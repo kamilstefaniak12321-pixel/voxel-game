@@ -40,12 +40,19 @@
             line-height: 1.4;
         }
     </style>
+
+    <!-- Układ menu (src/ui/menu.css) i motyw (ustawiany w src/config.js) -->
+    <link rel="stylesheet" href="./src/ui/menu.css">
+    <link rel="stylesheet" id="theme-css">
 </head>
 
-<body>
+<body data-screen="menu">
 
 <div id="crosshair">+</div>
 <div id="info"></div>
+
+<!-- Ekrany menu (tworzone w src/ui/Menu.js) -->
+<div id="menu"></div>
 
 <script type="importmap">
 {

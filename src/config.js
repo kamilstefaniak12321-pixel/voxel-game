@@ -61,3 +61,14 @@ export const MAX_FALL_SPEED = 50;
 export const MOUSE_SENSITIVITY = 0.002;
 
 export const PLAYER_REACH = 5;
+
+// ------------------------------------------------------------
+// INTERFEJS
+// ------------------------------------------------------------
+
+// Nazwa gry: na ekranie tytułowym i na karcie przeglądarki.
+export const GAME_TITLE = 'Voxel Game';
+
+// Motyw menu = nazwa folderu w assets/ui/themes/.
+// Nowy motyw: skopiuj folder motywu i zmień jego theme.css.
+export const UI_THEME = 'default';

@@ -264,7 +264,7 @@ export class Game {
     // HUD (informacje w lewym górnym rogu)
     // --------------------------------------------------------
 
-    updateHud(element, extraLines = '') {
+    updateHud(element) {
 
         const player = this.player;
         const hit = this.currentHit;
@@ -316,10 +316,10 @@ export class Game {
 
             `${hotbarLegend}<br>` +
 
-            `LPM - zniszcz | PPM - postaw${extraLines}<br>` +
+            `LPM - zniszcz | PPM - postaw<br>` +
 
             `WASD - ruch | Spacja - skok | ` +
-            `Mysz - kamera | ESC - wyjście` +
+            `Mysz - kamera | ESC - pauza` +
 
             `<br><br>${this.saver.getStatus()}`;
 

@@ -2,53 +2,95 @@ import * as THREE from 'three';
 
 import { InputManager } from './input/InputManager.js';
 import { Game } from './game/Game.js';
+import { Menu } from './ui/Menu.js';
+import { TEXTS } from './ui/texts.js';
 import {
     WorldStorage,
     createWorldInfo,
-    randomSeed
+    seedFromText
 } from './storage/WorldStorage.js';
 
-import { WORLD_SEED } from './config.js';
+import {
+    GAME_TITLE,
+    UI_THEME
+} from './config.js';
 
 // ------------------------------------------------------------
 // START APLIKACJI
 //
-// Tu powstaje to, co jest wspólne dla całej aplikacji:
-// renderer (rysowanie), obsługa klawiatury i myszy oraz baza
-// z zapisami. Sama gra (świat, gracz...) jest w game/Game.js.
+// Tu powstaje to, co jest wspólne dla całej aplikacji: renderer
+// (rysowanie), klawiatura i mysz, baza z zapisami i menu.
+// Sama gra (świat, gracz...) jest w game/Game.js.
+//
+// Stany aplikacji:
+//   'menu'    - ekrany menu, żaden świat nie jest uruchomiony
+//   'loading' - świat się wczytuje albo zapisuje
+//   'playing' - gra działa, mysz jest przechwycona
+//   'paused'  - menu pauzy na tle zatrzymanej gry
 // ------------------------------------------------------------
+
+document.title = GAME_TITLE;
+
 
 const renderer = new THREE.WebGLRenderer({
     antialias: true
 });
 
-renderer.setSize(
-    window.innerWidth,
-    window.innerHeight
-);
+renderer.setSize(window.innerWidth, window.innerHeight);
 
-renderer.setPixelRatio(
-    Math.min(window.devicePixelRatio, 2)
-);
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
-document.body.appendChild(
-    renderer.domElement
-);
+document.body.appendChild(renderer.domElement);
 
 
-const input = new InputManager(
-    renderer.domElement
-);
+const input = new InputManager(renderer.domElement);
+
+const infoElement = document.getElementById('info');
 
 
-const infoElement =
-    document.getElementById('info');
+let state = 'menu';
+
+let game = null;
 
 // ------------------------------------------------------------
-// WCZYTANIE ŚWIATA
+// MOTYW MENU
 // ------------------------------------------------------------
 
-// Baza z zapisami. null = zapis niedostępny, gra działa bez niego.
+// Wczytuje theme.css wybranego motywu. Jeśli takiego motywu nie
+// ma, wraca do domyślnego.
+
+function loadTheme(name) {
+
+    const link = document.getElementById('theme-css');
+
+    return new Promise((resolve) => {
+
+        link.onload = () => resolve(name);
+
+        link.onerror = () => {
+
+            if (name === 'default') {
+                resolve(null);
+                return;
+            }
+
+            console.warn(`Nie ma motywu "${name}" - używam domyślnego.`);
+
+            loadTheme('default').then(resolve);
+
+        };
+
+        link.href = `./assets/ui/themes/${name}/theme.css`;
+
+    });
+
+}
+
+// ------------------------------------------------------------
+// BAZA Z ZAPISAMI
+// ------------------------------------------------------------
+
+// null = zapis niedostępny, gra działa bez niego.
 
 let storage = null;
 
@@ -67,122 +109,214 @@ catch (error) {
 
 }
 
+// ------------------------------------------------------------
+// CO ROBIĄ PRZYCISKI MENU
+// ------------------------------------------------------------
 
-// Ostatnio grany świat, a jeśli nie ma żadnego - nowy.
+const menu = new Menu(
+    document.getElementById('menu'),
+    GAME_TITLE,
+    {
+        openWorldList,
+        playWorld,
+        createWorld,
+        deleteWorld,
+        resume,
+        quitToMenu
+    }
+);
 
-let worldInfo =
-    storage
-        ? (await storage.listWorlds())[0]
-        : undefined;
 
-if (!worldInfo) {
+async function openWorldList() {
 
-    worldInfo =
-        createWorldInfo(
-            'Świat 1',
-            WORLD_SEED
-        );
+    const worlds = storage ? await storage.listWorlds() : [];
+
+    menu.showWorlds(worlds, !storage);
 
 }
 
 
-const game = await Game.start(
-    renderer,
-    input,
-    storage,
-    worldInfo
-);
+async function createWorld(name, seedText) {
+
+    const worldInfo = createWorldInfo(name, seedFromText(seedText));
+
+    if (storage) {
+        await storage.saveWorld(worldInfo);
+    }
+
+    await playWorld(worldInfo);
+
+}
+
+
+async function deleteWorld(worldInfo) {
+
+    if (storage) {
+        await storage.deleteWorld(worldInfo.id);
+    }
+
+    await openWorldList();
+
+}
+
+
+async function playWorld(worldInfo) {
+
+    if (state !== 'menu') {
+        return;
+    }
+
+
+    state = 'loading';
+
+    menu.showLoading(TEXTS.loadingWorld);
+
+
+    try {
+
+        game = await Game.start(renderer, input, storage, worldInfo);
+
+    }
+
+    catch (error) {
+
+        console.error(error);
+
+        game = null;
+        state = 'menu';
+
+        menu.showError(TEXTS.worldLoadError);
+
+        return;
+
+    }
+
+
+    // Świat gotowy - przechwytujemy mysz i gramy.
+
+    state = 'paused';
+
+    resume();
+
+}
 
 // ------------------------------------------------------------
-// NOWY ŚWIAT (tymczasowo, do czasu menu)
+// PAUZA
 //
-// Klawisz N zapisuje obecny świat i tworzy nowy. Stare światy
-// zostają w bazie - pojawią się na liście światów w menu.
+// Gra działa tylko wtedy, gdy mysz jest przechwycona. ESC
+// (albo przełączenie okna) zwalnia mysz - wtedy pojawia się
+// menu pauzy, a świat się zapisuje.
 // ------------------------------------------------------------
 
-let creatingWorld = false;
+function resume() {
 
-
-async function createNewWorld() {
-
-    if (creatingWorld) {
+    if (!game) {
         return;
     }
 
 
-    if (!storage) {
+    input.reset();
 
-        alert('Zapis jest niedostępny, więc nie da się utworzyć nowego świata.');
 
+    // Starsze przeglądarki nie zwracają Promise - stąd "?.".
+
+    try {
+
+        renderer.domElement
+            .requestPointerLock()
+            ?.catch?.(pointerLockFailed);
+
+    }
+
+    catch (error) {
+
+        pointerLockFailed();
+
+    }
+
+
+    // Zabezpieczenie: jeśli po sekundzie mysz nadal nie jest
+    // przechwycona, pokazujemy menu pauzy z przyciskiem "Wróć do gry".
+
+    setTimeout(() => {
+
+        if (game && state === 'paused' && !document.pointerLockElement) {
+            menu.showPause();
+        }
+
+    }, 1000);
+
+}
+
+
+// Przeglądarka nie pozwoliła przechwycić myszy
+// (np. ESC było wciśnięte przed chwilą) - zostajemy w pauzie.
+
+function pointerLockFailed() {
+
+    if (game && state === 'paused') {
+        menu.showPause(TEXTS.pointerLockFailed);
+    }
+
+}
+
+document.addEventListener('pointerlockerror', pointerLockFailed);
+
+
+document.addEventListener('pointerlockchange', () => {
+
+    if (!game) {
         return;
-
     }
 
 
-    creatingWorld = true;
-
-    document.exitPointerLock();
-
-
-    const answer =
-        prompt(
-            'Seed nowego świata (zostaw puste dla losowego):',
-            ''
-        );
+    const locked =
+        document.pointerLockElement === renderer.domElement;
 
 
-    // Anulowano.
+    if (locked) {
 
-    if (answer === null) {
+        state = 'playing';
 
-        creatingWorld = false;
+        input.reset();
 
+        menu.hide();
+
+    }
+
+    else if (state === 'playing') {
+
+        state = 'paused';
+
+        menu.showPause();
+
+        game.saver.save();
+
+    }
+
+});
+
+
+async function quitToMenu() {
+
+    if (!game || state === 'loading') {
         return;
-
     }
 
 
-    // Puste = losowy seed, same cyfry = liczba, reszta = tekst.
+    state = 'loading';
 
-    const text = answer.trim();
+    menu.showLoading(TEXTS.savingWorld);
 
-    let seed = text;
-
-    if (text === '') {
-        seed = randomSeed();
-    }
-    else if (/^-?\d+$/.test(text)) {
-        seed = Number(text);
-    }
-
-
-    // Zapisujemy obecny świat i zamykamy go, żeby przy
-    // przeładowaniu strony nie stał się znowu "ostatnio granym".
 
     await game.stop();
 
-
-    const worlds = await storage.listWorlds();
-
-    const newWorld =
-        createWorldInfo(
-            `Świat ${worlds.length + 1}`,
-            seed
-        );
-
-    newWorld.lastPlayed =
-        Math.max(
-            newWorld.lastPlayed,
-            worldInfo.lastPlayed + 1
-        );
-
-    await storage.saveWorld(newWorld);
+    game = null;
 
 
-    // Najprostszy sposób na wejście do nowego świata do czasu menu:
-    // przeładowanie strony wczyta ostatnio grany świat, czyli nowy.
+    state = 'menu';
 
-    location.reload();
+    menu.showTitle();
 
 }
 
@@ -198,47 +332,44 @@ function animate() {
     requestAnimationFrame(animate);
 
 
-    const dt = Math.min(
-        clock.getDelta(),
-        0.05
-    );
+    const dt = Math.min(clock.getDelta(), 0.05);
 
 
-    if (creatingWorld) {
+    if (!game) {
         return;
     }
 
 
-    if (input.consumeKeyPress('KeyN')) {
-        createNewWorld();
+    if (state === 'playing') {
+
+        game.update(dt);
+
+        game.updateHud(infoElement);
+
     }
 
 
-    game.update(dt);
-
-    game.updateHud(infoElement, ' | N - nowy świat');
+    // W pauzie świat dalej jest widoczny pod menu.
 
     game.render();
 
 }
 
 
+window.addEventListener('resize', () => {
+
+    renderer.setSize(window.innerWidth, window.innerHeight);
+
+    game?.resize(window.innerWidth, window.innerHeight);
+
+});
+
+// ------------------------------------------------------------
+// START
+// ------------------------------------------------------------
+
+await loadTheme(UI_THEME);
+
+menu.showTitle();
+
 animate();
-
-
-window.addEventListener(
-    'resize',
-    () => {
-
-        renderer.setSize(
-            window.innerWidth,
-            window.innerHeight
-        );
-
-        game.resize(
-            window.innerWidth,
-            window.innerHeight
-        );
-
-    }
-);

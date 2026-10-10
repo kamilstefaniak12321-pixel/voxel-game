@@ -105,21 +105,26 @@ krwawy księżyc co kilka pełni. Światło dostosuje się samo. Kolejne
 rzeczy do zmiany (np. kolor zenitu, kolor gwiazd) warto dodawać jako
 kolejne pola wariantu, liczone w `SkyState.update`.
 
-### Dynamiczne światło (lampa w ręce, płonąca strzała, meteoryt)
+### Dynamiczne światło - ZROBIONE
 
-Nie przez `Light.js` - przebudowywanie chunków co klatkę byłoby za
-wolne. Dwa sposoby:
+`src/world/DynamicLight.js`: pudełko 32 x 32 x 32 komórek wokół gracza.
+Gdy któreś źródło przejdzie do innego bloku (albo zmienią się bloki
+w pudełku), liczy w nim rozlewanie tym samym zanikiem co lampy
+(`COLOR_DECAY` z `Light.js`) - więc światło omija ściany - i wysyła
+wynik na kartę jako teksturę 3D. Shader bloków (`BlockRenderData.js`)
+czyta z niej światło w komórce przed każdą ścianą i bierze jaśniejsze
+z tego i zwykłego światła. Meshe chunków się nie zmieniają.
 
-- **Prosty:** lista kilku świateł (pozycja, kolor, zasięg) jako uniformy
-  w shaderze bloków; w miejscu oznaczonym komentarzem w
-  `BlockRenderData.js` liczymy ich jasność z odległości i bierzemy
-  jaśniejsze ze świateł. Wada: świeci przez ściany.
-- **Porządny:** małe pudełko światła wokół gracza (np. 32x32x32 komórki)
-  jako tekstura 3D. Gdy źródło światła przejdzie do innego bloku, liczymy
-  rozlewanie (to samo co w `Light.js`) tylko w tym pudełku - to kilka
-  tysięcy komórek, ułamek milisekundy - i wysyłamy teksturę na kartę.
-  Shader odczytuje z niej światło po pozycji. Światło omija ściany jak
-  zwykłe, a mesh dalej się nie zmienia.
+Źródło to `{ position, color: [r, g, b], strength: 0-15 }`. Dziś
+źródłami są: lampa trzymana w ręce (wybrana na pasku), lecący meteoryt,
+błysk uderzenia i kule z `/demo kula` - zbiera je
+`Game.updateDynamicLight()`. Nowe źródło (płonąca strzała, świecący
+potwór...) = dopisanie go do tej listy. Całość wyłącza ustawienie
+„Dynamiczne światło” (WebGL2; na starszym WebGL1 go nie ma).
+
+Ograniczenie: światło liczy się tylko w pudełku wokół gracza, więc
+źródło dalej niż ~16 bloków nie oświetla terenu (samo świecenie
+- np. kulę ognia - dalej widać).
 
 ### Słońce i kolorowe wschody / zachody
 
@@ -142,22 +147,44 @@ wolne. Dwa sposoby:
   zasłonić słońce; brakuje przyciemnienia nieba i świata, czyli kilku
   linijek w `SkyState`), krwawy księżyc, faza wpływająca na potwory.
 
-### Gwiazdy
+### Noc zależna od księżyca - ZROBIONE
 
-- `layers/Stars.js`: liczba (`STAR_COUNT`), kolory, migotanie. Gwiazdy są
-  zawsze te same (stały seed), więc gracz może się ich nauczyć.
-- Pomysły: Droga Mleczna (tekstura na osobnej kopule, obracana razem
-  z gwiazdami), gwiazdozbiory, spadające gwiazdy (patrz niżej).
+`SkyColors.js` liczy dla każdej chwili, jak ciemne jest niebo i ile
+światła daje księżyc (faza x wysokość nad horyzontem):
 
-### Meteoryty
+- **światło na blokach**: w nowiu tylko słabe światło gwiazd, w pełni
+  sporo światła księżyca (`MOON_AMBIENT`, `MOON_LIGHT`). Nocą świat
+  traci kolory i idzie w barwę światła księżyca (`NIGHT_DESATURATION`,
+  shader bloków) - pełnia jest jasna, ale srebrna, a nie dzienna,
+- **gwiazdy**: `state.starLimit` - jaka część najsłabszych gwiazd
+  znika (zmierzch, jasny księżyc: `MOON_HIDES_STARS`),
+- **Droga Mleczna i galaktyki**: `state.galaxyVisibility`,
+- **spadające gwiazdy**: `state.meteorsPerMinute`
+  (`METEORS_PER_MINUTE`, `METEOR_SHOWER_FACTOR`).
 
-- **Spadające gwiazdy:** nowa warstwa `layers/Meteors.js`. Gdy
-  `state.starVisibility` jest duże, co jakiś czas losuje smugę (linia
-  z poświatą, która przelatuje po niebie w 1-2 sekundy).
-- **Meteoryt spadający na ziemię:** zdarzenie świata. Gra wybiera miejsce
-  upadku (zapisane w świecie, żeby nie zginęło przy wyjściu), warstwa
-  rysuje smugę w stronę tego miejsca, a przy upadku `World` robi krater
-  i stawia nowy blok, a dynamiczne światło pokazuje rozbłysk.
+### Gwiazdy, Droga Mleczna, galaktyki - ZROBIONE
+
+- `layers/Stars.js`: `STAR_COUNT` gwiazd (w nowiu widać wszystkie), kolory,
+  migotanie, zawsze te same (stały seed).
+- `layers/Galaxies.js`: pas Drogi Mlecznej z obłokami i ciemnymi pasmami
+  pyłu (szum w shaderze), cieplejsze jądro, trzy odległe galaktyki.
+  Kierunek pasa i galaktyk - stałe na górze pliku.
+- Pomysły: gwiazdozbiory, zorza polarna (nowa warstwa), pory roku
+  (Droga Mleczna w innym miejscu o tej samej godzinie).
+
+### Meteoryty - ZROBIONE
+
+- **Spadające gwiazdy** (`layers/ShootingStars.js`): smugi na niebie,
+  co dwudziesta to kolorowy bolid. Mniej więcej co siódma noc to deszcz
+  meteorów (`isMeteorShowerNight` w `Sky.js`) - kilka razy więcej smug
+  i wszystkie lecą z jednego punktu nieba (radiantu).
+- **Meteoryty spadające na ziemię** (`src/game/Meteorites.js`): kula
+  ognia z warkoczem i dynamicznym światłem, krater, błysk, blok
+  `meteorite` (świeci), komunikat na czacie. Częstość:
+  `METEORITES_PER_NIGHT` w `config.js`. Nigdy nie spada w chunki
+  zmieniane przez gracza.
+- Pomysły: rzadki meteoryt z nowym surowcem w środku, meteoryt
+  zostawiający płonące bloki (ogień), dźwięk przelotu i uderzenia.
 
 ### Chmury (na przyszłość)
 
@@ -176,4 +203,8 @@ w scenie świata; kolor z `SkyState` (różowe o zachodzie, szare nocą).
 | jak światło słabnie z odległością, domyślny kolor lamp, cienie w kątach | `src/config.js` (OŚWIETLENIE) |
 | kolor i siłę światła konkretnego bloku | `src/blocks/BlockRegistry.js` (`light`, `lightColor`) |
 | jak mocno niebo i księżyc barwią światło | `src/sky/SkyColors.js` (`AMBIENT_TINT_...`, `SUN_TINT`, `MOON_TINT`) |
+| ile światła daje księżyc, jak bardzo noc traci kolory, ile gwiazd chowa pełnia, ile spadających gwiazd | `src/sky/SkyColors.js` (`MOON_...`, `NIGHT_DESATURATION`, `METEORS_...`) |
+| wygląd Drogi Mlecznej i galaktyk | `src/sky/layers/Galaxies.js` |
+| jak często spadają meteoryty, krater | `src/config.js` (`METEORITES_PER_NIGHT`), `src/game/Meteorites.js` |
+| dynamiczne światło (pudełko, źródła) | `src/world/DynamicLight.js`, `Game.updateDynamicLight()` |
 | komendy do sprawdzania | `src/commands/gameCommands.js`, opis: `docs/komendy.md` |

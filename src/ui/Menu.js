@@ -573,12 +573,28 @@ export class Menu {
         );
 
 
+        // Dynamiczne światło (lampa w ręce, meteoryty) - można wyłączyć
+        // na słabszym komputerze.
+
+        const dynamicLightButton = button(
+            TEXTS.dynamicLight(settings.get('dynamicLight')),
+            () => {
+
+                settings.set('dynamicLight', !settings.get('dynamicLight'));
+
+                dynamicLightButton.textContent = TEXTS.dynamicLight(settings.get('dynamicLight'));
+
+            }
+        );
+
+
         grid.append(
             slider('mouseSensitivity', TEXTS.mouseSensitivity),
             slider('fov', TEXTS.fov),
             slider('viewDistance', TEXTS.viewDistance),
             themeButton,
-            debugButton
+            debugButton,
+            dynamicLightButton
         );
 
 

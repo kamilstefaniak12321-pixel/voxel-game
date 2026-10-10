@@ -29,19 +29,19 @@ const SKY_TABLE = [
     {
         at: -1, zenith: '#01030a', horizon: '#03070f',
         sunset: '#000000', high: '#000000', glow: 0, halo: '#000000', disc: '#ff5a1e',
-        ambient: 0.08, sunLight: 0
+        ambient: 0.04, sunLight: 0
     },
     {
         at: -0.3, zenith: '#01030a', horizon: '#03070f',
         sunset: '#000000', high: '#000000', glow: 0, halo: '#000000', disc: '#ff5a1e',
-        ambient: 0.08, sunLight: 0
+        ambient: 0.04, sunLight: 0
     },
 
     // zmierzch: ostatnie światło za horyzontem
     {
         at: -0.16, zenith: '#040a1e', horizon: '#0c1229',
         sunset: '#2a1430', high: '#1a1534', glow: 0.6, halo: '#000000', disc: '#ff5a1e',
-        ambient: 0.1, sunLight: 0
+        ambient: 0.07, sunLight: 0
     },
     {
         at: -0.07, zenith: '#0f1d44', horizon: '#30335a',
@@ -76,17 +76,22 @@ const SKY_TABLE = [
 ];
 
 
-// Księżyc w nocy: rozjaśnia niebo i daje słabe, niebieskawe
-// światło (najmocniej w pełni, wcale w nowiu). Kolory poniżej są
-// dla zwykłego, białego księżyca - inny kolor księżyca (wariant)
-// odpowiednio je zabarwia.
+// NOC ZALEŻY OD KSIĘŻYCA
+//
+// Bez księżyca (nów) noc jest ciemna - na blokach zostaje tylko
+// słabe światło gwiazd (`ambient` w nocnych wierszach tabeli).
+// Księżyc dokłada światło - najwięcej w pełni, gdy jest wysoko:
+// wtedy widać całkiem dobrze, ale w chłodnych, srebrnych barwach
+// (świat jest nocą odbarwiony - NIGHT_DESATURATION).
+// Kolory poniżej są dla zwykłego, białego księżyca - inny kolor
+// księżyca (wariant) odpowiednio je zabarwia.
 
 export const DEFAULT_MOON_COLOR = new THREE.Color('#f2f2ff');
 
 const MOON_SKY_GLOW = new THREE.Color('#0b1733');
-const MOON_AMBIENT = 0.1;
+const MOON_AMBIENT = 0.2;
 const MOON_AMBIENT_COLOR = new THREE.Color('#7f90c8');
-const MOON_LIGHT = 0.22;
+const MOON_LIGHT = 0.32;
 const MOON_LIGHT_COLOR = new THREE.Color('#a8b8f0');
 
 
@@ -101,6 +106,19 @@ const SUN_TINT = 0.75;
 
 // koloru księżyca (światło księżyca i poświata nieba wokół niego).
 const MOON_TINT = 0.5;
+
+
+// Jak bardzo świat traci kolory w nocy (0 = wcale, 1 = szaro-niebieski).
+// Światło lamp zostaje kolorowe.
+const NIGHT_DESATURATION = 0.6;
+
+// Jaka część gwiazd (najsłabszych) znika w pełni, gdy księżyc jest wysoko.
+const MOON_HIDES_STARS = 0.75;
+
+// Spadające gwiazdy na minutę w najciemniejszą noc (nów)
+// i ile razy więcej w noc z deszczem meteorów.
+const METEORS_PER_MINUTE = 10;
+const METEOR_SHOWER_FACTOR = 5;
 
 
 // Zamieniamy teksty kolorów na obiekty Color (raz, przy starcie).
@@ -222,6 +240,23 @@ export class SkyState {
 
         this.starVisibility = 0;
         this.moonBrightness = 1;
+
+        // Jaka część najsłabszych gwiazd jest schowana (0 = widać
+        // wszystkie, w nowiu), jak bardzo widać Drogę Mleczną i ile
+        // spadających gwiazd przypada na minutę.
+
+        this.starLimit = 0;
+        this.galaxyVisibility = 0;
+        this.meteorsPerMinute = 0;
+
+        // Noc z deszczem meteorów (ustawia Sky).
+
+        this.meteorShower = false;
+
+        // Nocne odbarwienie świata i barwa, w którą idzie.
+
+        this.nightDesaturation = 0;
+        this.nightTint = new THREE.Color(1, 1, 1);
 
         // Światło na blokach.
 
@@ -369,11 +404,36 @@ export class SkyState {
         this.moonBrightness = 0.45 + 0.55 * (1 - this.daylight);
 
 
-        // Gwiazdy wychodzą po zmierzchu; jasny księżyc część zagłusza.
+        // Nocą świat traci kolory i idzie w barwę światła księżyca.
 
-        this.starVisibility =
-            (1 - smoothstep(-0.2, -0.03, sun)) *
-            (1 - 0.35 * celestial.moonIllumination * moonUp);
+        this.nightDesaturation = NIGHT_DESATURATION * (1 - this.daylight);
+
+        hueOf(this.nightTint, this.moonLightColor);
+
+        this.nightTint.multiplyScalar(1 / luminance(this.nightTint));
+
+
+        // NIEBO NOCĄ: im ciemniejsze niebo, tym więcej na nim widać.
+        // Zmierzch i jasny księżyc chowają najsłabsze gwiazdy.
+
+        const night = 1 - smoothstep(-0.2, -0.03, sun);
+
+        const moonLight = celestial.moonIllumination * moonUp;
+
+        this.starVisibility = night;
+
+        const twilightLimit = 1 - night;
+        const moonLimit = MOON_HIDES_STARS * moonLight;
+
+        this.starLimit = 1 - (1 - twilightLimit) * (1 - moonLimit);
+
+        this.galaxyVisibility = night * night * (1 - 0.92 * moonLight);
+
+        this.meteorsPerMinute =
+            METEORS_PER_MINUTE *
+            night *
+            (0.15 + 0.85 * (1 - moonLight)) *
+            (this.meteorShower ? METEOR_SHOWER_FACTOR : 1);
 
     }
 

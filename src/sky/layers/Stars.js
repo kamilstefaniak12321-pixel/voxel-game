@@ -9,7 +9,8 @@ import {
 //
 // Punkty rozsiane po kuli wokół kamery. Każda gwiazda ma własną
 // jasność, kolor (od niebieskawych po pomarańczowe) i rytm
-// migotania. Cała kula obraca się razem z niebem (Celestial.js),
+// migotania. Im jaśniejsze niebo (zmierzch, księżyc w pełni),
+// tym więcej najsłabszych gwiazd znika (state.starLimit). Cała kula obraca się razem z niebem (Celestial.js),
 // więc gwiazdy wschodzą i zachodzą jak słońce.
 //
 // Gwiazdy są zawsze te same (stały seed), niezależnie od świata.
@@ -61,6 +62,7 @@ export class Stars {
         const colors = new Float32Array(STAR_COUNT * 3);
         const sizes = new Float32Array(STAR_COUNT);
         const phases = new Float32Array(STAR_COUNT);
+        const ranks = new Float32Array(STAR_COUNT);
 
         const totalWeight = STAR_COLORS.reduce((sum, c) => sum + c.weight, 0);
 
@@ -78,9 +80,14 @@ export class Stars {
             positions[i * 3 + 2] = z * DISTANCE;
 
 
-            // Dużo słabych gwiazd, mało jasnych.
+            // Dużo słabych gwiazd, mało jasnych. rank: 0 = najsłabsza,
+            // 1 = najjaśniejsza (słabe znikają pierwsze).
 
-            const brightness = random() ** 4;
+            const rank = random();
+
+            const brightness = rank ** 4;
+
+            ranks[i] = rank;
 
             sizes[i] = 1.2 + brightness * 2.6;
 
@@ -118,12 +125,14 @@ export class Stars {
         geometry.setAttribute('aColor', new THREE.BufferAttribute(colors, 3));
         geometry.setAttribute('aSize', new THREE.BufferAttribute(sizes, 1));
         geometry.setAttribute('aPhase', new THREE.BufferAttribute(phases, 1));
+        geometry.setAttribute('aRank', new THREE.BufferAttribute(ranks, 1));
 
 
         this.material = new THREE.ShaderMaterial({
 
             uniforms: {
                 uVisibility: { value: 0 },
+                uLimit: { value: 0 },
                 uTime: { value: 0 },
                 uPixelRatio: { value: 1 }
             },
@@ -132,8 +141,10 @@ export class Stars {
                 attribute vec3 aColor;
                 attribute float aSize;
                 attribute float aPhase;
+                attribute float aRank;
 
                 uniform float uVisibility;
+                uniform float uLimit;
                 uniform float uTime;
                 uniform float uPixelRatio;
 
@@ -151,7 +162,11 @@ export class Stars {
 
                     float twinkle = 0.75 + 0.25 * sin(uTime * (1.3 + aPhase * 0.3) + aPhase * 40.0);
 
-                    vColor = aColor * uVisibility * aboveHorizon * twinkle;
+                    // Słabe gwiazdy znikają, gdy niebo jest jaśniejsze.
+
+                    float shown = smoothstep(uLimit, uLimit + 0.06, aRank);
+
+                    vColor = aColor * uVisibility * aboveHorizon * twinkle * shown;
 
                     gl_PointSize = aSize * uPixelRatio;
 
@@ -202,6 +217,7 @@ export class Stars {
         const uniforms = this.material.uniforms;
 
         uniforms.uVisibility.value = state.starVisibility;
+        uniforms.uLimit.value = state.starLimit;
         uniforms.uTime.value = this.time;
         uniforms.uPixelRatio.value = pixelRatio;
 

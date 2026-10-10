@@ -106,8 +106,15 @@ export const SUN_PATH_TILT = 35;
 // więc raz świeci w nocy, a raz w dzień.
 export const MOON_CYCLE_DAYS = 8;
 
-// Ile gwiazd jest na niebie.
-export const STAR_COUNT = 1600;
+// Ile gwiazd jest na niebie w najciemniejszą noc (nów). Przy pełni
+// i o zmierzchu widać tylko najjaśniejsze z nich.
+export const STAR_COUNT = 4500;
+
+// Ile meteorytów średnio spada na ziemię w ciągu jednej nocy
+// (0.3 = mniej więcej co trzecią noc; 0 = wcale). Spadają w pobliżu
+// gracza, ale nigdy w chunki, które gracz zmieniał. Spadające
+// gwiazdy na niebie to co innego - ich częstość jest w SkyColors.js.
+export const METEORITES_PER_NIGHT = 0.3;
 
 // Kolory nieba o różnych porach dnia są w src/sky/SkyColors.js.
 

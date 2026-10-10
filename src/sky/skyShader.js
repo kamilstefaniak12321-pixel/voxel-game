@@ -36,7 +36,13 @@ export const skyUniforms = {
 
     // Jasność mgły na blokach (ciemnieje w tunelach).
 
-    uFogBrightness: { value: 1 }
+    uFogBrightness: { value: 1 },
+
+    // Nocą bloki oświetlone niebem tracą kolory i idą w barwę
+    // światła księżyca (lampy zostają kolorowe).
+
+    uNightDesaturation: { value: 0 },
+    uNightTint: { value: new THREE.Color(1, 1, 1) }
 
 };
 

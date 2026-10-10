@@ -177,6 +177,26 @@ export const BLOCK_TYPES = {
             all: 'lamp_purple'
         }
 
+    },
+
+
+    // Meteoryt - zostaje w kraterze po uderzeniu (src/game/Meteorites.js).
+    // Lekko się żarzy.
+
+    meteorite: {
+
+        id: 10,
+        name: 'Meteorite',
+
+        solid: true,
+
+        light: 7,
+        lightColor: '#ff7a30',
+
+        textures: {
+            all: 'meteorite'
+        }
+
     }
 
 };

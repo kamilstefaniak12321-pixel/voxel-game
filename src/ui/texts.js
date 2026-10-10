@@ -56,6 +56,7 @@ export const TEXTS = {
     viewDistance: (value) => `Zasięg widzenia: ${value} bloków`,
     theme: (name) => `Motyw: ${name}`,
     showDebug: (on) => `Debug (F3): ${on ? 'Wł.' : 'Wył.'}`,
+    dynamicLight: (on) => `Dynamiczne światło: ${on ? 'Wł.' : 'Wył.'}`,
     resetSettings: 'Przywróć domyślne',
     done: 'Gotowe',
 

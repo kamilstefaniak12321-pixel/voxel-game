@@ -18,6 +18,11 @@ import {
     SKY_COLOR_GLSL
 } from '../sky/skyShader.js';
 
+
+import {
+    dynamicLightUniforms
+} from '../world/DynamicLight.js';
+
 // ------------------------------------------------------------
 // Jeden wspólny materiał dla wszystkich bloków (atlas tekstur).
 //
@@ -80,8 +85,50 @@ blockMaterial.onBeforeCompile = (shader, renderer) => {
         shader.fragmentShader.replace(
             '#include <opaque_fragment>',
             `#ifdef USE_COLOR_ALPHA
+
+                // Nocą to, co oświetla niebo, traci kolory (srebrna,
+                // księżycowa noc). Światło lamp dochodzi dopiero potem,
+                // więc zostaje kolorowe.
+
+                float skyLuminance = dot(outgoingLight, vec3(0.2126, 0.7152, 0.0722));
+
+                outgoingLight = mix(outgoingLight, skyLuminance * uNightTint, uNightDesaturation);
+
                 outgoingLight = max(outgoingLight, blockTexel * pow(vColor.rgb, vec3(2.2)));
+
             #endif
+
+            #ifdef USE_DYNAMIC_LIGHT
+
+                // Dynamiczne światło (lampa w ręce, meteoryt...): kolor
+                // z tekstury 3D wokół gracza, w komórce przed ścianą.
+                // Ściany cieniujemy tak jak przy zwykłych lampach.
+
+                if (uDynamicEnabled > 0.5) {
+
+                    vec3 cell = (vWorldPosition + vWorldNormal * 0.5 - uDynamicOrigin) / uDynamicSize;
+
+                    if (all(greaterThanEqual(cell, vec3(0.0))) && all(lessThanEqual(cell, vec3(1.0)))) {
+
+                        vec3 n = abs(vWorldNormal);
+
+                        float faceShade =
+                            n.x * 0.8 + n.z * 0.9 +
+                            n.y * (vWorldNormal.y > 0.0 ? 1.0 : 0.65);
+
+                        // W teksturze kolejne osie to x, z, y (tak są
+                        // ułożone dane w DynamicLight.js).
+
+                        vec3 dynamicLight = texture(uDynamicLight, cell.xzy).rgb * faceShade * 0.75;
+
+                        outgoingLight = max(outgoingLight, blockTexel * pow(dynamicLight, vec3(2.2)));
+
+                    }
+
+                }
+
+            #endif
+
             #include <opaque_fragment>`
         );
 
@@ -113,6 +160,8 @@ blockMaterial.onBeforeCompile = (shader, renderer) => {
                 `#include <common>
                 varying vec3 vSkyDirection;
                 uniform float uFogBrightness;
+                uniform float uNightDesaturation;
+                uniform vec3 uNightTint;
                 ${SKY_COLOR_GLSL}`
             )
             .replace(
@@ -130,6 +179,39 @@ blockMaterial.onBeforeCompile = (shader, renderer) => {
     if (!renderer.capabilities.isWebGL2) {
         return;
     }
+
+
+    // Dynamiczne światło potrzebuje tekstur 3D (WebGL2).
+
+    Object.assign(shader.uniforms, dynamicLightUniforms);
+
+    shader.vertexShader =
+        shader.vertexShader
+            .replace(
+                '#include <common>',
+                `#include <common>
+                varying vec3 vWorldPosition;
+                varying vec3 vWorldNormal;`
+            )
+            .replace(
+                '#include <fog_vertex>',
+                `#include <fog_vertex>
+                vWorldPosition = (modelMatrix * vec4(transformed, 1.0)).xyz;
+                vWorldNormal = objectNormal;`
+            );
+
+    shader.fragmentShader =
+        shader.fragmentShader.replace(
+            '#include <common>',
+            `#define USE_DYNAMIC_LIGHT
+            #include <common>
+            varying vec3 vWorldPosition;
+            varying vec3 vWorldNormal;
+            uniform highp sampler3D uDynamicLight;
+            uniform vec3 uDynamicOrigin;
+            uniform float uDynamicSize;
+            uniform float uDynamicEnabled;`
+        );
 
 
     const before = 'varying vec2 vMapUv;';

@@ -22,7 +22,7 @@ Współrzędne można podawać względem gracza: `~` (tu, gdzie stoję),
 | `/ksiezyc` | faza, oświetlenie, czy jest nad horyzontem, kolor |
 | `/ksiezyc faza <now \| sierp \| kwadra \| garb \| pelnia \| ubywajacy-garb \| ostatnia-kwadra \| ubywajacy-sierp>` | przesuwa czas o pełne doby do tej fazy i mówi, o której księżyc jest najwyżej |
 | `/ksiezyc kolor <kolor \| domyslny>` | kolor księżyca (zabarwia też światło nocą) |
-| `/niebo` | wysokość słońca, siła łuny, kolor łuny, widoczność gwiazd |
+| `/niebo` | wysokość słońca, łuna, ile gwiazd widać, Droga Mleczna, spadające gwiazdy na minutę |
 | `/niebo zachod <kolor \| domyslny>` | kolor łuny wschodu i zachodu (zabarwia też światło) |
 | `/tp <x> <z>`, `/tp <x> <y> <z>`, `/tp spawn` | teleport (bez y - na powierzchnię) |
 | `/pozycja` | pozycja i chunk |
@@ -32,7 +32,14 @@ Współrzędne można podawać względem gracza: `~` (tu, gdzie stoję),
 | `/bloki` | lista bloków |
 | `/wypelnij <x1> <y1> <z1> <x2> <y2> <z2> <blok \| powietrze>` | wypełnia prostopadłościan (do 16 384 bloków) |
 | `/swiatlo` | światło przy głowie i przy wskazanej ścianie (niebo 0-15, lampy 0-15 i ich kolor) |
+| `/swiatlo dynamiczne [wl \| wyl]` | włącza/wyłącza dynamiczne światło (to samo co w ustawieniach) |
 | `/demo swiatlo` | buduje zamknięty pokój z kolorowymi lampami i stawia w nim gracza |
+| `/demo kula [kolor \| usun]` | kula dynamicznego światła krąży przed graczem przez minutę |
+| `/meteory` | ile spadających gwiazd na minutę, czy jest deszcz meteorów |
+| `/meteory deszcz <wl \| wyl \| auto>` | wymusza albo wyłącza deszcz meteorów (auto = sam wybiera noce) |
+| `/meteory pokaz [ile]` | od razu kilka spadających gwiazd (widać w nocy) |
+| `/meteor` | zrzuca meteoryt w pobliżu (nie w chunki zmieniane przez gracza) |
+| `/meteor tu` | meteoryt spada tam, gdzie patrzysz (albo 15 bloków przed graczem) |
 
 Kolory: `czerwony`, `krwawy`, `pomaranczowy`, `zloty`, `zolty`, `zielony`,
 `turkusowy`, `niebieski`, `fioletowy`, `rozowy`, `bialy` albo `#rrggbb`.

@@ -96,7 +96,10 @@ export const ATLAS_URL = atlasUrl.href;
 
 export const blockAtlasTexture =
     textureLoader.load(
-        atlasUrl.href
+        atlasUrl.href,
+        (texture) => computeAtlasAverages(texture.image),
+        undefined,
+        () => resolveAverages()
     );
     
 // ------------------------------------------------------------
@@ -179,3 +182,163 @@ export function getAtlasUV(tileName) {
 }
 
 // ------------------------------------------------------------
+
+// ------------------------------------------------------------
+// ŚREDNIE KOLORY KAFELKÓW ("rozmyty atlas")
+//
+// Z daleka tekstury bloków zlewają się w jeden kolor. Dla każdego
+// kafelka atlasu liczymy jego średni kolor:
+//   atlasAverageTexture - mała tekstura 16 x 16 (jeden piksel na
+//       kafelek) - shader bloków bierze z niej kolor dalekich ścian,
+//   getAtlasAverage('grass_top') - ten sam kolor jako THREE.Color
+//       (daleki teren, FarTerrain.js).
+// Liczone raz, po wczytaniu terrain.png - nowa tekstura bloku sama
+// zmienia też kolor dalekiego terenu.
+// ------------------------------------------------------------
+
+const averageData = new Uint8Array(ATLAS_COLUMNS * ATLAS_ROWS * 4).fill(128);
+
+export const atlasAverageTexture = new THREE.DataTexture(
+    averageData,
+    ATLAS_COLUMNS,
+    ATLAS_ROWS
+);
+
+atlasAverageTexture.magFilter = THREE.NearestFilter;
+atlasAverageTexture.minFilter = THREE.NearestFilter;
+atlasAverageTexture.colorSpace = THREE.SRGBColorSpace;
+atlasAverageTexture.needsUpdate = true;
+
+
+// Średnie kolory (liniowe) po nazwie kafelka.
+
+const averageColors = new Map();
+
+let resolveAverages;
+
+// Obietnica spełniona, gdy średnie kolory są policzone.
+
+export const atlasAveragesReady = new Promise((resolve) => {
+    resolveAverages = resolve;
+});
+
+
+export function getAtlasAverage(tileName) {
+
+    return averageColors.get(tileName) ?? null;
+
+}
+
+
+function srgbToLinear(value) {
+
+    return value <= 0.04045
+        ? value / 12.92
+        : ((value + 0.055) / 1.055) ** 2.4;
+
+}
+
+
+function linearToSrgb(value) {
+
+    return value <= 0.0031308
+        ? value * 12.92
+        : 1.055 * value ** (1 / 2.4) - 0.055;
+
+}
+
+
+function computeAtlasAverages(image) {
+
+    try {
+
+        const tile = ATLAS_TILE_SIZE;
+
+        const canvas = document.createElement('canvas');
+
+        canvas.width = ATLAS_COLUMNS * tile;
+        canvas.height = ATLAS_ROWS * tile;
+
+        const context = canvas.getContext('2d', { willReadFrequently: true });
+
+        context.drawImage(image, 0, 0, canvas.width, canvas.height);
+
+        const pixels = context.getImageData(0, 0, canvas.width, canvas.height).data;
+
+
+        for (let ty = 0; ty < ATLAS_ROWS; ty++) {
+
+            for (let tx = 0; tx < ATLAS_COLUMNS; tx++) {
+
+                // Średnia liczona w kolorach liniowych - tak, jak
+                // mieszałaby je karta graficzna.
+
+                let r = 0, g = 0, b = 0, count = 0;
+
+                for (let y = 0; y < tile; y++) {
+
+                    for (let x = 0; x < tile; x++) {
+
+                        const i = ((ty * tile + y) * canvas.width + tx * tile + x) * 4;
+
+                        if (pixels[i + 3] < 128) {
+                            continue;
+                        }
+
+                        r += srgbToLinear(pixels[i] / 255);
+                        g += srgbToLinear(pixels[i + 1] / 255);
+                        b += srgbToLinear(pixels[i + 2] / 255);
+
+                        count++;
+
+                    }
+
+                }
+
+                if (count === 0) {
+                    continue;
+                }
+
+                r /= count;
+                g /= count;
+                b /= count;
+
+
+                // W teksturze wiersz 0 jest na dole (v = 0), a w atlasie
+                // kafelek y = 0 jest na górze.
+
+                const o = ((ATLAS_ROWS - 1 - ty) * ATLAS_COLUMNS + tx) * 4;
+
+                averageData[o] = Math.round(linearToSrgb(r) * 255);
+                averageData[o + 1] = Math.round(linearToSrgb(g) * 255);
+                averageData[o + 2] = Math.round(linearToSrgb(b) * 255);
+                averageData[o + 3] = 255;
+
+
+                for (const [name, position] of Object.entries(ATLAS_TILES)) {
+
+                    if (position.x === tx && position.y === ty) {
+                        averageColors.set(name, new THREE.Color(r, g, b));
+                    }
+
+                }
+
+            }
+
+        }
+
+
+        atlasAverageTexture.needsUpdate = true;
+
+    }
+
+    catch (error) {
+
+        console.warn('Nie udało się policzyć średnich kolorów atlasu:', error);
+
+    }
+
+
+    resolveAverages();
+
+}

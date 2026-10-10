@@ -23,6 +23,12 @@ import {
     dynamicLightUniforms
 } from '../world/DynamicLight.js';
 
+
+import {
+    viewUniforms,
+    VIEW_GLSL
+} from './viewUniforms.js';
+
 // ------------------------------------------------------------
 // Jeden wspólny materiał dla wszystkich bloków (atlas tekstur).
 //
@@ -65,21 +71,26 @@ blockMaterial.onBeforeCompile = (shader, renderer) => {
 
     // Światło nieba: przyciemnia teksturę przed oświetleniem sceny.
 
+    // Z dalekiego terenem: im bliżej końca zasięgu widzenia, tym
+    // bardziej tekstura zlewa się w swój średni kolor - na końcu
+    // zasięgu bloki wyglądają tak jak daleki teren za nimi.
+
     shader.fragmentShader =
         shader.fragmentShader.replace(
             '#include <color_fragment>',
-            `vec3 blockTexel = diffuseColor.rgb;
+            `if (uFarEnabled > 0.5) {
+                float farBlur = smoothstep(uFarInner * 0.65, uFarInner, length(vSkyDirection.xz));
+                diffuseColor.rgb = mix(diffuseColor.rgb, texture2D(uAtlasAverage, vMapUv).rgb, farBlur);
+            }
+            vec3 blockTexel = diffuseColor.rgb;
             #ifdef USE_COLOR_ALPHA
                 diffuseColor.rgb *= pow(vColor.a, 2.2);
             #endif`
         );
 
 
-    // Światło lamp: na końcu, jaśniejsze z dwóch świateł.
-    //
-    // (Tu kiedyś dojdzie światło dynamiczne - np. lampa trzymana
-    // w ręce - liczone w shaderze z listy świateł, bez przebudowy
-    // chunków. Patrz docs/niebo-i-swiatlo.md.)
+    // Światło lamp: na końcu, jaśniejsze z dwóch świateł,
+    // potem dynamiczne światło (lampa w ręce...) i suwak jasności.
 
     shader.fragmentShader =
         shader.fragmentShader.replace(
@@ -129,6 +140,10 @@ blockMaterial.onBeforeCompile = (shader, renderer) => {
 
             #endif
 
+            // Ustawienie "Jasność" (viewUniforms.js).
+
+            outgoingLight = applyBrightness(outgoingLight, blockTexel);
+
             #include <opaque_fragment>`
         );
 
@@ -138,7 +153,7 @@ blockMaterial.onBeforeCompile = (shader, renderer) => {
     // dokładnie w kolorze nieba za nim. W tunelu mgła ciemnieje
     // (uFogBrightness).
 
-    Object.assign(shader.uniforms, skyUniforms);
+    Object.assign(shader.uniforms, skyUniforms, viewUniforms);
 
     shader.vertexShader =
         shader.vertexShader
@@ -162,15 +177,31 @@ blockMaterial.onBeforeCompile = (shader, renderer) => {
                 uniform float uFogBrightness;
                 uniform float uNightDesaturation;
                 uniform vec3 uNightTint;
-                ${SKY_COLOR_GLSL}`
+                uniform sampler2D uAtlasAverage;
+                ${SKY_COLOR_GLSL}
+                ${VIEW_GLSL}`
             )
             .replace(
                 '#include <fog_fragment>',
                 `#ifdef USE_FOG
-                    float fogFactor = smoothstep(fogNear, fogFar, vFogDepth);
-                    if (fogFactor > 0.0) {
-                        vec3 fogSky = skyColor(normalize(vSkyDirection)) * uFogBrightness;
-                        gl_FragColor.rgb = mix(gl_FragColor.rgb, linearToOutputTexel(vec4(fogSky, 1.0)).rgb, fogFactor);
+                    if (uFarEnabled > 0.5) {
+
+                        // Z dalekim terenem: ta sama mgiełka co na nim
+                        // (rośnie z odległością), bez znikania bloków.
+
+                        float haze = farHaze(length(vSkyDirection.xz));
+                        vec3 hazeSky = skyColor(normalize(vSkyDirection)) * uFogBrightness;
+                        gl_FragColor.rgb = mix(gl_FragColor.rgb, linearToOutputTexel(vec4(hazeSky, 1.0)).rgb, haze);
+
+                    }
+                    else {
+
+                        float fogFactor = smoothstep(fogNear, fogFar, vFogDepth);
+                        if (fogFactor > 0.0) {
+                            vec3 fogSky = skyColor(normalize(vSkyDirection)) * uFogBrightness;
+                            gl_FragColor.rgb = mix(gl_FragColor.rgb, linearToOutputTexel(vec4(fogSky, 1.0)).rgb, fogFactor);
+                        }
+
                     }
                 #endif`
             );

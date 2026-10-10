@@ -121,6 +121,24 @@ const METEORS_PER_MINUTE = 10;
 const METEOR_SHOWER_FACTOR = 5;
 
 
+// ZAĆMIENIE SŁOŃCA
+//
+// Im większą część słońca zasłania księżyc (Celestial.eclipse),
+// tym ciemniej: światło słońca słabnie dokładnie tyle, ile tarczy
+// zniknęło, a niebo i światło otoczenia trochę wolniej (przy małym
+// zaćmieniu prawie nic nie widać, przy prawie pełnym robi się
+// szaro). W pełnym zaćmieniu: zmrok w środku dnia, ciemnoniebieskie
+// niebo, łuna jak przy zachodzie dookoła całego horyzontu, korona
+// wokół zasłoniętego słońca i najjaśniejsze gwiazdy.
+
+// Jak ciemno jest w pełnym zaćmieniu (1 = jak w nocy bez księżyca).
+const ECLIPSE_DARKNESS = 0.9;
+
+const ECLIPSE_ZENITH = new THREE.Color('#0a1430');
+const ECLIPSE_HORIZON = new THREE.Color('#2e3352');
+const ECLIPSE_GLOW_COLOR = new THREE.Color('#e08a4c');
+
+
 // Zamieniamy teksty kolorów na obiekty Color (raz, przy starcie).
 
 const COLOR_FIELDS = [
@@ -253,6 +271,21 @@ export class SkyState {
 
         this.meteorShower = false;
 
+        // Jak bardzo jest noc (0 = dzień, 1 = noc) - tylko od słońca,
+        // bez zaćmień.
+
+        this.night = 0;
+
+        // Zaćmienie słońca: zasłonięta część tarczy (0-1), jak ciemno
+        // przez nie jest (0-1), łuna dookoła horyzontu (0-1) i jej kolor,
+        // korona wokół słońca (0-1).
+
+        this.eclipse = 0;
+        this.eclipseDarkness = 0;
+        this.eclipseGlow = 0;
+        this.eclipseGlowColor = new THREE.Color().copy(ECLIPSE_GLOW_COLOR);
+        this.corona = 0;
+
         // Nocne odbarwienie świata i barwa, w którą idzie.
 
         this.nightDesaturation = 0;
@@ -272,6 +305,11 @@ export class SkyState {
         // Kolor tarczy księżyca.
 
         this.moonColor = new THREE.Color().copy(DEFAULT_MOON_COLOR);
+
+        // Jak nisko pod linią poziomu jest widoczny horyzont (ustawia
+        // Sky z Sky.horizonDip) - poniżej słońce i księżyc są schowane.
+
+        this.horizonDip = 0;
 
     }
 
@@ -360,6 +398,26 @@ export class SkyState {
         addScaled(this.horizon, _tinted, moonGlow * 1.3);
 
 
+        // Zaćmienie słońca: niebo ciemnieje (tylko gdy słońce jest
+        // nad horyzontem - w nocy i tak go nie widać).
+
+        const eclipse = celestial.eclipse * smoothstep(-0.08, 0.04, sun);
+
+        const darkness = ECLIPSE_DARKNESS * eclipse ** 1.8;
+
+        this.eclipse = eclipse;
+        this.eclipseDarkness = darkness;
+
+        this.zenith.lerp(ECLIPSE_ZENITH, darkness);
+        this.horizon.lerp(ECLIPSE_HORIZON, darkness);
+
+        this.sunHalo.multiplyScalar(1 - eclipse);
+
+        this.eclipseGlow = 0.8 * smoothstep(0.75, 1, eclipse);
+
+        this.corona = smoothstep(0.9, 1, eclipse);
+
+
         // BARWA ŚWIATŁA OTOCZENIA: odcień całego nieba (zenit, horyzont
         // i łuna zachodu), lekko - w dzień ledwo, w nocy wyraźniej.
 
@@ -399,6 +457,13 @@ export class SkyState {
         this.moonLightIntensity = MOON_LIGHT * moonGlow;
 
 
+        // Zaćmienie: słońce świeci tyle, ile z niego zostało,
+        // a światło z nieba słabnie razem z niebem.
+
+        this.sunLightIntensity *= 1 - eclipse;
+        this.ambientIntensity *= 1 - darkness;
+
+
         // W dzień księżyc jest blady, w nocy jasny.
 
         this.moonBrightness = 0.45 + 0.55 * (1 - this.daylight);
@@ -406,7 +471,10 @@ export class SkyState {
 
         // Nocą świat traci kolory i idzie w barwę światła księżyca.
 
-        this.nightDesaturation = NIGHT_DESATURATION * (1 - this.daylight);
+        this.nightDesaturation = Math.max(
+            NIGHT_DESATURATION * (1 - this.daylight),
+            0.35 * darkness
+        );
 
         hueOf(this.nightTint, this.moonLightColor);
 
@@ -418,6 +486,8 @@ export class SkyState {
 
         const night = 1 - smoothstep(-0.2, -0.03, sun);
 
+        this.night = night;
+
         const moonLight = celestial.moonIllumination * moonUp;
 
         this.starVisibility = night;
@@ -426,6 +496,15 @@ export class SkyState {
         const moonLimit = MOON_HIDES_STARS * moonLight;
 
         this.starLimit = 1 - (1 - twilightLimit) * (1 - moonLimit);
+
+
+        // W pełnym zaćmieniu widać najjaśniejsze gwiazdy.
+
+        const eclipseStars = smoothstep(0.93, 1, eclipse);
+
+        this.starVisibility = Math.max(this.starVisibility, 0.9 * eclipseStars);
+
+        this.starLimit = Math.min(this.starLimit, 1 - 0.2 * eclipseStars);
 
         this.galaxyVisibility = night * night * (1 - 0.92 * moonLight);
 

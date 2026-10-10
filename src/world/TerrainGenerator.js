@@ -42,6 +42,11 @@ import {
 
 const NOISE_GAIN = 2.5;
 
+// Ile warstw szczegółów (oktaw) mają wzgórza i góry.
+
+export const HILL_OCTAVES = 4;
+export const MOUNTAIN_OCTAVES = 2;
+
 
 // Płynne przejście 0 -> 1 między wartościami edge0 i edge1.
 
@@ -92,13 +97,26 @@ export class TerrainGenerator {
 
     getHeight(x, z) {
 
+        return this.getHeightLod(x, z, HILL_OCTAVES, MOUNTAIN_OCTAVES);
+
+    }
+
+
+    // To samo, ale z mniejszą liczbą szczegółów (oktaw szumu) -
+    // dla dalekiego terenu (FarTerrain.js). Z daleka drobnych
+    // pagórków i tak nie widać, a policzenie ich w punktach co
+    // kilkanaście bloków dałoby przypadkowe "kolce".
+
+    getHeightLod(x, z, hillOctaves, mountainOctaves) {
+
         // Wzgórza: mniej więcej -1..1
 
         const hills =
             this.hillNoise.fractal2D(
                 x / TERRAIN_HILL_SCALE,
                 z / TERRAIN_HILL_SCALE,
-                4
+                HILL_OCTAVES,
+                hillOctaves
             ) * NOISE_GAIN;
 
 
@@ -113,7 +131,8 @@ export class TerrainGenerator {
                 this.mountainNoise.fractal2D(
                     x / TERRAIN_MOUNTAIN_SCALE,
                     z / TERRAIN_MOUNTAIN_SCALE,
-                    2
+                    MOUNTAIN_OCTAVES,
+                    mountainOctaves
                 ) * NOISE_GAIN
             );
 

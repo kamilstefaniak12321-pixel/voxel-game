@@ -45,18 +45,49 @@ z tekstur w atlasie, więc nowy blok od razu ma ikonkę.
 
 ## Ustawienia
 
-W menu (z ekranu tytułowego i z pauzy) można zmienić:
+W menu (z ekranu tytułowego i z pauzy) są trzy zakładki:
 
-- **czułość myszy** (10-200%),
+**Obraz**
+
+- **zasięg widzenia** (24-384 bloków) - jak daleko widać prawdziwe bloki,
+- **daleki teren** (do 4096 bloków albo wyłączony) - uproszczony,
+  rozmyty teren za zasięgiem widzenia, aż po horyzont,
 - **pole widzenia** (50-110°),
-- **zasięg widzenia** (20-120 bloków - dalej teren znika we mgle),
-- **motyw menu**,
-- **informacje debugowania** (to samo co F3),
-- **dynamiczne światło** (lampa w ręce, meteoryty - można wyłączyć na
-  słabszym komputerze).
+- **jasność** - od *Nastrojowej* (zwykłej) do *Jasnej*: rozjaśnia półmrok
+  i noc, pełnego światła nie zmienia,
+- **rozdzielczość** (25-100%) - mniej = szybciej, ale mniej ostro,
+- **limit FPS** (bez limitu, 30, 60, 120, 144),
+- **cienie w kątach** (0-100%),
+- **dynamiczne światło** (lampa w ręce, meteoryty),
+- **wczytywanie** (1-16 ms na klatkę) - ile czasu w każdej
+  klatce gra poświęca na nowe chunki: więcej = świat dogrywa się
+  szybciej (przy dużym zasięgu), ale mogą być przycięcia.
+
+**Sterowanie** - czułość myszy (10-200%), odwrócona mysz (góra/dół).
+
+**Inne** - motyw menu, rozmiar interfejsu w grze (pasek, czat, napisy),
+informacje debugowania (to samo co F3), licznik FPS w rogu ekranu,
+spadające meteoryty (wł./wył. - te, które robią kratery).
 
 Zmiany działają od razu, także w grze pod pauzą, i zapisują się
-w przeglądarce. Wartości domyślne są w `src/config.js`.
+w przeglądarce. Wartości domyślne są w `src/config.js`, a lista ustawień
+z zakresami w `src/settings/Settings.js`. Wszystko da się też zmienić
+z czatu: `/ustaw` (lista), np. `/ustaw zasieg 256`.
+
+## Wydajność
+
+- **Licznik FPS** - ustawienie *Inne → Licznik FPS*; z F3 klatki na
+  sekundę widać też w debugu.
+- `/wydajnosc` - klatki na sekundę, czasy klatki (średnia, najdłuższa,
+  najwolniejsze 1%), ile czasu zajmuje gra, a ile rysowanie, liczba
+  rysowań i trójkątów, chunki, daleki teren, pamięć.
+- `/wydajnosc test [sekundy]` - kamera obraca się raz dookoła, a na
+  koniec na czacie pojawia się wynik. Dobre do porównań: ten sam
+  test przy różnym zasięgu widzenia, dalekim terenie, rozdzielczości.
+
+Przy dużym zasięgu widzenia od razu (pod ekranem wczytywania) wczytują
+się tylko najbliższe chunki (`START_LOAD_RADIUS`), reszta dogrywa się
+w trakcie gry.
 
 ## Świat
 
@@ -65,14 +96,26 @@ ten idzie dalej, a chunki daleko za plecami znikają z pamięci (zmiany
 gracza w nich zostają). Jak daleko wokół gracza wczytuje się teren,
 zależy od ustawienia *Zasięg widzenia*.
 
+**Daleki teren (horyzont):** za zasięgiem widzenia widać uproszczony
+teren - te same wzgórza i góry, które wygenerowałyby się tam naprawdę,
+ale bez bloków i tekstur, w rozmytych kolorach trawy, ziemi i skały.
+Im dalej, tym bardziej ginie w powietrzu (mgiełka w kolorze nieba):
+w dzień jest jasny i niebieskawy, wieczorem i w nocy ciemny, a słońce
+i księżyc zachodzą za dalekimi górami. Bliskie bloki z odległością
+płynnie zlewają się w średni kolor swoich tekstur, więc przejście jest
+prawie niewidoczne. Pokazuje też chunki zmienione przez gracza (np.
+krater po meteorycie). Zasięg - ustawienie *Daleki teren*; mgiełka -
+`FAR_HAZE_...` w `src/config.js`; kod - `src/world/FarTerrain.js`.
+
 Świat kończy się na **granicy** - `WORLD_BORDER` w `src/config.js`
 (domyślnie 30 000 bloków od środka w każdą stronę; `Infinity` = bez
 granicy). Szum terenu powtarza się mniej więcej co 61 000 bloków, więc
 przy tej granicy nikt nie trafi na powtórkę. Nowe światy zaczynają się
 w punkcie `WORLD_SPAWN_X` / `WORLD_SPAWN_Z`.
 
-Wczytywanie chunków ma limit czasu na klatkę (`CHUNK_LOAD_BUDGET_MS`),
-żeby gra nie przycinała przy szybkim ruchu. Chunk pojawia się na
+Wczytywanie chunków ma limit czasu na klatkę (ustawienie *Wczytywanie*,
+domyślnie `CHUNK_LOAD_BUDGET_MS`), żeby gra nie przycinała przy
+szybkim ruchu. Chunk pojawia się na
 ekranie dopiero wtedy, gdy wczytali się wszyscy jego sąsiedzi (bez nich
 nie da się policzyć światła i cieni na jego krawędziach).
 
@@ -134,6 +177,11 @@ Komendy służą do sprawdzania nowości w grze, np.:
 /demo kula zielony         krążąca kula dynamicznego światła
 /meteor tu                 meteoryt spada tam, gdzie patrzysz
 /meteory deszcz wl         deszcz meteorów (/meteory pokaz - kilka od razu)
+/zacmienie pokaz pelne     pełne zaćmienie słońca (albo czesciowe, 50...)
+/zacmienie                 kiedy następne zaćmienie (/zacmienie lista)
+/horyzont 2048             daleki teren (/horyzont lod - dokładność kafelków)
+/ustaw zasieg 256          dowolne ustawienie (/ustaw - lista)
+/wydajnosc test            test wydajności z obrotem kamery
 /latanie                   latanie (Spacja w górę, Shift w dół)
 /tp 100 30 -50             teleport (~ = względem gracza)
 /daj lamp_blue             blok na pasek
@@ -167,6 +215,14 @@ w debugu (F3) widać godzinę, numer dnia i fazę księżyca, a klawisze
 - **Meteoryty** - co kilka nocy (`METEORITES_PER_NIGHT`) w pobliżu spada
   kula ognia, robi krater i zostawia żarzący się blok meteorytu (na
   czacie pojawia się, gdzie). Nie spada w chunki, które zmieniałeś.
+  Można je wyłączyć w ustawieniach.
+- **Zaćmienia słońca** - mniej więcej co trzeci nów (`ECLIPSE_CHANCE`)
+  księżyc przechodzi przed słońcem, koło południa. Zwykle zasłania tylko
+  część tarczy - im większą, tym ciemniej robi się na świecie. Czasem
+  (`ECLIPSE_TOTAL_SHARE`) zaćmienie jest pełne: na pół minuty robi się
+  zmrok, niebo ciemnieje, dookoła horyzontu świeci łuna, wokół czarnej
+  tarczy widać koronę, a na niebie najjaśniejsze gwiazdy. Kiedy
+  następne - `/zacmienie`.
 - **Mgła** ma zawsze kolor nieba za terenem, także o zachodzie.
 
 Kolory nieba i światła o każdej porze dnia są w `src/sky/SkyColors.js`

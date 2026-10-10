@@ -232,13 +232,15 @@ export class Meteorites {
 
     update(dt) {
 
-        // Ciemną nocą czasem spada sam.
+        // Ciemną nocą czasem spada sam (chyba że gracz wyłączył
+        // meteoryty w ustawieniach - komenda /meteor działa zawsze).
 
         const state = this.game.sky.state;
 
         if (
             METEORITES_PER_NIGHT > 0 &&
-            state.starVisibility > 0.7 &&
+            this.game.settings.get('meteorites') &&
+            state.night > 0.7 &&
             Math.random() < METEORITES_PER_NIGHT / DARK_NIGHT_SECONDS * dt
         ) {
             this.spawn();

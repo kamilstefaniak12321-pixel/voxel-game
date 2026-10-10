@@ -258,8 +258,12 @@ export class Noise {
     // każda kolejna jest 2x drobniejsza i 2x słabsza.
     // Pierwsza daje duże kształty, następne dodają szczegóły.
     // Zwraca wartość mniej więcej od -1 do 1.
+    //
+    // used - ile pierwszych oktaw naprawdę policzyć (domyślnie
+    // wszystkie). Mniej = ten sam kształt bez drobnych szczegółów
+    // (dla dalekiego terenu, oglądanego z daleka).
 
-    fractal2D(x, y, octaves) {
+    fractal2D(x, y, octaves, used = octaves) {
 
         let sum = 0;
         let amplitude = 1;
@@ -272,11 +276,15 @@ export class Noise {
             // Przesunięcie (i * 31.7) sprawia, że warstwy nie
             // zerują się wszystkie w tych samych punktach.
 
-            sum +=
-                this.noise2D(
-                    x * frequency + i * 31.7,
-                    y * frequency + i * 31.7
-                ) * amplitude;
+            if (i < used) {
+
+                sum +=
+                    this.noise2D(
+                        x * frequency + i * 31.7,
+                        y * frequency + i * 31.7
+                    ) * amplitude;
+
+            }
 
             total += amplitude;
 

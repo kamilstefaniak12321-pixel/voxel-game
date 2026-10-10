@@ -1,2 +1,9 @@
-# Auto detect text files and perform LF normalization
+# Pliki tekstowe (kod, html, opisy): git sam pilnuje końców linii,
+# żeby na Windowsie i innych systemach nie było fałszywych zmian.
 * text=auto
+
+# Grafiki i archiwa: zapisywane dokładnie tak, jak są.
+*.png binary
+*.jpg binary
+*.gif binary
+*.zip binary

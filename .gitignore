@@ -1,0 +1,16 @@
+# Pliki, których git ma NIE zapisywać.
+
+# Pliki systemowe Windowsa i macOS
+Thumbs.db
+desktop.ini
+.DS_Store
+
+# Ustawienia edytorów
+.vscode/
+.idea/
+
+# Spakowane wersje gry - historia jest teraz w gicie
+*.zip
+
+# Biblioteki pobierane przez npm (gdyby kiedyś doszły)
+node_modules/

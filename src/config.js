@@ -70,5 +70,6 @@ export const PLAYER_REACH = 5;
 export const GAME_TITLE = 'Voxel Game';
 
 // Motyw menu = nazwa folderu w assets/ui/themes/.
+// Dostępne: 'default' (ziemia) i 'lepidolit' (fioletowy).
 // Nowy motyw: skopiuj folder motywu i zmień jego theme.css.
 export const UI_THEME = 'default';

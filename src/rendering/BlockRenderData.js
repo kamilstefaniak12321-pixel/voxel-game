@@ -14,12 +14,23 @@ import {
 
 // ------------------------------------------------------------
 // Jeden wspólny materiał dla wszystkich bloków (atlas tekstur).
+//
+// vertexColors: każdy róg ściany ma "kolor" z poziomem światła
+// (liczy go ChunkMesher.js):
+//   r, g, b - światło lamp (w kolorze lamp),
+//   a       - światło nieba.
+// Światło nieba przechodzi przez zwykłe oświetlenie sceny
+// (słońce + otoczenie), a światło lamp świeci niezależnie od
+// słońca. Liczy się jaśniejsze z nich - jak w Minecrafcie, w dzień
+// pod gołym niebem lampa niczego nie rozjaśnia.
 // ------------------------------------------------------------
 
 export const blockMaterial =
     new THREE.MeshLambertMaterial({
 
-        map: blockAtlasTexture
+        map: blockAtlasTexture,
+
+        vertexColors: true
 
     });
 
@@ -36,6 +47,34 @@ export const blockMaterial =
 // ------------------------------------------------------------
 
 blockMaterial.onBeforeCompile = (shader, renderer) => {
+
+    // Światło w rogach to jasność "na oko" (0.5 = wygląda na w pół
+    // ciemniej), a karta liczy światło liniowo - stąd pow(..., 2.2).
+    // Bez tego półcień wyglądałby prawie jak pełne światło.
+
+    // Światło nieba: przyciemnia teksturę przed oświetleniem sceny.
+
+    shader.fragmentShader =
+        shader.fragmentShader.replace(
+            '#include <color_fragment>',
+            `vec3 blockTexel = diffuseColor.rgb;
+            #ifdef USE_COLOR_ALPHA
+                diffuseColor.rgb *= pow(vColor.a, 2.2);
+            #endif`
+        );
+
+
+    // Światło lamp: na końcu, jaśniejsze z dwóch świateł.
+
+    shader.fragmentShader =
+        shader.fragmentShader.replace(
+            '#include <opaque_fragment>',
+            `#ifdef USE_COLOR_ALPHA
+                outgoingLight = max(outgoingLight, blockTexel * pow(vColor.rgb, vec3(2.2)));
+            #endif
+            #include <opaque_fragment>`
+        );
+
 
     if (!renderer.capabilities.isWebGL2) {
         return;

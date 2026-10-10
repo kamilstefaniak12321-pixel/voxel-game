@@ -68,7 +68,32 @@ przy tej granicy nikt nie trafi na powtórkę. Nowe światy zaczynają się
 w punkcie `WORLD_SPAWN_X` / `WORLD_SPAWN_Z`.
 
 Wczytywanie chunków ma limit czasu na klatkę (`CHUNK_LOAD_BUDGET_MS`),
-żeby gra nie przycinała przy szybkim ruchu.
+żeby gra nie przycinała przy szybkim ruchu. Chunk pojawia się na
+ekranie dopiero wtedy, gdy wczytali się wszyscy jego sąsiedzi (bez nich
+nie da się policzyć światła i cieni na jego krawędziach).
+
+## Oświetlenie
+
+Światło działa jak w Minecrafcie - każde miejsce ma poziom od 0
+(ciemno) do 15:
+
+- **światło nieba** - 15 wszędzie, skąd widać niebo; w głąb tunelu albo
+  pod nawis słabnie o 1 z każdym blokiem,
+- **światło bloków** - lampa świeci na 15 ciepłym światłem, które też
+  słabnie o 1 z każdym blokiem. W dzień pod gołym niebem lampy niczego
+  nie rozjaśniają (liczy się jaśniejsze z dwóch świateł).
+
+Do tego **gładkie przejścia** światła i **cienie w kątach** (ambient
+occlusion), a mgła w ciemnym tunelu ciemnieje razem z nim. Poziom
+światła w miejscu gracza widać w debugu (F3).
+
+Ustawienia w `src/config.js` (sekcja OŚWIETLENIE): jak szybko ciemnieje
+półmrok (`LIGHT_CURVE`), jak jasno jest w zupełnej ciemności
+(`LIGHT_MIN_BRIGHTNESS`), kolor światła lamp (`BLOCK_LIGHT_COLOR`)
+i siła cieni w kątach (`AMBIENT_OCCLUSION`).
+
+Światło nie jest zapisywane - po wczytaniu świata liczy się od nowa
+(`src/world/Light.js`).
 
 ## Zapis świata
 
@@ -115,12 +140,12 @@ assets/ui/themes/           motywy menu (kolory, czcionka, tło)
 assets/fonts/               czcionki
 src/
   main.js                   start aplikacji, menu, pauza, pętla
-  config.js                 ustawienia: chunki, teren, gracz, menu
+  config.js                 ustawienia: chunki, teren, światło, gracz, menu
   game/                     jeden uruchomiony świat (Game)
   ui/                       ekrany menu, pasek bloków, ikonki, napisy
   settings/                 ustawienia gracza (zapis w przeglądarce)
   blocks/                   lista bloków (BlockRegistry)
-  world/                    świat, chunki, szum, generator terenu
+  world/                    świat, chunki, szum, generator terenu, światło
   storage/                  zapis i wczytywanie światów
   rendering/                atlas tekstur, budowanie meshy chunków
   player/                   ruch i kolizje gracza
@@ -133,3 +158,4 @@ src/
 1. Narysuj teksturę 16x16 i wklej ją do wolnego kafelka w `assets/textures/blocks/terrain.png`.
 2. Dopisz pozycję kafelka w `ATLAS_TILES` w `src/rendering/TextureAtlas.js`.
 3. Dopisz blok w `BLOCK_TYPES` w `src/blocks/BlockRegistry.js` (nowe, unikalne `id`).
+   Blok, który ma świecić, dostaje `light: 1-15` (jak lampa: `light: 15`).

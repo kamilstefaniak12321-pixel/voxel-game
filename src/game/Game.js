@@ -11,6 +11,7 @@ import {
     blockExists
 } from '../blocks/BlockRegistry.js';
 import { WorldSaver } from '../storage/WorldSaver.js';
+import { lightToBrightness } from '../world/Light.js';
 
 import {
     PLAYER_REACH,
@@ -111,13 +112,21 @@ export class Game {
 
         this.scene = new THREE.Scene();
 
-        this.scene.background = new THREE.Color(0x87CEEB);
+        this.skyColor = new THREE.Color(0x87CEEB);
+
+        this.scene.background = this.skyColor;
 
         this.scene.fog = new THREE.Fog(
             0x87CEEB,
             20,
             45
         );
+
+        // Jasność mgły: w ciemnym tunelu mgła ciemnieje (inaczej
+        // koniec długiego tunelu "świeciłby" kolorem nieba).
+        // Zmienia się płynnie - jak oczy przyzwyczajające się do ciemności.
+
+        this.fogBrightness = 1;
 
         this.scene.add(
             new THREE.AmbientLight(0xffffff, 0.7)
@@ -319,6 +328,9 @@ export class Game {
         this.saver.update(dt);
 
 
+        this.updateFog(dt);
+
+
         this.highlight.update(this.currentHit);
 
     }
@@ -330,6 +342,35 @@ export class Game {
             this.scene,
             this.camera
         );
+
+    }
+
+
+    // Mgła ma kolor nieba przyciemniony tak, jak ciemno jest
+    // tam, gdzie gracz ma głowę (liczy się tylko światło nieba).
+
+    updateFog(dt) {
+
+        const light = this.world.getLight(
+            Math.floor(this.camera.position.x),
+            Math.floor(this.camera.position.y),
+            Math.floor(this.camera.position.z)
+        );
+
+        const target = lightToBrightness(light.sky);
+
+
+        // Mniej więcej w sekundę dochodzi do nowej jasności.
+
+        this.fogBrightness +=
+            (target - this.fogBrightness) * Math.min(1, dt * 3);
+
+
+        // Kolory w three.js są liniowe, a jasność "na oko" - stąd potęga.
+
+        this.scene.fog.color
+            .copy(this.skyColor)
+            .multiplyScalar(this.fogBrightness ** 2.2);
 
     }
 
@@ -416,13 +457,15 @@ export class Game {
     // --------------------------------------------------------
 
     // Promień wczytywania chunków wokół gracza (w chunkach):
-    // tyle, żeby krawędź wczytanego terenu kryła się we mgle.
+    // tyle, żeby krawędź widocznego terenu kryła się we mgle.
+    // +2, bo najdalszy pierścień wczytanych chunków jest niewidoczny
+    // (czeka na sąsiadów - patrz World.js).
 
     getLoadRadius() {
 
         return Math.ceil(
             this.settings.get('viewDistance') / CHUNK_SIZE
-        ) + 1;
+        ) + 2;
 
     }
 
@@ -485,6 +528,15 @@ export class Game {
         const selected = getBlockDefinition(this.selectedBlock);
 
 
+        // Światło w miejscu głowy gracza.
+
+        const light = this.world.getLight(
+            Math.floor(this.camera.position.x),
+            Math.floor(this.camera.position.y),
+            Math.floor(this.camera.position.z)
+        );
+
+
         // Bez informacji debugowania (F3): tylko komunikat o zapisie
         // (wybrany blok widać na pasku na dole).
 
@@ -511,7 +563,8 @@ export class Game {
             `Wczytane chunki: ${this.world.chunks.size}` +
             `${this.world.loadQueue.length > 0 ? ` (w kolejce: ${this.world.loadQueue.length})` : ''}<br>` +
 
-            `Na ziemi: ${player.onGround ? 'tak' : 'nie'}<br>` +
+            `Na ziemi: ${player.onGround ? 'tak' : 'nie'} | ` +
+            `Światło: niebo ${light.sky}, lampy ${light.block}<br>` +
 
             `Wybrany blok: ${selected?.name ?? 'brak'}<br><br>` +
 

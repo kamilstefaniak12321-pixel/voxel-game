@@ -1,8 +1,9 @@
 import * as THREE from 'three';
 
 import {
-    WORLD_SIZE_X,
-    WORLD_SIZE_Z,
+    WORLD_BORDER,
+    WORLD_SPAWN_X,
+    WORLD_SPAWN_Z,
     GRAVITY,
     MOVE_SPEED,
     JUMP_SPEED,
@@ -55,14 +56,19 @@ export class Player {
 
     }
 
-// Ustawia gracza na powierzchni terenu na środku świata.
+// Ustawia gracza na powierzchni terenu w miejscu startu.
 
 spawn() {
 
     // + 0.5 = środek bloku, żeby gracz stał w jednej kolumnie.
 
-    const x = Math.floor(WORLD_SIZE_X / 2) + 0.5;
-    const z = Math.floor(WORLD_SIZE_Z / 2) + 0.5;
+    const x = Math.floor(WORLD_SPAWN_X) + 0.5;
+    const z = Math.floor(WORLD_SPAWN_Z) + 0.5;
+
+
+    // Chunk w miejscu startu musi istnieć, żeby znaleźć powierzchnię.
+
+    this.world.ensureColumnLoaded(x, z);
 
 
     this.pos.set(
@@ -312,6 +318,14 @@ resolveMovement(dt) {
         }
 
     }
+
+
+    // Granica świata - dalej nie da się przejść.
+
+    const limit = WORLD_BORDER - this.width / 2;
+
+    this.pos.x = Math.min(limit, Math.max(-limit, this.pos.x));
+    this.pos.z = Math.min(limit, Math.max(-limit, this.pos.z));
 
 }
 

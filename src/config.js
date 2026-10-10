@@ -6,13 +6,25 @@
 export const CHUNK_SIZE = 16;     // szerokość i długość (X, Z)
 export const CHUNK_HEIGHT = 64;   // wysokość (Y) = limit budowania
 
-// Rozmiar startowego świata w chunkach.
-export const WORLD_CHUNKS_X = 8;
-export const WORLD_CHUNKS_Z = 8;
+// Ile milisekund na klatkę może zająć wczytywanie chunków
+// (generowanie i budowanie meshy). Więcej = świat dogrywa się
+// szybciej, ale gra może lekko przycinać przy szybkim ruchu.
+export const CHUNK_LOAD_BUDGET_MS = 4;
 
-// Rozmiar startowego świata w blokach (wyliczany z chunków).
-export const WORLD_SIZE_X = WORLD_CHUNKS_X * CHUNK_SIZE;
-export const WORLD_SIZE_Z = WORLD_CHUNKS_Z * CHUNK_SIZE;
+// ------------------------------------------------------------
+// ŚWIAT
+// ------------------------------------------------------------
+
+// Świat generuje się wokół gracza bez końca - aż do granicy.
+// Granica = ile bloków od środka (0, 0) w każdą stronę.
+// Dalej teren się nie generuje, a gracz zatrzymuje się na niej.
+// Infinity = bez granicy. (Szum terenu powtarza się mniej więcej
+// co 61 000 bloków, więc przy 30 000 nikt nie trafi na powtórkę.)
+export const WORLD_BORDER = 30000;
+
+// Miejsce startu w nowym świecie (w blokach).
+export const WORLD_SPAWN_X = 0;
+export const WORLD_SPAWN_Z = 0;
 
 // ------------------------------------------------------------
 // TEREN

@@ -3,8 +3,7 @@ import * as THREE from 'three';
 import {
     CHUNK_SIZE,
     CHUNK_HEIGHT,
-    WORLD_CHUNKS_X,
-    WORLD_CHUNKS_Z
+    WORLD_BORDER
 } from '../config.js';
 // ------------------------------------------------------------
 import {
@@ -40,9 +39,21 @@ import {
 //   isSolid(x, y, z)             - czy blok ma kolizję
 //
 // Zmiana bloku nie przebudowuje mesha od razu. Chunk jest tylko
-// oznaczany jako "brudny", a updateMeshes() (wywoływane raz na
-// klatkę) przebudowuje wszystkie brudne chunki naraz.
+// oznaczany jako "brudny", a update() (wywoływane raz na klatkę)
+// przebudowuje brudne chunki.
+//
+// Świat nie ma stałego rozmiaru: update() wczytuje chunki wokół
+// gracza (najbliższe najpierw) i usuwa z pamięci te za daleko.
+// Żeby gra nie przycinała, na jedną klatkę przypada tylko
+// ograniczony czas pracy - reszta czeka na kolejne klatki.
 // ------------------------------------------------------------
+
+// Chunki dalej niż (promień wczytywania + UNLOAD_MARGIN) są
+// usuwane z pamięci. Zapas zapobiega ciągłemu wczytywaniu
+// i usuwaniu tego samego chunka, gdy gracz chodzi po granicy.
+
+const UNLOAD_MARGIN = 2;
+
 export class World {
 
     // seed        - seed tego świata (liczba albo tekst).
@@ -76,6 +87,18 @@ export class World {
 
         this.generator =
             new TerrainGenerator(seed);
+
+
+        // Chunk, w którym stoi gracz, i promień wczytywania.
+
+        this.centerCx = 0;
+        this.centerCz = 0;
+        this.loadRadius = -1;
+
+        // Chunki do wczytania - najdalsze na początku listy,
+        // więc pop() zawsze zwraca najbliższy.
+
+        this.loadQueue = [];
 
     }
 
@@ -124,6 +147,23 @@ export class World {
         if (chunk) {
             this.dirtyChunks.add(chunk);
         }
+
+    }
+
+
+    // Czy chunk leży (choćby częściowo) wewnątrz granicy świata.
+
+    chunkInsideBorder(cx, cz) {
+
+        const minX = cx * CHUNK_SIZE;
+        const minZ = cz * CHUNK_SIZE;
+
+        return (
+            minX + CHUNK_SIZE > -WORLD_BORDER &&
+            minX < WORLD_BORDER &&
+            minZ + CHUNK_SIZE > -WORLD_BORDER &&
+            minZ < WORLD_BORDER
+        );
 
     }
 
@@ -230,9 +270,16 @@ export class World {
         }
 
 
-        // Poza limitem wysokości nie da się budować.
+        // Poza limitem wysokości i za granicą świata nie da się budować.
 
         if (y < 0 || y >= CHUNK_HEIGHT) {
+            return false;
+        }
+
+        if (
+            x < -WORLD_BORDER || x >= WORLD_BORDER ||
+            z < -WORLD_BORDER || z >= WORLD_BORDER
+        ) {
             return false;
         }
 
@@ -240,22 +287,13 @@ export class World {
         const cx = this.toChunkCoord(x);
         const cz = this.toChunkCoord(z);
 
-        let chunk = this.getChunk(cx, cz);
 
+        // Chunk jeszcze niewczytany powstaje na żądanie.
+
+        const chunk = this.generateChunk(cx, cz);
 
         if (!chunk) {
-
-            // Usuwanie bloku z nieistniejącego chunka: nic do zrobienia.
-
-            if (id === AIR_ID) {
-                return false;
-            }
-
-            // Stawianie bloku poza dotychczasowym światem:
-            // chunk powstaje na żądanie.
-
-            chunk = this.createChunk(cx, cz);
-
+            return false;
         }
 
 
@@ -271,6 +309,8 @@ export class World {
         this.markDirty(chunk);
 
         // Chunk zmieniony przez gracza trafi do zapisu.
+
+        chunk.modified = true;
 
         this.unsavedChunks.add(chunk);
 
@@ -340,22 +380,49 @@ export class World {
     // MESHE
     // --------------------------------------------------------
 
-    // Przebudowuje meshe wszystkich zmienionych chunków.
-    // Wywoływane raz na klatkę (i po wygenerowaniu świata).
+    // Przebudowuje meshe zmienionych chunków, najbliższe graczowi
+    // najpierw. deadline = performance.now(), po którym przerywamy
+    // (przynajmniej jeden chunk zawsze się przebuduje, więc
+    // postawiony blok pojawia się od razu).
 
-    updateMeshes() {
+    updateMeshes(deadline = Infinity) {
 
         if (this.dirtyChunks.size === 0) {
             return;
         }
 
 
-        for (const chunk of this.dirtyChunks) {
+        const chunks = [...this.dirtyChunks];
+
+        chunks.sort(
+            (a, b) => this.distanceToCenter(a) - this.distanceToCenter(b)
+        );
+
+
+        for (const chunk of chunks) {
+
             this.rebuildChunkMesh(chunk);
+
+            this.dirtyChunks.delete(chunk);
+
+
+            if (performance.now() >= deadline) {
+                break;
+            }
+
         }
 
+    }
 
-        this.dirtyChunks.clear();
+
+    // Kwadrat odległości chunka od chunka gracza (w chunkach).
+
+    distanceToCenter(chunk) {
+
+        const dx = chunk.cx - this.centerCx;
+        const dz = chunk.cz - this.centerCz;
+
+        return dx * dx + dz * dz;
 
     }
 
@@ -447,6 +514,8 @@ export class World {
         this.dirtyChunks.clear();
         this.unsavedChunks.clear();
 
+        this.loadQueue = [];
+
     }
 
     // --------------------------------------------------------
@@ -456,12 +525,19 @@ export class World {
     // Tworzy chunk i wypełnia go terenem z generatora.
     // Jeśli chunk już istnieje, zostaje bez zmian.
 
+    // Za granicą świata zwraca null.
+
     generateChunk(cx, cz) {
 
         let chunk = this.getChunk(cx, cz);
 
         if (chunk) {
             return chunk;
+        }
+
+
+        if (!this.chunkInsideBorder(cx, cz)) {
+            return null;
         }
 
 
@@ -491,7 +567,10 @@ export class World {
         }
 
 
-        if (!loaded) {
+        if (loaded) {
+            chunk.modified = true;
+        }
+        else {
             this.generator.generateChunk(chunk);
         }
 
@@ -512,24 +591,67 @@ export class World {
     }
 
 
-    generateStartWorld() {
+    // Upewnia się, że chunk z kolumną (x, z) istnieje.
 
-        for (let cx = 0; cx < WORLD_CHUNKS_X; cx++) {
+    ensureColumnLoaded(x, z) {
 
-            for (let cz = 0; cz < WORLD_CHUNKS_Z; cz++) {
+        return this.generateChunk(
+            this.toChunkCoord(Math.floor(x)),
+            this.toChunkCoord(Math.floor(z))
+        );
 
-                this.generateChunk(cx, cz);
+    }
 
-            }
+    // --------------------------------------------------------
+    // WCZYTYWANIE CHUNKÓW WOKÓŁ GRACZA
+    // --------------------------------------------------------
+
+    // Wywoływane co klatkę z pozycją gracza (w blokach).
+    // radius   - promień wczytywania w chunkach
+    // budgetMs - ile milisekund może zająć ta klatka
+
+    update(x, z, radius, budgetMs) {
+
+        this.setCenter(x, z, radius);
+
+
+        const deadline = performance.now() + budgetMs;
+
+
+        // Najpierw meshe (postawione bloki i świeżo
+        // wygenerowane chunki stają się widoczne)...
+
+        this.updateMeshes(deadline);
+
+
+        // ...potem nowe chunki, najbliższe najpierw - tylko jeśli
+        // w tej klatce zostało jeszcze trochę czasu.
+
+        while (
+            this.loadQueue.length > 0 &&
+            performance.now() < deadline
+        ) {
+
+            const [cx, cz] = this.loadQueue.pop();
+
+            this.generateChunk(cx, cz);
 
         }
 
+    }
 
-        // Chunki, które gracz zbudował poza startowym obszarem.
 
-        for (const key of this.savedChunks.keys()) {
+    // Wczytuje od razu wszystko w promieniu (przy wejściu do świata,
+    // pod ekranem wczytywania) i buduje meshe.
 
-            const [cx, cz] = key.split(',').map(Number);
+    loadAround(x, z, radius) {
+
+        this.setCenter(x, z, radius);
+
+
+        while (this.loadQueue.length > 0) {
+
+            const [cx, cz] = this.loadQueue.pop();
 
             this.generateChunk(cx, cz);
 
@@ -537,6 +659,116 @@ export class World {
 
 
         this.updateMeshes();
+
+    }
+
+
+    // Ustawia środek wczytywania. Gdy gracz przejdzie do innego
+    // chunka (albo zmieni się zasięg), układa nową kolejkę
+    // i usuwa z pamięci chunki za daleko.
+
+    setCenter(x, z, radius) {
+
+        const cx = this.toChunkCoord(Math.floor(x));
+        const cz = this.toChunkCoord(Math.floor(z));
+
+
+        if (
+            cx === this.centerCx &&
+            cz === this.centerCz &&
+            radius === this.loadRadius
+        ) {
+            return;
+        }
+
+
+        this.centerCx = cx;
+        this.centerCz = cz;
+        this.loadRadius = radius;
+
+
+        // Brakujące chunki w kole o promieniu radius.
+
+        const queue = [];
+
+        for (let dz = -radius; dz <= radius; dz++) {
+
+            for (let dx = -radius; dx <= radius; dx++) {
+
+                const distance = dx * dx + dz * dz;
+
+                if (distance > radius * radius) {
+                    continue;
+                }
+
+
+                const qx = cx + dx;
+                const qz = cz + dz;
+
+                if (
+                    !this.getChunk(qx, qz) &&
+                    this.chunkInsideBorder(qx, qz)
+                ) {
+                    queue.push([qx, qz, distance]);
+                }
+
+            }
+
+        }
+
+
+        // Najdalsze na początek - pop() bierze najbliższy.
+
+        queue.sort((a, b) => b[2] - a[2]);
+
+        this.loadQueue = queue;
+
+
+        // Usuwanie dalekich chunków.
+
+        const maxDistance = radius + UNLOAD_MARGIN;
+
+        for (const chunk of [...this.chunks.values()]) {
+
+            if (this.distanceToCenter(chunk) > maxDistance * maxDistance) {
+                this.unloadChunk(chunk);
+            }
+
+        }
+
+    }
+
+
+    // Usuwa chunk z pamięci i ze sceny.
+
+    unloadChunk(chunk) {
+
+        const key = this.chunkKey(chunk.cx, chunk.cz);
+
+
+        // Chunk zmieniony przez gracza zachowujemy w pamięci, żeby
+        // po powrocie wczytać go takim, jakim był. Do bazy trafi
+        // przy najbliższym zapisie (zostaje na liście niezapisanych).
+
+        if (chunk.modified) {
+            this.savedChunks.set(key, chunk.blocks);
+        }
+
+
+        if (chunk.mesh) {
+
+            this.scene.remove(chunk.mesh);
+
+            chunk.mesh.geometry.dispose();
+
+            chunk.mesh = null;
+
+        }
+
+
+        this.chunks.delete(key);
+
+        this.dirtyChunks.delete(chunk);
 
     }
 

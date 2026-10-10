@@ -12,6 +12,9 @@ import {
 } from '../blocks/BlockRegistry.js';
 import { WorldSaver } from '../storage/WorldSaver.js';
 import { lightToBrightness } from '../world/Light.js';
+import { WorldTime } from '../sky/WorldTime.js';
+import { Sky } from '../sky/Sky.js';
+import { skyUniforms } from '../sky/skyShader.js';
 
 import {
     PLAYER_REACH,
@@ -108,13 +111,10 @@ export class Game {
         this.settings = settings;
 
 
-        // Scena: niebo, mgła i światło.
+        // Scena świata i mgła. Kolor mgły na blokach liczy shader
+        // z koloru nieba w danym kierunku (patrz sky/skyShader.js).
 
         this.scene = new THREE.Scene();
-
-        this.skyColor = new THREE.Color(0x87CEEB);
-
-        this.scene.background = this.skyColor;
 
         this.scene.fog = new THREE.Fog(
             0x87CEEB,
@@ -128,15 +128,15 @@ export class Game {
 
         this.fogBrightness = 1;
 
-        this.scene.add(
-            new THREE.AmbientLight(0xffffff, 0.7)
-        );
 
-        const sun = new THREE.DirectionalLight(0xffffff, 0.9);
+        // Czas świata (zapisany albo poranek nowego świata) i niebo:
+        // słońce, księżyc, gwiazdy i światło na blokach.
 
-        sun.position.set(20, 40, 20);
+        this.time = new WorldTime(worldInfo.time);
 
-        this.scene.add(sun);
+        this.sky = new Sky(this.scene);
+
+        this.sky.update(this.time.days, 0, renderer.getPixelRatio());
 
 
         this.camera = new THREE.PerspectiveCamera(
@@ -214,7 +214,8 @@ export class Game {
             storage,
             worldInfo,
             this.world,
-            this.player
+            this.player,
+            this.time
         );
 
         this.saver.saveOnExit();
@@ -244,6 +245,22 @@ export class Game {
 
 
         this.player.update(dt, input);
+
+
+        // Upływ czasu. Z włączonym debugiem (F3) klawisze [ i ]
+        // przestawiają zegar o godzinę (do oglądania nieba).
+
+        this.time.update(dt);
+
+        const earlier = input.consumeKeyPress('BracketLeft');
+        const later = input.consumeKeyPress('BracketRight');
+
+        if (this.settings.get('showDebug')) {
+
+            if (earlier) this.time.addHours(-1);
+            if (later) this.time.addHours(1);
+
+        }
 
 
         // Pasek bloków: klawisze 1-9 i kółko myszy.
@@ -336,6 +353,8 @@ export class Game {
         this.saver.update(dt);
 
 
+        this.sky.update(this.time.days, dt, this.renderer.getPixelRatio());
+
         this.updateFog(dt);
 
 
@@ -344,12 +363,21 @@ export class Game {
     }
 
 
+    // Najpierw niebo (własna scena), potem świat na nim.
+
     render() {
 
-        this.renderer.render(
-            this.scene,
-            this.camera
-        );
+        const renderer = this.renderer;
+
+        renderer.autoClear = false;
+
+        renderer.clear();
+
+        this.sky.render(renderer, this.camera);
+
+        renderer.clearDepth();
+
+        renderer.render(this.scene, this.camera);
 
     }
 
@@ -376,9 +404,15 @@ export class Game {
 
         // Kolory w three.js są liniowe, a jasność "na oko" - stąd potęga.
 
+        const fog = this.fogBrightness ** 2.2;
+
+        skyUniforms.uFogBrightness.value = fog;
+
+        // Kolor mgły dla reszty obiektów (np. ramka wskazanego bloku).
+
         this.scene.fog.color
-            .copy(this.skyColor)
-            .multiplyScalar(this.fogBrightness ** 2.2);
+            .copy(this.sky.state.horizon)
+            .multiplyScalar(fog);
 
     }
 
@@ -514,6 +548,8 @@ export class Game {
 
         this.highlight.dispose();
 
+        this.sky.dispose();
+
         return true;
 
     }
@@ -581,6 +617,9 @@ export class Game {
             `Wczytane chunki: ${this.world.chunks.size}` +
             `${this.world.loadQueue.length > 0 ? ` (w kolejce: ${this.world.loadQueue.length})` : ''}<br>` +
 
+            `Czas: ${this.time.formatClock()}, dzień ${this.time.dayNumber} | ` +
+            `Księżyc: ${this.sky.celestial.moonPhaseName}<br>` +
+
             `Na ziemi: ${player.onGround ? 'tak' : 'nie'} | ` +
             `Światło: niebo ${light.sky}, lampy ${light.block}<br>` +
 
@@ -593,7 +632,7 @@ export class Game {
             `LPM - zniszcz | PPM - postaw<br>` +
 
             `WASD - ruch | Spacja - skok | ` +
-            `Mysz - kamera | ESC - pauza | F3 - debug` +
+            `Mysz - kamera | ESC - pauza | F3 - debug | [ ] - czas ±1 h` +
 
             `<br><br>${this.saver.getStatus()}`;
 

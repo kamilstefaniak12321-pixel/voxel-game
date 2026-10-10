@@ -10,7 +10,8 @@ import {BlockPlacer} from './interaction/BlockPlacer.js';
 import {getBlockDefinition} from './blocks/BlockRegistry.js';
 import {
     WorldStorage,
-    createWorldInfo
+    createWorldInfo,
+    randomSeed
 } from './storage/WorldStorage.js';
 import { WorldSaver } from './storage/WorldSaver.js';
 
@@ -31,6 +32,17 @@ function update(dt) {
 
 
     updateBlockSelection();
+
+
+    if (
+        input.consumeKeyPress(
+            'KeyN'
+        )
+    ) {
+
+        createNewWorld();
+
+    }
 
 
     currentHit =
@@ -241,6 +253,101 @@ saver.saveOnExit();
 
 saver.save();
 
+// ------------------------------------------------------------
+// NOWY ŚWIAT (tymczasowo, do czasu menu)
+//
+// Klawisz N zapisuje obecny świat i tworzy nowy. Stare światy
+// zostają w bazie - pojawią się na liście światów w menu.
+// ------------------------------------------------------------
+
+let creatingWorld = false;
+
+
+async function createNewWorld() {
+
+    if (creatingWorld) {
+        return;
+    }
+
+
+    if (!storage) {
+
+        alert('Zapis jest niedostępny, więc nie da się utworzyć nowego świata.');
+
+        return;
+
+    }
+
+
+    creatingWorld = true;
+
+    document.exitPointerLock();
+
+
+    const answer =
+        prompt(
+            'Seed nowego świata (zostaw puste dla losowego):',
+            ''
+        );
+
+
+    // Anulowano.
+
+    if (answer === null) {
+
+        creatingWorld = false;
+
+        return;
+
+    }
+
+
+    // Puste = losowy seed, same cyfry = liczba, reszta = tekst.
+
+    const text = answer.trim();
+
+    let seed = text;
+
+    if (text === '') {
+        seed = randomSeed();
+    }
+    else if (/^-?\d+$/.test(text)) {
+        seed = Number(text);
+    }
+
+
+    // Zapisujemy obecny świat i wyłączamy autozapis, żeby przy
+    // przeładowaniu strony nie stał się znowu "ostatnio granym".
+
+    await saver.save();
+
+    saver.stop();
+
+
+    const worlds = await storage.listWorlds();
+
+    const newWorld =
+        createWorldInfo(
+            `Świat ${worlds.length + 1}`,
+            seed
+        );
+
+    newWorld.lastPlayed =
+        Math.max(
+            newWorld.lastPlayed,
+            worldInfo.lastPlayed + 1
+        );
+
+    await storage.saveWorld(newWorld);
+
+
+    // Najprostszy sposób na wejście do nowego świata do czasu menu:
+    // przeładowanie strony wczyta ostatnio grany świat, czyli nowy.
+
+    location.reload();
+
+}
+
 
 const input = new InputManager(
     renderer.domElement
@@ -417,7 +524,7 @@ const targetDefinition =
 
     `1 Grass | 2 Dirt | 3 Stone | 4 Lamp | 5 Lepidolite<br>` +
 
-    `LPM - zniszcz | PPM - postaw<br>` +
+    `LPM - zniszcz | PPM - postaw | N - nowy świat<br>` +
 
     `WASD - ruch | Spacja - skok | ` +
     `Mysz - kamera | ESC - wyjście` +

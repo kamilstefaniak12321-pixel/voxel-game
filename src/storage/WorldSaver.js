@@ -170,27 +170,40 @@ export class WorldSaver {
 
     saveOnExit() {
 
-        document.addEventListener('visibilitychange', () => {
+        this.onVisibilityChange = () => {
 
             if (document.visibilityState === 'hidden') {
                 this.save();
             }
 
-        });
+        };
 
-
-        window.addEventListener('pagehide', () => {
+        this.onPageHide = () => {
             this.save();
-        });
+        };
+
+
+        document.addEventListener('visibilitychange', this.onVisibilityChange);
+
+        window.addEventListener('pagehide', this.onPageHide);
 
     }
 
 
-    // Wyłącza dalsze zapisy (np. przed przejściem do innego świata).
+    // Wyłącza dalsze zapisy (np. przy wyjściu ze świata).
 
     stop() {
 
         this.stopped = true;
+
+
+        if (this.onVisibilityChange) {
+
+            document.removeEventListener('visibilitychange', this.onVisibilityChange);
+
+            window.removeEventListener('pagehide', this.onPageHide);
+
+        }
 
     }
 

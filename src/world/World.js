@@ -423,6 +423,32 @@ export class World {
 
     }
 
+    // Usuwa meshe wszystkich chunków ze sceny i zwalnia ich
+    // pamięć na karcie graficznej (przy wyjściu ze świata).
+
+    dispose() {
+
+        for (const chunk of this.chunks.values()) {
+
+            if (chunk.mesh) {
+
+                this.scene.remove(chunk.mesh);
+
+                chunk.mesh.geometry.dispose();
+
+                chunk.mesh = null;
+
+            }
+
+        }
+
+
+        this.chunks.clear();
+        this.dirtyChunks.clear();
+        this.unsavedChunks.clear();
+
+    }
+
     // --------------------------------------------------------
     // GENEROWANIE
     // --------------------------------------------------------

@@ -66,4 +66,16 @@ export class BlockHighlight {
 
     }
 
+
+    // Zwalnia pamięć ramki podświetlenia.
+
+    dispose() {
+
+        this.mesh.removeFromParent();
+
+        this.mesh.geometry.dispose();
+        this.mesh.material.dispose();
+
+    }
+
 }

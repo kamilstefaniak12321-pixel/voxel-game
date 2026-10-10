@@ -88,6 +88,27 @@ export function randomSeed() {
 
 }
 
+
+// Seed z tekstu wpisanego przez gracza:
+// puste = losowy, same cyfry = liczba, reszta = tekst.
+
+export function seedFromText(text) {
+
+    const trimmed = String(text ?? '').trim();
+
+
+    if (trimmed === '') {
+        return randomSeed();
+    }
+
+    if (/^-?\d+$/.test(trimmed)) {
+        return Number(trimmed);
+    }
+
+    return trimmed;
+
+}
+
 // ------------------------------------------------------------
 
 export class WorldStorage {
@@ -213,6 +234,32 @@ export class WorldStorage {
         }
 
         return chunks;
+
+    }
+
+
+    // Usuwa świat razem ze wszystkimi jego chunkami.
+
+    async deleteWorld(worldId) {
+
+        const transaction =
+            this.db.transaction(['worlds', 'chunks'], 'readwrite');
+
+
+        transaction.objectStore('worlds').delete(worldId);
+
+
+        // Wszystkie chunki tego świata: klucze od [id, -∞, -∞] do [id, +∞, +∞].
+
+        transaction.objectStore('chunks').delete(
+            IDBKeyRange.bound(
+                [worldId, -Infinity, -Infinity],
+                [worldId, Infinity, Infinity]
+            )
+        );
+
+
+        await transactionToPromise(transaction);
 
     }
 

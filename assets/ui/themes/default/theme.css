@@ -1,0 +1,107 @@
+/* ============================================================
+   MOTYW: domyślny (ziemia)
+   ------------------------------------------------------------
+   Jak zrobić własny motyw:
+     1. Skopiuj cały ten folder (np. jako "moj-motyw").
+     2. Podmień background.png na swoją teksturę (np. 16x16).
+     3. Zmień wartości poniżej.
+     4. W src/config.js ustaw: UI_THEME = 'moj-motyw'.
+
+   Kolory można wpisywać jako #rrggbb, #rrggbbaa (z przezroczystością)
+   albo rgba(czerwony, zielony, niebieski, przezroczystość).
+   ============================================================ */
+
+:root {
+
+    /* --- Czcionka ------------------------------------------ */
+
+    --ui-font: 'Pixelify Sans', monospace;
+    --ui-font-size: 20px;
+
+    /* --- Tło menu ------------------------------------------ */
+
+    /* Kolor pod teksturą (widać go, zanim tekstura się wczyta). */
+    --menu-background-color: #2b1d14;
+
+    /* Przyciemnienie tekstury - im większa ostatnia liczba, tym ciemniej. */
+    --menu-background-tint: rgba(0, 0, 0, 0.55);
+
+    /* Rozmiar jednego kafelka tekstury na ekranie. */
+    --menu-background-size: 64px;
+
+    /* Przyciemnienie gry w czasie pauzy. */
+    --pause-background: rgba(0, 0, 0, 0.6);
+
+    /* --- Tytuł gry ----------------------------------------- */
+
+    --title-size: 64px;
+    --title-color: #ffffff;
+    --title-shadow: #3f3f3f;
+    --title-shadow-offset: 4px;
+
+    /* --- Tekst --------------------------------------------- */
+
+    --heading-size: 28px;
+    --text-color: #ffffff;
+    --text-muted: #b0b0b0;
+    --text-danger: #ff6b6b;
+    --text-shadow: #3f3f3f;
+    --text-shadow-offset: 2px;
+
+    /* --- Przyciski ----------------------------------------- */
+
+    --button-width: 400px;
+    --button-height: 40px;
+    --button-gap: 8px;
+    --button-radius: 0;
+
+    --button-background: #6f6f6f;
+    --button-background-hover: #7d86b8;
+    --button-text: #e0e0e0;
+    --button-text-hover: #ffffa0;
+
+    /* Obramowanie zewnętrzne */
+    --button-outline: #000000;
+    --button-outline-hover: #ffffff;
+    --button-outline-width: 2px;
+
+    /* "Wypukłość": jaśniejsza krawędź u góry, ciemniejsza u dołu */
+    --button-bevel: 2px;
+    --button-border-light: #a8a8a8;
+    --button-border-dark: #4c4c4c;
+
+    --button-disabled-background: #2c2c2c;
+    --button-disabled-text: #808080;
+
+    /* Przycisk "Usuń" po najechaniu */
+    --button-danger-hover: #a54848;
+
+    /* --- Pola tekstowe ------------------------------------- */
+
+    --input-background: #000000;
+    --input-text: #e0e0e0;
+    --input-border: #a0a0a0;
+    --input-border-focus: #ffffff;
+    --input-placeholder: #6a6a6a;
+
+    /* --- Lista światów ------------------------------------- */
+
+    --list-width: 600px;
+    --list-background: rgba(0, 0, 0, 0.45);
+    --list-border: #000000;
+    --list-item-hover: rgba(255, 255, 255, 0.06);
+    --list-item-selected: rgba(255, 255, 255, 0.04);
+    --list-item-selected-border: #ffffff;
+
+}
+
+
+/* --- Tekstura tła ------------------------------------------
+   Ścieżka do obrazka jest liczona względem TEGO pliku,
+   więc background.png musi leżeć w tym samym folderze. */
+
+.menu-screen.textured {
+    background-image:
+        linear-gradient(var(--menu-background-tint), var(--menu-background-tint)),
+        url('background.png');
+}

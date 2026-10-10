@@ -1,172 +1,96 @@
 import * as THREE from 'three';
 
-import { World } from './world/World.js';
-import { Player } from './player/Player.js';
 import { InputManager } from './input/InputManager.js';
-import { VoxelRaycast } from './interaction/VoxelRaycast.js';
-import { BlockHighlight } from './interaction/BlockHighlight.js';
-import { BlockBreaker } from './interaction/BlockBreaker.js';
-import {BlockPlacer} from './interaction/BlockPlacer.js';
-import {getBlockDefinition} from './blocks/BlockRegistry.js';
+import { Game } from './game/Game.js';
+import { Menu } from './ui/Menu.js';
+import { TEXTS } from './ui/texts.js';
 import {
     WorldStorage,
     createWorldInfo,
-    randomSeed
+    seedFromText
 } from './storage/WorldStorage.js';
-import { WorldSaver } from './storage/WorldSaver.js';
 
 import {
-    PLAYER_REACH,
-    CHUNK_SIZE,
-    WORLD_SEED
+    GAME_TITLE,
+    UI_THEME
 } from './config.js';
 
-const scene = new THREE.Scene();
+// ------------------------------------------------------------
+// START APLIKACJI
+//
+// Tu powstaje to, co jest wspólne dla całej aplikacji: renderer
+// (rysowanie), klawiatura i mysz, baza z zapisami i menu.
+// Sama gra (świat, gracz...) jest w game/Game.js.
+//
+// Stany aplikacji:
+//   'menu'    - ekrany menu, żaden świat nie jest uruchomiony
+//   'loading' - świat się wczytuje albo zapisuje
+//   'playing' - gra działa, mysz jest przechwycona
+//   'paused'  - menu pauzy na tle zatrzymanej gry
+// ------------------------------------------------------------
 
-function update(dt) {
+document.title = GAME_TITLE;
 
-    player.update(
-        dt,
-        input
-    );
-
-
-    updateBlockSelection();
-
-
-    if (
-        input.consumeKeyPress(
-            'KeyN'
-        )
-    ) {
-
-        createNewWorld();
-
-    }
-
-
-    currentHit =
-        voxelRaycast.castFromCamera(
-            camera
-        );
-
-
-    if (
-        input.consumeMousePress(0)
-    ) {
-
-        blockBreaker.breakBlock(
-            currentHit
-        );
-
-
-        currentHit =
-            voxelRaycast.castFromCamera(
-                camera
-            );
-
-    }
-
-
-    else if (
-        input.consumeMousePress(2)
-    ) {
-
-        blockPlacer.placeBlock(
-            currentHit,
-            selectedBlock
-        );
-
-
-        currentHit =
-            voxelRaycast.castFromCamera(
-                camera
-            );
-
-    }
-
-
-    // Przebudowa meshy chunków zmienionych w tej klatce.
-
-    world.updateMeshes();
-
-
-    // Autozapis co jakiś czas.
-
-    saver.update(dt);
-
-
-    blockHighlight.update(
-        currentHit
-    );
-
-
-    updateHUD();
-
-}
-scene.background = new THREE.Color(0x87CEEB);
-
-scene.fog = new THREE.Fog(
-    0x87CEEB,
-    20,
-    45
-);
-
-const camera = new THREE.PerspectiveCamera(
-    75,
-    window.innerWidth / window.innerHeight,
-    0.1,
-    500
-);
 
 const renderer = new THREE.WebGLRenderer({
     antialias: true
 });
 
+renderer.setSize(window.innerWidth, window.innerHeight);
 
-renderer.setSize(
-    window.innerWidth,
-    window.innerHeight
-);
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
-
-renderer.setPixelRatio(
-    Math.min(window.devicePixelRatio, 2)
-);
+document.body.appendChild(renderer.domElement);
 
 
-document.body.appendChild(
-    renderer.domElement
-);
+const input = new InputManager(renderer.domElement);
 
-scene.add(
-    new THREE.AmbientLight(
-        0xffffff,
-        0.7
-    )
-);
+const infoElement = document.getElementById('info');
 
 
-const sun = new THREE.DirectionalLight(
-    0xffffff,
-    0.9
-);
+let state = 'menu';
 
-
-sun.position.set(
-    20,
-    40,
-    20
-);
-
-
-scene.add(sun);
+let game = null;
 
 // ------------------------------------------------------------
-// WCZYTANIE ŚWIATA
+// MOTYW MENU
 // ------------------------------------------------------------
 
-// Baza z zapisami. null = zapis niedostępny, gra działa bez niego.
+// Wczytuje theme.css wybranego motywu. Jeśli takiego motywu nie
+// ma, wraca do domyślnego.
+
+function loadTheme(name) {
+
+    const link = document.getElementById('theme-css');
+
+    return new Promise((resolve) => {
+
+        link.onload = () => resolve(name);
+
+        link.onerror = () => {
+
+            if (name === 'default') {
+                resolve(null);
+                return;
+            }
+
+            console.warn(`Nie ma motywu "${name}" - używam domyślnego.`);
+
+            loadTheme('default').then(resolve);
+
+        };
+
+        link.href = `./assets/ui/themes/${name}/theme.css`;
+
+    });
+
+}
+
+// ------------------------------------------------------------
+// BAZA Z ZAPISAMI
+// ------------------------------------------------------------
+
+// null = zapis niedostępny, gra działa bez niego.
 
 let storage = null;
 
@@ -185,354 +109,220 @@ catch (error) {
 
 }
 
+// ------------------------------------------------------------
+// CO ROBIĄ PRZYCISKI MENU
+// ------------------------------------------------------------
 
-// Ostatnio grany świat, a jeśli nie ma żadnego - nowy.
+const menu = new Menu(
+    document.getElementById('menu'),
+    GAME_TITLE,
+    {
+        openWorldList,
+        playWorld,
+        createWorld,
+        deleteWorld,
+        resume,
+        quitToMenu
+    }
+);
 
-let worldInfo =
-    storage
-        ? (await storage.listWorlds())[0]
-        : undefined;
 
-if (!worldInfo) {
+async function openWorldList() {
 
-    worldInfo =
-        createWorldInfo(
-            'Świat 1',
-            WORLD_SEED
-        );
+    const worlds = storage ? await storage.listWorlds() : [];
+
+    menu.showWorlds(worlds, !storage);
 
 }
 
 
-// Chunki zmienione przez gracza w tym świecie.
+async function createWorld(name, seedText) {
 
-const savedChunks =
-    storage
-        ? await storage.loadChunks(worldInfo.id)
-        : new Map();
+    const worldInfo = createWorldInfo(name, seedFromText(seedText));
 
+    if (storage) {
+        await storage.saveWorld(worldInfo);
+    }
 
-const world = new World(
-    scene,
-    worldInfo.seed,
-    savedChunks
-);
-
-world.generateStartWorld();
-
-
-const player = new Player(
-    world,
-    camera
-);
-
-
-// Gracz wraca tam, gdzie był przy ostatnim zapisie.
-
-if (worldInfo.player) {
-
-    player.setState(
-        worldInfo.player
-    );
+    await playWorld(worldInfo);
 
 }
 
 
-const saver =
-    new WorldSaver(
-        storage,
-        worldInfo,
-        world,
-        player
-    );
+async function deleteWorld(worldInfo) {
 
-saver.saveOnExit();
+    if (storage) {
+        await storage.deleteWorld(worldInfo.id);
+    }
+
+    await openWorldList();
+
+}
 
 
-// Od razu zapisujemy, żeby nowy świat pojawił się w bazie.
+async function playWorld(worldInfo) {
 
-saver.save();
+    if (state !== 'menu') {
+        return;
+    }
+
+
+    state = 'loading';
+
+    menu.showLoading(TEXTS.loadingWorld);
+
+
+    try {
+
+        game = await Game.start(renderer, input, storage, worldInfo);
+
+    }
+
+    catch (error) {
+
+        console.error(error);
+
+        game = null;
+        state = 'menu';
+
+        menu.showError(TEXTS.worldLoadError);
+
+        return;
+
+    }
+
+
+    // Świat gotowy - przechwytujemy mysz i gramy.
+
+    state = 'paused';
+
+    resume();
+
+}
 
 // ------------------------------------------------------------
-// NOWY ŚWIAT (tymczasowo, do czasu menu)
+// PAUZA
 //
-// Klawisz N zapisuje obecny świat i tworzy nowy. Stare światy
-// zostają w bazie - pojawią się na liście światów w menu.
+// Gra działa tylko wtedy, gdy mysz jest przechwycona. ESC
+// (albo przełączenie okna) zwalnia mysz - wtedy pojawia się
+// menu pauzy, a świat się zapisuje.
 // ------------------------------------------------------------
 
-let creatingWorld = false;
+function resume() {
 
-
-async function createNewWorld() {
-
-    if (creatingWorld) {
+    if (!game) {
         return;
     }
 
 
-    if (!storage) {
+    input.reset();
 
-        alert('Zapis jest niedostępny, więc nie da się utworzyć nowego świata.');
 
+    // Starsze przeglądarki nie zwracają Promise - stąd "?.".
+
+    try {
+
+        renderer.domElement
+            .requestPointerLock()
+            ?.catch?.(pointerLockFailed);
+
+    }
+
+    catch (error) {
+
+        pointerLockFailed();
+
+    }
+
+
+    // Zabezpieczenie: jeśli po sekundzie mysz nadal nie jest
+    // przechwycona, pokazujemy menu pauzy z przyciskiem "Wróć do gry".
+
+    setTimeout(() => {
+
+        if (game && state === 'paused' && !document.pointerLockElement) {
+            menu.showPause();
+        }
+
+    }, 1000);
+
+}
+
+
+// Przeglądarka nie pozwoliła przechwycić myszy
+// (np. ESC było wciśnięte przed chwilą) - zostajemy w pauzie.
+
+function pointerLockFailed() {
+
+    if (game && state === 'paused') {
+        menu.showPause(TEXTS.pointerLockFailed);
+    }
+
+}
+
+document.addEventListener('pointerlockerror', pointerLockFailed);
+
+
+document.addEventListener('pointerlockchange', () => {
+
+    if (!game) {
         return;
-
     }
 
 
-    creatingWorld = true;
-
-    document.exitPointerLock();
-
-
-    const answer =
-        prompt(
-            'Seed nowego świata (zostaw puste dla losowego):',
-            ''
-        );
+    const locked =
+        document.pointerLockElement === renderer.domElement;
 
 
-    // Anulowano.
+    if (locked) {
 
-    if (answer === null) {
+        state = 'playing';
 
-        creatingWorld = false;
+        input.reset();
 
+        menu.hide();
+
+    }
+
+    else if (state === 'playing') {
+
+        state = 'paused';
+
+        menu.showPause();
+
+        game.saver.save();
+
+    }
+
+});
+
+
+async function quitToMenu() {
+
+    if (!game || state === 'loading') {
         return;
-
     }
 
 
-    // Puste = losowy seed, same cyfry = liczba, reszta = tekst.
+    state = 'loading';
 
-    const text = answer.trim();
-
-    let seed = text;
-
-    if (text === '') {
-        seed = randomSeed();
-    }
-    else if (/^-?\d+$/.test(text)) {
-        seed = Number(text);
-    }
+    menu.showLoading(TEXTS.savingWorld);
 
 
-    // Zapisujemy obecny świat i wyłączamy autozapis, żeby przy
-    // przeładowaniu strony nie stał się znowu "ostatnio granym".
+    await game.stop();
 
-    await saver.save();
-
-    saver.stop();
+    game = null;
 
 
-    const worlds = await storage.listWorlds();
+    state = 'menu';
 
-    const newWorld =
-        createWorldInfo(
-            `Świat ${worlds.length + 1}`,
-            seed
-        );
-
-    newWorld.lastPlayed =
-        Math.max(
-            newWorld.lastPlayed,
-            worldInfo.lastPlayed + 1
-        );
-
-    await storage.saveWorld(newWorld);
-
-
-    // Najprostszy sposób na wejście do nowego świata do czasu menu:
-    // przeładowanie strony wczyta ostatnio grany świat, czyli nowy.
-
-    location.reload();
+    menu.showTitle();
 
 }
 
-
-const input = new InputManager(
-    renderer.domElement
-);
-
-const voxelRaycast =
-    new VoxelRaycast(
-        world,
-        PLAYER_REACH
-    );
-
-
-const blockHighlight =
-    new BlockHighlight(scene);
-
-const blockBreaker =
-    new BlockBreaker(world);
-
-const blockPlacer =
-    new BlockPlacer(
-        world,
-        player
-    );
-
-let selectedBlock = 'stone';
-
-function updateBlockSelection() {
-
-    if (
-        input.consumeKeyPress(
-            'Digit1'
-        )
-    ) {
-
-        selectedBlock = 'grass';
-
-    }
-
-
-    if (
-        input.consumeKeyPress(
-            'Digit2'
-        )
-    ) {
-
-        selectedBlock = 'dirt';
-
-    }
-
-
-    if (
-        input.consumeKeyPress(
-            'Digit3'
-        )
-    ) {
-
-        selectedBlock = 'stone';
-
-    }
-
-
-    if (
-        input.consumeKeyPress(
-            'Digit4'
-        )
-    ) {
-
-        selectedBlock = 'lamp';
-
-    }
-
-
-    if (
-        input.consumeKeyPress(
-            'Digit5'
-        )
-    ) {
-
-        selectedBlock = 'lepidolite';
-
-    }
-
-}
-
-let currentHit = null;
-
-const infoElement =
-    document.getElementById('info');
-    
-    function updateHUD() {
-
-    let targetInfo =
-        'Cel: brak';
-
-
-    if (
-        currentHit &&
-        currentHit.hit
-    ) {
-
-const targetDefinition =
-    getBlockDefinition(
-        currentHit.block.type
-    ); 
-    
-        targetInfo =
-    `Cel: ${
-        targetDefinition?.name ??
-        currentHit.block.type
-    }<br>` +
-
-            `BlockPos: ` +
-            `${currentHit.block.x}, ` +
-            `${currentHit.block.y}, ` +
-            `${currentHit.block.z}<br>` +
-
-            `Normal: ` +
-            `${currentHit.normal.x}, ` +
-            `${currentHit.normal.y}, ` +
-            `${currentHit.normal.z}<br>` +
-
-            `Odległość: ` +
-            `${currentHit.distance.toFixed(2)}`;
-
-    }
-
-
-    const selectedDefinition =
-        getBlockDefinition(
-            selectedBlock
-        );
-
-
-    infoElement.innerHTML =
-
-    `Świat: ${
-        worldInfo.name
-    } | Seed: ${
-        worldInfo.seed
-    }${
-        storage
-            ? ''
-            : ' | ZAPIS NIEDOSTĘPNY'
-    }<br>` +
-
-    `Pozycja: ${
-        player.pos.x.toFixed(1)
-    }, ${
-        player.pos.y.toFixed(1)
-    }, ${
-        player.pos.z.toFixed(1)
-    }<br>` +
-
-    `Chunk: ${
-        Math.floor(player.pos.x / CHUNK_SIZE)
-    }, ${
-        Math.floor(player.pos.z / CHUNK_SIZE)
-    } | Chunków: ${
-        world.chunks.size
-    }<br>` +
-
-    `Na ziemi: ${
-        player.onGround
-            ? 'tak'
-            : 'nie'
-    }<br>` +
-
-    `Wybrany blok: ${
-        selectedDefinition?.name ??
-        selectedBlock
-    }<br><br>` +
-
-    `${targetInfo}<br><br>` +
-
-    `1 Grass | 2 Dirt | 3 Stone | 4 Lamp | 5 Lepidolite<br>` +
-
-    `LPM - zniszcz | PPM - postaw | N - nowy świat<br>` +
-
-    `WASD - ruch | Spacja - skok | ` +
-    `Mysz - kamera | ESC - wyjście` +
-
-    `<br><br>${
-        saver.getStatus()
-    }`;
-}
+// ------------------------------------------------------------
+// PĘTLA GRY
+// ------------------------------------------------------------
 
 const clock = new THREE.Clock();
 
@@ -542,41 +332,44 @@ function animate() {
     requestAnimationFrame(animate);
 
 
-    const dt = Math.min(
-        clock.getDelta(),
-        0.05
-    );
+    const dt = Math.min(clock.getDelta(), 0.05);
 
 
-    update(dt);
+    if (!game) {
+        return;
+    }
 
 
-    renderer.render(
-        scene,
-        camera
-    );
+    if (state === 'playing') {
+
+        game.update(dt);
+
+        game.updateHud(infoElement);
+
+    }
+
+
+    // W pauzie świat dalej jest widoczny pod menu.
+
+    game.render();
 
 }
 
 
+window.addEventListener('resize', () => {
+
+    renderer.setSize(window.innerWidth, window.innerHeight);
+
+    game?.resize(window.innerWidth, window.innerHeight);
+
+});
+
+// ------------------------------------------------------------
+// START
+// ------------------------------------------------------------
+
+await loadTheme(UI_THEME);
+
+menu.showTitle();
+
 animate();
-
-window.addEventListener(
-    'resize',
-    () => {
-
-        camera.aspect =
-            window.innerWidth /
-            window.innerHeight;
-
-
-        camera.updateProjectionMatrix();
-
-
-        renderer.setSize(
-            window.innerWidth,
-            window.innerHeight
-        );
-
-    }
-);

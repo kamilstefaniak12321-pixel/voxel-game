@@ -1,0 +1,88 @@
+/* ============================================================
+   MOTYW: lepidolit (fioletowy)
+   ------------------------------------------------------------
+   Przykład motywu zrobionego z domyślnego: inna tekstura tła
+   i fioletowe kolory. Opis wszystkich wartości jest w
+   assets/ui/themes/default/theme.css.
+   ============================================================ */
+
+:root {
+
+    /* --- Czcionka ------------------------------------------ */
+
+    --ui-font: 'Pixelify Sans', monospace;
+    --ui-font-size: 20px;
+
+    /* --- Tło menu ------------------------------------------ */
+
+    --menu-background-color: #3a2c4f;
+    --menu-background-tint: rgba(30, 10, 50, 0.5);
+    --menu-background-size: 64px;
+    --pause-background: rgba(25, 10, 40, 0.65);
+
+    /* --- Tytuł gry ----------------------------------------- */
+
+    --title-size: 64px;
+    --title-color: #f3ecff;
+    --title-shadow: #5b3f86;
+    --title-shadow-offset: 4px;
+
+    /* --- Tekst --------------------------------------------- */
+
+    --heading-size: 28px;
+    --text-color: #ffffff;
+    --text-muted: #d2c3ec;
+    --text-danger: #ff8fa3;
+    --text-shadow: #3d2a5c;
+    --text-shadow-offset: 2px;
+
+    /* --- Przyciski ----------------------------------------- */
+
+    --button-width: 400px;
+    --button-height: 40px;
+    --button-gap: 8px;
+    --button-radius: 0;
+
+    --button-background: #7b62a8;
+    --button-background-hover: #9a7fd0;
+    --button-text: #f3ecff;
+    --button-text-hover: #ffffff;
+
+    --button-outline: #1e1230;
+    --button-outline-hover: #f3ecff;
+    --button-outline-width: 2px;
+
+    --button-bevel: 2px;
+    --button-border-light: #b49ae0;
+    --button-border-dark: #4d3a72;
+
+    --button-disabled-background: #2e2440;
+    --button-disabled-text: #8a7aa6;
+
+    --button-danger-hover: #b0506e;
+
+    /* --- Pola tekstowe ------------------------------------- */
+
+    --input-background: #170e24;
+    --input-text: #f3ecff;
+    --input-border: #9a7fd0;
+    --input-border-focus: #ffffff;
+    --input-placeholder: #7a6a98;
+
+    /* --- Lista światów ------------------------------------- */
+
+    --list-width: 600px;
+    --list-background: rgba(20, 8, 36, 0.55);
+    --list-border: #1e1230;
+    --list-item-hover: rgba(255, 255, 255, 0.07);
+    --list-item-selected: rgba(255, 255, 255, 0.05);
+    --list-item-selected-border: #f3ecff;
+
+}
+
+
+.menu-screen.textured {
+    background-image:
+        linear-gradient(var(--menu-background-tint), var(--menu-background-tint)),
+        url('background.png');
+}

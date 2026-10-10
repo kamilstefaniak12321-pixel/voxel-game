@@ -1,0 +1,272 @@
+/* ============================================================
+   UKŁAD MENU
+   ------------------------------------------------------------
+   Ten plik ustala tylko rozmieszczenie i kształt elementów.
+   Kolory, czcionka i tekstury pochodzą z motywu:
+       assets/ui/themes/<motyw>/theme.css
+   Żeby zmienić wygląd menu, edytuj motyw, nie ten plik.
+   ============================================================ */
+
+/* Czcionka dołączona do gry (licencja: assets/fonts/pixelify-sans/OFL.txt).
+   Dwa pliki: podstawowe litery i rozszerzone (m.in. polskie znaki). */
+
+@font-face {
+    font-family: 'Pixelify Sans';
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url('../../assets/fonts/pixelify-sans/pixelify-sans-latin-400-normal.woff2') format('woff2');
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+    font-family: 'Pixelify Sans';
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url('../../assets/fonts/pixelify-sans/pixelify-sans-latin-ext-400-normal.woff2') format('woff2');
+    unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+/* ------------------------------------------------------------
+   HUD i celownik widać tylko w trakcie gry
+   ------------------------------------------------------------ */
+
+body:not([data-screen="game"]) #info,
+body:not([data-screen="game"]) #crosshair {
+    display: none;
+}
+
+/* ------------------------------------------------------------
+   Kontener i ekrany
+   ------------------------------------------------------------ */
+
+#menu {
+    position: fixed;
+    inset: 0;
+    z-index: 10;
+    font-family: var(--ui-font);
+    font-size: var(--ui-font-size);
+    color: var(--text-color);
+    text-shadow: var(--text-shadow-offset) var(--text-shadow-offset) 0 var(--text-shadow);
+    user-select: none;
+}
+
+#menu[hidden] {
+    display: none;
+}
+
+.menu-screen {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    padding: 24px 16px;
+    box-sizing: border-box;
+    overflow-y: auto;
+}
+
+/* Tło z tekstury motywu (sama tekstura jest ustawiona w theme.css) */
+
+.menu-screen.textured {
+    background-color: var(--menu-background-color);
+    background-size: var(--menu-background-size);
+    background-repeat: repeat;
+    image-rendering: pixelated;
+}
+
+/* Pauza: przyciemniona gra zamiast tekstury */
+
+.menu-screen.overlay {
+    background: var(--pause-background);
+}
+
+/* ------------------------------------------------------------
+   Napisy
+   ------------------------------------------------------------ */
+
+.menu-title {
+    margin: 0 0 32px;
+    font-size: var(--title-size);
+    font-weight: 400;
+    color: var(--title-color);
+    text-shadow: var(--title-shadow-offset) var(--title-shadow-offset) 0 var(--title-shadow);
+    text-align: center;
+    letter-spacing: 2px;
+}
+
+.menu-heading {
+    margin: 0 0 8px;
+    font-size: var(--heading-size);
+    font-weight: 400;
+    text-align: center;
+}
+
+.menu-note {
+    margin: 0;
+    color: var(--text-muted);
+    text-align: center;
+}
+
+.menu-danger {
+    color: var(--text-danger);
+}
+
+/* ------------------------------------------------------------
+   Przyciski
+   ------------------------------------------------------------ */
+
+.menu-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: var(--button-gap);
+    width: var(--button-width);
+    max-width: 100%;
+}
+
+/* Dwa przyciski obok siebie */
+
+.menu-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--button-gap);
+    width: var(--button-width);
+    max-width: 100%;
+}
+
+/* Siatka 2 x 2 pod listą światów */
+
+.menu-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--button-gap);
+    width: var(--list-width);
+    max-width: 100%;
+}
+
+.menu-button {
+    height: var(--button-height);
+    padding: 0 12px;
+    font: inherit;
+    color: var(--button-text);
+    text-shadow: inherit;
+    background: var(--button-background);
+    border: var(--button-outline-width) solid var(--button-outline);
+    border-radius: var(--button-radius);
+    box-shadow:
+        inset var(--button-bevel) var(--button-bevel) 0 var(--button-border-light),
+        inset calc(var(--button-bevel) * -1) calc(var(--button-bevel) * -2) 0 var(--button-border-dark);
+    cursor: pointer;
+}
+
+.menu-button:hover:not(:disabled),
+.menu-button:focus-visible {
+    color: var(--button-text-hover);
+    background: var(--button-background-hover);
+    border-color: var(--button-outline-hover);
+    outline: none;
+}
+
+.menu-button:disabled {
+    color: var(--button-disabled-text);
+    background: var(--button-disabled-background);
+    box-shadow: none;
+    cursor: default;
+}
+
+.menu-button.danger:hover:not(:disabled),
+.menu-button.danger:focus-visible {
+    background: var(--button-danger-hover);
+}
+
+/* ------------------------------------------------------------
+   Formularz nowego świata
+   ------------------------------------------------------------ */
+
+.menu-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    width: var(--button-width);
+    max-width: 100%;
+}
+
+.menu-label {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    color: var(--text-muted);
+}
+
+.menu-input {
+    height: var(--button-height);
+    padding: 0 10px;
+    font: inherit;
+    color: var(--input-text);
+    background: var(--input-background);
+    border: 2px solid var(--input-border);
+    border-radius: var(--button-radius);
+    outline: none;
+    user-select: text;
+}
+
+.menu-input:focus {
+    border-color: var(--input-border-focus);
+}
+
+.menu-input::placeholder {
+    color: var(--input-placeholder);
+}
+
+/* ------------------------------------------------------------
+   Lista światów
+   ------------------------------------------------------------ */
+
+.world-list {
+    width: var(--list-width);
+    max-width: 100%;
+    height: min(50vh, 420px);
+    overflow-y: auto;
+    padding: 6px;
+    box-sizing: border-box;
+    background: var(--list-background);
+    border-top: 2px solid var(--list-border);
+    border-bottom: 2px solid var(--list-border);
+}
+
+.world-list-empty {
+    margin: 24px 0;
+    text-align: center;
+    color: var(--text-muted);
+}
+
+.world-item {
+    padding: 8px 12px;
+    border: 2px solid transparent;
+    cursor: pointer;
+}
+
+.world-item:hover {
+    background: var(--list-item-hover);
+}
+
+.world-item.selected,
+.world-item:focus-visible {
+    border-color: var(--list-item-selected-border);
+    background: var(--list-item-selected);
+    outline: none;
+}
+
+.world-name {
+    color: var(--text-color);
+}
+
+.world-details {
+    margin-top: 2px;
+    font-size: 0.8em;
+    color: var(--text-muted);
+    word-break: break-all;
+}

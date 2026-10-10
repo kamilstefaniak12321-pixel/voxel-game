@@ -11,7 +11,8 @@ import {getBlockDefinition} from './blocks/BlockRegistry.js';
 
 import {
     PLAYER_REACH,
-    CHUNK_SIZE
+    CHUNK_SIZE,
+    WORLD_SEED
 } from './config.js';
 
 const scene = new THREE.Scene();
@@ -139,7 +140,10 @@ sun.position.set(
 
 scene.add(sun);
 
-const world = new World(scene);
+const world = new World(
+    scene,
+    WORLD_SEED
+);
 
 world.generateStartWorld();
 

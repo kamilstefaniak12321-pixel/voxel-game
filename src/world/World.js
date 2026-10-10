@@ -4,8 +4,7 @@ import {
     CHUNK_SIZE,
     CHUNK_HEIGHT,
     WORLD_CHUNKS_X,
-    WORLD_CHUNKS_Z,
-    WORLD_SEED
+    WORLD_CHUNKS_Z
 } from '../config.js';
 // ------------------------------------------------------------
 import {
@@ -46,9 +45,14 @@ import {
 // ------------------------------------------------------------
 export class World {
 
-    constructor(scene) {
+    // seed - seed tego świata (liczba albo tekst).
+    // Ten sam seed zawsze daje ten sam teren.
+
+    constructor(scene, seed) {
 
         this.scene = scene;
+
+        this.seed = seed;
 
         // Klucz "cx,cz" -> Chunk.
 
@@ -61,7 +65,7 @@ export class World {
         // Generator terenu dla tego świata.
 
         this.generator =
-            new TerrainGenerator(WORLD_SEED);
+            new TerrainGenerator(seed);
 
     }
 

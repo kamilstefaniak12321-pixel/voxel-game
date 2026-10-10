@@ -30,6 +30,17 @@ import {
     TerrainGenerator
 } from './TerrainGenerator.js';
 // ------------------------------------------------------------
+import {
+    LightEngine,
+    edgesAt,
+    ALL_EDGES,
+    EDGE_WEST,
+    EDGE_EAST,
+    EDGE_NORTH,
+    EDGE_SOUTH,
+    EDGE_SELF
+} from './Light.js';
+// ------------------------------------------------------------
 // Świat = mapa chunków.
 //
 // Z zewnątrz działa tak samo jak wcześniej:
@@ -41,6 +52,11 @@ import {
 // Zmiana bloku nie przebudowuje mesha od razu. Chunk jest tylko
 // oznaczany jako "brudny", a update() (wywoływane raz na klatkę)
 // przebudowuje brudne chunki.
+//
+// Mesh chunka powstaje dopiero wtedy, gdy wczytani są wszyscy
+// jego sąsiedzi (także po skosie) - bez nich nie dałoby się
+// poprawnie policzyć światła i cieni na jego krawędziach.
+// Dlatego najdalszy pierścień wczytanych chunków jest niewidoczny.
 //
 // Świat nie ma stałego rozmiaru: update() wczytuje chunki wokół
 // gracza (najbliższe najpierw) i usuwa z pamięci te za daleko.
@@ -87,6 +103,11 @@ export class World {
 
         this.generator =
             new TerrainGenerator(seed);
+
+
+        // Światło nieba i lamp (src/world/Light.js).
+
+        this.light = new LightEngine(this);
 
 
         // Chunk, w którym stoi gracz, i promień wczytywania.
@@ -137,6 +158,20 @@ export class World {
             chunk
         );
 
+
+        // Łączymy chunk z wczytanymi sąsiadami (w obie strony).
+
+        chunk.west = this.getChunk(cx - 1, cz);
+        chunk.east = this.getChunk(cx + 1, cz);
+        chunk.north = this.getChunk(cx, cz - 1);
+        chunk.south = this.getChunk(cx, cz + 1);
+
+        if (chunk.west) chunk.west.east = chunk;
+        if (chunk.east) chunk.east.west = chunk;
+        if (chunk.north) chunk.north.south = chunk;
+        if (chunk.south) chunk.south.north = chunk;
+
+
         return chunk;
 
     }
@@ -147,6 +182,76 @@ export class World {
         if (chunk) {
             this.dirtyChunks.add(chunk);
         }
+
+    }
+
+
+    // Oznacza do przebudowy chunk i tych sąsiadów, których
+    // krawędzi dotyczyła zmiana (edges - patrz edgesAt w Light.js).
+    // Na rogu chunka zmiana dotyczy też sąsiada po skosie.
+
+    markDirtyAround(chunk, edges) {
+
+        const west = edges & EDGE_WEST;
+        const east = edges & EDGE_EAST;
+        const north = edges & EDGE_NORTH;
+        const south = edges & EDGE_SOUTH;
+
+
+        if (edges & EDGE_SELF) this.markDirty(chunk);
+
+        if (west) this.markDirty(chunk.west);
+        if (east) this.markDirty(chunk.east);
+        if (north) this.markDirty(chunk.north);
+        if (south) this.markDirty(chunk.south);
+
+
+        const cx = chunk.cx;
+        const cz = chunk.cz;
+
+        if (west && north) this.markDirty(this.getChunk(cx - 1, cz - 1));
+        if (east && north) this.markDirty(this.getChunk(cx + 1, cz - 1));
+        if (west && south) this.markDirty(this.getChunk(cx - 1, cz + 1));
+        if (east && south) this.markDirty(this.getChunk(cx + 1, cz + 1));
+
+    }
+
+
+    // Przebudowa meshy wszędzie tam, gdzie zmieniło się światło.
+
+    applyLightChanges() {
+
+        this.light.takeChangedChunks(
+            (chunk, edges) => this.markDirtyAround(chunk, edges)
+        );
+
+    }
+
+
+    // Czy wszyscy sąsiedzi chunka (także po skosie) są wczytani.
+    // Sąsiad za granicą świata nigdy nie powstanie - nie czekamy na niego.
+
+    hasAllNeighbors(chunk) {
+
+        for (let dz = -1; dz <= 1; dz++) {
+
+            for (let dx = -1; dx <= 1; dx++) {
+
+                const cx = chunk.cx + dx;
+                const cz = chunk.cz + dz;
+
+                if (
+                    !this.getChunk(cx, cz) &&
+                    this.chunkInsideBorder(cx, cz)
+                ) {
+                    return false;
+                }
+
+            }
+
+        }
+
+        return true;
 
     }
 
@@ -216,6 +321,15 @@ export class World {
         return isSolidId(
             this.getBlockId(x, y, z)
         );
+
+    }
+
+
+    // Światło w miejscu (x, y, z): { sky, block }, oba 0-15.
+
+    getLight(x, y, z) {
+
+        return this.light.getLight(x, y, z);
 
     }
 
@@ -306,8 +420,6 @@ export class World {
         }
 
 
-        this.markDirty(chunk);
-
         // Chunk zmieniony przez gracza trafi do zapisu.
 
         chunk.modified = true;
@@ -315,24 +427,20 @@ export class World {
         this.unsavedChunks.add(chunk);
 
 
-        // Blok na krawędzi chunka zmienia też widoczne ściany
+        // Światło wokół zmienionego bloku liczy się od nowa.
+
+        this.light.blockChanged(
+            chunk,
+            chunk.index(lx, y, lz)
+        );
+
+
+        // Blok na krawędzi chunka zmienia też ściany (i cienie)
         // w sąsiednim chunku, więc sąsiada też trzeba przebudować.
 
-        if (lx === 0) {
-            this.markDirty(this.getChunk(cx - 1, cz));
-        }
+        this.markDirtyAround(chunk, edgesAt(lx, lz));
 
-        if (lx === CHUNK_SIZE - 1) {
-            this.markDirty(this.getChunk(cx + 1, cz));
-        }
-
-        if (lz === 0) {
-            this.markDirty(this.getChunk(cx, cz - 1));
-        }
-
-        if (lz === CHUNK_SIZE - 1) {
-            this.markDirty(this.getChunk(cx, cz + 1));
-        }
+        this.applyLightChanges();
 
 
         return true;
@@ -392,7 +500,23 @@ export class World {
         }
 
 
-        const chunks = [...this.dirtyChunks];
+        // Chunk bez kompletu sąsiadów jeszcze czeka - wróci na listę,
+        // gdy wczyta się któryś z nich (generateChunk oznacza
+        // wtedy wszystkich sąsiadów do przebudowy).
+
+        const chunks = [];
+
+        for (const chunk of this.dirtyChunks) {
+
+            if (this.hasAllNeighbors(chunk)) {
+                chunks.push(chunk);
+            }
+            else {
+                this.dirtyChunks.delete(chunk);
+            }
+
+        }
+
 
         chunks.sort(
             (a, b) => this.distanceToCenter(a) - this.distanceToCenter(b)
@@ -575,15 +699,18 @@ export class World {
         }
 
 
-        // Nowy chunk zasłania boczne ściany sąsiadów,
-        // więc ich meshe też trzeba przebudować.
+        // Światło nowego chunka (może też wpłynąć do sąsiadów).
 
-        this.markDirty(chunk);
+        this.light.initChunk(chunk);
 
-        this.markDirty(this.getChunk(cx - 1, cz));
-        this.markDirty(this.getChunk(cx + 1, cz));
-        this.markDirty(this.getChunk(cx, cz - 1));
-        this.markDirty(this.getChunk(cx, cz + 1));
+
+        // Nowy chunk zmienia ściany, światło i cienie sąsiadów,
+        // a niektórzy z nich mogą mieć teraz komplet sąsiadów -
+        // wszystkich oznaczamy do przebudowy.
+
+        this.markDirtyAround(chunk, ALL_EDGES);
+
+        this.applyLightChanges();
 
 
         return chunk;
@@ -769,6 +896,16 @@ export class World {
         this.chunks.delete(key);
 
         this.dirtyChunks.delete(chunk);
+
+
+        // Odłączamy chunk od sąsiadów.
+
+        if (chunk.west) chunk.west.east = null;
+        if (chunk.east) chunk.east.west = null;
+        if (chunk.north) chunk.north.south = null;
+        if (chunk.south) chunk.south.north = null;
+
+        chunk.west = chunk.east = chunk.north = chunk.south = null;
 
     }
 

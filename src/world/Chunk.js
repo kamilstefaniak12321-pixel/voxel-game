@@ -33,6 +33,31 @@ export class Chunk {
         );
 
 
+        // Światło (0-15) w każdej komórce chunka, w tym samym
+        // układzie co bloki. Liczy je LightEngine (src/world/Light.js).
+        //   skyLight   - światło nieba (15 pod gołym niebem)
+        //   blockLight - światło świecących bloków (np. lampy)
+
+        this.skyLight = new Uint8Array(this.blocks.length);
+        this.blockLight = new Uint8Array(this.blocks.length);
+
+
+        // Sąsiednie wczytane chunki (null = niewczytany).
+        // Ustawia je World przy wczytywaniu i usuwaniu chunków.
+        //   west = cx - 1, east = cx + 1, north = cz - 1, south = cz + 1
+
+        this.west = null;
+        this.east = null;
+        this.north = null;
+        this.south = null;
+
+
+        // Które części chunka zmieniły światło od ostatniego
+        // sprawdzenia (używa tego LightEngine).
+
+        this.lightChanged = 0;
+
+
         // Ile bloków innych niż powietrze jest w chunku.
 
         this.blockCount = 0;

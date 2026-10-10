@@ -19,6 +19,8 @@ export const MAX_BLOCK_ID = 255;
 //   textures       - all  albo  top / side / bottom
 //   randomRotation - lista ścian, których tekstura ma być losowo
 //                    obracana o 0/90/180/270 stopni (opcjonalne)
+//   light          - jak mocno blok świeci: 0-15 (opcjonalne,
+//                    domyślnie 0; 15 = najjaśniej, jak lampa)
 
 export const BLOCK_TYPES = {
 
@@ -75,6 +77,10 @@ export const BLOCK_TYPES = {
 
         solid: true,
 
+        // Lampa świeci najmocniej, jak się da.
+
+        light: 15,
+
         textures: {
             all: 'lamp'
         }
@@ -107,6 +113,7 @@ const typeById = new Array(MAX_BLOCK_ID + 1).fill(null);
 
 const solidById = new Uint8Array(MAX_BLOCK_ID + 1);
 const opaqueById = new Uint8Array(MAX_BLOCK_ID + 1);
+const lightById = new Uint8Array(MAX_BLOCK_ID + 1);
 
 
 for (const [type, definition] of Object.entries(BLOCK_TYPES)) {
@@ -143,6 +150,9 @@ for (const [type, definition] of Object.entries(BLOCK_TYPES)) {
 
     opaqueById[id] =
         (definition.opaque ?? definition.solid) ? 1 : 0;
+
+    lightById[id] =
+        Math.max(0, Math.min(15, Math.floor(definition.light ?? 0)));
 
 }
 
@@ -195,5 +205,14 @@ export function isSolidId(id) {
 export function isOpaqueId(id) {
 
     return opaqueById[id] === 1;
+
+}
+
+
+// Jak mocno blok świeci (0 = wcale, 15 = najjaśniej).
+
+export function getLightEmission(id) {
+
+    return lightById[id];
 
 }

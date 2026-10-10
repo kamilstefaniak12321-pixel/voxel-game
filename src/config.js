@@ -60,6 +60,30 @@ export const LEPIDOLITE_VEIN_SCALE = 7;
 export const LEPIDOLITE_VEIN_THRESHOLD = 0.5;
 
 // ------------------------------------------------------------
+// OŚWIETLENIE
+// ------------------------------------------------------------
+
+// Światło ma poziomy od 0 (ciemno) do 15 (pełne światło dnia).
+// Z każdym blokiem odległości od lampy albo od nieba (np. w głąb
+// tunelu) światło spada o jeden poziom.
+
+// Jak jasność zależy od poziomu światła:
+//   1   = równo (każdy poziom w dół zabiera tyle samo jasności),
+//   1.5 = półmrok jest ciemniejszy (bardziej klimatycznie),
+//   0.7 = półmrok jest jaśniejszy.
+export const LIGHT_CURVE = 1.2;
+
+// Jak jasno jest w zupełnej ciemności (0 = czarno, 1 = jak w dzień).
+export const LIGHT_MIN_BRIGHTNESS = 0.08;
+
+// Kolor światła lamp (i innych świecących bloków) - ciepły żółty.
+export const BLOCK_LIGHT_COLOR = 0xffd7a0;
+
+// Cienie w kątach i przy ścianach (ambient occlusion):
+// 0 = wyłączone, 0.5 = wyraźne, 1 = bardzo mocne.
+export const AMBIENT_OCCLUSION = 0.45;
+
+// ------------------------------------------------------------
 // GRACZ
 // ------------------------------------------------------------
 

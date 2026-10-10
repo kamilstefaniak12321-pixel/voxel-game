@@ -5,6 +5,8 @@ import { Game } from './game/Game.js';
 import { Menu } from './ui/Menu.js';
 import { TEXTS } from './ui/texts.js';
 import { Settings } from './settings/Settings.js';
+import { Hotbar } from './ui/Hotbar.js';
+import { createBlockIcons } from './ui/BlockIcons.js';
 import {
     WorldStorage,
     createWorldInfo,
@@ -343,6 +345,8 @@ async function quitToMenu() {
 
     game = null;
 
+    hotbar.reset();
+
 
     state = 'menu';
 
@@ -368,6 +372,11 @@ function animate() {
     if (!game) {
         return;
     }
+
+
+    // Pasek bloków na dole ekranu.
+
+    hotbar.update(game.hotbar.slots, game.hotbar.selected);
 
 
     if (state === 'playing') {
@@ -417,6 +426,14 @@ window.addEventListener('resize', () => {
 // ------------------------------------------------------------
 
 await loadTheme(settings.get('theme'));
+
+
+// Ikonki bloków i pasek bloków na dole ekranu.
+
+const hotbar = new Hotbar(
+    document.getElementById('hotbar'),
+    await createBlockIcons()
+);
 
 menu.showTitle();
 

@@ -41,8 +41,10 @@
         }
     </style>
 
-    <!-- Układ menu (src/ui/menu.css) i motyw (ustawiany w src/config.js) -->
+    <!-- Układ menu (src/ui/menu.css), HUD w grze (src/ui/hud.css)
+         i motyw (wybierany w ustawieniach) -->
     <link rel="stylesheet" href="./src/ui/menu.css">
+    <link rel="stylesheet" href="./src/ui/hud.css">
     <link rel="stylesheet" id="theme-css">
 </head>
 
@@ -50,6 +52,9 @@
 
 <div id="crosshair">+</div>
 <div id="info"></div>
+
+<!-- Pasek bloków (tworzony w src/ui/Hotbar.js) -->
+<div id="hotbar"></div>
 
 <!-- Ekrany menu (tworzone w src/ui/Menu.js) -->
 <div id="menu"></div>

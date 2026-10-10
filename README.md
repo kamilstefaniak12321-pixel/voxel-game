@@ -23,9 +23,23 @@ Do działania potrzebny jest internet (three.js pobierany z unpkg).
 | Mysz | rozglądanie się |
 | LPM | zniszcz blok |
 | PPM | postaw blok |
-| 1-5 | wybór bloku: trawa, ziemia, kamień, lampa, lepidolit |
+| 1-9 / kółko myszy | wybór miejsca na pasku bloków |
+| Środkowy przycisk myszy | weź blok, na który patrzysz, na pasek |
 | ESC | pauza (wróć do gry, ustawienia, zapisz i wyjdź do menu) |
 | F3 | informacje debugowania w lewym górnym rogu |
+
+## Pasek bloków
+
+Na dole ekranu jest pasek z 9 miejscami. Ikonki bloków rysują się same
+z tekstur w atlasie, więc nowy blok od razu ma ikonkę.
+
+- Co jest na pasku w nowym świecie - `HOTBAR_DEFAULT` w `src/config.js`.
+- Środkowy przycisk myszy na bloku w świecie: jeśli blok jest na pasku,
+  wybiera jego miejsce; jeśli nie - wkłada go do pierwszego pustego
+  miejsca (albo zastępuje wybrany, gdy pasek jest pełny).
+- Zawartość paska i wybrane miejsce zapisują się razem ze światem.
+- Wygląd paska (kolory ramek, rozmiar miejsc, nazwa bloku nad paskiem)
+  jest w motywie - wartości `--hotbar-...` w `theme.css`.
 
 ## Ustawienia
 
@@ -103,7 +117,7 @@ src/
   main.js                   start aplikacji, menu, pauza, pętla
   config.js                 ustawienia: chunki, teren, gracz, menu
   game/                     jeden uruchomiony świat (Game)
-  ui/                       ekrany menu, ich układ i napisy
+  ui/                       ekrany menu, pasek bloków, ikonki, napisy
   settings/                 ustawienia gracza (zapis w przeglądarce)
   blocks/                   lista bloków (BlockRegistry)
   world/                    świat, chunki, szum, generator terenu

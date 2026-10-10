@@ -78,6 +78,20 @@
     --list-item-selected: rgba(255, 255, 255, 0.05);
     --list-item-selected-border: #f3ecff;
 
+    /* --- Pasek bloków w grze ------------------------------- */
+
+    /* Rozmiar jednego miejsca na pasku. */
+    --hotbar-slot-size: 48px;
+
+    --hotbar-background: rgba(30, 12, 50, 0.5);
+    --hotbar-border: #1e1230;
+    --hotbar-slot-border: #9a7fd0;
+    --hotbar-selected-border: #f3ecff;
+
+    /* Nazwa bloku pokazywana nad paskiem przy zmianie. */
+    --hotbar-name-color: #f3ecff;
+    --hotbar-name-size: 18px;
+
 }
 
 

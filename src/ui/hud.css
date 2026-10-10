@@ -1,0 +1,92 @@
+/* ============================================================
+   HUD W GRZE: pasek bloków
+   ------------------------------------------------------------
+   Układ paska. Kolory i rozmiary pochodzą z motywu
+   (assets/ui/themes/<motyw>/theme.css) - jeśli motyw ich nie
+   ma, działają wartości zapasowe podane po przecinku w var().
+   ============================================================ */
+
+/* Pasek widać tylko w trakcie gry (nie w menu i nie w pauzie). */
+
+body:not([data-screen="game"]) #hotbar {
+    display: none;
+}
+
+#hotbar {
+    position: fixed;
+    left: 50%;
+    bottom: 8px;
+    transform: translateX(-50%);
+    z-index: 5;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    pointer-events: none;
+    user-select: none;
+
+    /* Na wąskim ekranie miejsca się zmniejszają, żeby pasek się zmieścił. */
+    --slot: min(
+        var(--hotbar-slot-size, 48px),
+        calc((100vw - 24px) / 9)
+    );
+}
+
+/* Nazwa wybranego bloku - pojawia się na chwilę po zmianie. */
+
+.hotbar-name {
+    min-height: 1.4em;
+    font-family: var(--ui-font, monospace);
+    font-size: var(--hotbar-name-size, 18px);
+    color: var(--hotbar-name-color, #ffffff);
+    text-shadow: 2px 2px 0 var(--text-shadow, #3f3f3f);
+    opacity: 0;
+    transition: opacity 0.4s;
+}
+
+.hotbar-name.visible {
+    opacity: 1;
+    transition: none;
+}
+
+.hotbar-slots {
+    display: flex;
+    padding: 2px;
+    background: var(--hotbar-background, rgba(0, 0, 0, 0.45));
+    border: 2px solid var(--hotbar-border, #000000);
+}
+
+.hotbar-slot {
+    position: relative;
+    width: var(--slot);
+    height: var(--slot);
+    box-sizing: border-box;
+    border: 2px solid var(--hotbar-slot-border, #8b8b8b);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.hotbar-slot + .hotbar-slot {
+    margin-left: -2px;
+}
+
+/* Wybrane miejsce: grubsza, jasna ramka nad sąsiadami. */
+
+.hotbar-slot.selected {
+    z-index: 1;
+    border-color: var(--hotbar-selected-border, #ffffff);
+    box-shadow:
+        0 0 0 2px var(--hotbar-selected-border, #ffffff),
+        0 0 0 4px var(--hotbar-border, #000000);
+}
+
+.hotbar-slot img {
+    width: 78%;
+    height: 78%;
+    image-rendering: pixelated;
+}
+
+.hotbar-slot img[hidden] {
+    display: none;
+}

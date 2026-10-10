@@ -11,6 +11,11 @@ export class InputManager {
 
         this.mousePressed = new Set();
 
+        // Obroty kółka myszy od ostatniego odczytu
+        // (+1 = w dół / do siebie, -1 = w górę).
+
+        this.wheelSteps = 0;
+
         this.keyPressed = new Set();
 
         window.addEventListener(
@@ -90,6 +95,20 @@ this.element.addEventListener(
         });
 
 
+        document.addEventListener('wheel', event => {
+
+            if (
+                document.pointerLockElement !== this.element ||
+                event.deltaY === 0
+            ) {
+                return;
+            }
+
+            this.wheelSteps += Math.sign(event.deltaY);
+
+        }, { passive: true });
+
+
         document.addEventListener('mousedown', event => {
 
             if (
@@ -118,6 +137,21 @@ this.element.addEventListener(
 
         this.mouseDeltaX = 0;
         this.mouseDeltaY = 0;
+
+        this.wheelSteps = 0;
+
+    }
+
+
+    // Zwraca obroty kółka od ostatniego odczytu i je zeruje.
+
+    consumeWheel() {
+
+        const steps = this.wheelSteps;
+
+        this.wheelSteps = 0;
+
+        return steps;
 
     }
 

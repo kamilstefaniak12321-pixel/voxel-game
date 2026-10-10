@@ -64,6 +64,11 @@ const atlasUrl =
     );
 
 
+// Adres atlasu - przydaje się też poza 3D (np. ikonki bloków).
+
+export const ATLAS_URL = atlasUrl.href;
+
+
 export const blockAtlasTexture =
     textureLoader.load(
         atlasUrl.href

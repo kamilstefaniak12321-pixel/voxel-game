@@ -62,7 +62,10 @@ blockMaterial.onBeforeCompile = (shader, renderer) => {
 
 // ------------------------------------------------------------
 
-function getFaceTexture(
+// Nazwa kafelka atlasu dla danej ściany bloku
+// (np. 'grass_side' dla boku trawy).
+
+export function getFaceTexture(
     textures,
     faceName
 ) {

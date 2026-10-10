@@ -6,7 +6,10 @@ import { VoxelRaycast } from '../interaction/VoxelRaycast.js';
 import { BlockHighlight } from '../interaction/BlockHighlight.js';
 import { BlockBreaker } from '../interaction/BlockBreaker.js';
 import { BlockPlacer } from '../interaction/BlockPlacer.js';
-import { getBlockDefinition } from '../blocks/BlockRegistry.js';
+import {
+    getBlockDefinition,
+    blockExists
+} from '../blocks/BlockRegistry.js';
 import { WorldSaver } from '../storage/WorldSaver.js';
 
 import {
@@ -15,20 +18,48 @@ import {
     CHUNK_LOAD_BUDGET_MS,
     MOUSE_SENSITIVITY,
     WORLD_SPAWN_X,
-    WORLD_SPAWN_Z
+    WORLD_SPAWN_Z,
+    HOTBAR_SIZE,
+    HOTBAR_DEFAULT
 } from '../config.js';
 
 // ------------------------------------------------------------
-// Bloki pod klawiszami 1-9 (kolejność = numer klawisza).
+// Pasek bloków świata: zapisany albo domyślny z config.js.
+// Nieznane bloki (np. usunięte z gry) zamieniamy na puste miejsca.
+//
+//   { slots: ['grass', 'dirt', null, ...], selected: 0 }
 // ------------------------------------------------------------
 
-const HOTBAR = [
-    'grass',
-    'dirt',
-    'stone',
-    'lamp',
-    'lepidolite'
-];
+function loadHotbar(saved) {
+
+    const source =
+        Array.isArray(saved?.slots)
+            ? saved.slots
+            : HOTBAR_DEFAULT;
+
+
+    const slots = [];
+
+    for (let i = 0; i < HOTBAR_SIZE; i++) {
+
+        const type = source[i];
+
+        slots.push(blockExists(type) ? type : null);
+
+    }
+
+
+    const selected =
+        Number.isInteger(saved?.selected) &&
+        saved.selected >= 0 &&
+        saved.selected < HOTBAR_SIZE
+            ? saved.selected
+            : 0;
+
+
+    return { slots, selected };
+
+}
 
 // ------------------------------------------------------------
 // GRA = jeden uruchomiony świat.
@@ -158,9 +189,14 @@ export class Game {
 
         this.placer = new BlockPlacer(this.world, this.player);
 
-        this.selectedBlock = 'stone';
-
         this.currentHit = null;
+
+
+        // Pasek bloków - zapisywany razem ze światem.
+
+        this.hotbar = loadHotbar(worldInfo.hotbar);
+
+        worldInfo.hotbar = this.hotbar;
 
 
         // Autozapis.
@@ -201,13 +237,25 @@ export class Game {
         this.player.update(dt, input);
 
 
-        // Wybór bloku klawiszami 1-9.
+        // Pasek bloków: klawisze 1-9 i kółko myszy.
 
-        for (let i = 0; i < HOTBAR.length; i++) {
+        for (let i = 0; i < HOTBAR_SIZE; i++) {
 
             if (input.consumeKeyPress(`Digit${i + 1}`)) {
-                this.selectedBlock = HOTBAR[i];
+                this.hotbar.selected = i;
             }
+
+        }
+
+
+        const wheel = input.consumeWheel();
+
+        if (wheel !== 0) {
+
+            // Kółko przewija w kółko: za ostatnim jest pierwszy.
+
+            this.hotbar.selected =
+                ((this.hotbar.selected + wheel) % HOTBAR_SIZE + HOTBAR_SIZE) % HOTBAR_SIZE;
 
         }
 
@@ -227,14 +275,31 @@ export class Game {
 
         else if (input.consumeMousePress(2)) {
 
-            this.placer.placeBlock(
-                this.currentHit,
-                this.selectedBlock
-            );
+            // Puste miejsce na pasku - nie ma czego postawić.
 
-            this.currentHit =
-                this.raycast.castFromCamera(this.camera);
+            if (this.selectedBlock) {
 
+                this.placer.placeBlock(
+                    this.currentHit,
+                    this.selectedBlock
+                );
+
+                this.currentHit =
+                    this.raycast.castFromCamera(this.camera);
+
+            }
+
+        }
+
+
+        // Środkowy przycisk: weź blok, na który patrzysz.
+
+        if (
+            input.consumeMousePress(1) &&
+            this.currentHit &&
+            this.currentHit.hit
+        ) {
+            this.pickBlock(this.currentHit.block.type);
         }
 
 
@@ -296,6 +361,59 @@ export class Game {
 
     }
 
+
+    // --------------------------------------------------------
+    // PASEK BLOKÓW
+    // --------------------------------------------------------
+
+    // Blok w wybranym miejscu paska (null = puste miejsce).
+
+    get selectedBlock() {
+
+        return this.hotbar.slots[this.hotbar.selected];
+
+    }
+
+
+    // "Weź blok" (środkowy przycisk myszy):
+    // - blok jest już na pasku -> wybieramy jego miejsce,
+    // - nie ma go -> trafia do pierwszego pustego miejsca,
+    // - brak pustych -> zastępuje blok w wybranym miejscu.
+
+    pickBlock(type) {
+
+        const slots = this.hotbar.slots;
+
+
+        const existing = slots.indexOf(type);
+
+        if (existing !== -1) {
+
+            this.hotbar.selected = existing;
+
+            return;
+
+        }
+
+
+        const empty = slots.indexOf(null);
+
+        if (empty !== -1) {
+
+            slots[empty] = type;
+
+            this.hotbar.selected = empty;
+
+            return;
+
+        }
+
+
+        slots[this.hotbar.selected] = type;
+
+    }
+
+    // --------------------------------------------------------
 
     // Promień wczytywania chunków wokół gracza (w chunkach):
     // tyle, żeby krawędź wczytanego terenu kryła się we mgle.
@@ -367,24 +485,16 @@ export class Game {
         const selected = getBlockDefinition(this.selectedBlock);
 
 
-        // Bez informacji debugowania (F3): tylko wybrany blok.
+        // Bez informacji debugowania (F3): tylko komunikat o zapisie
+        // (wybrany blok widać na pasku na dole).
 
         if (!this.settings.get('showDebug')) {
 
-            element.innerHTML =
-                `Wybrany blok: ${selected?.name ?? this.selectedBlock}` +
-                `<br><br>${this.saver.getStatus()}`;
+            element.innerHTML = this.saver.getStatus();
 
             return;
 
         }
-
-        const hotbarLegend =
-            HOTBAR
-                .map((type, i) =>
-                    `${i + 1} ${getBlockDefinition(type)?.name ?? type}`
-                )
-                .join(' | ');
 
 
         element.innerHTML =
@@ -403,11 +513,11 @@ export class Game {
 
             `Na ziemi: ${player.onGround ? 'tak' : 'nie'}<br>` +
 
-            `Wybrany blok: ${selected?.name ?? this.selectedBlock}<br><br>` +
+            `Wybrany blok: ${selected?.name ?? 'brak'}<br><br>` +
 
             `${targetInfo}<br><br>` +
 
-            `${hotbarLegend}<br>` +
+            `1-9 / kółko - wybór bloku | środkowy przycisk - weź blok<br>` +
 
             `LPM - zniszcz | PPM - postaw<br>` +
 

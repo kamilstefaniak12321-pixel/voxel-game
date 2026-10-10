@@ -77,6 +77,24 @@ export const MOUSE_SENSITIVITY = 0.002;
 export const PLAYER_REACH = 5;
 
 // ------------------------------------------------------------
+// PASEK BLOKÓW
+// ------------------------------------------------------------
+
+// Liczba miejsc na pasku (klawisze 1-9).
+export const HOTBAR_SIZE = 9;
+
+// Co jest na pasku w nowym świecie (kolejność = klawisze 1, 2, 3...).
+// Pozostałe miejsca są puste - środkowym przyciskiem myszy można
+// do nich "wziąć" blok, na który się patrzy.
+export const HOTBAR_DEFAULT = [
+    'grass',
+    'dirt',
+    'stone',
+    'lamp',
+    'lepidolite'
+];
+
+// ------------------------------------------------------------
 // INTERFEJS
 // ------------------------------------------------------------
 

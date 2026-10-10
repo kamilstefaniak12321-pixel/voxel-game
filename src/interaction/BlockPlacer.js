@@ -57,15 +57,15 @@ export class BlockPlacer {
         }
 
 
-        this.world.setBlock(
+        // true tylko wtedy, gdy świat naprawdę się zmienił
+        // (np. ponad limitem wysokości blok się nie postawi).
+
+        return this.world.setBlock(
             x,
             y,
             z,
             blockType
         );
-
-
-        return true;
 
     }
 

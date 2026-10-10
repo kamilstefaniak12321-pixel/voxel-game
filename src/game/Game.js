@@ -273,7 +273,15 @@ export class Game {
             this.raycast.castFromCamera(this.camera);
 
 
-        if (input.consumeMousePress(0)) {
+        // Oba kliknięcia odczytujemy od razu: gdy w tej samej klatce
+        // wciśnięto LPM i PPM, wygrywa niszczenie, a PPM przepada
+        // (inaczej blok postawiłby się klatkę później sam z siebie).
+
+        const breakPressed = input.consumeMousePress(0);
+        const placePressed = input.consumeMousePress(2);
+
+
+        if (breakPressed) {
 
             this.breaker.breakBlock(this.currentHit);
 
@@ -282,7 +290,7 @@ export class Game {
 
         }
 
-        else if (input.consumeMousePress(2)) {
+        else if (placePressed) {
 
             // Puste miejsce na pasku - nie ma czego postawić.
 
@@ -484,19 +492,29 @@ export class Game {
     // WYJŚCIE ZE ŚWIATA
     // --------------------------------------------------------
 
-    // Zapisuje świat i zwalnia pamięć (meshe chunków na karcie
-    // graficznej). Po stop() tego obiektu nie da się już używać.
+    // Zapisuje świat (czeka, aż wszystkie zapisy się skończą)
+    // i zwalnia pamięć (meshe chunków na karcie graficznej).
+    //
+    // Zwraca false, jeśli zapis się nie udał - wtedy NIC nie jest
+    // sprzątane, świat działa dalej i można spróbować jeszcze raz.
+    // stop({ save: false }) zamyka świat bez zapisywania.
+    //
+    // Po udanym stop() tego obiektu nie da się już używać.
 
-    async stop() {
+    async stop({ save = true } = {}) {
 
-        await this.saver.save();
+        if (save && !(await this.saver.flush())) {
+            return false;
+        }
+
 
         this.saver.stop();
-
 
         this.world.dispose();
 
         this.highlight.dispose();
+
+        return true;
 
     }
 

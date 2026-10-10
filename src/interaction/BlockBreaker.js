@@ -20,15 +20,14 @@ export class BlockBreaker {
         const block = hit.block;
 
 
-        this.world.setBlock(
+        // true tylko wtedy, gdy świat naprawdę się zmienił.
+
+        return this.world.setBlock(
             block.x,
             block.y,
             block.z,
             null
         );
-
-
-        return true;
 
     }
 

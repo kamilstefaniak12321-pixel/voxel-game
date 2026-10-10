@@ -46,6 +46,11 @@ export class Player {
         this.onGround = false;
 
 
+        // Czułość myszy (zmieniana przez ustawienia gracza).
+
+        this.mouseSensitivity = MOUSE_SENSITIVITY;
+
+
         this.spawn();
 
     }
@@ -79,8 +84,8 @@ updateLook(input) {
     const mouse = input.consumeMouseDelta();
 
 
-    this.yaw -= mouse.x * MOUSE_SENSITIVITY;
-    this.pitch -= mouse.y * MOUSE_SENSITIVITY;
+    this.yaw -= mouse.x * this.mouseSensitivity;
+    this.pitch -= mouse.y * this.mouseSensitivity;
 
 
     const maxPitch = Math.PI / 2 - 0.01;

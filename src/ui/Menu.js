@@ -1,4 +1,5 @@
 import { TEXTS } from './texts.js';
+import { SETTINGS_RANGES } from '../settings/Settings.js';
 
 // ------------------------------------------------------------
 // MENU
@@ -63,12 +64,16 @@ export class Menu {
     // root     - element <div id="menu">
     // title    - nazwa gry na ekranie tytułowym
     // handlers - funkcje z main.js wywoływane przez przyciski
+    // settings - ustawienia gracza (Settings)
+    // themes   - motywy do wyboru: { folder: 'nazwa w grze' }
 
-    constructor(root, title, handlers) {
+    constructor(root, title, handlers, settings, themes) {
 
         this.root = root;
         this.title = title;
         this.handlers = handlers;
+        this.settings = settings;
+        this.themes = themes;
 
 
         // Co robi ESC na danym ekranie (np. "Wróć").
@@ -144,7 +149,8 @@ export class Menu {
         );
 
         screen.querySelector('.menu-buttons').append(
-            button(TEXTS.play, () => this.handlers.openWorldList())
+            button(TEXTS.play, () => this.handlers.openWorldList()),
+            button(TEXTS.settings, () => this.showSettings('title'))
         );
 
     }
@@ -424,6 +430,7 @@ export class Menu {
 
         buttons.append(
             button(TEXTS.resume, () => this.handlers.resume()),
+            button(TEXTS.settings, () => this.showSettings('pause')),
             button(TEXTS.saveAndQuit, () => this.handlers.quitToMenu())
         );
 
@@ -437,6 +444,138 @@ export class Menu {
         if (hint) {
             screen.append(el('p', 'menu-note', hint));
         }
+
+    }
+
+    // --------------------------------------------------------
+    // Ustawienia
+    //
+    // returnTo = 'title' albo 'pause' - dokąd wraca "Gotowe".
+    // Każda zmiana działa od razu (także w grze pod pauzą).
+    // --------------------------------------------------------
+
+    showSettings(returnTo = 'title') {
+
+        const fromPause = returnTo === 'pause';
+
+        const screen = this.newScreen('settings', !fromPause);
+
+        const settings = this.settings;
+
+
+        const goBack = () => {
+
+            if (fromPause) {
+                this.showPause();
+            }
+            else {
+                this.showTitle();
+            }
+
+        };
+
+        this.onEscape = goBack;
+
+
+        const grid = el('div', 'settings-grid');
+
+
+        // Suwak: pasek w stylu przycisku z napisem na środku.
+
+        const slider = (key, label) => {
+
+            const wrapper = el('label', 'menu-slider');
+
+            const range = el('input');
+
+            const text = el('span', 'menu-slider-label', label(settings.get(key)));
+
+            const { min, max, step } = SETTINGS_RANGES[key];
+
+
+            range.type = 'range';
+            range.min = min;
+            range.max = max;
+            range.step = step;
+            range.value = settings.get(key);
+
+
+            range.addEventListener('input', () => {
+
+                settings.set(key, Number(range.value));
+
+                text.textContent = label(settings.get(key));
+
+            });
+
+
+            wrapper.append(range, text);
+
+            return wrapper;
+
+        };
+
+
+        // Przycisk motywu: każde kliknięcie = następny motyw.
+
+        const themeButton = button(
+            TEXTS.theme(this.themes[settings.get('theme')]),
+            () => {
+
+                const keys = Object.keys(this.themes);
+
+                const next =
+                    keys[(keys.indexOf(settings.get('theme')) + 1) % keys.length];
+
+                settings.set('theme', next);
+
+                themeButton.textContent = TEXTS.theme(this.themes[next]);
+
+            }
+        );
+
+
+        const debugButton = button(
+            TEXTS.showDebug(settings.get('showDebug')),
+            () => {
+
+                settings.set('showDebug', !settings.get('showDebug'));
+
+                debugButton.textContent = TEXTS.showDebug(settings.get('showDebug'));
+
+            }
+        );
+
+
+        grid.append(
+            slider('mouseSensitivity', TEXTS.mouseSensitivity),
+            slider('fov', TEXTS.fov),
+            slider('viewDistance', TEXTS.viewDistance),
+            themeButton,
+            debugButton
+        );
+
+
+        const buttons = el('div', 'menu-row settings-buttons');
+
+        buttons.append(
+            button(TEXTS.resetSettings, () => {
+
+                settings.reset();
+
+                // Odświeżamy ekran, żeby suwaki pokazały nowe wartości.
+                this.showSettings(returnTo);
+
+            }),
+            button(TEXTS.done, goBack)
+        );
+
+
+        screen.append(
+            el('h2', 'menu-heading', TEXTS.settingsTitle),
+            grid,
+            buttons
+        );
 
     }
 

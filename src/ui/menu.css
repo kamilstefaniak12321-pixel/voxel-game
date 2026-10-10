@@ -150,6 +150,9 @@ body:not([data-screen="game"]) #crosshair {
 .menu-button {
     height: var(--button-height);
     padding: 0 12px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
     font: inherit;
     color: var(--button-text);
     text-shadow: inherit;
@@ -269,4 +272,109 @@ body:not([data-screen="game"]) #crosshair {
     font-size: 0.8em;
     color: var(--text-muted);
     word-break: break-all;
+}
+
+/* ------------------------------------------------------------
+   Ustawienia
+   ------------------------------------------------------------ */
+
+.settings-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: var(--button-gap);
+    width: var(--list-width);
+    max-width: 100%;
+}
+
+.settings-buttons {
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    width: var(--list-width);
+    margin-top: 16px;
+}
+
+/* Suwak: tor wygląda jak wyłączony przycisk, uchwyt jak przycisk.
+   Napis leży na środku, nad suwakiem. */
+
+.menu-slider {
+    position: relative;
+    display: block;
+    height: var(--button-height);
+    background: var(--button-disabled-background);
+    border: var(--button-outline-width) solid var(--button-outline);
+    border-radius: var(--button-radius);
+    box-sizing: border-box;
+}
+
+.menu-slider:hover,
+.menu-slider:focus-within {
+    border-color: var(--button-outline-hover);
+}
+
+.menu-slider input {
+    position: absolute;
+    z-index: 0;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    background: transparent;
+    cursor: pointer;
+    -webkit-appearance: none;
+    appearance: none;
+    outline: none;
+}
+
+.menu-slider input::-webkit-slider-runnable-track {
+    height: 100%;
+    background: transparent;
+}
+
+.menu-slider input::-moz-range-track {
+    height: 100%;
+    background: transparent;
+}
+
+.menu-slider input::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 16px;
+    height: 100%;
+    background: var(--button-background);
+    border: none;
+    border-radius: var(--button-radius);
+    box-shadow:
+        inset var(--button-bevel) var(--button-bevel) 0 var(--button-border-light),
+        inset calc(var(--button-bevel) * -1) calc(var(--button-bevel) * -2) 0 var(--button-border-dark);
+}
+
+.menu-slider input::-moz-range-thumb {
+    width: 16px;
+    height: 100%;
+    background: var(--button-background);
+    border: none;
+    border-radius: var(--button-radius);
+    box-shadow:
+        inset var(--button-bevel) var(--button-bevel) 0 var(--button-border-light),
+        inset calc(var(--button-bevel) * -1) calc(var(--button-bevel) * -2) 0 var(--button-border-dark);
+}
+
+.menu-slider:hover input::-webkit-slider-thumb {
+    background: var(--button-background-hover);
+}
+
+.menu-slider:hover input::-moz-range-thumb {
+    background: var(--button-background-hover);
+}
+
+/* Napis zawsze nad uchwytem suwaka */
+
+.menu-slider-label {
+    position: absolute;
+    z-index: 1;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--button-text);
+    pointer-events: none;
 }

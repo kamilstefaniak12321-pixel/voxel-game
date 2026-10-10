@@ -24,7 +24,21 @@ Do działania potrzebny jest internet (three.js pobierany z unpkg).
 | LPM | zniszcz blok |
 | PPM | postaw blok |
 | 1-5 | wybór bloku: trawa, ziemia, kamień, lampa, lepidolit |
-| ESC | pauza (wróć do gry albo zapisz i wyjdź do menu) |
+| ESC | pauza (wróć do gry, ustawienia, zapisz i wyjdź do menu) |
+| F3 | informacje debugowania w lewym górnym rogu |
+
+## Ustawienia
+
+W menu (z ekranu tytułowego i z pauzy) można zmienić:
+
+- **czułość myszy** (10-200%),
+- **pole widzenia** (50-110°),
+- **zasięg widzenia** (20-120 bloków - dalej teren znika we mgle),
+- **motyw menu**,
+- **informacje debugowania** (to samo co F3).
+
+Zmiany działają od razu, także w grze pod pauzą, i zapisują się
+w przeglądarce. Wartości domyślne są w `src/config.js`.
 
 ## Zapis świata
 
@@ -43,15 +57,16 @@ z plikiem `theme.css` (kolory, czcionka, rozmiary) i teksturą tła
 `background.png`. W grze są dwa motywy: `default` (ziemia) i
 `lepidolit` (fioletowy).
 
-**Zmiana motywu:** w `src/config.js` ustaw `UI_THEME` na nazwę folderu,
-np. `UI_THEME = 'lepidolit'`.
+**Zmiana motywu:** w grze: *Ustawienia → Motyw*. Motyw domyślny
+(przed pierwszym wyborem) ustawia `UI_THEME` w `src/config.js`.
 
 **Własny motyw:**
 
 1. Skopiuj folder `assets/ui/themes/default` i nazwij go po swojemu.
 2. Podmień `background.png` na swoją teksturę (np. 16x16).
 3. Zmień kolory i rozmiary w `theme.css` - każda wartość ma opis.
-4. Ustaw `UI_THEME` w `src/config.js` na nazwę nowego folderu.
+4. Dopisz go do `UI_THEMES` w `src/config.js` (nazwa folderu i nazwa
+   widoczna w grze) - pojawi się w *Ustawienia → Motyw*.
 
 Inne rzeczy do zmiany:
 
@@ -73,6 +88,7 @@ src/
   config.js                 ustawienia: chunki, teren, gracz, menu
   game/                     jeden uruchomiony świat (Game)
   ui/                       ekrany menu, ich układ i napisy
+  settings/                 ustawienia gracza (zapis w przeglądarce)
   blocks/                   lista bloków (BlockRegistry)
   world/                    świat, chunki, szum, generator terenu
   storage/                  zapis i wczytywanie światów

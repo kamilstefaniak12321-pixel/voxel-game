@@ -4,6 +4,7 @@ import { InputManager } from './input/InputManager.js';
 import { Game } from './game/Game.js';
 import { Menu } from './ui/Menu.js';
 import { TEXTS } from './ui/texts.js';
+import { Settings } from './settings/Settings.js';
 import {
     WorldStorage,
     createWorldInfo,
@@ -12,7 +13,7 @@ import {
 
 import {
     GAME_TITLE,
-    UI_THEME
+    UI_THEMES
 } from './config.js';
 
 // ------------------------------------------------------------
@@ -44,6 +45,11 @@ document.body.appendChild(renderer.domElement);
 
 
 const input = new InputManager(renderer.domElement);
+
+
+// Ustawienia gracza (czułość myszy, pole widzenia, motyw...).
+
+const settings = new Settings();
 
 const infoElement = document.getElementById('info');
 
@@ -123,8 +129,24 @@ const menu = new Menu(
         deleteWorld,
         resume,
         quitToMenu
-    }
+    },
+    settings,
+    UI_THEMES
 );
+
+
+// Zmiana w ustawieniach działa od razu: nowy motyw menu,
+// a w uruchomionej grze nowe pole widzenia, mgła i czułość.
+
+settings.onChange((key) => {
+
+    if (key === 'theme') {
+        loadTheme(settings.get('theme'));
+    }
+
+    game?.applySettings();
+
+});
 
 
 async function openWorldList() {
@@ -174,7 +196,7 @@ async function playWorld(worldInfo) {
 
     try {
 
-        game = await Game.start(renderer, input, storage, worldInfo);
+        game = await Game.start(renderer, input, storage, worldInfo, settings);
 
     }
 
@@ -342,6 +364,13 @@ function animate() {
 
     if (state === 'playing') {
 
+        // F3 - informacje debugowania w HUD.
+
+        if (input.consumeKeyPress('F3')) {
+            settings.set('showDebug', !settings.get('showDebug'));
+        }
+
+
         game.update(dt);
 
         game.updateHud(infoElement);
@@ -356,6 +385,17 @@ function animate() {
 }
 
 
+// F3 w przeglądarce otwiera wyszukiwanie - w grze go blokujemy.
+
+window.addEventListener('keydown', (event) => {
+
+    if (event.code === 'F3') {
+        event.preventDefault();
+    }
+
+});
+
+
 window.addEventListener('resize', () => {
 
     renderer.setSize(window.innerWidth, window.innerHeight);
@@ -368,7 +408,7 @@ window.addEventListener('resize', () => {
 // START
 // ------------------------------------------------------------
 
-await loadTheme(UI_THEME);
+await loadTheme(settings.get('theme'));
 
 menu.showTitle();
 

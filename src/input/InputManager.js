@@ -36,8 +36,18 @@ export class InputManager {
         });
 
 
+        // Kliknięcie w grę przechwytuje mysz - ale tylko wtedy, gdy
+        // nie jest już przechwycona. Ponowna prośba przy każdym
+        // kliknięciu (np. przy niszczeniu bloków) sprawiała, że
+        // przeglądarka zgłaszała "mysz przechwycona" od nowa, a gra
+        // czyściła wtedy wciśnięte klawisze i postać stawała.
+
         this.element.addEventListener('click', () => {
-            this.element.requestPointerLock();
+
+            if (document.pointerLockElement !== this.element) {
+                this.element.requestPointerLock();
+            }
+
         });
 
 this.element.addEventListener(

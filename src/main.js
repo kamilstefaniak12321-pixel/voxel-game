@@ -296,13 +296,21 @@ document.addEventListener('pointerlockchange', () => {
         document.pointerLockElement === renderer.domElement;
 
 
+    // Wejście do gry z pauzy (albo po wczytaniu świata). Gdy gra
+    // już trwa, nic nie robimy - inaczej kasowalibyśmy klawisze,
+    // które gracz właśnie trzyma.
+
     if (locked) {
 
-        state = 'playing';
+        if (state !== 'playing') {
 
-        input.reset();
+            state = 'playing';
 
-        menu.hide();
+            input.reset();
+
+            menu.hide();
+
+        }
 
     }
 

@@ -58,6 +58,8 @@ export const JUMP_SPEED = 9;
 // Maksymalna prędkość spadania (bloki na sekundę).
 export const MAX_FALL_SPEED = 50;
 
+// Podstawowa czułość myszy (radiany na piksel ruchu).
+// Gracz może ją zmienić w ustawieniach (procent tej wartości).
 export const MOUSE_SENSITIVITY = 0.002;
 
 export const PLAYER_REACH = 5;
@@ -69,7 +71,27 @@ export const PLAYER_REACH = 5;
 // Nazwa gry: na ekranie tytułowym i na karcie przeglądarki.
 export const GAME_TITLE = 'Voxel Game';
 
-// Motyw menu = nazwa folderu w assets/ui/themes/.
-// Dostępne: 'default' (ziemia) i 'lepidolit' (fioletowy).
-// Nowy motyw: skopiuj folder motywu i zmień jego theme.css.
+// Motywy menu do wyboru w ustawieniach:
+//   nazwa folderu w assets/ui/themes/  ->  nazwa widoczna w grze.
+// Nowy motyw: skopiuj folder motywu, zmień jego theme.css
+// i dopisz go tutaj.
+export const UI_THEMES = {
+    default: 'Ziemia',
+    lepidolit: 'Lepidolit'
+};
+
+// Motyw domyślny (zanim gracz wybierze inny w ustawieniach).
 export const UI_THEME = 'default';
+
+// ------------------------------------------------------------
+// USTAWIENIA GRACZA (domyślne wartości i zakresy)
+// ------------------------------------------------------------
+
+// Czułość myszy w procentach (100 = MOUSE_SENSITIVITY).
+export const DEFAULT_MOUSE_SENSITIVITY = 100;
+
+// Pole widzenia kamery w stopniach.
+export const DEFAULT_FOV = 75;
+
+// Zasięg widzenia w blokach - dalej teren znika we mgle.
+export const DEFAULT_VIEW_DISTANCE = 45;

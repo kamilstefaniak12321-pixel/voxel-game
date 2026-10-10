@@ -9,6 +9,7 @@ export const TEXTS = {
 
     // Ekran tytułowy
     play: 'Graj',
+    settings: 'Ustawienia',
 
     // Lista światów
     selectWorld: 'Wybierz świat',
@@ -44,6 +45,16 @@ export const TEXTS = {
     resume: 'Wróć do gry',
     saveAndQuit: 'Zapisz i wyjdź do menu',
     pointerLockFailed: 'Nie udało się przechwycić myszy - kliknij jeszcze raz.',
+
+    // Ustawienia
+    settingsTitle: 'Ustawienia',
+    mouseSensitivity: (value) => `Czułość myszy: ${value}%`,
+    fov: (value) => `Pole widzenia: ${value}°`,
+    viewDistance: (value) => `Zasięg widzenia: ${value} bloków`,
+    theme: (name) => `Motyw: ${name}`,
+    showDebug: (on) => `Debug (F3): ${on ? 'Wł.' : 'Wył.'}`,
+    resetSettings: 'Przywróć domyślne',
+    done: 'Gotowe',
 
     // Błędy
     worldLoadError: 'Nie udało się wczytać świata.'

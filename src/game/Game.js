@@ -11,7 +11,8 @@ import { WorldSaver } from '../storage/WorldSaver.js';
 
 import {
     PLAYER_REACH,
-    CHUNK_SIZE
+    CHUNK_SIZE,
+    MOUSE_SENSITIVITY
 } from '../config.js';
 
 // ------------------------------------------------------------
@@ -32,7 +33,7 @@ const HOTBAR = [
 // Tworzy scenę, świat, gracza i wszystko, co potrzebne do grania.
 // Z zewnątrz (main.js, menu) używa się jej tak:
 //
-//   const game = await Game.start(renderer, input, storage, worldInfo);
+//   const game = await Game.start(renderer, input, storage, worldInfo, settings);
 //
 //   game.update(dt);   // co klatkę
 //   game.render();     // co klatkę
@@ -44,7 +45,7 @@ export class Game {
 
     // Wczytuje zapisane chunki świata i uruchamia grę.
 
-    static async start(renderer, input, storage, worldInfo) {
+    static async start(renderer, input, storage, worldInfo, settings) {
 
         const savedChunks =
             storage
@@ -56,18 +57,20 @@ export class Game {
             input,
             storage,
             worldInfo,
+            settings,
             savedChunks
         );
 
     }
 
 
-    constructor(renderer, input, storage, worldInfo, savedChunks) {
+    constructor(renderer, input, storage, worldInfo, settings, savedChunks) {
 
         this.renderer = renderer;
         this.input = input;
         this.storage = storage;
         this.worldInfo = worldInfo;
+        this.settings = settings;
 
 
         // Scena: niebo, mgła i światło.
@@ -122,6 +125,11 @@ export class Game {
         if (worldInfo.player) {
             this.player.setState(worldInfo.player);
         }
+
+
+        // Pole widzenia, mgła i czułość myszy z ustawień gracza.
+
+        this.applySettings();
 
 
         // Celowanie, niszczenie i stawianie bloków.
@@ -230,6 +238,34 @@ export class Game {
     }
 
 
+    // Stosuje ustawienia gracza. Wywoływane przy starcie
+    // i po każdej zmianie w ekranie ustawień.
+
+    applySettings() {
+
+        const settings = this.settings;
+
+
+        this.camera.fov = settings.get('fov');
+
+        this.camera.updateProjectionMatrix();
+
+
+        // Mgła gęstnieje od ~45% zasięgu do pełnego zasięgu.
+
+        const viewDistance = settings.get('viewDistance');
+
+        this.scene.fog.far = viewDistance;
+        this.scene.fog.near = viewDistance * 0.45;
+
+
+        this.player.mouseSensitivity =
+            MOUSE_SENSITIVITY *
+            settings.get('mouseSensitivity') / 100;
+
+    }
+
+
     // Po zmianie rozmiaru okna.
 
     resize(width, height) {
@@ -287,6 +323,19 @@ export class Game {
 
         const selected = getBlockDefinition(this.selectedBlock);
 
+
+        // Bez informacji debugowania (F3): tylko wybrany blok.
+
+        if (!this.settings.get('showDebug')) {
+
+            element.innerHTML =
+                `Wybrany blok: ${selected?.name ?? this.selectedBlock}` +
+                `<br><br>${this.saver.getStatus()}`;
+
+            return;
+
+        }
+
         const hotbarLegend =
             HOTBAR
                 .map((type, i) =>
@@ -319,7 +368,7 @@ export class Game {
             `LPM - zniszcz | PPM - postaw<br>` +
 
             `WASD - ruch | Spacja - skok | ` +
-            `Mysz - kamera | ESC - pauza` +
+            `Mysz - kamera | ESC - pauza | F3 - debug` +
 
             `<br><br>${this.saver.getStatus()}`;
 

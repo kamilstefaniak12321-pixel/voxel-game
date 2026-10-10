@@ -12,6 +12,11 @@
 //
 // Zapisywany jest stan gracza i tylko te chunki, które zmieniły
 // się od poprzedniego zapisu.
+//
+// Naraz trwa najwyżej jeden zapis. Prośba o zapis w trakcie
+// innego czeka na swoją kolej (wszystkie takie prośby łączą się
+// w jeden kolejny zapis). Przy wyjściu ze świata flush() czeka
+// na wszystko i mówi, czy świat naprawdę trafił do bazy.
 // ------------------------------------------------------------
 
 const CHANGE_SAVE_DELAY = 2;
@@ -43,8 +48,11 @@ export class WorldSaver {
         this.timeSinceChange = 0;
 
 
-        this.saving = false;
-        this.saveAgain = false;
+        // Trwający zapis i zapis czekający na swoją kolej
+        // (Promise z wynikiem true/false albo null).
+
+        this.saving = null;
+        this.queued = null;
 
         this.stopped = false;
 
@@ -55,27 +63,75 @@ export class WorldSaver {
     }
 
 
-    // Zapisuje świat. Zwraca true, jeśli zapis się udał.
+    // Prośba o zapis. Zwraca Promise z wynikiem (true = udało się)
+    // zapisu, który obejmuje stan świata z chwili wywołania.
 
-    async save() {
+    save() {
 
         if (!this.storage || this.stopped) {
-            return false;
+            return Promise.resolve(false);
         }
 
 
-        // Zapis już trwa - zrobimy kolejny zaraz po nim.
+        if (!this.saving) {
 
-        if (this.saving) {
+            this.saving = this.write().finally(() => {
+                this.saving = null;
+            });
 
-            this.saveAgain = true;
-
-            return false;
+            return this.saving;
 
         }
 
 
-        this.saving = true;
+        // Zapis już trwa - kolejny zrobimy zaraz po nim.
+        // Kilka próśb w tym czasie = jeden kolejny zapis.
+
+        if (!this.queued) {
+
+            this.queued = this.saving.then(() => {
+
+                this.queued = null;
+
+                return this.save();
+
+            });
+
+        }
+
+        return this.queued;
+
+    }
+
+
+    // Kończy wszystkie zapisy przed wyjściem ze świata: czeka na
+    // trwający i zaplanowany zapis, a potem zapisuje to, co jeszcze
+    // zostało (zawsze z aktualną pozycją gracza).
+    //
+    // Zwraca true, jeśli świat jest w całości w bazie. Przy błędzie
+    // zwraca false (bez ponawiania w kółko) - niezapisane chunki
+    // zostają na liście, więc można spróbować jeszcze raz.
+    //
+    // Bez dostępnego zapisu (storage = null) gra świadomie działa
+    // bez zapisu, więc nie ma na co czekać - zwraca true.
+
+    async flush() {
+
+        if (!this.storage) {
+            return true;
+        }
+
+
+        await (this.queued ?? this.saving);
+
+        return this.save();
+
+    }
+
+
+    // Jeden zapis do bazy.
+
+    async write() {
 
         this.timeSinceSave = 0;
         this.timeSinceChange = 0;
@@ -118,21 +174,6 @@ export class WorldSaver {
             this.showStatus('Błąd zapisu świata!');
 
             return false;
-
-        }
-
-        finally {
-
-            this.saving = false;
-
-
-            if (this.saveAgain) {
-
-                this.saveAgain = false;
-
-                this.save();
-
-            }
 
         }
 
@@ -190,7 +231,7 @@ export class WorldSaver {
     }
 
 
-    // Wyłącza dalsze zapisy (np. przy wyjściu ze świata).
+    // Wyłącza dalsze zapisy (przy wyjściu ze świata, po flush()).
 
     stop() {
 

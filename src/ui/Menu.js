@@ -447,6 +447,32 @@ export class Menu {
 
     }
 
+    // Zapis przy wyjściu się nie udał (na tle zatrzymanej gry).
+
+    showSaveError() {
+
+        const screen = this.newScreen('save-error', false);
+
+        this.onEscape = () => this.showPause();
+
+
+        const buttons = el('div', 'menu-buttons');
+
+        buttons.append(
+            button(TEXTS.retrySave, () => this.handlers.quitToMenu()),
+            button(TEXTS.resume, () => this.handlers.resume()),
+            button(TEXTS.quitWithoutSaving, () => this.handlers.quitWithoutSaving(), 'danger')
+        );
+
+
+        screen.append(
+            el('h2', 'menu-heading menu-danger', TEXTS.saveFailed),
+            el('p', 'menu-note', TEXTS.saveFailedNote),
+            buttons
+        );
+
+    }
+
     // --------------------------------------------------------
     // Ustawienia
     //

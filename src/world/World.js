@@ -739,10 +739,13 @@ export class World {
 
     update(x, z, radius, budgetMs) {
 
-        this.setCenter(x, z, radius);
-
+        // Czas liczymy od samego początku - układanie kolejki
+        // i usuwanie dalekich chunków też się w nim mieści.
 
         const deadline = performance.now() + budgetMs;
+
+
+        this.setCenter(x, z, radius);
 
 
         // Najpierw meshe (postawione bloki i świeżo

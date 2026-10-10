@@ -56,6 +56,12 @@ export const TEXTS = {
     resetSettings: 'Przywróć domyślne',
     done: 'Gotowe',
 
+    // Błąd zapisu przy wyjściu
+    saveFailed: 'Nie udało się zapisać świata',
+    saveFailedNote: 'Ostatnie zmiany nie są jeszcze zapisane. Spróbuj jeszcze raz albo wyjdź bez zapisywania - wtedy te zmiany przepadną.',
+    retrySave: 'Spróbuj ponownie',
+    quitWithoutSaving: 'Wyjdź bez zapisywania',
+
     // Błędy
     worldLoadError: 'Nie udało się wczytać świata.'
 

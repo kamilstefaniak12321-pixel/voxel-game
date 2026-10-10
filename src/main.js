@@ -130,7 +130,8 @@ const menu = new Menu(
         createWorld,
         deleteWorld,
         resume,
-        quitToMenu
+        quitToMenu,
+        quitWithoutSaving
     },
     settings,
     UI_THEMES
@@ -329,6 +330,10 @@ document.addEventListener('pointerlockchange', () => {
 });
 
 
+// "Zapisz i wyjdź do menu". Świat zamykamy dopiero wtedy, gdy
+// zapis naprawdę się udał - inaczej zostajemy w pauzie z ekranem
+// błędu (spróbuj ponownie / wyjdź bez zapisywania).
+
 async function quitToMenu() {
 
     if (!game || state === 'loading') {
@@ -341,7 +346,42 @@ async function quitToMenu() {
     menu.showLoading(TEXTS.savingWorld);
 
 
-    await game.stop();
+    if (!(await game.stop())) {
+
+        state = 'paused';
+
+        menu.showSaveError();
+
+        return;
+
+    }
+
+
+    closeWorld();
+
+}
+
+
+// Wyjście bez zapisywania - tylko na wyraźne życzenie gracza
+// (z ekranu błędu zapisu).
+
+async function quitWithoutSaving() {
+
+    if (!game || state === 'loading') {
+        return;
+    }
+
+
+    state = 'loading';
+
+    await game.stop({ save: false });
+
+    closeWorld();
+
+}
+
+
+function closeWorld() {
 
     game = null;
 

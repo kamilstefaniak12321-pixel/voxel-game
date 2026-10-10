@@ -45,10 +45,12 @@ import {
 // ------------------------------------------------------------
 export class World {
 
-    // seed - seed tego świata (liczba albo tekst).
-    // Ten sam seed zawsze daje ten sam teren.
+    // seed        - seed tego świata (liczba albo tekst).
+    //               Ten sam seed zawsze daje ten sam teren.
+    // savedChunks - chunki wczytane z zapisu:
+    //               Map "cx,cz" -> Uint8Array (pusta dla nowego świata)
 
-    constructor(scene, seed) {
+    constructor(scene, seed, savedChunks = new Map()) {
 
         this.scene = scene;
 
@@ -61,6 +63,14 @@ export class World {
         // Chunki, których mesh trzeba przebudować.
 
         this.dirtyChunks = new Set();
+
+        // Chunki zmienione przez gracza, wczytane z zapisu.
+
+        this.savedChunks = savedChunks;
+
+        // Chunki zmienione od ostatniego zapisu świata.
+
+        this.unsavedChunks = new Set();
 
         // Generator terenu dla tego świata.
 
@@ -260,6 +270,10 @@ export class World {
 
         this.markDirty(chunk);
 
+        // Chunk zmieniony przez gracza trafi do zapisu.
+
+        this.unsavedChunks.add(chunk);
+
 
         // Blok na krawędzi chunka zmienia też widoczne ściany
         // w sąsiednim chunku, więc sąsiada też trzeba przebudować.
@@ -282,6 +296,43 @@ export class World {
 
 
         return true;
+
+    }
+
+    // --------------------------------------------------------
+    // ZAPIS
+    // --------------------------------------------------------
+
+    // Czy coś zmieniło się od ostatniego zapisu.
+
+    hasUnsavedChanges() {
+
+        return this.unsavedChunks.size > 0;
+
+    }
+
+
+    // Zwraca chunki zmienione od ostatniego zapisu
+    // i zaczyna liczyć zmiany od nowa.
+
+    takeUnsavedChunks() {
+
+        const chunks = [...this.unsavedChunks];
+
+        this.unsavedChunks.clear();
+
+        return chunks;
+
+    }
+
+
+    // Oddaje chunki z powrotem do zapisu (gdy zapis się nie udał).
+
+    markUnsaved(chunks) {
+
+        for (const chunk of chunks) {
+            this.unsavedChunks.add(chunk);
+        }
 
     }
 
@@ -390,7 +441,33 @@ export class World {
 
         chunk = this.createChunk(cx, cz);
 
-        this.generator.generateChunk(chunk);
+
+        // Chunk zmieniony kiedyś przez gracza wczytujemy z zapisu,
+        // każdy inny powstaje z generatora.
+
+        const saved =
+            this.savedChunks.get(
+                this.chunkKey(cx, cz)
+            );
+
+        const loaded =
+            saved !== undefined &&
+            chunk.loadBlocks(saved);
+
+
+        if (saved !== undefined && !loaded) {
+
+            console.warn(
+                `Zapisany chunk ${cx}, ${cz} ma zły rozmiar - ` +
+                `generuję go od nowa.`
+            );
+
+        }
+
+
+        if (!loaded) {
+            this.generator.generateChunk(chunk);
+        }
 
 
         // Nowy chunk zasłania boczne ściany sąsiadów,
@@ -418,6 +495,17 @@ export class World {
                 this.generateChunk(cx, cz);
 
             }
+
+        }
+
+
+        // Chunki, które gracz zbudował poza startowym obszarem.
+
+        for (const key of this.savedChunks.keys()) {
+
+            const [cx, cz] = key.split(',').map(Number);
+
+            this.generateChunk(cx, cz);
 
         }
 

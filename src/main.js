@@ -8,6 +8,11 @@ import { BlockHighlight } from './interaction/BlockHighlight.js';
 import { BlockBreaker } from './interaction/BlockBreaker.js';
 import {BlockPlacer} from './interaction/BlockPlacer.js';
 import {getBlockDefinition} from './blocks/BlockRegistry.js';
+import {
+    WorldStorage,
+    createWorldInfo
+} from './storage/WorldStorage.js';
+import { WorldSaver } from './storage/WorldSaver.js';
 
 import {
     PLAYER_REACH,
@@ -72,6 +77,11 @@ function update(dt) {
     // Przebudowa meshy chunków zmienionych w tej klatce.
 
     world.updateMeshes();
+
+
+    // Autozapis co jakiś czas.
+
+    saver.update(dt);
 
 
     blockHighlight.update(
@@ -140,9 +150,60 @@ sun.position.set(
 
 scene.add(sun);
 
+// ------------------------------------------------------------
+// WCZYTANIE ŚWIATA
+// ------------------------------------------------------------
+
+// Baza z zapisami. null = zapis niedostępny, gra działa bez niego.
+
+let storage = null;
+
+try {
+
+    storage = await WorldStorage.open();
+
+}
+
+catch (error) {
+
+    console.warn(
+        'Zapis świata niedostępny - gra działa bez zapisu.',
+        error
+    );
+
+}
+
+
+// Ostatnio grany świat, a jeśli nie ma żadnego - nowy.
+
+let worldInfo =
+    storage
+        ? (await storage.listWorlds())[0]
+        : undefined;
+
+if (!worldInfo) {
+
+    worldInfo =
+        createWorldInfo(
+            'Świat 1',
+            WORLD_SEED
+        );
+
+}
+
+
+// Chunki zmienione przez gracza w tym świecie.
+
+const savedChunks =
+    storage
+        ? await storage.loadChunks(worldInfo.id)
+        : new Map();
+
+
 const world = new World(
     scene,
-    WORLD_SEED
+    worldInfo.seed,
+    savedChunks
 );
 
 world.generateStartWorld();
@@ -152,6 +213,33 @@ const player = new Player(
     world,
     camera
 );
+
+
+// Gracz wraca tam, gdzie był przy ostatnim zapisie.
+
+if (worldInfo.player) {
+
+    player.setState(
+        worldInfo.player
+    );
+
+}
+
+
+const saver =
+    new WorldSaver(
+        storage,
+        worldInfo,
+        world,
+        player
+    );
+
+saver.saveOnExit();
+
+
+// Od razu zapisujemy, żeby nowy świat pojawił się w bazie.
+
+saver.save();
 
 
 const input = new InputManager(
@@ -288,6 +376,16 @@ const targetDefinition =
 
     infoElement.innerHTML =
 
+    `Świat: ${
+        worldInfo.name
+    } | Seed: ${
+        worldInfo.seed
+    }${
+        storage
+            ? ''
+            : ' | ZAPIS NIEDOSTĘPNY'
+    }<br>` +
+
     `Pozycja: ${
         player.pos.x.toFixed(1)
     }, ${
@@ -322,7 +420,11 @@ const targetDefinition =
     `LPM - zniszcz | PPM - postaw<br>` +
 
     `WASD - ruch | Spacja - skok | ` +
-    `Mysz - kamera | ESC - wyjście`;
+    `Mysz - kamera | ESC - wyjście` +
+
+    `<br><br>${
+        saver.getStatus()
+    }`;
 }
 
 const clock = new THREE.Clock();

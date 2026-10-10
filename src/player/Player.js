@@ -391,6 +391,58 @@ moveAxis(axis, delta) {
 
 }
 
+// Stan gracza do zapisania w świecie.
+
+getState() {
+
+    return {
+
+        x: this.pos.x,
+        y: this.pos.y,
+        z: this.pos.z,
+
+        yaw: this.yaw,
+        pitch: this.pitch
+
+    };
+
+}
+
+
+// Przywraca stan gracza z zapisu.
+
+setState(state) {
+
+    const values = [
+        state?.x,
+        state?.y,
+        state?.z,
+        state?.yaw,
+        state?.pitch
+    ];
+
+
+    // Uszkodzony zapis - zostajemy w miejscu startu.
+
+    if (!values.every(Number.isFinite)) {
+        return false;
+    }
+
+
+    this.pos.set(state.x, state.y, state.z);
+
+    this.yaw = state.yaw;
+    this.pitch = state.pitch;
+
+    this.vel.set(0, 0, 0);
+
+
+    this.updateCamera();
+
+    return true;
+
+}
+
 checkRespawn() {
 
     if (this.pos.y >= -30) {

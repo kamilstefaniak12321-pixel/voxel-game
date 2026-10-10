@@ -25,7 +25,18 @@ Do działania potrzebny jest internet (three.js pobierany z unpkg).
 | LPM | zniszcz blok |
 | PPM | postaw blok |
 | 1-5 | wybór bloku: trawa, ziemia, kamień, lampa, lepidolit |
+| N | nowy świat (tymczasowo, do czasu menu) |
 | ESC | uwolnienie myszy |
+
+## Zapis świata
+
+Świat zapisuje się sam w przeglądarce (IndexedDB): zmienione bloki
+2 sekundy po zmianie, pozycja gracza co 10 sekund, a całość także przy
+przełączeniu albo zamknięciu karty. Przy starcie wczytuje się ostatnio
+grany świat.
+
+Zapisy są przypisane do adresu, pod którym otwierasz grę
+(np. `http://localhost:5500`). Inny adres albo port = inne zapisy.
 
 ## Struktura projektu
 
@@ -37,6 +48,7 @@ src/
   config.js                 ustawienia: chunki, teren, gracz
   blocks/                   lista bloków (BlockRegistry)
   world/                    świat, chunki, szum, generator terenu
+  storage/                  zapis i wczytywanie światów
   rendering/                atlas tekstur, budowanie meshy chunków
   player/                   ruch i kolizje gracza
   input/                    klawiatura i mysz

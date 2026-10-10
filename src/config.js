@@ -18,7 +18,9 @@ export const WORLD_SIZE_Z = WORLD_CHUNKS_Z * CHUNK_SIZE;
 // TEREN
 // ------------------------------------------------------------
 
-// Seed świata: liczba albo tekst. Ten sam seed = ten sam świat.
+// Seed pierwszego świata: liczba albo tekst.
+// Ten sam seed = ten sam świat. Każdy świat ma własny seed,
+// to jest tylko wartość domyślna.
 export const WORLD_SEED = 'lepidolit';
 
 // Średnia wysokość terenu (poziom nizin).

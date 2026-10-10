@@ -46,6 +46,40 @@ export class Chunk {
     }
 
 
+    // Wczytuje bloki z zapisu. Zwraca false, jeśli dane mają
+    // zły rozmiar (np. po zmianie CHUNK_HEIGHT w config.js).
+
+    loadBlocks(data) {
+
+        if (
+            !data ||
+            data.length !== this.blocks.length
+        ) {
+            return false;
+        }
+
+
+        this.blocks.set(data);
+
+
+        let count = 0;
+
+        for (let i = 0; i < this.blocks.length; i++) {
+
+            if (this.blocks[i] !== AIR_ID) {
+                count++;
+            }
+
+        }
+
+        this.blockCount = count;
+
+
+        return true;
+
+    }
+
+
     index(lx, y, lz) {
 
         return (y * CHUNK_SIZE + lz) * CHUNK_SIZE + lx;

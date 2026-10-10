@@ -33,13 +33,25 @@ export class Chunk {
         );
 
 
-        // Światło (0-15) w każdej komórce chunka, w tym samym
-        // układzie co bloki. Liczy je LightEngine (src/world/Light.js).
-        //   skyLight   - światło nieba (15 pod gołym niebem)
-        //   blockLight - światło świecących bloków (np. lampy)
+        // Światło w każdej komórce chunka, w tym samym układzie
+        // co bloki. Liczy je LightEngine (src/world/Light.js).
+        //   skyLight              - światło nieba (0-15)
+        //   lightR, lightG, lightB - kolorowe światło lamp (0-255)
 
         this.skyLight = new Uint8Array(this.blocks.length);
-        this.blockLight = new Uint8Array(this.blocks.length);
+        this.lightR = new Uint8Array(this.blocks.length);
+        this.lightG = new Uint8Array(this.blocks.length);
+        this.lightB = new Uint8Array(this.blocks.length);
+
+        // Te same tablice pod numerami kanałów z Light.js
+        // (SKY = 0, RED = 1, GREEN = 2, BLUE = 3).
+
+        this.lightChannels = [
+            this.skyLight,
+            this.lightR,
+            this.lightG,
+            this.lightB
+        ];
 
 
         // Sąsiednie wczytane chunki (null = niewczytany).

@@ -11,7 +11,7 @@ import {
     blockExists
 } from '../blocks/BlockRegistry.js';
 import { WorldSaver } from '../storage/WorldSaver.js';
-import { lightToBrightness } from '../world/Light.js';
+import { lightToBrightness, describeLight } from '../world/Light.js';
 import { WorldTime } from '../sky/WorldTime.js';
 import { Sky } from '../sky/Sky.js';
 import { skyUniforms } from '../sky/skyShader.js';
@@ -621,7 +621,7 @@ export class Game {
             `Księżyc: ${this.sky.celestial.moonPhaseName}<br>` +
 
             `Na ziemi: ${player.onGround ? 'tak' : 'nie'} | ` +
-            `Światło: niebo ${light.sky}, lampy ${light.block}<br>` +
+            `Światło: ${describeLight(light)}<br>` +
 
             `Wybrany blok: ${selected?.name ?? 'brak'}<br><br>` +
 
@@ -632,7 +632,9 @@ export class Game {
             `LPM - zniszcz | PPM - postaw<br>` +
 
             `WASD - ruch | Spacja - skok | ` +
-            `Mysz - kamera | ESC - pauza | F3 - debug | [ ] - czas ±1 h` +
+            `Mysz - kamera | ESC - pauza | F3 - debug | [ ] - czas ±1 h<br>` +
+
+            `T - czat | /pomoc - komendy` +
 
             `<br><br>${this.saver.getStatus()}`;
 

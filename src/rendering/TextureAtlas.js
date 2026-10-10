@@ -47,6 +47,26 @@ export const ATLAS_TILES = {
     lepidolite: {
         x: 5,
         y: 0
+    },
+
+    lamp_red: {
+        x: 6,
+        y: 0
+    },
+
+    lamp_green: {
+        x: 7,
+        y: 0
+    },
+
+    lamp_blue: {
+        x: 8,
+        y: 0
+    },
+
+    lamp_purple: {
+        x: 9,
+        y: 0
     }
 
 };

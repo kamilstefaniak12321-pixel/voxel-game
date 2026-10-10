@@ -22,6 +22,10 @@ const MAX_STEP_DISTANCE = 0.25;
 
 const COLLISION_EPSILON = 0.0001;
 
+// Ile razy szybciej gracz porusza się w locie (/latanie).
+
+const FLY_SPEED_FACTOR = 2;
+
 export class Player {
 
     constructor(world, camera) {
@@ -50,6 +54,13 @@ export class Player {
         // Czułość myszy (zmieniana przez ustawienia gracza).
 
         this.mouseSensitivity = MOUSE_SENSITIVITY;
+
+
+        // Do testowania (komendy /latanie i /predkosc).
+
+        this.flying = false;
+
+        this.speedMultiplier = 1;
 
 
         this.spawn();
@@ -233,8 +244,39 @@ updateMovement(dt, input) {
     }
 
 
-    this.vel.x = move.x * MOVE_SPEED;
-    this.vel.z = move.z * MOVE_SPEED;
+    // Prędkość: zwykła razy mnożnik z komendy /predkosc,
+    // w locie dwa razy szybciej.
+
+    const speed =
+        MOVE_SPEED *
+        this.speedMultiplier *
+        (this.flying ? FLY_SPEED_FACTOR : 1);
+
+    this.vel.x = move.x * speed;
+    this.vel.z = move.z * speed;
+
+
+    // Latanie (komenda /latanie): bez grawitacji,
+    // Spacja - w górę, Shift - w dół.
+
+    if (this.flying) {
+
+        let vertical = 0;
+
+        if (input.isKeyDown('Space')) {
+            vertical += 1;
+        }
+
+        if (input.isKeyDown('ShiftLeft') || input.isKeyDown('ShiftRight')) {
+            vertical -= 1;
+        }
+
+        this.vel.y = vertical * speed;
+
+        return;
+
+    }
+
 
 
     this.vel.y += GRAVITY * dt;

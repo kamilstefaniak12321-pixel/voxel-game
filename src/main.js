@@ -7,6 +7,9 @@ import { TEXTS } from './ui/texts.js';
 import { Settings } from './settings/Settings.js';
 import { Hotbar } from './ui/Hotbar.js';
 import { createBlockIcons } from './ui/BlockIcons.js';
+import { Chat } from './ui/Chat.js';
+import { CommandRegistry } from './commands/CommandRegistry.js';
+import { GAME_COMMANDS } from './commands/gameCommands.js';
 import {
     WorldStorage,
     createWorldInfo,
@@ -29,6 +32,7 @@ import {
 //   'menu'    - ekrany menu, żaden świat nie jest uruchomiony
 //   'loading' - świat się wczytuje albo zapisuje
 //   'playing' - gra działa, mysz jest przechwycona
+//   'chat'    - otwarty czat (gra działa dalej, mysz jest wolna)
 //   'paused'  - menu pauzy na tle zatrzymanej gry
 // ------------------------------------------------------------
 
@@ -223,6 +227,8 @@ async function playWorld(worldInfo) {
 
     resume();
 
+    chat.print(TEXTS.chatHint, 'hint');
+
 }
 
 // ------------------------------------------------------------
@@ -307,6 +313,12 @@ document.addEventListener('pointerlockchange', () => {
 
         if (state !== 'playing') {
 
+            // Kliknięcie w grę przy otwartym czacie też do niej wraca.
+
+            if (state === 'chat') {
+                chat.close();
+            }
+
             state = 'playing';
 
             input.reset();
@@ -316,6 +328,8 @@ document.addEventListener('pointerlockchange', () => {
         }
 
     }
+
+    // Przy otwartym czacie mysz jest wolna celowo - bez pauzy.
 
     else if (state === 'playing') {
 
@@ -333,6 +347,140 @@ document.addEventListener('pointerlockchange', () => {
 // "Zapisz i wyjdź do menu". Świat zamykamy dopiero wtedy, gdy
 // zapis naprawdę się udał - inaczej zostajemy w pauzie z ekranem
 // błędu (spróbuj ponownie / wyjdź bez zapisywania).
+
+// ------------------------------------------------------------
+// CZAT I KOMENDY
+//
+// T albo / otwiera czat. Tekst zaczynający się od / to komenda
+// (src/commands/). Na czas pisania mysz jest zwolniona, a po
+// wysłaniu (Enter) gra wraca do przechwyconej myszy.
+// ------------------------------------------------------------
+
+const commands = new CommandRegistry();
+
+for (const command of GAME_COMMANDS) {
+    commands.register(command);
+}
+
+
+const chat = new Chat(document.getElementById('chat'), {
+
+    submit: submitChat,
+
+    // ESC: przeglądarka nie pozwala po nim od razu przechwycić
+    // myszy, więc zamiast tego pokazujemy menu pauzy.
+    cancel: () => closeChat(false),
+
+    complete: (text) => (game ? commands.complete(text, commandContext()) : [])
+
+});
+
+
+// To, czym mogą sterować komendy.
+
+function commandContext() {
+
+    return {
+        game,
+        world: game.world,
+        player: game.player,
+        sky: game.sky,
+        time: game.time,
+        chat,
+        commands
+    };
+
+}
+
+
+function openChat(prefix) {
+
+    if (!game || state !== 'playing') {
+        return;
+    }
+
+
+    state = 'chat';
+
+    input.reset();
+
+    chat.open(prefix);
+
+    document.exitPointerLock();
+
+}
+
+
+// relock = true: wracamy od razu do gry (przechwytujemy mysz),
+// false: pokazujemy menu pauzy.
+
+function closeChat(relock = true) {
+
+    if (state !== 'chat') {
+        return;
+    }
+
+
+    chat.close();
+
+    state = 'paused';
+
+
+    if (relock) {
+        resume();
+    }
+    else {
+        menu.showPause();
+    }
+
+}
+
+
+function submitChat(text) {
+
+    if (text.startsWith('/')) {
+
+        chat.print(text, 'command');
+
+        const result = commands.execute(text.slice(1), commandContext());
+
+        if (result.text) {
+            chat.print(result.text, result.ok ? 'success' : 'error');
+        }
+
+    }
+    else if (text) {
+
+        chat.print(text, 'player');
+
+    }
+
+
+    closeChat();
+
+}
+
+
+window.addEventListener('keydown', (event) => {
+
+    if (
+        state === 'playing' &&
+        !event.repeat &&
+        ['KeyT', 'Slash', 'NumpadDivide'].includes(event.code)
+    ) {
+
+        // Bez tego litera "t" trafiłaby do pola czatu.
+
+        event.preventDefault();
+
+        openChat(event.code === 'KeyT' ? '' : '/');
+
+    }
+
+});
+
+// ------------------------------------------------------------
+
 
 async function quitToMenu() {
 
@@ -387,6 +535,8 @@ function closeWorld() {
 
     hotbar.reset();
 
+    chat.clear();
+
 
     state = 'menu';
 
@@ -419,7 +569,9 @@ function animate() {
     hotbar.update(game.hotbar.slots, game.hotbar.selected);
 
 
-    if (state === 'playing') {
+    // Gra działa także przy otwartym czacie.
+
+    if (state === 'playing' || state === 'chat') {
 
         // F3 - informacje debugowania w HUD.
 
@@ -433,6 +585,9 @@ function animate() {
         game.updateHud(infoElement);
 
     }
+
+
+    chat.update();
 
 
     // W pauzie świat dalej jest widoczny pod menu.

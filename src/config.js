@@ -76,7 +76,8 @@ export const LIGHT_CURVE = 1.2;
 // Jak jasno jest w zupełnej ciemności (0 = czarno, 1 = jak w dzień).
 export const LIGHT_MIN_BRIGHTNESS = 0.08;
 
-// Kolor światła lamp (i innych świecących bloków) - ciepły żółty.
+// Kolor światła świecących bloków, które nie mają własnego
+// lightColor w BlockRegistry.js (np. zwykła lampa) - ciepły żółty.
 export const BLOCK_LIGHT_COLOR = 0xffd7a0;
 
 // Cienie w kątach i przy ścianach (ambient occlusion):
@@ -135,14 +136,19 @@ export const PLAYER_REACH = 5;
 export const HOTBAR_SIZE = 9;
 
 // Co jest na pasku w nowym świecie (kolejność = klawisze 1, 2, 3...).
-// Pozostałe miejsca są puste - środkowym przyciskiem myszy można
-// do nich "wziąć" blok, na który się patrzy.
+// Jeśli bloków jest mniej niż miejsc, reszta zostaje pusta.
+// Środkowy przycisk myszy "bierze" blok, na który się patrzy,
+// a komenda /daj <blok> wkłada dowolny blok na pasek.
 export const HOTBAR_DEFAULT = [
     'grass',
     'dirt',
     'stone',
     'lamp',
-    'lepidolite'
+    'lepidolite',
+    'lamp_red',
+    'lamp_green',
+    'lamp_blue',
+    'lamp_purple'
 ];
 
 // ------------------------------------------------------------

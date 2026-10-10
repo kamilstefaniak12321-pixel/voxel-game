@@ -40,6 +40,22 @@ W menu (z ekranu tytułowego i z pauzy) można zmienić:
 Zmiany działają od razu, także w grze pod pauzą, i zapisują się
 w przeglądarce. Wartości domyślne są w `src/config.js`.
 
+## Świat
+
+Świat nie ma stałego rozmiaru - teren generuje się wokół gracza, gdy
+ten idzie dalej, a chunki daleko za plecami znikają z pamięci (zmiany
+gracza w nich zostają). Jak daleko wokół gracza wczytuje się teren,
+zależy od ustawienia *Zasięg widzenia*.
+
+Świat kończy się na **granicy** - `WORLD_BORDER` w `src/config.js`
+(domyślnie 30 000 bloków od środka w każdą stronę; `Infinity` = bez
+granicy). Szum terenu powtarza się mniej więcej co 61 000 bloków, więc
+przy tej granicy nikt nie trafi na powtórkę. Nowe światy zaczynają się
+w punkcie `WORLD_SPAWN_X` / `WORLD_SPAWN_Z`.
+
+Wczytywanie chunków ma limit czasu na klatkę (`CHUNK_LOAD_BUDGET_MS`),
+żeby gra nie przycinała przy szybkim ruchu.
+
 ## Zapis świata
 
 Świat zapisuje się sam w przeglądarce (IndexedDB): zmienione bloki

@@ -12,7 +12,10 @@ import { WorldSaver } from '../storage/WorldSaver.js';
 import {
     PLAYER_REACH,
     CHUNK_SIZE,
-    MOUSE_SENSITIVITY
+    CHUNK_LOAD_BUDGET_MS,
+    MOUSE_SENSITIVITY,
+    WORLD_SPAWN_X,
+    WORLD_SPAWN_Z
 } from '../config.js';
 
 // ------------------------------------------------------------
@@ -112,7 +115,20 @@ export class Game {
             savedChunks
         );
 
-        this.world.generateStartWorld();
+
+        // Wczytujemy teren wokół miejsca, w którym gracz się pojawi:
+        // zapisanej pozycji albo miejsca startu w nowym świecie.
+
+        const start = worldInfo.player ?? {
+            x: WORLD_SPAWN_X + 0.5,
+            z: WORLD_SPAWN_Z + 0.5
+        };
+
+        this.world.loadAround(
+            start.x,
+            start.z,
+            this.getLoadRadius()
+        );
 
 
         this.player = new Player(
@@ -173,6 +189,15 @@ export class Game {
         const input = this.input;
 
 
+        // Chunk pod graczem musi istnieć, zanim policzymy kolizje
+        // (np. po bardzo szybkim ruchu).
+
+        this.world.ensureColumnLoaded(
+            this.player.pos.x,
+            this.player.pos.z
+        );
+
+
         this.player.update(dt, input);
 
 
@@ -213,9 +238,15 @@ export class Game {
         }
 
 
-        // Przebudowa meshy chunków zmienionych w tej klatce.
+        // Wczytywanie chunków wokół gracza i przebudowa meshy
+        // (z limitem czasu na klatkę).
 
-        this.world.updateMeshes();
+        this.world.update(
+            this.player.pos.x,
+            this.player.pos.z,
+            this.getLoadRadius(),
+            CHUNK_LOAD_BUDGET_MS
+        );
 
 
         // Autozapis co jakiś czas.
@@ -262,6 +293,18 @@ export class Game {
         this.player.mouseSensitivity =
             MOUSE_SENSITIVITY *
             settings.get('mouseSensitivity') / 100;
+
+    }
+
+
+    // Promień wczytywania chunków wokół gracza (w chunkach):
+    // tyle, żeby krawędź wczytanego terenu kryła się we mgle.
+
+    getLoadRadius() {
+
+        return Math.ceil(
+            this.settings.get('viewDistance') / CHUNK_SIZE
+        ) + 1;
 
     }
 
@@ -355,7 +398,8 @@ export class Game {
 
             `Chunk: ${Math.floor(player.pos.x / CHUNK_SIZE)}, ` +
             `${Math.floor(player.pos.z / CHUNK_SIZE)} | ` +
-            `Chunków: ${this.world.chunks.size}<br>` +
+            `Wczytane chunki: ${this.world.chunks.size}` +
+            `${this.world.loadQueue.length > 0 ? ` (w kolejce: ${this.world.loadQueue.length})` : ''}<br>` +
 
             `Na ziemi: ${player.onGround ? 'tak' : 'nie'}<br>` +
 

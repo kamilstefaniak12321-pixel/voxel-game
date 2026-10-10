@@ -38,10 +38,23 @@ export class Chunk {
         this.blockCount = 0;
 
 
+        // Wysokość nad najwyższym blokiem - mesher nie musi
+        // przeglądać pustego powietrza nad terenem.
+
+        this.maxY = 0;
+
+
         // Mesh chunka w scenie (null, gdy chunk jest pusty
         // albo jeszcze nie został zbudowany).
 
         this.mesh = null;
+
+
+        // Czy gracz kiedyś zmienił ten chunk. Taki chunk przy
+        // usuwaniu z pamięci zostaje zachowany, zamiast znowu
+        // powstawać z generatora.
+
+        this.modified = false;
 
     }
 
@@ -73,6 +86,23 @@ export class Chunk {
         }
 
         this.blockCount = count;
+
+
+        // Najwyższy niepusty blok.
+
+        this.maxY = 0;
+
+        for (let i = this.blocks.length - 1; i >= 0; i--) {
+
+            if (this.blocks[i] !== AIR_ID) {
+
+                this.maxY = Math.floor(i / (CHUNK_SIZE * CHUNK_SIZE)) + 1;
+
+                break;
+
+            }
+
+        }
 
 
         return true;
@@ -120,6 +150,11 @@ export class Chunk {
 
 
         this.blocks[i] = id;
+
+
+        if (id !== AIR_ID && y >= this.maxY) {
+            this.maxY = y + 1;
+        }
 
         return true;
 

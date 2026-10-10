@@ -67,6 +67,11 @@ export const ATLAS_TILES = {
     lamp_purple: {
         x: 9,
         y: 0
+    },
+
+    meteorite: {
+        x: 10,
+        y: 0
     }
 
 };

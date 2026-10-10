@@ -28,6 +28,7 @@ export const SETTINGS_DEFAULTS = {
     fov: DEFAULT_FOV,                              // stopnie
     viewDistance: DEFAULT_VIEW_DISTANCE,           // bloki
     showDebug: true,                               // informacje F3
+    dynamicLight: true,                            // lampa w ręce, meteoryty...
     theme: UI_THEME                                // motyw menu
 
 };

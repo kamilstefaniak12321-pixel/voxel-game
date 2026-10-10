@@ -8,8 +8,14 @@ import { BlockBreaker } from '../interaction/BlockBreaker.js';
 import { BlockPlacer } from '../interaction/BlockPlacer.js';
 import {
     getBlockDefinition,
-    blockExists
+    blockExists,
+    getBlockId,
+    getLightEmission,
+    getLightColor
 } from '../blocks/BlockRegistry.js';
+import { DynamicLight } from '../world/DynamicLight.js';
+import { Meteorites } from './Meteorites.js';
+import { createGlowSprite } from '../rendering/Glow.js';
 import { WorldSaver } from '../storage/WorldSaver.js';
 import { lightToBrightness, describeLight } from '../world/Light.js';
 import { WorldTime } from '../sky/WorldTime.js';
@@ -137,6 +143,30 @@ export class Game {
         this.sky = new Sky(this.scene);
 
         this.sky.update(this.time.days, 0, renderer.getPixelRatio());
+
+
+        // Dynamiczne światło (lampa w ręce, meteoryty, kule światła)
+        // i spadające meteoryty.
+
+        this.dynamicLight = new DynamicLight();
+
+        this.meteorites = new Meteorites(this);
+
+        // Światło lampy trzymanej w ręce (wybranej na pasku).
+
+        this.handLight = {
+            position: new THREE.Vector3(),
+            color: [1, 1, 1],
+            strength: 0
+        };
+
+        // Kule światła z komendy /demo kula.
+
+        this.orbs = [];
+
+        // Komunikaty dla gracza (main.js pokazuje je na czacie).
+
+        this.onMessage = null;
 
 
         this.camera = new THREE.PerspectiveCamera(
@@ -358,6 +388,15 @@ export class Game {
         this.updateFog(dt);
 
 
+        // Meteoryty, kule światła i dynamiczne światło.
+
+        this.meteorites.update(dt);
+
+        this.updateOrbs(dt);
+
+        this.updateDynamicLight();
+
+
         this.highlight.update(this.currentHit);
 
     }
@@ -378,6 +417,124 @@ export class Game {
         renderer.clearDepth();
 
         renderer.render(this.scene, this.camera);
+
+    }
+
+
+    // Zbiera źródła dynamicznego światła i przelicza je wokół gracza.
+    // Ustawienie "Dynamiczne światło" wyłącza je wszystkie.
+
+    updateDynamicLight() {
+
+        const sources = [];
+
+
+        if (this.settings.get('dynamicLight')) {
+
+            // Lampa w ręce: wybrany na pasku blok, który świeci.
+
+            const id = getBlockId(this.selectedBlock);
+
+            const strength = this.selectedBlock ? getLightEmission(id) : 0;
+
+            if (strength > 0) {
+
+                this.handLight.position.copy(this.camera.position);
+                this.handLight.color = getLightColor(id);
+                this.handLight.strength = strength;
+
+                sources.push(this.handLight);
+
+            }
+
+
+            sources.push(...this.meteorites.getLightSources());
+
+            for (const orb of this.orbs) {
+                sources.push(orb.light);
+            }
+
+        }
+
+
+        this.dynamicLight.update(this.world, this.camera.position, sources);
+
+    }
+
+
+    // --------------------------------------------------------
+    // KULE ŚWIATŁA (/demo kula) - krążą wokół miejsca, w którym
+    // powstały, i świecą dynamicznym światłem.
+    // --------------------------------------------------------
+
+    // color - [r, g, b] (0-1)
+
+    addOrb(color, seconds = 60) {
+
+        const center = this.player.pos.clone();
+
+        center.x += -Math.sin(this.player.yaw) * 5;
+        center.z += -Math.cos(this.player.yaw) * 5;
+        center.y += 1.5;
+
+
+        const sprite = createGlowSprite(new THREE.Color().setRGB(...color, THREE.SRGBColorSpace), 1.2);
+
+        this.scene.add(sprite);
+
+
+        this.orbs.push({
+            center,
+            angle: Math.random() * Math.PI * 2,
+            timeLeft: seconds,
+            sprite,
+            light: { position: center.clone(), color, strength: 14 }
+        });
+
+    }
+
+
+    updateOrbs(dt) {
+
+        for (const orb of this.orbs) {
+
+            orb.timeLeft -= dt;
+
+            orb.angle += dt * 0.8;
+
+            orb.light.position.set(
+                orb.center.x + Math.cos(orb.angle) * 4,
+                orb.center.y + Math.sin(orb.angle * 2) * 0.8,
+                orb.center.z + Math.sin(orb.angle) * 4
+            );
+
+            orb.sprite.position.copy(orb.light.position);
+
+        }
+
+
+        for (const orb of this.orbs.filter((orb) => orb.timeLeft <= 0)) {
+            this.removeOrb(orb);
+        }
+
+    }
+
+
+    removeOrb(orb) {
+
+        orb.sprite.removeFromParent();
+        orb.sprite.material.dispose();
+
+        this.orbs = this.orbs.filter((other) => other !== orb);
+
+    }
+
+
+    removeOrbs() {
+
+        for (const orb of [...this.orbs]) {
+            this.removeOrb(orb);
+        }
 
     }
 
@@ -549,6 +706,12 @@ export class Game {
         this.highlight.dispose();
 
         this.sky.dispose();
+
+        this.meteorites.dispose();
+
+        this.removeOrbs();
+
+        this.dynamicLight.dispose();
 
         return true;
 

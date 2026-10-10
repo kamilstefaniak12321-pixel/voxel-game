@@ -51,7 +51,9 @@ W menu (z ekranu tytułowego i z pauzy) można zmienić:
 - **pole widzenia** (50-110°),
 - **zasięg widzenia** (20-120 bloków - dalej teren znika we mgle),
 - **motyw menu**,
-- **informacje debugowania** (to samo co F3).
+- **informacje debugowania** (to samo co F3),
+- **dynamiczne światło** (lampa w ręce, meteoryty - można wyłączyć na
+  słabszym komputerze).
 
 Zmiany działają od razu, także w grze pod pauzą, i zapisują się
 w przeglądarce. Wartości domyślne są w `src/config.js`.
@@ -95,6 +97,11 @@ Do tego **gładkie przejścia** światła i **cienie w kątach** (ambient
 occlusion), a mgła w ciemnym tunelu ciemnieje razem z nim. Poziom
 światła w miejscu gracza widać w debugu (F3).
 
+**Dynamiczne światło:** świecący blok wybrany na pasku świeci w ręce
+(w swoim kolorze) i oświetla okolicę w czasie ruchu. Tak samo świeci
+lecący meteoryt i błysk jego uderzenia. To światło też nie przechodzi
+przez ściany. Wyłącza się je w ustawieniach.
+
 Ustawienia w `src/config.js` (sekcja OŚWIETLENIE): jak szybko ciemnieje
 półmrok (`LIGHT_CURVE`), jak jasno jest w zupełnej ciemności
 (`LIGHT_MIN_BRIGHTNESS`), domyślny kolor światła lamp (`BLOCK_LIGHT_COLOR`)
@@ -124,6 +131,9 @@ Komendy służą do sprawdzania nowości w grze, np.:
 /ksiezyc kolor krwawy      kolor księżyca (zabarwia światło nocą)
 /niebo zachod zielony      kolor łuny wschodu i zachodu
 /demo swiatlo              pokój z kolorowymi lampami
+/demo kula zielony         krążąca kula dynamicznego światła
+/meteor tu                 meteoryt spada tam, gdzie patrzysz
+/meteory deszcz wl         deszcz meteorów (/meteory pokaz - kilka od razu)
 /latanie                   latanie (Spacja w górę, Shift w dół)
 /tp 100 30 -50             teleport (~ = względem gracza)
 /daj lamp_blue             blok na pasek
@@ -145,9 +155,18 @@ w debugu (F3) widać godzinę, numer dnia i fazę księżyca, a klawisze
   na ścianach bloków zmieniają się w ciągu dnia razem ze słońcem.
 - **Księżyc** ma własny cykl (`MOON_CYCLE_DAYS`, domyślnie 8 dni) i fazy
   jak prawdziwy: w pełni świeci całą noc, kwadry - pół nocy i pół dnia,
-  sierp widać w dzień blisko słońca. Im bliżej pełni, tym jaśniejsza noc.
+  sierp widać w dzień blisko słońca.
+- **Noc zależy od księżyca:** w pełni jest na tyle jasno, że dobrze
+  widać okolicę, ale w srebrnych, księżycowych barwach. W nowiu jest
+  ciemno, za to na niebie widać dużo więcej gwiazd, Drogę Mleczną
+  i odległe galaktyki.
 - **Gwiazdy** wychodzą o zmierzchu, migoczą i obracają się razem
   z niebem.
+- **Spadające gwiazdy** - najwięcej w ciemne noce; mniej więcej co
+  siódma noc to deszcz meteorów.
+- **Meteoryty** - co kilka nocy (`METEORITES_PER_NIGHT`) w pobliżu spada
+  kula ognia, robi krater i zostawia żarzący się blok meteorytu (na
+  czacie pojawia się, gdzie). Nie spada w chunki, które zmieniałeś.
 - **Mgła** ma zawsze kolor nieba za terenem, także o zachodzie.
 
 Kolory nieba i światła o każdej porze dnia są w `src/sky/SkyColors.js`

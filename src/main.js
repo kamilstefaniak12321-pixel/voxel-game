@@ -205,6 +205,10 @@ async function playWorld(worldInfo) {
 
         game = await Game.start(renderer, input, storage, worldInfo, settings);
 
+        // Komunikaty gry (np. gdzie spadł meteoryt) trafiają na czat.
+
+        game.onMessage = (text) => chat.print(text, 'hint');
+
     }
 
     catch (error) {

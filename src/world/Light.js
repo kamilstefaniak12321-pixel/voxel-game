@@ -127,6 +127,10 @@ for (let v = 1; v <= COLOR_MAX; v++) {
 
 const { decay: COLOR_DECAY, chain: COLOR_CHAIN } = buildColorDecay();
 
+// (Zanik kolorowego światła przydaje się też dynamicznemu światłu.)
+
+export { COLOR_DECAY };
+
 const DECAY = [SKY_DECAY, COLOR_DECAY, COLOR_DECAY, COLOR_DECAY];
 
 
@@ -159,6 +163,34 @@ for (let v = 0; v <= COLOR_MAX; v++) {
 }
 
 
+// Wartości kanałów R, G, B źródła światła o sile `strength` (0-15)
+// i kolorze `color` ([r, g, b], 0-1). Najjaśniejszy kanał ma wartość,
+// którą światło ma po (15 - strength) blokach od najmocniejszej lampy,
+// więc zasięg zgadza się z siłą.
+
+export function colorEmission(strength, color) {
+
+    const level = Math.max(0, Math.min(MAX_LIGHT, Math.round(strength)));
+
+    if (level === 0) {
+        return [0, 0, 0];
+    }
+
+    const top = COLOR_CHAIN[MAX_LIGHT - level];
+
+    const brightest = Math.max(color[0], color[1], color[2], 0.0001);
+
+    return color.map((component) => {
+
+        const value = Math.round(top * component / brightest);
+
+        return value >= COLOR_CHAIN[MAX_LIGHT - 1] ? value : 0;
+
+    });
+
+}
+
+
 // Ile światła daje świecący blok w każdym kanale:
 // EMISSION[kanał][id] (dla SKY zawsze 0).
 
@@ -179,23 +211,10 @@ for (let id = 1; id <= MAX_BLOCK_ID; id++) {
     }
 
 
-    // Najjaśniejszy kanał: wartość, którą światło ma po
-    // (15 - strength) blokach od najmocniejszej lampy.
-
-    const top = COLOR_CHAIN[MAX_LIGHT - strength];
-
-    const color = getLightColor(id);
-
-    const brightest = Math.max(...color, 0.0001);
-
+    const values = colorEmission(strength, getLightColor(id));
 
     for (let c = 0; c < 3; c++) {
-
-        const value = Math.round(top * color[c] / brightest);
-
-        EMISSION[COLOR_CHANNELS[c]][id] =
-            value >= COLOR_CHAIN[MAX_LIGHT - 1] ? value : 0;
-
+        EMISSION[COLOR_CHANNELS[c]][id] = values[c];
     }
 
     EMITS[id] = 1;

@@ -8,6 +8,8 @@ import { SkyDome } from './layers/SkyDome.js';
 import { Moon } from './layers/Moon.js';
 import { Sun } from './layers/Sun.js';
 import { Stars } from './layers/Stars.js';
+import { Galaxies } from './layers/Galaxies.js';
+import { ShootingStars } from './layers/ShootingStars.js';
 
 // ------------------------------------------------------------
 // NIEBO
@@ -35,6 +37,25 @@ import { Stars } from './layers/Stars.js';
 // nieba 0-15, a jego jasność i kolor zmienia się tutaj.
 // ------------------------------------------------------------
 
+// Czy tej nocy jest deszcz meteorów - mniej więcej co siódma noc,
+// zawsze te same noce (liczone z numeru nocy, nie losowane).
+// Noc trwa od południa do południa, więc cała ma jeden numer.
+
+export function isMeteorShowerNight(days) {
+
+    const night = Math.floor(days + 0.5);
+
+    if (night < 2) {
+        return false;
+    }
+
+    const hash = Math.imul(night, 2654435761) >>> 0;
+
+    return (hash >>> 8) % 7 === 3;
+
+}
+
+
 export class Sky {
 
     // worldScene - scena świata, do której trafiają światła
@@ -51,12 +72,15 @@ export class Sky {
         // wariant zabarwia też świat. Teraz ustawiają go komendy
         // (/niebo, /ksiezyc); w przyszłości np. losowy wariant zachodu
         // na każdy dzień albo krwawy księżyc.
-        //   sunsetColor - kolor łuny wschodu/zachodu (THREE.Color albo null)
-        //   moonColor   - kolor księżyca (THREE.Color albo null)
+        //   sunsetColor  - kolor łuny wschodu/zachodu (THREE.Color albo null)
+        //   moonColor    - kolor księżyca (THREE.Color albo null)
+        //   meteorShower - deszcz meteorów: null = sam wybiera noce
+        //                  (isMeteorShowerNight), true/false = wymuszony
 
         this.variant = {
             sunsetColor: null,
-            moonColor: null
+            moonColor: null,
+            meteorShower: null
         };
 
 
@@ -65,11 +89,15 @@ export class Sky {
         this.camera = new THREE.PerspectiveCamera(75, 1, 0.5, 1000);
 
 
+        this.shootingStars = new ShootingStars();
+
         this.layers = [
             new SkyDome(),
             new Moon(),
             new Sun(),
-            new Stars()
+            new Galaxies(),
+            new Stars(),
+            this.shootingStars
         ];
 
         for (const layer of this.layers) {
@@ -88,6 +116,22 @@ export class Sky {
     }
 
 
+    // Przelicza tylko położenie ciał niebieskich i stan nieba
+    // (bez warstw i świateł) - np. dla komend, które zmieniły czas
+    // i od razu chcą podać, jak wygląda niebo.
+
+    refresh(days) {
+
+        this.celestial.update(days);
+
+        this.state.meteorShower =
+            this.variant.meteorShower ?? isMeteorShowerNight(days);
+
+        this.state.update(this.celestial, this.variant);
+
+    }
+
+
     // days       - czas świata (WorldTime.days)
     // dt         - czas klatki w sekundach (migotanie gwiazd itp.)
     // pixelRatio - gęstość pikseli ekranu (rozmiar gwiazd)
@@ -97,9 +141,7 @@ export class Sky {
         const celestial = this.celestial;
         const state = this.state;
 
-        celestial.update(days);
-
-        state.update(celestial, this.variant);
+        this.refresh(days);
 
 
         // Wspólne wartości dla kopuły i mgły na blokach.
@@ -111,6 +153,8 @@ export class Sky {
         skyUniforms.uSunset.value = state.sunset;
         skyUniforms.uSunDirection.value.copy(celestial.sunDirection);
         skyUniforms.uSunHalo.value.copy(state.sunHalo);
+        skyUniforms.uNightDesaturation.value = state.nightDesaturation;
+        skyUniforms.uNightTint.value.copy(state.nightTint);
 
 
         // Światła świata.

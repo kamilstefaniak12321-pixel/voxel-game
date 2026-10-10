@@ -391,6 +391,8 @@ export const GAME_COMMANDS = [
 
             if (!action) {
 
+                sky.refresh(time.days);
+
                 return `Księżyc: ${celestial.moonPhaseName}, ` +
                     `oświetlony w ${Math.round(celestial.moonIllumination * 100)}%, ` +
                     `${celestial.moonHeight > 0 ? 'nad horyzontem' : 'pod horyzontem'}, ` +
@@ -484,20 +486,25 @@ export const GAME_COMMANDS = [
         usage: '/niebo | /niebo zachod <czerwony | #rrggbb | domyslny>',
         description: 'Wygląd nieba: kolor łuny wschodu i zachodu (zabarwia też światło).',
 
-        run(args, { sky }) {
+        run(args, { sky, time }) {
 
             const [action, value] = args;
 
 
             if (!action) {
 
+                sky.refresh(time.days);
+
                 const state = sky.state;
                 const height = Math.asin(Math.max(-1, Math.min(1, sky.celestial.sunHeight))) * 180 / Math.PI;
 
                 return `Słońce: ${height.toFixed(0)}° nad horyzontem | ` +
                     `łuna zachodu: ${Math.round(state.sunset * 100)}% | ` +
-                    `kolor łuny: ${colorName(sky.variant.sunsetColor)} | ` +
-                    `gwiazdy: ${Math.round(state.starVisibility * 100)}%`;
+                    `kolor łuny: ${colorName(sky.variant.sunsetColor)}\n` +
+                    `Gwiazdy: widać ${Math.round(state.starVisibility * (1 - state.starLimit) * 100)}% | ` +
+                    `Droga Mleczna: ${Math.round(state.galaxyVisibility * 100)}% | ` +
+                    `spadające gwiazdy: ${state.meteorsPerMinute.toFixed(1)}/min` +
+                    `${state.meteorShower ? ' (deszcz meteorów!)' : ''}`;
 
             }
 
@@ -522,6 +529,141 @@ export const GAME_COMMANDS = [
 
             return [];
 
+        }
+    },
+
+    {
+        name: 'meteory',
+        aliases: ['meteors'],
+        usage: '/meteory | /meteory deszcz <wl | wyl | auto> | /meteory pokaz [ile]',
+        description: 'Spadające gwiazdy na niebie: częstość, deszcz meteorów, pokaz.',
+
+        run(args, { sky, time }) {
+
+            const [action, value] = args;
+
+
+            if (!action) {
+
+                sky.refresh(time.days);
+
+                const state = sky.state;
+
+                const shower =
+                    sky.variant.meteorShower === null
+                        ? (state.meteorShower ? 'tak (ta noc)' : 'nie')
+                        : (sky.variant.meteorShower ? 'tak (wymuszony)' : 'nie (wyłączony)');
+
+                return `Spadające gwiazdy: ${state.meteorsPerMinute.toFixed(1)} na minutę ` +
+                    '(najwięcej w ciemne noce przy nowiu, w dzień wcale) | ' +
+                    `deszcz meteorów: ${shower}`;
+
+            }
+
+
+            switch (simplify(action)) {
+
+                case 'deszcz':
+                case 'shower': {
+
+                    const mode = simplify(value ?? '');
+
+                    if (['wl', 'on', 'tak'].includes(mode)) sky.variant.meteorShower = true;
+                    else if (['wyl', 'off', 'nie'].includes(mode)) sky.variant.meteorShower = false;
+                    else if (mode === 'auto') sky.variant.meteorShower = null;
+                    else throw usageError(this);
+
+                    return mode === 'auto'
+                        ? 'Deszcz meteorów: sam wybiera noce (mniej więcej co siódma).'
+                        : `Deszcz meteorów: ${sky.variant.meteorShower ? 'włączony' : 'wyłączony'}. Widać go w nocy.`;
+
+                }
+
+                case 'pokaz':
+                case 'show': {
+
+                    const count = value === undefined ? 8 : parseNumber(value, 'liczba');
+
+                    if (count < 1 || count > 30) {
+                        throw new CommandError('Ile: od 1 do 30');
+                    }
+
+                    sky.shootingStars.burst = Math.floor(count);
+
+                    return `${Math.floor(count)} spadających gwiazd (widać je w nocy).`;
+
+                }
+
+                default:
+                    throw usageError(this);
+
+            }
+
+        },
+
+        complete(args) {
+
+            if (args.length === 1) return ['deszcz', 'pokaz'];
+            if (args.length === 2 && simplify(args[0]) === 'deszcz') return ['wl', 'wyl', 'auto'];
+
+            return [];
+
+        }
+    },
+
+
+    {
+        name: 'meteor',
+        aliases: ['meteorite'],
+        usage: '/meteor | /meteor tu',
+        description: 'Zrzuca meteoryt w pobliżu (albo "tu" - tam, gdzie patrzysz).',
+
+        run(args, { game, player, world }) {
+
+            let landing = null;
+
+
+            if (simplify(args[0] ?? '') === 'tu') {
+
+                const hit = game.currentHit;
+
+                let x, z;
+
+                if (hit && hit.hit) {
+                    x = hit.block.x;
+                    z = hit.block.z;
+                }
+                else {
+                    x = Math.floor(player.pos.x - Math.sin(player.yaw) * 15);
+                    z = Math.floor(player.pos.z - Math.cos(player.yaw) * 15);
+                }
+
+                world.ensureColumnLoaded(x, z);
+
+                landing = new THREE.Vector3(x, world.getSurfaceY(x, z), z);
+
+            }
+            else if (args[0] !== undefined) {
+
+                throw usageError(this);
+
+            }
+
+
+            const meteor = game.meteorites.spawn(landing);
+
+            if (!meteor) {
+                throw new CommandError('Brak miejsca: w pobliżu są tylko chunki zmienione przez gracza. Spróbuj /meteor tu');
+            }
+
+            const { x, z } = meteor.landing;
+
+            return `Meteoryt leci! Spadnie na ${x}, ${z} za ~3 sekundy.`;
+
+        },
+
+        complete(args) {
+            return args.length === 1 ? ['tu'] : [];
         }
     },
 
@@ -767,10 +909,29 @@ export const GAME_COMMANDS = [
     {
         name: 'swiatlo',
         aliases: ['light'],
-        usage: '/swiatlo',
-        description: 'Światło przy głowie gracza i przy wskazanym bloku.',
+        usage: '/swiatlo | /swiatlo dynamiczne <wl | wyl>',
+        description: 'Światło przy głowie i wskazanym bloku; włączanie dynamicznego światła.',
 
         run(args, { game, world }) {
+
+            if (args[0] !== undefined) {
+
+                if (simplify(args[0]) !== 'dynamiczne') {
+                    throw usageError(this);
+                }
+
+                const mode = simplify(args[1] ?? '');
+
+                const on =
+                    ['wl', 'on', 'tak'].includes(mode) ? true :
+                    ['wyl', 'off', 'nie'].includes(mode) ? false :
+                    !game.settings.get('dynamicLight');
+
+                game.settings.set('dynamicLight', on);
+
+                return `Dynamiczne światło (lampa w ręce, meteoryty, kule): ${on ? 'włączone' : 'wyłączone'}.`;
+
+            }
 
             const camera = game.camera.position;
 
@@ -800,21 +961,58 @@ export const GAME_COMMANDS = [
     {
         name: 'demo',
         aliases: [],
-        usage: '/demo swiatlo',
-        description: 'Buduje scenę do sprawdzenia nowości (np. pokój z kolorowymi lampami).',
+        usage: '/demo swiatlo | /demo kula [kolor | usun]',
+        description: 'Sceny do sprawdzania nowości: pokój z kolorowymi lampami, krążąca kula dynamicznego światła.',
 
         run(args, ctx) {
 
-            if (simplify(args[0] ?? '') !== 'swiatlo') {
-                throw usageError(this);
+            const what = simplify(args[0] ?? '');
+
+
+            if (what === 'swiatlo') {
+                return buildLightDemo(ctx);
             }
 
-            return buildLightDemo(ctx);
+
+            if (what === 'kula') {
+
+                if (simplify(args[1] ?? '') === 'usun') {
+
+                    ctx.game.removeOrbs();
+
+                    return 'Usunięto kule światła.';
+
+                }
+
+                const color = args[1] === undefined ? new THREE.Color('#9fd0ff') : parseColor(args[1]);
+
+                if (!color) {
+                    throw new CommandError('Podaj kolor kuli, np. /demo kula zielony');
+                }
+
+                const srgb = {};
+
+                color.getRGB(srgb, THREE.SRGBColorSpace);
+
+                ctx.game.addOrb([srgb.r, srgb.g, srgb.b]);
+
+                return 'Kula światła krąży przed tobą przez minutę (światło nie przechodzi przez ściany). ' +
+                    (ctx.game.settings.get('dynamicLight') ? '' : 'Uwaga: dynamiczne światło jest wyłączone (/swiatlo dynamiczne wl).');
+
+            }
+
+
+            throw usageError(this);
 
         },
 
         complete(args) {
-            return args.length === 1 ? ['swiatlo'] : [];
+
+            if (args.length === 1) return ['swiatlo', 'kula'];
+            if (args.length === 2 && simplify(args[0]) === 'kula') return [...Object.keys(COLOR_NAMES), 'usun'];
+
+            return [];
+
         }
     }
 

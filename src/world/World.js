@@ -99,6 +99,12 @@ export class World {
 
         this.unsavedChunks = new Set();
 
+
+        // Rośnie przy każdej zmianie bloku - po tym np. dynamiczne
+        // światło poznaje, że musi od nowa sprawdzić, gdzie są ściany.
+
+        this.version = 0;
+
         // Generator terenu dla tego świata.
 
         this.generator =
@@ -425,6 +431,8 @@ export class World {
         chunk.modified = true;
 
         this.unsavedChunks.add(chunk);
+
+        this.version++;
 
 
         // Światło wokół zmienionego bloku liczy się od nowa.

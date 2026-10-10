@@ -33,13 +33,16 @@ export class WorldSaver {
     // storage   - WorldStorage albo null (zapis niedostępny)
     // worldInfo - dane świata (nazwa, seed, id...)
 
-    constructor(storage, worldInfo, world, player) {
+    // time      - czas świata (WorldTime) albo null
+
+    constructor(storage, worldInfo, world, player, time = null) {
 
         this.storage = storage;
         this.worldInfo = worldInfo;
 
         this.world = world;
         this.player = player;
+        this.time = time;
 
 
         // Czas od ostatniego zapisu i od pierwszej niezapisanej zmiany.
@@ -145,6 +148,10 @@ export class WorldSaver {
 
         this.worldInfo.player = this.player.getState();
         this.worldInfo.lastPlayed = Date.now();
+
+        if (this.time) {
+            this.worldInfo.time = this.time.getState();
+        }
 
 
         try {

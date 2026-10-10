@@ -27,6 +27,7 @@ Do działania potrzebny jest internet (three.js pobierany z unpkg).
 | Środkowy przycisk myszy | weź blok, na który patrzysz, na pasek |
 | ESC | pauza (wróć do gry, ustawienia, zapisz i wyjdź do menu) |
 | F3 | informacje debugowania w lewym górnym rogu |
+| [ / ] (z F3) | cofnij / przesuń czas o godzinę |
 
 ## Pasek bloków
 
@@ -83,6 +84,9 @@ nie da się policzyć światła i cieni na jego krawędziach).
   słabnie o 1 z każdym blokiem. W dzień pod gołym niebem lampy niczego
   nie rozjaśniają (liczy się jaśniejsze z dwóch świateł).
 
+Jak jasne jest światło nieba, zależy od pory dnia (patrz niżej) -
+w nocy świat ciemnieje, a lampy świecą tak samo jak w dzień.
+
 Do tego **gładkie przejścia** światła i **cienie w kątach** (ambient
 occlusion), a mgła w ciemnym tunelu ciemnieje razem z nim. Poziom
 światła w miejscu gracza widać w debugu (F3).
@@ -94,6 +98,31 @@ i siła cieni w kątach (`AMBIENT_OCCLUSION`).
 
 Światło nie jest zapisywane - po wczytaniu świata liczy się od nowa
 (`src/world/Light.js`).
+
+## Dzień i noc
+
+Doba w grze trwa 20 minut (`DAY_LENGTH_MINUTES` w `src/config.js`),
+nowy świat zaczyna się rano. Czas zapisuje się razem ze światem;
+w debugu (F3) widać godzinę, numer dnia i fazę księżyca, a klawisze
+`[` i `]` przestawiają zegar o godzinę.
+
+- **Słońce** wschodzi o 6:00 na wschodzie i zachodzi o 18:00 na
+  zachodzie, w południe świeci z południowej strony nieba. Przy
+  wschodzie i zachodzie niebo robi się pomarańczowo-różowe, a cienie
+  na ścianach bloków zmieniają się w ciągu dnia razem ze słońcem.
+- **Księżyc** ma własny cykl (`MOON_CYCLE_DAYS`, domyślnie 8 dni) i fazy
+  jak prawdziwy: w pełni świeci całą noc, kwadry - pół nocy i pół dnia,
+  sierp widać w dzień blisko słońca. Im bliżej pełni, tym jaśniejsza noc.
+- **Gwiazdy** wychodzą o zmierzchu, migoczą i obracają się razem
+  z niebem.
+- **Mgła** ma zawsze kolor nieba za terenem, także o zachodzie.
+
+Kolory nieba i światła o każdej porze dnia są w `src/sky/SkyColors.js`
+(jedna tabela), tekstura księżyca w `assets/textures/sky/moon.png`
+(32x32, poza tarczą przezroczysta).
+
+Jak jest zbudowane niebo i jak dokładać kolejne rzeczy (kolorowe
+i dynamiczne światło, meteoryty, chmury...) - `docs/niebo-i-swiatlo.md`.
 
 ## Zapis świata
 
@@ -136,16 +165,19 @@ Inne rzeczy do zmiany:
 ```
 index.html                  strona gry
 assets/textures/blocks/     tekstury bloków (terrain.png = atlas)
+assets/textures/sky/        tekstury nieba (księżyc)
 assets/ui/themes/           motywy menu (kolory, czcionka, tło)
 assets/fonts/               czcionki
+docs/                       opisy, jak działają większe części gry
 src/
   main.js                   start aplikacji, menu, pauza, pętla
-  config.js                 ustawienia: chunki, teren, światło, gracz, menu
+  config.js                 ustawienia: chunki, teren, światło, dzień i noc, gracz, menu
   game/                     jeden uruchomiony świat (Game)
   ui/                       ekrany menu, pasek bloków, ikonki, napisy
   settings/                 ustawienia gracza (zapis w przeglądarce)
   blocks/                   lista bloków (BlockRegistry)
   world/                    świat, chunki, szum, generator terenu, światło
+  sky/                      czas, słońce, księżyc, gwiazdy, kolory nieba
   storage/                  zapis i wczytywanie światów
   rendering/                atlas tekstur, budowanie meshy chunków
   player/                   ruch i kolizje gracza

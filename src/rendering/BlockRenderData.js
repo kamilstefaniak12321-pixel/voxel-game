@@ -12,6 +12,12 @@ import {
     getAtlasUV
 } from './TextureAtlas.js';
 
+
+import {
+    skyUniforms,
+    SKY_COLOR_GLSL
+} from '../sky/skyShader.js';
+
 // ------------------------------------------------------------
 // Jeden wspólny materiał dla wszystkich bloków (atlas tekstur).
 //
@@ -65,6 +71,10 @@ blockMaterial.onBeforeCompile = (shader, renderer) => {
 
 
     // Światło lamp: na końcu, jaśniejsze z dwóch świateł.
+    //
+    // (Tu kiedyś dojdzie światło dynamiczne - np. lampa trzymana
+    // w ręce - liczone w shaderze z listy świateł, bez przebudowy
+    // chunków. Patrz docs/niebo-i-swiatlo.md.)
 
     shader.fragmentShader =
         shader.fragmentShader.replace(
@@ -74,6 +84,47 @@ blockMaterial.onBeforeCompile = (shader, renderer) => {
             #endif
             #include <opaque_fragment>`
         );
+
+
+    // Mgła w kolorze nieba w kierunku, w którym patrzymy na blok
+    // (ta sama funkcja co kopuła nieba), więc daleki teren znika
+    // dokładnie w kolorze nieba za nim. W tunelu mgła ciemnieje
+    // (uFogBrightness).
+
+    Object.assign(shader.uniforms, skyUniforms);
+
+    shader.vertexShader =
+        shader.vertexShader
+            .replace(
+                '#include <common>',
+                `#include <common>
+                varying vec3 vSkyDirection;`
+            )
+            .replace(
+                '#include <fog_vertex>',
+                `#include <fog_vertex>
+                vSkyDirection = (modelMatrix * vec4(transformed, 1.0)).xyz - cameraPosition;`
+            );
+
+    shader.fragmentShader =
+        shader.fragmentShader
+            .replace(
+                '#include <common>',
+                `#include <common>
+                varying vec3 vSkyDirection;
+                uniform float uFogBrightness;
+                ${SKY_COLOR_GLSL}`
+            )
+            .replace(
+                '#include <fog_fragment>',
+                `#ifdef USE_FOG
+                    float fogFactor = smoothstep(fogNear, fogFar, vFogDepth);
+                    if (fogFactor > 0.0) {
+                        vec3 fogSky = skyColor(normalize(vSkyDirection)) * uFogBrightness;
+                        gl_FragColor.rgb = mix(gl_FragColor.rgb, linearToOutputTexel(vec4(fogSky, 1.0)).rgb, fogFactor);
+                    }
+                #endif`
+            );
 
 
     if (!renderer.capabilities.isWebGL2) {

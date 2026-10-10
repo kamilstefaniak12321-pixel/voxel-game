@@ -84,6 +84,33 @@ export const BLOCK_LIGHT_COLOR = 0xffd7a0;
 export const AMBIENT_OCCLUSION = 0.45;
 
 // ------------------------------------------------------------
+// DZIEŃ I NOC
+// ------------------------------------------------------------
+
+// Ile minut (prawdziwych) trwa cała doba w grze - dzień i noc.
+// W Minecrafcie 20.
+export const DAY_LENGTH_MINUTES = 20;
+
+// O której godzinie zaczyna się nowy świat:
+// 0 = północ, 0.25 = 6:00, 0.5 = południe, 0.75 = 18:00.
+export const START_TIME_OF_DAY = 0.3;
+
+// Jak nisko po niebie chodzi słońce (w stopniach). 0 = w południe
+// dokładnie nad głową; więcej = niżej, po południowej stronie nieba
+// (dłuższe cienie, ładniejsze cieniowanie ścian).
+export const SUN_PATH_TILT = 35;
+
+// Po ilu dniach księżyc wraca do tej samej fazy (np. pełnia -> pełnia).
+// Każdego dnia wschodzi o (24 / MOON_CYCLE_DAYS) godzin później,
+// więc raz świeci w nocy, a raz w dzień.
+export const MOON_CYCLE_DAYS = 8;
+
+// Ile gwiazd jest na niebie.
+export const STAR_COUNT = 1600;
+
+// Kolory nieba o różnych porach dnia są w src/sky/SkyColors.js.
+
+// ------------------------------------------------------------
 // GRACZ
 // ------------------------------------------------------------
 

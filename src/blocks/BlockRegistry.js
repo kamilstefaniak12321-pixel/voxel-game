@@ -1,3 +1,7 @@
+import {
+    BLOCK_LIGHT_COLOR
+} from '../config.js';
+
 // ID 0 jest zarezerwowane dla powietrza.
 // Chunk przechowuje bloki jako liczby, więc pusta tablica = samo powietrze.
 
@@ -20,7 +24,10 @@ export const MAX_BLOCK_ID = 255;
 //   randomRotation - lista ścian, których tekstura ma być losowo
 //                    obracana o 0/90/180/270 stopni (opcjonalne)
 //   light          - jak mocno blok świeci: 0-15 (opcjonalne,
-//                    domyślnie 0; 15 = najjaśniej, jak lampa)
+//                    domyślnie 0; 15 = najjaśniej, jak lampa).
+//                    Tyle bloków mniej więcej sięga jego światło.
+//   lightColor     - kolor światła, np. '#ff3020' (opcjonalne,
+//                    domyślnie BLOCK_LIGHT_COLOR z config.js)
 
 export const BLOCK_TYPES = {
 
@@ -99,6 +106,77 @@ export const BLOCK_TYPES = {
             all: 'lepidolite'
         }
 
+    },
+
+
+    // Kolorowe lampy. Światła różnych kolorów mieszają się ze sobą
+    // (czerwona + niebieska = fioletowe światło między nimi).
+
+    lamp_red: {
+
+        id: 6,
+        name: 'Red Lamp',
+
+        solid: true,
+
+        light: 15,
+        lightColor: '#ff3a2a',
+
+        textures: {
+            all: 'lamp_red'
+        }
+
+    },
+
+
+    lamp_green: {
+
+        id: 7,
+        name: 'Green Lamp',
+
+        solid: true,
+
+        light: 15,
+        lightColor: '#4cff5a',
+
+        textures: {
+            all: 'lamp_green'
+        }
+
+    },
+
+
+    lamp_blue: {
+
+        id: 8,
+        name: 'Blue Lamp',
+
+        solid: true,
+
+        light: 15,
+        lightColor: '#3a6bff',
+
+        textures: {
+            all: 'lamp_blue'
+        }
+
+    },
+
+
+    lamp_purple: {
+
+        id: 9,
+        name: 'Purple Lamp',
+
+        solid: true,
+
+        light: 15,
+        lightColor: '#b45cff',
+
+        textures: {
+            all: 'lamp_purple'
+        }
+
     }
 
 };
@@ -114,6 +192,32 @@ const typeById = new Array(MAX_BLOCK_ID + 1).fill(null);
 const solidById = new Uint8Array(MAX_BLOCK_ID + 1);
 const opaqueById = new Uint8Array(MAX_BLOCK_ID + 1);
 const lightById = new Uint8Array(MAX_BLOCK_ID + 1);
+
+// Kolor światła: [czerwony, zielony, niebieski], każdy 0-1.
+
+const lightColorById = new Array(MAX_BLOCK_ID + 1).fill(null);
+
+
+// '#ff8040' albo 0xff8040 -> [1, 0.5, 0.25]
+
+function parseColor(value, blockType) {
+
+    const number =
+        typeof value === 'number'
+            ? value
+            : parseInt(String(value).replace('#', ''), 16);
+
+    if (!Number.isFinite(number) || number < 0 || number > 0xffffff) {
+        throw new Error(`Blok "${blockType}": nieprawidłowy lightColor: ${value}`);
+    }
+
+    return [
+        ((number >> 16) & 255) / 255,
+        ((number >> 8) & 255) / 255,
+        (number & 255) / 255
+    ];
+
+}
 
 
 for (const [type, definition] of Object.entries(BLOCK_TYPES)) {
@@ -153,6 +257,9 @@ for (const [type, definition] of Object.entries(BLOCK_TYPES)) {
 
     lightById[id] =
         Math.max(0, Math.min(15, Math.floor(definition.light ?? 0)));
+
+    lightColorById[id] =
+        parseColor(definition.lightColor ?? BLOCK_LIGHT_COLOR, type);
 
 }
 
@@ -205,6 +312,15 @@ export function isSolidId(id) {
 export function isOpaqueId(id) {
 
     return opaqueById[id] === 1;
+
+}
+
+
+// Kolor światła bloku: [czerwony, zielony, niebieski], każdy 0-1.
+
+export function getLightColor(id) {
+
+    return lightColorById[id] ?? [1, 1, 1];
 
 }
 

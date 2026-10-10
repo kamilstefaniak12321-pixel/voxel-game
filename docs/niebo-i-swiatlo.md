@@ -76,18 +76,34 @@ Każda zmiana wyglądu nieba w `skyColor` automatycznie zmienia mgłę.
 
 ## Plan rozwoju
 
-### Kolorowe światło (np. czerwona lub niebieska lampa)
+### Kolorowe światło - ZROBIONE
 
-1. `BlockRegistry.js`: nowe pole bloku, np. `lightColor: '#ff4020'`.
-2. `Light.js`: zamiast jednego kanału `blockLight` trzy (`lightR`,
-   `lightG`, `lightB`), każdy rozlewany tym samym kodem co dziś (funkcje
-   `spread` / `remove` dostają kanał zamiast `isSky`). Lampa czerwona
-   świeci np. R=15, G=4, B=2; światła różnych lamp mieszają się same.
-3. `ChunkMesher.js`: do r, g, b zapisuje trzy kanały zamiast
-   „jasność × `BLOCK_LIGHT_COLOR`”.
-4. Shader **nie zmienia się** - atrybut koloru już ma r, g, b.
+- `BlockRegistry.js`: pole bloku `lightColor` (np. `'#ff3a2a'`) obok `light`.
+- `Light.js`: kanały nieba (0-15) i `RED`, `GREEN`, `BLUE` (0-255), każdy
+  rozlewany tym samym kodem. Kolorowe światło traci 25% na blok (a nie
+  stałą wartość), więc proporcje kanałów - kolor - zostają do końca
+  zasięgu; zasięg dalej zgadza się z siłą `light` (15 = 14 bloków).
+- `ChunkMesher.js`: jasność z poziomu najmocniejszego kanału, kolor
+  z proporcji kanałów.
+- Sprawdzanie: `/demo swiatlo`, `/swiatlo`.
 
-Koszt: +32 KB pamięci na chunk.
+### Barwa światła z nieba - ZROBIONE
+
+Kolory światła na blokach nie są nigdzie wpisane na sztywno -
+`SkyColors.js` liczy je z kolorów nieba:
+
+- światło otoczenia - z odcienia całego nieba (w dzień lekko, w nocy
+  mocniej),
+- światło słońca - z koloru tarczy słońca,
+- światło księżyca - niebieskawe, zabarwione kolorem księżyca.
+
+**Warianty nieba** (`Sky.variant`): `sunsetColor` (kolor łuny wschodu
+i zachodu) i `moonColor` (kolor księżyca). Dziś ustawiają je komendy
+`/niebo zachod` i `/ksiezyc kolor`; w przyszłości np. losowy wariant
+zachodu na każdy dzień (z seedu świata, żeby był zawsze taki sam) albo
+krwawy księżyc co kilka pełni. Światło dostosuje się samo. Kolejne
+rzeczy do zmiany (np. kolor zenitu, kolor gwiazd) warto dodawać jako
+kolejne pola wariantu, liczone w `SkyState.update`.
 
 ### Dynamiczne światło (lampa w ręce, płonąca strzała, meteoryt)
 
@@ -157,4 +173,7 @@ w scenie świata; kolor z `SkyState` (różowe o zachodzie, szare nocą).
 | wygląd gradientu, łuny zachodu, poświaty słońca | `src/sky/skyShader.js` |
 | rozmiar i wygląd słońca / księżyca | `src/sky/layers/Sun.js`, `Moon.js` |
 | teksturę księżyca | `assets/textures/sky/moon.png` |
-| jak światło słabnie z odległością, kolor lamp, cienie w kątach | `src/config.js` (OŚWIETLENIE) |
+| jak światło słabnie z odległością, domyślny kolor lamp, cienie w kątach | `src/config.js` (OŚWIETLENIE) |
+| kolor i siłę światła konkretnego bloku | `src/blocks/BlockRegistry.js` (`light`, `lightColor`) |
+| jak mocno niebo i księżyc barwią światło | `src/sky/SkyColors.js` (`AMBIENT_TINT_...`, `SUN_TINT`, `MOON_TINT`) |
+| komendy do sprawdzania | `src/commands/gameCommands.js`, opis: `docs/komendy.md` |

@@ -25,7 +25,6 @@ const DISTANCE = 90;
 
 const EARTHSHINE = 0.04;
 
-const MOON_COLOR = new THREE.Color('#f2f2ff');
 
 
 const _axisX = new THREE.Vector3();
@@ -52,7 +51,7 @@ export class Moon {
                 uMap: { value: texture },
                 uTextureSize: { value: 32 },
                 uLight: { value: new THREE.Vector3() },
-                uColor: { value: MOON_COLOR.clone() },
+                uColor: { value: new THREE.Color() },
                 uBrightness: { value: 1 },
                 uEarthshine: { value: EARTHSHINE }
             },
@@ -157,6 +156,10 @@ export class Moon {
 
 
         this.material.uniforms.uBrightness.value = state.moonBrightness;
+
+        // Kolor księżyca (SkyColors.js, może go zmienić wariant nieba).
+
+        this.material.uniforms.uColor.value.copy(state.moonColor);
 
         this.material.uniforms.uEarthshine.value = EARTHSHINE * (1 - state.daylight);
 

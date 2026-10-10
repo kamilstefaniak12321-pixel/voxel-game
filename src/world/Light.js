@@ -6,41 +6,67 @@ import {
 } from '../config.js';
 
 import {
+    MAX_BLOCK_ID,
     isOpaqueId,
-    getLightEmission
+    getLightEmission,
+    getLightColor
 } from '../blocks/BlockRegistry.js';
 
 // ------------------------------------------------------------
 // ŚWIATŁO
 //
-// Każda komórka świata ma dwa poziomy światła, od 0 (ciemno)
-// do 15 (najjaśniej):
+// Każda komórka świata ma cztery wartości światła ("kanały"):
 //
-//   światło nieba - 15 wszędzie, skąd widać niebo. Pod gołym
-//                   niebem świeci w dół bez osłabienia, a w bok
-//                   (np. pod nawis albo do jaskini) słabnie o 1
-//                   z każdym blokiem.
+//   SKY   - światło nieba, poziom 0-15. 15 wszędzie, skąd widać
+//           niebo. Pod gołym niebem świeci w dół bez osłabienia,
+//           a w bok (pod nawis, do jaskini) słabnie o 1 na blok.
 //
-//   światło bloków - świecące bloki (np. lampa, `light` w
-//                   BlockRegistry.js) dają tyle, ile świecą,
-//                   i też słabnie o 1 z każdym blokiem.
+//   RED, GREEN, BLUE - kolorowe światło bloków (lamp), każdy
+//           kanał 0-255. Słabnie o 25% z każdym blokiem (a nie o
+//           stałą wartość), więc proporcje kanałów - czyli KOLOR -
+//           zostają takie same aż do końca zasięgu. Lampy różnych
+//           kolorów mieszają się: między czerwoną a niebieską jest
+//           fioletowo.
+//
+// Siła świecenia bloku (`light` 0-15 w BlockRegistry.js) mówi,
+// na ile bloków sięga jego światło - tak jak poziom 15 światła
+// nieba sięga 14 bloków w głąb tunelu.
 //
 // Światło nie przechodzi przez bloki, które zasłaniają (opaque).
 //
 // Liczenie to "rozlewanie": zaczynamy od źródeł i krok po kroku
-// oddajemy sąsiadom poziom o 1 mniejszy, dopóki coś się zmienia.
+// oddajemy sąsiadom słabsze światło, dopóki coś się zmienia.
 // Przy postawieniu/zniszczeniu bloku poprawiamy tylko okolicę -
 // najpierw "zbieramy" światło, które od niego zależało, a potem
-// rozlewamy je od nowa z pozostałych źródeł.
+// rozlewamy je od nowa z pozostałych źródeł. Każdy kanał liczy
+// się osobno, tym samym kodem.
 //
-// Wartości światła są zapisane w chunkach (skyLight, blockLight).
-// Nie trafiają do zapisu świata - po wczytaniu liczą się od nowa.
+// Wartości są zapisane w chunkach (chunk.lightChannels). Nie
+// trafiają do zapisu świata - po wczytaniu liczą się od nowa.
 // ------------------------------------------------------------
 
 export const MAX_LIGHT = 15;
 
 
-// Jak jasno wygląda dany poziom światła (może być ułamkowy):
+export const SKY = 0;
+export const RED = 1;
+export const GREEN = 2;
+export const BLUE = 3;
+
+export const CHANNEL_COUNT = 4;
+
+const COLOR_CHANNELS = [RED, GREEN, BLUE];
+
+
+// Kolorowe światło: najjaśniejsza wartość kanału i ile zostaje
+// po każdym bloku.
+
+export const COLOR_MAX = 255;
+
+const COLOR_FALLOFF = 0.75;
+
+
+// Jak jasno wygląda dany poziom światła 0-15 (może być ułamkowy):
 // od LIGHT_MIN_BRIGHTNESS (poziom 0) do 1 (poziom 15).
 
 export function lightToBrightness(level) {
@@ -49,6 +75,158 @@ export function lightToBrightness(level) {
         LIGHT_MIN_BRIGHTNESS +
         (1 - LIGHT_MIN_BRIGHTNESS) * (level / MAX_LIGHT) ** LIGHT_CURVE
     );
+
+}
+
+// ------------------------------------------------------------
+// ZANIK ŚWIATŁA
+//
+// DECAY[kanał][wartość] = ile światła dostaje sąsiad.
+// ------------------------------------------------------------
+
+function buildColorDecay() {
+
+    const decay = new Uint8Array(COLOR_MAX + 1);
+
+    for (let v = 0; v <= COLOR_MAX; v++) {
+        decay[v] = Math.floor(v * COLOR_FALLOFF);
+    }
+
+
+    // Wartości kolejno po 0, 1, 2... blokach od najjaśniejszego źródła.
+    // Wszystko słabsze niż po (MAX_LIGHT - 1) blokach gaśnie, więc
+    // zasięg zgadza się z poziomami 0-15.
+
+    const chain = [COLOR_MAX];
+
+    while (chain.length < MAX_LIGHT) {
+        chain.push(decay[chain[chain.length - 1]]);
+    }
+
+    const cutoff = chain[MAX_LIGHT - 1];
+
+    for (let v = 0; v <= COLOR_MAX; v++) {
+
+        if (decay[v] < cutoff) {
+            decay[v] = 0;
+        }
+
+    }
+
+    return { decay, chain };
+
+}
+
+
+const SKY_DECAY = new Uint8Array(COLOR_MAX + 1);
+
+for (let v = 1; v <= COLOR_MAX; v++) {
+    SKY_DECAY[v] = Math.min(v, MAX_LIGHT + 1) - 1;
+}
+
+
+const { decay: COLOR_DECAY, chain: COLOR_CHAIN } = buildColorDecay();
+
+const DECAY = [SKY_DECAY, COLOR_DECAY, COLOR_DECAY, COLOR_DECAY];
+
+
+// Wartość kanału koloru -> równoważny poziom 0-15 (ułamkowy).
+// Przydaje się do liczenia jasności (ChunkMesher) i do debugu.
+
+export const COLOR_LEVEL = new Float32Array(COLOR_MAX + 1);
+
+for (let v = 0; v <= COLOR_MAX; v++) {
+
+    let level = 0;
+
+    for (let d = 0; d < COLOR_CHAIN.length; d++) {
+
+        const upper = COLOR_CHAIN[d];
+        const lower = d + 1 < COLOR_CHAIN.length ? COLOR_CHAIN[d + 1] : 0;
+
+        if (v <= upper && v > lower) {
+
+            level = (MAX_LIGHT - d - 1) + (v - lower) / (upper - lower);
+
+            break;
+
+        }
+
+    }
+
+    COLOR_LEVEL[v] = Math.min(MAX_LIGHT, level);
+
+}
+
+
+// Ile światła daje świecący blok w każdym kanale:
+// EMISSION[kanał][id] (dla SKY zawsze 0).
+
+const EMISSION = [];
+
+for (let channel = 0; channel < CHANNEL_COUNT; channel++) {
+    EMISSION.push(new Uint8Array(MAX_BLOCK_ID + 1));
+}
+
+const EMITS = new Uint8Array(MAX_BLOCK_ID + 1);
+
+for (let id = 1; id <= MAX_BLOCK_ID; id++) {
+
+    const strength = getLightEmission(id);
+
+    if (strength === 0) {
+        continue;
+    }
+
+
+    // Najjaśniejszy kanał: wartość, którą światło ma po
+    // (15 - strength) blokach od najmocniejszej lampy.
+
+    const top = COLOR_CHAIN[MAX_LIGHT - strength];
+
+    const color = getLightColor(id);
+
+    const brightest = Math.max(...color, 0.0001);
+
+
+    for (let c = 0; c < 3; c++) {
+
+        const value = Math.round(top * color[c] / brightest);
+
+        EMISSION[COLOR_CHANNELS[c]][id] =
+            value >= COLOR_CHAIN[MAX_LIGHT - 1] ? value : 0;
+
+    }
+
+    EMITS[id] = 1;
+
+}
+
+
+// Opis światła do debugu i komend, np.
+// "niebo 15, lampy 12 (#ff8040)".
+
+export function describeLight(light) {
+
+    const strongest = Math.max(light.red, light.green, light.blue);
+
+    if (strongest === 0) {
+        return `niebo ${light.sky}, lampy 0`;
+    }
+
+
+    const hex = [light.red, light.green, light.blue]
+        .map((value) => Math.round(255 * value / strongest).toString(16).padStart(2, '0'))
+        .join('');
+
+    return `niebo ${light.sky}, lampy ${Math.round(COLOR_LEVEL[strongest])} (#${hex})`;
+
+}
+
+
+function emissionOf(channel, id) {
+
+    return EMISSION[channel][id];
 
 }
 
@@ -117,7 +295,7 @@ export class LightEngine {
 
 
         // Kolejka zbierania: komórki, których światło zgasło,
-        // razem z poziomem, który miały wcześniej.
+        // razem z wartością, którą miały wcześniej.
 
         this.removeChunks = [];
         this.removeIndices = [];
@@ -150,22 +328,31 @@ export class LightEngine {
 
         this.skyHeights = new Int16Array(LAYER);
 
+
+        // Świecące bloki nowego chunka.
+
+        this.emitters = [];
+
     }
 
     // --------------------------------------------------------
     // ODCZYT
     // --------------------------------------------------------
 
-    // Światło w miejscu (x, y, z) świata: { sky, block }.
+    // Światło w miejscu (x, y, z) świata:
+    // { sky: 0-15, red, green, blue: 0-255 }
 
     getLight(x, y, z) {
 
-        if (y >= H) {
-            return { sky: MAX_LIGHT, block: 0 };
-        }
+        const light = { sky: MAX_LIGHT, red: 0, green: 0, blue: 0 };
+
 
         if (y < 0) {
-            return { sky: 0, block: 0 };
+            light.sky = 0;
+        }
+
+        if (y < 0 || y >= H) {
+            return light;
         }
 
 
@@ -175,16 +362,18 @@ export class LightEngine {
         const chunk = this.world.getChunk(cx, cz);
 
         if (!chunk) {
-            return { sky: MAX_LIGHT, block: 0 };
+            return light;
         }
 
 
         const index = chunk.index(x - cx * S, y, z - cz * S);
 
-        return {
-            sky: chunk.skyLight[index],
-            block: chunk.blockLight[index]
-        };
+        light.sky = chunk.skyLight[index];
+        light.red = chunk.lightR[index];
+        light.green = chunk.lightG[index];
+        light.blue = chunk.lightB[index];
+
+        return light;
 
     }
 
@@ -251,33 +440,50 @@ export class LightEngine {
 
         // 3. Wymiana z sąsiednimi chunkami i rozlewanie.
 
-        this.exchangeWithNeighbors(chunk, true);
+        this.exchangeWithNeighbors(chunk, SKY);
 
-        this.spread(true);
+        this.spread(SKY);
 
 
-        // 4. Świecące bloki.
+        // 4. Świecące bloki - każdy kolor osobno.
 
-        const blockLight = chunk.blockLight;
+        const emitters = this.emitters;
+
+        emitters.length = 0;
 
         for (let i = 0; i < top * LAYER; i++) {
 
-            const emission = getLightEmission(blocks[i]);
-
-            if (emission > 0) {
-
-                blockLight[i] = emission;
-
-                this.addToSpread(chunk, i);
-
+            if (EMITS[blocks[i]]) {
+                emitters.push(i);
             }
 
         }
 
 
-        this.exchangeWithNeighbors(chunk, false);
+        for (const channel of COLOR_CHANNELS) {
 
-        this.spread(false);
+            const light = chunk.lightChannels[channel];
+
+            for (const i of emitters) {
+
+                const emission = emissionOf(channel, blocks[i]);
+
+                if (emission > 0) {
+
+                    light[i] = emission;
+
+                    this.addToSpread(chunk, i);
+
+                }
+
+            }
+
+
+            this.exchangeWithNeighbors(chunk, channel);
+
+            this.spread(channel);
+
+        }
 
     }
 
@@ -303,25 +509,25 @@ export class LightEngine {
 
 
     // Porównuje światło na styku z czterema sąsiednimi chunkami.
-    // Gdzie jedna strona jest jaśniejsza o więcej niż 1, światło
-    // rozleje się na drugą.
+    // Gdzie jedna strona może dać drugiej więcej, niż ta ma,
+    // światło rozleje się na drugą.
 
-    exchangeWithNeighbors(chunk, isSky) {
+    exchangeWithNeighbors(chunk, channel) {
 
         if (chunk.west) {
-            this.exchange(chunk, chunk.west, 0, S - 1, S, isSky);
+            this.exchange(chunk, chunk.west, 0, S - 1, S, channel);
         }
 
         if (chunk.east) {
-            this.exchange(chunk, chunk.east, S - 1, 0, S, isSky);
+            this.exchange(chunk, chunk.east, S - 1, 0, S, channel);
         }
 
         if (chunk.north) {
-            this.exchange(chunk, chunk.north, 0, (S - 1) * S, 1, isSky);
+            this.exchange(chunk, chunk.north, 0, (S - 1) * S, 1, channel);
         }
 
         if (chunk.south) {
-            this.exchange(chunk, chunk.south, (S - 1) * S, 0, 1, isSky);
+            this.exchange(chunk, chunk.south, (S - 1) * S, 0, 1, channel);
         }
 
     }
@@ -331,10 +537,12 @@ export class LightEngine {
     // stykają się z komórkami chunka b (od bStart), kolejne
     // komórki wzdłuż ściany są co `step`.
 
-    exchange(a, b, aStart, bStart, step, isSky) {
+    exchange(a, b, aStart, bStart, step, channel) {
 
-        const aLight = isSky ? a.skyLight : a.blockLight;
-        const bLight = isSky ? b.skyLight : b.blockLight;
+        const aLight = a.lightChannels[channel];
+        const bLight = b.lightChannels[channel];
+
+        const decay = DECAY[channel];
 
 
         for (let y = 0; y < H; y++) {
@@ -348,10 +556,10 @@ export class LightEngine {
                 const lb = bLight[ib];
 
 
-                if (lb > la + 1 && !isOpaqueId(a.blocks[ia])) {
+                if (decay[lb] > la && !isOpaqueId(a.blocks[ia])) {
                     this.addToSpread(b, ib);
                 }
-                else if (la > lb + 1 && !isOpaqueId(b.blocks[ib])) {
+                else if (decay[la] > lb && !isOpaqueId(b.blocks[ib])) {
                     this.addToSpread(a, ia);
                 }
 
@@ -369,15 +577,16 @@ export class LightEngine {
 
     blockChanged(chunk, index) {
 
-        this.relight(chunk, index, true);
-        this.relight(chunk, index, false);
+        for (let channel = 0; channel < CHANNEL_COUNT; channel++) {
+            this.relight(chunk, index, channel);
+        }
 
     }
 
 
-    relight(chunk, index, isSky) {
+    relight(chunk, index, channel) {
 
-        const light = isSky ? chunk.skyLight : chunk.blockLight;
+        const light = chunk.lightChannels[channel];
 
         const id = chunk.blocks[index];
 
@@ -389,11 +598,11 @@ export class LightEngine {
 
         if (oldLevel > 0) {
 
-            this.setLevel(chunk, index, 0, isSky);
+            this.setLevel(chunk, index, 0, channel);
 
             this.addToRemove(chunk, index, oldLevel);
 
-            this.remove(isSky);
+            this.remove(channel);
 
         }
 
@@ -415,19 +624,16 @@ export class LightEngine {
 
                 const neighborIndex = this.neighborIndices[k];
 
-                const neighborLight =
-                    isSky ? neighbor.skyLight : neighbor.blockLight;
-
-                if (neighborLight[neighborIndex] > 0) {
+                if (neighbor.lightChannels[channel][neighborIndex] > 0) {
                     this.addToSpread(neighbor, neighborIndex);
                 }
 
             }
 
 
-            if (isSky && index >= (H - 1) * LAYER) {
+            if (channel === SKY && index >= (H - 1) * LAYER) {
 
-                this.setLevel(chunk, index, MAX_LIGHT, isSky);
+                this.setLevel(chunk, index, MAX_LIGHT, channel);
 
                 this.addToSpread(chunk, index);
 
@@ -438,22 +644,18 @@ export class LightEngine {
 
         // 3. Nowy blok sam świeci.
 
-        if (!isSky) {
+        const emission = emissionOf(channel, id);
 
-            const emission = getLightEmission(id);
+        if (emission > light[index]) {
 
-            if (emission > light[index]) {
+            this.setLevel(chunk, index, emission, channel);
 
-                this.setLevel(chunk, index, emission, isSky);
-
-                this.addToSpread(chunk, index);
-
-            }
+            this.addToSpread(chunk, index);
 
         }
 
 
-        this.spread(isSky);
+        this.spread(channel);
 
     }
 
@@ -463,10 +665,13 @@ export class LightEngine {
 
     // Rozlewa światło od komórek z kolejki rozlewania.
 
-    spread(isSky) {
+    spread(channel) {
 
         const chunks = this.spreadChunks;
         const indices = this.spreadIndices;
+
+        const decay = DECAY[channel];
+        const isSky = channel === SKY;
 
 
         // Kolejka rośnie w trakcie pętli - nowe komórki
@@ -477,10 +682,15 @@ export class LightEngine {
             const chunk = chunks[q];
             const index = indices[q];
 
-            const level =
-                (isSky ? chunk.skyLight : chunk.blockLight)[index];
+            const level = chunk.lightChannels[channel][index];
 
-            if (level <= 1) {
+            const weaker = decay[level];
+
+            // Pełne światło nieba idzie w dół bez osłabienia.
+
+            const fullSkyDown = isSky && level === MAX_LIGHT;
+
+            if (weaker === 0 && !fullSkyDown) {
                 continue;
             }
 
@@ -496,12 +706,14 @@ export class LightEngine {
                 }
 
 
-                // Pełne światło nieba idzie w dół bez osłabienia.
-
                 const newLevel =
-                    isSky && k === 5 && level === MAX_LIGHT
+                    fullSkyDown && k === 5
                         ? MAX_LIGHT
-                        : level - 1;
+                        : weaker;
+
+                if (newLevel === 0) {
+                    continue;
+                }
 
                 const neighborIndex = this.neighborIndices[k];
 
@@ -510,15 +722,12 @@ export class LightEngine {
                     continue;
                 }
 
-                const neighborLight =
-                    isSky ? neighbor.skyLight : neighbor.blockLight;
-
-                if (neighborLight[neighborIndex] >= newLevel) {
+                if (neighbor.lightChannels[channel][neighborIndex] >= newLevel) {
                     continue;
                 }
 
 
-                this.setLevel(neighbor, neighborIndex, newLevel, isSky);
+                this.setLevel(neighbor, neighborIndex, newLevel, channel);
 
                 this.addToSpread(neighbor, neighborIndex);
 
@@ -538,11 +747,13 @@ export class LightEngine {
     // do kolejki rozlewania - spread() oświetli potem zgaszone
     // miejsca od nowa, jeśli da się do nich dotrzeć.
 
-    remove(isSky) {
+    remove(channel) {
 
         const chunks = this.removeChunks;
         const indices = this.removeIndices;
         const levels = this.removeLevels;
+
+        const isSky = channel === SKY;
 
 
         for (let q = 0; q < chunks.length; q++) {
@@ -563,8 +774,7 @@ export class LightEngine {
 
                 const neighborIndex = this.neighborIndices[k];
 
-                const neighborLevel =
-                    (isSky ? neighbor.skyLight : neighbor.blockLight)[neighborIndex];
+                const neighborLevel = neighbor.lightChannels[channel][neighborIndex];
 
                 if (neighborLevel === 0) {
                     continue;
@@ -588,15 +798,12 @@ export class LightEngine {
                 }
 
 
-                this.setLevel(neighbor, neighborIndex, 0, isSky);
+                this.setLevel(neighbor, neighborIndex, 0, channel);
 
                 this.addToRemove(neighbor, neighborIndex, neighborLevel);
 
 
-                if (
-                    !isSky &&
-                    getLightEmission(neighbor.blocks[neighborIndex]) > 0
-                ) {
+                if (emissionOf(channel, neighbor.blocks[neighborIndex]) > 0) {
                     this.relightChunks.push(neighbor);
                     this.relightIndices.push(neighborIndex);
                 }
@@ -618,11 +825,11 @@ export class LightEngine {
             const chunk = this.relightChunks[q];
             const index = this.relightIndices[q];
 
-            const emission = getLightEmission(chunk.blocks[index]);
+            const emission = emissionOf(channel, chunk.blocks[index]);
 
-            if (emission > chunk.blockLight[index]) {
+            if (emission > chunk.lightChannels[channel][index]) {
 
-                this.setLevel(chunk, index, emission, false);
+                this.setLevel(chunk, index, emission, channel);
 
                 this.addToSpread(chunk, index);
 
@@ -657,11 +864,11 @@ export class LightEngine {
     }
 
 
-    // Ustawia poziom światła i zapamiętuje, że chunk się zmienił.
+    // Ustawia wartość światła i zapamiętuje, że chunk się zmienił.
 
-    setLevel(chunk, index, level, isSky) {
+    setLevel(chunk, index, level, channel) {
 
-        (isSky ? chunk.skyLight : chunk.blockLight)[index] = level;
+        chunk.lightChannels[channel][index] = level;
 
 
         if (chunk.lightChanged === 0) {

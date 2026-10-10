@@ -46,6 +46,20 @@ export class Sky {
         this.state = new SkyState();
 
 
+        // WARIANT NIEBA - zmiany wyglądu względem zwykłego nieba.
+        // Kolor światła na blokach liczy się z kolorów nieba, więc
+        // wariant zabarwia też świat. Teraz ustawiają go komendy
+        // (/niebo, /ksiezyc); w przyszłości np. losowy wariant zachodu
+        // na każdy dzień albo krwawy księżyc.
+        //   sunsetColor - kolor łuny wschodu/zachodu (THREE.Color albo null)
+        //   moonColor   - kolor księżyca (THREE.Color albo null)
+
+        this.variant = {
+            sunsetColor: null,
+            moonColor: null
+        };
+
+
         this.scene = new THREE.Scene();
 
         this.camera = new THREE.PerspectiveCamera(75, 1, 0.5, 1000);
@@ -85,7 +99,7 @@ export class Sky {
 
         celestial.update(days);
 
-        state.update(celestial);
+        state.update(celestial, this.variant);
 
 
         // Wspólne wartości dla kopuły i mgły na blokach.

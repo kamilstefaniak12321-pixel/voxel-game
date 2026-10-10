@@ -92,6 +92,18 @@
     --hotbar-name-color: #f3ecff;
     --hotbar-name-size: 18px;
 
+    /* --- Czat w grze (T) ----------------------------------- */
+
+    --chat-font-size: 16px;
+    --chat-background: rgba(30, 12, 50, 0.55);
+    --chat-text: #f3ecff;
+    --chat-command: #d2c3ec;
+    --chat-success: #a8ffb0;
+    --chat-error: #ff8fa3;
+    --chat-hint: #ffe0a0;
+    --chat-input-background: rgba(23, 14, 36, 0.8);
+    --chat-input-border: #9a7fd0;
+
 }
 
 

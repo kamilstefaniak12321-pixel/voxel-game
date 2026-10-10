@@ -28,6 +28,7 @@ Do działania potrzebny jest internet (three.js pobierany z unpkg).
 | ESC | pauza (wróć do gry, ustawienia, zapisz i wyjdź do menu) |
 | F3 | informacje debugowania w lewym górnym rogu |
 | [ / ] (z F3) | cofnij / przesuń czas o godzinę |
+| T, / | czat i komendy (`/pomoc`) |
 
 ## Pasek bloków
 
@@ -80,9 +81,12 @@ nie da się policzyć światła i cieni na jego krawędziach).
 
 - **światło nieba** - 15 wszędzie, skąd widać niebo; w głąb tunelu albo
   pod nawis słabnie o 1 z każdym blokiem,
-- **światło bloków** - lampa świeci na 15 ciepłym światłem, które też
-  słabnie o 1 z każdym blokiem. W dzień pod gołym niebem lampy niczego
-  nie rozjaśniają (liczy się jaśniejsze z dwóch świateł).
+- **światło bloków (kolorowe)** - lampy świecą na 15 bloków. Zwykła lampa
+  ciepłym, żółtawym światłem, a kolorowe (czerwona, zielona, niebieska,
+  fioletowa) swoim kolorem. Kolor nie blednie z odległością, a światła
+  różnych lamp się mieszają (czerwona + niebieska = fioletowo). W dzień
+  pod gołym niebem lampy niczego nie rozjaśniają (liczy się jaśniejsze
+  z dwóch świateł).
 
 Jak jasne jest światło nieba, zależy od pory dnia (patrz niżej) -
 w nocy świat ciemnieje, a lampy świecą tak samo jak w dzień.
@@ -93,11 +97,40 @@ occlusion), a mgła w ciemnym tunelu ciemnieje razem z nim. Poziom
 
 Ustawienia w `src/config.js` (sekcja OŚWIETLENIE): jak szybko ciemnieje
 półmrok (`LIGHT_CURVE`), jak jasno jest w zupełnej ciemności
-(`LIGHT_MIN_BRIGHTNESS`), kolor światła lamp (`BLOCK_LIGHT_COLOR`)
-i siła cieni w kątach (`AMBIENT_OCCLUSION`).
+(`LIGHT_MIN_BRIGHTNESS`), domyślny kolor światła lamp (`BLOCK_LIGHT_COLOR`)
+i siła cieni w kątach (`AMBIENT_OCCLUSION`). Własny kolor lampy:
+`lightColor` w definicji bloku (`src/blocks/BlockRegistry.js`).
+
+Barwa światła na świecie pochodzi z nieba: w dzień jest lekko
+niebieskawa, o zachodzie ciepła, w nocy chłodna. Inny kolor łuny
+zachodu albo księżyca (np. `/ksiezyc kolor krwawy`) też lekko
+zabarwia świat.
 
 Światło nie jest zapisywane - po wczytaniu świata liczy się od nowa
 (`src/world/Light.js`).
+
+## Czat i komendy
+
+**T** otwiera czat, **/** otwiera czat od razu z ukośnikiem do komendy.
+Enter wysyła, ESC zamyka, strzałki ↑ ↓ przywołują poprzednie wpisy,
+a **Tab** podpowiada nazwy komend, bloków, godzin i kolorów.
+
+Komendy służą do sprawdzania nowości w grze, np.:
+
+```
+/pomoc                     lista komend (/pomoc czas - opis jednej)
+/czas ustaw zachod         godzina albo pora: rano, poludnie, noc...
+/ksiezyc faza pelnia       faza księżyca (i o której jest najwyżej)
+/ksiezyc kolor krwawy      kolor księżyca (zabarwia światło nocą)
+/niebo zachod zielony      kolor łuny wschodu i zachodu
+/demo swiatlo              pokój z kolorowymi lampami
+/latanie                   latanie (Spacja w górę, Shift w dół)
+/tp 100 30 -50             teleport (~ = względem gracza)
+/daj lamp_blue             blok na pasek
+/wypelnij ~ ~ ~ ~5 ~3 ~5 stone
+```
+
+Pełna lista i jak dodać własną komendę: `docs/komendy.md`.
 
 ## Dzień i noc
 
@@ -182,6 +215,7 @@ src/
   rendering/                atlas tekstur, budowanie meshy chunków
   player/                   ruch i kolizje gracza
   input/                    klawiatura i mysz
+  commands/                 komendy czatu (do testowania)
   interaction/              raycast, niszczenie, stawianie, podświetlenie
 ```
 
@@ -190,4 +224,6 @@ src/
 1. Narysuj teksturę 16x16 i wklej ją do wolnego kafelka w `assets/textures/blocks/terrain.png`.
 2. Dopisz pozycję kafelka w `ATLAS_TILES` w `src/rendering/TextureAtlas.js`.
 3. Dopisz blok w `BLOCK_TYPES` w `src/blocks/BlockRegistry.js` (nowe, unikalne `id`).
-   Blok, który ma świecić, dostaje `light: 1-15` (jak lampa: `light: 15`).
+   Blok, który ma świecić, dostaje `light: 1-15` (jak lampa: `light: 15`)
+   i opcjonalnie kolor światła, np. `lightColor: '#ff3020'`.
+4. Sprawdź go w grze: `/daj <nazwa>` wkłada blok na pasek.

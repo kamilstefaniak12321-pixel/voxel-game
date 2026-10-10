@@ -46,6 +46,9 @@ export const TEXTS = {
     saveAndQuit: 'Zapisz i wyjdź do menu',
     pointerLockFailed: 'Nie udało się przechwycić myszy - kliknij jeszcze raz.',
 
+    // Czat (pokazywane po wejściu do świata)
+    chatHint: 'T - czat, /pomoc - lista komend do testowania gry',
+
     // Ustawienia
     settingsTitle: 'Ustawienia',
     mouseSensitivity: (value) => `Czułość myszy: ${value}%`,

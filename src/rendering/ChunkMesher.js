@@ -4,7 +4,6 @@ import * as THREE from 'three';
 import {
     CHUNK_SIZE,
     CHUNK_HEIGHT,
-    BLOCK_LIGHT_COLOR,
     AMBIENT_OCCLUSION
 } from '../config.js';
 
@@ -18,6 +17,7 @@ import {
 
 import {
     MAX_LIGHT,
+    COLOR_LEVEL,
     lightToBrightness
 } from '../world/Light.js';
 
@@ -59,7 +59,7 @@ function getRotationAt(x, y, z) {
 //
 //   padOpaque - 1, jeśli blok zasłania (światło i widok)
 //   padSky    - światło nieba
-//   padBlock  - światło lamp
+//   padR, padG, padB - kolorowe światło lamp
 //
 // Współrzędne w kopii: x i z od -1 do CHUNK_SIZE, y od -1 do
 // wysokości chunka. Pod światem (y = -1) jest "pełny blok",
@@ -76,7 +76,9 @@ const P_LAYER = P * P;
 
 const padOpaque = new Uint8Array(P_LAYER * (H + 2));
 const padSky = new Uint8Array(P_LAYER * (H + 2));
-const padBlock = new Uint8Array(P_LAYER * (H + 2));
+const padR = new Uint8Array(P_LAYER * (H + 2));
+const padG = new Uint8Array(P_LAYER * (H + 2));
+const padB = new Uint8Array(P_LAYER * (H + 2));
 
 
 function padIndex(x, y, z) {
@@ -140,7 +142,7 @@ function fillPadding(chunk, world, height) {
 
                             padOpaque[p] = 0;
                             padSky[p] = MAX_LIGHT;
-                            padBlock[p] = 0;
+                            padR[p] = padG[p] = padB[p] = 0;
 
                             continue;
 
@@ -151,7 +153,9 @@ function fillPadding(chunk, world, height) {
 
                         padOpaque[p] = isOpaqueId(source.blocks[i]) ? 1 : 0;
                         padSky[p] = source.skyLight[i];
-                        padBlock[p] = source.blockLight[i];
+                        padR[p] = source.lightR[i];
+                        padG[p] = source.lightG[i];
+                        padB[p] = source.lightB[i];
 
                     }
 
@@ -162,7 +166,7 @@ function fillPadding(chunk, world, height) {
 
                     padOpaque[below] = 1;
                     padSky[below] = 0;
-                    padBlock[below] = 0;
+                    padR[below] = padG[below] = padB[below] = 0;
 
 
                     // Nad światem: otwarte niebo.
@@ -173,7 +177,7 @@ function fillPadding(chunk, world, height) {
 
                         padOpaque[above] = 0;
                         padSky[above] = MAX_LIGHT;
-                        padBlock[above] = 0;
+                        padR[above] = padG[above] = padB[above] = 0;
 
                     }
 
@@ -275,11 +279,9 @@ const SHADE = [0, 1, 2, 3].map(
 );
 
 
-// Kolor światła lamp jako ułamki 0-1.
+// Komórki, z których bierzemy światło dla jednego rogu ściany.
 
-const LAMP_R = ((BLOCK_LIGHT_COLOR >> 16) & 255) / 255;
-const LAMP_G = ((BLOCK_LIGHT_COLOR >> 8) & 255) / 255;
-const LAMP_B = (BLOCK_LIGHT_COLOR & 255) / 255;
+const sampleCells = new Int32Array(4);
 
 
 // Światło nieba cieniuje karta graficzna (słońce świeci z jednej
@@ -501,13 +503,13 @@ export function buildChunkGeometry(chunk, world) {
                             const diagonal = block + CORNER_SAMPLES[s + 2];
 
 
-                            // Średnie światło komórek bez bloku.
+                            // Światło bierzemy z komórek bez bloku.
                             // Gdy oba boki są zajęte, komórka po skosie
                             // jest od ściany odcięta - nie liczy się.
 
-                            let sky = padSky[front];
-                            let lamp = padBlock[front];
-                            let count = 1;
+                            let count = 0;
+
+                            sampleCells[count++] = front;
 
                             let shadeCount;
 
@@ -525,24 +527,40 @@ export function buildChunkGeometry(chunk, world) {
                                     padOpaque[diagonal];
 
                                 if (!padOpaque[diagonal]) {
-                                    sky += padSky[diagonal];
-                                    lamp += padBlock[diagonal];
-                                    count++;
+                                    sampleCells[count++] = diagonal;
                                 }
 
                             }
 
+                            if (!padOpaque[side1]) sampleCells[count++] = side1;
+                            if (!padOpaque[side2]) sampleCells[count++] = side2;
 
-                            if (!padOpaque[side1]) {
-                                sky += padSky[side1];
-                                lamp += padBlock[side1];
-                                count++;
-                            }
 
-                            if (!padOpaque[side2]) {
-                                sky += padSky[side2];
-                                lamp += padBlock[side2];
-                                count++;
+                            // Średnia: poziom nieba, poziom lamp (z najmocniejszego
+                            // kanału) i suma kanałów - z niej bierzemy kolor.
+
+                            let sky = 0;
+                            let lampLevel = 0;
+                            let red = 0;
+                            let green = 0;
+                            let blue = 0;
+
+                            for (let n = 0; n < count; n++) {
+
+                                const cell = sampleCells[n];
+
+                                const cr = padR[cell];
+                                const cg = padG[cell];
+                                const cb = padB[cell];
+
+                                sky += padSky[cell];
+
+                                red += cr;
+                                green += cg;
+                                blue += cb;
+
+                                lampLevel += COLOR_LEVEL[cr > cg ? (cr > cb ? cr : cb) : (cg > cb ? cg : cb)];
+
                             }
 
 
@@ -550,22 +568,36 @@ export function buildChunkGeometry(chunk, world) {
                                 BRIGHTNESS[Math.round(sky * LEVEL_STEPS / count)];
 
                             const lampBrightness =
-                                BRIGHTNESS[Math.round(lamp * LEVEL_STEPS / count)];
+                                BRIGHTNESS[Math.round(lampLevel * LEVEL_STEPS / count)];
 
                             const shade = SHADE[shadeCount];
 
                             const skyValue = skyBrightness * shade;
 
                             const lampValue =
-                                lampBrightness * shade * LAMP_FACE_SHADE[faceIndex];
+                                lampBrightness * shade * LAMP_FACE_SHADE[faceIndex] * 255;
 
 
-                            r = lampValue * LAMP_R * 255;
-                            g = lampValue * LAMP_G * 255;
-                            b = lampValue * LAMP_B * 255;
+                            // Kolor lamp: proporcje kanałów (najmocniejszy = 1).
+
+                            const strongest = Math.max(red, green, blue);
+
+                            if (strongest > 0) {
+
+                                r = lampValue * red / strongest;
+                                g = lampValue * green / strongest;
+                                b = lampValue * blue / strongest;
+
+                            }
+                            else {
+
+                                r = g = b = lampValue;
+
+                            }
+
                             a = skyValue * 255;
 
-                            brightness = Math.max(skyValue, lampValue);
+                            brightness = Math.max(skyValue, lampValue / 255);
 
                         }
 

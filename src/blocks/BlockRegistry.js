@@ -31,6 +31,18 @@ export const MAX_BLOCK_ID = 255;
 //   liquid         - ciecz, np. woda (opcjonalne): ściany między
 //                    dwoma takimi samymi blokami nie są rysowane,
 //                    celownik i stawianie bloków przez nią przechodzą
+//   label          - nazwa po polsku (pasek bloków, ekwipunek)
+//   model          - 'cube' (zwykły sześcian, domyślnie) albo 'cross'
+//                    (roślina: kilka skrzyżowanych płaszczyzn z teksturą
+//                    z przezroczystością; tekstury roślin są w wierszu 2
+//                    atlasu - shader kołysze je na wietrze)
+//   plant          - kształt rośliny: { planes: 2 albo 3, height, width }
+//   soil           - na tym bloku mogą rosnąć rośliny
+//   replaceable    - postawienie bloku w tym miejscu zastępuje ten
+//                    (np. trawa) - jak w Minecrafcie
+//   drops          - co trafia do ekwipunku po zniszczeniu w trybie
+//                    przygody (domyślnie ten sam blok, null = nic)
+//   creative       - false = nie ma go w ekwipunku kreatywnym
 
 export const BLOCK_TYPES = {
 
@@ -38,6 +50,11 @@ export const BLOCK_TYPES = {
 
         id: 1,
         name: 'Grass Block',
+
+        label: 'Blok trawy',
+
+        soil: true,
+        drops: 'dirt',
 
         solid: true,
 
@@ -57,6 +74,10 @@ export const BLOCK_TYPES = {
         id: 2,
         name: 'Dirt',
 
+        label: 'Ziemia',
+
+        soil: true,
+
         solid: true,
 
         textures: {
@@ -71,6 +92,8 @@ export const BLOCK_TYPES = {
         id: 3,
         name: 'Stone',
 
+        label: 'Kamień',
+
         solid: true,
 
         textures: {
@@ -84,6 +107,8 @@ export const BLOCK_TYPES = {
 
         id: 4,
         name: 'Lamp',
+
+        label: 'Lampa',
 
         solid: true,
 
@@ -103,6 +128,8 @@ export const BLOCK_TYPES = {
         id: 5,
         name: 'Lepidolite',
 
+        label: 'Lepidolit',
+
         solid: true,
 
         textures: {
@@ -119,6 +146,8 @@ export const BLOCK_TYPES = {
 
         id: 6,
         name: 'Red Lamp',
+
+        label: 'Czerwona lampa',
 
         solid: true,
 
@@ -137,6 +166,8 @@ export const BLOCK_TYPES = {
         id: 7,
         name: 'Green Lamp',
 
+        label: 'Zielona lampa',
+
         solid: true,
 
         light: 15,
@@ -154,6 +185,8 @@ export const BLOCK_TYPES = {
         id: 8,
         name: 'Blue Lamp',
 
+        label: 'Niebieska lampa',
+
         solid: true,
 
         light: 15,
@@ -170,6 +203,8 @@ export const BLOCK_TYPES = {
 
         id: 9,
         name: 'Purple Lamp',
+
+        label: 'Fioletowa lampa',
 
         solid: true,
 
@@ -191,6 +226,8 @@ export const BLOCK_TYPES = {
         id: 10,
         name: 'Meteorite',
 
+        label: 'Meteoryt',
+
         solid: true,
 
         light: 7,
@@ -209,6 +246,8 @@ export const BLOCK_TYPES = {
 
         id: 11,
         name: 'Sand',
+
+        label: 'Piasek',
 
         solid: true,
 
@@ -232,6 +271,8 @@ export const BLOCK_TYPES = {
 
         id: 12,
         name: 'Water',
+
+        label: 'Woda',
 
         solid: false,
         opaque: false,
@@ -259,6 +300,8 @@ export const BLOCK_TYPES = {
         id: 13,
         name: 'Granite',
 
+        label: 'Granit',
+
         solid: true,
 
         textures: {
@@ -278,6 +321,8 @@ export const BLOCK_TYPES = {
         id: 14,
         name: 'Limestone',
 
+        label: 'Wapień',
+
         solid: true,
 
         textures: {
@@ -294,6 +339,8 @@ export const BLOCK_TYPES = {
 
         id: 15,
         name: 'Sandstone',
+
+        label: 'Piaskowiec',
 
         solid: true,
 
@@ -315,6 +362,8 @@ export const BLOCK_TYPES = {
         id: 16,
         name: 'Slate',
 
+        label: 'Łupek',
+
         solid: true,
 
         textures: {
@@ -335,6 +384,8 @@ export const BLOCK_TYPES = {
         id: 17,
         name: 'Basalt',
 
+        label: 'Bazalt',
+
         solid: true,
 
         textures: {
@@ -343,6 +394,180 @@ export const BLOCK_TYPES = {
             bottom: 'basalt_top'
         }
 
+    },
+
+
+    // ------------------------------------------------------------
+    // RODZAJE ZIEMI - na wszystkich mogą rosnąć rośliny.
+    // ------------------------------------------------------------
+
+    humus: {
+        id: 18,
+        name: 'Humus',
+        label: 'Czarnoziem',
+        solid: true,
+        soil: true,
+        textures: { all: 'humus' },
+        randomRotation: ['top', 'bottom']
+    },
+
+    coarse_dirt: {
+        id: 19,
+        name: 'Coarse Dirt',
+        label: 'Ziemia kamienista',
+        solid: true,
+        soil: true,
+        textures: { all: 'coarse_dirt' },
+        randomRotation: ['top', 'bottom']
+    },
+
+    // Ściółka leśna: igły i liście na wierzchu, ziemia pod spodem.
+    forest_floor: {
+        id: 20,
+        name: 'Forest Floor',
+        label: 'Ściółka leśna',
+        solid: true,
+        soil: true,
+        textures: { top: 'forest_floor_top', side: 'forest_floor_side', bottom: 'dirt' },
+        randomRotation: ['top']
+    },
+
+    mud: {
+        id: 21,
+        name: 'Mud',
+        label: 'Błoto',
+        solid: true,
+        soil: true,
+        textures: { all: 'mud' },
+        randomRotation: ['top', 'bottom']
+    },
+
+    clay: {
+        id: 22,
+        name: 'Clay',
+        label: 'Glina',
+        solid: true,
+        soil: true,
+        textures: { all: 'clay' }
+    },
+
+    gravel: {
+        id: 23,
+        name: 'Gravel',
+        label: 'Żwir',
+        solid: true,
+        textures: { all: 'gravel' },
+        randomRotation: ['top', 'bottom']
+    },
+
+
+    // ------------------------------------------------------------
+    // ROŚLINY - model 'cross': skrzyżowane płaszczyzny, bez kolizji,
+    // nie zasłaniają światła, rosną tylko na ziemi (soil). Zniszczenie
+    // bloku pod rośliną niszczy też roślinę.
+    // ------------------------------------------------------------
+
+    short_grass: {
+        id: 24,
+        name: 'Short Grass',
+        label: 'Krótka trawa',
+        solid: false,
+        model: 'cross',
+        plant: { planes: 3, height: 1, width: 0.48 },
+        replaceable: true,
+        textures: { all: 'short_grass' }
+    },
+
+    tall_grass: {
+        id: 25,
+        name: 'Tall Grass',
+        label: 'Wysoka trawa',
+        solid: false,
+        model: 'cross',
+        plant: { planes: 3, height: 1, width: 0.48 },
+        replaceable: true,
+        textures: { all: 'tall_grass' }
+    },
+
+    fern: {
+        id: 26,
+        name: 'Fern',
+        label: 'Paproć',
+        solid: false,
+        model: 'cross',
+        plant: { planes: 3, height: 0.95, width: 0.5 },
+        replaceable: true,
+        textures: { all: 'fern' }
+    },
+
+    clover: {
+        id: 27,
+        name: 'Clover',
+        label: 'Koniczyna',
+        solid: false,
+        model: 'cross',
+        plant: { planes: 2, height: 0.75, width: 0.42 },
+        textures: { all: 'clover' }
+    },
+
+    nettle: {
+        id: 28,
+        name: 'Nettle',
+        label: 'Pokrzywa',
+        solid: false,
+        model: 'cross',
+        plant: { planes: 2, height: 1, width: 0.42 },
+        textures: { all: 'nettle' }
+    },
+
+    plantain: {
+        id: 29,
+        name: 'Plantain',
+        label: 'Babka zwyczajna',
+        solid: false,
+        model: 'cross',
+        plant: { planes: 2, height: 0.8, width: 0.42 },
+        textures: { all: 'plantain' }
+    },
+
+    poppy: {
+        id: 30,
+        name: 'Poppy',
+        label: 'Mak',
+        solid: false,
+        model: 'cross',
+        plant: { planes: 2, height: 0.85, width: 0.4 },
+        textures: { all: 'poppy' }
+    },
+
+    cornflower: {
+        id: 31,
+        name: 'Cornflower',
+        label: 'Chaber',
+        solid: false,
+        model: 'cross',
+        plant: { planes: 2, height: 0.85, width: 0.4 },
+        textures: { all: 'cornflower' }
+    },
+
+    chamomile: {
+        id: 32,
+        name: 'Chamomile',
+        label: 'Rumianek',
+        solid: false,
+        model: 'cross',
+        plant: { planes: 2, height: 0.8, width: 0.42 },
+        textures: { all: 'chamomile' }
+    },
+
+    dandelion: {
+        id: 33,
+        name: 'Dandelion',
+        label: 'Mniszek',
+        solid: false,
+        model: 'cross',
+        plant: { planes: 2, height: 0.8, width: 0.42 },
+        textures: { all: 'dandelion' }
     }
 
 };
@@ -358,6 +583,9 @@ const typeById = new Array(MAX_BLOCK_ID + 1).fill(null);
 const solidById = new Uint8Array(MAX_BLOCK_ID + 1);
 const opaqueById = new Uint8Array(MAX_BLOCK_ID + 1);
 const liquidById = new Uint8Array(MAX_BLOCK_ID + 1);
+const plantById = new Uint8Array(MAX_BLOCK_ID + 1);
+const soilById = new Uint8Array(MAX_BLOCK_ID + 1);
+const replaceableById = new Uint8Array(MAX_BLOCK_ID + 1);
 const lightById = new Uint8Array(MAX_BLOCK_ID + 1);
 
 // Kolor światła: [czerwony, zielony, niebieski], każdy 0-1.
@@ -423,6 +651,12 @@ for (const [type, definition] of Object.entries(BLOCK_TYPES)) {
         (definition.opaque ?? definition.solid) ? 1 : 0;
 
     liquidById[id] = definition.liquid ? 1 : 0;
+
+    plantById[id] = definition.model === 'cross' ? 1 : 0;
+
+    soilById[id] = definition.soil ? 1 : 0;
+
+    replaceableById[id] = definition.replaceable ? 1 : 0;
 
     lightById[id] =
         Math.max(0, Math.min(15, Math.floor(definition.light ?? 0)));
@@ -492,6 +726,66 @@ export function isLiquidId(id) {
     return liquidById[id] === 1;
 
 }
+
+
+// Roślina (model 'cross') - rośnie tylko na ziemi (soil).
+
+export function isPlantId(id) {
+
+    return plantById[id] === 1;
+
+}
+
+
+// Czy na tym bloku mogą rosnąć rośliny.
+
+export function isSoilId(id) {
+
+    return soilById[id] === 1;
+
+}
+
+
+// Czy postawienie bloku w tym miejscu po prostu ten blok zastępuje.
+
+export function isReplaceableId(id) {
+
+    return replaceableById[id] === 1;
+
+}
+
+
+// Nazwa bloku po polsku (albo zwykła nazwa, gdy nie ma polskiej).
+
+export function getBlockLabel(type) {
+
+    const definition = BLOCK_TYPES[type];
+
+    return definition ? (definition.label ?? definition.name) : type;
+
+}
+
+
+// Co trafia do ekwipunku po zniszczeniu bloku (tryb przygody).
+
+export function getDropType(type) {
+
+    const definition = BLOCK_TYPES[type];
+
+    if (!definition) {
+        return null;
+    }
+
+    return definition.drops === undefined ? type : definition.drops;
+
+}
+
+
+// Bloki w ekwipunku kreatywnym (w kolejności z listy BLOCK_TYPES).
+
+export const CREATIVE_BLOCKS = Object.keys(BLOCK_TYPES).filter(
+    (type) => BLOCK_TYPES[type].creative !== false
+);
 
 
 // Kolor światła bloku: [czerwony, zielony, niebieski], każdy 0-1.

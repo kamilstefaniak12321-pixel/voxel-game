@@ -33,6 +33,15 @@ export const TEXTS = {
         realistic: 'Morza, niziny, wyżyny i góry. W budowie - kolejne aktualizacje zmienią ten teren (Twoje budowle zostaną).',
         classic: 'Pierwszy generator gry: wzgórza i góry, bez morza. Nie będzie się już zmieniał.'
     },
+    gameMode: (name) => `Tryb gry: ${name}`,
+    gameModes: {
+        adventure: 'Przygoda',
+        creative: 'Kreatywny'
+    },
+    gameModeNotes: {
+        adventure: 'Zniszczone bloki trafiają do ekwipunku, a stawianie je zużywa. Zaczynasz z pustymi rękami.',
+        creative: 'Wszystkie bloki bez końca (E - ekwipunek), latanie: dwa razy Spacja.'
+    },
     createWorld: 'Utwórz świat',
     cancel: 'Anuluj',
     defaultWorldName: (number) => `Świat ${number}`,
@@ -53,7 +62,7 @@ export const TEXTS = {
     pointerLockFailed: 'Nie udało się przechwycić myszy - kliknij jeszcze raz.',
 
     // Czat (pokazywane po wejściu do świata)
-    chatHint: 'T - czat, /pomoc - lista komend do testowania gry, F5 - widok z trzeciej osoby',
+    chatHint: 'E - ekwipunek, T - czat, /pomoc - lista komend do testowania gry, F5 - widok z trzeciej osoby',
 
     // Ustawienia
     settingsTitle: 'Ustawienia',

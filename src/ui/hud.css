@@ -92,6 +92,20 @@ body:not([data-screen="game"]) #hotbar {
     display: none;
 }
 
+/* Liczba bloków w stosie (prawy dolny róg miejsca). */
+
+.hotbar-count {
+    position: absolute;
+    right: 2px;
+    bottom: 0;
+    font-family: var(--ui-font, monospace);
+    font-size: calc(var(--slot) * 0.32);
+    line-height: 1;
+    color: #ffffff;
+    text-shadow: 2px 2px 0 #3f3f3f;
+    pointer-events: none;
+}
+
 
 /* ------------------------------------------------------------
    CZAT (src/ui/Chat.js)
@@ -385,4 +399,214 @@ body:not([data-screen="game"]) #terrain-map {
     margin-right: 4px;
     vertical-align: middle;
     border: 1px solid #000000;
+}
+
+
+/* ------------------------------------------------------------
+   EKWIPUNEK (klawisz E - src/ui/InventoryScreen.js)
+   ------------------------------------------------------------ */
+
+#inventory {
+    position: fixed;
+    inset: 0;
+    z-index: 20;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.45);
+    font-family: var(--ui-font, monospace);
+    --inv-slot: min(44px, calc((100vw - 64px) / 10));
+}
+
+#inventory[hidden] {
+    display: none;
+}
+
+.inv-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 12px;
+    max-width: calc(100vw - 16px);
+    max-height: calc(100vh - 16px);
+    box-sizing: border-box;
+    background: rgba(32, 34, 42, 0.94);
+    border: 2px solid #000000;
+    box-shadow: inset 0 0 0 2px #5b5e6b;
+    color: #ffffff;
+}
+
+.inv-title {
+    font-size: 18px;
+    text-shadow: 2px 2px 0 #000000;
+}
+
+.inv-tabs {
+    display: flex;
+    gap: 4px;
+}
+
+.inv-tab {
+    font: inherit;
+    font-size: 15px;
+    padding: 6px 12px;
+    color: #d8d8d8;
+    background: #3c3f4b;
+    border: 2px solid #000000;
+    cursor: pointer;
+}
+
+.inv-tab.selected {
+    color: #ffff9f;
+    background: #5b5e6b;
+}
+
+.inv-search {
+    font: inherit;
+    font-size: 15px;
+    padding: 6px 8px;
+    color: #ffffff;
+    background: #15161b;
+    border: 2px solid #5b5e6b;
+    outline: none;
+}
+
+.inv-search:focus {
+    border-color: #ffffff;
+}
+
+.inv-scroll {
+    overflow-y: auto;
+    max-height: calc(var(--inv-slot) * 5 + 8px);
+    padding-right: 4px;
+}
+
+.inv-grid {
+    display: grid;
+    grid-template-columns: repeat(9, var(--inv-slot));
+    gap: 2px;
+}
+
+.inv-row {
+    display: flex;
+    gap: 10px;
+    align-items: flex-end;
+}
+
+.inv-preview {
+    width: 110px;
+    height: 154px;
+    background: #15161b;
+    border: 2px solid #000000;
+    image-rendering: pixelated;
+}
+
+.inv-bottom {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.inv-hotbar {
+    padding-top: 6px;
+    border-top: 2px solid #5b5e6b;
+}
+
+.inv-slot {
+    position: relative;
+    width: var(--inv-slot);
+    height: var(--inv-slot);
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #15161b;
+    border: 2px solid #4a4d59;
+    cursor: pointer;
+}
+
+.inv-slot:hover {
+    background: #2c2f3a;
+    border-color: #c6c6c6;
+}
+
+.inv-slot.selected {
+    border-color: #ffffff;
+}
+
+.inv-slot img,
+.inv-cursor img {
+    width: 78%;
+    height: 78%;
+    image-rendering: pixelated;
+    pointer-events: none;
+}
+
+.inv-slot img[hidden],
+.inv-cursor img[hidden] {
+    display: none;
+}
+
+.inv-count {
+    position: absolute;
+    right: 2px;
+    bottom: 0;
+    font-size: calc(var(--inv-slot) * 0.34);
+    line-height: 1;
+    text-shadow: 2px 2px 0 #3f3f3f;
+    pointer-events: none;
+}
+
+.inv-trash {
+    font-size: calc(var(--inv-slot) * 0.5);
+    color: #c9c9c9;
+}
+
+.inv-help,
+.inv-empty {
+    margin: 0;
+    max-width: calc(var(--inv-slot) * 9 + 40px);
+    font-size: 12px;
+    color: #b8b8c0;
+}
+
+/* Blok trzymany pod kursorem i podpowiedź z nazwą. */
+
+.inv-cursor {
+    position: fixed;
+    z-index: 22;
+    width: var(--inv-slot, 44px);
+    height: var(--inv-slot, 44px);
+    transform: translate(-50%, -50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    font-family: var(--ui-font, monospace);
+    color: #ffffff;
+    --inv-slot: 44px;
+}
+
+.inv-cursor[hidden],
+.inv-tooltip[hidden] {
+    display: none;
+}
+
+.inv-tooltip {
+    position: fixed;
+    z-index: 23;
+    padding: 4px 8px;
+    font-family: var(--ui-font, monospace);
+    font-size: 14px;
+    color: #ffffff;
+    background: rgba(20, 8, 28, 0.94);
+    border: 2px solid #3d1d6b;
+    pointer-events: none;
+    white-space: nowrap;
+}
+
+.inv-tooltip-id {
+    margin-left: 8px;
+    color: #9a9aa6;
+    font-size: 12px;
 }

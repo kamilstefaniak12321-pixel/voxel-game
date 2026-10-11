@@ -1,6 +1,6 @@
 import { TEXTS } from './texts.js';
 import { TERRAIN_TYPES, terrainName } from '../world/terrain/generators.js';
-import { DEFAULT_TERRAIN } from '../config.js';
+import { DEFAULT_TERRAIN, DEFAULT_GAME_MODE } from '../config.js';
 import { SETTINGS_RANGES, SETTINGS_CHOICES } from '../settings/Settings.js';
 import { hasCustomSkin, chooseSkinFile, resetSkin } from '../player/skin.js';
 
@@ -274,6 +274,7 @@ export class Menu {
                     'world-details',
                     `${TEXTS.seed}: ${world.seed}  ·  ` +
                     `${TEXTS.terrain}: ${terrainName(world.terrain)}  ·  ` +
+                    `${TEXTS.gameModes[world.gameMode ?? 'creative']}  ·  ` +
                     `${TEXTS.lastPlayed}: ${formatDate(world.lastPlayed)}`
                 )
             );
@@ -393,6 +394,25 @@ export class Menu {
         terrainNote.textContent = TEXTS.terrainNotes[terrain] ?? '';
 
 
+        // Tryb gry: przygoda / kreatywny.
+
+        const modes = Object.keys(TEXTS.gameModes);
+
+        let gameMode = modes.includes(DEFAULT_GAME_MODE) ? DEFAULT_GAME_MODE : modes[0];
+
+        const modeNote = el('p', 'menu-note', TEXTS.gameModeNotes[gameMode]);
+
+        const modeButton = button(TEXTS.gameMode(TEXTS.gameModes[gameMode]), () => {
+
+            gameMode = modes[(modes.indexOf(gameMode) + 1) % modes.length];
+
+            modeButton.textContent = TEXTS.gameMode(TEXTS.gameModes[gameMode]);
+
+            modeNote.textContent = TEXTS.gameModeNotes[gameMode];
+
+        });
+
+
         const buttons = el('div', 'menu-row');
 
         const createButton = button(TEXTS.createWorld, () => {});
@@ -405,7 +425,7 @@ export class Menu {
         );
 
 
-        form.append(nameLabel, seedLabel, terrainButton, terrainNote, buttons);
+        form.append(nameLabel, seedLabel, terrainButton, terrainNote, modeButton, modeNote, buttons);
 
 
         // Enter w polu tekstowym też tworzy świat.
@@ -418,7 +438,7 @@ export class Menu {
                 nameInput.value.trim() ||
                 TEXTS.defaultWorldName(number);
 
-            this.handlers.createWorld(name, seedInput.value, terrain);
+            this.handlers.createWorld(name, seedInput.value, terrain, gameMode);
 
         });
 

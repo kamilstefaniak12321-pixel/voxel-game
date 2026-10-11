@@ -18,9 +18,18 @@ export class InputManager {
 
         this.keyPressed = new Set();
 
+        // enabled = false (np. przy otwartym ekwipunku): klawisze nie
+        // trafiają do gry (puszczenie klawisza działa zawsze).
+
+        this.enabled = true;
+
         window.addEventListener(
     'keydown',
     event => {
+
+        if (!this.enabled) {
+            return;
+        }
 
         if (!this.keys[event.code]) {
 

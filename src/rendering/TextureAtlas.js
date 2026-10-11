@@ -124,9 +124,38 @@ export const ATLAS_TILES = {
     basalt_top: {
         x: 4,
         y: 1
-    }
+    },
+
+    // Rodzaje ziemi.
+
+    humus: { x: 5, y: 1 },
+    coarse_dirt: { x: 6, y: 1 },
+    forest_floor_top: { x: 7, y: 1 },
+    forest_floor_side: { x: 8, y: 1 },
+    mud: { x: 9, y: 1 },
+    clay: { x: 10, y: 1 },
+    gravel: { x: 11, y: 1 },
+
+    // Rośliny - cały wiersz 2 (PLANT_ATLAS_ROW): shader bloków kołysze
+    // na wietrze górę wszystkiego, co ma teksturę z tego wiersza.
+
+    short_grass: { x: 0, y: 2 },
+    tall_grass: { x: 1, y: 2 },
+    fern: { x: 2, y: 2 },
+    clover: { x: 3, y: 2 },
+    nettle: { x: 4, y: 2 },
+    plantain: { x: 5, y: 2 },
+    poppy: { x: 6, y: 2 },
+    cornflower: { x: 7, y: 2 },
+    chamomile: { x: 8, y: 2 },
+    dandelion: { x: 9, y: 2 }
 
 };
+
+
+// Wiersz atlasu z roślinami (kołyszą się na wietrze).
+
+export const PLANT_ATLAS_ROW = 2;
 
 // ------------------------------------------------------------
 

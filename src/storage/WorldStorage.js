@@ -13,7 +13,7 @@
 //            i tak powstaje z seeda zawsze tak samo.
 // ------------------------------------------------------------
 
-import { DEFAULT_TERRAIN } from '../config.js';
+import { DEFAULT_TERRAIN, DEFAULT_GAME_MODE } from '../config.js';
 
 const DB_NAME = 'voxel-game';
 
@@ -57,7 +57,7 @@ function transactionToPromise(transaction) {
 // Dane nowego świata (jeszcze niezapisane w bazie).
 // ------------------------------------------------------------
 
-export function createWorldInfo(name, seed, terrain = DEFAULT_TERRAIN) {
+export function createWorldInfo(name, seed, terrain = DEFAULT_TERRAIN, gameMode = DEFAULT_GAME_MODE) {
 
     const now = Date.now();
 
@@ -78,6 +78,12 @@ export function createWorldInfo(name, seed, terrain = DEFAULT_TERRAIN) {
         // Typ terenu ('realistic', 'classic' - src/world/terrain/generators.js).
         // Światy bez tego pola są klasyczne.
         terrain,
+
+        // Tryb gry ('adventure', 'creative'). Światy bez tego pola są kreatywne.
+        gameMode,
+
+        // Ekwipunek z paskiem bloków (game/Inventory.js) - powstaje w grze.
+        inventory: null,
 
         formatVersion: WORLD_FORMAT_VERSION
 

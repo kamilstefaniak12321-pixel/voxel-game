@@ -9,8 +9,11 @@ import {
     BLOCK_TYPES,
     blockExists,
     getBlockDefinition,
-    getBlockTypeById
+    getBlockTypeById,
+    getBlockLabel
 } from '../blocks/BlockRegistry.js';
+
+import { STACK_SIZE } from '../game/Inventory.js';
 
 import {
     describeLight
@@ -234,6 +237,14 @@ const PHASE_WORDS = [
 ];
 
 
+// Polskie nazwy bloków (label) bez ogonków, spacje -> _:
+// mak, chaber, paproc, czarnoziem, krotka_trawa, sciolka_lesna...
+
+const LABEL_WORDS = new Map(
+    Object.keys(BLOCK_TYPES).map((type) => [simplify(getBlockLabel(type)).replace(/\s+/g, '_'), type])
+);
+
+
 function blockArgument(text) {
 
     const word = simplify(text ?? '');
@@ -242,9 +253,10 @@ function blockArgument(text) {
         return null;
     }
 
-    // Polskie nazwy też działają: granit, wapien, piaskowiec, trawa...
+    // Polskie nazwy też działają: granit, wapien, piaskowiec, trawa,
+    // mak, paproc...
 
-    const name = blockFromWord(word) ?? word;
+    const name = blockFromWord(word) ?? LABEL_WORDS.get(word) ?? word;
 
     if (!blockExists(name)) {
         throw new CommandError(`Nie ma bloku "${text ?? ''}". Lista: /bloki`);
@@ -1332,6 +1344,94 @@ export const GAME_COMMANDS = [
 
 
     {
+        name: 'tryb',
+        aliases: ['gamemode', 'gm'],
+        usage: '/tryb [przygoda | kreatywny]',
+        description: 'Tryb gry: przygoda (zbierasz i zużywasz bloki) albo kreatywny (bloki bez końca, latanie - 2 x Spacja).',
+
+        run(args, { game }) {
+
+            const word = simplify(args[0] ?? '');
+
+            if (!word) {
+                return `Tryb gry: ${TEXTS.gameModes[game.mode]}. Zmiana: /tryb przygoda albo /tryb kreatywny.`;
+            }
+
+            const mode =
+                ['przygoda', 'adventure', 'survival', 'p', '0'].includes(word) ? 'adventure' :
+                ['kreatywny', 'creative', 'k', '1'].includes(word) ? 'creative' :
+                null;
+
+            if (!mode) {
+                throw usageError(this);
+            }
+
+            game.setMode(mode);
+
+            return mode === 'creative'
+                ? 'Tryb kreatywny: bloki się nie zużywają, E - wszystkie bloki, dwa razy Spacja - latanie.'
+                : 'Tryb przygody: zniszczone bloki trafiają do ekwipunku, stawianie je zużywa.';
+
+        },
+
+        complete(args) {
+            return args.length === 1 ? ['przygoda', 'kreatywny'] : [];
+        }
+    },
+
+
+    {
+        name: 'ekwipunek',
+        aliases: ['inventory', 'eq'],
+        usage: '/ekwipunek | /ekwipunek wyczysc',
+        description: 'Co jest w ekwipunku (E - okno ekwipunku); wyczyszczenie ekwipunku.',
+
+        run(args, { game }) {
+
+            const inventory = game.inventory;
+
+            const word = simplify(args[0] ?? '');
+
+
+            if (['wyczysc', 'clear'].includes(word)) {
+
+                inventory.clear();
+
+                return 'Ekwipunek wyczyszczony.';
+
+            }
+
+            if (word) {
+                throw usageError(this);
+            }
+
+
+            const totals = new Map();
+
+            for (const item of inventory.slots) {
+
+                if (item) {
+                    totals.set(item.type, (totals.get(item.type) ?? 0) + item.count);
+                }
+
+            }
+
+            const used = inventory.slots.filter(Boolean).length;
+
+            return totals.size === 0
+                ? 'Ekwipunek jest pusty.'
+                : `Ekwipunek (${used} z ${inventory.slots.length} miejsc): ` +
+                  [...totals].map(([type, count]) => `${getBlockLabel(type)} ${count}`).join(', ');
+
+        },
+
+        complete(args) {
+            return args.length === 1 ? ['wyczysc'] : [];
+        }
+    },
+
+
+    {
         name: 'latanie',
         aliases: ['fly'],
         usage: '/latanie',
@@ -1608,8 +1708,8 @@ export const GAME_COMMANDS = [
     {
         name: 'daj',
         aliases: ['give'],
-        usage: '/daj <blok>',
-        description: 'Wkłada blok do wybranego miejsca na pasku.',
+        usage: '/daj <blok> [ilość]',
+        description: 'Blok do ekwipunku. Bez ilości w trybie kreatywnym - do wybranego miejsca na pasku, w przygodzie - stos 64.',
 
         run(args, { game }) {
 
@@ -1619,14 +1719,33 @@ export const GAME_COMMANDS = [
                 throw new CommandError('Podaj blok, np. /daj lamp_red');
             }
 
-            game.hotbar.slots[game.hotbar.selected] = type;
+            const inventory = game.inventory;
 
-            return `Na pasku: ${getBlockDefinition(type).name}.`;
+
+            if (args[1] === undefined && game.mode === 'creative') {
+
+                inventory.set(inventory.selected, { type, count: 1 });
+
+                return `Na pasku: ${getBlockLabel(type)}.`;
+
+            }
+
+
+            const count = args[1] === undefined ? STACK_SIZE : Math.floor(parseNumber(args[1], 'ilość'));
+
+            if (count < 1 || count > STACK_SIZE * 36) {
+                throw new CommandError(`Ilość: od 1 do ${STACK_SIZE * 36}`);
+            }
+
+            const left = inventory.add(type, count);
+
+            return `Do ekwipunku: ${count - left} x ${getBlockLabel(type)}` +
+                (left > 0 ? ` (${left} się nie zmieściło - ekwipunek pełny).` : '.');
 
         },
 
         complete(args) {
-            return args.length === 1 ? BLOCK_NAMES : [];
+            return args.length === 1 ? BLOCK_NAMES : args.length === 2 ? ['1', '16', '64'] : [];
         }
     },
 
@@ -1642,7 +1761,8 @@ export const GAME_COMMANDS = [
             return 'Bloki: ' + BLOCK_NAMES
                 .map((type) => {
                     const definition = BLOCK_TYPES[type];
-                    return definition.light ? `${type} (świeci ${definition.light})` : type;
+                    const name = `${type} (${getBlockLabel(type)}${definition.light ? `, świeci ${definition.light}` : ''})`;
+                    return name;
                 })
                 .join(', ');
 

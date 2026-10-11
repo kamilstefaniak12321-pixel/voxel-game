@@ -49,6 +49,26 @@ function getRotationAt(x, y, z) {
 
 }
 
+
+// Liczba 0..1 zależna od pozycji bloku i "soli" (rośliny: obrót,
+// przesunięcie i wysokość każdej kępki trochę inne).
+
+function plantRandom(x, y, z, salt) {
+
+    let h =
+        Math.imul(x, 668265263) ^
+        Math.imul(y, 374761393) ^
+        Math.imul(z, 2246822519) ^
+        Math.imul(salt, 3266489917);
+
+    h = Math.imul(h ^ (h >>> 15), 2246822519);
+    h = Math.imul(h ^ (h >>> 13), 3266489917);
+    h ^= h >>> 16;
+
+    return (h >>> 0) / 4294967296;
+
+}
+
 // ------------------------------------------------------------
 // KOPIA OKOLICY CHUNKA
 //
@@ -381,6 +401,123 @@ function ensureCapacity(faces) {
 }
 
 // ------------------------------------------------------------
+// ROŚLINY: kilka pionowych płaszczyzn skrzyżowanych w środku bloku
+// (2 albo 3 - plant.planes), każda z dwiema stronami. Obrót,
+// przesunięcie i wysokość zależą od pozycji (kępki nie stoją w równym
+// rzędzie). Światło - z komórki rośliny; dół ciemniejszy (głębia
+// kępki). Normalna w górę: obie strony oświetlone jak wierzch bloku.
+// ------------------------------------------------------------
+
+const PLANT_BOTTOM_SHADE = 0.68;
+
+function addPlants(plants, faceCount, baseX, baseZ) {
+
+    for (let k = 0; k < plants.length; k += 4) {
+
+        const lx = plants[k];
+        const y = plants[k + 1];
+        const lz = plants[k + 2];
+        const id = plants[k + 3];
+
+        const { cross } = blockRenderData[id];
+
+        const wx = baseX + lx;
+        const wz = baseZ + lz;
+
+
+        // Światło komórki rośliny.
+
+        const cell = padIndex(lx, y, lz);
+
+        const red = padR[cell];
+        const green = padG[cell];
+        const blue = padB[cell];
+
+        const strongest = Math.max(red, green, blue);
+
+        const sky = BRIGHTNESS[padSky[cell] * LEVEL_STEPS];
+
+        const lamp = BRIGHTNESS[Math.round(COLOR_LEVEL[strongest] * LEVEL_STEPS)] * 0.75;
+
+        const lampR = strongest > 0 ? lamp * red / strongest : lamp;
+        const lampG = strongest > 0 ? lamp * green / strongest : lamp;
+        const lampB = strongest > 0 ? lamp * blue / strongest : lamp;
+
+
+        // Kształt kępki.
+
+        const angle0 = plantRandom(wx, y, wz, 1) * Math.PI;
+        const centerX = lx + 0.5 + (plantRandom(wx, y, wz, 2) - 0.5) * 0.3;
+        const centerZ = lz + 0.5 + (plantRandom(wx, y, wz, 3) - 0.5) * 0.3;
+        const top = y + cross.height * (0.85 + 0.3 * plantRandom(wx, y, wz, 4));
+
+        const { uMin, uMax, vMin, vMax } = cross.uv;
+
+
+        for (let plane = 0; plane < cross.planes; plane++) {
+
+            const angle = angle0 + plane * Math.PI / cross.planes;
+
+            const dx = Math.cos(angle) * cross.width;
+            const dz = Math.sin(angle) * cross.width;
+
+            // Dwie strony płaszczyzny: rogi lewy górny, prawy górny,
+            // lewy dolny, prawy dolny (patrząc na daną stronę).
+
+            for (let side = 0; side < 2; side++) {
+
+                ensureCapacity(faceCount + 1);
+
+                const s = side === 0 ? 1 : -1;
+
+                const xs = [centerX - dx * s, centerX + dx * s];
+                const zs = [centerZ - dz * s, centerZ + dz * s];
+                const us = side === 0 ? [uMin, uMax] : [uMax, uMin];
+
+                const p = faceCount * 12;
+                const t = faceCount * 8;
+                const c = faceCount * 16;
+
+                for (let i = 0; i < 4; i++) {
+
+                    const right = i & 1;
+                    const bottom = i >> 1;
+
+                    positionBuffer[p + i * 3] = xs[right];
+                    positionBuffer[p + i * 3 + 1] = bottom ? y : top;
+                    positionBuffer[p + i * 3 + 2] = zs[right];
+
+                    normalBuffer[p + i * 3] = 0;
+                    normalBuffer[p + i * 3 + 1] = 1;
+                    normalBuffer[p + i * 3 + 2] = 0;
+
+                    uvBuffer[t + i * 2] = us[right];
+                    uvBuffer[t + i * 2 + 1] = bottom ? vMin : vMax;
+
+                    const shade = bottom ? PLANT_BOTTOM_SHADE : 1;
+
+                    colorBuffer[c + i * 4] = lampR * shade * 255 + 0.5;
+                    colorBuffer[c + i * 4 + 1] = lampG * shade * 255 + 0.5;
+                    colorBuffer[c + i * 4 + 2] = lampB * shade * 255 + 0.5;
+                    colorBuffer[c + i * 4 + 3] = sky * shade * 255 + 0.5;
+
+                }
+
+                splitBuffer[faceCount] = 0;
+
+                faceCount++;
+
+            }
+
+        }
+
+    }
+
+    return faceCount;
+
+}
+
+// ------------------------------------------------------------
 // Ile dolnych warstw chunka na pewno jest schowanych.
 //
 // Poniżej solidBelow (Chunk.js) wszystkie komórki chunka są
@@ -459,6 +596,11 @@ export function buildChunkGeometry(chunk, world) {
 
     let faceCount = 0;
 
+    // Rośliny dokładamy na końcu (osobny materiał - przezroczystość
+    // i kołysanie na wietrze): x, y, z, id po kolei.
+
+    const plants = [];
+
 
     for (let y = start; y < height; y++) {
 
@@ -477,6 +619,15 @@ export function buildChunkGeometry(chunk, world) {
 
                 if (!renderData) {
                     continue;
+                }
+
+
+                if (renderData.cross) {
+
+                    plants.push(lx, y, lz, id);
+
+                    continue;
+
                 }
 
 
@@ -704,6 +855,11 @@ export function buildChunkGeometry(chunk, world) {
     }
 
 
+    const cubeFaces = faceCount;
+
+    faceCount = addPlants(plants, faceCount, baseX, baseZ);
+
+
     if (faceCount === 0) {
         return null;
     }
@@ -762,6 +918,16 @@ export function buildChunkGeometry(chunk, world) {
     geometry.setIndex(
         new THREE.BufferAttribute(indices, 1)
     );
+
+
+    // Grupa 0 - zwykłe ściany (blockMaterial), grupa 1 - rośliny
+    // (plantMaterial: przezroczystość, wiatr).
+
+    geometry.addGroup(0, cubeFaces * 6, 0);
+
+    if (faceCount > cubeFaces) {
+        geometry.addGroup(cubeFaces * 6, (faceCount - cubeFaces) * 6, 1);
+    }
 
 
     // Kula obejmująca chunk - potrzebna, żeby three.js pomijał

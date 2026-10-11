@@ -91,6 +91,11 @@ export class Player {
 
         this.flying = false;
 
+        // Tryb kreatywny: dwa razy Spacja włącza i wyłącza latanie
+        // (ustawia Game). Lądowanie na ziemi kończy lot.
+        this.canFly = false;
+        this.lastJumpPress = -Infinity;
+
         this.speedMultiplier = 1;
 
 
@@ -348,6 +353,28 @@ updateMovement(dt, input) {
 //   dwa razy W albo przytrzymane R (razem z W) - bieg.
 
 updateStance(input) {
+
+    // Latanie w trybie kreatywnym: dwa razy Spacja (w krótkim odstępie).
+
+    if (input.consumeKeyPress('Space')) {
+
+        if (this.canFly && this.clock - this.lastJumpPress < SPRINT_DOUBLE_TAP) {
+
+            this.flying = !this.flying;
+
+            this.vel.y = 0;
+
+            this.lastJumpPress = -Infinity;
+
+        }
+        else {
+
+            this.lastJumpPress = this.clock;
+
+        }
+
+    }
+
 
     const shift = input.isKeyDown('ShiftLeft') || input.isKeyDown('ShiftRight');
 
@@ -690,6 +717,13 @@ update(dt, input) {
     this.resolveMovement(dt);
 
     this.landed = !wasOnGround && this.onGround && !this.flying ? Math.max(0, fallSpeed) : 0;
+
+
+    // Lot w trybie kreatywnym kończy się po zejściu na ziemię.
+
+    if (this.flying && this.canFly && this.onGround) {
+        this.flying = false;
+    }
 
 
     // Bieg kończy się na ścianie (i przez chwilę nie wraca, nawet z R).

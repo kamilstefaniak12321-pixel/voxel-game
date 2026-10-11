@@ -127,6 +127,23 @@ export async function createBlockIcons() {
         const textures = definition.textures;
 
 
+        // Roślina: płaski obrazek (jak tekstura), bez sześcianu.
+
+        if (definition.model === 'cross') {
+
+            const tile = ATLAS_TILES[getFaceTexture(textures, 'front')];
+
+            if (tile) {
+                ctx.drawImage(atlas, tile.x * T, tile.y * T, T, T, 0, 0, W, W);
+            }
+
+            icons.set(type, canvas.toDataURL());
+
+            continue;
+
+        }
+
+
         // Góra: romb od (W/2, 0) przez (W, W/4) i (0, W/4) do (W/2, W/2).
 
         drawFace(ctx, atlas, getFaceTexture(textures, 'top'),

@@ -378,6 +378,18 @@ const HELD_FACES = [
 ];
 
 
+// Roślina w ręce: dwie skrzyżowane płaszczyzny (każda z obu stron).
+
+const S = Math.SQRT1_2;
+
+const HELD_PLANT_FACES = [
+    ['front', [S, 0, -S], [[0, 1, 0], [1, 1, 1], [0, 0, 0], [1, 0, 1]]],
+    ['front', [-S, 0, S], [[1, 1, 1], [0, 1, 0], [1, 0, 1], [0, 0, 0]]],
+    ['front', [S, 0, S], [[0, 1, 1], [1, 1, 0], [0, 0, 1], [1, 0, 0]]],
+    ['front', [-S, 0, -S], [[1, 1, 0], [0, 1, 1], [1, 0, 0], [0, 0, 1]]]
+];
+
+
 function buildBlockGeometry(type) {
 
     const definition = getBlockDefinition(type);
@@ -387,8 +399,10 @@ function buildBlockGeometry(type) {
     const uvs = [];
     const indices = [];
 
+    const faces = definition.model === 'cross' ? HELD_PLANT_FACES : HELD_FACES;
 
-    for (const [faceName, normal, corners] of HELD_FACES) {
+
+    for (const [faceName, normal, corners] of faces) {
 
         const uv = getAtlasUV(getFaceTexture(definition.textures, faceName));
 
@@ -485,6 +499,9 @@ export class PlayerModel {
         this.heldType = null;
 
         this.heldMaterial = createModelMaterial({ map: blockAtlasTexture });
+
+        // Rośliny mają przezroczyste tło tekstury.
+        this.heldPlantMaterial = createModelMaterial({ map: blockAtlasTexture, alphaTest: 0.5 });
 
         this.held = new THREE.Mesh(new THREE.BufferGeometry(), this.heldMaterial);
 
@@ -613,6 +630,10 @@ export class PlayerModel {
 
         this.held.visible = Boolean(type);
 
+        this.held.material = type && getBlockDefinition(type).model === 'cross'
+            ? this.heldPlantMaterial
+            : this.heldMaterial;
+
         const light = type ? (getBlockDefinition(type).light ?? 0) : 0;
 
         this.heldMaterial.userData.uniforms.uModelGlow.value = light / 15;
@@ -675,7 +696,7 @@ export class PlayerModel {
 
         this.held.geometry.dispose();
 
-        for (const material of [...this.materials, this.heldMaterial]) {
+        for (const material of [...this.materials, this.heldMaterial, this.heldPlantMaterial]) {
             material.dispose();
         }
 

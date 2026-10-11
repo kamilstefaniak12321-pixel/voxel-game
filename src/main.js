@@ -12,6 +12,7 @@ import { CommandRegistry } from './commands/CommandRegistry.js';
 import { GAME_COMMANDS } from './commands/gameCommands.js';
 import { PerfMonitor } from './game/PerfMonitor.js';
 import { TerrainMap } from './ui/TerrainMap.js';
+import { InventoryScreen } from './ui/InventoryScreen.js';
 import {
     WorldStorage,
     createWorldInfo,
@@ -21,7 +22,8 @@ import {
 import {
     GAME_TITLE,
     UI_THEMES,
-    POTATO_RENDER_SCALE
+    POTATO_RENDER_SCALE,
+    HOTBAR_SIZE
 } from './config.js';
 
 // ------------------------------------------------------------
@@ -36,6 +38,7 @@ import {
 //   'loading' - świat się wczytuje albo zapisuje
 //   'playing' - gra działa, mysz jest przechwycona
 //   'chat'    - otwarty czat (gra działa dalej, mysz jest wolna)
+//   'inventory' - otwarty ekwipunek (E; gra działa dalej, mysz wolna)
 //   'paused'  - menu pauzy na tle zatrzymanej gry
 // ------------------------------------------------------------
 
@@ -238,9 +241,9 @@ async function openWorldList() {
 }
 
 
-async function createWorld(name, seedText, terrain) {
+async function createWorld(name, seedText, terrain, gameMode) {
 
-    const worldInfo = createWorldInfo(name, seedFromText(seedText), terrain);
+    const worldInfo = createWorldInfo(name, seedFromText(seedText), terrain, gameMode);
 
     if (storage) {
         await storage.saveWorld(worldInfo);
@@ -281,6 +284,10 @@ async function playWorld(worldInfo) {
         // Komunikaty gry (np. gdzie spadł meteoryt) trafiają na czat.
 
         game.onMessage = (text) => chat.print(text, 'hint');
+
+        // Krótkie komunikaty (np. "Ekwipunek pełny") - nad paskiem bloków.
+
+        game.onNotice = (text) => hotbar.showName(text);
 
         // Pomiar wydajności (komenda /wydajnosc).
 
@@ -400,6 +407,11 @@ document.addEventListener('pointerlockchange', () => {
 
             if (state === 'chat') {
                 chat.close();
+            }
+
+            if (state === 'inventory') {
+                inventoryScreen.close();
+                input.enabled = true;
             }
 
             state = 'playing';
@@ -557,7 +569,68 @@ function submitChat(text) {
 }
 
 
+// ------------------------------------------------------------
+// EKWIPUNEK (E)
+//
+// Jak czat: mysz jest wolna, gra działa dalej, ale klawisze ruchu
+// nie działają. E wraca do gry, ESC - do menu pauzy.
+// ------------------------------------------------------------
+
+function openInventory() {
+
+    if (!game || state !== 'playing' || !inventoryScreen) {
+        return;
+    }
+
+    state = 'inventory';
+
+    input.reset();
+
+    input.enabled = false;
+
+    inventoryScreen.open(game);
+
+    document.exitPointerLock();
+
+}
+
+
+function closeInventory(relock = true) {
+
+    if (state !== 'inventory') {
+        return;
+    }
+
+    inventoryScreen.close();
+
+    input.enabled = true;
+
+    state = 'paused';
+
+    if (relock) {
+        resume();
+    }
+    else {
+        menu.showPause();
+    }
+
+}
+
+
 window.addEventListener('keydown', (event) => {
+
+    // E - ekwipunek.
+
+    if (state === 'playing' && !event.repeat && event.code === 'KeyE') {
+
+        event.preventDefault();
+
+        openInventory();
+
+        return;
+
+    }
+
 
     // M - mapa terenu (otwiera / zamyka).
 
@@ -724,12 +797,12 @@ function animate(now) {
 
     // Pasek bloków na dole ekranu.
 
-    hotbar.update(game.hotbar.slots, game.hotbar.selected);
+    hotbar.update(game.inventory.slots.slice(0, HOTBAR_SIZE), game.inventory.selected);
 
 
-    // Gra działa także przy otwartym czacie.
+    // Gra działa także przy otwartym czacie i ekwipunku.
 
-    if (state === 'playing' || state === 'chat') {
+    if (state === 'playing' || state === 'chat' || state === 'inventory') {
 
         // F3 - informacje debugowania w HUD.
 
@@ -750,6 +823,8 @@ function animate(now) {
 
 
     chat.update();
+
+    inventoryScreen?.update();
 
     crosshairElement.style.visibility = game.cameraMode === 'front' ? 'hidden' : '';
 
@@ -817,10 +892,19 @@ await loadTheme(settings.get('theme'));
 
 // Ikonki bloków i pasek bloków na dole ekranu.
 
+const blockIcons = await createBlockIcons();
+
 const hotbar = new Hotbar(
     document.getElementById('hotbar'),
-    await createBlockIcons()
+    blockIcons
 );
+
+
+// Ekwipunek (E) - te same ikonki.
+
+const inventoryScreen = new InventoryScreen(blockIcons, {
+    close: (relock) => closeInventory(relock)
+});
 
 menu.showTitle();
 

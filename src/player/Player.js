@@ -6,7 +6,12 @@ import {
     MOVE_SPEED,
     JUMP_SPEED,
     MAX_FALL_SPEED,
-    MOUSE_SENSITIVITY
+    MOUSE_SENSITIVITY,
+    CROUCH_SPEED_FACTOR,
+    CROUCH_HEIGHT,
+    CROUCH_EYE_HEIGHT,
+    SPRINT_SPEED_FACTOR,
+    SPRINT_DOUBLE_TAP
 } from '../config.js';
 
 // Maksymalna odległość pokonywana w jednym kroku kolizji.
@@ -24,6 +29,11 @@ const COLLISION_EPSILON = 0.0001;
 
 const FLY_SPEED_FACTOR = 2;
 
+// Wzrost i wysokość oczu stojącego gracza.
+
+const STAND_HEIGHT = 1.8;
+const STAND_EYE_HEIGHT = 1.6;
+
 export class Player {
 
     constructor(world, camera) {
@@ -38,8 +48,29 @@ export class Player {
 
 
         this.width = 0.6;
-        this.height = 1.8;
-        this.eyeHeight = 1.6;
+        this.height = STAND_HEIGHT;
+        this.eyeHeight = STAND_EYE_HEIGHT;
+
+
+        // Kucanie (Shift) i bieg (dwa razy W albo R).
+
+        this.crouching = false;
+        this.sprinting = false;
+
+        // Bieg włączony dwuklikiem W trwa, dopóki W jest wciśnięte.
+        this.sprintLatched = false;
+        this.lastForwardPress = -Infinity;
+        this.clock = 0;
+
+        // Po uderzeniu w ścianę bieg na chwilę się wyłącza (sekundy).
+        this.sprintPause = 0;
+
+        // Prędkość, z jaką gracz właśnie wylądował (0 = nie lądował
+        // w tej klatce) - dla animacji.
+        this.landed = 0;
+
+        // Prędkość ruchu w tej chwili (bloki/s) - dla animacji.
+        this.moveSpeed = MOVE_SPEED;
 
 
         this.yaw = 0;
@@ -247,13 +278,20 @@ updateMovement(dt, input) {
     }
 
 
+    this.updateStance(input);
+
+
     // Prędkość: zwykła razy mnożnik z komendy /predkosc,
-    // w locie dwa razy szybciej.
+    // w locie dwa razy szybciej, kucając wolniej, biegnąc szybciej.
 
     const speed =
         MOVE_SPEED *
         this.speedMultiplier *
-        (this.flying ? FLY_SPEED_FACTOR : 1);
+        (this.flying ? FLY_SPEED_FACTOR : 1) *
+        (this.crouching ? CROUCH_SPEED_FACTOR : 1) *
+        (this.sprinting ? SPRINT_SPEED_FACTOR : 1);
+
+    this.moveSpeed = speed;
 
     this.vel.x = move.x * speed;
     this.vel.z = move.z * speed;
@@ -305,7 +343,69 @@ updateMovement(dt, input) {
 
 }
 
+// Kucanie i bieg z klawiszy.
+//   Shift - kucanie (w locie Shift to "w dół", więc wtedy nie kuca),
+//   dwa razy W albo przytrzymane R (razem z W) - bieg.
+
+updateStance(input) {
+
+    const shift = input.isKeyDown('ShiftLeft') || input.isKeyDown('ShiftRight');
+
+    const forward = input.isKeyDown('KeyW');
+
+
+    // Kucanie. Wstać można tylko, gdy nad głową jest miejsce.
+
+    if (shift && !this.flying) {
+
+        this.crouching = true;
+
+        this.height = CROUCH_HEIGHT;
+
+    }
+    else if (this.crouching) {
+
+        this.height = STAND_HEIGHT;
+
+        if (this.collidesAt(this.pos)) {
+            this.height = CROUCH_HEIGHT;
+        }
+        else {
+            this.crouching = false;
+        }
+
+    }
+
+
+    // Bieg: dwuklik W (w krótkim odstępie) albo R.
+
+    if (input.consumeKeyPress('KeyW')) {
+
+        if (this.clock - this.lastForwardPress < SPRINT_DOUBLE_TAP) {
+            this.sprintLatched = true;
+        }
+
+        this.lastForwardPress = this.clock;
+
+    }
+
+    if (!forward) {
+        this.sprintLatched = false;
+    }
+
+    this.sprinting =
+        forward &&
+        !this.crouching &&
+        this.sprintPause <= 0 &&
+        (this.sprintLatched || input.isKeyDown('KeyR'));
+
+}
+
 resolveMovement(dt) {
+
+    // Kucając na ziemi nie da się spaść z krawędzi (jak w Minecrafcie).
+
+    this.edgeGuard = this.crouching && this.onGround && !this.flying;
 
     this.onGround = false;
 
@@ -390,7 +490,20 @@ moveAxis(axis, delta) {
 
 
     if (!this.collidesAt(this.pos)) {
+
+        // Kucanie: ruch w bok, po którym pod stopami nie byłoby
+        // żadnego bloku, jest zatrzymany (jak zderzenie).
+
+        if (axis !== 'y' && this.edgeGuard && !this.hasGroundBelow()) {
+
+            this.pos[axis] = oldValue;
+
+            return true;
+
+        }
+
         return false;
+
     }
 
 
@@ -452,6 +565,30 @@ moveAxis(axis, delta) {
 
 
     return true;
+
+}
+
+// Czy pod stopami (w obrysie gracza) jest jakiś blok z kolizją.
+
+hasGroundBelow() {
+
+    const half = this.width / 2;
+
+    const y = Math.floor(this.pos.y - 0.05);
+
+    for (let x = Math.floor(this.pos.x - half); x <= Math.floor(this.pos.x + half); x++) {
+
+        for (let z = Math.floor(this.pos.z - half); z <= Math.floor(this.pos.z + half); z++) {
+
+            if (this.world.isSolid(x, y, z)) {
+                return true;
+            }
+
+        }
+
+    }
+
+    return false;
 
 }
 
@@ -536,13 +673,45 @@ updateCamera() {
 
 update(dt, input) {
 
+    this.clock += dt;
+
     this.updateLook(input);
 
     this.updateMovement(dt, input);
 
+
+    // Lądowanie (dla animacji): prędkość spadania tuż przed dotknięciem ziemi.
+
+    const wasOnGround = this.onGround;
+    const fallSpeed = -this.vel.y;
+
+    const horizontal = Math.hypot(this.vel.x, this.vel.z);
+
     this.resolveMovement(dt);
 
+    this.landed = !wasOnGround && this.onGround && !this.flying ? Math.max(0, fallSpeed) : 0;
+
+
+    // Bieg kończy się na ścianie (i przez chwilę nie wraca, nawet z R).
+
+    this.sprintPause -= dt;
+
+    if (this.sprinting && horizontal > 0 && Math.hypot(this.vel.x, this.vel.z) < horizontal * 0.5) {
+
+        this.sprintLatched = false;
+        this.sprinting = false;
+        this.sprintPause = 0.4;
+
+    }
+
     this.checkRespawn();
+
+
+    // Oczy płynnie zjeżdżają w dół przy kucaniu i wracają przy wstawaniu.
+
+    const eyeTarget = this.crouching ? CROUCH_EYE_HEIGHT : STAND_EYE_HEIGHT;
+
+    this.eyeHeight += (eyeTarget - this.eyeHeight) * Math.min(1, dt * 14);
 
     this.updateCamera();
 

@@ -1,0 +1,684 @@
+import * as THREE from 'three';
+
+import { getBlockDefinition } from '../blocks/BlockRegistry.js';
+import { getAtlasUV, blockAtlasTexture } from '../rendering/TextureAtlas.js';
+import { getFaceTexture } from '../rendering/BlockRenderData.js';
+import { createModelMaterial } from '../rendering/ModelMaterial.js';
+import { skinTexture } from './skin.js';
+
+// ------------------------------------------------------------
+// MODEL GRACZA
+//
+// Klockowa postać jak w Minecrafcie (wymiary w pikselach skórki,
+// 32 piksele = wysokość gracza), ale z większą liczbą stawów:
+//
+//            [ głowa ]            8 x 8 x 8      staw: szyja
+//          ┌─[klatka]─┐           8 x 6 x 4      staw: talia
+//   ramię ─┤ [brzuch] ├─ ramię    8 x 6 x 4      (miednica)
+//  przedr. │          │ przedr.   ręce 4 x 6 x 4 + 4 x 6 x 4   stawy: bark, łokieć
+//          [udo][udo]             nogi 4 x 6 x 4 + 4 x 6 x 4   stawy: biodro, kolano
+//          [gol.][gol.]
+//
+// Tułów, ręce i nogi to "zginane klocki": wyprostowane wyglądają jak
+// jeden klocek, a w środku (łokieć, kolano, talia) zginają się bez
+// szpar - dwie połowy obracają się osobno, a pas wierzchołków w stawie
+// leży w połowie między nimi (gładkie zgięcie). Styl 'blocks' robi
+// z każdej połowy osobny, sztywny klocek (widać wyraźnie dwie części).
+//
+// Animacje (PlayerAnimator.js) ustawiają kąty stawów: setPose(pose).
+// Szczegóły i układ skórki: docs/gracz.md.
+// ------------------------------------------------------------
+
+// Rozmiar jednego piksela skórki w blokach (gracz ma 1,8 bloku).
+
+export const MODEL_PIXEL = 1.8 / 32;
+
+const SKIN_SIZE = 64;
+
+
+// Kości (stawy): rodzic, położenie względem rodzica (piksele).
+// Model patrzy w stronę -Z (do przodu), +X to jego prawa strona.
+
+const BONES = {
+    pelvis: { parent: null, at: [0, 12, 0] },       // miednica (dół tułowia)
+    waist: { parent: 'pelvis', at: [0, 6, 0] },     // talia
+    neck: { parent: 'waist', at: [0, 6, 0] },       // szyja (dół głowy)
+    shoulderR: { parent: 'waist', at: [6, 4, 0] },  // prawy bark
+    elbowR: { parent: 'shoulderR', at: [0, -4, 0] },
+    shoulderL: { parent: 'waist', at: [-6, 4, 0] },
+    elbowL: { parent: 'shoulderL', at: [0, -4, 0] },
+    hipR: { parent: 'pelvis', at: [2, 0, 0] },      // prawe biodro
+    kneeR: { parent: 'hipR', at: [0, -6, 0] },
+    hipL: { parent: 'pelvis', at: [-2, 0, 0] },
+    kneeL: { parent: 'hipL', at: [0, -6, 0] }
+};
+
+const BONE_NAMES = Object.keys(BONES);
+
+
+// Części modelu: środek klocka (x, z), góra i rozmiar (piksele), miejsce
+// w skórce (uv - zwykła warstwa, overlay - wierzchnia) i kości:
+// [kość górnej połowy, kość dolnej połowy] (zginany klocek) albo jedna.
+// Wierzchnia warstwa jest trochę większa (inflate).
+
+const PARTS = [
+    { name: 'head', x: 0, z: 0, top: 32, size: [8, 8, 8], uv: [0, 0], overlay: [32, 0], inflate: 0.5, bones: ['neck'] },
+    { name: 'body', x: 0, z: 0, top: 24, size: [8, 12, 4], uv: [16, 16], overlay: [16, 32], inflate: 0.25, bones: ['waist', 'pelvis'] },
+    { name: 'armR', x: 6, z: 0, top: 24, size: [4, 12, 4], uv: [40, 16], overlay: [40, 32], inflate: 0.25, bones: ['shoulderR', 'elbowR'] },
+    { name: 'armL', x: -6, z: 0, top: 24, size: [4, 12, 4], uv: [32, 48], overlay: [48, 48], inflate: 0.25, bones: ['shoulderL', 'elbowL'] },
+    { name: 'legR', x: 2, z: 0, top: 12, size: [4, 12, 4], uv: [0, 16], overlay: [0, 32], inflate: 0.25, bones: ['hipR', 'kneeR'] },
+    { name: 'legL', x: -2, z: 0, top: 12, size: [4, 12, 4], uv: [16, 48], overlay: [0, 48], inflate: 0.25, bones: ['hipL', 'kneeL'] }
+];
+
+
+// Pusta poza: wszystkie kąty 0 (stoi prosto, ręce wzdłuż ciała).
+// Kąty w radianach; znaki:
+//   lean   - pochylenie do przodu (+),
+//   twist  - skręt w lewo (+, patrząc z góry przeciwnie do zegara),
+//   sway   - przechył na prawy bok (+),
+//   swing  - ręka / noga do przodu (+),
+//   spread - ręka / noga w bok, od ciała (+),
+//   bend   - zgięcie łokcia (+ przedramię do przodu) / kolana (+ goleń do tyłu),
+//   pitch  - głowa w górę (+), yaw - głowa w lewo (+), roll - przechył głowy.
+// drop - o ile pikseli obniżyć miednicę (kucanie, ugięte nogi).
+
+export function createPose() {
+
+    return {
+        drop: 0,
+        pelvis: { lean: 0, twist: 0, sway: 0 },
+        waist: { lean: 0, twist: 0, sway: 0 },
+        head: { pitch: 0, yaw: 0, roll: 0 },
+        armR: { swing: 0, spread: 0, twist: 0, bend: 0 },
+        armL: { swing: 0, spread: 0, twist: 0, bend: 0 },
+        legR: { swing: 0, spread: 0, twist: 0, bend: 0 },
+        legL: { swing: 0, spread: 0, twist: 0, bend: 0 }
+    };
+
+}
+
+// ------------------------------------------------------------
+// Budowa geometrii
+// ------------------------------------------------------------
+
+// Zbiera wierzchołki, a na końcu robi z nich BufferGeometry.
+
+class GeometryBuilder {
+
+    constructor() {
+
+        this.positions = [];
+        this.normals = [];
+        this.uvs = [];
+        this.skinIndex = [];
+        this.skinWeight = [];
+        this.indices = [];
+
+        this.groups = [];
+
+    }
+
+
+    // Czworokąt: 4 rogi (kolejność: lewy górny, prawy górny, lewy dolny,
+    // prawy dolny - patrząc na ścianę z zewnątrz), uv rogów (piksele
+    // skórki) i kości rogów: [[indeks, waga], ...].
+
+    quad(corners, normal, uvs, skins) {
+
+        const base = this.positions.length / 3;
+
+        for (let i = 0; i < 4; i++) {
+
+            const [x, y, z] = corners[i];
+
+            this.positions.push(x * MODEL_PIXEL, y * MODEL_PIXEL, z * MODEL_PIXEL);
+            this.normals.push(...normal);
+            this.uvs.push(uvs[i][0] / SKIN_SIZE, 1 - uvs[i][1] / SKIN_SIZE);
+
+            const skin = skins[i];
+
+            this.skinIndex.push(skin[0][0], skin[1]?.[0] ?? 0, 0, 0);
+            this.skinWeight.push(skin[0][1], skin[1]?.[1] ?? 0, 0, 0);
+
+        }
+
+        this.indices.push(base, base + 2, base + 1, base + 1, base + 2, base + 3);
+
+    }
+
+
+    // Grupa (materiał) dla trójkątów dodanych od `start`.
+
+    group(start, materialIndex) {
+
+        this.groups.push({ start, count: this.indices.length - start, materialIndex });
+
+    }
+
+
+    build() {
+
+        const geometry = new THREE.BufferGeometry();
+
+        geometry.setAttribute('position', new THREE.Float32BufferAttribute(this.positions, 3));
+        geometry.setAttribute('normal', new THREE.Float32BufferAttribute(this.normals, 3));
+        geometry.setAttribute('uv', new THREE.Float32BufferAttribute(this.uvs, 2));
+        geometry.setAttribute('skinIndex', new THREE.Uint16BufferAttribute(this.skinIndex, 4));
+        geometry.setAttribute('skinWeight', new THREE.Float32BufferAttribute(this.skinWeight, 4));
+
+        geometry.setIndex(this.indices);
+
+        for (const { start, count, materialIndex } of this.groups) {
+            geometry.addGroup(start, count, materialIndex);
+        }
+
+        return geometry;
+
+    }
+
+}
+
+
+// Klocek części modelu (jedna warstwa skórki).
+//   part     - wpis z PARTS,
+//   uvOrigin - róg miejsca w skórce,
+//   inflate  - powiększenie (piksele; wierzchnia warstwa),
+//   style    - 'smooth' (gładkie zgięcia) albo 'blocks' (osobne klocki).
+//
+// Ściany biorą obrazek ze skórki jak w Minecrafcie: w pasie pod
+// wierzchem i spodem kolejno prawy bok, przód, lewy bok, tył.
+
+function addPart(builder, part, uvOrigin, inflate, style, boneIndex) {
+
+    const [w, h, d] = part.size;
+    const [u, v] = uvOrigin;
+
+    const x0 = part.x + w / 2 + inflate;   // prawa strona (+X)
+    const x1 = part.x - w / 2 - inflate;   // lewa strona (-X)
+    const zf = part.z - d / 2 - inflate;   // przód (-Z)
+    const zb = part.z + d / 2 + inflate;   // tył (+Z)
+
+    const yTop = part.top + inflate;
+    const yBottom = part.top - h - inflate;
+
+
+    const upper = boneIndex[part.bones[0]];
+    const lower = boneIndex[part.bones[1] ?? part.bones[0]];
+
+    const bendable = part.bones.length > 1;
+
+
+    // Wysokości pasów boków (od góry): cały klocek albo dwie połowy.
+    // W skórce połowa to h / 2 pikseli; pasy pokrywają się w środku.
+
+    const ySplit = part.top - h / 2;
+
+    const bands = bendable
+        ? [
+            { from: yTop, to: ySplit, vFrom: 0, vTo: h / 2, top: true },
+            { from: ySplit, to: yBottom, vFrom: h / 2, vTo: h, top: false }
+        ]
+        : [{ from: yTop, to: yBottom, vFrom: 0, vTo: h, top: true }];
+
+
+    // Kości rogu na wysokości y (gładko: pas w stawie dzielony 50 / 50).
+
+    const skinAt = (y, band) => {
+
+        if (!bendable) {
+            return [[upper, 1]];
+        }
+
+        if (style === 'smooth') {
+
+            if (Math.abs(y - ySplit) < 0.001) {
+                return [[upper, 0.5], [lower, 0.5]];
+            }
+
+            return [[y > ySplit ? upper : lower, 1]];
+
+        }
+
+        return [[band.top ? upper : lower, 1]];
+
+    };
+
+
+    // Boki (każdy pas osobno). Kolejność rogów: lewy górny, prawy górny,
+    // lewy dolny, prawy dolny - patrząc na ścianę z zewnątrz.
+
+    const sides = [
+        // przód (-Z): lewa strona obrazka = prawa strona modelu (+X)
+        { normal: [0, 0, -1], a: [x0, zf], b: [x1, zf], u0: u + d, u1: u + d + w },
+        // tył (+Z)
+        { normal: [0, 0, 1], a: [x1, zb], b: [x0, zb], u0: u + 2 * d + w, u1: u + 2 * d + 2 * w },
+        // prawy bok (+X): od tyłu do przodu
+        { normal: [1, 0, 0], a: [x0, zb], b: [x0, zf], u0: u, u1: u + d },
+        // lewy bok (-X): od przodu do tyłu
+        { normal: [-1, 0, 0], a: [x1, zf], b: [x1, zb], u0: u + d + w, u1: u + 2 * d + w }
+    ];
+
+
+    for (const band of bands) {
+
+        const v0 = v + d + band.vFrom;
+        const v1 = v + d + band.vTo;
+
+        const skinTop = skinAt(band.from, band);
+        const skinBottom = skinAt(band.to, band);
+
+        for (const side of sides) {
+
+            builder.quad(
+                [
+                    [side.a[0], band.from, side.a[1]],
+                    [side.b[0], band.from, side.b[1]],
+                    [side.a[0], band.to, side.a[1]],
+                    [side.b[0], band.to, side.b[1]]
+                ],
+                side.normal,
+                [[side.u0, v0], [side.u1, v0], [side.u0, v1], [side.u1, v1]],
+                [skinTop, skinTop, skinBottom, skinBottom]
+            );
+
+        }
+
+    }
+
+
+    // Wierzch (+Y): na obrazku przód modelu na dole, prawa strona po lewej.
+
+    const top = [[upper, 1]];
+
+    builder.quad(
+        [[x0, yTop, zb], [x1, yTop, zb], [x0, yTop, zf], [x1, yTop, zf]],
+        [0, 1, 0],
+        [[u + d, v], [u + d + w, v], [u + d, v + d], [u + d + w, v + d]],
+        [top, top, top, top]
+    );
+
+
+    // Spód (-Y): na obrazku przód modelu u góry.
+
+    const bottom = [[lower, 1]];
+
+    builder.quad(
+        [[x0, yBottom, zf], [x1, yBottom, zf], [x0, yBottom, zb], [x1, yBottom, zb]],
+        [0, -1, 0],
+        [[u + d + w, v], [u + d + 2 * w, v], [u + d + w, v + d], [u + d + 2 * w, v + d]],
+        [bottom, bottom, bottom, bottom]
+    );
+
+
+    // Osobne klocki: zamknięcia w stawie (żeby przy zgięciu nie było
+    // widać pustego środka) - z obrazkiem spodu i wierzchu.
+
+    if (bendable && style === 'blocks') {
+
+        const upperSkin = [[upper, 1]];
+        const lowerSkin = [[lower, 1]];
+
+        builder.quad(
+            [[x0, ySplit, zf], [x1, ySplit, zf], [x0, ySplit, zb], [x1, ySplit, zb]],
+            [0, -1, 0],
+            [[u + d + w, v], [u + d + 2 * w, v], [u + d + w, v + d], [u + d + 2 * w, v + d]],
+            [upperSkin, upperSkin, upperSkin, upperSkin]
+        );
+
+        builder.quad(
+            [[x0, ySplit, zb], [x1, ySplit, zb], [x0, ySplit, zf], [x1, ySplit, zf]],
+            [0, 1, 0],
+            [[u + d, v], [u + d + w, v], [u + d, v + d], [u + d + w, v + d]],
+            [lowerSkin, lowerSkin, lowerSkin, lowerSkin]
+        );
+
+    }
+
+}
+
+
+// Cała geometria modelu: grupa 0 - zwykła warstwa, grupa 1 - wierzchnia.
+
+function buildGeometry(style, boneIndex) {
+
+    const builder = new GeometryBuilder();
+
+    for (const part of PARTS) {
+        addPart(builder, part, part.uv, 0, style, boneIndex);
+    }
+
+    builder.group(0, 0);
+
+
+    const overlayStart = builder.indices.length;
+
+    for (const part of PARTS) {
+        addPart(builder, part, part.overlay, part.inflate, style, boneIndex);
+    }
+
+    builder.group(overlayStart, 1);
+
+
+    return builder.build();
+
+}
+
+// ------------------------------------------------------------
+// Blok w ręce: mały sześcian z teksturami bloku z atlasu.
+// ------------------------------------------------------------
+
+const HELD_FACES = [
+    // nazwa ściany (BlockRenderData), normalna, rogi (lewy górny, prawy górny, lewy dolny, prawy dolny)
+    ['right', [1, 0, 0], [[1, 1, 1], [1, 1, 0], [1, 0, 1], [1, 0, 0]]],
+    ['left', [-1, 0, 0], [[0, 1, 0], [0, 1, 1], [0, 0, 0], [0, 0, 1]]],
+    ['top', [0, 1, 0], [[0, 1, 0], [1, 1, 0], [0, 1, 1], [1, 1, 1]]],
+    ['bottom', [0, -1, 0], [[0, 0, 1], [1, 0, 1], [0, 0, 0], [1, 0, 0]]],
+    ['front', [0, 0, 1], [[0, 1, 1], [1, 1, 1], [0, 0, 1], [1, 0, 1]]],
+    ['back', [0, 0, -1], [[1, 1, 0], [0, 1, 0], [1, 0, 0], [0, 0, 0]]]
+];
+
+
+function buildBlockGeometry(type) {
+
+    const definition = getBlockDefinition(type);
+
+    const positions = [];
+    const normals = [];
+    const uvs = [];
+    const indices = [];
+
+
+    for (const [faceName, normal, corners] of HELD_FACES) {
+
+        const uv = getAtlasUV(getFaceTexture(definition.textures, faceName));
+
+        const base = positions.length / 3;
+
+        // Rogi kafelka: lewy górny, prawy górny, lewy dolny, prawy dolny.
+
+        const cornerUv = [[uv.uMin, uv.vMax], [uv.uMax, uv.vMax], [uv.uMin, uv.vMin], [uv.uMax, uv.vMin]];
+
+        for (let i = 0; i < 4; i++) {
+
+            positions.push(corners[i][0] - 0.5, corners[i][1] - 0.5, corners[i][2] - 0.5);
+            normals.push(...normal);
+            uvs.push(...cornerUv[i]);
+
+        }
+
+        indices.push(base, base + 2, base + 1, base + 1, base + 2, base + 3);
+
+    }
+
+
+    const geometry = new THREE.BufferGeometry();
+
+    geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+    geometry.setAttribute('normal', new THREE.Float32BufferAttribute(normals, 3));
+    geometry.setAttribute('uv', new THREE.Float32BufferAttribute(uvs, 2));
+    geometry.setIndex(indices);
+
+    return geometry;
+
+}
+
+// ------------------------------------------------------------
+
+export class PlayerModel {
+
+    constructor() {
+
+        // Całość: ustawiana w miejscu stóp gracza i obracana jak jego ciało.
+
+        this.object = new THREE.Group();
+
+        this.object.name = 'player-model';
+
+
+        // Kości.
+
+        this.bones = {};
+
+        for (const name of BONE_NAMES) {
+
+            const bone = new THREE.Bone();
+
+            bone.name = name;
+
+            const [x, y, z] = BONES[name].at;
+
+            bone.position.set(x * MODEL_PIXEL, y * MODEL_PIXEL, z * MODEL_PIXEL);
+
+            this.bones[name] = bone;
+
+        }
+
+        for (const name of BONE_NAMES) {
+
+            const parent = BONES[name].parent;
+
+            if (parent) {
+                this.bones[parent].add(this.bones[name]);
+            }
+
+        }
+
+        this.boneIndex = Object.fromEntries(BONE_NAMES.map((name, i) => [name, i]));
+
+
+        this.materials = [
+            createModelMaterial({ map: skinTexture }),
+            createModelMaterial({ map: skinTexture, alphaTest: 0.5 })
+        ];
+
+        this.style = 'smooth';
+
+        this.overlay = true;
+
+        this.mesh = null;
+
+        this.buildMesh();
+
+
+        // Blok w prawej ręce (przy dłoni, na dole przedramienia).
+
+        this.heldType = null;
+
+        this.heldMaterial = createModelMaterial({ map: blockAtlasTexture });
+
+        this.held = new THREE.Mesh(new THREE.BufferGeometry(), this.heldMaterial);
+
+        this.held.scale.setScalar(4.5 * MODEL_PIXEL);
+        this.held.position.set(0, -6.5 * MODEL_PIXEL, -2.2 * MODEL_PIXEL);
+        this.held.rotation.set(-0.3, Math.PI / 4, 0);
+        this.held.visible = false;
+
+        this.bones.elbowR.add(this.held);
+
+    }
+
+
+    // (Prze)budowa siatki - po zmianie stylu zgięć.
+
+    buildMesh() {
+
+        const pose = this.mesh ? this.savePose() : null;
+
+        if (this.mesh) {
+
+            this.mesh.removeFromParent();
+            this.mesh.geometry.dispose();
+
+        }
+
+
+        // Kości w pozycji spoczynkowej (do powiązania z siatką).
+
+        for (const bone of Object.values(this.bones)) {
+            bone.rotation.set(0, 0, 0);
+        }
+
+        this.bones.pelvis.position.y = BONES.pelvis.at[1] * MODEL_PIXEL;
+
+
+        const geometry = buildGeometry(this.style, this.boneIndex);
+
+        const mesh = new THREE.SkinnedMesh(geometry, this.materials);
+
+        mesh.frustumCulled = false;
+
+        mesh.add(this.bones.pelvis);
+
+        mesh.updateMatrixWorld(true);
+
+        mesh.bind(new THREE.Skeleton(BONE_NAMES.map((name) => this.bones[name])));
+
+        this.mesh = mesh;
+
+        this.object.add(mesh);
+
+        this.applyOverlay();
+
+        if (pose) {
+            this.restorePose(pose);
+        }
+
+    }
+
+
+    savePose() {
+
+        return Object.fromEntries(
+            Object.entries(this.bones).map(([name, bone]) => [name, bone.rotation.clone()])
+        );
+
+    }
+
+
+    restorePose(saved) {
+
+        for (const [name, rotation] of Object.entries(saved)) {
+            this.bones[name].rotation.copy(rotation);
+        }
+
+    }
+
+
+    // 'smooth' - gładkie zgięcia, 'blocks' - osobne klocki.
+
+    setStyle(style) {
+
+        if (style === this.style) {
+            return;
+        }
+
+        this.style = style;
+
+        this.buildMesh();
+
+    }
+
+
+    // Wierzchnia warstwa skórki (czapka, kurtka, rękawy, nogawki).
+
+    setOverlay(on) {
+
+        this.overlay = on;
+
+        this.applyOverlay();
+
+    }
+
+
+    applyOverlay() {
+
+        this.materials[1].visible = this.overlay;
+
+    }
+
+
+    // Blok trzymany w prawej ręce (nazwa albo null).
+
+    setHeldBlock(type) {
+
+        if (type === this.heldType) {
+            return;
+        }
+
+        this.heldType = type;
+
+        this.held.geometry.dispose();
+
+        this.held.geometry = type ? buildBlockGeometry(type) : new THREE.BufferGeometry();
+
+        this.held.visible = Boolean(type);
+
+        const light = type ? (getBlockDefinition(type).light ?? 0) : 0;
+
+        this.heldMaterial.userData.uniforms.uModelGlow.value = light / 15;
+
+    }
+
+
+    // Ustawia stawy według pozy (createPose).
+
+    setPose(pose) {
+
+        const b = this.bones;
+
+        b.pelvis.position.y = (BONES.pelvis.at[1] - pose.drop) * MODEL_PIXEL;
+
+        b.pelvis.rotation.set(-pose.pelvis.lean, pose.pelvis.twist, -pose.pelvis.sway);
+        b.waist.rotation.set(-pose.waist.lean, pose.waist.twist, -pose.waist.sway);
+
+        b.neck.rotation.set(pose.head.pitch, pose.head.yaw, pose.head.roll, 'YXZ');
+
+
+        // Ręce i nogi: do przodu = obrót wokół X, w bok = wokół Z (prawa
+        // strona +, lewa -), zgięcie w stawie środkowym.
+
+        const limb = (bone, joint, values, side, kneeLike) => {
+
+            bone.rotation.set(values.swing, values.twist * side, values.spread * side, 'ZXY');
+
+            joint.rotation.set(kneeLike ? -values.bend : values.bend, 0, 0);
+
+        };
+
+        limb(b.shoulderR, b.elbowR, pose.armR, 1, false);
+        limb(b.shoulderL, b.elbowL, pose.armL, -1, false);
+        limb(b.hipR, b.kneeR, pose.legR, 1, true);
+        limb(b.hipL, b.kneeL, pose.legL, -1, true);
+
+    }
+
+
+    // Położenie: stopy w (x, y, z), ciało obrócone o yaw; lift -
+    // dodatkowo w górę (podgląd skoku).
+
+    place(position, yaw, lift = 0) {
+
+        this.object.position.copy(position);
+
+        this.object.position.y += lift;
+
+        this.object.rotation.set(0, yaw, 0);
+
+    }
+
+
+    dispose() {
+
+        this.object.removeFromParent();
+
+        this.mesh.geometry.dispose();
+
+        this.held.geometry.dispose();
+
+        for (const material of [...this.materials, this.heldMaterial]) {
+            material.dispose();
+        }
+
+    }
+
+}

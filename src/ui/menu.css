@@ -303,6 +303,20 @@ body:not([data-screen="game"]) #crosshair {
     max-width: 100%;
 }
 
+/* Skórka gracza: dwa przyciski obok siebie i notka pod nimi, na całą szerokość. */
+
+.settings-skin {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: var(--button-gap);
+}
+
+.settings-skin .menu-note {
+    grid-column: 1 / -1;
+    max-width: none;
+}
+
 .settings-buttons {
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
     width: var(--list-width);

@@ -2,6 +2,7 @@ import { TEXTS } from './texts.js';
 import { TERRAIN_TYPES, terrainName } from '../world/terrain/generators.js';
 import { DEFAULT_TERRAIN } from '../config.js';
 import { SETTINGS_RANGES, SETTINGS_CHOICES } from '../settings/Settings.js';
+import { hasCustomSkin, chooseSkinFile, resetSkin } from '../player/skin.js';
 
 // ------------------------------------------------------------
 // MENU
@@ -70,6 +71,13 @@ const SETTINGS_TABS = {
     controls: [
         'mouseSensitivity',
         'invertMouse'
+    ],
+
+    player: [
+        'skin',
+        'skinOverlay',
+        'jointStyle',
+        'cameraDistance'
     ],
 
     other: [
@@ -648,6 +656,11 @@ export class Menu {
         const label = TEXTS[key];
 
 
+        if (key === 'skin') {
+            return this.skinControl();
+        }
+
+
         if (key in SETTINGS_RANGES) {
 
             // Suwak: pasek w stylu przycisku z napisem na środku.
@@ -744,6 +757,40 @@ export class Menu {
         );
 
         return toggle;
+
+    }
+
+
+    // Skórka gracza: wczytanie pliku PNG i powrót do domyślnej
+    // (src/player/skin.js). Pod przyciskami - wynik albo podpowiedź.
+
+    skinControl() {
+
+        const box = el('div', 'settings-skin');
+
+        const note = el('p', 'menu-note', TEXTS.skinNote(hasCustomSkin()));
+
+        const choose = button(TEXTS.skin, () => {
+
+            chooseSkinFile((message) => {
+
+                note.textContent = message;
+
+            });
+
+        });
+
+        const reset = button(TEXTS.skinReset, async () => {
+
+            await resetSkin();
+
+            note.textContent = TEXTS.skinNote(false);
+
+        });
+
+        box.append(choose, reset, note);
+
+        return box;
 
     }
 

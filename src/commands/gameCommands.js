@@ -41,6 +41,8 @@ import { MAP_LAYERS, MAP_SCALES } from '../ui/TerrainMap.js';
 
 import { ROCK_INFO, blockNamePl, blockFromWord } from '../world/terrain/rocks.js';
 
+import { chooseSkinFile, resetSkin, hasCustomSkin } from '../player/skin.js';
+
 import {
     CHUNK_SIZE,
     CHUNK_HEIGHT,
@@ -507,6 +509,36 @@ function findLandform(generator, x0, z0, target, maxRadius) {
 }
 
 
+// Widoki kamery (/kamera) i podgląd animacji (/animacja).
+
+const CAMERA_WORDS = {
+    oczy: 'first', 'z-oczu': 'first', first: 'first', '1': 'first',
+    tyl: 'back', back: 'back', '2': 'back',
+    przod: 'front', front: 'front', '3': 'front'
+};
+
+const CAMERA_NAMES = {
+    first: 'z oczu',
+    back: 'zza pleców',
+    front: 'z przodu'
+};
+
+const ANIMATION_WORDS = {
+    stanie: 'idle',
+    chodzenie: 'walk',
+    bieg: 'run',
+    kucanie: 'crouch',
+    skradanie: 'sneak',
+    skok: 'jump',
+    machanie: 'swing',
+    latanie: 'fly'
+};
+
+const ANIMATION_WORDS_PL = Object.fromEntries(
+    Object.entries(ANIMATION_WORDS).map(([word, mode]) => [mode, word])
+);
+
+
 // Ustawienia do wpisania w /ustaw (polska nazwa -> klucz w Settings).
 
 const SETTING_WORDS = {
@@ -526,7 +558,10 @@ const SETTING_WORDS = {
     interfejs: 'hudScale',
     debug: 'showDebug',
     'licznik-fps': 'showFps',
-    meteoryty: 'meteorites'
+    meteoryty: 'meteorites',
+    'warstwa-skorki': 'skinOverlay',
+    zgiecia: 'jointStyle',
+    kamera: 'cameraDistance'
 };
 
 
@@ -576,6 +611,16 @@ function parseSettingValue(key, text) {
         if (OFF_WORDS.includes(word)) return false;
 
         throw new CommandError('Wpisz wl albo wyl');
+
+    }
+
+
+    if (key === 'jointStyle') {
+
+        if (['gladkie', 'smooth'].includes(word)) return 'smooth';
+        if (['klocki', 'bloki', 'blocks'].includes(word)) return 'blocks';
+
+        throw new CommandError('Wpisz gladkie albo klocki');
 
     }
 
@@ -1330,6 +1375,231 @@ export const GAME_COMMANDS = [
 
         }
     },
+
+    // ========================================================
+    // MODEL GRACZA I ANIMACJE (docs/gracz.md)
+    // ========================================================
+
+    {
+        name: 'kamera',
+        aliases: ['camera', 'widok'],
+        usage: '/kamera [oczy | tyl | przod]   (bez nazwy - następny widok, jak F5)',
+        description: 'Widok kamery: z oczu gracza, zza pleców albo z przodu (model gracza).',
+
+        run(args, { game }) {
+
+            const word = simplify(args[0] ?? '');
+
+            if (!word) {
+                game.cycleCameraMode();
+            }
+            else {
+
+                const mode = CAMERA_WORDS[word];
+
+                if (!mode) {
+                    throw new CommandError('Widoki: oczy, tyl, przod');
+                }
+
+                game.setCameraMode(mode);
+
+            }
+
+            return `Kamera: ${CAMERA_NAMES[game.cameraMode]}. Odległość: /ustaw kamera <2-8>.`;
+
+        },
+
+        complete(args) {
+            return args.length === 1 ? ['oczy', 'tyl', 'przod'] : [];
+        }
+    },
+
+
+    {
+        name: 'animacja',
+        aliases: ['animation', 'anim'],
+        usage: '/animacja <stanie | chodzenie | bieg | kucanie | skradanie | skok | machanie | latanie> | /animacja wyl',
+        description: 'Podgląd animacji modelu gracza w miejscu (kamera z przodu). Wolniej: /model tempo 0.25.',
+
+        run(args, { game }) {
+
+            const word = simplify(args[0] ?? '');
+
+            const animator = game.animator;
+
+
+            if (!word) {
+
+                return animator.preview
+                    ? `Podgląd animacji: ${ANIMATION_WORDS_PL[animator.preview.mode]}. Koniec: /animacja wyl`
+                    : `Podgląd wyłączony. Animacje: ${Object.keys(ANIMATION_WORDS).join(', ')}`;
+
+            }
+
+
+            if (OFF_WORDS.includes(word)) {
+
+                animator.preview = null;
+
+                return 'Podgląd animacji wyłączony - model znowu rusza się razem z graczem.';
+
+            }
+
+
+            const mode = ANIMATION_WORDS[word];
+
+            if (!mode) {
+                throw new CommandError(`Animacje: ${Object.keys(ANIMATION_WORDS).join(', ')}`);
+            }
+
+            animator.preview = { mode, time: 0 };
+
+
+            // Z oczu modelu nie widać - przełączamy na kamerę z przodu.
+
+            if (game.cameraMode === 'first') {
+                game.setCameraMode('front');
+            }
+
+            return `Podgląd: ${ANIMATION_WORDS_PL[mode]} (kamera: ${CAMERA_NAMES[game.cameraMode]}). ` +
+                'Wolniej: /model tempo 0.25 | koniec: /animacja wyl';
+
+        },
+
+        complete(args) {
+            return args.length === 1 ? [...Object.keys(ANIMATION_WORDS), 'wyl'] : [];
+        }
+    },
+
+
+    {
+        name: 'model',
+        aliases: [],
+        usage: '/model | /model gladki | /model klocki | /model warstwa <wl | wyl> | /model tempo <0.05-2>',
+        description: 'Model gracza: zgięcia rąk i nóg (gładkie / osobne klocki), druga warstwa skórki, tempo animacji.',
+
+        run(args, { game }) {
+
+            const settings = game.settings;
+
+            const word = simplify(args[0] ?? '');
+
+
+            if (!word) {
+
+                return `Model: zgięcia ${settings.get('jointStyle') === 'blocks' ? 'klocki' : 'gładkie'}, ` +
+                    `druga warstwa skórki ${settings.get('skinOverlay') ? 'wł.' : 'wył.'}, ` +
+                    `tempo animacji x${game.animator.timeScale}, skórka ${hasCustomSkin() ? 'własna' : 'domyślna'}. ` +
+                    '11 stawów: miednica, talia, szyja, 2 barki, 2 łokcie, 2 biodra, 2 kolana.';
+
+            }
+
+
+            if (['gladki', 'gladkie', 'smooth'].includes(word)) {
+
+                settings.set('jointStyle', 'smooth');
+
+                return 'Zgięcia gładkie: ręka, noga i tułów zginają się w środku bez szpar.';
+
+            }
+
+
+            if (['klocki', 'bloki', 'blocks'].includes(word)) {
+
+                settings.set('jointStyle', 'blocks');
+
+                return 'Zgięcia z klocków: każda połowa ręki, nogi i tułowia to osobny, sztywny klocek.';
+
+            }
+
+
+            if (word === 'warstwa') {
+
+                const value = simplify(args[1] ?? '');
+
+                const on = ON_WORDS.includes(value) ? true : OFF_WORDS.includes(value) ? false : !settings.get('skinOverlay');
+
+                settings.set('skinOverlay', on);
+
+                return `Druga warstwa skórki: ${on ? 'wł.' : 'wył.'}`;
+
+            }
+
+
+            if (word === 'tempo') {
+
+                const value = parseNumber(args[1], 'tempo');
+
+                if (value < 0.05 || value > 2) {
+                    throw new CommandError('Tempo: od 0.05 do 2 (1 = normalnie)');
+                }
+
+                game.animator.timeScale = value;
+
+                return `Tempo animacji: x${value}${value < 1 ? ' (zwolnione)' : ''}.`;
+
+            }
+
+
+            throw usageError(this);
+
+        },
+
+        complete(args) {
+
+            if (args.length === 1) return ['gladki', 'klocki', 'warstwa', 'tempo'];
+            if (args.length === 2 && simplify(args[0]) === 'warstwa') return ['wl', 'wyl'];
+            if (args.length === 2 && simplify(args[0]) === 'tempo') return ['0.25', '0.5', '1'];
+
+            return [];
+
+        }
+    },
+
+
+    {
+        name: 'skorka',
+        aliases: ['skin'],
+        usage: '/skorka | /skorka plik | /skorka domyslna',
+        description: 'Skórka gracza: wczytanie własnej (PNG 64 x 64, układ jak w Minecrafcie) albo powrót do domyślnej.',
+
+        run(args, { game }) {
+
+            const word = simplify(args[0] ?? '');
+
+
+            if (!word) {
+                return `Skórka: ${hasCustomSkin() ? 'własna' : 'domyślna'}. Własna: /skorka plik (PNG 64 x 64). Szablon: docs/gracz.md.`;
+            }
+
+
+            if (['plik', 'wczytaj', 'file'].includes(word)) {
+
+                chooseSkinFile((message) => game.onMessage?.(message));
+
+                return 'Wybierz plik PNG ze skórką (64 x 64)...';
+
+            }
+
+
+            if (['domyslna', 'reset', 'default'].includes(word)) {
+
+                resetSkin().then(() => game.onMessage?.('Wrócono do domyślnej skórki.'));
+
+                return 'Wczytywanie domyślnej skórki...';
+
+            }
+
+
+            throw usageError(this);
+
+        },
+
+        complete(args) {
+            return args.length === 1 ? ['plik', 'domyslna'] : [];
+        }
+    },
+
 
     // ========================================================
     // BLOKI I ŚWIAT
@@ -2176,6 +2446,7 @@ export const GAME_COMMANDS = [
             if (args.length === 2 && key) {
 
                 if (typeof SETTINGS_DEFAULTS[key] === 'boolean') return ['wl', 'wyl'];
+                if (key === 'jointStyle') return ['gladkie', 'klocki'];
                 if (key in SETTINGS_CHOICES) return SETTINGS_CHOICES[key].map(String);
                 if (key === 'theme') return Object.keys(UI_THEMES);
 

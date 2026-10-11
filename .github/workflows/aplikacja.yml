@@ -107,7 +107,7 @@ jobs:
           GH_TOKEN: ${{ secrets.WYDANIA_TOKEN }}
         run: npx electron-builder --win --x64 --publish always
 
-      - uses: actions/upload-artifact@v5
+      - uses: actions/upload-artifact@v6
         with:
           name: Voxel-Game-${{ needs.wersja.outputs.version }}-instalator
           path: dist/*.exe

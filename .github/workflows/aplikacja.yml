@@ -42,7 +42,7 @@ jobs:
       build: ${{ steps.check.outputs.build }}
       publish: ${{ steps.check.outputs.publish }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - id: check
         env:
@@ -88,9 +88,9 @@ jobs:
     if: needs.wersja.outputs.build == 'true'
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
           node-version: 22
           cache: npm
@@ -107,7 +107,7 @@ jobs:
           GH_TOKEN: ${{ secrets.WYDANIA_TOKEN }}
         run: npx electron-builder --win --x64 --publish always
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v5
         with:
           name: Voxel-Game-${{ needs.wersja.outputs.version }}-instalator
           path: dist/*.exe

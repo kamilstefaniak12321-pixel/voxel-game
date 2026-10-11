@@ -279,6 +279,19 @@ const SHADE = [0, 1, 2, 3].map(
 );
 
 
+// Ustawienie "Cienie w kątach" (0 = brak, 1 = bardzo mocne).
+// Działa na meshe budowane od tej chwili - stare trzeba przebudować
+// (World.remeshAll()).
+
+export function setAmbientOcclusion(strength) {
+
+    for (let count = 0; count < SHADE.length; count++) {
+        SHADE[count] = 1 - strength * count / 3;
+    }
+
+}
+
+
 // Komórki, z których bierzemy światło dla jednego rogu ściany.
 
 const sampleCells = new Int32Array(4);

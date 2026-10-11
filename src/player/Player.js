@@ -51,9 +51,11 @@ export class Player {
         this.onGround = false;
 
 
-        // Czułość myszy (zmieniana przez ustawienia gracza).
+        // Czułość myszy i odwrócona oś Y (ustawienia gracza).
 
         this.mouseSensitivity = MOUSE_SENSITIVITY;
+
+        this.invertMouse = false;
 
 
         // Do testowania (komendy /latanie i /predkosc).
@@ -101,8 +103,12 @@ updateLook(input) {
     const mouse = input.consumeMouseDelta();
 
 
+    // Odwrócona mysz (ustawienie): ruch w górę = patrzenie w dół.
+
+    const vertical = this.invertMouse ? -1 : 1;
+
     this.yaw -= mouse.x * this.mouseSensitivity;
-    this.pitch -= mouse.y * this.mouseSensitivity;
+    this.pitch -= mouse.y * this.mouseSensitivity * vertical;
 
 
     const maxPitch = Math.PI / 2 - 0.01;

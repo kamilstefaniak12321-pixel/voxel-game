@@ -51,12 +51,28 @@ export const TEXTS = {
 
     // Ustawienia
     settingsTitle: 'Ustawienia',
+    settingsTabs: {
+        video: 'Obraz',
+        controls: 'Sterowanie',
+        other: 'Inne'
+    },
     mouseSensitivity: (value) => `Czułość myszy: ${value}%`,
+    invertMouse: (on) => `Odwrócona mysz: ${on ? 'Wł.' : 'Wył.'}`,
     fov: (value) => `Pole widzenia: ${value}°`,
     viewDistance: (value) => `Zasięg widzenia: ${value} bloków`,
+    farTerrain: (value) => value > 0 ? `Daleki teren: ${value} bloków` : 'Daleki teren: Wył.',
+    brightness: (value) =>
+        `Jasność: ${value === 0 ? 'Nastrojowa' : value === 100 ? 'Jasna' : `+${value}%`}`,
+    renderScale: (value) => `Rozdzielczość: ${value}%`,
+    fpsLimit: (value) => `Limit FPS: ${value > 0 ? value : 'Bez limitu'}`,
+    ambientOcclusion: (value) => `Cienie w kątach: ${value > 0 ? `${value}%` : 'Wył.'}`,
     theme: (name) => `Motyw: ${name}`,
+    hudScale: (value) => `Interfejs w grze: ${value}%`,
     showDebug: (on) => `Debug (F3): ${on ? 'Wł.' : 'Wył.'}`,
+    showFps: (on) => `Licznik FPS: ${on ? 'Wł.' : 'Wył.'}`,
     dynamicLight: (on) => `Dynamiczne światło: ${on ? 'Wł.' : 'Wył.'}`,
+    loadBudget: (value) => `Wczytywanie: ${value} ms/klatkę`,
+    meteorites: (on) => `Spadające meteoryty: ${on ? 'Wł.' : 'Wył.'}`,
     resetSettings: 'Przywróć domyślne',
     done: 'Gotowe',
 

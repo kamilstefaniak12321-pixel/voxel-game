@@ -16,9 +16,28 @@ import {
 } from '../world/Light.js';
 
 import {
+    findEclipses,
+    nextNewMoonCycle,
+    newMoonDays,
+    sunCoverage,
+    SUN_RADIUS,
+    MOON_RADIUS
+} from '../sky/Celestial.js';
+
+import {
+    SETTINGS_DEFAULTS,
+    SETTINGS_RANGES,
+    SETTINGS_CHOICES
+} from '../settings/Settings.js';
+
+import { TEXTS } from '../ui/texts.js';
+
+import {
     CHUNK_SIZE,
     CHUNK_HEIGHT,
-    WORLD_BORDER
+    WORLD_BORDER,
+    DAY_LENGTH_MINUTES,
+    UI_THEMES
 } from '../config.js';
 
 // ------------------------------------------------------------
@@ -219,6 +238,199 @@ function blockArgument(text) {
 
 
 const BLOCK_NAMES = Object.keys(BLOCK_TYPES);
+
+
+const ON_WORDS = ['wl', 'on', 'tak', '1', 'true'];
+const OFF_WORDS = ['wyl', 'off', 'nie', '0', 'false'];
+
+
+// Ile prawdziwych sekund trwa `hours` godzin gry (przy obecnej
+// prędkości czasu; Infinity, gdy czas stoi).
+
+function realSeconds(hours, time) {
+
+    return time.speed > 0
+        ? hours / 24 * DAY_LENGTH_MINUTES * 60 / time.speed
+        : Infinity;
+
+}
+
+
+// Liczba z jednym miejscem po przecinku (po polsku: 1,5).
+
+function decimal(value) {
+
+    return value.toFixed(1).replace('.', ',');
+
+}
+
+
+function durationText(seconds) {
+
+    if (!Number.isFinite(seconds)) {
+        return 'czas stoi';
+    }
+
+    if (seconds < 90) {
+        return `${Math.round(seconds)} s`;
+    }
+
+    if (seconds < 90 * 60) {
+        return `${Math.round(seconds / 60)} min`;
+    }
+
+    return `${decimal(seconds / 3600)} h`;
+
+}
+
+
+// Opis zaćmienia z listy findEclipses (Celestial.js).
+
+function eclipseText(eclipse) {
+
+    const day = Math.floor(eclipse.days) + 1;
+
+    const kind = eclipse.total ? 'PEŁNE' : `częściowe (${Math.round(eclipse.coverage * 100)}%)`;
+
+    return `dzień ${day}, ${clockText(eclipse.days)} - ${kind}` +
+        `${eclipse.visible ? '' : ' (słońce pod horyzontem - nie widać)'}`;
+
+}
+
+
+// Szerokość księżyca (stopnie), przy której zaćmienie zasłania
+// `coverage` tarczy słońca (0-1).
+
+function latitudeForCoverage(coverage) {
+
+    if (coverage >= 1) {
+        return 0;
+    }
+
+    let low = MOON_RADIUS - SUN_RADIUS;
+    let high = SUN_RADIUS + MOON_RADIUS;
+
+    for (let i = 0; i < 40; i++) {
+
+        const middle = (low + high) / 2;
+
+        if (sunCoverage(middle) > coverage) {
+            low = middle;
+        }
+        else {
+            high = middle;
+        }
+
+    }
+
+    return (low + high) / 2;
+
+}
+
+
+// Ustawienia do wpisania w /ustaw (polska nazwa -> klucz w Settings).
+
+const SETTING_WORDS = {
+    zasieg: 'viewDistance',
+    'daleki-teren': 'farTerrain',
+    pole: 'fov',
+    jasnosc: 'brightness',
+    rozdzielczosc: 'renderScale',
+    fps: 'fpsLimit',
+    cienie: 'ambientOcclusion',
+    'dynamiczne-swiatlo': 'dynamicLight',
+    wczytywanie: 'loadBudget',
+    czulosc: 'mouseSensitivity',
+    'odwroc-mysz': 'invertMouse',
+    motyw: 'theme',
+    interfejs: 'hudScale',
+    debug: 'showDebug',
+    'licznik-fps': 'showFps',
+    meteoryty: 'meteorites'
+};
+
+
+function settingWord(key) {
+
+    return Object.keys(SETTING_WORDS).find((word) => SETTING_WORDS[word] === key) ?? key;
+
+}
+
+
+function settingText(key, value) {
+
+    return key === 'theme' ? TEXTS.theme(UI_THEMES[value]) : TEXTS[key](value);
+
+}
+
+
+// Zamienia wpisany tekst na wartość ustawienia (albo rzuca błąd).
+
+function parseSettingValue(key, text) {
+
+    if (text === undefined) {
+        throw new CommandError(`Podaj wartość, np. /ustaw ${settingWord(key)} ${SETTINGS_DEFAULTS[key]}`);
+    }
+
+    const word = simplify(text);
+
+
+    if (key === 'theme') {
+
+        const theme = Object.keys(UI_THEMES).find(
+            (name) => simplify(name) === word || simplify(UI_THEMES[name]) === word
+        );
+
+        if (!theme) {
+            throw new CommandError(`Motywy: ${Object.keys(UI_THEMES).join(', ')}`);
+        }
+
+        return theme;
+
+    }
+
+
+    if (typeof SETTINGS_DEFAULTS[key] === 'boolean') {
+
+        if (ON_WORDS.includes(word)) return true;
+        if (OFF_WORDS.includes(word)) return false;
+
+        throw new CommandError('Wpisz wl albo wyl');
+
+    }
+
+
+    if (key in SETTINGS_CHOICES) {
+
+        const value = ['bez-limitu', 'brak', 'wyl'].includes(word) ? 0 : Number(word);
+
+        if (!SETTINGS_CHOICES[key].includes(value)) {
+            throw new CommandError(`Do wyboru: ${SETTINGS_CHOICES[key].join(', ')} (0 = bez limitu)`);
+        }
+
+        return value;
+
+    }
+
+
+    if (key in SETTINGS_RANGES) {
+
+        const { min, max } = SETTINGS_RANGES[key];
+
+        const value = OFF_WORDS.includes(word) && min === 0 ? 0 : parseNumber(text);
+
+        if (value < min || value > max) {
+            throw new CommandError(`Zakres: od ${min} do ${max}`);
+        }
+
+        return value;
+
+    }
+
+
+    throw new CommandError('Tego ustawienia nie da się zmienić komendą.');
+
+}
 
 // ------------------------------------------------------------
 
@@ -504,7 +716,8 @@ export const GAME_COMMANDS = [
                     `Gwiazdy: widać ${Math.round(state.starVisibility * (1 - state.starLimit) * 100)}% | ` +
                     `Droga Mleczna: ${Math.round(state.galaxyVisibility * 100)}% | ` +
                     `spadające gwiazdy: ${state.meteorsPerMinute.toFixed(1)}/min` +
-                    `${state.meteorShower ? ' (deszcz meteorów!)' : ''}`;
+                    `${state.meteorShower ? ' (deszcz meteorów!)' : ''}` +
+                    `${state.eclipse > 0 ? `\nZaćmienie słońca: zasłonięte ${Math.round(state.eclipse * 100)}%` : ''}`;
 
             }
 
@@ -526,6 +739,155 @@ export const GAME_COMMANDS = [
 
             if (args.length === 1) return ['zachod'];
             if (args.length === 2) return [...Object.keys(COLOR_NAMES), 'domyslny'];
+
+            return [];
+
+        }
+    },
+
+    {
+        name: 'zacmienie',
+        aliases: ['eclipse'],
+        usage: '/zacmienie | /zacmienie lista [ile] | /zacmienie nastepne | /zacmienie pokaz [pelne | czesciowe | <procent>] | /zacmienie auto',
+        description: 'Zaćmienia słońca: kiedy następne, lista, przeskok do następnego albo wymuszone zaćmienie.',
+
+        run(args, { sky, time }) {
+
+            const [action, value] = args;
+
+            const override = sky.variant.eclipse;
+
+
+            if (!action) {
+
+                sky.refresh(time.days);
+
+                const now = sky.state.eclipse;
+
+                const [next] = findEclipses(time.days, 1, override);
+
+                const current = now > 0
+                    ? (now >= 1
+                        ? 'Teraz: PEŁNE ZAĆMIENIE! '
+                        : `Teraz: zasłonięte ${Math.round(now * 100)}% słońca. `)
+                    : '';
+
+                if (!next) {
+                    return current + 'Brak zaćmień w najbliższym czasie.';
+                }
+
+                const hours = (next.days - time.days) * 24;
+
+                const when = hours > 0
+                    ? `, za ${hours < 10 ? decimal(hours) : Math.round(hours)} h gry (${durationText(realSeconds(hours, time))})`
+                    : '';
+
+                return current +
+                    `${now > 0 && hours < 6 ? 'To zaćmienie' : 'Następne zaćmienie'}: ${eclipseText(next)}${when}. ` +
+                    'Przeskok do następnego: /zacmienie nastepne' +
+                    (override ? ' | wymuszone komendą - powrót: /zacmienie auto' : '');
+
+            }
+
+
+            switch (simplify(action)) {
+
+                case 'lista':
+                case 'list': {
+
+                    const count = value === undefined ? 5 : parseNumber(value, 'liczba');
+
+                    if (count < 1 || count > 20) {
+                        throw new CommandError('Ile: od 1 do 20');
+                    }
+
+                    return 'Najbliższe zaćmienia słońca:\n' +
+                        findEclipses(time.days, Math.floor(count), override)
+                            .map((eclipse) => '- ' + eclipseText(eclipse))
+                            .join('\n');
+
+                }
+
+                case 'nastepne':
+                case 'next': {
+
+                    const [next] = findEclipses(time.days + 0.1, 1, override);
+
+                    if (!next) {
+                        throw new CommandError('Brak zaćmień w najbliższym czasie.');
+                    }
+
+                    time.days = next.days - 1.5 / 24;
+
+                    return `Przeskok do zaćmienia: ${eclipseText(next)}. Największe zakrycie za 1,5 h gry ` +
+                        `(${durationText(realSeconds(1.5, time))}). Szybciej: /czas predkosc 10`;
+
+                }
+
+                case 'pokaz':
+                case 'show': {
+
+                    const word = simplify(value ?? 'pelne');
+
+                    let coverage;
+
+                    if (['pelne', 'calkowite', 'total'].includes(word)) {
+                        coverage = 1;
+                    }
+                    else if (['czesciowe', 'partial'].includes(word)) {
+                        coverage = 0.7;
+                    }
+                    else {
+
+                        const percent = parseNumber(value, 'procent');
+
+                        if (percent < 5 || percent > 100) {
+                            throw new CommandError('Procent zasłonięcia: od 5 do 100');
+                        }
+
+                        coverage = percent / 100;
+
+                    }
+
+
+                    const cycle = nextNewMoonCycle(time.days);
+
+                    sky.variant.eclipse = {
+                        cycle,
+                        latitude: latitudeForCoverage(coverage)
+                    };
+
+                    const peak = newMoonDays(cycle);
+
+                    time.days = peak - 1.5 / 24;
+
+                    return `Zaćmienie ${coverage >= 1 ? 'PEŁNE' : `częściowe (${Math.round(coverage * 100)}%)`} - ` +
+                        `największe o ${clockText(peak)} dnia ${Math.floor(peak) + 1}, ` +
+                        `za 1,5 h gry (${durationText(realSeconds(1.5, time))}). ` +
+                        'Szybciej: /czas predkosc 10. Powrót do zwykłych zaćmień: /zacmienie auto';
+
+                }
+
+                case 'auto':
+                case 'wyl': {
+
+                    sky.variant.eclipse = null;
+
+                    return 'Zaćmienia znowu same wybierają nowie (mniej więcej co trzeci).';
+
+                }
+
+                default:
+                    throw usageError(this);
+
+            }
+
+        },
+
+        complete(args) {
+
+            if (args.length === 1) return ['lista', 'nastepne', 'pokaz', 'auto'];
+            if (args.length === 2 && simplify(args[0]) === 'pokaz') return ['pelne', 'czesciowe', '50', '90'];
 
             return [];
 
@@ -1013,6 +1375,252 @@ export const GAME_COMMANDS = [
 
             return [];
 
+        }
+    },
+
+    // ========================================================
+    // DALEKI TEREN, USTAWIENIA, WYDAJNOŚĆ
+    // ========================================================
+
+    {
+        name: 'horyzont',
+        aliases: ['daleki-teren', 'horizon'],
+        usage: '/horyzont | /horyzont <bloki | wyl> | /horyzont lod | /horyzont odswiez',
+        description: 'Daleki teren za zasięgiem widzenia: zasięg, kafelki, kolorowanie dokładności.',
+
+        run(args, { game }) {
+
+            const far = game.farTerrain;
+
+            const [action] = args;
+
+
+            if (!action) {
+
+                const stats = far.stats();
+
+                if (!stats.active) {
+
+                    return `Daleki teren wyłączony (zasięg widzenia ${game.settings.get('viewDistance')}, ` +
+                        `daleki teren ${game.settings.get('farTerrain') || 'wył.'}). Włącz: /horyzont 1024`;
+
+                }
+
+                return `Daleki teren: od ${far.inner} do ${far.outer} bloków | ` +
+                    `kafelków: ${stats.shown} widocznych` +
+                    `${stats.missing ? `, ${stats.missing} w budowie` : ''}, ${stats.cached} w pamięci | ` +
+                    `${Math.round(stats.triangles / 1000)} tys. trójkątów | ` +
+                    `kolorowanie dokładności: ${far.debugLod ? 'wł.' : 'wył.'} (/horyzont lod)`;
+
+            }
+
+
+            const word = simplify(action);
+
+
+            if (word === 'lod') {
+
+                far.setDebugLod(!far.debugLod);
+
+                return far.debugLod
+                    ? 'Kafelki pokolorowane według dokładności: czerwone - kratka 4 bloki, niebieskie - 8, żółte - 16, zielone - 32, fioletowe - 64.'
+                    : 'Kolorowanie dokładności wyłączone.';
+
+            }
+
+
+            if (['odswiez', 'refresh'].includes(word)) {
+
+                far.rebuildAll();
+
+                return 'Daleki teren buduje się od nowa.';
+
+            }
+
+
+            const value = parseSettingValue('farTerrain', action);
+
+            if (value > 0 && value < SETTINGS_RANGES.farTerrain.step) {
+                throw new CommandError(`Daleki teren: od ${SETTINGS_RANGES.farTerrain.step} do ${SETTINGS_RANGES.farTerrain.max} bloków (albo wyl)`);
+            }
+
+            game.settings.set('farTerrain', value);
+
+            return settingText('farTerrain', game.settings.get('farTerrain')) +
+                (far.active || value === 0 ? '' : ' (musi sięgać dalej niż zasięg widzenia)');
+
+        },
+
+        complete(args) {
+            return args.length === 1 ? ['512', '1024', '2048', '4096', 'wyl', 'lod', 'odswiez'] : [];
+        }
+    },
+
+
+    {
+        name: 'ustaw',
+        aliases: ['ustawienia', 'settings'],
+        usage: '/ustaw | /ustaw <ustawienie> <wartość> | /ustaw domyslne   (np. /ustaw zasieg 256)',
+        description: 'Ustawienia gry z czatu (to samo co w menu ustawień).',
+
+        run(args, { game }) {
+
+            const settings = game.settings;
+
+            const [name, value] = args;
+
+
+            if (!name) {
+
+                return 'Ustawienia (/ustaw <nazwa> <wartość>):\n' +
+                    Object.keys(SETTINGS_DEFAULTS)
+                        .map((key) => `${settingWord(key)}: ${settingText(key, settings.get(key))}`)
+                        .join('\n');
+
+            }
+
+
+            if (['domyslne', 'reset'].includes(simplify(name))) {
+
+                settings.reset();
+
+                return 'Przywrócono domyślne ustawienia.';
+
+            }
+
+
+            const key = SETTING_WORDS[simplify(name)] ?? Object.keys(SETTINGS_DEFAULTS).find(
+                (setting) => simplify(setting) === simplify(name)
+            );
+
+            if (!key) {
+                throw new CommandError(`Nie ma ustawienia "${name}". Do wyboru: ${Object.keys(SETTING_WORDS).join(', ')}`);
+            }
+
+
+            if (value === undefined) {
+                return settingText(key, settings.get(key));
+            }
+
+
+            settings.set(key, parseSettingValue(key, value));
+
+            return settingText(key, settings.get(key));
+
+        },
+
+        complete(args) {
+
+            if (args.length === 1) {
+                return [...Object.keys(SETTING_WORDS), 'domyslne'];
+            }
+
+            const key = SETTING_WORDS[simplify(args[0])];
+
+            if (args.length === 2 && key) {
+
+                if (typeof SETTINGS_DEFAULTS[key] === 'boolean') return ['wl', 'wyl'];
+                if (key in SETTINGS_CHOICES) return SETTINGS_CHOICES[key].map(String);
+                if (key === 'theme') return Object.keys(UI_THEMES);
+
+                const { min, max } = SETTINGS_RANGES[key];
+
+                return [String(min), String(SETTINGS_DEFAULTS[key]), String(max)];
+
+            }
+
+            return [];
+
+        }
+    },
+
+
+    {
+        name: 'wydajnosc',
+        aliases: ['perf', 'fps'],
+        usage: '/wydajnosc | /wydajnosc test [sekundy]',
+        description: 'Klatki na sekundę, czasy klatki, rysowanie, chunki, pamięć; test z obrotem kamery.',
+
+        run(args, { game, world }) {
+
+            if (args[0] !== undefined) {
+
+                if (!['test', 'benchmark'].includes(simplify(args[0]))) {
+                    throw usageError(this);
+                }
+
+                const seconds = args[1] === undefined ? 10 : parseNumber(args[1], 'liczba sekund');
+
+                if (seconds < 3 || seconds > 60) {
+                    throw new CommandError('Czas testu: od 3 do 60 sekund');
+                }
+
+                game.startBenchmark(seconds);
+
+                return `Test wydajności: ${seconds} s - kamera obróci się raz dookoła, nie ruszaj myszą. ` +
+                    'Wynik pojawi się na czacie.';
+
+            }
+
+
+            const summary = game.perf?.summary(2);
+
+            const info = game.renderer.info;
+
+            const far = game.farTerrain.stats();
+
+
+            let meshed = 0;
+
+            for (const chunk of world.chunks.values()) {
+
+                if (chunk.mesh) {
+                    meshed++;
+                }
+
+            }
+
+
+            // Bloki i światło chunków (5 bajtów na komórkę) - tego nie ma
+            // w "pamięci JS" przeglądarki.
+
+            let chunkBytes = 0;
+
+            for (const chunk of world.chunks.values()) {
+                chunkBytes += chunk.blocks.length * 5;
+            }
+
+            for (const blocks of world.savedChunks.values()) {
+                chunkBytes += blocks.length;
+            }
+
+            const memory =
+                ` | chunki w pamięci: ~${Math.round(chunkBytes / 1048576)} MB` +
+                (performance.memory
+                    ? `, pamięć JS: ${Math.round(performance.memory.usedJSHeapSize / 1048576)} MB`
+                    : '');
+
+            const canvas = game.renderer.domElement;
+
+
+            return (summary
+                ? `${summary.fps.toFixed(0)} FPS (ostatnie 2 s) | klatka średnio ${summary.frameMs.toFixed(1)} ms, ` +
+                  `najdłuższa ${summary.worstMs.toFixed(1)} ms | najwolniejsze 1%: ${summary.low1.toFixed(0)} FPS\n` +
+                  `Na klatkę: gra ${summary.updateMs.toFixed(2)} ms, rysowanie ${summary.renderMs.toFixed(2)} ms\n`
+                : 'Brak pomiaru klatek.\n') +
+                `Rysowanie: ${info.render.calls} wywołań, ${Math.round(info.render.triangles / 1000)} tys. trójkątów | ` +
+                `na karcie: ${info.memory.geometries} geometrii, ${info.memory.textures} tekstur\n` +
+                `Chunki: ${world.chunks.size} wczytanych, ${meshed} z meshem, ${world.loadQueue.length} w kolejce, ` +
+                `${world.dirtyChunks.size} do przebudowy | ` +
+                `daleki teren: ${far.active ? `${far.shown} kafelków, ${Math.round(far.triangles / 1000)} tys. trójkątów` : 'wył.'}\n` +
+                `Ekran: ${canvas.width} x ${canvas.height} px | zasięg ${game.settings.get('viewDistance')}, ` +
+                `daleki teren ${game.settings.get('farTerrain') || 'wył.'}${memory}\n` +
+                'Test: /wydajnosc test';
+
+        },
+
+        complete(args) {
+            return args.length === 1 ? ['test'] : [];
         }
     }
 

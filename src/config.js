@@ -9,7 +9,15 @@ export const CHUNK_HEIGHT = 64;   // wysokość (Y) = limit budowania
 // Ile milisekund na klatkę może zająć wczytywanie chunków
 // (generowanie i budowanie meshy). Więcej = świat dogrywa się
 // szybciej, ale gra może lekko przycinać przy szybkim ruchu.
+// To wartość domyślna - gracz zmienia ją w ustawieniach
+// ("Wczytywanie").
 export const CHUNK_LOAD_BUDGET_MS = 4;
+
+// Przy wejściu do świata (pod ekranem wczytywania) od razu
+// wczytuje się tyle chunków w każdą stronę - reszta dogrywa się
+// już w trakcie gry. Dzięki temu duży zasięg widzenia nie wydłuża
+// ekranu wczytywania.
+export const START_LOAD_RADIUS = 5;
 
 // ------------------------------------------------------------
 // ŚWIAT
@@ -106,6 +114,20 @@ export const SUN_PATH_TILT = 35;
 // więc raz świeci w nocy, a raz w dzień.
 export const MOON_CYCLE_DAYS = 8;
 
+// Średnica tarczy słońca i księżyca na niebie w stopniach (prawdziwe
+// mają ~0.5°, w grze są większe). Księżyc musi być choć trochę większy
+// od słońca, żeby mogło być pełne zaćmienie - im większa różnica,
+// tym dłużej trwa pełne zaćmienie.
+export const SUN_DIAMETER = 7;
+export const MOON_DIAMETER = 8;
+
+// Zaćmienia słońca: jaka część nowiów (0-1) ma zaćmienie
+// (0.3 = mniej więcej co trzeci nów, czyli co ~24 dni gry)
+// i jaka część zaćmień jest pełna (reszta to częściowe).
+// Zaćmienie widać koło południa i trwa kilka minut.
+export const ECLIPSE_CHANCE = 0.3;
+export const ECLIPSE_TOTAL_SHARE = 0.35;
+
 // Ile gwiazd jest na niebie w najciemniejszą noc (nów). Przy pełni
 // i o zmierzchu widać tylko najjaśniejsze z nich.
 export const STAR_COUNT = 4500;
@@ -117,6 +139,20 @@ export const STAR_COUNT = 4500;
 export const METEORITES_PER_NIGHT = 0.3;
 
 // Kolory nieba o różnych porach dnia są w src/sky/SkyColors.js.
+
+// ------------------------------------------------------------
+// DALEKI TEREN (HORYZONT)
+// ------------------------------------------------------------
+
+// Za zasięgiem widzenia widać uproszczony teren aż do odległości
+// z ustawień ("Daleki teren"). Im dalej, tym bardziej ginie
+// w powietrzu (mgiełka w kolorze nieba):
+//   FAR_HAZE_DISTANCE - po ilu blokach mgiełka zakrywa ~63% terenu
+//                       (mniej = gęstsze powietrze),
+//   FAR_HAZE_MAX      - najwięcej mgiełki (0-1); poniżej 1 daleki
+//                       teren zawsze ma trochę własnego koloru.
+export const FAR_HAZE_DISTANCE = 900;
+export const FAR_HAZE_MAX = 0.82;
 
 // ------------------------------------------------------------
 // GRACZ
@@ -187,5 +223,9 @@ export const DEFAULT_MOUSE_SENSITIVITY = 100;
 // Pole widzenia kamery w stopniach.
 export const DEFAULT_FOV = 75;
 
-// Zasięg widzenia w blokach - dalej teren znika we mgle.
-export const DEFAULT_VIEW_DISTANCE = 45;
+// Zasięg widzenia w blokach - tak daleko widać prawdziwe bloki.
+export const DEFAULT_VIEW_DISTANCE = 48;
+
+// Daleki teren (horyzont): do ilu bloków od gracza widać uproszczony,
+// rozmyty teren za zasięgiem widzenia (0 = wyłączony).
+export const DEFAULT_FAR_TERRAIN = 1024;

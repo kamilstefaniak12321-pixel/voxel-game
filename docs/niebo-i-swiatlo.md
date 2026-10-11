@@ -1,8 +1,7 @@
 # Niebo i światło
 
-Jak są zbudowane dzień i noc, niebo i oświetlenie bloków - i gdzie
-podepną się rzeczy planowane na później: kolorowe światło, dynamiczne
-światło, zachody słońca, księżyc, gwiazdy, meteoryty.
+Jak są zbudowane dzień i noc, niebo, daleki teren i oświetlenie
+bloków - i gdzie podepną się rzeczy planowane na później.
 
 ## Jak to działa teraz
 
@@ -63,16 +62,40 @@ class MojaWarstwa {
 
 Nowa warstwa = nowy plik + dopisanie jej do listy w konstruktorze
 `Sky`. Kolejność rysowania ustala `object.renderOrder`. Obecnie:
-kopuła (0), księżyc (1), słońce (2), gwiazdy (3). Księżyc zapisuje
-głębię, więc zasłania słońce i gwiazdy za sobą.
+kopuła (0), księżyc (1), słońce (2), galaktyki (2.5), gwiazdy (3),
+spadające gwiazdy (3.5). Księżyc zapisuje głębię, więc zasłania słońce
+i gwiazdy za sobą - dzięki temu zaćmienie słońca "dzieje się samo".
 
-### Mgła
+### Kolejność rysowania klatki
+
+```
+1. niebo            własna scena i kamera (Sky.render)
+2. daleki teren     własna scena i kamera (FarTerrain.render)
+3. świat            chunki, meteoryty, ramka bloku...
+```
+
+Między krokami czyszczona jest tylko głębia, więc każdy kolejny krok
+jest na wierzchu poprzedniego: góry dalekiego terenu zasłaniają
+zachodzące słońce, a prawdziwe chunki zawsze zasłaniają daleki teren.
+Słońce i księżyc chowają się pod linią `Sky.horizonDip` - z dalekim
+terenem i z wysoka to brzeg terenu, który jest trochę pod linią poziomu.
+
+### Mgła i mgiełka
 
 Funkcja `skyColor(kierunek)` w `skyShader.js` liczy kolor nieba
-i jest używana **dwa razy**: przez kopułę nieba i przez mgłę na
-blokach. Dlatego daleki teren znika dokładnie w kolorze nieba za nim,
-także o zachodzie, gdy niebo z jednej strony jest pomarańczowe.
+i jest używana przez kopułę nieba, mgłę na blokach i mgiełkę na
+dalekim terenie. Dlatego teren w oddali ginie dokładnie w kolorze nieba
+za nim, także o zachodzie, gdy niebo z jednej strony jest pomarańczowe.
 Każda zmiana wyglądu nieba w `skyColor` automatycznie zmienia mgłę.
+
+- **Bez dalekiego terenu** bloki od ~45% zasięgu widzenia znikają we
+  mgle (jak dawniej).
+- **Z dalekim terenem** bloki nie znikają: od ~65% zasięgu ich tekstury
+  zlewają się w średni kolor (`atlasAverageTexture` w `TextureAtlas.js`),
+  a cały teren - bliski i daleki - dostaje tę samą mgiełkę rosnącą
+  z odległością (`farHaze` w `src/rendering/viewUniforms.js`,
+  `FAR_HAZE_DISTANCE` i `FAR_HAZE_MAX` w `config.js`). Na końcu zasięgu
+  bloki wyglądają więc tak jak daleki teren za nimi.
 
 ## Plan rozwoju
 
@@ -126,6 +149,33 @@ Ograniczenie: światło liczy się tylko w pudełku wokół gracza, więc
 źródło dalej niż ~16 bloków nie oświetla terenu (samo świecenie
 - np. kulę ognia - dalej widać).
 
+### Daleki teren (horyzont) - ZROBIONE
+
+`src/world/FarTerrain.js`: za zasięgiem widzenia, do odległości
+z ustawienia "Daleki teren", rysuje się gładka siatka wysokości
+z generatora terenu (`TerrainGenerator.getHeightLod`) - te same góry
+i wzgórza, które wygenerowałyby się tam naprawdę, ale bez bloków.
+
+- **Kafelki** (drzewo czwórkowe): 32 x 32 kratki, blisko gracza kratka
+  ma 4 bloki, dalej 8, 16, 32, 64 (`MIN_SPACING`, `LOD_DISTANCE`).
+  Rzadsze kafelki liczą mniej oktaw szumu - z daleka drobnych pagórków
+  nie widać, a próbkowane co kilkadziesiąt bloków dałyby "kolce".
+  Kafelki leżą w stałych miejscach świata, budują się z limitem czasu
+  (`BUILD_BUDGET_MS`) i nowy zestaw pokazuje się dopiero, gdy jest gotowy.
+  Szczeliny między kafelkami różnej dokładności zasłaniają fartuchy.
+- **Kolory**: średnie kolory tekstur trawy (płasko), boku trawy
+  (stromo) i kamienia (wysoko) - nowa tekstura sama zmienia daleki teren.
+- **Światło**: te same światła nieba co bloki (`Sky.attachLights`), to
+  samo nocne odbarwienie, ten sam suwak jasności. Zaćmienie, faza
+  księżyca, kolor zachodu - wszystko działa i tu.
+- **Zmiany gracza**: kolumny w chunkach zmienionych przez gracza są
+  liczone z ich bloków (`World.savedChunks`). Gdy taki chunk znika
+  z pamięci, kafelki nad nim przebudowują się (`invalidateChunk`).
+- **Sprawdzanie**: `/horyzont`, `/horyzont lod` (kolory dokładności),
+  `/horyzont odswiez`, `/wydajnosc`.
+- Pomysły: chmury rzucające cień na daleki teren, woda (gdy będzie)
+  jako płaszczyzna w kafelkach, zimą śnieg na szczytach.
+
 ### Słońce i kolorowe wschody / zachody
 
 - Kolory: tabela w `SkyColors.js` (wiersze dla różnych wysokości słońca).
@@ -143,9 +193,32 @@ Ograniczenie: światło liczy się tylko w pudełku wokół gracza, więc
   księżyc jest względem słońca, a tarcza jest oświetlana z kierunku
   słońca. Inny cykl albo inna orbita = fazy dalej się zgadzają.
 - Wygląd: `layers/Moon.js` i `assets/textures/sky/moon.png`.
-- Pomysły: **zaćmienia** (geometrycznie już możliwe - księżyc może
-  zasłonić słońce; brakuje przyciemnienia nieba i świata, czyli kilku
-  linijek w `SkyState`), krwawy księżyc, faza wpływająca na potwory.
+- Pomysły: zaćmienie księżyca (pełnia w cieniu Ziemi - czerwona tarcza;
+  działałoby jak zaćmienie słońca, tylko w pełni), krwawy księżyc,
+  faza wpływająca na potwory.
+
+### Zaćmienia słońca - ZROBIONE
+
+- **Kiedy** (`Celestial.js`): księżyc chodzi kilka-kilkanaście stopni
+  na północ albo południe od drogi słońca, a ta "szerokość" zmienia się
+  płynnie z cyklu na cykl (`newMoonLatitude`). W nowiu, w którym jest
+  mniejsza niż suma promieni tarcz, księżyc przechodzi przed słońcem.
+  Które nowie, wynika z numeru cyklu (zawsze te same), a ile ich jest -
+  z `ECLIPSE_CHANCE` i `ECLIPSE_TOTAL_SHARE` w `config.js`. Pierwsze dwa
+  nowie świata nie mają zaćmień.
+- **Ile zasłania**: `Celestial.eclipse` - pole wspólnej części tarcz
+  (`sunCoverage`) liczone z prawdziwego położenia słońca i księżyca.
+  Pełne zaćmienie jest możliwe, bo księżyc jest trochę większy niż
+  słońce (`MOON_DIAMETER` > `SUN_DIAMETER`); im większa różnica, tym
+  dłużej trwa.
+- **Wygląd** (`SkyColors.js`, `ECLIPSE_...`): światło słońca słabnie
+  dokładnie o zasłoniętą część, niebo i światło otoczenia trochę wolniej
+  (przy małym zaćmieniu prawie nic nie widać). W pełnym: zmrok,
+  łuna dookoła horyzontu (`uEclipseGlow` w `skyColor`), korona wokół
+  tarczy (`layers/Sun.js`), najjaśniejsze gwiazdy, słaba poświata
+  ciemnej strony księżyca.
+- **Sprawdzanie**: `/zacmienie`, `/zacmienie lista`, `/zacmienie
+  nastepne`, `/zacmienie pokaz pelne | czesciowe | 50`.
 
 ### Noc zależna od księżyca - ZROBIONE
 
@@ -207,4 +280,10 @@ w scenie świata; kolor z `SkyState` (różowe o zachodzie, szare nocą).
 | wygląd Drogi Mlecznej i galaktyk | `src/sky/layers/Galaxies.js` |
 | jak często spadają meteoryty, krater | `src/config.js` (`METEORITES_PER_NIGHT`), `src/game/Meteorites.js` |
 | dynamiczne światło (pudełko, źródła) | `src/world/DynamicLight.js`, `Game.updateDynamicLight()` |
+| jak często są zaćmienia, ile z nich pełnych, rozmiar tarcz | `src/config.js` (`ECLIPSE_...`, `SUN_DIAMETER`, `MOON_DIAMETER`) |
+| jak ciemno jest w czasie zaćmienia, kolory nieba i łuny | `src/sky/SkyColors.js` (`ECLIPSE_...`) |
+| korona przy pełnym zaćmieniu | `src/sky/layers/Sun.js` |
+| daleki teren: dokładność kafelków, kolory | `src/world/FarTerrain.js` |
+| gęstość mgiełki w oddali | `src/config.js` (`FAR_HAZE_DISTANCE`, `FAR_HAZE_MAX`) |
+| jak bloki zlewają się w daleki teren, suwak jasności | `src/rendering/viewUniforms.js`, `BlockRenderData.js` |
 | komendy do sprawdzania | `src/commands/gameCommands.js`, opis: `docs/komendy.md` |

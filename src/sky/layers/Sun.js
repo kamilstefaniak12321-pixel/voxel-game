@@ -1,5 +1,7 @@
 import * as THREE from 'three';
 
+import { SUN_DIAMETER } from '../../config.js';
+
 // ------------------------------------------------------------
 // WARSTWA: SŁOŃCE
 //
@@ -9,10 +11,13 @@ import * as THREE from 'three';
 // Pod horyzontem tarcza jest ucinana, więc słońce "zachodzi".
 // ------------------------------------------------------------
 
-// Średnica tarczy słońca w stopniach (prawdziwe słońce ma ~0.5°,
-// w grze jest większe, żeby dobrze je było widać).
+// Średnica tarczy słońca: SUN_DIAMETER w config.js.
+//
+// W czasie zaćmienia poświata słabnie razem z zasłoniętą częścią
+// tarczy, a przy pełnym zaćmieniu pojawia się KORONA - perłowa
+// poświata z promieniami wokół czarnej tarczy księżyca.
 
-const SUN_DIAMETER = 7;
+const CORONA_COLOR = new THREE.Color('#dfe8ff');
 
 // Ile razy większy od tarczy jest kwadrat z poświatą.
 
@@ -31,7 +36,11 @@ export class Sun {
         this.material = new THREE.ShaderMaterial({
 
             uniforms: {
-                uColor: { value: new THREE.Color() }
+                uColor: { value: new THREE.Color() },
+                uGlow: { value: 1 },
+                uCorona: { value: 0 },
+                uCoronaColor: { value: CORONA_COLOR },
+                uHorizonDip: { value: 0 }
             },
 
             vertexShader: /* glsl */ `
@@ -47,6 +56,10 @@ export class Sun {
 
             fragmentShader: /* glsl */ `
                 uniform vec3 uColor;
+                uniform float uGlow;
+                uniform float uCorona;
+                uniform vec3 uCoronaColor;
+                uniform float uHorizonDip;
 
                 varying vec2 vUv;
                 varying vec3 vWorld;
@@ -55,17 +68,35 @@ export class Sun {
 
                     // r = 1 na brzegu tarczy.
 
-                    float r = length(vUv * 2.0 - 1.0) * ${GLOW_SCALE.toFixed(1)};
+                    vec2 p = vUv * 2.0 - 1.0;
+
+                    float r = length(p) * ${GLOW_SCALE.toFixed(1)};
 
                     float disc = 1.0 - smoothstep(0.92, 1.0, r);
 
-                    float glow = exp(-max(r - 1.0, 0.0) * 1.8) * 0.45 * (1.0 - smoothstep(1.0, ${GLOW_SCALE.toFixed(1)}, r));
+                    float outside = 1.0 - smoothstep(1.0, ${GLOW_SCALE.toFixed(1)}, r);
 
-                    // Część pod horyzontem jest schowana.
+                    float glow = exp(-max(r - 1.0, 0.0) * 1.8) * 0.45 * outside * uGlow;
 
-                    float aboveHorizon = smoothstep(-0.003, 0.003, normalize(vWorld).y);
 
-                    gl_FragColor = vec4(uColor * (disc * 1.6 + glow) * aboveHorizon, 1.0);
+                    // Korona: im dalej od tarczy, tym słabsza, a wzdłuż
+                    // kilku "promieni" sięga dalej.
+
+                    float angle = atan(p.y, p.x);
+
+                    float rays = 0.5 + 0.5 * sin(angle * 5.0 + 0.7) * sin(angle * 3.0 + 2.1);
+
+                    float corona = uCorona * exp(-max(r - 1.0, 0.0) * (3.2 - 2.0 * rays)) * outside;
+
+
+                    // Część pod horyzontem jest schowana (z dalekim terenem
+                    // i z wysoka - pod jego brzegiem, patrz Sky.horizonDip).
+
+                    float aboveHorizon = smoothstep(uHorizonDip - 0.003, uHorizonDip + 0.003, normalize(vWorld).y);
+
+                    vec3 color = uColor * (disc * 1.6 + glow) + uCoronaColor * corona * 0.9;
+
+                    gl_FragColor = vec4(color * aboveHorizon, 1.0);
 
                     #include <colorspace_fragment>
 
@@ -104,6 +135,11 @@ export class Sun {
 
 
         this.material.uniforms.uColor.value.copy(state.sunDiscColor);
+
+        this.material.uniforms.uGlow.value = 1 - state.eclipse;
+
+        this.material.uniforms.uHorizonDip.value = state.horizonDip;
+        this.material.uniforms.uCorona.value = state.corona;
 
 
         // Głęboko pod horyzontem nie ma czego rysować.

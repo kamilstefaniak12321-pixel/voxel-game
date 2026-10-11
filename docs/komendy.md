@@ -22,8 +22,13 @@ Współrzędne można podawać względem gracza: `~` (tu, gdzie stoję),
 | `/ksiezyc` | faza, oświetlenie, czy jest nad horyzontem, kolor |
 | `/ksiezyc faza <now \| sierp \| kwadra \| garb \| pelnia \| ubywajacy-garb \| ostatnia-kwadra \| ubywajacy-sierp>` | przesuwa czas o pełne doby do tej fazy i mówi, o której księżyc jest najwyżej |
 | `/ksiezyc kolor <kolor \| domyslny>` | kolor księżyca (zabarwia też światło nocą) |
-| `/niebo` | wysokość słońca, łuna, ile gwiazd widać, Droga Mleczna, spadające gwiazdy na minutę |
+| `/niebo` | wysokość słońca, łuna, ile gwiazd widać, Droga Mleczna, spadające gwiazdy na minutę, trwające zaćmienie |
 | `/niebo zachod <kolor \| domyslny>` | kolor łuny wschodu i zachodu (zabarwia też światło) |
+| `/zacmienie` | kiedy następne zaćmienie słońca (dzień, godzina, pełne czy częściowe); jeśli trwa - ile słońca jest zasłonięte |
+| `/zacmienie lista [ile]` | najbliższe zaćmienia (domyślnie 5) |
+| `/zacmienie nastepne` | przeskok czasu na 1,5 h przed następnym zaćmieniem |
+| `/zacmienie pokaz [pelne \| czesciowe \| <procent>]` | wymusza zaćmienie w najbliższym nowiu i przestawia czas na 1,5 h przed nim |
+| `/zacmienie auto` | wyłącza wymuszone zaćmienie (wracają zwykłe) |
 | `/tp <x> <z>`, `/tp <x> <y> <z>`, `/tp spawn` | teleport (bez y - na powierzchnię) |
 | `/pozycja` | pozycja i chunk |
 | `/latanie` | włącza/wyłącza latanie (Spacja w górę, Shift w dół) |
@@ -40,9 +45,23 @@ Współrzędne można podawać względem gracza: `~` (tu, gdzie stoję),
 | `/meteory pokaz [ile]` | od razu kilka spadających gwiazd (widać w nocy) |
 | `/meteor` | zrzuca meteoryt w pobliżu (nie w chunki zmieniane przez gracza) |
 | `/meteor tu` | meteoryt spada tam, gdzie patrzysz (albo 15 bloków przed graczem) |
+| `/horyzont` | daleki teren: zasięg, ile kafelków widać i ile się buduje, trójkąty |
+| `/horyzont <bloki \| wyl>` | zasięg dalekiego terenu (to samo co w ustawieniach) |
+| `/horyzont lod` | koloruje kafelki dalekiego terenu według dokładności (czerwone - najdokładniejsze) |
+| `/horyzont odswiez` | buduje daleki teren od nowa |
+| `/ustaw` | lista ustawień z wartościami |
+| `/ustaw <ustawienie> <wartość>` | zmienia ustawienie, np. `/ustaw zasieg 256`, `/ustaw jasnosc 50`, `/ustaw licznik-fps wl` |
+| `/ustaw domyslne` | przywraca domyślne ustawienia |
+| `/wydajnosc` | FPS, czasy klatki, rysowanie (wywołania, trójkąty), chunki, daleki teren, pamięć |
+| `/wydajnosc test [sekundy]` | test: kamera obraca się raz dookoła, wynik na czacie (domyślnie 10 s) |
 
 Kolory: `czerwony`, `krwawy`, `pomaranczowy`, `zloty`, `zolty`, `zielony`,
 `turkusowy`, `niebieski`, `fioletowy`, `rozowy`, `bialy` albo `#rrggbb`.
+
+Nazwy ustawień w `/ustaw`: `zasieg`, `daleki-teren`, `pole`, `jasnosc`,
+`rozdzielczosc`, `fps` (limit), `cienie`, `dynamiczne-swiatlo`, `wczytywanie`, `czulosc`,
+`odwroc-mysz`, `motyw`, `interfejs`, `debug`, `licznik-fps`, `meteoryty`.
+Wartości tak/nie: `wl` / `wyl`.
 
 Niektóre komendy mają też angielskie nazwy (`/time`, `/moon`, `/tp`,
 `/fly`, `/give`, `/fill`...) - pokazuje je `/pomoc <komenda>`.

@@ -76,17 +76,28 @@ export class Sky {
         //   moonColor    - kolor księżyca (THREE.Color albo null)
         //   meteorShower - deszcz meteorów: null = sam wybiera noce
         //                  (isMeteorShowerNight), true/false = wymuszony
+        //   eclipse      - zaćmienie wymuszone komendą /zacmienie:
+        //                  { cycle, latitude } (patrz Celestial.js) albo null
 
         this.variant = {
             sunsetColor: null,
             moonColor: null,
-            meteorShower: null
+            meteorShower: null,
+            eclipse: null
         };
 
 
         this.scene = new THREE.Scene();
 
         this.camera = new THREE.PerspectiveCamera(75, 1, 0.5, 1000);
+
+
+        // Gdzie jest widoczny horyzont: y kierunku (0 = dokładnie
+        // poziomo, ujemne = niżej). Z dalekim terenem i z wysoka brzeg
+        // terenu jest trochę pod linią poziomu - ustawia to Game.
+        // Słońce i księżyc chowają się dopiero pod nim.
+
+        this.horizonDip = 0;
 
 
         this.shootingStars = new ShootingStars();
@@ -105,13 +116,32 @@ export class Sky {
         }
 
 
-        // Światło dla bloków.
+        // Światło dla bloków. Każda scena, w której coś oświetla niebo
+        // (świat, daleki teren), dostaje własny komplet świateł.
 
-        this.ambientLight = new THREE.AmbientLight();
-        this.sunLight = new THREE.DirectionalLight();
-        this.moonLight = new THREE.DirectionalLight();
+        this.lightSets = [];
 
-        worldScene.add(this.ambientLight, this.sunLight, this.moonLight);
+        this.attachLights(worldScene);
+
+    }
+
+
+    // Dodaje do sceny światło nieba: otoczenie, słońce i księżyc
+    // (ustawiane co klatkę w update).
+
+    attachLights(scene) {
+
+        const set = {
+            ambient: new THREE.AmbientLight(),
+            sun: new THREE.DirectionalLight(),
+            moon: new THREE.DirectionalLight()
+        };
+
+        scene.add(set.ambient, set.sun, set.moon);
+
+        this.lightSets.push(set);
+
+        return set;
 
     }
 
@@ -122,7 +152,7 @@ export class Sky {
 
     refresh(days) {
 
-        this.celestial.update(days);
+        this.celestial.update(days, this.variant.eclipse);
 
         this.state.meteorShower =
             this.variant.meteorShower ?? isMeteorShowerNight(days);
@@ -143,6 +173,8 @@ export class Sky {
 
         this.refresh(days);
 
+        state.horizonDip = this.horizonDip;
+
 
         // Wspólne wartości dla kopuły i mgły na blokach.
 
@@ -153,22 +185,28 @@ export class Sky {
         skyUniforms.uSunset.value = state.sunset;
         skyUniforms.uSunDirection.value.copy(celestial.sunDirection);
         skyUniforms.uSunHalo.value.copy(state.sunHalo);
+        skyUniforms.uEclipseGlow.value = state.eclipseGlow;
+        skyUniforms.uEclipseGlowColor.value.copy(state.eclipseGlowColor);
         skyUniforms.uNightDesaturation.value = state.nightDesaturation;
         skyUniforms.uNightTint.value.copy(state.nightTint);
 
 
         // Światła świata.
 
-        this.ambientLight.color.copy(state.ambientColor);
-        this.ambientLight.intensity = state.ambientIntensity;
+        for (const set of this.lightSets) {
 
-        this.sunLight.position.copy(celestial.sunDirection).multiplyScalar(100);
-        this.sunLight.color.copy(state.sunLightColor);
-        this.sunLight.intensity = state.sunLightIntensity;
+            set.ambient.color.copy(state.ambientColor);
+            set.ambient.intensity = state.ambientIntensity;
 
-        this.moonLight.position.copy(celestial.moonDirection).multiplyScalar(100);
-        this.moonLight.color.copy(state.moonLightColor);
-        this.moonLight.intensity = state.moonLightIntensity;
+            set.sun.position.copy(celestial.sunDirection).multiplyScalar(100);
+            set.sun.color.copy(state.sunLightColor);
+            set.sun.intensity = state.sunLightIntensity;
+
+            set.moon.position.copy(celestial.moonDirection).multiplyScalar(100);
+            set.moon.color.copy(state.moonLightColor);
+            set.moon.intensity = state.moonLightIntensity;
+
+        }
 
 
         for (const layer of this.layers) {
@@ -211,9 +249,13 @@ export class Sky {
             layer.dispose();
         }
 
-        this.ambientLight.removeFromParent();
-        this.sunLight.removeFromParent();
-        this.moonLight.removeFromParent();
+        for (const set of this.lightSets) {
+
+            set.ambient.removeFromParent();
+            set.sun.removeFromParent();
+            set.moon.removeFromParent();
+
+        }
 
     }
 

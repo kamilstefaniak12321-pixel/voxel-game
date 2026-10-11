@@ -1,5 +1,5 @@
 import { TEXTS } from './texts.js';
-import { SETTINGS_RANGES } from '../settings/Settings.js';
+import { SETTINGS_RANGES, SETTINGS_CHOICES } from '../settings/Settings.js';
 
 // ------------------------------------------------------------
 // MENU
@@ -46,6 +46,38 @@ function button(text, onClick, extraClass = '') {
     return element;
 
 }
+
+
+// Co jest na której zakładce ustawień (kolejność = kolejność na ekranie).
+
+const SETTINGS_TABS = {
+
+    video: [
+        'viewDistance',
+        'farTerrain',
+        'fov',
+        'brightness',
+        'renderScale',
+        'fpsLimit',
+        'ambientOcclusion',
+        'dynamicLight',
+        'loadBudget'
+    ],
+
+    controls: [
+        'mouseSensitivity',
+        'invertMouse'
+    ],
+
+    other: [
+        'theme',
+        'hudScale',
+        'showDebug',
+        'showFps',
+        'meteorites'
+    ]
+
+};
 
 
 function formatDate(timestamp) {
@@ -477,10 +509,11 @@ export class Menu {
     // Ustawienia
     //
     // returnTo = 'title' albo 'pause' - dokąd wraca "Gotowe".
+    // tab      - która zakładka jest otwarta (patrz SETTINGS_TABS).
     // Każda zmiana działa od razu (także w grze pod pauzą).
     // --------------------------------------------------------
 
-    showSettings(returnTo = 'title') {
+    showSettings(returnTo = 'title', tab = 'video') {
 
         const fromPause = returnTo === 'pause';
 
@@ -503,12 +536,74 @@ export class Menu {
         this.onEscape = goBack;
 
 
+        // Zakładki: przycisk wybranej jest wciśnięty (nieaktywny).
+
+        const tabs = el('div', 'settings-tabs');
+
+        for (const name of Object.keys(SETTINGS_TABS)) {
+
+            const tabButton = button(
+                TEXTS.settingsTabs[name],
+                () => this.showSettings(returnTo, name),
+                name === tab ? 'selected' : ''
+            );
+
+            tabButton.disabled = name === tab;
+
+            tabs.append(tabButton);
+
+        }
+
+
         const grid = el('div', 'settings-grid');
 
+        for (const key of SETTINGS_TABS[tab] ?? SETTINGS_TABS.video) {
+            grid.append(this.settingControl(key));
+        }
 
-        // Suwak: pasek w stylu przycisku z napisem na środku.
 
-        const slider = (key, label) => {
+        const buttons = el('div', 'menu-row settings-buttons');
+
+        buttons.append(
+            button(TEXTS.resetSettings, () => {
+
+                settings.reset();
+
+                // Odświeżamy ekran, żeby suwaki pokazały nowe wartości.
+                this.showSettings(returnTo, tab);
+
+            }),
+            button(TEXTS.done, goBack)
+        );
+
+
+        screen.append(
+            el('h2', 'menu-heading', TEXTS.settingsTitle),
+            tabs,
+            grid,
+            buttons
+        );
+
+    }
+
+
+    // Jeden element ustawień - rodzaj zależy od ustawienia:
+    //   liczba z zakresem (SETTINGS_RANGES)  -> suwak,
+    //   kilka wartości (SETTINGS_CHOICES)    -> przycisk "następna",
+    //   motyw                                -> przycisk "następny motyw",
+    //   tak/nie                              -> przycisk Wł./Wył.
+    // Napis bierze się z TEXTS[klucz] (texts.js).
+
+    settingControl(key) {
+
+        const settings = this.settings;
+
+        const label = TEXTS[key];
+
+
+        if (key in SETTINGS_RANGES) {
+
+            // Suwak: pasek w stylu przycisku z napisem na środku.
 
             const wrapper = el('label', 'menu-slider');
 
@@ -539,85 +634,69 @@ export class Menu {
 
             return wrapper;
 
-        };
+        }
 
 
-        // Przycisk motywu: każde kliknięcie = następny motyw.
+        if (key === 'theme') {
 
-        const themeButton = button(
-            TEXTS.theme(this.themes[settings.get('theme')]),
+            // Każde kliknięcie = następny motyw.
+
+            const themeButton = button(
+                label(this.themes[settings.get('theme')]),
+                () => {
+
+                    const keys = Object.keys(this.themes);
+
+                    const next =
+                        keys[(keys.indexOf(settings.get('theme')) + 1) % keys.length];
+
+                    settings.set('theme', next);
+
+                    themeButton.textContent = label(this.themes[next]);
+
+                }
+            );
+
+            return themeButton;
+
+        }
+
+
+        if (key in SETTINGS_CHOICES) {
+
+            const choices = SETTINGS_CHOICES[key];
+
+            const choiceButton = button(
+                label(settings.get(key)),
+                () => {
+
+                    const next =
+                        choices[(choices.indexOf(settings.get(key)) + 1) % choices.length];
+
+                    settings.set(key, next);
+
+                    choiceButton.textContent = label(next);
+
+                }
+            );
+
+            return choiceButton;
+
+        }
+
+
+        const toggle = button(
+            label(settings.get(key)),
             () => {
 
-                const keys = Object.keys(this.themes);
+                settings.set(key, !settings.get(key));
 
-                const next =
-                    keys[(keys.indexOf(settings.get('theme')) + 1) % keys.length];
-
-                settings.set('theme', next);
-
-                themeButton.textContent = TEXTS.theme(this.themes[next]);
+                toggle.textContent = label(settings.get(key));
 
             }
         );
 
-
-        const debugButton = button(
-            TEXTS.showDebug(settings.get('showDebug')),
-            () => {
-
-                settings.set('showDebug', !settings.get('showDebug'));
-
-                debugButton.textContent = TEXTS.showDebug(settings.get('showDebug'));
-
-            }
-        );
-
-
-        // Dynamiczne światło (lampa w ręce, meteoryty) - można wyłączyć
-        // na słabszym komputerze.
-
-        const dynamicLightButton = button(
-            TEXTS.dynamicLight(settings.get('dynamicLight')),
-            () => {
-
-                settings.set('dynamicLight', !settings.get('dynamicLight'));
-
-                dynamicLightButton.textContent = TEXTS.dynamicLight(settings.get('dynamicLight'));
-
-            }
-        );
-
-
-        grid.append(
-            slider('mouseSensitivity', TEXTS.mouseSensitivity),
-            slider('fov', TEXTS.fov),
-            slider('viewDistance', TEXTS.viewDistance),
-            themeButton,
-            debugButton,
-            dynamicLightButton
-        );
-
-
-        const buttons = el('div', 'menu-row settings-buttons');
-
-        buttons.append(
-            button(TEXTS.resetSettings, () => {
-
-                settings.reset();
-
-                // Odświeżamy ekran, żeby suwaki pokazały nowe wartości.
-                this.showSettings(returnTo);
-
-            }),
-            button(TEXTS.done, goBack)
-        );
-
-
-        screen.append(
-            el('h2', 'menu-heading', TEXTS.settingsTitle),
-            grid,
-            buttons
-        );
+        return toggle;
 
     }
 

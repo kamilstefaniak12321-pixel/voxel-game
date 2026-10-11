@@ -1,5 +1,7 @@
 import * as THREE from 'three';
 
+import { MOON_DIAMETER } from '../../config.js';
+
 // ------------------------------------------------------------
 // WARSTWA: KSIĘŻYC
 //
@@ -14,9 +16,7 @@ import * as THREE from 'three';
 // co jest za nim (np. gwiazdy - także ciemną częścią tarczy).
 // ------------------------------------------------------------
 
-// Średnica tarczy w stopniach.
-
-const MOON_DIAMETER = 7;
+// Średnica tarczy: MOON_DIAMETER w config.js.
 
 const DISTANCE = 90;
 
@@ -53,7 +53,8 @@ export class Moon {
                 uLight: { value: new THREE.Vector3() },
                 uColor: { value: new THREE.Color() },
                 uBrightness: { value: 1 },
-                uEarthshine: { value: EARTHSHINE }
+                uEarthshine: { value: EARTHSHINE },
+                uHorizonDip: { value: 0 }
             },
 
             vertexShader: /* glsl */ `
@@ -74,6 +75,7 @@ export class Moon {
                 uniform vec3 uColor;
                 uniform float uBrightness;
                 uniform float uEarthshine;
+                uniform float uHorizonDip;
 
                 varying vec2 vUv;
                 varying vec3 vWorld;
@@ -97,7 +99,7 @@ export class Moon {
                     float lit = step(0.0, dot(normal, uLight));
 
 
-                    float aboveHorizon = smoothstep(-0.003, 0.003, normalize(vWorld).y);
+                    float aboveHorizon = smoothstep(uHorizonDip - 0.003, uHorizonDip + 0.003, normalize(vWorld).y);
 
                     vec3 color = texel.rgb * uColor * (lit + uEarthshine) * uBrightness * aboveHorizon;
 
@@ -157,11 +159,17 @@ export class Moon {
 
         this.material.uniforms.uBrightness.value = state.moonBrightness;
 
+        this.material.uniforms.uHorizonDip.value = state.horizonDip;
+
         // Kolor księżyca (SkyColors.js, może go zmienić wariant nieba).
 
         this.material.uniforms.uColor.value.copy(state.moonColor);
 
-        this.material.uniforms.uEarthshine.value = EARTHSHINE * (1 - state.daylight);
+        // Światło odbite od Ziemi widać nocą - i w czasie zaćmienia,
+        // gdy przed słońcem jest ciemna strona księżyca.
+
+        this.material.uniforms.uEarthshine.value =
+            EARTHSHINE * Math.max(1 - state.daylight, state.eclipseDarkness);
 
         moon.visible = celestial.moonHeight > -0.1;
 

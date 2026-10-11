@@ -16,7 +16,8 @@ body:not([data-screen="game"]) #hotbar {
     position: fixed;
     left: 50%;
     bottom: 8px;
-    transform: translateX(-50%);
+    transform: translateX(-50%) scale(var(--hud-scale, 1));
+    transform-origin: bottom center;
     z-index: 5;
     display: flex;
     flex-direction: column;
@@ -28,7 +29,7 @@ body:not([data-screen="game"]) #hotbar {
     /* Na wąskim ekranie miejsca się zmniejszają, żeby pasek się zmieścił. */
     --slot: min(
         var(--hotbar-slot-size, 48px),
-        calc((100vw - 24px) / 9)
+        calc((100vw - 24px) / 9 / var(--hud-scale, 1))
     );
 }
 
@@ -105,9 +106,11 @@ body:not([data-screen="game"]) #chat {
 #chat {
     position: fixed;
     left: 8px;
-    bottom: calc(var(--hotbar-slot-size, 48px) + 56px);
+    bottom: calc((var(--hotbar-slot-size, 48px) + 56px) * var(--hud-scale, 1));
     z-index: 6;
-    width: min(640px, calc(100vw - 16px));
+    width: min(640px, calc((100vw - 16px) / var(--hud-scale, 1)));
+    transform: scale(var(--hud-scale, 1));
+    transform-origin: bottom left;
     font-family: var(--ui-font, monospace);
     font-size: var(--chat-font-size, 16px);
     pointer-events: none;
@@ -116,7 +119,7 @@ body:not([data-screen="game"]) #chat {
 .chat-log {
     display: flex;
     flex-direction: column;
-    max-height: 40vh;
+    max-height: calc(40vh / var(--hud-scale, 1));
     overflow: hidden;
 }
 
@@ -173,4 +176,43 @@ body:not([data-screen="game"]) #chat {
 #chat.open .chat-input {
     display: block;
     pointer-events: auto;
+}
+
+
+/* ------------------------------------------------------------
+   ROZMIAR INTERFEJSU I LICZNIK FPS
+   ------------------------------------------------------------ */
+
+/* Ustawienie "Rozmiar interfejsu w grze" zmienia --hud-scale
+   (main.js) - pasek bloków i czat skalują się wyżej, tu napisy
+   debugowania i licznik klatek. */
+
+#info {
+    transform: scale(var(--hud-scale, 1));
+    transform-origin: top left;
+}
+
+body:not([data-screen="game"]) #fps {
+    display: none;
+}
+
+#fps {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    z-index: 5;
+    padding: 2px 8px;
+    font-family: monospace;
+    font-size: 14px;
+    color: #ffffff;
+    background: rgba(0, 0, 0, 0.45);
+    text-shadow: 0 0 2px #000000;
+    pointer-events: none;
+    user-select: none;
+    transform: scale(var(--hud-scale, 1));
+    transform-origin: top right;
+}
+
+#fps[hidden] {
+    display: none;
 }

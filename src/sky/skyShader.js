@@ -34,6 +34,11 @@ export const skyUniforms = {
     uSunDirection: { value: new THREE.Vector3(0, 1, 0) },
     uSunHalo: { value: new THREE.Color() },
 
+    // Zaćmienie słońca: łuna dookoła całego horyzontu (siła i kolor).
+
+    uEclipseGlow: { value: 0 },
+    uEclipseGlowColor: { value: new THREE.Color() },
+
     // Jasność mgły na blokach (ciemnieje w tunelach).
 
     uFogBrightness: { value: 1 },
@@ -56,6 +61,8 @@ export const SKY_COLOR_GLSL = /* glsl */ `
     uniform float uSunset;
     uniform vec3 uSunDirection;
     uniform vec3 uSunHalo;
+    uniform float uEclipseGlow;
+    uniform vec3 uEclipseGlowColor;
 
     vec3 skyColor(vec3 direction) {
 
@@ -99,6 +106,14 @@ export const SKY_COLOR_GLSL = /* glsl */ `
         float band = uSunset * exp(-abs(height - 0.15) * 10.0) * (0.25 + 0.2 * (1.0 - towardSun));
 
         color = mix(color, uSunsetHigh, clamp(band, 0.0, 1.0));
+
+
+        // Pełne zaćmienie: dookoła horyzontu jasno jak przy zachodzie
+        // (tam cień księżyca już nie sięga).
+
+        float eclipseGlow = uEclipseGlow * exp(-height * 9.0) * aboveGround;
+
+        color = mix(color, uEclipseGlowColor, clamp(eclipseGlow, 0.0, 1.0));
 
 
         // Poświata wokół słońca (szeroka i wąska).

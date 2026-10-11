@@ -105,6 +105,11 @@ export class World {
 
         this.version = 0;
 
+        // Wywoływane, gdy chunk zmieniony przez gracza znika z pamięci
+        // (np. daleki teren pokaże wtedy jego nowy kształt).
+
+        this.onModifiedChunkUnloaded = null;
+
         // Generator terenu dla tego świata.
 
         this.generator =
@@ -547,6 +552,41 @@ export class World {
     }
 
 
+    // Do jakiej odległości od gracza (w blokach) wszystkie chunki są
+    // już wczytane i mogą mieć meshe. Gdy kolejka jest pusta - cały
+    // promień wczytywania. Daleki teren zaczyna się najdalej tu, żeby
+    // w czasie wczytywania nie było dziury między nim a chunkami.
+
+    completeRadius() {
+
+        if (this.loadQueue.length === 0) {
+            return Infinity;
+        }
+
+        // Kolejka jest posortowana - na końcu najbliższy brakujący chunk.
+
+        const nearest = Math.sqrt(this.loadQueue[this.loadQueue.length - 1][2]);
+
+        // Mesh powstaje dopiero z kompletem sąsiadów - stąd zapas.
+
+        return Math.max(0, (nearest - 2) * CHUNK_SIZE);
+
+    }
+
+
+    // Oznacza do przebudowy meshe wszystkich chunków (np. po zmianie
+    // ustawienia cieni w kątach). Przebudowują się stopniowo,
+    // najbliższe najpierw.
+
+    remeshAll() {
+
+        for (const chunk of this.chunks.values()) {
+            this.dirtyChunks.add(chunk);
+        }
+
+    }
+
+
     // Kwadrat odległości chunka od chunka gracza (w chunkach).
 
     distanceToCenter(chunk) {
@@ -889,7 +929,11 @@ export class World {
         // przy najbliższym zapisie (zostaje na liście niezapisanych).
 
         if (chunk.modified) {
+
             this.savedChunks.set(key, chunk.blocks);
+
+            this.onModifiedChunkUnloaded?.(chunk);
+
         }
 
 

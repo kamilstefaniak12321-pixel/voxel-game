@@ -10,6 +10,7 @@ import { createBlockIcons } from './ui/BlockIcons.js';
 import { Chat } from './ui/Chat.js';
 import { CommandRegistry } from './commands/CommandRegistry.js';
 import { GAME_COMMANDS } from './commands/gameCommands.js';
+import { PerfMonitor } from './game/PerfMonitor.js';
 import {
     WorldStorage,
     createWorldInfo,
@@ -45,9 +46,12 @@ const renderer = new THREE.WebGLRenderer({
 
 renderer.setSize(window.innerWidth, window.innerHeight);
 
-renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-
 document.body.appendChild(renderer.domElement);
+
+// Gra rysuje kilka razy na klatkę (niebo, daleki teren, świat) -
+// statystyki rysowania (/wydajnosc) zerujemy sami raz na klatkę.
+
+renderer.info.autoReset = false;
 
 
 const input = new InputManager(renderer.domElement);
@@ -58,6 +62,13 @@ const input = new InputManager(renderer.domElement);
 const settings = new Settings();
 
 const infoElement = document.getElementById('info');
+
+const fpsElement = document.getElementById('fps');
+
+
+// Pomiar czasu klatek (licznik FPS, /wydajnosc).
+
+const perf = new PerfMonitor();
 
 
 let state = 'menu';
@@ -142,8 +153,38 @@ const menu = new Menu(
 );
 
 
+// Ustawienia, które dotyczą całej aplikacji (nie tylko świata):
+// rozdzielczość rysowania, rozmiar interfejsu, licznik FPS.
+
+function applyAppSettings() {
+
+    // Rozdzielczość: część pikseli ekranu (mniej = szybciej, ale
+    // mniej ostro - piksele zostają ostre, nie rozmyte).
+
+    const scale = settings.get('renderScale') / 100;
+
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2) * scale);
+
+    renderer.setSize(window.innerWidth, window.innerHeight);
+
+    renderer.domElement.style.imageRendering = scale < 1 ? 'pixelated' : '';
+
+
+    document.documentElement.style.setProperty(
+        '--hud-scale',
+        settings.get('hudScale') / 100
+    );
+
+
+    fpsElement.hidden = !settings.get('showFps');
+
+}
+
+applyAppSettings();
+
+
 // Zmiana w ustawieniach działa od razu: nowy motyw menu,
-// a w uruchomionej grze nowe pole widzenia, mgła i czułość.
+// a w uruchomionej grze nowe pole widzenia, zasięg, jasność...
 
 settings.onChange((key) => {
 
@@ -151,7 +192,11 @@ settings.onChange((key) => {
         loadTheme(settings.get('theme'));
     }
 
-    game?.applySettings();
+    if (['renderScale', 'hudScale', 'showFps'].includes(key)) {
+        applyAppSettings();
+    }
+
+    game?.applySettings(key);
 
 });
 
@@ -208,6 +253,12 @@ async function playWorld(worldInfo) {
         // Komunikaty gry (np. gdzie spadł meteoryt) trafiają na czat.
 
         game.onMessage = (text) => chat.print(text, 'hint');
+
+        // Pomiar wydajności (komenda /wydajnosc).
+
+        game.perf = perf;
+
+        perf.reset();
 
     }
 
@@ -552,20 +603,57 @@ function closeWorld() {
 // PĘTLA GRY
 // ------------------------------------------------------------
 
-const clock = new THREE.Clock();
+// Limit FPS (ustawienie): klatki przychodzą od przeglądarki
+// (zwykle tyle, ile odświeża się monitor), a nadmiarowe pomijamy.
+// nextFrameTime = kiedy wypada następna klatka; przesuwa się zawsze
+// o równy odstęp, więc np. limit 60 na monitorze 144 Hz daje
+// naprawdę 60 klatek, a nie co którąś klatkę monitora.
+
+let lastFrameTime = 0;
+
+let nextFrameTime = 0;
+
+let fpsShownAt = 0;
 
 
-function animate() {
+function animate(now) {
 
     requestAnimationFrame(animate);
 
 
-    const dt = Math.min(clock.getDelta(), 0.05);
+    const limit = settings.get('fpsLimit');
+
+    if (limit > 0) {
+
+        const interval = 1000 / limit;
+
+        // Odrobina zapasu (1 ms), bo klatki przeglądarki nie
+        // przychodzą idealnie równo.
+
+        if (now < nextFrameTime - 1) {
+            return;
+        }
+
+        // Po dłuższej przerwie nie nadrabiamy zaległych klatek.
+
+        nextFrameTime = Math.max(nextFrameTime + interval, now - interval / 2);
+
+    }
+
+
+    const dt = lastFrameTime > 0
+        ? Math.min((now - lastFrameTime) / 1000, 0.05)
+        : 1 / 60;
+
+    lastFrameTime = now;
 
 
     if (!game) {
         return;
     }
+
+
+    perf.beginFrame(now);
 
 
     // Pasek bloków na dole ekranu.
@@ -584,7 +672,11 @@ function animate() {
         }
 
 
+        perf.begin();
+
         game.update(dt);
+
+        perf.endUpdate();
 
         game.updateHud(infoElement);
 
@@ -596,7 +688,28 @@ function animate() {
 
     // W pauzie świat dalej jest widoczny pod menu.
 
+    perf.begin();
+
     game.render();
+
+    perf.endRender();
+
+    perf.endFrame();
+
+
+    // Licznik FPS w rogu (odświeżany dwa razy na sekundę).
+
+    if (!fpsElement.hidden && now - fpsShownAt > 500) {
+
+        fpsShownAt = now;
+
+        const summary = perf.summary(1);
+
+        fpsElement.textContent = summary
+            ? `${Math.round(summary.fps)} FPS | ${summary.frameMs.toFixed(1)} ms`
+            : '-- FPS';
+
+    }
 
 }
 
@@ -614,7 +727,7 @@ window.addEventListener('keydown', (event) => {
 
 window.addEventListener('resize', () => {
 
-    renderer.setSize(window.innerWidth, window.innerHeight);
+    applyAppSettings();
 
     game?.resize(window.innerWidth, window.innerHeight);
 
@@ -636,4 +749,4 @@ const hotbar = new Hotbar(
 
 menu.showTitle();
 
-animate();
+requestAnimationFrame(animate);

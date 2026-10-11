@@ -14,6 +14,9 @@ import {
     getLightColor
 } from '../blocks/BlockRegistry.js';
 import { DynamicLight } from '../world/DynamicLight.js';
+import { FarTerrain } from '../world/FarTerrain.js';
+import { setAmbientOcclusion } from '../rendering/ChunkMesher.js';
+import { viewUniforms } from '../rendering/viewUniforms.js';
 import { Meteorites } from './Meteorites.js';
 import { createGlowSprite } from '../rendering/Glow.js';
 import { WorldSaver } from '../storage/WorldSaver.js';
@@ -25,7 +28,8 @@ import { skyUniforms } from '../sky/skyShader.js';
 import {
     PLAYER_REACH,
     CHUNK_SIZE,
-    CHUNK_LOAD_BUDGET_MS,
+    START_LOAD_RADIUS,
+    TERRAIN_BASE_HEIGHT,
     MOUSE_SENSITIVITY,
     WORLD_SPAWN_X,
     WORLD_SPAWN_Z,
@@ -168,6 +172,13 @@ export class Game {
 
         this.onMessage = null;
 
+        // Pomiar wydajności (ustawia main.js) i trwający test
+        // wydajności (/wydajnosc test).
+
+        this.perf = null;
+
+        this.benchmark = null;
+
 
         this.camera = new THREE.PerspectiveCamera(
             75,
@@ -186,8 +197,24 @@ export class Game {
         );
 
 
+        // Daleki teren za zasięgiem widzenia (własna scena, oświetlona
+        // tym samym niebem).
+
+        this.farTerrain = new FarTerrain(this.world);
+
+        this.sky.attachLights(this.farTerrain.scene);
+
+
+        // Cienie w kątach z ustawień - zanim powstaną pierwsze meshe.
+
+        this.appliedAmbientOcclusion = settings.get('ambientOcclusion') / 100;
+
+        setAmbientOcclusion(this.appliedAmbientOcclusion);
+
+
         // Wczytujemy teren wokół miejsca, w którym gracz się pojawi:
         // zapisanej pozycji albo miejsca startu w nowym świecie.
+        // Od razu tylko najbliższe chunki - dalsze dograją się w grze.
 
         const start = worldInfo.player ?? {
             x: WORLD_SPAWN_X + 0.5,
@@ -197,7 +224,7 @@ export class Game {
         this.world.loadAround(
             start.x,
             start.z,
-            this.getLoadRadius()
+            Math.min(this.getLoadRadius(), START_LOAD_RADIUS)
         );
 
 
@@ -275,6 +302,13 @@ export class Game {
 
 
         this.player.update(dt, input);
+
+
+        // Test wydajności: kamera powoli obraca się dookoła.
+
+        if (this.benchmark) {
+            this.updateBenchmark(dt);
+        }
 
 
         // Upływ czasu. Z włączonym debugiem (F3) klawisze [ i ]
@@ -374,14 +408,29 @@ export class Game {
             this.player.pos.x,
             this.player.pos.z,
             this.getLoadRadius(),
-            CHUNK_LOAD_BUDGET_MS
+            this.settings.get('loadBudget')
         );
+
+        // Daleki teren: wybór i budowanie kafelków (też z limitem czasu).
+        // Zaczyna się na końcu zasięgu widzenia - albo bliżej, dopóki
+        // dalsze chunki się wczytują (np. zaraz po wejściu do świata).
+
+        this.updateFarRange();
+
+        this.farTerrain.update(this.camera.position);
 
 
         // Autozapis co jakiś czas.
 
         this.saver.update(dt);
 
+
+        // Z dalekim terenem słońce zachodzi za jego brzegiem - z wysoka
+        // ten brzeg jest trochę pod linią poziomu.
+
+        this.sky.horizonDip = this.farTerrain.active
+            ? Math.min(0, (TERRAIN_BASE_HEIGHT + 1 - this.camera.position.y) / this.farTerrain.outer)
+            : 0;
 
         this.sky.update(this.time.days, dt, this.renderer.getPixelRatio());
 
@@ -402,7 +451,8 @@ export class Game {
     }
 
 
-    // Najpierw niebo (własna scena), potem świat na nim.
+    // Najpierw niebo (własna scena), na nim daleki teren, a na
+    // wierzchu świat (prawdziwe chunki zawsze zasłaniają daleki teren).
 
     render() {
 
@@ -410,13 +460,96 @@ export class Game {
 
         renderer.autoClear = false;
 
+        renderer.info.reset();
+
         renderer.clear();
 
         this.sky.render(renderer, this.camera);
 
         renderer.clearDepth();
 
+        this.farTerrain.render(renderer, this.camera);
+
+        renderer.clearDepth();
+
         renderer.render(this.scene, this.camera);
+
+    }
+
+
+    // --------------------------------------------------------
+    // TEST WYDAJNOŚCI (/wydajnosc test): kamera obraca się raz
+    // dookoła, a my mierzymy klatki. Wynik trafia na czat.
+    // --------------------------------------------------------
+
+    startBenchmark(seconds) {
+
+        this.benchmark = {
+            seconds,
+            time: 0,
+            startYaw: this.player.yaw,
+            startPitch: this.player.pitch,
+            calls: 0,
+            triangles: 0,
+            samples: 0
+        };
+
+        this.perf?.reset();
+
+    }
+
+
+    updateBenchmark(dt) {
+
+        const test = this.benchmark;
+
+        test.time += dt;
+
+
+        // Patrzymy lekko w dół, jak przy zwykłym chodzeniu.
+
+        this.player.yaw = test.startYaw + 2 * Math.PI * Math.min(1, test.time / test.seconds);
+        this.player.pitch = -0.1;
+
+        this.player.updateCamera();
+
+
+        const info = this.renderer.info.render;
+
+        test.calls += info.calls;
+        test.triangles += info.triangles;
+        test.samples++;
+
+
+        if (test.time < test.seconds) {
+            return;
+        }
+
+
+        this.benchmark = null;
+
+        this.player.yaw = test.startYaw;
+        this.player.pitch = test.startPitch;
+
+        this.player.updateCamera();
+
+
+        const summary = this.perf?.summary(test.seconds + 1);
+
+        if (!summary) {
+            return;
+        }
+
+        this.onMessage?.(
+            `Test wydajności (${test.seconds} s, obrót dookoła): ` +
+            `średnio ${summary.fps.toFixed(0)} FPS, ` +
+            `najwolniejsze 1%: ${summary.low1.toFixed(0)} FPS, ` +
+            `najdłuższa klatka ${summary.worstMs.toFixed(1)} ms | ` +
+            `gra ${summary.updateMs.toFixed(1)} ms, rysowanie ${summary.renderMs.toFixed(1)} ms na klatkę | ` +
+            `${Math.round(test.calls / test.samples)} rysowań, ` +
+            `${Math.round(test.triangles / test.samples / 1000)} tys. trójkątów | ` +
+            `zasięg ${this.settings.get('viewDistance')}, daleki teren ${this.settings.get('farTerrain') || 'wył.'}`
+        );
 
     }
 
@@ -574,30 +707,86 @@ export class Game {
     }
 
 
-    // Stosuje ustawienia gracza. Wywoływane przy starcie
-    // i po każdej zmianie w ekranie ustawień.
+    // Gdzie kończą się prawdziwe chunki, a zaczyna daleki teren.
 
-    applySettings() {
+    updateFarRange() {
+
+        const viewDistance = this.settings.get('viewDistance');
+
+        const outer = this.settings.get('farTerrain');
+
+        // Zaokrąglone do 8 bloków, żeby nie wybierać kafelków co klatkę.
+
+        const loaded = Math.floor(this.world.completeRadius() / 8) * 8;
+
+        const inner = Math.max(16, Math.min(viewDistance, loaded));
+
+
+        this.farTerrain.setRange(inner, outer);
+
+        viewUniforms.uFarEnabled.value = this.farTerrain.active ? 1 : 0;
+        viewUniforms.uFarInner.value = inner;
+        viewUniforms.uFarOuter.value = Math.max(outer, inner);
+
+    }
+
+
+    // Stosuje ustawienia gracza. Wywoływane przy starcie
+    // i po każdej zmianie w ekranie ustawień (key = co się zmieniło).
+
+    applySettings(key = null) {
 
         const settings = this.settings;
 
 
+        // Zasięg: prawdziwe chunki do viewDistance, dalej daleki teren.
+        // Kamera świata musi sięgać do ostatnich wczytanych chunków.
+
+        const viewDistance = settings.get('viewDistance');
+
+        const farTerrain = settings.get('farTerrain');
+
         this.camera.fov = settings.get('fov');
+
+        this.camera.far = viewDistance + 3 * CHUNK_SIZE + 64;
 
         this.camera.updateProjectionMatrix();
 
 
-        // Mgła gęstnieje od ~45% zasięgu do pełnego zasięgu.
+        this.updateFarRange();
 
-        const viewDistance = settings.get('viewDistance');
+
+        // Bez dalekiego terenu: mgła gęstnieje od ~45% zasięgu do
+        // pełnego zasięgu i teren znika w kolorze nieba.
 
         this.scene.fog.far = viewDistance;
         this.scene.fog.near = viewDistance * 0.45;
 
 
+        viewUniforms.uBrightness.value = settings.get('brightness') / 100;
+
+
+        // Cienie w kątach są zapisane w meshach chunków - po zmianie
+        // trzeba je przebudować (stopniowo, najbliższe najpierw).
+
+        const ambientOcclusion = settings.get('ambientOcclusion') / 100;
+
+        if (ambientOcclusion !== this.appliedAmbientOcclusion) {
+
+            setAmbientOcclusion(ambientOcclusion);
+
+            this.world.remeshAll();
+
+            this.appliedAmbientOcclusion = ambientOcclusion;
+
+        }
+
+
         this.player.mouseSensitivity =
             MOUSE_SENSITIVITY *
             settings.get('mouseSensitivity') / 100;
+
+        this.player.invertMouse = settings.get('invertMouse');
 
     }
 
@@ -713,6 +902,8 @@ export class Game {
 
         this.dynamicLight.dispose();
 
+        this.farTerrain.dispose();
+
         return true;
 
     }
@@ -766,6 +957,27 @@ export class Game {
         }
 
 
+        // Klatki na sekundę i daleki teren.
+
+        const summary = this.perf?.summary(1);
+
+        const far = this.farTerrain.stats();
+
+        const performanceInfo =
+            `FPS: ${summary ? Math.round(summary.fps) : '--'}` +
+            `${summary ? ` (${summary.frameMs.toFixed(1)} ms)` : ''} | ` +
+            `Daleki teren: ${far.active ? `${far.shown} kafelków${far.missing ? `, buduje się ${far.missing}` : ''}` : 'wył.'}`;
+
+
+        // Zaćmienie słońca (tylko gdy trwa).
+
+        const eclipse = this.sky.state.eclipse;
+
+        const eclipseInfo = eclipse > 0
+            ? ` | Zaćmienie: ${Math.round(eclipse * 100)}%${eclipse >= 1 ? ' (pełne!)' : ''}`
+            : '';
+
+
         element.innerHTML =
 
             `Świat: ${this.worldInfo.name} | Seed: ${this.worldInfo.seed}` +
@@ -781,7 +993,9 @@ export class Game {
             `${this.world.loadQueue.length > 0 ? ` (w kolejce: ${this.world.loadQueue.length})` : ''}<br>` +
 
             `Czas: ${this.time.formatClock()}, dzień ${this.time.dayNumber} | ` +
-            `Księżyc: ${this.sky.celestial.moonPhaseName}<br>` +
+            `Księżyc: ${this.sky.celestial.moonPhaseName}${eclipseInfo}<br>` +
+
+            `${performanceInfo}<br>` +
 
             `Na ziemi: ${player.onGround ? 'tak' : 'nie'} | ` +
             `Światło: ${describeLight(light)}<br>` +

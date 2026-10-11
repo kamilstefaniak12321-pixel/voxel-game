@@ -3,7 +3,10 @@ import {
     UI_THEMES,
     DEFAULT_MOUSE_SENSITIVITY,
     DEFAULT_FOV,
-    DEFAULT_VIEW_DISTANCE
+    DEFAULT_VIEW_DISTANCE,
+    DEFAULT_FAR_TERRAIN,
+    AMBIENT_OCCLUSION,
+    CHUNK_LOAD_BUDGET_MS
 } from '../config.js';
 
 // ------------------------------------------------------------
@@ -24,12 +27,27 @@ const STORAGE_KEY = 'voxel-game-settings';
 
 export const SETTINGS_DEFAULTS = {
 
-    mouseSensitivity: DEFAULT_MOUSE_SENSITIVITY,   // procent
+    // Obraz
+    viewDistance: DEFAULT_VIEW_DISTANCE,           // bloki (prawdziwe chunki)
+    farTerrain: DEFAULT_FAR_TERRAIN,               // bloki (0 = bez dalekiego terenu)
     fov: DEFAULT_FOV,                              // stopnie
-    viewDistance: DEFAULT_VIEW_DISTANCE,           // bloki
-    showDebug: true,                               // informacje F3
+    brightness: 0,                                 // procent (0 = nastrojowo, 100 = jasno)
+    renderScale: 100,                              // procent rozdzielczości ekranu
+    fpsLimit: 0,                                   // klatki na sekundę (0 = bez limitu)
+    ambientOcclusion: Math.round(AMBIENT_OCCLUSION * 100),   // cienie w kątach, procent
     dynamicLight: true,                            // lampa w ręce, meteoryty...
-    theme: UI_THEME                                // motyw menu
+    loadBudget: CHUNK_LOAD_BUDGET_MS,              // ms na klatkę na wczytywanie chunków
+
+    // Sterowanie
+    mouseSensitivity: DEFAULT_MOUSE_SENSITIVITY,   // procent
+    invertMouse: false,                            // odwrócona oś Y myszy
+
+    // Inne
+    theme: UI_THEME,                               // motyw menu
+    hudScale: 100,                                 // rozmiar paska, czatu i napisów w grze (procent)
+    showDebug: true,                               // informacje F3
+    showFps: false,                                // licznik klatek w rogu ekranu
+    meteorites: true                               // meteoryty spadające na ziemię
 
 };
 
@@ -38,9 +56,25 @@ export const SETTINGS_DEFAULTS = {
 
 export const SETTINGS_RANGES = {
 
-    mouseSensitivity: { min: 10, max: 200, step: 5 },
+    viewDistance: { min: 24, max: 384, step: 8 },
+    farTerrain: { min: 0, max: 4096, step: 256 },
     fov: { min: 50, max: 110, step: 1 },
-    viewDistance: { min: 20, max: 120, step: 5 }
+    brightness: { min: 0, max: 100, step: 5 },
+    renderScale: { min: 25, max: 100, step: 5 },
+    ambientOcclusion: { min: 0, max: 100, step: 5 },
+    loadBudget: { min: 1, max: 16, step: 1 },
+    mouseSensitivity: { min: 10, max: 200, step: 5 },
+    hudScale: { min: 50, max: 200, step: 10 }
+
+};
+
+
+// Ustawienia z kilkoma wartościami do wyboru (przycisk przełącza
+// na następną).
+
+export const SETTINGS_CHOICES = {
+
+    fpsLimit: [0, 30, 60, 120, 144]
 
 };
 
@@ -159,6 +193,13 @@ export class Settings {
         if (key === 'theme') {
 
             return value in UI_THEMES ? value : fallback;
+
+        }
+
+
+        if (key in SETTINGS_CHOICES) {
+
+            return SETTINGS_CHOICES[key].includes(value) ? value : fallback;
 
         }
 

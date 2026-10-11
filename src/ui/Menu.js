@@ -53,6 +53,7 @@ function button(text, onClick, extraClass = '') {
 const SETTINGS_TABS = {
 
     video: [
+        'potato',
         'viewDistance',
         'farTerrain',
         'fov',
@@ -106,6 +107,13 @@ export class Menu {
         this.handlers = handlers;
         this.settings = settings;
         this.themes = themes;
+
+
+        // Czy przy starcie strony był włączony tryb ziemniaka (od tego
+        // zależy wygładzanie krawędzi - zmienia się dopiero po
+        // odświeżeniu strony). Ustawia main.js.
+
+        this.startupPotato = settings.get('potato');
 
 
         // Co robi ESC na danym ekranie (np. "Wróć").
@@ -562,6 +570,20 @@ export class Menu {
         }
 
 
+        // Uwaga o wygładzaniu krawędzi (gdy tryb ziemniaka zmieniono
+        // od uruchomienia strony).
+
+        const note = el('p', 'menu-note', TEXTS.potatoReloadNote);
+
+        const refreshNote = () => {
+            note.hidden = tab !== 'video' || settings.get('potato') === this.startupPotato;
+        };
+
+        refreshNote();
+
+        grid.addEventListener('click', refreshNote);
+
+
         const buttons = el('div', 'menu-row settings-buttons');
 
         buttons.append(
@@ -581,6 +603,7 @@ export class Menu {
             el('h2', 'menu-heading', TEXTS.settingsTitle),
             tabs,
             grid,
+            note,
             buttons
         );
 

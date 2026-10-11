@@ -37,7 +37,10 @@ import {
     CHUNK_HEIGHT,
     WORLD_BORDER,
     DAY_LENGTH_MINUTES,
-    UI_THEMES
+    UI_THEMES,
+    POTATO_RENDER_SCALE,
+    POTATO_VIEW_DISTANCE,
+    POTATO_STAR_SHARE
 } from '../config.js';
 
 // ------------------------------------------------------------
@@ -331,6 +334,7 @@ function latitudeForCoverage(coverage) {
 // Ustawienia do wpisania w /ustaw (polska nazwa -> klucz w Settings).
 
 const SETTING_WORDS = {
+    ziemniak: 'potato',
     zasieg: 'viewDistance',
     'daleki-teren': 'farTerrain',
     pole: 'fov',
@@ -1401,7 +1405,7 @@ export const GAME_COMMANDS = [
 
                 if (!stats.active) {
 
-                    return `Daleki teren wyłączony (zasięg widzenia ${game.settings.get('viewDistance')}, ` +
+                    return `Daleki teren wyłączony (zasięg widzenia ${game.viewDistance}, ` +
                         `daleki teren ${game.settings.get('farTerrain') || 'wył.'}). Włącz: /horyzont 1024`;
 
                 }
@@ -1453,6 +1457,52 @@ export const GAME_COMMANDS = [
 
         complete(args) {
             return args.length === 1 ? ['512', '1024', '2048', '4096', 'wyl', 'lod', 'odswiez'] : [];
+        }
+    },
+
+
+    {
+        name: 'ziemniak',
+        aliases: ['potato'],
+        usage: '/ziemniak [wl | wyl]',
+        description: 'Tryb ziemniaka: wszystko działa, ale prościej i szybciej (słaby komputer, brak karty graficznej).',
+
+        run(args, { game }) {
+
+            const settings = game.settings;
+
+            const word = simplify(args[0] ?? '');
+
+            const on =
+                ON_WORDS.includes(word) ? true :
+                OFF_WORDS.includes(word) ? false :
+                args[0] === undefined ? !settings.get('potato') :
+                null;
+
+            if (on === null) {
+                throw usageError(this);
+            }
+
+
+            settings.set('potato', on);
+
+            if (!on) {
+                return 'Tryb ziemniaka wyłączony - wracają zwykłe ustawienia. ' +
+                    'Wygładzanie krawędzi wróci po odświeżeniu strony (F5).';
+            }
+
+            return 'Tryb ziemniaka włączony: ' +
+                `rozdzielczość najwyżej ${POTATO_RENDER_SCALE}%, ` +
+                `zasięg widzenia najwyżej ${POTATO_VIEW_DISTANCE} bloków, ` +
+                'rzadsza siatka dalekiego terenu, bez Drogi Mlecznej, ' +
+                `${Math.round(POTATO_STAR_SHARE * 100)}% gwiazd, mgła liczona w rogach ścian. ` +
+                'Wygładzanie krawędzi wyłączy się po odświeżeniu strony (F5). ' +
+                'Twoje ustawienia zostają - wyłączysz: /ziemniak wyl';
+
+        },
+
+        complete(args) {
+            return args.length === 1 ? ['wl', 'wyl'] : [];
         }
     },
 
@@ -1613,8 +1663,9 @@ export const GAME_COMMANDS = [
                 `Chunki: ${world.chunks.size} wczytanych, ${meshed} z meshem, ${world.loadQueue.length} w kolejce, ` +
                 `${world.dirtyChunks.size} do przebudowy | ` +
                 `daleki teren: ${far.active ? `${far.shown} kafelków, ${Math.round(far.triangles / 1000)} tys. trójkątów` : 'wył.'}\n` +
-                `Ekran: ${canvas.width} x ${canvas.height} px | zasięg ${game.settings.get('viewDistance')}, ` +
-                `daleki teren ${game.settings.get('farTerrain') || 'wył.'}${memory}\n` +
+                `Ekran: ${canvas.width} x ${canvas.height} px | zasięg ${game.viewDistance}, ` +
+                `daleki teren ${game.settings.get('farTerrain') || 'wył.'}` +
+                `${game.settings.get('potato') ? ', TRYB ZIEMNIAKA' : ''}${memory}\n` +
                 'Test: /wydajnosc test';
 
         },

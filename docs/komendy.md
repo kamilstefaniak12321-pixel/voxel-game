@@ -49,6 +49,7 @@ Współrzędne można podawać względem gracza: `~` (tu, gdzie stoję),
 | `/horyzont <bloki \| wyl>` | zasięg dalekiego terenu (to samo co w ustawieniach) |
 | `/horyzont lod` | koloruje kafelki dalekiego terenu według dokładności (czerwone - najdokładniejsze) |
 | `/horyzont odswiez` | buduje daleki teren od nowa |
+| `/ziemniak [wl \| wyl]` | tryb ziemniaka - wszystko działa, ale prościej i szybciej (słaby komputer, brak karty graficznej) |
 | `/ustaw` | lista ustawień z wartościami |
 | `/ustaw <ustawienie> <wartość>` | zmienia ustawienie, np. `/ustaw zasieg 256`, `/ustaw jasnosc 50`, `/ustaw licznik-fps wl` |
 | `/ustaw domyslne` | przywraca domyślne ustawienia |
@@ -58,7 +59,7 @@ Współrzędne można podawać względem gracza: `~` (tu, gdzie stoję),
 Kolory: `czerwony`, `krwawy`, `pomaranczowy`, `zloty`, `zolty`, `zielony`,
 `turkusowy`, `niebieski`, `fioletowy`, `rozowy`, `bialy` albo `#rrggbb`.
 
-Nazwy ustawień w `/ustaw`: `zasieg`, `daleki-teren`, `pole`, `jasnosc`,
+Nazwy ustawień w `/ustaw`: `ziemniak`, `zasieg`, `daleki-teren`, `pole`, `jasnosc`,
 `rozdzielczosc`, `fps` (limit), `cienie`, `dynamiczne-swiatlo`, `wczytywanie`, `czulosc`,
 `odwroc-mysz`, `motyw`, `interfejs`, `debug`, `licznik-fps`, `meteoryty`.
 Wartości tak/nie: `wl` / `wyl`.

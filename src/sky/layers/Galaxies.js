@@ -217,6 +217,8 @@ export class Galaxies {
         this.object.renderOrder = 2.5;
         this.object.frustumCulled = false;
 
+        this.enabled = true;
+
     }
 
 
@@ -226,7 +228,10 @@ export class Galaxies {
 
         this.material.uniforms.uVisibility.value = state.galaxyVisibility;
 
-        this.object.visible = state.galaxyVisibility > 0.002;
+        // W trybie ziemniaka (enabled = false) Drogi Mlecznej nie ma -
+        // jej shader jest najdroższą częścią nocnego nieba.
+
+        this.object.visible = this.enabled && state.galaxyVisibility > 0.002;
 
     }
 

@@ -229,3 +229,18 @@ export const DEFAULT_VIEW_DISTANCE = 48;
 // Daleki teren (horyzont): do ilu bloków od gracza widać uproszczony,
 // rozmyty teren za zasięgiem widzenia (0 = wyłączony).
 export const DEFAULT_FAR_TERRAIN = 1024;
+
+// TRYB ZIEMNIAKA (ustawienie albo adres gry z ?ziemniak) - wszystko
+// działa, ale prościej, żeby gra chodziła nawet na bardzo słabym
+// komputerze (albo bez karty graficznej):
+//   - rozdzielczość najwyżej POTATO_RENDER_SCALE procent,
+//   - zasięg widzenia najwyżej POTATO_VIEW_DISTANCE bloków,
+//   - daleki teren z rzadszą siatką (mniej trójkątów),
+//   - bez wygładzania krawędzi (po odświeżeniu strony),
+//   - bez Drogi Mlecznej i galaktyk, tylko najjaśniejsze gwiazdy
+//     (POTATO_STAR_SHARE - jaka część gwiazd zostaje),
+//   - kolor mgły liczony w rogach ścian, a nie w każdym pikselu.
+// Własne ustawienia gracza zostają - po wyłączeniu trybu wracają.
+export const POTATO_RENDER_SCALE = 50;
+export const POTATO_VIEW_DISTANCE = 32;
+export const POTATO_STAR_SHARE = 0.3;

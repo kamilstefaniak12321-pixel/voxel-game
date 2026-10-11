@@ -17,6 +17,7 @@ import { DynamicLight } from '../world/DynamicLight.js';
 import { FarTerrain } from '../world/FarTerrain.js';
 import { setAmbientOcclusion } from '../rendering/ChunkMesher.js';
 import { viewUniforms } from '../rendering/viewUniforms.js';
+import { blockMaterial, setPotatoDefine } from '../rendering/BlockRenderData.js';
 import { Meteorites } from './Meteorites.js';
 import { createGlowSprite } from '../rendering/Glow.js';
 import { WorldSaver } from '../storage/WorldSaver.js';
@@ -30,6 +31,7 @@ import {
     CHUNK_SIZE,
     START_LOAD_RADIUS,
     TERRAIN_BASE_HEIGHT,
+    POTATO_VIEW_DISTANCE,
     MOUSE_SENSITIVITY,
     WORLD_SPAWN_X,
     WORLD_SPAWN_Z,
@@ -548,7 +550,8 @@ export class Game {
             `gra ${summary.updateMs.toFixed(1)} ms, rysowanie ${summary.renderMs.toFixed(1)} ms na klatkę | ` +
             `${Math.round(test.calls / test.samples)} rysowań, ` +
             `${Math.round(test.triangles / test.samples / 1000)} tys. trójkątów | ` +
-            `zasięg ${this.settings.get('viewDistance')}, daleki teren ${this.settings.get('farTerrain') || 'wył.'}`
+            `zasięg ${this.viewDistance}, daleki teren ${this.settings.get('farTerrain') || 'wył.'}` +
+            `${this.settings.get('potato') ? ', tryb ziemniaka' : ''}`
         );
 
     }
@@ -707,11 +710,25 @@ export class Game {
     }
 
 
+    // Zasięg widzenia naprawdę używany w grze: z ustawień, a w trybie
+    // ziemniaka najwyżej POTATO_VIEW_DISTANCE.
+
+    get viewDistance() {
+
+        const viewDistance = this.settings.get('viewDistance');
+
+        return this.settings.get('potato')
+            ? Math.min(viewDistance, POTATO_VIEW_DISTANCE)
+            : viewDistance;
+
+    }
+
+
     // Gdzie kończą się prawdziwe chunki, a zaczyna daleki teren.
 
     updateFarRange() {
 
-        const viewDistance = this.settings.get('viewDistance');
+        const viewDistance = this.viewDistance;
 
         const outer = this.settings.get('farTerrain');
 
@@ -742,7 +759,7 @@ export class Game {
         // Zasięg: prawdziwe chunki do viewDistance, dalej daleki teren.
         // Kamera świata musi sięgać do ostatnich wczytanych chunków.
 
-        const viewDistance = settings.get('viewDistance');
+        const viewDistance = this.viewDistance;
 
         const farTerrain = settings.get('farTerrain');
 
@@ -764,6 +781,18 @@ export class Game {
 
 
         viewUniforms.uBrightness.value = settings.get('brightness') / 100;
+
+
+        // Tryb ziemniaka: prostsze niebo, rzadszy daleki teren i kolor
+        // mgły liczony w rogach ścian (config.js: POTATO_...).
+
+        const potato = settings.get('potato');
+
+        this.sky.setLowDetail(potato);
+
+        this.farTerrain.setLowDetail(potato);
+
+        setPotatoDefine([blockMaterial], potato);
 
 
         // Cienie w kątach są zapisane w meshach chunków - po zmianie
@@ -852,7 +881,7 @@ export class Game {
     getLoadRadius() {
 
         return Math.ceil(
-            this.settings.get('viewDistance') / CHUNK_SIZE
+            this.viewDistance / CHUNK_SIZE
         ) + 2;
 
     }

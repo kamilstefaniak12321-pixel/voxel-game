@@ -155,17 +155,30 @@ blockMaterial.onBeforeCompile = (shader, renderer) => {
 
     Object.assign(shader.uniforms, skyUniforms, viewUniforms);
 
+    // W trybie ziemniaka (define POTATO) kolor nieba dla mgły liczy
+    // się tylko w rogach ścian, a nie w każdym pikselu.
+
     shader.vertexShader =
         shader.vertexShader
             .replace(
                 '#include <common>',
                 `#include <common>
-                varying vec3 vSkyDirection;`
+                varying vec3 vSkyDirection;
+
+                #ifdef POTATO
+                    varying vec3 vFogSky;
+                    uniform float uFogBrightness;
+                    ${SKY_COLOR_GLSL}
+                #endif`
             )
             .replace(
                 '#include <fog_vertex>',
                 `#include <fog_vertex>
-                vSkyDirection = (modelMatrix * vec4(transformed, 1.0)).xyz - cameraPosition;`
+                vSkyDirection = (modelMatrix * vec4(transformed, 1.0)).xyz - cameraPosition;
+
+                #ifdef POTATO
+                    vFogSky = skyColor(normalize(vSkyDirection)) * uFogBrightness;
+                #endif`
             );
 
     shader.fragmentShader =
@@ -179,7 +192,14 @@ blockMaterial.onBeforeCompile = (shader, renderer) => {
                 uniform vec3 uNightTint;
                 uniform sampler2D uAtlasAverage;
                 ${SKY_COLOR_GLSL}
-                ${VIEW_GLSL}`
+                ${VIEW_GLSL}
+
+                #ifdef POTATO
+                    varying vec3 vFogSky;
+                    #define FOG_SKY vFogSky
+                #else
+                    #define FOG_SKY (skyColor(normalize(vSkyDirection)) * uFogBrightness)
+                #endif`
             )
             .replace(
                 '#include <fog_fragment>',
@@ -190,7 +210,7 @@ blockMaterial.onBeforeCompile = (shader, renderer) => {
                         // (rośnie z odległością), bez znikania bloków.
 
                         float haze = farHaze(length(vSkyDirection.xz));
-                        vec3 hazeSky = skyColor(normalize(vSkyDirection)) * uFogBrightness;
+                        vec3 hazeSky = FOG_SKY;
                         gl_FragColor.rgb = mix(gl_FragColor.rgb, linearToOutputTexel(vec4(hazeSky, 1.0)).rgb, haze);
 
                     }
@@ -198,7 +218,7 @@ blockMaterial.onBeforeCompile = (shader, renderer) => {
 
                         float fogFactor = smoothstep(fogNear, fogFar, vFogDepth);
                         if (fogFactor > 0.0) {
-                            vec3 fogSky = skyColor(normalize(vSkyDirection)) * uFogBrightness;
+                            vec3 fogSky = FOG_SKY;
                             gl_FragColor.rgb = mix(gl_FragColor.rgb, linearToOutputTexel(vec4(fogSky, 1.0)).rgb, fogFactor);
                         }
 
@@ -262,6 +282,36 @@ blockMaterial.onBeforeCompile = (shader, renderer) => {
         );
 
 };
+
+// ------------------------------------------------------------
+// TRYB ZIEMNIAKA
+//
+// Włącza albo wyłącza prostszą wersję shadera (define POTATO) w podanych
+// materiałach. Zmiana defines = nowy shader, więc tylko gdy się zmienia.
+// ------------------------------------------------------------
+
+export function setPotatoDefine(materials, on) {
+
+    for (const material of materials) {
+
+        material.defines = material.defines ?? {};
+
+        if (('POTATO' in material.defines) === on) {
+            continue;
+        }
+
+        if (on) {
+            material.defines.POTATO = '';
+        }
+        else {
+            delete material.defines.POTATO;
+        }
+
+        material.needsUpdate = true;
+
+    }
+
+}
 
 // ------------------------------------------------------------
 

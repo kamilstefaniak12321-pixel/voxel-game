@@ -19,7 +19,8 @@ import {
 
 import {
     GAME_TITLE,
-    UI_THEMES
+    UI_THEMES,
+    POTATO_RENDER_SCALE
 } from './config.js';
 
 // ------------------------------------------------------------
@@ -40,8 +41,26 @@ import {
 document.title = GAME_TITLE;
 
 
+// Ustawienia gracza (czułość myszy, pole widzenia, motyw...).
+
+const settings = new Settings();
+
+
+// Tryb ziemniaka można włączyć też adresem gry: ...index.html?ziemniak
+// (a wyłączyć: ?ziemniak=0). Zostaje zapamiętany jak zwykłe ustawienie.
+
+const potatoParameter = new URLSearchParams(location.search).get('ziemniak');
+
+if (potatoParameter !== null) {
+    settings.set('potato', !['0', 'nie', 'wyl', 'false'].includes(potatoParameter));
+}
+
+
+// Wygładzanie krawędzi (antialiasing) da się wybrać tylko przy
+// tworzeniu renderera - w trybie ziemniaka jest wyłączone.
+
 const renderer = new THREE.WebGLRenderer({
-    antialias: true
+    antialias: !settings.get('potato')
 });
 
 renderer.setSize(window.innerWidth, window.innerHeight);
@@ -55,11 +74,6 @@ renderer.info.autoReset = false;
 
 
 const input = new InputManager(renderer.domElement);
-
-
-// Ustawienia gracza (czułość myszy, pole widzenia, motyw...).
-
-const settings = new Settings();
 
 const infoElement = document.getElementById('info');
 
@@ -159,9 +173,14 @@ const menu = new Menu(
 function applyAppSettings() {
 
     // Rozdzielczość: część pikseli ekranu (mniej = szybciej, ale
-    // mniej ostro - piksele zostają ostre, nie rozmyte).
+    // mniej ostro - piksele zostają ostre, nie rozmyte). Tryb ziemniaka
+    // obniża ją do POTATO_RENDER_SCALE.
 
-    const scale = settings.get('renderScale') / 100;
+    const scale = (
+        settings.get('potato')
+            ? Math.min(settings.get('renderScale'), POTATO_RENDER_SCALE)
+            : settings.get('renderScale')
+    ) / 100;
 
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2) * scale);
 
@@ -192,7 +211,7 @@ settings.onChange((key) => {
         loadTheme(settings.get('theme'));
     }
 
-    if (['renderScale', 'hudScale', 'showFps'].includes(key)) {
+    if (['renderScale', 'hudScale', 'showFps', 'potato'].includes(key)) {
         applyAppSettings();
     }
 

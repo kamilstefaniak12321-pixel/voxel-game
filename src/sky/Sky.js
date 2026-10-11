@@ -11,6 +11,8 @@ import { Stars } from './layers/Stars.js';
 import { Galaxies } from './layers/Galaxies.js';
 import { ShootingStars } from './layers/ShootingStars.js';
 
+import { POTATO_STAR_SHARE } from '../config.js';
+
 // ------------------------------------------------------------
 // NIEBO
 //
@@ -102,12 +104,16 @@ export class Sky {
 
         this.shootingStars = new ShootingStars();
 
+        this.galaxies = new Galaxies();
+
+        this.stars = new Stars();
+
         this.layers = [
             new SkyDome(),
             new Moon(),
             new Sun(),
-            new Galaxies(),
-            new Stars(),
+            this.galaxies,
+            this.stars,
             this.shootingStars
         ];
 
@@ -142,6 +148,17 @@ export class Sky {
         this.lightSets.push(set);
 
         return set;
+
+    }
+
+
+    // Tryb ziemniaka: bez Drogi Mlecznej i galaktyk, mniej gwiazd.
+
+    setLowDetail(on) {
+
+        this.galaxies.enabled = !on;
+
+        this.stars.setLowDetail(on, POTATO_STAR_SHARE);
 
     }
 

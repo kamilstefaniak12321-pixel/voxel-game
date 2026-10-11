@@ -38,6 +38,10 @@ import { Geology } from './Geology.js';
 // Pod powierzchnią - skały według budowy geologicznej (Geology.js):
 // granit, kamień, wapień, piaskowiec, łupek, bazalt, żyły lepidolitu.
 //
+// Na trawie rosną rośliny: trawa (rzadka albo gęste łąki), kępy
+// kwiatów, paprocie w wilgotnych miejscach, pojedyncze zioła
+// (PLANTS w TerrainShape.js).
+//
 // Woda jest na razie WSTĘPNA (morze bez rzek i jezior) - patrz
 // docs/generator-terenu.md, etapy 2-3.
 // ------------------------------------------------------------
@@ -51,6 +55,23 @@ const GAINS = [0, 1.6, 2.0, 2.3, 2.5];
 function clamp(value, min, max) {
 
     return value < min ? min : value > max ? max : value;
+
+}
+
+
+// Liczba 0-1 "losowa", ale zawsze taka sama dla tego miejsca
+// (seed, x, z, salt) - rośliny wychodzą identycznie przy każdym
+// generowaniu chunka.
+
+function hash01(seed, x, z, salt) {
+
+    let h = (seed ^ Math.imul(x, 0x27d4eb2d) ^ Math.imul(z, 0x165667b1) ^ Math.imul(salt, 0x9e3779b1)) | 0;
+
+    h = Math.imul(h ^ (h >>> 16), 0x85ebca6b);
+    h = Math.imul(h ^ (h >>> 13), 0xc2b2ae35);
+    h ^= h >>> 16;
+
+    return (h >>> 0) / 4294967296;
 
 }
 
@@ -151,8 +172,13 @@ export class RealisticGenerator {
             depressions: noise(15),
             temperature: noise(16),
             humidity: noise(17),
-            rockLine: noise(18)
+            rockLine: noise(18),
+            meadows: noise(19),
+            flowers: noise(20),
+            flowerSpecies: noise(21)
         };
+
+        this.plantSeed = Math.imul(base, 0x2545f491) >>> 0;
 
 
         this.ids = {
@@ -162,8 +188,19 @@ export class RealisticGenerator {
             sand: getBlockId('sand'),
             water: getBlockId('water'),
             granite: getBlockId('granite'),
-            lepidolite: getBlockId('lepidolite')
+            lepidolite: getBlockId('lepidolite'),
+            shortGrass: getBlockId('short_grass'),
+            tallGrass: getBlockId('tall_grass'),
+            fern: getBlockId('fern'),
+            clover: getBlockId('clover'),
+            plantain: getBlockId('plantain'),
+            nettle: getBlockId('nettle'),
+            dandelion: getBlockId('dandelion')
         };
+
+        // Kwiaty w kępach (kolejność = plamy pola gatunków).
+
+        this.flowerIds = ['poppy', 'cornflower', 'chamomile', 'dandelion'].map(getBlockId);
 
 
         // Skały pod ziemią (granit, wapień, piaskowiec...).
@@ -602,6 +639,23 @@ export class RealisticGenerator {
 
         let top = height;
 
+
+        // Roślina na trawie.
+
+        if (kind === 'grass' && height + 1 < CHUNK_HEIGHT) {
+
+            const plant = this.plantAt(x, z, sample);
+
+            if (plant !== 0) {
+
+                out[height + 1] = plant;
+
+                top = height + 1;
+
+            }
+
+        }
+
         if (sample.ocean) {
 
             for (let y = height + 1; y <= SEA_LEVEL; y++) {
@@ -615,6 +669,93 @@ export class RealisticGenerator {
         out.fill(0, top + 1);
 
         return top;
+
+    }
+
+
+    // Roślina na trawie w kolumnie (x, z): ID bloku albo 0 (nic nie
+    // rośnie). Liczby do strojenia: PLANTS w TerrainShape.js.
+
+    plantAt(x, z, sample) {
+
+        const P = SHAPE.PLANTS;
+        const ids = this.ids;
+
+        const roll = hash01(this.plantSeed, x, z, 1);
+
+
+        // Kępy kwiatów.
+
+        const flowers = this.field(this.noise.flowers, x, z, P.flowerScale, 2);
+
+        if (flowers > P.flowerThreshold) {
+
+            const chance = (flowers - P.flowerThreshold) / (1 - P.flowerThreshold) * P.flowerDensity;
+
+            if (roll < chance) {
+
+                const species = this.field(this.noise.flowerSpecies, x, z, P.flowerSpeciesScale, 1);
+
+                let index = Math.floor((species * 0.5 + 0.5) * this.flowerIds.length);
+
+                // Trochę innych kwiatów w kępie.
+
+                if (hash01(this.plantSeed, x, z, 2) < P.flowerMix) {
+                    index += 1 + Math.floor(hash01(this.plantSeed, x, z, 3) * (this.flowerIds.length - 1));
+                }
+
+                return this.flowerIds[clamp(index, 0, this.flowerIds.length * 2) % this.flowerIds.length];
+
+            }
+
+        }
+
+
+        // Paprocie (wilgotno, wyżej więcej) i zioła.
+
+        const humidity = this.field(this.noise.humidity, x, z, SHAPE.SCALES.humidity, 2);
+
+        const uplands = smoothstep(SHAPE.RELIEF_UPLAND * 0.5, SHAPE.RELIEF_UPLAND * 1.5, sample.height - SEA_LEVEL);
+
+        let edge = P.fern * smoothstep(P.fernHumidity, P.fernHumidity + 0.5, humidity) * (0.6 + 0.6 * uplands);
+
+        if (roll < edge) {
+            return ids.fern;
+        }
+
+        const herbs = [
+            [P.clover, ids.clover],
+            [P.plantain, ids.plantain],
+            [P.nettle * (humidity > 0 ? 1.5 : 0.5), ids.nettle],
+            [P.dandelion, ids.dandelion]
+        ];
+
+        for (const [chance, id] of herbs) {
+
+            edge += chance;
+
+            if (roll < edge) {
+                return id;
+            }
+
+        }
+
+
+        // Trawa: od rzadkiej do gęstej łąki.
+
+        const meadow = smoothstep(-0.5, 0.5, this.field(this.noise.meadows, x, z, P.meadowScale, 2));
+
+        edge += P.grass[0] + (P.grass[1] - P.grass[0]) * meadow;
+
+        if (roll < edge) {
+
+            const tall = P.tallGrass[0] + (P.tallGrass[1] - P.tallGrass[0]) * meadow;
+
+            return hash01(this.plantSeed, x, z, 4) < tall ? ids.tallGrass : ids.shortGrass;
+
+        }
+
+        return 0;
 
     }
 

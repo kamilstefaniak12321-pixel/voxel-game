@@ -8,16 +8,19 @@ import { BlockBreaker } from '../interaction/BlockBreaker.js';
 import { BlockPlacer } from '../interaction/BlockPlacer.js';
 import {
     getBlockDefinition,
-    blockExists,
     getBlockId,
     getLightEmission,
-    getLightColor
+    getLightColor,
+    getBlockLabel,
+    getDropType,
+    isPlantId
 } from '../blocks/BlockRegistry.js';
+import { Inventory } from './Inventory.js';
 import { DynamicLight } from '../world/DynamicLight.js';
 import { FarTerrain } from '../world/FarTerrain.js';
 import { setAmbientOcclusion } from '../rendering/ChunkMesher.js';
 import { viewUniforms } from '../rendering/viewUniforms.js';
-import { blockMaterial, setPotatoDefine } from '../rendering/BlockRenderData.js';
+import { blockMaterial, plantMaterial, setPotatoDefine } from '../rendering/BlockRenderData.js';
 import { Meteorites } from './Meteorites.js';
 import { createGlowSprite } from '../rendering/Glow.js';
 import { WorldSaver } from '../storage/WorldSaver.js';
@@ -37,9 +40,17 @@ import {
     POTATO_VIEW_DISTANCE,
     MOUSE_SENSITIVITY,
     HOTBAR_SIZE,
-    HOTBAR_DEFAULT,
     SPRINT_FOV_FACTOR
 } from '../config.js';
+
+
+// Tryby gry: przygoda (zbieranie i zużywanie bloków) i kreatywny
+// (bloki bez końca, latanie po dwukrotnym wciśnięciu Spacji).
+
+export const GAME_MODES = {
+    adventure: 'Przygoda',
+    creative: 'Kreatywny'
+};
 
 
 // Widoki kamery (F5): z oczu gracza, zza pleców, z przodu.
@@ -51,44 +62,6 @@ const CAMERA_TEXTS = {
     back: 'zza pleców',
     front: 'z przodu'
 };
-
-// ------------------------------------------------------------
-// Pasek bloków świata: zapisany albo domyślny z config.js.
-// Nieznane bloki (np. usunięte z gry) zamieniamy na puste miejsca.
-//
-//   { slots: ['grass', 'dirt', null, ...], selected: 0 }
-// ------------------------------------------------------------
-
-function loadHotbar(saved) {
-
-    const source =
-        Array.isArray(saved?.slots)
-            ? saved.slots
-            : HOTBAR_DEFAULT;
-
-
-    const slots = [];
-
-    for (let i = 0; i < HOTBAR_SIZE; i++) {
-
-        const type = source[i];
-
-        slots.push(blockExists(type) ? type : null);
-
-    }
-
-
-    const selected =
-        Number.isInteger(saved?.selected) &&
-        saved.selected >= 0 &&
-        saved.selected < HOTBAR_SIZE
-            ? saved.selected
-            : 0;
-
-
-    return { slots, selected };
-
-}
 
 // ------------------------------------------------------------
 // GRA = jeden uruchomiony świat.
@@ -292,11 +265,35 @@ export class Game {
         this.currentHit = null;
 
 
-        // Pasek bloków - zapisywany razem ze światem.
+        // Tryb gry i ekwipunek (z paskiem bloków) - zapisywane ze światem.
+        // Światy sprzed trybów są kreatywne (bloki były bez końca).
 
-        this.hotbar = loadHotbar(worldInfo.hotbar);
+        this.mode = worldInfo.gameMode in GAME_MODES ? worldInfo.gameMode : 'creative';
 
-        worldInfo.hotbar = this.hotbar;
+        worldInfo.gameMode = this.mode;
+
+        this.inventory = Inventory.load(worldInfo, this.mode);
+
+        worldInfo.inventory = this.inventory.data;
+
+        delete worldInfo.hotbar;
+
+
+        // Dawny "pasek" (komendy, testy): nazwy bloków i wybrane miejsce.
+
+        const inventory = this.inventory;
+
+        this.hotbar = {
+            get slots() { return inventory.hotbarTypes(); },
+            get selected() { return inventory.selected; },
+            set selected(value) { inventory.selected = value; }
+        };
+
+        this.player.canFly = this.mode === 'creative';
+
+        // Krótkie komunikaty nad paskiem (np. "Ekwipunek pełny") - main.js.
+
+        this.onNotice = null;
 
 
         // Autozapis.
@@ -361,12 +358,13 @@ export class Game {
         }
 
 
-        // Pasek bloków: klawisze 1-9 i kółko myszy.
+        // Pasek bloków: klawisze 1-9 i kółko myszy (w kółko: za ostatnim
+        // jest pierwszy).
 
         for (let i = 0; i < HOTBAR_SIZE; i++) {
 
             if (input.consumeKeyPress(`Digit${i + 1}`)) {
-                this.hotbar.selected = i;
+                this.inventory.selected = i;
             }
 
         }
@@ -375,13 +373,13 @@ export class Game {
         const wheel = input.consumeWheel();
 
         if (wheel !== 0) {
-
-            // Kółko przewija w kółko: za ostatnim jest pierwszy.
-
-            this.hotbar.selected =
-                ((this.hotbar.selected + wheel) % HOTBAR_SIZE + HOTBAR_SIZE) % HOTBAR_SIZE;
-
+            this.inventory.selected += wheel;
         }
+
+
+        // Czas dla kołysania roślin na wietrze.
+
+        viewUniforms.uTime.value = (viewUniforms.uTime.value + dt) % 3600;
 
 
         this.currentHit =
@@ -405,7 +403,7 @@ export class Game {
 
         if (breakPressed) {
 
-            this.breaker.breakBlock(this.currentHit);
+            this.breakTarget(this.currentHit);
 
             this.currentHit =
                 this.raycast.castFromCamera(this.camera);
@@ -418,10 +416,16 @@ export class Game {
 
             if (this.selectedBlock) {
 
-                this.placer.placeBlock(
+                const placed = this.placer.placeBlock(
                     this.currentHit,
                     this.selectedBlock
                 );
+
+                // W przygodzie postawiony blok znika ze stosu.
+
+                if (placed && this.mode === 'adventure') {
+                    this.inventory.take(this.inventory.selected, 1);
+                }
 
                 this.currentHit =
                     this.raycast.castFromCamera(this.camera);
@@ -1076,7 +1080,7 @@ export class Game {
 
         this.farTerrain.setLowDetail(potato);
 
-        setPotatoDefine([blockMaterial], potato);
+        setPotatoDefine([blockMaterial, plantMaterial], potato);
 
 
         // Model gracza: wierzchnia warstwa skórki, styl zgięć, tryb ziemniaka.
@@ -1087,7 +1091,7 @@ export class Game {
 
             this.model.setStyle(settings.get('jointStyle'));
 
-            setPotatoDefine([...this.model.materials, this.model.heldMaterial], potato);
+            setPotatoDefine([...this.model.materials, this.model.heldMaterial, this.model.heldPlantMaterial], potato);
 
         }
 
@@ -1125,46 +1129,141 @@ export class Game {
 
     get selectedBlock() {
 
-        return this.hotbar.slots[this.hotbar.selected];
+        return this.inventory.selectedItem?.type ?? null;
+
+    }
+
+
+    // Zmiana trybu gry ('adventure' / 'creative').
+
+    setMode(mode) {
+
+        if (!(mode in GAME_MODES)) {
+            return false;
+        }
+
+        this.mode = mode;
+
+        this.worldInfo.gameMode = mode;
+
+        this.player.canFly = mode === 'creative';
+
+        if (mode !== 'creative') {
+            this.player.flying = false;
+        }
+
+        return true;
+
+    }
+
+
+    // Zniszczenie wskazanego bloku. W przygodzie blok (albo to, co
+    // z niego zostaje - np. trawa daje ziemię) trafia do ekwipunku;
+    // gdy nie ma na niego miejsca, blok zostaje. Roślina, która rosła
+    // na zniszczonym bloku, też trafia do ekwipunku.
+
+    breakTarget(hit) {
+
+        if (!hit || !hit.hit) {
+            return false;
+        }
+
+        if (this.mode !== 'adventure') {
+            return this.breaker.breakBlock(hit);
+        }
+
+
+        const { x, y, z, type } = hit.block;
+
+        const drop = getDropType(type);
+
+        if (drop && !this.inventory.canAdd(drop)) {
+
+            this.onNotice?.('Ekwipunek pełny');
+
+            return false;
+
+        }
+
+
+        const plantAbove = isPlantId(this.world.getBlockId(x, y + 1, z))
+            ? this.world.getBlock(x, y + 1, z)
+            : null;
+
+
+        if (!this.breaker.breakBlock(hit)) {
+            return false;
+        }
+
+        if (drop) {
+            this.inventory.add(drop);
+        }
+
+        if (plantAbove && this.world.getBlock(x, y + 1, z) === null) {
+
+            const plantDrop = getDropType(plantAbove);
+
+            if (plantDrop) {
+                this.inventory.add(plantDrop);
+            }
+
+        }
+
+        return true;
 
     }
 
 
     // "Weź blok" (środkowy przycisk myszy):
-    // - blok jest już na pasku -> wybieramy jego miejsce,
-    // - nie ma go -> trafia do pierwszego pustego miejsca,
-    // - brak pustych -> zastępuje blok w wybranym miejscu.
+    // - blok jest na pasku -> wybieramy jego miejsce,
+    // - jest w reszcie ekwipunku -> zamienia się z wybranym miejscem paska,
+    // - nie ma go: w trybie kreatywnym trafia do pierwszego pustego
+    //   miejsca paska (albo zastępuje wybrany), w przygodzie - nic.
 
     pickBlock(type) {
 
-        const slots = this.hotbar.slots;
+        const inventory = this.inventory;
 
 
-        const existing = slots.indexOf(type);
+        const onHotbar = inventory.find(type, 0, HOTBAR_SIZE);
 
-        if (existing !== -1) {
+        if (onHotbar !== -1) {
 
-            this.hotbar.selected = existing;
+            inventory.selected = onHotbar;
 
             return;
 
         }
 
 
-        const empty = slots.indexOf(null);
+        const inMain = inventory.find(type, HOTBAR_SIZE);
+
+        if (inMain !== -1) {
+
+            const selected = inventory.selected;
+
+            const item = inventory.get(selected);
+
+            inventory.set(selected, inventory.get(inMain));
+            inventory.set(inMain, item);
+
+            return;
+
+        }
+
+
+        if (this.mode !== 'creative') {
+            return;
+        }
+
+
+        const empty = inventory.slots.slice(0, HOTBAR_SIZE).indexOf(null);
 
         if (empty !== -1) {
-
-            slots[empty] = type;
-
-            this.hotbar.selected = empty;
-
-            return;
-
+            inventory.selected = empty;
         }
 
-
-        slots[this.hotbar.selected] = type;
+        inventory.set(inventory.selected, { type, count: 1 });
 
     }
 
@@ -1333,11 +1432,12 @@ export class Game {
             `bieg ${Math.round(this.animator.run * 100)}%, kucanie ${Math.round(this.animator.crouch * 100)}%, ` +
             `powietrze ${Math.round(this.animator.air * 100)}%<br>` +
 
-            `Wybrany blok: ${selected?.name ?? 'brak'}<br><br>` +
+            `Tryb: ${GAME_MODES[this.mode]}${player.flying ? ' (lata)' : ''} | ` +
+            `Wybrany blok: ${selected ? `${getBlockLabel(this.selectedBlock)} (${this.selectedBlock})` : 'brak'}<br><br>` +
 
             `${targetInfo}<br><br>` +
 
-            `1-9 / kółko - wybór bloku | środkowy przycisk - weź blok<br>` +
+            `1-9 / kółko - wybór bloku | środkowy przycisk - weź blok | E - ekwipunek<br>` +
 
             `LPM - zniszcz | PPM - postaw<br>` +
 

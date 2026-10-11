@@ -1,5 +1,5 @@
 import {
-    getBlockDefinition
+    getBlockLabel
 } from '../blocks/BlockRegistry.js';
 
 import {
@@ -54,7 +54,13 @@ export class Hotbar {
             image.alt = '';
             image.draggable = false;
 
-            slot.appendChild(image);
+            // Liczba bloków w stosie (gdy więcej niż 1).
+
+            const count = document.createElement('span');
+
+            count.className = 'hotbar-count';
+
+            slot.append(image, count);
 
 
             this.slotsElement.appendChild(slot);
@@ -77,12 +83,14 @@ export class Hotbar {
     }
 
 
-    // Wywoływane co klatkę: slots = tablica nazw bloków (null =
-    // puste miejsce), selected = numer wybranego miejsca.
+    // Wywoływane co klatkę: items = miejsca paska ({ type, count }
+    // albo null = puste miejsce), selected = numer wybranego miejsca.
 
-    update(slots, selected) {
+    update(items, selected) {
 
-        const slotsKey = slots.join(',');
+        const slots = items.map((item) => item?.type ?? null);
+
+        const slotsKey = items.map((item) => (item ? `${item.type}:${item.count}` : '')).join(',');
 
         const slotsChanged = slotsKey !== this.shownSlots;
         const selectionChanged = selected !== this.shownSelected;
@@ -101,7 +109,7 @@ export class Hotbar {
         const selectedBefore =
             this.shownSlots === null
                 ? undefined
-                : this.shownSlots.split(',')[this.shownSelected];
+                : this.shownSlots.split(',')[this.shownSelected]?.split(':')[0];
 
 
         if (slotsChanged) {
@@ -110,6 +118,8 @@ export class Hotbar {
 
                 const slot = this.slotElements[i];
                 const image = slot.firstChild;
+
+                slot.lastChild.textContent = items[i] && items[i].count > 1 ? String(items[i].count) : '';
 
                 const icon = type ? this.icons.get(type) : null;
 
@@ -124,7 +134,7 @@ export class Hotbar {
                 }
 
 
-                slot.title = type ? (getBlockDefinition(type)?.name ?? type) : '';
+                slot.title = type ? getBlockLabel(type) : '';
 
             });
 
@@ -143,7 +153,7 @@ export class Hotbar {
         const type = slots[selected];
 
         if (!firstShow && (type ?? '') !== (selectedBefore ?? '')) {
-            this.showName(type ? (getBlockDefinition(type)?.name ?? type) : '');
+            this.showName(type ? getBlockLabel(type) : '');
         }
 
     }

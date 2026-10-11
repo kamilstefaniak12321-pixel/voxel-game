@@ -40,7 +40,11 @@ export const viewUniforms = {
 
     // Średni kolor każdego kafelka atlasu (TextureAtlas.js).
 
-    uAtlasAverage: { value: atlasAverageTexture }
+    uAtlasAverage: { value: atlasAverageTexture },
+
+    // Czas w sekundach (kołysanie roślin na wietrze) - ustawia Game.
+
+    uTime: { value: 0 }
 
 };
 

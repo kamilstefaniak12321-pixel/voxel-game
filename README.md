@@ -20,6 +20,7 @@ Do działania potrzebny jest internet (three.js pobierany z unpkg).
 |---|---|
 | WASD | ruch |
 | Spacja | skok |
+| 2× Spacja | latanie (tryb kreatywny): Spacja - w górę, Shift - w dół, lądowanie kończy lot |
 | Shift | kucanie (wolniej, niżej, nie spada się z krawędzi) |
 | 2× W albo R | bieg |
 | F5 | widok: z oczu / zza pleców / z przodu |
@@ -28,24 +29,88 @@ Do działania potrzebny jest internet (three.js pobierany z unpkg).
 | PPM | postaw blok |
 | 1-9 / kółko myszy | wybór miejsca na pasku bloków |
 | Środkowy przycisk myszy | weź blok, na który patrzysz, na pasek |
+| E | ekwipunek (w trybie kreatywnym też wszystkie bloki gry) |
 | ESC | pauza (wróć do gry, ustawienia, zapisz i wyjdź do menu) |
 | F3 | informacje debugowania w lewym górnym rogu |
 | [ / ] (z F3) | cofnij / przesuń czas o godzinę |
 | T, / | czat i komendy (`/pomoc`) |
 | M | mapa terenu z góry (to samo co `/mapa`) |
 
-## Pasek bloków
+## Tryby gry i ekwipunek
 
-Na dole ekranu jest pasek z 9 miejscami. Ikonki bloków rysują się same
-z tekstur w atlasie, więc nowy blok od razu ma ikonkę.
+Tryb wybiera się przy tworzeniu świata (przycisk *Tryb gry*, domyślnie
+przygoda - `DEFAULT_GAME_MODE` w `src/config.js`) i można go zmienić
+w grze komendą `/tryb przygoda` albo `/tryb kreatywny`.
 
-- Co jest na pasku w nowym świecie - `HOTBAR_DEFAULT` w `src/config.js`.
+- **Przygoda** - zaczynasz z pustym ekwipunkiem. Zniszczony blok trafia
+  do ekwipunku (blok trawy daje ziemię, a roślina, która na nim rosła,
+  też wpada do ekwipunku), a postawienie bloku zużywa jedną sztukę ze
+  stosu. Gdy ekwipunek jest pełny, blok się nie niszczy (napis
+  *Ekwipunek pełny*). Bez latania.
+- **Kreatywny** - bloki się nie zużywają, pod **E** są wszystkie bloki
+  gry, a **dwa razy Spacja** włącza latanie (Spacja - w górę, Shift -
+  w dół; po wylądowaniu lot sam się wyłącza, dwa razy Spacja w locie
+  też go kończy).
+
+**Ekwipunek** (klawisz **E**) ma 36 miejsc: 9 na pasku na dole ekranu
+(klawisze 1-9) i 27 w trzech rzędach. Stos to najwyżej 64 sztuki.
+W trybie kreatywnym okno ma zakładki: *Wszystkie bloki* (z wyszukiwaniem
+po polsku i po nazwie bloku, np. „ziem” albo „humus”) i *Ekwipunek*.
+W zakładce ekwipunku widać postać gracza - głowa patrzy za myszką.
+
+| W oknie ekwipunku | Akcja |
+|---|---|
+| klik | weź stos / połóż / zamień / dołóż do takiego samego |
+| prawy przycisk | weź połowę stosu / połóż jedną sztukę (na bloku z listy kreatywnej: +1 sztuka) |
+| Shift + klik | pasek ↔ reszta ekwipunku (blok z listy kreatywnej - prosto na pasek; w zakładce *Wszystkie bloki* Shift + klik na pasku czyści miejsce) |
+| 1-9 nad miejscem | zamiana z tym miejscem paska |
+| kosz (kreatywny) | usuwa trzymany blok |
+| E | zamknij i wróć do gry (ESC - menu pauzy) |
+
+Blok trzymany pod kursorem po zamknięciu okna wraca do ekwipunku.
+Najechanie na blok pokazuje jego polską nazwę i nazwę do komend.
+
+**Pasek bloków** - ikonki rysują się same z tekstur w atlasie (nowy
+blok od razu ma ikonkę), liczba w rogu to ilość w stosie.
+
+- Co jest na pasku w nowym świecie kreatywnym - `HOTBAR_DEFAULT`
+  w `src/config.js`.
 - Środkowy przycisk myszy na bloku w świecie: jeśli blok jest na pasku,
-  wybiera jego miejsce; jeśli nie - wkłada go do pierwszego pustego
-  miejsca (albo zastępuje wybrany, gdy pasek jest pełny).
-- Zawartość paska i wybrane miejsce zapisują się razem ze światem.
+  wybiera jego miejsce; jeśli jest w reszcie ekwipunku - zamienia go
+  z wybranym miejscem paska; jeśli go nie ma - w trybie kreatywnym
+  wkłada go do pierwszego pustego miejsca (albo zastępuje wybrany).
+- Ekwipunek, tryb gry i wybrane miejsce zapisują się razem ze światem.
+  Światy sprzed ekwipunku dostają w nim to, co miały na pasku.
 - Wygląd paska (kolory ramek, rozmiar miejsc, nazwa bloku nad paskiem)
   jest w motywie - wartości `--hotbar-...` w `theme.css`.
+- Kod: `src/game/Inventory.js` (ekwipunek), `src/ui/InventoryScreen.js`
+  (okno), `src/ui/Hotbar.js` (pasek).
+
+## Bloki naturalne i rośliny
+
+Oprócz trawy, ziemi, piasku i skał są:
+
+- **ziemie:** czarnoziem (`humus`), ziemia kamienista (`coarse_dirt`),
+  ściółka leśna (`forest_floor`), błoto (`mud`), glina (`clay`)
+  i żwir (`gravel`) - na razie tylko w trybie kreatywnym (na ziemiach
+  rosną rośliny, na żwirze nie),
+- **rośliny:** krótka i wysoka trawa, paproć, koniczyna, pokrzywa,
+  babka zwyczajna oraz kwiaty: mak, chaber, rumianek, mniszek.
+
+Rośliny są skrzyżowanymi płaszczyznami z teksturą (model `cross`),
+nie mają kolizji, nie zasłaniają światła i lekko kołyszą się na wietrze
+(tylko górne końce - korzenie stoją w miejscu). Każda jest trochę
+przesunięta, obrócona i ma inną wysokość, więc łąka nie wygląda jak
+siatka. Rosną tylko na ziemi (bloki z `soil: true`); gdy zniszczysz
+blok pod rośliną, roślina też znika. Trawę i paproć można zastąpić
+stawianym blokiem (jak w Minecrafcie). Celownik trafia w roślinę, więc
+żeby rozkopać ziemię pod nią, najpierw niszczysz roślinę.
+
+W terenie realistycznym na trawie rośnie trawa (od rzadkiej do gęstych
+łąk), kępy kwiatów zwykle jednego gatunku, paprocie w wilgotnym
+klimacie i na wyżynach, a pojedynczo zioła i mniszki - liczby do
+strojenia: `PLANTS` w `src/world/terrain/TerrainShape.js`. Rośliny
+rysują się do `PLANT_VIEW_DISTANCE` bloków od gracza (`src/config.js`).
 
 ## Ustawienia
 
@@ -275,9 +340,12 @@ Komendy służą do sprawdzania nowości w grze, np.:
 /model tempo 0.25          zwolnione animacje (/model klocki - inne zgięcia)
 /skorka plik               własna skórka gracza (PNG 64 x 64)
 /wydajnosc test            test wydajności z obrotem kamery
-/latanie                   latanie (Spacja w górę, Shift w dół)
+/tryb kreatywny            tryb gry: przygoda albo kreatywny (/gm k, /gm p)
+/ekwipunek                 co jest w ekwipunku (/ekwipunek wyczysc)
+/latanie                   latanie w każdym trybie (Spacja w górę, Shift w dół)
 /tp 100 30 -50             teleport (~ = względem gracza)
 /daj lamp_blue             blok na pasek (też po polsku: /daj granit)
+/daj poppy 32              32 maki do ekwipunku (bez ilości w przygodzie - stos 64)
 /wypelnij ~ ~ ~ ~5 ~3 ~5 stone
 ```
 
@@ -393,7 +461,11 @@ src/
 
 1. Narysuj teksturę 16x16 i wklej ją do wolnego kafelka w `assets/textures/blocks/terrain.png`.
 2. Dopisz pozycję kafelka w `ATLAS_TILES` w `src/rendering/TextureAtlas.js`.
-3. Dopisz blok w `BLOCK_TYPES` w `src/blocks/BlockRegistry.js` (nowe, unikalne `id`).
+3. Dopisz blok w `BLOCK_TYPES` w `src/blocks/BlockRegistry.js` (nowe, unikalne `id`,
+   polska nazwa w `label`). Opis wszystkich pól jest na początku pliku.
    Blok, który ma świecić, dostaje `light: 1-15` (jak lampa: `light: 15`)
    i opcjonalnie kolor światła, np. `lightColor: '#ff3020'`.
-4. Sprawdź go w grze: `/daj <nazwa>` wkłada blok na pasek.
+   Roślina: `solid: false`, `model: 'cross'`, `plant: { planes, height, width }`
+   (tekstura z przezroczystym tłem w wierszu 2 atlasu - tam działa wiatr).
+4. Blok sam trafia do zakładki *Wszystkie bloki* w trybie kreatywnym
+   (chyba że ma `creative: false`). Szybki test: `/daj <nazwa>`.

@@ -1,5 +1,7 @@
 import * as THREE from 'three';
 
+import { getBlockDefinition } from '../blocks/BlockRegistry.js';
+
 
 export class BlockHighlight {
 
@@ -54,11 +56,22 @@ export class BlockHighlight {
         this.mesh.visible = true;
 
 
+        // Roślina: węższa (i zwykle niższa) ramka niż pełny blok.
+
+        const plant = getBlockDefinition(hit.block.type)?.plant;
+
+        const height = plant ? Math.min(1, plant.height) : 1;
+
+        const width = plant ? 0.8 : 1;
+
+        this.mesh.scale.set(width, height, width);
+
+
         this.mesh.position.set(
 
             hit.block.x + 0.5,
 
-            hit.block.y + 0.5,
+            hit.block.y + height / 2,
 
             hit.block.z + 0.5
 

@@ -284,6 +284,60 @@ blockMaterial.onBeforeCompile = (shader, renderer) => {
 };
 
 // ------------------------------------------------------------
+// MATERIAŁ ROŚLIN
+//
+// Ten sam shader co bloki, a do tego:
+//   - przezroczyste piksele tekstury są pomijane (alphaTest),
+//   - góra rośliny kołysze się na wietrze (uTime z viewUniforms).
+// Rośliny są w osobnej grupie geometrii chunka (ChunkMesher.js),
+// więc zwykłe bloki nie płacą za przezroczystość.
+// ------------------------------------------------------------
+
+export const plantMaterial =
+    new THREE.MeshLambertMaterial({
+
+        map: blockAtlasTexture,
+
+        vertexColors: true,
+
+        alphaTest: 0.5
+
+    });
+
+
+plantMaterial.onBeforeCompile = (shader, renderer) => {
+
+    blockMaterial.onBeforeCompile(shader, renderer);
+
+
+    // Góra kafelka rośliny: wierzchołki z v przy górnej krawędzi kafelka
+    // atlasu. Kołysanie zależy od miejsca (każda kępka trochę inaczej).
+
+    shader.vertexShader = shader.vertexShader
+        .replace(
+            '#include <common>',
+            `#include <common>
+            uniform float uTime;`
+        )
+        .replace(
+            '#include <begin_vertex>',
+            `#include <begin_vertex>
+
+            float plantTop = step(fract((1.0 - uv.y) * 16.0), 0.5);
+
+            vec3 plantWorld = (modelMatrix * vec4(transformed, 1.0)).xyz;
+
+            float plantPhase = plantWorld.x * 0.45 + plantWorld.z * 0.35;
+
+            float gust = 0.75 + 0.25 * sin(uTime * 0.37 + plantWorld.x * 0.05);
+
+            transformed.x += plantTop * gust * (sin(uTime * 1.8 + plantPhase) * 0.07 + sin(uTime * 3.3 + plantPhase * 2.1) * 0.02);
+            transformed.z += plantTop * gust * cos(uTime * 1.45 + plantPhase * 1.3) * 0.055;`
+        );
+
+};
+
+// ------------------------------------------------------------
 // TRYB ZIEMNIAKA
 //
 // Włącza albo wyłącza prostszą wersję shadera (define POTATO) w podanych
@@ -581,6 +635,17 @@ for (
 
 
     blockRenderData[definition.id] = {
+
+        // Roślina: płaszczyzny z jedną teksturą (ChunkMesher.addPlants).
+
+        cross: definition.model === 'cross'
+            ? {
+                uv: getAtlasUV(getFaceTexture(definition.textures, 'front')),
+                planes: definition.plant?.planes ?? 2,
+                height: definition.plant?.height ?? 1,
+                width: definition.plant?.width ?? 0.45
+            }
+            : null,
 
         uv: FACE_NAMES.map(
             faceName => createRotatedUVs(

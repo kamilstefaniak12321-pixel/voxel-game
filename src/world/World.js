@@ -5,7 +5,8 @@ import {
     CHUNK_HEIGHT,
     WORLD_BORDER,
     WORLD_SPAWN_X,
-    WORLD_SPAWN_Z
+    WORLD_SPAWN_Z,
+    PLANT_VIEW_DISTANCE
 } from '../config.js';
 // ------------------------------------------------------------
 import {
@@ -13,11 +14,14 @@ import {
     blockExists,
     getBlockId,
     getBlockTypeById,
-    isSolidId
+    isSolidId,
+    isSoilId,
+    isPlantId
 } from '../blocks/BlockRegistry.js';
 // ------------------------------------------------------------
 import {
-    blockMaterial
+    blockMaterial,
+    plantMaterial
 } from '../rendering/BlockRenderData.js';
 // ------------------------------------------------------------
 import {
@@ -469,6 +473,14 @@ export class World {
         this.applyLightChanges();
 
 
+        // Roślina nad blokiem, który przestał być ziemią (zniszczony,
+        // zamieniony na kamień...), nie ma na czym rosnąć - znika.
+
+        if (!isSoilId(id) && y + 1 < CHUNK_HEIGHT && isPlantId(this.getBlockId(x, y + 1, z))) {
+            this.setBlock(x, y + 1, z, null);
+        }
+
+
         return true;
 
     }
@@ -647,15 +659,19 @@ export class World {
 
             chunk.mesh.geometry = geometry;
 
+            this.updatePlantVisibility(chunk);
+
             return;
 
         }
 
 
+        // Grupa 0 - zwykłe bloki, grupa 1 - rośliny (ChunkMesher.js).
+
         const mesh =
             new THREE.Mesh(
                 geometry,
-                blockMaterial
+                [blockMaterial, plantMaterial]
             );
 
 
@@ -672,6 +688,31 @@ export class World {
         this.scene.add(mesh);
 
         chunk.mesh = mesh;
+
+        this.updatePlantVisibility(chunk);
+
+    }
+
+
+    // Rośliny dalej niż PLANT_VIEW_DISTANCE nie są rysowane: grupa
+    // roślin w geometrii dostaje 0 trójkątów (pełna liczba zostaje
+    // w userData, więc po podejściu bliżej wracają bez przebudowy).
+
+    updatePlantVisibility(chunk) {
+
+        const geometry = chunk.mesh?.geometry;
+
+        const group = geometry?.groups[1];
+
+        if (!group) {
+            return;
+        }
+
+        geometry.userData.plantCount ??= group.count;
+
+        const radius = PLANT_VIEW_DISTANCE / CHUNK_SIZE;
+
+        group.count = this.distanceToCenter(chunk) <= radius * radius ? geometry.userData.plantCount : 0;
 
     }
 
@@ -880,6 +921,11 @@ export class World {
         this.centerCx = cx;
         this.centerCz = cz;
         this.loadRadius = radius;
+
+
+        for (const chunk of this.chunks.values()) {
+            this.updatePlantVisibility(chunk);
+        }
 
 
         // Brakujące chunki w kole o promieniu radius.

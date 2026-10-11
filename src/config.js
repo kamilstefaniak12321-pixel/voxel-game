@@ -52,6 +52,14 @@ export const WORLD_SEED = 'lepidolit';
 // Światy zapisane przed wprowadzeniem typów są klasyczne.
 export const DEFAULT_TERRAIN = 'realistic';
 
+// Tryb gry nowego świata (do wyboru przy tworzeniu, /tryb w grze):
+//   'adventure' - przygoda: zniszczone bloki trafiają do ekwipunku,
+//                 stawianie je zużywa,
+//   'creative'  - kreatywny: bloki bez końca (ekwipunek E - wszystkie
+//                 bloki), latanie po dwukrotnym wciśnięciu Spacji.
+// Światy sprzed trybów są kreatywne.
+export const DEFAULT_GAME_MODE = 'adventure';
+
 // Poziom morza w terenie realistycznym (y powierzchni wody).
 // Kształt terenu (niziny, wyżyny, góry...) - src/world/terrain/TerrainShape.js.
 export const SEA_LEVEL = 48;
@@ -216,10 +224,11 @@ export const THIRD_PERSON_DISTANCE = 4;
 // Liczba miejsc na pasku (klawisze 1-9).
 export const HOTBAR_SIZE = 9;
 
-// Co jest na pasku w nowym świecie (kolejność = klawisze 1, 2, 3...).
-// Jeśli bloków jest mniej niż miejsc, reszta zostaje pusta.
-// Środkowy przycisk myszy "bierze" blok, na który się patrzy,
-// a komenda /daj <blok> wkłada dowolny blok na pasek.
+// Co jest na pasku w nowym świecie KREATYWNYM (kolejność = klawisze
+// 1, 2, 3...; świat przygody zaczyna z pustym ekwipunkiem). Jeśli
+// bloków jest mniej niż miejsc, reszta zostaje pusta. Środkowy
+// przycisk myszy "bierze" blok, na który się patrzy, a komenda
+// /daj <blok> [ilość] daje dowolny blok.
 export const HOTBAR_DEFAULT = [
     'grass',
     'dirt',
@@ -263,6 +272,10 @@ export const DEFAULT_FOV = 75;
 
 // Zasięg widzenia w blokach - tak daleko widać prawdziwe bloki.
 export const DEFAULT_VIEW_DISTANCE = 48;
+
+// Rośliny (trawa, kwiaty...) widać do tylu bloków od gracza - dalej
+// i tak są malutkie, a to dużo trójkątów (przy dużym zasięgu widzenia).
+export const PLANT_VIEW_DISTANCE = 128;
 
 // Daleki teren (horyzont): do ilu bloków od gracza widać uproszczony,
 // rozmyty teren za zasięgiem widzenia (0 = wyłączony).

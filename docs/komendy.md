@@ -46,10 +46,13 @@ Współrzędne można podawać względem gracza: `~` (tu, gdzie stoję),
 | `/skorka plik` | wczytanie własnej skórki (PNG 64 x 64, układ jak w Minecrafcie) |
 | `/skorka domyslna` | powrót do domyślnej skórki |
 | `/pozycja` | pozycja i chunk |
-| `/latanie` | włącza/wyłącza latanie (Spacja w górę, Shift w dół) |
+| `/tryb [przygoda \| kreatywny]` | tryb gry (bez słowa - jaki jest): przygoda - zniszczone bloki trafiają do ekwipunku, stawianie je zużywa; kreatywny - bloki bez końca, wszystkie bloki pod E, latanie po dwukliku Spacji. Skróty: `/gm p`, `/gm k` |
+| `/ekwipunek` | co jest w ekwipunku (ile sztuk każdego bloku, ile miejsc zajętych) |
+| `/ekwipunek wyczysc` | czyści cały ekwipunek (z paskiem) |
+| `/latanie` | włącza/wyłącza latanie w każdym trybie (Spacja w górę, Shift w dół) - do testów; w kreatywnym wystarczy 2× Spacja |
 | `/predkosc <0.1-20>` | prędkość ruchu (1 = normalnie) |
-| `/daj <blok>` | blok do wybranego miejsca na pasku (nazwy też po polsku: `granit`, `wapien`, `piaskowiec`, `lupek`, `bazalt`, `kamien`, `lepidolit`, `trawa`, `ziemia`, `piasek`) |
-| `/bloki` | lista bloków |
+| `/daj <blok> [ilość]` | blok do ekwipunku: z ilością - tyle sztuk (do 2304, pierwsze wolne miejsca, najpierw pasek); bez ilości w trybie kreatywnym - jedna sztuka do wybranego miejsca paska, w przygodzie - stos 64. Nazwy też po polsku, bez ogonków: `granit`, `trawa`, `ziemia`, `mak`, `chaber`, `paproc`, `czarnoziem`, `krotka_trawa`... |
+| `/bloki` | lista bloków (nazwa do komend i polska nazwa) |
 | `/wypelnij <x1> <y1> <z1> <x2> <y2> <z2> <blok \| powietrze>` | wypełnia prostopadłościan (do 16 384 bloków) |
 | `/swiatlo` | światło przy głowie i przy wskazanej ścianie (niebo 0-15, lampy 0-15 i ich kolor) |
 | `/swiatlo dynamiczne [wl \| wyl]` | włącza/wyłącza dynamiczne światło (to samo co w ustawieniach) |

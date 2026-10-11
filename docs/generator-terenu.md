@@ -35,6 +35,15 @@ etap po etapie.
 - **Budowa geologiczna** (zrobione) - zamiast samego kamienia:
   granit, wapień, piaskowiec, łupek, bazalt i kamień, każdy w swoim
   miejscu; lepidolit tylko jako rzadkie żyły w granicie. Opis niżej.
+- **Pierwsze rośliny** (zrobione, przed biomami) - na trawie rośnie
+  trawa (od rzadkiej do gęstych łąk - pole `meadows`), kępy kwiatów
+  zwykle jednego gatunku (pola `flowers` i `flowerSpecies`), paprocie
+  tam, gdzie wilgotno (pole wilgotności klimatu) i na wyżynach,
+  a pojedynczo koniczyna, babka, pokrzywa i mniszek. Roślina jest
+  częścią `fillColumn`, więc kolumna z `columnBlocks` zgadza się
+  z chunkiem. Liczby: `PLANTS` w `TerrainShape.js`. Nowe ziemie
+  (czarnoziem, ściółka, błoto, glina, ziemia kamienista, żwir) są na
+  razie tylko w trybie kreatywnym - trafią do generatora z biomami.
 
 ## Jak działa generator realistyczny
 
@@ -236,7 +245,9 @@ Co: łąki, lasy i inne krajobrazy na podstawie rzeźby i klimatu.
   i w depresjach), plaża i wydmy, hale (równie w górach), skaliste
   góry, ośnieżone szczyty,
 - płynne granice biomów (mieszanie kolorów trawy, przenikanie roślin),
-- nowe bloki: drewno, liście, śnieg, żwir, glina, wysoka trawa, kwiaty,
+- nowe bloki: drewno, liście, śnieg (żwir, glina, czarnoziem, ściółka,
+  błoto, trawy, paproć, zioła i kwiaty już są - do rozmieszczenia
+  w biomach),
 - drzewa i rośliny: rozmieszczane z seeda tak, żeby drzewo na granicy
   chunków pasowało po obu stronach,
 - daleki teren i mapa w kolorach biomów (`/mapa biomy`).

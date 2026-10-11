@@ -215,3 +215,38 @@ export const LEPIDOLITE = {
     MIN_DEPTH: 3,
     OUTCROP: 0.3
 };
+
+
+// ROŚLINY NA TRAWIE (trawa, kwiaty, paprocie, zioła). Szanse to część
+// kolumn z trawą, na których coś rośnie (0.3 = 30%). [a, b] - od
+// najrzadszego do najgęstszego miejsca pola.
+
+export const PLANTS = {
+
+    // Łąki: pole o plamach `meadowScale` bloków - od rzadkiej trawy
+    // do gęstej łąki; część trawy jest wysoka (więcej na gęstej łące).
+    meadowScale: 36,
+    grass: [0.08, 0.55],
+    tallGrass: [0.08, 0.5],
+
+    // Kępy kwiatów: tam, gdzie pole kwiatów > flowerThreshold. Gatunek
+    // zmienia się wolno (plamy flowerSpeciesScale), więc kępa jest
+    // zwykle jednego koloru.
+    flowerScale: 22,
+    flowerThreshold: 0.3,
+    flowerDensity: 0.85,
+    flowerSpeciesScale: 80,
+    flowerMix: 0.12,
+
+    // Paprocie - w wilgotnym klimacie (wilgotność > fernHumidity)
+    // i wyżej, na pogórzach.
+    fern: 0.12,
+    fernHumidity: -0.1,
+
+    // Pojedyncze zioła i mniszki - wszędzie po trochu.
+    clover: 0.02,
+    plantain: 0.01,
+    nettle: 0.012,
+    dandelion: 0.006
+
+};

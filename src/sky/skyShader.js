@@ -47,7 +47,15 @@ export const skyUniforms = {
     // światła księżyca (lampy zostają kolorowe).
 
     uNightDesaturation: { value: 0 },
-    uNightTint: { value: new THREE.Color(1, 1, 1) }
+    uNightTint: { value: new THREE.Color(1, 1, 1) },
+
+    // Meteoryt (game/Meteorites.js): łuna na niebie wokół kuli ognia
+    // (kierunek od kamery i kolor razy siła; czarny = brak) i błysk
+    // uderzenia, który rozjaśnia całe niebo.
+
+    uMeteorDirection: { value: new THREE.Vector3(0, 1, 0) },
+    uMeteorGlow: { value: new THREE.Color(0, 0, 0) },
+    uSkyFlash: { value: new THREE.Color(0, 0, 0) }
 
 };
 
@@ -63,6 +71,9 @@ export const SKY_COLOR_GLSL = /* glsl */ `
     uniform vec3 uSunHalo;
     uniform float uEclipseGlow;
     uniform vec3 uEclipseGlowColor;
+    uniform vec3 uMeteorDirection;
+    uniform vec3 uMeteorGlow;
+    uniform vec3 uSkyFlash;
 
     vec3 skyColor(vec3 direction) {
 
@@ -121,6 +132,16 @@ export const SKY_COLOR_GLSL = /* glsl */ `
         float sun = max(dot(direction, uSunDirection), 0.0);
 
         color += uSunHalo * (pow(sun, 8.0) * 0.3 + pow(sun, 90.0) * 0.6) * aboveGround;
+
+
+        // Meteoryt: łuna wokół kuli ognia (szeroka, węższa i jasny
+        // środek) i błysk uderzenia na całym niebie.
+
+        float meteor = max(dot(direction, uMeteorDirection), 0.0);
+
+        color += uMeteorGlow * (pow(meteor, 5.0) * 0.06 + pow(meteor, 30.0) * 0.35 + pow(meteor, 400.0) * 1.2);
+
+        color += uSkyFlash;
 
 
         return color;

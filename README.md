@@ -295,7 +295,9 @@ occlusion), a mgła w ciemnym tunelu ciemnieje razem z nim. Poziom
 **Dynamiczne światło:** świecący blok wybrany na pasku świeci w ręce
 (w swoim kolorze) i oświetla okolicę w czasie ruchu. Tak samo świeci
 lecący meteoryt i błysk jego uderzenia. To światło też nie przechodzi
-przez ściany. Wyłącza się je w ustawieniach.
+przez ściany. Wyłącza się je w ustawieniach. Kula ognia meteorytu
+oświetla dodatkowo cały teren w zasięgu wzroku, także daleki
+(`src/rendering/meteorLight.js` - bez cieni, za to z każdej odległości).
 
 Ustawienia w `src/config.js` (sekcja OŚWIETLENIE): jak szybko ciemnieje
 półmrok (`LIGHT_CURVE`), jak jasno jest w zupełnej ciemności
@@ -333,7 +335,8 @@ Komendy służą do sprawdzania nowości w grze, np.:
 /niebo zachod zielony      kolor łuny wschodu i zachodu
 /demo swiatlo              pokój z kolorowymi lampami
 /demo kula zielony         krążąca kula dynamicznego światła
-/meteor tu                 meteoryt spada tam, gdzie patrzysz
+/meteor pokaz              meteoryt spada przed tobą (/meteor tu - tam, gdzie patrzysz)
+/meteor tempo 0.25         meteoryty cztery razy wolniej (1 - normalnie)
 /meteory deszcz wl         deszcz meteorów (/meteory pokaz - kilka od razu)
 /zacmienie pokaz pelne     pełne zaćmienie słońca (albo czesciowe, 50...)
 /zacmienie                 kiedy następne zaćmienie (/zacmienie lista)
@@ -384,9 +387,16 @@ w debugu (F3) widać godzinę, numer dnia i fazę księżyca, a klawisze
 - **Spadające gwiazdy** - najwięcej w ciemne noce; mniej więcej co
   siódma noc to deszcz meteorów.
 - **Meteoryty** - co kilka nocy (`METEORITES_PER_NIGHT`) w pobliżu spada
-  kula ognia, robi krater i zostawia żarzący się blok meteorytu (na
-  czacie pojawia się, gdzie). Nie spada w chunki, które zmieniałeś.
-  Można je wyłączyć w ustawieniach.
+  kula ognia. Przez 8 sekund zbliża się z daleka: rozżarzona bryła
+  w poświacie, długi świecący warkocz, sypiące się kanciaste iskry,
+  smuga dymu i odpadające płonące odłamki, a niebo wokół niej i teren,
+  do którego leci, jaśnieją coraz mocniej. Uderzenie to błysk (ekran,
+  niebo i cała okolica), wstrząs kamery, kula ognia, fala iskier po
+  ziemi, deszcz odłamków w kolorach rozbitych bloków, słup iskier i pył,
+  a potem długo dymiący, żarzący się krater z wałem wyrzuconej ziemi,
+  osmaloną okolicą i blokiem meteorytu na dnie (na czacie - gdzie spadł).
+  Nie spada w chunki, które zmieniałeś. Można je wyłączyć w ustawieniach.
+  Pokaz: `/meteor pokaz` (przed tobą), zwolnione: `/meteor tempo 0.25`.
 - **Zaćmienia słońca** - mniej więcej co trzeci nów (`ECLIPSE_CHANCE`)
   księżyc przechodzi przed słońcem, koło południa. Zwykle zasłania tylko
   część tarczy - im większą, tym ciemniej robi się na świecie. Czasem

@@ -14,6 +14,11 @@ import {
     VIEW_GLSL
 } from './viewUniforms.js';
 
+import {
+    meteorLightUniforms,
+    METEOR_LIGHT_GLSL
+} from './meteorLight.js';
+
 // ------------------------------------------------------------
 // MATERIAŁ MODELI (gracz, blok w ręce)
 //
@@ -53,7 +58,7 @@ export function createModelMaterial({ map, alphaTest = 0, glow = 0 }) {
 
     material.onBeforeCompile = (shader, renderer) => {
 
-        Object.assign(shader.uniforms, skyUniforms, viewUniforms, modelLight, own);
+        Object.assign(shader.uniforms, skyUniforms, viewUniforms, modelLight, meteorLightUniforms, own);
 
 
         shader.vertexShader = shader.vertexShader
@@ -101,6 +106,7 @@ export function createModelMaterial({ map, alphaTest = 0, glow = 0 }) {
                 uniform float uModelGlow;
                 ${SKY_COLOR_GLSL}
                 ${VIEW_GLSL}
+                ${METEOR_LIGHT_GLSL}
 
                 #ifdef USE_DYNAMIC_LIGHT
                     uniform highp sampler3D uDynamicLight;
@@ -154,6 +160,10 @@ export function createModelMaterial({ map, alphaTest = 0, glow = 0 }) {
                     }
 
                 #endif
+
+                // Kula ognia meteorytu (rendering/meteorLight.js).
+
+                outgoingLight += modelTexel * meteorLight(vWorldPosition, vWorldNormal);
 
                 // Świecący blok w ręce (lampa) jest jasny sam z siebie.
 

@@ -62,8 +62,10 @@ Współrzędne można podawać względem gracza: `~` (tu, gdzie stoję),
 | `/meteory` | ile spadających gwiazd na minutę, czy jest deszcz meteorów |
 | `/meteory deszcz <wl \| wyl \| auto>` | wymusza albo wyłącza deszcz meteorów (auto = sam wybiera noce) |
 | `/meteory pokaz [ile]` | od razu kilka spadających gwiazd (widać w nocy) |
-| `/meteor` | zrzuca meteoryt w pobliżu (nie w chunki zmieniane przez gracza) |
+| `/meteor` | zrzuca meteoryt w pobliżu (nie w chunki zmieniane przez gracza); nadlatuje zza miejsca upadku, więc patrząc w tamtą stronę widać cały przelot (8 s) |
 | `/meteor tu` | meteoryt spada tam, gdzie patrzysz (albo 15 bloków przed graczem) |
+| `/meteor pokaz` | meteoryt spada 30 bloków przed graczem i nadlatuje z naprzeciwka - najlepszy widok |
+| `/meteor tempo [0.05-2]` | tempo meteorytów (lot, cząsteczki, wybuch): 0.25 = cztery razy wolniej, 1 = normalnie; bez liczby - jakie jest |
 | `/horyzont` | daleki teren: zasięg, ile kafelków widać i ile się buduje, trójkąty |
 | `/horyzont <bloki \| wyl>` | zasięg dalekiego terenu (to samo co w ustawieniach) |
 | `/horyzont lod` | koloruje kafelki dalekiego terenu według dokładności (czerwone - najdokładniejsze) |

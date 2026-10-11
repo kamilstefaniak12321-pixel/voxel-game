@@ -11,6 +11,7 @@ import { Chat } from './ui/Chat.js';
 import { CommandRegistry } from './commands/CommandRegistry.js';
 import { GAME_COMMANDS } from './commands/gameCommands.js';
 import { PerfMonitor } from './game/PerfMonitor.js';
+import { TerrainMap } from './ui/TerrainMap.js';
 import {
     WorldStorage,
     createWorldInfo,
@@ -83,6 +84,11 @@ const fpsElement = document.getElementById('fps');
 // Pomiar czasu klatek (licznik FPS, /wydajnosc).
 
 const perf = new PerfMonitor();
+
+
+// Mapa terenu z góry (/mapa, klawisz M).
+
+const terrainMap = new TerrainMap();
 
 
 let state = 'menu';
@@ -229,9 +235,9 @@ async function openWorldList() {
 }
 
 
-async function createWorld(name, seedText) {
+async function createWorld(name, seedText, terrain) {
 
-    const worldInfo = createWorldInfo(name, seedFromText(seedText));
+    const worldInfo = createWorldInfo(name, seedFromText(seedText), terrain);
 
     if (storage) {
         await storage.saveWorld(worldInfo);
@@ -445,7 +451,19 @@ const chat = new Chat(document.getElementById('chat'), {
     // myszy, więc zamiast tego pokazujemy menu pauzy.
     cancel: () => closeChat(false),
 
-    complete: (text) => (game ? commands.complete(text, commandContext()) : [])
+    complete: (text) => (game ? commands.complete(text, commandContext()) : []),
+
+    // Opis komendy z wpisanego tekstu (do podpowiedzi nad polem).
+
+    describe: (text) => {
+
+        const command = commands.find(text.trim().split(/\s+/)[0] ?? '');
+
+        return command
+            ? { usage: `Użycie: ${command.usage}`, description: command.description }
+            : null;
+
+    }
 
 });
 
@@ -461,7 +479,8 @@ function commandContext() {
         sky: game.sky,
         time: game.time,
         chat,
-        commands
+        commands,
+        map: terrainMap
     };
 
 }
@@ -537,6 +556,22 @@ function submitChat(text) {
 
 window.addEventListener('keydown', (event) => {
 
+    // M - mapa terenu (otwiera / zamyka).
+
+    if (state === 'playing' && !event.repeat && event.code === 'KeyM') {
+
+        if (terrainMap.isOpen) {
+            terrainMap.close();
+        }
+        else {
+            terrainMap.open(game.world.generator, game.player.pos.x, game.player.pos.z);
+        }
+
+        return;
+
+    }
+
+
     if (
         state === 'playing' &&
         !event.repeat &&
@@ -608,6 +643,8 @@ function closeWorld() {
     game = null;
 
     hotbar.reset();
+
+    terrainMap.close();
 
     chat.clear();
 
@@ -703,6 +740,8 @@ function animate(now) {
 
 
     chat.update();
+
+    terrainMap.update(game.player.pos.x, game.player.pos.z, game.player.yaw);
 
 
     // W pauzie świat dalej jest widoczny pod menu.

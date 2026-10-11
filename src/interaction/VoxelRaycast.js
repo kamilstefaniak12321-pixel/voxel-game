@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { isLiquidId } from '../blocks/BlockRegistry.js';
 
 
 export class VoxelRaycast {
@@ -151,7 +152,9 @@ export class VoxelRaycast {
                 this.world.getBlock(x, y, z);
 
 
-            if (blockType !== null) {
+            // Przez ciecz (wodę) celownik przechodzi.
+
+            if (blockType !== null && !isLiquidId(this.world.getBlockId(x, y, z))) {
 
                 return {
 

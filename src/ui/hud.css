@@ -159,11 +159,21 @@ body:not([data-screen="game"]) #chat {
     color: var(--chat-hint, #ffe58a);
 }
 
-.chat-input {
+.chat-input-row {
+    position: relative;
     display: none;
+    margin-top: 4px;
+}
+
+#chat.open .chat-input-row {
+    display: block;
+}
+
+.chat-input {
+    display: block;
     box-sizing: border-box;
     width: 100%;
-    margin-top: 4px;
+    margin: 0;
     padding: 6px 8px;
     border: 2px solid var(--chat-input-border, #a0a0a0);
     border-radius: 0;
@@ -171,11 +181,83 @@ body:not([data-screen="game"]) #chat {
     background: var(--chat-input-background, rgba(0, 0, 0, 0.7));
     color: var(--chat-text, #ffffff);
     font: inherit;
+    line-height: 1.4;
+    pointer-events: auto;
 }
 
-#chat.open .chat-input {
+/* Szary dopisek podpowiedzi - leży na polu w tym samym miejscu co
+   tekst (ten sam odstęp i czcionka); wpisana część jest niewidoczna. */
+
+.chat-ghost {
+    position: absolute;
+    inset: 0;
+    box-sizing: border-box;
+    padding: 6px 8px;
+    border: 2px solid transparent;
+    font: inherit;
+    line-height: 1.4;
+    white-space: pre;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.chat-ghost-typed {
+    color: transparent;
+}
+
+.chat-ghost-rest {
+    color: var(--chat-ghost, rgba(255, 255, 255, 0.4));
+}
+
+/* Lista podpowiedzi i sposób użycia komendy nad polem. */
+
+.chat-usage,
+.chat-suggestions {
+    display: none;
+}
+
+#chat.open .chat-usage:not([hidden]) {
     display: block;
+    margin-top: 4px;
+    padding: 2px 8px;
+    background: var(--chat-background, rgba(0, 0, 0, 0.5));
+    color: var(--chat-command, #b0b0b0);
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+
+#chat.open .chat-suggestions:not([hidden]) {
+    display: flex;
+    flex-direction: column;
+    width: fit-content;
+    max-width: 100%;
+    margin-top: 4px;
+    background: var(--chat-input-background, rgba(0, 0, 0, 0.7));
     pointer-events: auto;
+}
+
+.chat-suggestion {
+    padding: 1px 8px;
+    color: var(--chat-text, #ffffff);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    cursor: pointer;
+}
+
+.chat-suggestion.selected {
+    color: var(--chat-hint, #ffe58a);
+}
+
+.chat-suggestion.more {
+    color: var(--chat-command, #b0b0b0);
+    cursor: default;
+}
+
+.chat-suggestion-description {
+    margin-left: 12px;
+    color: var(--chat-command, #b0b0b0);
+    font-size: 0.85em;
 }
 
 
@@ -215,4 +297,92 @@ body:not([data-screen="game"]) #fps {
 
 #fps[hidden] {
     display: none;
+}
+
+
+/* ------------------------------------------------------------
+   MAPA TERENU (src/ui/TerrainMap.js, /mapa albo klawisz M)
+   ------------------------------------------------------------ */
+
+body:not([data-screen="game"]) #terrain-map {
+    display: none;
+}
+
+#terrain-map {
+    position: fixed;
+    top: 50%;
+    right: 12px;
+    z-index: 7;
+    box-sizing: border-box;
+    width: min(72vh, 540px);
+    padding: 8px;
+    background: rgba(0, 0, 0, 0.78);
+    border: 2px solid var(--chat-input-border, #a0a0a0);
+    color: #ffffff;
+    font-family: var(--ui-font, monospace);
+    font-size: 13px;
+    line-height: 1.35;
+    transform: translateY(-50%) scale(var(--hud-scale, 1));
+    transform-origin: right center;
+    user-select: none;
+}
+
+#terrain-map[hidden] {
+    display: none;
+}
+
+.terrain-map-view {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1;
+}
+
+.terrain-map-view canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    image-rendering: pixelated;
+}
+
+/* Gracz: czerwona strzałka (wierzchołek = kierunek patrzenia). */
+
+.terrain-map-player {
+    position: absolute;
+    width: 0;
+    height: 0;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-bottom: 14px solid #ff3030;
+    filter: drop-shadow(0 0 1px #000000);
+    pointer-events: none;
+}
+
+.terrain-map-player[hidden] {
+    display: none;
+}
+
+.terrain-map-title {
+    margin-bottom: 6px;
+}
+
+.terrain-map-hover {
+    min-height: 1.35em;
+    margin-top: 4px;
+    color: var(--chat-hint, #ffe58a);
+}
+
+.terrain-map-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 12px;
+    margin-top: 4px;
+}
+
+.terrain-map-swatch {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    margin-right: 4px;
+    vertical-align: middle;
+    border: 1px solid #000000;
 }

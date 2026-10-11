@@ -28,6 +28,9 @@ export const MAX_BLOCK_ID = 255;
 //                    Tyle bloków mniej więcej sięga jego światło.
 //   lightColor     - kolor światła, np. '#ff3020' (opcjonalne,
 //                    domyślnie BLOCK_LIGHT_COLOR z config.js)
+//   liquid         - ciecz, np. woda (opcjonalne): ściany między
+//                    dwoma takimi samymi blokami nie są rysowane,
+//                    celownik i stawianie bloków przez nią przechodzą
 
 export const BLOCK_TYPES = {
 
@@ -197,6 +200,47 @@ export const BLOCK_TYPES = {
             all: 'meteorite'
         }
 
+    },
+
+
+    // Piasek - plaże i dno morza (teren realistyczny).
+
+    sand: {
+
+        id: 11,
+        name: 'Sand',
+
+        solid: true,
+
+        textures: {
+            all: 'sand'
+        },
+
+        randomRotation: ['top']
+
+    },
+
+
+    // Woda - morze w terenie realistycznym. Na razie WSTĘPNA:
+    // nieprzezroczysta (widać tylko powierzchnię), bez pływania - gracz
+    // chodzi po dnie. Prawdziwa woda (przezroczysta, z pływaniem
+    // i płynięciem) - etap 2 w docs/generator-terenu.md.
+    //   liquid - ciecz: ściany między dwoma blokami wody nie są
+    //            rysowane, a celownik i stawianie bloków przez nią przechodzą.
+
+    water: {
+
+        id: 12,
+        name: 'Water',
+
+        solid: false,
+        opaque: false,
+        liquid: true,
+
+        textures: {
+            all: 'water'
+        }
+
     }
 
 };
@@ -211,6 +255,7 @@ const typeById = new Array(MAX_BLOCK_ID + 1).fill(null);
 
 const solidById = new Uint8Array(MAX_BLOCK_ID + 1);
 const opaqueById = new Uint8Array(MAX_BLOCK_ID + 1);
+const liquidById = new Uint8Array(MAX_BLOCK_ID + 1);
 const lightById = new Uint8Array(MAX_BLOCK_ID + 1);
 
 // Kolor światła: [czerwony, zielony, niebieski], każdy 0-1.
@@ -275,6 +320,8 @@ for (const [type, definition] of Object.entries(BLOCK_TYPES)) {
     opaqueById[id] =
         (definition.opaque ?? definition.solid) ? 1 : 0;
 
+    liquidById[id] = definition.liquid ? 1 : 0;
+
     lightById[id] =
         Math.max(0, Math.min(15, Math.floor(definition.light ?? 0)));
 
@@ -332,6 +379,15 @@ export function isSolidId(id) {
 export function isOpaqueId(id) {
 
     return opaqueById[id] === 1;
+
+}
+
+
+// Ciecz (woda): bez kolizji, celownik przez nią przechodzi.
+
+export function isLiquidId(id) {
+
+    return liquidById[id] === 1;
 
 }
 

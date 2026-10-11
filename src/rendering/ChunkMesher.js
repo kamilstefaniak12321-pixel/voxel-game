@@ -11,6 +11,7 @@ import {
 import {
     AIR_ID,
     isOpaqueId,
+    isLiquidId,
     getLightEmission
 } from '../blocks/BlockRegistry.js';
 
@@ -75,6 +76,10 @@ const P_LAYER = P * P;
 
 
 const padOpaque = new Uint8Array(P_LAYER * (H + 2));
+
+// ID cieczy w komórce (0 = nie ciecz) - między dwiema komórkami tej
+// samej cieczy (np. woda przy wodzie) nie rysujemy ściany.
+const padLiquid = new Uint8Array(P_LAYER * (H + 2));
 const padSky = new Uint8Array(P_LAYER * (H + 2));
 const padR = new Uint8Array(P_LAYER * (H + 2));
 const padG = new Uint8Array(P_LAYER * (H + 2));
@@ -97,10 +102,11 @@ function padOffset(dx, dy, dz) {
 }
 
 
-function fillPadding(chunk, world, height) {
+function fillPadding(chunk, world, height, first) {
 
-    // Warstwy do skopiowania: od 0 do `last` (jedna nad
+    // Warstwy do skopiowania: od `first` do `last` (jedna nad
     // najwyższym blokiem chunka, jeśli mieści się w świecie).
+    // Niższych mesher nie ogląda (patrz hiddenBelow).
 
     const last = Math.min(height, H - 1);
 
@@ -130,7 +136,7 @@ function fillPadding(chunk, world, height) {
                     const column = (z - dz * S) * S + (x - dx * S);
 
 
-                    for (let y = 0; y <= last; y++) {
+                    for (let y = first; y <= last; y++) {
 
                         const p = padIndex(x, y, z);
 
@@ -141,6 +147,7 @@ function fillPadding(chunk, world, height) {
                         if (!source) {
 
                             padOpaque[p] = 0;
+                            padLiquid[p] = 0;
                             padSky[p] = MAX_LIGHT;
                             padR[p] = padG[p] = padB[p] = 0;
 
@@ -151,7 +158,10 @@ function fillPadding(chunk, world, height) {
 
                         const i = y * LAYER + column;
 
-                        padOpaque[p] = isOpaqueId(source.blocks[i]) ? 1 : 0;
+                        const blockId = source.blocks[i];
+
+                        padOpaque[p] = isOpaqueId(blockId) ? 1 : 0;
+                        padLiquid[p] = isLiquidId(blockId) ? blockId : 0;
                         padSky[p] = source.skyLight[i];
                         padR[p] = source.lightR[i];
                         padG[p] = source.lightG[i];
@@ -165,6 +175,7 @@ function fillPadding(chunk, world, height) {
                     const below = padIndex(x, -1, z);
 
                     padOpaque[below] = 1;
+                    padLiquid[below] = 0;
                     padSky[below] = 0;
                     padR[below] = padG[below] = padB[below] = 0;
 
@@ -176,6 +187,7 @@ function fillPadding(chunk, world, height) {
                         const above = padIndex(x, H, z);
 
                         padOpaque[above] = 0;
+                        padLiquid[above] = 0;
                         padSky[above] = MAX_LIGHT;
                         padR[above] = padG[above] = padB[above] = 0;
 
@@ -369,6 +381,38 @@ function ensureCapacity(faces) {
 }
 
 // ------------------------------------------------------------
+// Ile dolnych warstw chunka na pewno jest schowanych.
+//
+// Poniżej solidBelow (Chunk.js) wszystkie komórki chunka są
+// zasłaniającymi blokami. Blok na wysokości y nie ma widocznej
+// ściany, jeśli zasłaniające są: jego warstwa i warstwa nad nim -
+// także w czterech sąsiednich chunkach (ściany na krawędzi).
+// Brak sąsiada (np. granica świata) = nic nie pomijamy.
+// ------------------------------------------------------------
+
+const NEIGHBORS = [[1, 0], [-1, 0], [0, 1], [0, -1]];
+
+function hiddenBelow(chunk, world) {
+
+    let solid = chunk.solidBelow;
+
+    for (const [dx, dz] of NEIGHBORS) {
+
+        const neighbor = world.getChunk(chunk.cx + dx, chunk.cz + dz);
+
+        if (!neighbor) {
+            return 0;
+        }
+
+        solid = Math.min(solid, neighbor.solidBelow);
+
+    }
+
+    return Math.max(0, solid - 1);
+
+}
+
+// ------------------------------------------------------------
 // Buduje geometrię całego chunka jako JEDEN mesh.
 //
 // Dodawane są tylko te ściany, które graniczą z powietrzem
@@ -398,7 +442,13 @@ export function buildChunkGeometry(chunk, world) {
     const height = Math.min(chunk.maxY, H);
 
 
-    fillPadding(chunk, world, height);
+    // Lity kamień głęboko pod terenem nie ma żadnej widocznej
+    // ściany - zaczynamy od pierwszej warstwy, która może ją mieć.
+
+    const start = hiddenBelow(chunk, world);
+
+
+    fillPadding(chunk, world, height, Math.max(0, start - 1));
 
 
     // Pozycja rogu chunka w świecie (w blokach) - do obrotu tekstur.
@@ -410,7 +460,7 @@ export function buildChunkGeometry(chunk, world) {
     let faceCount = 0;
 
 
-    for (let y = 0; y < height; y++) {
+    for (let y = start; y < height; y++) {
 
         for (let lz = 0; lz < S; lz++) {
 
@@ -436,6 +486,8 @@ export function buildChunkGeometry(chunk, world) {
 
                 const glowing = getLightEmission(id) > 0;
 
+                const liquid = isLiquidId(id) ? id : 0;
+
 
                 for (
                     let faceIndex = 0;
@@ -449,6 +501,12 @@ export function buildChunkGeometry(chunk, world) {
                     const front = block + FACE_FRONT[faceIndex];
 
                     if (padOpaque[front]) {
+                        continue;
+                    }
+
+                    // Woda przy wodzie - bez ściany między nimi.
+
+                    if (liquid && padLiquid[front] === liquid) {
                         continue;
                     }
 

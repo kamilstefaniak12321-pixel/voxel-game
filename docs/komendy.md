@@ -1,8 +1,15 @@
 # Komendy
 
 Czat otwiera się klawiszem **T** (albo **/** - wtedy od razu z ukośnikiem).
-Tekst zaczynający się od `/` to komenda. **Tab** podpowiada, **↑ ↓**
-przywołują poprzednie wpisy, **ESC** zamyka.
+Tekst zaczynający się od `/` to komenda. **ESC** zamyka, **↑ ↓**
+przywołują poprzednie wpisy.
+
+**Podpowiedzi:** w trakcie pisania nad czatem widać listę pasujących
+komend (z krótkim opisem) albo słów, które pasują w tym miejscu (bloki,
+godziny, kolory, formy terenu...). Pierwsza z nich dopisuje się szarym
+kolorem w polu tekstowym - **Tab** ją zatwierdza, a **↑ ↓** wybierają
+inną z listy (gdy podpowiedzi jest kilka). Po wpisaniu nazwy komendy
+nad czatem pojawia się, jak jej użyć.
 
 Wielkość liter i polskie znaki nie mają znaczenia: `/Księżyc` = `/ksiezyc`.
 Współrzędne można podawać względem gracza: `~` (tu, gdzie stoję),
@@ -49,6 +56,12 @@ Współrzędne można podawać względem gracza: `~` (tu, gdzie stoję),
 | `/horyzont <bloki \| wyl>` | zasięg dalekiego terenu (to samo co w ustawieniach) |
 | `/horyzont lod` | koloruje kafelki dalekiego terenu według dokładności (czerwone - najdokładniejsze) |
 | `/horyzont odswiez` | buduje daleki teren od nowa |
+| `/teren` | teren pod graczem: wysokość, pas (morze, nizina, wyżyna, góry), forma terenu, powierzchnia, nachylenie i pola generatora |
+| `/teren <x> <z>` | to samo dla dowolnego miejsca (`~` = względem gracza) |
+| `/teren formy` | lista form terenu do szukania |
+| `/teren znajdz <forma> [promien] [tp]` | najbliższa forma terenu (np. `turnia`, `kotlina`, `plaskowyz`, `wyzyna`); `tp` - od razu teleport |
+| `/mapa [warstwa] [skala]` | mapa terenu z góry (klawisz **M**); warstwy: `teren`, `formy`, `pasy`, `kontynent`, `wypietrzenie`, `erozja`, `grzbiety`, `gory`, `wyzyny`, `temperatura`, `wilgotnosc`; skala = bloki na punkt (1-32) |
+| `/mapa wyl` | zamyka mapę |
 | `/ziemniak [wl \| wyl]` | tryb ziemniaka - wszystko działa, ale prościej i szybciej (słaby komputer, brak karty graficznej) |
 | `/ustaw` | lista ustawień z wartościami |
 | `/ustaw <ustawienie> <wartość>` | zmienia ustawienie, np. `/ustaw zasieg 256`, `/ustaw jasnosc 50`, `/ustaw licznik-fps wl` |
@@ -86,7 +99,7 @@ pogrupowana tematami). Nowa komenda to nowy obiekt na tej liście:
     description: 'Wyrzuca gracza w górę.',
 
     // args - słowa po nazwie komendy, ctx - { game, world, player,
-    // sky, time, chat, commands }. Zwrócony tekst pojawi się na czacie.
+    // sky, time, chat, commands, map }. Zwrócony tekst pojawi się na czacie.
 
     run(args, { player }) {
 
@@ -102,7 +115,8 @@ pogrupowana tematami). Nowa komenda to nowy obiekt na tej liście:
 
     },
 
-    // Podpowiedzi pod Tab dla ostatniego wpisanego słowa (opcjonalne).
+    // Podpowiedzi (lista nad czatem, Tab) dla ostatniego wpisanego
+    // słowa (opcjonalne).
 
     complete(args) {
         return args.length === 1 ? ['5', '10', '20'] : [];

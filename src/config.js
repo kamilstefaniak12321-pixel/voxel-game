@@ -4,7 +4,9 @@
 
 // Rozmiar jednego chunka w blokach.
 export const CHUNK_SIZE = 16;     // szerokość i długość (X, Z)
-export const CHUNK_HEIGHT = 64;   // wysokość (Y) = limit budowania
+export const CHUNK_HEIGHT = 128;  // wysokość (Y) = limit budowania
+                                  // (dawniej 64 - stare zapisy są
+                                  // automatycznie powiększane)
 
 // Ile milisekund na klatkę może zająć wczytywanie chunków
 // (generowanie i budowanie meshy). Więcej = świat dogrywa się
@@ -42,6 +44,19 @@ export const WORLD_SPAWN_Z = 0;
 // Ten sam seed = ten sam świat. Każdy świat ma własny seed,
 // to jest tylko wartość domyślna.
 export const WORLD_SEED = 'lepidolit';
+
+// Typ terenu nowego świata (wybiera się go przy tworzeniu świata):
+//   'realistic' - nowy, realistyczny (w budowie, src/world/terrain/,
+//                 plan: docs/generator-terenu.md),
+//   'classic'   - pierwszy generator gry (wartości niżej).
+// Światy zapisane przed wprowadzeniem typów są klasyczne.
+export const DEFAULT_TERRAIN = 'realistic';
+
+// Poziom morza w terenie realistycznym (y powierzchni wody).
+// Kształt terenu (niziny, wyżyny, góry...) - src/world/terrain/TerrainShape.js.
+export const SEA_LEVEL = 48;
+
+// --- Teren klasyczny ---
 
 // Średnia wysokość terenu (poziom nizin).
 export const TERRAIN_BASE_HEIGHT = 18;

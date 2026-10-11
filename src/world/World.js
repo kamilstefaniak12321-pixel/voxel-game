@@ -3,7 +3,9 @@ import * as THREE from 'three';
 import {
     CHUNK_SIZE,
     CHUNK_HEIGHT,
-    WORLD_BORDER
+    WORLD_BORDER,
+    WORLD_SPAWN_X,
+    WORLD_SPAWN_Z
 } from '../config.js';
 // ------------------------------------------------------------
 import {
@@ -27,8 +29,8 @@ import {
 } from './Chunk.js';
 // ------------------------------------------------------------
 import {
-    TerrainGenerator
-} from './TerrainGenerator.js';
+    createGenerator
+} from './terrain/generators.js';
 // ------------------------------------------------------------
 import {
     LightEngine,
@@ -76,8 +78,10 @@ export class World {
     //               Ten sam seed zawsze daje ten sam teren.
     // savedChunks - chunki wczytane z zapisu:
     //               Map "cx,cz" -> Uint8Array (pusta dla nowego świata)
+    // terrain     - typ terenu ('realistic', 'classic' - patrz
+    //               terrain/generators.js)
 
-    constructor(scene, seed, savedChunks = new Map()) {
+    constructor(scene, seed, savedChunks = new Map(), terrain = 'classic') {
 
         this.scene = scene;
 
@@ -110,10 +114,19 @@ export class World {
 
         this.onModifiedChunkUnloaded = null;
 
-        // Generator terenu dla tego świata.
+        // Generator terenu dla tego świata (typ zapisany w świecie).
 
-        this.generator =
-            new TerrainGenerator(seed);
+        this.terrain = terrain;
+
+        this.generator = createGenerator(terrain, seed);
+
+
+        // Miejsce startu: w terenie realistycznym najbliższy ląd przy
+        // WORLD_SPAWN_X / Z (żeby nie zaczynać na dnie morza).
+
+        const spawn = this.generator.findSpawn(WORLD_SPAWN_X, WORLD_SPAWN_Z);
+
+        this.spawnPoint = { x: spawn.x + 0.5, z: spawn.z + 0.5 };
 
 
         // Światło nieba i lamp (src/world/Light.js).
@@ -743,7 +756,11 @@ export class World {
             chunk.modified = true;
         }
         else {
+
             this.generator.generateChunk(chunk);
+
+            chunk.updateSolidBelow();
+
         }
 
 

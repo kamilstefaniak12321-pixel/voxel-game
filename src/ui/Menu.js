@@ -1,4 +1,6 @@
 import { TEXTS } from './texts.js';
+import { TERRAIN_TYPES, terrainName } from '../world/terrain/generators.js';
+import { DEFAULT_TERRAIN } from '../config.js';
 import { SETTINGS_RANGES, SETTINGS_CHOICES } from '../settings/Settings.js';
 
 // ------------------------------------------------------------
@@ -263,6 +265,7 @@ export class Menu {
                     'div',
                     'world-details',
                     `${TEXTS.seed}: ${world.seed}  ·  ` +
+                    `${TEXTS.terrain}: ${terrainName(world.terrain)}  ·  ` +
                     `${TEXTS.lastPlayed}: ${formatDate(world.lastPlayed)}`
                 )
             );
@@ -361,6 +364,27 @@ export class Menu {
         seedLabel.append(seedInput);
 
 
+        // Typ terenu: każde kliknięcie = następny (terrain/generators.js).
+
+        const terrainTypes = Object.keys(TERRAIN_TYPES);
+
+        let terrain = terrainTypes.includes(DEFAULT_TERRAIN) ? DEFAULT_TERRAIN : terrainTypes[0];
+
+        const terrainNote = el('p', 'menu-note');
+
+        const terrainButton = button(TEXTS.terrainType(terrainName(terrain)), () => {
+
+            terrain = terrainTypes[(terrainTypes.indexOf(terrain) + 1) % terrainTypes.length];
+
+            terrainButton.textContent = TEXTS.terrainType(terrainName(terrain));
+
+            terrainNote.textContent = TEXTS.terrainNotes[terrain] ?? '';
+
+        });
+
+        terrainNote.textContent = TEXTS.terrainNotes[terrain] ?? '';
+
+
         const buttons = el('div', 'menu-row');
 
         const createButton = button(TEXTS.createWorld, () => {});
@@ -373,7 +397,7 @@ export class Menu {
         );
 
 
-        form.append(nameLabel, seedLabel, buttons);
+        form.append(nameLabel, seedLabel, terrainButton, terrainNote, buttons);
 
 
         // Enter w polu tekstowym też tworzy świat.
@@ -386,7 +410,7 @@ export class Menu {
                 nameInput.value.trim() ||
                 TEXTS.defaultWorldName(number);
 
-            this.handlers.createWorld(name, seedInput.value);
+            this.handlers.createWorld(name, seedInput.value, terrain);
 
         });
 

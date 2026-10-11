@@ -27,6 +27,12 @@ export const TEXTS = {
     worldName: 'Nazwa świata',
     worldSeed: 'Seed',
     seedPlaceholder: 'puste = losowy',
+    terrain: 'Teren',
+    terrainType: (name) => `Teren: ${name}`,
+    terrainNotes: {
+        realistic: 'Morza, niziny, wyżyny i góry. W budowie - kolejne aktualizacje zmienią ten teren (Twoje budowle zostaną).',
+        classic: 'Pierwszy generator gry: wzgórza i góry, bez morza. Nie będzie się już zmieniał.'
+    },
     createWorld: 'Utwórz świat',
     cancel: 'Anuluj',
     defaultWorldName: (number) => `Świat ${number}`,

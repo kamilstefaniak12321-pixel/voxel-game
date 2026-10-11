@@ -32,6 +32,12 @@ import {
 
 import { TEXTS } from '../ui/texts.js';
 
+import { LANDFORMS, RELIEFS } from '../world/terrain/landforms.js';
+
+import { terrainName } from '../world/terrain/generators.js';
+
+import { MAP_LAYERS, MAP_SCALES } from '../ui/TerrainMap.js';
+
 import {
     CHUNK_SIZE,
     CHUNK_HEIGHT,
@@ -327,6 +333,98 @@ function latitudeForCoverage(coverage) {
     }
 
     return (low + high) / 2;
+
+}
+
+
+// Formy terenu do wpisania w /teren znajdz (bez polskich znaków).
+// Część słów to pasy wysokości (niziny, wyżyny, góry, morze).
+
+const LANDFORM_WORDS = {
+    morze: { relief: 'sea' },
+    wybrzeze: { landform: 'coast' },
+    plaza: { landform: 'coast' },
+    nizina: { relief: 'lowland' },
+    wyzyna: { relief: 'upland' },
+    gory: { relief: 'mountains' },
+    zbocze: { landform: 'mountains' },
+    grzbiet: { landform: 'ridge' },
+    turnia: { landform: 'crag' },
+    wzgorze: { landform: 'hill' },
+    pagorek: { landform: 'hillock' },
+    dolina: { landform: 'valley' },
+    kotlina: { landform: 'basin' },
+    wawoz: { landform: 'ravine' },
+    zleb: { landform: 'gully' },
+    depresja: { landform: 'depression' },
+    rownina: { landform: 'plain' },
+    rownia: { landform: 'flat' },
+    plaskowyz: { landform: 'plateau' }
+};
+
+const SURFACE_NAMES = {
+    grass: 'trawa',
+    rock: 'skała',
+    sand: 'piasek',
+    seabed: 'dno morza (piasek)',
+    water: 'woda'
+};
+
+
+// Opis miejsca z generatora (do /teren).
+
+function terrainText(world, x, z) {
+
+    const generator = world.generator;
+
+    const info = generator.describe(x, z);
+
+    const sea = generator.seaLevel;
+
+    const fields = Object.entries(info.fields)
+        .map(([name, value]) => `${name} ${value.toFixed(2)}`)
+        .join(', ');
+
+    return `Teren: ${terrainName(world.terrain)} | ${x}, ${z} | wysokość ${info.height}` +
+        `${sea !== null ? ` (${info.height - sea >= 0 ? '+' : ''}${info.height - sea} nad morzem)` : ''} | ` +
+        `${RELIEFS[info.relief] ?? info.relief} | forma: ${LANDFORMS[info.landform]?.name ?? info.landform} | ` +
+        `powierzchnia: ${SURFACE_NAMES[info.surface] ?? info.surface}` +
+        (fields ? `\nPola: ${fields}` : '');
+
+}
+
+
+// Najbliższe miejsce z formą terenu (szukanie coraz dalej).
+
+function findLandform(generator, x0, z0, target, maxRadius) {
+
+    const step = 12;
+
+    for (let radius = 0; radius <= maxRadius; radius += step) {
+
+        const count = radius === 0 ? 1 : Math.ceil(2 * Math.PI * radius / step);
+
+        for (let k = 0; k < count; k++) {
+
+            const angle = 2 * Math.PI * k / count;
+
+            const x = Math.round(x0 + Math.cos(angle) * radius);
+            const z = Math.round(z0 + Math.sin(angle) * radius);
+
+            const info = generator.describe(x, z);
+
+            if (
+                (target.landform && info.landform === target.landform) ||
+                (target.relief && info.relief === target.relief)
+            ) {
+                return { x, z, info, distance: radius };
+            }
+
+        }
+
+    }
+
+    return null;
 
 }
 
@@ -1379,6 +1477,180 @@ export const GAME_COMMANDS = [
 
             return [];
 
+        }
+    },
+
+    // ========================================================
+    // TEREN (generator terenu - docs/generator-terenu.md)
+    // ========================================================
+
+    {
+        name: 'teren',
+        aliases: ['terrain'],
+        usage: '/teren [x z] | /teren znajdz <forma> [promien] [tp] | /teren formy',
+        description: 'Teren w miejscu gracza (albo x z): wysokość, niziny/wyżyny/góry, forma terenu, pola generatora. Szukanie form.',
+
+        run(args, { world, player }) {
+
+            const [action] = args;
+
+
+            if (!action) {
+                return terrainText(world, Math.floor(player.pos.x), Math.floor(player.pos.z));
+            }
+
+
+            const word = simplify(action);
+
+
+            if (word === 'formy') {
+
+                return 'Formy terenu (/teren znajdz <forma>): ' +
+                    Object.keys(LANDFORM_WORDS).join(', ');
+
+            }
+
+
+            if (['znajdz', 'find'].includes(word)) {
+
+                const target = LANDFORM_WORDS[simplify(args[1] ?? '')];
+
+                if (!target) {
+                    throw new CommandError(`Podaj formę terenu: ${Object.keys(LANDFORM_WORDS).join(', ')}`);
+                }
+
+                const teleport = args.slice(2).some((arg) => simplify(arg) === 'tp');
+
+                const radiusArg = args.slice(2).find((arg) => simplify(arg) !== 'tp');
+
+                const radius = radiusArg === undefined ? 1500 : parseNumber(radiusArg, 'promień');
+
+                if (radius < 16 || radius > 4000) {
+                    throw new CommandError('Promień: od 16 do 4000 bloków');
+                }
+
+
+                const found = findLandform(
+                    world.generator,
+                    Math.floor(player.pos.x),
+                    Math.floor(player.pos.z),
+                    target,
+                    radius
+                );
+
+                if (!found) {
+                    throw new CommandError(`Nie ma "${args[1]}" w promieniu ${radius} bloków. Spróbuj większy promień.`);
+                }
+
+
+                const { x, z, info, distance } = found;
+
+                const what = target.landform
+                    ? LANDFORMS[info.landform].name
+                    : RELIEFS[info.relief];
+
+                if (teleport) {
+
+                    world.ensureColumnLoaded(x, z);
+
+                    player.pos.set(x + 0.5, world.getSurfaceY(x, z), z + 0.5);
+                    player.vel.set(0, 0, 0);
+                    player.updateCamera();
+
+                    return `Przeniesiono: ${what} na ${x}, ${z} (${distance} bloków stąd).`;
+
+                }
+
+                return `Najbliżej: ${what} na ${x}, ${z} (ok. ${distance} bloków stąd, wysokość ${info.height}). ` +
+                    `Przeniesienie: /tp ${x} ${z} albo /teren znajdz ${simplify(args[1])} tp`;
+
+            }
+
+
+            if (args.length === 2) {
+
+                const x = Math.floor(parseCoordinate(args[0], player.pos.x));
+                const z = Math.floor(parseCoordinate(args[1], player.pos.z));
+
+                return terrainText(world, x, z);
+
+            }
+
+            throw usageError(this);
+
+        },
+
+        complete(args) {
+
+            if (args.length === 1) return ['znajdz', 'formy', '~'];
+            if (args.length === 2 && simplify(args[0]) === 'znajdz') return Object.keys(LANDFORM_WORDS);
+            if (args.length >= 3 && simplify(args[0]) === 'znajdz') return ['tp', '500', '3000'];
+
+            return [];
+
+        }
+    },
+
+
+    {
+        name: 'mapa',
+        aliases: ['map'],
+        usage: '/mapa [warstwa] [skala] | /mapa wyl   (skala = bloki na punkt: 1, 2, 4, 8, 16, 32)',
+        description: 'Mapa terenu z góry: wysokość, formy terenu, niziny/wyżyny/góry, pola generatora. Klawisz M.',
+
+        run(args, { game, player, map }) {
+
+            if (!map) {
+                throw new CommandError('Mapa jest niedostępna.');
+            }
+
+
+            if (args.length === 0 && map.isOpen) {
+
+                map.close();
+
+                return 'Mapa zamknięta.';
+
+            }
+
+            if (OFF_WORDS.includes(simplify(args[0] ?? ''))) {
+
+                map.close();
+
+                return 'Mapa zamknięta.';
+
+            }
+
+
+            let layer = map.layer;
+            let scale = map.scale;
+
+            for (const arg of args) {
+
+                const word = simplify(arg);
+
+                if (word in MAP_LAYERS) {
+                    layer = word;
+                }
+                else if (MAP_SCALES.includes(Number(word))) {
+                    scale = Number(word);
+                }
+                else {
+                    throw new CommandError(`Warstwy: ${Object.keys(MAP_LAYERS).join(', ')}. Skale: ${MAP_SCALES.join(', ')}`);
+                }
+
+            }
+
+
+            map.open(game.world.generator, player.pos.x, player.pos.z, layer, scale);
+
+            return `Mapa: ${MAP_LAYERS[layer]}, 1 punkt = ${scale} bl. ` +
+                'Przy otwartym czacie wskaż punkt myszą - pokaże współrzędne i formę terenu.';
+
+        },
+
+        complete(args) {
+            return args.length <= 2 ? [...Object.keys(MAP_LAYERS), ...MAP_SCALES.map(String), 'wyl'] : [];
         }
     },
 

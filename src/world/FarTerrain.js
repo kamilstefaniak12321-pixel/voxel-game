@@ -3,16 +3,14 @@ import * as THREE from 'three';
 import {
     CHUNK_SIZE,
     CHUNK_HEIGHT,
-    WORLD_BORDER,
-    TERRAIN_ROCK_LEVEL
+    WORLD_BORDER
 } from '../config.js';
 
-import { isSolidId } from '../blocks/BlockRegistry.js';
-
 import {
-    HILL_OCTAVES,
-    MOUNTAIN_OCTAVES
-} from './TerrainGenerator.js';
+    isSolidId,
+    isLiquidId,
+    getBlockTypeById
+} from '../blocks/BlockRegistry.js';
 
 import {
     skyUniforms,
@@ -101,7 +99,22 @@ const RECENTER_DISTANCE = 16;
 const FALLBACK_COLORS = {
     grass_top: new THREE.Color(0.10, 0.22, 0.05),
     grass_side: new THREE.Color(0.16, 0.12, 0.06),
-    stone: new THREE.Color(0.22, 0.22, 0.22)
+    stone: new THREE.Color(0.22, 0.22, 0.22),
+    sand: new THREE.Color(0.62, 0.55, 0.33),
+    water: new THREE.Color(0.03, 0.11, 0.42)
+};
+
+// Rodzaj powierzchni (generator.farSurface) -> numer w kafelku.
+
+const KINDS = ['grass', 'rock', 'sand', 'water'];
+
+// Blok wierzchu w zmienionym chunku -> rodzaj powierzchni.
+
+const BLOCK_KINDS = {
+    stone: 'rock',
+    lepidolite: 'rock',
+    sand: 'sand',
+    water: 'water'
 };
 
 
@@ -651,11 +664,12 @@ export class FarTerrain {
     }
 
 
-    // Wysokość wierzchu terenu w kolumnie (x, z) - y nad najwyższym
-    // pełnym blokiem. spacing = jak gęsto próbkujemy (mniej szczegółów
-    // przy rzadszych próbkach).
+    // Wierzch terenu w kolumnie (x, z): { top, kind } - top = y nad
+    // najwyższym blokiem (albo nad wodą), kind = rodzaj powierzchni
+    // ('grass', 'rock', 'sand', 'water'). spacing = jak gęsto
+    // próbkujemy (mniej szczegółów przy rzadszych próbkach).
 
-    heightAt(x, z, spacing, modified) {
+    surfaceAt(x, z, spacing, modified) {
 
         if (modified.size > 0) {
 
@@ -671,29 +685,22 @@ export class FarTerrain {
 
                 for (let y = CHUNK_HEIGHT - 1; y >= 0; y--) {
 
-                    if (isSolidId(blocks[(y * CHUNK_SIZE + lz) * CHUNK_SIZE + lx])) {
-                        return y + 1;
+                    const id = blocks[(y * CHUNK_SIZE + lz) * CHUNK_SIZE + lx];
+
+                    if (isSolidId(id) || isLiquidId(id)) {
+                        return { top: y + 1, kind: BLOCK_KINDS[getBlockTypeById(id)] ?? 'grass' };
                     }
 
                 }
 
-                return 0;
+                return { top: 0, kind: 'rock' };
 
             }
 
         }
 
 
-        // Oktawy szumu, których szczegóły są większe niż 2 próbki.
-
-        const hillOctaves =
-            spacing <= 4 ? HILL_OCTAVES :
-            spacing <= 8 ? 2 :
-            spacing <= 16 ? 1 : 0;
-
-        const mountainOctaves = spacing <= 16 ? MOUNTAIN_OCTAVES : 1;
-
-        return this.generator.getHeightLod(x, z, hillOctaves, mountainOctaves) + 1;
+        return this.generator.farSurface(x, z, spacing);
 
     }
 
@@ -713,6 +720,8 @@ export class FarTerrain {
 
         const heights = new Float32Array(W * W);
 
+        const kinds = new Uint8Array(W * W);
+
         const modified = this.modifiedChunksIn(x0 - spacing, z0 - spacing, tile.size + 2 * spacing);
 
 
@@ -723,7 +732,10 @@ export class FarTerrain {
                 const x = Math.max(-WORLD_BORDER, Math.min(WORLD_BORDER - 1, x0 + (i - 1) * spacing));
                 const z = Math.max(-WORLD_BORDER, Math.min(WORLD_BORDER - 1, z0 + (j - 1) * spacing));
 
-                heights[j * W + i] = this.heightAt(x, z, spacing, modified);
+                const surface = this.surfaceAt(x, z, spacing, modified);
+
+                heights[j * W + i] = surface.top;
+                kinds[j * W + i] = Math.max(0, KINDS.indexOf(surface.kind));
 
             }
 
@@ -731,6 +743,8 @@ export class FarTerrain {
 
 
         const height = (i, j) => heights[(j + 1) * W + (i + 1)];
+
+        const kindAt = (i, j) => KINDS[kinds[(j + 1) * W + (i + 1)]];
 
 
         // Wierzchołki: siatka (N+1) x (N+1) i fartuchy na 4 brzegach.
@@ -744,7 +758,7 @@ export class FarTerrain {
         const colors = new Float32Array(vertexCount * 3);
 
 
-        const { grass_top: grass, grass_side: side, stone } = this.colors;
+        const { grass_top: grass, grass_side: side, stone, sand, water } = this.colors;
 
         const normal = new THREE.Vector3();
 
@@ -778,14 +792,23 @@ export class FarTerrain {
                 normals[v * 3 + 2] = normal.z;
 
 
-                // Kolor: trawa, na stromych zboczach ziemia (boki trawy),
-                // wysoko goła skała - jak w generatorze terenu.
+                // Kolor z rodzaju powierzchni (generator); trawa na
+                // stromych zboczach - ziemia (boki trawy).
 
-                const steep = smoothstep(0.3, 0.75, 1 - normal.y);
+                const kind = kindAt(i, j);
 
-                const rock = smoothstep(TERRAIN_ROCK_LEVEL - 1, TERRAIN_ROCK_LEVEL + 3, h - 1);
-
-                color.copy(grass).lerp(side, steep).lerp(stone, rock);
+                if (kind === 'water') {
+                    color.copy(water);
+                }
+                else if (kind === 'sand') {
+                    color.copy(sand);
+                }
+                else if (kind === 'rock') {
+                    color.copy(stone);
+                }
+                else {
+                    color.copy(grass).lerp(side, smoothstep(0.3, 0.75, 1 - normal.y));
+                }
 
                 colors[v * 3] = color.r;
                 colors[v * 3 + 1] = color.g;

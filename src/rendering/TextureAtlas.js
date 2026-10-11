@@ -72,6 +72,16 @@ export const ATLAS_TILES = {
     meteorite: {
         x: 10,
         y: 0
+    },
+
+    sand: {
+        x: 11,
+        y: 0
+    },
+
+    water: {
+        x: 12,
+        y: 0
     }
 
 };

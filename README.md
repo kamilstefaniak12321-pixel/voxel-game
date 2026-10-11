@@ -29,6 +29,7 @@ Do działania potrzebny jest internet (three.js pobierany z unpkg).
 | F3 | informacje debugowania w lewym górnym rogu |
 | [ / ] (z F3) | cofnij / przesuń czas o godzinę |
 | T, / | czat i komendy (`/pomoc`) |
+| M | mapa terenu z góry (to samo co `/mapa`) |
 
 ## Pasek bloków
 
@@ -116,7 +117,30 @@ w trakcie gry.
 Świat nie ma stałego rozmiaru - teren generuje się wokół gracza, gdy
 ten idzie dalej, a chunki daleko za plecami znikają z pamięci (zmiany
 gracza w nich zostają). Jak daleko wokół gracza wczytuje się teren,
-zależy od ustawienia *Zasięg widzenia*.
+zależy od ustawienia *Zasięg widzenia*. Świat ma **128 bloków
+wysokości** (`CHUNK_HEIGHT`; dawniej 64 - stare zapisy wczytują się
+bez zmian, wyżej jest po prostu powietrze).
+
+**Typ terenu** wybiera się przy tworzeniu świata (przycisk *Teren*):
+
+- **Realistyczny (w budowie)** - morza i wybrzeża z plażami, niziny,
+  wyżyny i góry z płynnymi przejściami, a w nich formy terenu: grzbiety,
+  turnie, wzgórza, pagórki, doliny, kotliny, wąwozy, żleby, depresje,
+  równiny, płaskowyże. Poziom morza to `SEA_LEVEL` (48). To dopiero
+  początek - kolejne aktualizacje będą ten teren zmieniać (rzeki,
+  biomy...), więc w takim świecie nowe chunki mogą wyglądać inaczej niż
+  wcześniej (Twoje budowle zostają). Woda to na razie zwykły
+  nieprzezroczysty blok, przez który się przechodzi - prawdziwa woda
+  przyjdzie w etapie "Woda".
+- **Klasyczny** - pierwszy generator gry (wzgórza i góry, bez morza).
+  Już się nie zmienia. Wszystkie światy sprzed tej aktualizacji są
+  klasyczne.
+
+Plan rozdziału o terenie (etapy, formy terenu, rzeki, biomy) i jak
+działa generator: `docs/generator-terenu.md`. Teren najłatwiej
+oglądać na **mapie** (klawisz **M** albo `/mapa formy 16`) i komendą
+`/teren` (co jest pod graczem; `/teren znajdz turnia tp` - teleport
+do najbliższej turni).
 
 **Daleki teren (horyzont):** za zasięgiem widzenia widać uproszczony
 teren - te same wzgórza i góry, które wygenerowałyby się tam naprawdę,
@@ -131,9 +155,11 @@ krater po meteorycie). Zasięg - ustawienie *Daleki teren*; mgiełka -
 
 Świat kończy się na **granicy** - `WORLD_BORDER` w `src/config.js`
 (domyślnie 30 000 bloków od środka w każdą stronę; `Infinity` = bez
-granicy). Szum terenu powtarza się mniej więcej co 61 000 bloków, więc
-przy tej granicy nikt nie trafi na powtórkę. Nowe światy zaczynają się
-w punkcie `WORLD_SPAWN_X` / `WORLD_SPAWN_Z`.
+granicy). Szum klasycznego terenu powtarza się mniej więcej co 61 000
+bloków, a kontynenty realistycznego - co kilkaset tysięcy, więc przy
+tej granicy nikt nie trafi na powtórkę. Nowe światy zaczynają się
+w pobliżu punktu `WORLD_SPAWN_X` / `WORLD_SPAWN_Z` (w terenie
+realistycznym gra szuka tam najbliższego płaskiego lądu).
 
 Wczytywanie chunków ma limit czasu na klatkę (ustawienie *Wczytywanie*,
 domyślnie `CHUNK_LOAD_BUDGET_MS`), żeby gra nie przycinała przy
@@ -184,8 +210,14 @@ zabarwia świat.
 ## Czat i komendy
 
 **T** otwiera czat, **/** otwiera czat od razu z ukośnikiem do komendy.
-Enter wysyła, ESC zamyka, strzałki ↑ ↓ przywołują poprzednie wpisy,
-a **Tab** podpowiada nazwy komend, bloków, godzin i kolorów.
+Enter wysyła, ESC zamyka, strzałki ↑ ↓ przywołują poprzednie wpisy.
+
+**Podpowiedzi:** w trakcie pisania komendy nad czatem pojawia się
+lista pasujących komend (z opisem) albo słów do wpisania dalej (bloki,
+godziny, kolory, warstwy mapy...), a w polu tekstowym szarym kolorem
+dopisuje się pierwsza z nich. **Tab** ją zatwierdza, strzałki ↑ ↓
+wybierają inną z listy. Gdy komenda jest już wpisana, nad czatem widać,
+jak jej użyć.
 
 Komendy służą do sprawdzania nowości w grze, np.:
 
@@ -202,6 +234,9 @@ Komendy służą do sprawdzania nowości w grze, np.:
 /zacmienie pokaz pelne     pełne zaćmienie słońca (albo czesciowe, 50...)
 /zacmienie                 kiedy następne zaćmienie (/zacmienie lista)
 /horyzont 2048             daleki teren (/horyzont lod - dokładność kafelków)
+/teren                     forma terenu pod graczem (niziny, wyżyny, góry...)
+/teren znajdz kotlina tp   teleport do najbliższej kotliny (/teren formy - lista)
+/mapa formy 16             mapa terenu (klawisz M; warstwy: teren, formy, pasy...)
 /ustaw zasieg 256          dowolne ustawienie (/ustaw - lista)
 /wydajnosc test            test wydajności z obrotem kamery
 /latanie                   latanie (Spacja w górę, Shift w dół)
@@ -306,7 +341,8 @@ src/
   ui/                       ekrany menu, pasek bloków, ikonki, napisy
   settings/                 ustawienia gracza (zapis w przeglądarce)
   blocks/                   lista bloków (BlockRegistry)
-  world/                    świat, chunki, szum, generator terenu, światło
+  world/                    świat, chunki, szum, światło, daleki teren
+  world/terrain/            generatory terenu (realistyczny, lista typów, formy terenu)
   sky/                      czas, słońce, księżyc, gwiazdy, kolory nieba
   storage/                  zapis i wczytywanie światów
   rendering/                atlas tekstur, budowanie meshy chunków

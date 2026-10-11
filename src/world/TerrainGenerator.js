@@ -22,7 +22,12 @@ import {
 } from './Noise.js';
 
 // ------------------------------------------------------------
-// GENERATOR TERENU
+// GENERATOR TERENU "KLASYCZNY" (pierwszy generator gry)
+//
+// Światy utworzone z tym typem terenu zawsze wyglądają tak samo -
+// tego pliku nie zmieniamy (inaczej stare światy dostałyby szwy
+// między zapisanymi a nowymi chunkami). Nowy teren powstaje
+// w src/world/terrain/ (patrz docs/generator-terenu.md).
 //
 // Dla każdej kolumny (x, z) wylicza wysokość terenu z szumu,
 // a potem wypełnia kolumnę blokami od dołu:
@@ -69,6 +74,16 @@ function smoothstep(edge0, edge1, value) {
 export class TerrainGenerator {
 
     constructor(seed) {
+
+        // Wspólne pola wszystkich generatorów (patrz terrain/generators.js).
+
+        this.type = 'classic';
+
+        // Bez morza; typowa wysokość nizin (np. horyzont dalekiego terenu).
+
+        this.seaLevel = null;
+        this.baseHeight = TERRAIN_BASE_HEIGHT;
+
 
         const baseSeed = seedToNumber(seed);
 
@@ -248,6 +263,58 @@ export class TerrainGenerator {
             }
 
         }
+
+    }
+
+
+    // --------------------------------------------------------
+    // Wspólny interfejs generatorów (terrain/generators.js)
+    // --------------------------------------------------------
+
+    // Powierzchnia dla dalekiego terenu: wierzch i rodzaj
+    // (spacing = co ile bloków są próbki - mniej szczegółów z daleka).
+
+    farSurface(x, z, spacing) {
+
+        const hillOctaves =
+            spacing <= 4 ? HILL_OCTAVES :
+            spacing <= 8 ? 2 :
+            spacing <= 16 ? 1 : 0;
+
+        const mountainOctaves = spacing <= 16 ? MOUNTAIN_OCTAVES : 1;
+
+        const height = this.getHeightLod(x, z, hillOctaves, mountainOctaves);
+
+        return {
+            top: height + 1,
+            kind: height > TERRAIN_ROCK_LEVEL + 1 ? 'rock' : 'grass'
+        };
+
+    }
+
+
+    // Opis miejsca (komenda /teren, mapa terenu).
+
+    describe(x, z, slopeHint = null) {
+
+        const height = this.getHeight(x, z);
+
+        return {
+            height,
+            landform: height > TERRAIN_ROCK_LEVEL ? 'mountains' : 'plain',
+            relief: height > TERRAIN_ROCK_LEVEL ? 'mountains' : 'lowland',
+            surface: this.isBareRock(x, z, height) ? 'rock' : 'grass',
+            fields: {}
+        };
+
+    }
+
+
+    // Miejsce startu nowego świata - tu zawsze tam, gdzie poproszono.
+
+    findSpawn(x, z) {
+
+        return { x, z };
 
     }
 

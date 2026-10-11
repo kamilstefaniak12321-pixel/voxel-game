@@ -13,6 +13,8 @@
 //            i tak powstaje z seeda zawsze tak samo.
 // ------------------------------------------------------------
 
+import { DEFAULT_TERRAIN } from '../config.js';
+
 const DB_NAME = 'voxel-game';
 
 // Zwiększ, gdy zmienisz układ tabel (wtedy odpali się onupgradeneeded).
@@ -55,7 +57,7 @@ function transactionToPromise(transaction) {
 // Dane nowego świata (jeszcze niezapisane w bazie).
 // ------------------------------------------------------------
 
-export function createWorldInfo(name, seed) {
+export function createWorldInfo(name, seed, terrain = DEFAULT_TERRAIN) {
 
     const now = Date.now();
 
@@ -72,6 +74,10 @@ export function createWorldInfo(name, seed) {
 
         // Pozycja i obrót gracza (null = nowy świat, start na środku).
         player: null,
+
+        // Typ terenu ('realistic', 'classic' - src/world/terrain/generators.js).
+        // Światy bez tego pola są klasyczne.
+        terrain,
 
         formatVersion: WORLD_FORMAT_VERSION
 

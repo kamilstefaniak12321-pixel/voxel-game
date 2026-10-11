@@ -4,7 +4,8 @@ import {
 } from '../config.js';
 
 import {
-    AIR_ID
+    AIR_ID,
+    isOpaqueId
 } from '../blocks/BlockRegistry.js';
 
 // ------------------------------------------------------------
@@ -81,6 +82,15 @@ export class Chunk {
         this.maxY = 0;
 
 
+        // Wysokość, poniżej której WSZYSTKIE komórki chunka są
+        // zasłaniającymi blokami (np. lity kamień pod terenem).
+        // Takich bloków nie widać, więc mesher je pomija. Liczy ją
+        // updateSolidBelow() po wygenerowaniu; przy zmianie bloku
+        // może tylko zmaleć (setId).
+
+        this.solidBelow = 0;
+
+
         // Mesh chunka w scenie (null, gdy chunk jest pusty
         // albo jeszcze nie został zbudowany).
 
@@ -96,18 +106,25 @@ export class Chunk {
     }
 
 
-    // Wczytuje bloki z zapisu. Zwraca false, jeśli dane mają
-    // zły rozmiar (np. po zmianie CHUNK_HEIGHT w config.js).
+    // Wczytuje bloki z zapisu. Zapis z niższego świata (np. sprzed
+    // podniesienia CHUNK_HEIGHT z 64 do 128) jest dopełniany powietrzem
+    // od góry - warstwy idą od dołu, więc dane pasują 1:1.
+    // Zwraca false, jeśli dane mają zły rozmiar (np. większy świat).
 
     loadBlocks(data) {
 
+        const layer = CHUNK_SIZE * CHUNK_SIZE;
+
         if (
             !data ||
-            data.length !== this.blocks.length
+            data.length > this.blocks.length ||
+            data.length % layer !== 0
         ) {
             return false;
         }
 
+
+        this.blocks.fill(AIR_ID);
 
         this.blocks.set(data);
 
@@ -142,7 +159,47 @@ export class Chunk {
         }
 
 
+        this.updateSolidBelow();
+
+
         return true;
+
+    }
+
+
+    // Liczy solidBelow od nowa: idzie od dołu, aż trafi na warstwę,
+    // w której jest coś niezasłaniającego (powietrze, woda...).
+
+    updateSolidBelow() {
+
+        const layer = CHUNK_SIZE * CHUNK_SIZE;
+
+        const blocks = this.blocks;
+
+        let y = 0;
+
+        for (; y < this.maxY; y++) {
+
+            const start = y * layer;
+
+            let full = true;
+
+            for (let i = start; i < start + layer; i++) {
+
+                if (!isOpaqueId(blocks[i])) {
+                    full = false;
+                    break;
+                }
+
+            }
+
+            if (!full) {
+                break;
+            }
+
+        }
+
+        this.solidBelow = y;
 
     }
 
@@ -191,6 +248,10 @@ export class Chunk {
 
         if (id !== AIR_ID && y >= this.maxY) {
             this.maxY = y + 1;
+        }
+
+        if (y < this.solidBelow && !isOpaqueId(id)) {
+            this.solidBelow = y;
         }
 
         return true;

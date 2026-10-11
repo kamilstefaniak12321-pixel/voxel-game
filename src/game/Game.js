@@ -30,11 +30,8 @@ import {
     PLAYER_REACH,
     CHUNK_SIZE,
     START_LOAD_RADIUS,
-    TERRAIN_BASE_HEIGHT,
     POTATO_VIEW_DISTANCE,
     MOUSE_SENSITIVITY,
-    WORLD_SPAWN_X,
-    WORLD_SPAWN_Z,
     HOTBAR_SIZE,
     HOTBAR_DEFAULT
 } from '../config.js';
@@ -195,7 +192,8 @@ export class Game {
         this.world = new World(
             this.scene,
             worldInfo.seed,
-            savedChunks
+            savedChunks,
+            worldInfo.terrain
         );
 
 
@@ -218,10 +216,7 @@ export class Game {
         // zapisanej pozycji albo miejsca startu w nowym świecie.
         // Od razu tylko najbliższe chunki - dalsze dograją się w grze.
 
-        const start = worldInfo.player ?? {
-            x: WORLD_SPAWN_X + 0.5,
-            z: WORLD_SPAWN_Z + 0.5
-        };
+        const start = worldInfo.player ?? this.world.spawnPoint;
 
         this.world.loadAround(
             start.x,
@@ -431,7 +426,7 @@ export class Game {
         // ten brzeg jest trochę pod linią poziomu.
 
         this.sky.horizonDip = this.farTerrain.active
-            ? Math.min(0, (TERRAIN_BASE_HEIGHT + 1 - this.camera.position.y) / this.farTerrain.outer)
+            ? Math.min(0, (this.world.generator.baseHeight + 1 - this.camera.position.y) / this.farTerrain.outer)
             : 0;
 
         this.sky.update(this.time.days, dt, this.renderer.getPixelRatio());

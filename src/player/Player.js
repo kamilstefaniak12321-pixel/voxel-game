@@ -2,8 +2,6 @@ import * as THREE from 'three';
 
 import {
     WORLD_BORDER,
-    WORLD_SPAWN_X,
-    WORLD_SPAWN_Z,
     GRAVITY,
     MOVE_SPEED,
     JUMP_SPEED,
@@ -73,10 +71,9 @@ export class Player {
 
 spawn() {
 
-    // + 0.5 = środek bloku, żeby gracz stał w jednej kolumnie.
+    // Miejsce startu świata (World.spawnPoint - środek bloku).
 
-    const x = Math.floor(WORLD_SPAWN_X) + 0.5;
-    const z = Math.floor(WORLD_SPAWN_Z) + 0.5;
+    const { x, z } = this.world.spawnPoint;
 
 
     // Chunk w miejscu startu musi istnieć, żeby znaleźć powierzchnię.

@@ -1,3 +1,5 @@
+import { isLiquidId } from '../blocks/BlockRegistry.js';
+
 export class BlockPlacer {
 
     constructor(world, player) {
@@ -31,12 +33,11 @@ export class BlockPlacer {
             hit.normal.z;
 
 
+        // Zajęte miejsce - chyba że to ciecz (blok ją zastępuje).
+
         if (
-            this.world.getBlock(
-                x,
-                y,
-                z
-            ) !== null
+            this.world.getBlock(x, y, z) !== null &&
+            !isLiquidId(this.world.getBlockId(x, y, z))
         ) {
 
             return false;

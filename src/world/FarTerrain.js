@@ -29,6 +29,8 @@ import {
     getAtlasAverage
 } from '../rendering/TextureAtlas.js';
 
+import { setPotatoDefine } from '../rendering/BlockRenderData.js';
+
 // ------------------------------------------------------------
 // DALEKI TEREN (HORYZONT)
 //
@@ -46,8 +48,8 @@ import {
 //     pustą linią horyzontu.
 //
 // BUDOWA: teren jest podzielony na kafelki (drzewo czwórkowe).
-// Każdy kafelek ma TILE_CELLS x TILE_CELLS kratek; blisko gracza
-// kratka ma MIN_SPACING bloków, dalej 2x, 4x, 8x więcej - z daleka
+// Każdy kafelek ma 32 x 32 kratki (DETAIL niżej); blisko gracza
+// kratka ma 4 bloki, dalej 2x, 4x, 8x więcej - z daleka
 // szczegółów i tak nie widać. Kafelki leżą zawsze w tych samych
 // miejscach świata, więc przy chodzeniu przebudowuje się tylko
 // kilka z nich (z limitem czasu na klatkę). Szczeliny między
@@ -63,19 +65,30 @@ import {
 // nie przebija przez wykopane dziury i nie ma szczeliny na granicy.
 // ------------------------------------------------------------
 
-// Kratek na brzegu kafelka.
-const TILE_CELLS = 32;
+// Dokładność kafelków:
+//   cells       - kratek na brzegu kafelka,
+//   minSpacing  - najmniejsza kratka (w blokach) - blisko gracza,
+//   rootSpacing - największa kratka (kafelki "korzenie" drzewa),
+//   lodDistance - kafelek dzielimy na 4 mniejsze, gdy gracz jest
+//                 bliżej niż (rozmiar kafelka x lodDistance).
+// Więcej kratek / większe lodDistance = dokładniej, ale więcej
+// trójkątów. Tryb ziemniaka ma ~9x mniej trójkątów.
+const DETAIL = {
+    cells: 32,
+    minSpacing: 4,
+    rootSpacing: 64,
+    lodDistance: 1.5
+};
 
-// Najmniejsza kratka (w blokach) - blisko gracza.
+const POTATO_DETAIL = {
+    cells: 16,
+    minSpacing: 8,
+    rootSpacing: 128,
+    lodDistance: 0.8
+};
+
+// Najmniejsza kratka w ogóle (do kolorów /horyzont lod).
 const MIN_SPACING = 4;
-
-// Największa kratka - kafelki "korzenie" drzewa.
-const ROOT_SPACING = 64;
-
-// Kafelek dzielimy na 4 mniejsze, gdy gracz jest bliżej niż
-// (rozmiar kafelka x LOD_DISTANCE). Więcej = dokładniej, ale więcej
-// pracy i więcej trójkątów.
-const LOD_DISTANCE = 1.5;
 
 // Ile milisekund na klatkę może zająć budowanie kafelków.
 const BUILD_BUDGET_MS = 2;
@@ -145,7 +158,15 @@ function createFarMaterial(lodColor) {
                 '#include <common>',
                 `#include <common>
                 varying vec3 vFarWorld;
-                uniform float uFarInner;`
+                uniform float uFarInner;
+
+                // Tryb ziemniaka: kolor mgiełki liczony w wierzchołkach.
+
+                #ifdef POTATO
+                    varying vec3 vHazeSky;
+                    uniform float uFogBrightness;
+                    ${SKY_COLOR_GLSL}
+                #endif`
             )
             .replace(
                 '#include <begin_vertex>',
@@ -165,7 +186,11 @@ function createFarMaterial(lodColor) {
             .replace(
                 '#include <project_vertex>',
                 `#include <project_vertex>
-                vFarWorld = (modelMatrix * vec4(transformed, 1.0)).xyz;`
+                vFarWorld = (modelMatrix * vec4(transformed, 1.0)).xyz;
+
+                #ifdef POTATO
+                    vHazeSky = skyColor(normalize(vFarWorld - cameraPosition)) * uFogBrightness;
+                #endif`
             );
 
 
@@ -180,7 +205,14 @@ function createFarMaterial(lodColor) {
                 uniform vec3 uLodTint;
                 uniform float uLodDebug;
                 ${SKY_COLOR_GLSL}
-                ${VIEW_GLSL}`
+                ${VIEW_GLSL}
+
+                #ifdef POTATO
+                    varying vec3 vHazeSky;
+                    #define HAZE_SKY vHazeSky
+                #else
+                    #define HAZE_SKY (skyColor(normalize(vFarWorld - cameraPosition)) * uFogBrightness)
+                #endif`
             )
             .replace(
                 '#include <clipping_planes_fragment>',
@@ -211,7 +243,7 @@ function createFarMaterial(lodColor) {
                 '#include <fog_fragment>',
                 `vec3 farDirection = vFarWorld - cameraPosition;
 
-                vec3 hazeSky = skyColor(normalize(farDirection)) * uFogBrightness;
+                vec3 hazeSky = HAZE_SKY;
 
                 gl_FragColor.rgb = mix(
                     gl_FragColor.rgb,
@@ -283,6 +315,10 @@ export class FarTerrain {
         // Kolorowanie kafelków według dokładności (/horyzont lod).
 
         this.debugLod = false;
+
+        // Jak dokładne są kafelki (tryb ziemniaka - rzadsza siatka).
+
+        this.detail = DETAIL;
 
 
         // Kolory czekają na policzenie średnich kolorów tekstur.
@@ -411,7 +447,9 @@ export class FarTerrain {
 
         const result = [];
 
-        const rootSize = ROOT_SPACING * TILE_CELLS;
+        const { rootSpacing, cells } = this.detail;
+
+        const rootSize = rootSpacing * cells;
 
         const minX = Math.floor((center.x - this.outer) / rootSize);
         const maxX = Math.floor((center.x + this.outer) / rootSize);
@@ -423,7 +461,7 @@ export class FarTerrain {
 
             for (let rx = minX; rx <= maxX; rx++) {
 
-                this.visit(ROOT_SPACING, rx * rootSize, rz * rootSize, center, result);
+                this.visit(rootSpacing, rx * rootSize, rz * rootSize, center, result);
 
             }
 
@@ -439,7 +477,9 @@ export class FarTerrain {
 
     visit(spacing, x0, z0, center, result) {
 
-        const size = spacing * TILE_CELLS;
+        const { cells, minSpacing, lodDistance } = this.detail;
+
+        const size = spacing * cells;
 
 
         // Za granicą świata nie ma terenu.
@@ -473,7 +513,7 @@ export class FarTerrain {
         }
 
 
-        if (spacing > MIN_SPACING && near < size * LOD_DISTANCE) {
+        if (spacing > minSpacing && near < size * lodDistance) {
 
             const half = size / 2;
 
@@ -487,7 +527,7 @@ export class FarTerrain {
         }
 
 
-        const key = `${spacing}:${x0}:${z0}`;
+        const key = `${cells}:${spacing}:${x0}:${z0}`;
 
         let tile = this.tiles.get(key);
 
@@ -495,6 +535,7 @@ export class FarTerrain {
 
             tile = {
                 key,
+                cells,
                 spacing,
                 x0,
                 z0,
@@ -664,7 +705,7 @@ export class FarTerrain {
 
         const { spacing, x0, z0 } = tile;
 
-        const N = TILE_CELLS;
+        const N = tile.cells;
 
         // Wysokości z ramką jednej próbki dookoła (do normalnych).
 
@@ -901,8 +942,30 @@ export class FarTerrain {
     }
 
 
+    // Tryb ziemniaka: rzadsza siatka kafelków i mgiełka liczona
+    // w wierzchołkach.
+
+    setLowDetail(on) {
+
+        const detail = on ? POTATO_DETAIL : DETAIL;
+
+        if (detail === this.detail) {
+            return;
+        }
+
+        this.detail = detail;
+
+        setPotatoDefine(farMaterials, on);
+
+        // Inne kafelki będą potrzebne - wybieramy je od nowa.
+
+        this.center = null;
+
+    }
+
+
     // Kolorowanie kafelków według dokładności (/horyzont lod):
-    // czerwony - najdokładniejsze, potem żółty, zielony, niebieski...
+    // czerwony - najdokładniejsze, potem niebieski, żółty, zielony...
 
     setDebugLod(on) {
 

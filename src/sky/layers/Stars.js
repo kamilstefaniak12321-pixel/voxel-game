@@ -119,13 +119,33 @@ export class Stars {
         }
 
 
+        // Najjaśniejsze gwiazdy na początek - w trybie ziemniaka
+        // rysujemy tylko początek listy (setLowDetail).
+
+        const order = [...ranks.keys()].sort((a, b) => ranks[b] - ranks[a]);
+
+        const sorted = (array, size) => {
+
+            const result = new Float32Array(array.length);
+
+            order.forEach((from, to) => {
+                for (let k = 0; k < size; k++) {
+                    result[to * size + k] = array[from * size + k];
+                }
+            });
+
+            return result;
+
+        };
+
+
         const geometry = new THREE.BufferGeometry();
 
-        geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-        geometry.setAttribute('aColor', new THREE.BufferAttribute(colors, 3));
-        geometry.setAttribute('aSize', new THREE.BufferAttribute(sizes, 1));
-        geometry.setAttribute('aPhase', new THREE.BufferAttribute(phases, 1));
-        geometry.setAttribute('aRank', new THREE.BufferAttribute(ranks, 1));
+        geometry.setAttribute('position', new THREE.BufferAttribute(sorted(positions, 3), 3));
+        geometry.setAttribute('aColor', new THREE.BufferAttribute(sorted(colors, 3), 3));
+        geometry.setAttribute('aSize', new THREE.BufferAttribute(sorted(sizes, 1), 1));
+        geometry.setAttribute('aPhase', new THREE.BufferAttribute(sorted(phases, 1), 1));
+        geometry.setAttribute('aRank', new THREE.BufferAttribute(sorted(ranks, 1), 1));
 
 
         this.material = new THREE.ShaderMaterial({
@@ -203,6 +223,15 @@ export class Stars {
         this.object.frustumCulled = false;
 
         this.time = 0;
+
+    }
+
+
+    // Tryb ziemniaka: tylko część najjaśniejszych gwiazd (share 0-1).
+
+    setLowDetail(on, share) {
+
+        this.object.geometry.setDrawRange(0, on ? Math.ceil(STAR_COUNT * share) : Infinity);
 
     }
 

@@ -56,6 +56,8 @@ export const TEXTS = {
         controls: 'Sterowanie',
         other: 'Inne'
     },
+    potato: (on) => `Tryb ziemniaka: ${on ? 'Wł.' : 'Wył.'}`,
+    potatoReloadNote: 'Wygładzanie krawędzi zmieni się po odświeżeniu strony (F5).',
     mouseSensitivity: (value) => `Czułość myszy: ${value}%`,
     invertMouse: (on) => `Odwrócona mysz: ${on ? 'Wł.' : 'Wył.'}`,
     fov: (value) => `Pole widzenia: ${value}°`,

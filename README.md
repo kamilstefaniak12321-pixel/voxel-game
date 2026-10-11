@@ -49,6 +49,7 @@ W menu (z ekranu tytułowego i z pauzy) są trzy zakładki:
 
 **Obraz**
 
+- **tryb ziemniaka** - patrz niżej,
 - **zasięg widzenia** (24-384 bloków) - jak daleko widać prawdziwe bloki,
 - **daleki teren** (do 4096 bloków albo wyłączony) - uproszczony,
   rozmyty teren za zasięgiem widzenia, aż po horyzont,
@@ -73,6 +74,27 @@ Zmiany działają od razu, także w grze pod pauzą, i zapisują się
 w przeglądarce. Wartości domyślne są w `src/config.js`, a lista ustawień
 z zakresami w `src/settings/Settings.js`. Wszystko da się też zmienić
 z czatu: `/ustaw` (lista), np. `/ustaw zasieg 256`.
+
+## Tryb ziemniaka
+
+Dla bardzo słabych komputerów (i komputerów bez karty graficznej).
+Wszystko w grze działa tak samo - niebo, zaćmienia, daleki teren,
+światło - tylko prościej:
+
+- rozdzielczość najwyżej 50%, bez wygładzania krawędzi,
+- zasięg widzenia najwyżej 32 bloki,
+- daleki teren z rzadszą siatką (~9 razy mniej trójkątów),
+- bez Drogi Mlecznej i galaktyk, 30% najjaśniejszych gwiazd,
+- kolor mgły liczony w rogach ścian, a nie w każdym pikselu.
+
+Włącza się go w *Ustawienia → Obraz → Tryb ziemniaka*, komendą
+`/ziemniak` albo otwierając grę z dopiskiem `?ziemniak` w adresie
+(np. `http://localhost:5500/index.html?ziemniak`; `?ziemniak=0`
+wyłącza). Twoje własne ustawienia zostają - po wyłączeniu trybu
+wszystko wraca. Wygładzanie krawędzi zmienia się dopiero po
+odświeżeniu strony. Liczby da się zmienić w `src/config.js`
+(`POTATO_...`). Bez karty graficznej gra w trybie ziemniaka rysuje
+się 5-10 razy szybciej.
 
 ## Wydajność
 

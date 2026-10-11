@@ -157,7 +157,8 @@ z generatora terenu (`TerrainGenerator.getHeightLod`) - te same góry
 i wzgórza, które wygenerowałyby się tam naprawdę, ale bez bloków.
 
 - **Kafelki** (drzewo czwórkowe): 32 x 32 kratki, blisko gracza kratka
-  ma 4 bloki, dalej 8, 16, 32, 64 (`MIN_SPACING`, `LOD_DISTANCE`).
+  ma 4 bloki, dalej 8, 16, 32, 64 (`DETAIL`; w trybie ziemniaka
+  rzadsza siatka `POTATO_DETAIL`).
   Rzadsze kafelki liczą mniej oktaw szumu - z daleka drobnych pagórków
   nie widać, a próbkowane co kilkadziesiąt bloków dałyby "kolce".
   Kafelki leżą w stałych miejscach świata, budują się z limitem czasu
@@ -286,4 +287,5 @@ w scenie świata; kolor z `SkyState` (różowe o zachodzie, szare nocą).
 | daleki teren: dokładność kafelków, kolory | `src/world/FarTerrain.js` |
 | gęstość mgiełki w oddali | `src/config.js` (`FAR_HAZE_DISTANCE`, `FAR_HAZE_MAX`) |
 | jak bloki zlewają się w daleki teren, suwak jasności | `src/rendering/viewUniforms.js`, `BlockRenderData.js` |
+| co upraszcza tryb ziemniaka | `src/config.js` (`POTATO_...`), `FarTerrain.js` (`POTATO_DETAIL`), define `POTATO` w shaderach bloków i dalekiego terenu |
 | komendy do sprawdzania | `src/commands/gameCommands.js`, opis: `docs/komendy.md` |

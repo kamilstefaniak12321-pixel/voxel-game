@@ -28,6 +28,7 @@ const STORAGE_KEY = 'voxel-game-settings';
 export const SETTINGS_DEFAULTS = {
 
     // Obraz
+    potato: false,                                 // tryb ziemniaka (config.js: POTATO_...)
     viewDistance: DEFAULT_VIEW_DISTANCE,           // bloki (prawdziwe chunki)
     farTerrain: DEFAULT_FAR_TERRAIN,               // bloki (0 = bez dalekiego terenu)
     fov: DEFAULT_FOV,                              // stopnie

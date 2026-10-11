@@ -126,6 +126,12 @@ export class Menu {
         this.startupPotato = settings.get('potato');
 
 
+        // Aplikacja na komputer: { version, update, install } albo null
+        // (w przeglądarce). Pokazywane na ekranie tytułowym.
+
+        this.appInfo = null;
+
+
         // Co robi ESC na danym ekranie (np. "Wróć").
 
         this.onEscape = null;
@@ -202,6 +208,81 @@ export class Menu {
             button(TEXTS.play, () => this.handlers.openWorldList()),
             button(TEXTS.settings, () => this.showSettings('title'))
         );
+
+        screen.append(this.appInfoElement());
+
+    }
+
+    // --------------------------------------------------------
+    // Aplikacja na komputer: wersja i aktualizacje
+    // --------------------------------------------------------
+
+    // info - { version, install() } (main.js, tylko w aplikacji)
+
+    setAppInfo(info) {
+
+        this.appInfo = { update: null, ...info };
+
+        this.refreshAppInfo();
+
+    }
+
+
+    // status - { state: 'downloading' | 'ready' | 'error', version, percent }
+
+    setUpdateStatus(status) {
+
+        if (!this.appInfo) {
+            return;
+        }
+
+        this.appInfo.update = status;
+
+        this.refreshAppInfo();
+
+    }
+
+
+    refreshAppInfo() {
+
+        this.root.querySelector('.menu-app-info')?.replaceWith(this.appInfoElement());
+
+    }
+
+
+    // Lewy dolny róg ekranu tytułowego (w przeglądarce pusty).
+
+    appInfoElement() {
+
+        const box = el('div', 'menu-app-info');
+
+        const info = this.appInfo;
+
+        if (!info) {
+            return box;
+        }
+
+
+        box.append(el('span', 'menu-version', TEXTS.appVersion(info.version)));
+
+        const update = info.update;
+
+        if (update?.state === 'downloading') {
+            box.append(el('span', 'menu-update', TEXTS.updateDownloading(update.version, update.percent)));
+        }
+        else if (update?.state === 'ready') {
+
+            box.append(
+                el('span', 'menu-update', TEXTS.updateReady(update.version)),
+                button(TEXTS.installUpdate, () => info.install())
+            );
+
+        }
+        else if (update?.state === 'error') {
+            box.append(el('span', 'menu-update menu-danger', TEXTS.updateError));
+        }
+
+        return box;
 
     }
 

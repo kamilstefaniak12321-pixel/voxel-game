@@ -14,3 +14,7 @@ desktop.ini
 
 # Biblioteki pobierane przez npm (gdyby kiedyś doszły)
 node_modules/
+
+# Zbudowane instalatory aplikacji (npm run dist) - trafiają do wydań,
+# nie do gita
+dist/

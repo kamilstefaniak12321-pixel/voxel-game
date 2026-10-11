@@ -683,11 +683,16 @@ export class InventoryScreen {
             return;
         }
 
+        // Przytrzymany E (powtarzanie klawisza) nie zamyka okna -
+        // dopiero kolejne wciśnięcie.
+
         if (event.code === 'KeyE') {
 
             event.preventDefault();
 
-            this.handlers.close(true);
+            if (!event.repeat) {
+                this.handlers.close(true);
+            }
 
             return;
 

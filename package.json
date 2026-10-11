@@ -1,0 +1,55 @@
+{
+    "name": "voxel-game",
+    "productName": "Voxel Game",
+    "version": "0.1.0",
+    "description": "Gra voxelowa - aplikacja na komputer (Windows)",
+    "author": "Kamil",
+    "private": true,
+    "main": "desktop/main.js",
+    "scripts": {
+        "start": "electron .",
+        "dist": "electron-builder --win --publish never"
+    },
+    "dependencies": {
+        "electron-updater": "6.8.9"
+    },
+    "devDependencies": {
+        "electron": "44.4.5",
+        "electron-builder": "26.15.3"
+    },
+    "build": {
+        "appId": "pl.kamil.voxelgame",
+        "productName": "Voxel Game",
+        "directories": {
+            "output": "dist"
+        },
+        "files": [
+            "index.html",
+            "src/**/*",
+            "assets/**/*",
+            "lib/**/*",
+            "desktop/**/*",
+            "package.json"
+        ],
+        "win": {
+            "target": "nsis",
+            "icon": "desktop/icon.png"
+        },
+        "nsis": {
+            "oneClick": false,
+            "perMachine": false,
+            "allowToChangeInstallationDirectory": true,
+            "createDesktopShortcut": true,
+            "shortcutName": "Voxel Game",
+            "artifactName": "Voxel-Game-${version}-instalator.${ext}",
+            "installerLanguages": ["pl_PL"],
+            "language": "1045"
+        },
+        "publish": {
+            "provider": "github",
+            "owner": "kamilstefaniak12321-pixel",
+            "repo": "voxel-game-wydania",
+            "releaseType": "release"
+        }
+    }
+}

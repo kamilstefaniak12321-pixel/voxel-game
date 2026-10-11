@@ -1,0 +1,114 @@
+# ------------------------------------------------------------
+# APLIKACJA NA KOMPUTER - budowanie instalatora dla Windowsa
+#
+# - Pull request zmieniający aplikację (desktop/, package.json...) -
+#   tylko próbne zbudowanie (instalator do pobrania w zakładce
+#   Actions -> ten przebieg -> Artifacts), bez wydania.
+# - Wypchnięcie na main: jeśli wersji z package.json nie ma jeszcze
+#   w repozytorium z wydaniami (package.json -> build.publish), to
+#   instalator jest budowany i publikowany jako nowe wydanie -
+#   zainstalowane gry same go pobiorą. Ta sama wersja = nic się nie
+#   dzieje, więc nowe wydanie = podniesienie "version" w package.json.
+# - Actions -> "Aplikacja na komputer" -> Run workflow - to samo ręcznie.
+#
+# Wymaga sekretu WYDANIA_TOKEN (token z prawem zapisu do repozytorium
+# z wydaniami). Bez niego instalator jest tylko budowany. Opis:
+# docs/aplikacja.md.
+# ------------------------------------------------------------
+
+name: Aplikacja na komputer
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    paths:
+      - 'desktop/**'
+      - 'package.json'
+      - 'package-lock.json'
+      - '.github/workflows/aplikacja.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+
+  # Czy trzeba coś budować i czy publikować?
+  wersja:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.check.outputs.version }}
+      build: ${{ steps.check.outputs.build }}
+      publish: ${{ steps.check.outputs.publish }}
+    steps:
+      - uses: actions/checkout@v5
+
+      - id: check
+        env:
+          WYDANIA_TOKEN: ${{ secrets.WYDANIA_TOKEN }}
+          EVENT: ${{ github.event_name }}
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          REPO=$(node -p "const p = require('./package.json').build.publish; p.owner + '/' + p.repo")
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
+          if [ "$EVENT" = "pull_request" ]; then
+            echo "Pull request - próbne zbudowanie wersji $VERSION."
+            echo "build=true" >> "$GITHUB_OUTPUT"
+            echo "publish=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          if [ -z "$WYDANIA_TOKEN" ]; then
+            echo "::warning::Brak sekretu WYDANIA_TOKEN - instalator nie zostanie opublikowany (docs/aplikacja.md)."
+            if [ "$EVENT" = "workflow_dispatch" ]; then BUILD=true; else BUILD=false; fi
+            echo "build=$BUILD" >> "$GITHUB_OUTPUT"
+            echo "publish=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
+            -H "Authorization: Bearer $WYDANIA_TOKEN" \
+            -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/$REPO/releases/tags/v$VERSION")
+
+          if [ "$STATUS" = "200" ]; then
+            echo "Wersja $VERSION jest już wydana w $REPO - nic do zrobienia."
+            echo "build=false" >> "$GITHUB_OUTPUT"
+            echo "publish=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "Nowa wersja $VERSION - budowanie i wydanie w $REPO."
+            echo "build=true" >> "$GITHUB_OUTPUT"
+            echo "publish=true" >> "$GITHUB_OUTPUT"
+          fi
+
+  windows:
+    needs: wersja
+    if: needs.wersja.outputs.build == 'true'
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Zbuduj instalator (bez wydania)
+        if: needs.wersja.outputs.publish != 'true'
+        run: npx electron-builder --win --x64 --publish never
+
+      - name: Zbuduj instalator i opublikuj wydanie
+        if: needs.wersja.outputs.publish == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.WYDANIA_TOKEN }}
+        run: npx electron-builder --win --x64 --publish always
+
+      - uses: actions/upload-artifact@v6
+        with:
+          name: Voxel-Game-${{ needs.wersja.outputs.version }}-instalator
+          path: dist/*.exe
+          retention-days: 14

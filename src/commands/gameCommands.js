@@ -8,7 +8,8 @@ import {
 import {
     BLOCK_TYPES,
     blockExists,
-    getBlockDefinition
+    getBlockDefinition,
+    getBlockTypeById
 } from '../blocks/BlockRegistry.js';
 
 import {
@@ -37,6 +38,8 @@ import { LANDFORMS, RELIEFS } from '../world/terrain/landforms.js';
 import { terrainName } from '../world/terrain/generators.js';
 
 import { MAP_LAYERS, MAP_SCALES } from '../ui/TerrainMap.js';
+
+import { ROCK_INFO, blockNamePl, blockFromWord } from '../world/terrain/rocks.js';
 
 import {
     CHUNK_SIZE,
@@ -231,11 +234,15 @@ const PHASE_WORDS = [
 
 function blockArgument(text) {
 
-    const name = simplify(text ?? '');
+    const word = simplify(text ?? '');
 
-    if (['powietrze', 'air', 'nic'].includes(name)) {
+    if (['powietrze', 'air', 'nic'].includes(word)) {
         return null;
     }
+
+    // Polskie nazwy też działają: granit, wapien, piaskowiec, trawa...
+
+    const name = blockFromWord(word) ?? word;
 
     if (!blockExists(name)) {
         throw new CommandError(`Nie ma bloku "${text ?? ''}". Lista: /bloki`);
@@ -389,7 +396,78 @@ function terrainText(world, x, z) {
         `${sea !== null ? ` (${info.height - sea >= 0 ? '+' : ''}${info.height - sea} nad morzem)` : ''} | ` +
         `${RELIEFS[info.relief] ?? info.relief} | forma: ${LANDFORMS[info.landform]?.name ?? info.landform} | ` +
         `powierzchnia: ${SURFACE_NAMES[info.surface] ?? info.surface}` +
+        (info.rock ? ` | skała pod spodem: ${blockNamePl(info.rock)} (/skaly)` : '') +
         (fields ? `\nPola: ${fields}` : '');
+
+}
+
+
+// Kolumna bloków (x, z) z generatora jako tekst: od góry, kolejne
+// bloki tej samej skały razem - np. "trawa 1, ziemia 3, wapień 8 (y 50-57)".
+
+function columnText(generator, x, z) {
+
+    const { blocks, top } = generator.columnBlocks(x, z);
+
+    const runs = [];
+
+    for (let y = top; y >= 0; y--) {
+
+        const type = getBlockTypeById(blocks[y]);
+
+        const last = runs[runs.length - 1];
+
+        if (last && last.type === type) {
+            last.bottom = y;
+        }
+        else {
+            runs.push({ type, top: y, bottom: y });
+        }
+
+    }
+
+
+    const lepidolite = runs.filter((run) => run.type === 'lepidolite');
+
+    const text = runs.map(({ type, top: from, bottom }) =>
+        `${blockNamePl(type)} ${from - bottom + 1} (y ${bottom === from ? from : `${bottom}-${from}`})`
+    ).join(', ');
+
+    return `Kolumna ${x}, ${z} od góry: ${text}` +
+        (lepidolite.length > 0
+            ? ` | Lepidolit: ${lepidolite.reduce((sum, run) => sum + run.top - run.bottom + 1, 0)} bl.`
+            : ' | Lepidolitu tu nie ma (/skaly zyla - najbliższa żyła).');
+
+}
+
+
+// Punkty na pierścieniach coraz dalej od (x0, z0), co `step` bloków.
+// test(x, z) zwraca wynik albo null - pierwszy wynik kończy szukanie.
+
+function searchRings(x0, z0, maxRadius, step, test) {
+
+    for (let radius = 0; radius <= maxRadius; radius += step) {
+
+        const count = radius === 0 ? 1 : Math.ceil(2 * Math.PI * radius / step);
+
+        for (let k = 0; k < count; k++) {
+
+            const angle = 2 * Math.PI * k / count;
+
+            const x = Math.round(x0 + Math.cos(angle) * radius);
+            const z = Math.round(z0 + Math.sin(angle) * radius);
+
+            const result = test(x, z);
+
+            if (result) {
+                return { x, z, distance: radius, ...result };
+            }
+
+        }
+
+    }
+
+    return null;
 
 }
 
@@ -1425,8 +1503,9 @@ export const GAME_COMMANDS = [
     {
         name: 'demo',
         aliases: [],
-        usage: '/demo swiatlo | /demo kula [kolor | usun]',
-        description: 'Sceny do sprawdzania nowości: pokój z kolorowymi lampami, krążąca kula dynamicznego światła.',
+        usage: '/demo swiatlo | /demo kula [kolor | usun] | /demo skaly',
+        description: 'Sceny do sprawdzania nowości: pokój z kolorowymi lampami, krążąca kula dynamicznego światła, ' +
+            'odkrywka (wykop do dna świata - widać warstwy skał).',
 
         run(args, ctx) {
 
@@ -1435,6 +1514,11 @@ export const GAME_COMMANDS = [
 
             if (what === 'swiatlo') {
                 return buildLightDemo(ctx);
+            }
+
+
+            if (['skaly', 'odkrywka'].includes(what)) {
+                return buildRockDemo(ctx);
             }
 
 
@@ -1472,7 +1556,7 @@ export const GAME_COMMANDS = [
 
         complete(args) {
 
-            if (args.length === 1) return ['swiatlo', 'kula'];
+            if (args.length === 1) return ['swiatlo', 'kula', 'skaly'];
             if (args.length === 2 && simplify(args[0]) === 'kula') return [...Object.keys(COLOR_NAMES), 'usun'];
 
             return [];
@@ -1593,10 +1677,245 @@ export const GAME_COMMANDS = [
 
 
     {
+        name: 'skaly',
+        aliases: ['rocks', 'geologia'],
+        usage: '/skaly | /skaly statystyki [promien] | /skaly znajdz <skala> [promien] [tp] | /skaly zyla [promien] [tp] | /skaly przekroj',
+        description: 'Skały pod ziemią: kolumna pod graczem, udział skał w okolicy, szukanie odsłoniętych skał i żył lepidolitu, przekrój.',
+
+        run(args, { world, player, game, map }) {
+
+            const generator = world.generator;
+
+            if (!generator.columnBlocks) {
+                throw new CommandError('Ten typ terenu nie ma opisu skał.');
+            }
+
+
+            const px = Math.floor(player.pos.x);
+            const pz = Math.floor(player.pos.z);
+
+            const action = simplify(args[0] ?? '');
+
+
+            if (!action) {
+                return columnText(generator, px, pz);
+            }
+
+
+            const flags = args.slice(1).map(simplify);
+
+            const teleport = flags.includes('tp');
+
+            const radiusOf = (fallback, max) => {
+
+                const text = args.slice(1).find((arg) => /^\d+$/.test(arg));
+
+                const radius = text === undefined ? fallback : Number(text);
+
+                if (radius < 16 || radius > max) {
+                    throw new CommandError(`Promień: od 16 do ${max} bloków`);
+                }
+
+                return radius;
+
+            };
+
+            const moveTo = (x, z) => {
+
+                world.ensureColumnLoaded(x, z);
+
+                player.pos.set(x + 0.5, world.getSurfaceY(x, z), z + 0.5);
+                player.vel.set(0, 0, 0);
+                player.updateCamera();
+
+            };
+
+
+            if (['statystyki', 'stat', 'stats'].includes(action)) {
+
+                const radius = radiusOf(128, 1024);
+
+                const step = Math.max(1, Math.ceil(radius / 20));
+
+                const counts = {};
+
+                let columns = 0;
+                let rock = 0;
+                let exposed = 0;
+
+                const buffer = new Uint8Array(CHUNK_HEIGHT);
+
+                for (let dz = -radius; dz <= radius; dz += step) {
+
+                    for (let dx = -radius; dx <= radius; dx += step) {
+
+                        if (dx * dx + dz * dz > radius * radius) {
+                            continue;
+                        }
+
+                        const { blocks, height } = generator.columnBlocks(px + dx, pz + dz, buffer);
+
+                        columns++;
+
+                        for (let y = 0; y <= height; y++) {
+
+                            const type = getBlockTypeById(blocks[y]);
+
+                            if (type in ROCK_INFO) {
+                                counts[type] = (counts[type] ?? 0) + 1;
+                                rock++;
+                            }
+
+                        }
+
+                        if (getBlockTypeById(blocks[height]) === 'lepidolite') {
+                            exposed++;
+                        }
+
+                    }
+
+                }
+
+
+                const shares = Object.entries(counts)
+                    .sort((a, b) => b[1] - a[1])
+                    .map(([type, count]) => `${blockNamePl(type)} ${(100 * count / rock).toFixed(type === 'lepidolite' ? 2 : 1)}%`)
+                    .join(', ');
+
+                return `Skały w promieniu ${radius} bl. (${columns} kolumn co ${step} bl.): ${shares || 'brak'}. ` +
+                    `Lepidolit na wierzchu: ${exposed} kolumn.`;
+
+            }
+
+
+            if (['znajdz', 'find'].includes(action)) {
+
+                const target = blockFromWord(flags[0] ?? '');
+
+                if (!target || !(target in ROCK_INFO)) {
+                    throw new CommandError(`Podaj skałę: ${Object.values(ROCK_INFO).map((info) => info.word).join(', ')}`);
+                }
+
+
+                // Odsłonięte skały zajmują duże plamy - wystarczy rzadka
+                // siatka. Lepidolit wychodzi na wierzch w małych miejscach,
+                // więc szukamy gęsto (i bliżej).
+
+                const lepidolite = target === 'lepidolite';
+
+                const radius = radiusOf(lepidolite ? 256 : 1500, lepidolite ? 512 : 4000);
+
+                const found = searchRings(px, pz, radius, lepidolite ? 2 : 12, (x, z) =>
+                    generator.surfaceBlock(x, z) === target ? {} : null
+                );
+
+                if (!found) {
+
+                    throw new CommandError(
+                        `Nie ma odsłoniętego: ${blockNamePl(target)} w promieniu ${radius} bl.` +
+                        (lepidolite ? ' Lepidolit rzadko wychodzi na wierzch - pod ziemią szukaj: /skaly zyla' : '')
+                    );
+
+                }
+
+                if (teleport) {
+
+                    moveTo(found.x, found.z);
+
+                    return `Przeniesiono: ${blockNamePl(target)} na wierzchu, ${found.x}, ${found.z} (${found.distance} bl. stąd).`;
+
+                }
+
+                return `Najbliżej: ${blockNamePl(target)} na wierzchu, ${found.x}, ${found.z} (ok. ${found.distance} bl. stąd). ` +
+                    `Przeniesienie: /skaly znajdz ${flags[0]} tp`;
+
+            }
+
+
+            if (['zyla', 'zyly', 'vein'].includes(action)) {
+
+                const radius = radiusOf(192, 512);
+
+                const buffer = new Uint8Array(CHUNK_HEIGHT);
+
+                const lepidoliteId = getBlockDefinition('lepidolite').id;
+
+                const found = searchRings(px, pz, radius, 4, (x, z) => {
+
+                    const { blocks, height } = generator.columnBlocks(x, z, buffer);
+
+                    for (let y = height; y >= 0; y--) {
+
+                        if (blocks[y] === lepidoliteId) {
+                            return { y, height };
+                        }
+
+                    }
+
+                    return null;
+
+                });
+
+                if (!found) {
+                    throw new CommandError(`Nie ma żyły lepidolitu w promieniu ${radius} bl. Spróbuj większy promień albo inne miejsce (żyły są w granicie - pod górami płycej).`);
+                }
+
+                const depth = found.height - found.y;
+
+                if (teleport) {
+
+                    moveTo(found.x, found.z);
+
+                    return `Przeniesiono nad żyłę lepidolitu: ${found.x}, ${found.z} - żyła ${depth} bl. pod tobą (y ${found.y}).`;
+
+                }
+
+                return `Najbliższa żyła lepidolitu: ${found.x}, ${found.z}, y ${found.y} (${depth} bl. pod powierzchnią, ` +
+                    `ok. ${found.distance} bl. stąd). Przeniesienie: /skaly zyla tp`;
+
+            }
+
+
+            if (['przekroj', 'section'].includes(action)) {
+
+                if (!map) {
+                    throw new CommandError('Mapa jest niedostępna.');
+                }
+
+                map.open(generator, player.pos.x, player.pos.z, 'przekroj', 1, player.yaw);
+
+                return 'Przekrój terenu w kierunku patrzenia (to samo co /mapa przekroj). Zamknięcie: M albo /mapa wyl.';
+
+            }
+
+
+            throw usageError(this);
+
+        },
+
+        complete(args) {
+
+            if (args.length === 1) return ['statystyki', 'znajdz', 'zyla', 'przekroj'];
+
+            const action = simplify(args[0]);
+
+            if (action === 'znajdz' && args.length === 2) return Object.values(ROCK_INFO).map((info) => info.word);
+            if (action === 'znajdz' && args.length >= 3) return ['tp', '500', '3000'];
+            if (action === 'zyla') return ['tp', '256', '512'];
+            if (action === 'statystyki' && args.length === 2) return ['64', '128', '512'];
+
+            return [];
+
+        }
+    },
+
+
+    {
         name: 'mapa',
         aliases: ['map'],
         usage: '/mapa [warstwa] [skala] | /mapa wyl   (skala = bloki na punkt: 1, 2, 4, 8, 16, 32)',
-        description: 'Mapa terenu z góry: wysokość, formy terenu, niziny/wyżyny/góry, pola generatora. Klawisz M.',
+        description: 'Mapa terenu z góry: wysokość, formy terenu, niziny/wyżyny/góry, skały, pola generatora; ' +
+            'przekrój pionowy w kierunku patrzenia (/mapa przekroj). Klawisz M.',
 
         run(args, { game, player, map }) {
 
@@ -1623,7 +1942,7 @@ export const GAME_COMMANDS = [
 
 
             let layer = map.layer;
-            let scale = map.scale;
+            let scale = null;
 
             for (const arg of args) {
 
@@ -1642,10 +1961,25 @@ export const GAME_COMMANDS = [
             }
 
 
-            map.open(game.world.generator, player.pos.x, player.pos.z, layer, scale);
+            // Bez podanej skali: przekrój z bliska (1 blok na punkt),
+            // a po przekroju zwykła mapa wraca do 8.
+
+            if (scale === null) {
+
+                scale =
+                    layer === 'przekroj' ? 1 :
+                    map.layer === 'przekroj' ? 8 :
+                    map.scale;
+
+            }
+
+
+            map.open(game.world.generator, player.pos.x, player.pos.z, layer, scale, player.yaw);
 
             return `Mapa: ${MAP_LAYERS[layer]}, 1 punkt = ${scale} bl. ` +
-                'Przy otwartym czacie wskaż punkt myszą - pokaże współrzędne i formę terenu.';
+                (layer === 'przekroj'
+                    ? 'Przy otwartym czacie wskaż punkt myszą - pokaże wysokość i skałę.'
+                    : 'Przy otwartym czacie wskaż punkt myszą - pokaże współrzędne i formę terenu.');
 
         },
 
@@ -1953,6 +2287,87 @@ export const GAME_COMMANDS = [
 // /demo swiatlo - zamknięty pokój z kolorowymi lampami przed
 // graczem. Gracz trafia do środka.
 // ------------------------------------------------------------
+
+// Odkrywka: przed graczem (w stronę, w którą patrzy) długi wykop aż
+// do y = 1. Patrząc wzdłuż niego widać na ścianach warstwy skał
+// (granit, piaskowiec, wapień...) i czasem żyłę lepidolitu.
+
+function buildRockDemo({ player, world }) {
+
+    const p = player.pos;
+
+    // Kierunek do przodu, wyrównany do osi X albo Z (proste ściany).
+
+    const forwardX = -Math.sin(player.yaw);
+    const forwardZ = -Math.cos(player.yaw);
+
+    const alongX = Math.abs(forwardX) >= Math.abs(forwardZ);
+
+    const ax = alongX ? Math.sign(forwardX) : 0;
+    const az = alongX ? 0 : Math.sign(forwardZ);
+
+    const sx = az !== 0 ? 1 : 0;    // w poprzek
+    const sz = ax !== 0 ? 1 : 0;
+
+    const startX = Math.floor(p.x);
+    const startZ = Math.floor(p.z);
+
+
+    // Najwyższy teren w miejscu wykopu - tyle trzeba usunąć.
+
+    const HALF = 4;
+
+    let top = 1;
+
+    for (let a = 3; a < 31; a++) {
+
+        for (let s = -HALF; s <= HALF; s++) {
+
+            const x = startX + ax * a + sx * s;
+            const z = startZ + az * a + sz * s;
+
+            world.ensureColumnLoaded(x, z);
+
+            top = Math.max(top, world.getSurfaceY(x, z));
+
+        }
+
+    }
+
+
+    // Długość tak, żeby zmieścić się w ~16 tys. bloków (w górach krótszy).
+
+    const length = Math.max(8, Math.min(28, Math.floor(16384 / ((2 * HALF + 1) * top))));
+
+    let changed = 0;
+
+    for (let y = top; y >= 1; y--) {
+
+        for (let a = 3; a < 3 + length; a++) {
+
+            for (let s = -HALF; s <= HALF; s++) {
+
+                if (world.setBlock(startX + ax * a + sx * s, y, startZ + az * a + sz * s, null)) {
+                    changed++;
+                }
+
+            }
+
+        }
+
+    }
+
+
+    // Patrzymy wzdłuż wykopu, w dół.
+
+    player.pitch = -0.6;
+    player.updateCamera();
+
+    return `Odkrywka przed tobą: ${2 * HALF + 1} x ${length} bloków, od y ${top} do 1 (${changed} bloków). ` +
+        'Na ścianach widać warstwy skał. Uwaga: to zmienia świat (zapisze się).';
+
+}
+
 
 function buildLightDemo({ player, world }) {
 

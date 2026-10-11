@@ -15,8 +15,13 @@ import { RealisticGenerator } from './RealisticGenerator.js';
 //   generateChunk(chunk) - wypełnia chunk blokami
 //   farSurface(x, z, spacing) -> { top, kind } - dla dalekiego
 //                          terenu; kind: 'grass', 'rock', 'sand', 'water'
+//                          albo nazwa skały ('granite', 'limestone'...)
 //   describe(x, z)       - opis miejsca: wysokość, pas wysokości,
-//                          forma terenu, pola (/teren, /mapa)
+//                          forma terenu, skała pod glebą (rock), pola
+//                          (/teren, /mapa)
+//   columnBlocks(x, z)   - bloki jednej kolumny, dokładnie jak w chunku:
+//                          { height, kind, top, blocks } (/mapa przekroj,
+//                          /skaly)
 //   findSpawn(x, z)      - miejsce startu nowego świata
 //
 // Nowy typ terenu = nowa klasa z tymi metodami + wpis niżej.

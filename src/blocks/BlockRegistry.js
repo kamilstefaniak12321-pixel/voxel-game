@@ -241,6 +241,108 @@ export const BLOCK_TYPES = {
             all: 'water'
         }
 
+    },
+
+
+    // ------------------------------------------------------------
+    // SKAŁY - budowa geologiczna terenu realistycznego
+    // (src/world/terrain/Geology.js). Zwykły kamień (stone) jest
+    // skałą "domyślną", te są w swoich miejscach:
+    // ------------------------------------------------------------
+
+    // Granit - podłoże pod całym lądem; pod górami podchodzi pod
+    // samą powierzchnię (granitowe szczyty). Tylko w nim są żyły
+    // lepidolitu.
+
+    granite: {
+
+        id: 13,
+        name: 'Granite',
+
+        solid: true,
+
+        textures: {
+            all: 'granite'
+        },
+
+        randomRotation: ['top', 'bottom']
+
+    },
+
+
+    // Wapień - warstwy na wyżynach i płaskowyżach (białe skałki
+    // i urwiska).
+
+    limestone: {
+
+        id: 14,
+        name: 'Limestone',
+
+        solid: true,
+
+        textures: {
+            all: 'limestone'
+        }
+
+    },
+
+
+    // Piaskowiec - warstwy na nizinach, wybrzeżach i płaskowyżach
+    // (pod piaskiem plaż).
+
+    sandstone: {
+
+        id: 15,
+        name: 'Sandstone',
+
+        solid: true,
+
+        textures: {
+            top: 'sandstone_top',
+            side: 'sandstone_side',
+            bottom: 'sandstone_top'
+        },
+
+        randomRotation: ['top', 'bottom']
+
+    },
+
+
+    // Łupek - skała gór (nad granitowym trzonem).
+
+    slate: {
+
+        id: 16,
+        name: 'Slate',
+
+        solid: true,
+
+        textures: {
+            top: 'slate_top',
+            side: 'slate_side',
+            bottom: 'slate_top'
+        },
+
+        randomRotation: ['top', 'bottom']
+
+    },
+
+
+    // Bazalt - najgłębsze podłoże i dno głębokiego morza.
+
+    basalt: {
+
+        id: 17,
+        name: 'Basalt',
+
+        solid: true,
+
+        textures: {
+            top: 'basalt_top',
+            side: 'basalt_side',
+            bottom: 'basalt_top'
+        }
+
     }
 
 };

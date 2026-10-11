@@ -2,16 +2,16 @@ import {
     CHUNK_SIZE,
     CHUNK_HEIGHT,
     SEA_LEVEL,
-    TERRAIN_DIRT_DEPTH,
-    LEPIDOLITE_VEIN_SCALE,
-    LEPIDOLITE_VEIN_THRESHOLD
+    TERRAIN_DIRT_DEPTH
 } from '../../config.js';
 
-import { getBlockId } from '../../blocks/BlockRegistry.js';
+import { getBlockId, getBlockTypeById } from '../../blocks/BlockRegistry.js';
 
 import { Noise, seedToNumber } from '../Noise.js';
 
 import * as SHAPE from './TerrainShape.js';
+
+import { Geology } from './Geology.js';
 
 // ------------------------------------------------------------
 // GENERATOR TERENU "REALISTYCZNY" (w budowie)
@@ -34,6 +34,9 @@ import * as SHAPE from './TerrainShape.js';
 // wyżynami i górami są pogórza i krawędzie, a nie schodki.
 // Wynik zależy tylko od seeda i pozycji - każdy chunk można
 // wygenerować osobno i zawsze pasuje do sąsiadów.
+//
+// Pod powierzchnią - skały według budowy geologicznej (Geology.js):
+// granit, kamień, wapień, piaskowiec, łupek, bazalt, żyły lepidolitu.
 //
 // Woda jest na razie WSTĘPNA (morze bez rzek i jezior) - patrz
 // docs/generator-terenu.md, etapy 2-3.
@@ -109,52 +112,6 @@ export const DETAIL_MEDIUM = 1;
 export const DETAIL_COARSE = 2;
 
 
-// Żyły lepidolitu: szum 3D liczymy w punktach co VEIN_STEP bloków,
-// a między nimi bierzemy średnią z sąsiednich punktów - 8 razy mniej
-// liczenia szumu niż w każdym bloku (w wysokich górach to większość
-// czasu generowania chunka), a żyły wyglądają prawie tak samo.
-
-const VEIN_STEP = 2;
-const VEIN_GRID = CHUNK_SIZE / VEIN_STEP + 1;
-const VEIN_LAYER = VEIN_GRID * VEIN_GRID;
-
-// Średnia z punktów jest trochę łagodniejsza niż sam szum - z progiem
-// niższym o 0.04 lepidolitu jest tyle samo co w klasycznym terenie.
-
-const VEIN_THRESHOLD = LEPIDOLITE_VEIN_THRESHOLD - 0.04;
-
-// Wartość szumu żył w bloku (lx, y, lz) chunka - z siatki veinGrid,
-// liniowo między punktami (przy VEIN_STEP 2: punkt albo średnia).
-
-function veinAt(grid, lx, y, lz) {
-
-    const tx = (lx % VEIN_STEP) / VEIN_STEP;
-    const ty = (y % VEIN_STEP) / VEIN_STEP;
-    const tz = (lz % VEIN_STEP) / VEIN_STEP;
-
-    const i = (Math.floor(y / VEIN_STEP) * VEIN_GRID + Math.floor(lz / VEIN_STEP)) * VEIN_GRID +
-        Math.floor(lx / VEIN_STEP);
-
-    const lerp = (a, b, t) => a + (b - a) * t;
-
-    const bottom = lerp(
-        lerp(grid[i], grid[i + 1], tx),
-        lerp(grid[i + VEIN_GRID], grid[i + VEIN_GRID + 1], tx),
-        tz
-    );
-
-    const j = i + VEIN_LAYER;
-
-    const upper = lerp(
-        lerp(grid[j], grid[j + 1], tx),
-        lerp(grid[j + VEIN_GRID], grid[j + VEIN_GRID + 1], tx),
-        tz
-    );
-
-    return lerp(bottom, upper, ty);
-
-}
-
 // ------------------------------------------------------------
 
 export class RealisticGenerator {
@@ -194,8 +151,7 @@ export class RealisticGenerator {
             depressions: noise(15),
             temperature: noise(16),
             humidity: noise(17),
-            rockLine: noise(18),
-            veins: noise(19)
+            rockLine: noise(18)
         };
 
 
@@ -205,8 +161,24 @@ export class RealisticGenerator {
             grass: getBlockId('grass'),
             sand: getBlockId('sand'),
             water: getBlockId('water'),
+            granite: getBlockId('granite'),
             lepidolite: getBlockId('lepidolite')
         };
+
+
+        // Skały pod ziemią (granit, wapień, piaskowiec...).
+
+        this.geology = new Geology(this, base);
+
+
+        // Kolumny chunka (granice skał) - używane ponownie.
+
+        this.chunkColumns = Array.from(
+            { length: CHUNK_SIZE * CHUNK_SIZE },
+            () => this.geology.createColumn()
+        );
+
+        this.columnBuffer = new Uint8Array(CHUNK_HEIGHT);
 
 
         // Wynik ostatniego compute() (używany ponownie, bez tworzenia
@@ -499,8 +471,6 @@ export class RealisticGenerator {
         const baseX = chunk.cx * size;
         const baseZ = chunk.cz * size;
 
-        const ids = this.ids;
-
 
         // Wysokości z ramką jednej kolumny (do nachylenia zboczy).
 
@@ -508,7 +478,7 @@ export class RealisticGenerator {
 
         const heights = new Int16Array(W * W);
 
-        const columns = [];
+        const samples = [];
 
         for (let j = 0; j < W; j++) {
 
@@ -521,7 +491,7 @@ export class RealisticGenerator {
                 heights[j * W + i] = sample.height;
 
                 if (inside) {
-                    columns.push(sample);
+                    samples.push(sample);
                 }
 
             }
@@ -529,74 +499,57 @@ export class RealisticGenerator {
         }
 
 
-        let top = 0;
+        // Skały każdej kolumny i najwyższy granit w chunku (do tej
+        // wysokości liczymy szum żył lepidolitu).
 
-        for (const sample of columns) {
-            top = Math.max(top, sample.height);
+        let graniteTop = 0;
+
+        for (let k = 0; k < samples.length; k++) {
+
+            const lx = k % size;
+            const lz = Math.floor(k / size);
+
+            const col = this.geology.column(baseX + lx, baseZ + lz, samples[k], this.chunkColumns[k]);
+
+            graniteTop = Math.max(graniteTop, Math.min(col.graniteTop, col.height + 1));
+
         }
 
-        const veins = this.veinGrid(baseX, baseZ, top);
+        if (graniteTop > 0) {
+            this.geology.prepareChunk(baseX, baseZ, graniteTop);
+        }
 
 
-        let column = 0;
+        const buffer = this.columnBuffer;
 
         for (let lz = 0; lz < size; lz++) {
 
             for (let lx = 0; lx < size; lx++) {
 
-                const sample = columns[column++];
+                const k = lz * size + lx;
 
                 const x = baseX + lx;
                 const z = baseZ + lz;
 
-                const k = (lz + 1) * W + (lx + 1);
+                const h = (lz + 1) * W + (lx + 1);
 
-                const height = heights[k];
+                const height = heights[h];
 
                 const slope = Math.max(
-                    Math.abs(height - heights[k - 1]),
-                    Math.abs(height - heights[k + 1]),
-                    Math.abs(height - heights[k - W]),
-                    Math.abs(height - heights[k + W])
+                    Math.abs(height - heights[h - 1]),
+                    Math.abs(height - heights[h + 1]),
+                    Math.abs(height - heights[h - W]),
+                    Math.abs(height - heights[h + W])
                 );
+
+                const sample = samples[k];
 
                 const kind = this.surfaceKind(x, z, sample, slope);
 
+                const top = this.fillColumn(x, z, sample, kind, this.chunkColumns[k], buffer, lx, lz);
 
-                for (let y = 0; y <= height; y++) {
-
-                    const depth = height - y;
-
-                    let id = ids.stone;
-
-                    if (kind === 'grass') {
-                        id = depth === 0 ? ids.grass : depth <= TERRAIN_DIRT_DEPTH ? ids.dirt : ids.stone;
-                    }
-                    else if (kind === 'sand' || kind === 'seabed') {
-                        id = depth <= 2 ? ids.sand : ids.stone;
-                    }
-
-
-                    if (
-                        id === ids.stone &&
-                        veinAt(veins, lx, y, lz) > VEIN_THRESHOLD
-                    ) {
-                        id = ids.lepidolite;
-                    }
-
-                    chunk.setId(lx, y, lz, id);
-
-                }
-
-
-                // Morze do poziomu morza.
-
-                if (sample.ocean) {
-
-                    for (let y = height + 1; y <= SEA_LEVEL; y++) {
-                        chunk.setId(lx, y, lz, ids.water);
-                    }
-
+                for (let y = 0; y <= top; y++) {
+                    chunk.setId(lx, y, lz, buffer[y]);
                 }
 
             }
@@ -605,40 +558,145 @@ export class RealisticGenerator {
 
     }
 
-    // Szum żył w punktach siatki co VEIN_STEP bloków, od y = 0 do
-    // jednego punktu nad `top` (najwyższym blokiem chunka).
 
-    veinGrid(baseX, baseZ, top) {
+    // Bloki jednej kolumny do `out` (od y = 0). Zwraca y najwyższego
+    // bloku (terenu albo wody). lx, lz - pozycja w chunku (szum żył
+    // z prepareChunk) albo -1 dla pojedynczej kolumny.
 
-        const layers = Math.floor(top / VEIN_STEP) + 2;
+    fillColumn(x, z, sample, kind, col, out, lx = -1, lz = -1) {
 
-        const grid = this.veinBuffer ??= new Float32Array(
-            VEIN_LAYER * (Math.floor(CHUNK_HEIGHT / VEIN_STEP) + 2)
-        );
+        const ids = this.ids;
+        const geology = this.geology;
 
-        const scale = LEPIDOLITE_VEIN_SCALE;
+        const height = sample.height;
 
-        let i = 0;
 
-        for (let gy = 0; gy < layers; gy++) {
+        for (let y = 0; y <= height; y++) {
 
-            for (let gz = 0; gz < VEIN_GRID; gz++) {
+            const depth = height - y;
 
-                for (let gx = 0; gx < VEIN_GRID; gx++) {
+            let id;
 
-                    grid[i++] = this.noise.veins.noise3D(
-                        (baseX + gx * VEIN_STEP) / scale,
-                        gy * VEIN_STEP / scale,
-                        (baseZ + gz * VEIN_STEP) / scale
-                    );
+            if (kind === 'grass' && depth <= TERRAIN_DIRT_DEPTH) {
+                id = depth === 0 ? ids.grass : ids.dirt;
+            }
+            else if ((kind === 'sand' || kind === 'seabed') && depth <= 2) {
+                id = ids.sand;
+            }
+            else {
 
+                id = geology.rockAt(col, y);
+
+                if (id === ids.granite && geology.isLepidolite(x, y, z, depth, lx, lz)) {
+                    id = ids.lepidolite;
                 }
 
             }
 
+            out[y] = id;
+
         }
 
-        return grid;
+
+        // Morze do poziomu morza.
+
+        let top = height;
+
+        if (sample.ocean) {
+
+            for (let y = height + 1; y <= SEA_LEVEL; y++) {
+                out[y] = ids.water;
+            }
+
+            top = Math.max(top, SEA_LEVEL);
+
+        }
+
+        out.fill(0, top + 1);
+
+        return top;
+
+    }
+
+
+    // Cała kolumna (x, z) dokładnie tak, jak w chunku - bez
+    // generowania chunka (mapa przekroju, komenda /skaly).
+    // Zwraca { height, kind, top, blocks } (blocks - ID od y = 0).
+
+    columnBlocks(x, z, blocks = new Uint8Array(CHUNK_HEIGHT)) {
+
+        const sample = this.compute(x, z, DETAIL_FULL, {});
+
+        const height = sample.height;
+
+        let slope = 0;
+
+        for (const [dx, dz] of [[-1, 0], [1, 0], [0, -1], [0, 1]]) {
+            slope = Math.max(slope, Math.abs(height - this.compute(x + dx, z + dz).height));
+        }
+
+        const kind = this.surfaceKind(x, z, sample, slope);
+
+        const col = this.geology.column(x, z, sample, this.geology.createColumn());
+
+        const top = this.fillColumn(x, z, sample, kind, col, blocks);
+
+        return { height, kind, top, blocks, column: col };
+
+    }
+
+
+    // Blok na samym wierzchu kolumny (bez wody) - nazwa, dokładnie
+    // jak w chunku (szukanie skał: /skaly znajdz).
+
+    surfaceBlock(x, z) {
+
+        const sample = this.compute(x, z, DETAIL_FULL, {});
+
+        const height = sample.height;
+
+        let slope = 0;
+
+        for (const [dx, dz] of [[-1, 0], [1, 0], [0, -1], [0, 1]]) {
+            slope = Math.max(slope, Math.abs(height - this.compute(x + dx, z + dz).height));
+        }
+
+        const kind = this.surfaceKind(x, z, sample, slope);
+
+        if (kind === 'grass') {
+            return 'grass';
+        }
+
+        if (kind !== 'rock') {
+            return 'sand';
+        }
+
+        const col = this.geology.column(x, z, sample, this.geology.createColumn());
+
+        let id = this.geology.rockAt(col, height);
+
+        if (id === this.ids.granite && this.geology.isLepidolite(x, height, z, 0)) {
+            id = this.ids.lepidolite;
+        }
+
+        return getBlockTypeById(id);
+
+    }
+
+
+    // Skała, która jest na wierzchu (kind 'rock') albo tuż pod glebą
+    // i piaskiem - nazwa bloku (mapa skał, daleki teren).
+
+    surfaceRock(x, z, sample, kind) {
+
+        const col = this.geology.column(x, z, sample, this.geology.createColumn());
+
+        const y =
+            kind === 'grass' ? sample.height - TERRAIN_DIRT_DEPTH - 1 :
+            kind === 'sand' || kind === 'seabed' ? sample.height - 3 :
+            sample.height;
+
+        return getBlockTypeById(this.geology.rockAt(col, Math.max(0, y)));
 
     }
 
@@ -657,6 +715,12 @@ export class RealisticGenerator {
         }
 
         const kind = this.surfaceKind(x, z, sample, 0);
+
+        // Goła skała - w kolorze swojego rodzaju (granit, wapień...).
+
+        if (kind === 'rock') {
+            return { top: sample.height + 1, kind: this.surfaceRock(x, z, sample, kind) };
+        }
 
         return { top: sample.height + 1, kind };
 
@@ -709,11 +773,16 @@ export class RealisticGenerator {
         const humidity = this.field(this.noise.humidity, x, z, SHAPE.SCALES.humidity, 2);
 
 
+        const surface = this.surfaceKind(x, z, sample, Math.round(slope * 2));
+
+
         return {
             height,
             relief,
             landform: this.classify(sample, slope),
-            surface: this.surfaceKind(x, z, sample, Math.round(slope * 2)),
+            surface,
+            // skała na wierzchu albo pod glebą (mapa skał)
+            rock: this.surfaceRock(x, z, sample, surface),
             slope,
             fields: {
                 kontynent: sample.continent,

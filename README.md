@@ -126,7 +126,11 @@ bez zmian, wyżej jest po prostu powietrze).
 - **Realistyczny (w budowie)** - morza i wybrzeża z plażami, niziny,
   wyżyny i góry z płynnymi przejściami, a w nich formy terenu: grzbiety,
   turnie, wzgórza, pagórki, doliny, kotliny, wąwozy, żleby, depresje,
-  równiny, płaskowyże. Poziom morza to `SEA_LEVEL` (48). To dopiero
+  równiny, płaskowyże. Poziom morza to `SEA_LEVEL` (48).
+  Pod ziemią są różne skały: granit (pod górami tuż pod powierzchnią),
+  wapień na wyżynach, piaskowiec na nizinach i wybrzeżach, łupek
+  w górach, bazalt na dnie świata i pod głębokim morzem, a lepidolit
+  tylko jako rzadkie żyły w granicie (na wierzch wychodzi rzadko). To dopiero
   początek - kolejne aktualizacje będą ten teren zmieniać (rzeki,
   biomy...), więc w takim świecie nowe chunki mogą wyglądać inaczej niż
   wcześniej (Twoje budowle zostają). Woda to na razie zwykły
@@ -140,7 +144,8 @@ Plan rozdziału o terenie (etapy, formy terenu, rzeki, biomy) i jak
 działa generator: `docs/generator-terenu.md`. Teren najłatwiej
 oglądać na **mapie** (klawisz **M** albo `/mapa formy 16`) i komendą
 `/teren` (co jest pod graczem; `/teren znajdz turnia tp` - teleport
-do najbliższej turni).
+do najbliższej turni). Skały pod ziemią: `/skaly`, `/mapa skaly`,
+`/mapa przekroj` (przekrój pionowy) i `/demo skaly` (odkrywka).
 
 **Daleki teren (horyzont):** za zasięgiem widzenia widać uproszczony
 teren - te same wzgórza i góry, które wygenerowałyby się tam naprawdę,
@@ -236,12 +241,15 @@ Komendy służą do sprawdzania nowości w grze, np.:
 /horyzont 2048             daleki teren (/horyzont lod - dokładność kafelków)
 /teren                     forma terenu pod graczem (niziny, wyżyny, góry...)
 /teren znajdz kotlina tp   teleport do najbliższej kotliny (/teren formy - lista)
-/mapa formy 16             mapa terenu (klawisz M; warstwy: teren, formy, pasy...)
+/mapa formy 16             mapa terenu (klawisz M; warstwy: teren, formy, pasy, skaly...)
+/mapa przekroj             przekrój pionowy terenu w kierunku patrzenia
+/skaly                     skały pod tobą (/skaly zyla tp - żyła lepidolitu)
+/demo skaly                odkrywka - na ścianach widać warstwy skał
 /ustaw zasieg 256          dowolne ustawienie (/ustaw - lista)
 /wydajnosc test            test wydajności z obrotem kamery
 /latanie                   latanie (Spacja w górę, Shift w dół)
 /tp 100 30 -50             teleport (~ = względem gracza)
-/daj lamp_blue             blok na pasek
+/daj lamp_blue             blok na pasek (też po polsku: /daj granit)
 /wypelnij ~ ~ ~ ~5 ~3 ~5 stone
 ```
 
@@ -342,7 +350,7 @@ src/
   settings/                 ustawienia gracza (zapis w przeglądarce)
   blocks/                   lista bloków (BlockRegistry)
   world/                    świat, chunki, szum, światło, daleki teren
-  world/terrain/            generatory terenu (realistyczny, lista typów, formy terenu)
+  world/terrain/            generatory terenu (realistyczny, lista typów, formy terenu, skały)
   sky/                      czas, słońce, księżyc, gwiazdy, kolory nieba
   storage/                  zapis i wczytywanie światów
   rendering/                atlas tekstur, budowanie meshy chunków

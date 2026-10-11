@@ -1,18 +1,28 @@
 # Voxel Game
 
-Gra voxelowa w przeglądarce, napisana w JavaScripcie z użyciem three.js.
+Gra voxelowa w przeglądarce i jako aplikacja na komputer (Windows),
+napisana w JavaScripcie z użyciem three.js.
 
 > Nazwa robocza - do zmiany, gdy gra dostanie prawdziwą nazwę.
 
 ## Jak uruchomić
 
-Gra używa modułów JavaScript, więc nie zadziała po dwukliku w `index.html`.
-Trzeba ją otworzyć przez lokalny serwer, na przykład:
+**Aplikacja na komputer (Windows):** instalator z wydań -
+<https://github.com/kamilstefaniak12321-pixel/voxel-game-wydania/releases/latest>
+(plik `Voxel-Game-...-instalator.exe`). Gra sama sprawdza aktualizacje
+przy starcie, pobiera je w tle i instaluje po zamknięciu (albo od razu
+- *Zainstaluj teraz* na ekranie tytułowym). Wszystko o aplikacji -
+instalacja, zapisy, wydawanie nowych wersji: `docs/aplikacja.md`.
+
+**W przeglądarce:** gra używa modułów JavaScript, więc nie zadziała po
+dwukliku w `index.html`. Trzeba ją otworzyć przez lokalny serwer, na
+przykład:
 
 - **VS Code:** rozszerzenie *Live Server* -> prawy przycisk na `index.html` -> *Open with Live Server*
 - **Node.js:** w folderze gry `npx serve`, potem adres podany w konsoli
 
-Do działania potrzebny jest internet (three.js pobierany z unpkg).
+Internet nie jest potrzebny - three.js jest w `lib/three/`. Światy
+z przeglądarki i z aplikacji są zapisywane osobno.
 
 ## Sterowanie
 
@@ -433,6 +443,10 @@ Inne rzeczy do zmiany:
 
 ```
 index.html                  strona gry
+package.json                aplikacja na komputer: wersja, biblioteki, ustawienia instalatora
+desktop/                    aplikacja na komputer (okno, aktualizacje, ikonka)
+lib/three/                  three.js 0.160.0 (biblioteka 3D)
+.github/workflows/          automatyczne budowanie instalatora i wydań
 assets/textures/blocks/     tekstury bloków (terrain.png = atlas)
 assets/textures/sky/        tekstury nieba (księżyc)
 assets/textures/player/     skórka gracza i szablon skórki

@@ -61,6 +61,14 @@ export const TEXTS = {
     saveAndQuit: 'Zapisz i wyjdź do menu',
     pointerLockFailed: 'Nie udało się przechwycić myszy - kliknij jeszcze raz.',
 
+    // Aplikacja na komputer (desktop/): wersja i aktualizacje
+    appVersion: (version) => `Wersja ${version}`,
+    updateDownloading: (version, percent) => `Pobieranie aktualizacji ${version}... ${percent ?? 0}%`,
+    updateReady: (version) => `Nowa wersja ${version} gotowa - zainstaluje się po zamknięciu gry.`,
+    installUpdate: 'Zainstaluj teraz',
+    updateError: 'Nie udało się pobrać aktualizacji (spróbuje przy następnym uruchomieniu).',
+    updateReadyInGame: (version) => `Pobrano nową wersję gry (${version}) - zainstaluje się po zamknięciu gry (albo od razu: ekran tytułowy - Zainstaluj teraz).`,
+
     // Czat (pokazywane po wejściu do świata)
     chatHint: 'E - ekwipunek, T - czat, /pomoc - lista komend do testowania gry, F5 - widok z trzeciej osoby',
 

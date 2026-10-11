@@ -625,6 +625,11 @@ window.addEventListener('keydown', (event) => {
 
         event.preventDefault();
 
+        // To samo wciśnięcie nie może od razu zamknąć ekwipunku
+        // (ekran ekwipunku też nasłuchuje klawisza E).
+
+        event.stopImmediatePropagation();
+
         openInventory();
 
         return;
@@ -905,6 +910,53 @@ const hotbar = new Hotbar(
 const inventoryScreen = new InventoryScreen(blockIcons, {
     close: (relock) => closeInventory(relock)
 });
+
+// ------------------------------------------------------------
+// APLIKACJA NA KOMPUTER (desktop/)
+//
+// W aplikacji jest obiekt window.desktop (desktop/preload.js): przed
+// zamknięciem okna zapisujemy świat, a na ekranie tytułowym widać
+// wersję gry i pobieraną aktualizację. W przeglądarce nic się tu
+// nie dzieje.
+// ------------------------------------------------------------
+
+if (window.desktop) {
+
+    window.desktop.onBeforeClose(async () => {
+
+        if (game) {
+            await game.saver.flush();
+        }
+
+    });
+
+
+    menu.setAppInfo({
+        version: window.desktop.version,
+        install: () => window.desktop.installUpdate()
+    });
+
+
+    let announced = null;
+
+    window.desktop.onUpdate((status) => {
+
+        menu.setUpdateStatus(status);
+
+        // W trakcie gry - jedna informacja na czacie.
+
+        if (status?.state === 'ready' && game && announced !== status.version) {
+
+            announced = status.version;
+
+            chat.print(TEXTS.updateReadyInGame(status.version), 'hint');
+
+        }
+
+    });
+
+}
+
 
 menu.showTitle();
 

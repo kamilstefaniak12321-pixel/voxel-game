@@ -409,3 +409,39 @@ body:not([data-screen="game"]) #crosshair {
     color: var(--button-text);
     pointer-events: none;
 }
+
+/* ------------------------------------------------------------
+   Aplikacja na komputer: wersja i aktualizacje (ekran tytułowy,
+   lewy dolny róg; w przeglądarce pusto)
+   ------------------------------------------------------------ */
+
+.menu-app-info {
+    position: absolute;
+    left: 12px;
+    bottom: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+    max-width: calc(100% - 24px);
+    font-size: calc(var(--ui-font-size) * 0.8);
+    color: var(--text-muted);
+}
+
+.menu-app-info:empty {
+    display: none;
+}
+
+.menu-app-info .menu-update {
+    color: var(--text-color);
+    white-space: normal;
+}
+
+.menu-app-info .menu-update.menu-danger {
+    color: var(--text-danger);
+}
+
+.menu-app-info .menu-button {
+    height: auto;
+    padding: 6px 14px;
+}

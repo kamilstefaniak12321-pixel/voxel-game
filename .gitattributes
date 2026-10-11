@@ -9,3 +9,7 @@
 *.zip binary
 *.woff binary
 *.woff2 binary
+*.ico binary
+
+# Biblioteki z zewnątrz (lib/) - bez porównywania zmian linijka po linijce.
+lib/** -diff linguist-vendored

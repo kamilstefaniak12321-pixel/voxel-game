@@ -25,6 +25,10 @@ import { lightToBrightness, describeLight } from '../world/Light.js';
 import { WorldTime } from '../sky/WorldTime.js';
 import { Sky } from '../sky/Sky.js';
 import { skyUniforms } from '../sky/skyShader.js';
+import { PlayerModel } from '../player/PlayerModel.js';
+import { PlayerAnimator } from '../player/PlayerAnimator.js';
+import { modelLight } from '../rendering/ModelMaterial.js';
+import { COLOR_LEVEL } from '../world/Light.js';
 
 import {
     PLAYER_REACH,
@@ -33,8 +37,20 @@ import {
     POTATO_VIEW_DISTANCE,
     MOUSE_SENSITIVITY,
     HOTBAR_SIZE,
-    HOTBAR_DEFAULT
+    HOTBAR_DEFAULT,
+    SPRINT_FOV_FACTOR
 } from '../config.js';
+
+
+// Widoki kamery (F5): z oczu gracza, zza pleców, z przodu.
+
+export const CAMERA_MODES = ['first', 'back', 'front'];
+
+const CAMERA_TEXTS = {
+    first: 'z oczu',
+    back: 'zza pleców',
+    front: 'z przodu'
+};
 
 // ------------------------------------------------------------
 // Pasek bloków świata: zapisany albo domyślny z config.js.
@@ -237,6 +253,27 @@ export class Game {
         }
 
 
+        // Model gracza (widać go z trzeciej osoby - F5) i jego animacje.
+
+        this.model = new PlayerModel();
+
+        this.scene.add(this.model.object);
+
+        this.animator = new PlayerAnimator();
+
+        this.cameraMode = 'first';
+
+        // Położenie kamery z trzeciej osoby (null = z oczu gracza).
+        this.view = null;
+
+        // Światło w miejscu gracza (dla modelu), płynnie zmieniane.
+        this.modelSky = 1;
+        this.modelBlock = new THREE.Vector3();
+
+        // Pole widzenia przy biegu (mnożnik, płynnie).
+        this.fovBoost = 1;
+
+
         // Pole widzenia, mgła i czułość myszy z ustawień gracza.
 
         this.applySettings();
@@ -359,6 +396,13 @@ export class Game {
         const placePressed = input.consumeMousePress(2);
 
 
+        // Machnięcie ręką przy każdym kliknięciu (jak w Minecrafcie).
+
+        if (breakPressed || (placePressed && this.selectedBlock)) {
+            this.animator.swing();
+        }
+
+
         if (breakPressed) {
 
             this.breaker.breakBlock(this.currentHit);
@@ -445,6 +489,219 @@ export class Game {
 
         this.highlight.update(this.currentHit);
 
+
+        // Widok z trzeciej osoby (F5), model gracza i pole widzenia przy biegu.
+
+        if (input.consumeKeyPress('F5')) {
+            this.cycleCameraMode();
+        }
+
+        this.updateModel(dt);
+
+        this.updateView();
+
+        this.updateFovBoost(dt);
+
+    }
+
+    // --------------------------------------------------------
+    // MODEL GRACZA I KAMERA Z TRZECIEJ OSOBY
+    // --------------------------------------------------------
+
+    // Następny widok: z oczu -> zza pleców -> z przodu -> z oczu.
+
+    cycleCameraMode() {
+
+        const next = CAMERA_MODES[(CAMERA_MODES.indexOf(this.cameraMode) + 1) % CAMERA_MODES.length];
+
+        this.setCameraMode(next);
+
+    }
+
+
+    setCameraMode(mode) {
+
+        this.cameraMode = CAMERA_MODES.includes(mode) ? mode : 'first';
+
+        this.updateView();
+
+    }
+
+
+    // Animacja i położenie modelu, blok w ręce, światło w miejscu gracza.
+
+    updateModel(dt) {
+
+        const player = this.player;
+
+        const pose = this.animator.update(dt, {
+            vx: player.vel.x,
+            vy: player.vel.y,
+            vz: player.vel.z,
+            onGround: player.onGround,
+            crouching: player.crouching,
+            sprinting: player.sprinting,
+            flying: player.flying,
+            yaw: player.yaw,
+            pitch: player.pitch,
+            landed: player.landed
+        });
+
+        this.model.setPose(pose);
+
+        this.model.place(player.pos, this.animator.bodyYaw, this.animator.previewLift);
+
+        this.model.setHeldBlock(this.selectedBlock);
+
+
+        // Światło na wysokości piersi gracza (jak w rogach ścian bloków):
+        // niebo i lampy osobno, kolor lamp z proporcji kanałów.
+
+        const light = this.world.getLight(
+            Math.floor(player.pos.x),
+            Math.floor(player.pos.y + 1.2),
+            Math.floor(player.pos.z)
+        );
+
+        const sky = lightToBrightness(light.sky);
+
+        const strongest = Math.max(light.red, light.green, light.blue);
+
+        const lamp = strongest > 0 ? lightToBrightness(COLOR_LEVEL[strongest]) : 0;
+
+        const rate = Math.min(1, dt * 10);
+
+        this.modelSky += (sky - this.modelSky) * rate;
+
+        this.modelBlock.lerp(
+            new THREE.Vector3(
+                strongest > 0 ? lamp * light.red / strongest : 0,
+                strongest > 0 ? lamp * light.green / strongest : 0,
+                strongest > 0 ? lamp * light.blue / strongest : 0
+            ),
+            rate
+        );
+
+        modelLight.uModelSky.value = this.modelSky;
+        modelLight.uModelBlock.value.copy(this.modelBlock);
+
+    }
+
+
+    // Kamera z trzeciej osoby: od oczu gracza do tyłu (albo do przodu,
+    // patrząc na gracza), ale nie przez bloki - zatrzymuje się przed ścianą.
+
+    updateView() {
+
+        const thirdPerson = this.cameraMode !== 'first';
+
+        this.model.object.visible = thirdPerson;
+
+        if (!thirdPerson) {
+
+            this.view = null;
+
+            return;
+
+        }
+
+
+        const { yaw, pitch } = this.player;
+
+        const eye = this.camera.position;
+
+        const direction = new THREE.Vector3(
+            -Math.sin(yaw) * Math.cos(pitch),
+            Math.sin(pitch),
+            -Math.cos(yaw) * Math.cos(pitch)
+        );
+
+        if (this.cameraMode === 'back') {
+            direction.negate();
+        }
+
+
+        const distance = this.settings.get('cameraDistance');
+
+        const point = new THREE.Vector3();
+
+        let reach = distance;
+
+        for (let t = 0.1; t <= distance; t += 0.05) {
+
+            point.copy(eye).addScaledVector(direction, t);
+
+            if (this.solidNear(point, 0.15)) {
+
+                reach = Math.max(0.1, t - 0.2);
+
+                break;
+
+            }
+
+        }
+
+
+        this.view = {
+            position: eye.clone().addScaledVector(direction, reach),
+            yaw: this.cameraMode === 'back' ? yaw : yaw + Math.PI,
+            pitch: this.cameraMode === 'back' ? pitch : -pitch
+        };
+
+    }
+
+
+    // Czy w pobliżu punktu (± radius) jest blok z kolizją.
+
+    solidNear(point, radius) {
+
+        for (const dx of [-radius, radius]) {
+
+            for (const dy of [-radius, radius]) {
+
+                for (const dz of [-radius, radius]) {
+
+                    if (this.world.isSolid(
+                        Math.floor(point.x + dx),
+                        Math.floor(point.y + dy),
+                        Math.floor(point.z + dz)
+                    )) {
+                        return true;
+                    }
+
+                }
+
+            }
+
+        }
+
+        return false;
+
+    }
+
+
+    // Bieg poszerza pole widzenia (płynnie).
+
+    updateFovBoost(dt) {
+
+        const target = this.player.sprinting ? SPRINT_FOV_FACTOR : 1;
+
+        const previous = this.fovBoost;
+
+        this.fovBoost += (target - this.fovBoost) * Math.min(1, dt * 8);
+
+        if (Math.abs(target - this.fovBoost) < 0.001) {
+            this.fovBoost = target;
+        }
+
+        if (this.fovBoost !== previous) {
+
+            this.camera.fov = this.settings.get('fov') * this.fovBoost;
+
+            this.camera.updateProjectionMatrix();
+
+        }
+
     }
 
 
@@ -461,15 +718,47 @@ export class Game {
 
         renderer.clear();
 
-        this.sky.render(renderer, this.camera);
+
+        // Z trzeciej osoby kamera na czas rysowania przesuwa się za gracza
+        // (celowanie i reszta gry dalej liczą się z jego oczu).
+
+        const camera = this.camera;
+
+        const saved = this.view
+            ? { position: camera.position.clone(), rotation: camera.rotation.clone() }
+            : null;
+
+        if (this.view) {
+
+            camera.position.copy(this.view.position);
+
+            camera.rotation.set(this.view.pitch, this.view.yaw, 0, 'YXZ');
+
+            camera.updateMatrixWorld();
+
+        }
+
+
+        this.sky.render(renderer, camera);
 
         renderer.clearDepth();
 
-        this.farTerrain.render(renderer, this.camera);
+        this.farTerrain.render(renderer, camera);
 
         renderer.clearDepth();
 
-        renderer.render(this.scene, this.camera);
+        renderer.render(this.scene, camera);
+
+
+        if (saved) {
+
+            camera.position.copy(saved.position);
+
+            camera.rotation.copy(saved.rotation);
+
+            camera.updateMatrixWorld();
+
+        }
 
     }
 
@@ -758,7 +1047,7 @@ export class Game {
 
         const farTerrain = settings.get('farTerrain');
 
-        this.camera.fov = settings.get('fov');
+        this.camera.fov = settings.get('fov') * (this.fovBoost ?? 1);
 
         this.camera.far = viewDistance + 3 * CHUNK_SIZE + 64;
 
@@ -788,6 +1077,19 @@ export class Game {
         this.farTerrain.setLowDetail(potato);
 
         setPotatoDefine([blockMaterial], potato);
+
+
+        // Model gracza: wierzchnia warstwa skórki, styl zgięć, tryb ziemniaka.
+
+        if (this.model) {
+
+            this.model.setOverlay(settings.get('skinOverlay'));
+
+            this.model.setStyle(settings.get('jointStyle'));
+
+            setPotatoDefine([...this.model.materials, this.model.heldMaterial], potato);
+
+        }
 
 
         // Cienie w kątach są zapisane w meshach chunków - po zmianie
@@ -928,6 +1230,8 @@ export class Game {
 
         this.farTerrain.dispose();
 
+        this.model.dispose();
+
         return true;
 
     }
@@ -1021,8 +1325,13 @@ export class Game {
 
             `${performanceInfo}<br>` +
 
-            `Na ziemi: ${player.onGround ? 'tak' : 'nie'} | ` +
+            `Na ziemi: ${player.onGround ? 'tak' : 'nie'}` +
+            `${player.crouching ? ' | kuca' : ''}${player.sprinting ? ' | biegnie' : ''} | ` +
             `Światło: ${describeLight(light)}<br>` +
+
+            `Kamera: ${CAMERA_TEXTS[this.cameraMode]} | Animacja: chód ${Math.round(this.animator.move * 100)}%, ` +
+            `bieg ${Math.round(this.animator.run * 100)}%, kucanie ${Math.round(this.animator.crouch * 100)}%, ` +
+            `powietrze ${Math.round(this.animator.air * 100)}%<br>` +
 
             `Wybrany blok: ${selected?.name ?? 'brak'}<br><br>` +
 
@@ -1032,8 +1341,8 @@ export class Game {
 
             `LPM - zniszcz | PPM - postaw<br>` +
 
-            `WASD - ruch | Spacja - skok | ` +
-            `Mysz - kamera | ESC - pauza | F3 - debug | [ ] - czas ±1 h<br>` +
+            `WASD - ruch | Spacja - skok | Shift - kucanie | 2× W albo R - bieg<br>` +
+            `Mysz - kamera | F5 - widok | ESC - pauza | F3 - debug | [ ] - czas ±1 h<br>` +
 
             `T - czat | /pomoc - komendy` +
 

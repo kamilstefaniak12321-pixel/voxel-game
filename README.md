@@ -20,6 +20,9 @@ Do działania potrzebny jest internet (three.js pobierany z unpkg).
 |---|---|
 | WASD | ruch |
 | Spacja | skok |
+| Shift | kucanie (wolniej, niżej, nie spada się z krawędzi) |
+| 2× W albo R | bieg |
+| F5 | widok: z oczu / zza pleców / z przodu |
 | Mysz | rozglądanie się |
 | LPM | zniszcz blok |
 | PPM | postaw blok |
@@ -67,6 +70,10 @@ W menu (z ekranu tytułowego i z pauzy) są trzy zakładki:
 
 **Sterowanie** - czułość myszy (10-200%), odwrócona mysz (góra/dół).
 
+**Gracz** - skórka (wczytanie własnego pliku PNG albo domyślna), druga
+warstwa skórki, zgięcia rąk i nóg (gładkie albo klocki), odległość
+kamery z trzeciej osoby.
+
 **Inne** - motyw menu, rozmiar interfejsu w grze (pasek, czat, napisy),
 informacje debugowania (to samo co F3), licznik FPS w rogu ekranu,
 spadające meteoryty (wł./wył. - te, które robią kratery).
@@ -75,6 +82,23 @@ Zmiany działają od razu, także w grze pod pauzą, i zapisują się
 w przeglądarce. Wartości domyślne są w `src/config.js`, a lista ustawień
 z zakresami w `src/settings/Settings.js`. Wszystko da się też zmienić
 z czatu: `/ustaw` (lista), np. `/ustaw zasieg 256`.
+
+## Gracz
+
+Postać gracza jest klockowa jak w Minecrafcie, ale ma **11 stawów**:
+ręce zginają się w łokciach, nogi w kolanach, a tułów w talii. Widać ją
+z trzeciej osoby (**F5**). Animacje: stanie (oddech), chód, bieg,
+kucanie, skradanie, skok, spadanie, lądowanie, machnięcie ręką przy
+niszczeniu i stawianiu, latanie; głowa patrzy tam, gdzie kamera.
+W prawej ręce jest blok wybrany na pasku.
+
+**Skórka** to obrazek 64 x 64 w układzie skórek Minecrafta (z drugą
+warstwą). Domyślna: `assets/textures/player/skin.png`; własną wczytuje
+się w *Ustawienia → Gracz* albo `/skorka plik`.
+
+Do oglądania: `/animacja chodzenie` (podgląd w miejscu), `/model tempo 0.25`
+(zwolnione), `/kamera przod`. Opis modelu, układ skórki, liczby animacji
+i plan: `docs/gracz.md`.
 
 ## Tryb ziemniaka
 
@@ -246,6 +270,10 @@ Komendy służą do sprawdzania nowości w grze, np.:
 /skaly                     skały pod tobą (/skaly zyla tp - żyła lepidolitu)
 /demo skaly                odkrywka - na ścianach widać warstwy skał
 /ustaw zasieg 256          dowolne ustawienie (/ustaw - lista)
+/kamera przod              widok z trzeciej osoby (oczy, tyl, przod; jak F5)
+/animacja bieg             podgląd animacji gracza (chodzenie, kucanie, skok...)
+/model tempo 0.25          zwolnione animacje (/model klocki - inne zgięcia)
+/skorka plik               własna skórka gracza (PNG 64 x 64)
 /wydajnosc test            test wydajności z obrotem kamery
 /latanie                   latanie (Spacja w górę, Shift w dół)
 /tp 100 30 -50             teleport (~ = względem gracza)
@@ -339,6 +367,7 @@ Inne rzeczy do zmiany:
 index.html                  strona gry
 assets/textures/blocks/     tekstury bloków (terrain.png = atlas)
 assets/textures/sky/        tekstury nieba (księżyc)
+assets/textures/player/     skórka gracza i szablon skórki
 assets/ui/themes/           motywy menu (kolory, czcionka, tło)
 assets/fonts/               czcionki
 docs/                       opisy, jak działają większe części gry
@@ -354,7 +383,7 @@ src/
   sky/                      czas, słońce, księżyc, gwiazdy, kolory nieba
   storage/                  zapis i wczytywanie światów
   rendering/                atlas tekstur, budowanie meshy chunków
-  player/                   ruch i kolizje gracza
+  player/                   ruch i kolizje gracza, model, animacje, skórka
   input/                    klawiatura i mysz
   commands/                 komendy czatu (do testowania)
   interaction/              raycast, niszczenie, stawianie, podświetlenie

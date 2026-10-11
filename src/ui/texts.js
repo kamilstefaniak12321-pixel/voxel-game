@@ -53,13 +53,14 @@ export const TEXTS = {
     pointerLockFailed: 'Nie udało się przechwycić myszy - kliknij jeszcze raz.',
 
     // Czat (pokazywane po wejściu do świata)
-    chatHint: 'T - czat, /pomoc - lista komend do testowania gry',
+    chatHint: 'T - czat, /pomoc - lista komend do testowania gry, F5 - widok z trzeciej osoby',
 
     // Ustawienia
     settingsTitle: 'Ustawienia',
     settingsTabs: {
         video: 'Obraz',
         controls: 'Sterowanie',
+        player: 'Gracz',
         other: 'Inne'
     },
     potato: (on) => `Tryb ziemniaka: ${on ? 'Wł.' : 'Wył.'}`,
@@ -81,6 +82,14 @@ export const TEXTS = {
     dynamicLight: (on) => `Dynamiczne światło: ${on ? 'Wł.' : 'Wył.'}`,
     loadBudget: (value) => `Wczytywanie: ${value} ms/klatkę`,
     meteorites: (on) => `Spadające meteoryty: ${on ? 'Wł.' : 'Wył.'}`,
+    skin: 'Wczytaj skórkę...',
+    skinReset: 'Skórka domyślna',
+    skinNote: (custom) =>
+        `Teraz: ${custom ? 'własna' : 'domyślna'} skórka. Skórka to obrazek PNG 64 x 64 ` +
+        '(układ jak w Minecrafcie) - szablon w docs/gracz.md.',
+    skinOverlay: (on) => `Druga warstwa skórki: ${on ? 'Wł.' : 'Wył.'}`,
+    jointStyle: (value) => `Zgięcia rąk i nóg: ${value === 'blocks' ? 'Klocki' : 'Gładkie'}`,
+    cameraDistance: (value) => `Kamera z tyłu (F5): ${value} ${value < 5 ? 'bloki' : 'bloków'}`,
     resetSettings: 'Przywróć domyślne',
     done: 'Gotowe',
 

@@ -186,6 +186,29 @@ export const MOUSE_SENSITIVITY = 0.002;
 
 export const PLAYER_REACH = 5;
 
+// Kucanie (Shift): wolniej, niżej (mieści się pod 1,5 bloku), a na
+// krawędzi bloku nie da się z niego spaść.
+export const CROUCH_SPEED_FACTOR = 0.3;
+export const CROUCH_HEIGHT = 1.5;
+export const CROUCH_EYE_HEIGHT = 1.27;
+
+// Bieg (dwa razy W albo przytrzymane R): szybciej i trochę szersze
+// pole widzenia.
+export const SPRINT_SPEED_FACTOR = 1.3;
+export const SPRINT_FOV_FACTOR = 1.1;
+
+// Ile sekund między dwoma wciśnięciami W, żeby zacząć biec.
+export const SPRINT_DOUBLE_TAP = 0.3;
+
+// ------------------------------------------------------------
+// MODEL GRACZA I KAMERA (src/player/PlayerModel.js,
+// docs/gracz.md)
+// ------------------------------------------------------------
+
+// Kamera z trzeciej osoby (F5): odległość od głowy (bloki).
+// Gracz może ją zmienić w ustawieniach.
+export const THIRD_PERSON_DISTANCE = 4;
+
 // ------------------------------------------------------------
 // PASEK BLOKÓW
 // ------------------------------------------------------------

@@ -6,7 +6,8 @@ import {
     DEFAULT_VIEW_DISTANCE,
     DEFAULT_FAR_TERRAIN,
     AMBIENT_OCCLUSION,
-    CHUNK_LOAD_BUDGET_MS
+    CHUNK_LOAD_BUDGET_MS,
+    THIRD_PERSON_DISTANCE
 } from '../config.js';
 
 // ------------------------------------------------------------
@@ -43,6 +44,11 @@ export const SETTINGS_DEFAULTS = {
     mouseSensitivity: DEFAULT_MOUSE_SENSITIVITY,   // procent
     invertMouse: false,                            // odwrócona oś Y myszy
 
+    // Gracz
+    skinOverlay: true,                             // druga (wierzchnia) warstwa skórki
+    jointStyle: 'smooth',                          // zgięcia modelu: 'smooth' albo 'blocks'
+    cameraDistance: THIRD_PERSON_DISTANCE,         // kamera z trzeciej osoby (F5), bloki
+
     // Inne
     theme: UI_THEME,                               // motyw menu
     hudScale: 100,                                 // rozmiar paska, czatu i napisów w grze (procent)
@@ -65,7 +71,8 @@ export const SETTINGS_RANGES = {
     ambientOcclusion: { min: 0, max: 100, step: 5 },
     loadBudget: { min: 1, max: 16, step: 1 },
     mouseSensitivity: { min: 10, max: 200, step: 5 },
-    hudScale: { min: 50, max: 200, step: 10 }
+    hudScale: { min: 50, max: 200, step: 10 },
+    cameraDistance: { min: 2, max: 8, step: 1 }
 
 };
 
@@ -75,7 +82,8 @@ export const SETTINGS_RANGES = {
 
 export const SETTINGS_CHOICES = {
 
-    fpsLimit: [0, 30, 60, 120, 144]
+    fpsLimit: [0, 30, 60, 120, 144],
+    jointStyle: ['smooth', 'blocks']
 
 };
 

@@ -80,6 +80,9 @@ const infoElement = document.getElementById('info');
 
 const fpsElement = document.getElementById('fps');
 
+// Celownik (z kamery z przodu nie ma sensu - wtedy znika).
+const crosshairElement = document.getElementById('crosshair');
+
 
 // Pomiar czasu klatek (licznik FPS, /wydajnosc).
 
@@ -748,6 +751,8 @@ function animate(now) {
 
     chat.update();
 
+    crosshairElement.style.visibility = game.cameraMode === 'front' ? 'hidden' : '';
+
     terrainMap.update(game.player.pos.x, game.player.pos.z, game.player.yaw, game.player.pos.y);
 
 
@@ -780,10 +785,15 @@ function animate(now) {
 
 
 // F3 w przeglądarce otwiera wyszukiwanie - w grze go blokujemy.
+// F5 w grze zmienia widok kamery (zamiast odświeżać stronę).
 
 window.addEventListener('keydown', (event) => {
 
     if (event.code === 'F3') {
+        event.preventDefault();
+    }
+
+    if (event.code === 'F5' && state === 'playing') {
         event.preventDefault();
     }
 

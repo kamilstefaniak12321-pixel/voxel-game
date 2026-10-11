@@ -37,6 +37,14 @@ Współrzędne można podawać względem gracza: `~` (tu, gdzie stoję),
 | `/zacmienie pokaz [pelne \| czesciowe \| <procent>]` | wymusza zaćmienie w najbliższym nowiu i przestawia czas na 1,5 h przed nim |
 | `/zacmienie auto` | wyłącza wymuszone zaćmienie (wracają zwykłe) |
 | `/tp <x> <z>`, `/tp <x> <y> <z>`, `/tp spawn` | teleport (bez y - na powierzchnię) |
+| `/kamera [oczy \| tyl \| przod]` | widok kamery: z oczu, zza pleców, z przodu (bez nazwy - następny, jak F5) |
+| `/animacja <stanie \| chodzenie \| bieg \| kucanie \| skradanie \| skok \| machanie \| latanie>` | podgląd animacji modelu gracza w miejscu (włącza kamerę z przodu); `/animacja wyl` - koniec |
+| `/model` | model gracza: styl zgięć, druga warstwa skórki, tempo animacji |
+| `/model gladki \| klocki` | zgięcia rąk, nóg i tułowia: gładkie albo osobne klocki |
+| `/model warstwa <wl \| wyl>` | druga (wierzchnia) warstwa skórki |
+| `/model tempo <0.05-2>` | tempo animacji (0.25 = cztery razy wolniej) |
+| `/skorka plik` | wczytanie własnej skórki (PNG 64 x 64, układ jak w Minecrafcie) |
+| `/skorka domyslna` | powrót do domyślnej skórki |
 | `/pozycja` | pozycja i chunk |
 | `/latanie` | włącza/wyłącza latanie (Spacja w górę, Shift w dół) |
 | `/predkosc <0.1-20>` | prędkość ruchu (1 = normalnie) |
@@ -80,7 +88,8 @@ Kolory: `czerwony`, `krwawy`, `pomaranczowy`, `zloty`, `zolty`, `zielony`,
 
 Nazwy ustawień w `/ustaw`: `ziemniak`, `zasieg`, `daleki-teren`, `pole`, `jasnosc`,
 `rozdzielczosc`, `fps` (limit), `cienie`, `dynamiczne-swiatlo`, `wczytywanie`, `czulosc`,
-`odwroc-mysz`, `motyw`, `interfejs`, `debug`, `licznik-fps`, `meteoryty`.
+`odwroc-mysz`, `motyw`, `interfejs`, `debug`, `licznik-fps`, `meteoryty`,
+`warstwa-skorki`, `zgiecia` (`gladkie` / `klocki`), `kamera` (odległość kamery z F5, 2-8).
 Wartości tak/nie: `wl` / `wyl`.
 
 Niektóre komendy mają też angielskie nazwy (`/time`, `/moon`, `/tp`,

@@ -40,13 +40,14 @@ Współrzędne można podawać względem gracza: `~` (tu, gdzie stoję),
 | `/pozycja` | pozycja i chunk |
 | `/latanie` | włącza/wyłącza latanie (Spacja w górę, Shift w dół) |
 | `/predkosc <0.1-20>` | prędkość ruchu (1 = normalnie) |
-| `/daj <blok>` | blok do wybranego miejsca na pasku |
+| `/daj <blok>` | blok do wybranego miejsca na pasku (nazwy też po polsku: `granit`, `wapien`, `piaskowiec`, `lupek`, `bazalt`, `kamien`, `lepidolit`, `trawa`, `ziemia`, `piasek`) |
 | `/bloki` | lista bloków |
 | `/wypelnij <x1> <y1> <z1> <x2> <y2> <z2> <blok \| powietrze>` | wypełnia prostopadłościan (do 16 384 bloków) |
 | `/swiatlo` | światło przy głowie i przy wskazanej ścianie (niebo 0-15, lampy 0-15 i ich kolor) |
 | `/swiatlo dynamiczne [wl \| wyl]` | włącza/wyłącza dynamiczne światło (to samo co w ustawieniach) |
 | `/demo swiatlo` | buduje zamknięty pokój z kolorowymi lampami i stawia w nim gracza |
 | `/demo kula [kolor \| usun]` | kula dynamicznego światła krąży przed graczem przez minutę |
+| `/demo skaly` | odkrywka: wykop przed graczem aż do y = 1 - na ścianach widać warstwy skał (zmienia świat) |
 | `/meteory` | ile spadających gwiazd na minutę, czy jest deszcz meteorów |
 | `/meteory deszcz <wl \| wyl \| auto>` | wymusza albo wyłącza deszcz meteorów (auto = sam wybiera noce) |
 | `/meteory pokaz [ile]` | od razu kilka spadających gwiazd (widać w nocy) |
@@ -60,8 +61,13 @@ Współrzędne można podawać względem gracza: `~` (tu, gdzie stoję),
 | `/teren <x> <z>` | to samo dla dowolnego miejsca (`~` = względem gracza) |
 | `/teren formy` | lista form terenu do szukania |
 | `/teren znajdz <forma> [promien] [tp]` | najbliższa forma terenu (np. `turnia`, `kotlina`, `plaskowyz`, `wyzyna`); `tp` - od razu teleport |
-| `/mapa [warstwa] [skala]` | mapa terenu z góry (klawisz **M**); warstwy: `teren`, `formy`, `pasy`, `kontynent`, `wypietrzenie`, `erozja`, `grzbiety`, `gory`, `wyzyny`, `temperatura`, `wilgotnosc`; skala = bloki na punkt (1-32) |
+| `/mapa [warstwa] [skala]` | mapa terenu z góry (klawisz **M**); warstwy: `teren`, `formy`, `pasy`, `skaly` (skała na wierzchu albo pod glebą), `przekroj` (przekrój pionowy w kierunku patrzenia, domyślnie 1 blok na punkt), `kontynent`, `wypietrzenie`, `erozja`, `grzbiety`, `gory`, `wyzyny`, `temperatura`, `wilgotnosc`; skala = bloki na punkt (1-32) |
 | `/mapa wyl` | zamyka mapę |
+| `/skaly` | skały w kolumnie pod graczem, od góry (np. trawa 1, ziemia 3, piaskowiec 12...) |
+| `/skaly statystyki [promien]` | udział skał w okolicy (domyślnie 128 bloków) i ile lepidolitu wychodzi na wierzch |
+| `/skaly znajdz <skala> [promien] [tp]` | najbliższe miejsce, gdzie skała jest na wierzchu: `granit`, `wapien`, `piaskowiec`, `lupek`, `bazalt`, `kamien`, `lepidolit` |
+| `/skaly zyla [promien] [tp]` | najbliższa żyła lepidolitu pod ziemią (z `tp` - przeniesienie nad nią) |
+| `/skaly przekroj` | przekrój pionowy terenu (to samo co `/mapa przekroj`) |
 | `/ziemniak [wl \| wyl]` | tryb ziemniaka - wszystko działa, ale prościej i szybciej (słaby komputer, brak karty graficznej) |
 | `/ustaw` | lista ustawień z wartościami |
 | `/ustaw <ustawienie> <wartość>` | zmienia ustawienie, np. `/ustaw zasieg 256`, `/ustaw jasnosc 50`, `/ustaw licznik-fps wl` |

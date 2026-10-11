@@ -144,3 +144,74 @@ export const BEACH_HEIGHT = 2;
 // nizina < RELIEF_UPLAND <= wyżyna < RELIEF_MOUNTAINS <= góry
 export const RELIEF_UPLAND = 15;
 export const RELIEF_MOUNTAINS = 32;
+
+
+// ------------------------------------------------------------
+// BUDOWA GEOLOGICZNA (Geology.js) - jakie skały są pod ziemią.
+//
+// Tu wysokości to zwykłe y w świecie (0 = dno świata), chyba że
+// opis mówi "pod powierzchnią". Od dołu:
+//
+//   bazalt  - najgłębsze podłoże,
+//   granit  - podłoże pod całym lądem; pod górami podchodzi pod samą
+//             powierzchnię (granitowe szczyty i turnie),
+//   kamień  - zwykła skała między granitem a warstwami,
+//   warstwy - skały osadowe pod glebą; jakie, zależy od miejsca
+//             (STRATA): wapień na wyżynach, piaskowiec na nizinach
+//             i wybrzeżach, łupek w górach, bazalt pod głębokim morzem.
+// ------------------------------------------------------------
+
+// Bazalt: do tej wysokości (± 2).
+export const BASALT_TOP = 4;
+
+// Wierzch granitu pod nizinami i pod wyżynami (± GRANITE_VARIATION).
+export const GRANITE_LOW = 16;
+export const GRANITE_UPLAND = 24;
+export const GRANITE_VARIATION = 6;
+
+// Pod górami granit jest tyle bloków pod powierzchnią
+// (± GRANITE_MOUNTAIN_VARIATION). Gdzie wychodzi mniej niż 0 -
+// granit jest na wierzchu.
+export const GRANITE_MOUNTAIN_DEPTH = 2;
+export const GRANITE_MOUNTAIN_VARIATION = 8;
+
+// Warstwy skał osadowych sięgają tyle bloków pod powierzchnię
+// (± COVER_VARIATION); niżej jest zwykły kamień.
+export const COVER_DEPTH = 22;
+export const COVER_VARIATION = 8;
+
+// Grubość jednej warstwy (bloki) i jak bardzo warstwy są pofalowane
+// (o ile bloków w górę i w dół).
+export const STRATA_THICKNESS = 4;
+export const STRATA_WARP = 6;
+
+// W górach warstwy są pofałdowane - o tyle bloków w górę i w dół.
+export const STRATA_FOLDS = 30;
+
+// Z jakich skał są warstwy w danym miejscu (udziały, sumują się do 1).
+// Między miejscami (np. nizina -> wyżyna) skały zmieniają się płynnie,
+// warstwa po warstwie.
+export const STRATA = {
+    lowland: { stone: 0.55, sandstone: 0.45 },
+    coast: { sandstone: 0.8, stone: 0.2 },
+    upland: { limestone: 0.65, stone: 0.2, sandstone: 0.15 },
+    plateau: { sandstone: 0.5, limestone: 0.5 },
+    mountains: { slate: 0.6, stone: 0.4 },
+    ocean: { basalt: 0.55, stone: 0.45 }
+};
+
+// Lepidolit: rzadkie żyły (cienkie, powyginane płyty) tylko w granicie.
+//   SCALE        - jak bardzo żyły się wyginają (bloki),
+//   WIDTH        - grubość żyły (więcej = grubsze),
+//   POCKET_SCALE - wielkość obszarów, w których żyły w ogóle są,
+//   POCKET       - próg tych obszarów (więcej = rzadziej),
+//   MIN_DEPTH    - płycej niż tyle bloków pod powierzchnią żyła jest
+//                  tylko tam, gdzie pole wychodni > OUTCROP (rzadko).
+export const LEPIDOLITE = {
+    SCALE: 11,
+    WIDTH: 0.045,
+    POCKET_SCALE: 48,
+    POCKET: 0.45,
+    MIN_DEPTH: 3,
+    OUTCROP: 0.3
+};

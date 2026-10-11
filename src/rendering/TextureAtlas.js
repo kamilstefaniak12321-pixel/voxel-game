@@ -82,6 +82,48 @@ export const ATLAS_TILES = {
     water: {
         x: 12,
         y: 0
+    },
+
+    // Skały (teren realistyczny - src/world/terrain/Geology.js).
+
+    granite: {
+        x: 13,
+        y: 0
+    },
+
+    limestone: {
+        x: 14,
+        y: 0
+    },
+
+    sandstone_side: {
+        x: 15,
+        y: 0
+    },
+
+    sandstone_top: {
+        x: 0,
+        y: 1
+    },
+
+    slate_side: {
+        x: 1,
+        y: 1
+    },
+
+    slate_top: {
+        x: 2,
+        y: 1
+    },
+
+    basalt_side: {
+        x: 3,
+        y: 1
+    },
+
+    basalt_top: {
+        x: 4,
+        y: 1
     }
 
 };

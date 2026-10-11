@@ -1,4 +1,7 @@
+import { CHUNK_HEIGHT } from '../config.js';
+import { getBlockTypeById } from '../blocks/BlockRegistry.js';
 import { LANDFORMS, RELIEFS } from '../world/terrain/landforms.js';
+import { ROCK_INFO, SOIL_INFO, blockNamePl } from '../world/terrain/rocks.js';
 
 // ------------------------------------------------------------
 // MAPA TERENU (komenda /mapa, klawisz M)
@@ -11,6 +14,9 @@ import { LANDFORMS, RELIEFS } from '../world/terrain/landforms.js';
 //   teren   - wysokość w kolorach jak na mapie fizycznej, z cieniowaniem,
 //   formy   - formy terenu (góry, doliny, kotliny, wąwozy...) z legendą,
 //   pasy    - niziny / wyżyny / góry / depresje / morze,
+//   skaly   - skała na wierzchu albo tuż pod glebą (mapa geologiczna),
+//   przekroj - przekrój pionowy terenu w kierunku patrzenia: wszystkie
+//             skały pod ziemią, żyły lepidolitu, woda,
 //   pola    - pojedyncze pola generatora (kontynent, erozja, grzbiety...).
 //
 // Mapa liczy się kawałkami (kilka ms na klatkę), więc gra nie
@@ -30,6 +36,8 @@ export const MAP_LAYERS = {
     teren: 'wysokość terenu',
     formy: 'formy terenu',
     pasy: 'niziny, wyżyny, góry',
+    skaly: 'skały (na wierzchu i pod glebą)',
+    przekroj: 'przekrój pionowy w kierunku patrzenia',
     kontynent: 'pole: kontynent (morze ↔ ląd)',
     wypietrzenie: 'pole: wypiętrzenie (niziny ↔ góry)',
     erozja: 'pole: erozja (poszarpany ↔ wygładzony)',
@@ -50,6 +58,13 @@ const RELIEF_COLORS = {
     upland: '#e2c66b',
     mountains: '#9c6b45'
 };
+
+
+// Kolory bloków na mapie skał i przekroju.
+
+const BLOCK_COLORS = { ...SOIL_INFO, ...ROCK_INFO };
+
+const AIR_COLOR = [196, 222, 244];
 
 
 function hexToRgb(hex) {
@@ -182,9 +197,10 @@ export class TerrainMap {
     }
 
 
-    // Otwiera mapę wokół (x, z). layer, scale - opcjonalnie.
+    // Otwiera mapę wokół (x, z). layer, scale - opcjonalnie;
+    // yaw - kierunek patrzenia (dla przekroju).
 
-    open(generator, x, z, layer = this.layer, scale = this.scale) {
+    open(generator, x, z, layer = this.layer, scale = this.scale, yaw = 0) {
 
         this.generator = generator;
         this.layer = layer;
@@ -192,15 +208,21 @@ export class TerrainMap {
 
         this.center = { x: Math.round(x), z: Math.round(z) };
 
+        // Kierunek przekroju (do przodu, jak patrzy gracz).
+        this.direction = { x: -Math.sin(yaw), z: -Math.cos(yaw) };
+
         this.root.hidden = false;
 
 
         const size = MAP_SIZE * scale;
 
-        this.title.textContent =
-            `Mapa: ${MAP_LAYERS[layer]} | ${size} x ${size} bloków (1 punkt = ${scale} ` +
-            `${scale === 1 ? 'blok' : [2, 4, 32].includes(scale) ? 'bloki' : 'bloków'}) | środek ${this.center.x}, ${this.center.z} | ` +
-            'M albo /mapa - zamknij';
+        const unit = `${scale === 1 ? 'blok' : [2, 4, 32].includes(scale) ? 'bloki' : 'bloków'}`;
+
+        this.title.textContent = this.isSection
+            ? `Mapa: ${MAP_LAYERS[layer]} | ${size} bloków w poziomie (1 punkt = ${scale} ${unit}), ` +
+              `wysokość 0-${CHUNK_HEIGHT - 1} | ← za tobą, przed tobą → | M albo /mapa - zamknij`
+            : `Mapa: ${MAP_LAYERS[layer]} | ${size} x ${size} bloków (1 punkt = ${scale} ${unit}) | ` +
+              `środek ${this.center.x}, ${this.center.z} | M albo /mapa - zamknij`;
 
 
         // Liczenie od nowa: najpierw wysokości (z ramką na nachylenie),
@@ -232,6 +254,36 @@ export class TerrainMap {
     }
 
 
+    get isSection() {
+
+        return this.layer === 'przekroj';
+
+    }
+
+
+    // Kolumna przekroju i (od lewej) - pozycja w świecie.
+
+    sectionColumn(i) {
+
+        const along = (i - MAP_SIZE / 2) * this.scale;
+
+        return {
+            x: Math.round(this.center.x + this.direction.x * along),
+            z: Math.round(this.center.z + this.direction.z * along)
+        };
+
+    }
+
+
+    // Wysokość (y) w wierszu j przekroju (góra mapy = góra świata).
+
+    sectionY(j) {
+
+        return Math.floor((MAP_SIZE - 1 - j) * CHUNK_HEIGHT / MAP_SIZE);
+
+    }
+
+
     // Pozycja bloku pod punktem mapy (i, j).
 
     blockAt(i, j) {
@@ -248,10 +300,19 @@ export class TerrainMap {
 
     // Co klatkę: liczenie kolejnych wierszy i strzałka gracza.
 
-    update(playerX, playerZ, yaw) {
+    update(playerX, playerZ, yaw, playerY = 0) {
 
         if (!this.isOpen) {
             return;
+        }
+
+
+        if (this.isSection) {
+
+            this.updateSection(playerX, playerY, playerZ);
+
+            return;
+
         }
 
 
@@ -360,6 +421,106 @@ export class TerrainMap {
     }
 
 
+    // Przekrój: kolumny po kolei (cała kolumna bloków z generatora).
+
+    updateSection(playerX, playerY, playerZ) {
+
+        // Gracz: strzałka "przed siebie" w środku przekroju, na jego
+        // wysokości (o ile nie odszedł w bok od linii przekroju).
+
+        const dx = playerX - this.center.x;
+        const dz = playerZ - this.center.z;
+
+        const along = dx * this.direction.x + dz * this.direction.z;
+        const aside = Math.abs(dx * this.direction.z - dz * this.direction.x);
+
+        const px = MAP_SIZE / 2 + along / this.scale;
+        const py = MAP_SIZE * (1 - playerY / CHUNK_HEIGHT);
+
+        this.marker.style.left = `${(px / MAP_SIZE) * 100}%`;
+        this.marker.style.top = `${(py / MAP_SIZE) * 100}%`;
+        this.marker.style.transform = 'translate(-50%, -50%) rotate(90deg)';
+        this.marker.hidden = px < 0 || px > MAP_SIZE || aside > 2 * this.scale;
+
+
+        const job = this.job;
+
+        if (!job || job.row >= MAP_SIZE) {
+            return;
+        }
+
+
+        if (!this.generator.columnBlocks) {
+
+            job.row = MAP_SIZE;
+
+            this.hover.textContent = 'Ten typ terenu nie ma przekroju.';
+
+            return;
+
+        }
+
+
+        const deadline = performance.now() + BUDGET_MS;
+
+        const data = this.image.data;
+
+        while (job.row < MAP_SIZE && performance.now() < deadline) {
+
+            const i = job.row++;
+
+            const { x, z } = this.sectionColumn(i);
+
+            const { blocks } = this.generator.columnBlocks(x, z);
+
+            job.samples[i] = blocks.slice();
+
+
+            for (let j = 0; j < MAP_SIZE; j++) {
+
+                const y = this.sectionY(j);
+
+                const id = blocks[y];
+
+                let color = AIR_COLOR;
+
+                if (id !== 0) {
+
+                    const type = getBlockTypeById(id);
+
+                    job.present.add(type);
+
+                    color = hexToRgb(BLOCK_COLORS[type]?.color ?? '#808080');
+
+                    // Co drugi blok w pionie odrobinę ciemniej - widać warstwy.
+
+                    if (y % 2 === 1) {
+                        color = color.map((c) => c * 0.94);
+                    }
+
+                }
+
+                const o = (j * MAP_SIZE + i) * 4;
+
+                data[o] = color[0];
+                data[o + 1] = color[1];
+                data[o + 2] = color[2];
+                data[o + 3] = 255;
+
+            }
+
+        }
+
+
+        this.context.putImageData(this.image, 0, 0);
+
+        if (job.row >= MAP_SIZE) {
+            this.showLegend();
+        }
+
+    }
+
+
     colorFor(info, shade) {
 
         const sea = this.generator.seaLevel ?? 0;
@@ -397,6 +558,20 @@ export class TerrainMap {
                 color = hexToRgb(RELIEF_COLORS[info.relief] ?? '#808080');
 
                 return water ? color : color.map((c) => Math.min(255, c * (0.7 + shade * 0.3)));
+
+            }
+
+            case 'skaly': {
+
+                if (water) {
+                    return hexToRgb(SOIL_INFO.water.color);
+                }
+
+                this.job.present.add(info.rock);
+
+                color = hexToRgb(ROCK_INFO[info.rock]?.color ?? '#808080');
+
+                return color.map((c) => Math.min(255, c * (0.75 + shade * 0.25)));
 
             }
 
@@ -438,6 +613,17 @@ export class TerrainMap {
 
             for (const [key, name] of Object.entries(RELIEFS)) {
                 if (this.job.present.has(key)) entries.push([RELIEF_COLORS[key], name]);
+            }
+
+        }
+        else if (this.layer === 'skaly' || this.layer === 'przekroj') {
+
+            for (const [type, info] of Object.entries(BLOCK_COLORS)) {
+                if (this.job.present.has(type)) entries.push([info.color, info.name]);
+            }
+
+            if (this.layer === 'skaly') {
+                entries.push([SOIL_INFO.water.color, 'morze']);
             }
 
         }
@@ -486,6 +672,29 @@ export class TerrainMap {
         const i = Math.floor((event.clientX - rect.left) / rect.width * MAP_SIZE);
         const j = Math.floor((event.clientY - rect.top) / rect.height * MAP_SIZE);
 
+
+        if (this.isSection) {
+
+            const blocks = this.job.samples[i];
+
+            if (!blocks) {
+                return;
+            }
+
+            const { x, z } = this.sectionColumn(i);
+
+            const y = this.sectionY(j);
+
+            const id = blocks[y];
+
+            this.hover.textContent =
+                `${x}, ${y}, ${z} | ${id === 0 ? 'powietrze' : blockNamePl(getBlockTypeById(id))}`;
+
+            return;
+
+        }
+
+
         const info = this.job.samples[j * MAP_SIZE + i];
 
         if (!info) {
@@ -496,7 +705,8 @@ export class TerrainMap {
 
         this.hover.textContent =
             `${x}, ${z} | wysokość ${info.height} | ${RELIEFS[info.relief] ?? info.relief} | ` +
-            `${LANDFORMS[info.landform]?.name ?? info.landform}`;
+            `${LANDFORMS[info.landform]?.name ?? info.landform}` +
+            (info.rock ? ` | skała: ${blockNamePl(info.rock)}` : '');
 
     }
 

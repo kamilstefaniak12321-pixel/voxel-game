@@ -564,7 +564,14 @@ window.addEventListener('keydown', (event) => {
             terrainMap.close();
         }
         else {
-            terrainMap.open(game.world.generator, game.player.pos.x, game.player.pos.z);
+            terrainMap.open(
+                game.world.generator,
+                game.player.pos.x,
+                game.player.pos.z,
+                undefined,
+                undefined,
+                game.player.yaw
+            );
         }
 
         return;
@@ -741,7 +748,7 @@ function animate(now) {
 
     chat.update();
 
-    terrainMap.update(game.player.pos.x, game.player.pos.z, game.player.yaw);
+    terrainMap.update(game.player.pos.x, game.player.pos.z, game.player.yaw, game.player.pos.y);
 
 
     // W pauzie świat dalej jest widoczny pod menu.

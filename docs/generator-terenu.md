@@ -28,8 +28,13 @@ etap po etapie.
   (`/teren`), szukanie form (`/teren znajdz turnia`).
 - **Szybkość przy wyższym świecie** - mesher pomija lity kamień pod
   terenem (`Chunk.solidBelow`), więc budowa meshy jest nawet szybsza
-  niż przy świecie 64; żyły lepidolitu w terenie realistycznym liczą
-  szum co 2 bloki.
+  niż przy świecie 64.
+
+**Etap 1 - w toku:**
+
+- **Budowa geologiczna** (zrobione) - zamiast samego kamienia:
+  granit, wapień, piaskowiec, łupek, bazalt i kamień, każdy w swoim
+  miejscu; lepidolit tylko jako rzadkie żyły w granicie. Opis niżej.
 
 ## Jak działa generator realistyczny
 
@@ -54,6 +59,11 @@ seed ──► POLA (gładkie mapy szumu)                       TerrainShape.js:
          POWIERZCHNIA I WODA                              ROCK_LINE, ROCK_SLOPE, BEACH_HEIGHT
            trawa / ziemia, skała (strome zbocza, szczyty),
            piasek (plaże, dno), woda do poziomu morza
+            │
+            ▼
+         SKAŁY POD ZIEMIĄ                                 Geology.js; GRANITE_..., STRATA, LEPIDOLITE
+           bazalt, granit, kamień, warstwy osadowe,
+           żyły lepidolitu
 ```
 
 Każda kolumna (x, z) jest liczona niezależnie - tylko z seeda
@@ -69,6 +79,48 @@ były okrągłymi plamami. Pola klimatu na razie widać tylko na mapie
 **Wszystkie liczby** do strojenia są w `src/world/terrain/TerrainShape.js`,
 z opisami. Najwygodniej stroić tak: zmienić liczbę, odświeżyć grę,
 `/mapa formy 16` - i widać efekt na kilku kilometrach terenu.
+
+## Budowa geologiczna
+
+Każda kolumna ma pod glebą (trawa + 3 ziemi) albo piaskiem (3 bloki)
+kilka pięter skał (`src/world/terrain/Geology.js`):
+
+```
+ y 127  ┌──────────────────────────────────────────────┐
+        │  gleba / piasek                              │
+        │  WARSTWY OSADOWE  (pasy po 4 bloki, lekko     │  sięgają ~22 bloki
+        │  pofalowane; w górach mocno pofałdowane)      │  pod powierzchnię
+        │  KAMIEŃ                                       │
+        │  GRANIT   (pod nizinami od y ~16, pod wyżynami │
+        │           ~24, pod górami tuż pod powierzchnią│
+        │           albo na wierzchu) + żyły lepidolitu │
+ y 0    │  BAZALT   (najgłębsze 2-6 bloków)              │
+        └──────────────────────────────────────────────┘
+```
+
+Z jakich skał są warstwy, zależy od krajobrazu (`STRATA`
+w `TerrainShape.js`). Każda warstwa ciągnie się daleko w bok, a na
+granicy krajobrazów zmienia skałę - jak prawdziwe skały osadowe.
+
+| skała | gdzie | na powierzchni |
+|---|---|---|
+| **granit** | podłoże pod całym lądem; pod górami tuż pod powierzchnią | granitowe szczyty i turnie |
+| **łupek** | warstwy w górach (na przemian z kamieniem, pofałdowane) | zbocza gór |
+| **wapień** | warstwy na wyżynach (~65%) i płaskowyżach | białe urwiska wyżyn, krawędzie wąwozów |
+| **piaskowiec** | warstwy na nizinach, wybrzeżach (pod plażą) i płaskowyżach | klify, krawędzie płaskowyżów (pasy z wapieniem) |
+| **kamień** | między granitem a warstwami; część warstw na nizinach i w górach | wszędzie po trochu |
+| **bazalt** | dno świata; pod głębokim morzem zamiast granitu (skorupa oceaniczna) | dno głębokiego morza (pod piaskiem) |
+| **lepidolit** | cienkie, powyginane żyły tylko w granicie, w rzadkich skupiskach | rzadko - tylko gdzie granit jest na wierzchu |
+
+Lepidolit (~0,3% skał, dawniej ~2,6%): pod nizinami jest głęboko
+(y ~5-15, w granicie), pod górami płycej. Na powierzchnię wychodzi
+w nielicznych miejscach (`LEPIDOLITE.OUTCROP`).
+
+Sprawdzanie: `/skaly` (kolumna pod graczem), `/skaly statystyki`,
+`/skaly znajdz granit tp`, `/skaly zyla tp`, `/mapa skaly`,
+`/mapa przekroj` (przekrój pionowy), `/demo skaly` (odkrywka w świecie).
+
+Klasyczny teren zostaje bez zmian (sam kamień i lepidolit jak dawniej).
 
 ## Formy terenu
 
@@ -114,6 +166,9 @@ nad morzem), **wyżyna** (15-31), **góry** (32 i więcej), **depresja**
 Co: dopracować kształty z prototypu, aż teren będzie wyglądał
 naturalnie z bliska i z daleka.
 
+- ~~rodzaje skał i budowa geologiczna~~ (zrobione - opis wyżej);
+  dalej: żwir i glina, ostańce wapienne, kolor skał na dalekich
+  górach zależny od skały,
 - przejścia: pogórza między nizinami a górami, krawędzie wyżyn,
   wybrzeża (klify przy górach, płaskie plaże przy nizinach),
 - góry: mniej "płaskowyżu z graniami", więcej zboczy; grzbiety boczne;
@@ -204,7 +259,9 @@ Jaskinie, rudy i warstwy skał, wodospady, klify nadmorskie, pory roku.
   gotowy, zamrozimy jego wersję (jak klasyczny) i dalsze zmiany pójdą
   do nowego typu.
 - **Wydajność**: realistyczny liczy ~3 µs na kolumnę, wygenerowanie
-  chunka to ~1 ms (klasyczny ~0,5 ms), mesh ~0,2 ms. Każdy kolejny
+  chunka to ~1 ms razem ze skałami (klasyczny ~0,5 ms), mesh ~0,2 ms.
+  Szum żył lepidolitu jest liczony w punktach co 2-4 bloki i tylko
+  do wysokości granitu. Każdy kolejny
   etap (rzeki, biomy, drzewa) ma się zmieścić tak, żeby cały chunk
   był gotowy w kilku ms (`/wydajnosc`, `/wydajnosc test`).
 - **Wysokość świata**: 128 bloków (morze na 48). Chunk zajmuje teraz
@@ -220,13 +277,18 @@ Jaskinie, rudy i warstwy skał, wodospady, klify nadmorskie, pory roku.
 | `/mapa [warstwa] [skala]`, klawisz **M** | mapa z góry: `teren` (wysokość), `formy`, `pasy`, pola (`kontynent`, `wypietrzenie`, `erozja`, `grzbiety`, `gory`, `wyzyny`, `temperatura`, `wilgotnosc`); skala 1-32 bloki na punkt |
 | `/teren [x z]` | wysokość, pas wysokości, forma, powierzchnia i wartości pól w miejscu |
 | `/teren znajdz <forma> [promień] [tp]` | najbliższe miejsce z formą (np. `turnia`, `kotlina`, `wawoz`, `morze`) |
+| `/skaly`, `/skaly statystyki [promień]` | skały w kolumnie pod graczem; udział skał w okolicy |
+| `/skaly znajdz <skała> [promień] [tp]`, `/skaly zyla [tp]` | najbliższa odsłonięta skała; najbliższa żyła lepidolitu |
+| `/mapa skaly`, `/mapa przekroj` | mapa skał (pod glebą); przekrój pionowy w kierunku patrzenia |
+| `/demo skaly` | odkrywka - wykop do dna świata, na ścianach widać warstwy |
 | `/horyzont lod`, `/wydajnosc` | daleki teren i szybkość |
 
-## Do ustalenia z Kamilem
+## Ustalone z Kamilem
 
-- Skala: ile metrów to jeden blok w pionie (teraz góry sięgają ~70
-  bloków nad morze)? Czy chcemy wyższych gór (świat 256)?
-- Proporcje: ile morza, a ile lądu; jak duże kontynenty (teraz morza
-  i lądy mają po kilka kilometrów).
-- Czy nowe światy mają być domyślnie realistyczne (teraz tak).
+- Góry do ~70 bloków nad morzem - na razie wystarczą (świat 128).
+- Morza i lądy - zostają takie jak teraz.
+- Nowe światy są domyślnie realistyczne.
+
+## Do ustalenia
+
 - Lista biomów na start (etap 4).

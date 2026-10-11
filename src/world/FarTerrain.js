@@ -9,7 +9,8 @@ import {
 import {
     isSolidId,
     isLiquidId,
-    getBlockTypeById
+    getBlockTypeById,
+    getBlockDefinition
 } from '../blocks/BlockRegistry.js';
 
 import {
@@ -104,18 +105,35 @@ const FALLBACK_COLORS = {
     water: new THREE.Color(0.03, 0.11, 0.42)
 };
 
+// Skały, które mają na dalekim terenie własny kolor (średni kolor
+// wierzchu bloku). Zwykły kamień to 'rock'.
+
+const ROCK_KINDS = ['granite', 'limestone', 'sandstone', 'slate', 'basalt', 'lepidolite'];
+
 // Rodzaj powierzchni (generator.farSurface) -> numer w kafelku.
 
-const KINDS = ['grass', 'rock', 'sand', 'water'];
+const KINDS = ['grass', 'rock', 'sand', 'water', ...ROCK_KINDS];
 
-// Blok wierzchu w zmienionym chunku -> rodzaj powierzchni.
+// Numer rodzaju: 'stone' to to samo co 'rock', nieznany = trawa.
+
+function kindIndex(kind) {
+
+    return Math.max(0, KINDS.indexOf(kind === 'stone' ? 'rock' : kind));
+
+}
+
+// Blok wierzchu w zmienionym chunku -> rodzaj powierzchni
+// (inne bloki - jak trawa).
 
 const BLOCK_KINDS = {
     stone: 'rock',
-    lepidolite: 'rock',
     sand: 'sand',
     water: 'water'
 };
+
+for (const rock of ROCK_KINDS) {
+    BLOCK_KINDS[rock] = rock;
+}
 
 
 // ------------------------------------------------------------
@@ -344,6 +362,18 @@ export class FarTerrain {
 
             for (const name of Object.keys(FALLBACK_COLORS)) {
                 this.colors[name] = getAtlasAverage(name) ?? FALLBACK_COLORS[name];
+            }
+
+
+            // Skały: średni kolor tekstury wierzchu bloku.
+
+            for (const rock of ROCK_KINDS) {
+
+                const textures = getBlockDefinition(rock)?.textures ?? {};
+
+                this.colors[rock] =
+                    getAtlasAverage(textures.top ?? textures.all) ?? this.colors.stone;
+
             }
 
             this.colorsReady = true;
@@ -666,7 +696,8 @@ export class FarTerrain {
 
     // Wierzch terenu w kolumnie (x, z): { top, kind } - top = y nad
     // najwyższym blokiem (albo nad wodą), kind = rodzaj powierzchni
-    // ('grass', 'rock', 'sand', 'water'). spacing = jak gęsto
+    // ('grass', 'rock', 'sand', 'water' albo skała: 'granite',
+    // 'limestone'... - KINDS). spacing = jak gęsto
     // próbkujemy (mniej szczegółów przy rzadszych próbkach).
 
     surfaceAt(x, z, spacing, modified) {
@@ -735,7 +766,7 @@ export class FarTerrain {
                 const surface = this.surfaceAt(x, z, spacing, modified);
 
                 heights[j * W + i] = surface.top;
-                kinds[j * W + i] = Math.max(0, KINDS.indexOf(surface.kind));
+                kinds[j * W + i] = kindIndex(surface.kind);
 
             }
 
@@ -805,6 +836,9 @@ export class FarTerrain {
                 }
                 else if (kind === 'rock') {
                     color.copy(stone);
+                }
+                else if (kind !== 'grass') {
+                    color.copy(this.colors[kind] ?? stone);
                 }
                 else {
                     color.copy(grass).lerp(side, smoothstep(0.3, 0.75, 1 - normal.y));

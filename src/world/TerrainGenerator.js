@@ -304,8 +304,63 @@ export class TerrainGenerator {
             landform: height > TERRAIN_ROCK_LEVEL ? 'mountains' : 'plain',
             relief: height > TERRAIN_ROCK_LEVEL ? 'mountains' : 'lowland',
             surface: this.isBareRock(x, z, height) ? 'rock' : 'grass',
+            rock: 'stone',
             fields: {}
         };
+
+    }
+
+
+    // Blok na wierzchu kolumny (/skaly znajdz).
+
+    surfaceBlock(x, z) {
+
+        const height = this.getHeight(x, z);
+
+        if (!this.isBareRock(x, z, height)) {
+            return 'grass';
+        }
+
+        return this.isLepidolite(x, height, z) ? 'lepidolite' : 'stone';
+
+    }
+
+
+    // Bloki jednej kolumny - tak jak w generateChunk (mapa przekroju,
+    // komenda /skaly). Teren się przez to nie zmienia.
+
+    columnBlocks(x, z, blocks = new Uint8Array(CHUNK_HEIGHT)) {
+
+        const height = this.getHeight(x, z);
+
+        const bareRock = this.isBareRock(x, z, height);
+
+        blocks.fill(0);
+
+        for (let y = 0; y <= height; y++) {
+
+            let id = this.stoneId;
+
+            if (!bareRock) {
+
+                if (y === height) {
+                    id = this.grassId;
+                }
+                else if (y >= height - TERRAIN_DIRT_DEPTH) {
+                    id = this.dirtId;
+                }
+
+            }
+
+            if (id === this.stoneId && this.isLepidolite(x, y, z)) {
+                id = this.lepidoliteId;
+            }
+
+            blocks[y] = id;
+
+        }
+
+        return { height, kind: bareRock ? 'rock' : 'grass', top: height, blocks };
 
     }
 

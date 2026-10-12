@@ -36,10 +36,10 @@ z przeglądarki i z aplikacji są zapisywane osobno.
 | F5 | widok: z oczu / zza pleców / z przodu |
 | Mysz | rozglądanie się |
 | LPM | zniszcz blok |
-| PPM | postaw blok |
+| PPM | postaw blok / zbierz owoce z krzaka / posadź owoc |
 | 1-9 / kółko myszy | wybór miejsca na pasku bloków |
 | Środkowy przycisk myszy | weź blok, na który patrzysz, na pasek |
-| E | ekwipunek (w trybie kreatywnym też wszystkie bloki gry) |
+| E | ekwipunek (w trybie kreatywnym też wszystkie bloki gry i owoce) |
 | ESC | pauza (wróć do gry, ustawienia, zapisz i wyjdź do menu) |
 | F3 | informacje debugowania w lewym górnym rogu |
 | [ / ] (z F3) | cofnij / przesuń czas o godzinę |
@@ -105,7 +105,9 @@ Oprócz trawy, ziemi, piasku i skał są:
   i żwir (`gravel`) - na razie tylko w trybie kreatywnym (na ziemiach
   rosną rośliny, na żwirze nie),
 - **rośliny:** krótka i wysoka trawa, paproć, koniczyna, pokrzywa,
-  babka zwyczajna oraz kwiaty: mak, chaber, rumianek, mniszek.
+  babka zwyczajna oraz kwiaty: mak, chaber, rumianek, mniszek,
+- **krzaki owocowe:** malina, jeżyna, porzeczka i leszczyna (orzechy
+  laskowe) - opis niżej.
 
 Rośliny są skrzyżowanymi płaszczyznami z teksturą (model `cross`),
 nie mają kolizji, nie zasłaniają światła i lekko kołyszą się na wietrze
@@ -121,6 +123,50 @@ W terenie realistycznym na trawie rośnie trawa (od rzadkiej do gęstych
 klimacie i na wyżynach, a pojedynczo zioła i mniszki - liczby do
 strojenia: `PLANTS` w `src/world/terrain/TerrainShape.js`. Rośliny
 rysują się do `PLANT_VIEW_DISTANCE` bloków od gracza (`src/config.js`).
+
+### Krzaki owocowe i orzechy
+
+Cztery gatunki: **malina**, **jeżyna**, **porzeczka** (czerwona)
+i **leszczyna** (orzechy laskowe). Każdy rośnie w czterech etapach:
+
+| Etap | Blok (np. malina) | Wygląd |
+|---|---|---|
+| sadzonka | `raspberry_sapling` | mała roślinka |
+| krzak | `raspberry_bush` | sam krzak, bez owoców |
+| kilka owoców | `raspberry_bush_few` | pierwsze owoce |
+| pełen owoców | `raspberry_bush_full` | krzak obsypany owocami |
+
+(jeżyna - `blackberry_...`, porzeczka - `currant_...`, leszczyna -
+`hazel_...`)
+
+- **Wzrost:** krzaki same przechodzą do następnego etapu - średnio co
+  `BUSH_GROWTH_SECONDS` sekund (`src/config.js`, teraz 150 s), każdy
+  w swoim, losowym czasie. Rosną posadzone krzaki i te, z których
+  zbierałeś owoce (w chunkach wczytanych wokół gracza i zmienionych
+  przez niego); dzikie krzaki w nietkniętym terenie czekają w swoim
+  etapie - dzięki temu nie trzeba zapisywać całej okolicy, a meteoryty
+  dalej mają gdzie spadać. Kod: `src/game/PlantGrowth.js`.
+- **Zbiór:** PPM na krzaku z owocami - owoce trafiają do ekwipunku
+  (kilka owoców: 1-2, pełen: 2-4, orzechy 2-3), a krzak wraca do etapu
+  bez owoców i owocuje od nowa. Z **Shiftem** i blokiem w ręce PPM
+  zwyczajnie stawia blok obok. Działa w obu trybach.
+- **Sadzenie:** owoc w ręce + PPM na ziemi = sadzonka tego gatunku
+  (w przygodzie zużywa jeden owoc). Orzech daje leszczynę.
+- **Niszczenie:** zniszczony krzak (przygoda) daje sadzonkę - można go
+  przesadzić - i owoce, które na nim były.
+- **W świecie:** w terenie realistycznym na trawie rosną dzikie zarośla
+  (zwykle jednego gatunku) - w różnych etapach, najczęściej z owocami.
+  Liczby do strojenia: `bush...` w `PLANTS` (`TerrainShape.js`).
+- **Owoce** to pierwsze **przedmioty**, które nie są blokami: maliny,
+  jeżyny, porzeczki, orzech laskowy (`src/items/ItemRegistry.js`). Leżą
+  w ekwipunku jak bloki (stosy po 64), w ręce postaci widać je jako
+  płaski obrazek. Na razie służą do sadzenia - jedzenie przyjdzie
+  z głodem.
+- **Tekstury:** wiersz 3 atlasu (krzaki - sadzonka i krzak bez owoców są
+  wspólne dla gatunków) i wiersz 4 (ikonki owoców).
+- **Test:** `/krzaki ogrod` (przed tobą wszystkie gatunki i etapy),
+  `/krzaki znajdz` (najbliższy dziki krzak z owocami), `/krzaki tempo 60`
+  (rosną 60 razy szybciej), `/krzaki rosnij 3`, `/daj maliny 10`.
 
 ## Ustawienia
 
@@ -149,8 +195,8 @@ W menu (z ekranu tytułowego i z pauzy) są zakładki:
 warstwa skórki, zgięcia rąk i nóg (gładkie albo klocki), odległość
 kamery z trzeciej osoby.
 
-**Dźwięk** - głośność całej gry, osobno bloków i kroków oraz zjawisk
-(meteoryty); 0 = wyłączone.
+**Dźwięk** - głośność całej gry, osobno bloków i kroków, zjawisk
+(meteoryty) oraz menu i ekwipunku; 0 = wyłączone.
 
 **Inne** - motyw menu, rozmiar interfejsu w grze (pasek, czat, napisy),
 informacje debugowania (to samo co F3), licznik FPS w rogu ekranu,
@@ -169,21 +215,34 @@ z czatu: `/ustaw` (lista), np. `/ustaw zasieg 256`.
   stuk przy lądowaniu (tym głośniejszy, im mocniej).
 - **Bloki** - każde postawienie i zniszczenie ma dźwięk swojego
   materiału, słychać go z miejsca bloku (z lewej, z prawej, z daleka).
+- **Zbieranie owoców** - szelest liści i miękkie "pyknięcia" zrywanych
+  owoców (z miejsca krzaka).
 - **Meteoryt** - huk lecącej kuli ognia narasta i robi się coraz
   wyższy, a uderzenie słychać trochę po błysku (dźwięk leci 343 bloki na
   sekundę - jak grzmot po błyskawicy). Potem grad odłamków i trzaskający,
   gasnący żar w kraterze. Dźwięki meteorytu są przestrzenne.
+- **Menu** - każdy przycisk cicho "klika" (przyciski powrotu - *Wróć*,
+  *Anuluj*, *Gotowe*, ESC - niżej), suwaki tykają przy każdym kroku
+  (tym wyżej, im dalej w prawo; suwak głośności od razu gra nową
+  głośnością), wybór świata na liście - lżejsze kliknięcie.
+- **Ekwipunek** - otwarcie i zamknięcie (szelest torby), wzięcie
+  i odłożenie stosu, kosz. Zła komenda na czacie - krótkie, niskie
+  "bum".
 
 Dźwięk zaczyna grać po pierwszym kliknięciu albo klawiszu (tak chce
-przeglądarka), w pauzie i w menu jest wstrzymany. Głośność: *Ustawienia*
-→ *Dźwięk* albo `/ustaw glosnosc 60`. Test: `/dzwiek pokaz` (wszystkie
-materiały po kolei), `/dzwiek meteor_impact` (jeden dźwięk).
+przeglądarka). Dźwięki gry w pauzie i w menu milkną i zatrzymują się
+w miejscu (po powrocie grają dalej), a dźwięki menu grają zawsze.
+Głośność: *Ustawienia* → *Dźwięk* albo `/ustaw glosnosc 60`
+(`glosnosc-menu` - samo menu). Test: `/dzwiek pokaz` (wszystkie
+materiały po kolei), `/dzwiek menu` (dźwięki menu i ekwipunku),
+`/dzwiek meteor_impact` (jeden dźwięk).
 
 Pliki są w `assets/sounds/` (`.ogg`) - każdy można podmienić własnym
 nagraniem o tej samej nazwie. Lista dźwięków, ich głośność i zasięg:
 `src/audio/sounds.js`; materiał dźwięków bloku: pole `sound`
-w `src/blocks/BlockRegistry.js`. Obecne dźwięki są syntetyczne - policzył
-je skrypt `tools/dzwieki.py` (Python z numpy i scipy + ffmpeg).
+w `src/blocks/BlockRegistry.js`; dźwięki menu gra `src/audio/ui.js`.
+Obecne dźwięki są syntetyczne - policzył je skrypt `tools/dzwieki.py`
+(Python z numpy i scipy + ffmpeg).
 
 ## Gracz
 
@@ -192,7 +251,7 @@ ręce zginają się w łokciach, nogi w kolanach, a tułów w talii. Widać ją
 z trzeciej osoby (**F5**). Animacje: stanie (oddech), chód, bieg,
 kucanie, skradanie, skok, spadanie, lądowanie, machnięcie ręką przy
 niszczeniu i stawianiu, latanie; głowa patrzy tam, gdzie kamera.
-W prawej ręce jest blok wybrany na pasku.
+W prawej ręce jest blok wybrany na pasku (owoc - jako płaski obrazek).
 
 **Skórka** to obrazek 64 x 64 w układzie skórek Minecrafta (z drugą
 warstwą). Domyślna: `assets/textures/player/skin.png`; własną wczytuje
@@ -490,16 +549,17 @@ assets/textures/sky/        tekstury nieba (księżyc)
 assets/textures/player/     skórka gracza i szablon skórki
 assets/ui/themes/           motywy menu (kolory, czcionka, tło)
 assets/fonts/               czcionki
-assets/sounds/              dźwięki (.ogg): bloki, kroki, meteoryt
+assets/sounds/              dźwięki (.ogg): bloki, kroki, zbieranie, meteoryt, menu (ui/)
 tools/                      skrypty pomocnicze (generator dźwięków)
 docs/                       opisy, jak działają większe części gry
 src/
   main.js                   start aplikacji, menu, pauza, pętla
   config.js                 ustawienia: chunki, teren, światło, dzień i noc, gracz, menu
-  game/                     jeden uruchomiony świat (Game)
+  game/                     jeden uruchomiony świat (Game), ekwipunek, meteoryty, wzrost roślin
   ui/                       ekrany menu, pasek bloków, ikonki, napisy
   settings/                 ustawienia gracza (zapis w przeglądarce)
-  blocks/                   lista bloków (BlockRegistry)
+  blocks/                   lista bloków (BlockRegistry), krzaki owocowe
+  items/                    przedmioty, które nie są blokami (owoce)
   world/                    świat, chunki, szum, światło, daleki teren
   world/terrain/            generatory terenu (realistyczny, lista typów, formy terenu, skały)
   sky/                      czas, słońce, księżyc, gwiazdy, kolory nieba
@@ -507,7 +567,7 @@ src/
   rendering/                atlas tekstur, budowanie meshy chunków
   player/                   ruch i kolizje gracza, model, animacje, skórka
   input/                    klawiatura i mysz
-  audio/                    dźwięk (lista dźwięków, odtwarzanie)
+  audio/                    dźwięk (lista dźwięków, odtwarzanie, dźwięki menu)
   commands/                 komendy czatu (do testowania)
   interaction/              raycast, niszczenie, stawianie, podświetlenie
 ```
@@ -521,8 +581,16 @@ src/
    Blok, który ma świecić, dostaje `light: 1-15` (jak lampa: `light: 15`)
    i opcjonalnie kolor światła, np. `lightColor: '#ff3020'`.
    Roślina: `solid: false`, `model: 'cross'`, `plant: { planes, height, width }`
-   (tekstura z przezroczystym tłem w wierszu 2 atlasu - tam działa wiatr).
+   (tekstura z przezroczystym tłem - każda roślina kołysze się na wietrze).
+   Roślina, która rośnie etapami: `grows: { into: 'następny_etap', seconds }`,
+   a taka, z której zbiera się owoce: `harvest: { item, count: [min, max],
+   becomes }` (przykład - krzaki owocowe na początku `BlockRegistry.js`).
    Dźwięki kroków, stawiania i niszczenia: `sound: 'grass'` (albo `dirt`,
    `stone`, `sand`, `gravel`, `mud`, `plant`, `glass`).
 4. Blok sam trafia do zakładki *Wszystkie bloki* w trybie kreatywnym
    (chyba że ma `creative: false`). Szybki test: `/daj <nazwa>`.
+
+**Nowy przedmiot** (coś, czego nie da się postawić jak bloku - np. owoc):
+ikonka 16x16 w wolnym kafelku atlasu (wiersz 4) + wpis w `ATLAS_TILES`,
+potem wpis w `ITEM_TYPES` w `src/items/ItemRegistry.js` (polska nazwa,
+ikonka, opcjonalnie `plants` - jaka roślina wyrasta po posadzeniu).

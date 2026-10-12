@@ -44,6 +44,13 @@ etap po etapie.
   z chunkiem. Liczby: `PLANTS` w `TerrainShape.js`. Nowe ziemie
   (czarnoziem, ściółka, błoto, glina, ziemia kamienista, żwir) są na
   razie tylko w trybie kreatywnym - trafią do generatora z biomami.
+- **Krzaki owocowe** (zrobione) - rzadkie zarośla malin, jeżyn,
+  porzeczek i leszczyny (pole `bushes` > `bushThreshold`; gatunek
+  z pola `bushSpecies`, zmienia się co ~140 bloków), w różnych etapach
+  wzrostu - najczęściej z owocami. Około pół procent kolumn z trawą.
+  Dzikie krzaki rosną dalej dopiero w chunku zmienionym przez gracza
+  (`src/game/PlantGrowth.js`). Liczby: `bush...`
+  w `PLANTS` (`TerrainShape.js`).
 
 ## Jak działa generator realistyczny
 

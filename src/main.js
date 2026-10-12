@@ -14,6 +14,7 @@ import { PerfMonitor } from './game/PerfMonitor.js';
 import { TerrainMap } from './ui/TerrainMap.js';
 import { InventoryScreen } from './ui/InventoryScreen.js';
 import { SoundManager } from './audio/SoundManager.js';
+import { setUiSounds, playUi } from './audio/ui.js';
 import {
     WorldStorage,
     createWorldInfo,
@@ -98,11 +99,14 @@ const perf = new PerfMonitor();
 const terrainMap = new TerrainMap();
 
 
-// Dźwięk (kroki, bloki, meteoryty). Przeglądarka pozwala go włączyć
-// dopiero po kliknięciu albo klawiszu - stąd unlock przy pierwszym
-// takim zdarzeniu (i przy każdym następnym, gdyby się wstrzymał).
+// Dźwięk (kroki, bloki, meteoryty, menu). Przeglądarka pozwala go
+// włączyć dopiero po kliknięciu albo klawiszu - stąd unlock przy
+// pierwszym takim zdarzeniu (i przy każdym następnym, gdyby się
+// wstrzymał). Menu i ekwipunek grają przez src/audio/ui.js.
 
 const sounds = new SoundManager(settings);
+
+setUiSounds(sounds);
 
 for (const type of ['pointerdown', 'keydown']) {
     window.addEventListener(type, () => sounds.unlock(), { capture: true });
@@ -570,6 +574,10 @@ function submitChat(text) {
             chat.print(result.text, result.ok ? 'success' : 'error');
         }
 
+        if (!result.ok) {
+            playUi('ui_error');
+        }
+
     }
     else if (text) {
 
@@ -744,7 +752,7 @@ function closeWorld() {
 
     game = null;
 
-    sounds.stopLoops();
+    sounds.stopGameSounds();
 
     hotbar.reset();
 
@@ -808,7 +816,8 @@ function animate(now) {
     lastFrameTime = now;
 
 
-    // Dźwięk gra tylko w trakcie gry (w pauzie i w menu jest wstrzymany).
+    // Dźwięki gry grają tylko w trakcie gry (w pauzie i w menu stoją;
+    // menu ma swoje - src/audio/ui.js).
 
     sounds.setActive(Boolean(game) && (state === 'playing' || state === 'chat' || state === 'inventory'));
 

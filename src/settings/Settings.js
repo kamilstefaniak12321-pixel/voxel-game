@@ -53,6 +53,7 @@ export const SETTINGS_DEFAULTS = {
     volumeMaster: 80,                              // głośność gry
     volumeBlocks: 100,                             // kroki, stawianie i niszczenie bloków
     volumeWorld: 100,                              // zjawiska: meteoryty
+    volumeUi: 80,                                  // menu i ekwipunek
 
     // Inne
     theme: UI_THEME,                               // motyw menu
@@ -80,6 +81,7 @@ export const SETTINGS_RANGES = {
     volumeMaster: { min: 0, max: 100, step: 5 },
     volumeBlocks: { min: 0, max: 100, step: 5 },
     volumeWorld: { min: 0, max: 100, step: 5 },
+    volumeUi: { min: 0, max: 100, step: 5 },
     cameraDistance: { min: 2, max: 8, step: 1 }
 
 };

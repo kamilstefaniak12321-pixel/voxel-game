@@ -277,6 +277,12 @@ export const DEFAULT_VIEW_DISTANCE = 48;
 // i tak są malutkie, a to dużo trójkątów (przy dużym zasięgu widzenia).
 export const PLANT_VIEW_DISTANCE = 128;
 
+// Krzaki owocowe rosną etapami: sadzonka -> krzak -> kilka owoców ->
+// pełen owoców (src/game/PlantGrowth.js). Jeden etap trwa średnio
+// tyle sekund (losowo: raz szybciej, raz wolniej) - ale rosną tylko
+// krzaki w chunkach wczytanych wokół gracza.
+export const BUSH_GROWTH_SECONDS = 150;
+
 // Daleki teren (horyzont): do ilu bloków od gracza widać uproszczony,
 // rozmyty teren za zasięgiem widzenia (0 = wyłączony).
 export const DEFAULT_FAR_TERRAIN = 1024;

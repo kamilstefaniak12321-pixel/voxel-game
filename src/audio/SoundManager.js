@@ -7,7 +7,7 @@ import { SOUNDS } from './sounds.js';
 //
 // Jeden menedżer na całą grę (main.js): wczytuje pliki z listy
 // (sounds.js), gra je przez Web Audio i pilnuje głośności z ustawień
-// (główna, bloki, zjawiska).
+// (główna, bloki, zjawiska, menu).
 //
 // Dźwięk z miejscem w świecie (position) brzmi z tamtej strony
 // i cichnie z odległością - słuchacz jest w kamerze (updateListener
@@ -15,7 +15,11 @@ import { SOUNDS } from './sounds.js';
 //
 // Przeglądarka pozwala grać dźwięk dopiero po kliknięciu albo
 // klawiszu - unlock() wołamy przy pierwszym takim zdarzeniu.
-// W pauzie i w menu dźwięk jest wstrzymany (setActive).
+//
+// Dźwięki gry (bloki, zjawiska) grają tylko w grze: w pauzie i w menu
+// (setActive(false)) milkną i zatrzymują się w miejscu, a po powrocie
+// grają dalej. Dźwięki menu (kategoria 'ui', src/audio/ui.js) grają
+// zawsze.
 //
 //   sounds.play('step_grass', { volume: 0.5 })
 //   sounds.play('break_stone', { position: new THREE.Vector3(x, y, z) })
@@ -60,6 +64,9 @@ export class SoundManager {
         this.active = false;
         this.voices = 0;
         this.loops = new Set();
+
+        // Grające teraz dźwięki gry (do zatrzymania w pauzie).
+        this.gameVoices = new Set();
 
         this.history = [];
 
@@ -172,10 +179,18 @@ export class SoundManager {
             this.master = this.context.createGain();
             this.master.connect(limiter);
 
-            for (const name of ['blocks', 'world']) {
+
+            // Dźwięki gry idą przez wspólny "kanał gry" - w pauzie
+            // wyciszany. Menu ('ui') idzie prosto do głównej głośności.
+
+            this.gameBus = this.context.createGain();
+            this.gameBus.gain.value = this.active ? 1 : 0;
+            this.gameBus.connect(this.master);
+
+            for (const name of ['blocks', 'world', 'ui']) {
 
                 this.categories[name] = this.context.createGain();
-                this.categories[name].connect(this.master);
+                this.categories[name].connect(name === 'ui' ? this.master : this.gameBus);
 
             }
 
@@ -183,7 +198,7 @@ export class SoundManager {
 
         }
 
-        if (this.active && this.context.state === 'suspended') {
+        if (this.context.state === 'suspended') {
             this.context.resume().catch(() => {});
         }
 
@@ -197,7 +212,8 @@ export class SoundManager {
     }
 
 
-    // W grze dźwięk gra, w pauzie i w menu jest wstrzymany.
+    // W grze dźwięki gry grają, w pauzie i w menu milkną i stoją
+    // w miejscu (prędkość odtwarzania 0), a po powrocie grają dalej.
 
     setActive(active) {
 
@@ -211,11 +227,31 @@ export class SoundManager {
             return;
         }
 
-        if (active) {
-            this.context.resume().catch(() => {});
-        }
-        else {
-            this.context.suspend().catch(() => {});
+        const now = this.context.currentTime;
+
+        this.gameBus.gain.cancelScheduledValues(now);
+        this.gameBus.gain.setTargetAtTime(active ? 1 : 0, now, 0.015);
+
+        for (const voice of this.gameVoices) {
+
+            const rate = voice.source.playbackRate;
+
+            if (active) {
+
+                rate.cancelScheduledValues(now);
+                rate.setValueAtTime(voice.frozenRate ?? rate.value, now + 0.01);
+
+            }
+            else {
+
+                voice.frozenRate = rate.value;
+
+                rate.cancelScheduledValues(now);
+                rate.setValueAtTime(rate.value, now);
+                rate.setValueAtTime(0, now + 0.06);
+
+            }
+
         }
 
     }
@@ -232,6 +268,7 @@ export class SoundManager {
         this.master.gain.value = sliderGain(s.get('volumeMaster'));
         this.categories.blocks.gain.value = sliderGain(s.get('volumeBlocks'));
         this.categories.world.gain.value = sliderGain(s.get('volumeWorld'));
+        this.categories.ui.gain.value = sliderGain(s.get('volumeUi'));
 
     }
 
@@ -381,13 +418,42 @@ export class SoundManager {
     }
 
 
+    // Zatrzymuje wszystkie dźwięki gry - pętle i te zatrzymane
+    // w pauzie (przy wyjściu ze świata). Menu gra dalej.
+
+    stopGameSounds() {
+
+        this.stopLoops();
+
+        for (const voice of [...this.gameVoices]) {
+
+            try {
+                voice.source.stop();
+            }
+            catch {
+                // Jeszcze się nie zaczął albo już skończył.
+            }
+
+        }
+
+    }
+
+
     createVoice(name, { position, volume, pitch, loop = false }) {
 
         const definition = SOUNDS[name];
 
         const list = this.buffers.get(name);
 
-        if (!definition || !list || list.length === 0 || !this.running) {
+        if (!definition || !list || list.length === 0 || !this.context || this.context.state === 'closed') {
+            return null;
+        }
+
+        // Dźwięki gry - tylko w grze (nie w pauzie i nie w menu).
+
+        const ui = definition.category === 'ui';
+
+        if (!ui && !this.active) {
             return null;
         }
 
@@ -442,11 +508,19 @@ export class SoundManager {
         output.connect(this.categories[definition.category] ?? this.categories.blocks);
 
 
+        const voice = { source, gain, panner };
+
         this.voices++;
+
+        if (!ui) {
+            this.gameVoices.add(voice);
+        }
 
         source.onended = () => {
 
             this.voices--;
+
+            this.gameVoices.delete(voice);
 
             source.disconnect();
             gain.disconnect();
@@ -455,13 +529,13 @@ export class SoundManager {
         };
 
 
-        this.history.push({ name, time: context.currentTime, positional: Boolean(position) });
+        this.history.push({ name, time: context.currentTime, positional: Boolean(position), category: definition.category });
 
         if (this.history.length > HISTORY) {
             this.history.shift();
         }
 
-        return { source, gain, panner };
+        return voice;
 
     }
 

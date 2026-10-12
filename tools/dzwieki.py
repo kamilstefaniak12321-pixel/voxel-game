@@ -2,8 +2,9 @@
 # GENERATOR DŹWIĘKÓW GRY
 #
 # Wszystkie dźwięki gry (kroki, niszczenie i stawianie bloków,
-# meteoryt) są "syntetyczne" - policzone z szumu i drgań, bez
-# nagrań. Ten skrypt zapisuje je do assets/sounds/ jako pliki .ogg.
+# zbieranie owoców, meteoryt, menu i ekwipunek) są "syntetyczne" -
+# policzone z szumu i drgań, bez nagrań. Ten skrypt zapisuje je do
+# assets/sounds/ jako pliki .ogg.
 #
 # Uruchomienie (potrzebny Python 3 z numpy i scipy oraz ffmpeg):
 #
@@ -367,6 +368,145 @@ METEOR = {
 
 
 # ------------------------------------------------------------
+# Zbieranie owoców z krzaka
+# ------------------------------------------------------------
+
+def harvest(s):
+    """Szelest liści i kilka miękkich "pyknięć" zrywanych owoców."""
+    length = 0.45
+    out = lowpass(mat_plant(s, 0), 4500)
+    out = np.concatenate([out, np.zeros(samples(length) - len(out))]) * 0.45
+    at = s.uniform(0.04, 0.08)
+    for _ in range(int(s.uniform(2, 4))):
+        freq = s.uniform(520, 820)
+        pop = sweep(freq * 1.5, freq, 0.06, 0.012) + band(s.noise(0.06), 1200, 4000) * envelope(samples(0.06), 0.0005, 0.004) * 0.4
+        place(out, pop * s.uniform(0.8, 1.3), at)
+        at += s.uniform(0.06, 0.11)
+    return out
+
+
+# ------------------------------------------------------------
+# Menu i ekwipunek - krótkie, miękkie, ciche dźwięki
+# ------------------------------------------------------------
+
+def soft_tone(freq, seconds, decay, harmonics=(1.0, 0.25, 0.08), attack=0.002):
+    """Ton z kilkoma alikwotami (cieplejszy niż czysty sinus)."""
+    n = samples(seconds)
+    t = time_axis(n)
+    out = sum(a * np.sin(2 * np.pi * freq * (k + 1) * t) for k, a in enumerate(harmonics))
+    return out * envelope(n, attack, decay)
+
+
+def ui_click(s):
+    """Przycisk: krótki, drewniano-plastikowy stuk."""
+    length = 0.09
+    n = samples(length)
+    out = band(s.noise(length), 2500, 7000) * envelope(n, 0.0003, 0.0025) * 0.5
+    out += damped_sine(1850, length, 0.007) * 0.55
+    out += damped_sine(620, length, 0.018) * 0.8
+    out += damped_sine(240, length, 0.012) * 0.3
+    return out
+
+
+def ui_slider(s):
+    """Suwak: malutkie "tyk" przy każdym kroku."""
+    length = 0.04
+    n = samples(length)
+    out = band(s.noise(length), 3000, 9000) * envelope(n, 0.0002, 0.0015) * 0.6
+    out += damped_sine(2600, length, 0.004) * 0.5
+    out += damped_sine(900, length, 0.006) * 0.25
+    return out
+
+
+def ui_open(s):
+    """Otwarcie ekwipunku: szelest torby i miękkie stuknięcie."""
+    length = 0.32
+    n = samples(length)
+    swish = band(s.noise(length), 500, 3200) * envelope(n, 0.05, 0.07)
+    out = lowpass(swish, 2600) * 0.9
+    out += grains(s, length, 18, 1500, 5000, length=(0.001, 0.004), loudness=(0.05, 0.25)) * envelope(n, 0.04, 0.1)
+    thump = damped_sine(130, length, 0.05) * 0.7 + damped_sine(260, length, 0.03) * 0.25
+    place(out, thump[: samples(0.25)], 0.055)
+    return out
+
+
+def ui_close(s):
+    """Zamknięcie ekwipunku: stuknięcie i krótszy szelest."""
+    length = 0.26
+    n = samples(length)
+    out = damped_sine(115, length, 0.045) * 0.75 + damped_sine(230, length, 0.025) * 0.2
+    swish = band(s.noise(length), 400, 2400) * envelope(n, 0.012, 0.06)
+    out += lowpass(swish, 2000) * 0.7
+    return out
+
+
+def item_pick(s):
+    """Wzięcie stosu w ekwipunku: lekkie "pyk" w górę."""
+    length = 0.1
+    n = samples(length)
+    t = time_axis(n)
+    freq = 620 + 380 * (1 - np.exp(-t / 0.02))
+    out = np.sin(2 * np.pi * np.cumsum(freq) / SR) * envelope(n, 0.002, 0.025)
+    out += band(s.noise(length), 1500, 5000) * envelope(n, 0.0005, 0.004) * 0.35
+    return out
+
+
+def item_place(s):
+    """Odłożenie stosu: miękki stuk w dół."""
+    length = 0.11
+    n = samples(length)
+    t = time_axis(n)
+    freq = 420 + 300 * np.exp(-t / 0.015)
+    out = np.sin(2 * np.pi * np.cumsum(freq) / SR) * envelope(n, 0.001, 0.03)
+    out += band(s.noise(length), 900, 3500) * envelope(n, 0.0005, 0.005) * 0.45
+    out += damped_sine(160, length, 0.02) * 0.35
+    return out
+
+
+def item_trash(s):
+    """Kosz: "puf" - zgnieciony papier i opadający ton."""
+    length = 0.35
+    n = samples(length)
+    out = band(s.noise(length), 700, 4500) * envelope(n, 0.01, 0.07) * 0.6
+    out += grains(s, length, 40, 1200, 6000, length=(0.001, 0.005), density_decay=0.08, loudness=(0.1, 0.5))
+    out += sweep(520, 140, length, 0.09) * 0.45
+    return out
+
+
+def ui_error(s):
+    """Błąd (np. zła komenda): dwa niskie, łagodne "bum"."""
+    length = 0.3
+    out = np.zeros(samples(length))
+    place(out, soft_tone(233, 0.12, 0.035, (1.0, 0.45, 0.2, 0.08)), 0.0)
+    place(out, soft_tone(185, 0.16, 0.05, (1.0, 0.45, 0.2, 0.08)), 0.1)
+    return lowpass(out, 2200)
+
+
+UI = {
+    'ui_click': ui_click,
+    'ui_slider': ui_slider,
+    'ui_open': ui_open,
+    'ui_close': ui_close,
+    'item_pick': item_pick,
+    'item_place': item_place,
+    'item_trash': item_trash,
+    'ui_error': ui_error
+}
+
+# głośność (najgłośniejsze 50 ms, dB) - menu ciszej niż świat
+UI_LOUDNESS = {
+    'ui_click': -19,
+    'ui_slider': -28,
+    'ui_open': -19,
+    'ui_close': -20,
+    'item_pick': -21,
+    'item_place': -20,
+    'item_trash': -19,
+    'ui_error': -18
+}
+
+
+# ------------------------------------------------------------
 # Zapis
 # ------------------------------------------------------------
 
@@ -392,6 +532,14 @@ def generate(root=ROOT):
     for name, make in METEOR.items():
         seed += 101
         save(os.path.join(root, 'meteor', f'{name}.ogg'), make(Synth(seed)))
+    for v in range(1, 4):
+        seed += 1
+        sound = fade(loudness(harvest(Synth(seed)), -15), 0.0005, 0.04)
+        save(os.path.join(root, 'blocks', f'harvest_{v}.ogg'), sound)
+    for name, make in UI.items():
+        seed += 1
+        sound = fade(loudness(make(Synth(seed)), UI_LOUDNESS[name]), 0.0003, 0.015)
+        save(os.path.join(root, 'ui', f'{name}.ogg'), sound)
 
 
 if __name__ == '__main__':

@@ -136,8 +136,8 @@ export const ATLAS_TILES = {
     clay: { x: 10, y: 1 },
     gravel: { x: 11, y: 1 },
 
-    // Rośliny - cały wiersz 2 (PLANT_ATLAS_ROW): shader bloków kołysze
-    // na wietrze górę wszystkiego, co ma teksturę z tego wiersza.
+    // Rośliny - wiersz 2 (PLANT_ATLAS_ROW). Każda roślina (model
+    // 'cross') kołysze się na wietrze, z którego wiersza by nie była.
 
     short_grass: { x: 0, y: 2 },
     tall_grass: { x: 1, y: 2 },
@@ -148,12 +148,35 @@ export const ATLAS_TILES = {
     poppy: { x: 6, y: 2 },
     cornflower: { x: 7, y: 2 },
     chamomile: { x: 8, y: 2 },
-    dandelion: { x: 9, y: 2 }
+    dandelion: { x: 9, y: 2 },
+
+    // Krzaki owocowe - wiersz 3. Sadzonka i krzak bez owoców są
+    // wspólne dla wszystkich gatunków; dalej każdy gatunek ma dwa
+    // etapy: kilka owoców (few) i pełen owoców (full).
+
+    bush_sapling: { x: 0, y: 3 },
+    bush_leaves: { x: 1, y: 3 },
+    raspberry_bush_few: { x: 2, y: 3 },
+    raspberry_bush_full: { x: 3, y: 3 },
+    blackberry_bush_few: { x: 4, y: 3 },
+    blackberry_bush_full: { x: 5, y: 3 },
+    currant_bush_few: { x: 6, y: 3 },
+    currant_bush_full: { x: 7, y: 3 },
+    hazel_bush_few: { x: 8, y: 3 },
+    hazel_bush_full: { x: 9, y: 3 },
+
+    // Przedmioty (src/items/ItemRegistry.js) - wiersz 4: ikonki
+    // w ekwipunku i obrazek w ręce.
+
+    raspberry: { x: 0, y: 4 },
+    blackberry: { x: 1, y: 4 },
+    currants: { x: 2, y: 4 },
+    hazelnut: { x: 3, y: 4 }
 
 };
 
 
-// Wiersz atlasu z roślinami (kołyszą się na wietrze).
+// Wiersz atlasu z roślinami.
 
 export const PLANT_ATLAS_ROW = 2;
 

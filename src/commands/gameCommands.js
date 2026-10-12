@@ -7,11 +7,20 @@ import {
 
 import {
     BLOCK_TYPES,
+    FRUIT_BUSHES,
     blockExists,
+    bushStages,
     getBlockDefinition,
+    getBlockId,
     getBlockTypeById,
     getBlockLabel
 } from '../blocks/BlockRegistry.js';
+
+import {
+    ITEM_TYPES,
+    itemExists,
+    getItemLabel
+} from '../items/ItemRegistry.js';
 
 import { STACK_SIZE } from '../game/Inventory.js';
 
@@ -55,6 +64,7 @@ import {
     CHUNK_HEIGHT,
     WORLD_BORDER,
     DAY_LENGTH_MINUTES,
+    BUSH_GROWTH_SECONDS,
     UI_THEMES,
     POTATO_RENDER_SCALE,
     POTATO_VIEW_DISTANCE,
@@ -249,6 +259,19 @@ const LABEL_WORDS = new Map(
 );
 
 
+// Przedmioty (owoce) po polsku: maliny / malina, jezyny / jezyna,
+// porzeczki / porzeczka, orzech_laskowy / orzech / orzechy.
+
+const ITEM_WORDS = new Map([
+    ...Object.keys(ITEM_TYPES).map((type) => [simplify(getItemLabel(type)).replace(/\s+/g, '_'), type]),
+    ['malina', 'raspberry'],
+    ['jezyna', 'blackberry'],
+    ['porzeczka', 'currants'],
+    ['orzech', 'hazelnut'],
+    ['orzechy', 'hazelnut']
+]);
+
+
 function blockArgument(text) {
 
     const word = simplify(text ?? '');
@@ -273,6 +296,34 @@ function blockArgument(text) {
 
 const BLOCK_NAMES = Object.keys(BLOCK_TYPES);
 
+const ITEM_NAMES = Object.keys(ITEM_TYPES);
+
+
+// Blok albo przedmiot (do ekwipunku: /daj).
+
+function itemArgument(text) {
+
+    const word = simplify(text ?? '');
+
+    const item = ITEM_WORDS.get(word) ?? word;
+
+    if (itemExists(item)) {
+        return item;
+    }
+
+    if (!word) {
+        return null;
+    }
+
+    try {
+        return blockArgument(text);
+    }
+    catch {
+        throw new CommandError(`Nie ma bloku ani przedmiotu "${text}". Lista: /bloki`);
+    }
+
+}
+
 
 const ON_WORDS = ['wl', 'on', 'tak', '1', 'true'];
 const OFF_WORDS = ['wyl', 'off', 'nie', '0', 'false'];
@@ -295,6 +346,162 @@ function realSeconds(hours, time) {
 function decimal(value) {
 
     return value.toFixed(1).replace('.', ',');
+
+}
+
+
+// --- Krzaki owocowe (/krzaki) --------------------------------
+
+// Krzaki liczone i rosnące "w okolicy" - do tylu bloków od gracza.
+
+const BUSH_COMMAND_RADIUS = 64;
+
+
+// ID bloku krzaka -> { type, stage }.
+
+const BUSH_BY_ID = new Map(
+    Object.keys(FRUIT_BUSHES).flatMap((species) =>
+        bushStages(species).map((type, stage) => [getBlockId(type), { type, stage }])
+    )
+);
+
+
+// Przegląda krzaki we wczytanych chunkach do `radius` bloków od `center`:
+// visit(x, y, z, { type, stage }, odległość).
+
+function forEachBush(world, center, radius, visit) {
+
+    const layer = CHUNK_SIZE * CHUNK_SIZE;
+
+    for (const chunk of world.chunks.values()) {
+
+        const baseX = chunk.cx * CHUNK_SIZE;
+        const baseZ = chunk.cz * CHUNK_SIZE;
+
+        // Chunk w całości za daleko.
+
+        const nearX = Math.max(baseX, Math.min(center.x, baseX + CHUNK_SIZE));
+        const nearZ = Math.max(baseZ, Math.min(center.z, baseZ + CHUNK_SIZE));
+
+        if (Math.hypot(nearX - center.x, nearZ - center.z) > radius) {
+            continue;
+        }
+
+        const blocks = chunk.blocks;
+
+        for (let i = chunk.solidBelow * layer; i < chunk.maxY * layer; i++) {
+
+            const bush = BUSH_BY_ID.get(blocks[i]);
+
+            if (!bush) {
+                continue;
+            }
+
+            const x = baseX + (i % CHUNK_SIZE);
+            const y = Math.floor(i / layer);
+            const z = baseZ + Math.floor((i % layer) / CHUNK_SIZE);
+
+            const distance = Math.hypot(x + 0.5 - center.x, z + 0.5 - center.z);
+
+            if (distance <= radius) {
+                visit(x, y, z, bush, distance);
+            }
+
+        }
+
+    }
+
+}
+
+
+// Ile krzaków w każdym etapie: [sadzonki, bez owoców, kilka, pełne].
+
+function countBushes(world, center, radius) {
+
+    const counts = [0, 0, 0, 0];
+
+    forEachBush(world, center, radius, (x, y, z, bush) => counts[bush.stage]++);
+
+    return counts;
+
+}
+
+
+// Najbliższy krzak spełniający warunek (we wczytanych chunkach).
+
+function nearestBush(world, center, accept) {
+
+    let best = null;
+
+    forEachBush(world, center, Infinity, (x, y, z, bush, distance) => {
+
+        if (accept(bush) && (!best || distance < best.distance)) {
+            best = { x, y, z, type: bush.type, distance };
+        }
+
+    });
+
+    return best;
+
+}
+
+
+// Kierunek po polsku (północ = -Z, wschód = +X - jak sąsiedzi
+// chunków w Chunk.js).
+
+function directionName(dx, dz) {
+
+    const names = ['na wschód', 'na południowy wschód', 'na południe', 'na południowy zachód', 'na zachód', 'na północny zachód', 'na północ', 'na północny wschód'];
+
+    const angle = Math.atan2(dz, dx);
+
+    return names[(Math.round(angle / (Math.PI / 4)) + 8) % 8];
+
+}
+
+
+// Ogródek przed graczem: rzędy = gatunki, kolumny = etapy (od
+// sadzonki do pełnego owoców), co 2 bloki, na trawie.
+
+function plantBushGarden(player, world) {
+
+    const species = Object.keys(FRUIT_BUSHES);
+
+    // Kierunek patrzenia zaokrąglony do osi X albo Z.
+
+    const lookX = -Math.sin(player.yaw);
+    const lookZ = -Math.cos(player.yaw);
+
+    const [forwardX, forwardZ] = Math.abs(lookX) > Math.abs(lookZ) ? [Math.sign(lookX), 0] : [0, Math.sign(lookZ)];
+
+    // "W prawo" od kierunku patrzenia.
+
+    const rightX = -forwardZ;
+    const rightZ = forwardX;
+
+    const startX = Math.floor(player.pos.x) + forwardX * 3 - rightX * 3;
+    const startZ = Math.floor(player.pos.z) + forwardZ * 3 - rightZ * 3;
+
+    const y = Math.floor(player.pos.y);
+
+
+    species.forEach((name, row) => {
+
+        bushStages(name).forEach((type, stage) => {
+
+            const x = startX + rightX * stage * 2 + forwardX * row * 2;
+            const z = startZ + rightZ * stage * 2 + forwardZ * row * 2;
+
+            world.setBlock(x, y - 1, z, 'grass');
+            world.setBlock(x, y, z, type);
+            world.setBlock(x, y + 1, z, null);
+
+        });
+
+    });
+
+    return `Ogródek: ${species.length} rzędy krzaków (${species.map((name) => getBlockLabel(bushStages(name)[1]).toLowerCase()).join(', ')}), ` +
+        'w każdym od lewej: sadzonka, bez owoców, kilka owoców, pełen owoców. PPM na owocach - zbiór.';
 
 }
 
@@ -606,6 +813,7 @@ const SETTING_WORDS = {
     glosnosc: 'volumeMaster',
     'glosnosc-bloki': 'volumeBlocks',
     'glosnosc-zjawiska': 'volumeWorld',
+    'glosnosc-menu': 'volumeUi',
     'warstwa-skorki': 'skinOverlay',
     zgiecia: 'jointStyle',
     kamera: 'cameraDistance'
@@ -1354,8 +1562,8 @@ export const GAME_COMMANDS = [
     {
         name: 'dzwiek',
         aliases: ['sound', 'dzwieki'],
-        usage: '/dzwiek | /dzwiek lista | /dzwiek <nazwa> | /dzwiek pokaz [materiał]',
-        description: 'Dźwięk: stan i głośność, lista dźwięków, odtworzenie jednego, pokaz dźwięków bloków (krok, postawienie, zniszczenie).',
+        usage: '/dzwiek | /dzwiek lista | /dzwiek <nazwa> | /dzwiek pokaz [materiał] | /dzwiek menu',
+        description: 'Dźwięk: stan i głośność, lista dźwięków, odtworzenie jednego, pokaz dźwięków bloków (krok, postawienie, zniszczenie), pokaz dźwięków menu i ekwipunku.',
 
         run(args, { game }) {
 
@@ -1373,8 +1581,8 @@ export const GAME_COMMANDS = [
             if (!word) {
 
                 return `Dźwięk: ${sounds.running ? 'gra' : 'wstrzymany (kliknij w grę)'} | wczytane pliki: ${sounds.loadedCount} z ${sounds.fileCount} | ` +
-                    `głośność ${settings.get('volumeMaster')}%, bloki ${settings.get('volumeBlocks')}%, zjawiska ${settings.get('volumeWorld')}% ` +
-                    '(Ustawienia -> Dźwięk albo /ustaw glosnosc 80). Dalej: /dzwiek lista, /dzwiek pokaz';
+                    `głośność ${settings.get('volumeMaster')}%, bloki ${settings.get('volumeBlocks')}%, zjawiska ${settings.get('volumeWorld')}%, menu ${settings.get('volumeUi')}% ` +
+                    '(Ustawienia -> Dźwięk albo /ustaw glosnosc 80). Dalej: /dzwiek lista, /dzwiek pokaz, /dzwiek menu';
 
             }
 
@@ -1417,6 +1625,35 @@ export const GAME_COMMANDS = [
             }
 
 
+            if (word === 'menu') {
+
+                // Po kolei: przycisk, "Wróć", suwak w prawo, ekwipunek
+                // (otwarcie, wzięcie, odłożenie, kosz, zamknięcie), błąd
+                // i zbieranie owoców.
+
+                const show = [
+                    ['ui_click', 0],
+                    ['ui_click', 0.45, { pitch: 0.82 }],
+                    ...Array.from({ length: 10 }, (_, i) => ['ui_slider', 1 + i * 0.07, { pitch: 0.8 + 0.05 * i }]),
+                    ['ui_open', 2.1],
+                    ['item_pick', 2.7],
+                    ['item_place', 3.15],
+                    ['item_pick', 3.6],
+                    ['item_trash', 4.0],
+                    ['ui_close', 4.7],
+                    ['ui_error', 5.4],
+                    ['harvest', 6.2]
+                ];
+
+                for (const [name, at, options] of show) {
+                    sounds.play(name, { ...options, delay: at });
+                }
+
+                return 'Pokaz dźwięków menu: przycisk, "Wróć", suwak, ekwipunek (otwarcie, wzięcie, odłożenie, kosz, zamknięcie), błąd, zbieranie owoców.';
+
+            }
+
+
             const name = Object.keys(SOUNDS).find((key) => simplify(key) === word);
 
             if (!name) {
@@ -1434,7 +1671,7 @@ export const GAME_COMMANDS = [
         complete(args) {
 
             if (args.length === 1) {
-                return ['lista', 'pokaz', ...Object.keys(SOUNDS)];
+                return ['lista', 'pokaz', 'menu', ...Object.keys(SOUNDS)];
             }
 
             return args.length === 2 && simplify(args[0]) === 'pokaz'
@@ -1599,7 +1836,7 @@ export const GAME_COMMANDS = [
             return totals.size === 0
                 ? 'Ekwipunek jest pusty.'
                 : `Ekwipunek (${used} z ${inventory.slots.length} miejsc): ` +
-                  [...totals].map(([type, count]) => `${getBlockLabel(type)} ${count}`).join(', ');
+                  [...totals].map(([type, count]) => `${getItemLabel(type)} ${count}`).join(', ');
 
         },
 
@@ -1886,15 +2123,15 @@ export const GAME_COMMANDS = [
     {
         name: 'daj',
         aliases: ['give'],
-        usage: '/daj <blok> [ilość]',
-        description: 'Blok do ekwipunku. Bez ilości w trybie kreatywnym - do wybranego miejsca na pasku, w przygodzie - stos 64.',
+        usage: '/daj <blok albo przedmiot> [ilość]',
+        description: 'Blok albo przedmiot (np. maliny) do ekwipunku. Bez ilości w trybie kreatywnym - do wybranego miejsca na pasku, w przygodzie - stos 64.',
 
         run(args, { game }) {
 
-            const type = blockArgument(args[0]);
+            const type = itemArgument(args[0]);
 
             if (!type) {
-                throw new CommandError('Podaj blok, np. /daj lamp_red');
+                throw new CommandError('Podaj blok albo przedmiot, np. /daj lamp_red albo /daj maliny');
             }
 
             const inventory = game.inventory;
@@ -1904,7 +2141,7 @@ export const GAME_COMMANDS = [
 
                 inventory.set(inventory.selected, { type, count: 1 });
 
-                return `Na pasku: ${getBlockLabel(type)}.`;
+                return `Na pasku: ${getItemLabel(type)}.`;
 
             }
 
@@ -1917,22 +2154,22 @@ export const GAME_COMMANDS = [
 
             const left = inventory.add(type, count);
 
-            return `Do ekwipunku: ${count - left} x ${getBlockLabel(type)}` +
+            return `Do ekwipunku: ${count - left} x ${getItemLabel(type)}` +
                 (left > 0 ? ` (${left} się nie zmieściło - ekwipunek pełny).` : '.');
 
         },
 
         complete(args) {
-            return args.length === 1 ? BLOCK_NAMES : args.length === 2 ? ['1', '16', '64'] : [];
+            return args.length === 1 ? [...BLOCK_NAMES, ...ITEM_NAMES] : args.length === 2 ? ['1', '16', '64'] : [];
         }
     },
 
 
     {
         name: 'bloki',
-        aliases: ['blocks'],
+        aliases: ['blocks', 'przedmioty'],
         usage: '/bloki',
-        description: 'Lista wszystkich bloków.',
+        description: 'Lista wszystkich bloków i przedmiotów.',
 
         run() {
 
@@ -1942,8 +2179,106 @@ export const GAME_COMMANDS = [
                     const name = `${type} (${getBlockLabel(type)}${definition.light ? `, świeci ${definition.light}` : ''})`;
                     return name;
                 })
-                .join(', ');
+                .join(', ') +
+                '\nPrzedmioty: ' + ITEM_NAMES.map((type) => `${type} (${getItemLabel(type)})`).join(', ');
 
+        }
+    },
+
+
+    {
+        name: 'krzaki',
+        aliases: ['bushes', 'owoce'],
+        usage: '/krzaki | /krzaki rosnij [etapy] | /krzaki tempo <0-500> | /krzaki ogrod | /krzaki znajdz',
+        description: 'Krzaki owocowe: ile ich jest w okolicy, wzrost od razu (rosnij) albo szybciej (tempo 60 = minuta w sekundę), ogródek ze wszystkimi gatunkami i etapami przed tobą, najbliższy dziki krzak z owocami.',
+
+        run(args, { game, player, world }) {
+
+            const word = simplify(args[0] ?? '');
+
+            const growth = game.plantGrowth;
+
+
+            if (word === 'tempo') {
+
+                if (args[1] === undefined) {
+                    return `Tempo wzrostu krzaków: x${growth.speed}. Zmiana: /krzaki tempo 60 (szybko) albo 1 (normalnie).`;
+                }
+
+                const value = parseNumber(args[1], 'tempo');
+
+                if (value < 0 || value > 500) {
+                    throw new CommandError('Tempo: od 0 (nie rosną) do 500 (1 = normalnie).');
+                }
+
+                growth.speed = value;
+
+                return `Tempo wzrostu krzaków: x${value}` +
+                    (value > 0 ? ` - etap średnio co ${decimal(BUSH_GROWTH_SECONDS / value)} s.` : ' - nie rosną.');
+
+            }
+
+
+            if (['rosnij', 'grow'].includes(word)) {
+
+                const stages = args[1] === undefined ? 1 : Math.floor(parseNumber(args[1], 'liczba etapów'));
+
+                if (stages < 1 || stages > 3) {
+                    throw new CommandError('Etapy: od 1 do 3 (3 = od sadzonki do pełnego owoców).');
+                }
+
+                const count = growth.growAround(player.pos.x, player.pos.z, BUSH_COMMAND_RADIUS, stages);
+
+                return count > 0
+                    ? `Urosło: ${count} (krzaki do ${BUSH_COMMAND_RADIUS} bloków od ciebie).`
+                    : `W promieniu ${BUSH_COMMAND_RADIUS} bloków nie ma rosnących krzaków.`;
+
+            }
+
+
+            if (['ogrod', 'garden', 'pokaz'].includes(word)) {
+                return plantBushGarden(player, world);
+            }
+
+
+            if (['znajdz', 'find'].includes(word)) {
+
+                const found = nearestBush(world, player.pos, (bush) => bush.stage >= 2);
+
+                if (!found) {
+                    return 'We wczytanych chunkach nie ma krzaków z owocami. Ogródek do obejrzenia: /krzaki ogrod.';
+                }
+
+                const { x, y, z, type, distance } = found;
+
+                return `Najbliższy: ${getBlockLabel(type)} - ${Math.round(distance)} bloków ` +
+                    `${directionName(x + 0.5 - player.pos.x, z + 0.5 - player.pos.z)} (${x} ${y} ${z}). ` +
+                    `Teleport: /tp ${x} ${y + 1} ${z}`;
+
+            }
+
+
+            if (word) {
+                throw usageError(this);
+            }
+
+
+            // Ile krzaków w okolicy, w jakim etapie.
+
+            const counts = countBushes(world, player.pos, BUSH_COMMAND_RADIUS);
+
+            const total = counts.reduce((sum, value) => sum + value, 0);
+
+            return `Krzaki do ${BUSH_COMMAND_RADIUS} bloków od ciebie: ${total}` +
+                (total > 0 ? ` (sadzonki ${counts[0]}, bez owoców ${counts[1]}, kilka owoców ${counts[2]}, pełne owoców ${counts[3]})` : '') +
+                `. Teraz rośnie: ${growth.countGrowing(true)} (posadzone i te, z których zbierałeś - dzikie czekają). ` +
+                `Tempo wzrostu: x${growth.speed} (etap średnio co ${BUSH_GROWTH_SECONDS} s). ` +
+                'Zbieranie: PPM na krzaku z owocami. Sadzenie: PPM owocem na ziemi.';
+
+        },
+
+        complete(args) {
+            return args.length === 1 ? ['rosnij', 'tempo', 'ogrod', 'znajdz'] : args.length === 2 && simplify(args[0]) === 'tempo' ? ['1', '10', '60'] : [];
         }
     },
 

@@ -11,12 +11,14 @@ import {
     getBlockId,
     getLightEmission,
     getLightColor,
-    getBlockLabel,
     getDropType,
     getBlockSound,
+    getHarvest,
     isPlantId
 } from '../blocks/BlockRegistry.js';
+import { getItemLabel, getPlacedBlock, itemExists } from '../items/ItemRegistry.js';
 import { Inventory } from './Inventory.js';
+import { PlantGrowth } from './PlantGrowth.js';
 import { DynamicLight } from '../world/DynamicLight.js';
 import { FarTerrain } from '../world/FarTerrain.js';
 import { setAmbientOcclusion } from '../rendering/ChunkMesher.js';
@@ -185,6 +187,11 @@ export class Game {
             savedChunks,
             worldInfo.terrain
         );
+
+
+        // Rosnące rośliny (krzaki owocowe).
+
+        this.plantGrowth = new PlantGrowth(this.world);
 
 
         // Daleki teren za zasięgiem widzenia (własna scena, oświetlona
@@ -406,9 +413,19 @@ export class Game {
         const placePressed = input.consumeMousePress(2);
 
 
+        // PPM na krzaku z owocami zbiera owoce (z Shiftem i czymś
+        // w ręce - zwyczajnie stawia obok).
+
+        const harvesting =
+            placePressed &&
+            !(this.player.crouching && this.selectedBlock) &&
+            this.currentHit?.hit &&
+            getHarvest(this.currentHit.block.type) !== null;
+
+
         // Machnięcie ręką przy każdym kliknięciu (jak w Minecrafcie).
 
-        if (breakPressed || (placePressed && this.selectedBlock)) {
+        if (breakPressed || (placePressed && (this.selectedBlock || harvesting))) {
             this.animator.swing();
         }
 
@@ -422,26 +439,38 @@ export class Game {
 
         }
 
+        else if (harvesting) {
+
+            this.harvestTarget(this.currentHit);
+
+            this.currentHit =
+                this.raycast.castFromCamera(this.camera);
+
+        }
+
         else if (placePressed) {
 
-            // Puste miejsce na pasku - nie ma czego postawić.
+            // Puste miejsce na pasku - nie ma czego postawić. Owoc
+            // stawia sadzonkę (getPlacedBlock), inny przedmiot - nic.
 
-            if (this.selectedBlock) {
+            const type = this.selectedBlock;
 
-                const type = this.selectedBlock;
+            const block = type ? getPlacedBlock(type) : null;
+
+            if (block) {
 
                 const target = this.placer.targetOf(this.currentHit);
 
                 const placed = this.placer.placeBlock(
                     this.currentHit,
-                    type
+                    block
                 );
 
                 if (placed) {
-                    this.playBlockSound('place', type, target);
+                    this.playBlockSound('place', block, target);
                 }
 
-                // W przygodzie postawiony blok znika ze stosu.
+                // W przygodzie postawiony blok (posadzony owoc) znika ze stosu.
 
                 if (placed && this.mode === 'adventure') {
                     this.inventory.take(this.inventory.selected, 1);
@@ -502,9 +531,11 @@ export class Game {
         this.updateFog(dt);
 
 
-        // Meteoryty, kule światła i dynamiczne światło.
+        // Meteoryty, rosnące krzaki, kule światła i dynamiczne światło.
 
         this.meteorites.update(dt);
+
+        this.plantGrowth.update(dt);
 
         this.updateOrbs(dt);
 
@@ -1251,6 +1282,8 @@ export class Game {
             this.inventory.add(drop);
         }
 
+        this.addHarvest(type);
+
         if (plantAbove && this.world.getBlock(x, y + 1, z) === null) {
 
             const plantDrop = getDropType(plantAbove);
@@ -1259,9 +1292,72 @@ export class Game {
                 this.inventory.add(plantDrop);
             }
 
+            this.addHarvest(plantAbove);
+
         }
 
         return true;
+
+    }
+
+
+    // Owoce z rośliny (zbiór albo zniszczony krzak) do ekwipunku.
+    // Zwraca, ile sztuk się zmieściło.
+
+    addHarvest(type) {
+
+        const harvest = getHarvest(type);
+
+        if (!harvest) {
+            return 0;
+        }
+
+        const [min, max] = harvest.count;
+
+        const count = min + Math.floor(Math.random() * (max - min + 1));
+
+        return count - this.inventory.add(harvest.item, count);
+
+    }
+
+
+    // Zbiór (PPM na krzaku z owocami): owoce trafiają do ekwipunku
+    // (w obu trybach), krzak wraca do etapu bez owoców i owocuje od
+    // nowa (PlantGrowth.js). Pełny ekwipunek - nic się nie dzieje.
+
+    harvestTarget(hit) {
+
+        if (!hit || !hit.hit) {
+            return false;
+        }
+
+        const { x, y, z, type } = hit.block;
+
+        const harvest = getHarvest(type);
+
+        if (!harvest) {
+            return false;
+        }
+
+        if (!this.inventory.canAdd(harvest.item, harvest.count[1])) {
+
+            this.onNotice?.('Ekwipunek pełny');
+
+            return false;
+
+        }
+
+        if (!this.world.setBlock(x, y, z, harvest.becomes)) {
+            return false;
+        }
+
+        const count = this.addHarvest(type);
+
+        this.sounds?.play('harvest', {
+            position: new THREE.Vector3(x + 0.5, y + 0.5, z + 0.5)
+        });
+
+        return count > 0;
 
     }
 
@@ -1533,7 +1629,7 @@ export class Game {
         }
 
 
-        const selected = getBlockDefinition(this.selectedBlock);
+        const selected = itemExists(this.selectedBlock);
 
 
         // Światło w miejscu głowy gracza.
@@ -1606,13 +1702,13 @@ export class Game {
             `powietrze ${Math.round(this.animator.air * 100)}%<br>` +
 
             `Tryb: ${GAME_MODES[this.mode]}${player.flying ? ' (lata)' : ''} | ` +
-            `Wybrany blok: ${selected ? `${getBlockLabel(this.selectedBlock)} (${this.selectedBlock})` : 'brak'}<br><br>` +
+            `W ręce: ${selected ? `${getItemLabel(this.selectedBlock)} (${this.selectedBlock})` : 'nic'}<br><br>` +
 
             `${targetInfo}<br><br>` +
 
             `1-9 / kółko - wybór bloku | środkowy przycisk - weź blok | E - ekwipunek<br>` +
 
-            `LPM - zniszcz | PPM - postaw<br>` +
+            `LPM - zniszcz | PPM - postaw / zbierz owoce<br>` +
 
             `WASD - ruch | Spacja - skok | Shift - kucanie | 2× W albo R - bieg<br>` +
             `Mysz - kamera | F5 - widok | ESC - pauza | F3 - debug | [ ] - czas ±1 h<br>` +

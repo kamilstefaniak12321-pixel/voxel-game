@@ -9,8 +9,11 @@
 //   volume   - głośność 0-1 (mnożona przez ustawienia głośności),
 //   pitch    - [min, max]: losowa wysokość (1 = bez zmian), żeby
 //              powtarzane kroki nie brzmiały identycznie,
-//   category - 'blocks' (kroki, bloki) albo 'world' (zjawiska:
-//              meteoryty) - każda ma swój suwak głośności,
+//   category - 'blocks' (kroki, bloki, zbieranie owoców), 'world'
+//              (zjawiska: meteoryty) albo 'ui' (menu, ekwipunek) -
+//              każda ma swój suwak głośności. Dźwięki 'ui' grają też
+//              w menu i w pauzie (src/audio/ui.js), pozostałe tylko
+//              w grze,
 //   loop     - dźwięk grany w pętli (aż się go zatrzyma),
 //   distance - jak cichnie z odległością (w blokach): do "ref"
 //              pełna głośność, dalej coraz ciszej (rolloff - jak
@@ -49,6 +52,41 @@ for (const material of BLOCK_MATERIALS) {
         };
 
     }
+
+}
+
+
+// Zbieranie owoców z krzaka (PPM - game/Game.js).
+
+SOUNDS.harvest = {
+    files: ['blocks/harvest_1.ogg', 'blocks/harvest_2.ogg', 'blocks/harvest_3.ogg'],
+    volume: 0.9,
+    pitch: [0.9, 1.1],
+    category: 'blocks',
+    distance: BLOCK_DISTANCE
+};
+
+
+// Menu i ekwipunek (src/audio/ui.js) - bez miejsca w świecie.
+
+const UI_SOUNDS = {
+    ui_click: { volume: 0.8, pitch: [0.97, 1.03] },     // przycisk
+    ui_slider: { volume: 0.7 },                          // krok suwaka
+    ui_open: { volume: 0.8, pitch: [0.95, 1.05] },      // otwarcie ekwipunku
+    ui_close: { volume: 0.8, pitch: [0.95, 1.05] },     // zamknięcie
+    item_pick: { volume: 0.8, pitch: [0.95, 1.05] },    // wzięcie stosu
+    item_place: { volume: 0.8, pitch: [0.95, 1.05] },   // odłożenie
+    item_trash: { volume: 0.8, pitch: [0.95, 1.05] },   // kosz
+    ui_error: { volume: 0.8 }                            // błąd (np. komendy)
+};
+
+for (const [name, sound] of Object.entries(UI_SOUNDS)) {
+
+    SOUNDS[name] = {
+        files: [`ui/${name}.ogg`],
+        category: 'ui',
+        ...sound
+    };
 
 }
 

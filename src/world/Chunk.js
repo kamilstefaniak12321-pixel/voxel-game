@@ -5,7 +5,8 @@ import {
 
 import {
     AIR_ID,
-    isOpaqueId
+    isOpaqueId,
+    isGrowingId
 } from '../blocks/BlockRegistry.js';
 
 // ------------------------------------------------------------
@@ -103,6 +104,12 @@ export class Chunk {
 
         this.modified = false;
 
+
+        // Rosnące rośliny (np. krzaki owocowe przed owocowaniem):
+        // indeksy komórek w `blocks`. Wzrost - src/game/PlantGrowth.js.
+
+        this.growing = new Set();
+
     }
 
 
@@ -161,8 +168,32 @@ export class Chunk {
 
         this.updateSolidBelow();
 
+        this.scanGrowing();
+
 
         return true;
+
+    }
+
+
+    // Szuka rosnących roślin w całym chunku wczytanym z zapisu.
+    // Generator stawia bloki przez setId, a ten sam pilnuje listy.
+
+    scanGrowing() {
+
+        this.growing.clear();
+
+        const layer = CHUNK_SIZE * CHUNK_SIZE;
+
+        const blocks = this.blocks;
+
+        for (let i = this.solidBelow * layer; i < this.maxY * layer; i++) {
+
+            if (isGrowingId(blocks[i])) {
+                this.growing.add(i);
+            }
+
+        }
 
     }
 
@@ -244,6 +275,14 @@ export class Chunk {
 
 
         this.blocks[i] = id;
+
+
+        if (isGrowingId(id)) {
+            this.growing.add(i);
+        }
+        else {
+            this.growing.delete(i);
+        }
 
 
         if (id !== AIR_ID && y >= this.maxY) {

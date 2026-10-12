@@ -1,13 +1,14 @@
 import { HOTBAR_SIZE, HOTBAR_DEFAULT } from '../config.js';
 
-import { blockExists } from '../blocks/BlockRegistry.js';
+import { itemExists } from '../items/ItemRegistry.js';
 
 // ------------------------------------------------------------
 // EKWIPUNEK
 //
 // 36 miejsc: 0-8 to pasek bloków (klawisze 1-9), 9-35 - reszta
 // ekwipunku (3 rzędy po 9). W każdym miejscu nic (null) albo stos
-// bloków { type, count } - najwyżej STACK_SIZE sztuk.
+// bloków lub przedmiotów (owoce - src/items/ItemRegistry.js)
+// { type, count } - najwyżej STACK_SIZE sztuk.
 //
 // Tryb przygody: zniszczone bloki trafiają tutaj, stawianie zużywa
 // je ze stosu. Tryb kreatywny: stawianie nic nie zużywa.
@@ -27,7 +28,7 @@ export const SLOT_COUNT = HOTBAR_SIZE + MAIN_ROWS * HOTBAR_SIZE;
 
 function cleanItem(item) {
 
-    if (!item || !blockExists(item.type)) {
+    if (!item || !itemExists(item.type)) {
         return null;
     }
 

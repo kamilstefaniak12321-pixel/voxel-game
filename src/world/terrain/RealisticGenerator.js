@@ -5,7 +5,7 @@ import {
     TERRAIN_DIRT_DEPTH
 } from '../../config.js';
 
-import { getBlockId, getBlockTypeById } from '../../blocks/BlockRegistry.js';
+import { getBlockId, getBlockTypeById, FRUIT_BUSHES, bushStages } from '../../blocks/BlockRegistry.js';
 
 import { Noise, seedToNumber } from '../Noise.js';
 
@@ -175,7 +175,9 @@ export class RealisticGenerator {
             rockLine: noise(18),
             meadows: noise(19),
             flowers: noise(20),
-            flowerSpecies: noise(21)
+            flowerSpecies: noise(21),
+            bushes: noise(22),
+            bushSpecies: noise(23)
         };
 
         this.plantSeed = Math.imul(base, 0x2545f491) >>> 0;
@@ -201,6 +203,11 @@ export class RealisticGenerator {
         // Kwiaty w kępach (kolejność = plamy pola gatunków).
 
         this.flowerIds = ['poppy', 'cornflower', 'chamomile', 'dandelion'].map(getBlockId);
+
+        // Krzaki owocowe: [gatunek][etap] -> ID (etapy: sadzonka, krzak,
+        // kilka owoców, pełen owoców).
+
+        this.bushIds = Object.keys(FRUIT_BUSHES).map((species) => bushStages(species).map(getBlockId));
 
 
         // Skały pod ziemią (granit, wapień, piaskowiec...).
@@ -682,6 +689,39 @@ export class RealisticGenerator {
         const ids = this.ids;
 
         const roll = hash01(this.plantSeed, x, z, 1);
+
+
+        // Krzaki owocowe: rzadkie zarośla tam, gdzie pole krzaków
+        // > bushThreshold. Gatunek zmienia się wolno (plamy
+        // bushSpeciesScale), więc w zaroślach rośnie zwykle jeden.
+
+        const bushes = this.field(this.noise.bushes, x, z, P.bushScale, 2);
+
+        if (bushes > P.bushThreshold) {
+
+            const chance = (bushes - P.bushThreshold) / (1 - P.bushThreshold) * P.bushDensity;
+
+            if (hash01(this.plantSeed, x, z, 5) < chance) {
+
+                const species = this.field(this.noise.bushSpecies, x, z, P.bushSpeciesScale, 1);
+
+                const stages = this.bushIds[clamp(Math.floor((species * 0.5 + 0.5) * this.bushIds.length), 0, this.bushIds.length - 1)];
+
+                // Etap: najczęściej z owocami, czasem bez albo sadzonka.
+
+                const stage = hash01(this.plantSeed, x, z, 6);
+
+                let index = 0;
+
+                while (index < 3 && stage >= P.bushStages[index]) {
+                    index++;
+                }
+
+                return stages[index];
+
+            }
+
+        }
 
 
         // Kępy kwiatów.

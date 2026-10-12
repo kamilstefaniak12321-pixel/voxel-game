@@ -1,16 +1,18 @@
 import * as THREE from 'three';
 
 import { HOTBAR_SIZE } from '../config.js';
-import { CREATIVE_BLOCKS, getBlockLabel } from '../blocks/BlockRegistry.js';
+import { CREATIVE_ITEMS, getItemLabel } from '../items/ItemRegistry.js';
 import { STACK_SIZE, SLOT_COUNT } from '../game/Inventory.js';
 import { modelLight } from '../rendering/ModelMaterial.js';
+import { playUi } from '../audio/ui.js';
 import { skyUniforms } from '../sky/skyShader.js';
 
 // ------------------------------------------------------------
 // EKWIPUNEK (klawisz E)
 //
-// Tryb kreatywny: zakładki - "Wszystkie bloki" (każdy blok gry,
-// z wyszukiwaniem) i "Ekwipunek". Tryb przygody: sam ekwipunek.
+// Tryb kreatywny: zakładki - "Wszystkie bloki" (każdy blok gry
+// i przedmiot, np. owoce - z wyszukiwaniem) i "Ekwipunek". Tryb
+// przygody: sam ekwipunek.
 // Na dole zawsze pasek bloków (9 miejsc), w kreatywnym także kosz.
 //
 // Obsługa jak w Minecrafcie:
@@ -23,6 +25,8 @@ import { skyUniforms } from '../sky/skyShader.js';
 // Trzymany blok (pod kursorem) po zamknięciu wraca do ekwipunku.
 //
 // W zakładce ekwipunku widać postać gracza (patrzy za myszką).
+// Dźwięki (src/audio/ui.js): otwarcie, zamknięcie, wzięcie
+// i odłożenie stosu, kosz.
 // ------------------------------------------------------------
 
 const TABS = {
@@ -142,6 +146,8 @@ export class InventoryScreen {
 
         this.build();
 
+        playUi('ui_open');
+
     }
 
 
@@ -163,6 +169,8 @@ export class InventoryScreen {
         this.root.hidden = true;
         this.cursorElement.hidden = true;
         this.tooltip.hidden = true;
+
+        playUi('ui_close');
 
     }
 
@@ -307,9 +315,9 @@ export class InventoryScreen {
 
         const query = simplify(this.search.trim());
 
-        const items = CREATIVE_BLOCKS.filter((type) =>
+        const items = CREATIVE_ITEMS.filter((type) =>
             !query ||
-            simplify(getBlockLabel(type)).includes(query) ||
+            simplify(getItemLabel(type)).includes(query) ||
             type.includes(query)
         );
 
@@ -400,6 +408,10 @@ export class InventoryScreen {
 
         if (tab) {
 
+            if (tab.dataset.tab !== this.tab) {
+                playUi('ui_click');
+            }
+
             this.tab = tab.dataset.tab;
 
             this.build();
@@ -432,6 +444,8 @@ export class InventoryScreen {
                     this.game.inventory.add(this.cursor.type, this.cursor.count);
                 }
 
+                playUi(this.game.mode === 'creative' ? 'item_trash' : 'item_place');
+
                 this.cursor = null;
 
                 this.refresh();
@@ -445,8 +459,18 @@ export class InventoryScreen {
 
         const kind = slot.dataset.kind;
 
+        // Stan przed kliknięciem - po nim wiadomo, jaki dźwięk zagrać.
+
+        const before = this.snapshot(slot);
+
         if (kind === 'trash') {
+
+            if (this.cursor) {
+                playUi('item_trash');
+            }
+
             this.cursor = null;
+
         }
         else if (kind === 'creative') {
             this.clickCreative(slot.dataset.type, right, event.shiftKey);
@@ -455,7 +479,59 @@ export class InventoryScreen {
             this.clickSlot(Number(slot.dataset.index), right, event.shiftKey);
         }
 
+        if (kind !== 'trash') {
+            this.playClickSound(before, this.snapshot(slot), event.shiftKey);
+        }
+
         this.refresh();
+
+    }
+
+
+    // Kursor i miejsce (tekst do porównania przed / po kliknięciu).
+
+    snapshot(slot) {
+
+        const index = slot.dataset.kind === 'slot' ? Number(slot.dataset.index) : -1;
+
+        const item = index >= 0 ? this.game.inventory.get(index) : null;
+
+        return {
+            cursor: this.cursor ? `${this.cursor.type}:${this.cursor.count}` : '',
+            slot: item ? `${item.type}:${item.count}` : '',
+            hotbar: JSON.stringify(this.game.inventory.slots)
+        };
+
+    }
+
+
+    // Wzięcie (pod kursorem przybyło), odłożenie (ubyło albo zamiana),
+    // Shift + klik (przeniesienie) - albo cisza, gdy nic się nie zmieniło.
+
+    playClickSound(before, after, shift) {
+
+        if (shift) {
+
+            if (before.hotbar !== after.hotbar) {
+                playUi('item_place', { pitch: 1.15 });
+            }
+
+            return;
+
+        }
+
+        if (before.cursor === after.cursor && before.slot === after.slot) {
+            return;
+        }
+
+        const count = (state) => Number(state.cursor.split(':')[1] ?? 0);
+
+        if (!before.cursor || (before.cursor.split(':')[0] === after.cursor.split(':')[0] && count(after) > count(before))) {
+            playUi('item_pick');
+        }
+        else {
+            playUi('item_place');
+        }
 
     }
 
@@ -642,7 +718,7 @@ export class InventoryScreen {
 
         if (label) {
 
-            this.tooltip.replaceChildren(getBlockLabel(label), el('span', 'inv-tooltip-id', label));
+            this.tooltip.replaceChildren(getItemLabel(label), el('span', 'inv-tooltip-id', label));
 
             this.tooltip.style.left = `${event.clientX + 14}px`;
             this.tooltip.style.top = `${event.clientY - 30}px`;
@@ -723,6 +799,8 @@ export class InventoryScreen {
             inventory.set(target, item);
 
         }
+
+        playUi('item_place', { pitch: 1.15 });
 
         this.refresh();
 

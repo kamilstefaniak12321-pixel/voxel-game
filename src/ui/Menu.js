@@ -3,6 +3,7 @@ import { TERRAIN_TYPES, terrainName } from '../world/terrain/generators.js';
 import { DEFAULT_TERRAIN, DEFAULT_GAME_MODE } from '../config.js';
 import { SETTINGS_RANGES, SETTINGS_CHOICES } from '../settings/Settings.js';
 import { hasCustomSkin, chooseSkinFile, resetSkin } from '../player/skin.js';
+import { playUi, playSlider } from '../audio/ui.js';
 
 // ------------------------------------------------------------
 // MENU
@@ -38,13 +39,24 @@ function el(tag, className = '', text = '') {
 }
 
 
-function button(text, onClick, extraClass = '') {
+// Każdy przycisk "klika" (src/audio/ui.js). Przyciski powrotu
+// (Wróć, Anuluj, Gotowe...) - niższym dźwiękiem: back = true.
+
+const BACK_PITCH = 0.82;
+
+function button(text, onClick, extraClass = '', back = false) {
 
     const element = el('button', `menu-button ${extraClass}`.trim(), text);
 
     element.type = 'button';
 
-    element.addEventListener('click', onClick);
+    element.addEventListener('click', (event) => {
+
+        playUi('ui_click', { pitch: back ? BACK_PITCH : 1 });
+
+        onClick(event);
+
+    });
 
     return element;
 
@@ -83,7 +95,8 @@ const SETTINGS_TABS = {
     sound: [
         'volumeMaster',
         'volumeBlocks',
-        'volumeWorld'
+        'volumeWorld',
+        'volumeUi'
     ],
 
     other: [
@@ -149,7 +162,11 @@ export class Menu {
                 this.onEscape &&
                 !this.root.hidden
             ) {
+
+                playUi('ui_click', { pitch: BACK_PITCH });
+
                 this.onEscape();
+
             }
 
         });
@@ -376,6 +393,10 @@ export class Menu {
 
             item.addEventListener('click', () => {
 
+                if (selected !== world) {
+                    playUi('ui_click', { pitch: 1.12, volume: 0.7 });
+                }
+
                 selected = world;
 
                 list.querySelectorAll('.world-item').forEach(
@@ -404,7 +425,7 @@ export class Menu {
             playButton,
             button(TEXTS.newWorld, () => this.showCreateWorld(worlds)),
             deleteButton,
-            button(TEXTS.back, () => this.showTitle())
+            button(TEXTS.back, () => this.showTitle(), '', true)
         );
 
         screen.append(buttons);
@@ -508,7 +529,7 @@ export class Menu {
 
         buttons.append(
             createButton,
-            button(TEXTS.cancel, () => this.handlers.openWorldList())
+            button(TEXTS.cancel, () => this.handlers.openWorldList(), '', true)
         );
 
 
@@ -556,7 +577,7 @@ export class Menu {
 
         buttons.append(
             button(TEXTS.confirmDelete, () => this.handlers.deleteWorld(world), 'danger'),
-            button(TEXTS.cancel, () => this.handlers.openWorldList())
+            button(TEXTS.cancel, () => this.handlers.openWorldList(), '', true)
         );
 
 
@@ -591,7 +612,7 @@ export class Menu {
         );
 
         screen.querySelector('.menu-buttons').append(
-            button(TEXTS.back, () => this.showTitle())
+            button(TEXTS.back, () => this.showTitle(), '', true)
         );
 
     }
@@ -608,7 +629,7 @@ export class Menu {
         const buttons = el('div', 'menu-buttons');
 
         buttons.append(
-            button(TEXTS.resume, () => this.handlers.resume()),
+            button(TEXTS.resume, () => this.handlers.resume(), '', true),
             button(TEXTS.settings, () => this.showSettings('pause')),
             button(TEXTS.saveAndQuit, () => this.handlers.quitToMenu())
         );
@@ -734,7 +755,7 @@ export class Menu {
                 this.showSettings(returnTo, tab);
 
             }),
-            button(TEXTS.done, goBack)
+            button(TEXTS.done, goBack, '', true)
         );
 
 
@@ -793,6 +814,11 @@ export class Menu {
                 settings.set(key, Number(range.value));
 
                 text.textContent = label(settings.get(key));
+
+                // "Tyk" przy każdym kroku - po ustawieniu, więc suwak
+                // głośności od razu brzmi nową głośnością.
+
+                playSlider((Number(range.value) - min) / (max - min));
 
             });
 

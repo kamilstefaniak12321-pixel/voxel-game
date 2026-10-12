@@ -247,6 +247,20 @@ export const PLANTS = {
     clover: 0.02,
     plantain: 0.01,
     nettle: 0.012,
-    dandelion: 0.006
+    dandelion: 0.006,
+
+    // Krzaki owocowe (malina, jeżyna, porzeczka, leszczyna): zarośla
+    // tam, gdzie pole krzaków > bushThreshold (plamy bushScale
+    // bloków); w środku zarośli najwyżej bushDensity kolumn ma krzak.
+    // Gatunek zmienia się co ~bushSpeciesScale bloków.
+    bushScale: 26,
+    bushThreshold: 0.45,
+    bushDensity: 0.13,
+    bushSpeciesScale: 140,
+
+    // Etap dzikiego krzaka: losowa liczba 0-1 poniżej pierwszej
+    // granicy = sadzonka, poniżej drugiej = krzak bez owoców, poniżej
+    // trzeciej = kilka owoców, wyżej = pełen owoców.
+    bushStages: [0.06, 0.3, 0.65]
 
 };

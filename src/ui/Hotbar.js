@@ -1,6 +1,6 @@
 import {
-    getBlockLabel
-} from '../blocks/BlockRegistry.js';
+    getItemLabel
+} from '../items/ItemRegistry.js';
 
 import {
     HOTBAR_SIZE
@@ -134,7 +134,7 @@ export class Hotbar {
                 }
 
 
-                slot.title = type ? getBlockLabel(type) : '';
+                slot.title = type ? getItemLabel(type) : '';
 
             });
 
@@ -153,7 +153,7 @@ export class Hotbar {
         const type = slots[selected];
 
         if (!firstShow && (type ?? '') !== (selectedBefore ?? '')) {
-            this.showName(type ? getBlockLabel(type) : '');
+            this.showName(type ? getItemLabel(type) : '');
         }
 
     }

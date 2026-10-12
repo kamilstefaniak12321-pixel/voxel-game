@@ -3,6 +3,10 @@ import {
 } from '../blocks/BlockRegistry.js';
 
 import {
+    ITEM_TYPES
+} from '../items/ItemRegistry.js';
+
+import {
     ATLAS_URL,
     ATLAS_TILES,
     ATLAS_TILE_SIZE
@@ -18,7 +22,8 @@ import {
 // Dla każdego bloku rysujemy mały sześcian widziany z ukosa
 // (góra + dwa boki), z tych samych tekstur co w świecie.
 // Wynik to obrazki (data URL), które pasek bloków wstawia
-// do <img>. Nowy blok dostaje ikonkę automatycznie.
+// do <img>. Nowy blok dostaje ikonkę automatycznie. Roślina
+// i przedmiot (owoc) - płaski obrazek z atlasu.
 // ------------------------------------------------------------
 
 // Rozmiar ikonki w pikselach (na ekranie może być mniejsza).
@@ -86,7 +91,33 @@ function drawFace(ctx, atlas, tileName, transform, shade) {
 }
 
 
-// Zwraca Map: nazwa bloku -> data URL ikonki.
+// Płaski obrazek: cały kafelek atlasu na całej ikonce.
+
+function flatIcon(atlas, tileName) {
+
+    const canvas = document.createElement('canvas');
+
+    canvas.width = ICON_SIZE;
+    canvas.height = ICON_SIZE;
+
+    const ctx = canvas.getContext('2d');
+
+    ctx.imageSmoothingEnabled = false;
+
+    const tile = ATLAS_TILES[tileName];
+
+    const T = ATLAS_TILE_SIZE;
+
+    if (tile) {
+        ctx.drawImage(atlas, tile.x * T, tile.y * T, T, T, 0, 0, ICON_SIZE, ICON_SIZE);
+    }
+
+    return canvas.toDataURL();
+
+}
+
+
+// Zwraca Map: nazwa bloku albo przedmiotu -> data URL ikonki.
 
 export async function createBlockIcons() {
 
@@ -131,13 +162,7 @@ export async function createBlockIcons() {
 
         if (definition.model === 'cross') {
 
-            const tile = ATLAS_TILES[getFaceTexture(textures, 'front')];
-
-            if (tile) {
-                ctx.drawImage(atlas, tile.x * T, tile.y * T, T, T, 0, 0, W, W);
-            }
-
-            icons.set(type, canvas.toDataURL());
+            icons.set(type, flatIcon(atlas, getFaceTexture(textures, 'front')));
 
             continue;
 
@@ -164,6 +189,11 @@ export async function createBlockIcons() {
 
         icons.set(type, canvas.toDataURL());
 
+    }
+
+
+    for (const [type, item] of Object.entries(ITEM_TYPES)) {
+        icons.set(type, flatIcon(atlas, item.icon));
     }
 
 

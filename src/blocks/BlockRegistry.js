@@ -1,5 +1,6 @@
 import {
-    BLOCK_LIGHT_COLOR
+    BLOCK_LIGHT_COLOR,
+    BUSH_GROWTH_SECONDS
 } from '../config.js';
 
 // ID 0 jest zarezerwowane dla powietrza.
@@ -47,6 +48,132 @@ export const MAX_BLOCK_ID = 255;
 //                    grass, dirt, stone, sand, gravel, mud, plant, glass
 //                    (src/audio/sounds.js); domyślnie roślina - plant,
 //                    inne - stone
+//   grows          - roślina rośnie (src/game/PlantGrowth.js):
+//                    { into: następny etap, seconds: średnio po ilu
+//                    sekundach }
+//   harvest        - PPM zbiera z rośliny przedmioty: { item, count:
+//                    [najmniej, najwięcej], becomes: blok po zbiorze };
+//                    zniszczenie rośliny w przygodzie też je daje
+
+// ------------------------------------------------------------
+// KRZAKI OWOCOWE
+//
+// Każdy gatunek rośnie w czterech etapach (src/game/PlantGrowth.js):
+//
+//   <gatunek>_sapling   - sadzonka,
+//   <gatunek>_bush      - krzak bez owoców,
+//   <gatunek>_bush_few  - kilka owoców,
+//   <gatunek>_bush_full - pełen owoców.
+//
+// PPM na krzaku z owocami zbiera je - krzak wraca do etapu "bez
+// owoców" i owocuje od nowa. Owoc posadzony na ziemi daje sadzonkę
+// (src/items/ItemRegistry.js). Zniszczony krzak (przygoda) daje
+// sadzonkę i owoce, które na nim były.
+//
+// Tekstury: wiersz 3 atlasu (sadzonka i krzak bez owoców wspólne).
+// ------------------------------------------------------------
+
+export const FRUIT_BUSHES = {
+
+    raspberry: {
+        firstId: 34,
+        name: 'Raspberry',
+        item: 'raspberry',
+        labels: ['Sadzonka maliny', 'Krzak maliny', 'Krzak maliny (kilka owoców)', 'Krzak maliny (pełen owoców)'],
+        harvest: [[1, 2], [2, 4]]
+    },
+
+    blackberry: {
+        firstId: 38,
+        name: 'Blackberry',
+        item: 'blackberry',
+        labels: ['Sadzonka jeżyny', 'Krzak jeżyny', 'Krzak jeżyny (kilka owoców)', 'Krzak jeżyny (pełen owoców)'],
+        harvest: [[1, 2], [2, 4]]
+    },
+
+    currant: {
+        firstId: 42,
+        name: 'Currant',
+        item: 'currants',
+        labels: ['Sadzonka porzeczki', 'Krzak porzeczki', 'Krzak porzeczki (kilka owoców)', 'Krzak porzeczki (pełen owoców)'],
+        harvest: [[1, 2], [2, 4]]
+    },
+
+    hazel: {
+        firstId: 46,
+        name: 'Hazel',
+        item: 'hazelnut',
+        labels: ['Sadzonka leszczyny', 'Leszczyna', 'Leszczyna (kilka orzechów)', 'Leszczyna (pełna orzechów)'],
+        harvest: [[1, 2], [2, 3]]
+    }
+
+};
+
+// Nazwy bloków kolejnych etapów: [sadzonka, krzak, kilka, pełen].
+
+export function bushStages(species) {
+
+    return [`${species}_sapling`, `${species}_bush`, `${species}_bush_few`, `${species}_bush_full`];
+
+}
+
+
+function fruitBushBlocks() {
+
+    const blocks = {};
+
+    for (const [species, bush] of Object.entries(FRUIT_BUSHES)) {
+
+        const stages = bushStages(species);
+
+        const textures = ['bush_sapling', 'bush_leaves', `${species}_bush_few`, `${species}_bush_full`];
+
+        const names = ['Sapling', 'Bush', 'Bush (Few Fruits)', 'Bush (Full)'];
+
+        stages.forEach((type, stage) => {
+
+            const fruiting = stage >= 2;
+
+            blocks[type] = {
+
+                id: bush.firstId + stage,
+                name: `${bush.name} ${names[stage]}`,
+                label: bush.labels[stage],
+
+                solid: false,
+                model: 'cross',
+
+                plant: stage === 0
+                    ? { planes: 2, height: 1, width: 0.42 }
+                    : { planes: 3, height: 1, width: 0.5 },
+
+                textures: { all: textures[stage] },
+
+                // Zniszczony krzak daje sadzonkę.
+                drops: stages[0],
+
+                bush: species,
+                stage,
+
+                grows: stage < 3
+                    ? { into: stages[stage + 1], seconds: BUSH_GROWTH_SECONDS }
+                    : undefined,
+
+                harvest: fruiting
+                    ? { item: bush.item, count: bush.harvest[stage - 2], becomes: stages[1] }
+                    : undefined
+
+            };
+
+        });
+
+    }
+
+    return blocks;
+
+}
+
+// ------------------------------------------------------------
 
 export const BLOCK_TYPES = {
 
@@ -610,9 +737,16 @@ export const BLOCK_TYPES = {
         model: 'cross',
         plant: { planes: 2, height: 0.8, width: 0.42 },
         textures: { all: 'dandelion' }
-    }
+    },
+
+
+    // Krzaki owocowe (FRUIT_BUSHES wyżej) - po 4 bloki na gatunek.
+
+    ...fruitBushBlocks()
 
 };
+
+
 
 // ------------------------------------------------------------
 // Tablice ID -> dane bloku.
@@ -629,6 +763,7 @@ const plantById = new Uint8Array(MAX_BLOCK_ID + 1);
 const soilById = new Uint8Array(MAX_BLOCK_ID + 1);
 const replaceableById = new Uint8Array(MAX_BLOCK_ID + 1);
 const lightById = new Uint8Array(MAX_BLOCK_ID + 1);
+const growsById = new Uint8Array(MAX_BLOCK_ID + 1);
 
 // Kolor światła: [czerwony, zielony, niebieski], każdy 0-1.
 
@@ -699,6 +834,8 @@ for (const [type, definition] of Object.entries(BLOCK_TYPES)) {
     soilById[id] = definition.soil ? 1 : 0;
 
     replaceableById[id] = definition.replaceable ? 1 : 0;
+
+    growsById[id] = definition.grows ? 1 : 0;
 
     lightById[id] =
         Math.max(0, Math.min(15, Math.floor(definition.light ?? 0)));
@@ -804,6 +941,33 @@ export function getBlockLabel(type) {
     const definition = BLOCK_TYPES[type];
 
     return definition ? (definition.label ?? definition.name) : type;
+
+}
+
+
+// Czy roślina jeszcze rośnie (ma kolejny etap - PlantGrowth.js).
+
+export function isGrowingId(id) {
+
+    return growsById[id] === 1;
+
+}
+
+
+// Wzrost rośliny: { into, seconds } albo null.
+
+export function getGrowth(type) {
+
+    return BLOCK_TYPES[type]?.grows ?? null;
+
+}
+
+
+// Zbiór z rośliny (PPM): { item, count: [min, max], becomes } albo null.
+
+export function getHarvest(type) {
+
+    return BLOCK_TYPES[type]?.harvest ?? null;
 
 }
 

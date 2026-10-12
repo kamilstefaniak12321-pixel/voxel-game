@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 
 import { getBlockDefinition } from '../blocks/BlockRegistry.js';
+import { ITEM_TYPES, isItemType } from '../items/ItemRegistry.js';
 import { getAtlasUV, blockAtlasTexture } from '../rendering/TextureAtlas.js';
 import { getFaceTexture } from '../rendering/BlockRenderData.js';
 import { createModelMaterial } from '../rendering/ModelMaterial.js';
@@ -390,16 +391,31 @@ const HELD_PLANT_FACES = [
 ];
 
 
+// Przedmiot w ręce (np. owoc): jedna płaska płaszczyzna (z obu stron),
+// zwrócona do przodu - widać ją z przodu i zza pleców.
+
+const HELD_ITEM_FACES = HELD_PLANT_FACES.slice(2, 4);
+
+// Przedmiot jest płaski - trochę większy niż blok w ręce.
+
+const HELD_BLOCK_SCALE = 4.5;
+const HELD_ITEM_SCALE = 6.5;
+
+
 function buildBlockGeometry(type) {
 
-    const definition = getBlockDefinition(type);
+    // Przedmiot ma tylko obrazek (ikonkę) - "tekstura" każdej ściany.
+
+    const item = isItemType(type) ? ITEM_TYPES[type] : null;
+
+    const definition = item ? { textures: { all: item.icon } } : getBlockDefinition(type);
 
     const positions = [];
     const normals = [];
     const uvs = [];
     const indices = [];
 
-    const faces = definition.model === 'cross' ? HELD_PLANT_FACES : HELD_FACES;
+    const faces = item ? HELD_ITEM_FACES : definition.model === 'cross' ? HELD_PLANT_FACES : HELD_FACES;
 
 
     for (const [faceName, normal, corners] of faces) {
@@ -505,7 +521,7 @@ export class PlayerModel {
 
         this.held = new THREE.Mesh(new THREE.BufferGeometry(), this.heldMaterial);
 
-        this.held.scale.setScalar(4.5 * MODEL_PIXEL);
+        this.held.scale.setScalar(HELD_BLOCK_SCALE * MODEL_PIXEL);
         this.held.position.set(0, -6.5 * MODEL_PIXEL, -2.2 * MODEL_PIXEL);
         this.held.rotation.set(-0.3, Math.PI / 4, 0);
         this.held.visible = false;
@@ -614,7 +630,7 @@ export class PlayerModel {
     }
 
 
-    // Blok trzymany w prawej ręce (nazwa albo null).
+    // Blok albo przedmiot trzymany w prawej ręce (nazwa albo null).
 
     setHeldBlock(type) {
 
@@ -630,11 +646,17 @@ export class PlayerModel {
 
         this.held.visible = Boolean(type);
 
-        this.held.material = type && getBlockDefinition(type).model === 'cross'
-            ? this.heldPlantMaterial
-            : this.heldMaterial;
+        const block = type && !isItemType(type) ? getBlockDefinition(type) : null;
 
-        const light = type ? (getBlockDefinition(type).light ?? 0) : 0;
+        this.held.scale.setScalar((isItemType(type) ? HELD_ITEM_SCALE : HELD_BLOCK_SCALE) * MODEL_PIXEL);
+
+        // Rośliny i przedmioty mają przezroczyste piksele.
+
+        this.held.material = block && block.model !== 'cross'
+            ? this.heldMaterial
+            : this.heldPlantMaterial;
+
+        const light = block?.light ?? 0;
 
         this.heldMaterial.userData.uniforms.uModelGlow.value = light / 15;
 

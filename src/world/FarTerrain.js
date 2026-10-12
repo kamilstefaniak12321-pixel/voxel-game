@@ -24,6 +24,11 @@ import {
 } from '../rendering/viewUniforms.js';
 
 import {
+    meteorLightUniforms,
+    METEOR_LIGHT_GLSL
+} from '../rendering/meteorLight.js';
+
+import {
     atlasAveragesReady,
     getAtlasAverage
 } from '../rendering/TextureAtlas.js';
@@ -178,7 +183,7 @@ function createFarMaterial(lodColor) {
 
     material.onBeforeCompile = (shader) => {
 
-        Object.assign(shader.uniforms, skyUniforms, viewUniforms, {
+        Object.assign(shader.uniforms, skyUniforms, viewUniforms, meteorLightUniforms, {
             uLodTint: { value: lodColor },
             uLodDebug: lodDebug
         });
@@ -237,6 +242,7 @@ function createFarMaterial(lodColor) {
                 uniform float uLodDebug;
                 ${SKY_COLOR_GLSL}
                 ${VIEW_GLSL}
+                ${METEOR_LIGHT_GLSL}
 
                 #ifdef POTATO
                     varying vec3 vHazeSky;
@@ -265,6 +271,10 @@ function createFarMaterial(lodColor) {
                 `float skyLuminance = dot(outgoingLight, VIEW_LUMINANCE);
 
                 outgoingLight = mix(outgoingLight, skyLuminance * uNightTint, uNightDesaturation);
+
+                // Kula ognia meteorytu oświetla też daleki teren.
+
+                outgoingLight += diffuseColor.rgb * meteorLight(vFarWorld, inverseTransformDirection(normal, viewMatrix));
 
                 outgoingLight = applyBrightness(outgoingLight, diffuseColor.rgb);
 

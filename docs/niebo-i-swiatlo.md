@@ -252,11 +252,33 @@ i wzgórza, które wygenerowałyby się tam naprawdę, ale bez bloków.
   co dwudziesta to kolorowy bolid. Mniej więcej co siódma noc to deszcz
   meteorów (`isMeteorShowerNight` w `Sky.js`) - kilka razy więcej smug
   i wszystkie lecą z jednego punktu nieba (radiantu).
-- **Meteoryty spadające na ziemię** (`src/game/Meteorites.js`): kula
-  ognia z warkoczem i dynamicznym światłem, krater, błysk, blok
-  `meteorite` (świeci), komunikat na czacie. Częstość:
+- **Meteoryty spadające na ziemię** (`src/game/Meteorites.js`) - pokaz
+  w trzech częściach:
+  1. *przelot* (`FLIGHT_SECONDS`, 8 s): z daleka (`START_DISTANCE`),
+     nisko nad horyzontem, na początku wolno, potem coraz szybciej.
+     Rozżarzona, obracająca się bryła (tekstura bloku meteorytu)
+     w trzech poświatach, świecący warkocz, kanciaste iskry
+     (`rendering/CubeParticles.js` - świecące sześciany, stygną z bieli
+     przez pomarańcz do czerwieni), smuga dymu i co chwilę odpadający
+     płonący odłamek. Niebo wokół kuli łuna (`uMeteorGlow`
+     w `skyShader.js`), a teren jaśnieje coraz mocniej
+     (`rendering/meteorLight.js` - światło punktowe w shaderach bloków,
+     roślin, dalekiego terenu, modelu gracza i cząsteczek; bez cieni,
+     za to z każdej odległości). Z bliska działa też dynamiczne światło;
+  2. *uderzenie*: błysk ekranu (nakładka), nieba (`uSkyFlash`)
+     i terenu, wstrząs kamery (`Meteorites.shake`, `Game.render`), kula
+     ognia, fala iskier, deszcz odłamków w kolorach rozbitych bloków
+     (odbijają się od bloków i leżą chwilę), słup iskier, pierścień pyłu;
+     krater z nierównym brzegiem, wyłożony żwirem i ziemią kamienistą,
+     z wałem wyrzuconej ziemi, osmalona (czarnoziem) okolica bez roślin
+     (`SCORCH_RADIUS`), na dnie blok `meteorite` (świeci) i czasem
+     odłamki;
+  3. *po uderzeniu* (`IMPACT_SECONDS`): słup dymu podświetlony od dołu,
+     iskry z krateru, gasnący żar.
+  Ile cząsteczek - `PARTICLES` (tryb ziemniaka: 40%). Częstość:
   `METEORITES_PER_NIGHT` w `config.js`. Nigdy nie spada w chunki
-  zmieniane przez gracza.
+  zmieniane przez gracza. Komendy: `/meteor`, `/meteor tu`,
+  `/meteor pokaz`, `/meteor tempo 0.25`.
 - Pomysły: rzadki meteoryt z nowym surowcem w środku, meteoryt
   zostawiający płonące bloki (ogień), dźwięk przelotu i uderzenia.
 

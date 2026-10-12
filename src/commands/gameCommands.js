@@ -15,6 +15,8 @@ import {
 
 import { STACK_SIZE } from '../game/Inventory.js';
 
+import { FLIGHT_SECONDS } from '../game/Meteorites.js';
+
 import {
     describeLight
 } from '../world/Light.js';
@@ -1214,15 +1216,38 @@ export const GAME_COMMANDS = [
     {
         name: 'meteor',
         aliases: ['meteorite'],
-        usage: '/meteor | /meteor tu',
-        description: 'Zrzuca meteoryt w pobliżu (albo "tu" - tam, gdzie patrzysz).',
+        usage: '/meteor | /meteor tu | /meteor pokaz | /meteor tempo <0.05-2>',
+        description: 'Zrzuca meteoryt w pobliżu ("tu" - tam, gdzie patrzysz; "pokaz" - przed tobą, nadlatuje z naprzeciwka). Tempo 0.25 = cztery razy wolniej.',
 
         run(args, { game, player, world }) {
 
+            const word = simplify(args[0] ?? '');
+
+            const meteorites = game.meteorites;
+
+
+            if (word === 'tempo') {
+
+                if (args[1] === undefined) {
+                    return `Tempo meteorytów: x${meteorites.timeScale}. Zmiana: /meteor tempo 0.25 (wolniej) albo 1 (normalnie).`;
+                }
+
+                const value = parseNumber(args[1], 'tempo');
+
+                if (value < 0.05 || value > 2) {
+                    throw new CommandError('Tempo: od 0.05 do 2 (1 = normalnie).');
+                }
+
+                meteorites.timeScale = value;
+
+                return `Tempo meteorytów: x${value}.`;
+
+            }
+
+
             let landing = null;
 
-
-            if (simplify(args[0] ?? '') === 'tu') {
+            if (word === 'tu') {
 
                 const hit = game.currentHit;
 
@@ -1242,27 +1267,54 @@ export const GAME_COMMANDS = [
                 landing = new THREE.Vector3(x, world.getSurfaceY(x, z), z);
 
             }
-            else if (args[0] !== undefined) {
+            else if (word === 'pokaz') {
+
+                // 30 bloków przed graczem (w poziomie).
+
+                const x = Math.floor(player.pos.x - Math.sin(player.yaw) * 30);
+                const z = Math.floor(player.pos.z - Math.cos(player.yaw) * 30);
+
+                world.ensureColumnLoaded(x, z);
+
+                landing = new THREE.Vector3(x, world.getSurfaceY(x, z), z);
+
+            }
+            else if (word) {
 
                 throw usageError(this);
 
             }
 
 
-            const meteor = game.meteorites.spawn(landing);
+            // Z komendy meteoryt nadlatuje zza miejsca upadku (patrząc
+            // od gracza) - lekko z boku, żeby było widać cały przelot.
 
-            if (!meteor) {
+            const target = landing ?? meteorites.findLandingSpot();
+
+            if (!target) {
                 throw new CommandError('Brak miejsca: w pobliżu są tylko chunki zmienione przez gracza. Spróbuj /meteor tu');
             }
 
+            const away = new THREE.Vector3(target.x + 0.5 - player.pos.x, 0, target.z + 0.5 - player.pos.z);
+
+            if (away.lengthSq() < 1) {
+                away.set(-Math.sin(player.yaw), 0, -Math.cos(player.yaw));
+            }
+
+            away.normalize().applyAxisAngle(new THREE.Vector3(0, 1, 0), (Math.random() < 0.5 ? -1 : 1) * (0.25 + Math.random() * 0.35));
+
+            const meteor = meteorites.spawn(target, { from: away });
+
             const { x, z } = meteor.landing;
 
-            return `Meteoryt leci! Spadnie na ${x}, ${z} za ~3 sekundy.`;
+            const seconds = Math.round(FLIGHT_SECONDS / meteorites.timeScale);
+
+            return `Meteoryt leci! Spadnie na ${x}, ${z} za ~${seconds} s - patrz w tamtą stronę (nadlatuje zza tego miejsca).`;
 
         },
 
         complete(args) {
-            return args.length === 1 ? ['tu'] : [];
+            return args.length === 1 ? ['tu', 'pokaz', 'tempo'] : args.length === 2 && simplify(args[0]) === 'tempo' ? ['0.25', '0.5', '1'] : [];
         }
     },
 

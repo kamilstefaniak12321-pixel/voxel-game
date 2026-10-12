@@ -728,7 +728,9 @@ export class Game {
 
         const camera = this.camera;
 
-        const saved = this.view
+        const shake = this.meteorites.shake;
+
+        const saved = this.view || shake > 0.001
             ? { position: camera.position.clone(), rotation: camera.rotation.clone() }
             : null;
 
@@ -737,6 +739,26 @@ export class Game {
             camera.position.copy(this.view.position);
 
             camera.rotation.set(this.view.pitch, this.view.yaw, 0, 'YXZ');
+
+            camera.updateMatrixWorld();
+
+        }
+
+
+        // Wstrząs przy uderzeniu meteorytu (tylko obraz - celowanie
+        // i ruch gracza się nie zmieniają).
+
+        if (shake > 0.001) {
+
+            const t = performance.now() / 1000;
+
+            const amount = shake * 0.03;
+
+            camera.rotation.x += amount * (Math.sin(t * 47) * 0.6 + Math.sin(t * 29.3) * 0.4);
+            camera.rotation.y += amount * (Math.sin(t * 39.7 + 1) * 0.6 + Math.sin(t * 23.1) * 0.4);
+            camera.rotation.z += amount * 0.5 * Math.sin(t * 33.3 + 2);
+
+            camera.position.y += shake * 0.08 * Math.sin(t * 53);
 
             camera.updateMatrixWorld();
 

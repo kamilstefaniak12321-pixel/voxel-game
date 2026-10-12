@@ -29,6 +29,12 @@ import {
     VIEW_GLSL
 } from './viewUniforms.js';
 
+
+import {
+    meteorLightUniforms,
+    METEOR_LIGHT_GLSL
+} from './meteorLight.js';
+
 // ------------------------------------------------------------
 // Jeden wspólny materiał dla wszystkich bloków (atlas tekstur).
 //
@@ -138,6 +144,11 @@ blockMaterial.onBeforeCompile = (shader, renderer) => {
 
                 }
 
+                // Kula ognia meteorytu oświetla teren z daleka
+                // (rendering/meteorLight.js).
+
+                outgoingLight += blockTexel * meteorLight(vWorldPosition, vWorldNormal);
+
             #endif
 
             // Ustawienie "Jasność" (viewUniforms.js).
@@ -234,7 +245,7 @@ blockMaterial.onBeforeCompile = (shader, renderer) => {
 
     // Dynamiczne światło potrzebuje tekstur 3D (WebGL2).
 
-    Object.assign(shader.uniforms, dynamicLightUniforms);
+    Object.assign(shader.uniforms, dynamicLightUniforms, meteorLightUniforms);
 
     shader.vertexShader =
         shader.vertexShader
@@ -261,7 +272,8 @@ blockMaterial.onBeforeCompile = (shader, renderer) => {
             uniform highp sampler3D uDynamicLight;
             uniform vec3 uDynamicOrigin;
             uniform float uDynamicSize;
-            uniform float uDynamicEnabled;`
+            uniform float uDynamicEnabled;
+            ${METEOR_LIGHT_GLSL}`
         );
 
 

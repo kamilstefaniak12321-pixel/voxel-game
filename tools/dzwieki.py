@@ -1,0 +1,399 @@
+# ------------------------------------------------------------
+# GENERATOR DŹWIĘKÓW GRY
+#
+# Wszystkie dźwięki gry (kroki, niszczenie i stawianie bloków,
+# meteoryt) są "syntetyczne" - policzone z szumu i drgań, bez
+# nagrań. Ten skrypt zapisuje je do assets/sounds/ jako pliki .ogg.
+#
+# Uruchomienie (potrzebny Python 3 z numpy i scipy oraz ffmpeg):
+#
+#     python tools/dzwieki.py
+#
+# Każdy plik można też podmienić własnym nagraniem (.ogg, ta sama
+# nazwa) - gra niczego tu nie sprawdza. Lista dźwięków i ich
+# głośności: src/audio/sounds.js.
+# ------------------------------------------------------------
+
+import os
+import subprocess
+import sys
+import tempfile
+
+import numpy as np
+from scipy.io import wavfile
+from scipy.signal import butter, sosfilt
+
+SR = 44100
+
+ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'assets', 'sounds')
+
+
+# ------------------------------------------------------------
+# Narzędzia
+# ------------------------------------------------------------
+
+class Synth:
+
+    def __init__(self, seed):
+        self.rng = np.random.default_rng(seed)
+
+    def noise(self, seconds):
+        return self.rng.standard_normal(samples(seconds))
+
+    def brown(self, seconds):
+        x = np.cumsum(self.noise(seconds))
+        x -= np.convolve(x, np.ones(2048) / 2048, mode='same')
+        return x / (np.abs(x).max() + 1e-9)
+
+    def uniform(self, a, b):
+        return self.rng.uniform(a, b)
+
+
+def samples(seconds):
+    return int(round(seconds * SR))
+
+
+def time_axis(n):
+    return np.arange(n) / SR
+
+
+def envelope(n, attack, decay, hold=0.0):
+    t = time_axis(n)
+    rise = np.clip(t / max(attack, 1e-4), 0, 1)
+    fall = np.exp(-np.maximum(t - attack - hold, 0) / decay)
+    return rise * fall
+
+
+def band(x, low, high, order=2):
+    high = min(high, SR / 2 - 100)
+    sos = butter(order, [low, high], 'bandpass', fs=SR, output='sos')
+    return sosfilt(sos, x)
+
+
+def lowpass(x, cutoff, order=2):
+    sos = butter(order, cutoff, 'lowpass', fs=SR, output='sos')
+    return sosfilt(sos, x)
+
+
+def highpass(x, cutoff, order=2):
+    sos = butter(order, cutoff, 'highpass', fs=SR, output='sos')
+    return sosfilt(sos, x)
+
+
+def place(out, sound, at):
+    """Dodaje dźwięk do bufora out od sekundy at."""
+    start = samples(at)
+    if start >= len(out):
+        return
+    end = min(len(out), start + len(sound))
+    out[start:end] += sound[:end - start]
+
+
+def fade(x, fade_in=0.002, fade_out=0.02):
+    n_in = max(1, samples(fade_in))
+    n_out = max(1, samples(fade_out))
+    x = x.copy()
+    x[:n_in] *= np.linspace(0, 1, n_in)
+    x[-n_out:] *= np.linspace(1, 0, n_out)
+    return x
+
+
+def normalize(x, peak):
+    return x / (np.abs(x).max() + 1e-9) * peak
+
+
+def loudness(x, target_db, window=0.05):
+    """Głośność "na ucho": najgłośniejsze 50 ms ustawione na target_db,
+    a szczyty łagodnie przycięte (bez trzasków)."""
+    w = max(1, samples(window))
+    power = np.convolve(x ** 2, np.ones(w) / w, mode='valid')
+    level = np.sqrt(power.max() + 1e-12)
+    x = x * (10 ** (target_db / 20) / level)
+    return np.tanh(x / 0.95) * 0.95
+
+
+def damped_sine(freq, seconds, decay, phase=0.0):
+    t = time_axis(samples(seconds))
+    return np.sin(2 * np.pi * freq * t + phase) * np.exp(-t / decay)
+
+
+def sweep(f0, f1, seconds, decay):
+    """Sinus z opadającą częstotliwością (huk)."""
+    t = time_axis(samples(seconds))
+    freq = f1 + (f0 - f1) * np.exp(-t / (seconds * 0.25))
+    phase = 2 * np.pi * np.cumsum(freq) / SR
+    return np.sin(phase) * np.exp(-t / decay)
+
+
+def grains(s, seconds, count, low, high, length=(0.002, 0.008), density_decay=None, loudness=(0.3, 1.0)):
+    """Chrzęst: dużo krótkich, cichych trzasków (ziarenka, kamyki)."""
+    out = np.zeros(samples(seconds))
+    for _ in range(count):
+        if density_decay:
+            at = min(seconds * 0.95, s.rng.exponential(density_decay))
+        else:
+            at = s.uniform(0, seconds * 0.9)
+        n = int(s.uniform(*length) * SR)
+        lo = s.uniform(low, (low + high) / 2)
+        hi = min(high, lo * s.uniform(1.6, 3.5))
+        g = band(s.noise(n / SR + 0.002)[:n], lo, hi) * envelope(n, 0.0005, n / SR / 3)
+        place(out, g * s.uniform(*loudness), at)
+    return out
+
+
+def loopable(x, crossfade):
+    """Pętla bez trzasku: koniec płynnie przechodzi w początek."""
+    n = samples(crossfade)
+    head = x[:n].copy()
+    body = x[n:].copy()
+    ramp = np.linspace(0, 1, n)
+    body[-n:] = body[-n:] * (1 - ramp) + head * ramp
+    return body
+
+
+# ------------------------------------------------------------
+# Materiały: kroki, niszczenie, stawianie
+#
+# heavy: 0 = krok, 1 = postawienie (więcej dołu), 2 = zniszczenie
+# (dłużej, głośniej, z okruchami).
+# ------------------------------------------------------------
+
+def mat_grass(s, heavy):
+    length = [0.2, 0.2, 0.36][heavy]
+    out = np.zeros(samples(length))
+    n = len(out)
+    body = band(s.noise(length), 400, 4200) * envelope(n, 0.003, [0.045, 0.04, 0.09][heavy])
+    out += body * 0.5
+    out += grains(s, length, [35, 25, 90][heavy], 1200, 6000, density_decay=[0.05, 0.04, 0.09][heavy])
+    out += lowpass(s.noise(length), 350) * envelope(n, 0.002, 0.03) * [0.3, 0.6, 0.5][heavy]
+    if heavy == 2:
+        out += lowpass(band(s.noise(length), 150, 1500) * envelope(n, 0.004, 0.08), 1500) * 0.6
+    return out
+
+
+def mat_dirt(s, heavy):
+    length = [0.18, 0.18, 0.34][heavy]
+    out = np.zeros(samples(length))
+    n = len(out)
+    out += band(s.noise(length), 120, 1800) * envelope(n, 0.003, [0.04, 0.045, 0.1][heavy]) * 0.9
+    out += grains(s, length, [18, 14, 60][heavy], 400, 3500, density_decay=[0.04, 0.035, 0.08][heavy])
+    out += damped_sine(s.uniform(65, 85), length, 0.04) * [0.25, 0.6, 0.45][heavy]
+    return out
+
+
+def mat_stone(s, heavy):
+    length = [0.13, 0.14, 0.42][heavy]
+    out = np.zeros(samples(length))
+    n = len(out)
+    click = band(s.noise(length), 1500, 6000) * envelope(n, 0.0005, [0.006, 0.006, 0.012][heavy])
+    out += click * [0.6, 0.5, 1.0][heavy]
+    out += band(s.noise(length), 300, 2500) * envelope(n, 0.001, [0.025, 0.03, 0.06][heavy]) * 0.8
+    for base in (s.uniform(700, 1000), s.uniform(1400, 1900), s.uniform(2500, 3200)):
+        out += damped_sine(base, length, s.uniform(0.012, 0.03), s.uniform(0, 6)) * s.uniform(0.08, 0.22)
+    out += damped_sine(s.uniform(150, 200), length, 0.025) * [0.3, 0.6, 0.5][heavy]
+    if heavy == 2:
+        # okruchy skały spadające po pęknięciu
+        debris = np.zeros(n)
+        for _ in range(16):
+            piece = band(s.noise(0.02), 1200, 4500)[: samples(0.02)] * envelope(samples(0.02), 0.0005, 0.004)
+            for f in (s.uniform(1800, 4200),):
+                piece += damped_sine(f, 0.02, 0.006)[: len(piece)] * 0.3
+            place(debris, piece * s.uniform(0.15, 0.5), 0.04 + s.rng.exponential(0.09))
+        out += debris
+    return out
+
+
+def mat_sand(s, heavy):
+    length = [0.22, 0.2, 0.42][heavy]
+    out = np.zeros(samples(length))
+    n = len(out)
+    hiss = band(s.noise(length), 900, 5000) * envelope(n, [0.012, 0.008, 0.02][heavy], [0.06, 0.05, 0.14][heavy])
+    out += hiss * 0.5
+    out += grains(s, length, [70, 50, 180][heavy], 1500, 7000, length=(0.001, 0.003), density_decay=[0.06, 0.05, 0.12][heavy])
+    out += lowpass(s.noise(length), 400) * envelope(n, 0.004, 0.04) * [0.15, 0.35, 0.3][heavy]
+    return out
+
+
+def mat_gravel(s, heavy):
+    length = [0.22, 0.2, 0.42][heavy]
+    out = np.zeros(samples(length))
+    n = len(out)
+    out += grains(s, length, [55, 40, 150][heavy], 500, 4500, length=(0.002, 0.007), density_decay=[0.05, 0.04, 0.11][heavy], loudness=(0.4, 1.0))
+    out += band(s.noise(length), 200, 1500) * envelope(n, 0.003, 0.04) * 0.4
+    out += damped_sine(s.uniform(80, 110), length, 0.03) * [0.2, 0.5, 0.4][heavy]
+    return out
+
+
+def mat_mud(s, heavy):
+    length = [0.24, 0.22, 0.4][heavy]
+    out = np.zeros(samples(length))
+    n = len(out)
+    t = time_axis(n)
+    wet = lowpass(s.noise(length), 900) * envelope(n, 0.006, [0.07, 0.06, 0.13][heavy])
+    squelch = np.sin(2 * np.pi * np.cumsum(260 - 140 * np.clip(t / 0.12, 0, 1)) / SR) * envelope(n, 0.01, 0.05)
+    out += wet * 0.8 + squelch * 0.35
+    out += grains(s, length, [10, 8, 30][heavy], 300, 1500, length=(0.004, 0.012))
+    return out
+
+
+def mat_plant(s, heavy):
+    length = [0.28, 0.25, 0.32][heavy]
+    out = np.zeros(samples(length))
+    for _ in range([3, 2, 4][heavy]):
+        n = int(s.uniform(0.09, 0.2) * SR)
+        swish = band(s.noise(n / SR), 1500, 7000) * envelope(n, s.uniform(0.015, 0.04), s.uniform(0.03, 0.06))
+        place(out, swish * s.uniform(0.4, 1.0), s.uniform(0, length * 0.35))
+    out += grains(s, length, [12, 8, 30][heavy], 2000, 7000, length=(0.001, 0.003), loudness=(0.1, 0.4))
+    if heavy == 2:
+        snap = band(s.noise(0.02), 900, 3500)[: samples(0.02)] * envelope(samples(0.02), 0.0005, 0.005)
+        place(out, snap * 1.2, 0.0)
+    return out
+
+
+def mat_glass(s, heavy):
+    length = [0.16, 0.22, 0.6][heavy]
+    out = np.zeros(samples(length))
+    n = len(out)
+    out += band(s.noise(length), 2500, 9000) * envelope(n, 0.0005, 0.006) * 0.6
+    count = [3, 3, 14][heavy]
+    for i in range(count):
+        at = 0 if i < 3 else s.rng.exponential(0.08)
+        tone = damped_sine(s.uniform(2400, 6800), length, s.uniform(0.04, 0.12) * (1.0 if heavy else 0.5), s.uniform(0, 6))
+        place(out, tone * s.uniform(0.15, 0.4), at)
+    out += damped_sine(s.uniform(180, 240), length, 0.02) * [0.25, 0.5, 0.3][heavy]
+    return out
+
+
+MATERIALS = {
+    'grass': mat_grass,
+    'dirt': mat_dirt,
+    'stone': mat_stone,
+    'sand': mat_sand,
+    'gravel': mat_gravel,
+    'mud': mat_mud,
+    'plant': mat_plant,
+    'glass': mat_glass
+}
+
+# ile wersji każdego rodzaju (gra losuje jedną)
+KINDS = {'step': (0, 4), 'place': (1, 3), 'break': (2, 3)}
+
+# głośność (najgłośniejsze 50 ms, dB)
+LOUDNESS = {'step': -16, 'place': -14, 'break': -12}
+
+
+# ------------------------------------------------------------
+# Meteoryt
+# ------------------------------------------------------------
+
+def meteor_flight(s):
+    """Huk lecącej kuli ognia (pętla): głęboki pomruk, szum i trzaski."""
+    length = 6.5
+    n = samples(length)
+    t = time_axis(n)
+    lfo = (0.6 + 0.25 * np.sin(2 * np.pi * 0.37 * t) + 0.15 * np.sin(2 * np.pi * 1.3 * t + 1)
+           + 0.1 * np.sin(2 * np.pi * 2.9 * t + 2))
+    rumble = lowpass(s.brown(length), 260, order=4) * 1.2
+    roar = band(s.noise(length), 180, 1600, order=2) * 0.25
+    hiss = band(s.noise(length), 2500, 8000) * 0.05 * (0.7 + 0.3 * np.sin(2 * np.pi * 0.8 * t))
+    crackle = np.zeros(n)
+    for _ in range(int(length * 22)):
+        k = int(s.uniform(0.0015, 0.006) * SR)
+        pop = band(s.noise(k / SR + 0.001)[:k], 900, 5000) * envelope(k, 0.0003, k / SR / 4)
+        place(crackle, pop * s.rng.exponential(0.25), s.uniform(0, length - 0.01))
+    out = (rumble * 1.4 + roar * 1.3) * lfo + hiss * 0.6 + crackle * 0.35
+    out = loopable(out, 0.5)
+    return normalize(out, 0.8)
+
+
+def meteor_impact(s):
+    """Uderzenie: trzask, głęboki huk, grzmot i spadające okruchy."""
+    length = 6.0
+    n = samples(length)
+    t = time_axis(n)
+    out = np.zeros(n)
+    crack = s.noise(length) * envelope(n, 0.0005, 0.018)
+    out += lowpass(crack, 4500) * 1.4
+    out += sweep(110, 32, length, 1.1) * 1.6
+    out += damped_sine(38, length, 1.6) * 0.9
+    cutoff_noise = s.noise(length) * envelope(n, 0.002, 0.9)
+    early = lowpass(cutoff_noise, 2500, order=2) * np.exp(-t / 0.25)
+    late = lowpass(cutoff_noise, 400, order=2)
+    out += (early * 0.9 + late * 1.6)
+    out += lowpass(s.brown(length), 140, order=4) * envelope(n, 0.05, 2.0) * 1.4
+    out += grains(s, length, 160, 700, 6000, length=(0.002, 0.01), density_decay=0.7, loudness=(0.05, 0.35))
+    return fade(normalize(out, 0.95), 0.0005, 0.6)
+
+
+def meteor_debris(s):
+    """Grad odłamków: kamyki i grudki ziemi spadające dookoła."""
+    length = 3.0
+    n = samples(length)
+    out = np.zeros(n)
+    for _ in range(140):
+        at = 0.05 + s.rng.exponential(0.6)
+        if at > length - 0.1:
+            continue
+        if s.uniform(0, 1) < 0.5:
+            piece = mat_stone(s, 0)[: samples(0.06)]
+        else:
+            piece = mat_dirt(s, 0)[: samples(0.08)]
+        place(out, fade(piece, 0.0005, 0.01) * s.uniform(0.1, 0.7) * np.exp(-at / 1.4), at)
+    return fade(normalize(out, 0.85), 0.001, 0.3)
+
+
+def fire_crackle(s):
+    """Trzaskający żar (pętla)."""
+    length = 5.0
+    n = samples(length)
+    t = time_axis(n)
+    out = np.zeros(n)
+    for _ in range(int(length * 28)):
+        k = int(s.uniform(0.001, 0.007) * SR)
+        lo = s.uniform(700, 3000)
+        pop = band(s.noise(k / SR + 0.001)[:k], lo, lo * 3) * envelope(k, 0.0002, k / SR / 4)
+        place(out, pop * s.rng.exponential(0.3), s.uniform(0, length - 0.01))
+    out += band(s.noise(length), 1500, 6000) * 0.04 * (0.6 + 0.4 * np.sin(2 * np.pi * 0.5 * t))
+    out += lowpass(s.brown(length), 180) * 0.35 * (0.7 + 0.3 * np.sin(2 * np.pi * 0.23 * t + 1))
+    return normalize(loopable(out, 0.4), 0.7)
+
+
+METEOR = {
+    'meteor_flight': meteor_flight,
+    'meteor_impact': meteor_impact,
+    'meteor_debris': meteor_debris,
+    'fire_crackle': fire_crackle
+}
+
+
+# ------------------------------------------------------------
+# Zapis
+# ------------------------------------------------------------
+
+def save(path, data):
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    with tempfile.TemporaryDirectory() as tmp:
+        wav = os.path.join(tmp, 'x.wav')
+        wavfile.write(wav, SR, (np.clip(data, -1, 1) * 32767).astype(np.int16))
+        subprocess.run(
+            ['ffmpeg', '-y', '-loglevel', 'error', '-i', wav, '-c:a', 'libvorbis', '-q:a', '4', path],
+            check=True
+        )
+
+
+def generate(root=ROOT):
+    seed = 1
+    for material, make in MATERIALS.items():
+        for kind, (heavy, variants) in KINDS.items():
+            for v in range(1, variants + 1):
+                seed += 1
+                sound = fade(loudness(make(Synth(seed), heavy), LOUDNESS[kind]), 0.0005, 0.03)
+                save(os.path.join(root, 'blocks', f'{kind}_{material}_{v}.ogg'), sound)
+    for name, make in METEOR.items():
+        seed += 101
+        save(os.path.join(root, 'meteor', f'{name}.ogg'), make(Synth(seed)))
+
+
+if __name__ == '__main__':
+    generate(sys.argv[1] if len(sys.argv) > 1 else ROOT)
+    print('Gotowe:', os.path.abspath(sys.argv[1] if len(sys.argv) > 1 else ROOT))

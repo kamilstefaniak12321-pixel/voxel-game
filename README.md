@@ -124,7 +124,7 @@ rysują się do `PLANT_VIEW_DISTANCE` bloków od gracza (`src/config.js`).
 
 ## Ustawienia
 
-W menu (z ekranu tytułowego i z pauzy) są trzy zakładki:
+W menu (z ekranu tytułowego i z pauzy) są zakładki:
 
 **Obraz**
 
@@ -149,6 +149,9 @@ W menu (z ekranu tytułowego i z pauzy) są trzy zakładki:
 warstwa skórki, zgięcia rąk i nóg (gładkie albo klocki), odległość
 kamery z trzeciej osoby.
 
+**Dźwięk** - głośność całej gry, osobno bloków i kroków oraz zjawisk
+(meteoryty); 0 = wyłączone.
+
 **Inne** - motyw menu, rozmiar interfejsu w grze (pasek, czat, napisy),
 informacje debugowania (to samo co F3), licznik FPS w rogu ekranu,
 spadające meteoryty (wł./wył. - te, które robią kratery).
@@ -157,6 +160,30 @@ Zmiany działają od razu, także w grze pod pauzą, i zapisują się
 w przeglądarce. Wartości domyślne są w `src/config.js`, a lista ustawień
 z zakresami w `src/settings/Settings.js`. Wszystko da się też zmienić
 z czatu: `/ustaw` (lista), np. `/ustaw zasieg 256`.
+
+## Dźwięki
+
+- **Kroki** - co krok dźwięk bloku pod stopami (trawa, ziemia, kamień,
+  piasek, żwir, błoto, szkło lamp); kucanie - ciszej i rzadziej, bieg -
+  głośniej, a przez trawę i kwiaty jeszcze szelest. Po skoku i upadku
+  stuk przy lądowaniu (tym głośniejszy, im mocniej).
+- **Bloki** - każde postawienie i zniszczenie ma dźwięk swojego
+  materiału, słychać go z miejsca bloku (z lewej, z prawej, z daleka).
+- **Meteoryt** - huk lecącej kuli ognia narasta i robi się coraz
+  wyższy, a uderzenie słychać trochę po błysku (dźwięk leci 343 bloki na
+  sekundę - jak grzmot po błyskawicy). Potem grad odłamków i trzaskający,
+  gasnący żar w kraterze. Dźwięki meteorytu są przestrzenne.
+
+Dźwięk zaczyna grać po pierwszym kliknięciu albo klawiszu (tak chce
+przeglądarka), w pauzie i w menu jest wstrzymany. Głośność: *Ustawienia*
+→ *Dźwięk* albo `/ustaw glosnosc 60`. Test: `/dzwiek pokaz` (wszystkie
+materiały po kolei), `/dzwiek meteor_impact` (jeden dźwięk).
+
+Pliki są w `assets/sounds/` (`.ogg`) - każdy można podmienić własnym
+nagraniem o tej samej nazwie. Lista dźwięków, ich głośność i zasięg:
+`src/audio/sounds.js`; materiał dźwięków bloku: pole `sound`
+w `src/blocks/BlockRegistry.js`. Obecne dźwięki są syntetyczne - policzył
+je skrypt `tools/dzwieki.py` (Python z numpy i scipy + ffmpeg).
 
 ## Gracz
 
@@ -337,6 +364,7 @@ Komendy służą do sprawdzania nowości w grze, np.:
 /demo kula zielony         krążąca kula dynamicznego światła
 /meteor pokaz              meteoryt spada przed tobą (/meteor tu - tam, gdzie patrzysz)
 /meteor tempo 0.25         meteoryty cztery razy wolniej (1 - normalnie)
+/dzwiek pokaz              dźwięki bloków po kolei (/dzwiek lista, /dzwiek meteor_impact)
 /meteory deszcz wl         deszcz meteorów (/meteory pokaz - kilka od razu)
 /zacmienie pokaz pelne     pełne zaćmienie słońca (albo czesciowe, 50...)
 /zacmienie                 kiedy następne zaćmienie (/zacmienie lista)
@@ -462,6 +490,8 @@ assets/textures/sky/        tekstury nieba (księżyc)
 assets/textures/player/     skórka gracza i szablon skórki
 assets/ui/themes/           motywy menu (kolory, czcionka, tło)
 assets/fonts/               czcionki
+assets/sounds/              dźwięki (.ogg): bloki, kroki, meteoryt
+tools/                      skrypty pomocnicze (generator dźwięków)
 docs/                       opisy, jak działają większe części gry
 src/
   main.js                   start aplikacji, menu, pauza, pętla
@@ -477,6 +507,7 @@ src/
   rendering/                atlas tekstur, budowanie meshy chunków
   player/                   ruch i kolizje gracza, model, animacje, skórka
   input/                    klawiatura i mysz
+  audio/                    dźwięk (lista dźwięków, odtwarzanie)
   commands/                 komendy czatu (do testowania)
   interaction/              raycast, niszczenie, stawianie, podświetlenie
 ```
@@ -491,5 +522,7 @@ src/
    i opcjonalnie kolor światła, np. `lightColor: '#ff3020'`.
    Roślina: `solid: false`, `model: 'cross'`, `plant: { planes, height, width }`
    (tekstura z przezroczystym tłem w wierszu 2 atlasu - tam działa wiatr).
+   Dźwięki kroków, stawiania i niszczenia: `sound: 'grass'` (albo `dirt`,
+   `stone`, `sand`, `gravel`, `mud`, `plant`, `glass`).
 4. Blok sam trafia do zakładki *Wszystkie bloki* w trybie kreatywnym
    (chyba że ma `creative: false`). Szybki test: `/daj <nazwa>`.

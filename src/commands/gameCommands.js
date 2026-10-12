@@ -17,6 +17,8 @@ import { STACK_SIZE } from '../game/Inventory.js';
 
 import { FLIGHT_SECONDS } from '../game/Meteorites.js';
 
+import { SOUNDS, BLOCK_MATERIALS } from '../audio/sounds.js';
+
 import {
     describeLight
 } from '../world/Light.js';
@@ -553,6 +555,34 @@ const ANIMATION_WORDS_PL = Object.fromEntries(
 );
 
 
+// Materiały dźwięków bloków (/dzwiek pokaz): polska nazwa.
+
+const MATERIAL_NAMES = {
+    grass: 'trawa',
+    dirt: 'ziemia',
+    stone: 'kamień',
+    sand: 'piasek',
+    gravel: 'żwir',
+    mud: 'błoto',
+    plant: 'rośliny',
+    glass: 'szkło (lampy)'
+};
+
+// Słowo z komendy -> materiał (po polsku albo nazwa z sounds.js).
+
+const MATERIAL_WORDS = {
+    trawa: 'grass',
+    ziemia: 'dirt',
+    kamien: 'stone',
+    piasek: 'sand',
+    zwir: 'gravel',
+    bloto: 'mud',
+    rosliny: 'plant',
+    szklo: 'glass',
+    ...Object.fromEntries(BLOCK_MATERIALS.map((name) => [name, name]))
+};
+
+
 // Ustawienia do wpisania w /ustaw (polska nazwa -> klucz w Settings).
 
 const SETTING_WORDS = {
@@ -573,6 +603,9 @@ const SETTING_WORDS = {
     debug: 'showDebug',
     'licznik-fps': 'showFps',
     meteoryty: 'meteorites',
+    glosnosc: 'volumeMaster',
+    'glosnosc-bloki': 'volumeBlocks',
+    'glosnosc-zjawiska': 'volumeWorld',
     'warstwa-skorki': 'skinOverlay',
     zgiecia: 'jointStyle',
     kamera: 'cameraDistance'
@@ -1315,6 +1348,99 @@ export const GAME_COMMANDS = [
 
         complete(args) {
             return args.length === 1 ? ['tu', 'pokaz', 'tempo'] : args.length === 2 && simplify(args[0]) === 'tempo' ? ['0.25', '0.5', '1'] : [];
+        }
+    },
+
+    {
+        name: 'dzwiek',
+        aliases: ['sound', 'dzwieki'],
+        usage: '/dzwiek | /dzwiek lista | /dzwiek <nazwa> | /dzwiek pokaz [materiał]',
+        description: 'Dźwięk: stan i głośność, lista dźwięków, odtworzenie jednego, pokaz dźwięków bloków (krok, postawienie, zniszczenie).',
+
+        run(args, { game }) {
+
+            const sounds = game.sounds;
+
+            if (!sounds) {
+                throw new CommandError('Dźwięk jest niedostępny.');
+            }
+
+            const word = simplify(args[0] ?? '');
+
+            const settings = game.settings;
+
+
+            if (!word) {
+
+                return `Dźwięk: ${sounds.running ? 'gra' : 'wstrzymany (kliknij w grę)'} | wczytane pliki: ${sounds.loadedCount} z ${sounds.fileCount} | ` +
+                    `głośność ${settings.get('volumeMaster')}%, bloki ${settings.get('volumeBlocks')}%, zjawiska ${settings.get('volumeWorld')}% ` +
+                    '(Ustawienia -> Dźwięk albo /ustaw glosnosc 80). Dalej: /dzwiek lista, /dzwiek pokaz';
+
+            }
+
+
+            if (word === 'lista') {
+                return `Dźwięki (${Object.keys(SOUNDS).length}): ${Object.keys(SOUNDS).join(', ')}`;
+            }
+
+
+            if (!sounds.running) {
+                throw new CommandError('Dźwięk jest jeszcze wstrzymany - kliknij w grę i spróbuj jeszcze raz.');
+            }
+
+
+            if (word === 'pokaz') {
+
+                const material = args[1] === undefined ? null : MATERIAL_WORDS[simplify(args[1])];
+
+                if (args[1] !== undefined && !material) {
+                    throw new CommandError(`Nie ma materiału "${args[1]}". Do wyboru: ${Object.keys(MATERIAL_WORDS).filter((w) => !BLOCK_MATERIALS.includes(w)).join(', ')}`);
+                }
+
+                const list = material ? [material] : BLOCK_MATERIALS;
+
+
+                // Każdy materiał: trzy kroki, postawienie, zniszczenie.
+
+                list.forEach((name, i) => {
+
+                    const start = i * 2.6;
+
+                    for (const [kind, at] of [['step', 0], ['step', 0.45], ['step', 0.9], ['place', 1.4], ['break', 1.9]]) {
+                        sounds.play(`${kind}_${name}`, { volume: kind === 'step' ? 0.6 : 1, delay: start + at });
+                    }
+
+                });
+
+                return `Pokaz dźwięków (krok x3, postawienie, zniszczenie): ${list.map((name) => MATERIAL_NAMES[name]).join(', ')}.`;
+
+            }
+
+
+            const name = Object.keys(SOUNDS).find((key) => simplify(key) === word);
+
+            if (!name) {
+                throw new CommandError(`Nie ma dźwięku "${args[0]}". Lista: /dzwiek lista`);
+            }
+
+            if (!sounds.play(name)) {
+                throw new CommandError(`Nie udało się zagrać "${name}" (plik się nie wczytał albo gra za dużo dźwięków naraz).`);
+            }
+
+            return `Gra: ${name}.`;
+
+        },
+
+        complete(args) {
+
+            if (args.length === 1) {
+                return ['lista', 'pokaz', ...Object.keys(SOUNDS)];
+            }
+
+            return args.length === 2 && simplify(args[0]) === 'pokaz'
+                ? Object.keys(MATERIAL_WORDS).filter((w) => !BLOCK_MATERIALS.includes(w))
+                : [];
+
         }
     },
 

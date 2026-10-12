@@ -96,6 +96,11 @@ const PARTICLES = {
 };
 
 
+// Prędkość dźwięku (bloki na sekundę) - huk uderzenia dochodzi
+// z opóźnieniem, jak grzmot po błyskawicy.
+const SPEED_OF_SOUND = 343;
+
+
 // Ciemna część nocy w sekundach (do przeliczenia "na noc" na "na sekundę").
 const DARK_NIGHT_SECONDS = DAY_LENGTH_MINUTES * 60 * 0.35;
 
@@ -331,6 +336,15 @@ export class Meteorites {
     }
 
 
+    // W zwolnionym tempie (/meteor tempo) dźwięki są niższe.
+
+    get soundPitch() {
+
+        return Math.max(0.3, Math.min(1.5, this.timeScale));
+
+    }
+
+
     // Tryb ziemniaka: mniej cząsteczek.
 
     get particleScale() {
@@ -447,6 +461,14 @@ export class Meteorites {
                 strength: 15
             }
         };
+
+        // Huk lecącej kuli (pętla) - coraz głośniejszy i wyższy.
+
+        meteor.sound = this.game.sounds?.loop('meteor_flight', {
+            position: start,
+            volume: 0.15,
+            pitch: 0.75 * this.soundPitch
+        }) ?? null;
 
         this.flying.push(meteor);
 
@@ -608,6 +630,14 @@ export class Meteorites {
         meteor.previous.copy(position);
 
         meteor.light.position.copy(position);
+
+        if (meteor.sound) {
+
+            meteor.sound.setPosition(position);
+            meteor.sound.setVolume(0.15 + 0.55 * progress, 0.2);
+            meteor.sound.setPitch((0.75 + 0.45 * progress) * this.soundPitch);
+
+        }
 
 
         // Ogień migocze.
@@ -920,6 +950,18 @@ export class Meteorites {
 
         this.game.scene.add(blast, blastCore, shockwave);
 
+        // Dźwięk: huk dochodzi później niż błysk (prędkość dźwięku),
+        // potem grad odłamków i trzaskający żar.
+
+        meteor.sound?.stop(0.15);
+
+        const soundDelay = this.game.camera.position.distanceTo(center) / SPEED_OF_SOUND;
+
+        const sounds = this.game.sounds;
+
+        sounds?.play('meteor_impact', { position: center, delay: soundDelay / this.timeScale, pitch: this.soundPitch });
+        sounds?.play('meteor_debris', { position: center, delay: (soundDelay + 0.3) / this.timeScale, pitch: this.soundPitch });
+
         this.impacts.push({
             center,
             age: 0,
@@ -927,7 +969,9 @@ export class Meteorites {
             debrisColors,
             blast,
             blastCore,
-            shockwave
+            shockwave,
+            soundDelay,
+            fire: null
         });
 
         this.burst(center, debrisColors);
@@ -1274,6 +1318,26 @@ export class Meteorites {
             const c = impact.center;
 
 
+            // Trzaskający żar (od chwili, gdy doszedł huk) - cichnie.
+
+            if (!impact.fire && !impact.fireDone && age >= impact.soundDelay) {
+
+                impact.fireDone = true;
+
+                impact.fire = this.game.sounds?.loop('fire_crackle', {
+                    position: new THREE.Vector3(c.x, c.y + 0.5, c.z),
+                    pitch: this.soundPitch
+                }) ?? null;
+
+            }
+
+            impact.fire?.setVolume(Math.exp(-age / 9), 0.3);
+
+            if (age >= IMPACT_SECONDS) {
+                impact.fire?.stop(1.5);
+            }
+
+
             // Kula ognia wybuchu.
 
             if (impact.blast) {
@@ -1538,6 +1602,8 @@ export class Meteorites {
 
     removeObjects(meteor) {
 
+        meteor.sound?.stop(0.1);
+
         meteor.group.removeFromParent();
         meteor.trail.removeFromParent();
 
@@ -1565,6 +1631,8 @@ export class Meteorites {
             if (impact.blast) {
                 this.removeBlast(impact);
             }
+
+            impact.fire?.stop(0.1);
 
         }
 

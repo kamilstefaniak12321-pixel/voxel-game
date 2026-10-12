@@ -43,6 +43,10 @@ export const MAX_BLOCK_ID = 255;
 //   drops          - co trafia do ekwipunku po zniszczeniu w trybie
 //                    przygody (domyślnie ten sam blok, null = nic)
 //   creative       - false = nie ma go w ekwipunku kreatywnym
+//   sound          - materiał dźwięków (kroki, stawianie, niszczenie):
+//                    grass, dirt, stone, sand, gravel, mud, plant, glass
+//                    (src/audio/sounds.js); domyślnie roślina - plant,
+//                    inne - stone
 
 export const BLOCK_TYPES = {
 
@@ -52,6 +56,8 @@ export const BLOCK_TYPES = {
         name: 'Grass Block',
 
         label: 'Blok trawy',
+
+        sound: 'grass',
 
         soil: true,
         drops: 'dirt',
@@ -76,6 +82,8 @@ export const BLOCK_TYPES = {
 
         label: 'Ziemia',
 
+        sound: 'dirt',
+
         soil: true,
 
         solid: true,
@@ -94,6 +102,8 @@ export const BLOCK_TYPES = {
 
         label: 'Kamień',
 
+        sound: 'stone',
+
         solid: true,
 
         textures: {
@@ -109,6 +119,8 @@ export const BLOCK_TYPES = {
         name: 'Lamp',
 
         label: 'Lampa',
+
+        sound: 'glass',
 
         solid: true,
 
@@ -130,6 +142,8 @@ export const BLOCK_TYPES = {
 
         label: 'Lepidolit',
 
+        sound: 'stone',
+
         solid: true,
 
         textures: {
@@ -148,6 +162,8 @@ export const BLOCK_TYPES = {
         name: 'Red Lamp',
 
         label: 'Czerwona lampa',
+
+        sound: 'glass',
 
         solid: true,
 
@@ -168,6 +184,8 @@ export const BLOCK_TYPES = {
 
         label: 'Zielona lampa',
 
+        sound: 'glass',
+
         solid: true,
 
         light: 15,
@@ -187,6 +205,8 @@ export const BLOCK_TYPES = {
 
         label: 'Niebieska lampa',
 
+        sound: 'glass',
+
         solid: true,
 
         light: 15,
@@ -205,6 +225,8 @@ export const BLOCK_TYPES = {
         name: 'Purple Lamp',
 
         label: 'Fioletowa lampa',
+
+        sound: 'glass',
 
         solid: true,
 
@@ -228,6 +250,8 @@ export const BLOCK_TYPES = {
 
         label: 'Meteoryt',
 
+        sound: 'stone',
+
         solid: true,
 
         light: 7,
@@ -248,6 +272,8 @@ export const BLOCK_TYPES = {
         name: 'Sand',
 
         label: 'Piasek',
+
+        sound: 'sand',
 
         solid: true,
 
@@ -302,6 +328,8 @@ export const BLOCK_TYPES = {
 
         label: 'Granit',
 
+        sound: 'stone',
+
         solid: true,
 
         textures: {
@@ -323,6 +351,8 @@ export const BLOCK_TYPES = {
 
         label: 'Wapień',
 
+        sound: 'stone',
+
         solid: true,
 
         textures: {
@@ -341,6 +371,8 @@ export const BLOCK_TYPES = {
         name: 'Sandstone',
 
         label: 'Piaskowiec',
+
+        sound: 'stone',
 
         solid: true,
 
@@ -364,6 +396,8 @@ export const BLOCK_TYPES = {
 
         label: 'Łupek',
 
+        sound: 'stone',
+
         solid: true,
 
         textures: {
@@ -386,6 +420,8 @@ export const BLOCK_TYPES = {
 
         label: 'Bazalt',
 
+        sound: 'stone',
+
         solid: true,
 
         textures: {
@@ -405,6 +441,7 @@ export const BLOCK_TYPES = {
         id: 18,
         name: 'Humus',
         label: 'Czarnoziem',
+        sound: 'dirt',
         solid: true,
         soil: true,
         textures: { all: 'humus' },
@@ -415,6 +452,7 @@ export const BLOCK_TYPES = {
         id: 19,
         name: 'Coarse Dirt',
         label: 'Ziemia kamienista',
+        sound: 'gravel',
         solid: true,
         soil: true,
         textures: { all: 'coarse_dirt' },
@@ -426,6 +464,7 @@ export const BLOCK_TYPES = {
         id: 20,
         name: 'Forest Floor',
         label: 'Ściółka leśna',
+        sound: 'grass',
         solid: true,
         soil: true,
         textures: { top: 'forest_floor_top', side: 'forest_floor_side', bottom: 'dirt' },
@@ -436,6 +475,7 @@ export const BLOCK_TYPES = {
         id: 21,
         name: 'Mud',
         label: 'Błoto',
+        sound: 'mud',
         solid: true,
         soil: true,
         textures: { all: 'mud' },
@@ -446,6 +486,7 @@ export const BLOCK_TYPES = {
         id: 22,
         name: 'Clay',
         label: 'Glina',
+        sound: 'mud',
         solid: true,
         soil: true,
         textures: { all: 'clay' }
@@ -455,6 +496,7 @@ export const BLOCK_TYPES = {
         id: 23,
         name: 'Gravel',
         label: 'Żwir',
+        sound: 'gravel',
         solid: true,
         textures: { all: 'gravel' },
         randomRotation: ['top', 'bottom']
@@ -777,6 +819,21 @@ export function getDropType(type) {
     }
 
     return definition.drops === undefined ? type : definition.drops;
+
+}
+
+
+// Materiał dźwięków bloku (src/audio/sounds.js).
+
+export function getBlockSound(type) {
+
+    const definition = getBlockDefinition(type);
+
+    if (!definition) {
+        return null;
+    }
+
+    return definition.sound ?? (definition.model === 'cross' ? 'plant' : 'stone');
 
 }
 

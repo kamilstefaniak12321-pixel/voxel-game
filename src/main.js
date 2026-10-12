@@ -13,6 +13,7 @@ import { GAME_COMMANDS } from './commands/gameCommands.js';
 import { PerfMonitor } from './game/PerfMonitor.js';
 import { TerrainMap } from './ui/TerrainMap.js';
 import { InventoryScreen } from './ui/InventoryScreen.js';
+import { SoundManager } from './audio/SoundManager.js';
 import {
     WorldStorage,
     createWorldInfo,
@@ -95,6 +96,17 @@ const perf = new PerfMonitor();
 // Mapa terenu z góry (/mapa, klawisz M).
 
 const terrainMap = new TerrainMap();
+
+
+// Dźwięk (kroki, bloki, meteoryty). Przeglądarka pozwala go włączyć
+// dopiero po kliknięciu albo klawiszu - stąd unlock przy pierwszym
+// takim zdarzeniu (i przy każdym następnym, gdyby się wstrzymał).
+
+const sounds = new SoundManager(settings);
+
+for (const type of ['pointerdown', 'keydown']) {
+    window.addEventListener(type, () => sounds.unlock(), { capture: true });
+}
 
 
 let state = 'menu';
@@ -280,6 +292,8 @@ async function playWorld(worldInfo) {
     try {
 
         game = await Game.start(renderer, input, storage, worldInfo, settings);
+
+        game.sounds = sounds;
 
         // Komunikaty gry (np. gdzie spadł meteoryt) trafiają na czat.
 
@@ -730,6 +744,8 @@ function closeWorld() {
 
     game = null;
 
+    sounds.stopLoops();
+
     hotbar.reset();
 
     terrainMap.close();
@@ -792,6 +808,11 @@ function animate(now) {
     lastFrameTime = now;
 
 
+    // Dźwięk gra tylko w trakcie gry (w pauzie i w menu jest wstrzymany).
+
+    sounds.setActive(Boolean(game) && (state === 'playing' || state === 'chat' || state === 'inventory'));
+
+
     if (!game) {
         return;
     }
@@ -819,6 +840,8 @@ function animate(now) {
         perf.begin();
 
         game.update(dt);
+
+        sounds.updateListener(game.camera);
 
         perf.endUpdate();
 

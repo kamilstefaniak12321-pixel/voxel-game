@@ -78,6 +78,7 @@ export const TEXTS = {
         video: 'Obraz',
         controls: 'Sterowanie',
         player: 'Gracz',
+        sound: 'Dźwięk',
         other: 'Inne'
     },
     potato: (on) => `Tryb ziemniaka: ${on ? 'Wł.' : 'Wył.'}`,
@@ -99,6 +100,9 @@ export const TEXTS = {
     dynamicLight: (on) => `Dynamiczne światło: ${on ? 'Wł.' : 'Wył.'}`,
     loadBudget: (value) => `Wczytywanie: ${value} ms/klatkę`,
     meteorites: (on) => `Spadające meteoryty: ${on ? 'Wł.' : 'Wył.'}`,
+    volumeMaster: (value) => `Głośność: ${value > 0 ? `${value}%` : 'Wył.'}`,
+    volumeBlocks: (value) => `Bloki i kroki: ${value > 0 ? `${value}%` : 'Wył.'}`,
+    volumeWorld: (value) => `Zjawiska (meteoryt): ${value > 0 ? `${value}%` : 'Wył.'}`,
     skin: 'Wczytaj skórkę...',
     skinReset: 'Skórka domyślna',
     skinNote: (custom) =>

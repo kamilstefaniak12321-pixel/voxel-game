@@ -80,6 +80,12 @@ const SETTINGS_TABS = {
         'cameraDistance'
     ],
 
+    sound: [
+        'volumeMaster',
+        'volumeBlocks',
+        'volumeWorld'
+    ],
+
     other: [
         'theme',
         'hudScale',

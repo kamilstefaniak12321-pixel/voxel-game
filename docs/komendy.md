@@ -65,7 +65,11 @@ Współrzędne można podawać względem gracza: `~` (tu, gdzie stoję),
 | `/meteor` | zrzuca meteoryt w pobliżu (nie w chunki zmieniane przez gracza); nadlatuje zza miejsca upadku, więc patrząc w tamtą stronę widać cały przelot (8 s) |
 | `/meteor tu` | meteoryt spada tam, gdzie patrzysz (albo 15 bloków przed graczem) |
 | `/meteor pokaz` | meteoryt spada 30 bloków przed graczem i nadlatuje z naprzeciwka - najlepszy widok |
-| `/meteor tempo [0.05-2]` | tempo meteorytów (lot, cząsteczki, wybuch): 0.25 = cztery razy wolniej, 1 = normalnie; bez liczby - jakie jest |
+| `/meteor tempo [0.05-2]` | tempo meteorytów (lot, cząsteczki, wybuch, także dźwięki - niższe): 0.25 = cztery razy wolniej, 1 = normalnie; bez liczby - jakie jest |
+| `/dzwiek` | stan dźwięku (gra / wstrzymany), ile plików się wczytało, głośności |
+| `/dzwiek lista` | wszystkie dźwięki (nazwy z `src/audio/sounds.js`) |
+| `/dzwiek <nazwa>` | gra jeden dźwięk, np. `/dzwiek meteor_impact`, `/dzwiek break_stone` |
+| `/dzwiek pokaz [materiał]` | po kolei dla każdego materiału (albo jednego: `trawa`, `ziemia`, `kamien`, `piasek`, `zwir`, `bloto`, `rosliny`, `szklo`): trzy kroki, postawienie, zniszczenie |
 | `/horyzont` | daleki teren: zasięg, ile kafelków widać i ile się buduje, trójkąty |
 | `/horyzont <bloki \| wyl>` | zasięg dalekiego terenu (to samo co w ustawieniach) |
 | `/horyzont lod` | koloruje kafelki dalekiego terenu według dokładności (czerwone - najdokładniejsze) |
@@ -94,7 +98,8 @@ Kolory: `czerwony`, `krwawy`, `pomaranczowy`, `zloty`, `zolty`, `zielony`,
 Nazwy ustawień w `/ustaw`: `ziemniak`, `zasieg`, `daleki-teren`, `pole`, `jasnosc`,
 `rozdzielczosc`, `fps` (limit), `cienie`, `dynamiczne-swiatlo`, `wczytywanie`, `czulosc`,
 `odwroc-mysz`, `motyw`, `interfejs`, `debug`, `licznik-fps`, `meteoryty`,
-`warstwa-skorki`, `zgiecia` (`gladkie` / `klocki`), `kamera` (odległość kamery z F5, 2-8).
+`warstwa-skorki`, `zgiecia` (`gladkie` / `klocki`), `kamera` (odległość kamery z F5, 2-8),
+`glosnosc`, `glosnosc-bloki`, `glosnosc-zjawiska` (0-100).
 Wartości tak/nie: `wl` / `wyl`.
 
 Niektóre komendy mają też angielskie nazwy (`/time`, `/moon`, `/tp`,

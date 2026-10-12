@@ -13,6 +13,7 @@ import {
     getLightColor,
     getBlockLabel,
     getDropType,
+    getBlockSound,
     isPlantId
 } from '../blocks/BlockRegistry.js';
 import { Inventory } from './Inventory.js';
@@ -296,6 +297,15 @@ export class Game {
         this.onNotice = null;
 
 
+        // Dźwięk (audio/SoundManager.js) - ustawia main.js; bez niego
+        // gra działa po cichu. Kroki: przebyta droga od ostatniego kroku.
+
+        this.sounds = null;
+
+        this.stepDistance = 0;
+        this.stepFrom = new THREE.Vector3();
+
+
         // Autozapis.
 
         this.saver = new WorldSaver(
@@ -333,6 +343,8 @@ export class Game {
 
 
         this.player.update(dt, input);
+
+        this.updateFootsteps();
 
 
         // Test wydajności: kamera powoli obraca się dookoła.
@@ -416,10 +428,18 @@ export class Game {
 
             if (this.selectedBlock) {
 
+                const type = this.selectedBlock;
+
+                const target = this.placer.targetOf(this.currentHit);
+
                 const placed = this.placer.placeBlock(
                     this.currentHit,
-                    this.selectedBlock
+                    type
                 );
+
+                if (placed) {
+                    this.playBlockSound('place', type, target);
+                }
 
                 // W przygodzie postawiony blok znika ze stosu.
 
@@ -1191,7 +1211,15 @@ export class Game {
         }
 
         if (this.mode !== 'adventure') {
-            return this.breaker.breakBlock(hit);
+
+            const broken = this.breaker.breakBlock(hit);
+
+            if (broken) {
+                this.playBlockSound('break', hit.block.type, hit.block);
+            }
+
+            return broken;
+
         }
 
 
@@ -1217,6 +1245,8 @@ export class Game {
             return false;
         }
 
+        this.playBlockSound('break', type, hit.block);
+
         if (drop) {
             this.inventory.add(drop);
         }
@@ -1232,6 +1262,127 @@ export class Game {
         }
 
         return true;
+
+    }
+
+
+    // --------------------------------------------------------
+    // DŹWIĘKI BLOKÓW I KROKÓW
+    // --------------------------------------------------------
+
+    // Dźwięk bloku (kind: 'step', 'place', 'break') w środku bloku
+    // { x, y, z } albo "w głowie" (position = null).
+
+    playBlockSound(kind, type, block = null, volume = 1) {
+
+        const material = getBlockSound(type);
+
+        if (!this.sounds || !material) {
+            return;
+        }
+
+        const position = block
+            ? new THREE.Vector3(block.x + 0.5, block.y + 0.5, block.z + 0.5)
+            : null;
+
+        this.sounds.play(`${kind}_${material}`, { position, volume });
+
+    }
+
+
+    // Kroki: co kawałek drogi po ziemi dźwięk bloku pod stopami
+    // (kucanie - ciszej i rzadziej, bieg - głośniej i rzadziej), przez
+    // trawę i kwiaty - jeszcze szelest. Po skoku / upadku - stuk
+    // przy lądowaniu (tym głośniejszy, im mocniej).
+
+    updateFootsteps() {
+
+        const player = this.player;
+
+        const moved = Math.hypot(player.pos.x - this.stepFrom.x, player.pos.z - this.stepFrom.z);
+
+        this.stepFrom.copy(player.pos);
+
+
+        if (player.landed > 4 && !player.flying) {
+
+            this.playStep(Math.min(1, 0.3 + (player.landed - 4) / 14));
+
+            this.stepDistance = 0;
+
+            return;
+
+        }
+
+
+        // Teleport albo lot - bez kroków.
+
+        if (!player.onGround || player.flying || moved > 2) {
+            return;
+        }
+
+
+        const stride = player.crouching ? 0.9 : player.sprinting ? 2.1 : 1.6;
+
+        this.stepDistance += moved;
+
+        if (this.stepDistance >= stride) {
+
+            this.stepDistance -= stride;
+
+            this.playStep(player.crouching ? 0.35 : player.sprinting ? 0.8 : 0.6);
+
+        }
+
+    }
+
+
+    playStep(volume) {
+
+        if (!this.sounds) {
+            return;
+        }
+
+        const type = this.blockUnderFeet();
+
+        if (type) {
+            this.playBlockSound('step', type, null, volume);
+        }
+
+
+        // Trawa, kwiaty, paprocie przy nogach szeleszczą.
+
+        const p = this.player.pos;
+
+        const plant = this.world.getBlockId(Math.floor(p.x), Math.floor(p.y + 0.2), Math.floor(p.z));
+
+        if (isPlantId(plant)) {
+            this.sounds.play('step_plant', { volume: volume * 0.7 });
+        }
+
+    }
+
+
+    // Blok, na którym stoi gracz (środek stóp, a na krawędzi - jeden
+    // z rogów).
+
+    blockUnderFeet() {
+
+        const p = this.player.pos;
+
+        const y = Math.floor(p.y - 0.05);
+
+        for (const [dx, dz] of [[0, 0], [0.3, 0.3], [-0.3, 0.3], [0.3, -0.3], [-0.3, -0.3]]) {
+
+            const type = this.world.getBlock(Math.floor(p.x + dx), y, Math.floor(p.z + dz));
+
+            if (type && this.world.isSolid(Math.floor(p.x + dx), y, Math.floor(p.z + dz))) {
+                return type;
+            }
+
+        }
+
+        return null;
 
     }
 

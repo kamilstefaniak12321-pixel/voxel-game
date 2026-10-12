@@ -283,11 +283,18 @@ body:not([data-screen="game"]) #crosshair {
 
 .settings-tabs {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
     gap: var(--button-gap);
     width: var(--list-width);
     max-width: 100%;
     margin-bottom: 8px;
+}
+
+/* Pięć zakładek w jednym rzędzie - trochę mniejszy napis. */
+
+.settings-tabs .menu-button {
+    padding: 0 6px;
+    font-size: 0.85em;
 }
 
 .settings-tabs .menu-button.selected:disabled {

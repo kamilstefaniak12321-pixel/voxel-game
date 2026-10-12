@@ -49,6 +49,11 @@ export const SETTINGS_DEFAULTS = {
     jointStyle: 'smooth',                          // zgięcia modelu: 'smooth' albo 'blocks'
     cameraDistance: THIRD_PERSON_DISTANCE,         // kamera z trzeciej osoby (F5), bloki
 
+    // Dźwięk (procent; na ucho - suwak 50% to mniej więcej "o połowę ciszej")
+    volumeMaster: 80,                              // głośność gry
+    volumeBlocks: 100,                             // kroki, stawianie i niszczenie bloków
+    volumeWorld: 100,                              // zjawiska: meteoryty
+
     // Inne
     theme: UI_THEME,                               // motyw menu
     hudScale: 100,                                 // rozmiar paska, czatu i napisów w grze (procent)
@@ -72,6 +77,9 @@ export const SETTINGS_RANGES = {
     loadBudget: { min: 1, max: 16, step: 1 },
     mouseSensitivity: { min: 10, max: 200, step: 5 },
     hudScale: { min: 50, max: 200, step: 10 },
+    volumeMaster: { min: 0, max: 100, step: 5 },
+    volumeBlocks: { min: 0, max: 100, step: 5 },
+    volumeWorld: { min: 0, max: 100, step: 5 },
     cameraDistance: { min: 2, max: 8, step: 1 }
 
 };

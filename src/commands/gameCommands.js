@@ -13,8 +13,11 @@ import {
     getBlockDefinition,
     getBlockId,
     getBlockTypeById,
-    getBlockLabel
+    getBlockLabel,
+    isLiquidId
 } from '../blocks/BlockRegistry.js';
+
+import { waterUniforms } from '../rendering/BlockRenderData.js';
 
 import {
     ITEM_TYPES,
@@ -65,6 +68,7 @@ import {
     WORLD_BORDER,
     DAY_LENGTH_MINUTES,
     BUSH_GROWTH_SECONDS,
+    WATER_WAVE_HEIGHT,
     UI_THEMES,
     POTATO_RENDER_SCALE,
     POTATO_VIEW_DISTANCE,
@@ -259,14 +263,16 @@ const LABEL_WORDS = new Map(
 );
 
 
-// Przedmioty (owoce) po polsku: maliny / malina, jezyny / jezyna,
-// porzeczki / porzeczka, orzech_laskowy / orzech / orzechy.
+// Przedmioty (owoce) po polsku: truskawki / truskawka, jezyny / jezyna,
+// papryczki_chili / chili / papryczka, orzech_laskowy / orzech / orzechy.
 
 const ITEM_WORDS = new Map([
     ...Object.keys(ITEM_TYPES).map((type) => [simplify(getItemLabel(type)).replace(/\s+/g, '_'), type]),
-    ['malina', 'raspberry'],
+    ['truskawka', 'strawberry'],
     ['jezyna', 'blackberry'],
-    ['porzeczka', 'currants'],
+    ['chili', 'chili_pepper'],
+    ['papryczka', 'chili_pepper'],
+    ['papryczki', 'chili_pepper'],
     ['orzech', 'hazelnut'],
     ['orzechy', 'hazelnut']
 ]);
@@ -460,6 +466,143 @@ function directionName(dx, dz) {
 }
 
 
+// Kierunek patrzenia gracza zaokrąglony do osi X albo Z (do przodu)
+// i kierunek "w prawo" od niego.
+
+function lookAxes(player) {
+
+    const lookX = -Math.sin(player.yaw);
+    const lookZ = -Math.cos(player.yaw);
+
+    const [forwardX, forwardZ] = Math.abs(lookX) > Math.abs(lookZ) ? [Math.sign(lookX), 0] : [0, Math.sign(lookZ)];
+
+    return { forwardX, forwardZ, rightX: -forwardZ, rightZ: forwardX };
+
+}
+
+
+// --- Woda (/woda) ---------------------------------------------
+
+// Basen przed graczem: 7 bloków szerokości, 11 długości; pierwsze
+// 3 rzędy płytkie (1 blok wody - brodzik), dalej 4 bloki głębokości.
+// Ściany z wapienia równo z ziemią, dno z piasku.
+
+const POOL_WIDTH = 7;
+const POOL_LENGTH = 11;
+const POOL_SHALLOW = 3;
+const POOL_DEPTH = 4;
+
+function buildPool(player, world) {
+
+    const { forwardX, forwardZ, rightX, rightZ } = lookAxes(player);
+
+    const ground = Math.floor(player.pos.y);
+
+    const half = Math.floor(POOL_WIDTH / 2);
+
+    let changed = 0;
+
+    const set = (x, y, z, type) => {
+        if (world.setBlock(x, y, z, type)) changed++;
+    };
+
+
+    // a - wzdłuż (od gracza), b - w poprzek; -1 i ostatni rząd to ściany.
+
+    for (let a = -1; a <= POOL_LENGTH; a++) {
+
+        for (let b = -half - 1; b <= half + 1; b++) {
+
+            const x = Math.floor(player.pos.x) + forwardX * (a + 2) + rightX * b;
+            const z = Math.floor(player.pos.z) + forwardZ * (a + 2) + rightZ * b;
+
+            const wall = a < 0 || a >= POOL_LENGTH || Math.abs(b) > half;
+
+            const depth = a < POOL_SHALLOW ? 1 : POOL_DEPTH;
+
+            // Nad basenem pusto.
+
+            for (let y = ground; y < ground + 4; y++) {
+                set(x, y, z, null);
+            }
+
+            for (let y = ground - POOL_DEPTH - 1; y < ground; y++) {
+
+                if (wall) {
+                    set(x, y, z, 'limestone');
+                }
+                else if (y >= ground - depth) {
+                    set(x, y, z, 'water');
+                }
+                else {
+                    set(x, y, z, 'sand');
+                }
+
+            }
+
+        }
+
+    }
+
+    return `Basen przed tobą (${changed} bloków): na początku brodzik (1 blok wody), dalej ${POOL_DEPTH} bloki głębokości. ` +
+        'Pływanie: Spacja - w górę, Shift - w dół, Spacja przy brzegu - wyjście z wody.';
+
+}
+
+
+// Najbliższa powierzchnia wody we wczytanych chunkach: { x, y, z, distance } albo null.
+
+function nearestWater(world, center) {
+
+    const layer = CHUNK_SIZE * CHUNK_SIZE;
+
+    let best = null;
+
+    for (const chunk of world.chunks.values()) {
+
+        const baseX = chunk.cx * CHUNK_SIZE;
+        const baseZ = chunk.cz * CHUNK_SIZE;
+
+        for (let lz = 0; lz < CHUNK_SIZE; lz++) {
+
+            for (let lx = 0; lx < CHUNK_SIZE; lx++) {
+
+                for (let y = chunk.maxY - 1; y >= 0; y--) {
+
+                    const id = chunk.blocks[y * layer + lz * CHUNK_SIZE + lx];
+
+                    if (id === 0) {
+                        continue;
+                    }
+
+                    if (isLiquidId(id)) {
+
+                        const x = baseX + lx;
+                        const z = baseZ + lz;
+
+                        const distance = Math.hypot(x + 0.5 - center.x, z + 0.5 - center.z);
+
+                        if (!best || distance < best.distance) {
+                            best = { x, y, z, distance };
+                        }
+
+                    }
+
+                    break;
+
+                }
+
+            }
+
+        }
+
+    }
+
+    return best;
+
+}
+
+
 // Ogródek przed graczem: rzędy = gatunki, kolumny = etapy (od
 // sadzonki do pełnego owoców), co 2 bloki, na trawie.
 
@@ -467,17 +610,7 @@ function plantBushGarden(player, world) {
 
     const species = Object.keys(FRUIT_BUSHES);
 
-    // Kierunek patrzenia zaokrąglony do osi X albo Z.
-
-    const lookX = -Math.sin(player.yaw);
-    const lookZ = -Math.cos(player.yaw);
-
-    const [forwardX, forwardZ] = Math.abs(lookX) > Math.abs(lookZ) ? [Math.sign(lookX), 0] : [0, Math.sign(lookZ)];
-
-    // "W prawo" od kierunku patrzenia.
-
-    const rightX = -forwardZ;
-    const rightZ = forwardX;
+    const { forwardX, forwardZ, rightX, rightZ } = lookAxes(player);
 
     const startX = Math.floor(player.pos.x) + forwardX * 3 - rightX * 3;
     const startZ = Math.floor(player.pos.z) + forwardZ * 3 - rightZ * 3;
@@ -754,7 +887,9 @@ const ANIMATION_WORDS = {
     skradanie: 'sneak',
     skok: 'jump',
     machanie: 'swing',
-    latanie: 'fly'
+    latanie: 'fly',
+    plywanie: 'swim',
+    'plywanie-w-miejscu': 'tread'
 };
 
 const ANIMATION_WORDS_PL = Object.fromEntries(
@@ -813,6 +948,7 @@ const SETTING_WORDS = {
     glosnosc: 'volumeMaster',
     'glosnosc-bloki': 'volumeBlocks',
     'glosnosc-zjawiska': 'volumeWorld',
+    'glosnosc-otoczenie': 'volumeWorld',
     'glosnosc-menu': 'volumeUi',
     'warstwa-skorki': 'skinOverlay',
     zgiecia: 'jointStyle',
@@ -1581,7 +1717,7 @@ export const GAME_COMMANDS = [
             if (!word) {
 
                 return `Dźwięk: ${sounds.running ? 'gra' : 'wstrzymany (kliknij w grę)'} | wczytane pliki: ${sounds.loadedCount} z ${sounds.fileCount} | ` +
-                    `głośność ${settings.get('volumeMaster')}%, bloki ${settings.get('volumeBlocks')}%, zjawiska ${settings.get('volumeWorld')}%, menu ${settings.get('volumeUi')}% ` +
+                    `głośność ${settings.get('volumeMaster')}%, bloki ${settings.get('volumeBlocks')}%, otoczenie ${settings.get('volumeWorld')}%, menu ${settings.get('volumeUi')}% ` +
                     '(Ustawienia -> Dźwięk albo /ustaw glosnosc 80). Dalej: /dzwiek lista, /dzwiek pokaz, /dzwiek menu';
 
             }
@@ -1933,7 +2069,7 @@ export const GAME_COMMANDS = [
     {
         name: 'animacja',
         aliases: ['animation', 'anim'],
-        usage: '/animacja <stanie | chodzenie | bieg | kucanie | skradanie | skok | machanie | latanie> | /animacja wyl',
+        usage: '/animacja <stanie | chodzenie | bieg | kucanie | skradanie | skok | machanie | latanie | plywanie | plywanie-w-miejscu> | /animacja wyl',
         description: 'Podgląd animacji modelu gracza w miejscu (kamera z przodu). Wolniej: /model tempo 0.25.',
 
         run(args, { game }) {
@@ -2124,14 +2260,14 @@ export const GAME_COMMANDS = [
         name: 'daj',
         aliases: ['give'],
         usage: '/daj <blok albo przedmiot> [ilość]',
-        description: 'Blok albo przedmiot (np. maliny) do ekwipunku. Bez ilości w trybie kreatywnym - do wybranego miejsca na pasku, w przygodzie - stos 64.',
+        description: 'Blok albo przedmiot (np. truskawki) do ekwipunku. Bez ilości w trybie kreatywnym - do wybranego miejsca na pasku, w przygodzie - stos 64.',
 
         run(args, { game }) {
 
             const type = itemArgument(args[0]);
 
             if (!type) {
-                throw new CommandError('Podaj blok albo przedmiot, np. /daj lamp_red albo /daj maliny');
+                throw new CommandError('Podaj blok albo przedmiot, np. /daj lamp_red albo /daj truskawki');
             }
 
             const inventory = game.inventory;
@@ -2182,6 +2318,81 @@ export const GAME_COMMANDS = [
                 .join(', ') +
                 '\nPrzedmioty: ' + ITEM_NAMES.map((type) => `${type} (${getItemLabel(type)})`).join(', ');
 
+        }
+    },
+
+
+    {
+        name: 'woda',
+        aliases: ['water', 'plywanie'],
+        usage: '/woda | /woda basen | /woda znajdz | /woda fale <0-3>',
+        description: 'Woda: czy jesteś w wodzie (jak głęboko, czy pod wodą), basen do pływania przed tobą, najbliższa woda (morze) i komenda /tp, wysokość fal (0 - płaska woda, 1 - zwykłe).',
+
+        run(args, { game, player, world }) {
+
+            const word = simplify(args[0] ?? '');
+
+
+            if (word === 'fale') {
+
+                if (args[1] === undefined) {
+                    return `Fale: x${decimal(waterUniforms.uWaveHeight.value / WATER_WAVE_HEIGHT)}. Zmiana: /woda fale 0 (płaska woda) do 3.`;
+                }
+
+                const value = parseNumber(args[1], 'wysokość fal');
+
+                if (value < 0 || value > 3) {
+                    throw new CommandError('Fale: od 0 (płaska woda) do 3 (1 = zwykłe).');
+                }
+
+                waterUniforms.uWaveHeight.value = WATER_WAVE_HEIGHT * value;
+
+                return `Fale: x${value}${value === 0 ? ' - woda płaska' : ''}.`;
+
+            }
+
+
+            if (['basen', 'pool'].includes(word)) {
+                return buildPool(player, world);
+            }
+
+
+            if (['znajdz', 'find'].includes(word)) {
+
+                const found = nearestWater(world, player.pos);
+
+                if (!found) {
+                    return 'We wczytanych chunkach nie ma wody. Basen: /woda basen. Morze: /mapa (niebieskie) i /tp.';
+                }
+
+                const { x, y, z, distance } = found;
+
+                return `Najbliższa woda: ${Math.round(distance)} bloków ${directionName(x + 0.5 - player.pos.x, z + 0.5 - player.pos.z)} ` +
+                    `(${x} ${y} ${z}). Teleport nad wodę: /tp ${x} ${y + 2} ${z}`;
+
+            }
+
+
+            if (word) {
+                throw usageError(this);
+            }
+
+
+            const water = player.submerged;
+
+            const state = water <= 0
+                ? 'nie jesteś w wodzie'
+                : `w wodzie ${Math.round(water * 100)}% ciała` +
+                  (player.swimming ? ', pływasz' : player.onGround ? ', stoisz na dnie' : '') +
+                  (game.water.underwater ? ', oczy pod wodą' : '');
+
+            return `Woda: ${state}. Woda dookoła: ${game.water.nearbyWater} kolumn. ` +
+                'Pływanie: Spacja - w górę, Shift - w dół, Spacja przy brzegu - wyjście. Dalej: /woda basen, /woda znajdz, /woda fale.';
+
+        },
+
+        complete(args) {
+            return args.length === 1 ? ['basen', 'znajdz', 'fale'] : args.length === 2 && simplify(args[0]) === 'fale' ? ['0', '1', '2'] : [];
         }
     },
 

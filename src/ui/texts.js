@@ -102,7 +102,7 @@ export const TEXTS = {
     meteorites: (on) => `Spadające meteoryty: ${on ? 'Wł.' : 'Wył.'}`,
     volumeMaster: (value) => `Głośność: ${value > 0 ? `${value}%` : 'Wył.'}`,
     volumeBlocks: (value) => `Bloki i kroki: ${value > 0 ? `${value}%` : 'Wył.'}`,
-    volumeWorld: (value) => `Zjawiska (meteoryt): ${value > 0 ? `${value}%` : 'Wył.'}`,
+    volumeWorld: (value) => `Otoczenie (woda, meteoryt): ${value > 0 ? `${value}%` : 'Wył.'}`,
     volumeUi: (value) => `Menu i ekwipunek: ${value > 0 ? `${value}%` : 'Wył.'}`,
     skin: 'Wczytaj skórkę...',
     skinReset: 'Skórka domyślna',

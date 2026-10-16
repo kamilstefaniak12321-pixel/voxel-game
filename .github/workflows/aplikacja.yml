@@ -4,12 +4,20 @@
 # - Pull request zmieniający aplikację (desktop/, package.json...) -
 #   tylko próbne zbudowanie (instalator do pobrania w zakładce
 #   Actions -> ten przebieg -> Artifacts), bez wydania.
-# - Wypchnięcie na main: jeśli wersji z package.json nie ma jeszcze
-#   w repozytorium z wydaniami (package.json -> build.publish), to
-#   instalator jest budowany i publikowany jako nowe wydanie -
-#   zainstalowane gry same go pobiorą. Ta sama wersja = nic się nie
-#   dzieje, więc nowe wydanie = podniesienie "version" w package.json.
+# - Wypchnięcie na main: jeśli w repozytorium z wydaniami
+#   (package.json -> build.publish) nie ma jeszcze KOMPLETNEGO wydania
+#   tej wersji - instalatora .exe, pliku .blockmap i latest.yml (z niego
+#   zainstalowana gra wie, że jest aktualizacja) - instalator jest
+#   budowany i publikowany. Wydanie, któremu brakuje plików (np. po
+#   przerwanym wysyłaniu), jest uzupełniane. Kompletne wydanie tej samej
+#   wersji = nic się nie dzieje, więc nowe wydanie = podniesienie
+#   "version" w package.json.
 # - Actions -> "Aplikacja na komputer" -> Run workflow - to samo ręcznie.
+#
+# Instalator buduje electron-builder (bez wysyłania), a do wydania
+# wysyła go GitHub CLI (gh). Gdy coś się nie uda, ostatnie linie
+# błędu są widoczne od razu na stronie przebiegu (adnotacje), a lista
+# plików wydania - w adnotacji "Wydanie".
 #
 # Wymaga sekretu WYDANIA_TOKEN (token z prawem zapisu do repozytorium
 # z wydaniami). Bez niego instalator jest tylko budowany. Opis:
@@ -39,6 +47,8 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       version: ${{ steps.check.outputs.version }}
+      repo: ${{ steps.check.outputs.repo }}
+      exe: ${{ steps.check.outputs.exe }}
       build: ${{ steps.check.outputs.build }}
       publish: ${{ steps.check.outputs.publish }}
     steps:
@@ -49,9 +59,16 @@ jobs:
           WYDANIA_TOKEN: ${{ secrets.WYDANIA_TOKEN }}
           EVENT: ${{ github.event_name }}
         run: |
+          # Wersja, repozytorium z wydaniami i nazwa instalatora - z package.json.
           VERSION=$(node -p "require('./package.json').version")
           REPO=$(node -p "const p = require('./package.json').build.publish; p.owner + '/' + p.repo")
-          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          EXE=$(node -p 'const p = require("./package.json"); p.build.nsis.artifactName.replace("${version}", p.version).replace("${ext}", "exe")')
+
+          {
+            echo "version=$VERSION"
+            echo "repo=$REPO"
+            echo "exe=$EXE"
+          } >> "$GITHUB_OUTPUT"
 
           if [ "$EVENT" = "pull_request" ]; then
             echo "Pull request - próbne zbudowanie wersji $VERSION."
@@ -68,25 +85,52 @@ jobs:
             exit 0
           fi
 
-          STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
+          STATUS=$(curl -s -o release.json -w "%{http_code}" \
             -H "Authorization: Bearer $WYDANIA_TOKEN" \
             -H "Accept: application/vnd.github+json" \
             "https://api.github.com/repos/$REPO/releases/tags/v$VERSION")
 
+          if [ "$STATUS" = "401" ]; then
+            echo "::error title=WYDANIA_TOKEN::Token nie działa (HTTP 401) - wygasł albo został usunięty. Zrób nowy i podmień sekret WYDANIA_TOKEN (docs/aplikacja.md)."
+            exit 1
+          fi
+
           if [ "$STATUS" = "200" ]; then
-            echo "Wersja $VERSION jest już wydana w $REPO - nic do zrobienia."
-            echo "build=false" >> "$GITHUB_OUTPUT"
-            echo "publish=false" >> "$GITHUB_OUTPUT"
+
+            # Wydanie jest - czy ma wszystkie pliki?
+            MISSING=$(EXE="$EXE" node -e '
+              const names = require("./release.json").assets.map((asset) => asset.name);
+              const need = [process.env.EXE, process.env.EXE + ".blockmap", "latest.yml"];
+              console.log(need.filter((name) => !names.includes(name)).join(", "));
+            ')
+
+            if [ -z "$MISSING" ]; then
+              echo "Wersja $VERSION jest już wydana w $REPO (komplet plików) - nic do zrobienia."
+              echo "build=false" >> "$GITHUB_OUTPUT"
+              echo "publish=false" >> "$GITHUB_OUTPUT"
+              exit 0
+            fi
+
+            echo "::warning title=Niepełne wydanie::Wydanie v$VERSION w $REPO nie ma plików: $MISSING - instalator zostanie zbudowany i dosłany."
+
           else
             echo "Nowa wersja $VERSION - budowanie i wydanie w $REPO."
-            echo "build=true" >> "$GITHUB_OUTPUT"
-            echo "publish=true" >> "$GITHUB_OUTPUT"
           fi
+
+          echo "build=true" >> "$GITHUB_OUTPUT"
+          echo "publish=true" >> "$GITHUB_OUTPUT"
 
   windows:
     needs: wersja
     if: needs.wersja.outputs.build == 'true'
     runs-on: windows-latest
+    defaults:
+      run:
+        shell: bash
+    env:
+      VERSION: ${{ needs.wersja.outputs.version }}
+      REPO: ${{ needs.wersja.outputs.repo }}
+      EXE: ${{ needs.wersja.outputs.exe }}
     steps:
       - uses: actions/checkout@v5
 
@@ -97,18 +141,89 @@ jobs:
 
       - run: npm ci
 
-      - name: Zbuduj instalator (bez wydania)
-        if: needs.wersja.outputs.publish != 'true'
-        run: npx electron-builder --win --x64 --publish never
+      # Samo budowanie (bez wysyłania). Przy błędzie ostatnie linie
+      # wyniku trafiają do adnotacji.
+      - name: Zbuduj instalator
+        run: |
+          set -o pipefail
+          if ! npx electron-builder --win --x64 --publish never 2>&1 | tee build.log; then
+            TEXT=$(tail -n 30 build.log | sed -e 's/\x1b\[[0-9;]*m//g' -e 's/%/%25/g' -e 's/\r//g' | awk 'BEGIN { ORS = "%0A" } { print }')
+            echo "::error title=Budowanie instalatora::$TEXT"
+            exit 1
+          fi
 
-      - name: Zbuduj instalator i opublikuj wydanie
-        if: needs.wersja.outputs.publish == 'true'
-        env:
-          GH_TOKEN: ${{ secrets.WYDANIA_TOKEN }}
-        run: npx electron-builder --win --x64 --publish always
+      # Czy są wszystkie pliki wydania i czy latest.yml wskazuje na ten instalator.
+      - name: Sprawdź pliki
+        run: |
+          for FILE in "dist/$EXE" "dist/$EXE.blockmap" "dist/latest.yml"; do
+            if [ ! -f "$FILE" ]; then
+              echo "::error title=Brak pliku::Nie powstał $FILE. W dist/ jest: $(ls dist | tr '\n' ' ')"
+              exit 1
+            fi
+          done
+
+          if ! grep -q "url: $EXE" dist/latest.yml; then
+            echo "::error title=latest.yml::latest.yml nie wskazuje na $EXE:%0A$(sed 's/%/%25/g' dist/latest.yml | awk 'BEGIN { ORS = "%0A" } { print }')"
+            exit 1
+          fi
+
+          SIZE=$(( $(stat -c %s "dist/$EXE") / 1024 / 1024 ))
+          echo "::notice title=Instalator::$EXE ($SIZE MB), $EXE.blockmap, latest.yml"
 
       - uses: actions/upload-artifact@v6
         with:
           name: Voxel-Game-${{ needs.wersja.outputs.version }}-instalator
           path: dist/*.exe
           retention-days: 14
+
+      # Wysłanie do repozytorium z wydaniami: nowe wydanie albo
+      # uzupełnienie istniejącego (pliki o tej samej nazwie są
+      # podmieniane). Wydanie zostaje oznaczone jako najnowsze.
+      - name: Opublikuj wydanie
+        if: needs.wersja.outputs.publish == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.WYDANIA_TOKEN }}
+        run: |
+          TAG="v$VERSION"
+          FILES=("dist/$EXE" "dist/$EXE.blockmap" "dist/latest.yml")
+          NOTES="Voxel Game $VERSION - instalator dla Windowsa: pobierz $EXE i uruchom. Zainstalowana gra aktualizuje się sama."
+
+          # Uruchamia komendę; przy błędzie pokazuje jej wynik w adnotacji.
+          run() {
+            if ! "$@" > out.log 2>&1; then
+              cat out.log
+              echo "::error title=Wydanie::$* %0A$(sed -e 's/%/%25/g' -e 's/\r//g' out.log | awk 'BEGIN { ORS = "%0A" } { print }')"
+              exit 1
+            fi
+            cat out.log
+          }
+
+          if gh release view "$TAG" --repo "$REPO" > /dev/null 2>&1; then
+            echo "Wydanie $TAG jest - dosyłam pliki."
+            run gh release upload "$TAG" "${FILES[@]}" --repo "$REPO" --clobber
+            run gh release edit "$TAG" --repo "$REPO" --title "$TAG" --notes "$NOTES" --draft=false --prerelease=false --latest
+          else
+            echo "Nowe wydanie $TAG."
+            run gh release create "$TAG" "${FILES[@]}" --repo "$REPO" --title "$TAG" --notes "$NOTES" --latest
+          fi
+
+      # Sprawdzenie z zewnątrz: pliki wydania i czy instalator da się
+      # pobrać bez logowania (tak, jak pobiera go gracz i aktualizator).
+      - name: Sprawdź wydanie
+        if: needs.wersja.outputs.publish == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.WYDANIA_TOKEN }}
+        run: |
+          TAG="v$VERSION"
+          ASSETS=$(gh release view "$TAG" --repo "$REPO" --json assets --jq '.assets[] | "\(.name) (\(.size / 1048576 | floor) MB)"' | tr '\n' ',' | sed 's/,$//; s/,/, /g')
+
+          URL="https://github.com/$REPO/releases/download/$TAG/$EXE"
+          CODE=$(curl -s -L -o /dev/null -r 0-1023 -w "%{http_code}" "$URL")
+          LATEST=$(curl -s -L "https://github.com/$REPO/releases/latest/download/latest.yml" | grep -m1 '^version:' || true)
+
+          echo "::notice title=Wydanie::$TAG: $ASSETS%0APobieranie $EXE bez logowania: HTTP $CODE%0Areleases/latest/download/latest.yml: $LATEST"
+
+          if [ "$CODE" != "200" ] && [ "$CODE" != "206" ]; then
+            echo "::error title=Pobieranie::Instalatora nie da się pobrać: $URL (HTTP $CODE)"
+            exit 1
+          fi

@@ -9,8 +9,19 @@ import {
 
 import {
     blockAtlasTexture,
-    getAtlasUV
+    getAtlasUV,
+    ATLAS_TILES,
+    ATLAS_COLUMNS,
+    ATLAS_ROWS
 } from './TextureAtlas.js';
+
+
+import {
+    WATER_SURFACE,
+    WATER_WAVE_HEIGHT,
+    WATER_OPACITY,
+    WATER_OPACITY_GRAZING
+} from '../config.js';
 
 
 import {
@@ -215,7 +226,15 @@ blockMaterial.onBeforeCompile = (shader, renderer) => {
             .replace(
                 '#include <fog_fragment>',
                 `#ifdef USE_FOG
-                    if (uFarEnabled > 0.5) {
+                    if (uUnderwater > 0.5) {
+
+                        // Pod wodą: gęsta, niebieska mgła (Game.updateWater).
+
+                        float waterFog = 1.0 - exp(-length(vSkyDirection) * uUnderwaterDensity);
+                        gl_FragColor.rgb = mix(gl_FragColor.rgb, linearToOutputTexel(vec4(uUnderwaterColor, 1.0)).rgb, waterFog);
+
+                    }
+                    else if (uFarEnabled > 0.5) {
 
                         // Z dalekim terenem: ta sama mgiełka co na nim
                         // (rośnie z odległością), bez znikania bloków.
@@ -345,6 +364,162 @@ plantMaterial.onBeforeCompile = (shader, renderer) => {
 
             transformed.x += plantTop * gust * (sin(uTime * 1.8 + plantPhase) * 0.07 + sin(uTime * 3.3 + plantPhase * 2.1) * 0.02);
             transformed.z += plantTop * gust * cos(uTime * 1.45 + plantPhase * 1.3) * 0.055;`
+        );
+
+};
+
+// ------------------------------------------------------------
+// MATERIAŁ WODY
+//
+// Ten sam shader co bloki, a do tego:
+//   - woda jest półprzezroczysta - patrząc z góry widać dno, z boku
+//     (pod małym kątem) jest gęstsza, jak prawdziwa woda,
+//   - tekstura wody powoli płynie: dwie warstwy w różne strony,
+//     piksele zostają ostre,
+//   - powierzchnia faluje (wierzchołki na wysokości WATER_SURFACE),
+//   - widać ją z obu stron (spod wody też).
+// Woda jest w osobnej grupie geometrii chunka (ChunkMesher.js),
+// rysowanej po wszystkim, co nieprzezroczyste.
+// Liczby: WATER_... w config.js.
+// ------------------------------------------------------------
+
+const waterTile = ATLAS_TILES.water;
+
+export const waterUniforms = {
+
+    // Jak wysoko faluje powierzchnia (bloki; 0 = płaska) - /woda fale.
+    uWaveHeight: { value: WATER_WAVE_HEIGHT },
+
+    uWaterOpacity: { value: WATER_OPACITY },
+    uWaterOpacityGrazing: { value: WATER_OPACITY_GRAZING },
+
+    // Kafelek wody w atlasie: róg (u, v) i rozmiar.
+    uWaterTile: {
+        value: new THREE.Vector4(
+            waterTile.x / ATLAS_COLUMNS,
+            1 - (waterTile.y + 1) / ATLAS_ROWS,
+            1 / ATLAS_COLUMNS,
+            1 / ATLAS_ROWS
+        )
+    }
+
+};
+
+
+export const waterMaterial =
+    new THREE.MeshLambertMaterial({
+
+        map: blockAtlasTexture,
+
+        vertexColors: true,
+
+        transparent: true,
+
+        side: THREE.DoubleSide
+
+    });
+
+
+waterMaterial.onBeforeCompile = (shader, renderer) => {
+
+    blockMaterial.onBeforeCompile(shader, renderer);
+
+    Object.assign(shader.uniforms, waterUniforms);
+
+
+    shader.vertexShader = shader.vertexShader
+        .replace(
+            '#include <common>',
+            `#include <common>
+            uniform float uTime;
+            uniform float uWaveHeight;
+            varying vec3 vWaterWorld;
+            varying vec3 vWaterNormal;`
+        )
+        .replace(
+            '#include <begin_vertex>',
+            `#include <begin_vertex>
+
+            vec3 waterWorld = (modelMatrix * vec4(transformed, 1.0)).xyz;
+
+            // Wierzchołki na wysokości powierzchni falują: kilka fal
+            // w różnych kierunkach. Zależy tylko od miejsca w świecie,
+            // więc sąsiednie bloki (i chunki) falują razem, bez szpar.
+
+            if (abs(fract(waterWorld.y) - ${WATER_SURFACE.toFixed(4)}) < 0.01) {
+
+                float wave =
+                    sin(waterWorld.x * 0.9 + uTime * 1.3) * 0.5 +
+                    sin(waterWorld.z * 1.3 - uTime * 1.05) * 0.35 +
+                    sin((waterWorld.x + waterWorld.z) * 0.45 + uTime * 0.7) * 0.15;
+
+                transformed.y += wave * uWaveHeight;
+                waterWorld.y += wave * uWaveHeight;
+
+            }
+
+            vWaterWorld = waterWorld;
+            vWaterNormal = normalize(mat3(modelMatrix) * objectNormal);`
+        );
+
+
+    shader.fragmentShader = shader.fragmentShader
+        .replace(
+            '#include <common>',
+            `#include <common>
+            uniform float uTime;
+            uniform vec4 uWaterTile;
+            uniform float uWaterOpacity;
+            uniform float uWaterOpacityGrazing;
+            varying vec3 vWaterWorld;
+            varying vec3 vWaterNormal;`
+        )
+        .replace(
+            '#include <map_pars_fragment>',
+            `#include <map_pars_fragment>
+
+            // Piksel tekstury wody w miejscu p (powtarza się co blok).
+
+            vec4 waterTexel(vec2 p) {
+
+                vec2 cell = (floor(fract(p) * 16.0) + 0.5) / 16.0;
+
+                return texture2D(map, uWaterTile.xy + cell * uWaterTile.zw);
+
+            }`
+        )
+        .replace(
+            '#include <map_fragment>',
+            `vec3 waterNormal = normalize(vWaterNormal);
+
+            // Płaszczyzna tekstury: góra / dół - x, z; boki - poziomo i y.
+
+            vec2 waterPlane = abs(waterNormal.y) > 0.5
+                ? vWaterWorld.xz
+                : (abs(waterNormal.x) > 0.5 ? vWaterWorld.zy : vWaterWorld.xy);
+
+            // Dwie warstwy płyną w różne strony (na bokach - w dół).
+
+            vec2 flowA = abs(waterNormal.y) > 0.5 ? vec2(0.06, 0.025) : vec2(0.0, 0.35);
+            vec2 flowB = abs(waterNormal.y) > 0.5 ? vec2(-0.035, 0.05) : vec2(0.02, 0.22);
+
+            vec4 waterColor = mix(
+                waterTexel(waterPlane + flowA * uTime),
+                waterTexel(waterPlane + flowB * uTime + 0.37),
+                0.5
+            );
+
+            diffuseColor *= waterColor;`
+        )
+        .replace(
+            '#include <alphamap_fragment>',
+            `#include <alphamap_fragment>
+
+            // Z góry widać dno, z boku woda jest gęstsza.
+
+            float waterFacing = abs(dot(normalize(cameraPosition - vWaterWorld), waterNormal));
+
+            diffuseColor.a = mix(uWaterOpacityGrazing, uWaterOpacity, pow(waterFacing, 0.6));`
         );
 
 };

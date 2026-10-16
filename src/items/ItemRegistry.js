@@ -24,11 +24,11 @@ import {
 
 export const ITEM_TYPES = {
 
-    raspberry: {
-        name: 'Raspberries',
-        label: 'Maliny',
-        icon: 'raspberry',
-        plants: 'raspberry_sapling'
+    strawberry: {
+        name: 'Strawberries',
+        label: 'Truskawki',
+        icon: 'strawberry',
+        plants: 'strawberry_sapling'
     },
 
     blackberry: {
@@ -38,11 +38,11 @@ export const ITEM_TYPES = {
         plants: 'blackberry_sapling'
     },
 
-    currants: {
-        name: 'Currants',
-        label: 'Porzeczki',
-        icon: 'currants',
-        plants: 'currant_sapling'
+    chili_pepper: {
+        name: 'Chili Peppers',
+        label: 'Papryczki chili',
+        icon: 'chili_pepper',
+        plants: 'chili_sapling'
     },
 
     hazelnut: {
@@ -64,6 +64,27 @@ for (const [type, item] of Object.entries(ITEM_TYPES)) {
     if (item.plants && !blockExists(item.plants)) {
         throw new Error(`Przedmiot "${type}": nieznana roślina "${item.plants}"`);
     }
+
+}
+
+// Stare nazwy (z wersji 0.4.0, gdy truskawki były malinami,
+// a papryczki chili porzeczkami) -> nowe. Ekwipunek z zapisu
+// przechodzi przez currentType, więc nic nie ginie.
+
+const RENAMED = {
+    raspberry: 'strawberry',
+    currants: 'chili_pepper'
+};
+
+for (const stage of ['sapling', 'bush', 'bush_few', 'bush_full']) {
+    RENAMED[`raspberry_${stage}`] = `strawberry_${stage}`;
+    RENAMED[`currant_${stage}`] = `chili_${stage}`;
+}
+
+
+export function currentType(type) {
+
+    return Object.hasOwn(RENAMED, type ?? '') ? RENAMED[type] : type;
 
 }
 

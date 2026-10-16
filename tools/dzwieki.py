@@ -2,13 +2,18 @@
 # GENERATOR DŹWIĘKÓW GRY
 #
 # Wszystkie dźwięki gry (kroki, niszczenie i stawianie bloków,
-# zbieranie owoców, meteoryt, menu i ekwipunek) są "syntetyczne" -
-# policzone z szumu i drgań, bez nagrań. Ten skrypt zapisuje je do
-# assets/sounds/ jako pliki .ogg.
+# zbieranie owoców, meteoryt, menu i ekwipunek, woda) są
+# "syntetyczne" - policzone z szumu i drgań, bez nagrań. Ten skrypt
+# zapisuje je do assets/sounds/ jako pliki .ogg.
 #
 # Uruchomienie (potrzebny Python 3 z numpy i scipy oraz ffmpeg):
 #
-#     python tools/dzwieki.py
+#     python tools/dzwieki.py                  wszystkie
+#     python tools/dzwieki.py assets/sounds woda   tylko jedna grupa:
+#                                  bloki, meteoryt, owoce, menu, woda
+#
+# (pliki .ogg za każdym razem wychodzą trochę inne w bajtach, więc
+# lepiej przeliczać tylko grupę, która się zmieniła)
 #
 # Każdy plik można też podmienić własnym nagraniem (.ogg, ta sama
 # nazwa) - gra niczego tu nie sprawdza. Lista dźwięków i ich
@@ -507,6 +512,118 @@ UI_LOUDNESS = {
 
 
 # ------------------------------------------------------------
+# Woda
+# ------------------------------------------------------------
+
+def bubble(s, freq, decay, rise=None):
+    """Bąbelek: krótki ton, który rośnie w górę (pękający pęcherzyk)."""
+    length = decay * 6
+    n = samples(length)
+    t = time_axis(n)
+    rise = s.uniform(1.5, 4.0) if rise is None else rise
+    f = freq * (1 + rise * t / length)
+    return np.sin(2 * np.pi * np.cumsum(f) / SR) * envelope(n, 0.0008, decay)
+
+
+def bubbles(s, length, count, low, high, spread=None, loud=(0.2, 1.0), decay=(0.008, 0.03)):
+    """Dużo bąbelków: rozrzucone w czasie (spread - rozkład wykładniczy)."""
+    out = np.zeros(samples(length))
+    for _ in range(count):
+        at = min(length * 0.95, s.rng.exponential(spread)) if spread else s.uniform(0, length * 0.95)
+        b = bubble(s, s.uniform(low, high), s.uniform(*decay))
+        place(out, b * s.uniform(*loud), at)
+    return out
+
+
+def water_splash(s):
+    """Wpadnięcie do wody: chlust, głuche uderzenie i bąbelki."""
+    length = 1.1
+    n = samples(length)
+    out = lowpass(s.noise(length), 3800) * envelope(n, 0.004, 0.09) * 0.9
+    out += band(s.noise(length), 250, 900) * envelope(n, 0.01, 0.16) * 0.8
+    out += damped_sine(s.uniform(70, 95), length, 0.07) * 0.6
+    out += bubbles(s, length, 70, 250, 1400, spread=0.25, loud=(0.1, 0.6))
+    return out
+
+
+def water_swim(s):
+    """Ruch ramion w wodzie: miękki szum przepływu i kilka bąbelków."""
+    length = 0.6
+    n = samples(length)
+    swirl = band(s.noise(length), 250, 1600) * envelope(n, s.uniform(0.08, 0.14), 0.12)
+    out = lowpass(swirl, 1800) * 0.9
+    out += bubbles(s, length, 10, 300, 1000, spread=0.18, loud=(0.1, 0.45))
+    return out
+
+
+def water_wade(s):
+    """Krok w płytkiej wodzie: chlupnięcie."""
+    length = 0.35
+    n = samples(length)
+    out = lowpass(s.noise(length), 2600) * envelope(n, 0.006, 0.05) * 0.8
+    out += band(s.noise(length), 300, 1200) * envelope(n, 0.01, 0.08) * 0.6
+    out += bubbles(s, length, 8, 400, 1300, spread=0.07, loud=(0.15, 0.5))
+    return out
+
+
+def water_exit(s):
+    """Wyjście z wody: spływająca woda i krople."""
+    length = 1.0
+    n = samples(length)
+    out = band(s.noise(length), 400, 2500) * envelope(n, 0.02, 0.18) * 0.55
+    for _ in range(9):
+        drop = bubble(s, s.uniform(900, 2200), s.uniform(0.006, 0.015), rise=s.uniform(0.5, 1.5))
+        place(out, drop * s.uniform(0.15, 0.5), s.uniform(0.15, 0.9))
+    return out
+
+
+def water_underwater(s):
+    """Pod wodą (pętla): głuchy szum i od czasu do czasu bąbelki."""
+    length = 8.0
+    n = samples(length)
+    t = time_axis(n)
+    out = lowpass(s.brown(length), 320, order=4) * (0.75 + 0.25 * np.sin(2 * np.pi * 0.13 * t))
+    out += lowpass(s.noise(length), 600) * 0.05
+    for _ in range(5):
+        at = s.uniform(0.3, length - 1.2)
+        place(out, bubbles(s, 0.8, int(s.uniform(4, 10)), 220, 650, spread=0.2, loud=(0.1, 0.35), decay=(0.015, 0.04)), at)
+    return normalize(loopable(out, 0.8), 0.7)
+
+
+def water_waves(s):
+    """Fale przy brzegu (pętla): spokojne nabiegające fale."""
+    length = 12.0
+    n = samples(length)
+    t = time_axis(n)
+    swell = np.zeros(n)
+    at = 0.2
+    while at < length:
+        rise, fall = s.uniform(0.9, 1.4), s.uniform(1.6, 2.4)
+        k = (t - at)
+        env = np.where(k < 0, 0, np.where(k < rise, (k / rise) ** 2, np.exp(-(k - rise) / (fall / 3))))
+        swell = np.maximum(swell, env * s.uniform(0.6, 1.0))
+        at += s.uniform(2.6, 4.0)
+    body = band(s.noise(length), 180, 1400) * swell
+    fizz = band(s.noise(length), 2200, 5000) * np.roll(swell, samples(0.35)) * 0.1
+    low = lowpass(s.brown(length), 200) * 0.3
+    out = body + fizz + low + bubbles(s, length, 40, 500, 1600, loud=(0.03, 0.12))
+    return normalize(loopable(out, 1.2), 0.7)
+
+
+WATER = {
+    'water_splash': (water_splash, 3, -12),
+    'water_swim': (water_swim, 4, -19),
+    'water_wade': (water_wade, 4, -18),
+    'water_exit': (water_exit, 2, -20)
+}
+
+WATER_LOOPS = {
+    'water_underwater': water_underwater,
+    'water_waves': water_waves
+}
+
+
+# ------------------------------------------------------------
 # Zapis
 # ------------------------------------------------------------
 
@@ -521,27 +638,51 @@ def save(path, data):
         )
 
 
-def generate(root=ROOT):
+GROUPS = ['bloki', 'meteoryt', 'owoce', 'menu', 'woda']
+
+
+def generate(root=ROOT, only=None):
+    # Ziarna liczą się zawsze po kolei (także dla pomijanych grup), więc
+    # dźwięk wychodzi taki sam bez względu na to, co się przelicza.
+    want = lambda group: only is None or only == group
     seed = 1
     for material, make in MATERIALS.items():
         for kind, (heavy, variants) in KINDS.items():
             for v in range(1, variants + 1):
                 seed += 1
-                sound = fade(loudness(make(Synth(seed), heavy), LOUDNESS[kind]), 0.0005, 0.03)
-                save(os.path.join(root, 'blocks', f'{kind}_{material}_{v}.ogg'), sound)
+                if want('bloki'):
+                    sound = fade(loudness(make(Synth(seed), heavy), LOUDNESS[kind]), 0.0005, 0.03)
+                    save(os.path.join(root, 'blocks', f'{kind}_{material}_{v}.ogg'), sound)
     for name, make in METEOR.items():
         seed += 101
-        save(os.path.join(root, 'meteor', f'{name}.ogg'), make(Synth(seed)))
+        if want('meteoryt'):
+            save(os.path.join(root, 'meteor', f'{name}.ogg'), make(Synth(seed)))
     for v in range(1, 4):
         seed += 1
-        sound = fade(loudness(harvest(Synth(seed)), -15), 0.0005, 0.04)
-        save(os.path.join(root, 'blocks', f'harvest_{v}.ogg'), sound)
+        if want('owoce'):
+            sound = fade(loudness(harvest(Synth(seed)), -15), 0.0005, 0.04)
+            save(os.path.join(root, 'blocks', f'harvest_{v}.ogg'), sound)
     for name, make in UI.items():
         seed += 1
-        sound = fade(loudness(make(Synth(seed)), UI_LOUDNESS[name]), 0.0003, 0.015)
-        save(os.path.join(root, 'ui', f'{name}.ogg'), sound)
+        if want('menu'):
+            sound = fade(loudness(make(Synth(seed)), UI_LOUDNESS[name]), 0.0003, 0.015)
+            save(os.path.join(root, 'ui', f'{name}.ogg'), sound)
+    for name, (make, variants, level) in WATER.items():
+        for v in range(1, variants + 1):
+            seed += 1
+            if want('woda'):
+                sound = fade(loudness(make(Synth(seed)), level), 0.0005, 0.05)
+                save(os.path.join(root, 'water', f'{name}_{v}.ogg'), sound)
+    for name, make in WATER_LOOPS.items():
+        seed += 1
+        if want('woda'):
+            save(os.path.join(root, 'water', f'{name}.ogg'), make(Synth(seed)))
 
 
 if __name__ == '__main__':
-    generate(sys.argv[1] if len(sys.argv) > 1 else ROOT)
-    print('Gotowe:', os.path.abspath(sys.argv[1] if len(sys.argv) > 1 else ROOT))
+    root = sys.argv[1] if len(sys.argv) > 1 else ROOT
+    only = sys.argv[2] if len(sys.argv) > 2 else None
+    if only is not None and only not in GROUPS:
+        sys.exit(f'Nieznana grupa "{only}" - do wyboru: {", ".join(GROUPS)}')
+    generate(root, only)
+    print('Gotowe:', os.path.abspath(root), f'(grupa: {only})' if only else '')

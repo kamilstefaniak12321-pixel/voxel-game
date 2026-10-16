@@ -101,6 +101,10 @@ export class PlayerAnimator {
         this.crouch = 0;
         this.air = 0;
         this.fly = 0;
+        this.swim = 0;
+
+        // Faza ruchu ramion przy pływaniu (radiany).
+        this.swimPhase = 0;
 
         // Która noga idzie w górę przy skoku (1 = prawa, -1 = lewa).
         this.airSide = 1;
@@ -136,7 +140,8 @@ export class PlayerAnimator {
 
 
     // state: { vx, vy, vz, onGround, crouching, sprinting, flying,
-    //          yaw, pitch (kamery), landed (prędkość lądowania albo 0) }
+    //          swimming, yaw, pitch (kamery), landed (prędkość lądowania
+    //          albo 0) }
 
     update(dt, input) {
 
@@ -219,12 +224,25 @@ export class PlayerAnimator {
             (state.crouching ? CROUCH_SPEED_FACTOR : 1) *
             (state.sprinting ? SPRINT_SPEED_FACTOR : 1);
 
-        const grounded = state.onGround || state.flying;
+        const grounded = state.onGround || state.flying || state.swimming;
 
         this.move = approach(this.move, state.flying ? 0 : clamp(speed / (expected * 0.7), 0, 1), A.blend.move, dt);
         this.run = approach(this.run, state.sprinting && moving ? 1 : 0, A.blend.run, dt);
         this.crouch = approach(this.crouch, state.crouching && !state.flying ? 1 : 0, A.blend.crouch, dt);
         this.fly = approach(this.fly, state.flying ? 1 : 0, A.blend.air, dt);
+        this.swim = approach(this.swim, state.swimming ? 1 : 0, A.blend.swim, dt);
+
+
+        // Ruchy ramion przy pływaniu: w miejscu powoli, płynąc - co
+        // kawałek drogi (także w górę i w dół).
+
+        if (state.swimming) {
+
+            const swimSpeed = Math.hypot(speed, state.vy);
+
+            this.swimPhase = (this.swimPhase + (2 * Math.PI) * dt * (1 / A.swim.period + swimSpeed / A.swim.stride)) % (Math.PI * 200);
+
+        }
 
 
         // Start skoku: noga w górę ta, która akurat była z przodu.
@@ -292,6 +310,7 @@ export class PlayerAnimator {
         const crouch = this.crouch;
         const air = this.air;
         const fly = this.fly;
+        const swim = this.swim;
 
 
         // Parametry kroku: chód -> bieg -> skradanie.
@@ -389,6 +408,51 @@ export class PlayerAnimator {
             armL = lerp(armL, 0, fly);
             pelvisLean = lerp(pelvisLean, F.lean * forward, fly);
             waistLean = lerp(waistLean, F.lean * forward * 0.5, fly);
+
+        }
+
+
+        // --- Pływanie ----------------------------------------------
+
+        if (swim > 0.001) {
+
+            const S = A.swim;
+
+            const forward = Math.min(1, speed / (MOVE_SPEED * 0.5));
+
+            const q = this.swimPhase;
+
+            // 0 - ręce wyciągnięte do przodu, 1 - rozgarnięte na boki.
+
+            const sweep = 0.5 + 0.5 * Math.sin(q);
+
+            const arm = S.armForward * (1 - 0.6 * sweep);
+            const spread = 8 + S.armSpread * sweep;
+            const elbow = 12 + S.elbow * (1 - sweep);
+
+            const kick = S.legKick * Math.sin(2 * q);
+            const knee = S.knee * (0.5 + 0.5 * Math.sin(2 * q + 1));
+
+            const lean = S.leanIdle + (S.lean - S.leanIdle) * forward;
+
+            armR = lerp(armR, arm, swim);
+            armL = lerp(armL, arm, swim);
+            spreadR = lerp(spreadR, spread, swim);
+            spreadL = lerp(spreadL, spread, swim);
+            elbowR = lerp(elbowR, elbow, swim);
+            elbowL = lerp(elbowL, elbow, swim);
+
+            legR = lerp(legR, kick - lean * 0.15, swim);
+            legL = lerp(legL, -kick - lean * 0.15, swim);
+            kneeR = lerp(kneeR, knee, swim);
+            kneeL = lerp(kneeL, S.knee - knee, swim);
+
+            pelvisLean = lerp(pelvisLean, lean * 0.6, swim);
+            waistLean = lerp(waistLean, lean * 0.4, swim);
+
+            pelvisTwist *= 1 - swim;
+            waistTwist *= 1 - swim;
+            pelvisSway *= 1 - swim;
 
         }
 
@@ -511,7 +575,7 @@ export class PlayerAnimator {
 
         const longest = Math.max(reach(legR, kneeR), reach(legL, kneeL));
 
-        const planted = (1 - air) * (1 - fly);
+        const planted = (1 - air) * (1 - fly) * (1 - swim);
 
         pose.drop = (2 * SEGMENT - longest) * planted - bounce * Math.abs(s) * move * planted;
 
@@ -633,6 +697,21 @@ export class PlayerAnimator {
 
             case 'fly':
                 state.flying = true;
+                break;
+
+            // Pływanie: płynąc do przodu i w miejscu.
+
+            case 'swim':
+                state.onGround = false;
+                state.swimming = true;
+                walkAt(MOVE_SPEED * 0.5);
+                break;
+
+            case 'tread':
+                state.onGround = false;
+                state.swimming = true;
+                state.yaw = this.bodyYaw;
+                state.pitch = 0;
                 break;
 
             default:

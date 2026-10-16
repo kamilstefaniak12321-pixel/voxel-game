@@ -16,7 +16,7 @@ biegania, kucania i skakania były płynniejsze i bardziej naturalne.
   kamera nie wchodzi w ściany.
 - **Kucanie** (Shift) i **bieg** (2x W albo R) - też jako mechanika.
 - **Animacje**: stanie (oddech), chód, bieg, kucanie, skradanie, skok,
-  spadanie, lądowanie, machnięcie ręką, latanie, obrót głowy i ciała.
+  spadanie, lądowanie, machnięcie ręką, latanie, pływanie, obrót głowy i ciała.
 - Blok z paska w prawej ręce, model oświetlony jak bloki (niebo, lampy,
   noc, dynamiczne światło, mgła).
 - Narzędzia: `/kamera`, `/animacja`, `/model`, `/skorka`.
@@ -95,6 +95,7 @@ Silnik: `src/player/PlayerAnimator.js`.
 | **lądowanie** | ugięcie kolan - tym mocniejsze, im szybciej gracz spadał |
 | **machnięcie** | prawa ręka do przodu i w dół (niszczenie / stawianie bloku), klatka skręca się za nią |
 | **latanie** | nogi luźno, lekko z tyłu; przy ruchu pochylenie do przodu |
+| **pływanie** | żabka: ręce do przodu i na boki, nogi kopią; płynąc - ciało prawie poziomo, w miejscu - utrzymywanie się na wodzie (liczby: `swim` w `animations.js`) |
 | **głowa i ciało** | głowa patrzy tam, gdzie kamera (do 60° w bok); ciało obraca się za kamerą, a przy chodzeniu w bok - w stronę ruchu |
 
 Najważniejsze sztuczki:
@@ -128,7 +129,7 @@ w `src/config.js`. Odległość kamery: *Ustawienia → Gracz* albo
 | komenda | do czego |
 |---|---|
 | `/kamera [oczy \| tyl \| przod]` | widok kamery (jak F5) |
-| `/animacja <nazwa>` | podgląd animacji w miejscu: `stanie`, `chodzenie`, `bieg`, `kucanie`, `skradanie`, `skok`, `machanie`, `latanie`; `/animacja wyl` |
+| `/animacja <nazwa>` | podgląd animacji w miejscu: `stanie`, `chodzenie`, `bieg`, `kucanie`, `skradanie`, `skok`, `machanie`, `latanie`, `plywanie`, `plywanie-w-miejscu`; `/animacja wyl` |
 | `/model` | informacje; `/model gladki` / `klocki`, `/model warstwa wl\|wyl`, `/model tempo 0.25` |
 | `/skorka plik`, `/skorka domyslna` | własna skórka / domyślna |
 | F3 | w debugu: czy gracz kuca / biegnie, widok kamery, wagi animacji |

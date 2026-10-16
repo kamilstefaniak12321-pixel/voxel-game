@@ -75,11 +75,11 @@ export const MAX_BLOCK_ID = 255;
 
 export const FRUIT_BUSHES = {
 
-    raspberry: {
+    strawberry: {
         firstId: 34,
-        name: 'Raspberry',
-        item: 'raspberry',
-        labels: ['Sadzonka maliny', 'Krzak maliny', 'Krzak maliny (kilka owoców)', 'Krzak maliny (pełen owoców)'],
+        name: 'Strawberry',
+        item: 'strawberry',
+        labels: ['Sadzonka truskawki', 'Krzak truskawki', 'Krzak truskawki (kilka owoców)', 'Krzak truskawki (pełen owoców)'],
         harvest: [[1, 2], [2, 4]]
     },
 
@@ -91,11 +91,11 @@ export const FRUIT_BUSHES = {
         harvest: [[1, 2], [2, 4]]
     },
 
-    currant: {
+    chili: {
         firstId: 42,
-        name: 'Currant',
-        item: 'currants',
-        labels: ['Sadzonka porzeczki', 'Krzak porzeczki', 'Krzak porzeczki (kilka owoców)', 'Krzak porzeczki (pełen owoców)'],
+        name: 'Chili Pepper',
+        item: 'chili_pepper',
+        labels: ['Sadzonka papryczki chili', 'Krzak papryczki chili', 'Krzak papryczki chili (kilka papryczek)', 'Krzak papryczki chili (pełen papryczek)'],
         harvest: [[1, 2], [2, 4]]
     },
 
@@ -413,10 +413,10 @@ export const BLOCK_TYPES = {
     },
 
 
-    // Woda - morze w terenie realistycznym. Na razie WSTĘPNA:
-    // nieprzezroczysta (widać tylko powierzchnię), bez pływania - gracz
-    // chodzi po dnie. Prawdziwa woda (przezroczysta, z pływaniem
-    // i płynięciem) - etap 2 w docs/generator-terenu.md.
+    // Woda - morze w terenie realistycznym (i postawiona przez gracza).
+    // Półprzezroczysta i falująca (BlockRenderData.js - waterMaterial),
+    // spowalnia i da się w niej pływać (Player.js). Na razie się nie
+    // rozlewa - stoi tam, gdzie ją postawiono.
     //   liquid - ciecz: ściany między dwoma blokami wody nie są
     //            rysowane, a celownik i stawianie bloków przez nią przechodzą.
 
@@ -849,7 +849,9 @@ for (const [type, definition] of Object.entries(BLOCK_TYPES)) {
 
 export function getBlockDefinition(type) {
 
-    return BLOCK_TYPES[type] || null;
+    // Tylko własne pola listy (nie np. "constructor" z Object).
+
+    return typeof type === 'string' && Object.hasOwn(BLOCK_TYPES, type) ? BLOCK_TYPES[type] : null;
 
 }
 
@@ -938,7 +940,7 @@ export function isReplaceableId(id) {
 
 export function getBlockLabel(type) {
 
-    const definition = BLOCK_TYPES[type];
+    const definition = getBlockDefinition(type);
 
     return definition ? (definition.label ?? definition.name) : type;
 
@@ -958,7 +960,7 @@ export function isGrowingId(id) {
 
 export function getGrowth(type) {
 
-    return BLOCK_TYPES[type]?.grows ?? null;
+    return getBlockDefinition(type)?.grows ?? null;
 
 }
 
@@ -967,7 +969,7 @@ export function getGrowth(type) {
 
 export function getHarvest(type) {
 
-    return BLOCK_TYPES[type]?.harvest ?? null;
+    return getBlockDefinition(type)?.harvest ?? null;
 
 }
 
@@ -976,7 +978,7 @@ export function getHarvest(type) {
 
 export function getDropType(type) {
 
-    const definition = BLOCK_TYPES[type];
+    const definition = getBlockDefinition(type);
 
     if (!definition) {
         return null;

@@ -45,14 +45,33 @@ programisty (konsola błędów). Reszta klawiszy działa jak w przeglądarce
 2. Zmiana trafia do gałęzi `main` (scalony pull request).
 3. GitHub Actions (`.github/workflows/aplikacja.yml`) widzi, że takiej
    wersji jeszcze nie ma w repozytorium z wydaniami, buduje instalator
-   na Windowsie i publikuje wydanie `v0.2.0` w
-   `kamilstefaniak12321-pixel/voxel-game-wydania` (5-10 minut - widać
-   to w zakładce **Actions**).
-4. Zainstalowane gry same pobierają nową wersję przy następnym starcie.
+   na Windowsie (electron-builder) i publikuje wydanie `v0.2.0` w
+   `kamilstefaniak12321-pixel/voxel-game-wydania` (GitHub CLI) - z trzema
+   plikami: `Voxel-Game-0.2.0-instalator.exe`, `...exe.blockmap`
+   i `latest.yml` (5-10 minut - widać to w zakładce **Actions**).
+4. Na koniec przebieg sam sprawdza wydanie z zewnątrz: listę plików
+   i czy instalator da się pobrać bez logowania. Wynik jest w adnotacji
+   **Wydanie** na stronie przebiegu (np. *Pobieranie ... HTTP 206* =
+   działa).
+5. Zainstalowane gry same pobierają nową wersję przy następnym starcie.
 
-Scalenie bez zmiany wersji niczego nie wydaje. Wydanie można też
-uruchomić ręcznie: **Actions** → *Aplikacja na komputer* →
-**Run workflow**.
+Scalenie bez zmiany wersji niczego nie wydaje - chyba że wydaniu tej
+wersji brakuje któregoś z trzech plików: wtedy instalator jest budowany
+od nowa i dosyłany. Wydanie można też uruchomić ręcznie: **Actions** →
+*Aplikacja na komputer* → **Run workflow**.
+
+### Gdy wydanie się nie uda
+
+Błąd widać od razu na stronie przebiegu w **Actions** (czerwone
+adnotacje z ostatnimi liniami błędu):
+
+- **WYDANIA_TOKEN ... HTTP 401** - token wygasł albo został usunięty:
+  zrób nowy (punkt 2 niżej) i podmień sekret (punkt 3).
+- **Wydanie ... 403 / Resource not accessible** - token nie ma prawa
+  zapisu: przy tokenie ma być *Contents: Read and write* dla
+  `voxel-game-wydania`.
+- inny błąd wysyłania - zwykle wystarczy **Run workflow** jeszcze raz:
+  przebieg dośle brakujące pliki do istniejącego wydania.
 
 Pull request, który zmienia aplikację (`desktop/`, `package.json`),
 buduje instalator na próbę - bez wydania. Ten instalator można pobrać

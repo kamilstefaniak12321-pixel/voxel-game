@@ -9,8 +9,9 @@
 //   volume   - głośność 0-1 (mnożona przez ustawienia głośności),
 //   pitch    - [min, max]: losowa wysokość (1 = bez zmian), żeby
 //              powtarzane kroki nie brzmiały identycznie,
-//   category - 'blocks' (kroki, bloki, zbieranie owoców), 'world'
-//              (zjawiska: meteoryty) albo 'ui' (menu, ekwipunek) -
+//   category - 'blocks' (kroki, bloki, zbieranie owoców, pływanie),
+//              'world' (otoczenie: fale, pod wodą, meteoryty) albo
+//              'ui' (menu, ekwipunek) -
 //              każda ma swój suwak głośności. Dźwięki 'ui' grają też
 //              w menu i w pauzie (src/audio/ui.js), pozostałe tylko
 //              w grze,
@@ -65,6 +66,52 @@ SOUNDS.harvest = {
     category: 'blocks',
     distance: BLOCK_DISTANCE
 };
+
+
+// Woda (game/Game.js - updateWaterSounds): plusk przy wpadnięciu,
+// ruchy w wodzie, kroki w płytkiej wodzie, krople przy wychodzeniu.
+
+const WATER_SOUNDS = {
+    water_splash: { variants: 3, volume: 0.9 },
+    water_swim: { variants: 4, volume: 0.6 },
+    water_wade: { variants: 4, volume: 0.55 },
+    water_exit: { variants: 2, volume: 0.6 }
+};
+
+for (const [name, { variants, volume }] of Object.entries(WATER_SOUNDS)) {
+
+    SOUNDS[name] = {
+        files: Array.from({ length: variants }, (_, i) => `water/${name}_${i + 1}.ogg`),
+        volume,
+        pitch: [0.9, 1.1],
+        category: 'blocks',
+        distance: BLOCK_DISTANCE
+    };
+
+}
+
+Object.assign(SOUNDS, {
+
+    // Pod wodą - pętla (gdy kamera jest pod wodą; reszta dźwięków
+    // gry jest wtedy przytłumiona - SoundManager.setUnderwater).
+    water_underwater: {
+        files: ['water/water_underwater.ogg'],
+        volume: 0.7,
+        category: 'world',
+        loop: true
+    },
+
+    // Fale przy brzegu - pętla, z miejsca, gdzie jest woda (tym
+    // głośniej, im więcej wody dookoła).
+    water_waves: {
+        files: ['water/water_waves.ogg'],
+        volume: 0.8,
+        category: 'world',
+        loop: true,
+        distance: { ref: 6, max: 64, rolloff: 1 }
+    }
+
+});
 
 
 // Menu i ekwipunek (src/audio/ui.js) - bez miejsca w świecie.

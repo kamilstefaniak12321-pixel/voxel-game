@@ -11,8 +11,20 @@ import {
     CROUCH_HEIGHT,
     CROUCH_EYE_HEIGHT,
     SPRINT_SPEED_FACTOR,
-    SPRINT_DOUBLE_TAP
+    SPRINT_DOUBLE_TAP,
+    WATER_SURFACE,
+    WATER_SPEED_FACTOR,
+    WATER_GRAVITY_FACTOR,
+    WATER_DRAG,
+    SWIM_UP_ACCELERATION,
+    SWIM_DOWN_ACCELERATION,
+    WATER_CLIMB_SPEED
 } from '../config.js';
+
+import {
+    isLiquidId,
+    isOpaqueId
+} from '../blocks/BlockRegistry.js';
 
 // Maksymalna odległość pokonywana w jednym kroku kolizji.
 // Szybszy ruch jest dzielony na kilka krótszych kroków,
@@ -33,6 +45,13 @@ const FLY_SPEED_FACTOR = 2;
 
 const STAND_HEIGHT = 1.8;
 const STAND_EYE_HEIGHT = 1.6;
+
+
+function clamp01(value) {
+
+    return Math.max(0, Math.min(1, value));
+
+}
 
 export class Player {
 
@@ -97,6 +116,22 @@ export class Player {
         this.lastJumpPress = -Infinity;
 
         this.speedMultiplier = 1;
+
+
+        // Woda (updateWater):
+        //   submerged - jaka część ciała jest w wodzie (0 - sucho, 1 - cały),
+        //   swimming  - pływa (głęboko w wodzie i nie stoi na dnie),
+        //   splash    - wpadł do wody w tej klatce: z jaką prędkością
+        //               (0 = nie), dla dźwięku plusku,
+        //   leftWater - wyszedł z wody w tej klatce.
+        this.submerged = 0;
+        this.swimming = false;
+        this.splash = 0;
+        this.leftWater = false;
+
+        // Czy w ostatniej klatce gracz oparł się o ścianę (wyjście
+        // z wody na brzeg).
+        this.touchingWall = false;
 
 
         this.spawn();
@@ -286,15 +321,26 @@ updateMovement(dt, input) {
     this.updateStance(input);
 
 
+    // Woda (w locie nie przeszkadza): 0 - sucho, 1 - cały w wodzie.
+
+    const water = this.flying ? 0 : this.submerged;
+
+    // Od kolan w górę woda spowalnia (w pełni od piersi).
+
+    const wade = clamp01((water - 0.15) / 0.5);
+
+
     // Prędkość: zwykła razy mnożnik z komendy /predkosc,
-    // w locie dwa razy szybciej, kucając wolniej, biegnąc szybciej.
+    // w locie dwa razy szybciej, kucając wolniej, biegnąc szybciej,
+    // w wodzie wolniej.
 
     const speed =
         MOVE_SPEED *
         this.speedMultiplier *
         (this.flying ? FLY_SPEED_FACTOR : 1) *
         (this.crouching ? CROUCH_SPEED_FACTOR : 1) *
-        (this.sprinting ? SPRINT_SPEED_FACTOR : 1);
+        (this.sprinting ? SPRINT_SPEED_FACTOR : 1) *
+        (1 + (WATER_SPEED_FACTOR - 1) * wade);
 
     this.moveSpeed = speed;
 
@@ -325,6 +371,18 @@ updateMovement(dt, input) {
 
 
 
+    const space = input.isKeyDown('Space');
+
+
+    if (water > 0) {
+
+        this.updateSwimming(dt, water, space, input);
+
+        return;
+
+    }
+
+
     this.vel.y += GRAVITY * dt;
 
 
@@ -336,7 +394,7 @@ updateMovement(dt, input) {
 
 
     if (
-        input.isKeyDown('Space') &&
+        space &&
         this.onGround
     ) {
 
@@ -345,6 +403,96 @@ updateMovement(dt, input) {
         this.onGround = false;
 
     }
+
+}
+
+
+// Ruch w pionie w wodzie (water - jaka część ciała jest zanurzona):
+//   - słabsza grawitacja i opór wody - gracz powoli opada na dno,
+//   - Spacja - płynie w górę; przy powierzchni siła słabnie, więc
+//     unosi się z oczami tuż nad wodą,
+//   - Shift - nurkuje,
+//   - Spacja przy ścianie brzegu - wybicie w górę (wyjście z wody),
+//   - w płytkiej wodzie (do pasa) Spacja to zwykły skok z dna.
+
+updateSwimming(dt, water, space, input) {
+
+    const deep = clamp01(water / 0.5);
+
+    this.vel.y += GRAVITY * (1 + (WATER_GRAVITY_FACTOR - 1) * deep) * dt;
+
+    this.vel.y *= Math.exp(-WATER_DRAG * deep * dt);
+
+
+    if (space && this.onGround && water < 0.6) {
+
+        this.vel.y = JUMP_SPEED;
+
+        this.onGround = false;
+
+        return;
+
+    }
+
+    if (space) {
+        this.vel.y += SWIM_UP_ACCELERATION * clamp01((water - 0.72) / 0.15) * dt;
+    }
+
+    const shift = input.isKeyDown('ShiftLeft') || input.isKeyDown('ShiftRight');
+
+    if (shift && water > 0.5) {
+        this.vel.y -= SWIM_DOWN_ACCELERATION * dt;
+    }
+
+    if (space && this.touchingWall && water > 0.2) {
+        this.vel.y = Math.max(this.vel.y, WATER_CLIMB_SPEED);
+    }
+
+}
+
+
+// Wysokość powierzchni wody nad stopami gracza (w kolumnie, w której
+// stoi), albo -Infinity, gdy przy jego ciele nie ma wody.
+
+waterLevel() {
+
+    const world = this.world;
+
+    const x = Math.floor(this.pos.x);
+    const z = Math.floor(this.pos.z);
+
+    const top = Math.floor(this.pos.y + this.height);
+
+    let y = Math.floor(this.pos.y);
+
+    while (y <= top && !isLiquidId(world.getBlockId(x, y, z))) {
+        y++;
+    }
+
+    if (y > top) {
+        return -Infinity;
+    }
+
+    while (isLiquidId(world.getBlockId(x, y + 1, z))) {
+        y++;
+    }
+
+    // Górny blok wody jest niższy, chyba że przykrywa go pełny blok.
+
+    return y + (isOpaqueId(world.getBlockId(x, y + 1, z)) ? 1 : WATER_SURFACE);
+
+}
+
+
+// Ile gracza jest w wodzie (submerged) i czy pływa.
+
+updateWater() {
+
+    const level = this.waterLevel();
+
+    this.submerged = clamp01((level - this.pos.y) / STAND_HEIGHT);
+
+    this.swimming = !this.flying && this.submerged > 0.6 && !this.onGround;
 
 }
 
@@ -382,8 +530,9 @@ updateStance(input) {
 
 
     // Kucanie. Wstać można tylko, gdy nad głową jest miejsce.
+    // Głęboko w wodzie Shift to nurkowanie, nie kucanie.
 
-    if (shift && !this.flying) {
+    if (shift && !this.flying && this.submerged < 0.5) {
 
         this.crouching = true;
 
@@ -436,6 +585,8 @@ resolveMovement(dt) {
 
     this.onGround = false;
 
+    this.touchingWall = false;
+
 
     // Przy dużej prędkości (albo niskim FPS) dzielimy ruch
     // na kilka krótszych kroków.
@@ -460,6 +611,8 @@ resolveMovement(dt) {
 
         if (this.moveAxis('x', this.vel.x * stepDt)) {
 
+            this.touchingWall ||= this.vel.x !== 0;
+
             this.vel.x = 0;
 
         }
@@ -468,6 +621,8 @@ resolveMovement(dt) {
         // Z
 
         if (this.moveAxis('z', this.vel.z * stepDt)) {
+
+            this.touchingWall ||= this.vel.z !== 0;
 
             this.vel.z = 0;
 
@@ -702,6 +857,13 @@ update(dt, input) {
 
     this.clock += dt;
 
+    this.splash = 0;
+    this.leftWater = false;
+
+    const wasSubmerged = this.submerged;
+
+    this.updateWater();
+
     this.updateLook(input);
 
     this.updateMovement(dt, input);
@@ -717,6 +879,19 @@ update(dt, input) {
     this.resolveMovement(dt);
 
     this.landed = !wasOnGround && this.onGround && !this.flying ? Math.max(0, fallSpeed) : 0;
+
+
+    // Wejście do wody (plusk - tym głośniejszy, im szybciej) i wyjście.
+
+    this.updateWater();
+
+    if (!this.flying && wasSubmerged < 0.05 && this.submerged >= 0.05) {
+        this.splash = Math.max(0.5, fallSpeed, horizontal * 0.4);
+    }
+
+    if (wasSubmerged > 0.25 && this.submerged < 0.02) {
+        this.leftWater = true;
+    }
 
 
     // Lot w trybie kreatywnym kończy się po zejściu na ziemię.

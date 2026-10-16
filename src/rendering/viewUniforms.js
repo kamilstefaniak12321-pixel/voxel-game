@@ -1,3 +1,5 @@
+import * as THREE from 'three';
+
 import { atlasAverageTexture } from './TextureAtlas.js';
 
 import {
@@ -11,6 +13,7 @@ import {
 // Ustawienia obrazu, których używają shadery bloków
 // (BlockRenderData.js) i dalekiego terenu (FarTerrain.js):
 //   jasność (ustawienie "Jasność"),
+//   mgła pod wodą,
 //   daleki teren - gdzie kończą się prawdziwe chunki, gdzie kończy
 //   się daleki teren i jak gęsta jest mgiełka w oddali.
 // Wartości ustawia Game.applySettings().
@@ -42,9 +45,17 @@ export const viewUniforms = {
 
     uAtlasAverage: { value: atlasAverageTexture },
 
-    // Czas w sekundach (kołysanie roślin na wietrze) - ustawia Game.
+    // Czas w sekundach (kołysanie roślin na wietrze, płynąca woda) -
+    // ustawia Game.
 
-    uTime: { value: 0 }
+    uTime: { value: 0 },
+
+    // Kamera pod wodą: 1 = zamiast zwykłej mgły gęsta mgła w kolorze
+    // wody (kolor liniowy i gęstość - Game.updateWater).
+
+    uUnderwater: { value: 0 },
+    uUnderwaterColor: { value: new THREE.Color() },
+    uUnderwaterDensity: { value: 0.08 }
 
 };
 
@@ -57,6 +68,9 @@ export const VIEW_GLSL = /* glsl */ `
     uniform float uFarOuter;
     uniform float uHazeDistance;
     uniform float uHazeMax;
+    uniform float uUnderwater;
+    uniform vec3 uUnderwaterColor;
+    uniform float uUnderwaterDensity;
 
     const vec3 VIEW_LUMINANCE = vec3(0.2126, 0.7152, 0.0722);
 

@@ -35,6 +35,11 @@ const MAX_VOICES = 48;
 // Ile ostatnich odtworzeń pamiętamy (/dzwiek, testy).
 const HISTORY = 60;
 
+// Filtr dźwięków gry: zwykle przepuszcza wszystko, pod wodą tylko niskie
+// tony (Hz).
+const OPEN_HZ = 20000;
+const MUFFLED_HZ = 750;
+
 
 // Głośność z suwaka (0-100) -> mnożnik (na ucho: kwadrat).
 
@@ -62,6 +67,7 @@ export class SoundManager {
         this.categories = {};
 
         this.active = false;
+        this.underwater = false;
         this.voices = 0;
         this.loops = new Set();
 
@@ -185,7 +191,16 @@ export class SoundManager {
 
             this.gameBus = this.context.createGain();
             this.gameBus.gain.value = this.active ? 1 : 0;
-            this.gameBus.connect(this.master);
+
+            // Pod wodą dźwięki gry są przytłumione (filtr - setUnderwater).
+
+            this.muffle = this.context.createBiquadFilter();
+            this.muffle.type = 'lowpass';
+            this.muffle.frequency.value = this.underwater ? MUFFLED_HZ : OPEN_HZ;
+            this.muffle.Q.value = 0.7;
+
+            this.gameBus.connect(this.muffle);
+            this.muffle.connect(this.master);
 
             for (const name of ['blocks', 'world', 'ui']) {
 
@@ -253,6 +268,28 @@ export class SoundManager {
             }
 
         }
+
+    }
+
+
+    // Kamera pod wodą: dźwięki gry głuche (tylko niskie tony).
+
+    setUnderwater(underwater) {
+
+        if (underwater === this.underwater) {
+            return;
+        }
+
+        this.underwater = underwater;
+
+        if (!this.context) {
+            return;
+        }
+
+        const frequency = this.muffle.frequency;
+
+        frequency.cancelScheduledValues(this.context.currentTime);
+        frequency.setTargetAtTime(underwater ? MUFFLED_HZ : OPEN_HZ, this.context.currentTime, 0.06);
 
     }
 

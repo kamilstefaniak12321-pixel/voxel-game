@@ -38,7 +38,7 @@ Współrzędne można podawać względem gracza: `~` (tu, gdzie stoję),
 | `/zacmienie auto` | wyłącza wymuszone zaćmienie (wracają zwykłe) |
 | `/tp <x> <z>`, `/tp <x> <y> <z>`, `/tp spawn` | teleport (bez y - na powierzchnię) |
 | `/kamera [oczy \| tyl \| przod]` | widok kamery: z oczu, zza pleców, z przodu (bez nazwy - następny, jak F5) |
-| `/animacja <stanie \| chodzenie \| bieg \| kucanie \| skradanie \| skok \| machanie \| latanie>` | podgląd animacji modelu gracza w miejscu (włącza kamerę z przodu); `/animacja wyl` - koniec |
+| `/animacja <stanie \| chodzenie \| bieg \| kucanie \| skradanie \| skok \| machanie \| latanie \| plywanie \| plywanie-w-miejscu>` | podgląd animacji modelu gracza w miejscu (włącza kamerę z przodu); `/animacja wyl` - koniec |
 | `/model` | model gracza: styl zgięć, druga warstwa skórki, tempo animacji |
 | `/model gladki \| klocki` | zgięcia rąk, nóg i tułowia: gładkie albo osobne klocki |
 | `/model warstwa <wl \| wyl>` | druga (wierzchnia) warstwa skórki |
@@ -51,10 +51,10 @@ Współrzędne można podawać względem gracza: `~` (tu, gdzie stoję),
 | `/ekwipunek wyczysc` | czyści cały ekwipunek (z paskiem) |
 | `/latanie` | włącza/wyłącza latanie w każdym trybie (Spacja w górę, Shift w dół) - do testów; w kreatywnym wystarczy 2× Spacja |
 | `/predkosc <0.1-20>` | prędkość ruchu (1 = normalnie) |
-| `/daj <blok albo przedmiot> [ilość]` | blok albo przedmiot (owoc) do ekwipunku: z ilością - tyle sztuk (do 2304, pierwsze wolne miejsca, najpierw pasek); bez ilości w trybie kreatywnym - jedna sztuka do wybranego miejsca paska, w przygodzie - stos 64. Nazwy też po polsku, bez ogonków: `granit`, `trawa`, `ziemia`, `mak`, `chaber`, `paproc`, `czarnoziem`, `krotka_trawa`, `maliny` (`malina`), `jezyny`, `porzeczki`, `orzech`, `sadzonka_maliny`, `leszczyna`... |
+| `/daj <blok albo przedmiot> [ilość]` | blok albo przedmiot (owoc) do ekwipunku: z ilością - tyle sztuk (do 2304, pierwsze wolne miejsca, najpierw pasek); bez ilości w trybie kreatywnym - jedna sztuka do wybranego miejsca paska, w przygodzie - stos 64. Nazwy też po polsku, bez ogonków: `granit`, `trawa`, `ziemia`, `mak`, `chaber`, `paproc`, `czarnoziem`, `krotka_trawa`, `truskawki` (`truskawka`), `jezyny`, `chili` (`papryczki`), `orzech`, `sadzonka_truskawki`, `leszczyna`... |
 | `/bloki` | lista bloków i przedmiotów (nazwa do komend i polska nazwa) |
 | `/krzaki` | krzaki owocowe do 64 bloków od ciebie: ile w każdym etapie (sadzonki, bez owoców, kilka owoców, pełne), tempo wzrostu |
-| `/krzaki ogrod` | przed tobą ogródek: 4 rzędy (malina, jeżyna, porzeczka, leszczyna), w każdym od lewej sadzonka, krzak bez owoców, kilka owoców, pełen owoców (zmienia świat) |
+| `/krzaki ogrod` | przed tobą ogródek: 4 rzędy (truskawka, jeżyna, papryczka chili, leszczyna), w każdym od lewej sadzonka, krzak bez owoców, kilka owoców, pełen owoców (zmienia świat) |
 | `/krzaki znajdz` | najbliższy dziki krzak z owocami: nazwa, odległość, kierunek i komenda `/tp` |
 | `/krzaki rosnij [1-3]` | krzaki do 64 bloków od ciebie od razu rosną o tyle etapów (3 = od sadzonki do pełnego owoców) |
 | `/krzaki tempo [0-500]` | tempo wzrostu krzaków: 60 = etap średnio co 2,5 s zamiast 150 s, 0 = nie rosną, 1 = normalnie; bez liczby - jakie jest (nie zapisuje się) |
@@ -75,6 +75,10 @@ Współrzędne można podawać względem gracza: `~` (tu, gdzie stoję),
 | `/dzwiek lista` | wszystkie dźwięki (nazwy z `src/audio/sounds.js`) |
 | `/dzwiek <nazwa>` | gra jeden dźwięk, np. `/dzwiek meteor_impact`, `/dzwiek break_stone` |
 | `/dzwiek pokaz [materiał]` | po kolei dla każdego materiału (albo jednego: `trawa`, `ziemia`, `kamien`, `piasek`, `zwir`, `bloto`, `rosliny`, `szklo`): trzy kroki, postawienie, zniszczenie |
+| `/woda` | czy jesteś w wodzie: jak głęboko (procent ciała), czy pływasz, czy oczy są pod wodą; ile wody dookoła |
+| `/woda basen` | basen przed tobą (zmienia świat): brodzik (1 blok wody), dalej 4 bloki głębokości, ściany z wapienia równo z ziemią |
+| `/woda znajdz` | najbliższa woda we wczytanych chunkach: odległość, kierunek i komenda `/tp` nad wodę |
+| `/woda fale [0-3]` | wysokość fal na wodzie (0 = płaska, 1 = zwykłe); bez liczby - jaka jest (nie zapisuje się) |
 | `/dzwiek menu` | po kolei dźwięki menu i ekwipunku: przycisk, "Wróć", suwak, otwarcie ekwipunku, wzięcie, odłożenie, kosz, zamknięcie, błąd, zbieranie owoców |
 | `/horyzont` | daleki teren: zasięg, ile kafelków widać i ile się buduje, trójkąty |
 | `/horyzont <bloki \| wyl>` | zasięg dalekiego terenu (to samo co w ustawieniach) |
@@ -105,7 +109,7 @@ Nazwy ustawień w `/ustaw`: `ziemniak`, `zasieg`, `daleki-teren`, `pole`, `jasno
 `rozdzielczosc`, `fps` (limit), `cienie`, `dynamiczne-swiatlo`, `wczytywanie`, `czulosc`,
 `odwroc-mysz`, `motyw`, `interfejs`, `debug`, `licznik-fps`, `meteoryty`,
 `warstwa-skorki`, `zgiecia` (`gladkie` / `klocki`), `kamera` (odległość kamery z F5, 2-8),
-`glosnosc`, `glosnosc-bloki`, `glosnosc-zjawiska`, `glosnosc-menu` (0-100).
+`glosnosc`, `glosnosc-bloki`, `glosnosc-otoczenie` (też `glosnosc-zjawiska`), `glosnosc-menu` (0-100).
 Wartości tak/nie: `wl` / `wyl`.
 
 Niektóre komendy mają też angielskie nazwy (`/time`, `/moon`, `/tp`,

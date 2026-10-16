@@ -610,3 +610,20 @@ body:not([data-screen="game"]) #terrain-map {
     color: #9a9aa6;
     font-size: 12px;
 }
+
+
+/* Pod wodą (src/game/WaterEffects.js): niebieska poświata i ciemniejsze
+   brzegi ekranu - na obrazie gry, pod napisami i paskiem. */
+
+#underwater {
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    display: none;
+    background: radial-gradient(ellipse at center, rgba(40, 110, 170, 0.08) 35%, rgba(4, 22, 48, 0.5) 100%);
+}
+
+body.underwater #underwater {
+    display: block;
+}

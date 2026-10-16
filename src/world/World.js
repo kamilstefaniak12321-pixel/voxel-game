@@ -21,7 +21,8 @@ import {
 // ------------------------------------------------------------
 import {
     blockMaterial,
-    plantMaterial
+    plantMaterial,
+    waterMaterial
 } from '../rendering/BlockRenderData.js';
 // ------------------------------------------------------------
 import {
@@ -666,12 +667,13 @@ export class World {
         }
 
 
-        // Grupa 0 - zwykłe bloki, grupa 1 - rośliny (ChunkMesher.js).
+        // Grupa 0 - zwykłe bloki, grupa 1 - rośliny, grupa 2 - woda
+        // (ChunkMesher.js).
 
         const mesh =
             new THREE.Mesh(
                 geometry,
-                [blockMaterial, plantMaterial]
+                [blockMaterial, plantMaterial, waterMaterial]
             );
 
 

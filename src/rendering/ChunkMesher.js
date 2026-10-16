@@ -4,7 +4,10 @@ import * as THREE from 'three';
 import {
     CHUNK_SIZE,
     CHUNK_HEIGHT,
-    AMBIENT_OCCLUSION
+    AMBIENT_OCCLUSION,
+    WATER_SURFACE,
+    WATER_DEPTH_LIGHT,
+    WATER_DEPTH_LIGHT_MIN
 } from '../config.js';
 
 
@@ -106,6 +109,11 @@ const padG = new Uint8Array(P_LAYER * (H + 2));
 const padB = new Uint8Array(P_LAYER * (H + 2));
 
 
+// Najwyższa warstwa skopiowana dla obecnego chunka - wyżej w kopii
+// zostały dane poprzedniego chunka.
+let padTop = 0;
+
+
 function padIndex(x, y, z) {
 
     return ((y + 1) * P + (z + 1)) * P + (x + 1);
@@ -129,6 +137,8 @@ function fillPadding(chunk, world, height, first) {
     // Niższych mesher nie ogląda (patrz hiddenBelow).
 
     const last = Math.min(height, H - 1);
+
+    padTop = last;
 
 
     for (let dz = -1; dz <= 1; dz++) {
@@ -320,6 +330,41 @@ export function setAmbientOcclusion(strength) {
     for (let count = 0; count < SHADE.length; count++) {
         SHADE[count] = 1 - strength * count / 3;
     }
+
+}
+
+
+// Numer górnej ściany (+Y) w BLOCK_FACES.
+
+const TOP_FACE = BLOCK_FACES.findIndex((face) => face.normal[1] === 1);
+
+
+// Ściana pod wodą: światło nieba razy WATER_DEPTH_LIGHT do potęgi
+// głębokości (ile bloków wody nad komórką przed ścianą).
+
+const WATER_DEPTH_MAX = 40;
+
+const DEPTH_SHADE = Array.from(
+    { length: WATER_DEPTH_MAX + 1 },
+    (_, depth) => Math.max(WATER_DEPTH_LIGHT_MIN, WATER_DEPTH_LIGHT ** depth)
+);
+
+
+function waterDepthShade(cell) {
+
+    let depth = 0;
+
+    let y = Math.floor(cell / P_LAYER) - 1;
+
+    while (depth < WATER_DEPTH_MAX && y <= padTop && padLiquid[cell]) {
+
+        depth++;
+        y++;
+        cell += P_LAYER;
+
+    }
+
+    return DEPTH_SHADE[depth];
 
 }
 
@@ -518,6 +563,249 @@ function addPlants(plants, faceCount, baseX, baseZ) {
 }
 
 // ------------------------------------------------------------
+// ŚCIANY JEDNEGO BLOKU (sześcian albo woda). Zwraca nową liczbę
+// ścian w buforach.
+// ------------------------------------------------------------
+
+function addCubeFaces(id, renderData, lx, y, lz, faceCount, baseX, baseZ) {
+
+    const block = padIndex(lx, y, lz);
+
+    // Świecący blok jest jasny cały, bez cieni.
+
+    const glowing = getLightEmission(id) > 0;
+
+    const liquid = isLiquidId(id) ? id : 0;
+
+    // Górny blok wody (nad nim nie ma wody ani pełnego bloku) jest
+    // trochę niższy - jego górne rogi są na wysokości WATER_SURFACE.
+
+    const above = block + FACE_FRONT[TOP_FACE];
+
+    const topHeight =
+        liquid && padLiquid[above] !== liquid && !padOpaque[above]
+            ? WATER_SURFACE
+            : 1;
+
+
+    for (
+        let faceIndex = 0;
+        faceIndex < BLOCK_FACES.length;
+        faceIndex++
+    ) {
+
+        // Komórka przed ścianą. Jeśli zajmuje ją
+        // zasłaniający blok, ściany nie widać.
+
+        const front = block + FACE_FRONT[faceIndex];
+
+        if (padOpaque[front]) {
+            continue;
+        }
+
+        // Woda przy wodzie - bez ściany między nimi.
+
+        if (liquid && padLiquid[front] === liquid) {
+            continue;
+        }
+
+
+        const face = BLOCK_FACES[faceIndex];
+
+        const rotation =
+            renderData.rotate[faceIndex]
+                ? getRotationAt(baseX + lx, y, baseZ + lz)
+                : 0;
+
+        const uv = renderData.uv[faceIndex][rotation];
+
+        // Ściana pod wodą (np. dno morza) ciemnieje z głębokością.
+
+        const depthShade = !liquid && padLiquid[front] ? waterDepthShade(front) : 1;
+
+
+        ensureCapacity(faceCount + 1);
+
+
+        // 4 rogi ściany.
+
+        const p = faceCount * 12;
+        const t = faceCount * 8;
+        const c = faceCount * 16;
+
+        let brightness0 = 0;
+        let brightness1 = 0;
+        let brightness2 = 0;
+        let brightness3 = 0;
+
+
+        for (let i = 0; i < 4; i++) {
+
+            const corner = face.corners[i];
+
+            positionBuffer[p + i * 3] = lx + corner[0];
+            positionBuffer[p + i * 3 + 1] = y + (corner[1] === 1 ? topHeight : 0);
+            positionBuffer[p + i * 3 + 2] = lz + corner[2];
+
+            normalBuffer[p + i * 3] = face.normal[0];
+            normalBuffer[p + i * 3 + 1] = face.normal[1];
+            normalBuffer[p + i * 3 + 2] = face.normal[2];
+
+            uvBuffer[t + i * 2] = uv[i * 2];
+            uvBuffer[t + i * 2 + 1] = uv[i * 2 + 1];
+
+
+            // Kolor rogu:
+            //   r, g, b - światło lamp (już w kolorze lamp)
+            //   a       - światło nieba
+            // Świecący blok: pełne światło, bez cieni w kątach.
+
+            let r = FACE_SHADE[faceIndex] * 255;
+            let g = r;
+            let b = r;
+            let a = 255;
+
+            let brightness = 1;
+
+
+            if (!glowing) {
+
+                const s = faceIndex * 12 + i * 3;
+
+                const side1 = block + CORNER_SAMPLES[s];
+                const side2 = block + CORNER_SAMPLES[s + 1];
+                const diagonal = block + CORNER_SAMPLES[s + 2];
+
+
+                // Światło bierzemy z komórek bez bloku.
+                // Gdy oba boki są zajęte, komórka po skosie
+                // jest od ściany odcięta - nie liczy się.
+
+                let count = 0;
+
+                sampleCells[count++] = front;
+
+                let shadeCount;
+
+
+                if (padOpaque[side1] && padOpaque[side2]) {
+
+                    shadeCount = 3;
+
+                }
+                else {
+
+                    shadeCount =
+                        padOpaque[side1] +
+                        padOpaque[side2] +
+                        padOpaque[diagonal];
+
+                    if (!padOpaque[diagonal]) {
+                        sampleCells[count++] = diagonal;
+                    }
+
+                }
+
+                if (!padOpaque[side1]) sampleCells[count++] = side1;
+                if (!padOpaque[side2]) sampleCells[count++] = side2;
+
+
+                // Średnia: poziom nieba, poziom lamp (z najmocniejszego
+                // kanału) i suma kanałów - z niej bierzemy kolor.
+
+                let sky = 0;
+                let lampLevel = 0;
+                let red = 0;
+                let green = 0;
+                let blue = 0;
+
+                for (let n = 0; n < count; n++) {
+
+                    const cell = sampleCells[n];
+
+                    const cr = padR[cell];
+                    const cg = padG[cell];
+                    const cb = padB[cell];
+
+                    sky += padSky[cell];
+
+                    red += cr;
+                    green += cg;
+                    blue += cb;
+
+                    lampLevel += COLOR_LEVEL[cr > cg ? (cr > cb ? cr : cb) : (cg > cb ? cg : cb)];
+
+                }
+
+
+                const skyBrightness =
+                    BRIGHTNESS[Math.round(sky * LEVEL_STEPS / count)];
+
+                const lampBrightness =
+                    BRIGHTNESS[Math.round(lampLevel * LEVEL_STEPS / count)];
+
+                const shade = SHADE[shadeCount];
+
+                const skyValue = skyBrightness * shade;
+
+                const lampValue =
+                    lampBrightness * shade * LAMP_FACE_SHADE[faceIndex] * 255;
+
+
+                // Kolor lamp: proporcje kanałów (najmocniejszy = 1).
+
+                const strongest = Math.max(red, green, blue);
+
+                if (strongest > 0) {
+
+                    r = lampValue * red / strongest;
+                    g = lampValue * green / strongest;
+                    b = lampValue * blue / strongest;
+
+                }
+                else {
+
+                    r = g = b = lampValue;
+
+                }
+
+                a = skyValue * depthShade * 255;
+
+                brightness = Math.max(skyValue, lampValue / 255);
+
+            }
+
+
+            colorBuffer[c + i * 4] = r + 0.5;
+            colorBuffer[c + i * 4 + 1] = g + 0.5;
+            colorBuffer[c + i * 4 + 2] = b + 0.5;
+            colorBuffer[c + i * 4 + 3] = a + 0.5;
+
+
+            if (i === 0) brightness0 = brightness;
+            else if (i === 1) brightness1 = brightness;
+            else if (i === 2) brightness2 = brightness;
+            else brightness3 = brightness;
+
+        }
+
+
+        splitBuffer[faceCount] =
+            brightness0 + brightness3 > brightness1 + brightness2
+                ? 1
+                : 0;
+
+
+        faceCount++;
+
+    }
+
+
+    return faceCount;
+
+}
+
+// ------------------------------------------------------------
 // Ile dolnych warstw chunka na pewno jest schowanych.
 //
 // Poniżej solidBelow (Chunk.js) wszystkie komórki chunka są
@@ -597,9 +885,12 @@ export function buildChunkGeometry(chunk, world) {
     let faceCount = 0;
 
     // Rośliny dokładamy na końcu (osobny materiał - przezroczystość
-    // i kołysanie na wietrze): x, y, z, id po kolei.
+    // i kołysanie na wietrze), a po nich wodę (półprzezroczysta,
+    // fale): x, y, z, id po kolei.
 
     const plants = [];
+
+    const liquids = [];
 
 
     for (let y = start; y < height; y++) {
@@ -631,222 +922,18 @@ export function buildChunkGeometry(chunk, world) {
                 }
 
 
-                const block = padIndex(lx, y, lz);
+                // Woda (ciecz) - na końcu, osobna grupa (przezroczystość).
 
-                // Świecący blok jest jasny cały, bez cieni.
+                if (isLiquidId(id)) {
 
-                const glowing = getLightEmission(id) > 0;
+                    liquids.push(lx, y, lz, id);
 
-                const liquid = isLiquidId(id) ? id : 0;
-
-
-                for (
-                    let faceIndex = 0;
-                    faceIndex < BLOCK_FACES.length;
-                    faceIndex++
-                ) {
-
-                    // Komórka przed ścianą. Jeśli zajmuje ją
-                    // zasłaniający blok, ściany nie widać.
-
-                    const front = block + FACE_FRONT[faceIndex];
-
-                    if (padOpaque[front]) {
-                        continue;
-                    }
-
-                    // Woda przy wodzie - bez ściany między nimi.
-
-                    if (liquid && padLiquid[front] === liquid) {
-                        continue;
-                    }
-
-
-                    const face = BLOCK_FACES[faceIndex];
-
-                    const rotation =
-                        renderData.rotate[faceIndex]
-                            ? getRotationAt(baseX + lx, y, baseZ + lz)
-                            : 0;
-
-                    const uv = renderData.uv[faceIndex][rotation];
-
-
-                    ensureCapacity(faceCount + 1);
-
-
-                    // 4 rogi ściany.
-
-                    const p = faceCount * 12;
-                    const t = faceCount * 8;
-                    const c = faceCount * 16;
-
-                    let brightness0 = 0;
-                    let brightness1 = 0;
-                    let brightness2 = 0;
-                    let brightness3 = 0;
-
-
-                    for (let i = 0; i < 4; i++) {
-
-                        const corner = face.corners[i];
-
-                        positionBuffer[p + i * 3] = lx + corner[0];
-                        positionBuffer[p + i * 3 + 1] = y + corner[1];
-                        positionBuffer[p + i * 3 + 2] = lz + corner[2];
-
-                        normalBuffer[p + i * 3] = face.normal[0];
-                        normalBuffer[p + i * 3 + 1] = face.normal[1];
-                        normalBuffer[p + i * 3 + 2] = face.normal[2];
-
-                        uvBuffer[t + i * 2] = uv[i * 2];
-                        uvBuffer[t + i * 2 + 1] = uv[i * 2 + 1];
-
-
-                        // Kolor rogu:
-                        //   r, g, b - światło lamp (już w kolorze lamp)
-                        //   a       - światło nieba
-                        // Świecący blok: pełne światło, bez cieni w kątach.
-
-                        let r = FACE_SHADE[faceIndex] * 255;
-                        let g = r;
-                        let b = r;
-                        let a = 255;
-
-                        let brightness = 1;
-
-
-                        if (!glowing) {
-
-                            const s = faceIndex * 12 + i * 3;
-
-                            const side1 = block + CORNER_SAMPLES[s];
-                            const side2 = block + CORNER_SAMPLES[s + 1];
-                            const diagonal = block + CORNER_SAMPLES[s + 2];
-
-
-                            // Światło bierzemy z komórek bez bloku.
-                            // Gdy oba boki są zajęte, komórka po skosie
-                            // jest od ściany odcięta - nie liczy się.
-
-                            let count = 0;
-
-                            sampleCells[count++] = front;
-
-                            let shadeCount;
-
-
-                            if (padOpaque[side1] && padOpaque[side2]) {
-
-                                shadeCount = 3;
-
-                            }
-                            else {
-
-                                shadeCount =
-                                    padOpaque[side1] +
-                                    padOpaque[side2] +
-                                    padOpaque[diagonal];
-
-                                if (!padOpaque[diagonal]) {
-                                    sampleCells[count++] = diagonal;
-                                }
-
-                            }
-
-                            if (!padOpaque[side1]) sampleCells[count++] = side1;
-                            if (!padOpaque[side2]) sampleCells[count++] = side2;
-
-
-                            // Średnia: poziom nieba, poziom lamp (z najmocniejszego
-                            // kanału) i suma kanałów - z niej bierzemy kolor.
-
-                            let sky = 0;
-                            let lampLevel = 0;
-                            let red = 0;
-                            let green = 0;
-                            let blue = 0;
-
-                            for (let n = 0; n < count; n++) {
-
-                                const cell = sampleCells[n];
-
-                                const cr = padR[cell];
-                                const cg = padG[cell];
-                                const cb = padB[cell];
-
-                                sky += padSky[cell];
-
-                                red += cr;
-                                green += cg;
-                                blue += cb;
-
-                                lampLevel += COLOR_LEVEL[cr > cg ? (cr > cb ? cr : cb) : (cg > cb ? cg : cb)];
-
-                            }
-
-
-                            const skyBrightness =
-                                BRIGHTNESS[Math.round(sky * LEVEL_STEPS / count)];
-
-                            const lampBrightness =
-                                BRIGHTNESS[Math.round(lampLevel * LEVEL_STEPS / count)];
-
-                            const shade = SHADE[shadeCount];
-
-                            const skyValue = skyBrightness * shade;
-
-                            const lampValue =
-                                lampBrightness * shade * LAMP_FACE_SHADE[faceIndex] * 255;
-
-
-                            // Kolor lamp: proporcje kanałów (najmocniejszy = 1).
-
-                            const strongest = Math.max(red, green, blue);
-
-                            if (strongest > 0) {
-
-                                r = lampValue * red / strongest;
-                                g = lampValue * green / strongest;
-                                b = lampValue * blue / strongest;
-
-                            }
-                            else {
-
-                                r = g = b = lampValue;
-
-                            }
-
-                            a = skyValue * 255;
-
-                            brightness = Math.max(skyValue, lampValue / 255);
-
-                        }
-
-
-                        colorBuffer[c + i * 4] = r + 0.5;
-                        colorBuffer[c + i * 4 + 1] = g + 0.5;
-                        colorBuffer[c + i * 4 + 2] = b + 0.5;
-                        colorBuffer[c + i * 4 + 3] = a + 0.5;
-
-
-                        if (i === 0) brightness0 = brightness;
-                        else if (i === 1) brightness1 = brightness;
-                        else if (i === 2) brightness2 = brightness;
-                        else brightness3 = brightness;
-
-                    }
-
-
-                    splitBuffer[faceCount] =
-                        brightness0 + brightness3 > brightness1 + brightness2
-                            ? 1
-                            : 0;
-
-
-                    faceCount++;
+                    continue;
 
                 }
+
+
+                faceCount = addCubeFaces(id, renderData, lx, y, lz, faceCount, baseX, baseZ);
 
             }
 
@@ -858,6 +945,18 @@ export function buildChunkGeometry(chunk, world) {
     const cubeFaces = faceCount;
 
     faceCount = addPlants(plants, faceCount, baseX, baseZ);
+
+    const plantFaces = faceCount - cubeFaces;
+
+    for (let k = 0; k < liquids.length; k += 4) {
+
+        const id = liquids[k + 3];
+
+        faceCount = addCubeFaces(id, blockRenderData[id], liquids[k], liquids[k + 1], liquids[k + 2], faceCount, baseX, baseZ);
+
+    }
+
+    const waterFaces = faceCount - cubeFaces - plantFaces;
 
 
     if (faceCount === 0) {
@@ -921,12 +1020,15 @@ export function buildChunkGeometry(chunk, world) {
 
 
     // Grupa 0 - zwykłe ściany (blockMaterial), grupa 1 - rośliny
-    // (plantMaterial: przezroczystość, wiatr).
+    // (plantMaterial: przezroczystość, wiatr; zawsze jest, choćby
+    // pusta), grupa 2 - woda (waterMaterial: półprzezroczysta, fale).
 
     geometry.addGroup(0, cubeFaces * 6, 0);
 
-    if (faceCount > cubeFaces) {
-        geometry.addGroup(cubeFaces * 6, (faceCount - cubeFaces) * 6, 1);
+    geometry.addGroup(cubeFaces * 6, plantFaces * 6, 1);
+
+    if (waterFaces > 0) {
+        geometry.addGroup((cubeFaces + plantFaces) * 6, waterFaces * 6, 2);
     }
 
 

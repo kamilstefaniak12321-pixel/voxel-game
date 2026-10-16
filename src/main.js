@@ -822,6 +822,11 @@ function animate(now) {
     sounds.setActive(Boolean(game) && (state === 'playing' || state === 'chat' || state === 'inventory'));
 
 
+    // Niebieska nakładka, gdy kamera jest pod wodą.
+
+    document.body.classList.toggle('underwater', Boolean(game?.water.underwater));
+
+
     if (!game) {
         return;
     }

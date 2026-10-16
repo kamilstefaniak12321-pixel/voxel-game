@@ -249,7 +249,7 @@ export const PLANTS = {
     nettle: 0.012,
     dandelion: 0.006,
 
-    // Krzaki owocowe (malina, jeżyna, porzeczka, leszczyna): zarośla
+    // Krzaki owocowe (truskawka, jeżyna, papryczka chili, leszczyna): zarośla
     // tam, gdzie pole krzaków > bushThreshold (plamy bushScale
     // bloków); w środku zarośli najwyżej bushDensity kolumn ma krzak.
     // Gatunek zmienia się co ~bushSpeciesScale bloków.

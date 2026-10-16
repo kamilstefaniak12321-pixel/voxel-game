@@ -23,7 +23,8 @@ etap po etapie.
 - **Prototyp generatora realistycznego** (`src/world/terrain/`) -
   pola, makroformy, formy szczegółowe, powierzchnia, morze.
 - **Woda wstępna i piasek** - morze do poziomu `SEA_LEVEL` (48), plaże
-  i piaszczyste dno. Woda jest na razie nieprzezroczysta i bez pływania.
+  i piaszczyste dno. Woda jest już półprzezroczysta, z pływaniem
+  (pierwsza część etapu 2 - niżej).
 - **Narzędzia**: mapa terenu (`/mapa`, klawisz **M**), opis miejsca
   (`/teren`), szukanie form (`/teren znajdz turnia`).
 - **Szybkość przy wyższym świecie** - mesher pomija lity kamień pod
@@ -44,8 +45,8 @@ etap po etapie.
   z chunkiem. Liczby: `PLANTS` w `TerrainShape.js`. Nowe ziemie
   (czarnoziem, ściółka, błoto, glina, ziemia kamienista, żwir) są na
   razie tylko w trybie kreatywnym - trafią do generatora z biomami.
-- **Krzaki owocowe** (zrobione) - rzadkie zarośla malin, jeżyn,
-  porzeczek i leszczyny (pole `bushes` > `bushThreshold`; gatunek
+- **Krzaki owocowe** (zrobione) - rzadkie zarośla truskawek, jeżyn,
+  papryczek chili i leszczyny (pole `bushes` > `bushThreshold`; gatunek
   z pola `bushSpecies`, zmienia się co ~140 bloków), w różnych etapach
   wzrostu - najczęściej z owocami. Około pół procent kolumn z trawą.
   Dzikie krzaki rosną dalej dopiero w chunku zmienionym przez gracza
@@ -202,10 +203,12 @@ porównanie kilku seedów.
 
 Co: prawdziwa woda zamiast wstępnej.
 
-- przezroczysta woda (osobny, półprzezroczysty mesh rysowany po
-  zwykłych blokach), lekko obniżona powierzchnia,
-- pływanie, wolniejszy ruch w wodzie, mgła i barwa pod wodą,
-  światło słabnące z głębokością,
+- (zrobione) przezroczysta woda (osobna, półprzezroczysta grupa meshu
+  chunka rysowana po zwykłych blokach), lekko obniżona i falująca
+  powierzchnia, płynąca tekstura,
+- (zrobione) pływanie, wolniejszy ruch w wodzie, mgła i barwa pod wodą,
+  dno ciemniejące z głębokością (światło nieba w meshu, nie w silniku
+  światła), dźwięki,
 - jeziora: zagłębienia terenu wypełnione wodą do poziomu przelewu,
 - wybrzeża: plaże, żwir, klify; fale (animacja tekstury),
 - woda w dalekim terenie z odbiciem nieba,

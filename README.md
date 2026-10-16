@@ -29,9 +29,9 @@ z przeglądarki i z aplikacji są zapisywane osobno.
 | Klawisz | Akcja |
 |---|---|
 | WASD | ruch |
-| Spacja | skok |
+| Spacja | skok; w wodzie - płyń w górę (przy brzegu - wyjście z wody) |
 | 2× Spacja | latanie (tryb kreatywny): Spacja - w górę, Shift - w dół, lądowanie kończy lot |
-| Shift | kucanie (wolniej, niżej, nie spada się z krawędzi) |
+| Shift | kucanie (wolniej, niżej, nie spada się z krawędzi); w wodzie - nurkuj |
 | 2× W albo R | bieg |
 | F5 | widok: z oczu / zza pleców / z przodu |
 | Mysz | rozglądanie się |
@@ -106,8 +106,8 @@ Oprócz trawy, ziemi, piasku i skał są:
   rosną rośliny, na żwirze nie),
 - **rośliny:** krótka i wysoka trawa, paproć, koniczyna, pokrzywa,
   babka zwyczajna oraz kwiaty: mak, chaber, rumianek, mniszek,
-- **krzaki owocowe:** malina, jeżyna, porzeczka i leszczyna (orzechy
-  laskowe) - opis niżej.
+- **krzaki owocowe:** truskawka, jeżyna, papryczka chili i leszczyna
+  (orzechy laskowe) - opis niżej.
 
 Rośliny są skrzyżowanymi płaszczyznami z teksturą (model `cross`),
 nie mają kolizji, nie zasłaniają światła i lekko kołyszą się na wietrze
@@ -126,17 +126,17 @@ rysują się do `PLANT_VIEW_DISTANCE` bloków od gracza (`src/config.js`).
 
 ### Krzaki owocowe i orzechy
 
-Cztery gatunki: **malina**, **jeżyna**, **porzeczka** (czerwona)
+Cztery gatunki: **truskawka**, **jeżyna**, **papryczka chili**
 i **leszczyna** (orzechy laskowe). Każdy rośnie w czterech etapach:
 
-| Etap | Blok (np. malina) | Wygląd |
+| Etap | Blok (np. truskawka) | Wygląd |
 |---|---|---|
-| sadzonka | `raspberry_sapling` | mała roślinka |
-| krzak | `raspberry_bush` | sam krzak, bez owoców |
-| kilka owoców | `raspberry_bush_few` | pierwsze owoce |
-| pełen owoców | `raspberry_bush_full` | krzak obsypany owocami |
+| sadzonka | `strawberry_sapling` | mała roślinka |
+| krzak | `strawberry_bush` | sam krzak, bez owoców |
+| kilka owoców | `strawberry_bush_few` | pierwsze owoce |
+| pełen owoców | `strawberry_bush_full` | krzak obsypany owocami |
 
-(jeżyna - `blackberry_...`, porzeczka - `currant_...`, leszczyna -
+(jeżyna - `blackberry_...`, papryczka chili - `chili_...`, leszczyna -
 `hazel_...`)
 
 - **Wzrost:** krzaki same przechodzą do następnego etapu - średnio co
@@ -157,8 +157,8 @@ i **leszczyna** (orzechy laskowe). Każdy rośnie w czterech etapach:
 - **W świecie:** w terenie realistycznym na trawie rosną dzikie zarośla
   (zwykle jednego gatunku) - w różnych etapach, najczęściej z owocami.
   Liczby do strojenia: `bush...` w `PLANTS` (`TerrainShape.js`).
-- **Owoce** to pierwsze **przedmioty**, które nie są blokami: maliny,
-  jeżyny, porzeczki, orzech laskowy (`src/items/ItemRegistry.js`). Leżą
+- **Owoce** to pierwsze **przedmioty**, które nie są blokami: truskawki,
+  jeżyny, papryczki chili, orzech laskowy (`src/items/ItemRegistry.js`). Leżą
   w ekwipunku jak bloki (stosy po 64), w ręce postaci widać je jako
   płaski obrazek. Na razie służą do sadzenia - jedzenie przyjdzie
   z głodem.
@@ -166,7 +166,49 @@ i **leszczyna** (orzechy laskowe). Każdy rośnie w czterech etapach:
   wspólne dla gatunków) i wiersz 4 (ikonki owoców).
 - **Test:** `/krzaki ogrod` (przed tobą wszystkie gatunki i etapy),
   `/krzaki znajdz` (najbliższy dziki krzak z owocami), `/krzaki tempo 60`
-  (rosną 60 razy szybciej), `/krzaki rosnij 3`, `/daj maliny 10`.
+  (rosną 60 razy szybciej), `/krzaki rosnij 3`, `/daj truskawki 10`.
+
+## Woda
+
+Woda (morze w terenie realistycznym i postawiona przez gracza) jest
+**półprzezroczysta**: z góry widać dno, które ciemnieje z głębokością,
+a pod małym kątem woda wydaje się gęstsza (jak prawdziwa). Górny blok
+wody jest trochę niższy od pełnego, powierzchnia lekko **faluje**,
+a tekstura powoli **płynie** (dwie warstwy w różne strony).
+
+**Pływanie:**
+
+- w wodzie ruch jest wolniejszy (od kolan w górę - im głębiej, tym
+  wolniej; w pełni od piersi - połowa zwykłej prędkości, z biegiem
+  trochę szybciej),
+- bez klawiszy powoli opadasz na dno, **Spacja** - płyniesz w górę,
+  a przy powierzchni unosisz się z oczami tuż nad wodą,
+- **Shift** - nurkujesz,
+- **Spacja przy brzegu** (oparty o ścianę brzegu) - wybijasz się
+  z wody na brzeg,
+- wpadnięcie do wody wyhamowuje (upadek do wody nie boli).
+
+**Pod wodą** jest niebieska mgła (nocą ciemna) i poświata na brzegach
+ekranu, a dźwięki gry są głuche. **Dźwięki:** plusk przy wpadnięciu
+(tym głośniejszy, im szybciej), ruchy ramion przy pływaniu, chlupanie
+przy chodzeniu w płytkiej wodzie, krople przy wychodzeniu, szum pod
+wodą i fale przy brzegu (z miejsca, gdzie jest woda). Postać pływa
+żabką (z trzeciej osoby - F5): płynąc pochyla się prawie poziomo,
+w miejscu utrzymuje się na wodzie.
+
+Woda na razie **się nie rozlewa** - stoi tam, gdzie ją postawiono.
+
+- **Test:** `/woda basen` (basen przed tobą: brodzik i głęboka część),
+  `/woda znajdz` (najbliższa woda i komenda `/tp`), `/woda` (jak głęboko
+  jesteś), `/woda fale 0-3` (wysokość fal), `/animacja plywanie`.
+- **Liczby do strojenia:** `WATER_...`, `SWIM_...` i `UNDERWATER_...`
+  w `src/config.js` (przezroczystość, fale, prędkość i opór, mgła pod
+  wodą, ciemnienie dna).
+- **Kod:** `src/player/Player.js` (pływanie), `src/rendering/ChunkMesher.js`
+  (woda w osobnej grupie meshu, obniżona powierzchnia, ciemniejące dno),
+  `src/rendering/BlockRenderData.js` (`waterMaterial` - przezroczystość,
+  fale, płynąca tekstura), `src/game/WaterEffects.js` (widok spod wody,
+  dźwięki).
 
 ## Ustawienia
 
@@ -195,8 +237,8 @@ W menu (z ekranu tytułowego i z pauzy) są zakładki:
 warstwa skórki, zgięcia rąk i nóg (gładkie albo klocki), odległość
 kamery z trzeciej osoby.
 
-**Dźwięk** - głośność całej gry, osobno bloków i kroków, zjawisk
-(meteoryty) oraz menu i ekwipunku; 0 = wyłączone.
+**Dźwięk** - głośność całej gry, osobno bloków i kroków, otoczenia
+(woda, meteoryty) oraz menu i ekwipunku; 0 = wyłączone.
 
 **Inne** - motyw menu, rozmiar interfejsu w grze (pasek, czat, napisy),
 informacje debugowania (to samo co F3), licznik FPS w rogu ekranu,
@@ -217,6 +259,9 @@ z czatu: `/ustaw` (lista), np. `/ustaw zasieg 256`.
   materiału, słychać go z miejsca bloku (z lewej, z prawej, z daleka).
 - **Zbieranie owoców** - szelest liści i miękkie "pyknięcia" zrywanych
   owoców (z miejsca krzaka).
+- **Woda** - plusk, pływanie, chlupanie w płytkiej wodzie, krople przy
+  wychodzeniu, szum pod wodą (reszta dźwięków jest wtedy głucha) i fale
+  przy brzegu (opis wyżej: *Woda*).
 - **Meteoryt** - huk lecącej kuli ognia narasta i robi się coraz
   wyższy, a uderzenie słychać trochę po błysku (dźwięk leci 343 bloki na
   sekundę - jak grzmot po błyskawicy). Potem grad odłamków i trzaskający,
@@ -318,9 +363,8 @@ bez zmian, wyżej jest po prostu powietrze).
   tylko jako rzadkie żyły w granicie (na wierzch wychodzi rzadko). To dopiero
   początek - kolejne aktualizacje będą ten teren zmieniać (rzeki,
   biomy...), więc w takim świecie nowe chunki mogą wyglądać inaczej niż
-  wcześniej (Twoje budowle zostają). Woda to na razie zwykły
-  nieprzezroczysty blok, przez który się przechodzi - prawdziwa woda
-  przyjdzie w etapie "Woda".
+  wcześniej (Twoje budowle zostają). Woda jest półprzezroczysta i da
+  się w niej pływać (niżej: *Woda*); na razie się nie rozlewa.
 - **Klasyczny** - pierwszy generator gry (wzgórza i góry, bez morza).
   Już się nie zmienia. Wszystkie światy sprzed tej aktualizacji są
   klasyczne.
@@ -549,13 +593,13 @@ assets/textures/sky/        tekstury nieba (księżyc)
 assets/textures/player/     skórka gracza i szablon skórki
 assets/ui/themes/           motywy menu (kolory, czcionka, tło)
 assets/fonts/               czcionki
-assets/sounds/              dźwięki (.ogg): bloki, kroki, zbieranie, meteoryt, menu (ui/)
+assets/sounds/              dźwięki (.ogg): bloki, kroki, zbieranie, meteoryt, menu (ui/), woda
 tools/                      skrypty pomocnicze (generator dźwięków)
 docs/                       opisy, jak działają większe części gry
 src/
   main.js                   start aplikacji, menu, pauza, pętla
   config.js                 ustawienia: chunki, teren, światło, dzień i noc, gracz, menu
-  game/                     jeden uruchomiony świat (Game), ekwipunek, meteoryty, wzrost roślin
+  game/                     jeden uruchomiony świat (Game), ekwipunek, meteoryty, wzrost roślin, woda (obraz i dźwięk)
   ui/                       ekrany menu, pasek bloków, ikonki, napisy
   settings/                 ustawienia gracza (zapis w przeglądarce)
   blocks/                   lista bloków (BlockRegistry), krzaki owocowe

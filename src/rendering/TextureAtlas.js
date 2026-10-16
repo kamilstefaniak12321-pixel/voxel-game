@@ -156,21 +156,21 @@ export const ATLAS_TILES = {
 
     bush_sapling: { x: 0, y: 3 },
     bush_leaves: { x: 1, y: 3 },
-    raspberry_bush_few: { x: 2, y: 3 },
-    raspberry_bush_full: { x: 3, y: 3 },
+    strawberry_bush_few: { x: 2, y: 3 },
+    strawberry_bush_full: { x: 3, y: 3 },
     blackberry_bush_few: { x: 4, y: 3 },
     blackberry_bush_full: { x: 5, y: 3 },
-    currant_bush_few: { x: 6, y: 3 },
-    currant_bush_full: { x: 7, y: 3 },
+    chili_bush_few: { x: 6, y: 3 },
+    chili_bush_full: { x: 7, y: 3 },
     hazel_bush_few: { x: 8, y: 3 },
     hazel_bush_full: { x: 9, y: 3 },
 
     // Przedmioty (src/items/ItemRegistry.js) - wiersz 4: ikonki
     // w ekwipunku i obrazek w ręce.
 
-    raspberry: { x: 0, y: 4 },
+    strawberry: { x: 0, y: 4 },
     blackberry: { x: 1, y: 4 },
-    currants: { x: 2, y: 4 },
+    chili_pepper: { x: 2, y: 4 },
     hazelnut: { x: 3, y: 4 }
 
 };

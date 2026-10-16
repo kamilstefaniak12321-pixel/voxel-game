@@ -1,6 +1,6 @@
 import { HOTBAR_SIZE, HOTBAR_DEFAULT } from '../config.js';
 
-import { itemExists } from '../items/ItemRegistry.js';
+import { itemExists, currentType } from '../items/ItemRegistry.js';
 
 // ------------------------------------------------------------
 // EKWIPUNEK
@@ -28,7 +28,11 @@ export const SLOT_COUNT = HOTBAR_SIZE + MAIN_ROWS * HOTBAR_SIZE;
 
 function cleanItem(item) {
 
-    if (!item || !itemExists(item.type)) {
+    // Przedmiot o starej nazwie (np. maliny z 0.4.0) - pod nową.
+
+    const type = currentType(item?.type);
+
+    if (!item || !itemExists(type)) {
         return null;
     }
 
@@ -38,7 +42,7 @@ function cleanItem(item) {
         return null;
     }
 
-    return { type: item.type, count: Math.min(STACK_SIZE, count) };
+    return { type, count: Math.min(STACK_SIZE, count) };
 
 }
 

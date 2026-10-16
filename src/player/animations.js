@@ -9,6 +9,7 @@
 //   twist  - skręt (+ w lewo), pitch - głowa w górę (+).
 //
 // Krok (stride) to długość pełnego cyklu: lewa + prawa noga, w blokach.
+// Podgląd pływania: /animacja plywanie.
 // Im dłuższy krok przy tej samej prędkości, tym wolniej przebierają się
 // nogi. Zmiana liczby -> odśwież grę (F5 w przeglądarce, gdy kamera
 // nie jest w grze) i sprawdź: /animacja chodzenie, /model tempo 0.25.
@@ -117,6 +118,21 @@ export const ANIMATIONS = {
         lean: 8                // przy ruchu - pochylenie do przodu
     },
 
+    // Pływanie: ciało pochylone (płynąc - prawie poziomo), ręce
+    // wyciągają się do przodu i rozgarniają wodę na boki (żabka),
+    // nogi kopią na zmianę.
+    swim: {
+        period: 1.5,           // sekundy na jeden ruch ramion w miejscu
+        stride: 2.0,           // bloki na jeden ruch ramion płynąc
+        lean: 60,              // pochylenie płynąc...
+        leanIdle: 10,          // ...i w miejscu (utrzymywanie się na wodzie)
+        armForward: 75,        // ręce do przodu...
+        armSpread: 55,         // ...i na boki
+        elbow: 55,
+        legKick: 22,           // nogi w górę i w dół
+        knee: 35
+    },
+
     // Obrót ciała i głowy.
     turn: {
         headMax: 60,           // głowa obraca się tyle względem ciała
@@ -129,7 +145,8 @@ export const ANIMATIONS = {
         move: 8,
         run: 6,
         crouch: 12,
-        air: 9
+        air: 9,
+        swim: 5
     }
 
 };

@@ -209,6 +209,51 @@ export const SPRINT_FOV_FACTOR = 1.1;
 export const SPRINT_DOUBLE_TAP = 0.3;
 
 // ------------------------------------------------------------
+// WODA (src/player/Player.js - pływanie, src/rendering - wygląd)
+// ------------------------------------------------------------
+
+// Powierzchnia wody: tyle bloku od dołu (górny blok wody jest trochę
+// niższy niż pełny - jak w Minecrafcie).
+export const WATER_SURFACE = 0.875;
+
+// Ruch w wodzie: prędkość pozioma (razy zwykła; z biegiem - razy
+// SPRINT_SPEED_FACTOR), grawitacja (razy zwykła), opór (im więcej, tym
+// szybciej woda hamuje: przy 4 gracz opada najwyżej ~1,5 bloku/s).
+export const WATER_SPEED_FACTOR = 0.5;
+export const WATER_GRAVITY_FACTOR = 0.2;
+export const WATER_DRAG = 4;
+
+// Pływanie w górę (Spacja): przyspieszenie (bloki/s²). Przy powierzchni
+// słabnie - gracz unosi się z oczami tuż nad wodą.
+export const SWIM_UP_ACCELERATION = 22;
+
+// Shift w wodzie: nurkowanie (dodatkowe przyspieszenie w dół).
+export const SWIM_DOWN_ACCELERATION = 10;
+
+// Wyjście z wody na brzeg: Spacja przy ścianie brzegu - wybicie w górę
+// (bloki/s).
+export const WATER_CLIMB_SPEED = 7.5;
+
+// Pod wodą: kolor mgły (sRGB, w dzień; nocą ciemnieje razem z niebem)
+// i gęstość - im więcej, tym gorzej widać (0.055 = ~40 bloków).
+export const UNDERWATER_FOG_COLOR = 0x1f5a8a;
+export const UNDERWATER_FOG_DENSITY = 0.055;
+
+// Przezroczystość wody: patrząc pionowo w dół i pod małym kątem
+// (z boku woda odbija niebo i wydaje się gęstsza). 1 = nieprzezroczysta.
+export const WATER_OPACITY = 0.45;
+export const WATER_OPACITY_GRAZING = 0.94;
+
+// Fale: o ile (w blokach) faluje powierzchnia; 0 = płaska woda.
+export const WATER_WAVE_HEIGHT = 0.045;
+
+// Dno pod wodą ciemnieje z głębokością: światło nieba razy
+// WATER_DEPTH_LIGHT do potęgi głębokości (w blokach), najmniej
+// WATER_DEPTH_LIGHT_MIN.
+export const WATER_DEPTH_LIGHT = 0.9;
+export const WATER_DEPTH_LIGHT_MIN = 0.3;
+
+// ------------------------------------------------------------
 // MODEL GRACZA I KAMERA (src/player/PlayerModel.js,
 // docs/gracz.md)
 // ------------------------------------------------------------

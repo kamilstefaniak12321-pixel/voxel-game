@@ -19,11 +19,12 @@ import {
 import { getItemLabel, getPlacedBlock, itemExists } from '../items/ItemRegistry.js';
 import { Inventory } from './Inventory.js';
 import { PlantGrowth } from './PlantGrowth.js';
+import { WaterEffects } from './WaterEffects.js';
 import { DynamicLight } from '../world/DynamicLight.js';
 import { FarTerrain } from '../world/FarTerrain.js';
 import { setAmbientOcclusion } from '../rendering/ChunkMesher.js';
 import { viewUniforms } from '../rendering/viewUniforms.js';
-import { blockMaterial, plantMaterial, setPotatoDefine } from '../rendering/BlockRenderData.js';
+import { blockMaterial, plantMaterial, waterMaterial, setPotatoDefine } from '../rendering/BlockRenderData.js';
 import { Meteorites } from './Meteorites.js';
 import { createGlowSprite } from '../rendering/Glow.js';
 import { WorldSaver } from '../storage/WorldSaver.js';
@@ -193,6 +194,10 @@ export class Game {
 
         this.plantGrowth = new PlantGrowth(this.world);
 
+        // Woda wokół gracza: widok spod wody, plusk, fale (WaterEffects.js).
+
+        this.water = new WaterEffects(this);
+
 
         // Daleki teren za zasięgiem widzenia (własna scena, oświetlona
         // tym samym niebem).
@@ -311,6 +316,7 @@ export class Game {
 
         this.stepDistance = 0;
         this.stepFrom = new THREE.Vector3();
+        this.swimDistance = 0;
 
 
         // Autozapis.
@@ -555,6 +561,8 @@ export class Game {
 
         this.updateView();
 
+        this.water.update(dt);
+
         this.updateFovBoost(dt);
 
     }
@@ -597,6 +605,7 @@ export class Game {
             crouching: player.crouching,
             sprinting: player.sprinting,
             flying: player.flying,
+            swimming: player.swimming,
             yaw: player.yaw,
             pitch: player.pitch,
             landed: player.landed
@@ -816,13 +825,31 @@ export class Game {
         }
 
 
-        this.sky.render(renderer, camera);
+        // Pod wodą zamiast nieba i dalekiego terenu - tło w kolorze wody
+        // (bliskie bloki i tak znikają w niebieskiej mgle).
 
-        renderer.clearDepth();
+        if (this.water.underwater) {
 
-        this.farTerrain.render(renderer, camera);
+            renderer.getClearColor(this.clearColor ??= new THREE.Color());
 
-        renderer.clearDepth();
+            renderer.setClearColor(viewUniforms.uUnderwaterColor.value);
+
+            renderer.clear();
+
+            renderer.setClearColor(this.clearColor);
+
+        }
+        else {
+
+            this.sky.render(renderer, camera);
+
+            renderer.clearDepth();
+
+            this.farTerrain.render(renderer, camera);
+
+            renderer.clearDepth();
+
+        }
 
         renderer.render(this.scene, camera);
 
@@ -1153,7 +1180,7 @@ export class Game {
 
         this.farTerrain.setLowDetail(potato);
 
-        setPotatoDefine([blockMaterial, plantMaterial], potato);
+        setPotatoDefine([blockMaterial, plantMaterial, waterMaterial], potato);
 
 
         // Model gracza: wierzchnia warstwa skórki, styl zgięć, tryb ziemniaka.
@@ -1397,10 +1424,36 @@ export class Game {
 
         const moved = Math.hypot(player.pos.x - this.stepFrom.x, player.pos.z - this.stepFrom.z);
 
+        const moved3 = player.pos.distanceTo(this.stepFrom);
+
         this.stepFrom.copy(player.pos);
 
 
-        if (player.landed > 4 && !player.flying) {
+        // Pływanie: co kawałek drogi (także w górę i w dół) ruch ramion
+        // w wodzie - szybciej i głośniej z biegiem.
+
+        if (player.swimming) {
+
+            if (moved3 > 2) {
+                return;
+            }
+
+            this.swimDistance += moved3;
+
+            if (this.swimDistance >= (player.sprinting ? 2.2 : 1.5)) {
+
+                this.swimDistance = 0;
+
+                this.sounds?.play('water_swim', { volume: player.sprinting ? 0.9 : 0.6 });
+
+            }
+
+            return;
+
+        }
+
+
+        if (player.landed > 4 && !player.flying && player.submerged < 0.3) {
 
             this.playStep(Math.min(1, 0.3 + (player.landed - 4) / 14));
 
@@ -1441,8 +1494,16 @@ export class Game {
 
         const type = this.blockUnderFeet();
 
-        if (type) {
-            this.playBlockSound('step', type, null, volume);
+        // W wodzie: chlupnięcie (w płytkiej wodzie słychać też dno).
+
+        const water = this.player.submerged;
+
+        if (water > 0.03) {
+            this.sounds.play('water_wade', { volume: volume * (0.7 + water) });
+        }
+
+        if (type && water < 0.3) {
+            this.playBlockSound('step', type, null, water > 0.03 ? volume * 0.5 : volume);
         }
 
 
@@ -1592,6 +1653,8 @@ export class Game {
 
         this.meteorites.dispose();
 
+        this.water.dispose();
+
         this.removeOrbs();
 
         this.dynamicLight.dispose();
@@ -1694,6 +1757,7 @@ export class Game {
             `${performanceInfo}<br>` +
 
             `Na ziemi: ${player.onGround ? 'tak' : 'nie'}` +
+            `${player.submerged > 0 ? ` | w wodzie ${Math.round(player.submerged * 100)}%${player.swimming ? ', pływa' : ''}${this.water.underwater ? ', pod wodą' : ''}` : ''}` +
             `${player.crouching ? ' | kuca' : ''}${player.sprinting ? ' | biegnie' : ''} | ` +
             `Światło: ${describeLight(light)}<br>` +
 

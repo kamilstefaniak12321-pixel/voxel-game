@@ -101,6 +101,12 @@ const BUILD_BUDGET_MS = 2;
 // od nowa.
 const RECENTER_DISTANCE = 16;
 
+// Woda z bliska jest półprzezroczysta (widać przez nią ciemne dno), więc
+// wydaje się trochę jaśniejsza i mniej niebieska niż sama tekstura -
+// daleka woda dostaje taki sam odcień (mnożnik koloru, bez szwu na
+// granicy zasięgu widzenia).
+const FAR_WATER_TINT = new THREE.Color(2.2, 1.13, 0.75);
+
 // Kolory, gdyby nie dało się policzyć średnich kolorów tekstur.
 const FALLBACK_COLORS = {
     grass_top: new THREE.Color(0.10, 0.22, 0.05),
@@ -373,6 +379,8 @@ export class FarTerrain {
             for (const name of Object.keys(FALLBACK_COLORS)) {
                 this.colors[name] = getAtlasAverage(name) ?? FALLBACK_COLORS[name];
             }
+
+            this.colors.water = this.colors.water.clone().multiply(FAR_WATER_TINT);
 
 
             // Skały: średni kolor tekstury wierzchu bloku.

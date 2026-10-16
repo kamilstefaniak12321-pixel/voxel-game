@@ -52,7 +52,7 @@ export const SETTINGS_DEFAULTS = {
     // Dźwięk (procent; na ucho - suwak 50% to mniej więcej "o połowę ciszej")
     volumeMaster: 80,                              // głośność gry
     volumeBlocks: 100,                             // kroki, stawianie i niszczenie bloków
-    volumeWorld: 100,                              // zjawiska: meteoryty
+    volumeWorld: 100,                              // otoczenie: woda, meteoryty
     volumeUi: 80,                                  // menu i ekwipunek
 
     // Inne

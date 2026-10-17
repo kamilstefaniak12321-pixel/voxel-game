@@ -1,0 +1,278 @@
+/* ============================================================
+   OSIĄGNIĘCIA - powiadomienie na ekranie i księga w menu
+   (src/achievements/). Kolory rang są też w src/achievements/list.js
+   (TIERS) - przy zmianie warto zmienić w obu miejscach.
+   ============================================================ */
+
+:root {
+    --tier-common: #cfd6dc;
+    --tier-rare: #57a9ff;
+    --tier-epic: #c27bff;
+    --tier-legendary: #ffb52e;
+}
+
+.tier-common { --tier: var(--tier-common); }
+.tier-rare { --tier: var(--tier-rare); }
+.tier-epic { --tier: var(--tier-epic); }
+.tier-legendary { --tier: var(--tier-legendary); }
+
+
+/* ------------------------------------------------------------
+   Powiadomienie (u góry ekranu, wjeżdża z góry)
+   ------------------------------------------------------------ */
+
+#achievements {
+    position: fixed;
+    top: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 20;
+    pointer-events: none;
+    width: min(560px, calc(100vw - 32px));
+    font-family: var(--ui-font);
+    color: var(--text-color, #ffffff);
+    text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.6);
+}
+
+.achievement-toast {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 12px 18px 12px 14px;
+    background: rgba(12, 12, 16, 0.88);
+    border: 2px solid #000000;
+    box-shadow:
+        inset 0 0 0 2px color-mix(in srgb, var(--tier) 55%, transparent),
+        0 6px 18px rgba(0, 0, 0, 0.45);
+    transform: translateY(-140%);
+    opacity: 0;
+    transition: transform 0.4s cubic-bezier(0.2, 0.9, 0.3, 1.2), opacity 0.3s;
+    overflow: hidden;
+}
+
+.achievement-toast.visible {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+/* Pasek w kolorze rangi z lewej. */
+
+.achievement-toast::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 6px;
+    background: var(--tier);
+}
+
+.achievement-icon {
+    flex: 0 0 auto;
+    width: 52px;
+    height: 52px;
+    display: grid;
+    place-items: center;
+    background: rgba(255, 255, 255, 0.06);
+    border: 2px solid color-mix(in srgb, var(--tier) 70%, #000000);
+    image-rendering: pixelated;
+}
+
+.achievement-icon img {
+    width: 40px;
+    height: 40px;
+    image-rendering: pixelated;
+}
+
+.achievement-text {
+    min-width: 0;
+}
+
+.achievement-label {
+    font-size: 14px;
+    color: var(--tier);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.achievement-title {
+    font-size: 22px;
+    line-height: 1.15;
+    margin: 2px 0 3px;
+}
+
+.achievement-comment {
+    font-size: 16px;
+    color: #c9c9c9;
+    font-style: italic;
+}
+
+/* Bardzo rzadkie - fioletowa poświata. Legendarne - złota, pulsująca
+   ramka i przelatujący błysk. */
+
+.achievement-toast.tier-epic {
+    box-shadow:
+        inset 0 0 0 2px var(--tier),
+        0 0 22px color-mix(in srgb, var(--tier) 55%, transparent),
+        0 6px 18px rgba(0, 0, 0, 0.45);
+}
+
+.achievement-toast.tier-legendary {
+    background:
+        linear-gradient(135deg, rgba(70, 42, 6, 0.92), rgba(18, 12, 6, 0.92) 55%, rgba(60, 34, 4, 0.92));
+    animation: achievement-legendary 1.4s ease-in-out infinite alternate;
+}
+
+.achievement-toast.tier-legendary .achievement-title {
+    font-size: 26px;
+    color: #ffe6a8;
+}
+
+.achievement-toast.tier-legendary::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 40%;
+    left: -50%;
+    background: linear-gradient(100deg, transparent, rgba(255, 230, 160, 0.35), transparent);
+    animation: achievement-shine 2.2s ease-in-out 0.4s infinite;
+}
+
+@keyframes achievement-legendary {
+    from {
+        box-shadow:
+            inset 0 0 0 2px var(--tier),
+            0 0 16px color-mix(in srgb, var(--tier) 45%, transparent),
+            0 6px 18px rgba(0, 0, 0, 0.45);
+    }
+    to {
+        box-shadow:
+            inset 0 0 0 2px #fff2c8,
+            0 0 34px color-mix(in srgb, var(--tier) 85%, transparent),
+            0 6px 18px rgba(0, 0, 0, 0.45);
+    }
+}
+
+@keyframes achievement-shine {
+    from { left: -50%; }
+    to { left: 120%; }
+}
+
+
+/* ------------------------------------------------------------
+   Księga osiągnięć (ekran menu)
+   ------------------------------------------------------------ */
+
+.screen-achievements {
+    justify-content: flex-start;
+}
+
+.achievements-summary {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 6px 18px;
+    font-size: 18px;
+}
+
+.achievements-summary .tier-count {
+    color: var(--tier);
+}
+
+.achievements-progress {
+    width: min(var(--list-width, 600px), calc(100vw - 32px));
+    height: 10px;
+    background: rgba(0, 0, 0, 0.5);
+    border: 2px solid #000000;
+}
+
+.achievements-progress > div {
+    height: 100%;
+    background: linear-gradient(90deg, var(--tier-common), var(--tier-rare), var(--tier-epic), var(--tier-legendary));
+}
+
+.achievements-list {
+    width: min(720px, calc(100vw - 32px));
+    flex: 1 1 auto;
+    min-height: 120px;
+    overflow-y: auto;
+    background: var(--list-background, rgba(0, 0, 0, 0.45));
+    border: 2px solid var(--list-border, #000000);
+    padding: 8px 12px 12px;
+    box-sizing: border-box;
+}
+
+.achievements-tier {
+    margin: 12px 4px 6px;
+    font-size: 18px;
+    color: var(--tier);
+    border-bottom: 2px solid color-mix(in srgb, var(--tier) 40%, transparent);
+    padding-bottom: 2px;
+}
+
+.achievement-entry {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 8px 6px;
+}
+
+.achievement-entry + .achievement-entry {
+    border-top: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.achievement-entry .achievement-icon {
+    width: 44px;
+    height: 44px;
+}
+
+.achievement-entry .achievement-icon img {
+    width: 34px;
+    height: 34px;
+}
+
+.achievement-entry .achievement-title {
+    font-size: 20px;
+    color: var(--tier);
+}
+
+.achievement-task {
+    font-size: 15px;
+    color: var(--text-muted, #b0b0b0);
+}
+
+.achievement-entry .achievement-comment {
+    font-size: 15px;
+}
+
+.achievement-meta {
+    font-size: 13px;
+    color: var(--text-muted, #b0b0b0);
+    margin-top: 2px;
+}
+
+/* Jeszcze niezdobyte: wyblakłe, ikonka szara; sekretne - znak zapytania. */
+
+.achievement-entry.locked .achievement-title {
+    color: var(--text-muted, #b0b0b0);
+}
+
+.achievement-entry.locked .achievement-icon {
+    border-color: #2c2c2c;
+}
+
+.achievement-entry.locked .achievement-icon img {
+    filter: grayscale(1) brightness(0.45);
+}
+
+.achievement-entry.secret .achievement-icon::after {
+    content: '?';
+    font-size: 26px;
+    color: #6a6a6a;
+}
+
+.achievement-entry.unlocked.tier-legendary .achievement-icon {
+    box-shadow: 0 0 12px color-mix(in srgb, var(--tier) 70%, transparent);
+}

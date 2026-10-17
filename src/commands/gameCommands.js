@@ -80,6 +80,10 @@ import {
 
 import { skyfallSpeed } from '../player/Player.js';
 
+import { ACHIEVEMENTS, TIERS, TIER_ORDER } from '../achievements/list.js';
+
+import { findAchievement } from '../achievements/AchievementBook.js';
+
 // ------------------------------------------------------------
 // KOMENDY GRY
 //
@@ -3405,6 +3409,150 @@ export const GAME_COMMANDS = [
 
 
     // ========================================================
+    // OSIĄGNIĘCIA (src/achievements/)
+    // ========================================================
+
+    {
+        name: 'osiagniecia',
+        aliases: ['achievements', 'osiagniecie'],
+        usage: '/osiagniecia [ksiega | pokaz <ranga|id> | daj <id> | zabierz <id|wszystkie>]   (rangi: zwykle, rzadkie, bardzo-rzadkie, legendarne)',
+        description: 'Osiągnięcia: lista, księga (L), test powiadomienia, przyznanie i zabranie (do testów).',
+
+        run(args, { game }) {
+
+            const book = game.achievements;
+
+            if (!book) {
+                throw new CommandError('Księga osiągnięć jest niedostępna.');
+            }
+
+            const action = simplify(args[0] ?? 'lista');
+
+            const target = args[1] === undefined ? '' : simplify(args[1]);
+
+
+            if (action === 'lista') {
+
+                const summary = book.summary();
+
+                const lines = TIER_ORDER.map((tier) => {
+
+                    const names = ACHIEVEMENTS
+                        .filter((achievement) => achievement.tier === tier)
+                        .map((achievement) => {
+
+                            const got = book.has(achievement.id);
+
+                            const name = !got && achievement.secret ? '???' : achievement.title;
+
+                            return `${got ? '✔' : '·'} ${name}${got || achievement.secret ? '' : ` (${achievement.id})`}`;
+
+                        });
+
+                    return `${TIERS[tier].name}: ${names.join(', ')}`;
+
+                });
+
+                return `Osiągnięcia: ${summary.unlocked} z ${summary.total}, punkty ${summary.points} z ${summary.maxPoints}\n` +
+                    lines.join('\n') + '\nKsięga: L albo /osiagniecia ksiega';
+
+            }
+
+
+            if (action === 'ksiega') {
+
+                game.onOpenAchievements?.();
+
+                return 'Księga osiągnięć otwarta.';
+
+            }
+
+
+            if (action === 'pokaz') {
+
+                const tier = TIER_WORDS[target] ?? (TIERS[target] ? target : null);
+
+                const achievement =
+                    tier ? ACHIEVEMENTS.find((a) => a.tier === tier) : findAchievement(target);
+
+                if (!achievement) {
+                    throw new CommandError(`Podaj rangę (${Object.keys(TIER_WORDS).join(', ')}) albo id osiągnięcia.`);
+                }
+
+                book.notify(achievement);
+
+                return `Pokaz powiadomienia: ${achievement.title} (bez zdobywania).`;
+
+            }
+
+
+            if (action === 'daj') {
+
+                const achievement = findAchievement(target);
+
+                if (!achievement) {
+                    throw new CommandError(`Nie ma osiągnięcia "${args[1] ?? ''}". Lista: /osiagniecia`);
+                }
+
+                if (!book.unlock(achievement.id, { command: true })) {
+                    return `Już masz: ${achievement.title}.`;
+                }
+
+                return '';
+
+            }
+
+
+            if (action === 'zabierz') {
+
+                if (target === 'wszystkie') {
+
+                    book.reset();
+
+                    return 'Wszystkie osiągnięcia i postęp wyzerowane.';
+
+                }
+
+                const achievement = findAchievement(target);
+
+                if (!achievement) {
+                    throw new CommandError(`Nie ma osiągnięcia "${args[1] ?? ''}". Lista: /osiagniecia`);
+                }
+
+                return book.revoke(achievement.id)
+                    ? `Zabrano: ${achievement.title}.`
+                    : `Nie masz jeszcze: ${achievement.title}.`;
+
+            }
+
+
+            throw usageError(this);
+
+        },
+
+        complete(args) {
+
+            if (args.length === 1) {
+                return ['lista', 'ksiega', 'pokaz', 'daj', 'zabierz'];
+            }
+
+            const action = simplify(args[0]);
+
+            if (args.length === 2 && action === 'pokaz') {
+                return [...Object.keys(TIER_WORDS), ...ACHIEVEMENTS.map((achievement) => achievement.id)];
+            }
+
+            if (args.length === 2 && (action === 'daj' || action === 'zabierz')) {
+                return [...ACHIEVEMENTS.map((achievement) => achievement.id), ...(action === 'zabierz' ? ['wszystkie'] : [])];
+            }
+
+            return [];
+
+        }
+    },
+
+
+    // ========================================================
     // SEKRET (ukryta - nie ma jej na liście /pomoc)
     // ========================================================
 
@@ -3479,6 +3627,16 @@ export const GAME_COMMANDS = [
     }
 
 ];
+
+
+// Rangi osiągnięć po polsku (/osiagniecia pokaz).
+
+const TIER_WORDS = {
+    zwykle: 'common',
+    rzadkie: 'rare',
+    'bardzo-rzadkie': 'epic',
+    legendarne: 'legendary'
+};
 
 
 // Ile mniej więcej trwa spadanie z kosmosu z wysokości height

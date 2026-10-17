@@ -124,7 +124,14 @@ const UI_SOUNDS = {
     item_pick: { volume: 0.8, pitch: [0.95, 1.05] },    // wzięcie stosu
     item_place: { volume: 0.8, pitch: [0.95, 1.05] },   // odłożenie
     item_trash: { volume: 0.8, pitch: [0.95, 1.05] },   // kosz
-    ui_error: { volume: 0.8 }                            // błąd (np. komendy)
+    ui_error: { volume: 0.8 },                           // błąd (np. komendy)
+
+    // Zdobyte osiągnięcie (src/achievements/) - im rzadsze, tym
+    // bogatsza melodyjka.
+    achievement_common: { volume: 0.9 },
+    achievement_rare: { volume: 0.9 },
+    achievement_epic: { volume: 0.9 },
+    achievement_legendary: { volume: 1 }
 };
 
 for (const [name, sound] of Object.entries(UI_SOUNDS)) {

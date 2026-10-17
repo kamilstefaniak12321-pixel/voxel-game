@@ -506,6 +506,8 @@ export class Skyfall {
 
         game.onMessage?.(`Wylądowałeś jak meteoryt! Krater na ${x}, ${bottom}, ${z}.`);
 
+        game.achieve?.('skyfallLanded', { x, y: bottom, z });
+
     }
 
 
@@ -586,6 +588,8 @@ export class Skyfall {
         game.sounds?.play('meteor_impact', { position: where, volume: 0.5, pitch: 1.4 });
 
         game.onMessage?.(`Plusk! Wpadłeś do wody prosto z kosmosu (${Math.round(speed)} bloków na sekundę).`);
+
+        game.achieve?.('skyfallSplash', { speed });
 
     }
 

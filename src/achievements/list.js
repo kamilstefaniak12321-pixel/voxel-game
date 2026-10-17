@@ -1,0 +1,238 @@
+// ------------------------------------------------------------
+// LISTA OSIĄGNIĘĆ
+//
+// Każde osiągnięcie to jeden wpis niżej. Nowa rzecz w grze = nowe
+// osiągnięcie: dopisz wpis, a jeśli potrzebuje nowego zdarzenia -
+// wywołaj je w grze (game.achieve('nazwa', dane) - patrz
+// docs/osiagniecia.md).
+//
+// Pola:
+//   id       - nazwa w zapisie (nie zmieniać po wydaniu - inaczej
+//              gracze stracą to osiągnięcie)
+//   tier     - ranga: 'common', 'rare', 'epic', 'legendary' (TIERS)
+//   title    - tytuł
+//   task     - co trzeba zrobić (widać w księdze przed zdobyciem,
+//              chyba że osiągnięcie jest sekretne)
+//   comment  - żartobliwy komentarz po zdobyciu
+//   icon     - ikonka: nazwa bloku albo przedmiotu
+//   secret   - true: przed zdobyciem w księdze tylko "???"
+//
+// Kiedy się zdobywa (jedno z dwóch):
+//   on: 'zdarzenie', when(dane, book) - przy zdarzeniu z gry
+//       (when zwraca true = zdobyte; bez when - zawsze),
+//   check(game, book)                 - sprawdzane co pół sekundy
+//                                       w trakcie gry.
+//
+// book.count(klucz, ile) i book.collect(klucz, wartość) liczą postęp
+// (zapisywany razem z osiągnięciami) - patrz AchievementBook.js.
+// ------------------------------------------------------------
+
+import { WORLD_BORDER } from '../config.js';
+
+
+// Rangi: nazwa, punkty, kolor (do księgi i powiadomień - także
+// w src/ui/achievements.css), dźwięk powiadomienia.
+
+export const TIERS = {
+    common: { name: 'Zwykłe', points: 10, color: '#cfd6dc', sound: 'achievement_common' },
+    rare: { name: 'Rzadkie', points: 25, color: '#57a9ff', sound: 'achievement_rare' },
+    epic: { name: 'Bardzo rzadkie', points: 50, color: '#c27bff', sound: 'achievement_epic' },
+    legendary: { name: 'Legendarne', points: 100, color: '#ffb52e', sound: 'achievement_legendary' }
+};
+
+export const TIER_ORDER = ['common', 'rare', 'epic', 'legendary'];
+
+
+// Owoce z krzaków - do "Pełnych koszy".
+
+const FRUITS = ['strawberry', 'blackberry', 'chili_pepper', 'hazelnut'];
+
+
+export const ACHIEVEMENTS = [
+
+    // --------------------------------------------------------
+    // ZWYKŁE
+    // --------------------------------------------------------
+
+    {
+        id: 'first_break',
+        tier: 'common',
+        title: 'Od czegoś trzeba zacząć',
+        task: 'Zniszcz pierwszy blok.',
+        comment: 'Świat właśnie zrobił się o jeden blok mniejszy. Brawo... chyba.',
+        icon: 'stone',
+        on: 'blockBroken'
+    },
+    {
+        id: 'first_place',
+        tier: 'common',
+        title: 'Architekt amator',
+        task: 'Postaw pierwszy blok.',
+        comment: 'Stoi. Krzywo, ale stoi.',
+        icon: 'grass',
+        on: 'blockPlaced'
+    },
+    {
+        id: 'harvest',
+        tier: 'common',
+        title: 'Witaminki',
+        task: 'Zbierz owoce z krzaka (PPM).',
+        comment: 'Babcia byłaby dumna. Krzak trochę mniej.',
+        icon: 'strawberry',
+        on: 'harvested'
+    },
+    {
+        id: 'plant',
+        tier: 'common',
+        title: 'Zielone palce',
+        task: 'Posadź owoc albo orzech.',
+        comment: 'Teraz najtrudniejsza część ogrodnictwa: czekanie.',
+        icon: 'hazelnut',
+        on: 'planted'
+    },
+    {
+        id: 'swim',
+        tier: 'common',
+        title: 'Mokra robota',
+        task: 'Popływaj w wodzie.',
+        comment: 'Potwierdzone naukowo: woda jest mokra.',
+        icon: 'water',
+        check: (game) => game.player.swimming
+    },
+    {
+        id: 'midnight',
+        tier: 'common',
+        title: 'Nocny marek',
+        task: 'Bądź w świecie o północy.',
+        comment: 'Porządni gracze już dawno śpią. Ty nie jesteś porządnym graczem.',
+        icon: 'lamp',
+        check: (game) => {
+            const time = game.time.timeOfDay;
+            return time < 0.01 || time > 0.99;
+        }
+    },
+
+    // --------------------------------------------------------
+    // RZADKIE
+    // --------------------------------------------------------
+
+    {
+        id: 'builder',
+        tier: 'rare',
+        title: 'Murarz',
+        task: 'Postaw 500 bloków.',
+        comment: 'Pięćset bloków. Kręgosłup pamięta każdy z nich.',
+        icon: 'granite',
+        on: 'blockPlaced',
+        when: (data, book) => book.count('placed', 1) >= 500,
+        goal: { key: 'placed', count: 500 }
+    },
+    {
+        id: 'deep_dive',
+        tier: 'rare',
+        title: 'Głębinowiec',
+        task: 'Zanurkuj 10 bloków pod powierzchnię wody.',
+        comment: 'Ryb brak, ale za to jest ciemno, mokro i trochę strasznie.',
+        icon: 'gravel',
+        check: (game) => game.water.depth >= 10
+    },
+    {
+        id: 'high_flyer',
+        tier: 'rare',
+        title: 'Ponad chmurami',
+        task: 'Wzleć na wysokość 1000 bloków.',
+        comment: 'Stąd wszystko wygląda tak malutko. Ty też.',
+        icon: 'lamp_blue',
+        check: (game) => game.player.pos.y >= 1000
+    },
+    {
+        id: 'meteor_witness',
+        tier: 'rare',
+        title: 'Naoczny świadek',
+        task: 'Bądź najwyżej 60 bloków od miejsca, w które uderzy meteoryt.',
+        comment: 'Spadło. Ty nie. Tym razem.',
+        icon: 'basalt',
+        on: 'meteorImpact',
+        when: (data) => data.distance <= 60
+    },
+    {
+        id: 'all_fruits',
+        tier: 'rare',
+        title: 'Pełne kosze',
+        task: 'Zbierz owoce z każdego rodzaju krzaka.',
+        comment: 'Truskawki, jeżyny, chili i orzechy. Dieta jak marzenie, zwłaszcza to chili.',
+        icon: 'blackberry',
+        on: 'harvested',
+        when: (data, book) => book.collect('fruits', data.item) >= FRUITS.length,
+        goal: { key: 'fruits', count: FRUITS.length }
+    },
+
+    // --------------------------------------------------------
+    // BARDZO RZADKIE
+    // --------------------------------------------------------
+
+    {
+        id: 'eclipse',
+        tier: 'epic',
+        title: 'Dzień jak noc',
+        task: 'Zobacz pełne zaćmienie słońca.',
+        comment: 'Słońce na chwilę zrobiło sobie przerwę. Ty jak zwykle nie.',
+        icon: 'lamp_purple',
+        check: (game) => game.sky.state.eclipse > 0.995
+    },
+    {
+        id: 'meteorite_miner',
+        tier: 'epic',
+        title: 'Kosmiczny złom',
+        task: 'Wykop blok meteorytu.',
+        comment: 'Kawałek nieba w kieszeni. Jeszcze ciepły.',
+        icon: 'meteorite',
+        on: 'blockBroken',
+        when: (data) => data.type === 'meteorite'
+    },
+    {
+        id: 'space',
+        tier: 'epic',
+        title: 'Houston, mamy widok',
+        task: 'Wyleć w kosmos.',
+        comment: 'Mały krok dla gracza, wielki skok dla... a nie, to też tylko gracz.',
+        icon: 'lamp_blue',
+        secret: true,
+        check: (game) => game.spaceView.space > 0.98
+    },
+    {
+        id: 'world_border',
+        tier: 'epic',
+        title: 'Koniec świata',
+        task: `Dojdź do granicy świata (${WORLD_BORDER} bloków od środka).`,
+        comment: 'Dalej nic nie ma. Sprawdzaliśmy. Dwa razy.',
+        icon: 'stone',
+        check: (game) => Math.max(Math.abs(game.player.pos.x), Math.abs(game.player.pos.z)) >= WORLD_BORDER - 2
+    },
+
+    // --------------------------------------------------------
+    // LEGENDARNE
+    // --------------------------------------------------------
+
+    {
+        id: 'meteor_player',
+        tier: 'legendary',
+        title: 'Problem spadł z nieba',
+        task: 'Wyląduj jako meteoryt.',
+        comment: 'Tym razem problemem byłeś ty.',
+        icon: 'meteorite',
+        secret: true,
+        on: 'skyfallLanded'
+    },
+    {
+        id: 'space_splash',
+        tier: 'legendary',
+        title: 'Skok do basenu',
+        task: 'Wpadnij do wody prosto z kosmosu.',
+        comment: 'Najdroższy skok do wody w historii. Sędziowie dają 10/10, ryby 0/10.',
+        icon: 'water',
+        secret: true,
+        on: 'skyfallSplash'
+    }
+
+];

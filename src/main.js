@@ -2,6 +2,7 @@ import * as THREE from 'three';
 
 import { InputManager } from './input/InputManager.js';
 import { Game } from './game/Game.js';
+import { AchievementBook } from './achievements/AchievementBook.js';
 import { Menu } from './ui/Menu.js';
 import { TEXTS } from './ui/texts.js';
 import { Settings } from './settings/Settings.js';
@@ -113,6 +114,12 @@ for (const type of ['pointerdown', 'keydown']) {
 }
 
 
+// Księga osiągnięć - jedna na gracza, wspólna dla wszystkich światów
+// (src/achievements/). Powiadomienia trafiają do <div id="achievements">.
+
+const achievements = new AchievementBook(document.getElementById('achievements'));
+
+
 let state = 'menu';
 
 let game = null;
@@ -193,6 +200,8 @@ const menu = new Menu(
     settings,
     UI_THEMES
 );
+
+menu.achievements = achievements;
 
 
 // Ustawienia, które dotyczą całej aplikacji (nie tylko świata):
@@ -298,6 +307,26 @@ async function playWorld(worldInfo) {
         game = await Game.start(renderer, input, storage, worldInfo, settings);
 
         game.sounds = sounds;
+
+        // Osiągnięcia: gra zgłasza zdarzenia, księga zapisuje, w którym świecie.
+
+        game.achievements = achievements;
+
+        achievements.attach(game, worldInfo);
+
+        // /osiagniecia ksiega - otwiera księgę (jak klawisz L).
+
+        game.onOpenAchievements = () => {
+
+            if (state === 'chat') {
+                closeChat(false);
+            }
+
+            if (state === 'paused') {
+                menu.showAchievements('pause');
+            }
+
+        };
 
         // Komunikaty gry (np. gdzie spadł meteoryt) trafiają na czat.
 
@@ -598,6 +627,25 @@ function submitChat(text) {
 // nie działają. E wraca do gry, ESC - do menu pauzy.
 // ------------------------------------------------------------
 
+// Księga osiągnięć w trakcie gry (L): pauza z otwartą księgą.
+
+function openAchievements() {
+
+    if (!game || state !== 'playing') {
+        return;
+    }
+
+    state = 'paused';
+
+    document.exitPointerLock();
+
+    menu.showAchievements('pause');
+
+    game.saver.save();
+
+}
+
+
 function openInventory() {
 
     if (!game || state !== 'playing' || !inventoryScreen) {
@@ -653,6 +701,19 @@ window.addEventListener('keydown', (event) => {
         event.stopImmediatePropagation();
 
         openInventory();
+
+        return;
+
+    }
+
+
+    // L - księga osiągnięć (gra staje jak w pauzie, "Gotowe" - pauza).
+
+    if (state === 'playing' && !event.repeat && event.code === 'KeyL') {
+
+        event.preventDefault();
+
+        openAchievements();
 
         return;
 
@@ -751,6 +812,8 @@ async function quitWithoutSaving() {
 function closeWorld() {
 
     game = null;
+
+    achievements.detach();
 
     sounds.stopGameSounds();
 
@@ -935,6 +998,8 @@ await loadTheme(settings.get('theme'));
 // Ikonki bloków i pasek bloków na dole ekranu.
 
 const blockIcons = await createBlockIcons();
+
+achievements.setIcons(blockIcons);
 
 const hotbar = new Hotbar(
     document.getElementById('hotbar'),

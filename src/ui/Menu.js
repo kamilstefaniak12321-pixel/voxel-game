@@ -4,6 +4,7 @@ import { DEFAULT_TERRAIN, DEFAULT_GAME_MODE } from '../config.js';
 import { SETTINGS_RANGES, SETTINGS_CHOICES } from '../settings/Settings.js';
 import { hasCustomSkin, chooseSkinFile, resetSkin } from '../player/skin.js';
 import { playUi, playSlider } from '../audio/ui.js';
+import { ACHIEVEMENTS, TIERS, TIER_ORDER } from '../achievements/list.js';
 
 // ------------------------------------------------------------
 // MENU
@@ -151,6 +152,11 @@ export class Menu {
         this.appInfo = null;
 
 
+        // Księga osiągnięć (AchievementBook) - ustawia main.js.
+
+        this.achievements = null;
+
+
         // Co robi ESC na danym ekranie (np. "Wróć").
 
         this.onEscape = null;
@@ -229,6 +235,7 @@ export class Menu {
 
         screen.querySelector('.menu-buttons').append(
             button(TEXTS.play, () => this.handlers.openWorldList()),
+            button(TEXTS.achievements, () => this.showAchievements('title')),
             button(TEXTS.settings, () => this.showSettings('title'))
         );
 
@@ -630,6 +637,7 @@ export class Menu {
 
         buttons.append(
             button(TEXTS.resume, () => this.handlers.resume(), '', true),
+            button(TEXTS.achievements, () => this.showAchievements('pause')),
             button(TEXTS.settings, () => this.showSettings('pause')),
             button(TEXTS.saveAndQuit, () => this.handlers.quitToMenu())
         );
@@ -644,6 +652,140 @@ export class Menu {
         if (hint) {
             screen.append(el('p', 'menu-note', hint));
         }
+
+    }
+
+    // --------------------------------------------------------
+    // Księga osiągnięć (z ekranu tytułowego albo z pauzy - returnTo)
+    // --------------------------------------------------------
+
+    showAchievements(returnTo = 'title') {
+
+        const book = this.achievements;
+
+        const fromPause = returnTo === 'pause';
+
+        const screen = this.newScreen('achievements', !fromPause);
+
+        const goBack = () => (fromPause ? this.showPause() : this.showTitle());
+
+        this.onEscape = goBack;
+
+
+        screen.append(el('h2', 'menu-heading', TEXTS.achievementsTitle));
+
+
+        // Podsumowanie: zdobyte, punkty, ile w każdej randze, pasek.
+
+        const summary = book?.summary() ?? { unlocked: 0, total: ACHIEVEMENTS.length, points: 0, maxPoints: 0, tiers: {} };
+
+        const line = el('div', 'achievements-summary');
+
+        line.append(
+            el('span', '', TEXTS.achievementsSummary(summary.unlocked, summary.total)),
+            el('span', '', TEXTS.achievementsPoints(summary.points, summary.maxPoints))
+        );
+
+        for (const tier of TIER_ORDER) {
+
+            const count = summary.tiers[tier] ?? { unlocked: 0, total: 0 };
+
+            line.append(el('span', `tier-count tier-${tier}`, `${TIERS[tier].name}: ${count.unlocked}/${count.total}`));
+
+        }
+
+        const bar = el('div', 'achievements-progress');
+
+        const fill = el('div');
+
+        fill.style.width = `${summary.maxPoints ? (100 * summary.points / summary.maxPoints) : 0}%`;
+
+        bar.append(fill);
+
+        screen.append(line, bar);
+
+
+        // Lista: rangami, od zwykłych do legendarnych.
+
+        const list = el('div', 'achievements-list');
+
+        for (const tier of TIER_ORDER) {
+
+            const entries = ACHIEVEMENTS.filter((achievement) => achievement.tier === tier);
+
+            if (entries.length === 0) {
+                continue;
+            }
+
+            list.append(el('div', `achievements-tier tier-${tier}`, `${TIERS[tier].name} · ${TIERS[tier].points} pkt`));
+
+            for (const achievement of entries) {
+                list.append(this.achievementEntry(achievement));
+            }
+
+        }
+
+        screen.append(list);
+
+
+        const buttons = el('div', 'menu-buttons');
+
+        buttons.append(button(TEXTS.done, goBack, '', true));
+
+        screen.append(buttons, el('p', 'menu-note', TEXTS.achievementsHint));
+
+    }
+
+
+    achievementEntry(achievement) {
+
+        const book = this.achievements;
+
+        const record = book?.data.unlocked[achievement.id] ?? null;
+
+        const hidden = !record && achievement.secret;
+
+        const entry = el(
+            'div',
+            `achievement-entry tier-${achievement.tier} ${record ? 'unlocked' : 'locked'}${hidden ? ' secret' : ''}`
+        );
+
+        const icon = el('div', 'achievement-icon');
+
+        if (!hidden) {
+            book?.fillIcon(icon, achievement);
+        }
+
+        const text = el('div', 'achievement-text');
+
+        text.append(el('div', 'achievement-title', hidden ? TEXTS.achievementSecret : achievement.title));
+
+        text.append(el('div', 'achievement-task', hidden ? TEXTS.achievementSecretTask : achievement.task));
+
+        if (record) {
+
+            text.append(el('div', 'achievement-comment', achievement.comment));
+
+            text.append(el(
+                'div',
+                'achievement-meta',
+                TEXTS.achievementUnlockedAt(formatDate(record.at), record.world) +
+                (record.command ? TEXTS.achievementByCommand : '')
+            ));
+
+        }
+
+        else if (achievement.goal && book) {
+
+            const now = Math.min(achievement.goal.count, book.progressOf(achievement.goal.key));
+
+            text.append(el('div', 'achievement-meta', TEXTS.achievementProgress(now, achievement.goal.count)));
+
+        }
+
+        entry.append(icon, text);
+
+        return entry;
 
     }
 

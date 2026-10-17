@@ -101,6 +101,10 @@ Współrzędne można podawać względem gracza: `~` (tu, gdzie stoję),
 | `/ustaw domyslne` | przywraca domyślne ustawienia |
 | `/wydajnosc` | FPS, czasy klatki, rysowanie (wywołania, trójkąty), chunki, daleki teren, pamięć |
 | `/wydajnosc test [sekundy]` | test: kamera obraca się raz dookoła, wynik na czacie (domyślnie 10 s) |
+| `/osiagniecia` | osiągnięcia: co zdobyte, punkty, id (opis: `docs/osiagniecia.md`) |
+| `/osiagniecia ksiega` | otwiera księgę osiągnięć (to samo co klawisz L) |
+| `/osiagniecia pokaz <zwykle \| rzadkie \| bardzo-rzadkie \| legendarne \| id>` | samo powiadomienie o osiągnięciu (bez zdobywania) |
+| `/osiagniecia daj <id>` / `zabierz <id \| wszystkie>` | przyznaje / zabiera osiągnięcie (do testów) |
 
 Kolory: `czerwony`, `krwawy`, `pomaranczowy`, `zloty`, `zolty`, `zielony`,
 `turkusowy`, `niebieski`, `fioletowy`, `rozowy`, `bialy` albo `#rrggbb`.
@@ -126,6 +130,7 @@ Niektóre komendy mają też angielskie nazwy (`/time`, `/moon`, `/tp`,
 Każda nowość powinna dać się szybko sprawdzić z czatu: nowy blok -
 `/daj`, nowa rzecz na niebie - opcja `/niebo` albo `/demo`, nowy
 efekt - komenda, która go włącza albo buduje scenę do obejrzenia.
+A jeśli jest za co - także nowe osiągnięcie (`docs/osiagniecia.md`).
 
 ## Jak dodać komendę
 

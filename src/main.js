@@ -52,23 +52,6 @@ import {
 document.title = GAME_TITLE;
 
 
-// STEROWANIE DOTYKOWE (telefon, tablet - src/input/TouchControls.js).
-// Włącza się samo na ekranie dotykowym bez myszy. Adresem gry można je
-// wymusić: ...index.html?dotyk (np. do testów na komputerze - wtedy
-// "dotyka" się myszą), a wyłączyć: ?dotyk=0.
-
-const touchParameter = new URLSearchParams(location.search).get('dotyk');
-
-const touchDetected = Boolean(
-    window.matchMedia?.('(pointer: coarse)').matches &&
-    !window.matchMedia('(any-pointer: fine)').matches
-);
-
-const touchMode = touchParameter !== null
-    ? !['0', 'nie', 'wyl', 'false'].includes(touchParameter)
-    : touchDetected;
-
-
 // Aplikacja na telefon (Android - folder android/, Capacitor): gra
 // działa w niej jak strona, a Capacitor dokłada obiekt
 // window.Capacitor. null = przeglądarka albo aplikacja na komputer.
@@ -76,6 +59,29 @@ const touchMode = touchParameter !== null
 const nativeApp = window.Capacitor?.isNativePlatform?.()
     ? window.Capacitor.getPlatform()
     : null;
+
+
+// STEROWANIE DOTYKOWE (telefon, tablet - src/input/TouchControls.js).
+// Włącza się samo:
+//   - w aplikacji na telefon - zawsze,
+//   - w przeglądarce, gdy głównym "wskaźnikiem" jest palec (telefon,
+//     tablet), także gdy telefon zgłasza rysik albo myszkę,
+//   - przy pierwszym dotknięciu ekranu palcem, jeśli przeglądarka źle
+//     zgłosiła ekran (enableTouchMode niżej).
+// Adresem gry można je wymusić: ...index.html?dotyk (np. do testów na
+// komputerze - wtedy "dotyka" się myszą), a wyłączyć: ?dotyk=0.
+
+const touchParameter = new URLSearchParams(location.search).get('dotyk');
+
+const touchDetected = Boolean(
+    nativeApp ||
+    window.matchMedia?.('(pointer: coarse)').matches ||
+    (navigator.maxTouchPoints > 0 && window.matchMedia?.('(hover: none)').matches)
+);
+
+let touchMode = touchParameter !== null
+    ? !['0', 'nie', 'wyl', 'false'].includes(touchParameter)
+    : touchDetected;
 
 
 // Ustawienia gracza (czułość myszy, pole widzenia, motyw...). Na
@@ -694,6 +700,7 @@ function commandContext() {
             enabled: touchMode,
             detected: touchDetected,
             forced: touchParameter !== null,
+            app: nativeApp,
             reload: reloadWithTouch
         }
     };
@@ -1237,8 +1244,11 @@ const inventoryScreen = new InventoryScreen(blockIcons, {
 
 // Sterowanie dotykowe (telefon, tablet) - przyciski na ekranie.
 
-const touch = touchMode
-    ? new TouchControls(
+let touch = null;
+
+function createTouchControls() {
+
+    touch = new TouchControls(
         input,
         {
             pause: pauseGame,
@@ -1261,8 +1271,63 @@ const touch = touchMode
             }
         },
         document.getElementById('hotbar')
-    )
-    : null;
+    );
+
+}
+
+if (touchMode) {
+    createTouchControls();
+}
+
+
+// Pierwsze dotknięcie ekranu palcem, a sterowanie dotykowe wyłączone
+// (przeglądarka zgłosiła ekran jak w komputerze - zdarza się np. na
+// telefonach z rysikiem): włączamy je od razu. Zostawione wyłączone
+// tylko wtedy, gdy gracz sam tak chciał (?dotyk=0, /dotyk wyl).
+
+function enableTouchMode() {
+
+    if (touch) {
+        return;
+    }
+
+    touchMode = true;
+
+    input.pointerLock = false;
+
+    if (document.pointerLockElement) {
+        document.exitPointerLock();
+    }
+
+    // Lżejsze ustawienia telefonu tam, gdzie gracz nic nie zmieniał.
+    settings.useDefaults(TOUCH_SETTINGS);
+
+    createTouchControls();
+
+    applyAppSettings();
+
+    // (Menu zostaje, jak jest - to samo dotknięcie, np. "Wróć do gry",
+    // od razu działa już po dotykowemu.)
+
+    if (game) {
+
+        game.touchMode = true;
+
+        chat.print(TEXTS.touchHint, 'hint');
+
+    }
+
+    console.info('Sterowanie dotykowe włączone (dotknięcie ekranu).');
+
+}
+
+window.addEventListener('pointerdown', (event) => {
+
+    if (event.pointerType === 'touch' && !touchMode && touchParameter === null) {
+        enableTouchMode();
+    }
+
+}, { capture: true });
 
 // ------------------------------------------------------------
 // APLIKACJA NA KOMPUTER (desktop/)

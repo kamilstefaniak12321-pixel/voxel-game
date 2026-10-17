@@ -3254,9 +3254,13 @@ export const GAME_COMMANDS = [
 
                 const reason = touch.forced
                     ? 'wymuszone adresem z ?dotyk'
-                    : touch.detected
-                        ? 'wykryty ekran dotykowy bez myszy'
-                        : 'jest mysz albo nie ma ekranu dotykowego';
+                    : touch.app
+                        ? 'aplikacja na telefon'
+                        : touch.detected
+                            ? 'wykryty ekran dotykowy'
+                            : touch.enabled
+                                ? 'włączone po dotknięciu ekranu'
+                                : 'jest mysz albo nie ma ekranu dotykowego';
 
                 return `Sterowanie dotykowe: ${touch.enabled ? 'włączone' : 'wyłączone'} (${reason}). ` +
                     `Ekran ${window.innerWidth}×${window.innerHeight} punktów, ` +

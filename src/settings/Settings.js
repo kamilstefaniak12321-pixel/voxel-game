@@ -176,6 +176,31 @@ export class Settings {
     }
 
 
+    // Nowe wartości domyślne w trakcie działania (np. telefon wykryty
+    // dopiero po dotknięciu ekranu - main.js). Ustawienia, których
+    // gracz nie zmieniał (mają starą wartość domyślną), dostają nową.
+
+    useDefaults(overrides) {
+
+        for (const [key, value] of Object.entries(overrides)) {
+
+            if (!(key in SETTINGS_DEFAULTS)) {
+                continue;
+            }
+
+            const unchanged = this.values[key] === this.defaults[key];
+
+            this.defaults[key] = value;
+
+            if (unchanged) {
+                this.set(key, value);
+            }
+
+        }
+
+    }
+
+
     // Przywraca wszystkie wartości domyślne.
 
     reset() {

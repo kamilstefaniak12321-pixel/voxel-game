@@ -1,9 +1,10 @@
 # ------------------------------------------------------------
-# APLIKACJA NA KOMPUTER - budowanie instalatora dla Windowsa
+# APLIKACJE - instalator dla Windowsa i aplikacja na Androida (.apk)
 #
-# - Pull request zmieniający aplikację (desktop/, package.json...) -
-#   tylko próbne zbudowanie (instalator do pobrania w zakładce
-#   Actions -> ten przebieg -> Artifacts), bez wydania.
+# - Pull request zmieniający aplikację (desktop/, android/,
+#   package.json...) - tylko próbne zbudowanie (instalator i .apk do
+#   pobrania w zakładce Actions -> ten przebieg -> Artifacts), bez
+#   wydania.
 # - Wypchnięcie na main: jeśli w repozytorium z wydaniami
 #   (package.json -> build.publish) nie ma jeszcze KOMPLETNEGO wydania
 #   tej wersji - instalatora .exe, pliku .blockmap i latest.yml (z niego
@@ -12,7 +13,16 @@
 #   przerwanym wysyłaniu), jest uzupełniane. Kompletne wydanie tej samej
 #   wersji = nic się nie dzieje, więc nowe wydanie = podniesienie
 #   "version" w package.json.
-# - Actions -> "Aplikacja na komputer" -> Run workflow - to samo ręcznie.
+# - Actions -> "Aplikacje (komputer i telefon)" -> Run workflow - to samo
+#   ręcznie.
+#
+# Android (job "android", po Windowsie): aplikacja z folderu android/
+# (Capacitor), pliki gry kopiowane przed budowaniem (npm run
+# android:sync). Z sekretami ANDROID_KEYSTORE i ANDROID_KEYSTORE_PASSWORD
+# powstaje wydanie podpisane kluczem gry (Voxel-Game-<wersja>-android.apk,
+# trafia do wydania obok instalatora - wydanie bez .apk jest uzupełniane).
+# Bez nich - tylko wersja testowa "Voxel Game (test)" w Artifacts.
+# Opis: docs/telefon.md.
 #
 # Instalator buduje electron-builder (bez wysyłania), a do wydania
 # wysyła go GitHub CLI (gh). Gdy coś się nie uda, ostatnie linie
@@ -24,7 +34,7 @@
 # docs/aplikacja.md.
 # ------------------------------------------------------------
 
-name: Aplikacja na komputer
+name: Aplikacje (komputer i telefon)
 
 on:
   push:
@@ -32,6 +42,9 @@ on:
   pull_request:
     paths:
       - 'desktop/**'
+      - 'android/**'
+      - 'capacitor.config.json'
+      - 'tools/android-www.mjs'
       - 'package.json'
       - 'package-lock.json'
       - '.github/workflows/aplikacja.yml'
@@ -49,14 +62,18 @@ jobs:
       version: ${{ steps.check.outputs.version }}
       repo: ${{ steps.check.outputs.repo }}
       exe: ${{ steps.check.outputs.exe }}
+      apk: ${{ steps.check.outputs.apk }}
       build: ${{ steps.check.outputs.build }}
       publish: ${{ steps.check.outputs.publish }}
+      build_android: ${{ steps.check.outputs.build_android }}
+      publish_android: ${{ steps.check.outputs.publish_android }}
     steps:
       - uses: actions/checkout@v5
 
       - id: check
         env:
           WYDANIA_TOKEN: ${{ secrets.WYDANIA_TOKEN }}
+          ANDROID_KEYSTORE: ${{ secrets.ANDROID_KEYSTORE }}
           EVENT: ${{ github.event_name }}
         run: |
           # Wersja, repozytorium z wydaniami i nazwa instalatora - z package.json.
@@ -64,24 +81,38 @@ jobs:
           REPO=$(node -p "const p = require('./package.json').build.publish; p.owner + '/' + p.repo")
           EXE=$(node -p 'const p = require("./package.json"); p.build.nsis.artifactName.replace("${version}", p.version).replace("${ext}", "exe")')
 
+          APK="Voxel-Game-$VERSION-android.apk"
+
           {
             echo "version=$VERSION"
             echo "repo=$REPO"
             echo "exe=$EXE"
+            echo "apk=$APK"
           } >> "$GITHUB_OUTPUT"
+
+          # Android: wydanie tylko z kluczem do podpisu (sekret).
+          if [ -n "$ANDROID_KEYSTORE" ]; then SIGNED=true; else SIGNED=false; fi
 
           if [ "$EVENT" = "pull_request" ]; then
             echo "Pull request - próbne zbudowanie wersji $VERSION."
-            echo "build=true" >> "$GITHUB_OUTPUT"
-            echo "publish=false" >> "$GITHUB_OUTPUT"
+            {
+              echo "build=true"
+              echo "publish=false"
+              echo "build_android=true"
+              echo "publish_android=false"
+            } >> "$GITHUB_OUTPUT"
             exit 0
           fi
 
           if [ -z "$WYDANIA_TOKEN" ]; then
             echo "::warning::Brak sekretu WYDANIA_TOKEN - instalator nie zostanie opublikowany (docs/aplikacja.md)."
             if [ "$EVENT" = "workflow_dispatch" ]; then BUILD=true; else BUILD=false; fi
-            echo "build=$BUILD" >> "$GITHUB_OUTPUT"
-            echo "publish=false" >> "$GITHUB_OUTPUT"
+            {
+              echo "build=$BUILD"
+              echo "publish=false"
+              echo "build_android=$BUILD"
+              echo "publish_android=false"
+            } >> "$GITHUB_OUTPUT"
             exit 0
           fi
 
@@ -104,21 +135,47 @@ jobs:
               console.log(need.filter((name) => !names.includes(name)).join(", "));
             ')
 
+            HAS_APK=$(APK="$APK" node -p 'require("./release.json").assets.some((asset) => asset.name === process.env.APK)')
+
             if [ -z "$MISSING" ]; then
-              echo "Wersja $VERSION jest już wydana w $REPO (komplet plików) - nic do zrobienia."
+              echo "Wersja $VERSION jest już wydana w $REPO (komplet plików instalatora)."
               echo "build=false" >> "$GITHUB_OUTPUT"
               echo "publish=false" >> "$GITHUB_OUTPUT"
-              exit 0
+            else
+              echo "::warning title=Niepełne wydanie::Wydanie v$VERSION w $REPO nie ma plików: $MISSING - instalator zostanie zbudowany i dosłany."
+              echo "build=true" >> "$GITHUB_OUTPUT"
+              echo "publish=true" >> "$GITHUB_OUTPUT"
             fi
 
-            echo "::warning title=Niepełne wydanie::Wydanie v$VERSION w $REPO nie ma plików: $MISSING - instalator zostanie zbudowany i dosłany."
+            if [ "$HAS_APK" = "true" ]; then
+              echo "Aplikacja na Androida ($APK) też jest w wydaniu."
+              echo "build_android=false" >> "$GITHUB_OUTPUT"
+              echo "publish_android=false" >> "$GITHUB_OUTPUT"
+            elif [ "$SIGNED" = "true" ]; then
+              echo "W wydaniu nie ma jeszcze $APK - aplikacja na Androida zostanie zbudowana i dosłana."
+              echo "build_android=true" >> "$GITHUB_OUTPUT"
+              echo "publish_android=true" >> "$GITHUB_OUTPUT"
+            else
+              echo "::warning title=Android::Brak sekretu ANDROID_KEYSTORE - aplikacja na Androida nie trafi do wydania (docs/telefon.md)."
+              echo "build_android=false" >> "$GITHUB_OUTPUT"
+              echo "publish_android=false" >> "$GITHUB_OUTPUT"
+            fi
 
-          else
-            echo "Nowa wersja $VERSION - budowanie i wydanie w $REPO."
+            exit 0
+
           fi
+
+          echo "Nowa wersja $VERSION - budowanie i wydanie w $REPO."
 
           echo "build=true" >> "$GITHUB_OUTPUT"
           echo "publish=true" >> "$GITHUB_OUTPUT"
+
+          if [ "$SIGNED" != "true" ]; then
+            echo "::warning title=Android::Brak sekretu ANDROID_KEYSTORE - w wydaniu będzie tylko instalator dla Windowsa, aplikacja na Androida tylko w wersji testowej w Artifacts (docs/telefon.md)."
+          fi
+
+          echo "build_android=true" >> "$GITHUB_OUTPUT"
+          echo "publish_android=$SIGNED" >> "$GITHUB_OUTPUT"
 
   windows:
     needs: wersja
@@ -186,7 +243,7 @@ jobs:
         run: |
           TAG="v$VERSION"
           FILES=("dist/$EXE" "dist/$EXE.blockmap" "dist/latest.yml")
-          NOTES="Voxel Game $VERSION - instalator dla Windowsa: pobierz $EXE i uruchom. Zainstalowana gra aktualizuje się sama."
+          NOTES="Voxel Game $VERSION - Windows: pobierz $EXE i uruchom (zainstalowana gra aktualizuje się sama). Android (telefon, tablet): pobierz na telefonie Voxel-Game-$VERSION-android.apk i otwórz - nowa wersja instaluje się na starej, światy zostają."
 
           # Uruchamia komendę; przy błędzie pokazuje jej wynik w adnotacji.
           run() {
@@ -225,5 +282,137 @@ jobs:
 
           if [ "$CODE" != "200" ] && [ "$CODE" != "206" ]; then
             echo "::error title=Pobieranie::Instalatora nie da się pobrać: $URL (HTTP $CODE)"
+            exit 1
+          fi
+
+
+  # ----------------------------------------------------------
+  # Android: aplikacja .apk (po Windowsie - żeby nie tworzyć tego
+  # samego wydania naraz). Opis: docs/telefon.md.
+  # ----------------------------------------------------------
+
+  android:
+    needs: [wersja, windows]
+    if: always() && needs.wersja.outputs.build_android == 'true'
+    runs-on: ubuntu-latest
+    env:
+      VERSION: ${{ needs.wersja.outputs.version }}
+      REPO: ${{ needs.wersja.outputs.repo }}
+      APK: ${{ needs.wersja.outputs.apk }}
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - run: npm ci
+
+      # Pliki gry (index.html, src/, assets/, lib/) do aplikacji.
+      - name: Pliki gry do aplikacji
+        run: npm run android:sync
+
+      # Klucz do podpisu z sekretów: jest - wydanie (release), nie ma -
+      # wersja testowa "Voxel Game (test)" (debug, osobna aplikacja).
+      - name: Klucz do podpisu
+        env:
+          ANDROID_KEYSTORE: ${{ secrets.ANDROID_KEYSTORE }}
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+        run: |
+          if [ -n "$ANDROID_KEYSTORE" ] && [ -n "$ANDROID_KEYSTORE_PASSWORD" ]; then
+            echo "$ANDROID_KEYSTORE" | tr -d ' \r\n' | base64 -d > "$RUNNER_TEMP/voxelgame.p12"
+            {
+              echo "ANDROID_KEYSTORE_FILE=$RUNNER_TEMP/voxelgame.p12"
+              echo "ANDROID_KEYSTORE_PASSWORD=$ANDROID_KEYSTORE_PASSWORD"
+              echo "KIND=release"
+              echo "OUT=$APK"
+            } >> "$GITHUB_ENV"
+            echo "Wydanie podpisane kluczem gry."
+          else
+            {
+              echo "KIND=debug"
+              echo "OUT=Voxel-Game-$VERSION-android-TEST.apk"
+            } >> "$GITHUB_ENV"
+            echo "::warning title=Android::Brak sekretów ANDROID_KEYSTORE / ANDROID_KEYSTORE_PASSWORD - powstanie tylko wersja testowa \"Voxel Game (test)\" (osobna aplikacja, nie trafia do wydań). Jak dodać klucz: docs/telefon.md."
+          fi
+
+      - name: Zbuduj aplikację
+        working-directory: android
+        run: |
+          set -o pipefail
+          if [ "$KIND" = "release" ]; then TASK=assembleRelease; else TASK=assembleDebug; fi
+          chmod +x gradlew
+          if ! ./gradlew "$TASK" --no-daemon --stacktrace 2>&1 | tee ../build.log; then
+            TEXT=$(grep -E "error|FAILED|What went wrong|Exception" -A 3 ../build.log | head -n 40 | sed -e 's/%/%25/g' -e 's/\r//g' | awk 'BEGIN { ORS = "%0A" } { print }')
+            echo "::error title=Budowanie aplikacji::$TEXT"
+            exit 1
+          fi
+
+      # Czy plik powstał, co jest w środku (nazwa, wersja, podpis).
+      - name: Sprawdź aplikację
+        run: |
+          FILE=$(ls android/app/build/outputs/apk/$KIND/*.apk | head -n 1)
+          if [ -z "$FILE" ]; then
+            echo "::error title=Brak pliku::Nie powstał plik .apk ($KIND)."
+            exit 1
+          fi
+
+          mkdir -p dist
+          cp "$FILE" "dist/$OUT"
+
+          TOOLS="$ANDROID_HOME/build-tools/$(ls "$ANDROID_HOME/build-tools" | sort -V | tail -n 1)"
+          BADGING=$("$TOOLS/aapt2" dump badging "dist/$OUT" | grep -E "^package:|^application-label:|^sdkVersion|^targetSdkVersion" | tr '\n' ' ')
+          CERT=$("$TOOLS/apksigner" verify --print-certs "dist/$OUT" | grep -m1 "SHA-256" || true)
+          SIZE=$(( $(stat -c %s "dist/$OUT") / 1024 / 1024 ))
+
+          echo "::notice title=Aplikacja ($KIND)::$OUT ($SIZE MB)%0A$BADGING%0A$CERT"
+
+      - uses: actions/upload-artifact@v6
+        with:
+          name: ${{ env.OUT }}
+          path: dist/*.apk
+          retention-days: 14
+
+      # Do wydania - tylko podpisana kluczem gry i tylko gdy Windows się
+      # udał albo nie był potrzebny (wydanie z instalatorem już jest).
+      - name: Opublikuj w wydaniu
+        if: needs.wersja.outputs.publish_android == 'true' && env.KIND == 'release' && (needs.windows.result == 'success' || needs.windows.result == 'skipped')
+        env:
+          GH_TOKEN: ${{ secrets.WYDANIA_TOKEN }}
+        run: |
+          TAG="v$VERSION"
+          EXE=$(node -p 'const p = require("./package.json"); p.build.nsis.artifactName.replace("${version}", p.version).replace("${ext}", "exe")')
+          NOTES="Voxel Game $VERSION - Windows: pobierz $EXE i uruchom (zainstalowana gra aktualizuje się sama). Android (telefon, tablet): pobierz na telefonie $APK i otwórz - nowa wersja instaluje się na starej, światy zostają."
+
+          run() {
+            if ! "$@" > out.log 2>&1; then
+              cat out.log
+              echo "::error title=Wydanie::$* %0A$(sed -e 's/%/%25/g' -e 's/\r//g' out.log | awk 'BEGIN { ORS = "%0A" } { print }')"
+              exit 1
+            fi
+            cat out.log
+          }
+
+          if gh release view "$TAG" --repo "$REPO" > /dev/null 2>&1; then
+            echo "Wydanie $TAG jest - dosyłam $APK."
+            run gh release upload "$TAG" "dist/$APK" --repo "$REPO" --clobber
+            run gh release edit "$TAG" --repo "$REPO" --notes "$NOTES"
+          else
+            echo "Nowe wydanie $TAG (bez instalatora dla Windowsa)."
+            run gh release create "$TAG" "dist/$APK" --repo "$REPO" --title "$TAG" --notes "$NOTES"
+          fi
+
+          URL="https://github.com/$REPO/releases/download/$TAG/$APK"
+          CODE=$(curl -s -L -o /dev/null -r 0-1023 -w "%{http_code}" "$URL")
+          echo "::notice title=Wydanie (Android)::$TAG: $APK%0APobieranie bez logowania: HTTP $CODE"
+
+          if [ "$CODE" != "200" ] && [ "$CODE" != "206" ]; then
+            echo "::error title=Pobieranie::Aplikacji nie da się pobrać: $URL (HTTP $CODE)"
             exit 1
           fi

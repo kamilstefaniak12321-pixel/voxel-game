@@ -69,6 +69,15 @@ const touchMode = touchParameter !== null
     : touchDetected;
 
 
+// Aplikacja na telefon (Android - folder android/, Capacitor): gra
+// działa w niej jak strona, a Capacitor dokłada obiekt
+// window.Capacitor. null = przeglądarka albo aplikacja na komputer.
+
+const nativeApp = window.Capacitor?.isNativePlatform?.()
+    ? window.Capacitor.getPlatform()
+    : null;
+
+
 // Ustawienia gracza (czułość myszy, pole widzenia, motyw...). Na
 // telefonie inne wartości na start (TOUCH_SETTINGS w config.js).
 
@@ -339,6 +348,10 @@ async function playWorld(worldInfo) {
 
         game.touchMode = touchMode;
 
+        // Aplikacja na telefon ('android') albo null (osiągnięcia).
+
+        game.nativeApp = nativeApp;
+
         // Osiągnięcia: gra zgłasza zdarzenia, księga zapisuje, w którym świecie.
 
         game.achievements = achievements;
@@ -499,10 +512,12 @@ function pauseGame() {
 
 // Telefon: wyjście do innej aplikacji / zgaszenie ekranu = pauza
 // i zapis (strona może zostać zamknięta przez system bez pytania).
+// Aplikacja na Androida zgłasza to sama zdarzeniem "apppause"
+// (android/.../MainActivity.java).
 
-document.addEventListener('visibilitychange', () => {
+function pauseOnLeave() {
 
-    if (!touchMode || !document.hidden || !game) {
+    if (!game) {
         return;
     }
 
@@ -513,7 +528,17 @@ document.addEventListener('visibilitychange', () => {
         game.saver.save();
     }
 
+}
+
+document.addEventListener('visibilitychange', () => {
+
+    if (touchMode && document.hidden) {
+        pauseOnLeave();
+    }
+
 });
+
+window.addEventListener('apppause', pauseOnLeave);
 
 
 // Przycisk "wstecz" w telefonie (Android) wyszedłby ze strony, a więc
@@ -1221,7 +1246,8 @@ const touch = touchMode
             chat: () => openChat(''),
             achievements: openAchievements,
             map: toggleMap,
-            fullscreen: toggleFullscreen,
+            // W aplikacji na telefon gra i tak jest na pełnym ekranie.
+            fullscreen: nativeApp ? null : toggleFullscreen,
 
             close: () => {
 

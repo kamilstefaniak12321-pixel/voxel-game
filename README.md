@@ -24,6 +24,14 @@ przykład:
 Internet nie jest potrzebny - three.js jest w `lib/three/`. Światy
 z przeglądarki i z aplikacji są zapisywane osobno.
 
+**Na telefonie / tablecie (wersja testowa):** na komputerze w folderze
+gry `npx serve`, a na telefonie (w tej samej sieci Wi-Fi) adres
+**Network** z konsoli, np. `http://192.168.1.23:3000`. Na ekranie
+dotykowym gra sama włącza **sterowanie dotykowe** - joystick, rozglądanie
+palcem i przyciski (sterowanie poniżej). Wymuszenie na komputerze:
+`?dotyk` w adresie albo `/dotyk wl` (`?dotyk=0`, `/dotyk wyl` wyłącza). Szczegóły, ustawienia na
+telefonie i co jeszcze nie działa: `docs/telefon.md`.
+
 ## Sterowanie
 
 | Klawisz | Akcja |
@@ -47,6 +55,19 @@ z przeglądarki i z aplikacji są zapisywane osobno.
 | M | mapa terenu z góry (to samo co `/mapa`) |
 | L | księga osiągnięć |
 
+**Na telefonie** (sterowanie dotykowe, `docs/telefon.md`):
+
+| Dotyk | Akcja |
+|---|---|
+| lewa część ekranu | joystick - chodzenie (do samego brzegu w przód - bieg) |
+| reszta ekranu - przesuń palec | rozglądanie się |
+| stuknięcie / przytrzymanie palca | postaw blok (zbierz owoce) / kop |
+| ▲ / ▼ (prawy dół) | skok (2× - latanie) / kucanie, w locie w dół |
+| kilof, kostka | kop / postaw tam, gdzie celownik |
+| pasek bloków | stuknięcie - wybór miejsca |
+| przyciski u góry | pauza, ekwipunek, czat, osiągnięcia, widok (F5), mapa, pełny ekran |
+| "wstecz" w telefonie | pauza (nie wychodzi z gry) |
+
 ## Osiągnięcia
 
 Za ciekawe rzeczy w grze dostajesz **osiągnięcia** w czterech rangach:
@@ -58,7 +79,7 @@ w pauzie i na ekranie tytułowym) - z datą i nazwą świata. Księga jest
 wspólna dla wszystkich światów. Niektóre osiągnięcia są sekretne -
 przed zdobyciem widać tylko znak zapytania.
 
-Na start jest 17 osiągnięć (od pierwszego zniszczonego bloku po
+Na start jest 18 osiągnięć (od pierwszego zniszczonego bloku po
 legendarne *Problem spadł z nieba*). Nowa rzecz w grze = nowe
 osiągnięcie - jak je dopisać, zdarzenia z gry i pełna lista (spoilery):
 `docs/osiagniecia.md`. Test: `/osiagniecia` (lista), `/osiagniecia pokaz
@@ -643,7 +664,7 @@ src/
   storage/                  zapis i wczytywanie światów
   rendering/                atlas tekstur, budowanie meshy chunków
   player/                   ruch i kolizje gracza, model, animacje, skórka
-  input/                    klawiatura i mysz
+  input/                    klawiatura i mysz, sterowanie dotykowe (telefon)
   audio/                    dźwięk (lista dźwięków, odtwarzanie, dźwięki menu)
   commands/                 komendy czatu (do testowania)
   interaction/              raycast, niszczenie, stawianie, podświetlenie

@@ -182,6 +182,10 @@ export class Game {
 
         this.achievements = null;
 
+        // Gra na ekranie dotykowym (telefon, tablet - ustawia main.js).
+
+        this.touchMode = false;
+
         // Pomiar wydajności (ustawia main.js) i trwający test
         // wydajności (/wydajnosc test).
 

@@ -732,7 +732,13 @@ export class Menu {
 
         buttons.append(button(TEXTS.done, goBack, '', true));
 
-        screen.append(buttons, el('p', 'menu-note', TEXTS.achievementsHint));
+        // Na telefonie (sterowanie dotykowe) nie ma klawisza L.
+
+        const hint = document.body.classList.contains('touch')
+            ? TEXTS.achievementsHintTouch
+            : TEXTS.achievementsHint;
+
+        screen.append(buttons, el('p', 'menu-note', hint));
 
     }
 

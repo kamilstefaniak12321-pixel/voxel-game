@@ -3239,6 +3239,59 @@ export const GAME_COMMANDS = [
 
 
     {
+        name: 'dotyk',
+        aliases: ['touch', 'telefon'],
+        usage: '/dotyk [wl | wyl]',
+        description: 'Sterowanie dotykowe (telefon, tablet): czy jest włączone, ekran i rozdzielczość; wl / wyl - przełącza (zapis świata i odświeżenie strony).',
+
+        run(args, { game, touch }) {
+
+            const word = simplify(args[0] ?? '');
+
+            if (args[0] === undefined) {
+
+                const canvas = game.renderer.domElement;
+
+                const reason = touch.forced
+                    ? 'wymuszone adresem z ?dotyk'
+                    : touch.detected
+                        ? 'wykryty ekran dotykowy bez myszy'
+                        : 'jest mysz albo nie ma ekranu dotykowego';
+
+                return `Sterowanie dotykowe: ${touch.enabled ? 'włączone' : 'wyłączone'} (${reason}). ` +
+                    `Ekran ${window.innerWidth}×${window.innerHeight} punktów, ` +
+                    `${(window.devicePixelRatio || 1).toFixed(2)} piksela na punkt - ` +
+                    `gra rysuje ${canvas.width}×${canvas.height} pikseli. ` +
+                    `Przełączysz: /dotyk ${touch.enabled ? 'wyl' : 'wl'}`;
+
+            }
+
+            const on =
+                ON_WORDS.includes(word) ? true :
+                OFF_WORDS.includes(word) ? false :
+                null;
+
+            if (on === null) {
+                throw usageError(this);
+            }
+
+            if (on === touch.enabled) {
+                return `Sterowanie dotykowe już jest ${on ? 'włączone' : 'wyłączone'}.`;
+            }
+
+            touch.reload(on);
+
+            return `Zapisuję świat i odświeżam stronę ${on ? 'ze sterowaniem dotykowym' : 'bez sterowania dotykowego'}...`;
+
+        },
+
+        complete(args) {
+            return args.length === 1 ? ['wl', 'wyl'] : [];
+        }
+    },
+
+
+    {
         name: 'ustaw',
         aliases: ['ustawienia', 'settings'],
         usage: '/ustaw | /ustaw <ustawienie> <wartość> | /ustaw domyslne   (np. /ustaw zasieg 256)',

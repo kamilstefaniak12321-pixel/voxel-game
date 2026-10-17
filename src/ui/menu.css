@@ -62,11 +62,43 @@ body:not([data-screen="game"]) #crosshair {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
     gap: 16px;
     padding: 24px 16px;
     box-sizing: border-box;
     overflow-y: auto;
+}
+
+/* Zawartość na środku ekranu: puste "rozpórki" nad i pod nią (marginesy
+   auto) zamiast justify-content: center - dzięki temu, gdy ekran jest za
+   niski (telefon poziomo, małe okno), da się przewinąć do samej góry,
+   a nic nie ucieka nad krawędź. */
+
+.menu-screen::before,
+.menu-screen::after {
+    content: '';
+    margin: auto 0;
+}
+
+/* Niski ekran (telefon poziomo): mniejsze odstępy i tytuł. */
+
+@media (max-height: 520px) {
+
+    .menu-screen {
+        gap: 10px;
+        padding: 12px 16px;
+    }
+
+    .menu-title {
+        margin-bottom: 8px;
+        font-size: calc(var(--title-size) * 0.7);
+    }
+
+    .menu-heading {
+        margin-bottom: 0;
+        font-size: calc(var(--heading-size) * 0.85);
+    }
+
 }
 
 /* Tło z tekstury motywu (sama tekstura jest ustawiona w theme.css) */

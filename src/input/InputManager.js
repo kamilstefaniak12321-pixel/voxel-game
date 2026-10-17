@@ -23,6 +23,12 @@ export class InputManager {
 
         this.enabled = true;
 
+        // false = sterowanie dotykowe (src/input/TouchControls.js):
+        // bez przechwytywania myszy - "klawisze" i "mysz" ustawia
+        // wtedy TouchControls.
+
+        this.pointerLock = true;
+
         window.addEventListener(
     'keydown',
     event => {
@@ -58,7 +64,7 @@ export class InputManager {
 
         this.element.addEventListener('click', () => {
 
-            if (document.pointerLockElement !== this.element) {
+            if (this.pointerLock && document.pointerLockElement !== this.element) {
                 this.element.requestPointerLock();
             }
 

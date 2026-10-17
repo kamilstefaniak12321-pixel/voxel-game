@@ -96,6 +96,7 @@ Współrzędne można podawać względem gracza: `~` (tu, gdzie stoję),
 | `/skaly zyla [promien] [tp]` | najbliższa żyła lepidolitu pod ziemią (z `tp` - przeniesienie nad nią) |
 | `/skaly przekroj` | przekrój pionowy terenu (to samo co `/mapa przekroj`) |
 | `/ziemniak [wl \| wyl]` | tryb ziemniaka - wszystko działa, ale prościej i szybciej (słaby komputer, brak karty graficznej) |
+| `/dotyk [wl \| wyl]` | sterowanie dotykowe (telefon, tablet): czy włączone, ekran i rozdzielczość; `wl` / `wyl` - przełącza (zapis świata i odświeżenie strony) - `docs/telefon.md` |
 | `/ustaw` | lista ustawień z wartościami |
 | `/ustaw <ustawienie> <wartość>` | zmienia ustawienie, np. `/ustaw zasieg 256`, `/ustaw jasnosc 50`, `/ustaw licznik-fps wl` |
 | `/ustaw domyslne` | przywraca domyślne ustawienia |

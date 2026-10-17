@@ -166,6 +166,16 @@ export const ACHIEVEMENTS = [
         when: (data, book) => book.collect('fruits', data.item) >= FRUITS.length,
         goal: { key: 'fruits', count: FRUITS.length }
     },
+    {
+        id: 'pocket_miner',
+        tier: 'rare',
+        title: 'Kopalnia w kieszeni',
+        task: 'Zagraj na telefonie albo tablecie i zniszcz blok palcem.',
+        comment: 'Bateria właśnie zaczęła się pocić.',
+        icon: 'stone',
+        on: 'blockBroken',
+        when: (data, book) => book.game?.touchMode === true
+    },
 
     // --------------------------------------------------------
     // BARDZO RZADKIE

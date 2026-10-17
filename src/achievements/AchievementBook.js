@@ -308,8 +308,12 @@ export class AchievementBook {
 
         this.notify(achievement);
 
+        // Na telefonie nie ma klawisza L - jest przycisk z książką.
+
+        const where = this.game?.touchMode ? 'przycisk z książką u góry' : 'L';
+
         this.game?.onMessage?.(
-            `Osiągnięcie zdobyte: ${achievement.title} (${TIERS[achievement.tier].name.toLowerCase()}). Księga osiągnięć: L`
+            `Osiągnięcie zdobyte: ${achievement.title} (${TIERS[achievement.tier].name.toLowerCase()}). Księga osiągnięć: ${where}`
         );
 
         for (const listener of this.listeners) {

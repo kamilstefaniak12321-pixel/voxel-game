@@ -85,10 +85,15 @@ export class InventoryScreen {
         this.root.id = 'inventory';
         this.root.hidden = true;
 
+        // Schowane od początku - inaczej puste miejsce na blok pod
+        // kursorem było widać w lewym dolnym rogu ekranu (także w menu).
+
         this.cursorElement = el('div', 'inv-cursor');
         this.cursorElement.append(el('img'), el('span', 'inv-count'));
+        this.cursorElement.hidden = true;
 
         this.tooltip = el('div', 'inv-tooltip');
+        this.tooltip.hidden = true;
 
         document.body.append(this.root, this.cursorElement, this.tooltip);
 

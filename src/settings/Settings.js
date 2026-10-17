@@ -101,9 +101,24 @@ export const SETTINGS_CHOICES = {
 
 export class Settings {
 
-    constructor() {
+    // overrides - inne wartości domyślne (np. na telefonie mniejszy
+    // zasięg widzenia - main.js, TOUCH_SETTINGS w config.js). Działają
+    // tylko dla ustawień, których gracz jeszcze nie zmieniał, i dla
+    // "Przywróć domyślne".
 
-        this.values = { ...SETTINGS_DEFAULTS };
+    constructor(overrides = {}) {
+
+        this.defaults = { ...SETTINGS_DEFAULTS };
+
+        for (const [key, value] of Object.entries(overrides)) {
+
+            if (key in SETTINGS_DEFAULTS) {
+                this.defaults[key] = value;
+            }
+
+        }
+
+        this.values = { ...this.defaults };
 
         this.listeners = new Set();
 
@@ -165,7 +180,7 @@ export class Settings {
 
     reset() {
 
-        for (const [key, value] of Object.entries(SETTINGS_DEFAULTS)) {
+        for (const [key, value] of Object.entries(this.defaults)) {
             this.set(key, value);
         }
 

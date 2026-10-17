@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 
 import { InputManager } from './input/InputManager.js';
+import { TouchControls } from './input/TouchControls.js';
 import { Game } from './game/Game.js';
 import { AchievementBook } from './achievements/AchievementBook.js';
 import { Menu } from './ui/Menu.js';
@@ -26,7 +27,9 @@ import {
     GAME_TITLE,
     UI_THEMES,
     POTATO_RENDER_SCALE,
-    HOTBAR_SIZE
+    HOTBAR_SIZE,
+    TOUCH_SETTINGS,
+    TOUCH_MAX_PIXEL_RATIO
 } from './config.js';
 
 // ------------------------------------------------------------
@@ -39,7 +42,8 @@ import {
 // Stany aplikacji:
 //   'menu'    - ekrany menu, żaden świat nie jest uruchomiony
 //   'loading' - świat się wczytuje albo zapisuje
-//   'playing' - gra działa, mysz jest przechwycona
+//   'playing' - gra działa, mysz jest przechwycona (na telefonie:
+//               widać przyciski dotykowe)
 //   'chat'    - otwarty czat (gra działa dalej, mysz jest wolna)
 //   'inventory' - otwarty ekwipunek (E; gra działa dalej, mysz wolna)
 //   'paused'  - menu pauzy na tle zatrzymanej gry
@@ -48,9 +52,27 @@ import {
 document.title = GAME_TITLE;
 
 
-// Ustawienia gracza (czułość myszy, pole widzenia, motyw...).
+// STEROWANIE DOTYKOWE (telefon, tablet - src/input/TouchControls.js).
+// Włącza się samo na ekranie dotykowym bez myszy. Adresem gry można je
+// wymusić: ...index.html?dotyk (np. do testów na komputerze - wtedy
+// "dotyka" się myszą), a wyłączyć: ?dotyk=0.
 
-const settings = new Settings();
+const touchParameter = new URLSearchParams(location.search).get('dotyk');
+
+const touchDetected = Boolean(
+    window.matchMedia?.('(pointer: coarse)').matches &&
+    !window.matchMedia('(any-pointer: fine)').matches
+);
+
+const touchMode = touchParameter !== null
+    ? !['0', 'nie', 'wyl', 'false'].includes(touchParameter)
+    : touchDetected;
+
+
+// Ustawienia gracza (czułość myszy, pole widzenia, motyw...). Na
+// telefonie inne wartości na start (TOUCH_SETTINGS w config.js).
+
+const settings = new Settings(touchMode ? TOUCH_SETTINGS : {});
 
 
 // Tryb ziemniaka można włączyć też adresem gry: ...index.html?ziemniak
@@ -81,6 +103,9 @@ renderer.info.autoReset = false;
 
 
 const input = new InputManager(renderer.domElement);
+
+// Na telefonie nie ma czego przechwytywać - "mysz" to palec.
+input.pointerLock = !touchMode;
 
 const infoElement = document.getElementById('info');
 
@@ -219,7 +244,9 @@ function applyAppSettings() {
             : settings.get('renderScale')
     ) / 100;
 
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2) * scale);
+    const maxPixelRatio = touchMode ? TOUCH_MAX_PIXEL_RATIO : 2;
+
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, maxPixelRatio) * scale);
 
     renderer.setSize(window.innerWidth, window.innerHeight);
 
@@ -308,6 +335,10 @@ async function playWorld(worldInfo) {
 
         game.sounds = sounds;
 
+        // Telefon / tablet (sterowanie dotykowe) - np. dla osiągnięć.
+
+        game.touchMode = touchMode;
+
         // Osiągnięcia: gra zgłasza zdarzenia, księga zapisuje, w którym świecie.
 
         game.achievements = achievements;
@@ -364,7 +395,7 @@ async function playWorld(worldInfo) {
 
     resume();
 
-    chat.print(TEXTS.chatHint, 'hint');
+    chat.print(touchMode ? TEXTS.touchHint : TEXTS.chatHint, 'hint');
 
 }
 
@@ -384,6 +415,21 @@ function resume() {
 
 
     input.reset();
+
+
+    // Telefon: bez przechwytywania myszy - od razu gramy.
+
+    if (touchMode) {
+
+        state = 'playing';
+
+        menu.hide();
+
+        guardBackButton();
+
+        return;
+
+    }
 
 
     // Starsze przeglądarki nie zwracają Promise - stąd "?.".
@@ -429,6 +475,80 @@ function pointerLockFailed() {
 }
 
 document.addEventListener('pointerlockerror', pointerLockFailed);
+
+
+// Pauza bez myszy (telefon: przycisk pauzy, przełączenie aplikacji,
+// przycisk "wstecz"). Z myszą pauzę robi pointerlockchange niżej.
+
+function pauseGame() {
+
+    if (!game || state !== 'playing') {
+        return;
+    }
+
+    state = 'paused';
+
+    input.reset();
+
+    menu.showPause();
+
+    game.saver.save();
+
+}
+
+
+// Telefon: wyjście do innej aplikacji / zgaszenie ekranu = pauza
+// i zapis (strona może zostać zamknięta przez system bez pytania).
+
+document.addEventListener('visibilitychange', () => {
+
+    if (!touchMode || !document.hidden || !game) {
+        return;
+    }
+
+    if (state === 'playing') {
+        pauseGame();
+    }
+    else {
+        game.saver.save();
+    }
+
+});
+
+
+// Przycisk "wstecz" w telefonie (Android) wyszedłby ze strony, a więc
+// i z gry. W trakcie gry dokładamy więc wpis w historii przeglądarki -
+// "wstecz" zabiera tylko ten wpis, a gra robi pauzę (albo zamyka czat
+// / ekwipunek) i dokłada wpis z powrotem. Na ekranie tytułowym
+// "wstecz" działa normalnie.
+
+function guardBackButton() {
+
+    if (touchMode && history.state?.voxelGame !== true) {
+        history.pushState({ voxelGame: true }, '');
+    }
+
+}
+
+window.addEventListener('popstate', () => {
+
+    if (!touchMode || !game) {
+        return;
+    }
+
+    if (state === 'chat') {
+        closeChat(false);
+    }
+    else if (state === 'inventory') {
+        closeInventory(false);
+    }
+    else if (state === 'playing') {
+        pauseGame();
+    }
+
+    guardBackButton();
+
+});
 
 
 document.addEventListener('pointerlockchange', () => {
@@ -542,7 +662,15 @@ function commandContext() {
         time: game.time,
         chat,
         commands,
-        map: terrainMap
+        map: terrainMap,
+
+        // Sterowanie dotykowe (/dotyk).
+        touch: {
+            enabled: touchMode,
+            detected: touchDetected,
+            forced: touchParameter !== null,
+            reload: reloadWithTouch
+        }
     };
 
 }
@@ -724,19 +852,19 @@ window.addEventListener('keydown', (event) => {
 
     if (state === 'playing' && !event.repeat && event.code === 'KeyM') {
 
-        if (terrainMap.isOpen) {
-            terrainMap.close();
-        }
-        else {
-            terrainMap.open(
-                game.world.generator,
-                game.player.pos.x,
-                game.player.pos.z,
-                undefined,
-                undefined,
-                game.player.yaw
-            );
-        }
+        toggleMap();
+
+        return;
+
+    }
+
+
+    // Telefon z klawiaturą (np. na Bluetooth): ESC - pauza (bez
+    // przechwyconej myszy nie zrobi jej przeglądarka).
+
+    if (touchMode && state === 'playing' && event.code === 'Escape') {
+
+        pauseGame();
 
         return;
 
@@ -760,6 +888,67 @@ window.addEventListener('keydown', (event) => {
 });
 
 // ------------------------------------------------------------
+
+
+function toggleMap() {
+
+    if (!game) {
+        return;
+    }
+
+    if (terrainMap.isOpen) {
+        terrainMap.close();
+    }
+    else {
+        terrainMap.open(
+            game.world.generator,
+            game.player.pos.x,
+            game.player.pos.z,
+            undefined,
+            undefined,
+            game.player.yaw
+        );
+    }
+
+}
+
+
+// /dotyk wl | wyl: zapis świata i strona od nowa z ?dotyk=1 albo
+// ?dotyk=0 w adresie (pozostałe dopiski, np. ?ziemniak, zostają).
+
+async function reloadWithTouch(on) {
+
+    if (game) {
+        await game.saver.flush();
+    }
+
+    const params = new URLSearchParams(location.search);
+
+    params.set('dotyk', on ? '1' : '0');
+
+    location.search = params.toString();
+
+}
+
+
+// Pełny ekran (przycisk na telefonie) - i od razu obrót na poziomo,
+// jeśli telefon na to pozwala.
+
+function toggleFullscreen() {
+
+    if (document.fullscreenElement) {
+
+        document.exitFullscreen?.().catch(() => {});
+
+        return;
+
+    }
+
+    document.documentElement.requestFullscreen?.({ navigationUI: 'hide' })
+        .then(() => screen.orientation?.lock?.('landscape'))
+        .catch(() => {});
+
+}
 
 
 async function quitToMenu() {
@@ -883,6 +1072,13 @@ function animate(now) {
     // menu ma swoje - src/audio/ui.js).
 
     sounds.setActive(Boolean(game) && (state === 'playing' || state === 'chat' || state === 'inventory'));
+
+
+    // Przyciski dotykowe (telefon) - zależnie od stanu.
+
+    touch?.setState(game ? state : 'menu');
+
+    touch?.update();
 
 
     // Niebieska nakładka, gdy kamera jest pod wodą.
@@ -1012,6 +1208,35 @@ const hotbar = new Hotbar(
 const inventoryScreen = new InventoryScreen(blockIcons, {
     close: (relock) => closeInventory(relock)
 });
+
+
+// Sterowanie dotykowe (telefon, tablet) - przyciski na ekranie.
+
+const touch = touchMode
+    ? new TouchControls(
+        input,
+        {
+            pause: pauseGame,
+            inventory: openInventory,
+            chat: () => openChat(''),
+            achievements: openAchievements,
+            map: toggleMap,
+            fullscreen: toggleFullscreen,
+
+            close: () => {
+
+                if (state === 'chat') {
+                    closeChat(true);
+                }
+                else if (state === 'inventory') {
+                    closeInventory(true);
+                }
+
+            }
+        },
+        document.getElementById('hotbar')
+    )
+    : null;
 
 // ------------------------------------------------------------
 // APLIKACJA NA KOMPUTER (desktop/)

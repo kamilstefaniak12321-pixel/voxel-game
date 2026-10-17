@@ -3,6 +3,11 @@
 
 <head>
     <meta charset="UTF-8">
+    <!-- Telefon: strona na cały ekran, bez powiększania palcami; przy
+         otwartej klawiaturze strona się zmniejsza (czat zostaje widoczny) -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover, interactive-widget=resizes-content">
+    <meta name="theme-color" content="#000000">
+    <meta name="mobile-web-app-capable" content="yes">
     <title>Voxel Starter</title>
 
     <style>
@@ -42,11 +47,12 @@
     </style>
 
     <!-- Układ menu (src/ui/menu.css), HUD w grze (src/ui/hud.css),
-         osiągnięcia (src/ui/achievements.css) i motyw (wybierany
-         w ustawieniach) -->
+         osiągnięcia (src/ui/achievements.css), sterowanie dotykowe
+         (src/ui/touch.css) i motyw (wybierany w ustawieniach) -->
     <link rel="stylesheet" href="./src/ui/menu.css">
     <link rel="stylesheet" href="./src/ui/hud.css">
     <link rel="stylesheet" href="./src/ui/achievements.css">
+    <link rel="stylesheet" href="./src/ui/touch.css">
     <link rel="stylesheet" id="theme-css">
 </head>
 

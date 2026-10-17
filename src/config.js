@@ -384,3 +384,18 @@ export const DEFAULT_FAR_TERRAIN = 1024;
 export const POTATO_RENDER_SCALE = 50;
 export const POTATO_VIEW_DISTANCE = 32;
 export const POTATO_STAR_SHARE = 0.3;
+
+// TELEFON / TABLET (sterowanie dotykowe - src/input/TouchControls.js,
+// włącza się samo na ekranie dotykowym bez myszy albo adresem ?dotyk).
+// Telefon ma słabszą kartę graficzną niż komputer i baterię, więc
+// na start (dopóki gracz sam tego nie zmieni w ustawieniach):
+export const TOUCH_SETTINGS = {
+    viewDistance: 32,      // bloki
+    farTerrain: 512,       // bloki
+    renderScale: 80,       // procent rozdzielczości
+    fpsLimit: 60,          // klatki na sekundę
+    showDebug: false       // napisy F3 zasłaniałyby przyciski
+};
+// Ekran telefonu ma 2-3 piksele na punkt - rysujemy najwyżej tyle
+// pikseli na punkt (więcej i tak prawie nie widać, a zjada baterię).
+export const TOUCH_MAX_PIXEL_RATIO = 1.5;

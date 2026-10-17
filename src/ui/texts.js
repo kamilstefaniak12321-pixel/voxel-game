@@ -22,6 +22,7 @@ export const TEXTS = {
     achievementByCommand: ' · przyznane komendą',
     achievementProgress: (now, goal) => `Postęp: ${now} z ${goal}`,
     achievementsHint: 'W grze: klawisz L',
+    achievementsHintTouch: 'W grze: przycisk z książką u góry ekranu',
 
     // Lista światów
     selectWorld: 'Wybierz świat',
@@ -83,6 +84,10 @@ export const TEXTS = {
 
     // Czat (pokazywane po wejściu do świata)
     chatHint: 'E - ekwipunek, T - czat, /pomoc - lista komend do testowania gry, F5 - widok z trzeciej osoby',
+
+    // To samo na telefonie (sterowanie dotykowe - src/input/TouchControls.js).
+    touchHint: 'Lewa strona ekranu - chodzenie (do samego brzegu w przód - bieg), prawa - rozglądanie. ' +
+        'Stuknij - postaw blok, przytrzymaj - kop. Skok 2 razy - latanie (tryb kreatywny).',
 
     // Ustawienia
     settingsTitle: 'Ustawienia',

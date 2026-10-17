@@ -26,6 +26,8 @@ import { setAmbientOcclusion } from '../rendering/ChunkMesher.js';
 import { viewUniforms } from '../rendering/viewUniforms.js';
 import { blockMaterial, plantMaterial, waterMaterial, setPotatoDefine } from '../rendering/BlockRenderData.js';
 import { Meteorites } from './Meteorites.js';
+import { SpaceView } from '../space/SpaceView.js';
+import { Skyfall } from '../space/Skyfall.js';
 import { createGlowSprite } from '../rendering/Glow.js';
 import { WorldSaver } from '../storage/WorldSaver.js';
 import { lightToBrightness, describeLight } from '../world/Light.js';
@@ -44,8 +46,15 @@ import {
     POTATO_VIEW_DISTANCE,
     MOUSE_SENSITIVITY,
     HOTBAR_SIZE,
-    SPRINT_FOV_FACTOR
+    SPRINT_FOV_FACTOR,
+    CHUNK_HEIGHT
 } from '../config.js';
+
+
+// Ile bloków nad światem (nad CHUNK_HEIGHT) jeszcze widać prawdziwe
+// chunki pod sobą - wyżej sam daleki teren (i kula Ziemi).
+
+const HIGH_VIEW = 1100;
 
 
 // Tryby gry: przygoda (zbieranie i zużywanie bloków) i kreatywny
@@ -148,6 +157,10 @@ export class Game {
 
         this.meteorites = new Meteorites(this);
 
+        // Spadanie z kosmosu jak meteoryt: ogień, wstrząsy, krater.
+
+        this.skyfall = new Skyfall(this);
+
         // Światło lampy trzymanej w ręce (wybranej na pasku).
 
         this.handLight = {
@@ -205,6 +218,12 @@ export class Game {
         this.farTerrain = new FarTerrain(this.world);
 
         this.sky.attachLights(this.farTerrain.scene);
+
+
+        // Kosmos (sekret): z wysoka czarne niebo, planety i kula Ziemi
+        // (src/space/SpaceView.js).
+
+        this.spaceView = new SpaceView(this);
 
 
         // Cienie w kątach z ustawień - zanim powstaną pierwsze meshe.
@@ -520,6 +539,13 @@ export class Game {
         this.farTerrain.update(this.camera.position);
 
 
+        // Kosmos: jak wysoko jesteśmy (niebo, kula Ziemi) - przed niebem.
+
+        this.spaceView.update(dt, this.camera.position);
+
+        this.updateCameraRange();
+
+
         // Autozapis co jakiś czas.
 
         this.saver.update(dt);
@@ -532,12 +558,21 @@ export class Game {
             ? Math.min(0, (this.world.generator.baseHeight + 1 - this.camera.position.y) / this.farTerrain.outer)
             : 0;
 
+        // Z kulą Ziemi (kosmos) horyzont jest dalej - tam, gdzie kończy się kula.
+
+        if (this.spaceView.horizonDip < 0) {
+            this.sky.horizonDip = Math.min(this.sky.horizonDip, this.spaceView.horizonDip);
+        }
+
         this.sky.update(this.time.days, dt, this.renderer.getPixelRatio());
 
         this.updateFog(dt);
 
 
-        // Meteoryty, rosnące krzaki, kule światła i dynamiczne światło.
+        // Spadanie z kosmosu (ogień, krater), meteoryty, rosnące krzaki,
+        // kule światła i dynamiczne światło.
+
+        this.skyfall.update(dt);
 
         this.meteorites.update(dt);
 
@@ -748,7 +783,9 @@ export class Game {
 
     updateFovBoost(dt) {
 
-        const target = this.player.sprinting ? SPRINT_FOV_FACTOR : 1;
+        // Bieg i spadanie z kosmosu (ogień) poszerzają pole widzenia.
+
+        const target = (this.player.sprinting ? SPRINT_FOV_FACTOR : 1) * this.skyfall.fovFactor;
 
         const previous = this.fovBoost;
 
@@ -788,7 +825,7 @@ export class Game {
 
         const camera = this.camera;
 
-        const shake = this.meteorites.shake;
+        const shake = Math.max(this.meteorites.shake, this.skyfall.shake);
 
         const saved = this.view || shake > 0.001
             ? { position: camera.position.clone(), rotation: camera.rotation.clone() }
@@ -845,7 +882,13 @@ export class Game {
 
             renderer.clearDepth();
 
+            // Z wysoka: kula Ziemi pod dalekim terenem, chmury nad nim.
+
+            this.spaceView.renderBehind(renderer, camera);
+
             this.farTerrain.render(renderer, camera);
+
+            this.spaceView.renderFront(renderer, camera);
 
             renderer.clearDepth();
 
@@ -973,6 +1016,10 @@ export class Game {
 
 
             sources.push(...this.meteorites.getLightSources());
+
+            if (this.skyfall.light.strength > 0) {
+                sources.push(this.skyfall.light);
+            }
 
             for (const orb of this.orbs) {
                 sources.push(orb.light);
@@ -1124,7 +1171,20 @@ export class Game {
 
         const loaded = Math.floor(this.world.completeRadius() / 8) * 8;
 
-        const inner = Math.max(16, Math.min(viewDistance, loaded));
+        let inner = Math.max(16, Math.min(viewDistance, loaded));
+
+
+        // Bardzo wysoko chunków już nie widać (updateCameraRange) -
+        // daleki teren jest wtedy także pod graczem (z zapasem, żeby
+        // nie przełączać tam i z powrotem na granicy).
+
+        const height = this.camera.position.y - CHUNK_HEIGHT;
+
+        this.farUnderPlayer = this.farUnderPlayer ? height > HIGH_VIEW - 100 : height > HIGH_VIEW;
+
+        if (this.farUnderPlayer) {
+            inner = 16;
+        }
 
 
         this.farTerrain.setRange(inner, outer);
@@ -1132,6 +1192,36 @@ export class Game {
         viewUniforms.uFarEnabled.value = this.farTerrain.active ? 1 : 0;
         viewUniforms.uFarInner.value = inner;
         viewUniforms.uFarOuter.value = Math.max(outer, inner);
+
+    }
+
+
+    // Z wysoka kamera świata sięga dalej, żeby chunki pod graczem
+    // nie znikały (do HIGH_VIEW bloków nad światem; wyżej jest już
+    // tylko daleki teren i kula Ziemi). Zaokrąglone do 64 bloków.
+    // Bez dalekiego terenu nie ma po co - chunki i tak znikają we mgle.
+
+    updateCameraRange() {
+
+        const base = this.cameraFarBase;
+
+        if (!base) {
+            return;
+        }
+
+        const height = this.farTerrain.active
+            ? Math.min(HIGH_VIEW + 200, Math.max(0, this.camera.position.y - CHUNK_HEIGHT))
+            : 0;
+
+        const far = base + Math.ceil(height * 1.15 / 64) * 64;
+
+        if (far !== this.camera.far) {
+
+            this.camera.far = far;
+
+            this.camera.updateProjectionMatrix();
+
+        }
 
     }
 
@@ -1153,9 +1243,13 @@ export class Game {
 
         this.camera.fov = settings.get('fov') * (this.fovBoost ?? 1);
 
-        this.camera.far = viewDistance + 3 * CHUNK_SIZE + 64;
+        this.cameraFarBase = viewDistance + 3 * CHUNK_SIZE + 64;
+
+        this.camera.far = this.cameraFarBase;
 
         this.camera.updateProjectionMatrix();
+
+        this.updateCameraRange();
 
 
         this.updateFarRange();
@@ -1179,6 +1273,8 @@ export class Game {
         this.sky.setLowDetail(potato);
 
         this.farTerrain.setLowDetail(potato);
+
+        this.spaceView.setLowDetail(potato);
 
         setPotatoDefine([blockMaterial, plantMaterial, waterMaterial], potato);
 
@@ -1653,6 +1749,8 @@ export class Game {
 
         this.meteorites.dispose();
 
+        this.skyfall.dispose();
+
         this.water.dispose();
 
         this.removeOrbs();
@@ -1660,6 +1758,8 @@ export class Game {
         this.dynamicLight.dispose();
 
         this.farTerrain.dispose();
+
+        this.spaceView.dispose();
 
         this.model.dispose();
 

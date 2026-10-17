@@ -30,7 +30,7 @@ z przeglądarki i z aplikacji są zapisywane osobno.
 |---|---|
 | WASD | ruch |
 | Spacja | skok; w wodzie - płyń w górę (przy brzegu - wyjście z wody) |
-| 2× Spacja | latanie (tryb kreatywny): Spacja - w górę, Shift - w dół, lądowanie kończy lot |
+| 2× Spacja | latanie (tryb kreatywny): Spacja - w górę, Shift - w dół (wysoko coraz szybciej), lądowanie kończy lot |
 | Shift | kucanie (wolniej, niżej, nie spada się z krawędzi); w wodzie - nurkuj |
 | 2× W albo R | bieg |
 | F5 | widok: z oczu / zza pleców / z przodu |
@@ -262,6 +262,8 @@ z czatu: `/ustaw` (lista), np. `/ustaw zasieg 256`.
 - **Woda** - plusk, pływanie, chlupanie w płytkiej wodzie, krople przy
   wychodzeniu, szum pod wodą (reszta dźwięków jest wtedy głucha) i fale
   przy brzegu (opis wyżej: *Woda*).
+- **Kosmos** - cichy pomruk wysoko w kosmosie, a przy spadaniu jak
+  meteoryt zapłon, ryk ognia i pęd powietrza (`docs/kosmos.md`).
 - **Meteoryt** - huk lecącej kuli ognia narasta i robi się coraz
   wyższy, a uderzenie słychać trochę po błysku (dźwięk leci 343 bloki na
   sekundę - jak grzmot po błyskawicy). Potem grad odłamków i trzaskający,
@@ -544,6 +546,15 @@ Kolory nieba i światła o każdej porze dnia są w `src/sky/SkyColors.js`
 Jak jest zbudowane niebo i jak dokładać kolejne rzeczy (kolorowe
 i dynamiczne światło, meteoryty, chmury...) - `docs/niebo-i-swiatlo.md`.
 
+## Sekret: kosmos
+
+*(spoiler)* Kto w locie poleci naprawdę wysoko, ten trafi w kosmos:
+świat zagina się w kulę z kontynentami, morzami, chmurami i czapami
+lodowymi, niebo robi się czarne, a wśród gwiazd widać planety. Powrót -
+wyłączyć latanie i spadać jak meteoryt, w powłoce ognia, aż do
+uderzenia, które robi krater. Wszystko o tym (i ukryta komenda
+`/kosmos`) - `docs/kosmos.md`.
+
 ## Zapis świata
 
 Świat zapisuje się sam w przeglądarce (IndexedDB): zmienione bloki
@@ -593,7 +604,7 @@ assets/textures/sky/        tekstury nieba (księżyc)
 assets/textures/player/     skórka gracza i szablon skórki
 assets/ui/themes/           motywy menu (kolory, czcionka, tło)
 assets/fonts/               czcionki
-assets/sounds/              dźwięki (.ogg): bloki, kroki, zbieranie, meteoryt, menu (ui/), woda
+assets/sounds/              dźwięki (.ogg): bloki, kroki, zbieranie, meteoryt, menu (ui/), woda, kosmos
 tools/                      skrypty pomocnicze (generator dźwięków)
 docs/                       opisy, jak działają większe części gry
 src/
@@ -606,7 +617,8 @@ src/
   items/                    przedmioty, które nie są blokami (owoce)
   world/                    świat, chunki, szum, światło, daleki teren
   world/terrain/            generatory terenu (realistyczny, lista typów, formy terenu, skały)
-  sky/                      czas, słońce, księżyc, gwiazdy, kolory nieba
+  sky/                      czas, słońce, księżyc, gwiazdy, planety, kolory nieba
+  space/                    sekret: kosmos - kula Ziemi, spadanie jak meteoryt
   storage/                  zapis i wczytywanie światów
   rendering/                atlas tekstur, budowanie meshy chunków
   player/                   ruch i kolizje gracza, model, animacje, skórka

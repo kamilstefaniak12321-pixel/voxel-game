@@ -4,8 +4,16 @@ import { atlasAverageTexture } from './TextureAtlas.js';
 
 import {
     FAR_HAZE_DISTANCE,
-    FAR_HAZE_MAX
+    FAR_HAZE_MAX,
+    SEA_LEVEL
 } from '../config.js';
+
+
+// Powietrze rzednie z wysokością (mgiełka z wysoka): powyżej
+// HAZE_GROUND gęstość maleje e razy co HAZE_HEIGHT bloków.
+
+const HAZE_GROUND = SEA_LEVEL + 40;
+const HAZE_HEIGHT = 250;
 
 // ------------------------------------------------------------
 // WSPÓLNE WARTOŚCI WIDOKU
@@ -55,7 +63,15 @@ export const viewUniforms = {
 
     uUnderwater: { value: 0 },
     uUnderwaterColor: { value: new THREE.Color() },
-    uUnderwaterDensity: { value: 0.08 }
+    uUnderwaterDensity: { value: 0.08 },
+
+    // Kosmos (src/space/): wysoko nad ziemią daleki teren wygina się
+    // w kulę o promieniu 1 / uCurvature (0 = płasko), a za jego końcem
+    // jest kula Ziemi (uGlobe 0-1) - wtedy brzeg dalekiego terenu nie
+    // znika w niebie, tylko przechodzi w kulę.
+
+    uCurvature: { value: 0 },
+    uGlobe: { value: 0 }
 
 };
 
@@ -71,19 +87,38 @@ export const VIEW_GLSL = /* glsl */ `
     uniform float uUnderwater;
     uniform vec3 uUnderwaterColor;
     uniform float uUnderwaterDensity;
+    uniform float uCurvature;
+    uniform float uGlobe;
 
     const vec3 VIEW_LUMINANCE = vec3(0.2126, 0.7152, 0.0722);
 
 
-    // Ile mgiełki jest w odległości d (w poziomie): rośnie z
-    // odległością, a przy samym końcu dalekiego terenu trochę
-    // szybciej, żeby jego brzeg łagodnie przechodził w niebo.
+    // Ile mgiełki jest na drodze długości d od kamery: rośnie
+    // z odległością. Z wysoka (patrząc w dół przez coraz rzadsze
+    // powietrze) jest jej mniej.
 
-    float farHaze(float d) {
+    float hazeAlong(float d) {
 
-        float haze = uHazeMax * (1.0 - exp(-d / uHazeDistance));
+        float height = max(cameraPosition.y - ${HAZE_GROUND.toFixed(1)}, 0.0);
 
-        float edge = smoothstep(uFarOuter * 0.8, uFarOuter, d);
+        float thin = height < 1.0
+            ? 1.0
+            : ${HAZE_HEIGHT.toFixed(1)} * (1.0 - exp(-height / ${HAZE_HEIGHT.toFixed(1)})) / height;
+
+        return uHazeMax * (1.0 - exp(-d * thin / uHazeDistance));
+
+    }
+
+
+    // Mgiełka w punkcie odległym od kamery o offset. Przy samym końcu
+    // dalekiego terenu rośnie szybciej, żeby jego brzeg łagodnie
+    // przechodził w niebo (chyba że za nim jest kula Ziemi).
+
+    float farHaze(vec3 offset) {
+
+        float haze = hazeAlong(length(offset));
+
+        float edge = smoothstep(uFarOuter * 0.8, uFarOuter, length(offset.xz)) * (1.0 - uGlobe);
 
         return mix(haze, 1.0, edge * 0.45);
 
@@ -113,6 +148,42 @@ export const VIEW_GLSL = /* glsl */ `
 
         return light * (target / max(amount, 0.0001));
 
+    }
+
+`;
+
+
+// Kula Ziemi z kosmosu (daleki teren wygięty w kulę i src/space/Globe.js):
+// światło dnia w miejscu kuli, gdzie słońce stoi na wysokości mu
+// (1 = w zenicie, 0 = na horyzoncie) - mniej więcej jak w tabeli
+// w SkyColors.js: otoczenie, słońce, nocne odbarwienie i jasność
+// mgiełki. Daleki teren i kula dokładają różnicę między tym miejscem
+// a miejscem gracza - dzięki temu na całej kuli widać granicę dnia
+// i nocy, a pod graczem wszystko wygląda tak jak na ziemi.
+// Wymaga SKY_COLOR_GLSL (uSunDirection) przed sobą.
+
+export const GLOBE_LIGHT_GLSL = /* glsl */ `
+
+    float daylightAmbient(float mu) {
+        return 0.04 + 0.66 * smoothstep(-0.16, 0.22, mu);
+    }
+
+    float daylightSun(float mu) {
+        return 0.9 * smoothstep(-0.02, 0.22, mu);
+    }
+
+    float daylightNight(float mu) {
+        return 0.6 * (1.0 - smoothstep(-0.16, 0.05, mu));
+    }
+
+    float daylightHaze(float mu) {
+        return mix(0.06, 1.0, smoothstep(-0.25, 0.15, mu));
+    }
+
+    // Jasność mgiełki w tym miejscu względem miejsca gracza.
+
+    float hazeScale(float mu) {
+        return clamp(daylightHaze(mu) / daylightHaze(uSunDirection.y), 0.0, 4.0);
     }
 
 `;

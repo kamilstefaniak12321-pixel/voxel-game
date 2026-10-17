@@ -11,9 +11,17 @@ import {
 // Wielka kula dookoła kamery, od środka pomalowana kolorem nieba
 // (gradient, zachody - patrz skyShader.js). Rysowana jako pierwsza,
 // wszystko inne jest na niej.
+//
+// Wysoko nad ziemią (kosmos, uSpace) kopuła czernieje - najpierw
+// w zenicie, na końcu przy horyzoncie. Z wysoka gradient zaczyna się
+// od widocznego horyzontu (uHorizonDip), a nie od linii poziomu.
 // ------------------------------------------------------------
 
 export const DOME_RADIUS = 100;
+
+// Kolor nieba w kosmosie (sRGB).
+
+const SPACE_COLOR = new THREE.Color('#010208');
 
 
 export class SkyDome {
@@ -36,11 +44,31 @@ export class SkyDome {
             fragmentShader: /* glsl */ `
                 varying vec3 vDirection;
 
+                uniform float uSpace;
+                uniform float uHorizonDip;
+
                 ${SKY_COLOR_GLSL}
 
                 void main() {
 
-                    gl_FragColor = vec4(skyColor(normalize(vDirection)), 1.0);
+                    vec3 direction = normalize(vDirection);
+
+                    // Z wysoka horyzont jest niżej niż linia poziomu -
+                    // gradient nieba zaczyna się od niego.
+
+                    vec3 skyDirection = direction;
+
+                    skyDirection.y = (direction.y - uHorizonDip) / (1.0 - uHorizonDip);
+
+                    vec3 color = skyColor(normalize(skyDirection));
+
+                    // Kosmos: czernieje od zenitu w dół.
+
+                    float space = clamp(uSpace * 1.5 - (1.0 - direction.y) * 0.25, 0.0, 1.0);
+
+                    color = mix(color, vec3(${SPACE_COLOR.r.toFixed(5)}, ${SPACE_COLOR.g.toFixed(5)}, ${SPACE_COLOR.b.toFixed(5)}), space);
+
+                    gl_FragColor = vec4(color, 1.0);
 
                     #include <colorspace_fragment>
 

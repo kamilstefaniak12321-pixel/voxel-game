@@ -254,6 +254,44 @@ export const WATER_DEPTH_LIGHT = 0.9;
 export const WATER_DEPTH_LIGHT_MIN = 0.3;
 
 // ------------------------------------------------------------
+// KOSMOS - sekret (src/space/, docs/kosmos.md)
+// ------------------------------------------------------------
+
+// Lot w pionie (Spacja/Shift w locie) przyspiesza z wysokością:
+// powyżej FLY_BOOST_START prędkość w górę i w dół rośnie o tyle,
+// ile wynosi zwykła, co FLY_BOOST_BLOCKS bloków (na wysokości 1000
+// ~15 razy szybciej, w kosmosie kilkaset bloków na sekundę).
+// W poziomie lot jest zwykły.
+export const FLY_BOOST_START = 160;
+export const FLY_BOOST_BLOCKS = 60;
+
+// Wyżej nie da się polecieć.
+export const SPACE_MAX_ALTITUDE = 30000;
+
+// Niebo (wysokość kamery): od SPACE_START zaczyna ciemnieć,
+// od SPACE_FULL jest czarne - kosmos (gwiazdy, planety).
+export const SPACE_START = 800;
+export const SPACE_FULL = 3000;
+
+// Ziemia z wysoka: od SPACE_CURVE_START teren zaczyna się zaginać,
+// od SPACE_CURVE_FULL to już kula o promieniu GLOBE_RADIUS bloków
+// (świat owinięty dookoła miejsca pod graczem).
+export const SPACE_CURVE_START = 350;
+export const SPACE_CURVE_FULL = 1600;
+export const GLOBE_RADIUS = 4000;
+
+// Spadanie z kosmosu ("jak meteoryt"): zaczyna się, gdy gracz nie
+// leci i jest wyżej niż SKYFALL_START. Prędkość spadania zależy od
+// wysokości nad morzem: SKYFALL_SPEED + SKYFALL_SPEED_PER_BLOCK *
+// wysokość (najwyżej SKYFALL_MAX_SPEED). Uderzenie w ziemię robi
+// krater (wielkość: SKYFALL_CRATER_SCALE razy krater meteorytu).
+export const SKYFALL_START = 1000;
+export const SKYFALL_SPEED = 200;
+export const SKYFALL_SPEED_PER_BLOCK = 0.06;
+export const SKYFALL_MAX_SPEED = 900;
+export const SKYFALL_CRATER_SCALE = 1.2;
+
+// ------------------------------------------------------------
 // MODEL GRACZA I KAMERA (src/player/PlayerModel.js,
 // docs/gracz.md)
 // ------------------------------------------------------------

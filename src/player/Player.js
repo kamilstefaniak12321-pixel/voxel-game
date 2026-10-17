@@ -18,7 +18,15 @@ import {
     WATER_DRAG,
     SWIM_UP_ACCELERATION,
     SWIM_DOWN_ACCELERATION,
-    WATER_CLIMB_SPEED
+    WATER_CLIMB_SPEED,
+    SEA_LEVEL,
+    FLY_BOOST_START,
+    FLY_BOOST_BLOCKS,
+    SPACE_MAX_ALTITUDE,
+    SKYFALL_START,
+    SKYFALL_SPEED,
+    SKYFALL_SPEED_PER_BLOCK,
+    SKYFALL_MAX_SPEED
 } from '../config.js';
 
 import {
@@ -50,6 +58,27 @@ const STAND_EYE_HEIGHT = 1.6;
 function clamp01(value) {
 
     return Math.max(0, Math.min(1, value));
+
+}
+
+
+// Ile razy szybszy jest lot w pionie na wysokości y (1 przy ziemi).
+
+export function flyBoost(y) {
+
+    return 1 + Math.max(0, y - FLY_BOOST_START) / FLY_BOOST_BLOCKS;
+
+}
+
+
+// Prędkość spadania z kosmosu na wysokości y (bloki na sekundę).
+
+export function skyfallSpeed(y) {
+
+    return Math.min(
+        SKYFALL_MAX_SPEED,
+        SKYFALL_SPEED + SKYFALL_SPEED_PER_BLOCK * Math.max(0, y - SEA_LEVEL)
+    );
 
 }
 
@@ -134,6 +163,18 @@ export class Player {
         this.touchingWall = false;
 
 
+        // Spadanie z kosmosu (patrz updateSkyfall):
+        //   skyfall       - spada jak meteoryt,
+        //   skyfallImpact - uderzył w ziemię w tej klatce:
+        //                   { speed, x, y, z } albo null (krater robi
+        //                   src/space/Skyfall.js),
+        //   skyfallSplash - wpadł z kosmosu do wody w tej klatce
+        //                   (prędkość, 0 = nie).
+        this.skyfall = false;
+        this.skyfallImpact = null;
+        this.skyfallSplash = 0;
+
+
         this.spawn();
 
     }
@@ -163,6 +204,8 @@ spawn() {
 
 
     this.vel.set(0, 0, 0);
+
+    this.skyfall = false;
 
 }
 
@@ -363,7 +406,11 @@ updateMovement(dt, input) {
             vertical -= 1;
         }
 
-        this.vel.y = vertical * speed;
+        // Wysoko lot w pionie przyspiesza (do kosmosu i z powrotem).
+
+        this.vel.y = vertical * speed * flyBoost(this.pos.y);
+
+        this.skyfall = false;
 
         return;
 
@@ -377,6 +424,21 @@ updateMovement(dt, input) {
     if (water > 0) {
 
         this.updateSwimming(dt, water, space, input);
+
+        return;
+
+    }
+
+
+    // Z kosmosu spada się jak meteoryt.
+
+    if (this.pos.y > SKYFALL_START) {
+        this.skyfall = true;
+    }
+
+    if (this.skyfall) {
+
+        this.updateSkyfall(dt);
 
         return;
 
@@ -403,6 +465,22 @@ updateMovement(dt, input) {
         this.onGround = false;
 
     }
+
+}
+
+
+// Spadanie z kosmosu: prędkość graniczna zależy od wysokości - w górze
+// kilkaset bloków na sekundę, przy ziemi mniej (gęstsze powietrze),
+// ale wciąż jak meteoryt. Na początku gracz szybko się rozpędza,
+// a niżej zwalnia razem z prędkością graniczną.
+
+updateSkyfall(dt) {
+
+    const terminal = skyfallSpeed(this.pos.y);
+
+    const acceleration = -GRAVITY + terminal * 0.5;
+
+    this.vel.y = Math.max(this.vel.y - acceleration * dt, -terminal);
 
 }
 
@@ -647,6 +725,17 @@ resolveMovement(dt) {
     }
 
 
+    // Wyżej niż SPACE_MAX_ALTITUDE nie da się polecieć.
+
+    if (this.pos.y > SPACE_MAX_ALTITUDE) {
+
+        this.pos.y = SPACE_MAX_ALTITUDE;
+
+        this.vel.y = Math.min(this.vel.y, 0);
+
+    }
+
+
     // Granica świata - dalej nie da się przejść.
 
     const limit = WORLD_BORDER - this.width / 2;
@@ -859,6 +948,8 @@ update(dt, input) {
 
     this.splash = 0;
     this.leftWater = false;
+    this.skyfallImpact = null;
+    this.skyfallSplash = 0;
 
     const wasSubmerged = this.submerged;
 
@@ -887,6 +978,33 @@ update(dt, input) {
 
     if (!this.flying && wasSubmerged < 0.05 && this.submerged >= 0.05) {
         this.splash = Math.max(0.5, fallSpeed, horizontal * 0.4);
+    }
+
+
+    // Koniec spadania z kosmosu: wpadnięcie do wody (woda szybko
+    // hamuje - także gdy w tej samej klatce sięgnął płytkiego dna)
+    // albo uderzenie w ziemię (krater).
+
+    if (this.skyfall && this.submerged > 0) {
+
+        this.skyfall = false;
+
+        this.skyfallSplash = Math.max(0, fallSpeed);
+
+        this.vel.y = Math.max(this.vel.y, -12);
+
+    }
+    else if (this.skyfall && this.onGround) {
+
+        this.skyfall = false;
+
+        this.skyfallImpact = {
+            speed: Math.max(0, fallSpeed),
+            x: Math.floor(this.pos.x),
+            y: Math.floor(this.pos.y + 0.01),
+            z: Math.floor(this.pos.z)
+        };
+
     }
 
     if (wasSubmerged > 0.25 && this.submerged < 0.02) {

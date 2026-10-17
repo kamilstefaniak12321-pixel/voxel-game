@@ -77,7 +77,8 @@ export class Galaxies {
         this.material = new THREE.ShaderMaterial({
 
             uniforms: {
-                uVisibility: { value: 0 }
+                uVisibility: { value: 0 },
+                uSpace: { value: 0 }
             },
 
             vertexShader: /* glsl */ `
@@ -93,6 +94,7 @@ export class Galaxies {
 
             fragmentShader: /* glsl */ `
                 uniform float uVisibility;
+                uniform float uSpace;
 
                 varying vec3 vLocal;
                 varying vec3 vWorld;
@@ -193,7 +195,7 @@ export class Galaxies {
 
                     // Przy horyzoncie gaśnie (gruba warstwa powietrza).
 
-                    float aboveHorizon = smoothstep(0.0, 0.4, normalize(vWorld).y);
+                    float aboveHorizon = mix(smoothstep(0.0, 0.4, normalize(vWorld).y), 1.0, uSpace);
 
                     gl_FragColor = vec4(color * uVisibility * aboveHorizon * 0.14, 1.0);
 
@@ -227,6 +229,7 @@ export class Galaxies {
         this.object.quaternion.copy(celestial.starRotation);
 
         this.material.uniforms.uVisibility.value = state.galaxyVisibility;
+        this.material.uniforms.uSpace.value = state.space;
 
         // W trybie ziemniaka (enabled = false) Drogi Mlecznej nie ma -
         // jej shader jest najdroższą częścią nocnego nieba.

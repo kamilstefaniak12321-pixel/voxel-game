@@ -115,6 +115,12 @@ Wartości tak/nie: `wl` / `wyl`.
 Niektóre komendy mają też angielskie nazwy (`/time`, `/moon`, `/tp`,
 `/fly`, `/give`, `/fill`...) - pokazuje je `/pomoc <komenda>`.
 
+### Sekrety (nie ma ich w `/pomoc` ani w podpowiedziach)
+
+| komenda | co robi |
+|---|---|
+| `/kosmos [lec \| spadaj \| status] [wysokość]` | kosmos: przeniesienie wysoko (domyślnie 6000, w locie), `spadaj` - od razu w dół jak meteoryt (krater przy lądowaniu), `status` - wysokość, kula, prędkość, ogień. Opis: `docs/kosmos.md` |
+
 ## Zasada: nowa rzecz w grze = nowa komenda
 
 Każda nowość powinna dać się szybko sprawdzić z czatu: nowy blok -
@@ -132,6 +138,7 @@ pogrupowana tematami). Nowa komenda to nowy obiekt na tej liście:
     aliases: ['jump'],                  // inne nazwy (opcjonalne)
     usage: '/skok <siła>',              // pokazywane przy błędzie i w /pomoc
     description: 'Wyrzuca gracza w górę.',
+    // hidden: true,                    // sekret: bez /pomoc i podpowiedzi
 
     // args - słowa po nazwie komendy, ctx - { game, world, player,
     // sky, time, chat, commands, map }. Zwrócony tekst pojawi się na czacie.

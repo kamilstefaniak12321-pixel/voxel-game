@@ -70,7 +70,9 @@ i gwiazdy za sobą - dzięki temu zaćmienie słońca "dzieje się samo".
 
 ```
 1. niebo            własna scena i kamera (Sky.render)
+   (kula Ziemi      tylko wysoko - src/space/Globe.js, docs/kosmos.md)
 2. daleki teren     własna scena i kamera (FarTerrain.render)
+   (chmury na kuli  tylko wysoko)
 3. świat            chunki, meteoryty, ramka bloku...
 ```
 
@@ -281,6 +283,13 @@ i wzgórza, które wygenerowałyby się tam naprawdę, ale bez bloków.
   `/meteor pokaz`, `/meteor tempo 0.25`.
 - Pomysły: rzadki meteoryt z nowym surowcem w środku, meteoryt
   zostawiający płonące bloki (ogień), dźwięk przelotu i uderzenia.
+
+### Kosmos - ZROBIONE (sekret)
+
+Wysoko nad światem (`Sky.space`, `SkyState.space`): czarna kopuła
+(`uSpace`), gwiazdy i Droga Mleczna także w dzień, bez horyzontu
+i migotania, białe słońce, planety (`layers/Planets.js` - widoczne
+tylko tam), a świat zagięty w kulę Ziemi. Opis: `docs/kosmos.md`.
 
 ### Chmury (na przyszłość)
 

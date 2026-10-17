@@ -10,6 +10,7 @@ import { Sun } from './layers/Sun.js';
 import { Stars } from './layers/Stars.js';
 import { Galaxies } from './layers/Galaxies.js';
 import { ShootingStars } from './layers/ShootingStars.js';
+import { Planets } from './layers/Planets.js';
 
 import { POTATO_STAR_SHARE } from '../config.js';
 
@@ -101,6 +102,11 @@ export class Sky {
 
         this.horizonDip = 0;
 
+        // Kosmos (0-1): kamera wysoko nad ziemią - czarne niebo,
+        // gwiazdy i planety (ustawia src/space/SpaceView.js).
+
+        this.space = 0;
+
 
         this.shootingStars = new ShootingStars();
 
@@ -108,9 +114,12 @@ export class Sky {
 
         this.stars = new Stars();
 
+        this.planets = new Planets();
+
         this.layers = [
             new SkyDome(),
             new Moon(),
+            this.planets,
             new Sun(),
             this.galaxies,
             this.stars,
@@ -174,6 +183,8 @@ export class Sky {
         this.state.meteorShower =
             this.variant.meteorShower ?? isMeteorShowerNight(days);
 
+        this.state.space = this.space;
+
         this.state.update(this.celestial, this.variant);
 
     }
@@ -190,7 +201,10 @@ export class Sky {
 
         this.refresh(days);
 
-        state.horizonDip = this.horizonDip;
+        // W kosmosie nic nie chowa się za horyzontem - zasłania to
+        // dopiero kula Ziemi (src/space/Globe.js).
+
+        state.horizonDip = Math.min(this.horizonDip, -3 * this.space);
 
 
         // Wspólne wartości dla kopuły i mgły na blokach.
@@ -206,6 +220,8 @@ export class Sky {
         skyUniforms.uEclipseGlowColor.value.copy(state.eclipseGlowColor);
         skyUniforms.uNightDesaturation.value = state.nightDesaturation;
         skyUniforms.uNightTint.value.copy(state.nightTint);
+        skyUniforms.uSpace.value = this.space;
+        skyUniforms.uHorizonDip.value = Math.max(-0.95, Math.min(0, this.horizonDip));
 
 
         // Światła świata.

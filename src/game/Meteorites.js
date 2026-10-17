@@ -888,12 +888,40 @@ export class Meteorites {
 
         meteor.done = true;
 
+        meteor.sound?.stop(0.15);
+
         this.removeObjects(meteor);
 
 
-        const world = this.game.world;
-
         const { x, y, z } = meteor.landing;
+
+        const bottom = this.explode(x, y, z);
+
+
+        const player = this.game.player.pos;
+
+        const distance = Math.round(Math.hypot(player.x - x, player.z - z));
+
+        this.game.onMessage?.(
+            `Meteoryt spadł na ${x}, ${bottom}, ${z} (${distance} bloków od ciebie).`
+        );
+
+    }
+
+
+    // Wybuch jak przy uderzeniu meteorytu w miejscu (x, y, z) - y to
+    // pierwszy blok powietrza nad ziemią. Używa go też gracz spadający
+    // z kosmosu (src/space/Skyfall.js).
+    //   scale     - wielkość krateru i wybuchu (1 = jak meteoryt),
+    //   meteorite - czy na dnie zostaje rozżarzony blok meteorytu,
+    //   clear     - promień wolny od cząsteczek wokół środka (gracz
+    //               stoi w środku wybuchu - odłamki, dym i iskry
+    //               zaczynają się dalej, a nie na jego oczach).
+    // Zwraca y dna krateru.
+
+    explode(x, y, z, { scale = 1, meteorite = true, clear = 0 } = {}) {
+
+        const world = this.game.world;
 
         const center = new THREE.Vector3(x + 0.5, y, z + 0.5);
 
@@ -903,26 +931,30 @@ export class Meteorites {
         const debrisColors = this.sampleCraterColors(x, y, z);
 
 
-        this.carveCrater(x, y, z);
+        this.carveCrater(x, y, z, scale);
 
 
         // Na dnie zostaje rozżarzony meteoryt, czasem z odłamkami obok.
 
         const bottom = world.getSurfaceY(x, z);
 
-        world.setBlock(x, bottom, z, 'meteorite');
+        if (meteorite) {
 
-        const pieces = Math.floor(random(0, 3.2));
+            world.setBlock(x, bottom, z, 'meteorite');
 
-        for (let i = 0; i < pieces; i++) {
+            const pieces = Math.floor(random(0, 3.2));
 
-            const angle = Math.random() * Math.PI * 2;
-            const distance = random(1, CRATER_RADIUS * 0.6);
+            for (let i = 0; i < pieces; i++) {
 
-            const px = Math.floor(x + 0.5 + Math.cos(angle) * distance);
-            const pz = Math.floor(z + 0.5 + Math.sin(angle) * distance);
+                const angle = Math.random() * Math.PI * 2;
+                const distance = random(1, CRATER_RADIUS * scale * 0.6);
 
-            world.setBlock(px, world.getSurfaceY(px, pz), pz, 'meteorite');
+                const px = Math.floor(x + 0.5 + Math.cos(angle) * distance);
+                const pz = Math.floor(z + 0.5 + Math.sin(angle) * distance);
+
+                world.setBlock(px, world.getSurfaceY(px, pz), pz, 'meteorite');
+
+            }
 
         }
 
@@ -953,8 +985,6 @@ export class Meteorites {
         // Dźwięk: huk dochodzi później niż błysk (prędkość dźwięku),
         // potem grad odłamków i trzaskający żar.
 
-        meteor.sound?.stop(0.15);
-
         const soundDelay = this.game.camera.position.distanceTo(center) / SPEED_OF_SOUND;
 
         const sounds = this.game.sounds;
@@ -971,19 +1001,13 @@ export class Meteorites {
             blastCore,
             shockwave,
             soundDelay,
-            fire: null
+            fire: null,
+            clear
         });
 
-        this.burst(center, debrisColors);
+        this.burst(center, debrisColors, scale, clear);
 
-
-        const player = this.game.player.pos;
-
-        const distance = Math.round(Math.hypot(player.x - x, player.z - z));
-
-        this.game.onMessage?.(
-            `Meteoryt spadł na ${x}, ${bottom}, ${z} (${distance} bloków od ciebie).`
-        );
+        return bottom;
 
     }
 
@@ -1022,11 +1046,13 @@ export class Meteorites {
     // Krater z nierównym brzegiem, wyłożony żwirem i spaloną ziemią,
     // wał wyrzuconej ziemi dookoła i osmalona okolica bez roślin.
 
-    carveCrater(x, y, z) {
+    carveCrater(x, y, z, scale = 1) {
 
         const world = this.game.world;
 
-        const R = CRATER_RADIUS;
+        const R = CRATER_RADIUS * scale;
+
+        const scorch = SCORCH_RADIUS * scale;
 
         const reach = Math.ceil(R) + 1;
 
@@ -1056,7 +1082,7 @@ export class Meteorites {
 
         // Dookoła: spalone rośliny, osmalona ziemia, wał i wyłożone dno.
 
-        const S = Math.ceil(SCORCH_RADIUS);
+        const S = Math.ceil(scorch);
 
         for (let dx = -S; dx <= S; dx++) {
 
@@ -1064,7 +1090,7 @@ export class Meteorites {
 
                 const distance = Math.hypot(dx, dz);
 
-                if (distance > SCORCH_RADIUS) {
+                if (distance > scorch) {
                     continue;
                 }
 
@@ -1107,7 +1133,7 @@ export class Meteorites {
 
                 // Wał z wyrzuconej ziemi tuż za brzegiem.
 
-                const rim = 1 - Math.abs(distance - (R + RIM_WIDTH * 0.5)) / RIM_WIDTH;
+                const rim = 1 - Math.abs(distance - (R + RIM_WIDTH * scale * 0.5)) / (RIM_WIDTH * scale);
 
                 if (rim > 0 && Math.random() < 0.55 * rim && top < CHUNK_HEIGHT - 1) {
 
@@ -1120,7 +1146,7 @@ export class Meteorites {
 
                 // Osmalona (czarna) ziemia: im bliżej krateru, tym więcej.
 
-                const burn = 0.9 * (1 - (distance - R) / (SCORCH_RADIUS - R)) ** 0.7;
+                const burn = 0.9 * (1 - (distance - R) / (scorch - R)) ** 0.7;
 
                 const ground = getBlockTypeById(groundId);
 
@@ -1140,14 +1166,24 @@ export class Meteorites {
 
     // Wybuch: fala iskier po ziemi, odłamki, żar i pył.
 
-    burst(center, debrisColors) {
+    burst(center, debrisColors, size = 1, clear = 0) {
 
-        const scale = this.particleScale;
+        const scale = this.particleScale * size;
 
         const position = this.tmp;
         const velocity = this.tmp2;
 
         const count = (n) => Math.round(n * scale);
+
+        // Z wolnym środkiem (clear): cząsteczki zaczynają się na pierścieniu.
+
+        const ring = (angle, spread) => {
+
+            const r = clear + random(0, spread);
+
+            return position.set(center.x + Math.cos(angle) * r, center.y, center.z + Math.sin(angle) * r);
+
+        };
 
 
         // Odłamki ziemi i skał - lecą wysoko, odbijają się i leżą chwilę.
@@ -1160,11 +1196,18 @@ export class Meteorites {
 
             velocity.set(Math.cos(angle), up, Math.sin(angle)).normalize().multiplyScalar(speed);
 
-            position.set(
-                center.x + random(-2, 2),
-                center.y + random(-0.5, 1),
-                center.z + random(-2, 2)
-            );
+            if (clear > 0) {
+                ring(angle, 2).y += random(-0.5, 1);
+            }
+            else {
+
+                position.set(
+                    center.x + random(-2, 2),
+                    center.y + random(-0.5, 1),
+                    center.z + random(-2, 2)
+                );
+
+            }
 
             const color = pick(debrisColors).clone().multiplyScalar(random(0.8, 1.1));
 
@@ -1172,7 +1215,7 @@ export class Meteorites {
                 position,
                 velocity,
                 life: random(4, 8),
-                size: random(0.15, 0.5),
+                size: random(0.15, 0.5) * (clear > 0 ? 0.6 : 1),
                 fade: 0.15,
                 colors: color,
                 gravity: 24,
@@ -1194,7 +1237,12 @@ export class Meteorites {
 
             velocity.normalize().multiplyScalar(random(6, 26));
 
-            position.set(center.x, center.y + 0.5, center.z);
+            if (clear > 0) {
+                ring(Math.atan2(velocity.z, velocity.x), 0.5).y += 0.5;
+            }
+            else {
+                position.set(center.x, center.y + 0.5, center.z);
+            }
 
             this.glowParticles.emit({
                 position,
@@ -1212,9 +1260,9 @@ export class Meteorites {
         }
 
 
-        // Słup iskier prosto w górę.
+        // Słup iskier prosto w górę (nie wtedy, gdy w środku stoi gracz).
 
-        for (let i = 0; i < count(PARTICLES.column); i++) {
+        for (let i = 0; i < (clear > 0 ? 0 : count(PARTICLES.column)); i++) {
 
             randomInSphere(velocity, 2.5);
 
@@ -1248,7 +1296,7 @@ export class Meteorites {
 
             velocity.y = random(0.3, 1.5);
 
-            position.set(center.x + Math.cos(angle) * 0.6, center.y + 0.4, center.z + Math.sin(angle) * 0.6);
+            position.set(center.x + Math.cos(angle) * (0.6 + clear), center.y + 0.4, center.z + Math.sin(angle) * (0.6 + clear));
 
             this.glowParticles.emit({
                 position,
@@ -1277,7 +1325,7 @@ export class Meteorites {
 
             velocity.y = random(0.5, 2.5);
 
-            position.set(center.x + Math.cos(angle) * 1.5, center.y + random(0.2, 1), center.z + Math.sin(angle) * 1.5);
+            position.set(center.x + Math.cos(angle) * (1.5 + clear), center.y + random(0.2, 1), center.z + Math.sin(angle) * (1.5 + clear));
 
             const color = pick(dust);
 
@@ -1368,7 +1416,7 @@ export class Meteorites {
 
                 impact.carry.smoke--;
 
-                position.set(c.x + random(-1.6, 1.6), c.y + random(-0.5, 0.8), c.z + random(-1.6, 1.6));
+                this.craterPoint(impact, 1.6, -0.5, 0.8);
 
                 velocity.set(random(-0.6, 0.6) + 0.5, random(3, 6), random(-0.6, 0.6));
 
@@ -1394,7 +1442,7 @@ export class Meteorites {
 
                 impact.carry.sparks--;
 
-                position.set(c.x + random(-1.2, 1.2), c.y + random(-0.6, 0.4), c.z + random(-1.2, 1.2));
+                this.craterPoint(impact, 1.2, -0.6, 0.4);
 
                 velocity.set(random(-1.2, 1.2), random(2, 6), random(-1.2, 1.2));
 
@@ -1416,6 +1464,27 @@ export class Meteorites {
         }
 
         this.impacts = this.impacts.filter((impact) => impact.age < IMPACT_SECONDS);
+
+    }
+
+
+    // Losowy punkt w kraterze (do this.tmp): w kwadracie +-spread wokół
+    // środka, a z wolnym środkiem (impact.clear) - na pierścieniu za nim.
+
+    craterPoint(impact, spread, low, high) {
+
+        const c = impact.center;
+
+        if (impact.clear > 0) {
+
+            const angle = Math.random() * Math.PI * 2;
+            const r = impact.clear + random(0, spread);
+
+            return this.tmp.set(c.x + Math.cos(angle) * r, c.y + random(low, high), c.z + Math.sin(angle) * r);
+
+        }
+
+        return this.tmp.set(c.x + random(-spread, spread), c.y + random(low, high), c.z + random(-spread, spread));
 
     }
 
@@ -1472,6 +1541,15 @@ export class Meteorites {
 
             }
 
+        }
+
+
+        // Gracz spadający z kosmosu jak meteoryt (src/space/Skyfall.js).
+
+        const fall = this.game.skyfall?.glow;
+
+        if (fall && (!best || fall.power > best.power)) {
+            best = fall;
         }
 
 

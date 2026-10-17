@@ -178,7 +178,7 @@ export function createModelMaterial({ map, alphaTest = 0, glow = 0 }) {
                 `#ifdef USE_FOG
                     if (uFarEnabled > 0.5) {
 
-                        float haze = farHaze(length(vSkyDirection.xz));
+                        float haze = farHaze(vSkyDirection);
                         gl_FragColor.rgb = mix(gl_FragColor.rgb, linearToOutputTexel(vec4(FOG_SKY, 1.0)).rgb, haze);
 
                     }

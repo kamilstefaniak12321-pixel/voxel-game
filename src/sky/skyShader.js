@@ -55,7 +55,18 @@ export const skyUniforms = {
 
     uMeteorDirection: { value: new THREE.Vector3(0, 1, 0) },
     uMeteorGlow: { value: new THREE.Color(0, 0, 0) },
-    uSkyFlash: { value: new THREE.Color(0, 0, 0) }
+    uSkyFlash: { value: new THREE.Color(0, 0, 0) },
+
+    // Kosmos (src/space/): 0 = zwykłe niebo, 1 = kamera wysoko nad
+    // ziemią, niebo jest czarne. skyColor() zostaje kolorem powietrza
+    // (mgiełka na terenie widzianym z góry), czernieje sama kopuła.
+
+    uSpace: { value: 0 },
+
+    // Gdzie jest widoczny horyzont (y kierunku, 0 = poziomo; z wysoka
+    // niżej - Sky.horizonDip). Gradient kopuły zaczyna się od niego.
+
+    uHorizonDip: { value: 0 }
 
 };
 

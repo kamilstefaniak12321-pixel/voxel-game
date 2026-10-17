@@ -72,11 +72,11 @@ const MOON_PHASE_OFFSET_DAYS = MOON_CYCLE_DAYS * 0.44;
 const STAR_DRIFT_DAYS = 40;
 
 
-const EAST = new THREE.Vector3(1, 0, 0);
+export const EAST = new THREE.Vector3(1, 0, 0);
 
 // Punkt drogi słońca w południe (nad południowym horyzontem).
 
-const SUN_NOON = new THREE.Vector3(
+export const SUN_NOON = new THREE.Vector3(
     0,
     Math.cos(SUN_PATH_TILT * DEG),
     Math.sin(SUN_PATH_TILT * DEG)
@@ -85,7 +85,7 @@ const SUN_NOON = new THREE.Vector3(
 // Oś, wokół której obraca się całe niebo (biegun). Szerokość
 // księżyca to przesunięcie wzdłuż tej osi.
 
-const SKY_AXIS = new THREE.Vector3()
+export const SKY_AXIS = new THREE.Vector3()
     .crossVectors(EAST, SUN_NOON)
     .normalize();
 

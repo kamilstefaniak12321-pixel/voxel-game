@@ -58,7 +58,10 @@ programisty (konsola błędów). Reszta klawiszy działa jak w przeglądarce
 Scalenie bez zmiany wersji niczego nie wydaje - chyba że wydaniu tej
 wersji brakuje któregoś z trzech plików: wtedy instalator jest budowany
 od nowa i dosyłany. Wydanie można też uruchomić ręcznie: **Actions** →
-*Aplikacja na komputer* → **Run workflow**.
+*Aplikacje (komputer i telefon)* → **Run workflow**.
+
+Ten sam przebieg buduje też **aplikację na Androida** (`.apk`) i dokłada
+ją do wydania - `docs/telefon.md`.
 
 ### Gdy wydanie się nie uda
 

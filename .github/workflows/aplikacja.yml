@@ -294,7 +294,9 @@ jobs:
   android:
     needs: [wersja, windows]
     if: always() && needs.wersja.outputs.build_android == 'true'
-    runs-on: ubuntu-latest
+    # Konkretna wersja systemu (z gotowym Android SDK) - "latest" zmienia
+    # się sam i mógłby nagle zepsuć budowanie.
+    runs-on: ubuntu-24.04
     env:
       VERSION: ${{ needs.wersja.outputs.version }}
       REPO: ${{ needs.wersja.outputs.repo }}
@@ -367,7 +369,7 @@ jobs:
           cp "$FILE" "dist/$OUT"
 
           TOOLS="$ANDROID_HOME/build-tools/$(ls "$ANDROID_HOME/build-tools" | sort -V | tail -n 1)"
-          BADGING=$("$TOOLS/aapt2" dump badging "dist/$OUT" | grep -E "^package:|^application-label:|^sdkVersion|^targetSdkVersion" | tr '\n' ' ')
+          BADGING=$("$TOOLS/aapt2" dump badging "dist/$OUT" | grep -E "^package:|^application-label:|^(min)?[sS]dkVersion|^targetSdkVersion" | tr '\n' ' ')
           CERT=$("$TOOLS/apksigner" verify --print-certs "dist/$OUT" | grep -m1 "SHA-256" || true)
           SIZE=$(( $(stat -c %s "dist/$OUT") / 1024 / 1024 ))
 

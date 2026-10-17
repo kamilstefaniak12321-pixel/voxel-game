@@ -41,6 +41,7 @@ tylko jako *Sekretne osiągnięcie* ze znakiem zapytania.
 | rzadkie | Naoczny świadek | bądź do 60 bloków od uderzenia meteorytu |
 | rzadkie | Pełne kosze | zbierz owoce z każdego rodzaju krzaka |
 | rzadkie | Kopalnia w kieszeni | zagraj na telefonie / tablecie i zniszcz blok palcem (`docs/telefon.md`) |
+| rzadkie | Lokator z ikonką | zagraj w aplikacji na Androida (`docs/telefon.md`) |
 | bardzo rzadkie | Dzień jak noc | zobacz pełne zaćmienie słońca |
 | bardzo rzadkie | Kosmiczny złom | wykop blok meteorytu |
 | bardzo rzadkie | Houston, mamy widok *(sekret)* | wyleć w kosmos |

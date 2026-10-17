@@ -105,3 +105,9 @@ app/src/main/res/xml/config.xml
 *.keystore
 *.jks
 *.p12
+
+# Wyjątek: klucz WERSJI TESTOWEJ ("Voxel Game (test)", osobna aplikacja
+# pl.kamil.voxelgame.test) - celowo w gicie, z jawnym hasłem, żeby każda
+# testowa wersja instalowała się na poprzedniej. Prawdziwej aplikacji
+# nim nie podpiszesz (inna nazwa pakietu).
+!app/klucz-testowy.keystore

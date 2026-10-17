@@ -41,6 +41,16 @@ android {
         }
     }
     signingConfigs {
+        // Wersja testowa: zawsze ten sam klucz z gita (jawny - patrz
+        // android/.gitignore), więc kolejne testowe .apk instalują się
+        // na poprzednich, ze światami.
+        test {
+            storeFile file('klucz-testowy.keystore')
+            storeType 'pkcs12'
+            storePassword 'android'
+            keyAlias 'test'
+            keyPassword 'android'
+        }
         release {
             if (keystoreFile) {
                 storeFile file(keystoreFile)
@@ -60,6 +70,7 @@ android {
             }
         }
         debug {
+            signingConfig signingConfigs.test
             applicationIdSuffix ".test"
             versionNameSuffix "-test"
             resValue "string", "app_name", "Voxel Game (test)"

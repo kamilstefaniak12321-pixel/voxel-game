@@ -44,6 +44,10 @@ Każdy pull request, który zmienia aplikację, buduje ją na próbę:
 (plik zip z `.apk` w środku - na telefonie trzeba być zalogowanym na
 GitHubie). Bez klucza do podpisu (niżej) powstaje **Voxel Game (test)** -
 osobna aplikacja z własnymi światami, którą można mieć obok prawdziwej.
+Wersja testowa ma swój stały klucz w gicie (`android/app/klucz-testowy.keystore`,
+celowo jawny - prawdziwej aplikacji nim się nie podpisze), więc kolejne
+testowe `.apk` instalują się na poprzednich. (Tylko testowa z wersji
+0.9.0 była podpisana innym kluczem - ją trzeba raz odinstalować.)
 
 ### Klucz do podpisu (raz, w ustawieniach repozytorium)
 
@@ -111,8 +115,13 @@ Telefon i komputer muszą być w **tej samej sieci Wi-Fi**.
 5. Obróć telefon poziomo i stuknij przycisk **pełnego ekranu** (prawy
    górny róg w grze) - wtedy nie przeszkadza pasek adresu.
 
-Sterowanie dotykowe włącza się samo, gdy urządzenie ma ekran dotykowy
-i nie ma myszy. Można je wymusić adresem z dopiskiem `?dotyk`
+Sterowanie dotykowe włącza się samo: w aplikacji na Androida zawsze,
+a w przeglądarce, gdy głównym "wskaźnikiem" jest palec. Niektóre
+telefony (np. z rysikiem) i okienka przeglądarki w aplikacjach udają
+komputer z myszą - wtedy sterowanie dotykowe włącza się przy pierwszym
+dotknięciu ekranu palcem (a gra nie próbuje już przechwytywać myszy, co
+na telefonie kończyło się napisem *Nie udało się przechwycić myszy*).
+Można je wymusić adresem z dopiskiem `?dotyk`
 (np. `http://localhost:3000/index.html?dotyk` - na komputerze "palcem"
 jest wtedy mysz, przydaje się do sprawdzania układu przycisków),
 a wyłączyć - `?dotyk=0` (np. tablet z myszą). To samo z czatu:

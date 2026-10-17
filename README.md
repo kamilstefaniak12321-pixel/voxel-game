@@ -45,6 +45,24 @@ z przeglądarki i z aplikacji są zapisywane osobno.
 | [ / ] (z F3) | cofnij / przesuń czas o godzinę |
 | T, / | czat i komendy (`/pomoc`) |
 | M | mapa terenu z góry (to samo co `/mapa`) |
+| L | księga osiągnięć |
+
+## Osiągnięcia
+
+Za ciekawe rzeczy w grze dostajesz **osiągnięcia** w czterech rangach:
+**zwykłe** (10 pkt), **rzadkie** (25), **bardzo rzadkie** (50)
+i **legendarne** (100). Zdobyte osiągnięcie wyjeżdża na górze ekranu
+z żartobliwym komentarzem i melodyjką (im rzadsze, tym bogatszą)
+i trafia do **księgi osiągnięć** (klawisz **L**, przycisk *Osiągnięcia*
+w pauzie i na ekranie tytułowym) - z datą i nazwą świata. Księga jest
+wspólna dla wszystkich światów. Niektóre osiągnięcia są sekretne -
+przed zdobyciem widać tylko znak zapytania.
+
+Na start jest 17 osiągnięć (od pierwszego zniszczonego bloku po
+legendarne *Problem spadł z nieba*). Nowa rzecz w grze = nowe
+osiągnięcie - jak je dopisać, zdarzenia z gry i pełna lista (spoilery):
+`docs/osiagniecia.md`. Test: `/osiagniecia` (lista), `/osiagniecia pokaz
+legendarne` (samo powiadomienie), `/osiagniecia daj <id>`.
 
 ## Tryby gry i ekwipunek
 
@@ -268,6 +286,8 @@ z czatu: `/ustaw` (lista), np. `/ustaw zasieg 256`.
   wyższy, a uderzenie słychać trochę po błysku (dźwięk leci 343 bloki na
   sekundę - jak grzmot po błyskawicy). Potem grad odłamków i trzaskający,
   gasnący żar w kraterze. Dźwięki meteorytu są przestrzenne.
+- **Osiągnięcia** - melodyjka przy zdobyciu: dwa dźwięki dla zwykłych,
+  arpeggio z dzwoneczkami dla rzadszych, fanfara dla legendarnych.
 - **Menu** - każdy przycisk cicho "klika" (przyciski powrotu - *Wróć*,
   *Anuluj*, *Gotowe*, ESC - niżej), suwaki tykają przy każdym kroku
   (tym wyżej, im dalej w prawo; suwak głośności od razu gra nową
@@ -619,6 +639,7 @@ src/
   world/terrain/            generatory terenu (realistyczny, lista typów, formy terenu, skały)
   sky/                      czas, słońce, księżyc, gwiazdy, planety, kolory nieba
   space/                    sekret: kosmos - kula Ziemi, spadanie jak meteoryt
+  achievements/             osiągnięcia: lista (list.js) i księga (zapis, powiadomienia)
   storage/                  zapis i wczytywanie światów
   rendering/                atlas tekstur, budowanie meshy chunków
   player/                   ruch i kolizje gracza, model, animacje, skórka

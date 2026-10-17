@@ -10,6 +10,18 @@ export const TEXTS = {
     // Ekran tytułowy
     play: 'Graj',
     settings: 'Ustawienia',
+    achievements: 'Osiągnięcia',
+
+    // Księga osiągnięć (src/achievements/)
+    achievementsTitle: 'Księga osiągnięć',
+    achievementsSummary: (unlocked, total) => `Zdobyte: ${unlocked} z ${total}`,
+    achievementsPoints: (points, max) => `Punkty: ${points} z ${max}`,
+    achievementSecret: 'Sekretne osiągnięcie',
+    achievementSecretTask: 'Zdobędziesz je, gdy zrobisz coś... nieoczywistego.',
+    achievementUnlockedAt: (date, world) => `Zdobyte ${date}${world ? ` · świat „${world}”` : ''}`,
+    achievementByCommand: ' · przyznane komendą',
+    achievementProgress: (now, goal) => `Postęp: ${now} z ${goal}`,
+    achievementsHint: 'W grze: klawisz L',
 
     // Lista światów
     selectWorld: 'Wybierz świat',
@@ -103,7 +115,7 @@ export const TEXTS = {
     volumeMaster: (value) => `Głośność: ${value > 0 ? `${value}%` : 'Wył.'}`,
     volumeBlocks: (value) => `Bloki i kroki: ${value > 0 ? `${value}%` : 'Wył.'}`,
     volumeWorld: (value) => `Otoczenie (woda, meteoryt): ${value > 0 ? `${value}%` : 'Wył.'}`,
-    volumeUi: (value) => `Menu i ekwipunek: ${value > 0 ? `${value}%` : 'Wył.'}`,
+    volumeUi: (value) => `Menu, ekwipunek, osiągnięcia: ${value > 0 ? `${value}%` : 'Wył.'}`,
     skin: 'Wczytaj skórkę...',
     skinReset: 'Skórka domyślna',
     skinNote: (custom) =>

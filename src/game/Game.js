@@ -177,6 +177,11 @@ export class Game {
 
         this.onMessage = null;
 
+        // Księga osiągnięć (wspólna dla wszystkich światów - ustawia
+        // ją main.js; bez niej, np. w testach, osiągnięć nie ma).
+
+        this.achievements = null;
+
         // Pomiar wydajności (ustawia main.js) i trwający test
         // wydajności (/wydajnosc test).
 
@@ -492,7 +497,17 @@ export class Game {
                 );
 
                 if (placed) {
+
                     this.playBlockSound('place', block, target);
+
+                    this.achieve('blockPlaced', { type: block });
+
+                    // Owoc postawiony jako sadzonka - posadzony.
+
+                    if (block !== type) {
+                        this.achieve('planted', { type: block, item: type });
+                    }
+
                 }
 
                 // W przygodzie postawiony blok (posadzony owoc) znika ze stosu.
@@ -575,6 +590,10 @@ export class Game {
         this.skyfall.update(dt);
 
         this.meteorites.update(dt);
+
+        // Osiągnięcia sprawdzane co chwilę (wysokość, nurkowanie...).
+
+        this.achievements?.update(dt);
 
         this.plantGrowth.update(dt);
 
@@ -1353,6 +1372,16 @@ export class Game {
     }
 
 
+    // Zdarzenie dla księgi osiągnięć (src/achievements/), np.
+    // achieve('blockBroken', { type: 'stone' }). Bez księgi (testy) - nic.
+
+    achieve(name, data = {}) {
+
+        this.achievements?.event(name, data);
+
+    }
+
+
     // Zniszczenie wskazanego bloku. W przygodzie blok (albo to, co
     // z niego zostaje - np. trawa daje ziemię) trafia do ekwipunku;
     // gdy nie ma na niego miejsca, blok zostaje. Roślina, która rosła
@@ -1369,7 +1398,11 @@ export class Game {
             const broken = this.breaker.breakBlock(hit);
 
             if (broken) {
+
                 this.playBlockSound('break', hit.block.type, hit.block);
+
+                this.achieve('blockBroken', { type: hit.block.type });
+
             }
 
             return broken;
@@ -1400,6 +1433,8 @@ export class Game {
         }
 
         this.playBlockSound('break', type, hit.block);
+
+        this.achieve('blockBroken', { type });
 
         if (drop) {
             this.inventory.add(drop);
@@ -1479,6 +1514,8 @@ export class Game {
         this.sounds?.play('harvest', {
             position: new THREE.Vector3(x + 0.5, y + 0.5, z + 0.5)
         });
+
+        this.achieve('harvested', { type, item: harvest.item });
 
         return count > 0;
 

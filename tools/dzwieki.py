@@ -2,7 +2,8 @@
 # GENERATOR DŹWIĘKÓW GRY
 #
 # Wszystkie dźwięki gry (kroki, niszczenie i stawianie bloków,
-# zbieranie owoców, meteoryt, menu i ekwipunek, woda, kosmos) są
+# zbieranie owoców, meteoryt, menu i ekwipunek, woda, kosmos,
+# osiągnięcia) są
 # "syntetyczne" - policzone z szumu i drgań, bez nagrań. Ten skrypt
 # zapisuje je do assets/sounds/ jako pliki .ogg.
 #
@@ -10,7 +11,8 @@
 #
 #     python tools/dzwieki.py                  wszystkie
 #     python tools/dzwieki.py assets/sounds woda   tylko jedna grupa:
-#                                  bloki, meteoryt, owoce, menu, woda, kosmos
+#                                  bloki, meteoryt, owoce, menu, woda, kosmos,
+#                                  osiagniecia
 #
 # (pliki .ogg za każdym razem wychodzą trochę inne w bajtach, więc
 # lepiej przeliczać tylko grupę, która się zmieniła)
@@ -690,6 +692,97 @@ SPACE = {
 
 
 # ------------------------------------------------------------
+# Osiągnięcia (src/achievements/) - im rzadsze, tym bogatsza
+# melodyjka: zwykłe - dwa dźwięki, legendarne - fanfara.
+# ------------------------------------------------------------
+
+def note(name):
+    """Częstotliwość nuty, np. 'C5', 'G#4'."""
+    names = {'C': -9, 'C#': -8, 'D': -7, 'D#': -6, 'E': -5, 'F': -4, 'F#': -3, 'G': -2, 'G#': -1, 'A': 0, 'A#': 1, 'B': 2}
+    return 440.0 * 2 ** ((names[name[:-1]] + 12 * (int(name[-1]) - 4)) / 12)
+
+
+def bell(freq, seconds, decay):
+    """Dzwoneczek: ton z niecałkowitymi alikwotami (jak metal)."""
+    n = samples(seconds)
+    t = time_axis(n)
+    out = (np.sin(2 * np.pi * freq * t) + 0.35 * np.sin(2 * np.pi * freq * 2.76 * t) * np.exp(-t / (decay * 0.4))
+           + 0.18 * np.sin(2 * np.pi * freq * 5.4 * t) * np.exp(-t / (decay * 0.2)))
+    return out * envelope(n, 0.002, decay)
+
+
+def sparkle(s, seconds, count, low, high, start=0.0):
+    """Iskierki: krótkie, wysokie dzwoneczki w losowych chwilach."""
+    out = np.zeros(samples(seconds))
+    for _ in range(count):
+        place(out, bell(s.uniform(low, high), 0.25, s.uniform(0.03, 0.08)) * s.uniform(0.05, 0.18), start + s.uniform(0, seconds - start - 0.3))
+    return out
+
+
+def melody(notes, step, seconds, decay=0.35, harmonics=(1.0, 0.3, 0.1)):
+    out = np.zeros(samples(seconds))
+    for i, name in enumerate(notes):
+        place(out, soft_tone(note(name), min(1.5, seconds - i * step), decay, harmonics) * (0.85 + 0.15 * i / max(1, len(notes) - 1)), i * step)
+    return out
+
+
+def achievement_common(s):
+    """Zwykłe: dwa miękkie dźwięki w górę."""
+    return melody(['G5', 'C6'], 0.09, 0.9, 0.22)
+
+
+def achievement_rare(s):
+    """Rzadkie: trzy dźwięki i dzwoneczek."""
+    length = 1.4
+    out = melody(['E5', 'G5', 'C6'], 0.08, length, 0.3)
+    place(out, bell(note('G6'), 1.0, 0.35) * 0.35, 0.24)
+    return out + sparkle(s, length, 5, 2500, 4500, 0.2)
+
+
+def achievement_epic(s):
+    """Bardzo rzadkie: arpeggio, dzwonki i ciepłe tło."""
+    length = 2.0
+    out = melody(['C5', 'E5', 'G5', 'C6', 'E6'], 0.075, length, 0.4)
+    pad = sum(soft_tone(note(n), length, 0.9, (1.0, 0.2), attack=0.08) for n in ['C4', 'G4', 'E5']) * 0.25
+    out += pad
+    place(out, bell(note('C7'), 1.2, 0.45) * 0.3, 0.38)
+    return out + sparkle(s, length, 10, 2500, 5500, 0.3)
+
+
+def achievement_legendary(s):
+    """Legendarne: fanfara - narastający akord, szybkie arpeggio,
+    triumfalny akord z dzwonami i deszcz iskierek."""
+    length = 3.4
+    n = samples(length)
+    t = time_axis(n)
+    out = np.zeros(n)
+    # Wznoszący się "szum" przed fanfarą.
+    rise = band(s.noise(0.5), 400, 3000) * np.linspace(0, 1, samples(0.5)) ** 2 * 0.15
+    place(out, rise, 0.0)
+    # Szybkie arpeggio w górę.
+    place(out, melody(['G4', 'C5', 'E5', 'G5', 'C6'], 0.06, 1.0, 0.25), 0.45)
+    # Akord (C-dur) z dzwonami - długo wybrzmiewa.
+    chord = np.zeros(n)
+    for name in ['C4', 'G4', 'C5', 'E5', 'G5', 'C6']:
+        place(chord, soft_tone(note(name), length - 0.8, 1.1, (1.0, 0.35, 0.15, 0.05), attack=0.01), 0.78)
+    out += chord * 0.35
+    for name, at in [('C7', 0.78), ('G6', 0.95), ('E7', 1.1)]:
+        place(out, bell(note(name), 1.8, 0.6) * 0.3, at)
+    # Lekkie drżenie akordu (vibrato w głośności) i iskierki.
+    out *= 1 + 0.04 * np.sin(2 * np.pi * 5.5 * t) * (t > 0.8)
+    out += sparkle(s, length, 26, 2500, 6500, 0.8)
+    return out
+
+
+ACHIEVEMENT_SOUNDS = {
+    'achievement_common': (achievement_common, -18),
+    'achievement_rare': (achievement_rare, -17),
+    'achievement_epic': (achievement_epic, -16),
+    'achievement_legendary': (achievement_legendary, -15)
+}
+
+
+# ------------------------------------------------------------
 # Zapis
 # ------------------------------------------------------------
 
@@ -704,7 +797,7 @@ def save(path, data):
         )
 
 
-GROUPS = ['bloki', 'meteoryt', 'owoce', 'menu', 'woda', 'kosmos']
+GROUPS = ['bloki', 'meteoryt', 'owoce', 'menu', 'woda', 'kosmos', 'osiagniecia']
 
 
 def generate(root=ROOT, only=None):
@@ -747,6 +840,11 @@ def generate(root=ROOT, only=None):
         seed += 1
         if want('kosmos'):
             save(os.path.join(root, 'space', f'{name}.ogg'), make(Synth(seed)))
+    for name, (make, level) in ACHIEVEMENT_SOUNDS.items():
+        seed += 1
+        if want('osiagniecia'):
+            sound = fade(loudness(make(Synth(seed)), level), 0.001, 0.25)
+            save(os.path.join(root, 'ui', f'{name}.ogg'), sound)
 
 
 if __name__ == '__main__':

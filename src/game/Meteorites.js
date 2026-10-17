@@ -906,6 +906,8 @@ export class Meteorites {
             `Meteoryt spadł na ${x}, ${bottom}, ${z} (${distance} bloków od ciebie).`
         );
 
+        this.game.achieve?.('meteorImpact', { distance });
+
     }
 
 

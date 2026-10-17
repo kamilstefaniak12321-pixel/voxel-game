@@ -62,6 +62,10 @@ export class WaterEffects {
         // Ile kolumn z wodą jest teraz dookoła (/woda).
         this.nearbyWater = 0;
 
+        // Jak głęboko pod powierzchnią są oczy (bloki, 0 = nad wodą) -
+        // osiągnięcie "Głębinowiec".
+        this.depth = 0;
+
     }
 
 
@@ -76,6 +80,8 @@ export class WaterEffects {
         if (this.underwater) {
             this.updateFogColor();
         }
+
+        this.depth = this.underwater ? this.depthBelowSurface(eye) : 0;
 
         this.updateSounds(dt);
 
@@ -102,6 +108,29 @@ export class WaterEffects {
         const surface = isLiquidId(above) || isOpaqueId(above) ? 1 : WATER_SURFACE;
 
         return point.y - y < surface;
+
+    }
+
+
+    // Jak głęboko pod powierzchnią wody jest punkt (szukamy w górę
+    // ostatniego bloku wody, najwyżej 64 bloki).
+
+    depthBelowSurface(point) {
+
+        const world = this.game.world;
+
+        const x = Math.floor(point.x);
+        const z = Math.floor(point.z);
+
+        let y = Math.floor(point.y);
+
+        const limit = y + 64;
+
+        while (y < limit && isLiquidId(world.getBlockId(x, y + 1, z))) {
+            y++;
+        }
+
+        return Math.max(0, y + WATER_SURFACE - point.y);
 
     }
 

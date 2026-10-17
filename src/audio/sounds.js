@@ -27,9 +27,11 @@
 
 export const BLOCK_MATERIALS = ['grass', 'dirt', 'stone', 'sand', 'gravel', 'mud', 'plant', 'glass'];
 
-// Rodzaj dźwięku bloku: ile wersji (plików) i jak głośno.
+// Rodzaj dźwięku bloku: ile wersji (plików) i jak głośno. Dźwięki
+// bloków są miękkie i ciche (tło, nie mają zwracać uwagi) - kroków jest
+// 6 wersji, żeby się nie powtarzały.
 const BLOCK_KINDS = {
-    step: { variants: 4, volume: 0.45 },
+    step: { variants: 6, volume: 0.45 },
     place: { variants: 3, volume: 0.8 },
     break: { variants: 3, volume: 0.9 }
 };
@@ -47,7 +49,7 @@ for (const material of BLOCK_MATERIALS) {
         SOUNDS[`${kind}_${material}`] = {
             files: Array.from({ length: variants }, (_, i) => `blocks/${kind}_${material}_${i + 1}.ogg`),
             volume,
-            pitch: [0.88, 1.12],
+            pitch: [0.92, 1.08],
             category: 'blocks',
             distance: BLOCK_DISTANCE
         };

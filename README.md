@@ -296,7 +296,35 @@ w przeglądarce. Wartości domyślne są w `src/config.js`, a lista ustawień
 z zakresami w `src/settings/Settings.js`. Wszystko da się też zmienić
 z czatu: `/ustaw` (lista), np. `/ustaw zasieg 256`.
 
+## Tekstury
+
+Bloki mają tekstury 16 x 16 pikseli (atlas `assets/textures/blocks/terrain.png`)
+w stylu pikselowym, ale **wygładzone i wycieniowane**: każda pokazuje
+fakturę swojego bloku - grudki ziemi, kamyki w żwirze, warstwy piaskowca
+i łupka, słupy bazaltu, kryształy granitu, łuski miki w lepidolicie,
+liście na ściółce, mokry połysk błota, żarzące się żyłki meteorytu.
+Światło pada z lewej góry: to, co wystaje, jest jaśniejsze z lewej i od
+góry, a szczeliny są ciemne. Kolory przechodzą płynnie, bez
+przypadkowego "szumu", a każda tekstura łączy się bez szwów z sąsiednim
+blokiem. Średni kolor każdej tekstury jest taki jak dawniej (z daleka
+świat wygląda tak samo - daleki teren liczy kolory ze średniej).
+
+Tekstury rysuje skrypt **`tools/tekstury.py`** (Python z numpy i Pillow):
+`python tools/tekstury.py` wkleja je do atlasu, `python tools/tekstury.py
+podglad.png` dodatkowo zapisuje powiększony podgląd. Każdy blok to jedna
+funkcja (np. `stone()`, `gravel()`), z własnym numerem losowania - ten
+sam numer, ta sama tekstura. Trawa z wierzchu, woda, rośliny, krzaki
+i owoce są rysowane ręcznie - skrypt ich nie zmienia (bok trawy dostaje
+tylko nową ziemię pod tą samą trawą).
+
 ## Dźwięki
+
+Dźwięki bloków są **miękkie i ciche** - mają być tłem, a nie zwracać na
+siebie uwagę: trawa lekko szeleści pod stopami, ziemia głucho stuka,
+kamień krótko puka, piasek cicho szumi, żwir chrzęści, błoto mlaszcze,
+liście szeleszczą, a szkło lamp cicho dzwoni. Bez trzasków na początku
+i bez syczących wysokich tonów; każdy krok ma 6 wersji (gra losuje
+jedną i lekko zmienia wysokość), żeby się nie powtarzały.
 
 - **Kroki** - co krok dźwięk bloku pod stopami (trawa, ziemia, kamień,
   piasek, żwir, błoto, szkło lamp); kucanie - ciszej i rzadziej, bieg -
@@ -656,7 +684,7 @@ assets/textures/player/     skórka gracza i szablon skórki
 assets/ui/themes/           motywy menu (kolory, czcionka, tło)
 assets/fonts/               czcionki
 assets/sounds/              dźwięki (.ogg): bloki, kroki, zbieranie, meteoryt, menu (ui/), woda, kosmos
-tools/                      skrypty pomocnicze (dźwięki, ikonki i pliki aplikacji na Androida)
+tools/                      skrypty pomocnicze (tekstury, dźwięki, ikonki i pliki aplikacji na Androida)
 docs/                       opisy, jak działają większe części gry
 src/
   main.js                   start aplikacji, menu, pauza, pętla
@@ -682,7 +710,8 @@ src/
 
 ## Dodawanie nowego bloku
 
-1. Narysuj teksturę 16x16 i wklej ją do wolnego kafelka w `assets/textures/blocks/terrain.png`.
+1. Narysuj teksturę 16x16 i wklej ją do wolnego kafelka w `assets/textures/blocks/terrain.png`
+   (albo dopisz jej funkcję w `tools/tekstury.py` - patrz *Tekstury*).
 2. Dopisz pozycję kafelka w `ATLAS_TILES` w `src/rendering/TextureAtlas.js`.
 3. Dopisz blok w `BLOCK_TYPES` w `src/blocks/BlockRegistry.js` (nowe, unikalne `id`,
    polska nazwa w `label`). Opis wszystkich pól jest na początku pliku.

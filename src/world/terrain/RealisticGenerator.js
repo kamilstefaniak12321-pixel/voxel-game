@@ -891,8 +891,10 @@ export class RealisticGenerator {
 
         const sample = this.compute(x, z, spacing <= 8 ? DETAIL_MEDIUM : DETAIL_COARSE);
 
+        // Morze: floor - wierzch dna (kula Ziemi z kosmosu - głębia).
+
         if (sample.ocean && sample.height < SEA_LEVEL) {
-            return { top: SEA_LEVEL + 1, kind: 'water' };
+            return { top: SEA_LEVEL + 1, kind: 'water', floor: sample.height + 1 };
         }
 
         const kind = this.surfaceKind(x, z, sample, 0);

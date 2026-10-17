@@ -239,7 +239,7 @@ blockMaterial.onBeforeCompile = (shader, renderer) => {
                         // Z dalekim terenem: ta sama mgiełka co na nim
                         // (rośnie z odległością), bez znikania bloków.
 
-                        float haze = farHaze(length(vSkyDirection.xz));
+                        float haze = farHaze(vSkyDirection);
                         vec3 hazeSky = FOG_SKY;
                         gl_FragColor.rgb = mix(gl_FragColor.rgb, linearToOutputTexel(vec4(hazeSky, 1.0)).rgb, haze);
 

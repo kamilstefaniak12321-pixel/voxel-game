@@ -178,3 +178,34 @@ Object.assign(SOUNDS, {
     }
 
 });
+
+
+// Kosmos - sekret (src/space/).
+
+Object.assign(SOUNDS, {
+
+    // W kosmosie - cichy pomruk (pętla, tym głośniej, im wyżej).
+    space_ambient: {
+        files: ['space/space_ambient.ogg'],
+        volume: 0.6,
+        category: 'world',
+        loop: true
+    },
+
+    // Pęd powietrza przy spadaniu z kosmosu (pętla, głośniej przy
+    // większej prędkości; razem z rykiem ognia - meteor_flight).
+    skyfall_wind: {
+        files: ['space/skyfall_wind.ogg'],
+        volume: 0.8,
+        category: 'world',
+        loop: true
+    },
+
+    // Zapłon przy wejściu w atmosferę.
+    skyfall_ignite: {
+        files: ['space/skyfall_ignite.ogg'],
+        volume: 0.9,
+        category: 'world'
+    }
+
+});

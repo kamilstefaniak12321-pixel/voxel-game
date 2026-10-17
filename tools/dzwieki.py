@@ -2,7 +2,7 @@
 # GENERATOR DŹWIĘKÓW GRY
 #
 # Wszystkie dźwięki gry (kroki, niszczenie i stawianie bloków,
-# zbieranie owoców, meteoryt, menu i ekwipunek, woda) są
+# zbieranie owoców, meteoryt, menu i ekwipunek, woda, kosmos) są
 # "syntetyczne" - policzone z szumu i drgań, bez nagrań. Ten skrypt
 # zapisuje je do assets/sounds/ jako pliki .ogg.
 #
@@ -10,7 +10,7 @@
 #
 #     python tools/dzwieki.py                  wszystkie
 #     python tools/dzwieki.py assets/sounds woda   tylko jedna grupa:
-#                                  bloki, meteoryt, owoce, menu, woda
+#                                  bloki, meteoryt, owoce, menu, woda, kosmos
 #
 # (pliki .ogg za każdym razem wychodzą trochę inne w bajtach, więc
 # lepiej przeliczać tylko grupę, która się zmieniła)
@@ -624,6 +624,72 @@ WATER_LOOPS = {
 
 
 # ------------------------------------------------------------
+# Kosmos (sekret - src/space/)
+# ------------------------------------------------------------
+
+def space_ambient(s):
+    """Kosmos (pętla): cichy, głęboki pomruk z wolnym "falowaniem"
+    i delikatnym, wysokim pobłyskiem."""
+    length = 12.0
+    n = samples(length)
+    t = time_axis(n)
+    # Dwa bliskie, niskie tony dają powolne dudnienie.
+    drone = (np.sin(2 * np.pi * 55 * t) + 0.8 * np.sin(2 * np.pi * 55.5 * t + 1)
+             + 0.35 * np.sin(2 * np.pi * 82.4 * t + 2) * (0.6 + 0.4 * np.sin(2 * np.pi * 0.07 * t)))
+    drone *= 0.5 + 0.2 * np.sin(2 * np.pi * (1 / length) * t)
+    air = lowpass(s.brown(length), 160, order=4) * 0.7
+    shimmer = band(s.noise(length), 1800, 4200) * 0.025 * (0.5 + 0.5 * np.sin(2 * np.pi * (2 / length) * t + 0.5))
+    pad = sum(np.sin(2 * np.pi * f * t + s.uniform(0, 6)) * a for f, a in ((220, 0.05), (329.6, 0.035), (440, 0.02)))
+    pad *= 0.5 + 0.5 * np.sin(2 * np.pi * (1 / length) * t + 2)
+    out = drone * 0.5 + air + shimmer + pad
+    return normalize(loopable(out, 1.5), 0.6)
+
+
+def skyfall_wind(s):
+    """Pęd powietrza przy spadaniu z kosmosu (pętla): ryk wiatru
+    i drżący, niski grzmot."""
+    length = 7.0
+    n = samples(length)
+    t = time_axis(n)
+    gust = (0.7 + 0.2 * np.sin(2 * np.pi * 0.31 * t) + 0.1 * np.sin(2 * np.pi * 1.7 * t + 1)
+            + 0.08 * np.sin(2 * np.pi * 4.3 * t + 2))
+    roar = band(s.noise(length), 250, 2400, order=2) * gust
+    whistle = band(s.noise(length), 1800, 3200, order=4) * 0.25 * (0.5 + 0.5 * np.sin(2 * np.pi * 0.23 * t + 2))
+    rumble = lowpass(s.brown(length), 120, order=4) * 1.6 * (0.8 + 0.2 * np.sin(2 * np.pi * 6.0 * t))
+    out = roar + whistle + rumble
+    return normalize(loopable(out, 0.6), 0.8)
+
+
+def skyfall_ignite(s):
+    """Zapłon przy wejściu w atmosferę: narastający świst i głuchy wybuch ognia."""
+    length = 3.0
+    n = samples(length)
+    t = time_axis(n)
+    out = np.zeros(n)
+    # Świst: szum, którego filtr szybko idzie w górę.
+    whoosh = s.noise(length)
+    pieces = 24
+    step = n // pieces
+    for i in range(pieces):
+        lo = 150 * (1.18 ** i)
+        seg = band(whoosh[i * step:(i + 1) * step + 512], lo, lo * 4)[:step]
+        out[i * step:i * step + len(seg)] += seg * (i / pieces) ** 1.5
+    out *= np.exp(-np.maximum(t - 0.6, 0) / 0.5)
+    # Wybuch ognia: głuchy huk i trzaski.
+    boom = sweep(90, 35, length, 0.6) * 1.2 + lowpass(s.noise(length), 600) * envelope(n, 0.01, 0.5) * 0.8
+    place(out, boom[: samples(2.2)], 0.45)
+    out += grains(s, length, 60, 900, 5000, length=(0.002, 0.008), density_decay=1.0, loudness=(0.05, 0.3))
+    return fade(normalize(out, 0.9), 0.01, 0.5)
+
+
+SPACE = {
+    'space_ambient': space_ambient,
+    'skyfall_wind': skyfall_wind,
+    'skyfall_ignite': skyfall_ignite
+}
+
+
+# ------------------------------------------------------------
 # Zapis
 # ------------------------------------------------------------
 
@@ -638,7 +704,7 @@ def save(path, data):
         )
 
 
-GROUPS = ['bloki', 'meteoryt', 'owoce', 'menu', 'woda']
+GROUPS = ['bloki', 'meteoryt', 'owoce', 'menu', 'woda', 'kosmos']
 
 
 def generate(root=ROOT, only=None):
@@ -677,6 +743,10 @@ def generate(root=ROOT, only=None):
         seed += 1
         if want('woda'):
             save(os.path.join(root, 'water', f'{name}.ogg'), make(Synth(seed)))
+    for name, make in SPACE.items():
+        seed += 1
+        if want('kosmos'):
+            save(os.path.join(root, 'space', f'{name}.ogg'), make(Synth(seed)))
 
 
 if __name__ == '__main__':

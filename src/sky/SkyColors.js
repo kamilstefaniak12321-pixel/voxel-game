@@ -139,6 +139,14 @@ const ECLIPSE_HORIZON = new THREE.Color('#2e3352');
 const ECLIPSE_GLOW_COLOR = new THREE.Color('#e08a4c');
 
 
+// KOSMOS (wysoko nad ziemią - src/space/): gwiazdy i Droga Mleczna
+// są widoczne zawsze, także w dzień, a słońce jest białe (bez
+// powietrza, które je barwi). Spadających gwiazd nie ma - to
+// zjawisko w powietrzu.
+
+const SPACE_SUN = new THREE.Color('#fffaf0');
+
+
 // Zamieniamy teksty kolorów na obiekty Color (raz, przy starcie).
 
 const COLOR_FIELDS = [
@@ -310,6 +318,11 @@ export class SkyState {
         // Sky z Sky.horizonDip) - poniżej słońce i księżyc są schowane.
 
         this.horizonDip = 0;
+
+        // Kosmos: 0 = zwykłe niebo, 1 = kamera wysoko nad ziemią
+        // (ustawia Sky z Sky.space).
+
+        this.space = 0;
 
     }
 
@@ -513,6 +526,27 @@ export class SkyState {
             night *
             (0.15 + 0.85 * (1 - moonLight)) *
             (this.meteorShower ? METEOR_SHOWER_FACTOR : 1);
+
+
+        // Kosmos.
+
+        const space = this.space;
+
+        if (space > 0) {
+
+            const clear = smoothstep(0.3, 1, space);
+
+            this.starVisibility = Math.max(this.starVisibility, clear);
+            this.starLimit = Math.min(this.starLimit, 1 - clear);
+            this.galaxyVisibility = Math.max(this.galaxyVisibility, 0.9 * clear * clear);
+
+            this.meteorsPerMinute *= 1 - space;
+
+            this.sunDiscColor.lerp(SPACE_SUN, space);
+
+            this.moonBrightness += (1 - this.moonBrightness) * space;
+
+        }
 
     }
 

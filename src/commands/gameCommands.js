@@ -72,8 +72,13 @@ import {
     UI_THEMES,
     POTATO_RENDER_SCALE,
     POTATO_VIEW_DISTANCE,
-    POTATO_STAR_SHARE
+    POTATO_STAR_SHARE,
+    SPACE_FULL,
+    SPACE_MAX_ALTITUDE,
+    SKYFALL_START
 } from '../config.js';
+
+import { skyfallSpeed } from '../player/Player.js';
 
 // ------------------------------------------------------------
 // KOMENDY GRY
@@ -1079,14 +1084,14 @@ export const GAME_COMMANDS = [
             }
 
             return 'Komendy (szczegóły: /pomoc <komenda>, Tab podpowiada):\n' +
-                commands.commands
+                commands.visible
                     .map((command) => `/${command.name} - ${command.description}`)
                     .join('\n');
 
         },
 
         complete(args, { commands }) {
-            return args.length === 1 ? commands.commands.map((command) => command.name) : [];
+            return args.length === 1 ? commands.visible.map((command) => command.name) : [];
         }
     },
 
@@ -1864,6 +1869,8 @@ export const GAME_COMMANDS = [
             pos.set(x, y, z);
 
             player.vel.set(0, 0, 0);
+
+            player.skyfall = false;
 
             player.updateCamera();
 
@@ -3394,9 +3401,112 @@ export const GAME_COMMANDS = [
         complete(args) {
             return args.length === 1 ? ['test'] : [];
         }
+    },
+
+
+    // ========================================================
+    // SEKRET (ukryta - nie ma jej na liście /pomoc)
+    // ========================================================
+
+    {
+        name: 'kosmos',
+        aliases: ['space'],
+        hidden: true,
+        usage: '/kosmos [lec|spadaj|status] [wysokość]',
+        description: 'Sekret: przenosi w kosmos (czarne niebo, planety, kula Ziemi). ' +
+            '"spadaj" - od razu w dół jak meteoryt (krater przy lądowaniu).',
+
+        run(args, { game, player }) {
+
+            const action = simplify(args[0] ?? 'lec');
+
+            const space = game.spaceView;
+
+
+            if (action === 'status') {
+
+                const map = space.globe.map;
+
+                return `Wysokość ${Math.round(player.pos.y)} | kosmos ${Math.round(space.space * 100)}%, ` +
+                    `kula ${Math.round(space.curve * 100)}%, mapa kuli ${Math.round(map.progress * 100)}%\n` +
+                    (player.skyfall
+                        ? `Spadasz: ${Math.round(game.skyfall.speed)} bloków/s, ogień ${Math.round(game.skyfall.heat * 100)}%`
+                        : player.flying ? 'Lecisz (Spacja - w górę, Shift - w dół, wysoko coraz szybciej).' : 'Nie spadasz.');
+
+            }
+
+            if (action !== 'lec' && action !== 'spadaj') {
+                throw usageError(this);
+            }
+
+
+            const height = args[1] === undefined ? 6000 : parseNumber(args[1], 'wysokość');
+
+            if (height < SKYFALL_START || height > SPACE_MAX_ALTITUDE) {
+                throw new CommandError(`Wysokość: od ${SKYFALL_START} do ${SPACE_MAX_ALTITUDE}`);
+            }
+
+
+            player.pos.y = height;
+
+            player.vel.set(0, 0, 0);
+
+            player.flying = action === 'lec';
+
+            player.skyfall = false;
+
+            player.updateCamera();
+
+
+            if (action === 'spadaj') {
+
+                const seconds = fallSeconds(height);
+
+                return `Spadasz z wysokości ${Math.round(height)} - jak meteoryt! ` +
+                    `Ziemia za ~${Math.round(seconds)} s.`;
+
+            }
+
+            return `Jesteś na wysokości ${Math.round(height)}` +
+                `${height < SPACE_FULL ? ' (kosmos zaczyna się wyżej - Spacja w górę)' : ''}. ` +
+                'Wyłącz latanie (dwa razy Spacja albo /latanie), żeby wrócić jak meteoryt.';
+
+        },
+
+        complete(args) {
+            return args.length === 1 ? ['lec', 'spadaj', 'status'] : [];
+        }
     }
 
 ];
+
+
+// Ile mniej więcej trwa spadanie z kosmosu z wysokości height
+// (krok co 1/20 s, jak Player.updateSkyfall - do poziomu morza).
+
+function fallSeconds(height) {
+
+    let y = height;
+    let speed = 0;
+    let time = 0;
+
+    const dt = 0.05;
+
+    while (y > 70 && time < 600) {
+
+        const terminal = skyfallSpeed(y);
+
+        speed = Math.min(speed + (30 + terminal * 0.5) * dt, terminal);
+
+        y -= speed * dt;
+
+        time += dt;
+
+    }
+
+    return time;
+
+}
 
 // ------------------------------------------------------------
 // /demo swiatlo - zamknięty pokój z kolorowymi lampami przed

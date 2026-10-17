@@ -153,6 +153,7 @@ export class Stars {
             uniforms: {
                 uVisibility: { value: 0 },
                 uLimit: { value: 0 },
+                uSpace: { value: 0 },
                 uTime: { value: 0 },
                 uPixelRatio: { value: 1 }
             },
@@ -165,6 +166,7 @@ export class Stars {
 
                 uniform float uVisibility;
                 uniform float uLimit;
+                uniform float uSpace;
                 uniform float uTime;
                 uniform float uPixelRatio;
 
@@ -175,12 +177,16 @@ export class Stars {
                     vec4 world = modelMatrix * vec4(position, 1.0);
 
                     // Przy horyzoncie gwiazdy gasną (gruba warstwa powietrza).
+                    // W kosmosie nie ma powietrza: widać je wszędzie
+                    // i nie migoczą.
 
                     float height = normalize(world.xyz).y;
 
-                    float aboveHorizon = smoothstep(-0.02, 0.2, height);
+                    float aboveHorizon = mix(smoothstep(-0.02, 0.2, height), 1.0, uSpace);
 
                     float twinkle = 0.75 + 0.25 * sin(uTime * (1.3 + aPhase * 0.3) + aPhase * 40.0);
+
+                    twinkle = mix(twinkle, 1.0, uSpace);
 
                     // Słabe gwiazdy znikają, gdy niebo jest jaśniejsze.
 
@@ -247,6 +253,7 @@ export class Stars {
 
         uniforms.uVisibility.value = state.starVisibility;
         uniforms.uLimit.value = state.starLimit;
+        uniforms.uSpace.value = state.space;
         uniforms.uTime.value = this.time;
         uniforms.uPixelRatio.value = pixelRatio;
 

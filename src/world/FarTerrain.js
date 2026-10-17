@@ -3,7 +3,8 @@ import * as THREE from 'three';
 import {
     CHUNK_SIZE,
     CHUNK_HEIGHT,
-    WORLD_BORDER
+    WORLD_BORDER,
+    SEA_LEVEL
 } from '../config.js';
 
 import {
@@ -20,7 +21,8 @@ import {
 
 import {
     viewUniforms,
-    VIEW_GLSL
+    VIEW_GLSL,
+    GLOBE_LIGHT_GLSL
 } from '../rendering/viewUniforms.js';
 
 import {
@@ -152,6 +154,11 @@ for (const rock of ROCK_KINDS) {
 // w wierzchołkach i z dopiskami w shaderze:
 //   - środek (tam są prawdziwe chunki) zapada się pod ziemię, a to,
 //     co za końcem dalekiego terenu, jest wycięte,
+//   - wysoko nad ziemią (kosmos, viewUniforms.uCurvature) teren
+//     wygina się w kulę: punkt w odległości d od gracza trafia na
+//     kulę w odległość łuku d (razem z kierunkiem "w górę" do
+//     oświetlenia), a brzeg nie znika w niebie, tylko - postrzępiony -
+//     przechodzi w kulę Ziemi (src/space/Globe.js),
 //   - nocne odbarwienie i suwak jasności - tak jak na blokach,
 //   - mgiełka w kolorze nieba zamiast zwykłej mgły.
 // ------------------------------------------------------------
@@ -200,7 +207,15 @@ function createFarMaterial(lodColor) {
                 '#include <common>',
                 `#include <common>
                 varying vec3 vFarWorld;
+                varying float vFarFlat;
+                varying vec2 vFarFlatXZ;
+                varying float vFarSunHeight;
                 uniform float uFarInner;
+                uniform float uCurvature;
+
+                #ifndef POTATO
+                    uniform vec3 uSunDirection;
+                #endif
 
                 // Tryb ziemniaka: kolor mgiełki liczony w wierzchołkach.
 
@@ -211,6 +226,39 @@ function createFarMaterial(lodColor) {
                 #endif`
             )
             .replace(
+                '#include <beginnormal_vertex>',
+                `#include <beginnormal_vertex>
+
+                // Odległość od gracza w poziomie (na płaskim świecie)
+                // i zgięcie w kulę: kierunek i kąt od miejsca pod kamerą.
+
+                vec3 farFlatWorld = (modelMatrix * vec4(position, 1.0)).xyz;
+
+                vec2 farOffset = farFlatWorld.xz - cameraPosition.xz;
+
+                float farFlat = length(farOffset);
+
+                vec2 farBendDir = farFlat > 0.001 ? farOffset / farFlat : vec2(1.0, 0.0);
+
+                float farBendAngle = min(farFlat * uCurvature, 3.0);
+
+                // Kierunek ściany obraca się razem z kulą.
+
+                if (uCurvature > 0.0) {
+
+                    float along = dot(objectNormal.xz, farBendDir);
+
+                    float along2 = along * cos(farBendAngle) + objectNormal.y * sin(farBendAngle);
+
+                    objectNormal = vec3(
+                        objectNormal.x + farBendDir.x * (along2 - along),
+                        -along * sin(farBendAngle) + objectNormal.y * cos(farBendAngle),
+                        objectNormal.z + farBendDir.y * (along2 - along)
+                    );
+
+                }`
+            )
+            .replace(
                 '#include <begin_vertex>',
                 `#include <begin_vertex>
 
@@ -219,10 +267,41 @@ function createFarMaterial(lodColor) {
                 // temu na granicy nie ma szczeliny, przez którą widać
                 // by niebo - zamiast niej jest stromy, schowany stok.
 
-                vec3 farWorldVertex = (modelMatrix * vec4(transformed, 1.0)).xyz;
-
-                if (length(farWorldVertex.xz - cameraPosition.xz) < uFarInner) {
+                if (farFlat < uFarInner) {
                     transformed.y -= ${SINK_DEPTH.toFixed(1)};
+                }
+
+                vFarFlat = farFlat;
+                vFarFlatXZ = farFlatWorld.xz;
+
+                // Jak wysoko stoi słońce w tym miejscu kuli.
+
+                vFarSunHeight = dot(vec3(farBendDir.x * sin(farBendAngle), cos(farBendAngle), farBendDir.y * sin(farBendAngle)), uSunDirection);
+
+                // Kula: punkt na wysokości h nad morzem, kąt a od miejsca
+                // pod kamerą (licząc tak, żeby przy ogromnej kuli nie
+                // gubić dokładności).
+
+                if (uCurvature > 0.0) {
+
+                    float worldY = farFlatWorld.y + transformed.y - position.y;
+
+                    float h = worldY - ${(SEA_LEVEL + 1).toFixed(1)};
+
+                    float s = sin(farBendAngle);
+
+                    float halfSin = sin(farBendAngle * 0.5);
+
+                    float horizontal = s / uCurvature + h * s;
+
+                    float bentY = ${(SEA_LEVEL + 1).toFixed(1)} + h * cos(farBendAngle) - 2.0 * halfSin * halfSin / uCurvature;
+
+                    vec2 bentXZ = cameraPosition.xz + farBendDir * horizontal;
+
+                    transformed.xz += bentXZ - farFlatWorld.xz;
+
+                    transformed.y += bentY - worldY;
+
                 }`
             )
             .replace(
@@ -241,6 +320,9 @@ function createFarMaterial(lodColor) {
                 '#include <common>',
                 `#include <common>
                 varying vec3 vFarWorld;
+                varying float vFarFlat;
+                varying vec2 vFarFlatXZ;
+                varying float vFarSunHeight;
                 uniform float uFogBrightness;
                 uniform float uNightDesaturation;
                 uniform vec3 uNightTint;
@@ -248,6 +330,7 @@ function createFarMaterial(lodColor) {
                 uniform float uLodDebug;
                 ${SKY_COLOR_GLSL}
                 ${VIEW_GLSL}
+                ${GLOBE_LIGHT_GLSL}
                 ${METEOR_LIGHT_GLSL}
 
                 #ifdef POTATO
@@ -262,8 +345,22 @@ function createFarMaterial(lodColor) {
                 `#include <clipping_planes_fragment>
 
                 // Za końcem dalekiego terenu - niebo (okrągły horyzont).
+                // Z kulą Ziemi za nim: brzeg postrzępiony (stały wzór
+                // w świecie), za nim widać kulę.
 
-                if (length(vFarWorld.xz - cameraPosition.xz) > uFarOuter) {
+                float farEnd = uFarOuter;
+
+                if (uGlobe > 0.0) {
+
+                    vec2 cell = floor(vFarFlatXZ / 12.0);
+
+                    float jag = fract(sin(dot(cell, vec2(12.9898, 78.233))) * 43758.5453);
+
+                    farEnd *= 1.0 - uGlobe * (0.03 + 0.2 * jag);
+
+                }
+
+                if (vFarFlat > farEnd) {
                     discard;
                 }`
             )
@@ -274,9 +371,31 @@ function createFarMaterial(lodColor) {
             )
             .replace(
                 '#include <opaque_fragment>',
-                `float skyLuminance = dot(outgoingLight, VIEW_LUMINANCE);
+                `float nightDesaturation = uNightDesaturation;
 
-                outgoingLight = mix(outgoingLight, skyLuminance * uNightTint, uNightDesaturation);
+                // Wygięty w kulę (kosmos): tam, gdzie jest inna pora dnia
+                // niż u gracza, jaśniej albo ciemniej (jak na kuli Ziemi).
+
+                if (uCurvature > 0.0) {
+
+                    float hereSun = vFarSunHeight;
+                    float playerSun = uSunDirection.y;
+
+                    vec3 farNormal = inverseTransformDirection(normal, viewMatrix);
+
+                    float extra =
+                        daylightAmbient(hereSun) - daylightAmbient(playerSun) +
+                        (daylightSun(hereSun) - daylightSun(playerSun)) * max(dot(farNormal, uSunDirection), 0.0);
+
+                    outgoingLight = max(outgoingLight + diffuseColor.rgb * extra * RECIPROCAL_PI, vec3(0.0));
+
+                    nightDesaturation = clamp(nightDesaturation + daylightNight(hereSun) - daylightNight(playerSun), 0.0, 1.0);
+
+                }
+
+                float skyLuminance = dot(outgoingLight, VIEW_LUMINANCE);
+
+                outgoingLight = mix(outgoingLight, skyLuminance * uNightTint, nightDesaturation);
 
                 // Kula ognia meteorytu oświetla też daleki teren.
 
@@ -292,10 +411,16 @@ function createFarMaterial(lodColor) {
 
                 vec3 hazeSky = HAZE_SKY;
 
+                // Na kuli (kosmos): mgiełka ciemnieje tam, gdzie jest noc.
+
+                if (uCurvature > 0.0) {
+                    hazeSky *= hazeScale(vFarSunHeight);
+                }
+
                 gl_FragColor.rgb = mix(
                     gl_FragColor.rgb,
                     linearToOutputTexel(vec4(hazeSky, 1.0)).rgb,
-                    farHaze(length(farDirection.xz))
+                    farHaze(farDirection)
                 );`
             );
 
@@ -449,12 +574,18 @@ export class FarTerrain {
         }
 
 
+        // Wysokość kamery nad terenem (z wysoka bliskie kafelki są
+        // daleko, więc mogą być mniej dokładne).
+
+        const height = Math.max(0, cameraPosition.y - CHUNK_HEIGHT);
+
         if (
             !this.center ||
-            Math.hypot(cameraPosition.x - this.center.x, cameraPosition.z - this.center.z) > RECENTER_DISTANCE
+            Math.hypot(cameraPosition.x - this.center.x, cameraPosition.z - this.center.z) > RECENTER_DISTANCE ||
+            Math.abs(height - this.center.height) > Math.max(32, this.center.height * 0.25)
         ) {
 
-            this.center = { x: cameraPosition.x, z: cameraPosition.z };
+            this.center = { x: cameraPosition.x, z: cameraPosition.z, height };
 
             this.wanted = this.selectTiles(this.center);
 
@@ -558,7 +689,7 @@ export class FarTerrain {
         const dx = Math.max(x0 - center.x, 0, center.x - (x0 + size));
         const dz = Math.max(z0 - center.z, 0, center.z - (z0 + size));
 
-        const near = Math.hypot(dx, dz);
+        const near = Math.hypot(dx, dz, center.height);
 
         const fx = Math.max(Math.abs(center.x - x0), Math.abs(center.x - (x0 + size)));
         const fz = Math.max(Math.abs(center.z - z0), Math.abs(center.z - (z0 + size)));
@@ -569,7 +700,7 @@ export class FarTerrain {
         // Za końcem dalekiego terenu albo w całości w zasięgu
         // prawdziwych chunków - nie jest potrzebny.
 
-        if (near > this.outer || far < this.inner - 8) {
+        if (Math.hypot(dx, dz) > this.outer || far < this.inner - 8) {
             return;
         }
 
@@ -1085,8 +1216,10 @@ export class FarTerrain {
         // Bliżej niż ułamek zasięgu widzenia nic nie widać (wycięte),
         // a daleko trzeba sięgnąć aż do rogów ekranu.
 
-        farCamera.near = Math.max(1, this.inner * 0.2);
-        farCamera.far = this.outer * 1.6 + 200;
+        // Z wysoka (kosmos) teren jest dalej - i niżej, bo wygina się w kulę.
+
+        farCamera.near = Math.max(1, this.inner * 0.2, (farCamera.position.y - CHUNK_HEIGHT) * 0.2);
+        farCamera.far = this.outer * 1.6 + 200 + Math.max(0, farCamera.position.y) * 1.5;
 
         farCamera.updateProjectionMatrix();
 

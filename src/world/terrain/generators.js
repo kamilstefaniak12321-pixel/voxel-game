@@ -13,9 +13,11 @@ import { RealisticGenerator } from './RealisticGenerator.js';
 //   baseHeight           - typowa wysokość nizin (np. horyzont)
 //   getHeight(x, z)      - y najwyższego bloku terenu
 //   generateChunk(chunk) - wypełnia chunk blokami
-//   farSurface(x, z, spacing) -> { top, kind } - dla dalekiego
-//                          terenu; kind: 'grass', 'rock', 'sand', 'water'
-//                          albo nazwa skały ('granite', 'limestone'...)
+//   farSurface(x, z, spacing) -> { top, kind, floor } - dla dalekiego
+//                          terenu i kuli Ziemi z kosmosu; kind: 'grass',
+//                          'rock', 'sand', 'water' albo nazwa skały
+//                          ('granite', 'limestone'...); floor (tylko
+//                          woda, opcjonalnie) - wierzch dna
 //   describe(x, z)       - opis miejsca: wysokość, pas wysokości,
 //                          forma terenu, skała pod glebą (rock), pola
 //                          (/teren, /mapa)

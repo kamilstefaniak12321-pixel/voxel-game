@@ -171,7 +171,7 @@ export class Moon {
         this.material.uniforms.uEarthshine.value =
             EARTHSHINE * Math.max(1 - state.daylight, state.eclipseDarkness);
 
-        moon.visible = celestial.moonHeight > -0.1;
+        moon.visible = celestial.moonHeight > -0.1 || state.space > 0.001;
 
     }
 

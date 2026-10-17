@@ -144,7 +144,7 @@ export class Sun {
 
         // Głęboko pod horyzontem nie ma czego rysować.
 
-        this.object.visible = celestial.sunHeight > -0.1;
+        this.object.visible = celestial.sunHeight > -0.1 || state.space > 0.001;
 
     }
 

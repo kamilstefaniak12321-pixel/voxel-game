@@ -8,6 +8,9 @@
 //       aliases: ['time'],               // inne nazwy (opcjonalne)
 //       usage: '/czas ustaw <godzina>',  // jak używać (do /pomoc)
 //       description: 'Ustawia czas.',    // krótki opis (do /pomoc)
+//       hidden: true,                    // sekret: nie ma jej na liście
+//                                        // /pomoc ani w podpowiedziach
+//                                        // (opcjonalne)
 //
 //       run(args, ctx) { ... },          // wykonanie
 //       complete(args, ctx) { ... }      // podpowiedzi pod Tab (opcjonalne)
@@ -72,6 +75,15 @@ export class CommandRegistry {
         }
 
         this.commands.push(command);
+
+    }
+
+
+    // Komendy widoczne na liście /pomoc i w podpowiedziach (bez ukrytych).
+
+    get visible() {
+
+        return this.commands.filter((command) => !command.hidden);
 
     }
 
@@ -144,7 +156,7 @@ export class CommandRegistry {
 
         if (words.length === 1) {
 
-            options = this.commands.map((command) => command.name);
+            options = this.visible.map((command) => command.name);
 
         }
         else {

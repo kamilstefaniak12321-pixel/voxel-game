@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <!-- Nazwa aplikacji (app_name) jest w app/build.gradle - wersja
+         testowa ma dopisek "(test)". -->
+    <string name="package_name">pl.kamil.voxelgame</string>
+    <string name="custom_url_scheme">pl.kamil.voxelgame</string>
+</resources>

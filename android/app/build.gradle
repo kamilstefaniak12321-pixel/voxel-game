@@ -1,0 +1,91 @@
+apply plugin: 'com.android.application'
+
+// ------------------------------------------------------------
+// APLIKACJA NA TELEFON (Android) - budowanie
+//
+// Wersja aplikacji = "version" z package.json (jedno miejsce na
+// komputer i telefon). versionCode (liczba, która musi rosnąć z każdym
+// wydaniem): 0.9.0 -> 900, 1.2.3 -> 10203.
+//
+// Dwie odmiany:
+//   - release (wydanie): podpisana kluczem z sekretów GitHuba
+//     (ANDROID_KEYSTORE...) - tylko taka trafia do wydań; kolejne
+//     wersje instalują się na poprzednich (światy zostają),
+//   - debug (test): osobna aplikacja "Voxel Game (test)" z własnymi
+//     światami - instaluje się obok wydania i nigdy z nim nie kłóci.
+// Budowanie: GitHub Actions (.github/workflows/aplikacja.yml),
+// opis: docs/telefon.md.
+// ------------------------------------------------------------
+
+def gamePackage = new groovy.json.JsonSlurper().parse(rootProject.file('../package.json'))
+def versionParts = gamePackage.version.tokenize('.').collect { it.replaceAll('[^0-9].*', '').toInteger() }
+
+// Klucz do podpisu wydania - plik i hasło z GitHub Actions.
+def keystoreFile = System.getenv('ANDROID_KEYSTORE_FILE')
+
+android {
+    namespace = "pl.kamil.voxelgame"
+    compileSdk = rootProject.ext.compileSdkVersion
+    defaultConfig {
+        applicationId "pl.kamil.voxelgame"
+        minSdkVersion rootProject.ext.minSdkVersion
+        targetSdkVersion rootProject.ext.targetSdkVersion
+        versionCode versionParts[0] * 10000 + versionParts[1] * 100 + versionParts[2]
+        versionName gamePackage.version
+        resValue "string", "app_name", "Voxel Game"
+        resValue "string", "title_activity_main", "Voxel Game"
+        aaptOptions {
+             // Files and dirs to omit from the packaged assets dir, modified to accommodate modern web apps.
+             // Default: https://android.googlesource.com/platform/frameworks/base/+/282e181b58cf72b6ca770dc7ca5f91f135444502/tools/aapt/AaptAssets.cpp#61
+            ignoreAssetsPattern = '!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~'
+        }
+    }
+    signingConfigs {
+        release {
+            if (keystoreFile) {
+                storeFile file(keystoreFile)
+                storeType 'pkcs12'
+                storePassword System.getenv('ANDROID_KEYSTORE_PASSWORD')
+                keyAlias 'voxelgame'
+                keyPassword System.getenv('ANDROID_KEYSTORE_PASSWORD')
+            }
+        }
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            if (keystoreFile) {
+                signingConfig signingConfigs.release
+            }
+        }
+        debug {
+            applicationIdSuffix ".test"
+            versionNameSuffix "-test"
+            resValue "string", "app_name", "Voxel Game (test)"
+            resValue "string", "title_activity_main", "Voxel Game (test)"
+        }
+    }
+    lint {
+        // Ostrzeżenia lintera nie zatrzymują budowania wydania.
+        abortOnError false
+        checkReleaseBuilds false
+    }
+}
+
+repositories {
+    flatDir{
+        dirs '../capacitor-cordova-android-plugins/src/main/libs', 'libs'
+    }
+}
+
+dependencies {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation "androidx.appcompat:appcompat:$androidxAppCompatVersion"
+    implementation "androidx.coordinatorlayout:coordinatorlayout:$androidxCoordinatorLayoutVersion"
+    implementation "androidx.core:core-splashscreen:$coreSplashScreenVersion"
+    implementation project(':capacitor-android')
+    implementation project(':capacitor-cordova-android-plugins')
+}
+
+apply from: 'capacitor.build.gradle'

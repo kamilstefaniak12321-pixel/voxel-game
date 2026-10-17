@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Wygląd aplikacji: czarne tło (pod grą i w pasach przy wycięciu
+         na aparat), bez paska tytułu. -->
+
+    <style name="AppTheme" parent="Theme.AppCompat.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/voxelDark</item>
+        <item name="colorPrimaryDark">@color/voxelDark</item>
+        <item name="colorAccent">@color/voxelSky</item>
+        <item name="android:windowBackground">@color/voxelDark</item>
+    </style>
+
+    <style name="AppTheme.NoActionBar" parent="Theme.AppCompat.DayNight.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:background">@null</item>
+        <item name="android:windowBackground">@color/voxelDark</item>
+    </style>
+
+    <!-- Ekran startowy: Android 12+ pokazuje ikonkę na ciemnym tle,
+         starsze - obrazek splash.png (tools/android_ikony.py). -->
+
+    <style name="AppTheme.NoActionBarLaunch" parent="Theme.SplashScreen">
+        <item name="android:background">@drawable/splash</item>
+        <item name="windowSplashScreenBackground">@color/voxelDark</item>
+        <item name="postSplashScreenTheme">@style/AppTheme.NoActionBar</item>
+    </style>
+
+    <color name="voxelDark">#0A121E</color>
+    <color name="voxelSky">#3A88D6</color>
+
+</resources>

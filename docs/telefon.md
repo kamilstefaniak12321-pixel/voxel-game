@@ -1,12 +1,104 @@
-# Telefon i tablet (sterowanie dotykowe) - wersja testowa
+# Telefon i tablet - aplikacja na Androida i sterowanie dotykowe
 
-Gra działa też w przeglądarce na telefonie (Android - Chrome, Firefox,
-Samsung Internet; iPhone - Safari) ze **sterowaniem dotykowym**: joystick,
-rozglądanie palcem i przyciski na ekranie. To pierwsza, testowa wersja -
-sprawdzamy, czy gra w ogóle się uruchamia, jak szybko działa i jak się
-w nią gra palcami.
+Na telefonie i tablecie gra ma **sterowanie dotykowe**: joystick,
+rozglądanie palcem i przyciski na ekranie. Można w nią grać na dwa
+sposoby:
 
-## Jak uruchomić na telefonie
+- **aplikacja na Androida** - instalowana jak każda inna, z ikonką na
+  ekranie, działa bez internetu (niżej),
+- **w przeglądarce telefonu** (Android i iPhone), bez instalacji - gra
+  z komputera przez sieć Wi-Fi (dalej: *W przeglądarce telefonu*).
+
+## Aplikacja na Androida
+
+### Instalacja (dla gracza)
+
+1. Na telefonie otwórz wydania:
+   <https://github.com/kamilstefaniak12321-pixel/voxel-game-wydania/releases/latest>
+   i pobierz **`Voxel-Game-<wersja>-android.apk`**.
+2. Otwórz pobrany plik (z powiadomienia albo z folderu *Pobrane*).
+3. Android zapyta, czy przeglądarka może instalować aplikacje -
+   **zezwól** (*Ustawienia → Zezwalaj z tego źródła*), wróć i stuknij
+   **Zainstaluj**.
+4. Google Play Protect może ostrzec o *nieznanej aplikacji* (gra nie jest
+   w sklepie Google Play) - **Więcej szczegółów → Zainstaluj mimo to**.
+5. Na ekranie telefonu pojawia się ikonka **Voxel Game** (blok trawy).
+
+Aplikacja uruchamia się zawsze poziomo, na cały ekran (pasek stanu
+i przyciski nawigacji wysuwają się po przeciągnięciu palcem od
+krawędzi), ekran nie gaśnie w trakcie gry, a przycisk **wstecz** robi
+pauzę. Wyjście do innej aplikacji = pauza i zapis świata.
+
+**Nowa wersja:** pobierz nowy `.apk` z wydań i zainstaluj tak samo -
+instaluje się na poprzedniej, **światy, ustawienia i osiągnięcia
+zostają**. (Sama się jeszcze nie aktualizuje - patrz *Do zrobienia*.)
+Wersja jest w *Ustawienia → Aplikacje → Voxel Game* na telefonie.
+
+**Zapisy:** światy są w danych aplikacji (osobno od przeglądarki
+telefonu i od komputera). Odinstalowanie aplikacji je usuwa.
+
+### Wersja testowa
+
+Każdy pull request, który zmienia aplikację, buduje ją na próbę:
+**Actions** → przebieg → *Artifacts* → `Voxel-Game-<wersja>-android...`
+(plik zip z `.apk` w środku - na telefonie trzeba być zalogowanym na
+GitHubie). Bez klucza do podpisu (niżej) powstaje **Voxel Game (test)** -
+osobna aplikacja z własnymi światami, którą można mieć obok prawdziwej.
+
+### Klucz do podpisu (raz, w ustawieniach repozytorium)
+
+Android instaluje nową wersję na starej tylko wtedy, gdy obie są
+podpisane **tym samym kluczem**. Klucz gry jest w dwóch sekretach
+repozytorium `voxel-game` (*Settings → Secrets and variables → Actions →
+New repository secret*):
+
+| sekret | co to |
+|---|---|
+| `ANDROID_KEYSTORE` | plik klucza (`voxelgame.p12`) zapisany jako tekst base64 |
+| `ANDROID_KEYSTORE_PASSWORD` | hasło do klucza |
+
+Bez nich do wydań trafia tylko instalator dla Windowsa (w przebiegu
+widać ostrzeżenie *Android*), a w *Artifacts* jest wersja testowa.
+Po dodaniu sekretów do już wydanej wersji: **Actions** → *Aplikacje
+(komputer i telefon)* → **Run workflow** - przebieg zbuduje podpisany
+`.apk` i dołoży go do wydania (instalatora nie buduje drugi raz).
+Odcisk klucza (SHA-256) widać w adnotacji *Aplikacja (release)*.
+
+> **Kopia klucza jest ważniejsza niż wygląda.** Sekretów GitHuba nie da
+> się odczytać - jeśli zginie też kopia zapasowa, nowej wersji nie da się
+> zainstalować na starej: trzeba odinstalować grę (razem ze światami)
+> i zainstalować od nowa. Klucz trzymaj prywatnie (nie do gita, nie do
+> czatu) - kto go ma, może podpisać "aktualizację" gry.
+
+Nowy klucz (gdyby był potrzebny), np. w terminalu z Javą:
+`keytool -genkeypair -storetype PKCS12 -keystore voxelgame.p12 -alias voxelgame -keyalg RSA -keysize 4096 -validity 36500`,
+potem base64 (PowerShell: `[Convert]::ToBase64String([IO.File]::ReadAllBytes("voxelgame.p12"))`).
+
+### Jak powstaje (kod)
+
+- **`android/`** - projekt aplikacji ([Capacitor](https://capacitorjs.com/)):
+  okienko przeglądarki (WebView) z grą na cały ekran. W środku są te same
+  pliki co w przeglądarce (`index.html`, `src/`, `assets/`, `lib/`) -
+  kopiuje je `npm run android:sync` (`tools/android-www.mjs` + `npx cap
+  sync android`), więc nic nie trzeba zmieniać w grze osobno dla telefonu.
+- `android/app/src/main/java/pl/kamil/voxelgame/MainActivity.java` -
+  pełny ekran, ekran nie gaśnie, "wstecz", pauza przy wyjściu
+  (zdarzenie `apppause` w `main.js`).
+- `android/app/src/main/AndroidManifest.xml` - zawsze poziomo, nazwa,
+  ikonka; `android/app/build.gradle` - wersja (z `package.json`:
+  `0.9.0` → versionCode 900), podpis, odmiana testowa.
+- Ikonki i ekran startowy - `tools/android_ikony.py` (z `desktop/icon.png`;
+  po zmianie ikonki: `python tools/android_ikony.py`).
+- Budowanie: GitHub Actions, job **android** w
+  `.github/workflows/aplikacja.yml` (po instalatorze dla Windowsa,
+  ~5 minut). Nowa wersja w `package.json` → nowy `.apk` w wydaniu obok
+  instalatora; wydanie bez `.apk` jest uzupełniane.
+- W grze: `window.Capacitor` = aplikacja (`nativeApp` w `main.js`) - bez
+  przycisku pełnego ekranu, osiągnięcie *Lokator z ikonką*.
+- Samemu na komputerze (niekonieczne): Android Studio,
+  `npm run android:sync`, potem `npx cap open android` i ▶.
+
+## W przeglądarce telefonu
 
 Telefon i komputer muszą być w **tej samej sieci Wi-Fi**.
 
@@ -101,7 +193,10 @@ z `main.js`) i jego miejsce w `touch.css`.
   połóż), ale nie ma przeciągania ani "połowy stosu" (PPM).
 - **Joystick** ma 8 kierunków (jak klawisze), nie płynny ruch.
 - Brak "wybierz blok, na który patrzysz" (środkowy przycisk myszy).
-- Prawdziwa aplikacja na Androida (plik .apk, ikonka na ekranie) - na
-  razie gra działa tylko przez przeglądarkę i serwer na komputerze.
-  Można by też wystawić ją w internecie (np. GitHub Pages) - wtedy
-  wystarczyłby adres strony, bez komputera.
+- Aplikacja na Androida **sama się nie aktualizuje** - można dodać
+  sprawdzanie wydań przy starcie (jak w aplikacji na komputer) i przycisk
+  "pobierz nową wersję".
+- iPhone: tylko przeglądarka (aplikacja na iOS wymaga Maca i płatnego
+  konta Apple).
+- Gra w przeglądarce bez komputera: wystawienie jej w internecie (np.
+  GitHub Pages) - wtedy wystarczyłby adres strony.

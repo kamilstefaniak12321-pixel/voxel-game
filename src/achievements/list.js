@@ -176,6 +176,15 @@ export const ACHIEVEMENTS = [
         on: 'blockBroken',
         when: (data, book) => book.game?.touchMode === true
     },
+    {
+        id: 'own_icon',
+        tier: 'rare',
+        title: 'Lokator z ikonką',
+        task: 'Zagraj w aplikacji na telefon (zainstalowanej, z ikonką na ekranie).',
+        comment: 'Gra zamieszkała na twoim telefonie. Czynszu nie płaci.',
+        icon: 'grass',
+        check: (game) => game.nativeApp === 'android'
+    },
 
     // --------------------------------------------------------
     // BARDZO RZADKIE

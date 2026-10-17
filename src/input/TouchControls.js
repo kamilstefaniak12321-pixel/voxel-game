@@ -148,9 +148,10 @@ export class TouchControls {
         this.button(top, 'camera', 'Widok', { press: 'F5' });
         this.button(top, 'map', 'Mapa', { action: () => handlers.map?.() });
 
-        // iPhone nie ma pełnego ekranu dla stron - wtedy bez przycisku.
+        // iPhone nie ma pełnego ekranu dla stron, a aplikacja na telefon
+        // jest na nim od początku - wtedy bez przycisku.
 
-        if (document.documentElement.requestFullscreen) {
+        if (handlers.fullscreen && document.documentElement.requestFullscreen) {
             this.button(top, 'fullscreen', 'Pełny ekran', { action: () => handlers.fullscreen?.() });
         }
 

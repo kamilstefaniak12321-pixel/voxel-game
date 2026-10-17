@@ -186,6 +186,11 @@ export class Game {
 
         this.touchMode = false;
 
+        // Aplikacja na telefon: 'android' (main.js), null - przeglądarka
+        // albo komputer.
+
+        this.nativeApp = null;
+
         // Pomiar wydajności (ustawia main.js) i trwający test
         // wydajności (/wydajnosc test).
 

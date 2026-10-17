@@ -1,0 +1,8 @@
+{
+    "appId": "pl.kamil.voxelgame",
+    "appName": "Voxel Game",
+    "webDir": "www",
+    "android": {
+        "backgroundColor": "#000000"
+    }
+}

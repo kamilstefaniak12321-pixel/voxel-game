@@ -1,7 +1,7 @@
 # Voxel Game
 
-Gra voxelowa w przeglądarce i jako aplikacja na komputer (Windows),
-napisana w JavaScripcie z użyciem three.js.
+Gra voxelowa w przeglądarce, jako aplikacja na komputer (Windows) i na
+telefon (Android), napisana w JavaScripcie z użyciem three.js.
 
 > Nazwa robocza - do zmiany, gdy gra dostanie prawdziwą nazwę.
 
@@ -24,13 +24,21 @@ przykład:
 Internet nie jest potrzebny - three.js jest w `lib/three/`. Światy
 z przeglądarki i z aplikacji są zapisywane osobno.
 
-**Na telefonie / tablecie (wersja testowa):** na komputerze w folderze
+**Aplikacja na telefon (Android):** na telefonie z wydań (link wyżej)
+pobierz `Voxel-Game-...-android.apk` i otwórz - Android zapyta, czy
+zezwolić na instalację z przeglądarki (zezwól). Gra ma ikonkę na
+ekranie, działa bez internetu, zawsze poziomo i na cały ekran. Nowa
+wersja = nowy `.apk` zainstalowany na starym (światy zostają).
+
+**W przeglądarce telefonu / tabletu:** na komputerze w folderze
 gry `npx serve`, a na telefonie (w tej samej sieci Wi-Fi) adres
-**Network** z konsoli, np. `http://192.168.1.23:3000`. Na ekranie
-dotykowym gra sama włącza **sterowanie dotykowe** - joystick, rozglądanie
-palcem i przyciski (sterowanie poniżej). Wymuszenie na komputerze:
-`?dotyk` w adresie albo `/dotyk wl` (`?dotyk=0`, `/dotyk wyl` wyłącza). Szczegóły, ustawienia na
-telefonie i co jeszcze nie działa: `docs/telefon.md`.
+**Network** z konsoli, np. `http://192.168.1.23:3000`.
+
+Na ekranie dotykowym gra sama włącza **sterowanie dotykowe** - joystick,
+rozglądanie palcem i przyciski (sterowanie poniżej). Wymuszenie na
+komputerze: `?dotyk` w adresie albo `/dotyk wl` (`?dotyk=0`, `/dotyk wyl`
+wyłącza). Instalacja, aktualizacje, klucz do podpisu aplikacji,
+ustawienia na telefonie i co jeszcze nie działa: `docs/telefon.md`.
 
 ## Sterowanie
 
@@ -79,7 +87,7 @@ w pauzie i na ekranie tytułowym) - z datą i nazwą świata. Księga jest
 wspólna dla wszystkich światów. Niektóre osiągnięcia są sekretne -
 przed zdobyciem widać tylko znak zapytania.
 
-Na start jest 18 osiągnięć (od pierwszego zniszczonego bloku po
+Na start jest 19 osiągnięć (od pierwszego zniszczonego bloku po
 legendarne *Problem spadł z nieba*). Nowa rzecz w grze = nowe
 osiągnięcie - jak je dopisać, zdarzenia z gry i pełna lista (spoilery):
 `docs/osiagniecia.md`. Test: `/osiagniecia` (lista), `/osiagniecia pokaz
@@ -638,6 +646,8 @@ Inne rzeczy do zmiany:
 index.html                  strona gry
 package.json                aplikacja na komputer: wersja, biblioteki, ustawienia instalatora
 desktop/                    aplikacja na komputer (okno, aktualizacje, ikonka)
+android/                    aplikacja na telefon (Android, Capacitor): pełny ekran, ikonki
+capacitor.config.json       aplikacja na telefon: nazwa, identyfikator
 lib/three/                  three.js 0.160.0 (biblioteka 3D)
 .github/workflows/          automatyczne budowanie instalatora i wydań
 assets/textures/blocks/     tekstury bloków (terrain.png = atlas)
@@ -646,7 +656,7 @@ assets/textures/player/     skórka gracza i szablon skórki
 assets/ui/themes/           motywy menu (kolory, czcionka, tło)
 assets/fonts/               czcionki
 assets/sounds/              dźwięki (.ogg): bloki, kroki, zbieranie, meteoryt, menu (ui/), woda, kosmos
-tools/                      skrypty pomocnicze (generator dźwięków)
+tools/                      skrypty pomocnicze (dźwięki, ikonki i pliki aplikacji na Androida)
 docs/                       opisy, jak działają większe części gry
 src/
   main.js                   start aplikacji, menu, pauza, pętla

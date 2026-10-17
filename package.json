@@ -1,19 +1,24 @@
 {
     "name": "voxel-game",
     "productName": "Voxel Game",
-    "version": "0.8.0",
+    "version": "0.9.0",
     "description": "Gra voxelowa - aplikacja na komputer (Windows)",
     "author": "Kamil",
     "private": true,
     "main": "desktop/main.js",
     "scripts": {
         "start": "electron .",
-        "dist": "electron-builder --win --publish never"
+        "dist": "electron-builder --win --publish never",
+        "android:www": "node tools/android-www.mjs",
+        "android:sync": "node tools/android-www.mjs && npx cap sync android"
     },
     "dependencies": {
         "electron-updater": "6.8.9"
     },
     "devDependencies": {
+        "@capacitor/android": "8.5.3",
+        "@capacitor/cli": "8.5.3",
+        "@capacitor/core": "8.5.3",
         "electron": "44.4.5",
         "electron-builder": "26.15.3"
     },
@@ -42,7 +47,9 @@
             "createDesktopShortcut": true,
             "shortcutName": "Voxel Game",
             "artifactName": "Voxel-Game-${version}-instalator.${ext}",
-            "installerLanguages": ["pl_PL"],
+            "installerLanguages": [
+                "pl_PL"
+            ],
             "language": "1045"
         },
         "publish": {

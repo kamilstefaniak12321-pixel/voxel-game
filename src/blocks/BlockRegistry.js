@@ -1,6 +1,8 @@
 import {
     BLOCK_LIGHT_COLOR,
-    BUSH_GROWTH_SECONDS
+    BUSH_GROWTH_SECONDS,
+    BREAK_SECONDS,
+    LEAVES_BREAK_SECONDS
 } from '../config.js';
 
 import { treeBlocks } from './trees.js';
@@ -77,6 +79,9 @@ export const MAX_BLOCK_ID = 255;
 //   bark           - przedmiot z okorowania siekierą (kora brzozowa)
 //   tree, part     - gatunek drzewa i część ('log', 'leaves'...) -
 //                    src/blocks/trees.js
+//   hardness       - ile sekund kopie się blok w trybie przygody
+//                    (domyślnie według materiału - BREAK_SECONDS
+//                    w config.js)
 
 // ------------------------------------------------------------
 // KRZAKI OWOCOWE
@@ -294,6 +299,8 @@ export const BLOCK_TYPES = {
 
         sound: 'stone',
 
+        hardness: 2.5,
+
         solid: true,
 
         textures: {
@@ -402,6 +409,8 @@ export const BLOCK_TYPES = {
 
         sound: 'stone',
 
+        hardness: 4.5,
+
         solid: true,
 
         light: 7,
@@ -480,6 +489,8 @@ export const BLOCK_TYPES = {
 
         sound: 'stone',
 
+        hardness: 2.8,
+
         solid: true,
 
         textures: {
@@ -503,6 +514,8 @@ export const BLOCK_TYPES = {
 
         sound: 'stone',
 
+        hardness: 1.8,
+
         solid: true,
 
         textures: {
@@ -523,6 +536,8 @@ export const BLOCK_TYPES = {
         label: 'Piaskowiec',
 
         sound: 'stone',
+
+        hardness: 1.8,
 
         solid: true,
 
@@ -571,6 +586,8 @@ export const BLOCK_TYPES = {
         label: 'Bazalt',
 
         sound: 'stone',
+
+        hardness: 2.8,
 
         solid: true,
 
@@ -1109,6 +1126,29 @@ export function getStrip(type) {
     const definition = getBlockDefinition(type);
 
     return definition?.strip ? { into: definition.strip, item: definition.bark ?? null } : null;
+
+}
+
+
+// Ile sekund kopie się blok w trybie przygody (bez narzędzia).
+
+export function getBreakTime(type) {
+
+    const definition = getBlockDefinition(type);
+
+    if (!definition) {
+        return 0;
+    }
+
+    if (definition.hardness !== undefined) {
+        return definition.hardness;
+    }
+
+    if (definition.model === 'leaves') {
+        return LEAVES_BREAK_SECONDS;
+    }
+
+    return BREAK_SECONDS[getBlockSound(type)] ?? 1;
 
 }
 

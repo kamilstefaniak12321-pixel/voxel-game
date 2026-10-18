@@ -14,6 +14,8 @@ import {
     getBlockId,
     getBlockTypeById,
     getBlockLabel,
+    getBlockSound,
+    getBreakTime,
     isLiquidId
 } from '../blocks/BlockRegistry.js';
 
@@ -80,7 +82,9 @@ import {
     POTATO_STAR_SHARE,
     SPACE_FULL,
     SPACE_MAX_ALTITUDE,
-    SKYFALL_START
+    SKYFALL_START,
+    AXE_SPEED,
+    CREATIVE_REPEAT_SECONDS
 } from '../config.js';
 
 import { skyfallSpeed } from '../player/Player.js';
@@ -315,6 +319,92 @@ function blockArgument(text) {
 
 
 const BLOCK_NAMES = Object.keys(BLOCK_TYPES);
+
+
+// KOPANIE (/kopanie): czas w sekundach po polsku ("2,2 s").
+
+function seconds(time) {
+
+    return `${String(Math.round(time * 100) / 100).replace('.', ',')} s`;
+
+}
+
+
+// Nazwy grup bloków (materiał dźwięku) w liście czasów kopania. Skały
+// (i bloki z własną twardością) - każda swoją nazwą.
+
+const MINING_GROUPS = {
+    grass: 'trawa',
+    dirt: 'ziemia',
+    sand: 'piasek',
+    gravel: 'żwir',
+    mud: 'błoto i glina',
+    glass: 'lampy',
+    wood: 'drewno (pnie i deski)',
+    plant: 'rośliny'
+};
+
+
+function miningList() {
+
+    const groups = new Map();
+
+    for (const type of BLOCK_NAMES) {
+
+        if (isLiquidId(getBlockId(type))) {
+            continue;
+        }
+
+        const definition = getBlockDefinition(type);
+
+        const time = getBreakTime(type);
+
+        const material = getBlockSound(type);
+
+        const name =
+            definition.model === 'leaves' ? 'liście' :
+            definition.hardness === undefined && MINING_GROUPS[material] ? MINING_GROUPS[material] :
+            getBlockLabel(type).toLowerCase();
+
+        if (!groups.has(time)) {
+            groups.set(time, new Set());
+        }
+
+        groups.get(time).add(name + (material === 'wood' ? ` - siekierą ${seconds(time / AXE_SPEED)}` : ''));
+
+    }
+
+    return 'Kopanie w trybie przygody (trzymany LPM):\n' + [...groups.keys()]
+        .sort((a, b) => a - b)
+        .map((time) => `${time > 0 ? seconds(time) : 'od razu'}: ${[...groups.get(time)].join(', ')}`)
+        .join('\n');
+
+}
+
+
+function miningText(type, game) {
+
+    const time = getBreakTime(type);
+
+    const label = getBlockLabel(type);
+
+    if (time <= 0) {
+        return `${label}: znika od razu - wystarczy kliknąć.`;
+    }
+
+    let text = `${label}: kopanie ${seconds(time)}`;
+
+    if (getBlockSound(type) === 'wood') {
+        text += ` (siekierą ${seconds(time / AXE_SPEED)})`;
+    }
+
+    return text + '. ' + (
+        game.mode === 'adventure'
+            ? 'Trzymaj LPM - blok pęka i po tym czasie znika (puszczony LPM - od nowa).'
+            : `W trybie kreatywnym bloki znikają od razu (trzymany LPM - kolejny co ${seconds(CREATIVE_REPEAT_SECONDS)}).`
+    );
+
+}
 
 const ITEM_NAMES = Object.keys(ITEM_TYPES);
 
@@ -1164,6 +1254,8 @@ const SETTING_WORDS = {
     'glosnosc-otoczenie': 'volumeWorld',
     'glosnosc-menu': 'volumeUi',
     'warstwa-skorki': 'skinOverlay',
+    reka: 'showHand',
+    kolysanie: 'viewBobbing',
     zgiecia: 'jointStyle',
     kamera: 'cameraDistance'
 };
@@ -2136,12 +2228,54 @@ export const GAME_COMMANDS = [
 
             return mode === 'creative'
                 ? 'Tryb kreatywny: bloki się nie zużywają, E - wszystkie bloki, dwa razy Spacja - latanie.'
-                : 'Tryb przygody: zniszczone bloki trafiają do ekwipunku, stawianie je zużywa.';
+                : 'Tryb przygody: kopanie trwa (trzymaj LPM - /kopanie), zniszczone bloki trafiają do ekwipunku, stawianie je zużywa.';
 
         },
 
         complete(args) {
             return args.length === 1 ? ['przygoda', 'kreatywny'] : [];
+        }
+    },
+
+
+    {
+        name: 'kopanie',
+        aliases: ['mining', 'kop'],
+        usage: '/kopanie [blok | lista]',
+        description: 'Ile trwa kopanie bloku w trybie przygody - bloku, na który patrzysz, albo podanego (np. /kopanie granit). lista - wszystkie czasy.',
+
+        run(args, { game }) {
+
+            const word = simplify(args[0] ?? '');
+
+            if (word === 'lista' || word === 'list') {
+                return miningList();
+            }
+
+            if (!word) {
+
+                const hit = game.currentHit;
+
+                if (!hit?.hit) {
+                    return 'Spójrz na blok albo podaj jego nazwę, np. /kopanie granit. Wszystkie czasy: /kopanie lista';
+                }
+
+                return miningText(hit.block.type, game);
+
+            }
+
+            const type = blockArgument(args[0]);
+
+            if (!type) {
+                throw new CommandError('Powietrza się nie kopie :) Podaj blok, np. /kopanie granit');
+            }
+
+            return miningText(type, game);
+
+        },
+
+        complete(args) {
+            return args.length === 1 ? ['lista', ...BLOCK_NAMES] : [];
         }
     },
 

@@ -139,10 +139,10 @@ komputera), tak samo księga osiągnięć i ustawienia.
 | lewa część ekranu - przesuń palec | **joystick** (pojawia się pod palcem): chodzenie; do samego brzegu w przód - bieg |
 | reszta ekranu - przesuń palec | rozglądanie się (czułość: *Ustawienia → Sterowanie → Czułość myszy*) |
 | reszta ekranu - krótkie stuknięcie | postaw blok / zbierz owoce / posadź owoc (jak PPM) |
-| reszta ekranu - przytrzymaj palec | kop (jak LPM) - trzymany niszczy kolejne bloki |
+| reszta ekranu - przytrzymaj palec | kop (jak trzymany LPM): w trybie przygody blok pęka i znika po czasie kopania, w kreatywnym - kolejne bloki co chwilę; przesunięcie palca (rozglądanie) przerywa kopanie |
 | ▲ (duży, prawy dół) | skok; **2× szybko** - latanie (tryb kreatywny); trzymany w locie - w górę, w wodzie - płyń w górę |
 | ▼ | trzymany: kucanie; w locie - w dół; w wodzie - nurkuj |
-| kilof / kostka | kop / postaw tam, gdzie celownik (środek ekranu) |
+| kilof / kostka | kop (trzymany - kopie dalej) / postaw tam, gdzie celownik (środek ekranu) |
 | pasek bloków | stuknięcie w miejsce - wybór |
 | ☰ (lewy górny róg) | pauza (ustawienia, zapisz i wyjdź) |
 | skrzynka, dymek | ekwipunek, czat (pisanie klawiaturą telefonu, Enter - wyślij) |

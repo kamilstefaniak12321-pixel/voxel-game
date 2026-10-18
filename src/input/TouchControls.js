@@ -32,7 +32,10 @@ const STICK_DEAD = 0.3;
 const STICK_SPRINT = 0.92;
 
 // Stuknięcie: najwyżej tyle ms i tyle px ruchu. Przytrzymanie: po tylu ms
-// niszczy blok, potem co REPEAT_MS następny (tak samo trzymany "Kop").
+// zaczyna kopać - jak trzymany LPM (tak samo trzymany "Kop"): w trybie
+// przygody blok pęka i znika po czasie kopania, w kreatywnym kolejne
+// bloki co chwilę (Game.js). REPEAT_MS - powtarzanie przycisków
+// z repeat: true.
 const TAP_MS = 320;
 const TAP_MOVE = 14;
 const HOLD_MS = 400;
@@ -136,7 +139,7 @@ export class TouchControls {
 
         this.button(actions, 'jump', 'Skok', { key: 'Space' });
         this.button(actions, 'down', 'W dół', { key: 'ShiftLeft' });
-        this.button(actions, 'break', 'Kop', { mouse: 0, repeat: true });
+        this.button(actions, 'break', 'Kop', { mouse: 0, hold: true });
         this.button(actions, 'place', 'Postaw', { mouse: 2 });
 
         const top = this.element('div', 'touch-top');
@@ -246,6 +249,11 @@ export class TouchControls {
 
                 this.input.mousePressed.add(what.mouse);
 
+                // Trzymany jak przycisk myszy (kopanie).
+                if (what.hold) {
+                    this.input.mouseDown.add(what.mouse);
+                }
+
                 // Trzymany - następne wciśnięcia w update().
                 if (what.repeat) {
                     repeat.last = performance.now();
@@ -269,6 +277,10 @@ export class TouchControls {
             }
 
             this.repeats.delete(repeat);
+
+            if (what.hold) {
+                this.input.mouseDown.delete(what.mouse);
+            }
 
         };
 
@@ -555,14 +567,9 @@ export class TouchControls {
 
                 this.input.mousePressed.add(0);
 
+                this.input.mouseDown.add(0);
+
                 this.holdRing.classList.add('active');
-
-            }
-            else if (look.broke && now - look.lastBreak >= REPEAT_MS) {
-
-                look.lastBreak = now;
-
-                this.input.mousePressed.add(0);
 
             }
 
@@ -586,6 +593,8 @@ export class TouchControls {
     stopHold() {
 
         this.holdRing.classList.remove('active');
+
+        this.input.mouseDown.delete(0);
 
     }
 

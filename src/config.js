@@ -371,6 +371,44 @@ export const BUSH_GROWTH_SECONDS = 150;
 // Gdy nad sadzonką nie ma miejsca na drzewo - czeka dalej.
 export const TREE_GROWTH_SECONDS = 300;
 
+// KOPANIE (tryb przygody): ile sekund trzeba trzymać LPM, żeby zniszczyć
+// blok - według materiału dźwięków bloku (pole sound w BlockRegistry.js;
+// blok może mieć własny czas: pole hardness). Liście - LEAVES_BREAK_SECONDS,
+// siekiera kopie drewno AXE_SPEED razy szybciej. W trybie kreatywnym blok
+// znika od razu, a trzymany LPM niszczy kolejne co CREATIVE_REPEAT_SECONDS.
+export const BREAK_SECONDS = {
+    plant: 0,
+    grass: 0.6,
+    dirt: 0.6,
+    sand: 0.55,
+    gravel: 0.7,
+    mud: 0.6,
+    glass: 0.45,
+    wood: 2,
+    stone: 2.2
+};
+export const LEAVES_BREAK_SECONDS = 0.35;
+export const AXE_SPEED = 3;
+
+// Przy kopaniu co tyle sekund: machnięcie ręką, stuknięcie (dźwięk)
+// i kilka odłamków. Po zniszczeniu bloku chwila przerwy, zanim zacznie
+// się kopać następny.
+export const MINING_HIT_SECONDS = 0.25;
+export const MINING_DELAY_SECONDS = 0.15;
+export const CREATIVE_REPEAT_SECONDS = 0.25;
+
+// WIDOK Z OCZU (src/player/FirstPersonHand.js): kołysanie przy chodzeniu
+// - ile bloków w górę i w dół (kamera; bieg - więcej) i jak szybko
+// (kroki na blok drogi).
+export const VIEW_BOB_HEIGHT = 0.055;
+export const VIEW_BOB_STEPS = 0.62;
+
+// Po upadku kamera na chwilę się ugina - przy lądowaniu szybszym niż
+// LAND_DIP_SPEED bloków/s (zwykły skok ląduje z prędkością ok. 9),
+// najwyżej o LAND_DIP_MAX bloku.
+export const LAND_DIP_SPEED = 10;
+export const LAND_DIP_MAX = 0.2;
+
 // Daleki teren (horyzont): do ilu bloków od gracza widać uproszczony,
 // rozmyty teren za zasięgiem widzenia (0 = wyłączony).
 export const DEFAULT_FAR_TERRAIN = 1024;

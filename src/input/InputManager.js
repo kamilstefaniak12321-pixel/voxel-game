@@ -11,6 +11,9 @@ export class InputManager {
 
         this.mousePressed = new Set();
 
+        // Przyciski myszy trzymane teraz (kopanie trzymanym LPM).
+        this.mouseDown = new Set();
+
         // Obroty kółka myszy od ostatniego odczytu
         // (+1 = w dół / do siebie, -1 = w górę).
 
@@ -136,6 +139,13 @@ this.element.addEventListener(
                 event.button
             );
 
+            this.mouseDown.add(event.button);
+
+        });
+
+
+        document.addEventListener('mouseup', event => {
+            this.mouseDown.delete(event.button);
         });
 
     }
@@ -149,6 +159,7 @@ this.element.addEventListener(
 
         this.keyPressed.clear();
         this.mousePressed.clear();
+        this.mouseDown.clear();
 
         this.mouseDeltaX = 0;
         this.mouseDeltaY = 0;
@@ -189,6 +200,15 @@ this.element.addEventListener(
         this.mouseDeltaY = 0;
 
         return delta;
+
+    }
+
+
+    // Czy przycisk myszy jest teraz trzymany.
+
+    isMouseDown(button) {
+
+        return this.mouseDown.has(button);
 
     }
 

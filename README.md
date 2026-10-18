@@ -51,7 +51,7 @@ ustawienia na telefonie i co jeszcze nie działa: `docs/telefon.md`.
 | 2× W albo R | bieg |
 | F5 | widok: z oczu / zza pleców / z przodu |
 | Mysz | rozglądanie się |
-| LPM | zniszcz blok |
+| LPM | zniszcz blok (w trybie przygody trzymaj - kopanie trwa chwilę, blok pęka; w kreatywnym trzymany LPM niszczy blok za blokiem) |
 | PPM | postaw blok / zbierz owoce z krzaka (żywicę, kwiaty lipy) / posadź owoc, szyszkę, żołądź / siekierą - okoruj pień |
 | 1-9 / kółko myszy | wybór miejsca na pasku bloków |
 | Środkowy przycisk myszy | weź blok, na który patrzysz, na pasek |
@@ -87,7 +87,7 @@ w pauzie i na ekranie tytułowym) - z datą i nazwą świata. Księga jest
 wspólna dla wszystkich światów. Niektóre osiągnięcia są sekretne -
 przed zdobyciem widać tylko znak zapytania.
 
-Jest 23 osiągnięcia (od pierwszego zniszczonego bloku po
+Jest 25 osiągnięć (od pierwszego zniszczonego bloku po
 legendarne *Problem spadł z nieba*). Nowa rzecz w grze = nowe
 osiągnięcie - jak je dopisać, zdarzenia z gry i pełna lista (spoilery):
 `docs/osiagniecia.md`. Test: `/osiagniecia` (lista), `/osiagniecia pokaz
@@ -99,15 +99,26 @@ Tryb wybiera się przy tworzeniu świata (przycisk *Tryb gry*, domyślnie
 przygoda - `DEFAULT_GAME_MODE` w `src/config.js`) i można go zmienić
 w grze komendą `/tryb przygoda` albo `/tryb kreatywny`.
 
-- **Przygoda** - zaczynasz z pustym ekwipunkiem. Zniszczony blok trafia
-  do ekwipunku (blok trawy daje ziemię, a roślina, która na nim rosła,
-  też wpada do ekwipunku), a postawienie bloku zużywa jedną sztukę ze
-  stosu. Gdy ekwipunek jest pełny, blok się nie niszczy (napis
-  *Ekwipunek pełny*). Bez latania.
-- **Kreatywny** - bloki się nie zużywają, pod **E** są wszystkie bloki
+- **Przygoda** - zaczynasz z pustym ekwipunkiem. Blok się **kopie**:
+  trzymasz LPM, ręka uderza, z bloku lecą odłamki, blok pęka (10 etapów
+  pęknięć) i po chwili znika - ziemia i piasek w pół sekundy, liście
+  w 0,35 s, drewno w 2 s (siekierą 3 razy szybciej), kamień 2,2 s, granit
+  i bazalt 2,8 s, meteoryt 4,5 s, rośliny od razu (`/kopanie lista`).
+  Puszczony LPM albo inny blok pod celownikiem - kopanie od nowa.
+  Zniszczony blok trafia do ekwipunku (blok trawy daje ziemię, a roślina,
+  która na nim rosła, też wpada do ekwipunku), a postawienie bloku zużywa
+  jedną sztukę ze stosu. Gdy ekwipunek jest pełny, blok się nie kopie
+  (napis *Ekwipunek pełny*). Bez latania.
+- **Kreatywny** - bloki znikają od razu (trzymany LPM - kolejny co
+  ćwierć sekundy), nie zużywają się, pod **E** są wszystkie bloki
   gry, a **dwa razy Spacja** włącza latanie (Spacja - w górę, Shift -
   w dół; po wylądowaniu lot sam się wyłącza, dwa razy Spacja w locie
   też go kończy).
+
+Czas kopania ustawia się w `src/config.js` (`BREAK_SECONDS` dla
+materiałów, `LEAVES_BREAK_SECONDS`, `AXE_SPEED`) albo przy bloku
+(`hardness` w `src/blocks/BlockRegistry.js`). Test: `/kopanie` (blok, na
+który patrzysz), `/kopanie granit`, `/kopanie lista`.
 
 **Ekwipunek** (klawisz **E**) ma 36 miejsc: 9 na pasku na dole ekranu
 (klawisze 1-9) i 27 w trzech rzędach. Stos to najwyżej 64 sztuki.
@@ -317,7 +328,8 @@ W menu (z ekranu tytułowego i z pauzy) są zakładki:
 **Sterowanie** - czułość myszy (10-200%), odwrócona mysz (góra/dół).
 
 **Gracz** - skórka (wczytanie własnego pliku PNG albo domyślna), druga
-warstwa skórki, zgięcia rąk i nóg (gładkie albo klocki), odległość
+warstwa skórki, ręka w widoku z oczu (wł./wył.), kołysanie widoku przy
+chodzeniu (wł./wył.), zgięcia rąk i nóg (gładkie albo klocki), odległość
 kamery z trzeciej osoby.
 
 **Dźwięk** - głośność całej gry, osobno bloków i kroków, otoczenia
@@ -356,6 +368,10 @@ tylko nową ziemię pod tą samą trawą).
 Drzewa (pnie, słoje, deski, liście, sadzonki i dodatki - wiersze 5-8
 atlasu) rysuje osobny skrypt **`tools/tekstury_drzew.py`**, w tym samym
 stylu: `python tools/tekstury_drzew.py [podglad.png]`.
+
+Pęknięcia kopanego bloku (10 etapów w pasku
+`assets/textures/blocks/cracks.png`) rysuje **`tools/pekniecia.py`**:
+`python tools/pekniecia.py [podglad.png]` (podgląd - etapy na kamieniu).
 
 ## Dźwięki
 
@@ -422,9 +438,18 @@ W prawej ręce jest blok wybrany na pasku (owoc - jako płaski obrazek).
 warstwą). Domyślna: `assets/textures/player/skin.png`; własną wczytuje
 się w *Ustawienia → Gracz* albo `/skorka plik`.
 
+**Z oczu** widać prawą rękę (ze skórki, z rękawem) albo to, co
+trzymasz: blok (obrócony, widać dwa boki i wierzch), przedmiot (np.
+siekierę - głowicą w głąb ekranu, jak w Minecrafcie) albo roślinę.
+Ręka macha przy kopaniu i stawianiu, chowa się i wraca przy zmianie
+przedmiotu, kołysze się przy chodzeniu i lekko spóźnia za obrotem
+kamery. Przy chodzeniu kołysze się też widok (do wyłączenia
+w ustawieniach), a po upadku z wysoka kamera na chwilę się ugina.
+Z rozbijanych bloków sypią się odłamki w kolorach ich tekstury.
+
 Do oglądania: `/animacja chodzenie` (podgląd w miejscu), `/model tempo 0.25`
-(zwolnione), `/kamera przod`. Opis modelu, układ skórki, liczby animacji
-i plan: `docs/gracz.md`.
+(zwolnione), `/kamera przod`. Opis modelu, układ skórki, liczby animacji,
+widok z oczu i plan: `docs/gracz.md`.
 
 ## Tryb ziemniaka
 
@@ -772,7 +797,10 @@ src/
    `model: 'flat'`, `flat: { attach: 'down' }` - przykłady w
    `src/blocks/trees.js`.
    Dźwięki kroków, stawiania i niszczenia: `sound: 'grass'` (albo `dirt`,
-   `stone`, `sand`, `gravel`, `mud`, `plant`, `glass`, `wood`).
+   `stone`, `sand`, `gravel`, `mud`, `plant`, `glass`, `wood`). Od tego
+   materiału zależy też czas kopania w trybie przygody (`BREAK_SECONDS`
+   w `src/config.js`); inny czas - pole `hardness` (sekundy, np. granit
+   `hardness: 2.8`). Sprawdzisz: `/kopanie <nazwa>`.
 4. Blok sam trafia do zakładki *Wszystkie bloki* w trybie kreatywnym
    (chyba że ma `creative: false`). Szybki test: `/daj <nazwa>`.
 

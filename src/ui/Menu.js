@@ -90,6 +90,8 @@ const SETTINGS_TABS = {
     player: [
         'skin',
         'skinOverlay',
+        'showHand',
+        'viewBobbing',
         'jointStyle',
         'cameraDistance'
     ],

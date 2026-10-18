@@ -3,6 +3,8 @@ import {
     BUSH_GROWTH_SECONDS
 } from '../config.js';
 
+import { treeBlocks } from './trees.js';
+
 // ID 0 jest zarezerwowane dla powietrza.
 // Chunk przechowuje bloki jako liczby, więc pusta tablica = samo powietrze.
 
@@ -33,11 +35,23 @@ export const MAX_BLOCK_ID = 255;
 //                    dwoma takimi samymi blokami nie są rysowane,
 //                    celownik i stawianie bloków przez nią przechodzą
 //   label          - nazwa po polsku (pasek bloków, ekwipunek)
-//   model          - 'cube' (zwykły sześcian, domyślnie) albo 'cross'
+//   model          - 'cube' (zwykły sześcian, domyślnie), 'cross'
 //                    (roślina: kilka skrzyżowanych płaszczyzn z teksturą
-//                    z przezroczystością; tekstury roślin są w wierszu 2
-//                    atlasu - shader kołysze je na wietrze)
+//                    z przezroczystością; shader kołysze je na wietrze),
+//                    'leaves' (liście: sześcian z prześwitami - widać
+//                    przez nie liście dalej w koronie; przepuszczają
+//                    światło nieba, ale pod koroną jest cień) albo
+//                    'flat' (płaski obrazek przy ścianie sąsiada -
+//                    opadłe liście na ziemi, wieniec na ścianie)
 //   plant          - kształt rośliny: { planes: 2 albo 3, height, width }
+//   flat           - model 'flat': { attach } - do którego sąsiada
+//                    przylega: 'down' (leży na bloku pod spodem),
+//                    'north' (-Z), 'south' (+Z), 'east' (+X), 'west'
+//                    (-X); znika, gdy ten sąsiad zniknie
+//   wall           - wersje bloku na każdą stronę { north, south,
+//                    east, west } - BlockPlacer.js stawia tę, która
+//                    pasuje do klikniętej ściany
+//   pick           - co bierze środkowy przycisk (zamiast samego bloku)
 //   soil           - na tym bloku mogą rosnąć rośliny
 //   replaceable    - postawienie bloku w tym miejscu zastępuje ten
 //                    (np. trawa) - jak w Minecrafcie
@@ -45,15 +59,24 @@ export const MAX_BLOCK_ID = 255;
 //                    przygody (domyślnie ten sam blok, null = nic)
 //   creative       - false = nie ma go w ekwipunku kreatywnym
 //   sound          - materiał dźwięków (kroki, stawianie, niszczenie):
-//                    grass, dirt, stone, sand, gravel, mud, plant, glass
+//                    grass, dirt, stone, sand, gravel, mud, plant, glass,
+//                    wood
 //                    (src/audio/sounds.js); domyślnie roślina - plant,
 //                    inne - stone
 //   grows          - roślina rośnie (src/game/PlantGrowth.js):
 //                    { into: następny etap, seconds: średnio po ilu
-//                    sekundach }
+//                    sekundach } albo { tree: gatunek, seconds } -
+//                    sadzonka wyrasta w całe drzewo
 //   harvest        - PPM zbiera z rośliny przedmioty: { item, count:
 //                    [najmniej, najwięcej], becomes: blok po zbiorze };
 //                    zniszczenie rośliny w przygodzie też je daje
+//   loot           - w przygodzie po zniszczeniu czasem wypada coś
+//                    jeszcze: [[co, szansa 0-1], ...] (liście: sadzonki,
+//                    szyszki, żołędzie...)
+//   strip          - siekiera (PPM) zamienia blok w ten (okorowany pień)
+//   bark           - przedmiot z okorowania siekierą (kora brzozowa)
+//   tree, part     - gatunek drzewa i część ('log', 'leaves'...) -
+//                    src/blocks/trees.js
 
 // ------------------------------------------------------------
 // KRZAKI OWOCOWE
@@ -742,7 +765,12 @@ export const BLOCK_TYPES = {
 
     // Krzaki owocowe (FRUIT_BUSHES wyżej) - po 4 bloki na gatunek.
 
-    ...fruitBushBlocks()
+    ...fruitBushBlocks(),
+
+
+    // Drzewa (src/blocks/trees.js) - po 5 bloków na gatunek i dodatki.
+
+    ...treeBlocks()
 
 };
 
@@ -764,6 +792,37 @@ const soilById = new Uint8Array(MAX_BLOCK_ID + 1);
 const replaceableById = new Uint8Array(MAX_BLOCK_ID + 1);
 const lightById = new Uint8Array(MAX_BLOCK_ID + 1);
 const growsById = new Uint8Array(MAX_BLOCK_ID + 1);
+const leavesById = new Uint8Array(MAX_BLOCK_ID + 1);
+const treeById = new Uint8Array(MAX_BLOCK_ID + 1);
+
+// Model 'flat': do którego sąsiada blok przylega (ATTACH_... niżej).
+const attachById = new Uint8Array(MAX_BLOCK_ID + 1);
+
+export const ATTACH_NONE = 0;
+export const ATTACH_DOWN = 1;
+export const ATTACH_NORTH = 2;
+export const ATTACH_SOUTH = 3;
+export const ATTACH_EAST = 4;
+export const ATTACH_WEST = 5;
+
+const ATTACH_CODES = {
+    down: ATTACH_DOWN,
+    north: ATTACH_NORTH,
+    south: ATTACH_SOUTH,
+    east: ATTACH_EAST,
+    west: ATTACH_WEST
+};
+
+// Przesunięcie do sąsiada, do którego blok przylega: [dx, dy, dz].
+
+export const ATTACH_OFFSETS = [
+    null,
+    [0, -1, 0],
+    [0, 0, -1],
+    [0, 0, 1],
+    [1, 0, 0],
+    [-1, 0, 0]
+];
 
 // Kolor światła: [czerwony, zielony, niebieski], każdy 0-1.
 
@@ -836,6 +895,22 @@ for (const [type, definition] of Object.entries(BLOCK_TYPES)) {
     replaceableById[id] = definition.replaceable ? 1 : 0;
 
     growsById[id] = definition.grows ? 1 : 0;
+
+    leavesById[id] = definition.model === 'leaves' ? 1 : 0;
+
+    treeById[id] = definition.tree ? 1 : 0;
+
+    if (definition.model === 'flat') {
+
+        const attach = ATTACH_CODES[definition.flat?.attach];
+
+        if (!attach) {
+            throw new Error(`Blok "${type}": model 'flat' bez flat.attach (down, north, south, east, west)`);
+        }
+
+        attachById[id] = attach;
+
+    }
 
     lightById[id] =
         Math.max(0, Math.min(15, Math.floor(definition.light ?? 0)));
@@ -927,6 +1002,34 @@ export function isSoilId(id) {
 }
 
 
+// Liście (model 'leaves'): przepuszczają światło nieba, ale
+// osłabione (pod koroną jest cień - Light.js).
+
+export function isLeavesId(id) {
+
+    return leavesById[id] === 1;
+
+}
+
+
+// Część drzewa (pień, liście, sadzonka, opadłe liście...).
+
+export function isTreeId(id) {
+
+    return treeById[id] === 1;
+
+}
+
+
+// Model 'flat': do którego sąsiada blok przylega (ATTACH_...).
+
+export function getAttach(id) {
+
+    return attachById[id];
+
+}
+
+
 // Czy postawienie bloku w tym miejscu po prostu ten blok zastępuje.
 
 export function isReplaceableId(id) {
@@ -985,6 +1088,27 @@ export function getDropType(type) {
     }
 
     return definition.drops === undefined ? type : definition.drops;
+
+}
+
+
+// Co czasem wypada dodatkowo w przygodzie: [[co, szansa], ...].
+
+export function getLoot(type) {
+
+    return getBlockDefinition(type)?.loot ?? [];
+
+}
+
+
+// Siekiera: na co zamienia się blok (albo null) i co z niego zostaje
+// w ręce (kora brzozowa).
+
+export function getStrip(type) {
+
+    const definition = getBlockDefinition(type);
+
+    return definition?.strip ? { into: definition.strip, item: definition.bark ?? null } : null;
 
 }
 

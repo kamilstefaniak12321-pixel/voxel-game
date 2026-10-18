@@ -29,6 +29,10 @@
 
 import { WORLD_BORDER } from '../config.js';
 
+import { getBlockDefinition } from '../blocks/BlockRegistry.js';
+
+import { TREE_NAMES } from '../blocks/trees.js';
+
 
 // Rangi: nazwa, punkty, kolor (do księgi i powiadomień - także
 // w src/ui/achievements.css), dźwięk powiadomienia.
@@ -46,6 +50,17 @@ export const TIER_ORDER = ['common', 'rare', 'epic', 'legendary'];
 // Owoce z krzaków - do "Pełnych koszy".
 
 const FRUITS = ['strawberry', 'blackberry', 'chili_pepper', 'hazelnut'];
+
+
+// Pień drzewa (każdy rodzaj pnia, także okorowany): gatunek albo null.
+
+function logSpecies(type) {
+
+    const definition = getBlockDefinition(type);
+
+    return definition?.part === 'log' || definition?.part === 'stripped' ? definition.tree : null;
+
+}
 
 
 export const ACHIEVEMENTS = [
@@ -79,16 +94,37 @@ export const ACHIEVEMENTS = [
         task: 'Zbierz owoce z krzaka (PPM).',
         comment: 'Babcia byłaby dumna. Krzak trochę mniej.',
         icon: 'strawberry',
-        on: 'harvested'
+        on: 'harvested',
+        when: (data) => FRUITS.includes(data.item)
     },
     {
         id: 'plant',
         tier: 'common',
         title: 'Zielone palce',
-        task: 'Posadź owoc albo orzech.',
+        task: 'Posadź owoc, orzech albo szyszkę.',
         comment: 'Teraz najtrudniejsza część ogrodnictwa: czekanie.',
         icon: 'hazelnut',
         on: 'planted'
+    },
+    {
+        id: 'lumberjack',
+        tier: 'common',
+        title: 'Drwal',
+        task: 'Zetnij pień drzewa.',
+        comment: 'Drzewo nawet nie zdążyło krzyknąć „uwaga!”.',
+        icon: 'oak_log',
+        on: 'blockBroken',
+        when: (data) => logSpecies(data.type) !== null
+    },
+    {
+        id: 'birch_bark',
+        tier: 'common',
+        title: 'Brzozowy papirus',
+        task: 'Zdejmij siekierą korę z brzozy (PPM siekierą na pniu).',
+        comment: 'Dawniej pisano na niej listy. Ty możesz napisać listę zakupów.',
+        icon: 'birch_bark',
+        on: 'stripped',
+        when: (data) => data.item === 'birch_bark'
     },
     {
         id: 'swim',
@@ -163,8 +199,31 @@ export const ACHIEVEMENTS = [
         comment: 'Truskawki, jeżyny, chili i orzechy. Dieta jak marzenie, zwłaszcza to chili.',
         icon: 'blackberry',
         on: 'harvested',
-        when: (data, book) => book.collect('fruits', data.item) >= FRUITS.length,
+        when: (data, book) => FRUITS.includes(data.item) && book.collect('fruits', data.item) >= FRUITS.length,
         goal: { key: 'fruits', count: FRUITS.length }
+    },
+    {
+        id: 'forester',
+        tier: 'rare',
+        title: 'Leśniczy',
+        task: 'Zetnij pień każdego z sześciu gatunków drzew: świerka, sosny, buka, lipy, dębu i brzozy.',
+        comment: 'Znasz już las od środka. Las ciebie też - i prosi o chwilę przerwy.',
+        icon: 'spruce_log',
+        on: 'blockBroken',
+        when: (data, book) => {
+            const species = logSpecies(data.type);
+            return species !== null && book.collect('trees', species) >= TREE_NAMES.length;
+        },
+        goal: { key: 'trees', count: TREE_NAMES.length }
+    },
+    {
+        id: 'tree_grown',
+        tier: 'rare',
+        title: 'Z małego ziarenka',
+        task: 'Wyhoduj drzewo z sadzonki.',
+        comment: 'Wyrosło! Teraz tylko sto lat i będzie z niego porządny dąb. Albo brzoza.',
+        icon: 'oak_sapling',
+        on: 'treeGrown'
     },
     {
         id: 'pocket_miner',

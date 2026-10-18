@@ -37,6 +37,7 @@ export const SETTINGS_DEFAULTS = {
     renderScale: 100,                              // procent rozdzielczości ekranu
     fpsLimit: 0,                                   // klatki na sekundę (0 = bez limitu)
     ambientOcclusion: Math.round(AMBIENT_OCCLUSION * 100),   // cienie w kątach, procent
+    fancyLeaves: true,                             // liście z prześwitami (false = szybkie, pełne)
     dynamicLight: true,                            // lampa w ręce, meteoryty...
     loadBudget: CHUNK_LOAD_BUDGET_MS,              // ms na klatkę na wczytywanie chunków
 

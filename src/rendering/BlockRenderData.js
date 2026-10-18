@@ -3,7 +3,13 @@ import * as THREE from 'three';
 
 import {
     BLOCK_TYPES,
-    MAX_BLOCK_ID
+    MAX_BLOCK_ID,
+    ATTACH_DOWN,
+    ATTACH_NORTH,
+    ATTACH_SOUTH,
+    ATTACH_EAST,
+    ATTACH_WEST,
+    getAttach
 } from '../blocks/BlockRegistry.js';
 
 
@@ -367,6 +373,74 @@ plantMaterial.onBeforeCompile = (shader, renderer) => {
         );
 
 };
+
+// ------------------------------------------------------------
+// MATERIAŁ LIŚCI (i płaskich dekoracji - opadłe liście, wieniec)
+//
+// Ten sam shader co bloki, a przezroczyste piksele tekstury są
+// pomijane (prześwity w liściach). Bez wiatru - liście to sześciany,
+// kołysząc się rozjechałyby się na szwach. Osobna grupa geometrii
+// chunka (ChunkMesher.js), żeby zwykłe bloki nie płaciły za
+// przezroczystość.
+// ------------------------------------------------------------
+
+export const leafMaterial =
+    new THREE.MeshLambertMaterial({
+
+        map: blockAtlasTexture,
+
+        vertexColors: true,
+
+        alphaTest: 0.5
+
+    });
+
+
+leafMaterial.onBeforeCompile = (shader, renderer) => {
+
+    // Szybkie liście (define FAST_LEAVES, bez alphaTest): prześwity
+    // zamalowane ciemnym kolorem liści - jak cień w głębi korony.
+
+    shader.fragmentShader =
+        shader.fragmentShader.replace(
+            '#include <color_fragment>',
+            `#ifdef FAST_LEAVES
+                if (diffuseColor.a < 0.5) {
+                    diffuseColor.rgb = texture2D(uAtlasAverage, vMapUv).rgb * 0.38;
+                }
+                diffuseColor.a = 1.0;
+            #endif
+            #include <color_fragment>`
+        );
+
+    blockMaterial.onBeforeCompile(shader, renderer);
+
+};
+
+
+// Przełącza szybkie liście w materiale (ChunkMesher.setFastLeaves -
+// osobno, w meshach).
+
+export function setLeafMaterialFast(on) {
+
+    leafMaterial.defines = leafMaterial.defines ?? {};
+
+    if (('FAST_LEAVES' in leafMaterial.defines) === on) {
+        return;
+    }
+
+    if (on) {
+        leafMaterial.defines.FAST_LEAVES = '';
+    }
+    else {
+        delete leafMaterial.defines.FAST_LEAVES;
+    }
+
+    leafMaterial.alphaTest = on ? 0 : 0.5;
+
+    leafMaterial.needsUpdate = true;
+
+}
 
 // ------------------------------------------------------------
 // MATERIAŁ WODY
@@ -789,8 +863,24 @@ function createRotatedUVs(textureName) {
 // blockRenderData[id] = {
 //     uv:     [ściana][obrót] -> Float32Array(8)
 //     rotate: [ściana]        -> czy losowo obracać teksturę
+//     cross:  roślina (płaszczyzny) albo null
+//     leaves: liście (sześcian z prześwitami)
+//     flat:   płaska dekoracja { face, axis, far } albo null - która
+//             ściana sześcianu, wzdłuż której osi ją przesunąć i czy pod
+//             dalszą ścianę komórki (1) zamiast bliższej (0)
 // }
 // ------------------------------------------------------------
+
+// Model 'flat': przyleganie -> ściana (indeks w FACE_NAMES) zwrócona
+// od sąsiada, oś i strona komórki.
+
+const FLAT_FACES = {
+    [ATTACH_DOWN]: { face: 2, axis: 1, far: false },    // leży: wierzch
+    [ATTACH_NORTH]: { face: 4, axis: 2, far: false },   // sąsiad -Z: przód (+Z)
+    [ATTACH_SOUTH]: { face: 5, axis: 2, far: true },    // sąsiad +Z: tył (-Z)
+    [ATTACH_EAST]: { face: 1, axis: 0, far: true },     // sąsiad +X: lewa (-X)
+    [ATTACH_WEST]: { face: 0, axis: 0, far: false }     // sąsiad -X: prawa (+X)
+};
 
 export const blockRenderData =
     new Array(MAX_BLOCK_ID + 1).fill(null);
@@ -832,6 +922,12 @@ for (
                 height: definition.plant?.height ?? 1,
                 width: definition.plant?.width ?? 0.45
             }
+            : null,
+
+        leaves: definition.model === 'leaves',
+
+        flat: definition.model === 'flat'
+            ? FLAT_FACES[getAttach(definition.id)]
             : null,
 
         uv: FACE_NAMES.map(

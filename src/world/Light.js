@@ -8,6 +8,7 @@ import {
 import {
     MAX_BLOCK_ID,
     isOpaqueId,
+    isLeavesId,
     getLightEmission,
     getLightColor
 } from '../blocks/BlockRegistry.js';
@@ -33,6 +34,9 @@ import {
 // nieba sięga 14 bloków w głąb tunelu.
 //
 // Światło nie przechodzi przez bloki, które zasłaniają (opaque).
+// Liście przepuszczają światło, ale pełne światło nieba wpada tylko
+// do pierwszego bloku liści - dalej słabnie o 1 na blok (także w dół),
+// więc pod koroną drzewa i w gęstym lesie jest cień.
 //
 // Liczenie to "rozlewanie": zaczynamy od źródeł i krok po kroku
 // oddajemy sąsiadom słabsze światło, dopóki coś się zmienia.
@@ -201,6 +205,15 @@ for (let channel = 0; channel < CHANNEL_COUNT; channel++) {
 }
 
 const EMITS = new Uint8Array(MAX_BLOCK_ID + 1);
+
+
+// Bloki, przez które pełne światło nieba nie spływa dalej w dół (liście).
+
+const FILTERS = new Uint8Array(MAX_BLOCK_ID + 1);
+
+for (let id = 1; id <= MAX_BLOCK_ID; id++) {
+    FILTERS[id] = isLeavesId(id) ? 1 : 0;
+}
 
 for (let id = 1; id <= MAX_BLOCK_ID; id++) {
 
@@ -415,8 +428,9 @@ export class LightEngine {
 
 
         // 1. Niebo świeci z góry w dół, aż do pierwszego bloku,
-        //    który zasłania. Nad najwyższym blokiem chunka jest
-        //    samo powietrze, więc tę część wypełniamy od razu.
+        //    który zasłania (albo do pierwszych liści - od nich
+        //    światło rozleje się słabsze). Nad najwyższym blokiem
+        //    chunka jest samo powietrze, więc tę część wypełniamy od razu.
 
         sky.fill(MAX_LIGHT, top * LAYER);
 
@@ -424,11 +438,27 @@ export class LightEngine {
 
             let y = top - 1;
 
-            while (y >= 0 && !isOpaqueId(blocks[y * LAYER + column])) {
+            while (y >= 0) {
 
-                sky[y * LAYER + column] = MAX_LIGHT;
+                const i = y * LAYER + column;
+
+                const id = blocks[i];
+
+                if (isOpaqueId(id)) {
+                    break;
+                }
+
+                sky[i] = MAX_LIGHT;
 
                 y--;
+
+                if (FILTERS[id]) {
+
+                    this.addToSpread(chunk, i);
+
+                    break;
+
+                }
 
             }
 
@@ -705,9 +735,10 @@ export class LightEngine {
 
             const weaker = decay[level];
 
-            // Pełne światło nieba idzie w dół bez osłabienia.
+            // Pełne światło nieba idzie w dół bez osłabienia
+            // (ale nie dalej niż do pierwszych liści).
 
-            const fullSkyDown = isSky && level === MAX_LIGHT;
+            const fullSkyDown = isSky && level === MAX_LIGHT && FILTERS[chunk.blocks[index]] === 0;
 
             if (weaker === 0 && !fullSkyDown) {
                 continue;

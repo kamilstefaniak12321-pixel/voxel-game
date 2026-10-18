@@ -11,7 +11,11 @@ import { Noise, seedToNumber } from '../Noise.js';
 
 import * as SHAPE from './TerrainShape.js';
 
+import { FORESTS } from './TerrainShape.js';
+
 import { Geology } from './Geology.js';
+
+import { Forests } from '../trees/Forests.js';
 
 // ------------------------------------------------------------
 // GENERATOR TERENU "REALISTYCZNY" (w budowie)
@@ -40,7 +44,8 @@ import { Geology } from './Geology.js';
 //
 // Na trawie rosną rośliny: trawa (rzadka albo gęste łąki), kępy
 // kwiatów, paprocie w wilgotnych miejscach, pojedyncze zioła
-// (PLANTS w TerrainShape.js).
+// (PLANTS w TerrainShape.js), i drzewa - lasy sześciu gatunków
+// (src/world/trees/Forests.js, FORESTS w TerrainShape.js).
 //
 // Woda jest na razie WSTĘPNA (morze bez rzek i jezior) - patrz
 // docs/generator-terenu.md, etapy 2-3.
@@ -123,6 +128,14 @@ function profile(table, x) {
     return table[table.length - 1][1];
 
 }
+
+
+// Daleki teren: od jakiej gęstości lasu widać korony drzew i jak
+// wysoko są (bloki nad ziemią - średnio dla gatunku).
+
+const FAR_FOREST_DENSITY = 0.16;
+
+const FAR_CANOPY = { spruce: 13, pine: 15, beech: 10, linden: 10, oak: 8, birch: 10 };
 
 
 // Dokładność liczenia: pełna (chunki), średnia i zgrubna (daleki teren -
@@ -213,6 +226,11 @@ export class RealisticGenerator {
         // Skały pod ziemią (granit, wapień, piaskowiec...).
 
         this.geology = new Geology(this, base);
+
+
+        // Lasy i drzewa.
+
+        this.forests = new Forests(this, base);
 
 
         // Kolumny chunka (granice skał) - używane ponownie.
@@ -600,6 +618,12 @@ export class RealisticGenerator {
 
         }
 
+
+        // Drzewa - także te z sąsiednich chunków, których korony
+        // tu sięgają.
+
+        this.forests.placeTrees(chunk);
+
     }
 
 
@@ -905,6 +929,30 @@ export class RealisticGenerator {
             return { top: sample.height + 1, kind: this.surfaceRock(x, z, sample, kind) };
         }
 
+
+        // Las: korony drzew w kolorze liści gatunku, który tu przeważa,
+        // teren podniesiony do wysokości koron - na skraju lasu nisko,
+        // w gęstym lesie wyżej, i trochę nierówno (pojedyncze korony).
+
+        if (kind === 'grass') {
+
+            const forest = this.forests.forestAt(x, z, sample);
+
+            if (forest.density >= FAR_FOREST_DENSITY) {
+
+                const cover = smoothstep(FAR_FOREST_DENSITY, FORESTS.dense, forest.density);
+
+                const bump = 0.75 + 0.5 * hash01(this.plantSeed, x, z, 9);
+
+                return {
+                    top: sample.height + 1 + Math.round(FAR_CANOPY[forest.species] * cover * bump),
+                    kind: `${forest.species}_leaves`
+                };
+
+            }
+
+        }
+
         return { top: sample.height + 1, kind };
 
     }
@@ -958,12 +1006,19 @@ export class RealisticGenerator {
 
         const surface = this.surfaceKind(x, z, sample, Math.round(slope * 2));
 
+        // Las: gęstość (część kratek z drzewem) i gatunek, który przeważa.
+
+        const forest = sample.ocean && height < SEA_LEVEL
+            ? { density: 0, species: null }
+            : this.forests.forestAt(x, z, sample);
+
 
         return {
             height,
             relief,
             landform: this.classify(sample, slope),
             surface,
+            forest,
             // skała na wierzchu albo pod glebą (mapa skał)
             rock: this.surfaceRock(x, z, sample, surface),
             slope,
@@ -1029,8 +1084,30 @@ export class RealisticGenerator {
     }
 
 
+    // Czy pień jakiegoś drzewa stoi najwyżej `distance` bloków od (x, z).
+
+    treeNear(x, z, distance) {
+
+        let found = false;
+
+        this.forests.forEachTree(x - distance, z - distance, x + distance, z + distance, (tree) => {
+
+            // Duży dąb ma pień 2 x 2 (x..x+1, z..z+1).
+
+            if (tree.x - 1 - distance <= x && x <= tree.x + 1 + distance && tree.z - 1 - distance <= z && z <= tree.z + 1 + distance) {
+                found = true;
+            }
+
+        });
+
+        return found;
+
+    }
+
+
     // Miejsce startu nowego świata: najbliższy suchy, niezbyt stromy
-    // ląd na nizinie (szukamy coraz dalej od podanego punktu).
+    // ląd na nizinie, nie przy pniu drzewa (szukamy coraz dalej od
+    // podanego punktu).
 
     findSpawn(x0, z0) {
 
@@ -1057,7 +1134,7 @@ export class RealisticGenerator {
                     ([dx, dz]) => Math.abs(this.compute(x + dx, z + dz).height - sample.height) <= 1
                 );
 
-                if (flat) {
+                if (flat && !this.treeNear(x, z, 2)) {
                     return { x, z };
                 }
 

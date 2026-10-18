@@ -264,3 +264,36 @@ export const PLANTS = {
     bushStages: [0.06, 0.3, 0.65]
 
 };
+
+
+// LASY I DRZEWA (src/world/trees/Forests.js, docs/drzewa.md).
+//
+// Drzewa stoją na siatce co `grid` bloków (najwyżej jedno w kratce,
+// w losowym miejscu kratki). Kratka ma drzewo z szansą = gęstość lasu
+// w tym miejscu:
+//   - pole lasów (plamy `scale` bloków): poniżej `from` - łąki
+//     (tylko pojedyncze drzewa: `lone`), powyżej `full` - gęsty las
+//     (`dense` kratek z drzewem),
+//   - w suchym klimacie lasy są rzadsze (`dry` - mnożnik przy
+//     najsuchszym), w wilgotnym gęstsze (`wet`),
+//   - drzewa rosną do `treeLine` bloków poniżej granicy gołej skały,
+//     ostatnie `treeLineFade` bloków coraz rzadziej,
+//   - tylko na trawie i na zboczach o nachyleniu najwyżej `maxSlope`.
+// Gatunek: klimat (temperatura, wilgotność, wysokość) i plamy
+// gatunków (`speciesScale` bloków - w lesie przeważa jeden, dwa
+// gatunki), trochę losowo (`mix` - im więcej, tym bardziej mieszany las).
+export const FORESTS = {
+    grid: 4,
+    scale: 190,
+    from: -0.15,
+    full: 0.4,
+    dense: 0.5,
+    lone: 0.012,
+    dry: 0.45,
+    wet: 1.1,
+    treeLine: 4,
+    treeLineFade: 10,
+    maxSlope: 2,
+    speciesScale: 150,
+    mix: 0.35
+};

@@ -15,6 +15,7 @@ import {
     AIR_ID,
     isOpaqueId,
     isLiquidId,
+    isLeavesId,
     getLightEmission
 } from '../blocks/BlockRegistry.js';
 
@@ -82,6 +83,8 @@ function plantRandom(x, y, z, salt) {
 // do trzech płaskich tablic:
 //
 //   padOpaque - 1, jeśli blok zasłania (światło i widok)
+//   padShade  - 1, jeśli blok rzuca cień w kąty (zasłaniający albo
+//               liście - korona drzewa ma cienie we wgłębieniach)
 //   padSky    - światło nieba
 //   padR, padG, padB - kolorowe światło lamp
 //
@@ -99,6 +102,7 @@ const P_LAYER = P * P;
 
 
 const padOpaque = new Uint8Array(P_LAYER * (H + 2));
+const padShade = new Uint8Array(P_LAYER * (H + 2));
 
 // ID cieczy w komórce (0 = nie ciecz) - między dwiema komórkami tej
 // samej cieczy (np. woda przy wodzie) nie rysujemy ściany.
@@ -112,6 +116,9 @@ const padB = new Uint8Array(P_LAYER * (H + 2));
 // Najwyższa warstwa skopiowana dla obecnego chunka - wyżej w kopii
 // zostały dane poprzedniego chunka.
 let padTop = 0;
+
+// Najniższa skopiowana warstwa (niżej - też dane poprzedniego chunka).
+let padBottom = 0;
 
 
 function padIndex(x, y, z) {
@@ -139,6 +146,7 @@ function fillPadding(chunk, world, height, first) {
     const last = Math.min(height, H - 1);
 
     padTop = last;
+    padBottom = first;
 
 
     for (let dz = -1; dz <= 1; dz++) {
@@ -177,6 +185,7 @@ function fillPadding(chunk, world, height, first) {
                         if (!source) {
 
                             padOpaque[p] = 0;
+                            padShade[p] = 0;
                             padLiquid[p] = 0;
                             padSky[p] = MAX_LIGHT;
                             padR[p] = padG[p] = padB[p] = 0;
@@ -191,6 +200,7 @@ function fillPadding(chunk, world, height, first) {
                         const blockId = source.blocks[i];
 
                         padOpaque[p] = isOpaqueId(blockId) ? 1 : 0;
+                        padShade[p] = padOpaque[p] | (isLeavesId(blockId) ? 1 : 0);
                         padLiquid[p] = isLiquidId(blockId) ? blockId : 0;
                         padSky[p] = source.skyLight[i];
                         padR[p] = source.lightR[i];
@@ -205,6 +215,7 @@ function fillPadding(chunk, world, height, first) {
                     const below = padIndex(x, -1, z);
 
                     padOpaque[below] = 1;
+                    padShade[below] = 1;
                     padLiquid[below] = 0;
                     padSky[below] = 0;
                     padR[below] = padG[below] = padB[below] = 0;
@@ -217,6 +228,7 @@ function fillPadding(chunk, world, height, first) {
                         const above = padIndex(x, H, z);
 
                         padOpaque[above] = 0;
+                        padShade[above] = 0;
                         padLiquid[above] = 0;
                         padSky[above] = MAX_LIGHT;
                         padR[above] = padG[above] = padB[above] = 0;
@@ -330,6 +342,20 @@ export function setAmbientOcclusion(strength) {
     for (let count = 0; count < SHADE.length; count++) {
         SHADE[count] = 1 - strength * count / 3;
     }
+
+}
+
+
+// Szybkie liście (ustawienie "Liście drzew: Szybkie" i tryb
+// ziemniaka): bez ścian między dwoma blokami liści - korona to sam
+// wierzch, prześwity są zamalowane (leafMaterial, FAST_LEAVES). Działa
+// na meshe budowane od tej chwili (World.remeshAll()).
+
+let fastLeaves = false;
+
+export function setFastLeaves(on) {
+
+    fastLeaves = on;
 
 }
 
@@ -563,13 +589,129 @@ function addPlants(plants, faceCount, baseX, baseZ) {
 }
 
 // ------------------------------------------------------------
-// ŚCIANY JEDNEGO BLOKU (sześcian albo woda). Zwraca nową liczbę
-// ścian w buforach.
+// PŁASKIE DEKORACJE (model 'flat'): jeden obrazek tuż przy ścianie
+// sąsiada, do którego blok przylega - opadłe liście leżą na ziemi,
+// wieniec wisi na ścianie. Światło - z komórki dekoracji.
+// ------------------------------------------------------------
+
+// Jak daleko od ściany sąsiada (żeby nie migotała razem z nią).
+const FLAT_GAP = 0.03;
+
+function addFlats(flats, faceCount, baseX, baseZ) {
+
+    for (let k = 0; k < flats.length; k += 4) {
+
+        const lx = flats[k];
+        const y = flats[k + 1];
+        const lz = flats[k + 2];
+
+        const { flat, uv, rotate } = blockRenderData[flats[k + 3]];
+
+        const faceIndex = flat.face;
+
+        const face = BLOCK_FACES[faceIndex];
+
+        const rotation = rotate[faceIndex] ? getRotationAt(baseX + lx, y, baseZ + lz) : 0;
+
+        const faceUv = uv[faceIndex][rotation];
+
+
+        const cell = padIndex(lx, y, lz);
+
+        const red = padR[cell];
+        const green = padG[cell];
+        const blue = padB[cell];
+
+        const strongest = Math.max(red, green, blue);
+
+        const sky = BRIGHTNESS[padSky[cell] * LEVEL_STEPS];
+
+        const lamp = BRIGHTNESS[Math.round(COLOR_LEVEL[strongest] * LEVEL_STEPS)] * LAMP_FACE_SHADE[faceIndex] * 255;
+
+        const r = strongest > 0 ? lamp * red / strongest : lamp;
+        const g = strongest > 0 ? lamp * green / strongest : lamp;
+        const b = strongest > 0 ? lamp * blue / strongest : lamp;
+
+
+        ensureCapacity(faceCount + 1);
+
+        const p = faceCount * 12;
+        const t = faceCount * 8;
+        const c = faceCount * 16;
+
+        for (let i = 0; i < 4; i++) {
+
+            const corner = face.corners[i];
+
+            // Ściana sześcianu przesunięta pod samą ścianę sąsiada.
+
+            const position = [lx + corner[0], y + corner[1], lz + corner[2]];
+
+            position[flat.axis] = [lx, y, lz][flat.axis] + (flat.far ? 1 - FLAT_GAP : FLAT_GAP);
+
+            positionBuffer[p + i * 3] = position[0];
+            positionBuffer[p + i * 3 + 1] = position[1];
+            positionBuffer[p + i * 3 + 2] = position[2];
+
+            normalBuffer[p + i * 3] = face.normal[0];
+            normalBuffer[p + i * 3 + 1] = face.normal[1];
+            normalBuffer[p + i * 3 + 2] = face.normal[2];
+
+            uvBuffer[t + i * 2] = faceUv[i * 2];
+            uvBuffer[t + i * 2 + 1] = faceUv[i * 2 + 1];
+
+            colorBuffer[c + i * 4] = r + 0.5;
+            colorBuffer[c + i * 4 + 1] = g + 0.5;
+            colorBuffer[c + i * 4 + 2] = b + 0.5;
+            colorBuffer[c + i * 4 + 3] = sky * 255 + 0.5;
+
+        }
+
+        splitBuffer[faceCount] = 0;
+
+        faceCount++;
+
+    }
+
+    return faceCount;
+
+}
+
+// ------------------------------------------------------------
+// LIŚCIE: ściana między dwoma blokami liści jest potrzebna, bo przez
+// prześwity w liściach widać głąb korony. Ale tylko przy wierzchu
+// korony - przez dwie warstwy prześwitów prawie nic już nie widać,
+// więc ścianę głębiej w środku (za sąsiednimi liśćmi w tę stronę jest
+// jeszcze blok liści albo pełny blok) pomijamy. Poza kopią okolicy
+// chunka (krawędź) - rysujemy.
+// ------------------------------------------------------------
+
+function deepInLeaves(block, lx, y, lz, faceIndex) {
+
+    const [nx, ny, nz] = BLOCK_FACES[faceIndex].normal;
+
+    const x = lx + nx * 2;
+    const yy = y + ny * 2;
+    const z = lz + nz * 2;
+
+    if (x < -1 || x > S || z < -1 || z > S || yy < padBottom || yy > padTop) {
+        return false;
+    }
+
+    return padShade[block + FACE_FRONT[faceIndex] * 2] === 1;
+
+}
+
+// ------------------------------------------------------------
+// ŚCIANY JEDNEGO BLOKU (sześcian, liście albo woda). Zwraca nową
+// liczbę ścian w buforach.
 // ------------------------------------------------------------
 
 function addCubeFaces(id, renderData, lx, y, lz, faceCount, baseX, baseZ) {
 
     const block = padIndex(lx, y, lz);
+
+    const leaves = renderData.leaves;
 
     // Świecący blok jest jasny cały, bez cieni.
 
@@ -600,6 +742,13 @@ function addCubeFaces(id, renderData, lx, y, lz, faceCount, baseX, baseZ) {
         const front = block + FACE_FRONT[faceIndex];
 
         if (padOpaque[front]) {
+            continue;
+        }
+
+        // Liście przy liściach - tylko przy wierzchu korony
+        // (szybkie liście - wcale).
+
+        if (leaves && padShade[front] && (fastLeaves || deepInLeaves(block, lx, y, lz, faceIndex))) {
             continue;
         }
 
@@ -680,30 +829,20 @@ function addCubeFaces(id, renderData, lx, y, lz, faceCount, baseX, baseZ) {
                 // Światło bierzemy z komórek bez bloku.
                 // Gdy oba boki są zajęte, komórka po skosie
                 // jest od ściany odcięta - nie liczy się.
+                // Cień w kącie rzucają też liście (padShade).
 
                 let count = 0;
 
                 sampleCells[count++] = front;
 
-                let shadeCount;
+                const shadeCount =
+                    padShade[side1] && padShade[side2]
+                        ? 3
+                        : padShade[side1] + padShade[side2] + padShade[diagonal];
 
 
-                if (padOpaque[side1] && padOpaque[side2]) {
-
-                    shadeCount = 3;
-
-                }
-                else {
-
-                    shadeCount =
-                        padOpaque[side1] +
-                        padOpaque[side2] +
-                        padOpaque[diagonal];
-
-                    if (!padOpaque[diagonal]) {
-                        sampleCells[count++] = diagonal;
-                    }
-
+                if (!(padOpaque[side1] && padOpaque[side2]) && !padOpaque[diagonal]) {
+                    sampleCells[count++] = diagonal;
                 }
 
                 if (!padOpaque[side1]) sampleCells[count++] = side1;
@@ -885,10 +1024,15 @@ export function buildChunkGeometry(chunk, world) {
     let faceCount = 0;
 
     // Rośliny dokładamy na końcu (osobny materiał - przezroczystość
-    // i kołysanie na wietrze), a po nich wodę (półprzezroczysta,
+    // i kołysanie na wietrze), po nich liście i płaskie dekoracje
+    // (przezroczystość bez wiatru), a na koniec wodę (półprzezroczysta,
     // fale): x, y, z, id po kolei.
 
     const plants = [];
+
+    const leaves = [];
+
+    const flats = [];
 
     const liquids = [];
 
@@ -922,6 +1066,24 @@ export function buildChunkGeometry(chunk, world) {
                 }
 
 
+                if (renderData.leaves) {
+
+                    leaves.push(lx, y, lz, id);
+
+                    continue;
+
+                }
+
+
+                if (renderData.flat) {
+
+                    flats.push(lx, y, lz, id);
+
+                    continue;
+
+                }
+
+
                 // Woda (ciecz) - na końcu, osobna grupa (przezroczystość).
 
                 if (isLiquidId(id)) {
@@ -948,6 +1110,18 @@ export function buildChunkGeometry(chunk, world) {
 
     const plantFaces = faceCount - cubeFaces;
 
+    for (let k = 0; k < leaves.length; k += 4) {
+
+        const id = leaves[k + 3];
+
+        faceCount = addCubeFaces(id, blockRenderData[id], leaves[k], leaves[k + 1], leaves[k + 2], faceCount, baseX, baseZ);
+
+    }
+
+    faceCount = addFlats(flats, faceCount, baseX, baseZ);
+
+    const cutoutFaces = faceCount - cubeFaces - plantFaces;
+
     for (let k = 0; k < liquids.length; k += 4) {
 
         const id = liquids[k + 3];
@@ -956,7 +1130,7 @@ export function buildChunkGeometry(chunk, world) {
 
     }
 
-    const waterFaces = faceCount - cubeFaces - plantFaces;
+    const waterFaces = faceCount - cubeFaces - plantFaces - cutoutFaces;
 
 
     if (faceCount === 0) {
@@ -1019,16 +1193,26 @@ export function buildChunkGeometry(chunk, world) {
     );
 
 
-    // Grupa 0 - zwykłe ściany (blockMaterial), grupa 1 - rośliny
-    // (plantMaterial: przezroczystość, wiatr; zawsze jest, choćby
-    // pusta), grupa 2 - woda (waterMaterial: półprzezroczysta, fale).
+    // Grupy (i materiały - World.js):
+    //   pierwsza - zwykłe ściany (materiał 0: blockMaterial),
+    //   druga    - rośliny (materiał 1: plantMaterial - przezroczystość,
+    //              wiatr; zawsze jest, choćby pusta - World.js chowa
+    //              rośliny z daleka),
+    //   potem    - liście i płaskie dekoracje (materiał 3: leafMaterial -
+    //              przezroczystość bez wiatru), jeśli są,
+    //   na końcu - woda (materiał 2: waterMaterial - półprzezroczysta,
+    //              fale), jeśli jest.
 
     geometry.addGroup(0, cubeFaces * 6, 0);
 
     geometry.addGroup(cubeFaces * 6, plantFaces * 6, 1);
 
+    if (cutoutFaces > 0) {
+        geometry.addGroup((cubeFaces + plantFaces) * 6, cutoutFaces * 6, 3);
+    }
+
     if (waterFaces > 0) {
-        geometry.addGroup((cubeFaces + plantFaces) * 6, waterFaces * 6, 2);
+        geometry.addGroup((cubeFaces + plantFaces + cutoutFaces) * 6, waterFaces * 6, 2);
     }
 
 

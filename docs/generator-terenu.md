@@ -52,6 +52,16 @@ etap po etapie.
   Dzikie krzaki rosną dalej dopiero w chunku zmienionym przez gracza
   (`src/game/PlantGrowth.js`). Liczby: `bush...`
   w `PLANTS` (`TerrainShape.js`).
+- **Drzewa i lasy** (zrobione, pierwszy kawałek etapu 4 - przed biomami) -
+  sześć gatunków (świerk, sosna, buk, lipa, dąb, brzoza), każdy z własnym
+  kształtem. Drzewa stoją na siatce co 4 bloki, gęstość z pola lasów
+  (`forest`, łąki ↔ lasy), wilgotności i wysokości (granica lasu pod
+  gołą skałą), gatunek z klimatu i plam gatunków. Każdy chunk wstawia
+  kawałki drzew z okolicy (zasięg korony do 7 bloków), więc drzewa
+  pasują na granicach chunków. Daleki teren pokazuje korony lasów.
+  Opis: `docs/drzewa.md`, liczby: `FORESTS` (`TerrainShape.js`), kod:
+  `src/world/trees/`. `columnBlocks` (przekrój, `/skaly`) drzew nie
+  zawiera - to sama kolumna terenu.
 
 ## Jak działa generator realistyczny
 
@@ -255,11 +265,12 @@ Co: łąki, lasy i inne krajobrazy na podstawie rzeźby i klimatu.
   i w depresjach), plaża i wydmy, hale (równie w górach), skaliste
   góry, ośnieżone szczyty,
 - płynne granice biomów (mieszanie kolorów trawy, przenikanie roślin),
-- nowe bloki: drewno, liście, śnieg (żwir, glina, czarnoziem, ściółka,
-  błoto, trawy, paproć, zioła i kwiaty już są - do rozmieszczenia
-  w biomach),
+- nowe bloki: śnieg (drewno i liście sześciu gatunków drzew, żwir, glina,
+  czarnoziem, ściółka, błoto, trawy, paproć, zioła i kwiaty już są - do
+  rozmieszczenia w biomach),
 - drzewa i rośliny: rozmieszczane z seeda tak, żeby drzewo na granicy
-  chunków pasowało po obu stronach,
+  chunków pasowało po obu stronach (drzewa - zrobione, `docs/drzewa.md`;
+  w biomach dojdzie np. ściółka pod lasem, rzadsze drzewa na halach),
 - daleki teren i mapa w kolorach biomów (`/mapa biomy`).
 
 ### Później
@@ -280,7 +291,9 @@ Jaskinie, rudy i warstwy skał, wodospady, klify nadmorskie, pory roku.
   gotowy, zamrozimy jego wersję (jak klasyczny) i dalsze zmiany pójdą
   do nowego typu.
 - **Wydajność**: realistyczny liczy ~3 µs na kolumnę, wygenerowanie
-  chunka to ~1 ms razem ze skałami (klasyczny ~0,5 ms), mesh ~0,2 ms.
+  chunka to ~1 ms razem ze skałami (klasyczny ~0,5 ms), w lesie z
+  drzewami ~2 ms (drzewa z okolicy są pamiętane - sąsiednie chunki
+  nie liczą ich od nowa), mesh ~0,2 ms.
   Szum żył lepidolitu jest liczony w punktach co 2-4 bloki i tylko
   do wysokości granitu. Każdy kolejny
   etap (rzeki, biomy, drzewa) ma się zmieścić tak, żeby cały chunk
@@ -303,6 +316,7 @@ Jaskinie, rudy i warstwy skał, wodospady, klify nadmorskie, pory roku.
 | `/mapa skaly`, `/mapa przekroj` | mapa skał (pod glebą); przekrój pionowy w kierunku patrzenia |
 | `/demo skaly` | odkrywka - wykop do dna świata, na ścianach widać warstwy |
 | `/horyzont lod`, `/wydajnosc` | daleki teren i szybkość |
+| `/mapa lasy`, `/drzewa`, `/drzewa znajdz <gatunek> [tp]` | lasy: gatunek i gęstość na mapie, drzewa w okolicy, najbliższe drzewo gatunku |
 
 ## Ustalone z Kamilem
 

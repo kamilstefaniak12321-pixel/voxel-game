@@ -37,6 +37,8 @@ import {
 
 import { setPotatoDefine } from '../rendering/BlockRenderData.js';
 
+import { TREE_NAMES } from '../blocks/trees.js';
+
 // ------------------------------------------------------------
 // DALEKI TEREN (HORYZONT)
 //
@@ -123,9 +125,18 @@ const FALLBACK_COLORS = {
 
 const ROCK_KINDS = ['granite', 'limestone', 'sandstone', 'slate', 'basalt', 'lepidolite'];
 
+// Lasy: z daleka widać korony drzew w kolorze liści gatunku
+// (generator.farSurface podnosi tam teren do wysokości koron).
+
+const LEAF_KINDS = TREE_NAMES.map((species) => `${species}_leaves`);
+
+// Korony z daleka są trochę ciemniejsze niż sama tekstura liści
+// (cienie między liśćmi i drzewami).
+const FAR_LEAVES_SHADE = 0.78;
+
 // Rodzaj powierzchni (generator.farSurface) -> numer w kafelku.
 
-const KINDS = ['grass', 'rock', 'sand', 'water', ...ROCK_KINDS];
+const KINDS = ['grass', 'rock', 'sand', 'water', ...ROCK_KINDS, ...LEAF_KINDS];
 
 // Numer rodzaju: 'stone' to to samo co 'rock', nieznany = trawa.
 
@@ -147,6 +158,12 @@ const BLOCK_KINDS = {
 for (const rock of ROCK_KINDS) {
     BLOCK_KINDS[rock] = rock;
 }
+
+for (const leaves of LEAF_KINDS) {
+    BLOCK_KINDS[leaves] = leaves;
+}
+
+BLOCK_KINDS.linden_leaves_flowering = 'linden_leaves';
 
 
 // ------------------------------------------------------------
@@ -516,6 +533,16 @@ export class FarTerrain {
 
                 this.colors[rock] =
                     getAtlasAverage(textures.top ?? textures.all) ?? this.colors.stone;
+
+            }
+
+
+            // Korony drzew: średni kolor liści gatunku, trochę ciemniej.
+
+            for (const leaves of LEAF_KINDS) {
+
+                this.colors[leaves] =
+                    (getAtlasAverage(leaves) ?? FALLBACK_COLORS.grass_top).clone().multiplyScalar(FAR_LEAVES_SHADE);
 
             }
 

@@ -5,11 +5,15 @@ import {
     getGrowth
 } from '../blocks/BlockRegistry.js';
 
+import { plantTree } from '../world/trees/plantTree.js';
+
 // ------------------------------------------------------------
 // WZROST ROŚLIN
 //
 // Krzaki owocowe rosną etapami (pole "grows" w BlockRegistry.js):
-// sadzonka -> krzak -> kilka owoców -> pełen owoców.
+// sadzonka -> krzak -> kilka owoców -> pełen owoców. Sadzonka drzewa
+// (grows.tree) wyrasta od razu w całe drzewo (src/world/trees/
+// plantTree.js) - jeśli ma nad sobą miejsce; jeśli nie, czeka dalej.
 //
 // Co sekundę gry każda rosnąca roślina we wczytanych chunkach ma
 // szansę 1 / seconds, że przejdzie do następnego etapu - czyli
@@ -46,6 +50,9 @@ export class PlantGrowth {
 
         // Ile razy coś urosło (od wejścia do świata).
         this.grown = 0;
+
+        // Wywoływane, gdy z sadzonki wyrosło drzewo: (gatunek, x, y, z).
+        this.onTreeGrown = null;
 
     }
 
@@ -88,7 +95,7 @@ export class PlantGrowth {
                 }
 
                 if (Math.random() < TICK / growth.seconds) {
-                    this.grow(chunk, index, growth.into);
+                    this.grow(chunk, index, growth);
                 }
 
             }
@@ -98,13 +105,34 @@ export class PlantGrowth {
     }
 
 
-    // Roślina w komórce `index` chunka przechodzi do etapu `into`.
+    // Roślina w komórce `index` chunka rośnie (growth - pole grows):
+    // przechodzi do etapu growth.into albo wyrasta z niej drzewo.
 
-    grow(chunk, index, into) {
+    grow(chunk, index, growth) {
 
         const { x, y, z } = cellPosition(chunk, index);
 
-        if (this.world.setBlock(x, y, z, into)) {
+
+        if (growth.tree) {
+
+            const seed = (Math.random() * 4294967296) >>> 0;
+
+            const size = 0.2 + Math.random() * 0.8;
+
+            if (!plantTree(this.world, x, y, z, growth.tree, seed, size)) {
+                return false;
+            }
+
+            this.grown++;
+
+            this.onTreeGrown?.(growth.tree, x, y, z);
+
+            return true;
+
+        }
+
+
+        if (this.world.setBlock(x, y, z, growth.into)) {
 
             this.grown++;
 
@@ -139,7 +167,7 @@ export class PlantGrowth {
 
                     const growth = getGrowth(getBlockTypeById(chunk.blocks[index]));
 
-                    if (growth && this.grow(chunk, index, growth.into)) {
+                    if (growth && this.grow(chunk, index, growth)) {
                         count++;
                     }
 

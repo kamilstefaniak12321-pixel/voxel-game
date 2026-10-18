@@ -167,6 +167,7 @@ zmieni) - `TOUCH_SETTINGS` w `src/config.js`:
 | daleki teren | 512 | 1024 |
 | rozdzielczość | 80% | 100% |
 | limit FPS | 60 | bez limitu |
+| liście drzew | szybkie | ładne (z prześwitami) |
 | informacje F3 | wyłączone | włączone |
 
 Do tego obraz ma najwyżej 1.5 piksela na punkt ekranu

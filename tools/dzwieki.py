@@ -169,7 +169,7 @@ def loopable(x, crossfade):
 # wysokich tonów (szum zamiast syku), raczej cicho - mają być tłem,
 # a nie zwracać na siebie uwagę. Trawa szeleści, ziemia głucho
 # stuka, kamień puka, piasek szumi, żwir chrzęści, błoto mlaszcze,
-# rośliny szeleszczą liśćmi, szkło (lampy) cicho dzwoni.
+# rośliny szeleszczą liśćmi, szkło (lampy) cicho dzwoni, drewno puka.
 # ------------------------------------------------------------
 
 def soft_env(n, attack, decay):
@@ -300,6 +300,20 @@ def mat_glass(s, heavy):
     return lowpass(out, 4500)
 
 
+def mat_wood(s, heavy):
+    # drewno (pnie, deski): ciepłe, głuche puknięcie; przy niszczeniu
+    # jeszcze ciche trzaski drzazg
+    length = [0.22, 0.24, 0.42][heavy]
+    n = samples(length)
+    out = band(s.noise(length), 280, 1500) * soft_env(n, 0.003, [0.02, 0.026, 0.035][heavy]) * 0.8
+    body = s.uniform(140, 190) if heavy == 1 else s.uniform(170, 240)
+    out += damped_sine(body, length, [0.035, 0.045, 0.04][heavy]) * soft_env(n, 0.003, 1) * [0.5, 0.8, 0.6][heavy]
+    out += damped_sine(body * s.uniform(2.3, 2.9), length, 0.02) * soft_env(n, 0.002, 1) * 0.18
+    if heavy == 2:
+        out += crumble(s, length, 18, 700, 3000, 0.07, grain=(0.004, 0.01), loud=(0.15, 0.5))
+    return lowpass(out, 3000)
+
+
 MATERIALS = {
     'grass': mat_grass,
     'dirt': mat_dirt,
@@ -308,7 +322,8 @@ MATERIALS = {
     'gravel': mat_gravel,
     'mud': mat_mud,
     'plant': mat_plant,
-    'glass': mat_glass
+    'glass': mat_glass,
+    'wood': mat_wood
 }
 
 # ile wersji każdego rodzaju (gra losuje jedną - więcej kroków, żeby
@@ -842,8 +857,9 @@ def generate(root=ROOT, only=None):
                     sound = fade(loudness(make(Synth(seed), heavy), LOUDNESS[kind]), 0.002, 0.04)
                     save(os.path.join(root, 'blocks', f'{kind}_{material}_{v}.ogg'), sound)
     # Dalsze grupy liczą ziarna od tej samej liczby co dawniej (gdy
-    # kroków było po 4) - więcej wersji kroków ich nie zmienia.
-    seed = 1 + len(MATERIALS) * 10
+    # kroków było po 4 i materiałów 8) - więcej wersji kroków ani nowy
+    # materiał (drewno) ich nie zmienia.
+    seed = 1 + 8 * 10
     for name, make in METEOR.items():
         seed += 101
         if want('meteoryt'):

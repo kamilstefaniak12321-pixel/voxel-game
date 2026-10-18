@@ -126,6 +126,7 @@ const UI_SOUNDS = {
     item_pick: { volume: 0.8, pitch: [0.95, 1.05] },    // wzięcie stosu
     item_place: { volume: 0.8, pitch: [0.95, 1.05] },   // odłożenie
     item_trash: { volume: 0.8, pitch: [0.95, 1.05] },   // kosz
+    item_craft: { volume: 0.8, pitch: [0.97, 1.03] },   // wzięcie wyrobu (crafting)
     ui_error: { volume: 0.8 },                           // błąd (np. komendy)
 
     // Zdobyte osiągnięcie (src/achievements/) - im rzadsze, tym

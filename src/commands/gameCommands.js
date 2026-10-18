@@ -16,6 +16,7 @@ import {
     getBlockLabel,
     getBlockSound,
     getBreakTime,
+    getBestTool,
     isLiquidId
 } from '../blocks/BlockRegistry.js';
 
@@ -28,6 +29,19 @@ import {
 } from '../items/ItemRegistry.js';
 
 import { STACK_SIZE } from '../game/Inventory.js';
+
+import {
+    RECIPE_LIST,
+    craftFromInventory,
+    getRecipe,
+    recipeText,
+    recipesFor,
+    recipesUsing,
+    maxCrafts,
+    stockOf
+} from '../crafting/Crafting.js';
+
+import { CATEGORIES, getCategory } from '../items/categories.js';
 
 import { FLIGHT_SECONDS } from '../game/Meteorites.js';
 
@@ -83,7 +97,6 @@ import {
     SPACE_FULL,
     SPACE_MAX_ALTITUDE,
     SKYFALL_START,
-    AXE_SPEED,
     CREATIVE_REPEAT_SECONDS
 } from '../config.js';
 
@@ -345,6 +358,15 @@ const MINING_GROUPS = {
 };
 
 
+// Narzędzie w narzędniku ("kilofem 0,73 s").
+
+const TOOL_WITH = {
+    axe: 'siekierą',
+    pickaxe: 'kilofem',
+    shovel: 'łopatą'
+};
+
+
 function miningList() {
 
     const groups = new Map();
@@ -370,7 +392,9 @@ function miningList() {
             groups.set(time, new Set());
         }
 
-        groups.get(time).add(name + (material === 'wood' ? ` - siekierą ${seconds(time / AXE_SPEED)}` : ''));
+        const tool = getBestTool(type);
+
+        groups.get(time).add(name + (tool && time > 0 ? ` - ${TOOL_WITH[tool]} ${seconds(getBreakTime(type, tool))}` : ''));
 
     }
 
@@ -394,8 +418,10 @@ function miningText(type, game) {
 
     let text = `${label}: kopanie ${seconds(time)}`;
 
-    if (getBlockSound(type) === 'wood') {
-        text += ` (siekierą ${seconds(time / AXE_SPEED)})`;
+    const tool = getBestTool(type);
+
+    if (tool) {
+        text += ` (${TOOL_WITH[tool]} ${seconds(getBreakTime(type, tool))})`;
     }
 
     return text + '. ' + (
@@ -2234,6 +2260,120 @@ export const GAME_COMMANDS = [
 
         complete(args) {
             return args.length === 1 ? ['przygoda', 'kreatywny'] : [];
+        }
+    },
+
+
+    {
+        name: 'przepisy',
+        aliases: ['recipes', 'crafting', 'przepis'],
+        usage: '/przepisy [blok | przedmiot | lista | moge]',
+        description: 'Przepisy wytwarzania (siatka 2 x 2 w ekwipunku, E): jak zrobić rzecz i do czego się przydaje. lista - wszystkie, moge - te, na które masz składniki.',
+
+        run(args, { game }) {
+
+            const word = simplify(args[0] ?? '');
+
+            if (!word || word === 'lista' || word === 'list') {
+
+                const lines = RECIPE_LIST.map((recipe) => `${CATEGORIES[getCategory(recipe.result[0])].label}: ${recipeText(recipe)}`);
+
+                return `Przepisy (${RECIPE_LIST.length}) - siatka 2 x 2 w ekwipunku (E), księga przepisów: przycisk 📖.\n` + lines.join('\n');
+
+            }
+
+            if (word === 'moge' || word === 'mozliwe') {
+
+                const stock = stockOf(game.inventory);
+
+                const ready = RECIPE_LIST
+                    .map((recipe) => ({ recipe, times: maxCrafts(recipe, stock) }))
+                    .filter(({ times }) => times > 0);
+
+                return ready.length === 0
+                    ? 'Nie masz składników na żaden przepis. Zacznij od pnia drzewa (deski) - /przepisy lista.'
+                    : 'Możesz zrobić:\n' + ready.map(({ recipe, times }) => `${recipeText(recipe)} - ${times} raz${times === 1 ? '' : 'y'}`).join('\n');
+
+            }
+
+            const type = itemArgument(args[0]);
+
+            const made = recipesFor(type);
+
+            const uses = recipesUsing(type);
+
+            const lines = [];
+
+            lines.push(made.length > 0
+                ? made.map((recipe) => `Jak zrobić - ${recipeText(recipe)}`).join('\n')
+                : `${getItemLabel(type)}: nie robi się tego z przepisu (zbierasz albo wykopujesz).`);
+
+            if (uses.length > 0) {
+                lines.push(`Przydaje się do: ${uses.map((recipe) => getItemLabel(recipe.result[0])).join(', ')}.`);
+            }
+
+            return lines.join('\n');
+
+        },
+
+        complete(args) {
+            return args.length === 1 ? ['lista', 'moge', ...RECIPE_LIST.map((recipe) => recipe.result[0])] : [];
+        }
+    },
+
+
+    {
+        name: 'wytworz',
+        aliases: ['craft', 'zrob'],
+        usage: '/wytworz <przepis> [ile razy]',
+        description: 'Wytwarza od razu ze składników z ekwipunku (jak siatka 2 x 2 - do testów i na skróty). Przepisy: /przepisy lista.',
+
+        run(args, { game }) {
+
+            const word = simplify(args[0] ?? '');
+
+            if (!word) {
+                throw usageError(this);
+            }
+
+            // Nazwa przepisu albo tego, co powstaje (też po polsku).
+
+            let recipe = getRecipe(word);
+
+            if (!recipe) {
+
+                const type = itemArgument(args[0]);
+
+                recipe = recipesFor(type)[0] ?? null;
+
+                if (!recipe) {
+                    throw new CommandError(`${getItemLabel(type)} nie ma przepisu. Lista: /przepisy lista`);
+                }
+
+            }
+
+            const times = args[1] === undefined ? 1 : Math.floor(parseNumber(args[1], 'ile razy'));
+
+            if (times < 1 || times > STACK_SIZE) {
+                throw new CommandError(`Ile razy: od 1 do ${STACK_SIZE}`);
+            }
+
+            const done = craftFromInventory(game.inventory, recipe, times);
+
+            if (done === 0) {
+                throw new CommandError(`Brakuje składników (albo miejsca w ekwipunku). ${recipeText(recipe)}`);
+            }
+
+            const [type, count] = recipe.result;
+
+            game.achieve?.('crafted', { type, count: count * done, recipe: recipe.id });
+
+            return `Wytworzono: ${count * done} x ${getItemLabel(type)}${done < times ? ` (składników starczyło na ${done} z ${times})` : ''}.`;
+
+        },
+
+        complete(args) {
+            return args.length === 1 ? RECIPE_LIST.map((recipe) => recipe.id) : args.length === 2 ? ['1', '4', '16'] : [];
         }
     },
 

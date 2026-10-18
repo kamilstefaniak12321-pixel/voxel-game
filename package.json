@@ -1,7 +1,7 @@
 {
     "name": "voxel-game",
     "productName": "Voxel Game",
-    "version": "0.12.0",
+    "version": "0.13.0",
     "description": "Gra voxelowa - aplikacja na komputer (Windows)",
     "author": "Kamil",
     "private": true,

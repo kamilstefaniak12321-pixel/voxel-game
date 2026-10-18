@@ -193,17 +193,20 @@ przytrzymać palec albo przycisk z kilofem):
 | rośliny | od razu |
 | liście | 0,35 s |
 | lampy | 0,45 s |
-| piasek, trawa, ziemia, błoto, glina | 0,55-0,6 s |
-| żwir | 0,7 s |
-| wapień, piaskowiec | 1,8 s |
+| piasek, trawa, ziemia, błoto, glina | 0,55-0,6 s, **łopatą ~0,2 s** |
+| żwir | 0,7 s, łopatą 0,23 s |
+| wapień, piaskowiec | 1,8 s, **kilofem 0,6 s** |
 | drewno (pnie, deski) | 2 s, **siekierą 0,67 s** |
-| kamień, łupek | 2,2 s |
-| lepidolit | 2,5 s |
-| granit, bazalt | 2,8 s |
-| meteoryt | 4,5 s |
+| kamień, łupek | 2,2 s, kilofem 0,73 s |
+| lepidolit | 2,5 s, kilofem 0,83 s |
+| granit, bazalt | 2,8 s, kilofem 0,93 s |
+| meteoryt | 4,5 s, kilofem 1,5 s |
+
+Narzędzia (siekiera, kilof, łopata) robi się z patyków i skał -
+przepisy: `docs/wiki/przepisy.md`.
 
 Liczby: `BREAK_SECONDS` (dla materiałów), `LEAVES_BREAK_SECONDS`,
-`AXE_SPEED`, `MINING_HIT_SECONDS`, `MINING_DELAY_SECONDS` w
+`TOOL_MATERIALS`, `TOOL_SPEED`, `MINING_HIT_SECONDS`, `MINING_DELAY_SECONDS` w
 `src/config.js`, a twardość pojedynczych skał - `hardness`
 w `src/blocks/BlockRegistry.js`. W **trybie kreatywnym** bloki znikają
 od razu, a trzymany LPM niszczy kolejny co 0,25 s

@@ -138,6 +138,25 @@ export const ACHIEVEMENTS = [
         when: (data) => data.progress >= 0.9
     },
     {
+        id: 'first_craft',
+        tier: 'common',
+        title: 'Złota rączka',
+        task: 'Wytwórz coś w ekwipunku (siatka 2 x 2 - E).',
+        comment: 'Z dwóch desek cztery patyki. Matematyka się nie zgadza, ale działa.',
+        icon: 'stick',
+        on: 'crafted'
+    },
+    {
+        id: 'colored_lamp',
+        tier: 'common',
+        title: 'Kolorowe światła',
+        task: 'Zrób kolorową lampę (lampa i coś w tym kolorze).',
+        comment: 'Disco w jaskini. Nietoperze są zachwycone.',
+        icon: 'lamp_purple',
+        on: 'crafted',
+        when: (data) => ['lamp_red', 'lamp_green', 'lamp_blue', 'lamp_purple'].includes(data.type)
+    },
+    {
         id: 'birch_bark',
         tier: 'common',
         title: 'Brzozowy papirus',
@@ -236,6 +255,17 @@ export const ACHIEVEMENTS = [
             return species !== null && book.collect('trees', species) >= TREE_NAMES.length;
         },
         goal: { key: 'trees', count: TREE_NAMES.length }
+    },
+    {
+        id: 'tool_set',
+        tier: 'rare',
+        title: 'Komplet narzędzi',
+        task: 'Zrób siekierę, kilof i łopatę (postęp liczy się w księdze).',
+        comment: 'Teraz brakuje tylko skrzynki na narzędzia. I garażu. I warsztatu.',
+        icon: 'pickaxe',
+        on: 'crafted',
+        when: (data, book) => ['axe', 'pickaxe', 'shovel'].includes(data.type) && book.collect('tools', data.type) >= 3,
+        goal: { key: 'tools', count: 3 }
     },
     {
         id: 'tree_grown',

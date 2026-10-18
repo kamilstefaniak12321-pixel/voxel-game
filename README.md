@@ -5,6 +5,13 @@ telefon (Android), napisana w JavaScripcie z użyciem three.js.
 
 > Nazwa robocza - do zmiany, gdy gra dostanie prawdziwą nazwę.
 
+**Wiki gry** (dla graczy - jak grać, wszystkie bloki, przedmioty,
+przepisy i osiągnięcia z ikonkami): [`docs/wiki/`](docs/wiki/README.md),
+całe wiki jako jedna strona: `docs/wiki/index.html`. **Historia
+zmian** - wszystko, co weszło do gry, wersja po wersji:
+[`CHANGELOG.md`](CHANGELOG.md). Ten plik (README) opisuje grę od środka -
+dla tych, którzy ją rozwijają.
+
 ## Jak uruchomić
 
 **Aplikacja na komputer (Windows):** instalator z wydań -
@@ -87,7 +94,7 @@ w pauzie i na ekranie tytułowym) - z datą i nazwą świata. Księga jest
 wspólna dla wszystkich światów. Niektóre osiągnięcia są sekretne -
 przed zdobyciem widać tylko znak zapytania.
 
-Jest 25 osiągnięć (od pierwszego zniszczonego bloku po
+Jest 28 osiągnięć (od pierwszego zniszczonego bloku po
 legendarne *Problem spadł z nieba*). Nowa rzecz w grze = nowe
 osiągnięcie - jak je dopisać, zdarzenia z gry i pełna lista (spoilery):
 `docs/osiagniecia.md`. Test: `/osiagniecia` (lista), `/osiagniecia pokaz
@@ -104,6 +111,8 @@ w grze komendą `/tryb przygoda` albo `/tryb kreatywny`.
   pęknięć) i po chwili znika - ziemia i piasek w pół sekundy, liście
   w 0,35 s, drewno w 2 s (siekierą 3 razy szybciej), kamień 2,2 s, granit
   i bazalt 2,8 s, meteoryt 4,5 s, rośliny od razu (`/kopanie lista`).
+  **Narzędzia** kopią swoje bloki 3 razy szybciej: siekiera - drewno,
+  kilof - skały, łopata - ziemię, piasek, żwir i błoto.
   Puszczony LPM albo inny blok pod celownikiem - kopanie od nowa.
   Zniszczony blok trafia do ekwipunku (blok trawy daje ziemię, a roślina,
   która na nim rosła, też wpada do ekwipunku), a postawienie bloku zużywa
@@ -116,15 +125,19 @@ w grze komendą `/tryb przygoda` albo `/tryb kreatywny`.
   też go kończy).
 
 Czas kopania ustawia się w `src/config.js` (`BREAK_SECONDS` dla
-materiałów, `LEAVES_BREAK_SECONDS`, `AXE_SPEED`) albo przy bloku
-(`hardness` w `src/blocks/BlockRegistry.js`). Test: `/kopanie` (blok, na
-który patrzysz), `/kopanie granit`, `/kopanie lista`.
+materiałów, `LEAVES_BREAK_SECONDS`, narzędzia: `TOOL_MATERIALS`
+i `TOOL_SPEED`) albo przy bloku (`hardness` w
+`src/blocks/BlockRegistry.js`). Test: `/kopanie` (blok, na który
+patrzysz), `/kopanie granit`, `/kopanie lista`.
 
 **Ekwipunek** (klawisz **E**) ma 36 miejsc: 9 na pasku na dole ekranu
 (klawisze 1-9) i 27 w trzech rzędach. Stos to najwyżej 64 sztuki.
-W trybie kreatywnym okno ma zakładki: *Wszystkie bloki* (z wyszukiwaniem
-po polsku i po nazwie bloku, np. „ziem” albo „humus”) i *Ekwipunek*.
-W zakładce ekwipunku widać postać gracza - głowa patrzy za myszką.
+W trybie kreatywnym okno ma zakładki: *Wszystkie bloki* (ułożone
+w kategorie - Ziemia, Skały, Drewno, Rośliny, Owoce i nasiona,
+Światło, Ozdoby, Narzędzia i surowce - z przyciskami kategorii
+i wyszukiwaniem po polsku i po nazwie bloku, np. „ziem” albo „humus”)
+i *Ekwipunek*. W zakładce ekwipunku widać postać gracza - głowa patrzy
+za myszką - i **wytwarzanie** (niżej).
 
 | W oknie ekwipunku | Akcja |
 |---|---|
@@ -132,6 +145,8 @@ W zakładce ekwipunku widać postać gracza - głowa patrzy za myszką.
 | prawy przycisk | weź połowę stosu / połóż jedną sztukę (na bloku z listy kreatywnej: +1 sztuka) |
 | Shift + klik | pasek ↔ reszta ekwipunku (blok z listy kreatywnej - prosto na pasek; w zakładce *Wszystkie bloki* Shift + klik na pasku czyści miejsce) |
 | 1-9 nad miejscem | zamiana z tym miejscem paska |
+| klik na wyniku wytwarzania | wyrób pod kursor (kolejny klik dokłada) |
+| Shift + klik na wyniku | wytwórz, ile się da, prosto do ekwipunku |
 | kosz (kreatywny) | usuwa trzymany blok |
 | E | zamknij i wróć do gry (ESC - menu pauzy) |
 
@@ -152,7 +167,61 @@ blok od razu ma ikonkę), liczba w rogu to ilość w stosie.
 - Wygląd paska (kolory ramek, rozmiar miejsc, nazwa bloku nad paskiem)
   jest w motywie - wartości `--hotbar-...` w `theme.css`.
 - Kod: `src/game/Inventory.js` (ekwipunek), `src/ui/InventoryScreen.js`
-  (okno), `src/ui/Hotbar.js` (pasek).
+  (okno), `src/ui/Hotbar.js` (pasek), `src/items/categories.js`
+  (kategorie).
+
+### Wytwarzanie (crafting)
+
+![Ekwipunek z księgą przepisów i siatką wytwarzania](docs/wiki/wytwarzanie.jpg)
+
+W zakładce ekwipunku, obok miejsc, jest **siatka 2 x 2** i **wynik**
+ze strzałką - jak w Minecrafcie. Składniki kładzie się w siatce,
+a gdy pasują do przepisu, w wyniku pojawia się wyrób: klik bierze go
+pod kursor (składniki ubywają po jednej sztuce), Shift + klik
+wytwarza, ile się da, prosto do ekwipunku. Przepisy **z kształtem**
+(np. patyki - dwie deski jedna nad drugą) można przesuwać po siatce
+i odbijać w poziomie; przepisy **bez kształtu** (np. deski z pnia) -
+obojętne, gdzie leżą składniki. Po zamknięciu okna składniki z siatki
+wracają do ekwipunku (co się nie zmieści - czeka w siatce, także
+w zapisie świata).
+
+**Księga przepisów** - przycisk 📖 *Przepisy* obok siatki: wszystkie
+przepisy z kategoriami, wyszukiwaniem i filtrem *Tylko możliwe*.
+Szare - brakuje składników. Klik na przepisie sam układa składniki
+z ekwipunku w siatce (kolejny klik - jeszcze jeden komplet, Shift -
+ile się da); gdy czegoś brakuje, siatka pokazuje przepis
+półprzezroczyście, a podpowiedź mówi, czego brakuje. Na wąskim
+ekranie (telefon) księga otwiera się w miejscu ekwipunku - pasek
+i siatka zostają.
+
+Co jest teraz (22 przepisy, pełna lista z obrazkami:
+[`docs/wiki/przepisy.md`](docs/wiki/przepisy.md)):
+
+| Wyrób | Z czego |
+|---|---|
+| deski x4 (6 gatunków) | pień tego drzewa (też okorowany) |
+| patyki x4 | 2 deski jedna nad drugą |
+| siekiera / kilof / łopata | skała (kamień, granit, wapień, piaskowiec, łupek, bazalt) i patyk |
+| lampa x2 | lepidolit + żywica + kora brzozowa |
+| kolorowa lampa | lampa + mak / truskawki / chili (czerwona), koniczyna / pokrzywa / paproć (zielona), chaber (niebieska), jeżyny (fioletowa) |
+| wieniec świerkowy | 3 x igliwie świerka + szyszka |
+| opadłe liście x2 | liście buka albo dębu |
+| piaskowiec | 4 x piasek |
+| ziemia kamienista x4 | 2 x ziemia + 2 x żwir |
+| czarnoziem / ściółka leśna | ziemia + opadłe liście / igliwie |
+
+Komendy: `/przepisy` (lista, `/przepisy kilof` - jak zrobić i do czego
+się przydaje, `/przepisy moge` - na co masz składniki), `/wytworz
+<przepis> [ile]` - wytwarzanie z ekwipunku na skróty.
+
+**Nowy przepis** = wpis w `src/crafting/recipes.js` (opis pól na
+początku pliku): wynik, kształt z literami (`pattern` + `key`) albo
+lista składników (`ingredients`); zamiast konkretnego bloku może być
+grupa, np. `'#planks'` - dowolne deski (`GROUPS` w tym samym pliku).
+Przepis sam trafia do księgi, `/przepisy` i wiki; literówka w nazwie
+= błąd od razu przy starcie gry. Czy nowy przepis nie gryzie się
+z innym (ten sam układ w siatce): `node tools/sprawdz_przepisy.mjs`.
+Logika: `src/crafting/Crafting.js`.
 
 ## Bloki naturalne i rośliny
 
@@ -368,6 +437,10 @@ tylko nową ziemię pod tą samą trawą).
 Drzewa (pnie, słoje, deski, liście, sadzonki i dodatki - wiersze 5-8
 atlasu) rysuje osobny skrypt **`tools/tekstury_drzew.py`**, w tym samym
 stylu: `python tools/tekstury_drzew.py [podglad.png]`.
+
+Ikonki narzędzi i surowców (patyk, kilof, łopata - wiersz 9 atlasu)
+rysuje **`tools/tekstury_narzedzi.py`** w tym samym stylu co siekiera:
+`python tools/tekstury_narzedzi.py [podglad.png]`.
 
 Pęknięcia kopanego bloku (10 etapów w pasku
 `assets/textures/blocks/cracks.png`) rysuje **`tools/pekniecia.py`**:
@@ -753,8 +826,10 @@ assets/textures/player/     skórka gracza i szablon skórki
 assets/ui/themes/           motywy menu (kolory, czcionka, tło)
 assets/fonts/               czcionki
 assets/sounds/              dźwięki (.ogg): bloki, kroki, zbieranie, meteoryt, menu (ui/), woda, kosmos
-tools/                      skrypty pomocnicze (tekstury, tekstury drzew, dźwięki, ikonki i pliki aplikacji na Androida)
+tools/                      skrypty pomocnicze (tekstury, tekstury drzew i narzędzi, pęknięcia, dźwięki, wiki, ikonki i pliki aplikacji na Androida)
 docs/                       opisy, jak działają większe części gry
+docs/wiki/                  wiki gry dla graczy (strony generuje tools/wiki.py)
+CHANGELOG.md                historia zmian - wszystkie wersje gry
 src/
   main.js                   start aplikacji, menu, pauza, pętla
   config.js                 ustawienia: chunki, teren, światło, dzień i noc, gracz, menu
@@ -762,7 +837,8 @@ src/
   ui/                       ekrany menu, pasek bloków, ikonki, napisy
   settings/                 ustawienia gracza (zapis w przeglądarce)
   blocks/                   lista bloków (BlockRegistry), krzaki owocowe, drzewa (trees.js)
-  items/                    przedmioty, które nie są blokami (owoce, szyszki, siekiera...)
+  items/                    przedmioty, które nie są blokami (owoce, szyszki, narzędzia...), kategorie
+  crafting/                 wytwarzanie: przepisy (recipes.js) i siatka 2 x 2 (Crafting.js)
   world/                    świat, chunki, szum, światło, daleki teren
   world/terrain/            generatory terenu (realistyczny, lista typów, formy terenu, skały)
   world/trees/              drzewa: kształty gatunków, lasy w terenie, sadzenie drzewa
@@ -805,6 +881,14 @@ src/
    (chyba że ma `creative: false`). Szybki test: `/daj <nazwa>`.
 
 **Nowy przedmiot** (coś, czego nie da się postawić jak bloku - np. owoc):
-ikonka 16x16 w wolnym kafelku atlasu (wiersz 4 albo 8) + wpis w `ATLAS_TILES`,
+ikonka 16x16 w wolnym kafelku atlasu (wiersze 4, 8 i 9) + wpis w `ATLAS_TILES`,
 potem wpis w `ITEM_TYPES` w `src/items/ItemRegistry.js` (polska nazwa,
-ikonka, opcjonalnie `plants` - jaka roślina wyrasta po posadzeniu).
+ikonka, opcjonalnie `plants` - jaka roślina wyrasta po posadzeniu,
+`tool` - narzędzie). Kategoria (ekwipunek kreatywny, księga przepisów,
+wiki) dobiera się sama (`src/items/categories.js`), a inną podaje
+pole `category`. Przepis na nową rzecz: `src/crafting/recipes.js`.
+
+**Po każdej zmianie bloków, przedmiotów, przepisów albo osiągnięć**
+odśwież wiki: `python tools/wiki.py` (potrzebny Node.js i Python
+z numpy, Pillow i markdown) - przerysuje ikonki i strony w
+`docs/wiki/`. Nową wersję gry dopisz też do `CHANGELOG.md`.

@@ -241,7 +241,13 @@ export const ATLAS_TILES = {
     linden_flower: { x: 10, y: 8 },
     acorn: { x: 11, y: 8 },
     birch_bark: { x: 12, y: 8 },
-    axe: { x: 13, y: 8 }
+    axe: { x: 13, y: 8 },
+
+    // Wiersz 9 - narzędzia i surowce (tools/tekstury_narzedzi.py).
+
+    stick: { x: 0, y: 9 },
+    pickaxe: { x: 1, y: 9 },
+    shovel: { x: 2, y: 9 }
 
 };
 

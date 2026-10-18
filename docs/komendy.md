@@ -47,7 +47,9 @@ Współrzędne można podawać względem gracza: `~` (tu, gdzie stoję),
 | `/skorka domyslna` | powrót do domyślnej skórki |
 | `/pozycja` | pozycja i chunk |
 | `/tryb [przygoda \| kreatywny]` | tryb gry (bez słowa - jaki jest): przygoda - bloki się kopie (trzymany LPM), zniszczone trafiają do ekwipunku, stawianie je zużywa; kreatywny - bloki bez końca i znikają od razu, wszystkie bloki pod E, latanie po dwukliku Spacji. Skróty: `/gm p`, `/gm k` |
-| `/kopanie [blok \| lista]` | ile trwa kopanie w trybie przygody: blok, na który patrzysz, albo podany (`/kopanie granit`, siekierą - dla drewna), `lista` - czasy wszystkich bloków. Skrót: `/kop` |
+| `/kopanie [blok \| lista]` | ile trwa kopanie w trybie przygody: blok, na który patrzysz, albo podany (`/kopanie granit` - także kilofem, łopatą albo siekierą, jeśli przyspiesza), `lista` - czasy wszystkich bloków. Skrót: `/kop` |
+| `/przepisy [rzecz \| lista \| moge]` | przepisy wytwarzania: `/przepisy kilof` - jak zrobić i do czego się przydaje (też dla surowców: `/przepisy granit`), `lista` - wszystkie, `moge` - te, na które masz składniki (ile razy). Też `/recipes` |
+| `/wytworz <przepis> [ile razy]` | wytwarza od razu ze składników z ekwipunku (nazwa przepisu albo wyrobu, też po polsku: `/wytworz kilof`, `/wytworz stick 4`). Też `/craft` |
 | `/ekwipunek` | co jest w ekwipunku (ile sztuk każdego bloku, ile miejsc zajętych) |
 | `/ekwipunek wyczysc` | czyści cały ekwipunek (z paskiem) |
 | `/latanie` | włącza/wyłącza latanie w każdym trybie (Spacja w górę, Shift w dół) - do testów; w kreatywnym wystarczy 2× Spacja |

@@ -62,12 +62,17 @@ import { ROCK_INFO, blockNamePl, blockFromWord } from '../world/terrain/rocks.js
 
 import { chooseSkinFile, resetSkin, hasCustomSkin } from '../player/skin.js';
 
+import { TREE_SPECIES, TREE_NAMES } from '../blocks/trees.js';
+
+import { plantTree } from '../world/trees/plantTree.js';
+
 import {
     CHUNK_SIZE,
     CHUNK_HEIGHT,
     WORLD_BORDER,
     DAY_LENGTH_MINUTES,
     BUSH_GROWTH_SECONDS,
+    TREE_GROWTH_SECONDS,
     WATER_WAVE_HEIGHT,
     UI_THEMES,
     POTATO_RENDER_SCALE,
@@ -648,6 +653,199 @@ function plantBushGarden(player, world) {
 }
 
 
+// --- Drzewa (/drzewa) ------------------------------------------
+
+// Słowa gatunków (po polsku bez ogonków i po angielsku) -> gatunek.
+
+const TREE_WORDS = {
+    swierk: 'spruce', spruce: 'spruce',
+    sosna: 'pine', pine: 'pine',
+    buk: 'beech', beech: 'beech',
+    lipa: 'linden', linden: 'linden',
+    dab: 'oak', oak: 'oak',
+    brzoza: 'birch', birch: 'birch'
+};
+
+const TREE_COMMAND_RADIUS = 64;
+
+const TREE_FIND_RADIUS = 1500;
+
+
+function treeSpecies(word) {
+
+    const species = TREE_WORDS[simplify(word ?? '')];
+
+    if (!species) {
+        throw new CommandError(`Podaj gatunek drzewa: ${TREE_NAMES.map((name) => simplify(TREE_SPECIES[name].short)).join(', ')}.`);
+    }
+
+    return species;
+
+}
+
+
+function treeName(species) {
+
+    return TREE_SPECIES[species].short;
+
+}
+
+
+// Ziemia w kolumnie (x, z) - wysokość, na której stoi podstawa pnia.
+
+function groundAt(world, x, z) {
+
+    world.ensureColumnLoaded(x, z);
+
+    return world.getGroundY(x, z);
+
+}
+
+
+// Drzewo gatunku `species` posadzone `ahead` bloków przed graczem
+// (albo w podanym miejscu). size 0-1. Pod pniem trawa.
+
+function growTreeAt(world, species, x, z, size, force) {
+
+    const y = groundAt(world, x, z);
+
+    if (y < 1 || y >= CHUNK_HEIGHT - 4) {
+        return null;
+    }
+
+    if (world.getBlock(x, y - 1, z) !== 'grass' && force) {
+        world.setBlock(x, y - 1, z, 'grass');
+    }
+
+    const seed = (Math.random() * 4294967296) >>> 0;
+
+    const shape = plantTree(world, x, y, z, species, seed, size, force);
+
+    return shape ? { x, y, z, shape } : null;
+
+}
+
+
+// Aleja: wszystkie gatunki w rzędzie przed graczem (co 12 bloków).
+
+function plantTreeAlley(player, world) {
+
+    const { forwardX, forwardZ, rightX, rightZ } = lookAxes(player);
+
+    const spacing = 12;
+
+    const ahead = 9;
+
+    const baseX = Math.floor(player.pos.x) + forwardX * ahead;
+    const baseZ = Math.floor(player.pos.z) + forwardZ * ahead;
+
+    const planted = [];
+
+    TREE_NAMES.forEach((species, i) => {
+
+        const offset = Math.round((i - (TREE_NAMES.length - 1) / 2) * spacing);
+
+        const x = baseX + rightX * offset;
+        const z = baseZ + rightZ * offset;
+
+        if (growTreeAt(world, species, x, z, 0.75, true)) {
+            planted.push(treeName(species));
+        }
+
+    });
+
+    return `Aleja drzew przed tobą (od lewej): ${planted.join(', ')}. ` +
+        'Bloki i dodatki każdego gatunku: ekwipunek (E) albo /daj, np. /daj pine_log_resin. Siekiera (/daj axe) - PPM na pniu okorowuje.';
+
+}
+
+
+// Najbliższe drzewo gatunku z generatora terenu (kratki siatki lasów
+// pierścieniami coraz dalej od gracza). Zwraca { x, y, z, distance }
+// albo null.
+
+function findTree(world, species, x0, z0, radius) {
+
+    const forests = world.generator.forests;
+
+    if (!forests) {
+        return null;
+    }
+
+    const G = forests.grid;
+
+    const gx0 = Math.floor(x0 / G);
+    const gz0 = Math.floor(z0 / G);
+
+    let best = null;
+
+    const check = (gx, gz) => {
+
+        const tree = forests.treeAt(gx, gz);
+
+        if (!tree || tree.species !== species) {
+            return;
+        }
+
+        const distance = Math.hypot(tree.x - x0, tree.z - z0);
+
+        if (!best || distance < best.distance) {
+            best = { x: tree.x, y: tree.y, z: tree.z, distance };
+        }
+
+    };
+
+
+    for (let r = 0; r <= Math.ceil(radius / G); r++) {
+
+        if (r === 0) {
+            check(gx0, gz0);
+        }
+
+        for (let i = -r; i <= r && r > 0; i++) {
+
+            check(gx0 + i, gz0 - r);
+            check(gx0 + i, gz0 + r);
+
+            if (i > -r && i < r) {
+                check(gx0 - r, gz0 + i);
+                check(gx0 + r, gz0 + i);
+            }
+
+        }
+
+        // Cały następny pierścień jest dalej niż najlepsze znalezione.
+
+        if (best && (r - 1) * G > best.distance) {
+            break;
+        }
+
+    }
+
+    return best;
+
+}
+
+
+// Drzewa z generatora w promieniu (bez sprawdzania, czy ktoś je ściął).
+
+function countTrees(world, x, z, radius) {
+
+    const counts = {};
+
+    world.generator.forests?.forEachTree(x - radius, z - radius, x + radius, z + radius, (tree) => {
+
+        if (Math.hypot(tree.x - x, tree.z - z) <= radius) {
+            counts[tree.species] = (counts[tree.species] ?? 0) + 1;
+        }
+
+    });
+
+    return counts;
+
+}
+
+
 function durationText(seconds) {
 
     if (!Number.isFinite(seconds)) {
@@ -764,6 +962,9 @@ function terrainText(world, x, z) {
         `${RELIEFS[info.relief] ?? info.relief} | forma: ${LANDFORMS[info.landform]?.name ?? info.landform} | ` +
         `powierzchnia: ${SURFACE_NAMES[info.surface] ?? info.surface}` +
         (info.rock ? ` | skała pod spodem: ${blockNamePl(info.rock)} (/skaly)` : '') +
+        (info.forest?.species
+            ? ` | las: ${Math.round(info.forest.density * 100)}% kratek z drzewem, przeważa ${treeName(info.forest.species)} (/drzewa)`
+            : '') +
         (fields ? `\nPola: ${fields}` : '');
 
 }
@@ -916,7 +1117,8 @@ const MATERIAL_NAMES = {
     gravel: 'żwir',
     mud: 'błoto',
     plant: 'rośliny',
-    glass: 'szkło (lampy)'
+    glass: 'szkło (lampy)',
+    wood: 'drewno (pnie, deski)'
 };
 
 // Słowo z komendy -> materiał (po polsku albo nazwa z sounds.js).
@@ -930,6 +1132,7 @@ const MATERIAL_WORDS = {
     bloto: 'mud',
     rosliny: 'plant',
     szklo: 'glass',
+    drewno: 'wood',
     ...Object.fromEntries(BLOCK_MATERIALS.map((name) => [name, name]))
 };
 
@@ -945,6 +1148,7 @@ const SETTING_WORDS = {
     rozdzielczosc: 'renderScale',
     fps: 'fpsLimit',
     cienie: 'ambientOcclusion',
+    liscie: 'fancyLeaves',
     'dynamiczne-swiatlo': 'dynamicLight',
     wczytywanie: 'loadBudget',
     czulosc: 'mouseSensitivity',
@@ -2501,6 +2705,174 @@ export const GAME_COMMANDS = [
 
         complete(args) {
             return args.length === 1 ? ['rosnij', 'tempo', 'ogrod', 'znajdz'] : args.length === 2 && simplify(args[0]) === 'tempo' ? ['1', '10', '60'] : [];
+        }
+    },
+
+
+    {
+        name: 'drzewa',
+        aliases: ['drzewo', 'trees', 'tree', 'las'],
+        usage: '/drzewa | /drzewa posadz <gatunek> [rozmiar 0-100] | /drzewa aleja | /drzewa znajdz <gatunek> [tp] | /drzewa rosnij | /drzewa tempo <0-500>',
+        description: 'Drzewa (świerk, sosna, buk, lipa, dąb, brzoza): jakie rosną w okolicy, drzewo przed tobą (posadz), wszystkie gatunki w rzędzie (aleja), najbliższe drzewo gatunku (znajdz), sadzonki rosną od razu (rosnij) albo szybciej (tempo).',
+
+        run(args, { game, player, world }) {
+
+            const word = simplify(args[0] ?? '');
+
+            const growth = game.plantGrowth;
+
+
+            if (['posadz', 'plant', 'wyhoduj', 'postaw'].includes(word) || TREE_WORDS[word]) {
+
+                const species = treeSpecies(TREE_WORDS[word] ? args[0] : args[1]);
+
+                const sizeArg = TREE_WORDS[word] ? args[1] : args[2];
+
+                const size = sizeArg === undefined ? 0.4 + Math.random() * 0.5 : parseNumber(sizeArg, 'rozmiar') / 100;
+
+                if (size < 0 || size > 1) {
+                    throw new CommandError('Rozmiar: od 0 (małe) do 100 (duże).');
+                }
+
+                const { forwardX, forwardZ } = lookAxes(player);
+
+                const x = Math.floor(player.pos.x) + forwardX * 5;
+                const z = Math.floor(player.pos.z) + forwardZ * 5;
+
+                const tree = growTreeAt(world, species, x, z, size, true);
+
+                if (!tree) {
+                    throw new CommandError('Tu drzewo się nie zmieści (za wysoko albo pod wodą?).');
+                }
+
+                return `Wyrosło: ${TREE_SPECIES[species].species[0].toLowerCase()} (${tree.shape.top + 1} bloków wysokości) na ${x} ${tree.y} ${z}.`;
+
+            }
+
+
+            if (['aleja', 'pokaz', 'alley', 'ogrod'].includes(word)) {
+                return plantTreeAlley(player, world);
+            }
+
+
+            if (['znajdz', 'find'].includes(word)) {
+
+                const species = treeSpecies(args[1]);
+
+                if (!world.generator.forests) {
+                    throw new CommandError('Lasy rosną tylko w terenie realistycznym (sadzonki rosną wszędzie).');
+                }
+
+                const teleport = args.slice(2).some((arg) => simplify(arg) === 'tp');
+
+                const found = findTree(world, species, Math.floor(player.pos.x), Math.floor(player.pos.z), TREE_FIND_RADIUS);
+
+                if (!found) {
+                    throw new CommandError(`W promieniu ${TREE_FIND_RADIUS} bloków nie ma drzewa: ${TREE_SPECIES[species].short}.`);
+                }
+
+                const { x, y, z, distance } = found;
+
+                if (teleport) {
+
+                    // Obok pnia, na ziemi.
+
+                    const sx = x + 2;
+
+                    const sy = groundAt(world, sx, z);
+
+                    player.pos.set(sx + 0.5, sy, z + 0.5);
+                    player.vel.set(0, 0, 0);
+                    player.updateCamera();
+
+                    return `Przeniesiono pod drzewo: ${TREE_SPECIES[species].species[0].toLowerCase()} na ${x} ${y} ${z}.`;
+
+                }
+
+                return `Najbliższe drzewo (${TREE_SPECIES[species].short}): ${Math.round(distance)} bloków ` +
+                    `${directionName(x + 0.5 - player.pos.x, z + 0.5 - player.pos.z)} (pień na ${x} ${y} ${z}). ` +
+                    `Przeniesienie: /drzewa znajdz ${simplify(args[1])} tp`;
+
+            }
+
+
+            if (['rosnij', 'grow'].includes(word)) {
+
+                const count = growth.growAround(player.pos.x, player.pos.z, TREE_COMMAND_RADIUS, 1);
+
+                return count > 0
+                    ? `Urosło: ${count} (sadzonki i krzaki do ${TREE_COMMAND_RADIUS} bloków od ciebie; sadzonka bez miejsca nad sobą czeka).`
+                    : `W promieniu ${TREE_COMMAND_RADIUS} bloków nie ma sadzonek (albo nad żadną nie ma miejsca na drzewo).`;
+
+            }
+
+
+            if (word === 'tempo') {
+
+                if (args[1] === undefined) {
+                    return `Tempo wzrostu roślin: x${growth.speed}. Zmiana: /drzewa tempo 60 (szybko) albo 1 (normalnie).`;
+                }
+
+                const value = parseNumber(args[1], 'tempo');
+
+                if (value < 0 || value > 500) {
+                    throw new CommandError('Tempo: od 0 (nie rosną) do 500 (1 = normalnie).');
+                }
+
+                growth.speed = value;
+
+                return `Tempo wzrostu roślin (sadzonki i krzaki): x${value}` +
+                    (value > 0 ? ` - sadzonka wyrasta średnio po ${durationText(TREE_GROWTH_SECONDS / value)}.` : ' - nie rosną.');
+
+            }
+
+
+            if (word) {
+                throw usageError(this);
+            }
+
+
+            // Co rośnie w okolicy.
+
+            const x = Math.floor(player.pos.x);
+            const z = Math.floor(player.pos.z);
+
+            const species = TREE_NAMES.map(treeName).join(', ');
+
+            if (!world.generator.forests) {
+
+                return `Drzewa: ${species}. W terenie klasycznym nie ma lasów - posadź drzewo (/drzewa posadz <gatunek>) ` +
+                    `albo sadzonkę (wyrośnie średnio po ${durationText(TREE_GROWTH_SECONDS)}).`;
+
+            }
+
+            const counts = countTrees(world, x, z, TREE_COMMAND_RADIUS);
+
+            const total = Object.values(counts).reduce((sum, value) => sum + value, 0);
+
+            const here = world.generator.describe(x, z).forest;
+
+            return `Drzewa do ${TREE_COMMAND_RADIUS} bloków od ciebie: ${total}` +
+                (total > 0 ? ` (${Object.entries(counts).sort((a, b) => b[1] - a[1]).map(([name, count]) => `${treeName(name)} ${count}`).join(', ')})` : '') +
+                `. Tutaj: ${here.species ? `las ${Math.round(here.density * 100)}% (przeważa ${treeName(here.species)})` : 'brak lasu'}. ` +
+                `Gatunki: ${species} - /drzewa znajdz <gatunek>, /mapa lasy. ` +
+                `Sadzonka wyrasta średnio po ${durationText(TREE_GROWTH_SECONDS / Math.max(growth.speed, 0.001))}; ` +
+                'szyszki, orzeszki, żołędzie i kwiat lipy też można posadzić.';
+
+        },
+
+        complete(args) {
+
+            const species = TREE_NAMES.map((name) => simplify(TREE_SPECIES[name].short));
+
+            if (args.length === 1) return ['posadz', 'aleja', 'znajdz', 'rosnij', 'tempo', ...species];
+            if (args.length === 2 && ['posadz', 'znajdz'].includes(simplify(args[0]))) return species;
+            if (args.length === 3 && simplify(args[0]) === 'znajdz') return ['tp'];
+            if (args.length === 3 && simplify(args[0]) === 'posadz') return ['20', '60', '100'];
+            if (args.length === 2 && simplify(args[0]) === 'tempo') return ['1', '10', '60'];
+
+            return [];
+
         }
     },
 

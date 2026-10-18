@@ -52,7 +52,7 @@ ustawienia na telefonie i co jeszcze nie działa: `docs/telefon.md`.
 | F5 | widok: z oczu / zza pleców / z przodu |
 | Mysz | rozglądanie się |
 | LPM | zniszcz blok |
-| PPM | postaw blok / zbierz owoce z krzaka / posadź owoc |
+| PPM | postaw blok / zbierz owoce z krzaka (żywicę, kwiaty lipy) / posadź owoc, szyszkę, żołądź / siekierą - okoruj pień |
 | 1-9 / kółko myszy | wybór miejsca na pasku bloków |
 | Środkowy przycisk myszy | weź blok, na który patrzysz, na pasek |
 | E | ekwipunek (w trybie kreatywnym też wszystkie bloki gry i owoce) |
@@ -87,7 +87,7 @@ w pauzie i na ekranie tytułowym) - z datą i nazwą świata. Księga jest
 wspólna dla wszystkich światów. Niektóre osiągnięcia są sekretne -
 przed zdobyciem widać tylko znak zapytania.
 
-Na start jest 19 osiągnięć (od pierwszego zniszczonego bloku po
+Jest 23 osiągnięcia (od pierwszego zniszczonego bloku po
 legendarne *Problem spadł z nieba*). Nowa rzecz w grze = nowe
 osiągnięcie - jak je dopisać, zdarzenia z gry i pełna lista (spoilery):
 `docs/osiagniecia.md`. Test: `/osiagniecia` (lista), `/osiagniecia pokaz
@@ -154,7 +154,10 @@ Oprócz trawy, ziemi, piasku i skał są:
 - **rośliny:** krótka i wysoka trawa, paproć, koniczyna, pokrzywa,
   babka zwyczajna oraz kwiaty: mak, chaber, rumianek, mniszek,
 - **krzaki owocowe:** truskawka, jeżyna, papryczka chili i leszczyna
-  (orzechy laskowe) - opis niżej.
+  (orzechy laskowe) - opis niżej,
+- **drzewa:** świerk, sosna, buk, lipa, dąb i brzoza - pnie, deski,
+  liście, sadzonki i dodatki; w terenie realistycznym rosną lasy - opis
+  niżej i w `docs/drzewa.md`.
 
 Rośliny są skrzyżowanymi płaszczyznami z teksturą (model `cross`),
 nie mają kolizji, nie zasłaniają światła i lekko kołyszą się na wietrze
@@ -215,6 +218,36 @@ i **leszczyna** (orzechy laskowe). Każdy rośnie w czterech etapach:
   `/krzaki znajdz` (najbliższy dziki krzak z owocami), `/krzaki tempo 60`
   (rosną 60 razy szybciej), `/krzaki rosnij 3`, `/daj truskawki 10`.
 
+### Drzewa i lasy
+
+Sześć gatunków z koncepcji Kamila: **świerk pospolity**, **sosna
+zwyczajna**, **buk zwyczajny**, **lipa drobnolistna**, **dąb szypułkowy**
+i **brzoza brodawkowata**. Wszystko o nich: `docs/drzewa.md`.
+
+- **Bloki** każdego gatunku: pień (`oak_log`), okorowany pień
+  (`oak_log_stripped`), deski (`oak_planks`), liście albo igliwie
+  (`oak_leaves`), sadzonka (`oak_sapling`) - świerk `spruce_`, sosna
+  `pine_`, buk `beech_`, lipa `linden_`, brzoza `birch_`.
+- **Dodatki:** szyszki świerka i sosny, wieniec świerkowy (na ścianę),
+  górny (rudy) pień sosny i pień z żywicą, żywica, orzeszki bukowe,
+  opadłe liście buka i dębu, kwitnące liście lipy i kwiat lipy,
+  żołędzie, kora brzozowa, a do tego **siekiera** (PPM na pniu -
+  okorowany pień; z brzozy kora).
+- **W świecie** (teren realistyczny): lasy na ok. 1/3 lądu - gatunek
+  zależy od klimatu: świerki w górach i w chłodzie, sosny tam, gdzie
+  sucho, buki na wyżynach, lipy i dęby w cieple na nizinach, brzozy
+  nisko i wilgotno. Każdy gatunek ma swój kształt (stożek świerka,
+  parasol sosny, szeroka korona dębu z konarami...), drzewa są różnej
+  wielkości i pasują na granicach chunków. Liście mają prześwity, a pod
+  koroną jest cień. Z daleka las widać jako korony drzew.
+- **Sadzonki** (i szyszki, orzeszki, żołędzie, kwiat lipy posadzone na
+  ziemi) wyrastają w całe drzewo średnio po 5 minutach
+  (`TREE_GROWTH_SECONDS`), jeśli mają nad sobą miejsce.
+- **Przygoda:** z liści czasem wypada sadzonka i nasiono gatunku.
+- **Test:** `/drzewa aleja` (wszystkie gatunki przed tobą), `/drzewa
+  dab` (jedno drzewo), `/drzewa znajdz sosna tp`, `/mapa lasy`,
+  `/drzewa tempo 60`, `/daj axe`.
+
 ## Woda
 
 Woda (morze w terenie realistycznym i postawiona przez gracza) jest
@@ -273,6 +306,9 @@ W menu (z ekranu tytułowego i z pauzy) są zakładki:
 - **rozdzielczość** (25-100%) - mniej = szybciej, ale mniej ostro,
 - **limit FPS** (bez limitu, 30, 60, 120, 144),
 - **cienie w kątach** (0-100%),
+- **liście drzew** - *ładne* (z prześwitami, widać głąb korony) albo
+  *szybkie* (pełne, bez ścian w środku korony - las mniej spowalnia
+  grę; na telefonie domyślnie),
 - **dynamiczne światło** (lampa w ręce, meteoryty),
 - **wczytywanie** (1-16 ms na klatkę) - ile czasu w każdej
   klatce gra poświęca na nowe chunki: więcej = świat dogrywa się
@@ -317,12 +353,17 @@ sam numer, ta sama tekstura. Trawa z wierzchu, woda, rośliny, krzaki
 i owoce są rysowane ręcznie - skrypt ich nie zmienia (bok trawy dostaje
 tylko nową ziemię pod tą samą trawą).
 
+Drzewa (pnie, słoje, deski, liście, sadzonki i dodatki - wiersze 5-8
+atlasu) rysuje osobny skrypt **`tools/tekstury_drzew.py`**, w tym samym
+stylu: `python tools/tekstury_drzew.py [podglad.png]`.
+
 ## Dźwięki
 
 Dźwięki bloków są **miękkie i ciche** - mają być tłem, a nie zwracać na
 siebie uwagę: trawa lekko szeleści pod stopami, ziemia głucho stuka,
 kamień krótko puka, piasek cicho szumi, żwir chrzęści, błoto mlaszcze,
-liście szeleszczą, a szkło lamp cicho dzwoni. Bez trzasków na początku
+liście szeleszczą, drewno (pnie, deski) ciepło i głucho puka, a szkło
+lamp cicho dzwoni. Bez trzasków na początku
 i bez syczących wysokich tonów; każdy krok ma 6 wersji (gra losuje
 jedną i lekko zmienia wysokość), żeby się nie powtarzały.
 
@@ -395,7 +436,8 @@ Wszystko w grze działa tak samo - niebo, zaćmienia, daleki teren,
 - zasięg widzenia najwyżej 32 bloki,
 - daleki teren z rzadszą siatką (~9 razy mniej trójkątów),
 - bez Drogi Mlecznej i galaktyk, 30% najjaśniejszych gwiazd,
-- kolor mgły liczony w rogach ścian, a nie w każdym pikselu.
+- kolor mgły liczony w rogach ścian, a nie w każdym pikselu,
+- szybkie liście drzew (bez prześwitów).
 
 Włącza się go w *Ustawienia → Obraz → Tryb ziemniaka*, komendą
 `/ziemniak` albo otwierając grę z dopiskiem `?ziemniak` w adresie
@@ -555,6 +597,8 @@ Komendy służą do sprawdzania nowości w grze, np.:
 /teren znajdz kotlina tp   teleport do najbliższej kotliny (/teren formy - lista)
 /mapa formy 16             mapa terenu (klawisz M; warstwy: teren, formy, pasy, skaly...)
 /mapa przekroj             przekrój pionowy terenu w kierunku patrzenia
+/drzewa aleja              wszystkie gatunki drzew przed tobą (/drzewa dab - jedno)
+/drzewa znajdz sosna tp    teleport pod najbliższą sosnę (/mapa lasy - mapa lasów)
 /skaly                     skały pod tobą (/skaly zyla tp - żyła lepidolitu)
 /demo skaly                odkrywka - na ścianach widać warstwy skał
 /ustaw zasieg 256          dowolne ustawienie (/ustaw - lista)
@@ -684,7 +728,7 @@ assets/textures/player/     skórka gracza i szablon skórki
 assets/ui/themes/           motywy menu (kolory, czcionka, tło)
 assets/fonts/               czcionki
 assets/sounds/              dźwięki (.ogg): bloki, kroki, zbieranie, meteoryt, menu (ui/), woda, kosmos
-tools/                      skrypty pomocnicze (tekstury, dźwięki, ikonki i pliki aplikacji na Androida)
+tools/                      skrypty pomocnicze (tekstury, tekstury drzew, dźwięki, ikonki i pliki aplikacji na Androida)
 docs/                       opisy, jak działają większe części gry
 src/
   main.js                   start aplikacji, menu, pauza, pętla
@@ -692,10 +736,11 @@ src/
   game/                     jeden uruchomiony świat (Game), ekwipunek, meteoryty, wzrost roślin, woda (obraz i dźwięk)
   ui/                       ekrany menu, pasek bloków, ikonki, napisy
   settings/                 ustawienia gracza (zapis w przeglądarce)
-  blocks/                   lista bloków (BlockRegistry), krzaki owocowe
-  items/                    przedmioty, które nie są blokami (owoce)
+  blocks/                   lista bloków (BlockRegistry), krzaki owocowe, drzewa (trees.js)
+  items/                    przedmioty, które nie są blokami (owoce, szyszki, siekiera...)
   world/                    świat, chunki, szum, światło, daleki teren
   world/terrain/            generatory terenu (realistyczny, lista typów, formy terenu, skały)
+  world/trees/              drzewa: kształty gatunków, lasy w terenie, sadzenie drzewa
   sky/                      czas, słońce, księżyc, gwiazdy, planety, kolory nieba
   space/                    sekret: kosmos - kula Ziemi, spadanie jak meteoryt
   achievements/             osiągnięcia: lista (list.js) i księga (zapis, powiadomienia)
@@ -722,12 +767,16 @@ src/
    Roślina, która rośnie etapami: `grows: { into: 'następny_etap', seconds }`,
    a taka, z której zbiera się owoce: `harvest: { item, count: [min, max],
    becomes }` (przykład - krzaki owocowe na początku `BlockRegistry.js`).
+   Liście: `model: 'leaves'` (sześcian z przezroczystymi prześwitami),
+   płaska dekoracja przy ścianie sąsiada (opadłe liście, wieniec):
+   `model: 'flat'`, `flat: { attach: 'down' }` - przykłady w
+   `src/blocks/trees.js`.
    Dźwięki kroków, stawiania i niszczenia: `sound: 'grass'` (albo `dirt`,
-   `stone`, `sand`, `gravel`, `mud`, `plant`, `glass`).
+   `stone`, `sand`, `gravel`, `mud`, `plant`, `glass`, `wood`).
 4. Blok sam trafia do zakładki *Wszystkie bloki* w trybie kreatywnym
    (chyba że ma `creative: false`). Szybki test: `/daj <nazwa>`.
 
 **Nowy przedmiot** (coś, czego nie da się postawić jak bloku - np. owoc):
-ikonka 16x16 w wolnym kafelku atlasu (wiersz 4) + wpis w `ATLAS_TILES`,
+ikonka 16x16 w wolnym kafelku atlasu (wiersz 4 albo 8) + wpis w `ATLAS_TILES`,
 potem wpis w `ITEM_TYPES` w `src/items/ItemRegistry.js` (polska nazwa,
 ikonka, opcjonalnie `plants` - jaka roślina wyrasta po posadzeniu).

@@ -366,6 +366,11 @@ export const PLANT_VIEW_DISTANCE = 128;
 // krzaki w chunkach wczytanych wokół gracza.
 export const BUSH_GROWTH_SECONDS = 150;
 
+// Sadzonka drzewa (src/blocks/trees.js) wyrasta w całe drzewo średnio
+// po tylu sekundach (też losowo i też tylko we wczytanych chunkach).
+// Gdy nad sadzonką nie ma miejsca na drzewo - czeka dalej.
+export const TREE_GROWTH_SECONDS = 300;
+
 // Daleki teren (horyzont): do ilu bloków od gracza widać uproszczony,
 // rozmyty teren za zasięgiem widzenia (0 = wyłączony).
 export const DEFAULT_FAR_TERRAIN = 1024;
@@ -394,6 +399,7 @@ export const TOUCH_SETTINGS = {
     farTerrain: 512,       // bloki
     renderScale: 80,       // procent rozdzielczości
     fpsLimit: 60,          // klatki na sekundę
+    fancyLeaves: false,    // szybkie liście (bez prześwitów - dużo mniej ścian)
     showDebug: false       // napisy F3 zasłaniałyby przyciski
 };
 // Ekran telefonu ma 2-3 piksele na punkt - rysujemy najwyżej tyle

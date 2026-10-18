@@ -15,6 +15,8 @@ import { ROCK_INFO, SOIL_INFO, blockNamePl } from '../world/terrain/rocks.js';
 //   formy   - formy terenu (góry, doliny, kotliny, wąwozy...) z legendą,
 //   pasy    - niziny / wyżyny / góry / depresje / morze,
 //   skaly   - skała na wierzchu albo tuż pod glebą (mapa geologiczna),
+//   lasy    - lasy: gatunek drzew, który przeważa, im gęściej, tym
+//             mocniejszy kolor (src/world/trees/Forests.js),
 //   przekroj - przekrój pionowy terenu w kierunku patrzenia: wszystkie
 //             skały pod ziemią, żyły lepidolitu, woda,
 //   pola    - pojedyncze pola generatora (kontynent, erozja, grzbiety...).
@@ -37,6 +39,7 @@ export const MAP_LAYERS = {
     formy: 'formy terenu',
     pasy: 'niziny, wyżyny, góry',
     skaly: 'skały (na wierzchu i pod glebą)',
+    lasy: 'lasy (gatunek drzew, gęstość)',
     przekroj: 'przekrój pionowy w kierunku patrzenia',
     kontynent: 'pole: kontynent (morze ↔ ląd)',
     wypietrzenie: 'pole: wypiętrzenie (niziny ↔ góry)',
@@ -58,6 +61,21 @@ const RELIEF_COLORS = {
     upland: '#e2c66b',
     mountains: '#9c6b45'
 };
+
+
+// Lasy: kolor gatunku, który przeważa (im gęstszy las, tym mocniej),
+// łąki jasne.
+
+const FOREST_COLORS = {
+    spruce: ['#1d4a2a', 'świerk'],
+    pine: ['#7a8f2e', 'sosna'],
+    beech: ['#3d9a4a', 'buk'],
+    linden: ['#d8c440', 'lipa'],
+    oak: ['#b5742f', 'dąb'],
+    birch: ['#ecebe2', 'brzoza']
+};
+
+const MEADOW_COLOR = [176, 206, 132];
 
 
 // Kolory bloków na mapie skał i przekroju.
@@ -561,6 +579,30 @@ export class TerrainMap {
 
             }
 
+            case 'lasy': {
+
+                if (water) {
+                    return hexToRgb(SOIL_INFO.water.color);
+                }
+
+                const forest = info.forest;
+
+                if (!forest?.species || info.surface !== 'grass') {
+                    return (info.surface === 'grass' ? MEADOW_COLOR : [170, 166, 160]).map((c) => c * (0.8 + 0.2 * shade));
+                }
+
+                const cover = Math.min(1, Math.max(0, (forest.density - 0.03) / 0.4));
+
+                if (cover > 0.25) {
+                    this.job.present.add(forest.species);
+                }
+
+                color = mix(MEADOW_COLOR, hexToRgb(FOREST_COLORS[forest.species][0]), cover);
+
+                return color.map((c) => Math.min(255, c * (0.8 + 0.2 * shade)));
+
+            }
+
             case 'skaly': {
 
                 if (water) {
@@ -625,6 +667,15 @@ export class TerrainMap {
             if (this.layer === 'skaly') {
                 entries.push([SOIL_INFO.water.color, 'morze']);
             }
+
+        }
+        else if (this.layer === 'lasy') {
+
+            for (const [species, [color, name]] of Object.entries(FOREST_COLORS)) {
+                if (this.job.present.has(species)) entries.push([color, name]);
+            }
+
+            entries.push([`rgb(${MEADOW_COLOR.join(',')})`, 'łąki']);
 
         }
         else if (this.layer === 'teren') {
@@ -706,7 +757,10 @@ export class TerrainMap {
         this.hover.textContent =
             `${x}, ${z} | wysokość ${info.height} | ${RELIEFS[info.relief] ?? info.relief} | ` +
             `${LANDFORMS[info.landform]?.name ?? info.landform}` +
-            (info.rock ? ` | skała: ${blockNamePl(info.rock)}` : '');
+            (info.rock ? ` | skała: ${blockNamePl(info.rock)}` : '') +
+            (info.forest?.species && info.forest.density > 0.03
+                ? ` | las ${Math.round(info.forest.density * 100)}%: ${FOREST_COLORS[info.forest.species][1]}`
+                : '');
 
     }
 

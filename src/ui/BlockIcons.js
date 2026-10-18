@@ -80,11 +80,18 @@ function drawFace(ctx, atlas, tileName, transform, shade) {
     );
 
 
+    // Cień tylko na pikselach ściany (liście mają prześwity - przez
+    // nie nie może być widać ciemnego prostokąta).
+
     if (shade > 0) {
+
+        ctx.globalCompositeOperation = 'source-atop';
 
         ctx.fillStyle = `rgba(0, 0, 0, ${shade})`;
 
         ctx.fillRect(-0.15, -0.15, T + 0.3, T + 0.3);
+
+        ctx.globalCompositeOperation = 'source-over';
 
     }
 
@@ -158,9 +165,10 @@ export async function createBlockIcons() {
         const textures = definition.textures;
 
 
-        // Roślina: płaski obrazek (jak tekstura), bez sześcianu.
+        // Roślina i płaska dekoracja: płaski obrazek (jak tekstura),
+        // bez sześcianu.
 
-        if (definition.model === 'cross') {
+        if (definition.model === 'cross' || definition.model === 'flat') {
 
             icons.set(type, flatIcon(atlas, getFaceTexture(textures, 'front')));
 

@@ -11,7 +11,8 @@ import {
     getBlockDefinition,
     getBlockTypeById,
     isPlantId,
-    isSoilId
+    isSoilId,
+    isTreeId
 } from '../blocks/BlockRegistry.js';
 
 import { createGlowSprite, getGlowTexture } from '../rendering/Glow.js';
@@ -499,7 +500,9 @@ export class Meteorites {
             }
 
 
-            const y = world.getSurfaceY(x, z);
+            // Ziemia (meteoryt przebija korony drzew).
+
+            const y = world.getGroundY(x, z);
 
             if (y < 4 || y > CHUNK_HEIGHT - 8) {
                 continue;
@@ -938,7 +941,7 @@ export class Meteorites {
 
         // Na dnie zostaje rozżarzony meteoryt, czasem z odłamkami obok.
 
-        const bottom = world.getSurfaceY(x, z);
+        const bottom = world.getGroundY(x, z);
 
         if (meteorite) {
 
@@ -954,7 +957,7 @@ export class Meteorites {
                 const px = Math.floor(x + 0.5 + Math.cos(angle) * distance);
                 const pz = Math.floor(z + 0.5 + Math.sin(angle) * distance);
 
-                world.setBlock(px, world.getSurfaceY(px, pz), pz, 'meteorite');
+                world.setBlock(px, world.getGroundY(px, pz), pz, 'meteorite');
 
             }
 
@@ -1059,6 +1062,32 @@ export class Meteorites {
         const reach = Math.ceil(R) + 1;
 
 
+        // Drzewa nad kraterem: wybuch je zmiata (całe kolumny - inaczej
+        // nad dziurą wisiałyby korony).
+
+        const clearing = Math.ceil(R + 1);
+
+        for (let dx = -clearing; dx <= clearing; dx++) {
+
+            for (let dz = -clearing; dz <= clearing; dz++) {
+
+                if (Math.hypot(dx, dz) > R + 1) {
+                    continue;
+                }
+
+                for (let ty = Math.max(1, y - 2); ty < Math.min(CHUNK_HEIGHT, y + 30); ty++) {
+
+                    if (isTreeId(world.getBlockId(x + dx, ty, z + dz))) {
+                        world.setBlock(x + dx, ty, z + dz, null);
+                    }
+
+                }
+
+            }
+
+        }
+
+
         // Misa: środek pół bloku pod powierzchnią, spłaszczona w pionie.
 
         for (let dy = reach; dy >= -reach; dy--) {
@@ -1099,7 +1128,7 @@ export class Meteorites {
                 const bx = x + dx;
                 const bz = z + dz;
 
-                const top = world.getSurfaceY(bx, bz);
+                const top = world.getGroundY(bx, bz);
 
 
                 // Roślina na wierzchu spłonęła.

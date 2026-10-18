@@ -171,7 +171,77 @@ export const ATLAS_TILES = {
     strawberry: { x: 0, y: 4 },
     blackberry: { x: 1, y: 4 },
     chili_pepper: { x: 2, y: 4 },
-    hazelnut: { x: 3, y: 4 }
+    hazelnut: { x: 3, y: 4 },
+
+    // Drzewa (src/blocks/trees.js, tekstury: tools/tekstury_drzew.py).
+    // Wiersz 5 - pnie (bok z korą, góra ze słojami).
+
+    spruce_log_side: { x: 0, y: 5 },
+    spruce_log_top: { x: 1, y: 5 },
+    pine_log_side: { x: 2, y: 5 },
+    pine_log_top: { x: 3, y: 5 },
+    beech_log_side: { x: 4, y: 5 },
+    beech_log_top: { x: 5, y: 5 },
+    linden_log_side: { x: 6, y: 5 },
+    linden_log_top: { x: 7, y: 5 },
+    oak_log_side: { x: 8, y: 5 },
+    oak_log_top: { x: 9, y: 5 },
+    birch_log_side: { x: 10, y: 5 },
+    birch_log_top: { x: 11, y: 5 },
+    pine_log_upper_side: { x: 12, y: 5 },
+    pine_log_resin_side: { x: 13, y: 5 },
+
+    // Wiersz 6 - okorowane pnie.
+
+    spruce_stripped_side: { x: 0, y: 6 },
+    spruce_stripped_top: { x: 1, y: 6 },
+    pine_stripped_side: { x: 2, y: 6 },
+    pine_stripped_top: { x: 3, y: 6 },
+    beech_stripped_side: { x: 4, y: 6 },
+    beech_stripped_top: { x: 5, y: 6 },
+    linden_stripped_side: { x: 6, y: 6 },
+    linden_stripped_top: { x: 7, y: 6 },
+    oak_stripped_side: { x: 8, y: 6 },
+    oak_stripped_top: { x: 9, y: 6 },
+    birch_stripped_side: { x: 10, y: 6 },
+    birch_stripped_top: { x: 11, y: 6 },
+
+    // Wiersz 7 - deski, liście (z przezroczystymi prześwitami),
+    // kwitnące liście lipy, opadłe liście, wieniec.
+
+    spruce_planks: { x: 0, y: 7 },
+    pine_planks: { x: 1, y: 7 },
+    beech_planks: { x: 2, y: 7 },
+    linden_planks: { x: 3, y: 7 },
+    oak_planks: { x: 4, y: 7 },
+    birch_planks: { x: 5, y: 7 },
+    spruce_leaves: { x: 6, y: 7 },
+    pine_leaves: { x: 7, y: 7 },
+    beech_leaves: { x: 8, y: 7 },
+    linden_leaves: { x: 9, y: 7 },
+    oak_leaves: { x: 10, y: 7 },
+    birch_leaves: { x: 11, y: 7 },
+    linden_leaves_flowering: { x: 12, y: 7 },
+    beech_leaf_litter: { x: 13, y: 7 },
+    oak_leaf_litter: { x: 14, y: 7 },
+    spruce_wreath: { x: 15, y: 7 },
+
+    // Wiersz 8 - sadzonki i przedmioty drzew.
+
+    spruce_sapling: { x: 0, y: 8 },
+    pine_sapling: { x: 1, y: 8 },
+    beech_sapling: { x: 2, y: 8 },
+    linden_sapling: { x: 3, y: 8 },
+    oak_sapling: { x: 4, y: 8 },
+    birch_sapling: { x: 5, y: 8 },
+    spruce_cone: { x: 6, y: 8 },
+    pine_cone: { x: 7, y: 8 },
+    resin: { x: 8, y: 8 },
+    beechnuts: { x: 9, y: 8 },
+    linden_flower: { x: 10, y: 8 },
+    acorn: { x: 11, y: 8 },
+    birch_bark: { x: 12, y: 8 },
+    axe: { x: 13, y: 8 }
 
 };
 

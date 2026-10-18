@@ -193,9 +193,11 @@ spawn() {
     this.world.ensureColumnLoaded(x, z);
 
 
+    // Na ziemi - nie na koronie drzewa.
+
     this.pos.set(
         x,
-        this.world.getSurfaceY(
+        this.world.getGroundY(
             Math.floor(x),
             Math.floor(z)
         ),

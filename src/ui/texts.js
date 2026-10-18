@@ -110,6 +110,7 @@ export const TEXTS = {
     renderScale: (value) => `Rozdzielczość: ${value}%`,
     fpsLimit: (value) => `Limit FPS: ${value > 0 ? value : 'Bez limitu'}`,
     ambientOcclusion: (value) => `Cienie w kątach: ${value > 0 ? `${value}%` : 'Wył.'}`,
+    fancyLeaves: (on) => `Liście drzew: ${on ? 'Ładne' : 'Szybkie'}`,
     theme: (name) => `Motyw: ${name}`,
     hudScale: (value) => `Interfejs w grze: ${value}%`,
     showDebug: (on) => `Debug (F3): ${on ? 'Wł.' : 'Wył.'}`,

@@ -14,17 +14,19 @@ import {
     getDropType,
     getBlockSound,
     getHarvest,
+    getLoot,
+    getStrip,
     isPlantId
 } from '../blocks/BlockRegistry.js';
-import { getItemLabel, getPlacedBlock, itemExists } from '../items/ItemRegistry.js';
+import { getItemLabel, getPlacedBlock, getTool, itemExists } from '../items/ItemRegistry.js';
 import { Inventory } from './Inventory.js';
 import { PlantGrowth } from './PlantGrowth.js';
 import { WaterEffects } from './WaterEffects.js';
 import { DynamicLight } from '../world/DynamicLight.js';
 import { FarTerrain } from '../world/FarTerrain.js';
-import { setAmbientOcclusion } from '../rendering/ChunkMesher.js';
+import { setAmbientOcclusion, setFastLeaves } from '../rendering/ChunkMesher.js';
 import { viewUniforms } from '../rendering/viewUniforms.js';
-import { blockMaterial, plantMaterial, waterMaterial, setPotatoDefine } from '../rendering/BlockRenderData.js';
+import { blockMaterial, plantMaterial, waterMaterial, leafMaterial, setPotatoDefine, setLeafMaterialFast } from '../rendering/BlockRenderData.js';
 import { Meteorites } from './Meteorites.js';
 import { SpaceView } from '../space/SpaceView.js';
 import { Skyfall } from '../space/Skyfall.js';
@@ -221,6 +223,8 @@ export class Game {
 
         this.plantGrowth = new PlantGrowth(this.world);
 
+        this.plantGrowth.onTreeGrown = (species) => this.achieve('treeGrown', { species });
+
         // Woda wokół gracza: widok spod wody, plusk, fale (WaterEffects.js).
 
         this.water = new WaterEffects(this);
@@ -245,6 +249,15 @@ export class Game {
         this.appliedAmbientOcclusion = settings.get('ambientOcclusion') / 100;
 
         setAmbientOcclusion(this.appliedAmbientOcclusion);
+
+
+        // Szybkie albo ładne liście - też przed pierwszymi meshami.
+
+        this.appliedFastLeaves = settings.get('potato') || !settings.get('fancyLeaves');
+
+        setFastLeaves(this.appliedFastLeaves);
+
+        setLeafMaterialFast(this.appliedFastLeaves);
 
 
         // Wczytujemy teren wokół miejsca, w którym gracz się pojawi:
@@ -452,11 +465,22 @@ export class Game {
         const placePressed = input.consumeMousePress(2);
 
 
+        // PPM siekierą na pniu - okorowanie.
+
+        const stripping =
+            placePressed &&
+            getTool(this.selectedBlock) === 'axe' &&
+            this.currentHit?.hit &&
+            getStrip(this.currentHit.block.type) !== null;
+
+
         // PPM na krzaku z owocami zbiera owoce (z Shiftem i czymś
-        // w ręce - zwyczajnie stawia obok).
+        // w ręce - zwyczajnie stawia obok). Tak samo żywica z pnia
+        // sosny i kwiaty z kwitnącej lipy.
 
         const harvesting =
             placePressed &&
+            !stripping &&
             !(this.player.crouching && this.selectedBlock) &&
             this.currentHit?.hit &&
             getHarvest(this.currentHit.block.type) !== null;
@@ -472,6 +496,15 @@ export class Game {
         if (breakPressed) {
 
             this.breakTarget(this.currentHit);
+
+            this.currentHit =
+                this.raycast.castFromCamera(this.camera);
+
+        }
+
+        else if (stripping) {
+
+            this.stripTarget(this.currentHit);
 
             this.currentHit =
                 this.raycast.castFromCamera(this.camera);
@@ -540,7 +573,7 @@ export class Game {
             this.currentHit &&
             this.currentHit.hit
         ) {
-            this.pickBlock(this.currentHit.block.type);
+            this.pickBlock(getBlockDefinition(this.currentHit.block.type)?.pick ?? this.currentHit.block.type);
         }
 
 
@@ -1304,7 +1337,7 @@ export class Game {
 
         this.spaceView.setLowDetail(potato);
 
-        setPotatoDefine([blockMaterial, plantMaterial, waterMaterial], potato);
+        setPotatoDefine([blockMaterial, plantMaterial, waterMaterial, leafMaterial], potato);
 
 
         // Model gracza: wierzchnia warstwa skórki, styl zgięć, tryb ziemniaka.
@@ -1322,16 +1355,26 @@ export class Game {
 
         // Cienie w kątach są zapisane w meshach chunków - po zmianie
         // trzeba je przebudować (stopniowo, najbliższe najpierw).
+        // Tak samo szybkie liście (bez ścian w środku korony) - te są
+        // też zawsze w trybie ziemniaka.
 
         const ambientOcclusion = settings.get('ambientOcclusion') / 100;
 
-        if (ambientOcclusion !== this.appliedAmbientOcclusion) {
+        const fastLeaves = potato || !settings.get('fancyLeaves');
+
+        if (ambientOcclusion !== this.appliedAmbientOcclusion || fastLeaves !== this.appliedFastLeaves) {
 
             setAmbientOcclusion(ambientOcclusion);
+
+            setFastLeaves(fastLeaves);
+
+            setLeafMaterialFast(fastLeaves);
 
             this.world.remeshAll();
 
             this.appliedAmbientOcclusion = ambientOcclusion;
+
+            this.appliedFastLeaves = fastLeaves;
 
         }
 
@@ -1451,6 +1494,8 @@ export class Game {
 
         this.addHarvest(type);
 
+        this.addLoot(type);
+
         if (plantAbove && this.world.getBlock(x, y + 1, z) === null) {
 
             const plantDrop = getDropType(plantAbove);
@@ -1462,6 +1507,69 @@ export class Game {
             this.addHarvest(plantAbove);
 
         }
+
+        return true;
+
+    }
+
+
+    // Łupy z bloku (pole loot - np. sadzonka albo żołądź z liści):
+    // każdy z szansą podaną w BlockRegistry.js. Zwraca listę tego,
+    // co wypadło.
+
+    addLoot(type) {
+
+        const found = [];
+
+        for (const [item, chance] of getLoot(type)) {
+
+            if (Math.random() < chance && this.inventory.add(item) === 0) {
+                found.push(item);
+            }
+
+        }
+
+        return found;
+
+    }
+
+
+    // Okorowanie siekierą (PPM na pniu): pień zamienia się w okorowany,
+    // z brzozy zostaje jeszcze kora (do ekwipunku - w obu trybach).
+
+    stripTarget(hit) {
+
+        if (!hit || !hit.hit) {
+            return false;
+        }
+
+        const { x, y, z, type } = hit.block;
+
+        const strip = getStrip(type);
+
+        if (!strip) {
+            return false;
+        }
+
+        if (strip.item && !this.inventory.canAdd(strip.item)) {
+
+            this.onNotice?.('Ekwipunek pełny');
+
+            return false;
+
+        }
+
+        if (!this.world.setBlock(x, y, z, strip.into)) {
+            return false;
+        }
+
+        if (strip.item) {
+            this.inventory.add(strip.item);
+        }
+
+        this.playBlockSound('break', strip.into, hit.block);
+
+        this.achieve('stripped', { type, into: strip.into, item: strip.item });
 
         return true;
 

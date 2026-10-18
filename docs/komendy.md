@@ -58,6 +58,12 @@ Współrzędne można podawać względem gracza: `~` (tu, gdzie stoję),
 | `/krzaki znajdz` | najbliższy dziki krzak z owocami: nazwa, odległość, kierunek i komenda `/tp` |
 | `/krzaki rosnij [1-3]` | krzaki do 64 bloków od ciebie od razu rosną o tyle etapów (3 = od sadzonki do pełnego owoców) |
 | `/krzaki tempo [0-500]` | tempo wzrostu krzaków: 60 = etap średnio co 2,5 s zamiast 150 s, 0 = nie rosną, 1 = normalnie; bez liczby - jakie jest (nie zapisuje się) |
+| `/drzewa` | drzewa do 64 bloków od ciebie (ile każdego gatunku - z generatora terenu), las w miejscu gracza, tempo wzrostu sadzonek (`docs/drzewa.md`) |
+| `/drzewa posadz <gatunek> [0-100]` | drzewo 5 bloków przed tobą (gatunki: `swierk`, `sosna`, `buk`, `lipa`, `dab`, `brzoza`; rozmiar 0 - małe, 100 - duże, bez - losowy); krócej: `/drzewa dab` |
+| `/drzewa aleja` | wszystkie sześć gatunków w rzędzie przed tobą, co 12 bloków (zmienia świat) |
+| `/drzewa znajdz <gatunek> [tp]` | najbliższe drzewo gatunku w świecie (do 1500 bloków): odległość, kierunek; `tp` - przeniesienie pod nie |
+| `/drzewa rosnij` | sadzonki (i krzaki) do 64 bloków od ciebie rosną od razu - sadzonka bez miejsca nad sobą czeka |
+| `/drzewa tempo [0-500]` | tempo wzrostu roślin (to samo co `/krzaki tempo`): 60 = sadzonka wyrasta średnio po 5 s zamiast 5 min |
 | `/wypelnij <x1> <y1> <z1> <x2> <y2> <z2> <blok \| powietrze>` | wypełnia prostopadłościan (do 16 384 bloków) |
 | `/swiatlo` | światło przy głowie i przy wskazanej ścianie (niebo 0-15, lampy 0-15 i ich kolor) |
 | `/swiatlo dynamiczne [wl \| wyl]` | włącza/wyłącza dynamiczne światło (to samo co w ustawieniach) |
@@ -74,7 +80,7 @@ Współrzędne można podawać względem gracza: `~` (tu, gdzie stoję),
 | `/dzwiek` | stan dźwięku (gra / wstrzymany), ile plików się wczytało, głośności |
 | `/dzwiek lista` | wszystkie dźwięki (nazwy z `src/audio/sounds.js`) |
 | `/dzwiek <nazwa>` | gra jeden dźwięk, np. `/dzwiek meteor_impact`, `/dzwiek break_stone` |
-| `/dzwiek pokaz [materiał]` | po kolei dla każdego materiału (albo jednego: `trawa`, `ziemia`, `kamien`, `piasek`, `zwir`, `bloto`, `rosliny`, `szklo`): trzy kroki, postawienie, zniszczenie |
+| `/dzwiek pokaz [materiał]` | po kolei dla każdego materiału (albo jednego: `trawa`, `ziemia`, `kamien`, `piasek`, `zwir`, `bloto`, `rosliny`, `szklo`, `drewno`): trzy kroki, postawienie, zniszczenie |
 | `/woda` | czy jesteś w wodzie: jak głęboko (procent ciała), czy pływasz, czy oczy są pod wodą; ile wody dookoła |
 | `/woda basen` | basen przed tobą (zmienia świat): brodzik (1 blok wody), dalej 4 bloki głębokości, ściany z wapienia równo z ziemią |
 | `/woda znajdz` | najbliższa woda we wczytanych chunkach: odległość, kierunek i komenda `/tp` nad wodę |
@@ -88,7 +94,7 @@ Współrzędne można podawać względem gracza: `~` (tu, gdzie stoję),
 | `/teren <x> <z>` | to samo dla dowolnego miejsca (`~` = względem gracza) |
 | `/teren formy` | lista form terenu do szukania |
 | `/teren znajdz <forma> [promien] [tp]` | najbliższa forma terenu (np. `turnia`, `kotlina`, `plaskowyz`, `wyzyna`); `tp` - od razu teleport |
-| `/mapa [warstwa] [skala]` | mapa terenu z góry (klawisz **M**); warstwy: `teren`, `formy`, `pasy`, `skaly` (skała na wierzchu albo pod glebą), `przekroj` (przekrój pionowy w kierunku patrzenia, domyślnie 1 blok na punkt), `kontynent`, `wypietrzenie`, `erozja`, `grzbiety`, `gory`, `wyzyny`, `temperatura`, `wilgotnosc`; skala = bloki na punkt (1-32) |
+| `/mapa [warstwa] [skala]` | mapa terenu z góry (klawisz **M**); warstwy: `teren`, `formy`, `pasy`, `skaly` (skała na wierzchu albo pod glebą), `przekroj` (przekrój pionowy w kierunku patrzenia, domyślnie 1 blok na punkt), `lasy` (gatunek drzew, który przeważa, i gęstość lasu), `kontynent`, `wypietrzenie`, `erozja`, `grzbiety`, `gory`, `wyzyny`, `temperatura`, `wilgotnosc`; skala = bloki na punkt (1-32) |
 | `/mapa wyl` | zamyka mapę |
 | `/skaly` | skały w kolumnie pod graczem, od góry (np. trawa 1, ziemia 3, piaskowiec 12...) |
 | `/skaly statystyki [promien]` | udział skał w okolicy (domyślnie 128 bloków) i ile lepidolitu wychodzi na wierzch |

@@ -16,13 +16,17 @@ import {
     getBlockTypeById,
     isSolidId,
     isSoilId,
-    isPlantId
+    isPlantId,
+    isTreeId,
+    getAttach,
+    ATTACH_OFFSETS
 } from '../blocks/BlockRegistry.js';
 // ------------------------------------------------------------
 import {
     blockMaterial,
     plantMaterial,
-    waterMaterial
+    waterMaterial,
+    leafMaterial
 } from '../rendering/BlockRenderData.js';
 // ------------------------------------------------------------
 import {
@@ -382,6 +386,26 @@ export class World {
     }
 
 
+    // Jak getSurfaceY, ale drzewa (pnie, liście) się nie liczą - wysokość
+    // ziemi pod nimi (start gracza, meteoryty).
+
+    getGroundY(x, z) {
+
+        for (let y = CHUNK_HEIGHT - 1; y >= 0; y--) {
+
+            const id = this.getBlockId(x, y, z);
+
+            if (isSolidId(id) && !isTreeId(id)) {
+                return y + 1;
+            }
+
+        }
+
+        return 0;
+
+    }
+
+
     // Stawia blok (type = nazwa) albo usuwa go (type = null).
     // Zwraca true, jeśli świat faktycznie się zmienił.
 
@@ -482,7 +506,38 @@ export class World {
         }
 
 
+        // Płaskie dekoracje oparte o ten blok (opadłe liście na nim,
+        // wieniec na jego ścianie) bez oparcia też znikają.
+
+        if (!isSolidId(id)) {
+            this.removeUnsupported(x, y, z);
+        }
+
+
         return true;
+
+    }
+
+
+    // Usuwa dekoracje (model 'flat'), które przylegały do bloku (x, y, z).
+
+    removeUnsupported(x, y, z) {
+
+        for (let attach = 1; attach < ATTACH_OFFSETS.length; attach++) {
+
+            const [dx, dy, dz] = ATTACH_OFFSETS[attach];
+
+            // Dekoracja leży po przeciwnej stronie niż jej oparcie.
+
+            const nx = x - dx;
+            const ny = y - dy;
+            const nz = z - dz;
+
+            if (ny >= 0 && ny < CHUNK_HEIGHT && getAttach(this.getBlockId(nx, ny, nz)) === attach) {
+                this.setBlock(nx, ny, nz, null);
+            }
+
+        }
 
     }
 
@@ -667,13 +722,13 @@ export class World {
         }
 
 
-        // Grupa 0 - zwykłe bloki, grupa 1 - rośliny, grupa 2 - woda
-        // (ChunkMesher.js).
+        // Materiały grup geometrii (ChunkMesher.js): 0 - zwykłe bloki,
+        // 1 - rośliny, 2 - woda, 3 - liście i płaskie dekoracje.
 
         const mesh =
             new THREE.Mesh(
                 geometry,
-                [blockMaterial, plantMaterial, waterMaterial]
+                [blockMaterial, plantMaterial, waterMaterial, leafMaterial]
             );
 
 

@@ -415,7 +415,10 @@ function buildBlockGeometry(type) {
     const uvs = [];
     const indices = [];
 
-    const faces = item ? HELD_ITEM_FACES : definition.model === 'cross' ? HELD_PLANT_FACES : HELD_FACES;
+    const faces =
+        item || definition.model === 'flat' ? HELD_ITEM_FACES :
+        definition.model === 'cross' ? HELD_PLANT_FACES :
+        HELD_FACES;
 
 
     for (const [faceName, normal, corners] of faces) {
@@ -648,11 +651,16 @@ export class PlayerModel {
 
         const block = type && !isItemType(type) ? getBlockDefinition(type) : null;
 
-        this.held.scale.setScalar((isItemType(type) ? HELD_ITEM_SCALE : HELD_BLOCK_SCALE) * MODEL_PIXEL);
+        // Płaska dekoracja (wieniec, opadłe liście) - jak przedmiot.
 
-        // Rośliny i przedmioty mają przezroczyste piksele.
+        const flat = isItemType(type) || block?.model === 'flat';
 
-        this.held.material = block && block.model !== 'cross'
+        this.held.scale.setScalar((flat ? HELD_ITEM_SCALE : HELD_BLOCK_SCALE) * MODEL_PIXEL);
+
+        // Przezroczyste piksele (rośliny, liście, przedmioty) - materiał
+        // z alphaTest.
+
+        this.held.material = block && (block.model ?? 'cube') === 'cube'
             ? this.heldMaterial
             : this.heldPlantMaterial;
 

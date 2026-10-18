@@ -404,6 +404,60 @@ export function getAtlasAverage(tileName) {
 }
 
 
+// Piksele atlasu (RGBA, sRGB) - zapamiętane przy liczeniu średnich,
+// do kolorów cząsteczek (odłamki niszczonego bloku).
+
+let atlasPixels = null;
+
+const tileColors = new Map();
+
+
+// Kolory nieprzezroczystych pikseli kafelka (THREE.Color, liniowe) -
+// pusta lista, dopóki atlas się nie wczyta.
+
+export function getTileColors(tileName) {
+
+    if (tileColors.has(tileName)) {
+        return tileColors.get(tileName);
+    }
+
+    const tile = ATLAS_TILES[tileName];
+
+    if (!atlasPixels || !tile) {
+        return [];
+    }
+
+    const colors = [];
+
+    const width = ATLAS_COLUMNS * ATLAS_TILE_SIZE;
+
+    for (let y = 0; y < ATLAS_TILE_SIZE; y++) {
+
+        for (let x = 0; x < ATLAS_TILE_SIZE; x++) {
+
+            const i = ((tile.y * ATLAS_TILE_SIZE + y) * width + tile.x * ATLAS_TILE_SIZE + x) * 4;
+
+            if (atlasPixels[i + 3] < 128) {
+                continue;
+            }
+
+            colors.push(new THREE.Color(
+                srgbToLinear(atlasPixels[i] / 255),
+                srgbToLinear(atlasPixels[i + 1] / 255),
+                srgbToLinear(atlasPixels[i + 2] / 255)
+            ));
+
+        }
+
+    }
+
+    tileColors.set(tileName, colors);
+
+    return colors;
+
+}
+
+
 function srgbToLinear(value) {
 
     return value <= 0.04045
@@ -438,6 +492,8 @@ function computeAtlasAverages(image) {
         context.drawImage(image, 0, 0, canvas.width, canvas.height);
 
         const pixels = context.getImageData(0, 0, canvas.width, canvas.height).data;
+
+        atlasPixels = pixels;
 
 
         for (let ty = 0; ty < ATLAS_ROWS; ty++) {

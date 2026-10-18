@@ -21,6 +21,13 @@ biegania, kucania i skakania były płynniejsze i bardziej naturalne.
   noc, dynamiczne światło, mgła).
 - Narzędzia: `/kamera`, `/animacja`, `/model`, `/skorka`.
 
+**Etap 2 - widok z oczu (zrobione):**
+
+- **Ręka i przedmiot w ręce** z oczu gracza (prawy dolny róg ekranu).
+- **Kołysanie widoku** przy chodzeniu i ugięcie kamery po upadku.
+- **Kopanie** w trybie przygody: trzymany LPM, blok pęka, odłamki.
+- Szczegóły: *Widok z oczu* i *Kopanie* niżej.
+
 ## Model
 
 Wymiary w pikselach skórki - 32 piksele to wysokość gracza (1,8 bloku),
@@ -124,10 +131,90 @@ zamyka kartę. Liczby: `CROUCH_...`, `SPRINT_...`, `THIRD_PERSON_DISTANCE`
 w `src/config.js`. Odległość kamery: *Ustawienia → Gracz* albo
 `/ustaw kamera 3`.
 
+## Widok z oczu
+
+![Widok z oczu: pusta ręka, blok w ręce, kopanie siekierą, odłamki](widok-z-oczu.jpg)
+
+Z oczu widać to, co trzymasz w prawej ręce - jak w Minecrafcie:
+
+| w ręce | jak wygląda |
+|---|---|
+| nic | prawa ręka ze skórki (z rękawem z drugiej warstwy): pięść z prawej, trochę poniżej środka, reszta ręki idzie w prawy dolny róg |
+| blok | sześcian obrócony tak, że widać dwa boki i wierzch |
+| przedmiot (siekiera, owoc, szyszka...) i płaskie bloki (wieniec, ściółka) | płaski obrazek: głowica / czubek w głąb ekranu i do środka, trzonek w prawym dolnym rogu |
+| roślina (kwiat, sadzonka) | dwie skrzyżowane płaszczyzny jak w świecie |
+
+Ręka ma **własną scenę i kamerę** (pole widzenia stałe - 70°, nie
+zmienia się przy biegu), rysowaną na samym końcu na wyczyszczonej
+głębi - nigdy nie wchodzi w ścianę. Oświetla się jak model gracza
+(niebo, lampy, lampa w ręce, meteoryt, noc). Na węższym ekranie
+(telefon pionowo) przesuwa się bliżej środka, żeby nie uciekła za
+krawędź.
+
+**Animacje ręki:**
+
+- **machnięcie** - przy każdym kliknięciu i przy każdym uderzeniu
+  w trakcie kopania: pusta ręka - cios do przodu, blok i przedmiot - do
+  środka i w dół (0,3 s),
+- **wyjęcie** - po zmianie miejsca na pasku ręka chowa się w dół i wraca
+  z nowym przedmiotem (0,22 s),
+- **kołysanie** przy chodzeniu (ósemka, w rytm kroków; przy biegu
+  mocniej), w miejscu - lekki oddech,
+- **spóźnianie się** za obrotem kamery - ręka "płynie" za wzrokiem.
+
+**Kołysanie widoku**: przy chodzeniu kamera kiwa się w rytm kroków (na
+boki i w dół, z lekkim przechyłem; `VIEW_BOB_HEIGHT`, `VIEW_BOB_STEPS`
+w `src/config.js`), a po upadku z wysoka na chwilę się ugina. Kiwa się
+tylko obraz - celowanie i ruch liczą się z oczu gracza. Wyłączenie:
+*Ustawienia → Gracz → Kołysanie przy chodzeniu* albo `/ustaw kolysanie wyl`;
+samą rękę wyłącza `/ustaw reka wyl`.
+
+Strojenie: pozy (położenie, obrót, wielkość) są w `POSES` na początku
+`src/player/FirstPersonHand.js` - w układzie kamery: +X w prawo, +Y
+w górę, -Z do przodu.
+
+## Kopanie
+
+W **trybie przygody** blok trzeba kopać - trzymać LPM (na telefonie:
+przytrzymać palec albo przycisk z kilofem):
+
+- co 0,25 s ręka uderza: stuk (dźwięk kroku po tym bloku) i kilka
+  odłamków z trafionej ściany,
+- blok **pęka** - 10 etapów pęknięć (`src/interaction/BlockCracks.js`,
+  tekstura z `tools/pekniecia.py`),
+- po czasie kopania blok znika, a **odłamki** (małe sześciany w kolorach
+  pikseli jego tekstury, przyciemnione jak światło w tym miejscu) sypią
+  się, odbijają od ziemi i znikają (`src/rendering/BlockDebris.js`),
+- puszczony LPM albo inny blok pod celownikiem - kopanie od nowa,
+- po rozbiciu bloku 0,15 s przerwy przed następnym.
+
+| bloki | czas |
+|---|---|
+| rośliny | od razu |
+| liście | 0,35 s |
+| lampy | 0,45 s |
+| piasek, trawa, ziemia, błoto, glina | 0,55-0,6 s |
+| żwir | 0,7 s |
+| wapień, piaskowiec | 1,8 s |
+| drewno (pnie, deski) | 2 s, **siekierą 0,67 s** |
+| kamień, łupek | 2,2 s |
+| lepidolit | 2,5 s |
+| granit, bazalt | 2,8 s |
+| meteoryt | 4,5 s |
+
+Liczby: `BREAK_SECONDS` (dla materiałów), `LEAVES_BREAK_SECONDS`,
+`AXE_SPEED`, `MINING_HIT_SECONDS`, `MINING_DELAY_SECONDS` w
+`src/config.js`, a twardość pojedynczych skał - `hardness`
+w `src/blocks/BlockRegistry.js`. W **trybie kreatywnym** bloki znikają
+od razu, a trzymany LPM niszczy kolejny co 0,25 s
+(`CREATIVE_REPEAT_SECONDS`). Odłamki lecą w obu trybach.
+
 ## Narzędzia
 
 | komenda | do czego |
 |---|---|
+| `/kopanie [blok \| lista]` | czas kopania bloku, na który patrzysz (albo podanego); `lista` - wszystkie czasy |
+| `/ustaw reka wl\|wyl`, `/ustaw kolysanie wl\|wyl` | ręka w widoku z oczu, kołysanie widoku |
 | `/kamera [oczy \| tyl \| przod]` | widok kamery (jak F5) |
 | `/animacja <nazwa>` | podgląd animacji w miejscu: `stanie`, `chodzenie`, `bieg`, `kucanie`, `skradanie`, `skok`, `machanie`, `latanie`, `plywanie`, `plywanie-w-miejscu`; `/animacja wyl` |
 | `/model` | informacje; `/model gladki` / `klocki`, `/model warstwa wl\|wyl`, `/model tempo 0.25` |
@@ -136,17 +223,17 @@ w `src/config.js`. Odległość kamery: *Ustawienia → Gracz* albo
 
 ## Plan - co dalej
 
-1. **Ręka w pierwszej osobie** - prawa ręka i blok w ręce widoczne
-   z oczu gracza, z machnięciem przy niszczeniu i stawianiu.
-2. **Więcej animacji**: obrót w miejscu (przestępowanie z nogi na nogę),
+1. **Więcej animacji**: obrót w miejscu (przestępowanie z nogi na nogę),
    lądowanie z dużej wysokości (przyklęk), zmęczenie po długim biegu,
    pływanie (razem z prawdziwą wodą z rozdziału o terenie), wspinanie,
    siadanie, emotki (`/emotka machanie`, `/emotka taniec`).
-3. **Szczegóły modelu**: smukłe ręce (3 piksele, jak skórki "Alex"),
+2. **Szczegóły modelu**: smukłe ręce (3 piksele, jak skórki "Alex"),
    mruganie oczami, szalik / peleryna, które powiewają przy biegu.
-4. **Edytor póz** - ustawianie stawów myszką i zapisywanie póz / klatek
+3. **Edytor póz** - ustawianie stawów myszką i zapisywanie póz / klatek
    animacji do pliku (np. do emotek).
-5. **Cień pod graczem** (miękka plama na ziemi).
+4. **Cień pod graczem** (miękka plama na ziemi).
+5. **Narzędzia do kopania** - kilof (skały szybciej), łopata (ziemia,
+   piasek), może różne materiały narzędzi.
 6. Ten sam model dla innych postaci (NPC, w przyszłości inni gracze).
 
 ## Do ustalenia z Kamilem

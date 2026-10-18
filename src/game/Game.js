@@ -16,6 +16,7 @@ import {
     getHarvest,
     getLoot,
     getStrip,
+    getBreakTime,
     isPlantId
 } from '../blocks/BlockRegistry.js';
 import { getItemLabel, getPlacedBlock, getTool, itemExists } from '../items/ItemRegistry.js';
@@ -38,7 +39,10 @@ import { Sky } from '../sky/Sky.js';
 import { skyUniforms } from '../sky/skyShader.js';
 import { PlayerModel } from '../player/PlayerModel.js';
 import { PlayerAnimator } from '../player/PlayerAnimator.js';
+import { FirstPersonHand } from '../player/FirstPersonHand.js';
 import { modelLight } from '../rendering/ModelMaterial.js';
+import { BlockDebris } from '../rendering/BlockDebris.js';
+import { BlockCracks } from '../interaction/BlockCracks.js';
 import { COLOR_LEVEL } from '../world/Light.js';
 
 import {
@@ -49,7 +53,14 @@ import {
     MOUSE_SENSITIVITY,
     HOTBAR_SIZE,
     SPRINT_FOV_FACTOR,
-    CHUNK_HEIGHT
+    CHUNK_HEIGHT,
+    AXE_SPEED,
+    MINING_HIT_SECONDS,
+    MINING_DELAY_SECONDS,
+    CREATIVE_REPEAT_SECONDS,
+    VIEW_BOB_HEIGHT,
+    LAND_DIP_SPEED,
+    LAND_DIP_MAX
 } from '../config.js';
 
 
@@ -293,6 +304,16 @@ export class Game {
 
         this.animator = new PlayerAnimator();
 
+        // Ręka (i to, co w niej) w widoku z oczu - osobna scena,
+        // rysowana na wierzchu (src/player/FirstPersonHand.js).
+
+        this.hand = new FirstPersonHand(this.sky);
+
+        this.hand.resize(this.camera.aspect);
+
+        // Kamera na chwilę w dół po upadku (bloki).
+        this.landDip = 0;
+
         this.cameraMode = 'first';
 
         // Położenie kamery z trzeciej osoby (null = z oczu gracza).
@@ -322,6 +343,23 @@ export class Game {
         this.placer = new BlockPlacer(this.world, this.player);
 
         this.currentHit = null;
+
+
+        // Kopanie: pęknięcia kopanego bloku (przygoda) i odłamki.
+        //   mining - { x, y, z, type, progress 0-1, hit (s do następnego
+        //            uderzenia) } albo null,
+        //   miningDelay - przerwa po zniszczonym bloku (przygoda),
+        //   breakRepeat - kiedy następny blok przy trzymanym LPM (kreatywny).
+
+        this.cracks = new BlockCracks(this.scene);
+
+        this.debris = new BlockDebris(this.scene, this.world);
+
+        this.mining = null;
+
+        this.miningDelay = 0;
+
+        this.breakRepeat = 0;
 
 
         // Tryb gry i ekwipunek (z paskiem bloków) - zapisywane ze światem.
@@ -464,6 +502,11 @@ export class Game {
         const breakPressed = input.consumeMousePress(0);
         const placePressed = input.consumeMousePress(2);
 
+        // Trzymany LPM: w przygodzie kopie (blok pęka i znika po czasie
+        // kopania), w kreatywnym niszczy kolejne bloki co chwilę.
+
+        const breakHeld = input.isMouseDown(0);
+
 
         // PPM siekierą na pniu - okorowanie.
 
@@ -489,20 +532,24 @@ export class Game {
         // Machnięcie ręką przy każdym kliknięciu (jak w Minecrafcie).
 
         if (breakPressed || (placePressed && (this.selectedBlock || harvesting))) {
-            this.animator.swing();
+            this.swingArm();
         }
 
 
-        if (breakPressed) {
+        const mined = this.updateMining(dt, breakPressed, breakHeld);
 
-            this.breakTarget(this.currentHit);
+        if (breakPressed || mined) {
 
             this.currentHit =
                 this.raycast.castFromCamera(this.camera);
 
         }
 
-        else if (stripping) {
+        // PPM - tylko gdy w tej samej klatce nie było LPM.
+
+        const placing = !breakPressed;
+
+        if (placing && stripping) {
 
             this.stripTarget(this.currentHit);
 
@@ -511,7 +558,7 @@ export class Game {
 
         }
 
-        else if (harvesting) {
+        else if (placing && harvesting) {
 
             this.harvestTarget(this.currentHit);
 
@@ -520,7 +567,7 @@ export class Game {
 
         }
 
-        else if (placePressed) {
+        else if (placing && placePressed) {
 
             // Puste miejsce na pasku - nie ma czego postawić. Owoc
             // stawia sadzonkę (getPlacedBlock), inny przedmiot - nic.
@@ -633,6 +680,10 @@ export class Game {
 
         this.meteorites.update(dt);
 
+        // Odłamki niszczonych bloków.
+
+        this.debris.update(dt);
+
         // Osiągnięcia sprawdzane co chwilę (wysokość, nurkowanie...).
 
         this.achievements?.update(dt);
@@ -712,6 +763,19 @@ export class Game {
         this.model.place(player.pos, this.animator.bodyYaw, this.animator.previewLift);
 
         this.model.setHeldBlock(this.selectedBlock);
+
+
+        // Ręka w widoku z oczu i kamera w dół po upadku.
+
+        this.hand.setHeld(this.selectedBlock);
+
+        this.hand.update(dt, player);
+
+        if (player.landed > LAND_DIP_SPEED) {
+            this.landDip = Math.max(this.landDip, Math.min(LAND_DIP_MAX, (player.landed - LAND_DIP_SPEED) * 0.02));
+        }
+
+        this.landDip *= Math.exp(-dt * 7);
 
 
         // Światło na wysokości piersi gracza (jak w rogach ścian bloków):
@@ -888,9 +952,37 @@ export class Game {
 
         const shake = Math.max(this.meteorites.shake, this.skyfall.shake);
 
-        const saved = this.view || shake > 0.001
+        // Kołysanie widoku z oczu przy chodzeniu (i w dół po upadku).
+
+        const bob = !this.view && this.settings.get('viewBobbing') ? this.hand.bob : null;
+
+        const bobbing = bob !== null && (bob.amount > 0.01 || this.landDip > 0.002);
+
+        const saved = this.view || shake > 0.001 || bobbing
             ? { position: camera.position.clone(), rotation: camera.rotation.clone() }
             : null;
+
+
+        // Kołysanie: na boki i w dół (co krok), lekki przechył - tylko
+        // obraz (celowanie i ruch liczą się z oczu gracza).
+
+        if (bobbing) {
+
+            const a = bob.amount;
+
+            const side = Math.sin(bob.phase) * VIEW_BOB_HEIGHT * 0.5 * a;
+
+            const down = Math.abs(Math.cos(bob.phase)) * VIEW_BOB_HEIGHT * a + this.landDip;
+
+            camera.position.add((this.bobOffset ??= new THREE.Vector3()).set(side, -down, 0).applyQuaternion(camera.quaternion));
+
+            camera.rotation.z += Math.sin(bob.phase) * 0.008 * a;
+
+            camera.rotation.x += Math.abs(Math.cos(bob.phase)) * 0.004 * a;
+
+            camera.updateMatrixWorld();
+
+        }
 
         if (this.view) {
 
@@ -956,6 +1048,13 @@ export class Game {
         }
 
         renderer.render(this.scene, camera);
+
+
+        // Ręka w widoku z oczu - na wierzchu (nigdy nie wchodzi w ścianę).
+
+        if (!this.view && this.settings.get('showHand')) {
+            this.hand.render(renderer, camera);
+        }
 
 
         if (saved) {
@@ -1353,6 +1452,17 @@ export class Game {
         }
 
 
+        // Ręka w widoku z oczu: tryb ziemniaka, rękaw (wierzchnia warstwa).
+
+        if (this.hand) {
+
+            this.hand.setLowDetail(potato);
+
+            this.hand.setOverlay(settings.get('skinOverlay'));
+
+        }
+
+
         // Cienie w kątach są zapisane w meshach chunków - po zmianie
         // trzeba je przebudować (stopniowo, najbliższe najpierw).
         // Tak samo szybkie liście (bez ścian w środku korony) - te są
@@ -1434,6 +1544,175 @@ export class Game {
     }
 
 
+    // Machnięcie ręką: model gracza (z trzeciej osoby) i ręka w widoku
+    // z oczu.
+
+    swingArm() {
+
+        this.animator.swing();
+
+        this.hand.swing();
+
+    }
+
+
+    // KOPANIE. Zwraca true, gdy w tej klatce zniknął blok.
+    //
+    // Kreatywny: kliknięcie niszczy blok od razu, trzymany LPM - kolejne
+    // bloki co CREATIVE_REPEAT_SECONDS.
+    // Przygoda: trzeba trzymać LPM na bloku przez czas kopania
+    // (getBreakTime; siekiera - drewno szybciej). Blok pęka (BlockCracks),
+    // co MINING_HIT_SECONDS ręka uderza: stuk i odłamki. Zmiana celu albo
+    // puszczenie LPM - od nowa. Rośliny znikają od razu.
+
+    updateMining(dt, pressed, held) {
+
+        const hit = this.currentHit?.hit ? this.currentHit : null;
+
+
+        if (this.mode !== 'adventure') {
+
+            this.stopMining();
+
+            if (pressed) {
+
+                this.breakRepeat = CREATIVE_REPEAT_SECONDS;
+
+                return this.breakTarget(hit);
+
+            }
+
+            if (held && hit) {
+
+                this.breakRepeat -= dt;
+
+                if (this.breakRepeat <= 0) {
+
+                    this.breakRepeat = CREATIVE_REPEAT_SECONDS;
+
+                    this.swingArm();
+
+                    return this.breakTarget(hit);
+
+                }
+
+            }
+
+            return false;
+
+        }
+
+
+        this.miningDelay = Math.max(0, this.miningDelay - dt);
+
+        if (!(pressed || held) || !hit) {
+
+            // Puszczony LPM tuż przed rozbiciem (osiągnięcie).
+
+            if (this.mining && !held && this.mining.progress >= 0.5) {
+                this.achieve('miningAbandoned', { type: this.mining.type, progress: this.mining.progress });
+            }
+
+            this.stopMining();
+
+            return false;
+
+        }
+
+
+        const { x, y, z, type } = hit.block;
+
+        let mining = this.mining;
+
+        if (!mining || mining.x !== x || mining.y !== y || mining.z !== z || mining.type !== type) {
+
+            // Pełny ekwipunek - nie ma sensu kopać (blok i tak by został).
+
+            const drop = getDropType(type);
+
+            if (drop && !this.inventory.canAdd(drop)) {
+
+                this.onNotice?.('Ekwipunek pełny');
+
+                this.stopMining();
+
+                this.miningDelay = 1;
+
+                return false;
+
+            }
+
+            mining = this.mining = { x, y, z, type, progress: 0, hit: 0 };
+
+        }
+
+        if (this.miningDelay > 0) {
+
+            this.cracks.update(null, 0);
+
+            return false;
+
+        }
+
+
+        let time = getBreakTime(type);
+
+        if (getTool(this.selectedBlock) === 'axe' && getBlockSound(type) === 'wood') {
+            time /= AXE_SPEED;
+        }
+
+        mining.progress = time <= 0 ? 1 : mining.progress + dt / time;
+
+
+        // Uderzenie: machnięcie, stuk (dźwięk kroku po tym bloku), odłamki.
+
+        mining.hit -= dt;
+
+        if (mining.hit <= 0 && mining.progress < 1) {
+
+            mining.hit = MINING_HIT_SECONDS;
+
+            if (!pressed) {
+                this.swingArm();
+            }
+
+            this.playBlockSound('step', type, hit.block, 0.7);
+
+            this.debris.chips(type, x, y, z, hit.normal);
+
+        }
+
+
+        if (mining.progress >= 1) {
+
+            const broken = this.breakTarget(hit);
+
+            this.stopMining();
+
+            // Pełny ekwipunek - blok zostaje; nie próbujemy co klatkę.
+
+            this.miningDelay = broken ? MINING_DELAY_SECONDS : 1;
+
+            return broken;
+
+        }
+
+        this.cracks.update(mining, mining.progress);
+
+        return false;
+
+    }
+
+
+    stopMining() {
+
+        this.mining = null;
+
+        this.cracks.update(null, 0);
+
+    }
+
+
     // Zniszczenie wskazanego bloku. W przygodzie blok (albo to, co
     // z niego zostaje - np. trawa daje ziemię) trafia do ekwipunku;
     // gdy nie ma na niego miejsca, blok zostaje. Roślina, która rosła
@@ -1453,7 +1732,9 @@ export class Game {
 
                 this.playBlockSound('break', hit.block.type, hit.block);
 
-                this.achieve('blockBroken', { type: hit.block.type });
+                this.debris.burst(hit.block.type, hit.block.x, hit.block.y, hit.block.z);
+
+                this.achieve('blockBroken', { type: hit.block.type, mode: this.mode, tool: getTool(this.selectedBlock) });
 
             }
 
@@ -1486,7 +1767,9 @@ export class Game {
 
         this.playBlockSound('break', type, hit.block);
 
-        this.achieve('blockBroken', { type });
+        this.debris.burst(type, x, y, z);
+
+        this.achieve('blockBroken', { type, mode: this.mode, tool: getTool(this.selectedBlock) });
 
         if (drop) {
             this.inventory.add(drop);
@@ -1871,6 +2154,8 @@ export class Game {
 
         this.camera.updateProjectionMatrix();
 
+        this.hand.resize(width / height);
+
     }
 
     // --------------------------------------------------------
@@ -1916,6 +2201,12 @@ export class Game {
         this.spaceView.dispose();
 
         this.model.dispose();
+
+        this.hand.dispose();
+
+        this.cracks.dispose();
+
+        this.debris.dispose();
 
         return true;
 

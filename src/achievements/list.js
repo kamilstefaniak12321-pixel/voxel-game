@@ -117,6 +117,27 @@ export const ACHIEVEMENTS = [
         when: (data) => logSpecies(data.type) !== null
     },
     {
+        id: 'axe_chop',
+        tier: 'common',
+        title: 'Ostrze w ruch',
+        task: 'W trybie przygody zetnij pień drzewa siekierą (idzie trzy razy szybciej niż ręką).',
+        comment: 'Ręce bolą mniej. Drzewo - bardziej.',
+        icon: 'axe',
+        on: 'blockBroken',
+        when: (data) => data.mode === 'adventure' && data.tool === 'axe' && logSpecies(data.type) !== null
+    },
+    {
+        id: 'almost',
+        tier: 'common',
+        title: 'Prawie robi różnicę',
+        task: 'W trybie przygody kop blok i puść przycisk, gdy jest już prawie rozbity.',
+        comment: 'Blok odetchnął z ulgą. Na razie.',
+        icon: 'stone',
+        secret: true,
+        on: 'miningAbandoned',
+        when: (data) => data.progress >= 0.9
+    },
+    {
         id: 'birch_bark',
         tier: 'common',
         title: 'Brzozowy papirus',

@@ -46,7 +46,8 @@ Współrzędne można podawać względem gracza: `~` (tu, gdzie stoję),
 | `/skorka plik` | wczytanie własnej skórki (PNG 64 x 64, układ jak w Minecrafcie) |
 | `/skorka domyslna` | powrót do domyślnej skórki |
 | `/pozycja` | pozycja i chunk |
-| `/tryb [przygoda \| kreatywny]` | tryb gry (bez słowa - jaki jest): przygoda - zniszczone bloki trafiają do ekwipunku, stawianie je zużywa; kreatywny - bloki bez końca, wszystkie bloki pod E, latanie po dwukliku Spacji. Skróty: `/gm p`, `/gm k` |
+| `/tryb [przygoda \| kreatywny]` | tryb gry (bez słowa - jaki jest): przygoda - bloki się kopie (trzymany LPM), zniszczone trafiają do ekwipunku, stawianie je zużywa; kreatywny - bloki bez końca i znikają od razu, wszystkie bloki pod E, latanie po dwukliku Spacji. Skróty: `/gm p`, `/gm k` |
+| `/kopanie [blok \| lista]` | ile trwa kopanie w trybie przygody: blok, na który patrzysz, albo podany (`/kopanie granit`, siekierą - dla drewna), `lista` - czasy wszystkich bloków. Skrót: `/kop` |
 | `/ekwipunek` | co jest w ekwipunku (ile sztuk każdego bloku, ile miejsc zajętych) |
 | `/ekwipunek wyczysc` | czyści cały ekwipunek (z paskiem) |
 | `/latanie` | włącza/wyłącza latanie w każdym trybie (Spacja w górę, Shift w dół) - do testów; w kreatywnym wystarczy 2× Spacja |
@@ -117,9 +118,10 @@ Kolory: `czerwony`, `krwawy`, `pomaranczowy`, `zloty`, `zolty`, `zielony`,
 `turkusowy`, `niebieski`, `fioletowy`, `rozowy`, `bialy` albo `#rrggbb`.
 
 Nazwy ustawień w `/ustaw`: `ziemniak`, `zasieg`, `daleki-teren`, `pole`, `jasnosc`,
-`rozdzielczosc`, `fps` (limit), `cienie`, `dynamiczne-swiatlo`, `wczytywanie`, `czulosc`,
+`rozdzielczosc`, `fps` (limit), `cienie`, `liscie` (ładne liście z prześwitami: `wl` / `wyl`), `dynamiczne-swiatlo`, `wczytywanie`, `czulosc`,
 `odwroc-mysz`, `motyw`, `interfejs`, `debug`, `licznik-fps`, `meteoryty`,
-`warstwa-skorki`, `zgiecia` (`gladkie` / `klocki`), `kamera` (odległość kamery z F5, 2-8),
+`warstwa-skorki`, `reka` (ręka w widoku z oczu), `kolysanie` (kołysanie widoku przy chodzeniu),
+`zgiecia` (`gladkie` / `klocki`), `kamera` (odległość kamery z F5, 2-8),
 `glosnosc`, `glosnosc-bloki`, `glosnosc-otoczenie` (też `glosnosc-zjawiska`), `glosnosc-menu` (0-100).
 Wartości tak/nie: `wl` / `wyl`.
 

@@ -128,6 +128,8 @@ export const TEXTS = {
         `Teraz: ${custom ? 'własna' : 'domyślna'} skórka. Skórka to obrazek PNG 64 x 64 ` +
         '(układ jak w Minecrafcie) - szablon w docs/gracz.md.',
     skinOverlay: (on) => `Druga warstwa skórki: ${on ? 'Wł.' : 'Wył.'}`,
+    showHand: (on) => `Ręka w widoku z oczu: ${on ? 'Wł.' : 'Wył.'}`,
+    viewBobbing: (on) => `Kołysanie przy chodzeniu: ${on ? 'Wł.' : 'Wył.'}`,
     jointStyle: (value) => `Zgięcia rąk i nóg: ${value === 'blocks' ? 'Klocki' : 'Gładkie'}`,
     cameraDistance: (value) => `Kamera z tyłu (F5): ${value} ${value < 5 ? 'bloki' : 'bloków'}`,
     resetSettings: 'Przywróć domyślne',

@@ -338,6 +338,41 @@ function addPart(builder, part, uvOrigin, inflate, style, boneIndex) {
 }
 
 
+// Sama prawa ręka (widok z oczu - FirstPersonHand.js): grupa 0 - zwykła
+// warstwa, grupa 1 - rękaw (wierzchnia). Dłoń (dół ręki) w punkcie
+// (0, 0, 0), ręka idzie w górę (+Y) do barku; przód ręki (-Z) jak
+// w modelu.
+
+export function buildArmGeometry() {
+
+    const builder = new GeometryBuilder();
+
+    const part = PARTS.find((p) => p.name === 'armR');
+
+    const bones = { shoulderR: 0, elbowR: 0 };
+
+    addPart(builder, part, part.uv, 0, 'blocks', bones);
+
+    builder.group(0, 0);
+
+    const overlayStart = builder.indices.length;
+
+    addPart(builder, part, part.overlay, part.inflate, 'blocks', bones);
+
+    builder.group(overlayStart, 1);
+
+    const geometry = builder.build();
+
+    geometry.deleteAttribute('skinIndex');
+    geometry.deleteAttribute('skinWeight');
+
+    geometry.translate(-part.x * MODEL_PIXEL, -(part.top - part.size[1]) * MODEL_PIXEL, -part.z * MODEL_PIXEL);
+
+    return geometry;
+
+}
+
+
 // Cała geometria modelu: grupa 0 - zwykła warstwa, grupa 1 - wierzchnia.
 
 function buildGeometry(style, boneIndex) {
@@ -402,7 +437,7 @@ const HELD_BLOCK_SCALE = 4.5;
 const HELD_ITEM_SCALE = 6.5;
 
 
-function buildBlockGeometry(type) {
+export function buildBlockGeometry(type) {
 
     // Przedmiot ma tylko obrazek (ikonkę) - "tekstura" każdej ściany.
 

@@ -47,6 +47,8 @@ export const SETTINGS_DEFAULTS = {
 
     // Gracz
     skinOverlay: true,                             // druga (wierzchnia) warstwa skórki
+    showHand: true,                                // ręka i przedmiot w ręce w widoku z oczu
+    viewBobbing: true,                             // kołysanie widoku przy chodzeniu
     jointStyle: 'smooth',                          // zgięcia modelu: 'smooth' albo 'blocks'
     cameraDistance: THIRD_PERSON_DISTANCE,         // kamera z trzeciej osoby (F5), bloki
 

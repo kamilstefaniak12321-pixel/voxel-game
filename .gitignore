@@ -22,3 +22,6 @@ dist/
 # Aplikacja na telefon: pliki gry kopiowane przed budowaniem
 # (npm run android:www) - powstają od nowa przy każdym budowaniu
 www/
+
+# Python (skrypty w tools/)
+__pycache__/

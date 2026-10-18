@@ -163,113 +163,141 @@ def loopable(x, crossfade):
 # Materiały: kroki, niszczenie, stawianie
 #
 # heavy: 0 = krok, 1 = postawienie (więcej dołu), 2 = zniszczenie
-# (dłużej, głośniej, z okruchami).
+# (dłużej, z okruchami).
+#
+# Wszystkie są "miękkie": łagodny początek (bez trzasku), mało
+# wysokich tonów (szum zamiast syku), raczej cicho - mają być tłem,
+# a nie zwracać na siebie uwagę. Trawa szeleści, ziemia głucho
+# stuka, kamień puka, piasek szumi, żwir chrzęści, błoto mlaszcze,
+# rośliny szeleszczą liśćmi, szkło (lampy) cicho dzwoni.
 # ------------------------------------------------------------
 
-def mat_grass(s, heavy):
-    length = [0.2, 0.2, 0.36][heavy]
+def soft_env(n, attack, decay):
+    """Obwiednia bez trzasku: płynne narastanie (połowa cosinusa)
+    i wykładnicze wygasanie."""
+    t = time_axis(n)
+    rise = np.where(t < attack, 0.5 - 0.5 * np.cos(np.pi * np.clip(t / max(attack, 1e-4), 0, 1)), 1.0)
+    fall = np.exp(-np.maximum(t - attack, 0) / decay)
+    return rise * fall
+
+
+def rustle(s, length, count, low, high, spread, swish=(0.02, 0.05), attack=(0.008, 0.02), loud=(0.3, 1.0)):
+    """Szelest: dużo krótkich, nakładających się "przesunięć" źdźbeł
+    albo liści - każde z łagodnym początkiem."""
     out = np.zeros(samples(length))
-    n = len(out)
-    body = band(s.noise(length), 400, 4200) * envelope(n, 0.003, [0.045, 0.04, 0.09][heavy])
-    out += body * 0.5
-    out += grains(s, length, [35, 25, 90][heavy], 1200, 6000, density_decay=[0.05, 0.04, 0.09][heavy])
-    out += lowpass(s.noise(length), 350) * envelope(n, 0.002, 0.03) * [0.3, 0.6, 0.5][heavy]
-    if heavy == 2:
-        out += lowpass(band(s.noise(length), 150, 1500) * envelope(n, 0.004, 0.08), 1500) * 0.6
+    for _ in range(count):
+        n = samples(s.uniform(*swish) * 2.5)
+        lo = s.uniform(low, (low + high) / 2)
+        hi = min(high, lo * s.uniform(1.8, 3.0))
+        piece = band(s.noise(n / SR), lo, hi) * soft_env(n, s.uniform(*attack), s.uniform(*swish) / 2)
+        place(out, piece * s.uniform(*loud), s.rng.uniform(0, spread))
     return out
+
+
+def thump(s, length, cutoff, attack, decay, amount):
+    """Głuchy dół (nacisk stopy, położony blok)."""
+    n = samples(length)
+    return lowpass(s.noise(length), cutoff, 2) * soft_env(n, attack, decay) * amount
+
+
+def crumble(s, length, count, low, high, spread, grain=(0.004, 0.011), loud=(0.2, 0.7)):
+    """Kruszenie: ziarenka z łagodnym początkiem (nie trzaski)."""
+    out = np.zeros(samples(length))
+    for _ in range(count):
+        n = samples(s.uniform(*grain))
+        lo = s.uniform(low, (low + high) / 2)
+        hi = min(high, lo * s.uniform(1.6, 2.6))
+        piece = band(s.noise(n / SR + 0.002)[:n], lo, hi) * soft_env(n, n / SR * 0.3, n / SR / 3)
+        place(out, piece * s.uniform(*loud), min(length * 0.9, s.rng.exponential(spread)))
+    return out
+
+
+def mat_grass(s, heavy):
+    # miękka trawa lekko szeleszcząca pod stopą
+    length = [0.3, 0.26, 0.42][heavy]
+    out = rustle(s, length, [9, 7, 16][heavy], 700, 3200, [0.11, 0.08, 0.22][heavy])
+    out += thump(s, length, 220, 0.008, [0.05, 0.06, 0.07][heavy], [0.5, 0.9, 0.7][heavy])
+    if heavy == 2:
+        out += crumble(s, length, 14, 300, 1600, 0.08, loud=(0.15, 0.4))
+    return lowpass(out, 3600)
 
 
 def mat_dirt(s, heavy):
-    length = [0.18, 0.18, 0.34][heavy]
-    out = np.zeros(samples(length))
-    n = len(out)
-    out += band(s.noise(length), 120, 1800) * envelope(n, 0.003, [0.04, 0.045, 0.1][heavy]) * 0.9
-    out += grains(s, length, [18, 14, 60][heavy], 400, 3500, density_decay=[0.04, 0.035, 0.08][heavy])
-    out += damped_sine(s.uniform(65, 85), length, 0.04) * [0.25, 0.6, 0.45][heavy]
-    return out
+    # głuche stuknięcie i ciche osypywanie się grudek
+    length = [0.24, 0.24, 0.4][heavy]
+    out = thump(s, length, 320, 0.006, [0.05, 0.06, 0.08][heavy], [1.0, 1.4, 1.1][heavy])
+    out += crumble(s, length, [10, 8, 34][heavy], 300, 1700, [0.04, 0.03, 0.09][heavy])
+    out += band(s.noise(length), 250, 1100) * soft_env(samples(length), 0.008, 0.04) * 0.35
+    return lowpass(out, 2400)
 
 
 def mat_stone(s, heavy):
-    length = [0.13, 0.14, 0.42][heavy]
-    out = np.zeros(samples(length))
-    n = len(out)
-    click = band(s.noise(length), 1500, 6000) * envelope(n, 0.0005, [0.006, 0.006, 0.012][heavy])
-    out += click * [0.6, 0.5, 1.0][heavy]
-    out += band(s.noise(length), 300, 2500) * envelope(n, 0.001, [0.025, 0.03, 0.06][heavy]) * 0.8
-    for base in (s.uniform(700, 1000), s.uniform(1400, 1900), s.uniform(2500, 3200)):
-        out += damped_sine(base, length, s.uniform(0.012, 0.03), s.uniform(0, 6)) * s.uniform(0.08, 0.22)
-    out += damped_sine(s.uniform(150, 200), length, 0.025) * [0.3, 0.6, 0.5][heavy]
+    # krótkie, przytłumione puknięcie (bez dzwonienia)
+    length = [0.18, 0.2, 0.45][heavy]
+    n = samples(length)
+    out = band(s.noise(length), 300, 2000) * soft_env(n, 0.003, [0.022, 0.028, 0.04][heavy]) * 0.9
+    out += damped_sine(s.uniform(140, 190), length, 0.03) * soft_env(n, 0.003, 1) * [0.25, 0.5, 0.4][heavy]
+    out += band(s.noise(length), 1000, 2800) * soft_env(n, 0.005, 0.03) * 0.4
     if heavy == 2:
-        # okruchy skały spadające po pęknięciu
-        debris = np.zeros(n)
-        for _ in range(16):
-            piece = band(s.noise(0.02), 1200, 4500)[: samples(0.02)] * envelope(samples(0.02), 0.0005, 0.004)
-            for f in (s.uniform(1800, 4200),):
-                piece += damped_sine(f, 0.02, 0.006)[: len(piece)] * 0.3
-            place(debris, piece * s.uniform(0.15, 0.5), 0.04 + s.rng.exponential(0.09))
-        out += debris
-    return out
+        out += crumble(s, length, 22, 500, 2600, 0.1, grain=(0.006, 0.016), loud=(0.15, 0.45))
+    return lowpass(out, 2800)
 
 
 def mat_sand(s, heavy):
-    length = [0.22, 0.2, 0.42][heavy]
-    out = np.zeros(samples(length))
-    n = len(out)
-    hiss = band(s.noise(length), 900, 5000) * envelope(n, [0.012, 0.008, 0.02][heavy], [0.06, 0.05, 0.14][heavy])
-    out += hiss * 0.5
-    out += grains(s, length, [70, 50, 180][heavy], 1500, 7000, length=(0.001, 0.003), density_decay=[0.06, 0.05, 0.12][heavy])
-    out += lowpass(s.noise(length), 400) * envelope(n, 0.004, 0.04) * [0.15, 0.35, 0.3][heavy]
-    return out
+    # cichy, miękki szum osypującego się piasku
+    length = [0.3, 0.26, 0.45][heavy]
+    n = samples(length)
+    out = band(s.noise(length), 350, 2400) * soft_env(n, [0.025, 0.018, 0.03][heavy], [0.07, 0.06, 0.13][heavy]) * 0.6
+    out += crumble(s, length, [20, 14, 50][heavy], 1200, 3000, [0.06, 0.05, 0.12][heavy], grain=(0.002, 0.005), loud=(0.05, 0.2))
+    out += thump(s, length, 200, 0.012, 0.05, [0.3, 0.5, 0.4][heavy])
+    return lowpass(out, 3000)
 
 
 def mat_gravel(s, heavy):
-    length = [0.22, 0.2, 0.42][heavy]
-    out = np.zeros(samples(length))
-    n = len(out)
-    out += grains(s, length, [55, 40, 150][heavy], 500, 4500, length=(0.002, 0.007), density_decay=[0.05, 0.04, 0.11][heavy], loudness=(0.4, 1.0))
-    out += band(s.noise(length), 200, 1500) * envelope(n, 0.003, 0.04) * 0.4
-    out += damped_sine(s.uniform(80, 110), length, 0.03) * [0.2, 0.5, 0.4][heavy]
-    return out
+    # przytłumiony chrzęst kamyków
+    length = [0.28, 0.24, 0.45][heavy]
+    out = crumble(s, length, [26, 18, 70][heavy], 400, 2600, [0.05, 0.04, 0.11][heavy], grain=(0.005, 0.012), loud=(0.3, 0.9))
+    out += thump(s, length, 260, 0.006, 0.05, [0.6, 1.0, 0.8][heavy])
+    return lowpass(out, 3200)
 
 
 def mat_mud(s, heavy):
-    length = [0.24, 0.22, 0.4][heavy]
-    out = np.zeros(samples(length))
-    n = len(out)
+    # miękkie mlaśnięcie
+    length = [0.28, 0.26, 0.42][heavy]
+    n = samples(length)
     t = time_axis(n)
-    wet = lowpass(s.noise(length), 900) * envelope(n, 0.006, [0.07, 0.06, 0.13][heavy])
-    squelch = np.sin(2 * np.pi * np.cumsum(260 - 140 * np.clip(t / 0.12, 0, 1)) / SR) * envelope(n, 0.01, 0.05)
-    out += wet * 0.8 + squelch * 0.35
-    out += grains(s, length, [10, 8, 30][heavy], 300, 1500, length=(0.004, 0.012))
-    return out
+    wet = lowpass(s.noise(length), 700) * soft_env(n, 0.012, [0.07, 0.06, 0.12][heavy])
+    pitch = 230 - 110 * np.clip(t / 0.14, 0, 1)
+    squelch = np.sin(2 * np.pi * np.cumsum(pitch) / SR) * soft_env(n, 0.02, 0.05)
+    out = wet * 0.9 + squelch * 0.25
+    out += crumble(s, length, [5, 4, 14][heavy], 250, 900, 0.06, grain=(0.008, 0.02), loud=(0.1, 0.3))
+    return lowpass(out, 1500)
 
 
 def mat_plant(s, heavy):
-    length = [0.28, 0.25, 0.32][heavy]
-    out = np.zeros(samples(length))
-    for _ in range([3, 2, 4][heavy]):
-        n = int(s.uniform(0.09, 0.2) * SR)
-        swish = band(s.noise(n / SR), 1500, 7000) * envelope(n, s.uniform(0.015, 0.04), s.uniform(0.03, 0.06))
-        place(out, swish * s.uniform(0.4, 1.0), s.uniform(0, length * 0.35))
-    out += grains(s, length, [12, 8, 30][heavy], 2000, 7000, length=(0.001, 0.003), loudness=(0.1, 0.4))
+    # liście: lekki, przewiewny szelest
+    length = [0.32, 0.28, 0.36][heavy]
+    out = rustle(s, length, [8, 6, 12][heavy], 900, 3600, [0.12, 0.09, 0.16][heavy], swish=(0.025, 0.06), attack=(0.012, 0.03))
     if heavy == 2:
-        snap = band(s.noise(0.02), 900, 3500)[: samples(0.02)] * envelope(samples(0.02), 0.0005, 0.005)
-        place(out, snap * 1.2, 0.0)
-    return out
+        n = samples(0.03)
+        snap = band(s.noise(0.03), 600, 2000)[:n] * soft_env(n, 0.002, 0.008)
+        place(out, snap * 0.5, 0.0)
+    return lowpass(out, 4000)
 
 
 def mat_glass(s, heavy):
-    length = [0.16, 0.22, 0.6][heavy]
-    out = np.zeros(samples(length))
-    n = len(out)
-    out += band(s.noise(length), 2500, 9000) * envelope(n, 0.0005, 0.006) * 0.6
-    count = [3, 3, 14][heavy]
-    for i in range(count):
-        at = 0 if i < 3 else s.rng.exponential(0.08)
-        tone = damped_sine(s.uniform(2400, 6800), length, s.uniform(0.04, 0.12) * (1.0 if heavy else 0.5), s.uniform(0, 6))
-        place(out, tone * s.uniform(0.15, 0.4), at)
-    out += damped_sine(s.uniform(180, 240), length, 0.02) * [0.25, 0.5, 0.3][heavy]
-    return out
+    # cichy, przytłumiony "dzyń" (lampy)
+    length = [0.22, 0.28, 0.6][heavy]
+    n = samples(length)
+    out = band(s.noise(length), 600, 2400) * soft_env(n, 0.002, 0.012) * 0.3
+    for _ in range(2 if heavy < 2 else 3):
+        out += damped_sine(s.uniform(1300, 2600), length, s.uniform(0.04, 0.09), s.uniform(0, 6)) * soft_env(n, 0.0015, 1) * s.uniform(0.12, 0.25)
+    out += damped_sine(s.uniform(180, 230), length, 0.025) * soft_env(n, 0.003, 1) * [0.3, 0.5, 0.35][heavy]
+    if heavy == 2:
+        for _ in range(9):
+            tone = damped_sine(s.uniform(1500, 3600), 0.08, s.uniform(0.015, 0.035), s.uniform(0, 6))
+            place(out, tone * soft_env(len(tone), 0.001, 1) * s.uniform(0.06, 0.18), 0.03 + s.rng.exponential(0.08))
+    return lowpass(out, 4500)
 
 
 MATERIALS = {
@@ -283,11 +311,12 @@ MATERIALS = {
     'glass': mat_glass
 }
 
-# ile wersji każdego rodzaju (gra losuje jedną)
-KINDS = {'step': (0, 4), 'place': (1, 3), 'break': (2, 3)}
+# ile wersji każdego rodzaju (gra losuje jedną - więcej kroków, żeby
+# się nie powtarzały; ta sama liczba w src/audio/sounds.js)
+KINDS = {'step': (0, 6), 'place': (1, 3), 'break': (2, 3)}
 
-# głośność (najgłośniejsze 50 ms, dB)
-LOUDNESS = {'step': -16, 'place': -14, 'break': -12}
+# głośność (najgłośniejsze 50 ms, dB) - kroki najciszej, mają być tłem
+LOUDNESS = {'step': -21, 'place': -18.5, 'break': -17}
 
 
 # ------------------------------------------------------------
@@ -810,8 +839,11 @@ def generate(root=ROOT, only=None):
             for v in range(1, variants + 1):
                 seed += 1
                 if want('bloki'):
-                    sound = fade(loudness(make(Synth(seed), heavy), LOUDNESS[kind]), 0.0005, 0.03)
+                    sound = fade(loudness(make(Synth(seed), heavy), LOUDNESS[kind]), 0.002, 0.04)
                     save(os.path.join(root, 'blocks', f'{kind}_{material}_{v}.ogg'), sound)
+    # Dalsze grupy liczą ziarna od tej samej liczby co dawniej (gdy
+    # kroków było po 4) - więcej wersji kroków ich nie zmienia.
+    seed = 1 + len(MATERIALS) * 10
     for name, make in METEOR.items():
         seed += 101
         if want('meteoryt'):

@@ -2,6 +2,8 @@ import {
     TREE_GROWTH_SECONDS
 } from '../config.js';
 
+import { TREE_PACKS, PACK_SLOT, packTile } from './treePacks.js';
+
 // ------------------------------------------------------------
 // DRZEWA - bloki sześciu gatunków (z koncepcji Kamila)
 //
@@ -27,6 +29,11 @@ import {
 // (src/world/terrain/RealisticGenerator.js, docs/drzewa.md).
 //
 // Tekstury: wiersze 5-8 atlasu (tools/tekstury_drzew.py).
+//
+// Nowe gatunki można dodawać bez pisania kodu - jako paczki drzew
+// (folder w assets/drzewa/, src/blocks/treePacks.js, instrukcja:
+// docs/drzewa-paczki.md). Ich bloki powstają tutaj, tak samo jak bloki
+// sześciu gatunków gry (PACK_BLOCKS niżej).
 // ------------------------------------------------------------
 
 // Pola gatunku:
@@ -36,7 +43,8 @@ import {
 //   labels  - nazwy po polsku: [pień, okorowany, deski, liście, sadzonka],
 //   name_pl - nazwa gatunku (komendy, opisy): [mianownik, dopełniacz],
 //   loot    - co czasem wypada z liści w przygodzie: [[co, szansa]],
-//   bark    - przedmiot przy okorowaniu siekierą (tylko brzoza).
+//   bark    - przedmiot przy okorowaniu siekierą (tylko brzoza),
+//   pack    - paczka drzewa (tylko gatunki z assets/drzewa/).
 
 export const TREE_SPECIES = {
 
@@ -98,7 +106,40 @@ export const TREE_SPECIES = {
 };
 
 
+// Sześć gatunków samej gry (lasy w generatorze terenu, daleki teren,
+// osiągnięcie "Leśniczy" - bez gatunków z paczek).
+
+export const BASE_TREE_NAMES = Object.keys(TREE_SPECIES);
+
+
+// Gatunki z paczek (assets/drzewa/) dochodzą na koniec listy.
+
+for (const pack of TREE_PACKS) {
+
+    TREE_SPECIES[pack.id] = {
+        firstId: pack.firstId,
+        name: pack.name,
+        species: pack.species,
+        short: pack.short,
+        labels: [pack.labels.pien, pack.labels.okorowany, pack.labels.deski, pack.labels.liscie, pack.labels.sadzonka],
+        loot: pack.loot,
+        bark: pack.bark ?? undefined,
+        pack
+    };
+
+}
+
+
 export const TREE_NAMES = Object.keys(TREE_SPECIES);
+
+
+// Czy gatunek jest z paczki drzewa.
+
+export function isPackTree(species) {
+
+    return Boolean(TREE_SPECIES[species]?.pack);
+
+}
 
 
 // Nazwy bloków gatunku.
@@ -120,6 +161,46 @@ export function treeParts(species) {
 
 const SAPLING_SHAPE = { planes: 2, height: 0.95, width: 0.44 };
 
+// Liście: tekstura losowo obrócona na każdej ścianie.
+
+const LEAF_ROTATION = ['top', 'bottom', 'left', 'right', 'front', 'back'];
+
+
+// Tekstury bloków gatunku: gatunki gry - kafelki "<gatunek>_log_top"...,
+// paczki - pliki PNG z folderu paczki.
+
+function speciesTextures(species, tree) {
+
+    const pack = tree.pack;
+
+    if (!pack) {
+
+        return {
+            logTop: `${species}_log_top`,
+            logSide: `${species}_log_side`,
+            strippedTop: `${species}_stripped_top`,
+            strippedSide: `${species}_stripped_side`,
+            planks: `${species}_planks`,
+            leaves: `${species}_leaves`,
+            sapling: `${species}_sapling`
+        };
+
+    }
+
+    const tile = (key) => packTile(pack, pack.textures[key]);
+
+    return {
+        logTop: tile('pien_gora'),
+        logSide: tile('pien_bok'),
+        strippedTop: tile('okorowany_gora'),
+        strippedSide: tile('okorowany_bok'),
+        planks: tile('deski'),
+        leaves: tile('liscie'),
+        sapling: tile('sadzonka')
+    };
+
+}
+
 
 function speciesBlocks(species, tree) {
 
@@ -129,6 +210,10 @@ function speciesBlocks(species, tree) {
 
     const id = tree.firstId;
 
+    const textures = speciesTextures(species, tree);
+
+    const pack = tree.pack?.id;
+
     return {
 
         [parts.log]: {
@@ -136,10 +221,11 @@ function speciesBlocks(species, tree) {
             name: `${tree.name} Log`,
             label: logLabel,
             tree: species,
+            pack,
             part: 'log',
             sound: 'wood',
             solid: true,
-            textures: { top: `${species}_log_top`, side: `${species}_log_side`, bottom: `${species}_log_top` },
+            textures: { top: textures.logTop, side: textures.logSide, bottom: textures.logTop },
             randomRotation: ['top', 'bottom'],
             strip: parts.stripped,
             bark: tree.bark
@@ -150,10 +236,11 @@ function speciesBlocks(species, tree) {
             name: `Stripped ${tree.name} Log`,
             label: strippedLabel,
             tree: species,
+            pack,
             part: 'stripped',
             sound: 'wood',
             solid: true,
-            textures: { top: `${species}_stripped_top`, side: `${species}_stripped_side`, bottom: `${species}_stripped_top` },
+            textures: { top: textures.strippedTop, side: textures.strippedSide, bottom: textures.strippedTop },
             randomRotation: ['top', 'bottom']
         },
 
@@ -162,10 +249,11 @@ function speciesBlocks(species, tree) {
             name: `${tree.name} Planks`,
             label: planksLabel,
             tree: species,
+            pack,
             part: 'planks',
             sound: 'wood',
             solid: true,
-            textures: { all: `${species}_planks` }
+            textures: { all: textures.planks }
         },
 
         [parts.leaves]: {
@@ -173,13 +261,14 @@ function speciesBlocks(species, tree) {
             name: `${tree.name} Leaves`,
             label: leavesLabel,
             tree: species,
+            pack,
             part: 'leaves',
             sound: 'plant',
             solid: true,
             opaque: false,
             model: 'leaves',
-            textures: { all: `${species}_leaves` },
-            randomRotation: ['top', 'bottom', 'left', 'right', 'front', 'back'],
+            textures: { all: textures.leaves },
+            randomRotation: LEAF_ROTATION,
             loot: tree.loot
         },
 
@@ -188,12 +277,13 @@ function speciesBlocks(species, tree) {
             name: `${tree.name} Sapling`,
             label: saplingLabel,
             tree: species,
+            pack,
             part: 'sapling',
             solid: false,
             model: 'cross',
             plant: SAPLING_SHAPE,
-            textures: { all: `${species}_sapling` },
-            grows: { tree: species, seconds: TREE_GROWTH_SECONDS }
+            textures: { all: textures.sapling },
+            grows: { tree: species, seconds: tree.pack?.growthSeconds ?? TREE_GROWTH_SECONDS }
         }
 
     };
@@ -325,7 +415,7 @@ const EXTRAS = {
             opaque: false,
             model: 'leaves',
             textures: { all: 'linden_leaves_flowering' },
-            randomRotation: ['top', 'bottom', 'left', 'right', 'front', 'back'],
+            randomRotation: LEAF_ROTATION,
             drops: 'linden_leaves',
             loot: TREE_SPECIES.linden.loot,
             harvest: { item: 'linden_flower', count: [1, 2], becomes: 'linden_leaves' }
@@ -357,6 +447,115 @@ const EXTRAS = {
 };
 
 
+// ------------------------------------------------------------
+// DODATKI PACZEK DRZEW (assets/drzewa/)
+//
+// Opadłe liście (jeśli paczka je ma) i odmiany liści. Odmiana z "zbior"
+// (np. liście z jabłkami): PPM zbiera przedmiot, a liście zamieniają się
+// w "odrastające" - wyglądają jak zwykłe liście i po "odrasta" sekundach
+// (średnio) znów są odmianą. Bez "odrasta" - po zbiorze zostają zwykłe
+// liście. Odmiany i opadłe liście zniszczone w przygodzie dają zwykłe
+// liście (i zbiór, jeśli był).
+// ------------------------------------------------------------
+
+export function packVariantType(species, key) {
+
+    return `${species}_leaves_${key}`;
+
+}
+
+
+function packExtras(pack) {
+
+    const species = pack.id;
+
+    const parts = treeParts(species);
+
+    const tile = (file) => packTile(pack, file);
+
+    const blocks = {};
+
+
+    if (pack.textures.opadleLiscie) {
+
+        blocks[`${species}_leaf_litter`] = {
+            id: pack.firstId + PACK_SLOT.litter,
+            name: `${pack.name} Leaf Litter`,
+            label: pack.labels.opadleLiscie,
+            tree: species,
+            pack: species,
+            part: 'litter',
+            sound: 'plant',
+            solid: false,
+            replaceable: true,
+            model: 'flat',
+            flat: { attach: 'down' },
+            textures: { all: tile(pack.textures.opadleLiscie) },
+            randomRotation: ['top']
+        };
+
+    }
+
+
+    pack.variants.forEach((variant, i) => {
+
+        const type = packVariantType(species, variant.key);
+
+        const regrowing = `${type}_growing`;
+
+        const id = pack.firstId + PACK_SLOT.variants + i * 2;
+
+        blocks[type] = {
+            id,
+            name: `${pack.name} Leaves (${variant.key})`,
+            label: variant.label,
+            tree: species,
+            pack: species,
+            part: 'leaves',
+            sound: 'plant',
+            solid: true,
+            opaque: false,
+            model: 'leaves',
+            textures: { all: tile(variant.texture) },
+            randomRotation: LEAF_ROTATION,
+            drops: parts.leaves,
+            loot: pack.loot,
+            harvest: variant.harvest
+                ? { item: variant.harvest.item, count: variant.harvest.count, becomes: variant.regrow ? regrowing : parts.leaves }
+                : undefined
+        };
+
+        if (variant.regrow) {
+
+            blocks[regrowing] = {
+                id: id + 1,
+                name: `${pack.name} Leaves (${variant.key} regrowing)`,
+                label: variant.afterLabel ?? `${pack.labels.liscie} (po zbiorze)`,
+                tree: species,
+                pack: species,
+                part: 'leaves',
+                sound: 'plant',
+                solid: true,
+                opaque: false,
+                model: 'leaves',
+                textures: { all: tile(pack.textures.liscie) },
+                randomRotation: LEAF_ROTATION,
+                creative: false,
+                drops: parts.leaves,
+                pick: parts.leaves,
+                loot: pack.loot,
+                grows: { into: type, seconds: variant.regrow }
+            };
+
+        }
+
+    });
+
+    return blocks;
+
+}
+
+
 const PART_ORDER = ['log', 'stripped', 'planks', 'leaves', 'sapling', 'litter', 'wreath'];
 
 
@@ -368,7 +567,9 @@ export function treeBlocks() {
 
     for (const [species, tree] of Object.entries(TREE_SPECIES)) {
 
-        const entries = Object.entries({ ...speciesBlocks(species, tree), ...(EXTRAS[species] ?? {}) });
+        const extras = tree.pack ? packExtras(tree.pack) : EXTRAS[species] ?? {};
+
+        const entries = Object.entries({ ...speciesBlocks(species, tree), ...extras });
 
         entries.sort(([, a], [, b]) => PART_ORDER.indexOf(a.part) - PART_ORDER.indexOf(b.part));
 

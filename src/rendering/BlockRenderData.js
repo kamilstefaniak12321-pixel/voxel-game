@@ -360,7 +360,7 @@ plantMaterial.onBeforeCompile = (shader, renderer) => {
             '#include <begin_vertex>',
             `#include <begin_vertex>
 
-            float plantTop = step(fract((1.0 - uv.y) * 16.0), 0.5);
+            float plantTop = step(fract((1.0 - uv.y) * ${ATLAS_ROWS.toFixed(1)}), 0.5);
 
             vec3 plantWorld = (modelMatrix * vec4(transformed, 1.0)).xyz;
 

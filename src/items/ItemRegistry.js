@@ -5,6 +5,10 @@ import {
     getBlockLabel
 } from '../blocks/BlockRegistry.js';
 
+import { TOOL_MATERIALS } from '../config.js';
+
+import { TREE_PACKS, packTile } from '../blocks/treePacks.js';
+
 // ------------------------------------------------------------
 // PRZEDMIOTY
 //
@@ -17,8 +21,20 @@ import {
 //   label  - nazwa po polsku (pasek, ekwipunek, /daj)
 //   icon   - kafelek atlasu z obrazkiem (wiersz 4 i 8 w terrain.png)
 //   plants - jaki blok (roślina) staje po posadzeniu - opcjonalne
-//   tool   - narzędzie: 'axe' (siekiera - PPM na pniu okorowuje go,
-//            src/game/Game.js)
+//   tool   - narzędzie: 'axe' (siekiera - drewno kopie szybciej, PPM
+//            na pniu okorowuje go), 'pickaxe' (kilof - skały szybciej),
+//            'shovel' (łopata - ziemia, piasek, żwir, błoto szybciej);
+//            jakie materiały - TOOL_MATERIALS w src/config.js
+//   category - kategoria w ekwipunku, księdze przepisów i wiki
+//            (src/items/categories.js) - opcjonalne, zwykle sama się
+//            dobiera
+//
+// Skąd się biorą i do czego służą: przepisy (src/crafting/recipes.js),
+// sadzenie (plants), łupy z liści i zbiory (BlockRegistry.js).
+//
+// Przedmioty z paczek drzew ("przedmioty" w assets/drzewa/<drzewo>/
+// drzewo.json) dochodzą na koniec listy jako <drzewo>_<klucz>, np.
+// jablon_jablko.
 //
 // Nazwy przedmiotów i bloków nie mogą się powtarzać - wszędzie poza
 // światem (ekwipunek, /daj) chodzi o tę samą listę.
@@ -109,15 +125,58 @@ export const ITEM_TYPES = {
         icon: 'birch_bark'
     },
 
+    // NARZĘDZIA I SUROWCE (wiersz 9 atlasu - tools/tekstury_narzedzi.py).
+    // Narzędzia robi się z patyków i skał (src/crafting/recipes.js).
+
     // PPM siekierą na pniu - okorowany pień (z brzozy jeszcze kora).
     axe: {
         name: 'Axe',
         label: 'Siekiera',
         icon: 'axe',
         tool: 'axe'
+    },
+
+    pickaxe: {
+        name: 'Pickaxe',
+        label: 'Kilof',
+        icon: 'pickaxe',
+        tool: 'pickaxe'
+    },
+
+    shovel: {
+        name: 'Shovel',
+        label: 'Łopata',
+        icon: 'shovel',
+        tool: 'shovel'
+    },
+
+    stick: {
+        name: 'Stick',
+        label: 'Patyk',
+        icon: 'stick'
     }
 
 };
+
+
+// Przedmioty z paczek drzew (src/blocks/treePacks.js).
+
+for (const pack of TREE_PACKS) {
+
+    for (const item of Object.values(pack.items)) {
+
+        ITEM_TYPES[item.type] = {
+            name: item.label,
+            label: item.label,
+            icon: packTile(pack, item.texture),
+            plants: item.plants ? `${pack.id}_sapling` : undefined,
+            category: item.category,
+            pack: pack.id
+        };
+
+    }
+
+}
 
 
 for (const [type, item] of Object.entries(ITEM_TYPES)) {
@@ -128,6 +187,10 @@ for (const [type, item] of Object.entries(ITEM_TYPES)) {
 
     if (item.plants && !blockExists(item.plants)) {
         throw new Error(`Przedmiot "${type}": nieznana roślina "${item.plants}"`);
+    }
+
+    if (item.tool && !Object.hasOwn(TOOL_MATERIALS, item.tool)) {
+        throw new Error(`Przedmiot "${type}": nieznane narzędzie "${item.tool}" (TOOL_MATERIALS w config.js)`);
     }
 
 }
@@ -176,7 +239,7 @@ export function currentType(type) {
 
 // ------------------------------------------------------------
 
-// Narzędzie w ręce ('axe') albo null.
+// Narzędzie w ręce ('axe', 'pickaxe', 'shovel') albo null.
 
 export function getTool(type) {
 

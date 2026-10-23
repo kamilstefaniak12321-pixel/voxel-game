@@ -14,7 +14,10 @@ import { itemExists, currentType } from '../items/ItemRegistry.js';
 // je ze stosu. Tryb kreatywny: stawianie nic nie zużywa.
 //
 // Dane (`data`) to zwykły obiekt zapisywany razem ze światem
-// (worldInfo.inventory): { slots: [...], selected }.
+// (worldInfo.inventory): { slots: [...], selected, craft: [...] }.
+// craft - 4 miejsca siatki wytwarzania 2 x 2 (src/crafting/Crafting.js):
+// po zamknięciu okna wracają do ekwipunku, a co się nie zmieści -
+// czeka w siatce (i w zapisie), więc nic nie ginie.
 // ------------------------------------------------------------
 
 export const STACK_SIZE = 64;
@@ -22,6 +25,9 @@ export const STACK_SIZE = 64;
 export const MAIN_ROWS = 3;
 
 export const SLOT_COUNT = HOTBAR_SIZE + MAIN_ROWS * HOTBAR_SIZE;
+
+// Siatka wytwarzania 2 x 2 (tak samo w Crafting.js - GRID_CELLS).
+export const CRAFT_SLOTS = 4;
 
 
 // Poprawny stos albo null (zapis mógł być uszkodzony, blok usunięty z gry).
@@ -101,7 +107,17 @@ export class Inventory {
             selected = 0;
         }
 
-        return new Inventory({ slots, selected });
+        // Siatka wytwarzania (światy sprzed craftingu - pusta).
+
+        const craft = new Array(CRAFT_SLOTS).fill(null);
+
+        if (Array.isArray(saved?.craft)) {
+            for (let i = 0; i < CRAFT_SLOTS; i++) {
+                craft[i] = cleanItem(saved.craft[i]);
+            }
+        }
+
+        return new Inventory({ slots, selected, craft });
 
     }
 
@@ -109,6 +125,17 @@ export class Inventory {
     get slots() {
 
         return this.data.slots;
+
+    }
+
+
+    // Siatka wytwarzania 2 x 2 (4 stosy albo null).
+
+    get craft() {
+
+        this.data.craft ??= new Array(CRAFT_SLOTS).fill(null);
+
+        return this.data.craft;
 
     }
 
@@ -241,6 +268,65 @@ export class Inventory {
     }
 
 
+    // Ile sztuk tego bloku / przedmiotu jest w ekwipunku.
+
+    count(type) {
+
+        let count = 0;
+
+        for (const item of this.data.slots) {
+            if (item?.type === type) {
+                count += item.count;
+            }
+        }
+
+        return count;
+
+    }
+
+
+    // Zabiera `count` sztuk danej rzeczy z całego ekwipunku (najpierw
+    // z reszty ekwipunku, na końcu z paska - żeby pasek zostawał).
+    // Zwraca, ile zabrało.
+
+    remove(type, count) {
+
+        let left = count;
+
+        const order = [];
+
+        for (let i = SLOT_COUNT - 1; i >= HOTBAR_SIZE; i--) {
+            order.push(i);
+        }
+
+        for (let i = HOTBAR_SIZE - 1; i >= 0; i--) {
+            order.push(i);
+        }
+
+        for (const i of order) {
+
+            const item = this.data.slots[i];
+
+            if (left > 0 && item?.type === type) {
+
+                const taken = Math.min(left, item.count);
+
+                item.count -= taken;
+                left -= taken;
+
+                if (item.count <= 0) {
+                    this.data.slots[i] = null;
+                }
+
+            }
+
+        }
+
+        return count - left;
+
+    }
+
+
     // Zabiera `count` sztuk z miejsca (np. postawiony blok).
 
     take(index, count = 1) {
@@ -287,6 +373,8 @@ export class Inventory {
     clear() {
 
         this.data.slots.fill(null);
+
+        this.craft.fill(null);
 
     }
 

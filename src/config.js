@@ -373,9 +373,11 @@ export const TREE_GROWTH_SECONDS = 300;
 
 // KOPANIE (tryb przygody): ile sekund trzeba trzymać LPM, żeby zniszczyć
 // blok - według materiału dźwięków bloku (pole sound w BlockRegistry.js;
-// blok może mieć własny czas: pole hardness). Liście - LEAVES_BREAK_SECONDS,
-// siekiera kopie drewno AXE_SPEED razy szybciej. W trybie kreatywnym blok
-// znika od razu, a trzymany LPM niszczy kolejne co CREATIVE_REPEAT_SECONDS.
+// blok może mieć własny czas: pole hardness). Liście - LEAVES_BREAK_SECONDS.
+// Narzędzie kopie swoje materiały TOOL_SPEED razy szybciej (TOOL_MATERIALS:
+// siekiera - drewno, kilof - skały, łopata - ziemia, piasek, żwir, błoto).
+// W trybie kreatywnym blok znika od razu, a trzymany LPM niszczy kolejne
+// co CREATIVE_REPEAT_SECONDS.
 export const BREAK_SECONDS = {
     plant: 0,
     grass: 0.6,
@@ -388,7 +390,12 @@ export const BREAK_SECONDS = {
     stone: 2.2
 };
 export const LEAVES_BREAK_SECONDS = 0.35;
-export const AXE_SPEED = 3;
+export const TOOL_SPEED = 3;
+export const TOOL_MATERIALS = {
+    axe: ['wood'],
+    pickaxe: ['stone'],
+    shovel: ['grass', 'dirt', 'sand', 'gravel', 'mud']
+};
 
 // Przy kopaniu co tyle sekund: machnięcie ręką, stuknięcie (dźwięk)
 // i kilka odłamków. Po zniszczeniu bloku chwila przerwy, zanim zacznie

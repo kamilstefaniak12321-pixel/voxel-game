@@ -1,4 +1,4 @@
-import { TREE_SPECIES, treeParts } from '../../blocks/trees.js';
+import { TREE_SPECIES, TREE_NAMES, treeParts, packVariantType } from '../../blocks/trees.js';
 
 // ------------------------------------------------------------
 // KSZTAŁTY DRZEW
@@ -23,6 +23,10 @@ import { TREE_SPECIES, treeParts } from '../../blocks/trees.js';
 //             nieregularna korona,
 //   brzoza  - smukły biały pień (czasem lekko pochylony), lekka,
 //             ażurowa korona ze zwisającymi gałązkami.
+//
+// Gatunki z paczek drzew (assets/drzewa/) - na dole pliku: kształt
+// narysowany w szablonie (pliki .txt) albo jeden z gotowych (kula,
+// stożek, parasol, kolumna) z liczbami z drzewo.json.
 // ------------------------------------------------------------
 
 // Najdalej od pnia (w poziomie) i najwyżej, gdzie może być blok
@@ -91,6 +95,22 @@ class TreeBuilder {
     }
 
 
+    key(x, y, z) {
+
+        return (x + 64) * 16384 + (y + 64) * 128 + (z + 64);
+
+    }
+
+
+    // Czy w komórce (x, y, z) już coś jest.
+
+    has(x, y, z) {
+
+        return this.cells.has(this.key(x, y, z));
+
+    }
+
+
     set(x, y, z, type, strength) {
 
         x = Math.round(x);
@@ -101,7 +121,7 @@ class TreeBuilder {
             return;
         }
 
-        const key = (x + 64) * 16384 + (y + 64) * 128 + (z + 64);
+        const key = this.key(x, y, z);
 
         const old = this.cells.get(key);
 
@@ -199,7 +219,7 @@ class TreeBuilder {
 
     // Jedna warstwa liści (krążek o promieniu r) na wysokości y.
 
-    disk(cx, y, cz, r, ragged = 0.3) {
+    disk(cx, y, cz, r, ragged = 0.3, type) {
 
         const random = this.random;
 
@@ -221,7 +241,7 @@ class TreeBuilder {
                     continue;
                 }
 
-                this.leaf(cx + x, y, cz + z);
+                this.leaf(cx + x, y, cz + z, type);
 
             }
 
@@ -687,7 +707,271 @@ function birch(tree, size) {
 }
 
 
+// ------------------------------------------------------------
+// PACZKI DRZEW (src/blocks/treePacks.js, docs/drzewa-paczki.md)
+// ------------------------------------------------------------
+
+// Szablon: komórki [x, y, z, znak] narysowane w pliku .txt. Rozmiar
+// drzewa wybiera szablon (pierwszy - najmniejsze drzewa, ostatni -
+// największe), a każde drzewo jest losowo obrócone i odbite, więc
+// w lesie nie stoją takie same.
+//   P i @ - pień (@ - podstawa, tam stała sadzonka),
+//   L     - liście, l - liście, ale nie zawsze (70%),
+//   inny  - odmiana liści z tym "znakiem" (np. J - liście z jabłkami).
+
+function templateTree(tree, size, pack) {
+
+    const random = tree.random;
+
+    const templates = pack.shape.templates;
+
+    const cells = templates[Math.min(templates.length - 1, Math.floor(size * templates.length))];
+
+    const turn = Math.floor(random() * 4);
+
+    const mirror = random() < 0.5;
+
+    const variants = new Map(
+        pack.variants.filter((variant) => variant.char).map((variant) => [variant.char, packVariantType(pack.id, variant.key)])
+    );
+
+
+    for (const [cx, y, cz, char] of cells) {
+
+        let x = mirror ? -cx : cx;
+        let z = cz;
+
+        for (let k = 0; k < turn; k++) {
+            [x, z] = [-z, x];
+        }
+
+        if (char === 'P' || char === '@') {
+
+            tree.log(x, y, z);
+
+            if (y === 0) {
+                tree.roots.push([x, z, tree.parts.log]);
+            }
+
+        }
+        else if (char === 'L') {
+            tree.leaf(x, y, z);
+        }
+        else if (char === 'l') {
+
+            if (random() < 0.7) {
+                tree.leaf(x, y, z);
+            }
+
+        }
+        else if (variants.has(char)) {
+            tree.leaf(x, y, z, variants.get(char));
+        }
+
+    }
+
+}
+
+
+// Gotowe kształty: liczby z drzewo.json - wysokość pnia pod koroną,
+// promień i wysokość korony, gęstość brzegu korony (0-1). Każda liczba
+// to [dla małego, dla dużego drzewa].
+
+function sizes(tree, size, shape) {
+
+    const random = tree.random;
+
+    return {
+        trunk: Math.max(1, Math.round(lerp(shape.trunk[0], shape.trunk[1], size) + (random() - 0.5) * 0.9)),
+        radius: lerp(shape.radius[0], shape.radius[1], size),
+        tall: Math.max(1, lerp(shape.crown[0], shape.crown[1], size)),
+        density: shape.density
+    };
+
+}
+
+
+const PACK_SHAPES = {
+
+    // Kula: zaokrąglona korona (jak lipa, jabłoń).
+    kula(tree, size, shape) {
+
+        const { trunk, radius, tall, density } = sizes(tree, size, shape);
+
+        const crownY = trunk + tall / 2 - 0.5;
+
+        tree.trunk(0, 0, 0, Math.round(crownY));
+
+        tree.blob(0, crownY, 0, radius, Math.max(0.6, tall / 2), radius, 0.6, density);
+
+    },
+
+    // Stożek: korona od dołu szeroka, do góry coraz węższa (jak świerk).
+    stozek(tree, size, shape) {
+
+        const { trunk, radius, density } = sizes(tree, size, shape);
+
+        const tall = Math.round(lerp(shape.crown[0], shape.crown[1], size));
+
+        tree.trunk(0, 0, 0, trunk + tall - 1);
+
+        for (let y = trunk; y < trunk + tall; y++) {
+
+            const t = (y - trunk) / tall;
+
+            tree.disk(0, y, 0, Math.max(0.5, radius * (1 - t) + 0.3), (1 - density) * 0.6);
+
+        }
+
+        tree.leaf(0, trunk + tall, 0);
+
+    },
+
+    // Parasol: wysoki pień, płaska szeroka korona na górze (jak pinia,
+    // akacja). Wysokość korony - jej grubość.
+    parasol(tree, size, shape) {
+
+        const random = tree.random;
+
+        const { trunk, radius, tall, density } = sizes(tree, size, shape);
+
+        tree.trunk(0, 0, 0, trunk);
+
+        const limbs = 3 + Math.floor(random() * 2);
+
+        const angle0 = random() * Math.PI * 2;
+
+        for (let i = 0; i < limbs; i++) {
+
+            const angle = angle0 + i * Math.PI * 2 / limbs;
+
+            tree.branch(0, trunk - 1, 0, Math.cos(angle) * radius * 0.5, trunk + 0.6, Math.sin(angle) * radius * 0.5);
+
+        }
+
+        tree.blob(0, trunk + 0.4 + tall / 2, 0, radius, Math.max(0.7, tall / 2), radius, 0.55, density);
+
+    },
+
+    // Kolumna: wąska, wysoka korona tej samej szerokości (jak topola).
+    kolumna(tree, size, shape) {
+
+        const { trunk, radius, density } = sizes(tree, size, shape);
+
+        const tall = Math.round(lerp(shape.crown[0], shape.crown[1], size));
+
+        tree.trunk(0, 0, 0, trunk + tall - 2);
+
+        for (let y = trunk; y < trunk + tall; y++) {
+
+            const fromTop = trunk + tall - 1 - y;
+
+            const r = fromTop === 0 ? Math.min(radius, 0.6) : fromTop === 1 ? radius * 0.7 : radius;
+
+            tree.disk(0, y, 0, Math.max(0.5, r), (1 - density) * 0.6);
+
+        }
+
+    }
+
+};
+
+
+// Odmiany liści z "udzial" - taka część liści na wierzchu korony
+// (z co najmniej jednym pustym sąsiadem - widać je z zewnątrz).
+
+function packVariants(tree, pack) {
+
+    const variants = pack.variants.filter((variant) => variant.share > 0);
+
+    if (variants.length === 0) {
+        return;
+    }
+
+    const random = tree.random;
+
+    for (const cell of tree.cells.values()) {
+
+        const [x, y, z, type] = cell;
+
+        if (type !== tree.parts.leaves) {
+            continue;
+        }
+
+        const outside =
+            !tree.has(x + 1, y, z) || !tree.has(x - 1, y, z) ||
+            !tree.has(x, y + 1, z) || !tree.has(x, y - 1, z) ||
+            !tree.has(x, y, z + 1) || !tree.has(x, y, z - 1);
+
+        if (!outside) {
+            continue;
+        }
+
+        for (const variant of variants) {
+
+            if (random() < variant.share) {
+
+                cell[3] = packVariantType(pack.id, variant.key);
+
+                break;
+
+            }
+
+        }
+
+    }
+
+}
+
+
+function packShape(pack) {
+
+    return (tree, size) => {
+
+        if (pack.shape.kind === 'szablon') {
+            templateTree(tree, size, pack);
+        }
+        else {
+            PACK_SHAPES[pack.shape.kind](tree, size, pack.shape);
+        }
+
+        packVariants(tree, pack);
+
+
+        // Opadłe liście pod koroną.
+
+        if (pack.shape.litter > 0) {
+
+            let radius = 2;
+
+            for (const [x, , z, type] of tree.cells.values()) {
+
+                if (type !== tree.parts.log) {
+                    radius = Math.max(radius, Math.hypot(x, z));
+                }
+
+            }
+
+            tree.fallen(Math.min(6, Math.round(radius)), pack.shape.litter);
+
+        }
+
+    };
+
+}
+
+
 const SHAPES = { spruce, pine, beech, linden, oak, birch };
+
+for (const species of TREE_NAMES) {
+
+    const pack = TREE_SPECIES[species].pack;
+
+    if (pack) {
+        SHAPES[species] = packShape(pack);
+    }
+
+}
 
 
 // Drzewo gatunku `species` (TREE_SPECIES): { species, blocks: [[x, y, z,

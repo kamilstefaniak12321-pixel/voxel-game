@@ -6,6 +6,10 @@ i **brzoza brodawkowata**. Każdy ma swoje bloki, dodatki, wygląd w świecie
 i miejsca, w których rośnie. To pierwszy kawałek etapu 4 (biomy) z
 `docs/generator-terenu.md` - same drzewa i lasy, jeszcze bez biomów.
 
+Nowe gatunki można dodawać **bez programowania** - jako paczki drzew
+w `assets/drzewa/` (przykład: jabłoń). Instrukcja krok po kroku:
+[`docs/drzewa-paczki.md`](drzewa-paczki.md).
+
 ![Drzewa w grze](drzewa-galeria.jpg)
 
 ![Bloki i dodatki drzew](drzewa-bloki.png)

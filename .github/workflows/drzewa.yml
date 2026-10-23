@@ -1,0 +1,94 @@
+# ------------------------------------------------------------
+# DRZEWA - paczki drzew (assets/drzewa/) dodane prosto na GitHubie
+#
+# Uruchamia się, gdy zmieni się coś w assets/drzewa/ (wysłane z
+# komputera albo wgrane przez stronę GitHuba: Add file -> Upload files,
+# można przeciągnąć cały folder drzewa):
+#
+#   1. node tools/drzewa.mjs - dopisuje nowe foldery do
+#      assets/drzewa/lista.json, nadaje nowym drzewom wolne numery
+#      bloków ("pierwszeId") i sprawdza wszystkie paczki tak jak gra
+#      przy starcie. Błędy widać na stronie przebiegu (Actions -> ten
+#      przebieg) i w podsumowaniu - przebieg świeci wtedy na czerwono.
+#   2. Odświeża wiki gry (python tools/wiki.py) - nowe bloki i przedmioty.
+#   3. Jeśli coś się zmieniło - zapisuje to (commit "Drzewa: ...")
+#      w tej samej gałęzi. Przy pull requeście tylko sprawdza.
+#
+# Nowe drzewo trafia do aplikacji (Windows, Android) z najbliższym
+# wydaniem - wydanie = podniesienie "version" w package.json
+# (.github/workflows/aplikacja.yml). Opis: docs/drzewa-paczki.md.
+# ------------------------------------------------------------
+
+name: Drzewa (paczki)
+
+on:
+  push:
+    paths:
+      - 'assets/drzewa/**'
+  pull_request:
+    paths:
+      - 'assets/drzewa/**'
+      - 'src/blocks/treePacks.js'
+      - 'tools/drzewa.mjs'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: drzewa-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  drzewa:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+
+      # Błąd w jednej paczce nie zatrzymuje reszty (gra też ją tylko
+      # pomija) - lista i wiki zapisują się, a na końcu przebieg i tak
+      # świeci na czerwono.
+      - name: Lista drzew i sprawdzenie paczek
+        id: drzewa
+        continue-on-error: true
+        run: node tools/drzewa.mjs
+
+      - uses: actions/setup-python@v6
+        if: github.event_name != 'pull_request'
+        with:
+          python-version: '3.12'
+
+      - name: Wiki gry
+        if: github.event_name != 'pull_request'
+        run: |
+          pip install --quiet numpy pillow markdown
+          python tools/wiki.py
+
+      - name: Zapis zmian
+        if: github.event_name != 'pull_request'
+        run: |
+          git add assets/drzewa docs/wiki
+          # Sama nowa data w wiki (index.html) to jeszcze nie zmiana.
+          if [ "$(git diff --cached --numstat)" = "$(printf '1\t1\tdocs/wiki/index.html')" ]; then
+            git reset -q
+          fi
+          if git diff --cached --quiet; then
+            echo "Nic do zapisania."
+            exit 0
+          fi
+          NEW=$(git diff --cached --name-only -- 'assets/drzewa/*/drzewo.json' | cut -d/ -f3 | sort -u | tr '\n' ' ')
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -q -m "Drzewa: lista i numery bloków ${NEW}(automatycznie), wiki"
+          git pull --rebase --quiet
+          git push --quiet
+
+      - name: Wynik sprawdzenia
+        if: steps.drzewa.outcome == 'failure'
+        run: |
+          echo "::error::Któraś paczka drzewa ma błąd - opis w kroku 'Lista drzew i sprawdzenie paczek' i w podsumowaniu przebiegu. Gra pomija tylko to drzewo."
+          exit 1

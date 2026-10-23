@@ -37,7 +37,7 @@ import {
 
 import { setPotatoDefine } from '../rendering/BlockRenderData.js';
 
-import { TREE_NAMES } from '../blocks/trees.js';
+import { BASE_TREE_NAMES, TREE_NAMES, TREE_SPECIES } from '../blocks/trees.js';
 
 // ------------------------------------------------------------
 // DALEKI TEREN (HORYZONT)
@@ -128,7 +128,7 @@ const ROCK_KINDS = ['granite', 'limestone', 'sandstone', 'slate', 'basalt', 'lep
 // Lasy: z daleka widać korony drzew w kolorze liści gatunku
 // (generator.farSurface podnosi tam teren do wysokości koron).
 
-const LEAF_KINDS = TREE_NAMES.map((species) => `${species}_leaves`);
+const LEAF_KINDS = BASE_TREE_NAMES.map((species) => `${species}_leaves`);
 
 // Korony z daleka są trochę ciemniejsze niż sama tekstura liści
 // (cienie między liśćmi i drzewami).
@@ -164,6 +164,28 @@ for (const leaves of LEAF_KINDS) {
 }
 
 BLOCK_KINDS.linden_leaves_flowering = 'linden_leaves';
+
+// Drzewa z paczek z daleka wyglądają jak gatunek gry z "podobnyDo"
+// (wszystkie ich liście, także odmiany).
+
+for (const species of TREE_NAMES) {
+
+    const pack = TREE_SPECIES[species].pack;
+
+    if (!pack) {
+        continue;
+    }
+
+    const kind = `${pack.similar}_leaves`;
+
+    BLOCK_KINDS[`${species}_leaves`] = kind;
+
+    for (const variant of pack.variants) {
+        BLOCK_KINDS[`${species}_leaves_${variant.key}`] = kind;
+        BLOCK_KINDS[`${species}_leaves_${variant.key}_growing`] = kind;
+    }
+
+}
 
 
 // ------------------------------------------------------------

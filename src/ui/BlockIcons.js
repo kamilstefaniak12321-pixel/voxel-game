@@ -7,7 +7,7 @@ import {
 } from '../items/ItemRegistry.js';
 
 import {
-    ATLAS_URL,
+    atlasImage,
     ATLAS_TILES,
     ATLAS_TILE_SIZE
 } from '../rendering/TextureAtlas.js';
@@ -35,22 +35,6 @@ const ICON_SIZE = 64;
 
 const LEFT_SHADE = 0.2;
 const RIGHT_SHADE = 0.4;
-
-
-function loadImage(url) {
-
-    return new Promise((resolve, reject) => {
-
-        const image = new Image();
-
-        image.onload = () => resolve(image);
-        image.onerror = () => reject(new Error(`Nie udało się wczytać ${url}`));
-
-        image.src = url;
-
-    });
-
-}
 
 
 // Rysuje jedną ścianę: kafelek atlasu "naciągnięty" na
@@ -132,8 +116,10 @@ export async function createBlockIcons() {
 
     let atlas;
 
+    // Ten sam obrazek co w świecie (z teksturami paczek drzew).
+
     try {
-        atlas = await loadImage(ATLAS_URL);
+        atlas = await atlasImage;
     }
     catch (error) {
         console.warn(error);

@@ -34,12 +34,10 @@ const STICK_SPRINT = 0.92;
 // Stuknięcie: najwyżej tyle ms i tyle px ruchu. Przytrzymanie: po tylu ms
 // zaczyna kopać - jak trzymany LPM (tak samo trzymany "Kop"): w trybie
 // przygody blok pęka i znika po czasie kopania, w kreatywnym kolejne
-// bloki co chwilę (Game.js). REPEAT_MS - powtarzanie przycisków
-// z repeat: true.
+// bloki co chwilę (Game.js).
 const TAP_MS = 320;
 const TAP_MOVE = 14;
 const HOLD_MS = 400;
-const REPEAT_MS = 300;
 
 
 // Ikonki przycisków (proste rysunki SVG, kolor = kolor tekstu).
@@ -180,9 +178,6 @@ export class TouchControls {
         this.lookPointer = null;
         this.look = null;
 
-        // Trzymane przyciski, które powtarzają wciśnięcie (Kop).
-        this.repeats = new Set();
-
         // Klawisze z przycisków (keyDown / keyUp).
         this.heldFrames = new Map();
         this.pendingUp = new Set();
@@ -212,8 +207,8 @@ export class TouchControls {
 
 
     // Przycisk. what: { key } - trzymany klawisz, { press } - jedno
-    // wciśnięcie klawisza, { mouse, repeat } - przycisk myszy (repeat -
-    // trzymany powtarza), { action } - funkcja.
+    // wciśnięcie klawisza, { mouse, hold } - przycisk myszy (hold -
+    // trzymany działa jak trzymany przycisk myszy), { action } - funkcja.
 
     button(parent, name, label, what) {
 
@@ -225,8 +220,6 @@ export class TouchControls {
         element.setAttribute('aria-label', label);
 
         parent.appendChild(element);
-
-        const repeat = { mouse: what.mouse, last: 0 };
 
         const down = (event) => {
 
@@ -254,12 +247,6 @@ export class TouchControls {
                     this.input.mouseDown.add(what.mouse);
                 }
 
-                // Trzymany - następne wciśnięcia w update().
-                if (what.repeat) {
-                    repeat.last = performance.now();
-                    this.repeats.add(repeat);
-                }
-
             }
 
             what.action?.();
@@ -275,8 +262,6 @@ export class TouchControls {
             if (what.key) {
                 this.keyUp(what.key);
             }
-
-            this.repeats.delete(repeat);
 
             if (what.hold) {
                 this.input.mouseDown.delete(what.mouse);
@@ -454,8 +439,7 @@ export class TouchControls {
                 // Ile klatek gry minęło od dotknięcia (update).
                 frames: 0,
                 moved: false,
-                broke: false,
-                lastBreak: 0
+                broke: false
             };
 
             this.holdRing.style.left = `${event.clientX}px`;
@@ -563,25 +547,12 @@ export class TouchControls {
             if (!look.broke && look.frames > 1 && now - look.time >= HOLD_MS) {
 
                 look.broke = true;
-                look.lastBreak = now;
 
                 this.input.mousePressed.add(0);
 
                 this.input.mouseDown.add(0);
 
                 this.holdRing.classList.add('active');
-
-            }
-
-        }
-
-        for (const repeat of this.repeats) {
-
-            if (now - repeat.last >= REPEAT_MS) {
-
-                repeat.last = now;
-
-                this.input.mousePressed.add(repeat.mouse);
 
             }
 
@@ -667,8 +638,6 @@ export class TouchControls {
         this.knob.style.transform = '';
 
         this.stopHold();
-
-        this.repeats.clear();
 
         this.setMove(0, 0);
 

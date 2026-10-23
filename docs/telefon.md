@@ -151,7 +151,12 @@ komputera), tak samo księga osiągnięć i ustawienia.
 | przycisk "wstecz" telefonu | pauza (albo zamyka czat / ekwipunek) - nie wychodzi z gry |
 
 Kop i postaw działają zawsze tam, gdzie jest celownik - jak na
-komputerze. Wyjście do innej aplikacji albo zgaszenie ekranu to pauza
+komputerze. W ekwipunku (skrzynka) jest też **wytwarzanie**: stuknięcie
+bierze i kładzie stos jak klik myszą, a najwygodniej przez księgę
+przepisów (📖 *Przepisy*) - na telefonie otwiera się w miejscu
+ekwipunku; stuknięcie w przepis układa składniki w siatce (kolejne -
+następny komplet), a stuknięcie w wynik wkłada wyrób prosto do
+ekwipunku. Wyjście do innej aplikacji albo zgaszenie ekranu to pauza
 i zapis świata. Telefon trzymany pionowo: gra działa, ale pokazuje
 podpowiedź, żeby go obrócić.
 

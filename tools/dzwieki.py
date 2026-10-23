@@ -827,6 +827,30 @@ ACHIEVEMENT_SOUNDS = {
 
 
 # ------------------------------------------------------------
+# Wytwarzanie (crafting w ekwipunku - src/ui/InventoryScreen.js)
+# ------------------------------------------------------------
+
+def item_craft(s):
+    """Wzięcie wyrobu: dwa drewniane stuknięcia (składanie) i krótki,
+    jasny dzwoneczek "gotowe"."""
+    length = 0.42
+    out = np.zeros(samples(length))
+    for at, freq in [(0.0, 330), (0.07, 410)]:
+        n = samples(0.08)
+        knock = damped_sine(freq, 0.08, 0.016) * 0.7 + damped_sine(freq * 2.7, 0.08, 0.006) * 0.25
+        knock += band(s.noise(0.08), 1200, 4500) * envelope(n, 0.0004, 0.004) * 0.4
+        place(out, knock, at)
+    for at, name, loud in [(0.15, 'E6', 0.32), (0.2, 'B6', 0.22)]:
+        place(out, soft_tone(note(name), 0.22, 0.07, (1.0, 0.2, 0.05)) * loud, at)
+    return out
+
+
+CRAFT_SOUNDS = {
+    'item_craft': (item_craft, -20)
+}
+
+
+# ------------------------------------------------------------
 # Zapis
 # ------------------------------------------------------------
 
@@ -841,7 +865,7 @@ def save(path, data):
         )
 
 
-GROUPS = ['bloki', 'meteoryt', 'owoce', 'menu', 'woda', 'kosmos', 'osiagniecia']
+GROUPS = ['bloki', 'meteoryt', 'owoce', 'menu', 'woda', 'kosmos', 'osiagniecia', 'wytwarzanie']
 
 
 def generate(root=ROOT, only=None):
@@ -892,6 +916,12 @@ def generate(root=ROOT, only=None):
         seed += 1
         if want('osiagniecia'):
             sound = fade(loudness(make(Synth(seed)), level), 0.001, 0.25)
+            save(os.path.join(root, 'ui', f'{name}.ogg'), sound)
+    # Nowe grupy - zawsze na końcu (wcześniejsze ziarna się nie zmieniają).
+    for name, (make, level) in CRAFT_SOUNDS.items():
+        seed += 1
+        if want('wytwarzanie'):
+            sound = fade(loudness(make(Synth(seed)), level), 0.0005, 0.05)
             save(os.path.join(root, 'ui', f'{name}.ogg'), sound)
 
 

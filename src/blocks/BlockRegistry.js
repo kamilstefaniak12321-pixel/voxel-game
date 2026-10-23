@@ -2,7 +2,9 @@ import {
     BLOCK_LIGHT_COLOR,
     BUSH_GROWTH_SECONDS,
     BREAK_SECONDS,
-    LEAVES_BREAK_SECONDS
+    LEAVES_BREAK_SECONDS,
+    TOOL_SPEED,
+    TOOL_MATERIALS
 } from '../config.js';
 
 import { treeBlocks } from './trees.js';
@@ -82,6 +84,8 @@ export const MAX_BLOCK_ID = 255;
 //   hardness       - ile sekund kopie się blok w trybie przygody
 //                    (domyślnie według materiału - BREAK_SECONDS
 //                    w config.js)
+//   category       - kategoria w ekwipunku, księdze przepisów i wiki
+//                    (src/items/categories.js); zwykle dobiera się sama
 
 // ------------------------------------------------------------
 // KRZAKI OWOCOWE
@@ -410,6 +414,9 @@ export const BLOCK_TYPES = {
         sound: 'stone',
 
         hardness: 4.5,
+
+        // Świeci, ale to skała (nie lampa).
+        category: 'skaly',
 
         solid: true,
 
@@ -1130,9 +1137,11 @@ export function getStrip(type) {
 }
 
 
-// Ile sekund kopie się blok w trybie przygody (bez narzędzia).
+// Ile sekund kopie się blok w trybie przygody. tool - narzędzie w ręce
+// ('axe', 'pickaxe', 'shovel' albo null): pasujące kopie TOOL_SPEED
+// razy szybciej (getBestTool).
 
-export function getBreakTime(type) {
+export function getBreakTime(type, tool = null) {
 
     const definition = getBlockDefinition(type);
 
@@ -1140,15 +1149,38 @@ export function getBreakTime(type) {
         return 0;
     }
 
-    if (definition.hardness !== undefined) {
-        return definition.hardness;
+    const time =
+        definition.hardness !== undefined ? definition.hardness :
+        definition.model === 'leaves' ? LEAVES_BREAK_SECONDS :
+        BREAK_SECONDS[getBlockSound(type)] ?? 1;
+
+    return tool && getBestTool(type) === tool ? time / TOOL_SPEED : time;
+
+}
+
+
+// Narzędzie, które kopie ten blok szybciej ('axe', 'pickaxe', 'shovel')
+// albo null (liście, rośliny, lampy - wszystko jedno czym).
+
+export function getBestTool(type) {
+
+    const definition = getBlockDefinition(type);
+
+    if (!definition || definition.model === 'leaves') {
+        return null;
     }
 
-    if (definition.model === 'leaves') {
-        return LEAVES_BREAK_SECONDS;
+    const material = getBlockSound(type);
+
+    for (const [tool, materials] of Object.entries(TOOL_MATERIALS)) {
+
+        if (materials.includes(material)) {
+            return tool;
+        }
+
     }
 
-    return BREAK_SECONDS[getBlockSound(type)] ?? 1;
+    return null;
 
 }
 

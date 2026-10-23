@@ -16,6 +16,7 @@ import {
     getBlockLabel,
     getBlockSound,
     getBreakTime,
+    getBestTool,
     isLiquidId
 } from '../blocks/BlockRegistry.js';
 
@@ -28,6 +29,19 @@ import {
 } from '../items/ItemRegistry.js';
 
 import { STACK_SIZE } from '../game/Inventory.js';
+
+import {
+    RECIPE_LIST,
+    craftFromInventory,
+    getRecipe,
+    recipeText,
+    recipesFor,
+    recipesUsing,
+    maxCrafts,
+    stockOf
+} from '../crafting/Crafting.js';
+
+import { CATEGORIES, getCategory } from '../items/categories.js';
 
 import { FLIGHT_SECONDS } from '../game/Meteorites.js';
 
@@ -66,6 +80,8 @@ import { chooseSkinFile, resetSkin, hasCustomSkin } from '../player/skin.js';
 
 import { TREE_SPECIES, TREE_NAMES } from '../blocks/trees.js';
 
+import { TREE_PACKS, TREE_PACK_ERRORS, PACK_ID_SLOTS } from '../blocks/treePacks.js';
+
 import { plantTree } from '../world/trees/plantTree.js';
 
 import {
@@ -83,7 +99,6 @@ import {
     SPACE_FULL,
     SPACE_MAX_ALTITUDE,
     SKYFALL_START,
-    AXE_SPEED,
     CREATIVE_REPEAT_SECONDS
 } from '../config.js';
 
@@ -345,6 +360,15 @@ const MINING_GROUPS = {
 };
 
 
+// Narzędzie w narzędniku ("kilofem 0,73 s").
+
+const TOOL_WITH = {
+    axe: 'siekierą',
+    pickaxe: 'kilofem',
+    shovel: 'łopatą'
+};
+
+
 function miningList() {
 
     const groups = new Map();
@@ -370,7 +394,9 @@ function miningList() {
             groups.set(time, new Set());
         }
 
-        groups.get(time).add(name + (material === 'wood' ? ` - siekierą ${seconds(time / AXE_SPEED)}` : ''));
+        const tool = getBestTool(type);
+
+        groups.get(time).add(name + (tool && time > 0 ? ` - ${TOOL_WITH[tool]} ${seconds(getBreakTime(type, tool))}` : ''));
 
     }
 
@@ -394,8 +420,10 @@ function miningText(type, game) {
 
     let text = `${label}: kopanie ${seconds(time)}`;
 
-    if (getBlockSound(type) === 'wood') {
-        text += ` (siekierą ${seconds(time / AXE_SPEED)})`;
+    const tool = getBestTool(type);
+
+    if (tool) {
+        text += ` (${TOOL_WITH[tool]} ${seconds(getBreakTime(type, tool))})`;
     }
 
     return text + '. ' + (
@@ -756,6 +784,13 @@ const TREE_WORDS = {
     brzoza: 'birch', birch: 'birch'
 };
 
+// Drzewa z paczek (assets/drzewa/): nazwa folderu i krótka nazwa.
+
+for (const pack of TREE_PACKS) {
+    TREE_WORDS[pack.id] = pack.id;
+    TREE_WORDS[simplify(pack.short)] ??= pack.id;
+}
+
 const TREE_COMMAND_RADIUS = 64;
 
 const TREE_FIND_RADIUS = 1500;
@@ -812,6 +847,40 @@ function growTreeAt(world, species, x, z, size, force) {
     const shape = plantTree(world, x, y, z, species, seed, size, force);
 
     return shape ? { x, y, z, shape } : null;
+
+}
+
+
+// Paczki drzew (/drzewa paczki): co jest wczytane i co ma błędy.
+
+function treePacksText() {
+
+    const lines = TREE_PACKS.map((pack) => {
+
+        const variants = pack.variants.map((variant) => variant.label.toLowerCase()).join(', ');
+
+        const items = Object.values(pack.items).map((item) => item.label.toLowerCase()).join(', ');
+
+        return `- ${pack.short} (folder ${pack.folder}, bloki ${pack.firstId}-${pack.firstId + PACK_ID_SLOTS - 1}, ` +
+            `kształt: ${pack.shape.kind}` +
+            (variants ? `, odmiany liści: ${variants}` : '') +
+            (items ? `, przedmioty: ${items}` : '') +
+            `, w lesie: ${pack.climate.chance > 0 ? `${Math.round(pack.climate.chance * 100)}% drzew tam, gdzie pasuje klimat` : 'nie (tylko sadzonka i /drzewa posadz)'})`;
+
+    });
+
+    const errors = TREE_PACK_ERRORS.map((error) => `- BŁĄD: ${error}`);
+
+    if (lines.length === 0 && errors.length === 0) {
+        return 'Brak paczek drzew. Nowe drzewo: folder w assets/drzewa/ - instrukcja w docs/drzewa-paczki.md.';
+    }
+
+    return [
+        `Paczki drzew (assets/drzewa/): wczytane ${TREE_PACKS.length}` + (errors.length > 0 ? `, błędy: ${errors.length}` : ''),
+        ...lines,
+        ...errors,
+        'Posadzenie: /drzewa posadz <nazwa>, bloki: E albo /daj <nazwa>_log. Instrukcja: docs/drzewa-paczki.md.'
+    ].join('\n');
 
 }
 
@@ -2239,6 +2308,120 @@ export const GAME_COMMANDS = [
 
 
     {
+        name: 'przepisy',
+        aliases: ['recipes', 'crafting', 'przepis'],
+        usage: '/przepisy [blok | przedmiot | lista | moge]',
+        description: 'Przepisy wytwarzania (siatka 2 x 2 w ekwipunku, E): jak zrobić rzecz i do czego się przydaje. lista - wszystkie, moge - te, na które masz składniki.',
+
+        run(args, { game }) {
+
+            const word = simplify(args[0] ?? '');
+
+            if (!word || word === 'lista' || word === 'list') {
+
+                const lines = RECIPE_LIST.map((recipe) => `${CATEGORIES[getCategory(recipe.result[0])].label}: ${recipeText(recipe)}`);
+
+                return `Przepisy (${RECIPE_LIST.length}) - siatka 2 x 2 w ekwipunku (E), księga przepisów: przycisk 📖.\n` + lines.join('\n');
+
+            }
+
+            if (word === 'moge' || word === 'mozliwe') {
+
+                const stock = stockOf(game.inventory);
+
+                const ready = RECIPE_LIST
+                    .map((recipe) => ({ recipe, times: maxCrafts(recipe, stock) }))
+                    .filter(({ times }) => times > 0);
+
+                return ready.length === 0
+                    ? 'Nie masz składników na żaden przepis. Zacznij od pnia drzewa (deski) - /przepisy lista.'
+                    : 'Możesz zrobić:\n' + ready.map(({ recipe, times }) => `${recipeText(recipe)} - ${times} raz${times === 1 ? '' : 'y'}`).join('\n');
+
+            }
+
+            const type = itemArgument(args[0]);
+
+            const made = recipesFor(type);
+
+            const uses = recipesUsing(type);
+
+            const lines = [];
+
+            lines.push(made.length > 0
+                ? made.map((recipe) => `Jak zrobić - ${recipeText(recipe)}`).join('\n')
+                : `${getItemLabel(type)}: nie robi się tego z przepisu (zbierasz albo wykopujesz).`);
+
+            if (uses.length > 0) {
+                lines.push(`Przydaje się do: ${uses.map((recipe) => getItemLabel(recipe.result[0])).join(', ')}.`);
+            }
+
+            return lines.join('\n');
+
+        },
+
+        complete(args) {
+            return args.length === 1 ? ['lista', 'moge', ...RECIPE_LIST.map((recipe) => recipe.result[0])] : [];
+        }
+    },
+
+
+    {
+        name: 'wytworz',
+        aliases: ['craft', 'zrob'],
+        usage: '/wytworz <przepis> [ile razy]',
+        description: 'Wytwarza od razu ze składników z ekwipunku (jak siatka 2 x 2 - do testów i na skróty). Przepisy: /przepisy lista.',
+
+        run(args, { game }) {
+
+            const word = simplify(args[0] ?? '');
+
+            if (!word) {
+                throw usageError(this);
+            }
+
+            // Nazwa przepisu albo tego, co powstaje (też po polsku).
+
+            let recipe = getRecipe(word);
+
+            if (!recipe) {
+
+                const type = itemArgument(args[0]);
+
+                recipe = recipesFor(type)[0] ?? null;
+
+                if (!recipe) {
+                    throw new CommandError(`${getItemLabel(type)} nie ma przepisu. Lista: /przepisy lista`);
+                }
+
+            }
+
+            const times = args[1] === undefined ? 1 : Math.floor(parseNumber(args[1], 'ile razy'));
+
+            if (times < 1 || times > STACK_SIZE) {
+                throw new CommandError(`Ile razy: od 1 do ${STACK_SIZE}`);
+            }
+
+            const done = craftFromInventory(game.inventory, recipe, times);
+
+            if (done === 0) {
+                throw new CommandError(`Brakuje składników (albo miejsca w ekwipunku). ${recipeText(recipe)}`);
+            }
+
+            const [type, count] = recipe.result;
+
+            game.achieve?.('crafted', { type, count: count * done, recipe: recipe.id });
+
+            return `Wytworzono: ${count * done} x ${getItemLabel(type)}${done < times ? ` (składników starczyło na ${done} z ${times})` : ''}.`;
+
+        },
+
+        complete(args) {
+            return args.length === 1 ? RECIPE_LIST.map((recipe) => recipe.id) : args.length === 2 ? ['1', '4', '16'] : [];
+        }
+    },
+
+
+    {
         name: 'kopanie',
         aliases: ['mining', 'kop'],
         usage: '/kopanie [blok | lista]',
@@ -2846,8 +3029,8 @@ export const GAME_COMMANDS = [
     {
         name: 'drzewa',
         aliases: ['drzewo', 'trees', 'tree', 'las'],
-        usage: '/drzewa | /drzewa posadz <gatunek> [rozmiar 0-100] | /drzewa aleja | /drzewa znajdz <gatunek> [tp] | /drzewa rosnij | /drzewa tempo <0-500>',
-        description: 'Drzewa (świerk, sosna, buk, lipa, dąb, brzoza): jakie rosną w okolicy, drzewo przed tobą (posadz), wszystkie gatunki w rzędzie (aleja), najbliższe drzewo gatunku (znajdz), sadzonki rosną od razu (rosnij) albo szybciej (tempo).',
+        usage: '/drzewa | /drzewa posadz <gatunek> [rozmiar 0-100] | /drzewa aleja | /drzewa znajdz <gatunek> [tp] | /drzewa rosnij | /drzewa tempo <0-500> | /drzewa paczki',
+        description: 'Drzewa (świerk, sosna, buk, lipa, dąb, brzoza i drzewa z paczek): jakie rosną w okolicy, drzewo przed tobą (posadz), wszystkie gatunki w rzędzie (aleja), najbliższe drzewo gatunku (znajdz), sadzonki rosną od razu (rosnij) albo szybciej (tempo), paczki drzew i ich błędy (paczki).',
 
         run(args, { game, player, world }) {
 
@@ -2886,6 +3069,11 @@ export const GAME_COMMANDS = [
 
             if (['aleja', 'pokaz', 'alley', 'ogrod'].includes(word)) {
                 return plantTreeAlley(player, world);
+            }
+
+
+            if (['paczki', 'paczka', 'packs'].includes(word)) {
+                return treePacksText();
             }
 
 
@@ -2999,7 +3187,7 @@ export const GAME_COMMANDS = [
 
             const species = TREE_NAMES.map((name) => simplify(TREE_SPECIES[name].short));
 
-            if (args.length === 1) return ['posadz', 'aleja', 'znajdz', 'rosnij', 'tempo', ...species];
+            if (args.length === 1) return ['posadz', 'aleja', 'znajdz', 'rosnij', 'tempo', 'paczki', ...species];
             if (args.length === 2 && ['posadz', 'znajdz'].includes(simplify(args[0]))) return species;
             if (args.length === 3 && simplify(args[0]) === 'znajdz') return ['tp'];
             if (args.length === 3 && simplify(args[0]) === 'posadz') return ['20', '60', '100'];

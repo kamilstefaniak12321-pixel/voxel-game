@@ -54,7 +54,6 @@ import {
     HOTBAR_SIZE,
     SPRINT_FOV_FACTOR,
     CHUNK_HEIGHT,
-    AXE_SPEED,
     MINING_HIT_SECONDS,
     MINING_DELAY_SECONDS,
     CREATIVE_REPEAT_SECONDS,
@@ -1561,9 +1560,10 @@ export class Game {
     // Kreatywny: kliknięcie niszczy blok od razu, trzymany LPM - kolejne
     // bloki co CREATIVE_REPEAT_SECONDS.
     // Przygoda: trzeba trzymać LPM na bloku przez czas kopania
-    // (getBreakTime; siekiera - drewno szybciej). Blok pęka (BlockCracks),
-    // co MINING_HIT_SECONDS ręka uderza: stuk i odłamki. Zmiana celu albo
-    // puszczenie LPM - od nowa. Rośliny znikają od razu.
+    // (getBreakTime; pasujące narzędzie - siekiera, kilof, łopata -
+    // szybciej). Blok pęka (BlockCracks), co MINING_HIT_SECONDS ręka
+    // uderza: stuk i odłamki. Zmiana celu albo puszczenie LPM - od nowa.
+    // Rośliny znikają od razu.
 
     updateMining(dt, pressed, held) {
 
@@ -1620,6 +1620,18 @@ export class Game {
         }
 
 
+        // Przerwa po rozbitym bloku (albo po napisie "Ekwipunek pełny" -
+        // żeby trzymany LPM nie powtarzał go w każdej klatce).
+
+        if (this.miningDelay > 0) {
+
+            this.cracks.update(null, 0);
+
+            return false;
+
+        }
+
+
         const { x, y, z, type } = hit.block;
 
         let mining = this.mining;
@@ -1646,20 +1658,8 @@ export class Game {
 
         }
 
-        if (this.miningDelay > 0) {
 
-            this.cracks.update(null, 0);
-
-            return false;
-
-        }
-
-
-        let time = getBreakTime(type);
-
-        if (getTool(this.selectedBlock) === 'axe' && getBlockSound(type) === 'wood') {
-            time /= AXE_SPEED;
-        }
+        const time = getBreakTime(type, getTool(this.selectedBlock));
 
         mining.progress = time <= 0 ? 1 : mining.progress + dt / time;
 

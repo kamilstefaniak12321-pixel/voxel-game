@@ -47,7 +47,9 @@ Współrzędne można podawać względem gracza: `~` (tu, gdzie stoję),
 | `/skorka domyslna` | powrót do domyślnej skórki |
 | `/pozycja` | pozycja i chunk |
 | `/tryb [przygoda \| kreatywny]` | tryb gry (bez słowa - jaki jest): przygoda - bloki się kopie (trzymany LPM), zniszczone trafiają do ekwipunku, stawianie je zużywa; kreatywny - bloki bez końca i znikają od razu, wszystkie bloki pod E, latanie po dwukliku Spacji. Skróty: `/gm p`, `/gm k` |
-| `/kopanie [blok \| lista]` | ile trwa kopanie w trybie przygody: blok, na który patrzysz, albo podany (`/kopanie granit`, siekierą - dla drewna), `lista` - czasy wszystkich bloków. Skrót: `/kop` |
+| `/kopanie [blok \| lista]` | ile trwa kopanie w trybie przygody: blok, na który patrzysz, albo podany (`/kopanie granit` - także kilofem, łopatą albo siekierą, jeśli przyspiesza), `lista` - czasy wszystkich bloków. Skrót: `/kop` |
+| `/przepisy [rzecz \| lista \| moge]` | przepisy wytwarzania: `/przepisy kilof` - jak zrobić i do czego się przydaje (też dla surowców: `/przepisy granit`), `lista` - wszystkie, `moge` - te, na które masz składniki (ile razy). Też `/recipes` |
+| `/wytworz <przepis> [ile razy]` | wytwarza od razu ze składników z ekwipunku (nazwa przepisu albo wyrobu, też po polsku: `/wytworz kilof`, `/wytworz stick 4`). Też `/craft` |
 | `/ekwipunek` | co jest w ekwipunku (ile sztuk każdego bloku, ile miejsc zajętych) |
 | `/ekwipunek wyczysc` | czyści cały ekwipunek (z paskiem) |
 | `/latanie` | włącza/wyłącza latanie w każdym trybie (Spacja w górę, Shift w dół) - do testów; w kreatywnym wystarczy 2× Spacja |
@@ -60,11 +62,12 @@ Współrzędne można podawać względem gracza: `~` (tu, gdzie stoję),
 | `/krzaki rosnij [1-3]` | krzaki do 64 bloków od ciebie od razu rosną o tyle etapów (3 = od sadzonki do pełnego owoców) |
 | `/krzaki tempo [0-500]` | tempo wzrostu krzaków: 60 = etap średnio co 2,5 s zamiast 150 s, 0 = nie rosną, 1 = normalnie; bez liczby - jakie jest (nie zapisuje się) |
 | `/drzewa` | drzewa do 64 bloków od ciebie (ile każdego gatunku - z generatora terenu), las w miejscu gracza, tempo wzrostu sadzonek (`docs/drzewa.md`) |
-| `/drzewa posadz <gatunek> [0-100]` | drzewo 5 bloków przed tobą (gatunki: `swierk`, `sosna`, `buk`, `lipa`, `dab`, `brzoza`; rozmiar 0 - małe, 100 - duże, bez - losowy); krócej: `/drzewa dab` |
-| `/drzewa aleja` | wszystkie sześć gatunków w rzędzie przed tobą, co 12 bloków (zmienia świat) |
+| `/drzewa posadz <gatunek> [0-100]` | drzewo 5 bloków przed tobą (gatunki: `swierk`, `sosna`, `buk`, `lipa`, `dab`, `brzoza` i drzewa z paczek, np. `jablon`; rozmiar 0 - małe, 100 - duże, bez - losowy); krócej: `/drzewa dab` |
+| `/drzewa aleja` | wszystkie gatunki (także z paczek) w rzędzie przed tobą, co 12 bloków (zmienia świat) |
 | `/drzewa znajdz <gatunek> [tp]` | najbliższe drzewo gatunku w świecie (do 1500 bloków): odległość, kierunek; `tp` - przeniesienie pod nie |
 | `/drzewa rosnij` | sadzonki (i krzaki) do 64 bloków od ciebie rosną od razu - sadzonka bez miejsca nad sobą czeka |
 | `/drzewa tempo [0-500]` | tempo wzrostu roślin (to samo co `/krzaki tempo`): 60 = sadzonka wyrasta średnio po 5 s zamiast 5 min |
+| `/drzewa paczki` | paczki drzew z `assets/drzewa/`: numery bloków, kształt, odmiany liści, czy rosną w lesie, i błędy paczek pominiętych przez grę (`docs/drzewa-paczki.md`) |
 | `/wypelnij <x1> <y1> <z1> <x2> <y2> <z2> <blok \| powietrze>` | wypełnia prostopadłościan (do 16 384 bloków) |
 | `/swiatlo` | światło przy głowie i przy wskazanej ścianie (niebo 0-15, lampy 0-15 i ich kolor) |
 | `/swiatlo dynamiczne [wl \| wyl]` | włącza/wyłącza dynamiczne światło (to samo co w ustawieniach) |

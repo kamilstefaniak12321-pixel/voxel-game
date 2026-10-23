@@ -32,11 +32,14 @@ tylko jako *Sekretne osiągnięcie* ze znakiem zapytania.
 | zwykłe | Od czegoś trzeba zacząć | zniszcz pierwszy blok |
 | zwykłe | Architekt amator | postaw pierwszy blok |
 | zwykłe | Witaminki | zbierz owoce z krzaka |
+| zwykłe | Sadownik | zbierz owoce z drzewa owocowego (np. jabłka z jabłoni) - jest, gdy któraś paczka drzewa ma owoce (`docs/drzewa-paczki.md`) |
 | zwykłe | Zielone palce | posadź owoc, orzech albo szyszkę |
 | zwykłe | Drwal | zetnij pień drzewa |
 | zwykłe | Brzozowy papirus | zdejmij siekierą korę z brzozy |
 | zwykłe | Ostrze w ruch | w trybie przygody zetnij pień siekierą |
 | zwykłe | Prawie robi różnicę *(sekret)* | w trybie przygody puść LPM, gdy blok jest już prawie rozbity (od 90%) |
+| zwykłe | Złota rączka | wytwórz coś w ekwipunku (siatka 2 x 2) |
+| zwykłe | Kolorowe światła | zrób kolorową lampę |
 | zwykłe | Mokra robota | popływaj |
 | zwykłe | Nocny marek | bądź w świecie o północy |
 | rzadkie | Murarz | postaw 500 bloków (postęp liczy się w księdze) |
@@ -46,6 +49,7 @@ tylko jako *Sekretne osiągnięcie* ze znakiem zapytania.
 | rzadkie | Pełne kosze | zbierz owoce z każdego rodzaju krzaka |
 | rzadkie | Leśniczy | zetnij pień każdego z sześciu gatunków drzew (postęp w księdze) |
 | rzadkie | Z małego ziarenka | wyhoduj drzewo z sadzonki (`docs/drzewa.md`) |
+| rzadkie | Komplet narzędzi | zrób siekierę, kilof i łopatę (postęp w księdze) |
 | rzadkie | Kopalnia w kieszeni | zagraj na telefonie / tablecie i zniszcz blok palcem (`docs/telefon.md`) |
 | rzadkie | Lokator z ikonką | zagraj w aplikacji na Androida (`docs/telefon.md`) |
 | bardzo rzadkie | Dzień jak noc | zobacz pełne zaćmienie słońca |
@@ -99,6 +103,7 @@ Gra zgłasza je przez `game.achieve('nazwa', dane)`:
 |---|---|---|
 | `blockBroken` | `type` - zniszczony blok, `mode` - tryb gry, `tool` - narzędzie w ręce (`axe` albo null) | `Game.breakTarget` |
 | `miningAbandoned` | `type` - kopany blok, `progress` - jak daleko było kopanie (0-1) | `Game.updateMining` (puszczony LPM w trybie przygody) |
+| `crafted` | `type` - wyrób, `count` - ile sztuk, `recipe` - nazwa przepisu | `InventoryScreen` (wynik wytwarzania), `/wytworz` |
 | `blockPlaced` | `type` - postawiony blok | `Game.update` (PPM) |
 | `planted` | `type` - sadzonka, `item` - posadzony owoc | `Game.update` (PPM owocem) |
 | `harvested` | `type` - krzak (pień z żywicą, kwitnąca lipa), `item` - zebrany owoc (żywica, kwiat lipy) | `Game.harvestTarget` |

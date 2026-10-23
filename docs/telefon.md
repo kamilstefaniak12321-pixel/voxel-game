@@ -42,7 +42,7 @@ telefonu i od komputera). Odinstalowanie aplikacji je usuwa.
 Każdy pull request, który zmienia aplikację, buduje ją na próbę:
 **Actions** → przebieg → *Artifacts* → `Voxel-Game-<wersja>-android...`
 (plik zip z `.apk` w środku - na telefonie trzeba być zalogowanym na
-GitHubie). Bez klucza do podpisu (niżej) powstaje **Voxel Game (test)** -
+GitHubie; plik jest tam przez 2 dni, `docs/aplikacja.md`). Bez klucza do podpisu (niżej) powstaje **Voxel Game (test)** -
 osobna aplikacja z własnymi światami, którą można mieć obok prawdziwej.
 Wersja testowa ma swój stały klucz w gicie (`android/app/klucz-testowy.keystore`,
 celowo jawny - prawdziwej aplikacji nim się nie podpisze), więc kolejne

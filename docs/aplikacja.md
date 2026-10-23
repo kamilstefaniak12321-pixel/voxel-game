@@ -78,7 +78,12 @@ adnotacje z ostatnimi liniami błędu):
 
 Pull request, który zmienia aplikację (`desktop/`, `package.json`),
 buduje instalator na próbę - bez wydania. Ten instalator można pobrać
-z przebiegu w zakładce **Actions** (sekcja *Artifacts*, plik zip).
+z przebiegu w zakładce **Actions** (sekcja *Artifacts*, plik zip) przez
+**2 dni**. Dłużej nie: repozytorium gry jest prywatne, a darmowy plan
+GitHuba ma tylko 0,5 GB miejsca na takie pliki na miesiąc (liczone za
+każdą godzinę, w której leżą). Gdy miejsca zabraknie, GitHub przysyła
+maila *GitHub Actions Usage*, a pliki próbne przestają się zapisywać
+do początku następnego miesiąca - budowanie i wydania działają dalej.
 
 > Kod gry jest w prywatnym repozytorium `voxel-game`, a do publicznego
 > `voxel-game-wydania` trafiają tylko gotowe instalatory - zainstalowana

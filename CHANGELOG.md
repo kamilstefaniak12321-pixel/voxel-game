@@ -11,6 +11,50 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 0.14.0 - Paczki drzew i jabłoń (2026-10-19)
+
+Pull request #33.
+
+### Nowe
+- **Paczki drzew - nowe gatunki bez programowania.** Folder
+  w `assets/drzewa/` to jeden gatunek: tekstury PNG 16 x 16, opis
+  `drzewo.json` i kształt drzewa narysowany literkami (warstwy od dołu
+  do góry w pliku `.txt`) albo jeden z gotowych kształtów (kula,
+  stożek, parasol, kolumna). Gra przy starcie sama robi z paczki bloki
+  (pień, okorowany pień, deski, liście, sadzonka, opadłe liście i do
+  dwóch odmian liści), przedmioty (np. owoce, które posadzone dają
+  sadzonkę), ikonki, przepisy (deski, opadłe liście i własne
+  z `drzewo.json`), drzewa z sadzonek i w lesie - tam, gdzie pasuje
+  im klimat. Tekstury trafiają do atlasu same (bez wklejania do
+  `terrain.png`). Paczka z błędem jest pomijana, a gra mówi na czacie,
+  co poprawić. Instrukcja krok po kroku: `docs/drzewa-paczki.md`.
+- **Odmiany liści z owocami**: PPM zbiera owoce, a po zbiorze owoce
+  **odrastają** (liście "po zbiorze" po pewnym czasie znów są z owocami).
+- **Jabłoń domowa** (`assets/drzewa/jablon/`) - przykładowa paczka:
+  krótki pień, konary i szeroka korona w trzech rozmiarach, liście
+  z jabłkami (jabłka odrastają po ok. 10 minutach), jabłko do
+  posadzenia, deski jabłoniowe, opadłe liście; rośnie w ciepłych lasach
+  na nizinach. Jabłko z lampą daje czerwoną lampę.
+- `python tools/nowe_drzewo.py <nazwa>` - zakłada paczkę z teksturami
+  zastępczymi w stylu gry, szablonami kształtu i wolnymi numerami
+  bloków; `node tools/drzewa.mjs` - dopisuje paczki do listy, nadaje
+  numery i sprawdza je jak gra (`pokaz <drzewo>` - warstwy drzewa
+  w konsoli).
+- Akcja **Drzewa (paczki)** na GitHubie: folder drzewa wgrany do
+  repozytorium (także przeciągnięty na stronie GitHuba) sam trafia na
+  listę, dostaje numery bloków, jest sprawdzany, a wiki się odświeża.
+- Komenda `/drzewa paczki` (wczytane paczki i ich błędy); `/drzewa
+  posadz`, `aleja`, `znajdz` znają drzewa z paczek.
+- Osiągnięcie *Sadownik* - zbierz owoce z drzewa owocowego.
+
+### Zmiany
+- Atlas tekstur składa się w grze z `terrain.png` i tekstur paczek
+  (przy wielu paczkach ma 32 wiersze zamiast 16); ikonki bloków rysują
+  się z tego samego obrazka.
+- Wiki: bloki i przedmioty z paczek (z ikonkami i folderem paczki).
+
+---
+
 ## 0.13.0 - Wytwarzanie, narzędzia i porządki (2026-10-19)
 
 Pull request #32.

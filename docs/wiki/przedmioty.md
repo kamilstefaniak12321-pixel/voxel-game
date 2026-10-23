@@ -2,7 +2,7 @@
 
 > Ta strona jest generowana z kodu gry (`python tools/wiki.py`) - nie zmieniaj jej ręcznie, zmiany przepadną przy następnym generowaniu.
 
-Wersja gry **0.13.0** - 15 przedmiotów. Przedmiotu nie da się postawić jak bloku; owoce i nasiona posadzone na ziemi (PPM) wyrastają w krzak albo drzewo, narzędzia przyspieszają kopanie.
+Wersja gry **0.14.0** - 16 przedmiotów. Przedmiotu nie da się postawić jak bloku; owoce i nasiona posadzone na ziemi (PPM) wyrastają w krzak albo drzewo, narzędzia przyspieszają kopanie.
 
 
 ## Owoce i nasiona
@@ -18,6 +18,7 @@ Wersja gry **0.13.0** - 15 przedmiotów. Przedmiotu nie da się postawić jak bl
 | <img src="ikony/beechnuts.png" width="32" height="32" alt=""> | **Orzeszki bukowe** | `beechnuts` | **Posadzony (PPM na ziemi):** Sadzonka buka<br>**Skąd:** czasem z bloku: Liście buka (8%) |
 | <img src="ikony/linden_flower.png" width="32" height="32" alt=""> | **Kwiat lipy** | `linden_flower` | **Posadzony (PPM na ziemi):** Sadzonka lipy<br>**Skąd:** zbiór (PPM): Kwitnące liście lipy |
 | <img src="ikony/acorn.png" width="32" height="32" alt=""> | **Żołądź** | `acorn` | **Posadzony (PPM na ziemi):** Sadzonka dębu<br>**Skąd:** czasem z bloku: Liście dębu (10%) |
+| <img src="ikony/jablon_jablko.png" width="32" height="32" alt=""> | **Jabłko** | `jablon_jablko` | **Posadzony (PPM na ziemi):** Sadzonka jabłoni<br>**Paczka drzewa:** assets/drzewa/jablon<br>**Skąd:** czasem z bloku: Liście jabłoni (5%); czasem z bloku: Liście jabłoni z jabłkami (5%); zbiór (PPM): Liście jabłoni z jabłkami; czasem z bloku: Liście jabłoni (jabłka odrastają) (5%)<br>**Przydaje się do:** Czerwona lampa |
 
 ## Narzędzia i surowce
 

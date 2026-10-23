@@ -31,7 +31,9 @@ import { WORLD_BORDER } from '../config.js';
 
 import { getBlockDefinition } from '../blocks/BlockRegistry.js';
 
-import { TREE_NAMES } from '../blocks/trees.js';
+import { BASE_TREE_NAMES } from '../blocks/trees.js';
+
+import { TREE_PACKS } from '../blocks/treePacks.js';
 
 
 // Rangi: nazwa, punkty, kolor (do księgi i powiadomień - także
@@ -50,6 +52,25 @@ export const TIER_ORDER = ['common', 'rare', 'epic', 'legendary'];
 // Owoce z krzaków - do "Pełnych koszy".
 
 const FRUITS = ['strawberry', 'blackberry', 'chili_pepper', 'hazelnut'];
+
+
+// Owoce drzew z paczek (assets/drzewa/) - zbiór z odmian liści.
+// Osiągnięcie "Sadownik" jest tylko wtedy, gdy jakaś paczka je ma.
+
+const TREE_FRUIT = TREE_PACKS.flatMap((pack) =>
+    pack.variants.filter((variant) => variant.harvest).map((variant) => variant.harvest.item)
+);
+
+const ORCHARD = TREE_FRUIT.length === 0 ? [] : [{
+    id: 'orchard',
+    tier: 'common',
+    title: 'Sadownik',
+    task: 'Zbierz owoce z drzewa owocowego (PPM na liściach z owocami).',
+    comment: 'Jabłko pada niedaleko od jabłoni. Tym razem - prosto do kieszeni.',
+    icon: TREE_FRUIT[0],
+    on: 'harvested',
+    when: (data) => getBlockDefinition(data.type)?.pack !== undefined && TREE_FRUIT.includes(data.item)
+}];
 
 
 // Pień drzewa (każdy rodzaj pnia, także okorowany): gatunek albo null.
@@ -97,6 +118,7 @@ export const ACHIEVEMENTS = [
         on: 'harvested',
         when: (data) => FRUITS.includes(data.item)
     },
+    ...ORCHARD,
     {
         id: 'plant',
         tier: 'common',
@@ -252,9 +274,9 @@ export const ACHIEVEMENTS = [
         on: 'blockBroken',
         when: (data, book) => {
             const species = logSpecies(data.type);
-            return species !== null && book.collect('trees', species) >= TREE_NAMES.length;
+            return BASE_TREE_NAMES.includes(species) && book.collect('trees', species) >= BASE_TREE_NAMES.length;
         },
-        goal: { key: 'trees', count: TREE_NAMES.length }
+        goal: { key: 'trees', count: BASE_TREE_NAMES.length }
     },
     {
         id: 'tool_set',

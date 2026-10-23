@@ -94,7 +94,7 @@ w pauzie i na ekranie tytułowym) - z datą i nazwą świata. Księga jest
 wspólna dla wszystkich światów. Niektóre osiągnięcia są sekretne -
 przed zdobyciem widać tylko znak zapytania.
 
-Jest 28 osiągnięć (od pierwszego zniszczonego bloku po
+Jest 29 osiągnięć (od pierwszego zniszczonego bloku po
 legendarne *Problem spadł z nieba*). Nowa rzecz w grze = nowe
 osiągnięcie - jak je dopisać, zdarzenia z gry i pełna lista (spoilery):
 `docs/osiagniecia.md`. Test: `/osiagniecia` (lista), `/osiagniecia pokaz
@@ -328,6 +328,18 @@ i **brzoza brodawkowata**. Wszystko o nich: `docs/drzewa.md`.
   dab` (jedno drzewo), `/drzewa znajdz sosna tp`, `/mapa lasy`,
   `/drzewa tempo 60`, `/daj axe`.
 
+**Nowe drzewa bez programowania - paczki drzew.** Każdy folder
+w `assets/drzewa/` to jeden gatunek: tekstury PNG 16 x 16, opis
+`drzewo.json` (nazwy, bloki, odmiany liści - np. z owocami, które się
+zbiera i które odrastają - przedmioty, gdzie rośnie, przepisy) i kształt
+drzewa narysowany literkami w pliku `.txt`. Gra sama robi z tego bloki,
+przedmioty, ikonki, przepisy, drzewa w lesie i z sadzonek. Przykład:
+**jabłoń** (`assets/drzewa/jablon/`, `/drzewa posadz jablon`) - jabłka
+zbiera się PPM i odrastają po 10 minutach. Nowa paczka: `python
+tools/nowe_drzewo.py grusza`, sprawdzenie: `node tools/drzewa.mjs`,
+w grze: `/drzewa paczki`. Folder wgrany na GitHuba dopisuje do gry akcja
+*Drzewa (paczki)*. **Instrukcja krok po kroku: `docs/drzewa-paczki.md`.**
+
 ## Woda
 
 Woda (morze w terenie realistycznym i postawiona przez gracza) jest
@@ -441,6 +453,11 @@ stylu: `python tools/tekstury_drzew.py [podglad.png]`.
 Ikonki narzędzi i surowców (patyk, kilof, łopata - wiersz 9 atlasu)
 rysuje **`tools/tekstury_narzedzi.py`** w tym samym stylu co siekiera:
 `python tools/tekstury_narzedzi.py [podglad.png]`.
+
+Tekstury drzew z paczek (`assets/drzewa/<drzewo>/*.png`) **nie są**
+w `terrain.png` - gra dokłada je do atlasu sama przy starcie, od
+wiersza 10 (`docs/drzewa-paczki.md`). Wiersze 10-15 pliku zostają więc
+wolne dla nich.
 
 Pęknięcia kopanego bloku (10 etapów w pasku
 `assets/textures/blocks/cracks.png`) rysuje **`tools/pekniecia.py`**:
@@ -819,14 +836,15 @@ desktop/                    aplikacja na komputer (okno, aktualizacje, ikonka)
 android/                    aplikacja na telefon (Android, Capacitor): pełny ekran, ikonki
 capacitor.config.json       aplikacja na telefon: nazwa, identyfikator
 lib/three/                  three.js 0.160.0 (biblioteka 3D)
-.github/workflows/          automatyczne budowanie instalatora i wydań
+.github/workflows/          automatyczne budowanie instalatora i wydań, sprawdzanie paczek drzew
 assets/textures/blocks/     tekstury bloków (terrain.png = atlas)
 assets/textures/sky/        tekstury nieba (księżyc)
 assets/textures/player/     skórka gracza i szablon skórki
 assets/ui/themes/           motywy menu (kolory, czcionka, tło)
 assets/fonts/               czcionki
 assets/sounds/              dźwięki (.ogg): bloki, kroki, zbieranie, meteoryt, menu (ui/), woda, kosmos
-tools/                      skrypty pomocnicze (tekstury, tekstury drzew i narzędzi, pęknięcia, dźwięki, wiki, ikonki i pliki aplikacji na Androida)
+assets/drzewa/              paczki drzew: folder = gatunek (drzewo.json, tekstury, kształt), lista.json (docs/drzewa-paczki.md)
+tools/                      skrypty pomocnicze (tekstury, tekstury drzew i narzędzi, nowe drzewo i sprawdzanie paczek, pęknięcia, dźwięki, wiki, ikonki i pliki aplikacji na Androida)
 docs/                       opisy, jak działają większe części gry
 docs/wiki/                  wiki gry dla graczy (strony generuje tools/wiki.py)
 CHANGELOG.md                historia zmian - wszystkie wersje gry
@@ -836,7 +854,7 @@ src/
   game/                     jeden uruchomiony świat (Game), ekwipunek, meteoryty, wzrost roślin, woda (obraz i dźwięk)
   ui/                       ekrany menu, pasek bloków, ikonki, napisy
   settings/                 ustawienia gracza (zapis w przeglądarce)
-  blocks/                   lista bloków (BlockRegistry), krzaki owocowe, drzewa (trees.js)
+  blocks/                   lista bloków (BlockRegistry), krzaki owocowe, drzewa (trees.js), paczki drzew (treePacks.js)
   items/                    przedmioty, które nie są blokami (owoce, szyszki, narzędzia...), kategorie
   crafting/                 wytwarzanie: przepisy (recipes.js) i siatka 2 x 2 (Crafting.js)
   world/                    świat, chunki, szum, światło, daleki teren
@@ -855,6 +873,10 @@ src/
 ```
 
 ## Dodawanie nowego bloku
+
+**Nowe drzewo** (pień, deski, liście, odmiany liści z owocami,
+sadzonka, kształt, gdzie rośnie) nie wymaga kodu - to paczka drzewa
+w `assets/drzewa/`: `docs/drzewa-paczki.md`. Poniżej - każdy inny blok.
 
 1. Narysuj teksturę 16x16 i wklej ją do wolnego kafelka w `assets/textures/blocks/terrain.png`
    (albo dopisz jej funkcję w `tools/tekstury.py` - patrz *Tekstury*).

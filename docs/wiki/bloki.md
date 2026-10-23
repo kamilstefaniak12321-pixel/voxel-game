@@ -2,7 +2,7 @@
 
 > Ta strona jest generowana z kodu gry (`python tools/wiki.py`) - nie zmieniaj jej ręcznie, zmiany przepadną przy następnym generowaniu.
 
-Wersja gry **0.13.0** - 85 bloków (do tego 3 odmian, których nie ma w ekwipunku, np. wieniec zawieszony na boku bloku). Czas kopania dotyczy trybu przygody; w kreatywnym bloki znikają od razu.
+Wersja gry **0.14.0** - 92 bloków (do tego 4 odmian, których nie ma w ekwipunku, np. wieniec zawieszony na boku bloku). Czas kopania dotyczy trybu przygody; w kreatywnym bloki znikają od razu.
 
 [Ziemia](#ziemia) · [Skały](#skały) · [Drewno](#drewno) · [Rośliny](#rośliny) · [Światło](#światło) · [Ozdoby](#ozdoby)
 
@@ -58,6 +58,9 @@ Wersja gry **0.13.0** - 85 bloków (do tego 3 odmian, których nie ma w ekwipunk
 | <img src="ikony/birch_log.png" width="32" height="32" alt=""> | **Pień brzozy** | `birch_log` | **Kopanie:** 2 s (siekierą 0,67 s)<br>**Siekierą (PPM):** Okorowany pień brzozy + Kora brzozowa<br>**Przydaje się do:** Deski brzozowe |
 | <img src="ikony/birch_log_stripped.png" width="32" height="32" alt=""> | **Okorowany pień brzozy** | `birch_log_stripped` | **Kopanie:** 2 s (siekierą 0,67 s)<br>**Skąd:** siekierą (PPM) z bloku: Pień brzozy<br>**Przydaje się do:** Deski brzozowe |
 | <img src="ikony/birch_planks.png" width="32" height="32" alt=""> | **Deski brzozowe** | `birch_planks` | **Kopanie:** 2 s (siekierą 0,67 s)<br>**Przepis:** Deski brzozowe x4<br>**Przydaje się do:** Patyk |
+| <img src="ikony/jablon_log.png" width="32" height="32" alt=""> | **Pień jabłoni** | `jablon_log` | **Kopanie:** 2 s (siekierą 0,67 s)<br>**Siekierą (PPM):** Okorowany pień jabłoni<br>**Paczka drzewa:** assets/drzewa/jablon<br>**Przydaje się do:** Deski jabłoniowe |
+| <img src="ikony/jablon_log_stripped.png" width="32" height="32" alt=""> | **Okorowany pień jabłoni** | `jablon_log_stripped` | **Kopanie:** 2 s (siekierą 0,67 s)<br>**Paczka drzewa:** assets/drzewa/jablon<br>**Skąd:** siekierą (PPM) z bloku: Pień jabłoni<br>**Przydaje się do:** Deski jabłoniowe |
+| <img src="ikony/jablon_planks.png" width="32" height="32" alt=""> | **Deski jabłoniowe** | `jablon_planks` | **Kopanie:** 2 s (siekierą 0,67 s)<br>**Paczka drzewa:** assets/drzewa/jablon<br>**Przepis:** Deski jabłoniowe x4<br>**Przydaje się do:** Patyk |
 
 ## Rośliny
 
@@ -102,13 +105,16 @@ Wersja gry **0.13.0** - 85 bloków (do tego 3 odmian, których nie ma w ekwipunk
 | <img src="ikony/oak_sapling.png" width="32" height="32" alt=""> | **Sadzonka dębu** | `oak_sapling` | **Kopanie:** od razu<br>**Rośnie:** w drzewo, średnio po 5 min<br>**Skąd:** czasem z bloku: Liście dębu (5%); posadzony przedmiot: Żołądź |
 | <img src="ikony/birch_leaves.png" width="32" height="32" alt=""> | **Liście brzozy** | `birch_leaves` | **Kopanie:** 0,35 s<br>**Czasem wypada:** Sadzonka brzozy (7%) |
 | <img src="ikony/birch_sapling.png" width="32" height="32" alt=""> | **Sadzonka brzozy** | `birch_sapling` | **Kopanie:** od razu<br>**Rośnie:** w drzewo, średnio po 5 min<br>**Skąd:** czasem z bloku: Liście brzozy (7%) |
+| <img src="ikony/jablon_leaves.png" width="32" height="32" alt=""> | **Liście jabłoni** | `jablon_leaves` | **Kopanie:** 0,35 s<br>**Czasem wypada:** Sadzonka jabłoni (5%), Jabłko (5%)<br>**Paczka drzewa:** assets/drzewa/jablon<br>**Skąd:** zniszczony blok: Liście jabłoni z jabłkami; zniszczony blok: Liście jabłoni (jabłka odrastają)<br>**Przydaje się do:** Opadłe liście jabłoni |
+| <img src="ikony/jablon_leaves_jablka.png" width="32" height="32" alt=""> | **Liście jabłoni z jabłkami** | `jablon_leaves_jablka` | **Kopanie:** 0,35 s<br>**Daje:** Liście jabłoni<br>**Czasem wypada:** Sadzonka jabłoni (5%), Jabłko (5%)<br>**Zbiór (PPM):** Jabłko 1-2<br>**Paczka drzewa:** assets/drzewa/jablon<br>**Skąd:** wyrasta z: Liście jabłoni (jabłka odrastają) |
+| <img src="ikony/jablon_sapling.png" width="32" height="32" alt=""> | **Sadzonka jabłoni** | `jablon_sapling` | **Kopanie:** od razu<br>**Rośnie:** w drzewo, średnio po 5 min<br>**Paczka drzewa:** assets/drzewa/jablon<br>**Skąd:** czasem z bloku: Liście jabłoni (5%); czasem z bloku: Liście jabłoni z jabłkami (5%); czasem z bloku: Liście jabłoni (jabłka odrastają) (5%); posadzony przedmiot: Jabłko |
 
 ## Światło
 
 | | Nazwa | W komendach | Najważniejsze |
 |---|---|---|---|
-| <img src="ikony/lamp.png" width="32" height="32" alt=""> | **Lampa** | `lamp` | **Kopanie:** 0,45 s<br>**Świeci:** 15 / 15<br>**Przepis:** Lampa x2<br>**Przydaje się do:** Czerwona lampa, Zielona lampa, Niebieska lampa, Fioletowa lampa |
-| <img src="ikony/lamp_red.png" width="32" height="32" alt=""> | **Czerwona lampa** | `lamp_red` | **Kopanie:** 0,45 s<br>**Świeci:** 15 / 15<br>**Przepis:** Czerwona lampa |
+| <img src="ikony/lamp.png" width="32" height="32" alt=""> | **Lampa** | `lamp` | **Kopanie:** 0,45 s<br>**Świeci:** 15 / 15<br>**Przepis:** Lampa x2<br>**Przydaje się do:** Czerwona lampa, Zielona lampa, Niebieska lampa, Fioletowa lampa, Czerwona lampa |
+| <img src="ikony/lamp_red.png" width="32" height="32" alt=""> | **Czerwona lampa** | `lamp_red` | **Kopanie:** 0,45 s<br>**Świeci:** 15 / 15<br>**Przepis:** Czerwona lampa, Czerwona lampa |
 | <img src="ikony/lamp_green.png" width="32" height="32" alt=""> | **Zielona lampa** | `lamp_green` | **Kopanie:** 0,45 s<br>**Świeci:** 15 / 15<br>**Przepis:** Zielona lampa |
 | <img src="ikony/lamp_blue.png" width="32" height="32" alt=""> | **Niebieska lampa** | `lamp_blue` | **Kopanie:** 0,45 s<br>**Świeci:** 15 / 15<br>**Przepis:** Niebieska lampa |
 | <img src="ikony/lamp_purple.png" width="32" height="32" alt=""> | **Fioletowa lampa** | `lamp_purple` | **Kopanie:** 0,45 s<br>**Świeci:** 15 / 15<br>**Przepis:** Fioletowa lampa |
@@ -120,3 +126,4 @@ Wersja gry **0.13.0** - 85 bloków (do tego 3 odmian, których nie ma w ekwipunk
 | <img src="ikony/spruce_wreath.png" width="32" height="32" alt=""> | **Wieniec świerkowy** | `spruce_wreath` | **Kopanie:** od razu<br>**Skąd:** zniszczony blok: Wieniec świerkowy<br>**Przepis:** Wieniec świerkowy |
 | <img src="ikony/beech_leaf_litter.png" width="32" height="32" alt=""> | **Opadłe liście buka** | `beech_leaf_litter` | **Kopanie:** od razu<br>**Przepis:** Opadłe liście buka x2<br>**Przydaje się do:** Czarnoziem |
 | <img src="ikony/oak_leaf_litter.png" width="32" height="32" alt=""> | **Opadłe liście dębu** | `oak_leaf_litter` | **Kopanie:** od razu<br>**Przepis:** Opadłe liście dębu x2<br>**Przydaje się do:** Czarnoziem |
+| <img src="ikony/jablon_leaf_litter.png" width="32" height="32" alt=""> | **Opadłe liście jabłoni** | `jablon_leaf_litter` | **Kopanie:** od razu<br>**Paczka drzewa:** assets/drzewa/jablon<br>**Przepis:** Opadłe liście jabłoni x2<br>**Przydaje się do:** Czarnoziem |

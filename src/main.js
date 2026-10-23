@@ -12,6 +12,7 @@ import { createBlockIcons } from './ui/BlockIcons.js';
 import { Chat } from './ui/Chat.js';
 import { CommandRegistry } from './commands/CommandRegistry.js';
 import { GAME_COMMANDS } from './commands/gameCommands.js';
+import { TREE_PACK_ERRORS } from './blocks/treePacks.js';
 import { PerfMonitor } from './game/PerfMonitor.js';
 import { TerrainMap } from './ui/TerrainMap.js';
 import { InventoryScreen } from './ui/InventoryScreen.js';
@@ -415,6 +416,29 @@ async function playWorld(worldInfo) {
     resume();
 
     chat.print(touchMode ? TEXTS.touchHint : TEXTS.chatHint, 'hint');
+
+    showTreePackErrors();
+
+}
+
+
+// Paczki drzew z błędami (assets/drzewa/) - gra je pomija, a na czacie
+// mówi, co poprawić (wszystkie: /drzewa paczki).
+
+function showTreePackErrors() {
+
+    if (TREE_PACK_ERRORS.length === 0) {
+        return;
+    }
+
+    const shown = TREE_PACK_ERRORS.slice(0, 4);
+
+    chat.print(
+        `Paczki drzew - błędy do poprawienia (drzewo z błędem w opisie albo kształcie gra pomija):\n${shown.map((error) => `- ${error}`).join('\n')}` +
+        (TREE_PACK_ERRORS.length > shown.length ? `\n... i ${TREE_PACK_ERRORS.length - shown.length} więcej` : '') +
+        '\nWszystkie: /drzewa paczki, instrukcja: docs/drzewa-paczki.md',
+        'error'
+    );
 
 }
 

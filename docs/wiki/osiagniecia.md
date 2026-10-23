@@ -2,7 +2,7 @@
 
 > Ta strona jest generowana z kodu gry (`python tools/wiki.py`) - nie zmieniaj jej ręcznie, zmiany przepadną przy następnym generowaniu.
 
-Wersja gry **0.13.0** - 28 osiągnięć. Księga osiągnięć: klawisz **L**. Uwaga, spoilery: sekretne osiągnięcia są tu opisane (w grze widać tylko „???”).
+Wersja gry **0.14.0** - 29 osiągnięć. Księga osiągnięć: klawisz **L**. Uwaga, spoilery: sekretne osiągnięcia są tu opisane (w grze widać tylko „???”).
 
 
 ## Zwykłe (10 pkt)
@@ -12,6 +12,7 @@ Wersja gry **0.13.0** - 28 osiągnięć. Księga osiągnięć: klawisz **L**. Uw
 | <img src="ikony/stone.png" width="32" height="32" alt=""> | **Od czegoś trzeba zacząć** | Zniszcz pierwszy blok. | „Świat właśnie zrobił się o jeden blok mniejszy. Brawo... chyba.” |
 | <img src="ikony/grass.png" width="32" height="32" alt=""> | **Architekt amator** | Postaw pierwszy blok. | „Stoi. Krzywo, ale stoi.” |
 | <img src="ikony/strawberry.png" width="32" height="32" alt=""> | **Witaminki** | Zbierz owoce z krzaka (PPM). | „Babcia byłaby dumna. Krzak trochę mniej.” |
+| <img src="ikony/jablon_jablko.png" width="32" height="32" alt=""> | **Sadownik** | Zbierz owoce z drzewa owocowego (PPM na liściach z owocami). | „Jabłko pada niedaleko od jabłoni. Tym razem - prosto do kieszeni.” |
 | <img src="ikony/hazelnut.png" width="32" height="32" alt=""> | **Zielone palce** | Posadź owoc, orzech albo szyszkę. | „Teraz najtrudniejsza część ogrodnictwa: czekanie.” |
 | <img src="ikony/oak_log.png" width="32" height="32" alt=""> | **Drwal** | Zetnij pień drzewa. | „Drzewo nawet nie zdążyło krzyknąć „uwaga!”.” |
 | <img src="ikony/axe.png" width="32" height="32" alt=""> | **Ostrze w ruch** | W trybie przygody zetnij pień drzewa siekierą (idzie trzy razy szybciej niż ręką). | „Ręce bolą mniej. Drzewo - bardziej.” |

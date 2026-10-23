@@ -10,7 +10,9 @@ import {
     getAttach
 } from '../../blocks/BlockRegistry.js';
 
-import { TREE_NAMES } from '../../blocks/trees.js';
+import { BASE_TREE_NAMES } from '../../blocks/trees.js';
+
+import { TREE_PACKS } from '../../blocks/treePacks.js';
 
 import { Noise } from '../Noise.js';
 
@@ -39,6 +41,13 @@ import { buildTree, TREE_REACH } from './TreeShapes.js';
 //   lipa    - ciepło i wilgotno, niziny i wyżyny (z dębem),
 //   dąb     - ciepłe niziny,
 //   brzoza  - wilgotno i nisko (blisko wody), chłodniej.
+//
+// Drzewa z paczek (assets/drzewa/, "gdzieRosnie" w drzewo.json): w kratce,
+// w której ma stać drzewo, paczka "losuje" swoją szansę (czestosc) -
+// jeśli klimat i wysokość pasują do jej zakresów i wypadło, stoi tam
+// drzewo z paczki zamiast zwykłego. Las dalej jest tam, gdzie był, tylko
+// część drzew to nowy gatunek. Bez paczek świat jest taki sam jak przed
+// nimi (ten sam seed - te same drzewa).
 // ------------------------------------------------------------
 
 function clamp(value, min, max) {
@@ -77,6 +86,29 @@ function random01(seed, x, z, salt) {
 }
 
 
+// Liczba z nazwy (każda paczka losuje swoją szansę osobno, niezależnie
+// od kolejności na liście).
+
+function nameSalt(name) {
+
+    let h = 0x811c9dc5;
+
+    for (let i = 0; i < name.length; i++) {
+        h = Math.imul(h ^ name.charCodeAt(i), 0x01000193);
+    }
+
+    return 1000 + ((h >>> 0) % 1000000);
+
+}
+
+
+// Paczki, które rosną same w lesie (czestosc > 0).
+
+const WILD_PACKS = TREE_PACKS
+    .filter((pack) => pack.climate.chance > 0)
+    .map((pack) => ({ id: pack.id, climate: pack.climate, salt: nameSalt(pack.id) }));
+
+
 // Ile kratek (drzew) najwyżej pamiętamy - sąsiednie chunki pytają
 // o te same drzewa, więc nie liczymy ich kilka razy.
 
@@ -105,7 +137,7 @@ export class Forests {
 
         this.neighbor = {};
 
-        this.scores = new Float32Array(TREE_NAMES.length);
+        this.scores = new Float32Array(BASE_TREE_NAMES.length);
 
         this.ids = new Map();
 
@@ -181,7 +213,7 @@ export class Forests {
     }
 
 
-    // Oceny gatunków (kolejność TREE_NAMES) - większa = lepiej mu tu.
+    // Oceny gatunków (kolejność BASE_TREE_NAMES) - większa = lepiej mu tu.
     // jitter - losowy dodatek dla pojedynczego drzewa (0 = sam klimat).
 
     speciesScores(x, z, climate, jitter = null) {
@@ -229,7 +261,35 @@ export class Forests {
 
         }
 
-        return TREE_NAMES[best];
+        return BASE_TREE_NAMES[best];
+
+    }
+
+
+    // Gatunek z paczki w kratce (gx, gz) albo null. climate - klimat
+    // w miejscu drzewa ({ temperature, humidity, above }).
+
+    packSpecies(gx, gz, climate) {
+
+        for (const pack of WILD_PACKS) {
+
+            const { chance, temperature, humidity, height } = pack.climate;
+
+            if (
+                climate.temperature < temperature[0] || climate.temperature > temperature[1] ||
+                climate.humidity < humidity[0] || climate.humidity > humidity[1] ||
+                climate.above < height[0] || climate.above > height[1]
+            ) {
+                continue;
+            }
+
+            if (random01(this.seed, gx, gz, pack.salt) < chance) {
+                return pack.id;
+            }
+
+        }
+
+        return null;
 
     }
 
@@ -340,7 +400,7 @@ export class Forests {
         }
 
 
-        const species = this.bestSpecies(
+        const species = this.packSpecies(gx, gz, climate) ?? this.bestSpecies(
             this.speciesScores(x, z, climate, (i) => random01(seed, gx, gz, 10 + i))
         );
 

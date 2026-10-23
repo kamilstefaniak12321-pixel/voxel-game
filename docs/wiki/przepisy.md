@@ -2,7 +2,7 @@
 
 > Ta strona jest generowana z kodu gry (`python tools/wiki.py`) - nie zmieniaj jej ręcznie, zmiany przepadną przy następnym generowaniu.
 
-Wersja gry **0.13.0** - 22 przepisów. Wytwarza się w ekwipunku (**E**): siatka 2 x 2 obok miejsc ekwipunku, wynik po prawej (klik - weź, Shift + klik - ile się da). Przycisk 📖 *Przepisy* otwiera księgę - klik na przepisie sam układa składniki. Przepisy *z kształtem* można przesuwać po siatce i odbijać w poziomie; przepisy *bez kształtu* - obojętne, gdzie leżą składniki. Z czatu: `/przepisy`, `/wytworz <przepis>`.
+Wersja gry **0.14.0** - 25 przepisów. Wytwarza się w ekwipunku (**E**): siatka 2 x 2 obok miejsc ekwipunku, wynik po prawej (klik - weź, Shift + klik - ile się da). Przycisk 📖 *Przepisy* otwiera księgę - klik na przepisie sam układa składniki. Przepisy *z kształtem* można przesuwać po siatce i odbijać w poziomie; przepisy *bez kształtu* - obojętne, gdzie leżą składniki. Z czatu: `/przepisy`, `/wytworz <przepis>`.
 
 
 ## Ziemia
@@ -15,9 +15,9 @@ Wersja gry **0.13.0** - 22 przepisów. Wytwarza się w ekwipunku (**E**): siatka
 
 ### Czarnoziem
 
-<img src="przepisy/humus.png" alt="Czarnoziem: 1 x Ziemia + 1 x opadłe liście (bukowe albo dębowe) (obojętne gdzie)">
+<img src="przepisy/humus.png" alt="Czarnoziem: 1 x Ziemia + 1 x opadłe liście (dowolne) (obojętne gdzie)">
 
-1 x Ziemia + 1 x opadłe liście (bukowe albo dębowe) (bez kształtu). Nazwa przepisu: `humus`. Ziemia z próchnicą z opadłych liści.
+1 x Ziemia + 1 x opadłe liście (dowolne) (bez kształtu). Nazwa przepisu: `humus`. Ziemia z próchnicą z opadłych liści.
 
 ### Ściółka leśna
 
@@ -73,6 +73,12 @@ Wersja gry **0.13.0** - 22 przepisów. Wytwarza się w ekwipunku (**E**): siatka
 
 1 x pień brzozy (też okorowany) (bez kształtu). Nazwa przepisu: `birch_planks`.
 
+### Deski jabłoniowe x4
+
+<img src="przepisy/jablon_planks.png" alt="Deski jabłoniowe x4: 1 x pień jabłoni (też okorowany) (obojętne gdzie)">
+
+1 x pień jabłoni (też okorowany) (bez kształtu). Nazwa przepisu: `jablon_planks`.
+
 
 ## Światło
 
@@ -106,6 +112,12 @@ Wersja gry **0.13.0** - 22 przepisów. Wytwarza się w ekwipunku (**E**): siatka
 
 1 x Lampa + 1 x Jeżyny (bez kształtu). Nazwa przepisu: `lamp_purple`.
 
+### Czerwona lampa
+
+<img src="przepisy/jablon_czerwona_lampa.png" alt="Czerwona lampa: 1 x Lampa + 1 x Jabłko (obojętne gdzie)">
+
+1 x Lampa + 1 x Jabłko (bez kształtu). Nazwa przepisu: `jablon_czerwona_lampa`. Jabłko też jest czerwone.
+
 
 ## Ozdoby
 
@@ -126,6 +138,12 @@ Wersja gry **0.13.0** - 22 przepisów. Wytwarza się w ekwipunku (**E**): siatka
 <img src="przepisy/oak_leaf_litter.png" alt="Opadłe liście dębu x2: 1 x Liście dębu (obojętne gdzie)">
 
 1 x Liście dębu (bez kształtu). Nazwa przepisu: `oak_leaf_litter`.
+
+### Opadłe liście jabłoni x2
+
+<img src="przepisy/jablon_leaf_litter.png" alt="Opadłe liście jabłoni x2: 1 x Liście jabłoni (obojętne gdzie)">
+
+1 x Liście jabłoni (bez kształtu). Nazwa przepisu: `jablon_leaf_litter`.
 
 
 ## Narzędzia i surowce
@@ -159,11 +177,11 @@ Wersja gry **0.13.0** - 22 przepisów. Wytwarza się w ekwipunku (**E**): siatka
 
 Składnik z grupy to dowolna rzecz z listy (np. patyki z desek różnych drzew).
 
-- **deski (dowolne)**: Deski świerkowe, Deski sosnowe, Deski bukowe, Deski lipowe, Deski dębowe, Deski brzozowe
+- **deski (dowolne)**: Deski świerkowe, Deski sosnowe, Deski bukowe, Deski lipowe, Deski dębowe, Deski brzozowe, Deski jabłoniowe
 - **skała (kamień, granit, wapień, piaskowiec, łupek, bazalt)**: Kamień, Granit, Wapień, Piaskowiec, Łupek, Bazalt
 - **szyszka (świerka albo sosny)**: Szyszka świerka, Szyszka sosny
 - **igliwie (świerka albo sosny)**: Igliwie świerka, Igliwie sosny
-- **opadłe liście (bukowe albo dębowe)**: Opadłe liście buka, Opadłe liście dębu
+- **opadłe liście (dowolne)**: Opadłe liście buka, Opadłe liście dębu, Opadłe liście jabłoni
 - **coś czerwonego (mak, truskawki, papryczki chili)**: Mak, Truskawki, Papryczki chili
 - **coś zielonego (koniczyna, pokrzywa, paproć)**: Koniczyna, Pokrzywa, Paproć
 - **pień (gatunek)**: zwykły, okorowany, a u sosny także górny i z żywicą

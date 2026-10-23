@@ -1,8 +1,25 @@
 import * as THREE from 'three';
 
+import { PACK_TEXTURES, TREE_PACK_ERRORS } from '../blocks/treePacks.js';
+
 
 export const ATLAS_COLUMNS = 16;
-export const ATLAS_ROWS = 16;
+
+// Wiersze w pliku terrain.png.
+const IMAGE_ROWS = 16;
+
+// Pierwszy wolny wiersz atlasu - od niego idą tekstury z paczek drzew
+// (assets/drzewa/, src/blocks/treePacks.js), po kolei, kafelek za
+// kafelkiem. Nie trzeba ich wklejać do terrain.png - gra dorysowuje je
+// sama przy starcie.
+export const PACK_ATLAS_ROW = 10;
+
+const PACK_TILE_NAMES = Object.keys(PACK_TEXTURES);
+
+// Gdy tekstur z paczek jest więcej, niż mieści się w wolnych wierszach
+// terrain.png, atlas w grze ma dwa razy więcej wierszy.
+export const ATLAS_ROWS =
+    PACK_TILE_NAMES.length > (IMAGE_ROWS - PACK_ATLAS_ROW) * ATLAS_COLUMNS ? IMAGE_ROWS * 2 : IMAGE_ROWS;
 
 // Rozmiar jednego kafelka w pikselach.
 export const ATLAS_TILE_SIZE = 16;
@@ -252,15 +269,23 @@ export const ATLAS_TILES = {
 };
 
 
+// Tekstury z paczek drzew: nazwa kafelka "<drzewo>/<plik>.png".
+
+PACK_TILE_NAMES.forEach((name, i) => {
+
+    ATLAS_TILES[name] = {
+        x: i % ATLAS_COLUMNS,
+        y: PACK_ATLAS_ROW + Math.floor(i / ATLAS_COLUMNS)
+    };
+
+});
+
+
 // Wiersz atlasu z roślinami.
 
 export const PLANT_ATLAS_ROW = 2;
 
 // ------------------------------------------------------------
-
-const textureLoader =
-    new THREE.TextureLoader();
-
 
 const atlasUrl =
     new URL(
@@ -274,16 +299,13 @@ const atlasUrl =
 export const ATLAS_URL = atlasUrl.href;
 
 
+// Tekstura atlasu - obrazek dostaje po wczytaniu (atlasImage niżej).
+
 export const blockAtlasTexture =
-    textureLoader.load(
-        atlasUrl.href,
-        (texture) => computeAtlasAverages(texture.image),
-        undefined,
-        () => resolveAverages()
-    );
-    
+    new THREE.Texture();
+
 // ------------------------------------------------------------
-    
+
 blockAtlasTexture.magFilter =
     THREE.NearestFilter;
 
@@ -298,7 +320,152 @@ blockAtlasTexture.generateMipmaps =
 
 blockAtlasTexture.colorSpace =
     THREE.SRGBColorSpace;
-    
+
+// ------------------------------------------------------------
+// WCZYTANIE ATLASU
+//
+// Bez paczek drzew atlas to po prostu terrain.png. Z paczkami - płótno:
+// terrain.png, a w wolnych wierszach (od PACK_ATLAS_ROW) tekstury
+// z folderów paczek. Brakująca albo zepsuta tekstura - fioletowo-czarna
+// szachownica (od razu widać, której brakuje).
+//
+// atlasImage - obietnica z gotowym obrazkiem atlasu (<img>; ikonki
+// bloków, src/ui/BlockIcons.js, rysują się z niego).
+// ------------------------------------------------------------
+
+function loadImage(url) {
+
+    return new Promise((resolve, reject) => {
+
+        const image = new Image();
+
+        image.onload = () => resolve(image);
+        image.onerror = () => reject(new Error(`Nie udało się wczytać ${url}`));
+
+        image.src = url;
+
+    });
+
+}
+
+
+function drawMissing(context, x, y) {
+
+    const T = ATLAS_TILE_SIZE;
+
+    for (let py = 0; py < T; py += 4) {
+
+        for (let px = 0; px < T; px += 4) {
+
+            context.fillStyle = ((px + py) / 4) % 2 === 0 ? '#ff00dc' : '#000000';
+            context.fillRect(x * T + px, y * T + py, 4, 4);
+
+        }
+
+    }
+
+}
+
+
+async function buildAtlas() {
+
+    const base = await loadImage(atlasUrl.href);
+
+    if (PACK_TILE_NAMES.length === 0) {
+        return base;
+    }
+
+    const T = ATLAS_TILE_SIZE;
+
+    const canvas = document.createElement('canvas');
+
+    canvas.width = ATLAS_COLUMNS * T;
+    canvas.height = ATLAS_ROWS * T;
+
+    // Płótno w pamięci (nie na karcie graficznej): z atlasu czytają
+    // potem piksele średnie kolory i ikonki bloków - bez czekania na
+    // kartę graficzną przy każdym odczycie.
+
+    const context = canvas.getContext('2d', { willReadFrequently: true });
+
+    context.imageSmoothingEnabled = false;
+
+    context.drawImage(base, 0, 0);
+
+
+    const images = await Promise.all(PACK_TILE_NAMES.map((name) =>
+        loadImage(PACK_TEXTURES[name].url).catch(() => null)
+    ));
+
+    PACK_TILE_NAMES.forEach((name, i) => {
+
+        const { x, y } = ATLAS_TILES[name];
+
+        const image = images[i];
+
+        if (!image) {
+
+            drawMissing(context, x, y);
+
+            TREE_PACK_ERRORS.push(`Drzewo "${PACK_TEXTURES[name].pack}": brak tekstury ${PACK_TEXTURES[name].file} (w grze - fioletowa szachownica)`);
+
+            return;
+
+        }
+
+        if (image.width !== T || image.height !== T) {
+            TREE_PACK_ERRORS.push(`Drzewo "${PACK_TEXTURES[name].pack}": tekstura ${PACK_TEXTURES[name].file} ma ${image.width} x ${image.height} pikseli zamiast ${T} x ${T}`);
+        }
+
+        context.clearRect(x * T, y * T, T, T);
+
+        context.drawImage(image, 0, 0, image.width, image.height, x * T, y * T, T, T);
+
+    });
+
+
+    // Gotowy atlas z powrotem jako zwykły obrazek (PNG) - tak jak sam
+    // terrain.png. Rysowanie z obrazka (ikonki, średnie kolory, tekstura
+    // 3D) jest tanie; z płótna przeglądarka przy każdym rysowaniu
+    // przesyłałaby całe płótno od nowa.
+
+    const blob = await new Promise((resolve) => canvas.toBlob(resolve, 'image/png'));
+
+    if (!blob) {
+        return canvas;
+    }
+
+    try {
+        return await loadImage(URL.createObjectURL(blob));
+    }
+    catch {
+        return canvas;
+    }
+
+}
+
+
+export const atlasImage = buildAtlas();
+
+
+atlasImage.then(
+    (image) => {
+
+        blockAtlasTexture.image = image;
+        blockAtlasTexture.needsUpdate = true;
+
+        computeAtlasAverages(image);
+
+    },
+    (error) => {
+
+        console.warn(error);
+
+        resolveAverages();
+
+    }
+);
+
 // ------------------------------------------------------------
 
 export function getAtlasUV(tileName) {
@@ -369,7 +536,8 @@ export function getAtlasUV(tileName) {
 // Z daleka tekstury bloków zlewają się w jeden kolor. Dla każdego
 // kafelka atlasu liczymy jego średni kolor:
 //   atlasAverageTexture - mała tekstura 16 x 16 (jeden piksel na
-//       kafelek) - shader bloków bierze z niej kolor dalekich ścian,
+//       kafelek; z wieloma paczkami drzew 16 x 32) - shader bloków
+//       bierze z niej kolor dalekich ścian,
 //   getAtlasAverage('grass_top') - ten sam kolor jako THREE.Color
 //       (daleki teren, FarTerrain.js).
 // Liczone raz, po wczytaniu terrain.png - nowa tekstura bloku sama
@@ -495,7 +663,7 @@ function computeAtlasAverages(image) {
 
         const context = canvas.getContext('2d', { willReadFrequently: true });
 
-        context.drawImage(image, 0, 0, canvas.width, canvas.height);
+        context.drawImage(image, 0, 0);
 
         const pixels = context.getImageData(0, 0, canvas.width, canvas.height).data;
 

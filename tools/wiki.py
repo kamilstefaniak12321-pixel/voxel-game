@@ -69,11 +69,21 @@ class Icons:
         self.atlas = np.asarray(Image.open(ATLAS).convert('RGBA')).astype(np.float64)
         self.tiles = data['tiles']
         self.cache = {}
+        self.files = {}
 
     def tile(self, name):
         pos = self.tiles.get(name)
         if not pos:
             return np.zeros((TILE, TILE, 4))
+        if 'file' in pos:
+            # Tekstura z paczki drzewa (assets/drzewa/<drzewo>/<plik>.png).
+            if name not in self.files:
+                try:
+                    img = Image.open(os.path.join(ROOT, pos['file'])).convert('RGBA').resize((TILE, TILE), Image.NEAREST)
+                    self.files[name] = np.asarray(img).astype(np.float64)
+                except OSError:
+                    self.files[name] = np.zeros((TILE, TILE, 4))
+            return self.files[name]
         x, y = pos['x'], pos['y']
         return self.atlas[y * TILE:(y + 1) * TILE, x * TILE:(x + 1) * TILE]
 
@@ -242,6 +252,8 @@ class Wiki:
                 out.append(('Posadzony (PPM na ziemi)', entry['plantsLabel']))
             if entry['tool']:
                 out.append(('Narzędzie', f'kopie 3 razy szybciej: {", ".join(entry["toolMaterials"])}'))
+        if entry.get('pack'):
+            out.append(('Paczka drzewa', f'assets/drzewa/{entry["pack"]}'))
         if entry['sources']:
             out.append(('Skąd', '; '.join(entry['sources'])))
         if entry['madeBy']:

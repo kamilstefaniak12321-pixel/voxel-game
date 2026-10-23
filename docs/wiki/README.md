@@ -2,7 +2,7 @@
 
 Klockowa gra w przeglądarce, na komputerze (Windows) i na telefonie
 (Android). Nieskończony świat z prawdziwymi formami terenu i skałami,
-lasy sześciu gatunków drzew, krzaki owocowe, woda, dzień i noc
+lasy sześciu gatunków drzew (i jabłonie), krzaki owocowe, woda, dzień i noc
 z fazami księżyca, meteoryty, kopanie, wytwarzanie - i jeden sekret
 wysoko nad chmurami.
 
@@ -73,7 +73,7 @@ Zmiana w trakcie gry: `/tryb przygoda` albo `/tryb kreatywny`.
   rzadkie żyły **lepidolitu**. Świat ma 128 bloków wysokości i ciągnie
   się 30 000 bloków w każdą stronę.
 - **Lasy** - świerk, sosna, buk, lipa, dąb i brzoza, każdy tam, gdzie
-  pasuje mu klimat. Łąki z kwiatami i dzikie **krzaki owocowe**
+  pasuje mu klimat, a w ciepłych lasach na nizinach czasem **jabłoń**. Łąki z kwiatami i dzikie **krzaki owocowe**
   (truskawki, jeżyny, papryczki chili, leszczyna).
 - **Woda** - przezroczysta, z falami; można pływać i nurkować.
 - **Niebo** - doba trwa 20 minut, księżyc ma fazy (pełnia - jasna noc,
@@ -89,8 +89,8 @@ Zmiana w trakcie gry: `/tryb przygoda` albo `/tryb kreatywny`.
 - **Sadzenie** - owoce, orzechy, szyszki, żołędzie i kwiat lipy
   posadzone na ziemi wyrastają w krzak albo drzewo.
 - **Zbieranie** - PPM na krzaku z owocami, na pniu sosny z żywicą,
-  na kwitnącej lipie.
-- **Osiągnięcia** - 28 osiągnięć w czterech rangach (klawisz L).
+  na kwitnącej lipie, na liściach jabłoni z jabłkami (jabłka odrastają).
+- **Osiągnięcia** - 29 osiągnięć w czterech rangach (klawisz L).
 
 ## Ustawienia i komendy
 
@@ -110,4 +110,5 @@ Opisy techniczne poszczególnych części gry są w `docs/`:
 [niebo i światło](../niebo-i-swiatlo.md), [kosmos](../kosmos.md),
 [osiągnięcia](../osiagniecia.md), [telefon](../telefon.md),
 [aplikacja](../aplikacja.md). Jak dodać blok, przedmiot albo przepis -
-w głównym [README](../../README.md).
+w głównym [README](../../README.md). **Nowe drzewo bez programowania**
+(folder w `assets/drzewa/`) - [paczki drzew](../drzewa-paczki.md).

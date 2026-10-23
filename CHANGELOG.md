@@ -52,6 +52,9 @@ Pull request #33.
   (przy wielu paczkach ma 32 wiersze zamiast 16); ikonki bloków rysują
   się z tego samego obrazka.
 - Wiki: bloki i przedmioty z paczek (z ikonkami i folderem paczki).
+- Aplikacje: próbny instalator i `.apk` z pull requestów leżą w Actions
+  2 dni zamiast 14 (darmowe 0,5 GB miejsca na miesiąc), a brak miejsca
+  na nie nie zatrzymuje już publikacji wydania.
 
 ---
 

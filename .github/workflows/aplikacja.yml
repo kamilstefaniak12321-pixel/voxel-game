@@ -3,7 +3,7 @@
 #
 # - Pull request zmieniający aplikację (desktop/, android/,
 #   package.json...) - tylko próbne zbudowanie (instalator i .apk do
-#   pobrania w zakładce Actions -> ten przebieg -> Artifacts), bez
+#   pobrania przez 2 dni w zakładce Actions -> ten przebieg -> Artifacts), bez
 #   wydania.
 # - Wypchnięcie na main: jeśli w repozytorium z wydaniami
 #   (package.json -> build.publish) nie ma jeszcze KOMPLETNEGO wydania
@@ -227,11 +227,16 @@ jobs:
           SIZE=$(( $(stat -c %s "dist/$EXE") / 1024 / 1024 ))
           echo "::notice title=Instalator::$EXE ($SIZE MB), $EXE.blockmap, latest.yml"
 
+      # Instalator do pobrania z przebiegu (Artifacts) - tylko na 2 dni:
+      # repozytorium jest prywatne, a darmowy plan ma 0,5 GB miejsca na
+      # takie pliki na miesiąc (liczone za każdą godzinę leżenia).
+      # Brak miejsca nie zatrzymuje wydania (continue-on-error).
       - uses: actions/upload-artifact@v6
+        continue-on-error: true
         with:
           name: Voxel-Game-${{ needs.wersja.outputs.version }}-instalator
           path: dist/*.exe
-          retention-days: 14
+          retention-days: 2
 
       # Wysłanie do repozytorium z wydaniami: nowe wydanie albo
       # uzupełnienie istniejącego (pliki o tej samej nazwie są
@@ -375,11 +380,13 @@ jobs:
 
           echo "::notice title=Aplikacja ($KIND)::$OUT ($SIZE MB)%0A$BADGING%0A$CERT"
 
+      # Jak instalator wyżej: 2 dni, brak miejsca nie zatrzymuje wydania.
       - uses: actions/upload-artifact@v6
+        continue-on-error: true
         with:
           name: ${{ env.OUT }}
           path: dist/*.apk
-          retention-days: 14
+          retention-days: 2
 
       # Do wydania - tylko podpisana kluczem gry i tylko gdy Windows się
       # udał albo nie był potrzebny (wydanie z instalatorem już jest).

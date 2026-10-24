@@ -19,6 +19,11 @@ import {
     METEOR_LIGHT_GLSL
 } from './meteorLight.js';
 
+import {
+    shadowUniforms,
+    shadowLightsChunk
+} from './Shadows.js';
+
 // ------------------------------------------------------------
 // MATERIAŁ MODELI (gracz, blok w ręce)
 //
@@ -38,7 +43,17 @@ export const modelLight = {
     uModelSky: { value: 1 },
 
     // Światło lamp w kolorze (0-1 na kanał).
-    uModelBlock: { value: new THREE.Vector3() }
+    uModelBlock: { value: new THREE.Vector3() },
+
+    // Cienie słońca (Shadows.js): 1 = włączone - wtedy światło nieba
+    // przyciemnia tylko światło otoczenia, a światło słońca mnoży się
+    // przez uModelSun (0-1, liniowo: czy słońce dochodzi do gracza).
+    uModelShadows: { value: 0 },
+    uModelSun: { value: 1 },
+
+    // Światło otoczenia z cieniami (liniowo) - w ciemnym miejscu słabsze
+    // (SHADOW_INDOOR_DARKNESS w config.js).
+    uModelAmbient: { value: 1 }
 
 };
 
@@ -59,6 +74,8 @@ export function createModelMaterial({ map, alphaTest = 0, glow = 0 }) {
     material.onBeforeCompile = (shader, renderer) => {
 
         Object.assign(shader.uniforms, skyUniforms, viewUniforms, modelLight, meteorLightUniforms, own);
+
+        shader.uniforms.uSunShadowLight = shadowUniforms.uSunShadowLight;
 
 
         shader.vertexShader = shader.vertexShader
@@ -104,6 +121,10 @@ export function createModelMaterial({ map, alphaTest = 0, glow = 0 }) {
                 uniform float uModelSky;
                 uniform vec3 uModelBlock;
                 uniform float uModelGlow;
+                uniform float uModelShadows;
+                uniform float uModelSun;
+                uniform float uModelAmbient;
+                uniform int uSunShadowLight;
                 ${SKY_COLOR_GLSL}
                 ${VIEW_GLSL}
                 ${METEOR_LIGHT_GLSL}
@@ -126,7 +147,14 @@ export function createModelMaterial({ map, alphaTest = 0, glow = 0 }) {
                 '#include <color_fragment>',
                 `#include <color_fragment>
                 vec3 modelTexel = diffuseColor.rgb;
-                diffuseColor.rgb *= pow(uModelSky, 2.2);`
+                float modelSky = pow(uModelSky, 2.2);
+                if (uModelShadows < 0.5) {
+                    diffuseColor.rgb *= modelSky;
+                }`
+            )
+            .replace(
+                '#include <lights_fragment_begin>',
+                shadowLightsChunk('uModelSun', 'modelSky', 'uModelAmbient', 'uModelShadows > 0.5')
             )
             .replace(
                 '#include <opaque_fragment>',

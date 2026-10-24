@@ -580,6 +580,9 @@ export class PlayerModel {
             this.mesh.removeFromParent();
             this.mesh.geometry.dispose();
 
+            // Tekstura z kośćmi (tworzy ją three.js przy pierwszym rysowaniu).
+            this.mesh.skeleton.dispose();
+
         }
 
 
@@ -758,6 +761,8 @@ export class PlayerModel {
         this.object.removeFromParent();
 
         this.mesh.geometry.dispose();
+
+        this.mesh.skeleton.dispose();
 
         this.held.geometry.dispose();
 

@@ -29,7 +29,7 @@
 
 import { WORLD_BORDER } from '../config.js';
 
-import { getBlockDefinition } from '../blocks/BlockRegistry.js';
+import { getBlockDefinition, isOpaqueId } from '../blocks/BlockRegistry.js';
 
 import { BASE_TREE_NAMES } from '../blocks/trees.js';
 
@@ -71,6 +71,60 @@ const ORCHARD = TREE_FRUIT.length === 0 ? [] : [{
     on: 'harvested',
     when: (data) => getBlockDefinition(data.type)?.pack !== undefined && TREE_FRUIT.includes(data.item)
 }];
+
+
+// "Złota godzina": słońce nisko nad horyzontem (wschód albo zachód),
+// gracz patrzy prosto na nie i nic go nie zasłania.
+
+function lookingAtLowSun(game) {
+
+    const sun = game.sky.celestial.sunDirection;
+
+    if (sun.y < 0 || sun.y > 0.12 || game.sky.space > 0.5) {
+        return false;
+    }
+
+    const { yaw, pitch } = game.player;
+
+    const look =
+        -Math.sin(yaw) * Math.cos(pitch) * sun.x +
+        Math.sin(pitch) * sun.y +
+        -Math.cos(yaw) * Math.cos(pitch) * sun.z;
+
+    return look > 0.95 && game.shadows?.light === 'sun' && game.sunVisibility > 0.5;
+
+}
+
+
+// "Promyk słońca": w dzień, pod dachem (nad głową jest pełny blok,
+// więc nie widać nieba), a słońce świeci prosto na gracza - przez okno.
+
+function inSunbeam(game) {
+
+    if (game.sky.celestial.sunDirection.y < 0.08 || game.shadows?.light !== 'sun' || game.water.underwater) {
+        return false;
+    }
+
+    if (game.sunVisibility < 0.8) {
+        return false;
+    }
+
+    const eye = game.camera.position;
+
+    const x = Math.floor(eye.x);
+    const z = Math.floor(eye.z);
+
+    for (let y = Math.floor(eye.y) + 1; y <= Math.floor(eye.y) + 24; y++) {
+
+        if (isOpaqueId(game.world.getBlockId(x, y, z))) {
+            return true;
+        }
+
+    }
+
+    return false;
+
+}
 
 
 // Pień drzewa (każdy rodzaj pnia, także okorowany): gatunek albo null.
@@ -209,6 +263,15 @@ export const ACHIEVEMENTS = [
             return time < 0.01 || time > 0.99;
         }
     },
+    {
+        id: 'golden_hour',
+        tier: 'common',
+        title: 'Złota godzina',
+        task: 'Popatrz prosto na zachodzące (albo wschodzące) słońce.',
+        comment: 'Fotografowie nazywają to złotą godziną. Ty nazywasz to: jeszcze jeden blok i kończę.',
+        icon: 'dandelion',
+        check: (game) => lookingAtLowSun(game)
+    },
 
     // --------------------------------------------------------
     // RZADKIE
@@ -316,6 +379,15 @@ export const ACHIEVEMENTS = [
         comment: 'Gra zamieszkała na twoim telefonie. Czynszu nie płaci.',
         icon: 'grass',
         check: (game) => game.nativeApp === 'android'
+    },
+    {
+        id: 'sunbeam',
+        tier: 'rare',
+        title: 'Promyk słońca',
+        task: 'Stań w plamie słońca pod dachem (słońce wpada przez okno albo dziurę w ścianie).',
+        comment: 'Jak kot na parapecie. Brakuje tylko mruczenia.',
+        icon: 'oak_planks',
+        check: (game) => inSunbeam(game)
     },
 
     // --------------------------------------------------------

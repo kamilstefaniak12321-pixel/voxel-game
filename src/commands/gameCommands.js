@@ -1307,6 +1307,8 @@ const SETTING_WORDS = {
     rozdzielczosc: 'renderScale',
     fps: 'fpsLimit',
     cienie: 'ambientOcclusion',
+    'cienie-slonca': 'shadows',
+    promienie: 'lightShafts',
     liscie: 'fancyLeaves',
     'dynamiczne-swiatlo': 'dynamicLight',
     wczytywanie: 'loadBudget',
@@ -1327,6 +1329,20 @@ const SETTING_WORDS = {
     kolysanie: 'viewBobbing',
     zgiecia: 'jointStyle',
     kamera: 'cameraDistance'
+};
+
+
+// Jakość cieni słońca: słowo -> wartość ustawienia "shadows".
+
+const SHADOW_WORDS = {
+    wyl: 0,
+    off: 0,
+    nie: 0,
+    zwykle: 1,
+    wl: 2,
+    on: 2,
+    tak: 2,
+    dokladne: 2
 };
 
 
@@ -1386,6 +1402,19 @@ function parseSettingValue(key, text) {
         if (['klocki', 'bloki', 'blocks'].includes(word)) return 'blocks';
 
         throw new CommandError('Wpisz gladkie albo klocki');
+
+    }
+
+
+    if (key === 'shadows') {
+
+        const value = SHADOW_WORDS[word] ?? Number(word);
+
+        if (![0, 1, 2].includes(value)) {
+            throw new CommandError('Wpisz wyl, zwykle albo dokladne (0, 1, 2)');
+        }
+
+        return value;
 
     }
 
@@ -3320,11 +3349,96 @@ export const GAME_COMMANDS = [
 
 
     {
+        name: 'cienie',
+        aliases: ['shadows'],
+        usage: '/cienie | /cienie <wyl | zwykle | dokladne> | /cienie promienie <wl | wyl>',
+        description: 'Cienie słońca i księżyca (pikselowe) i promienie światła w powietrzu: stan i włączanie.',
+
+        run(args, { game }) {
+
+            const settings = game.settings;
+
+            const word = simplify(args[0] ?? '');
+
+
+            if (word === 'promienie') {
+
+                const mode = simplify(args[1] ?? '');
+
+                const on =
+                    ON_WORDS.includes(mode) ? true :
+                    OFF_WORDS.includes(mode) ? false :
+                    !settings.get('lightShafts');
+
+                settings.set('lightShafts', on);
+
+                return `${TEXTS.lightShafts(on)}${on && settings.get('shadows') === 0 ? ' (działają tylko z cieniami słońca: /cienie dokladne)' : ''}`;
+
+            }
+
+
+            if (word !== '') {
+
+                const value = SHADOW_WORDS[word] ?? Number(word);
+
+                if (![0, 1, 2].includes(value)) {
+                    throw usageError(this);
+                }
+
+                settings.set('shadows', value);
+
+            }
+
+
+            const shadows = game.shadows;
+
+            const quality = settings.get('shadows');
+
+            let text = `${TEXTS.shadows(quality)}, ${TEXTS.lightShafts(settings.get('lightShafts')).replace(/\.$/, '')}.`;
+
+            if (!shadows.supported) {
+                return `${text} Ta przeglądarka nie ma WebGL2 - cienie nie zadziałają.`;
+            }
+
+            if (settings.get('potato')) {
+                return `${text} W trybie ziemniaka cieni nie ma (/ziemniak wyl).`;
+            }
+
+            if (!shadows.enabled) {
+                return text;
+            }
+
+            const degrees = Math.round(Math.asin(Math.max(-1, Math.min(1, shadows.direction.y))) * 180 / Math.PI);
+
+            text += ` Cienie rzuca ${shadows.light === 'sun' ? 'słońce' : 'księżyc'} (${degrees}° nad horyzontem, ` +
+                `siła ${Math.round(shadows.strength * 100)}%), mapa ${shadows.size} x ${shadows.size} - ${shadows.radius} bloki wokół gracza, ` +
+                `przerysowana ${shadows.draws} ${shadows.draws === 1 ? 'raz' : 'razy'}. Słońce na graczu: ${Math.round(game.sunVisibility * 100)}%.`;
+
+            if (shadows.strength === 0) {
+                text += ' Teraz słońce i księżyc są za nisko (albo nie świecą) - cieni nie widać.';
+            }
+
+            return text;
+
+        },
+
+        complete(args) {
+
+            if (args.length === 1) return ['wyl', 'zwykle', 'dokladne', 'promienie'];
+            if (args.length === 2 && simplify(args[0]) === 'promienie') return ['wl', 'wyl'];
+
+            return [];
+
+        }
+    },
+
+
+    {
         name: 'demo',
         aliases: [],
-        usage: '/demo swiatlo | /demo kula [kolor | usun] | /demo skaly',
-        description: 'Sceny do sprawdzania nowości: pokój z kolorowymi lampami, krążąca kula dynamicznego światła, ' +
-            'odkrywka (wykop do dna świata - widać warstwy skał).',
+        usage: '/demo swiatlo | /demo okno | /demo kula [kolor | usun] | /demo skaly',
+        description: 'Sceny do sprawdzania nowości: pokój z kolorowymi lampami, ciemny pokój z oknami od strony słońca ' +
+            '(snopy światła i cienie), krążąca kula dynamicznego światła, odkrywka (wykop do dna świata - widać warstwy skał).',
 
         run(args, ctx) {
 
@@ -3333,6 +3447,11 @@ export const GAME_COMMANDS = [
 
             if (what === 'swiatlo') {
                 return buildLightDemo(ctx);
+            }
+
+
+            if (['okno', 'okna', 'slonce'].includes(what)) {
+                return buildWindowDemo(ctx);
             }
 
 
@@ -3375,7 +3494,7 @@ export const GAME_COMMANDS = [
 
         complete(args) {
 
-            if (args.length === 1) return ['swiatlo', 'kula', 'skaly'];
+            if (args.length === 1) return ['swiatlo', 'okno', 'kula', 'skaly'];
             if (args.length === 2 && simplify(args[0]) === 'kula') return [...Object.keys(COLOR_NAMES), 'usun'];
 
             return [];
@@ -4499,6 +4618,210 @@ function buildRockDemo({ player, world }) {
 
     return `Odkrywka przed tobą: ${2 * HALF + 1} x ${length} bloków, od y ${top} do 1 (${changed} bloków). ` +
         'Na ścianach widać warstwy skał. Uwaga: to zmienia świat (zapisze się).';
+
+}
+
+
+// /demo okno - ciemny pokój (kamień, podłoga z desek) z oknami od
+// strony słońca i wąską szczeliną. Przez okna wpadają snopy światła,
+// na podłodze leżą plamy słońca (cienie słońca i promienie - Shadows.js,
+// LightShafts.js). Gdy słońce jest za wysoko, za nisko albo jest noc,
+// zegar przestawia się na popołudnie. Gracz trafia do środka.
+
+function buildWindowDemo({ game, player, world, sky, time }) {
+
+    let note = '';
+
+    sky.refresh(time.days);
+
+    const height = sky.celestial.sunHeight;
+
+    if (height < 0.3 || height > 0.6) {
+
+        // Popołudnie tego samego (albo następnego) dnia: słońce mniej
+        // więcej 20-25 stopni nad horyzontem.
+
+        let day = Math.floor(time.days);
+
+        let best = null;
+
+        for (let hour = 12; hour <= 20; hour += 0.125) {
+
+            sky.refresh(day + hour / 24);
+
+            const h = sky.celestial.sunHeight;
+
+            if (h > 0.15 && (best === null || Math.abs(h - 0.42) < Math.abs(best.h - 0.42))) {
+                best = { hour, h };
+            }
+
+        }
+
+        if (best) {
+
+            if (day + best.hour / 24 < time.days) {
+                day++;
+            }
+
+            time.days = day + best.hour / 24 + 1e-7;
+
+            note = ` Ustawiono godzinę ${time.formatClock()} - słońce nisko, długie snopy światła.`;
+
+        }
+
+        sky.refresh(time.days);
+
+    }
+
+
+    // Ściana z oknami - od strony słońca (wzdłuż osi X albo Z).
+
+    const sun = sky.celestial.sunDirection;
+
+    const alongX = Math.abs(sun.x) >= Math.abs(sun.z);
+
+    const ux = alongX ? (Math.sign(sun.x) || 1) : 0;     // "u" - w stronę słońca
+    const uz = alongX ? 0 : (Math.sign(sun.z) || 1);
+
+    const vx = uz;                                        // "v" - w poprzek
+    const vz = ux;
+
+
+    // Pokój przed graczem (w stronę, w którą patrzy), na najwyższym
+    // terenie pod nim (pod podłogą - kamienny fundament).
+
+    const p = player.pos;
+
+    const centerX = Math.floor(p.x - Math.sin(player.yaw) * 10);
+    const centerZ = Math.floor(p.z - Math.cos(player.yaw) * 10);
+
+    const SIZE = 5;
+
+    const at = (u, v) => [centerX + ux * u + vx * v, centerZ + uz * u + vz * v];
+
+    let floor = 1;
+
+    for (let u = -SIZE; u <= SIZE; u++) {
+
+        for (let v = -SIZE; v <= SIZE; v++) {
+
+            const [x, z] = at(u, v);
+
+            world.ensureColumnLoaded(x, z);
+
+            floor = Math.max(floor, world.getSurfaceY(x, z));
+
+        }
+
+    }
+
+    floor = Math.min(CHUNK_HEIGHT - 24, floor);
+
+    const put = (u, y, v, type) => {
+
+        const [x, z] = at(u, v);
+
+        world.setBlock(x, floor + y, z, type);
+
+    };
+
+
+    // Przed oknami pusto aż do 24 bloków (drzewa i wzgórza nie
+    // zasłaniają słońca).
+
+    for (let u = SIZE + 1; u <= SIZE + 24; u++) {
+
+        for (let v = -SIZE - 3; v <= SIZE + 3; v++) {
+
+            const [x, z] = at(u, v);
+
+            world.ensureColumnLoaded(x, z);
+
+            for (let y = 1; y <= 20; y++) {
+                put(u, y, v, null);
+            }
+
+        }
+
+    }
+
+
+    // Fundament.
+
+    for (let u = -SIZE; u <= SIZE; u++) {
+
+        for (let v = -SIZE; v <= SIZE; v++) {
+
+            const [x, z] = at(u, v);
+
+            for (let y = floor - 1; y > 0 && !world.isSolid(x, y, z); y--) {
+                world.setBlock(x, y, z, 'stone');
+            }
+
+        }
+
+    }
+
+
+    // Ściany, podłoga i dach. Wnętrze: 9 x 5 x 9 bloków.
+
+    for (let u = -SIZE; u <= SIZE; u++) {
+
+        for (let v = -SIZE; v <= SIZE; v++) {
+
+            for (let y = 0; y <= 6; y++) {
+
+                const wall = Math.abs(u) === SIZE || Math.abs(v) === SIZE || y === 6;
+
+                put(u, y, v, y === 0 ? 'oak_planks' : wall ? 'stone' : null);
+
+            }
+
+        }
+
+    }
+
+
+    // Okna od strony słońca i wąska szczelina (jak drzwi) między nimi.
+
+    for (const v of [-3, -2, 2, 3]) {
+
+        put(SIZE, 2, v, null);
+        put(SIZE, 3, v, null);
+
+    }
+
+    for (let y = 1; y <= 4; y++) {
+        put(SIZE, y, 0, null);
+    }
+
+    // Gracz w głębi pokoju, patrzy w stronę okien (trochę z boku,
+    // żeby snopy było widać).
+
+    const standU = -SIZE + 1.5;
+    const standV = 3.5;
+
+    p.set(
+        centerX + ux * standU + vx * standV + 0.5,
+        floor + 1,
+        centerZ + uz * standU + vz * standV + 0.5
+    );
+
+    const lookX = ux * (SIZE - 1) + vx * -1.5 - (ux * standU + vx * standV);
+    const lookZ = uz * (SIZE - 1) + vz * -1.5 - (uz * standU + vz * standV);
+
+    player.yaw = Math.atan2(-lookX, -lookZ);
+    player.pitch = -0.18;
+
+    player.vel.set(0, 0, 0);
+
+    player.updateCamera();
+
+
+    const shadowsOff = game.settings.get('shadows') === 0 || game.settings.get('potato');
+
+    return 'Zbudowano ciemny pokój z oknami od strony słońca - jesteś w środku.' + note +
+        (shadowsOff ? ' Uwaga: cienie słońca są wyłączone (/cienie dokladne) - bez nich nie ma plam ani snopów światła.' : '');
 
 }
 

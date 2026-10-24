@@ -27,7 +27,9 @@ import { DynamicLight } from '../world/DynamicLight.js';
 import { FarTerrain } from '../world/FarTerrain.js';
 import { setAmbientOcclusion, setFastLeaves } from '../rendering/ChunkMesher.js';
 import { viewUniforms } from '../rendering/viewUniforms.js';
-import { blockMaterial, plantMaterial, waterMaterial, leafMaterial, setPotatoDefine, setLeafMaterialFast } from '../rendering/BlockRenderData.js';
+import { blockMaterial, plantMaterial, waterMaterial, leafMaterial, setPotatoDefine, setLeafMaterialFast, setShadowDefine } from '../rendering/BlockRenderData.js';
+import { SunShadows } from '../rendering/Shadows.js';
+import { LightShafts } from '../rendering/LightShafts.js';
 import { Meteorites } from './Meteorites.js';
 import { SpaceView } from '../space/SpaceView.js';
 import { Skyfall } from '../space/Skyfall.js';
@@ -59,7 +61,11 @@ import {
     CREATIVE_REPEAT_SECONDS,
     VIEW_BOB_HEIGHT,
     LAND_DIP_SPEED,
-    LAND_DIP_MAX
+    LAND_DIP_MAX,
+    SHADOW_INDOOR_DARKNESS,
+    SHAFT_BRIGHTNESS,
+    SHAFT_DENSITY_OUTSIDE,
+    SHAFT_DENSITY_INSIDE
 } from '../config.js';
 
 
@@ -67,6 +73,15 @@ import {
 // chunki pod sobą - wyżej sam daleki teren (i kula Ziemi).
 
 const HIGH_VIEW = 1100;
+
+
+function smoothstep(a, b, x) {
+
+    const t = Math.min(1, Math.max(0, (x - a) / (b - a)));
+
+    return t * t * (3 - 2 * t);
+
+}
 
 
 // Tryby gry: przygoda (zbieranie i zużywanie bloków) i kreatywny
@@ -246,6 +261,24 @@ export class Game {
         this.farTerrain = new FarTerrain(this.world);
 
         this.sky.attachLights(this.farTerrain.scene);
+
+
+        // Pikselowe cienie słońca i księżyca (mapa cieni przerysowywana,
+        // gdy zmienią się chunki w jej zasięgu) i promienie światła
+        // w powietrzu (src/rendering/Shadows.js, LightShafts.js).
+
+        this.shadows = new SunShadows(renderer);
+
+        this.world.onMeshChanged = (chunk) => this.shadows.markChunk(chunk);
+
+        this.lightShafts = new LightShafts(renderer);
+
+        this.shaftColor = new THREE.Color();
+
+        // Czy słońce dochodzi do gracza (0-1, płynnie) - model, ręka,
+        // osiągnięcia.
+
+        this.sunVisibility = 1;
 
 
         // Kosmos (sekret): z wysoka czarne niebo, planety i kula Ziemi
@@ -671,6 +704,14 @@ export class Game {
 
         this.updateFog(dt);
 
+        // Cienie: które światło je rzuca i czy przerysować mapę.
+
+        this.shadows.update(dt, this.sky, this.camera.position);
+
+        // Z cieniami słońce mocniej, światło nieba słabiej (config.js).
+
+        this.sky.applyShadowContrast(this.shadows.active ? this.shadows.strength : 0);
+
 
         // Spadanie z kosmosu (ogień, krater), meteoryty, rosnące krzaki,
         // kule światła i dynamiczne światło.
@@ -808,6 +849,30 @@ export class Game {
         modelLight.uModelSky.value = this.modelSky;
         modelLight.uModelBlock.value.copy(this.modelBlock);
 
+
+        // Czy słońce (albo księżyc) świeci na gracza - promień w jego
+        // stronę przez bloki. Z cieniami model i ręka ciemnieją w cieniu
+        // (tak samo jak bloki obok).
+
+        const shadows = this.shadows;
+
+        const visible = SunShadows.sunVisibility(
+            this.world,
+            player.pos.x,
+            player.pos.y + 1.2,
+            player.pos.z,
+            shadows.direction
+        );
+
+        this.sunVisibility += (visible - this.sunVisibility) * rate;
+
+        const strength = shadows.active ? shadows.strength : 0;
+
+        modelLight.uModelSun.value =
+            this.modelSky ** 2.2 + (this.sunVisibility - this.modelSky ** 2.2) * strength;
+
+        modelLight.uModelAmbient.value = this.modelSky ** (2.2 + SHADOW_INDOOR_DARKNESS * strength);
+
     }
 
 
@@ -941,6 +1006,12 @@ export class Game {
 
         renderer.info.reset();
 
+
+        // Mapa cieni słońca (gdy trzeba) i cień gracza - przed światem.
+
+        this.shadows.render(this.world, this.camera.position, this.model, this.scene, this.viewDistance);
+
+
         renderer.clear();
 
 
@@ -1049,6 +1120,11 @@ export class Game {
         renderer.render(this.scene, camera);
 
 
+        // Promienie światła w powietrzu (na świecie, pod ręką).
+
+        this.renderLightShafts(camera);
+
+
         // Ręka w widoku z oczu - na wierzchu (nigdy nie wchodzi w ścianę).
 
         if (!this.view && this.settings.get('showHand')) {
@@ -1065,6 +1141,52 @@ export class Game {
             camera.updateMatrixWorld();
 
         }
+
+    }
+
+
+    // Promienie światła (LightShafts.js): kolor światła, które rzuca
+    // cienie, mocniejsze o wschodzie i zachodzie i w ciemnym miejscu
+    // (w pokoju z oknem snop jest wyraźny, na dworze - lekka mgiełka).
+
+    renderLightShafts(camera) {
+
+        const shadows = this.shadows;
+
+        if (!this.shaftsEnabled || !shadows.active || this.water.underwater) {
+            return;
+        }
+
+        const state = this.sky.state;
+
+        const sun = shadows.light === 'sun';
+
+        const intensity = sun ? state.sunLightIntensity : state.moonLightIntensity * 1.6;
+
+        const lowSun = 1 + 0.9 * (1 - smoothstep(0.06, 0.4, shadows.direction.y));
+
+        const amount = intensity * shadows.strength * lowSun * SHAFT_BRIGHTNESS;
+
+        if (amount < 0.003) {
+            return;
+        }
+
+        this.shaftColor.copy(sun ? state.sunLightColor : state.moonLightColor).multiplyScalar(amount);
+
+        // Gęstość powietrza: w ciemnym miejscu (mało światła nieba przy
+        // głowie - fogBrightness) snopy są dużo wyraźniejsze. Cień pod
+        // drzewami to jeszcze "na dworze" (inaczej las tonąłby w blasku).
+
+        const inside = smoothstep(0.3, 0.8, 1 - this.fogBrightness);
+
+        const density = SHAFT_DENSITY_OUTSIDE + (SHAFT_DENSITY_INSIDE - SHAFT_DENSITY_OUTSIDE) * inside;
+
+        // Na dworze świeci głównie powietrze w stronę słońca (blask wokół
+        // niego), w ciemnym pokoju snop widać też z boku.
+
+        const isotropic = 0.12 + 0.5 * inside;
+
+        this.lightShafts.render(camera, this.world, shadows, this.shaftColor, density, isotropic, shadows.radius);
 
     }
 
@@ -1438,6 +1560,17 @@ export class Game {
         setPotatoDefine([blockMaterial, plantMaterial, waterMaterial, leafMaterial], potato);
 
 
+        // Cienie słońca i promienie światła (nie w trybie ziemniaka).
+
+        this.shadows.setQuality(potato ? 0 : settings.get('shadows'));
+
+        setShadowDefine([blockMaterial, plantMaterial, waterMaterial, leafMaterial], this.shadows.enabled);
+
+        modelLight.uModelShadows.value = this.shadows.enabled ? 1 : 0;
+
+        this.shaftsEnabled = !potato && settings.get('lightShafts');
+
+
         // Model gracza: wierzchnia warstwa skórki, styl zgięć, tryb ziemniaka.
 
         if (this.model) {
@@ -1544,13 +1677,14 @@ export class Game {
 
 
     // Machnięcie ręką: model gracza (z trzeciej osoby) i ręka w widoku
-    // z oczu.
+    // z oczu. seconds - ile trwa machnięcie ręki (przy kopaniu tyle, co
+    // jedno uderzenie - kolejne machnięcia łączą się w płynny ruch).
 
-    swingArm() {
+    swingArm(seconds) {
 
         this.animator.swing();
 
-        this.hand.swing();
+        this.hand.swing(seconds);
 
     }
 
@@ -1590,7 +1724,7 @@ export class Game {
 
                     this.breakRepeat = CREATIVE_REPEAT_SECONDS;
 
-                    this.swingArm();
+                    this.swingArm(Math.max(CREATIVE_REPEAT_SECONDS, 0.2));
 
                     return this.breakTarget(hit);
 
@@ -1673,7 +1807,7 @@ export class Game {
             mining.hit = MINING_HIT_SECONDS;
 
             if (!pressed) {
-                this.swingArm();
+                this.swingArm(MINING_HIT_SECONDS);
             }
 
             this.playBlockSound('step', type, hit.block, 0.7);
@@ -2208,6 +2342,12 @@ export class Game {
 
         this.debris.dispose();
 
+        this.shadows.dispose();
+
+        this.lightShafts.dispose();
+
+        modelLight.uModelShadows.value = 0;
+
         return true;
 
     }
@@ -2273,6 +2413,17 @@ export class Game {
             `Daleki teren: ${far.active ? `${far.shown} kafelków${far.missing ? `, buduje się ${far.missing}` : ''}` : 'wył.'}`;
 
 
+        // Cienie słońca.
+
+        const shadows = this.shadows;
+
+        const shadowInfo = shadows.enabled
+            ? `Cienie: ${shadows.light === 'sun' ? 'słońce' : 'księżyc'} ${Math.round(Math.asin(Math.max(-1, Math.min(1, shadows.direction.y))) * 180 / Math.PI)}°, ` +
+              `siła ${Math.round(shadows.strength * 100)}%, mapa ${shadows.size} px (${shadows.radius} bl.), przerysowana ${shadows.draws}×` +
+              `${this.shaftsEnabled ? ' | promienie' : ''} | słońce na graczu ${Math.round(this.sunVisibility * 100)}%`
+            : `Cienie: wył.${shadows.supported ? '' : ' (brak WebGL2)'}`;
+
+
         // Zaćmienie słońca (tylko gdy trwa).
 
         const eclipse = this.sky.state.eclipse;
@@ -2300,6 +2451,8 @@ export class Game {
             `Księżyc: ${this.sky.celestial.moonPhaseName}${eclipseInfo}<br>` +
 
             `${performanceInfo}<br>` +
+
+            `${shadowInfo}<br>` +
 
             `Na ziemi: ${player.onGround ? 'tak' : 'nie'}` +
             `${player.submerged > 0 ? ` | w wodzie ${Math.round(player.submerged * 100)}%${player.swimming ? ', pływa' : ''}${this.water.underwater ? ', pod wodą' : ''}` : ''}` +

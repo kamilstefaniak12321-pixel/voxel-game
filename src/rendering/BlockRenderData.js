@@ -52,6 +52,14 @@ import {
     METEOR_LIGHT_GLSL
 } from './meteorLight.js';
 
+
+import {
+    shadowUniforms,
+    SHADOW_GLSL,
+    shadowLightsChunk,
+    setShadowFastLeaves
+} from './Shadows.js';
+
 // ------------------------------------------------------------
 // Jeden wspólny materiał dla wszystkich bloków (atlas tekstur).
 //
@@ -106,7 +114,17 @@ blockMaterial.onBeforeCompile = (shader, renderer) => {
                 diffuseColor.rgb = mix(diffuseColor.rgb, texture2D(uAtlasAverage, vMapUv).rgb, farBlur);
             }
             vec3 blockTexel = diffuseColor.rgb;
-            #ifdef USE_COLOR_ALPHA
+            #ifdef USE_SUN_SHADOWS
+
+                // Z cieniami słońca (Shadows.js) światło nieba przyciemnia
+                // tylko światło otoczenia, a światło słońca zależy od tego,
+                // czy jego promień tu dochodzi (lights_fragment_begin niżej).
+
+                float blockSky = pow(vColor.a, 2.2);
+                float blockAmbient = pow(vColor.a, 2.2 + uSunShadowAmbient);
+                float blockSun = sunShadowLight(vWorldPosition, vWorldNormal, blockSky);
+
+            #elif defined( USE_COLOR_ALPHA )
                 diffuseColor.rgb *= pow(vColor.a, 2.2);
             #endif`
         );
@@ -268,9 +286,10 @@ blockMaterial.onBeforeCompile = (shader, renderer) => {
     }
 
 
-    // Dynamiczne światło potrzebuje tekstur 3D (WebGL2).
+    // Dynamiczne światło potrzebuje tekstur 3D (WebGL2), cienie słońca -
+    // tekstury głębi (też WebGL2).
 
-    Object.assign(shader.uniforms, dynamicLightUniforms, meteorLightUniforms);
+    Object.assign(shader.uniforms, dynamicLightUniforms, meteorLightUniforms, shadowUniforms);
 
     shader.vertexShader =
         shader.vertexShader
@@ -298,7 +317,22 @@ blockMaterial.onBeforeCompile = (shader, renderer) => {
             uniform vec3 uDynamicOrigin;
             uniform float uDynamicSize;
             uniform float uDynamicEnabled;
-            ${METEOR_LIGHT_GLSL}`
+            ${METEOR_LIGHT_GLSL}
+            ${SHADOW_GLSL}`
+        );
+
+
+    // Cienie słońca: światło, które rzuca cienie, dochodzi tylko tam,
+    // gdzie nic go nie zasłania (blockSun), reszta - jak dotąd.
+
+    shader.fragmentShader =
+        shader.fragmentShader.replace(
+            '#include <lights_fragment_begin>',
+            `#ifdef USE_SUN_SHADOWS
+                ${shadowLightsChunk('blockSun', 'blockSky', 'blockAmbient')}
+            #else
+                #include <lights_fragment_begin>
+            #endif`
         );
 
 
@@ -439,6 +473,10 @@ export function setLeafMaterialFast(on) {
     leafMaterial.alphaTest = on ? 0 : 0.5;
 
     leafMaterial.needsUpdate = true;
+
+    // Mapa cieni: szybkie liście rzucają pełny cień.
+
+    setShadowFastLeaves(on);
 
 }
 
@@ -948,3 +986,34 @@ for (
 }
 
 // ------------------------------------------------------------
+
+
+// ------------------------------------------------------------
+// CIENIE SŁOŃCA
+//
+// Włącza albo wyłącza cienie (define USE_SUN_SHADOWS) w podanych
+// materiałach bloków. Tylko z WebGL2 (Shadows.supported).
+// ------------------------------------------------------------
+
+export function setShadowDefine(materials, on) {
+
+    for (const material of materials) {
+
+        material.defines = material.defines ?? {};
+
+        if (('USE_SUN_SHADOWS' in material.defines) === on) {
+            continue;
+        }
+
+        if (on) {
+            material.defines.USE_SUN_SHADOWS = '';
+        }
+        else {
+            delete material.defines.USE_SUN_SHADOWS;
+        }
+
+        material.needsUpdate = true;
+
+    }
+
+}

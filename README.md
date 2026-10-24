@@ -94,7 +94,7 @@ w pauzie i na ekranie tytułowym) - z datą i nazwą świata. Księga jest
 wspólna dla wszystkich światów. Niektóre osiągnięcia są sekretne -
 przed zdobyciem widać tylko znak zapytania.
 
-Jest 29 osiągnięć (od pierwszego zniszczonego bloku po
+Jest 31 osiągnięć (od pierwszego zniszczonego bloku po
 legendarne *Problem spadł z nieba*). Nowa rzecz w grze = nowe
 osiągnięcie - jak je dopisać, zdarzenia z gry i pełna lista (spoilery):
 `docs/osiagniecia.md`. Test: `/osiagniecia` (lista), `/osiagniecia pokaz
@@ -398,6 +398,11 @@ W menu (z ekranu tytułowego i z pauzy) są zakładki:
 - **rozdzielczość** (25-100%) - mniej = szybciej, ale mniej ostro,
 - **limit FPS** (bez limitu, 30, 60, 120, 144),
 - **cienie w kątach** (0-100%),
+- **cienie słońca** - *wyłączone*, *zwykłe* (32 bloki wokół gracza) albo
+  *dokładne* (64 bloki) - pikselowe cienie słońca i księżyca (patrz
+  *Oświetlenie*; na telefonie domyślnie wyłączone),
+- **promienie światła** - widoczne snopy światła w powietrzu (tylko
+  z cieniami słońca),
 - **liście drzew** - *ładne* (z prześwitami, widać głąb korony) albo
   *szybkie* (pełne, bez ścian w środku korony - las mniej spowalnia
   grę; na telefonie domyślnie),
@@ -531,7 +536,8 @@ się w *Ustawienia → Gracz* albo `/skorka plik`.
 **Z oczu** widać prawą rękę (ze skórki, z rękawem) albo to, co
 trzymasz: blok (obrócony, widać dwa boki i wierzch), przedmiot (np.
 siekierę - głowicą w głąb ekranu, jak w Minecrafcie) albo roślinę.
-Ręka macha przy kopaniu i stawianiu, chowa się i wraca przy zmianie
+Ręka macha przy kopaniu i stawianiu (przy kopaniu szerokim łukiem
+w górę i do środka ekranu, raz na każde uderzenie), chowa się i wraca przy zmianie
 przedmiotu, kołysze się przy chodzeniu i lekko spóźnia za obrotem
 kamery. Przy chodzeniu kołysze się też widok (do wyłączenia
 w ustawieniach), a po upadku z wysoka kamera na chwilę się ugina.
@@ -658,6 +664,28 @@ Do tego **gładkie przejścia** światła i **cienie w kątach** (ambient
 occlusion), a mgła w ciemnym tunelu ciemnieje razem z nim. Poziom
 światła w miejscu gracza widać w debugu (F3).
 
+**Cienie słońca i księżyca** (ustawienie *Cienie słońca*): drzewa,
+budowle i sam gracz rzucają cienie, które idą za słońcem - rano i pod
+wieczór są długie, w południe krótkie, a w jasną noc cienie rzuca
+księżyc. Cienie są **pikselowe** (jak w „Vibrant Visuals” w Minecrafcie):
+brzeg cienia idzie po pikselach tekstury bloku, a pod drzewem
+z ładnymi liśćmi leżą plamki słońca. Słońce świeci tylko tam, dokąd
+dochodzą jego promienie - przez okno do ciemnego pokoju wpada jasna
+plama słońca, a w środku jest ciemniej niż na dworze. **Promienie
+światła** (osobne ustawienie): w powietrzu widać snopy światła - przez
+okna, między drzewami, mocniej o wschodzie i zachodzie; patrząc pod
+słońce widać jego blask. Model gracza i ręka ciemnieją, gdy gracz
+wejdzie w cień.
+
+- **Test:** `/demo okno` (ciemny pokój z oknami od strony słońca),
+  `/cienie` (stan cieni), `/cienie dokladne | zwykle | wyl`,
+  `/cienie promienie wl | wyl`, `/czas ustaw zachod`.
+- **Liczby do strojenia:** `SHADOW_...` i `SHAFT_...` w `src/config.js`
+  (jak mocno świeci słońce z cieniami, jak ciemno jest w środku, gęstość
+  powietrza dla promieni), `SHADOW_QUALITY` w `src/rendering/Shadows.js`.
+- **Kod:** `src/rendering/Shadows.js` (mapa cieni), `src/rendering/LightShafts.js`
+  (promienie), opis: `docs/niebo-i-swiatlo.md`.
+
 **Dynamiczne światło:** świecący blok wybrany na pasku świeci w ręce
 (w swoim kolorze) i oświetla okolicę w czasie ruchu. Tak samo świeci
 lecący meteoryt i błysk jego uderzenia. To światło też nie przechodzi
@@ -700,6 +728,8 @@ Komendy służą do sprawdzania nowości w grze, np.:
 /ksiezyc kolor krwawy      kolor księżyca (zabarwia światło nocą)
 /niebo zachod zielony      kolor łuny wschodu i zachodu
 /demo swiatlo              pokój z kolorowymi lampami
+/demo okno                 ciemny pokój z oknami - snopy światła i plamy słońca
+/cienie                    cienie słońca (/cienie dokladne | zwykle | wyl, /cienie promienie wl)
 /demo kula zielony         krążąca kula dynamicznego światła
 /meteor pokaz              meteoryt spada przed tobą (/meteor tu - tam, gdzie patrzysz)
 /meteor tempo 0.25         meteoryty cztery razy wolniej (1 - normalnie)

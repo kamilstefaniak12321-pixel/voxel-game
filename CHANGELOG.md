@@ -11,6 +11,48 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 0.15.0 - Cienie słońca i promienie światła (2026-10-24)
+
+Pull request #35.
+
+### Nowe
+- **Pikselowe cienie słońca i księżyca** (jak „Vibrant Visuals”
+  w Minecrafcie). Drzewa, budowle i gracz rzucają cienie, które idą za
+  słońcem: rano i pod wieczór długie, w południe krótkie, w jasną noc
+  cienie rzuca księżyc. Brzeg cienia idzie po pikselach tekstury bloku
+  (16 na blok), a pod drzewem z ładnymi liśćmi leżą plamki słońca.
+  Cienie są do 64 bloków od gracza (ustawienie *Dokładne*) albo do 32
+  (*Zwykłe*).
+- **Słońce wpada przez okna**: światło słońca dochodzi tylko tam, dokąd
+  sięgają jego promienie, więc przez okno do ciemnego pokoju wpada jasna
+  plama słońca, a w środku jest ciemniej niż na dworze. Z cieniami
+  słońce świeci mocniej, a cienie i wnętrza są wyraźniej ciemniejsze.
+- **Promienie światła w powietrzu**: widoczne snopy światła przez okna
+  i między drzewami, mocniejsze o wschodzie i zachodzie, blask wokół
+  słońca, gdy patrzy się pod słońce; nocą słabe, w kolorze księżyca.
+  W ciemnym pomieszczeniu są wyraźniejsze (oczy przyzwyczajone do
+  ciemności).
+- **Cień gracza** - także w widoku z oczu (widać go, patrząc pod nogi),
+  a model i ręka ciemnieją, gdy gracz wejdzie w cień.
+- Ustawienia *Cienie słońca* (wyłączone / zwykłe / dokładne) i *Promienie
+  światła* w zakładce *Obraz*; na telefonie i w trybie ziemniaka
+  domyślnie wyłączone.
+- Komendy `/cienie` (stan, `/cienie dokladne | zwykle | wyl`,
+  `/cienie promienie wl | wyl`) i `/demo okno` (ciemny pokój z oknami od
+  strony słońca); w `/ustaw`: `cienie-slonca`, `promienie`. Stan cieni
+  w debugu (F3).
+- Osiągnięcia *Złota godzina* (popatrz na zachodzące słońce) i *Promyk
+  słońca* (stań w plamie słońca pod dachem).
+
+### Zmiany
+- Animacja kopania w widoku z oczu: ręka (i narzędzie) macha szerokim
+  łukiem w górę i do środka ekranu, a przy trzymanym przycisku robi
+  jedno machnięcie na każde uderzenie (bez przerw).
+- Poprawka: po wyjściu ze świata w pamięci karty graficznej zostawała
+  mała tekstura z kośćmi modelu gracza.
+
+---
+
 ## 0.14.0 - Paczki drzew i jabłoń (2026-10-23)
 
 Pull requesty #33 i #34.

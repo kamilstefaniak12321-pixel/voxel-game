@@ -154,8 +154,10 @@ krawędź.
 **Animacje ręki:**
 
 - **machnięcie** - przy każdym kliknięciu i przy każdym uderzeniu
-  w trakcie kopania: pusta ręka - cios do przodu, blok i przedmiot - do
-  środka i w dół (0,3 s),
+  w trakcie kopania: pusta ręka - cios do przodu, blok i przedmiot -
+  szerokim łukiem w górę i do środka ekranu, potem w dół (0,3 s; przy
+  kopaniu tyle, ile trwa jedno uderzenie, więc machnięcia idą jedno za
+  drugim bez przerw),
 - **wyjęcie** - po zmianie miejsca na pasku ręka chowa się w dół i wraca
   z nowym przedmiotem (0,22 s),
 - **kołysanie** przy chodzeniu (ósemka, w rytm kroków; przy biegu

@@ -115,6 +115,26 @@ export const BLOCK_LIGHT_COLOR = 0xffd7a0;
 // 0 = wyłączone, 0.5 = wyraźne, 1 = bardzo mocne.
 export const AMBIENT_OCCLUSION = 0.45;
 
+// Cienie słońca (ustawienie "Cienie słońca" - src/rendering/Shadows.js).
+// Z cieniami słońce świeci mocniej, a światło z całego nieba jest
+// słabsze, więc plamy słońca i cienie są wyraźniejsze (jak w "Vibrant
+// Visuals" w Minecrafcie). 1 = tak samo jak bez cieni.
+export const SHADOW_SUN_BOOST = 1.3;
+export const SHADOW_AMBIENT = 0.82;
+
+// Tam, gdzie dochodzi mało światła nieba (pokój, jaskinia, gęsty las),
+// z cieniami jest ciemniej - wpadające słońce bardziej się wyróżnia.
+// 0 = tak jak bez cieni, 1 = wyraźnie ciemniej.
+export const SHADOW_INDOOR_DARKNESS = 0.6;
+
+// Promienie światła w powietrzu (ustawienie "Promienie światła" -
+// src/rendering/LightShafts.js): jasność i gęstość powietrza (ile
+// światła rozprasza każdy blok oświetlonego powietrza) - na dworze
+// i w ciemnym miejscu (w pokoju z oknem snop jest wyraźny).
+export const SHAFT_BRIGHTNESS = 2.2;
+export const SHAFT_DENSITY_OUTSIDE = 0.0012;
+export const SHAFT_DENSITY_INSIDE = 0.35;
+
 // ------------------------------------------------------------
 // DZIEŃ I NOC
 // ------------------------------------------------------------
@@ -445,6 +465,8 @@ export const TOUCH_SETTINGS = {
     renderScale: 80,       // procent rozdzielczości
     fpsLimit: 60,          // klatki na sekundę
     fancyLeaves: false,    // szybkie liście (bez prześwitów - dużo mniej ścian)
+    shadows: 0,            // bez cieni słońca (mapa cieni to dużo pracy dla karty)
+    lightShafts: false,    // bez promieni światła
     showDebug: false       // napisy F3 zasłaniałyby przyciski
 };
 // Ekran telefonu ma 2-3 piksele na punkt - rysujemy najwyżej tyle

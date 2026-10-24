@@ -34,7 +34,9 @@ import { buildArmGeometry, buildBlockGeometry } from './PlayerModel.js';
 // Pole widzenia kamery ręki (stałe - nie zależy od ustawień i biegu).
 const HAND_FOV = 70;
 
-// Ile trwa machnięcie i wyjęcie (s).
+// Ile trwa machnięcie i wyjęcie (s). Przy kopaniu machnięcie trwa tyle,
+// co jedno uderzenie (MINING_HIT_SECONDS), więc kolejne machnięcia
+// łączą się w jeden płynny ruch.
 const SWING_SECONDS = 0.3;
 const EQUIP_SECONDS = 0.22;
 
@@ -53,7 +55,7 @@ export const POSES = {
     // widać wierzch i bok (twist). Machnięcie (swing): cios do przodu.
     arm: {
         position: [0.36, -0.18, -0.75], toShoulder: [0.3, -0.5, 0.8], twist: -1, scale: 1,
-        swing: { move: [-0.16, 0.06, -0.3], turn: [0.2, 0.25, 0] }
+        swing: { move: [-0.26, 0.1, -0.4], turn: [0.3, 0.4, -0.12] }
     },
 
     // Blok: sześcian obrócony tak, że widać dwa boki i wierzch.
@@ -68,9 +70,10 @@ export const POSES = {
 
 };
 
-// Machnięcie blokiem i przedmiotem (jak w Minecrafcie): do środka,
-// w górę i do przodu, obrót w dół.
-const SWING = { move: [-0.22, 0.12, -0.16], turn: [-0.9, 0.35, -0.25] };
+// Machnięcie blokiem i przedmiotem: szeroki łuk - w górę i do środka
+// ekranu (tam, gdzie celujesz), w dół na cel i z powrotem, z obrotem
+// "na cios" (narzędzie uderza głowicą).
+const SWING = { move: [-0.36, 0.16, -0.24], turn: [-1.25, 0.5, -0.4] };
 
 const WIDE_ASPECT = 16 / 9;
 
@@ -130,6 +133,8 @@ export class FirstPersonHand {
         // Animacje.
 
         this.swingTime = Infinity;
+
+        this.swingSeconds = SWING_SECONDS;
 
         this.equip = 1;             // 0 = schowana, 1 = wyjęta
 
@@ -259,11 +264,14 @@ export class FirstPersonHand {
     }
 
 
-    // Machnięcie (kopanie, stawianie).
+    // Machnięcie (kopanie, stawianie). seconds - ile trwa (kopanie:
+    // tyle co jedno uderzenie).
 
-    swing() {
+    swing(seconds = SWING_SECONDS) {
 
         this.swingTime = 0;
+
+        this.swingSeconds = seconds;
 
     }
 
@@ -395,9 +403,9 @@ export class FirstPersonHand {
         // Machnięcie (jak w Minecrafcie): do środka, w górę i do przodu,
         // obrót w dół.
 
-        if (this.swingTime < SWING_SECONDS) {
+        if (this.swingTime < this.swingSeconds) {
 
-            const t = this.swingTime / SWING_SECONDS;
+            const t = this.swingTime / this.swingSeconds;
 
             const s = Math.sqrt(t);
 

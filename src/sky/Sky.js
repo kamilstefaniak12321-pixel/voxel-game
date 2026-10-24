@@ -12,7 +12,7 @@ import { Galaxies } from './layers/Galaxies.js';
 import { ShootingStars } from './layers/ShootingStars.js';
 import { Planets } from './layers/Planets.js';
 
-import { POTATO_STAR_SHARE } from '../config.js';
+import { POTATO_STAR_SHARE, SHADOW_SUN_BOOST, SHADOW_AMBIENT } from '../config.js';
 
 // ------------------------------------------------------------
 // NIEBO
@@ -244,6 +244,30 @@ export class Sky {
 
         for (const layer of this.layers) {
             layer.update(state, celestial, dt, pixelRatio);
+        }
+
+    }
+
+
+    // Z cieniami słońca (Game, amount = siła cieni 0-1) słońce i księżyc
+    // świecą mocniej, a światło z całego nieba słabiej - plamy słońca
+    // i cienie są wyraźniejsze. Po update (które ustawia zwykłe wartości).
+
+    applyShadowContrast(amount) {
+
+        if (amount <= 0) {
+            return;
+        }
+
+        const direct = 1 + (SHADOW_SUN_BOOST - 1) * amount;
+        const ambient = 1 + (SHADOW_AMBIENT - 1) * amount;
+
+        for (const set of this.lightSets) {
+
+            set.sun.intensity *= direct;
+            set.moon.intensity *= direct;
+            set.ambient.intensity *= ambient;
+
         }
 
     }

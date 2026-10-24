@@ -72,6 +72,10 @@ Współrzędne można podawać względem gracza: `~` (tu, gdzie stoję),
 | `/swiatlo` | światło przy głowie i przy wskazanej ścianie (niebo 0-15, lampy 0-15 i ich kolor) |
 | `/swiatlo dynamiczne [wl \| wyl]` | włącza/wyłącza dynamiczne światło (to samo co w ustawieniach) |
 | `/demo swiatlo` | buduje zamknięty pokój z kolorowymi lampami i stawia w nim gracza |
+| `/demo okno` | buduje ciemny pokój z oknami od strony słońca (snopy światła, plamy słońca na podłodze) i stawia w nim gracza; w nocy albo przy słońcu za wysoko przestawia zegar na popołudnie (zmienia świat) |
+| `/cienie` | cienie słońca i promienie światła: jakość, które światło rzuca cienie i jak wysoko jest, ile razy przerysowano mapę cieni, czy słońce świeci na gracza |
+| `/cienie <wyl \| zwykle \| dokladne>` | jakość cieni słońca (to samo co w ustawieniach) |
+| `/cienie promienie [wl \| wyl]` | promienie światła w powietrzu (to samo co w ustawieniach) |
 | `/demo kula [kolor \| usun]` | kula dynamicznego światła krąży przed graczem przez minutę |
 | `/demo skaly` | odkrywka: wykop przed graczem aż do y = 1 - na ścianach widać warstwy skał (zmienia świat) |
 | `/meteory` | ile spadających gwiazd na minutę, czy jest deszcz meteorów |
@@ -121,7 +125,8 @@ Kolory: `czerwony`, `krwawy`, `pomaranczowy`, `zloty`, `zolty`, `zielony`,
 `turkusowy`, `niebieski`, `fioletowy`, `rozowy`, `bialy` albo `#rrggbb`.
 
 Nazwy ustawień w `/ustaw`: `ziemniak`, `zasieg`, `daleki-teren`, `pole`, `jasnosc`,
-`rozdzielczosc`, `fps` (limit), `cienie`, `liscie` (ładne liście z prześwitami: `wl` / `wyl`), `dynamiczne-swiatlo`, `wczytywanie`, `czulosc`,
+`rozdzielczosc`, `fps` (limit), `cienie` (cienie w kątach, 0-100), `cienie-slonca` (`wyl` / `zwykle` / `dokladne`), `promienie` (promienie światła: `wl` / `wyl`),
+`liscie` (ładne liście z prześwitami: `wl` / `wyl`), `dynamiczne-swiatlo`, `wczytywanie`, `czulosc`,
 `odwroc-mysz`, `motyw`, `interfejs`, `debug`, `licznik-fps`, `meteoryty`,
 `warstwa-skorki`, `reka` (ręka w widoku z oczu), `kolysanie` (kołysanie widoku przy chodzeniu),
 `zgiecia` (`gladkie` / `klocki`), `kamera` (odległość kamery z F5, 2-8),

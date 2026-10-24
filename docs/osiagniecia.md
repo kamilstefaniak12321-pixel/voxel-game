@@ -42,6 +42,7 @@ tylko jako *Sekretne osiągnięcie* ze znakiem zapytania.
 | zwykłe | Kolorowe światła | zrób kolorową lampę |
 | zwykłe | Mokra robota | popływaj |
 | zwykłe | Nocny marek | bądź w świecie o północy |
+| zwykłe | Złota godzina | popatrz prosto na zachodzące (albo wschodzące) słońce |
 | rzadkie | Murarz | postaw 500 bloków (postęp liczy się w księdze) |
 | rzadkie | Głębinowiec | zanurkuj 10 bloków pod powierzchnię |
 | rzadkie | Ponad chmurami | wzleć na wysokość 1000 |
@@ -52,6 +53,7 @@ tylko jako *Sekretne osiągnięcie* ze znakiem zapytania.
 | rzadkie | Komplet narzędzi | zrób siekierę, kilof i łopatę (postęp w księdze) |
 | rzadkie | Kopalnia w kieszeni | zagraj na telefonie / tablecie i zniszcz blok palcem (`docs/telefon.md`) |
 | rzadkie | Lokator z ikonką | zagraj w aplikacji na Androida (`docs/telefon.md`) |
+| rzadkie | Promyk słońca | stań w plamie słońca pod dachem (słońce przez okno - `/demo okno`) |
 | bardzo rzadkie | Dzień jak noc | zobacz pełne zaćmienie słońca |
 | bardzo rzadkie | Kosmiczny złom | wykop blok meteorytu |
 | bardzo rzadkie | Houston, mamy widok *(sekret)* | wyleć w kosmos |

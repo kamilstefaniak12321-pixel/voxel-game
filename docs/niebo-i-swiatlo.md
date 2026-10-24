@@ -41,6 +41,12 @@ W shaderze bloków (`BlockRenderData.js`):
 - światło lamp nie zależy od pory dnia,
 - liczy się jaśniejsze z nich.
 
+Z **cieniami słońca** (niżej) jest jedna różnica: światło nieba
+z chunków przyciemnia już tylko światło otoczenia (i to mocniej w ciemnych
+miejscach), a światło słońca (albo księżyca) zależy wyłącznie od tego,
+czy jego promień dochodzi do danego piksela - stąd jasna plama słońca
+w ciemnym pokoju.
+
 Najważniejsza zasada: **mesh chunka nie zależy od pory dnia.** Zmiana
 dnia w noc nie przebudowuje żadnego chunka - zmieniają się tylko
 światła sceny i kolory nieba. Tę zasadę warto trzymać też przy
@@ -69,11 +75,14 @@ i gwiazdy za sobą - dzięki temu zaćmienie słońca "dzieje się samo".
 ### Kolejność rysowania klatki
 
 ```
+0. mapa cieni       tylko gdy trzeba, i cień gracza (Shadows.render)
 1. niebo            własna scena i kamera (Sky.render)
    (kula Ziemi      tylko wysoko - src/space/Globe.js, docs/kosmos.md)
 2. daleki teren     własna scena i kamera (FarTerrain.render)
    (chmury na kuli  tylko wysoko)
 3. świat            chunki, meteoryty, ramka bloku...
+4. promienie        snopy światła w powietrzu (LightShafts.render)
+5. ręka             widok z oczu (FirstPersonHand.render)
 ```
 
 Między krokami czyszczona jest tylko głębia, więc każdy kolejny krok
@@ -178,6 +187,61 @@ i wzgórza, które wygenerowałyby się tam naprawdę, ale bez bloków.
   `/horyzont odswiez`, `/wydajnosc`.
 - Pomysły: chmury rzucające cień na daleki teren, woda (gdy będzie)
   jako płaszczyzna w kafelkach, zimą śnieg na szczytach.
+
+### Cienie słońca i promienie światła - ZROBIONE
+
+![Cienie słońca i promienie światła](cienie-i-swiatlo.jpg)
+
+**Cienie** (`src/rendering/Shadows.js`, ustawienie *Cienie słońca*):
+
+- *mapa cieni* - świat narysowany „oczami słońca” (kamera ortograficzna
+  z kierunku światła, sama głębia) w teksturze 1024 albo 2048 pikseli
+  na 32 albo 64 bloki wokół gracza - zawsze **16 pikseli na blok**, tyle
+  co tekstura bloku,
+- shader bloków dla każdego piksela ściany bierze **środek piksela
+  tekstury** (1/16 bloku) i sprawdza w mapie, czy coś zasłania słońce -
+  dlatego brzeg cienia jest pikselowy, jak w „Vibrant Visuals”,
+- mapa nie jest rysowana co klatkę: tylko gdy słońce przesunie się
+  o ~0,1° (`ANGLE_STEP`), gracz odejdzie o 1/4 zasięgu od środka mapy
+  albo zmieni się chunk w jej zasięgu (najwyżej 10 razy na sekundę).
+  Do mapy rysuje się osobna scena `World.shadowScene` z kopiami meshy
+  chunków (ta sama geometria, materiały tylko z głębią): rośliny i woda
+  nie rzucają cieni, liście - z prześwitami (plamki słońca pod drzewem),
+- piksele mapy stoją w miejscu (kamera przesuwa się o całe piksele), więc
+  brzegi cieni nie migoczą, gdy gracz chodzi,
+- cienie rzuca mocniejsze z dwóch świateł: w dzień słońce, w jasną noc
+  księżyc. Przy horyzoncie (`FADE_LOW`-`FADE_HIGH`) cienie płynnie znikają,
+  w kosmosie ich nie ma,
+- przy niskim słońcu mapa obejmuje bloki tylko ±32 bloki w pionie od
+  gracza (`VERTICAL_RANGE`), za to jest gęstsza wzdłuż długich cieni,
+- **gracz** rzuca cień z własnej, małej mapy (co klatkę, także w widoku
+  z oczu), a model i ręka ciemnieją w cieniu: `SunShadows.sunVisibility`
+  to promień od gracza do słońca przez bloki (liście przepuszczają trochę),
+- z cieniami słońce świeci mocniej, a światło z całego nieba jest
+  słabsze (`SHADOW_SUN_BOOST`, `SHADOW_AMBIENT` w `config.js`), a tam,
+  gdzie mało światła nieba, jest ciemniej (`SHADOW_INDOOR_DARKNESS`) -
+  plamy słońca i cienie są wyraźne,
+- poza zasięgiem mapy (dalej niż 32/64 bloki) i na dalekim terenie
+  oświetlenie jest jak bez cieni (przy brzegu mapy przejście jest płynne).
+
+**Promienie światła** (`src/rendering/LightShafts.js`, ustawienie
+*Promienie światła*, wymaga cieni):
+
+1. głębia bliskich chunków (do zasięgu mapy cieni) w połowie
+   rozdzielczości - gdzie kończy się powietrze,
+2. dla każdego punktu ekranu 20 kroków od oka do ściany: w mapie cieni
+   sprawdzamy, czy powietrze w tym miejscu jest w słońcu; każdy
+   oświetlony krok dodaje światła (dalsze mniej - bliski snop jest
+   wyraźny), najwięcej patrząc w stronę słońca,
+3. rozmycie i dodanie do obrazu w kolorze światła.
+
+Gęstość powietrza zależy od tego, jak ciemno jest wokół gracza (oczy
+przyzwyczajone do ciemności): w pokoju z oknem snop jest wyraźny, na
+dworze zostaje blask wokół słońca (`SHAFT_...` w `config.js`).
+O wschodzie i zachodzie promienie są mocniejsze, nocą - słabe, w kolorze
+księżyca. Pod wodą ich nie ma.
+
+Test: `/demo okno`, `/cienie`, `/czas ustaw zachod`.
 
 ### Słońce i kolorowe wschody / zachody
 
@@ -319,4 +383,7 @@ w scenie świata; kolor z `SkyState` (różowe o zachodzie, szare nocą).
 | gęstość mgiełki w oddali | `src/config.js` (`FAR_HAZE_DISTANCE`, `FAR_HAZE_MAX`) |
 | jak bloki zlewają się w daleki teren, suwak jasności | `src/rendering/viewUniforms.js`, `BlockRenderData.js` |
 | co upraszcza tryb ziemniaka | `src/config.js` (`POTATO_...`), `FarTerrain.js` (`POTATO_DETAIL`), define `POTATO` w shaderach bloków i dalekiego terenu |
+| cienie słońca: rozmiar i zasięg mapy, jak często się przerysowuje, kiedy znikają przy horyzoncie | `src/rendering/Shadows.js` (`SHADOW_QUALITY`, `ANGLE_STEP`, `FADE_...`) |
+| jak mocno świeci słońce z cieniami, jak ciemno jest w środku | `src/config.js` (`SHADOW_SUN_BOOST`, `SHADOW_AMBIENT`, `SHADOW_INDOOR_DARKNESS`) |
+| promienie światła: jasność, gęstość powietrza na dworze i w środku | `src/config.js` (`SHAFT_...`), wygląd: `src/rendering/LightShafts.js` |
 | komendy do sprawdzania | `src/commands/gameCommands.js`, opis: `docs/komendy.md` |

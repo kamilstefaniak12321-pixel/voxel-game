@@ -34,6 +34,10 @@ import {
 } from '../rendering/ChunkMesher.js';
 // ------------------------------------------------------------
 import {
+    SHADOW_CASTER_MATERIALS
+} from '../rendering/Shadows.js';
+// ------------------------------------------------------------
+import {
     Chunk
 } from './Chunk.js';
 // ------------------------------------------------------------
@@ -122,6 +126,20 @@ export class World {
         // (np. daleki teren pokaże wtedy jego nowy kształt).
 
         this.onModifiedChunkUnloaded = null;
+
+        // Wywoływane po każdej zmianie mesha chunka (nowy, przebudowany,
+        // usunięty) - np. cienie słońca przerysowują wtedy swoją mapę.
+
+        this.onMeshChanged = null;
+
+        // Druga, osobna scena z tymi samymi meshami chunków (ta sama
+        // geometria, inne materiały) - z niej rysuje się mapa cieni
+        // słońca i głębia dla promieni światła (src/rendering/Shadows.js).
+        // Położenie chunków się nie zmienia, więc macierze liczymy raz.
+
+        this.shadowScene = new THREE.Scene();
+
+        this.shadowScene.matrixWorldAutoUpdate = false;
 
         // Generator terenu dla tego świata (typ zapisany w świecie).
 
@@ -700,9 +718,9 @@ export class World {
 
             if (chunk.mesh) {
 
-                this.scene.remove(chunk.mesh);
+                this.removeChunkMesh(chunk);
 
-                chunk.mesh = null;
+                this.onMeshChanged?.(chunk);
 
             }
 
@@ -715,7 +733,11 @@ export class World {
 
             chunk.mesh.geometry = geometry;
 
+            chunk.shadowMesh.geometry = geometry;
+
             this.updatePlantVisibility(chunk);
+
+            this.onMeshChanged?.(chunk);
 
             return;
 
@@ -746,7 +768,46 @@ export class World {
 
         chunk.mesh = mesh;
 
+
+        // Kopia do mapy cieni (World.shadowScene).
+
+        const shadowMesh = new THREE.Mesh(geometry, SHADOW_CASTER_MATERIALS);
+
+        shadowMesh.position.copy(mesh.position);
+
+        shadowMesh.frustumCulled = false;
+
+        shadowMesh.userData.chunk = chunk;
+
+        this.shadowScene.add(shadowMesh);
+
+        shadowMesh.updateMatrixWorld();
+
+        chunk.shadowMesh = shadowMesh;
+
+
         this.updatePlantVisibility(chunk);
+
+        this.onMeshChanged?.(chunk);
+
+    }
+
+
+    // Usuwa mesh chunka (i jego kopię do cieni) ze sceny.
+
+    removeChunkMesh(chunk) {
+
+        this.scene.remove(chunk.mesh);
+
+        chunk.mesh = null;
+
+        if (chunk.shadowMesh) {
+
+            this.shadowScene.remove(chunk.shadowMesh);
+
+            chunk.shadowMesh = null;
+
+        }
 
     }
 
@@ -782,11 +843,9 @@ export class World {
 
             if (chunk.mesh) {
 
-                this.scene.remove(chunk.mesh);
-
                 chunk.mesh.geometry.dispose();
 
-                chunk.mesh = null;
+                this.removeChunkMesh(chunk);
 
             }
 
@@ -1059,11 +1118,11 @@ export class World {
 
         if (chunk.mesh) {
 
-            this.scene.remove(chunk.mesh);
-
             chunk.mesh.geometry.dispose();
 
-            chunk.mesh = null;
+            this.removeChunkMesh(chunk);
+
+            this.onMeshChanged?.(chunk);
 
         }
 

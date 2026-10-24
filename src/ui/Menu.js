@@ -77,6 +77,8 @@ const SETTINGS_TABS = {
         'renderScale',
         'fpsLimit',
         'ambientOcclusion',
+        'shadows',
+        'lightShafts',
         'fancyLeaves',
         'dynamicLight',
         'loadBudget'

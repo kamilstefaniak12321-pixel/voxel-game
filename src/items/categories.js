@@ -16,6 +16,7 @@ export const CATEGORIES = {
     teren: { label: 'Ziemia', icon: 'grass' },
     skaly: { label: 'Skały', icon: 'granite' },
     drewno: { label: 'Drewno', icon: 'oak_log' },
+    budowa: { label: 'Budulec', icon: 'lime_plaster' },
     rosliny: { label: 'Rośliny', icon: 'poppy' },
     owoce: { label: 'Owoce i nasiona', icon: 'strawberry' },
     swiatlo: { label: 'Światło', icon: 'lamp' },

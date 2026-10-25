@@ -37,8 +37,9 @@ export const SETTINGS_DEFAULTS = {
     renderScale: 100,                              // procent rozdzielczości ekranu
     fpsLimit: 0,                                   // klatki na sekundę (0 = bez limitu)
     ambientOcclusion: Math.round(AMBIENT_OCCLUSION * 100),   // cienie w kątach, procent
-    shadows: 2,                                    // cienie słońca: 0 - wył., 1 - zwykłe, 2 - dokładne
+    shadows: 3,                                    // cienie słońca: 0 - wył., 1 - zwykłe, 2 - dokładne, 3 - dalekie
     lightShafts: true,                             // promienie światła w powietrzu
+    bounceLight: true,                             // światło odbite od oświetlonych ścian
     fancyLeaves: true,                             // liście z prześwitami (false = szybkie, pełne)
     dynamicLight: true,                            // lampa w ręce, meteoryty...
     loadBudget: CHUNK_LOAD_BUDGET_MS,              // ms na klatkę na wczytywanie chunków
@@ -98,7 +99,7 @@ export const SETTINGS_RANGES = {
 export const SETTINGS_CHOICES = {
 
     fpsLimit: [0, 30, 60, 120, 144],
-    shadows: [0, 1, 2],
+    shadows: [0, 1, 2, 3],
     jointStyle: ['smooth', 'blocks']
 
 };

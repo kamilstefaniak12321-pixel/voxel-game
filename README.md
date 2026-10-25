@@ -94,7 +94,7 @@ w pauzie i na ekranie tytułowym) - z datą i nazwą świata. Księga jest
 wspólna dla wszystkich światów. Niektóre osiągnięcia są sekretne -
 przed zdobyciem widać tylko znak zapytania.
 
-Jest 31 osiągnięć (od pierwszego zniszczonego bloku po
+Jest 32 osiągnięcia (od pierwszego zniszczonego bloku po
 legendarne *Problem spadł z nieba*). Nowa rzecz w grze = nowe
 osiągnięcie - jak je dopisać, zdarzenia z gry i pełna lista (spoilery):
 `docs/osiagniecia.md`. Test: `/osiagniecia` (lista), `/osiagniecia pokaz
@@ -194,7 +194,7 @@ półprzezroczyście, a podpowiedź mówi, czego brakuje. Na wąskim
 ekranie (telefon) księga otwiera się w miejscu ekwipunku - pasek
 i siatka zostają.
 
-Co jest teraz (22 przepisy, pełna lista z obrazkami:
+Co jest teraz (30 przepisów razem z drzewami z paczek, pełna lista z obrazkami:
 [`docs/wiki/przepisy.md`](docs/wiki/przepisy.md)):
 
 | Wyrób | Z czego |
@@ -209,6 +209,11 @@ Co jest teraz (22 przepisy, pełna lista z obrazkami:
 | piaskowiec | 4 x piasek |
 | ziemia kamienista x4 | 2 x ziemia + 2 x żwir |
 | czarnoziem / ściółka leśna | ziemia + opadłe liście / igliwie |
+| tynk wapienny x4 | 2 x wapień + 2 x piasek |
+| tynk ochrowy x4 | 3 x tynk wapienny + glina |
+| terakota x4 | 4 x glina |
+| polerowany kamień x4 | 4 x kamień |
+| ciemne deski x3 | 3 x deski (dowolne) + bazalt |
 
 Komendy: `/przepisy` (lista, `/przepisy kilof` - jak zrobić i do czego
 się przydaje, `/przepisy moge` - na co masz składniki), `/wytworz
@@ -398,11 +403,14 @@ W menu (z ekranu tytułowego i z pauzy) są zakładki:
 - **rozdzielczość** (25-100%) - mniej = szybciej, ale mniej ostro,
 - **limit FPS** (bez limitu, 30, 60, 120, 144),
 - **cienie w kątach** (0-100%),
-- **cienie słońca** - *wyłączone*, *zwykłe* (32 bloki wokół gracza) albo
-  *dokładne* (64 bloki) - pikselowe cienie słońca i księżyca (patrz
-  *Oświetlenie*; na telefonie domyślnie wyłączone),
+- **cienie słońca** - *wyłączone*, *zwykłe* (32 bloki wokół gracza),
+  *dokładne* (64 bloki) albo *dalekie* (do tego 512 bloków z dalekim
+  terenem - góry rzucają długie cienie) - pikselowe cienie słońca
+  i księżyca (patrz *Oświetlenie*; na telefonie domyślnie wyłączone),
 - **promienie światła** - widoczne snopy światła w powietrzu (tylko
   z cieniami słońca),
+- **światło odbite** - oświetlone słońcem ściany świecą dalej w kolorze
+  swojej tekstury, światło „wlewa się” do pokoju (tylko z cieniami słońca),
 - **liście drzew** - *ładne* (z prześwitami, widać głąb korony) albo
   *szybkie* (pełne, bez ścian w środku korony - las mniej spowalnia
   grę; na telefonie domyślnie),
@@ -677,14 +685,35 @@ okna, między drzewami, mocniej o wschodzie i zachodzie; patrząc pod
 słońce widać jego blask. Model gracza i ręka ciemnieją, gdy gracz
 wejdzie w cień.
 
+Z jakością *Dalekie* jest też druga, rzadsza mapa cieni na 512 bloków
+wokół gracza, razem z dalekim terenem: o wschodzie i zachodzie góry
+rzucają długie cienie na doliny, a słońce chowa się za grzbietem.
+Trawa i kwiaty rzucają drobne, pikselowe cienie.
+
+**Światło odbite** (osobne ustawienie): słońce, które wpadnie przez
+okno, nie zostaje na podłodze - oświetlona podłoga i ściany świecą
+dalej w kolorze swojej tekstury i rozjaśniają cały pokój, słabnąc
+z odległością. Jasne ściany oddają dużo światła (i odbijają je dalej),
+ciemne - mało. Do budowania są bloki, które światło odbijają inaczej:
+**tynk wapienny** (biały, jasny pokój), **tynk ochrowy** (ciepły),
+**terakota** (czerwonawe światło), **polerowany kamień** (gładki,
+odbija najwięcej) i **ciemne deski** (pochłaniają światło - pokój jest
+mroczny). Przepisy - w tabeli w części *Wytwarzanie*.
+
 - **Test:** `/demo okno` (ciemny pokój z oknami od strony słońca),
-  `/cienie` (stan cieni), `/cienie dokladne | zwykle | wyl`,
-  `/cienie promienie wl | wyl`, `/czas ustaw zachod`.
-- **Liczby do strojenia:** `SHADOW_...` i `SHAFT_...` w `src/config.js`
-  (jak mocno świeci słońce z cieniami, jak ciemno jest w środku, gęstość
-  powietrza dla promieni), `SHADOW_QUALITY` w `src/rendering/Shadows.js`.
-- **Kod:** `src/rendering/Shadows.js` (mapa cieni), `src/rendering/LightShafts.js`
-  (promienie), opis: `docs/niebo-i-swiatlo.md`.
+  `/demo dom` (cztery pokoje z różnego budulca obok siebie),
+  `/cienie` (stan cieni), `/cienie dalekie | dokladne | zwykle | wyl`,
+  `/cienie promienie wl | wyl`, `/swiatlo odbite wl | wyl`,
+  `/swiatlo` (ile światła odbitego jest przy głowie), `/czas ustaw zachod`.
+- **Liczby do strojenia:** `SHADOW_...`, `SHAFT_...` i `BOUNCE_...`
+  w `src/config.js` (jak mocno świeci słońce z cieniami, jak ciemno jest
+  w środku, gęstość powietrza dla promieni, jak daleko rozlewa się
+  i jak jasne jest światło odbite), `SHADOW_QUALITY` w
+  `src/rendering/Shadows.js`, pole `reflect` bloku w
+  `src/blocks/BlockRegistry.js` (jak mocno blok odbija światło).
+- **Kod:** `src/rendering/Shadows.js` (mapy cieni), `src/rendering/LightShafts.js`
+  (promienie), `src/world/BounceLight.js` (światło odbite), opis:
+  `docs/niebo-i-swiatlo.md`.
 
 **Dynamiczne światło:** świecący blok wybrany na pasku świeci w ręce
 (w swoim kolorze) i oświetla okolicę w czasie ruchu. Tak samo świeci
@@ -729,7 +758,8 @@ Komendy służą do sprawdzania nowości w grze, np.:
 /niebo zachod zielony      kolor łuny wschodu i zachodu
 /demo swiatlo              pokój z kolorowymi lampami
 /demo okno                 ciemny pokój z oknami - snopy światła i plamy słońca
-/cienie                    cienie słońca (/cienie dokladne | zwykle | wyl, /cienie promienie wl)
+/demo dom                  cztery pokoje z różnego budulca - światło odbite
+/cienie                    cienie słońca (/cienie dalekie | dokladne | zwykle | wyl, /cienie promienie wl)
 /demo kula zielony         krążąca kula dynamicznego światła
 /meteor pokaz              meteoryt spada przed tobą (/meteor tu - tam, gdzie patrzysz)
 /meteor tempo 0.25         meteoryty cztery razy wolniej (1 - normalnie)

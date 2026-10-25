@@ -152,6 +152,11 @@ export const ATLAS_TILES = {
     mud: { x: 9, y: 1 },
     clay: { x: 10, y: 1 },
     gravel: { x: 11, y: 1 },
+    // Budulec (tools/tekstury_budulec.py) - różnie odbija światło.
+    lime_plaster: { x: 12, y: 1 },
+    ochre_plaster: { x: 13, y: 1 },
+    terracotta: { x: 14, y: 1 },
+    polished_stone: { x: 15, y: 1 },
 
     // Rośliny - wiersz 2 (PLANT_ATLAS_ROW). Każda roślina (model
     // 'cross') kołysze się na wietrze, z którego wiersza by nie była.
@@ -264,7 +269,8 @@ export const ATLAS_TILES = {
 
     stick: { x: 0, y: 9 },
     pickaxe: { x: 1, y: 9 },
-    shovel: { x: 2, y: 9 }
+    shovel: { x: 2, y: 9 },
+    dark_planks: { x: 3, y: 9 }
 
 };
 

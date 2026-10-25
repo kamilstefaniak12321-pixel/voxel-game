@@ -60,6 +60,12 @@ import {
     setShadowFastLeaves
 } from './Shadows.js';
 
+
+import {
+    bounceUniforms,
+    BOUNCE_GLSL
+} from '../world/BounceLight.js';
+
 // ------------------------------------------------------------
 // Jeden wspólny materiał dla wszystkich bloków (atlas tekstur).
 //
@@ -136,7 +142,16 @@ blockMaterial.onBeforeCompile = (shader, renderer) => {
     shader.fragmentShader =
         shader.fragmentShader.replace(
             '#include <opaque_fragment>',
-            `#ifdef USE_COLOR_ALPHA
+            `#ifdef USE_SUN_SHADOWS
+
+                // Światło odbite od oświetlonych słońcem ścian
+                // (src/world/BounceLight.js) - w kolorze tej ściany.
+
+                outgoingLight += blockTexel * bounceLight(vWorldPosition, vWorldNormal, blockSky);
+
+            #endif
+
+            #ifdef USE_COLOR_ALPHA
 
                 // Nocą to, co oświetla niebo, traci kolory (srebrna,
                 // księżycowa noc). Światło lamp dochodzi dopiero potem,
@@ -289,7 +304,7 @@ blockMaterial.onBeforeCompile = (shader, renderer) => {
     // Dynamiczne światło potrzebuje tekstur 3D (WebGL2), cienie słońca -
     // tekstury głębi (też WebGL2).
 
-    Object.assign(shader.uniforms, dynamicLightUniforms, meteorLightUniforms, shadowUniforms);
+    Object.assign(shader.uniforms, dynamicLightUniforms, meteorLightUniforms, shadowUniforms, bounceUniforms);
 
     shader.vertexShader =
         shader.vertexShader
@@ -318,7 +333,11 @@ blockMaterial.onBeforeCompile = (shader, renderer) => {
             uniform float uDynamicSize;
             uniform float uDynamicEnabled;
             ${METEOR_LIGHT_GLSL}
-            ${SHADOW_GLSL}`
+            ${SHADOW_GLSL}
+
+            #ifdef USE_SUN_SHADOWS
+                ${BOUNCE_GLSL}
+            #endif`
         );
 
 
@@ -379,6 +398,11 @@ export const plantMaterial =
 plantMaterial.onBeforeCompile = (shader, renderer) => {
 
     blockMaterial.onBeforeCompile(shader, renderer);
+
+    // Roślina kołysze się, a mapa cieni nie - większy zapas, żeby
+    // źdźbła nie cieniowały same siebie w paski (Shadows.js).
+
+    shader.fragmentShader = `#define SUN_SHADOW_RECEIVER_BIAS 0.3\n${shader.fragmentShader}`;
 
 
     // Góra kafelka rośliny: wierzchołki z v przy górnej krawędzi kafelka
@@ -991,29 +1015,40 @@ for (
 // ------------------------------------------------------------
 // CIENIE SŁOŃCA
 //
-// Włącza albo wyłącza cienie (define USE_SUN_SHADOWS) w podanych
-// materiałach bloków. Tylko z WebGL2 (Shadows.supported).
+// Włącza albo wyłącza cienie (define USE_SUN_SHADOWS) i daleką mapę
+// cieni (USE_FAR_SHADOWS) w podanych materiałach. Tylko z WebGL2
+// (Shadows.supported). Zmiana defines = nowy shader, więc tylko gdy
+// się zmienia.
 // ------------------------------------------------------------
 
-export function setShadowDefine(materials, on) {
+export function setShadowDefine(materials, on, far = false) {
 
     for (const material of materials) {
 
-        material.defines = material.defines ?? {};
+        setDefine(material, 'USE_SUN_SHADOWS', on);
 
-        if (('USE_SUN_SHADOWS' in material.defines) === on) {
-            continue;
-        }
-
-        if (on) {
-            material.defines.USE_SUN_SHADOWS = '';
-        }
-        else {
-            delete material.defines.USE_SUN_SHADOWS;
-        }
-
-        material.needsUpdate = true;
+        setDefine(material, 'USE_FAR_SHADOWS', on && far);
 
     }
+
+}
+
+
+export function setDefine(material, name, on) {
+
+    material.defines = material.defines ?? {};
+
+    if ((name in material.defines) === on) {
+        return;
+    }
+
+    if (on) {
+        material.defines[name] = '';
+    }
+    else {
+        delete material.defines[name];
+    }
+
+    material.needsUpdate = true;
 
 }

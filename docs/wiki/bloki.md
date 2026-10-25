@@ -2,9 +2,9 @@
 
 > Ta strona jest generowana z kodu gry (`python tools/wiki.py`) - nie zmieniaj jej ręcznie, zmiany przepadną przy następnym generowaniu.
 
-Wersja gry **0.15.0** - 92 bloków (do tego 4 odmian, których nie ma w ekwipunku, np. wieniec zawieszony na boku bloku). Czas kopania dotyczy trybu przygody; w kreatywnym bloki znikają od razu.
+Wersja gry **0.16.0** - 97 bloków (do tego 4 odmian, których nie ma w ekwipunku, np. wieniec zawieszony na boku bloku). Czas kopania dotyczy trybu przygody; w kreatywnym bloki znikają od razu.
 
-[Ziemia](#ziemia) · [Skały](#skały) · [Drewno](#drewno) · [Rośliny](#rośliny) · [Światło](#światło) · [Ozdoby](#ozdoby)
+[Ziemia](#ziemia) · [Skały](#skały) · [Drewno](#drewno) · [Budulec](#budulec) · [Rośliny](#rośliny) · [Światło](#światło) · [Ozdoby](#ozdoby)
 
 ## Ziemia
 
@@ -12,27 +12,27 @@ Wersja gry **0.15.0** - 92 bloków (do tego 4 odmian, których nie ma w ekwipunk
 |---|---|---|---|
 | <img src="ikony/grass.png" width="32" height="32" alt=""> | **Blok trawy** | `grass` | **Kopanie:** 0,6 s (łopatą 0,2 s)<br>**Daje:** Ziemia |
 | <img src="ikony/dirt.png" width="32" height="32" alt=""> | **Ziemia** | `dirt` | **Kopanie:** 0,6 s (łopatą 0,2 s)<br>**Skąd:** zniszczony blok: Blok trawy<br>**Przydaje się do:** Ziemia kamienista, Czarnoziem, Ściółka leśna |
-| <img src="ikony/sand.png" width="32" height="32" alt=""> | **Piasek** | `sand` | **Kopanie:** 0,55 s (łopatą 0,18 s)<br>**Przydaje się do:** Piaskowiec |
+| <img src="ikony/sand.png" width="32" height="32" alt=""> | **Piasek** | `sand` | **Kopanie:** 0,55 s (łopatą 0,18 s)<br>**Przydaje się do:** Piaskowiec, Tynk wapienny |
 | <img src="ikony/water.png" width="32" height="32" alt=""> | **Woda** | `water` | - |
 | <img src="ikony/humus.png" width="32" height="32" alt=""> | **Czarnoziem** | `humus` | **Kopanie:** 0,6 s (łopatą 0,2 s)<br>**Przepis:** Czarnoziem |
 | <img src="ikony/coarse_dirt.png" width="32" height="32" alt=""> | **Ziemia kamienista** | `coarse_dirt` | **Kopanie:** 0,7 s (łopatą 0,23 s)<br>**Przepis:** Ziemia kamienista x4 |
 | <img src="ikony/forest_floor.png" width="32" height="32" alt=""> | **Ściółka leśna** | `forest_floor` | **Kopanie:** 0,6 s (łopatą 0,2 s)<br>**Przepis:** Ściółka leśna |
 | <img src="ikony/mud.png" width="32" height="32" alt=""> | **Błoto** | `mud` | **Kopanie:** 0,6 s (łopatą 0,2 s) |
-| <img src="ikony/clay.png" width="32" height="32" alt=""> | **Glina** | `clay` | **Kopanie:** 0,6 s (łopatą 0,2 s) |
+| <img src="ikony/clay.png" width="32" height="32" alt=""> | **Glina** | `clay` | **Kopanie:** 0,6 s (łopatą 0,2 s)<br>**Przydaje się do:** Tynk ochrowy, Terakota |
 | <img src="ikony/gravel.png" width="32" height="32" alt=""> | **Żwir** | `gravel` | **Kopanie:** 0,7 s (łopatą 0,23 s)<br>**Przydaje się do:** Ziemia kamienista |
 
 ## Skały
 
 | | Nazwa | W komendach | Najważniejsze |
 |---|---|---|---|
-| <img src="ikony/stone.png" width="32" height="32" alt=""> | **Kamień** | `stone` | **Kopanie:** 2,2 s (kilofem 0,73 s)<br>**Przydaje się do:** Siekiera, Kilof, Łopata |
+| <img src="ikony/stone.png" width="32" height="32" alt=""> | **Kamień** | `stone` | **Kopanie:** 2,2 s (kilofem 0,73 s)<br>**Przydaje się do:** Polerowany kamień, Siekiera, Kilof, Łopata |
 | <img src="ikony/lepidolite.png" width="32" height="32" alt=""> | **Lepidolit** | `lepidolite` | **Kopanie:** 2,5 s (kilofem 0,83 s)<br>**Przydaje się do:** Lampa |
 | <img src="ikony/meteorite.png" width="32" height="32" alt=""> | **Meteoryt** | `meteorite` | **Kopanie:** 4,5 s (kilofem 1,5 s)<br>**Świeci:** 7 / 15 |
 | <img src="ikony/granite.png" width="32" height="32" alt=""> | **Granit** | `granite` | **Kopanie:** 2,8 s (kilofem 0,93 s)<br>**Przydaje się do:** Siekiera, Kilof, Łopata |
-| <img src="ikony/limestone.png" width="32" height="32" alt=""> | **Wapień** | `limestone` | **Kopanie:** 1,8 s (kilofem 0,6 s)<br>**Przydaje się do:** Siekiera, Kilof, Łopata |
+| <img src="ikony/limestone.png" width="32" height="32" alt=""> | **Wapień** | `limestone` | **Kopanie:** 1,8 s (kilofem 0,6 s)<br>**Przydaje się do:** Tynk wapienny, Siekiera, Kilof, Łopata |
 | <img src="ikony/sandstone.png" width="32" height="32" alt=""> | **Piaskowiec** | `sandstone` | **Kopanie:** 1,8 s (kilofem 0,6 s)<br>**Przepis:** Piaskowiec<br>**Przydaje się do:** Siekiera, Kilof, Łopata |
 | <img src="ikony/slate.png" width="32" height="32" alt=""> | **Łupek** | `slate` | **Kopanie:** 2,2 s (kilofem 0,73 s)<br>**Przydaje się do:** Siekiera, Kilof, Łopata |
-| <img src="ikony/basalt.png" width="32" height="32" alt=""> | **Bazalt** | `basalt` | **Kopanie:** 2,8 s (kilofem 0,93 s)<br>**Przydaje się do:** Siekiera, Kilof, Łopata |
+| <img src="ikony/basalt.png" width="32" height="32" alt=""> | **Bazalt** | `basalt` | **Kopanie:** 2,8 s (kilofem 0,93 s)<br>**Przydaje się do:** Ciemne deski, Siekiera, Kilof, Łopata |
 
 ## Drewno
 
@@ -40,27 +40,37 @@ Wersja gry **0.15.0** - 92 bloków (do tego 4 odmian, których nie ma w ekwipunk
 |---|---|---|---|
 | <img src="ikony/spruce_log.png" width="32" height="32" alt=""> | **Pień świerka** | `spruce_log` | **Kopanie:** 2 s (siekierą 0,67 s)<br>**Siekierą (PPM):** Okorowany pień świerka<br>**Przydaje się do:** Deski świerkowe |
 | <img src="ikony/spruce_log_stripped.png" width="32" height="32" alt=""> | **Okorowany pień świerka** | `spruce_log_stripped` | **Kopanie:** 2 s (siekierą 0,67 s)<br>**Skąd:** siekierą (PPM) z bloku: Pień świerka<br>**Przydaje się do:** Deski świerkowe |
-| <img src="ikony/spruce_planks.png" width="32" height="32" alt=""> | **Deski świerkowe** | `spruce_planks` | **Kopanie:** 2 s (siekierą 0,67 s)<br>**Przepis:** Deski świerkowe x4<br>**Przydaje się do:** Patyk |
+| <img src="ikony/spruce_planks.png" width="32" height="32" alt=""> | **Deski świerkowe** | `spruce_planks` | **Kopanie:** 2 s (siekierą 0,67 s)<br>**Przepis:** Deski świerkowe x4<br>**Przydaje się do:** Ciemne deski, Patyk |
 | <img src="ikony/pine_log.png" width="32" height="32" alt=""> | **Pień sosny** | `pine_log` | **Kopanie:** 2 s (siekierą 0,67 s)<br>**Siekierą (PPM):** Okorowany pień sosny<br>**Skąd:** zniszczony blok: Pień sosny z żywicą<br>**Przydaje się do:** Deski sosnowe |
 | <img src="ikony/pine_log_upper.png" width="32" height="32" alt=""> | **Pień sosny (górny)** | `pine_log_upper` | **Kopanie:** 2 s (siekierą 0,67 s)<br>**Siekierą (PPM):** Okorowany pień sosny<br>**Przydaje się do:** Deski sosnowe |
 | <img src="ikony/pine_log_resin.png" width="32" height="32" alt=""> | **Pień sosny z żywicą** | `pine_log_resin` | **Kopanie:** 2 s (siekierą 0,67 s)<br>**Daje:** Pień sosny<br>**Zbiór (PPM):** Żywica 1-2<br>**Siekierą (PPM):** Okorowany pień sosny<br>**Przydaje się do:** Deski sosnowe |
 | <img src="ikony/pine_log_stripped.png" width="32" height="32" alt=""> | **Okorowany pień sosny** | `pine_log_stripped` | **Kopanie:** 2 s (siekierą 0,67 s)<br>**Skąd:** siekierą (PPM) z bloku: Pień sosny; siekierą (PPM) z bloku: Pień sosny (górny); siekierą (PPM) z bloku: Pień sosny z żywicą<br>**Przydaje się do:** Deski sosnowe |
-| <img src="ikony/pine_planks.png" width="32" height="32" alt=""> | **Deski sosnowe** | `pine_planks` | **Kopanie:** 2 s (siekierą 0,67 s)<br>**Przepis:** Deski sosnowe x4<br>**Przydaje się do:** Patyk |
+| <img src="ikony/pine_planks.png" width="32" height="32" alt=""> | **Deski sosnowe** | `pine_planks` | **Kopanie:** 2 s (siekierą 0,67 s)<br>**Przepis:** Deski sosnowe x4<br>**Przydaje się do:** Ciemne deski, Patyk |
 | <img src="ikony/beech_log.png" width="32" height="32" alt=""> | **Pień buka** | `beech_log` | **Kopanie:** 2 s (siekierą 0,67 s)<br>**Siekierą (PPM):** Okorowany pień buka<br>**Przydaje się do:** Deski bukowe |
 | <img src="ikony/beech_log_stripped.png" width="32" height="32" alt=""> | **Okorowany pień buka** | `beech_log_stripped` | **Kopanie:** 2 s (siekierą 0,67 s)<br>**Skąd:** siekierą (PPM) z bloku: Pień buka<br>**Przydaje się do:** Deski bukowe |
-| <img src="ikony/beech_planks.png" width="32" height="32" alt=""> | **Deski bukowe** | `beech_planks` | **Kopanie:** 2 s (siekierą 0,67 s)<br>**Przepis:** Deski bukowe x4<br>**Przydaje się do:** Patyk |
+| <img src="ikony/beech_planks.png" width="32" height="32" alt=""> | **Deski bukowe** | `beech_planks` | **Kopanie:** 2 s (siekierą 0,67 s)<br>**Przepis:** Deski bukowe x4<br>**Przydaje się do:** Ciemne deski, Patyk |
 | <img src="ikony/linden_log.png" width="32" height="32" alt=""> | **Pień lipy** | `linden_log` | **Kopanie:** 2 s (siekierą 0,67 s)<br>**Siekierą (PPM):** Okorowany pień lipy<br>**Przydaje się do:** Deski lipowe |
 | <img src="ikony/linden_log_stripped.png" width="32" height="32" alt=""> | **Okorowany pień lipy** | `linden_log_stripped` | **Kopanie:** 2 s (siekierą 0,67 s)<br>**Skąd:** siekierą (PPM) z bloku: Pień lipy<br>**Przydaje się do:** Deski lipowe |
-| <img src="ikony/linden_planks.png" width="32" height="32" alt=""> | **Deski lipowe** | `linden_planks` | **Kopanie:** 2 s (siekierą 0,67 s)<br>**Przepis:** Deski lipowe x4<br>**Przydaje się do:** Patyk |
+| <img src="ikony/linden_planks.png" width="32" height="32" alt=""> | **Deski lipowe** | `linden_planks` | **Kopanie:** 2 s (siekierą 0,67 s)<br>**Przepis:** Deski lipowe x4<br>**Przydaje się do:** Ciemne deski, Patyk |
 | <img src="ikony/oak_log.png" width="32" height="32" alt=""> | **Pień dębu** | `oak_log` | **Kopanie:** 2 s (siekierą 0,67 s)<br>**Siekierą (PPM):** Okorowany pień dębu<br>**Przydaje się do:** Deski dębowe |
 | <img src="ikony/oak_log_stripped.png" width="32" height="32" alt=""> | **Okorowany pień dębu** | `oak_log_stripped` | **Kopanie:** 2 s (siekierą 0,67 s)<br>**Skąd:** siekierą (PPM) z bloku: Pień dębu<br>**Przydaje się do:** Deski dębowe |
-| <img src="ikony/oak_planks.png" width="32" height="32" alt=""> | **Deski dębowe** | `oak_planks` | **Kopanie:** 2 s (siekierą 0,67 s)<br>**Przepis:** Deski dębowe x4<br>**Przydaje się do:** Patyk |
+| <img src="ikony/oak_planks.png" width="32" height="32" alt=""> | **Deski dębowe** | `oak_planks` | **Kopanie:** 2 s (siekierą 0,67 s)<br>**Przepis:** Deski dębowe x4<br>**Przydaje się do:** Ciemne deski, Patyk |
 | <img src="ikony/birch_log.png" width="32" height="32" alt=""> | **Pień brzozy** | `birch_log` | **Kopanie:** 2 s (siekierą 0,67 s)<br>**Siekierą (PPM):** Okorowany pień brzozy + Kora brzozowa<br>**Przydaje się do:** Deski brzozowe |
 | <img src="ikony/birch_log_stripped.png" width="32" height="32" alt=""> | **Okorowany pień brzozy** | `birch_log_stripped` | **Kopanie:** 2 s (siekierą 0,67 s)<br>**Skąd:** siekierą (PPM) z bloku: Pień brzozy<br>**Przydaje się do:** Deski brzozowe |
-| <img src="ikony/birch_planks.png" width="32" height="32" alt=""> | **Deski brzozowe** | `birch_planks` | **Kopanie:** 2 s (siekierą 0,67 s)<br>**Przepis:** Deski brzozowe x4<br>**Przydaje się do:** Patyk |
+| <img src="ikony/birch_planks.png" width="32" height="32" alt=""> | **Deski brzozowe** | `birch_planks` | **Kopanie:** 2 s (siekierą 0,67 s)<br>**Przepis:** Deski brzozowe x4<br>**Przydaje się do:** Ciemne deski, Patyk |
 | <img src="ikony/jablon_log.png" width="32" height="32" alt=""> | **Pień jabłoni** | `jablon_log` | **Kopanie:** 2 s (siekierą 0,67 s)<br>**Siekierą (PPM):** Okorowany pień jabłoni<br>**Paczka drzewa:** assets/drzewa/jablon<br>**Przydaje się do:** Deski jabłoniowe |
 | <img src="ikony/jablon_log_stripped.png" width="32" height="32" alt=""> | **Okorowany pień jabłoni** | `jablon_log_stripped` | **Kopanie:** 2 s (siekierą 0,67 s)<br>**Paczka drzewa:** assets/drzewa/jablon<br>**Skąd:** siekierą (PPM) z bloku: Pień jabłoni<br>**Przydaje się do:** Deski jabłoniowe |
-| <img src="ikony/jablon_planks.png" width="32" height="32" alt=""> | **Deski jabłoniowe** | `jablon_planks` | **Kopanie:** 2 s (siekierą 0,67 s)<br>**Paczka drzewa:** assets/drzewa/jablon<br>**Przepis:** Deski jabłoniowe x4<br>**Przydaje się do:** Patyk |
+| <img src="ikony/jablon_planks.png" width="32" height="32" alt=""> | **Deski jabłoniowe** | `jablon_planks` | **Kopanie:** 2 s (siekierą 0,67 s)<br>**Paczka drzewa:** assets/drzewa/jablon<br>**Przepis:** Deski jabłoniowe x4<br>**Przydaje się do:** Ciemne deski, Patyk |
+
+## Budulec
+
+| | Nazwa | W komendach | Najważniejsze |
+|---|---|---|---|
+| <img src="ikony/lime_plaster.png" width="32" height="32" alt=""> | **Tynk wapienny** | `lime_plaster` | **Kopanie:** 2,2 s (kilofem 0,73 s)<br>**Przepis:** Tynk wapienny x4<br>**Przydaje się do:** Tynk ochrowy |
+| <img src="ikony/ochre_plaster.png" width="32" height="32" alt=""> | **Tynk ochrowy** | `ochre_plaster` | **Kopanie:** 2,2 s (kilofem 0,73 s)<br>**Przepis:** Tynk ochrowy x4 |
+| <img src="ikony/terracotta.png" width="32" height="32" alt=""> | **Terakota** | `terracotta` | **Kopanie:** 2,2 s (kilofem 0,73 s)<br>**Przepis:** Terakota x4 |
+| <img src="ikony/polished_stone.png" width="32" height="32" alt=""> | **Polerowany kamień** | `polished_stone` | **Kopanie:** 2,2 s (kilofem 0,73 s)<br>**Przepis:** Polerowany kamień x4 |
+| <img src="ikony/dark_planks.png" width="32" height="32" alt=""> | **Ciemne deski** | `dark_planks` | **Kopanie:** 2 s (siekierą 0,67 s)<br>**Przepis:** Ciemne deski x3 |
 
 ## Rośliny
 

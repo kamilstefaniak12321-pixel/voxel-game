@@ -52,6 +52,10 @@ uniform float uMaxDistance;
 uniform float uBias;
 uniform float uDensity;
 uniform float uIsotropic;
+uniform highp sampler2D uFarShadowMap;
+uniform mat4 uFarShadowMatrix;
+uniform vec4 uFarShadowInfo;
+uniform float uFarBias;
 
 varying vec2 vUv;
 
@@ -94,6 +98,11 @@ void main() {
     vec3 a = (uShadowMatrix * vec4(origin, 1.0)).xyz;
     vec3 b = (uShadowMatrix * vec4(origin + direction * rayLength, 1.0)).xyz;
 
+    // Daleka mapa cieni (jeśli jest) - dla kroków poza bliską.
+
+    vec3 farA = (uFarShadowMatrix * vec4(origin, 1.0)).xyz;
+    vec3 farB = (uFarShadowMatrix * vec4(origin + direction * rayLength, 1.0)).xyz;
+
     float start = noise(gl_FragCoord.xy);
 
     // Każdy krok w oświetlonym powietrzu dodaje trochę światła, tym
@@ -113,11 +122,26 @@ void main() {
 
         vec3 inside = step(vec3(0.0), s) * step(s, vec3(1.0));
 
-        float sun = step(s.z - uBias, texture2D(uShadowMap, s.xy).r);
+        float lit = 1.0;
 
-        // Poza mapą cieni - powietrze w słońcu.
+        if (inside.x * inside.y * inside.z > 0.5) {
 
-        float lit = mix(1.0, sun, inside.x * inside.y * inside.z);
+            lit = step(s.z - uBias, texture2D(uShadowMap, s.xy).r);
+
+        }
+        else if (uFarShadowInfo.z > 0.5) {
+
+            vec3 f = mix(farA, farB, t);
+
+            vec3 farInside = step(vec3(0.0), f) * step(f, vec3(1.0));
+
+            if (farInside.x * farInside.y * farInside.z > 0.5) {
+                lit = step(f.z - uFarBias, texture2D(uFarShadowMap, f.xy).r);
+            }
+
+        }
+
+        // Poza mapami cieni - powietrze w słońcu.
 
         glow += lit * exp(-uDensity * t * rayLength);
 
@@ -242,7 +266,11 @@ export class LightShafts {
                 uMaxDistance: { value: 64 },
                 uBias: { value: 0 },
                 uDensity: { value: 0.01 },
-                uIsotropic: { value: 0.6 }
+                uIsotropic: { value: 0.6 },
+                uFarShadowMap: shadowUniforms.uFarShadowMap,
+                uFarShadowMatrix: shadowUniforms.uFarShadowMatrix,
+                uFarShadowInfo: shadowUniforms.uFarShadowInfo,
+                uFarBias: { value: 0 }
             },
             depthTest: false,
             depthWrite: false
@@ -401,6 +429,10 @@ export class LightShafts {
         const info = shadowUniforms.uSunShadowInfo.value;
 
         march.uBias.value = info.z * 1.5 * info.x;
+
+        const farInfo = shadowUniforms.uFarShadowInfo.value;
+
+        march.uFarBias.value = farInfo.y * 1.5 * farInfo.x;
 
         this.drawQuad(this.march, this.targets[0]);
 

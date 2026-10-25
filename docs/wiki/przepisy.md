@@ -2,7 +2,7 @@
 
 > Ta strona jest generowana z kodu gry (`python tools/wiki.py`) - nie zmieniaj jej ręcznie, zmiany przepadną przy następnym generowaniu.
 
-Wersja gry **0.15.0** - 25 przepisów. Wytwarza się w ekwipunku (**E**): siatka 2 x 2 obok miejsc ekwipunku, wynik po prawej (klik - weź, Shift + klik - ile się da). Przycisk 📖 *Przepisy* otwiera księgę - klik na przepisie sam układa składniki. Przepisy *z kształtem* można przesuwać po siatce i odbijać w poziomie; przepisy *bez kształtu* - obojętne, gdzie leżą składniki. Z czatu: `/przepisy`, `/wytworz <przepis>`.
+Wersja gry **0.16.0** - 30 przepisów. Wytwarza się w ekwipunku (**E**): siatka 2 x 2 obok miejsc ekwipunku, wynik po prawej (klik - weź, Shift + klik - ile się da). Przycisk 📖 *Przepisy* otwiera księgę - klik na przepisie sam układa składniki. Przepisy *z kształtem* można przesuwać po siatce i odbijać w poziomie; przepisy *bez kształtu* - obojętne, gdzie leżą składniki. Z czatu: `/przepisy`, `/wytworz <przepis>`.
 
 
 ## Ziemia
@@ -78,6 +78,39 @@ Wersja gry **0.15.0** - 25 przepisów. Wytwarza się w ekwipunku (**E**): siatka
 <img src="przepisy/jablon_planks.png" alt="Deski jabłoniowe x4: 1 x pień jabłoni (też okorowany) (obojętne gdzie)">
 
 1 x pień jabłoni (też okorowany) (bez kształtu). Nazwa przepisu: `jablon_planks`.
+
+
+## Budulec
+
+### Tynk wapienny x4
+
+<img src="przepisy/lime_plaster.png" alt="Tynk wapienny x4: 2 x Wapień + 2 x Piasek (obojętne gdzie)">
+
+2 x Wapień + 2 x Piasek (bez kształtu). Nazwa przepisu: `lime_plaster`. Biały - odbija dużo światła, pokój jest jasny.
+
+### Tynk ochrowy x4
+
+<img src="przepisy/ochre_plaster.png" alt="Tynk ochrowy x4: 3 x Tynk wapienny + 1 x Glina (obojętne gdzie)">
+
+3 x Tynk wapienny + 1 x Glina (bez kształtu). Nazwa przepisu: `ochre_plaster`. Ciepły, żółty - zabarwia odbite światło.
+
+### Terakota x4
+
+<img src="przepisy/terracotta.png" alt="Terakota x4: 4 x Glina (ułożenie: CC / CC; C = Glina)">
+
+4 x Glina (z kształtem). Nazwa przepisu: `terracotta`. Czerwone płytki - ciepłe, czerwonawe światło w pokoju.
+
+### Polerowany kamień x4
+
+<img src="przepisy/polished_stone.png" alt="Polerowany kamień x4: 4 x Kamień (ułożenie: SS / SS; S = Kamień)">
+
+4 x Kamień (z kształtem). Nazwa przepisu: `polished_stone`. Gładki i błyszczący - odbija najwięcej światła.
+
+### Ciemne deski x3
+
+<img src="przepisy/dark_planks.png" alt="Ciemne deski x3: 3 x deski (dowolne) + 1 x Bazalt (obojętne gdzie)">
+
+3 x deski (dowolne) + 1 x Bazalt (bez kształtu). Nazwa przepisu: `dark_planks`. Bejcowane na ciemno - pochłaniają światło, pokój jest mroczny.
 
 
 ## Światło

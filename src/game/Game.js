@@ -1627,7 +1627,7 @@ export class Game {
 
         this.sky.setLowDetail(potato);
 
-        this.farTerrain.setLowDetail(potato);
+        this.farTerrain.setDetail(settings.get('farDetail'), potato);
 
         this.spaceView.setLowDetail(potato);
 

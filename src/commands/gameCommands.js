@@ -84,6 +84,8 @@ import { TREE_PACKS, TREE_PACK_ERRORS, PACK_ID_SLOTS } from '../blocks/treePacks
 
 import { plantTree } from '../world/trees/plantTree.js';
 
+import { LOD_LEGEND } from '../world/FarTerrain.js';
+
 import {
     CHUNK_SIZE,
     CHUNK_HEIGHT,
@@ -1302,6 +1304,8 @@ const SETTING_WORDS = {
     ziemniak: 'potato',
     zasieg: 'viewDistance',
     'daleki-teren': 'farTerrain',
+    'szczegoly-terenu': 'farDetail',
+    'daleki-teren-szczegoly': 'farDetail',
     pole: 'fov',
     jasnosc: 'brightness',
     rozdzielczosc: 'renderScale',
@@ -1335,6 +1339,17 @@ const SETTING_WORDS = {
 
 
 // Jakość cieni słońca: słowo -> wartość ustawienia "shadows".
+
+// Szczegóły dalekiego terenu (/horyzont szczegoly, /ustaw szczegoly-terenu).
+
+const FAR_DETAIL_WORDS = {
+    niskie: 1,
+    nisko: 1,
+    srednie: 2,
+    wysokie: 3,
+    wysoko: 3
+};
+
 
 const SHADOW_WORDS = {
     wyl: 0,
@@ -1416,6 +1431,19 @@ function parseSettingValue(key, text) {
 
         if (![0, 1, 2, 3].includes(value)) {
             throw new CommandError('Wpisz wyl, zwykle, dokladne albo dalekie (0, 1, 2, 3)');
+        }
+
+        return value;
+
+    }
+
+
+    if (key === 'farDetail') {
+
+        const value = FAR_DETAIL_WORDS[word] ?? Number(word);
+
+        if (![1, 2, 3].includes(value)) {
+            throw new CommandError('Wpisz niskie, srednie albo wysokie (1, 2, 3)');
         }
 
         return value;
@@ -3970,7 +3998,7 @@ export const GAME_COMMANDS = [
     {
         name: 'horyzont',
         aliases: ['daleki-teren', 'horizon'],
-        usage: '/horyzont | /horyzont <bloki | wyl> | /horyzont lod | /horyzont odswiez',
+        usage: '/horyzont | /horyzont <bloki | wyl> | /horyzont szczegoly <niskie | srednie | wysokie> | /horyzont lod | /horyzont odswiez',
         description: 'Daleki teren za zasięgiem widzenia: zasięg, kafelki, kolorowanie dokładności.',
 
         run(args, { game }) {
@@ -3992,9 +4020,11 @@ export const GAME_COMMANDS = [
                 }
 
                 return `Daleki teren: od ${far.inner} do ${far.outer} bloków | ` +
+                    `${TEXTS.farDetail(game.settings.get('farDetail'))}${game.settings.get('potato') ? ' (tryb ziemniaka - mniej)' : ''} | ` +
                     `kafelków: ${stats.shown} widocznych` +
                     `${stats.missing ? `, ${stats.missing} w budowie` : ''}, ${stats.cached} w pamięci | ` +
                     `${Math.round(stats.triangles / 1000)} tys. trójkątów | ` +
+                    `kafelki liczą: ${stats.workers ? `osobne wątki (${stats.workers})` : 'gra (bez osobnych wątków)'} | ` +
                     `kolorowanie dokładności: ${far.debugLod ? 'wł.' : 'wył.'} (/horyzont lod)`;
 
             }
@@ -4008,7 +4038,7 @@ export const GAME_COMMANDS = [
                 far.setDebugLod(!far.debugLod);
 
                 return far.debugLod
-                    ? 'Kafelki pokolorowane według dokładności: czerwone - kratka 4 bloki, niebieskie - 8, żółte - 16, zielone - 32, fioletowe - 64.'
+                    ? `Kafelki pokolorowane według wielkości kratki: ${LOD_LEGEND}.`
                     : 'Kolorowanie dokładności wyłączone.';
 
             }
@@ -4019,6 +4049,16 @@ export const GAME_COMMANDS = [
                 far.rebuildAll();
 
                 return 'Daleki teren buduje się od nowa.';
+
+            }
+
+
+            if (['szczegoly', 'detail'].includes(word)) {
+
+                game.settings.set('farDetail', parseSettingValue('farDetail', args[1]));
+
+                return `${TEXTS.farDetail(game.settings.get('farDetail'))} - im wyższe, tym drobniejsze kratki ` +
+                    '(i więcej trójkątów: wysokie ~2x więcej niż średnie, niskie ~4x mniej).';
 
             }
 
@@ -4037,7 +4077,11 @@ export const GAME_COMMANDS = [
         },
 
         complete(args) {
-            return args.length === 1 ? ['512', '1024', '2048', '4096', 'wyl', 'lod', 'odswiez'] : [];
+            if (args.length === 2 && simplify(args[0]) === 'szczegoly') {
+                return ['niskie', 'srednie', 'wysokie'];
+            }
+
+            return args.length === 1 ? ['1024', '2048', '4096', '8192', '16384', 'wyl', 'szczegoly', 'lod', 'odswiez'] : [];
         }
     },
 
@@ -4976,7 +5020,7 @@ function shadowsNote(game) {
     }
 
     if (!game.settings.get('bounceLight')) {
-        return ' Uwaga: światło odbite jest wyłączone (/swiatlo odbite wl).';
+        return ' Uwaga: światło odbite (eksperymentalne) jest wyłączone - włącz: /swiatlo odbite wl.';
     }
 
     return '';

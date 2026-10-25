@@ -169,10 +169,12 @@ zmieni) - `TOUCH_SETTINGS` w `src/config.js`:
 | ustawienie | telefon | komputer |
 |---|---|---|
 | zasięg widzenia | 32 | 48 |
-| daleki teren | 512 | 1024 |
+| daleki teren | 1024 | 8192 |
+| szczegóły dalekiego terenu | niskie | średnie |
 | rozdzielczość | 80% | 100% |
 | limit FPS | 60 | bez limitu |
 | liście drzew | szybkie | ładne (z prześwitami) |
+| cienie słońca, promienie światła | wyłączone | dalekie, włączone |
 | informacje F3 | wyłączone | włączone |
 
 Do tego obraz ma najwyżej 1.5 piksela na punkt ekranu

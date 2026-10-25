@@ -105,6 +105,7 @@ export const TEXTS = {
     fov: (value) => `Pole widzenia: ${value}°`,
     viewDistance: (value) => `Zasięg widzenia: ${value} bloków`,
     farTerrain: (value) => value > 0 ? `Daleki teren: ${value} bloków` : 'Daleki teren: Wył.',
+    farDetail: (value) => `Szczegóły dalekiego terenu: ${['', 'Niskie', 'Średnie', 'Wysokie'][value] ?? 'Średnie'}`,
     brightness: (value) =>
         `Jasność: ${value === 0 ? 'Nastrojowa' : value === 100 ? 'Jasna' : `+${value}%`}`,
     renderScale: (value) => `Rozdzielczość: ${value}%`,
@@ -112,7 +113,7 @@ export const TEXTS = {
     ambientOcclusion: (value) => `Cienie w kątach: ${value > 0 ? `${value}%` : 'Wył.'}`,
     shadows: (value) => `Cienie słońca: ${['Wył.', 'Zwykłe', 'Dokładne', 'Dalekie'][value] ?? 'Wył.'}`,
     lightShafts: (on) => `Promienie światła: ${on ? 'Wł.' : 'Wył.'}`,
-    bounceLight: (on) => `Światło odbite: ${on ? 'Wł.' : 'Wył.'}`,
+    bounceLight: (on) => `Światło odbite (eksperymentalne): ${on ? 'Wł.' : 'Wył.'}`,
     fancyLeaves: (on) => `Liście drzew: ${on ? 'Ładne' : 'Szybkie'}`,
     theme: (name) => `Motyw: ${name}`,
     hudScale: (value) => `Interfejs w grze: ${value}%`,

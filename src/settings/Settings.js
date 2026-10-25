@@ -25,6 +25,16 @@ import {
 
 const STORAGE_KEY = 'voxel-game-settings';
 
+// Wersja zapisu ustawień. Gdy nowa wersja gry zmienia wartość domyślną
+// i chce, żeby dostali ją wszyscy (także ci, którzy mają ją zapisaną),
+// zwiększamy wersję i dopisujemy klucze do RESET_AT_REVISION - zapis
+// starszy niż ta wersja wraca dla nich do wartości domyślnej (raz).
+const SETTINGS_REVISION = 2;
+
+const RESET_AT_REVISION = {
+    2: ['bounceLight', 'farTerrain']   // 0.17.0: światło odbite eksperymentalne, dalszy daleki teren
+};
+
 
 export const SETTINGS_DEFAULTS = {
 
@@ -32,6 +42,7 @@ export const SETTINGS_DEFAULTS = {
     potato: false,                                 // tryb ziemniaka (config.js: POTATO_...)
     viewDistance: DEFAULT_VIEW_DISTANCE,           // bloki (prawdziwe chunki)
     farTerrain: DEFAULT_FAR_TERRAIN,               // bloki (0 = bez dalekiego terenu)
+    farDetail: 2,                                  // szczegóły dalekiego terenu: 1 - niskie, 2 - średnie, 3 - wysokie
     fov: DEFAULT_FOV,                              // stopnie
     brightness: 0,                                 // procent (0 = nastrojowo, 100 = jasno)
     renderScale: 100,                              // procent rozdzielczości ekranu
@@ -39,7 +50,7 @@ export const SETTINGS_DEFAULTS = {
     ambientOcclusion: Math.round(AMBIENT_OCCLUSION * 100),   // cienie w kątach, procent
     shadows: 3,                                    // cienie słońca: 0 - wył., 1 - zwykłe, 2 - dokładne, 3 - dalekie
     lightShafts: true,                             // promienie światła w powietrzu
-    bounceLight: true,                             // światło odbite od oświetlonych ścian
+    bounceLight: false,                            // światło odbite od ścian (eksperymentalne - na razie wyłączone)
     fancyLeaves: true,                             // liście z prześwitami (false = szybkie, pełne)
     dynamicLight: true,                            // lampa w ręce, meteoryty...
     loadBudget: CHUNK_LOAD_BUDGET_MS,              // ms na klatkę na wczytywanie chunków
@@ -76,7 +87,7 @@ export const SETTINGS_DEFAULTS = {
 export const SETTINGS_RANGES = {
 
     viewDistance: { min: 24, max: 384, step: 8 },
-    farTerrain: { min: 0, max: 4096, step: 256 },
+    farTerrain: { min: 0, max: 16384, step: 256 },
     fov: { min: 50, max: 110, step: 1 },
     brightness: { min: 0, max: 100, step: 5 },
     renderScale: { min: 25, max: 100, step: 5 },
@@ -100,6 +111,7 @@ export const SETTINGS_CHOICES = {
 
     fpsLimit: [0, 30, 60, 120, 144],
     shadows: [0, 1, 2, 3],
+    farDetail: [1, 2, 3],
     jointStyle: ['smooth', 'blocks']
 
 };
@@ -135,16 +147,39 @@ export class Settings {
 
         const saved = this.load();
 
+        const reset = new Set();
+
+        if (saved && typeof saved === 'object') {
+
+            const revision = Number(saved.revision) || 1;
+
+            for (const [at, keys] of Object.entries(RESET_AT_REVISION)) {
+
+                if (revision < Number(at)) {
+                    keys.forEach((key) => reset.add(key));
+                }
+
+            }
+
+        }
+
         for (const key of Object.keys(SETTINGS_DEFAULTS)) {
 
             if (
                 saved &&
                 typeof saved === 'object' &&
-                key in saved
+                key in saved &&
+                !reset.has(key)
             ) {
                 this.values[key] = this.validate(key, saved[key]);
             }
 
+        }
+
+        // Stary zapis - od razu zapisujemy nową wersję (reset tylko raz).
+
+        if (reset.size > 0) {
+            this.save();
         }
 
     }
@@ -313,7 +348,7 @@ export class Settings {
 
             localStorage.setItem(
                 STORAGE_KEY,
-                JSON.stringify(this.values)
+                JSON.stringify({ ...this.values, revision: SETTINGS_REVISION })
             );
 
         }

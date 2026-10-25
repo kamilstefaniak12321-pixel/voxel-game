@@ -11,6 +11,44 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 0.17.0 - Kanciasty daleki teren do 16 384 bloków (2026-10-25)
+
+Pull request #37.
+
+### Nowe
+- **Daleki teren jest kanciasty, jak bloki.** Zamiast gładkiej,
+  rozmytej siatki - kratki (słupki) z płaskim wierzchem w kolorze
+  trawy, skały, piasku, wody albo koron drzew i z pionowymi ściankami
+  tam, gdzie teren schodzi niżej. Tuż za zasięgiem widzenia kratka ma
+  1 blok, dalej 2, 4, 8... aż do 128 bloków - rozdzielczość maleje
+  z odległością, ale teren zostaje kanciasty. Każda kratka ma trochę
+  inną jasność (jak tekstura z daleka), ścianki są u dołu ciemniejsze,
+  a ścianki trawy u góry zielonkawe.
+- **Daleki teren sięga do 16 384 bloków** (było 4096), domyślnie 8192
+  (na telefonie 1024). Dwa razy dalszy horyzont to tylko jeden poziom
+  kratek więcej, więc 16 384 bloków kosztuje niewiele więcej niż 4096.
+- **Daleki teren liczą osobne wątki przeglądarki** (1-3, zależnie od
+  procesora) - wysokości i siatki kratek powstają obok gry, więc
+  nie zabierają czasu klatkom. `/horyzont` pokazuje, ile wątków liczy.
+- Ustawienie **Szczegóły dalekiego terenu**: *niskie* (większe kratki,
+  ~2x mniej trójkątów - na telefonie domyślnie), *średnie*, *wysokie*
+  (drobniejsze kratki); `/horyzont szczegoly niskie | srednie | wysokie`.
+- `/horyzont lod` koloruje kafelki według wielkości kratki (od 1 do 256
+  bloków).
+
+### Zmiany
+- **Światło odbite jest eksperymentalne i domyślnie wyłączone** - na
+  dworze dawało świecący krąg wokół gracza. Można je włączyć
+  w ustawieniach albo `/swiatlo odbite wl`; poprawka - później.
+- Przy pierwszym uruchomieniu nowej wersji ustawienia *Światło odbite*
+  i *Daleki teren* wracają do nowych wartości domyślnych (raz - potem
+  zostaje to, co ustawisz).
+- W zasięgu prawdziwych chunków daleki teren jest wycięty, a nie
+  zapadnięty pod ziemię - nigdzie nie wystaje spomiędzy prawdziwych
+  drzew ani przez wykopane dziury (to samo w dalekiej mapie cieni).
+
+---
+
 ## 0.16.0 - Światło odbite, budulec i dalekie cienie (2026-10-25)
 
 Pull request #36.

@@ -459,8 +459,10 @@ export const LAND_DIP_SPEED = 10;
 export const LAND_DIP_MAX = 0.2;
 
 // Daleki teren (horyzont): do ilu bloków od gracza widać uproszczony,
-// rozmyty teren za zasięgiem widzenia (0 = wyłączony).
-export const DEFAULT_FAR_TERRAIN = 1024;
+// kanciasty teren za zasięgiem widzenia (0 = wyłączony). Kratki rosną
+// z odległością, więc nawet kilkanaście tysięcy bloków to niewiele
+// więcej pracy niż kilka tysięcy (src/world/FarTerrain.js).
+export const DEFAULT_FAR_TERRAIN = 8192;
 
 // TRYB ZIEMNIAKA (ustawienie albo adres gry z ?ziemniak) - wszystko
 // działa, ale prościej, żeby gra chodziła nawet na bardzo słabym
@@ -483,7 +485,8 @@ export const POTATO_STAR_SHARE = 0.3;
 // na start (dopóki gracz sam tego nie zmieni w ustawieniach):
 export const TOUCH_SETTINGS = {
     viewDistance: 32,      // bloki
-    farTerrain: 512,       // bloki
+    farTerrain: 1024,      // bloki
+    farDetail: 1,          // niskie szczegóły dalekiego terenu (~4x mniej trójkątów)
     renderScale: 80,       // procent rozdzielczości
     fpsLimit: 60,          // klatki na sekundę
     fancyLeaves: false,    // szybkie liście (bez prześwitów - dużo mniej ścian)

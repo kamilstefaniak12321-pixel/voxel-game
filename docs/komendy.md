@@ -96,9 +96,10 @@ Współrzędne można podawać względem gracza: `~` (tu, gdzie stoję),
 | `/woda znajdz` | najbliższa woda we wczytanych chunkach: odległość, kierunek i komenda `/tp` nad wodę |
 | `/woda fale [0-3]` | wysokość fal na wodzie (0 = płaska, 1 = zwykłe); bez liczby - jaka jest (nie zapisuje się) |
 | `/dzwiek menu` | po kolei dźwięki menu i ekwipunku: przycisk, "Wróć", suwak, otwarcie ekwipunku, wzięcie, odłożenie, kosz, zamknięcie, błąd, zbieranie owoców |
-| `/horyzont` | daleki teren: zasięg, ile kafelków widać i ile się buduje, trójkąty |
-| `/horyzont <bloki \| wyl>` | zasięg dalekiego terenu (to samo co w ustawieniach) |
-| `/horyzont lod` | koloruje kafelki dalekiego terenu według dokładności (czerwone - najdokładniejsze) |
+| `/horyzont` | daleki teren: zasięg, ile kafelków widać i ile się buduje, trójkąty, ile wątków go liczy |
+| `/horyzont <bloki \| wyl>` | zasięg dalekiego terenu, do 16384 (to samo co w ustawieniach) |
+| `/horyzont szczegoly <niskie \| srednie \| wysokie>` | wielkość kratek dalekiego terenu (to samo co w ustawieniach) |
+| `/horyzont lod` | koloruje kafelki dalekiego terenu według wielkości kratki (czerwone - 1 blok, pomarańczowe - 2, żółte - 4...) |
 | `/horyzont odswiez` | buduje daleki teren od nowa |
 | `/teren` | teren pod graczem: wysokość, pas (morze, nizina, wyżyna, góry), forma terenu, powierzchnia, nachylenie i pola generatora |
 | `/teren <x> <z>` | to samo dla dowolnego miejsca (`~` = względem gracza) |

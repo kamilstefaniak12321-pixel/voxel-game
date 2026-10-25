@@ -427,35 +427,38 @@ const modelDepthMaterial = new THREE.ShaderMaterial({
 const MODEL_LAYER = 2;
 
 
-// Daleki teren do dalekiej mapy: w zasięgu chunków zapada się pod
-// ziemię (tak jak w FarTerrain.js), żeby nie rzucał cienia drugi raz
-// na prawdziwe chunki.
+// Daleki teren do dalekiej mapy: w zasięgu chunków jest wycięty
+// (tak jak w FarTerrain.js), żeby nie rzucał cienia drugi raz na
+// prawdziwe chunki.
 
 const farTerrainDepthMaterial = new THREE.ShaderMaterial({
     vertexShader: `
-        uniform vec2 uFarCenter;
-        uniform float uFarInner;
-        uniform float uFarSink;
+        varying vec2 vFarXZ;
 
         void main() {
 
-            vec3 world = (modelMatrix * vec4(position, 1.0)).xyz;
+            vFarXZ = (modelMatrix * vec4(position, 1.0)).xz;
 
-            vec3 moved = position;
-
-            if (length(world.xz - uFarCenter) < uFarInner) {
-                moved.y -= uFarSink;
-            }
-
-            gl_Position = projectionMatrix * modelViewMatrix * vec4(moved, 1.0);
+            gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
 
         }
     `,
-    fragmentShader: 'void main() {}',
+    fragmentShader: `
+        uniform vec2 uFarCenter;
+        uniform float uFarInner;
+        varying vec2 vFarXZ;
+
+        void main() {
+
+            if (length(vFarXZ - uFarCenter) < uFarInner) {
+                discard;
+            }
+
+        }
+    `,
     uniforms: {
         uFarCenter: { value: new THREE.Vector2() },
-        uFarInner: { value: 0 },
-        uFarSink: { value: 0 }
+        uFarInner: { value: 0 }
     },
     colorWrite: false
 });
@@ -1096,7 +1099,6 @@ export class SunShadows {
 
             material.uFarCenter.value.copy(build.center);
             material.uFarInner.value = build.terrain.inner;
-            material.uFarSink.value = build.terrain.sinkDepth;
 
             const override = scene.overrideMaterial;
 

@@ -86,6 +86,10 @@ export const MAX_BLOCK_ID = 255;
 //                    w config.js)
 //   category       - kategoria w ekwipunku, księdze przepisów i wiki
 //                    (src/items/categories.js); zwykle dobiera się sama
+//   reflect        - jak mocno blok odbija światło słońca (światło
+//                    odbite - src/world/BounceLight.js): mnożnik koloru
+//                    tekstury, domyślnie 1. Więcej (np. 1.8) - gładka,
+//                    błyszcząca ściana, mniej (0.5) - matowa, pochłania.
 
 // ------------------------------------------------------------
 // KRZAKI OWOCOWE
@@ -784,6 +788,70 @@ export const BLOCK_TYPES = {
         model: 'cross',
         plant: { planes: 2, height: 0.8, width: 0.42 },
         textures: { all: 'dandelion' }
+    },
+
+
+    // ------------------------------------------------------------
+    // BUDULEC - ściany, które różnie odbijają światło słońca (pole
+    // reflect; światło odbite - src/world/BounceLight.js). Pokój
+    // z białego tynku jest jasny, z ciemnych desek - mroczny,
+    // z terakoty - ciepły. Tekstury: tools/tekstury_budulec.py.
+    // ------------------------------------------------------------
+
+    lime_plaster: {
+        id: 89,
+        name: 'Lime Plaster',
+        label: 'Tynk wapienny',
+        sound: 'stone',
+        solid: true,
+        category: 'budowa',
+        reflect: 1.1,
+        textures: { all: 'lime_plaster' },
+        randomRotation: ['top', 'bottom']
+    },
+
+    ochre_plaster: {
+        id: 90,
+        name: 'Ochre Plaster',
+        label: 'Tynk ochrowy',
+        sound: 'stone',
+        solid: true,
+        category: 'budowa',
+        reflect: 1.1,
+        textures: { all: 'ochre_plaster' },
+        randomRotation: ['top', 'bottom']
+    },
+
+    terracotta: {
+        id: 91,
+        name: 'Terracotta',
+        label: 'Terakota',
+        sound: 'stone',
+        solid: true,
+        category: 'budowa',
+        textures: { all: 'terracotta' }
+    },
+
+    polished_stone: {
+        id: 92,
+        name: 'Polished Stone',
+        label: 'Polerowany kamień',
+        sound: 'stone',
+        solid: true,
+        category: 'budowa',
+        reflect: 1.8,
+        textures: { all: 'polished_stone' }
+    },
+
+    dark_planks: {
+        id: 93,
+        name: 'Dark Planks',
+        label: 'Ciemne deski',
+        sound: 'wood',
+        solid: true,
+        category: 'budowa',
+        reflect: 0.6,
+        textures: { all: 'dark_planks' }
     },
 
 

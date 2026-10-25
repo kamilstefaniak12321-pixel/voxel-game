@@ -75,7 +75,7 @@ i gwiazdy za sobą - dzięki temu zaćmienie słońca "dzieje się samo".
 ### Kolejność rysowania klatki
 
 ```
-0. mapa cieni       tylko gdy trzeba, i cień gracza (Shadows.render)
+0. mapy cieni       bliska tylko gdy trzeba, daleka po kawałku, cień gracza (Shadows.render)
 1. niebo            własna scena i kamera (Sky.render)
    (kula Ziemi      tylko wysoko - src/space/Globe.js, docs/kosmos.md)
 2. daleki teren     własna scena i kamera (FarTerrain.render)
@@ -205,8 +205,10 @@ i wzgórza, które wygenerowałyby się tam naprawdę, ale bez bloków.
   o ~0,1° (`ANGLE_STEP`), gracz odejdzie o 1/4 zasięgu od środka mapy
   albo zmieni się chunk w jej zasięgu (najwyżej 10 razy na sekundę).
   Do mapy rysuje się osobna scena `World.shadowScene` z kopiami meshy
-  chunków (ta sama geometria, materiały tylko z głębią): rośliny i woda
-  nie rzucają cieni, liście - z prześwitami (plamki słońca pod drzewem),
+  chunków (ta sama geometria, materiały tylko z głębią): woda nie rzuca
+  cienia, trawa i kwiaty - drobne cienie (z większym zapasem przy
+  porównaniu, bo kołyszą się na wietrze), liście - z prześwitami
+  (plamki słońca pod drzewem),
 - piksele mapy stoją w miejscu (kamera przesuwa się o całe piksele), więc
   brzegi cieni nie migoczą, gdy gracz chodzi,
 - cienie rzuca mocniejsze z dwóch świateł: w dzień słońce, w jasną noc
@@ -241,7 +243,66 @@ dworze zostaje blask wokół słońca (`SHAFT_...` w `config.js`).
 O wschodzie i zachodzie promienie są mocniejsze, nocą - słabe, w kolorze
 księżyca. Pod wodą ich nie ma.
 
-Test: `/demo okno`, `/cienie`, `/czas ustaw zachod`.
+**Daleka mapa cieni** (jakość *Dalekie*): druga mapa 2048 pikseli na
+512 bloków wokół gracza (2 piksele na blok), razem z dalekim terenem
+(`FarTerrain.js` - w zasięgu chunków zapada się pod ziemię, jak przy
+rysowaniu). Kamera stoi tak daleko w stronę słońca, jak sięga daleki
+teren, więc o wschodzie i zachodzie góry rzucają cień na doliny,
+a słońce chowa się za grzbietem (daleki teren też dostaje te cienie).
+Rysowana rzadko (słońce o ~0,23°, gracz o 48 bloków, zmienione chunki
+najwyżej co 2 s) i po kawałku: kamera i lista chunków w pierwszej
+klatce, po ćwiartce chunków w kolejnych, daleki teren na końcu - do
+drugiej tekstury, która gotowa podmienia poprzednią (żadna klatka nie
+rysuje całego świata). Bloki biorą cień z bliskiej mapy, przy jej
+brzegu i dalej - z dalekiej. Promienie światła sięgają z nią dalej
+(`SHAFT_FAR_REACH`).
+
+Test: `/demo okno`, `/cienie`, `/cienie dalekie`, `/czas ustaw zachod`.
+
+### Światło odbite - ZROBIONE
+
+![Pokoje z różnego budulca](swiatlo-odbite.jpg)
+
+`src/world/BounceLight.js`, ustawienie *Światło odbite* (działa
+z cieniami słońca). Słońce wpadające przez okno nie zostaje na
+podłodze: oświetlona podłoga i ściany świecą dalej, w kolorze swojej
+tekstury, a światło rozlewa się po pokoju. Wokół gracza jest pudełko
+komórek (`BOUNCE_SIZE` x `BOUNCE_HEIGHT`, jak w dynamicznym świetle):
+
+1. **bloki** - które komórki są ścianą i ile światła odbija każda
+   ściana: średni kolor tekstury (góra, boki, spód osobno) razy pole
+   bloku `reflect` (domyślnie 1),
+2. **źródła** - komórki powietrza przy ścianach zwróconych do światła,
+   do których dochodzi słońce (promień w stronę słońca przez bloki -
+   ten sam co dla modelu gracza): świecą tyle, ile odbija oświetlona
+   ściana,
+3. **rozlewanie** - światło rozchodzi się po powietrzu (nie przez
+   ściany), słabnąc z odległością (`BOUNCE_SPREAD`); przy jasnej
+   ścianie wraca do komórki (kolejne odbicia - biały pokój jest
+   jaśniejszy w całości), przy ciemnej przepada. Liczone krokami
+   nadrelaksacji Gaussa-Seidla (na zmianę w przód i w tył), od
+   poprzedniego wyniku, więc zmiany są płynne,
+4. wynik (pierwiastek - więcej odcieni w półmroku) idzie jako
+   tekstura 3D do shadera bloków i modeli: światło odbite razy kolor
+   ściany, pod gołym niebem słabsze (`BOUNCE_OUTDOOR` - tam świeci
+   całe niebo).
+
+Każdy krok jest podzielony na kawałki (najwyżej ~2,5 ms na klatkę).
+Liczy się od nowa, gdy słońce przesunie się o ~1,4°, gracz odejdzie
+o 8 bloków albo zmienią się bloki w pudełku. Kolor i siłę (pora dnia,
+księżyc) dodaje shader - o zachodzie nic się nie przelicza.
+
+Z cieniami światło nieba z chunków (to, które wlewa się przez okno
+wg zasad Minecrafta) przyciemnia pokój mocniej (`SHADOW_INDOOR_DARKNESS`),
+więc wnętrze oświetla głównie światło odbite - zależne od tego, z czego
+jest dom. **Budulec** (`tools/tekstury_budulec.py`): tynk wapienny
+(`reflect` 1.1 - biały, jasny pokój), tynk ochrowy (1.1 - ciepły),
+terakota (1 - czerwonawe światło), polerowany kamień (1.8 - gładki,
+odbija najwięcej), ciemne deski (0.6 - pochłaniają światło).
+
+Test: `/demo dom` (cztery pokoje z różnego budulca, każdy z oknem od
+strony słońca), `/swiatlo` (ile światła odbitego jest przy głowie),
+`/swiatlo odbite wl | wyl`.
 
 ### Słońce i kolorowe wschody / zachody
 
@@ -384,6 +445,9 @@ w scenie świata; kolor z `SkyState` (różowe o zachodzie, szare nocą).
 | jak bloki zlewają się w daleki teren, suwak jasności | `src/rendering/viewUniforms.js`, `BlockRenderData.js` |
 | co upraszcza tryb ziemniaka | `src/config.js` (`POTATO_...`), `FarTerrain.js` (`POTATO_DETAIL`), define `POTATO` w shaderach bloków i dalekiego terenu |
 | cienie słońca: rozmiar i zasięg mapy, jak często się przerysowuje, kiedy znikają przy horyzoncie | `src/rendering/Shadows.js` (`SHADOW_QUALITY`, `ANGLE_STEP`, `FADE_...`) |
+| daleka mapa cieni: zasięg, jak często, na ile klatek | `src/rendering/Shadows.js` (`FAR_...`) |
+| światło odbite: pudełko, jak daleko się rozlewa, jasność, pod gołym niebem | `src/config.js` (`BOUNCE_...`), `src/world/BounceLight.js` |
+| jak mocno blok odbija światło | `src/blocks/BlockRegistry.js` (pole `reflect`) |
 | jak mocno świeci słońce z cieniami, jak ciemno jest w środku | `src/config.js` (`SHADOW_SUN_BOOST`, `SHADOW_AMBIENT`, `SHADOW_INDOOR_DARKNESS`) |
 | promienie światła: jasność, gęstość powietrza na dworze i w środku | `src/config.js` (`SHAFT_...`), wygląd: `src/rendering/LightShafts.js` |
 | komendy do sprawdzania | `src/commands/gameCommands.js`, opis: `docs/komendy.md` |

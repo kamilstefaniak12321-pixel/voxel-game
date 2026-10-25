@@ -35,7 +35,12 @@ import {
     getAtlasAverage
 } from '../rendering/TextureAtlas.js';
 
-import { setPotatoDefine } from '../rendering/BlockRenderData.js';
+import { setPotatoDefine, setDefine } from '../rendering/BlockRenderData.js';
+
+import {
+    shadowUniforms,
+    FAR_TERRAIN_SHADOW_GLSL
+} from '../rendering/Shadows.js';
 
 import { BASE_TREE_NAMES, TREE_NAMES, TREE_SPECIES } from '../blocks/trees.js';
 
@@ -235,7 +240,7 @@ function createFarMaterial(lodColor) {
 
     material.onBeforeCompile = (shader) => {
 
-        Object.assign(shader.uniforms, skyUniforms, viewUniforms, meteorLightUniforms, {
+        Object.assign(shader.uniforms, skyUniforms, viewUniforms, meteorLightUniforms, shadowUniforms, {
             uLodTint: { value: lodColor },
             uLodDebug: lodDebug
         });
@@ -371,6 +376,7 @@ function createFarMaterial(lodColor) {
                 ${VIEW_GLSL}
                 ${GLOBE_LIGHT_GLSL}
                 ${METEOR_LIGHT_GLSL}
+                ${FAR_TERRAIN_SHADOW_GLSL}
 
                 #ifdef POTATO
                     varying vec3 vHazeSky;
@@ -407,6 +413,26 @@ function createFarMaterial(lodColor) {
                 '#include <color_fragment>',
                 `#include <color_fragment>
                 diffuseColor.rgb *= mix(vec3(1.0), uLodTint, uLodDebug);`
+            )
+            .replace(
+                '#include <lights_fragment_begin>',
+                `#ifdef USE_FAR_SHADOWS
+
+                    // Daleka mapa cieni (src/rendering/Shadows.js): góry
+                    // rzucają cień na doliny - słońce świeci tylko tam,
+                    // dokąd dochodzą jego promienie.
+
+                    float farSun = farTerrainSun(vFarWorld, inverseTransformDirection(normal, viewMatrix));
+
+                    ${THREE.ShaderChunk.lights_fragment_begin.replace(
+                        'getDirectionalLightInfo( directionalLight, directLight );',
+                        `getDirectionalLightInfo( directionalLight, directLight );
+                        directLight.color *= ( UNROLLED_LOOP_INDEX == uSunShadowLight ) ? farSun : 1.0;`
+                    )}
+
+                #else
+                    #include <lights_fragment_begin>
+                #endif`
             )
             .replace(
                 '#include <opaque_fragment>',
@@ -506,6 +532,11 @@ export class FarTerrain {
 
         this.inner = 48;
         this.outer = 0;
+
+        // O ile daleki teren zapada się w zasięgu chunków (dla dalekiej
+        // mapy cieni - Shadows.js).
+
+        this.sinkDepth = SINK_DEPTH;
 
 
         // Kafelki: klucz "kratka:x:z" -> kafelek
@@ -1330,6 +1361,17 @@ export class FarTerrain {
             this.world.onModifiedChunkUnloaded = null;
         }
 
+    }
+
+}
+
+
+// Daleka mapa cieni (jakość cieni "Dalekie") na dalekim terenie.
+
+export function setFarTerrainShadows(on) {
+
+    for (const material of farMaterials) {
+        setDefine(material, 'USE_FAR_SHADOWS', on);
     }
 
 }

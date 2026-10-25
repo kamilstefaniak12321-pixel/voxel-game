@@ -53,7 +53,10 @@ export const modelLight = {
 
     // Światło otoczenia z cieniami (liniowo) - w ciemnym miejscu słabsze
     // (SHADOW_INDOOR_DARKNESS w config.js).
-    uModelAmbient: { value: 1 }
+    uModelAmbient: { value: 1 },
+
+    // Światło odbite w miejscu gracza (liniowe, RGB) - BounceLight.js.
+    uModelBounce: { value: new THREE.Vector3() }
 
 };
 
@@ -124,6 +127,7 @@ export function createModelMaterial({ map, alphaTest = 0, glow = 0 }) {
                 uniform float uModelShadows;
                 uniform float uModelSun;
                 uniform float uModelAmbient;
+                uniform vec3 uModelBounce;
                 uniform int uSunShadowLight;
                 ${SKY_COLOR_GLSL}
                 ${VIEW_GLSL}
@@ -158,7 +162,11 @@ export function createModelMaterial({ map, alphaTest = 0, glow = 0 }) {
             )
             .replace(
                 '#include <opaque_fragment>',
-                `float skyLuminance = dot(outgoingLight, vec3(0.2126, 0.7152, 0.0722));
+                `// Światło odbite od ścian wokół gracza (BounceLight.js).
+
+                outgoingLight += modelTexel * uModelBounce;
+
+                float skyLuminance = dot(outgoingLight, vec3(0.2126, 0.7152, 0.0722));
 
                 outgoingLight = mix(outgoingLight, skyLuminance * uNightTint, uNightDesaturation);
 

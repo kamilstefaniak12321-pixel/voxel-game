@@ -11,6 +11,43 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 0.16.0 - Światło odbite, budulec i dalekie cienie (2026-10-25)
+
+Pull request #36.
+
+### Nowe
+- **Światło odbite - światło „wlewa się” do pokoju.** Słońce, które
+  wpadnie przez okno, nie zostaje na podłodze: oświetlona podłoga
+  i ściany świecą dalej w kolorze swojej tekstury i rozjaśniają cały
+  pokój, słabnąc z odległością. Jasne ściany oddają dużo światła
+  (i odbijają je dalej), ciemne - mało, więc to, z czego zbudujesz dom,
+  zmienia jego wnętrze. Liczone w tle, po kawałku (nie przycina gry);
+  model gracza i ręka też je dostają. Ustawienie *Światło odbite*.
+- **Budulec, który inaczej odbija światło** (kategoria *Budulec*):
+  tynk wapienny (biały - jasny pokój), tynk ochrowy (ciepły), terakota
+  (czerwonawe światło), polerowany kamień (gładki, odbija najwięcej)
+  i ciemne deski (pochłaniają światło - pokój jest mroczny). Przepisy:
+  wapień + piasek, tynk + glina, 4 x glina, 4 x kamień, deski + bazalt.
+  Nowe pole bloku `reflect` - jak mocno odbija światło.
+- **Dalekie cienie** (jakość cieni *Dalekie*, domyślna na komputerze):
+  druga mapa cieni na 512 bloków wokół gracza, razem z dalekim terenem -
+  o wschodzie i zachodzie góry rzucają długie cienie na doliny, a słońce
+  chowa się za grzbietem. Rysowana rzadko i po kawałku, do drugiej
+  tekstury - nie przycina gry. Promienie światła sięgają z nią dalej.
+- **Trawa i kwiaty rzucają cienie** - drobne, pikselowe.
+- `/demo dom` - cztery pokoje z różnego budulca obok siebie, każdy
+  z oknem od strony słońca. `/swiatlo odbite wl | wyl`, `/swiatlo`
+  pokazuje światło odbite przy głowie; `/cienie dalekie`; w `/ustaw`:
+  `swiatlo-odbite`.
+- Osiągnięcie *Projektant wnętrz* - postaw każdy z pięciu budulców.
+
+### Zmiany
+- W pomieszczeniach światło nieba wpadające przez otwory jest słabsze
+  (wnętrze oświetla głównie światło odbite).
+- Promienie światła są wyraźniejsze.
+
+---
+
 ## 0.15.0 - Cienie słońca i promienie światła (2026-10-24)
 
 Pull request #35.

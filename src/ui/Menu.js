@@ -79,6 +79,7 @@ const SETTINGS_TABS = {
         'ambientOcclusion',
         'shadows',
         'lightShafts',
+        'bounceLight',
         'fancyLeaves',
         'dynamicLight',
         'loadBudget'

@@ -24,12 +24,13 @@ import { Inventory } from './Inventory.js';
 import { PlantGrowth } from './PlantGrowth.js';
 import { WaterEffects } from './WaterEffects.js';
 import { DynamicLight } from '../world/DynamicLight.js';
-import { FarTerrain } from '../world/FarTerrain.js';
+import { FarTerrain, setFarTerrainShadows } from '../world/FarTerrain.js';
 import { setAmbientOcclusion, setFastLeaves } from '../rendering/ChunkMesher.js';
 import { viewUniforms } from '../rendering/viewUniforms.js';
 import { blockMaterial, plantMaterial, waterMaterial, leafMaterial, setPotatoDefine, setLeafMaterialFast, setShadowDefine } from '../rendering/BlockRenderData.js';
 import { SunShadows } from '../rendering/Shadows.js';
 import { LightShafts } from '../rendering/LightShafts.js';
+import { BounceLight, bounceUniforms } from '../world/BounceLight.js';
 import { Meteorites } from './Meteorites.js';
 import { SpaceView } from '../space/SpaceView.js';
 import { Skyfall } from '../space/Skyfall.js';
@@ -65,7 +66,11 @@ import {
     SHADOW_INDOOR_DARKNESS,
     SHAFT_BRIGHTNESS,
     SHAFT_DENSITY_OUTSIDE,
-    SHAFT_DENSITY_INSIDE
+    SHAFT_DENSITY_INSIDE,
+    SHAFT_FAR_REACH,
+    SHADOW_SUN_BOOST,
+    BOUNCE_STRENGTH,
+    BOUNCE_OUTDOOR
 } from '../config.js';
 
 
@@ -269,7 +274,17 @@ export class Game {
 
         this.shadows = new SunShadows(renderer);
 
-        this.world.onMeshChanged = (chunk) => this.shadows.markChunk(chunk);
+        // Światło odbite od oświetlonych słońcem ścian (BounceLight.js).
+
+        this.bounce = new BounceLight();
+
+        this.world.onMeshChanged = (chunk) => {
+
+            this.shadows.markChunk(chunk);
+
+            this.bounce.markChunk(chunk);
+
+        };
 
         this.lightShafts = new LightShafts(renderer);
 
@@ -279,6 +294,11 @@ export class Game {
         // osiągnięcia.
 
         this.sunVisibility = 1;
+
+        // Światło odbite w miejscu gracza (model, ręka).
+
+        this.modelBounce = new THREE.Vector3();
+        this.bounceTarget = new THREE.Vector3();
 
 
         // Kosmos (sekret): z wysoka czarne niebo, planety i kula Ziemi
@@ -712,6 +732,8 @@ export class Game {
 
         this.sky.applyShadowContrast(this.shadows.active ? this.shadows.strength : 0);
 
+        this.updateBounce();
+
 
         // Spadanie z kosmosu (ogień, krater), meteoryty, rosnące krzaki,
         // kule światła i dynamiczne światło.
@@ -873,6 +895,21 @@ export class Game {
 
         modelLight.uModelAmbient.value = this.modelSky ** (2.2 + SHADOW_INDOOR_DARKNESS * strength);
 
+        // Światło odbite w miejscu gracza (płynnie).
+
+        const bounce = this.bounce.enabled ? this.bounce.sample(player.pos.x, player.pos.y + 1.2, player.pos.z) : [0, 0, 0];
+
+        const bounceColor = bounceUniforms.uBounceColor.value;
+
+        const outdoor = 1 - BOUNCE_OUTDOOR * this.modelSky ** 2.2;
+
+        this.modelBounce.lerp(
+            this.bounceTarget.set(bounce[0] * bounceColor.r * outdoor, bounce[1] * bounceColor.g * outdoor, bounce[2] * bounceColor.b * outdoor),
+            rate
+        );
+
+        modelLight.uModelBounce.value.copy(this.modelBounce);
+
     }
 
 
@@ -1009,7 +1046,7 @@ export class Game {
 
         // Mapa cieni słońca (gdy trzeba) i cień gracza - przed światem.
 
-        this.shadows.render(this.world, this.camera.position, this.model, this.scene, this.viewDistance);
+        this.shadows.render(this.world, this.camera.position, this.model, this.scene, this.viewDistance, this.farTerrain);
 
 
         renderer.clear();
@@ -1145,6 +1182,38 @@ export class Game {
     }
 
 
+    // Światło odbite (BounceLight.js): liczy się w tle (kawałek na
+    // klatkę), a jego kolor i siłę - kolor światła, które rzuca cienie,
+    // razy siłę cieni - dostaje shader.
+
+    updateBounce() {
+
+        const shadows = this.shadows;
+
+        const enabled = this.bounceEnabled && shadows.active;
+
+        this.bounce.update(this.world, this.camera.position, shadows.direction, shadows.light, enabled);
+
+        const color = bounceUniforms.uBounceColor.value;
+
+        if (!enabled) {
+
+            color.setRGB(0, 0, 0);
+
+            return;
+
+        }
+
+        const state = this.sky.state;
+
+        const sun = shadows.light === 'sun';
+
+        color.copy(sun ? state.sunLightColor : state.moonLightColor)
+            .multiplyScalar((sun ? state.sunLightIntensity : state.moonLightIntensity) * shadows.strength * SHADOW_SUN_BOOST * BOUNCE_STRENGTH);
+
+    }
+
+
     // Promienie światła (LightShafts.js): kolor światła, które rzuca
     // cienie, mocniejsze o wschodzie i zachodzie i w ciemnym miejscu
     // (w pokoju z oknem snop jest wyraźny, na dworze - lekka mgiełka).
@@ -1186,7 +1255,12 @@ export class Game {
 
         const isotropic = 0.12 + 0.5 * inside;
 
-        this.lightShafts.render(camera, this.world, shadows, this.shaftColor, density, isotropic, shadows.radius);
+        // Z daleką mapą cieni promienie sięgają dalej (smugi cienia gór
+        // o zachodzie).
+
+        const reach = shadows.farValid ? SHAFT_FAR_REACH : shadows.radius;
+
+        this.lightShafts.render(camera, this.world, shadows, this.shaftColor, density, isotropic, reach);
 
     }
 
@@ -1564,11 +1638,15 @@ export class Game {
 
         this.shadows.setQuality(potato ? 0 : settings.get('shadows'));
 
-        setShadowDefine([blockMaterial, plantMaterial, waterMaterial, leafMaterial], this.shadows.enabled);
+        setShadowDefine([blockMaterial, plantMaterial, waterMaterial, leafMaterial], this.shadows.enabled, this.shadows.hasFar);
+
+        setFarTerrainShadows(this.shadows.hasFar);
 
         modelLight.uModelShadows.value = this.shadows.enabled ? 1 : 0;
 
         this.shaftsEnabled = !potato && settings.get('lightShafts');
+
+        this.bounceEnabled = !potato && settings.get('bounceLight');
 
 
         // Model gracza: wierzchnia warstwa skórki, styl zgięć, tryb ziemniaka.
@@ -2346,6 +2424,10 @@ export class Game {
 
         this.lightShafts.dispose();
 
+        this.bounce.dispose();
+
+        modelLight.uModelBounce.value.set(0, 0, 0);
+
         modelLight.uModelShadows.value = 0;
 
         return true;
@@ -2420,6 +2502,7 @@ export class Game {
         const shadowInfo = shadows.enabled
             ? `Cienie: ${shadows.light === 'sun' ? 'słońce' : 'księżyc'} ${Math.round(Math.asin(Math.max(-1, Math.min(1, shadows.direction.y))) * 180 / Math.PI)}°, ` +
               `siła ${Math.round(shadows.strength * 100)}%, mapa ${shadows.size} px (${shadows.radius} bl.), przerysowana ${shadows.draws}×` +
+              `${shadows.hasFar ? `, daleka ${shadows.farRadius} bl. ${shadows.farDraws}×` : ''}` +
               `${this.shaftsEnabled ? ' | promienie' : ''} | słońce na graczu ${Math.round(this.sunVisibility * 100)}%`
             : `Cienie: wył.${shadows.supported ? '' : ' (brak WebGL2)'}`;
 

@@ -204,6 +204,42 @@ export const RECIPES = [
     },
 
 
+    // BUDULEC - ściany, które różnie odbijają światło (BounceLight.js)
+
+    {
+        id: 'lime_plaster',
+        result: ['lime_plaster', 4],
+        ingredients: ['limestone', 'limestone', 'sand', 'sand'],
+        note: 'Biały - odbija dużo światła, pokój jest jasny.'
+    },
+    {
+        id: 'ochre_plaster',
+        result: ['ochre_plaster', 4],
+        ingredients: ['lime_plaster', 'lime_plaster', 'lime_plaster', 'clay'],
+        note: 'Ciepły, żółty - zabarwia odbite światło.'
+    },
+    {
+        id: 'terracotta',
+        result: ['terracotta', 4],
+        pattern: ['CC', 'CC'],
+        key: { C: 'clay' },
+        note: 'Czerwone płytki - ciepłe, czerwonawe światło w pokoju.'
+    },
+    {
+        id: 'polished_stone',
+        result: ['polished_stone', 4],
+        pattern: ['SS', 'SS'],
+        key: { S: 'stone' },
+        note: 'Gładki i błyszczący - odbija najwięcej światła.'
+    },
+    {
+        id: 'dark_planks',
+        result: ['dark_planks', 3],
+        ingredients: ['#planks', '#planks', '#planks', 'basalt'],
+        note: 'Bejcowane na ciemno - pochłaniają światło, pokój jest mroczny.'
+    },
+
+
     // ZIEMIA I SKAŁY
 
     {

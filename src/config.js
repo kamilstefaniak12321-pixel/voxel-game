@@ -125,15 +125,37 @@ export const SHADOW_AMBIENT = 0.82;
 // Tam, gdzie dochodzi mało światła nieba (pokój, jaskinia, gęsty las),
 // z cieniami jest ciemniej - wpadające słońce bardziej się wyróżnia.
 // 0 = tak jak bez cieni, 1 = wyraźnie ciemniej.
-export const SHADOW_INDOOR_DARKNESS = 0.6;
+export const SHADOW_INDOOR_DARKNESS = 1.2;
+
+// Światło odbite (ustawienie "Światło odbite" - src/world/BounceLight.js):
+// oświetlone słońcem ściany świecą dalej w kolorze swojej tekstury,
+// a światło rozlewa się po pokoju.
+//   BOUNCE_SIZE / BOUNCE_HEIGHT - pudełko wokół gracza (bloki w poziomie
+//       i w pionie) - dalej światła odbitego nie ma,
+//   BOUNCE_SPREAD      - jak daleko się rozlewa (0.9 - tuż przy plamie
+//       słońca, 0.99 - po całym pokoju i dalej),
+//   BOUNCE_STRENGTH    - jasność,
+//   BOUNCE_MAX_REFLECT - najwięcej, ile ściana może odbić (0-1),
+//   BOUNCE_OUTDOOR     - o ile słabsze jest pod gołym niebem (tam całe
+//       niebo i tak świeci; 0 = tak samo jak w środku, 1 = wcale).
+export const BOUNCE_SIZE = 40;
+export const BOUNCE_HEIGHT = 24;
+export const BOUNCE_SPREAD = 0.985;
+export const BOUNCE_STRENGTH = 1.5;
+export const BOUNCE_MAX_REFLECT = 0.9;
+export const BOUNCE_OUTDOOR = 0.6;
 
 // Promienie światła w powietrzu (ustawienie "Promienie światła" -
 // src/rendering/LightShafts.js): jasność i gęstość powietrza (ile
 // światła rozprasza każdy blok oświetlonego powietrza) - na dworze
 // i w ciemnym miejscu (w pokoju z oknem snop jest wyraźny).
-export const SHAFT_BRIGHTNESS = 2.2;
+export const SHAFT_BRIGHTNESS = 3.0;
 export const SHAFT_DENSITY_OUTSIDE = 0.0012;
-export const SHAFT_DENSITY_INSIDE = 0.35;
+export const SHAFT_DENSITY_INSIDE = 0.4;
+
+// Jak daleko od oka liczyć promienie z daleką mapą cieni (bloki;
+// bez niej - tyle, ile sięga bliska mapa).
+export const SHAFT_FAR_REACH = 128;
 
 // ------------------------------------------------------------
 // DZIEŃ I NOC
@@ -467,6 +489,7 @@ export const TOUCH_SETTINGS = {
     fancyLeaves: false,    // szybkie liście (bez prześwitów - dużo mniej ścian)
     shadows: 0,            // bez cieni słońca (mapa cieni to dużo pracy dla karty)
     lightShafts: false,    // bez promieni światła
+    bounceLight: false,    // bez światła odbitego (liczenie w tle)
     showDebug: false       // napisy F3 zasłaniałyby przyciski
 };
 // Ekran telefonu ma 2-3 piksele na punkt - rysujemy najwyżej tyle

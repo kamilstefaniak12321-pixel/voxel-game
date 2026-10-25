@@ -49,6 +49,12 @@ export const TIERS = {
 export const TIER_ORDER = ['common', 'rare', 'epic', 'legendary'];
 
 
+// Budulec, który różnie odbija światło (BlockRegistry.js) - do
+// "Projektanta wnętrz".
+
+const BUILDING_BLOCKS = ['lime_plaster', 'ochre_plaster', 'terracotta', 'polished_stone', 'dark_planks'];
+
+
 // Owoce z krzaków - do "Pełnych koszy".
 
 const FRUITS = ['strawberry', 'blackberry', 'chili_pepper', 'hazelnut'];
@@ -379,6 +385,17 @@ export const ACHIEVEMENTS = [
         comment: 'Gra zamieszkała na twoim telefonie. Czynszu nie płaci.',
         icon: 'grass',
         check: (game) => game.nativeApp === 'android'
+    },
+    {
+        id: 'interior_designer',
+        tier: 'rare',
+        title: 'Projektant wnętrz',
+        task: 'Postaw każdy z pięciu budulców: tynk wapienny, tynk ochrowy, terakotę, polerowany kamień i ciemne deski.',
+        comment: 'Biel optycznie powiększa wnętrze. Ciemne deski - optycznie zmniejszają rachunki za prąd.',
+        icon: 'lime_plaster',
+        on: 'blockPlaced',
+        when: (data, book) => BUILDING_BLOCKS.includes(data.type) && book.collect('building', data.type) >= BUILDING_BLOCKS.length,
+        goal: { key: 'building', count: BUILDING_BLOCKS.length }
     },
     {
         id: 'sunbeam',

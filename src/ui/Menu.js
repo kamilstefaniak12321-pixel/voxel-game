@@ -72,6 +72,7 @@ const SETTINGS_TABS = {
         'potato',
         'viewDistance',
         'farTerrain',
+        'farDetail',
         'fov',
         'brightness',
         'renderScale',

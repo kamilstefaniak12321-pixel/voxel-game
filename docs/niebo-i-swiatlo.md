@@ -162,29 +162,52 @@ Ograniczenie: światło liczy się tylko w pudełku wokół gracza, więc
 
 ### Daleki teren (horyzont) - ZROBIONE
 
-`src/world/FarTerrain.js`: za zasięgiem widzenia, do odległości
-z ustawienia "Daleki teren", rysuje się gładka siatka wysokości
-z generatora terenu (`TerrainGenerator.getHeightLod`) - te same góry
-i wzgórza, które wygenerowałyby się tam naprawdę, ale bez bloków.
+![Daleki teren przed i po 0.17.0, zachód słońca, widok z wysoka](daleki-teren.jpg)
 
-- **Kafelki** (drzewo czwórkowe): 32 x 32 kratki, blisko gracza kratka
-  ma 4 bloki, dalej 8, 16, 32, 64 (`DETAIL`; w trybie ziemniaka
-  rzadsza siatka `POTATO_DETAIL`).
-  Rzadsze kafelki liczą mniej oktaw szumu - z daleka drobnych pagórków
-  nie widać, a próbkowane co kilkadziesiąt bloków dałyby "kolce".
-  Kafelki leżą w stałych miejscach świata, budują się z limitem czasu
-  (`BUILD_BUDGET_MS`) i nowy zestaw pokazuje się dopiero, gdy jest gotowy.
-  Szczeliny między kafelkami różnej dokładności zasłaniają fartuchy.
-- **Kolory**: średnie kolory tekstur trawy (płasko), boku trawy
-  (stromo) i kamienia (wysoko) - nowa tekstura sama zmienia daleki teren.
+`src/world/FarTerrain.js`: za zasięgiem widzenia, do odległości
+z ustawienia "Daleki teren" (do 16 384 bloków), rysuje się kanciasty
+teren z kratek - te same góry, wzgórza i lasy, które wygenerowałyby
+się tam naprawdę (`generator.farSurface`), ale bez pojedynczych bloków.
+
+- **Kratki**: każda kratka to słupek o boku `s` bloków - płaski wierzch
+  na wysokości terenu w jej środku i pionowe ścianki tam, gdzie sąsiad
+  jest niżej (u dołu ciemniejsze, jak cień w kącie; ścianka trawy u góry
+  zielonkawa jak brzeg bloku trawy). Każda kratka ma trochę inną jasność
+  (shader, stały wzór w świecie). Wierzchy kratek o tej samej wysokości
+  i rodzaju łączą się w prostokąty, ścianki wzdłuż granicy też - płaska
+  woda albo równina to kilka trójkątów (`meshFarTile` w
+  `src/world/farSamples.js`).
+- **Kafelki** (drzewo czwórkowe): 32 x 32 kratki, tuż za zasięgiem
+  widzenia kratka ma 1 blok, dalej 2, 4, 8... do 128 - mniej więcej
+  odległość / 64 przy średnich szczegółach (`DETAILS` - ustawienie
+  *Szczegóły dalekiego terenu*: niskie - odległość / 32, wysokie - / 96;
+  w trybie ziemniaka `POTATO_DETAIL` - około 8 razy mniej trójkątów niż
+  średnie). Dzięki temu dwa razy dalszy horyzont to tylko jeden poziom
+  kafelków więcej: przy średnich 4096 bloków ~1 mln trójkątów, 8192 ~1,3
+  mln, 16 384 ~1,5 mln.
+  Kafelki leżą w stałych miejscach świata i nowy zestaw pokazuje się
+  dopiero, gdy jest gotowy (na początku - po kolei, najbliższe najpierw).
+  Szczeliny między kafelkami różnej dokładności zasłaniają fartuchy
+  (ścianki na brzegu kafelka opuszczone w dół).
+- **Wątki**: wysokości kratek i gotowe siatki liczą osobne wątki
+  przeglądarki (`src/world/FarTerrainWorker.js`, tyle ile rdzeni minus
+  dwa, najwyżej 3) - każdy z własnym generatorem terenu. Gra tylko
+  wkłada gotowe siatki do sceny. Bez wątków (stara przeglądarka) liczy
+  się w grze, z limitem czasu na klatkę (`BUILD_BUDGET_MS`).
+- **Środek**: w zasięgu prawdziwych chunków daleki teren jest wycięty
+  (`discard` w shaderze) - nie wystaje spomiędzy prawdziwych drzew ani
+  przez wykopane dziury.
+- **Kolory**: średnie kolory tekstur trawy (wierzch i bok), skał (każda
+  swoim kolorem), piasku, wody i liści gatunku, który przeważa w lesie -
+  nowa tekstura sama zmienia daleki teren.
 - **Światło**: te same światła nieba co bloki (`Sky.attachLights`), to
   samo nocne odbarwienie, ten sam suwak jasności. Zaćmienie, faza
   księżyca, kolor zachodu - wszystko działa i tu.
 - **Zmiany gracza**: kolumny w chunkach zmienionych przez gracza są
   liczone z ich bloków (`World.savedChunks`). Gdy taki chunk znika
   z pamięci, kafelki nad nim przebudowują się (`invalidateChunk`).
-- **Sprawdzanie**: `/horyzont`, `/horyzont lod` (kolory dokładności),
-  `/horyzont odswiez`, `/wydajnosc`.
+- **Sprawdzanie**: `/horyzont`, `/horyzont lod` (kolory według
+  wielkości kratki), `/horyzont odswiez`, `/wydajnosc`.
 - Pomysły: chmury rzucające cień na daleki teren, woda (gdy będzie)
   jako płaszczyzna w kafelkach, zimą śnieg na szczytach.
 
@@ -245,8 +268,7 @@ księżyca. Pod wodą ich nie ma.
 
 **Daleka mapa cieni** (jakość *Dalekie*): druga mapa 2048 pikseli na
 512 bloków wokół gracza (2 piksele na blok), razem z dalekim terenem
-(`FarTerrain.js` - w zasięgu chunków zapada się pod ziemię, jak przy
-rysowaniu). Kamera stoi tak daleko w stronę słońca, jak sięga daleki
+(`FarTerrain.js` - w zasięgu chunków wycięty, jak przy rysowaniu). Kamera stoi tak daleko w stronę słońca, jak sięga daleki
 teren, więc o wschodzie i zachodzie góry rzucają cień na doliny,
 a słońce chowa się za grzbietem (daleki teren też dostaje te cienie).
 Rysowana rzadko (słońce o ~0,23°, gracz o 48 bloków, zmienione chunki
@@ -259,12 +281,15 @@ brzegu i dalej - z dalekiej. Promienie światła sięgają z nią dalej
 
 Test: `/demo okno`, `/cienie`, `/cienie dalekie`, `/czas ustaw zachod`.
 
-### Światło odbite - ZROBIONE
+### Światło odbite - EKSPERYMENTALNE
 
 ![Pokoje z różnego budulca](swiatlo-odbite.jpg)
 
 `src/world/BounceLight.js`, ustawienie *Światło odbite* (działa
-z cieniami słońca). Słońce wpadające przez okno nie zostaje na
+z cieniami słońca; od 0.17.0 domyślnie wyłączone - na dworze oświetlona
+trawa w pudełku wokół gracza świeci i widać jasny krąg, który idzie za
+graczem. Do poprawy: światło odbite słabnące przy brzegu pudełka
+i tam, gdzie jest dużo nieba). Słońce wpadające przez okno nie zostaje na
 podłodze: oświetlona podłoga i ściany świecą dalej, w kolorze swojej
 tekstury, a światło rozlewa się po pokoju. Wokół gracza jest pudełko
 komórek (`BOUNCE_SIZE` x `BOUNCE_HEIGHT`, jak w dynamicznym świetle):

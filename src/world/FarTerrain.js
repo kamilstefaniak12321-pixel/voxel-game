@@ -42,40 +42,50 @@ import {
     FAR_TERRAIN_SHADOW_GLSL
 } from '../rendering/Shadows.js';
 
-import { BASE_TREE_NAMES, TREE_NAMES, TREE_SPECIES } from '../blocks/trees.js';
+import {
+    KINDS,
+    ROCK_KINDS,
+    LEAF_KINDS,
+    BLOCK_KINDS,
+    kindIndex,
+    samplePosition,
+    sampleFarTile,
+    meshFarTile,
+    createMeshScratch
+} from './farSamples.js';
 
 // ------------------------------------------------------------
 // DALEKI TEREN (HORYZONT)
 //
 // Za zasięgiem widzenia (gdzie kończą się prawdziwe chunki) widać
-// uproszczony teren aż do odległości z ustawień "Daleki teren".
-// Nie ma tu bloków ani tekstur - to gładka siatka wysokości
-// policzona z tego samego generatora co chunki (TerrainGenerator),
-// w średnich kolorach tekstur (trawa, ziemia, kamień), oświetlona
-// tym samym światłem nieba co bloki i z mgiełką, która gęstnieje
-// z odległością. Dzięki temu:
-//   - za prawdziwymi chunkami "coś jest" - wzgórza i góry po
-//     horyzont, w dzień jasne i niebieskawe od powietrza, wieczorem
-//     i w nocy ciemne,
-//   - słońce i księżyc chowają się za dalekimi górami, a nie za
-//     pustą linią horyzontu.
+// uproszczony teren aż do odległości z ustawień "Daleki teren" (do
+// kilkunastu tysięcy bloków). Jest zbudowany z KRATEK - kanciastych
+// słupków jak wielkie bloki: każda kratka ma płaski wierzch w kolorze
+// swojej powierzchni (trawa, skała, piasek, woda, korony drzew)
+// i pionowe ścianki tam, gdzie sąsiad jest niżej. Blisko gracza
+// kratka ma 1 blok (prawie jak prawdziwe chunki), dalej 2, 4, 8...
+// aż do 128 bloków - im dalej, tym mniejsza rozdzielczość, ale
+// teren zostaje kanciasty, nie rozmyty. Wysokości z tego samego
+// generatora co chunki (TerrainGenerator), oświetlenie tym samym
+// światłem nieba co bloki, mgiełka gęstnieje z odległością.
 //
-// BUDOWA: teren jest podzielony na kafelki (drzewo czwórkowe).
-// Każdy kafelek ma 32 x 32 kratki (DETAIL niżej); blisko gracza
-// kratka ma 4 bloki, dalej 2x, 4x, 8x więcej - z daleka
-// szczegółów i tak nie widać. Kafelki leżą zawsze w tych samych
-// miejscach świata, więc przy chodzeniu przebudowuje się tylko
-// kilka z nich (z limitem czasu na klatkę). Szczeliny między
-// kafelkami różnej dokładności zasłaniają "fartuchy" - paski
-// opuszczone w dół na brzegach kafelka.
+// BUDOWA: teren jest podzielony na kafelki (drzewo czwórkowe). Każdy
+// kafelek ma 32 x 32 kratki (DETAIL niżej) i leży zawsze w tym samym
+// miejscu świata, więc przy chodzeniu przebudowuje się tylko kilka
+// z nich. Wysokości kratek liczy osobny wątek przeglądarki
+// (FarTerrainWorker.js), więc nie zabierają czasu klatkom; z nich
+// gra składa siatkę: wierzchy kratek o tej samej wysokości i rodzaju
+// łączą się w większe prostokąty, ścianki wzdłuż brzegu też.
+// Szczeliny między kafelkami różnej dokładności zasłaniają
+// "fartuchy" - ścianki na brzegu kafelka opuszczone w dół.
 //
 // Chunki zmienione przez gracza (np. krater po meteorycie, budowle)
 // daleki teren też pokazuje - z ich zapisanych bloków.
 //
 // RYSOWANIE: osobna scena rysowana po niebie, a przed światem
 // (Game.render). Bliskie chunki są rysowane na wierzchu, a daleki
-// teren w ich zasięgu zapada się głęboko pod ziemię (shader), więc
-// nie przebija przez wykopane dziury i nie ma szczeliny na granicy.
+// teren w ich zasięgu jest wycięty (shader), więc nie przebija przez
+// wykopane dziury ani nie wystaje spomiędzy prawdziwych drzew.
 // ------------------------------------------------------------
 
 // Dokładność kafelków:
@@ -84,31 +94,59 @@ import { BASE_TREE_NAMES, TREE_NAMES, TREE_SPECIES } from '../blocks/trees.js';
 //   rootSpacing - największa kratka (kafelki "korzenie" drzewa),
 //   lodDistance - kafelek dzielimy na 4 mniejsze, gdy gracz jest
 //                 bliżej niż (rozmiar kafelka x lodDistance).
-// Więcej kratek / większe lodDistance = dokładniej, ale więcej
-// trójkątów. Tryb ziemniaka ma ~9x mniej trójkątów.
-const DETAIL = {
-    cells: 32,
-    minSpacing: 4,
-    rootSpacing: 64,
-    lodDistance: 1.5
+// Kratka ma mniej więcej (odległość / (cells x lodDistance)) bloków -
+// przy 32 x 2: w odległości 256 bloków 4 bloki, 1000 bloków - 8-16.
+// Więcej = drobniejsze kratki, ale więcej trójkątów (lodDistance x 2 =
+// ~4x więcej). Ustawienie "Szczegóły dalekiego terenu" (farDetail)
+// wybiera jeden z DETAILS; tryb ziemniaka - POTATO_DETAIL (~8x mniej
+// trójkątów niż średnie).
+const DETAILS = {
+    1: { cells: 32, minSpacing: 2, rootSpacing: 256, lodDistance: 1 },     // niskie (telefon)
+    2: { cells: 32, minSpacing: 1, rootSpacing: 256, lodDistance: 2 },     // średnie
+    3: { cells: 32, minSpacing: 1, rootSpacing: 256, lodDistance: 3 }      // wysokie
 };
+
+const DETAIL = DETAILS[2];
 
 const POTATO_DETAIL = {
     cells: 16,
-    minSpacing: 8,
-    rootSpacing: 128,
-    lodDistance: 0.8
+    minSpacing: 2,
+    rootSpacing: 256,
+    lodDistance: 1.5
 };
 
-// Najmniejsza kratka w ogóle (do kolorów /horyzont lod).
-const MIN_SPACING = 4;
+// Kratki od 1 do 256 bloków - poziomy dokładności 0..8.
+const LEVELS = 9;
 
-// Ile milisekund na klatkę może zająć budowanie kafelków.
+// Ile milisekund na klatkę może zająć składanie siatek kafelków (i,
+// bez osobnego wątku, liczenie wysokości).
 const BUILD_BUDGET_MS = 2;
+
+// Wątków liczących kafelki: tyle, ile rdzeni procesora minus dwa
+// (gra i przeglądarka), od 1 do MAX_WORKERS. Każdy liczy naraz
+// najwyżej WORKER_REQUESTS kafelków (najbliższe najpierw - po przejściu
+// kawałka nowe, bliższe kafelki nie czekają na stare).
+const MAX_WORKERS = 3;
+const WORKER_REQUESTS = 3;
+
+// Dopóki wątek nie wystartuje (najwyżej tyle milisekund) - czekamy na
+// niego; dłużej - liczymy w grze (a gdy wątek jednak ruszy - dalej on).
+const WORKER_START_MS = 15000;
 
 // Po przejściu tylu bloków od ostatniego środka wybieramy kafelki
 // od nowa.
 const RECENTER_DISTANCE = 16;
+
+// Ścianka kratki jest u dołu ciemniejsza (jak cień w kącie przy
+// prawdziwych blokach) - kolor dołu = kolor x SIDE_SHADE. Ścianka
+// trawy u góry przechodzi w kolor wierzchu (jak zielony brzeg na boku
+// bloku trawy) - GRASS_SIDE_FRINGE: ile koloru wierzchu.
+const SIDE_SHADE = 0.72;
+const GRASS_SIDE_FRINGE = 0.45;
+
+// Kratki różnią się trochę jasnością (jak piksele tekstury z daleka):
+// +-CELL_VARIATION.
+const CELL_VARIATION = 0.07;
 
 // Woda z bliska jest półprzezroczysta (widać przez nią ciemne dno), więc
 // wydaje się trochę jaśniejsza i mniej niebieska niż sama tekstura -
@@ -125,79 +163,18 @@ const FALLBACK_COLORS = {
     water: new THREE.Color(0.03, 0.11, 0.42)
 };
 
-// Skały, które mają na dalekim terenie własny kolor (średni kolor
-// wierzchu bloku). Zwykły kamień to 'rock'.
-
-const ROCK_KINDS = ['granite', 'limestone', 'sandstone', 'slate', 'basalt', 'lepidolite'];
-
-// Lasy: z daleka widać korony drzew w kolorze liści gatunku
-// (generator.farSurface podnosi tam teren do wysokości koron).
-
-const LEAF_KINDS = BASE_TREE_NAMES.map((species) => `${species}_leaves`);
-
 // Korony z daleka są trochę ciemniejsze niż sama tekstura liści
-// (cienie między liśćmi i drzewami).
+// (cienie między liśćmi i drzewami), a ich boki jeszcze trochę.
 const FAR_LEAVES_SHADE = 0.78;
-
-// Rodzaj powierzchni (generator.farSurface) -> numer w kafelku.
-
-const KINDS = ['grass', 'rock', 'sand', 'water', ...ROCK_KINDS, ...LEAF_KINDS];
-
-// Numer rodzaju: 'stone' to to samo co 'rock', nieznany = trawa.
-
-function kindIndex(kind) {
-
-    return Math.max(0, KINDS.indexOf(kind === 'stone' ? 'rock' : kind));
-
-}
-
-// Blok wierzchu w zmienionym chunku -> rodzaj powierzchni
-// (inne bloki - jak trawa).
-
-const BLOCK_KINDS = {
-    stone: 'rock',
-    sand: 'sand',
-    water: 'water'
-};
-
-for (const rock of ROCK_KINDS) {
-    BLOCK_KINDS[rock] = rock;
-}
-
-for (const leaves of LEAF_KINDS) {
-    BLOCK_KINDS[leaves] = leaves;
-}
-
-BLOCK_KINDS.linden_leaves_flowering = 'linden_leaves';
-
-// Drzewa z paczek z daleka wyglądają jak gatunek gry z "podobnyDo"
-// (wszystkie ich liście, także odmiany).
-
-for (const species of TREE_NAMES) {
-
-    const pack = TREE_SPECIES[species].pack;
-
-    if (!pack) {
-        continue;
-    }
-
-    const kind = `${pack.similar}_leaves`;
-
-    BLOCK_KINDS[`${species}_leaves`] = kind;
-
-    for (const variant of pack.variants) {
-        BLOCK_KINDS[`${species}_leaves_${variant.key}`] = kind;
-        BLOCK_KINDS[`${species}_leaves_${variant.key}_growing`] = kind;
-    }
-
-}
+const FAR_LEAVES_SIDE_SHADE = 0.85;
 
 
 // ------------------------------------------------------------
 // MATERIAŁ - zwykły materiał z oświetleniem (jak bloki), z kolorem
 // w wierzchołkach i z dopiskami w shaderze:
-//   - środek (tam są prawdziwe chunki) zapada się pod ziemię, a to,
-//     co za końcem dalekiego terenu, jest wycięte,
+//   - środek (tam są prawdziwe chunki) i to, co za końcem dalekiego
+//     terenu, jest wycięte,
+//   - każda kratka ma trochę inną jasność (stały wzór w świecie),
 //   - wysoko nad ziemią (kosmos, viewUniforms.uCurvature) teren
 //     wygina się w kulę: punkt w odległości d od gracza trafia na
 //     kulę w odległość łuku d (razem z kierunkiem "w górę" do
@@ -208,41 +185,66 @@ for (const species of TREE_NAMES) {
 // ------------------------------------------------------------
 
 // Kolorowanie kafelków według dokładności (komenda /horyzont lod):
-// czerwony - kratka 4 bloki, niebieski - 8, żółty - 16, zielony - 32,
-// fioletowy - 64. Każda dokładność ma własny materiał (ten sam shader),
-// bo wspólny materiał dostaje wartości tylko raz na klatkę.
+// jeden kolor na wielkość kratki (1, 2, 4... 256 bloków). Każda
+// dokładność ma własny materiał (ten sam shader, inna wielkość
+// kratki), bo wspólny materiał dostaje wartości tylko raz na klatkę.
 
 const LOD_COLORS = [
-    new THREE.Color('#ff4040'),
-    new THREE.Color('#4080ff'),
-    new THREE.Color('#ffe040'),
-    new THREE.Color('#40ff60'),
-    new THREE.Color('#d060ff')
+    ['#ff4040', 'czerwone'],
+    ['#ff9a30', 'pomarańczowe'],
+    ['#ffe040', 'żółte'],
+    ['#40ff60', 'zielone'],
+    ['#40e0ff', 'błękitne'],
+    ['#4060ff', 'niebieskie'],
+    ['#d060ff', 'fioletowe'],
+    ['#ff60c0', 'różowe'],
+    ['#ffffff', 'białe']
 ];
 
-// O ile bloków w dół zapada się daleki teren w zasięgu prawdziwych
-// chunków (patrz shader niżej).
+// Opis kolorów do /horyzont lod.
 
-const SINK_DEPTH = 48;
+function blocksWord(n) {
+
+    if (n === 1) {
+        return 'blok';
+    }
+
+    return n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 12 || n % 100 > 14) ? 'bloki' : 'bloków';
+
+}
+
+export const LOD_LEGEND = LOD_COLORS
+    .map(([, name], level) => `${name} - ${2 ** level} ${blocksWord(2 ** level)}`)
+    .join(', ');
 
 const lodDebug = { value: 0 };
 
+// Kąt jednego piksela ekranu (radiany) - rogi kratek odsuwają się
+// o pół piksela (FarTerrain.render liczy go z pola widzenia).
+const pixelAngle = { value: 0.0015 };
 
-function createFarMaterial(lodColor) {
 
-    // Tylko przednie strony trójkątów - tylne (odwrócone od gracza
-    // zbocza gór, środek fartuchów) karta graficzna od razu pomija.
+function createFarMaterial(level) {
+
+    // Tylko przednie strony trójkątów - tylne (ścianki od drugiej
+    // strony, spody) karta graficzna od razu pomija.
 
     const material = new THREE.MeshLambertMaterial({
         vertexColors: true
     });
+
+    const lodColor = new THREE.Color(LOD_COLORS[level][0]);
+
+    const cellSize = 2 ** level;
 
 
     material.onBeforeCompile = (shader) => {
 
         Object.assign(shader.uniforms, skyUniforms, viewUniforms, meteorLightUniforms, shadowUniforms, {
             uLodTint: { value: lodColor },
-            uLodDebug: lodDebug
+            uLodDebug: lodDebug,
+            uCellSize: { value: cellSize },
+            uPixelAngle: pixelAngle
         });
 
 
@@ -251,11 +253,12 @@ function createFarMaterial(lodColor) {
                 '#include <common>',
                 `#include <common>
                 varying vec3 vFarWorld;
-                varying float vFarFlat;
                 varying vec2 vFarFlatXZ;
+                varying vec3 vFarCell;
                 varying float vFarSunHeight;
-                uniform float uFarInner;
                 uniform float uCurvature;
+                uniform float uCellSize;
+                uniform float uPixelAngle;
 
                 #ifndef POTATO
                     uniform vec3 uSunDirection;
@@ -270,13 +273,38 @@ function createFarMaterial(lodColor) {
                 #endif`
             )
             .replace(
+                '#include <color_vertex>',
+                `#include <color_vertex>
+
+                // Kolor zapisany jako pierwiastek (więcej odcieni
+                // w ciemnych kolorach przy 8 bitach).
+
+                vColor.rgb *= vColor.rgb;`
+            )
+            .replace(
                 '#include <beginnormal_vertex>',
                 `#include <beginnormal_vertex>
+
+                // Normalna z siatki: 127 na osi ściany, +-1 na pozostałych -
+                // w którą stronę od środka ściany leży róg (farSamples.js).
+
+                vec3 farPacked = floor(objectNormal * 127.0 + 0.5);
+
+                vec3 farAxis = step(vec3(64.0), abs(farPacked)) * sign(farPacked);
+
+                vec3 farSpread = farPacked - farAxis * 127.0;
+
+                objectNormal = farAxis;
 
                 // Odległość od gracza w poziomie (na płaskim świecie)
                 // i zgięcie w kulę: kierunek i kąt od miejsca pod kamerą.
 
                 vec3 farFlatWorld = (modelMatrix * vec4(position, 1.0)).xyz;
+
+                // Kratka, do której należy ta ściana (trochę w głąb
+                // słupka) - do różnej jasności kratek.
+
+                vFarCell = (farFlatWorld - objectNormal * 0.05) / uCellSize;
 
                 vec2 farOffset = farFlatWorld.xz - cameraPosition.xz;
 
@@ -306,16 +334,15 @@ function createFarMaterial(lodColor) {
                 '#include <begin_vertex>',
                 `#include <begin_vertex>
 
-                // W zasięgu prawdziwych chunków daleki teren zapada się
-                // głęboko pod ziemię (chunki rysują się na nim). Dzięki
-                // temu na granicy nie ma szczeliny, przez którą widać
-                // by niebo - zamiast niej jest stromy, schowany stok.
+                // Róg o pół piksela na zewnątrz ściany - bez prześwitów
+                // między połączonymi ścianami.
 
-                if (farFlat < uFarInner) {
-                    transformed.y -= ${SINK_DEPTH.toFixed(1)};
-                }
+                vec3 farGrow = farSpread * (0.5 * uPixelAngle * length(farFlatWorld - cameraPosition));
 
-                vFarFlat = farFlat;
+                transformed += farGrow;
+
+                farFlatWorld += farGrow;
+
                 vFarFlatXZ = farFlatWorld.xz;
 
                 // Jak wysoko stoi słońce w tym miejscu kuli.
@@ -328,7 +355,7 @@ function createFarMaterial(lodColor) {
 
                 if (uCurvature > 0.0) {
 
-                    float worldY = farFlatWorld.y + transformed.y - position.y;
+                    float worldY = farFlatWorld.y;
 
                     float h = worldY - ${(SEA_LEVEL + 1).toFixed(1)};
 
@@ -364,8 +391,8 @@ function createFarMaterial(lodColor) {
                 '#include <common>',
                 `#include <common>
                 varying vec3 vFarWorld;
-                varying float vFarFlat;
                 varying vec2 vFarFlatXZ;
+                varying vec3 vFarCell;
                 varying float vFarSunHeight;
                 uniform float uFogBrightness;
                 uniform float uNightDesaturation;
@@ -389,6 +416,15 @@ function createFarMaterial(lodColor) {
                 '#include <clipping_planes_fragment>',
                 `#include <clipping_planes_fragment>
 
+                // W zasięgu prawdziwych chunków nic (one rysują się na
+                // wierzchu - daleki teren nie wystaje spomiędzy nich).
+
+                float farFlat = length(vFarFlatXZ - cameraPosition.xz);
+
+                if (farFlat < uFarInner) {
+                    discard;
+                }
+
                 // Za końcem dalekiego terenu - niebo (okrągły horyzont).
                 // Z kulą Ziemi za nim: brzeg postrzępiony (stały wzór
                 // w świecie), za nim widać kulę.
@@ -405,13 +441,22 @@ function createFarMaterial(lodColor) {
 
                 }
 
-                if (vFarFlat > farEnd) {
+                if (farFlat > farEnd) {
                     discard;
                 }`
             )
             .replace(
                 '#include <color_fragment>',
                 `#include <color_fragment>
+
+                // Każda kratka trochę jaśniejsza albo ciemniejsza.
+
+                vec3 farCellIndex = mod(floor(vFarCell), 509.0);
+
+                float farCellNoise = fract(sin(dot(farCellIndex, vec3(12.9898, 78.233, 37.719))) * 43758.5453);
+
+                diffuseColor.rgb *= ${(1 - CELL_VARIATION).toFixed(3)} + ${(2 * CELL_VARIATION).toFixed(3)} * farCellNoise;
+
                 diffuseColor.rgb *= mix(vec3(1.0), uLodTint, uLodDebug);`
             )
             .replace(
@@ -497,18 +542,32 @@ function createFarMaterial(lodColor) {
 }
 
 
-// Materiał dla każdej dokładności (indeks = poziom: 0 - kratka 4 bloki).
+// Materiał dla każdej dokładności (indeks = poziom: 0 - kratka 1 blok).
 
-const farMaterials = LOD_COLORS.map((color) => createFarMaterial(color));
+const farMaterials = Array.from({ length: LEVELS }, (_, level) => createFarMaterial(level));
 
 
-function smoothstep(edge0, edge1, x) {
+function levelOf(spacing) {
 
-    const t = Math.min(1, Math.max(0, (x - edge0) / (edge1 - edge0)));
-
-    return t * t * (3 - 2 * t);
+    return Math.max(0, Math.min(LEVELS - 1, Math.round(Math.log2(spacing))));
 
 }
+
+
+// Kolor (liniowy, 0-1) jako pierwiastek w bajcie (shader podnosi do
+// kwadratu - więcej odcieni w ciemnych kolorach).
+
+function colorByte(value) {
+
+    return Math.round(Math.sqrt(Math.min(1, Math.max(0, value))) * 255);
+
+}
+
+
+// Bufory do składania siatki kafelka w grze (wspólne - kafelki
+// powstają po kolei).
+
+let scratch = createMeshScratch(DETAIL.cells);
 
 // ------------------------------------------------------------
 
@@ -533,14 +592,11 @@ export class FarTerrain {
         this.inner = 48;
         this.outer = 0;
 
-        // O ile daleki teren zapada się w zasięgu chunków (dla dalekiej
-        // mapy cieni - Shadows.js).
 
-        this.sinkDepth = SINK_DEPTH;
-
-
-        // Kafelki: klucz "kratka:x:z" -> kafelek
-        // { key, spacing, x0, z0, size, distance, mesh, stale, usedAt }
+        // Kafelki: klucz "kratki:kratka:x:z" -> kafelek
+        // { key, cells, spacing, x0, z0, size, distance, raw, pending,
+        //   mesh, stale, usedAt }
+        // raw - wysokości i rodzaje kratek z generatora (z wątku).
 
         this.tiles = new Map();
 
@@ -550,6 +606,11 @@ export class FarTerrain {
         this.wanted = [];
         this.shown = new Set();
 
+        // Czy pokazany jest już pełny zestaw (do tego czasu kafelki
+        // pojawiają się po kolei, najbliższe najpierw).
+
+        this.complete = false;
+
         this.center = null;
 
         this.frame = 0;
@@ -558,56 +619,254 @@ export class FarTerrain {
 
         this.debugLod = false;
 
-        // Jak dokładne są kafelki (tryb ziemniaka - rzadsza siatka).
+        // Jak dokładne są kafelki (tryb ziemniaka - mniej kratek).
 
         this.detail = DETAIL;
+
+
+        // Wątki liczące kafelki (bez nich - po kawałku w grze):
+        // [{ worker, ready, busy }], zlecenia: numer -> { tile, entry }.
+
+        this.workers = [];
+
+        this.requests = new Map();
+
+        this.nextRequest = 1;
+
+        this.startWorkers();
 
 
         // Kolory czekają na policzenie średnich kolorów tekstur.
 
         this.colorsReady = false;
 
-        atlasAveragesReady.then(() => {
-
-            this.colors = {};
-
-            for (const name of Object.keys(FALLBACK_COLORS)) {
-                this.colors[name] = getAtlasAverage(name) ?? FALLBACK_COLORS[name];
-            }
-
-            this.colors.water = this.colors.water.clone().multiply(FAR_WATER_TINT);
-
-
-            // Skały: średni kolor tekstury wierzchu bloku.
-
-            for (const rock of ROCK_KINDS) {
-
-                const textures = getBlockDefinition(rock)?.textures ?? {};
-
-                this.colors[rock] =
-                    getAtlasAverage(textures.top ?? textures.all) ?? this.colors.stone;
-
-            }
-
-
-            // Korony drzew: średni kolor liści gatunku, trochę ciemniej.
-
-            for (const leaves of LEAF_KINDS) {
-
-                this.colors[leaves] =
-                    (getAtlasAverage(leaves) ?? FALLBACK_COLORS.grass_top).clone().multiplyScalar(FAR_LEAVES_SHADE);
-
-            }
-
-            this.colorsReady = true;
-
-        });
+        atlasAveragesReady.then(() => this.prepareColors());
 
 
         // Chunk zmieniony przez gracza znika z pamięci - kafelki nad
         // nim trzeba przebudować, żeby pokazały jego nowy kształt.
 
         world.onModifiedChunkUnloaded = (chunk) => this.invalidateChunk(chunk.cx, chunk.cz);
+
+    }
+
+
+    // Osobne wątki, każdy z własnym generatorem (ten sam typ terenu
+    // i seed). Gdy przeglądarka ich nie uruchomi - liczymy w grze.
+
+    startWorkers() {
+
+        const cores = (typeof navigator !== 'undefined' && navigator.hardwareConcurrency) || 2;
+
+        const count = Math.max(1, Math.min(MAX_WORKERS, cores - 2));
+
+        this.workersStarted = performance.now();
+
+        for (let n = 0; n < count; n++) {
+
+            try {
+
+                const worker = new Worker(new URL('./FarTerrainWorker.js', import.meta.url), { type: 'module' });
+
+                const entry = { worker, ready: false, busy: 0 };
+
+                worker.onmessage = (event) => this.onWorkerMessage(entry, event.data);
+
+                worker.onerror = (event) => this.stopWorker(entry, event);
+
+                this.workers.push(entry);
+
+            }
+            catch (error) {
+
+                console.warn('Daleki teren liczy się bez osobnego wątku:', error?.message ?? error);
+
+                break;
+
+            }
+
+        }
+
+    }
+
+
+    // Wątek nie działa - jego kafelki policzy inny albo gra.
+
+    stopWorker(entry, reason) {
+
+        console.warn('Wątek dalekiego terenu zatrzymany:', reason?.message ?? reason);
+
+        entry.worker.terminate();
+
+        this.workers = this.workers.filter((other) => other !== entry);
+
+        for (const [id, request] of this.requests) {
+
+            if (request.entry === entry) {
+
+                request.tile.pending = 0;
+
+                this.requests.delete(id);
+
+            }
+
+        }
+
+    }
+
+
+    onWorkerMessage(entry, message) {
+
+        // Wątek wczytany - dopiero teraz można mu coś zlecić.
+
+        if (message.type === 'ready') {
+
+            entry.worker.postMessage({ type: 'init', terrain: this.world.terrain, seed: this.world.seed });
+
+            entry.ready = true;
+
+            this.sendPalette(entry);
+
+            return;
+
+        }
+
+        if (message.type !== 'tile') {
+            return;
+        }
+
+        const request = this.requests.get(message.id);
+
+        this.requests.delete(message.id);
+
+        entry.busy = Math.max(0, entry.busy - 1);
+
+        const tile = request?.tile;
+
+        if (!tile || tile.pending !== message.id) {
+            return;
+        }
+
+        tile.pending = 0;
+
+        tile.raw = { heights: message.heights, kinds: message.kinds };
+
+        tile.workerMesh = message.mesh;
+
+        tile.stale = true;
+
+    }
+
+
+    // Kolory kratek dla wątków (siatki składają wtedy one).
+
+    sendPalette(only = null) {
+
+        if (!this.kindColors) {
+            return;
+        }
+
+        for (const entry of only ? [only] : this.workers) {
+
+            if (entry.ready) {
+                entry.worker.postMessage({ type: 'palette', colors: this.kindColors });
+            }
+
+        }
+
+    }
+
+
+    // Kolory kratek: wierzch i boki dla każdego rodzaju powierzchni
+    // (średnie kolory tekstur), w bajtach dla siatki.
+
+    prepareColors() {
+
+        const colors = {};
+
+        for (const name of Object.keys(FALLBACK_COLORS)) {
+            colors[name] = getAtlasAverage(name) ?? FALLBACK_COLORS[name];
+        }
+
+        colors.water = colors.water.clone().multiply(FAR_WATER_TINT);
+
+
+        const top = new Map();
+        const side = new Map();
+
+        top.set('grass', colors.grass_top);
+        side.set('grass', colors.grass_side);
+
+        top.set('rock', colors.stone);
+        side.set('rock', colors.stone);
+
+        top.set('sand', colors.sand);
+        side.set('sand', colors.sand);
+
+        top.set('water', colors.water);
+        side.set('water', colors.water);
+
+
+        // Skały: średni kolor tekstury wierzchu i boku bloku.
+
+        for (const rock of ROCK_KINDS) {
+
+            const textures = getBlockDefinition(rock)?.textures ?? {};
+
+            colors[rock] = getAtlasAverage(textures.top ?? textures.all) ?? colors.stone;
+
+            top.set(rock, colors[rock]);
+            side.set(rock, getAtlasAverage(textures.side ?? textures.all) ?? colors[rock]);
+
+        }
+
+
+        // Korony drzew: średni kolor liści gatunku, trochę ciemniej.
+
+        for (const leaves of LEAF_KINDS) {
+
+            colors[leaves] =
+                (getAtlasAverage(leaves) ?? FALLBACK_COLORS.grass_top).clone().multiplyScalar(FAR_LEAVES_SHADE);
+
+            top.set(leaves, colors[leaves]);
+            side.set(leaves, colors[leaves].clone().multiplyScalar(FAR_LEAVES_SIDE_SHADE));
+
+        }
+
+
+        // Bajty: [wierzch r g b, góra boku r g b, dół boku r g b] na rodzaj.
+
+        this.kindColors = new Uint8Array(KINDS.length * 9);
+
+        KINDS.forEach((kind, index) => {
+
+            const t = top.get(kind) ?? colors.stone;
+            const s = side.get(kind) ?? t;
+
+            const u = kind === 'grass' ? s.clone().lerp(t, GRASS_SIDE_FRINGE) : s;
+
+            const bytes = [
+                t.r, t.g, t.b,
+                u.r, u.g, u.b,
+                s.r * SIDE_SHADE, s.g * SIDE_SHADE, s.b * SIDE_SHADE
+            ];
+
+            bytes.forEach((value, c) => {
+                this.kindColors[index * 9 + c] = colorByte(value);
+            });
+
+        });
+
+
+        // Kolory po nazwie (kula Ziemi z kosmosu - GlobeMap.js).
+
+        this.colors = colors;
+
+        this.colorsReady = true;
+
+        this.sendPalette();
+
+        this.rebuildAll(false);
 
     }
 
@@ -672,7 +931,8 @@ export class FarTerrain {
         }
 
 
-        // Budujemy brakujące i nieaktualne kafelki, najbliższe najpierw.
+        // Brakujące i nieaktualne kafelki, najbliższe najpierw: najpierw
+        // wysokości kratek (wątek albo po kawałku tutaj), potem siatka.
 
         const deadline = performance.now() + BUILD_BUDGET_MS;
 
@@ -686,6 +946,22 @@ export class FarTerrain {
                 continue;
             }
 
+            if (!tile.raw) {
+
+                this.requestSamples(tile, deadline);
+
+                if (!tile.raw) {
+
+                    if (!tile.mesh) {
+                        missing++;
+                    }
+
+                    continue;
+
+                }
+
+            }
+
             if (performance.now() >= deadline) {
 
                 if (!tile.mesh) {
@@ -696,17 +972,102 @@ export class FarTerrain {
 
             }
 
-            this.buildTile(tile);
+            this.buildMesh(tile);
 
         }
 
 
         // Nowy zestaw kafelków pokazujemy dopiero, gdy jest gotowy cały
         // (do tego czasu zostaje stary - kafelki leżą zawsze w tych samych
-        // miejscach świata, więc stary zestaw nadal pasuje).
+        // miejscach świata, więc stary zestaw nadal pasuje). Na początku
+        // (nic jeszcze nie widać) - po kolei, co już jest.
 
         if (missing === 0) {
+
             this.showWanted();
+
+            this.complete = true;
+
+        }
+        else if (!this.complete) {
+
+            this.showReady();
+
+        }
+
+    }
+
+
+    // Wysokości kratek kafelka: zlecenie dla wątku albo (bez wątku)
+    // liczenie tutaj - rząd po rzędzie, do końca czasu klatki.
+
+    requestSamples(tile, deadline) {
+
+        const ready = this.workers.filter((entry) => entry.ready);
+
+        const waiting = ready.length === 0 && this.workers.length > 0 &&
+            performance.now() - this.workersStarted < WORKER_START_MS;
+
+        if (waiting || tile.pending) {
+            return;
+        }
+
+        if (ready.length > 0 && !tile.job) {
+
+            // Najmniej zajęty wątek (każdy liczy naraz kilka kafelków).
+
+            const entry = ready.reduce((best, other) => other.busy < best.busy ? other : best);
+
+            if (entry.busy >= WORKER_REQUESTS) {
+                return;
+            }
+
+            const id = this.nextRequest++;
+
+            tile.pending = id;
+
+            entry.busy++;
+
+            this.requests.set(id, { tile, entry });
+
+            entry.worker.postMessage({
+                type: 'tile',
+                id,
+                x0: tile.x0,
+                z0: tile.z0,
+                spacing: tile.spacing,
+                cells: tile.cells
+            });
+
+            return;
+
+        }
+
+
+        const W = tile.cells + 2;
+
+        const job = tile.job ??= {
+            heights: new Int16Array(W * W),
+            kinds: new Uint8Array(W * W),
+            row: 0
+        };
+
+        while (job.row < W && performance.now() < deadline) {
+
+            sampleFarTile(this.generator, tile.x0, tile.z0, tile.spacing, tile.cells, job.heights, job.kinds, job.row, job.row + 1);
+
+            job.row++;
+
+        }
+
+        if (job.row === W) {
+
+            tile.raw = { heights: job.heights, kinds: job.kinds };
+
+            tile.job = null;
+
+            tile.stale = true;
+
         }
 
     }
@@ -812,6 +1173,10 @@ export class FarTerrain {
                 x0,
                 z0,
                 size,
+                raw: null,
+                workerMesh: null,
+                job: null,
+                pending: 0,
                 mesh: null,
                 stale: false,
                 usedAt: 0
@@ -852,16 +1217,39 @@ export class FarTerrain {
         this.shown = wanted;
 
 
-        // Zapomniane kafelki (dawno niepotrzebne) zwalniają pamięć.
+        // Zapomniane kafelki (dawno niepotrzebne) zwalniają pamięć - zostaje
+        // zapas na powrót w to samo miejsce (pół widocznego zestawu).
 
-        if (this.tiles.size > this.wanted.length * 2 + 64) {
+        const keep = this.wanted.length + Math.max(64, this.wanted.length >> 1);
+
+        if (this.tiles.size > keep + 32) {
 
             const old = [...this.tiles.values()]
                 .filter((tile) => !this.shown.has(tile))
                 .sort((a, b) => a.usedAt - b.usedAt);
 
-            for (const tile of old.slice(0, this.tiles.size - this.wanted.length * 2)) {
+            for (const tile of old.slice(0, this.tiles.size - keep)) {
                 this.disposeTile(tile);
+            }
+
+        }
+
+    }
+
+
+    // Na początku: gotowe kafelki od razu do sceny (nie zachodzą na
+    // siebie - to liście jednego drzewa czwórkowego).
+
+    showReady() {
+
+        for (const tile of this.wanted) {
+
+            if (tile.mesh && !this.shown.has(tile)) {
+
+                this.scene.add(tile.mesh);
+
+                this.shown.add(tile);
+
             }
 
         }
@@ -879,10 +1267,12 @@ export class FarTerrain {
 
         this.wanted = [];
 
+        this.complete = false;
+
     }
 
     // --------------------------------------------------------
-    // WYSOKOŚĆ TERENU
+    // WYSOKOŚĆ TERENU W ZMIENIONYCH CHUNKACH
     // --------------------------------------------------------
 
     // Chunki zmienione przez gracza, które leżą w prostokącie
@@ -923,254 +1313,101 @@ export class FarTerrain {
     }
 
 
-    // Wierzch terenu w kolumnie (x, z): { top, kind } - top = y nad
-    // najwyższym blokiem (albo nad wodą), kind = rodzaj powierzchni
-    // ('grass', 'rock', 'sand', 'water' albo skała: 'granite',
-    // 'limestone'... - KINDS). spacing = jak gęsto
-    // próbkujemy (mniej szczegółów przy rzadszych próbkach).
+    // Wierzch kolumny (x, z) w zmienionym chunku: { top, kind } albo
+    // null, gdy chunk nie był zmieniany.
 
-    surfaceAt(x, z, spacing, modified) {
+    modifiedSurface(x, z, modified) {
 
-        if (modified.size > 0) {
+        const cx = Math.floor(x / CHUNK_SIZE);
+        const cz = Math.floor(z / CHUNK_SIZE);
 
-            const cx = Math.floor(x / CHUNK_SIZE);
-            const cz = Math.floor(z / CHUNK_SIZE);
+        const blocks = modified.get(`${cx},${cz}`);
 
-            const blocks = modified.get(`${cx},${cz}`);
+        if (!blocks) {
+            return null;
+        }
 
-            if (blocks) {
+        const lx = x - cx * CHUNK_SIZE;
+        const lz = z - cz * CHUNK_SIZE;
 
-                const lx = x - cx * CHUNK_SIZE;
-                const lz = z - cz * CHUNK_SIZE;
+        for (let y = CHUNK_HEIGHT - 1; y >= 0; y--) {
 
-                for (let y = CHUNK_HEIGHT - 1; y >= 0; y--) {
+            const id = blocks[(y * CHUNK_SIZE + lz) * CHUNK_SIZE + lx];
 
-                    const id = blocks[(y * CHUNK_SIZE + lz) * CHUNK_SIZE + lx];
-
-                    if (isSolidId(id) || isLiquidId(id)) {
-                        return { top: y + 1, kind: BLOCK_KINDS[getBlockTypeById(id)] ?? 'grass' };
-                    }
-
-                }
-
-                return { top: 0, kind: 'rock' };
-
+            if (isSolidId(id) || isLiquidId(id)) {
+                return { top: y + 1, kind: BLOCK_KINDS[getBlockTypeById(id)] ?? 'grass' };
             }
 
         }
 
-
-        return this.generator.farSurface(x, z, spacing);
+        return { top: 0, kind: 'rock' };
 
     }
 
     // --------------------------------------------------------
-    // BUDOWANIE KAFELKA
+    // SIATKA KAFELKA
     // --------------------------------------------------------
 
-    buildTile(tile) {
+    // Siatka kafelka z wysokości kratek (meshFarTile w farSamples.js).
+    // Zwykle gotowa z wątku; w zmienionych chunkach (ich wierzch zamiast
+    // generatora) i bez wątku - składana tutaj.
 
-        const { spacing, x0, z0 } = tile;
+    buildMesh(tile) {
 
-        const N = tile.cells;
+        const { spacing: s, x0, z0, cells } = tile;
 
-        // Wysokości z ramką jednej próbki dookoła (do normalnych).
+        const W = cells + 2;
 
-        const W = N + 3;
+        let mesh = tile.workerMesh;
 
-        const heights = new Float32Array(W * W);
-
-        const kinds = new Uint8Array(W * W);
-
-        const modified = this.modifiedChunksIn(x0 - spacing, z0 - spacing, tile.size + 2 * spacing);
+        tile.workerMesh = null;
 
 
-        for (let j = 0; j < W; j++) {
+        const modified = this.modifiedChunksIn(x0 - s, z0 - s, tile.size + 2 * s);
 
-            for (let i = 0; i < W; i++) {
+        if (modified.size > 0 || !mesh) {
 
-                const x = Math.max(-WORLD_BORDER, Math.min(WORLD_BORDER - 1, x0 + (i - 1) * spacing));
-                const z = Math.max(-WORLD_BORDER, Math.min(WORLD_BORDER - 1, z0 + (j - 1) * spacing));
+            let { heights, kinds } = tile.raw;
 
-                const surface = this.surfaceAt(x, z, spacing, modified);
+            if (modified.size > 0) {
 
-                heights[j * W + i] = surface.top;
-                kinds[j * W + i] = kindIndex(surface.kind);
+                heights = heights.slice();
+                kinds = kinds.slice();
+
+                for (let row = 0; row < W; row++) {
+
+                    const z = samplePosition(z0, row - 1, s);
+
+                    for (let column = 0; column < W; column++) {
+
+                        const surface = this.modifiedSurface(samplePosition(x0, column - 1, s), z, modified);
+
+                        if (surface) {
+                            heights[row * W + column] = surface.top;
+                            kinds[row * W + column] = kindIndex(surface.kind);
+                        }
+
+                    }
+
+                }
 
             }
 
-        }
-
-
-        const height = (i, j) => heights[(j + 1) * W + (i + 1)];
-
-        const kindAt = (i, j) => KINDS[kinds[(j + 1) * W + (i + 1)]];
-
-
-        // Wierzchołki: siatka (N+1) x (N+1) i fartuchy na 4 brzegach.
-
-        const gridCount = (N + 1) * (N + 1);
-        const skirtCount = 4 * (N + 1);
-        const vertexCount = gridCount + skirtCount;
-
-        const positions = new Float32Array(vertexCount * 3);
-        const normals = new Float32Array(vertexCount * 3);
-        const colors = new Float32Array(vertexCount * 3);
-
-
-        const { grass_top: grass, grass_side: side, stone, sand, water } = this.colors;
-
-        const normal = new THREE.Vector3();
-
-        const color = new THREE.Color();
-
-
-        for (let j = 0; j <= N; j++) {
-
-            for (let i = 0; i <= N; i++) {
-
-                const v = j * (N + 1) + i;
-
-                const h = height(i, j);
-
-
-                // Środek bloku (x + 0.5), wierzch terenu na wysokości h.
-
-                positions[v * 3] = i * spacing + 0.5;
-                positions[v * 3 + 1] = h;
-                positions[v * 3 + 2] = j * spacing + 0.5;
-
-
-                normal.set(
-                    height(i - 1, j) - height(i + 1, j),
-                    2 * spacing,
-                    height(i, j - 1) - height(i, j + 1)
-                ).normalize();
-
-                normals[v * 3] = normal.x;
-                normals[v * 3 + 1] = normal.y;
-                normals[v * 3 + 2] = normal.z;
-
-
-                // Kolor z rodzaju powierzchni (generator); trawa na
-                // stromych zboczach - ziemia (boki trawy).
-
-                const kind = kindAt(i, j);
-
-                if (kind === 'water') {
-                    color.copy(water);
-                }
-                else if (kind === 'sand') {
-                    color.copy(sand);
-                }
-                else if (kind === 'rock') {
-                    color.copy(stone);
-                }
-                else if (kind !== 'grass') {
-                    color.copy(this.colors[kind] ?? stone);
-                }
-                else {
-                    color.copy(grass).lerp(side, smoothstep(0.3, 0.75, 1 - normal.y));
-                }
-
-                colors[v * 3] = color.r;
-                colors[v * 3 + 1] = color.g;
-                colors[v * 3 + 2] = color.b;
-
+            if (scratch.cells < cells) {
+                scratch = createMeshScratch(cells);
             }
 
-        }
-
-
-        // Fartuchy: kopie brzegowych wierzchołków opuszczone w dół.
-
-        const skirtDepth = spacing * 2 + 4;
-
-        const edges = [
-            (k) => k,                         // z = 0
-            (k) => N * (N + 1) + k,           // z = N
-            (k) => k * (N + 1),               // x = 0
-            (k) => k * (N + 1) + N            // x = N
-        ];
-
-        for (let e = 0; e < 4; e++) {
-
-            for (let k = 0; k <= N; k++) {
-
-                const from = edges[e](k);
-                const to = gridCount + e * (N + 1) + k;
-
-                for (let c = 0; c < 3; c++) {
-
-                    positions[to * 3 + c] = positions[from * 3 + c];
-                    normals[to * 3 + c] = normals[from * 3 + c];
-                    colors[to * 3 + c] = colors[from * 3 + c];
-
-                }
-
-                positions[to * 3 + 1] -= skirtDepth;
-
-            }
-
-        }
-
-
-        // Trójkąty siatki i fartuchów.
-
-        const indices = new Uint16Array(N * N * 6 + 4 * N * 6);
-
-        let n = 0;
-
-        for (let j = 0; j < N; j++) {
-
-            for (let i = 0; i < N; i++) {
-
-                const a = j * (N + 1) + i;
-                const b = a + (N + 1);
-                const c = a + 1;
-                const d = b + 1;
-
-                indices[n++] = a; indices[n++] = b; indices[n++] = c;
-                indices[n++] = c; indices[n++] = b; indices[n++] = d;
-
-            }
-
-        }
-
-        // Fartuch jest widoczny od zewnątrz kafelka (tam jest szczelina
-        // do zasłonięcia), więc trójkąty są skierowane na zewnątrz.
-
-        for (let e = 0; e < 4; e++) {
-
-            const outward = e === 1 || e === 2;
-
-            for (let k = 0; k < N; k++) {
-
-                const a = edges[e](k);
-                const b = edges[e](k + 1);
-                const c = gridCount + e * (N + 1) + k;
-                const d = c + 1;
-
-                if (outward) {
-                    indices[n++] = a; indices[n++] = c; indices[n++] = b;
-                    indices[n++] = b; indices[n++] = c; indices[n++] = d;
-                }
-                else {
-                    indices[n++] = a; indices[n++] = b; indices[n++] = c;
-                    indices[n++] = b; indices[n++] = d; indices[n++] = c;
-                }
-
-            }
+            mesh = meshFarTile(heights, kinds, cells, s, this.kindColors, scratch);
 
         }
 
 
         const geometry = new THREE.BufferGeometry();
 
-        geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-        geometry.setAttribute('normal', new THREE.BufferAttribute(normals, 3));
-        geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
-        geometry.setIndex(new THREE.BufferAttribute(indices, 1));
+        geometry.setAttribute('position', new THREE.BufferAttribute(mesh.positions, 4));
+        geometry.setAttribute('normal', new THREE.BufferAttribute(mesh.normals, 4, true));
+        geometry.setAttribute('color', new THREE.BufferAttribute(mesh.colors, 4, true));
+        geometry.setIndex(new THREE.BufferAttribute(mesh.indices, 1));
 
         geometry.computeBoundingSphere();
 
@@ -1184,18 +1421,13 @@ export class FarTerrain {
         }
         else {
 
-            const level = Math.min(
-                farMaterials.length - 1,
-                Math.round(Math.log2(spacing / MIN_SPACING))
-            );
+            const object = new THREE.Mesh(geometry, farMaterials[levelOf(s)]);
 
-            const mesh = new THREE.Mesh(geometry, farMaterials[level]);
+            object.position.set(x0, 0, z0);
+            object.updateMatrix();
+            object.matrixAutoUpdate = false;
 
-            mesh.position.set(x0, 0, z0);
-            mesh.updateMatrix();
-            mesh.matrixAutoUpdate = false;
-
-            tile.mesh = mesh;
+            tile.mesh = object;
 
         }
 
@@ -1228,20 +1460,21 @@ export class FarTerrain {
     }
 
 
-    // Tryb ziemniaka: rzadsza siatka kafelków i mgiełka liczona
+    // Szczegóły (ustawienie farDetail: 1 - niskie, 2 - średnie,
+    // 3 - wysokie); tryb ziemniaka: mniej kratek i mgiełka liczona
     // w wierzchołkach.
 
-    setLowDetail(on) {
+    setDetail(level, potato = false) {
 
-        const detail = on ? POTATO_DETAIL : DETAIL;
+        setPotatoDefine(farMaterials, potato);
+
+        const detail = potato ? POTATO_DETAIL : DETAILS[level] ?? DETAIL;
 
         if (detail === this.detail) {
             return;
         }
 
         this.detail = detail;
-
-        setPotatoDefine(farMaterials, on);
 
         // Inne kafelki będą potrzebne - wybieramy je od nowa.
 
@@ -1250,8 +1483,7 @@ export class FarTerrain {
     }
 
 
-    // Kolorowanie kafelków według dokładności (/horyzont lod):
-    // czerwony - najdokładniejsze, potem niebieski, żółty, zielony...
+    // Kolorowanie kafelków według dokładności (/horyzont lod).
 
     setDebugLod(on) {
 
@@ -1262,12 +1494,27 @@ export class FarTerrain {
     }
 
 
-    // Wszystko od nowa (komenda /horyzont odswiez).
+    // Wszystko od nowa (komenda /horyzont odswiez): także wysokości
+    // (samples = false - tylko siatki, np. po nowych kolorach).
 
-    rebuildAll() {
+    rebuildAll(samples = true) {
 
         for (const tile of this.tiles.values()) {
+
             tile.stale = true;
+
+            tile.workerMesh = null;
+
+            if (samples) {
+                tile.raw = null;
+                tile.job = null;
+                tile.pending = 0;
+            }
+
+        }
+
+        if (samples) {
+            this.requests.clear();
         }
 
     }
@@ -1292,6 +1539,12 @@ export class FarTerrain {
 
         farCamera.fov = camera.fov;
         farCamera.aspect = camera.aspect;
+
+        // Kąt jednego piksela (do odsuwania rogów kratek).
+
+        const pixels = Math.max(1, renderer.domElement.height);
+
+        pixelAngle.value = 2 * Math.tan(THREE.MathUtils.degToRad(camera.fov) / 2) / pixels;
 
         // Bliżej niż ułamek zasięgu widzenia nic nie widać (wycięte),
         // a daleko trzeba sięgnąć aż do rogów ekranu.
@@ -1325,7 +1578,8 @@ export class FarTerrain {
             wanted: this.wanted.length,
             missing: this.wanted.filter((tile) => !tile.mesh || tile.stale).length,
             cached: this.tiles.size,
-            triangles
+            triangles,
+            workers: this.workers.filter((entry) => entry.ready).length
         };
 
     }
@@ -1343,6 +1597,10 @@ export class FarTerrain {
 
         }
 
+        if (tile.pending) {
+            this.requests.delete(tile.pending);
+        }
+
         this.tiles.delete(tile.key);
 
     }
@@ -1356,6 +1614,12 @@ export class FarTerrain {
 
         this.shown = new Set();
         this.wanted = [];
+
+        for (const entry of this.workers) {
+            entry.worker.terminate();
+        }
+
+        this.workers = [];
 
         if (this.world.onModifiedChunkUnloaded) {
             this.world.onModifiedChunkUnloaded = null;

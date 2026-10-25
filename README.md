@@ -395,8 +395,12 @@ W menu (z ekranu tytułowego i z pauzy) są zakładki:
 
 - **tryb ziemniaka** - patrz niżej,
 - **zasięg widzenia** (24-384 bloków) - jak daleko widać prawdziwe bloki,
-- **daleki teren** (do 4096 bloków albo wyłączony) - uproszczony,
-  rozmyty teren za zasięgiem widzenia, aż po horyzont,
+- **daleki teren** (do 16 384 bloków albo wyłączony) - uproszczony,
+  kanciasty teren za zasięgiem widzenia, aż po horyzont (im dalej, tym
+  większe kratki),
+- **szczegóły dalekiego terenu** - *niskie* (większe kratki, ~2x mniej
+  trójkątów; na telefonie domyślnie), *średnie* albo *wysokie*
+  (drobniejsze kratki, ~1,7x więcej trójkątów),
 - **pole widzenia** (50-110°),
 - **jasność** - od *Nastrojowej* (zwykłej) do *Jasnej*: rozjaśnia półmrok
   i noc, pełnego światła nie zmienia,
@@ -409,8 +413,9 @@ W menu (z ekranu tytułowego i z pauzy) są zakładki:
   i księżyca (patrz *Oświetlenie*; na telefonie domyślnie wyłączone),
 - **promienie światła** - widoczne snopy światła w powietrzu (tylko
   z cieniami słońca),
-- **światło odbite** - oświetlone słońcem ściany świecą dalej w kolorze
-  swojej tekstury, światło „wlewa się” do pokoju (tylko z cieniami słońca),
+- **światło odbite** (eksperymentalne, domyślnie wyłączone) - oświetlone
+  słońcem ściany świecą dalej w kolorze swojej tekstury, światło „wlewa
+  się” do pokoju (tylko z cieniami słońca),
 - **liście drzew** - *ładne* (z prześwitami, widać głąb korony) albo
   *szybkie* (pełne, bez ścian w środku korony - las mniej spowalnia
   grę; na telefonie domyślnie),
@@ -563,7 +568,7 @@ Wszystko w grze działa tak samo - niebo, zaćmienia, daleki teren,
 
 - rozdzielczość najwyżej 50%, bez wygładzania krawędzi,
 - zasięg widzenia najwyżej 32 bloki,
-- daleki teren z rzadszą siatką (~9 razy mniej trójkątów),
+- daleki teren z większymi kratkami (~8 razy mniej trójkątów),
 - bez Drogi Mlecznej i galaktyk, 30% najjaśniejszych gwiazd,
 - kolor mgły liczony w rogach ścian, a nie w każdym pikselu,
 - szybkie liście drzew (bez prześwitów).
@@ -627,15 +632,23 @@ do najbliższej turni). Skały pod ziemią: `/skaly`, `/mapa skaly`,
 `/mapa przekroj` (przekrój pionowy) i `/demo skaly` (odkrywka).
 
 **Daleki teren (horyzont):** za zasięgiem widzenia widać uproszczony
-teren - te same wzgórza i góry, które wygenerowałyby się tam naprawdę,
-ale bez bloków i tekstur, w rozmytych kolorach trawy, ziemi i skały.
-Im dalej, tym bardziej ginie w powietrzu (mgiełka w kolorze nieba):
-w dzień jest jasny i niebieskawy, wieczorem i w nocy ciemny, a słońce
-i księżyc zachodzą za dalekimi górami. Bliskie bloki z odległością
-płynnie zlewają się w średni kolor swoich tekstur, więc przejście jest
-prawie niewidoczne. Pokazuje też chunki zmienione przez gracza (np.
-krater po meteorycie). Zasięg - ustawienie *Daleki teren*; mgiełka -
-`FAR_HAZE_...` w `src/config.js`; kod - `src/world/FarTerrain.js`.
+teren - te same wzgórza, lasy i góry, które wygenerowałyby się tam
+naprawdę - aż do 16 384 bloków. Jest kanciasty jak bloki: zbudowany
+z kratek (słupków) w kolorach trawy, skał, piasku, wody i koron drzew,
+z pionowymi ściankami tam, gdzie teren schodzi niżej. Tuż za zasięgiem
+widzenia kratka ma 1 blok, dalej 2, 4, 8... aż do 128 bloków - im
+dalej, tym mniejsza rozdzielczość, ale teren zostaje kanciasty, a nie
+rozmyty. Wysokości i siatki liczą osobne wątki przeglądarki, więc gra
+się przy tym nie przycina. Im dalej, tym bardziej teren ginie
+w powietrzu (mgiełka w kolorze nieba): w dzień jest jasny
+i niebieskawy, wieczorem i w nocy ciemny, a słońce i księżyc zachodzą
+za dalekimi górami (z dalekimi cieniami góry rzucają cień na doliny).
+Pokazuje też chunki zmienione przez gracza (np. krater po meteorycie,
+budowle). Zasięg - ustawienie *Daleki teren* albo `/horyzont 16384`;
+`/horyzont lod` koloruje kafelki według wielkości kratki; mgiełka -
+`FAR_HAZE_...` w `src/config.js`; kod - `src/world/FarTerrain.js`
+(kafelki), `src/world/farSamples.js` (wysokości i siatka kratek),
+`src/world/FarTerrainWorker.js` (wątek).
 
 Świat kończy się na **granicy** - `WORLD_BORDER` w `src/config.js`
 (domyślnie 30 000 bloków od środka w każdą stronę; `Infinity` = bez
@@ -690,7 +703,9 @@ wokół gracza, razem z dalekim terenem: o wschodzie i zachodzie góry
 rzucają długie cienie na doliny, a słońce chowa się za grzbietem.
 Trawa i kwiaty rzucają drobne, pikselowe cienie.
 
-**Światło odbite** (osobne ustawienie): słońce, które wpadnie przez
+**Światło odbite** (osobne ustawienie, na razie eksperymentalne
+i domyślnie wyłączone - na dworze daje jeszcze świecący krąg wokół
+gracza): słońce, które wpadnie przez
 okno, nie zostaje na podłodze - oświetlona podłoga i ściany świecą
 dalej w kolorze swojej tekstury i rozjaśniają cały pokój, słabnąc
 z odległością. Jasne ściany oddają dużo światła (i odbijają je dalej),
@@ -767,7 +782,7 @@ Komendy służą do sprawdzania nowości w grze, np.:
 /meteory deszcz wl         deszcz meteorów (/meteory pokaz - kilka od razu)
 /zacmienie pokaz pelne     pełne zaćmienie słońca (albo czesciowe, 50...)
 /zacmienie                 kiedy następne zaćmienie (/zacmienie lista)
-/horyzont 2048             daleki teren (/horyzont lod - dokładność kafelków)
+/horyzont 16384            daleki teren (/horyzont lod - wielkość kratek)
 /teren                     forma terenu pod graczem (niziny, wyżyny, góry...)
 /teren znajdz kotlina tp   teleport do najbliższej kotliny (/teren formy - lista)
 /mapa formy 16             mapa terenu (klawisz M; warstwy: teren, formy, pasy, skaly...)

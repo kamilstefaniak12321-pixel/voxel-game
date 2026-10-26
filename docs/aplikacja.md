@@ -54,6 +54,11 @@ programisty (konsola błędów). Reszta klawiszy działa jak w przeglądarce
    **Wydanie** na stronie przebiegu (np. *Pobieranie ... HTTP 206* =
    działa).
 5. Zainstalowane gry same pobierają nową wersję przy następnym starcie.
+6. Potem (job *android*, z kluczem do podpisu) do tego samego wydania
+   trafia aplikacja na telefon: `Voxel-Game-0.2.0-android.apk`, paczka
+   plików gry `...-android-www.zip` i `android-latest.json` - z niego
+   zainstalowane aplikacje na telefonie wiedzą o nowej wersji
+   (`docs/telefon.md`, *Aktualizacje*).
 
 Scalenie bez zmiany wersji niczego nie wydaje - chyba że wydaniu tej
 wersji brakuje któregoś z trzech plików: wtedy instalator jest budowany

@@ -24,7 +24,9 @@ import com.getcapacitor.BridgeActivity;
 //   - przycisk "wstecz" trafia do gry (pauza / zamknięcie czatu -
 //     main.js, guardBackButton), a na ekranie tytułowym chowa grę,
 //   - wyjście z aplikacji = pauza i zapis świata (zdarzenie
-//     "apppause" w main.js).
+//     "apppause" w main.js),
+//   - aktualizacje (AktualizacjePlugin) - pobrane pliki gry włączają
+//     się tu, zanim Capacitor wczyta stronę.
 // Opis: docs/telefon.md.
 // ------------------------------------------------------------
 
@@ -32,6 +34,13 @@ public class MainActivity extends BridgeActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        // Przed super.onCreate: wtyczkę trzeba zgłosić, zanim powstanie
+        // most do strony, a pobrane pliki gry włączyć, zanim się wczyta.
+
+        registerPlugin(AktualizacjePlugin.class);
+
+        AktualizacjePlugin.przedStartem(this);
 
         super.onCreate(savedInstanceState);
 

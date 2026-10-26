@@ -82,6 +82,20 @@ export const TEXTS = {
     updateError: 'Nie udało się pobrać aktualizacji (spróbuje przy następnym uruchomieniu).',
     updateReadyInGame: (version) => `Pobrano nową wersję gry (${version}) - zainstaluje się po zamknięciu gry (albo od razu: ekran tytułowy - Zainstaluj teraz).`,
 
+    // Aplikacja na telefon (src/app/AndroidUpdates.js): nowe pliki gry
+    // (web) albo nowa aplikacja (apk).
+    updateDownloadingApk: (version, percent) => `Pobieranie aplikacji ${version}... ${percent ?? 0}%`,
+    updateReadyWeb: (version) => `Nowa wersja ${version} gotowa - włączy się przy następnym uruchomieniu gry.`,
+    restartUpdate: 'Uruchom ponownie teraz',
+    updateReadyApk: (version) => `Pobrana nowa aplikacja ${version} - zainstaluj ją (Android zapyta o zgodę, światy zostają).`,
+    installApk: 'Zainstaluj',
+    updatePermission: 'Zezwól grze na instalowanie aplikacji (otworzyły się ustawienia), wróć i stuknij Zainstaluj jeszcze raz.',
+    updateAvailableApk: (version, size) => `Nowa wersja ${version} wymaga nowej aplikacji (${size > 0 ? (size / 1048576).toFixed(1).replace('.', ',') : '?'} MB) - na danych komórkowych nie pobiera się sama.`,
+    downloadUpdate: 'Pobierz',
+    updateErrorPhone: 'Nie udało się pobrać aktualizacji (spróbuje później).',
+    updateReadyInGameWeb: (version) => `Pobrano nową wersję gry (${version}) - włączy się przy następnym uruchomieniu (albo od razu: ekran tytułowy - Uruchom ponownie teraz).`,
+    updateReadyInGameApk: (version) => `Pobrano nową aplikację (${version}) - zainstaluj ją: ekran tytułowy - Zainstaluj.`,
+
     // Czat (pokazywane po wejściu do świata)
     chatHint: 'E - ekwipunek, T - czat, /pomoc - lista komend do testowania gry, F5 - widok z trzeciej osoby',
 

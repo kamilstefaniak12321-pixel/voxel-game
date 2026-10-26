@@ -18,6 +18,7 @@ import { TerrainMap } from './ui/TerrainMap.js';
 import { InventoryScreen } from './ui/InventoryScreen.js';
 import { SoundManager } from './audio/SoundManager.js';
 import { setUiSounds, playUi } from './audio/ui.js';
+import { AndroidUpdates } from './app/AndroidUpdates.js';
 import {
     WorldStorage,
     createWorldInfo,
@@ -60,6 +61,14 @@ document.title = GAME_TITLE;
 const nativeApp = window.Capacitor?.isNativePlatform?.()
     ? window.Capacitor.getPlatform()
     : null;
+
+
+// Aktualizacje aplikacji (komputer albo telefon) dla komendy
+// /aktualizacja: { platform: 'desktop' | 'android', version, status(),
+// install() (komputer) / updater (telefon - AndroidUpdates) } albo null
+// (przeglądarka). Ustawiane na końcu pliku (APLIKACJE).
+
+let appUpdates = null;
 
 
 // STEROWANIE DOTYKOWE (telefon, tablet - src/input/TouchControls.js).
@@ -719,6 +728,9 @@ function commandContext() {
         commands,
         map: terrainMap,
 
+        // Aktualizacje aplikacji (/aktualizacja) - null w przeglądarce.
+        updates: appUpdates,
+
         // Sterowanie dotykowe (/dotyk).
         touch: {
             enabled: touchMode,
@@ -1354,13 +1366,37 @@ window.addEventListener('pointerdown', (event) => {
 }, { capture: true });
 
 // ------------------------------------------------------------
-// APLIKACJA NA KOMPUTER (desktop/)
+// APLIKACJE: KOMPUTER (desktop/) I TELEFON (android/)
 //
-// W aplikacji jest obiekt window.desktop (desktop/preload.js): przed
-// zamknięciem okna zapisujemy świat, a na ekranie tytułowym widać
-// wersję gry i pobieraną aktualizację. W przeglądarce nic się tu
-// nie dzieje.
+// W aplikacji na komputer jest obiekt window.desktop (desktop/preload.js):
+// przed zamknięciem okna zapisujemy świat, a na ekranie tytułowym widać
+// wersję gry i pobieraną aktualizację. W aplikacji na telefon to samo
+// robi src/app/AndroidUpdates.js (wtyczka Aktualizacje). W przeglądarce
+// nic się tu nie dzieje.
+//
+// appUpdates (dla komendy /aktualizacja) - niżej.
 // ------------------------------------------------------------
+
+// Ostatnia wersja ogłoszona na czacie (raz na wersję).
+let announcedUpdate = null;
+
+function announceUpdate(status) {
+
+    if (status?.state !== 'ready' || !game || announcedUpdate === status.version) {
+        return;
+    }
+
+    announcedUpdate = status.version;
+
+    const text =
+        status.kind === 'web' ? TEXTS.updateReadyInGameWeb(status.version) :
+        status.kind === 'apk' ? TEXTS.updateReadyInGameApk(status.version) :
+        TEXTS.updateReadyInGame(status.version);
+
+    chat.print(text, 'hint');
+
+}
+
 
 if (window.desktop) {
 
@@ -1379,23 +1415,76 @@ if (window.desktop) {
     });
 
 
-    let announced = null;
+    let desktopStatus = null;
 
     window.desktop.onUpdate((status) => {
+
+        desktopStatus = status;
 
         menu.setUpdateStatus(status);
 
         // W trakcie gry - jedna informacja na czacie.
 
-        if (status?.state === 'ready' && game && announced !== status.version) {
+        announceUpdate(status);
 
-            announced = status.version;
+    });
 
-            chat.print(TEXTS.updateReadyInGame(status.version), 'hint');
+
+    appUpdates = {
+        platform: 'desktop',
+        version: window.desktop.version,
+        status: () => desktopStatus,
+        install: () => {
+            window.desktop.installUpdate();
+            return desktopStatus?.state === 'ready';
+        }
+    };
+
+}
+else if (nativeApp === 'android' && AndroidUpdates.available()) {
+
+    const updater = new AndroidUpdates({
+
+        onVersion: (version) => {
+
+            menu.setAppInfo({
+                version,
+                install: () => updater.install(),
+                download: () => updater.download()
+            });
+
+        },
+
+        onStatus: (status) => {
+
+            menu.setUpdateStatus(status);
+
+            announceUpdate(status);
+
+        },
+
+        // Przed wczytaniem nowej wersji - zapis świata.
+
+        beforeRestart: async () => {
+
+            if (game) {
+                await game.saver.flush();
+            }
 
         }
 
     });
+
+    updater.start().catch((error) => console.warn('Aktualizacje:', error));
+
+    appUpdates = {
+        platform: 'android',
+        updater,
+        get version() {
+            return updater.version;
+        },
+        status: () => updater.status
+    };
 
 }
 

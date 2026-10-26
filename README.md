@@ -34,8 +34,12 @@ z przeglądarki i z aplikacji są zapisywane osobno.
 **Aplikacja na telefon (Android):** na telefonie z wydań (link wyżej)
 pobierz `Voxel-Game-...-android.apk` i otwórz - Android zapyta, czy
 zezwolić na instalację z przeglądarki (zezwól). Gra ma ikonkę na
-ekranie, działa bez internetu, zawsze poziomo i na cały ekran. Nowa
-wersja = nowy `.apk` zainstalowany na starym (światy zostają).
+ekranie, działa bez internetu, zawsze poziomo i na cały ekran. Od
+wersji 0.19.0 **aktualizuje się sama** (nowa wersja gry pobiera się
+w tle i włącza przy następnym uruchomieniu; rzadziej potrzebna nowa
+aplikacja - wtedy *Zainstaluj* na ekranie tytułowym). Starszą wersję
+trzeba raz zaktualizować ręcznie: nowy `.apk` zainstalowany na starym
+(światy zostają).
 
 **W przeglądarce telefonu / tabletu:** na komputerze w folderze
 gry `npx serve`, a na telefonie (w tej samej sieci Wi-Fi) adres
@@ -960,6 +964,7 @@ src/
   input/                    klawiatura i mysz, sterowanie dotykowe (telefon)
   audio/                    dźwięk (lista dźwięków, odtwarzanie, dźwięki menu)
   commands/                 komendy czatu (do testowania)
+  app/                      aplikacja na telefon: aktualizacje (AndroidUpdates.js)
   interaction/              raycast, niszczenie, stawianie, podświetlenie
 ```
 

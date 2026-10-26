@@ -44,17 +44,20 @@ tylko jako *Sekretne osiągnięcie* ze znakiem zapytania.
 | zwykłe | Nocny marek | bądź w świecie o północy |
 | zwykłe | Złota godzina | popatrz prosto na zachodzące (albo wschodzące) słońce |
 | zwykłe | Nowe szaty | zagraj z własną paczką tekstur (Ustawienia → Tekstury) |
+| zwykłe | Borówkowy język | zbierz borówki z krzaka (bory i świerczyny) |
 | rzadkie | Murarz | postaw 500 bloków (postęp liczy się w księdze) |
 | rzadkie | Głębinowiec | zanurkuj 10 bloków pod powierzchnię |
 | rzadkie | Ponad chmurami | wzleć na wysokość 1000 |
 | rzadkie | Naoczny świadek | bądź do 60 bloków od uderzenia meteorytu |
-| rzadkie | Pełne kosze | zbierz owoce z każdego rodzaju krzaka |
+| rzadkie | Pełne kosze | zbierz owoce z każdego rodzaju krzaka (pięć - z borówkami) |
 | rzadkie | Leśniczy | zetnij pień każdego z sześciu gatunków drzew (postęp w księdze) |
 | rzadkie | Z małego ziarenka | wyhoduj drzewo z sadzonki (`docs/drzewa.md`) |
 | rzadkie | Komplet narzędzi | zrób siekierę, kilof i łopatę (postęp w księdze) |
 | rzadkie | Kopalnia w kieszeni | zagraj na telefonie / tablecie i zniszcz blok palcem (`docs/telefon.md`) |
 | rzadkie | Lokator z ikonką | zagraj w aplikacji na Androida (`docs/telefon.md`) |
 | rzadkie | Spływ | daj się ponieść nurtowi rzeki przez 100 bloków (`docs/rzeki.md`) |
+| rzadkie | Turysta | odwiedź każdy z 11 biomów lądowych (`docs/biomy.md`, `/biom lista`) |
+| rzadkie | Dach świata | stań na śniegu na ośnieżonym szczycie (`/biom znajdz snieg tp`) |
 | rzadkie | Projektant wnętrz | postaw każdy z pięciu budulców: tynk wapienny, tynk ochrowy, terakotę, polerowany kamień i ciemne deski (postęp w księdze) |
 | rzadkie | Promyk słońca | stań w plamie słońca pod dachem (słońce przez okno - `/demo okno`) |
 | bardzo rzadkie | Dzień jak noc | zobacz pełne zaćmienie słońca |

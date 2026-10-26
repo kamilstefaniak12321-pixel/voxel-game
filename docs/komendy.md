@@ -106,11 +106,14 @@ Współrzędne można podawać względem gracza: `~` (tu, gdzie stoję),
 | `/horyzont szczegoly <niskie \| srednie \| wysokie>` | wielkość kratek dalekiego terenu (to samo co w ustawieniach) |
 | `/horyzont lod` | koloruje kafelki dalekiego terenu według wielkości kratki (czerwone - 1 blok, pomarańczowe - 2, żółte - 4...) |
 | `/horyzont odswiez` | buduje daleki teren od nowa |
-| `/teren` | teren pod graczem: wysokość, pas (morze, nizina, wyżyna, góry), forma terenu, powierzchnia, nachylenie i pola generatora |
+| `/teren` | teren pod graczem: wysokość, pas (morze, nizina, wyżyna, góry), forma terenu, powierzchnia, biom, nachylenie i pola generatora |
+| `/biom` | biom pod graczem (teren realistyczny): co tam rośnie, temperatura, wilgotność, ile biomów odwiedzone (`docs/biomy.md`) |
+| `/biom lista` | wszystkie biomy (✔ - odwiedzone) i słowa do szukania |
+| `/biom znajdz <biom> [promien] [tp]` | najbliższy biom, np. `hala`, `mokradla`, `bor`, `snieg`, `plaza`; `tp` - od razu teleport |
 | `/teren <x> <z>` | to samo dla dowolnego miejsca (`~` = względem gracza) |
 | `/teren formy` | lista form terenu do szukania |
 | `/teren znajdz <forma> [promien] [tp]` | najbliższa forma terenu (np. `turnia`, `kotlina`, `plaskowyz`, `wyzyna`); `tp` - od razu teleport |
-| `/mapa [warstwa] [skala]` | mapa terenu z góry (klawisz **M**); warstwy: `teren`, `formy`, `pasy`, `skaly` (skała na wierzchu albo pod glebą), `przekroj` (przekrój pionowy w kierunku patrzenia, domyślnie 1 blok na punkt), `lasy` (gatunek drzew, który przeważa, i gęstość lasu), `kontynent`, `wypietrzenie`, `erozja`, `grzbiety`, `gory`, `wyzyny`, `temperatura`, `wilgotnosc`; skala = bloki na punkt (1-32) |
+| `/mapa [warstwa] [skala]` | mapa terenu z góry (klawisz **M**); warstwy: `teren`, `formy`, `pasy`, `skaly` (skała na wierzchu albo pod glebą), `przekroj` (przekrój pionowy w kierunku patrzenia, domyślnie 1 blok na punkt), `lasy` (gatunek drzew, który przeważa, i gęstość lasu), `biomy` (biomy z legendą), `kontynent`, `wypietrzenie`, `erozja`, `grzbiety`, `gory`, `wyzyny`, `temperatura`, `wilgotnosc`; skala = bloki na punkt (1-32) |
 | `/mapa wyl` | zamyka mapę |
 | `/skaly` | skały w kolumnie pod graczem, od góry (np. trawa 1, ziemia 3, piaskowiec 12...) |
 | `/skaly statystyki [promien]` | udział skał w okolicy (domyślnie 128 bloków) i ile lepidolitu wychodzi na wierzch |

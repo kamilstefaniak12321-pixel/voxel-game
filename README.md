@@ -98,7 +98,7 @@ w pauzie i na ekranie tytułowym) - z datą i nazwą świata. Księga jest
 wspólna dla wszystkich światów. Niektóre osiągnięcia są sekretne -
 przed zdobyciem widać tylko znak zapytania.
 
-Są 34 osiągnięcia (od pierwszego zniszczonego bloku po
+Jest 37 osiągnięć (od pierwszego zniszczonego bloku po
 legendarne *Problem spadł z nieba*). Nowa rzecz w grze = nowe
 osiągnięcie - jak je dopisać, zdarzenia z gry i pełna lista (spoilery):
 `docs/osiagniecia.md`. Test: `/osiagniecia` (lista), `/osiagniecia pokaz
@@ -237,16 +237,23 @@ Logika: `src/crafting/Crafting.js`.
 Oprócz trawy, ziemi, piasku i skał są:
 
 - **ziemie:** czarnoziem (`humus`), ziemia kamienista (`coarse_dirt`),
-  ściółka leśna (`forest_floor`), błoto (`mud`), glina (`clay`)
-  i żwir (`gravel`) - na razie tylko w trybie kreatywnym (na ziemiach
-  rosną rośliny, na żwirze nie),
+  ściółka leśna (`forest_floor`), mech (`moss`), błoto (`mud`), glina
+  (`clay`) i żwir (`gravel`) - w terenie realistycznym w biomach (na
+  ziemiach rosną rośliny, na żwirze nie), czarnoziem tylko w trybie
+  kreatywnym,
+- **śnieg** (`snow`, na szczytach) i warstwa śniegu (`snow_layer`),
 - **rośliny:** krótka i wysoka trawa, paproć, koniczyna, pokrzywa,
-  babka zwyczajna oraz kwiaty: mak, chaber, rumianek, mniszek,
-- **krzaki owocowe:** truskawka, jeżyna, papryczka chili i leszczyna
-  (orzechy laskowe) - opis niżej,
+  babka zwyczajna, kwiaty: mak, chaber, rumianek, mniszek, krokus,
+  a także wrzos, trzcina, piaskownica (trawa wydmowa) i kępki mchu,
+- **krzaki owocowe:** truskawka, jeżyna, papryczka chili, leszczyna
+  (orzechy laskowe) i borówka - opis niżej,
 - **drzewa:** świerk, sosna, buk, lipa, dąb i brzoza - pnie, deski,
-  liście, sadzonki i dodatki; w terenie realistycznym rosną lasy - opis
-  niżej i w `docs/drzewa.md`.
+  liście, sadzonki i dodatki - oraz z paczek drzew: jabłoń, olcha
+  i wierzba; w terenie realistycznym rosną lasy - opis niżej
+  i w `docs/drzewa.md`.
+
+Co gdzie rośnie, zależy od **biomu** (niżej, *Świat*: łąka, lasy,
+hala, mokradła...).
 
 Rośliny są skrzyżowanymi płaszczyznami z teksturą (model `cross`),
 nie mają kolizji, nie zasłaniają światła i lekko kołyszą się na wietrze
@@ -257,16 +264,18 @@ blok pod rośliną, roślina też znika. Trawę i paproć można zastąpić
 stawianym blokiem (jak w Minecrafcie). Celownik trafia w roślinę, więc
 żeby rozkopać ziemię pod nią, najpierw niszczysz roślinę.
 
-W terenie realistycznym na trawie rośnie trawa (od rzadkiej do gęstych
-łąk), kępy kwiatów zwykle jednego gatunku, paprocie w wilgotnym
-klimacie i na wyżynach, a pojedynczo zioła i mniszki - liczby do
-strojenia: `PLANTS` w `src/world/terrain/TerrainShape.js`. Rośliny
+W terenie realistycznym rośliny zależą od biomu: na łąkach trawa (od
+rzadkiej do gęstych łąk), kępy kwiatów zwykle jednego gatunku i zioła,
+w borach wrzos i borówki, na halach krokusy, na mokradłach trzcina, na
+wydmach piaskownica... - `BIOMES` w `src/world/terrain/Biomes.js`
+(liczby wspólne: `PLANTS` w `src/world/terrain/TerrainShape.js`). Rośliny
 rysują się do `PLANT_VIEW_DISTANCE` bloków od gracza (`src/config.js`).
 
 ### Krzaki owocowe i orzechy
 
-Cztery gatunki: **truskawka**, **jeżyna**, **papryczka chili**
-i **leszczyna** (orzechy laskowe). Każdy rośnie w czterech etapach:
+Pięć gatunków: **truskawka**, **jeżyna**, **papryczka chili**,
+**leszczyna** (orzechy laskowe) i **borówka** (niska, z borów
+i świerczyn). Każdy rośnie w czterech etapach:
 
 | Etap | Blok (np. truskawka) | Wygląd |
 |---|---|---|
@@ -276,7 +285,7 @@ i **leszczyna** (orzechy laskowe). Każdy rośnie w czterech etapach:
 | pełen owoców | `strawberry_bush_full` | krzak obsypany owocami |
 
 (jeżyna - `blackberry_...`, papryczka chili - `chili_...`, leszczyna -
-`hazel_...`)
+`hazel_...`, borówka - `blueberry_...`)
 
 - **Wzrost:** krzaki same przechodzą do następnego etapu - średnio co
   `BUSH_GROWTH_SECONDS` sekund (`src/config.js`, teraz 150 s), każdy
@@ -293,11 +302,14 @@ i **leszczyna** (orzechy laskowe). Każdy rośnie w czterech etapach:
   (w przygodzie zużywa jeden owoc). Orzech daje leszczynę.
 - **Niszczenie:** zniszczony krzak (przygoda) daje sadzonkę - można go
   przesadzić - i owoce, które na nim były.
-- **W świecie:** w terenie realistycznym na trawie rosną dzikie zarośla
-  (zwykle jednego gatunku) - w różnych etapach, najczęściej z owocami.
-  Liczby do strojenia: `bush...` w `PLANTS` (`TerrainShape.js`).
+- **W świecie:** w terenie realistycznym rosną dzikie zarośla (zwykle
+  jednego gatunku, jakie - zależy od biomu: na łąkach truskawki,
+  papryczki i jeżyny, w lasach liściastych leszczyna, w borach
+  i świerczynach borówki) - w różnych etapach, najczęściej z owocami.
+  Liczby do strojenia: `bush...` w `PLANTS` (`TerrainShape.js`) i `bushes`
+  biomu w `Biomes.js`.
 - **Owoce** to pierwsze **przedmioty**, które nie są blokami: truskawki,
-  jeżyny, papryczki chili, orzech laskowy (`src/items/ItemRegistry.js`). Leżą
+  jeżyny, papryczki chili, orzech laskowy, borówki (`src/items/ItemRegistry.js`). Leżą
   w ekwipunku jak bloki (stosy po 64), w ręce postaci widać je jako
   płaski obrazek. Na razie służą do sadzenia - jedzenie przyjdzie
   z głodem.
@@ -323,9 +335,10 @@ i **brzoza brodawkowata**. Wszystko o nich: `docs/drzewa.md`.
   żołędzie, kora brzozowa, a do tego **siekiera** (PPM na pniu -
   okorowany pień; z brzozy kora).
 - **W świecie** (teren realistyczny): lasy na ok. 1/3 lądu - gatunek
-  zależy od klimatu: świerki w górach i w chłodzie, sosny tam, gdzie
-  sucho, buki na wyżynach, lipy i dęby w cieple na nizinach, brzozy
-  nisko i wilgotno. Każdy gatunek ma swój kształt (stożek świerka,
+  zależy od biomu: świerczyna w górach i w chłodzie, bór sosnowy tam,
+  gdzie sucho, buczyna na wyżynach, las liściasty (dęby i lipy)
+  w cieple na nizinach, brzezina nisko i wilgotno, olchy i wierzby na
+  mokradłach. Każdy gatunek ma swój kształt (stożek świerka,
   parasol sosny, szeroka korona dębu z konarami...), drzewa są różnej
   wielkości i pasują na granicach chunków. Liście mają prześwity, a pod
   koroną jest cień. Z daleka las widać jako korony drzew.
@@ -649,9 +662,9 @@ bez zmian, wyżej jest po prostu powietrze).
   **Rzeki** spływają z gór i wyżyn zawsze w dół doliną, łączą się
   w większe i uchodzą do morza albo do **jezior** (jeziora są
   w zagłębieniach, także w górach, z płaską taflą na poziomie przelewu);
-  na płaskim meandrują, a ich **nurt** niesie gracza. To dopiero
-  początek - kolejne aktualizacje będą ten teren zmieniać (rzeki główne,
-  strumyki, biomy...), więc w takim świecie nowe chunki mogą wyglądać
+  na płaskim meandrują, a ich **nurt** niesie gracza. Na tym wszystkim
+  są **biomy** (niżej). Kolejne aktualizacje będą ten teren zmieniać
+  (rzeki główne, strumyki...), więc w takim świecie nowe chunki mogą wyglądać
   inaczej niż wcześniej (Twoje budowle zostają). Woda jest
   półprzezroczysta i da się w niej pływać (niżej: *Woda*); na razie się
   nie rozlewa.
@@ -662,6 +675,20 @@ bez zmian, wyżej jest po prostu powietrze).
 ![Rzeka wpadająca do jeziora, jezioro i sieć rzek na mapie](docs/rzeki.jpg)
 
 Rzeki i jeziora (jak powstają, liczby, komendy `/rzeka`): `docs/rzeki.md`.
+
+**Biomy** (teren realistyczny): **łąka**, **las liściasty** (dęby,
+lipy), **buczyna**, **brzezina**, **bór sosnowy** (wrzos, borówki),
+**świerczyna** (mech), **hala** (krokusy), **skaliste góry** (piargi,
+płaty śniegu), **ośnieżone szczyty**, **mokradła** (błoto, trzcina,
+olchy i wierzby), **plaża i wydmy** (piaskownica). Biom wynika
+z wysokości, klimatu (temperatura i wilgotność), wody w pobliżu i pola
+lasów; granice są poszarpane, a drzewa na nich się przeplatają. Trawa
+lekko zmienia kolor z klimatem (cieplej - żółciej, chłodniej -
+sinawo). Komendy: `/biom` (gdzie jestem i co tu rośnie), `/biom lista`,
+`/biom znajdz hala tp`, `/mapa biomy`. Wszystko o biomach:
+`docs/biomy.md`.
+
+![Biomy](docs/biomy.jpg)
 Plan rozdziału o terenie (etapy, formy terenu, rzeki, biomy) i jak
 działa generator: `docs/generator-terenu.md`. Teren najłatwiej
 oglądać na **mapie** (klawisz **M** albo `/mapa formy 16`) i komendą

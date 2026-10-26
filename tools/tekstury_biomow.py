@@ -64,12 +64,12 @@ def snow():
     r = rng(901)
     height = fbm(r, ((2, 0.55), (4, 0.3), (8, 0.15)))
     tone = 0.62 + light(height, 1.1) + (height - 0.5) * 0.2
-    palette = [(178, 196, 222), (198, 214, 236), (216, 228, 244), (230, 238, 248), (242, 246, 252), (250, 252, 255)]
+    palette = [(200, 214, 234), (216, 228, 244), (228, 236, 248), (238, 243, 251), (246, 249, 253), (252, 253, 255)]
     rgb = paint(palette, np.clip(tone, 0, 1), 2)
     for x, y in scatter(r, 5, 4.5):
         rgb[int(y), int(x)] = (255, 255, 255)
-        rgb[(int(y) + 1) % N, int(x)] = rgb[(int(y) + 1) % N, int(x)] * 0.96
-    return match(rgb, (230, 237, 247))
+        rgb[(int(y) + 1) % N, int(x)] = rgb[(int(y) + 1) % N, int(x)] * 0.97
+    return match(rgb, (240, 245, 251))
 
 
 MOSS = (82, 124, 44)

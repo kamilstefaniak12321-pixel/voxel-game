@@ -64,8 +64,8 @@ Tekstury → *Rozdzielczość*, `/tekstury rozdzielczosc`):
   i ponowne uruchomienie gry).
 
 Dlaczego nie więcej: wszystkie tekstury leżą w jednym obrazku (atlas
-16 x 11 kafelków) na karcie graficznej. Przy 512 x 512 na kafelek to
-8192 x 5632 pikseli - ok. 250 MB pamięci karty z mipmapami; 1024 x 1024
+16 x 12 kafelków) na karcie graficznej. Przy 512 x 512 na kafelek to
+8192 x 6144 pikseli - ok. 270 MB pamięci karty z mipmapami; 1024 x 1024
 to już prawie 1 GB i obrazek 16384 pikseli szerokości (największy, jaki
 przyjmuje wiele kart). Gra sama sprawdza, ile karta przyjmie
 (`maxResolution` w `TexturePacks.js`), i nie proponuje więcej.

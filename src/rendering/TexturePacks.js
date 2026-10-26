@@ -44,8 +44,8 @@ const ACTIVE = 'aktywna';
 const SETTINGS_KEY = 'voxel-game-settings';
 
 // Rozdzielczości w grze (piksele na blok). Większe zajmują dużo pamięci
-// karty graficznej: atlas 16 x 11 kafelków po 512 px to 8192 x 5632
-// pikseli - ok. 250 MB z mipmapami; na telefonie najwyżej
+// karty graficznej: atlas 16 x 12 kafelków po 512 px to 8192 x 6144
+// pikseli - ok. 270 MB z mipmapami; na telefonie najwyżej
 // RESOLUTION_MAX_PHONE.
 export const RESOLUTIONS = [16, 32, 64, 128, 256, 512];
 

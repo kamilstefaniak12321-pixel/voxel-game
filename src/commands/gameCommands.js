@@ -68,6 +68,8 @@ import {
 
 import { TEXTS } from '../ui/texts.js';
 
+import { compareVersions, megabytes } from '../app/AndroidUpdates.js';
+
 import { LANDFORMS, RELIEFS } from '../world/terrain/landforms.js';
 
 import { terrainName } from '../world/terrain/generators.js';
@@ -466,6 +468,9 @@ function itemArgument(text) {
 
 
 const ON_WORDS = ['wl', 'on', 'tak', '1', 'true'];
+
+// /aktualizacja.
+const UPDATE_WORDS = ['sprawdz', 'pobierz', 'instaluj', 'wroc'];
 const OFF_WORDS = ['wyl', 'off', 'nie', '0', 'false'];
 
 
@@ -4371,6 +4376,150 @@ export const GAME_COMMANDS = [
 
         complete(args) {
             return args.length === 1 ? ['wl', 'wyl'] : [];
+        }
+    },
+
+
+    {
+        name: 'aktualizacja',
+        aliases: ['aktualizacje', 'update', 'wersja'],
+        usage: '/aktualizacja [sprawdz | pobierz | instaluj | wroc]',
+        description: 'Wersja gry i aktualizacje aplikacji (komputer, telefon): stan; sprawdz - sprawdź wydania teraz; pobierz - pobierz nową aplikację (telefon); instaluj - nowa wersja od razu; wroc - wersja wbudowana w aplikację (telefon).',
+
+        run(args, { updates, chat }) {
+
+            const word = simplify(args[0] ?? '');
+
+            if (args[0] !== undefined && !UPDATE_WORDS.includes(word)) {
+                throw usageError(this);
+            }
+
+
+            // Przeglądarka.
+
+            if (!updates) {
+
+                if (args[0] === undefined) {
+                    return 'Gra w przeglądarce - działa ta wersja, którą podaje strona (odświeżenie strony = najnowsza). ' +
+                        'Same aktualizują się aplikacje: na komputer (docs/aplikacja.md) i na telefon (docs/telefon.md).';
+                }
+
+                throw new CommandError('Aktualizacje są tylko w aplikacji na komputer i na telefon.');
+
+            }
+
+
+            // Aplikacja na komputer (electron-updater - sprawdza przy starcie).
+
+            if (updates.platform === 'desktop') {
+
+                const status = updates.status();
+
+                if (word === 'instaluj') {
+
+                    if (status?.state !== 'ready') {
+                        throw new CommandError('Nie ma pobranej aktualizacji. Aplikacja sprawdza wydania przy każdym uruchomieniu i sama pobiera nową wersję.');
+                    }
+
+                    updates.install();
+
+                    return 'Zapisuję świat, zamykam grę i instaluję nową wersję...';
+
+                }
+
+                if (word !== '') {
+                    throw new CommandError('Aplikacja na komputer sprawdza i pobiera aktualizacje sama, przy każdym uruchomieniu (gotową - /aktualizacja instaluj).');
+                }
+
+                const state =
+                    status?.state === 'downloading' ? `pobieram wersję ${status.version}... ${status.percent ?? 0}%` :
+                    status?.state === 'ready' ? `nowa wersja ${status.version} gotowa - zainstaluje się po zamknięciu gry (od razu: /aktualizacja instaluj)` :
+                    status?.state === 'error' ? 'nie udało się pobrać aktualizacji (spróbuje przy następnym uruchomieniu)' :
+                    'nowszej wersji nie ma (sprawdzane przy uruchomieniu)';
+
+                return `Aplikacja na komputer, wersja ${updates.version}: ${state}.`;
+
+            }
+
+
+            // Aplikacja na telefon (src/app/AndroidUpdates.js).
+
+            const updater = updates.updater;
+
+            const info = updater.info;
+
+            if (info?.wylaczone) {
+                return `Wersja testowa aplikacji (${updater.version}) się nie aktualizuje - nowe testowe .apk są w GitHub Actions (docs/telefon.md).`;
+            }
+
+            const downloaded = info?.apk && updater.version && compareVersions(updater.version, info.apk) > 0;
+
+            if (word === '') {
+
+                const checked = updater.checkedAt
+                    ? `sprawdzone ${Math.round((Date.now() - updater.checkedAt) / 60000)} min temu`
+                    : updater.lastError ? `nie udało się sprawdzić: ${updater.lastError}` : 'jeszcze nie sprawdzone';
+
+                const app = downloaded
+                    ? `gra ${updater.version} (pobrana), aplikacja ${info.apk}`
+                    : `wersja ${updater.version}`;
+
+                return `Aplikacja na telefon, ${app}. ${updater.describe()} (${checked}). Dalej: /aktualizacja sprawdz | pobierz | instaluj | wroc`;
+
+            }
+
+            if (word === 'sprawdz') {
+
+                updater.check()
+                    .then((text) => chat.print(text, 'success'))
+                    .catch((error) => chat.print(`Nie udało się sprawdzić wydań: ${error?.message ?? error}`, 'error'));
+
+                return 'Sprawdzam wydania na GitHubie...';
+
+            }
+
+            if (word === 'pobierz') {
+
+                if (updater.status?.state !== 'available') {
+                    throw new CommandError(`Nie ma aplikacji do pobrania. ${updater.describe()}`);
+                }
+
+                updater.download();
+
+                return `Pobieram aplikację ${updater.status.version} (${megabytes(updater.latest?.apk?.size)} MB)...`;
+
+            }
+
+            if (word === 'instaluj') {
+
+                const status = updater.status;
+
+                if (status?.state !== 'ready') {
+                    throw new CommandError(`Nie ma gotowej aktualizacji. ${updater.describe()}`);
+                }
+
+                updater.install().catch((error) => chat.print(`Nie udało się: ${error?.message ?? error}`, 'error'));
+
+                return status.kind === 'web'
+                    ? `Zapisuję świat i uruchamiam wersję ${status.version}...`
+                    : 'Otwieram instalację aplikacji (Android zapyta o zgodę)...';
+
+            }
+
+            // wroc
+
+            if (!downloaded) {
+                throw new CommandError(`Gra już działa na plikach wbudowanych w aplikację (${updater.version}).`);
+            }
+
+            updater.revert().catch((error) => chat.print(`Nie udało się: ${error?.message ?? error}`, 'error'));
+
+            return `Zapisuję świat i wracam do wersji ${info.apk} wbudowanej w aplikację (pobrana ${updater.version} nie będzie już pobierana)...`;
+
+        },
+
+        complete(args) {
+            return args.length === 1 ? UPDATE_WORDS : [];
         }
     },
 

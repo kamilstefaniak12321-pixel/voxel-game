@@ -19,9 +19,12 @@
 # Android (job "android", po Windowsie): aplikacja z folderu android/
 # (Capacitor), pliki gry kopiowane przed budowaniem (npm run
 # android:sync). Z sekretami ANDROID_KEYSTORE i ANDROID_KEYSTORE_PASSWORD
-# powstaje wydanie podpisane kluczem gry (Voxel-Game-<wersja>-android.apk,
-# trafia do wydania obok instalatora - wydanie bez .apk jest uzupełniane).
-# Bez nich - tylko wersja testowa "Voxel Game (test)" w Artifacts.
+# powstaje wydanie podpisane kluczem gry - do wydania obok instalatora
+# trafiają: Voxel-Game-<wersja>-android.apk, paczka z plikami gry
+# Voxel-Game-<wersja>-android-www.zip i android-latest.json (z niego
+# zainstalowana aplikacja wie, że jest aktualizacja - jak latest.yml na
+# komputerze); wydanie bez któregoś z nich jest uzupełniane. Bez
+# sekretów - tylko wersja testowa "Voxel Game (test)" w Artifacts.
 # Opis: docs/telefon.md.
 #
 # Instalator buduje electron-builder (bez wysyłania), a do wydania
@@ -63,6 +66,7 @@ jobs:
       repo: ${{ steps.check.outputs.repo }}
       exe: ${{ steps.check.outputs.exe }}
       apk: ${{ steps.check.outputs.apk }}
+      www: ${{ steps.check.outputs.www }}
       build: ${{ steps.check.outputs.build }}
       publish: ${{ steps.check.outputs.publish }}
       build_android: ${{ steps.check.outputs.build_android }}
@@ -82,12 +86,14 @@ jobs:
           EXE=$(node -p 'const p = require("./package.json"); p.build.nsis.artifactName.replace("${version}", p.version).replace("${ext}", "exe")')
 
           APK="Voxel-Game-$VERSION-android.apk"
+          WWW="Voxel-Game-$VERSION-android-www.zip"
 
           {
             echo "version=$VERSION"
             echo "repo=$REPO"
             echo "exe=$EXE"
             echo "apk=$APK"
+            echo "www=$WWW"
           } >> "$GITHUB_OUTPUT"
 
           # Android: wydanie tylko z kluczem do podpisu (sekret).
@@ -135,7 +141,11 @@ jobs:
               console.log(need.filter((name) => !names.includes(name)).join(", "));
             ')
 
-            HAS_APK=$(APK="$APK" node -p 'require("./release.json").assets.some((asset) => asset.name === process.env.APK)')
+            # Android: aplikacja, paczka plików gry i android-latest.json.
+            HAS_APK=$(APK="$APK" WWW="$WWW" node -p '
+              const names = require("./release.json").assets.map((asset) => asset.name);
+              [process.env.APK, process.env.WWW, "android-latest.json"].every((name) => names.includes(name))
+            ')
 
             if [ -z "$MISSING" ]; then
               echo "Wersja $VERSION jest już wydana w $REPO (komplet plików instalatora)."
@@ -148,11 +158,11 @@ jobs:
             fi
 
             if [ "$HAS_APK" = "true" ]; then
-              echo "Aplikacja na Androida ($APK) też jest w wydaniu."
+              echo "Aplikacja na Androida ($APK, $WWW, android-latest.json) też jest w wydaniu."
               echo "build_android=false" >> "$GITHUB_OUTPUT"
               echo "publish_android=false" >> "$GITHUB_OUTPUT"
             elif [ "$SIGNED" = "true" ]; then
-              echo "W wydaniu nie ma jeszcze $APK - aplikacja na Androida zostanie zbudowana i dosłana."
+              echo "W wydaniu brakuje plików aplikacji na Androida ($APK, $WWW, android-latest.json) - zostanie zbudowana i dosłana."
               echo "build_android=true" >> "$GITHUB_OUTPUT"
               echo "publish_android=true" >> "$GITHUB_OUTPUT"
             else
@@ -248,7 +258,7 @@ jobs:
         run: |
           TAG="v$VERSION"
           FILES=("dist/$EXE" "dist/$EXE.blockmap" "dist/latest.yml")
-          NOTES="Voxel Game $VERSION - Windows: pobierz $EXE i uruchom (zainstalowana gra aktualizuje się sama). Android (telefon, tablet): pobierz na telefonie Voxel-Game-$VERSION-android.apk i otwórz - nowa wersja instaluje się na starej, światy zostają."
+          NOTES="Voxel Game $VERSION - Windows: pobierz $EXE i uruchom (zainstalowana gra aktualizuje się sama). Android (telefon, tablet): pobierz na telefonie Voxel-Game-$VERSION-android.apk i otwórz - nowa wersja instaluje się na starej, światy zostają; zainstalowana aplikacja (od 0.19.0) też aktualizuje się sama."
 
           # Uruchamia komendę; przy błędzie pokazuje jej wynik w adnotacji.
           run() {
@@ -306,6 +316,7 @@ jobs:
       VERSION: ${{ needs.wersja.outputs.version }}
       REPO: ${{ needs.wersja.outputs.repo }}
       APK: ${{ needs.wersja.outputs.apk }}
+      WWW: ${{ needs.wersja.outputs.www }}
     steps:
       - uses: actions/checkout@v5
 
@@ -380,6 +391,42 @@ jobs:
 
           echo "::notice title=Aplikacja ($KIND)::$OUT ($SIZE MB)%0A$BADGING%0A$CERT"
 
+      # Aktualizacja dla zainstalowanej aplikacji (src/app/AndroidUpdates.js,
+      # AktualizacjePlugin.java): paczka z plikami gry dokładnie takimi,
+      # jak w aplikacji (assets/public, z wersja.json - wersja i odcisk
+      # części na telefon) i android-latest.json - co jest w wydaniu
+      # (nazwy, rozmiary, SHA-256).
+      - name: Paczka aktualizacji
+        env:
+          PUBLIC: android/app/src/main/assets/public
+        run: |
+          if [ ! -f "$PUBLIC/wersja.json" ]; then
+            echo "::error title=Paczka aktualizacji::Brak $PUBLIC/wersja.json (tools/android-www.mjs)."
+            exit 1
+          fi
+
+          rm -f "dist/$WWW"
+          (cd "$PUBLIC" && zip -q -r -X "$GITHUB_WORKSPACE/dist/$WWW" .)
+
+          node -e '
+            const fs = require("fs");
+            const crypto = require("crypto");
+            const env = process.env;
+            const file = (name) => {
+              const data = fs.readFileSync("dist/" + name);
+              return { file: name, size: data.length, sha256: crypto.createHash("sha256").update(data).digest("hex") };
+            };
+            const info = JSON.parse(fs.readFileSync(env.PUBLIC + "/wersja.json", "utf8"));
+            if (info.version !== env.VERSION) {
+              throw new Error("wersja.json: " + info.version + " zamiast " + env.VERSION);
+            }
+            const latest = { version: env.VERSION, native: info.native, www: file(env.WWW), apk: file(env.OUT) };
+            fs.writeFileSync("dist/android-latest.json", JSON.stringify(latest, null, 2) + "\n");
+          '
+
+          SIZE=$(( $(stat -c %s "dist/$WWW") / 1024 ))
+          echo "::notice title=Paczka aktualizacji::$WWW ($SIZE kB)%0A$(sed -e 's/%/%25/g' dist/android-latest.json | awk 'BEGIN { ORS = "%0A" } { print }')"
+
       # Jak instalator wyżej: 2 dni, brak miejsca nie zatrzymuje wydania.
       - uses: actions/upload-artifact@v6
         continue-on-error: true
@@ -397,7 +444,7 @@ jobs:
         run: |
           TAG="v$VERSION"
           EXE=$(node -p 'const p = require("./package.json"); p.build.nsis.artifactName.replace("${version}", p.version).replace("${ext}", "exe")')
-          NOTES="Voxel Game $VERSION - Windows: pobierz $EXE i uruchom (zainstalowana gra aktualizuje się sama). Android (telefon, tablet): pobierz na telefonie $APK i otwórz - nowa wersja instaluje się na starej, światy zostają."
+          NOTES="Voxel Game $VERSION - Windows: pobierz $EXE i uruchom (zainstalowana gra aktualizuje się sama). Android (telefon, tablet): pobierz na telefonie $APK i otwórz - nowa wersja instaluje się na starej, światy zostają; zainstalowana aplikacja (od 0.19.0) też aktualizuje się sama."
 
           run() {
             if ! "$@" > out.log 2>&1; then
@@ -408,18 +455,24 @@ jobs:
             cat out.log
           }
 
+          # Najpierw aplikacja i paczka, na końcu android-latest.json - gdy
+          # zainstalowana gra go zobaczy, pliki już są.
+
           if gh release view "$TAG" --repo "$REPO" > /dev/null 2>&1; then
-            echo "Wydanie $TAG jest - dosyłam $APK."
-            run gh release upload "$TAG" "dist/$APK" --repo "$REPO" --clobber
+            echo "Wydanie $TAG jest - dosyłam $APK i $WWW."
+            run gh release upload "$TAG" "dist/$APK" "dist/$WWW" --repo "$REPO" --clobber
             run gh release edit "$TAG" --repo "$REPO" --notes "$NOTES"
           else
             echo "Nowe wydanie $TAG (bez instalatora dla Windowsa)."
-            run gh release create "$TAG" "dist/$APK" --repo "$REPO" --title "$TAG" --notes "$NOTES"
+            run gh release create "$TAG" "dist/$APK" "dist/$WWW" --repo "$REPO" --title "$TAG" --notes "$NOTES"
           fi
+
+          run gh release upload "$TAG" dist/android-latest.json --repo "$REPO" --clobber
 
           URL="https://github.com/$REPO/releases/download/$TAG/$APK"
           CODE=$(curl -s -L -o /dev/null -r 0-1023 -w "%{http_code}" "$URL")
-          echo "::notice title=Wydanie (Android)::$TAG: $APK%0APobieranie bez logowania: HTTP $CODE"
+          LATEST=$(curl -s -L "https://github.com/$REPO/releases/latest/download/android-latest.json" | node -e 'let t = ""; process.stdin.on("data", (d) => t += d).on("end", () => { try { console.log(JSON.parse(t).version); } catch { console.log("brak"); } })')
+          echo "::notice title=Wydanie (Android)::$TAG: $APK, $WWW, android-latest.json%0APobieranie bez logowania: HTTP $CODE%0Areleases/latest/download/android-latest.json: wersja $LATEST"
 
           if [ "$CODE" != "200" ] && [ "$CODE" != "206" ]; then
             echo "::error title=Pobieranie::Aplikacji nie da się pobrać: $URL (HTTP $CODE)"

@@ -119,6 +119,7 @@ Współrzędne można podawać względem gracza: `~` (tu, gdzie stoję),
 | `/skaly przekroj` | przekrój pionowy terenu (to samo co `/mapa przekroj`) |
 | `/ziemniak [wl \| wyl]` | tryb ziemniaka - wszystko działa, ale prościej i szybciej (słaby komputer, brak karty graficznej) |
 | `/dotyk [wl \| wyl]` | sterowanie dotykowe (telefon, tablet): czy włączone, ekran i rozdzielczość; `wl` / `wyl` - przełącza (zapis świata i odświeżenie strony) - `docs/telefon.md` |
+| `/aktualizacja [sprawdz \| pobierz \| instaluj \| wroc]` | wersja gry i aktualizacje aplikacji (komputer, telefon): stan; `sprawdz` - sprawdź wydania teraz (telefon); `pobierz` - nowa aplikacja na danych komórkowych; `instaluj` - nowa wersja od razu; `wroc` - wersja wbudowana w aplikację (telefon) - `docs/telefon.md`, `docs/aplikacja.md` |
 | `/ustaw` | lista ustawień z wartościami |
 | `/ustaw <ustawienie> <wartość>` | zmienia ustawienie, np. `/ustaw zasieg 256`, `/ustaw jasnosc 50`, `/ustaw licznik-fps wl` |
 | `/ustaw domyslne` | przywraca domyślne ustawienia |

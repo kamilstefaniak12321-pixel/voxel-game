@@ -29,10 +29,42 @@ i przyciski nawigacji wysuwają się po przeciągnięciu palcem od
 krawędzi), ekran nie gaśnie w trakcie gry, a przycisk **wstecz** robi
 pauzę. Wyjście do innej aplikacji = pauza i zapis świata.
 
-**Nowa wersja:** pobierz nowy `.apk` z wydań i zainstaluj tak samo -
-instaluje się na poprzedniej, **światy, ustawienia i osiągnięcia
-zostają**. (Sama się jeszcze nie aktualizuje - patrz *Do zrobienia*.)
-Wersja jest w *Ustawienia → Aplikacje → Voxel Game* na telefonie.
+**Nowa wersja:** od wersji 0.19.0 aplikacja **aktualizuje się sama**
+(niżej, *Aktualizacje*). Starszą (do 0.18.0) trzeba raz zaktualizować
+ręcznie: pobierz nowy `.apk` z wydań i zainstaluj tak samo - instaluje
+się na poprzedniej, **światy, ustawienia i osiągnięcia zostają**.
+Wersja gry jest na ekranie tytułowym (lewy dolny róg) i pod
+`/aktualizacja`.
+
+### Aktualizacje
+
+Jak w aplikacji na komputer: przy każdym uruchomieniu (i co 3 godziny)
+gra sprawdza wydania na GitHubie i sama pobiera nową wersję w tle. Na
+ekranie tytułowym, w lewym dolnym rogu, widać wersję i stan aktualizacji.
+Są dwa rodzaje:
+
+- **Nowa wersja gry** (zwykle - zmiany w samej grze): pobierają się tylko
+  pliki gry (ok. 2 MB) i **włączają się przy następnym uruchomieniu**
+  gry - albo od razu: *Uruchom ponownie teraz* (świat zapisuje się
+  przedtem). Nic nie trzeba instalować ani zatwierdzać.
+- **Nowa aplikacja** (rzadko - gdy zmieni się część na telefon: kod
+  w `android/`, Capacitor): przez Wi-Fi pobiera się sama, na danych
+  komórkowych - po stuknięciu *Pobierz* (ok. 6 MB). Potem *Zainstaluj* -
+  Android zapyta o zgodę (po cichu instalować nie pozwala). Za pierwszym
+  razem otworzą się ustawienia: **zezwól Voxel Game na instalowanie
+  aplikacji**, wróć i stuknij *Zainstaluj* jeszcze raz. Światy zostają.
+
+Gdy nowa wersja gry się nie uruchomi (np. błąd w niej), po dwóch
+nieudanych uruchomieniach aplikacja sama wraca do wersji wbudowanej
+i tej wersji już nie pobiera. Ręcznie: `/aktualizacja wroc`.
+
+Bez internetu gra działa normalnie - sprawdzi wydania następnym razem.
+Wersja testowa (*Voxel Game (test)*) się nie aktualizuje - nowe testowe
+`.apk` są w Actions.
+
+Komenda **`/aktualizacja`** - wersja i stan; `sprawdz` (sprawdź wydania
+teraz), `pobierz` (nowa aplikacja na danych komórkowych), `instaluj`
+(nowa wersja od razu), `wroc` (wersja wbudowana w aplikację).
 
 **Zapisy:** światy są w danych aplikacji (osobno od przeglądarki
 telefonu i od komputera). Odinstalowanie aplikacji je usuwa.
@@ -99,6 +131,29 @@ potem base64 (PowerShell: `[Convert]::ToBase64String([IO.File]::ReadAllBytes("vo
   instalatora; wydanie bez `.apk` jest uzupełniane.
 - W grze: `window.Capacitor` = aplikacja (`nativeApp` w `main.js`) - bez
   przycisku pełnego ekranu, osiągnięcie *Lokator z ikonką*.
+- **Aktualizacje**:
+  - `android/app/src/main/java/pl/kamil/voxelgame/AktualizacjePlugin.java` -
+    wtyczka Capacitora *Aktualizacje*: sprawdza `android-latest.json`
+    w najnowszym wydaniu, pobiera (z kontrolą rozmiaru i SHA-256)
+    i rozpakowuje pliki gry do `files/gra/<wersja>/`, a Capacitor podaje
+    grę z tego folderu zamiast z wbudowanych plików (to samo, czego
+    używa przy aktualizacjach "na żywo" - `serverBasePath`); pobiera
+    i otwiera instalację `.apk`; pilnuje, żeby zepsuta wersja nie
+    zablokowała gry (próba, powrót). Zarejestrowana w `MainActivity`.
+  - `src/app/AndroidUpdates.js` - kiedy co pobrać i co pokazać w menu
+    (`Menu.setUpdateStatus`) i na czacie; `/aktualizacja`.
+  - `tools/android-www.mjs` dokłada do plików gry `wersja.json`: wersję,
+    repozytorium z wydaniami i **odcisk części na telefon** (Java,
+    manifest, pliki Gradle, wersja Capacitora). Same pliki gry można
+    podmienić tylko między wersjami o tym samym odcisku - inaczej
+    potrzebna jest nowa aplikacja (gra sama to rozpoznaje).
+    `node tools/android-www.mjs --odcisk` - odcisk teraz.
+  - W wydaniu (GitHub Actions, job *android*): `Voxel-Game-<wersja>-android.apk`,
+    `Voxel-Game-<wersja>-android-www.zip` (pliki gry z aplikacji)
+    i `android-latest.json` (wersja, odcisk, nazwy, rozmiary, SHA-256 -
+    jak `latest.yml` dla komputera).
+  - Uprawnienia w manifeście: stan sieci (czy Wi-Fi) i instalowanie
+    aplikacji (zgoda gracza i tak przy każdej instalacji).
 - Samemu na komputerze (niekonieczne): Android Studio,
   `npm run android:sync`, potem `npx cap open android` i ▶.
 
@@ -210,9 +265,9 @@ z `main.js`) i jego miejsce w `touch.css`.
   połóż), ale nie ma przeciągania ani "połowy stosu" (PPM).
 - **Joystick** ma 8 kierunków (jak klawisze), nie płynny ruch.
 - Brak "wybierz blok, na który patrzysz" (środkowy przycisk myszy).
-- Aplikacja na Androida **sama się nie aktualizuje** - można dodać
-  sprawdzanie wydań przy starcie (jak w aplikacji na komputer) i przycisk
-  "pobierz nową wersję".
+- Nowa aplikacja (`.apk`) instaluje się dopiero po zgodzie gracza -
+  po cichu Android pozwala tylko sklepom (Google Play). Nowe wersje
+  samej gry instalują się bez pytania.
 - iPhone: tylko przeglądarka (aplikacja na iOS wymaga Maca i płatnego
   konta Apple).
 - Gra w przeglądarce bez komputera: wystawienie jej w internecie (np.

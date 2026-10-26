@@ -11,6 +11,35 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 0.19.0 - Aplikacja na telefon aktualizuje się sama (2026-10-26)
+
+Pull request #39.
+
+### Nowe
+- **Aktualizacje na telefonie** - jak w aplikacji na komputer: przy
+  uruchomieniu (i co 3 godziny) gra sprawdza wydania na GitHubie i sama
+  pobiera nową wersję w tle. Stan widać na ekranie tytułowym (lewy dolny
+  róg), a gotową aktualizację - także na czacie w trakcie gry.
+  - **Nowa wersja gry** (pliki gry, ok. 2 MB) pobiera się sama
+    i włącza przy następnym uruchomieniu albo od razu (*Uruchom ponownie
+    teraz* - świat zapisuje się przedtem). Bez instalowania.
+  - **Nowa aplikacja** (gdy zmieni się część na telefon) - przez Wi-Fi
+    pobiera się sama, na danych komórkowych po stuknięciu *Pobierz*;
+    *Zainstaluj* - Android zapyta o zgodę (za pierwszym razem trzeba
+    zezwolić grze na instalowanie aplikacji).
+  - Zepsuta wersja nie blokuje gry: po dwóch nieudanych uruchomieniach
+    aplikacja wraca do wersji wbudowanej.
+- `/aktualizacja` - wersja i stan; `sprawdz`, `pobierz`, `instaluj`,
+  `wroc` (na komputerze - stan i `instaluj`).
+- W wydaniach obok `.apk`: paczka z plikami gry
+  (`Voxel-Game-<wersja>-android-www.zip`) i `android-latest.json`.
+
+### Uwaga
+- Wersję 0.19.0 trzeba na telefonie zainstalować jeszcze ręcznie (nowy
+  `.apk` z wydań na starym) - kolejne przyjdą same.
+
+---
+
 ## 0.18.0 - Rzeki, jeziora i nurt (2026-10-26)
 
 Pull request #38.

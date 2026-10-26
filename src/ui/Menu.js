@@ -254,7 +254,8 @@ export class Menu {
     // Aplikacja na komputer: wersja i aktualizacje
     // --------------------------------------------------------
 
-    // info - { version, install() } (main.js, tylko w aplikacji)
+    // info - { version, install(), download() } (main.js, tylko
+    // w aplikacji; download - telefon: pobranie aplikacji .apk)
 
     setAppInfo(info) {
 
@@ -265,7 +266,9 @@ export class Menu {
     }
 
 
-    // status - { state: 'downloading' | 'ready' | 'error', version, percent }
+    // status - { state: 'downloading' | 'ready' | 'available' | 'error',
+    // version, percent, kind, size, message } - kind (tylko telefon):
+    // 'web' (pliki gry) albo 'apk' (aplikacja); bez kind - komputer.
 
     setUpdateStatus(status) {
 
@@ -304,8 +307,42 @@ export class Menu {
 
         const update = info.update;
 
+        const kind = update?.kind;
+
         if (update?.state === 'downloading') {
-            box.append(el('span', 'menu-update', TEXTS.updateDownloading(update.version, update.percent)));
+
+            box.append(el('span', 'menu-update', kind === 'apk'
+                ? TEXTS.updateDownloadingApk(update.version, update.percent)
+                : TEXTS.updateDownloading(update.version, update.percent)));
+
+        }
+        else if (update?.state === 'ready' && kind === 'web') {
+
+            box.append(
+                el('span', 'menu-update', TEXTS.updateReadyWeb(update.version)),
+                button(TEXTS.restartUpdate, () => info.install())
+            );
+
+        }
+        else if (update?.state === 'ready' && kind === 'apk') {
+
+            box.append(
+                el('span', 'menu-update', TEXTS.updateReadyApk(update.version)),
+                button(TEXTS.installApk, () => info.install())
+            );
+
+            if (update.message === 'permission') {
+                box.append(el('span', 'menu-update', TEXTS.updatePermission));
+            }
+
+        }
+        else if (update?.state === 'available') {
+
+            box.append(
+                el('span', 'menu-update', TEXTS.updateAvailableApk(update.version, update.size)),
+                button(TEXTS.downloadUpdate, () => info.download())
+            );
+
         }
         else if (update?.state === 'ready') {
 
@@ -316,7 +353,7 @@ export class Menu {
 
         }
         else if (update?.state === 'error') {
-            box.append(el('span', 'menu-update menu-danger', TEXTS.updateError));
+            box.append(el('span', 'menu-update menu-danger', kind ? TEXTS.updateErrorPhone : TEXTS.updateError));
         }
 
         return box;

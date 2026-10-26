@@ -70,6 +70,13 @@ export const ITEM_TYPES = {
         plants: 'hazel_sapling'
     },
 
+    blueberry: {
+        name: 'Blueberries',
+        label: 'Borówki',
+        icon: 'blueberry',
+        plants: 'blueberry_sapling'
+    },
+
 
     // Dodatki drzew (src/blocks/trees.js). Szyszki, orzeszki, żołędzie
     // i kwiat lipy (z nasionkami na przysadce) posadzone na ziemi

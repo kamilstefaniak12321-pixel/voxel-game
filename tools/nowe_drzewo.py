@@ -47,7 +47,7 @@ DIR = os.path.join(ROOT, 'assets', 'drzewa')
 LIST = os.path.join(DIR, 'lista.json')
 
 FIRST_ID = 100
-LAST_ID = 255
+LAST_ID = 239
 SLOTS = 10
 
 RESERVED = {

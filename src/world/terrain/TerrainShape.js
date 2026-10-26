@@ -139,6 +139,19 @@ export const ROCK_SLOPE = 3;
 // Plaża: piasek do tylu bloków nad morzem (pas tuż przy morzu).
 export const BEACH_HEIGHT = 2;
 
+// Wydmy: piaszczyste pagórki na niektórych płaskich wybrzeżach (biom
+// "Plaża i wydmy"). Pas wybrzeża, w którym mogą być: profil kontynentu
+// (wysokość nad morzem bez wzgórz) od zone[0] do zone[1] bloków; plamy
+// wybrzeży z wydmami - pole o skali patchScale, powyżej patch;
+// wysokość wydm do height bloków, pojedyncza wydma ~scale bloków.
+export const DUNES = {
+    zone: [0.4, 3.2],
+    patchScale: 900,
+    patch: 0.15,
+    height: 5,
+    scale: 22
+};
+
 
 // PODZIAŁ WYSOKOŚCIOWY (do opisu i mapy; bloki nad morzem):
 // nizina < RELIEF_UPLAND <= wyżyna < RELIEF_MOUNTAINS <= góry
@@ -266,6 +279,55 @@ export const PLANTS = {
 };
 
 
+// BIOMY (src/world/terrain/Biomes.js, docs/biomy.md) - gdzie jest
+// który biom. Wysokości - bloki nad morzem.
+//   edge, edgeScale  - poszarpanie granic biomów: o ile bloków (i jak
+//                      drobno) przesuwa się miejsce sprawdzania klimatu,
+//   duneBiome        - od jakiej "siły" pasa wydm jest biom plaży,
+//   snowLine         - granica śniegu (bloki nad morzem); w ciepłym
+//                      klimacie wyżej o snowWarm, pofalowana o snowWobble;
+//                      snowCover bloków niżej śnieg leży już płatami,
+//   rockyBelow       - skaliste góry od tylu bloków pod granicą gołej
+//                      skały (ROCK_LINE),
+//   mountainAbove, mountainField - od jakiej wysokości (albo pola gór)
+//                      są góry: hala albo świerczyna,
+//   alpineBelow      - hala zaczyna się tyle bloków pod granicą lasu,
+//   alpineForest     - poniżej tej wartości pola lasów w górach jest
+//                      hala (polana), wyżej las,
+//   wetland...       - mokradła na nizinach (do wetlandAbove): przy
+//                      rzece i jeziorze w pasie wetlandReach bloków (od
+//                      suchego do wilgotnego klimatu), w depresjach
+//                      i w wilgotnych plamach (pole o skali wetlandScale),
+//   forestFrom, forestHumid - las tam, gdzie pole lasów > forestFrom -
+//                      forestHumid x wilgotność (inaczej łąka),
+//   forestMix, forestScale - jak bardzo przeplatają się rodzaje lasu
+//                      (plamy szumu o tej skali).
+export const BIOME_SHAPE = {
+    edge: 10,
+    edgeScale: 40,
+    duneBiome: 0.35,
+    snowLine: 58,
+    snowWarm: 6,
+    snowWobble: 3,
+    snowCover: 5,
+    rockyBelow: 2,
+    mountainAbove: 30,
+    mountainField: 0.55,
+    alpineBelow: 2,
+    alpineForest: -0.25,
+    wetlandAbove: 12,
+    wetlandReach: [4, 16],
+    wetlandScale: 90,
+    wetlandDepression: 0.3,
+    wetlandHumidity: 0.35,
+    wetlandPatch: 0.45,
+    forestFrom: 0.02,
+    forestHumid: 0.12,
+    forestMix: 0.35,
+    forestScale: 420
+};
+
+
 // LASY I DRZEWA (src/world/trees/Forests.js, docs/drzewa.md).
 //
 // Drzewa stoją na siatce co `grid` bloków (najwyżej jedno w kratce,
@@ -279,9 +341,9 @@ export const PLANTS = {
 //   - drzewa rosną do `treeLine` bloków poniżej granicy gołej skały,
 //     ostatnie `treeLineFade` bloków coraz rzadziej,
 //   - tylko na trawie i na zboczach o nachyleniu najwyżej `maxSlope`.
-// Gatunek: klimat (temperatura, wilgotność, wysokość) i plamy
-// gatunków (`speciesScale` bloków - w lesie przeważa jeden, dwa
-// gatunki), trochę losowo (`mix` - im więcej, tym bardziej mieszany las).
+// Gatunek: z gatunków biomu (Biomes.js - trees) i plam gatunków
+// (`speciesScale` bloków - w lesie przeważa jeden, dwa gatunki; `patches`
+// - jak bardzo plamy zmieniają udziały gatunków biomu).
 export const FORESTS = {
     grid: 4,
     scale: 190,
@@ -295,7 +357,7 @@ export const FORESTS = {
     treeLineFade: 10,
     maxSlope: 2,
     speciesScale: 150,
-    mix: 0.35
+    patches: 0.9
 };
 // RZEKI I JEZIORA (src/world/terrain/Rivers.js, docs/rzeki.md).
 //

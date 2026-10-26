@@ -179,6 +179,11 @@ export const ATLAS_TILES = {
     cornflower: { x: 7, y: 2 },
     chamomile: { x: 8, y: 2 },
     dandelion: { x: 9, y: 2 },
+    // Rośliny biomów (tools/tekstury_biomow.py).
+    reed: { x: 10, y: 2 },
+    heather: { x: 11, y: 2 },
+    crocus: { x: 12, y: 2 },
+    dune_grass: { x: 13, y: 2 },
 
     // Krzaki owocowe - wiersz 3. Sadzonka i krzak bez owoców są
     // wspólne dla wszystkich gatunków; dalej każdy gatunek ma dwa
@@ -194,6 +199,10 @@ export const ATLAS_TILES = {
     chili_bush_full: { x: 7, y: 3 },
     hazel_bush_few: { x: 8, y: 3 },
     hazel_bush_full: { x: 9, y: 3 },
+    // Borówka ma własny krzak (niski, drobne listki).
+    blueberry_bush_few: { x: 10, y: 3 },
+    blueberry_bush_full: { x: 11, y: 3 },
+    blueberry_bush: { x: 12, y: 3 },
 
     // Przedmioty (src/items/ItemRegistry.js) - wiersz 4: ikonki
     // w ekwipunku i obrazek w ręce.
@@ -202,6 +211,7 @@ export const ATLAS_TILES = {
     blackberry: { x: 1, y: 4 },
     chili_pepper: { x: 2, y: 4 },
     hazelnut: { x: 3, y: 4 },
+    blueberry: { x: 4, y: 4 },
 
     // Drzewa (src/blocks/trees.js, tekstury: tools/tekstury_drzew.py).
     // Wiersz 5 - pnie (bok z korą, góra ze słojami).
@@ -278,7 +288,14 @@ export const ATLAS_TILES = {
     stick: { x: 0, y: 9 },
     pickaxe: { x: 1, y: 9 },
     shovel: { x: 2, y: 9 },
-    dark_planks: { x: 3, y: 9 }
+    dark_planks: { x: 3, y: 9 },
+
+    // Biomy (tools/tekstury_biomow.py): śnieg, mech.
+
+    snow: { x: 4, y: 9 },
+    moss_top: { x: 5, y: 9 },
+    moss_side: { x: 6, y: 9 },
+    moss_carpet: { x: 7, y: 9 }
 
 };
 

@@ -35,6 +35,8 @@ import { BASE_TREE_NAMES } from '../blocks/trees.js';
 
 import { TREE_PACKS } from '../blocks/treePacks.js';
 
+import { BIOMES, LAND_BIOMES } from '../world/terrain/Biomes.js';
+
 
 // Rangi: nazwa, punkty, kolor (do księgi i powiadomień - także
 // w src/ui/achievements.css), dźwięk powiadomienia.
@@ -57,7 +59,37 @@ const BUILDING_BLOCKS = ['lime_plaster', 'ochre_plaster', 'terracotta', 'polishe
 
 // Owoce z krzaków - do "Pełnych koszy".
 
-const FRUITS = ['strawberry', 'blackberry', 'chili_pepper', 'hazelnut'];
+const FRUITS = ['strawberry', 'blackberry', 'chili_pepper', 'hazelnut', 'blueberry'];
+
+
+// Biom, w którym stoi gracz (teren realistyczny; klasyczny - null).
+// Liczony najwyżej raz na BIOME_CHECK_MS (sprawdza go kilka osiągnięć).
+
+const BIOME_CHECK_MS = 400;
+
+function currentBiome(game) {
+
+    const generator = game.world?.generator;
+
+    if (!generator?.biomeAt) {
+        return null;
+    }
+
+    const now = performance.now();
+
+    const cache = game.achievementBiome;
+
+    if (cache && now - cache.time < BIOME_CHECK_MS) {
+        return cache.key;
+    }
+
+    const key = generator.biomeAt(Math.floor(game.player.pos.x), Math.floor(game.player.pos.z));
+
+    game.achievementBiome = { time: now, key };
+
+    return key;
+
+}
 
 
 // Owoce drzew z paczek (assets/drzewa/) - zbiór z odmian liści.
@@ -279,6 +311,16 @@ export const ACHIEVEMENTS = [
         check: (game) => lookingAtLowSun(game)
     },
     {
+        id: 'blueberries',
+        tier: 'common',
+        title: 'Borówkowy język',
+        task: 'Zbierz borówki z krzaka (rosną w borach i świerczynach).',
+        comment: 'Język fioletowy, palce fioletowe, koszulka też. Było warto.',
+        icon: 'blueberry',
+        on: 'harvested',
+        when: (data) => data.item === 'blueberry'
+    },
+    {
         id: 'texture_pack',
         tier: 'common',
         title: 'Nowe szaty',
@@ -414,6 +456,32 @@ export const ACHIEVEMENTS = [
         on: 'blockPlaced',
         when: (data, book) => BUILDING_BLOCKS.includes(data.type) && book.collect('building', data.type) >= BUILDING_BLOCKS.length,
         goal: { key: 'building', count: BUILDING_BLOCKS.length }
+    },
+    {
+        id: 'tourist',
+        tier: 'rare',
+        title: 'Turysta',
+        task: `Odwiedź każdy z ${LAND_BIOMES.length} biomów lądowych: łąkę, lasy, góry, mokradła, wydmy... (/biom lista).`,
+        comment: 'Łąka, bór, bagno, szczyt. Pocztówki wyślesz później.',
+        icon: 'tall_grass',
+        check: (game, book) => {
+            const key = currentBiome(game);
+            return Boolean(key) && !BIOMES[key].water && book.collect('biomes', key) >= LAND_BIOMES.length;
+        },
+        goal: { key: 'biomes', count: LAND_BIOMES.length }
+    },
+    {
+        id: 'summit',
+        tier: 'rare',
+        title: 'Dach świata',
+        task: 'Stań na śniegu na ośnieżonym szczycie.',
+        comment: 'Widok jak z pocztówki, wiatr jak z zamrażarki.',
+        icon: 'snow',
+        check: (game) => {
+            const p = game.player;
+            return p.onGround && game.world.getBlock(Math.floor(p.pos.x), Math.floor(p.pos.y - 0.1), Math.floor(p.pos.z)) === 'snow' &&
+                currentBiome(game) === 'snowy';
+        }
     },
     {
         id: 'sunbeam',

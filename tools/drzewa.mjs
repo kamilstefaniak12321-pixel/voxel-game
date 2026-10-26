@@ -46,7 +46,7 @@ const GITHUB = Boolean(process.env.GITHUB_ACTIONS);
 // go wczytujemy).
 
 const FIRST_ID = 100;
-const LAST_ID = 255;
+const LAST_ID = 239;
 const SLOTS = 10;
 
 

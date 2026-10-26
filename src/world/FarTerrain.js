@@ -48,10 +48,13 @@ import {
     FAR_TERRAIN_SHADOW_GLSL
 } from '../rendering/Shadows.js';
 
+import { grassTint } from './terrain/Biomes.js';
+
 import {
     KINDS,
     ROCK_KINDS,
     LEAF_KINDS,
+    GRASS_KINDS,
     BLOCK_KINDS,
     kindIndex,
     samplePosition,
@@ -161,9 +164,19 @@ const FAR_WATER_TINT = new THREE.Color(...FAR_WATER_TINT_RGB);
 const FALLBACK_COLORS = {
     grass_top: new THREE.Color(0.10, 0.22, 0.05),
     grass_side: new THREE.Color(0.16, 0.12, 0.06),
+    snow: new THREE.Color(0.78, 0.84, 0.92),
     stone: new THREE.Color(0.22, 0.22, 0.22),
     sand: new THREE.Color(0.62, 0.55, 0.33),
     water: new THREE.Color(0.03, 0.11, 0.42)
+};
+
+// Kolor trawy na dalekim terenie (rodzaje GRASS_KINDS - farSamples.js):
+// typowy kolor trawy z Biomes.js (grassTint) w ciepłym, chłodnym
+// i górskim klimacie.
+const FAR_GRASS_TINTS = {
+    grass_warm: grassTint(0.45, -0.35, 8, [1, 1, 1]),
+    grass_cool: grassTint(-0.65, 0.5, 8, [1, 1, 1]),
+    grass_high: grassTint(-0.9, 0, 45, [1, 1, 1])
 };
 
 // Korony z daleka są trochę ciemniejsze niż sama tekstura liści
@@ -852,6 +865,22 @@ export class FarTerrain {
         top.set('water', colors.water);
         side.set('water', colors.water);
 
+        top.set('snow', colors.snow);
+        side.set('snow', colors.snow);
+
+
+        // Trawa w kolorze klimatu (tylko zielony wierzch - jak shader
+        // bloków; bok trawy to głównie ziemia).
+
+        for (const [kind, tint] of Object.entries(FAR_GRASS_TINTS)) {
+
+            colors[kind] = colors.grass_top.clone().multiply(new THREE.Color(...tint));
+
+            top.set(kind, colors[kind]);
+            side.set(kind, colors.grass_side);
+
+        }
+
 
         // Skały: średni kolor tekstury wierzchu i boku bloku.
 
@@ -889,7 +918,7 @@ export class FarTerrain {
             const t = top.get(kind) ?? colors.stone;
             const s = side.get(kind) ?? t;
 
-            const u = kind === 'grass' ? s.clone().lerp(t, GRASS_SIDE_FRINGE) : s;
+            const u = kind === 'grass' || GRASS_KINDS.includes(kind) ? s.clone().lerp(t, GRASS_SIDE_FRINGE) : s;
 
             const bytes = [
                 t.r, t.g, t.b,

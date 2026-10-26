@@ -1,7 +1,7 @@
 import {
     isLiquidId,
     isPlantId,
-    isSoilId,
+    canGrowOn,
     isSolidId,
     isReplaceableId,
     getBlockId,
@@ -119,7 +119,7 @@ export class BlockPlacer {
 
         if (
             isPlantId(getBlockId(blockType)) &&
-            !isSoilId(this.world.getBlockId(x, y - 1, z))
+            !canGrowOn(getBlockId(blockType), this.world.getBlockId(x, y - 1, z))
         ) {
             return false;
         }

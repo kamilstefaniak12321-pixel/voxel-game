@@ -26,17 +26,19 @@
 // (osiągnięcie), gameCommands.js (/drzewa).
 // ------------------------------------------------------------
 
+import { BIOMES, LAND_BIOMES, biomeByWord } from '../world/terrain/Biomes.js';
+
 // Numery bloków: każda paczka zajmuje PACK_ID_SLOTS kolejnych numerów
 // od swojego "pierwszeId":
 //   +0 pień, +1 okorowany pień, +2 deski, +3 liście, +4 sadzonka,
 //   +5 opadłe liście, +6 i +7 pierwsza odmiana liści (odmiana i jej
 //   "odrastająca" wersja po zbiorze), +8 i +9 druga odmiana.
-// Numery 1-99 są dla bloków samej gry. Numer zapisuje się w świecie,
+// Numery 1-99 i 240-255 są dla bloków samej gry. Numer zapisuje się w świecie,
 // więc raz użytego "pierwszeId" nie wolno już zmieniać.
 
 export const PACK_FIRST_ID = 100;
 
-export const PACK_LAST_ID = 255;
+export const PACK_LAST_ID = 239;
 
 export const PACK_ID_SLOTS = 10;
 
@@ -83,7 +85,8 @@ const RESERVED = new Set([
     'coarse', 'forest', 'water', 'grass', 'dirt', 'stone', 'sand', 'gravel', 'mud', 'clay',
     'humus', 'granite', 'limestone', 'sandstone', 'slate', 'basalt', 'meteorite', 'lepidolite',
     'axe', 'pickaxe', 'shovel', 'stick', 'resin', 'acorn', 'beechnuts', 'bush', 'tree', 'leaves',
-    'fern', 'clover', 'nettle', 'plantain', 'poppy', 'cornflower', 'chamomile', 'dandelion'
+    'fern', 'clover', 'nettle', 'plantain', 'poppy', 'cornflower', 'chamomile', 'dandelion',
+    'blueberry', 'snow', 'moss', 'reed', 'heather', 'crocus', 'dune'
 ]);
 
 // Przedmioty paczki nazywają się <paczka>_<klucz> - te klucze zderzyłyby
@@ -647,8 +650,32 @@ async function validatePack(folder) {
         chance: where.czestosc === undefined ? 0 : number(where.czestosc, 'gdzieRosnie.czestosc', 0, 1),
         temperature: where.temperatura === undefined ? [-3, 3] : range(where.temperatura, 'gdzieRosnie.temperatura', -3, 3),
         humidity: where.wilgotnosc === undefined ? [-3, 3] : range(where.wilgotnosc, 'gdzieRosnie.wilgotnosc', -3, 3),
-        height: where.wysokosc === undefined ? [-128, 128] : range(where.wysokosc, 'gdzieRosnie.wysokosc', -128, 128)
+        height: where.wysokosc === undefined ? [-128, 128] : range(where.wysokosc, 'gdzieRosnie.wysokosc', -128, 128),
+        biomes: null
     };
+
+    // Biomy (src/world/terrain/Biomes.js), w których rośnie - bez tego
+    // pola we wszystkich (gdzie pasuje klimat i rośnie las).
+
+    if (where.biomy !== undefined) {
+
+        if (!Array.isArray(where.biomy) || where.biomy.length === 0) {
+            fail(`"gdzieRosnie.biomy": lista biomów, np. ["mokradla", "laka"] - do wyboru: ${LAND_BIOMES.map((key) => BIOMES[key].words[0]).join(', ')}`);
+        }
+
+        pack.climate.biomes = new Set(where.biomy.map((word) => {
+
+            const key = biomeByWord(word);
+
+            if (!key || BIOMES[key].water) {
+                fail(`"gdzieRosnie.biomy": nieznany biom "${word}" - do wyboru: ${LAND_BIOMES.map((k) => BIOMES[k].words[0]).join(', ')}`);
+            }
+
+            return key;
+
+        }));
+
+    }
 
 
     // Przepisy (sprawdza je dopiero recipes.js - tam są wszystkie nazwy).

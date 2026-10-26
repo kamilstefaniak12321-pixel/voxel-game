@@ -16,7 +16,7 @@ import { TREE_PACKS } from '../../blocks/treePacks.js';
 
 import { Noise } from '../Noise.js';
 
-import { FORESTS, SCALES } from '../terrain/TerrainShape.js';
+import { FORESTS, SCALES, BIOME_SHAPE } from '../terrain/TerrainShape.js';
 
 import { buildTree, TREE_REACH } from './TreeShapes.js';
 
@@ -112,9 +112,17 @@ const WILD_PACKS = TREE_PACKS
 
 
 // Najmniejsza gęstość (pojedyncze drzewa) w którymkolwiek biomie - do
-// szybkiego odrzucania kratek bez drzewa.
+// szybkiego odrzucania kratek bez drzewa: w lasach (FOREST_LONE) i poza
+// nimi (OPEN_LONE). Biom lasu jest tylko tam, gdzie pole lasów jest
+// wyższe niż FOREST_FIELD (z zapasem na poszarpane granice).
 
-const MAX_LONE = Math.max(...BIOME_KEYS.map((key) => BIOMES[key].lone ?? 0));
+const FOREST_TYPES = ['deciduous', 'beech', 'birch', 'pine', 'spruce'];
+
+const FOREST_LONE = Math.max(...FOREST_TYPES.map((key) => BIOMES[key].lone ?? 0));
+
+const OPEN_LONE = Math.max(...BIOME_KEYS.filter((key) => !FOREST_TYPES.includes(key)).map((key) => BIOMES[key].lone ?? 0));
+
+const FOREST_FIELD = Math.min(BIOME_SHAPE.forestFrom - BIOME_SHAPE.forestHumid, BIOME_SHAPE.alpineForest) - 0.2;
 
 // O ile bloków (najwyżej) przesuwamy miejsce sprawdzania biomu drzewa.
 
@@ -398,7 +406,7 @@ export class Forests {
 
         const upper = FORESTS.lone + (FORESTS.dense - FORESTS.lone) * smoothstep(FORESTS.from, FORESTS.full, forest);
 
-        if (roll >= Math.max(upper, MAX_LONE) * FORESTS.wet) {
+        if (roll >= Math.max(upper, forest > FOREST_FIELD ? FOREST_LONE : OPEN_LONE) * FORESTS.wet) {
             return null;
         }
 

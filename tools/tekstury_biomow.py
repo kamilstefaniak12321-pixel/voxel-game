@@ -94,7 +94,9 @@ def moss_cushions(seed, base=MOSS, count=26, gap=2.2):
 
 def moss_top():
     rgb, _ = moss_cushions(911)
-    return match(rgb, (84, 122, 46))
+    # mniej kontrastu niż w kępkach - z daleka równy, miękki kobierzec
+    rgb = mix(rgb, rgb.reshape(-1, 3).mean(axis=0), 0.3)
+    return match(rgb, (98, 138, 54))
 
 
 def moss_side():

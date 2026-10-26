@@ -2,7 +2,7 @@
 
 > Ta strona jest generowana z kodu gry (`python tools/wiki.py`) - nie zmieniaj jej ręcznie, zmiany przepadną przy następnym generowaniu.
 
-Wersja gry **0.20.0** - 121 bloków (do tego 4 odmian, których nie ma w ekwipunku, np. wieniec zawieszony na boku bloku). Czas kopania dotyczy trybu przygody; w kreatywnym bloki znikają od razu.
+Wersja gry **0.21.0** - 121 bloków (do tego 4 odmian, których nie ma w ekwipunku, np. wieniec zawieszony na boku bloku). Czas kopania dotyczy trybu przygody; w kreatywnym bloki znikają od razu.
 
 [Ziemia](#ziemia) · [Skały](#skały) · [Drewno](#drewno) · [Budulec](#budulec) · [Rośliny](#rośliny) · [Światło](#światło) · [Ozdoby](#ozdoby)
 
@@ -20,9 +20,9 @@ Wersja gry **0.20.0** - 121 bloków (do tego 4 odmian, których nie ma w ekwipun
 | <img src="ikony/mud.png" width="32" height="32" alt=""> | **Błoto** | `mud` | **Kopanie:** 0,6 s (łopatą 0,2 s) |
 | <img src="ikony/clay.png" width="32" height="32" alt=""> | **Glina** | `clay` | **Kopanie:** 0,6 s (łopatą 0,2 s)<br>**Przydaje się do:** Tynk ochrowy, Terakota |
 | <img src="ikony/gravel.png" width="32" height="32" alt=""> | **Żwir** | `gravel` | **Kopanie:** 0,7 s (łopatą 0,23 s)<br>**Przydaje się do:** Ziemia kamienista |
-| <img src="ikony/snow.png" width="32" height="32" alt=""> | **Śnieg** | `snow` | **Kopanie:** 0,4 s (łopatą 0,13 s) |
-| <img src="ikony/snow_layer.png" width="32" height="32" alt=""> | **Warstwa śniegu** | `snow_layer` | **Kopanie:** 0,4 s (łopatą 0,13 s) |
-| <img src="ikony/moss.png" width="32" height="32" alt=""> | **Mech** | `moss` | **Kopanie:** 0,6 s (łopatą 0,2 s) |
+| <img src="ikony/snow.png" width="32" height="32" alt=""> | **Śnieg** | `snow` | **Kopanie:** 0,4 s (łopatą 0,13 s)<br>**Przepis:** Śnieg<br>**Przydaje się do:** Warstwa śniegu |
+| <img src="ikony/snow_layer.png" width="32" height="32" alt=""> | **Warstwa śniegu** | `snow_layer` | **Kopanie:** 0,4 s (łopatą 0,13 s)<br>**Przepis:** Warstwa śniegu x4<br>**Przydaje się do:** Śnieg |
+| <img src="ikony/moss.png" width="32" height="32" alt=""> | **Mech** | `moss` | **Kopanie:** 0,6 s (łopatą 0,2 s)<br>**Przepis:** Mech<br>**Przydaje się do:** Kępki mchu |
 
 ## Skały
 
@@ -95,10 +95,10 @@ Wersja gry **0.20.0** - 121 bloków (do tego 4 odmian, których nie ma w ekwipun
 | <img src="ikony/cornflower.png" width="32" height="32" alt=""> | **Chaber** | `cornflower` | **Kopanie:** od razu<br>**Przydaje się do:** Niebieska lampa |
 | <img src="ikony/chamomile.png" width="32" height="32" alt=""> | **Rumianek** | `chamomile` | **Kopanie:** od razu |
 | <img src="ikony/dandelion.png" width="32" height="32" alt=""> | **Mniszek** | `dandelion` | **Kopanie:** od razu |
-| <img src="ikony/moss_carpet.png" width="32" height="32" alt=""> | **Kępki mchu** | `moss_carpet` | **Kopanie:** od razu |
+| <img src="ikony/moss_carpet.png" width="32" height="32" alt=""> | **Kępki mchu** | `moss_carpet` | **Kopanie:** od razu<br>**Przepis:** Kępki mchu x4<br>**Przydaje się do:** Mech |
 | <img src="ikony/reed.png" width="32" height="32" alt=""> | **Trzcina** | `reed` | **Kopanie:** od razu |
-| <img src="ikony/heather.png" width="32" height="32" alt=""> | **Wrzos** | `heather` | **Kopanie:** od razu |
-| <img src="ikony/crocus.png" width="32" height="32" alt=""> | **Krokus** | `crocus` | **Kopanie:** od razu |
+| <img src="ikony/heather.png" width="32" height="32" alt=""> | **Wrzos** | `heather` | **Kopanie:** od razu<br>**Przydaje się do:** Fioletowa lampa |
+| <img src="ikony/crocus.png" width="32" height="32" alt=""> | **Krokus** | `crocus` | **Kopanie:** od razu<br>**Przydaje się do:** Fioletowa lampa |
 | <img src="ikony/dune_grass.png" width="32" height="32" alt=""> | **Piaskownica (trawa wydmowa)** | `dune_grass` | **Kopanie:** od razu |
 | <img src="ikony/strawberry_sapling.png" width="32" height="32" alt=""> | **Sadzonka truskawki** | `strawberry_sapling` | **Kopanie:** od razu<br>**Rośnie:** w: Krzak truskawki<br>**Skąd:** zniszczony blok: Krzak truskawki; zniszczony blok: Krzak truskawki (kilka owoców); zniszczony blok: Krzak truskawki (pełen owoców); posadzony przedmiot: Truskawki |
 | <img src="ikony/strawberry_bush.png" width="32" height="32" alt=""> | **Krzak truskawki** | `strawberry_bush` | **Kopanie:** od razu<br>**Daje:** Sadzonka truskawki<br>**Rośnie:** w: Krzak truskawki (kilka owoców)<br>**Skąd:** wyrasta z: Sadzonka truskawki |

@@ -2,7 +2,7 @@
 
 > Ta strona jest generowana z kodu gry (`python tools/wiki.py`) - nie zmieniaj jej ręcznie, zmiany przepadną przy następnym generowaniu.
 
-Wersja gry **0.20.0** - 19 przedmiotów. Przedmiotu nie da się postawić jak bloku; owoce i nasiona posadzone na ziemi (PPM) wyrastają w krzak albo drzewo, narzędzia przyspieszają kopanie.
+Wersja gry **0.21.0** - 19 przedmiotów. Przedmiotu nie da się postawić jak bloku; owoce i nasiona posadzone na ziemi (PPM) wyrastają w krzak albo drzewo, narzędzia przyspieszają kopanie.
 
 
 ## Owoce i nasiona
@@ -13,7 +13,7 @@ Wersja gry **0.20.0** - 19 przedmiotów. Przedmiotu nie da się postawić jak bl
 | <img src="ikony/blackberry.png" width="32" height="32" alt=""> | **Jeżyny** | `blackberry` | **Posadzony (PPM na ziemi):** Sadzonka jeżyny<br>**Skąd:** zbiór (PPM): Krzak jeżyny (kilka owoców); zbiór (PPM): Krzak jeżyny (pełen owoców)<br>**Przydaje się do:** Fioletowa lampa |
 | <img src="ikony/chili_pepper.png" width="32" height="32" alt=""> | **Papryczki chili** | `chili_pepper` | **Posadzony (PPM na ziemi):** Sadzonka papryczki chili<br>**Skąd:** zbiór (PPM): Krzak papryczki chili (kilka papryczek); zbiór (PPM): Krzak papryczki chili (pełen papryczek)<br>**Przydaje się do:** Czerwona lampa |
 | <img src="ikony/hazelnut.png" width="32" height="32" alt=""> | **Orzech laskowy** | `hazelnut` | **Posadzony (PPM na ziemi):** Sadzonka leszczyny<br>**Skąd:** zbiór (PPM): Leszczyna (kilka orzechów); zbiór (PPM): Leszczyna (pełna orzechów) |
-| <img src="ikony/blueberry.png" width="32" height="32" alt=""> | **Borówki** | `blueberry` | **Posadzony (PPM na ziemi):** Sadzonka borówki<br>**Skąd:** zbiór (PPM): Krzak borówki (kilka owoców); zbiór (PPM): Krzak borówki (pełen owoców) |
+| <img src="ikony/blueberry.png" width="32" height="32" alt=""> | **Borówki** | `blueberry` | **Posadzony (PPM na ziemi):** Sadzonka borówki<br>**Skąd:** zbiór (PPM): Krzak borówki (kilka owoców); zbiór (PPM): Krzak borówki (pełen owoców)<br>**Przydaje się do:** Niebieska lampa |
 | <img src="ikony/spruce_cone.png" width="32" height="32" alt=""> | **Szyszka świerka** | `spruce_cone` | **Posadzony (PPM na ziemi):** Sadzonka świerka<br>**Skąd:** czasem z bloku: Igliwie świerka (8%)<br>**Przydaje się do:** Wieniec świerkowy |
 | <img src="ikony/pine_cone.png" width="32" height="32" alt=""> | **Szyszka sosny** | `pine_cone` | **Posadzony (PPM na ziemi):** Sadzonka sosny<br>**Skąd:** czasem z bloku: Igliwie sosny (8%)<br>**Przydaje się do:** Wieniec świerkowy |
 | <img src="ikony/beechnuts.png" width="32" height="32" alt=""> | **Orzeszki bukowe** | `beechnuts` | **Posadzony (PPM na ziemi):** Sadzonka buka<br>**Skąd:** czasem z bloku: Liście buka (8%) |

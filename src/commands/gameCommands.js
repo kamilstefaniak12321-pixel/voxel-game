@@ -3972,7 +3972,7 @@ export const GAME_COMMANDS = [
                 const biome = BIOMES[key];
 
                 return `Biom: ${biome.name} (${x}, ${z}) - ${biome.about}. ` +
-                    `Temperatura ${info.temperature.toFixed(2)}, wilgotność ${info.humidity.toFixed(2)}, ${info.above} bloków nad morzem. ` +
+                    `Temperatura ${info.temperature.toFixed(2)}, wilgotność ${info.humidity.toFixed(2)}, wysokość ${info.above >= 0 ? '+' : ''}${info.above} nad morzem. ` +
                     `Odwiedzone: ${LAND_BIOMES.filter((k) => visited.has(k)).length} z ${LAND_BIOMES.length} (/biom lista, /mapa biomy).`;
 
             }

@@ -1,4 +1,4 @@
-# Paczka tekstur - szablon (Voxel Game 0.20.0)
+# Paczka tekstur - szablon (Voxel Game 0.21.0)
 
 Oryginalne tekstury gry, każda w osobnym pliku. Zrób z nich własną paczkę:
 
@@ -59,8 +59,12 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/blackberry.png` | Jeżyny |
 | `bloki/blackberry_bush_few.png` | Krzak jeżyny (kilka owoców) |
 | `bloki/blackberry_bush_full.png` | Krzak jeżyny (pełen owoców) |
+| `bloki/blueberry.png` | Borówki |
+| `bloki/blueberry_bush.png` | Krzak borówki |
+| `bloki/blueberry_bush_few.png` | Krzak borówki (kilka owoców) |
+| `bloki/blueberry_bush_full.png` | Krzak borówki (pełen owoców) |
 | `bloki/bush_leaves.png` | Krzak truskawki, Krzak jeżyny, Krzak papryczki chili, Leszczyna |
-| `bloki/bush_sapling.png` | Sadzonka truskawki, Sadzonka jeżyny, Sadzonka papryczki chili, Sadzonka leszczyny |
+| `bloki/bush_sapling.png` | Sadzonka truskawki, Sadzonka jeżyny, Sadzonka papryczki chili, Sadzonka leszczyny, Sadzonka borówki |
 | `bloki/chamomile.png` | Rumianek |
 | `bloki/chili_bush_few.png` | Krzak papryczki chili (kilka papryczek) |
 | `bloki/chili_bush_full.png` | Krzak papryczki chili (pełen papryczek) |
@@ -69,9 +73,11 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/clover.png` | Koniczyna |
 | `bloki/coarse_dirt.png` | Ziemia kamienista |
 | `bloki/cornflower.png` | Chaber |
+| `bloki/crocus.png` | Krokus |
 | `bloki/dandelion.png` | Mniszek |
 | `bloki/dark_planks.png` | Ciemne deski |
 | `bloki/dirt.png` | Ziemia |
+| `bloki/dune_grass.png` | Piaskownica (trawa wydmowa) |
 | `bloki/fern.png` | Paproć |
 | `bloki/forest_floor_side.png` | Ściółka leśna |
 | `bloki/forest_floor_top.png` | Ściółka leśna |
@@ -82,6 +88,7 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/hazel_bush_few.png` | Leszczyna (kilka orzechów) |
 | `bloki/hazel_bush_full.png` | Leszczyna (pełna orzechów) |
 | `bloki/hazelnut.png` | Orzech laskowy |
+| `bloki/heather.png` | Wrzos |
 | `bloki/humus.png` | Czarnoziem |
 | `bloki/jablon/deski.png` | Deski jabłoniowe |
 | `bloki/jablon/jablko.png` | Jabłko |
@@ -111,6 +118,9 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/linden_stripped_side.png` | Okorowany pień lipy |
 | `bloki/linden_stripped_top.png` | Okorowany pień lipy |
 | `bloki/meteorite.png` | Meteoryt |
+| `bloki/moss_carpet.png` | Kępki mchu |
+| `bloki/moss_side.png` | Mech |
+| `bloki/moss_top.png` | Mech |
 | `bloki/mud.png` | Błoto |
 | `bloki/nettle.png` | Pokrzywa |
 | `bloki/oak_leaf_litter.png` | Opadłe liście dębu |
@@ -122,6 +132,15 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/oak_stripped_side.png` | Okorowany pień dębu |
 | `bloki/oak_stripped_top.png` | Okorowany pień dębu |
 | `bloki/ochre_plaster.png` | Tynk ochrowy |
+| `bloki/olcha/deski.png` | Deski olchowe |
+| `bloki/olcha/liscie.png` | Liście olchy |
+| `bloki/olcha/okorowany_bok.png` | Okorowany pień olchy |
+| `bloki/olcha/okorowany_gora.png` | Okorowany pień olchy |
+| `bloki/olcha/opadle_liscie.png` | Opadłe liście olchy |
+| `bloki/olcha/pien_bok.png` | Pień olchy |
+| `bloki/olcha/pien_gora.png` | Pień olchy |
+| `bloki/olcha/sadzonka.png` | Sadzonka olchy |
+| `bloki/olcha/szyszki.png` | Szyszeczki olchy |
 | `bloki/pickaxe.png` | Kilof |
 | `bloki/pine_cone.png` | Szyszka sosny |
 | `bloki/pine_leaves.png` | Igliwie sosny |
@@ -136,6 +155,7 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/plantain.png` | Babka zwyczajna |
 | `bloki/polished_stone.png` | Polerowany kamień |
 | `bloki/poppy.png` | Mak |
+| `bloki/reed.png` | Trzcina |
 | `bloki/resin.png` | Żywica |
 | `bloki/sand.png` | Piasek |
 | `bloki/sandstone_side.png` | Piaskowiec |
@@ -144,6 +164,7 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/shovel.png` | Łopata |
 | `bloki/slate_side.png` | Łupek |
 | `bloki/slate_top.png` | Łupek |
+| `bloki/snow.png` | Śnieg, Warstwa śniegu |
 | `bloki/spruce_cone.png` | Szyszka świerka |
 | `bloki/spruce_leaves.png` | Igliwie świerka |
 | `bloki/spruce_log_side.png` | Pień świerka |
@@ -161,3 +182,12 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/tall_grass.png` | Wysoka trawa |
 | `bloki/terracotta.png` | Terakota |
 | `bloki/water.png` | Woda |
+| `bloki/wierzba/bazie.png` | Bazie |
+| `bloki/wierzba/deski.png` | Deski wierzbowe |
+| `bloki/wierzba/liscie.png` | Liście wierzby |
+| `bloki/wierzba/okorowany_bok.png` | Okorowany pień wierzby |
+| `bloki/wierzba/okorowany_gora.png` | Okorowany pień wierzby |
+| `bloki/wierzba/opadle_liscie.png` | Opadłe liście wierzby |
+| `bloki/wierzba/pien_bok.png` | Pień wierzby |
+| `bloki/wierzba/pien_gora.png` | Pień wierzby |
+| `bloki/wierzba/sadzonka.png` | Sadzonka wierzby |

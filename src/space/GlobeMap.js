@@ -237,11 +237,13 @@ export class GlobeMap {
         else if (surface.kind === 'sand') {
             color.copy(palette.sand ?? FALLBACK.sand);
         }
-        else if (surface.kind === 'grass') {
+        else if (surface.kind === 'grass' || surface.kind.startsWith('grass_')) {
 
             // Wyżej trawa przechodzi w ziemię (jak zbocza na dalekim terenie).
+            // Trawa w kolorze klimatu (grass_warm, grass_cool, grass_high -
+            // Biomes.js) - swój kolor.
 
-            color.copy(palette.grass_top ?? palette.grass ?? FALLBACK.grass)
+            color.copy(palette[surface.kind] ?? palette.grass_top ?? palette.grass ?? FALLBACK.grass)
                 .lerp(palette.grass_side ?? FALLBACK.side, 0.35 * smoothstep(SEA_LEVEL + 25, SEA_LEVEL + 60, height));
 
         }

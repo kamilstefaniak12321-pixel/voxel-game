@@ -129,7 +129,7 @@ export const BIOMES = {
         ground: [['forest_floor', 0.45]],
         trees: { oak: 0.46, linden: 0.4, beech: 0.06, birch: 0.08 },
         density: 1,
-        lone: 0.15,
+        lone: 0.38,
         plants: {
             grass: [0.06, 0.3],
             tall: [0.2, 0.5],
@@ -150,7 +150,7 @@ export const BIOMES = {
         ground: [['forest_floor', 0.75]],
         trees: { beech: 0.84, oak: 0.05, spruce: 0.05, linden: 0.06 },
         density: 1,
-        lone: 0.15,
+        lone: 0.42,
         plants: {
             grass: [0.02, 0.12],
             tall: [0.1, 0.3],
@@ -170,7 +170,7 @@ export const BIOMES = {
         ground: [['moss', 0.12]],
         trees: { birch: 0.76, pine: 0.1, oak: 0.06, spruce: 0.08 },
         density: 0.9,
-        lone: 0.12,
+        lone: 0.3,
         plants: {
             grass: [0.25, 0.65],
             tall: [0.35, 0.65],
@@ -190,7 +190,7 @@ export const BIOMES = {
         ground: [['forest_floor', 0.35], ['moss', 0.3]],
         trees: { pine: 0.86, birch: 0.09, spruce: 0.05 },
         density: 0.8,
-        lone: 0.1,
+        lone: 0.28,
         plants: {
             grass: [0.04, 0.2],
             tall: [0.1, 0.3],
@@ -210,7 +210,7 @@ export const BIOMES = {
         ground: [['forest_floor', 0.5], ['moss', 0.35]],
         trees: { spruce: 0.9, beech: 0.04, birch: 0.06 },
         density: 1,
-        lone: 0.15,
+        lone: 0.42,
         plants: {
             grass: [0.02, 0.12],
             tall: [0.1, 0.3],

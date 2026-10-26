@@ -9,6 +9,8 @@ export const LANDFORMS = {
 
     // Woda i brzeg
     sea: { name: 'morze', group: 'woda', color: '#2f5fb0' },
+    river: { name: 'rzeka', group: 'woda', color: '#3fa9f5' },
+    lake: { name: 'jezioro', group: 'woda', color: '#2f80d8' },
     coast: { name: 'wybrzeże (plaża)', group: 'woda', color: '#e8d9a0' },
 
     // Formy wypukłe

@@ -387,6 +387,15 @@ export const ACHIEVEMENTS = [
         check: (game) => game.nativeApp === 'android'
     },
     {
+        id: 'river_ride',
+        tier: 'rare',
+        title: 'Spływ',
+        task: 'Daj się ponieść nurtowi rzeki przez 100 bloków.',
+        comment: 'Wiosło? Jakie wiosło? Rzeka wie, dokąd płynie.',
+        icon: 'water',
+        check: (game) => game.player.riverDistance >= 100
+    },
+    {
         id: 'interior_designer',
         tier: 'rare',
         title: 'Projektant wnętrz',

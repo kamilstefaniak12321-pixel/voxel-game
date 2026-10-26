@@ -289,6 +289,15 @@ export const WATER_OPACITY_GRAZING = 0.94;
 // Fale: o ile (w blokach) faluje powierzchnia; 0 = płaska woda.
 export const WATER_WAVE_HEIGHT = 0.045;
 
+// NURT RZEK (src/world/terrain/Rivers.js liczy kierunek i siłę):
+//   WATER_FLOW_MAX   - najszybszy nurt zapisywany w chunku (bloki/s),
+//   RIVER_PUSH       - jak mocno nurt niesie gracza (1 = z prędkością
+//                      nurtu, gdy jest cały w wodzie),
+//   RIVER_TEXTURE    - jak szybko płynie tekstura wody (razy nurt).
+export const WATER_FLOW_MAX = 4;
+export const RIVER_PUSH = 1;
+export const RIVER_TEXTURE = 0.6;
+
 // Dno pod wodą ciemnieje z głębokością: światło nieba razy
 // WATER_DEPTH_LIGHT do potęgi głębokości (w blokach), najmniej
 // WATER_DEPTH_LIGHT_MIN.

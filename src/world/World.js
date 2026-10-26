@@ -324,6 +324,34 @@ export class World {
     }
 
     // --------------------------------------------------------
+    // NURT RZEK
+    // --------------------------------------------------------
+
+    // Nurt rzeki w kolumnie (x, z): [x, z] w blokach na sekundę albo
+    // null (bez nurtu - nie rzeka, chunk niewczytany). Kolumna, nie
+    // blok - nurt działa tylko na tego, kto jest w wodzie.
+
+    getFlow(x, z) {
+
+        const chunk = this.getChunk(this.toChunkCoord(x), this.toChunkCoord(z));
+
+        if (!chunk || !chunk.flow) {
+            return null;
+        }
+
+        const lx = x - chunk.cx * CHUNK_SIZE;
+        const lz = z - chunk.cz * CHUNK_SIZE;
+
+        const n = (lz * CHUNK_SIZE + lx) * 2;
+
+        const fx = chunk.flow[n];
+        const fz = chunk.flow[n + 1];
+
+        return fx === 0 && fz === 0 ? null : [fx / 32, fz / 32];
+
+    }
+
+    // --------------------------------------------------------
     // BLOKI
     // --------------------------------------------------------
 
@@ -768,6 +796,10 @@ export class World {
 
         chunk.mesh = mesh;
 
+        // Licznik zmian zestawu chunków z meshem (FarTerrain - maska).
+
+        this.meshVersion = (this.meshVersion ?? 0) + 1;
+
 
         // Kopia do mapy cieni (World.shadowScene).
 
@@ -800,6 +832,8 @@ export class World {
         this.scene.remove(chunk.mesh);
 
         chunk.mesh = null;
+
+        this.meshVersion = (this.meshVersion ?? 0) + 1;
 
         if (chunk.shadowMesh) {
 
@@ -910,7 +944,13 @@ export class World {
 
 
         if (loaded) {
+
             chunk.modified = true;
+
+            // Nurt rzek nie jest zapisany - liczy go generator.
+
+            this.generator.fillFlow?.(chunk);
+
         }
         else {
 

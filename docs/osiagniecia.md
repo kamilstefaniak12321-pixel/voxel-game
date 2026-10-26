@@ -53,6 +53,7 @@ tylko jako *Sekretne osiągnięcie* ze znakiem zapytania.
 | rzadkie | Komplet narzędzi | zrób siekierę, kilof i łopatę (postęp w księdze) |
 | rzadkie | Kopalnia w kieszeni | zagraj na telefonie / tablecie i zniszcz blok palcem (`docs/telefon.md`) |
 | rzadkie | Lokator z ikonką | zagraj w aplikacji na Androida (`docs/telefon.md`) |
+| rzadkie | Spływ | daj się ponieść nurtowi rzeki przez 100 bloków (`docs/rzeki.md`) |
 | rzadkie | Projektant wnętrz | postaw każdy z pięciu budulców: tynk wapienny, tynk ochrowy, terakotę, polerowany kamień i ciemne deski (postęp w księdze) |
 | rzadkie | Promyk słońca | stań w plamie słońca pod dachem (słońce przez okno - `/demo okno`) |
 | bardzo rzadkie | Dzień jak noc | zobacz pełne zaćmienie słońca |

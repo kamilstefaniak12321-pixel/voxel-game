@@ -3,6 +3,7 @@ import * as THREE from 'three';
 import { atlasAverageTexture } from './TextureAtlas.js';
 
 import {
+    CHUNK_SIZE,
     FAR_HAZE_DISTANCE,
     FAR_HAZE_MAX,
     SEA_LEVEL
@@ -74,6 +75,48 @@ export const viewUniforms = {
     uGlobe: { value: 0 }
 
 };
+
+
+// MASKA CHUNKÓW: które chunki wokół gracza mają mesh (prawdziwe bloki
+// są narysowane) - CHUNK_MASK_SIZE x CHUNK_MASK_SIZE chunków od
+// uChunkMaskOrigin (ustawia FarTerrain.updateMask). Daleki teren jest
+// tam wycięty co do chunka (zwykłe wycięcie koła nie wystarcza: chunki
+// wystają za koło, a przez ich półprzezroczystą wodę widać by daleki
+// teren pod spodem), a woda przy granicy wie, że pod nią dalej nie ma
+// już dna (BlockRenderData.js).
+
+export const CHUNK_MASK_SIZE = 128;
+
+export const chunkMaskData = new Uint8Array(CHUNK_MASK_SIZE * CHUNK_MASK_SIZE);
+
+const chunkMaskTexture = new THREE.DataTexture(chunkMaskData, CHUNK_MASK_SIZE, CHUNK_MASK_SIZE, THREE.RedFormat, THREE.UnsignedByteType);
+
+chunkMaskTexture.magFilter = THREE.NearestFilter;
+chunkMaskTexture.minFilter = THREE.NearestFilter;
+chunkMaskTexture.needsUpdate = true;
+
+export const chunkMaskUniforms = {
+    uChunkMask: { value: chunkMaskTexture },
+    uChunkMaskOrigin: { value: new THREE.Vector2(1e6, 1e6) }
+};
+
+export const CHUNK_MASK_GLSL = /* glsl */ `
+
+    uniform sampler2D uChunkMask;
+    uniform vec2 uChunkMaskOrigin;
+
+    // Czy chunk w punkcie xz świata ma mesh.
+
+    bool chunkMeshed(vec2 xz) {
+
+        vec2 chunk = floor(xz / ${CHUNK_SIZE.toFixed(1)}) - uChunkMaskOrigin;
+
+        return chunk.x >= 0.0 && chunk.y >= 0.0 &&
+            chunk.x < ${CHUNK_MASK_SIZE.toFixed(1)} && chunk.y < ${CHUNK_MASK_SIZE.toFixed(1)} &&
+            texture2D(uChunkMask, (chunk + 0.5) / ${CHUNK_MASK_SIZE.toFixed(1)}).r > 0.5;
+
+    }
+`;
 
 
 export const VIEW_GLSL = /* glsl */ `

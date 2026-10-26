@@ -94,7 +94,7 @@ w pauzie i na ekranie tytułowym) - z datą i nazwą świata. Księga jest
 wspólna dla wszystkich światów. Niektóre osiągnięcia są sekretne -
 przed zdobyciem widać tylko znak zapytania.
 
-Jest 32 osiągnięcia (od pierwszego zniszczonego bloku po
+Jest 33 osiągnięcia (od pierwszego zniszczonego bloku po
 legendarne *Problem spadł z nieba*). Nowa rzecz w grze = nowe
 osiągnięcie - jak je dopisać, zdarzenia z gry i pełna lista (spoilery):
 `docs/osiagniecia.md`. Test: `/osiagniecia` (lista), `/osiagniecia pokaz
@@ -373,6 +373,13 @@ wodą i fale przy brzegu (z miejsca, gdzie jest woda). Postać pływa
 żabką (z trzeciej osoby - F5): płynąc pochyla się prawie poziomo,
 w miejscu utrzymuje się na wodzie.
 
+**Rzeki** (teren realistyczny) mają **nurt**: woda płynie w dół rzeki
+(wolno na płaskim, szybko w górach), tekstura płynie w stronę nurtu,
+a gracz w wodzie płynie z nurtem - tym mocniej, im głębiej jest; pod
+prąd da się płynąć tylko tam, gdzie nurt jest wolny. `/rzeka` -
+nurt i dokąd płynie woda, `/rzeka znajdz tp` - nad najbliższą rzekę
+(więcej: `docs/rzeki.md`).
+
 Woda na razie **się nie rozlewa** - stoi tam, gdzie ją postawiono.
 
 - **Test:** `/woda basen` (basen przed tobą: brodzik i głęboka część),
@@ -615,15 +622,23 @@ bez zmian, wyżej jest po prostu powietrze).
   Pod ziemią są różne skały: granit (pod górami tuż pod powierzchnią),
   wapień na wyżynach, piaskowiec na nizinach i wybrzeżach, łupek
   w górach, bazalt na dnie świata i pod głębokim morzem, a lepidolit
-  tylko jako rzadkie żyły w granicie (na wierzch wychodzi rzadko). To dopiero
-  początek - kolejne aktualizacje będą ten teren zmieniać (rzeki,
-  biomy...), więc w takim świecie nowe chunki mogą wyglądać inaczej niż
-  wcześniej (Twoje budowle zostają). Woda jest półprzezroczysta i da
-  się w niej pływać (niżej: *Woda*); na razie się nie rozlewa.
+  tylko jako rzadkie żyły w granicie (na wierzch wychodzi rzadko).
+  **Rzeki** spływają z gór i wyżyn zawsze w dół doliną, łączą się
+  w większe i uchodzą do morza albo do **jezior** (jeziora są
+  w zagłębieniach, także w górach, z płaską taflą na poziomie przelewu);
+  na płaskim meandrują, a ich **nurt** niesie gracza. To dopiero
+  początek - kolejne aktualizacje będą ten teren zmieniać (rzeki główne,
+  strumyki, biomy...), więc w takim świecie nowe chunki mogą wyglądać
+  inaczej niż wcześniej (Twoje budowle zostają). Woda jest
+  półprzezroczysta i da się w niej pływać (niżej: *Woda*); na razie się
+  nie rozlewa.
 - **Klasyczny** - pierwszy generator gry (wzgórza i góry, bez morza).
   Już się nie zmienia. Wszystkie światy sprzed tej aktualizacji są
   klasyczne.
 
+![Rzeka wpadająca do jeziora, jezioro i sieć rzek na mapie](docs/rzeki.jpg)
+
+Rzeki i jeziora (jak powstają, liczby, komendy `/rzeka`): `docs/rzeki.md`.
 Plan rozdziału o terenie (etapy, formy terenu, rzeki, biomy) i jak
 działa generator: `docs/generator-terenu.md`. Teren najłatwiej
 oglądać na **mapie** (klawisz **M** albo `/mapa formy 16`) i komendą
@@ -785,6 +800,7 @@ Komendy służą do sprawdzania nowości w grze, np.:
 /horyzont 16384            daleki teren (/horyzont lod - wielkość kratek)
 /teren                     forma terenu pod graczem (niziny, wyżyny, góry...)
 /teren znajdz kotlina tp   teleport do najbliższej kotliny (/teren formy - lista)
+/rzeka znajdz tp           nad najbliższą rzekę (/rzeka - nurt i dokąd płynie woda)
 /mapa formy 16             mapa terenu (klawisz M; warstwy: teren, formy, pasy, skaly...)
 /mapa przekroj             przekrój pionowy terenu w kierunku patrzenia
 /drzewa aleja              wszystkie gatunki drzew przed tobą (/drzewa dab - jedno)

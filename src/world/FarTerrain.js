@@ -4,7 +4,9 @@ import {
     CHUNK_SIZE,
     CHUNK_HEIGHT,
     WORLD_BORDER,
-    SEA_LEVEL
+    SEA_LEVEL,
+    WATER_SURFACE,
+    WATER_WAVE_HEIGHT
 } from '../config.js';
 
 import {
@@ -22,7 +24,11 @@ import {
 import {
     viewUniforms,
     VIEW_GLSL,
-    GLOBE_LIGHT_GLSL
+    GLOBE_LIGHT_GLSL,
+    CHUNK_MASK_SIZE,
+    CHUNK_MASK_GLSL,
+    chunkMaskData,
+    chunkMaskUniforms
 } from '../rendering/viewUniforms.js';
 
 import {
@@ -35,7 +41,7 @@ import {
     getAtlasAverage
 } from '../rendering/TextureAtlas.js';
 
-import { setPotatoDefine, setDefine } from '../rendering/BlockRenderData.js';
+import { setPotatoDefine, setDefine, FAR_WATER_TINT_RGB } from '../rendering/BlockRenderData.js';
 
 import {
     shadowUniforms,
@@ -148,11 +154,8 @@ const GRASS_SIDE_FRINGE = 0.45;
 // +-CELL_VARIATION.
 const CELL_VARIATION = 0.07;
 
-// Woda z bliska jest półprzezroczysta (widać przez nią ciemne dno), więc
-// wydaje się trochę jaśniejsza i mniej niebieska niż sama tekstura -
-// daleka woda dostaje taki sam odcień (mnożnik koloru, bez szwu na
-// granicy zasięgu widzenia).
-const FAR_WATER_TINT = new THREE.Color(2.2, 1.13, 0.75);
+// Daleka woda: odcień FAR_WATER_TINT_RGB (BlockRenderData.js).
+const FAR_WATER_TINT = new THREE.Color(...FAR_WATER_TINT_RGB);
 
 // Kolory, gdyby nie dało się policzyć średnich kolorów tekstur.
 const FALLBACK_COLORS = {
@@ -219,6 +222,7 @@ export const LOD_LEGEND = LOD_COLORS
 
 const lodDebug = { value: 0 };
 
+
 // Kąt jednego piksela ekranu (radiany) - rogi kratek odsuwają się
 // o pół piksela (FarTerrain.render liczy go z pola widzenia).
 const pixelAngle = { value: 0.0015 };
@@ -240,7 +244,7 @@ function createFarMaterial(level) {
 
     material.onBeforeCompile = (shader) => {
 
-        Object.assign(shader.uniforms, skyUniforms, viewUniforms, meteorLightUniforms, shadowUniforms, {
+        Object.assign(shader.uniforms, skyUniforms, viewUniforms, meteorLightUniforms, shadowUniforms, chunkMaskUniforms, {
             uLodTint: { value: lodColor },
             uLodDebug: lodDebug,
             uCellSize: { value: cellSize },
@@ -254,6 +258,9 @@ function createFarMaterial(level) {
                 `#include <common>
                 varying vec3 vFarWorld;
                 varying vec2 vFarFlatXZ;
+                varying vec2 vFarMaskXZ;
+                varying vec2 vFarSide;
+                varying float vFarCurtain;
                 varying vec3 vFarCell;
                 varying float vFarSunHeight;
                 uniform float uCurvature;
@@ -296,10 +303,27 @@ function createFarMaterial(level) {
 
                 objectNormal = farAxis;
 
+                // Ścianka zwrócona w bok: w którą stronę (do maski chunków).
+
+                vFarSide = farAxis.xz;
+
                 // Odległość od gracza w poziomie (na płaskim świecie)
                 // i zgięcie w kulę: kierunek i kąt od miejsca pod kamerą.
 
                 vec3 farFlatWorld = (modelMatrix * vec4(position, 1.0)).xyz;
+
+                // Znacznik rogu (farSamples.js, czwarta liczba koloru):
+                // wierzch wody - na wysokości powierzchni bliskiej wody,
+                // trochę niżej niż jej najniższa fala (na granicy chunków
+                // z wodą daleka woda nie wystaje nad bliską); kurtyna.
+
+                float farFlag = color.a * 255.0;
+
+                float farWaterDrop = farFlag < 75.0 ? ${(1 - WATER_SURFACE + WATER_WAVE_HEIGHT + 0.02).toFixed(4)} : 0.0;
+
+                vFarCurtain = farFlag > 25.0 && farFlag < 175.0 ? 1.0 : 0.0;
+
+                farFlatWorld.y -= farWaterDrop;
 
                 // Kratka, do której należy ta ściana (trochę w głąb
                 // słupka) - do różnej jasności kratek.
@@ -338,6 +362,13 @@ function createFarMaterial(level) {
                 // między połączonymi ścianami.
 
                 vec3 farGrow = farSpread * (0.5 * uPixelAngle * length(farFlatWorld - cameraPosition));
+
+                // Do maski chunków - położenie bez odsunięcia: przy granicy
+                // z chunkami odsunięty róg wycinałby piksele po tej stronie.
+
+                vFarMaskXZ = farFlatWorld.xz;
+
+                transformed.y -= farWaterDrop;
 
                 transformed += farGrow;
 
@@ -392,6 +423,9 @@ function createFarMaterial(level) {
                 `#include <common>
                 varying vec3 vFarWorld;
                 varying vec2 vFarFlatXZ;
+                varying vec2 vFarMaskXZ;
+                varying vec2 vFarSide;
+                varying float vFarCurtain;
                 varying vec3 vFarCell;
                 varying float vFarSunHeight;
                 uniform float uFogBrightness;
@@ -399,6 +433,7 @@ function createFarMaterial(level) {
                 uniform vec3 uNightTint;
                 uniform vec3 uLodTint;
                 uniform float uLodDebug;
+                ${CHUNK_MASK_GLSL}
                 ${SKY_COLOR_GLSL}
                 ${VIEW_GLSL}
                 ${GLOBE_LIGHT_GLSL}
@@ -416,12 +451,23 @@ function createFarMaterial(level) {
                 '#include <clipping_planes_fragment>',
                 `#include <clipping_planes_fragment>
 
-                // W zasięgu prawdziwych chunków nic (one rysują się na
-                // wierzchu - daleki teren nie wystaje spomiędzy nich).
+                // Tam, gdzie są prawdziwe chunki (z meshem), nic - one rysują
+                // się na wierzchu; daleki teren nie wystaje spomiędzy nich.
+                // Ścianka na granicy chunka liczy się po stronie słupka,
+                // do którego należy: ścianka słupka w chunku bez meshu
+                // zwrócona do prawdziwych chunków zostaje - patrząc z nich
+                // (np. z góry między drzewami) widać ją, a nie niebo.
 
                 float farFlat = length(vFarFlatXZ - cameraPosition.xz);
 
-                if (farFlat < uFarInner) {
+                if (chunkMeshed(vFarMaskXZ - vFarSide * 0.5)) {
+                    discard;
+                }
+
+                // Kurtyna (farSamples.js) - tylko zwrócona do prawdziwych
+                // chunków.
+
+                if (vFarCurtain > 0.5 && !chunkMeshed(vFarMaskXZ + vFarSide * 0.5)) {
                     discard;
                 }
 
@@ -912,6 +958,8 @@ export class FarTerrain {
             return;
         }
 
+        this.updateMask(cameraPosition);
+
 
         // Wysokość kamery nad terenem (z wysoka bliskie kafelki są
         // daleko, więc mogą być mniej dokładne).
@@ -994,6 +1042,46 @@ export class FarTerrain {
             this.showReady();
 
         }
+
+    }
+
+
+    // Maska chunków z meshem wokół gracza (viewUniforms.js)
+    // - od nowa, gdy zmienił się zestaw meshy albo gracz przeszedł dalej.
+
+    updateMask(cameraPosition) {
+
+        const world = this.world;
+
+        const ox = Math.floor(cameraPosition.x / CHUNK_SIZE) - (CHUNK_MASK_SIZE >> 1);
+        const oz = Math.floor(cameraPosition.z / CHUNK_SIZE) - (CHUNK_MASK_SIZE >> 1);
+
+        const origin = chunkMaskUniforms.uChunkMaskOrigin.value;
+
+        const version = world.meshVersion ?? 0;
+
+        if (origin.x === ox && origin.y === oz && version === this.maskVersion) {
+            return;
+        }
+
+        this.maskVersion = version;
+
+        origin.set(ox, oz);
+
+        chunkMaskData.fill(0);
+
+        for (const chunk of world.chunks.values()) {
+
+            const i = chunk.cx - ox;
+            const j = chunk.cz - oz;
+
+            if (chunk.mesh && i >= 0 && j >= 0 && i < CHUNK_MASK_SIZE && j < CHUNK_MASK_SIZE) {
+                chunkMaskData[j * CHUNK_MASK_SIZE + i] = 255;
+            }
+
+        }
+
+        chunkMaskUniforms.uChunkMask.value.needsUpdate = true;
 
     }
 

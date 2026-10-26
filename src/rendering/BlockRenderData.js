@@ -25,6 +25,7 @@ import {
 import {
     WATER_SURFACE,
     WATER_WAVE_HEIGHT,
+    RIVER_TEXTURE,
     WATER_OPACITY,
     WATER_OPACITY_GRAZING
 } from '../config.js';
@@ -43,7 +44,9 @@ import {
 
 import {
     viewUniforms,
-    VIEW_GLSL
+    VIEW_GLSL,
+    CHUNK_MASK_GLSL,
+    chunkMaskUniforms
 } from './viewUniforms.js';
 
 
@@ -521,6 +524,24 @@ export function setLeafMaterialFast(on) {
 
 const waterTile = ATLAS_TILES.water;
 
+// Nurt rzeki w UV ściany wody (ChunkMesher.js): środek kafelka wody
+// przesunięty o nurt / 3.97 bloku/s razy WATER_FLOW_UV rozmiaru kafelka.
+export const WATER_FLOW_UV = 0.35;
+
+// Woda z bliska jest półprzezroczysta (widać przez nią ciemne dno), więc
+// wydaje się trochę jaśniejsza i mniej niebieska niż sama tekstura -
+// daleka (nieprzezroczysta) woda dostaje taki odcień: mnożnik koloru
+// tekstury, bez szwu na granicy zasięgu widzenia. Tak samo bliska woda
+// tam, gdzie pod nią nie ma już narysowanego dna (waterMaterial).
+export const FAR_WATER_TINT_RGB = [2.2, 1.13, 0.75];
+
+// Nieprzezroczysta bliska woda (bez dna pod spodem) jest oświetlona
+// jak powierzchnia, a nie jak dno widziane przez wodę - trochę ciemniej,
+// żeby wyglądała jak daleka woda za nią.
+const WATER_EDGE_SHADE = 0.82;
+
+const glslVec3 = (v) => `vec3(${v.map((x) => x.toFixed(3)).join(', ')})`;
+
 export const waterUniforms = {
 
     // Jak wysoko faluje powierzchnia (bloki; 0 = płaska) - /woda fale.
@@ -560,7 +581,7 @@ waterMaterial.onBeforeCompile = (shader, renderer) => {
 
     blockMaterial.onBeforeCompile(shader, renderer);
 
-    Object.assign(shader.uniforms, waterUniforms);
+    Object.assign(shader.uniforms, waterUniforms, chunkMaskUniforms);
 
 
     shader.vertexShader = shader.vertexShader
@@ -608,7 +629,8 @@ waterMaterial.onBeforeCompile = (shader, renderer) => {
             uniform float uWaterOpacity;
             uniform float uWaterOpacityGrazing;
             varying vec3 vWaterWorld;
-            varying vec3 vWaterNormal;`
+            varying vec3 vWaterNormal;
+            ${CHUNK_MASK_GLSL}`
         )
         .replace(
             '#include <map_pars_fragment>',
@@ -639,6 +661,21 @@ waterMaterial.onBeforeCompile = (shader, renderer) => {
             vec2 flowA = abs(waterNormal.y) > 0.5 ? vec2(0.06, 0.025) : vec2(0.0, 0.35);
             vec2 flowB = abs(waterNormal.y) > 0.5 ? vec2(-0.035, 0.05) : vec2(0.02, 0.22);
 
+            // Rzeka: nurt zapisany w UV (środek kafelka przesunięty o nurt) -
+            // na wierzchu obie warstwy płyną z nurtem (trochę inaczej, żeby
+            // było widać ruch wody, a nie przesuwany obrazek).
+
+            vec2 riverFlow = ((vMapUv - uWaterTile.xy) / uWaterTile.zw - 0.5) / ${WATER_FLOW_UV.toFixed(3)} * ${(127 / 32).toFixed(4)};
+
+            if (abs(waterNormal.y) > 0.5 && dot(riverFlow, riverFlow) > 0.01) {
+
+                vec2 across = vec2(-riverFlow.y, riverFlow.x);
+
+                flowA = -riverFlow * ${RIVER_TEXTURE.toFixed(3)};
+                flowB = -riverFlow * ${(RIVER_TEXTURE * 0.7).toFixed(3)} + across * 0.04;
+
+            }
+
             vec4 waterColor = mix(
                 waterTexel(waterPlane + flowA * uTime),
                 waterTexel(waterPlane + flowB * uTime + 0.37),
@@ -655,7 +692,51 @@ waterMaterial.onBeforeCompile = (shader, renderer) => {
 
             float waterFacing = abs(dot(normalize(cameraPosition - vWaterWorld), waterNormal));
 
-            diffuseColor.a = mix(uWaterOpacityGrazing, uWaterOpacity, pow(waterFacing, 0.6));`
+            diffuseColor.a = mix(uWaterOpacityGrazing, uWaterOpacity, pow(waterFacing, 0.6));
+
+            // Przy granicy prawdziwych chunków (z dalekim terenem za nimi):
+            // promień przez wodę schodzi pod powierzchnię i wychodzi poza
+            // narysowane chunki, zanim trafi w dno - tam pod wodą nie ma
+            // nic (daleki teren ma wierzch na poziomie wody), więc przez
+            // wodę widać by jasne niebo (pas wzdłuż granicy). Sprawdzamy
+            // kilka głębokości: im płycej promień już jest poza chunkami,
+            // tym bardziej woda jest nieprzezroczysta, w kolorze dalekiej
+            // wody.
+
+            if (uFarEnabled > 0.5 && waterNormal.y > 0.5) {
+
+                vec3 waterRay = vWaterWorld - cameraPosition;
+
+                if (waterRay.y < -0.001) {
+
+                    vec2 waterRun = waterRay.xz / -waterRay.y;
+
+                    float waterEdge = 0.0;
+
+                    for (int i = 0; i < 4; i++) {
+
+                        float depth = 1.5 * exp2(float(i));
+
+                        vec2 offset = waterRun * depth;
+
+                        float run = length(offset);
+
+                        if (run > 48.0) {
+                            offset *= 48.0 / run;
+                        }
+
+                        if (!chunkMeshed(vWaterWorld.xz + offset)) {
+                            waterEdge = max(waterEdge, 1.0 - float(i) * 0.1);
+                        }
+
+                    }
+
+                    diffuseColor.a = mix(diffuseColor.a, 1.0, waterEdge);
+                    diffuseColor.rgb = mix(diffuseColor.rgb, diffuseColor.rgb * ${glslVec3(FAR_WATER_TINT_RGB.map((v) => v * WATER_EDGE_SHADE))}, waterEdge);
+
+                }
+
+            }`
         );
 
 };

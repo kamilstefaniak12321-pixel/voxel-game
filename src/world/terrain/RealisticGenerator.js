@@ -17,6 +17,8 @@ import { Geology } from './Geology.js';
 
 import { Forests } from '../trees/Forests.js';
 
+import { Rivers } from './Rivers.js';
+
 // ------------------------------------------------------------
 // GENERATOR TERENU "REALISTYCZNY" (w budowie)
 //
@@ -130,6 +132,25 @@ function profile(table, x) {
 }
 
 
+// Nurt rzeki z kolumny (compute: flowX, flowZ) do chunk.flow (bloki/s
+// razy 32; tablica powstaje dopiero, gdy chunk ma rzekę).
+
+function setFlow(chunk, lx, lz, sample) {
+
+    if (sample.flowX === 0 && sample.flowZ === 0) {
+        return;
+    }
+
+    chunk.flow ??= new Int8Array(CHUNK_SIZE * CHUNK_SIZE * 2);
+
+    const n = (lz * CHUNK_SIZE + lx) * 2;
+
+    chunk.flow[n] = clamp(Math.round(sample.flowX * 32), -127, 127);
+    chunk.flow[n + 1] = clamp(Math.round(sample.flowZ * 32), -127, 127);
+
+}
+
+
 // Daleki teren: od jakiej gęstości lasu widać korony drzew i jak
 // wysoko są (bloki nad ziemią - średnio dla gatunku).
 
@@ -144,6 +165,11 @@ const FAR_CANOPY = { spruce: 13, pine: 15, beech: 10, linden: 10, oak: 8, birch:
 export const DETAIL_FULL = 0;
 export const DETAIL_MEDIUM = 1;
 export const DETAIL_COARSE = 2;
+
+// Sama "makrorzeźba" (kontynent, wyżyny, góry, płaskowyże, depresje -
+// bez wzgórz, pagórków i drobnych form, bez rzek): gładka wysokość,
+// po której spływają rzeki (Rivers.js). Pola jak przy DETAIL_FULL.
+export const DETAIL_MACRO = 3;
 
 
 // ------------------------------------------------------------
@@ -201,6 +227,7 @@ export class RealisticGenerator {
             dirt: getBlockId('dirt'),
             grass: getBlockId('grass'),
             sand: getBlockId('sand'),
+            gravel: getBlockId('gravel'),
             water: getBlockId('water'),
             granite: getBlockId('granite'),
             lepidolite: getBlockId('lepidolite'),
@@ -231,6 +258,11 @@ export class RealisticGenerator {
         // Lasy i drzewa.
 
         this.forests = new Forests(this, base);
+
+
+        // Rzeki i jeziora (spływają po makrorzeźbie).
+
+        this.rivers = new Rivers(this, base);
 
 
         // Kolumny chunka (granice skał) - używane ponownie.
@@ -273,13 +305,20 @@ export class RealisticGenerator {
 
 
     // Liczy wszystkie pola i wysokość w kolumnie (x, z).
-    // detail - DETAIL_FULL / MEDIUM / COARSE (daleki teren).
+    // detail  - DETAIL_FULL / MEDIUM / COARSE (daleki teren) / MACRO
+    //           (tylko makrorzeźba - out.macro, out.ocean),
+    // spacing - odstęp próbek dalekiego terenu (rzeki węższe niż kratka
+    //           i tak mają ją zalać - inaczej by z daleka znikały).
     // Wynik w `out` (domyślnie wspólny obiekt this.sample):
     //   height  - y najwyższego bloku terenu (bez wody)
     //   ocean   - czy to morze (tu woda sięga do SEA_LEVEL)
+    //   water   - y najwyższego bloku wody (morze, rzeka, jezioro) albo 0
+    //   macro   - wysokość makrorzeźby (y, z ułamkiem)
+    //   river   - 0 nic, 1 koryto rzeki, 2 brzeg; lake - jezioro;
+    //   flowX, flowZ - nurt rzeki (bloki na sekundę)
     //   oraz wartości pól (do opisu, mapy i powierzchni).
 
-    compute(x, z, detail = DETAIL_FULL, out = this.sample) {
+    compute(x, z, detail = DETAIL_FULL, out = this.sample, spacing = 1) {
 
         const N = this.noise;
         const S = SHAPE.SCALES;
@@ -360,11 +399,13 @@ export class RealisticGenerator {
             (1 - 0.8 * plateau) *
             land;
 
-        const hills =
+        const macroOnly = detail === DETAIL_MACRO;
+
+        const hills = macroOnly ? 0 :
             this.field(N.hills, x, z, S.hills, detail === DETAIL_FULL ? 3 : detail === DETAIL_MEDIUM ? 2 : 1) *
             hillAmplitude;
 
-        const hillocks = detail === DETAIL_COARSE
+        const hillocks = detail === DETAIL_COARSE || macroOnly
             ? 0
             : this.field(N.bumps, x, z, S.bumps, 2) *
               SHAPE.HILLOCK_HEIGHT * (1 - 0.7 * flatness) * (1 - mountains) * land;
@@ -372,11 +413,19 @@ export class RealisticGenerator {
 
         let height = base + uplandLift + massif + hills + hillocks;
 
+        // Makrorzeźba: to samo bez wzgórz, pagórków i drobnych form.
+
+        let macro = base + uplandLift + massif;
+
 
         // Płaskowyże: teren w stopniach - płaskie wierzchy, strome krawędzie.
 
         if (plateau > 0 && height > 2) {
             height += (terrace(height, SHAPE.PLATEAU_STEP) - height) * plateau;
+        }
+
+        if (plateau > 0 && macro > 2) {
+            macro += (terrace(macro, SHAPE.PLATEAU_STEP) - macro) * plateau;
         }
 
 
@@ -389,6 +438,30 @@ export class RealisticGenerator {
             smoothstep(-0.10, 0.0, continent) * (1 - smoothstep(0.15, 0.40, continent));
 
         height += (-SHAPE.DEPRESSION_DEPTH + hillocks * 0.3 - height) * depression;
+
+        macro += (-SHAPE.DEPRESSION_DEPTH - macro) * depression;
+
+
+        // Morze tam, gdzie profil kontynentu schodzi pod wodę. Na lądzie
+        // teren nie schodzi poniżej morza (poza depresjami) - inaczej przy
+        // brzegu woda stałaby "ścianą" obok suchego dołka.
+
+        const ocean = base < 0;
+
+        if (!ocean && depression < 0.05) {
+            macro = Math.max(macro, 0);
+        }
+
+        if (macroOnly) {
+
+            out.macro = SEA_LEVEL + macro;
+            out.ocean = ocean;
+            out.mountains = mountains;
+            out.height = clamp(SEA_LEVEL + Math.floor(macro), 2, CHUNK_HEIGHT - 6);
+
+            return out;
+
+        }
 
 
         // Wąwozy: wąskie rozcięcia wyżyn (też płaskowyżów).
@@ -446,19 +519,23 @@ export class RealisticGenerator {
         height += crag - ravine - gully;
 
 
-        // Morze tam, gdzie profil kontynentu schodzi pod wodę. Na lądzie
-        // teren nie schodzi poniżej morza (poza depresjami) - inaczej przy
-        // brzegu woda stałaby "ścianą" obok suchego dołka.
-
-        const ocean = base < 0;
-
         if (!ocean && depression < 0.05) {
             height = Math.max(height, 0);
         }
 
 
-        out.height = clamp(SEA_LEVEL + Math.floor(height), 2, CHUNK_HEIGHT - 6);
+        // Rzeki i jeziora: koryta, doliny, brzegi i woda (Rivers.js) -
+        // zmieniają wysokość tylko w pobliżu wody.
+
         out.ocean = ocean;
+        out.mountains = mountains;
+        out.macro = SEA_LEVEL + macro;
+        out.water = ocean ? SEA_LEVEL : 0;
+
+        const surface = this.rivers.shape(x, z, SEA_LEVEL + macro, SEA_LEVEL + height, out, spacing);
+
+
+        out.height = clamp(Math.floor(surface), 2, CHUNK_HEIGHT - 6);
 
         out.continent = continent;
         out.uplift = uplift;
@@ -500,7 +577,8 @@ export class RealisticGenerator {
     }
 
 
-    // Rodzaj powierzchni: 'water' (dno morza), 'sand', 'rock', 'grass'.
+    // Rodzaj powierzchni: 'seabed' (dno morza), 'riverbed' (dno rzeki
+    // i jeziora - piasek, w górach żwir), 'sand', 'rock', 'grass'.
     // slope - największa różnica wysokości do sąsiedniej kolumny.
 
     surfaceKind(x, z, sample, slope) {
@@ -511,11 +589,19 @@ export class RealisticGenerator {
             return 'seabed';
         }
 
+        if (sample.water > height) {
+            return 'riverbed';
+        }
+
         if (height <= SEA_LEVEL + SHAPE.BEACH_HEIGHT && sample.base < 1 && sample.depression < 0.05) {
             return 'sand';
         }
 
-        if (sample.crag > 1.5 || slope >= SHAPE.ROCK_SLOPE || height > this.rockLine(x, z)) {
+        // Brzeg rzeki (stromy tylko przez koryto obok) - trawa, nie skała.
+
+        const steep = slope >= SHAPE.ROCK_SLOPE && !(sample.river > 0);
+
+        if (sample.crag > 1.5 || steep || height > this.rockLine(x, z)) {
             return 'rock';
         }
 
@@ -614,6 +700,8 @@ export class RealisticGenerator {
                     chunk.setId(lx, y, lz, buffer[y]);
                 }
 
+                setFlow(chunk, lx, lz, sample);
+
             }
 
         }
@@ -623,6 +711,27 @@ export class RealisticGenerator {
         // tu sięgają.
 
         this.forests.placeTrees(chunk);
+
+    }
+
+
+    // Nurt rzek w chunku wczytanym z zapisu (zapis ma tylko bloki).
+
+    fillFlow(chunk) {
+
+        const sample = {};
+
+        for (let lz = 0; lz < CHUNK_SIZE; lz++) {
+
+            for (let lx = 0; lx < CHUNK_SIZE; lx++) {
+
+                this.compute(chunk.cx * CHUNK_SIZE + lx, chunk.cz * CHUNK_SIZE + lz, DETAIL_FULL, sample);
+
+                setFlow(chunk, lx, lz, sample);
+
+            }
+
+        }
 
     }
 
@@ -650,6 +759,13 @@ export class RealisticGenerator {
             }
             else if ((kind === 'sand' || kind === 'seabed') && depth <= 2) {
                 id = ids.sand;
+            }
+            else if (kind === 'riverbed' && depth <= 1) {
+
+                // Dno rzeki i jeziora: w górach żwir, niżej piasek.
+
+                id = sample.mountains > 0.4 && !sample.lake ? ids.gravel : ids.sand;
+
             }
             else {
 
@@ -687,13 +803,15 @@ export class RealisticGenerator {
 
         }
 
-        if (sample.ocean) {
+        // Woda: morze do poziomu morza, rzeka i jezioro do swojego.
 
-            for (let y = height + 1; y <= SEA_LEVEL; y++) {
+        if (sample.water > height) {
+
+            for (let y = height + 1; y <= sample.water; y++) {
                 out[y] = ids.water;
             }
 
-            top = Math.max(top, SEA_LEVEL);
+            top = Math.max(top, sample.water);
 
         }
 
@@ -913,12 +1031,13 @@ export class RealisticGenerator {
 
     farSurface(x, z, spacing) {
 
-        const sample = this.compute(x, z, spacing <= 8 ? DETAIL_MEDIUM : DETAIL_COARSE);
+        const sample = this.compute(x, z, spacing <= 8 ? DETAIL_MEDIUM : DETAIL_COARSE, this.sample, spacing);
 
-        // Morze: floor - wierzch dna (kula Ziemi z kosmosu - głębia).
+        // Woda (morze, rzeka, jezioro): floor - wierzch dna (kula Ziemi
+        // z kosmosu - głębia).
 
-        if (sample.ocean && sample.height < SEA_LEVEL) {
-            return { top: SEA_LEVEL + 1, kind: 'water', floor: sample.height + 1 };
+        if (sample.water > sample.height) {
+            return { top: sample.water + 1, kind: 'water', floor: sample.height + 1 };
         }
 
         const kind = this.surfaceKind(x, z, sample, 0);
@@ -963,9 +1082,9 @@ export class RealisticGenerator {
     // slopeHint - nachylenie policzone wcześniej (mapa liczy je sama
     // z siatki wysokości); bez niego liczymy je z sąsiednich kolumn.
 
-    describe(x, z, slopeHint = null) {
+    describe(x, z, slopeHint = null, spacing = 1) {
 
-        const sample = this.compute(x, z, DETAIL_FULL, {});
+        const sample = this.compute(x, z, DETAIL_FULL, {}, spacing);
 
         const height = sample.height;
 
@@ -1016,6 +1135,10 @@ export class RealisticGenerator {
         return {
             height,
             relief,
+            // woda: 'river', 'lake', 'sea' albo null
+            water: sample.water > height
+                ? (sample.ocean ? 'sea' : sample.lake ? 'lake' : 'river')
+                : null,
             landform: this.classify(sample, slope),
             surface,
             forest,
@@ -1048,6 +1171,10 @@ export class RealisticGenerator {
         const above = sample.height - SEA_LEVEL;
 
         if (sample.ocean && sample.height < SEA_LEVEL) return 'sea';
+
+        if (sample.lake) return 'lake';
+
+        if (sample.river === 1 && sample.water > sample.height) return 'river';
 
         if (sample.base < 1 && above <= SHAPE.BEACH_HEIGHT && sample.depression < 0.05) return 'coast';
 
@@ -1126,7 +1253,7 @@ export class RealisticGenerator {
 
                 const above = sample.height - SEA_LEVEL;
 
-                if (sample.ocean || above < 2 || above > SHAPE.RELIEF_UPLAND) {
+                if (sample.ocean || sample.water > 0 || sample.river > 0 || above < 2 || above > SHAPE.RELIEF_UPLAND) {
                     continue;
                 }
 

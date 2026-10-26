@@ -40,6 +40,11 @@ export class Chunk {
         //   skyLight              - światło nieba (0-15)
         //   lightR, lightG, lightB - kolorowe światło lamp (0-255)
 
+        // Nurt rzeki w kolumnach (x, z na przemian, bloki/s razy 32;
+        // Int8Array 16 x 16 x 2) albo null - bez rzeki (RealisticGenerator).
+
+        this.flow = null;
+
         this.skyLight = new Uint8Array(this.blocks.length);
         this.lightR = new Uint8Array(this.blocks.length);
         this.lightG = new Uint8Array(this.blocks.length);

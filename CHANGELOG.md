@@ -11,6 +11,52 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 0.18.0 - Rzeki, jeziora i nurt (2026-10-26)
+
+Pull request #38.
+
+### Nowe
+- **Rzeki** (teren realistyczny). Zaczynają się w źródłach - częściej
+  w górach i na wyżynach - i spływają zawsze w dół, dnem dolin (wzdłuż
+  spadku terenu, nie w poprzek zbocza), aż do morza albo do jeziora.
+  Rzeki, które się spotkają, płyną dalej razem i są coraz szersze
+  (od ~3 do ~9 bloków). Na płaskim terenie meandrują, na spadkach płyną
+  prosto. Poziom wody nigdy nie rośnie w dół rzeki - tam, gdzie spada
+  o blok, jest mały próg.
+- **Jeziora** - w zagłębieniach terenu (także w górach, między
+  szczytami), z płaską taflą na poziomie przelewu. Rzeka wpływa do
+  jeziora równo z taflą i wypływa z niego przelewem; zagłębienie, które
+  nie ma odpływu, jest jeziorem, w którym rzeka się kończy. Morze ma
+  zawsze jeden poziom.
+- **Bez zalewisk i ścian wody**: przy rzece wzgórza się wygładzają,
+  brzegi opadają łagodnie (w górach stromiej), tuż przy korycie brzeg
+  jest blok nad wodą. Przy jeziorze teren obok wody nie schodzi poniżej
+  tafli (przy przelewie jest próg), a rzeka dochodzi do jeziora równo
+  z taflą i dopiero dalej łagodnie opada. Dno z piasku (w górach ze
+  żwiru), brzegi z trawy, drzewa nie rosną w wodzie ani na samym
+  brzegu.
+- **Nurt**: woda w rzece płynie w dół rzeki - wolno na płaskim, szybko
+  w górach. Nurt niesie gracza (tym mocniej, im głębiej jest w wodzie),
+  a tekstura wody płynie w jego stronę.
+- `/rzeka` (nurt i dokąd płynie stąd woda), `/rzeka znajdz tp`,
+  `/rzeka jezioro tp`, `/rzeka nurt 0-3`, `/rzeka statystyki`,
+  `/teren znajdz rzeka | jezioro`; rzeki i jeziora na mapie (`/mapa`)
+  i w dalekim terenie.
+- Osiągnięcie *Spływ* - daj się ponieść nurtowi rzeki przez 100 bloków.
+
+### Poprawki
+- Woda przy granicy zasięgu widzenia: bez jasnego pasa wzdłuż końca
+  prawdziwych chunków (przez wodę było tam widać niebo - pod nią nie
+  ma już dna), bez szczeliny między bliską a daleką wodą (daleka woda
+  jest na wysokości powierzchni bliskiej), a daleki teren jest
+  wycinany dokładnie tam, gdzie są narysowane prawdziwe chunki (co do
+  chunka).
+- Z góry, na końcu zasięgu widzenia, między drzewami nie widać już
+  dziur z niebem - daleki teren ma tam ścianki koron (i wody) zwrócone
+  do prawdziwych chunków.
+
+---
+
 ## 0.17.0 - Kanciasty daleki teren do 16 384 bloków (2026-10-25)
 
 Pull request #37.

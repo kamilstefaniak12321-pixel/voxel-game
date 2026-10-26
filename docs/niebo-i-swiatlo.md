@@ -195,8 +195,21 @@ się tam naprawdę (`generator.farSurface`), ale bez pojedynczych bloków.
   wkłada gotowe siatki do sceny. Bez wątków (stara przeglądarka) liczy
   się w grze, z limitem czasu na klatkę (`BUILD_BUDGET_MS`).
 - **Środek**: w zasięgu prawdziwych chunków daleki teren jest wycięty
-  (`discard` w shaderze) - nie wystaje spomiędzy prawdziwych drzew ani
-  przez wykopane dziury.
+  (`discard` w shaderze) co do chunka - według maski chunków z meshem
+  (`chunkMaskUniforms` w `viewUniforms.js`) - nie wystaje spomiędzy
+  prawdziwych drzew ani przez wykopane dziury.
+- **Granica z chunkami**: ścianka słupka w chunku bez meshu zwrócona do
+  prawdziwych chunków zostaje (widać ją z nich), a na granicach chunków
+  w bliskich kafelkach koron drzew i wody są dodatkowo **kurtyny** -
+  ścianki od wierzchu w dół, rysowane tylko od strony prawdziwych
+  chunków. Bez nich z góry między prawdziwymi drzewami (albo przez wodę)
+  było widać niebo tam, gdzie daleki słupek ma tę samą wysokość co
+  sąsiad i zwykłej ścianki nie ma.
+- **Woda na granicy**: wierzch dalekiej wody jest na wysokości
+  powierzchni bliskiej wody (tuż pod jej najniższą falą), a bliska woda
+  tuż przy końcu chunków robi się nieprzezroczysta, w kolorze dalekiej
+  wody - z tej samej maski wie, że pod nią nie ma już narysowanego dna
+  (inaczej widać by przez wodę jasny pas nieba).
 - **Kolory**: średnie kolory tekstur trawy (wierzch i bok), skał (każda
   swoim kolorem), piasku, wody i liści gatunku, który przeważa w lesie -
   nowa tekstura sama zmienia daleki teren.

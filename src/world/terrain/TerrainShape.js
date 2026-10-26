@@ -297,3 +297,46 @@ export const FORESTS = {
     speciesScale: 150,
     mix: 0.35
 };
+// RZEKI I JEZIORA (src/world/terrain/Rivers.js, docs/rzeki.md).
+//
+// Rzeki spływają po makrorzeźbie (teren bez wzgórz i pagórków) na
+// zgrubnej siatce co `cell` bloków: z każdej kratki do najniższej
+// sąsiedniej (najbardziej stromo w dół). Zaczynają się w źródłach
+// (najwyżej jedno na `sourceSpacing` x `sourceSpacing` bloków, szansa
+// rośnie z wysokością: `sourceChance` - od nizin do gór) i kończą
+// w morzu albo w jeziorze. Zagłębienie bez odpływu wypełnia się wodą do
+// poziomu przelewu (jezioro, najwyżej `lakeMaxCells` kratek) - rzeka
+// wypływa z niego dalej; płytsze niż `lakeMinDepth` bloków rzeka
+// przecina bez jeziora. Rzeka dłuższa niż `maxLength` bloków (w linii
+// prostej od źródła) się nie tworzy - jej źródło jest pomijane.
+//
+// Koryto: połowa szerokości od `halfWidth[0]` (źródło) do
+// `halfWidth[1]` (po połączeniu wielu dopływów: + `widthPerSource`
+// x pierwiastek z liczby źródeł), głębokość `depth` (+ część
+// szerokości), woda `waterBelow` bloków pod okolicznym terenem. Brzegi
+// i dolina: teren opada do wody najwyżej `bankSlope` (niziny .. góry)
+// bloku na blok, na `bank` blokach od koryta wzgórza się wygładzają.
+// Na płaskim rzeka meandruje (do `meander` bloków w bok, zakręty co
+// ~`meanderScale` bloków), na spadkach płynie prosto.
+// Nurt: `flow` [najwolniej, najszybciej] bloków na sekundę - zależy od
+// spadku (`flowSlope` - ile szybciej na blok spadku na blok drogi).
+export const RIVERS = {
+    cell: 16,
+    sourceSpacing: 352,
+    sourceChance: [0.25, 0.85],
+    maxLength: 6144,
+    minLength: 12,
+    lakeMaxCells: 700,
+    lakeMinDepth: 4,
+    halfWidth: [1.6, 4.5],
+    widthPerSource: 0.75,
+    depth: 1.5,
+    waterBelow: 1.5,
+    bankSlope: [0.4, 1.1],
+    bank: 26,
+    meander: 14,
+    meanderScale: 70,
+    meanderSlope: [0.004, 0.03],
+    flow: [0.6, 3.2],
+    flowSlope: 45
+};

@@ -369,7 +369,9 @@ export class Forests {
 
         const height = sample.height;
 
-        if (sample.ocean || height + 1 + 6 >= CHUNK_HEIGHT) {
+        // Nie w wodzie i nie na samym brzegu rzeki.
+
+        if (sample.ocean || sample.water > height || sample.riverGap < 2 || height + 1 + 6 >= CHUNK_HEIGHT) {
             return null;
         }
 

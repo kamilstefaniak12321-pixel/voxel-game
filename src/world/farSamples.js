@@ -28,6 +28,29 @@ export const LEAF_KINDS = BASE_TREE_NAMES.map((species) => `${species}_leaves`);
 
 export const KINDS = ['grass', 'rock', 'sand', 'water', ...ROCK_KINDS, ...LEAF_KINDS];
 
+const WATER_KIND = KINDS.indexOf('water');
+
+const FIRST_LEAF_KIND = KINDS.indexOf(LEAF_KINDS[0]);
+
+// Kurtyny (meshFarTile): jak głęboko pod wierzchem sięgają - korony
+// drzew (do ziemi pod nimi) i woda (do dna); inne rodzaje bez kurtyn.
+// Tylko w kafelkach o kratkach do CURTAIN_MAX_SPACING bloków (dalej
+// prawdziwych chunków i tak nie ma).
+
+const CURTAIN_LEAVES = 12;
+const CURTAIN_WATER = 8;
+const CURTAIN_MAX_SPACING = 4;
+
+function curtainDepth(kind) {
+
+    if (kind === WATER_KIND) {
+        return CURTAIN_WATER;
+    }
+
+    return kind >= FIRST_LEAF_KIND ? CURTAIN_LEAVES : 0;
+
+}
+
 // Numer rodzaju: 'stone' to to samo co 'rock', nieznany = trawa.
 
 const KIND_INDEX = new Map(KINDS.map((kind, index) => [kind, index]));
@@ -142,6 +165,21 @@ export function sampleFarTile(generator, x0, z0, spacing, cells, heights, kinds,
 // czytają bez przeliczania tylko takie formaty (3 x 16 albo 3 x 8 bitów
 // przeglądarka musiałaby przerabiać).
 //
+// Czwarta liczba koloru to znacznik rogu (shader dalekiego terenu):
+//   255 - zwykły róg,
+//     0 - na wierzchu wody (wierzch kratki wody, dół ścianki nad wodą) -
+//         shader obniża go do wysokości powierzchni bliskiej wody
+//         (WATER_SURFACE), żeby na granicy z nią nie było szczeliny,
+//   100 - róg kurtyny, 50 - róg kurtyny na wierzchu wody.
+//
+// KURTYNY: na granicach chunków wewnątrz kafelka (kratki do
+// CURTAIN_MAX_SPACING bloków) koron drzew i wody - ścianki od wierzchu
+// w dół (curtainDepth), w obie strony. Shader rysuje tylko te zwrócone
+// do chunków z meshem ze słupka w chunku bez meshu: patrząc z prawdziwych
+// chunków (z góry między drzewami, przez wodę) widać ścianę koron albo
+// wody, a nie niebo - tam, gdzie zwykłej ścianki nie ma (sąsiad tej samej
+// wysokości).
+//
 // Normalna ma na swojej osi 127 (= 1), a na dwóch pozostałych +-1:
 // w którą stronę od środka ściany leży ten róg. Shader dalekiego terenu
 // wyciąga z tego czystą normalną i odsuwa róg o pół piksela na zewnątrz,
@@ -153,7 +191,7 @@ export function sampleFarTile(generator, x0, z0, spacing, cells, heights, kinds,
 
 export function createMeshScratch(cells) {
 
-    const maxQuads = cells * cells + 2 * cells * (cells + 1);
+    const maxQuads = cells * cells + 2 * cells * (cells + 1) + 4 * cells * cells;
 
     return {
         cells,
@@ -190,7 +228,7 @@ export function meshFarTile(heights, kinds, cells, spacing, palette, scratch) {
     // w palecie: wierzch, bok albo ciemniejszy dół boku). Rogi idą
     // przeciwnie do wskazówek zegara patrząc od strony normalnej.
 
-    const corner = (v, x, y, z, nx, ny, nz, color) => {
+    const corner = (v, x, y, z, nx, ny, nz, color, water = false, curtain = false) => {
 
         // nx, ny, nz: 127 na osi normalnej, +-1 - strona rogu.
 
@@ -208,7 +246,7 @@ export function meshFarTile(heights, kinds, cells, spacing, palette, scratch) {
         colors[p] = palette[color];
         colors[p + 1] = palette[color + 1];
         colors[p + 2] = palette[color + 2];
-        colors[p + 3] = 255;
+        colors[p + 3] = curtain ? (water ? 50 : 100) : (water ? 0 : 255);
 
     };
 
@@ -224,10 +262,12 @@ export function meshFarTile(heights, kinds, cells, spacing, palette, scratch) {
         const za = j0 * s;
         const zb = j1 * s;
 
-        corner(0, xa, y, za, -1, 127, -1, c);
-        corner(1, xa, y, zb, -1, 127, 1, c);
-        corner(2, xb, y, zb, 1, 127, 1, c);
-        corner(3, xb, y, za, 1, 127, -1, c);
+        const water = kind === WATER_KIND;
+
+        corner(0, xa, y, za, -1, 127, -1, c, water);
+        corner(1, xa, y, zb, -1, 127, 1, c, water);
+        corner(2, xb, y, zb, 1, 127, 1, c, water);
+        corner(3, xb, y, za, 1, 127, -1, c, water);
 
         quads++;
 
@@ -235,25 +275,25 @@ export function meshFarTile(heights, kinds, cells, spacing, palette, scratch) {
 
 
     // Ścianka w płaszczyźnie x = const (od a do b wzdłuż z),
-    // zwrócona w stronę dir (+1 / -1).
+    // zwrócona w stronę dir (+1 / -1). lowWater - pod nią woda.
 
-    const sideX = (x, a, b, bottom, upper, kind, dir) => {
+    const sideX = (x, a, b, bottom, upper, kind, dir, lowWater, curtain = false, highWater = kind === WATER_KIND) => {
 
         const c = kind * 9;
 
         const n = dir * 127;
 
         if (dir > 0) {
-            corner(0, x, bottom, a, n, -1, -1, c + 6);
-            corner(1, x, upper, a, n, 0, -1, c + 3);
-            corner(2, x, upper, b, n, 0, 1, c + 3);
-            corner(3, x, bottom, b, n, -1, 1, c + 6);
+            corner(0, x, bottom, a, n, -1, -1, c + 6, lowWater, curtain);
+            corner(1, x, upper, a, n, 0, -1, c + 3, highWater, curtain);
+            corner(2, x, upper, b, n, 0, 1, c + 3, highWater, curtain);
+            corner(3, x, bottom, b, n, -1, 1, c + 6, lowWater, curtain);
         }
         else {
-            corner(0, x, bottom, b, n, -1, 1, c + 6);
-            corner(1, x, upper, b, n, 0, 1, c + 3);
-            corner(2, x, upper, a, n, 0, -1, c + 3);
-            corner(3, x, bottom, a, n, -1, -1, c + 6);
+            corner(0, x, bottom, b, n, -1, 1, c + 6, lowWater, curtain);
+            corner(1, x, upper, b, n, 0, 1, c + 3, highWater, curtain);
+            corner(2, x, upper, a, n, 0, -1, c + 3, highWater, curtain);
+            corner(3, x, bottom, a, n, -1, -1, c + 6, lowWater, curtain);
         }
 
         quads++;
@@ -263,23 +303,23 @@ export function meshFarTile(heights, kinds, cells, spacing, palette, scratch) {
 
     // Ścianka w płaszczyźnie z = const (od a do b wzdłuż x).
 
-    const sideZ = (z, a, b, bottom, upper, kind, dir) => {
+    const sideZ = (z, a, b, bottom, upper, kind, dir, lowWater, curtain = false, highWater = kind === WATER_KIND) => {
 
         const c = kind * 9;
 
         const n = dir * 127;
 
         if (dir > 0) {
-            corner(0, a, bottom, z, -1, -1, n, c + 6);
-            corner(1, b, bottom, z, 1, -1, n, c + 6);
-            corner(2, b, upper, z, 1, 0, n, c + 3);
-            corner(3, a, upper, z, -1, 0, n, c + 3);
+            corner(0, a, bottom, z, -1, -1, n, c + 6, lowWater, curtain);
+            corner(1, b, bottom, z, 1, -1, n, c + 6, lowWater, curtain);
+            corner(2, b, upper, z, 1, 0, n, c + 3, highWater, curtain);
+            corner(3, a, upper, z, -1, 0, n, c + 3, highWater, curtain);
         }
         else {
-            corner(0, b, bottom, z, 1, -1, n, c + 6);
-            corner(1, a, bottom, z, -1, -1, n, c + 6);
-            corner(2, a, upper, z, -1, 0, n, c + 3);
-            corner(3, b, upper, z, 1, 0, n, c + 3);
+            corner(0, b, bottom, z, 1, -1, n, c + 6, lowWater, curtain);
+            corner(1, a, bottom, z, -1, -1, n, c + 6, lowWater, curtain);
+            corner(2, a, upper, z, -1, 0, n, c + 3, highWater, curtain);
+            corner(3, b, upper, z, 1, 0, n, c + 3, highWater, curtain);
         }
 
         quads++;
@@ -343,24 +383,36 @@ export function meshFarTile(heights, kinds, cells, spacing, palette, scratch) {
 
     const skirt = s * 2 + 4;
 
-    // [kierunek, dół, góra, rodzaj] albo null (ta sama wysokość).
+    // [kierunek, dół, góra, rodzaj, pod nią woda] albo null (ta sama
+    // wysokość).
 
     const face = (b, hA, hB, kA, kB) => {
 
         if (b === 0) {
-            return [-1, Math.min(hA, hB) - skirt, hB, kB];
+            return [-1, Math.min(hA, hB) - skirt, hB, kB, false];
         }
 
         if (b === N) {
-            return [1, Math.min(hA, hB) - skirt, hA, kA];
+            return [1, Math.min(hA, hB) - skirt, hA, kA, false];
         }
 
         if (hA > hB) {
-            return [1, hB, hA, kA];
+            return [1, hB, hA, kA, kB === WATER_KIND];
         }
 
         if (hB > hA) {
-            return [-1, hA, hB, kB];
+            return [-1, hA, hB, kB, kA === WATER_KIND];
+        }
+
+        // Ląd równo z wodą: wierzch wody jest trochę niżej (shader) -
+        // niska ścianka lądu nad wodą zasłania szczelinę.
+
+        if (kA === WATER_KIND && kB !== WATER_KIND) {
+            return [-1, hA, hB, kB, true];
+        }
+
+        if (kB === WATER_KIND && kA !== WATER_KIND) {
+            return [1, hB, hA, kA, true];
         }
 
         return null;
@@ -384,13 +436,14 @@ export function meshFarTile(heights, kinds, cells, spacing, palette, scratch) {
                 if (
                     run && current &&
                     current[0] === run[0] && current[1] === run[1] &&
-                    current[2] === run[2] && current[3] === run[3]
+                    current[2] === run[2] && current[3] === run[3] &&
+                    current[4] === run[4]
                 ) {
                     continue;
                 }
 
                 if (run) {
-                    emit(b * s, start * s, t * s, run[1], run[2], run[3], run[0]);
+                    emit(b * s, start * s, t * s, run[1], run[2], run[3], run[0], run[4]);
                 }
 
                 run = current;
@@ -407,6 +460,91 @@ export function meshFarTile(heights, kinds, cells, spacing, palette, scratch) {
     sides(sideX, (b, t) => [H(b - 1, t), H(b, t), K(b - 1, t), K(b, t)]);
 
     sides(sideZ, (b, t) => [H(t, b - 1), H(t, b), K(t, b - 1), K(t, b)]);
+
+
+    // 3. Kurtyny na granicach chunków wewnątrz kafelka. Kurtyna kratki
+    // o wierzchu h zwrócona do sąsiada o wierzchu hn: od h - głębokość
+    // do h - albo tylko poniżej zwykłej ścianki (gdy h > hn, ścianka
+    // od hn do h już jest). Sąsiednie takie same łączą się.
+
+    if (s <= CURTAIN_MAX_SPACING && 16 % s === 0) {
+
+        const step = 16 / s;
+
+        // [dół, góra, czy górne rogi na wierzchu wody] albo null.
+
+        const curtain = (h, hn, kind, kindN) => {
+
+            const depth = curtainDepth(kind);
+
+            if (depth === 0) {
+                return null;
+            }
+
+            const upper = Math.min(h, hn);
+
+            const water = upper === h ? kind === WATER_KIND : kindN === WATER_KIND;
+
+            return upper > h - depth ? [h - depth, upper, water] : null;
+
+        };
+
+        const curtains = (emit, across) => {
+
+            for (let b = step; b < N; b += step) {
+
+                for (const dir of [-1, 1]) {
+
+                    let run = null;
+                    let start = 0;
+
+                    for (let t = 0; t <= N; t++) {
+
+                        let current = null;
+
+                        if (t < N) {
+
+                            const [hA, hB, kA, kB] = across(b, t);
+
+                            // dir -1: kurtyna kratki B (zwrócona do A),
+                            // dir +1: kratki A (zwrócona do B).
+
+                            const range = dir < 0 ? curtain(hB, hA, kB, kA) : curtain(hA, hB, kA, kB);
+
+                            if (range) {
+                                current = [range[0], range[1], dir < 0 ? kB : kA, range[2]];
+                            }
+
+                        }
+
+                        if (
+                            run && current &&
+                            current[0] === run[0] && current[1] === run[1] &&
+                            current[2] === run[2] && current[3] === run[3]
+                        ) {
+                            continue;
+                        }
+
+                        if (run) {
+                            emit(b * s, start * s, t * s, run[0], run[1], run[2], dir, false, true, run[3]);
+                        }
+
+                        run = current;
+                        start = t;
+
+                    }
+
+                }
+
+            }
+
+        };
+
+        curtains(sideX, (b, t) => [H(b - 1, t), H(b, t), K(b - 1, t), K(b, t)]);
+
+        curtains(sideZ, (b, t) => [H(t, b - 1), H(t, b), K(t, b - 1), K(t, b)]);
+
+    }
 
 
     // Trójkąty: dwa na ścianę.

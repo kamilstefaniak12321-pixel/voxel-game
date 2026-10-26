@@ -10,6 +10,8 @@ import {
     WATER_DEPTH_LIGHT_MIN
 } from '../config.js';
 
+import { WATER_FLOW_UV } from './BlockRenderData.js';
+
 
 import {
     AIR_ID,
@@ -707,6 +709,44 @@ function deepInLeaves(block, lx, y, lz, faceIndex) {
 // liczbę ścian w buforach.
 // ------------------------------------------------------------
 
+// Nurt rzeki budowanego chunka (chunk.flow) - do ścian wody.
+
+let meshFlow = null;
+
+// UV ściany wody: środek kafelka wody przesunięty o nurt (shader wody
+// odczytuje z tego kierunek i siłę nurtu - BlockRenderData.js). Woda bez
+// nurtu - sam środek kafelka.
+
+const flowUv = new Float32Array(8);
+
+function waterUv(uv, lx, lz) {
+
+    const uMin = Math.min(uv[0], uv[2], uv[4], uv[6]);
+    const uMax = Math.max(uv[0], uv[2], uv[4], uv[6]);
+    const vMin = Math.min(uv[1], uv[3], uv[5], uv[7]);
+    const vMax = Math.max(uv[1], uv[3], uv[5], uv[7]);
+
+    let fx = 0;
+    let fz = 0;
+
+    if (meshFlow) {
+        fx = meshFlow[(lz * S + lx) * 2] / 127;
+        fz = meshFlow[(lz * S + lx) * 2 + 1] / 127;
+    }
+
+    const u = uMin + (0.5 + WATER_FLOW_UV * fx) * (uMax - uMin);
+    const v = vMin + (0.5 + WATER_FLOW_UV * fz) * (vMax - vMin);
+
+    for (let i = 0; i < 4; i++) {
+        flowUv[i * 2] = u;
+        flowUv[i * 2 + 1] = v;
+    }
+
+    return flowUv;
+
+}
+
+
 function addCubeFaces(id, renderData, lx, y, lz, faceCount, baseX, baseZ) {
 
     const block = padIndex(lx, y, lz);
@@ -766,7 +806,9 @@ function addCubeFaces(id, renderData, lx, y, lz, faceCount, baseX, baseZ) {
                 ? getRotationAt(baseX + lx, y, baseZ + lz)
                 : 0;
 
-        const uv = renderData.uv[faceIndex][rotation];
+        const uv = liquid
+            ? waterUv(renderData.uv[faceIndex][rotation], lx, lz)
+            : renderData.uv[faceIndex][rotation];
 
         // Ściana pod wodą (np. dno morza) ciemnieje z głębokością.
 
@@ -1004,6 +1046,8 @@ export function buildChunkGeometry(chunk, world) {
 
     const blocks = chunk.blocks;
     const height = Math.min(chunk.maxY, H);
+
+    meshFlow = chunk.flow;
 
 
     // Lity kamień głęboko pod terenem nie ma żadnej widocznej

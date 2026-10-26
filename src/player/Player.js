@@ -14,6 +14,7 @@ import {
     SPRINT_DOUBLE_TAP,
     WATER_SURFACE,
     WATER_SPEED_FACTOR,
+    RIVER_PUSH,
     WATER_GRAVITY_FACTOR,
     WATER_DRAG,
     SWIM_UP_ACCELERATION,
@@ -157,6 +158,12 @@ export class Player {
         this.swimming = false;
         this.splash = 0;
         this.leftWater = false;
+
+        // Nurt rzeki: [x, z] (bloki/s) w tej klatce albo null; jak mocno
+        // niesie gracza (/rzeka nurt).
+        this.current = null;
+        this.riverPush = RIVER_PUSH;
+        this.riverDistance = 0;
 
         // Czy w ostatniej klatce gracz oparł się o ścianę (wyjście
         // z wody na brzeg).
@@ -391,6 +398,34 @@ updateMovement(dt, input) {
 
     this.vel.x = move.x * speed;
     this.vel.z = move.z * speed;
+
+
+    // Nurt rzeki niesie gracza - tym mocniej, im głębiej jest w wodzie
+    // (po kolana prawie wcale). Pod prąd da się płynąć tylko tam, gdzie
+    // nurt jest wolny.
+
+    this.current = null;
+
+    if (water > 0.1) {
+
+        const flow = this.world.getFlow(Math.floor(this.pos.x), Math.floor(this.pos.z));
+
+        if (flow) {
+
+            const push = this.riverPush * clamp01((water - 0.1) / 0.5);
+
+            this.vel.x += flow[0] * push;
+            this.vel.z += flow[1] * push;
+
+            this.current = flow;
+
+            // Ile bloków poniósł gracza nurt (osiągnięcie "Spływ").
+
+            this.riverDistance += Math.hypot(flow[0], flow[1]) * push * dt;
+
+        }
+
+    }
 
 
     // Latanie (komenda /latanie): bez grawitacji,

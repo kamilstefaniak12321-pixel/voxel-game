@@ -53,6 +53,22 @@ export const MAP_LAYERS = {
 
 export const MAP_SCALES = [1, 2, 4, 8, 16, 32];
 
+// Rzeki i jeziora na mapie.
+const RIVER_COLOR = '#3fa9f5';
+const LAKE_COLOR = '#2f80d8';
+
+// Warstwy-pola (szare plamy wartości) - bez rzek.
+const FIELD_LAYERS = {
+    kontynent: true,
+    wypietrzenie: true,
+    erozja: true,
+    grzbiety: true,
+    gory: true,
+    wyzyny: true,
+    temperatura: true,
+    wilgotnosc: true
+};
+
 
 const RELIEF_COLORS = {
     sea: '#2f5fb0',
@@ -403,7 +419,9 @@ export class TerrainMap {
                 // Przy dużej skali nachylenie z siatki mapy jest zbyt
                 // wygładzone - wtedy generator liczy je sam (wolniej).
 
-                const info = this.generator.describe(x, z, this.scale <= 2 ? slope : null);
+                // Rzeki węższe niż punkt mapy i tak są widoczne (zalewają punkt).
+
+                const info = this.generator.describe(x, z, this.scale <= 2 ? slope : null, this.scale);
 
                 job.samples[j * MAP_SIZE + i] = info;
 
@@ -546,6 +564,19 @@ export class TerrainMap {
         const water = info.relief === 'sea';
 
         let color;
+
+
+        // Rzeki i jeziora - na każdej warstwie (poza polami).
+
+        if ((info.water === 'river' || info.water === 'lake') && !(this.layer in FIELD_LAYERS)) {
+
+            if (this.layer === 'formy') {
+                this.job.present.add(info.water);
+            }
+
+            return hexToRgb(info.water === 'river' ? RIVER_COLOR : LAKE_COLOR);
+
+        }
 
         switch (this.layer) {
 

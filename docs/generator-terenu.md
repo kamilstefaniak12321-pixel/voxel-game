@@ -225,12 +225,21 @@ Co: prawdziwa woda zamiast wstępnej.
 - stawianie i niszczenie wody (wiadro) - prosto, bez płynięcia;
   płynięcie wody jako osobny, późniejszy krok.
 
-### Etap 3 - rzeki
+### Etap 3 - rzeki (pierwsza część zrobiona)
 
-Co: rzeki, które zaczynają się w górach, łączą się w większe
-i uchodzą do morza (albo do jeziora).
+Zrobione (opis: `docs/rzeki.md`): rzeki średniej wielkości ze źródeł
+(wyżej - częściej), spływające po makrorzeźbie zawsze w dół zbocza,
+łączące się w większe i uchodzące do morza albo do jezior; jeziora
+w zagłębieniach (także w górach) z płaską taflą na poziomie przelewu;
+meandry na płaskim; doliny i brzegi bez ścian wody; nurt, który niesie
+gracza; `/rzeka`, rzeki na mapie i w dalekim terenie.
 
-Pomysł (hydrologia na zgrubnej siatce):
+Dalej: rzeki główne (szerokie, ujścia) i strumyki, wodospady,
+rozlewanie się wody.
+
+Pierwotny pomysł (hydrologia na zgrubnej siatce) - zrobione inaczej:
+rzeki liczone ze źródeł (bieg każdego źródła w dół), a nie z przepływu
+w regionach - dzięki temu nie ma granic regionów:
 
 1. **Zgrubna mapa wysokości** - teren z generatora co ~16-32 bloki,
    w regionach (np. 1024 x 1024 bloki) z zapasem na brzegach.

@@ -1092,7 +1092,9 @@ const LANDFORM_WORDS = {
     depresja: { landform: 'depression' },
     rownina: { landform: 'plain' },
     rownia: { landform: 'flat' },
-    plaskowyz: { landform: 'plateau' }
+    plaskowyz: { landform: 'plateau' },
+    rzeka: { landform: 'river' },
+    jezioro: { landform: 'lake' }
 };
 
 const SURFACE_NAMES = {
@@ -1205,6 +1207,24 @@ function searchRings(x0, z0, maxRadius, step, test) {
 
 function findLandform(generator, x0, z0, target, maxRadius) {
 
+    // Rzeki są wąskie - szukamy ich w sieci rzek, nie co kilka bloków.
+
+    if ((target.landform === 'river' || target.landform === 'lake') && generator.rivers) {
+
+        const found = target.landform === 'river'
+            ? generator.rivers.nearest(x0, z0, maxRadius)
+            : generator.rivers.nearestLake(x0, z0, maxRadius);
+
+        if (!found) {
+            return null;
+        }
+
+        const spot = target.landform === 'river' ? found : riverBank(generator, found.x, found.z);
+
+        return { x: spot.x, z: spot.z, info: generator.describe(found.x, found.z), distance: Math.round(found.distance) };
+
+    }
+
     const step = 12;
 
     for (let radius = 0; radius <= maxRadius; radius += step) {
@@ -1232,6 +1252,37 @@ function findLandform(generator, x0, z0, target, maxRadius) {
     }
 
     return null;
+
+}
+
+
+// Suche miejsce przy wodzie (x, z) - do teleportu nad rzekę albo
+// jezioro: najbliższa kolumna bez wody (szukamy coraz dalej).
+
+function riverBank(generator, x, z) {
+
+    for (let radius = 0; radius <= 96; radius += 2) {
+
+        const count = radius === 0 ? 1 : Math.ceil(2 * Math.PI * radius / 2);
+
+        for (let k = 0; k < count; k++) {
+
+            const angle = 2 * Math.PI * k / count;
+
+            const bx = Math.round(x + Math.cos(angle) * radius);
+            const bz = Math.round(z + Math.sin(angle) * radius);
+
+            const sample = generator.compute(bx, bz, 0, {});
+
+            if (sample.water <= sample.height && !sample.ocean) {
+                return { x: bx, z: bz };
+            }
+
+        }
+
+    }
+
+    return { x, z };
 
 }
 
@@ -2911,6 +2962,141 @@ export const GAME_COMMANDS = [
                 .join(', ') +
                 '\nPrzedmioty: ' + ITEM_NAMES.map((type) => `${type} (${getItemLabel(type)})`).join(', ');
 
+        }
+    },
+
+
+    {
+        name: 'rzeka',
+        aliases: ['rzeki', 'river', 'nurt'],
+        usage: '/rzeka | /rzeka znajdz [tp] | /rzeka jezioro [tp] | /rzeka nurt <0-3> | /rzeka statystyki',
+        description: 'Rzeki i jeziora: nurt tam, gdzie jesteś, i dokąd płynie woda; najbliższa rzeka albo jezioro (z teleportem nad brzeg); siła nurtu (0 - nie niesie); liczby sieci rzek.',
+
+        run(args, { game, player, world }) {
+
+            const rivers = world.generator.rivers;
+
+            if (!rivers) {
+                throw new CommandError('Rzeki są tylko w terenie realistycznym.');
+            }
+
+            const word = simplify(args[0] ?? '');
+
+            const teleport = args.slice(1).some((arg) => simplify(arg) === 'tp');
+
+            const px = Math.floor(player.pos.x);
+            const pz = Math.floor(player.pos.z);
+
+
+            if (['znajdz', 'find', 'jezioro', 'lake'].includes(word)) {
+
+                const lake = ['jezioro', 'lake'].includes(word);
+
+                const found = lake ? rivers.nearestLake(px, pz, 3000) : rivers.nearest(px, pz, 1500);
+
+                if (!found) {
+                    return lake ? 'W promieniu 3000 bloków nie ma jeziora.' : 'W promieniu 1500 bloków nie ma rzeki.';
+                }
+
+                const what = lake ? 'jezioro' : 'rzeka';
+
+                const spot = riverBank(world.generator, found.x, found.z);
+
+                if (teleport) {
+
+                    world.ensureColumnLoaded(spot.x, spot.z);
+
+                    player.pos.set(spot.x + 0.5, world.getSurfaceY(spot.x, spot.z), spot.z + 0.5);
+                    player.vel.set(0, 0, 0);
+
+                    // Twarzą do wody.
+
+                    player.yaw = Math.atan2(-(found.x - spot.x), -(found.z - spot.z));
+                    player.updateCamera();
+
+                    return `Przeniesiono nad ${lake ? 'jezioro' : 'rzekę'} (${spot.x} ${spot.z}).`;
+
+                }
+
+                return `Najbliższa ${what}: ${Math.round(found.distance)} bloków ${directionName(found.x - player.pos.x, found.z - player.pos.z)} ` +
+                    `(${found.x} ${found.z}, woda na wysokości ${found.level}` +
+                    `${lake ? `, ${found.cells * 256} m², ${found.outlet ? 'wypływa z niego rzeka' : 'bez odpływu'}` : `, szerokość ok. ${Math.round(found.width)}`}). ` +
+                    `Teleport: /rzeka ${lake ? 'jezioro' : 'znajdz'} tp`;
+
+            }
+
+
+            if (word === 'nurt') {
+
+                if (args[1] === undefined) {
+                    return `Nurt niesie gracza x${decimal(player.riverPush)}. Zmiana: /rzeka nurt 0 (nie niesie) do 3.`;
+                }
+
+                const value = parseNumber(args[1], 'siła nurtu');
+
+                if (value < 0 || value > 3) {
+                    throw new CommandError('Siła nurtu: od 0 (nie niesie) do 3 (1 = zwykła).');
+                }
+
+                player.riverPush = value;
+
+                return `Nurt niesie gracza x${decimal(value)}.`;
+
+            }
+
+
+            if (['statystyki', 'stats'].includes(word)) {
+
+                const stats = rivers.stats();
+
+                return `Sieć rzek (policzona dotąd): ${stats.rivers} rzek z ${stats.sources} sprawdzonych źródeł, ` +
+                    `${stats.runs} odcinków, ${stats.lakes} jezior, ${stats.cells} kratek spływu, ${stats.zones} obszarów.`;
+
+            }
+
+
+            if (word) {
+                throw usageError(this);
+            }
+
+
+            // Gdzie jesteś: nurt, dokąd płynie woda.
+
+            const flow = world.getFlow(px, pz);
+
+            const sample = world.generator.compute(px, pz, 0, {});
+
+            const way = rivers.downstream(px, pz);
+
+            const target = way.end === 'sea' ? 'do morza' : 'do jeziora bez odpływu';
+
+            const route = `woda stąd płynie ${target} (ok. ${Math.round(way.length)} bloków` +
+                `${way.lakes ? `, przez ${way.lakes} ${way.lakes === 1 ? 'jezioro' : 'jeziora'}` : ''})`;
+
+            if (sample.lake) {
+                return `Jezioro (tafla na wysokości ${sample.water}) - ${route}.`;
+            }
+
+            if (flow && sample.water > sample.height) {
+
+                const speed = Math.hypot(flow[0], flow[1]);
+
+                return `Rzeka: nurt ${decimal(speed)} bloku/s na ${directionName(flow[0], flow[1])}` +
+                    `${player.current ? ' - niesie cię' : ''}; ${route}.`;
+
+            }
+
+            const near = rivers.nearest(px, pz, 600);
+
+            return (near
+                ? `Najbliższa rzeka: ${Math.round(near.distance)} bloków ${directionName(near.x - player.pos.x, near.z - player.pos.z)}. `
+                : 'W promieniu 600 bloków nie ma rzeki. ') +
+                `Deszcz stąd spłynąłby ${target} (ok. ${Math.round(way.length)} bloków). Dalej: /rzeka znajdz tp, /rzeka jezioro, /mapa.`;
+
+        },
+
+        complete(args) {
+            return args.length === 1 ? ['znajdz', 'jezioro', 'nurt', 'statystyki'] : args.length === 2 && ['znajdz', 'jezioro'].includes(simplify(args[0])) ? ['tp'] : [];
         }
     },
 

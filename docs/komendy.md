@@ -95,6 +95,11 @@ Współrzędne można podawać względem gracza: `~` (tu, gdzie stoję),
 | `/woda basen` | basen przed tobą (zmienia świat): brodzik (1 blok wody), dalej 4 bloki głębokości, ściany z wapienia równo z ziemią |
 | `/woda znajdz` | najbliższa woda we wczytanych chunkach: odległość, kierunek i komenda `/tp` nad wodę |
 | `/woda fale [0-3]` | wysokość fal na wodzie (0 = płaska, 1 = zwykłe); bez liczby - jaka jest (nie zapisuje się) |
+| `/rzeka` | rzeka tam, gdzie jesteś: nurt (siła, kierunek), dokąd płynie woda (do morza albo jeziora, ile bloków, przez ile jezior); poza rzeką - najbliższa rzeka |
+| `/rzeka znajdz [tp]` | najbliższa rzeka; z `tp` - teleport nad brzeg, twarzą do wody |
+| `/rzeka jezioro [tp]` | najbliższe jezioro, do którego wpływa rzeka (wielkość, czy ma odpływ) |
+| `/rzeka nurt [0-3]` | jak mocno nurt niesie gracza (0 - wcale, 1 - zwykle); bez liczby - jak jest |
+| `/rzeka statystyki` | ile rzek, źródeł, jezior i obszarów policzono dotąd (`docs/rzeki.md`) |
 | `/dzwiek menu` | po kolei dźwięki menu i ekwipunku: przycisk, "Wróć", suwak, otwarcie ekwipunku, wzięcie, odłożenie, kosz, zamknięcie, błąd, zbieranie owoców |
 | `/horyzont` | daleki teren: zasięg, ile kafelków widać i ile się buduje, trójkąty, ile wątków go liczy |
 | `/horyzont <bloki \| wyl>` | zasięg dalekiego terenu, do 16384 (to samo co w ustawieniach) |

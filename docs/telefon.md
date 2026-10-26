@@ -49,7 +49,7 @@ Są dwa rodzaje:
   przedtem). Nic nie trzeba instalować ani zatwierdzać.
 - **Nowa aplikacja** (rzadko - gdy zmieni się część na telefon: kod
   w `android/`, Capacitor): przez Wi-Fi pobiera się sama, na danych
-  komórkowych - po stuknięciu *Pobierz* (ok. 10 MB). Potem *Zainstaluj* -
+  komórkowych - po stuknięciu *Pobierz* (ok. 6 MB). Potem *Zainstaluj* -
   Android zapyta o zgodę (po cichu instalować nie pozwala). Za pierwszym
   razem otworzą się ustawienia: **zezwól Voxel Game na instalowanie
   aplikacji**, wróć i stuknij *Zainstaluj* jeszcze raz. Światy zostają.

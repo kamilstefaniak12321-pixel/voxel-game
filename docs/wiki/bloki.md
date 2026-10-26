@@ -2,7 +2,7 @@
 
 > Ta strona jest generowana z kodu gry (`python tools/wiki.py`) - nie zmieniaj jej ręcznie, zmiany przepadną przy następnym generowaniu.
 
-Wersja gry **0.20.0** - 97 bloków (do tego 4 odmian, których nie ma w ekwipunku, np. wieniec zawieszony na boku bloku). Czas kopania dotyczy trybu przygody; w kreatywnym bloki znikają od razu.
+Wersja gry **0.20.0** - 121 bloków (do tego 4 odmian, których nie ma w ekwipunku, np. wieniec zawieszony na boku bloku). Czas kopania dotyczy trybu przygody; w kreatywnym bloki znikają od razu.
 
 [Ziemia](#ziemia) · [Skały](#skały) · [Drewno](#drewno) · [Budulec](#budulec) · [Rośliny](#rośliny) · [Światło](#światło) · [Ozdoby](#ozdoby)
 
@@ -20,6 +20,9 @@ Wersja gry **0.20.0** - 97 bloków (do tego 4 odmian, których nie ma w ekwipunk
 | <img src="ikony/mud.png" width="32" height="32" alt=""> | **Błoto** | `mud` | **Kopanie:** 0,6 s (łopatą 0,2 s) |
 | <img src="ikony/clay.png" width="32" height="32" alt=""> | **Glina** | `clay` | **Kopanie:** 0,6 s (łopatą 0,2 s)<br>**Przydaje się do:** Tynk ochrowy, Terakota |
 | <img src="ikony/gravel.png" width="32" height="32" alt=""> | **Żwir** | `gravel` | **Kopanie:** 0,7 s (łopatą 0,23 s)<br>**Przydaje się do:** Ziemia kamienista |
+| <img src="ikony/snow.png" width="32" height="32" alt=""> | **Śnieg** | `snow` | **Kopanie:** 0,4 s (łopatą 0,13 s) |
+| <img src="ikony/snow_layer.png" width="32" height="32" alt=""> | **Warstwa śniegu** | `snow_layer` | **Kopanie:** 0,4 s (łopatą 0,13 s) |
+| <img src="ikony/moss.png" width="32" height="32" alt=""> | **Mech** | `moss` | **Kopanie:** 0,6 s (łopatą 0,2 s) |
 
 ## Skały
 
@@ -61,6 +64,12 @@ Wersja gry **0.20.0** - 97 bloków (do tego 4 odmian, których nie ma w ekwipunk
 | <img src="ikony/jablon_log.png" width="32" height="32" alt=""> | **Pień jabłoni** | `jablon_log` | **Kopanie:** 2 s (siekierą 0,67 s)<br>**Siekierą (PPM):** Okorowany pień jabłoni<br>**Paczka drzewa:** assets/drzewa/jablon<br>**Przydaje się do:** Deski jabłoniowe |
 | <img src="ikony/jablon_log_stripped.png" width="32" height="32" alt=""> | **Okorowany pień jabłoni** | `jablon_log_stripped` | **Kopanie:** 2 s (siekierą 0,67 s)<br>**Paczka drzewa:** assets/drzewa/jablon<br>**Skąd:** siekierą (PPM) z bloku: Pień jabłoni<br>**Przydaje się do:** Deski jabłoniowe |
 | <img src="ikony/jablon_planks.png" width="32" height="32" alt=""> | **Deski jabłoniowe** | `jablon_planks` | **Kopanie:** 2 s (siekierą 0,67 s)<br>**Paczka drzewa:** assets/drzewa/jablon<br>**Przepis:** Deski jabłoniowe x4<br>**Przydaje się do:** Ciemne deski, Patyk |
+| <img src="ikony/olcha_log.png" width="32" height="32" alt=""> | **Pień olchy** | `olcha_log` | **Kopanie:** 2 s (siekierą 0,67 s)<br>**Siekierą (PPM):** Okorowany pień olchy<br>**Paczka drzewa:** assets/drzewa/olcha<br>**Przydaje się do:** Deski olchowe |
+| <img src="ikony/olcha_log_stripped.png" width="32" height="32" alt=""> | **Okorowany pień olchy** | `olcha_log_stripped` | **Kopanie:** 2 s (siekierą 0,67 s)<br>**Paczka drzewa:** assets/drzewa/olcha<br>**Skąd:** siekierą (PPM) z bloku: Pień olchy<br>**Przydaje się do:** Deski olchowe |
+| <img src="ikony/olcha_planks.png" width="32" height="32" alt=""> | **Deski olchowe** | `olcha_planks` | **Kopanie:** 2 s (siekierą 0,67 s)<br>**Paczka drzewa:** assets/drzewa/olcha<br>**Przepis:** Deski olchowe x4<br>**Przydaje się do:** Ciemne deski, Patyk |
+| <img src="ikony/wierzba_log.png" width="32" height="32" alt=""> | **Pień wierzby** | `wierzba_log` | **Kopanie:** 2 s (siekierą 0,67 s)<br>**Siekierą (PPM):** Okorowany pień wierzby<br>**Paczka drzewa:** assets/drzewa/wierzba<br>**Przydaje się do:** Deski wierzbowe |
+| <img src="ikony/wierzba_log_stripped.png" width="32" height="32" alt=""> | **Okorowany pień wierzby** | `wierzba_log_stripped` | **Kopanie:** 2 s (siekierą 0,67 s)<br>**Paczka drzewa:** assets/drzewa/wierzba<br>**Skąd:** siekierą (PPM) z bloku: Pień wierzby<br>**Przydaje się do:** Deski wierzbowe |
+| <img src="ikony/wierzba_planks.png" width="32" height="32" alt=""> | **Deski wierzbowe** | `wierzba_planks` | **Kopanie:** 2 s (siekierą 0,67 s)<br>**Paczka drzewa:** assets/drzewa/wierzba<br>**Przepis:** Deski wierzbowe x4<br>**Przydaje się do:** Ciemne deski, Patyk |
 
 ## Budulec
 
@@ -86,6 +95,11 @@ Wersja gry **0.20.0** - 97 bloków (do tego 4 odmian, których nie ma w ekwipunk
 | <img src="ikony/cornflower.png" width="32" height="32" alt=""> | **Chaber** | `cornflower` | **Kopanie:** od razu<br>**Przydaje się do:** Niebieska lampa |
 | <img src="ikony/chamomile.png" width="32" height="32" alt=""> | **Rumianek** | `chamomile` | **Kopanie:** od razu |
 | <img src="ikony/dandelion.png" width="32" height="32" alt=""> | **Mniszek** | `dandelion` | **Kopanie:** od razu |
+| <img src="ikony/moss_carpet.png" width="32" height="32" alt=""> | **Kępki mchu** | `moss_carpet` | **Kopanie:** od razu |
+| <img src="ikony/reed.png" width="32" height="32" alt=""> | **Trzcina** | `reed` | **Kopanie:** od razu |
+| <img src="ikony/heather.png" width="32" height="32" alt=""> | **Wrzos** | `heather` | **Kopanie:** od razu |
+| <img src="ikony/crocus.png" width="32" height="32" alt=""> | **Krokus** | `crocus` | **Kopanie:** od razu |
+| <img src="ikony/dune_grass.png" width="32" height="32" alt=""> | **Piaskownica (trawa wydmowa)** | `dune_grass` | **Kopanie:** od razu |
 | <img src="ikony/strawberry_sapling.png" width="32" height="32" alt=""> | **Sadzonka truskawki** | `strawberry_sapling` | **Kopanie:** od razu<br>**Rośnie:** w: Krzak truskawki<br>**Skąd:** zniszczony blok: Krzak truskawki; zniszczony blok: Krzak truskawki (kilka owoców); zniszczony blok: Krzak truskawki (pełen owoców); posadzony przedmiot: Truskawki |
 | <img src="ikony/strawberry_bush.png" width="32" height="32" alt=""> | **Krzak truskawki** | `strawberry_bush` | **Kopanie:** od razu<br>**Daje:** Sadzonka truskawki<br>**Rośnie:** w: Krzak truskawki (kilka owoców)<br>**Skąd:** wyrasta z: Sadzonka truskawki |
 | <img src="ikony/strawberry_bush_few.png" width="32" height="32" alt=""> | **Krzak truskawki (kilka owoców)** | `strawberry_bush_few` | **Kopanie:** od razu<br>**Daje:** Sadzonka truskawki<br>**Zbiór (PPM):** Truskawki 1-2<br>**Rośnie:** w: Krzak truskawki (pełen owoców)<br>**Skąd:** wyrasta z: Krzak truskawki |
@@ -102,6 +116,10 @@ Wersja gry **0.20.0** - 97 bloków (do tego 4 odmian, których nie ma w ekwipunk
 | <img src="ikony/hazel_bush.png" width="32" height="32" alt=""> | **Leszczyna** | `hazel_bush` | **Kopanie:** od razu<br>**Daje:** Sadzonka leszczyny<br>**Rośnie:** w: Leszczyna (kilka orzechów)<br>**Skąd:** wyrasta z: Sadzonka leszczyny |
 | <img src="ikony/hazel_bush_few.png" width="32" height="32" alt=""> | **Leszczyna (kilka orzechów)** | `hazel_bush_few` | **Kopanie:** od razu<br>**Daje:** Sadzonka leszczyny<br>**Zbiór (PPM):** Orzech laskowy 1-2<br>**Rośnie:** w: Leszczyna (pełna orzechów)<br>**Skąd:** wyrasta z: Leszczyna |
 | <img src="ikony/hazel_bush_full.png" width="32" height="32" alt=""> | **Leszczyna (pełna orzechów)** | `hazel_bush_full` | **Kopanie:** od razu<br>**Daje:** Sadzonka leszczyny<br>**Zbiór (PPM):** Orzech laskowy 2-3<br>**Skąd:** wyrasta z: Leszczyna (kilka orzechów) |
+| <img src="ikony/blueberry_sapling.png" width="32" height="32" alt=""> | **Sadzonka borówki** | `blueberry_sapling` | **Kopanie:** od razu<br>**Rośnie:** w: Krzak borówki<br>**Skąd:** zniszczony blok: Krzak borówki; zniszczony blok: Krzak borówki (kilka owoców); zniszczony blok: Krzak borówki (pełen owoców); posadzony przedmiot: Borówki |
+| <img src="ikony/blueberry_bush.png" width="32" height="32" alt=""> | **Krzak borówki** | `blueberry_bush` | **Kopanie:** od razu<br>**Daje:** Sadzonka borówki<br>**Rośnie:** w: Krzak borówki (kilka owoców)<br>**Skąd:** wyrasta z: Sadzonka borówki |
+| <img src="ikony/blueberry_bush_few.png" width="32" height="32" alt=""> | **Krzak borówki (kilka owoców)** | `blueberry_bush_few` | **Kopanie:** od razu<br>**Daje:** Sadzonka borówki<br>**Zbiór (PPM):** Borówki 1-3<br>**Rośnie:** w: Krzak borówki (pełen owoców)<br>**Skąd:** wyrasta z: Krzak borówki |
+| <img src="ikony/blueberry_bush_full.png" width="32" height="32" alt=""> | **Krzak borówki (pełen owoców)** | `blueberry_bush_full` | **Kopanie:** od razu<br>**Daje:** Sadzonka borówki<br>**Zbiór (PPM):** Borówki 3-5<br>**Skąd:** wyrasta z: Krzak borówki (kilka owoców) |
 | <img src="ikony/spruce_leaves.png" width="32" height="32" alt=""> | **Igliwie świerka** | `spruce_leaves` | **Kopanie:** 0,35 s<br>**Czasem wypada:** Sadzonka świerka (5%), Szyszka świerka (8%)<br>**Przydaje się do:** Ściółka leśna, Wieniec świerkowy |
 | <img src="ikony/spruce_sapling.png" width="32" height="32" alt=""> | **Sadzonka świerka** | `spruce_sapling` | **Kopanie:** od razu<br>**Rośnie:** w drzewo, średnio po 5 min<br>**Skąd:** czasem z bloku: Igliwie świerka (5%); posadzony przedmiot: Szyszka świerka |
 | <img src="ikony/pine_leaves.png" width="32" height="32" alt=""> | **Igliwie sosny** | `pine_leaves` | **Kopanie:** 0,35 s<br>**Czasem wypada:** Sadzonka sosny (5%), Szyszka sosny (8%)<br>**Przydaje się do:** Ściółka leśna |
@@ -118,15 +136,19 @@ Wersja gry **0.20.0** - 97 bloków (do tego 4 odmian, których nie ma w ekwipunk
 | <img src="ikony/jablon_leaves.png" width="32" height="32" alt=""> | **Liście jabłoni** | `jablon_leaves` | **Kopanie:** 0,35 s<br>**Czasem wypada:** Sadzonka jabłoni (5%), Jabłko (5%)<br>**Paczka drzewa:** assets/drzewa/jablon<br>**Skąd:** zniszczony blok: Liście jabłoni z jabłkami; zniszczony blok: Liście jabłoni (jabłka odrastają)<br>**Przydaje się do:** Opadłe liście jabłoni |
 | <img src="ikony/jablon_leaves_jablka.png" width="32" height="32" alt=""> | **Liście jabłoni z jabłkami** | `jablon_leaves_jablka` | **Kopanie:** 0,35 s<br>**Daje:** Liście jabłoni<br>**Czasem wypada:** Sadzonka jabłoni (5%), Jabłko (5%)<br>**Zbiór (PPM):** Jabłko 1-2<br>**Paczka drzewa:** assets/drzewa/jablon<br>**Skąd:** wyrasta z: Liście jabłoni (jabłka odrastają) |
 | <img src="ikony/jablon_sapling.png" width="32" height="32" alt=""> | **Sadzonka jabłoni** | `jablon_sapling` | **Kopanie:** od razu<br>**Rośnie:** w drzewo, średnio po 5 min<br>**Paczka drzewa:** assets/drzewa/jablon<br>**Skąd:** czasem z bloku: Liście jabłoni (5%); czasem z bloku: Liście jabłoni z jabłkami (5%); czasem z bloku: Liście jabłoni (jabłka odrastają) (5%); posadzony przedmiot: Jabłko |
+| <img src="ikony/olcha_leaves.png" width="32" height="32" alt=""> | **Liście olchy** | `olcha_leaves` | **Kopanie:** 0,35 s<br>**Czasem wypada:** Sadzonka olchy (4%), Szyszeczki olchy (6%)<br>**Paczka drzewa:** assets/drzewa/olcha<br>**Przydaje się do:** Opadłe liście olchy |
+| <img src="ikony/olcha_sapling.png" width="32" height="32" alt=""> | **Sadzonka olchy** | `olcha_sapling` | **Kopanie:** od razu<br>**Rośnie:** w drzewo, średnio po 5 min<br>**Paczka drzewa:** assets/drzewa/olcha<br>**Skąd:** czasem z bloku: Liście olchy (4%); posadzony przedmiot: Szyszeczki olchy |
+| <img src="ikony/wierzba_leaves.png" width="32" height="32" alt=""> | **Liście wierzby** | `wierzba_leaves` | **Kopanie:** 0,35 s<br>**Czasem wypada:** Sadzonka wierzby (4%), Bazie (6%)<br>**Paczka drzewa:** assets/drzewa/wierzba<br>**Przydaje się do:** Opadłe liście wierzby |
+| <img src="ikony/wierzba_sapling.png" width="32" height="32" alt=""> | **Sadzonka wierzby** | `wierzba_sapling` | **Kopanie:** od razu<br>**Rośnie:** w drzewo, średnio po 5 min<br>**Paczka drzewa:** assets/drzewa/wierzba<br>**Skąd:** czasem z bloku: Liście wierzby (4%); posadzony przedmiot: Bazie |
 
 ## Światło
 
 | | Nazwa | W komendach | Najważniejsze |
 |---|---|---|---|
-| <img src="ikony/lamp.png" width="32" height="32" alt=""> | **Lampa** | `lamp` | **Kopanie:** 0,45 s<br>**Świeci:** 15 / 15<br>**Przepis:** Lampa x2<br>**Przydaje się do:** Czerwona lampa, Zielona lampa, Niebieska lampa, Fioletowa lampa, Czerwona lampa |
+| <img src="ikony/lamp.png" width="32" height="32" alt=""> | **Lampa** | `lamp` | **Kopanie:** 0,45 s<br>**Świeci:** 15 / 15<br>**Przepis:** Lampa x2, Lampa<br>**Przydaje się do:** Czerwona lampa, Zielona lampa, Niebieska lampa, Fioletowa lampa, Czerwona lampa |
 | <img src="ikony/lamp_red.png" width="32" height="32" alt=""> | **Czerwona lampa** | `lamp_red` | **Kopanie:** 0,45 s<br>**Świeci:** 15 / 15<br>**Przepis:** Czerwona lampa, Czerwona lampa |
 | <img src="ikony/lamp_green.png" width="32" height="32" alt=""> | **Zielona lampa** | `lamp_green` | **Kopanie:** 0,45 s<br>**Świeci:** 15 / 15<br>**Przepis:** Zielona lampa |
-| <img src="ikony/lamp_blue.png" width="32" height="32" alt=""> | **Niebieska lampa** | `lamp_blue` | **Kopanie:** 0,45 s<br>**Świeci:** 15 / 15<br>**Przepis:** Niebieska lampa |
+| <img src="ikony/lamp_blue.png" width="32" height="32" alt=""> | **Niebieska lampa** | `lamp_blue` | **Kopanie:** 0,45 s<br>**Świeci:** 15 / 15<br>**Przepis:** Niebieska lampa<br>**Przydaje się do:** Lampa |
 | <img src="ikony/lamp_purple.png" width="32" height="32" alt=""> | **Fioletowa lampa** | `lamp_purple` | **Kopanie:** 0,45 s<br>**Świeci:** 15 / 15<br>**Przepis:** Fioletowa lampa |
 
 ## Ozdoby
@@ -137,3 +159,5 @@ Wersja gry **0.20.0** - 97 bloków (do tego 4 odmian, których nie ma w ekwipunk
 | <img src="ikony/beech_leaf_litter.png" width="32" height="32" alt=""> | **Opadłe liście buka** | `beech_leaf_litter` | **Kopanie:** od razu<br>**Przepis:** Opadłe liście buka x2<br>**Przydaje się do:** Czarnoziem |
 | <img src="ikony/oak_leaf_litter.png" width="32" height="32" alt=""> | **Opadłe liście dębu** | `oak_leaf_litter` | **Kopanie:** od razu<br>**Przepis:** Opadłe liście dębu x2<br>**Przydaje się do:** Czarnoziem |
 | <img src="ikony/jablon_leaf_litter.png" width="32" height="32" alt=""> | **Opadłe liście jabłoni** | `jablon_leaf_litter` | **Kopanie:** od razu<br>**Paczka drzewa:** assets/drzewa/jablon<br>**Przepis:** Opadłe liście jabłoni x2<br>**Przydaje się do:** Czarnoziem |
+| <img src="ikony/olcha_leaf_litter.png" width="32" height="32" alt=""> | **Opadłe liście olchy** | `olcha_leaf_litter` | **Kopanie:** od razu<br>**Paczka drzewa:** assets/drzewa/olcha<br>**Przepis:** Opadłe liście olchy x2<br>**Przydaje się do:** Czarnoziem |
+| <img src="ikony/wierzba_leaf_litter.png" width="32" height="32" alt=""> | **Opadłe liście wierzby** | `wierzba_leaf_litter` | **Kopanie:** od razu<br>**Paczka drzewa:** assets/drzewa/wierzba<br>**Przepis:** Opadłe liście wierzby x2<br>**Przydaje się do:** Czarnoziem |

@@ -11,6 +11,9 @@
 //                                (jeśli coś już wiadomo) i przy każdej
 //                                zmianie stanu aktualizacji
 //   desktop.installUpdate()    - zamknij grę i zainstaluj aktualizację
+//   desktop.downloadUpdate()   - pobierz nową wersję (bez aktualizacji
+//                                automatycznych - stan 'available')
+//   desktop.setAutoUpdates(on) - ustawienie "Aktualizacje automatyczne"
 // ------------------------------------------------------------
 
 const { contextBridge, ipcRenderer } = require('electron');
@@ -69,6 +72,14 @@ contextBridge.exposeInMainWorld('desktop', {
 
     installUpdate() {
         ipcRenderer.send('desktop:install-update');
+    },
+
+    downloadUpdate() {
+        ipcRenderer.send('desktop:download-update');
+    },
+
+    setAutoUpdates(on) {
+        ipcRenderer.send('desktop:auto-updates', Boolean(on));
     }
 
 });

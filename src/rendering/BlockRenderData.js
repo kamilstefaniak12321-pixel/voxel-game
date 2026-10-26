@@ -15,6 +15,7 @@ import {
 
 import {
     blockAtlasTexture,
+    atlasReady,
     getAtlasUV,
     ATLAS_TILES,
     ATLAS_COLUMNS,
@@ -558,9 +559,22 @@ export const waterUniforms = {
             1 / ATLAS_COLUMNS,
             1 / ATLAS_ROWS
         )
-    }
+    },
+
+    // Pikseli na kafelek w atlasie (16; z paczką tekstur więcej) i czy
+    // atlas ma mipmapy (TextureAtlas.js) - woda sama wybiera kopię
+    // atlasu (textureLod), bo jej współrzędne skaczą co piksel.
+    uAtlasTile: { value: 16 },
+    uAtlasMipmaps: { value: 0 }
 
 };
+
+atlasReady.then((atlas) => {
+
+    waterUniforms.uAtlasTile.value = atlas.tileSize;
+    waterUniforms.uAtlasMipmaps.value = atlas.mipmaps ? 1 : 0;
+
+}, () => {});
 
 
 export const waterMaterial =
@@ -626,6 +640,8 @@ waterMaterial.onBeforeCompile = (shader, renderer) => {
             `#include <common>
             uniform float uTime;
             uniform vec4 uWaterTile;
+            uniform float uAtlasTile;
+            uniform float uAtlasMipmaps;
             uniform float uWaterOpacity;
             uniform float uWaterOpacityGrazing;
             varying vec3 vWaterWorld;
@@ -636,13 +652,14 @@ waterMaterial.onBeforeCompile = (shader, renderer) => {
             '#include <map_pars_fragment>',
             `#include <map_pars_fragment>
 
-            // Piksel tekstury wody w miejscu p (powtarza się co blok).
+            // Piksel tekstury wody w miejscu p (powtarza się co blok),
+            // z kopii atlasu lod (mipmapy - z daleka mniejsza).
 
-            vec4 waterTexel(vec2 p) {
+            vec4 waterTexel(vec2 p, float lod) {
 
-                vec2 cell = (floor(fract(p) * 16.0) + 0.5) / 16.0;
+                vec2 cell = (floor(fract(p) * uAtlasTile) + 0.5) / uAtlasTile;
 
-                return texture2D(map, uWaterTile.xy + cell * uWaterTile.zw);
+                return textureLod(map, uWaterTile.xy + cell * uWaterTile.zw, lod);
 
             }`
         )
@@ -676,9 +693,15 @@ waterMaterial.onBeforeCompile = (shader, renderer) => {
 
             }
 
+            // Kopia atlasu: ile pikseli tekstury przypada na piksel ekranu.
+
+            vec2 waterTexels = vec2(length(dFdx(waterPlane)), length(dFdy(waterPlane))) * uAtlasTile;
+
+            float waterLod = uAtlasMipmaps > 0.5 ? max(0.0, log2(max(waterTexels.x, waterTexels.y))) : 0.0;
+
             vec4 waterColor = mix(
-                waterTexel(waterPlane + flowA * uTime),
-                waterTexel(waterPlane + flowB * uTime + 0.37),
+                waterTexel(waterPlane + flowA * uTime, waterLod),
+                waterTexel(waterPlane + flowB * uTime + 0.37, waterLod),
                 0.5
             );
 

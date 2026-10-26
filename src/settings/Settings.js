@@ -77,7 +77,11 @@ export const SETTINGS_DEFAULTS = {
     hudScale: 100,                                 // rozmiar paska, czatu i napisów w grze (procent)
     showDebug: true,                               // informacje F3
     showFps: false,                                // licznik klatek w rogu ekranu
-    meteorites: true                               // meteoryty spadające na ziemię
+    meteorites: true,                              // meteoryty spadające na ziemię
+    autoUpdates: true,                             // aplikacje: nowa wersja pobiera się sama (Wył. - po kliknięciu Pobierz)
+
+    // Tekstury (paczka tekstur - src/rendering/TexturePacks.js)
+    textureResolution: 0                           // piksele na blok w grze (0 = automatyczna, z paczki)
 
 };
 

@@ -43,6 +43,7 @@ tylko jako *Sekretne osiągnięcie* ze znakiem zapytania.
 | zwykłe | Mokra robota | popływaj |
 | zwykłe | Nocny marek | bądź w świecie o północy |
 | zwykłe | Złota godzina | popatrz prosto na zachodzące (albo wschodzące) słońce |
+| zwykłe | Nowe szaty | zagraj z własną paczką tekstur (Ustawienia → Tekstury) |
 | rzadkie | Murarz | postaw 500 bloków (postęp liczy się w księdze) |
 | rzadkie | Głębinowiec | zanurkuj 10 bloków pod powierzchnię |
 | rzadkie | Ponad chmurami | wzleć na wysokość 1000 |
@@ -116,6 +117,7 @@ Gra zgłasza je przez `game.achieve('nazwa', dane)`:
 | `meteorImpact` | `distance` - odległość od gracza | `Meteorites.impact` |
 | `skyfallLanded` | `x, y, z` - krater | `space/Skyfall.js` |
 | `skyfallSplash` | `speed` | `space/Skyfall.js` |
+| `texturePack` | `size` - rozdzielczość tekstur w grze, `name` - nazwa paczki | `main.js` (start świata z paczką tekstur) |
 
 Nowe zdarzenie = jedna linijka `this.achieve('nazwa', { ... })` w miejscu,
 gdzie coś się dzieje (w klasach, które znają grę: `this.game.achieve?.(...)`).

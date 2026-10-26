@@ -19,6 +19,8 @@ import { InventoryScreen } from './ui/InventoryScreen.js';
 import { SoundManager } from './audio/SoundManager.js';
 import { setUiSounds, playUi } from './audio/ui.js';
 import { AndroidUpdates } from './app/AndroidUpdates.js';
+import { atlasReady, blockAtlasTexture, atlasUploadedAt } from './rendering/TextureAtlas.js';
+import { markTextureFailure } from './rendering/TexturePacks.js';
 import {
     WorldStorage,
     createWorldInfo,
@@ -120,6 +122,47 @@ const renderer = new THREE.WebGLRenderer({
 renderer.setSize(window.innerWidth, window.innerHeight);
 
 document.body.appendChild(renderer.domElement);
+
+
+// Atlas tekstur na kartę graficzną od razu po wczytaniu (nie dopiero przy
+// pierwszym świecie) - z dużą paczką tekstur od razu wiadomo, czy karta
+// go udźwignie (TexturePacks.js - bezpieczny start).
+
+atlasReady.then(() => renderer.initTexture(blockAtlasTexture), () => {});
+
+
+// Utrata obrazu (karta graficzna zgubiła kontekst WebGL) z paczką tekstur:
+// duże kopie atlasu są już zwolnione z pamięci, więc atlas trzeba
+// zbudować od nowa - zapis świata i ponowne uruchomienie gry. Tuż po
+// starcie (TEXTURE_FAIL_WINDOW_MS) to znak, że atlas jest za duży dla tej
+// karty - następny start z rozdzielczością o połowę mniejszą.
+
+const TEXTURE_FAIL_WINDOW_MS = 30000;
+
+renderer.domElement.addEventListener('webglcontextlost', () => {
+
+    atlasReady.then(async (atlas) => {
+
+        if (!atlas.pack) {
+            return;
+        }
+
+        if (atlasUploadedAt === null || performance.now() - atlasUploadedAt < TEXTURE_FAIL_WINDOW_MS) {
+            markTextureFailure(atlas.tileSize);
+        }
+
+        try {
+            await Promise.race([game?.saver.flush(), new Promise((resolve) => setTimeout(resolve, 3000))]);
+        }
+        catch {
+            // i tak uruchamiamy od nowa
+        }
+
+        location.reload();
+
+    }, () => {});
+
+});
 
 // Gra rysuje kilka razy na klatkę (niebo, daleki teren, świat) -
 // statystyki rysowania (/wydajnosc) zerujemy sami raz na klatkę.
@@ -245,7 +288,8 @@ const menu = new Menu(
         deleteWorld,
         resume,
         quitToMenu,
-        quitWithoutSaving
+        quitWithoutSaving,
+        reloadGame
     },
     settings,
     UI_THEMES
@@ -427,6 +471,14 @@ async function playWorld(worldInfo) {
     chat.print(touchMode ? TEXTS.touchHint : TEXTS.chatHint, 'hint');
 
     showTreePackErrors();
+
+    // Świat z paczką tekstur - osiągnięcie "Nowe szaty".
+
+    atlasReady.then((atlas) => {
+        if (atlas.pack) {
+            game?.achieve('texturePack', { size: atlas.tileSize, name: atlas.pack.name });
+        }
+    }, () => {});
 
 }
 
@@ -731,6 +783,9 @@ function commandContext() {
         // Aktualizacje aplikacji (/aktualizacja) - null w przeglądarce.
         updates: appUpdates,
 
+        // Ponowne uruchomienie gry z zapisem świata (/tekstury).
+        reload: reloadGame,
+
         // Sterowanie dotykowe (/dotyk).
         touch: {
             enabled: touchMode,
@@ -983,6 +1038,20 @@ function toggleMap() {
 
 // /dotyk wl | wyl: zapis świata i strona od nowa z ?dotyk=1 albo
 // ?dotyk=0 w adresie (pozostałe dopiski, np. ?ziemniak, zostają).
+
+// Ponowne uruchomienie gry (np. nowa paczka tekstur - atlas liczy się
+// przy starcie): zapis świata i wczytanie strony od nowa.
+
+async function reloadGame() {
+
+    if (game) {
+        await game.saver.flush();
+    }
+
+    location.reload();
+
+}
+
 
 async function reloadWithTouch(on) {
 
@@ -1411,7 +1480,22 @@ if (window.desktop) {
 
     menu.setAppInfo({
         version: window.desktop.version,
-        install: () => window.desktop.installUpdate()
+        install: () => window.desktop.installUpdate(),
+        download: () => window.desktop.downloadUpdate?.()
+    });
+
+
+    // Aktualizacje automatyczne (ustawienie) - aplikacja zapamiętuje je
+    // u siebie (sprawdza wydania, zanim gra wystartuje).
+
+    window.desktop.setAutoUpdates?.(settings.get('autoUpdates'));
+
+    settings.onChange((key, value) => {
+
+        if (key === 'autoUpdates') {
+            window.desktop.setAutoUpdates?.(value);
+        }
+
     });
 
 
@@ -1434,6 +1518,7 @@ if (window.desktop) {
         platform: 'desktop',
         version: window.desktop.version,
         status: () => desktopStatus,
+        download: () => window.desktop.downloadUpdate?.(),
         install: () => {
             window.desktop.installUpdate();
             return desktopStatus?.state === 'ready';
@@ -1444,6 +1529,8 @@ if (window.desktop) {
 else if (nativeApp === 'android' && AndroidUpdates.available()) {
 
     const updater = new AndroidUpdates({
+
+        autoDownload: () => settings.get('autoUpdates'),
 
         onVersion: (version) => {
 

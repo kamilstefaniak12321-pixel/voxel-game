@@ -7,9 +7,8 @@ import {
 } from '../items/ItemRegistry.js';
 
 import {
-    atlasImage,
-    ATLAS_TILES,
-    ATLAS_TILE_SIZE
+    atlasReady,
+    ATLAS_TILES
 } from '../rendering/TextureAtlas.js';
 
 import {
@@ -36,6 +35,12 @@ const ICON_SIZE = 64;
 const LEFT_SHADE = 0.2;
 const RIGHT_SHADE = 0.4;
 
+// Kafelek obrazka atlasu do ikonek (z paczką tekstur - mniejsza kopia,
+// najwyżej 64 x 64; oryginalne tekstury - 16 x 16) i czy przy
+// zmniejszaniu wygładzać (duże tekstury tak, piksele 16 x 16 nie).
+let T = 16;
+let smooth = false;
+
 
 // Rysuje jedną ścianę: kafelek atlasu "naciągnięty" na
 // równoległobok podany przez transformację (a, b, c, d, e, f).
@@ -48,8 +53,6 @@ function drawFace(ctx, atlas, tileName, transform, shade) {
         return;
     }
 
-
-    const T = ATLAS_TILE_SIZE;
 
     ctx.setTransform(...transform);
 
@@ -93,11 +96,9 @@ function flatIcon(atlas, tileName) {
 
     const ctx = canvas.getContext('2d');
 
-    ctx.imageSmoothingEnabled = false;
+    ctx.imageSmoothingEnabled = smooth;
 
     const tile = ATLAS_TILES[tileName];
-
-    const T = ATLAS_TILE_SIZE;
 
     if (tile) {
         ctx.drawImage(atlas, tile.x * T, tile.y * T, T, T, 0, 0, ICON_SIZE, ICON_SIZE);
@@ -116,10 +117,19 @@ export async function createBlockIcons() {
 
     let atlas;
 
-    // Ten sam obrazek co w świecie (z teksturami paczek drzew).
+    // Ten sam obrazek co w świecie (z teksturami paczek drzew i paczką
+    // tekstur).
 
     try {
-        atlas = await atlasImage;
+
+        const ready = await atlasReady;
+
+        atlas = ready.iconImage;
+
+        T = ready.iconTileSize;
+
+        smooth = T > 16;
+
     }
     catch (error) {
         console.warn(error);
@@ -128,7 +138,6 @@ export async function createBlockIcons() {
 
 
     const W = ICON_SIZE;
-    const T = ATLAS_TILE_SIZE;
 
     // Jednostka: ile pikseli ikonki przypada na piksel tekstury
     // wzdłuż krawędzi ściany.
@@ -145,7 +154,7 @@ export async function createBlockIcons() {
 
         const ctx = canvas.getContext('2d');
 
-        ctx.imageSmoothingEnabled = false;
+        ctx.imageSmoothingEnabled = smooth;
 
 
         const textures = definition.textures;

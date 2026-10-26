@@ -98,7 +98,7 @@ w pauzie i na ekranie tytułowym) - z datą i nazwą świata. Księga jest
 wspólna dla wszystkich światów. Niektóre osiągnięcia są sekretne -
 przed zdobyciem widać tylko znak zapytania.
 
-Jest 33 osiągnięcia (od pierwszego zniszczonego bloku po
+Są 34 osiągnięcia (od pierwszego zniszczonego bloku po
 legendarne *Problem spadł z nieba*). Nowa rzecz w grze = nowe
 osiągnięcie - jak je dopisać, zdarzenia z gry i pełna lista (spoilery):
 `docs/osiagniecia.md`. Test: `/osiagniecia` (lista), `/osiagniecia pokaz
@@ -445,9 +445,17 @@ kamery z trzeciej osoby.
 **Dźwięk** - głośność całej gry, osobno bloków i kroków, otoczenia
 (woda, meteoryty) oraz menu i ekwipunku; 0 = wyłączone.
 
+**Tekstury** - własna **paczka tekstur** (plik `.zip`, tekstury
+w dowolnej rozdzielczości, np. 1254 x 1254), rozdzielczość w grze
+(automatyczna albo 16-512 pikseli na blok), powrót do oryginalnych
+tekstur, szablon paczki - niżej, *Tekstury*.
+
 **Inne** - motyw menu, rozmiar interfejsu w grze (pasek, czat, napisy),
 informacje debugowania (to samo co F3), licznik FPS w rogu ekranu,
-spadające meteoryty (wł./wył. - te, które robią kratery).
+spadające meteoryty (wł./wył. - te, które robią kratery), w aplikacji
+(komputer, telefon) - **aktualizacje automatyczne** (wł. - nowa wersja
+pobiera się sama; wył. - gra tylko pokazuje, że jest, i pobiera po
+kliknięciu *Pobierz*).
 
 Zmiany działają od razu, także w grze pod pauzą, i zapisują się
 w przeglądarce. Wartości domyślne są w `src/config.js`, a lista ustawień
@@ -455,6 +463,17 @@ z zakresami w `src/settings/Settings.js`. Wszystko da się też zmienić
 z czatu: `/ustaw` (lista), np. `/ustaw zasieg 256`.
 
 ## Tekstury
+
+**Własne tekstury:** Ustawienia → **Tekstury** → *Wczytaj paczkę
+(.zip)* (na telefonie - plik z pamięci telefonu). Tekstury
+w paczce mogą mieć **dowolną rozdzielczość** - gra skaluje je do
+rozdzielczości w grze: automatycznie (jak paczka) albo wybranej,
+najwyżej 512 x 512 na komputerze i 256 x 256 na telefonie. Czego
+w paczce nie ma, zostaje oryginalne. **Szablon** z oryginalnymi
+teksturami (każda w osobnym pliku, z opisem): folder
+`paczka-tekstur-szablon/` albo `Voxel-Game-paczka-tekstur.zip`
+w wydaniach (w grze: *Szablon paczki*). Komenda `/tekstury`. Opis:
+`docs/paczki-tekstur.md`.
 
 Bloki mają tekstury 16 x 16 pikseli (atlas `assets/textures/blocks/terrain.png`)
 w stylu pikselowym, ale **wygładzone i wycieniowane**: każda pokazuje

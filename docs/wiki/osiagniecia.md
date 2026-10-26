@@ -2,7 +2,7 @@
 
 > Ta strona jest generowana z kodu gry (`python tools/wiki.py`) - nie zmieniaj jej ręcznie, zmiany przepadną przy następnym generowaniu.
 
-Wersja gry **0.19.0** - 33 osiągnięć. Księga osiągnięć: klawisz **L**. Uwaga, spoilery: sekretne osiągnięcia są tu opisane (w grze widać tylko „???”).
+Wersja gry **0.20.0** - 34 osiągnięć. Księga osiągnięć: klawisz **L**. Uwaga, spoilery: sekretne osiągnięcia są tu opisane (w grze widać tylko „???”).
 
 
 ## Zwykłe (10 pkt)
@@ -23,6 +23,7 @@ Wersja gry **0.19.0** - 33 osiągnięć. Księga osiągnięć: klawisz **L**. Uw
 | <img src="ikony/water.png" width="32" height="32" alt=""> | **Mokra robota** | Popływaj w wodzie. | „Potwierdzone naukowo: woda jest mokra.” |
 | <img src="ikony/lamp.png" width="32" height="32" alt=""> | **Nocny marek** | Bądź w świecie o północy. | „Porządni gracze już dawno śpią. Ty nie jesteś porządnym graczem.” |
 | <img src="ikony/dandelion.png" width="32" height="32" alt=""> | **Złota godzina** | Popatrz prosto na zachodzące (albo wschodzące) słońce. | „Fotografowie nazywają to złotą godziną. Ty nazywasz to: jeszcze jeden blok i kończę.” |
+| <img src="ikony/grass.png" width="32" height="32" alt=""> | **Nowe szaty** | Zagraj z własną paczką tekstur (Ustawienia → Tekstury). | „Ten sam kamień, tylko w wyższej rozdzielczości. Dalej twardy.” |
 
 ## Rzadkie (25 pkt)
 

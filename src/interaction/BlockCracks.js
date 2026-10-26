@@ -2,6 +2,8 @@ import * as THREE from 'three';
 
 import { getBlockDefinition } from '../blocks/BlockRegistry.js';
 
+import { atlasReady, loadPackImage } from '../rendering/TextureAtlas.js';
+
 // ------------------------------------------------------------
 // PĘKNIĘCIA KOPANEGO BLOKU (tryb przygody)
 //
@@ -25,6 +27,25 @@ texture.minFilter = THREE.NearestFilter;
 texture.generateMipmaps = false;
 texture.colorSpace = THREE.SRGBColorSpace;
 texture.repeat.set(1 / STAGES, 1);
+
+// Pęknięcia z paczki tekstur (TexturePacks.js: pekniecia.png) - zamiast
+// oryginalnych, gdy paczka je ma.
+
+atlasReady.then(async ({ extras }) => {
+
+    if (!extras?.cracks) {
+        return;
+    }
+
+    try {
+        texture.image = await loadPackImage(extras.cracks);
+        texture.needsUpdate = true;
+    }
+    catch (error) {
+        console.warn('Paczka tekstur - pęknięcia:', error);
+    }
+
+}, () => {});
 
 
 export class BlockCracks {

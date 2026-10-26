@@ -23,7 +23,9 @@
 # trafiają: Voxel-Game-<wersja>-android.apk, paczka z plikami gry
 # Voxel-Game-<wersja>-android-www.zip i android-latest.json (z niego
 # zainstalowana aplikacja wie, że jest aktualizacja - jak latest.yml na
-# komputerze); wydanie bez któregoś z nich jest uzupełniane. Bez
+# komputerze), a także szablon paczki tekstur Voxel-Game-paczka-tekstur.zip
+# (folder paczka-tekstur-szablon/, docs/paczki-tekstur.md); wydanie bez
+# któregoś z nich jest uzupełniane. Bez
 # sekretów - tylko wersja testowa "Voxel Game (test)" w Artifacts.
 # Opis: docs/telefon.md.
 #
@@ -48,6 +50,7 @@ on:
       - 'android/**'
       - 'capacitor.config.json'
       - 'tools/android-www.mjs'
+      - 'paczka-tekstur-szablon/**'
       - 'package.json'
       - 'package-lock.json'
       - '.github/workflows/aplikacja.yml'
@@ -144,7 +147,7 @@ jobs:
             # Android: aplikacja, paczka plików gry i android-latest.json.
             HAS_APK=$(APK="$APK" WWW="$WWW" node -p '
               const names = require("./release.json").assets.map((asset) => asset.name);
-              [process.env.APK, process.env.WWW, "android-latest.json"].every((name) => names.includes(name))
+              [process.env.APK, process.env.WWW, "android-latest.json", "Voxel-Game-paczka-tekstur.zip"].every((name) => names.includes(name))
             ')
 
             if [ -z "$MISSING" ]; then
@@ -258,7 +261,7 @@ jobs:
         run: |
           TAG="v$VERSION"
           FILES=("dist/$EXE" "dist/$EXE.blockmap" "dist/latest.yml")
-          NOTES="Voxel Game $VERSION - Windows: pobierz $EXE i uruchom (zainstalowana gra aktualizuje się sama). Android (telefon, tablet): pobierz na telefonie Voxel-Game-$VERSION-android.apk i otwórz - nowa wersja instaluje się na starej, światy zostają; zainstalowana aplikacja (od 0.19.0) też aktualizuje się sama."
+          NOTES="Voxel Game $VERSION - Windows: pobierz $EXE i uruchom (zainstalowana gra aktualizuje się sama). Android (telefon, tablet): pobierz na telefonie Voxel-Game-$VERSION-android.apk i otwórz - nowa wersja instaluje się na starej, światy zostają; zainstalowana aplikacja (od 0.19.0) też aktualizuje się sama. Własne tekstury: Voxel-Game-paczka-tekstur.zip (szablon z oryginalnymi teksturami) - w grze Ustawienia, Tekstury."
 
           # Uruchamia komendę; przy błędzie pokazuje jej wynik w adnotacji.
           run() {
@@ -427,6 +430,14 @@ jobs:
           SIZE=$(( $(stat -c %s "dist/$WWW") / 1024 ))
           echo "::notice title=Paczka aktualizacji::$WWW ($SIZE kB)%0A$(sed -e 's/%/%25/g' dist/android-latest.json | awk 'BEGIN { ORS = "%0A" } { print }')"
 
+      # Szablon paczki tekstur (oryginalne tekstury - tools/paczka_tekstur.py)
+      # - gra otwiera go z najnowszego wydania (Ustawienia -> Tekstury).
+      - name: Szablon paczki tekstur
+        run: |
+          rm -f dist/Voxel-Game-paczka-tekstur.zip
+          (cd paczka-tekstur-szablon && zip -q -r -X "$GITHUB_WORKSPACE/dist/Voxel-Game-paczka-tekstur.zip" .)
+          echo "::notice title=Szablon paczki tekstur::Voxel-Game-paczka-tekstur.zip ($(( $(stat -c %s dist/Voxel-Game-paczka-tekstur.zip) / 1024 )) kB, $(find paczka-tekstur-szablon -name '*.png' | wc -l) obrazków)"
+
       # Jak instalator wyżej: 2 dni, brak miejsca nie zatrzymuje wydania.
       - uses: actions/upload-artifact@v6
         continue-on-error: true
@@ -444,7 +455,7 @@ jobs:
         run: |
           TAG="v$VERSION"
           EXE=$(node -p 'const p = require("./package.json"); p.build.nsis.artifactName.replace("${version}", p.version).replace("${ext}", "exe")')
-          NOTES="Voxel Game $VERSION - Windows: pobierz $EXE i uruchom (zainstalowana gra aktualizuje się sama). Android (telefon, tablet): pobierz na telefonie $APK i otwórz - nowa wersja instaluje się na starej, światy zostają; zainstalowana aplikacja (od 0.19.0) też aktualizuje się sama."
+          NOTES="Voxel Game $VERSION - Windows: pobierz $EXE i uruchom (zainstalowana gra aktualizuje się sama). Android (telefon, tablet): pobierz na telefonie $APK i otwórz - nowa wersja instaluje się na starej, światy zostają; zainstalowana aplikacja (od 0.19.0) też aktualizuje się sama. Własne tekstury: Voxel-Game-paczka-tekstur.zip (szablon z oryginalnymi teksturami) - w grze Ustawienia, Tekstury."
 
           run() {
             if ! "$@" > out.log 2>&1; then
@@ -459,12 +470,12 @@ jobs:
           # zainstalowana gra go zobaczy, pliki już są.
 
           if gh release view "$TAG" --repo "$REPO" > /dev/null 2>&1; then
-            echo "Wydanie $TAG jest - dosyłam $APK i $WWW."
-            run gh release upload "$TAG" "dist/$APK" "dist/$WWW" --repo "$REPO" --clobber
+            echo "Wydanie $TAG jest - dosyłam $APK, $WWW i szablon paczki tekstur."
+            run gh release upload "$TAG" "dist/$APK" "dist/$WWW" dist/Voxel-Game-paczka-tekstur.zip --repo "$REPO" --clobber
             run gh release edit "$TAG" --repo "$REPO" --notes "$NOTES"
           else
             echo "Nowe wydanie $TAG (bez instalatora dla Windowsa)."
-            run gh release create "$TAG" "dist/$APK" "dist/$WWW" --repo "$REPO" --title "$TAG" --notes "$NOTES"
+            run gh release create "$TAG" "dist/$APK" "dist/$WWW" dist/Voxel-Game-paczka-tekstur.zip --repo "$REPO" --title "$TAG" --notes "$NOTES"
           fi
 
           run gh release upload "$TAG" dist/android-latest.json --repo "$REPO" --clobber

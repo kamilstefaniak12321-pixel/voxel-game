@@ -507,3 +507,11 @@ export const TOUCH_SETTINGS = {
 // Ekran telefonu ma 2-3 piksele na punkt - rysujemy najwyżej tyle
 // pikseli na punkt (więcej i tak prawie nie widać, a zjada baterię).
 export const TOUCH_MAX_PIXEL_RATIO = 1.5;
+
+
+// WYDANIA (aplikacje na komputer i telefon - docs/aplikacja.md):
+// repozytorium z wydaniami (to samo co package.json -> build.publish)
+// i szablon paczki tekstur w najnowszym wydaniu (Ustawienia -> Tekstury,
+// docs/paczki-tekstur.md).
+export const RELEASES_REPO = 'kamilstefaniak12321-pixel/voxel-game-wydania';
+export const TEXTURE_PACK_TEMPLATE_URL = `https://github.com/${RELEASES_REPO}/releases/latest/download/Voxel-Game-paczka-tekstur.zip`;

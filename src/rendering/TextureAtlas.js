@@ -2,11 +2,10 @@ import * as THREE from 'three';
 
 import { PACK_TEXTURES, TREE_PACK_ERRORS } from '../blocks/treePacks.js';
 
+import { getPackInfo, loadPackTiles, gameResolution, safeResolution, startSucceeded } from './TexturePacks.js';
+
 
 export const ATLAS_COLUMNS = 16;
-
-// Wiersze w pliku terrain.png.
-const IMAGE_ROWS = 16;
 
 // Pierwszy wolny wiersz atlasu - od niego idą tekstury z paczek drzew
 // (assets/drzewa/, src/blocks/treePacks.js), po kolei, kafelek za
@@ -16,13 +15,22 @@ export const PACK_ATLAS_ROW = 10;
 
 const PACK_TILE_NAMES = Object.keys(PACK_TEXTURES);
 
-// Gdy tekstur z paczek jest więcej, niż mieści się w wolnych wierszach
-// terrain.png, atlas w grze ma dwa razy więcej wierszy.
-export const ATLAS_ROWS =
-    PACK_TILE_NAMES.length > (IMAGE_ROWS - PACK_ATLAS_ROW) * ATLAS_COLUMNS ? IMAGE_ROWS * 2 : IMAGE_ROWS;
-
-// Rozmiar jednego kafelka w pikselach.
+// Rozmiar jednego kafelka w pikselach w terrain.png (oryginalne
+// tekstury). Z paczką tekstur (TexturePacks.js) atlas w grze ma kafelki
+// atlasTileSize x atlasTileSize (do 512) - UV kafelków są takie same.
 export const ATLAS_TILE_SIZE = 16;
+
+// Rozmiar kafelka w atlasie w grze (po wczytaniu - atlasReady).
+export let atlasTileSize = ATLAS_TILE_SIZE;
+
+// Start z paczką tekstur uznajemy za udany tyle po wysłaniu atlasu na
+// kartę graficzną (TexturePacks.js - bezpieczny start).
+const START_CHECK_MS = 5000;
+
+// Kiedy atlas z paczką trafił na kartę graficzną (performance.now(),
+// null - jeszcze nie / bez paczki) - main.js: utrata obrazu tuż po
+// starcie = za duży atlas.
+export let atlasUploadedAt = null;
 
 // O jaką część piksela tekstury UV jest odsunięte od krawędzi
 // kafelka. Dokładnie na granicy dwóch kafelków karta graficzna
@@ -287,6 +295,13 @@ PACK_TILE_NAMES.forEach((name, i) => {
 });
 
 
+// Wiersze atlasu w grze: tylko te, w których są kafelki (terrain.png ma
+// ich 16, ale ostatnie są puste - czekają na tekstury paczek drzew). Mniej
+// wierszy = mniej pamięci karty graficznej (ważne przy dużej paczce
+// tekstur). Paczki drzew z wieloma teksturami dokładają wiersze same.
+export const ATLAS_ROWS = Math.max(...Object.values(ATLAS_TILES).map((tile) => tile.y)) + 1;
+
+
 // Wiersz atlasu z roślinami.
 
 export const PLANT_ATLAS_ROW = 2;
@@ -335,8 +350,19 @@ blockAtlasTexture.colorSpace =
 // z folderów paczek. Brakująca albo zepsuta tekstura - fioletowo-czarna
 // szachownica (od razu widać, której brakuje).
 //
-// atlasImage - obietnica z gotowym obrazkiem atlasu (<img>; ikonki
-// bloków, src/ui/BlockIcons.js, rysują się z niego).
+// Z PACZKĄ TEKSTUR (TexturePacks.js): atlas o kafelkach T x T (T -
+// rozdzielczość w grze): tekstury z paczki, a czego w niej nie ma -
+// oryginalne, powiększone (ostre piksele). Przy T > 16 atlas dostaje
+// MIPMAPY - pomniejszone kopie (T/2, T/4... aż do 1 piksela na kafelek),
+// każdy kafelek pomniejszany osobno, więc kolory sąsiednich kafelków
+// się nie mieszają. Karta graficzna bierze z daleka mniejszą kopię -
+// bez migotania drobnych pikseli wielkich tekstur.
+//
+// atlasReady - obietnica z gotowym atlasem:
+//   { image, mipmaps (null bez paczki), tileSize, iconImage, iconTileSize,
+//     pixelImage (kafelki 16 x 16 - średnie kolory, odłamki), pack
+//     (opis paczki albo null), extras ({ cracks, moon } - Bloby z paczki) }
+// atlasImage - obrazek do ikonek (src/ui/BlockIcons.js).
 // ------------------------------------------------------------
 
 function loadImage(url) {
@@ -351,6 +377,17 @@ function loadImage(url) {
         image.src = url;
 
     });
+
+}
+
+
+// Obrazek z pliku paczki tekstur (Blob) - np. pęknięcia, księżyc.
+
+export function loadPackImage(blob) {
+
+    const url = URL.createObjectURL(blob);
+
+    return loadImage(url).finally(() => URL.revokeObjectURL(url));
 
 }
 
@@ -373,20 +410,37 @@ function drawMissing(context, x, y) {
 }
 
 
-async function buildAtlas() {
+// Płótno w zwykłej pamięci (willReadFrequently - bez karty graficznej):
+// atlas z dużą paczką składamy bez obciążania karty, a ikonki i kolory
+// czytają z niego piksele.
+
+function createCanvas(width, height) {
+
+    const canvas = document.createElement('canvas');
+
+    canvas.width = width;
+    canvas.height = height;
+
+    canvas.getContext('2d', { willReadFrequently: true });
+
+    return canvas;
+
+}
+
+
+// Oryginalny atlas (16 x 16 na kafelek): terrain.png i tekstury paczek drzew.
+
+async function buildBaseAtlas() {
 
     const base = await loadImage(atlasUrl.href);
 
-    if (PACK_TILE_NAMES.length === 0) {
+    if (PACK_TILE_NAMES.length === 0 && base.height === ATLAS_ROWS * ATLAS_TILE_SIZE) {
         return base;
     }
 
     const T = ATLAS_TILE_SIZE;
 
-    const canvas = document.createElement('canvas');
-
-    canvas.width = ATLAS_COLUMNS * T;
-    canvas.height = ATLAS_ROWS * T;
+    const canvas = createCanvas(ATLAS_COLUMNS * T, ATLAS_ROWS * T);
 
     // Płótno w pamięci (nie na karcie graficznej): z atlasu czytają
     // potem piksele średnie kolory i ikonki bloków - bez czekania na
@@ -451,16 +505,205 @@ async function buildAtlas() {
 }
 
 
-export const atlasImage = buildAtlas();
+// Paczka tekstur (jeśli jest): tekstury przeskalowane do rozdzielczości
+// w grze (z zapisu - przy pierwszym starcie po zmianie liczone teraz).
+
+async function loadTexturePack() {
+
+    try {
+
+        const info = await getPackInfo();
+
+        if (!info) {
+            return null;
+        }
+
+        // (Poprzedni start z tą rozdzielczością się nie udał - mniejsza.)
+
+        const size = safeResolution(gameResolution(info.source, undefined, ATLAS_ROWS));
+
+        return size > 0 ? await loadPackTiles(size) : null;
+
+    }
+    catch (error) {
+
+        console.warn('Paczka tekstur:', error);
+
+        return null;
+
+    }
+
+}
 
 
-atlasImage.then(
-    (image) => {
+// Atlas z paczką: kafelki T x T i mipmapy (pomniejszone kopie atlasu,
+// każdy kafelek osobno). Tekstury paczki dekodowane po jednej (mniej
+// pamięci naraz).
 
-        blockAtlasTexture.image = image;
+async function buildPackAtlas(base, pack) {
+
+    const T = pack.size;
+
+    const B = ATLAS_TILE_SIZE;
+
+    const level0 = createCanvas(ATLAS_COLUMNS * T, ATLAS_ROWS * T);
+
+    const context = level0.getContext('2d', { willReadFrequently: true });
+
+    context.imageSmoothingEnabled = false;
+
+    for (const [name, { x, y }] of Object.entries(ATLAS_TILES)) {
+
+        const blob = pack.tiles.get(name);
+
+        let tile = null;
+
+        try {
+            tile = blob ? await createImageBitmap(blob) : null;
+        }
+        catch {
+            // zepsuty plik - zostaje oryginalna tekstura
+        }
+
+        if (tile) {
+            context.drawImage(tile, x * T, y * T, T, T);
+            tile.close();
+        }
+        else {
+            context.drawImage(base, x * B, y * B, B, B, x * T, y * T, T, T);
+        }
+
+    }
+
+
+    const levels = [level0];
+
+    if (T > B) {
+
+        let previous = level0;
+
+        for (let size = T / 2; size >= 1; size /= 2) {
+
+            const level = createCanvas(ATLAS_COLUMNS * size, ATLAS_ROWS * size);
+
+            const levelContext = level.getContext('2d', { willReadFrequently: true });
+
+            levelContext.imageSmoothingEnabled = true;
+            levelContext.imageSmoothingQuality = 'high';
+
+            for (let y = 0; y < ATLAS_ROWS; y++) {
+
+                for (let x = 0; x < ATLAS_COLUMNS; x++) {
+
+                    levelContext.drawImage(previous, x * size * 2, y * size * 2, size * 2, size * 2, x * size, y * size, size, size);
+
+                }
+
+            }
+
+            levels.push(level);
+
+            previous = level;
+
+        }
+
+    }
+
+
+    // Kopia z kafelkami size x size (albo największa, jaka jest).
+
+    const levelOf = (size) => levels[Math.max(0, Math.round(Math.log2(T / Math.min(T, size))))];
+
+    return {
+        image: level0,
+        mipmaps: levels.length > 1 ? levels : null,
+        tileSize: T,
+        iconImage: levelOf(64),
+        iconTileSize: Math.min(T, 64),
+        pixelImage: levelOf(B),
+        pack: pack.pack,
+        extras: pack.extras
+    };
+
+}
+
+
+async function buildAtlas() {
+
+    const [base, pack] = await Promise.all([buildBaseAtlas(), loadTexturePack()]);
+
+    if (!pack) {
+
+        return {
+            image: base,
+            mipmaps: null,
+            tileSize: ATLAS_TILE_SIZE,
+            iconImage: base,
+            iconTileSize: ATLAS_TILE_SIZE,
+            pixelImage: base,
+            pack: null,
+            extras: {}
+        };
+
+    }
+
+    return await buildPackAtlas(base, pack);
+
+}
+
+
+export const atlasReady = buildAtlas();
+
+export const atlasImage = atlasReady.then((atlas) => atlas.iconImage);
+
+
+atlasReady.then(
+    (atlas) => {
+
+        atlasTileSize = atlas.tileSize;
+
+        blockAtlasTexture.image = atlas.image;
+
+        if (atlas.mipmaps) {
+
+            // Mipmapy: z daleka mniejsza kopia, w obrębie kopii - ostre
+            // piksele (bez mieszania z sąsiednimi kafelkami).
+
+            blockAtlasTexture.mipmaps = atlas.mipmaps;
+            blockAtlasTexture.minFilter = THREE.NearestMipmapLinearFilter;
+
+        }
+
+        // Po wysłaniu na kartę graficzną: duże kopie atlasu nie są już
+        // potrzebne w pamięci (zostają te do ikonek i kolorów), a start
+        // z paczką się udał (TexturePacks.js - bezpieczny start).
+
+        blockAtlasTexture.onUpdate = () => {
+
+            blockAtlasTexture.onUpdate = null;
+
+            if (atlas.pack) {
+
+                atlasUploadedAt = performance.now();
+
+                for (const level of atlas.mipmaps ?? [atlas.image]) {
+
+                    if (level !== atlas.iconImage && level !== atlas.pixelImage && level.width > ATLAS_COLUMNS * 64) {
+                        level.width = 0;
+                        level.height = 0;
+                    }
+
+                }
+
+                setTimeout(startSucceeded, START_CHECK_MS);
+
+            }
+
+        };
+
         blockAtlasTexture.needsUpdate = true;
 
-        computeAtlasAverages(image);
+        computeAtlasAverages(atlas.pixelImage);
 
     },
     (error) => {

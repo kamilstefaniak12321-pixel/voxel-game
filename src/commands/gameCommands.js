@@ -70,6 +70,18 @@ import { TEXTS } from '../ui/texts.js';
 
 import { compareVersions, megabytes } from '../app/AndroidUpdates.js';
 
+import {
+    resolutionChoices,
+    resolutionName,
+    chooseTexturePack,
+    setTextureResolution,
+    resetTexturePack,
+    openTemplate,
+    describeTextures
+} from '../app/textures.js';
+
+import { getPackInfo } from '../rendering/TexturePacks.js';
+
 import { LANDFORMS, RELIEFS } from '../world/terrain/landforms.js';
 
 import { terrainName } from '../world/terrain/generators.js';
@@ -471,6 +483,9 @@ const ON_WORDS = ['wl', 'on', 'tak', '1', 'true'];
 
 // /aktualizacja.
 const UPDATE_WORDS = ['sprawdz', 'pobierz', 'instaluj', 'wroc'];
+
+// /tekstury.
+const TEXTURE_WORDS = ['wczytaj', 'rozdzielczosc', 'oryginalne', 'szablon', 'lista'];
 const OFF_WORDS = ['wyl', 'off', 'nie', '0', 'false'];
 
 
@@ -4381,6 +4396,115 @@ export const GAME_COMMANDS = [
 
 
     {
+        name: 'tekstury',
+        aliases: ['paczka', 'textures'],
+        usage: '/tekstury [wczytaj | rozdzielczosc <auto | 16 | 32 | 64 | 128 | 256 | 512> | oryginalne | szablon | lista]',
+        description: 'Paczka tekstur: stan; wczytaj - wybierz plik .zip; rozdzielczosc - piksele na blok w grze; oryginalne - bez paczki; szablon - pobierz szablon paczki; lista - brakujące i pominięte pliki paczki (docs/paczki-tekstur.md).',
+
+        run(args, { game, chat, reload }) {
+
+            const settings = game.settings;
+
+            const word = simplify(args[0] ?? '');
+
+            const status = (text, error = false) => chat.print(text, error ? 'error' : 'hint');
+
+            if (word === '') {
+
+                describeTextures(settings).then((text) => chat.print(text, 'success'));
+
+                return 'Sprawdzam paczkę tekstur...';
+
+            }
+
+            if (word === 'wczytaj') {
+
+                chooseTexturePack(settings, status, reload);
+
+                return 'Wybierz plik .zip z paczką tekstur (szablon: /tekstury szablon).';
+
+            }
+
+            if (word === 'rozdzielczosc') {
+
+                const choices = resolutionChoices();
+
+                const value = simplify(args[1] ?? '');
+
+                if (!value) {
+                    return `Rozdzielczość tekstur: ${resolutionName(settings.get('textureResolution'))}. Do wyboru na tym urządzeniu: ${choices.map(resolutionName).join(', ')}.`;
+                }
+
+                const size = value === 'auto' || value === 'automatyczna' ? 0 : parseInt(value, 10);
+
+                if (!choices.includes(size)) {
+                    throw new CommandError(`Do wyboru na tym urządzeniu: auto, ${choices.filter(Boolean).join(', ')}.`);
+                }
+
+                setTextureResolution(settings, size, status, reload);
+
+                return `Rozdzielczość tekstur: ${resolutionName(size)}...`;
+
+            }
+
+            if (word === 'oryginalne' || word === 'domyslne' || word === 'usun') {
+
+                resetTexturePack(status, reload);
+
+                return 'Oryginalne tekstury...';
+
+            }
+
+            if (word === 'szablon') {
+                return `Szablon paczki (oryginalne tekstury, opis w środku): ${openTemplate()}`;
+            }
+
+            if (word === 'lista') {
+
+                getPackInfo().then((info) => {
+
+                    if (!info) {
+                        chat.print('Nie ma paczki tekstur.', 'error');
+                        return;
+                    }
+
+                    const missing = info.missing.length
+                        ? `Bez tekstury w paczce (zostają oryginalne, ${info.missing.length}): ${info.missing.join(', ')}.`
+                        : 'Paczka ma wszystkie tekstury.';
+
+                    const unknown = info.unknown.length
+                        ? ` Pominięte pliki (${info.unknown.length}): ${info.unknown.join(', ')}.`
+                        : '';
+
+                    chat.print(missing + unknown, 'success');
+
+                });
+
+                return `Pliki paczki...`;
+
+            }
+
+            throw usageError(this);
+
+        },
+
+        complete(args) {
+
+            if (args.length === 1) {
+                return TEXTURE_WORDS;
+            }
+
+            if (args.length === 2 && simplify(args[0]) === 'rozdzielczosc') {
+                return ['auto', ...resolutionChoices().filter(Boolean).map(String)];
+            }
+
+            return [];
+
+        }
+    },
+
+
+    {
         name: 'aktualizacja',
         aliases: ['aktualizacje', 'update', 'wersja'],
         usage: '/aktualizacja [sprawdz | pobierz | instaluj | wroc]',
@@ -4427,14 +4551,27 @@ export const GAME_COMMANDS = [
 
                 }
 
+                if (word === 'pobierz') {
+
+                    if (status?.state !== 'available') {
+                        throw new CommandError('Nie ma nic do pobrania (z aktualizacjami automatycznymi nowa wersja pobiera się sama).');
+                    }
+
+                    updates.download();
+
+                    return `Pobieram wersję ${status.version}...`;
+
+                }
+
                 if (word !== '') {
-                    throw new CommandError('Aplikacja na komputer sprawdza i pobiera aktualizacje sama, przy każdym uruchomieniu (gotową - /aktualizacja instaluj).');
+                    throw new CommandError('Aplikacja na komputer sprawdza aktualizacje przy każdym uruchomieniu (gotową - /aktualizacja instaluj).');
                 }
 
                 const state =
                     status?.state === 'downloading' ? `pobieram wersję ${status.version}... ${status.percent ?? 0}%` :
                     status?.state === 'ready' ? `nowa wersja ${status.version} gotowa - zainstaluje się po zamknięciu gry (od razu: /aktualizacja instaluj)` :
                     status?.state === 'error' ? 'nie udało się pobrać aktualizacji (spróbuje przy następnym uruchomieniu)' :
+                    status?.state === 'available' ? `jest nowa wersja ${status.version} - aktualizacje automatyczne są wyłączone (/aktualizacja pobierz)` :
                     'nowszej wersji nie ma (sprawdzane przy uruchomieniu)';
 
                 return `Aplikacja na komputer, wersja ${updates.version}: ${state}.`;
@@ -4480,13 +4617,17 @@ export const GAME_COMMANDS = [
 
             if (word === 'pobierz') {
 
-                if (updater.status?.state !== 'available') {
-                    throw new CommandError(`Nie ma aplikacji do pobrania. ${updater.describe()}`);
+                const status = updater.status;
+
+                if (status?.state !== 'available') {
+                    throw new CommandError(`Nie ma nic do pobrania. ${updater.describe()}`);
                 }
 
                 updater.download();
 
-                return `Pobieram aplikację ${updater.status.version} (${megabytes(updater.latest?.apk?.size)} MB)...`;
+                return status.kind === 'web'
+                    ? `Pobieram nową wersję gry ${status.version} (${megabytes(status.size)} MB)...`
+                    : `Pobieram aplikację ${status.version} (${megabytes(status.size)} MB)...`;
 
             }
 

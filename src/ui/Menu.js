@@ -3,6 +3,15 @@ import { TERRAIN_TYPES, terrainName } from '../world/terrain/generators.js';
 import { DEFAULT_TERRAIN, DEFAULT_GAME_MODE } from '../config.js';
 import { SETTINGS_RANGES, SETTINGS_CHOICES } from '../settings/Settings.js';
 import { hasCustomSkin, chooseSkinFile, resetSkin } from '../player/skin.js';
+import {
+    resolutionChoices,
+    resolutionName,
+    chooseTexturePack,
+    setTextureResolution,
+    resetTexturePack,
+    openTemplate,
+    describeTextures
+} from '../app/textures.js';
 import { playUi, playSlider } from '../audio/ui.js';
 import { ACHIEVEMENTS, TIERS, TIER_ORDER } from '../achievements/list.js';
 
@@ -107,15 +116,27 @@ const SETTINGS_TABS = {
         'volumeUi'
     ],
 
+    textures: [
+        'texturePack'
+    ],
+
     other: [
         'theme',
         'hudScale',
         'showDebug',
         'showFps',
-        'meteorites'
+        'meteorites',
+        'autoUpdates'
     ]
 
 };
+
+// Ustawienia tylko w aplikacji (komputer, telefon) - w przeglądarce ich nie
+// ma na liście.
+const APP_ONLY_SETTINGS = new Set(['autoUpdates']);
+
+// Rozdzielczość tekstur zmienia się tyle ms po ostatnim kliknięciu.
+const RESOLUTION_APPLY_MS = 2000;
 
 
 function formatDate(timestamp) {
@@ -338,8 +359,13 @@ export class Menu {
         }
         else if (update?.state === 'available') {
 
+            const text =
+                kind === 'web' ? TEXTS.updateAvailableWeb(update.version, update.size) :
+                kind === 'apk' ? TEXTS.updateAvailableApk(update.version, update.size, update.reason) :
+                TEXTS.updateAvailableDesktop(update.version);
+
             box.append(
-                el('span', 'menu-update', TEXTS.updateAvailableApk(update.version, update.size)),
+                el('span', 'menu-update', text),
                 button(TEXTS.downloadUpdate, () => info.download())
             );
 
@@ -918,7 +944,13 @@ export class Menu {
         const grid = el('div', 'settings-grid');
 
         for (const key of SETTINGS_TABS[tab] ?? SETTINGS_TABS.video) {
+
+            if (APP_ONLY_SETTINGS.has(key) && !this.appInfo) {
+                continue;
+            }
+
             grid.append(this.settingControl(key));
+
         }
 
 
@@ -978,6 +1010,10 @@ export class Menu {
 
         if (key === 'skin') {
             return this.skinControl();
+        }
+
+        if (key === 'texturePack') {
+            return this.texturePackControl();
         }
 
 
@@ -1082,6 +1118,81 @@ export class Menu {
         );
 
         return toggle;
+
+    }
+
+
+    // Paczka tekstur (src/app/textures.js): wczytanie pliku .zip,
+    // rozdzielczość w grze, oryginalne tekstury, szablon paczki. Pod
+    // przyciskami - opis paczki, postęp albo wynik. Zmiany działają po
+    // ponownym uruchomieniu gry (handlers.reloadGame - z zapisem świata).
+
+    texturePackControl() {
+
+        const settings = this.settings;
+
+        const box = el('div', 'settings-textures');
+
+        const note = el('p', 'menu-note', TEXTS.texturePackChecking);
+
+        const reload = () => this.handlers.reloadGame?.();
+
+        const status = (text, error = false) => {
+            note.textContent = text;
+            note.classList.toggle('menu-danger', error);
+        };
+
+        const refresh = () => describeTextures(settings).then((text) => status(text));
+
+
+        const choose = button(TEXTS.texturePackLoad, () => chooseTexturePack(settings, status, reload));
+
+
+        // Rozdzielczość: każde kliknięcie - następna z dostępnych na tym
+        // urządzeniu. Zmiana działa dopiero chwilę po ostatnim kliknięciu
+        // (przeskalowanie i ponowne uruchomienie gry), żeby dało się
+        // przeklikać do wybranej.
+
+        const choices = resolutionChoices();
+
+        let chosen = settings.get('textureResolution');
+
+        let applyTimer = null;
+
+        const resolution = button(
+            TEXTS.textureResolution(chosen),
+            () => {
+
+                chosen = choices[(choices.indexOf(chosen) + 1) % choices.length];
+
+                resolution.textContent = TEXTS.textureResolution(chosen);
+
+                status(TEXTS.textureResolutionPending(resolutionName(chosen)));
+
+                clearTimeout(applyTimer);
+
+                applyTimer = setTimeout(() => setTextureResolution(settings, chosen, status, reload), RESOLUTION_APPLY_MS);
+
+            }
+        );
+
+
+        const reset = button(TEXTS.texturePackRemove, () => resetTexturePack(status, reload));
+
+        const template = button(TEXTS.texturePackTemplate, () => {
+
+            const url = openTemplate();
+
+            status(TEXTS.texturePackTemplateNote(url));
+
+        });
+
+
+        box.append(choose, resolution, reset, template, note);
+
+        refresh();
+
+        return box;
 
     }
 

@@ -278,6 +278,15 @@ export const ACHIEVEMENTS = [
         icon: 'dandelion',
         check: (game) => lookingAtLowSun(game)
     },
+    {
+        id: 'texture_pack',
+        tier: 'common',
+        title: 'Nowe szaty',
+        task: 'Zagraj z własną paczką tekstur (Ustawienia → Tekstury).',
+        comment: 'Ten sam kamień, tylko w wyższej rozdzielczości. Dalej twardy.',
+        icon: 'grass',
+        on: 'texturePack'
+    },
 
     // --------------------------------------------------------
     // RZADKIE

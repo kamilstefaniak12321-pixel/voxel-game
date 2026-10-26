@@ -2,6 +2,8 @@ import * as THREE from 'three';
 
 import { MOON_DIAMETER } from '../../config.js';
 
+import { atlasReady, loadPackImage } from '../../rendering/TextureAtlas.js';
+
 // ------------------------------------------------------------
 // WARSTWA: KSIĘŻYC
 //
@@ -43,6 +45,32 @@ export class Moon {
         texture.magFilter = THREE.NearestFilter;
         texture.minFilter = THREE.NearestFilter;
         texture.generateMipmaps = false;
+
+
+        // Księżyc z paczki tekstur (niebo/ksiezyc.png) - zamiast
+        // oryginalnego; uTextureSize - jego rozdzielczość (piksele tarczy).
+
+        atlasReady.then(async ({ extras }) => {
+
+            if (!extras?.moon) {
+                return;
+            }
+
+            try {
+
+                const image = await loadPackImage(extras.moon);
+
+                texture.image = image;
+                texture.needsUpdate = true;
+
+                this.material.uniforms.uTextureSize.value = image.width;
+
+            }
+            catch (error) {
+                console.warn('Paczka tekstur - księżyc:', error);
+            }
+
+        }, () => {});
 
 
         this.material = new THREE.ShaderMaterial({

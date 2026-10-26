@@ -344,14 +344,16 @@ body:not([data-screen="game"]) #crosshair {
 
 /* Skórka gracza: dwa przyciski obok siebie i notka pod nimi, na całą szerokość. */
 
-.settings-skin {
+.settings-skin,
+.settings-textures {
     grid-column: 1 / -1;
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
     gap: var(--button-gap);
 }
 
-.settings-skin .menu-note {
+.settings-skin .menu-note,
+.settings-textures .menu-note {
     grid-column: 1 / -1;
     max-width: none;
 }

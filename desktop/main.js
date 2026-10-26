@@ -11,7 +11,10 @@
 // Aktualizacje: przy starcie aplikacja sprawdza wydania na GitHubie
 // (package.json -> build.publish), sama pobiera nową wersję w tle
 // i instaluje ją przy zamknięciu gry albo od razu, gdy gracz kliknie
-// "Zainstaluj teraz" w menu. Opis: docs/aplikacja.md.
+// "Zainstaluj teraz" w menu. Z ustawieniem "Aktualizacje automatyczne:
+// Wył." (gra zapisuje je w pliku aktualizacje.json w folderze aplikacji)
+// tylko sprawdza - pobiera po kliknięciu "Pobierz". Opis:
+// docs/aplikacja.md.
 //
 // Klawisze: F11 - pełny ekran, F12 - narzędzia programisty.
 // ------------------------------------------------------------
@@ -19,6 +22,7 @@
 const { app, BrowserWindow, Menu, ipcMain, net, protocol, shell } = require('electron');
 
 const path = require('node:path');
+const fs = require('node:fs');
 const { pathToFileURL } = require('node:url');
 
 
@@ -66,6 +70,24 @@ let updateStatus = null;
 
 // Zainstalować pobraną aktualizację po zamknięciu okna?
 let installOnClose = false;
+
+
+// Ustawienie "Aktualizacje automatyczne" (zapisane przez grę - setAutoUpdates).
+
+function updateSettingsFile() {
+    return path.join(app.getPath('userData'), 'aktualizacje.json');
+}
+
+function readAutoUpdates() {
+
+    try {
+        return JSON.parse(fs.readFileSync(updateSettingsFile(), 'utf8')).automatyczne !== false;
+    }
+    catch {
+        return true;
+    }
+
+}
 
 
 // ------------------------------------------------------------
@@ -232,12 +254,46 @@ function startUpdater() {
 
     const { autoUpdater } = require('electron-updater');
 
-    autoUpdater.autoDownload = true;
+    autoUpdater.autoDownload = readAutoUpdates();
     autoUpdater.autoInstallOnAppQuit = true;
 
 
+    // Bez aktualizacji automatycznych: "jest nowa wersja" (gra pokazuje
+    // przycisk Pobierz).
+
     autoUpdater.on('update-available', (info) => {
-        setUpdateStatus({ state: 'downloading', version: info.version, percent: 0 });
+
+        setUpdateStatus(autoUpdater.autoDownload
+            ? { state: 'downloading', version: info.version, percent: 0 }
+            : { state: 'available', version: info.version });
+
+    });
+
+
+    ipcMain.on('desktop:download-update', () => {
+
+        if (updateStatus?.state !== 'available') {
+            return;
+        }
+
+        setUpdateStatus({ state: 'downloading', version: updateStatus.version, percent: 0 });
+
+        autoUpdater.downloadUpdate().catch(() => {});
+
+    });
+
+
+    ipcMain.on('desktop:auto-updates', (event, on) => {
+
+        autoUpdater.autoDownload = Boolean(on);
+
+        try {
+            fs.writeFileSync(updateSettingsFile(), JSON.stringify({ automatyczne: Boolean(on) }));
+        }
+        catch (error) {
+            console.warn('Aktualizacje - zapis ustawienia:', error);
+        }
+
     });
 
     autoUpdater.on('download-progress', (progress) => {

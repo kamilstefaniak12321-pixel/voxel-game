@@ -27,7 +27,11 @@ nowsza wersja. Jeśli tak - pobiera ją w tle (postęp w lewym dolnym rogu
 ekranu tytułowego). Gotowa aktualizacja instaluje się sama po zamknięciu
 gry, a przycisk **Zainstaluj teraz** na ekranie tytułowym zamyka grę
 (z zapisem świata), instaluje nową wersję i uruchamia ją od nowa.
-Wersja gry jest w lewym dolnym rogu ekranu tytułowego.
+Wersja gry jest w lewym dolnym rogu ekranu tytułowego. Z ustawieniem
+**Aktualizacje automatyczne: Wył.** (Ustawienia → Inne) aplikacja tylko
+sprawdza wydania i pokazuje nową wersję z przyciskiem **Pobierz**
+(ustawienie zapamiętuje w `aktualizacje.json` w swoim folderze -
+sprawdza wydania, zanim gra wystartuje).
 
 **Zapisy:** światy i ustawienia są w folderze
 `%APPDATA%\Voxel Game` (wpisz to w pasek adresu Eksploratora). Zostają

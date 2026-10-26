@@ -11,6 +11,38 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 0.20.0 - Paczki tekstur w dowolnej rozdzielczości (2026-10-26)
+
+Pull request #40.
+
+### Nowe
+- **Paczki tekstur** - zakładka **Ustawienia → Tekstury**: wczytanie
+  własnej paczki (plik `.zip`; na telefonie - systemowe okno wyboru
+  pliku), rozdzielczość w grze, powrót do oryginalnych tekstur, szablon.
+  - Tekstury w paczce mogą mieć **dowolną rozdzielczość** (np. 1254 x
+    1254) - gra skaluje je do rozdzielczości w grze: automatycznie (jak
+    paczka) albo wybranej (16-512); najwyżej 512 x 512 na komputerze
+    i 256 x 256 na telefonie (pamięć karty graficznej).
+  - Duże tekstury mają **mipmapy** (pomniejszone kopie dla dalekich
+    bloków, każdy kafelek osobno) - nie migoczą z daleka.
+  - Bloki, rośliny, przedmioty, drzewa z paczek drzew, pęknięcia
+    i księżyc; czego paczka nie ma - zostaje oryginalne. Ikonki
+    i kolory dalekiego terenu liczą się z paczki.
+  - Paczka zapisuje się w grze (przeskalowane tekstury też - start
+    jest szybki); zmiana działa po ponownym uruchomieniu gry (świat
+    zapisuje się przedtem).
+- **Szablon paczki** z oryginalnymi teksturami (każda w osobnym pliku,
+  opis: który plik to który blok): folder `paczka-tekstur-szablon/`
+  i `Voxel-Game-paczka-tekstur.zip` w każdym wydaniu; tworzy go
+  `tools/paczka_tekstur.py`.
+- `/tekstury [wczytaj | rozdzielczosc | oryginalne | szablon | lista]`.
+- Osiągnięcie *Nowe szaty* - zagraj z własną paczką tekstur.
+- **Aktualizacje automatyczne** - ustawienie (Ustawienia → Inne,
+  w aplikacji na komputer i na telefon): wyłączone - gra tylko pokazuje
+  nową wersję z przyciskiem *Pobierz* (`/aktualizacja pobierz`).
+
+---
+
 ## 0.19.0 - Aplikacja na telefon aktualizuje się sama (2026-10-26)
 
 Pull request #39.

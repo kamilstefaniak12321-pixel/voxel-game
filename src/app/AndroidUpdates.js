@@ -13,10 +13,15 @@
 //     komórkowych - po stuknięciu "Pobierz"; instaluje się po stuknięciu
 //     "Zainstaluj" (Android pyta o zgodę).
 //
+// Z ustawieniem "Aktualizacje automatyczne: Wył." gra tylko sprawdza
+// i pokazuje, że jest nowa wersja - pobiera po stuknięciu "Pobierz".
+//
 // Stan dla menu (Menu.setUpdateStatus): null albo
 //   { state, kind, version, percent, size, message }
 //   state: 'downloading' | 'ready' | 'available' | 'error'
-//   kind:  'web' (pliki gry) | 'apk' (aplikacja).
+//   kind:  'web' (pliki gry) | 'apk' (aplikacja),
+//   reason (available): 'manual' (aktualizacje automatyczne wyłączone)
+//          albo 'metered' (aplikacja na danych komórkowych).
 //
 // Wtyczka wołana bez @capacitor/core: window.Capacitor.nativePromise.
 // Opis: docs/telefon.md.
@@ -61,12 +66,14 @@ export class AndroidUpdates {
     // onVersion(version) - wersja działającej gry (raz, na starcie).
     // onStatus(status) - przy każdej zmianie stanu.
     // beforeRestart() - async, przed wczytaniem nowej wersji (zapis świata).
+    // autoDownload() - czy pobierać samemu (ustawienie autoUpdates).
 
-    constructor({ onVersion, onStatus, beforeRestart }) {
+    constructor({ onVersion, onStatus, beforeRestart, autoDownload }) {
 
         this.onVersion = onVersion;
         this.onStatus = onStatus;
         this.beforeRestart = beforeRestart;
+        this.autoDownload = autoDownload ?? (() => true);
 
         this.status = null;
 
@@ -201,8 +208,14 @@ export class AndroidUpdates {
             if (this.info.gotowa === latest.version) {
                 this.setStatus({ state: 'ready', kind: 'web', version: latest.version });
             }
-            else if (this.status?.state !== 'downloading') {
+            else if (this.status?.state === 'downloading') {
+                // już się pobiera
+            }
+            else if (this.autoDownload()) {
                 await this.downloadWeb(latest);
+            }
+            else {
+                this.setStatus({ state: 'available', kind: 'web', version: latest.version, size: latest.www.size, reason: 'manual' });
             }
 
             return this.describe();
@@ -214,14 +227,19 @@ export class AndroidUpdates {
 
         if (latest.apk) {
 
+            const auto = this.autoDownload();
+
             if (this.info.pobranaApk === latest.version) {
                 this.setStatus({ state: 'ready', kind: 'apk', version: latest.version });
             }
-            else if (!this.info.platne) {
+            else if (this.status?.state === 'downloading') {
+                // już się pobiera
+            }
+            else if (auto && !this.info.platne) {
                 await this.download();
             }
-            else if (this.status?.state !== 'downloading') {
-                this.setStatus({ state: 'available', kind: 'apk', version: latest.version, size: latest.apk.size });
+            else {
+                this.setStatus({ state: 'available', kind: 'apk', version: latest.version, size: latest.apk.size, reason: auto ? 'metered' : 'manual' });
             }
 
         }
@@ -251,13 +269,23 @@ export class AndroidUpdates {
     }
 
 
-    // Pobranie aplikacji (.apk) - samo przez Wi-Fi, albo "Pobierz".
+    // "Pobierz": pliki gry (aktualizacje automatyczne wyłączone) albo
+    // aplikacja (.apk - samo przez Wi-Fi, albo po stuknięciu).
 
     async download() {
 
         const latest = this.latest;
 
-        if (!latest?.apk || this.status?.state === 'downloading') {
+        if (this.status?.state === 'downloading') {
+            return;
+        }
+
+        if (this.status?.state === 'available' && this.status.kind === 'web' && latest?.www) {
+            await this.downloadWeb(latest);
+            return;
+        }
+
+        if (!latest?.apk) {
             return;
         }
 
@@ -343,7 +371,13 @@ export class AndroidUpdates {
         }
 
         if (status?.state === 'available') {
-            return `Jest nowa aplikacja ${version} (${megabytes(status.size)} MB) - na danych komórkowych nie pobiera się sama: /aktualizacja pobierz.`;
+
+            const why = status.reason === 'manual' ? 'aktualizacje automatyczne są wyłączone' : 'na danych komórkowych nie pobiera się sama';
+
+            return status.kind === 'web'
+                ? `Jest nowa wersja gry ${version} (${megabytes(status.size)} MB) - ${why}: /aktualizacja pobierz.`
+                : `Jest nowa aplikacja ${version} (${megabytes(status.size)} MB) - ${why}: /aktualizacja pobierz.`;
+
         }
 
         if (status?.state === 'error') {

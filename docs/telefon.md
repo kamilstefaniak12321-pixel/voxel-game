@@ -58,6 +58,10 @@ Gdy nowa wersja gry się nie uruchomi (np. błąd w niej), po dwóch
 nieudanych uruchomieniach aplikacja sama wraca do wersji wbudowanej
 i tej wersji już nie pobiera. Ręcznie: `/aktualizacja wroc`.
 
+Z ustawieniem **Aktualizacje automatyczne: Wył.** (Ustawienia → Inne)
+gra tylko sprawdza wydania i pokazuje, że jest nowa wersja - pobiera ją
+po stuknięciu *Pobierz*.
+
 Bez internetu gra działa normalnie - sprawdzi wydania następnym razem.
 Wersja testowa (*Voxel Game (test)*) się nie aktualizuje - nowe testowe
 `.apk` są w Actions.
@@ -268,6 +272,10 @@ z `main.js`) i jego miejsce w `touch.css`.
 - Nowa aplikacja (`.apk`) instaluje się dopiero po zgodzie gracza -
   po cichu Android pozwala tylko sklepom (Google Play). Nowe wersje
   samej gry instalują się bez pytania.
+- **Paczki tekstur** działają też w aplikacji: Ustawienia → Tekstury →
+  *Wczytaj paczkę (.zip)* otwiera systemowe okno wyboru pliku (plik
+  `.zip` z pamięci telefonu, np. z *Pobranych*). Na telefonie
+  rozdzielczość w grze to najwyżej 256 x 256 (`docs/paczki-tekstur.md`).
 - iPhone: tylko przeglądarka (aplikacja na iOS wymaga Maca i płatnego
   konta Apple).
 - Gra w przeglądarce bez komputera: wystawienie jej w internecie (np.

@@ -11,6 +11,24 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 0.21.1 - Poprawki ekwipunku i lotu (2026-10-27)
+
+Poprawki z pull requesta #42 oraz wcześniejsze poprawki zbioru owoców
+i księgi przepisów.
+
+### Poprawki
+- Owoce zostają na roślinie, gdy w ekwipunku brakuje na nie miejsca.
+- Lista „Tylko możliwe” w księdze przepisów odświeża się po zmianach
+  zawartości ekwipunku i siatki wytwarzania.
+- Przedmioty trzymane na kursorze nie znikają po zapisaniu i wczytaniu
+  świata, również przy pełnym ekwipunku.
+- Zniszczenie podpory oddaje także przedmioty z odpadających dekoracji.
+  Brak miejsca na wszystkie łupy blokuje niszczenie bez utraty bloków.
+- Zapis świata zachowuje włączony lot, także w trybie Przygoda po
+  użyciu `/latanie`.
+
+---
+
 ## 0.21.0 - Biomy (2026-10-26)
 
 Pull request #41.

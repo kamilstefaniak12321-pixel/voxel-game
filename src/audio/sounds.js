@@ -25,7 +25,7 @@
 // materiał ma blok - pole "sound" w BlockRegistry.js.
 // ------------------------------------------------------------
 
-export const BLOCK_MATERIALS = ['grass', 'dirt', 'stone', 'sand', 'gravel', 'mud', 'plant', 'glass', 'wood'];
+export const BLOCK_MATERIALS = ['grass', 'dirt', 'stone', 'sand', 'gravel', 'mud', 'plant', 'glass', 'wood', 'snow'];
 
 // Rodzaj dźwięku bloku: ile wersji (plików) i jak głośno. Dźwięki
 // bloków są miękkie i ciche (tło, nie mają zwracać uwagi) - kroków jest

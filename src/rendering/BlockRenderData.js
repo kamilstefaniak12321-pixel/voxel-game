@@ -123,6 +123,12 @@ blockMaterial.onBeforeCompile = (shader, renderer) => {
                 float farBlur = smoothstep(uFarInner * 0.65, uFarInner, length(vSkyDirection.xz));
                 diffuseColor.rgb = mix(diffuseColor.rgb, texture2D(uAtlasAverage, vMapUv).rgb, farBlur);
             }
+            // Kolor trawy z klimatu (ChunkMesher - atrybut tint): tylko
+            // zielone piksele (źdźbła), ziemia i kwiaty bez zmian.
+
+            float tintMask = smoothstep(0.01, 0.07, diffuseColor.g - max(diffuseColor.r, diffuseColor.b));
+            diffuseColor.rgb *= mix(vec3(1.0), vTint, tintMask);
+
             vec3 blockTexel = diffuseColor.rgb;
             #ifdef USE_SUN_SHADOWS
 
@@ -229,6 +235,8 @@ blockMaterial.onBeforeCompile = (shader, renderer) => {
                 '#include <common>',
                 `#include <common>
                 varying vec3 vSkyDirection;
+                attribute vec4 tint;
+                varying vec3 vTint;
 
                 #ifdef POTATO
                     varying vec3 vFogSky;
@@ -241,6 +249,9 @@ blockMaterial.onBeforeCompile = (shader, renderer) => {
                 `#include <fog_vertex>
                 vSkyDirection = (modelMatrix * vec4(transformed, 1.0)).xyz - cameraPosition;
 
+                // a = 1 (też bez atrybutu - inne siatki) - bez zmiany koloru.
+                vTint = tint.a < 0.5 ? tint.rgb * 2.0 : vec3(1.0);
+
                 #ifdef POTATO
                     vFogSky = skyColor(normalize(vSkyDirection)) * uFogBrightness;
                 #endif`
@@ -252,6 +263,7 @@ blockMaterial.onBeforeCompile = (shader, renderer) => {
                 '#include <common>',
                 `#include <common>
                 varying vec3 vSkyDirection;
+                varying vec3 vTint;
                 uniform float uFogBrightness;
                 uniform float uNightDesaturation;
                 uniform vec3 uNightTint;
@@ -1095,6 +1107,11 @@ for (
         flat: definition.model === 'flat'
             ? FLAT_FACES[getAttach(definition.id)]
             : null,
+
+        // Kolor trawy zależny od klimatu (chunk.tint - ChunkMesher.js):
+        // tylko zielone piksele tekstury (shader niżej).
+
+        tint: definition.tint === true,
 
         uv: FACE_NAMES.map(
             faceName => createRotatedUVs(

@@ -11,6 +11,47 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 0.21.0 - Biomy (2026-10-26)
+
+Pull request #41.
+
+### Nowe
+- **Biomy** w terenie realistycznym (`docs/biomy.md`): **łąka**, **las
+  liściasty**, **buczyna**, **brzezina**, **bór sosnowy**,
+  **świerczyna**, **hala**, **skaliste góry**, **ośnieżone szczyty**,
+  **mokradła**, **plaża i wydmy**. Biom wynika z wysokości, klimatu,
+  wody w pobliżu i pola lasów; każdy ma swój wierzch ziemi (ściółka,
+  mech, błoto, żwir, śnieg), rośliny, krzaki owocowe i drzewa.
+  - Granice biomów są poszarpane, drzewa na granicach się przeplatają.
+  - **Wydmy** na niektórych płaskich wybrzeżach.
+  - **Kolor trawy** zmienia się z klimatem (cieplej - żółciej,
+    chłodniej i wilgotniej - sinawo, w górach bledziej) - tylko zielone
+    piksele, także na dalekim terenie.
+  - Daleki teren: ośnieżone szczyty, trawa w kolorze klimatu, korony
+    drzew biomu.
+- **Nowe bloki:** śnieg i warstwa śniegu (nowy dźwięk - skrzypiący
+  śnieg), mech i kępki mchu, trzcina, wrzos, krokus, piaskownica
+  (trawa wydmowa), **borówka** (krzak owocowy, owoce: borówki).
+- **Nowe drzewa** (paczki drzew): **olcha czarna** i **wierzba biała**
+  na mokradłach, z przedmiotami (szyszeczki olchy, bazie). Paczki drzew
+  mogą rosnąć w wybranych biomach (`"biomy"` w `gdzieRosnie`); jabłonie
+  rosną teraz na łąkach i w lasach liściastych.
+- Trzcina, wrzos i piaskownica rosną też na piasku.
+- Przepisy: śnieg ↔ warstwy śniegu, mech ↔ kępki mchu, niebieska lampa
+  także z borówek, fioletowa - z wrzosu i krokusów.
+- `/biom` (biom pod graczem), `/biom lista`, `/biom znajdz <biom> [tp]`,
+  `/mapa biomy`; `/teren` pokazuje biom.
+- Osiągnięcia: *Borówkowy język*, *Turysta* (wszystkie biomy), *Dach
+  świata* (ośnieżony szczyt); *Pełne kosze* - z borówkami.
+
+### Zmiany
+- Numery bloków: bloki gry mają też numery 240-255, paczki drzew
+  100-239.
+- W istniejących światach realistycznych nietknięte chunki dostają
+  biomy (zmienione przez gracza zostają).
+
+---
+
 ## 0.20.0 - Paczki tekstur w dowolnej rozdzielczości (2026-10-26)
 
 Pull request #40.

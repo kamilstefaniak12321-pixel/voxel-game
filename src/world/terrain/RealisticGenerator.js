@@ -19,6 +19,8 @@ import { Forests } from '../trees/Forests.js';
 
 import { Rivers } from './Rivers.js';
 
+import { Biomes, BIOMES, BIOME_KEYS, BIOME_INDEX, grassTint } from './Biomes.js';
+
 // ------------------------------------------------------------
 // GENERATOR TERENU "REALISTYCZNY" (w budowie)
 //
@@ -159,6 +161,11 @@ const FAR_FOREST_DENSITY = 0.16;
 const FAR_CANOPY = { spruce: 13, pine: 15, beech: 10, linden: 10, oak: 8, birch: 10 };
 
 
+// Biomy leśne (w gęstym lesie więcej ściółki).
+
+const FOREST_BIOMES = new Set(['deciduous', 'beech', 'birch', 'pine', 'spruce']);
+
+
 // Dokładność liczenia: pełna (chunki), średnia i zgrubna (daleki teren -
 // bez szczegółów mniejszych niż odstęp próbek).
 
@@ -171,6 +178,51 @@ export const DETAIL_COARSE = 2;
 // po której spływają rzeki (Rivers.js). Pola jak przy DETAIL_FULL.
 export const DETAIL_MACRO = 3;
 
+
+// Opis biomu (Biomes.js) -> to samo po numerach bloków, do szybkiego
+// generowania. Progi plam (cover -> próg pola) - PATCH_LEVELS.
+
+function resolveBiome(biome) {
+
+    const plants = biome.plants;
+
+    return {
+        key: biome,
+        ground: (biome.ground ?? []).map(([type, cover]) => ({ id: getBlockId(type), level: patchLevel(cover) })),
+        plants: plants ? {
+            grass: plants.grass,
+            tall: plants.tall,
+            flowers: plants.flowers ? plants.flowers.map(getBlockId) : null,
+            flowerDensity: plants.flowerDensity ?? SHAPE.PLANTS.flowerDensity,
+            fern: plants.fern,
+            herbs: plants.herbs.map(([type, chance]) => [chance, getBlockId(type)]),
+            patches: (plants.patches ?? []).map(([type, density, cover]) => ({ id: getBlockId(type), density, level: patchLevel(cover) })),
+            bushes: plants.bushes ? {
+                stages: plants.bushes.species.map((species) => bushStages(species).map(getBlockId)),
+                density: plants.bushes.density,
+                threshold: plants.bushes.threshold ?? SHAPE.PLANTS.bushThreshold
+            } : null
+        } : null
+    };
+
+}
+
+
+// Pole plam (szum 2 oktawy, -1..1) nie ma równego rozkładu - próg, nad
+// którym jest mniej więcej `cover` części powierzchni, z tabeli
+// (zmierzone na dużym obszarze).
+
+const PATCH_LEVELS = [
+    [0, 1], [0.05, 0.65], [0.1, 0.51], [0.15, 0.41], [0.2, 0.34], [0.25, 0.27], [0.3, 0.21],
+    [0.35, 0.16], [0.4, 0.1], [0.45, 0.05], [0.5, 0], [0.6, -0.1], [0.7, -0.21],
+    [0.8, -0.34], [0.9, -0.51], [1, -1.01]
+];
+
+function patchLevel(cover) {
+
+    return profile(PATCH_LEVELS, cover);
+
+}
 
 // ------------------------------------------------------------
 
@@ -216,7 +268,12 @@ export class RealisticGenerator {
             flowers: noise(20),
             flowerSpecies: noise(21),
             bushes: noise(22),
-            bushSpecies: noise(23)
+            bushSpecies: noise(23),
+            dunes: noise(24),
+            dunePatch: noise(25),
+            ground: noise(26),
+            groundB: noise(27),
+            patches: noise(28)
         };
 
         this.plantSeed = Math.imul(base, 0x2545f491) >>> 0;
@@ -237,7 +294,13 @@ export class RealisticGenerator {
             clover: getBlockId('clover'),
             plantain: getBlockId('plantain'),
             nettle: getBlockId('nettle'),
-            dandelion: getBlockId('dandelion')
+            dandelion: getBlockId('dandelion'),
+            snow: getBlockId('snow'),
+            snowLayer: getBlockId('snow_layer'),
+            mud: getBlockId('mud'),
+            clay: getBlockId('clay'),
+            reed: getBlockId('reed'),
+            duneGrass: getBlockId('dune_grass')
         };
 
         // Kwiaty w kępach (kolejność = plamy pola gatunków).
@@ -248,6 +311,12 @@ export class RealisticGenerator {
         // kilka owoców, pełen owoców).
 
         this.bushIds = Object.keys(FRUIT_BUSHES).map((species) => bushStages(species).map(getBlockId));
+
+
+        // Biomy: wierzch ziemi i rośliny każdego biomu po numerach bloków
+        // (Biomes.js - BIOMES), w kolejności BIOME_KEYS.
+
+        this.biomeData = BIOME_KEYS.map((key) => resolveBiome(BIOMES[key]));
 
 
         // Skały pod ziemią (granit, wapień, piaskowiec...).
@@ -265,6 +334,11 @@ export class RealisticGenerator {
         this.rivers = new Rivers(this, base);
 
 
+        // Biomy (łąki, lasy, góry, mokradła...).
+
+        this.biomes = new Biomes(this, base);
+
+
         // Kolumny chunka (granice skał) - używane ponownie.
 
         this.chunkColumns = Array.from(
@@ -279,6 +353,8 @@ export class RealisticGenerator {
         // nowych obiektów dla każdej kolumny).
 
         this.sample = {};
+
+        this.farTint = new Float32Array(3);
 
     }
 
@@ -464,6 +540,39 @@ export class RealisticGenerator {
         }
 
 
+        // Wydmy: piaszczyste pagórki na płaskich wybrzeżach (nie
+        // wszędzie - w plamach pola dunePatch). duneZone - jak bardzo
+        // to pas wydm (0-1, biom plaży), dune - wysokość wydmy.
+
+        let duneZone = 0;
+        let dune = 0;
+
+        const D = SHAPE.DUNES;
+
+        if (base > D.zone[0] && base < D.zone[1] && !ocean) {
+
+            duneZone =
+                smoothstep(D.zone[0], D.zone[0] + 0.6, base) *
+                (1 - smoothstep(D.zone[1] - 1.4, D.zone[1], base)) *
+                smoothstep(D.patch, D.patch + 0.25, this.field(N.dunePatch, x, z, D.patchScale, 2)) *
+                (1 - upland) * (1 - mountains) * (1 - smoothstep(0, 0.05, depression));
+
+            if (duneZone > 0.02 && detail !== DETAIL_COARSE) {
+
+                const crest = this.ridged(N.dunes, warpX, warpZ, D.scale, 2);
+
+                dune = D.height * smoothstep(0.1, 0.6, duneZone) * smoothstep(0.3, 0.95, crest);
+
+                height += dune;
+
+            }
+
+        }
+
+        out.dune = dune;
+        out.duneZone = duneZone;
+
+
         // Wąwozy: wąskie rozcięcia wyżyn (też płaskowyżów).
 
         let ravine = 0;
@@ -597,6 +706,12 @@ export class RealisticGenerator {
             return 'sand';
         }
 
+        // Wydmy (biom plaży) - piasek także między nimi.
+
+        if (sample.duneZone > SHAPE.BIOME_SHAPE.duneBiome) {
+            return 'sand';
+        }
+
         // Brzeg rzeki (stromy tylko przez koryto obok) - trawa, nie skała.
 
         const steep = slope >= SHAPE.ROCK_SLOPE && !(sample.river > 0);
@@ -694,7 +809,9 @@ export class RealisticGenerator {
 
                 const kind = this.surfaceKind(x, z, sample, slope);
 
-                const top = this.fillColumn(x, z, sample, kind, this.chunkColumns[k], buffer, lx, lz);
+                const biome = BIOME_INDEX[this.biomes.classify(x, z, sample)];
+
+                const top = this.fillColumn(x, z, sample, kind, this.chunkColumns[k], buffer, lx, lz, biome);
 
                 for (let y = 0; y <= top; y++) {
                     chunk.setId(lx, y, lz, buffer[y]);
@@ -712,40 +829,91 @@ export class RealisticGenerator {
 
         this.forests.placeTrees(chunk);
 
+
+        // Kolor trawy w rogach kolumn (ChunkMesher.js) - wysokość rogu
+        // to średnia czterech kolumn wokół niego.
+
+        chunk.tint = this.biomes.tintGrid(baseX, baseZ, (i, j) =>
+            (heights[j * W + i] + heights[j * W + i + 1] + heights[(j + 1) * W + i] + heights[(j + 1) * W + i + 1]) / 4
+        );
+
     }
 
 
-    // Nurt rzek w chunku wczytanym z zapisu (zapis ma tylko bloki).
+    // Nurt rzek i kolor trawy w chunku wczytanym z zapisu (zapis ma
+    // tylko bloki).
 
     fillFlow(chunk) {
 
         const sample = {};
 
-        for (let lz = 0; lz < CHUNK_SIZE; lz++) {
+        const W = CHUNK_SIZE + 2;
 
-            for (let lx = 0; lx < CHUNK_SIZE; lx++) {
+        const heights = new Int16Array(W * W);
 
-                this.compute(chunk.cx * CHUNK_SIZE + lx, chunk.cz * CHUNK_SIZE + lz, DETAIL_FULL, sample);
+        const baseX = chunk.cx * CHUNK_SIZE;
+        const baseZ = chunk.cz * CHUNK_SIZE;
 
-                setFlow(chunk, lx, lz, sample);
+        for (let j = 0; j < W; j++) {
+
+            for (let i = 0; i < W; i++) {
+
+                this.compute(baseX + i - 1, baseZ + j - 1, DETAIL_FULL, sample);
+
+                heights[j * W + i] = sample.height;
+
+                if (i > 0 && j > 0 && i <= CHUNK_SIZE && j <= CHUNK_SIZE) {
+                    setFlow(chunk, i - 1, j - 1, sample);
+                }
 
             }
 
         }
+
+        chunk.tint = this.biomes.tintGrid(baseX, baseZ, (i, j) =>
+            (heights[j * W + i] + heights[j * W + i + 1] + heights[(j + 1) * W + i] + heights[(j + 1) * W + i + 1]) / 4
+        );
+
+    }
+
+
+    // Biom w kolumnie (x, z) - klucz z BIOMES (/biom, osiągnięcia).
+
+    biomeAt(x, z) {
+
+        return this.biomes.classify(x, z, this.compute(x, z, DETAIL_FULL, {}));
+
+    }
+
+
+    // Biom w kolumnie (numer z BIOME_INDEX); szczegóły (klimat, granica
+    // śniegu...) zostają w this.biomes.info.
+
+    biomeIndexAt(x, z, sample) {
+
+        return BIOME_INDEX[this.biomes.classify(x, z, sample)];
 
     }
 
 
     // Bloki jednej kolumny do `out` (od y = 0). Zwraca y najwyższego
     // bloku (terenu albo wody). lx, lz - pozycja w chunku (szum żył
-    // z prepareChunk) albo -1 dla pojedynczej kolumny.
+    // z prepareChunk) albo -1 dla pojedynczej kolumny. biome - numer
+    // biomu (this.biomes.info musi być policzone dla tej kolumny - robi
+    // to biomeIndexAt).
 
-    fillColumn(x, z, sample, kind, col, out, lx = -1, lz = -1) {
+    fillColumn(x, z, sample, kind, col, out, lx = -1, lz = -1, biome = this.biomeIndexAt(x, z, sample)) {
 
         const ids = this.ids;
         const geology = this.geology;
 
         const height = sample.height;
+
+        const key = BIOME_KEYS[biome];
+
+        // Wierzch ziemi (trawa, ściółka, mech, błoto, śnieg...).
+
+        const ground = kind === 'grass' ? this.groundAt(x, z, sample, biome) : ids.grass;
 
 
         for (let y = 0; y <= height; y++) {
@@ -755,16 +923,19 @@ export class RealisticGenerator {
             let id;
 
             if (kind === 'grass' && depth <= TERRAIN_DIRT_DEPTH) {
-                id = depth === 0 ? ids.grass : ids.dirt;
+                id = depth === 0 ? ground : ground === ids.mud && depth === 1 ? ids.mud : ids.dirt;
             }
             else if ((kind === 'sand' || kind === 'seabed') && depth <= 2) {
                 id = ids.sand;
             }
             else if (kind === 'riverbed' && depth <= 1) {
 
-                // Dno rzeki i jeziora: w górach żwir, niżej piasek.
+                // Dno rzeki i jeziora: w górach żwir, na mokradłach błoto
+                // (pod nim glina), niżej piasek.
 
-                id = sample.mountains > 0.4 && !sample.lake ? ids.gravel : ids.sand;
+                id = sample.mountains > 0.4 && !sample.lake ? ids.gravel :
+                    key === 'wetland' ? (depth === 0 ? ids.mud : ids.clay) :
+                    ids.sand;
 
             }
             else {
@@ -782,20 +953,32 @@ export class RealisticGenerator {
         }
 
 
-        // Morze do poziomu morza.
+        // Ośnieżone szczyty: skała pod śniegiem (wyżej - grubszym).
+
+        if (key === 'snowy' && kind === 'rock') {
+
+            out[height] = ids.snow;
+
+            if (height > 0 && this.biomes.info.above >= this.biomes.info.snowLine + 3) {
+                out[height - 1] = ids.snow;
+            }
+
+        }
+
 
         let top = height;
 
 
-        // Roślina na trawie.
+        // Na wierzchu: płaty śniegu pod szczytami, roślina na ziemi,
+        // piaskownica na wydmach.
 
-        if (kind === 'grass' && height + 1 < CHUNK_HEIGHT) {
+        if (height + 1 < CHUNK_HEIGHT && !(sample.water > height)) {
 
-            const plant = this.plantAt(x, z, sample);
+            const decoration = this.decorationAt(x, z, sample, kind, biome, ground);
 
-            if (plant !== 0) {
+            if (decoration !== 0) {
 
-                out[height + 1] = plant;
+                out[height + 1] = decoration;
 
                 top = height + 1;
 
@@ -822,72 +1005,208 @@ export class RealisticGenerator {
     }
 
 
-    // Roślina na trawie w kolumnie (x, z): ID bloku albo 0 (nic nie
-    // rośnie). Liczby do strojenia: PLANTS w TerrainShape.js.
+    // Wierzch ziemi w biomie: trawa albo plamy innej ziemi (ściółka,
+    // mech, błoto, żwir... - ground w BIOMES), śnieg na szczytach,
+    // błoto tuż przy wodzie na mokradłach.
 
-    plantAt(x, z, sample) {
+    groundAt(x, z, sample, biome) {
+
+        const ids = this.ids;
+
+        const key = BIOME_KEYS[biome];
+
+        if (key === 'snowy') {
+            return ids.snow;
+        }
+
+        if (key === 'wetland' && Math.min(sample.riverGap ?? Infinity, sample.lakeGap ?? Infinity) < 2) {
+            return ids.mud;
+        }
+
+        const ground = this.biomeData[biome].ground;
+
+        // W gęstym lesie więcej ściółki (pierwsza ziemia lasów).
+
+        const forest = FOREST_BIOMES.has(key) ? clamp(this.biomes.info.forest, -0.5, 0.8) * 0.35 : 0;
+
+        for (let i = 0; i < ground.length; i++) {
+
+            const level = ground[i].level - (i === 0 ? forest : 0);
+
+            if (this.field(i === 0 ? this.noise.ground : this.noise.groundB, x, z, 14, 2) > level) {
+                return ground[i].id;
+            }
+
+        }
+
+        return ids.grass;
+
+    }
+
+
+    // Co stoi na wierzchu kolumny (ID bloku albo 0): płaty śniegu pod
+    // granicą śniegu, roślina na ziemi (plantAt), piaskownica na
+    // wydmach.
+
+    decorationAt(x, z, sample, kind, biome, ground) {
+
+        const key = BIOME_KEYS[biome];
+
+        const info = this.biomes.info;
+
+
+        // Płaty śniegu (warstwa śniegu) - coraz więcej pod samą granicą.
+
+        if ((key === 'rocky' || key === 'alpine') && (kind === 'rock' || kind === 'grass')) {
+
+            const cover = smoothstep(info.snowLine - SHAPE.BIOME_SHAPE.snowCover, info.snowLine, info.above);
+
+            if (cover > 0 && hash01(this.plantSeed, x, z, 7) < cover * 0.85) {
+                return this.ids.snowLayer;
+            }
+
+        }
+
+        if (kind === 'grass') {
+            return ground === this.ids.snow ? 0 : this.plantAt(x, z, sample, biome);
+        }
+
+        // Piaskownica na wydmach (i rzadko na plaży).
+
+        if (kind === 'sand' && key === 'beach') {
+
+            const chance = 0.03 + 0.25 * smoothstep(0.3, 0.7, sample.duneZone ?? 0);
+
+            return hash01(this.plantSeed, x, z, 8) < chance ? this.ids.duneGrass : 0;
+
+        }
+
+        return 0;
+
+    }
+
+
+    // Roślina na ziemi w kolumnie (x, z): ID bloku albo 0 (nic nie
+    // rośnie). Co i jak gęsto - rośliny biomu (plants w BIOMES), liczby
+    // wspólne: PLANTS w TerrainShape.js.
+
+    plantAt(x, z, sample, biome = this.biomeIndexAt(x, z, sample)) {
+
+        const data = this.biomeData[biome].plants;
+
+        if (!data) {
+            return 0;
+        }
 
         const P = SHAPE.PLANTS;
         const ids = this.ids;
 
+        const key = BIOME_KEYS[biome];
+
         const roll = hash01(this.plantSeed, x, z, 1);
 
 
+        // Trzcina przy samej wodzie: na mokradłach gęsto, na innych
+        // nizinach rzadziej.
+
+        const water = Math.min(sample.riverGap ?? Infinity, sample.lakeGap ?? Infinity);
+
+        if (water < 2.5) {
+
+            const reed = key === 'wetland' ? 0.6 : water < 1.2 && sample.height - SEA_LEVEL < SHAPE.RELIEF_UPLAND ? 0.25 : 0;
+
+            if (hash01(this.plantSeed, x, z, 9) < reed) {
+                return ids.reed;
+            }
+
+        }
+
+
         // Krzaki owocowe: rzadkie zarośla tam, gdzie pole krzaków
-        // > bushThreshold. Gatunek zmienia się wolno (plamy
-        // bushSpeciesScale), więc w zaroślach rośnie zwykle jeden.
+        // > bushThreshold. Gatunek (z gatunków biomu) zmienia się wolno
+        // (plamy bushSpeciesScale), więc w zaroślach rośnie zwykle jeden.
 
-        const bushes = this.field(this.noise.bushes, x, z, P.bushScale, 2);
+        if (data.bushes) {
 
-        if (bushes > P.bushThreshold) {
+            const bushes = this.field(this.noise.bushes, x, z, P.bushScale, 2);
 
-            const chance = (bushes - P.bushThreshold) / (1 - P.bushThreshold) * P.bushDensity;
+            const threshold = data.bushes.threshold;
 
-            if (hash01(this.plantSeed, x, z, 5) < chance) {
+            if (bushes > threshold) {
 
-                const species = this.field(this.noise.bushSpecies, x, z, P.bushSpeciesScale, 1);
+                const chance = (bushes - threshold) / (1 - threshold) * P.bushDensity * data.bushes.density;
 
-                const stages = this.bushIds[clamp(Math.floor((species * 0.5 + 0.5) * this.bushIds.length), 0, this.bushIds.length - 1)];
+                if (hash01(this.plantSeed, x, z, 5) < chance) {
 
-                // Etap: najczęściej z owocami, czasem bez albo sadzonka.
+                    const list = data.bushes.stages;
 
-                const stage = hash01(this.plantSeed, x, z, 6);
+                    const species = this.field(this.noise.bushSpecies, x, z, P.bushSpeciesScale, 1);
 
-                let index = 0;
+                    const stages = list[clamp(Math.floor((species * 0.5 + 0.5) * list.length), 0, list.length - 1)];
 
-                while (index < 3 && stage >= P.bushStages[index]) {
-                    index++;
+                    // Etap: najczęściej z owocami, czasem bez albo sadzonka.
+
+                    const stage = hash01(this.plantSeed, x, z, 6);
+
+                    let index = 0;
+
+                    while (index < 3 && stage >= P.bushStages[index]) {
+                        index++;
+                    }
+
+                    return stages[index];
+
                 }
-
-                return stages[index];
 
             }
 
         }
 
 
-        // Kępy kwiatów.
+        // Kępy kwiatów (gatunki biomu).
 
-        const flowers = this.field(this.noise.flowers, x, z, P.flowerScale, 2);
+        if (data.flowers) {
 
-        if (flowers > P.flowerThreshold) {
+            const flowers = this.field(this.noise.flowers, x, z, P.flowerScale, 2);
 
-            const chance = (flowers - P.flowerThreshold) / (1 - P.flowerThreshold) * P.flowerDensity;
+            if (flowers > P.flowerThreshold) {
 
-            if (roll < chance) {
+                const chance = (flowers - P.flowerThreshold) / (1 - P.flowerThreshold) * data.flowerDensity;
 
-                const species = this.field(this.noise.flowerSpecies, x, z, P.flowerSpeciesScale, 1);
+                if (roll < chance) {
 
-                let index = Math.floor((species * 0.5 + 0.5) * this.flowerIds.length);
+                    const list = data.flowers;
 
-                // Trochę innych kwiatów w kępie.
+                    const species = this.field(this.noise.flowerSpecies, x, z, P.flowerSpeciesScale, 1);
 
-                if (hash01(this.plantSeed, x, z, 2) < P.flowerMix) {
-                    index += 1 + Math.floor(hash01(this.plantSeed, x, z, 3) * (this.flowerIds.length - 1));
+                    let index = Math.floor((species * 0.5 + 0.5) * list.length);
+
+                    // Trochę innych kwiatów w kępie.
+
+                    if (list.length > 1 && hash01(this.plantSeed, x, z, 2) < P.flowerMix) {
+                        index += 1 + Math.floor(hash01(this.plantSeed, x, z, 3) * (list.length - 1));
+                    }
+
+                    return list[clamp(index, 0, list.length * 2) % list.length];
+
                 }
 
-                return this.flowerIds[clamp(index, 0, this.flowerIds.length * 2) % this.flowerIds.length];
+            }
 
+        }
+
+
+        // Rośliny w plamach (wrzos, krokusy, kępki mchu, trzcina...).
+
+        for (let i = 0; i < data.patches.length; i++) {
+
+            const patch = data.patches[i];
+
+            if (
+                this.field(this.noise.patches, x + i * 977, z - i * 613, 18, 2) > patch.level &&
+                hash01(this.plantSeed, x, z, 20 + i) < patch.density
+            ) {
+                return patch.id;
             }
 
         }
@@ -895,26 +1214,19 @@ export class RealisticGenerator {
 
         // Paprocie (wilgotno, wyżej więcej) i zioła.
 
-        const humidity = this.field(this.noise.humidity, x, z, SHAPE.SCALES.humidity, 2);
+        const humidity = this.biomes.info.humidity;
 
         const uplands = smoothstep(SHAPE.RELIEF_UPLAND * 0.5, SHAPE.RELIEF_UPLAND * 1.5, sample.height - SEA_LEVEL);
 
-        let edge = P.fern * smoothstep(P.fernHumidity, P.fernHumidity + 0.5, humidity) * (0.6 + 0.6 * uplands);
+        let edge = data.fern * smoothstep(P.fernHumidity, P.fernHumidity + 0.5, humidity) * (0.6 + 0.6 * uplands);
 
         if (roll < edge) {
             return ids.fern;
         }
 
-        const herbs = [
-            [P.clover, ids.clover],
-            [P.plantain, ids.plantain],
-            [P.nettle * (humidity > 0 ? 1.5 : 0.5), ids.nettle],
-            [P.dandelion, ids.dandelion]
-        ];
+        for (const [chance, id] of data.herbs) {
 
-        for (const [chance, id] of herbs) {
-
-            edge += chance;
+            edge += id === ids.nettle ? chance * (humidity > 0 ? 1.5 : 0.5) : chance;
 
             if (roll < edge) {
                 return id;
@@ -927,11 +1239,11 @@ export class RealisticGenerator {
 
         const meadow = smoothstep(-0.5, 0.5, this.field(this.noise.meadows, x, z, P.meadowScale, 2));
 
-        edge += P.grass[0] + (P.grass[1] - P.grass[0]) * meadow;
+        edge += data.grass[0] + (data.grass[1] - data.grass[0]) * meadow;
 
         if (roll < edge) {
 
-            const tall = P.tallGrass[0] + (P.tallGrass[1] - P.tallGrass[0]) * meadow;
+            const tall = data.tall[0] + (data.tall[1] - data.tall[0]) * meadow;
 
             return hash01(this.plantSeed, x, z, 4) < tall ? ids.tallGrass : ids.shortGrass;
 
@@ -986,12 +1298,18 @@ export class RealisticGenerator {
 
         const kind = this.surfaceKind(x, z, sample, slope);
 
+        const biome = this.biomeIndexAt(x, z, sample);
+
         if (kind === 'grass') {
-            return 'grass';
+            return getBlockTypeById(this.groundAt(x, z, sample, biome));
         }
 
         if (kind !== 'rock') {
             return 'sand';
+        }
+
+        if (BIOME_KEYS[biome] === 'snowy') {
+            return 'snow';
         }
 
         const col = this.geology.column(x, z, sample, this.geology.createColumn());
@@ -1042,6 +1360,14 @@ export class RealisticGenerator {
 
         const kind = this.surfaceKind(x, z, sample, 0);
 
+        const biome = this.biomes.classify(x, z, sample, 0, 0, spacing >= 8);
+
+        // Ośnieżone szczyty - biało.
+
+        if (biome === 'snowy' && (kind === 'rock' || kind === 'grass')) {
+            return { top: sample.height + 1, kind: 'snow' };
+        }
+
         // Goła skała - w kolorze swojego rodzaju (granit, wapień...).
 
         if (kind === 'rock') {
@@ -1072,7 +1398,39 @@ export class RealisticGenerator {
 
         }
 
+        // Trawa w kolorze klimatu (cieplejsza, chłodniejsza, górska).
+
+        if (kind === 'grass') {
+            return { top: sample.height + 1, kind: this.farGrassKind() };
+        }
+
         return { top: sample.height + 1, kind };
+
+    }
+
+
+    // Rodzaj trawy na dalekim terenie (farSamples.js - GRASS_KINDS) z kolorem
+    // trawy w miejscu ostatniego classify (this.biomes.info).
+
+    farGrassKind() {
+
+        const info = this.biomes.info;
+
+        const tint = grassTint(info.temperature, info.humidity, info.above, this.farTint);
+
+        if (info.above >= 34) {
+            return 'grass_high';
+        }
+
+        if (tint[0] - tint[2] > 0.1) {
+            return 'grass_warm';
+        }
+
+        if (tint[2] - tint[0] > 0.07) {
+            return 'grass_cool';
+        }
+
+        return 'grass';
 
     }
 
@@ -1131,6 +1489,8 @@ export class RealisticGenerator {
             ? { density: 0, species: null }
             : this.forests.forestAt(x, z, sample);
 
+        const biome = this.biomes.classify(x, z, sample);
+
 
         return {
             height,
@@ -1142,6 +1502,8 @@ export class RealisticGenerator {
             landform: this.classify(sample, slope),
             surface,
             forest,
+            // biom (klucz z BIOMES w Biomes.js)
+            biome,
             // skała na wierzchu albo pod glebą (mapa skał)
             rock: this.surfaceRock(x, z, sample, surface),
             slope,

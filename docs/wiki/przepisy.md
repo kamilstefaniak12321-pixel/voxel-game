@@ -2,10 +2,28 @@
 
 > Ta strona jest generowana z kodu gry (`python tools/wiki.py`) - nie zmieniaj jej ręcznie, zmiany przepadną przy następnym generowaniu.
 
-Wersja gry **0.20.0** - 30 przepisów. Wytwarza się w ekwipunku (**E**): siatka 2 x 2 obok miejsc ekwipunku, wynik po prawej (klik - weź, Shift + klik - ile się da). Przycisk 📖 *Przepisy* otwiera księgę - klik na przepisie sam układa składniki. Przepisy *z kształtem* można przesuwać po siatce i odbijać w poziomie; przepisy *bez kształtu* - obojętne, gdzie leżą składniki. Z czatu: `/przepisy`, `/wytworz <przepis>`.
+Wersja gry **0.21.0** - 39 przepisów. Wytwarza się w ekwipunku (**E**): siatka 2 x 2 obok miejsc ekwipunku, wynik po prawej (klik - weź, Shift + klik - ile się da). Przycisk 📖 *Przepisy* otwiera księgę - klik na przepisie sam układa składniki. Przepisy *z kształtem* można przesuwać po siatce i odbijać w poziomie; przepisy *bez kształtu* - obojętne, gdzie leżą składniki. Z czatu: `/przepisy`, `/wytworz <przepis>`.
 
 
 ## Ziemia
+
+### Warstwa śniegu x4
+
+<img src="przepisy/snow_layer.png" alt="Warstwa śniegu x4: 1 x Śnieg (obojętne gdzie)">
+
+1 x Śnieg (bez kształtu). Nazwa przepisu: `snow_layer`.
+
+### Śnieg
+
+<img src="przepisy/snow.png" alt="Śnieg: 4 x Warstwa śniegu (ułożenie: SS / SS; S = Warstwa śniegu)">
+
+4 x Warstwa śniegu (z kształtem). Nazwa przepisu: `snow`.
+
+### Mech
+
+<img src="przepisy/moss.png" alt="Mech: 4 x Kępki mchu (ułożenie: MM / MM; M = Kępki mchu)">
+
+4 x Kępki mchu (z kształtem). Nazwa przepisu: `moss`.
 
 ### Ziemia kamienista x4
 
@@ -79,6 +97,18 @@ Wersja gry **0.20.0** - 30 przepisów. Wytwarza się w ekwipunku (**E**): siatka
 
 1 x pień jabłoni (też okorowany) (bez kształtu). Nazwa przepisu: `jablon_planks`.
 
+### Deski olchowe x4
+
+<img src="przepisy/olcha_planks.png" alt="Deski olchowe x4: 1 x pień olchy (też okorowany) (obojętne gdzie)">
+
+1 x pień olchy (też okorowany) (bez kształtu). Nazwa przepisu: `olcha_planks`.
+
+### Deski wierzbowe x4
+
+<img src="przepisy/wierzba_planks.png" alt="Deski wierzbowe x4: 1 x pień wierzby (też okorowany) (obojętne gdzie)">
+
+1 x pień wierzby (też okorowany) (bez kształtu). Nazwa przepisu: `wierzba_planks`.
+
 
 ## Budulec
 
@@ -113,6 +143,15 @@ Wersja gry **0.20.0** - 30 przepisów. Wytwarza się w ekwipunku (**E**): siatka
 3 x deski (dowolne) + 1 x Bazalt (bez kształtu). Nazwa przepisu: `dark_planks`. Bejcowane na ciemno - pochłaniają światło, pokój jest mroczny.
 
 
+## Rośliny
+
+### Kępki mchu x4
+
+<img src="przepisy/moss_carpet.png" alt="Kępki mchu x4: 1 x Mech (obojętne gdzie)">
+
+1 x Mech (bez kształtu). Nazwa przepisu: `moss_carpet`.
+
+
 ## Światło
 
 ### Lampa x2
@@ -135,21 +174,27 @@ Wersja gry **0.20.0** - 30 przepisów. Wytwarza się w ekwipunku (**E**): siatka
 
 ### Niebieska lampa
 
-<img src="przepisy/lamp_blue.png" alt="Niebieska lampa: 1 x Lampa + 1 x Chaber (obojętne gdzie)">
+<img src="przepisy/lamp_blue.png" alt="Niebieska lampa: 1 x Lampa + 1 x coś niebieskiego (chaber, borówki) (obojętne gdzie)">
 
-1 x Lampa + 1 x Chaber (bez kształtu). Nazwa przepisu: `lamp_blue`.
+1 x Lampa + 1 x coś niebieskiego (chaber, borówki) (bez kształtu). Nazwa przepisu: `lamp_blue`.
 
 ### Fioletowa lampa
 
-<img src="przepisy/lamp_purple.png" alt="Fioletowa lampa: 1 x Lampa + 1 x Jeżyny (obojętne gdzie)">
+<img src="przepisy/lamp_purple.png" alt="Fioletowa lampa: 1 x Lampa + 1 x coś fioletowego (jeżyny, wrzos, krokus) (obojętne gdzie)">
 
-1 x Lampa + 1 x Jeżyny (bez kształtu). Nazwa przepisu: `lamp_purple`.
+1 x Lampa + 1 x coś fioletowego (jeżyny, wrzos, krokus) (bez kształtu). Nazwa przepisu: `lamp_purple`.
 
 ### Czerwona lampa
 
 <img src="przepisy/jablon_czerwona_lampa.png" alt="Czerwona lampa: 1 x Lampa + 1 x Jabłko (obojętne gdzie)">
 
 1 x Lampa + 1 x Jabłko (bez kształtu). Nazwa przepisu: `jablon_czerwona_lampa`. Jabłko też jest czerwone.
+
+### Lampa
+
+<img src="przepisy/wierzba_srebrna_lampa.png" alt="Lampa: 1 x Niebieska lampa + 1 x Bazie (obojętne gdzie)">
+
+1 x Niebieska lampa + 1 x Bazie (bez kształtu). Nazwa przepisu: `wierzba_srebrna_lampa`. Bazie zdejmują z lampy niebieski kolor.
 
 
 ## Ozdoby
@@ -177,6 +222,18 @@ Wersja gry **0.20.0** - 30 przepisów. Wytwarza się w ekwipunku (**E**): siatka
 <img src="przepisy/jablon_leaf_litter.png" alt="Opadłe liście jabłoni x2: 1 x Liście jabłoni (obojętne gdzie)">
 
 1 x Liście jabłoni (bez kształtu). Nazwa przepisu: `jablon_leaf_litter`.
+
+### Opadłe liście olchy x2
+
+<img src="przepisy/olcha_leaf_litter.png" alt="Opadłe liście olchy x2: 1 x Liście olchy (obojętne gdzie)">
+
+1 x Liście olchy (bez kształtu). Nazwa przepisu: `olcha_leaf_litter`.
+
+### Opadłe liście wierzby x2
+
+<img src="przepisy/wierzba_leaf_litter.png" alt="Opadłe liście wierzby x2: 1 x Liście wierzby (obojętne gdzie)">
+
+1 x Liście wierzby (bez kształtu). Nazwa przepisu: `wierzba_leaf_litter`.
 
 
 ## Narzędzia i surowce
@@ -210,11 +267,13 @@ Wersja gry **0.20.0** - 30 przepisów. Wytwarza się w ekwipunku (**E**): siatka
 
 Składnik z grupy to dowolna rzecz z listy (np. patyki z desek różnych drzew).
 
-- **deski (dowolne)**: Deski świerkowe, Deski sosnowe, Deski bukowe, Deski lipowe, Deski dębowe, Deski brzozowe, Deski jabłoniowe
+- **deski (dowolne)**: Deski świerkowe, Deski sosnowe, Deski bukowe, Deski lipowe, Deski dębowe, Deski brzozowe, Deski jabłoniowe, Deski olchowe, Deski wierzbowe
 - **skała (kamień, granit, wapień, piaskowiec, łupek, bazalt)**: Kamień, Granit, Wapień, Piaskowiec, Łupek, Bazalt
 - **szyszka (świerka albo sosny)**: Szyszka świerka, Szyszka sosny
 - **igliwie (świerka albo sosny)**: Igliwie świerka, Igliwie sosny
-- **opadłe liście (dowolne)**: Opadłe liście buka, Opadłe liście dębu, Opadłe liście jabłoni
+- **opadłe liście (dowolne)**: Opadłe liście buka, Opadłe liście dębu, Opadłe liście jabłoni, Opadłe liście olchy, Opadłe liście wierzby
 - **coś czerwonego (mak, truskawki, papryczki chili)**: Mak, Truskawki, Papryczki chili
 - **coś zielonego (koniczyna, pokrzywa, paproć)**: Koniczyna, Pokrzywa, Paproć
+- **coś niebieskiego (chaber, borówki)**: Chaber, Borówki
+- **coś fioletowego (jeżyny, wrzos, krokus)**: Jeżyny, Wrzos, Krokus
 - **pień (gatunek)**: zwykły, okorowany, a u sosny także górny i z żywicą

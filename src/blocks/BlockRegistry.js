@@ -57,6 +57,8 @@ export const MAX_BLOCK_ID = 255;
 //                    pasuje do klikniętej ściany
 //   pick           - co bierze środkowy przycisk (zamiast samego bloku)
 //   soil           - na tym bloku mogą rosnąć rośliny
+//   ground         - roślina rośnie też na tych blokach (poza ziemią),
+//                    np. ['sand'] - trzcina i piaskownica na piasku
 //   replaceable    - postawienie bloku w tym miejscu zastępuje ten
 //                    (np. trawa) - jak w Minecrafcie
 //   drops          - co trafia do ekwipunku po zniszczeniu w trybie
@@ -64,7 +66,7 @@ export const MAX_BLOCK_ID = 255;
 //   creative       - false = nie ma go w ekwipunku kreatywnym
 //   sound          - materiał dźwięków (kroki, stawianie, niszczenie):
 //                    grass, dirt, stone, sand, gravel, mud, plant, glass,
-//                    wood
+//                    wood, snow
 //                    (src/audio/sounds.js); domyślnie roślina - plant,
 //                    inne - stone
 //   grows          - roślina rośnie (src/game/PlantGrowth.js):
@@ -86,6 +88,8 @@ export const MAX_BLOCK_ID = 255;
 //                    w config.js)
 //   category       - kategoria w ekwipunku, księdze przepisów i wiki
 //                    (src/items/categories.js); zwykle dobiera się sama
+//   tint           - true: zielone piksele tekstury biorą kolor trawy
+//                    z klimatu (teren realistyczny - chunk.tint)
 //   reflect        - jak mocno blok odbija światło słońca (światło
 //                    odbite - src/world/BounceLight.js): mnożnik koloru
 //                    tekstury, domyślnie 1. Więcej (np. 1.8) - gładka,
@@ -141,6 +145,18 @@ export const FRUIT_BUSHES = {
         item: 'hazelnut',
         labels: ['Sadzonka leszczyny', 'Leszczyna', 'Leszczyna (kilka orzechów)', 'Leszczyna (pełna orzechów)'],
         harvest: [[1, 2], [2, 3]]
+    },
+
+    // Borówka czarna - niska krzewinka z borów i świerczyn (biomy).
+    // Własna tekstura krzaka (bushTexture) i niższa (height).
+    blueberry: {
+        firstId: 94,
+        name: 'Blueberry',
+        item: 'blueberry',
+        labels: ['Sadzonka borówki', 'Krzak borówki', 'Krzak borówki (kilka owoców)', 'Krzak borówki (pełen owoców)'],
+        harvest: [[1, 3], [3, 5]],
+        bushTexture: 'blueberry_bush',
+        height: 0.7
     }
 
 };
@@ -162,7 +178,9 @@ function fruitBushBlocks() {
 
         const stages = bushStages(species);
 
-        const textures = ['bush_sapling', 'bush_leaves', `${species}_bush_few`, `${species}_bush_full`];
+        const textures = ['bush_sapling', bush.bushTexture ?? 'bush_leaves', `${species}_bush_few`, `${species}_bush_full`];
+
+        const height = bush.height ?? 1;
 
         const names = ['Sapling', 'Bush', 'Bush (Few Fruits)', 'Bush (Full)'];
 
@@ -180,8 +198,8 @@ function fruitBushBlocks() {
                 model: 'cross',
 
                 plant: stage === 0
-                    ? { planes: 2, height: 1, width: 0.42 }
-                    : { planes: 3, height: 1, width: 0.5 },
+                    ? { planes: 2, height, width: 0.42 }
+                    : { planes: 3, height, width: 0.5 },
 
                 textures: { all: textures[stage] },
 
@@ -233,7 +251,11 @@ export const BLOCK_TYPES = {
             bottom: 'dirt'
         },
 
-        randomRotation: ['top']
+        randomRotation: ['top'],
+
+        // Kolor trawy trochę zależy od klimatu (cieplej - żółciej,
+        // chłodniej i wilgotniej - chłodniejsza zieleń).
+        tint: true
 
     },
 
@@ -695,6 +717,7 @@ export const BLOCK_TYPES = {
         model: 'cross',
         plant: { planes: 3, height: 1, width: 0.48 },
         replaceable: true,
+        tint: true,
         textures: { all: 'short_grass' }
     },
 
@@ -706,6 +729,7 @@ export const BLOCK_TYPES = {
         model: 'cross',
         plant: { planes: 3, height: 1, width: 0.48 },
         replaceable: true,
+        tint: true,
         textures: { all: 'tall_grass' }
     },
 
@@ -717,6 +741,7 @@ export const BLOCK_TYPES = {
         model: 'cross',
         plant: { planes: 3, height: 0.95, width: 0.5 },
         replaceable: true,
+        tint: true,
         textures: { all: 'fern' }
     },
 
@@ -727,6 +752,7 @@ export const BLOCK_TYPES = {
         solid: false,
         model: 'cross',
         plant: { planes: 2, height: 0.75, width: 0.42 },
+        tint: true,
         textures: { all: 'clover' }
     },
 
@@ -788,6 +814,113 @@ export const BLOCK_TYPES = {
         model: 'cross',
         plant: { planes: 2, height: 0.8, width: 0.42 },
         textures: { all: 'dandelion' }
+    },
+
+
+    // ------------------------------------------------------------
+    // BIOMY (src/world/terrain/Biomes.js) - śnieg na szczytach, mech
+    // w lasach, rośliny mokradeł, borów, hal i wydm. Tekstury:
+    // tools/tekstury_biomow.py. Numery 240-255 - druga pula numerów
+    // bloków gry (1-99 się skończyły, 100-239 są dla paczek drzew).
+    // ------------------------------------------------------------
+
+    snow: {
+        id: 98,
+        name: 'Snow',
+        label: 'Śnieg',
+        sound: 'snow',
+        solid: true,
+        reflect: 1.6,
+        textures: { all: 'snow' },
+        randomRotation: ['top', 'bottom']
+    },
+
+    // Cienka warstwa śniegu na ziemi i skałach (płaska, jak opadłe
+    // liście) - pod szczytami, gdzie śnieg leży płatami.
+    snow_layer: {
+        id: 99,
+        name: 'Snow Layer',
+        label: 'Warstwa śniegu',
+        sound: 'snow',
+        solid: false,
+        replaceable: true,
+        model: 'flat',
+        flat: { attach: 'down' },
+        category: 'teren',
+        textures: { all: 'snow' },
+        randomRotation: ['top']
+    },
+
+    moss: {
+        id: 240,
+        name: 'Moss',
+        label: 'Mech',
+        sound: 'grass',
+        solid: true,
+        soil: true,
+        textures: { top: 'moss_top', side: 'moss_side', bottom: 'dirt' },
+        randomRotation: ['top'],
+        tint: true
+    },
+
+    // Kępki mchu na ziemi (płaskie, jak opadłe liście).
+    moss_carpet: {
+        id: 241,
+        name: 'Moss Carpet',
+        label: 'Kępki mchu',
+        sound: 'plant',
+        solid: false,
+        replaceable: true,
+        model: 'flat',
+        flat: { attach: 'down' },
+        category: 'rosliny',
+        textures: { all: 'moss_carpet' },
+        randomRotation: ['top'],
+        tint: true
+    },
+
+    reed: {
+        id: 242,
+        name: 'Reed',
+        label: 'Trzcina',
+        solid: false,
+        model: 'cross',
+        plant: { planes: 3, height: 1, width: 0.46 },
+        ground: ['sand'],
+        textures: { all: 'reed' }
+    },
+
+    heather: {
+        id: 243,
+        name: 'Heather',
+        label: 'Wrzos',
+        solid: false,
+        model: 'cross',
+        plant: { planes: 2, height: 0.72, width: 0.46 },
+        ground: ['sand'],
+        textures: { all: 'heather' }
+    },
+
+    crocus: {
+        id: 244,
+        name: 'Crocus',
+        label: 'Krokus',
+        solid: false,
+        model: 'cross',
+        plant: { planes: 2, height: 0.7, width: 0.42 },
+        textures: { all: 'crocus' }
+    },
+
+    dune_grass: {
+        id: 245,
+        name: 'Dune Grass',
+        label: 'Piaskownica (trawa wydmowa)',
+        solid: false,
+        model: 'cross',
+        plant: { planes: 3, height: 1, width: 0.5 },
+        replaceable: true,
+        ground: ['sand'],
+        textures: { all: 'dune_grass' }
     },
 
 
@@ -889,6 +1022,10 @@ const treeById = new Uint8Array(MAX_BLOCK_ID + 1);
 
 // Model 'flat': do którego sąsiada blok przylega (ATTACH_... niżej).
 const attachById = new Uint8Array(MAX_BLOCK_ID + 1);
+
+// Rośliny z polem ground: na jakich blokach (poza ziemią) rosną -
+// zbiór ID (null - tylko ziemia).
+const groundById = new Array(MAX_BLOCK_ID + 1).fill(null);
 
 export const ATTACH_NONE = 0;
 export const ATTACH_DOWN = 1;
@@ -1012,6 +1149,16 @@ for (const [type, definition] of Object.entries(BLOCK_TYPES)) {
 
 }
 
+// Rośliny rosnące poza ziemią (pole ground) - po nazwach już ID.
+
+for (const definition of Object.values(BLOCK_TYPES)) {
+
+    if (definition.ground) {
+        groundById[definition.id] = new Set(definition.ground.map((type) => BLOCK_TYPES[type]?.id ?? AIR_ID));
+    }
+
+}
+
 // ------------------------------------------------------------
 
 export function getBlockDefinition(type) {
@@ -1090,6 +1237,16 @@ export function isPlantId(id) {
 export function isSoilId(id) {
 
     return soilById[id] === 1;
+
+}
+
+
+// Czy roślina plantId może rosnąć na bloku groundId: na ziemi (soil)
+// każda, a niektóre też na innych blokach (pole ground - np. piasek).
+
+export function canGrowOn(plantId, groundId) {
+
+    return soilById[groundId] === 1 || (groundById[plantId]?.has(groundId) ?? false);
 
 }
 

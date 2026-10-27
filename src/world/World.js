@@ -15,7 +15,7 @@ import {
     getBlockId,
     getBlockTypeById,
     isSolidId,
-    isSoilId,
+    canGrowOn,
     isPlantId,
     isTreeId,
     getAttach,
@@ -547,7 +547,7 @@ export class World {
         // Roślina nad blokiem, który przestał być ziemią (zniszczony,
         // zamieniony na kamień...), nie ma na czym rosnąć - znika.
 
-        if (!isSoilId(id) && y + 1 < CHUNK_HEIGHT && isPlantId(this.getBlockId(x, y + 1, z))) {
+        if (y + 1 < CHUNK_HEIGHT && isPlantId(this.getBlockId(x, y + 1, z)) && !canGrowOn(this.getBlockId(x, y + 1, z), id)) {
             this.setBlock(x, y + 1, z, null);
         }
 

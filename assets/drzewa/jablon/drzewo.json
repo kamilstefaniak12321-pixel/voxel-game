@@ -37,6 +37,7 @@
     },
     "gdzieRosnie": {
         "czestosc": 0.06,
+        "biomy": ["laka", "lisciasty"],
         "temperatura": [-0.2, 1.5],
         "wilgotnosc": [-0.5, 1.5],
         "wysokosc": [1, 24]

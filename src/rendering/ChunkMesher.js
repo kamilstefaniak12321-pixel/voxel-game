@@ -438,6 +438,7 @@ let positionBuffer = null;
 let normalBuffer = null;
 let uvBuffer = null;
 let colorBuffer = null;
+let tintBuffer = null;
 let splitBuffer = null;
 
 
@@ -467,9 +468,67 @@ function ensureCapacity(faces) {
     normalBuffer = grow(normalBuffer, Float32Array, capacity * 12);
     uvBuffer = grow(uvBuffer, Float32Array, capacity * 8);
     colorBuffer = grow(colorBuffer, Uint8Array, capacity * 16);
+    tintBuffer = grow(tintBuffer, Uint8Array, capacity * 16);
     splitBuffer = grow(splitBuffer, Uint8Array, capacity);
 
     faceCapacity = capacity;
+
+}
+
+// ------------------------------------------------------------
+// KOLOR TRAWY: chunk.tint (generator - teren realistyczny) to kolor
+// w każdym rogu kolumny (17 x 17 rogów, r g b; 128 = bez zmiany).
+// Ściany bloków z tint (trawa, mech, rośliny trawiaste) dostają go
+// w atrybucie "tint" (r, g, b i 0; inne bloki i chunk bez koloru -
+// 0, 0, 0, 255: bez zmiany; siatka bez tego atrybutu też bez zmiany).
+// ------------------------------------------------------------
+
+let meshTint = null;
+
+const TINT_SIDE = S + 1;
+
+// Kolor rogu (ix, iz - 0..16) do tintBuffer[at].
+
+function writeTint(at, ix, iz) {
+
+    const n = (iz * TINT_SIDE + ix) * 3;
+
+    tintBuffer[at] = meshTint[n];
+    tintBuffer[at + 1] = meshTint[n + 1];
+    tintBuffer[at + 2] = meshTint[n + 2];
+    tintBuffer[at + 3] = 0;
+
+}
+
+
+function clearTint(at) {
+
+    tintBuffer[at] = 0;
+    tintBuffer[at + 1] = 0;
+    tintBuffer[at + 2] = 0;
+    tintBuffer[at + 3] = 255;
+
+}
+
+
+// Środek kolumny (rośliny, płaskie dekoracje): średnia czterech rogów.
+
+const columnTint = new Uint8Array(3);
+
+function tintOfColumn(lx, lz) {
+
+    for (let k = 0; k < 3; k++) {
+
+        const a = meshTint[(lz * TINT_SIDE + lx) * 3 + k];
+        const b = meshTint[(lz * TINT_SIDE + lx + 1) * 3 + k];
+        const c = meshTint[((lz + 1) * TINT_SIDE + lx) * 3 + k];
+        const d = meshTint[((lz + 1) * TINT_SIDE + lx + 1) * 3 + k];
+
+        columnTint[k] = (a + b + c + d + 2) >> 2;
+
+    }
+
+    return columnTint;
 
 }
 
@@ -492,10 +551,12 @@ function addPlants(plants, faceCount, baseX, baseZ) {
         const lz = plants[k + 2];
         const id = plants[k + 3];
 
-        const { cross } = blockRenderData[id];
+        const { cross, tint } = blockRenderData[id];
 
         const wx = baseX + lx;
         const wz = baseZ + lz;
+
+        const plantTint = tint && meshTint ? tintOfColumn(lx, lz) : null;
 
 
         // Światło komórki rośliny.
@@ -574,6 +635,16 @@ function addPlants(plants, faceCount, baseX, baseZ) {
                     colorBuffer[c + i * 4 + 2] = lampB * shade * 255 + 0.5;
                     colorBuffer[c + i * 4 + 3] = sky * shade * 255 + 0.5;
 
+                    if (plantTint) {
+                        tintBuffer[c + i * 4] = plantTint[0];
+                        tintBuffer[c + i * 4 + 1] = plantTint[1];
+                        tintBuffer[c + i * 4 + 2] = plantTint[2];
+                        tintBuffer[c + i * 4 + 3] = 0;
+                    }
+                    else {
+                        clearTint(c + i * 4);
+                    }
+
                 }
 
                 splitBuffer[faceCount] = 0;
@@ -607,7 +678,9 @@ function addFlats(flats, faceCount, baseX, baseZ) {
         const y = flats[k + 1];
         const lz = flats[k + 2];
 
-        const { flat, uv, rotate } = blockRenderData[flats[k + 3]];
+        const { flat, uv, rotate, tint } = blockRenderData[flats[k + 3]];
+
+        const flatTint = tint && meshTint ? tintOfColumn(lx, lz) : null;
 
         const faceIndex = flat.face;
 
@@ -666,6 +739,16 @@ function addFlats(flats, faceCount, baseX, baseZ) {
             colorBuffer[c + i * 4 + 1] = g + 0.5;
             colorBuffer[c + i * 4 + 2] = b + 0.5;
             colorBuffer[c + i * 4 + 3] = sky * 255 + 0.5;
+
+            if (flatTint) {
+                tintBuffer[c + i * 4] = flatTint[0];
+                tintBuffer[c + i * 4 + 1] = flatTint[1];
+                tintBuffer[c + i * 4 + 2] = flatTint[2];
+                tintBuffer[c + i * 4 + 3] = 0;
+            }
+            else {
+                clearTint(c + i * 4);
+            }
 
         }
 
@@ -758,6 +841,8 @@ function addCubeFaces(id, renderData, lx, y, lz, faceCount, baseX, baseZ) {
     const glowing = getLightEmission(id) > 0;
 
     const liquid = isLiquidId(id) ? id : 0;
+
+    const tinted = renderData.tint && meshTint !== null;
 
     // Górny blok wody (nad nim nie ma wody ani pełnego bloku) jest
     // trochę niższy - jego górne rogi są na wysokości WATER_SURFACE.
@@ -962,6 +1047,13 @@ function addCubeFaces(id, renderData, lx, y, lz, faceCount, baseX, baseZ) {
             colorBuffer[c + i * 4 + 2] = b + 0.5;
             colorBuffer[c + i * 4 + 3] = a + 0.5;
 
+            if (tinted) {
+                writeTint(c + i * 4, lx + corner[0], lz + corner[2]);
+            }
+            else {
+                clearTint(c + i * 4);
+            }
+
 
             if (i === 0) brightness0 = brightness;
             else if (i === 1) brightness1 = brightness;
@@ -1048,6 +1140,8 @@ export function buildChunkGeometry(chunk, world) {
     const height = Math.min(chunk.maxY, H);
 
     meshFlow = chunk.flow;
+
+    meshTint = chunk.tint ?? null;
 
 
     // Lity kamień głęboko pod terenem nie ma żadnej widocznej
@@ -1230,6 +1324,13 @@ export function buildChunkGeometry(chunk, world) {
     geometry.setAttribute(
         'color',
         new THREE.BufferAttribute(colorBuffer.slice(0, vertexCount * 4), 4, true)
+    );
+
+    // Kolor trawy w rogach (r, g, b - 0.5 = bez zmiany; a = 1 - nie dotyczy).
+
+    geometry.setAttribute(
+        'tint',
+        new THREE.BufferAttribute(tintBuffer.slice(0, vertexCount * 4), 4, true)
     );
 
     geometry.setIndex(

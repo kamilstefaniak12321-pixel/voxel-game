@@ -16,9 +16,11 @@ import { TREE_PACKS } from '../../blocks/treePacks.js';
 
 import { Noise } from '../Noise.js';
 
-import { FORESTS, SCALES } from '../terrain/TerrainShape.js';
+import { FORESTS, SCALES, BIOME_SHAPE } from '../terrain/TerrainShape.js';
 
 import { buildTree, TREE_REACH } from './TreeShapes.js';
+
+import { BIOMES, BIOME_KEYS } from '../terrain/Biomes.js';
 
 // ------------------------------------------------------------
 // LASY - gdzie w terenie realistycznym rosną drzewa i jakie
@@ -32,22 +34,22 @@ import { buildTree, TREE_REACH } from './TreeShapes.js';
 //
 // Gęstość lasu: pole lasów (łąki ↔ lasy), wilgotność (w suchym
 // klimacie rzadziej), wysokość (granica lasu pod gołą skałą), tylko
-// na trawie i niezbyt stromo. Gatunek: klimat i plamy gatunków -
-// liczby w FORESTS (TerrainShape.js), opis w docs/drzewa.md:
+// na trawie i niezbyt stromo - i biom (src/world/terrain/Biomes.js):
+// mnożnik gęstości (density) i najmniejsza gęstość (lone, pojedyncze
+// drzewa), np. bór rzadszy, na mokradłach i hali pojedyncze drzewa,
+// w skałach i na śniegu żadnych. Liczby w FORESTS (TerrainShape.js),
+// opis w docs/drzewa.md i docs/biomy.md.
 //
-//   świerk  - zimno: wysoko w górach i w chłodnym klimacie,
-//   sosna   - sucho (bory), także nad samym morzem,
-//   buk     - wyżyny i pogórza, umiarkowanie wilgotno,
-//   lipa    - ciepło i wilgotno, niziny i wyżyny (z dębem),
-//   dąb     - ciepłe niziny,
-//   brzoza  - wilgotno i nisko (blisko wody), chłodniej.
+// Gatunek: z gatunków biomu (trees w BIOMES - np. buczyna: prawie same
+// buki, las liściasty: dęby i lipy) i plam gatunków (w lesie przeważa
+// jeden, dwa). Biom sprawdzamy w miejscu drzewa trochę przesuniętym
+// (TREE_BIOME_JITTER), więc na granicy biomów drzewa się przeplatają.
 //
 // Drzewa z paczek (assets/drzewa/, "gdzieRosnie" w drzewo.json): w kratce,
 // w której ma stać drzewo, paczka "losuje" swoją szansę (czestosc) -
-// jeśli klimat i wysokość pasują do jej zakresów i wypadło, stoi tam
-// drzewo z paczki zamiast zwykłego. Las dalej jest tam, gdzie był, tylko
-// część drzew to nowy gatunek. Bez paczek świat jest taki sam jak przed
-// nimi (ten sam seed - te same drzewa).
+// jeśli biom (biomy), klimat i wysokość pasują do jej zakresów
+// i wypadło, stoi tam drzewo z paczki zamiast zwykłego (olcha i wierzba
+// na mokradłach, jabłoń na łąkach).
 // ------------------------------------------------------------
 
 function clamp(value, min, max) {
@@ -107,6 +109,31 @@ function nameSalt(name) {
 const WILD_PACKS = TREE_PACKS
     .filter((pack) => pack.climate.chance > 0)
     .map((pack) => ({ id: pack.id, climate: pack.climate, salt: nameSalt(pack.id) }));
+
+
+// Najmniejsza gęstość (pojedyncze drzewa) w którymkolwiek biomie - do
+// szybkiego odrzucania kratek bez drzewa: w lasach (FOREST_LONE) i poza
+// nimi (OPEN_LONE). Biom lasu jest tylko tam, gdzie pole lasów jest
+// wyższe niż FOREST_FIELD (z zapasem na poszarpane granice).
+
+const FOREST_TYPES = ['deciduous', 'beech', 'birch', 'pine', 'spruce'];
+
+const FOREST_LONE = Math.max(...FOREST_TYPES.map((key) => BIOMES[key].lone ?? 0));
+
+const OPEN_LONE = Math.max(...BIOME_KEYS.filter((key) => !FOREST_TYPES.includes(key)).map((key) => BIOMES[key].lone ?? 0));
+
+const FOREST_FIELD = Math.min(BIOME_SHAPE.forestFrom - BIOME_SHAPE.forestHumid, BIOME_SHAPE.alpineForest) - 0.2;
+
+// O ile bloków (najwyżej) przesuwamy miejsce sprawdzania biomu drzewa.
+
+const TREE_BIOME_JITTER = 6;
+
+// Gatunki drzew biomów: [[numer w BASE_TREE_NAMES, udział], ...].
+
+const BIOME_TREES = Object.fromEntries(BIOME_KEYS.map((key) => [
+    key,
+    Object.entries(BIOMES[key].trees ?? {}).map(([species, share]) => [BASE_TREE_NAMES.indexOf(species), share])
+]));
 
 
 // Ile kratek (drzew) najwyżej pamiętamy - sąsiednie chunki pytają
@@ -193,7 +220,7 @@ export class Forests {
     // Gęstość lasu 0-1 (jaka część kratek ma drzewo) w kolumnie
     // o wysokości `height` i klimacie `climate`.
 
-    density(x, z, height, climate, forest = this.forestField(x, z)) {
+    density(x, z, height, climate, forest = this.forestField(x, z), biome = null) {
 
         let density =
             FORESTS.lone +
@@ -208,60 +235,74 @@ export class Forests {
 
         density *= 1 - smoothstep(line - FORESTS.treeLineFade, line, height);
 
+
+        // Biom: mnożnik i pojedyncze drzewa (bez drzew - 0).
+
+        if (biome) {
+
+            const def = BIOMES[biome];
+
+            density = !def.density ? 0 : Math.max(def.lone ?? 0, density * def.density);
+
+        }
+
         return clamp(density, 0, 1);
 
     }
 
 
-    // Oceny gatunków (kolejność BASE_TREE_NAMES) - większa = lepiej mu tu.
-    // jitter - losowy dodatek dla pojedynczego drzewa (0 = sam klimat).
+    // Gatunek drzewa w biomie: udziały gatunków biomu zmienione przez
+    // plamy gatunków (w lesie przeważa jeden, dwa). pick - liczba 0-1
+    // (losowanie drzewa) albo null: gatunek, który tu przeważa.
 
-    speciesScores(x, z, climate, jitter = null) {
+    biomeSpecies(x, z, biome, pick = null) {
 
-        const { temperature: t, humidity: h, above } = climate;
+        const trees = BIOME_TREES[biome];
+
+        if (!trees || trees.length === 0) {
+            return null;
+        }
 
         const s = this.scores;
 
-        s[0] = 1.1 * smoothstep(-0.35, -0.8, t) + 0.9 * smoothstep(20, 36, above) + 0.15 * h;
-        s[1] = 0.25 + 0.95 * smoothstep(-0.15, -0.55, h) + 0.3 * smoothstep(4, 1, above) - 0.3 * smoothstep(-0.5, -0.9, t);
-        s[2] = 0.45 + 0.55 * smoothstep(4, 14, above) * smoothstep(-0.3, 0.2, h) - 0.6 * smoothstep(-0.45, -0.8, t) - 0.4 * smoothstep(28, 40, above);
-        s[3] = 0.36 + 0.7 * smoothstep(-0.25, 0.2, t) * smoothstep(-0.25, 0.3, h) - 0.3 * smoothstep(14, 26, above);
-        s[4] = 0.42 + 0.55 * smoothstep(-0.3, 0.3, t) + 0.25 * smoothstep(14, 4, above) - 0.35 * smoothstep(0.1, 0.6, h);
-        s[5] = 0.25 + 0.45 * smoothstep(0, 0.5, h) + 0.45 * smoothstep(6, 1, above) - 0.4 * smoothstep(0, 0.45, t);
+        let total = 0;
+        let best = trees[0][0];
+        let bestWeight = -1;
 
+        for (const [index, share] of trees) {
 
-        // Plamy gatunków: w lesie przeważa jeden, dwa.
+            const patch = this.generator.field(this.noise.species, x + index * 1733, z - index * 911, FORESTS.speciesScale, 1);
 
-        for (let i = 0; i < s.length; i++) {
+            const weight = share * Math.max(0.05, 1 + FORESTS.patches * patch);
 
-            s[i] += 0.45 * this.generator.field(this.noise.species, x + i * 1733, z - i * 911, FORESTS.speciesScale, 1);
+            s[index] = weight;
 
-            if (jitter) {
-                s[i] += (jitter(i) - 0.5) * FORESTS.mix;
+            total += weight;
+
+            if (weight > bestWeight) {
+                bestWeight = weight;
+                best = index;
             }
 
         }
 
-        return s;
+        if (pick === null) {
+            return BASE_TREE_NAMES[best];
+        }
 
-    }
+        let left = pick * total;
 
+        for (const [index] of trees) {
 
-    // Gatunek z najlepszą oceną.
+            left -= s[index];
 
-    bestSpecies(scores) {
-
-        let best = 0;
-
-        for (let i = 1; i < scores.length; i++) {
-
-            if (scores[i] > scores[best]) {
-                best = i;
+            if (left < 0) {
+                return BASE_TREE_NAMES[index];
             }
 
         }
 
-        return BASE_TREE_NAMES[best];
+        return BASE_TREE_NAMES[trees[trees.length - 1][0]];
 
     }
 
@@ -269,11 +310,15 @@ export class Forests {
     // Gatunek z paczki w kratce (gx, gz) albo null. climate - klimat
     // w miejscu drzewa ({ temperature, humidity, above }).
 
-    packSpecies(gx, gz, climate) {
+    packSpecies(gx, gz, climate, biome = null) {
 
         for (const pack of WILD_PACKS) {
 
-            const { chance, temperature, humidity, height } = pack.climate;
+            const { chance, temperature, humidity, height, biomes } = pack.climate;
+
+            if (biomes && !biomes.has(biome)) {
+                continue;
+            }
 
             if (
                 climate.temperature < temperature[0] || climate.temperature > temperature[1] ||
@@ -301,11 +346,14 @@ export class Forests {
 
         const climate = this.climate(x, z, sample.height);
 
-        const density = this.density(x, z, sample.height, climate);
+        const biome = this.generator.biomes.classify(x, z, sample);
+
+        const density = this.density(x, z, sample.height, climate, this.forestField(x, z), biome);
 
         return {
             density,
-            species: this.bestSpecies(this.speciesScores(x, z, climate))
+            species: density > 0 ? this.biomeSpecies(x, z, biome) : null,
+            biome
         };
 
     }
@@ -358,7 +406,7 @@ export class Forests {
 
         const upper = FORESTS.lone + (FORESTS.dense - FORESTS.lone) * smoothstep(FORESTS.from, FORESTS.full, forest);
 
-        if (roll >= upper * FORESTS.wet) {
+        if (roll >= Math.max(upper, forest > FOREST_FIELD ? FOREST_LONE : OPEN_LONE) * FORESTS.wet) {
             return null;
         }
 
@@ -377,7 +425,16 @@ export class Forests {
 
         const climate = this.climate(x, z, height);
 
-        if (roll >= this.density(x, z, height, climate, forest)) {
+        // Biom drzewa (miejsce trochę przesunięte - na granicy biomów
+        // drzewa się przeplatają).
+
+        const biome = generator.biomes.classify(
+            x, z, sample,
+            (random01(seed, gx, gz, 6) - 0.5) * 2 * TREE_BIOME_JITTER,
+            (random01(seed, gx, gz, 7) - 0.5) * 2 * TREE_BIOME_JITTER
+        );
+
+        if (roll >= this.density(x, z, height, climate, forest, biome)) {
             return null;
         }
 
@@ -402,9 +459,11 @@ export class Forests {
         }
 
 
-        const species = this.packSpecies(gx, gz, climate) ?? this.bestSpecies(
-            this.speciesScores(x, z, climate, (i) => random01(seed, gx, gz, 10 + i))
-        );
+        const species = this.packSpecies(gx, gz, climate, biome) ?? this.biomeSpecies(x, z, biome, random01(seed, gx, gz, 10));
+
+        if (!species) {
+            return null;
+        }
 
         const treeSeed = hash01(seed, gx, gz, 4);
 

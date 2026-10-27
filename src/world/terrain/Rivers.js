@@ -1375,6 +1375,7 @@ export class Rivers {
         out.flowX = 0;
         out.flowZ = 0;
         out.riverGap = Infinity;
+        out.lakeGap = Infinity;
 
         // Bardzo daleki teren (kratki większe niż MAX_SPACING) - bez rzek
         // i jezior (i bez liczenia ich tak daleko).
@@ -1488,6 +1489,10 @@ export class Rivers {
             if (edge === Infinity) {
                 continue;
             }
+
+            // Odległość od najbliższego jeziora (biomy - mokradła).
+
+            out.lakeGap = Math.min(out.lakeGap, edge);
 
             const water =
                 macro < candidate.level && edge <= LAKE_RIM &&

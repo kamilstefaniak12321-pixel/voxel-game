@@ -189,7 +189,7 @@ przecinka po ostatnim). Cały plik jabłoni:
 
 | Pole | Co znaczy |
 |---|---|
-| `pierwszeId` | pierwszy numer bloku drzewa (100, 110, 120... - każde drzewo zajmuje 10 numerów). Nadaje go generator, `node tools/drzewa.mjs` albo akcja na GitHubie. **Raz nadanego nie zmieniaj** - numer zapisuje się w światach. |
+| `pierwszeId` | pierwszy numer bloku drzewa (100, 110, 120... do 230 - każde drzewo zajmuje 10 numerów; 240-255 to bloki gry). Nadaje go generator, `node tools/drzewa.mjs` albo akcja na GitHubie. **Raz nadanego nie zmieniaj** - numer zapisuje się w światach. |
 | `gatunek` | pełna nazwa (*Jabłoń domowa*) - opisy, `/drzewa posadz` |
 | `gatunekDopelniacz` | "pień czego?" (*jabłoni*) - księga przepisów (*pień jabłoni (też okorowany)*) |
 | `krotko` | krótka nazwa (*jabłoń*) - komendy: `/drzewa posadz jablon` albo `/drzewa posadz jabłoń` |
@@ -338,9 +338,13 @@ zbiór sam to zapewnia.
 | `temperatura` | `[od, do]` - zakres temperatury: ok. -1 zimno (północ, wysokie góry) ... 1 ciepło |
 | `wilgotnosc` | `[od, do]` - ok. -1 sucho ... 1 mokro |
 | `wysokosc` | `[od, do]` - ile bloków nad poziomem morza (0 - brzeg morza, 20 - niziny i pagórki, 40+ - góry) |
+| `biomy` | lista biomów, w których drzewo rośnie (`docs/biomy.md`): `laka`, `lisciasty`, `buczyna`, `brzezina`, `bor`, `swierczyna`, `hala`, `skaly`, `snieg`, `mokradla`, `plaza`. Np. `["mokradla"]` - olcha i wierzba, `["laka", "lisciasty"]` - jabłoń |
 
 Pola, których nie podasz, pasują wszędzie. Drzewo pojawia się tylko tam,
-gdzie i tak rośnie las (zastępuje część drzew), w terenie realistycznym.
+gdzie i tak rośnie drzewo (zastępuje część drzew biomu - w lesie wiele,
+na łące pojedyncze), w terenie realistycznym. Przykład: olcha
+(`assets/drzewa/olcha/`) - `"czestosc": 0.5, "biomy": ["mokradla"]`:
+połowa drzew na mokradłach to olchy.
 
 **Jakie wartości są tutaj?** Komenda `/teren` pokazuje w miejscu, gdzie
 stoisz, wysokość nad morzem i w linii *Pola* - `temperatura`

@@ -1,0 +1,39 @@
+{
+    "pierwszeId": 120,
+    "gatunek": "Wierzba biała",
+    "gatunekDopelniacz": "wierzby",
+    "krotko": "wierzba",
+    "nazwaAngielska": "Willow",
+    "podobnyDo": "brzoza",
+    "bloki": {
+        "pien": { "nazwa": "Pień wierzby", "bok": "pien_bok.png", "gora": "pien_gora.png" },
+        "okorowany": { "nazwa": "Okorowany pień wierzby", "bok": "okorowany_bok.png", "gora": "okorowany_gora.png" },
+        "deski": { "nazwa": "Deski wierzbowe", "tekstura": "deski.png" },
+        "liscie": { "nazwa": "Liście wierzby", "tekstura": "liscie.png" },
+        "sadzonka": { "nazwa": "Sadzonka wierzby", "tekstura": "sadzonka.png" },
+        "opadleLiscie": { "nazwa": "Opadłe liście wierzby", "tekstura": "opadle_liscie.png" }
+    },
+    "przedmioty": {
+        "bazie": { "nazwa": "Bazie", "tekstura": "bazie.png", "sadzi": true }
+    },
+    "lupy": [["sadzonka", 0.04], ["bazie", 0.06]],
+    "czasWzrostu": 300,
+    "ksztalt": {
+        "rodzaj": "szablon",
+        "pliki": ["ksztalt_maly.txt", "ksztalt_sredni.txt", "ksztalt_duzy.txt"],
+        "opadleLiscie": 0.08
+    },
+    "gdzieRosnie": {
+        "czestosc": 0.55,
+        "biomy": ["mokradla"]
+    },
+    "przepisy": [
+        {
+            "id": "srebrna_lampa",
+            "wynik": "lamp",
+            "ile": 1,
+            "skladniki": ["lamp_blue", "bazie"],
+            "opis": "Bazie zdejmują z lampy niebieski kolor."
+        }
+    ]
+}

@@ -24,13 +24,21 @@ export const ROCK_KINDS = ['granite', 'limestone', 'sandstone', 'slate', 'basalt
 
 export const LEAF_KINDS = BASE_TREE_NAMES.map((species) => `${species}_leaves`);
 
-// Rodzaj powierzchni -> numer w kafelku.
+// Trawa w kolorze klimatu (Biomes.js - kolor trawy): cieplejsza,
+// chłodniejsza i górska (bledsza). Śnieg - ośnieżone szczyty.
 
-export const KINDS = ['grass', 'rock', 'sand', 'water', ...ROCK_KINDS, ...LEAF_KINDS];
+export const GRASS_KINDS = ['grass_warm', 'grass_cool', 'grass_high'];
+
+// Rodzaj powierzchni -> numer w kafelku. (Nowe rodzaje tylko na końcu -
+// numery zapisują się w kafelkach liczonych w wątku.)
+
+export const KINDS = ['grass', 'rock', 'sand', 'water', ...ROCK_KINDS, ...LEAF_KINDS, 'snow', ...GRASS_KINDS];
 
 const WATER_KIND = KINDS.indexOf('water');
 
 const FIRST_LEAF_KIND = KINDS.indexOf(LEAF_KINDS[0]);
+
+const LAST_LEAF_KIND = KINDS.indexOf(LEAF_KINDS[LEAF_KINDS.length - 1]);
 
 // Kurtyny (meshFarTile): jak głęboko pod wierzchem sięgają - korony
 // drzew (do ziemi pod nimi) i woda (do dna); inne rodzaje bez kurtyn.
@@ -47,7 +55,7 @@ function curtainDepth(kind) {
         return CURTAIN_WATER;
     }
 
-    return kind >= FIRST_LEAF_KIND ? CURTAIN_LEAVES : 0;
+    return kind >= FIRST_LEAF_KIND && kind <= LAST_LEAF_KIND ? CURTAIN_LEAVES : 0;
 
 }
 
@@ -70,7 +78,8 @@ export function kindIndex(kind) {
 export const BLOCK_KINDS = {
     stone: 'rock',
     sand: 'sand',
-    water: 'water'
+    water: 'water',
+    snow: 'snow'
 };
 
 for (const rock of ROCK_KINDS) {

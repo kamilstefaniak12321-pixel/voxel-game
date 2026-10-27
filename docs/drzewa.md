@@ -103,17 +103,23 @@ w `src/world/terrain/TerrainShape.js`.
 - **Gęstość lasu:** pole lasów (plamy ~190 bloków) - łąki z pojedynczymi
   drzewami ↔ gęste lasy (drzewo w połowie kratek); w suchym klimacie
   lasy są rzadsze, w wilgotnym gęstsze; drzewa rosną do kilku bloków
-  poniżej granicy gołej skały (góry mają nagie szczyty); tylko na trawie
-  i niezbyt stromo. Mniej więcej 1/3 lądu to lasy.
-- **Gatunek** - klimat (temperatura, wilgotność, wysokość nad morzem)
-  i plamy gatunków (~150 bloków - w lesie przeważa jeden, dwa gatunki,
-  na granicach lasy są mieszane):
-  - świerk - zimno: wysoko w górach i w chłodnym klimacie,
-  - sosna - sucho (bory), także nad samym morzem,
-  - buk - wyżyny i pogórza, umiarkowanie wilgotno,
-  - lipa - ciepło i wilgotno, niziny i wyżyny (z dębem),
-  - dąb - ciepłe niziny,
-  - brzoza - wilgotno i nisko (blisko wody), chłodniej.
+  poniżej granicy gołej skały (góry mają nagie szczyty); tylko na
+  ziemi (nie na piasku i skale) i niezbyt stromo. Do tego **biom**
+  (`docs/biomy.md`): w lasach las jest gęsty w całym biomie, bór jest
+  rzadszy, na hali, mokradłach i plaży - pojedyncze drzewa, w skałach
+  i na śniegu - żadnych. Mniej więcej 1/3 lądu to lasy.
+- **Gatunek** - z gatunków biomu (`trees` w `src/world/terrain/Biomes.js`)
+  i plam gatunków (~150 bloków - w lesie przeważa jeden, dwa gatunki):
+  - świerczyna - świerki (z domieszką buka i brzozy),
+  - bór sosnowy - sosny (trochę brzóz i świerków),
+  - buczyna - prawie same buki,
+  - las liściasty - dęby i lipy (trochę buków i brzóz),
+  - brzezina - brzozy (trochę sosen, dębów, świerków),
+  - mokradła - olchy i wierzby (paczki drzew), brzozy,
+  - łąka - pojedyncze dęby, lipy, brzozy, sosny i jabłonie,
+  - hala - pojedyncze świerki, plaża - pojedyncze sosny.
+  Każde drzewo sprawdza biom trochę obok siebie, więc na granicach
+  biomów drzewa się przeplatają.
 - **Pod drzewem:** pień wchodzi w trawę i rośliny (nie w ziemię ani skałę),
   na stoku schodzi w dół do gruntu; pod bukiem i dębem leżą opadłe
   liście.
@@ -185,8 +191,5 @@ szelest liści (`plant`). `tools/dzwieki.py`.
 
 ## Do zrobienia później
 
-- biomy (łąka, las liściasty, iglasty, bór, mokradła...) - lasy staną
-  się ich częścią, ściółka leśna pod drzewami,
-- rzeki (brzozy i olchy nad wodą),
 - liście opadające jesienią, śnieg na świerkach (pory roku),
 - deski i inne bloki z pni (crafting).

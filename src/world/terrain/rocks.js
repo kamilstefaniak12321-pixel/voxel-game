@@ -22,6 +22,14 @@ export const SOIL_INFO = {
     grass: { name: 'trawa', word: 'trawa', color: '#5aa83c' },
     dirt: { name: 'ziemia', word: 'ziemia', color: '#8a4a14' },
     sand: { name: 'piasek', word: 'piasek', color: '#e3d29c' },
+    // Wierzch ziemi w biomach (Biomes.js).
+    forest_floor: { name: 'ściółka', word: 'sciolka', color: '#7a5a2e' },
+    moss: { name: 'mech', word: 'mech', color: '#56803a' },
+    mud: { name: 'błoto', word: 'bloto', color: '#5a3d28' },
+    clay: { name: 'glina', word: 'glina', color: '#ac8e68' },
+    gravel: { name: 'żwir', word: 'zwir', color: '#7a726a' },
+    coarse_dirt: { name: 'ziemia kamienista', word: 'kamienista', color: '#aa8d6a' },
+    snow: { name: 'śnieg', word: 'snieg', color: '#eef3fa' },
     water: { name: 'woda', word: 'woda', color: '#2f62c0' }
 };
 

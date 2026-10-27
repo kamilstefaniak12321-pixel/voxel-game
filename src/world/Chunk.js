@@ -45,6 +45,12 @@ export class Chunk {
 
         this.flow = null;
 
+        // Kolor trawy w rogach kolumn (Uint8Array 17 x 17 x 3, r g b -
+        // 128 = bez zmiany) albo null (RealisticGenerator - biomy,
+        // ChunkMesher.js).
+
+        this.tint = null;
+
         this.skyLight = new Uint8Array(this.blocks.length);
         this.lightR = new Uint8Array(this.blocks.length);
         this.lightG = new Uint8Array(this.blocks.length);

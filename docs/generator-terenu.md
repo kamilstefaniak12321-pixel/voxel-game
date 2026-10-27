@@ -62,6 +62,14 @@ etap po etapie.
   Opis: `docs/drzewa.md`, liczby: `FORESTS` (`TerrainShape.js`), kod:
   `src/world/trees/`. `columnBlocks` (przekrój, `/skaly`) drzew nie
   zawiera - to sama kolumna terenu.
+- **Biomy** (zrobione - etap 4) - 11 biomów lądowych (łąka, las
+  liściasty, buczyna, brzezina, bór sosnowy, świerczyna, hala, skaliste
+  góry, ośnieżone szczyty, mokradła, plaża i wydmy) z wysokości,
+  klimatu, wody w pobliżu i pola lasów; każdy z własnym wierzchem
+  ziemi, roślinami, krzakami i drzewami; wydmy na niektórych
+  wybrzeżach; kolor trawy z klimatu. Opis: `docs/biomy.md`, liczby:
+  `BIOME_SHAPE`, `DUNES` (`TerrainShape.js`), kod:
+  `src/world/terrain/Biomes.js`.
 
 ## Jak działa generator realistyczny
 
@@ -264,7 +272,7 @@ trwać dłużej - wtedy w osobnym wątku (Web Worker), z wyprzedzeniem.
 Sprawdzanie: warstwa `/mapa rzeki`, `/teren znajdz rzeka`,
 `/rzeka` (skąd płynie i dokąd).
 
-### Etap 4 - biomy
+### Etap 4 - biomy (zrobione - `docs/biomy.md`)
 
 Co: łąki, lasy i inne krajobrazy na podstawie rzeźby i klimatu.
 
@@ -333,6 +341,7 @@ Jaskinie, rudy i warstwy skał, wodospady, klify nadmorskie, pory roku.
 - Morza i lądy - zostają takie jak teraz.
 - Nowe światy są domyślnie realistyczne.
 
-## Do ustalenia
-
-- Lista biomów na start (etap 4).
+- Biomy na start: łąka, las liściasty, buczyna, brzezina, bór, świerczyna,
+  hala, skaliste góry, ośnieżone szczyty, mokradła, plaża i wydmy - z nowymi
+  blokami (śnieg, mech, trzcina, wrzos, krokus, piaskownica, borówka,
+  olcha i wierzba).

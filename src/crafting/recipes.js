@@ -99,6 +99,18 @@ export const GROUPS = {
         types: ['clover', 'nettle', 'fern']
     },
 
+    blue: {
+        label: 'coś niebieskiego (chaber, borówki)',
+        icon: 'cornflower',
+        types: ['cornflower', 'blueberry']
+    },
+
+    purple: {
+        label: 'coś fioletowego (jeżyny, wrzos, krokus)',
+        icon: 'heather',
+        types: ['blackberry', 'heather', 'crocus']
+    },
+
     // Pnie każdego gatunku: "#oak_logs" itd.
     ...Object.fromEntries(TREE_NAMES.map((species) => [`${species}_logs`, {
         label: `pień ${TREE_SPECIES[species].species[1]} (też okorowany)`,
@@ -175,12 +187,12 @@ export const RECIPES = [
     {
         id: 'lamp_blue',
         result: ['lamp_blue', 1],
-        ingredients: ['lamp', 'cornflower']
+        ingredients: ['lamp', '#blue']
     },
     {
         id: 'lamp_purple',
         result: ['lamp_purple', 1],
-        ingredients: ['lamp', 'blackberry']
+        ingredients: ['lamp', '#purple']
     },
 
 
@@ -237,6 +249,32 @@ export const RECIPES = [
         result: ['dark_planks', 3],
         ingredients: ['#planks', '#planks', '#planks', 'basalt'],
         note: 'Bejcowane na ciemno - pochłaniają światło, pokój jest mroczny.'
+    },
+
+
+    // ŚNIEG I MECH (biomy)
+
+    {
+        id: 'snow_layer',
+        result: ['snow_layer', 4],
+        ingredients: ['snow']
+    },
+    {
+        id: 'snow',
+        result: ['snow', 1],
+        pattern: ['SS', 'SS'],
+        key: { S: 'snow_layer' }
+    },
+    {
+        id: 'moss_carpet',
+        result: ['moss_carpet', 4],
+        ingredients: ['moss']
+    },
+    {
+        id: 'moss',
+        result: ['moss', 1],
+        pattern: ['MM', 'MM'],
+        key: { M: 'moss_carpet' }
     },
 
 

@@ -12,7 +12,8 @@
 #     python tools/dzwieki.py                  wszystkie
 #     python tools/dzwieki.py assets/sounds woda   tylko jedna grupa:
 #                                  bloki, meteoryt, owoce, menu, woda, kosmos,
-#                                  osiagniecia
+#                                  osiagniecia, wytwarzanie, snieg (same
+#                                  dźwięki śniegu - nowy materiał)
 #
 # (pliki .ogg za każdym razem wychodzą trochę inne w bajtach, więc
 # lepiej przeliczać tylko grupę, która się zmieniła)
@@ -314,6 +315,17 @@ def mat_wood(s, heavy):
     return lowpass(out, 3000)
 
 
+def mat_snow(s, heavy):
+    # śnieg: miękkie, gęste skrzypnięcie (drobne chrupnięcia ubijanego
+    # śniegu) i ciche, głuche "puf"
+    length = [0.3, 0.26, 0.42][heavy]
+    n = samples(length)
+    out = crumble(s, length, [34, 24, 60][heavy], 900, 3400, [0.07, 0.05, 0.12][heavy], grain=(0.002, 0.006), loud=(0.15, 0.5))
+    out += band(s.noise(length), 300, 1600) * soft_env(n, 0.02, [0.06, 0.05, 0.1][heavy]) * 0.35
+    out += thump(s, length, 180, 0.01, 0.05, [0.4, 0.6, 0.5][heavy])
+    return lowpass(out, 3800)
+
+
 MATERIALS = {
     'grass': mat_grass,
     'dirt': mat_dirt,
@@ -323,7 +335,8 @@ MATERIALS = {
     'mud': mat_mud,
     'plant': mat_plant,
     'glass': mat_glass,
-    'wood': mat_wood
+    'wood': mat_wood,
+    'snow': mat_snow
 }
 
 # ile wersji każdego rodzaju (gra losuje jedną - więcej kroków, żeby
@@ -865,7 +878,7 @@ def save(path, data):
         )
 
 
-GROUPS = ['bloki', 'meteoryt', 'owoce', 'menu', 'woda', 'kosmos', 'osiagniecia', 'wytwarzanie']
+GROUPS = ['bloki', 'meteoryt', 'owoce', 'menu', 'woda', 'kosmos', 'osiagniecia', 'wytwarzanie', 'snieg']
 
 
 def generate(root=ROOT, only=None):
@@ -877,7 +890,7 @@ def generate(root=ROOT, only=None):
         for kind, (heavy, variants) in KINDS.items():
             for v in range(1, variants + 1):
                 seed += 1
-                if want('bloki'):
+                if want('bloki') or (material == 'snow' and want('snieg')):
                     sound = fade(loudness(make(Synth(seed), heavy), LOUDNESS[kind]), 0.002, 0.04)
                     save(os.path.join(root, 'blocks', f'{kind}_{material}_{v}.ogg'), sound)
     # Dalsze grupy liczą ziarna od tej samej liczby co dawniej (gdy

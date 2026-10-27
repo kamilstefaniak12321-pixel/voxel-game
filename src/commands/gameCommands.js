@@ -90,6 +90,8 @@ import { MAP_LAYERS, MAP_SCALES } from '../ui/TerrainMap.js';
 
 import { ROCK_INFO, blockNamePl, blockFromWord } from '../world/terrain/rocks.js';
 
+import { BIOMES, BIOME_KEYS, LAND_BIOMES, biomeByWord } from '../world/terrain/Biomes.js';
+
 import { chooseSkinFile, resetSkin, hasCustomSkin } from '../player/skin.js';
 
 import { TREE_SPECIES, TREE_NAMES } from '../blocks/trees.js';
@@ -787,7 +789,7 @@ function plantBushGarden(player, world) {
 
     });
 
-    return `Ogródek: ${species.length} rzędy krzaków (${species.map((name) => getBlockLabel(bushStages(name)[1]).toLowerCase()).join(', ')}), ` +
+    return `Ogródek: ${species.length} ${species.length >= 5 ? 'rzędów' : 'rzędy'} krzaków (${species.map((name) => getBlockLabel(bushStages(name)[1]).toLowerCase()).join(', ')}), ` +
         'w każdym od lewej: sadzonka, bez owoców, kilka owoców, pełen owoców. PPM na owocach - zbiór.';
 
 }
@@ -1118,7 +1120,8 @@ const LANDFORM_WORDS = {
 };
 
 const SURFACE_NAMES = {
-    grass: 'trawa',
+    grass: 'ziemia (trawa, ściółka, mech...)',
+    riverbed: 'dno rzeki albo jeziora',
     rock: 'skała',
     sand: 'piasek',
     seabed: 'dno morza (piasek)',
@@ -1144,6 +1147,7 @@ function terrainText(world, x, z) {
         `${sea !== null ? ` (${info.height - sea >= 0 ? '+' : ''}${info.height - sea} nad morzem)` : ''} | ` +
         `${RELIEFS[info.relief] ?? info.relief} | forma: ${LANDFORMS[info.landform]?.name ?? info.landform} | ` +
         `powierzchnia: ${SURFACE_NAMES[info.surface] ?? info.surface}` +
+        (BIOMES[info.biome] ? ` | biom: ${BIOMES[info.biome].name} (/biom)` : '') +
         (info.rock ? ` | skała pod spodem: ${blockNamePl(info.rock)} (/skaly)` : '') +
         (info.forest?.species
             ? ` | las: ${Math.round(info.forest.density * 100)}% kratek z drzewem, przeważa ${treeName(info.forest.species)} (/drzewa)`
@@ -1265,6 +1269,58 @@ function findLandform(generator, x0, z0, target, maxRadius) {
                 (target.relief && info.relief === target.relief)
             ) {
                 return { x, z, info, distance: radius };
+            }
+
+        }
+
+    }
+
+    return null;
+
+}
+
+
+// Najbliższe miejsce z biomem `target` (klucz z BIOMES) - kawałek w głębi
+// biomu (sąsiednie punkty o kilkanaście bloków też w nim), nie na samej
+// granicy: { x, z, distance } albo null.
+
+function findBiome(generator, x0, z0, target, maxRadius) {
+
+    const sample = {};
+
+    const inside = (x, z) => generator.biomes.classify(x, z, generator.compute(x, z, 0, sample)) === target;
+
+    const step = 16;
+
+    for (let radius = 0; radius <= maxRadius; radius += step) {
+
+        const count = radius === 0 ? 1 : Math.ceil(2 * Math.PI * radius / step);
+
+        for (let k = 0; k < count; k++) {
+
+            const angle = 2 * Math.PI * k / count;
+
+            const x = Math.round(x0 + Math.cos(angle) * radius);
+            const z = Math.round(z0 + Math.sin(angle) * radius);
+
+            if (!inside(x, z)) {
+                continue;
+            }
+
+            // Woda - wystarczy jedna kolumna (rzeki są wąskie).
+
+            if (BIOMES[target].water) {
+                return { x, z, distance: radius };
+            }
+
+            let around = 0;
+
+            for (const [dx, dz] of [[10, 0], [-10, 0], [0, 10], [0, -10]]) {
+                around += inside(x + dx, z + dz) ? 1 : 0;
+            }
+
+            if (around >= 3) {
+                return { x, z, distance: radius };
             }
 
         }
@@ -3878,6 +3934,113 @@ export const GAME_COMMANDS = [
             if (args.length === 1) return ['znajdz', 'formy', '~'];
             if (args.length === 2 && simplify(args[0]) === 'znajdz') return Object.keys(LANDFORM_WORDS);
             if (args.length >= 3 && simplify(args[0]) === 'znajdz') return ['tp', '500', '3000'];
+
+            return [];
+
+        }
+    },
+
+
+    {
+        name: 'biom',
+        aliases: ['biome', 'biomy'],
+        usage: '/biom | /biom lista | /biom znajdz <biom> [promien] [tp]',
+        description: 'Biom w miejscu gracza (łąka, las liściasty, hala, mokradła...): co tam rośnie, klimat. Lista biomów i szukanie najbliższego.',
+
+        run(args, { world, player, game }) {
+
+            const generator = world.generator;
+
+            if (!generator.biomes) {
+                throw new CommandError('Teren klasyczny nie ma biomów - są w terenie realistycznym (nowy świat: Teren - Realistyczny).');
+            }
+
+            const visited = new Set(game?.achievements?.data?.progress?.biomes ?? []);
+
+            const [action] = args;
+
+
+            if (!action) {
+
+                const x = Math.floor(player.pos.x);
+                const z = Math.floor(player.pos.z);
+
+                const key = generator.biomeAt(x, z);
+
+                const info = generator.biomes.info;
+
+                const biome = BIOMES[key];
+
+                return `Biom: ${biome.name} (${x}, ${z}) - ${biome.about}. ` +
+                    `Temperatura ${info.temperature.toFixed(2)}, wilgotność ${info.humidity.toFixed(2)}, wysokość ${info.above >= 0 ? '+' : ''}${info.above} nad morzem. ` +
+                    `Odwiedzone: ${LAND_BIOMES.filter((k) => visited.has(k)).length} z ${LAND_BIOMES.length} (/biom lista, /mapa biomy).`;
+
+            }
+
+
+            const word = simplify(action);
+
+
+            if (['lista', 'list'].includes(word)) {
+
+                return 'Biomy (✔ - odwiedzone; /biom znajdz <słowo>): ' +
+                    BIOME_KEYS.map((key) => `${!BIOMES[key].water && visited.has(key) ? '✔ ' : ''}${BIOMES[key].name} (${BIOMES[key].words[0]})`).join(', ');
+
+            }
+
+
+            if (['znajdz', 'find'].includes(word)) {
+
+                const target = biomeByWord(simplify(args[1] ?? ''));
+
+                if (!target) {
+                    throw new CommandError(`Podaj biom: ${BIOME_KEYS.map((key) => BIOMES[key].words[0]).join(', ')}`);
+                }
+
+                const teleport = args.slice(2).some((arg) => simplify(arg) === 'tp');
+
+                const radiusArg = args.slice(2).find((arg) => simplify(arg) !== 'tp');
+
+                const radius = radiusArg === undefined ? 3000 : parseNumber(radiusArg, 'promień');
+
+                if (radius < 16 || radius > 8000) {
+                    throw new CommandError('Promień: od 16 do 8000 bloków');
+                }
+
+                const found = findBiome(generator, Math.floor(player.pos.x), Math.floor(player.pos.z), target, radius);
+
+                if (!found) {
+                    throw new CommandError(`Nie ma biomu "${BIOMES[target].name}" w promieniu ${radius} bloków. Spróbuj większy promień.`);
+                }
+
+                const { x, z, distance } = found;
+
+                if (teleport) {
+
+                    world.ensureColumnLoaded(x, z);
+
+                    player.pos.set(x + 0.5, world.getSurfaceY(x, z), z + 0.5);
+                    player.vel.set(0, 0, 0);
+                    player.updateCamera();
+
+                    return `Przeniesiono: ${BIOMES[target].name} na ${x}, ${z} (${distance} bloków stąd).`;
+
+                }
+
+                return `Najbliżej: ${BIOMES[target].name} na ${x}, ${z} (ok. ${distance} bloków stąd). ` +
+                    `Przeniesienie: /tp ${x} ${z} albo /biom znajdz ${BIOMES[target].words[0]} tp`;
+
+            }
+
+            throw usageError(this);
+
+        },
+
+        complete(args) {
+
+            if (args.length === 1) return ['lista', 'znajdz'];
+            if (args.length === 2 && simplify(args[0]) === 'znajdz') return BIOME_KEYS.map((key) => BIOMES[key].words[0]);
+            if (args.length >= 3 && simplify(args[0]) === 'znajdz') return ['tp', '1000', '6000'];
 
             return [];
 

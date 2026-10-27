@@ -426,7 +426,8 @@ export const TREE_GROWTH_SECONDS = 300;
 // blok - według materiału dźwięków bloku (pole sound w BlockRegistry.js;
 // blok może mieć własny czas: pole hardness). Liście - LEAVES_BREAK_SECONDS.
 // Narzędzie kopie swoje materiały TOOL_SPEED razy szybciej (TOOL_MATERIALS:
-// siekiera - drewno, kilof - skały, łopata - ziemia, piasek, żwir, błoto).
+// siekiera - drewno, kilof - skały, łopata - ziemia, piasek, żwir, błoto,
+// śnieg).
 // W trybie kreatywnym blok znika od razu, a trzymany LPM niszczy kolejne
 // co CREATIVE_REPEAT_SECONDS.
 export const BREAK_SECONDS = {
@@ -438,14 +439,15 @@ export const BREAK_SECONDS = {
     mud: 0.6,
     glass: 0.45,
     wood: 2,
-    stone: 2.2
+    stone: 2.2,
+    snow: 0.4
 };
 export const LEAVES_BREAK_SECONDS = 0.35;
 export const TOOL_SPEED = 3;
 export const TOOL_MATERIALS = {
     axe: ['wood'],
     pickaxe: ['stone'],
-    shovel: ['grass', 'dirt', 'sand', 'gravel', 'mud']
+    shovel: ['grass', 'dirt', 'sand', 'gravel', 'mud', 'snow']
 };
 
 // Przy kopaniu co tyle sekund: machnięcie ręką, stuknięcie (dźwięk)

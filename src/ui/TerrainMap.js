@@ -2,6 +2,7 @@ import { CHUNK_HEIGHT } from '../config.js';
 import { getBlockTypeById } from '../blocks/BlockRegistry.js';
 import { LANDFORMS, RELIEFS } from '../world/terrain/landforms.js';
 import { ROCK_INFO, SOIL_INFO, blockNamePl } from '../world/terrain/rocks.js';
+import { BIOMES } from '../world/terrain/Biomes.js';
 
 // ------------------------------------------------------------
 // MAPA TERENU (komenda /mapa, klawisz M)
@@ -17,6 +18,8 @@ import { ROCK_INFO, SOIL_INFO, blockNamePl } from '../world/terrain/rocks.js';
 //   skaly   - skała na wierzchu albo tuż pod glebą (mapa geologiczna),
 //   lasy    - lasy: gatunek drzew, który przeważa, im gęściej, tym
 //             mocniejszy kolor (src/world/trees/Forests.js),
+//   biomy   - biomy (łąka, las liściasty, hala, mokradła... -
+//             src/world/terrain/Biomes.js) z legendą,
 //   przekroj - przekrój pionowy terenu w kierunku patrzenia: wszystkie
 //             skały pod ziemią, żyły lepidolitu, woda,
 //   pola    - pojedyncze pola generatora (kontynent, erozja, grzbiety...).
@@ -40,6 +43,7 @@ export const MAP_LAYERS = {
     pasy: 'niziny, wyżyny, góry',
     skaly: 'skały (na wierzchu i pod glebą)',
     lasy: 'lasy (gatunek drzew, gęstość)',
+    biomy: 'biomy (łąki, lasy, góry, mokradła...)',
     przekroj: 'przekrój pionowy w kierunku patrzenia',
     kontynent: 'pole: kontynent (morze ↔ ląd)',
     wypietrzenie: 'pole: wypiętrzenie (niziny ↔ góry)',
@@ -47,8 +51,8 @@ export const MAP_LAYERS = {
     grzbiety: 'pole: grzbiety gór',
     gory: 'pole: góry (po kotlinach)',
     wyzyny: 'pole: wyżyny',
-    temperatura: 'pole: temperatura (pod biomy)',
-    wilgotnosc: 'pole: wilgotność (pod biomy)'
+    temperatura: 'pole: temperatura (biomy)',
+    wilgotnosc: 'pole: wilgotność (biomy)'
 };
 
 export const MAP_SCALES = [1, 2, 4, 8, 16, 32];
@@ -634,6 +638,18 @@ export class TerrainMap {
 
             }
 
+            case 'biomy': {
+
+                const biome = BIOMES[info.biome] ? info.biome : 'meadow';
+
+                this.job.present.add(biome);
+
+                color = hexToRgb(BIOMES[biome].color);
+
+                return BIOMES[biome].water ? color : color.map((c) => Math.min(255, c * (0.72 + shade * 0.28)));
+
+            }
+
             case 'skaly': {
 
                 if (water) {
@@ -697,6 +713,13 @@ export class TerrainMap {
 
             if (this.layer === 'skaly') {
                 entries.push([SOIL_INFO.water.color, 'morze']);
+            }
+
+        }
+        else if (this.layer === 'biomy') {
+
+            for (const [key, biome] of Object.entries(BIOMES)) {
+                if (this.job.present.has(key)) entries.push([biome.color, biome.name.toLowerCase()]);
             }
 
         }
@@ -788,6 +811,7 @@ export class TerrainMap {
         this.hover.textContent =
             `${x}, ${z} | wysokość ${info.height} | ${RELIEFS[info.relief] ?? info.relief} | ` +
             `${LANDFORMS[info.landform]?.name ?? info.landform}` +
+            (BIOMES[info.biome] ? ` | biom: ${BIOMES[info.biome].name.toLowerCase()}` : '') +
             (info.rock ? ` | skała: ${blockNamePl(info.rock)}` : '') +
             (info.forest?.species && info.forest.density > 0.03
                 ? ` | las ${Math.round(info.forest.density * 100)}%: ${FOREST_COLORS[info.forest.species][1]}`

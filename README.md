@@ -51,6 +51,13 @@ komputerze: `?dotyk` w adresie albo `/dotyk wl` (`?dotyk=0`, `/dotyk wyl`
 wyłącza). Instalacja, aktualizacje, klucz do podpisu aplikacji,
 ustawienia na telefonie i co jeszcze nie działa: `docs/telefon.md`.
 
+## Testy poprawności
+
+`npm test` sprawdza zachowanie przedmiotów pod kursorem, łupy z bloków
+i ich dekoracji, zapis lotu gracza oraz wszystkie przepisy wytwarzania.
+Potrzebny jest Node.js 22.15 lub nowszy; testy nie wymagają instalowania
+zależności ani uruchamiania okna gry i nie zmieniają zapisanych światów.
+
 ## Sterowanie
 
 | Klawisz | Akcja |

@@ -17,7 +17,9 @@ import {
     getLoot,
     getStrip,
     getBreakTime,
-    isPlantId
+    isPlantId,
+    getAttach,
+    ATTACH_OFFSETS
 } from '../blocks/BlockRegistry.js';
 import { getItemLabel, getPlacedBlock, getTool, itemExists } from '../items/ItemRegistry.js';
 import { Inventory } from './Inventory.js';
@@ -1928,7 +1930,7 @@ export class Game {
     // Zniszczenie wskazanego bloku. W przygodzie blok (albo to, co
     // z niego zostaje - np. trawa daje ziemię) trafia do ekwipunku;
     // gdy nie mieści się cała paczka łupów (także owoce), blok zostaje.
-    // Roślina, która rosła na zniszczonym bloku, też trafia do ekwipunku.
+    // Roślina i dekoracje, które tracą oparcie, też trafiają do ekwipunku.
 
     breakTarget(hit) {
 
@@ -1957,17 +1959,43 @@ export class Game {
 
         const { x, y, z, type } = hit.block;
 
-        const plantAbove = isPlantId(this.world.getBlockId(x, y + 1, z))
-            ? this.world.getBlock(x, y + 1, z)
-            : null;
+        const drops = this.breakDrops(type);
+
+        // Te same sąsiednie bloki, które usuwa World.setBlock:
+        // roślina nad podłożem i dekoracje przylegające do podpory.
+        // Mapa po pozycji pilnuje, żeby żaden blok nie dał łupu dwa razy.
+        const supported = new Map();
+
+        const rememberSupported = (sx, sy, sz) => {
+            const key = `${sx},${sy},${sz}`;
+
+            if (!supported.has(key)) {
+                supported.set(key, {
+                    x: sx, y: sy, z: sz,
+                    drops: this.breakDrops(this.world.getBlock(sx, sy, sz))
+                });
+            }
+        };
+
+        if (isPlantId(this.world.getBlockId(x, y + 1, z))) {
+            rememberSupported(x, y + 1, z);
+        }
+
+        for (let attach = 1; attach < ATTACH_OFFSETS.length; attach++) {
+            const [dx, dy, dz] = ATTACH_OFFSETS[attach];
+            const sx = x - dx, sy = y - dy, sz = z - dz;
+
+            if (getAttach(this.world.getBlockId(sx, sy, sz)) === attach) {
+                rememberSupported(sx, sy, sz);
+            }
+        }
 
         // Losujemy raz, przed usunięciem bloku. Osobne canAdd dla każdego
         // łupu nie wystarczyłyby: dwa rodzaje mogłyby liczyć to samo miejsce.
-        const drops = this.breakDrops(type);
-        const plantDrops = plantAbove ? this.breakDrops(plantAbove) : [];
+        const supportedDrops = [...supported.values()].flatMap((block) => block.drops);
         const tool = getTool(this.selectedBlock);
 
-        if (!this.inventory.canAddAll([...drops, ...plantDrops])) {
+        if (!this.inventory.canAddAll([...drops, ...supportedDrops])) {
 
             this.onNotice?.('Ekwipunek pełny');
 
@@ -1980,8 +2008,10 @@ export class Game {
             return false;
         }
 
-        if (plantAbove && this.world.getBlock(x, y + 1, z) === null) {
-            drops.push(...plantDrops);
+        for (const block of supported.values()) {
+            if (this.world.getBlock(block.x, block.y, block.z) === null) {
+                drops.push(...block.drops);
+            }
         }
 
         for (const { type: item, count } of drops) {

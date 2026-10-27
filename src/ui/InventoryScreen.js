@@ -669,17 +669,11 @@ export class InventoryScreen {
     }
 
 
-    fillBook() {
-
-        if (!this.bookGrid) {
-            return;
-        }
+    bookRecipes(stock) {
 
         const query = simplify(this.book.search.trim());
 
-        const stock = stockOf(this.game.inventory);
-
-        const recipes = RECIPE_LIST.filter((recipe) => {
+        return RECIPE_LIST.filter((recipe) => {
 
             const type = recipe.result[0];
 
@@ -688,6 +682,17 @@ export class InventoryScreen {
                 (!this.book.craftable || maxCrafts(recipe, stock, 1) > 0);
 
         });
+
+    }
+
+
+    fillBook(stock = stockOf(this.game.inventory)) {
+
+        if (!this.bookGrid) {
+            return;
+        }
+
+        const recipes = this.bookRecipes(stock);
 
 
         this.bookGrid.replaceChildren(
@@ -721,7 +726,9 @@ export class InventoryScreen {
     }
 
 
-    // Przepisy, na które brakuje składników - szare.
+    // Przepisy, na które brakuje składników - szare. Z filtrem
+    // "Tylko możliwe" przebudowujemy listę dopiero, gdy zmienił się
+    // zestaw widocznych przepisów (np. po zrobieniu pierwszych desek).
 
     refreshBook(stock = stockOf(this.game.inventory)) {
 
@@ -729,7 +736,28 @@ export class InventoryScreen {
             return;
         }
 
-        for (const entry of this.bookGrid.querySelectorAll('.inv-recipe')) {
+        const entries = [...this.bookGrid.querySelectorAll('.inv-recipe')];
+
+        if (this.book.craftable) {
+
+            const recipes = this.bookRecipes(stock);
+
+            if (recipes.length !== entries.length || recipes.some((recipe, i) => recipe.id !== entries[i].dataset.recipe)) {
+
+                const scroll = this.bookGrid.parentElement;
+                const scrollTop = scroll.scrollTop;
+
+                this.fillBook(stock);
+
+                scroll.scrollTop = scrollTop;
+
+                return;
+
+            }
+
+        }
+
+        for (const entry of entries) {
             entry.classList.toggle('missing', maxCrafts(getRecipe(entry.dataset.recipe), stock, 1) === 0);
         }
 

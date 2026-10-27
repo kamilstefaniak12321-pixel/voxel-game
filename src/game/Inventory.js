@@ -223,6 +223,20 @@ export class Inventory {
     }
 
 
+    // Sprawdza całą paczkę naraz: różne przedmioty konkurują o te same
+    // puste miejsca. Próba na kopii nie zmienia prawdziwych stosów.
+
+    canAddAll(items) {
+
+        const preview = new Inventory({
+            slots: this.slots.map((item) => item ? { ...item } : null)
+        });
+
+        return items.every(({ type, count }) => preview.add(type, count) === 0);
+
+    }
+
+
     // Dodaje bloki: najpierw do niepełnych stosów (pasek, potem reszta),
     // potem do pustych miejsc (też najpierw pasek). Zwraca, ile się nie
     // zmieściło. from, to - tylko te miejsca.

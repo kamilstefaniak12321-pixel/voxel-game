@@ -1927,8 +1927,8 @@ export class Game {
 
     // Zniszczenie wskazanego bloku. W przygodzie blok (albo to, co
     // z niego zostaje - np. trawa daje ziemię) trafia do ekwipunku;
-    // gdy nie ma na niego miejsca, blok zostaje. Roślina, która rosła
-    // na zniszczonym bloku, też trafia do ekwipunku.
+    // gdy nie mieści się cała paczka łupów (także owoce), blok zostaje.
+    // Roślina, która rosła na zniszczonym bloku, też trafia do ekwipunku.
 
     breakTarget(hit) {
 
@@ -1957,9 +1957,17 @@ export class Game {
 
         const { x, y, z, type } = hit.block;
 
-        const drop = getDropType(type);
+        const plantAbove = isPlantId(this.world.getBlockId(x, y + 1, z))
+            ? this.world.getBlock(x, y + 1, z)
+            : null;
 
-        if (drop && !this.inventory.canAdd(drop)) {
+        // Losujemy raz, przed usunięciem bloku. Osobne canAdd dla każdego
+        // łupu nie wystarczyłyby: dwa rodzaje mogłyby liczyć to samo miejsce.
+        const drops = this.breakDrops(type);
+        const plantDrops = plantAbove ? this.breakDrops(plantAbove) : [];
+        const tool = getTool(this.selectedBlock);
+
+        if (!this.inventory.canAddAll([...drops, ...plantDrops])) {
 
             this.onNotice?.('Ekwipunek pełny');
 
@@ -1968,63 +1976,61 @@ export class Game {
         }
 
 
-        const plantAbove = isPlantId(this.world.getBlockId(x, y + 1, z))
-            ? this.world.getBlock(x, y + 1, z)
-            : null;
-
-
         if (!this.breaker.breakBlock(hit)) {
             return false;
+        }
+
+        if (plantAbove && this.world.getBlock(x, y + 1, z) === null) {
+            drops.push(...plantDrops);
+        }
+
+        for (const { type: item, count } of drops) {
+            this.inventory.add(item, count);
         }
 
         this.playBlockSound('break', type, hit.block);
 
         this.debris.burst(type, x, y, z);
 
-        this.achieve('blockBroken', { type, mode: this.mode, tool: getTool(this.selectedBlock) });
-
-        if (drop) {
-            this.inventory.add(drop);
-        }
-
-        this.addHarvest(type);
-
-        this.addLoot(type);
-
-        if (plantAbove && this.world.getBlock(x, y + 1, z) === null) {
-
-            const plantDrop = getDropType(plantAbove);
-
-            if (plantDrop) {
-                this.inventory.add(plantDrop);
-            }
-
-            this.addHarvest(plantAbove);
-
-        }
+        this.achieve('blockBroken', { type, mode: this.mode, tool });
 
         return true;
 
     }
 
 
-    // Łupy z bloku (pole loot - np. sadzonka albo żołądź z liści):
-    // każdy z szansą podaną w BlockRegistry.js. Zwraca listę tego,
-    // co wypadło.
+    // Cała paczka ze zniszczonego bloku, bez zmieniania ekwipunku.
+    // Ten sam wynik służy do sprawdzenia miejsca i przyznania łupów.
 
-    addLoot(type) {
+    breakDrops(type) {
 
-        const found = [];
+        const drops = [];
+        const drop = getDropType(type);
+
+        if (drop) {
+            drops.push({ type: drop, count: 1 });
+        }
+
+        const harvest = getHarvest(type);
+
+        if (harvest) {
+
+            const [min, max] = harvest.count;
+            const count = min + Math.floor(Math.random() * (max - min + 1));
+
+            drops.push({ type: harvest.item, count });
+
+        }
 
         for (const [item, chance] of getLoot(type)) {
 
-            if (Math.random() < chance && this.inventory.add(item) === 0) {
-                found.push(item);
+            if (Math.random() < chance) {
+                drops.push({ type: item, count: 1 });
             }
 
         }
 
-        return found;
+        return drops;
 
     }
 

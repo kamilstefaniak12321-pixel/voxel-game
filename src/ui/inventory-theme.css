@@ -1,0 +1,26 @@
+/* Jasna baza ekwipunku. Motyw ładowany po tym pliku może nadpisać
+   wybrane zmienne na :root, bez zmiany układu ani logiki przedmiotów.
+   Kursor i podpowiedź są poza #inventory, dlatego kolory są globalne. */
+:root {
+    --inv-overlay: rgba(20, 24, 28, 0.48);
+    --inv-panel-bg: #f4f4f2;
+    --inv-surface-bg: #ffffff;
+    --inv-slot-bg: #e0e2de;
+    --inv-hover-bg: #edf0ec;
+    --inv-selected-bg: #ffffff;
+    --inv-border: #b8bdb5;
+    --inv-border-strong: #868e82;
+    --inv-text: #2c322c;
+    --inv-muted: #596158;
+    --inv-accent: #626c70;
+    --inv-shadow: rgba(20, 24, 20, 0.24);
+    --inv-highlight: rgba(255, 255, 255, 0.8);
+    --inv-positive: #316339;
+    --inv-negative: #a03535;
+    --inv-missing-bg: #e6e3e2;
+    --inv-tooltip-bg: #fafbf8;
+    --inv-tooltip-border: #868e82;
+    --inv-count-text: #ffffff;
+    --inv-count-shadow: #303630;
+    --inv-result-bg: #edf2e9;
+}

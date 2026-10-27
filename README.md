@@ -150,6 +150,12 @@ i wyszukiwaniem po polsku i po nazwie bloku, np. „ziem” albo „humus”)
 i *Ekwipunek*. W zakładce ekwipunku widać postać gracza - głowa patrzy
 za myszką - i **wytwarzanie** (niżej).
 
+Okno ma wspólną jasną ramkę: księgę przepisów po lewej, postać
+i wytwarzanie nad zapasami oraz pasek wyrównany z dziewięcioma
+kolumnami ekwipunku. Na węższym ekranie sekcje zmieniają ułożenie.
+Układ i paleta są oddzielone: `src/ui/inventory.css` oraz
+`src/ui/inventory-theme.css`. [Opis motywów ekwipunku](docs/ekwipunek-motywy.md).
+
 | W oknie ekwipunku | Akcja |
 |---|---|
 | klik | weź stos / połóż / zamień / dołóż do takiego samego |
@@ -183,9 +189,9 @@ blok od razu ma ikonkę), liczba w rogu to ilość w stosie.
 
 ### Wytwarzanie (crafting)
 
-![Ekwipunek z księgą przepisów i siatką wytwarzania](docs/wiki/wytwarzanie.jpg)
+![Wspólny panel ekwipunku z księgą przepisów i wytwarzaniem](docs/ekwipunek-wspolny-panel.png)
 
-W zakładce ekwipunku, obok miejsc, jest **siatka 2 x 2** i **wynik**
+W zakładce ekwipunku, nad przedmiotami, jest **siatka 2 x 2** i **wynik**
 ze strzałką - jak w Minecrafcie. Składniki kładzie się w siatce,
 a gdy pasują do przepisu, w wyniku pojawia się wyrób: klik bierze go
 pod kursor (składniki ubywają po jednej sztuce), Shift + klik
@@ -196,14 +202,14 @@ obojętne, gdzie leżą składniki. Po zamknięciu okna składniki z siatki
 wracają do ekwipunku (co się nie zmieści - czeka w siatce, także
 w zapisie świata).
 
-**Księga przepisów** - przycisk 📖 *Przepisy* obok siatki: wszystkie
+**Księga przepisów** - przycisk *Przepisy* w nagłówku: wszystkie
 przepisy z kategoriami, wyszukiwaniem i filtrem *Tylko możliwe*.
 Szare - brakuje składników. Klik na przepisie sam układa składniki
 z ekwipunku w siatce (kolejny klik - jeszcze jeden komplet, Shift -
 ile się da); gdy czegoś brakuje, siatka pokazuje przepis
 półprzezroczyście, a podpowiedź mówi, czego brakuje. Na wąskim
-ekranie (telefon) księga otwiera się w miejscu ekwipunku - pasek
-i siatka zostają.
+ekranie (telefon) księga znajduje się pod ekwipunkiem. Wszystkie miejsca
+pozostają dostępne, a zapasy i pasek przewijają się razem w poziomie.
 
 Co jest teraz (30 przepisów razem z drzewami z paczek, pełna lista z obrazkami:
 [`docs/wiki/przepisy.md`](docs/wiki/przepisy.md)):
@@ -966,6 +972,11 @@ z plikiem `theme.css` (kolory, czcionka, rozmiary) i teksturą tła
 3. Zmień kolory i rozmiary w `theme.css` - każda wartość ma opis.
 4. Dopisz go do `UI_THEMES` w `src/config.js` (nazwa folderu i nazwa
    widoczna w grze) - pojawi się w *Ustawienia → Motyw*.
+
+**Kolory ekwipunku:** wspólna biała i jasnoszara baza znajduje się
+w `src/ui/inventory-theme.css`. Motyw może nadpisać zmienne `--inv-*`
+na `:root`, zachowując ten sam układ i obsługę przedmiotów.
+Lista zmiennych i przykład: [ekwipunek i motywy](docs/ekwipunek-motywy.md).
 
 Inne rzeczy do zmiany:
 

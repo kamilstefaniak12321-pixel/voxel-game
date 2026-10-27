@@ -14,10 +14,12 @@ import { itemExists, currentType } from '../items/ItemRegistry.js';
 // je ze stosu. Tryb kreatywny: stawianie nic nie zużywa.
 //
 // Dane (`data`) to zwykły obiekt zapisywany razem ze światem
-// (worldInfo.inventory): { slots: [...], selected, craft: [...] }.
+// (worldInfo.inventory): { slots: [...], selected, craft: [...], cursor }.
 // craft - 4 miejsca siatki wytwarzania 2 x 2 (src/crafting/Crafting.js):
 // po zamknięciu okna wracają do ekwipunku, a co się nie zmieści -
 // czeka w siatce (i w zapisie), więc nic nie ginie.
+// cursor - stos pod kursorem też należy do zapisu: karta może zostać
+// zamknięta przy otwartym ekwipunku albo zabraknąć miejsca na odłożenie.
 // ------------------------------------------------------------
 
 export const STACK_SIZE = 64;
@@ -117,7 +119,21 @@ export class Inventory {
             }
         }
 
-        return new Inventory({ slots, selected, craft });
+        const inventory = new Inventory({ slots, selected, craft, cursor: cleanItem(saved?.cursor) });
+
+        // Po wczytaniu gracz wraca do gry z zamkniętym oknem: trzymany
+        // stos odkładamy od razu, a tylko nadmiar czeka pod kursorem.
+
+        if (inventory.cursor) {
+
+            const { type, count } = inventory.cursor;
+            const left = inventory.add(type, count);
+
+            inventory.cursor = left > 0 ? { type, count: left } : null;
+
+        }
+
+        return inventory;
 
     }
 
@@ -136,6 +152,20 @@ export class Inventory {
         this.data.craft ??= new Array(CRAFT_SLOTS).fill(null);
 
         return this.data.craft;
+
+    }
+
+
+    get cursor() {
+
+        return this.data.cursor ?? null;
+
+    }
+
+
+    set cursor(item) {
+
+        this.data.cursor = item && item.count > 0 ? item : null;
 
     }
 
@@ -389,6 +419,8 @@ export class Inventory {
         this.data.slots.fill(null);
 
         this.craft.fill(null);
+
+        this.cursor = null;
 
     }
 

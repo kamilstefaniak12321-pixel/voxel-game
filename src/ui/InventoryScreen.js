@@ -181,9 +181,6 @@ export class InventoryScreen {
         // jego składniki widać w pustej siatce na półprzezroczysto.
         this.ghost = null;
 
-        // Blok trzymany pod kursorem: { type, count } albo null.
-        this.cursor = null;
-
         // Miejsce pod myszką: { kind: 'slot' | 'craft', index } /
         // { kind: 'creative', type } / { kind: 'result' }.
         this.hover = null;
@@ -227,11 +224,28 @@ export class InventoryScreen {
     }
 
 
+    // Trzymany stos jest częścią ekwipunku, także podczas zapisu przy
+    // ukryciu / zamknięciu karty. Okno jedynie pokazuje ten sam stan.
+
+    get cursor() {
+
+        return this.game?.inventory.cursor ?? null;
+
+    }
+
+
+    set cursor(item) {
+
+        if (this.game) {
+            this.game.inventory.cursor = item;
+        }
+
+    }
+
+
     open(game) {
 
         this.game = game;
-
-        this.cursor = null;
 
         this.ghost = null;
 
@@ -257,23 +271,12 @@ export class InventoryScreen {
             return;
         }
 
-        if (this.cursor && this.game) {
-
-            const left = this.game.inventory.add(this.cursor.type, this.cursor.count);
-
-            // Nie ma miejsca - do siatki wytwarzania (czeka tam w zapisie).
-
-            if (left > 0) {
-                this.storeInGrid({ type: this.cursor.type, count: left });
-            }
-
-        }
+        this.returnCursor();
 
         if (this.game) {
             returnGrid(this.game.inventory);
         }
 
-        this.cursor = null;
         this.hover = null;
         this.ghost = null;
 
@@ -286,8 +289,30 @@ export class InventoryScreen {
     }
 
 
+    // Odkłada trzymany stos. Gdy pełne są ekwipunek i siatka, reszta
+    // zostaje pod kursorem (również w zapisie i po ponownym otwarciu).
+
+    returnCursor() {
+
+        const item = this.cursor;
+
+        if (!item) {
+            return;
+        }
+
+        let left = this.game.inventory.add(item.type, item.count);
+
+        if (left > 0) {
+            left = this.storeInGrid({ type: item.type, count: left });
+        }
+
+        this.cursor = left > 0 ? { type: item.type, count: left } : null;
+
+    }
+
+
     // Stos, którego nie ma gdzie odłożyć: pierwsze wolne (albo takie
-    // samo) miejsce siatki.
+    // samo) miejsce siatki. Zwraca, ile sztuk nadal się nie zmieściło.
 
     storeInGrid(item) {
 
@@ -297,7 +322,7 @@ export class InventoryScreen {
 
             if (!grid[i]) {
                 grid[i] = { ...item };
-                return;
+                return 0;
             }
 
             if (grid[i].type === item.type && grid[i].count < STACK_SIZE) {
@@ -307,6 +332,8 @@ export class InventoryScreen {
             }
 
         }
+
+        return item.count;
 
     }
 
@@ -960,18 +987,13 @@ export class InventoryScreen {
             if (!event.target.closest('.inv-panel, .inv-book') && this.cursor) {
 
                 if (this.game.mode !== 'creative') {
-
-                    const left = this.game.inventory.add(this.cursor.type, this.cursor.count);
-
-                    if (left > 0) {
-                        this.storeInGrid({ type: this.cursor.type, count: left });
-                    }
-
+                    this.returnCursor();
+                }
+                else {
+                    this.cursor = null;
                 }
 
                 playUi(this.game.mode === 'creative' ? 'item_trash' : 'item_place');
-
-                this.cursor = null;
 
                 this.refresh();
 

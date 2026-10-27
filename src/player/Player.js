@@ -911,7 +911,9 @@ getState() {
         z: this.pos.z,
 
         yaw: this.yaw,
-        pitch: this.pitch
+        pitch: this.pitch,
+
+        flying: this.flying
 
     };
 
@@ -942,6 +944,10 @@ setState(state) {
 
     this.yaw = state.yaw;
     this.pitch = state.pitch;
+
+    // Stare zapisy nie mają tego pola. Komenda /latanie działa też
+    // w przygodzie, więc stan lotu nie zależy od canFly.
+    this.flying = state.flying === true;
 
     this.vel.set(0, 0, 0);
 

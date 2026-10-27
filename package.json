@@ -8,6 +8,7 @@
     "main": "desktop/main.js",
     "scripts": {
         "start": "electron .",
+        "test": "node tools/sprawdz_ekwipunek.mjs && node tools/sprawdz_lupy.mjs && node tools/sprawdz_stan_gracza.mjs && node tools/sprawdz_przepisy.mjs",
         "dist": "electron-builder --win --publish never",
         "android:www": "node tools/android-www.mjs",
         "android:sync": "node tools/android-www.mjs && npx cap sync android"

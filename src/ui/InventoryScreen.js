@@ -74,10 +74,6 @@ const HELP_TOUCH = {
 // Księga przepisów otwarta / zamknięta - pamiętane w przeglądarce.
 const BOOK_KEY = 'voxel-game-recipe-book';
 
-// Węższy ekran (telefon): księga zamiast 27 miejsc ekwipunku, w tym
-// samym oknie (pasek bloków i siatka zostają), bez wyszukiwania.
-const COMPACT_WIDTH = 1150;
-
 
 function el(tag, className, text) {
 
@@ -202,17 +198,22 @@ export class InventoryScreen {
         this.root.addEventListener('contextmenu', (event) => event.preventDefault());
         this.root.addEventListener('mousemove', (event) => this.onMouseMove(event));
 
-        window.addEventListener('keydown', (event) => this.onKeyDown(event));
-
-        // Obrót telefonu / zmiana okna przy otwartej księdze - inny układ.
-
-        window.addEventListener('resize', () => {
-
-            if (this.isOpen && this.tab === 'inventory' && this.book.open && (innerWidth < COMPACT_WIDTH) !== this.compact) {
-                this.build();
+        // Klawiatura uruchamia przycisk przez click, bez mousedown.
+        this.root.addEventListener('click', (event) => {
+            if (event.detail === 0 && event.target.closest('.inv-close')) {
+                this.handlers.close(true);
             }
-
         });
+
+        const clearHover = () => {
+            this.hover = null;
+            this.tooltip.hidden = true;
+        };
+
+        this.root.addEventListener('scroll', clearHover, true);
+        window.addEventListener('resize', clearHover);
+
+        window.addEventListener('keydown', (event) => this.onKeyDown(event));
 
     }
 
@@ -347,10 +348,39 @@ export class InventoryScreen {
 
         const creative = game.mode === 'creative';
 
+        // Wskazanie nie może odwoływać się do slotu ze starego układu
+        // (np. po zmianie zakładki i naciśnięciu klawisza 1-9).
+        this.hover = null;
+        this.tooltip.hidden = true;
+        this.bookGrid = null;
+
         const panel = el('div', 'inv-panel');
+        panel.setAttribute('role', 'dialog');
+        panel.setAttribute('aria-modal', 'true');
+        panel.setAttribute('aria-label', 'Ekwipunek');
+
+        const header = el('div', 'inv-header');
+        const actions = el('div', 'inv-header-actions');
+
+        if (this.tab === 'inventory') {
+            const toggle = el('button', `inv-book-toggle${this.book.open ? ' selected' : ''}`, 'Przepisy');
+            toggle.type = 'button';
+            toggle.title = 'Pokaż lub schowaj księgę przepisów';
+            toggle.setAttribute('aria-pressed', String(this.book.open));
+            actions.append(toggle);
+        }
+
+        const close = el('button', 'inv-close', '✕');
+        close.type = 'button';
+        close.title = 'Zamknij ekwipunek';
+        close.setAttribute('aria-label', 'Zamknij ekwipunek');
+        actions.append(close);
+
+        header.append(el('h2', 'inv-title', 'Ekwipunek'), actions);
+        panel.append(header);
 
 
-        // Nagłówek: zakładki (kreatywny) albo tytuł.
+        // Zakładki trybu kreatywnego; nagłówek i rama są wspólne.
 
         if (creative) {
 
@@ -370,21 +400,22 @@ export class InventoryScreen {
             panel.append(tabs);
 
         }
-        else {
+        const workspace = el('div', 'inv-workspace');
+        const main = el('div', 'inv-main');
+        const storageScroll = el('div', 'inv-storage-scroll');
+        const storage = el('div', 'inv-storage');
 
-            panel.append(el('div', 'inv-title', 'Ekwipunek'));
-
-        }
-
-
-        this.bookElement = null;
+        storageScroll.append(storage);
 
         if (this.tab === 'blocks') {
+
+            panel.classList.add('inv-creative');
 
             const search = el('input', 'inv-search');
 
             search.type = 'text';
             search.placeholder = 'Szukaj bloku...';
+            search.setAttribute('aria-label', 'Szukaj bloku');
             search.value = this.search;
 
             search.addEventListener('input', () => {
@@ -399,13 +430,14 @@ export class InventoryScreen {
 
             this.creativeChips = this.chipRow('creative', this.category);
 
-            this.creativeGrid = el('div', 'inv-grid');
+            this.creativeGrid = el('div', 'inv-grid inv-creative-grid');
 
-            const scroll = el('div', 'inv-scroll');
+            const scroll = el('div', 'inv-scroll inv-creative-scroll');
 
             scroll.append(this.creativeGrid);
 
-            panel.append(this.creativeChips, search, scroll);
+            main.append(this.creativeChips, search);
+            storage.append(scroll);
 
             this.fillCreative();
 
@@ -416,35 +448,22 @@ export class InventoryScreen {
 
             panel.classList.add('inv-crafting');
 
-            const row = el('div', 'inv-row');
+            const top = el('div', 'inv-top');
+            const preview = el('div', 'inv-character');
+            preview.append(this.previewCanvas);
+            top.append(preview, this.craftElement());
+            main.append(top);
 
-            this.compact = innerWidth < COMPACT_WIDTH;
-
-            if (this.book.open && this.compact) {
-
-                // Telefon: księga w miejscu ekwipunku (zamknięcie księgi -
-                // ekwipunek wraca).
-
-                row.append(this.bookPanel(true), this.craftElement());
-
+            const slots = el('div', 'inv-grid inv-items');
+            for (let i = HOTBAR_SIZE; i < SLOT_COUNT; i++) {
+                slots.append(this.slotElement(i));
             }
-            else {
+            storage.append(el('div', 'inv-section-label', 'Przedmioty'), slots);
 
-                const main = el('div', 'inv-grid');
-
-                for (let i = HOTBAR_SIZE; i < SLOT_COUNT; i++) {
-                    main.append(this.slotElement(i));
-                }
-
-                row.append(this.previewCanvas, main, this.craftElement());
-
-                if (this.book.open) {
-                    this.bookElement = this.bookPanel(false);
-                }
-
+            if (this.book.open) {
+                panel.classList.add('has-book');
+                workspace.append(this.bookPanel());
             }
-
-            panel.append(row);
 
         }
 
@@ -472,10 +491,12 @@ export class InventoryScreen {
 
         }
 
-        panel.append(bottom, el('p', 'inv-help', (game.touchMode ? HELP_TOUCH : HELP)[this.tab]));
+        storage.append(bottom);
+        main.append(storageScroll);
+        workspace.append(main);
+        panel.append(workspace, el('p', 'inv-help inv-footer', (game.touchMode ? HELP_TOUCH : HELP)[this.tab]));
 
-
-        this.root.replaceChildren(...(this.bookElement ? [this.bookElement] : []), panel);
+        this.root.replaceChildren(panel);
 
         this.refresh();
 
@@ -498,7 +519,7 @@ export class InventoryScreen {
     }
 
 
-    // Wytwarzanie: siatka 2 x 2 -> wynik, pod spodem przycisk księgi.
+    // Wytwarzanie: siatka 2 x 2 -> wynik, nad miejscami ekwipunku.
 
     craftElement() {
 
@@ -521,12 +542,7 @@ export class InventoryScreen {
 
         area.append(grid, el('span', 'inv-craft-arrow', '➜'), result);
 
-        const toggle = el('button', `inv-book-toggle${this.book.open ? ' selected' : ''}`, '📖 Przepisy');
-
-        toggle.type = 'button';
-        toggle.title = 'Księga przepisów';
-
-        box.append(area, toggle);
+        box.append(area);
 
         return box;
 
@@ -622,12 +638,12 @@ export class InventoryScreen {
     // Księga przepisów
     // --------------------------------------------------------
 
-    // compact - wąski ekran: wszystko w jednym rzędzie nad przepisami,
-    // bez wyszukiwania i opisu.
+    // Księga jest regionem wspólnego panelu. Na małym ekranie CSS
+    // przenosi ją pod ekwipunek, zachowując wyszukiwanie i wszystkie pola.
 
-    bookPanel(compact) {
+    bookPanel() {
 
-        const book = el('div', `inv-book${compact ? ' compact' : ''}`);
+        const book = el('div', 'inv-book');
 
         const head = el('div', 'inv-book-head');
 
@@ -635,6 +651,7 @@ export class InventoryScreen {
 
         close.type = 'button';
         close.title = 'Zamknij księgę';
+        close.setAttribute('aria-label', 'Zamknij księgę przepisów');
 
         head.append(el('span', 'inv-title', 'Przepisy'), close);
 
@@ -643,6 +660,7 @@ export class InventoryScreen {
 
         search.type = 'text';
         search.placeholder = 'Szukaj przepisu...';
+        search.setAttribute('aria-label', 'Szukaj przepisu');
         search.value = this.book.search;
 
         search.addEventListener('input', () => {
@@ -658,6 +676,7 @@ export class InventoryScreen {
 
         filter.type = 'button';
         filter.title = 'Pokaż tylko przepisy, na które masz składniki';
+        filter.setAttribute('aria-pressed', String(this.book.craftable));
 
 
         this.bookGrid = el('div', 'inv-book-grid');
@@ -667,27 +686,14 @@ export class InventoryScreen {
         scroll.append(this.bookGrid);
 
 
-        if (compact) {
-
-            const chips = this.chipRow('book', this.book.category);
-
-            chips.append(filter, close);
-
-            book.append(chips, scroll);
-
-        }
-        else {
-
-            book.append(
-                head,
-                this.chipRow('book', this.book.category),
-                search,
-                filter,
-                scroll,
-                el('p', 'inv-help', 'Klik - ułóż w siatce (jeszcze raz - więcej) | Shift + klik - ile się da | szare - brak składników')
-            );
-
-        }
+        book.append(
+            head,
+            search,
+            this.chipRow('book', this.book.category),
+            filter,
+            scroll,
+            el('p', 'inv-help', 'Klik - ułóż w siatce | Shift + klik - ile się da | szare - brak składników')
+        );
 
         this.fillBook();
 
@@ -1047,6 +1053,11 @@ export class InventoryScreen {
 
     onButton(target) {
 
+        if (target.closest('.inv-close')) {
+            this.handlers.close(true);
+            return true;
+        }
+
         const chip = target.closest('.inv-chip[data-where]');
 
         if (chip) {
@@ -1084,6 +1095,7 @@ export class InventoryScreen {
             this.book.craftable = !this.book.craftable;
 
             target.closest('.inv-book-filter').classList.toggle('selected', this.book.craftable);
+            target.closest('.inv-book-filter').setAttribute('aria-pressed', String(this.book.craftable));
 
             playUi('ui_click');
 
@@ -1600,7 +1612,19 @@ export class InventoryScreen {
 
         const digit = /^Digit([1-9])$/.exec(event.code);
 
-        if (!digit || !this.hover || this.hover.kind === 'result') {
+        if (!digit) {
+            return;
+        }
+
+        // Przewinięcie lub zmiana szerokości przesuwa sloty bez ruchu
+        // myszy. Skrót działa na miejscu aktualnie pod wskaźnikiem.
+        this.updateTooltip({
+            target: document.elementFromPoint(this.mouse.x, this.mouse.y) ?? this.root,
+            clientX: this.mouse.x,
+            clientY: this.mouse.y
+        });
+
+        if (!this.hover || this.hover.kind === 'result') {
             return;
         }
 

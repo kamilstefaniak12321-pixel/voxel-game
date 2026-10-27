@@ -11,6 +11,20 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 0.22.0 - Wspólny panel ekwipunku (2026-10-27)
+
+### Zmiany
+- Biały i jasnoszary ekwipunek z jedną wspólną ramką dla zapasów,
+  postaci, wytwarzania i księgi przepisów.
+- Pasek dziewięciu przedmiotów wyrównany z kolumnami zapasów; postać
+  i siatka wytwarzania znajdują się nad przedmiotami.
+- Układ dostosowany do szerokości i wysokości okna, z przewijaniem
+  zamiast zmniejszania miejsc do nieczytelnych rozmiarów.
+- Osobna paleta kolorów ekwipunku i podpowiedzi, którą przyszłe motywy
+  mogą nadpisywać bez zmiany układu ani zasad przenoszenia przedmiotów.
+
+---
+
 ## 0.21.1 - Poprawki ekwipunku i lotu (2026-10-27)
 
 Poprawki z pull requesta #42 oraz wcześniejsze poprawki zbioru owoców

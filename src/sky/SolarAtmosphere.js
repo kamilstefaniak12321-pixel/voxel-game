@@ -2,6 +2,8 @@
 // Wartości są względną energią liniową, nie luksami. To przybliżenie
 // do porównań w grze, nie pełny transport światła w atmosferze.
 
+import { sampleSolarDisc } from './SolarDisc.js';
+
 const clamp = (x, a, b) => Math.max(a, Math.min(b, x));
 const smooth = (a, b, x) => {
     const t = clamp((x - a) / (b - a), 0, 1);
@@ -24,14 +26,16 @@ export function relativeAirMass(sunHeight) {
 export function sampleSolarAtmosphere(sunHeight, eclipse = 0) {
     const height = clamp(Number.isFinite(sunHeight) ? sunHeight : -1, -1, 1);
     const covered = clamp(Number.isFinite(eclipse) ? eclipse : 0, 0, 1);
-    const airMass = relativeAirMass(height);
+    const disc = sampleSolarDisc(height);
+    const airMass = relativeAirMass(disc.lightHeight);
     const altitude = Math.asin(height) * 180 / Math.PI;
 
     // Krótkie fale znikają z wiązki szybciej. Tłumienie wykładnicze
     // daje cieplejsze i słabsze światło nisko nad horyzontem.
     const transmission = [0.055, 0.12, 0.28].map(tau => Math.exp(-tau * airMass));
-    const disc = smooth(0, 0.0093, height);
-    const direct = transmission.map(t => 2.4 * t * disc * (1 - covered));
+    // Energia widocznego wycinka tarczy; gdy jej środek jest już pod
+    // horyzontem, górny fragment nadal świeci znad horyzontu.
+    const direct = transmission.map(t => 2.4 * t * disc.visibility * (1 - covered));
 
     // Rozproszone światło trwa również przed wschodem / po zachodzie.
     // Osobna, empiryczna krzywa zmierzchu; nie suma fotonów z direct.
@@ -43,7 +47,7 @@ export function sampleSolarAtmosphere(sunHeight, eclipse = 0) {
 
     // Uśredniony grunt (albedo 0.18), bez odczytu sąsiednich bloków.
     // Lokalne kolorowe odbicia pozostają osobnym eksperymentem BounceLight.
-    const ground = sky.map((c, i) => 0.18 * (c + direct[i] * Math.max(height, 0)));
+    const ground = sky.map((c, i) => 0.18 * (c + direct[i] * disc.lightHeight));
 
-    return { airMass, altitude, transmission, direct, sky, ground };
+    return { airMass, altitude, transmission, direct, sky, ground, discVisibility: disc.visibility, lightHeight: disc.lightHeight };
 }

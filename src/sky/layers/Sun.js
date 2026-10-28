@@ -35,12 +35,15 @@ export class Sun {
 
         this.material = new THREE.ShaderMaterial({
 
+            extensions: { derivatives: true },
+
             uniforms: {
                 uColor: { value: new THREE.Color() },
                 uGlow: { value: 1 },
                 uCorona: { value: 0 },
                 uCoronaColor: { value: CORONA_COLOR },
-                uHorizonDip: { value: 0 }
+                uHorizonDip: { value: 0 },
+                uAtmosphere: { value: 0 }
             },
 
             vertexShader: /* glsl */ `
@@ -60,6 +63,7 @@ export class Sun {
                 uniform float uCorona;
                 uniform vec3 uCoronaColor;
                 uniform float uHorizonDip;
+                uniform float uAtmosphere;
 
                 varying vec2 vUv;
                 varying vec3 vWorld;
@@ -72,7 +76,10 @@ export class Sun {
 
                     float r = length(p) * ${GLOW_SCALE.toFixed(1)};
 
-                    float disc = 1.0 - smoothstep(0.92, 1.0, r);
+                    // Atmosfera liczy pole tej samej tarczy (SolarDisc).
+                    // Jej brzeg wygładzamy tylko na szerokość piksela.
+                    float discEdge = uAtmosphere > 0.5 ? max(fwidth(r), 0.0001) : 0.08;
+                    float disc = 1.0 - smoothstep(1.0 - discEdge, 1.0, r);
 
                     float outside = 1.0 - smoothstep(1.0, ${GLOW_SCALE.toFixed(1)}, r);
 
@@ -92,7 +99,10 @@ export class Sun {
                     // Część pod horyzontem jest schowana (z dalekim terenem
                     // i z wysoka - pod jego brzegiem, patrz Sky.horizonDip).
 
-                    float aboveHorizon = smoothstep(uHorizonDip - 0.003, uHorizonDip + 0.003, normalize(vWorld).y);
+                    float height = normalize(vWorld).y;
+                    float horizon = uAtmosphere > 0.5 ? 0.0 : uHorizonDip;
+                    float horizonEdge = uAtmosphere > 0.5 ? max(fwidth(height), 0.00001) : 0.003;
+                    float aboveHorizon = smoothstep(horizon - horizonEdge, horizon + horizonEdge, height);
 
                     vec3 color = uColor * (disc * 1.6 + glow) + uCoronaColor * corona * 0.9;
 
@@ -139,6 +149,7 @@ export class Sun {
         this.material.uniforms.uGlow.value = 1 - state.eclipse;
 
         this.material.uniforms.uHorizonDip.value = state.horizonDip;
+        this.material.uniforms.uAtmosphere.value = state.solarAtmosphere ? 1 : 0;
         this.material.uniforms.uCorona.value = state.corona;
 
 

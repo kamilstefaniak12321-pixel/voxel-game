@@ -17,6 +17,10 @@ import * as THREE from 'three';
 
 export const skyUniforms = {
 
+    // Eksperyment: rzeczywiste zero w danych światła bloków; klasyczny
+    // model zachowuje dawną minimalną jasność. Bez przebudowy chunków.
+    uAtmosphericLight: { value: 0 },
+
     // Kolor nieba w zenicie (nad głową) i przy horyzoncie.
 
     uSkyZenith: { value: new THREE.Color() },

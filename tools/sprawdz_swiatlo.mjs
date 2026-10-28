@@ -24,6 +24,8 @@ registerHooks({
 });
 
 const { sampleSolarAtmosphere, relativeAirMass, usesSolarAtmosphere } = await import('../src/sky/SolarAtmosphere.js');
+const { sampleNightIllumination } = await import('../src/sky/NightIllumination.js');
+const { skyUniforms } = await import('../src/sky/skyShader.js');
 const { createGenerator, TERRAIN_TYPES } = await import('../src/world/terrain/generators.js');
 const { Chunk } = await import('../src/world/Chunk.js');
 const { getBlockId, isSolidId } = await import('../src/blocks/BlockRegistry.js');
@@ -44,7 +46,8 @@ const noon = sampleSolarAtmosphere(1);
 const low = sampleSolarAtmosphere(Math.sin(3 * Math.PI / 180));
 assert.ok(noon.direct.every((c, i) => c > low.direct[i]));
 assert.ok(low.direct[0] / low.direct[2] > noon.direct[0] / noon.direct[2]);
-assert.deepEqual(sampleSolarAtmosphere(-0.04).direct, [0, 0, 0]);
+assert.deepEqual(sampleSolarAtmosphere(-0.08).direct, [0, 0, 0]);
+assert.ok(sampleSolarAtmosphere(-0.04).direct[0] > 0, 'Widoczny fragment tarczy nadal świeci');
 assert.ok(sampleSolarAtmosphere(-0.04).sky.every(c => c > 0));
 assert.deepEqual(sampleSolarAtmosphere(-1).sky, [0, 0, 0]);
 assert.deepEqual(sampleSolarAtmosphere(1, 1).direct, [0, 0, 0]);
@@ -55,11 +58,14 @@ for (const h of [-Infinity, NaN, Infinity, ...Array.from({ length: 2001 }, (_, i
     assert.ok([...s.direct, ...s.sky, ...s.ground].every(c => c >= 0));
 }
 // Nie ma skoku energii na horyzoncie ani na końcach krzywej zmierzchu.
-for (const altitude of [-12, 0, 2, 25]) {
+for (const altitude of [-12, -6, -3.5, 0, 2, 3.5, 25]) {
     const a = sampleSolarAtmosphere(Math.sin((altitude - 1e-5) * Math.PI / 180));
     const b = sampleSolarAtmosphere(Math.sin((altitude + 1e-5) * Math.PI / 180));
     a.sky.forEach((v, i) => near(v, b.sky[i], 1e-5));
     a.direct.forEach((v, i) => near(v, b.direct[i], 1e-5));
+    const na = sampleNightIllumination(Math.sin((altitude - 1e-5) * Math.PI / 180));
+    const nb = sampleNightIllumination(Math.sin((altitude + 1e-5) * Math.PI / 180));
+    na.sky.forEach((v, i) => near(v, nb.sky[i], 1e-5));
 }
 
 // Stare światy i nieznany typ pozostają klasyczne przy domyślnych ustawieniach.
@@ -96,6 +102,7 @@ for (const time of [0.1, 0.24, 0.26, 0.5, 0.74, 0.76, 0.9]) {
     sky.update(time, 0);
     assert.equal(lights.ambient.intensity, 0);
     assert.equal(lights.diffuse.intensity, 1);
+    assert.equal(skyUniforms.uAtmosphericLight.value, 1);
     const direct = lights.sun.intensity;
     sky.applyShadowContrast(1);
     assert.equal(lights.sun.intensity, direct);
@@ -104,7 +111,56 @@ for (const time of [0.1, 0.24, 0.26, 0.5, 0.74, 0.76, 0.9]) {
     sky.applyShadowContrast(1);
     assert.deepEqual(snapshot(), before);
     assert.equal(lights.diffuse.intensity, 0);
+    assert.equal(skyUniforms.uAtmosphericLight.value, 0);
 }
+
+// Rzeczywisty adapter Sky przy kontrolowanym położeniu Słońca/Księżyca.
+// Klasyczna tabela zmierzchu nie może dokładać drugiej energii nieba.
+const realCelestial = sky.celestial;
+const fixtureSky = (degrees, moonHeight = -1, illumination = 1) => {
+    const angle = degrees * Math.PI / 180;
+    sky.celestial = {
+        update() {}, eclipse: 0, sunHeight: Math.sin(angle), moonHeight,
+        moonIllumination: illumination,
+        sunDirection: new THREE.Vector3(Math.cos(angle), Math.sin(angle), 0),
+        moonDirection: new THREE.Vector3(Math.sqrt(1 - moonHeight ** 2), moonHeight, 0)
+    };
+    sky.solarAtmosphere = true;
+    sky.update(0, 0);
+    return sky.atmosphere;
+};
+for (const degrees of [2, 0, -3, -5, -6]) {
+    const actual = fixtureSky(degrees);
+    const solar = sampleSolarAtmosphere(sky.celestial.sunHeight);
+    assert.deepEqual(actual.sky, solar.sky);
+    assert.deepEqual(actual.ground, solar.ground);
+    const before = [...actual.sky];
+    sky.variant.sunsetColor = new THREE.Color('#ff0000');
+    sky.update(0, 0);
+    assert.deepEqual(sky.atmosphere.sky, before, 'Artystyczna łuna nie zmienia energii zmierzchu');
+    sky.variant.sunsetColor = null;
+    sky.update(0, 0);
+    assert.deepEqual(sky.atmosphere.sky, before, 'Kolejne klatki nie akumulują światła');
+}
+const moonless = [...fixtureSky(-15).sky];
+const moonlit = fixtureSky(-15, 1);
+moonlit.sky.forEach((v, i) => near(v - moonless[i], sky.state.moonAmbientLight.toArray()[i]));
+assert.ok(moonlit.sky.some((v, i) => v > moonless[i]));
+assert.deepEqual(fixtureSky(-15, 1, 0).sky, moonless, 'Nów nie dodaje poświaty');
+fixtureSky(-2);
+assert.ok(sky.celestial.sunDirection.y < 0 && sky.sunLightDirection.y > 0);
+near(sky.sunLightDirection.length(), 1);
+near(lights.sun.position.clone().normalize().y, sky.sunLightDirection.y);
+const direction = sky.sunLightDirection.toArray();
+const energy = [...sky.atmosphere.direct];
+sky.horizonDip = -0.1;
+sky.update(0, 0);
+assert.deepEqual(sky.sunLightDirection.toArray(), direction);
+assert.deepEqual(sky.atmosphere.direct, energy, 'Horyzont kamery nie steruje energią powierzchni');
+sky.solarAtmosphere = false;
+sky.update(0, 0);
+assert.deepEqual(sky.sunLightDirection.toArray(), sky.celestial.sunDirection.toArray());
+sky.celestial = realCelestial;
 sky.dispose();
 assert.equal(lights.diffuse.parent, null);
 
@@ -118,6 +174,7 @@ const shadowSky = (degrees, atmospheric = true, eclipse = 0) => {
     const atmosphere = sampleSolarAtmosphere(Math.sin(angle), eclipse);
     return {
         atmosphere: atmospheric ? atmosphere : null,
+        sunLightDirection: new THREE.Vector3(Math.sqrt(1 - atmosphere.lightHeight ** 2), atmosphere.lightHeight, 0),
         state: { sunLightIntensity: Math.max(...atmosphere.direct), moonLightIntensity: 0 },
         celestial: {
             sunDirection: new THREE.Vector3(Math.cos(angle), Math.sin(angle), 0),
@@ -144,7 +201,8 @@ const classicLow = shadowAt(3, false);
 assert.ok(classicLow.direct > 0.49 && classicLow.direct < 0.5);
 near(shadowAt(0.5, false).direct, 0);
 for (const degrees of [-0.01, 0, 0.01]) near(shadowAt(degrees).ambient, 0);
-for (const degrees of [-5, -0.01, 0]) {
+for (const degrees of [-0.01, -2, -3]) near(shadowAt(degrees).direct, 1);
+for (const degrees of [-5, -3.5]) {
     near(shadowAt(degrees).direct, 0);
     assert.equal(shadows.needsDraw, false);
 }

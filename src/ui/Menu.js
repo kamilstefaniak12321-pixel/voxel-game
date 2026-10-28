@@ -88,6 +88,7 @@ const SETTINGS_TABS = {
         'fpsLimit',
         'ambientOcclusion',
         'shadows',
+        'lightingModel',
         'lightShafts',
         'bounceLight',
         'fancyLeaves',

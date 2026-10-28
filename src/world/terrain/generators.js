@@ -1,5 +1,6 @@
 import { TerrainGenerator } from '../TerrainGenerator.js';
 import { RealisticGenerator } from './RealisticGenerator.js';
+import { LightLabGenerator } from './LightLabGenerator.js';
 
 // ------------------------------------------------------------
 // TYPY TERENU (GENERATORY)
@@ -39,6 +40,11 @@ export const TERRAIN_TYPES = {
     classic: {
         name: 'Klasyczny',
         create: (seed) => new TerrainGenerator(seed)
+    },
+
+    'light-lab': {
+        name: 'Laboratorium światła (eksperymentalne)',
+        create: (seed) => new LightLabGenerator(seed)
     }
 
 };

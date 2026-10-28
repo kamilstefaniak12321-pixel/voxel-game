@@ -49,6 +49,7 @@ export const SETTINGS_DEFAULTS = {
     fpsLimit: 0,                                   // klatki na sekundę (0 = bez limitu)
     ambientOcclusion: Math.round(AMBIENT_OCCLUSION * 100),   // cienie w kątach, procent
     shadows: 3,                                    // cienie słońca: 0 - wył., 1 - zwykłe, 2 - dokładne, 3 - dalekie
+    lightingModel: 'world',                         // tylko laboratorium domyślnie używa eksperymentu
     lightShafts: true,                             // promienie światła w powietrzu
     bounceLight: false,                            // światło odbite od ścian (eksperymentalne - na razie wyłączone)
     fancyLeaves: true,                             // liście z prześwitami (false = szybkie, pełne)
@@ -115,6 +116,7 @@ export const SETTINGS_CHOICES = {
 
     fpsLimit: [0, 30, 60, 120, 144],
     shadows: [0, 1, 2, 3],
+    lightingModel: ['world', 'classic', 'atmosphere'],
     farDetail: [1, 2, 3],
     jointStyle: ['smooth', 'blocks']
 

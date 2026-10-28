@@ -44,7 +44,8 @@ export const TEXTS = {
     terrainType: (name) => `Teren: ${name}`,
     terrainNotes: {
         realistic: 'Morza, niziny, wyżyny i góry. W budowie - kolejne aktualizacje zmienią ten teren (Twoje budowle zostaną).',
-        classic: 'Pierwszy generator gry: wzgórza i góry, bez morza. Nie będzie się już zmieniał.'
+        classic: 'Pierwszy generator gry: wzgórza i góry, bez morza. Nie będzie się już zmieniał.',
+        'light-lab': 'Stały plac testowy: materiały, słupy, liście, basen i pokój z otworem w dachu. Przy domyślnych ustawieniach używa eksperymentalnego światła atmosferycznego. Polecany tryb kreatywny. Seed nie zmienia stanowisk.'
     },
     gameMode: (name) => `Tryb gry: ${name}`,
     gameModes: {
@@ -129,6 +130,8 @@ export const TEXTS = {
     fpsLimit: (value) => `Limit FPS: ${value > 0 ? value : 'Bez limitu'}`,
     ambientOcclusion: (value) => `Cienie w kątach: ${value > 0 ? `${value}%` : 'Wył.'}`,
     shadows: (value) => `Cienie słońca: ${['Wył.', 'Zwykłe', 'Dokładne', 'Dalekie'][value] ?? 'Wył.'}`,
+    lightingModel: (value) => `Model światła: ${{ world: 'Według świata', classic: 'Klasyczny', atmosphere: 'Atmosferyczny (eksperymentalny)' }[value] ?? 'Według świata'}`,
+    lightLabHint: 'Laboratorium: /swiatlo model atmosfera lub klasyczne — porównanie; /czas predkosc 0 — zatrzymaj czas; /czas ustaw 06:15, 12:00 lub 17:45. Stanowiska są na północ od startu, tarasy LOD na wschodzie. /tryb kreatywny — latanie.',
     lightShafts: (on) => `Promienie światła: ${on ? 'Wł.' : 'Wył.'}`,
     bounceLight: (on) => `Światło odbite (eksperymentalne): ${on ? 'Wł.' : 'Wył.'}`,
     fancyLeaves: (on) => `Liście drzew: ${on ? 'Ładne' : 'Szybkie'}`,

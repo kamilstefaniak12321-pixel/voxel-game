@@ -744,6 +744,10 @@ nie da się policzyć światła i cieni na jego krawędziach).
 
 ## Oświetlenie
 
+**Eksperyment:** nowy teren „Laboratorium światła” i przełączany model
+atmosferyczny w Ustawienia → Obraz → Model światła. Instrukcja porównań,
+stanowiska i ograniczenia: [laboratorium światła](docs/eksperyment-swiatla.md).
+
 Światło działa jak w Minecrafcie - każde miejsce ma poziom od 0
 (ciemno) do 15:
 

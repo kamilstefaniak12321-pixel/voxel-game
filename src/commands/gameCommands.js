@@ -1441,6 +1441,7 @@ const SETTING_WORDS = {
     'cienie-slonca': 'shadows',
     promienie: 'lightShafts',
     'swiatlo-odbite': 'bounceLight',
+    'model-swiatla': 'lightingModel',
     odbicia: 'bounceLight',
     liscie: 'fancyLeaves',
     'dynamiczne-swiatlo': 'dynamicLight',
@@ -3593,10 +3594,18 @@ export const GAME_COMMANDS = [
     {
         name: 'swiatlo',
         aliases: ['light'],
-        usage: '/swiatlo | /swiatlo dynamiczne <wl | wyl> | /swiatlo odbite <wl | wyl>',
-        description: 'Światło przy głowie i wskazanym bloku (także odbite od ścian); włączanie dynamicznego i odbitego światła.',
+        usage: '/swiatlo | /swiatlo model <swiat | klasyczne | atmosfera> | /swiatlo dynamiczne <wl | wyl> | /swiatlo odbite <wl | wyl>',
+        description: 'Pomiar światła; model klasyczny lub eksperymentalna atmosfera; światło dynamiczne i odbite.',
 
         run(args, { game, world }) {
+
+            if (simplify(args[0] ?? '') === 'model') {
+                const choices = { swiat: 'world', klasyczne: 'classic', atmosfera: 'atmosphere' };
+                const choice = choices[simplify(args[1] ?? '')];
+                if (args.length !== 2 || !choice) throw usageError(this);
+                game.settings.set('lightingModel', choice);
+                return `${TEXTS.lightingModel(choice)}. Ustawienie dotyczy wszystkich światów; „Według świata” włącza eksperyment tylko w laboratorium.`;
+            }
 
             if (args[0] !== undefined && simplify(args[0]) === 'odbite') {
 
@@ -3638,6 +3647,14 @@ export const GAME_COMMANDS = [
                 Math.floor(camera.x), Math.floor(camera.y), Math.floor(camera.z)
             ));
 
+            text += ` | model: ${game.sky.solarAtmosphere ? 'atmosfera (eksperyment)' : 'klasyczny'}`;
+            if (game.sky.atmosphere) {
+                const sample = game.sky.atmosphere;
+                text += ` | wysokość Słońca: ${sample.altitude.toFixed(1)}°` +
+                    ` | droga w atmosferze: x${sample.airMass.toFixed(1)}` +
+                    ` | bezpośrednie RGB: ${sample.direct.map(v => v.toFixed(2)).join(' / ')}`;
+            }
+
             // Światło odbite (BounceLight.js), bez koloru słońca.
 
             if (game.bounce?.enabled) {
@@ -3663,6 +3680,13 @@ export const GAME_COMMANDS = [
 
             return text;
 
+        },
+
+        complete(args) {
+            if (args.length === 1) return ['model', 'dynamiczne', 'odbite'];
+            if (args.length === 2 && simplify(args[0]) === 'model') return ['swiat', 'klasyczne', 'atmosfera'];
+            if (args.length === 2) return ['wl', 'wyl'];
+            return [];
         }
     },
 

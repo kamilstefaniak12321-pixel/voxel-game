@@ -13,6 +13,11 @@ registerHooks({
             const name = url.split('/').pop().replace('.js', '');
             return { format: 'module', shortCircuit: true, source: `export class ${name} {}` };
         }
+        if (url.endsWith('/src/rendering/TextureAtlas.js')) {
+            // Kontroler cieni działa naprawdę; tylko ładowanie obrazu
+            // atlasu wymaga przeglądarki (sprawdzanej osobno w WebGL).
+            return { format: 'module', shortCircuit: true, source: 'export const blockAtlasTexture = null;' };
+        }
         return next(url, url.endsWith('.js') && (url.includes('/src/') || url.includes('/lib/three/'))
             ? { ...context, format: 'module' } : context);
     }
@@ -28,6 +33,7 @@ const { Settings } = await import('../src/settings/Settings.js');
 const { Sky } = await import('../src/sky/Sky.js');
 const { SkyState } = await import('../src/sky/SkyColors.js');
 const { Celestial } = await import('../src/sky/Celestial.js');
+const { SunShadows, shadowUniforms } = await import('../src/rendering/Shadows.js');
 const THREE = await import('three');
 
 const near = (actual, expected, tolerance = 1e-10) => assert.ok(Math.abs(actual - expected) < tolerance, `${actual} != ${expected}`);
@@ -102,6 +108,80 @@ for (const time of [0.1, 0.24, 0.26, 0.5, 0.74, 0.76, 0.9]) {
 sky.dispose();
 assert.equal(lights.diffuse.parent, null);
 
+// Regresja zachodu: zasłonięty promień pozostaje zasłonięty, kiedy
+// model atmosfery sam zmniejsza energię słońca. Sprawdzamy prawdziwy
+// kontroler i uniformy, bez renderera GPU; gotowość mapy ustawiamy jawnie.
+const shadows = new SunShadows({ capabilities: { isWebGL2: true } });
+const focus = new THREE.Vector3(0, 20, 0);
+const shadowSky = (degrees, atmospheric = true, eclipse = 0) => {
+    const angle = degrees * Math.PI / 180;
+    const atmosphere = sampleSolarAtmosphere(Math.sin(angle), eclipse);
+    return {
+        atmosphere: atmospheric ? atmosphere : null,
+        state: { sunLightIntensity: Math.max(...atmosphere.direct), moonLightIntensity: 0 },
+        celestial: {
+            sunDirection: new THREE.Vector3(Math.cos(angle), Math.sin(angle), 0),
+            moonDirection: new THREE.Vector3(0, -1, 0)
+        },
+        space: 0
+    };
+};
+const shadowAt = (degrees, atmospheric = true, eclipse = 0) => {
+    shadows.update(0, shadowSky(degrees, atmospheric, eclipse), focus);
+    return { direct: shadowUniforms.uSunShadowInfo.value.y, ambient: shadowUniforms.uSunShadowAmbient.value };
+};
+shadows.setQuality(1);
+shadows.valid = true;
+for (const degrees of [10, 5, 3, 2, 1, 0.5, 0.05]) {
+    const classic = shadowAt(degrees, false);
+    const atmospheric = shadowAt(degrees);
+    near(atmospheric.direct, 1);
+    // Zmiana zasłonięcia promienia nie podbija światła otoczenia
+    // ani nie wprowadza skoku jasności wnętrz na horyzoncie.
+    near(atmospheric.ambient, classic.ambient);
+}
+const classicLow = shadowAt(3, false);
+assert.ok(classicLow.direct > 0.49 && classicLow.direct < 0.5);
+near(shadowAt(0.5, false).direct, 0);
+for (const degrees of [-0.01, 0, 0.01]) near(shadowAt(degrees).ambient, 0);
+for (const degrees of [-5, -0.01, 0]) {
+    near(shadowAt(degrees).direct, 0);
+    assert.equal(shadows.needsDraw, false);
+}
+near(shadowAt(3, true, 1).direct, 0); // Brak wiązki podczas pełnego zaćmienia.
+
+// Księżyc zachowuje dotychczasowe wygaszanie także w trybie atmosfery.
+const moonSky = shadowSky(-3);
+moonSky.state.moonLightIntensity = 1;
+moonSky.celestial.moonDirection.copy(shadowSky(3).celestial.sunDirection);
+shadows.update(0, moonSky, focus);
+assert.equal(shadows.light, 'moon');
+near(shadowUniforms.uSunShadowInfo.value.y, classicLow.direct);
+near(shadowUniforms.uSunShadowAmbient.value, classicLow.ambient);
+
+const spaceSky = shadowSky(3);
+spaceSky.space = 0.4;
+shadows.update(0, spaceSky, focus);
+near(shadowUniforms.uSunShadowInfo.value.y, 0.5);
+spaceSky.space = 1;
+shadows.update(0, spaceSky, focus);
+near(shadowUniforms.uSunShadowInfo.value.y, 0);
+assert.equal(shadows.needsDraw, false);
+
+shadows.setQuality(3);
+shadows.valid = true;
+shadows.farValid = true;
+near(shadowAt(0.5).direct, 1);
+assert.equal(shadowUniforms.uFarShadowInfo.value.z, 1);
+shadows.valid = false;
+near(shadowAt(3).direct, 0); // Nie używaj mapy przed pierwszym rysowaniem.
+shadows.setQuality(0);
+near(shadowAt(3).direct, 0);
+near(shadowUniforms.uSunShadowAmbient.value, 0);
+assert.equal(shadowUniforms.uFarShadowInfo.value.z, 0);
+assert.equal(shadows.needsDraw, false);
+shadows.dispose();
+
 assert.ok(TERRAIN_TYPES['light-lab']);
 const generator = createGenerator('light-lab', 123);
 const saved = JSON.parse(JSON.stringify(createWorldInfo('Lab', 123, 'light-lab', 'creative')));
@@ -135,4 +215,4 @@ assert.notEqual(getBlockId('oak_leaves'), 0);
 assert.notEqual(getBlockId('oak_log'), 0);
 assert.equal(at(-4, 15, 10), getBlockId('water'));
 assert.equal(at(16, 19, 5), getBlockId('lamp_red'));
-console.log('OK: atmosfera RGB, zmierzch, zaćmienie, powrót A/B, ustawienia, zapis typu świata, spójne chunki/mapa/LOD i stanowiska laboratorium.');
+console.log('OK: atmosfera RGB, zmierzch, zaćmienie, cienie przy horyzoncie, powrót A/B, ustawienia, zapis typu świata, spójne chunki/mapa/LOD i stanowiska laboratorium.');

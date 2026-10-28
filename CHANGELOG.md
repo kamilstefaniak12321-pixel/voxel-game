@@ -11,6 +11,15 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## Niewydane — poprawka cieni atmosferycznych
+
+- Usunięto podwójne wygaszanie słonecznych cieni przy horyzoncie w modelu
+  atmosferycznym. Słabnie sama wiązka światła; blok nadal ją przesłania.
+  Klasyczny model, Księżyc i płynne przyciemnienie wnętrz zachowują swoje
+  dotychczasowe działanie.
+
+---
+
 ## 0.23.0 - Laboratorium światła (2026-10-28)
 
 Eksperyment z PR #45, wydany jako aktualizacja Windows i Androida.

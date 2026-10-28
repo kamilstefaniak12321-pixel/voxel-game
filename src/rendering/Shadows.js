@@ -55,9 +55,10 @@ export const SHADOW_QUALITY = {
     3: { size: 2048, radius: 64, far: true }
 };
 
-// Słońce tuż nad horyzontem prawie nie świeci, a jego promienie idą
-// niemal poziomo - cienie pojawiają się (i znikają) płynnie, gdy jest
-// między tymi wysokościami (y kierunku: 0 = horyzont, 1 = zenit).
+// Klasyczne wygaszanie cieni słońca/księżyca przy horyzoncie oraz
+// dodatkowego przyciemnienia wnętrz (y kierunku: 0 = horyzont, 1 = zenit).
+// Atmosfera tłumi już wiązkę słońca, więc nie wygaszamy drugi raz jej
+// przesłonięcia: nieprzezroczysty blok ma nadal zatrzymywać cały promień.
 
 const FADE_LOW = 0.015;
 const FADE_HIGH = 0.09;
@@ -110,7 +111,7 @@ export const shadowUniforms = {
     uSunShadowMatrix: { value: new THREE.Matrix4() },
 
     // x - 1 / zakres głębi (bloki -> jednostki mapy),
-    // y - siła cieni 0-1 (słońce przy horyzoncie - słabnie),
+    // y - siła przesłonięcia 0-1 (atmosfera: wiązka słabnie osobno),
     // z - rozmiar piksela mapy w blokach,
     // w - 1 = jest mapa cienia gracza.
     uSunShadowInfo: { value: new THREE.Vector4(1, 0, 1 / 16, 0) },
@@ -664,11 +665,13 @@ export class SunShadows {
         // Światło, które teraz rzuca cienie.
         //   direction - kierunek DO światła,
         //   light     - 'sun' albo 'moon',
-        //   strength  - siła cieni 0-1 (przy horyzoncie słabnie).
+        //   strength  - siła przesłonięcia światła kierunkowego 0-1,
+        //   ambientStrength - płynne dodatkowe przyciemnienie wnętrz.
 
         this.direction = new THREE.Vector3(0, 1, 0);
         this.light = 'sun';
         this.strength = 0;
+        this.ambientStrength = 0;
 
         // Stan bliskiej mapy: kierunek i środek z ostatniego rysowania.
 
@@ -877,7 +880,16 @@ export class SunShadows {
 
         // W kosmosie (nad światem) cieni nie ma.
 
-        this.strength = smoothstep(FADE_LOW, FADE_HIGH, this.direction.y) * (1 - smoothstep(0.2, 0.6, sky.space));
+        const spaceStrength = 1 - smoothstep(0.2, 0.6, sky.space);
+        this.ambientStrength = smoothstep(FADE_LOW, FADE_HIGH, this.direction.y) * spaceStrength;
+
+        // SolarAtmosphere osłabia energię źródła i wygasza tarczę na
+        // horyzoncie. Mieszanie mapy cienia z dostępem do nieba także tutaj
+        // wpuszczałoby bezpośrednie światło przez zasłaniające je bloki.
+        // Osobne ambientStrength zachowuje płynne doświetlenie wnętrz.
+        this.strength = sun && sky.atmosphere
+            ? (this.direction.y > 0 && state.sunLightIntensity > 0 ? spaceStrength : 0)
+            : this.ambientStrength;
 
 
         this.syncUniforms();
@@ -945,7 +957,7 @@ export class SunShadows {
         u.uSunShadowDir.value.copy(this.direction);
         u.uSunShadowInfo.value.y = strength;
         u.uSunShadowInfo.value.w = strength > 0 ? 1 : 0;
-        u.uSunShadowAmbient.value = SHADOW_INDOOR_DARKNESS * strength;
+        u.uSunShadowAmbient.value = SHADOW_INDOOR_DARKNESS * (this.active ? this.ambientStrength : 0);
         u.uFarShadowInfo.value.z = this.hasFar && this.farValid && strength > 0 ? 1 : 0;
 
     }

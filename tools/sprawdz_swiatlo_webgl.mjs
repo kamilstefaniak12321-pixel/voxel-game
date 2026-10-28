@@ -21,6 +21,7 @@ async function browserChecks() {
     const { atlasReady } = await import('/src/rendering/TextureAtlas.js');
     const { GAME_COMMANDS } = await import('/src/commands/gameCommands.js');
     const { createWorldInfo } = await import('/src/storage/WorldStorage.js');
+    const { shadowUniforms } = await import('/src/rendering/Shadows.js');
     await atlasReady;
     const renderer = new THREE.WebGLRenderer({ antialias: false, preserveDrawingBuffer: true });
     renderer.setSize(960, 640);
@@ -76,6 +77,30 @@ async function browserChecks() {
     command.run(['model', 'swiat'], context);
     frame();
     check(game.sky.solarAtmosphere, 'Powrót do trybu świata nie włączył atmosfery');
+    // Niskie Słońce: prawdziwe mapy cieni mają nadal całkowicie przesłaniać
+    // pozostałą wiązkę. Zanik energii źródła testujemy osobno w modelu CPU.
+    settings.set('shadows', 1);
+    const horizonSamples = [];
+    for (const time of [0.251, 0.254, 0.26, 0.74, 0.746, 0.749]) {
+        game.time.days = time;
+        frame();
+        check(game.shadows.light === 'sun', 'Niskie Słońce nie jest głównym źródłem');
+        check(game.shadows.active && shadowUniforms.uSunShadowInfo.value.y === 1, 'Przesłonięcie Słońca znika przed zachodem');
+        horizonSamples.push({ time, altitude: game.sky.atmosphere.altitude, strength: game.shadows.strength });
+    }
+    // Porównanie tych samych pikseli przy niezmienionym świetle nieba:
+    // dawne wygaszanie maski wpuszczało dodatkowe światło przez bloki.
+    game.time.days = 0.74;
+    frame();
+    const fixedBrightness = meanFrame();
+    const ambientBefore = shadowUniforms.uSunShadowAmbient.value;
+    game.shadows.strength = game.shadows.ambientStrength;
+    game.shadows.syncUniforms();
+    game.render();
+    const legacyBrightness = meanFrame();
+    check(shadowUniforms.uSunShadowAmbient.value === ambientBefore, 'Porównanie zmieniło doświetlenie wnętrz');
+    check(legacyBrightness > fixedBrightness + 0.001, 'Usunięcie przecieku nie przyciemniło cieni w obrazie');
+    frame();
     // Warianty shaderów: bez cieni, bliskie/dalekie, model gracza i tryb ziemniaka.
     for (const quality of [0, 1, 3]) { settings.set('shadows', quality); frame(); }
     game.setCameraMode('back'); frame();
@@ -86,7 +111,7 @@ async function browserChecks() {
     check(renderer.info.programs.length > 0, 'Nie skompilowano shaderów');
     check(renderer.info.programs.every(p => p.diagnostics?.runnable !== false), 'Shader nie skompilował się');
     check(errors.length === 0, errors.join('\n'));
-    return { status: 'passed', shaders: renderer.info.programs.length, samples };
+    return { status: 'passed', shaders: renderer.info.programs.length, samples, horizonSamples, sunsetComparison: { fixedBrightness, legacyBrightness } };
 }
 
 const root = fileURLToPath(new URL('../', import.meta.url));
@@ -168,7 +193,7 @@ try {
     const shot = await call('Page.captureScreenshot', { format: 'png' });
     await writeFile(resolve(output, 'laboratorium.png'), Buffer.from(shot.data, 'base64'));
     if (result?.status !== 'passed') throw new Error(`Test WebGL nie przeszedł: ${result?.text ?? 'brak wyniku'}\n${logs.slice(-10000)}`);
-    console.log('OK: WebGL2, prawdziwa gra, cień dachu, lampy, 12 ujęć dnia/nocy, A/B, cienie 0/1/3, trzecia osoba i tryb ziemniaka.');
+    console.log('OK: WebGL2, prawdziwa gra, cień dachu, lampy, 12 ujęć dnia/nocy, 6 położeń niskiego Słońca, porównanie przecieku światła, A/B, cienie 0/1/3, trzecia osoba i tryb ziemniaka.');
     console.log(result.text);
 } finally {
     await writeFile(resolve(output, 'chrome.log'), logs);

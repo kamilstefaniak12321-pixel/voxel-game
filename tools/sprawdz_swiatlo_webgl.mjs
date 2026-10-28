@@ -22,6 +22,7 @@ async function browserChecks() {
     const { GAME_COMMANDS } = await import('/src/commands/gameCommands.js');
     const { createWorldInfo } = await import('/src/storage/WorldStorage.js');
     const { shadowUniforms } = await import('/src/rendering/Shadows.js');
+    const { modelLight } = await import('/src/rendering/ModelMaterial.js');
     await atlasReady;
     const renderer = new THREE.WebGLRenderer({ antialias: false, preserveDrawingBuffer: true });
     renderer.setSize(960, 640);
@@ -42,6 +43,9 @@ async function browserChecks() {
     game.time.speed = 0;
     game.time.days = 0.5;
     const frame = () => { game.update(0); game.render(); };
+    // SwiftShader może rysować serię klatek dłużej niż limit pojedynczej
+    // komendy CDP. Pomiędzy klatkami obsługujemy kolejkę przeglądarki.
+    const yieldBrowser = () => new Promise(resolve => setTimeout(resolve, 0));
     // Dajemy wątkom dalekiego terenu i teksturom czas na odpowiedź.
     for (let i = 0; i < 32; i++) { frame(); await new Promise(r => setTimeout(r, 16)); }
     check(game.sky.solarAtmosphere, 'Laboratorium nie włączyło atmosfery');
@@ -65,6 +69,7 @@ async function browserChecks() {
             game.time.days = time;
             frame();
             samples.push({ mode, time, brightness: meanFrame() });
+            await yieldBrowser();
         }
     }
     for (const mode of ['atmosfera', 'klasyczne']) {
@@ -87,12 +92,23 @@ async function browserChecks() {
         check(game.shadows.light === 'sun', 'Niskie Słońce nie jest głównym źródłem');
         check(game.shadows.active && shadowUniforms.uSunShadowInfo.value.y === 1, 'Przesłonięcie Słońca znika przed zachodem');
         horizonSamples.push({ time, altitude: game.sky.atmosphere.altitude, strength: game.shadows.strength });
+        // Ręka i model muszą mieć takie samo doświetlenie otoczenia co
+        // bloki. Częściowy dostęp do nieba ujawnia różnicę wykładników.
+        const savedModelSky = game.modelSky;
+        game.modelSky = 0.5;
+        game.updateModel(0);
+        const expectedAmbient = 0.5 ** (2.2 + shadowUniforms.uSunShadowAmbient.value);
+        check(Math.abs(modelLight.uModelAmbient.value - expectedAmbient) < 1e-10, 'Otoczenie modelu gracza rozbiega się ze światłem bloków');
+        game.modelSky = savedModelSky;
+        game.updateModel(0);
+        await yieldBrowser();
     }
     // Porównanie tych samych pikseli przy niezmienionym świetle nieba:
     // dawne wygaszanie maski wpuszczało dodatkowe światło przez bloki.
     game.time.days = 0.74;
     frame();
     const fixedBrightness = meanFrame();
+    await yieldBrowser();
     const ambientBefore = shadowUniforms.uSunShadowAmbient.value;
     game.shadows.strength = game.shadows.ambientStrength;
     game.shadows.syncUniforms();
@@ -102,7 +118,7 @@ async function browserChecks() {
     check(legacyBrightness > fixedBrightness + 0.001, 'Usunięcie przecieku nie przyciemniło cieni w obrazie');
     frame();
     // Warianty shaderów: bez cieni, bliskie/dalekie, model gracza i tryb ziemniaka.
-    for (const quality of [0, 1, 3]) { settings.set('shadows', quality); frame(); }
+    for (const quality of [0, 1, 3]) { settings.set('shadows', quality); frame(); await yieldBrowser(); }
     game.setCameraMode('back'); frame();
     settings.set('potato', true); frame();
     settings.set('potato', false); frame();

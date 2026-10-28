@@ -898,7 +898,8 @@ export class Game {
         modelLight.uModelSun.value =
             this.modelSky ** 2.2 + (this.sunVisibility - this.modelSky ** 2.2) * strength;
 
-        modelLight.uModelAmbient.value = this.modelSky ** (2.2 + SHADOW_INDOOR_DARKNESS * strength);
+        const ambientStrength = shadows.active ? shadows.ambientStrength : 0;
+        modelLight.uModelAmbient.value = this.modelSky ** (2.2 + SHADOW_INDOOR_DARKNESS * ambientStrength);
 
         // Światło odbite w miejscu gracza (płynnie).
 

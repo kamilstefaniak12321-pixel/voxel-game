@@ -11,7 +11,9 @@ const smooth = (a, b, x) => {
 };
 
 export function usesSolarAtmosphere(choice, terrain) {
-    return choice === 'atmosphere' || (choice === 'world' && terrain === 'light-lab');
+    // Dawny wybór „Według świata” jest domyślnym profilem, także dla
+    // istniejących zapisów. Jawny „Klasyczny” pozostaje bez zmian.
+    return choice === 'atmosphere' || choice === 'world';
 }
 
 // Długość drogi przez jednorodną, kulistą powłokę / jej grubość.

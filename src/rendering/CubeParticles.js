@@ -6,6 +6,8 @@ import { viewUniforms, VIEW_GLSL } from './viewUniforms.js';
 
 import { meteorLightUniforms, METEOR_LIGHT_GLSL } from './meteorLight.js';
 
+import { SURFACE_LIGHTING_GLSL } from './SurfaceLighting.js';
+
 // ------------------------------------------------------------
 // KANCIASTE CZĄSTECZKI
 //
@@ -37,8 +39,10 @@ const C0 = 11, C1 = 14, C2 = 17;
 const RX = 20, RY = 21, RZ = 22;
 const SX = 23, SY = 24, SZ = 25;
 const GRAVITY = 26, DRAG = 27, COLLIDE = 28, RESTING = 29, LIFT = 30;
+const LIGHT_RED = 31, LIGHT_GREEN = 32, LIGHT_BLUE = 33, LIGHT_SKY = 34;
+const EMISSION = 35, CLASSIC_SHADE = 36;
 
-const STRIDE = 32;
+const STRIDE = 37;
 
 // Kiedy w życiu cząsteczki jest kolor "middle".
 const MIDDLE = 0.35;
@@ -75,7 +79,7 @@ function createCubeGeometry(shades) {
 // Materiał zwykłych cząsteczek: Lambert (słońce, księżyc, otoczenie
 // sceny) + nocna szarość jak na blokach + światło meteorytu.
 
-function createSolidMaterial() {
+function createSolidMaterial(surfaceLighting) {
 
     const material = new THREE.MeshLambertMaterial({ vertexColors: true, fog: false });
 
@@ -127,7 +131,53 @@ function createSolidMaterial() {
                 #include <opaque_fragment>`
             );
 
+        if (surfaceLighting) {
+
+            shader.vertexShader = shader.vertexShader
+                .replace(
+                    '#include <common>',
+                    `#include <common>
+                    uniform float uAtmosphericLight;
+                    attribute vec4 particleLight;
+                    attribute vec2 particleEmission;
+                    varying vec4 vParticleLight;
+                    varying float vParticleEmission;`
+                )
+                .replace(
+                    '#include <color_vertex>',
+                    `#include <color_vertex>
+                    // Classic zachowuje dawne cieniowanie koloru. Atmosfera
+                    // dostaje samo albedo; światło jest składane we fragmencie.
+                    vColor = mix(vColor * particleEmission.y, instanceColor, uAtmosphericLight);
+                    vParticleLight = particleLight;
+                    vParticleEmission = particleEmission.x;`
+                );
+
+            shader.fragmentShader = shader.fragmentShader
+                .replace(
+                    '#include <common>',
+                    `#include <common>
+                    varying vec4 vParticleLight;
+                    varying float vParticleEmission;
+                    ${SURFACE_LIGHTING_GLSL}`
+                )
+                .replace(
+                    `float particleLuminance = dot(outgoingLight, vec3(0.2126, 0.7152, 0.0722));
+
+                outgoingLight = mix(outgoingLight, particleLuminance * uNightTint, uNightDesaturation);`,
+                    `vec3 particleLocal = vParticleLight.rgb * surfaceDecodeLight(surfaceFaceShade(vParticleNormal));
+                    outgoingLight = surfaceRadiance(diffuseColor.rgb,
+                        outgoingLight * mix(1.0, vParticleLight.a, uAtmosphericLight),
+                        particleLocal * uAtmosphericLight, vec3(0.0),
+                        vec3(vParticleEmission * uAtmosphericLight),
+                        uNightDesaturation, uNightTint, uAtmosphericLight);`
+                );
+
+        }
+
     };
+
+    material.customProgramCacheKey = () => `cube-particles-surface-${surfaceLighting ? 1 : 0}`;
 
     return material;
 
@@ -139,9 +189,10 @@ export class CubeParticles {
 
     // capacity - najwięcej cząsteczek naraz (nowe ponad limit są pomijane)
 
-    constructor(scene, { capacity = 2000, glowing = false } = {}) {
+    constructor(scene, { capacity = 2000, glowing = false, surfaceLighting = false } = {}) {
 
         this.capacity = capacity;
+        this.surfaceLighting = surfaceLighting && !glowing;
 
         this.data = new Float32Array(capacity * STRIDE);
 
@@ -150,9 +201,17 @@ export class CubeParticles {
 
         const geometry = createCubeGeometry(glowing ? GLOW_SHADE : SOLID_SHADE);
 
+        if (this.surfaceLighting) {
+            for (const [name, size] of [['particleLight', 4], ['particleEmission', 2]]) {
+                const attribute = new THREE.InstancedBufferAttribute(new Float32Array(capacity * size), size);
+                attribute.setUsage(THREE.DynamicDrawUsage);
+                geometry.setAttribute(name, attribute);
+            }
+        }
+
         const material = glowing
             ? new THREE.MeshBasicMaterial({ vertexColors: true, fog: false })
-            : createSolidMaterial();
+            : createSolidMaterial(this.surfaceLighting);
 
         this.mesh = new THREE.InstancedMesh(geometry, material, capacity);
 
@@ -195,7 +254,10 @@ export class CubeParticles {
         drag = 0,
         lift = 0,
         spin = 6,
-        collide = false
+        collide = false,
+        // Liniowe mnożniki światła oddzielone od colors (albedo).
+        // classicShade pozwala odtworzyć dawny wygląd bez wypalania go w albedo.
+        lighting = null
     }) {
 
         if (this.count >= this.capacity) {
@@ -251,6 +313,12 @@ export class CubeParticles {
         d[o + LIFT] = lift;
         d[o + COLLIDE] = collide ? 1 : 0;
         d[o + RESTING] = 0;
+        d[o + LIGHT_RED] = lighting?.local?.[0] ?? 0;
+        d[o + LIGHT_GREEN] = lighting?.local?.[1] ?? 0;
+        d[o + LIGHT_BLUE] = lighting?.local?.[2] ?? 0;
+        d[o + LIGHT_SKY] = lighting?.sky ?? 1;
+        d[o + EMISSION] = lighting?.emission ?? 0;
+        d[o + CLASSIC_SHADE] = lighting?.classicShade ?? 1;
 
         return true;
 
@@ -435,6 +503,12 @@ export class CubeParticles {
 
             mesh.setColorAt(i, this.color);
 
+            if (this.surfaceLighting) {
+                mesh.geometry.getAttribute('particleLight').setXYZW(i,
+                    d[o + LIGHT_RED], d[o + LIGHT_GREEN], d[o + LIGHT_BLUE], d[o + LIGHT_SKY]);
+                mesh.geometry.getAttribute('particleEmission').setXY(i, d[o + EMISSION], d[o + CLASSIC_SHADE]);
+            }
+
         }
 
 
@@ -443,6 +517,10 @@ export class CubeParticles {
         if (this.count > 0) {
             mesh.instanceMatrix.needsUpdate = true;
             mesh.instanceColor.needsUpdate = true;
+            if (this.surfaceLighting) {
+                mesh.geometry.getAttribute('particleLight').needsUpdate = true;
+                mesh.geometry.getAttribute('particleEmission').needsUpdate = true;
+            }
         }
 
     }

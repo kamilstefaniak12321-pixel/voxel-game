@@ -1,4 +1,6 @@
 import * as THREE from 'three';
+import { SURFACE_LIGHTING_GLSL } from './SurfaceLighting.js';
+import { getSurfaceFaceTexture } from './SurfaceMaterials.js';
 
 
 import {
@@ -130,19 +132,22 @@ blockMaterial.onBeforeCompile = (shader, renderer) => {
             diffuseColor.rgb *= mix(vec3(1.0), vTint, tintMask);
 
             vec3 blockTexel = diffuseColor.rgb;
+            float blockSky = surfaceDecodeLight(vColor.a);
+            float blockAmbient = blockSky;
+            vec3 blockBounce = vec3(0.0);
             #ifdef USE_SUN_SHADOWS
 
                 // Z cieniami słońca (Shadows.js) światło nieba przyciemnia
                 // tylko światło otoczenia, a światło słońca zależy od tego,
                 // czy jego promień tu dochodzi (lights_fragment_begin niżej).
 
-                float blockSky = pow(vColor.a, 2.2);
-                float blockAmbient = pow(vColor.a, 2.2 + uSunShadowAmbient);
+                blockAmbient = pow(vColor.a, 2.2 + uSunShadowAmbient);
                 float blockSun = sunShadowLight(vWorldPosition, vWorldNormal, blockSky);
 
             #elif defined( USE_COLOR_ALPHA )
-                diffuseColor.rgb *= pow(vColor.a, 2.2);
-            #endif`
+                diffuseColor.rgb *= mix(blockSky, 1.0, uAtmosphericLight);
+            #endif
+            blockAmbient = mix(blockAmbient, blockSky * surfaceDecodeLight(vSurfaceOcclusion), uAtmosphericLight);`
         );
 
 
@@ -157,21 +162,19 @@ blockMaterial.onBeforeCompile = (shader, renderer) => {
                 // Światło odbite od oświetlonych słońcem ścian
                 // (src/world/BounceLight.js) - w kolorze tej ściany.
 
-                outgoingLight += blockTexel * bounceLight(vWorldPosition, vWorldNormal, blockSky);
+                blockBounce = bounceLight(vWorldPosition, vWorldNormal, blockSky);
+                blockBounce *= mix(1.0, surfaceDecodeLight(vSurfaceOcclusion), uAtmosphericLight);
 
             #endif
 
+            vec3 blockLocal = vec3(0.0);
             #ifdef USE_COLOR_ALPHA
 
                 // Nocą to, co oświetla niebo, traci kolory (srebrna,
                 // księżycowa noc). Światło lamp dochodzi dopiero potem,
                 // więc zostaje kolorowe.
 
-                float skyLuminance = dot(outgoingLight, vec3(0.2126, 0.7152, 0.0722));
-
-                outgoingLight = mix(outgoingLight, skyLuminance * uNightTint, uNightDesaturation);
-
-                outgoingLight = max(outgoingLight, blockTexel * pow(vColor.rgb, vec3(2.2)));
+                blockLocal = surfaceDecodeLight(vColor.rgb);
 
             #endif
 
@@ -187,28 +190,24 @@ blockMaterial.onBeforeCompile = (shader, renderer) => {
 
                     if (all(greaterThanEqual(cell, vec3(0.0))) && all(lessThanEqual(cell, vec3(1.0)))) {
 
-                        vec3 n = abs(vWorldNormal);
-
-                        float faceShade =
-                            n.x * 0.8 + n.z * 0.9 +
-                            n.y * (vWorldNormal.y > 0.0 ? 1.0 : 0.65);
-
                         // W teksturze kolejne osie to x, z, y (tak są
                         // ułożone dane w DynamicLight.js).
 
-                        vec3 dynamicLight = texture(uDynamicLight, cell.xzy).rgb * faceShade * 0.75;
-
-                        outgoingLight = max(outgoingLight, blockTexel * pow(dynamicLight, vec3(2.2)));
+                        vec3 dynamicLight = texture(uDynamicLight, cell.xzy).rgb * surfaceFaceShade(vWorldNormal);
+                        dynamicLight *= mix(1.0, vSurfaceOcclusion, uAtmosphericLight);
+                        blockLocal = max(blockLocal, surfaceDecodeLight(dynamicLight));
 
                     }
 
                 }
 
-                // Kula ognia meteorytu oświetla teren z daleka
-                // (rendering/meteorLight.js).
+            #endif
 
+            outgoingLight = surfaceRadiance(blockTexel, outgoingLight, blockLocal, blockBounce,
+                vec3(vSurfaceEmission * uAtmosphericLight), uNightDesaturation, uNightTint, uAtmosphericLight);
+
+            #ifdef USE_DYNAMIC_LIGHT
                 outgoingLight += blockTexel * meteorLight(vWorldPosition, vWorldNormal);
-
             #endif
 
             // Ustawienie "Jasność" (viewUniforms.js).
@@ -237,8 +236,12 @@ blockMaterial.onBeforeCompile = (shader, renderer) => {
                 varying vec3 vSkyDirection;
                 attribute vec4 tint;
                 attribute vec4 atmosphereLight;
+                attribute float surfaceOcclusion;
+                attribute float surfaceEmission;
                 uniform float uAtmosphericLight;
                 varying vec3 vTint;
+                varying float vSurfaceOcclusion;
+                varying float vSurfaceEmission;
 
                 #ifdef POTATO
                     varying vec3 vFogSky;
@@ -251,7 +254,9 @@ blockMaterial.onBeforeCompile = (shader, renderer) => {
                 `#include <color_vertex>
                 #ifdef USE_COLOR_ALPHA
                     vColor = mix(vColor, atmosphereLight, uAtmosphericLight);
-                #endif`
+                #endif
+                vSurfaceOcclusion = surfaceOcclusion;
+                vSurfaceEmission = surfaceEmission;`
             )
             .replace(
                 '#include <fog_vertex>',
@@ -273,12 +278,15 @@ blockMaterial.onBeforeCompile = (shader, renderer) => {
                 `#include <common>
                 varying vec3 vSkyDirection;
                 varying vec3 vTint;
+                varying float vSurfaceOcclusion;
+                varying float vSurfaceEmission;
                 uniform float uFogBrightness;
                 uniform float uNightDesaturation;
                 uniform vec3 uNightTint;
                 uniform sampler2D uAtlasAverage;
                 ${SKY_COLOR_GLSL}
                 ${VIEW_GLSL}
+                ${SURFACE_LIGHTING_GLSL}
 
                 #ifdef POTATO
                     varying vec3 vFogSky;
@@ -322,6 +330,13 @@ blockMaterial.onBeforeCompile = (shader, renderer) => {
 
 
     if (!renderer.capabilities.isWebGL2) {
+        // Bez map cieni dostęp do nieba nadal tłumi światło naturalne.
+        // AO działa tylko na otoczenie, tak jak w ścieżce WebGL2.
+        shader.uniforms.uSunShadowLight = shadowUniforms.uSunShadowLight;
+        shader.fragmentShader = shader.fragmentShader
+            .replace('#include <common>', '#include <common>\nuniform int uSunShadowLight;')
+            .replace('#include <lights_fragment_begin>',
+                shadowLightsChunk('blockSky', 'blockSky', 'blockAmbient', 'uAtmosphericLight > 0.5'));
         return;
     }
 
@@ -360,6 +375,10 @@ blockMaterial.onBeforeCompile = (shader, renderer) => {
             ${METEOR_LIGHT_GLSL}
             ${SHADOW_GLSL}
 
+            #ifndef USE_SUN_SHADOWS
+                uniform int uSunShadowLight;
+            #endif
+
             #ifdef USE_SUN_SHADOWS
                 ${BOUNCE_GLSL}
             #endif`
@@ -375,7 +394,7 @@ blockMaterial.onBeforeCompile = (shader, renderer) => {
             `#ifdef USE_SUN_SHADOWS
                 ${shadowLightsChunk('blockSun', 'blockSky', 'blockAmbient')}
             #else
-                #include <lights_fragment_begin>
+                ${shadowLightsChunk('blockSky', 'blockSky', 'blockAmbient', 'uAtmosphericLight > 0.5')}
             #endif`
         );
 
@@ -824,53 +843,7 @@ export function getFaceTexture(
     textures,
     faceName
 ) {
-
-    if (textures.all) {
-
-        return textures.all;
-
-    }
-
-
-    if (
-        textures[faceName]
-    ) {
-
-        return textures[faceName];
-
-    }
-
-
-    if (
-        faceName === 'right' ||
-        faceName === 'left' ||
-        faceName === 'front' ||
-        faceName === 'back'
-    ) {
-
-        return textures.side;
-
-    }
-
-
-    if (faceName === 'top') {
-
-        return textures.top;
-
-    }
-
-
-    if (faceName === 'bottom') {
-
-        return textures.bottom;
-
-    }
-
-
-    throw new Error(
-        `Brak tekstury dla ściany: ${faceName}`
-    );
-
+    return getSurfaceFaceTexture(textures, faceName);
 }
 
 // ------------------------------------------------------------

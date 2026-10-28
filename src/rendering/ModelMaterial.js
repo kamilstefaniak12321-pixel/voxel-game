@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { SURFACE_LIGHTING_GLSL } from './SurfaceLighting.js';
 
 import {
     skyUniforms,
@@ -131,6 +132,7 @@ export function createModelMaterial({ map, alphaTest = 0, glow = 0 }) {
                 uniform int uSunShadowLight;
                 ${SKY_COLOR_GLSL}
                 ${VIEW_GLSL}
+                ${SURFACE_LIGHTING_GLSL}
                 ${METEOR_LIGHT_GLSL}
 
                 #ifdef USE_DYNAMIC_LIGHT
@@ -151,33 +153,24 @@ export function createModelMaterial({ map, alphaTest = 0, glow = 0 }) {
                 '#include <color_fragment>',
                 `#include <color_fragment>
                 vec3 modelTexel = diffuseColor.rgb;
-                float modelSky = pow(uModelSky, 2.2);
-                if (uModelShadows < 0.5) {
+                float modelSky = surfaceDecodeLight(uModelSky);
+                if (uModelShadows < 0.5 && uAtmosphericLight < 0.5) {
                     diffuseColor.rgb *= modelSky;
                 }`
             )
             .replace(
                 '#include <lights_fragment_begin>',
-                shadowLightsChunk('uModelSun', 'modelSky', 'uModelAmbient', 'uModelShadows > 0.5')
+                shadowLightsChunk('(uModelShadows > 0.5 ? uModelSun : modelSky)', 'modelSky',
+                    'mix(uModelAmbient, modelSky, uAtmosphericLight)', 'uModelShadows > 0.5 || uAtmosphericLight > 0.5')
             )
             .replace(
                 '#include <opaque_fragment>',
-                `// Światło odbite od ścian wokół gracza (BounceLight.js).
-
-                outgoingLight += modelTexel * uModelBounce;
-
-                float skyLuminance = dot(outgoingLight, vec3(0.2126, 0.7152, 0.0722));
-
-                outgoingLight = mix(outgoingLight, skyLuminance * uNightTint, uNightDesaturation);
-
+                `
                 // Światło lamp - ściany cieniowane jak u bloków (góra
                 // najjaśniejsza, spód najciemniejszy).
 
-                vec3 n = abs(vWorldNormal);
-
-                float faceShade = n.x * 0.8 + n.z * 0.9 + n.y * (vWorldNormal.y > 0.0 ? 1.0 : 0.65);
-
-                outgoingLight = max(outgoingLight, modelTexel * pow(uModelBlock * faceShade * 0.75, vec3(2.2)));
+                float faceShade = surfaceFaceShade(vWorldNormal);
+                vec3 modelLocal = surfaceDecodeLight(uModelBlock * faceShade);
 
                 #ifdef USE_DYNAMIC_LIGHT
 
@@ -187,9 +180,8 @@ export function createModelMaterial({ map, alphaTest = 0, glow = 0 }) {
 
                         if (all(greaterThanEqual(cell, vec3(0.0))) && all(lessThanEqual(cell, vec3(1.0)))) {
 
-                            vec3 dynamicLight = texture(uDynamicLight, cell.xzy).rgb * faceShade * 0.75;
-
-                            outgoingLight = max(outgoingLight, modelTexel * pow(dynamicLight, vec3(2.2)));
+                            vec3 dynamicLight = texture(uDynamicLight, cell.xzy).rgb * faceShade;
+                            modelLocal = max(modelLocal, surfaceDecodeLight(dynamicLight));
 
                         }
 
@@ -197,13 +189,16 @@ export function createModelMaterial({ map, alphaTest = 0, glow = 0 }) {
 
                 #endif
 
+                outgoingLight = surfaceRadiance(modelTexel, outgoingLight, modelLocal, uModelBounce,
+                    vec3(uModelGlow * uAtmosphericLight), uNightDesaturation, uNightTint, uAtmosphericLight);
+
                 // Kula ognia meteorytu (rendering/meteorLight.js).
 
                 outgoingLight += modelTexel * meteorLight(vWorldPosition, vWorldNormal);
 
                 // Świecący blok w ręce (lampa) jest jasny sam z siebie.
 
-                outgoingLight = max(outgoingLight, modelTexel * uModelGlow);
+                if (uAtmosphericLight < 0.5) outgoingLight = max(outgoingLight, modelTexel * uModelGlow);
 
                 outgoingLight = applyBrightness(outgoingLight, modelTexel);
 

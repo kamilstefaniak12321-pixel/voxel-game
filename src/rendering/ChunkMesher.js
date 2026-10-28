@@ -442,6 +442,8 @@ let normalBuffer = null;
 let uvBuffer = null;
 let colorBuffer = null;
 let atmosphereLightBuffer = null;
+let surfaceOcclusionBuffer = null;
+let surfaceEmissionBuffer = null;
 let tintBuffer = null;
 let splitBuffer = null;
 
@@ -473,6 +475,8 @@ function ensureCapacity(faces) {
     uvBuffer = grow(uvBuffer, Float32Array, capacity * 8);
     colorBuffer = grow(colorBuffer, Uint8Array, capacity * 16);
     atmosphereLightBuffer = grow(atmosphereLightBuffer, Uint8Array, capacity * 16);
+    surfaceOcclusionBuffer = grow(surfaceOcclusionBuffer, Uint8Array, capacity * 4);
+    surfaceEmissionBuffer = grow(surfaceEmissionBuffer, Uint8Array, capacity * 4);
     tintBuffer = grow(tintBuffer, Uint8Array, capacity * 16);
     splitBuffer = grow(splitBuffer, Uint8Array, capacity);
 
@@ -555,6 +559,7 @@ function addPlants(plants, faceCount, baseX, baseZ) {
         const y = plants[k + 1];
         const lz = plants[k + 2];
         const id = plants[k + 3];
+        const emission = getLightEmission(id) / MAX_LIGHT * 255;
 
         const { cross, tint } = blockRenderData[id];
 
@@ -647,7 +652,9 @@ function addPlants(plants, faceCount, baseX, baseZ) {
                     atmosphereLightBuffer[c + i * 4] = lampR * atmosphereScale * shade * 255 + 0.5;
                     atmosphereLightBuffer[c + i * 4 + 1] = lampG * atmosphereScale * shade * 255 + 0.5;
                     atmosphereLightBuffer[c + i * 4 + 2] = lampB * atmosphereScale * shade * 255 + 0.5;
-                    atmosphereLightBuffer[c + i * 4 + 3] = atmosphereSky * shade * 255 + 0.5;
+                    atmosphereLightBuffer[c + i * 4 + 3] = atmosphereSky * 255 + 0.5;
+                    surfaceOcclusionBuffer[faceCount * 4 + i] = shade * 255 + 0.5;
+                    surfaceEmissionBuffer[faceCount * 4 + i] = emission + 0.5;
 
                     if (plantTint) {
                         tintBuffer[c + i * 4] = plantTint[0];
@@ -692,7 +699,9 @@ function addFlats(flats, faceCount, baseX, baseZ) {
         const y = flats[k + 1];
         const lz = flats[k + 2];
 
-        const { flat, uv, rotate, tint } = blockRenderData[flats[k + 3]];
+        const id = flats[k + 3];
+        const { flat, uv, rotate, tint } = blockRenderData[id];
+        const emission = getLightEmission(id) / MAX_LIGHT * 255;
 
         const flatTint = tint && meshTint ? tintOfColumn(lx, lz) : null;
 
@@ -762,6 +771,8 @@ function addFlats(flats, faceCount, baseX, baseZ) {
             atmosphereLightBuffer[c + i * 4 + 1] = g * atmosphereScale + 0.5;
             atmosphereLightBuffer[c + i * 4 + 2] = b * atmosphereScale + 0.5;
             atmosphereLightBuffer[c + i * 4 + 3] = atmosphereSky * 255 + 0.5;
+            surfaceOcclusionBuffer[faceCount * 4 + i] = 255;
+            surfaceEmissionBuffer[faceCount * 4 + i] = emission + 0.5;
 
             if (flatTint) {
                 tintBuffer[c + i * 4] = flatTint[0];
@@ -859,9 +870,11 @@ function addCubeFaces(id, renderData, lx, y, lz, faceCount, baseX, baseZ) {
 
     const leaves = renderData.leaves;
 
-    // Świecący blok jest jasny cały, bez cieni.
+    // W klasycznym modelu świecący blok jest jasny cały, bez cieni.
+    // Atmosfera otrzymuje osobną emisję, niezależną od światła otoczenia.
 
-    const glowing = getLightEmission(id) > 0;
+    const emission = getLightEmission(id) / MAX_LIGHT * 255;
+    const glowing = emission > 0;
 
     const liquid = isLiquidId(id) ? id : 0;
 
@@ -964,16 +977,18 @@ function addCubeFaces(id, renderData, lx, y, lz, faceCount, baseX, baseZ) {
             let b = r;
             let a = 255;
 
-            // Świecące bloki zachowują emisję w obu modelach.
+            // Atmosfera zawsze próbuje rzeczywiste światło otoczenia,
+            // również dla emisyjnych powierzchni.
             let atmosphereR = r;
             let atmosphereG = g;
             let atmosphereB = b;
             let atmosphereA = a;
 
             let brightness = 1;
+            let occlusion = 1;
 
 
-            if (!glowing) {
+            {
 
                 const s = faceIndex * 12 + i * 3;
 
@@ -1040,6 +1055,7 @@ function addCubeFaces(id, renderData, lx, y, lz, faceCount, baseX, baseZ) {
                     BRIGHTNESS[Math.round(lampLevel * LEVEL_STEPS / count)];
 
                 const shade = SHADE[shadeCount];
+                occlusion = shade;
 
                 const skyValue = skyBrightness * shade;
 
@@ -1072,12 +1088,19 @@ function addCubeFaces(id, renderData, lx, y, lz, faceCount, baseX, baseZ) {
                 atmosphereR = r * atmosphereScale;
                 atmosphereG = g * atmosphereScale;
                 atmosphereB = b * atmosphereScale;
-                atmosphereA = ATMOSPHERE_BRIGHTNESS[Math.round(sky * LEVEL_STEPS / count)] * shade * depthShade * 255;
+                atmosphereA = ATMOSPHERE_BRIGHTNESS[Math.round(sky * LEVEL_STEPS / count)] * depthShade * 255;
 
                 brightness = Math.max(skyValue, lampValue / 255);
 
             }
 
+            // Zachowujemy bajty i przekątną klasycznego mesha lampy.
+            // Jej własna emisja nie udaje już pełnego dostępu do nieba.
+            if (glowing) {
+                r = g = b = FACE_SHADE[faceIndex] * 255;
+                a = 255;
+                brightness = 1;
+            }
 
             colorBuffer[c + i * 4] = r + 0.5;
             colorBuffer[c + i * 4 + 1] = g + 0.5;
@@ -1088,6 +1111,8 @@ function addCubeFaces(id, renderData, lx, y, lz, faceCount, baseX, baseZ) {
             atmosphereLightBuffer[c + i * 4 + 1] = atmosphereG + 0.5;
             atmosphereLightBuffer[c + i * 4 + 2] = atmosphereB + 0.5;
             atmosphereLightBuffer[c + i * 4 + 3] = atmosphereA + 0.5;
+            surfaceOcclusionBuffer[faceCount * 4 + i] = occlusion * 255 + 0.5;
+            surfaceEmissionBuffer[faceCount * 4 + i] = emission + 0.5;
 
             if (tinted) {
                 writeTint(c + i * 4, lx + corner[0], lz + corner[2]);
@@ -1161,9 +1186,10 @@ function hiddenBelow(chunk, world) {
 // Sąsiad w niewczytanym chunku liczy się jako powietrze.
 //
 // Każdy róg ściany dostaje "kolor" ze światłem lamp (r, g, b)
-// i światłem nieba (a), już razem z cieniem w kącie. Karta
-// graficzna płynnie miesza go między rogami i oświetla nim
-// teksturę (patrz BlockRenderData.js).
+// i światłem nieba (a). Klasyczny kolor zawiera też cień w kącie;
+// atmosfera trzyma AO osobno od nieba, żeby nie przyciemniać nim
+// bezpośredniego słońca. Lampy rozproszone nadal zawierają AO.
+// Karta miesza dane między rogami (patrz BlockRenderData.js).
 //
 // Wierzchołki są w współrzędnych lokalnych chunka, mesh jest
 // potem przesuwany na właściwe miejsce w świecie.
@@ -1369,11 +1395,23 @@ export function buildChunkGeometry(chunk, world) {
     );
 
     // Oba modele współdzielą mesh: przełączenie światła wybiera atrybut
-    // w shaderze. Dodatkowe 4 bajty/wierzchołek zachowują dokładnie AO,
-    // odcień lamp, cień kępki i wodę, bez odejmowania minimum po gamma.
+    // w shaderze. RGB zawiera odcień lamp, AO i cień kierunkowy;
+    // alfa tylko dostęp do nieba i tłumienie pod wodą, bez AO.
     geometry.setAttribute(
         'atmosphereLight',
         new THREE.BufferAttribute(atmosphereLightBuffer.slice(0, vertexCount * 4), 4, true)
+    );
+
+    // Osobne bajty: zasłonięcie otoczenia (i dołu kępki) oraz liniowa
+    // emisja light / MAX_LIGHT. Emisja nie jest przyciemniana przez AO.
+    geometry.setAttribute(
+        'surfaceOcclusion',
+        new THREE.BufferAttribute(surfaceOcclusionBuffer.slice(0, vertexCount), 1, true)
+    );
+
+    geometry.setAttribute(
+        'surfaceEmission',
+        new THREE.BufferAttribute(surfaceEmissionBuffer.slice(0, vertexCount), 1, true)
     );
 
     // Kolor trawy w rogach (r, g, b - 0.5 = bez zmiany; a = 1 - nie dotyczy).

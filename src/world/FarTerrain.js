@@ -49,6 +49,8 @@ import {
 } from '../rendering/Shadows.js';
 
 import { grassTint } from './terrain/Biomes.js';
+import { SURFACE_FACE_NAMES, SURFACE_MATERIAL_COUNT, getSurfaceFaceTexture, surfaceMaterialId, surfaceMaterialType } from '../rendering/SurfaceMaterials.js';
+import { SURFACE_LIGHTING_GLSL } from '../rendering/SurfaceLighting.js';
 
 import {
     KINDS,
@@ -241,7 +243,7 @@ const lodDebug = { value: 0 };
 const pixelAngle = { value: 0.0015 };
 
 
-function createFarMaterial(level) {
+export function createFarTerrainMaterial(level = 0) {
 
     // Tylko przednie strony trójkątów - tylne (ścianki od drugiej
     // strony, spody) karta graficzna od razu pomija.
@@ -276,6 +278,8 @@ function createFarMaterial(level) {
                 varying float vFarCurtain;
                 varying vec3 vFarCell;
                 varying float vFarSunHeight;
+                attribute vec4 surfaceAlbedo;
+                uniform float uAtmosphericLight;
                 uniform float uCurvature;
                 uniform float uCellSize;
                 uniform float uPixelAngle;
@@ -299,7 +303,8 @@ function createFarMaterial(level) {
                 // Kolor zapisany jako pierwiastek (więcej odcieni
                 // w ciemnych kolorach przy 8 bitach).
 
-                vColor.rgb *= vColor.rgb;`
+                vColor.rgb = mix(vColor.rgb * vColor.rgb,
+                    surfaceAlbedo.rgb * surfaceAlbedo.rgb, uAtmosphericLight);`
             )
             .replace(
                 '#include <beginnormal_vertex>',
@@ -452,6 +457,7 @@ function createFarMaterial(level) {
                 ${GLOBE_LIGHT_GLSL}
                 ${METEOR_LIGHT_GLSL}
                 ${FAR_TERRAIN_SHADOW_GLSL}
+                ${SURFACE_LIGHTING_GLSL}
 
                 #ifdef POTATO
                     varying vec3 vHazeSky;
@@ -508,13 +514,16 @@ function createFarMaterial(level) {
                 '#include <color_fragment>',
                 `#include <color_fragment>
 
-                // Każda kratka trochę jaśniejsza albo ciemniejsza.
+                // Klasyczny widok: każda kratka trochę jaśniejsza albo
+                // ciemniejsza. Atmosfera używa czystego albedo tekstur.
 
                 vec3 farCellIndex = mod(floor(vFarCell), 509.0);
 
                 float farCellNoise = fract(sin(dot(farCellIndex, vec3(12.9898, 78.233, 37.719))) * 43758.5453);
 
-                diffuseColor.rgb *= ${(1 - CELL_VARIATION).toFixed(3)} + ${(2 * CELL_VARIATION).toFixed(3)} * farCellNoise;
+                float farVariation = ${(1 - CELL_VARIATION).toFixed(3)} + ${(2 * CELL_VARIATION).toFixed(3)} * farCellNoise;
+
+                diffuseColor.rgb *= mix(farVariation, 1.0, uAtmosphericLight);
 
                 diffuseColor.rgb *= mix(vec3(1.0), uLodTint, uLodDebug);`
             )
@@ -562,9 +571,11 @@ function createFarMaterial(level) {
 
                 }
 
-                float skyLuminance = dot(outgoingLight, VIEW_LUMINANCE);
-
-                outgoingLight = mix(outgoingLight, skyLuminance * uNightTint, nightDesaturation);
+                // Siatka wysokości nie zawiera jeszcze lokalnych źródeł,
+                // odbić ani emisji. Jawne zera, bez zastępowania ich albedo.
+                outgoingLight = surfaceRadiance(diffuseColor.rgb, outgoingLight,
+                    vec3(0.0), vec3(0.0), vec3(0.0),
+                    nightDesaturation, uNightTint, uAtmosphericLight);
 
                 // Kula ognia meteorytu oświetla też daleki teren.
 
@@ -603,7 +614,7 @@ function createFarMaterial(level) {
 
 // Materiał dla każdej dokładności (indeks = poziom: 0 - kratka 1 blok).
 
-const farMaterials = Array.from({ length: LEVELS }, (_, level) => createFarMaterial(level));
+const farMaterials = Array.from({ length: LEVELS }, (_, level) => createFarTerrainMaterial(level));
 
 
 function levelOf(spacing) {
@@ -808,7 +819,7 @@ export class FarTerrain {
 
         tile.pending = 0;
 
-        tile.raw = { heights: message.heights, kinds: message.kinds };
+        tile.raw = { heights: message.heights, kinds: message.kinds, materialIds: message.materialIds };
 
         tile.workerMesh = message.mesh;
 
@@ -828,7 +839,7 @@ export class FarTerrain {
         for (const entry of only ? [only] : this.workers) {
 
             if (entry.ready) {
-                entry.worker.postMessage({ type: 'palette', colors: this.kindColors });
+                entry.worker.postMessage({ type: 'palette', colors: this.kindColors, albedo: this.surfaceAlbedoPalette });
             }
 
         }
@@ -931,6 +942,25 @@ export class FarTerrain {
             });
 
         });
+
+        // Atmosfera: te same tekstury ścian i liniowe średnie co bliskie
+        // bloki. Cień boku/korony i wariacja LOD nie są częścią albedo.
+        // Osobna paleta zachowuje dawny wygląd modelu klasycznego.
+        this.surfaceAlbedoPalette = new Uint8Array(SURFACE_MATERIAL_COUNT * 18);
+        for (let id = 0; id < SURFACE_MATERIAL_COUNT; id++) {
+            const type = surfaceMaterialType(id);
+            const tint = FAR_GRASS_TINTS[type];
+            const definition = getBlockDefinition(tint ? 'grass' : type);
+            for (let face = 0; face < SURFACE_FACE_NAMES.length; face++) {
+                const name = SURFACE_FACE_NAMES[face];
+                const texture = definition ? getSurfaceFaceTexture(definition.textures, name) : 'stone';
+                const average = (getAtlasAverage(texture) ?? colors.stone).clone();
+                if (tint && name === 'top') average.multiply(new THREE.Color(...tint));
+                for (const [channel, value] of average.toArray().entries()) {
+                    this.surfaceAlbedoPalette[id * 18 + face * 3 + channel] = colorByte(value);
+                }
+            }
+        }
 
 
         // Kolory po nazwie (kula Ziemi z kosmosu - GlobeMap.js).
@@ -1166,12 +1196,13 @@ export class FarTerrain {
         const job = tile.job ??= {
             heights: new Int16Array(W * W),
             kinds: new Uint8Array(W * W),
+            materialIds: new Uint16Array(W * W),
             row: 0
         };
 
         while (job.row < W && performance.now() < deadline) {
 
-            sampleFarTile(this.generator, tile.x0, tile.z0, tile.spacing, tile.cells, job.heights, job.kinds, job.row, job.row + 1);
+            sampleFarTile(this.generator, tile.x0, tile.z0, tile.spacing, tile.cells, job.heights, job.kinds, job.row, job.row + 1, job.materialIds);
 
             job.row++;
 
@@ -1179,7 +1210,7 @@ export class FarTerrain {
 
         if (job.row === W) {
 
-            tile.raw = { heights: job.heights, kinds: job.kinds };
+            tile.raw = { heights: job.heights, kinds: job.kinds, materialIds: job.materialIds };
 
             tile.job = null;
 
@@ -1430,7 +1461,7 @@ export class FarTerrain {
     }
 
 
-    // Wierzch kolumny (x, z) w zmienionym chunku: { top, kind } albo
+    // Wierzch kolumny (x, z): { top, kind, material } albo
     // null, gdy chunk nie był zmieniany.
 
     modifiedSurface(x, z, modified) {
@@ -1452,7 +1483,8 @@ export class FarTerrain {
             const id = blocks[(y * CHUNK_SIZE + lz) * CHUNK_SIZE + lx];
 
             if (isSolidId(id) || isLiquidId(id)) {
-                return { top: y + 1, kind: BLOCK_KINDS[getBlockTypeById(id)] ?? 'grass' };
+                const material = getBlockTypeById(id);
+                return { top: y + 1, kind: BLOCK_KINDS[material] ?? 'grass', material };
             }
 
         }
@@ -1484,12 +1516,13 @@ export class FarTerrain {
 
         if (modified.size > 0 || !mesh) {
 
-            let { heights, kinds } = tile.raw;
+            let { heights, kinds, materialIds } = tile.raw;
 
             if (modified.size > 0) {
 
                 heights = heights.slice();
                 kinds = kinds.slice();
+                materialIds = materialIds.slice();
 
                 for (let row = 0; row < W; row++) {
 
@@ -1502,6 +1535,7 @@ export class FarTerrain {
                         if (surface) {
                             heights[row * W + column] = surface.top;
                             kinds[row * W + column] = kindIndex(surface.kind);
+                            materialIds[row * W + column] = surfaceMaterialId(surface.material ?? surface.kind);
                         }
 
                     }
@@ -1514,7 +1548,7 @@ export class FarTerrain {
                 scratch = createMeshScratch(cells);
             }
 
-            mesh = meshFarTile(heights, kinds, cells, s, this.kindColors, scratch);
+            mesh = meshFarTile(heights, kinds, cells, s, this.kindColors, scratch, materialIds, this.surfaceAlbedoPalette);
 
         }
 
@@ -1524,6 +1558,7 @@ export class FarTerrain {
         geometry.setAttribute('position', new THREE.BufferAttribute(mesh.positions, 4));
         geometry.setAttribute('normal', new THREE.BufferAttribute(mesh.normals, 4, true));
         geometry.setAttribute('color', new THREE.BufferAttribute(mesh.colors, 4, true));
+        geometry.setAttribute('surfaceAlbedo', new THREE.BufferAttribute(mesh.surfaceAlbedo, 4, true));
         geometry.setIndex(new THREE.BufferAttribute(mesh.indices, 1));
 
         geometry.computeBoundingSphere();

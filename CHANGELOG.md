@@ -11,6 +11,34 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 0.24.0 - Wspólne światło i materiały
+
+Pierwszy etap spójnego oświetlenia bliskiego i dalekiego terenu.
+
+### Zmiany
+
+- Atmosferyczne oświetlenie jest domyślne we wszystkich światach. Opcja
+  „Klasyczny” zachowuje wcześniejsze zasady i pozostaje dostępna do porównania.
+- Bloki, modele, odłamki i daleki teren korzystają ze wspólnych zasad
+  liniowego koloru. Światło otoczenia, lamp i emisja dodają się do siebie.
+- Przyciemnienie zakamarków jest oddzielone od dostępu do nieba i emisji;
+  nie nakłada drugiego cienia na bezpośrednie światło słoneczne.
+- Daleki teren korzysta z kolorów właściwych tekstur powierzchni, także
+  budowli i paczek bloków. Materiał nie zawiera już dodatkowego,
+  wypalonego przyciemnienia boków w trybie atmosferycznym.
+- Odłamki zachowują kolor lamp i brak światła w ciemnym pomieszczeniu.
+- Zasięg widoku i cieni pozostaje bez zmian. Dalekie lampy, rozszerzenie
+  światła odbitego i nowe właściwości wody/liści należą do następnych etapów.
+
+### Wydanie
+
+- Wersja 0.24.0 wspólna dla Windowsa i Androida; kod Androida: 2400.
+- Po scaleniu PR workflow „Aplikacje (komputer i telefon)” przygotuje
+  `v0.24.0` w `voxel-game-wydania` z instalatorem, APK i plikami aktualizacji.
+  Przygotowanie PR nie publikuje jeszcze aktualizacji.
+
+---
+
 ## 0.23.1 - Poprawki światła i cieni
 
 Przygotowane do wydania: poprawki z PR #47 i #48,

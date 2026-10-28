@@ -123,6 +123,10 @@ export const shadowUniforms = {
     // Kierunek DO światła, które rzuca cienie.
     uSunShadowDir: { value: new THREE.Vector3(0, 1, 0) },
 
+    // Maksymalne zaokrąglenie pozycji przez rasteryzator, w tekselu mapy:
+    // pół jednostki siatki określonej przez WebGL SUBPIXEL_BITS.
+    uShadowRasterPrecision: { value: 1 / 32 },
+
     // Które światło kierunkowe sceny rzuca cienie: 0 - słońce,
     // 1 - księżyc (kolejność z Sky.attachLights).
     uSunShadowLight: { value: 0 },
@@ -152,6 +156,7 @@ export const shadowUniforms = {
 const COMMON_GLSL = `
     uniform vec4 uSunShadowInfo;
     uniform vec3 uSunShadowDir;
+    uniform float uShadowRasterPrecision;
     uniform int uSunShadowLight;
 
 `;
@@ -218,13 +223,13 @@ const LOOKUP_GLSL = `
         // Zapas także przy płaszczyznach near/far, bez twardego cięcia Z.
         coverage = (1.0 - smoothstep(fadeStart, 1.0, edge)) *
             smoothstep(0.0, 0.02, s.z) * (1.0 - smoothstep(0.98, 1.0, s.z));
-        // Osobne transformacje castera i odbiorcy wymagają małego zapasu
-        // głębi. Dodatkowo rasteryzacja zaokrągla położenie w podpikselach:
-        // przy 0.5° SwiftShader dał różnicę 0.253/0.429 bloku w większych
-        // mapach. Gradient przelicza zapas 2/256 teksela na głębię danej
-        // płaszczyzny; tolerancja rośnie tylko dla promieni stycznych.
-        float rasterBias = uvTexel * (abs(depthGradient.x) + abs(depthGradient.y)) / 128.0;
-        float bias = max(max((info.y * 0.1 + extraBias) * info.x, 0.0000002), rasterBias);
+        // Gradient przelicza pół jednostki zgłoszonej siatki podpikseli
+        // na głębię płaszczyzny. SUBPIXEL_BITS=4 oznacza 1/32 teksela;
+        // przy promieniach stycznych nawet taki błąd XY mocno zmienia Z.
+        // Osobny mały zapas pokrywa precyzję transformacji castera/odbiorcy
+        // i ruch roślin. Niezależne źródła błędu sumujemy.
+        float rasterBias = uvTexel * (abs(depthGradient.x) + abs(depthGradient.y)) * uShadowRasterPrecision;
+        float bias = max((info.y * 0.1 + extraBias) * info.x, 0.0000002) + rasterBias;
         return step(planeDepth - bias, texture(depthMap, sampleUV).r);
     }
 `;
@@ -644,6 +649,13 @@ export class SunShadows {
         // w shaderze bloków).
 
         this.supported = renderer.capabilities.isWebGL2;
+
+        const gl = renderer.getContext?.();
+        const subpixelBits = gl?.getParameter?.(gl.SUBPIXEL_BITS);
+        // Bez kontekstu (np. kontroler w teście CPU) używamy siatki 1/16;
+        // podczas gry dokładność pochodzi zawsze z aktywnego renderera.
+        shadowUniforms.uShadowRasterPrecision.value = Number.isFinite(subpixelBits) && subpixelBits >= 0
+            ? 0.5 / 2 ** subpixelBits : 1 / 32;
 
         // 0 = wyłączone, 1 / 2 / 3 - SHADOW_QUALITY.
         this.quality = 0;

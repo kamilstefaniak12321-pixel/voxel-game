@@ -1,0 +1,6123 @@
+{
+  "version": "0.25.0",
+  "date": "2026-10-29",
+  "hardware": "RTX 3050 Laptop 4 GB; i5-12500H; AC power; 1920x1080 60 Hz; ANGLE/D3D11",
+  "scope": "Uncapped renderer throughput, not physical monitor refresh. 1% low = inverse mean of slowest 1% rendered-frame intervals. World clock running at 1x.",
+  "baseline0240": [
+    {
+      "trial": 1,
+      "profile": "default",
+      "scenario": "flight",
+      "timePreset": 0.5,
+      "timeMode": "running",
+      "timeSpeed": 1,
+      "valid": true,
+      "invalidReasons": [],
+      "warmupSeconds": 10,
+      "measurementSeconds": 30.005099999904633,
+      "trajectory": {
+        "start": {
+          "x": -28.5,
+          "y": 80,
+          "z": 66.5,
+          "yaw": 0,
+          "pitch": 0
+        },
+        "plannedDelta": {
+          "x": 0,
+          "y": 0,
+          "z": -256
+        },
+        "speedBlocksPerSecond": 8.533333333333333,
+        "warmupMotion": "stationary"
+      },
+      "motionDelta": {
+        "x": 0,
+        "y": 0,
+        "z": -255.9667199991862,
+        "distance": 255.9667199991862
+      },
+      "device": {
+        "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 3050 Laptop GPU (0x000025A2) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+        "vendor": "Google Inc. (NVIDIA)",
+        "version": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+        "timerQuery": true,
+        "context": {
+          "alpha": true,
+          "antialias": true,
+          "depth": true,
+          "desynchronized": false,
+          "failIfMajorPerformanceCaveat": false,
+          "powerPreference": "default",
+          "premultipliedAlpha": true,
+          "preserveDrawingBuffer": false,
+          "stencil": true,
+          "xrCompatible": false
+        },
+        "drawingBuffer": [
+          1920,
+          1080
+        ],
+        "viewport": [
+          1920,
+          1080
+        ],
+        "pixelRatio": 1,
+        "devicePixelRatio": 1,
+        "touchMode": true,
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36",
+        "hardwareConcurrency": 16
+      },
+      "settings": {
+        "potato": false,
+        "viewDistance": 48,
+        "farTerrain": 8192,
+        "farDetail": 2,
+        "fov": 75,
+        "brightness": 0,
+        "renderScale": 100,
+        "fpsLimit": 0,
+        "ambientOcclusion": 45,
+        "shadows": 3,
+        "lightingModel": "atmosphere",
+        "lightShafts": true,
+        "bounceLight": false,
+        "fancyLeaves": true,
+        "dynamicLight": true,
+        "loadBudget": 4,
+        "mouseSensitivity": 100,
+        "invertMouse": false,
+        "skinOverlay": true,
+        "showHand": true,
+        "viewBobbing": true,
+        "jointStyle": "smooth",
+        "cameraDistance": 4,
+        "volumeMaster": 80,
+        "volumeBlocks": 100,
+        "volumeWorld": 100,
+        "volumeUi": 80,
+        "theme": "default",
+        "hudScale": 100,
+        "showDebug": true,
+        "showFps": false,
+        "meteorites": true,
+        "autoUpdates": true,
+        "textureResolution": 0
+      },
+      "world": {
+        "seed": "lighting-rtx3050-0231",
+        "terrain": "realistic",
+        "gameMode": "creative"
+      },
+      "initial": {
+        "pose": {
+          "x": -28.5,
+          "y": 80,
+          "z": 66.5,
+          "yaw": 0,
+          "pitch": 0,
+          "flying": true
+        },
+        "time": {
+          "days": 0.5,
+          "speed": 1
+        },
+        "queues": {
+          "chunks": 81,
+          "loadQueue": 0,
+          "dirtyChunks": 0,
+          "unsavedChunks": 0,
+          "farTerrain": {
+            "active": true,
+            "shown": 439,
+            "wanted": 439,
+            "missing": 0,
+            "cached": 439,
+            "triangles": 1390628,
+            "workers": 3
+          }
+        },
+        "shadows": {
+          "available": true,
+          "quality": 3,
+          "near": {
+            "radius": 64,
+            "size": 2048,
+            "valid": true,
+            "draws": 16,
+            "needed": false
+          },
+          "cascades": [
+            {
+              "name": "far",
+              "radius": 512,
+              "size": 2048,
+              "valid": true,
+              "needed": false,
+              "changed": false,
+              "draws": 8,
+              "building": false,
+              "buildStep": null,
+              "terrainRevision": null
+            }
+          ],
+          "counters": null,
+          "terrainRevision": null
+        }
+      },
+      "measurementStart": {
+        "pose": {
+          "x": -28.5,
+          "y": 80,
+          "z": 66.4513600016276,
+          "yaw": 0,
+          "pitch": 0,
+          "flying": true
+        },
+        "time": {
+          "days": 0.5083422500000414,
+          "speed": 1
+        },
+        "queues": {
+          "chunks": 81,
+          "loadQueue": 0,
+          "dirtyChunks": 0,
+          "unsavedChunks": 0,
+          "farTerrain": {
+            "active": true,
+            "shown": 439,
+            "wanted": 439,
+            "missing": 0,
+            "cached": 439,
+            "triangles": 1390628,
+            "workers": 3
+          }
+        },
+        "shadows": {
+          "available": true,
+          "quality": 3,
+          "near": {
+            "radius": 64,
+            "size": 2048,
+            "valid": true,
+            "draws": 44,
+            "needed": false
+          },
+          "cascades": [
+            {
+              "name": "far",
+              "radius": 512,
+              "size": 2048,
+              "valid": true,
+              "needed": false,
+              "changed": false,
+              "draws": 20,
+              "building": false,
+              "buildStep": null,
+              "terrainRevision": null
+            }
+          ],
+          "counters": null,
+          "terrainRevision": null
+        }
+      },
+      "end": {
+        "pose": {
+          "x": -28.5,
+          "y": 80,
+          "z": -189.4667199991862,
+          "yaw": 0,
+          "pitch": 0,
+          "flying": true
+        },
+        "time": {
+          "days": 0.5333400000001667,
+          "speed": 1
+        },
+        "queues": {
+          "chunks": 107,
+          "loadQueue": 0,
+          "dirtyChunks": 0,
+          "unsavedChunks": 0,
+          "farTerrain": {
+            "active": true,
+            "shown": 446,
+            "wanted": 446,
+            "missing": 0,
+            "cached": 648,
+            "triangles": 1327860,
+            "workers": 3
+          }
+        },
+        "shadows": {
+          "available": true,
+          "quality": 3,
+          "near": {
+            "radius": 64,
+            "size": 2048,
+            "valid": true,
+            "draws": 147,
+            "needed": false
+          },
+          "cascades": [
+            {
+              "name": "far",
+              "radius": 512,
+              "size": 2048,
+              "valid": true,
+              "needed": false,
+              "changed": false,
+              "draws": 59,
+              "building": false,
+              "buildStep": null,
+              "terrainRevision": null
+            }
+          ],
+          "counters": null,
+          "terrainRevision": null
+        }
+      },
+      "renderedFrameIntervals": {
+        "samples": 4196,
+        "averageMs": 7.146925643469971,
+        "p50Ms": 7,
+        "p95Ms": 9.099999904632568,
+        "p99Ms": 12.599999904632568,
+        "maxMs": 39.09999990463257,
+        "slowest1PercentAverageMs": 16.135714275496348,
+        "fpsFromAverage": 139.9203027827334,
+        "fpsFromSlowest1PercentAverage": 61.97432496177732,
+        "over20ms": 6,
+        "over33_34ms": 1
+      },
+      "rafIntervals": {
+        "samples": 4196,
+        "averageMs": 7.147378455672068,
+        "p50Ms": 6.900000000001455,
+        "p95Ms": 7.099999999998545,
+        "p99Ms": 13.900000000001455,
+        "maxMs": 34.599999999998545,
+        "slowest1PercentAverageMs": 16.426190476190857,
+        "fpsFromAverage": 139.9114383269313,
+        "fpsFromSlowest1PercentAverage": 60.878388172197454,
+        "over20ms": 10,
+        "over33_34ms": 1
+      },
+      "cpuUpdate": {
+        "samples": 4197,
+        "averageMs": 0.5120324014282408,
+        "p50Ms": 0.2999999523162842,
+        "p95Ms": 1.0999999046325684,
+        "p99Ms": 5.799999952316284,
+        "maxMs": 18.59999990463257,
+        "slowest1PercentAverageMs": 7.276190456889925,
+        "fpsFromAverage": 1953.0014061818035,
+        "fpsFromSlowest1PercentAverage": 137.43455533837576,
+        "over20ms": 0,
+        "over33_34ms": 0
+      },
+      "cpuRender": {
+        "samples": 4197,
+        "averageMs": 3.232475576782499,
+        "p50Ms": 3.200000047683716,
+        "p95Ms": 4.3999998569488525,
+        "p99Ms": 5.799999952316284,
+        "maxMs": 25.799999952316284,
+        "slowest1PercentAverageMs": 7.73095238776434,
+        "fpsFromAverage": 309.36041935864137,
+        "fpsFromSlowest1PercentAverage": 129.35016927315252,
+        "over20ms": 1,
+        "over33_34ms": 0
+      },
+      "gpuRender": {
+        "samples": 4197,
+        "averageMs": 2.4709227505360953,
+        "p50Ms": 2.322432,
+        "p95Ms": 3.336064,
+        "p99Ms": 4.829856,
+        "maxMs": 10.479616,
+        "slowest1PercentAverageMs": 5.967117714285714,
+        "fpsFromAverage": 404.7071078134832,
+        "fpsFromSlowest1PercentAverage": 167.58509683928762,
+        "over20ms": 0,
+        "over33_34ms": 0
+      },
+      "gpu": {
+        "available": true,
+        "valid": true,
+        "disjointEvents": 0,
+        "skippedQueries": 0,
+        "discardedQueries": 0,
+        "pendingLimit": 8
+      },
+      "shadowDrawDelta": {
+        "near": 103,
+        "cascades": [
+          {
+            "name": "far",
+            "draws": 39
+          }
+        ]
+      },
+      "shadowWork": {
+        "cpu": {
+          "samples": 4197,
+          "averageMs": 0.549559210151725,
+          "p50Ms": 0.5,
+          "p95Ms": 1.1000001430511475,
+          "p99Ms": 2.299999952316284,
+          "maxMs": 4.900000095367432,
+          "slowest1PercentAverageMs": 2.8666666689373197,
+          "fpsFromAverage": 1819.6401434595464,
+          "fpsFromSlowest1PercentAverage": 348.8372090260157,
+          "over20ms": 0,
+          "over33_34ms": 0
+        },
+        "renderCalls": {
+          "frames": 4197,
+          "total": 47573,
+          "max": 287
+        },
+        "triangles": {
+          "frames": 4197,
+          "total": 64722162,
+          "max": 721762
+        }
+      }
+    },
+    {
+      "trial": 2,
+      "profile": "default",
+      "scenario": "flight",
+      "timePreset": 0.5,
+      "timeMode": "running",
+      "timeSpeed": 1,
+      "valid": true,
+      "invalidReasons": [],
+      "warmupSeconds": 10,
+      "measurementSeconds": 30.009299999952315,
+      "trajectory": {
+        "start": {
+          "x": -28.5,
+          "y": 80,
+          "z": 66.5,
+          "yaw": 0,
+          "pitch": 0
+        },
+        "plannedDelta": {
+          "x": 0,
+          "y": 0,
+          "z": -256
+        },
+        "speedBlocksPerSecond": 8.533333333333333,
+        "warmupMotion": "stationary"
+      },
+      "motionDelta": {
+        "x": 0,
+        "y": 0,
+        "z": -255.99829333292644,
+        "distance": 255.99829333292644
+      },
+      "device": {
+        "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 3050 Laptop GPU (0x000025A2) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+        "vendor": "Google Inc. (NVIDIA)",
+        "version": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+        "timerQuery": true,
+        "context": {
+          "alpha": true,
+          "antialias": true,
+          "depth": true,
+          "desynchronized": false,
+          "failIfMajorPerformanceCaveat": false,
+          "powerPreference": "default",
+          "premultipliedAlpha": true,
+          "preserveDrawingBuffer": false,
+          "stencil": true,
+          "xrCompatible": false
+        },
+        "drawingBuffer": [
+          1920,
+          1080
+        ],
+        "viewport": [
+          1920,
+          1080
+        ],
+        "pixelRatio": 1,
+        "devicePixelRatio": 1,
+        "touchMode": true,
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36",
+        "hardwareConcurrency": 16
+      },
+      "settings": {
+        "potato": false,
+        "viewDistance": 48,
+        "farTerrain": 8192,
+        "farDetail": 2,
+        "fov": 75,
+        "brightness": 0,
+        "renderScale": 100,
+        "fpsLimit": 0,
+        "ambientOcclusion": 45,
+        "shadows": 3,
+        "lightingModel": "atmosphere",
+        "lightShafts": true,
+        "bounceLight": false,
+        "fancyLeaves": true,
+        "dynamicLight": true,
+        "loadBudget": 4,
+        "mouseSensitivity": 100,
+        "invertMouse": false,
+        "skinOverlay": true,
+        "showHand": true,
+        "viewBobbing": true,
+        "jointStyle": "smooth",
+        "cameraDistance": 4,
+        "volumeMaster": 80,
+        "volumeBlocks": 100,
+        "volumeWorld": 100,
+        "volumeUi": 80,
+        "theme": "default",
+        "hudScale": 100,
+        "showDebug": true,
+        "showFps": false,
+        "meteorites": true,
+        "autoUpdates": true,
+        "textureResolution": 0
+      },
+      "world": {
+        "seed": "lighting-rtx3050-0231",
+        "terrain": "realistic",
+        "gameMode": "creative"
+      },
+      "initial": {
+        "pose": {
+          "x": -28.5,
+          "y": 80,
+          "z": 66.5,
+          "yaw": 0,
+          "pitch": 0,
+          "flying": true
+        },
+        "time": {
+          "days": 0.5,
+          "speed": 1
+        },
+        "queues": {
+          "chunks": 81,
+          "loadQueue": 0,
+          "dirtyChunks": 0,
+          "unsavedChunks": 0,
+          "farTerrain": {
+            "active": true,
+            "shown": 439,
+            "wanted": 439,
+            "missing": 0,
+            "cached": 648,
+            "triangles": 1390628,
+            "workers": 3
+          }
+        },
+        "shadows": {
+          "available": true,
+          "quality": 3,
+          "near": {
+            "radius": 64,
+            "size": 2048,
+            "valid": true,
+            "draws": 195,
+            "needed": false
+          },
+          "cascades": [
+            {
+              "name": "far",
+              "radius": 512,
+              "size": 2048,
+              "valid": true,
+              "needed": false,
+              "changed": false,
+              "draws": 80,
+              "building": false,
+              "buildStep": null,
+              "terrainRevision": null
+            }
+          ],
+          "counters": null,
+          "terrainRevision": null
+        }
+      },
+      "measurementStart": {
+        "pose": {
+          "x": -28.5,
+          "y": 80,
+          "z": 66.4769599995931,
+          "yaw": 0,
+          "pitch": 0,
+          "flying": true
+        },
+        "time": {
+          "days": 0.508336416666708,
+          "speed": 1
+        },
+        "queues": {
+          "chunks": 81,
+          "loadQueue": 0,
+          "dirtyChunks": 0,
+          "unsavedChunks": 0,
+          "farTerrain": {
+            "active": true,
+            "shown": 439,
+            "wanted": 439,
+            "missing": 0,
+            "cached": 648,
+            "triangles": 1390628,
+            "workers": 3
+          }
+        },
+        "shadows": {
+          "available": true,
+          "quality": 3,
+          "near": {
+            "radius": 64,
+            "size": 2048,
+            "valid": true,
+            "draws": 224,
+            "needed": false
+          },
+          "cascades": [
+            {
+              "name": "far",
+              "radius": 512,
+              "size": 2048,
+              "valid": true,
+              "needed": false,
+              "changed": false,
+              "draws": 93,
+              "building": false,
+              "buildStep": null,
+              "terrainRevision": null
+            }
+          ],
+          "counters": null,
+          "terrainRevision": null
+        }
+      },
+      "end": {
+        "pose": {
+          "x": -28.5,
+          "y": 80,
+          "z": -189.49829333292644,
+          "yaw": 0,
+          "pitch": 0,
+          "flying": true
+        },
+        "time": {
+          "days": 0.5333400000001635,
+          "speed": 1
+        },
+        "queues": {
+          "chunks": 107,
+          "loadQueue": 0,
+          "dirtyChunks": 0,
+          "unsavedChunks": 0,
+          "farTerrain": {
+            "active": true,
+            "shown": 446,
+            "wanted": 446,
+            "missing": 0,
+            "cached": 648,
+            "triangles": 1327860,
+            "workers": 3
+          }
+        },
+        "shadows": {
+          "available": true,
+          "quality": 3,
+          "near": {
+            "radius": 64,
+            "size": 2048,
+            "valid": true,
+            "draws": 326,
+            "needed": false
+          },
+          "cascades": [
+            {
+              "name": "far",
+              "radius": 512,
+              "size": 2048,
+              "valid": true,
+              "needed": false,
+              "changed": false,
+              "draws": 132,
+              "building": false,
+              "buildStep": null,
+              "terrainRevision": null
+            }
+          ],
+          "counters": null,
+          "terrainRevision": null
+        }
+      },
+      "renderedFrameIntervals": {
+        "samples": 4254,
+        "averageMs": 7.049365303244006,
+        "p50Ms": 7,
+        "p95Ms": 8.5,
+        "p99Ms": 10.900000095367432,
+        "maxMs": 21.299999952316284,
+        "slowest1PercentAverageMs": 12.630232578100161,
+        "fpsFromAverage": 141.85674269707883,
+        "fpsFromSlowest1PercentAverage": 79.17510574856097,
+        "over20ms": 1,
+        "over33_34ms": 0
+      },
+      "rafIntervals": {
+        "samples": 4255,
+        "averageMs": 7.049894242068156,
+        "p50Ms": 6.900000000008731,
+        "p95Ms": 7.099999999991269,
+        "p99Ms": 13.89999999999418,
+        "maxMs": 20.90000000000873,
+        "slowest1PercentAverageMs": 14.246511627909143,
+        "fpsFromAverage": 141.84609948228672,
+        "fpsFromSlowest1PercentAverage": 70.19262161278724,
+        "over20ms": 2,
+        "over33_34ms": 0
+      },
+      "cpuUpdate": {
+        "samples": 4256,
+        "averageMs": 0.46677631044522266,
+        "p50Ms": 0.2999999523162842,
+        "p95Ms": 1,
+        "p99Ms": 5.300000190734863,
+        "maxMs": 7.700000047683716,
+        "slowest1PercentAverageMs": 5.793023253596107,
+        "fpsFromAverage": 2142.3537947891477,
+        "fpsFromSlowest1PercentAverage": 172.62143723991352,
+        "over20ms": 0,
+        "over33_34ms": 0
+      },
+      "cpuRender": {
+        "samples": 4255,
+        "averageMs": 3.0657579321698774,
+        "p50Ms": 3.1000001430511475,
+        "p95Ms": 4.200000047683716,
+        "p99Ms": 5,
+        "maxMs": 10.799999952316284,
+        "slowest1PercentAverageMs": 5.939534874849541,
+        "fpsFromAverage": 326.18361335926534,
+        "fpsFromSlowest1PercentAverage": 168.3633518567953,
+        "over20ms": 0,
+        "over33_34ms": 0
+      },
+      "gpuRender": {
+        "samples": 4255,
+        "averageMs": 2.4585495012926013,
+        "p50Ms": 2.314976,
+        "p95Ms": 3.237888,
+        "p99Ms": 4.389888,
+        "maxMs": 6.7328,
+        "slowest1PercentAverageMs": 5.1242723720930226,
+        "fpsFromAverage": 406.74389491618626,
+        "fpsFromSlowest1PercentAverage": 195.14965782186698,
+        "over20ms": 0,
+        "over33_34ms": 0
+      },
+      "gpu": {
+        "available": true,
+        "valid": true,
+        "disjointEvents": 0,
+        "skippedQueries": 0,
+        "discardedQueries": 0,
+        "pendingLimit": 8
+      },
+      "shadowDrawDelta": {
+        "near": 102,
+        "cascades": [
+          {
+            "name": "far",
+            "draws": 39
+          }
+        ]
+      },
+      "shadowWork": {
+        "cpu": {
+          "samples": 4255,
+          "averageMs": 0.6065334916254889,
+          "p50Ms": 0.5999999046325684,
+          "p95Ms": 1.1000001430511475,
+          "p99Ms": 2.200000047683716,
+          "maxMs": 4.299999952316284,
+          "slowest1PercentAverageMs": 2.602325589157814,
+          "fpsFromAverage": 1648.7135727988152,
+          "fpsFromSlowest1PercentAverage": 384.27166998869967,
+          "over20ms": 0,
+          "over33_34ms": 0
+        },
+        "renderCalls": {
+          "frames": 4255,
+          "total": 47625,
+          "max": 287
+        },
+        "triangles": {
+          "frames": 4255,
+          "total": 64551008,
+          "max": 721762
+        }
+      }
+    },
+    {
+      "trial": 3,
+      "profile": "default",
+      "scenario": "flight",
+      "timePreset": 0.5,
+      "timeMode": "running",
+      "timeSpeed": 1,
+      "valid": true,
+      "invalidReasons": [],
+      "warmupSeconds": 10,
+      "measurementSeconds": 30.0055,
+      "trajectory": {
+        "start": {
+          "x": -28.5,
+          "y": 80,
+          "z": 66.5,
+          "yaw": 0,
+          "pitch": 0
+        },
+        "plannedDelta": {
+          "x": 0,
+          "y": 0,
+          "z": -256
+        },
+        "speedBlocksPerSecond": 8.533333333333333,
+        "warmupMotion": "stationary"
+      },
+      "motionDelta": {
+        "x": 0,
+        "y": 0,
+        "z": -255.9667199991862,
+        "distance": 255.9667199991862
+      },
+      "device": {
+        "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 3050 Laptop GPU (0x000025A2) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+        "vendor": "Google Inc. (NVIDIA)",
+        "version": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+        "timerQuery": true,
+        "context": {
+          "alpha": true,
+          "antialias": true,
+          "depth": true,
+          "desynchronized": false,
+          "failIfMajorPerformanceCaveat": false,
+          "powerPreference": "default",
+          "premultipliedAlpha": true,
+          "preserveDrawingBuffer": false,
+          "stencil": true,
+          "xrCompatible": false
+        },
+        "drawingBuffer": [
+          1920,
+          1080
+        ],
+        "viewport": [
+          1920,
+          1080
+        ],
+        "pixelRatio": 1,
+        "devicePixelRatio": 1,
+        "touchMode": true,
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36",
+        "hardwareConcurrency": 16
+      },
+      "settings": {
+        "potato": false,
+        "viewDistance": 48,
+        "farTerrain": 8192,
+        "farDetail": 2,
+        "fov": 75,
+        "brightness": 0,
+        "renderScale": 100,
+        "fpsLimit": 0,
+        "ambientOcclusion": 45,
+        "shadows": 3,
+        "lightingModel": "atmosphere",
+        "lightShafts": true,
+        "bounceLight": false,
+        "fancyLeaves": true,
+        "dynamicLight": true,
+        "loadBudget": 4,
+        "mouseSensitivity": 100,
+        "invertMouse": false,
+        "skinOverlay": true,
+        "showHand": true,
+        "viewBobbing": true,
+        "jointStyle": "smooth",
+        "cameraDistance": 4,
+        "volumeMaster": 80,
+        "volumeBlocks": 100,
+        "volumeWorld": 100,
+        "volumeUi": 80,
+        "theme": "default",
+        "hudScale": 100,
+        "showDebug": true,
+        "showFps": false,
+        "meteorites": true,
+        "autoUpdates": true,
+        "textureResolution": 0
+      },
+      "world": {
+        "seed": "lighting-rtx3050-0231",
+        "terrain": "realistic",
+        "gameMode": "creative"
+      },
+      "initial": {
+        "pose": {
+          "x": -28.5,
+          "y": 80,
+          "z": 66.5,
+          "yaw": 0,
+          "pitch": 0,
+          "flying": true
+        },
+        "time": {
+          "days": 0.5,
+          "speed": 1
+        },
+        "queues": {
+          "chunks": 81,
+          "loadQueue": 0,
+          "dirtyChunks": 0,
+          "unsavedChunks": 0,
+          "farTerrain": {
+            "active": true,
+            "shown": 439,
+            "wanted": 439,
+            "missing": 0,
+            "cached": 648,
+            "triangles": 1390628,
+            "workers": 3
+          }
+        },
+        "shadows": {
+          "available": true,
+          "quality": 3,
+          "near": {
+            "radius": 64,
+            "size": 2048,
+            "valid": true,
+            "draws": 361,
+            "needed": false
+          },
+          "cascades": [
+            {
+              "name": "far",
+              "radius": 512,
+              "size": 2048,
+              "valid": true,
+              "needed": false,
+              "changed": false,
+              "draws": 147,
+              "building": false,
+              "buildStep": null,
+              "terrainRevision": null
+            }
+          ],
+          "counters": null,
+          "terrainRevision": null
+        }
+      },
+      "measurementStart": {
+        "pose": {
+          "x": -28.5,
+          "y": 80,
+          "z": 66.4513600016276,
+          "yaw": 0,
+          "pitch": 0,
+          "flying": true
+        },
+        "time": {
+          "days": 0.5083421666667086,
+          "speed": 1
+        },
+        "queues": {
+          "chunks": 81,
+          "loadQueue": 0,
+          "dirtyChunks": 0,
+          "unsavedChunks": 0,
+          "farTerrain": {
+            "active": true,
+            "shown": 439,
+            "wanted": 439,
+            "missing": 0,
+            "cached": 648,
+            "triangles": 1390628,
+            "workers": 3
+          }
+        },
+        "shadows": {
+          "available": true,
+          "quality": 3,
+          "near": {
+            "radius": 64,
+            "size": 2048,
+            "valid": true,
+            "draws": 390,
+            "needed": false
+          },
+          "cascades": [
+            {
+              "name": "far",
+              "radius": 512,
+              "size": 2048,
+              "valid": true,
+              "needed": false,
+              "changed": false,
+              "draws": 160,
+              "building": false,
+              "buildStep": null,
+              "terrainRevision": null
+            }
+          ],
+          "counters": null,
+          "terrainRevision": null
+        }
+      },
+      "end": {
+        "pose": {
+          "x": -28.5,
+          "y": 80,
+          "z": -189.4667199991862,
+          "yaw": 0,
+          "pitch": 0,
+          "flying": true
+        },
+        "time": {
+          "days": 0.5333399166668314,
+          "speed": 1
+        },
+        "queues": {
+          "chunks": 107,
+          "loadQueue": 0,
+          "dirtyChunks": 0,
+          "unsavedChunks": 0,
+          "farTerrain": {
+            "active": true,
+            "shown": 446,
+            "wanted": 446,
+            "missing": 0,
+            "cached": 648,
+            "triangles": 1327860,
+            "workers": 3
+          }
+        },
+        "shadows": {
+          "available": true,
+          "quality": 3,
+          "near": {
+            "radius": 64,
+            "size": 2048,
+            "valid": true,
+            "draws": 492,
+            "needed": false
+          },
+          "cascades": [
+            {
+              "name": "far",
+              "radius": 512,
+              "size": 2048,
+              "valid": true,
+              "needed": false,
+              "changed": false,
+              "draws": 199,
+              "building": false,
+              "buildStep": null,
+              "terrainRevision": null
+            }
+          ],
+          "counters": null,
+          "terrainRevision": null
+        }
+      },
+      "renderedFrameIntervals": {
+        "samples": 4215,
+        "averageMs": 7.114780545658912,
+        "p50Ms": 7,
+        "p95Ms": 9,
+        "p99Ms": 11.899999856948853,
+        "maxMs": 22.09999990463257,
+        "slowest1PercentAverageMs": 13.874418630156406,
+        "fpsFromAverage": 140.55247292344816,
+        "fpsFromSlowest1PercentAverage": 72.07509205657628,
+        "over20ms": 1,
+        "over33_34ms": 0
+      },
+      "rafIntervals": {
+        "samples": 4215,
+        "averageMs": 7.115160142348753,
+        "p50Ms": 6.900000000023283,
+        "p95Ms": 7.100000000005821,
+        "p99Ms": 13.89999999999418,
+        "maxMs": 27.79999999998836,
+        "slowest1PercentAverageMs": 14.920930232558952,
+        "fpsFromAverage": 140.5449743918054,
+        "fpsFromSlowest1PercentAverage": 67.01995012468463,
+        "over20ms": 5,
+        "over33_34ms": 0
+      },
+      "cpuUpdate": {
+        "samples": 4216,
+        "averageMs": 0.4552656579515287,
+        "p50Ms": 0.2999999523162842,
+        "p95Ms": 1,
+        "p99Ms": 5.300000190734863,
+        "maxMs": 7.400000095367432,
+        "slowest1PercentAverageMs": 5.865116296812546,
+        "fpsFromAverage": 2196.519729819964,
+        "fpsFromSlowest1PercentAverage": 170.4996029735096,
+        "over20ms": 0,
+        "over33_34ms": 0
+      },
+      "cpuRender": {
+        "samples": 4216,
+        "averageMs": 3.2203984809668285,
+        "p50Ms": 3.200000047683716,
+        "p95Ms": 4.5,
+        "p99Ms": 6,
+        "maxMs": 12.700000047683716,
+        "slowest1PercentAverageMs": 7.246511642322984,
+        "fpsFromAverage": 310.5205787141534,
+        "fpsFromSlowest1PercentAverage": 137.99743233137679,
+        "over20ms": 0,
+        "over33_34ms": 0
+      },
+      "gpuRender": {
+        "samples": 4216,
+        "averageMs": 2.4684515749525597,
+        "p50Ms": 2.331488,
+        "p95Ms": 3.310592,
+        "p99Ms": 4.63344,
+        "maxMs": 8.123072,
+        "slowest1PercentAverageMs": 5.362059906976745,
+        "fpsFromAverage": 405.112261527439,
+        "fpsFromSlowest1PercentAverage": 186.4954919095306,
+        "over20ms": 0,
+        "over33_34ms": 0
+      },
+      "gpu": {
+        "available": true,
+        "valid": true,
+        "disjointEvents": 0,
+        "skippedQueries": 0,
+        "discardedQueries": 0,
+        "pendingLimit": 8
+      },
+      "shadowDrawDelta": {
+        "near": 102,
+        "cascades": [
+          {
+            "name": "far",
+            "draws": 39
+          }
+        ]
+      },
+      "shadowWork": {
+        "cpu": {
+          "samples": 4216,
+          "averageMs": 0.6278937373034642,
+          "p50Ms": 0.5999999046325684,
+          "p95Ms": 1.2000000476837158,
+          "p99Ms": 2.299999952316284,
+          "maxMs": 3.6999998092651367,
+          "slowest1PercentAverageMs": 2.753488390944725,
+          "fpsFromAverage": 1592.6261731715522,
+          "fpsFromSlowest1PercentAverage": 363.1756731892009,
+          "over20ms": 0,
+          "over33_34ms": 0
+        },
+        "renderCalls": {
+          "frames": 4216,
+          "total": 47495,
+          "max": 478
+        },
+        "triangles": {
+          "frames": 4216,
+          "total": 64518528,
+          "max": 989650
+        }
+      }
+    },
+    {
+      "trial": 4,
+      "profile": "default",
+      "scenario": "flight",
+      "timePreset": 0.735,
+      "timeMode": "running",
+      "timeSpeed": 1,
+      "valid": true,
+      "invalidReasons": [],
+      "warmupSeconds": 10,
+      "measurementSeconds": 30.002299999952317,
+      "trajectory": {
+        "start": {
+          "x": -28.5,
+          "y": 80,
+          "z": 66.5,
+          "yaw": 0,
+          "pitch": 0
+        },
+        "plannedDelta": {
+          "x": 0,
+          "y": 0,
+          "z": -256
+        },
+        "speedBlocksPerSecond": 8.533333333333333,
+        "warmupMotion": "stationary"
+      },
+      "motionDelta": {
+        "x": 0,
+        "y": 0,
+        "z": -255.9488,
+        "distance": 255.9488
+      },
+      "device": {
+        "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 3050 Laptop GPU (0x000025A2) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+        "vendor": "Google Inc. (NVIDIA)",
+        "version": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+        "timerQuery": true,
+        "context": {
+          "alpha": true,
+          "antialias": true,
+          "depth": true,
+          "desynchronized": false,
+          "failIfMajorPerformanceCaveat": false,
+          "powerPreference": "default",
+          "premultipliedAlpha": true,
+          "preserveDrawingBuffer": false,
+          "stencil": true,
+          "xrCompatible": false
+        },
+        "drawingBuffer": [
+          1920,
+          1080
+        ],
+        "viewport": [
+          1920,
+          1080
+        ],
+        "pixelRatio": 1,
+        "devicePixelRatio": 1,
+        "touchMode": true,
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36",
+        "hardwareConcurrency": 16
+      },
+      "settings": {
+        "potato": false,
+        "viewDistance": 48,
+        "farTerrain": 8192,
+        "farDetail": 2,
+        "fov": 75,
+        "brightness": 0,
+        "renderScale": 100,
+        "fpsLimit": 0,
+        "ambientOcclusion": 45,
+        "shadows": 3,
+        "lightingModel": "atmosphere",
+        "lightShafts": true,
+        "bounceLight": false,
+        "fancyLeaves": true,
+        "dynamicLight": true,
+        "loadBudget": 4,
+        "mouseSensitivity": 100,
+        "invertMouse": false,
+        "skinOverlay": true,
+        "showHand": true,
+        "viewBobbing": true,
+        "jointStyle": "smooth",
+        "cameraDistance": 4,
+        "volumeMaster": 80,
+        "volumeBlocks": 100,
+        "volumeWorld": 100,
+        "volumeUi": 80,
+        "theme": "default",
+        "hudScale": 100,
+        "showDebug": true,
+        "showFps": false,
+        "meteorites": true,
+        "autoUpdates": true,
+        "textureResolution": 0
+      },
+      "world": {
+        "seed": "lighting-rtx3050-0231",
+        "terrain": "realistic",
+        "gameMode": "creative"
+      },
+      "initial": {
+        "pose": {
+          "x": -28.5,
+          "y": 80,
+          "z": 66.5,
+          "yaw": 0,
+          "pitch": 0,
+          "flying": true
+        },
+        "time": {
+          "days": 0.735,
+          "speed": 1
+        },
+        "queues": {
+          "chunks": 81,
+          "loadQueue": 0,
+          "dirtyChunks": 0,
+          "unsavedChunks": 0,
+          "farTerrain": {
+            "active": true,
+            "shown": 439,
+            "wanted": 439,
+            "missing": 0,
+            "cached": 648,
+            "triangles": 1390628,
+            "workers": 3
+          }
+        },
+        "shadows": {
+          "available": true,
+          "quality": 3,
+          "near": {
+            "radius": 64,
+            "size": 2048,
+            "valid": true,
+            "draws": 611,
+            "needed": false
+          },
+          "cascades": [
+            {
+              "name": "far",
+              "radius": 512,
+              "size": 2048,
+              "valid": true,
+              "needed": false,
+              "changed": false,
+              "draws": 252,
+              "building": false,
+              "buildStep": null,
+              "terrainRevision": null
+            }
+          ],
+          "counters": null,
+          "terrainRevision": null
+        }
+      },
+      "measurementStart": {
+        "pose": {
+          "x": -28.5,
+          "y": 80,
+          "z": 66.46757333374023,
+          "yaw": 0,
+          "pitch": 0,
+          "flying": true
+        },
+        "time": {
+          "days": 0.7433421666667058,
+          "speed": 1
+        },
+        "queues": {
+          "chunks": 81,
+          "loadQueue": 0,
+          "dirtyChunks": 0,
+          "unsavedChunks": 0,
+          "farTerrain": {
+            "active": true,
+            "shown": 439,
+            "wanted": 439,
+            "missing": 0,
+            "cached": 648,
+            "triangles": 1390628,
+            "workers": 3
+          }
+        },
+        "shadows": {
+          "available": true,
+          "quality": 3,
+          "near": {
+            "radius": 64,
+            "size": 2048,
+            "valid": true,
+            "draws": 637,
+            "needed": false
+          },
+          "cascades": [
+            {
+              "name": "far",
+              "radius": 512,
+              "size": 2048,
+              "valid": true,
+              "needed": false,
+              "changed": false,
+              "draws": 263,
+              "building": false,
+              "buildStep": null,
+              "terrainRevision": null
+            }
+          ],
+          "counters": null,
+          "terrainRevision": null
+        }
+      },
+      "end": {
+        "pose": {
+          "x": -28.5,
+          "y": 80,
+          "z": -189.4488,
+          "yaw": 0,
+          "pitch": 0,
+          "flying": true
+        },
+        "time": {
+          "days": 0.7683398333334849,
+          "speed": 1
+        },
+        "queues": {
+          "chunks": 107,
+          "loadQueue": 0,
+          "dirtyChunks": 0,
+          "unsavedChunks": 0,
+          "farTerrain": {
+            "active": true,
+            "shown": 446,
+            "wanted": 446,
+            "missing": 0,
+            "cached": 648,
+            "triangles": 1327860,
+            "workers": 3
+          }
+        },
+        "shadows": {
+          "available": true,
+          "quality": 3,
+          "near": {
+            "radius": 64,
+            "size": 2048,
+            "valid": true,
+            "draws": 696,
+            "needed": false
+          },
+          "cascades": [
+            {
+              "name": "far",
+              "radius": 512,
+              "size": 2048,
+              "valid": true,
+              "needed": false,
+              "changed": true,
+              "draws": 283,
+              "building": false,
+              "buildStep": null,
+              "terrainRevision": null
+            }
+          ],
+          "counters": null,
+          "terrainRevision": null
+        }
+      },
+      "renderedFrameIntervals": {
+        "samples": 4093,
+        "averageMs": 7.326606401161084,
+        "p50Ms": 7,
+        "p95Ms": 10.300000190734863,
+        "p99Ms": 14.099999904632568,
+        "maxMs": 21.90000009536743,
+        "slowest1PercentAverageMs": 15.97317073984844,
+        "fpsFromAverage": 136.4888387946601,
+        "fpsFromSlowest1PercentAverage": 62.60497782730697,
+        "over20ms": 3,
+        "over33_34ms": 0
+      },
+      "rafIntervals": {
+        "samples": 4093,
+        "averageMs": 7.327241632054726,
+        "p50Ms": 6.900000000023283,
+        "p95Ms": 13.699999999982538,
+        "p99Ms": 14,
+        "maxMs": 27.70000000001164,
+        "slowest1PercentAverageMs": 16.19512195121809,
+        "fpsFromAverage": 136.47700597524545,
+        "fpsFromSlowest1PercentAverage": 61.74698795181265,
+        "over20ms": 11,
+        "over33_34ms": 0
+      },
+      "cpuUpdate": {
+        "samples": 4094,
+        "averageMs": 0.5416707383986502,
+        "p50Ms": 0.2999999523162842,
+        "p95Ms": 1.2000000476837158,
+        "p99Ms": 5.700000047683716,
+        "maxMs": 10,
+        "slowest1PercentAverageMs": 6.648780485478843,
+        "fpsFromAverage": 1846.1399686390957,
+        "fpsFromSlowest1PercentAverage": 150.40352169605134,
+        "over20ms": 0,
+        "over33_34ms": 0
+      },
+      "cpuRender": {
+        "samples": 4094,
+        "averageMs": 3.355520272697538,
+        "p50Ms": 3.299999952316284,
+        "p95Ms": 5.200000047683716,
+        "p99Ms": 7.1000001430511475,
+        "maxMs": 11.799999952316284,
+        "slowest1PercentAverageMs": 8.292682909384006,
+        "fpsFromAverage": 298.0163786035152,
+        "fpsFromSlowest1PercentAverage": 120.58823554779833,
+        "over20ms": 0,
+        "over33_34ms": 0
+      },
+      "gpuRender": {
+        "samples": 4094,
+        "averageMs": 3.033439007327797,
+        "p50Ms": 2.770944,
+        "p95Ms": 4.327072,
+        "p99Ms": 5.044224,
+        "maxMs": 8.384352,
+        "slowest1PercentAverageMs": 6.06106380487805,
+        "fpsFromAverage": 329.6588451537436,
+        "fpsFromSlowest1PercentAverage": 164.98753885335813,
+        "over20ms": 0,
+        "over33_34ms": 0
+      },
+      "gpu": {
+        "available": true,
+        "valid": true,
+        "disjointEvents": 0,
+        "skippedQueries": 0,
+        "discardedQueries": 0,
+        "pendingLimit": 8
+      },
+      "shadowDrawDelta": {
+        "near": 59,
+        "cascades": [
+          {
+            "name": "far",
+            "draws": 20
+          }
+        ]
+      },
+      "shadowWork": {
+        "cpu": {
+          "samples": 4094,
+          "averageMs": 0.4703712750482862,
+          "p50Ms": 0.40000009536743164,
+          "p95Ms": 1.1000001430511475,
+          "p99Ms": 2.0999999046325684,
+          "maxMs": 4.900000095367432,
+          "slowest1PercentAverageMs": 2.675609763075666,
+          "fpsFromAverage": 2125.9801630049465,
+          "fpsFromSlowest1PercentAverage": 373.74658061139695,
+          "over20ms": 0,
+          "over33_34ms": 0
+        },
+        "renderCalls": {
+          "frames": 4094,
+          "total": 27787,
+          "max": 333
+        },
+        "triangles": {
+          "frames": 4094,
+          "total": 36726704,
+          "max": 872364
+        }
+      }
+    }
+  ],
+  "development": {
+    "beforePooling": [
+      {
+        "trial": 1,
+        "profile": "default",
+        "scenario": "flight",
+        "timePreset": 0.5,
+        "timeMode": "running",
+        "timeSpeed": 1,
+        "valid": true,
+        "invalidReasons": [],
+        "warmupSeconds": 10,
+        "measurementSeconds": 30.001099999904632,
+        "trajectory": {
+          "start": {
+            "x": -28.5,
+            "y": 80,
+            "z": 66.5,
+            "yaw": 0,
+            "pitch": 0
+          },
+          "plannedDelta": {
+            "x": 0,
+            "y": 0,
+            "z": -256
+          },
+          "speedBlocksPerSecond": 8.533333333333333,
+          "warmupMotion": "stationary"
+        },
+        "motionDelta": {
+          "x": 0,
+          "y": 0,
+          "z": -255.93173333333334,
+          "distance": 255.93173333333334
+        },
+        "device": {
+          "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 3050 Laptop GPU (0x000025A2) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+          "vendor": "Google Inc. (NVIDIA)",
+          "version": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+          "timerQuery": true,
+          "context": {
+            "alpha": true,
+            "antialias": true,
+            "depth": true,
+            "desynchronized": false,
+            "failIfMajorPerformanceCaveat": false,
+            "powerPreference": "default",
+            "premultipliedAlpha": true,
+            "preserveDrawingBuffer": false,
+            "stencil": true,
+            "xrCompatible": false
+          },
+          "drawingBuffer": [
+            1920,
+            1080
+          ],
+          "viewport": [
+            1920,
+            1080
+          ],
+          "pixelRatio": 1,
+          "devicePixelRatio": 1,
+          "touchMode": true,
+          "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36",
+          "hardwareConcurrency": 16
+        },
+        "settings": {
+          "potato": false,
+          "viewDistance": 48,
+          "farTerrain": 8192,
+          "farDetail": 2,
+          "fov": 75,
+          "brightness": 0,
+          "renderScale": 100,
+          "fpsLimit": 0,
+          "ambientOcclusion": 45,
+          "shadows": 3,
+          "lightingModel": "atmosphere",
+          "lightShafts": true,
+          "bounceLight": false,
+          "fancyLeaves": true,
+          "dynamicLight": true,
+          "loadBudget": 4,
+          "mouseSensitivity": 100,
+          "invertMouse": false,
+          "skinOverlay": true,
+          "showHand": true,
+          "viewBobbing": true,
+          "jointStyle": "smooth",
+          "cameraDistance": 4,
+          "volumeMaster": 80,
+          "volumeBlocks": 100,
+          "volumeWorld": 100,
+          "volumeUi": 80,
+          "theme": "default",
+          "hudScale": 100,
+          "showDebug": true,
+          "showFps": false,
+          "meteorites": true,
+          "autoUpdates": true,
+          "textureResolution": 0
+        },
+        "world": {
+          "seed": "lighting-rtx3050-0231",
+          "terrain": "realistic",
+          "gameMode": "creative"
+        },
+        "initial": {
+          "pose": {
+            "x": -28.5,
+            "y": 80,
+            "z": 66.5,
+            "yaw": 0,
+            "pitch": 0,
+            "flying": true
+          },
+          "time": {
+            "days": 0.5,
+            "speed": 1
+          },
+          "queues": {
+            "chunks": 81,
+            "loadQueue": 0,
+            "dirtyChunks": 0,
+            "unsavedChunks": 0,
+            "farTerrain": {
+              "active": true,
+              "shown": 511,
+              "wanted": 511,
+              "missing": 0,
+              "cached": 511,
+              "triangles": 1556660,
+              "shadowRevision": 513,
+              "detailDistance": 800,
+              "targetSpacing": 4,
+              "lodWithinTarget": {
+                "1": 84,
+                "2": 71,
+                "4": 125
+              },
+              "workers": 3
+            }
+          },
+          "shadows": {
+            "available": true,
+            "quality": 3,
+            "near": {
+              "radius": 64,
+              "size": 2048,
+              "valid": true,
+              "draws": 17,
+              "needed": false
+            },
+            "cascades": [
+              {
+                "name": "far",
+                "radius": 256,
+                "size": 1024,
+                "valid": true,
+                "needed": false,
+                "changed": false,
+                "draws": 13,
+                "building": false,
+                "buildStep": null,
+                "terrainRevision": 513
+              },
+              {
+                "name": "distant",
+                "radius": 1024,
+                "size": 2048,
+                "valid": true,
+                "needed": false,
+                "changed": false,
+                "draws": 9,
+                "building": false,
+                "buildStep": null,
+                "terrainRevision": 513
+              }
+            ],
+            "counters": {
+              "budget": {
+                "draws": 24,
+                "triangles": 120000,
+                "milliseconds": 1.5
+              },
+              "lastFrame": {
+                "draws": 0,
+                "triangles": 0,
+                "completed": 0,
+                "prepareMilliseconds": 0,
+                "submitMilliseconds": 0
+              },
+              "cascades": [
+                {
+                  "name": "far",
+                  "radius": 256,
+                  "size": 1024,
+                  "valid": true,
+                  "building": false,
+                  "remaining": 0,
+                  "draws": 13,
+                  "terrainRevision": 513,
+                  "changed": false
+                },
+                {
+                  "name": "distant",
+                  "radius": 1024,
+                  "size": 2048,
+                  "valid": true,
+                  "building": false,
+                  "remaining": 0,
+                  "draws": 9,
+                  "terrainRevision": 513,
+                  "changed": false
+                }
+              ]
+            },
+            "terrainRevision": 513
+          }
+        },
+        "measurementStart": {
+          "pose": {
+            "x": -28.5,
+            "y": 80,
+            "z": 66.45392000122071,
+            "yaw": 0,
+            "pitch": 0,
+            "flying": true
+          },
+          "time": {
+            "days": 0.5083538333333713,
+            "speed": 1
+          },
+          "queues": {
+            "chunks": 81,
+            "loadQueue": 0,
+            "dirtyChunks": 0,
+            "unsavedChunks": 0,
+            "farTerrain": {
+              "active": true,
+              "shown": 511,
+              "wanted": 511,
+              "missing": 0,
+              "cached": 511,
+              "triangles": 1556660,
+              "shadowRevision": 513,
+              "detailDistance": 800,
+              "targetSpacing": 4,
+              "lodWithinTarget": {
+                "1": 84,
+                "2": 71,
+                "4": 125
+              },
+              "workers": 3
+            }
+          },
+          "shadows": {
+            "available": true,
+            "quality": 3,
+            "near": {
+              "radius": 64,
+              "size": 2048,
+              "valid": true,
+              "draws": 46,
+              "needed": false
+            },
+            "cascades": [
+              {
+                "name": "far",
+                "radius": 256,
+                "size": 1024,
+                "valid": true,
+                "needed": false,
+                "changed": false,
+                "draws": 30,
+                "building": false,
+                "buildStep": null,
+                "terrainRevision": 513
+              },
+              {
+                "name": "distant",
+                "radius": 1024,
+                "size": 2048,
+                "valid": true,
+                "needed": true,
+                "changed": false,
+                "draws": 23,
+                "building": true,
+                "buildStep": null,
+                "terrainRevision": 513
+              }
+            ],
+            "counters": {
+              "budget": {
+                "draws": 24,
+                "triangles": 120000,
+                "milliseconds": 1.5
+              },
+              "lastFrame": {
+                "draws": 24,
+                "triangles": 81262,
+                "completed": 0,
+                "prepareMilliseconds": 0,
+                "submitMilliseconds": 0.10000014305114746
+              },
+              "cascades": [
+                {
+                  "name": "far",
+                  "radius": 256,
+                  "size": 1024,
+                  "valid": true,
+                  "building": false,
+                  "remaining": 0,
+                  "draws": 30,
+                  "terrainRevision": 513,
+                  "changed": false
+                },
+                {
+                  "name": "distant",
+                  "radius": 1024,
+                  "size": 2048,
+                  "valid": true,
+                  "building": true,
+                  "remaining": 15,
+                  "draws": 23,
+                  "terrainRevision": 513,
+                  "changed": false
+                }
+              ]
+            },
+            "terrainRevision": 513
+          }
+        },
+        "end": {
+          "pose": {
+            "x": -28.5,
+            "y": 80,
+            "z": -189.43173333333334,
+            "yaw": 0,
+            "pitch": 0,
+            "flying": true
+          },
+          "time": {
+            "days": 0.5333458333334862,
+            "speed": 1
+          },
+          "queues": {
+            "chunks": 107,
+            "loadQueue": 0,
+            "dirtyChunks": 0,
+            "unsavedChunks": 0,
+            "farTerrain": {
+              "active": true,
+              "shown": 536,
+              "wanted": 536,
+              "missing": 0,
+              "cached": 719,
+              "triangles": 1543216,
+              "shadowRevision": 685,
+              "detailDistance": 800,
+              "targetSpacing": 4,
+              "lodWithinTarget": {
+                "1": 90,
+                "2": 65,
+                "4": 124,
+                "8": 2
+              },
+              "workers": 3
+            }
+          },
+          "shadows": {
+            "available": true,
+            "quality": 3,
+            "near": {
+              "radius": 64,
+              "size": 2048,
+              "valid": true,
+              "draws": 151,
+              "needed": false
+            },
+            "cascades": [
+              {
+                "name": "far",
+                "radius": 256,
+                "size": 1024,
+                "valid": true,
+                "needed": true,
+                "changed": false,
+                "draws": 89,
+                "building": true,
+                "buildStep": null,
+                "terrainRevision": 685
+              },
+              {
+                "name": "distant",
+                "radius": 1024,
+                "size": 2048,
+                "valid": true,
+                "needed": true,
+                "changed": false,
+                "draws": 66,
+                "building": true,
+                "buildStep": null,
+                "terrainRevision": 685
+              }
+            ],
+            "counters": {
+              "budget": {
+                "draws": 24,
+                "triangles": 120000,
+                "milliseconds": 1.5
+              },
+              "lastFrame": {
+                "draws": 24,
+                "triangles": 38092,
+                "completed": 0,
+                "prepareMilliseconds": 0,
+                "submitMilliseconds": 0.09999990463256836
+              },
+              "cascades": [
+                {
+                  "name": "far",
+                  "radius": 256,
+                  "size": 1024,
+                  "valid": true,
+                  "building": true,
+                  "remaining": 174,
+                  "draws": 89,
+                  "terrainRevision": 685,
+                  "changed": false
+                },
+                {
+                  "name": "distant",
+                  "radius": 1024,
+                  "size": 2048,
+                  "valid": true,
+                  "building": true,
+                  "remaining": 291,
+                  "draws": 66,
+                  "terrainRevision": 685,
+                  "changed": false
+                }
+              ]
+            },
+            "terrainRevision": 685
+          }
+        },
+        "renderedFrameIntervals": {
+          "samples": 4071,
+          "averageMs": 7.365266519282732,
+          "p50Ms": 7,
+          "p95Ms": 10.599999904632568,
+          "p99Ms": 15.799999952316284,
+          "maxMs": 45.5,
+          "slowest1PercentAverageMs": 19.49512193842632,
+          "fpsFromAverage": 135.77241195304163,
+          "fpsFromSlowest1PercentAverage": 51.294883056305814,
+          "over20ms": 10,
+          "over33_34ms": 1
+        },
+        "rafIntervals": {
+          "samples": 4072,
+          "averageMs": 7.365004911591355,
+          "p50Ms": 6.900000000001455,
+          "p95Ms": 13.69999999999709,
+          "p99Ms": 14,
+          "maxMs": 48.599999999998545,
+          "slowest1PercentAverageMs": 20.04634146341538,
+          "fpsFromAverage": 135.7772346392,
+          "fpsFromSlowest1PercentAverage": 49.88441416230499,
+          "over20ms": 29,
+          "over33_34ms": 1
+        },
+        "cpuUpdate": {
+          "samples": 4072,
+          "averageMs": 0.6487229857557181,
+          "p50Ms": 0.39999985694885254,
+          "p95Ms": 1.2999999523162842,
+          "p99Ms": 6.700000047683716,
+          "maxMs": 12.199999809265137,
+          "slowest1PercentAverageMs": 8.163414646939534,
+          "fpsFromAverage": 1541.4900072256082,
+          "fpsFromSlowest1PercentAverage": 122.49775899536111,
+          "over20ms": 0,
+          "over33_34ms": 0
+        },
+        "cpuRender": {
+          "samples": 4072,
+          "averageMs": 3.3466355609753276,
+          "p50Ms": 3.299999952316284,
+          "p95Ms": 5.200000047683716,
+          "p99Ms": 7.400000095367432,
+          "maxMs": 32.39999985694885,
+          "slowest1PercentAverageMs": 10.13170731358412,
+          "fpsFromAverage": 298.8075581520937,
+          "fpsFromSlowest1PercentAverage": 98.70004818035424,
+          "over20ms": 1,
+          "over33_34ms": 0
+        },
+        "gpuRender": {
+          "samples": 4072,
+          "averageMs": 2.904489186640464,
+          "p50Ms": 2.704384,
+          "p95Ms": 3.963904,
+          "p99Ms": 5.312512,
+          "maxMs": 9.8816,
+          "slowest1PercentAverageMs": 6.576689951219511,
+          "fpsFromAverage": 344.29461972164205,
+          "fpsFromSlowest1PercentAverage": 152.05217326910335,
+          "over20ms": 0,
+          "over33_34ms": 0
+        },
+        "gpu": {
+          "available": true,
+          "valid": true,
+          "disjointEvents": 0,
+          "skippedQueries": 0,
+          "discardedQueries": 0,
+          "pendingLimit": 8
+        },
+        "shadowDrawDelta": {
+          "near": 105,
+          "cascades": [
+            {
+              "name": "far",
+              "draws": 59
+            },
+            {
+              "name": "distant",
+              "draws": 43
+            }
+          ]
+        },
+        "shadowWork": {
+          "cpu": {
+            "samples": 4072,
+            "averageMs": 0.8742632603598484,
+            "p50Ms": 0.7000000476837158,
+            "p95Ms": 2.299999952316284,
+            "p99Ms": 4,
+            "maxMs": 17.299999952316284,
+            "slowest1PercentAverageMs": 5.402439030205331,
+            "fpsFromAverage": 1143.820225944755,
+            "fpsFromSlowest1PercentAverage": 185.1015799362002,
+            "over20ms": 0,
+            "over33_34ms": 0
+          },
+          "renderCalls": {
+            "frames": 4072,
+            "total": 74638,
+            "max": 241
+          },
+          "triangles": {
+            "frames": 4072,
+            "total": 121525350,
+            "max": 446210
+          }
+        }
+      },
+      {
+        "trial": 2,
+        "profile": "default",
+        "scenario": "flight",
+        "timePreset": 0.5,
+        "timeMode": "running",
+        "timeSpeed": 1,
+        "valid": true,
+        "invalidReasons": [],
+        "warmupSeconds": 10,
+        "measurementSeconds": 30.008,
+        "trajectory": {
+          "start": {
+            "x": -28.5,
+            "y": 80,
+            "z": 66.5,
+            "yaw": 0,
+            "pitch": 0
+          },
+          "plannedDelta": {
+            "x": 0,
+            "y": 0,
+            "z": -256
+          },
+          "speedBlocksPerSecond": 8.533333333333333,
+          "warmupMotion": "stationary"
+        },
+        "motionDelta": {
+          "x": 0,
+          "y": 0,
+          "z": -255.98549333292644,
+          "distance": 255.98549333292644
+        },
+        "device": {
+          "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 3050 Laptop GPU (0x000025A2) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+          "vendor": "Google Inc. (NVIDIA)",
+          "version": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+          "timerQuery": true,
+          "context": {
+            "alpha": true,
+            "antialias": true,
+            "depth": true,
+            "desynchronized": false,
+            "failIfMajorPerformanceCaveat": false,
+            "powerPreference": "default",
+            "premultipliedAlpha": true,
+            "preserveDrawingBuffer": false,
+            "stencil": true,
+            "xrCompatible": false
+          },
+          "drawingBuffer": [
+            1920,
+            1080
+          ],
+          "viewport": [
+            1920,
+            1080
+          ],
+          "pixelRatio": 1,
+          "devicePixelRatio": 1,
+          "touchMode": true,
+          "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36",
+          "hardwareConcurrency": 16
+        },
+        "settings": {
+          "potato": false,
+          "viewDistance": 48,
+          "farTerrain": 8192,
+          "farDetail": 2,
+          "fov": 75,
+          "brightness": 0,
+          "renderScale": 100,
+          "fpsLimit": 0,
+          "ambientOcclusion": 45,
+          "shadows": 3,
+          "lightingModel": "atmosphere",
+          "lightShafts": true,
+          "bounceLight": false,
+          "fancyLeaves": true,
+          "dynamicLight": true,
+          "loadBudget": 4,
+          "mouseSensitivity": 100,
+          "invertMouse": false,
+          "skinOverlay": true,
+          "showHand": true,
+          "viewBobbing": true,
+          "jointStyle": "smooth",
+          "cameraDistance": 4,
+          "volumeMaster": 80,
+          "volumeBlocks": 100,
+          "volumeWorld": 100,
+          "volumeUi": 80,
+          "theme": "default",
+          "hudScale": 100,
+          "showDebug": true,
+          "showFps": false,
+          "meteorites": true,
+          "autoUpdates": true,
+          "textureResolution": 0
+        },
+        "world": {
+          "seed": "lighting-rtx3050-0231",
+          "terrain": "realistic",
+          "gameMode": "creative"
+        },
+        "initial": {
+          "pose": {
+            "x": -28.5,
+            "y": 80,
+            "z": 66.5,
+            "yaw": 0,
+            "pitch": 0,
+            "flying": true
+          },
+          "time": {
+            "days": 0.5,
+            "speed": 1
+          },
+          "queues": {
+            "chunks": 81,
+            "loadQueue": 0,
+            "dirtyChunks": 0,
+            "unsavedChunks": 0,
+            "farTerrain": {
+              "active": true,
+              "shown": 553,
+              "wanted": 553,
+              "missing": 0,
+              "cached": 719,
+              "triangles": 1677400,
+              "shadowRevision": 719,
+              "detailDistance": 800,
+              "targetSpacing": 4,
+              "lodWithinTarget": {
+                "1": 96,
+                "2": 68,
+                "4": 125
+              },
+              "workers": 3
+            }
+          },
+          "shadows": {
+            "available": true,
+            "quality": 3,
+            "near": {
+              "radius": 64,
+              "size": 2048,
+              "valid": true,
+              "draws": 319,
+              "needed": false
+            },
+            "cascades": [
+              {
+                "name": "far",
+                "radius": 256,
+                "size": 1024,
+                "valid": true,
+                "needed": false,
+                "changed": false,
+                "draws": 189,
+                "building": false,
+                "buildStep": null,
+                "terrainRevision": 719
+              },
+              {
+                "name": "distant",
+                "radius": 1024,
+                "size": 2048,
+                "valid": true,
+                "needed": true,
+                "changed": false,
+                "draws": 153,
+                "building": true,
+                "buildStep": null,
+                "terrainRevision": 719
+              }
+            ],
+            "counters": {
+              "budget": {
+                "draws": 24,
+                "triangles": 120000,
+                "milliseconds": 1.5
+              },
+              "lastFrame": {
+                "draws": 24,
+                "triangles": 72952,
+                "completed": 0,
+                "prepareMilliseconds": 0,
+                "submitMilliseconds": 0.09999990463256836
+              },
+              "cascades": [
+                {
+                  "name": "far",
+                  "radius": 256,
+                  "size": 1024,
+                  "valid": true,
+                  "building": false,
+                  "remaining": 0,
+                  "draws": 189,
+                  "terrainRevision": 719,
+                  "changed": false
+                },
+                {
+                  "name": "distant",
+                  "radius": 1024,
+                  "size": 2048,
+                  "valid": true,
+                  "building": true,
+                  "remaining": 285,
+                  "draws": 153,
+                  "terrainRevision": 719,
+                  "changed": false
+                }
+              ]
+            },
+            "terrainRevision": 719
+          }
+        },
+        "measurementStart": {
+          "pose": {
+            "x": -28.5,
+            "y": 80,
+            "z": 66.49573333333333,
+            "yaw": 0,
+            "pitch": 0,
+            "flying": true
+          },
+          "time": {
+            "days": 0.5083364166666985,
+            "speed": 1
+          },
+          "queues": {
+            "chunks": 81,
+            "loadQueue": 0,
+            "dirtyChunks": 0,
+            "unsavedChunks": 0,
+            "farTerrain": {
+              "active": true,
+              "shown": 553,
+              "wanted": 553,
+              "missing": 0,
+              "cached": 719,
+              "triangles": 1677400,
+              "shadowRevision": 719,
+              "detailDistance": 800,
+              "targetSpacing": 4,
+              "lodWithinTarget": {
+                "1": 96,
+                "2": 68,
+                "4": 125
+              },
+              "workers": 3
+            }
+          },
+          "shadows": {
+            "available": true,
+            "quality": 3,
+            "near": {
+              "radius": 64,
+              "size": 2048,
+              "valid": true,
+              "draws": 348,
+              "needed": false
+            },
+            "cascades": [
+              {
+                "name": "far",
+                "radius": 256,
+                "size": 1024,
+                "valid": true,
+                "needed": false,
+                "changed": false,
+                "draws": 207,
+                "building": false,
+                "buildStep": null,
+                "terrainRevision": 719
+              },
+              {
+                "name": "distant",
+                "radius": 1024,
+                "size": 2048,
+                "valid": true,
+                "needed": false,
+                "changed": false,
+                "draws": 168,
+                "building": false,
+                "buildStep": null,
+                "terrainRevision": 719
+              }
+            ],
+            "counters": {
+              "budget": {
+                "draws": 24,
+                "triangles": 120000,
+                "milliseconds": 1.5
+              },
+              "lastFrame": {
+                "draws": 0,
+                "triangles": 0,
+                "completed": 0,
+                "prepareMilliseconds": 0,
+                "submitMilliseconds": 0
+              },
+              "cascades": [
+                {
+                  "name": "far",
+                  "radius": 256,
+                  "size": 1024,
+                  "valid": true,
+                  "building": false,
+                  "remaining": 0,
+                  "draws": 207,
+                  "terrainRevision": 719,
+                  "changed": false
+                },
+                {
+                  "name": "distant",
+                  "radius": 1024,
+                  "size": 2048,
+                  "valid": true,
+                  "building": false,
+                  "remaining": 0,
+                  "draws": 168,
+                  "terrainRevision": 719,
+                  "changed": false
+                }
+              ]
+            },
+            "terrainRevision": 719
+          }
+        },
+        "end": {
+          "pose": {
+            "x": -28.5,
+            "y": 80,
+            "z": -189.48549333292644,
+            "yaw": 0,
+            "pitch": 0,
+            "flying": true
+          },
+          "time": {
+            "days": 0.5333399166668095,
+            "speed": 1
+          },
+          "queues": {
+            "chunks": 107,
+            "loadQueue": 0,
+            "dirtyChunks": 0,
+            "unsavedChunks": 0,
+            "farTerrain": {
+              "active": true,
+              "shown": 536,
+              "wanted": 536,
+              "missing": 0,
+              "cached": 719,
+              "triangles": 1543216,
+              "shadowRevision": 890,
+              "detailDistance": 800,
+              "targetSpacing": 4,
+              "lodWithinTarget": {
+                "1": 90,
+                "2": 65,
+                "4": 124,
+                "8": 2
+              },
+              "workers": 3
+            }
+          },
+          "shadows": {
+            "available": true,
+            "quality": 3,
+            "near": {
+              "radius": 64,
+              "size": 2048,
+              "valid": true,
+              "draws": 451,
+              "needed": false
+            },
+            "cascades": [
+              {
+                "name": "far",
+                "radius": 256,
+                "size": 1024,
+                "valid": true,
+                "needed": false,
+                "changed": false,
+                "draws": 267,
+                "building": false,
+                "buildStep": null,
+                "terrainRevision": 890
+              },
+              {
+                "name": "distant",
+                "radius": 1024,
+                "size": 2048,
+                "valid": true,
+                "needed": true,
+                "changed": false,
+                "draws": 210,
+                "building": true,
+                "buildStep": null,
+                "terrainRevision": 890
+              }
+            ],
+            "counters": {
+              "budget": {
+                "draws": 24,
+                "triangles": 120000,
+                "milliseconds": 1.5
+              },
+              "lastFrame": {
+                "draws": 24,
+                "triangles": 79226,
+                "completed": 0,
+                "prepareMilliseconds": 0,
+                "submitMilliseconds": 0.2999999523162842
+              },
+              "cascades": [
+                {
+                  "name": "far",
+                  "radius": 256,
+                  "size": 1024,
+                  "valid": true,
+                  "building": false,
+                  "remaining": 0,
+                  "draws": 267,
+                  "terrainRevision": 890,
+                  "changed": false
+                },
+                {
+                  "name": "distant",
+                  "radius": 1024,
+                  "size": 2048,
+                  "valid": true,
+                  "building": true,
+                  "remaining": 27,
+                  "draws": 210,
+                  "terrainRevision": 890,
+                  "changed": false
+                }
+              ]
+            },
+            "terrainRevision": 890
+          }
+        },
+        "renderedFrameIntervals": {
+          "samples": 4095,
+          "averageMs": 7.323443223443223,
+          "p50Ms": 7,
+          "p95Ms": 10.299999952316284,
+          "p99Ms": 14.200000047683716,
+          "maxMs": 31.200000047683716,
+          "slowest1PercentAverageMs": 18.25609756097561,
+          "fpsFromAverage": 136.54779172710448,
+          "fpsFromSlowest1PercentAverage": 54.77621910487642,
+          "over20ms": 12,
+          "over33_34ms": 0
+        },
+        "rafIntervals": {
+          "samples": 4095,
+          "averageMs": 7.32361416361416,
+          "p50Ms": 6.900000000023283,
+          "p95Ms": 7.399999999994179,
+          "p99Ms": 14,
+          "maxMs": 27.89999999999418,
+          "slowest1PercentAverageMs": 17.85121951219569,
+          "fpsFromAverage": 136.54460457082655,
+          "fpsFromSlowest1PercentAverage": 56.01858177346453,
+          "over20ms": 19,
+          "over33_34ms": 0
+        },
+        "cpuUpdate": {
+          "samples": 4097,
+          "averageMs": 0.5643153553158008,
+          "p50Ms": 0.3000001907348633,
+          "p95Ms": 1.1999998092651367,
+          "p99Ms": 5.599999904632568,
+          "maxMs": 12.200000047683716,
+          "slowest1PercentAverageMs": 6.465853667840725,
+          "fpsFromAverage": 1772.0588153061728,
+          "fpsFromSlowest1PercentAverage": 154.65861916636143,
+          "over20ms": 0,
+          "over33_34ms": 0
+        },
+        "cpuRender": {
+          "samples": 4096,
+          "averageMs": 3.4922363274963573,
+          "p50Ms": 3.4000000953674316,
+          "p95Ms": 5.5,
+          "p99Ms": 8.299999952316284,
+          "maxMs": 24.59999990463257,
+          "slowest1PercentAverageMs": 10.436585385624955,
+          "fpsFromAverage": 286.34946384539694,
+          "fpsFromSlowest1PercentAverage": 95.81677943988946,
+          "over20ms": 2,
+          "over33_34ms": 0
+        },
+        "gpuRender": {
+          "samples": 4096,
+          "averageMs": 2.9339388593749947,
+          "p50Ms": 2.783232,
+          "p95Ms": 3.89632,
+          "p99Ms": 4.914176,
+          "maxMs": 8.685568,
+          "slowest1PercentAverageMs": 5.905091902439025,
+          "fpsFromAverage": 340.8387317972352,
+          "fpsFromSlowest1PercentAverage": 169.34537455496033,
+          "over20ms": 0,
+          "over33_34ms": 0
+        },
+        "gpu": {
+          "available": true,
+          "valid": true,
+          "disjointEvents": 0,
+          "skippedQueries": 0,
+          "discardedQueries": 0,
+          "pendingLimit": 8
+        },
+        "shadowDrawDelta": {
+          "near": 103,
+          "cascades": [
+            {
+              "name": "far",
+              "draws": 60
+            },
+            {
+              "name": "distant",
+              "draws": 42
+            }
+          ]
+        },
+        "shadowWork": {
+          "cpu": {
+            "samples": 4096,
+            "averageMs": 0.8860351553885266,
+            "p50Ms": 0.7000000476837158,
+            "p95Ms": 2.299999952316284,
+            "p99Ms": 4.1000001430511475,
+            "maxMs": 19.40000009536743,
+            "slowest1PercentAverageMs": 5.399999996510948,
+            "fpsFromAverage": 1128.6233891718437,
+            "fpsFromSlowest1PercentAverage": 185.18518530483718,
+            "over20ms": 0,
+            "over33_34ms": 0
+          },
+          "renderCalls": {
+            "frames": 4096,
+            "total": 75065,
+            "max": 238
+          },
+          "triangles": {
+            "frames": 4096,
+            "total": 122674246,
+            "max": 435208
+          }
+        }
+      }
+    ],
+    "pooledWithColdWaterShader": [
+      {
+        "trial": 1,
+        "profile": "default",
+        "scenario": "flight",
+        "timePreset": 0.5,
+        "timeMode": "running",
+        "timeSpeed": 1,
+        "valid": true,
+        "invalidReasons": [],
+        "warmupSeconds": 10,
+        "measurementSeconds": 30.003,
+        "trajectory": {
+          "start": {
+            "x": -28.5,
+            "y": 80,
+            "z": 66.5,
+            "yaw": 0,
+            "pitch": 0
+          },
+          "plannedDelta": {
+            "x": 0,
+            "y": 0,
+            "z": -256
+          },
+          "speedBlocksPerSecond": 8.533333333333333,
+          "warmupMotion": "stationary"
+        },
+        "motionDelta": {
+          "x": 0,
+          "y": 0,
+          "z": -255.94794666748047,
+          "distance": 255.94794666748047
+        },
+        "device": {
+          "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 3050 Laptop GPU (0x000025A2) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+          "vendor": "Google Inc. (NVIDIA)",
+          "version": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+          "timerQuery": true,
+          "context": {
+            "alpha": true,
+            "antialias": true,
+            "depth": true,
+            "desynchronized": false,
+            "failIfMajorPerformanceCaveat": false,
+            "powerPreference": "default",
+            "premultipliedAlpha": true,
+            "preserveDrawingBuffer": false,
+            "stencil": true,
+            "xrCompatible": false
+          },
+          "drawingBuffer": [
+            1920,
+            1080
+          ],
+          "viewport": [
+            1920,
+            1080
+          ],
+          "pixelRatio": 1,
+          "devicePixelRatio": 1,
+          "touchMode": true,
+          "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36",
+          "hardwareConcurrency": 16
+        },
+        "settings": {
+          "potato": false,
+          "viewDistance": 48,
+          "farTerrain": 8192,
+          "farDetail": 2,
+          "fov": 75,
+          "brightness": 0,
+          "renderScale": 100,
+          "fpsLimit": 0,
+          "ambientOcclusion": 45,
+          "shadows": 3,
+          "lightingModel": "atmosphere",
+          "lightShafts": true,
+          "bounceLight": false,
+          "fancyLeaves": true,
+          "dynamicLight": true,
+          "loadBudget": 4,
+          "mouseSensitivity": 100,
+          "invertMouse": false,
+          "skinOverlay": true,
+          "showHand": true,
+          "viewBobbing": true,
+          "jointStyle": "smooth",
+          "cameraDistance": 4,
+          "volumeMaster": 80,
+          "volumeBlocks": 100,
+          "volumeWorld": 100,
+          "volumeUi": 80,
+          "theme": "default",
+          "hudScale": 100,
+          "showDebug": true,
+          "showFps": false,
+          "meteorites": true,
+          "autoUpdates": true,
+          "textureResolution": 0
+        },
+        "world": {
+          "seed": "lighting-rtx3050-0231",
+          "terrain": "realistic",
+          "gameMode": "creative"
+        },
+        "initial": {
+          "pose": {
+            "x": -28.5,
+            "y": 80,
+            "z": 66.5,
+            "yaw": 0,
+            "pitch": 0,
+            "flying": true
+          },
+          "time": {
+            "days": 0.5,
+            "speed": 1
+          },
+          "queues": {
+            "chunks": 81,
+            "loadQueue": 0,
+            "dirtyChunks": 0,
+            "unsavedChunks": 0,
+            "farTerrain": {
+              "active": true,
+              "shown": 511,
+              "wanted": 511,
+              "missing": 0,
+              "cached": 511,
+              "triangles": 1556660,
+              "shadowRevision": 510,
+              "detailDistance": 800,
+              "targetSpacing": 4,
+              "lodWithinTarget": {
+                "1": 84,
+                "2": 71,
+                "4": 125
+              },
+              "workers": 3
+            }
+          },
+          "shadows": {
+            "available": true,
+            "quality": 3,
+            "near": {
+              "radius": 64,
+              "size": 2048,
+              "valid": true,
+              "draws": 17,
+              "needed": false
+            },
+            "cascades": [
+              {
+                "name": "far",
+                "radius": 256,
+                "size": 1024,
+                "valid": true,
+                "needed": false,
+                "changed": false,
+                "draws": 16,
+                "building": false,
+                "buildStep": null,
+                "terrainRevision": 510
+              },
+              {
+                "name": "distant",
+                "radius": 1024,
+                "size": 2048,
+                "valid": true,
+                "needed": false,
+                "changed": false,
+                "draws": 8,
+                "building": false,
+                "buildStep": null,
+                "terrainRevision": 510
+              }
+            ],
+            "counters": {
+              "budget": {
+                "draws": 24,
+                "triangles": 120000,
+                "milliseconds": 1.5
+              },
+              "lastFrame": {
+                "draws": 0,
+                "triangles": 0,
+                "completed": 0,
+                "prepareMilliseconds": 0,
+                "submitMilliseconds": 0
+              },
+              "cascades": [
+                {
+                  "name": "far",
+                  "radius": 256,
+                  "size": 1024,
+                  "valid": true,
+                  "building": false,
+                  "remaining": 0,
+                  "draws": 16,
+                  "terrainRevision": 510,
+                  "changed": false
+                },
+                {
+                  "name": "distant",
+                  "radius": 1024,
+                  "size": 2048,
+                  "valid": true,
+                  "building": false,
+                  "remaining": 0,
+                  "draws": 8,
+                  "terrainRevision": 510,
+                  "changed": false
+                }
+              ]
+            },
+            "terrainRevision": 510
+          }
+        },
+        "measurementStart": {
+          "pose": {
+            "x": -28.5,
+            "y": 80,
+            "z": 66.47013333333334,
+            "yaw": 0,
+            "pitch": 0,
+            "flying": true
+          },
+          "time": {
+            "days": 0.5082913333333708,
+            "speed": 1
+          },
+          "queues": {
+            "chunks": 81,
+            "loadQueue": 0,
+            "dirtyChunks": 0,
+            "unsavedChunks": 0,
+            "farTerrain": {
+              "active": true,
+              "shown": 511,
+              "wanted": 511,
+              "missing": 0,
+              "cached": 511,
+              "triangles": 1556660,
+              "shadowRevision": 510,
+              "detailDistance": 800,
+              "targetSpacing": 4,
+              "lodWithinTarget": {
+                "1": 84,
+                "2": 71,
+                "4": 125
+              },
+              "workers": 3
+            }
+          },
+          "shadows": {
+            "available": true,
+            "quality": 3,
+            "near": {
+              "radius": 64,
+              "size": 2048,
+              "valid": true,
+              "draws": 44,
+              "needed": false
+            },
+            "cascades": [
+              {
+                "name": "far",
+                "radius": 256,
+                "size": 1024,
+                "valid": true,
+                "needed": false,
+                "changed": false,
+                "draws": 33,
+                "building": false,
+                "buildStep": null,
+                "terrainRevision": 510
+              },
+              {
+                "name": "distant",
+                "radius": 1024,
+                "size": 2048,
+                "valid": true,
+                "needed": true,
+                "changed": false,
+                "draws": 22,
+                "building": true,
+                "buildStep": null,
+                "terrainRevision": 510
+              }
+            ],
+            "counters": {
+              "budget": {
+                "draws": 24,
+                "triangles": 120000,
+                "milliseconds": 1.5
+              },
+              "lastFrame": {
+                "draws": 24,
+                "triangles": 75494,
+                "completed": 0,
+                "prepareMilliseconds": 0,
+                "submitMilliseconds": 0.09999990463256836
+              },
+              "cascades": [
+                {
+                  "name": "far",
+                  "radius": 256,
+                  "size": 1024,
+                  "valid": true,
+                  "building": false,
+                  "remaining": 0,
+                  "draws": 33,
+                  "terrainRevision": 510,
+                  "changed": false
+                },
+                {
+                  "name": "distant",
+                  "radius": 1024,
+                  "size": 2048,
+                  "valid": true,
+                  "building": true,
+                  "remaining": 279,
+                  "draws": 22,
+                  "terrainRevision": 510,
+                  "changed": false
+                }
+              ]
+            },
+            "terrainRevision": 510
+          }
+        },
+        "end": {
+          "pose": {
+            "x": -28.5,
+            "y": 80,
+            "z": -189.44794666748047,
+            "yaw": 0,
+            "pitch": 0,
+            "flying": true
+          },
+          "time": {
+            "days": 0.532983583333491,
+            "speed": 1
+          },
+          "queues": {
+            "chunks": 107,
+            "loadQueue": 0,
+            "dirtyChunks": 0,
+            "unsavedChunks": 0,
+            "farTerrain": {
+              "active": true,
+              "shown": 536,
+              "wanted": 536,
+              "missing": 0,
+              "cached": 719,
+              "triangles": 1543216,
+              "shadowRevision": 684,
+              "detailDistance": 800,
+              "targetSpacing": 4,
+              "lodWithinTarget": {
+                "1": 90,
+                "2": 65,
+                "4": 124,
+                "8": 2
+              },
+              "workers": 3
+            }
+          },
+          "shadows": {
+            "available": true,
+            "quality": 3,
+            "near": {
+              "radius": 64,
+              "size": 2048,
+              "valid": true,
+              "draws": 146,
+              "needed": false
+            },
+            "cascades": [
+              {
+                "name": "far",
+                "radius": 256,
+                "size": 1024,
+                "valid": true,
+                "needed": true,
+                "changed": false,
+                "draws": 93,
+                "building": true,
+                "buildStep": null,
+                "terrainRevision": 684
+              },
+              {
+                "name": "distant",
+                "radius": 1024,
+                "size": 2048,
+                "valid": true,
+                "needed": false,
+                "changed": false,
+                "draws": 65,
+                "building": false,
+                "buildStep": null,
+                "terrainRevision": 684
+              }
+            ],
+            "counters": {
+              "budget": {
+                "draws": 24,
+                "triangles": 120000,
+                "milliseconds": 1.5
+              },
+              "lastFrame": {
+                "draws": 24,
+                "triangles": 55362,
+                "completed": 0,
+                "prepareMilliseconds": 0,
+                "submitMilliseconds": 0.5
+              },
+              "cascades": [
+                {
+                  "name": "far",
+                  "radius": 256,
+                  "size": 1024,
+                  "valid": true,
+                  "building": true,
+                  "remaining": 106,
+                  "draws": 93,
+                  "terrainRevision": 684,
+                  "changed": false
+                },
+                {
+                  "name": "distant",
+                  "radius": 1024,
+                  "size": 2048,
+                  "valid": true,
+                  "building": false,
+                  "remaining": 0,
+                  "draws": 65,
+                  "terrainRevision": 684,
+                  "changed": false
+                }
+              ]
+            },
+            "terrainRevision": 684
+          }
+        },
+        "renderedFrameIntervals": {
+          "samples": 4097,
+          "averageMs": 7.319526482769009,
+          "p50Ms": 7,
+          "p95Ms": 9.700000047683716,
+          "p99Ms": 14.200000047683716,
+          "maxMs": 412.7000000476837,
+          "slowest1PercentAverageMs": 25.870731720110264,
+          "fpsFromAverage": 136.62085960807883,
+          "fpsFromSlowest1PercentAverage": 38.65371922289556,
+          "over20ms": 2,
+          "over33_34ms": 1
+        },
+        "rafIntervals": {
+          "samples": 4097,
+          "averageMs": 7.320087869172565,
+          "p50Ms": 6.900000000001455,
+          "p95Ms": 7.099999999998545,
+          "p99Ms": 14,
+          "maxMs": 416.59999999999854,
+          "slowest1PercentAverageMs": 26.509756097561098,
+          "fpsFromAverage": 136.61038198890313,
+          "fpsFromSlowest1PercentAverage": 37.72196154200001,
+          "over20ms": 17,
+          "over33_34ms": 1
+        },
+        "cpuUpdate": {
+          "samples": 4098,
+          "averageMs": 0.5875305033940231,
+          "p50Ms": 0.39999985694885254,
+          "p95Ms": 1.0999999046325684,
+          "p99Ms": 6.299999952316284,
+          "maxMs": 8.799999952316284,
+          "slowest1PercentAverageMs": 7.297560988402948,
+          "fpsFromAverage": 1702.0392885530869,
+          "fpsFromSlowest1PercentAverage": 137.03208532126942,
+          "over20ms": 0,
+          "over33_34ms": 0
+        },
+        "cpuRender": {
+          "samples": 4098,
+          "averageMs": 3.3909224024512468,
+          "p50Ms": 3.299999952316284,
+          "p95Ms": 4.599999904632568,
+          "p99Ms": 6.5,
+          "maxMs": 406.59999990463257,
+          "slowest1PercentAverageMs": 17.392682941948497,
+          "fpsFromAverage": 294.9050085242632,
+          "fpsFromSlowest1PercentAverage": 57.49544238446115,
+          "over20ms": 1,
+          "over33_34ms": 1
+        },
+        "gpuRender": {
+          "samples": 4098,
+          "averageMs": 3.261298077110778,
+          "p50Ms": 3.034112,
+          "p95Ms": 4.245344,
+          "p99Ms": 5.317568,
+          "maxMs": 209.381376,
+          "slowest1PercentAverageMs": 11.221034926829269,
+          "fpsFromAverage": 306.62637279874514,
+          "fpsFromSlowest1PercentAverage": 89.11833948658516,
+          "over20ms": 1,
+          "over33_34ms": 1
+        },
+        "gpu": {
+          "available": true,
+          "valid": true,
+          "disjointEvents": 0,
+          "skippedQueries": 0,
+          "discardedQueries": 0,
+          "pendingLimit": 8
+        },
+        "shadowDrawDelta": {
+          "near": 102,
+          "cascades": [
+            {
+              "name": "far",
+              "draws": 60
+            },
+            {
+              "name": "distant",
+              "draws": 43
+            }
+          ]
+        },
+        "shadowWork": {
+          "cpu": {
+            "samples": 4098,
+            "averageMs": 0.7944363094993543,
+            "p50Ms": 0.7000000476837158,
+            "p95Ms": 1.6999998092651367,
+            "p99Ms": 2.5,
+            "maxMs": 4.5,
+            "slowest1PercentAverageMs": 2.8731707479895614,
+            "fpsFromAverage": 1258.7541481206842,
+            "fpsFromSlowest1PercentAverage": 348.0475362279559,
+            "over20ms": 0,
+            "over33_34ms": 0
+          },
+          "renderCalls": {
+            "frames": 4098,
+            "total": 74623,
+            "max": 241
+          },
+          "triangles": {
+            "frames": 4098,
+            "total": 121692272,
+            "max": 422230
+          }
+        }
+      }
+    ],
+    "profileConfirmingWaterCompile": [
+      {
+        "trial": 1,
+        "profile": "default",
+        "scenario": "flight",
+        "timePreset": 0.5,
+        "timeMode": "running",
+        "timeSpeed": 1,
+        "valid": true,
+        "invalidReasons": [],
+        "warmupSeconds": 10,
+        "measurementSeconds": 30.0035,
+        "trajectory": {
+          "start": {
+            "x": -28.5,
+            "y": 80,
+            "z": 66.5,
+            "yaw": 0,
+            "pitch": 0
+          },
+          "plannedDelta": {
+            "x": 0,
+            "y": 0,
+            "z": -256
+          },
+          "speedBlocksPerSecond": 8.533333333333333,
+          "warmupMotion": "stationary"
+        },
+        "motionDelta": {
+          "x": 0,
+          "y": 0,
+          "z": -255.93941333414713,
+          "distance": 255.93941333414713
+        },
+        "device": {
+          "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 3050 Laptop GPU (0x000025A2) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+          "vendor": "Google Inc. (NVIDIA)",
+          "version": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+          "timerQuery": true,
+          "context": {
+            "alpha": true,
+            "antialias": true,
+            "depth": true,
+            "desynchronized": false,
+            "failIfMajorPerformanceCaveat": false,
+            "powerPreference": "default",
+            "premultipliedAlpha": true,
+            "preserveDrawingBuffer": false,
+            "stencil": true,
+            "xrCompatible": false
+          },
+          "drawingBuffer": [
+            1920,
+            1080
+          ],
+          "viewport": [
+            1920,
+            1080
+          ],
+          "pixelRatio": 1,
+          "devicePixelRatio": 1,
+          "touchMode": true,
+          "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36",
+          "hardwareConcurrency": 16
+        },
+        "settings": {
+          "potato": false,
+          "viewDistance": 48,
+          "farTerrain": 8192,
+          "farDetail": 2,
+          "fov": 75,
+          "brightness": 0,
+          "renderScale": 100,
+          "fpsLimit": 0,
+          "ambientOcclusion": 45,
+          "shadows": 3,
+          "lightingModel": "atmosphere",
+          "lightShafts": true,
+          "bounceLight": false,
+          "fancyLeaves": true,
+          "dynamicLight": true,
+          "loadBudget": 4,
+          "mouseSensitivity": 100,
+          "invertMouse": false,
+          "skinOverlay": true,
+          "showHand": true,
+          "viewBobbing": true,
+          "jointStyle": "smooth",
+          "cameraDistance": 4,
+          "volumeMaster": 80,
+          "volumeBlocks": 100,
+          "volumeWorld": 100,
+          "volumeUi": 80,
+          "theme": "default",
+          "hudScale": 100,
+          "showDebug": true,
+          "showFps": false,
+          "meteorites": true,
+          "autoUpdates": true,
+          "textureResolution": 0
+        },
+        "world": {
+          "seed": "lighting-rtx3050-0231",
+          "terrain": "realistic",
+          "gameMode": "creative"
+        },
+        "initial": {
+          "pose": {
+            "x": -28.5,
+            "y": 80,
+            "z": 66.5,
+            "yaw": 0,
+            "pitch": 0,
+            "flying": true
+          },
+          "time": {
+            "days": 0.5,
+            "speed": 1
+          },
+          "queues": {
+            "chunks": 81,
+            "loadQueue": 0,
+            "dirtyChunks": 0,
+            "unsavedChunks": 0,
+            "farTerrain": {
+              "active": true,
+              "shown": 511,
+              "wanted": 511,
+              "missing": 0,
+              "cached": 511,
+              "triangles": 1556660,
+              "shadowRevision": 512,
+              "detailDistance": 800,
+              "targetSpacing": 4,
+              "lodWithinTarget": {
+                "1": 84,
+                "2": 71,
+                "4": 125
+              },
+              "workers": 3
+            }
+          },
+          "shadows": {
+            "available": true,
+            "quality": 3,
+            "near": {
+              "radius": 64,
+              "size": 2048,
+              "valid": true,
+              "draws": 25,
+              "needed": false
+            },
+            "cascades": [
+              {
+                "name": "far",
+                "radius": 256,
+                "size": 1024,
+                "valid": true,
+                "needed": false,
+                "changed": false,
+                "draws": 18,
+                "building": true,
+                "buildStep": null,
+                "terrainRevision": 512
+              },
+              {
+                "name": "distant",
+                "radius": 1024,
+                "size": 2048,
+                "valid": true,
+                "needed": false,
+                "changed": false,
+                "draws": 13,
+                "building": false,
+                "buildStep": null,
+                "terrainRevision": 512
+              }
+            ],
+            "counters": {
+              "budget": {
+                "draws": 24,
+                "triangles": 120000,
+                "milliseconds": 1.5
+              },
+              "lastFrame": {
+                "draws": 23,
+                "triangles": 20004,
+                "completed": 0,
+                "prepareMilliseconds": 1.1999998092651367,
+                "submitMilliseconds": 0.3000001907348633
+              },
+              "cascades": [
+                {
+                  "name": "far",
+                  "radius": 256,
+                  "size": 1024,
+                  "valid": true,
+                  "building": true,
+                  "remaining": 194,
+                  "draws": 18,
+                  "terrainRevision": 512,
+                  "changed": false
+                },
+                {
+                  "name": "distant",
+                  "radius": 1024,
+                  "size": 2048,
+                  "valid": true,
+                  "building": false,
+                  "remaining": 0,
+                  "draws": 13,
+                  "terrainRevision": 512,
+                  "changed": false
+                }
+              ]
+            },
+            "terrainRevision": 512
+          }
+        },
+        "measurementStart": {
+          "pose": {
+            "x": -28.5,
+            "y": 80,
+            "z": 66.4795199991862,
+            "yaw": 0,
+            "pitch": 0,
+            "flying": true
+          },
+          "time": {
+            "days": 0.5083479166667076,
+            "speed": 1
+          },
+          "queues": {
+            "chunks": 81,
+            "loadQueue": 0,
+            "dirtyChunks": 0,
+            "unsavedChunks": 0,
+            "farTerrain": {
+              "active": true,
+              "shown": 511,
+              "wanted": 511,
+              "missing": 0,
+              "cached": 511,
+              "triangles": 1556660,
+              "shadowRevision": 512,
+              "detailDistance": 800,
+              "targetSpacing": 4,
+              "lodWithinTarget": {
+                "1": 84,
+                "2": 71,
+                "4": 125
+              },
+              "workers": 3
+            }
+          },
+          "shadows": {
+            "available": true,
+            "quality": 3,
+            "near": {
+              "radius": 64,
+              "size": 2048,
+              "valid": true,
+              "draws": 54,
+              "needed": false
+            },
+            "cascades": [
+              {
+                "name": "far",
+                "radius": 256,
+                "size": 1024,
+                "valid": true,
+                "needed": false,
+                "changed": false,
+                "draws": 35,
+                "building": false,
+                "buildStep": null,
+                "terrainRevision": 512
+              },
+              {
+                "name": "distant",
+                "radius": 1024,
+                "size": 2048,
+                "valid": true,
+                "needed": false,
+                "changed": false,
+                "draws": 28,
+                "building": false,
+                "buildStep": null,
+                "terrainRevision": 512
+              }
+            ],
+            "counters": {
+              "budget": {
+                "draws": 24,
+                "triangles": 120000,
+                "milliseconds": 1.5
+              },
+              "lastFrame": {
+                "draws": 0,
+                "triangles": 0,
+                "completed": 0,
+                "prepareMilliseconds": 0,
+                "submitMilliseconds": 0
+              },
+              "cascades": [
+                {
+                  "name": "far",
+                  "radius": 256,
+                  "size": 1024,
+                  "valid": true,
+                  "building": false,
+                  "remaining": 0,
+                  "draws": 35,
+                  "terrainRevision": 512,
+                  "changed": false
+                },
+                {
+                  "name": "distant",
+                  "radius": 1024,
+                  "size": 2048,
+                  "valid": true,
+                  "building": false,
+                  "remaining": 0,
+                  "draws": 28,
+                  "terrainRevision": 512,
+                  "changed": false
+                }
+              ]
+            },
+            "terrainRevision": 512
+          }
+        },
+        "end": {
+          "pose": {
+            "x": -28.5,
+            "y": 80,
+            "z": -189.43941333414713,
+            "yaw": 0,
+            "pitch": 0,
+            "flying": true
+          },
+          "time": {
+            "days": 0.5333353333334829,
+            "speed": 1
+          },
+          "queues": {
+            "chunks": 107,
+            "loadQueue": 0,
+            "dirtyChunks": 0,
+            "unsavedChunks": 0,
+            "farTerrain": {
+              "active": true,
+              "shown": 536,
+              "wanted": 536,
+              "missing": 0,
+              "cached": 719,
+              "triangles": 1543216,
+              "shadowRevision": 687,
+              "detailDistance": 800,
+              "targetSpacing": 4,
+              "lodWithinTarget": {
+                "1": 90,
+                "2": 65,
+                "4": 124,
+                "8": 2
+              },
+              "workers": 3
+            }
+          },
+          "shadows": {
+            "available": true,
+            "quality": 3,
+            "near": {
+              "radius": 64,
+              "size": 2048,
+              "valid": true,
+              "draws": 160,
+              "needed": false
+            },
+            "cascades": [
+              {
+                "name": "far",
+                "radius": 256,
+                "size": 1024,
+                "valid": true,
+                "needed": false,
+                "changed": false,
+                "draws": 96,
+                "building": true,
+                "buildStep": null,
+                "terrainRevision": 687
+              },
+              {
+                "name": "distant",
+                "radius": 1024,
+                "size": 2048,
+                "valid": true,
+                "needed": true,
+                "changed": false,
+                "draws": 69,
+                "building": true,
+                "buildStep": null,
+                "terrainRevision": 687
+              }
+            ],
+            "counters": {
+              "budget": {
+                "draws": 24,
+                "triangles": 120000,
+                "milliseconds": 1.5
+              },
+              "lastFrame": {
+                "draws": 24,
+                "triangles": 33510,
+                "completed": 0,
+                "prepareMilliseconds": 1,
+                "submitMilliseconds": 0.20000004768371582
+              },
+              "cascades": [
+                {
+                  "name": "far",
+                  "radius": 256,
+                  "size": 1024,
+                  "valid": true,
+                  "building": true,
+                  "remaining": 200,
+                  "draws": 96,
+                  "terrainRevision": 687,
+                  "changed": false
+                },
+                {
+                  "name": "distant",
+                  "radius": 1024,
+                  "size": 2048,
+                  "valid": true,
+                  "building": true,
+                  "remaining": 171,
+                  "draws": 69,
+                  "terrainRevision": 687,
+                  "changed": false
+                }
+              ]
+            },
+            "terrainRevision": 687
+          }
+        },
+        "renderedFrameIntervals": {
+          "samples": 3943,
+          "averageMs": 7.60606137459997,
+          "p50Ms": 7,
+          "p95Ms": 12.700000047683716,
+          "p99Ms": 19.299999952316284,
+          "maxMs": 70.5,
+          "slowest1PercentAverageMs": 23.905000001192093,
+          "fpsFromAverage": 131.4740903011177,
+          "fpsFromSlowest1PercentAverage": 41.832252664720016,
+          "over20ms": 34,
+          "over33_34ms": 1
+        },
+        "rafIntervals": {
+          "samples": 3944,
+          "averageMs": 7.605755578093307,
+          "p50Ms": 6.900000000001455,
+          "p95Ms": 13.900000000001455,
+          "p99Ms": 20.80000000000291,
+          "maxMs": 62.400000000001455,
+          "slowest1PercentAverageMs": 24.022500000000218,
+          "fpsFromAverage": 131.47937633971284,
+          "fpsFromSlowest1PercentAverage": 41.62764075345992,
+          "over20ms": 70,
+          "over33_34ms": 2
+        },
+        "cpuUpdate": {
+          "samples": 3944,
+          "averageMs": 0.69520791283002,
+          "p50Ms": 0.40000009536743164,
+          "p95Ms": 1.3999998569488525,
+          "p99Ms": 6.900000095367432,
+          "maxMs": 11.5,
+          "slowest1PercentAverageMs": 8.255000001192093,
+          "fpsFromAverage": 1438.4186105265208,
+          "fpsFromSlowest1PercentAverage": 121.1387037983757,
+          "over20ms": 0,
+          "over33_34ms": 0
+        },
+        "cpuRender": {
+          "samples": 3944,
+          "averageMs": 3.2978955355546535,
+          "p50Ms": 3.0999999046325684,
+          "p95Ms": 5.900000095367432,
+          "p99Ms": 10.5,
+          "maxMs": 58.39999985694885,
+          "slowest1PercentAverageMs": 13.467499989271165,
+          "fpsFromAverage": 303.2236737698291,
+          "fpsFromSlowest1PercentAverage": 74.2528309483309,
+          "over20ms": 1,
+          "over33_34ms": 1
+        },
+        "gpuRender": {
+          "samples": 3944,
+          "averageMs": 3.284325931034476,
+          "p50Ms": 3.104768,
+          "p95Ms": 4.347904,
+          "p99Ms": 5.561344,
+          "maxMs": 13.396992,
+          "slowest1PercentAverageMs": 6.724456800000001,
+          "fpsFromAverage": 304.4764804097949,
+          "fpsFromSlowest1PercentAverage": 148.71089661844505,
+          "over20ms": 0,
+          "over33_34ms": 0
+        },
+        "gpu": {
+          "available": true,
+          "valid": true,
+          "disjointEvents": 0,
+          "skippedQueries": 0,
+          "discardedQueries": 0,
+          "pendingLimit": 8
+        },
+        "shadowDrawDelta": {
+          "near": 106,
+          "cascades": [
+            {
+              "name": "far",
+              "draws": 61
+            },
+            {
+              "name": "distant",
+              "draws": 41
+            }
+          ]
+        },
+        "shadowWork": {
+          "cpu": {
+            "samples": 3944,
+            "averageMs": 0.8020537501658194,
+            "p50Ms": 0.7000000476837158,
+            "p95Ms": 1.7000000476837158,
+            "p99Ms": 2.700000047683716,
+            "maxMs": 8.199999809265137,
+            "slowest1PercentAverageMs": 3.5275000095367433,
+            "fpsFromAverage": 1246.7992323373046,
+            "fpsFromSlowest1PercentAverage": 283.48688796497754,
+            "over20ms": 0,
+            "over33_34ms": 0
+          },
+          "renderCalls": {
+            "frames": 3944,
+            "total": 74531,
+            "max": 241
+          },
+          "triangles": {
+            "frames": 3944,
+            "total": 121971630,
+            "max": 442760
+          }
+        },
+        "slowPasses": [
+          {
+            "label": "renderer.render",
+            "ms": 11.5,
+            "seconds": 2.9267999999523164,
+            "scene": "other",
+            "programsBefore": 19,
+            "programsAfter": 19,
+            "newPrograms": []
+          },
+          {
+            "label": "farTerrain",
+            "ms": 11.800000190734863,
+            "seconds": 2.9267999999523164,
+            "scene": null,
+            "programsBefore": 19,
+            "programsAfter": 19,
+            "newPrograms": []
+          },
+          {
+            "label": "renderer.render",
+            "ms": 8.200000047683716,
+            "seconds": 19.670700000047685,
+            "scene": "other",
+            "programsBefore": 20,
+            "programsAfter": 20,
+            "newPrograms": []
+          },
+          {
+            "label": "farTerrain",
+            "ms": 8.200000047683716,
+            "seconds": 19.670700000047685,
+            "scene": null,
+            "programsBefore": 20,
+            "programsAfter": 20,
+            "newPrograms": []
+          },
+          {
+            "label": "renderer.render",
+            "ms": 8.099999904632568,
+            "seconds": 20.003600000143052,
+            "scene": "other",
+            "programsBefore": 20,
+            "programsAfter": 20,
+            "newPrograms": []
+          },
+          {
+            "label": "farTerrain",
+            "ms": 8.199999809265137,
+            "seconds": 20.003600000143052,
+            "scene": null,
+            "programsBefore": 20,
+            "programsAfter": 20,
+            "newPrograms": []
+          },
+          {
+            "label": "renderer.render",
+            "ms": 53,
+            "seconds": 21.16640000009537,
+            "scene": "world",
+            "programsBefore": 20,
+            "programsAfter": 22,
+            "newPrograms": [
+              {
+                "id": 20,
+                "material": "water"
+              },
+              {
+                "id": 21,
+                "material": "water"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "final0250": [
+    {
+      "trial": 1,
+      "profile": "default",
+      "scenario": "flight",
+      "timePreset": 0.5,
+      "timeMode": "running",
+      "timeSpeed": 1,
+      "valid": true,
+      "invalidReasons": [],
+      "warmupSeconds": 10,
+      "measurementSeconds": 30.005200000047683,
+      "trajectory": {
+        "start": {
+          "x": -28.5,
+          "y": 80,
+          "z": 66.5,
+          "yaw": 0,
+          "pitch": 0
+        },
+        "plannedDelta": {
+          "x": 0,
+          "y": 0,
+          "z": -256
+        },
+        "speedBlocksPerSecond": 8.533333333333333,
+        "warmupMotion": "stationary"
+      },
+      "motionDelta": {
+        "x": 0,
+        "y": 0,
+        "z": -255.96927999877929,
+        "distance": 255.96927999877929
+      },
+      "device": {
+        "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 3050 Laptop GPU (0x000025A2) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+        "vendor": "Google Inc. (NVIDIA)",
+        "version": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+        "timerQuery": true,
+        "context": {
+          "alpha": true,
+          "antialias": true,
+          "depth": true,
+          "desynchronized": false,
+          "failIfMajorPerformanceCaveat": false,
+          "powerPreference": "default",
+          "premultipliedAlpha": true,
+          "preserveDrawingBuffer": false,
+          "stencil": true,
+          "xrCompatible": false
+        },
+        "drawingBuffer": [
+          1920,
+          1080
+        ],
+        "viewport": [
+          1920,
+          1080
+        ],
+        "pixelRatio": 1,
+        "devicePixelRatio": 1,
+        "touchMode": true,
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36",
+        "hardwareConcurrency": 16
+      },
+      "settings": {
+        "potato": false,
+        "viewDistance": 48,
+        "farTerrain": 8192,
+        "farDetail": 2,
+        "fov": 75,
+        "brightness": 0,
+        "renderScale": 100,
+        "fpsLimit": 0,
+        "ambientOcclusion": 45,
+        "shadows": 3,
+        "lightingModel": "atmosphere",
+        "lightShafts": true,
+        "bounceLight": false,
+        "fancyLeaves": true,
+        "dynamicLight": true,
+        "loadBudget": 4,
+        "mouseSensitivity": 100,
+        "invertMouse": false,
+        "skinOverlay": true,
+        "showHand": true,
+        "viewBobbing": true,
+        "jointStyle": "smooth",
+        "cameraDistance": 4,
+        "volumeMaster": 80,
+        "volumeBlocks": 100,
+        "volumeWorld": 100,
+        "volumeUi": 80,
+        "theme": "default",
+        "hudScale": 100,
+        "showDebug": true,
+        "showFps": false,
+        "meteorites": true,
+        "autoUpdates": true,
+        "textureResolution": 0
+      },
+      "world": {
+        "seed": "lighting-rtx3050-0231",
+        "terrain": "realistic",
+        "gameMode": "creative"
+      },
+      "initial": {
+        "pose": {
+          "x": -28.5,
+          "y": 80,
+          "z": 66.5,
+          "yaw": 0,
+          "pitch": 0,
+          "flying": true
+        },
+        "time": {
+          "days": 0.5,
+          "speed": 1
+        },
+        "queues": {
+          "chunks": 81,
+          "loadQueue": 0,
+          "dirtyChunks": 0,
+          "unsavedChunks": 0,
+          "farTerrain": {
+            "active": true,
+            "shown": 511,
+            "wanted": 511,
+            "missing": 0,
+            "cached": 511,
+            "triangles": 1556660,
+            "shadowRevision": 512,
+            "detailDistance": 800,
+            "targetSpacing": 4,
+            "lodWithinTarget": {
+              "1": 84,
+              "2": 71,
+              "4": 125
+            },
+            "workers": 3
+          }
+        },
+        "shadows": {
+          "available": true,
+          "quality": 3,
+          "near": {
+            "radius": 64,
+            "size": 2048,
+            "valid": true,
+            "draws": 18,
+            "needed": false
+          },
+          "cascades": [
+            {
+              "name": "far",
+              "radius": 256,
+              "size": 1024,
+              "valid": true,
+              "needed": false,
+              "changed": false,
+              "draws": 13,
+              "building": false,
+              "buildStep": null,
+              "terrainRevision": 512
+            },
+            {
+              "name": "distant",
+              "radius": 1024,
+              "size": 2048,
+              "valid": true,
+              "needed": false,
+              "changed": false,
+              "draws": 9,
+              "building": false,
+              "buildStep": null,
+              "terrainRevision": 512
+            }
+          ],
+          "counters": {
+            "budget": {
+              "draws": 24,
+              "triangles": 120000,
+              "milliseconds": 1.5
+            },
+            "lastFrame": {
+              "draws": 0,
+              "triangles": 0,
+              "completed": 0,
+              "prepareMilliseconds": 0,
+              "submitMilliseconds": 0
+            },
+            "cascades": [
+              {
+                "name": "far",
+                "radius": 256,
+                "size": 1024,
+                "valid": true,
+                "building": false,
+                "remaining": 0,
+                "draws": 13,
+                "terrainRevision": 512,
+                "changed": false
+              },
+              {
+                "name": "distant",
+                "radius": 1024,
+                "size": 2048,
+                "valid": true,
+                "building": false,
+                "remaining": 0,
+                "draws": 9,
+                "terrainRevision": 512,
+                "changed": false
+              }
+            ]
+          },
+          "terrainRevision": 512
+        }
+      },
+      "measurementStart": {
+        "pose": {
+          "x": -28.5,
+          "y": 80,
+          "z": 66.44794666748047,
+          "yaw": 0,
+          "pitch": 0,
+          "flying": true
+        },
+        "time": {
+          "days": 0.5083480000000357,
+          "speed": 1
+        },
+        "queues": {
+          "chunks": 81,
+          "loadQueue": 0,
+          "dirtyChunks": 0,
+          "unsavedChunks": 0,
+          "farTerrain": {
+            "active": true,
+            "shown": 511,
+            "wanted": 511,
+            "missing": 0,
+            "cached": 511,
+            "triangles": 1556660,
+            "shadowRevision": 512,
+            "detailDistance": 800,
+            "targetSpacing": 4,
+            "lodWithinTarget": {
+              "1": 84,
+              "2": 71,
+              "4": 125
+            },
+            "workers": 3
+          }
+        },
+        "shadows": {
+          "available": true,
+          "quality": 3,
+          "near": {
+            "radius": 64,
+            "size": 2048,
+            "valid": true,
+            "draws": 46,
+            "needed": false
+          },
+          "cascades": [
+            {
+              "name": "far",
+              "radius": 256,
+              "size": 1024,
+              "valid": true,
+              "needed": false,
+              "changed": false,
+              "draws": 30,
+              "building": false,
+              "buildStep": null,
+              "terrainRevision": 512
+            },
+            {
+              "name": "distant",
+              "radius": 1024,
+              "size": 2048,
+              "valid": true,
+              "needed": true,
+              "changed": false,
+              "draws": 23,
+              "building": true,
+              "buildStep": null,
+              "terrainRevision": 512
+            }
+          ],
+          "counters": {
+            "budget": {
+              "draws": 24,
+              "triangles": 120000,
+              "milliseconds": 1.5
+            },
+            "lastFrame": {
+              "draws": 24,
+              "triangles": 69708,
+              "completed": 0,
+              "prepareMilliseconds": 0,
+              "submitMilliseconds": 0.3000001907348633
+            },
+            "cascades": [
+              {
+                "name": "far",
+                "radius": 256,
+                "size": 1024,
+                "valid": true,
+                "building": false,
+                "remaining": 0,
+                "draws": 30,
+                "terrainRevision": 512,
+                "changed": false
+              },
+              {
+                "name": "distant",
+                "radius": 1024,
+                "size": 2048,
+                "valid": true,
+                "building": true,
+                "remaining": 255,
+                "draws": 23,
+                "terrainRevision": 512,
+                "changed": false
+              }
+            ]
+          },
+          "terrainRevision": 512
+        }
+      },
+      "end": {
+        "pose": {
+          "x": -28.5,
+          "y": 80,
+          "z": -189.46927999877929,
+          "yaw": 0,
+          "pitch": 0,
+          "flying": true
+        },
+        "time": {
+          "days": 0.533345666666812,
+          "speed": 1
+        },
+        "queues": {
+          "chunks": 107,
+          "loadQueue": 0,
+          "dirtyChunks": 0,
+          "unsavedChunks": 0,
+          "farTerrain": {
+            "active": true,
+            "shown": 536,
+            "wanted": 536,
+            "missing": 0,
+            "cached": 719,
+            "triangles": 1543216,
+            "shadowRevision": 680,
+            "detailDistance": 800,
+            "targetSpacing": 4,
+            "lodWithinTarget": {
+              "1": 90,
+              "2": 65,
+              "4": 124,
+              "8": 2
+            },
+            "workers": 3
+          }
+        },
+        "shadows": {
+          "available": true,
+          "quality": 3,
+          "near": {
+            "radius": 64,
+            "size": 2048,
+            "valid": true,
+            "draws": 151,
+            "needed": false
+          },
+          "cascades": [
+            {
+              "name": "far",
+              "radius": 256,
+              "size": 1024,
+              "valid": true,
+              "needed": false,
+              "changed": false,
+              "draws": 91,
+              "building": false,
+              "buildStep": null,
+              "terrainRevision": 680
+            },
+            {
+              "name": "distant",
+              "radius": 1024,
+              "size": 2048,
+              "valid": true,
+              "needed": false,
+              "changed": false,
+              "draws": 66,
+              "building": false,
+              "buildStep": null,
+              "terrainRevision": 680
+            }
+          ],
+          "counters": {
+            "budget": {
+              "draws": 24,
+              "triangles": 120000,
+              "milliseconds": 1.5
+            },
+            "lastFrame": {
+              "draws": 0,
+              "triangles": 0,
+              "completed": 0,
+              "prepareMilliseconds": 0,
+              "submitMilliseconds": 0
+            },
+            "cascades": [
+              {
+                "name": "far",
+                "radius": 256,
+                "size": 1024,
+                "valid": true,
+                "building": false,
+                "remaining": 0,
+                "draws": 91,
+                "terrainRevision": 680,
+                "changed": false
+              },
+              {
+                "name": "distant",
+                "radius": 1024,
+                "size": 2048,
+                "valid": true,
+                "building": false,
+                "remaining": 0,
+                "draws": 66,
+                "terrainRevision": 680,
+                "changed": false
+              }
+            ]
+          },
+          "terrainRevision": 680
+        }
+      },
+      "renderedFrameIntervals": {
+        "samples": 3995,
+        "averageMs": 7.506983729685949,
+        "p50Ms": 7,
+        "p95Ms": 11.400000095367432,
+        "p99Ms": 16.5,
+        "maxMs": 27.5,
+        "slowest1PercentAverageMs": 19.79750000834465,
+        "fpsFromAverage": 133.20929364020807,
+        "fpsFromSlowest1PercentAverage": 50.511428189342084,
+        "over20ms": 17,
+        "over33_34ms": 0
+      },
+      "rafIntervals": {
+        "samples": 3995,
+        "averageMs": 7.506958698372966,
+        "p50Ms": 6.900000000001455,
+        "p95Ms": 13.80000000000291,
+        "p99Ms": 20.5,
+        "maxMs": 27.80000000000291,
+        "slowest1PercentAverageMs": 21.534999999999762,
+        "fpsFromAverage": 133.20973781522693,
+        "fpsFromSlowest1PercentAverage": 46.43603436266594,
+        "over20ms": 41,
+        "over33_34ms": 0
+      },
+      "cpuUpdate": {
+        "samples": 3996,
+        "averageMs": 0.7133633629218474,
+        "p50Ms": 0.40000009536743164,
+        "p95Ms": 1.4000000953674316,
+        "p99Ms": 6.700000047683716,
+        "maxMs": 11,
+        "slowest1PercentAverageMs": 8.169999998807906,
+        "fpsFromAverage": 1401.810146100193,
+        "fpsFromSlowest1PercentAverage": 122.39902082569292,
+        "over20ms": 0,
+        "over33_34ms": 0
+      },
+      "cpuRender": {
+        "samples": 3996,
+        "averageMs": 3.2428178165529347,
+        "p50Ms": 3.1000001430511475,
+        "p95Ms": 5.599999904632568,
+        "p99Ms": 7.799999952316284,
+        "maxMs": 12.799999952316284,
+        "slowest1PercentAverageMs": 9.507500010728837,
+        "fpsFromAverage": 308.37378371844045,
+        "fpsFromSlowest1PercentAverage": 105.18012083844751,
+        "over20ms": 0,
+        "over33_34ms": 0
+      },
+      "gpuRender": {
+        "samples": 3996,
+        "averageMs": 3.256201809809801,
+        "p50Ms": 3.042304,
+        "p95Ms": 4.327424,
+        "p99Ms": 5.83168,
+        "maxMs": 21.124096,
+        "slowest1PercentAverageMs": 7.513114399999999,
+        "fpsFromAverage": 307.1062724022045,
+        "fpsFromSlowest1PercentAverage": 133.10059540687948,
+        "over20ms": 1,
+        "over33_34ms": 0
+      },
+      "gpu": {
+        "available": true,
+        "valid": true,
+        "disjointEvents": 0,
+        "skippedQueries": 0,
+        "discardedQueries": 0,
+        "pendingLimit": 8
+      },
+      "shadowDrawDelta": {
+        "near": 105,
+        "cascades": [
+          {
+            "name": "far",
+            "draws": 61
+          },
+          {
+            "name": "distant",
+            "draws": 43
+          }
+        ]
+      },
+      "shadowWork": {
+        "cpu": {
+          "samples": 3996,
+          "averageMs": 0.7678428425325884,
+          "p50Ms": 0.7000000476837158,
+          "p95Ms": 1.7000000476837158,
+          "p99Ms": 2.5,
+          "maxMs": 5.6000001430511475,
+          "slowest1PercentAverageMs": 3.2050000011920927,
+          "fpsFromAverage": 1302.3498359399741,
+          "fpsFromSlowest1PercentAverage": 312.0124803831676,
+          "over20ms": 0,
+          "over33_34ms": 0
+        },
+        "renderCalls": {
+          "frames": 3996,
+          "total": 75047,
+          "max": 241
+        },
+        "triangles": {
+          "frames": 3996,
+          "total": 123054236,
+          "max": 436450
+        }
+      },
+      "slowPasses": [
+        {
+          "label": "renderer.render",
+          "ms": 10.599999904632568,
+          "seconds": 24.8145,
+          "scene": "world",
+          "programsBefore": 22,
+          "programsAfter": 22,
+          "newPrograms": []
+        }
+      ]
+    },
+    {
+      "trial": 2,
+      "profile": "default",
+      "scenario": "flight",
+      "timePreset": 0.5,
+      "timeMode": "running",
+      "timeSpeed": 1,
+      "valid": true,
+      "invalidReasons": [],
+      "warmupSeconds": 10,
+      "measurementSeconds": 30.002799999952316,
+      "trajectory": {
+        "start": {
+          "x": -28.5,
+          "y": 80,
+          "z": 66.5,
+          "yaw": 0,
+          "pitch": 0
+        },
+        "plannedDelta": {
+          "x": 0,
+          "y": 0,
+          "z": -256
+        },
+        "speedBlocksPerSecond": 8.533333333333333,
+        "warmupMotion": "stationary"
+      },
+      "motionDelta": {
+        "x": 0,
+        "y": 0,
+        "z": -255.94965333251952,
+        "distance": 255.94965333251952
+      },
+      "device": {
+        "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 3050 Laptop GPU (0x000025A2) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+        "vendor": "Google Inc. (NVIDIA)",
+        "version": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+        "timerQuery": true,
+        "context": {
+          "alpha": true,
+          "antialias": true,
+          "depth": true,
+          "desynchronized": false,
+          "failIfMajorPerformanceCaveat": false,
+          "powerPreference": "default",
+          "premultipliedAlpha": true,
+          "preserveDrawingBuffer": false,
+          "stencil": true,
+          "xrCompatible": false
+        },
+        "drawingBuffer": [
+          1920,
+          1080
+        ],
+        "viewport": [
+          1920,
+          1080
+        ],
+        "pixelRatio": 1,
+        "devicePixelRatio": 1,
+        "touchMode": true,
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36",
+        "hardwareConcurrency": 16
+      },
+      "settings": {
+        "potato": false,
+        "viewDistance": 48,
+        "farTerrain": 8192,
+        "farDetail": 2,
+        "fov": 75,
+        "brightness": 0,
+        "renderScale": 100,
+        "fpsLimit": 0,
+        "ambientOcclusion": 45,
+        "shadows": 3,
+        "lightingModel": "atmosphere",
+        "lightShafts": true,
+        "bounceLight": false,
+        "fancyLeaves": true,
+        "dynamicLight": true,
+        "loadBudget": 4,
+        "mouseSensitivity": 100,
+        "invertMouse": false,
+        "skinOverlay": true,
+        "showHand": true,
+        "viewBobbing": true,
+        "jointStyle": "smooth",
+        "cameraDistance": 4,
+        "volumeMaster": 80,
+        "volumeBlocks": 100,
+        "volumeWorld": 100,
+        "volumeUi": 80,
+        "theme": "default",
+        "hudScale": 100,
+        "showDebug": true,
+        "showFps": false,
+        "meteorites": true,
+        "autoUpdates": true,
+        "textureResolution": 0
+      },
+      "world": {
+        "seed": "lighting-rtx3050-0231",
+        "terrain": "realistic",
+        "gameMode": "creative"
+      },
+      "initial": {
+        "pose": {
+          "x": -28.5,
+          "y": 80,
+          "z": 66.5,
+          "yaw": 0,
+          "pitch": 0,
+          "flying": true
+        },
+        "time": {
+          "days": 0.5,
+          "speed": 1
+        },
+        "queues": {
+          "chunks": 81,
+          "loadQueue": 0,
+          "dirtyChunks": 0,
+          "unsavedChunks": 0,
+          "farTerrain": {
+            "active": true,
+            "shown": 553,
+            "wanted": 553,
+            "missing": 0,
+            "cached": 719,
+            "triangles": 1677400,
+            "shadowRevision": 714,
+            "detailDistance": 800,
+            "targetSpacing": 4,
+            "lodWithinTarget": {
+              "1": 96,
+              "2": 68,
+              "4": 125
+            },
+            "workers": 3
+          }
+        },
+        "shadows": {
+          "available": true,
+          "quality": 3,
+          "near": {
+            "radius": 64,
+            "size": 2048,
+            "valid": true,
+            "draws": 226,
+            "needed": false
+          },
+          "cascades": [
+            {
+              "name": "far",
+              "radius": 256,
+              "size": 1024,
+              "valid": true,
+              "needed": true,
+              "changed": false,
+              "draws": 135,
+              "building": true,
+              "buildStep": null,
+              "terrainRevision": 714
+            },
+            {
+              "name": "distant",
+              "radius": 1024,
+              "size": 2048,
+              "valid": true,
+              "needed": true,
+              "changed": false,
+              "draws": 104,
+              "building": true,
+              "buildStep": null,
+              "terrainRevision": 714
+            }
+          ],
+          "counters": {
+            "budget": {
+              "draws": 24,
+              "triangles": 120000,
+              "milliseconds": 1.5
+            },
+            "lastFrame": {
+              "draws": 24,
+              "triangles": 68238,
+              "completed": 0,
+              "prepareMilliseconds": 0,
+              "submitMilliseconds": 0.10000014305114746
+            },
+            "cascades": [
+              {
+                "name": "far",
+                "radius": 256,
+                "size": 1024,
+                "valid": true,
+                "building": true,
+                "remaining": 66,
+                "draws": 135,
+                "terrainRevision": 714,
+                "changed": false
+              },
+              {
+                "name": "distant",
+                "radius": 1024,
+                "size": 2048,
+                "valid": true,
+                "building": true,
+                "remaining": 213,
+                "draws": 104,
+                "terrainRevision": 714,
+                "changed": false
+              }
+            ]
+          },
+          "terrainRevision": 714
+        }
+      },
+      "measurementStart": {
+        "pose": {
+          "x": -28.5,
+          "y": 80,
+          "z": 66.46842666625976,
+          "yaw": 0,
+          "pitch": 0,
+          "flying": true
+        },
+        "time": {
+          "days": 0.5083364166667057,
+          "speed": 1
+        },
+        "queues": {
+          "chunks": 81,
+          "loadQueue": 0,
+          "dirtyChunks": 0,
+          "unsavedChunks": 0,
+          "farTerrain": {
+            "active": true,
+            "shown": 553,
+            "wanted": 553,
+            "missing": 0,
+            "cached": 719,
+            "triangles": 1677400,
+            "shadowRevision": 714,
+            "detailDistance": 800,
+            "targetSpacing": 4,
+            "lodWithinTarget": {
+              "1": 96,
+              "2": 68,
+              "4": 125
+            },
+            "workers": 3
+          }
+        },
+        "shadows": {
+          "available": true,
+          "quality": 3,
+          "near": {
+            "radius": 64,
+            "size": 2048,
+            "valid": true,
+            "draws": 255,
+            "needed": false
+          },
+          "cascades": [
+            {
+              "name": "far",
+              "radius": 256,
+              "size": 1024,
+              "valid": true,
+              "needed": false,
+              "changed": false,
+              "draws": 153,
+              "building": false,
+              "buildStep": null,
+              "terrainRevision": 714
+            },
+            {
+              "name": "distant",
+              "radius": 1024,
+              "size": 2048,
+              "valid": true,
+              "needed": true,
+              "changed": false,
+              "draws": 119,
+              "building": true,
+              "buildStep": null,
+              "terrainRevision": 714
+            }
+          ],
+          "counters": {
+            "budget": {
+              "draws": 24,
+              "triangles": 120000,
+              "milliseconds": 1.5
+            },
+            "lastFrame": {
+              "draws": 24,
+              "triangles": 63286,
+              "completed": 0,
+              "prepareMilliseconds": 0,
+              "submitMilliseconds": 0.7000000476837158
+            },
+            "cascades": [
+              {
+                "name": "far",
+                "radius": 256,
+                "size": 1024,
+                "valid": true,
+                "building": false,
+                "remaining": 0,
+                "draws": 153,
+                "terrainRevision": 714,
+                "changed": false
+              },
+              {
+                "name": "distant",
+                "radius": 1024,
+                "size": 2048,
+                "valid": true,
+                "building": true,
+                "remaining": 257,
+                "draws": 119,
+                "terrainRevision": 714,
+                "changed": false
+              }
+            ]
+          },
+          "terrainRevision": 714
+        }
+      },
+      "end": {
+        "pose": {
+          "x": -28.5,
+          "y": 80,
+          "z": -189.44965333251952,
+          "yaw": 0,
+          "pitch": 0,
+          "flying": true
+        },
+        "time": {
+          "days": 0.533334083333486,
+          "speed": 1
+        },
+        "queues": {
+          "chunks": 107,
+          "loadQueue": 0,
+          "dirtyChunks": 0,
+          "unsavedChunks": 0,
+          "farTerrain": {
+            "active": true,
+            "shown": 536,
+            "wanted": 536,
+            "missing": 0,
+            "cached": 719,
+            "triangles": 1543216,
+            "shadowRevision": 879,
+            "detailDistance": 800,
+            "targetSpacing": 4,
+            "lodWithinTarget": {
+              "1": 90,
+              "2": 65,
+              "4": 124,
+              "8": 2
+            },
+            "workers": 3
+          }
+        },
+        "shadows": {
+          "available": true,
+          "quality": 3,
+          "near": {
+            "radius": 64,
+            "size": 2048,
+            "valid": true,
+            "draws": 359,
+            "needed": false
+          },
+          "cascades": [
+            {
+              "name": "far",
+              "radius": 256,
+              "size": 1024,
+              "valid": true,
+              "needed": false,
+              "changed": false,
+              "draws": 214,
+              "building": false,
+              "buildStep": null,
+              "terrainRevision": 879
+            },
+            {
+              "name": "distant",
+              "radius": 1024,
+              "size": 2048,
+              "valid": true,
+              "needed": false,
+              "changed": false,
+              "draws": 162,
+              "building": false,
+              "buildStep": null,
+              "terrainRevision": 879
+            }
+          ],
+          "counters": {
+            "budget": {
+              "draws": 24,
+              "triangles": 120000,
+              "milliseconds": 1.5
+            },
+            "lastFrame": {
+              "draws": 0,
+              "triangles": 0,
+              "completed": 0,
+              "prepareMilliseconds": 0,
+              "submitMilliseconds": 0
+            },
+            "cascades": [
+              {
+                "name": "far",
+                "radius": 256,
+                "size": 1024,
+                "valid": true,
+                "building": false,
+                "remaining": 0,
+                "draws": 214,
+                "terrainRevision": 879,
+                "changed": false
+              },
+              {
+                "name": "distant",
+                "radius": 1024,
+                "size": 2048,
+                "valid": true,
+                "building": false,
+                "remaining": 0,
+                "draws": 162,
+                "terrainRevision": 879,
+                "changed": false
+              }
+            ]
+          },
+          "terrainRevision": 879
+        }
+      },
+      "renderedFrameIntervals": {
+        "samples": 4117,
+        "averageMs": 7.284187515180957,
+        "p50Ms": 7,
+        "p95Ms": 10.200000047683716,
+        "p99Ms": 13.900000095367432,
+        "maxMs": 22.799999952316284,
+        "slowest1PercentAverageMs": 16.733333332198008,
+        "fpsFromAverage": 137.28367067924907,
+        "fpsFromSlowest1PercentAverage": 59.76095617935348,
+        "over20ms": 6,
+        "over33_34ms": 0
+      },
+      "rafIntervals": {
+        "samples": 4117,
+        "averageMs": 7.284503279086711,
+        "p50Ms": 6.900000000008731,
+        "p95Ms": 7.100000000005821,
+        "p99Ms": 14,
+        "maxMs": 27.90000000000873,
+        "slowest1PercentAverageMs": 16.47857142857122,
+        "fpsFromAverage": 137.27771979606746,
+        "fpsFromSlowest1PercentAverage": 60.68487212830592,
+        "over20ms": 13,
+        "over33_34ms": 0
+      },
+      "cpuUpdate": {
+        "samples": 4118,
+        "averageMs": 0.5855755213686076,
+        "p50Ms": 0.39999985694885254,
+        "p95Ms": 1.2000000476837158,
+        "p99Ms": 5.700000047683716,
+        "maxMs": 8.799999952316284,
+        "slowest1PercentAverageMs": 6.316666676884606,
+        "fpsFromAverage": 1707.7216575972973,
+        "fpsFromSlowest1PercentAverage": 158.31134539035108,
+        "over20ms": 0,
+        "over33_34ms": 0
+      },
+      "cpuRender": {
+        "samples": 4118,
+        "averageMs": 3.2288975229883956,
+        "p50Ms": 3.200000047683716,
+        "p95Ms": 4.700000047683716,
+        "p99Ms": 7.200000047683716,
+        "maxMs": 13.200000047683716,
+        "slowest1PercentAverageMs": 9.019047629265557,
+        "fpsFromAverage": 309.70323241305107,
+        "fpsFromSlowest1PercentAverage": 110.87645182792237,
+        "over20ms": 0,
+        "over33_34ms": 0
+      },
+      "gpuRender": {
+        "samples": 4118,
+        "averageMs": 3.28014114813017,
+        "p50Ms": 3.0976,
+        "p95Ms": 4.344832,
+        "p99Ms": 5.269504,
+        "maxMs": 11.546624,
+        "slowest1PercentAverageMs": 6.467507047619047,
+        "fpsFromAverage": 304.86492953818333,
+        "fpsFromSlowest1PercentAverage": 154.61908160859923,
+        "over20ms": 0,
+        "over33_34ms": 0
+      },
+      "gpu": {
+        "available": true,
+        "valid": true,
+        "disjointEvents": 0,
+        "skippedQueries": 0,
+        "discardedQueries": 0,
+        "pendingLimit": 8
+      },
+      "shadowDrawDelta": {
+        "near": 104,
+        "cascades": [
+          {
+            "name": "far",
+            "draws": 61
+          },
+          {
+            "name": "distant",
+            "draws": 43
+          }
+        ]
+      },
+      "shadowWork": {
+        "cpu": {
+          "samples": 4118,
+          "averageMs": 0.784482757983826,
+          "p50Ms": 0.7000000476837158,
+          "p95Ms": 1.5999999046325684,
+          "p99Ms": 2.299999952316284,
+          "maxMs": 6.700000047683716,
+          "slowest1PercentAverageMs": 2.6476190260478427,
+          "fpsFromAverage": 1274.72527576013,
+          "fpsFromSlowest1PercentAverage": 377.6978448038732,
+          "over20ms": 0,
+          "over33_34ms": 0
+        },
+        "renderCalls": {
+          "frames": 4118,
+          "total": 75553,
+          "max": 238
+        },
+        "triangles": {
+          "frames": 4118,
+          "total": 123565800,
+          "max": 425212
+        }
+      },
+      "slowPasses": []
+    },
+    {
+      "trial": 3,
+      "profile": "default",
+      "scenario": "flight",
+      "timePreset": 0.5,
+      "timeMode": "running",
+      "timeSpeed": 1,
+      "valid": true,
+      "invalidReasons": [],
+      "warmupSeconds": 10,
+      "measurementSeconds": 30.007,
+      "trajectory": {
+        "start": {
+          "x": -28.5,
+          "y": 80,
+          "z": 66.5,
+          "yaw": 0,
+          "pitch": 0
+        },
+        "plannedDelta": {
+          "x": 0,
+          "y": 0,
+          "z": -256
+        },
+        "speedBlocksPerSecond": 8.533333333333333,
+        "warmupMotion": "stationary"
+      },
+      "motionDelta": {
+        "x": 0,
+        "y": 0,
+        "z": -255.97098666788736,
+        "distance": 255.97098666788736
+      },
+      "device": {
+        "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 3050 Laptop GPU (0x000025A2) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+        "vendor": "Google Inc. (NVIDIA)",
+        "version": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+        "timerQuery": true,
+        "context": {
+          "alpha": true,
+          "antialias": true,
+          "depth": true,
+          "desynchronized": false,
+          "failIfMajorPerformanceCaveat": false,
+          "powerPreference": "default",
+          "premultipliedAlpha": true,
+          "preserveDrawingBuffer": false,
+          "stencil": true,
+          "xrCompatible": false
+        },
+        "drawingBuffer": [
+          1920,
+          1080
+        ],
+        "viewport": [
+          1920,
+          1080
+        ],
+        "pixelRatio": 1,
+        "devicePixelRatio": 1,
+        "touchMode": true,
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36",
+        "hardwareConcurrency": 16
+      },
+      "settings": {
+        "potato": false,
+        "viewDistance": 48,
+        "farTerrain": 8192,
+        "farDetail": 2,
+        "fov": 75,
+        "brightness": 0,
+        "renderScale": 100,
+        "fpsLimit": 0,
+        "ambientOcclusion": 45,
+        "shadows": 3,
+        "lightingModel": "atmosphere",
+        "lightShafts": true,
+        "bounceLight": false,
+        "fancyLeaves": true,
+        "dynamicLight": true,
+        "loadBudget": 4,
+        "mouseSensitivity": 100,
+        "invertMouse": false,
+        "skinOverlay": true,
+        "showHand": true,
+        "viewBobbing": true,
+        "jointStyle": "smooth",
+        "cameraDistance": 4,
+        "volumeMaster": 80,
+        "volumeBlocks": 100,
+        "volumeWorld": 100,
+        "volumeUi": 80,
+        "theme": "default",
+        "hudScale": 100,
+        "showDebug": true,
+        "showFps": false,
+        "meteorites": true,
+        "autoUpdates": true,
+        "textureResolution": 0
+      },
+      "world": {
+        "seed": "lighting-rtx3050-0231",
+        "terrain": "realistic",
+        "gameMode": "creative"
+      },
+      "initial": {
+        "pose": {
+          "x": -28.5,
+          "y": 80,
+          "z": 66.5,
+          "yaw": 0,
+          "pitch": 0,
+          "flying": true
+        },
+        "time": {
+          "days": 0.5,
+          "speed": 1
+        },
+        "queues": {
+          "chunks": 81,
+          "loadQueue": 0,
+          "dirtyChunks": 0,
+          "unsavedChunks": 0,
+          "farTerrain": {
+            "active": true,
+            "shown": 553,
+            "wanted": 553,
+            "missing": 0,
+            "cached": 719,
+            "triangles": 1677400,
+            "shadowRevision": 912,
+            "detailDistance": 800,
+            "targetSpacing": 4,
+            "lodWithinTarget": {
+              "1": 96,
+              "2": 68,
+              "4": 125
+            },
+            "workers": 3
+          }
+        },
+        "shadows": {
+          "available": true,
+          "quality": 3,
+          "near": {
+            "radius": 64,
+            "size": 2048,
+            "valid": true,
+            "draws": 484,
+            "needed": false
+          },
+          "cascades": [
+            {
+              "name": "far",
+              "radius": 256,
+              "size": 1024,
+              "valid": true,
+              "needed": false,
+              "changed": false,
+              "draws": 288,
+              "building": false,
+              "buildStep": null,
+              "terrainRevision": 912
+            },
+            {
+              "name": "distant",
+              "radius": 1024,
+              "size": 2048,
+              "valid": true,
+              "needed": false,
+              "changed": false,
+              "draws": 226,
+              "building": false,
+              "buildStep": null,
+              "terrainRevision": 912
+            }
+          ],
+          "counters": {
+            "budget": {
+              "draws": 24,
+              "triangles": 120000,
+              "milliseconds": 1.5
+            },
+            "lastFrame": {
+              "draws": 0,
+              "triangles": 0,
+              "completed": 0,
+              "prepareMilliseconds": 0,
+              "submitMilliseconds": 0
+            },
+            "cascades": [
+              {
+                "name": "far",
+                "radius": 256,
+                "size": 1024,
+                "valid": true,
+                "building": false,
+                "remaining": 0,
+                "draws": 288,
+                "terrainRevision": 912,
+                "changed": false
+              },
+              {
+                "name": "distant",
+                "radius": 1024,
+                "size": 2048,
+                "valid": true,
+                "building": false,
+                "remaining": 0,
+                "draws": 226,
+                "terrainRevision": 912,
+                "changed": false
+              }
+            ]
+          },
+          "terrainRevision": 912
+        }
+      },
+      "measurementStart": {
+        "pose": {
+          "x": -28.5,
+          "y": 80,
+          "z": 66.44453333333334,
+          "yaw": 0,
+          "pitch": 0,
+          "flying": true
+        },
+        "time": {
+          "days": 0.5083422500000397,
+          "speed": 1
+        },
+        "queues": {
+          "chunks": 81,
+          "loadQueue": 0,
+          "dirtyChunks": 0,
+          "unsavedChunks": 0,
+          "farTerrain": {
+            "active": true,
+            "shown": 553,
+            "wanted": 553,
+            "missing": 0,
+            "cached": 719,
+            "triangles": 1677400,
+            "shadowRevision": 912,
+            "detailDistance": 800,
+            "targetSpacing": 4,
+            "lodWithinTarget": {
+              "1": 96,
+              "2": 68,
+              "4": 125
+            },
+            "workers": 3
+          }
+        },
+        "shadows": {
+          "available": true,
+          "quality": 3,
+          "near": {
+            "radius": 64,
+            "size": 2048,
+            "valid": true,
+            "draws": 513,
+            "needed": false
+          },
+          "cascades": [
+            {
+              "name": "far",
+              "radius": 256,
+              "size": 1024,
+              "valid": true,
+              "needed": false,
+              "changed": false,
+              "draws": 306,
+              "building": false,
+              "buildStep": null,
+              "terrainRevision": 912
+            },
+            {
+              "name": "distant",
+              "radius": 1024,
+              "size": 2048,
+              "valid": true,
+              "needed": true,
+              "changed": false,
+              "draws": 241,
+              "building": true,
+              "buildStep": null,
+              "terrainRevision": 912
+            }
+          ],
+          "counters": {
+            "budget": {
+              "draws": 24,
+              "triangles": 120000,
+              "milliseconds": 1.5
+            },
+            "lastFrame": {
+              "draws": 22,
+              "triangles": 26582,
+              "completed": 0,
+              "prepareMilliseconds": 0,
+              "submitMilliseconds": 0.6000001430511475
+            },
+            "cascades": [
+              {
+                "name": "far",
+                "radius": 256,
+                "size": 1024,
+                "valid": true,
+                "building": false,
+                "remaining": 0,
+                "draws": 306,
+                "terrainRevision": 912,
+                "changed": false
+              },
+              {
+                "name": "distant",
+                "radius": 1024,
+                "size": 2048,
+                "valid": true,
+                "building": true,
+                "remaining": 365,
+                "draws": 241,
+                "terrainRevision": 912,
+                "changed": false
+              }
+            ]
+          },
+          "terrainRevision": 912
+        }
+      },
+      "end": {
+        "pose": {
+          "x": -28.5,
+          "y": 80,
+          "z": -189.47098666788736,
+          "yaw": 0,
+          "pitch": 0,
+          "flying": true
+        },
+        "time": {
+          "days": 0.5333400000001363,
+          "speed": 1
+        },
+        "queues": {
+          "chunks": 107,
+          "loadQueue": 0,
+          "dirtyChunks": 0,
+          "unsavedChunks": 0,
+          "farTerrain": {
+            "active": true,
+            "shown": 536,
+            "wanted": 536,
+            "missing": 0,
+            "cached": 719,
+            "triangles": 1543216,
+            "shadowRevision": 1081,
+            "detailDistance": 800,
+            "targetSpacing": 4,
+            "lodWithinTarget": {
+              "1": 90,
+              "2": 65,
+              "4": 124,
+              "8": 2
+            },
+            "workers": 3
+          }
+        },
+        "shadows": {
+          "available": true,
+          "quality": 3,
+          "near": {
+            "radius": 64,
+            "size": 2048,
+            "valid": true,
+            "draws": 617,
+            "needed": false
+          },
+          "cascades": [
+            {
+              "name": "far",
+              "radius": 256,
+              "size": 1024,
+              "valid": true,
+              "needed": false,
+              "changed": false,
+              "draws": 366,
+              "building": false,
+              "buildStep": null,
+              "terrainRevision": 1081
+            },
+            {
+              "name": "distant",
+              "radius": 1024,
+              "size": 2048,
+              "valid": true,
+              "needed": false,
+              "changed": false,
+              "draws": 283,
+              "building": false,
+              "buildStep": null,
+              "terrainRevision": 1081
+            }
+          ],
+          "counters": {
+            "budget": {
+              "draws": 24,
+              "triangles": 120000,
+              "milliseconds": 1.5
+            },
+            "lastFrame": {
+              "draws": 0,
+              "triangles": 0,
+              "completed": 0,
+              "prepareMilliseconds": 0,
+              "submitMilliseconds": 0
+            },
+            "cascades": [
+              {
+                "name": "far",
+                "radius": 256,
+                "size": 1024,
+                "valid": true,
+                "building": false,
+                "remaining": 0,
+                "draws": 366,
+                "terrainRevision": 1081,
+                "changed": false
+              },
+              {
+                "name": "distant",
+                "radius": 1024,
+                "size": 2048,
+                "valid": true,
+                "building": false,
+                "remaining": 0,
+                "draws": 283,
+                "terrainRevision": 1081,
+                "changed": false
+              }
+            ]
+          },
+          "terrainRevision": 1081
+        }
+      },
+      "renderedFrameIntervals": {
+        "samples": 3890,
+        "averageMs": 7.7096143958501155,
+        "p50Ms": 7.099999904632568,
+        "p95Ms": 12.5,
+        "p99Ms": 17.40000009536743,
+        "maxMs": 26.699999809265137,
+        "slowest1PercentAverageMs": 20.348717952385925,
+        "fpsFromAverage": 129.70817328273563,
+        "fpsFromSlowest1PercentAverage": 49.14314515243198,
+        "over20ms": 18,
+        "over33_34ms": 0
+      },
+      "rafIntervals": {
+        "samples": 3890,
+        "averageMs": 7.709614395886888,
+        "p50Ms": 6.900000000023283,
+        "p95Ms": 13.89999999999418,
+        "p99Ms": 20.70000000001164,
+        "maxMs": 28,
+        "slowest1PercentAverageMs": 22.105128205130594,
+        "fpsFromAverage": 129.70817328211697,
+        "fpsFromSlowest1PercentAverage": 45.23837141862404,
+        "over20ms": 45,
+        "over33_34ms": 0
+      },
+      "cpuUpdate": {
+        "samples": 3891,
+        "averageMs": 0.6063736820245457,
+        "p50Ms": 0.39999985694885254,
+        "p95Ms": 1.2999999523162842,
+        "p99Ms": 6,
+        "maxMs": 8.100000143051147,
+        "slowest1PercentAverageMs": 6.715384599490044,
+        "fpsFromAverage": 1649.1480907634782,
+        "fpsFromSlowest1PercentAverage": 148.91179874879222,
+        "over20ms": 0,
+        "over33_34ms": 0
+      },
+      "cpuRender": {
+        "samples": 3891,
+        "averageMs": 3.763222820806001,
+        "p50Ms": 3.5999999046325684,
+        "p95Ms": 6.599999904632568,
+        "p99Ms": 10,
+        "maxMs": 17.299999952316284,
+        "slowest1PercentAverageMs": 11.528205113533216,
+        "fpsFromAverage": 265.7296810784703,
+        "fpsFromSlowest1PercentAverage": 86.74377235239142,
+        "over20ms": 0,
+        "over33_34ms": 0
+      },
+      "gpuRender": {
+        "samples": 3891,
+        "averageMs": 3.343274576201493,
+        "p50Ms": 3.121088,
+        "p95Ms": 4.622336,
+        "p99Ms": 5.817344,
+        "maxMs": 8.572928,
+        "slowest1PercentAverageMs": 6.658010256410257,
+        "fpsFromAverage": 299.10794857183515,
+        "fpsFromSlowest1PercentAverage": 150.19502245993257,
+        "over20ms": 0,
+        "over33_34ms": 0
+      },
+      "gpu": {
+        "available": true,
+        "valid": true,
+        "disjointEvents": 0,
+        "skippedQueries": 0,
+        "discardedQueries": 0,
+        "pendingLimit": 8
+      },
+      "shadowDrawDelta": {
+        "near": 104,
+        "cascades": [
+          {
+            "name": "far",
+            "draws": 60
+          },
+          {
+            "name": "distant",
+            "draws": 42
+          }
+        ]
+      },
+      "shadowWork": {
+        "cpu": {
+          "samples": 3891,
+          "averageMs": 0.8266769477561886,
+          "p50Ms": 0.7999999523162842,
+          "p95Ms": 1.7000000476837158,
+          "p99Ms": 2.5999999046325684,
+          "maxMs": 5.8999998569488525,
+          "slowest1PercentAverageMs": 3.351282070844601,
+          "fpsFromAverage": 1209.662375023586,
+          "fpsFromSlowest1PercentAverage": 298.3932652818975,
+          "over20ms": 0,
+          "over33_34ms": 0
+        },
+        "renderCalls": {
+          "frames": 3891,
+          "total": 74082,
+          "max": 240
+        },
+        "triangles": {
+          "frames": 3891,
+          "total": 121825758,
+          "max": 438614
+        }
+      },
+      "slowPasses": [
+        {
+          "label": "renderer.render",
+          "ms": 9.799999952316284,
+          "seconds": 15.924,
+          "scene": "other",
+          "programsBefore": 22,
+          "programsAfter": 22,
+          "newPrograms": []
+        },
+        {
+          "label": "farTerrain",
+          "ms": 10,
+          "seconds": 15.923900000095367,
+          "scene": null,
+          "programsBefore": 22,
+          "programsAfter": 22,
+          "newPrograms": []
+        },
+        {
+          "label": "renderer.render",
+          "ms": 8.299999952316284,
+          "seconds": 20.063700000047685,
+          "scene": "other",
+          "programsBefore": 22,
+          "programsAfter": 22,
+          "newPrograms": []
+        },
+        {
+          "label": "farTerrain",
+          "ms": 8.400000095367432,
+          "seconds": 20.063700000047685,
+          "scene": null,
+          "programsBefore": 22,
+          "programsAfter": 22,
+          "newPrograms": []
+        }
+      ]
+    },
+    {
+      "trial": 4,
+      "profile": "default",
+      "scenario": "flight",
+      "timePreset": 0.735,
+      "timeMode": "running",
+      "timeSpeed": 1,
+      "valid": true,
+      "invalidReasons": [],
+      "warmupSeconds": 10,
+      "measurementSeconds": 30.007,
+      "trajectory": {
+        "start": {
+          "x": -28.5,
+          "y": 80,
+          "z": 66.5,
+          "yaw": 0,
+          "pitch": 0
+        },
+        "plannedDelta": {
+          "x": 0,
+          "y": 0,
+          "z": -256
+        },
+        "speedBlocksPerSecond": 8.533333333333333,
+        "warmupMotion": "stationary"
+      },
+      "motionDelta": {
+        "x": 0,
+        "y": 0,
+        "z": -255.97098666585288,
+        "distance": 255.97098666585288
+      },
+      "device": {
+        "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 3050 Laptop GPU (0x000025A2) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+        "vendor": "Google Inc. (NVIDIA)",
+        "version": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+        "timerQuery": true,
+        "context": {
+          "alpha": true,
+          "antialias": true,
+          "depth": true,
+          "desynchronized": false,
+          "failIfMajorPerformanceCaveat": false,
+          "powerPreference": "default",
+          "premultipliedAlpha": true,
+          "preserveDrawingBuffer": false,
+          "stencil": true,
+          "xrCompatible": false
+        },
+        "drawingBuffer": [
+          1920,
+          1080
+        ],
+        "viewport": [
+          1920,
+          1080
+        ],
+        "pixelRatio": 1,
+        "devicePixelRatio": 1,
+        "touchMode": true,
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36",
+        "hardwareConcurrency": 16
+      },
+      "settings": {
+        "potato": false,
+        "viewDistance": 48,
+        "farTerrain": 8192,
+        "farDetail": 2,
+        "fov": 75,
+        "brightness": 0,
+        "renderScale": 100,
+        "fpsLimit": 0,
+        "ambientOcclusion": 45,
+        "shadows": 3,
+        "lightingModel": "atmosphere",
+        "lightShafts": true,
+        "bounceLight": false,
+        "fancyLeaves": true,
+        "dynamicLight": true,
+        "loadBudget": 4,
+        "mouseSensitivity": 100,
+        "invertMouse": false,
+        "skinOverlay": true,
+        "showHand": true,
+        "viewBobbing": true,
+        "jointStyle": "smooth",
+        "cameraDistance": 4,
+        "volumeMaster": 80,
+        "volumeBlocks": 100,
+        "volumeWorld": 100,
+        "volumeUi": 80,
+        "theme": "default",
+        "hudScale": 100,
+        "showDebug": true,
+        "showFps": false,
+        "meteorites": true,
+        "autoUpdates": true,
+        "textureResolution": 0
+      },
+      "world": {
+        "seed": "lighting-rtx3050-0231",
+        "terrain": "realistic",
+        "gameMode": "creative"
+      },
+      "initial": {
+        "pose": {
+          "x": -28.5,
+          "y": 80,
+          "z": 66.5,
+          "yaw": 0,
+          "pitch": 0,
+          "flying": true
+        },
+        "time": {
+          "days": 0.735,
+          "speed": 1
+        },
+        "queues": {
+          "chunks": 81,
+          "loadQueue": 0,
+          "dirtyChunks": 0,
+          "unsavedChunks": 0,
+          "farTerrain": {
+            "active": true,
+            "shown": 553,
+            "wanted": 553,
+            "missing": 0,
+            "cached": 719,
+            "triangles": 1677400,
+            "shadowRevision": 1113,
+            "detailDistance": 800,
+            "targetSpacing": 4,
+            "lodWithinTarget": {
+              "1": 96,
+              "2": 68,
+              "4": 125
+            },
+            "workers": 3
+          }
+        },
+        "shadows": {
+          "available": true,
+          "quality": 3,
+          "near": {
+            "radius": 64,
+            "size": 2048,
+            "valid": true,
+            "draws": 789,
+            "needed": false
+          },
+          "cascades": [
+            {
+              "name": "far",
+              "radius": 256,
+              "size": 1024,
+              "valid": true,
+              "needed": true,
+              "changed": false,
+              "draws": 468,
+              "building": true,
+              "buildStep": null,
+              "terrainRevision": 1113
+            },
+            {
+              "name": "distant",
+              "radius": 1024,
+              "size": 2048,
+              "valid": true,
+              "needed": false,
+              "changed": false,
+              "draws": 372,
+              "building": false,
+              "buildStep": null,
+              "terrainRevision": 1113
+            }
+          ],
+          "counters": {
+            "budget": {
+              "draws": 24,
+              "triangles": 120000,
+              "milliseconds": 1.5
+            },
+            "lastFrame": {
+              "draws": 24,
+              "triangles": 26554,
+              "completed": 0,
+              "prepareMilliseconds": 0,
+              "submitMilliseconds": 0.20000004768371582
+            },
+            "cascades": [
+              {
+                "name": "far",
+                "radius": 256,
+                "size": 1024,
+                "valid": true,
+                "building": true,
+                "remaining": 218,
+                "draws": 468,
+                "terrainRevision": 1113,
+                "changed": false
+              },
+              {
+                "name": "distant",
+                "radius": 1024,
+                "size": 2048,
+                "valid": true,
+                "building": false,
+                "remaining": 0,
+                "draws": 372,
+                "terrainRevision": 1113,
+                "changed": false
+              }
+            ]
+          },
+          "terrainRevision": 1113
+        }
+      },
+      "measurementStart": {
+        "pose": {
+          "x": -28.5,
+          "y": 80,
+          "z": 66.44538666788738,
+          "yaw": 0,
+          "pitch": 0,
+          "flying": true
+        },
+        "time": {
+          "days": 0.7433421666666765,
+          "speed": 1
+        },
+        "queues": {
+          "chunks": 81,
+          "loadQueue": 0,
+          "dirtyChunks": 0,
+          "unsavedChunks": 0,
+          "farTerrain": {
+            "active": true,
+            "shown": 553,
+            "wanted": 553,
+            "missing": 0,
+            "cached": 719,
+            "triangles": 1677400,
+            "shadowRevision": 1113,
+            "detailDistance": 800,
+            "targetSpacing": 4,
+            "lodWithinTarget": {
+              "1": 96,
+              "2": 68,
+              "4": 125
+            },
+            "workers": 3
+          }
+        },
+        "shadows": {
+          "available": true,
+          "quality": 3,
+          "near": {
+            "radius": 64,
+            "size": 2048,
+            "valid": true,
+            "draws": 813,
+            "needed": false
+          },
+          "cascades": [
+            {
+              "name": "far",
+              "radius": 256,
+              "size": 1024,
+              "valid": true,
+              "needed": false,
+              "changed": false,
+              "draws": 499,
+              "building": false,
+              "buildStep": null,
+              "terrainRevision": 1113
+            },
+            {
+              "name": "distant",
+              "radius": 1024,
+              "size": 2048,
+              "valid": true,
+              "needed": false,
+              "changed": false,
+              "draws": 386,
+              "building": false,
+              "buildStep": null,
+              "terrainRevision": 1113
+            }
+          ],
+          "counters": {
+            "budget": {
+              "draws": 24,
+              "triangles": 120000,
+              "milliseconds": 1.5
+            },
+            "lastFrame": {
+              "draws": 0,
+              "triangles": 0,
+              "completed": 0,
+              "prepareMilliseconds": 0,
+              "submitMilliseconds": 0
+            },
+            "cascades": [
+              {
+                "name": "far",
+                "radius": 256,
+                "size": 1024,
+                "valid": true,
+                "building": false,
+                "remaining": 0,
+                "draws": 499,
+                "terrainRevision": 1113,
+                "changed": false
+              },
+              {
+                "name": "distant",
+                "radius": 1024,
+                "size": 2048,
+                "valid": true,
+                "building": false,
+                "remaining": 0,
+                "draws": 386,
+                "terrainRevision": 1113,
+                "changed": false
+              }
+            ]
+          },
+          "terrainRevision": 1113
+        }
+      },
+      "end": {
+        "pose": {
+          "x": -28.5,
+          "y": 80,
+          "z": -189.47098666585288,
+          "yaw": 0,
+          "pitch": 0,
+          "flying": true
+        },
+        "time": {
+          "days": 0.7683458333333733,
+          "speed": 1
+        },
+        "queues": {
+          "chunks": 107,
+          "loadQueue": 0,
+          "dirtyChunks": 0,
+          "unsavedChunks": 0,
+          "farTerrain": {
+            "active": true,
+            "shown": 536,
+            "wanted": 536,
+            "missing": 0,
+            "cached": 719,
+            "triangles": 1543216,
+            "shadowRevision": 1278,
+            "detailDistance": 800,
+            "targetSpacing": 4,
+            "lodWithinTarget": {
+              "1": 90,
+              "2": 65,
+              "4": 124,
+              "8": 2
+            },
+            "workers": 3
+          }
+        },
+        "shadows": {
+          "available": true,
+          "quality": 3,
+          "near": {
+            "radius": 64,
+            "size": 2048,
+            "valid": true,
+            "draws": 872,
+            "needed": false
+          },
+          "cascades": [
+            {
+              "name": "far",
+              "radius": 256,
+              "size": 1024,
+              "valid": true,
+              "needed": false,
+              "changed": true,
+              "draws": 560,
+              "building": false,
+              "buildStep": null,
+              "terrainRevision": 1239
+            },
+            {
+              "name": "distant",
+              "radius": 1024,
+              "size": 2048,
+              "valid": true,
+              "needed": false,
+              "changed": true,
+              "draws": 415,
+              "building": false,
+              "buildStep": null,
+              "terrainRevision": 1239
+            }
+          ],
+          "counters": {
+            "budget": {
+              "draws": 24,
+              "triangles": 120000,
+              "milliseconds": 1.5
+            },
+            "lastFrame": {
+              "draws": 0,
+              "triangles": 0,
+              "completed": 0,
+              "prepareMilliseconds": 0,
+              "submitMilliseconds": 0
+            },
+            "cascades": [
+              {
+                "name": "far",
+                "radius": 256,
+                "size": 1024,
+                "valid": true,
+                "building": false,
+                "remaining": 0,
+                "draws": 560,
+                "terrainRevision": 1239,
+                "changed": true
+              },
+              {
+                "name": "distant",
+                "radius": 1024,
+                "size": 2048,
+                "valid": true,
+                "building": false,
+                "remaining": 0,
+                "draws": 415,
+                "terrainRevision": 1239,
+                "changed": true
+              }
+            ]
+          },
+          "terrainRevision": 1278
+        }
+      },
+      "renderedFrameIntervals": {
+        "samples": 4143,
+        "averageMs": 7.237243543349111,
+        "p50Ms": 7,
+        "p95Ms": 9.799999952316284,
+        "p99Ms": 13.599999904632568,
+        "maxMs": 30.09999990463257,
+        "slowest1PercentAverageMs": 16.13809525398981,
+        "fpsFromAverage": 138.17415346191865,
+        "fpsFromSlowest1PercentAverage": 61.965181408429885,
+        "over20ms": 5,
+        "over33_34ms": 0
+      },
+      "rafIntervals": {
+        "samples": 4143,
+        "averageMs": 7.238836591841661,
+        "p50Ms": 6.900000000023283,
+        "p95Ms": 7.100000000034925,
+        "p99Ms": 14,
+        "maxMs": 27.900000000023283,
+        "slowest1PercentAverageMs": 16.304761904761627,
+        "fpsFromAverage": 138.1437455194145,
+        "fpsFromSlowest1PercentAverage": 61.33177570093562,
+        "over20ms": 11,
+        "over33_34ms": 0
+      },
+      "cpuUpdate": {
+        "samples": 4144,
+        "averageMs": 0.6232625504373124,
+        "p50Ms": 0.39999985694885254,
+        "p95Ms": 1.2999999523162842,
+        "p99Ms": 5.699999809265137,
+        "maxMs": 16,
+        "slowest1PercentAverageMs": 6.53095239117032,
+        "fpsFromAverage": 1604.4602700713363,
+        "fpsFromSlowest1PercentAverage": 153.11702491538207,
+        "over20ms": 0,
+        "over33_34ms": 0
+      },
+      "cpuRender": {
+        "samples": 4144,
+        "averageMs": 3.038223937499017,
+        "p50Ms": 3,
+        "p95Ms": 4.5,
+        "p99Ms": 6.6000001430511475,
+        "maxMs": 15.299999952316284,
+        "slowest1PercentAverageMs": 8.247619044213067,
+        "fpsFromAverage": 329.13966204320434,
+        "fpsFromSlowest1PercentAverage": 121.24711321404314,
+        "over20ms": 0,
+        "over33_34ms": 0
+      },
+      "gpuRender": {
+        "samples": 4144,
+        "averageMs": 3.799271243243247,
+        "p50Ms": 3.829408,
+        "p95Ms": 5.40672,
+        "p99Ms": 5.912576,
+        "maxMs": 9.654272,
+        "slowest1PercentAverageMs": 6.520434285714285,
+        "fpsFromAverage": 263.20837233678276,
+        "fpsFromSlowest1PercentAverage": 153.36401782177526,
+        "over20ms": 0,
+        "over33_34ms": 0
+      },
+      "gpu": {
+        "available": true,
+        "valid": true,
+        "disjointEvents": 0,
+        "skippedQueries": 0,
+        "discardedQueries": 0,
+        "pendingLimit": 8
+      },
+      "shadowDrawDelta": {
+        "near": 59,
+        "cascades": [
+          {
+            "name": "far",
+            "draws": 61
+          },
+          {
+            "name": "distant",
+            "draws": 29
+          }
+        ]
+      },
+      "shadowWork": {
+        "cpu": {
+          "samples": 4144,
+          "averageMs": 0.6244932433813235,
+          "p50Ms": 0.5999999046325684,
+          "p95Ms": 1.5999999046325684,
+          "p99Ms": 2.3000001907348633,
+          "maxMs": 4.599999904632568,
+          "slowest1PercentAverageMs": 2.690476196152823,
+          "fpsFromAverage": 1601.2983496594652,
+          "fpsFromSlowest1PercentAverage": 371.6814151449933,
+          "over20ms": 0,
+          "over33_34ms": 0
+        },
+        "renderCalls": {
+          "frames": 4144,
+          "total": 60405,
+          "max": 214
+        },
+        "triangles": {
+          "frames": 4144,
+          "total": 106807668,
+          "max": 399780
+        }
+      },
+      "slowPasses": []
+    }
+  ]
+}

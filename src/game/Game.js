@@ -32,6 +32,7 @@ import { viewUniforms } from '../rendering/viewUniforms.js';
 import { blockMaterial, plantMaterial, waterMaterial, leafMaterial, setPotatoDefine, setLeafMaterialFast, setShadowDefine } from '../rendering/BlockRenderData.js';
 import { SunShadows } from '../rendering/Shadows.js';
 import { LightShafts } from '../rendering/LightShafts.js';
+import { prewarmWaterMaterial, waterShaderVariantKey } from '../rendering/WaterMaterialWarmup.js';
 import { BounceLight, bounceUniforms } from '../world/BounceLight.js';
 import { Meteorites } from './Meteorites.js';
 import { SpaceView } from '../space/SpaceView.js';
@@ -137,7 +138,7 @@ export class Game {
                 ? await storage.loadChunks(worldInfo.id)
                 : new Map();
 
-        return new Game(
+        const game = new Game(
             renderer,
             input,
             storage,
@@ -145,6 +146,15 @@ export class Game {
             settings,
             savedChunks
         );
+
+        try {
+            await prewarmWaterMaterial(renderer, game.scene, game.camera, true);
+        } catch (error) {
+            await game.stop({ save: false });
+            throw error;
+        }
+        game.prewarmedWaterVariant = waterShaderVariantKey();
+        return game;
 
     }
 
@@ -1718,6 +1728,17 @@ export class Game {
             settings.get('mouseSensitivity') / 100;
 
         this.player.invertMouse = settings.get('invertMouse');
+
+        // Po starcie: nowy kod shaderów przygotuj przy zmianie ustawień.
+        // Nie odraczaj go do napotkania wody i nie zatrzymuj samych renderów
+        // przy nadal działającej symulacji. Pierwszy warmup czeka w start().
+        if (this.prewarmedWaterVariant !== undefined) {
+            const variant = waterShaderVariantKey();
+            if (variant !== this.prewarmedWaterVariant) {
+                prewarmWaterMaterial(this.renderer, this.scene, this.camera);
+                this.prewarmedWaterVariant = variant;
+            }
+        }
 
     }
 

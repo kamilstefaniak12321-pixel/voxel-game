@@ -128,7 +128,8 @@ export async function checkDistantShadowRendering({ renderer, yieldBrowser }) {
         if (!renderer.extensions.has('EXT_color_buffer_float')) return { isolated, subpixelBits, floatTarget: false };
         const probeTarget = new THREE.WebGLRenderTarget(16, 16, { type: THREE.FloatType });
         const probeMaterial = new THREE.ShaderMaterial({
-            uniforms: { depthMap: { value: null }, worldToMap: { value: null }, info: { value: null }, mode: { value: 0 } },
+            uniforms: { depthMap: { value: null }, worldToMap: { value: null }, info: { value: null }, mode: { value: 0 },
+                rasterPrecision: shadowUniforms.uShadowRasterPrecision },
             vertexShader: `varying vec3 worldPosition; varying vec3 worldNormal;
                 void main() {
                     worldPosition = (modelMatrix * vec4(position, 1.0)).xyz;
@@ -137,6 +138,7 @@ export async function checkDistantShadowRendering({ renderer, yieldBrowser }) {
                 }`,
             fragmentShader: `precision highp float;
                 uniform highp sampler2D depthMap; uniform mat4 worldToMap; uniform vec4 info; uniform int mode;
+                uniform float rasterPrecision;
                 varying vec3 worldPosition; varying vec3 worldNormal;
                 void main() {
                     vec3 p = worldPosition;
@@ -152,9 +154,9 @@ export async function checkDistantShadowRendering({ renderer, yieldBrowser }) {
                         dot(n, ry) / dot(ry, ry)) * dot(rz, rz) / dot(n, rz);
                     float planeDepth = s.z + dot(depthGradient, delta);
                     float stored = texture2D(depthMap, uv).r;
-                    float rasterBias = texel * (abs(depthGradient.x) + abs(depthGradient.y)) / 128.0;
+                    float rasterBias = texel * (abs(depthGradient.x) + abs(depthGradient.y)) * rasterPrecision;
                     float transformBias = max(info.y * 0.1 * info.x, 0.0000002);
-                    float bias = max(transformBias, rasterBias);
+                    float bias = transformBias + rasterBias;
                     if (mode == 0) gl_FragColor = vec4(p, s.z);
                     else if (mode == 1) gl_FragColor = vec4(uv, planeDepth, stored);
                     else if (mode == 2) gl_FragColor = vec4((planeDepth - stored) / info.x, bias / info.x,

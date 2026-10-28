@@ -26,6 +26,8 @@ Drugi etap oświetlenia — PR #51.
 - Dalekie mapy powstają stopniowo, w ograniczonych porcjach, i trafiają
   do obrazu dopiero po zakończeniu. Woda i sztuczne łączenia kafelków
   nie rzucają już fałszywych cieni.
+- Przygotowanie materiału wody podczas ładowania świata ogranicza
+  przycięcie przy pierwszym dotarciu nad jezioro lub rzekę.
 - Wersja 0.25.0 wspólna dla Windowsa i Androida. Po scaleniu PR workflow
   „Aplikacje (komputer i telefon)” opublikuje `v0.25.0` w
   `voxel-game-wydania` z plikami automatycznej aktualizacji.

@@ -28,8 +28,9 @@ korzystają z tych samych większych map.
 
 Porównanie głębi uwzględnia płaszczyznę odbiorcy: przenosi jego głębię
 na środek odczytywanego teksela mapy. Mały dodatkowy zapas rośnie wraz
-z gradientem głębi (odpowiednik 2/256 teksela), żeby pokryć zaokrąglenia
-rasteryzacji przy niskim Słońcu. Ogranicza to samocień bez stałego,
+z gradientem głębi i dokładnością rasteryzacji zgłoszoną przez WebGL:
+pół jednostki siatki `SUBPIXEL_BITS` (przy 4 bitach: 1/32 teksela).
+Dodajemy do niego mały zapas transformacji. Ogranicza to samocień bez stałego,
 wieloblokowego odsuwania cienia. Dla płaszczyzny niemal równoległej
 do promienia test pomija cień, aby uniknąć niestabilnego dzielenia przez zero.
 
@@ -100,6 +101,21 @@ Duży skok kierunku światła lub teleport unieważnia stare mapy; zmiana
 Słońce/Księżyc również nie używa mapy poprzedniego źródła. Częstotliwość
 odświeżania uwzględnia większą wrażliwość długich cieni przy horyzoncie.
 
+## Pierwsze pojawienie się wody
+
+Profilowanie lotu wykazało zatrzymanie głównej sceny przy pierwszej wodzie:
+powstawały wtedy dwa programy, dla przedniej i tylnej strony przezroczystego
+materiału. `WaterMaterialWarmup.js` przygotowuje obydwa podczas ładowania
+świata, z rzeczywistymi światłami, mgłą i atrybutem koloru RGBA chunków.
+Nie rysuje pomocniczej geometrii. Po zmianie ustawień wpływających na kod
+wody przygotowuje nowy wariant podczas obsługi ustawień. Sam ruch oraz
+zmiany uniformów nie ponawiają kompilacji.
+
+Helper uwzględnia zachowanie dostarczonej wersji Three: `compileAsync`
+czeka tylko na ostatnią stronę materiału, więc osobno czekamy na obydwa
+programy i kończymy odroczoną inicjalizację lokalizacji uniformów/atrybutów.
+To przenosi koszt do wczytywania, nie usuwa kosztu kompilacji ze sterownika.
+
 ## Ograniczenia i sprawdzanie
 
 Daleki teren nadal jest kolumnową siatką wysokości. Korony drzew są
@@ -166,7 +182,26 @@ nie odrzucamy go jako niewygodnego wyniku.
 
 ### Wyniki 0.25.0
 
-Do uzupełnienia po zakończeniu tych samych prób. Do tego czasu nie
-przypisujemy zmianie poprawy wydajności ani gwarancji 60 FPS. Krótkie serie
-nie rozdzielają przyczyn przycięć między generowanie, przesyłanie zasobów,
-przeglądarkę i sterownik; do takiego rozstrzygnięcia potrzebny jest osobny profil.
+Wszystkie cztery końcowe próby są ważne, bez błędów timera GPU.
+Dane i wcześniejsze próby diagnostyczne zachowano w
+[`pomiary/cienie-0.25.0.json`](pomiary/cienie-0.25.0.json).
+
+| Próba | FPS | 1% low | p99 odstępu [ms] | Maks. odstęp [ms] | Śr. GPU render [ms] | Śr. CPU update/render [ms] |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| Południe 1 | 133.21 | 50.51 | 16.50 | 27.50 | 3.256 | 0.713 / 3.243 |
+| Południe 2 | 137.28 | 59.76 | 13.90 | 22.80 | 3.280 | 0.586 / 3.229 |
+| Południe 3 | 129.71 | 49.14 | 17.40 | 26.70 | 3.343 | 0.606 / 3.763 |
+| Zachód | 138.17 | 61.97 | 13.60 | 30.10 | 3.799 | 0.623 / 3.038 |
+
+Większy detal i cienie kosztują około 0,8 ms GPU w tych scenach.
+Przepustowość ma duży zapas ponad 60 FPS, ale 1% low i najdłuższe klatki
+pokazują krótkie spadki: nie są dowodem na bezwarunkowo stałe 60 FPS.
+Maksymalny zmierzony CPU całego `SunShadows.render` wynosił 4,6–6,7 ms;
+obejmuje także osobną mapę bliską i model, poza budżetem dwóch kaskad.
+
+W trakcie prac nie odrzucaliśmy niewygodnych wyników: po wprowadzeniu puli
+zasobów wystąpił odstęp 412,7 ms, a osobny profil wykazał 495,1 ms w głównej
+scenie wraz z pojawieniem się dwóch programów. Kolejna próba potwierdziła
+ich kod jako przednią i tylną stronę wody. Po przeniesieniu ich przygotowania
+do ładowania świata żaden z czterech końcowych przejazdów nie przekroczył
+33,34 ms. Nie oznacza to usunięcia wszystkich możliwych przycięć streamingu.

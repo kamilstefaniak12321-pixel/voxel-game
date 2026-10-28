@@ -5,8 +5,8 @@ import { readFile, mkdir, mkdtemp, rm, writeFile } from 'node:fs/promises';
 import { resolve, extname, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { tmpdir } from 'node:os';
-import { execFile } from 'node:child_process';
-import { promisify } from 'node:util';
+import { spawn } from 'node:child_process';
+import { once } from 'node:events';
 
 async function browserChecks() {
     const errors = [];
@@ -42,7 +42,7 @@ async function browserChecks() {
     game.time.days = 0.5;
     const frame = () => { game.update(0); game.render(); };
     // Dajemy wątkom dalekiego terenu i teksturom czas na odpowiedź.
-    for (let i = 0; i < 80; i++) { frame(); await new Promise(r => setTimeout(r, 16)); }
+    for (let i = 0; i < 32; i++) { frame(); await new Promise(r => setTimeout(r, 16)); }
     check(game.sky.solarAtmosphere, 'Laboratorium nie włączyło atmosfery');
     check(game.world.generator.type === 'light-lab', 'Niewłaściwy generator');
     check(game.world.getLight(17, 20, 13).sky < game.world.getLight(7, 20, 30).sky, 'Dach nie ogranicza dostępu do nieba');
@@ -106,21 +106,78 @@ const server = createServer(async (request, response) => {
     } catch { response.writeHead(404).end(); }
 });
 await new Promise(r => server.listen(0, '127.0.0.1', r));
+let chrome, socket;
+let logs = '';
 try {
-    const { stdout, stderr } = await promisify(execFile)(process.env.CHROME_BIN ?? 'google-chrome', [
+    chrome = spawn(process.env.CHROME_BIN ?? 'google-chrome', [
         '--headless', '--no-sandbox', '--disable-dev-shm-usage', '--use-angle=swiftshader', '--enable-unsafe-swiftshader',
-        '--no-first-run', '--hide-scrollbars', '--window-size=960,900', '--virtual-time-budget=20000',
-        `--user-data-dir=${profile}`, `--screenshot=${resolve(output, 'laboratorium.png')}`, '--dump-dom',
-        `http://127.0.0.1:${server.address().port}/__light_test__`
-    ], { timeout: 150000, maxBuffer: 4 * 1024 * 1024 });
-    await writeFile(resolve(output, 'result.html'), stdout);
-    await writeFile(resolve(output, 'chrome.log'), stderr);
-    if (!stdout.includes('<body data-result="passed">')) {
-        throw new Error(`Test WebGL nie przeszedł: ${stdout.match(/<pre id="result">([\s\S]*?)<\/pre>/)?.[1] ?? stderr}`);
+        '--no-first-run', '--disable-background-networking', '--hide-scrollbars', '--window-size=960,900',
+        '--remote-debugging-port=0', `--user-data-dir=${profile}`, 'about:blank'
+    ], { stdio: ['ignore', 'pipe', 'pipe'] });
+    let startupError;
+    chrome.on('error', error => { startupError = error; });
+    chrome.stdout.on('data', data => { logs += data; });
+    chrome.stderr.on('data', data => { logs += data; });
+    const pause = ms => new Promise(r => setTimeout(r, ms));
+    const start = Date.now();
+    let port;
+    while (!(port = logs.match(/DevTools listening on ws:\/\/127\.0\.0\.1:(\d+)/)?.[1])) {
+        if (startupError) throw startupError;
+        if (chrome.exitCode !== null || chrome.signalCode || Date.now() - start > 20000) throw new Error(`Chrome nie uruchomił się: ${logs}`);
+        await pause(100);
     }
+    const pages = await fetch(`http://127.0.0.1:${port}/json/list`).then(r => r.json());
+    const page = pages.find(p => p.type === 'page');
+    if (!page) throw new Error('Chrome nie utworzył karty testowej');
+    socket = new WebSocket(page.webSocketDebuggerUrl);
+    await once(socket, 'open');
+    let sequence = 0;
+    const pending = new Map();
+    socket.addEventListener('message', event => {
+        const message = JSON.parse(event.data);
+        if (message.id && pending.has(message.id)) {
+            const request = pending.get(message.id);
+            pending.delete(message.id);
+            clearTimeout(request.timer);
+            if (message.error) request.reject(new Error(JSON.stringify(message.error)));
+            else request.resolve(message.result);
+        } else if (message.method === 'Runtime.consoleAPICalled' || message.method === 'Runtime.exceptionThrown') {
+            logs += '\n' + JSON.stringify(message.params);
+        }
+    });
+    const call = (method, params = {}) => new Promise((resolve, reject) => {
+        const id = ++sequence;
+        const timer = setTimeout(() => { pending.delete(id); reject(new Error(`Brak odpowiedzi Chrome: ${method}`)); }, 30000);
+        pending.set(id, { resolve, reject, timer });
+        socket.send(JSON.stringify({ id, method, params }));
+    });
+    await call('Runtime.enable');
+    await call('Page.enable');
+    await call('Page.navigate', { url: `http://127.0.0.1:${server.address().port}/__light_test__` });
+    let result;
+    const deadline = Date.now() + 180000;
+    // Rzeczywisty zegar: pętle wczytywania chunków używają performance.now().
+    // Wirtualny czas Chrome zatrzymuje ten zegar wewnątrz takiej pętli.
+    while (Date.now() < deadline) {
+        const response = await call('Runtime.evaluate', { expression: `({status: document.body?.dataset.result, text: document.querySelector('#result')?.textContent})`, returnByValue: true });
+        result = response.result?.value;
+        if (result?.status === 'passed' || result?.status === 'failed') break;
+        await pause(500);
+    }
+    await writeFile(resolve(output, 'result.json'), JSON.stringify(result, null, 2));
+    const shot = await call('Page.captureScreenshot', { format: 'png' });
+    await writeFile(resolve(output, 'laboratorium.png'), Buffer.from(shot.data, 'base64'));
+    if (result?.status !== 'passed') throw new Error(`Test WebGL nie przeszedł: ${result?.text ?? 'brak wyniku'}\n${logs.slice(-10000)}`);
     console.log('OK: WebGL2, prawdziwa gra, cień dachu, lampy, 12 ujęć dnia/nocy, A/B, cienie 0/1/3, trzecia osoba i tryb ziemniaka.');
-    console.log(stdout.match(/<pre id="result">([\s\S]*?)<\/pre>/)?.[1]);
+    console.log(result.text);
 } finally {
+    await writeFile(resolve(output, 'chrome.log'), logs);
+    socket?.close();
+    if (chrome && chrome.exitCode === null && !chrome.signalCode) {
+        const exited = once(chrome, 'exit');
+        chrome.kill('SIGKILL');
+        await exited;
+    }
     server.closeAllConnections();
     await new Promise(r => server.close(r));
     await rm(profile, { recursive: true, force: true });

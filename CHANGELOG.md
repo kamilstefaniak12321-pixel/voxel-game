@@ -11,6 +11,15 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## W przygotowaniu — laboratorium światła
+
+- Eksperymentalne światło atmosferyczne: tłumienie wiązki RGB, cieplejsze
+  Słońce przy horyzoncie, rozproszone światło zmierzchu i półkule nieba/gruntu.
+- Osobny generator „Laboratorium światła” z powtarzalnymi stanowiskami,
+  przełączanie A/B w ustawieniach i przez `/swiatlo model`.
+- Domyślnie eksperyment działa tylko w laboratorium; stare światy zachowują
+  klasyczne oświetlenie. Testy modelu, generatora i integracji WebGL2.
+
 ## 0.22.0 - Wspólny panel ekwipunku (2026-10-27)
 
 ### Zmiany

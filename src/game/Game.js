@@ -41,6 +41,7 @@ import { WorldSaver } from '../storage/WorldSaver.js';
 import { lightToBrightness, describeLight } from '../world/Light.js';
 import { WorldTime } from '../sky/WorldTime.js';
 import { Sky } from '../sky/Sky.js';
+import { usesSolarAtmosphere } from '../sky/SolarAtmosphere.js';
 import { skyUniforms } from '../sky/skyShader.js';
 import { PlayerModel } from '../player/PlayerModel.js';
 import { PlayerAnimator } from '../player/PlayerAnimator.js';
@@ -180,6 +181,8 @@ export class Game {
         this.time = new WorldTime(worldInfo.time);
 
         this.sky = new Sky(this.scene);
+
+        this.sky.solarAtmosphere = usesSolarAtmosphere(settings.get('lightingModel'), worldInfo.terrain);
 
         this.sky.update(this.time.days, 0, renderer.getPixelRatio());
 
@@ -1589,6 +1592,8 @@ export class Game {
     applySettings(key = null) {
 
         const settings = this.settings;
+
+        this.sky.solarAtmosphere = usesSolarAtmosphere(settings.get('lightingModel'), this.worldInfo.terrain);
 
 
         // Zasięg: prawdziwe chunki do viewDistance, dalej daleki teren.

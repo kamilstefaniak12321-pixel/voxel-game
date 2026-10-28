@@ -470,6 +470,10 @@ async function playWorld(worldInfo) {
 
     chat.print(touchMode ? TEXTS.touchHint : TEXTS.chatHint, 'hint');
 
+    if (game.worldInfo.terrain === 'light-lab') {
+        chat.print(TEXTS.lightLabHint, 'hint');
+    }
+
     showTreePackErrors();
 
     // Świat z paczką tekstur - osiągnięcie "Nowe szaty".

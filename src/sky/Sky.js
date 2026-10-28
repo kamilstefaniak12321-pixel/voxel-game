@@ -3,6 +3,7 @@ import * as THREE from 'three';
 import { Celestial } from './Celestial.js';
 import { SkyState } from './SkyColors.js';
 import { skyUniforms } from './skyShader.js';
+import { sampleSolarAtmosphere } from './SolarAtmosphere.js';
 
 import { SkyDome } from './layers/SkyDome.js';
 import { Moon } from './layers/Moon.js';
@@ -68,6 +69,9 @@ export class Sky {
         this.celestial = new Celestial();
 
         this.state = new SkyState();
+
+        this.solarAtmosphere = false;
+        this.atmosphere = null;
 
 
         // WARIANT NIEBA - zmiany wyglądu względem zwykłego nieba.
@@ -148,11 +152,12 @@ export class Sky {
 
         const set = {
             ambient: new THREE.AmbientLight(),
+            diffuse: new THREE.HemisphereLight(0xffffff, 0xffffff, 0),
             sun: new THREE.DirectionalLight(),
             moon: new THREE.DirectionalLight()
         };
 
-        scene.add(set.ambient, set.sun, set.moon);
+        scene.add(set.ambient, set.diffuse, set.sun, set.moon);
 
         this.lightSets.push(set);
 
@@ -186,6 +191,32 @@ export class Sky {
         this.state.space = this.space;
 
         this.state.update(this.celestial, this.variant);
+
+        this.atmosphere = this.solarAtmosphere
+            ? sampleSolarAtmosphere(this.celestial.sunHeight, this.state.eclipse)
+            : null;
+
+        if (this.atmosphere) {
+            const state = this.state;
+            const sample = this.atmosphere;
+            const intensity = Math.max(...sample.direct);
+            state.sunLightIntensity = intensity;
+            state.sunLightColor.setRGB(...sample.direct).multiplyScalar(1 / Math.max(intensity, 1e-8));
+
+            // Dotychczasowe gwiazdy i księżyc zostają nocnym tłem.
+            const night = state.ambientIntensity * (1 - state.daylight);
+            const moon = [state.ambientColor.r, state.ambientColor.g, state.ambientColor.b];
+            sample.sky = sample.sky.map((c, i) => c + moon[i] * night);
+            sample.ground = sample.ground.map((c, i) => c + moon[i] * night * 0.18);
+
+            // Kula planety używa jednego koloru otoczenia zamiast półkul.
+            state.ambientColor.setRGB(...sample.sky.map((c, i) => (c + sample.ground[i]) * 0.5));
+            state.ambientIntensity = 1;
+
+            if (this.celestial.sunHeight > 0 && this.space === 0) {
+                state.sunDiscColor.setRGB(...sample.transmission).multiplyScalar(1 / sample.transmission[0]);
+            }
+        }
 
     }
 
@@ -229,7 +260,12 @@ export class Sky {
         for (const set of this.lightSets) {
 
             set.ambient.color.copy(state.ambientColor);
-            set.ambient.intensity = state.ambientIntensity;
+            set.ambient.intensity = this.atmosphere ? 0 : state.ambientIntensity;
+            set.diffuse.intensity = this.atmosphere ? 1 : 0;
+            if (this.atmosphere) {
+                set.diffuse.color.setRGB(...this.atmosphere.sky);
+                set.diffuse.groundColor.setRGB(...this.atmosphere.ground);
+            }
 
             set.sun.position.copy(celestial.sunDirection).multiplyScalar(100);
             set.sun.color.copy(state.sunLightColor);
@@ -255,7 +291,7 @@ export class Sky {
 
     applyShadowContrast(amount) {
 
-        if (amount <= 0) {
+        if (amount <= 0 || this.atmosphere) {
             return;
         }
 
@@ -309,6 +345,7 @@ export class Sky {
         for (const set of this.lightSets) {
 
             set.ambient.removeFromParent();
+            set.diffuse.removeFromParent();
             set.sun.removeFromParent();
             set.moon.removeFromParent();
 

@@ -342,6 +342,10 @@ export function shadowLightsChunk(sunLight, skyLight, ambientLight, condition = 
             'vec3 irradiance = getAmbientLightIrradiance( ambientLightColor );',
             `vec3 irradiance = getAmbientLightIrradiance( ambientLightColor );
             irradiance *= ${ambientFactor};`
+        )
+        .replace(
+            'getHemisphereLightIrradiance( hemisphereLights[ i ], geometryNormal );',
+            `getHemisphereLightIrradiance( hemisphereLights[ i ], geometryNormal ) * ${ambientFactor};`
         );
 
     return chunk;

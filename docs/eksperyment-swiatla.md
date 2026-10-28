@@ -1,21 +1,30 @@
-# Laboratorium światła — eksperyment v1
+# Laboratorium światła — wspólny model powierzchni 0.24.0
 
 Nowy teren **Laboratorium światła (eksperymentalne)** służy do powtarzalnych
 porównań światła. Wybierz go przy tworzeniu świata, najlepiej z trybem
 kreatywnym. Wszystkie seedy dają ten sam układ stanowisk. Istniejące światy
 zachowują swój generator.
 
+Wersja **0.24.0** jest pierwszym etapem ujednolicenia oświetlenia bliskiego
+i dalekiego terenu. Łączy zasady składania światła i wybór materiałów;
+nie zwiększa zasięgu map cieni ani światła odbitego. Laboratorium pozostaje
+stałą sceną porównawczą, a model atmosferyczny jest teraz domyślny również
+w pozostałych światach.
+
 ## Uruchomienie i porównanie
 
 W Ustawienia → Obraz jest **Model światła**:
 
-- **Według świata** (domyślne): atmosfera tylko w laboratorium, klasyczny model
-  we wszystkich pozostałych światach, również starszych zapisach.
+- **Domyślny (atmosferyczny)**: atmosfera we wszystkich światach, również
+  starszych zapisach i niezależnie od wybranego generatora.
 - **Klasyczny**: dotychczasowe oświetlenie we wszystkich światach.
-- **Atmosferyczny (eksperymentalny)**: nowy model we wszystkich światach.
+- **Atmosferyczny**: jawny wybór tego samego modelu atmosferycznego.
 
 Ustawienie zapisuje się lokalnie i dotyczy wszystkich światów. Przełączenie
 nie wymaga przebudowy chunków ani ponownego wejścia do gry.
+Wcześniej zapisany jawny wybór „Klasyczny” pozostaje klasyczny. Wartość
+ustawienia `world` zachowuje zgodność zapisu, ale oznacza teraz wspólny
+domyślny model atmosferyczny, a nie wybór zależny od typu świata.
 
 Do rzetelnego porównania ustaw jasność na 0%, wyłącz światło odbite i zachowaj
 tę samą kamerę. Cienie ustaw na „Dalekie”; tryb ziemniaka wyłącza mapy cieni.
@@ -35,7 +44,7 @@ rozproszone również wtedy, gdy Słońce jest już pod nim. `/swiatlo` podaje
 wysokość środka Słońca, widoczną część tarczy, kierunek wiązki,
 względną drogę przez atmosferę i liniowe RGB wiązki.
 
-Powrót do automatycznego wyboru: `/swiatlo model swiat`.
+Powrót do modelu domyślnego: `/swiatlo model swiat`.
 Powrót upływu czasu: `/czas predkosc 1` (pauza zegara nie jest zapisywana).
 
 ## Stanowiska
@@ -85,17 +94,61 @@ mnożone przez istniejący dostęp do nieba, również przy włączonych cieniac
 Model atmosferyczny omija dodatkowe artystyczne podbijanie kontrastu słońca.
 Powrót do klasycznego modelu wyłącza półkule i odtwarza dotychczasowe parametry.
 
-Mesher zachowuje klasyczne RGBA oraz dodatkowe `atmosphereLight` (4 bajty
-na wierzchołek). Drugie dane nie mają sztucznego minimum: zerowy dostęp
-do nieba i brak lamp dają zero także po AO i tłumieniu wody. Shader wybiera
-dane uniformem, bez przebudowy świata przy zmianie modelu. Ręka/model i
-jasność mgły używają tej samej krzywej bez minimum. Bloki emisyjne, lampy
-i światło dynamiczne pozostają źródłami światła.
+## Wspólne światło i materiały powierzchni
+
+`src/rendering/SurfaceLighting.js` zawiera wspólną funkcję GLSL dla bloków,
+roślin, liści, wody, ręki/modelu, dalekiego terenu i odłamków bloków. Przyjmuje
+osobno albedo, światło naturalne, lokalne, odbite i emisję powierzchni.
+Albedo atlasu jest liniowe; nie przechodzi ponownie przez gammę. Światło
+naturalne zawiera już odpowiedź Lamberta z Three.js, więc funkcja nie mnoży
+go drugi raz przez albedo ani nie dzieli ponownie przez π.
+
+W atmosferze niezależne składowe światła dodają się. Model klasyczny zachowuje
+dotychczasowe wybieranie maksimum. Statyczne i dynamiczne pole lamp mogą
+opisywać to samo źródło, dlatego najpierw łączą się maksimum kanałów;
+nie są traktowane jako dwie niezależne lampy. Nocne odbarwienie obejmuje
+światło naturalne i odbite, a lampy i własna emisja zachowują barwę.
+To wspólny kontrakt względnego liniowego RGB, nie nowe jednostki fizyczne.
+
+Mesher zachowuje klasyczne RGBA oraz `atmosphereLight` (4 bajty na
+wierzchołek). Dane atmosferyczne nie mają sztucznego minimum: zerowy dostęp
+do nieba i brak źródeł dają zero także po AO i tłumieniu wody. Dwa dodatkowe
+atrybuty, `surfaceOcclusion` i `surfaceEmission`, zajmują po 1 bajcie na
+wierzchołek. Pozwalają uwzględniać AO w świetle otoczenia i odbitym bez
+przyciemniania bezpośredniej wiązki ani własnej emisji. Shader wybiera dane
+uniformem, bez przebudowy świata przy zmianie modelu. Ręka/model i jasność
+mgły używają tej samej krzywej bez minimum.
+
+Odłamki mają osobno albedo oraz próbkę dostępu do nieba, RGB lamp i własnej
+emisji. Nie wypalają już minimum jasności w kolorze atmosferycznego odłamka:
+w całkowicie ciemnym pomieszczeniu fragment nieświecącego bloku pozostaje
+ciemny. Model klasyczny zachowuje wcześniejsze przyciemnienie odłamków.
+To światło pobrane przy ich powstawaniu, a nie nowa symulacja transportu
+światła dla poruszających się cząstek; dym i iskry zachowują wcześniejsze
+materiały.
+
+`SurfaceMaterials.js` ustala wspólną kolejność ścian i wybór tekstur dla
+bliskich bloków oraz dalekich powierzchni. Daleki teren zachowuje klasyczną
+paletę, a atmosfera korzysta z osobnego `surfaceAlbedo` (RGBA8, 4 bajty na
+wierzchołek): średniego liniowego koloru właściwej tekstury góry lub boku,
+bez wypalonego przyciemnienia dołu ściany, koron drzew i losowej jasności
+kratek LOD. Kodowanie pierwiastkiem w bajcie jest odwracane jednym
+podniesieniem do kwadratu w shaderze; nie jest dodatkową konwersją sRGB.
+
+Próbki dalekiego terenu niosą też `materialIds` (Uint16, 2 bajty na próbkę).
+Rzeczywiste materiały używają ID rejestru bloków, także dla paczek drzew.
+Trzy pomocnicze odcienie trawy mają numery powyżej `MAX_BLOCK_ID`, więc nie
+kolidują z blokami i nie zawijają się do Uint8. Te dane są wyłącznie
+buforami renderowania — nie zmieniają ID ani formatu zapisanych chunków.
+Worker i obliczanie w głównym wątku używają tych samych danych i meshera.
 
 `LightLabGenerator.js` używa jednej definicji kolumn dla chunków, przekroju
 mapy i próbek dalekiego terenu. Budowle przecinające granice chunków nie
-zależą od kolejności generowania. Z daleka materiały budowlane mają wspólny
-kolor skały; to celowe uproszczenie LOD.
+zależą od kolejności generowania. W atmosferze dalekie powierzchnie
+laboratorium i chunków zmienionych przez gracza zachowują rzeczywisty
+materiał budowlany. Klasyczny widok zachowuje wcześniejsze przypisanie
+kolorów. Siatka nie scala sąsiednich powierzchni różnych materiałów tylko
+dlatego, że mają tę samą wysokość i klasyczny rodzaj.
 
 ## Granice tego eksperymentu
 
@@ -105,7 +158,7 @@ jeszcze chmur, pogody, lokalnego albedo gruntu, rzeczywistego wielokrotnego
 rozpraszania ani widmowego transportu światła. Niebo i mgła nadal korzystają
 z dotychczasowego artystycznego gradientu; kolor widocznej tarczy Słońca jest
 powiązany z transmisją atmosfery. Kosmos i globalne oświetlenie kuli planety
-nie są przedmiotem kalibracji v1.
+nie są przedmiotem kalibracji tego etapu.
 
 Horyzont atmosferycznej tarczy to stałe Y=0, niezależne od kamery. Obniżony
 horyzont widziany z dużej wysokości i geometria orbity wymagają osobnego
@@ -125,6 +178,17 @@ konkretnych ścian pozostaje osobnym, domyślnie wyłączonym eksperymentem.
 Woda nie otrzymuje nowego modelu załamania czy pochłaniania, a materiały
 budowlane wciąż są rozproszone (Lambert), także „polerowany kamień”.
 
+Ujednolicenie albedo i składania światła nie oznacza identycznej ilości
+informacji blisko i daleko. Daleki teren nadal jest siatką wysokości:
+jeden materiał opisuje słupek, bez wnętrz budynków i kolejnych pionowych
+warstw. Lasy mają uproszczone korony dominującego gatunku, a klimat trawy
+trzy reprezentatywne odcienie. Zasięgi i rozdzielczości LOD pozostają
+dotychczasowe. Daleki shader przekazuje do wspólnej funkcji jawne zero
+lokalnych lamp, odbić i emisji, ponieważ jego siatka nie zawiera jeszcze
+tych danych. Istniejąca mapa dalekich cieni ma zasięg 512 bloków; etap 1
+nie dodaje dalszych cieni ani GI. Osobny efekt światła kuli meteorytu
+pozostaje taki jak wcześniej.
+
 Szerokość geograficzna, pory roku, zmiana orbity Słońca, półcień od rozmiaru
 tarczy i powiązanie oświetlenia ze wzrostem roślin to kolejne osobne etapy.
 
@@ -138,7 +202,27 @@ zgodność chunków z mapą/LOD, bezpieczny start i obecność stanowisk.
 `sprawdz_tarcze.mjs` porównuje pole/kierunek tarczy z próbkowaniem geometrycznym.
 `sprawdz_ciemnosc.mjs` sprawdza rzeczywisty mesher, AO, brak źródeł, kolorowe
 lampy i emisję dla bloków, roślin, dekoracji, liści i wody. Oba należą do `npm test`.
+
+Nowe kontrole etapu 1 również należą do `npm test`:
+
+- `tools/sprawdz_materialy.mjs`: referencja CPU wspólnego kontraktu — suma
+  i maksimum, liniowe albedo, brak źródeł, emisja, nocne odbarwienie,
+  skalowanie energii oraz brak akumulacji między wywołaniami.
+- `tools/sprawdz_materialy_far.mjs`: rzeczywiste próbkowanie, mesher, worker
+  i palety dalekiego terenu — tekstury ścian, ID paczek i odcieni, różne
+  materiały na jednej wysokości, laboratorium, zmodyfikowane chunki oraz
+  zgodność klasycznych buforów z 0.23.1. W teście CPU odczyt bitmap atlasu
+  zastępują kontrolowane liniowe kolory.
+- `tools/sprawdz_odlamki.mjs`: rzeczywista droga danych odłamków — oddzielne
+  albedo i światło, ciemność bez źródeł, kolorowe lampy, emisja, zgodność
+  klasycznego modelu, przełączanie A/B i przenoszenie danych wygasających
+  cząstek.
+
 Wygląd i wydajność na docelowym GPU należy porównać według scenariusza wyżej.
+Przy stałym czasie i ustawieniach obejrzyj również materiały laboratorium
+po obu stronach granicy bliskich chunków oraz odłamki w zamkniętym, ciemnym
+pokoju. Porównuj ten sam kadr po przełączeniu atmosfery i modelu klasycznego;
+osobno oceniaj zmianę materiału, geometrii LOD i dostępnych cieni.
 
 `node tools/sprawdz_swiatlo_webgl.mjs` uruchamia prawdziwą grę w lokalnym
 Chrome (`google-chrome` w PATH albo zmienna `CHROME_BIN`). Sprawdza WebGL2,
@@ -148,6 +232,13 @@ z poprawnym przesłonięciem i ze starym przeciekiem światła, przy tym samym
 doświetleniu wnętrz. Renderuje tarczę po zejściu jej środka pod horyzont
 i buduje zamknięty pokój: atmosfera ma dać ciemność z cieniami i bez nich,
 klasyczny model zachować minimum, a czerwona lampa rozświetlić ściany.
+`tools/surface_render_checks.js`, wywoływany przez ten test, renderuje
+rzeczywiste materiały bloków, roślin, liści, wody, modelu, far i odłamków
+do małej liniowej tekstury wynikowej przy kontrolowanym świetle i geometrii.
+Sprawdza kompilację wariantów oraz wartości pikseli: zgodność powierzchni,
+sumowanie niezależnych źródeł, klasyczne maksimum, ciemność bez źródeł,
+emisję i oddzielenie AO od bezpośredniej wiązki. To uzupełnia pełne ujęcia
+gry, nie zastępuje oceny przejść LOD i wyglądu rzeczywistej sceny.
 Nie wymaga pakietów npm. Wynik i zrzut zapisuje w
 `test-results/light-lab/`. Workflow „Laboratorium światła” uruchamia oba
 rodzaje testów dla pull requestów i udostępnia te pliki jako artefakt.

@@ -82,7 +82,7 @@ export class LightLabGenerator {
         while (height > 0 && blocks[height] === 0) height--;
         const name = getBlockTypeById(blocks[height]);
         const kind = name === 'water' ? 'water' : name === 'oak_leaves' ? 'oak_leaves' : name === 'grass' ? 'grass' : 'rock';
-        return { height, top: height, kind, blocks };
+        return { height, top: height, kind, material: name, blocks };
     }
 
     getHeight(x, z) { return this.columnBlocks(x, z).height; }
@@ -94,7 +94,7 @@ export class LightLabGenerator {
 
     farSurface(x, z) {
         const column = this.columnBlocks(x, z);
-        return { top: column.height + 1, kind: column.kind, floor: column.kind === 'water' ? 15 : undefined };
+        return { top: column.height + 1, kind: column.kind, material: column.material, floor: column.kind === 'water' ? 15 : undefined };
     }
 
     describe(x, z) {

@@ -1217,7 +1217,8 @@ export class Game {
         const sun = shadows.light === 'sun';
 
         color.copy(sun ? state.sunLightColor : state.moonLightColor)
-            .multiplyScalar((sun ? state.sunLightIntensity : state.moonLightIntensity) * shadows.strength * SHADOW_SUN_BOOST * BOUNCE_STRENGTH);
+            .multiplyScalar((sun ? state.sunLightIntensity : state.moonLightIntensity) * shadows.strength *
+                (this.sky.atmosphere ? 1 : SHADOW_SUN_BOOST) * BOUNCE_STRENGTH);
 
     }
 

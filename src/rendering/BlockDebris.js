@@ -10,6 +10,8 @@ import { CubeParticles } from './CubeParticles.js';
 
 import { lightToBrightness, COLOR_LEVEL } from '../world/Light.js';
 
+import { atmosphericLightToBrightness } from './LightPolicy.js';
+
 // ------------------------------------------------------------
 // ODŁAMKI NISZCZONEGO BLOKU
 //
@@ -19,8 +21,8 @@ import { lightToBrightness, COLOR_LEVEL } from '../world/Light.js';
 //   burst - zniszczony blok: garść odłamków z całego bloku,
 //   chips - kopanie (co uderzenie): kilka małych odłamków ze ściany,
 //           w którą trafia celownik.
-// Kolory są przyciemnione według światła w miejscu bloku (w jaskini
-// i nocą odłamki są ciemne, przy lampie jaśniejsze).
+// Albedo i próbka światła w miejscu bloku są osobne. Atmosfera używa
+// koloru lamp i prawdziwego zera w ciemności; classic zachowuje dawny wygląd.
 // ------------------------------------------------------------
 
 const BURST = 16;
@@ -41,17 +43,16 @@ export class BlockDebris {
 
         this.world = world;
 
-        this.particles = new CubeParticles(scene, { capacity: 900 });
+        this.particles = new CubeParticles(scene, { capacity: 900, surfaceLighting: true });
 
         this.position = new THREE.Vector3();
         this.velocity = new THREE.Vector3();
 
-        this.color = new THREE.Color();
-
     }
 
 
-    // Kolory odłamków bloku (piksele boku tekstury) i mnożnik światła.
+    // Piksele są liniowym albedo. Krzywe poziomów lamp/nieba dekodujemy
+    // tutaj raz; shader nie wykonuje już gamma na tych danych.
 
     colorsOf(type, x, y, z) {
 
@@ -81,16 +82,28 @@ export class BlockDebris {
 
         const glow = (definition.light ?? 0) / 15;
 
-        return { colors, shade: Math.max(sky, lamp, glow), plant: definition.model === 'cross' || definition.model === 'flat' };
+        const atmosphereLamp = strongest > 0 ? atmosphericLightToBrightness(COLOR_LEVEL[strongest]) : 0;
+        const local = strongest > 0
+            ? [light.red, light.green, light.blue].map(channel => (atmosphereLamp * channel / strongest) ** 2.2)
+            : [0, 0, 0];
+
+        return {
+            colors,
+            lighting: {
+                sky: atmosphericLightToBrightness(light.sky) ** 2.2,
+                local,
+                emission: glow,
+                classicShade: Math.max(sky, lamp, glow)
+            },
+            plant: definition.model === 'cross' || definition.model === 'flat'
+        };
 
     }
 
 
-    emitOne(colors, shade, position, velocity, size) {
+    emitOne(colors, lighting, position, velocity, size) {
 
         const base = colors[Math.floor(Math.random() * colors.length)];
-
-        const color = this.color.copy(base).multiplyScalar(shade);
 
         this.particles.emit({
             position,
@@ -98,7 +111,8 @@ export class BlockDebris {
             life: random(0.55, 1.0),
             size,
             fade: 0.35,
-            colors: color,
+            colors: base,
+            lighting,
             gravity: 16,
             drag: 1.2,
             spin: 8,
@@ -118,7 +132,7 @@ export class BlockDebris {
             return;
         }
 
-        const { colors, shade, plant } = found;
+        const { colors, lighting, plant } = found;
 
         const count = plant ? BURST_PLANT : BURST;
 
@@ -136,7 +150,7 @@ export class BlockDebris {
                 (oz - 0.5) * 3 + random(-0.6, 0.6)
             );
 
-            this.emitOne(colors, shade, this.position, this.velocity, random(0.07, plant ? 0.1 : 0.14));
+            this.emitOne(colors, lighting, this.position, this.velocity, random(0.07, plant ? 0.1 : 0.14));
 
         }
 
@@ -172,7 +186,7 @@ export class BlockDebris {
                 normal.z * 1.8 + random(-0.8, 0.8)
             );
 
-            this.emitOne(found.colors, found.shade, this.position, this.velocity, random(0.05, 0.08));
+            this.emitOne(found.colors, found.lighting, this.position, this.velocity, random(0.05, 0.08));
 
         }
 

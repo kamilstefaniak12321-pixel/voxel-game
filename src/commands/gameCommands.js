@@ -3604,7 +3604,7 @@ export const GAME_COMMANDS = [
                 const choice = choices[simplify(args[1] ?? '')];
                 if (args.length !== 2 || !choice) throw usageError(this);
                 game.settings.set('lightingModel', choice);
-                return `${TEXTS.lightingModel(choice)}. Ustawienie dotyczy wszystkich światów; „Według świata” włącza eksperyment tylko w laboratorium.`;
+                return `${TEXTS.lightingModel(choice)}. Domyślny model atmosferyczny działa we wszystkich światach. Klasyczny pozostaje dostępny w ustawieniach.`;
             }
 
             if (args[0] !== undefined && simplify(args[0]) === 'odbite') {
@@ -3647,7 +3647,7 @@ export const GAME_COMMANDS = [
                 Math.floor(camera.x), Math.floor(camera.y), Math.floor(camera.z)
             ));
 
-            text += ` | model: ${game.sky.solarAtmosphere ? 'atmosfera (eksperyment)' : 'klasyczny'}`;
+            text += ` | model: ${game.sky.solarAtmosphere ? 'atmosferyczny' : 'klasyczny'}`;
             if (game.sky.atmosphere) {
                 const sample = game.sky.atmosphere;
                 text += ` | wysokość Słońca: ${sample.altitude.toFixed(1)}°` +

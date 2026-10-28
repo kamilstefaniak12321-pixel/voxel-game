@@ -70,7 +70,7 @@ for (const altitude of [-12, -6, -3.5, 0, 2, 3.5, 25]) {
 
 // Stare światy i nieznany typ pozostają klasyczne przy domyślnych ustawieniach.
 for (const terrain of [undefined, 'classic', 'realistic', 'unknown']) {
-    assert.equal(usesSolarAtmosphere('world', terrain), false);
+    assert.equal(usesSolarAtmosphere('world', terrain), true);
 }
 assert.equal(usesSolarAtmosphere('world', 'light-lab'), true);
 assert.equal(usesSolarAtmosphere('classic', 'light-lab'), false);

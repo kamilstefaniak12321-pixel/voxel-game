@@ -12,13 +12,14 @@ import { sampleFarTile, meshFarTile, createMeshScratch } from './farSamples.js';
 //
 // Wiadomości:
 //   { type: 'init', terrain, seed }               - nowy świat
-//   { type: 'palette', colors }                   - kolory kratek
+//   { type: 'palette', colors, albedo }           - kolory i albedo kratek
 //   { type: 'tile', id, x0, z0, spacing, cells }  - policz kafelek
 // Odpowiedzi:
 //   { type: 'ready' }                    - wątek wczytany (wiadomości
 //                                          wysłane wcześniej mogłyby
 //                                          przepaść - gra czeka na to)
-//   { type: 'tile', id, heights, kinds, mesh } - wysokości i rodzaje
+//   { type: 'tile', id, heights, kinds, materialIds, mesh }
+//                                        - wysokości, rodzaje, materiały
 //                                          kratek i gotowa siatka (bez
 //                                          kolorów - null); tablice
 //                                          przekazane bez kopiowania.
@@ -27,6 +28,7 @@ import { sampleFarTile, meshFarTile, createMeshScratch } from './farSamples.js';
 let generator = null;
 
 let palette = null;
+let albedoPalette = null;
 
 let scratch = createMeshScratch(32);
 
@@ -48,6 +50,7 @@ self.onmessage = (event) => {
     if (message.type === 'palette') {
 
         palette = message.colors;
+        albedoPalette = message.albedo;
 
         return;
 
@@ -62,10 +65,11 @@ self.onmessage = (event) => {
 
         const heights = new Int16Array(W * W);
         const kinds = new Uint8Array(W * W);
+        const materialIds = new Uint16Array(W * W);
 
-        sampleFarTile(generator, x0, z0, spacing, cells, heights, kinds);
+        sampleFarTile(generator, x0, z0, spacing, cells, heights, kinds, 0, W, materialIds);
 
-        const transfer = [heights.buffer, kinds.buffer];
+        const transfer = [heights.buffer, kinds.buffer, materialIds.buffer];
 
         let mesh = null;
 
@@ -75,13 +79,13 @@ self.onmessage = (event) => {
                 scratch = createMeshScratch(cells);
             }
 
-            mesh = meshFarTile(heights, kinds, cells, spacing, palette, scratch);
+            mesh = meshFarTile(heights, kinds, cells, spacing, palette, scratch, materialIds, albedoPalette);
 
-            transfer.push(mesh.positions.buffer, mesh.normals.buffer, mesh.colors.buffer, mesh.indices.buffer);
+            transfer.push(mesh.positions.buffer, mesh.normals.buffer, mesh.colors.buffer, mesh.surfaceAlbedo.buffer, mesh.indices.buffer);
 
         }
 
-        self.postMessage({ type: 'tile', id, heights, kinds, mesh }, transfer);
+        self.postMessage({ type: 'tile', id, heights, kinds, materialIds, mesh }, transfer);
 
     }
 

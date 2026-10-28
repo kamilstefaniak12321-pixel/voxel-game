@@ -310,6 +310,10 @@ export class SkyState {
         this.moonLightIntensity = 0;
         this.moonLightColor = new THREE.Color().copy(MOON_LIGHT_COLOR);
 
+        // Jawny wkład Księżyca do otoczenia. Atmosfera korzysta tylko
+        // z niego, a nie z tabeli ambient zawierającej klasyczny zmierzch.
+        this.moonAmbientLight = new THREE.Color(0, 0, 0);
+
         // Kolor tarczy księżyca.
 
         this.moonColor = new THREE.Color().copy(DEFAULT_MOON_COLOR);
@@ -453,6 +457,8 @@ export class SkyState {
         // Poświata księżyca w nocy (w jego kolorze).
 
         tintByMoon(_tinted, MOON_AMBIENT_COLOR, _moonHue, _defaultMoonHue);
+
+        this.moonAmbientLight.copy(_tinted).multiplyScalar(MOON_AMBIENT * moonGlow);
 
         this.ambientColor.lerp(_tinted, moonGlow * 0.5);
         this.ambientIntensity += MOON_AMBIENT * moonGlow;

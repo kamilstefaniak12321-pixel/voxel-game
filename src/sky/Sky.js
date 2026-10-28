@@ -4,6 +4,7 @@ import { Celestial } from './Celestial.js';
 import { SkyState } from './SkyColors.js';
 import { skyUniforms } from './skyShader.js';
 import { sampleSolarAtmosphere } from './SolarAtmosphere.js';
+import { sampleNightIllumination } from './NightIllumination.js';
 
 import { SkyDome } from './layers/SkyDome.js';
 import { Moon } from './layers/Moon.js';
@@ -72,6 +73,7 @@ export class Sky {
 
         this.solarAtmosphere = false;
         this.atmosphere = null;
+        this.sunLightDirection = new THREE.Vector3(0, 1, 0);
 
 
         // WARIANT NIEBA - zmiany wyglądu względem zwykłego nieba.
@@ -192,6 +194,12 @@ export class Sky {
 
         this.state.update(this.celestial, this.variant);
 
+        this.state.solarAtmosphere = this.solarAtmosphere;
+        // Tarcza pozostaje na pozycji astronomicznej. Światło częściowo
+        // widocznej tarczy biegnie ze środka jej odsłoniętego fragmentu.
+        this.sunLightDirection ??= new THREE.Vector3();
+        this.sunLightDirection.copy(this.celestial.sunDirection);
+
         this.atmosphere = this.solarAtmosphere
             ? sampleSolarAtmosphere(this.celestial.sunHeight, this.state.eclipse)
             : null;
@@ -203,17 +211,25 @@ export class Sky {
             state.sunLightIntensity = intensity;
             state.sunLightColor.setRGB(...sample.direct).multiplyScalar(1 / Math.max(intensity, 1e-8));
 
-            // Dotychczasowe gwiazdy i księżyc zostają nocnym tłem.
-            const night = state.ambientIntensity * (1 - state.daylight);
-            const moon = [state.ambientColor.r, state.ambientColor.g, state.ambientColor.b];
-            sample.sky = sample.sky.map((c, i) => c + moon[i] * night);
-            sample.ground = sample.ground.map((c, i) => c + moon[i] * night * 0.18);
+            const horizontal = Math.hypot(this.sunLightDirection.x, this.sunLightDirection.z);
+            if (horizontal > 1e-10) {
+                const scale = Math.sqrt(Math.max(0, 1 - sample.lightHeight ** 2)) / horizontal;
+                this.sunLightDirection.x *= scale;
+                this.sunLightDirection.z *= scale;
+            }
+            this.sunLightDirection.y = sample.lightHeight;
+
+            // Księżyc i słabe tło nocne są osobnymi źródłami. Nie dodajemy
+            // starej krzywej zmierzchu do zmierzchu obliczonego przez atmosferę.
+            sample.night = sampleNightIllumination(this.celestial.sunHeight, state.moonAmbientLight.toArray());
+            sample.sky = sample.sky.map((c, i) => c + sample.night.sky[i]);
+            sample.ground = sample.ground.map((c, i) => c + sample.night.ground[i]);
 
             // Kula planety używa jednego koloru otoczenia zamiast półkul.
             state.ambientColor.setRGB(...sample.sky.map((c, i) => (c + sample.ground[i]) * 0.5));
             state.ambientIntensity = 1;
 
-            if (this.celestial.sunHeight > 0 && this.space === 0) {
+            if (sample.discVisibility > 0 && this.space === 0) {
                 state.sunDiscColor.setRGB(...sample.transmission).multiplyScalar(1 / sample.transmission[0]);
             }
         }
@@ -241,6 +257,7 @@ export class Sky {
         // Wspólne wartości dla kopuły i mgły na blokach.
 
         skyUniforms.uSkyZenith.value.copy(state.zenith);
+        skyUniforms.uAtmosphericLight.value = this.atmosphere ? 1 : 0;
         skyUniforms.uSkyHorizon.value.copy(state.horizon);
         skyUniforms.uSunsetColor.value.copy(state.sunsetColor);
         skyUniforms.uSunsetHigh.value.copy(state.sunsetHigh);
@@ -267,7 +284,7 @@ export class Sky {
                 set.diffuse.groundColor.setRGB(...this.atmosphere.ground);
             }
 
-            set.sun.position.copy(celestial.sunDirection).multiplyScalar(100);
+            set.sun.position.copy(this.sunLightDirection).multiplyScalar(100);
             set.sun.color.copy(state.sunLightColor);
             set.sun.intensity = state.sunLightIntensity;
 

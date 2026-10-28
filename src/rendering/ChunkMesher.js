@@ -11,6 +11,7 @@ import {
 } from '../config.js';
 
 import { WATER_FLOW_UV } from './BlockRenderData.js';
+import { atmosphericLightToBrightness } from './LightPolicy.js';
 
 
 import {
@@ -322,9 +323,11 @@ BLOCK_FACES.forEach((face, faceIndex) => {
 const LEVEL_STEPS = 16;
 
 const BRIGHTNESS = new Float32Array(MAX_LIGHT * LEVEL_STEPS + 1);
+const ATMOSPHERE_BRIGHTNESS = new Float32Array(BRIGHTNESS.length);
 
 for (let i = 0; i < BRIGHTNESS.length; i++) {
     BRIGHTNESS[i] = lightToBrightness(i / LEVEL_STEPS);
+    ATMOSPHERE_BRIGHTNESS[i] = atmosphericLightToBrightness(i / LEVEL_STEPS);
 }
 
 
@@ -438,6 +441,7 @@ let positionBuffer = null;
 let normalBuffer = null;
 let uvBuffer = null;
 let colorBuffer = null;
+let atmosphereLightBuffer = null;
 let tintBuffer = null;
 let splitBuffer = null;
 
@@ -468,6 +472,7 @@ function ensureCapacity(faces) {
     normalBuffer = grow(normalBuffer, Float32Array, capacity * 12);
     uvBuffer = grow(uvBuffer, Float32Array, capacity * 8);
     colorBuffer = grow(colorBuffer, Uint8Array, capacity * 16);
+    atmosphereLightBuffer = grow(atmosphereLightBuffer, Uint8Array, capacity * 16);
     tintBuffer = grow(tintBuffer, Uint8Array, capacity * 16);
     splitBuffer = grow(splitBuffer, Uint8Array, capacity);
 
@@ -577,6 +582,10 @@ function addPlants(plants, faceCount, baseX, baseZ) {
         const lampG = strongest > 0 ? lamp * green / strongest : lamp;
         const lampB = strongest > 0 ? lamp * blue / strongest : lamp;
 
+        const atmosphereSky = ATMOSPHERE_BRIGHTNESS[padSky[cell] * LEVEL_STEPS];
+        const atmosphereLamp = ATMOSPHERE_BRIGHTNESS[Math.round(COLOR_LEVEL[strongest] * LEVEL_STEPS)] * 0.75;
+        const atmosphereScale = lamp > 0 ? atmosphereLamp / lamp : 0;
+
 
         // Kształt kępki.
 
@@ -634,6 +643,11 @@ function addPlants(plants, faceCount, baseX, baseZ) {
                     colorBuffer[c + i * 4 + 1] = lampG * shade * 255 + 0.5;
                     colorBuffer[c + i * 4 + 2] = lampB * shade * 255 + 0.5;
                     colorBuffer[c + i * 4 + 3] = sky * shade * 255 + 0.5;
+
+                    atmosphereLightBuffer[c + i * 4] = lampR * atmosphereScale * shade * 255 + 0.5;
+                    atmosphereLightBuffer[c + i * 4 + 1] = lampG * atmosphereScale * shade * 255 + 0.5;
+                    atmosphereLightBuffer[c + i * 4 + 2] = lampB * atmosphereScale * shade * 255 + 0.5;
+                    atmosphereLightBuffer[c + i * 4 + 3] = atmosphereSky * shade * 255 + 0.5;
 
                     if (plantTint) {
                         tintBuffer[c + i * 4] = plantTint[0];
@@ -707,6 +721,10 @@ function addFlats(flats, faceCount, baseX, baseZ) {
         const g = strongest > 0 ? lamp * green / strongest : lamp;
         const b = strongest > 0 ? lamp * blue / strongest : lamp;
 
+        const atmosphereSky = ATMOSPHERE_BRIGHTNESS[padSky[cell] * LEVEL_STEPS];
+        const atmosphereLamp = ATMOSPHERE_BRIGHTNESS[Math.round(COLOR_LEVEL[strongest] * LEVEL_STEPS)] * LAMP_FACE_SHADE[faceIndex] * 255;
+        const atmosphereScale = lamp > 0 ? atmosphereLamp / lamp : 0;
+
 
         ensureCapacity(faceCount + 1);
 
@@ -739,6 +757,11 @@ function addFlats(flats, faceCount, baseX, baseZ) {
             colorBuffer[c + i * 4 + 1] = g + 0.5;
             colorBuffer[c + i * 4 + 2] = b + 0.5;
             colorBuffer[c + i * 4 + 3] = sky * 255 + 0.5;
+
+            atmosphereLightBuffer[c + i * 4] = r * atmosphereScale + 0.5;
+            atmosphereLightBuffer[c + i * 4 + 1] = g * atmosphereScale + 0.5;
+            atmosphereLightBuffer[c + i * 4 + 2] = b * atmosphereScale + 0.5;
+            atmosphereLightBuffer[c + i * 4 + 3] = atmosphereSky * 255 + 0.5;
 
             if (flatTint) {
                 tintBuffer[c + i * 4] = flatTint[0];
@@ -941,6 +964,12 @@ function addCubeFaces(id, renderData, lx, y, lz, faceCount, baseX, baseZ) {
             let b = r;
             let a = 255;
 
+            // Świecące bloki zachowują emisję w obu modelach.
+            let atmosphereR = r;
+            let atmosphereG = g;
+            let atmosphereB = b;
+            let atmosphereA = a;
+
             let brightness = 1;
 
 
@@ -1037,6 +1066,14 @@ function addCubeFaces(id, renderData, lx, y, lz, faceCount, baseX, baseZ) {
 
                 a = skyValue * depthShade * 255;
 
+                const atmosphereLampValue =
+                    ATMOSPHERE_BRIGHTNESS[Math.round(lampLevel * LEVEL_STEPS / count)] * shade * LAMP_FACE_SHADE[faceIndex] * 255;
+                const atmosphereScale = lampValue > 0 ? atmosphereLampValue / lampValue : 0;
+                atmosphereR = r * atmosphereScale;
+                atmosphereG = g * atmosphereScale;
+                atmosphereB = b * atmosphereScale;
+                atmosphereA = ATMOSPHERE_BRIGHTNESS[Math.round(sky * LEVEL_STEPS / count)] * shade * depthShade * 255;
+
                 brightness = Math.max(skyValue, lampValue / 255);
 
             }
@@ -1046,6 +1083,11 @@ function addCubeFaces(id, renderData, lx, y, lz, faceCount, baseX, baseZ) {
             colorBuffer[c + i * 4 + 1] = g + 0.5;
             colorBuffer[c + i * 4 + 2] = b + 0.5;
             colorBuffer[c + i * 4 + 3] = a + 0.5;
+
+            atmosphereLightBuffer[c + i * 4] = atmosphereR + 0.5;
+            atmosphereLightBuffer[c + i * 4 + 1] = atmosphereG + 0.5;
+            atmosphereLightBuffer[c + i * 4 + 2] = atmosphereB + 0.5;
+            atmosphereLightBuffer[c + i * 4 + 3] = atmosphereA + 0.5;
 
             if (tinted) {
                 writeTint(c + i * 4, lx + corner[0], lz + corner[2]);
@@ -1324,6 +1366,14 @@ export function buildChunkGeometry(chunk, world) {
     geometry.setAttribute(
         'color',
         new THREE.BufferAttribute(colorBuffer.slice(0, vertexCount * 4), 4, true)
+    );
+
+    // Oba modele współdzielą mesh: przełączenie światła wybiera atrybut
+    // w shaderze. Dodatkowe 4 bajty/wierzchołek zachowują dokładnie AO,
+    // odcień lamp, cień kępki i wodę, bez odejmowania minimum po gamma.
+    geometry.setAttribute(
+        'atmosphereLight',
+        new THREE.BufferAttribute(atmosphereLightBuffer.slice(0, vertexCount * 4), 4, true)
     );
 
     // Kolor trawy w rogach (r, g, b - 0.5 = bez zmiany; a = 1 - nie dotyczy).

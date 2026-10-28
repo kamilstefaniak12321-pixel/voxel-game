@@ -236,12 +236,21 @@ blockMaterial.onBeforeCompile = (shader, renderer) => {
                 `#include <common>
                 varying vec3 vSkyDirection;
                 attribute vec4 tint;
+                attribute vec4 atmosphereLight;
+                uniform float uAtmosphericLight;
                 varying vec3 vTint;
 
                 #ifdef POTATO
                     varying vec3 vFogSky;
                     uniform float uFogBrightness;
                     ${SKY_COLOR_GLSL}
+                #endif`
+            )
+            .replace(
+                '#include <color_vertex>',
+                `#include <color_vertex>
+                #ifdef USE_COLOR_ALPHA
+                    vColor = mix(vColor, atmosphereLight, uAtmosphericLight);
                 #endif`
             )
             .replace(

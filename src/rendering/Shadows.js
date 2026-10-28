@@ -876,12 +876,17 @@ export class SunShadows {
 
         this.light = sun ? 'sun' : 'moon';
 
-        this.direction.copy(sun ? celestial.sunDirection : celestial.moonDirection).normalize();
+        this.direction.copy(sun
+            ? (sky.atmosphere && sky.sunLightDirection ? sky.sunLightDirection : celestial.sunDirection)
+            : celestial.moonDirection).normalize();
 
         // W kosmosie (nad światem) cieni nie ma.
 
         const spaceStrength = 1 - smoothstep(0.2, 0.6, sky.space);
-        this.ambientStrength = smoothstep(FADE_LOW, FADE_HIGH, this.direction.y) * spaceStrength;
+        // Doświetlenie wnętrz zachowuje dotychczasową krzywą względem
+        // środka Słońca; kierunek promienia może już śledzić jego wycinek.
+        const ambientHeight = sun ? celestial.sunDirection.y : this.direction.y;
+        this.ambientStrength = smoothstep(FADE_LOW, FADE_HIGH, ambientHeight) * spaceStrength;
 
         // SolarAtmosphere osłabia energię źródła i wygasza tarczę na
         // horyzoncie. Mieszanie mapy cienia z dostępem do nieba także tutaj

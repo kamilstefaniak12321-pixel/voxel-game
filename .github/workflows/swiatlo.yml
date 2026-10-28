@@ -5,6 +5,10 @@ on:
     paths:
       - 'src/**'
       - 'tools/sprawdz_swiatlo*.mjs'
+      - 'tools/sprawdz_tarcze.mjs'
+      - 'tools/sprawdz_ciemnosc.mjs'
+      - 'tools/light_room_checks.js'
+      - 'package.json'
       - '.github/workflows/swiatlo.yml'
   workflow_dispatch:
 

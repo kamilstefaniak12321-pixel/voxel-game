@@ -39,6 +39,7 @@ import { Skyfall } from '../space/Skyfall.js';
 import { createGlowSprite } from '../rendering/Glow.js';
 import { WorldSaver } from '../storage/WorldSaver.js';
 import { lightToBrightness, describeLight } from '../world/Light.js';
+import { atmosphericLightToBrightness } from '../rendering/LightPolicy.js';
 import { WorldTime } from '../sky/WorldTime.js';
 import { Sky } from '../sky/Sky.js';
 import { usesSolarAtmosphere } from '../sky/SolarAtmosphere.js';
@@ -854,11 +855,12 @@ export class Game {
             Math.floor(player.pos.z)
         );
 
-        const sky = lightToBrightness(light.sky);
+        const toBrightness = this.sky.atmosphere ? atmosphericLightToBrightness : lightToBrightness;
+        const sky = toBrightness(light.sky);
 
         const strongest = Math.max(light.red, light.green, light.blue);
 
-        const lamp = strongest > 0 ? lightToBrightness(COLOR_LEVEL[strongest]) : 0;
+        const lamp = strongest > 0 ? toBrightness(COLOR_LEVEL[strongest]) : 0;
 
         const rate = Math.min(1, dt * 10);
 
@@ -1482,7 +1484,9 @@ export class Game {
             Math.floor(this.camera.position.z)
         );
 
-        const target = lightToBrightness(light.sky);
+        const target = this.sky.atmosphere
+            ? atmosphericLightToBrightness(light.sky)
+            : lightToBrightness(light.sky);
 
 
         // Mniej więcej w sekundę dochodzi do nowej jasności.

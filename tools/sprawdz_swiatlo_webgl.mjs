@@ -23,6 +23,7 @@ async function browserChecks() {
     const { createWorldInfo } = await import('/src/storage/WorldStorage.js');
     const { shadowUniforms } = await import('/src/rendering/Shadows.js');
     const { modelLight } = await import('/src/rendering/ModelMaterial.js');
+    const { checkDarkRoom } = await import('/tools/light_room_checks.js');
     await atlasReady;
     const renderer = new THREE.WebGLRenderer({ antialias: false, preserveDrawingBuffer: true });
     renderer.setSize(960, 640);
@@ -123,11 +124,53 @@ async function browserChecks() {
     settings.set('potato', true); frame();
     settings.set('potato', false); frame();
     game.setCameraMode('first');
+
+    // Renderujemy prawdziwy materiał tarczy osobno, bez poświaty.
+    // Widoczna tarcza i energia źródła zanikają po tym samym zachodzie.
+    const sunLayer = game.sky.layers.find(layer => layer.material?.uniforms?.uAtmosphere);
+    check(sunLayer, 'Brak warstwy tarczy Słońca');
+    const discSamples = [];
+    const target = new THREE.WebGLRenderTarget(256, 256);
+    const probeScene = new THREE.Scene();
+    probeScene.background = new THREE.Color(0, 0, 0);
+    const probeCamera = new THREE.PerspectiveCamera(75, 1, 0.5, 200);
+    const probe = new THREE.Mesh(sunLayer.object.geometry, sunLayer.material.clone());
+    probeScene.add(probe);
+    const previousAutoClear = renderer.autoClear;
+    for (const time of [0.75, 0.76, 0.77]) {
+        game.time.days = time;
+        game.update(0);
+        const sample = game.sky.atmosphere;
+        probe.material.uniforms.uColor.value.copy(sunLayer.material.uniforms.uColor.value);
+        probe.material.uniforms.uGlow.value = 0;
+        probe.material.uniforms.uCorona.value = 0;
+        probe.material.uniforms.uAtmosphere.value = 1;
+        probe.position.copy(sunLayer.object.position);
+        probe.quaternion.copy(sunLayer.object.quaternion);
+        probe.scale.copy(sunLayer.object.scale);
+        probeCamera.lookAt(probe.position);
+        renderer.autoClear = true;
+        renderer.setRenderTarget(target);
+        renderer.render(probeScene, probeCamera);
+        const pixels = new Uint8Array(256 * 256 * 4);
+        renderer.readRenderTargetPixels(target, 0, 0, 256, 256, pixels);
+        let litPixels = 0;
+        for (let i = 0; i < pixels.length; i += 4) if (pixels[i] + pixels[i + 1] + pixels[i + 2] > 3) litPixels++;
+        check((litPixels > 0) === (sample.direct[0] > 0), 'Tarcza i źródło mają różny moment zachodu');
+        if (time === 0.76) check(game.sky.celestial.sunHeight < 0 && game.sky.sunLightDirection.y > 0, 'Wiązka widocznego wycinka biegnie spod horyzontu');
+        discSamples.push({ time, visible: sample.discVisibility, litPixels, direct: sample.direct[0] });
+        renderer.setRenderTarget(null);
+        await yieldBrowser();
+    }
+    renderer.autoClear = previousAutoClear;
+    target.dispose();
+    probe.material.dispose();
+    const room = await checkDarkRoom({ game, settings, renderer, meanFrame, yieldBrowser });
     game.time.days = 0.5; frame();
     check(renderer.info.programs.length > 0, 'Nie skompilowano shaderów');
     check(renderer.info.programs.every(p => p.diagnostics?.runnable !== false), 'Shader nie skompilował się');
     check(errors.length === 0, errors.join('\n'));
-    return { status: 'passed', shaders: renderer.info.programs.length, samples, horizonSamples, sunsetComparison: { fixedBrightness, legacyBrightness } };
+    return { status: 'passed', shaders: renderer.info.programs.length, samples, horizonSamples, discSamples, room, sunsetComparison: { fixedBrightness, legacyBrightness } };
 }
 
 const root = fileURLToPath(new URL('../', import.meta.url));

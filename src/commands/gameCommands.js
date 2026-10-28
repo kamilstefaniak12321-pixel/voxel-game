@@ -3651,6 +3651,8 @@ export const GAME_COMMANDS = [
             if (game.sky.atmosphere) {
                 const sample = game.sky.atmosphere;
                 text += ` | wysokość Słońca: ${sample.altitude.toFixed(1)}°` +
+                    ` | widoczna tarcza: ${(sample.discVisibility * 100).toFixed(1)}%` +
+                    ` | kierunek wiązki: ${(Math.asin(sample.lightHeight) * 180 / Math.PI).toFixed(1)}°` +
                     ` | droga w atmosferze: x${sample.airMass.toFixed(1)}` +
                     ` | bezpośrednie RGB: ${sample.direct.map(v => v.toFixed(2)).join(' / ')}`;
             }

@@ -11,7 +11,15 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
-## Niewydane — poprawka cieni atmosferycznych
+## Niewydane — rozdzielenie źródeł światła atmosferycznego
+
+- Usunięto nakładanie klasycznego zmierzchu na nową atmosferę. Księżyc
+  i słabe tło nocne są osobnymi składowymi.
+- Widoczny fragment tarczy Słońca dostarcza światło aż do pełnego zachodu.
+  Wiązka i cienie korzystają ze wspólnego kierunku tego fragmentu.
+- W modelu atmosferycznym zamknięte pomieszczenie bez źródeł może być
+  całkowicie ciemne; lampy zachowują światło i kolory. Przełączanie modeli
+  nie przebudowuje chunków, klasyczne minimum jasności pozostaje dostępne.
 
 - Usunięto podwójne wygaszanie słonecznych cieni przy horyzoncie w modelu
   atmosferycznym. Słabnie sama wiązka światła; blok nadal ją przesłania.

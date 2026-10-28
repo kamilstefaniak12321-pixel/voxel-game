@@ -252,7 +252,7 @@ try {
     const shot = await call('Page.captureScreenshot', { format: 'png' });
     await writeFile(resolve(output, 'laboratorium.png'), Buffer.from(shot.data, 'base64'));
     if (result?.status !== 'passed') throw new Error(`Test WebGL nie przeszedł: ${result?.text ?? 'brak wyniku'}\n${logs.slice(-10000)}`);
-    console.log('OK: WebGL2, prawdziwa gra, cień dachu, lampy, 12 ujęć dnia/nocy, 6 położeń niskiego Słońca, porównanie przecieku światła, A/B, cienie 0/1/3, trzecia osoba i tryb ziemniaka.');
+    console.log('OK: WebGL2, prawdziwa gra, cień dachu, lampy, 12 ujęć dnia/nocy, 6 położeń niskiego Słońca, widoczna tarcza, ciemny pokój z lampą, porównanie przecieku światła, A/B, cienie 0/1/3, trzecia osoba i tryb ziemniaka.');
     console.log(result.text);
 } finally {
     await writeFile(resolve(output, 'chrome.log'), logs);
@@ -264,5 +264,7 @@ try {
     }
     server.closeAllConnections();
     await new Promise(r => server.close(r));
-    await rm(profile, { recursive: true, force: true });
+    // Procesy pomocnicze Chrome mogą kończyć zapis profilu tuż po wyjściu
+    // głównego procesu. Node ponowi usuwanie przy przejściowym ENOTEMPTY.
+    await rm(profile, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 });
 }

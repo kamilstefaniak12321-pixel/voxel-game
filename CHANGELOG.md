@@ -13,7 +13,7 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ## 0.25.0 - Spójne cienie i teren do 800 kratek
 
-Drugi etap oświetlenia — PR do uzupełnienia przed wydaniem.
+Drugi etap oświetlenia — PR #51.
 
 - Trzy skale cieni: szczegółowe przy graczu, pośrednie i dalekie.
   Zasięg obejmuje około 800 kratek z zapasem na płynne wygaszenie.

@@ -111,6 +111,7 @@ export async function checkDistantShadowRendering({ renderer, yieldBrowser }) {
     // Uruchamiane wyłącznie po niepowodzeniu: zapisuje liczby z GPU,
     // aby odróżnić błąd położenia próbki od tolerancji głębi.
     const debugSelfShadow = (name, z, x) => {
+        const gl = renderer.getContext(), subpixelBits = gl.getParameter(gl.SUBPIXEL_BITS);
         const farValid = shadowUniforms.uFarShadowInfo.value.z;
         const distantValid = shadowUniforms.uDistantShadowInfo.value.z;
         const isolated = {};
@@ -124,7 +125,7 @@ export async function checkDistantShadowRendering({ renderer, yieldBrowser }) {
             shadowUniforms.uFarShadowInfo.value.z = farValid;
             shadowUniforms.uDistantShadowInfo.value.z = distantValid;
         }
-        if (!renderer.extensions.has('EXT_color_buffer_float')) return { isolated, floatTarget: false };
+        if (!renderer.extensions.has('EXT_color_buffer_float')) return { isolated, subpixelBits, floatTarget: false };
         const probeTarget = new THREE.WebGLRenderTarget(16, 16, { type: THREE.FloatType });
         const probeMaterial = new THREE.ShaderMaterial({
             uniforms: { depthMap: { value: null }, worldToMap: { value: null }, info: { value: null }, mode: { value: 0 } },
@@ -147,14 +148,18 @@ export async function checkDistantShadowRendering({ renderer, yieldBrowser }) {
                     float texel = info.y * length(rx);
                     vec2 uv = (floor(s.xy / texel) + 0.5) * texel;
                     vec2 delta = uv - s.xy;
-                    float planeDepth = s.z - (dot(n, rx) / dot(rx, rx) * delta.x +
-                        dot(n, ry) / dot(ry, ry) * delta.y) * dot(rz, rz) / dot(n, rz);
+                    vec2 depthGradient = -vec2(dot(n, rx) / dot(rx, rx),
+                        dot(n, ry) / dot(ry, ry)) * dot(rz, rz) / dot(n, rz);
+                    float planeDepth = s.z + dot(depthGradient, delta);
                     float stored = texture2D(depthMap, uv).r;
-                    float bias = max(info.y * 0.1 * info.x, 0.0000002);
+                    float rasterBias = texel * (abs(depthGradient.x) + abs(depthGradient.y)) / 128.0;
+                    float transformBias = max(info.y * 0.1 * info.x, 0.0000002);
+                    float bias = max(transformBias, rasterBias);
                     if (mode == 0) gl_FragColor = vec4(p, s.z);
                     else if (mode == 1) gl_FragColor = vec4(uv, planeDepth, stored);
-                    else gl_FragColor = vec4((planeDepth - stored) / info.x, bias / info.x,
+                    else if (mode == 2) gl_FragColor = vec4((planeDepth - stored) / info.x, bias / info.x,
                         planeDepth - stored, step(planeDepth - bias, stored));
+                    else gl_FragColor = vec4(rasterBias / info.x, transformBias / info.x, texel, dot(n, rz));
                 }`,
             toneMapped: false
         });
@@ -167,7 +172,7 @@ export async function checkDistantShadowRendering({ renderer, yieldBrowser }) {
                 probeMaterial.uniforms.worldToMap.value = shadowUniforms[prefix + 'Matrix'].value;
                 probeMaterial.uniforms.info.value = shadowUniforms[prefix + 'Info'].value;
                 const values = [];
-                for (let mode = 0; mode < 3; mode++) {
+                for (let mode = 0; mode < 4; mode++) {
                     probeMaterial.uniforms.mode.value = mode;
                     renderer.setRenderTarget(probeTarget); renderer.clear(); renderer.render(probeScene, camera);
                     const rgba = new Float32Array(4);
@@ -175,9 +180,10 @@ export async function checkDistantShadowRendering({ renderer, yieldBrowser }) {
                     values.push([...rgba]);
                 }
                 maps[label] = { worldPositionAndDepth: values[0], uvPlaneStored: values[1], residualBiasWorldDepthLit: values[2],
+                    rasterTransformBiasWorldUvPlaneZ: values[3],
                     info: shadowUniforms[prefix + 'Info'].value.toArray() };
             }
-            return { isolated, maps, glError: renderer.getContext().getError() };
+            return { isolated, maps, subpixelBits, glError: gl.getError() };
         } finally {
             probeTarget.dispose(); probeMaterial.dispose(); renderer.setRenderTarget(target);
         }
@@ -213,6 +219,50 @@ export async function checkDistantShadowRendering({ renderer, yieldBrowser }) {
         } finally {
             previewTarget.dispose(); previewGeometry.dispose(); previewMaterial.dispose(); preview.dispose(); preview.forceContextLoss();
         }
+    };
+    // Tylko near: dach wypełnia prawdziwą mapę głębi. W połowie pasa
+    // wygaszania cień musi mieć połowę siły. Ponowne mnożenie wagi
+    // dałoby tu 75% światła zamiast 50%, choć pełny cień nadal byłby czarny.
+    const checkNearOnlyFalloff = async () => {
+        const roof = new THREE.Mesh(groundGeometry, SHADOW_CASTER_MATERIALS[0]);
+        roof.position.y = 65; roof.frustumCulled = false;
+        roof.userData.chunk = { cx: 0, cz: 0, maxY: 66 }; roof.updateMatrixWorld();
+        world.shadowScene.add(roof);
+        orient(90); sun.intensity = Math.PI * 2;
+        // Mały wycinek sprawia, że próbka jest praktycznie w środku
+        // odbiorcy. Kwantyzacja do piksela bloku mieści się w 3/255.
+        camera.left = camera.bottom = -.016; camera.right = camera.top = .016;
+        camera.updateProjectionMatrix();
+        const results = []; let clear;
+        try {
+            for (const quality of [0, 1, 2]) {
+                shadows.setQuality(quality);
+                setShadowDefine([nearMaterial], quality > 0, false);
+                shadows.update(.1, sky, focus); shadows.render(world, focus, null, scene, 64, terrain);
+                check(shadowUniforms.uFarShadowInfo.value.z === 0 && shadowUniforms.uDistantShadowInfo.value.z === 0 &&
+                    shadowUniforms.uFarShadowMap.value === null && shadowUniforms.uDistantShadowMap.value === null,
+                    `Jakość ${quality}: pozostała aktywna mapa daleka`);
+                if (quality === 0) {
+                    clear = read('near');
+                    check(clear > 64 && clear < 192, `Near-only: nasycona lub ciemna kontrola (${clear})`);
+                    results.push({ quality, clear });
+                } else {
+                    const values = [];
+                    // Near wygasa od 85% do 100% promienia; 92.5% to
+                    // połowa symetrycznego wygaszania, bez CPU kopii GLSL.
+                    for (const [edge, fraction] of [[0, 0], [.925, .5], [1.02, 1]]) {
+                        const value = read('near', 0, shadows.radius * edge), expected = clear * fraction;
+                        check(Math.abs(value - expected) <= 3,
+                            `Near-only q${quality}, edge=${edge}: ${value}/${expected}; ` +
+                            'połowa wygaszania ma dawać 50% światła, nie 75%');
+                        values.push({ edge, value, expected });
+                    }
+                    results.push({ quality, radius: shadows.radius, clear, values });
+                }
+                await yieldBrowser();
+            }
+            return { status: 'passed', values: results };
+        } finally { roof.removeFromParent(); }
     };
     const samples = [], transitions = [], selfShadow = [], disabled = []; let inventoryPreview;
     try {
@@ -282,8 +332,10 @@ export async function checkDistantShadowRendering({ renderer, yieldBrowser }) {
             }
             selfShadow.push({ degrees, clear, values });
         }
-        return { status: 'passed', casterDistance: 800, receiverHeight: 64, samples, transitions, selfShadow, inventoryPreview, disabled,
-            stats: shadows.stats(), note: 'Near ma pustą mapę; przeszkoda występuje tylko w kaskadach terenu dalekiego.' };
+        const stats = shadows.stats(), nearOnly = await checkNearOnlyFalloff();
+        return { status: 'passed', casterDistance: 800, receiverHeight: 64, samples, transitions, selfShadow, inventoryPreview, disabled, nearOnly,
+            rasterSubpixelBits: renderer.getContext().getParameter(renderer.getContext().SUBPIXEL_BITS),
+            stats, note: 'W próbie ściany 800 mapa near jest pusta. Osobna próba near-only zawiera dach i mierzy pojedyncze wygaszanie.' };
     } finally {
         shadows.dispose();
         for (const [u, value] of savedUniforms) {

@@ -26,6 +26,13 @@ tylko w dalszej mapie. Przesłonięcie jest ważone raz, bez ponownego
 mnożenia przez tę samą wagę przejścia. Promienie światła w powietrzu
 korzystają z tych samych większych map.
 
+Porównanie głębi uwzględnia płaszczyznę odbiorcy: przenosi jego głębię
+na środek odczytywanego teksela mapy. Mały dodatkowy zapas rośnie wraz
+z gradientem głębi (odpowiednik 2/256 teksela), żeby pokryć zaokrąglenia
+rasteryzacji przy niskim Słońcu. Ogranicza to samocień bez stałego,
+wieloblokowego odsuwania cienia. Dla płaszczyzny niemal równoległej
+do promienia test pomija cień, aby uniknąć niestabilnego dzielenia przez zero.
+
 Zewnętrzna mapa daje zapas poza 800 bloków. Wygaszanie zaczyna się przy
 82% jej szerokości od środka, czyli około 840 bloków w osiach mapy światła,
 i kończy na jej brzegu. Jest też przejście przy płaszczyznach głębi.

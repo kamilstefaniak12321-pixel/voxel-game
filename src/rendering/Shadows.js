@@ -210,18 +210,21 @@ const LOOKUP_GLSL = `
         float uvTexel = info.y * sqrt(x2);
         vec2 sampleUV = (floor(s.xy / uvTexel) + 0.5) * uvTexel;
         vec2 deltaUV = sampleUV - s.xy;
-        float planeDepth = s.z - (dot(worldNormal, rowX) / x2 * deltaUV.x +
-            dot(worldNormal, rowY) / y2 * deltaUV.y) * z2 / planeZ;
+        vec2 depthGradient = -vec2(dot(worldNormal, rowX) / x2,
+            dot(worldNormal, rowY) / y2) * z2 / planeZ;
+        float planeDepth = s.z + dot(depthGradient, deltaUV);
         if (planeDepth <= 0.0 || planeDepth >= 1.0) return 1.0;
 
         // Zapas także przy płaszczyznach near/far, bez twardego cięcia Z.
         coverage = (1.0 - smoothstep(fadeStart, 1.0, edge)) *
             smoothstep(0.0, 0.02, s.z) * (1.0 - smoothstep(0.98, 1.0, s.z));
-        // Rasteryzacja castera używa osobnych macierzy projekcji/widoku,
-        // lookup ich iloczynu. Przy 2° GPU wykazał różnicę 0.0214 bloku
-        // (średnia mapa, teksel 0.5). Zapas 0.1 teksela pokrywa tę
-        // precyzję transformacji; nachylenie obsługuje płaszczyzna wyżej.
-        float bias = max((info.y * 0.1 + extraBias) * info.x, 0.0000002);
+        // Osobne transformacje castera i odbiorcy wymagają małego zapasu
+        // głębi. Dodatkowo rasteryzacja zaokrągla położenie w podpikselach:
+        // przy 0.5° SwiftShader dał różnicę 0.253/0.429 bloku w większych
+        // mapach. Gradient przelicza zapas 2/256 teksela na głębię danej
+        // płaszczyzny; tolerancja rośnie tylko dla promieni stycznych.
+        float rasterBias = uvTexel * (abs(depthGradient.x) + abs(depthGradient.y)) / 128.0;
+        float bias = max(max((info.y * 0.1 + extraBias) * info.x, 0.0000002), rasterBias);
         return step(planeDepth - bias, texture(depthMap, sampleUV).r);
     }
 `;

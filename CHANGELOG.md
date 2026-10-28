@@ -13,7 +13,7 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ## 0.24.0 - Wspólne światło i materiały
 
-Pierwszy etap spójnego oświetlenia bliskiego i dalekiego terenu.
+Pierwszy etap spójnego oświetlenia bliskiego i dalekiego terenu — PR #50.
 
 ### Zmiany
 

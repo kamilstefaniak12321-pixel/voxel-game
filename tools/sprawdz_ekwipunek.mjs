@@ -17,7 +17,7 @@ register(`data:text/javascript,${encodeURIComponent(`
         if (context.parentURL === screenUrl) {
             const sources = {
                 'three': 'export {};',
-                '../rendering/ModelMaterial.js': 'export const modelLight = {};',
+                '../rendering/ModelMaterial.js': 'export const modelLight = {}; export function setModelPreviewRenderer() {}',
                 '../sky/skyShader.js': 'export const skyUniforms = {};'
             };
             if (Object.hasOwn(sources, specifier)) {

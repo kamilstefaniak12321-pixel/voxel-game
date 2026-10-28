@@ -1656,6 +1656,7 @@ export class Game {
         setFarTerrainShadows(this.shadows.hasFar);
 
         modelLight.uModelShadows.value = this.shadows.enabled ? 1 : 0;
+        modelLight.uModelDistantShadows.value = this.shadows.hasFar ? 1 : 0;
 
         this.shaftsEnabled = !potato && settings.get('lightShafts');
 
@@ -2476,6 +2477,7 @@ export class Game {
         modelLight.uModelBounce.value.set(0, 0, 0);
 
         modelLight.uModelShadows.value = 0;
+        modelLight.uModelDistantShadows.value = 0;
 
         return true;
 
@@ -2549,8 +2551,8 @@ export class Game {
         const shadowInfo = shadows.enabled
             ? `Cienie: ${shadows.light === 'sun' ? 'słońce' : 'księżyc'} ${Math.round(Math.asin(Math.max(-1, Math.min(1, shadows.direction.y))) * 180 / Math.PI)}°, ` +
               `siła ${Math.round(shadows.strength * 100)}%, mapa ${shadows.size} px (${shadows.radius} bl.), przerysowana ${shadows.draws}×` +
-              `${shadows.hasFar ? `, daleka ${shadows.farRadius} bl. ${shadows.farDraws}×` : ''}` +
-              `${this.shaftsEnabled ? ' | promienie' : ''} | słońce na graczu ${Math.round(this.sunVisibility * 100)}%`
+              `${shadows.hasFar ? `, dalsze ${shadows.cascades.map(c => `${c.config.radius} bl. ${c.draws}×`).join(' / ')}` : ''}` +
+              `${this.shaftsEnabled ? ' | promienie' : ''} | lokalny dostęp do słońca ${Math.round(this.sunVisibility * 100)}%`
             : `Cienie: wył.${shadows.supported ? '' : ' (brak WebGL2)'}`;
 
 

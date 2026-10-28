@@ -81,7 +81,7 @@ self.onmessage = (event) => {
 
             mesh = meshFarTile(heights, kinds, cells, spacing, palette, scratch, materialIds, albedoPalette);
 
-            transfer.push(mesh.positions.buffer, mesh.normals.buffer, mesh.colors.buffer, mesh.surfaceAlbedo.buffer, mesh.indices.buffer);
+            transfer.push(mesh.positions.buffer, mesh.normals.buffer, mesh.colors.buffer, mesh.surfaceAlbedo.buffer, mesh.indices.buffer, mesh.shadowIndices.buffer);
 
         }
 

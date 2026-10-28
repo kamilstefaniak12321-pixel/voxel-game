@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="pl">
+<meta charset="utf-8">
+<title>Test dalekich cieni</title>
+<style>body{background:#17212a;color:white;font:14px monospace}pre{white-space:pre-wrap}</style>
+<script type="importmap">{"imports":{"three":"../lib/three/three.module.js"}}</script>
+<body><pre id="result">Trwa test map cieni…</pre>
+<script type="module">
+import * as THREE from 'three';
+import { checkDistantShadowRendering } from './shadow_render_checks.js';
+const renderer = new THREE.WebGLRenderer({ antialias: false });
+renderer.setSize(64, 64);
+renderer.autoClear = false;
+try {
+    const result = await checkDistantShadowRendering({ renderer,
+        yieldBrowser: () => new Promise(requestAnimationFrame) });
+    document.querySelector('#result').textContent = JSON.stringify(result, null, 2);
+    document.body.dataset.result = 'passed';
+} catch (error) {
+    document.querySelector('#result').textContent = error.stack;
+    document.body.dataset.result = 'failed';
+} finally { renderer.dispose(); }
+</script>
+</body></html>

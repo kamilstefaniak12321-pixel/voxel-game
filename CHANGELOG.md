@@ -11,6 +11,28 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 0.25.0 - Spójne cienie i teren do 800 kratek
+
+Drugi etap oświetlenia — PR do uzupełnienia przed wydaniem.
+
+- Trzy skale cieni: szczegółowe przy graczu, pośrednie i dalekie.
+  Zasięg obejmuje około 800 kratek z zapasem na płynne wygaszenie.
+- Dalekie góry zasłaniają słońce również blisko gracza, na postaci,
+  przedmiocie w ręce i w smugach światła. Niskie słońce nie obcina już
+  pionowego obszaru dalekiej mapy.
+- Gęstszy uproszczony teren do około 800 kratek w średniej i wysokiej
+  jakości; dalszy horyzont pozostaje dostępny do 8192 kratek domyślnie.
+  Pełne, interaktywne bloki zachowują osobny zasięg z ustawień.
+- Dalekie mapy powstają stopniowo, w ograniczonych porcjach, i trafiają
+  do obrazu dopiero po zakończeniu. Woda i sztuczne łączenia kafelków
+  nie rzucają już fałszywych cieni.
+- Wersja 0.25.0 wspólna dla Windowsa i Androida. Po scaleniu PR workflow
+  „Aplikacje (komputer i telefon)” opublikuje `v0.25.0` w
+  `voxel-game-wydania` z plikami automatycznej aktualizacji.
+  Przygotowanie PR nie publikuje jeszcze aktualizacji.
+
+---
+
 ## 0.24.0 - Wspólne światło i materiały
 
 Pierwszy etap spójnego oświetlenia bliskiego i dalekiego terenu — PR #50.

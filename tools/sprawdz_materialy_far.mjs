@@ -36,10 +36,12 @@ const { TREE_PACKS } = await import('../src/blocks/treePacks.js');
 const { SURFACE_FACE_NAMES, SURFACE_TINT_TYPES, SURFACE_MATERIAL_COUNT,
     getSurfaceFaceTexture, surfaceMaterialId, surfaceMaterialType } = await import('../src/rendering/SurfaceMaterials.js');
 const { KINDS, kindIndex, sampleFarTile, meshFarTile, createMeshScratch } = await import('../src/world/farSamples.js');
-const { FarTerrain } = await import('../src/world/FarTerrain.js');
+const { FarTerrain, TARGET_DETAIL_DISTANCE } = await import('../src/world/FarTerrain.js');
 const { LightLabGenerator } = await import('../src/world/terrain/LightLabGenerator.js');
 const { getAtlasAverage } = await import('../src/rendering/TextureAtlas.js');
 const { CHUNK_SIZE, CHUNK_HEIGHT } = await import('../src/config.js');
+const THREE = await import('three');
+const { chunkMaskData, chunkMaskUniforms } = await import('../src/rendering/viewUniforms.js');
 
 // Rejestr i paczki nie zmieniają ID; odcienie istnieją tylko w buforze Uint16.
 for (const [type, definition] of Object.entries(BLOCK_TYPES)) {
@@ -125,7 +127,11 @@ for (const [spacing, expected] of classicHashes) {
         fixture.materialIds[i] = surfaceMaterialId(KINDS[fixture.kinds[i]]);
     }
     const result = mesh(fixture, 32, spacing);
-    const hash = createHash('sha256').update(result.positions).update(result.normals)
+    // W dawniej było niewykorzystanym zerem; teraz przenosi prawdziwy dół
+    // ściany dla depth pass. XYZ i wszystkie stare bufory nadal są identyczne.
+    const classicPositions = result.positions.slice();
+    for (let i = 3; i < classicPositions.length; i += 4) classicPositions[i] = 0;
+    const hash = createHash('sha256').update(classicPositions).update(result.normals)
         .update(result.colors).update(result.indices).digest('hex');
     assert.equal(hash, expected, `Klasyczne bufory i markery, spacing=${spacing}`);
 }
@@ -142,11 +148,15 @@ for (const key of ['heights', 'kinds', 'materialIds']) assert.deepEqual(worker.m
 assert.deepEqual(worker.message.mesh, mesh(raw, 8));
 assert.ok(worker.transfer.includes(worker.message.materialIds.buffer));
 assert.ok(worker.transfer.includes(worker.message.mesh.surfaceAlbedo.buffer));
+assert.ok(worker.transfer.includes(worker.message.mesh.shadowIndices.buffer), 'Worker musi przekazać indeks cieni');
 delete globalThis.self;
 
 // Palety właściwego FarTerrain: średnia atlasu bez cienia korony i dołu boku.
 const terrain = Object.assign(Object.create(FarTerrain.prototype), {
-    workers:[], rebuildAll() {}, world:{savedChunks:new Map(), chunks:new Map()}
+    workers:[], rebuildAll() {}, world:{savedChunks:new Map(), chunks:new Map()},
+    shown: new Set(), tiles: new Map(), requests: new Map(), scene: new THREE.Scene(),
+    shadowRevision: 0, shadowSnapshots: new Set(), shadowResourcePool: [], shadowCenter: new THREE.Vector2(),
+    lodSplits: new Set(), inner: 0, outer: 8192
 });
 terrain.prepareColors();
 const encode = color => Uint8Array.from(color.toArray(), value => Math.round(Math.sqrt(value) * 255));
@@ -171,6 +181,118 @@ const offset = getBlockId('terracotta') * 18 + 2 * 3;
 assert.deepEqual(tile.mesh.geometry.getAttribute('surfaceAlbedo').array.subarray(0, 3),
     terrain.surfaceAlbedoPalette.subarray(offset, offset + 3));
 assert.equal(terrain.modifiedSurface(0, 0, terrain.world.savedChunks).material, 'terracotta');
-tile.mesh.geometry.dispose();
+// Woda i sztuczne kurtyny/fartuchy nie są bryłą rzucającą cień.
+const waterMesh = mesh(sample({ farSurface: () => ({top:20, kind:'water', material:'water'}) }, 2), 2);
+assert.ok(waterMesh.indices.length > 0, 'Woda nadal musi być widoczna');
+assert.equal(waterMesh.shadowIndices.length, 0, 'Daleka woda rzuca cień');
+const flatRock = mesh(sample({ farSurface: () => ({top:20, kind:'rock', material:'stone'}) }, 2), 2);
+assert.equal(flatRock.shadowIndices.length, 6, 'Płaski teren powinien rzucać cień tylko wierzchem, bez kurtyn');
+const raised = buffers(1); raised.heights.fill(10); raised.heights[4] = 20;
+raised.kinds.fill(kindIndex('rock')); raised.materialIds.fill(surfaceMaterialId('stone'));
+const raisedMesh = mesh(raised, 1);
+assert.equal(raisedMesh.shadowIndices.length, 30, 'Kolumna: wierzch i cztery rzeczywiste boki');
+assert.ok(raisedMesh.positions.some((v, i) => i % 4 === 1 && v < 10), 'Fixture musi zawierać widoczny fartuch LOD');
+for (const index of raisedMesh.shadowIndices) {
+    const effectiveY = Math.max(raisedMesh.positions[index * 4 + 1], raisedMesh.positions[index * 4 + 3]);
+    assert.ok(effectiveY >= 10 && effectiveY <= 20, 'Fartuch przedłuża fizyczny cień poniżej podstawy');
+    assert.equal(raisedMesh.colors[index * 4 + 3], 255, 'Kurtyna dostała indeks cienia');
+}
 
-console.log('OK: materiały far, 5 ścian, ID paczek/odcieni, laboratorium, worker/main, klasyczne bufory, zmienione chunki.');
+// Snapshot ma zamrożoną maskę/origin i podtrzymuje geometrię aż do
+// ostatniego użytkownika, również gdy streaming wymieni lub usunie kafel.
+terrain.shown.add(tile); terrain.scene.add(tile.mesh); terrain.tiles.set('fixture', tile); tile.key = 'fixture';
+const oldMask = chunkMaskData[0], oldOrigin = chunkMaskUniforms.uChunkMaskOrigin.value.clone();
+chunkMaskData[0] = 127; chunkMaskUniforms.uChunkMaskOrigin.value.set(11, 12);
+const firstSnapshot = terrain.collectShadowCasters(null), oldBundle = tile.geometryBundle;
+assert.equal(firstSnapshot.casters.length, 1);
+assert.equal(oldBundle.references, 1);
+const frozenMaterial = firstSnapshot.casters[0].material;
+chunkMaskData[0] = 0; chunkMaskUniforms.uChunkMaskOrigin.value.set(13, 14);
+assert.equal(frozenMaterial.uniforms.uChunkMask.value.image.data[0], 127);
+assert.deepEqual(frozenMaterial.uniforms.uChunkMaskOrigin.value.toArray(), [11, 12]);
+chunkMaskData[0] = oldMask; chunkMaskUniforms.uChunkMaskOrigin.value.copy(oldOrigin);
+const oldPositions = firstSnapshot.casters[0].geometry.getAttribute('position').array.slice();
+let oldDisposed = 0, newDisposed = 0;
+oldBundle.shadowGeometry.addEventListener('dispose', () => oldDisposed++);
+terrain.world.savedChunks.clear(); tile.raw.heights.fill(30); terrain.buildMesh(tile);
+assert.ok(terrain.shadowRevision > firstSnapshot.revision, 'Nowy widoczny mesh nie zmienia rewizji cieni');
+assert.equal(oldBundle.retired, true); assert.equal(oldDisposed, 0);
+assert.deepEqual(firstSnapshot.casters[0].geometry.getAttribute('position').array, oldPositions,
+    'Streaming zmienił geometrię używaną przez budowaną mapę');
+const secondSnapshot = terrain.collectShadowCasters(null), newBundle = tile.geometryBundle;
+newBundle.shadowGeometry.addEventListener('dispose', () => newDisposed++);
+const rejected = terrain.collectShadowCasters({ intersectsSphere: () => false });
+assert.equal(rejected.casters.length, 0); rejected.dispose();
+terrain.disposeTile(tile);
+assert.equal(newBundle.retired, true); assert.equal(newDisposed, 0);
+firstSnapshot.dispose(); firstSnapshot.dispose();
+assert.equal(oldDisposed, 1, 'Podtrzymywana geometria musi zostać zwolniona dokładnie raz');
+assert.equal(newDisposed, 0);
+secondSnapshot.dispose();
+assert.equal(newDisposed, 1); assert.equal(terrain.shadowSnapshots.size, 0);
+
+// Docelowy detal obejmuje 800 bloków, horyzont nadal sięga 8192.
+terrain.setDetail(2);
+const chosen = terrain.selectTiles({ x: 0, z: 0, height: 0 });
+assert.equal(TARGET_DETAIL_DISTANCE, 800);
+assert.ok(chosen.some(t => t.distance > 7000), 'Nowy detal skrócił daleki horyzont');
+assert.ok(chosen.filter(t => t.distance <= 800).every(t => t.spacing <= 4), 'Brak szczegółów casterów w zasięgu 800');
+
+// Przekraczanie granicy detalu o jeden blok nie przełącza podziału co
+// krok. Dopiero wyjście poza pas histerezy pozwala scalić ten sam kafel.
+terrain.lodSplits.clear();
+const detailTile = '32:8:0:0';
+for (const [x, split] of [[-799, true], [-801, true], [-897, false], [-801, false], [-799, true]]) {
+    terrain.selectTiles({ x, z: 128, height: 0 });
+    assert.equal(terrain.lodSplits.has(detailTile), split, `Oscylacja LOD przy x=${x}`);
+}
+
+// Pula nie tworzy nowego programu/tekstury co aktualizację cienia.
+// Reużycie jest dozwolone dopiero po release i nie rusza drugiej mapy.
+const poolTile = { key:'pool-fixture', x0:0, z0:0, spacing:1, cells:2, size:2, raw:source };
+terrain.buildMesh(poolTile); terrain.tiles.set(poolTile.key, poolTile); terrain.shown.add(poolTile);
+terrain.scene.add(poolTile.mesh);
+chunkMaskData[0] = 11; chunkMaskUniforms.uChunkMaskOrigin.value.set(11, 12); terrain.shadowCenter.set(1, 2);
+const snapshotA = terrain.collectShadowCasters(null), materialA = snapshotA.casters[0].material;
+const maskA = materialA.uniforms.uChunkMask.value;
+chunkMaskData[0] = 22; chunkMaskUniforms.uChunkMaskOrigin.value.set(22, 23); terrain.shadowCenter.set(3, 4);
+const snapshotB = terrain.collectShadowCasters(null), materialB = snapshotB.casters[0].material;
+assert.notEqual(materialA, materialB, 'Dwie aktywne mapy współdzielą zmienny materiał');
+assert.equal(maskA.image.data[0], 11);
+assert.deepEqual(materialA.uniforms.uChunkMaskOrigin.value.toArray(), [11, 12]);
+assert.deepEqual(materialA.uniforms.uFarCenter.value.toArray(), [1, 2]);
+const poolSize = terrain.shadowResourcePool.length;
+assert.equal(poolSize, 2, 'Dwie jednoczesne mapy powinny używać dwóch slotów');
+snapshotA.dispose();
+const versionA = maskA.version;
+chunkMaskData[0] = 33;
+const snapshotC = terrain.collectShadowCasters(null);
+assert.equal(snapshotC.casters[0].material, materialA, 'Wolny slot nie został użyty ponownie');
+assert.equal(maskA.version, versionA + 1, 'Nowe bajty maski nie trafiły do GPU');
+snapshotC.dispose();
+const unchangedVersion = maskA.version, snapshotD = terrain.collectShadowCasters(null);
+assert.equal(snapshotD.casters[0].material, materialA);
+assert.equal(maskA.version, unchangedVersion, 'Identyczna maska powoduje zbędny upload GPU');
+snapshotD.dispose();
+for (let i = 0; i < 20; i++) {
+    chunkMaskData[0] = 40 + i; chunkMaskUniforms.uChunkMaskOrigin.value.set(i, i + 1);
+    const next = terrain.collectShadowCasters(null); next.dispose();
+    assert.equal(terrain.shadowResourcePool.length, poolSize, 'Pula rośnie przy kolejnych klatkach');
+    assert.equal(materialB.uniforms.uChunkMask.value.image.data[0], 22, 'Reużycie mutuje aktywny snapshot');
+    assert.deepEqual(materialB.uniforms.uChunkMaskOrigin.value.toArray(), [22, 23]);
+    assert.deepEqual(materialB.uniforms.uFarCenter.value.toArray(), [3, 4]);
+}
+const poolDisposals = new Map();
+for (const slot of terrain.shadowResourcePool) for (const resource of [slot.mask, slot.material]) {
+    poolDisposals.set(resource, 0);
+    resource.addEventListener('dispose', () => poolDisposals.set(resource, poolDisposals.get(resource) + 1));
+}
+let poolGeometryDisposals = 0;
+poolTile.geometryBundle.shadowGeometry.addEventListener('dispose', () => poolGeometryDisposals++);
+terrain.dispose(); snapshotB.dispose();
+assert.equal(terrain.shadowSnapshots.size, 0); assert.equal(terrain.shadowResourcePool.length, 0);
+assert.ok([...poolDisposals.values()].every(count => count === 1), 'Zasoby puli nie zostały zwolnione dokładnie raz');
+assert.equal(poolGeometryDisposals, 1);
+chunkMaskData[0] = oldMask; chunkMaskUniforms.uChunkMaskOrigin.value.copy(oldOrigin);
+
+console.log('OK: materiały far, worker/main, klasyczne bufory XYZ, cienie bez wody/kurtyn, podstawa ścian, snapshoty maski/geometrii i detal 800 przy horyzoncie 8192.');

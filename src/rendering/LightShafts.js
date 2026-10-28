@@ -56,6 +56,10 @@ uniform highp sampler2D uFarShadowMap;
 uniform mat4 uFarShadowMatrix;
 uniform vec4 uFarShadowInfo;
 uniform float uFarBias;
+uniform highp sampler2D uDistantShadowMap;
+uniform mat4 uDistantShadowMatrix;
+uniform vec4 uDistantShadowInfo;
+uniform float uDistantBias;
 
 varying vec2 vUv;
 
@@ -77,6 +81,14 @@ float phase(float cosine, float g) {
 
     return (1.0 - g2) / (12.566 * pow(1.0 + g2 - 2.0 * g * cosine, 1.5));
 
+}
+
+// Ta sama osłona brzegów co na powierzchniach. Okluzja każdej mapy
+// jest stosowana raz; bliska mapa nie może rozjaśnić cienia góry.
+float shadowCoverage(vec3 p, float fadeStart) {
+    float edge = max(abs(p.x - 0.5), abs(p.y - 0.5)) * 2.0;
+    return (1.0 - smoothstep(fadeStart, 1.0, edge)) *
+        smoothstep(0.0, 0.02, p.z) * (1.0 - smoothstep(0.98, 1.0, p.z));
 }
 
 void main() {
@@ -102,6 +114,8 @@ void main() {
 
     vec3 farA = (uFarShadowMatrix * vec4(origin, 1.0)).xyz;
     vec3 farB = (uFarShadowMatrix * vec4(origin + direction * rayLength, 1.0)).xyz;
+    vec3 distantA = (uDistantShadowMatrix * vec4(origin, 1.0)).xyz;
+    vec3 distantB = (uDistantShadowMatrix * vec4(origin + direction * rayLength, 1.0)).xyz;
 
     float start = noise(gl_FragCoord.xy);
 
@@ -120,26 +134,22 @@ void main() {
 
         vec3 s = mix(a, b, t);
 
-        vec3 inside = step(vec3(0.0), s) * step(s, vec3(1.0));
-
-        float lit = 1.0;
-
-        if (inside.x * inside.y * inside.z > 0.5) {
-
-            lit = step(s.z - uBias, texture2D(uShadowMap, s.xy).r);
-
-        }
-        else if (uFarShadowInfo.z > 0.5) {
-
+        float coverage = shadowCoverage(s, 0.85);
+        float occlusion = 0.0;
+        if (coverage > 0.0) occlusion = (1.0 - step(s.z - uBias, texture2D(uShadowMap, s.xy).r)) * coverage;
+        if (uFarShadowInfo.z > 0.5) {
             vec3 f = mix(farA, farB, t);
-
-            vec3 farInside = step(vec3(0.0), f) * step(f, vec3(1.0));
-
-            if (farInside.x * farInside.y * farInside.z > 0.5) {
-                lit = step(f.z - uFarBias, texture2D(uFarShadowMap, f.xy).r);
-            }
-
+            coverage = shadowCoverage(f, 0.82);
+            if (coverage > 0.0) occlusion = max(occlusion,
+                (1.0 - step(f.z - uFarBias, texture2D(uFarShadowMap, f.xy).r)) * coverage);
         }
+        if (uDistantShadowInfo.z > 0.5) {
+            vec3 d = mix(distantA, distantB, t);
+            coverage = shadowCoverage(d, 0.82);
+            if (coverage > 0.0) occlusion = max(occlusion,
+                (1.0 - step(d.z - uDistantBias, texture2D(uDistantShadowMap, d.xy).r)) * coverage);
+        }
+        float lit = 1.0 - occlusion;
 
         // Poza mapami cieni - powietrze w słońcu.
 
@@ -270,7 +280,11 @@ export class LightShafts {
                 uFarShadowMap: shadowUniforms.uFarShadowMap,
                 uFarShadowMatrix: shadowUniforms.uFarShadowMatrix,
                 uFarShadowInfo: shadowUniforms.uFarShadowInfo,
-                uFarBias: { value: 0 }
+                uFarBias: { value: 0 },
+                uDistantShadowMap: shadowUniforms.uDistantShadowMap,
+                uDistantShadowMatrix: shadowUniforms.uDistantShadowMatrix,
+                uDistantShadowInfo: shadowUniforms.uDistantShadowInfo,
+                uDistantBias: { value: 0 }
             },
             depthTest: false,
             depthWrite: false
@@ -433,6 +447,8 @@ export class LightShafts {
         const farInfo = shadowUniforms.uFarShadowInfo.value;
 
         march.uFarBias.value = farInfo.y * 1.5 * farInfo.x;
+        const distantInfo = shadowUniforms.uDistantShadowInfo.value;
+        march.uDistantBias.value = distantInfo.y * 1.5 * distantInfo.x;
 
         this.drawQuad(this.march, this.targets[0]);
 

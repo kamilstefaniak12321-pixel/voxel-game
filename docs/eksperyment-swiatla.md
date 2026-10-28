@@ -88,7 +88,12 @@ z dotychczasowego artystycznego gradientu; kolor widocznej tarczy Słońca jest
 powiązany z transmisją atmosfery. Kosmos i globalne oświetlenie kuli planety
 nie są przedmiotem kalibracji v1.
 
-Mapy cieni, ich rozdzielczość i zanikanie przy horyzoncie pozostają istniejące.
+Mapy cieni i ich rozdzielczość pozostają istniejące. W modelu atmosferycznym
+bloki przesłaniają całą pozostałą wiązkę Słońca także nisko nad horyzontem;
+nie nakładamy na to drugiego, klasycznego wygaszania maski cienia. Kontrast
+nadal zależy od słabnącej wiązki, kąta padania i światła rozproszonego — nie
+musi rosnąć aż do zachodu. Klasyczne cienie, cienie Księżyca i dodatkowe
+przyciemnienie wnętrz zachowują dotychczasowe płynne przejścia.
 Bez map cieni działa dotychczasowe uproszczenie oparte na dostępie do nieba;
 nie jest to test poprawnych kierunkowych cieni. Dostęp do nieba jest skalarem
 z flood fill, a nie pełnym rozkładem widoczności nieba. Światło odbite od
@@ -103,13 +108,16 @@ tarczy i powiązanie oświetlenia ze wzrostem roślin to kolejne osobne etapy.
 
 `npm test` uruchamia również `tools/sprawdz_swiatlo.mjs`: wartości skończone,
 ciągłość przy horyzoncie, zmierzch bez wiązki bezpośredniej, zaćmienie,
-przełączanie A/B, zapis ustawienia/typu świata, powtarzalność generatora,
+przełączanie A/B, pełne przesłonięcie niskiego Słońca bez skoku doświetlenia
+wnętrz, zapis ustawienia/typu świata, powtarzalność generatora,
 zgodność chunków z mapą/LOD, bezpieczny start i obecność stanowisk.
 Wygląd i wydajność na docelowym GPU należy porównać według scenariusza wyżej.
 
 `node tools/sprawdz_swiatlo_webgl.mjs` uruchamia prawdziwą grę w lokalnym
 Chrome (`google-chrome` w PATH albo zmienna `CHROME_BIN`). Sprawdza WebGL2,
-shadery w kilku trybach, lampy, dostęp do nieba pod dachem i obrazy 12 ujęć
-dnia/nocy. Nie wymaga pakietów npm. Wynik i zrzut zapisuje w
+shadery w kilku trybach, lampy, dostęp do nieba pod dachem, obrazy 12 ujęć
+dnia/nocy oraz 6 położeń niskiego Słońca. Porównuje też obraz zachodu
+z poprawnym przesłonięciem i ze starym przeciekiem światła, przy tym samym
+doświetleniu wnętrz. Nie wymaga pakietów npm. Wynik i zrzut zapisuje w
 `test-results/light-lab/`. Workflow „Laboratorium światła” uruchamia oba
 rodzaje testów dla pull requestów i udostępnia te pliki jako artefakt.

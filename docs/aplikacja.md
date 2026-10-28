@@ -44,8 +44,20 @@ programisty (konsola błędów). Reszta klawiszy działa jak w przeglądarce
 
 ## Jak powstaje nowa wersja
 
+Każdy pull request otrzymuje numer wersji w tytule i opisie oraz
+przygotowanie wydania. Przykład: `0.23.1 — Poprawki światła i cieni`.
+Szablon PR zawiera listę sprawdzeń, a zasady dla pracy nad projektem
+są zapisane w [`AGENTS.md`](../AGENTS.md).
+
 1. W `package.json` podnosi się `"version"` - np. `0.1.0` → `0.2.0`
-   (większe zmiany: środkowa liczba, poprawki: ostatnia).
+   (większe zmiany: środkowa liczba, poprawki: ostatnia). Ten sam numer
+   wpisuje się do głównego `version` i `packages[""].version`
+   w `package-lock.json`. `CHANGELOG.md` dostaje sekcję z numerem wersji,
+   numerem PR i zmianami względem ostatniego pobieralnego wydania.
+   Numer sprawdza się względem `main`, otwartych PR-ów i wydań, żeby
+   kolejne scalenia nie próbowały opublikować tego samego numeru.
+   Android używa tej samej wersji i wylicza kod wersji automatycznie.
+   W PR sprawdza się próbne kompilacje Windowsa i Androida.
 2. Zmiana trafia do gałęzi `main` (scalony pull request).
 3. GitHub Actions (`.github/workflows/aplikacja.yml`) widzi, że takiej
    wersji jeszcze nie ma w repozytorium z wydaniami, buduje instalator

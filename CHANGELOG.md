@@ -11,7 +11,12 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
-## Niewydane — rozdzielenie źródeł światła atmosferycznego
+## 0.23.1 - Poprawki światła i cieni
+
+Przygotowane do wydania w PR #48. Zawiera również poprawkę cieni z PR #47,
+która nie weszła do pobieralnej wersji 0.23.0.
+
+### Poprawki
 
 - Usunięto nakładanie klasycznego zmierzchu na nową atmosferę. Księżyc
   i słabe tło nocne są osobnymi składowymi.
@@ -25,6 +30,13 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
   atmosferycznym. Słabnie sama wiązka światła; blok nadal ją przesłania.
   Klasyczny model, Księżyc i płynne przyciemnienie wnętrz zachowują swoje
   dotychczasowe działanie.
+
+### Wydanie
+
+- Wersja 0.23.1 wspólna dla Windowsa i Androida; kod wersji Androida: 2301.
+- Po scaleniu PR workflow „Aplikacje (komputer i telefon)” buduje
+  i publikuje `v0.23.1` w `voxel-game-wydania`: instalator Windows,
+  APK, paczkę aktualizacji Androida i pliki automatycznych aktualizacji.
 
 ---
 

@@ -11,7 +11,11 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
-## W przygotowaniu — laboratorium światła
+## 0.23.0 - Laboratorium światła (2026-10-28)
+
+Eksperyment z PR #45, wydany jako aktualizacja Windows i Androida.
+
+### Zmiany
 
 - Eksperymentalne światło atmosferyczne: tłumienie wiązki RGB, cieplejsze
   Słońce przy horyzoncie, rozproszone światło zmierzchu i półkule nieba/gruntu.
@@ -19,6 +23,14 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
   przełączanie A/B w ustawieniach i przez `/swiatlo model`.
 - Domyślnie eksperyment działa tylko w laboratorium; stare światy zachowują
   klasyczne oświetlenie. Testy modelu, generatora i integracji WebGL2.
+
+### Jak wypróbować
+- Utwórz świat typu „Laboratorium światła”, najlepiej w trybie kreatywnym.
+- Porównuj modele w Ustawienia → Obraz → Model światła lub komendami
+  `/swiatlo model atmosfera` i `/swiatlo model klasyczne`.
+- Instrukcja i ograniczenia pierwszej wersji: [eksperyment światła](docs/eksperyment-swiatla.md).
+
+---
 
 ## 0.22.0 - Wspólny panel ekwipunku (2026-10-27)
 

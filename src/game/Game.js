@@ -2510,6 +2510,29 @@ export class Game {
 
     updateHud(element) {
 
+        const debug = this.settings.get('showDebug');
+        const status = this.saver.getStatus();
+        const now = performance.now();
+        const hud = this.hudState ??= { element: null, debug: null, status: null, html: null, nextUpdate: 0 };
+
+        // Diagnostyka nie musi przebudowywać DOM i drzewa dostępności co
+        // klatkę. F3 oraz komunikaty zapisu nadal reagują natychmiast.
+        const changed = element !== hud.element || debug !== hud.debug || status !== hud.status;
+        if (!changed && (!debug || now < hud.nextUpdate)) return;
+        if (element !== hud.element) hud.html = null;
+        hud.element = element;
+        hud.debug = debug;
+        hud.status = status;
+        hud.nextUpdate = now + 200;
+
+        if (!debug) {
+            if (status !== hud.html) {
+                element.innerHTML = status;
+                hud.html = status;
+            }
+            return;
+        }
+
         const player = this.player;
         const hit = this.currentHit;
 
@@ -2539,18 +2562,6 @@ export class Game {
             Math.floor(this.camera.position.y),
             Math.floor(this.camera.position.z)
         );
-
-
-        // Bez informacji debugowania (F3): tylko komunikat o zapisie
-        // (wybrany blok widać na pasku na dole).
-
-        if (!this.settings.get('showDebug')) {
-
-            element.innerHTML = this.saver.getStatus();
-
-            return;
-
-        }
 
 
         // Klatki na sekundę i daleki teren.
@@ -2586,7 +2597,7 @@ export class Game {
             : '';
 
 
-        element.innerHTML =
+        const html =
 
             `Świat: ${this.worldInfo.name} | Seed: ${this.worldInfo.seed}` +
             `${this.storage ? '' : ' | ZAPIS NIEDOSTĘPNY'}<br>` +
@@ -2630,7 +2641,12 @@ export class Game {
 
             `T - czat | /pomoc - komendy` +
 
-            `<br><br>${this.saver.getStatus()}`;
+            `<br><br>${status}`;
+
+        if (html !== hud.html) {
+            element.innerHTML = html;
+            hud.html = html;
+        }
 
     }
 

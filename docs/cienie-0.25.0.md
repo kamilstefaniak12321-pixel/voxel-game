@@ -155,8 +155,9 @@ Sprzęt: RTX 3050 Laptop 4 GB, i5-12500H, zasilacz podłączony, Chromium 156
 przez ANGLE/D3D11. Full HD 1920×1080, DPR 1, antyaliasing włączony;
 48/8192 bloków, średnie szczegóły far, cienie 3, atmosfera,
 promienie włączone, światło odbite wyłączone, jasność 0%, limit FPS 0.
-Monitor 60 Hz: wyniki powyżej 60 opisują przepustowość renderowania,
-nie liczbę różnych obrazów wyświetlanych na panelu.
+Bieżący tryb ekranu odczytany z Windows to 1920×1080 przy 144 Hz.
+Odstępy wywołań renderowania opisują przepustowość gry, nie są pomiarem
+fizycznego czasu wyświetlania obrazu na panelu.
 
 FPS liczymy z odstępów między początkami `Game.render`; 1% low to odwrotność
 średniej najwolniejszego 1% tych odstępów. Osobny timer GPU obejmuje całe
@@ -180,9 +181,9 @@ W trakcie 30 s pomiaru baza przerysowała mapę bliską 102–103 razy i daleką
 z aktywnym przeliczaniem cieni. Pierwsza miała jeden odstęp ponad 33,34 ms;
 nie odrzucamy go jako niewygodnego wyniku.
 
-### Wyniki 0.25.0
+### 0.25.0 przed ograniczeniem odświeżania diagnostyki
 
-Wszystkie cztery końcowe próby są ważne, bez błędów timera GPU.
+Wszystkie cztery próby są ważne, bez błędów timera GPU.
 Dane i wcześniejsze próby diagnostyczne zachowano w
 [`pomiary/cienie-0.25.0.json`](pomiary/cienie-0.25.0.json).
 
@@ -203,5 +204,50 @@ W trakcie prac nie odrzucaliśmy niewygodnych wyników: po wprowadzeniu puli
 zasobów wystąpił odstęp 412,7 ms, a osobny profil wykazał 495,1 ms w głównej
 scenie wraz z pojawieniem się dwóch programów. Kolejna próba potwierdziła
 ich kod jako przednią i tylną stronę wody. Po przeniesieniu ich przygotowania
-do ładowania świata żaden z czterech końcowych przejazdów nie przekroczył
+do ładowania świata żaden z tych czterech przejazdów nie przekroczył
 33,34 ms. Nie oznacza to usunięcia wszystkich możliwych przycięć streamingu.
+
+### Końcowy pomiar po odciążeniu diagnostyki
+
+Panel F3 liczył statystyki wszystkich kafli, sortował próbki wydajności
+i zastępował całe `innerHTML` w każdej klatce. Teraz robi to maksymalnie
+5 razy na sekundę, a DOM zmienia tylko po zmianie treści. Przełączenie F3
+oraz pojawienie się i wygaśnięcie komunikatu zapisu nadal działają od razu.
+Pasek przedmiotów, sterowanie i obraz świata mają własne ścieżki aktualizacji.
+
+Powtórzenie tego samego scenariusza, z włączonym F3 i zegarem 1×:
+
+| Próba | FPS | 1% low | p99 odstępu [ms] | Maks. odstęp [ms] | Śr. GPU render [ms] |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| Południe | 140.08 | 67.79 | 12.50 | 30.10 | 3.264 |
+| Zachód | 142.62 | 85.35 | 10.50 | 14.00 | 3.624 |
+
+Obie próby są ważne. Zasięg, jakość materiałów i gęstość terenu nie zostały
+obniżone. To krótkie próbki z jednej trasy; nawet przy 1% low ponad 60
+pozostał pojedynczy odstęp 30,1 ms, więc nie obiecujemy braku przycięć
+w każdym świecie. Dane wcześniejszych prób pozostają w części `development`
+raportu, zamiast zastępować je lepszymi wynikami.
+
+### Aplikacja Windows
+
+Osobne testowe okno Electron 44.4.5 / Chromium 152 (wersja runtime z
+`package.json`), pełny ekran 1920×1080, DPR 1, RTX 3050, zasilacz, ten sam
+seed i lot. W obu końcowych próbach diagnostyka F3 była włączona.
+Zainstalowana gra i jej ustawienia nie zostały zastąpione.
+
+| Limit w grze | FPS | 1% low | p99 odstępu [ms] | Maks. odstęp [ms] | Śr. GPU render [ms] |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| Bez limitu | 139.49 | 59.43 | 14.60 | 24.30 | 3.308 |
+| 60 FPS | 60.01 | 42.14 | 21.70 | 28.20 | 3.530 |
+
+Średni cel 60 FPS jest osiągnięty. Nie jest to jednak idealnie równy rytm
+16,67 ms: ogranicznik działa na ekranie 144 Hz, a krótkie skoki odstępów
+pozostają widoczne w 1% low. Wyników z limitem nie porównujemy bezpośrednio
+do prób bez limitu. Wszystkie zapytania GPU w obu próbach są ważne.
+Wcześniejsza próba aplikacji przed odciążeniem F3 miała 111,73 FPS,
+1% low 35,83 i maksymalnie 40,1 ms; zachowano ją w raporcie.
+
+Widok sprawdzony ręcznie w aplikacji, pozycja `(-28.5, 140, 66.5)`,
+zatrzymany zachód 17:38 (pomiar czasu klatek powyżej korzysta z zegara 1×):
+
+![Daleki teren i cienie w aplikacji Windows](pomiary/cienie-0.25.0.png)

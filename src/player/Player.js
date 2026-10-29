@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 
 import {
+    CHUNK_HEIGHT,
     WORLD_BORDER,
     GRAVITY,
     MOVE_SPEED,
@@ -952,9 +953,47 @@ setState(state) {
     this.vel.set(0, 0, 0);
 
 
+    this.ensureRestoredPositionClear();
+
     this.updateCamera();
 
     return true;
+
+}
+
+// Zmiana generatora może zasypać niezapisane wcześniej koryto, w którym
+// gracz zakończył grę. Sprawdzamy faktyczne bloki, również zapisane
+// budowle i wykopy. Wolna pozycja w jaskini pozostaje bez zmian.
+ensureRestoredPositionClear() {
+
+    const half = this.width / 2;
+
+    // Game wczytuje otoczenie przed setState. Te cztery narożniki
+    // gwarantują pełny obrys także na granicy chunków; brak chunka nie
+    // może zostać pomylony z wolnym powietrzem.
+    for (const x of [this.pos.x - half, this.pos.x + half]) {
+        for (const z of [this.pos.z - half, this.pos.z + half]) {
+            this.world.ensureColumnLoaded(x, z);
+        }
+    }
+
+    if (!this.collidesAt(this.pos)) {
+        return;
+    }
+
+    const savedY = this.pos.y;
+
+    // Pierwsze wolne miejsce nad zapisaną pozycją, bez kopania bloków
+    // i bez przenoszenia na dach, jeśli wcześniej jest wolna komora.
+    // Ponad limitem budowania nie ma już bloków; pętla jest ograniczona.
+    for (let y = Math.max(0, Math.floor(savedY) + 1); y <= CHUNK_HEIGHT; y++) {
+        this.pos.y = y;
+        if (!this.collidesAt(this.pos)) {
+            return;
+        }
+    }
+
+    this.pos.y = savedY;
 
 }
 

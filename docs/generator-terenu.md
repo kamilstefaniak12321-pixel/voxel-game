@@ -10,6 +10,13 @@ etap po etapie.
 
 ## Gdzie jesteśmy
 
+**Ustalenie z 29 października 2026:** teraz poprawiamy generację rzek:
+usuwamy dawne suche koryta, naprawiamy piaszczyste przedłużenia ujść
+i kwadratowe odcinki wody. Po sprawdzeniu efektu zaplanujemy roślinność
+w trzech strefach: na brzegach, pod wodą i na powierzchni rzeki.
+Do dalszego dopracowania światła wrócimy osobno; pozostaje cel 60 FPS
+na RTX 3050 Laptop na zasilaczu oraz spójny daleki widok.
+
 **Etap 0 - fundamenty (zrobione):**
 
 - **Wyższy świat** - `CHUNK_HEIGHT` 128 zamiast 64 (miejsce na morze,
@@ -76,7 +83,7 @@ etap po etapie.
 ```
 seed ──► POLA (gładkie mapy szumu)                       TerrainShape.js: SCALES
            kontynent, wypiętrzenie, erozja, grzbiety,
-           kotliny, płaskowyże, wąwozy, żleby, turnie,
+           kotliny, płaskowyże, żleby, turnie,
            depresje, klimat (temperatura, wilgotność)
             │
             ▼
@@ -85,9 +92,9 @@ seed ──► POLA (gładkie mapy szumu)                       TerrainShape.js:
            (wszystkie przejścia płynne: pogórza, krawędzie)
             │
             ▼
-         FORMY SZCZEGÓŁOWE                                HILLS, CRAG_..., RAVINE_..., BASIN_...
+         FORMY SZCZEGÓŁOWE                                HILLS, CRAG_..., GULLY_..., BASIN_...
            wzgórza, pagórki, grzbiety, turnie,
-           doliny, kotliny, wąwozy, żleby, depresje,
+           doliny, kotliny, żleby, depresje,
            równiny, równie, płaskowyże
             │
             ▼
@@ -178,7 +185,6 @@ Klucz w nawiasie to nazwa w kodzie (`landforms.js`), na mapie i w
 |---|---|---|
 | **doliny** (`valley`, `dolina`) | między grzbietami gór i w obniżeniach falistego terenu | doliny rzeczne (etap 3): V w górach, płaskie dno na nizinach |
 | **kotliny** (`basin`, `kotlina`) | pole kotlin obniża góry i wyżyny - płaskie dno otoczone górami | jeziora w kotlinach, rzeki z nich wypływające |
-| **wąwozy** (`ravine`, `wawoz`) | wąskie, głębokie pasy rozcinające wyżyny (też płaskowyże) | wąwozy wyżłobione przez potoki |
 | **żleby** (`gully`, `zleb`) | rynny na zboczach gór (nie na grani, nie w dolinie) | żleby skierowane w dół stoku, z piargami u wylotu |
 | **depresje** (`depression`, `depresja`) | suche obniżenia poniżej poziomu morza na nizinach, z dala od brzegu | wały / mierzeje oddzielające je od morza |
 
@@ -327,7 +333,7 @@ Jaskinie, rudy i warstwy skał, wodospady, klify nadmorskie, pory roku.
 |---|---|
 | `/mapa [warstwa] [skala]`, klawisz **M** | mapa z góry: `teren` (wysokość), `formy`, `pasy`, pola (`kontynent`, `wypietrzenie`, `erozja`, `grzbiety`, `gory`, `wyzyny`, `temperatura`, `wilgotnosc`); skala 1-32 bloki na punkt |
 | `/teren [x z]` | wysokość, pas wysokości, forma, powierzchnia i wartości pól w miejscu |
-| `/teren znajdz <forma> [promień] [tp]` | najbliższe miejsce z formą (np. `turnia`, `kotlina`, `wawoz`, `morze`) |
+| `/teren znajdz <forma> [promień] [tp]` | najbliższe miejsce z formą (np. `turnia`, `kotlina`, `zleb`, `morze`) |
 | `/skaly`, `/skaly statystyki [promień]` | skały w kolumnie pod graczem; udział skał w okolicy |
 | `/skaly znajdz <skała> [promień] [tp]`, `/skaly zyla [tp]` | najbliższa odsłonięta skała; najbliższa żyła lepidolitu |
 | `/mapa skaly`, `/mapa przekroj` | mapa skał (pod glebą); przekrój pionowy w kierunku patrzenia |

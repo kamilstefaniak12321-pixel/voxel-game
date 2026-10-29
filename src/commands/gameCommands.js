@@ -1109,7 +1109,6 @@ const LANDFORM_WORDS = {
     pagorek: { landform: 'hillock' },
     dolina: { landform: 'valley' },
     kotlina: { landform: 'basin' },
-    wawoz: { landform: 'ravine' },
     zleb: { landform: 'gully' },
     depresja: { landform: 'depression' },
     rownina: { landform: 'plain' },

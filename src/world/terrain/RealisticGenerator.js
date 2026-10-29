@@ -36,7 +36,7 @@ import { Biomes, BIOMES, BIOME_KEYS, BIOME_INDEX, grassTint } from './Biomes.js'
 //                     nimi wychodzą same); kotliny obniżają góry,
 //   4. WZGÓRZA i PAGÓRKI - falowanie, słabsze przy dużej erozji
 //                     (równiny),
-//   5. FORMY SZCZEGÓŁOWE - depresje, wąwozy, żleby, turnie.
+//   5. FORMY SZCZEGÓŁOWE - depresje, żleby, turnie.
 //
 // Wszystkie przejścia są płynne (smoothstep), więc między nizinami,
 // wyżynami i górami są pogórza i krawędzie, a nie schodki.
@@ -51,8 +51,8 @@ import { Biomes, BIOMES, BIOME_KEYS, BIOME_INDEX, grassTint } from './Biomes.js'
 // (PLANTS w TerrainShape.js), i drzewa - lasy sześciu gatunków
 // (src/world/trees/Forests.js, FORESTS w TerrainShape.js).
 //
-// Woda jest na razie WSTĘPNA (morze bez rzek i jezior) - patrz
-// docs/generator-terenu.md, etapy 2-3.
+// Rzeki i jeziora powstają z sieci spływu w Rivers.js. Dawna warstwa
+// suchych szczelin nie wycina już niezależnych koryt w wyżynach.
 // ------------------------------------------------------------
 
 // Wartości szumu z kilku oktaw mieszczą się w wąskim zakresie -
@@ -257,7 +257,6 @@ export class RealisticGenerator {
             bumps: noise(9),
             basins: noise(10),
             plateaus: noise(11),
-            ravines: noise(12),
             gullies: noise(13),
             crags: noise(14),
             depressions: noise(15),
@@ -573,25 +572,6 @@ export class RealisticGenerator {
         out.duneZone = duneZone;
 
 
-        // Wąwozy: wąskie rozcięcia wyżyn (też płaskowyżów).
-
-        let ravine = 0;
-
-        if (detail !== DETAIL_COARSE && upland > 0.15) {
-
-            const cut = this.ridged(N.ravines, warpX, warpZ, S.ravines, 1);
-
-            if (cut > SHAPE.RAVINE_EDGE) {
-
-                const t = (cut - SHAPE.RAVINE_EDGE) / (1 - SHAPE.RAVINE_EDGE);
-
-                ravine = SHAPE.RAVINE_DEPTH * Math.sqrt(t) * smoothstep(0.2, 0.6, upland) * (1 - mountains);
-
-            }
-
-        }
-
-
         // Żleby: rynny na zboczach (nie na grani i nie na dnie doliny).
 
         let gully = 0;
@@ -625,7 +605,7 @@ export class RealisticGenerator {
         }
 
 
-        height += crag - ravine - gully;
+        height += crag - gully;
 
 
         if (!ocean && depression < 0.05) {
@@ -657,7 +637,6 @@ export class RealisticGenerator {
         out.basin = basin;
         out.plateau = plateau;
         out.depression = depression;
-        out.ravine = ravine;
         out.gully = gully;
         out.crag = crag;
         out.hills = hills;
@@ -1544,7 +1523,6 @@ export class RealisticGenerator {
 
         if (sample.crag > 2.5) return 'crag';
         if (sample.gully > 1.2) return 'gully';
-        if (sample.ravine > 2) return 'ravine';
 
         if (sample.mountains > 0.35) {
 

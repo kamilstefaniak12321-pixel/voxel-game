@@ -394,7 +394,9 @@ export class Rivers {
 
         this.lastSea = tile.sea[n] === 1;
 
-        return value;
+        // Ta sama precyzja przy pierwszej i kolejnych wizytach. Progi
+        // zalewania jezior nie mogą zależeć od kolejności próbkowania.
+        return tile.h[n];
 
     }
 
@@ -562,6 +564,7 @@ export class Rivers {
             cells: new Set(cells),
             outlet,
             outletFrom,
+            outletRoute: outletFrom === null ? [] : [outletFrom],
             depth,
             shallow: depth < RIVERS.lakeMinDepth && outlet !== null,
             route: null,
@@ -572,7 +575,59 @@ export class Rivers {
             maxZ: -Infinity
         };
 
-        for (const k of cells) {
+        if (!lake.shallow && depth >= RIVERS.lakeMinDepth) {
+
+            // Historia szukania przelewu zawiera także suche siodła
+            // oraz odwiedzone za nimi części innych zagłębień. Nie są
+            // one wodą tego jeziora: dawały łańcuchy osobnych basenów
+            // o obrysach kratek 16 x 16. Tafla zalewa tylko spójny
+            // obszar od dna, poniżej rzeczywistego poziomu bloków wody.
+            const flooded = lake.cells;
+            const wet = new Set();
+            const pending = [pit];
+            const waterLevel = Math.floor(level);
+
+            while (pending.length > 0) {
+
+                const k = pending.pop();
+
+                if (wet.has(k) || !flooded.has(k) || this.heightOf(k) >= waterLevel) {
+                    continue;
+                }
+
+                wet.add(k);
+
+                for (const [di, dj] of NEIGHBORS) {
+                    pending.push(key(keyI(k) + di, keyJ(k) + dj));
+                }
+
+            }
+
+            lake.cells = wet;
+
+            // Koryto musi nadal łączyć wodę z przelewem, nawet gdy
+            // między nimi leżą usunięte z tafli suche kratki. Droga
+            // zalewania już prowadzi od przelewu do dna; zachowujemy
+            // jej odcinek do pierwszej naprawdę zalanej kratki.
+            if (outlet !== null) {
+
+                const route = [];
+                let k = outletFrom;
+
+                while (k !== undefined && !wet.has(k)) {
+                    route.push(k);
+                    k = parent.get(k);
+                }
+
+                route.push(k);
+                lake.outletFrom = k;
+                lake.outletRoute = route.reverse();
+
+            }
+
+        }
+
+        for (const k of lake.cells) {
 
             const x = keyI(k) * CELL;
             const z = keyJ(k) * CELL;
@@ -777,7 +832,19 @@ export class Rivers {
 
             run = this.deeper(lake, lake.outletFrom).reverse();
 
-            run.push(lake.outletFrom);
+            for (const k of lake.outletRoute) {
+
+                const x = keyI(k) * CELL + HALF;
+                const z = keyJ(k) * CELL + HALF;
+
+                if (Math.hypot(x - sx, z - sz) > RIVERS.maxLength) {
+                    return { runs, lakes, end: 'far', lakeEnd: null };
+                }
+
+                run.push(k);
+                seen.add(k);
+
+            }
 
             current = lake.outlet;
 
@@ -1377,6 +1444,11 @@ export class Rivers {
         out.riverGap = Infinity;
         out.lakeGap = Infinity;
 
+        // Naturalnie zanurzone dno morza nie potrzebuje wałów przy
+        // korycie. Rzeka może je pogłębić, ale nie usypuje wysp ani
+        // piaszczystej obwódki wokół swojego końca.
+        const seaWater = out.ocean && full < SEA_LEVEL;
+
         // Bardzo daleki teren (kratki większe niż MAX_SPACING) - bez rzek
         // i jezior (i bez liczenia ich tak daleko).
 
@@ -1482,13 +1554,22 @@ export class Rivers {
                 continue;
             }
 
-            smooth = Math.min(smooth, smoothstep(0, 6, macro - candidate.level));
-
             const edge = this.lakeEdge(candidate, x, z, 2);
 
             if (edge === Infinity) {
                 continue;
             }
+
+            // Ramka jeziora służy tylko do wyszukiwania. Wygładzanie
+            // zależy od odległości od jego rzeczywistych kratek, nie
+            // od prostokąta obejmującego także odległy ląd. Wygasa przed
+            // końcem dokładnego zasięgu lakeEdge (2 * CELL), więc na
+            // granicy indeksu nie powstaje nowy próg.
+            const shoreSmooth = Math.max(
+                smoothstep(0, 6, macro - candidate.level),
+                smoothstep(LAKE_RIM, 2 * CELL, edge)
+            );
+            smooth = Math.min(smooth, shoreSmooth);
 
             // Odległość od najbliższego jeziora (biomy - mokradła).
 
@@ -1513,7 +1594,7 @@ export class Rivers {
             return full;
         }
 
-        let height = macro + (full - macro) * smooth;
+        let height = seaWater ? full : macro + (full - macro) * smooth;
 
         // Teren równo z taflą (makrorzeźba tuż pod nią) - bez wody
         // jeziora: to brzeg, przez który rzeka dopływa do wody.
@@ -1561,6 +1642,12 @@ export class Rivers {
 
             }
 
+            // Po wejściu do otwartej wody kończy się rzeczny próg;
+            // ujście łączy się z istniejącą taflą morza.
+            if (seaWater) {
+                level = SEA_LEVEL;
+            }
+
             const width = segments[best + 6] + (segments[best + 7] - segments[best + 6]) * bestT;
 
             const steep = RIVERS.bankSlope[0] + (RIVERS.bankSlope[1] - RIVERS.bankSlope[0]) * (out.mountains ?? 0);
@@ -1586,7 +1673,7 @@ export class Rivers {
                 // Tuż przy korycie brzeg jest blok nad wodą - także tam,
                 // gdzie poziom wody zmienia się o blok (próg na rzece).
 
-                if (bestDistance < width + 1.5) {
+                if (!seaWater && bestDistance < width + 1.5) {
 
                     height = Math.max(height, level + 1);
 
@@ -1637,7 +1724,7 @@ export class Rivers {
         // (To samo jezioro bywa policzone dwa razy - z dwóch kratek
         // płaskiego dna: gdzie jest woda jeziora, ono terenu nie podnosi.)
 
-        if (out.river !== 1) {
+        if (out.river !== 1 && !seaWater) {
 
             for (let n = 0; n < near.length; n += 2) {
 

@@ -88,4 +88,40 @@ for (const [x0, z0] of anchors) {
     }
 }
 
-console.log(`OK: ${points.length} próbek, powrót po nowych źródłach, 4 chunki i 90 próbek LOD; kolejność bez wpływu.`);
+// Dokładny zapis zgłoszenia gracza: seed jest LICZBĄ, nie tekstem.
+// Obszar ±200 od (188,-252) obejmuje stare kwadratowe baseny; osobno
+// próbkujemy właściwe jezioro, do którego prowadzi poprawiony odpływ.
+const reportedForward = new RealisticGenerator(2138286349);
+const reportedReverse = new RealisticGenerator(2138286349);
+reportedForward.compute(188, -252, DETAIL_FULL, {});
+reportedReverse.compute(648, 88, DETAIL_FULL, {});
+const reportedPoints = [[188, -252], [648, 88]];
+for (let dx = -200; dx <= 200; dx += 40) {
+    for (let dz = -200; dz <= 200; dz += 40) reportedPoints.push([188 + dx, -252 + dz]);
+}
+for (let x = 208; x <= 320; x += 16) {
+    for (const z of [-225, -224, -209, -208, -193, -192, -177, -176, -161, -160]) {
+        reportedPoints.push([x - 1, z], [x, z]);
+    }
+}
+const reportedFirst = reportedPoints.map(([x, z]) => sample(reportedForward, x, z));
+for (let i = reportedPoints.length - 1; i >= 0; i--) {
+    const [x, z] = reportedPoints[i];
+    assert.deepEqual(sample(reportedReverse, x, z), reportedFirst[i],
+        `Seed zgłoszenia: kolejność zmieniła teren (${x},${z})`);
+}
+for (const [x, z] of [[512, 0], [-256, -512]]) reportedForward.compute(x, z, DETAIL_FULL, {});
+for (let i = 0; i < reportedPoints.length; i++) {
+    const [x, z] = reportedPoints[i];
+    assert.deepEqual(sample(reportedForward, x, z), reportedFirst[i],
+        `Seed zgłoszenia: powrót zmienił teren (${x},${z})`);
+}
+for (const [x, z] of [[188, -252], [208, -224], [255, -208], [256, -208], [320, -160], [648, 88]]) {
+    for (const spacing of [4, 16, 32]) {
+        assert.deepEqual(reportedForward.farSurface(x, z, spacing), reportedReverse.farSurface(x, z, spacing),
+            `Seed zgłoszenia: daleki teren zależy od kolejności (${x},${z}), krok ${spacing}`);
+    }
+}
+
+console.log(`OK: ${points.length} próbek, powrót po nowych źródłach, 4 chunki i 90 próbek LOD; ` +
+    `seed zgłoszenia 2138286349: ${reportedPoints.length} próbek i 18 próbek LOD; kolejność bez wpływu.`);

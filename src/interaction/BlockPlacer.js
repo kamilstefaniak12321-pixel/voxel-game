@@ -1,7 +1,10 @@
 import {
     isLiquidId,
     isPlantId,
-    canGrowOn,
+    canPlantStay,
+    getRiverPlant,
+    isWaterloggedPlantId,
+    getLiquidKindId,
     isSolidId,
     isReplaceableId,
     getBlockId,
@@ -49,7 +52,7 @@ export class BlockPlacer {
 
     // Gdzie stanie blok po kliknięciu we wskazany blok (albo null).
 
-    targetOf(hit) {
+    targetOf(hit, blockType = null) {
 
         if (!hit || !hit.hit) {
             return null;
@@ -57,7 +60,10 @@ export class BlockPlacer {
 
         const block = hit.block;
 
-        if (isReplaceableId(this.world.getBlockId(block.x, block.y, block.z))) {
+        const hitId = this.world.getBlockId(block.x, block.y, block.z);
+        const river = getRiverPlant(getBlockId(blockType));
+
+        if (isReplaceableId(hitId) || (river && isLiquidId(hitId) && !isWaterloggedPlantId(hitId))) {
             return { x: block.x, y: block.y, z: block.z };
         }
 
@@ -75,7 +81,7 @@ export class BlockPlacer {
 
     placeBlock(hit, blockType) {
 
-        const target = this.targetOf(hit);
+        const target = this.targetOf(hit, blockType);
 
         if (!target) {
             return false;
@@ -103,6 +109,24 @@ export class BlockPlacer {
 
         const id = this.world.getBlockId(x, y, z);
 
+        // Jedna sadzonka pałki ma suchą i płytkowodną postać.
+        if (blockType === 'cattail' && getLiquidKindId(id) === getBlockId('water')) {
+            blockType = 'cattail_water';
+        }
+
+        const plantId = getBlockId(blockType);
+        const river = getRiverPlant(plantId);
+
+        if (river) {
+            // Nigdy nie tworzymy wody przez postawienie wodnej rośliny
+            // w powietrzu ani nie nadpisujemy innej posadzonej rośliny.
+            if (isWaterloggedPlantId(id)) return false;
+            if (river.waterlogged) {
+                if (getLiquidKindId(id) !== getBlockId('water')) return false;
+            }
+            else if (isLiquidId(id)) return false;
+        }
+
 
         // Zajęte miejsce - chyba że to ciecz albo coś do zastąpienia.
 
@@ -118,8 +142,8 @@ export class BlockPlacer {
         // Roślina rośnie tylko na ziemi.
 
         if (
-            isPlantId(getBlockId(blockType)) &&
-            !canGrowOn(getBlockId(blockType), this.world.getBlockId(x, y - 1, z))
+            isPlantId(plantId) &&
+            !canPlantStay(plantId, this.world.getBlockId(x, y - 1, z), this.world.getBlockId(x, y + 1, z))
         ) {
             return false;
         }

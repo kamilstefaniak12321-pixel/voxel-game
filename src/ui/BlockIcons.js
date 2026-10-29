@@ -109,6 +109,71 @@ function flatIcon(atlas, tileName) {
 }
 
 
+// Sylwetki modeli rzecznych: liście, pędy, kolby i kwiaty zachowują
+// własny kształt także w małej kratce ekwipunku.
+function riverPlantIcon(kind) {
+
+    const canvas = document.createElement('canvas');
+    canvas.width = canvas.height = ICON_SIZE;
+    const ctx = canvas.getContext('2d');
+    ctx.scale(4, 4);
+    const polygon = (color, points) => {
+        ctx.fillStyle = color;
+        ctx.beginPath();
+        points.forEach(([x, y], index) => index ? ctx.lineTo(x, y) : ctx.moveTo(x, y));
+        ctx.closePath();
+        ctx.fill();
+    };
+    const pixel = (color, x, y, w, h) => {
+        ctx.fillStyle = color;
+        ctx.fillRect(x, y, w, h);
+    };
+
+    if (kind === 'lily' || kind === 'duckweed') {
+        for (const [x, y, r] of kind === 'lily' ? [[6, 10, 5], [11, 7, 3]] : [[4, 7, 2], [10, 6, 3], [7, 11, 2], [12, 11, 2]]) {
+            polygon('#32754a', [[x-r,y], [x-r+1,y-2], [x+r-1,y-2], [x+r,y], [x+1,y+2], [x,y]]);
+            polygon('#68a54e', [[x-r+1,y-1], [x-r+2,y-2], [x+r-1,y-2], [x+r,y], [x+1,y+1], [x,y-1]]);
+        }
+        if (kind === 'lily') {
+            polygon('#e7dce8', [[7,8], [5,6], [7,6], [8,3], [9,6], [12,5], [10,8]]);
+            polygon('#fff9ed', [[6,7], [7,5], [8,7], [10,4], [10,7], [12,7], [10,9], [8,9]]);
+            pixel('#e6c856', 8, 7, 2, 1);
+        }
+    }
+    else if (kind === 'milfoil') {
+        for (const [x, top] of [[4,5], [8,2], [12,6]]) {
+            pixel('#508c55', x, top, 1, 13-top);
+            for (let y=top+2; y<13; y+=3) {
+                polygon('#71a967', [[x,y+1], [x-3,y-1], [x-2,y+1], [x,y+2], [x+3,y-1], [x+2,y+1]]);
+            }
+        }
+    }
+    else {
+        for (const [x, tip, dx] of [[6,6,-4], [7,3,-2], [8,5,2], [9,7,5], [10,8,2]]) {
+            polygon('#397849', [[8,14], [x+dx,tip], [x+dx+1,tip+1], [10,14]]);
+            polygon('#74a652', [[8,14], [x+dx,tip], [x+dx+1,tip+2], [9,14]]);
+        }
+        if (kind === 'cattail') {
+            for (const [x, y] of [[6,2], [10,4]]) {
+                pixel('#668449', x, y-1, 0.5, 14-y);
+                pixel('#563d2e', x-0.5, y, 1.5, 4);
+                pixel('#88603c', x-0.5, y, 0.5, 3);
+            }
+        }
+        if (kind === 'loosestrife') {
+            for (const [x, top] of [[5,4], [8,1], [11,5]]) {
+                pixel('#638249', x, top, 0.5, 14-top);
+                for (let y=top; y<top+5; y++) {
+                    pixel(y%2 ? '#d28bc2' : '#9f518f', x-(y%2 ? 1:0), y, 1.5, 1);
+                }
+            }
+        }
+    }
+    return canvas.toDataURL();
+
+}
+
+
 // Zwraca Map: nazwa bloku albo przedmiotu -> data URL ikonki.
 
 export async function createBlockIcons() {
@@ -158,6 +223,11 @@ export async function createBlockIcons() {
 
 
         const textures = definition.textures;
+
+        if (definition.model === 'riverPlant') {
+            icons.set(type, riverPlantIcon(definition.riverPlant.kind));
+            continue;
+        }
 
 
         // Roślina i płaska dekoracja: płaski obrazek (jak tekstura),

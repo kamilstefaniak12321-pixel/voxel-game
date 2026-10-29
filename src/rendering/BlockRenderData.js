@@ -129,7 +129,7 @@ blockMaterial.onBeforeCompile = (shader, renderer) => {
             // zielone piksele (źdźbła), ziemia i kwiaty bez zmian.
 
             float tintMask = smoothstep(0.01, 0.07, diffuseColor.g - max(diffuseColor.r, diffuseColor.b));
-            diffuseColor.rgb *= mix(vec3(1.0), vTint, tintMask);
+            diffuseColor.rgb *= mix(vec3(1.0), vTint.rgb, mix(tintMask, 1.0, vTint.a));
 
             vec3 blockTexel = diffuseColor.rgb;
             float blockSky = surfaceDecodeLight(vColor.a);
@@ -239,7 +239,7 @@ blockMaterial.onBeforeCompile = (shader, renderer) => {
                 attribute float surfaceOcclusion;
                 attribute float surfaceEmission;
                 uniform float uAtmosphericLight;
-                varying vec3 vTint;
+                varying vec4 vTint;
                 varying float vSurfaceOcclusion;
                 varying float vSurfaceEmission;
 
@@ -264,7 +264,10 @@ blockMaterial.onBeforeCompile = (shader, renderer) => {
                 vSkyDirection = (modelMatrix * vec4(transformed, 1.0)).xyz - cameraPosition;
 
                 // a = 1 (też bez atrybutu - inne siatki) - bez zmiany koloru.
-                vTint = tint.a < 0.5 ? tint.rgb * 2.0 : vec3(1.0);
+                // a=0: biome tint on green texels; a=128/255: complete
+                // linear albedo tint for generated plant models; a=1: none.
+                vTint = tint.a < 0.5 ? vec4(tint.rgb * 2.0, 0.0)
+                    : tint.a < 0.75 ? vec4(tint.rgb, 1.0) : vec4(1.0, 1.0, 1.0, 0.0);
 
                 #ifdef POTATO
                     vFogSky = skyColor(normalize(vSkyDirection)) * uFogBrightness;
@@ -277,7 +280,7 @@ blockMaterial.onBeforeCompile = (shader, renderer) => {
                 '#include <common>',
                 `#include <common>
                 varying vec3 vSkyDirection;
-                varying vec3 vTint;
+                varying vec4 vTint;
                 varying float vSurfaceOcclusion;
                 varying float vSurfaceEmission;
                 uniform float uFogBrightness;
@@ -439,9 +442,13 @@ export const plantMaterial =
     });
 
 
+// Held items or small previews without animation data remain stationary.
+plantMaterial.defaultAttributeValues = { color: [1, 1, 1], uv: [0, 0], uv1: [0, 0], plantMotion: [0, 0] };
+
 plantMaterial.onBeforeCompile = (shader, renderer) => {
 
     blockMaterial.onBeforeCompile(shader, renderer);
+    shader.uniforms.uWaveHeight = waterUniforms.uWaveHeight;
 
     // Roślina kołysze się, a mapa cieni nie - większy zapas, żeby
     // źdźbła nie cieniowały same siebie w paski (Shadows.js).
@@ -449,20 +456,22 @@ plantMaterial.onBeforeCompile = (shader, renderer) => {
     shader.fragmentShader = `#define SUN_SHADOW_RECEIVER_BIAS 0.3\n${shader.fragmentShader}`;
 
 
-    // Góra kafelka rośliny: wierzchołki z v przy górnej krawędzi kafelka
-    // atlasu. Kołysanie zależy od miejsca (każda kępka trochę inaczej).
+    // Explicit motion weights keep roots anchored and let underwater plants
+    // move gently. Floating leaves follow the same waves as the water surface.
 
     shader.vertexShader = shader.vertexShader
         .replace(
             '#include <common>',
             `#include <common>
-            uniform float uTime;`
+            uniform float uTime;
+            uniform float uWaveHeight;
+            attribute vec2 plantMotion;`
         )
         .replace(
             '#include <begin_vertex>',
             `#include <begin_vertex>
 
-            float plantTop = step(fract((1.0 - uv.y) * ${ATLAS_ROWS.toFixed(1)}), 0.5);
+            float plantTop = plantMotion.x;
 
             vec3 plantWorld = (modelMatrix * vec4(transformed, 1.0)).xyz;
 
@@ -470,8 +479,18 @@ plantMaterial.onBeforeCompile = (shader, renderer) => {
 
             float gust = 0.75 + 0.25 * sin(uTime * 0.37 + plantWorld.x * 0.05);
 
-            transformed.x += plantTop * gust * (sin(uTime * 1.8 + plantPhase) * 0.07 + sin(uTime * 3.3 + plantPhase * 2.1) * 0.02);
-            transformed.z += plantTop * gust * cos(uTime * 1.45 + plantPhase * 1.3) * 0.055;`
+            if (plantMotion.y > 0.75) {
+                float padWave = sin(plantWorld.x * 0.9 + uTime * 1.3) * 0.5
+                    + sin(plantWorld.z * 1.3 - uTime * 1.05) * 0.35
+                    + sin((plantWorld.x + plantWorld.z) * 0.45 + uTime * 0.7) * 0.15;
+                transformed.y += padWave * uWaveHeight;
+            } else if (plantMotion.y > 0.25) {
+                transformed.x += plantTop * sin(uTime * 0.65 + plantPhase) * 0.018;
+                transformed.z += plantTop * cos(uTime * 0.5 + plantPhase) * 0.012;
+            } else {
+                transformed.x += plantTop * gust * (sin(uTime * 1.8 + plantPhase) * 0.07 + sin(uTime * 3.3 + plantPhase * 2.1) * 0.02);
+                transformed.z += plantTop * gust * cos(uTime * 1.45 + plantPhase * 1.3) * 0.055;
+            }`
         );
 
 };
@@ -1082,6 +1101,10 @@ for (
                 height: definition.plant?.height ?? 1,
                 width: definition.plant?.width ?? 0.45
             }
+            : null,
+
+        riverPlant: definition.model === 'riverPlant'
+            ? { ...definition.riverPlant, uv: getAtlasUV('snow') }
             : null,
 
         leaves: definition.model === 'leaves',

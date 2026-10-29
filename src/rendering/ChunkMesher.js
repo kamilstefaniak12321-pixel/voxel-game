@@ -12,12 +12,14 @@ import {
 
 import { WATER_FLOW_UV } from './BlockRenderData.js';
 import { atmosphericLightToBrightness } from './LightPolicy.js';
+import { getRiverPlantFaces, plantRandom, riverPlantTransform } from './RiverPlantGeometry.js';
 
 
 import {
     AIR_ID,
     isOpaqueId,
     isLiquidId,
+    getLiquidKindId,
     isLeavesId,
     getLightEmission
 } from '../blocks/BlockRegistry.js';
@@ -59,22 +61,6 @@ function getRotationAt(x, y, z) {
 
 // Liczba 0..1 zależna od pozycji bloku i "soli" (rośliny: obrót,
 // przesunięcie i wysokość każdej kępki trochę inne).
-
-function plantRandom(x, y, z, salt) {
-
-    let h =
-        Math.imul(x, 668265263) ^
-        Math.imul(y, 374761393) ^
-        Math.imul(z, 2246822519) ^
-        Math.imul(salt, 3266489917);
-
-    h = Math.imul(h ^ (h >>> 15), 2246822519);
-    h = Math.imul(h ^ (h >>> 13), 3266489917);
-    h ^= h >>> 16;
-
-    return (h >>> 0) / 4294967296;
-
-}
 
 // ------------------------------------------------------------
 // KOPIA OKOLICY CHUNKA
@@ -204,7 +190,7 @@ function fillPadding(chunk, world, height, first) {
 
                         padOpaque[p] = isOpaqueId(blockId) ? 1 : 0;
                         padShade[p] = padOpaque[p] | (isLeavesId(blockId) ? 1 : 0);
-                        padLiquid[p] = isLiquidId(blockId) ? blockId : 0;
+                        padLiquid[p] = getLiquidKindId(blockId);
                         padSky[p] = source.skyLight[i];
                         padR[p] = source.lightR[i];
                         padG[p] = source.lightG[i];
@@ -445,6 +431,7 @@ let atmosphereLightBuffer = null;
 let surfaceOcclusionBuffer = null;
 let surfaceEmissionBuffer = null;
 let tintBuffer = null;
+let plantMotionBuffer = null;
 let splitBuffer = null;
 
 
@@ -478,6 +465,7 @@ function ensureCapacity(faces) {
     surfaceOcclusionBuffer = grow(surfaceOcclusionBuffer, Uint8Array, capacity * 4);
     surfaceEmissionBuffer = grow(surfaceEmissionBuffer, Uint8Array, capacity * 4);
     tintBuffer = grow(tintBuffer, Uint8Array, capacity * 16);
+    plantMotionBuffer = grow(plantMotionBuffer, Uint8Array, capacity * 8);
     splitBuffer = grow(splitBuffer, Uint8Array, capacity);
 
     faceCapacity = capacity;
@@ -641,6 +629,8 @@ function addPlants(plants, faceCount, baseX, baseZ) {
 
                     uvBuffer[t + i * 2] = us[right];
                     uvBuffer[t + i * 2 + 1] = bottom ? vMin : vMax;
+                    plantMotionBuffer[t + i * 2] = bottom ? 0 : 255;
+                    plantMotionBuffer[t + i * 2 + 1] = 0;
 
                     const shade = bottom ? PLANT_BOTTOM_SHADE : 1;
 
@@ -683,6 +673,70 @@ function addPlants(plants, faceCount, baseX, baseZ) {
 }
 
 // ------------------------------------------------------------
+// Generated river plants share the existing plant material and chunk batch.
+// Their cached templates carry actual surface normals and a linear albedo tint.
+function addRiverPlants(plants, faceCount, baseX, baseZ) {
+    for (let k = 0; k < plants.length; k += 4) {
+        const lx = plants[k], y = plants[k + 1], lz = plants[k + 2];
+        const data = blockRenderData[plants[k + 3]].riverPlant;
+        const wx = baseX + lx, wz = baseZ + lz;
+        const transform = riverPlantTransform(wx, y, wz);
+        const faces = getRiverPlantFaces(data.kind, transform.variant, data.waterlogged);
+        const { cos, sin } = transform;
+        const centerX = lx + transform.x;
+        const centerZ = lz + transform.z;
+        const cell = padIndex(lx, y, lz);
+        const red = padR[cell], green = padG[cell], blue = padB[cell];
+        const strongest = Math.max(red, green, blue);
+        const sky = BRIGHTNESS[padSky[cell] * LEVEL_STEPS];
+        const lamp = BRIGHTNESS[Math.round(COLOR_LEVEL[strongest] * LEVEL_STEPS)] * 0.75;
+        const lampR = strongest > 0 ? lamp * red / strongest : lamp;
+        const lampG = strongest > 0 ? lamp * green / strongest : lamp;
+        const lampB = strongest > 0 ? lamp * blue / strongest : lamp;
+        const atmosphereSky = ATMOSPHERE_BRIGHTNESS[padSky[cell] * LEVEL_STEPS];
+        const atmosphereLamp = ATMOSPHERE_BRIGHTNESS[Math.round(COLOR_LEVEL[strongest] * LEVEL_STEPS)] * 0.75;
+        const atmosphereScale = lamp > 0 ? atmosphereLamp / lamp : 0;
+        const depthShade = data.kind === 'milfoil' ? waterDepthShade(cell) : 1;
+        const { uMin, uMax, vMin, vMax } = data.uv;
+        ensureCapacity(faceCount + faces.length);
+
+        for (const face of faces) {
+            const p = faceCount * 12, t = faceCount * 8, c = faceCount * 16;
+            for (let i = 0; i < 4; i++) {
+                const vertex = face.vertices[i];
+                positionBuffer[p + i * 3] = centerX + cos * vertex[0] - sin * vertex[2];
+                positionBuffer[p + i * 3 + 1] = y + vertex[1];
+                positionBuffer[p + i * 3 + 2] = centerZ + sin * vertex[0] + cos * vertex[2];
+                normalBuffer[p + i * 3] = cos * face.normal[0] - sin * face.normal[2];
+                normalBuffer[p + i * 3 + 1] = face.normal[1];
+                normalBuffer[p + i * 3 + 2] = sin * face.normal[0] + cos * face.normal[2];
+                uvBuffer[t + i * 2] = i & 1 ? uMax : uMin;
+                uvBuffer[t + i * 2 + 1] = i >> 1 ? vMin : vMax;
+                plantMotionBuffer[t + i * 2] = face.weights[i];
+                plantMotionBuffer[t + i * 2 + 1] = face.movement;
+
+                const shade = (0.79 + Math.min(1, vertex[1] / 0.8) * 0.21) * depthShade;
+                colorBuffer[c + i * 4] = lampR * shade * 255 + 0.5;
+                colorBuffer[c + i * 4 + 1] = lampG * shade * 255 + 0.5;
+                colorBuffer[c + i * 4 + 2] = lampB * shade * 255 + 0.5;
+                colorBuffer[c + i * 4 + 3] = sky * shade * 255 + 0.5;
+                atmosphereLightBuffer[c + i * 4] = lampR * atmosphereScale * shade * 255 + 0.5;
+                atmosphereLightBuffer[c + i * 4 + 1] = lampG * atmosphereScale * shade * 255 + 0.5;
+                atmosphereLightBuffer[c + i * 4 + 2] = lampB * atmosphereScale * shade * 255 + 0.5;
+                atmosphereLightBuffer[c + i * 4 + 3] = atmosphereSky * depthShade * 255 + 0.5;
+                surfaceOcclusionBuffer[faceCount * 4 + i] = shade * 255 + 0.5;
+                surfaceEmissionBuffer[faceCount * 4 + i] = 0;
+                tintBuffer[c + i * 4] = face.color[0];
+                tintBuffer[c + i * 4 + 1] = face.color[1];
+                tintBuffer[c + i * 4 + 2] = face.color[2];
+                tintBuffer[c + i * 4 + 3] = 128;
+            }
+            splitBuffer[faceCount++] = 0;
+        }
+    }
+    return faceCount;
+}
+
 // PŁASKIE DEKORACJE (model 'flat'): jeden obrazek tuż przy ścianie
 // sąsiada, do którego blok przylega - opadłe liście leżą na ziemi,
 // wieniec wisi na ścianie. Światło - z komórki dekoracji.
@@ -761,6 +815,8 @@ function addFlats(flats, faceCount, baseX, baseZ) {
 
             uvBuffer[t + i * 2] = faceUv[i * 2];
             uvBuffer[t + i * 2 + 1] = faceUv[i * 2 + 1];
+            plantMotionBuffer[t + i * 2] = 0;
+            plantMotionBuffer[t + i * 2 + 1] = 0;
 
             colorBuffer[c + i * 4] = r + 0.5;
             colorBuffer[c + i * 4 + 1] = g + 0.5;
@@ -876,7 +932,7 @@ function addCubeFaces(id, renderData, lx, y, lz, faceCount, baseX, baseZ) {
     const emission = getLightEmission(id) / MAX_LIGHT * 255;
     const glowing = emission > 0;
 
-    const liquid = isLiquidId(id) ? id : 0;
+    const liquid = getLiquidKindId(id);
 
     const tinted = renderData.tint && meshTint !== null;
 
@@ -965,6 +1021,8 @@ function addCubeFaces(id, renderData, lx, y, lz, faceCount, baseX, baseZ) {
 
             uvBuffer[t + i * 2] = uv[i * 2];
             uvBuffer[t + i * 2 + 1] = uv[i * 2 + 1];
+            plantMotionBuffer[t + i * 2] = 0;
+            plantMotionBuffer[t + i * 2 + 1] = 0;
 
 
             // Kolor rogu:
@@ -1235,6 +1293,7 @@ export function buildChunkGeometry(chunk, world) {
     // fale): x, y, z, id po kolei.
 
     const plants = [];
+    const riverPlants = [];
 
     const leaves = [];
 
@@ -1262,6 +1321,16 @@ export function buildChunkGeometry(chunk, world) {
                     continue;
                 }
 
+
+                if (renderData.riverPlant) {
+                    riverPlants.push(lx, y, lz, id);
+                    // A waterlogged plant is still a full water cell. Drawing
+                    // canonical water here also preserves flow UVs and hides
+                    // faces against ordinary water and other aquatic species.
+                    const liquid = getLiquidKindId(id);
+                    if (liquid) liquids.push(lx, y, lz, liquid);
+                    continue;
+                }
 
                 if (renderData.cross) {
 
@@ -1313,6 +1382,7 @@ export function buildChunkGeometry(chunk, world) {
     const cubeFaces = faceCount;
 
     faceCount = addPlants(plants, faceCount, baseX, baseZ);
+    faceCount = addRiverPlants(riverPlants, faceCount, baseX, baseZ);
 
     const plantFaces = faceCount - cubeFaces;
 
@@ -1421,6 +1491,11 @@ export function buildChunkGeometry(chunk, world) {
         new THREE.BufferAttribute(tintBuffer.slice(0, vertexCount * 4), 4, true)
     );
 
+    geometry.setAttribute(
+        'plantMotion',
+        new THREE.BufferAttribute(plantMotionBuffer.slice(0, vertexCount * 2), 2, true)
+    );
+
     geometry.setIndex(
         new THREE.BufferAttribute(indices, 1)
     );
@@ -1454,7 +1529,7 @@ export function buildChunkGeometry(chunk, world) {
 
     geometry.boundingSphere = new THREE.Sphere(
         new THREE.Vector3(S / 2, height / 2, S / 2),
-        Math.sqrt((S / 2) * (S / 2) * 2 + (height / 2) * (height / 2))
+        Math.sqrt((S / 2) * (S / 2) * 2 + (height / 2) * (height / 2)) + (riverPlants.length ? 1.2 : 0)
     );
 
 

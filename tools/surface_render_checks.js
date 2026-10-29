@@ -1,9 +1,10 @@
 // Regresje prawdziwych materiałów gry. Mały liniowy render target oddziela
 // kompozycję światła od nieba, ekspozycji, mgły i tonemappingu całego kadru.
 import * as THREE from 'three';
-import { blockMaterial, plantMaterial, leafMaterial, waterMaterial,
+import { blockMaterial, plantMaterial, leafMaterial, waterMaterial, waterUniforms,
     setShadowDefine, setPotatoDefine } from '../src/rendering/BlockRenderData.js';
 import { createModelMaterial, modelLight } from '../src/rendering/ModelMaterial.js';
+import { buildBlockGeometry } from '../src/player/PlayerModel.js';
 import { createFarTerrainMaterial } from '../src/world/FarTerrain.js';
 import { CubeParticles } from '../src/rendering/CubeParticles.js';
 import { skyUniforms } from '../src/sky/skyShader.js';
@@ -18,7 +19,7 @@ export async function checkSurfaceRendering({ game, settings, renderer, yieldBro
     const close = (actual, expected, label, tolerance = 2) => actual.forEach((v, i) =>
         check(Math.abs(v - expected[i]) <= tolerance, `${label}, RGB[${i}]: ${v} != ${expected[i]}`));
     const uniforms = [...new Set([skyUniforms, viewUniforms, chunkMaskUniforms, shadowUniforms,
-        dynamicLightUniforms, bounceUniforms, meteorLightUniforms, modelLight].flatMap(Object.values))];
+        dynamicLightUniforms, bounceUniforms, meteorLightUniforms, modelLight, waterUniforms].flatMap(Object.values))];
     const savedUniforms = uniforms.map(uniform => [uniform,
         uniform.value?.clone && !uniform.value.isTexture ? uniform.value.clone() : uniform.value]);
     const saved = { target: renderer.getRenderTarget(), autoClear: renderer.autoClear,
@@ -70,8 +71,27 @@ export async function checkSurfaceRendering({ game, settings, renderer, yieldBro
         add(['near', 'plant', 'leaf', 'water'][i], material);
         return material;
     });
+    // Exact chunk attribute types exercise both the new linear-albedo mode
+    // and all three motion modes on the GPU, independently of world density.
+    const riverGeometry = own(plane.clone());
+    const riverTint = [51, 128, 26];
+    riverGeometry.setAttribute('tint', new THREE.BufferAttribute(new Uint8Array([
+        ...riverTint, 128, ...riverTint, 128, ...riverTint, 128, ...riverTint, 128
+    ]), 4, true));
+    riverGeometry.setAttribute('plantMotion', new THREE.BufferAttribute(new Uint8Array([
+        255, 0, 255, 0, 0, 0, 0, 0
+    ]), 2, true));
+    const riverMaterial = own(plantMaterial.clone());
+    riverMaterial.onBeforeCompile = plantMaterial.onBeforeCompile;
+    riverMaterial.defines = { ...plantMaterial.defines }; riverMaterial.map = white;
+    riverMaterial.color.setRGB(.25, .25, .25);
+    blockMaterials.push(riverMaterial);
+    add('riverPlant', riverMaterial, riverGeometry);
     const model = own(createModelMaterial({ map: white }));
     model.color.setRGB(.25, .25, .25); add('model', model);
+    const heldGrass = own(createModelMaterial({ map: white, alphaTest: .5, vertexColors: true }));
+    heldGrass.color.setRGB(.25, .25, .25);
+    add('heldGrass', heldGrass, own(buildBlockGeometry('short_grass')));
     const farGeometry = own(new THREE.PlaneGeometry(2, 2));
     // Prawdziwe kodowanie farSamples: pierwiastek liniowego albedo oraz oś 127.
     fill(farGeometry, 'color', [.5, .5, .5, 1]);
@@ -113,7 +133,7 @@ export async function checkSurfaceRendering({ game, settings, renderer, yieldBro
         setShadowDefine(blockMaterials, quality > 0, quality === 3);
         far.defines = { ...(quality === 3 ? { USE_FAR_SHADOWS: '' } : {}), ...(potato ? { POTATO: '' } : {}) };
         far.needsUpdate = true;
-        setPotatoDefine([...blockMaterials, model, debris.mesh.material], potato);
+        setPotatoDefine([...blockMaterials, model, heldGrass, debris.mesh.material], potato);
         modelLight.uModelShadows.value = quality > 0 ? 1 : 0;
     };
     const checkWebGL1 = async () => {
@@ -210,6 +230,39 @@ export async function checkSurfaceRendering({ game, settings, renderer, yieldBro
             pixels[name] = draw(name);
             close(pixels[name], pixels.natural, `Near/${name}: ten sam liniowy materiał i światło`);
         }
+        pixels.riverDay = draw('riverPlant');
+        pixels.heldGrass = draw('heldGrass');
+        close(pixels.heldGrass, pixels.natural,
+            'Stara roślina w ręce po modelu rzecznym: biały kolor wierzchołków, bez czarnej sylwetki');
+        close(pixels.riverDay, pixels.natural.map((v, i) => v * riverTint[i] / 255),
+            'Rośliny rzeczne: liniowy kolor modelu, bez podwójnej gammy');
+        check(pixels.riverDay[1] > pixels.riverDay[0] && pixels.riverDay[1] > pixels.riverDay[2],
+            'Rośliny rzeczne nie otrzymały koloru modelu');
+        ambient.intensity = Math.PI * .08;
+        pixels.riverNight = draw('riverPlant');
+        close(pixels.riverNight, pixels.riverDay.map(v => v * .2), 'Rośliny rzeczne: światło nocne');
+        check(pixels.riverNight[1] > 0 && pixels.riverNight[1] < pixels.riverDay[1],
+            'Rośliny rzeczne świecą same albo znikają w świetle nocnym');
+        fill(riverGeometry, 'color', [0, 0, 0, 0]);
+        fill(riverGeometry, 'atmosphereLight', [0, 0, 0, 0]);
+        for (const atmosphere of [0, 1]) {
+            skyUniforms.uAtmosphericLight.value = atmosphere;
+            close(draw('riverPlant'), [0, 0, 0], `Rośliny rzeczne: ciemność, model ${atmosphere}`);
+        }
+        skyUniforms.uAtmosphericLight.value = 1;
+        ambient.intensity = Math.PI * .4;
+        fill(riverGeometry, 'color', [0, 0, 0, 1]);
+        fill(riverGeometry, 'atmosphereLight', [0, 0, 0, 1]);
+        const motion = riverGeometry.getAttribute('plantMotion');
+        for (const kind of [0, 128, 255]) {
+            for (let i = 0; i < motion.count; i++) motion.array[i * 2 + 1] = kind;
+            motion.needsUpdate = true;
+            viewUniforms.uTime.value = 4.7;
+            waterUniforms.uWaveHeight.value = .135;
+            close(draw('riverPlant'), pixels.riverDay, `Rośliny rzeczne: tryb ruchu ${kind}`);
+        }
+        viewUniforms.uTime.value = 0;
+        waterUniforms.uWaveHeight.value = .045;
         fill(plane, 'atmosphereLight', [.5, .25, 0, 1]);
         ambient.intensity = 0;
         pixels.lamp = draw('near');

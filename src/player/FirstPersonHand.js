@@ -116,7 +116,7 @@ export class FirstPersonHand {
 
 
         this.heldMaterial = createModelMaterial({ map: blockAtlasTexture });
-        this.heldCutoutMaterial = createModelMaterial({ map: blockAtlasTexture, alphaTest: 0.5 });
+        this.heldCutoutMaterial = createModelMaterial({ map: blockAtlasTexture, alphaTest: 0.5, vertexColors: true });
 
         this.held = new THREE.Mesh(new THREE.BufferGeometry(), this.heldMaterial);
 
@@ -252,7 +252,7 @@ export class FirstPersonHand {
 
         this.pose =
             flat ? POSES.item :
-            model === 'cross' ? POSES.plant :
+            model === 'cross' || model === 'riverPlant' ? POSES.plant :
             POSES.block;
 
         this.held.material = block && (model === 'cube')

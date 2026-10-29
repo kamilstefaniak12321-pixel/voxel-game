@@ -19,6 +19,8 @@ import { Forests } from '../trees/Forests.js';
 
 import { Rivers } from './Rivers.js';
 
+import { RiverVegetation } from './RiverVegetation.js';
+
 import { Biomes, BIOMES, BIOME_KEYS, BIOME_INDEX, grassTint } from './Biomes.js';
 
 // ------------------------------------------------------------
@@ -276,6 +278,8 @@ export class RealisticGenerator {
         };
 
         this.plantSeed = Math.imul(base, 0x2545f491) >>> 0;
+
+        this.riverVegetation = new RiverVegetation(this.plantSeed);
 
 
         this.ids = {
@@ -973,6 +977,10 @@ export class RealisticGenerator {
                 out[y] = ids.water;
             }
 
+            // Rośliny wodne zachowują wodę w swojej komórce. Nie
+            // zmieniają poziomu tafli, dna ani wyliczonego nurtu.
+            this.riverVegetation.fillWater(x, z, sample, key, out);
+
             top = Math.max(top, sample.water);
 
         }
@@ -1046,6 +1054,9 @@ export class RealisticGenerator {
 
         }
 
+        const riverPlant = this.riverVegetation.shoreAt(x, z, sample, key, kind);
+        if (riverPlant && ground !== this.ids.snow) return riverPlant;
+
         if (kind === 'grass') {
             return ground === this.ids.snow ? 0 : this.plantAt(x, z, sample, biome);
         }
@@ -1080,25 +1091,7 @@ export class RealisticGenerator {
         const P = SHAPE.PLANTS;
         const ids = this.ids;
 
-        const key = BIOME_KEYS[biome];
-
         const roll = hash01(this.plantSeed, x, z, 1);
-
-
-        // Trzcina przy samej wodzie: na mokradłach gęsto, na innych
-        // nizinach rzadziej.
-
-        const water = Math.min(sample.riverGap ?? Infinity, sample.lakeGap ?? Infinity);
-
-        if (water < 2.5) {
-
-            const reed = key === 'wetland' ? 0.6 : water < 1.2 && sample.height - SEA_LEVEL < SHAPE.RELIEF_UPLAND ? 0.25 : 0;
-
-            if (hash01(this.plantSeed, x, z, 9) < reed) {
-                return ids.reed;
-            }
-
-        }
 
 
         // Krzaki owocowe: rzadkie zarośla tam, gdzie pole krzaków

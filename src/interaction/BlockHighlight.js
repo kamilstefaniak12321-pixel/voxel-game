@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 
 import { getBlockDefinition } from '../blocks/BlockRegistry.js';
+import { riverPlantBounds } from './RiverPlantBounds.js';
 
 
 // Ramka płaskiej dekoracji (model 'flat'): wzdłuż której osi cienka
@@ -84,6 +85,15 @@ export class BlockHighlight {
         const size = [width, height, width];
 
         const center = [0.5, height / 2, 0.5];
+
+        const river = definition?.riverPlant;
+        if (river) {
+            const bounds = riverPlantBounds(river, hit.block.x, hit.block.y, hit.block.z);
+            for (let axis = 0; axis < 3; axis++) {
+                size[axis] = Math.max(0.01, bounds.max[axis] - bounds.min[axis]);
+                center[axis] = (bounds.min[axis] + bounds.max[axis]) / 2;
+            }
+        }
 
         const flat = FLAT_BOXES[definition?.flat?.attach];
 

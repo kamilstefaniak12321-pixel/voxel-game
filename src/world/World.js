@@ -15,7 +15,9 @@ import {
     getBlockId,
     getBlockTypeById,
     isSolidId,
-    canGrowOn,
+    canPlantStay,
+    isWaterloggedPlantId,
+    getLiquidKindId,
     isPlantId,
     isTreeId,
     getAttach,
@@ -514,6 +516,13 @@ export class World {
         const lz = z - cz * CHUNK_SIZE;
 
 
+        // Zbieramy roślinę, nie wodę, w której rosła. Postawienie
+        // konkretnego bloku nadal zastępuje całą komórkę normalnie.
+        const previousId = chunk.getId(lx, y, lz);
+        if (id === AIR_ID && isWaterloggedPlantId(previousId)) {
+            id = getLiquidKindId(previousId);
+        }
+
         if (!chunk.setId(lx, y, lz, id)) {
             return false;
         }
@@ -544,11 +553,18 @@ export class World {
         this.applyLightChanges();
 
 
-        // Roślina nad blokiem, który przestał być ziemią (zniszczony,
-        // zamieniony na kamień...), nie ma na czym rosnąć - znika.
-
-        if (y + 1 < CHUNK_HEIGHT && isPlantId(this.getBlockId(x, y + 1, z)) && !canGrowOn(this.getBlockId(x, y + 1, z), id)) {
-            this.setBlock(x, y + 1, z, null);
+        // Zmienione podłoże lub przykryta tafla mogą usunąć roślinę.
+        // Wodna odmiana oddaje wówczas swoją komórkę zwykłej wodzie.
+        for (const py of [y - 1, y + 1]) {
+            if (py < 0 || py >= CHUNK_HEIGHT) continue;
+            const plantId = this.getBlockId(x, py, z);
+            if (isPlantId(plantId) && !canPlantStay(
+                plantId,
+                this.getBlockId(x, py - 1, z),
+                this.getBlockId(x, py + 1, z)
+            )) {
+                this.setBlock(x, py, z, null);
+            }
         }
 
 

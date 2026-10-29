@@ -230,5 +230,51 @@ test('łup dostają tylko faktycznie usunięte bloki podparte', () => {
     assert.equal(f.count('moss_carpet'), 0);
 });
 
+for (const type of ['water_milfoil', 'water_lily', 'duckweed', 'cattail_water']) {
+    test(`${type}: zbieranie zostawia wodę i oddaje jedną roślinę`, () => {
+        const f = fixture();
+        f.set(0, 49, 0, 'sand');
+        f.set(0, 50, 0, type);
+        assert.equal(f.game.breakTarget(f.hit()), true);
+        assert.equal(f.world.getBlock(0, 50, 0), 'water');
+        assert.equal(f.count(type === 'cattail_water' ? 'cattail' : type), 1);
+    });
+}
+
+test('usunięcie dna zbiera zakorzenioną roślinę i zostawia jej wodę', () => {
+    const f = fixture();
+    f.set(0, 50, 0, 'sand');
+    f.set(0, 51, 0, 'water_milfoil');
+    assert.equal(f.game.breakTarget(f.hit()), true);
+    assert.equal(f.world.getBlock(0, 51, 0), 'water');
+    assert.equal(f.count('sand'), 1);
+    assert.equal(f.count('water_milfoil'), 1);
+});
+
+test('pełny ekwipunek zachowuje dno, wodę i zakorzenioną roślinę', () => {
+    const f = fixture();
+    f.set(0, 50, 0, 'sand');
+    f.set(0, 51, 0, 'cattail_water');
+    f.fill();
+    f.game.inventory.set(0, { type: 'sand', count: 63 });
+    assert.equal(f.game.breakTarget(f.hit()), false);
+    assert.equal(f.world.getBlock(0, 50, 0), 'sand');
+    assert.equal(f.world.getBlock(0, 51, 0), 'cattail_water');
+});
+
+test('zbieranie rośliny pod taflą nie duplikuje pływających liści', () => {
+    const f = fixture();
+    f.set(0, 49, 0, 'sand');
+    f.set(0, 50, 0, 'water_milfoil');
+    f.set(0, 51, 0, 'water_lily');
+    f.fill();
+    f.game.inventory.set(0, { type: 'water_milfoil', count: 63 });
+    assert.equal(f.game.breakTarget(f.hit()), true);
+    assert.equal(f.world.getBlock(0, 50, 0), 'water');
+    assert.equal(f.world.getBlock(0, 51, 0), 'water_lily');
+    assert.equal(f.count('water_milfoil'), 64);
+    assert.equal(f.count('water_lily'), 0);
+});
+
 console.log(`Sprawdzonych przypadków: ${checked}, błędów: ${failed}.`);
 process.exitCode = failed ? 1 : 0;

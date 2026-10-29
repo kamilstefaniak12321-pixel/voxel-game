@@ -12,6 +12,7 @@ import {
 import {
     isSolidId,
     isLiquidId,
+    getLiquidKindId,
     getBlockTypeById,
     getBlockDefinition
 } from '../blocks/BlockRegistry.js';
@@ -1593,7 +1594,7 @@ export class FarTerrain {
             const id = blocks[(y * CHUNK_SIZE + lz) * CHUNK_SIZE + lx];
 
             if (isSolidId(id) || isLiquidId(id)) {
-                const material = getBlockTypeById(id);
+                const material = getBlockTypeById(getLiquidKindId(id) || id);
                 return { top: y + 1, kind: BLOCK_KINDS[material] ?? 'grass', material };
             }
 

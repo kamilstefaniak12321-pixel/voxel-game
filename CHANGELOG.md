@@ -11,6 +11,27 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 0.26.0 - Żywe brzegi i roślinność wodna
+
+Roślinność rzeczna — PR #53.
+
+- Turzyce, pałki wodne i fioletowa krwawnica tworzą nieregularne kępy
+  przy brzegach, uzupełniając dotychczasową trzcinę.
+- W płytkiej wodzie rośnie wywłócznik, a spokojną taflę zdobią
+  grzybienie z okazjonalnymi kwiatami i małe skupiska rzęsy.
+- Sześć nowych modeli ma różne kształty, warianty i subtelny ruch:
+  łodygi kołyszą się, podwodne pędy falują, a liście podążają za taflą.
+  Siedliska uwzględniają brzeg, głębokość i nurt, pozostawiając przerwy.
+- Nowe rośliny można zbierać i sadzić. Wodne formy zachowują wodę
+  oraz możliwość pływania; pałka dobiera postać do lądu lub płycizny.
+- Drzewa i ściółka nie zastępują wody zajętej przez rośliny. Celownik
+  rozpoznaje także górną część wysokich pędów.
+- Roślinność pojawia się w nowych i nietkniętych fragmentach światów
+  realistycznych. Zapisane fragmenty zmienione przez gracza nie są
+  regenerowane; rośliny można tam dosadzić ręcznie.
+- Wersja 0.26.0 wspólna dla Windowsa i Androida. Przygotowana w PR;
+  publikacja w `voxel-game-wydania` następuje przez workflow po scaleniu.
+
 ## 0.25.1 - Naturalne koryta i ujścia rzek
 
 Naprawy generacji terenu — PR #52.

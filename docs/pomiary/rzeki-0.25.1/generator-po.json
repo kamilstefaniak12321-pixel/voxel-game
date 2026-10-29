@@ -1,0 +1,212 @@
+{
+  "mode": "current",
+  "baselineRef": "300746c5e9679d620d41fa73fc89723db1eaddd2",
+  "node": "v24.22.0",
+  "createdAt": "2026-10-29T21:44:26.689Z",
+  "seed": "lighting-rtx3050-0231",
+  "zones": [
+    [
+      -2048,
+      -2048
+    ],
+    [
+      -1792,
+      -2048
+    ],
+    [
+      -1536,
+      -2048
+    ],
+    [
+      -2048,
+      -1792
+    ],
+    [
+      -1792,
+      -1792
+    ],
+    [
+      -1536,
+      -1792
+    ],
+    [
+      -512,
+      -768
+    ],
+    [
+      -256,
+      -768
+    ],
+    [
+      0,
+      -768
+    ],
+    [
+      -512,
+      -512
+    ],
+    [
+      -256,
+      -512
+    ],
+    [
+      0,
+      -512
+    ],
+    [
+      768,
+      -512
+    ],
+    [
+      1024,
+      -512
+    ],
+    [
+      1280,
+      -512
+    ],
+    [
+      768,
+      -256
+    ],
+    [
+      1024,
+      -256
+    ],
+    [
+      1280,
+      -256
+    ]
+  ],
+  "note": "Main-thread Node CPU measurement, no GPU/FPS. Trial0 warms JIT; compare median of trials1–3. Immutable baseline source loaded from Git, current files loaded at process start.",
+  "trials": [
+    {
+      "trial": 0,
+      "warmup": true,
+      "zonePreparation": {
+        "count": 18,
+        "totalMs": 720.1399999999999,
+        "medianMs": 6.116700000000037,
+        "p95Ms": 537.2996,
+        "maxMs": 537.2996
+      },
+      "passes": [
+        {
+          "spacing": 1,
+          "count": 73728,
+          "elapsedMs": 185.21719999999993,
+          "microsecondsPerColumn": 2.512169053819443
+        },
+        {
+          "spacing": 4,
+          "count": 73728,
+          "elapsedMs": 173.414,
+          "microsecondsPerColumn": 2.352077907986111
+        },
+        {
+          "spacing": 8,
+          "count": 73728,
+          "elapsedMs": 137.85040000000004,
+          "microsecondsPerColumn": 1.8697157118055558
+        }
+      ],
+      "checksum": 17191757
+    },
+    {
+      "trial": 1,
+      "warmup": false,
+      "zonePreparation": {
+        "count": 18,
+        "totalMs": 627.6835999999998,
+        "medianMs": 6.322000000000116,
+        "p95Ms": 468.1503,
+        "maxMs": 468.1503
+      },
+      "passes": [
+        {
+          "spacing": 1,
+          "count": 73728,
+          "elapsedMs": 164.6311999999998,
+          "microsecondsPerColumn": 2.2329535590277754
+        },
+        {
+          "spacing": 4,
+          "count": 73728,
+          "elapsedMs": 147.05330000000004,
+          "microsecondsPerColumn": 1.9945380316840284
+        },
+        {
+          "spacing": 8,
+          "count": 73728,
+          "elapsedMs": 146.01920000000018,
+          "microsecondsPerColumn": 1.9805121527777803
+        }
+      ],
+      "checksum": 17191757
+    },
+    {
+      "trial": 2,
+      "warmup": false,
+      "zonePreparation": {
+        "count": 18,
+        "totalMs": 692.5231000000013,
+        "medianMs": 7.821599999999762,
+        "p95Ms": 518.1399000000001,
+        "maxMs": 518.1399000000001
+      },
+      "passes": [
+        {
+          "spacing": 1,
+          "count": 73728,
+          "elapsedMs": 152.41730000000007,
+          "microsecondsPerColumn": 2.0672919379340287
+        },
+        {
+          "spacing": 4,
+          "count": 73728,
+          "elapsedMs": 164.8779999999997,
+          "microsecondsPerColumn": 2.236300998263885
+        },
+        {
+          "spacing": 8,
+          "count": 73728,
+          "elapsedMs": 151.28790000000026,
+          "microsecondsPerColumn": 2.051973470052087
+        }
+      ],
+      "checksum": 17191757
+    },
+    {
+      "trial": 3,
+      "warmup": false,
+      "zonePreparation": {
+        "count": 18,
+        "totalMs": 668.6837,
+        "medianMs": 7.587300000000141,
+        "p95Ms": 475.30750000000035,
+        "maxMs": 475.30750000000035
+      },
+      "passes": [
+        {
+          "spacing": 1,
+          "count": 73728,
+          "elapsedMs": 187.61239999999998,
+          "microsecondsPerColumn": 2.5446560329861105
+        },
+        {
+          "spacing": 4,
+          "count": 73728,
+          "elapsedMs": 159.77310000000034,
+          "microsecondsPerColumn": 2.1670613606770877
+        },
+        {
+          "spacing": 8,
+          "count": 73728,
+          "elapsedMs": 168.39310000000023,
+          "microsecondsPerColumn": 2.2839775933159756
+        }
+      ],
+      "checksum": 17191757
+    }
+  ]
+}

@@ -1,0 +1,86 @@
+{
+  "device": {
+    "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 3050 Laptop GPU (0x000025A2) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "drawingBuffer": [
+      1920,
+      1080
+    ],
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.7977.130 Electron/44.4.5 Safari/537.36"
+  },
+  "seed": 2138286349,
+  "results": [
+    {
+      "point": "zgloszenie",
+      "pose": {
+        "x": 188,
+        "y": 132,
+        "z": -252,
+        "yaw": 3.65,
+        "pitch": -0.7
+      },
+      "settings": {
+        "potato": false,
+        "viewDistance": 48,
+        "farTerrain": 8192,
+        "farDetail": 2,
+        "fov": 75,
+        "brightness": 0,
+        "renderScale": 100,
+        "fpsLimit": 0,
+        "ambientOcclusion": 45,
+        "shadows": 3,
+        "lightingModel": "atmosphere",
+        "lightShafts": true,
+        "bounceLight": false,
+        "fancyLeaves": true,
+        "dynamicLight": true,
+        "loadBudget": 4,
+        "mouseSensitivity": 100,
+        "invertMouse": false,
+        "skinOverlay": true,
+        "showHand": true,
+        "viewBobbing": true,
+        "jointStyle": "smooth",
+        "cameraDistance": 4,
+        "volumeMaster": 80,
+        "volumeBlocks": 100,
+        "volumeWorld": 100,
+        "volumeUi": 80,
+        "theme": "default",
+        "hudScale": 100,
+        "showDebug": true,
+        "showFps": false,
+        "meteorites": true,
+        "autoUpdates": true,
+        "textureResolution": 0
+      },
+      "frames": {
+        "samples": 4020,
+        "averageMs": 7.460248756230767,
+        "fps": 134.04378763708172,
+        "p99Ms": 13.200000047683716,
+        "maxMs": 19.700000047683716,
+        "low1Fps": 64.54659949137623,
+        "over33ms": 0
+      },
+      "renderCpu": {
+        "samples": 4021,
+        "averageMs": 5.3203680710364445,
+        "fps": 187.95692077093327,
+        "p99Ms": 10.5,
+        "maxMs": 15.099999904632568,
+        "low1Fps": 84.88612849009377,
+        "over33ms": 0
+      },
+      "gpu": {
+        "samples": 4021,
+        "averageMs": 5.40408183436958,
+        "fps": 185.04531031341352,
+        "p99Ms": 8.633344,
+        "maxMs": 10.515424,
+        "low1Fps": 110.99759396200812,
+        "over33ms": 0
+      }
+    }
+  ]
+}

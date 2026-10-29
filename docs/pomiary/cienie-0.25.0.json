@@ -2,7 +2,7 @@
   "version": "0.25.0",
   "date": "2026-10-29",
   "hardware": "RTX 3050 Laptop 4 GB; i5-12500H; AC power; 1920x1080; current Windows display mode 144 Hz; ANGLE/D3D11",
-  "scope": "Uncapped renderer throughput, not physical monitor refresh. 1% low = inverse mean of slowest 1% rendered-frame intervals. World clock running at 1x.",
+  "scope": "Renderer call intervals, not physical monitor refresh. Runs are uncapped except rows with settings.fpsLimit=60, which measure the in-game limiter. 1% low = inverse mean of slowest 1% rendered-frame intervals. World clock running at 1x.",
   "baseline0240": [
     {
       "trial": 1,

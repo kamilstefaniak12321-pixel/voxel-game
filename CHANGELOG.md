@@ -13,7 +13,7 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ## 0.25.1 - Naturalne koryta i ujścia rzek
 
-Naprawy generacji terenu — numer PR zostanie uzupełniony po utworzeniu.
+Naprawy generacji terenu — PR #52.
 
 - Usunięte dawne suche szczeliny przypominające opuszczone koryta.
   Doliny i górskie żleby pozostają.

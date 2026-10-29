@@ -1,0 +1,232 @@
+{
+  "device": {
+    "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 3050 Laptop GPU (0x000025A2) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "drawingBuffer": [
+      1920,
+      1080
+    ],
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.7977.130 Electron/44.4.5 Safari/537.36"
+  },
+  "seed": 2138286349,
+  "results": [
+    {
+      "point": "zgloszenie",
+      "pose": {
+        "x": 188,
+        "y": 132,
+        "z": -252,
+        "yaw": 3.65,
+        "pitch": -0.7
+      },
+      "settings": {
+        "potato": false,
+        "viewDistance": 48,
+        "farTerrain": 8192,
+        "farDetail": 2,
+        "fov": 75,
+        "brightness": 0,
+        "renderScale": 100,
+        "fpsLimit": 0,
+        "ambientOcclusion": 45,
+        "shadows": 3,
+        "lightingModel": "atmosphere",
+        "lightShafts": true,
+        "bounceLight": false,
+        "fancyLeaves": true,
+        "dynamicLight": true,
+        "loadBudget": 4,
+        "mouseSensitivity": 100,
+        "invertMouse": false,
+        "skinOverlay": true,
+        "showHand": true,
+        "viewBobbing": true,
+        "jointStyle": "smooth",
+        "cameraDistance": 4,
+        "volumeMaster": 80,
+        "volumeBlocks": 100,
+        "volumeWorld": 100,
+        "volumeUi": 80,
+        "theme": "default",
+        "hudScale": 100,
+        "showDebug": true,
+        "showFps": false,
+        "meteorites": true,
+        "autoUpdates": true,
+        "textureResolution": 0
+      },
+      "frames": {
+        "samples": 3608,
+        "averageMs": 8.312638580931264,
+        "fps": 120.2987463323553,
+        "p99Ms": 15.599999904632568,
+        "maxMs": 23,
+        "low1Fps": 56.47130644664748,
+        "over33ms": 0
+      },
+      "renderCpu": {
+        "samples": 3609,
+        "averageMs": 6.010972569080627,
+        "fps": 166.36242945839115,
+        "p99Ms": 12.200000047683716,
+        "maxMs": 15.400000095367432,
+        "low1Fps": 75.69558098519275,
+        "over33ms": 0
+      },
+      "gpu": {
+        "samples": 3609,
+        "averageMs": 5.151901410917168,
+        "fps": 194.10309325425828,
+        "p99Ms": 8.408064,
+        "maxMs": 9.318368,
+        "low1Fps": 114.72706567508084,
+        "over33ms": 0
+      }
+    },
+    {
+      "point": "zgloszenie",
+      "pose": {
+        "x": 188,
+        "y": 132,
+        "z": -252,
+        "yaw": 3.65,
+        "pitch": -0.7
+      },
+      "settings": {
+        "potato": false,
+        "viewDistance": 192,
+        "farTerrain": 8192,
+        "farDetail": 2,
+        "fov": 75,
+        "brightness": 0,
+        "renderScale": 100,
+        "fpsLimit": 0,
+        "ambientOcclusion": 45,
+        "shadows": 3,
+        "lightingModel": "atmosphere",
+        "lightShafts": true,
+        "bounceLight": false,
+        "fancyLeaves": true,
+        "dynamicLight": true,
+        "loadBudget": 4,
+        "mouseSensitivity": 100,
+        "invertMouse": false,
+        "skinOverlay": true,
+        "showHand": true,
+        "viewBobbing": true,
+        "jointStyle": "smooth",
+        "cameraDistance": 4,
+        "volumeMaster": 80,
+        "volumeBlocks": 100,
+        "volumeWorld": 100,
+        "volumeUi": 80,
+        "theme": "default",
+        "hudScale": 100,
+        "showDebug": true,
+        "showFps": false,
+        "meteorites": true,
+        "autoUpdates": true,
+        "textureResolution": 0
+      },
+      "frames": {
+        "samples": 1623,
+        "averageMs": 18.476093653757044,
+        "fps": 54.12399497101779,
+        "p99Ms": 35.09999990463257,
+        "maxMs": 48.200000047683716,
+        "low1Fps": 25.114492535980048,
+        "over33ms": 20
+      },
+      "renderCpu": {
+        "samples": 1624,
+        "averageMs": 16.068411331018204,
+        "fps": 62.233905978596404,
+        "p99Ms": 30.700000047683716,
+        "maxMs": 45.5,
+        "low1Fps": 28.32389202248662,
+        "over33ms": 10
+      },
+      "gpu": {
+        "samples": 1624,
+        "averageMs": 11.930965970443339,
+        "fps": 83.81551020070853,
+        "p99Ms": 20.98992,
+        "maxMs": 29.413376,
+        "low1Fps": 42.64950870575821,
+        "over33ms": 0
+      }
+    },
+    {
+      "point": "zgloszenie",
+      "pose": {
+        "x": 188,
+        "y": 132,
+        "z": -252,
+        "yaw": 3.65,
+        "pitch": -0.7
+      },
+      "settings": {
+        "potato": false,
+        "viewDistance": 48,
+        "farTerrain": 8192,
+        "farDetail": 2,
+        "fov": 75,
+        "brightness": 0,
+        "renderScale": 100,
+        "fpsLimit": 60,
+        "ambientOcclusion": 45,
+        "shadows": 3,
+        "lightingModel": "atmosphere",
+        "lightShafts": true,
+        "bounceLight": false,
+        "fancyLeaves": true,
+        "dynamicLight": true,
+        "loadBudget": 4,
+        "mouseSensitivity": 100,
+        "invertMouse": false,
+        "skinOverlay": true,
+        "showHand": true,
+        "viewBobbing": true,
+        "jointStyle": "smooth",
+        "cameraDistance": 4,
+        "volumeMaster": 80,
+        "volumeBlocks": 100,
+        "volumeWorld": 100,
+        "volumeUi": 80,
+        "theme": "default",
+        "hudScale": 100,
+        "showDebug": true,
+        "showFps": false,
+        "meteorites": true,
+        "autoUpdates": true,
+        "textureResolution": 0
+      },
+      "frames": {
+        "samples": 1798,
+        "averageMs": 16.664349276974416,
+        "fps": 60.00834376303713,
+        "p99Ms": 22.200000047683716,
+        "maxMs": 25.100000143051147,
+        "low1Fps": 44.09603132627149,
+        "over33ms": 0
+      },
+      "renderCpu": {
+        "samples": 1799,
+        "averageMs": 7.125236240740018,
+        "fps": 140.3462237900678,
+        "p99Ms": 13.5,
+        "maxMs": 19.200000047683716,
+        "low1Fps": 66.86478453496152,
+        "over33ms": 0
+      },
+      "gpu": {
+        "samples": 1799,
+        "averageMs": 7.8016326047804405,
+        "fps": 128.1782994225146,
+        "p99Ms": 11.795456,
+        "maxMs": 13.014016,
+        "low1Fps": 82.55129737618957,
+        "over33ms": 0
+      }
+    }
+  ]
+}

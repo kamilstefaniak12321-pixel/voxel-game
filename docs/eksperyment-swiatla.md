@@ -13,6 +13,11 @@ w pozostałych światach.
 
 ## Uruchomienie i porównanie
 
+Ustalenie z 29 października 2026: po etapie cieni 0.25.0 dalsze prace
+nad światłem odkładamy na osobny etap, a teraz naprawiamy generację rzek.
+Do światła wrócimy z zachowaniem celu stabilnych 60 FPS na RTX 3050 Laptop
+na zasilaczu i spójnego wyglądu dalekiego terenu.
+
 W Ustawienia → Obraz jest **Model światła**:
 
 - **Domyślny (atmosferyczny)**: atmosfera we wszystkich światach, również

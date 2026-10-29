@@ -233,9 +233,9 @@ try {
             logs += '\n' + JSON.stringify(message.params);
         }
     });
-    const call = (method, params = {}) => new Promise((resolve, reject) => {
+    const call = (method, params = {}, timeoutMs = 30000) => new Promise((resolve, reject) => {
         const id = ++sequence;
-        const timer = setTimeout(() => { pending.delete(id); reject(new Error(`Brak odpowiedzi Chrome: ${method}`)); }, 30000);
+        const timer = setTimeout(() => { pending.delete(id); reject(new Error(`Brak odpowiedzi Chrome: ${method} (${timeoutMs} ms)`)); }, timeoutMs);
         pending.set(id, { resolve, reject, timer });
         socket.send(JSON.stringify({ id, method, params }));
     });
@@ -247,7 +247,11 @@ try {
     // Rzeczywisty zegar: pętle wczytywania chunków używają performance.now().
     // Wirtualny czas Chrome zatrzymuje ten zegar wewnątrz takiej pętli.
     while (Date.now() < deadline) {
-        const response = await call('Runtime.evaluate', { expression: `({status: document.body?.dataset.result, text: document.querySelector('#result')?.textContent})`, returnByValue: true });
+        // Sonda DOM czeka za synchroniczną kompilacją/renderem SwiftShader.
+        // Jej krótszy limit nie może przerywać jeszcze trwającego testu;
+        // cała próba nadal kończy się najpóźniej po istniejących 180 s.
+        const remaining = Math.max(1, deadline - Date.now());
+        const response = await call('Runtime.evaluate', { expression: `({status: document.body?.dataset.result, text: document.querySelector('#result')?.textContent})`, returnByValue: true }, remaining);
         result = response.result?.value;
         if (result?.status === 'passed' || result?.status === 'failed') break;
         await pause(500);

@@ -1,0 +1,40 @@
+
+{
+  "url": "http://127.0.0.1:63495/?dotyk=1",
+  "electron": "44.4.5",
+  "chrome": "152.0.7977.130",
+  "display": {
+    "bounds": {
+      "x": 0,
+      "y": 0,
+      "width": 1920,
+      "height": 1080
+    },
+    "scaleFactor": 1,
+    "displayFrequency": 144
+  },
+  "contentBounds": {
+    "x": 0,
+    "y": 0,
+    "width": 1920,
+    "height": 1080
+  },
+  "fullscreen": true,
+  "zoomFactor": 1,
+  "gpu": {
+    "2d_canvas": "enabled",
+    "direct_rendering_display_compositor": "disabled_off_ok",
+    "gpu_compositing": "enabled",
+    "multiple_raster_threads": "enabled_on",
+    "opengl": "enabled_on",
+    "rasterization": "enabled",
+    "raw_draw": "disabled_off_ok",
+    "skia_graphite": "disabled_off",
+    "trees_in_viz": "disabled_off",
+    "video_decode": "enabled",
+    "video_encode": "enabled",
+    "webgl": "enabled",
+    "webgpu": "enabled",
+    "webnn": "disabled_off"
+  }
+}

@@ -10,7 +10,7 @@
 //                  ↔ poszarpany (pagórki, ostre góry),
 //   grzbiety     - linie grzbietów górskich i doliny między nimi,
 //   + mniejsze pola do konkretnych form: kotliny, płaskowyże,
-//     wąwozy, żleby, turnie, depresje,
+//     żleby, turnie, depresje,
 //   + klimat (temperatura, wilgotność) - na razie tylko na mapie,
 //     pod przyszłe biomy.
 //
@@ -31,7 +31,6 @@ export const SCALES = {
     bumps: 24,
     basins: 650,
     plateaus: 520,
-    ravines: 170,
     gullies: 34,
     crags: 9,
     depressions: 420,
@@ -97,11 +96,6 @@ export const CRAG_HEIGHT = 9;
 // (0-1; wyżej = rzadziej).
 export const BASIN_FROM = 0.40;
 export const BASIN_FULL = 0.62;
-
-// Wąwozy: wąskie, głębokie rozcięcia wyżyn. Głębokość i jak wąskie
-// (próg 0-1: bliżej 1 = węższe i rzadsze).
-export const RAVINE_DEPTH = 9;
-export const RAVINE_EDGE = 0.94;
 
 // Żleby: rynny na stromych zboczach gór.
 export const GULLY_DEPTH = 3;

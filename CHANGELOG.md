@@ -11,6 +11,30 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 0.25.1 - Naturalne koryta i ujścia rzek
+
+Naprawy generacji terenu — PR #52.
+
+- Usunięte dawne suche szczeliny przypominające opuszczone koryta.
+  Doliny i górskie żleby pozostają.
+- Ujścia nie usypują piaszczystych wałów w morzu. Rzeka łączy się
+  z istniejącą taflą wody.
+- Jezioro zalewa tylko połączony obszar od swojego dna. Suche przejścia
+  do odpływu nie stają się już łańcuchem prostokątnych basenów;
+  prowadzi przez nie ciągłe koryto rzeczne.
+- Wpływ jeziora na pobliskie wzgórza wygasa według odległości od brzegu,
+  bez prostokątnych spłaszczeń otaczającego terenu.
+- Gracz wczytany wewnątrz podniesionego terenu trafia do najbliższego
+  wolnego miejsca nad nim. Budowle, wykopy i wolne pozycje w jaskiniach
+  pozostają bez zmian.
+- Poprawki dotyczą nowych i nietkniętych obszarów istniejących światów.
+  Zapisane fragmenty zmienione przez gracza nie są regenerowane.
+- Wersja 0.25.1 wspólna dla Windowsa i Androida. Po scaleniu PR workflow
+  „Aplikacje (komputer i telefon)” przygotuje wydanie w `voxel-game-wydania`.
+  Sam PR nie publikuje aktualizacji.
+
+---
+
 ## 0.25.0 - Spójne cienie i teren do 800 kratek
 
 Drugi etap oświetlenia — PR #51.

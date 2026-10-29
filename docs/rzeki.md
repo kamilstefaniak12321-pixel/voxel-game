@@ -23,6 +23,13 @@ rozdziału o terenie: `docs/generator-terenu.md` (etap 3).
 
 ## Jak to działa
 
+Od 0.25.1 historia wyszukiwania przelewu i obszar wody jeziora są
+rozdzielone: tafla zajmuje tylko połączone z dnem komórki poniżej jej
+blokowego poziomu. Przez suche fragmenty drogi do przelewu płynie rzeka.
+Zapobiega to powstawaniu oddzielnych prostokątnych basenów. Wygładzanie
+brzegów zależy od faktycznej odległości od jeziora, a zanurzone dno morza
+nie jest podnoszone przy ujściu rzeki.
+
 ```
 makrorzeźba co 16 bloków ──► spływ: z każdej kratki do najbardziej
 (teren bez wzgórz)             stromo w dół położonej sąsiedniej
@@ -154,7 +161,35 @@ Najwygodniej stroić tak: zmienić liczbę, odświeżyć grę, `/mapa teren 16`
 
 Osiągnięcie *Spływ* - daj się ponieść nurtowi rzeki przez 100 bloków.
 
+## Istniejące światy i poprawki generatora
+
+Przyczyny napraw, porównanie obrazu i pomiary RTX 3050:
+[sprawdzenie wersji 0.25.1](rzeki-0.25.1.md).
+
+Poprawki koryt i ujść dotyczą terenu **Realistycznego (w budowie)**.
+Po ponownym wejściu do świata nietknięte obszary powstają z bieżącego
+generatora, także jeśli gracz już je wcześniej odwiedził. Samo oglądanie
+terenu nie zapisuje jego bloków na stałe.
+
+Chunk zmieniony przez gracza jest zapisany w całości: obejmuje budowle,
+wykopy, wodę i dawne podłoże. Aktualizacja zachowuje wszystkie te bloki;
+nie usuwa zapisów ani nie odtwarza takiego chunka od nowa. Dlatego stare
+koryto może pozostać wewnątrz zmienionego chunka, a na jego granicy może
+pojawić się uskok względem poprawionego terenu. Zapis nie rozróżnia
+pojedynczych edycji od dawnego podłoża, więc nie da się automatycznie
+wymienić samej rzeki z gwarancją zachowania budowli i wykopów.
+
+Daleki widok również respektuje zapisane bloki. Nurt jest wyliczany
+osobno z generatora; nie zmienia zapisanej geometrii. Typ klasyczny
+pozostaje bez zmian. Regresję ochrony zapisów sprawdza
+`node tools/sprawdz_rzeki_zapisy.mjs`.
+
 ## Czego jeszcze nie ma (dalej)
+
+- **Roślinność rzeczna** — po sprawdzeniu napraw koryt, ujść i kwadratowych
+  odcinków zaplanujemy trzy strefy: rośliny na brzegach, zanurzone w rzece
+  oraz pływające na powierzchni. To kolejny etap, bez dodawania roślin
+  przy okazji obecnej naprawy generatora.
 
 - **Rzeki główne** (szerokie, z rozlewiskami przy ujściu) i **strumyki**
   (wąskie, od źródeł w górach) - kolejne warstwy z tymi samymi zasadami.

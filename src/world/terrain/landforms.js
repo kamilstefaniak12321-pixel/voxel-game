@@ -23,7 +23,6 @@ export const LANDFORMS = {
     // Formy wklęsłe
     valley: { name: 'dolina', group: 'wklęsłe', color: '#5f9a4c' },
     basin: { name: 'kotlina', group: 'wklęsłe', color: '#9fd06a' },
-    ravine: { name: 'wąwóz', group: 'wklęsłe', color: '#c0392b' },
     gully: { name: 'żleb', group: 'wklęsłe', color: '#e67e22' },
     depression: { name: 'depresja', group: 'wklęsłe', color: '#16a085' },
 

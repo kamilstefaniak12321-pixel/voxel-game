@@ -112,10 +112,15 @@ import {
 // wybiera jeden z DETAILS; tryb ziemniaka - POTATO_DETAIL (~8x mniej
 // trójkątów niż średnie).
 const DETAILS = {
-    1: { cells: 32, minSpacing: 2, rootSpacing: 256, lodDistance: 1 },     // niskie (telefon)
-    2: { cells: 32, minSpacing: 1, rootSpacing: 256, lodDistance: 2 },     // średnie
-    3: { cells: 32, minSpacing: 1, rootSpacing: 256, lodDistance: 3 }      // wysokie
+    1: { cells: 32, minSpacing: 2, rootSpacing: 256, lodDistance: 1, targetSpacing: 8 }, // niskie
+    2: { cells: 32, minSpacing: 1, rootSpacing: 256, lodDistance: 2, targetSpacing: 4 }, // średnie
+    3: { cells: 32, minSpacing: 1, rootSpacing: 256, lodDistance: 3, targetSpacing: 4 }  // wysokie
 };
+
+// Ten sam szczegółowy teren jest widoczny i rzuca cienie. To siatka LOD,
+// nie zwiększenie liczby pełnych chunków; dalszy horyzont pozostaje bez zmian.
+export const TARGET_DETAIL_DISTANCE = 800;
+const LOD_HYSTERESIS = 0.12;
 
 const DETAIL = DETAILS[2];
 
@@ -634,6 +639,90 @@ function colorByte(value) {
 }
 
 
+// Aktywny snapshot cieni ma wyłączny dostęp do maski i materiału z puli.
+// Nie czyta zmieniającej się maski widocznej sceny podczas budowy mapy.
+function createFarShadowMaterial(mask, origin, center, outer) {
+    return new THREE.ShaderMaterial({
+        uniforms: {
+            uChunkMask: { value: mask },
+            uChunkMaskOrigin: { value: origin },
+            uFarCenter: { value: center },
+            uFarOuter: { value: outer }
+        },
+        vertexShader: `
+            attribute vec4 shadowPosition;
+            varying vec2 vFarMaskXZ;
+            varying vec2 vFarSide;
+            void main() {
+                // W jest prawdziwym dołem ściany: fartuch zasłaniający
+                // szczeliny LOD nie może przedłużać cienia w dół.
+                vec3 p = shadowPosition.xyz;
+                p.y = max(p.y, shadowPosition.w);
+                vec3 packed = floor(normal * 127.0 + 0.5);
+                vFarSide = (step(vec3(64.0), abs(packed)) * sign(packed)).xz;
+                vFarMaskXZ = (modelMatrix * vec4(p, 1.0)).xz;
+                gl_Position = projectionMatrix * modelViewMatrix * vec4(p, 1.0);
+            }
+        `,
+        fragmentShader: `
+            ${CHUNK_MASK_GLSL}
+            uniform vec2 uFarCenter;
+            uniform float uFarOuter;
+            varying vec2 vFarMaskXZ;
+            varying vec2 vFarSide;
+            void main() {
+                if (chunkMeshed(vFarMaskXZ - vFarSide * 0.5) ||
+                    length(vFarMaskXZ - uFarCenter) > uFarOuter) discard;
+            }
+        `,
+        colorWrite: false
+    });
+}
+
+function acquireFarShadowResources(pool, origin, center, outer) {
+    let resources = pool.find(entry => !entry.busy);
+    if (!resources) {
+        const mask = new THREE.DataTexture(chunkMaskData.slice(), CHUNK_MASK_SIZE, CHUNK_MASK_SIZE,
+            THREE.RedFormat, THREE.UnsignedByteType);
+        mask.magFilter = mask.minFilter = THREE.NearestFilter;
+        mask.needsUpdate = true;
+        resources = {
+            busy: false,
+            mask,
+            material: createFarShadowMaterial(mask, origin.clone(), center.clone(), outer)
+        };
+        pool.push(resources);
+    } else {
+        // Ta sama tekstura nie wymaga kolejnej alokacji ani wysłania do GPU,
+        // jeśli między snapshotami zmieniła się wyłącznie kamera światła.
+        const data = resources.mask.image.data;
+        for (let i = 0; i < data.length; i++) {
+            if (data[i] === chunkMaskData[i]) continue;
+            data.set(chunkMaskData);
+            resources.mask.needsUpdate = true;
+            break;
+        }
+        const uniforms = resources.material.uniforms;
+        uniforms.uChunkMaskOrigin.value.copy(origin);
+        uniforms.uFarCenter.value.copy(center);
+        uniforms.uFarOuter.value = outer;
+    }
+    resources.busy = true;
+    return resources;
+}
+
+function disposeFarGeometry(bundle) {
+    bundle.geometry.dispose();
+    bundle.shadowGeometry.dispose();
+}
+
+function retireFarGeometry(bundle) {
+    if (!bundle) return;
+    bundle.retired = true;
+    if (bundle.references === 0) disposeFarGeometry(bundle);
+}
+
+
 // Bufory do składania siatki kafelka w grze (wspólne - kafelki
 // powstają po kolei).
 
@@ -675,6 +764,11 @@ export class FarTerrain {
 
         this.wanted = [];
         this.shown = new Set();
+        this.shadowRevision = 0;
+        this.shadowSnapshots = new Set();
+        this.shadowResourcePool = [];
+        this.shadowCenter = new THREE.Vector2();
+        this.lodSplits = new Set();
 
         // Czy pokazany jest już pełny zestaw (do tego czasu kafelki
         // pojawiają się po kolei, najbliższe najpierw).
@@ -994,6 +1088,7 @@ export class FarTerrain {
 
         this.inner = inner;
         this.outer = outer;
+        this.shadowRevision++;
 
         // Inne kafelki będą potrzebne - wybieramy je od nowa.
 
@@ -1012,6 +1107,7 @@ export class FarTerrain {
     update(cameraPosition) {
 
         this.frame++;
+        this.shadowCenter.set(cameraPosition.x, cameraPosition.z);
 
         if (!this.active || !this.colorsReady) {
             return;
@@ -1141,6 +1237,7 @@ export class FarTerrain {
         }
 
         chunkMaskUniforms.uChunkMask.value.needsUpdate = true;
+        this.shadowRevision++;
 
     }
 
@@ -1227,6 +1324,7 @@ export class FarTerrain {
     selectTiles(center) {
 
         const result = [];
+        const splits = new Set();
 
         const { rootSpacing, cells } = this.detail;
 
@@ -1242,7 +1340,7 @@ export class FarTerrain {
 
             for (let rx = minX; rx <= maxX; rx++) {
 
-                this.visit(rootSpacing, rx * rootSize, rz * rootSize, center, result);
+                this.visit(rootSpacing, rx * rootSize, rz * rootSize, center, result, splits);
 
             }
 
@@ -1250,13 +1348,14 @@ export class FarTerrain {
 
 
         result.sort((a, b) => a.distance - b.distance);
+        this.lodSplits = splits;
 
         return result;
 
     }
 
 
-    visit(spacing, x0, z0, center, result) {
+    visit(spacing, x0, z0, center, result, splits) {
 
         const { cells, minSpacing, lodDistance } = this.detail;
 
@@ -1294,21 +1393,27 @@ export class FarTerrain {
         }
 
 
-        if (spacing > minSpacing && near < size * lodDistance) {
+        const key = `${cells}:${spacing}:${x0}:${z0}`;
+        const wasSplit = this.lodSplits?.has(key) ?? false;
+        const margin = wasSplit ? 1 + LOD_HYSTERESIS : 1;
+        const detailed = this.detail.targetSpacing && spacing > this.detail.targetSpacing &&
+            near <= TARGET_DETAIL_DISTANCE * margin;
+
+        if (spacing > minSpacing && (near < size * lodDistance * margin || detailed)) {
+
+            splits.add(key);
 
             const half = size / 2;
 
-            this.visit(spacing / 2, x0, z0, center, result);
-            this.visit(spacing / 2, x0 + half, z0, center, result);
-            this.visit(spacing / 2, x0, z0 + half, center, result);
-            this.visit(spacing / 2, x0 + half, z0 + half, center, result);
+            this.visit(spacing / 2, x0, z0, center, result, splits);
+            this.visit(spacing / 2, x0 + half, z0, center, result, splits);
+            this.visit(spacing / 2, x0, z0 + half, center, result, splits);
+            this.visit(spacing / 2, x0 + half, z0 + half, center, result, splits);
 
             return;
 
         }
 
-
-        const key = `${cells}:${spacing}:${x0}:${z0}`;
 
         let tile = this.tiles.get(key);
 
@@ -1344,6 +1449,7 @@ export class FarTerrain {
     showWanted() {
 
         const wanted = new Set(this.wanted);
+        const changed = wanted.size !== this.shown.size || [...wanted].some(tile => !this.shown.has(tile));
 
 
         for (const tile of this.shown) {
@@ -1363,6 +1469,7 @@ export class FarTerrain {
         }
 
         this.shown = wanted;
+        if (changed) this.shadowRevision++;
 
 
         // Zapomniane kafelki (dawno niepotrzebne) zwalniają pamięć - zostaje
@@ -1397,6 +1504,7 @@ export class FarTerrain {
                 this.scene.add(tile.mesh);
 
                 this.shown.add(tile);
+                this.shadowRevision++;
 
             }
 
@@ -1406,6 +1514,8 @@ export class FarTerrain {
 
 
     hideAll() {
+
+        if (this.shown.size > 0) this.shadowRevision++;
 
         for (const tile of this.shown) {
             this.scene.remove(tile.mesh);
@@ -1563,10 +1673,20 @@ export class FarTerrain {
 
         geometry.computeBoundingSphere();
 
+        // Pozycje i normalne są niezmienne. Dodatkowy depth pass współdzieli
+        // te bufory, ma tylko mniejszy indeks bez wody oraz kurtyn.
+        const shadowGeometry = new THREE.BufferGeometry();
+        shadowGeometry.setAttribute('position', geometry.getAttribute('position'));
+        shadowGeometry.setAttribute('shadowPosition', geometry.getAttribute('position'));
+        shadowGeometry.setAttribute('normal', geometry.getAttribute('normal'));
+        shadowGeometry.setIndex(new THREE.BufferAttribute(mesh.shadowIndices, 1));
+        shadowGeometry.boundingSphere = geometry.boundingSphere.clone();
+        const bundle = { geometry, shadowGeometry, references: 0, retired: false };
+
 
         if (tile.mesh) {
 
-            tile.mesh.geometry.dispose();
+            retireFarGeometry(tile.geometryBundle);
 
             tile.mesh.geometry = geometry;
 
@@ -1583,6 +1703,8 @@ export class FarTerrain {
 
         }
 
+        tile.geometryBundle = bundle;
+        if (this.shown.has(tile)) this.shadowRevision++;
 
         tile.stale = false;
 
@@ -1627,6 +1749,7 @@ export class FarTerrain {
         }
 
         this.detail = detail;
+        this.lodSplits.clear();
 
         // Inne kafelki będą potrzebne - wybieramy je od nowa.
 
@@ -1675,6 +1798,65 @@ export class FarTerrain {
     // RYSOWANIE
     // --------------------------------------------------------
 
+    // Niezmienny zestaw dla budowanej po kawałku mapy cieni. Shadows może
+    // dodać proxy do własnej sceny i dzielić ich rysowanie na paczki.
+    // Zawsze zwalnia snapshot przez dispose(), również po anulowaniu mapy.
+    collectShadowCasters(frustum) {
+        const casters = [];
+        const retained = [];
+        const sphere = new THREE.Sphere();
+        let triangleCount = 0;
+        let resources = null;
+        let disposed = false;
+        const snapshot = {
+            revision: this.shadowRevision,
+            casters,
+            triangleCount: 0,
+            dispose: () => {
+                if (disposed) return;
+                disposed = true;
+                for (const caster of casters) caster.removeFromParent();
+                for (const bundle of retained) {
+                    bundle.references--;
+                    if (bundle.references === 0 && bundle.retired) disposeFarGeometry(bundle);
+                }
+                // Zachowaj program shadera i teksturę do następnej mapy.
+                // Kolejny snapshot nie może ich zmienić przed tym release.
+                if (resources) resources.busy = false;
+                this.shadowSnapshots.delete(snapshot);
+            }
+        };
+        if (!this.active) return snapshot;
+
+        for (const tile of this.shown) {
+            const bundle = tile.geometryBundle;
+            if (!bundle || bundle.shadowGeometry.index.count === 0) continue;
+            // Kafelki są bez obrotu, a scena far ma macierz jednostkową.
+            // Używamy macierzy lokalnej już ustawionej przez buildMesh;
+            // pierwszy cień może powstać przed pierwszym renderem koloru.
+            sphere.copy(bundle.geometry.boundingSphere).applyMatrix4(tile.mesh.matrix);
+            if (frustum && !frustum.intersectsSphere(sphere)) continue;
+
+            if (!resources) {
+                resources = acquireFarShadowResources(this.shadowResourcePool,
+                    chunkMaskUniforms.uChunkMaskOrigin.value, this.shadowCenter, this.outer);
+            }
+            const caster = new THREE.Mesh(bundle.shadowGeometry, resources.material);
+            caster.matrixAutoUpdate = false;
+            caster.matrix.copy(tile.mesh.matrix);
+            caster.matrixWorld.copy(tile.mesh.matrix);
+            caster.frustumCulled = false; // już ograniczony do konkretnej kaskady
+            caster.userData.shadowTriangles = bundle.shadowGeometry.index.count / 3;
+            triangleCount += caster.userData.shadowTriangles;
+            bundle.references++;
+            retained.push(bundle);
+            casters.push(caster);
+        }
+        snapshot.triangleCount = triangleCount;
+        this.shadowSnapshots.add(snapshot);
+        return snapshot;
+    }
+
     // Rysuje daleki teren widziany z kamery gracza.
 
     render(renderer, camera) {
@@ -1719,9 +1901,15 @@ export class FarTerrain {
     stats() {
 
         let triangles = 0;
+        const lodWithinTarget = {};
 
         for (const tile of this.shown) {
             triangles += tile.mesh.geometry.index.count / 3;
+            const dx = Math.max(tile.x0 - this.shadowCenter.x, 0, this.shadowCenter.x - (tile.x0 + tile.size));
+            const dz = Math.max(tile.z0 - this.shadowCenter.y, 0, this.shadowCenter.y - (tile.z0 + tile.size));
+            if (Math.hypot(dx, dz) <= TARGET_DETAIL_DISTANCE) {
+                lodWithinTarget[tile.spacing] = (lodWithinTarget[tile.spacing] ?? 0) + 1;
+            }
         }
 
         return {
@@ -1731,6 +1919,10 @@ export class FarTerrain {
             missing: this.wanted.filter((tile) => !tile.mesh || tile.stale).length,
             cached: this.tiles.size,
             triangles,
+            shadowRevision: this.shadowRevision,
+            detailDistance: this.detail.targetSpacing ? TARGET_DETAIL_DISTANCE : 0,
+            targetSpacing: this.detail.targetSpacing ?? null,
+            lodWithinTarget,
             workers: this.workers.filter((entry) => entry.ready).length
         };
 
@@ -1743,7 +1935,9 @@ export class FarTerrain {
 
             this.scene.remove(tile.mesh);
 
-            tile.mesh.geometry.dispose();
+            if (this.shown.delete(tile)) this.shadowRevision++;
+            retireFarGeometry(tile.geometryBundle);
+            tile.geometryBundle = null;
 
             tile.mesh = null;
 
@@ -1759,6 +1953,13 @@ export class FarTerrain {
 
 
     dispose() {
+
+        for (const snapshot of [...this.shadowSnapshots]) snapshot.dispose();
+        for (const resources of this.shadowResourcePool) {
+            resources.material.dispose();
+            resources.mask.dispose();
+        }
+        this.shadowResourcePool.length = 0;
 
         for (const tile of [...this.tiles.values()]) {
             this.disposeTile(tile);

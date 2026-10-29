@@ -23,15 +23,17 @@ import { isOpaqueId, isLeavesId } from '../blocks/BlockRegistry.js';
 // w słońcu - brzeg cienia idzie po pikselach tekstury, a nie
 // rozmytą kreską. Bliska mapa ma dokładnie 16 punktów na blok.
 //
-// DWIE MAPY:
+// TRZY MAPY w jakości „Dalekie”:
 //   - bliska - 32 albo 64 bloki wokół gracza, 16 punktów na blok,
 //     przerysowywana, gdy słońce przesunie się o kawałek, gracz odejdzie
 //     od środka mapy albo zmienią się chunki w jej zasięgu,
-//   - daleka (jakość "Dalekie") - 512 bloków wokół gracza, 2 punkty na
-//     blok, razem z dalekim terenem: góry rzucają długie cienie na
-//     doliny o wschodzie i zachodzie. Rysowana rzadko i po kawałku
-//     (kilka klatek na jedną mapę, do drugiej tekstury), więc nie
-//     przycina gry - gotowa podmienia poprzednią.
+//   - średnia: promień 256, mapa 1024 (pół bloku/teksel),
+//   - zewnętrzna: promień 1024, mapa 2048 (blok/teksel). Pełna waga do
+//     0.82 promienia, więc teren do około 800 bloków pozostaje w cieniu.
+// Promienie opisują osie kamery światła, nie koła na ziemi. Zasięg
+// przeszkód w stronę Słońca zależy też od dostępnego dalekiego terenu.
+// Obie większe mapy powstają do drugiego bufora, we wspólnym budżecie
+// rysowań/trójkątów. Tekstura i jej macierz są publikowane jednocześnie.
 //
 // Z włączonymi cieniami światło słońca nie słabnie razem ze światłem
 // nieba z chunków - liczy się tylko to, czy promień słońca dochodzi.
@@ -77,17 +79,19 @@ const ANGLE_STEP = 0.0018;
 const MOVE_SHARE = 0.25;
 const CHUNK_REDRAW_SECONDS = 0.1;
 
-// Daleka mapa: rozmiar, zasięg (bloki), zakres w pionie, kiedy ją
-// przerysować (kąt słońca, droga gracza, zmienione chunki najwyżej co
-// tyle sekund) i na ile klatek dzielimy rysowanie.
+// Większe mapy: rozmiar, zasięg, zakres w pionie, próg ruchu i minimalny
+// odstęp aktualizacji. Liczba klatek budowy wynika z budżetu poniżej.
 
-const FAR_SIZE = 2048;
-const FAR_RADIUS = 512;
-const FAR_VERTICAL_RANGE = 128;
-const FAR_ANGLE_STEP = 0.004;
-const FAR_MOVE = 48;
-const FAR_CHUNK_REDRAW_SECONDS = 2;
-const FAR_BUILD_STEPS = 4;
+export const DISTANT_SHADOW_CASCADES = [
+    { name: 'far', size: 1024, radius: 256, verticalRange: CHUNK_HEIGHT, move: 24, interval: 0.2 },
+    { name: 'distant', size: 2048, radius: 1024, verticalRange: CHUNK_HEIGHT, move: 80, interval: 0.5 }
+];
+
+// Budżet dotyczy również dalekich kafli; nie ma końcowej, nieograniczonej
+// paczki całego horyzontu. milliseconds ogranicza składanie jednej paczki,
+// nie czas renderer.render ani jednorazowego zebrania snapshotu. Osobne
+// pomiary prepare/submit w stats() ujawniają te koszty; to nie pomiar GPU.
+export const SHADOW_BUILD_BUDGET = { draws: 24, triangles: 120000, milliseconds: 1.5 };
 
 // Cień gracza (mała mapa wokół modelu, rysowana co klatkę).
 
@@ -119,6 +123,10 @@ export const shadowUniforms = {
     // Kierunek DO światła, które rzuca cienie.
     uSunShadowDir: { value: new THREE.Vector3(0, 1, 0) },
 
+    // Maksymalne zaokrąglenie pozycji przez rasteryzator, w tekselu mapy:
+    // pół jednostki siatki określonej przez WebGL SUBPIXEL_BITS.
+    uShadowRasterPrecision: { value: 1 / 32 },
+
     // Które światło kierunkowe sceny rzuca cienie: 0 - słońce,
     // 1 - księżyc (kolejność z Sky.attachLights).
     uSunShadowLight: { value: 0 },
@@ -135,28 +143,22 @@ export const shadowUniforms = {
     // z - 1 = mapa gotowa.
     uFarShadowMap: { value: null },
     uFarShadowMatrix: { value: new THREE.Matrix4() },
-    uFarShadowInfo: { value: new THREE.Vector4(1, 0.5, 0, 0) }
+    uFarShadowInfo: { value: new THREE.Vector4(1, 0.5, 0, 0) },
+    uDistantShadowMap: { value: null },
+    uDistantShadowMatrix: { value: new THREE.Matrix4() },
+    uDistantShadowInfo: { value: new THREE.Vector4(1, 1, 0, 0) }
 
 };
 
 
-// GLSL wspólny: uniformy światła i nachylenie ściany do promieni.
+// GLSL wspólny: uniformy światła.
 
 const COMMON_GLSL = `
     uniform vec4 uSunShadowInfo;
     uniform vec3 uSunShadowDir;
+    uniform float uShadowRasterPrecision;
     uniform int uSunShadowLight;
 
-    // Ściana ukośnie do promieni potrzebuje większego zapasu przy
-    // porównaniu głębi (inaczej cieniowałaby sama siebie w paski).
-
-    float shadowSlope(vec3 worldNormal) {
-
-        float facing = clamp(dot(worldNormal, uSunShadowDir), 0.05, 1.0);
-
-        return min(sqrt(1.0 - facing * facing) / facing, 8.0);
-
-    }
 `;
 
 
@@ -165,38 +167,87 @@ const COMMON_GLSL = `
 
 const FAR_GLSL = `
     #ifdef USE_FAR_SHADOWS
-
         uniform highp sampler2D uFarShadowMap;
         uniform mat4 uFarShadowMatrix;
         uniform vec4 uFarShadowInfo;
+        uniform highp sampler2D uDistantShadowMap;
+        uniform mat4 uDistantShadowMatrix;
+        uniform vec4 uDistantShadowInfo;
 
-        float farShadowLookup(vec3 p, float slope, float extraBias, out float coverage) {
-
-            coverage = 0.0;
-
-            if (uFarShadowInfo.z < 0.5) {
-                return 1.0;
-            }
-
-            vec3 s = (uFarShadowMatrix * vec4(p, 1.0)).xyz;
-
-            vec2 fromCenter = abs(s.xy - 0.5) * 2.0;
-
-            float edge = max(fromCenter.x, fromCenter.y);
-
-            if (edge >= 1.0 || s.z <= 0.0 || s.z >= 1.0) {
-                return 1.0;
-            }
-
-            coverage = 1.0 - smoothstep(0.9, 1.0, edge);
-
-            float bias = (uFarShadowInfo.y * (0.6 + 0.8 * slope) + extraBias) * uFarShadowInfo.x;
-
-            return step(s.z - bias, texture(uFarShadowMap, s.xy).r);
-
+        // x = ważone przesłonięcie, y = pokrycie. Każda waga występuje
+        // raz; maksimum przesłonięć zachowuje cień góry spoza near.
+        vec2 distantShadowOcclusion(vec3 p, vec3 worldNormal, float extraBias) {
+            float coverage;
+            float lit = shadowMapLookup(uDistantShadowMap, uDistantShadowMatrix,
+                uDistantShadowInfo, p, worldNormal, extraBias, 0.82, coverage);
+            vec2 result = vec2((1.0 - lit) * coverage, coverage);
+            lit = shadowMapLookup(uFarShadowMap, uFarShadowMatrix,
+                uFarShadowInfo, p, worldNormal, extraBias, 0.82, coverage);
+            return max(result, vec2((1.0 - lit) * coverage, coverage));
         }
-
     #endif
+`;
+
+const LOOKUP_GLSL = `
+    float shadowMapLookup(highp sampler2D depthMap, mat4 worldToMap, vec4 info,
+        vec3 p, vec3 worldNormal, float extraBias, float fadeStart,
+        out float coverage) {
+        coverage = 0.0;
+        if (info.z < 0.5) return 1.0;
+        vec3 s = (worldToMap * vec4(p, 1.0)).xyz;
+        float edge = max(abs(s.x - 0.5), abs(s.y - 0.5)) * 2.0;
+        if (edge >= 1.0 || s.z <= 0.0 || s.z >= 1.0) return 1.0;
+
+        // Głębia mapy pochodzi ze środka teksela. Przenieś punkt odbiorcy
+        // na ten sam promień, pozostając na jego płaszczyźnie. Wiersze
+        // ortograficznej macierzy są prostopadłe, więc nie potrzeba
+        // odwrotnej macierzy ani pochodnych ekranu. To usuwa samocień
+        // przy niskim słońcu bez wieloblokowego zapasu głębi.
+        vec3 rowX = vec3(worldToMap[0][0], worldToMap[1][0], worldToMap[2][0]);
+        vec3 rowY = vec3(worldToMap[0][1], worldToMap[1][1], worldToMap[2][1]);
+        vec3 rowZ = vec3(worldToMap[0][2], worldToMap[1][2], worldToMap[2][2]);
+        float x2 = dot(rowX, rowX);
+        float y2 = dot(rowY, rowY);
+        float z2 = dot(rowZ, rowZ);
+        float planeZ = dot(worldNormal, rowZ);
+        if (x2 <= 0.0 || y2 <= 0.0 || z2 <= 0.0 ||
+            abs(planeZ) <= 0.00001 * sqrt(dot(worldNormal, worldNormal) * z2)) return 1.0;
+        float uvTexel = info.y * sqrt(x2);
+        vec2 sampleUV = (floor(s.xy / uvTexel) + 0.5) * uvTexel;
+        vec2 deltaUV = sampleUV - s.xy;
+        vec2 depthGradient = -vec2(dot(worldNormal, rowX) / x2,
+            dot(worldNormal, rowY) / y2) * z2 / planeZ;
+        float planeDepth = s.z + dot(depthGradient, deltaUV);
+        if (planeDepth <= 0.0 || planeDepth >= 1.0) return 1.0;
+
+        // Zapas także przy płaszczyznach near/far, bez twardego cięcia Z.
+        coverage = (1.0 - smoothstep(fadeStart, 1.0, edge)) *
+            smoothstep(0.0, 0.02, s.z) * (1.0 - smoothstep(0.98, 1.0, s.z));
+        // Gradient przelicza pół jednostki zgłoszonej siatki podpikseli
+        // na głębię płaszczyzny. SUBPIXEL_BITS=4 oznacza 1/32 teksela;
+        // przy promieniach stycznych nawet taki błąd XY mocno zmienia Z.
+        // Osobny mały zapas pokrywa precyzję transformacji castera/odbiorcy
+        // i ruch roślin. Niezależne źródła błędu sumujemy.
+        float rasterBias = uvTexel * (abs(depthGradient.x) + abs(depthGradient.y)) * uShadowRasterPrecision;
+        float bias = max((info.y * 0.1 + extraBias) * info.x, 0.0000002) + rasterBias;
+        return step(planeDepth - bias, texture(depthMap, sampleUV).r);
+    }
+`;
+
+// Modele mają własny test lokalnych bloków. Ten helper dokłada wyłącznie
+// większe mapy, bez cienia modelu gracza i bez zmiany naturalnej energii.
+export const DISTANT_SHADOW_GLSL = `
+    ${COMMON_GLSL}
+    ${LOOKUP_GLSL}
+    ${FAR_GLSL}
+    float distantShadowVisibility(vec3 p, vec3 normal) {
+        if (uSunShadowInfo.y <= 0.0) return 1.0;
+        #ifdef USE_FAR_SHADOWS
+            return 1.0 - distantShadowOcclusion(p, normal, 0.0).x * uSunShadowInfo.y;
+        #else
+            return 1.0;
+        #endif
+    }
 `;
 
 
@@ -214,6 +265,7 @@ export const SHADOW_GLSL = `
     #endif
 
     ${COMMON_GLSL}
+    ${LOOKUP_GLSL}
     ${FAR_GLSL}
 
     uniform highp sampler2D uSunShadowMap;
@@ -239,35 +291,21 @@ export const SHADOW_GLSL = `
 
         vec3 p = mix(pixel, worldPosition, axis) + worldNormal * (0.5 / 16.0);
 
-        float slope = shadowSlope(worldNormal);
+        vec2 shadow = vec2(0.0);
 
-        float lit = 1.0;
-        float coverage = 0.0;
-
-        // Daleka mapa (dalej niż bliska i przy jej brzegu).
+        // Większe mapy, również dla cienia odległej góry wewnątrz near.
 
         #ifdef USE_FAR_SHADOWS
-            lit = farShadowLookup(p, slope, SUN_SHADOW_RECEIVER_BIAS, coverage);
+            shadow = distantShadowOcclusion(p, worldNormal, SUN_SHADOW_RECEIVER_BIAS);
         #endif
 
         // Bliska mapa.
 
-        vec3 s = (uSunShadowMatrix * vec4(p, 1.0)).xyz;
-
-        vec2 fromCenter = abs(s.xy - 0.5) * 2.0;
-
-        float edge = max(fromCenter.x, fromCenter.y);
-
-        if (edge < 1.0 && s.z > 0.0 && s.z < 1.0) {
-
-            // Przy brzegu bliskiej mapy płynne przejście w daleką
-            // (albo w brak cieni).
-
-            float nearWeight = 1.0 - smoothstep(0.85, 1.0, edge);
-
-            float bias = (uSunShadowInfo.z * (0.35 + 0.6 * slope) + SUN_SHADOW_RECEIVER_BIAS) * uSunShadowInfo.x;
-
-            float nearLit = step(s.z - bias, texture(uSunShadowMap, s.xy).r);
+        float nearWeight;
+        float nearLit = shadowMapLookup(uSunShadowMap, uSunShadowMatrix,
+            vec4(uSunShadowInfo.x, uSunShadowInfo.z, 1.0, 0.0), p, worldNormal,
+            SUN_SHADOW_RECEIVER_BIAS, 0.85, nearWeight);
+        if (nearWeight > 0.0) {
 
             // Cień gracza (model) - osobna mała mapa.
 
@@ -281,12 +319,15 @@ export const SHADOW_GLSL = `
 
             }
 
-            lit = mix(lit, nearLit, nearWeight);
-            coverage = max(coverage, nearWeight);
+            shadow = max(shadow, vec2((1.0 - nearLit) * nearWeight, nearWeight));
 
         }
 
-        return mix(skyLight, lit, coverage * uSunShadowInfo.y);
+        // Nie mnożymy ponownie przesłonięcia przez coverage. Pusta bliska
+        // mapa nie rozjaśnia cienia dalszej góry; poza wszystkimi mapami
+        // zostaje dotychczasowy dostęp do nieba.
+        float visible = mix(skyLight, 1.0, shadow.y) - shadow.x;
+        return mix(skyLight, max(0.0, visible), uSunShadowInfo.y);
 
     }
 
@@ -294,14 +335,18 @@ export const SHADOW_GLSL = `
 `;
 
 
-// GLSL dla dalekiego terenu (FarTerrain.js): tylko daleka mapa.
+// GLSL dla dalekiego terenu (FarTerrain.js): ten sam zestaw trzech map.
 // farTerrainSun(pozycja, normalna) - ile światła słońca (0-1).
 
 export const FAR_TERRAIN_SHADOW_GLSL = `
 #ifdef USE_FAR_SHADOWS
 
     ${COMMON_GLSL}
+    ${LOOKUP_GLSL}
     ${FAR_GLSL}
+
+    uniform highp sampler2D uSunShadowMap;
+    uniform mat4 uSunShadowMatrix;
 
     float farTerrainSun(vec3 worldPosition, vec3 worldNormal) {
 
@@ -309,11 +354,12 @@ export const FAR_TERRAIN_SHADOW_GLSL = `
             return 1.0;
         }
 
+        vec3 p = worldPosition + worldNormal * (0.5 / 16.0);
+        vec2 shadow = distantShadowOcclusion(p, worldNormal, 0.0);
         float coverage;
-
-        float lit = farShadowLookup(worldPosition + worldNormal * 0.75, shadowSlope(worldNormal), 1.0, coverage);
-
-        return mix(1.0, lit, coverage * uSunShadowInfo.y);
+        float lit = shadowMapLookup(uSunShadowMap, uSunShadowMatrix,
+            vec4(uSunShadowInfo.x, uSunShadowInfo.z, 1.0, 0.0), p, worldNormal, 0.0, 0.85, coverage);
+        return 1.0 - max(shadow.x, (1.0 - lit) * coverage) * uSunShadowInfo.y;
 
     }
 
@@ -430,43 +476,6 @@ const modelDepthMaterial = new THREE.ShaderMaterial({
 });
 
 const MODEL_LAYER = 2;
-
-
-// Daleki teren do dalekiej mapy: w zasięgu chunków jest wycięty
-// (tak jak w FarTerrain.js), żeby nie rzucał cienia drugi raz na
-// prawdziwe chunki.
-
-const farTerrainDepthMaterial = new THREE.ShaderMaterial({
-    vertexShader: `
-        varying vec2 vFarXZ;
-
-        void main() {
-
-            vFarXZ = (modelMatrix * vec4(position, 1.0)).xz;
-
-            gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-
-        }
-    `,
-    fragmentShader: `
-        uniform vec2 uFarCenter;
-        uniform float uFarInner;
-        varying vec2 vFarXZ;
-
-        void main() {
-
-            if (length(vFarXZ - uFarCenter) < uFarInner) {
-                discard;
-            }
-
-        }
-    `,
-    uniforms: {
-        uFarCenter: { value: new THREE.Vector2() },
-        uFarInner: { value: 0 }
-    },
-    colorWrite: false
-});
 
 
 // Z przestrzeni kamery (-1..1) do tekstury (0..1).
@@ -641,13 +650,50 @@ export class SunShadows {
 
         this.supported = renderer.capabilities.isWebGL2;
 
+        const gl = renderer.getContext?.();
+        const subpixelBits = gl?.getParameter?.(gl.SUBPIXEL_BITS);
+        // Bez kontekstu (np. kontroler w teście CPU) używamy siatki 1/16;
+        // podczas gry dokładność pochodzi zawsze z aktywnego renderera.
+        shadowUniforms.uShadowRasterPrecision.value = Number.isFinite(subpixelBits) && subpixelBits >= 0
+            ? 0.5 / 2 ** subpixelBits : 1 / 32;
+
         // 0 = wyłączone, 1 / 2 / 3 - SHADOW_QUALITY.
         this.quality = 0;
 
         this.near = new ShadowView(64, VERTICAL_RANGE);
-        this.far = new ShadowView(FAR_RADIUS, FAR_VERTICAL_RANGE);
+        this.cascades = DISTANT_SHADOW_CASCADES.map(config => {
+            // Pełny kwadrat w przestrzeni światła. Przy niskim Słońcu
+            // pionowego zakresu nie ścinamy do wysokości wokół gracza.
+            const view = new ShadowView(config.radius, config.verticalRange, false);
+            view.size = config.size;
+            return { config, view, target: null, backTarget: null,
+                valid: false, build: null, center: new THREE.Vector3(),
+                direction: new THREE.Vector3(), light: null, changed: false,
+                changeRevision: 0, sinceDraw: 0, needed: false, draws: 0,
+                terrainRevision: -1 };
+        });
+        this.far = this.cascades[0].view;
+        this.distant = this.cascades[1].view;
 
-        this.far.size = FAR_SIZE;
+        // Dotychczasowi odbiorcy (promienie, komendy, diagnostyka) nadal
+        // widzą far*. Nowy kod pracuje na wspólnym stanie każdej kaskady.
+        for (const cascade of this.cascades) {
+            const prefix = cascade.config.name;
+            for (const [suffix, field] of Object.entries({ Target: 'target', BackTarget: 'backTarget',
+                Valid: 'valid', Build: 'build', Center: 'center', Direction: 'direction',
+                Light: 'light', Changed: 'changed', Needed: 'needed', Draws: 'draws' })) {
+                Object.defineProperty(this, prefix + suffix, {
+                    get: () => cascade[field], set: value => { cascade[field] = value; }
+                });
+            }
+        }
+        Object.defineProperty(this, 'sinceFar', {
+            get: () => this.cascades[0].sinceDraw,
+            set: value => { this.cascades[0].sinceDraw = value; }
+        });
+        this.buildScene = new THREE.Scene();
+        this.buildScene.matrixWorldAutoUpdate = false;
+        this.lastFrame = { draws: 0, triangles: 0, completed: 0, prepareMilliseconds: 0, submitMilliseconds: 0 };
 
         this.target = null;
         this.modelTarget = null;
@@ -751,7 +797,7 @@ export class SunShadows {
 
     get farRadius() {
 
-        return this.hasFar ? FAR_RADIUS : 0;
+        return this.hasFar ? DISTANT_SHADOW_CASCADES.at(-1).radius : 0;
 
     }
 
@@ -808,20 +854,20 @@ export class SunShadows {
 
         // Daleka mapa.
 
-        if (!settings?.far) {
-
-            disposeTarget(this.farTarget);
-            disposeTarget(this.farBackTarget);
-
-            this.farTarget = null;
-            this.farBackTarget = null;
-
-        }
-        else if (!this.farTarget) {
-
-            this.farTarget = createTarget(FAR_SIZE);
-            this.farBackTarget = createTarget(FAR_SIZE);
-
+        for (const cascade of this.cascades) {
+            this.cancelBuild(cascade);
+            if (!settings?.far) {
+                disposeTarget(cascade.target);
+                disposeTarget(cascade.backTarget);
+                cascade.target = cascade.backTarget = null;
+            }
+            else if (!cascade.target) {
+                cascade.target = createTarget(cascade.config.size);
+                cascade.backTarget = createTarget(cascade.config.size);
+            }
+            cascade.valid = false;
+            cascade.needed = false;
+            cascade.terrainRevision = -1;
         }
 
 
@@ -832,6 +878,7 @@ export class SunShadows {
         shadowUniforms.uSunShadowMap.value = null;
         shadowUniforms.uModelShadowMap.value = null;
         shadowUniforms.uFarShadowMap.value = null;
+        shadowUniforms.uDistantShadowMap.value = null;
 
         this.valid = false;
         this.farValid = false;
@@ -851,8 +898,11 @@ export class SunShadows {
             this.changed = true;
         }
 
-        if (this.farValid && this.far.frustum.intersectsBox(chunkBox(this.box, chunk))) {
-            this.farChanged = true;
+        for (const cascade of this.cascades) {
+            if ((cascade.valid || cascade.build) && cascade.view.frustum.intersectsBox(chunkBox(this.box, chunk))) {
+                cascade.changed = true;
+                cascade.changeRevision++;
+            }
         }
 
     }
@@ -864,7 +914,7 @@ export class SunShadows {
     update(dt, sky, focus) {
 
         this.sinceDraw += dt;
-        this.sinceFar += dt;
+        for (const cascade of this.cascades) cascade.sinceDraw += dt;
 
         const state = sky.state;
         const celestial = sky.celestial;
@@ -903,7 +953,10 @@ export class SunShadows {
         if (!this.enabled || this.strength <= 0) {
 
             this.needsDraw = false;
-            this.farNeeded = false;
+            for (const cascade of this.cascades) {
+                cascade.needed = false;
+                this.cancelBuild(cascade);
+            }
 
             return false;
 
@@ -930,21 +983,38 @@ export class SunShadows {
         // Czy przerysować daleką mapę.
 
         if (this.hasFar) {
-
-            const farMoved =
-                Math.hypot(focus.x - this.farCenter.x, focus.z - this.farCenter.z) > FAR_MOVE ||
-                Math.abs(focus.y - this.farCenter.y) > FAR_VERTICAL_RANGE * 0.25;
-
-            const farTurned =
-                this.direction.dot(this.farDirection) < Math.cos(FAR_ANGLE_STEP) ||
-                this.light !== this.farLight;
-
-            this.farNeeded =
-                !this.farValid || farMoved || farTurned ||
-                (this.farChanged && this.sinceFar >= FAR_CHUNK_REDRAW_SECONDS);
-
+            for (const cascade of this.cascades) {
+                const { config } = cascade;
+                const source = cascade.build?.light ?? cascade.light;
+                const sourceChanged = source !== null && source !== this.light;
+                // Komenda zmiany czasu/teleport nie jest zwykłym opóźnieniem
+                // mapy. Nie pokazuj cienia z innego kierunku ani nie kończ
+                // pracy skierowanej na miejsce, z którego gracz już odszedł.
+                const discontinuity = Math.cos(0.08);
+                const publishedJump = cascade.valid && cascade.light !== null &&
+                    (this.direction.dot(cascade.direction) < discontinuity ||
+                        focus.distanceTo(cascade.center) > config.radius * 0.75);
+                const pendingJump = cascade.build &&
+                    (this.direction.dot(cascade.build.direction) < discontinuity ||
+                        focus.distanceTo(cascade.build.center) > config.radius * 0.75);
+                if (publishedJump) cascade.valid = false;
+                if (sourceChanged) {
+                    cascade.valid = false;
+                }
+                if (sourceChanged || pendingJump) this.cancelBuild(cascade);
+                // Długość cienia ~ h/tan(elewacji): stały próg kątowy
+                // dawał duże przeskoki przy horyzoncie. Tam aktualizujemy
+                // częściej, nadal pod wspólnym limitem pracy na klatkę.
+                const sine = Math.max(0.04, this.direction.y);
+                const angle = Math.max(0.00008, Math.min(0.003, sine * sine * config.radius / 32000));
+                const moved = focus.distanceTo(cascade.center) > config.move;
+                const turned = this.direction.dot(cascade.direction) < Math.cos(angle);
+                cascade.needed = !cascade.valid || sourceChanged || moved ||
+                    ((turned || cascade.changed) && cascade.sinceDraw >= config.interval);
+            }
         }
 
+        this.syncUniforms();
         return this.needsDraw;
 
     }
@@ -964,6 +1034,7 @@ export class SunShadows {
         u.uSunShadowInfo.value.w = strength > 0 ? 1 : 0;
         u.uSunShadowAmbient.value = SHADOW_INDOOR_DARKNESS * (this.active ? this.ambientStrength : 0);
         u.uFarShadowInfo.value.z = this.hasFar && this.farValid && strength > 0 ? 1 : 0;
+        u.uDistantShadowInfo.value.z = this.hasFar && this.distantValid && strength > 0 ? 1 : 0;
 
     }
 
@@ -978,6 +1049,7 @@ export class SunShadows {
 
     render(world, focus, model, scene, loadedRadius, farTerrain = null) {
 
+        this.lastFrame = { draws: 0, triangles: 0, completed: 0, prepareMilliseconds: 0, submitMilliseconds: 0 };
         if (!this.enabled || this.strength <= 0) {
             return;
         }
@@ -999,13 +1071,18 @@ export class SunShadows {
 
             // Tylko chunki w zasięgu kamery słońca.
 
+            const visibility = world.shadowScene.children.map(caster => caster.visible);
             for (const caster of world.shadowScene.children) {
                 caster.visible = near.frustum.intersectsBox(chunkBox(this.box, caster.userData.chunk));
             }
 
-            renderer.setRenderTarget(this.target);
-            renderer.clear();
-            renderer.render(world.shadowScene, near.camera);
+            try {
+                renderer.setRenderTarget(this.target);
+                renderer.clear();
+                renderer.render(world.shadowScene, near.camera);
+            } finally {
+                world.shadowScene.children.forEach((caster, i) => { caster.visible = visibility[i]; });
+            }
 
             const u = shadowUniforms;
 
@@ -1027,7 +1104,14 @@ export class SunShadows {
 
         // Daleka mapa - kawałek na klatkę.
 
-        if (this.hasFar && (this.farBuild || this.farNeeded)) {
+        if (this.hasFar) {
+            const revision = farTerrain?.shadowRevision ?? 0;
+            for (const cascade of this.cascades) {
+                if (cascade.terrainRevision !== revision) cascade.changed = true;
+                if (!cascade.valid || (cascade.changed && cascade.sinceDraw >= cascade.config.interval)) {
+                    cascade.needed = true;
+                }
+            }
             this.buildFar(world, focus, loadedRadius, farTerrain);
         }
 
@@ -1043,112 +1127,146 @@ export class SunShadows {
     }
 
 
-    // Daleka mapa: pierwsza klatka - kamera i lista chunków, kolejne -
-    // po paczce chunków do drugiej tekstury, ostatnia - daleki teren
-    // i zamiana tekstur.
+    // Jeden krok wspólnego schedulera. Obie kaskady dostają naprzemiennie
+    // pracę; również kafle far są zwykłymi zadaniami pod tym samym limitem.
+    // Snapshot trzyma geometrię/maskę i kamerę od początku do końca budowy.
 
     buildFar(world, focus, loadedRadius, farTerrain) {
 
-        const renderer = this.renderer;
-        const far = this.far;
-
-        if (!this.farBuild) {
-
-            this.farCenter.copy(focus);
-            this.farDirection.copy(this.direction);
-            this.farLight = this.light;
-            this.farChanged = false;
-            this.sinceFar = 0;
-            this.farNeeded = false;
-
-            const terrainActive = farTerrain?.active === true;
-
-            const reach = terrainActive ? farTerrain.outer + 64 : loadedRadius + FAR_RADIUS;
-
-            far.place(focus, this.direction, reach);
-
-            const casters = world.shadowScene.children.filter((caster) =>
-                far.frustum.intersectsBox(chunkBox(this.box, caster.userData.chunk))
-            );
-
-            const perStep = Math.ceil(casters.length / FAR_BUILD_STEPS);
-
-            this.farBuild = {
-                step: 0,
-                batches: Array.from({ length: FAR_BUILD_STEPS }, (_, i) => casters.slice(i * perStep, (i + 1) * perStep)),
-                terrain: terrainActive ? farTerrain : null,
-                center: new THREE.Vector2(focus.x, focus.z)
-            };
-
-        }
-
-
-        const build = this.farBuild;
-
-        renderer.setRenderTarget(this.farBackTarget);
-
-        if (build.step === 0) {
-            renderer.clear();
-        }
-
-        const batch = new Set(build.batches[build.step]);
-
-        if (batch.size > 0) {
-
-            for (const caster of world.shadowScene.children) {
-                caster.visible = batch.has(caster);
+        this.lastFrame = { draws: 0, triangles: 0, completed: 0, prepareMilliseconds: 0, submitMilliseconds: 0 };
+        if (!this.hasFar) return;
+        const start = this.nextCascade ?? 0;
+        let cascade;
+        for (let i = 0; i < this.cascades.length; i++) {
+            const index = (start + i) % this.cascades.length;
+            const candidate = this.cascades[index];
+            if (candidate.build || candidate.needed) {
+                cascade = candidate;
+                this.nextCascade = (index + 1) % this.cascades.length;
+                break;
             }
-
-            renderer.render(world.shadowScene, far.camera);
-
+        }
+        if (!cascade) return;
+        if (!cascade.build) {
+            const preparing = performance.now();
+            this.startBuild(cascade, world, focus, loadedRadius, farTerrain);
+            this.lastFrame.prepareMilliseconds = performance.now() - preparing;
         }
 
-        build.step++;
-
-        if (build.step < FAR_BUILD_STEPS) {
-            return;
+        const renderer = this.renderer;
+        const build = cascade.build;
+        const previous = renderer.getRenderTarget();
+        const autoClear = renderer.autoClear;
+        const deadline = performance.now() + SHADOW_BUILD_BUDGET.milliseconds;
+        try {
+            renderer.autoClear = false;
+            renderer.setRenderTarget(cascade.backTarget);
+            if (!build.cleared) {
+                renderer.clear();
+                build.cleared = true;
+            }
+            this.buildScene.clear();
+            while (build.cursor < build.jobs.length) {
+                const job = build.jobs[build.cursor];
+                if (this.lastFrame.draws + job.draws > SHADOW_BUILD_BUDGET.draws ||
+                    this.lastFrame.triangles + job.triangles > SHADOW_BUILD_BUDGET.triangles ||
+                    (this.lastFrame.draws > 0 && performance.now() >= deadline)) break;
+                this.buildScene.add(job.mesh);
+                this.lastFrame.draws += job.draws;
+                this.lastFrame.triangles += job.triangles;
+                build.cursor++;
+            }
+            if (this.buildScene.children.length) {
+                const submitting = performance.now();
+                renderer.render(this.buildScene, cascade.view.camera);
+                this.lastFrame.submitMilliseconds = performance.now() - submitting;
+            }
+            this.buildScene.clear();
+            if (build.cursor === build.jobs.length) this.publishBuild(cascade, farTerrain);
+        } finally {
+            this.buildScene.clear();
+            renderer.autoClear = autoClear;
+            renderer.setRenderTarget(previous);
         }
 
+    }
 
-        // Ostatnia paczka: daleki teren (góry za zasięgiem chunków).
-
-        if (build.terrain) {
-
-            const scene = build.terrain.scene;
-
-            const material = farTerrainDepthMaterial.uniforms;
-
-            material.uFarCenter.value.copy(build.center);
-            material.uFarInner.value = build.terrain.inner;
-
-            const override = scene.overrideMaterial;
-
-            scene.overrideMaterial = farTerrainDepthMaterial;
-
-            renderer.render(scene, far.camera);
-
-            scene.overrideMaterial = override;
-
+    startBuild(cascade, world, focus, loadedRadius, farTerrain) {
+        const terrainActive = farTerrain?.active === true;
+        const reach = terrainActive ? farTerrain.outer + 64 : loadedRadius + cascade.config.radius;
+        cascade.view.place(focus, this.direction, reach);
+        const terrain = terrainActive ? farTerrain.collectShadowCasters(cascade.view.frustum) : null;
+        const jobs = [];
+        for (const source of world.shadowScene.children) {
+            if (cascade.view.frustum.intersectsBox(chunkBox(this.box, source.userData.chunk))) {
+                appendShadowJobs(jobs, source, true);
+            }
         }
+        for (const source of terrain?.casters ?? []) appendShadowJobs(jobs, source, false);
+        cascade.build = { jobs, terrain, cursor: 0, cleared: false,
+            center: focus.clone(), direction: this.direction.clone(), light: this.light,
+            worldRevision: cascade.changeRevision, terrainRevision: terrain?.revision ?? farTerrain?.shadowRevision ?? 0 };
+        cascade.needed = false;
+    }
 
-
-        // Gotowe - zamiana tekstur.
-
-        [this.farTarget, this.farBackTarget] = [this.farBackTarget, this.farTarget];
-
-        const u = shadowUniforms;
-
-        u.uFarShadowMatrix.value.copy(far.textureMatrix);
-        u.uFarShadowInfo.value.x = far.depthScale;
-        u.uFarShadowInfo.value.y = far.texel;
-        u.uFarShadowMap.value = this.farTarget.depthTexture;
-
-        this.farValid = true;
-        this.farBuild = null;
-        this.farDraws++;
-
+    publishBuild(cascade, farTerrain) {
+        const build = cascade.build;
+        [cascade.target, cascade.backTarget] = [cascade.backTarget, cascade.target];
+        const prefix = cascade.config.name === 'far' ? 'uFarShadow' : 'uDistantShadow';
+        shadowUniforms[prefix + 'Matrix'].value.copy(cascade.view.textureMatrix);
+        shadowUniforms[prefix + 'Info'].value.x = cascade.view.depthScale;
+        shadowUniforms[prefix + 'Info'].value.y = cascade.view.texel;
+        shadowUniforms[prefix + 'Map'].value = cascade.target.depthTexture;
+        cascade.center.copy(build.center);
+        cascade.direction.copy(build.direction);
+        cascade.light = build.light;
+        cascade.terrainRevision = build.terrainRevision;
+        cascade.changed = cascade.changeRevision !== build.worldRevision ||
+            cascade.terrainRevision !== (farTerrain?.shadowRevision ?? 0);
+        cascade.valid = true;
+        cascade.draws++;
+        cascade.sinceDraw = 0;
+        cascade.needed = false;
+        this.lastFrame.completed++;
+        this.cancelBuild(cascade);
         this.syncUniforms();
+    }
 
+    cancelBuild(cascade) {
+        const build = cascade.build;
+        if (!build) return;
+        cascade.build = null;
+        const released = new Set();
+        const retained = new Set();
+        for (const other of this.cascades) {
+            for (const job of other.build?.jobs ?? []) retained.add(job.original);
+        }
+        for (const job of build.jobs) {
+            job.mesh.removeFromParent();
+            const retired = job.world && (job.source.geometry !== job.original || !job.source.parent);
+            const retainedElsewhere = retired && retained.has(job.original);
+            if (job.view) {
+                // BufferAttributes są współdzielone z żywym meshem. Zwolnij
+                // tylko VAO widoku; nie kasuj jego buforów z pamięci GPU.
+                if (!retired || retainedElsewhere || released.has(job.original)) {
+                    job.mesh.geometry.attributes = {};
+                    job.mesh.geometry.index = null;
+                } else released.add(job.original);
+                job.mesh.geometry.dispose();
+            } else if (retired && !retainedElsewhere && !released.has(job.original)) {
+                job.original.dispose();
+                released.add(job.original);
+            }
+        }
+        build.terrain?.dispose();
+    }
+
+    stats() {
+        return { budget: { ...SHADOW_BUILD_BUDGET }, lastFrame: { ...this.lastFrame },
+            cascades: this.cascades.map(cascade => ({ name: cascade.config.name,
+                radius: cascade.config.radius, size: cascade.config.size, valid: cascade.valid,
+                building: !!cascade.build, remaining: cascade.build ? cascade.build.jobs.length - cascade.build.cursor : 0,
+                draws: cascade.draws, terrainRevision: cascade.terrainRevision, changed: cascade.changed })) };
     }
 
 
@@ -1288,4 +1406,48 @@ function chunkBox(box, chunk) {
 
     return box;
 
+}
+
+// Niezależne proxy: nigdy nie przepinamy casterów świata/far ani nie
+// zmieniamy ich visible/drawRange. Nietypowo duża geometria jest dzielona
+// na lekkie widoki tych samych buforów, żeby również ona mieściła się
+// w pojedynczym budżecie; zwykłe meshe nie wymagają tych widoków.
+function appendShadowJobs(jobs, source, world) {
+    const original = source.geometry;
+    const total = original.index?.count ?? original.getAttribute('position').count;
+    const start = original.drawRange.start;
+    const end = Math.min(total, start + original.drawRange.count);
+    const materials = Array.isArray(source.material) ? source.material.slice() : source.material;
+    const groups = (Array.isArray(materials) ? original.groups : [{ start, count: end - start, materialIndex: 0 }])
+        .map(group => ({ start: Math.max(start, group.start), end: Math.min(end, group.start + group.count),
+            material: Array.isArray(materials) ? materials[group.materialIndex] : materials }))
+        .filter(group => group.end > group.start && group.material?.visible !== false);
+    const triangles = groups.reduce((sum, group) => sum + Math.floor((group.end - group.start) / 3), 0);
+    if (!triangles) return;
+    const add = (geometry, material, draws, count, view) => {
+        // Snapshot far już posiada niezależne proxy, które wolno przepinać
+        // do sceny budowy. Tylko świat i dzielone widoki wymagają nowego.
+        const mesh = !world && !view ? source : new THREE.Mesh(geometry, material);
+        mesh.matrixAutoUpdate = false;
+        mesh.matrixWorldAutoUpdate = false;
+        mesh.matrix.copy(source.matrixWorld);
+        mesh.matrixWorld.copy(source.matrixWorld);
+        mesh.frustumCulled = false; // lista jest ograniczona frustum światła, nie widza
+        jobs.push({ mesh, draws, triangles: count, world, source, original, view });
+    };
+    if (triangles <= SHADOW_BUILD_BUDGET.triangles && groups.length <= SHADOW_BUILD_BUDGET.draws) {
+        add(original, materials, groups.length, triangles, false);
+        return;
+    }
+    const page = Math.min(16000, SHADOW_BUILD_BUDGET.triangles) * 3;
+    for (const group of groups) {
+        for (let offset = group.start; offset < group.end; offset += page) {
+            const count = Math.min(page, group.end - offset);
+            const view = new THREE.BufferGeometry();
+            view.attributes = { ...original.attributes };
+            view.index = original.index;
+            view.setDrawRange(offset, count);
+            add(view, group.material, 1, Math.floor(count / 3), true);
+        }
+    }
 }

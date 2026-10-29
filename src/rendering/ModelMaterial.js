@@ -22,7 +22,8 @@ import {
 
 import {
     shadowUniforms,
-    shadowLightsChunk
+    shadowLightsChunk,
+    DISTANT_SHADOW_GLSL
 } from './Shadows.js';
 
 // ------------------------------------------------------------
@@ -51,6 +52,10 @@ export const modelLight = {
     // przez uModelSun (0-1, liniowo: czy słońce dochodzi do gracza).
     uModelShadows: { value: 0 },
     uModelSun: { value: 1 },
+    // Dalekie góry zasłaniają również model i przedmiot w ręce.
+    // Bliski promień CPU zachowuje prześwity liści; mapy uzupełniają
+    // przeszkody poza wczytanymi chunkami, bez cienia własnego gracza.
+    uModelDistantShadows: { value: 0 },
 
     // Światło otoczenia z cieniami (liniowo) - w ciemnym miejscu słabsze
     // (SHADOW_INDOOR_DARKNESS w config.js).
@@ -60,6 +65,13 @@ export const modelLight = {
     uModelBounce: { value: new THREE.Vector3() }
 
 };
+
+// Podgląd ekwipunku ma oddzielny kontekst WebGL i własne światło.
+// Nie przenosimy do niego tekstur głębi z renderera świata.
+const previewRenderers = new WeakSet();
+export function setModelPreviewRenderer(renderer) {
+    previewRenderers.add(renderer);
+}
 
 
 // map       - tekstura (skórka albo atlas bloków),
@@ -110,6 +122,9 @@ export function createModelMaterial({ map, alphaTest = 0, glow = 0 }) {
 
 
         const dynamic = renderer.capabilities.isWebGL2;
+        const sceneShadows = dynamic && !previewRenderers.has(renderer);
+
+        if (sceneShadows) Object.assign(shader.uniforms, shadowUniforms);
 
         shader.fragmentShader = shader.fragmentShader
             .replace(
@@ -127,9 +142,10 @@ export function createModelMaterial({ map, alphaTest = 0, glow = 0 }) {
                 uniform float uModelGlow;
                 uniform float uModelShadows;
                 uniform float uModelSun;
+                uniform float uModelDistantShadows;
                 uniform float uModelAmbient;
                 uniform vec3 uModelBounce;
-                uniform int uSunShadowLight;
+                ${sceneShadows ? `#define USE_FAR_SHADOWS\n${DISTANT_SHADOW_GLSL}` : 'uniform int uSunShadowLight;'}
                 ${SKY_COLOR_GLSL}
                 ${VIEW_GLSL}
                 ${SURFACE_LIGHTING_GLSL}
@@ -154,13 +170,17 @@ export function createModelMaterial({ map, alphaTest = 0, glow = 0 }) {
                 `#include <color_fragment>
                 vec3 modelTexel = diffuseColor.rgb;
                 float modelSky = surfaceDecodeLight(uModelSky);
+                float modelSun = uModelSun;
+                ${sceneShadows ? `if (uModelDistantShadows > 0.5) {
+                    modelSun = min(modelSun, distantShadowVisibility(vWorldPosition, normalize(vWorldNormal)));
+                }` : ''}
                 if (uModelShadows < 0.5 && uAtmosphericLight < 0.5) {
                     diffuseColor.rgb *= modelSky;
                 }`
             )
             .replace(
                 '#include <lights_fragment_begin>',
-                shadowLightsChunk('(uModelShadows > 0.5 ? uModelSun : modelSky)', 'modelSky',
+                shadowLightsChunk('(uModelShadows > 0.5 ? modelSun : modelSky)', 'modelSky',
                     'mix(uModelAmbient, modelSky, uAtmosphericLight)', 'uModelShadows > 0.5 || uAtmosphericLight > 0.5')
             )
             .replace(

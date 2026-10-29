@@ -129,7 +129,7 @@ export const TEXTS = {
     renderScale: (value) => `Rozdzielczość: ${value}%`,
     fpsLimit: (value) => `Limit FPS: ${value > 0 ? value : 'Bez limitu'}`,
     ambientOcclusion: (value) => `Cienie w kątach: ${value > 0 ? `${value}%` : 'Wył.'}`,
-    shadows: (value) => `Cienie słońca: ${['Wył.', 'Zwykłe', 'Dokładne', 'Dalekie'][value] ?? 'Wył.'}`,
+    shadows: (value) => `Cienie słońca: ${['Wył.', 'Zwykłe', 'Dokładne', 'Dalekie (~800 bloków)'][value] ?? 'Wył.'}`,
     lightingModel: (value) => `Model światła: ${{ world: 'Domyślny (atmosferyczny)', classic: 'Klasyczny', atmosphere: 'Atmosferyczny' }[value] ?? 'Domyślny (atmosferyczny)'}`,
     lightLabHint: 'Laboratorium: /swiatlo model atmosfera lub klasyczne — porównanie; /czas predkosc 0 — zatrzymaj czas; /czas ustaw 06:15, 12:00 lub 17:45. Stanowiska są na północ od startu, tarasy LOD na wschodzie. /tryb kreatywny — latanie.',
     lightShafts: (on) => `Promienie światła: ${on ? 'Wł.' : 'Wył.'}`,

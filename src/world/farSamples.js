@@ -173,8 +173,8 @@ export function sampleFarTile(generator, x0, z0, spacing, cells, heights, kinds,
 // albedoPalette - czyste albedo: 6 ścian x RGB na materialIds,
 // scratch - bufory z createMeshScratch (wspólne dla kolejnych kafelków).
 // Wynik: { positions (Int16, względem rogu kafelka), normals (Int8),
-// colors, surfaceAlbedo (Uint8), indices (Uint16) } - kopie użytej części. Po
-// 4 liczby na róg (czwarta nieużywana; kolor - 255), bo karty graficzne
+// colors, surfaceAlbedo (Uint8), indices, shadowIndices (Uint16) } - kopie użytej części. Po
+// 4 liczby na róg (position.w: rzeczywisty dół ściany dla cienia), bo karty graficzne
 // czytają bez przeliczania tylko takie formaty (3 x 16 albo 3 x 8 bitów
 // przeglądarka musiałaby przerabiać).
 //
@@ -212,6 +212,7 @@ export function createMeshScratch(cells) {
         normals: new Int8Array(maxQuads * 16),
         colors: new Uint8Array(maxQuads * 16),
         surfaceAlbedo: new Uint8Array(maxQuads * 16),
+        shadowQuads: new Uint8Array(maxQuads),
         used: new Uint8Array(cells * cells)
     };
 
@@ -234,7 +235,7 @@ export function meshFarTile(heights, kinds, cells, spacing, palette, scratch, ma
     const M = (i, j) => materialIds?.[(j + 1) * W + i + 1] ?? surfaceMaterialId(KINDS[K(i, j)]);
 
 
-    const { positions, normals, colors, surfaceAlbedo, used } = scratch;
+    const { positions, normals, colors, surfaceAlbedo, shadowQuads, used } = scratch;
 
     let quads = 0;
 
@@ -243,7 +244,7 @@ export function meshFarTile(heights, kinds, cells, spacing, palette, scratch, ma
     // w palecie: wierzch, bok albo ciemniejszy dół boku). Rogi idą
     // przeciwnie do wskazówek zegara patrząc od strony normalnej.
 
-    const corner = (v, x, y, z, nx, ny, nz, color, material, faceIndex, water = false, curtain = false) => {
+    const corner = (v, x, y, z, nx, ny, nz, color, material, faceIndex, water = false, curtain = false, shadowBase = 0) => {
 
         // nx, ny, nz: 127 na osi normalnej, +-1 - strona rogu.
 
@@ -253,6 +254,7 @@ export function meshFarTile(heights, kinds, cells, spacing, palette, scratch, ma
         positions[p] = x;
         positions[p + 1] = y;
         positions[p + 2] = z;
+        positions[p + 3] = shadowBase;
 
         normals[p] = nx;
         normals[p + 1] = ny;
@@ -290,6 +292,7 @@ export function meshFarTile(heights, kinds, cells, spacing, palette, scratch, ma
         corner(2, xb, y, zb, 1, 127, 1, c, material, 2, water);
         corner(3, xb, y, za, 1, 127, -1, c, material, 2, water);
 
+        shadowQuads[quads] = water ? 0 : 1;
         quads++;
 
     };
@@ -298,7 +301,7 @@ export function meshFarTile(heights, kinds, cells, spacing, palette, scratch, ma
     // Ścianka w płaszczyźnie x = const (od a do b wzdłuż z),
     // zwrócona w stronę dir (+1 / -1). lowWater - pod nią woda.
 
-    const sideX = (x, a, b, bottom, upper, kind, dir, lowWater, material, curtain = false, highWater = kind === WATER_KIND) => {
+    const sideX = (x, a, b, bottom, upper, kind, dir, lowWater, material, shadowBase = bottom, curtain = false, highWater = kind === WATER_KIND) => {
 
         const c = kind * 9;
 
@@ -306,18 +309,19 @@ export function meshFarTile(heights, kinds, cells, spacing, palette, scratch, ma
         const faceIndex = dir > 0 ? 0 : 1;
 
         if (dir > 0) {
-            corner(0, x, bottom, a, n, -1, -1, c + 6, material, faceIndex, lowWater, curtain);
-            corner(1, x, upper, a, n, 0, -1, c + 3, material, faceIndex, highWater, curtain);
-            corner(2, x, upper, b, n, 0, 1, c + 3, material, faceIndex, highWater, curtain);
-            corner(3, x, bottom, b, n, -1, 1, c + 6, material, faceIndex, lowWater, curtain);
+            corner(0, x, bottom, a, n, -1, -1, c + 6, material, faceIndex, lowWater, curtain, shadowBase);
+            corner(1, x, upper, a, n, 0, -1, c + 3, material, faceIndex, highWater, curtain, shadowBase);
+            corner(2, x, upper, b, n, 0, 1, c + 3, material, faceIndex, highWater, curtain, shadowBase);
+            corner(3, x, bottom, b, n, -1, 1, c + 6, material, faceIndex, lowWater, curtain, shadowBase);
         }
         else {
-            corner(0, x, bottom, b, n, -1, 1, c + 6, material, faceIndex, lowWater, curtain);
-            corner(1, x, upper, b, n, 0, 1, c + 3, material, faceIndex, highWater, curtain);
-            corner(2, x, upper, a, n, 0, -1, c + 3, material, faceIndex, highWater, curtain);
-            corner(3, x, bottom, a, n, -1, -1, c + 6, material, faceIndex, lowWater, curtain);
+            corner(0, x, bottom, b, n, -1, 1, c + 6, material, faceIndex, lowWater, curtain, shadowBase);
+            corner(1, x, upper, b, n, 0, 1, c + 3, material, faceIndex, highWater, curtain, shadowBase);
+            corner(2, x, upper, a, n, 0, -1, c + 3, material, faceIndex, highWater, curtain, shadowBase);
+            corner(3, x, bottom, a, n, -1, -1, c + 6, material, faceIndex, lowWater, curtain, shadowBase);
         }
 
+        shadowQuads[quads] = kind !== WATER_KIND && !curtain && upper > shadowBase ? 1 : 0;
         quads++;
 
     };
@@ -325,7 +329,7 @@ export function meshFarTile(heights, kinds, cells, spacing, palette, scratch, ma
 
     // Ścianka w płaszczyźnie z = const (od a do b wzdłuż x).
 
-    const sideZ = (z, a, b, bottom, upper, kind, dir, lowWater, material, curtain = false, highWater = kind === WATER_KIND) => {
+    const sideZ = (z, a, b, bottom, upper, kind, dir, lowWater, material, shadowBase = bottom, curtain = false, highWater = kind === WATER_KIND) => {
 
         const c = kind * 9;
 
@@ -333,18 +337,19 @@ export function meshFarTile(heights, kinds, cells, spacing, palette, scratch, ma
         const faceIndex = dir > 0 ? 4 : 5;
 
         if (dir > 0) {
-            corner(0, a, bottom, z, -1, -1, n, c + 6, material, faceIndex, lowWater, curtain);
-            corner(1, b, bottom, z, 1, -1, n, c + 6, material, faceIndex, lowWater, curtain);
-            corner(2, b, upper, z, 1, 0, n, c + 3, material, faceIndex, highWater, curtain);
-            corner(3, a, upper, z, -1, 0, n, c + 3, material, faceIndex, highWater, curtain);
+            corner(0, a, bottom, z, -1, -1, n, c + 6, material, faceIndex, lowWater, curtain, shadowBase);
+            corner(1, b, bottom, z, 1, -1, n, c + 6, material, faceIndex, lowWater, curtain, shadowBase);
+            corner(2, b, upper, z, 1, 0, n, c + 3, material, faceIndex, highWater, curtain, shadowBase);
+            corner(3, a, upper, z, -1, 0, n, c + 3, material, faceIndex, highWater, curtain, shadowBase);
         }
         else {
-            corner(0, b, bottom, z, 1, -1, n, c + 6, material, faceIndex, lowWater, curtain);
-            corner(1, a, bottom, z, -1, -1, n, c + 6, material, faceIndex, lowWater, curtain);
-            corner(2, a, upper, z, -1, 0, n, c + 3, material, faceIndex, highWater, curtain);
-            corner(3, b, upper, z, 1, 0, n, c + 3, material, faceIndex, highWater, curtain);
+            corner(0, b, bottom, z, 1, -1, n, c + 6, material, faceIndex, lowWater, curtain, shadowBase);
+            corner(1, a, bottom, z, -1, -1, n, c + 6, material, faceIndex, lowWater, curtain, shadowBase);
+            corner(2, a, upper, z, -1, 0, n, c + 3, material, faceIndex, highWater, curtain, shadowBase);
+            corner(3, b, upper, z, 1, 0, n, c + 3, material, faceIndex, highWater, curtain, shadowBase);
         }
 
+        shadowQuads[quads] = kind !== WATER_KIND && !curtain && upper > shadowBase ? 1 : 0;
         quads++;
 
     };
@@ -407,36 +412,36 @@ export function meshFarTile(heights, kinds, cells, spacing, palette, scratch, ma
 
     const skirt = s * 2 + 4;
 
-    // [kierunek, dół, góra, rodzaj, pod nią woda, materiał] albo null (ta sama
+    // [kierunek, dół, góra, rodzaj, pod nią woda, materiał, dół bez fartucha] albo null (ta sama
     // wysokość).
 
     const face = (b, hA, hB, kA, kB, mA, mB) => {
 
         if (b === 0) {
-            return [-1, Math.min(hA, hB) - skirt, hB, kB, false, mB];
+            return [-1, Math.min(hA, hB) - skirt, hB, kB, false, mB, Math.min(hA, hB)];
         }
 
         if (b === N) {
-            return [1, Math.min(hA, hB) - skirt, hA, kA, false, mA];
+            return [1, Math.min(hA, hB) - skirt, hA, kA, false, mA, Math.min(hA, hB)];
         }
 
         if (hA > hB) {
-            return [1, hB, hA, kA, kB === WATER_KIND, mA];
+            return [1, hB, hA, kA, kB === WATER_KIND, mA, hB];
         }
 
         if (hB > hA) {
-            return [-1, hA, hB, kB, kA === WATER_KIND, mB];
+            return [-1, hA, hB, kB, kA === WATER_KIND, mB, hA];
         }
 
         // Ląd równo z wodą: wierzch wody jest trochę niżej (shader) -
         // niska ścianka lądu nad wodą zasłania szczelinę.
 
         if (kA === WATER_KIND && kB !== WATER_KIND) {
-            return [-1, hA, hB, kB, true, mB];
+            return [-1, hA, hB, kB, true, mB, hA];
         }
 
         if (kB === WATER_KIND && kA !== WATER_KIND) {
-            return [1, hB, hA, kA, true, mA];
+            return [1, hB, hA, kA, true, mA, hB];
         }
 
         return null;
@@ -461,13 +466,13 @@ export function meshFarTile(heights, kinds, cells, spacing, palette, scratch, ma
                     run && current &&
                     current[0] === run[0] && current[1] === run[1] &&
                     current[2] === run[2] && current[3] === run[3] &&
-                    current[4] === run[4] && current[5] === run[5]
+                    current[4] === run[4] && current[5] === run[5] && current[6] === run[6]
                 ) {
                     continue;
                 }
 
                 if (run) {
-                    emit(b * s, start * s, t * s, run[1], run[2], run[3], run[0], run[4], run[5]);
+                    emit(b * s, start * s, t * s, run[1], run[2], run[3], run[0], run[4], run[5], run[6]);
                 }
 
                 run = current;
@@ -550,7 +555,7 @@ export function meshFarTile(heights, kinds, cells, spacing, palette, scratch, ma
                         }
 
                         if (run) {
-                            emit(b * s, start * s, t * s, run[0], run[1], run[2], dir, false, run[4], true, run[3]);
+                            emit(b * s, start * s, t * s, run[0], run[1], run[2], dir, false, run[4], run[0], true, run[3]);
                         }
 
                         run = current;
@@ -574,6 +579,8 @@ export function meshFarTile(heights, kinds, cells, spacing, palette, scratch, ma
     // Trójkąty: dwa na ścianę.
 
     const indices = new Uint16Array(quads * 6);
+    const shadowIndices = new Uint16Array(shadowQuads.subarray(0, quads).reduce((sum, casts) => sum + casts, 0) * 6);
+    let shadowOffset = 0;
 
     for (let q = 0; q < quads; q++) {
 
@@ -587,6 +594,17 @@ export function meshFarTile(heights, kinds, cells, spacing, palette, scratch, ma
         indices[n + 4] = v + 2;
         indices[n + 5] = v + 3;
 
+        if (shadowQuads[q]) {
+            // Bez tymczasowego TypedArray na każdą ścianę.
+            shadowIndices[shadowOffset] = v;
+            shadowIndices[shadowOffset + 1] = v + 1;
+            shadowIndices[shadowOffset + 2] = v + 2;
+            shadowIndices[shadowOffset + 3] = v;
+            shadowIndices[shadowOffset + 4] = v + 2;
+            shadowIndices[shadowOffset + 5] = v + 3;
+            shadowOffset += 6;
+        }
+
     }
 
     const count = quads * 16;
@@ -596,7 +614,8 @@ export function meshFarTile(heights, kinds, cells, spacing, palette, scratch, ma
         normals: normals.slice(0, count),
         colors: colors.slice(0, count),
         surfaceAlbedo: surfaceAlbedo.slice(0, count),
-        indices
+        indices,
+        shadowIndices
     };
 
 }

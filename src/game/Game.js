@@ -32,6 +32,7 @@ import { viewUniforms } from '../rendering/viewUniforms.js';
 import { blockMaterial, plantMaterial, waterMaterial, leafMaterial, setPotatoDefine, setLeafMaterialFast, setShadowDefine } from '../rendering/BlockRenderData.js';
 import { SunShadows } from '../rendering/Shadows.js';
 import { LightShafts } from '../rendering/LightShafts.js';
+import { prewarmWaterMaterial, waterShaderVariantKey } from '../rendering/WaterMaterialWarmup.js';
 import { BounceLight, bounceUniforms } from '../world/BounceLight.js';
 import { Meteorites } from './Meteorites.js';
 import { SpaceView } from '../space/SpaceView.js';
@@ -137,7 +138,7 @@ export class Game {
                 ? await storage.loadChunks(worldInfo.id)
                 : new Map();
 
-        return new Game(
+        const game = new Game(
             renderer,
             input,
             storage,
@@ -145,6 +146,15 @@ export class Game {
             settings,
             savedChunks
         );
+
+        try {
+            await prewarmWaterMaterial(renderer, game.scene, game.camera, true);
+        } catch (error) {
+            await game.stop({ save: false });
+            throw error;
+        }
+        game.prewarmedWaterVariant = waterShaderVariantKey();
+        return game;
 
     }
 
@@ -1656,6 +1666,7 @@ export class Game {
         setFarTerrainShadows(this.shadows.hasFar);
 
         modelLight.uModelShadows.value = this.shadows.enabled ? 1 : 0;
+        modelLight.uModelDistantShadows.value = this.shadows.hasFar ? 1 : 0;
 
         this.shaftsEnabled = !potato && settings.get('lightShafts');
 
@@ -1717,6 +1728,17 @@ export class Game {
             settings.get('mouseSensitivity') / 100;
 
         this.player.invertMouse = settings.get('invertMouse');
+
+        // Po starcie: nowy kod shaderów przygotuj przy zmianie ustawień.
+        // Nie odraczaj go do napotkania wody i nie zatrzymuj samych renderów
+        // przy nadal działającej symulacji. Pierwszy warmup czeka w start().
+        if (this.prewarmedWaterVariant !== undefined) {
+            const variant = waterShaderVariantKey();
+            if (variant !== this.prewarmedWaterVariant) {
+                prewarmWaterMaterial(this.renderer, this.scene, this.camera);
+                this.prewarmedWaterVariant = variant;
+            }
+        }
 
     }
 
@@ -2476,6 +2498,7 @@ export class Game {
         modelLight.uModelBounce.value.set(0, 0, 0);
 
         modelLight.uModelShadows.value = 0;
+        modelLight.uModelDistantShadows.value = 0;
 
         return true;
 
@@ -2486,6 +2509,29 @@ export class Game {
     // --------------------------------------------------------
 
     updateHud(element) {
+
+        const debug = this.settings.get('showDebug');
+        const status = this.saver.getStatus();
+        const now = performance.now();
+        const hud = this.hudState ??= { element: null, debug: null, status: null, html: null, nextUpdate: 0 };
+
+        // Diagnostyka nie musi przebudowywać DOM i drzewa dostępności co
+        // klatkę. F3 oraz komunikaty zapisu nadal reagują natychmiast.
+        const changed = element !== hud.element || debug !== hud.debug || status !== hud.status;
+        if (!changed && (!debug || now < hud.nextUpdate)) return;
+        if (element !== hud.element) hud.html = null;
+        hud.element = element;
+        hud.debug = debug;
+        hud.status = status;
+        hud.nextUpdate = now + 200;
+
+        if (!debug) {
+            if (status !== hud.html) {
+                element.innerHTML = status;
+                hud.html = status;
+            }
+            return;
+        }
 
         const player = this.player;
         const hit = this.currentHit;
@@ -2518,18 +2564,6 @@ export class Game {
         );
 
 
-        // Bez informacji debugowania (F3): tylko komunikat o zapisie
-        // (wybrany blok widać na pasku na dole).
-
-        if (!this.settings.get('showDebug')) {
-
-            element.innerHTML = this.saver.getStatus();
-
-            return;
-
-        }
-
-
         // Klatki na sekundę i daleki teren.
 
         const summary = this.perf?.summary(1);
@@ -2549,8 +2583,8 @@ export class Game {
         const shadowInfo = shadows.enabled
             ? `Cienie: ${shadows.light === 'sun' ? 'słońce' : 'księżyc'} ${Math.round(Math.asin(Math.max(-1, Math.min(1, shadows.direction.y))) * 180 / Math.PI)}°, ` +
               `siła ${Math.round(shadows.strength * 100)}%, mapa ${shadows.size} px (${shadows.radius} bl.), przerysowana ${shadows.draws}×` +
-              `${shadows.hasFar ? `, daleka ${shadows.farRadius} bl. ${shadows.farDraws}×` : ''}` +
-              `${this.shaftsEnabled ? ' | promienie' : ''} | słońce na graczu ${Math.round(this.sunVisibility * 100)}%`
+              `${shadows.hasFar ? `, dalsze ${shadows.cascades.map(c => `${c.config.radius} bl. ${c.draws}×`).join(' / ')}` : ''}` +
+              `${this.shaftsEnabled ? ' | promienie' : ''} | lokalny dostęp do słońca ${Math.round(this.sunVisibility * 100)}%`
             : `Cienie: wył.${shadows.supported ? '' : ' (brak WebGL2)'}`;
 
 
@@ -2563,7 +2597,7 @@ export class Game {
             : '';
 
 
-        element.innerHTML =
+        const html =
 
             `Świat: ${this.worldInfo.name} | Seed: ${this.worldInfo.seed}` +
             `${this.storage ? '' : ' | ZAPIS NIEDOSTĘPNY'}<br>` +
@@ -2607,7 +2641,12 @@ export class Game {
 
             `T - czat | /pomoc - komendy` +
 
-            `<br><br>${this.saver.getStatus()}`;
+            `<br><br>${status}`;
+
+        if (html !== hud.html) {
+            element.innerHTML = html;
+            hud.html = html;
+        }
 
     }
 

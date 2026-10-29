@@ -22,7 +22,7 @@ import {
     returnGrid,
     stockOf
 } from '../crafting/Crafting.js';
-import { modelLight } from '../rendering/ModelMaterial.js';
+import { modelLight, setModelPreviewRenderer } from '../rendering/ModelMaterial.js';
 import { playUi } from '../audio/ui.js';
 import { skyUniforms } from '../sky/skyShader.js';
 
@@ -1694,6 +1694,7 @@ export class InventoryScreen {
             camera.position.set(0, 1.05, -4.4);
             camera.lookAt(0, 0.92, 0);
 
+            setModelPreviewRenderer(renderer);
             this.preview = { renderer, scene, camera };
 
         }
@@ -1714,10 +1715,14 @@ export class InventoryScreen {
         const sky = modelLight.uModelSky.value;
         const block = modelLight.uModelBlock.value.clone();
         const night = skyUniforms.uNightDesaturation.value;
+        const shadows = modelLight.uModelShadows.value;
+        const distantShadows = modelLight.uModelDistantShadows.value;
 
         modelLight.uModelSky.value = 1;
         modelLight.uModelBlock.value.set(0, 0, 0);
         skyUniforms.uNightDesaturation.value = 0;
+        modelLight.uModelShadows.value = 0;
+        modelLight.uModelDistantShadows.value = 0;
 
         scene.add(object);
 
@@ -1752,6 +1757,8 @@ export class InventoryScreen {
         modelLight.uModelSky.value = sky;
         modelLight.uModelBlock.value.copy(block);
         skyUniforms.uNightDesaturation.value = night;
+        modelLight.uModelShadows.value = shadows;
+        modelLight.uModelDistantShadows.value = distantShadows;
 
     }
 

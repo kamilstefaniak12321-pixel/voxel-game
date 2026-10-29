@@ -25,6 +25,7 @@ async function browserChecks() {
     const { modelLight } = await import('/src/rendering/ModelMaterial.js');
     const { checkDarkRoom } = await import('/tools/light_room_checks.js');
     const { checkSurfaceRendering } = await import('/tools/surface_render_checks.js');
+    const { checkDistantShadowRendering } = await import('/tools/shadow_render_checks.js');
     await atlasReady;
     const renderer = new THREE.WebGLRenderer({ antialias: false, preserveDrawingBuffer: true });
     renderer.setSize(960, 640);
@@ -168,11 +169,12 @@ async function browserChecks() {
     probe.material.dispose();
     const room = await checkDarkRoom({ game, settings, renderer, meanFrame, yieldBrowser });
     const surfaces = await checkSurfaceRendering({ game, settings, renderer, yieldBrowser });
+    const distantShadows = await checkDistantShadowRendering({ renderer, yieldBrowser });
     game.time.days = 0.5; frame();
     check(renderer.info.programs.length > 0, 'Nie skompilowano shaderów');
     check(renderer.info.programs.every(p => p.diagnostics?.runnable !== false), 'Shader nie skompilował się');
     check(errors.length === 0, errors.join('\n'));
-    return { status: 'passed', shaders: renderer.info.programs.length, samples, horizonSamples, discSamples, room, surfaces, sunsetComparison: { fixedBrightness, legacyBrightness } };
+    return { status: 'passed', shaders: renderer.info.programs.length, samples, horizonSamples, discSamples, room, surfaces, distantShadows, sunsetComparison: { fixedBrightness, legacyBrightness } };
 }
 
 const root = fileURLToPath(new URL('../', import.meta.url));

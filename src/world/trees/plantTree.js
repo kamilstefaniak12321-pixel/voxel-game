@@ -1,6 +1,6 @@
 import { CHUNK_HEIGHT } from '../../config.js';
 
-import { AIR_ID, isLeavesId, isPlantId, isReplaceableId, isSoilId, getBlockTypeById, getBlockId, getGrowth } from '../../blocks/BlockRegistry.js';
+import { AIR_ID, isLeavesId, isLiquidId, isPlantId, isReplaceableId, isSoilId, getBlockTypeById, getBlockId, getGrowth } from '../../blocks/BlockRegistry.js';
 
 import { buildTree } from './TreeShapes.js';
 
@@ -107,13 +107,15 @@ export function plantTree(world, x, y, z, species, seed, size = 0.5, force = fal
 
             const below = world.getBlockId(x + dx, yy - 1, z + dz);
 
+            if (isLiquidId(below)) break;
+
             if (below === AIR_ID || isPlantId(below) || isLeavesId(below)) {
                 continue;
             }
 
             const here = world.getBlockId(x + dx, yy, z + dz);
 
-            if (isSoilId(below) && (here === AIR_ID || isReplaceableId(here) || isPlantId(here))) {
+            if (isSoilId(below) && !isLiquidId(here) && (here === AIR_ID || isReplaceableId(here) || isPlantId(here))) {
                 world.setBlock(x + dx, yy, z + dz, `${species}_leaf_litter`);
             }
 

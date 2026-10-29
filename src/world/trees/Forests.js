@@ -4,9 +4,12 @@ import {
     AIR_ID,
     getBlockId,
     isLeavesId,
+    isLiquidId,
     isPlantId,
     isReplaceableId,
     isSoilId,
+    canPlantStay,
+    getLiquidKindId,
     getAttach
 } from '../../blocks/BlockRegistry.js';
 
@@ -543,13 +546,28 @@ export class Forests {
 
 export function canReplace(id, log) {
 
-    return (
+    return !isLiquidId(id) && (
         id === AIR_ID ||
         isPlantId(id) ||
         isReplaceableId(id) ||
         getAttach(id) !== 0 ||
         (log && isLeavesId(id))
     );
+
+}
+
+
+// Generacja omija World.setBlock. Zachowujemy więc tę samą zasadę:
+// liść/gałąź nad taflą usuwa zakrytą roślinę, ale zostawia jej wodę.
+// Dotyczy też wysokich roślin lądowych potrzebujących miejsca nad sobą.
+function setTreeBlock(chunk, lx, y, lz, id) {
+
+    chunk.setId(lx, y, lz, id);
+    if (y < 1) return;
+    const below = chunk.getId(lx, y - 1, lz);
+    if (isPlantId(below) && !canPlantStay(below, chunk.getId(lx, y - 2, lz), id)) {
+        chunk.setId(lx, y - 1, lz, getLiquidKindId(below));
+    }
 
 }
 
@@ -579,7 +597,7 @@ export function placeTree(chunk, baseX, baseZ, tree, idOf) {
         const id = idOf(type);
 
         if (canReplace(chunk.getId(lx, y, lz), !isLeavesId(id))) {
-            chunk.setId(lx, y, lz, id);
+            setTreeBlock(chunk, lx, y, lz, id);
         }
 
     }
@@ -608,7 +626,7 @@ export function placeTree(chunk, baseX, baseZ, tree, idOf) {
                 break;
             }
 
-            chunk.setId(lx, y, lz, log);
+            setTreeBlock(chunk, lx, y, lz, log);
 
         }
 
@@ -632,14 +650,16 @@ export function placeTree(chunk, baseX, baseZ, tree, idOf) {
 
             const below = chunk.getId(lx, y - 1, lz);
 
+            if (isLiquidId(below)) break;
+
             if (below === AIR_ID || isPlantId(below) || isLeavesId(below)) {
                 continue;
             }
 
             const here = chunk.getId(lx, y, lz);
 
-            if (isSoilId(below) && (here === AIR_ID || isReplaceableId(here) || isPlantId(here))) {
-                chunk.setId(lx, y, lz, litter);
+            if (isSoilId(below) && !isLiquidId(here) && (here === AIR_ID || isReplaceableId(here) || isPlantId(here))) {
+                setTreeBlock(chunk, lx, y, lz, litter);
             }
 
             break;

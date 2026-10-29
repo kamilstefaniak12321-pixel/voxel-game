@@ -95,7 +95,7 @@ export class BlockDebris {
                 emission: glow,
                 classicShade: Math.max(sky, lamp, glow)
             },
-            plant: definition.model === 'cross' || definition.model === 'flat'
+            plant: definition.model === 'cross' || definition.model === 'flat' || definition.model === 'riverPlant'
         };
 
     }

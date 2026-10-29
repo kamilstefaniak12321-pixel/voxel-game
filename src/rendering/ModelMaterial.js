@@ -78,9 +78,9 @@ export function setModelPreviewRenderer(renderer) {
 // alphaTest - przezroczyste piksele (wierzchnia warstwa skórki),
 // glow      - ile blok sam świeci (0-1, lampa w ręce).
 
-export function createModelMaterial({ map, alphaTest = 0, glow = 0 }) {
+export function createModelMaterial({ map, alphaTest = 0, glow = 0, vertexColors = false }) {
 
-    const material = new THREE.MeshLambertMaterial({ map, alphaTest });
+    const material = new THREE.MeshLambertMaterial({ map, alphaTest, vertexColors });
 
     const own = { uModelGlow: { value: glow } };
 

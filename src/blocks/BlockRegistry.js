@@ -8,6 +8,7 @@ import {
 } from '../config.js';
 
 import { treeBlocks } from './trees.js';
+import { RIVER_PLANT_BLOCKS } from './riverPlants.js';
 
 // ID 0 jest zarezerwowane dla powietrza.
 // Chunk przechowuje bloki jako liczby, więc pusta tablica = samo powietrze.
@@ -995,7 +996,9 @@ export const BLOCK_TYPES = {
 
     // Drzewa (src/blocks/trees.js) - po 5 bloków na gatunek i dodatki.
 
-    ...treeBlocks()
+    ...treeBlocks(),
+
+    ...RIVER_PLANT_BLOCKS
 
 };
 
@@ -1012,6 +1015,7 @@ const typeById = new Array(MAX_BLOCK_ID + 1).fill(null);
 const solidById = new Uint8Array(MAX_BLOCK_ID + 1);
 const opaqueById = new Uint8Array(MAX_BLOCK_ID + 1);
 const liquidById = new Uint8Array(MAX_BLOCK_ID + 1);
+const riverPlantById = new Array(MAX_BLOCK_ID + 1).fill(null);
 const plantById = new Uint8Array(MAX_BLOCK_ID + 1);
 const soilById = new Uint8Array(MAX_BLOCK_ID + 1);
 const replaceableById = new Uint8Array(MAX_BLOCK_ID + 1);
@@ -1117,7 +1121,9 @@ for (const [type, definition] of Object.entries(BLOCK_TYPES)) {
 
     liquidById[id] = definition.liquid ? 1 : 0;
 
-    plantById[id] = definition.model === 'cross' ? 1 : 0;
+    plantById[id] = definition.model === 'cross' || definition.model === 'riverPlant' ? 1 : 0;
+
+    riverPlantById[id] = definition.riverPlant ?? null;
 
     soilById[id] = definition.soil ? 1 : 0;
 
@@ -1223,6 +1229,28 @@ export function isLiquidId(id) {
 }
 
 
+export function isWaterloggedPlantId(id) {
+
+    return riverPlantById[id]?.waterlogged === true;
+
+}
+
+
+// Ten sam rodzaj cieczy także pod rośliną: pływanie, ściany wody i LOD.
+export function getLiquidKindId(id) {
+
+    return isWaterloggedPlantId(id) ? BLOCK_TYPES.water.id : (isLiquidId(id) ? id : AIR_ID);
+
+}
+
+
+export function getRiverPlant(id) {
+
+    return riverPlantById[id] ?? null;
+
+}
+
+
 // Roślina (model 'cross') - rośnie tylko na ziemi (soil).
 
 export function isPlantId(id) {
@@ -1247,6 +1275,26 @@ export function isSoilId(id) {
 export function canGrowOn(plantId, groundId) {
 
     return soilById[groundId] === 1 || (groundById[plantId]?.has(groundId) ?? false);
+
+}
+
+
+// Rośliny przy tafli potrzebują otwartej powierzchni. Pływające liście
+// nie są zakorzenione: usunięcie dna nie zabiera im istniejącej wody.
+export function canPlantStay(plantId, groundId, aboveId = AIR_ID) {
+
+    const river = riverPlantById[plantId];
+
+    // Wysokie pędy zajmują także część komórki nad korzeniami.
+    if ((river?.kind === 'cattail' || river?.kind === 'loosestrife') && aboveId !== AIR_ID) return false;
+
+    if (river?.waterlogged) {
+        if (river.kind === 'lily' || river.kind === 'duckweed') {
+            return aboveId === AIR_ID;
+        }
+    }
+
+    return canGrowOn(plantId, groundId);
 
 }
 

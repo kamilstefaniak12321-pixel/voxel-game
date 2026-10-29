@@ -1101,7 +1101,7 @@ export class Meteorites {
                     const distance = dx * dx + dz * dz + (dy + 0.5) * (dy + 0.5) * 1.6;
 
                     if (distance <= radius * radius && y + dy >= 1) {
-                        world.setBlock(x + dx, y + dy, z + dz, null);
+                        world.clearBlock(x + dx, y + dy, z + dz);
                     }
 
                 }

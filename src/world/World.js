@@ -15,7 +15,9 @@ import {
     getBlockId,
     getBlockTypeById,
     isSolidId,
-    canGrowOn,
+    canPlantStay,
+    isWaterloggedPlantId,
+    getLiquidKindId,
     isPlantId,
     isTreeId,
     getAttach,
@@ -452,10 +454,11 @@ export class World {
     }
 
 
-    // Stawia blok (type = nazwa) albo usuwa go (type = null).
+    // Stawia blok (type = nazwa) albo zbiera go (type = null).
+    // Zbieranie rośliny zachowuje wodę; clearBlock opróżnia całą komórkę.
     // Zwraca true, jeśli świat faktycznie się zmienił.
 
-    setBlock(x, y, z, type) {
+    setBlock(x, y, z, type, preserveWater = true) {
 
         let id = AIR_ID;
 
@@ -514,6 +517,13 @@ export class World {
         const lz = z - cz * CHUNK_SIZE;
 
 
+        // Zbieramy roślinę, nie wodę, w której rosła. Postawienie
+        // konkretnego bloku nadal zastępuje całą komórkę normalnie.
+        const previousId = chunk.getId(lx, y, lz);
+        if (preserveWater && id === AIR_ID && isWaterloggedPlantId(previousId)) {
+            id = getLiquidKindId(previousId);
+        }
+
         if (!chunk.setId(lx, y, lz, id)) {
             return false;
         }
@@ -544,11 +554,18 @@ export class World {
         this.applyLightChanges();
 
 
-        // Roślina nad blokiem, który przestał być ziemią (zniszczony,
-        // zamieniony na kamień...), nie ma na czym rosnąć - znika.
-
-        if (y + 1 < CHUNK_HEIGHT && isPlantId(this.getBlockId(x, y + 1, z)) && !canGrowOn(this.getBlockId(x, y + 1, z), id)) {
-            this.setBlock(x, y + 1, z, null);
+        // Zmienione podłoże lub przykryta tafla mogą usunąć roślinę.
+        // Wodna odmiana oddaje wówczas swoją komórkę zwykłej wodzie.
+        for (const py of [y - 1, y + 1]) {
+            if (py < 0 || py >= CHUNK_HEIGHT) continue;
+            const plantId = this.getBlockId(x, py, z);
+            if (isPlantId(plantId) && !canPlantStay(
+                plantId,
+                this.getBlockId(x, py - 1, z),
+                this.getBlockId(x, py + 1, z)
+            )) {
+                this.setBlock(x, py, z, null);
+            }
         }
 
 
@@ -561,6 +578,15 @@ export class World {
 
 
         return true;
+
+    }
+
+
+    // Jawne usunięcie całej komórki (komendy budowania i czyszczenia),
+    // łącznie z wodą rośliny. Sąsiednie rośliny nadal tracą tylko oparcie.
+    clearBlock(x, y, z) {
+
+        return this.setBlock(x, y, z, null, false);
 
     }
 

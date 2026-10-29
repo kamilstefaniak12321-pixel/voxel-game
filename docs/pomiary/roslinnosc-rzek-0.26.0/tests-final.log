@@ -1,0 +1,144 @@
+
+> voxel-game@0.26.0 test
+> node tools/sprawdz_ekwipunek.mjs && node tools/sprawdz_lupy.mjs && node tools/sprawdz_stan_gracza.mjs && node tools/sprawdz_przepisy.mjs && node tools/sprawdz_swiatlo.mjs && node tools/sprawdz_tarcze.mjs && node tools/sprawdz_ciemnosc.mjs && node tools/sprawdz_cienie.mjs && node tools/sprawdz_materialy.mjs && node tools/sprawdz_materialy_far.mjs && node tools/sprawdz_odlamki.mjs && node tools/sprawdz_warmup_wody.mjs && node tools/sprawdz_teren_rzek.mjs && node tools/sprawdz_ujscia.mjs && node tools/sprawdz_rzeki_zapisy.mjs && node tools/sprawdz_rzeki_kolejnosc.mjs && node tools/sprawdz_pozycje_po_generacji.mjs && node tools/sprawdz_roslinnosc_rzek.mjs && node tools/sprawdz_rosliny_woda.mjs && node tools/sprawdz_modele_roslin_rzecznych.mjs && node tools/sprawdz_drzewa_woda.mjs && node tools/sprawdz_komendy_czyszczenie.mjs
+
+(node:5884) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/kamil/Documents/ChatGPT/ProjectZero/voxel-shadows-stage2/src/game/Inventory.js is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\kamil\Documents\ChatGPT\ProjectZero\voxel-shadows-stage2\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+OK: podniesiony stos trafia do zapisu i wraca do ekwipunku po wczytaniu
+OK: zamknięcie i ponowne otwarcie odkłada stos bez duplikacji
+OK: wynik craftingu nie ginie przy pełnym ekwipunku i siatce
+OK: wolna siatka przechowuje kursor, gdy ekwipunek jest pełny
+OK: dotyk nie zużywa składników, kiedy wynik nie mieści się w ekwipunku
+OK: częściowe odłożenie do stosów i siatki zachowuje nadmiar
+OK: klik poza oknem w przygodzie odkłada stos, a w kreatywnym go usuwa
+OK: wczytanie wykorzystuje wolne miejsce i zachowuje resztę kursora
+OK: stare zapisy i stare nazwy przedmiotów nadal się wczytują
+OK: wyczyszczenie ekwipunku obejmuje kursor
+OK: przełączenie świata nie przenosi ani nie usuwa jego kursora
+Sprawdzonych scenariuszy: 11, błędów: 0.
+(node:33480) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/kamil/Documents/ChatGPT/ProjectZero/voxel-shadows-stage2/src/game/Game.js is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\kamil\Documents\ChatGPT\ProjectZero\voxel-shadows-stage2\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+OK: cztery ściany i wierzch: każdy łup dokładnie raz
+OK: moss_carpet: zniszczenie podpory oddaje dekorację
+OK: snow_layer: zniszczenie podpory oddaje dekorację
+OK: beech_leaf_litter: zniszczenie podpory oddaje dekorację
+OK: pełny ekwipunek: miejsce na podporę nie wystarcza na dekorację
+OK: dwa rodzaje łupów nie mogą współdzielić ostatniego pustego slotu
+OK: dekoracje sumują ilość w istniejącym stosie
+OK: dekoracja oparta o inny blok pozostaje i nie daje łupu
+OK: krzak nad ziemią: sadzonka i wszystkie owoce trafiają do ekwipunku
+OK: krzak nad ziemią: brak miejsca na całą paczkę zachowuje oba bloki
+OK: łupy losowe z liści są sprawdzane razem z samym blokiem
+OK: tryb kreatywny usuwa bloki bez przyznawania łupów
+OK: nieudane niszczenie nie przyznaje żadnych łupów
+OK: łup dostają tylko faktycznie usunięte bloki podparte
+OK: water_milfoil: zbieranie zostawia wodę i oddaje jedną roślinę
+OK: water_lily: zbieranie zostawia wodę i oddaje jedną roślinę
+OK: duckweed: zbieranie zostawia wodę i oddaje jedną roślinę
+OK: cattail_water: zbieranie zostawia wodę i oddaje jedną roślinę
+OK: usunięcie dna zbiera zakorzenioną roślinę i zostawia jej wodę
+OK: pełny ekwipunek zachowuje dno, wodę i zakorzenioną roślinę
+OK: zbieranie rośliny pod taflą nie duplikuje pływających liści
+Sprawdzonych przypadków: 21, błędów: 0.
+OK: zapis lotu: creative, wysokość 100
+OK: zapis lotu: creative, wysokość 1100
+OK: zapis lotu: creative, wysokość 6000
+OK: zapis bez lotu nadal pozwala spadać: creative, wysokość 100
+OK: zapis bez lotu nadal pozwala spadać: creative, wysokość 6000
+OK: zapis lotu: adventure, wysokość 100
+OK: zapis lotu: adventure, wysokość 1100
+OK: zapis lotu: adventure, wysokość 6000
+OK: zapis bez lotu nadal pozwala spadać: adventure, wysokość 100
+OK: zapis bez lotu nadal pozwala spadać: adventure, wysokość 6000
+OK: stary zapis bez pola flying: wysokość 100
+OK: stary zapis bez pola flying: wysokość 6000
+OK: tylko boolean true przywraca lot: false
+OK: tylko boolean true przywraca lot: null
+OK: tylko boolean true przywraca lot: 0
+OK: tylko boolean true przywraca lot: 1
+OK: tylko boolean true przywraca lot: "true"
+OK: tylko boolean true przywraca lot: "false"
+OK: tylko boolean true przywraca lot: {}
+OK: tylko boolean true przywraca lot: []
+OK: uszkodzony zapis nie zmienia gracza: null
+OK: uszkodzony zapis nie zmienia gracza: {}
+OK: uszkodzony zapis nie zmienia gracza: {"x":null}
+OK: uszkodzony zapis nie zmienia gracza: {"y":null}
+OK: uszkodzony zapis nie zmienia gracza: {"z":"10"}
+OK: uszkodzony zapis nie zmienia gracza: {}
+OK: uszkodzony zapis nie zmienia gracza: {"pitch":null}
+Sprawdzono 27 przypadków zapisu i pierwszej klatki gracza, bez błędów.
+(node:6104) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/kamil/Documents/ChatGPT/ProjectZero/voxel-shadows-stage2/src/crafting/Crafting.js is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\kamil\Documents\ChatGPT\ProjectZero\voxel-shadows-stage2\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+Przepisów: 39, sprawdzonych układów: 878, błędów: 0.
+OK: atmosfera RGB, zmierzch, zaćmienie, cienie przy horyzoncie, powrót A/B, ustawienia, zapis typu świata, spójne chunki/mapa/LOD i stanowiska laboratorium.
+(node:10624) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/kamil/Documents/ChatGPT/ProjectZero/voxel-shadows-stage2/src/sky/SolarDisc.js is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\kamil\Documents\ChatGPT\ProjectZero\voxel-shadows-stage2\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+OK: pole tarczy względem próbek geometrycznych, widoczny wycinek, kierunek nad horyzontem, ciągły wschód/zachód i zaćmienie.
+OK: ciemność, 5 ścieżek meshera, oddzielne AO/sky/emisja, kolor i kodowanie lamp, głębokość wody oraz zgodność klasycznych meshy.
+OK: wspólny budżet kaskad, atomowa publikacja, streaming bez zagłodzenia, zmiany chunków, jakość 0/1/2/3, teleport, dzień/noc, kosmos i frustum przy niskim Słońcu.
+OK: 28 przypadków kontraktu materiałów: ciemność, suma/maksimum, emisja, noc, liniowy kolor, energia i brak akumulacji.
+OK: materiały far, worker/main, klasyczne bufory XYZ, cienie bez wody/kurtyn, podstawa ścian, snapshoty maski/geometrii i detal 800 przy horyzoncie 8192.
+OK: odłamki mają osobne liniowe albedo/niebo/RGB lamp/emisję, zero w ciemności, zgodność classic, przełączanie A/B i poprawne przenoszenie danych cząstek.
+OK: warmup wody: 7 ścieżek, oczekiwanie na obie strony, cleanup sukcesu/błędów, RGBA, właściwa scena i stabilny klucz wariantu.
+OK: suche szczeliny i prostokątne baseny znikają; pozostałe formy terenu oraz ciągły odpływ jeziora są zachowane.
+Ujścia i zasięg jezior: OK (6165 zanurzonych próbek rzeczywistego świata).
+OK: zapis i ponowne wczytanie rzek, budowli i wykopu; nowy teren obok; ochrona w dalekim widoku.
+OK: 4445 próbek, powrót po nowych źródłach, 4 chunki i 90 próbek LOD; seed zgłoszenia 2138286349: 283 próbek i 18 próbek LOD; kolejność bez wpływu.
+OK: bezpieczny powrót po zasypaniu starej szczeliny; wczytane narożniki; zachowane jaskinia, budowla i lot; bloki nietknięte.
+{"seed":2138286349,"anchor":[188,-252],"counts":{"river_sedge":131,"cattail":25,"purple_loosestrife":9,"reed":6,"water_milfoil":32,"water_lily":19,"duckweed":6,"cattail_water":9},"examples":{"reed":[92,52,-314],"river_sedge":[92,51,-312],"purple_loosestrife":[96,52,-312],"cattail":[96,51,-308],"water_milfoil":[106,48,-298],"cattail_water":[108,49,-294],"water_lily":[142,50,-264],"duckweed":[178,50,-246]}}
+{"seed":"lighting-rtx3050-0231","anchor":[968,-216],"counts":{"river_sedge":13,"cattail":0,"purple_loosestrife":2,"reed":3,"water_milfoil":0,"water_lily":0,"duckweed":0,"cattail_water":0},"examples":{"river_sedge":[976,57,-228],"reed":[984,58,-228],"purple_loosestrife":[988,62,-244]}}
+{"seed":"lighting-rtx3050-0231","anchor":[-1768,-1848],"counts":{"river_sedge":0,"cattail":0,"purple_loosestrife":0,"reed":0,"water_milfoil":5,"water_lily":0,"duckweed":0,"cattail_water":0},"examples":{"water_milfoil":[-1832,67,-1908]}}
+OK: 8 gatunków, siedliska, otwarty nurt, zachowana woda i powtarzalne kolumny.
+OK: stałe ID nowych roślin oraz dawnych bloków
+OK: water_milfoil: zachowuje wodę, pływanie i brak kolizji
+OK: water_milfoil: sadzenie w powietrzu nie tworzy wody
+OK: water_lily: zachowuje wodę, pływanie i brak kolizji
+OK: water_lily: sadzenie w powietrzu nie tworzy wody
+OK: duckweed: zachowuje wodę, pływanie i brak kolizji
+OK: duckweed: sadzenie w powietrzu nie tworzy wody
+OK: cattail_water: zachowuje wodę, pływanie i brak kolizji
+OK: cattail_water: sadzenie w powietrzu nie tworzy wody
+OK: pałka dobiera suchą lub wodną postać i wymaga płytkiej wody
+OK: wywłócznik rośnie na dnie w wodzie; nie w kamieniu ani na tafli
+OK: water_lily: tylko odsłonięta tafla; przykrycie usuwa roślinę, nie wodę
+OK: duckweed: tylko odsłonięta tafla; przykrycie usuwa roślinę, nie wodę
+OK: zniszczenie lub wymiana dna usuwa korzenie, pozostawia wodę i taflę
+OK: solid zastępuje całą komórkę z rośliną, bez odtwarzania wody
+OK: sadzenie nie nadpisuje innego wodnego gatunku
+OK: suche rośliny nadal potrzebują ziemi; nie wypierają wody
+OK: celownik pomija czystą wodę, wskazuje roślinę i pozwala wybrać taflę
+OK: zapis i ponowne wczytanie utrzymuje rośliny, wodę oraz materiał LOD
+OK: cattail: celownik trafia górny pęd, ale nie powietrze/ścianę ani poza zasięgiem
+OK: cattail: posadzenie pod blokiem odrzucone, zakrycie usuwa wysoki pęd
+OK: cattail_water: celownik trafia górny pęd, ale nie powietrze/ścianę ani poza zasięgiem
+OK: cattail_water: posadzenie pod blokiem odrzucone, zakrycie usuwa wysoki pęd
+OK: purple_loosestrife: celownik trafia górny pęd, ale nie powietrze/ścianę ani poza zasięgiem
+OK: purple_loosestrife: posadzenie pod blokiem odrzucone, zakrycie usuwa wysoki pęd
+OK: pływające liście nie przechwytują promienia biegnącego pod nimi
+OK: pływające liście pozostają celem na grzbiecie i w dolinie fal x3
+Sprawdzonych przypadków roślin i wody: 27.
+OK: river models: {"sedge":24,"cattail":36,"loosestrife":50,"milfoil":46,"lily":29,"duckweed":12} quads max; 48 cached variants, roots/normals/bounds, water/flow continuity and chunk boundary culling.
+OK: drzewa i ściółka zachowują wodę z roślinami; przykrycie usuwa tylko niesamodzielną roślinę.
+OK: pełne czyszczenie usuwa komórkę raz, zbieranie nadal zachowuje wodę
+OK: wyczyszczenie samego dna nie usuwa wody sąsiedniej rośliny
+OK: /wypelnij powietrze usuwa wodne rośliny oraz poprawnie liczy zmiany
+OK: /woda basen zostawia powietrze nad zaplanowaną taflą
+OK: /demo skaly opróżnia wykop także z roślin wodnych
+OK: /demo swiatlo nie zostawia wiszącej wody we wnętrzu
+OK: /krzaki ogrod opróżnia miejsce nad sadzonkami
+OK: /demo okno usuwa wodę w roślinach przed oknami
+OK: misa krateru usuwa całą wodę, samo spalenie rośliny obok ją zostawia
+Sprawdzonych przypadków czyszczenia: 9.
+(node:30588) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/kamil/Documents/ChatGPT/ProjectZero/voxel-shadows-stage2/lib/three/three.module.js is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\kamil\Documents\ChatGPT\ProjectZero\voxel-shadows-stage2\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)

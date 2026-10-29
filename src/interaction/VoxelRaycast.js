@@ -1,5 +1,31 @@
 import * as THREE from 'three';
-import { isLiquidId } from '../blocks/BlockRegistry.js';
+import { isLiquidId, getRiverPlant, getBlockTypeById } from '../blocks/BlockRegistry.js';
+import { riverPlantBounds } from './RiverPlantBounds.js';
+
+function intersectBounds(origin, direction, x, y, z, bounds, start, end) {
+    let near = -Infinity, far = Infinity;
+    const normal = { x: 0, y: 0, z: 0 };
+    const position = { x, y, z };
+    for (const [index, axis] of ['x', 'y', 'z'].entries()) {
+        const min = position[axis] + bounds.min[index], max = position[axis] + bounds.max[index];
+        const value = origin[axis], velocity = direction[axis];
+        if (Math.abs(velocity) < 1e-12) {
+            if (value < min || value > max) return null;
+            continue;
+        }
+        const a = (min - value) / velocity, b = (max - value) / velocity;
+        const entry = Math.min(a, b), exit = Math.max(a, b);
+        if (entry > near) {
+            near = entry;
+            normal.x = normal.y = normal.z = 0;
+            normal[axis] = velocity > 0 ? -1 : 1;
+        }
+        far = Math.min(far, exit);
+        if (near > far) return null;
+    }
+    const distance = Math.max(0, start, near);
+    return far >= distance && distance <= end ? { distance, normal } : null;
+}
 
 
 export class VoxelRaycast {
@@ -15,22 +41,25 @@ export class VoxelRaycast {
     }
 
 
-    castFromCamera(camera) {
+    castFromCamera(camera, includeWater = false) {
 
         camera.getWorldPosition(this.origin);
         camera.getWorldDirection(this.direction);
 
         return this.cast(
             this.origin,
-            this.direction
+            this.direction,
+            includeWater
         );
 
     }
 
 
-    cast(origin, direction) {
+    cast(origin, direction, includeWater = false) {
 
         const dir = direction.clone().normalize();
+
+        if (dir.lengthSq() === 0) return { hit: false };
 
 
         let x = Math.floor(origin.x);
@@ -95,6 +124,31 @@ export class VoxelRaycast {
 
         let distance = 0;
 
+        // Model może wejść do pustej komórki obok lub nad korzeniami.
+        // Sprawdzamy tylko krótki odcinek bieżącej komórki DDA, dlatego
+        // roślina za ścianą ani poza zasięgiem nie przechwytuje celu.
+        const plantHit = (start, end) => {
+            let closest = null;
+            for (let px = x - 1; px <= x + 1; px++) {
+                for (let pz = z - 1; pz <= z + 1; pz++) {
+                    for (let py = y - 1; py <= y; py++) {
+                        const id = this.world.getBlockId(px, py, pz);
+                        const river = getRiverPlant(id);
+                        if (!river) continue;
+                        const intersection = intersectBounds(origin, dir, px, py, pz,
+                            riverPlantBounds(river, px, py, pz), start, end);
+                        if (intersection && (!closest || intersection.distance < closest.distance)) {
+                            closest = { hit: true, block: {x:px,y:py,z:pz,type:getBlockTypeById(id)}, ...intersection };
+                        }
+                    }
+                }
+            }
+            return closest;
+        };
+
+        const initialPlant = plantHit(0, Math.min(tMaxX, tMaxY, tMaxZ, this.maxDistance));
+        if (initialPlant) return initialPlant;
+
 
         while (distance <= this.maxDistance) {
 
@@ -148,13 +202,11 @@ export class VoxelRaycast {
             }
 
 
-            const blockType =
-                this.world.getBlock(x, y, z);
+            // Zwykła woda przepuszcza celownik, wodną roślinę można
+            // zebrać. Taflę wskazujemy osobno tylko podczas sadzenia.
+            const id = this.world.getBlockId(x, y, z);
 
-
-            // Przez ciecz (wodę) celownik przechodzi.
-
-            if (blockType !== null && !isLiquidId(this.world.getBlockId(x, y, z))) {
+            if (id && ((!getRiverPlant(id) && !isLiquidId(id)) || (includeWater && isLiquidId(id)))) {
 
                 return {
 
@@ -164,7 +216,7 @@ export class VoxelRaycast {
                         x,
                         y,
                         z,
-                        type: blockType
+                        type: getBlockTypeById(id)
                     },
 
                     normal: {
@@ -178,6 +230,9 @@ export class VoxelRaycast {
                 };
 
             }
+
+            const plant = plantHit(distance, Math.min(tMaxX, tMaxY, tMaxZ, this.maxDistance));
+            if (plant) return plant;
 
         }
 

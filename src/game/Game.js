@@ -18,6 +18,10 @@ import {
     getStrip,
     getBreakTime,
     isPlantId,
+    canPlantStay,
+    isWaterloggedPlantId,
+    getLiquidKindId,
+    getRiverPlant,
     getAttach,
     ATTACH_OFFSETS
 } from '../blocks/BlockRegistry.js';
@@ -646,10 +650,16 @@ export class Game {
 
             if (block) {
 
-                const target = this.placer.targetOf(this.currentHit);
+                const river = getRiverPlant(getBlockId(block));
+                const surfacePlant = river && river.kind !== 'milfoil' &&
+                    (river.waterlogged || river.kind === 'cattail');
+                const placeHit = surfacePlant
+                    ? this.raycast.castFromCamera(this.camera, true)
+                    : this.currentHit;
+                const target = this.placer.targetOf(placeHit, block);
 
                 const placed = this.placer.placeBlock(
-                    this.currentHit,
+                    placeHit,
                     block
                 );
 
@@ -2005,12 +2015,16 @@ export class Game {
             if (!supported.has(key)) {
                 supported.set(key, {
                     x: sx, y: sy, z: sz,
+                    type: this.world.getBlock(sx, sy, sz),
                     drops: this.breakDrops(this.world.getBlock(sx, sy, sz))
                 });
             }
         };
 
-        if (isPlantId(this.world.getBlockId(x, y + 1, z))) {
+        const aboveId = this.world.getBlockId(x, y + 1, z);
+        const currentId = this.world.getBlockId(x, y, z);
+        const replacementId = isWaterloggedPlantId(currentId) ? getLiquidKindId(currentId) : 0;
+        if (isPlantId(aboveId) && !canPlantStay(aboveId, replacementId, this.world.getBlockId(x, y + 2, z))) {
             rememberSupported(x, y + 1, z);
         }
 
@@ -2042,7 +2056,7 @@ export class Game {
         }
 
         for (const block of supported.values()) {
-            if (this.world.getBlock(block.x, block.y, block.z) === null) {
+            if (this.world.getBlock(block.x, block.y, block.z) !== block.type) {
                 drops.push(...block.drops);
             }
         }

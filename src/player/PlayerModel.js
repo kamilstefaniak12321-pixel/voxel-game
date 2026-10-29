@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { getRiverPlantFaces } from '../rendering/RiverPlantGeometry.js';
 
 import { getBlockDefinition } from '../blocks/BlockRegistry.js';
 import { ITEM_TYPES, isItemType } from '../items/ItemRegistry.js';
@@ -445,6 +446,31 @@ export function buildBlockGeometry(type) {
 
     const definition = item ? { textures: { all: item.icon } } : getBlockDefinition(type);
 
+    if (definition.model === 'riverPlant') {
+        // Ten sam model co nad rzeką, bez otaczającej go wody.
+        const positions = [], normals = [], uvs = [], colors = [], indices = [];
+        const uv = getAtlasUV('snow');
+        const corners = [[uv.uMin, uv.vMax], [uv.uMax, uv.vMax], [uv.uMin, uv.vMin], [uv.uMax, uv.vMin]];
+        for (const face of getRiverPlantFaces(definition.riverPlant.kind, 0, definition.riverPlant.waterlogged)) {
+            const base = positions.length / 3;
+            for (let i = 0; i < 4; i++) {
+                positions.push(...face.vertices[i]);
+                normals.push(...face.normal);
+                uvs.push(...corners[i]);
+                colors.push(...face.color.map(value => value / 255));
+            }
+            indices.push(base, base + 2, base + 1, base + 2, base + 3, base + 1);
+        }
+        const geometry = new THREE.BufferGeometry();
+        geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+        geometry.setAttribute('normal', new THREE.Float32BufferAttribute(normals, 3));
+        geometry.setAttribute('uv', new THREE.Float32BufferAttribute(uvs, 2));
+        geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
+        geometry.setIndex(indices);
+        geometry.center();
+        return geometry;
+    }
+
     const positions = [];
     const normals = [];
     const uvs = [];
@@ -484,6 +510,9 @@ export function buildBlockGeometry(type) {
     geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
     geometry.setAttribute('normal', new THREE.Float32BufferAttribute(normals, 3));
     geometry.setAttribute('uv', new THREE.Float32BufferAttribute(uvs, 2));
+    // Wspólny materiał trzymanych roślin używa kolorów modeli rzecznych.
+    // Biały mnożnik zachowuje tekstury dawnych przedmiotów i roślin.
+    geometry.setAttribute('color', new THREE.Float32BufferAttribute(new Float32Array(positions.length).fill(1), 3));
     geometry.setIndex(indices);
 
     return geometry;
@@ -555,7 +584,7 @@ export class PlayerModel {
         this.heldMaterial = createModelMaterial({ map: blockAtlasTexture });
 
         // Rośliny mają przezroczyste tło tekstury.
-        this.heldPlantMaterial = createModelMaterial({ map: blockAtlasTexture, alphaTest: 0.5 });
+        this.heldPlantMaterial = createModelMaterial({ map: blockAtlasTexture, alphaTest: 0.5, vertexColors: true });
 
         this.held = new THREE.Mesh(new THREE.BufferGeometry(), this.heldMaterial);
 

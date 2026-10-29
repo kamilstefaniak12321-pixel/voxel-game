@@ -32,9 +32,10 @@ const { BlockPlacer } = await import('../src/interaction/BlockPlacer.js');
 const { BlockBreaker } = await import('../src/interaction/BlockBreaker.js');
 const { VoxelRaycast } = await import('../src/interaction/VoxelRaycast.js');
 const { riverPlantBounds } = await import('../src/interaction/RiverPlantBounds.js');
+const { getRiverPlantFaces, riverPlantTransform } = await import('../src/rendering/RiverPlantGeometry.js');
 const { Vector3 } = await import('three');
 const { getBlockId, isLiquidId, isSolidId, isOpaqueId, getLiquidKindId, getBlockTypeById, getRiverPlant, CREATIVE_BLOCKS } = await import('../src/blocks/BlockRegistry.js');
-const { WATER_SURFACE } = await import('../src/config.js');
+const { WATER_SURFACE, WATER_WAVE_HEIGHT } = await import('../src/config.js');
 
 function fixture(savedChunks = new Map()) {
     const world = Object.assign(Object.create(World.prototype), {
@@ -223,6 +224,33 @@ test('pływające liście nie przechwytują promienia biegnącego pod nimi', () 
     const ray = new VoxelRaycast(f.world,8);
     assert.equal(ray.cast(new Vector3(-2,50.2,.5),new Vector3(1,0,0)).hit,false);
     assert.equal(ray.cast(new Vector3(.5,54,.5),new Vector3(0,0,0)).hit,false);
+});
+
+test('pływające liście pozostają celem na grzbiecie i w dolinie fal x3', () => {
+    // Aim horizontally through a rendered triangle centroid, including a
+    // crest in the air cell above the plant. Times exercise both extrema;
+    // the target comes from the mesh and water shader, not from its bounds.
+    for (const [type, kind, time] of [
+        ['duckweed', 'duckweed', 7.9], ['duckweed', 'duckweed', 29.4],
+        ['water_lily', 'lily', 8.15], ['water_lily', 'lily', 10.8]
+    ]) {
+        const f = fixture(); f.pool(); f.set(0,50,0,type);
+        const transform = riverPlantTransform(0,50,0);
+        const face = getRiverPlantFaces(kind,transform.variant,true)[0];
+        const point = new Vector3();
+        for (const index of [0,2,1]) {
+            const vertex = face.vertices[index];
+            const x = transform.x + transform.cos*vertex[0] - transform.sin*vertex[2];
+            const z = transform.z + transform.sin*vertex[0] + transform.cos*vertex[2];
+            const wave = Math.sin(x*.9+time*1.3)*.5 + Math.sin(z*1.3-time*1.05)*.35 +
+                Math.sin((x+z)*.45+time*.7)*.15;
+            point.add(new Vector3(x,50+vertex[1]+wave*WATER_WAVE_HEIGHT*3,z).multiplyScalar(1/3));
+        }
+        const eye = point.clone(); eye.x -= 2;
+        const hit = new VoxelRaycast(f.world,8).cast(eye,new Vector3(1,0,0));
+        assert.equal(hit.block?.type,type,`${type}, t=${time}: rendered leaf escaped its target bounds`);
+        assert.equal(hit.block.y,50,'Wave crest still targets the root water cell');
+    }
 });
 
 console.log(`Sprawdzonych przypadków roślin i wody: ${checked}.`);

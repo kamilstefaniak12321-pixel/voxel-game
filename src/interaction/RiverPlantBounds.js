@@ -27,8 +27,11 @@ export function riverPlantBounds(river, x, y, z) {
     const floating = river.kind === 'lily' || river.kind === 'duckweed';
     const sway = floating ? 0.01 : river.kind === 'milfoil' ? 0.02 : 0.1;
     for (const axis of [0, 2]) { min[axis] -= sway; max[axis] += sway; }
-    min[1] -= floating ? WATER_WAVE_HEIGHT : 0;
-    max[1] += floating ? WATER_WAVE_HEIGHT : 0.005;
+    // /woda fale accepts 0..3. Cover the full supported wave envelope so
+    // cached bounds remain valid when the player changes wave height.
+    const waveMargin = floating ? 3 * WATER_WAVE_HEIGHT : 0;
+    min[1] -= waveMargin;
+    max[1] += floating ? waveMargin : 0.005;
     const bounds = { min, max };
     if (cache.size >= 128) cache.delete(cache.keys().next().value);
     cache.set(key, bounds);

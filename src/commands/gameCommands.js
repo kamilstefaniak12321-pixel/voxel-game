@@ -659,7 +659,7 @@ function buildPool(player, world) {
     let changed = 0;
 
     const set = (x, y, z, type) => {
-        if (world.setBlock(x, y, z, type)) changed++;
+        if (type === null ? world.clearBlock(x, y, z) : world.setBlock(x, y, z, type)) changed++;
     };
 
 
@@ -783,7 +783,7 @@ function plantBushGarden(player, world) {
 
             world.setBlock(x, y - 1, z, 'grass');
             world.setBlock(x, y, z, type);
-            world.setBlock(x, y + 1, z, null);
+            world.clearBlock(x, y + 1, z);
 
         });
 
@@ -3567,7 +3567,7 @@ export const GAME_COMMANDS = [
 
                     for (let z = minZ; z <= maxZ; z++) {
 
-                        if (world.setBlock(x, y, z, type)) {
+                        if (type === null ? world.clearBlock(x, y, z) : world.setBlock(x, y, z, type)) {
                             changed++;
                         }
 
@@ -5345,7 +5345,7 @@ function buildRockDemo({ player, world }) {
 
             for (let s = -HALF; s <= HALF; s++) {
 
-                if (world.setBlock(startX + ax * a + sx * s, y, startZ + az * a + sz * s, null)) {
+                if (world.clearBlock(startX + ax * a + sx * s, y, startZ + az * a + sz * s)) {
                     changed++;
                 }
 
@@ -5472,7 +5472,8 @@ function sunSite({ player, world, sky, time }, halfU, halfV) {
 
         const [x, z] = at(u, v);
 
-        world.setBlock(x, floor + y, z, type);
+        if (type === null) world.clearBlock(x, floor + y, z);
+        else world.setBlock(x, floor + y, z, type);
 
     };
 
@@ -5716,7 +5717,8 @@ function buildLightDemo({ player, world }) {
 
                 const wall = Math.abs(x) === 7 || Math.abs(z) === 5 || y === 0 || y === 6;
 
-                world.setBlock(centerX + x, floor + y, centerZ + z, wall ? 'stone' : null);
+                if (wall) world.setBlock(centerX + x, floor + y, centerZ + z, 'stone');
+                else world.clearBlock(centerX + x, floor + y, centerZ + z);
 
             }
 

@@ -454,10 +454,11 @@ export class World {
     }
 
 
-    // Stawia blok (type = nazwa) albo usuwa go (type = null).
+    // Stawia blok (type = nazwa) albo zbiera go (type = null).
+    // Zbieranie rośliny zachowuje wodę; clearBlock opróżnia całą komórkę.
     // Zwraca true, jeśli świat faktycznie się zmienił.
 
-    setBlock(x, y, z, type) {
+    setBlock(x, y, z, type, preserveWater = true) {
 
         let id = AIR_ID;
 
@@ -519,7 +520,7 @@ export class World {
         // Zbieramy roślinę, nie wodę, w której rosła. Postawienie
         // konkretnego bloku nadal zastępuje całą komórkę normalnie.
         const previousId = chunk.getId(lx, y, lz);
-        if (id === AIR_ID && isWaterloggedPlantId(previousId)) {
+        if (preserveWater && id === AIR_ID && isWaterloggedPlantId(previousId)) {
             id = getLiquidKindId(previousId);
         }
 
@@ -577,6 +578,15 @@ export class World {
 
 
         return true;
+
+    }
+
+
+    // Jawne usunięcie całej komórki (komendy budowania i czyszczenia),
+    // łącznie z wodą rośliny. Sąsiednie rośliny nadal tracą tylko oparcie.
+    clearBlock(x, y, z) {
+
+        return this.setBlock(x, y, z, null, false);
 
     }
 

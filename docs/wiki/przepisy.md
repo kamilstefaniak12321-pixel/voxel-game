@@ -2,7 +2,7 @@
 
 > Ta strona jest generowana z kodu gry (`python tools/wiki.py`) - nie zmieniaj jej ręcznie, zmiany przepadną przy następnym generowaniu.
 
-Wersja gry **0.27.0** - 39 przepisów. Wytwarza się w ekwipunku (**E**): siatka 2 x 2 obok miejsc ekwipunku, wynik po prawej (klik - weź, Shift + klik - ile się da). Przycisk 📖 *Przepisy* otwiera księgę - klik na przepisie sam układa składniki. Przepisy *z kształtem* można przesuwać po siatce i odbijać w poziomie; przepisy *bez kształtu* - obojętne, gdzie leżą składniki. Z czatu: `/przepisy`, `/wytworz <przepis>`.
+Wersja gry **0.28.0** - 39 przepisów. Wytwarza się w ekwipunku (**E**): siatka 2 x 2 obok miejsc ekwipunku, wynik po prawej (klik - weź, Shift + klik - ile się da). Przycisk 📖 *Przepisy* otwiera księgę - klik na przepisie sam układa składniki. Przepisy *z kształtem* można przesuwać po siatce i odbijać w poziomie; przepisy *bez kształtu* - obojętne, gdzie leżą składniki. Z czatu: `/przepisy`, `/wytworz <przepis>`.
 
 
 ## Ziemia
@@ -162,9 +162,9 @@ Wersja gry **0.27.0** - 39 przepisów. Wytwarza się w ekwipunku (**E**): siatka
 
 ### Czerwona lampa
 
-<img src="przepisy/lamp_red.png" alt="Czerwona lampa: 1 x Lampa + 1 x coś czerwonego (mak, truskawki, papryczki chili) (obojętne gdzie)">
+<img src="przepisy/lamp_red.png" alt="Czerwona lampa: 1 x Lampa + 1 x coś czerwonego (mak, truskawki, papryczki chili, wiecha amarantusa) (obojętne gdzie)">
 
-1 x Lampa + 1 x coś czerwonego (mak, truskawki, papryczki chili) (bez kształtu). Nazwa przepisu: `lamp_red`.
+1 x Lampa + 1 x coś czerwonego (mak, truskawki, papryczki chili, wiecha amarantusa) (bez kształtu). Nazwa przepisu: `lamp_red`.
 
 ### Zielona lampa
 
@@ -272,7 +272,7 @@ Składnik z grupy to dowolna rzecz z listy (np. patyki z desek różnych drzew).
 - **szyszka (świerka albo sosny)**: Szyszka świerka, Szyszka sosny
 - **igliwie (świerka albo sosny)**: Igliwie świerka, Igliwie sosny
 - **opadłe liście (dowolne)**: Opadłe liście buka, Opadłe liście dębu, Opadłe liście jabłoni, Opadłe liście olchy, Opadłe liście wierzby
-- **coś czerwonego (mak, truskawki, papryczki chili)**: Mak, Truskawki, Papryczki chili
+- **coś czerwonego (mak, truskawki, papryczki chili, wiecha amarantusa)**: Mak, Truskawki, Papryczki chili, Wiecha amarantusa
 - **coś zielonego (koniczyna, pokrzywa, paproć)**: Koniczyna, Pokrzywa, Paproć
 - **coś niebieskiego (chaber, borówki)**: Chaber, Borówki
 - **coś fioletowego (jeżyny, wrzos, krokus)**: Jeżyny, Wrzos, Krokus

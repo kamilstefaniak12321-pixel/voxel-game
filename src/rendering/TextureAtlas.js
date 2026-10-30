@@ -2,6 +2,8 @@ import * as THREE from 'three';
 
 import { PACK_TEXTURES, TREE_PACK_ERRORS } from '../blocks/treePacks.js';
 
+import { PLANT_TEXTURES, PLANT_PACK_ERRORS } from '../blocks/plantPacks.js';
+
 import { getPackInfo, loadPackTiles, gameResolution, safeResolution, startSucceeded } from './TexturePacks.js';
 
 
@@ -14,6 +16,8 @@ export const ATLAS_COLUMNS = 16;
 export const PACK_ATLAS_ROW = 10;
 
 const PACK_TILE_NAMES = Object.keys(PACK_TEXTURES);
+
+const PLANT_TILE_NAMES = Object.keys(PLANT_TEXTURES);
 
 // Rozmiar jednego kafelka w pikselach w terrain.png (oryginalne
 // tekstury). Z paczką tekstur (TexturePacks.js) atlas w grze ma kafelki
@@ -312,11 +316,46 @@ PACK_TILE_NAMES.forEach((name, i) => {
 });
 
 
+// Obrazki z paczek roślin (assets/rosliny/, src/blocks/plantPacks.js):
+// pod teksturami drzew. Obrazek większy niż 16 x 16 zajmuje kilka
+// kafelków obok siebie (w x h - pola w i h; zwykłe kafelki ich nie
+// mają), stoi na dole, na środku. Kafelki układane rzędami, od lewej.
+
+{
+
+    let row = PACK_ATLAS_ROW + Math.ceil(PACK_TILE_NAMES.length / ATLAS_COLUMNS);
+    let column = 0;
+    let shelf = 0;
+
+    for (const name of PLANT_TILE_NAMES) {
+
+        const { width, height } = PLANT_TEXTURES[name];
+
+        const w = Math.ceil(width / ATLAS_TILE_SIZE);
+        const h = Math.ceil(height / ATLAS_TILE_SIZE);
+
+        if (column + w > ATLAS_COLUMNS) {
+            row += shelf;
+            column = 0;
+            shelf = 0;
+        }
+
+        // pw, ph - rozmiar samego obrazka w pikselach (ikonki).
+        ATLAS_TILES[name] = { x: column, y: row, w, h, pw: width, ph: height };
+
+        column += w;
+        shelf = Math.max(shelf, h);
+
+    }
+
+}
+
+
 // Wiersze atlasu w grze: tylko te, w których są kafelki (terrain.png ma
 // ich 16, ale ostatnie są puste - czekają na tekstury paczek drzew). Mniej
 // wierszy = mniej pamięci karty graficznej (ważne przy dużej paczce
 // tekstur). Paczki drzew z wieloma teksturami dokładają wiersze same.
-export const ATLAS_ROWS = Math.max(...Object.values(ATLAS_TILES).map((tile) => tile.y)) + 1;
+export const ATLAS_ROWS = Math.max(...Object.values(ATLAS_TILES).map((tile) => tile.y + (tile.h ?? 1)));
 
 
 // Wiersz atlasu z roślinami.
@@ -451,7 +490,7 @@ async function buildBaseAtlas() {
 
     const base = await loadImage(atlasUrl.href);
 
-    if (PACK_TILE_NAMES.length === 0 && base.height === ATLAS_ROWS * ATLAS_TILE_SIZE) {
+    if (PACK_TILE_NAMES.length === 0 && PLANT_TILE_NAMES.length === 0 && base.height === ATLAS_ROWS * ATLAS_TILE_SIZE) {
         return base;
     }
 
@@ -497,6 +536,43 @@ async function buildBaseAtlas() {
         context.clearRect(x * T, y * T, T, T);
 
         context.drawImage(image, 0, 0, image.width, image.height, x * T, y * T, T, T);
+
+    });
+
+
+    // Obrazki roślin: na dole, na środku swoich kafelków, piksel w piksel.
+
+    const plantImages = await Promise.all(PLANT_TILE_NAMES.map((name) =>
+        loadImage(PLANT_TEXTURES[name].url).catch(() => null)
+    ));
+
+    PLANT_TILE_NAMES.forEach((name, i) => {
+
+        const { x, y, w, h } = ATLAS_TILES[name];
+
+        const image = plantImages[i];
+
+        context.clearRect(x * T, y * T, w * T, h * T);
+
+        if (!image) {
+
+            for (let dy = 0; dy < h; dy++) {
+                for (let dx = 0; dx < w; dx++) {
+                    drawMissing(context, x + dx, y + dy);
+                }
+            }
+
+            PLANT_PACK_ERRORS.push(`Roślina "${PLANT_TEXTURES[name].pack}": brak obrazka ${PLANT_TEXTURES[name].file} (w grze - fioletowa szachownica)`);
+
+            return;
+
+        }
+
+        context.drawImage(
+            image,
+            x * T + Math.floor((w * T - image.width) / 2),
+            y * T + h * T - image.height
+        );
 
     });
 
@@ -569,7 +645,15 @@ async function buildPackAtlas(base, pack) {
 
     context.imageSmoothingEnabled = false;
 
-    for (const [name, { x, y }] of Object.entries(ATLAS_TILES)) {
+    for (const [name, { x, y, w = 1, h = 1 }] of Object.entries(ATLAS_TILES)) {
+
+        // Obrazek rośliny na kilku kafelkach - z oryginału, powiększony
+        // piksel w piksel (paczka tekstur go jeszcze nie zmienia).
+
+        if (w > 1 || h > 1) {
+            context.drawImage(base, x * B, y * B, w * B, h * B, x * T, y * T, w * T, h * T);
+            continue;
+        }
 
         const blob = pack.tiles.get(name);
 
@@ -755,7 +839,7 @@ export function getAtlasUV(tileName) {
 
 
     const uMax =
-        (tile.x + 1) /
+        (tile.x + (tile.w ?? 1)) /
         ATLAS_COLUMNS;
 
 
@@ -767,7 +851,7 @@ export function getAtlasUV(tileName) {
 
     const vMin =
         1 -
-        (tile.y + 1) /
+        (tile.y + (tile.h ?? 1)) /
         ATLAS_ROWS;
 
 
@@ -871,9 +955,9 @@ export function getTileColors(tileName) {
 
     const width = ATLAS_COLUMNS * ATLAS_TILE_SIZE;
 
-    for (let y = 0; y < ATLAS_TILE_SIZE; y++) {
+    for (let y = 0; y < ATLAS_TILE_SIZE * (tile.h ?? 1); y++) {
 
-        for (let x = 0; x < ATLAS_TILE_SIZE; x++) {
+        for (let x = 0; x < ATLAS_TILE_SIZE * (tile.w ?? 1); x++) {
 
             const i = ((tile.y * ATLAS_TILE_SIZE + y) * width + tile.x * ATLAS_TILE_SIZE + x) * 4;
 

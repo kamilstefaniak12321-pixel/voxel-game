@@ -1099,7 +1099,10 @@ for (
                 uv: getAtlasUV(getFaceTexture(definition.textures, 'front')),
                 planes: definition.plant?.planes ?? 2,
                 height: definition.plant?.height ?? 1,
-                width: definition.plant?.width ?? 0.45
+                width: definition.plant?.width ?? 0.45,
+                // Roślina z paczki: płaszczyzny tak duże jak obrazek
+                // (w blokach), bez losowej wysokości - 16 pikseli na blok.
+                sprite: definition.plant?.sprite ?? null
             }
             : null,
 

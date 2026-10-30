@@ -11,6 +11,34 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 0.28.0 - Duże rośliny: amarantus
+
+Paczki roślin i pierwsza duża roślina — PR #56.
+
+- **Amarantus** - nowa roślina w trzech etapach wzrostu: młody (1.3 bloku),
+  z wiechami (1.7) i dojrzały, **2 bloki wysokości** - wyższy od gracza,
+  z długimi, zwisającymi, bordowymi wiechami. Rośnie kępami na łąkach
+  (teren realistyczny). PPM na dojrzałym daje **wiechy amarantusa**
+  (1-3), a roślina wraca do etapu z wiechami. Zniszczona roślina daje
+  młody amarantus do posadzenia.
+- Wiecha jest "czymś czerwonym" - czerwona lampa: lampa + wiecha.
+- Osiągnięcie **Wyższy od ciebie** - zbierz wiechy z dojrzałego amarantusa.
+- **Rośliny większe niż blok**: tekstura w skali bloków (16 pikseli na blok),
+  roślina wystaje nad swoją komórkę, kołysze się na wietrze, celownik
+  i ramka obejmują ją całą. Wyższy etap rośnie tylko z wolnym miejscem
+  nad rośliną.
+- **Paczki roślin** (`assets/rosliny/`): nowa roślina to folder
+  z obrazkami etapów i `roslina.json` - bez kodu (jak paczki drzew).
+  Błędy paczek na czacie i w `/rosliny bledy`.
+- `tools/rosliny_z_atlasu.py` robi tekstury z dużych atlasów "pixel art"
+  (np. 1254 x 1254): odczytuje siatkę pikseli rysunku, zmniejsza do skali
+  gry bez mieszania kolorów, wszystkie etapy w tej samej skali.
+- Komendy: `/rosliny`, `/rosliny <roslina>`, `/rosliny ogrod`,
+  `/rosliny znajdz <roslina>`, `/rosliny bledy`.
+- Plan rozmiarów i modeli dla wszystkich 28 roślin z atlasów:
+  `docs/rosliny.md`.
+- Wersja 0.28.0 wspólna dla Windowsa i Androida. Przygotowana w PR;
+  publikacja w `voxel-game-wydania` następuje przez workflow po scaleniu.
 ## 0.27.1 - Pikselowe modele roślin rzecznych
 
 Pikselowy styl roślin — PR #55.

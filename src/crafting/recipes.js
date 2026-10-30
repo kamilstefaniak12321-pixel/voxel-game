@@ -1,6 +1,7 @@
 import { BLOCK_TYPES } from '../blocks/BlockRegistry.js';
 import { TREE_NAMES, TREE_SPECIES } from '../blocks/trees.js';
 import { TREE_PACKS, TREE_PACK_ERRORS } from '../blocks/treePacks.js';
+import { PLANT_PACKS } from '../blocks/plantPacks.js';
 import { itemExists } from '../items/ItemRegistry.js';
 import { STACK_SIZE } from '../game/Inventory.js';
 
@@ -119,6 +120,24 @@ export const GROUPS = {
     }]))
 
 };
+
+
+// Przedmioty z paczek roślin w grupach składników ("grupy" w roslina.json),
+// np. wiecha amarantusa - coś czerwonego (czerwona lampa).
+
+for (const pack of PLANT_PACKS) {
+
+    for (const name of pack.item?.groups ?? []) {
+
+        const group = GROUPS[name];
+
+        group.types.push(pack.item.type);
+
+        group.label = group.label.replace(/\)$/, `, ${pack.item.label.toLowerCase()})`);
+
+    }
+
+}
 
 
 export const RECIPES = [

@@ -100,7 +100,26 @@ function flatIcon(atlas, tileName) {
 
     const tile = ATLAS_TILES[tileName];
 
-    if (tile) {
+    if (tile?.pw) {
+
+        // Roślina z paczki (obrazek na kilku kafelkach, stoi na dole, na
+        // środku): sam obrazek, jak największy w ikonce, w całych
+        // pikselach, jeśli się da.
+
+        const unit = T / 16;
+        const width = tile.pw * unit;
+        const height = tile.ph * unit;
+        const sx = tile.x * T + Math.floor(((tile.w ?? 1) * T - width) / 2);
+        const sy = tile.y * T + (tile.h ?? 1) * T - height;
+        const fit = ICON_SIZE / Math.max(width, height);
+        const scale = fit >= 1 ? Math.floor(fit) : fit;
+        const dw = width * scale;
+        const dh = height * scale;
+
+        ctx.drawImage(atlas, sx, sy, width, height, Math.round((ICON_SIZE - dw) / 2), Math.round((ICON_SIZE - dh) / 2), dw, dh);
+
+    }
+    else if (tile) {
         ctx.drawImage(atlas, tile.x * T, tile.y * T, T, T, 0, 0, ICON_SIZE, ICON_SIZE);
     }
 

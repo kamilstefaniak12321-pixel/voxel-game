@@ -53,4 +53,3 @@ function frame(t){
 }
 requestAnimationFrame(frame);
 await import('/src/main.js');
-

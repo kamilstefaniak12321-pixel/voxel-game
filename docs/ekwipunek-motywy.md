@@ -9,7 +9,7 @@ wyszukiwanie bloków, kategorie i kosz.
 
 ## Wygląd: drewniany i jasny
 
-Okno ma dwa wyglądy do wyboru: *Ustawienia → Inne → Wygląd ekwipunku*
+Okno ma dwa wyglądy do wyboru: *Ustawienia → Inne → Ekwipunek*
 albo komenda `/ekwipunek wyglad [drewniany | jasny]`. Domyślny jest
 **drewniany**:
 

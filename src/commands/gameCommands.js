@@ -2673,7 +2673,7 @@ export const GAME_COMMANDS = [
             }
 
 
-            // Wygląd okna (to samo co Ustawienia - Inne - Wygląd ekwipunku).
+            // Wygląd okna (to samo co Ustawienia - Inne - Ekwipunek: drewniany / jasny).
             // Bez słowa - przełącza na drugi.
 
             if (['wyglad', 'styl', 'style'].includes(word)) {

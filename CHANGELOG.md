@@ -24,7 +24,7 @@ Nowy wygląd okna ekwipunku — PR #54.
   ciemne wnęki, podpowiedzi przedmiotów są ciemne z drewnianym brzegiem.
   Dotyczy wszystkich części okna: ekwipunku, wytwarzania, księgi
   przepisów i zakładek trybu kreatywnego.
-- Nowe ustawienie *Ustawienia → Inne → Wygląd ekwipunku*: **Drewniany**
+- Nowe ustawienie *Ustawienia → Inne → Ekwipunek*: **Drewniany**
   albo **Jasny** (dotychczasowy). Komenda `/ekwipunek wyglad [drewniany |
   jasny]`.
 - Okno mieści się w całości od 1366 x 768 (na niższym ekranie księga

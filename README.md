@@ -154,7 +154,7 @@ Okno ma wspólną ramkę: księgę przepisów po lewej, postać
 i wytwarzanie nad zapasami oraz pasek wyrównany z dziewięcioma
 kolumnami ekwipunku. Na węższym ekranie sekcje zmieniają ułożenie.
 
-**Wygląd ekwipunku** (*Ustawienia → Inne*, albo `/ekwipunek wyglad`):
+**Wygląd ekwipunku** (*Ustawienia → Inne → Ekwipunek*, albo `/ekwipunek wyglad`):
 **Drewniany** (domyślny) - okno z desek z mchem, liśćmi i pnączami,
 ciemne przegródki na przedmioty w drewnianych ramkach ze złotym
 brzegiem - albo **Jasny** (biało-szary). Układ i obsługa przedmiotów

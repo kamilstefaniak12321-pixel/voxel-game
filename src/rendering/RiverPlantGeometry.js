@@ -3,7 +3,7 @@ import { createPixelPlant } from './PixelPlantBuilder.js';
 
 // Small reusable templates, appended to the ordinary chunk plant batch. There
 // are no Object3Ds, materials or draw calls per plant. Colours are linear RGB
-// multipliers for the neutral, lightly textured snow atlas tile.
+// multipliers for one neutral texel of the snow atlas tile.
 const linear = (hex) => [16, 8, 0].map((shift) => {
     const value = ((hex >> shift) & 255) / 255;
     return Math.round((value <= 0.04045 ? value / 12.92 : ((value + 0.055) / 1.055) ** 2.4) * 255);

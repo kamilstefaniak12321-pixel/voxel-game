@@ -13,6 +13,8 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ## 0.27.1 - Pikselowe modele roślin rzecznych
 
+Pikselowy styl roślin — PR #55.
+
 - Sześć roślin rzecznych ma kształty oparte na pikselach wielkości
   1/16 bloku: schodkowe liście i pędy oraz kwiaty i kolby z małych bryłek.
 - Cienkie liście są płaskie i widoczne z obu stron. Obrót i przesunięcie

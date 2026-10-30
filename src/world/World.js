@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { normalizeWorldExperiments, grassDetailAtDistance } from './WorldExperiments.js';
 // ------------------------------------------------------------
 import {
     CHUNK_SIZE,
@@ -96,11 +97,12 @@ export class World {
     // terrain     - typ terenu ('realistic', 'classic' - patrz
     //               terrain/generators.js)
 
-    constructor(scene, seed, savedChunks = new Map(), terrain = 'classic') {
+    constructor(scene, seed, savedChunks = new Map(), terrain = 'classic', experiments) {
 
         this.scene = scene;
 
         this.seed = seed;
+        this.experiments = normalizeWorldExperiments(experiments);
 
         // Klucz "cx,cz" -> Chunk.
 
@@ -739,6 +741,19 @@ export class World {
 
     }
 
+    setExperiments(value) {
+        const next = normalizeWorldExperiments(value);
+        if (next.bushyGrass === this.experiments.bushyGrass) return;
+        this.experiments = next;
+        // This changes rendering only. Block IDs and saved chunks stay intact.
+        this.remeshAll();
+    }
+
+    getGrassDetail(chunk) {
+        return grassDetailAtDistance(Math.sqrt(this.distanceToCenter(chunk)) * CHUNK_SIZE,
+            chunk.mesh?.geometry.userData.bushyGrassDetail);
+    }
+
 
     // Kwadrat odległości chunka od chunka gracza (w chunkach).
 
@@ -891,6 +906,11 @@ export class World {
         const radius = PLANT_VIEW_DISTANCE / CHUNK_SIZE;
 
         group.count = this.distanceToCenter(chunk) <= radius * radius ? geometry.userData.plantCount : 0;
+
+        if (this.experiments.bushyGrass && geometry.userData.bushyGrassCount > 0 &&
+            this.getGrassDetail(chunk) !== geometry.userData.bushyGrassDetail) {
+            this.dirtyChunks.add(chunk);
+        }
 
     }
 

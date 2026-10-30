@@ -13,10 +13,13 @@ import {
 import { WATER_FLOW_UV } from './BlockRenderData.js';
 import { atmosphericLightToBrightness } from './LightPolicy.js';
 import { getRiverPlantFaces, plantRandom, riverPlantTransform } from './RiverPlantGeometry.js';
+import { getBushyGrassFaces } from './BushyGrassGeometry.js';
+import { getAtlasUV } from './TextureAtlas.js';
 
 
 import {
     AIR_ID,
+    getBlockId,
     isOpaqueId,
     isLiquidId,
     getLiquidKindId,
@@ -538,6 +541,8 @@ function tintOfColumn(lx, lz) {
 // ------------------------------------------------------------
 
 const PLANT_BOTTOM_SHADE = 0.68;
+const SHORT_GRASS_ID = getBlockId('short_grass');
+const TALL_GRASS_ID = getBlockId('tall_grass');
 
 function addPlants(plants, faceCount, baseX, baseZ) {
 
@@ -680,13 +685,18 @@ function addPlants(plants, faceCount, baseX, baseZ) {
 // ------------------------------------------------------------
 // Generated river plants share the existing plant material and chunk batch.
 // Their cached templates carry actual surface normals and a linear albedo tint.
-function addRiverPlants(plants, faceCount, baseX, baseZ) {
+function addRiverPlants(plants, faceCount, baseX, baseZ, grassDetail = null) {
+    const grass = grassDetail !== null;
+    const grassUv = grass ? getAtlasUV('snow') : null;
     for (let k = 0; k < plants.length; k += 4) {
         const lx = plants[k], y = plants[k + 1], lz = plants[k + 2];
-        const data = blockRenderData[plants[k + 3]].riverPlant;
+        const data = grass ? { kind: 'grass', uv: grassUv } : blockRenderData[plants[k + 3]].riverPlant;
         const wx = baseX + lx, wz = baseZ + lz;
         const transform = riverPlantTransform(wx, y, wz);
-        const faces = getRiverPlantFaces(data.kind, transform.variant, data.waterlogged);
+        const faces = grass
+            ? getBushyGrassFaces(plants[k + 3] === TALL_GRASS_ID, transform.variant, grassDetail)
+            : getRiverPlantFaces(data.kind, transform.variant, data.waterlogged);
+        const climate = grass && meshTint ? tintOfColumn(lx, lz) : null;
         const { cos, sin } = transform;
         const centerX = lx + transform.x;
         const centerZ = lz + transform.z;
@@ -733,9 +743,11 @@ function addRiverPlants(plants, faceCount, baseX, baseZ) {
                 atmosphereLightBuffer[c + i * 4 + 3] = atmosphereSky * depthShade * 255 + 0.5;
                 surfaceOcclusionBuffer[faceCount * 4 + i] = shade * 255 + 0.5;
                 surfaceEmissionBuffer[faceCount * 4 + i] = 0;
-                tintBuffer[c + i * 4] = face.color[0];
-                tintBuffer[c + i * 4 + 1] = face.color[1];
-                tintBuffer[c + i * 4 + 2] = face.color[2];
+                for (let channel = 0; channel < 3; channel++) {
+                    tintBuffer[c + i * 4 + channel] = climate
+                        ? Math.min(255, Math.round(face.color[channel] * climate[channel] / 128))
+                        : face.color[channel];
+                }
                 tintBuffer[c + i * 4 + 3] = 128;
             }
             splitBuffer[faceCount++] = 0;
@@ -1301,6 +1313,8 @@ export function buildChunkGeometry(chunk, world) {
 
     const plants = [];
     const riverPlants = [];
+    const bushyGrass = [];
+    const grassDetail = world.experiments?.bushyGrass ? (world.getGrassDetail?.(chunk) ?? 0) : null;
 
     // Najwyższa roślina z paczki (bloki) - wystaje nad swoją komórkę.
     let spriteReach = 0;
@@ -1343,6 +1357,11 @@ export function buildChunkGeometry(chunk, world) {
                 }
 
                 if (renderData.cross) {
+
+                    if (grassDetail !== null && (id === SHORT_GRASS_ID || id === TALL_GRASS_ID)) {
+                        bushyGrass.push(lx, y, lz, id);
+                        continue;
+                    }
 
                     plants.push(lx, y, lz, id);
 
@@ -1397,6 +1416,7 @@ export function buildChunkGeometry(chunk, world) {
 
     faceCount = addPlants(plants, faceCount, baseX, baseZ);
     faceCount = addRiverPlants(riverPlants, faceCount, baseX, baseZ);
+    faceCount = addRiverPlants(bushyGrass, faceCount, baseX, baseZ, grassDetail);
 
     const plantFaces = faceCount - cubeFaces;
 
@@ -1545,6 +1565,9 @@ export function buildChunkGeometry(chunk, world) {
         new THREE.Vector3(S / 2, height / 2, S / 2),
         Math.sqrt((S / 2) * (S / 2) * 2 + (height / 2) * (height / 2)) + Math.max(riverPlants.length ? 1.2 : 0, spriteReach)
     );
+
+    geometry.userData.bushyGrassDetail = grassDetail;
+    geometry.userData.bushyGrassCount = bushyGrass.length / 4;
 
 
     return geometry;

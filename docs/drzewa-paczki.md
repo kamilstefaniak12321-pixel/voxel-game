@@ -189,7 +189,7 @@ przecinka po ostatnim). Cały plik jabłoni:
 
 | Pole | Co znaczy |
 |---|---|
-| `pierwszeId` | pierwszy numer bloku drzewa (100, 110, 120... do 230 - każde drzewo zajmuje 10 numerów; 240-255 to bloki gry). Nadaje go generator, `node tools/drzewa.mjs` albo akcja na GitHubie. **Raz nadanego nie zmieniaj** - numer zapisuje się w światach. |
+| `pierwszeId` | pierwszy numer bloku drzewa: 100, 110, 120... do 230, a od 0.30.0 także 1000, 1010... do 4990 (każde drzewo zajmuje 10 numerów; numery 2-bajtowe - `docs/numery-blokow.md`). Nadaje go generator, `node tools/drzewa.mjs` albo akcja na GitHubie (najpierw wolne w 100-239). **Raz nadanego nie zmieniaj** - numer zapisuje się w światach. |
 | `gatunek` | pełna nazwa (*Jabłoń domowa*) - opisy, `/drzewa posadz` |
 | `gatunekDopelniacz` | "pień czego?" (*jabłoni*) - księga przepisów (*pień jabłoni (też okorowany)*) |
 | `krotko` | krótka nazwa (*jabłoń*) - komendy: `/drzewa posadz jablon` albo `/drzewa posadz jabłoń` |

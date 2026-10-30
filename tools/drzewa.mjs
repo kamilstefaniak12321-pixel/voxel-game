@@ -45,8 +45,7 @@ const GITHUB = Boolean(process.env.GITHUB_ACTIONS);
 // razu przy imporcie, więc najpierw porządkujemy listę, a dopiero potem
 // go wczytujemy).
 
-const FIRST_ID = 100;
-const LAST_ID = 239;
+const RANGES = [[100, 239], [1000, 4999]];
 const SLOTS = 10;
 
 
@@ -131,7 +130,7 @@ function assignIds(list, added, write) {
     const overlaps = (id) => used.some((other) => Math.abs(other - id) < SLOTS) ||
         plants.some(([first, last]) => id <= last && first <= id + SLOTS - 1);
 
-    const valid = (id) => Number.isInteger(id) && id >= FIRST_ID && id <= LAST_ID - SLOTS + 1;
+    const valid = (id) => Number.isInteger(id) && RANGES.some(([from, to]) => id >= from && id + SLOTS - 1 <= to);
 
     for (const folder of list) {
 
@@ -157,13 +156,19 @@ function assignIds(list, added, write) {
             continue;
         }
 
-        let free = FIRST_ID;
+        // Najmniejsza wolna dziesiątka: najpierw dawny zakres (100-239),
+        // potem nowy (1000-4999).
+        let free = null;
 
-        while (free <= LAST_ID - SLOTS + 1 && overlaps(free)) {
-            free += SLOTS;
+        for (const [from, to] of RANGES) {
+            for (let id = from; id + SLOTS - 1 <= to && free === null; id += SLOTS) {
+                if (!overlaps(id)) {
+                    free = id;
+                }
+            }
         }
 
-        if (free > LAST_ID - SLOTS + 1) {
+        if (free === null) {
             continue;
         }
 

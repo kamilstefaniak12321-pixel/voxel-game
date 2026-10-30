@@ -22,7 +22,8 @@ const DB_NAME = 'voxel-game';
 const DB_VERSION = 1;
 
 // Wersja formatu zapisu świata - na wypadek przyszłych zmian.
-const WORLD_FORMAT_VERSION = 1;
+// 2 (0.30.0): chunk może mieć numery bloków 2-bajtowe (packChunkBlocks).
+const WORLD_FORMAT_VERSION = 2;
 
 // ------------------------------------------------------------
 // IndexedDB działa na zdarzeniach (onsuccess / onerror).
@@ -126,6 +127,27 @@ export function seedFromText(text) {
 
 // ------------------------------------------------------------
 
+// Bloki chunka do zapisu (kopia). Chunk w grze ma numery 2-bajtowe
+// (Uint16Array, do 65535). Gdy wszystkie numery mieszczą się w bajcie
+// (do 255 - wszystkie bloki sprzed 0.30.0), zapisujemy 1 bajt na blok,
+// jak dawniej: zapis jest o połowę mniejszy, a stary format zostaje
+// czytelny. Chunk z blokiem o większym numerze - 2 bajty na blok.
+
+export function packChunkBlocks(blocks) {
+
+    for (let i = 0; i < blocks.length; i++) {
+
+        if (blocks[i] > 255) {
+            return Uint16Array.from(blocks);
+        }
+
+    }
+
+    return Uint8Array.from(blocks);
+
+}
+
+
 export class WorldStorage {
 
     constructor(db) {
@@ -222,7 +244,8 @@ export class WorldStorage {
 
 
     // Wczytuje zapisane chunki świata.
-    // Zwraca Map: "cx,cz" -> Uint8Array z blokami.
+    // Zwraca Map: "cx,cz" -> Uint8Array albo Uint16Array z blokami
+    // (Chunk.loadBlocks przyjmuje oba).
 
     async loadChunks(worldId) {
 
@@ -304,8 +327,9 @@ export class WorldStorage {
                 cz: chunk.cz,
 
                 // Kopia, żeby zmiany w trakcie zapisu nie mieszały się
-                // z tym, co właśnie trafia do bazy.
-                blocks: chunk.blocks.slice()
+                // z tym, co właśnie trafia do bazy (1 albo 2 bajty
+                // na blok - packChunkBlocks niżej).
+                blocks: packChunkBlocks(chunk.blocks)
 
             });
 

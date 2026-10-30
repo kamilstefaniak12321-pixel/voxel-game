@@ -33,12 +33,34 @@ import { BIOMES, LAND_BIOMES, biomeByWord } from '../world/terrain/Biomes.js';
 //   +0 pień, +1 okorowany pień, +2 deski, +3 liście, +4 sadzonka,
 //   +5 opadłe liście, +6 i +7 pierwsza odmiana liści (odmiana i jej
 //   "odrastająca" wersja po zbiorze), +8 i +9 druga odmiana.
-// Numery 1-99 i 240-255 są dla bloków samej gry. Numer zapisuje się w świecie,
-// więc raz użytego "pierwszeId" nie wolno już zmieniać.
+// Numer zapisuje się w świecie, więc raz użytego "pierwszeId" nie wolno
+// już zmieniać. Zakresy (wszystkie: src/blocks/BlockRegistry.js):
+//   100-239    - dawny zakres, wspólny z paczkami roślin (drzewa od dołu),
+//   1000-4999  - od 0.30.0 (numery bloków 2-bajtowe), tylko drzewa.
 
+export const TREE_ID_RANGES = [[100, 239], [1000, 4999]];
+
+// Dawny zakres (100-239) - wspólny z paczkami roślin.
 export const PACK_FIRST_ID = 100;
 
 export const PACK_LAST_ID = 239;
+
+
+// Czy numery od `first` do first + count - 1 mieszczą się w jednym
+// z zakresów [[od, do], ...].
+
+export function idsInRanges(first, count, ranges) {
+
+    return Number.isInteger(first) && ranges.some(([from, to]) => first >= from && first + count - 1 <= to);
+
+}
+
+
+export function rangesText(ranges, count) {
+
+    return ranges.map(([from, to]) => `${from}-${to - count + 1}`).join(' albo ');
+
+}
 
 export const PACK_ID_SLOTS = 10;
 
@@ -375,10 +397,10 @@ async function validatePack(folder) {
         fail('brak "pierwszeId" - uruchom node tools/drzewa.mjs (nada wolny numer)');
     }
 
-    const firstId = number(json.pierwszeId, 'pierwszeId', PACK_FIRST_ID, PACK_LAST_ID - PACK_ID_SLOTS + 1);
+    const firstId = json.pierwszeId;
 
-    if (!Number.isInteger(firstId)) {
-        fail('"pierwszeId": liczba całkowita');
+    if (!idsInRanges(firstId, PACK_ID_SLOTS, TREE_ID_RANGES)) {
+        fail(`"pierwszeId": liczba całkowita ${rangesText(TREE_ID_RANGES, PACK_ID_SLOTS)} - drzewo zajmuje ${PACK_ID_SLOTS} numerów (jest ${JSON.stringify(firstId)}; node tools/drzewa.mjs nada wolny)`);
     }
 
     const similar = BASE_SPECIES_WORDS[String(json.podobnyDo ?? 'buk').toLowerCase()];

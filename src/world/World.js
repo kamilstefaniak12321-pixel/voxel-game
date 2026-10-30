@@ -93,7 +93,9 @@ export class World {
     // seed        - seed tego świata (liczba albo tekst).
     //               Ten sam seed zawsze daje ten sam teren.
     // savedChunks - chunki wczytane z zapisu:
-    //               Map "cx,cz" -> Uint8Array (pusta dla nowego świata)
+    //               Map "cx,cz" -> Uint16Array albo Uint8Array (stary
+    //               zapis / chunk bez numerów ponad 255; pusta dla nowego
+    //               świata)
     // terrain     - typ terenu ('realistic', 'classic' - patrz
     //               terrain/generators.js)
 

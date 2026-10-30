@@ -16,14 +16,26 @@ import { PLANT_PACKS, PLANT_PIXELS, plantStageType, plantTile } from './plantPac
 
 export const AIR_ID = 0;
 
-// Chunk trzyma ID w Uint8Array, więc mieszczą się wartości 1-255.
+// Chunk trzyma ID w Uint16Array (2 bajty na blok, 0.30.0 - wcześniej
+// 1 bajt i najwyżej 255 bloków). Bloki mają numery 1-MAX_BLOCK_ID;
+// ostatnie 256 numerów (65280-65535) gra trzyma dla siebie - nie trafiają
+// do zapisu świata (np. odcienie trawy dalekiego terenu,
+// src/rendering/SurfaceMaterials.js).
+//
+// Zakresy numerów (raz nadany numer zapisuje się w świecie - nie zmieniać):
+//   1-99, 240-255, 256-999  bloki gry,
+//   100-239                 paczki drzew i paczki roślin (dawny zakres -
+//                           drzewa od dołu, rośliny od góry),
+//   1000-4999               paczki drzew (treePacks.js),
+//   5000-9999               paczki roślin (plantPacks.js),
+//   10000-65279             wolne na przyszłość.
 
-export const MAX_BLOCK_ID = 255;
+export const MAX_BLOCK_ID = 65279;
 
 
 // Pola definicji bloku:
 //
-//   id             - unikalny numer 1-255 (zapisywany w chunkach)
+//   id             - unikalny numer (zapisywany w chunkach; zakresy wyżej)
 //   name           - nazwa wyświetlana w HUD
 //   solid          - czy blok ma kolizję
 //   opaque         - czy blok całkowicie zasłania sąsiada
@@ -891,7 +903,8 @@ export const BLOCK_TYPES = {
     // BIOMY (src/world/terrain/Biomes.js) - śnieg na szczytach, mech
     // w lasach, rośliny mokradeł, borów, hal i wydm. Tekstury:
     // tools/tekstury_biomow.py. Numery 240-255 - druga pula numerów
-    // bloków gry (1-99 się skończyły, 100-239 są dla paczek drzew).
+    // bloków gry (1-99 się skończyły, 100-239 są dla paczek drzew;
+    // nowe bloki gry: 256-999).
     // ------------------------------------------------------------
 
     snow: {

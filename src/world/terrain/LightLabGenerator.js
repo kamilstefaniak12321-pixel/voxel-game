@@ -64,7 +64,7 @@ export class LightLabGenerator {
         return LIGHT_LAB_FLOOR;
     }
 
-    columnBlocks(x, z, blocks = new Uint8Array(CHUNK_HEIGHT)) {
+    columnBlocks(x, z, blocks = new Uint16Array(CHUNK_HEIGHT)) {
         x = Math.floor(x);
         z = Math.floor(z);
         const floor = this.floorHeight(x, z);
@@ -105,7 +105,7 @@ export class LightLabGenerator {
     findSpawn() { return { x: 7, z: 32 }; }
 
     generateChunk(chunk) {
-        const blocks = new Uint8Array(CHUNK_HEIGHT);
+        const blocks = new Uint16Array(CHUNK_HEIGHT);
         for (let z = 0; z < CHUNK_SIZE; z++) {
             for (let x = 0; x < CHUNK_SIZE; x++) {
                 const column = this.columnBlocks(chunk.cx * CHUNK_SIZE + x, chunk.cz * CHUNK_SIZE + z, blocks);

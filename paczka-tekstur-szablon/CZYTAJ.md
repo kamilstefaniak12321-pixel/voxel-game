@@ -1,4 +1,4 @@
-# Paczka tekstur - szablon (Voxel Game 0.28.0)
+# Paczka tekstur - szablon (Voxel Game 0.30.0)
 
 Oryginalne tekstury gry, każda w osobnym pliku. Zrób z nich własną paczkę:
 

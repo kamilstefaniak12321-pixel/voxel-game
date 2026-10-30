@@ -1084,7 +1084,8 @@ w `assets/drzewa/`: `docs/drzewa-paczki.md`. Poniżej - każdy inny blok.
 1. Narysuj teksturę 16x16 i wklej ją do wolnego kafelka w `assets/textures/blocks/terrain.png`
    (albo dopisz jej funkcję w `tools/tekstury.py` - patrz *Tekstury*).
 2. Dopisz pozycję kafelka w `ATLAS_TILES` w `src/rendering/TextureAtlas.js`.
-3. Dopisz blok w `BLOCK_TYPES` w `src/blocks/BlockRegistry.js` (nowe, unikalne `id`,
+3. Dopisz blok w `BLOCK_TYPES` w `src/blocks/BlockRegistry.js` (nowe, unikalne `id` -
+   bloki gry: 256-999, numery 2-bajtowe: `docs/numery-blokow.md`;
    polska nazwa w `label`). Opis wszystkich pól jest na początku pliku.
    Blok, który ma świecić, dostaje `light: 1-15` (jak lampa: `light: 15`)
    i opcjonalnie kolor światła, np. `lightColor: '#ff3020'`.

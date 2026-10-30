@@ -24,13 +24,17 @@
 // rośnie), recipes.js (grupy składników), gameCommands.js (/rosliny).
 // ------------------------------------------------------------
 
-import { TREE_PACKS, PACK_FIRST_ID, PACK_LAST_ID, PACK_ID_SLOTS } from './treePacks.js';
+import { TREE_PACKS, PACK_ID_SLOTS, idsInRanges, rangesText } from './treePacks.js';
 import { BIOMES, LAND_BIOMES, biomeByWord } from '../world/terrain/Biomes.js';
 
-// Numery bloków: etapy zajmują kolejne numery od "pierwszeId". Rośliny
-// biorą numery z tego samego zakresu co paczki drzew (100-239) - drzewa
-// od dołu, rośliny od góry (239 w dół). Numer zapisuje się w świecie,
-// więc raz użytego nie wolno zmieniać.
+// Numery bloków: etapy zajmują kolejne numery od "pierwszeId". Zakresy
+// (wszystkie: src/blocks/BlockRegistry.js):
+//   5000-9999 - od 0.30.0 (numery bloków 2-bajtowe), tylko rośliny,
+//   100-239   - dawny zakres, wspólny z paczkami drzew (rośliny od góry,
+//               239 w dół - tam jest amarantus).
+// Numer zapisuje się w świecie, więc raz użytego nie wolno zmieniać.
+
+export const PLANT_ID_RANGES = [[5000, 9999], [100, 239]];
 
 export const PLANT_MAX_STAGES = 4;
 
@@ -217,13 +221,13 @@ async function validatePack(folder) {
     // Numery bloków.
 
     if (json.pierwszeId === undefined) {
-        fail(`brak "pierwszeId" - wolny numer z zakresu ${PACK_FIRST_ID}-${PACK_LAST_ID} (rośliny od góry, docs/rosliny.md)`);
+        fail('brak "pierwszeId" - wolny numer z zakresu 5000-9999 (docs/rosliny.md)');
     }
 
-    const firstId = number(json.pierwszeId, 'pierwszeId', PACK_FIRST_ID, PACK_LAST_ID - pack.stages.length + 1);
+    const firstId = json.pierwszeId;
 
-    if (!Number.isInteger(firstId)) {
-        fail('"pierwszeId": liczba całkowita');
+    if (!idsInRanges(firstId, pack.stages.length, PLANT_ID_RANGES)) {
+        fail(`"pierwszeId": liczba całkowita ${rangesText(PLANT_ID_RANGES, pack.stages.length)} (jest ${JSON.stringify(firstId)}; etapy zajmują kolejne numery)`);
     }
 
     pack.firstId = firstId;

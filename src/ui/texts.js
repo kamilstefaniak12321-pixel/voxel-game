@@ -60,6 +60,13 @@ export const TEXTS = {
     cancel: 'Anuluj',
     defaultWorldName: (number) => `Świat ${number}`,
 
+    worldExperiments: 'Dodatki świata',
+    experimentsNote: 'Eksperymentalne dodatki zapisują się osobno dla tego świata.',
+    bushyGrass: (on) => `Trawa kępiasta: ${on ? 'Wł.' : 'Wył.'} (eksperyment)`,
+    bushyGrassNote: 'Przestrzenne, pikselowe kępki zastępują zwykłą trawę. Możesz wrócić do poprzedniego wyglądu w dowolnej chwili.',
+    experimentsSaved: 'Zapisano. Nowy wygląd pojawi się stopniowo po powrocie do gry.',
+    experimentsSaveFailed: 'Zmiana działa w tej sesji, ale nie udało się jej zapisać. Spróbuj ponownie lub użyj „Zapisz i wyjdź”.',
+
     // Usuwanie świata
     deleteQuestion: (name) => `Usunąć świat „${name}”?`,
     deleteWarning: 'Tego nie da się cofnąć.',

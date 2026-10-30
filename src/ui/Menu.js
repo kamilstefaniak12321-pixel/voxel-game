@@ -1,6 +1,7 @@
 import { TEXTS } from './texts.js';
 import { TERRAIN_TYPES, terrainName } from '../world/terrain/generators.js';
 import { DEFAULT_TERRAIN, DEFAULT_GAME_MODE } from '../config.js';
+import { normalizeWorldExperiments } from '../world/WorldExperiments.js';
 import { SETTINGS_RANGES, SETTINGS_CHOICES } from '../settings/Settings.js';
 import { hasCustomSkin, chooseSkinFile, resetSkin } from '../player/skin.js';
 import {
@@ -458,7 +459,8 @@ export class Menu {
                     `${TEXTS.seed}: ${world.seed}  ·  ` +
                     `${TEXTS.terrain}: ${terrainName(world.terrain)}  ·  ` +
                     `${TEXTS.gameModes[world.gameMode ?? 'creative']}  ·  ` +
-                    `${TEXTS.lastPlayed}: ${formatDate(world.lastPlayed)}`
+                    `${TEXTS.lastPlayed}: ${formatDate(world.lastPlayed)}` +
+                    (world.experiments?.bushyGrass === true ? '  ·  ' + TEXTS.bushyGrass(true) : '')
                 )
             );
 
@@ -599,6 +601,14 @@ export class Menu {
 
         });
 
+        const experiments = normalizeWorldExperiments();
+        const grassButton = button(TEXTS.bushyGrass(false), () => {
+            experiments.bushyGrass = !experiments.bushyGrass;
+            grassButton.textContent = TEXTS.bushyGrass(experiments.bushyGrass);
+            grassButton.setAttribute('aria-pressed', String(experiments.bushyGrass));
+        });
+        grassButton.setAttribute('aria-pressed', 'false');
+
 
         const buttons = el('div', 'menu-row');
 
@@ -612,7 +622,8 @@ export class Menu {
         );
 
 
-        form.append(nameLabel, seedLabel, terrainButton, terrainNote, modeButton, modeNote, buttons);
+        form.append(nameLabel, seedLabel, terrainButton, terrainNote, modeButton, modeNote,
+            grassButton, el('p', 'menu-note', TEXTS.bushyGrassNote), buttons);
 
 
         // Enter w polu tekstowym też tworzy świat.
@@ -625,7 +636,7 @@ export class Menu {
                 nameInput.value.trim() ||
                 TEXTS.defaultWorldName(number);
 
-            this.handlers.createWorld(name, seedInput.value, terrain, gameMode);
+            this.handlers.createWorld(name, seedInput.value, terrain, gameMode, experiments);
 
         });
 
@@ -711,6 +722,7 @@ export class Menu {
             button(TEXTS.resume, () => this.handlers.resume(), '', true),
             button(TEXTS.achievements, () => this.showAchievements('pause')),
             button(TEXTS.settings, () => this.showSettings('pause')),
+            button(TEXTS.worldExperiments, () => this.showWorldExperiments()),
             button(TEXTS.saveAndQuit, () => this.handlers.quitToMenu())
         );
 
@@ -728,9 +740,37 @@ export class Menu {
     }
 
     // --------------------------------------------------------
-    // Księga osiągnięć (z ekranu tytułowego albo z pauzy - returnTo)
+    // Eksperymentalne dodatki zapisane osobno dla bieżącego świata.
     // --------------------------------------------------------
 
+    showWorldExperiments() {
+        const screen = this.newScreen('world-experiments', false);
+        this.onEscape = () => this.showPause();
+        const experiments = normalizeWorldExperiments(this.handlers.getWorldExperiments?.());
+        const note = el('p', 'menu-note', TEXTS.experimentsNote);
+        note.setAttribute('aria-live', 'polite');
+        const toggle = button(TEXTS.bushyGrass(experiments.bushyGrass), async () => {
+            experiments.bushyGrass = !experiments.bushyGrass;
+            toggle.textContent = TEXTS.bushyGrass(experiments.bushyGrass);
+            toggle.setAttribute('aria-pressed', String(experiments.bushyGrass));
+            toggle.disabled = true;
+            try {
+                const saved = await this.handlers.setWorldExperiments({ ...experiments });
+                note.textContent = saved ? TEXTS.experimentsSaved : TEXTS.experimentsSaveFailed;
+            } catch {
+                note.textContent = TEXTS.experimentsSaveFailed;
+            } finally {
+                toggle.disabled = false;
+            }
+        });
+        toggle.setAttribute('aria-pressed', String(experiments.bushyGrass));
+        const buttons = el('div', 'menu-buttons');
+        buttons.append(toggle, button(TEXTS.back, () => this.showPause(), '', true));
+        screen.append(el('h2', 'menu-heading', TEXTS.worldExperiments), note,
+            el('p', 'menu-note', TEXTS.bushyGrassNote), buttons);
+    }
+
+    // Księga osiągnięć (z ekranu tytułowego albo z pauzy - returnTo).
     showAchievements(returnTo = 'title') {
 
         const book = this.achievements;

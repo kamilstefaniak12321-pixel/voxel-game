@@ -289,7 +289,14 @@ const menu = new Menu(
         resume,
         quitToMenu,
         quitWithoutSaving,
-        reloadGame
+        reloadGame,
+        getWorldExperiments: () => game?.world.experiments ?? {},
+        setWorldExperiments: async (value) => {
+            if (!game) return false;
+            game.world.setExperiments(value);
+            game.worldInfo.experiments = { ...game.world.experiments };
+            return game.saver.flush();
+        }
     },
     settings,
     UI_THEMES
@@ -366,9 +373,9 @@ async function openWorldList() {
 }
 
 
-async function createWorld(name, seedText, terrain, gameMode) {
+async function createWorld(name, seedText, terrain, gameMode, experiments) {
 
-    const worldInfo = createWorldInfo(name, seedFromText(seedText), terrain, gameMode);
+    const worldInfo = createWorldInfo(name, seedFromText(seedText), terrain, gameMode, experiments);
 
     if (storage) {
         await storage.saveWorld(worldInfo);

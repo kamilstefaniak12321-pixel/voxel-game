@@ -1,14 +1,14 @@
 {
     "name": "voxel-game",
     "productName": "Voxel Game",
-    "version": "0.27.1",
+    "version": "0.29.0",
     "description": "Gra voxelowa - aplikacja na komputer (Windows)",
     "author": "Kamil",
     "private": true,
     "main": "desktop/main.js",
     "scripts": {
         "start": "electron .",
-        "test": "node tools/sprawdz_ekwipunek.mjs && node tools/sprawdz_wyglad_ekwipunku.mjs && node tools/sprawdz_lupy.mjs && node tools/sprawdz_stan_gracza.mjs && node tools/sprawdz_przepisy.mjs && node tools/sprawdz_swiatlo.mjs && node tools/sprawdz_tarcze.mjs && node tools/sprawdz_ciemnosc.mjs && node tools/sprawdz_cienie.mjs && node tools/sprawdz_materialy.mjs && node tools/sprawdz_materialy_far.mjs && node tools/sprawdz_odlamki.mjs && node tools/sprawdz_warmup_wody.mjs && node tools/sprawdz_teren_rzek.mjs && node tools/sprawdz_ujscia.mjs && node tools/sprawdz_rzeki_zapisy.mjs && node tools/sprawdz_rzeki_kolejnosc.mjs && node tools/sprawdz_pozycje_po_generacji.mjs && node tools/sprawdz_roslinnosc_rzek.mjs && node tools/sprawdz_rosliny_woda.mjs && node tools/sprawdz_modele_roslin_rzecznych.mjs && node tools/sprawdz_drzewa_woda.mjs && node tools/sprawdz_komendy_czyszczenie.mjs",
+        "test": "node tools/sprawdz_ekwipunek.mjs && node tools/sprawdz_wyglad_ekwipunku.mjs && node tools/sprawdz_lupy.mjs && node tools/sprawdz_stan_gracza.mjs && node tools/sprawdz_przepisy.mjs && node tools/sprawdz_swiatlo.mjs && node tools/sprawdz_tarcze.mjs && node tools/sprawdz_ciemnosc.mjs && node tools/sprawdz_cienie.mjs && node tools/sprawdz_materialy.mjs && node tools/sprawdz_materialy_far.mjs && node tools/sprawdz_odlamki.mjs && node tools/sprawdz_warmup_wody.mjs && node tools/sprawdz_teren_rzek.mjs && node tools/sprawdz_ujscia.mjs && node tools/sprawdz_rzeki_zapisy.mjs && node tools/sprawdz_rzeki_kolejnosc.mjs && node tools/sprawdz_pozycje_po_generacji.mjs && node tools/sprawdz_roslinnosc_rzek.mjs && node tools/sprawdz_rosliny_woda.mjs && node tools/sprawdz_modele_roslin_rzecznych.mjs && node tools/sprawdz_drzewa_woda.mjs && node tools/sprawdz_komendy_czyszczenie.mjs && node tools/sprawdz_trawe_kepiasta.mjs",
         "dist": "electron-builder --win --publish never",
         "android:www": "node tools/android-www.mjs",
         "android:sync": "node tools/android-www.mjs && npx cap sync android"

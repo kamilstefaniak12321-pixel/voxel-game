@@ -265,7 +265,8 @@ export class Game {
             this.scene,
             worldInfo.seed,
             savedChunks,
-            worldInfo.terrain
+            worldInfo.terrain,
+            worldInfo.experiments
         );
 
 

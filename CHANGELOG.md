@@ -11,6 +11,24 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 0.29.0 - Eksperymentalna trawa kępiasta
+
+Opcjonalny dodatek świata — numer PR zostanie uzupełniony po otwarciu.
+
+- Krótka i wysoka trawa mogą przyjąć postać przestrzennych kępek:
+  kilka warstw schodkowych liści, różne wysokości i pojedyncze kłosy.
+  Modele zachowują siatkę pikseli 1/16 bloku i kolory lokalnego biomu.
+- Opcja **Trawa kępiasta** jest domyślnie wyłączona. Można ją wybrać
+  przy tworzeniu świata lub w **Pauza → Dodatki świata**. Wybór jest
+  zapisywany osobno dla każdego świata, także już istniejącego.
+- Wyłączenie przywraca zwykłą trawę; bloki, teren, zbieranie i inne
+  rośliny zachowują dotychczasowe działanie.
+- Dalsze kępki mają stopniowo mniej geometrii. Rośliny korzystają
+  ze wspólnego rysowania chunka i dotychczasowego zasięgu roślin.
+- Wersja 0.29.0 dla Windowsa i Androida, przygotowana do wydania po
+  scaleniu PR. Równoległy PR #56 rezerwuje wersję 0.28.0; przed
+  scalaniem należy zachować rosnącą kolejność wersji.
+
 ## 0.27.1 - Pikselowe modele roślin rzecznych
 
 Pikselowy styl roślin — PR #55.

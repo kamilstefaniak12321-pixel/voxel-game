@@ -119,14 +119,19 @@ function riverPlantIcon(kind) {
     ctx.scale(4, 4);
     const polygon = (color, points) => {
         ctx.fillStyle = color;
-        ctx.beginPath();
-        points.forEach(([x, y], index) => index ? ctx.lineTo(x, y) : ctx.moveTo(x, y));
-        ctx.closePath();
-        ctx.fill();
+        // Rasterize onto the same 16x16 icon grid, without antialiased slopes.
+        for (let y=0; y<16; y++) for (let x=0; x<16; x++) {
+            let inside = false;
+            for (let i=0, j=points.length-1; i<points.length; j=i++) {
+                const [ax,ay]=points[i], [bx,by]=points[j];
+                if ((ay>y+.5)!==(by>y+.5) && x+.5 < (bx-ax)*(y+.5-ay)/(by-ay)+ax) inside=!inside;
+            }
+            if (inside) ctx.fillRect(x,y,1,1);
+        }
     };
     const pixel = (color, x, y, w, h) => {
         ctx.fillStyle = color;
-        ctx.fillRect(x, y, w, h);
+        ctx.fillRect(Math.round(x), Math.round(y), Math.max(1, Math.round(w)), Math.max(1, Math.round(h)));
     };
 
     if (kind === 'lily' || kind === 'duckweed') {

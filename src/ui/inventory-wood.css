@@ -1,0 +1,397 @@
+/* ============================================================
+   EKWIPUNEK: WYGLĄD "DREWNIANY"
+   ------------------------------------------------------------
+   Działa, gdy <html data-inv-style="wood"> (ustawienie "Wygląd
+   ekwipunku", main.js). Okno z desek z mchem i liśćmi, ciemne
+   przegródki na przedmioty w drewnianych ramkach ze złotym brzegiem.
+
+   Tekstury: assets/ui/inventory/wood/ (tools/ekwipunek_drewno.py).
+   Piksel tekstury = 3 piksele ekranu.
+   Układ i obsługa przedmiotów są w inventory.css i InventoryScreen.js;
+   tu są tylko kolory, tekstury i grubości ramek (z poprawionymi
+   szerokościami, żeby ramki się zmieściły).
+   ============================================================ */
+
+:root[data-inv-style="wood"] {
+
+    /* Kolory wspólne z jasnym wyglądem (inventory-theme.css) */
+    --inv-overlay: rgba(12, 8, 6, 0.55);
+    --inv-panel-bg: #7c5030;
+    --inv-surface-bg: #2b1d15;
+    --inv-slot-bg: #2f2018;
+    --inv-hover-bg: #45301f;
+    --inv-selected-bg: #45301f;
+    --inv-border: #22150d;
+    --inv-border-strong: #22150d;
+    --inv-text: #fbe7c6;
+    --inv-muted: #e9c995;
+    --inv-accent: #e2b347;
+    --inv-shadow: rgba(0, 0, 0, 0.45);
+    --inv-highlight: rgba(255, 220, 160, 0.08);
+    --inv-positive: #a6d86a;
+    --inv-negative: #ff8f73;
+    --inv-missing-bg: #1f150f;
+    --inv-tooltip-bg: #2b1d15;
+    --inv-tooltip-border: #22150d;
+    --inv-count-text: #fff4dc;
+    --inv-count-shadow: #1a0f08;
+    --inv-result-bg: #3d2c15;
+
+    /* Drewno */
+    --wood-outline: #22150d;
+    --wood-dark: #3e2817;
+    --wood-mid: #7c5030;
+    --wood-light: #a26c40;
+    --wood-lip: #b97f4c;
+    --wood-gold: #e2b347;
+    --wood-gold-light: #f6dc77;
+    --wood-hole: #2f2018;
+    --wood-hole-dark: #1d130d;
+    --wood-text-dark: #2a170b;
+
+    /* Ramka okna: grubość (układ), obrazek i jak daleko liście
+       wystają na zewnątrz. Ramki siatek: 3 px obrysu + 3 px złota. */
+    --wood-frame: 24px;
+    --wood-pad: 14px;
+    --wood-image: url('../../assets/ui/inventory/wood/frame.png') 28 / 84px / 36px repeat;
+    --wood-grid-frame: 6px;
+    --wood-chrome: calc((var(--wood-frame) + var(--wood-pad)) * 2);
+    --wood-framed-grid: calc(var(--inv-grid-width) + var(--wood-grid-frame) * 2);
+}
+
+
+/* --- Okno ------------------------------------------------- */
+
+:root[data-inv-style="wood"] #inventory {
+    padding: 36px;
+}
+
+:root[data-inv-style="wood"] .inv-panel {
+    width: calc(var(--wood-framed-grid) + var(--wood-chrome) + var(--inv-scrollbar-space));
+    padding: var(--wood-pad);
+    border: var(--wood-frame) solid transparent;
+    border-image: var(--wood-image);
+    background: url('../../assets/ui/inventory/wood/planks.png') 0 0 / 480px 270px repeat;
+    background-origin: border-box;
+    box-shadow: none;
+    image-rendering: pixelated;
+    scrollbar-color: var(--wood-light) var(--wood-dark);
+}
+
+:root[data-inv-style="wood"] .inv-panel.has-book {
+    width: calc(var(--inv-book-width) + var(--wood-grid-frame) * 2 + 24px +
+        var(--wood-framed-grid) + var(--wood-chrome) + var(--inv-scrollbar-space));
+}
+
+:root[data-inv-style="wood"] .inv-panel.inv-creative {
+    width: calc(var(--wood-framed-grid) + 14px + var(--wood-chrome) + var(--inv-scrollbar-space));
+}
+
+
+/* --- Napisy ----------------------------------------------- */
+
+:root[data-inv-style="wood"] .inv-title {
+    color: var(--inv-text);
+    text-shadow: 2px 2px 0 var(--wood-outline);
+}
+
+:root[data-inv-style="wood"] .inv-section-label,
+:root[data-inv-style="wood"] .inv-craft-title {
+    color: var(--inv-muted);
+    text-shadow: 2px 2px 0 var(--wood-outline);
+}
+
+/* Pomoc na dole i w księdze: na ciemnej, wpuszczonej tabliczce
+   (na słojach desek drobny tekst byłby nieczytelny). */
+:root[data-inv-style="wood"] .inv-help {
+    padding: 6px 9px;
+    color: var(--inv-muted);
+    background: rgba(29, 19, 13, 0.62);
+    box-shadow: inset 0 2px 0 rgba(0, 0, 0, 0.35), 0 2px 0 rgba(207, 154, 95, 0.35);
+}
+
+:root[data-inv-style="wood"] .inv-empty {
+    color: var(--inv-muted);
+    padding: 6px;
+}
+
+
+/* --- Rowki zamiast cienkich linii ------------------------- */
+
+:root[data-inv-style="wood"] .inv-header,
+:root[data-inv-style="wood"] .inv-bottom,
+:root[data-inv-style="wood"] .inv-footer {
+    border-color: var(--wood-dark);
+    border-width: 3px;
+}
+
+:root[data-inv-style="wood"] .inv-header {
+    box-shadow: 0 3px 0 rgba(207, 154, 95, 0.45);
+}
+
+/* Pasek pod zapasami: rowek nad nim, szerokość z ramką siatki. */
+:root[data-inv-style="wood"] .inv-bottom {
+    width: var(--wood-framed-grid);
+    padding-top: 12px;
+    box-shadow: inset 0 3px 0 rgba(207, 154, 95, 0.45);
+}
+
+/* Pomoc na dole: rowek, pod nim ta sama ciemna tabliczka. */
+:root[data-inv-style="wood"] .inv-footer {
+    padding: 9px 9px 6px;
+    box-shadow: inset 0 3px 0 rgba(207, 154, 95, 0.45);
+}
+
+:root[data-inv-style="wood"] .inv-book {
+    border-right: 3px solid var(--wood-dark);
+    box-shadow: 3px 0 0 rgba(207, 154, 95, 0.45);
+}
+
+:root[data-inv-style="wood"] .inv-storage {
+    min-width: var(--wood-framed-grid);
+}
+
+
+/* --- Ramki siatek: ciemny obrys, złoty brzeg z lewej i u góry,
+       drewniane przegródki między miejscami ------------------- */
+
+:root[data-inv-style="wood"] .inv-items,
+:root[data-inv-style="wood"] .inv-hotbar,
+:root[data-inv-style="wood"] .inv-craft-grid,
+:root[data-inv-style="wood"] .inv-creative-scroll,
+:root[data-inv-style="wood"] .inv-book-scroll {
+    padding: 3px;
+    background: var(--wood-mid);
+    border: 3px solid var(--wood-outline);
+    box-shadow:
+        inset 3px 3px 0 var(--wood-gold),
+        inset -3px -3px 0 var(--wood-dark),
+        0 3px 0 rgba(0, 0, 0, 0.35);
+}
+
+/* Kreatywny i księga: przewijana siatka, ramka na pojemniku. */
+:root[data-inv-style="wood"] .inv-creative-scroll,
+:root[data-inv-style="wood"] .inv-book-scroll {
+    scrollbar-color: var(--wood-lip) var(--wood-dark);
+}
+
+:root[data-inv-style="wood"] .inv-book-scroll {
+    width: max-content;
+    max-width: 100%;
+}
+
+/* Ramki zajmują więcej miejsca niż w jasnym wyglądzie - na niższym
+   ekranie księga i lista bloków są krótsze (przewijają się w środku),
+   żeby całe okno mieściło się bez przewijania. */
+:root[data-inv-style="wood"] .inv-book-scroll {
+    max-height: max(112px, min(calc(var(--inv-slot-size) * 5 + var(--inv-gap) * 4), calc(100dvh - 560px)));
+}
+
+:root[data-inv-style="wood"] .inv-creative-scroll {
+    max-height: max(112px, min(calc(var(--inv-slot-size) * 5 + var(--inv-gap) * 4), calc(100dvh - 540px)));
+}
+
+
+/* --- Miejsca na przedmioty: ciemna przegródka z jasną listwą
+       u dołu (jak półka) ------------------------------------- */
+
+:root[data-inv-style="wood"] .inv-slot {
+    background: var(--wood-hole);
+    border: 0;
+    box-shadow:
+        inset 0 3px 0 var(--wood-hole-dark),
+        inset 3px 0 0 var(--wood-hole-dark),
+        inset 0 -3px 0 var(--wood-lip),
+        inset 0 -6px 0 #5a3a22;
+}
+
+:root[data-inv-style="wood"] .inv-slot:hover {
+    background: var(--inv-hover-bg);
+}
+
+:root[data-inv-style="wood"] .inv-slot.selected {
+    background: var(--inv-selected-bg);
+    outline: 3px solid var(--wood-gold-light);
+    outline-offset: -3px;
+}
+
+:root[data-inv-style="wood"] .inv-slot.inv-result {
+    border: 3px solid var(--wood-outline);
+    box-shadow:
+        inset 0 3px 0 var(--wood-hole-dark),
+        inset 0 -3px 0 var(--wood-lip),
+        0 0 0 3px var(--wood-mid),
+        0 0 0 6px var(--wood-outline);
+    margin: 6px;
+}
+
+:root[data-inv-style="wood"] .inv-slot.inv-result.ready {
+    background: var(--inv-result-bg);
+    border-color: var(--wood-gold-light);
+    box-shadow:
+        inset 0 0 0 3px var(--wood-gold),
+        0 0 0 3px var(--wood-mid),
+        0 0 0 6px var(--wood-outline),
+        0 0 14px rgba(246, 220, 119, 0.45);
+}
+
+:root[data-inv-style="wood"] .inv-recipe.missing {
+    background: var(--inv-missing-bg);
+}
+
+/* Na ciemnym tle przygaszona ikona byłaby prawie czarna - szara,
+   ale widoczna. */
+:root[data-inv-style="wood"] .inv-recipe.missing img {
+    opacity: 0.62;
+    filter: grayscale(0.85) brightness(1.2);
+}
+
+:root[data-inv-style="wood"] .inv-trash {
+    color: var(--inv-muted);
+    border: 3px solid var(--wood-outline);
+}
+
+
+/* --- Strzałka wytwarzania: okrągła, ciemna tabliczka ------ */
+
+:root[data-inv-style="wood"] .inv-craft-arrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 33px;
+    height: 33px;
+    font-size: 20px;
+    color: var(--wood-gold);
+    text-shadow: 2px 2px 0 var(--wood-outline);
+    background: var(--wood-hole);
+    clip-path: polygon(30% 0, 70% 0, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0 70%, 0 30%);
+    box-shadow: inset 0 0 0 3px var(--wood-outline), inset 0 -6px 0 #4a301d;
+}
+
+
+/* --- Podgląd postaci: ciemna wnęka ------------------------ */
+
+:root[data-inv-style="wood"] .inv-character {
+    background: var(--wood-hole);
+    border: 3px solid var(--wood-outline);
+    box-shadow:
+        inset 3px 3px 0 var(--wood-hole-dark),
+        inset -3px -3px 0 #4a301d,
+        0 0 0 3px var(--wood-mid),
+        0 3px 0 3px rgba(0, 0, 0, 0.35);
+    margin: 3px;
+}
+
+
+/* --- Przyciski: jasne deseczki ---------------------------- */
+
+:root[data-inv-style="wood"] .inv-tab,
+:root[data-inv-style="wood"] .inv-chip,
+:root[data-inv-style="wood"] .inv-book-toggle,
+:root[data-inv-style="wood"] .inv-book-close,
+:root[data-inv-style="wood"] .inv-close {
+    color: var(--wood-text-dark);
+    text-shadow: 1px 1px 0 rgba(255, 230, 180, 0.35);
+    background: url('../../assets/ui/inventory/wood/board.png') 0 0 / 144px 36px repeat;
+    border: 3px solid var(--wood-outline);
+    border-radius: 0;
+    box-shadow:
+        inset 0 3px 0 rgba(255, 235, 190, 0.3),
+        inset 0 -3px 0 rgba(0, 0, 0, 0.28);
+}
+
+:root[data-inv-style="wood"] .inv-tab:hover,
+:root[data-inv-style="wood"] .inv-chip:hover,
+:root[data-inv-style="wood"] .inv-book-toggle:hover,
+:root[data-inv-style="wood"] .inv-book-close:hover,
+:root[data-inv-style="wood"] .inv-close:hover {
+    background: url('../../assets/ui/inventory/wood/board.png') 0 0 / 144px 36px repeat;
+    border-color: var(--wood-outline);
+    filter: brightness(1.12);
+}
+
+:root[data-inv-style="wood"] .inv-tab.selected,
+:root[data-inv-style="wood"] .inv-chip.selected,
+:root[data-inv-style="wood"] .inv-book-toggle.selected {
+    border-color: var(--wood-outline);
+    box-shadow:
+        inset 0 0 0 3px var(--wood-gold-light),
+        inset 0 -6px 0 rgba(0, 0, 0, 0.2);
+}
+
+:root[data-inv-style="wood"] .inv-panel button:focus-visible,
+:root[data-inv-style="wood"] .inv-panel input:focus-visible {
+    outline: 3px solid var(--wood-gold-light);
+    outline-offset: 2px;
+}
+
+
+/* --- Wyszukiwanie: ciemne, wpuszczone pole ---------------- */
+
+:root[data-inv-style="wood"] .inv-search {
+    color: var(--inv-text);
+    background: var(--wood-hole);
+    border: 3px solid var(--wood-outline);
+    border-radius: 0;
+    box-shadow: inset 0 3px 0 var(--wood-hole-dark), 0 3px 0 rgba(207, 154, 95, 0.35);
+}
+
+:root[data-inv-style="wood"] .inv-search::placeholder {
+    color: #b58c62;
+}
+
+:root[data-inv-style="wood"] .inv-search:focus {
+    border-color: var(--wood-gold);
+}
+
+
+/* --- Podpowiedź (poza #inventory - kolory na :root) ------- */
+
+:root[data-inv-style="wood"] .inv-tooltip {
+    color: var(--inv-text);
+    background: var(--inv-tooltip-bg);
+    border: 3px solid var(--wood-outline);
+    box-shadow: inset 0 0 0 2px var(--wood-light), 0 4px 0 rgba(0, 0, 0, 0.4);
+    text-shadow: 1px 1px 0 var(--wood-outline);
+}
+
+:root[data-inv-style="wood"] .inv-tooltip-title {
+    color: var(--wood-gold-light);
+}
+
+
+/* --- Mały ekran: rama bez liści na zewnątrz (nie zabiera
+       miejsca), cieńsze brzegi ------------------------------- */
+
+@media (max-width: 820px) {
+    :root[data-inv-style="wood"] .inv-panel.has-book {
+        width: calc(var(--wood-framed-grid) + var(--wood-chrome) + var(--inv-scrollbar-space));
+    }
+    :root[data-inv-style="wood"] .inv-book {
+        border-right: 0;
+        border-top: 3px solid var(--wood-dark);
+        box-shadow: inset 0 3px 0 rgba(207, 154, 95, 0.45);
+    }
+}
+
+/* Ekran laptopa (768 - 820 punktów wysokości): mniejsze odstępy,
+   żeby okno z ramą zmieściło się w całości. */
+@media (max-height: 820px) {
+    :root[data-inv-style="wood"] { --wood-pad: 10px; }
+    :root[data-inv-style="wood"] #inventory { padding: 32px 36px; }
+    :root[data-inv-style="wood"] .inv-panel { gap: 8px; }
+    :root[data-inv-style="wood"] .inv-header { min-height: 32px; padding-bottom: 6px; }
+    :root[data-inv-style="wood"] .inv-main { gap: 10px; }
+    :root[data-inv-style="wood"] .inv-footer { padding: 6px 9px 4px; }
+}
+
+@media (max-width: 480px), (max-height: 520px) {
+    :root[data-inv-style="wood"] {
+        --wood-frame: 15px;
+        --wood-pad: 8px;
+        --wood-image: url('../../assets/ui/inventory/wood/frame-compact.png') 16 / 48px / 0 repeat;
+    }
+    :root[data-inv-style="wood"] #inventory {
+        padding: 8px;
+    }
+}

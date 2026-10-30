@@ -52,6 +52,7 @@ Współrzędne można podawać względem gracza: `~` (tu, gdzie stoję),
 | `/wytworz <przepis> [ile razy]` | wytwarza od razu ze składników z ekwipunku (nazwa przepisu albo wyrobu, też po polsku: `/wytworz kilof`, `/wytworz stick 4`). Też `/craft` |
 | `/ekwipunek` | co jest w ekwipunku (ile sztuk każdego bloku, ile miejsc zajętych) |
 | `/ekwipunek wyczysc` | czyści cały ekwipunek (z paskiem) |
+| `/ekwipunek wyglad [drewniany \| jasny]` | wygląd okna ekwipunku (bez słowa - przełącza na drugi); to samo co *Ustawienia → Inne → Ekwipunek* |
 | `/latanie` | włącza/wyłącza latanie w każdym trybie (Spacja w górę, Shift w dół) - do testów; w kreatywnym wystarczy 2× Spacja |
 | `/predkosc <0.1-20>` | prędkość ruchu (1 = normalnie) |
 | `/daj <blok albo przedmiot> [ilość]` | blok albo przedmiot (owoc) do ekwipunku: z ilością - tyle sztuk (do 2304, pierwsze wolne miejsca, najpierw pasek); bez ilości w trybie kreatywnym - jedna sztuka do wybranego miejsca paska, w przygodzie - stos 64. Nazwy też po polsku, bez ogonków: `granit`, `trawa`, `ziemia`, `mak`, `chaber`, `paproc`, `czarnoziem`, `krotka_trawa`, `truskawki` (`truskawka`), `jezyny`, `chili` (`papryczki`), `orzech`, `sadzonka_truskawki`, `leszczyna`... |

@@ -150,11 +150,22 @@ i wyszukiwaniem po polsku i po nazwie bloku, np. „ziem” albo „humus”)
 i *Ekwipunek*. W zakładce ekwipunku widać postać gracza - głowa patrzy
 za myszką - i **wytwarzanie** (niżej).
 
-Okno ma wspólną jasną ramkę: księgę przepisów po lewej, postać
+Okno ma wspólną ramkę: księgę przepisów po lewej, postać
 i wytwarzanie nad zapasami oraz pasek wyrównany z dziewięcioma
 kolumnami ekwipunku. Na węższym ekranie sekcje zmieniają ułożenie.
-Układ i paleta są oddzielone: `src/ui/inventory.css` oraz
-`src/ui/inventory-theme.css`. [Opis motywów ekwipunku](docs/ekwipunek-motywy.md).
+
+**Wygląd ekwipunku** (*Ustawienia → Inne*, albo `/ekwipunek wyglad`):
+**Drewniany** (domyślny) - okno z desek z mchem, liśćmi i pnączami,
+ciemne przegródki na przedmioty w drewnianych ramkach ze złotym
+brzegiem - albo **Jasny** (biało-szary). Układ i obsługa przedmiotów
+są te same.
+
+![Drewniany ekwipunek](docs/ekwipunek-drewniany.png)
+
+Układ i wygląd są oddzielone: `src/ui/inventory.css` (układ),
+`src/ui/inventory-theme.css` (jasne kolory), `src/ui/inventory-wood.css`
+(drewniany wygląd, tekstury w `assets/ui/inventory/wood/` z
+`tools/ekwipunek_drewno.py`). [Opis wyglądów ekwipunku](docs/ekwipunek-motywy.md).
 
 | W oknie ekwipunku | Akcja |
 |---|---|
@@ -476,7 +487,8 @@ w dowolnej rozdzielczości, np. 1254 x 1254), rozdzielczość w grze
 (automatyczna albo 16-512 pikseli na blok), powrót do oryginalnych
 tekstur, szablon paczki - niżej, *Tekstury*.
 
-**Inne** - motyw menu, rozmiar interfejsu w grze (pasek, czat, napisy),
+**Inne** - motyw menu, wygląd ekwipunku (drewniany albo jasny),
+rozmiar interfejsu w grze (pasek, czat, napisy),
 informacje debugowania (to samo co F3), licznik FPS w rogu ekranu,
 spadające meteoryty (wł./wył. - te, które robią kratery), w aplikacji
 (komputer, telefon) - **aktualizacje automatyczne** (wł. - nowa wersja
@@ -882,6 +894,7 @@ Komendy służą do sprawdzania nowości w grze, np.:
 /wydajnosc test            test wydajności z obrotem kamery
 /tryb kreatywny            tryb gry: przygoda albo kreatywny (/gm k, /gm p)
 /ekwipunek                 co jest w ekwipunku (/ekwipunek wyczysc)
+/ekwipunek wyglad jasny    wygląd okna ekwipunku: drewniany albo jasny
 /latanie                   latanie w każdym trybie (Spacja w górę, Shift w dół)
 /tp 100 30 -50             teleport (~ = względem gracza)
 /daj lamp_blue             blok na pasek (też po polsku: /daj granit)

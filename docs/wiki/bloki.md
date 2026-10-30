@@ -2,7 +2,7 @@
 
 > Ta strona jest generowana z kodu gry (`python tools/wiki.py`) - nie zmieniaj jej ręcznie, zmiany przepadną przy następnym generowaniu.
 
-Wersja gry **0.21.0** - 121 bloków (do tego 4 odmian, których nie ma w ekwipunku, np. wieniec zawieszony na boku bloku). Czas kopania dotyczy trybu przygody; w kreatywnym bloki znikają od razu.
+Wersja gry **0.27.0** - 127 bloków (do tego 5 odmian, których nie ma w ekwipunku, np. wieniec zawieszony na boku bloku). Czas kopania dotyczy trybu przygody; w kreatywnym bloki znikają od razu.
 
 [Ziemia](#ziemia) · [Skały](#skały) · [Drewno](#drewno) · [Budulec](#budulec) · [Rośliny](#rośliny) · [Światło](#światło) · [Ozdoby](#ozdoby)
 
@@ -140,6 +140,12 @@ Wersja gry **0.21.0** - 121 bloków (do tego 4 odmian, których nie ma w ekwipun
 | <img src="ikony/olcha_sapling.png" width="32" height="32" alt=""> | **Sadzonka olchy** | `olcha_sapling` | **Kopanie:** od razu<br>**Rośnie:** w drzewo, średnio po 5 min<br>**Paczka drzewa:** assets/drzewa/olcha<br>**Skąd:** czasem z bloku: Liście olchy (4%); posadzony przedmiot: Szyszeczki olchy |
 | <img src="ikony/wierzba_leaves.png" width="32" height="32" alt=""> | **Liście wierzby** | `wierzba_leaves` | **Kopanie:** 0,35 s<br>**Czasem wypada:** Sadzonka wierzby (4%), Bazie (6%)<br>**Paczka drzewa:** assets/drzewa/wierzba<br>**Przydaje się do:** Opadłe liście wierzby |
 | <img src="ikony/wierzba_sapling.png" width="32" height="32" alt=""> | **Sadzonka wierzby** | `wierzba_sapling` | **Kopanie:** od razu<br>**Rośnie:** w drzewo, średnio po 5 min<br>**Paczka drzewa:** assets/drzewa/wierzba<br>**Skąd:** czasem z bloku: Liście wierzby (4%); posadzony przedmiot: Bazie |
+| <img src="ikony/river_sedge.png" width="32" height="32" alt=""> | **Turzyca rzeczna** | `river_sedge` | **Kopanie:** od razu |
+| <img src="ikony/cattail.png" width="32" height="32" alt=""> | **Pałka wodna** | `cattail` | **Kopanie:** od razu<br>**Skąd:** zniszczony blok: Pałka wodna (w wodzie) |
+| <img src="ikony/purple_loosestrife.png" width="32" height="32" alt=""> | **Krwawnica pospolita** | `purple_loosestrife` | **Kopanie:** od razu |
+| <img src="ikony/water_milfoil.png" width="32" height="32" alt=""> | **Wywłócznik** | `water_milfoil` | - |
+| <img src="ikony/water_lily.png" width="32" height="32" alt=""> | **Grzybień biały** | `water_lily` | - |
+| <img src="ikony/duckweed.png" width="32" height="32" alt=""> | **Rzęsa wodna** | `duckweed` | - |
 
 ## Światło
 

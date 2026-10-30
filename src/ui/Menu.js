@@ -123,6 +123,7 @@ const SETTINGS_TABS = {
 
     other: [
         'theme',
+        'inventoryStyle',
         'hudScale',
         'showDebug',
         'showFps',

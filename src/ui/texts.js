@@ -136,6 +136,7 @@ export const TEXTS = {
     bounceLight: (on) => `Światło odbite (eksperymentalne): ${on ? 'Wł.' : 'Wył.'}`,
     fancyLeaves: (on) => `Liście drzew: ${on ? 'Ładne' : 'Szybkie'}`,
     theme: (name) => `Motyw: ${name}`,
+    inventoryStyle: (value) => `Wygląd ekwipunku: ${value === 'light' ? 'Jasny' : 'Drewniany'}`,
     hudScale: (value) => `Interfejs w grze: ${value}%`,
     showDebug: (on) => `Debug (F3): ${on ? 'Wł.' : 'Wył.'}`,
     showFps: (on) => `Licznik FPS: ${on ? 'Wł.' : 'Wył.'}`,

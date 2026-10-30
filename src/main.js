@@ -327,6 +327,10 @@ function applyAppSettings() {
         settings.get('hudScale') / 100
     );
 
+    // Wygląd ekwipunku (src/ui/inventory-wood.css): drewniany albo jasny.
+
+    document.documentElement.dataset.invStyle = settings.get('inventoryStyle');
+
 
     fpsElement.hidden = !settings.get('showFps');
 
@@ -344,7 +348,7 @@ settings.onChange((key) => {
         loadTheme(settings.get('theme'));
     }
 
-    if (['renderScale', 'hudScale', 'showFps', 'potato'].includes(key)) {
+    if (['renderScale', 'hudScale', 'showFps', 'potato', 'inventoryStyle'].includes(key)) {
         applyAppSettings();
     }
 

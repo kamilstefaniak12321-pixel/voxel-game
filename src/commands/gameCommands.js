@@ -2654,8 +2654,8 @@ export const GAME_COMMANDS = [
     {
         name: 'ekwipunek',
         aliases: ['inventory', 'eq'],
-        usage: '/ekwipunek | /ekwipunek wyczysc',
-        description: 'Co jest w ekwipunku (E - okno ekwipunku); wyczyszczenie ekwipunku.',
+        usage: '/ekwipunek | /ekwipunek wyczysc | /ekwipunek wyglad [drewniany | jasny]',
+        description: 'Co jest w ekwipunku (E - okno ekwipunku); wyczyszczenie ekwipunku; wygląd okna ekwipunku.',
 
         run(args, { game }) {
 
@@ -2669,6 +2669,30 @@ export const GAME_COMMANDS = [
                 inventory.clear();
 
                 return 'Ekwipunek wyczyszczony.';
+
+            }
+
+
+            // Wygląd okna (to samo co Ustawienia - Inne - Wygląd ekwipunku).
+            // Bez słowa - przełącza na drugi.
+
+            if (['wyglad', 'styl', 'style'].includes(word)) {
+
+                const settings = game.settings;
+
+                const names = { drewniany: 'wood', drewno: 'wood', wood: 'wood', jasny: 'light', light: 'light' };
+
+                const value = args[1] === undefined
+                    ? (settings.get('inventoryStyle') === 'wood' ? 'light' : 'wood')
+                    : names[simplify(args[1])];
+
+                if (!value) {
+                    throw usageError(this);
+                }
+
+                settings.set('inventoryStyle', value);
+
+                return `Wygląd ekwipunku: ${value === 'wood' ? 'drewniany' : 'jasny'} (E - otwórz ekwipunek).`;
 
             }
 
@@ -2697,7 +2721,10 @@ export const GAME_COMMANDS = [
         },
 
         complete(args) {
-            return args.length === 1 ? ['wyczysc'] : [];
+            if (args.length === 2 && simplify(args[0]) === 'wyglad') {
+                return ['drewniany', 'jasny'];
+            }
+            return args.length === 1 ? ['wyczysc', 'wyglad'] : [];
         }
     },
 

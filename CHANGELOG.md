@@ -11,6 +11,30 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 0.27.0 - Drewniany ekwipunek
+
+Nowy wygląd okna ekwipunku — PR #54.
+
+- **Drewniany ekwipunek** (domyślny): okno z poziomych desek ze słojami
+  i sękami, z mchem na górnej krawędzi, kępami liści w rogach i pnączami
+  po bokach. Miejsca na przedmioty to ciemne przegródki z jaśniejszą
+  listwą u dołu, w drewnianych ramkach ze złotym brzegiem; wybrane
+  miejsce i gotowy wynik wytwarzania świecą na złoto.
+- Przyciski to jasne deseczki, pola wyszukiwania i podgląd postaci to
+  ciemne wnęki, podpowiedzi przedmiotów są ciemne z drewnianym brzegiem.
+  Dotyczy wszystkich części okna: ekwipunku, wytwarzania, księgi
+  przepisów i zakładek trybu kreatywnego.
+- Nowe ustawienie *Ustawienia → Inne → Wygląd ekwipunku*: **Drewniany**
+  albo **Jasny** (dotychczasowy). Komenda `/ekwipunek wyglad [drewniany |
+  jasny]`.
+- Okno mieści się w całości od 1366 x 768 (na niższym ekranie księga
+  i lista bloków przewijają się w środku). Na telefonie liście nie
+  wystają za okno.
+- Tekstury rysuje `tools/ekwipunek_drewno.py`
+  (`assets/ui/inventory/wood/`).
+- Wersja 0.27.0 wspólna dla Windowsa i Androida. Przygotowana w PR;
+  publikacja w `voxel-game-wydania` następuje przez workflow po scaleniu.
+
 ## 0.26.0 - Żywe brzegi i roślinność wodna
 
 Roślinność rzeczna — PR #53.

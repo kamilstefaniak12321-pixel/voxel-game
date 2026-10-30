@@ -1,8 +1,9 @@
 import { WATER_SURFACE } from '../config.js';
+import { createPixelPlant } from './PixelPlantBuilder.js';
 
 // Small reusable templates, appended to the ordinary chunk plant batch. There
 // are no Object3Ds, materials or draw calls per plant. Colours are linear RGB
-// multipliers for the neutral, lightly textured snow atlas tile.
+// multipliers for one neutral texel of the snow atlas tile.
 const linear = (hex) => [16, 8, 0].map((shift) => {
     const value = ((hex >> shift) & 255) / 255;
     return Math.round((value <= 0.04045 ? value / 12.92 : ((value + 0.055) / 1.055) ** 2.4) * 255);
@@ -27,12 +28,12 @@ export function plantRandom(x, y, z, salt) {
 }
 
 export function riverPlantTransform(x, y, z) {
-    const angle = plantRandom(x, y, z, 23) * Math.PI * 2;
+    const turn = Math.floor(plantRandom(x, y, z, 23) * 4);
     return {
         variant: Math.floor(plantRandom(x, y, z, 19) * 8),
-        cos: Math.cos(angle), sin: Math.sin(angle),
-        x: 0.5 + (plantRandom(x, y, z, 31) - 0.5) * 0.12,
-        z: 0.5 + (plantRandom(x, y, z, 37) - 0.5) * 0.12
+        cos: [1, 0, -1, 0][turn], sin: [0, 1, 0, -1][turn],
+        x: 0.5 + (Math.floor(plantRandom(x, y, z, 31) * 3) - 1) / 16,
+        z: 0.5 + (Math.floor(plantRandom(x, y, z, 37) * 3) - 1) / 16
     };
 }
 
@@ -47,134 +48,92 @@ function randomFor(seed) {
 }
 
 function makeTemplate(kind, variant, waterlogged) {
-    const faces = [];
     const random = randomFor(8191 + variant * 6299);
+    const pick = n => Math.floor(random() * n);
     const floating = kind === 'lily' || kind === 'duckweed';
     const movement = floating ? 255 : kind === 'milfoil' ? 128 : 0;
-    const motionHeight = kind === 'cattail' ? 1.9 : kind === 'loosestrife' ? 1.25 : 1;
-
-    function quad(a, b, c, d, color, double = false) {
-        let ux = c[0] - a[0], uy = c[1] - a[1], uz = c[2] - a[2];
-        let vx = b[0] - a[0], vy = b[1] - a[1], vz = b[2] - a[2];
-        let nx = uy * vz - uz * vy, ny = uz * vx - ux * vz, nz = ux * vy - uy * vx;
-        if (Math.hypot(nx, ny, nz) < 1e-10) {
-            ux = d[0] - c[0]; uy = d[1] - c[1]; uz = d[2] - c[2];
-            vx = b[0] - c[0]; vy = b[1] - c[1]; vz = b[2] - c[2];
-            nx = uy * vz - uz * vy; ny = uz * vx - ux * vz; nz = ux * vy - uy * vx;
-        }
-        const length = Math.hypot(nx, ny, nz) || 1;
-        const vertices = [a, b, c, d];
-        const weights = vertices.map((p) => floating ? 255 : Math.round(Math.min(1, Math.max(0, p[1] / motionHeight)) * 255));
-        faces.push({ vertices, normal: [nx / length, ny / length, nz / length], color, weights, movement });
-        if (double) faces.push({ vertices: [a, c, b, d], normal: [-nx / length, -ny / length, -nz / length], color, weights: [weights[0], weights[2], weights[1], weights[3]], movement });
-    }
-
-    function box(x, z, bottom, top, width, depth, color, cap = color) {
-        const x0 = x - width / 2, x1 = x + width / 2;
-        const z0 = z - depth / 2, z1 = z + depth / 2;
-        quad([x1, top, z1], [x1, top, z0], [x1, bottom, z1], [x1, bottom, z0], color);
-        quad([x0, top, z0], [x0, top, z1], [x0, bottom, z0], [x0, bottom, z1], color);
-        quad([x1, top, z0], [x0, top, z0], [x1, bottom, z0], [x0, bottom, z0], color);
-        quad([x0, top, z1], [x1, top, z1], [x0, bottom, z1], [x1, bottom, z1], color);
-        if (cap) quad([x0, top, z0], [x1, top, z0], [x0, top, z1], [x1, top, z1], cap);
-    }
-
-    function blade(x, z, bottom, angle, height, spread, width, color, bent = true) {
-        const dx = Math.cos(angle), dz = Math.sin(angle);
-        const sx = -dz * width / 2, sz = dx * width / 2;
-        const rootL = [x - sx, bottom, z - sz], rootR = [x + sx, bottom, z + sz];
-        const tip = [x + dx * spread, bottom + height, z + dz * spread];
-        if (bent) {
-            const midL = [x + dx * spread * 0.32 - sx * 0.7, bottom + height * 0.72, z + dz * spread * 0.32 - sz * 0.7];
-            const midR = [x + dx * spread * 0.32 + sx * 0.7, bottom + height * 0.72, z + dz * spread * 0.32 + sz * 0.7];
-            quad(midL, midR, rootL, rootR, color, true);
-            quad(tip, tip, midL, midR, color, true);
-        } else {
-            // A pointed leaf uses one triangle (the other is degenerate).
-            quad(tip, tip, rootL, rootR, color, true);
-        }
-    }
+    const height = kind === 'cattail' ? 1.9 : kind === 'loosestrife' ? 1.25 : 1;
+    const model = createPixelPlant(COLORS, floating, movement, height);
+    const { sheet, box } = model;
 
     if (kind === 'sedge') {
-        for (let i = 0; i < 6; i++) {
-            const angle = i * Math.PI / 3 + random() * 0.35;
-            blade((random() - 0.5) * 0.1, (random() - 0.5) * 0.1, 0,
-                angle, 0.4 + random() * 0.46, 0.27 + random() * 0.15, 0.065 + random() * 0.035,
-                i % 3 === 0 ? COLORS.light : COLORS.leaf);
+        for (const axis of [2, 0]) {
+            sheet(axis, 0, ({ leaf }) => {
+                leaf(-1, 0, -5, 7 + pick(3), 'leaf');
+                leaf(-1, 0, -2, 11 + pick(3), 'light');
+                leaf(0, 0, 0, 12 + pick(3), 'leaf');
+                leaf(0, 0, 3, 10 + pick(3), 'reed');
+                leaf(0, 0, 5, 6 + pick(3), 'leaf');
+            });
         }
     } else if (kind === 'cattail') {
-        for (let i = 0; i < 2; i++) {
-            const x = (i - 0.5) * 0.23, z = (random() - 0.5) * 0.22;
-            const top = (waterlogged ? 1.72 : 1.48) + random() * 0.16 - i * 0.15;
-            box(x, z, 0, top + 0.05, 0.026, 0.026, COLORS.stem);
-            box(x, z, top - 0.3, top, 0.075, 0.075, COLORS.brown, COLORS.brownTop);
-            for (let j = 0; j < 2; j++) {
-                blade(x, z, 0, i * 2.3 + j * 2.8 + random() * 0.4,
-                    top * (0.53 + random() * 0.12), 0.28, 0.075, j ? COLORS.reed : COLORS.leaf);
-            }
+        for (let i=0; i<2; i++) {
+            const x = i ? 2 : -3, z = i ? 1 : -2;
+            const top = (waterlogged ? 27 : 24) + pick(3) - i * 2;
+            // One-pixel square stems, two-pixel thick brown heads.
+            box(x, 0, z, 1, top+1, 1, 'stem');
+            box(x, top-5, z, 2, 5, 2, 'brown', 'brownTop');
+            sheet(2, z, ({ leaf }) => {
+                leaf(x + (i ? 1 : -2), 0, i ? 3 : -3, 12 + pick(4), 'leaf');
+                leaf(x + (i ? -2 : 1), 0, i ? -2 : 2, 17 + pick(3), 'reed');
+            });
+            sheet(0, x, ({ leaf }) => leaf(z + (i ? -2 : 1), 0, i ? -3 : 3, 12 + pick(4), 'leaf'));
         }
     } else if (kind === 'loosestrife') {
-        for (let i = 0; i < 2; i++) {
-            const x = (i - 0.5) * 0.23, z = (random() - 0.5) * 0.2;
-            const top = 0.96 + random() * 0.26 - i * 0.13;
-            box(x, z, 0, top, 0.025, 0.025, COLORS.dark, null);
-            for (let j = 0; j < 3; j++) {
-                const level = top * (0.3 + j * 0.17);
-                blade(x, z, level, i * 2 + j * 2.5, 0.07, 0.19 - j * 0.025, 0.09, COLORS.leaf, false);
-            }
-            // Three stepped, four-sided tiers make a solid flower spike,
-            // with an irregular profile rather than a crossed flower image.
-            for (let j = 0; j < 3; j++) {
-                const bottom = top - 0.27 + j * 0.105;
-                box(x + (j % 2) * 0.016, z, bottom, bottom + 0.09,
-                    0.13 - j * 0.03, 0.105 - j * 0.02, j % 2 ? COLORS.pink : COLORS.purple);
-            }
+        for (let i=0; i<2; i++) {
+            const x = i ? 2 : -3, z = i ? 1 : -1, top = 18 + pick(3) - i*2;
+            box(x, 0, z, 1, top, 1, 'dark');
+            for (const axis of [2, 0]) sheet(axis, axis === 2 ? z : x, ({ rect }) => {
+                const root = axis === 2 ? x : z;
+                for (let y=4; y<top-5; y+=4) {
+                    rect(root-2, y, 2, 1, 'leaf'); rect(root+1, y+1, 2, 1, 'light');
+                }
+            });
+            // Alternating pixel clusters around the stem; exposed faces only.
+            box(x-1, top-6, z, 3, 2, 1, 'purple', 'pink');
+            box(x, top-4, z-1, 1, 2, 3, 'pink', 'purple');
+            box(x, top-2, z, 1, 2, 1, 'pink');
         }
     } else if (kind === 'milfoil') {
-        for (let stem = 0; stem < 2; stem++) {
-            const x = (stem - 0.5) * 0.22, z = (random() - 0.5) * 0.15;
-            const top = 0.69 + random() * 0.12 - stem * 0.1;
-            box(x, z, 0, top, 0.018, 0.018, COLORS.dark);
-            for (let tier = 0; tier < 3; tier++) {
-                const level = top * (0.28 + tier * 0.25);
-                for (let arm = 0; arm < 3; arm++) {
-                    const angle = arm * Math.PI * 2 / 3 + tier * 0.75 + stem;
-                    blade(x, z, level, angle, 0.08, 0.23 - tier * 0.035, 0.065, COLORS.submerged, false);
+        for (const axis of [2, 0]) sheet(axis, 0, ({ rect }) => {
+            for (const root of [-2, 2]) {
+                const top = 10 + pick(3);
+                rect(root, 0, 1, top, 'dark');
+                for (let y=2; y<top-1; y+=3) {
+                    rect(root-2, y, 5, 1, 'submerged');
+                    rect(root-3, y+1, 1, 1, 'leaf'); rect(root+3, y+1, 1, 1, 'leaf');
                 }
             }
-        }
+        });
     } else if (kind === 'lily') {
-        const level = WATER_SURFACE + 0.055;
-        const radius = 0.29 + random() * 0.05;
-        const center = [-0.035, level, 0.025];
-        // Seven sectors leave the characteristic triangular notch in the pad.
-        for (let i = 0; i < 7; i++) {
-            const a = (i + 0.5) * Math.PI / 4, b = a + Math.PI / 4;
-            const p = [center[0] + Math.cos(a) * radius, level, center[2] + Math.sin(a) * radius * 0.86];
-            const q = [center[0] + Math.cos(b) * radius, level, center[2] + Math.sin(b) * radius * 0.86];
-            quad(center, p, q, q, i % 3 ? COLORS.pad : COLORS.padLight, true);
-        }
-        if (variant % 3 === 0) {
-            const flowerColor = variant % 2 ? COLORS.petalPink : COLORS.white;
-            const cx = 0.13, cz = -0.09;
-            for (let petal = 0; petal < 5; petal++) {
-                const angle = petal * Math.PI * 2 / 5;
-                const dx = Math.cos(angle), dz = Math.sin(angle), sx = -dz * 0.045, sz = dx * 0.045;
-                quad([cx + dx * 0.15, level + 0.105, cz + dz * 0.15], [cx + dx * 0.15, level + 0.105, cz + dz * 0.15],
-                    [cx - sx, level + 0.035, cz - sz], [cx + sx, level + 0.035, cz + sz], flowerColor, true);
+        // The resting leaf is at 15/16 block, clear of the 14/16 water plane.
+        const level = Math.ceil((WATER_SURFACE + .05) * 16);
+        const radius = 4 + pick(2);
+        sheet(1, level, ({ pixel }) => {
+            for (let z=-4; z<5; z++) for (let x=-radius; x<radius; x++) {
+                if (((x+.5)/radius)**2 + ((z+.5)/4.5)**2 > 1) continue;
+                if (z >= 0 && x >= 0 && x <= Math.floor(z/2)) continue;
+                pixel(x, z, z === -1 || x === -1 ? 'padLight' : 'pad');
             }
-            box(cx, cz, level + 0.035, level + 0.09, 0.07, 0.07, COLORS.pollen);
+        });
+        if (variant % 3 === 0) {
+            const petal = variant % 2 ? 'petalPink' : 'white';
+            box(0, level, -3, 3, 1, 3, petal);
+            box(-1, level+1, -2, 1, 1, 1, petal);
+            box(3, level+1, -2, 1, 1, 1, petal);
+            box(1, level+1, -4, 1, 1, 1, petal);
+            box(1, level+1, 0, 1, 1, 1, petal);
+            box(1, level+1, -2, 1, 1, 1, 'pollen');
         }
     } else if (kind === 'duckweed') {
-        const level = WATER_SURFACE + 0.05;
-        for (let i = 0; i < 6; i++) {
-            const x = (random() - 0.5) * 0.59, z = (random() - 0.5) * 0.59;
-            const size = 0.035 + random() * 0.025;
-            quad([x - size, level, z - size * 0.65], [x + size, level, z - size * 0.65],
-                [x - size, level, z + size * 0.65], [x + size, level, z + size * 0.65], i % 2 ? COLORS.padLight : COLORS.light, true);
-        }
+        const level = Math.ceil((WATER_SURFACE + .05) * 16);
+        sheet(1, level, ({ rect }) => {
+            for (const [x,z] of [[-4,-3],[0,-4],[3,-2],[-3,1],[1,0],[2,3]]) {
+                rect(x, z, 1 + pick(2), 1 + pick(2), pick(2) ? 'padLight' : 'light');
+            }
+        });
     }
-    return faces;
+    return model.finish();
 }
 
 export function getRiverPlantFaces(kind, variant, waterlogged = false) {

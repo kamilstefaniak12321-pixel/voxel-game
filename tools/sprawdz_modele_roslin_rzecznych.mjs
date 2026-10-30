@@ -23,7 +23,8 @@ registerHooks({
     }
 });
 
-const { getRiverPlantFaces } = await import('../src/rendering/RiverPlantGeometry.js');
+const { getRiverPlantFaces, riverPlantTransform } = await import('../src/rendering/RiverPlantGeometry.js');
+const { createPixelPlant, pixelRectangles } = await import('../src/rendering/PixelPlantBuilder.js');
 const { buildChunkGeometry } = await import('../src/rendering/ChunkMesher.js');
 const { plantMaterial } = await import('../src/rendering/BlockRenderData.js');
 const { Chunk } = await import('../src/world/Chunk.js');
@@ -37,15 +38,24 @@ for (const kind of kinds) {
         const waterlogged = ['milfoil', 'lily', 'duckweed', 'cattail'].includes(kind);
         const faces = getRiverPlantFaces(kind, variant, waterlogged);
         assert.equal(getRiverPlantFaces(kind, variant + 8, waterlogged), faces, 'Templates must be cached and stable');
-        assert.ok(faces.length > 0 && faces.length <= 50, `${kind}: too many faces (${faces.length})`);
+        const budget = {sedge:80,cattail:100,loosestrife:120,milfoil:96,lily:72,duckweed:16}[kind];
+        assert.ok(faces.length > 0 && faces.length <= budget, `${kind}: too many faces (${faces.length})`);
         counts[kind] = Math.max(counts[kind] ?? 0, faces.length);
         let roots = 0;
         for (const face of faces) {
             assert.ok(Math.abs(Math.hypot(...face.normal) - 1) < 1e-7, `${kind}: invalid normal`);
             assert.equal(face.vertices.length, 4);
+            const [a,b,c,d] = face.vertices;
+            const edges = [b.map((v,i)=>v-a[i]),c.map((v,i)=>v-a[i])];
+            const cross = [edges[1][1]*edges[0][2]-edges[1][2]*edges[0][1],
+                edges[1][2]*edges[0][0]-edges[1][0]*edges[0][2],edges[1][0]*edges[0][1]-edges[1][1]*edges[0][0]];
+            assert.ok(cross.reduce((sum,v,i)=>sum+v*face.normal[i],0)>0, `${kind}: back-facing rectangle`);
+            assert.equal(face.normal.filter(v=>v!==0).length,1, 'Pixel faces must be axis-aligned');
+            for(let axis=0;axis<3;axis++) assert.equal(a[axis]+d[axis],b[axis]+c[axis], 'No tapered triangles');
             for (let i = 0; i < 4; i++) {
                 const [x, y, z] = face.vertices[i];
                 assert.ok([x, y, z, ...face.color, face.weights[i], face.movement].every(Number.isFinite));
+                assert.ok([x,y,z].every(v=>Number.isInteger(v*16)), `${kind}: off the 1/16 grid`);
                 assert.ok(Math.hypot(x, z) <= 0.55 && y >= 0 && y <= 1.95, `${kind}: bounds`);
                 if (y === 0) { assert.equal(face.weights[i], 0, 'Roots must not sway'); roots++; }
                 if (kind === 'milfoil') { assert.ok(y < WATER_SURFACE); assert.equal(face.movement, 128); }
@@ -57,6 +67,27 @@ for (const kind of kinds) {
         }
         if (!['lily', 'duckweed'].includes(kind)) assert.ok(roots > 0);
     }
+}
+
+// Grid alignment survives the placement transform, including negative chunks.
+for(const [x,y,z] of [[0,50,0],[-1,50,-17],[183,50,-243],[16,2,16]]) {
+    const t=riverPlantTransform(x,y,z);
+    for(const kind of kinds) for(const f of getRiverPlantFaces(kind,t.variant,true)) for(const p of f.vertices) {
+        const q=[x+t.x+t.cos*p[0]-t.sin*p[2],y+p[1],z+t.z+t.sin*p[0]+t.cos*p[2]];
+        assert.ok(q.every(v=>Number.isInteger(v*16)), 'Placed model is off grid');
+    }
+}
+// Merging must preserve holes/colour boundaries and hide internal solid faces.
+{
+    const cells=new Map([['0,0','a'],['1,0','a'],['0,1','a'],['1,1','b'],['3,0','a']]);
+    const rebuilt=new Map();
+    for(const r of pixelRectangles(cells)) for(let y=0;y<r.height;y++) for(let x=0;x<r.width;x++) {
+        const key=`${r.u+x},${r.v+y}`;assert.ok(!rebuilt.has(key));rebuilt.set(key,r.color);
+    }
+    assert.deepEqual(rebuilt,cells);
+    const builder=createPixelPlant({a:[128,128,128]},false,0,1);
+    builder.box(0,0,0,1,1,1,'a');builder.box(1,0,0,1,1,1,'a');
+    assert.equal(builder.finish().length,6, 'Adjacent pixels must form one cuboid');
 }
 
 const aquatic = ['water_milfoil', 'water_lily', 'duckweed', 'cattail_water'];

@@ -39,6 +39,19 @@ Paczki roślin i pierwsza duża roślina — PR #56.
   `docs/rosliny.md`.
 - Wersja 0.28.0 wspólna dla Windowsa i Androida. Przygotowana w PR;
   publikacja w `voxel-game-wydania` następuje przez workflow po scaleniu.
+## 0.27.1 - Pikselowe modele roślin rzecznych
+
+Pikselowy styl roślin — PR #55.
+
+- Sześć roślin rzecznych ma kształty oparte na pikselach wielkości
+  1/16 bloku: schodkowe liście i pędy oraz kwiaty i kolby z małych bryłek.
+- Cienkie liście są płaskie i widoczne z obu stron. Obrót i przesunięcie
+  roślin zachowują siatkę pikseli; ikony również mają ostre krawędzie.
+- Sąsiednie powierzchnie o tym samym kolorze są łączone, a wnętrza
+  bryłek pomijane. Rośliny nadal korzystają ze wspólnego rysowania chunka.
+- Nowy wygląd obejmuje rośliny już zapisane w świecie i przedmioty
+  trzymane w ręce, zachowując siedliska, ruch, zbieranie i wodę.
+- Wersja 0.27.1 dla Windowsa i Androida; publikacja po scaleniu PR.
 
 ## 0.27.0 - Drewniany ekwipunek
 

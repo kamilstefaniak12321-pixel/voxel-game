@@ -1,0 +1,686 @@
+{
+  "device": {
+    "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 3050 Laptop GPU (0x000025A2) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "drawingBuffer": [
+      1920,
+      1080
+    ],
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.7977.130 Electron/44.4.5 Safari/537.36"
+  },
+  "seed": 2138286349,
+  "results": [
+    {
+      "point": "brzeg",
+      "pose": {
+        "x": 198,
+        "y": 62,
+        "z": -261,
+        "yaw": 2.297439,
+        "pitch": -0.4827
+      },
+      "experiments": {
+        "bushyGrass": false
+      },
+      "settings": {
+        "potato": false,
+        "viewDistance": 48,
+        "farTerrain": 8192,
+        "farDetail": 2,
+        "fov": 75,
+        "brightness": 0,
+        "renderScale": 100,
+        "fpsLimit": 0,
+        "ambientOcclusion": 45,
+        "shadows": 3,
+        "lightingModel": "atmosphere",
+        "lightShafts": true,
+        "bounceLight": false,
+        "fancyLeaves": true,
+        "dynamicLight": true,
+        "loadBudget": 4,
+        "mouseSensitivity": 100,
+        "invertMouse": false,
+        "skinOverlay": true,
+        "showHand": true,
+        "viewBobbing": true,
+        "jointStyle": "smooth",
+        "cameraDistance": 4,
+        "volumeMaster": 80,
+        "volumeBlocks": 100,
+        "volumeWorld": 100,
+        "volumeUi": 80,
+        "theme": "default",
+        "inventoryStyle": "wood",
+        "hudScale": 100,
+        "showDebug": true,
+        "showFps": false,
+        "meteorites": true,
+        "autoUpdates": true,
+        "textureResolution": 0
+      },
+      "frames": {
+        "samples": 4298,
+        "averageMs": 6.977221963737332,
+        "fps": 143.32351832825344,
+        "p99Ms": 9.5,
+        "maxMs": 14.900000095367432,
+        "low1Fps": 90.92831454423853,
+        "over33ms": 0
+      },
+      "renderCpu": {
+        "samples": 4299,
+        "averageMs": 4.0524307994350055,
+        "fps": 246.76547225418906,
+        "p99Ms": 7.8999998569488525,
+        "maxMs": 12.700000047683716,
+        "low1Fps": 110.91049758932681,
+        "over33ms": 0
+      },
+      "gpu": {
+        "samples": 4299,
+        "averageMs": 3.6116577064433675,
+        "fps": 276.8811668436776,
+        "p99Ms": 3.957408,
+        "maxMs": 6.600352,
+        "low1Fps": 230.2751254367516,
+        "over33ms": 0
+      },
+      "renderInfo": {
+        "calls": 348,
+        "triangles": 746106
+      }
+    },
+    {
+      "point": "brzeg",
+      "pose": {
+        "x": 198,
+        "y": 62,
+        "z": -261,
+        "yaw": 2.297439,
+        "pitch": -0.4827
+      },
+      "experiments": {
+        "bushyGrass": true
+      },
+      "settings": {
+        "potato": false,
+        "viewDistance": 48,
+        "farTerrain": 8192,
+        "farDetail": 2,
+        "fov": 75,
+        "brightness": 0,
+        "renderScale": 100,
+        "fpsLimit": 0,
+        "ambientOcclusion": 45,
+        "shadows": 3,
+        "lightingModel": "atmosphere",
+        "lightShafts": true,
+        "bounceLight": false,
+        "fancyLeaves": true,
+        "dynamicLight": true,
+        "loadBudget": 4,
+        "mouseSensitivity": 100,
+        "invertMouse": false,
+        "skinOverlay": true,
+        "showHand": true,
+        "viewBobbing": true,
+        "jointStyle": "smooth",
+        "cameraDistance": 4,
+        "volumeMaster": 80,
+        "volumeBlocks": 100,
+        "volumeWorld": 100,
+        "volumeUi": 80,
+        "theme": "default",
+        "inventoryStyle": "wood",
+        "hudScale": 100,
+        "showDebug": true,
+        "showFps": false,
+        "meteorites": true,
+        "autoUpdates": true,
+        "textureResolution": 0
+      },
+      "frames": {
+        "samples": 4261,
+        "averageMs": 7.0390049284317495,
+        "fps": 142.06553485434117,
+        "p99Ms": 11.400000095367432,
+        "maxMs": 21.299999952316284,
+        "low1Fps": 74.29163775517013,
+        "over33ms": 0
+      },
+      "renderCpu": {
+        "samples": 4262,
+        "averageMs": 4.440309712887929,
+        "fps": 225.2095157005638,
+        "p99Ms": 9.400000095367432,
+        "maxMs": 15.799999952316284,
+        "low1Fps": 91.91962378021178,
+        "over33ms": 0
+      },
+      "gpu": {
+        "samples": 4262,
+        "averageMs": 4.129729606757404,
+        "fps": 242.14660406911813,
+        "p99Ms": 4.476928,
+        "maxMs": 5.152576,
+        "low1Fps": 215.21397434184965,
+        "over33ms": 0
+      },
+      "renderInfo": {
+        "calls": 348,
+        "triangles": 1485414
+      }
+    },
+    {
+      "point": "brzeg",
+      "pose": {
+        "x": 198,
+        "y": 62,
+        "z": -261,
+        "yaw": 2.297439,
+        "pitch": -0.4827
+      },
+      "experiments": {
+        "bushyGrass": true
+      },
+      "settings": {
+        "potato": false,
+        "viewDistance": 192,
+        "farTerrain": 8192,
+        "farDetail": 2,
+        "fov": 75,
+        "brightness": 0,
+        "renderScale": 100,
+        "fpsLimit": 0,
+        "ambientOcclusion": 45,
+        "shadows": 3,
+        "lightingModel": "atmosphere",
+        "lightShafts": true,
+        "bounceLight": false,
+        "fancyLeaves": true,
+        "dynamicLight": true,
+        "loadBudget": 4,
+        "mouseSensitivity": 100,
+        "invertMouse": false,
+        "skinOverlay": true,
+        "showHand": true,
+        "viewBobbing": true,
+        "jointStyle": "smooth",
+        "cameraDistance": 4,
+        "volumeMaster": 80,
+        "volumeBlocks": 100,
+        "volumeWorld": 100,
+        "volumeUi": 80,
+        "theme": "default",
+        "inventoryStyle": "wood",
+        "hudScale": 100,
+        "showDebug": true,
+        "showFps": false,
+        "meteorites": true,
+        "autoUpdates": true,
+        "textureResolution": 0
+      },
+      "frames": {
+        "samples": 2408,
+        "averageMs": 12.453405315594816,
+        "fps": 80.29932172429551,
+        "p99Ms": 22.600000143051147,
+        "maxMs": 43.5,
+        "low1Fps": 36.91126535975352,
+        "over33ms": 3
+      },
+      "renderCpu": {
+        "samples": 2409,
+        "averageMs": 10.864176007116816,
+        "fps": 92.04563690287493,
+        "p99Ms": 20.09999990463257,
+        "maxMs": 39.700000047683716,
+        "low1Fps": 40.597596656859835,
+        "over33ms": 2
+      },
+      "gpu": {
+        "samples": 2409,
+        "averageMs": 7.491768667496894,
+        "fps": 133.47982891389975,
+        "p99Ms": 12.550144,
+        "maxMs": 20.040704,
+        "low1Fps": 65.55830543801213,
+        "over33ms": 0
+      },
+      "renderInfo": {
+        "calls": 1302,
+        "triangles": 3705746
+      }
+    },
+    {
+      "point": "brzeg",
+      "pose": {
+        "x": 198,
+        "y": 62,
+        "z": -261,
+        "yaw": 2.297439,
+        "pitch": -0.4827
+      },
+      "experiments": {
+        "bushyGrass": false
+      },
+      "settings": {
+        "potato": false,
+        "viewDistance": 192,
+        "farTerrain": 8192,
+        "farDetail": 2,
+        "fov": 75,
+        "brightness": 0,
+        "renderScale": 100,
+        "fpsLimit": 0,
+        "ambientOcclusion": 45,
+        "shadows": 3,
+        "lightingModel": "atmosphere",
+        "lightShafts": true,
+        "bounceLight": false,
+        "fancyLeaves": true,
+        "dynamicLight": true,
+        "loadBudget": 4,
+        "mouseSensitivity": 100,
+        "invertMouse": false,
+        "skinOverlay": true,
+        "showHand": true,
+        "viewBobbing": true,
+        "jointStyle": "smooth",
+        "cameraDistance": 4,
+        "volumeMaster": 80,
+        "volumeBlocks": 100,
+        "volumeWorld": 100,
+        "volumeUi": 80,
+        "theme": "default",
+        "inventoryStyle": "wood",
+        "hudScale": 100,
+        "showDebug": true,
+        "showFps": false,
+        "meteorites": true,
+        "autoUpdates": true,
+        "textureResolution": 0
+      },
+      "frames": {
+        "samples": 2411,
+        "averageMs": 12.439485690644153,
+        "fps": 80.38917563546127,
+        "p99Ms": 19.40000009536743,
+        "maxMs": 32.799999952316284,
+        "low1Fps": 46.262028037507775,
+        "over33ms": 0
+      },
+      "renderCpu": {
+        "samples": 2412,
+        "averageMs": 10.87669983165181,
+        "fps": 91.93965223623654,
+        "p99Ms": 17.09999990463257,
+        "maxMs": 28.700000047683716,
+        "low1Fps": 52.85412264820593,
+        "over33ms": 0
+      },
+      "gpu": {
+        "samples": 2412,
+        "averageMs": 6.764106852404642,
+        "fps": 147.8391784488886,
+        "p99Ms": 11.33056,
+        "maxMs": 18.375648,
+        "low1Fps": 79.95077181532923,
+        "over33ms": 0
+      },
+      "renderInfo": {
+        "calls": 1302,
+        "triangles": 2132898
+      }
+    }
+  ],
+  "surfaceChecks": {
+    "status": "passed",
+    "variants": [
+      {
+        "atmosphere": 0,
+        "shadows": 0,
+        "potato": false,
+        "materials": [
+          "near",
+          "plant",
+          "leaf",
+          "water",
+          "riverPlant",
+          "model",
+          "heldGrass",
+          "far",
+          "debris"
+        ]
+      },
+      {
+        "atmosphere": 0,
+        "shadows": 0,
+        "potato": true,
+        "materials": [
+          "near",
+          "plant",
+          "leaf",
+          "water",
+          "riverPlant",
+          "model",
+          "heldGrass",
+          "far",
+          "debris"
+        ]
+      },
+      {
+        "atmosphere": 0,
+        "shadows": 1,
+        "potato": false,
+        "materials": [
+          "near",
+          "plant",
+          "leaf",
+          "water",
+          "riverPlant",
+          "model",
+          "heldGrass",
+          "far",
+          "debris"
+        ]
+      },
+      {
+        "atmosphere": 0,
+        "shadows": 1,
+        "potato": true,
+        "materials": [
+          "near",
+          "plant",
+          "leaf",
+          "water",
+          "riverPlant",
+          "model",
+          "heldGrass",
+          "far",
+          "debris"
+        ]
+      },
+      {
+        "atmosphere": 0,
+        "shadows": 3,
+        "potato": false,
+        "materials": [
+          "near",
+          "plant",
+          "leaf",
+          "water",
+          "riverPlant",
+          "model",
+          "heldGrass",
+          "far",
+          "debris"
+        ]
+      },
+      {
+        "atmosphere": 0,
+        "shadows": 3,
+        "potato": true,
+        "materials": [
+          "near",
+          "plant",
+          "leaf",
+          "water",
+          "riverPlant",
+          "model",
+          "heldGrass",
+          "far",
+          "debris"
+        ]
+      },
+      {
+        "atmosphere": 1,
+        "shadows": 0,
+        "potato": false,
+        "materials": [
+          "near",
+          "plant",
+          "leaf",
+          "water",
+          "riverPlant",
+          "model",
+          "heldGrass",
+          "far",
+          "debris"
+        ]
+      },
+      {
+        "atmosphere": 1,
+        "shadows": 0,
+        "potato": true,
+        "materials": [
+          "near",
+          "plant",
+          "leaf",
+          "water",
+          "riverPlant",
+          "model",
+          "heldGrass",
+          "far",
+          "debris"
+        ]
+      },
+      {
+        "atmosphere": 1,
+        "shadows": 1,
+        "potato": false,
+        "materials": [
+          "near",
+          "plant",
+          "leaf",
+          "water",
+          "riverPlant",
+          "model",
+          "heldGrass",
+          "far",
+          "debris"
+        ]
+      },
+      {
+        "atmosphere": 1,
+        "shadows": 1,
+        "potato": true,
+        "materials": [
+          "near",
+          "plant",
+          "leaf",
+          "water",
+          "riverPlant",
+          "model",
+          "heldGrass",
+          "far",
+          "debris"
+        ]
+      },
+      {
+        "atmosphere": 1,
+        "shadows": 3,
+        "potato": false,
+        "materials": [
+          "near",
+          "plant",
+          "leaf",
+          "water",
+          "riverPlant",
+          "model",
+          "heldGrass",
+          "far",
+          "debris"
+        ]
+      },
+      {
+        "atmosphere": 1,
+        "shadows": 3,
+        "potato": true,
+        "materials": [
+          "near",
+          "plant",
+          "leaf",
+          "water",
+          "riverPlant",
+          "model",
+          "heldGrass",
+          "far",
+          "debris"
+        ]
+      }
+    ],
+    "programs": 34,
+    "pixels": {
+      "natural": [
+        25,
+        25,
+        25
+      ],
+      "far": [
+        25,
+        25,
+        25
+      ],
+      "model": [
+        25,
+        25,
+        25
+      ],
+      "debris": [
+        25,
+        25,
+        25
+      ],
+      "riverDay": [
+        5,
+        13,
+        3
+      ],
+      "heldGrass": [
+        25,
+        25,
+        25
+      ],
+      "riverNight": [
+        1,
+        3,
+        0
+      ],
+      "lamp": [
+        14,
+        3,
+        0
+      ],
+      "combined": [
+        39,
+        29,
+        25
+      ],
+      "classicCombined": [
+        25,
+        25,
+        25
+      ],
+      "occludedAmbient": [
+        0,
+        0,
+        0
+      ],
+      "occludedDirect": [
+        25,
+        25,
+        25
+      ],
+      "direct": [
+        25,
+        25,
+        25
+      ],
+      "dark": [
+        0,
+        0,
+        0
+      ],
+      "emission": [
+        25,
+        25,
+        25
+      ],
+      "occludedEmission": [
+        25,
+        25,
+        25
+      ]
+    },
+    "webgl1": {
+      "status": "passed",
+      "version": "WebGL 1.0 (OpenGL ES 2.0 Chromium)",
+      "compiled": [
+        {
+          "atmosphere": 0,
+          "potato": false,
+          "dark": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "atmosphere": 0,
+          "potato": true,
+          "dark": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "atmosphere": 1,
+          "potato": false,
+          "dark": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "atmosphere": 1,
+          "potato": true,
+          "dark": [
+            0,
+            0,
+            0
+          ]
+        }
+      ],
+      "samples": {
+        "openAmbient": [
+          25,
+          25,
+          25
+        ],
+        "occludedAmbient": [
+          0,
+          0,
+          0
+        ],
+        "occludedDirect": [
+          25,
+          25,
+          25
+        ],
+        "direct": [
+          25,
+          25,
+          25
+        ]
+      }
+    },
+    "scope": "Prawdziwe materiały; liniowy render target 16x16; kontrolowane źródła i geometria.",
+    "initialSettings": {
+      "lightingModel": "atmosphere",
+      "shadows": 3
+    }
+  }
+}

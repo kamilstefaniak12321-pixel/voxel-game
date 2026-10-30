@@ -13,7 +13,7 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ## 0.29.0 - Eksperymentalna trawa kępiasta
 
-Opcjonalny dodatek świata — numer PR zostanie uzupełniony po otwarciu.
+Opcjonalny dodatek świata — PR #57.
 
 - Krótka i wysoka trawa mogą przyjąć postać przestrzennych kępek:
   kilka warstw schodkowych liści, różne wysokości i pojedyncze kłosy.

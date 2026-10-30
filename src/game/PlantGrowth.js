@@ -132,6 +132,18 @@ export class PlantGrowth {
         }
 
 
+        // Roślina wyższa niż blok (paczki roślin - grows.room) rośnie
+        // dalej tylko, gdy nad nią jest wolne miejsce; jeśli nie, czeka.
+
+        for (let k = 1; k < (growth.room ?? 1); k++) {
+
+            if (this.world.getBlockId(x, y + k, z) !== 0) {
+                return false;
+            }
+
+        }
+
+
         if (this.world.setBlock(x, y, z, growth.into)) {
 
             this.grown++;

@@ -7,6 +7,8 @@ import {
 
 import { getBlockId, getBlockTypeById, FRUIT_BUSHES, bushStages } from '../../blocks/BlockRegistry.js';
 
+import { PLANT_PACKS, plantStageType } from '../../blocks/plantPacks.js';
+
 import { Noise, seedToNumber } from '../Noise.js';
 
 import * as SHAPE from './TerrainShape.js';
@@ -184,9 +186,25 @@ export const DETAIL_MACRO = 3;
 // Opis biomu (Biomes.js) -> to samo po numerach bloków, do szybkiego
 // generowania. Progi plam (cover -> próg pola) - PATCH_LEVELS.
 
-function resolveBiome(biome) {
+function resolveBiome(biome, key) {
 
     const plants = biome.plants;
+
+    // Rośliny z paczek roślin (gdzieRosnie w roslina.json): plamy jak
+    // "patches", w plamie losowy etap wzrostu (ids, wagi narastająco).
+
+    const packPatches = PLANT_PACKS
+        .filter((pack) => pack.where?.biomes.includes(key))
+        .map((pack) => {
+            let sum = 0;
+            return {
+                id: 0,
+                ids: pack.stages.map((_, stage) => getBlockId(plantStageType(pack, stage))),
+                weights: pack.where.stages.map((weight) => (sum += weight)),
+                density: pack.where.density,
+                level: patchLevel(pack.where.cover)
+            };
+        });
 
     return {
         key: biome,
@@ -198,7 +216,10 @@ function resolveBiome(biome) {
             flowerDensity: plants.flowerDensity ?? SHAPE.PLANTS.flowerDensity,
             fern: plants.fern,
             herbs: plants.herbs.map(([type, chance]) => [chance, getBlockId(type)]),
-            patches: (plants.patches ?? []).map(([type, density, cover]) => ({ id: getBlockId(type), density, level: patchLevel(cover) })),
+            patches: [
+                ...(plants.patches ?? []).map(([type, density, cover]) => ({ id: getBlockId(type), density, level: patchLevel(cover) })),
+                ...packPatches
+            ],
             bushes: plants.bushes ? {
                 stages: plants.bushes.species.map((species) => bushStages(species).map(getBlockId)),
                 density: plants.bushes.density,
@@ -319,7 +340,7 @@ export class RealisticGenerator {
         // Biomy: wierzch ziemi i rośliny każdego biomu po numerach bloków
         // (Biomes.js - BIOMES), w kolejności BIOME_KEYS.
 
-        this.biomeData = BIOME_KEYS.map((key) => resolveBiome(BIOMES[key]));
+        this.biomeData = BIOME_KEYS.map((key) => resolveBiome(BIOMES[key], key));
 
 
         // Skały pod ziemią (granit, wapień, piaskowiec...).
@@ -1178,7 +1199,17 @@ export class RealisticGenerator {
                 this.field(this.noise.patches, x + i * 977, z - i * 613, 18, 2) > patch.level &&
                 hash01(this.plantSeed, x, z, 20 + i) < patch.density
             ) {
-                return patch.id;
+
+                if (!patch.ids) {
+                    return patch.id;
+                }
+
+                const stage = hash01(this.plantSeed, x, z, 40 + i);
+
+                const index = patch.weights.findIndex((limit) => stage < limit);
+
+                return patch.ids[index < 0 ? patch.ids.length - 1 : index];
+
             }
 
         }

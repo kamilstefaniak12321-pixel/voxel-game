@@ -1,0 +1,31 @@
+{
+    "nazwa": "Amarantus",
+    "nazwaAngielska": "Amaranth",
+    "opis": "wysoka (do 2 m) roślina z długimi, zwisającymi, bordowymi wiechami; rośnie kępami na łąkach",
+    "pierwszeId": 237,
+    "etapy": [
+        { "plik": "etap1.png", "nazwa": "Młody amarantus" },
+        { "plik": "etap2.png", "nazwa": "Amarantus (zawiązuje wiechy)" },
+        { "plik": "etap3.png", "nazwa": "Amarantus (dojrzałe wiechy)" }
+    ],
+    "czasWzrostu": 300,
+    "przedmiot": {
+        "klucz": "wiecha",
+        "plik": "wiecha.png",
+        "nazwa": "Wiecha amarantusa",
+        "nazwaAngielska": "Amaranth Plume",
+        "grupy": ["red"]
+    },
+    "zbior": { "ile": [1, 3], "wraca": 2 },
+    "gdzieRosnie": {
+        "biomy": ["laka"],
+        "plamy": 0.025,
+        "gestosc": 0.22,
+        "etapy": [0.2, 0.3, 0.5]
+    },
+    "zrodlo": {
+        "atlas": "Atlas tekstur bordowego amarantusa.png",
+        "wysokosc": 32,
+        "nazwy": "etap1,etap2,etap3,wiecha"
+    }
+}

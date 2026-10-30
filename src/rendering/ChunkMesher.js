@@ -590,7 +590,12 @@ function addPlants(plants, faceCount, baseX, baseZ) {
         const angle0 = plantRandom(wx, y, wz, 1) * Math.PI;
         const centerX = lx + 0.5 + (plantRandom(wx, y, wz, 2) - 0.5) * 0.3;
         const centerZ = lz + 0.5 + (plantRandom(wx, y, wz, 3) - 0.5) * 0.3;
-        const top = y + cross.height * (0.85 + 0.3 * plantRandom(wx, y, wz, 4));
+
+        // Roślina z paczki (cross.sprite): płaszczyzna ma rozmiar
+        // obrazka w atlasie (w blokach) - dokładnie 16 pikseli na blok.
+        const sprite = cross.sprite;
+        const halfWidth = sprite ? sprite.width / 2 : cross.width;
+        const top = sprite ? y + sprite.height : y + cross.height * (0.85 + 0.3 * plantRandom(wx, y, wz, 4));
 
         const { uMin, uMax, vMin, vMax } = cross.uv;
 
@@ -599,8 +604,8 @@ function addPlants(plants, faceCount, baseX, baseZ) {
 
             const angle = angle0 + plane * Math.PI / cross.planes;
 
-            const dx = Math.cos(angle) * cross.width;
-            const dz = Math.sin(angle) * cross.width;
+            const dx = Math.cos(angle) * halfWidth;
+            const dz = Math.sin(angle) * halfWidth;
 
             // Dwie strony płaszczyzny: rogi lewy górny, prawy górny,
             // lewy dolny, prawy dolny (patrząc na daną stronę).
@@ -1311,6 +1316,9 @@ export function buildChunkGeometry(chunk, world) {
     const bushyGrass = [];
     const grassDetail = world.experiments?.bushyGrass ? (world.getGrassDetail?.(chunk) ?? 0) : null;
 
+    // Najwyższa roślina z paczki (bloki) - wystaje nad swoją komórkę.
+    let spriteReach = 0;
+
     const leaves = [];
 
     const flats = [];
@@ -1356,6 +1364,10 @@ export function buildChunkGeometry(chunk, world) {
                     }
 
                     plants.push(lx, y, lz, id);
+
+                    if (renderData.cross.sprite) {
+                        spriteReach = Math.max(spriteReach, renderData.cross.sprite.height, renderData.cross.sprite.width);
+                    }
 
                     continue;
 
@@ -1551,7 +1563,7 @@ export function buildChunkGeometry(chunk, world) {
 
     geometry.boundingSphere = new THREE.Sphere(
         new THREE.Vector3(S / 2, height / 2, S / 2),
-        Math.sqrt((S / 2) * (S / 2) * 2 + (height / 2) * (height / 2)) + (riverPlants.length ? 1.2 : 0)
+        Math.sqrt((S / 2) * (S / 2) * 2 + (height / 2) * (height / 2)) + Math.max(riverPlants.length ? 1.2 : 0, spriteReach)
     );
 
     geometry.userData.bushyGrassDetail = grassDetail;

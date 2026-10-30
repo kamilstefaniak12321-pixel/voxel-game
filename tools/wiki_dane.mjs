@@ -29,6 +29,7 @@ const A = await import(src('achievements/list.js'));
 const { TOOL_MATERIALS, TOOL_SPEED } = await import(src('config.js'));
 const { TREE_SPECIES } = await import(src('blocks/trees.js'));
 const { PACK_TEXTURES, TREE_PACKS } = await import(src('blocks/treePacks.js'));
+const { PLANT_TEXTURES, PLANT_PACKS } = await import(src('blocks/plantPacks.js'));
 
 
 // Kafelki atlasu: obiekt ATLAS_TILES z TextureAtlas.js (sam literał).
@@ -61,6 +62,16 @@ function atlasTiles() {
 
     for (const [name, texture] of Object.entries(PACK_TEXTURES)) {
         tiles[name] = { file: `assets/drzewa/${texture.pack}/${texture.file}` };
+    }
+
+    // Obrazki paczek roślin (dowolny rozmiar; region - większy niż jeden
+    // kafelek, paczka tekstur go jeszcze nie zmienia).
+    for (const [name, texture] of Object.entries(PLANT_TEXTURES)) {
+        tiles[name] = {
+            file: `assets/rosliny/${texture.pack}/${texture.file}`,
+            sprite: true,
+            region: texture.width > 16 || texture.height > 16
+        };
     }
 
     return tiles;

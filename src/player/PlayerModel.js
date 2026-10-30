@@ -515,6 +515,13 @@ export function buildBlockGeometry(type) {
     geometry.setAttribute('color', new THREE.Float32BufferAttribute(new Float32Array(positions.length).fill(1), 3));
     geometry.setIndex(indices);
 
+    // Roślina z paczki na kilku kafelkach (np. 2 x 3): bez rozciągania.
+    const sprite = !item && definition.plant?.sprite;
+    if (sprite && sprite.width !== sprite.height) {
+        const size = Math.max(sprite.width, sprite.height);
+        geometry.scale(sprite.width / size, sprite.height / size, sprite.width / size);
+    }
+
     return geometry;
 
 }

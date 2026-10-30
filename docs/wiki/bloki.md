@@ -2,7 +2,7 @@
 
 > Ta strona jest generowana z kodu gry (`python tools/wiki.py`) - nie zmieniaj jej ręcznie, zmiany przepadną przy następnym generowaniu.
 
-Wersja gry **0.27.0** - 127 bloków (do tego 5 odmian, których nie ma w ekwipunku, np. wieniec zawieszony na boku bloku). Czas kopania dotyczy trybu przygody; w kreatywnym bloki znikają od razu.
+Wersja gry **0.28.0** - 130 bloków (do tego 5 odmian, których nie ma w ekwipunku, np. wieniec zawieszony na boku bloku). Czas kopania dotyczy trybu przygody; w kreatywnym bloki znikają od razu.
 
 [Ziemia](#ziemia) · [Skały](#skały) · [Drewno](#drewno) · [Budulec](#budulec) · [Rośliny](#rośliny) · [Światło](#światło) · [Ozdoby](#ozdoby)
 
@@ -146,6 +146,9 @@ Wersja gry **0.27.0** - 127 bloków (do tego 5 odmian, których nie ma w ekwipun
 | <img src="ikony/water_milfoil.png" width="32" height="32" alt=""> | **Wywłócznik** | `water_milfoil` | - |
 | <img src="ikony/water_lily.png" width="32" height="32" alt=""> | **Grzybień biały** | `water_lily` | - |
 | <img src="ikony/duckweed.png" width="32" height="32" alt=""> | **Rzęsa wodna** | `duckweed` | - |
+| <img src="ikony/amarantus_etap1.png" width="32" height="32" alt=""> | **Młody amarantus** | `amarantus_etap1` | **Kopanie:** od razu<br>**Rośnie:** w: Amarantus (zawiązuje wiechy)<br>**Skąd:** zniszczony blok: Amarantus (zawiązuje wiechy); zniszczony blok: Amarantus (dojrzałe wiechy) |
+| <img src="ikony/amarantus_etap2.png" width="32" height="32" alt=""> | **Amarantus (zawiązuje wiechy)** | `amarantus_etap2` | **Kopanie:** od razu<br>**Daje:** Młody amarantus<br>**Rośnie:** w: Amarantus (dojrzałe wiechy)<br>**Skąd:** wyrasta z: Młody amarantus |
+| <img src="ikony/amarantus_etap3.png" width="32" height="32" alt=""> | **Amarantus (dojrzałe wiechy)** | `amarantus_etap3` | **Kopanie:** od razu<br>**Daje:** Młody amarantus<br>**Zbiór (PPM):** Wiecha amarantusa 1-3<br>**Skąd:** wyrasta z: Amarantus (zawiązuje wiechy) |
 
 ## Światło
 

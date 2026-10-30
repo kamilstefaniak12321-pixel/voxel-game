@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { isLiquidId, getRiverPlant, getBlockTypeById } from '../blocks/BlockRegistry.js';
 import { riverPlantBounds } from './RiverPlantBounds.js';
+import { spritePlantBounds, SPRITE_PLANT_REACH } from './PlantBounds.js';
 
 function intersectBounds(origin, direction, x, y, z, bounds, start, end) {
     let near = -Infinity, far = Infinity;
@@ -131,12 +132,17 @@ export class VoxelRaycast {
             let closest = null;
             for (let px = x - 1; px <= x + 1; px++) {
                 for (let pz = z - 1; pz <= z + 1; pz++) {
-                    for (let py = y - 1; py <= y; py++) {
+                    for (let py = y - SPRITE_PLANT_REACH; py <= y; py++) {
                         const id = this.world.getBlockId(px, py, pz);
+                        if (!id) continue;
                         const river = getRiverPlant(id);
-                        if (!river) continue;
+                        // Duże rośliny z paczek roślin też wystają nad komórkę.
+                        const bounds = river
+                            ? (py >= y - 1 ? riverPlantBounds(river, px, py, pz) : null)
+                            : spritePlantBounds(id, px, py, pz);
+                        if (!bounds) continue;
                         const intersection = intersectBounds(origin, dir, px, py, pz,
-                            riverPlantBounds(river, px, py, pz), start, end);
+                            bounds, start, end);
                         if (intersection && (!closest || intersection.distance < closest.distance)) {
                             closest = { hit: true, block: {x:px,y:py,z:pz,type:getBlockTypeById(id)}, ...intersection };
                         }

@@ -35,6 +35,8 @@ import { BASE_TREE_NAMES } from '../blocks/trees.js';
 
 import { TREE_PACKS } from '../blocks/treePacks.js';
 
+import { getPlantPack } from '../blocks/plantPacks.js';
+
 import { BIOMES, LAND_BIOMES } from '../world/terrain/Biomes.js';
 
 
@@ -109,6 +111,21 @@ const ORCHARD = TREE_FRUIT.length === 0 ? [] : [{
     on: 'harvested',
     when: (data) => getBlockDefinition(data.type)?.pack !== undefined && TREE_FRUIT.includes(data.item)
 }];
+
+
+// Amarantus z paczki roślin (assets/rosliny/amarantus) - osiągnięcie jest,
+// gdy paczka jest w grze.
+
+const AMARANTH = getPlantPack('amarantus')?.item ? [{
+    id: 'amaranth',
+    tier: 'common',
+    title: 'Wyższy od ciebie',
+    task: 'Zbierz wiechy z dojrzałego amarantusa (rośnie kępami na łąkach, ma 2 bloki wysokości).',
+    comment: 'Dwa metry rośliny, a najładniejsze i tak zwisa do samej ziemi.',
+    icon: 'amarantus_wiecha',
+    on: 'harvested',
+    when: (data) => data.item === 'amarantus_wiecha'
+}] : [];
 
 
 // "Złota godzina": słońce nisko nad horyzontem (wschód albo zachód),
@@ -211,6 +228,7 @@ export const ACHIEVEMENTS = [
         when: (data) => FRUITS.includes(data.item)
     },
     ...ORCHARD,
+    ...AMARANTH,
     {
         id: 'plant',
         tier: 'common',

@@ -1,4 +1,4 @@
-# Paczka tekstur - szablon (Voxel Game 0.21.0)
+# Paczka tekstur - szablon (Voxel Game 0.28.0)
 
 Oryginalne tekstury gry, każda w osobnym pliku. Zrób z nich własną paczkę:
 
@@ -70,15 +70,15 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/chili_bush_full.png` | Krzak papryczki chili (pełen papryczek) |
 | `bloki/chili_pepper.png` | Papryczki chili |
 | `bloki/clay.png` | Glina |
-| `bloki/clover.png` | Koniczyna |
+| `bloki/clover.png` | Koniczyna, Grzybień biały, Rzęsa wodna |
 | `bloki/coarse_dirt.png` | Ziemia kamienista |
-| `bloki/cornflower.png` | Chaber |
+| `bloki/cornflower.png` | Chaber, Krwawnica pospolita |
 | `bloki/crocus.png` | Krokus |
 | `bloki/dandelion.png` | Mniszek |
 | `bloki/dark_planks.png` | Ciemne deski |
 | `bloki/dirt.png` | Ziemia |
 | `bloki/dune_grass.png` | Piaskownica (trawa wydmowa) |
-| `bloki/fern.png` | Paproć |
+| `bloki/fern.png` | Paproć, Wywłócznik |
 | `bloki/forest_floor_side.png` | Ściółka leśna |
 | `bloki/forest_floor_top.png` | Ściółka leśna |
 | `bloki/granite.png` | Granit |
@@ -155,8 +155,9 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/plantain.png` | Babka zwyczajna |
 | `bloki/polished_stone.png` | Polerowany kamień |
 | `bloki/poppy.png` | Mak |
-| `bloki/reed.png` | Trzcina |
+| `bloki/reed.png` | Trzcina, Turzyca rzeczna, Pałka wodna, Pałka wodna (w wodzie) |
 | `bloki/resin.png` | Żywica |
+| `bloki/rosliny/amarantus/wiecha.png` | Wiecha amarantusa |
 | `bloki/sand.png` | Piasek |
 | `bloki/sandstone_side.png` | Piaskowiec |
 | `bloki/sandstone_top.png` | Piaskowiec |

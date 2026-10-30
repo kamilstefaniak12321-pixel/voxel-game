@@ -98,6 +98,25 @@ function buildList() {
 }
 
 
+// Numery bloków paczek roślin: [[pierwszy, ostatni], ...].
+
+function plantRanges() {
+
+    const dir = path.join(DIR, '..', 'rosliny');
+
+    const list = readJson(path.join(dir, 'lista.json'));
+
+    if (!Array.isArray(list)) {
+        return [];
+    }
+
+    return list.map((folder) => readJson(path.join(dir, String(folder), 'roslina.json')))
+        .filter((json) => json && Number.isInteger(json.pierwszeId) && Array.isArray(json.etapy))
+        .map((json) => [json.pierwszeId, json.pierwszeId + json.etapy.length - 1]);
+
+}
+
+
 // Wolne "pierwszeId" dla nowych drzew (najmniejsza wolna dziesiątka).
 
 function assignIds(list, added, write) {
@@ -106,7 +125,11 @@ function assignIds(list, added, write) {
 
     const changes = [];
 
-    const overlaps = (id) => used.some((other) => Math.abs(other - id) < SLOTS);
+    // Numery zajęte przez paczki roślin (assets/rosliny/ - od góry zakresu).
+    const plants = plantRanges();
+
+    const overlaps = (id) => used.some((other) => Math.abs(other - id) < SLOTS) ||
+        plants.some(([first, last]) => id <= last && first <= id + SLOTS - 1);
 
     const valid = (id) => Number.isInteger(id) && id >= FIRST_ID && id <= LAST_ID - SLOTS + 1;
 

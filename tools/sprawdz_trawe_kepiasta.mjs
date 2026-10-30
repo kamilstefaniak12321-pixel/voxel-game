@@ -36,7 +36,7 @@ assert.equal(createWorldInfo('Zwykły',1).experiments.bushyGrass,false);
 const world=new World(new Scene(),1,new Map(),'classic',info.experiments);
 const chunk=new Chunk(0,0);chunk.skyLight.fill(15);
 world.chunks.set('0,0',chunk);
-for (const [x,z,type] of [[2,2,'short_grass'],[5,2,'tall_grass'],[8,2,'fern'],[11,2,'water_lily'],[13,2,'stone']]) {
+for (const [x,z,type] of [[2,2,'short_grass'],[5,2,'tall_grass'],[8,2,'fern'],[11,2,'water_lily'],[13,2,'stone'],[5,5,'amarantus_etap3']]) {
     chunk.setId(x,1,z,getBlockId('dirt'));chunk.setId(x,2,z,getBlockId(type));
 }
 chunk.tint=new Uint8Array(17*17*3).fill(128);
@@ -52,6 +52,8 @@ const bushy=geometry();
 assert.equal(bushy.groups.length,ordinary.groups.length,'No extra material/draw group per tuft');
 assert.ok(bushy.groups[1].count>ordinary.groups[1].count);
 assert.equal(bushy.userData.bushyGrassCount,2,'Only short/tall grass are replaced');
+assert.ok(getBlockId('amarantus_etap3') > 0, 'Plant pack is loaded in the mixed fixture');
+assert.equal(bushy.boundingSphere.radius,ordinary.boundingSphere.radius,'Large plant bounds survive the grass toggle');
 assert.deepEqual(chunk.blocks,blockCopy,'Block IDs must survive toggling');
 
 function groupData(g,material,attribute) {

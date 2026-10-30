@@ -9,6 +9,8 @@ import { TOOL_MATERIALS } from '../config.js';
 
 import { TREE_PACKS, packTile } from '../blocks/treePacks.js';
 
+import { PLANT_PACKS, plantTile } from '../blocks/plantPacks.js';
+
 // ------------------------------------------------------------
 // PRZEDMIOTY
 //
@@ -179,6 +181,26 @@ for (const pack of TREE_PACKS) {
             plants: item.plants ? `${pack.id}_sapling` : undefined,
             category: item.category,
             pack: pack.id
+        };
+
+    }
+
+}
+
+
+// Przedmioty z paczek roślin (src/blocks/plantPacks.js): <roślina>_<klucz>,
+// np. amarantus_wiecha.
+
+for (const pack of PLANT_PACKS) {
+
+    if (pack.item) {
+
+        ITEM_TYPES[pack.item.type] = {
+            name: pack.item.name,
+            label: pack.item.label,
+            icon: plantTile(pack, pack.item.file),
+            category: pack.item.category,
+            plantPack: pack.id
         };
 
     }

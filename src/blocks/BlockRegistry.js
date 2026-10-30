@@ -9,6 +9,7 @@ import {
 
 import { treeBlocks } from './trees.js';
 import { RIVER_PLANT_BLOCKS } from './riverPlants.js';
+import { PLANT_PACKS, PLANT_PIXELS, plantStageType, plantTile } from './plantPacks.js';
 
 // ID 0 jest zarezerwowane dla powietrza.
 // Chunk przechowuje bloki jako liczby, więc pusta tablica = samo powietrze.
@@ -216,6 +217,74 @@ function fruitBushBlocks() {
 
                 harvest: fruiting
                     ? { item: bush.item, count: bush.harvest[stage - 2], becomes: stages[1] }
+                    : undefined
+
+            };
+
+        });
+
+    }
+
+    return blocks;
+
+}
+
+// Rośliny z paczek roślin (assets/rosliny/, src/blocks/plantPacks.js):
+// blok na każdy etap wzrostu. Model 'cross' z obrazkiem większym niż
+// blok - plant.sprite: rozmiar obrazka w blokach (16 pikseli = 1 blok),
+// plant.width / height: zasięg rośliny dla celownika.
+
+function plantPackBlocks() {
+
+    const blocks = {};
+
+    for (const pack of PLANT_PACKS) {
+
+        const types = pack.stages.map((_, stage) => plantStageType(pack, stage));
+
+        pack.stages.forEach((stage, index) => {
+
+            const last = index === pack.stages.length - 1;
+
+            const next = last ? null : pack.stages[index + 1];
+
+            blocks[types[index]] = {
+
+                id: pack.firstId + index,
+                name: `${pack.name} (${index + 1}/${pack.stages.length})`,
+                label: stage.label,
+
+                solid: false,
+                model: 'cross',
+                category: 'rosliny',
+
+                plant: {
+                    planes: stage.planes,
+                    height: stage.height / PLANT_PIXELS,
+                    width: stage.width / PLANT_PIXELS / 2,
+                    sprite: {
+                        width: Math.ceil(stage.width / PLANT_PIXELS),
+                        height: Math.ceil(stage.height / PLANT_PIXELS)
+                    }
+                },
+
+                textures: { all: plantTile(pack, stage.file) },
+
+                ...(pack.ground ? { ground: pack.ground } : {}),
+
+                // Zniszczona roślina daje młodą (do posadzenia).
+                drops: types[0],
+
+                plantPack: pack.id,
+                stage: index,
+
+                // Wyższy etap rośnie tylko, gdy ma nad sobą miejsce.
+                grows: last
+                    ? undefined
+                    : { into: types[index + 1], seconds: pack.growthSeconds ?? BUSH_GROWTH_SECONDS, room: Math.ceil(next.height / PLANT_PIXELS) },
+
+                harvest: last && pack.harvest
+                    ? { item: pack.item.type, count: pack.harvest.count, becomes: types[pack.harvest.back] }
                     : undefined
 
             };
@@ -998,7 +1067,11 @@ export const BLOCK_TYPES = {
 
     ...treeBlocks(),
 
-    ...RIVER_PLANT_BLOCKS
+    ...RIVER_PLANT_BLOCKS,
+
+    // Paczki roślin (assets/rosliny/) - po bloku na etap wzrostu.
+
+    ...plantPackBlocks()
 
 };
 

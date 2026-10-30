@@ -61,6 +61,10 @@ def main():
 
     rows = []
     for name, tile in tiles.items():
+        if tile.get('region'):
+            # Duża roślina z paczki roślin (kilka kafelków) - paczka tekstur
+            # jeszcze jej nie zmienia (docs/rosliny.md).
+            continue
         if 'file' in tile:
             # Tekstura z paczki drzewa (assets/drzewa/) - nazwa "jablon/liscie.png".
             target = os.path.join(OUT, 'bloki', *name.split('/'))

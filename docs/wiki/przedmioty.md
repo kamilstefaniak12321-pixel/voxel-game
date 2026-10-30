@@ -2,8 +2,14 @@
 
 > Ta strona jest generowana z kodu gry (`python tools/wiki.py`) - nie zmieniaj jej ręcznie, zmiany przepadną przy następnym generowaniu.
 
-Wersja gry **0.27.0** - 19 przedmiotów. Przedmiotu nie da się postawić jak bloku; owoce i nasiona posadzone na ziemi (PPM) wyrastają w krzak albo drzewo, narzędzia przyspieszają kopanie.
+Wersja gry **0.28.0** - 20 przedmiotów. Przedmiotu nie da się postawić jak bloku; owoce i nasiona posadzone na ziemi (PPM) wyrastają w krzak albo drzewo, narzędzia przyspieszają kopanie.
 
+
+## Rośliny
+
+| | Nazwa | W komendach | Najważniejsze |
+|---|---|---|---|
+| <img src="ikony/amarantus_wiecha.png" width="32" height="32" alt=""> | **Wiecha amarantusa** | `amarantus_wiecha` | **Skąd:** zbiór (PPM): Amarantus (dojrzałe wiechy)<br>**Przydaje się do:** Czerwona lampa |
 
 ## Owoce i nasiona
 

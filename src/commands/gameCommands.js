@@ -98,6 +98,8 @@ import { TREE_SPECIES, TREE_NAMES } from '../blocks/trees.js';
 
 import { TREE_PACKS, TREE_PACK_ERRORS, PACK_ID_SLOTS } from '../blocks/treePacks.js';
 
+import { PLANT_PACKS, PLANT_PACK_ERRORS, PLANT_PIXELS, plantStageType, getPlantPack } from '../blocks/plantPacks.js';
+
 import { plantTree } from '../world/trees/plantTree.js';
 
 import { LOD_LEGEND } from '../world/FarTerrain.js';
@@ -791,6 +793,106 @@ function plantBushGarden(player, world) {
 
     return `Ogródek: ${species.length} ${species.length >= 5 ? 'rzędów' : 'rzędy'} krzaków (${species.map((name) => getBlockLabel(bushStages(name)[1]).toLowerCase()).join(', ')}), ` +
         'w każdym od lewej: sadzonka, bez owoców, kilka owoców, pełen owoców. PPM na owocach - zbiór.';
+
+}
+
+
+// --- Rośliny z paczek roślin (/rosliny) -------------------------
+
+// Roślina po słowie: nazwa folderu albo polska nazwa (bez ogonków).
+
+function plantPackByWord(word) {
+
+    const key = simplify(word ?? '');
+
+    return getPlantPack(key) ?? PLANT_PACKS.find((pack) => simplify(pack.label) === key) ?? null;
+
+}
+
+
+// Rozmiar w blokach: "1.6 x 2".
+
+function blocksSize(pixels) {
+
+    return decimal(pixels / PLANT_PIXELS);
+
+}
+
+
+// Ogródek: każda roślina w osobnym rzędzie, od lewej kolejne etapy
+// (co 2 bloki - duże rośliny się nie zasłaniają).
+
+function plantPackGarden(player, world, packs) {
+
+    const { forwardX, forwardZ, rightX, rightZ } = lookAxes(player);
+
+    const startX = Math.floor(player.pos.x) + forwardX * 3 - rightX * 2;
+    const startZ = Math.floor(player.pos.z) + forwardZ * 3 - rightZ * 2;
+
+    const y = Math.floor(player.pos.y);
+
+    packs.forEach((pack, row) => {
+
+        pack.stages.forEach((stage, index) => {
+
+            const x = startX + rightX * index * 3 + forwardX * row * 3;
+            const z = startZ + rightZ * index * 3 + forwardZ * row * 3;
+
+            world.setBlock(x, y - 1, z, 'grass');
+            world.setBlock(x, y, z, plantStageType(pack, index));
+
+            for (let k = 1; k <= Math.ceil(stage.height / PLANT_PIXELS); k++) {
+                world.clearBlock(x, y + k, z);
+            }
+
+        });
+
+    });
+
+    return `Ogródek: ${packs.map((pack) => pack.label.toLowerCase()).join(', ')} - w rzędzie od lewej kolejne etapy wzrostu. ` +
+        'PPM na ostatnim etapie - zbiór, /krzaki rosnij - rosną od razu.';
+
+}
+
+
+// Najbliższa roślina z paczki (dowolny etap) we wczytanych chunkach.
+
+function nearestPlantPack(world, center, pack) {
+
+    const first = pack.firstId;
+    const last = pack.firstId + pack.stages.length - 1;
+    const layer = CHUNK_SIZE * CHUNK_SIZE;
+
+    let best = null;
+
+    for (const chunk of world.chunks.values()) {
+
+        const baseX = chunk.cx * CHUNK_SIZE;
+        const baseZ = chunk.cz * CHUNK_SIZE;
+
+        for (let i = chunk.solidBelow * layer; i < chunk.maxY * layer; i++) {
+
+            const id = chunk.blocks[i];
+
+            if (id < first || id > last) {
+                continue;
+            }
+
+            const x = baseX + (i % CHUNK_SIZE);
+            const y = Math.floor(i / layer);
+            const z = baseZ + Math.floor((i % layer) / CHUNK_SIZE);
+
+            const distance = Math.hypot(x + 0.5 - center.x, z + 0.5 - center.z);
+
+            if (!best || distance < best.distance) {
+                best = { x, y, z, distance, stage: id - first };
+            }
+
+        }
+
+    }
+
+    return best;
 
 }
 
@@ -3372,6 +3474,115 @@ export const GAME_COMMANDS = [
 
         complete(args) {
             return args.length === 1 ? ['rosnij', 'tempo', 'ogrod', 'znajdz'] : args.length === 2 && simplify(args[0]) === 'tempo' ? ['1', '10', '60'] : [];
+        }
+    },
+
+
+    {
+        name: 'rosliny',
+        aliases: ['roslina', 'plants'],
+        usage: '/rosliny | /rosliny <roslina> | /rosliny ogrod [roslina] | /rosliny znajdz <roslina> | /rosliny bledy',
+        description: 'Rośliny z paczek roślin (assets/rosliny/): lista z rozmiarami, opis rośliny, ogródek ze wszystkimi etapami przed tobą, najbliższa roślina we wczytanym terenie, błędy paczek.',
+
+        run(args, { player, world }) {
+
+            const word = simplify(args[0] ?? '');
+
+
+            if (['bledy', 'errors'].includes(word)) {
+
+                return PLANT_PACK_ERRORS.length === 0
+                    ? `Paczki roślin bez błędów (${PLANT_PACKS.length}).`
+                    : `Błędy paczek roślin:\n${PLANT_PACK_ERRORS.map((error) => `- ${error}`).join('\n')}`;
+
+            }
+
+
+            if (['ogrod', 'garden', 'pokaz'].includes(word)) {
+
+                const pack = args[1] === undefined ? null : plantPackByWord(args[1]);
+
+                if (args[1] !== undefined && !pack) {
+                    throw new CommandError(`Nie ma rośliny "${args[1]}" - lista: /rosliny.`);
+                }
+
+                if (PLANT_PACKS.length === 0) {
+                    throw new CommandError('Nie ma paczek roślin (assets/rosliny/lista.json).');
+                }
+
+                return plantPackGarden(player, world, pack ? [pack] : PLANT_PACKS);
+
+            }
+
+
+            if (['znajdz', 'find'].includes(word)) {
+
+                const pack = plantPackByWord(args[1]);
+
+                if (!pack) {
+                    throw new CommandError(`Podaj roślinę: /rosliny znajdz ${PLANT_PACKS[0]?.id ?? '<roslina>'}.`);
+                }
+
+                const found = nearestPlantPack(world, player.pos, pack);
+
+                if (!found) {
+                    return `We wczytanym terenie nie ma: ${pack.label.toLowerCase()}. Rośnie w biomach: ${pack.where ? pack.where.biomes.map((key) => BIOMES[key].name.toLowerCase()).join(', ') : 'nigdzie sama (tylko posadzona)'}.`;
+                }
+
+                const { x, y, z, distance, stage } = found;
+
+                return `Najbliższy: ${pack.stages[stage].label} - ${Math.round(distance)} bloków ` +
+                    `${directionName(x + 0.5 - player.pos.x, z + 0.5 - player.pos.z)} (${x} ${y} ${z}). Teleport: /tp ${x} ${y + 1} ${z}`;
+
+            }
+
+
+            if (word) {
+
+                const pack = plantPackByWord(word);
+
+                if (!pack) {
+                    throw usageError(this);
+                }
+
+                const stages = pack.stages.map((stage, index) =>
+                    `${index + 1}. ${stage.label} - ${blocksSize(stage.width)} x ${blocksSize(stage.height)} bloku (${stage.width} x ${stage.height} px, /daj ${plantStageType(pack, index)})`);
+
+                return `${pack.label} (${pack.folder}): ${pack.about || 'roślina z paczki roślin'}.\n` +
+                    stages.join('\n') +
+                    `\nRośnie: etap średnio co ${pack.growthSeconds ?? BUSH_GROWTH_SECONDS} s (wyższy etap tylko z wolnym miejscem nad sobą).` +
+                    (pack.item ? `\nPrzedmiot: ${pack.item.label} (/daj ${pack.item.type})` +
+                        (pack.harvest ? ` - PPM na ostatnim etapie: ${pack.harvest.count[0]}-${pack.harvest.count[1]} szt., roślina wraca do etapu ${pack.harvest.back + 1}` : '') : '') +
+                    (pack.where ? `\nGdzie rośnie: ${pack.where.biomes.map((key) => BIOMES[key].name.toLowerCase()).join(', ')} (/rosliny znajdz ${pack.id})` : '') +
+                    `\nNumery bloków: ${pack.firstId}-${pack.firstId + pack.stages.length - 1}.`;
+
+            }
+
+
+            if (PLANT_PACKS.length === 0) {
+                return 'Nie ma paczek roślin (assets/rosliny/lista.json, instrukcja: docs/rosliny.md).';
+            }
+
+            return `Rośliny z paczek (${PLANT_PACKS.length}): ` +
+                PLANT_PACKS.map((pack) => {
+                    const top = pack.stages[pack.stages.length - 1];
+                    return `${pack.label} (${pack.id}, do ${blocksSize(top.height)} bloku wysokości)`;
+                }).join(', ') +
+                '. Opis: /rosliny <roslina>, ogródek: /rosliny ogrod' +
+                (PLANT_PACK_ERRORS.length > 0 ? `. Błędy paczek: ${PLANT_PACK_ERRORS.length} (/rosliny bledy).` : '.');
+
+        },
+
+        complete(args) {
+
+            const names = PLANT_PACKS.map((pack) => pack.id);
+
+            if (args.length === 1) {
+                return ['ogrod', 'znajdz', 'bledy', ...names];
+            }
+
+            return args.length === 2 && ['ogrod', 'znajdz'].includes(simplify(args[0])) ? names : [];
+
         }
     },
 

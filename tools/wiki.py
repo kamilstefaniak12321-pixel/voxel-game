@@ -88,6 +88,20 @@ class Icons:
         return self.atlas[y * TILE:(y + 1) * TILE, x * TILE:(x + 1) * TILE]
 
     def flat(self, name):
+        pos = self.tiles.get(name) or {}
+        if pos.get('sprite'):
+            # Roślina z paczki roślin: obrazek w swoim rozmiarze, jak
+            # największy w ikonce, w całych pikselach (jak BlockIcons.js).
+            try:
+                img = Image.open(os.path.join(ROOT, pos['file'])).convert('RGBA')
+            except OSError:
+                return Image.new('RGBA', (ICON, ICON))
+            fit = ICON / max(img.size)
+            scale = int(fit) if fit >= 1 else fit
+            w, h = max(1, round(img.width * scale)), max(1, round(img.height * scale))
+            out = Image.new('RGBA', (ICON, ICON))
+            out.alpha_composite(img.resize((w, h), Image.NEAREST), ((ICON - w) // 2, (ICON - h) // 2))
+            return out
         img = Image.fromarray(self.tile(name).astype(np.uint8), 'RGBA')
         return img.resize((ICON, ICON), Image.NEAREST)
 

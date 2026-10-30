@@ -343,6 +343,31 @@ i świerczyn). Każdy rośnie w czterech etapach:
   `/krzaki znajdz` (najbliższy dziki krzak z owocami), `/krzaki tempo 60`
   (rosną 60 razy szybciej), `/krzaki rosnij 3`, `/daj truskawki 10`.
 
+### Rośliny z paczek (duże rośliny)
+
+Nowe rośliny dochodzą jak paczki drzew - folder w `assets/rosliny/`
+z obrazkami etapów wzrostu i opisem `roslina.json`, bez kodu. Skala jak
+bloki: **16 pikseli tekstury na blok**, więc rozmiar obrazka to rozmiar
+rośliny - roślina może być większa niż blok (wystaje nad swoją komórkę,
+celownik trafia ją też tam). Wyższy etap rośnie tylko z wolnym miejscem
+nad rośliną.
+
+Pierwsza: **amarantus** - trzy etapy (młody 1.3 bloku, z wiechami 1.7,
+dojrzały **2 bloki** - wyższy od gracza), rośnie kępami na łąkach.
+PPM na dojrzałym - **wiechy amarantusa** (czerwona lampa: lampa +
+wiecha), roślina wraca do etapu z wiechami. Osiągnięcie *Wyższy od
+ciebie*.
+
+![Amarantus obok słupka z 2 bloków](docs/rosliny-amarantus.png)
+
+- Tekstury z dużych atlasów "pixel art" robi
+  `tools/rosliny_z_atlasu.py` (siatka pikseli rysunku, zmniejszanie bez
+  mieszania kolorów, wszystkie etapy w tej samej skali).
+- **Test:** `/rosliny`, `/rosliny amarantus`, `/rosliny ogrod`,
+  `/rosliny znajdz amarantus`, `/krzaki rosnij 2`, `/daj amarantus_etap1 5`.
+- Instrukcja, rozmiary i plan dla wszystkich 28 roślin z atlasów:
+  [`docs/rosliny.md`](docs/rosliny.md).
+
 ### Drzewa i lasy
 
 Sześć gatunków z koncepcji Kamila: **świerk pospolity**, **sosna
@@ -1020,6 +1045,7 @@ assets/ui/themes/           motywy menu (kolory, czcionka, tło)
 assets/fonts/               czcionki
 assets/sounds/              dźwięki (.ogg): bloki, kroki, zbieranie, meteoryt, menu (ui/), woda, kosmos
 assets/drzewa/              paczki drzew: folder = gatunek (drzewo.json, tekstury, kształt), lista.json (docs/drzewa-paczki.md)
+assets/rosliny/             paczki roślin: folder = roślina (roslina.json, obrazki etapów i przedmiotu), lista.json (docs/rosliny.md)
 tools/                      skrypty pomocnicze (tekstury, tekstury drzew i narzędzi, nowe drzewo i sprawdzanie paczek, pęknięcia, dźwięki, wiki, ikonki i pliki aplikacji na Androida)
 docs/                       opisy, jak działają większe części gry
 docs/wiki/                  wiki gry dla graczy (strony generuje tools/wiki.py)

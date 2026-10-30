@@ -416,8 +416,11 @@ async function loadPacks() {
 
     let list;
 
+    // Testy w Node mogą podać listę same (tools/sprawdz_rosliny.mjs).
+    const override = NODE ? globalThis.process?.env?.ROSLINY_LISTA : undefined;
+
     try {
-        list = JSON.parse(await readFile('lista.json'));
+        list = JSON.parse(override ?? await readFile('lista.json'));
     }
     catch (error) {
 

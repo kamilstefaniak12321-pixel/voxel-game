@@ -13,6 +13,7 @@ import { Chat } from './ui/Chat.js';
 import { CommandRegistry } from './commands/CommandRegistry.js';
 import { GAME_COMMANDS } from './commands/gameCommands.js';
 import { TREE_PACK_ERRORS } from './blocks/treePacks.js';
+import { PLANT_PACK_ERRORS } from './blocks/plantPacks.js';
 import { PerfMonitor } from './game/PerfMonitor.js';
 import { TerrainMap } from './ui/TerrainMap.js';
 import { InventoryScreen } from './ui/InventoryScreen.js';
@@ -495,6 +496,21 @@ async function playWorld(worldInfo) {
 // mówi, co poprawić (wszystkie: /drzewa paczki).
 
 function showTreePackErrors() {
+
+    // Paczki roślin (assets/rosliny/) - tak samo.
+
+    if (PLANT_PACK_ERRORS.length > 0) {
+
+        const plants = PLANT_PACK_ERRORS.slice(0, 4);
+
+        chat.print(
+            `Paczki roślin - błędy do poprawienia (roślinę z błędem gra pomija):\n${plants.map((error) => `- ${error}`).join('\n')}` +
+            (PLANT_PACK_ERRORS.length > plants.length ? `\n... i ${PLANT_PACK_ERRORS.length - plants.length} więcej` : '') +
+            '\nWszystkie: /rosliny bledy, instrukcja: docs/rosliny.md',
+            'error'
+        );
+
+    }
 
     if (TREE_PACK_ERRORS.length === 0) {
         return;

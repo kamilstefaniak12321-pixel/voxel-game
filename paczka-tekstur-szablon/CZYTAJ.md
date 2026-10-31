@@ -1,4 +1,4 @@
-# Paczka tekstur - szablon (Voxel Game 0.45.0)
+# Paczka tekstur - szablon (Voxel Game 0.46.0)
 
 Oryginalne tekstury gry, każda w osobnym pliku. Zrób z nich własną paczkę:
 
@@ -161,6 +161,7 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/rosliny/barwinek/kwiat.png` | Kwiat barwinka |
 | `bloki/rosliny/cynia/kwiat.png` | Kwiat cynii |
 | `bloki/rosliny/dzwonek/kwiat.png` | Kwiat dzwonka |
+| `bloki/rosliny/gorczyca/nasiona.png` | Nasiona gorczycy |
 | `bloki/rosliny/kocanka/bukiet.png` | Bukiet kocanki |
 | `bloki/rosliny/lawenda/bukiet.png` | Bukiet lawendy |
 | `bloki/rosliny/len/wiazka.png` | Wiązka lnu |

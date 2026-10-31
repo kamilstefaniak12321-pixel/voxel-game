@@ -834,6 +834,27 @@ export function makeTuftTemplate(tuft, variant, mask = 0) {
             continue;
         }
 
+        if (flower.kind === 'straczki') {
+            // Strąki (gorczyca): na górze łodygi strąki na krótkich
+            // szypułkach, ukosem w górę i na zewnątrz, co 2 piksele
+            // w inną stronę, na czubku łodygi strąk prosto w górę.
+            let turn = Math.floor(random() * 4);
+            for (let k = 0; k < size; k++) {
+                const y = top - 1 - 2 * k;
+                if (y < Math.max(2, foliage)) break;
+                const [dx, dz] = DIRECTIONS[(turn % 4) * 2];
+                const [sx, sz] = at(y);
+                box(sx + dx, y, sz + dz, 1, 1, 1, 'bud');
+                box(sx + dx, y + 1, sz + dz, 1, 1, 1, 'bud');
+                box(sx + 2 * dx, y + 2, sz + 2 * dz, 1, 1, 1, 'flowerLight');
+                turn += 1 + (random() < 0.5 ? 1 : 0);
+            }
+            box(x, top, z, 1, 1, 1, 'bud');
+            box(x, top + 1, z, 1, 1, 1, 'bud');
+            box(x, top + 2, z, 1, 1, 1, 'flowerLight');
+            continue;
+        }
+
         if (flower.kind === 'torebka') {
             // Torebka nasienna (len): kulka na szczycie łodygi - rozmiar 1:
             // jeden piksel, 2: ciemny spód, krzyżyk, jasny czubek.

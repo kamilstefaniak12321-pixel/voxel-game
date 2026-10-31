@@ -454,6 +454,14 @@ do młodego. Rośnie na halach i łąkach. Osiągnięcie *Lniana robota*.
 
 ![Len - kwitnący i dojrzały, suchy](docs/rosliny-len.png)
 
+Trzynasta: **gorczyca** - rozeta szerokich liści, rozgałęzione łodygi
+z **gronami żółtych kwiatów**, potem przekwita w **złote strąki**
+sterczące ukosem z łodyg. PPM na strąkach - **nasiona gorczycy**,
+gorczyca wraca do młodej. Rośnie w brzezinach i na łąkach. Osiągnięcie
+*Ziarnko gorczycy*.
+
+![Gorczyca - kwitnąca i ze strąkami](docs/rosliny-gorczyca.png)
+
 - Tekstury z dużych atlasów "pixel art" robi
   `tools/rosliny_z_atlasu.py` (siatka pikseli rysunku, zmniejszanie bez
   mieszania kolorów, wszystkie etapy w tej samej skali).
@@ -468,7 +476,7 @@ do młodego. Rośnie na halach i łąkach. Osiągnięcie *Lniana robota*.
   `/rosliny ogrod cynia`, `/daj cynia_etap3 5`, `/rosliny ogrod mikolajek`,
   `/daj mikolajek_etap3 5`, `/daj barwinek_etap3 64` (posadź kilka obok
   siebie - połączą się), `/rosliny znajdz barwinek`, `/rosliny ogrod len`,
-  `/daj len_etap3 5`.
+  `/daj len_etap3 5`, `/rosliny ogrod gorczyca`, `/daj gorczyca_etap3 5`.
 - Każda roślina ma swój biom, gdzie rośnie najczęściej (wagi biomów
   w `roslina.json`) - tabela w `docs/rosliny.md`; `/rosliny <roslina>`
   pokazuje biomy (poboczne z dopiskiem "rzadziej").

@@ -96,7 +96,9 @@ const info = createWorldInfo('Regresja zapisu rzek', 'river-save-regression', 'r
 await storage.saveWorldAndChunks(info, original.takeUnsavedChunks());
 const saved = await storage.loadChunks(info.id);
 assert.deepEqual([...saved.keys()], ['0,0'], 'Odwiedzony, niezmieniony teren nie może blokować poprawki generatora');
-assert.deepEqual(saved.get('0,0'), before, 'Pełny zapis zachowuje wodę, budowlę i powietrze wykopu');
+// Numery bloków do 255 zapisują się po 1 bajcie (packChunkBlocks, 0.30.0).
+assert.ok(saved.get('0,0') instanceof Uint8Array, 'Chunk bez numerów ponad 255 zapisuje się po 1 bajcie');
+assert.deepEqual(Uint16Array.from(saved.get('0,0')), before, 'Pełny zapis zachowuje wodę, budowlę i powietrze wykopu');
 
 const generated = [], flowRestored = [];
 const nextGenerator = {

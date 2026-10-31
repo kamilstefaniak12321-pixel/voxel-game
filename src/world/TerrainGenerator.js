@@ -329,7 +329,7 @@ export class TerrainGenerator {
     // Bloki jednej kolumny - tak jak w generateChunk (mapa przekroju,
     // komenda /skaly). Teren się przez to nie zmienia.
 
-    columnBlocks(x, z, blocks = new Uint8Array(CHUNK_HEIGHT)) {
+    columnBlocks(x, z, blocks = new Uint16Array(CHUNK_HEIGHT)) {
 
         const height = this.getHeight(x, z);
 

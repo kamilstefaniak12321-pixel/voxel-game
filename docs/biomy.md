@@ -125,7 +125,8 @@ Tekstury: `python tools/tekstury_biomow.py` (bloki w atlasie i tekstury
 olchy i wierzby), kształty drzew - szablony `ksztalt_*.txt` w paczkach.
 
 **Numery bloków:** 1-99 się skończyły - bloki gry mają teraz też numery
-240-255, a paczki drzew 100-239.
+240-255, a paczki drzew 100-239. Od 0.30.0 numery są 2-bajtowe
+(`docs/numery-blokow.md`) - nowe bloki gry: 256-999.
 
 ## Komendy
 

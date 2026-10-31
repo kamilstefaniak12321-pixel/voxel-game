@@ -5216,17 +5216,17 @@ export const GAME_COMMANDS = [
             }
 
 
-            // Bloki i światło chunków (5 bajtów na komórkę) - tego nie ma
-            // w "pamięci JS" przeglądarki.
+            // Bloki i światło chunków (6 bajtów na komórkę: 2 numer bloku,
+            // 4 światło) - tego nie ma w "pamięci JS" przeglądarki.
 
             let chunkBytes = 0;
 
             for (const chunk of world.chunks.values()) {
-                chunkBytes += chunk.blocks.length * 5;
+                chunkBytes += chunk.blocks.byteLength + chunk.blocks.length * 4;
             }
 
             for (const blocks of world.savedChunks.values()) {
-                chunkBytes += blocks.length;
+                chunkBytes += blocks.byteLength;
             }
 
             const memory =

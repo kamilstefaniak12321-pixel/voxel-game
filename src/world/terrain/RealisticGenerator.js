@@ -1261,7 +1261,7 @@ export class RealisticGenerator {
     // generowania chunka (mapa przekroju, komenda /skaly).
     // Zwraca { height, kind, top, blocks } (blocks - ID od y = 0).
 
-    columnBlocks(x, z, blocks = new Uint8Array(CHUNK_HEIGHT)) {
+    columnBlocks(x, z, blocks = new Uint16Array(CHUNK_HEIGHT)) {
 
         const sample = this.compute(x, z, DETAIL_FULL, {});
 

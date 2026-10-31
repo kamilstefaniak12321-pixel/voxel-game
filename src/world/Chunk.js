@@ -28,9 +28,10 @@ export class Chunk {
         this.cz = cz;
 
 
-        // Uint8Array startuje wypełniona zerami, czyli powietrzem.
+        // Numery bloków (Uint16Array - do 65535, BlockRegistry.js).
+        // Startuje wypełniona zerami, czyli powietrzem.
 
-        this.blocks = new Uint8Array(
+        this.blocks = new Uint16Array(
             CHUNK_SIZE * CHUNK_HEIGHT * CHUNK_SIZE
         );
 
@@ -124,7 +125,8 @@ export class Chunk {
     }
 
 
-    // Wczytuje bloki z zapisu. Zapis z niższego świata (np. sprzed
+    // Wczytuje bloki z zapisu (Uint8Array - stary zapis albo chunk bez
+    // numerów ponad 255, Uint16Array - z nimi). Zapis z niższego świata (np. sprzed
     // podniesienia CHUNK_HEIGHT z 64 do 128) jest dopełniany powietrzem
     // od góry - warstwy idą od dołu, więc dane pasują 1:1.
     // Zwraca false, jeśli dane mają zły rozmiar (np. większy świat).

@@ -81,7 +81,7 @@ piksele rysunku i wynik (powiększone).
 | pole | znaczenie |
 |---|---|
 | `nazwa`, `nazwaAngielska`, `opis` | nazwy i opis (`/rosliny amarantus`) |
-| `pierwszeId` | numer bloku pierwszego etapu; etapy biorą kolejne numery. Zakres 100-239 jest wspólny z paczkami drzew: **drzewa od dołu, rośliny od góry** (amarantus 237-239). Raz użytego numeru nie wolno zmieniać (zapisuje się w świecie) |
+| `pierwszeId` | numer bloku pierwszego etapu; etapy biorą kolejne numery. Nowe rośliny: **5000-9999** (od 0.30.0, tylko rośliny); dawny zakres 100-239 jest wspólny z paczkami drzew (rośliny od góry - amarantus 237-239). Raz użytego numeru nie wolno zmieniać (zapisuje się w świecie) |
 | `etapy` | 1-4 etapy wzrostu: obrazek (do 64 x 64), nazwa, `plaszczyzny` (2-4, domyślnie 2) |
 | `czasWzrostu` | średnio sekund na etap (domyślnie jak krzaki, 150) |
 | `przedmiot` | przedmiot ze zbioru, obrazek 16 x 16; `grupy` - w których grupach składników jest (`red`, `green`, `blue`, `purple` - kolorowe lampy) |
@@ -141,7 +141,6 @@ Mniejsze niż 0.6 bloku: zwykłe zmniejszenie traci szczegóły - narzędzie
 daje dobrą podstawę, ale przy 5-10 pikselach trzeba będzie poprawić
 piksele ręcznie albo zrobić kępkę kilku małych roślin.
 
-**Numery bloków:** blok ma numer 1-255 (jeden bajt w chunku). Wolnych jest
-ok. 110 (zakres paczek 100-239). 28 roślin po 3 etapy to ok. 70-85
-numerów - zmieści się, ale zostanie miejsce na 2-4 nowe drzewa. Na
-dłużej trzeba będzie przejść na numery 2-bajtowe (zmiana zapisu chunków).
+**Numery bloków:** od 0.30.0 blok ma numer 2-bajtowy (do 65279) - nowe
+rośliny dostają numery **5000-9999** (osobny zakres tylko dla roślin),
+miejsca wystarczy na tysiące etapów. Opis zapisu: `docs/numery-blokow.md`.

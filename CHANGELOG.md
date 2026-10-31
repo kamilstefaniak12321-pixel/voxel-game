@@ -11,6 +11,24 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 0.30.0 - Numery bloków do 65279
+
+Numery bloków 2-bajtowe — PR #58.
+
+- Chunk trzyma numery bloków w 2 bajtach zamiast 1: bloki mogą mieć numery
+  **1-65279** (dotąd najwyżej 255, a wolnych zostało kilkadziesiąt). Miejsce
+  na tysiące nowych bloków, roślin i drzew bez kolejnej zmiany zapisu.
+- Zakresy: nowe bloki gry 256-999, paczki drzew 1000-4999 (oprócz dawnych
+  100-239), paczki roślin 5000-9999 - `docs/numery-blokow.md`.
+  `tools/drzewa.mjs` i `tools/nowe_drzewo.py` nadają numery z obu zakresów.
+- **Stare światy działają bez zmian.** Chunk bez bloków o numerze ponad 255
+  zapisuje się jak dotąd, po 1 bajcie (zapis nie rośnie); 2 bajty tylko
+  przy nowych blokach.
+- `/wydajnosc` liczy pamięć chunków z 2-bajtowymi numerami.
+- Nowe sprawdzenie `tools/sprawdz_numery_blokow.mjs` w `npm test`.
+- Wersja 0.30.0 wspólna dla Windowsa i Androida. Przygotowana w PR;
+  publikacja w `voxel-game-wydania` następuje przez workflow po scaleniu.
+
 ## 0.29.0 - Eksperymentalna trawa kępiasta
 
 Opcjonalny dodatek świata — PR #57.

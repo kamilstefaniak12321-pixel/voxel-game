@@ -46,8 +46,7 @@ from tekstury_drzew import (  # noqa: E402
 DIR = os.path.join(ROOT, 'assets', 'drzewa')
 LIST = os.path.join(DIR, 'lista.json')
 
-FIRST_ID = 100
-LAST_ID = 239
+RANGES = [(100, 239), (1000, 4999)]  # jak TREE_ID_RANGES w src/blocks/treePacks.js
 SLOTS = 10
 
 RESERVED = {
@@ -259,12 +258,13 @@ def free_id():
             data = read_json(os.path.join(DIR, name, 'drzewo.json'))
             if isinstance(data, dict) and isinstance(data.get('pierwszeId'), int):
                 used.append(data['pierwszeId'])
-    first = FIRST_ID
-    while first <= LAST_ID - SLOTS + 1 and any(abs(first - other) < SLOTS for other in used):
-        first += SLOTS
-    if first > LAST_ID - SLOTS + 1:
-        sys.exit(f'Brak wolnych numerów bloków ({FIRST_ID}-{LAST_ID}) - usuń albo wyłącz któreś drzewo.')
-    return first
+    for start, end in RANGES:
+        first = start
+        while first + SLOTS - 1 <= end:
+            if not any(abs(first - other) < SLOTS for other in used):
+                return first
+            first += SLOTS
+    sys.exit('Brak wolnych numerów bloków (100-239, 1000-4999) - usuń albo wyłącz któreś drzewo.')
 
 
 def add_to_list(folder):

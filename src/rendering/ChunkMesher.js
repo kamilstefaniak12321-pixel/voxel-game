@@ -697,7 +697,7 @@ function addPlants(plants, faceCount, baseX, baseZ) {
 // ------------------------------------------------------------
 // Generated river plants share the existing plant material and chunk batch.
 // Their cached templates carry actual surface normals and a linear albedo tint.
-function addRiverPlants(plants, faceCount, baseX, baseZ, grassDetail = null) {
+function addRiverPlants(plants, faceCount, baseX, baseZ, grassDetail = null, overrides = null, animationRanges = null) {
     const grass = grassDetail !== null;
     const grassUv = grass ? getAtlasUV('snow') : null;
     for (let k = 0; k < plants.length; k += 4) {
@@ -705,6 +705,8 @@ function addRiverPlants(plants, faceCount, baseX, baseZ, grassDetail = null) {
         const data = grass ? { kind: 'grass', uv: grassUv } : blockRenderData[plants[k + 3]].riverPlant;
         const wx = baseX + lx, wz = baseZ + lz;
         const transform = grass ? riverPlantTransform(wx, y, wz) : plantTransform(wx, y, wz, data.tuft);
+        const event = overrides?.get(y * LAYER + lz * S + lx);
+        if (event) animationRanges.push({ event, start: faceCount, transform });
         const cell = padIndex(lx, y, lz);
         // Dywan: z których stron rośnie taki sam (bity +x, +z, -x, -z).
         const mask = !grass && data.carpet
@@ -1293,13 +1295,16 @@ function hiddenBelow(chunk, world) {
 
 export function buildChunkGeometry(chunk, world) {
 
-    if (chunk.blockCount === 0) {
+    const overrides = world.plantAnimations?.overridesFor(chunk);
+    const animationRanges = [];
+    if (chunk.blockCount === 0 && !overrides?.size) {
         return null;
     }
 
 
     const blocks = chunk.blocks;
-    const height = Math.min(chunk.maxY, H);
+    let height = Math.min(chunk.maxY, H);
+    if (overrides) for (const event of overrides.values()) height = Math.max(height, event.y + 1);
 
     meshFlow = chunk.flow;
 
@@ -1309,7 +1314,8 @@ export function buildChunkGeometry(chunk, world) {
     // Lity kamień głęboko pod terenem nie ma żadnej widocznej
     // ściany - zaczynamy od pierwszej warstwy, która może ją mieć.
 
-    const start = hiddenBelow(chunk, world);
+    let start = hiddenBelow(chunk, world);
+    if (overrides) for (const event of overrides.values()) start = Math.min(start, event.y);
 
 
     fillPadding(chunk, world, height, Math.max(0, start - 1));
@@ -1349,7 +1355,8 @@ export function buildChunkGeometry(chunk, world) {
 
             for (let lx = 0; lx < S; lx++) {
 
-                const id = blocks[y * LAYER + lz * S + lx];
+                const index = y * LAYER + lz * S + lx;
+                const id = overrides?.get(index)?.renderId ?? blocks[index];
 
                 if (id === AIR_ID) {
                     continue;
@@ -1432,7 +1439,7 @@ export function buildChunkGeometry(chunk, world) {
     const cubeFaces = faceCount;
 
     faceCount = addPlants(plants, faceCount, baseX, baseZ);
-    faceCount = addRiverPlants(riverPlants, faceCount, baseX, baseZ);
+    faceCount = addRiverPlants(riverPlants, faceCount, baseX, baseZ, null, overrides, animationRanges);
     faceCount = addRiverPlants(bushyGrass, faceCount, baseX, baseZ, grassDetail);
 
     const plantFaces = faceCount - cubeFaces;
@@ -1585,6 +1592,7 @@ export function buildChunkGeometry(chunk, world) {
 
     geometry.userData.bushyGrassDetail = grassDetail;
     geometry.userData.bushyGrassCount = bushyGrass.length / 4;
+    if (animationRanges.length) world.plantAnimations.bindGeometry(geometry, animationRanges);
 
 
     return geometry;

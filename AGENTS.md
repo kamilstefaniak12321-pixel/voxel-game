@@ -28,3 +28,15 @@ i przygotowywać ją do wydania w `kamilstefaniak12321-pixel/voxel-game-wydania`
 
 Szczegóły procesu: [docs/aplikacja.md](docs/aplikacja.md),
 Android: [docs/telefon.md](docs/telefon.md).
+
+## Animacje krzaków i roślinności
+
+Przy nowych roślinach stosuj kierunek zatwierdzony przez Kamila:
+[docs/animacje-roslin.md](docs/animacje-roslin.md). Krótkie, subtelnie
+sprężyste reakcje na stawianie, zbiór, nieudany zbiór i usunięcie;
+płynne zmiany rozmiaru oraz odrastanie owoców. Owoce skaluj wokół
+własnych środków, zachowaj zakorzenienie i neutralny początek/koniec.
+Animacja jest warstwą wizualną — nie opóźnia ani nie zmienia zasad
+ekwipunku, wzrostu i zapisu. Ogranicz koszt do aktywnych roślin i
+sprawdź przejścia oraz wydajność w grze. Borówka jest pierwszym
+wdrożeniem; pozostałe gatunki dostają tę zasadę przy ich opracowaniu.

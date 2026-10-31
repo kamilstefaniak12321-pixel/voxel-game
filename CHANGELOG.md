@@ -11,6 +11,24 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 0.36.0 - Szałwia
+
+Szałwia - zioło z kłosami w okółkach — PR #64.
+
+- Nowa roślina z paczki roślin: **szałwia** - szarozielona kopułka
+  miękkich liści (dłuższe liście z boków), nad nią łodygi z **kłosami
+  w okółkach** - piętra fioletowych kwiatów dookoła łodygi, rozdzielone
+  kawałkiem łodygi. Trzy etapy: młoda, pąki, kwitnąca. Rośnie na
+  **łąkach i w skalistych górach**. PPM na kwitnącej - **liście
+  szałwii** (obrazek z atlasu), wraca do etapu z pąkami. Osiągnięcie
+  *Ogródek zielarza*.
+- Model "kepka": kłos w okółkach (`"okolki": true`), długość liści
+  z boków krzaka (`liscie.brzeg`) - `docs/rosliny.md`. Wcześniejsze
+  rośliny bez zmian.
+- Numery bloków szałwii: 5015-5017.
+- Wersja 0.36.0 wspólna dla Windowsa i Androida. Przygotowana w PR;
+  publikacja w `voxel-game-wydania` następuje przez workflow po scaleniu.
+
 ## 0.35.0 - Dzwonek gołębi
 
 Dzwonek gołębi - zwisające dzwonki z pikseli — PR #63 (zawiera #60-#62).

@@ -404,6 +404,13 @@ Osiągnięcie *Kto dzwoni?*.
 
 ![Dzwonek gołębi - zwisające dzwonki, obok zawilec](docs/rosliny-dzwonek.png)
 
+Siódma: **szałwia** - zioło: szarozielona kopułka miękkich liści, nad nią
+łodygi z **kłosami w okółkach** (piętra fioletowych kwiatów rozdzielone
+łodygą). Rośnie na łąkach i w skalistych górach. PPM na kwitnącej -
+**liście szałwii**. Osiągnięcie *Ogródek zielarza*.
+
+![Szałwia - szarozielone krzaczki z kłosami w okółkach](docs/rosliny-szalwia.png)
+
 - Tekstury z dużych atlasów "pixel art" robi
   `tools/rosliny_z_atlasu.py` (siatka pikseli rysunku, zmniejszanie bez
   mieszania kolorów, wszystkie etapy w tej samej skali).
@@ -413,7 +420,8 @@ Osiągnięcie *Kto dzwoni?*.
   (sadzi się na piasku i trawie), `/rosliny ogrod lawenda`,
   `/rosliny znajdz lawenda`, `/daj lawenda_etap3 5`, `/rosliny ogrod piwonia`,
   `/daj piwonia_etap3 5`, `/rosliny ogrod zawilec`, `/daj zawilec_etap3 5`,
-  `/rosliny ogrod dzwonek`, `/daj dzwonek_etap3 5`.
+  `/rosliny ogrod dzwonek`, `/daj dzwonek_etap3 5`, `/rosliny ogrod szalwia`,
+  `/daj szalwia_etap3 5`.
 - Instrukcja, rozmiary i plan dla wszystkich 28 roślin z atlasów:
   [`docs/rosliny.md`](docs/rosliny.md).
 

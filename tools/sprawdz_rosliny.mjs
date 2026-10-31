@@ -181,6 +181,12 @@ for (let variant = 0; variant < 8; variant++) {
     assert.ok(faces.every((face) => face.vertices.every((v) => v[1] >= 0)), 'dzwonki nie wchodzą pod ziemię');
 }
 
+// Szałwia - krzak z dłuższymi liśćmi z boków, kłosy w okółkach.
+const sage = P.getPlantPack('szalwia');
+assert.ok(sage && sage.stages.every((stage) => stage.tuft?.leaves.layout === 'krzak' && stage.tuft.leaves.edge === 3), 'szałwia - krzak z liśćmi 3 px z boków');
+assert.equal(R.getBlockId('szalwia_etap1'), 5015, 'szałwia od numeru 5015');
+assert.ok(sage.stages[2].tuft.flower.whorls && !sage.stages[1].tuft.flower.whorls, 'kwitnąca szałwia - kłosy w okółkach, pąki - zwykłe');
+
 // Amarantus - pierwsza roślina: 2 bloki wysokości, czerwona lampa.
 const amaranth = P.getPlantPack('amarantus');
 assert.ok(amaranth, 'amarantus');

@@ -51,6 +51,7 @@ tylko jako *Sekretne osiągnięcie* ze znakiem zapytania.
 | zwykłe | Róża bez kolców | zbierz kwiat z kwitnącej piwonii (lasy liściaste i brzeziny, roślina z paczki roślin) |
 | zwykłe | Pierwszy zwiastun | zbierz kwiat z kwitnącego zawilca (buczyny i lasy liściaste, roślina z paczki roślin) |
 | zwykłe | Kto dzwoni? | zbierz kwiat z kwitnącego dzwonka gołębiego (hale i skaliste góry, roślina z paczki roślin) |
+| zwykłe | Ogródek zielarza | zbierz liście z kwitnącej szałwii (łąki i skaliste góry, roślina z paczki roślin) |
 | rzadkie | Murarz | postaw 500 bloków (postęp liczy się w księdze) |
 | rzadkie | Głębinowiec | zanurkuj 10 bloków pod powierzchnię |
 | rzadkie | Ponad chmurami | wzleć na wysokość 1000 |

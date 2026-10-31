@@ -2,7 +2,7 @@
 
 > Ta strona jest generowana z kodu gry (`python tools/wiki.py`) - nie zmieniaj jej ręcznie, zmiany przepadną przy następnym generowaniu.
 
-Wersja gry **0.35.0** - 145 bloków (do tego 5 odmian, których nie ma w ekwipunku, np. wieniec zawieszony na boku bloku). Czas kopania dotyczy trybu przygody; w kreatywnym bloki znikają od razu.
+Wersja gry **0.36.0** - 148 bloków (do tego 5 odmian, których nie ma w ekwipunku, np. wieniec zawieszony na boku bloku). Czas kopania dotyczy trybu przygody; w kreatywnym bloki znikają od razu.
 
 [Ziemia](#ziemia) · [Skały](#skały) · [Drewno](#drewno) · [Budulec](#budulec) · [Rośliny](#rośliny) · [Światło](#światło) · [Ozdoby](#ozdoby)
 
@@ -164,6 +164,9 @@ Wersja gry **0.35.0** - 145 bloków (do tego 5 odmian, których nie ma w ekwipun
 | <img src="ikony/dzwonek_etap1.png" width="32" height="32" alt=""> | **Młody dzwonek** | `dzwonek_etap1` | **Kopanie:** od razu<br>**Rośnie:** w: Dzwonek (pąki)<br>**Skąd:** zniszczony blok: Dzwonek (pąki); zniszczony blok: Dzwonek (kwitnie) |
 | <img src="ikony/dzwonek_etap2.png" width="32" height="32" alt=""> | **Dzwonek (pąki)** | `dzwonek_etap2` | **Kopanie:** od razu<br>**Daje:** Młody dzwonek<br>**Rośnie:** w: Dzwonek (kwitnie)<br>**Skąd:** wyrasta z: Młody dzwonek |
 | <img src="ikony/dzwonek_etap3.png" width="32" height="32" alt=""> | **Dzwonek (kwitnie)** | `dzwonek_etap3` | **Kopanie:** od razu<br>**Daje:** Młody dzwonek<br>**Zbiór (PPM):** Kwiat dzwonka 1-3<br>**Skąd:** wyrasta z: Dzwonek (pąki) |
+| <img src="ikony/szalwia_etap1.png" width="32" height="32" alt=""> | **Młoda szałwia** | `szalwia_etap1` | **Kopanie:** od razu<br>**Rośnie:** w: Szałwia (pąki)<br>**Skąd:** zniszczony blok: Szałwia (pąki); zniszczony blok: Szałwia (kwitnie) |
+| <img src="ikony/szalwia_etap2.png" width="32" height="32" alt=""> | **Szałwia (pąki)** | `szalwia_etap2` | **Kopanie:** od razu<br>**Daje:** Młoda szałwia<br>**Rośnie:** w: Szałwia (kwitnie)<br>**Skąd:** wyrasta z: Młoda szałwia |
+| <img src="ikony/szalwia_etap3.png" width="32" height="32" alt=""> | **Szałwia (kwitnie)** | `szalwia_etap3` | **Kopanie:** od razu<br>**Daje:** Młoda szałwia<br>**Zbiór (PPM):** Liście szałwii 1-3<br>**Skąd:** wyrasta z: Szałwia (pąki) |
 
 ## Światło
 

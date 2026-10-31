@@ -17,7 +17,8 @@ import { createPixelPlant } from './PixelPlantBuilder.js';
 //
 // Parametry (już sprawdzone przez plantPacks.js - parseTuft):
 //   leaves: { layout: 'rozeta' | 'kepa' | 'krzak' | 'brak', count: [od, do],
-//             length: [od, do], radius (kepa, krzak) }
+//             length: [od, do], radius (kepa, krzak), edge (krzak: długość
+//             liści z boków kopułki) }
 //   stems:  { count: [od, do], height: [od, do], radius, spread (rozchylone),
 //             leaves: null | { every, length } (liście na łodygach) }
 //   flower: null | { kind: 'baldach' | 'klos' | 'pak' | 'pompon' | 'talerz' | 'dzwonek',
@@ -284,6 +285,31 @@ function bell(box, x, p, z, size) {
 
 }
 
+// Kłos w okółkach (szałwia): piętra kwiatów rozdzielone kawałkiem łodygi -
+// na każdym piętrze krzyżyk kwiatów dookoła łodygi (niższe ciemniejsze),
+// na czubku jasny pąk.
+
+function whorledSpike(box, x, top, z, size) {
+
+    for (let k = 0; k < size; k++) {
+
+        if (k === size - 1) {
+            box(x, top + k, z, 1, 1, 1, 'flowerLight');
+        }
+        else if (k % 2 === 0) {
+            const color = k < size / 2 ? 'flowerDark' : 'flower';
+            for (const [dx, dz] of [[0, 0], [1, 0], [-1, 0], [0, 1], [0, -1]]) {
+                box(x + dx, top + k, z + dz, 1, 1, 1, dx === 0 && dz === 0 ? 'stem' : color);
+            }
+        }
+        else {
+            box(x, top + k, z, 1, 1, 1, 'stem');
+        }
+
+    }
+
+}
+
 export function makeTuftTemplate(tuft, variant) {
 
     const random = randomFor(40503 + variant * 7919 + tuft.seed);
@@ -319,7 +345,7 @@ export function makeTuftTemplate(tuft, variant) {
             const [dx, dz] = DIRECTIONS[direction];
             const y = Math.min(layers - 1, 1 + Math.floor(random() * Math.max(1, layers - 1)));
             const r = core * Math.sqrt(1 - (y / layers) ** 2) * (dx !== 0 && dz !== 0 ? 0.7 : 1);
-            stemLeaves.push([Math.round(dx * r), y, Math.round(dz * r), direction, 2]);
+            stemLeaves.push([Math.round(dx * r), y, Math.round(dz * r), direction, tuft.leaves.edge]);
         }
     }
     else if (tuft.leaves.layout === 'rozeta') {
@@ -458,6 +484,11 @@ export function makeTuftTemplate(tuft, variant) {
                 for (const [dx, dz] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) box(x + dx, top, z + dz, 1, 1, 1, 'bud');
                 box(x, top + 1, z, 1, 1, 1, 'flowerLight');
             }
+            continue;
+        }
+
+        if (flower.kind === 'klos' && flower.whorls) {
+            whorledSpike(box, x, top, z, size);
             continue;
         }
 

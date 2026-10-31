@@ -192,6 +192,19 @@ const BELLFLOWER = getPlantPack('dzwonek')?.item ? [{
     when: (data) => data.item === 'dzwonek_kwiat'
 }] : [];
 
+// Szałwia (assets/rosliny/szalwia) - zioło z kłosami w okółkach.
+
+const SAGE = getPlantPack('szalwia')?.item ? [{
+    id: 'sage',
+    tier: 'common',
+    title: 'Ogródek zielarza',
+    task: 'Zbierz liście z kwitnącej szałwii (szarozielone krzaczki z fioletowymi kłosami na łąkach i w skalistych górach).',
+    comment: 'Do herbaty, do pieczeni, do płukania gardła. Szałwia nie wybrzydza.',
+    icon: 'szalwia_lisc',
+    on: 'harvested',
+    when: (data) => data.item === 'szalwia_lisc'
+}] : [];
+
 
 // "Złota godzina": słońce nisko nad horyzontem (wschód albo zachód),
 // gracz patrzy prosto na nie i nic go nie zasłania.
@@ -299,6 +312,7 @@ export const ACHIEVEMENTS = [
     ...PEONY,
     ...ANEMONE,
     ...BELLFLOWER,
+    ...SAGE,
     {
         id: 'plant',
         tier: 'common',

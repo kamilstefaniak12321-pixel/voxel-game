@@ -1,0 +1,54 @@
+{
+    "nazwa": "Szałwia",
+    "nazwaAngielska": "Sage",
+    "opis": "zioło - kopułka szarozielonych, miękkich liści, nad nią łodygi z kłosami fioletowych kwiatów w okółkach; rośnie na łąkach i w skalistych górach",
+    "pierwszeId": 5015,
+    "etapy": [
+        {
+            "nazwa": "Młoda szałwia",
+            "model": { "rodzaj": "kepka", "liscie": { "uklad": "krzak", "promien": 2, "dlugosc": [2, 3], "brzeg": 3 } }
+        },
+        {
+            "nazwa": "Szałwia (pąki)",
+            "model": {
+                "rodzaj": "kepka",
+                "liscie": { "uklad": "krzak", "promien": 3, "dlugosc": [3, 4], "brzeg": 3 },
+                "lodygi": { "ile": [2, 3], "wysokosc": [7, 9], "promien": 2, "rozchylone": true, "liscie": { "co": 3, "dlugosc": [2, 2] } },
+                "kwiaty": { "rodzaj": "klos", "rozmiar": 2 }
+            }
+        },
+        {
+            "nazwa": "Szałwia (kwitnie)",
+            "model": {
+                "rodzaj": "kepka",
+                "liscie": { "uklad": "krzak", "promien": 4, "dlugosc": [4, 5], "brzeg": 3 },
+                "lodygi": { "ile": [3, 4], "wysokosc": [7, 9], "promien": 3, "rozchylone": true, "liscie": { "co": 3, "dlugosc": [2, 3] } },
+                "kwiaty": { "rodzaj": "klos", "rozmiar": 5, "okolki": true }
+            }
+        }
+    ],
+    "kolory": {
+        "lisc": "#7f9566",
+        "liscJasny": "#a3b386",
+        "liscCiemny": "#4f6640",
+        "lodyga": "#5f6a36",
+        "kwiat": "#9a7fc0",
+        "kwiatJasny": "#b39ad6",
+        "kwiatCiemny": "#6e5a90",
+        "pak": "#806e97"
+    },
+    "czasWzrostu": 300,
+    "przedmiot": {
+        "klucz": "lisc",
+        "plik": "lisc.png",
+        "nazwa": "Liście szałwii",
+        "nazwaAngielska": "Sage Leaves",
+        "kategoria": "ozdoby"
+    },
+    "zbior": { "ile": [1, 3], "wraca": 2 },
+    "gdzieRosnie": { "biomy": ["laka", "skaly"], "plamy": 0.025, "gestosc": 0.35, "etapy": [0.2, 0.25, 0.55] },
+    "zrodlo": {
+        "atlas": "Pikselowy atlas wzrostu szałwii.png",
+        "przedmiot": "lisc: --wysokosc 16 --nazwy etap1,etap2,etap3,lisc; etapy - model z pikseli (kępka: krzak, liście na łodygach, kłosy) w kolorach atlasu"
+    }
+}

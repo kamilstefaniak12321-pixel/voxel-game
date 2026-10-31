@@ -11,8 +11,8 @@ bez pisania kodu. Są dwa rodzaje:
   (do 10 pikseli, złote baldachy na piasku), krzaczek **lawenda**
   (kępa liści, wachlarz łodyg z fioletowymi kłosami), krzak **piwonia**
   (kopułka liści, kuliste różowe kwiaty), **zawilec** (okółki liści,
-  otwarte, przechylone kwiaty) albo **dzwonek gołębi** (zwisające
-  dzwonki).
+  otwarte, przechylone kwiaty), **dzwonek gołębi** (zwisające dzwonki)
+  albo **szałwia** (szarozielony krzak, kłosy w okółkach).
 
 ![Amarantus - trzy etapy wzrostu obok słupka z 2 bloków](rosliny-amarantus.png)
 
@@ -25,6 +25,8 @@ bez pisania kodu. Są dwa rodzaje:
 ![Zawilec - kępki z otwartymi kwiatami, obok piwonia](rosliny-zawilec.png)
 
 ![Dzwonek gołębi - zwisające dzwonki, obok zawilec](rosliny-dzwonek.png)
+
+![Szałwia - szarozielone krzaczki z kłosami w okółkach](rosliny-szalwia.png)
 
 ## Skala: 16 pikseli na blok
 
@@ -144,7 +146,9 @@ samej skali co bloki - jeden piksel modelu to 1/16 bloku:
 - **kwiaty** na łodygach: `baldach` - kopułka z kostek (krzyżyk, nad nim
   jaśniejszy środek, jeden koszyczek w cieniu), `klos` - kolumna kwiatów
   (co drugi piksel kwiatek z boku, na zmianę z czterech stron; dół
-  ciemny, czubek jasny; `rozmiar` 1-2 to zamknięte pąki), `pompon` -
+  ciemny, czubek jasny; `rozmiar` 1-2 to zamknięte pąki; `"okolki": true`
+  - piętra kwiatów dookoła łodygi rozdzielone kawałkiem łodygi, jak
+  u szałwii), `pompon` -
   pełny, kulisty kwiat (rozmiar 1 - 3 x 3, rozmiar 2 - 5 x 5 pikseli,
   ciemny spód, jasny wierzch, `srodek` w innym kolorze), `pak` - jeden
   piksel pąka (rozmiar 2 - okrągły pąk z krzyżyka kostek), `talerz` -
@@ -165,7 +169,8 @@ Ikonka w ekwipunku to ten sam model z ukosa. Rozmiar etapu (do `/rosliny`
 i miejsca nad rośliną) wynika z parametrów: kocanka 8 x 4, 10 x 6
 i 10 x 10 pikseli, lawenda 12 x 6, 12 x 11 i 14 x 15 pikseli, piwonia
 12 x 6, 14 x 9 i 16 x 12 pikseli, zawilec 10 x 4, 12 x 8 i 12 x 12
-pikseli, dzwonek 12 x 5, 12 x 11 i 14 x 13 pikseli.
+pikseli, dzwonek 12 x 5, 12 x 11 i 14 x 13 pikseli, szałwia 12 x 4, 14 x 11
+i 16 x 14 pikseli.
 
 ```json
 "etapy": [
@@ -188,10 +193,11 @@ pikseli, dzwonek 12 x 5, 12 x 11 i 14 x 13 pikseli.
 | `liscie.uklad` | `rozeta` (domyślnie), `kepa`, `krzak` albo `brak` |
 | `liscie.ile`, `liscie.dlugosc` | rozeta: ile liści [od, do] (0-12), długość od środka (1-7); kępa: ile liści (0-32), wysokość (1-12); krzak: `dlugosc` - wysokość kopułki |
 | `liscie.promien` | kępa, krzak: promień kopułki (0-5, domyślnie 2); liście sięgają o 2 dalej |
+| `liscie.brzeg` | krzak: długość liści z boków kopułki (1-4, domyślnie 2) |
 | `lodygi.ile`, `lodygi.wysokosc`, `lodygi.promien` | łodygi: ile (0-12, domyślnie bez łodyg), wysokość [od, do] (1-24), jak daleko od środka szczyt (0-6) |
 | `lodygi.rozchylone` | `true` - łodygi wyrastają bliżej środka i odchylają się na boki (wachlarz) |
 | `lodygi.liscie` | `{ "co": 1-6, "dlugosc": [od, do] }` - płaskie liście na łodygach co tyle pikseli (nad kopułką krzaka), długość 1-5; `{ "okolek": 2-5, "dlugosc": [od, do] }` - okółek liści w ok. połowie łodygi |
-| `kwiaty` | `{ "rodzaj": "baldach", "rozmiar": 1-2 }`, `{ "rodzaj": "klos", "rozmiar": 1-6 }` (długość kłosa), `{ "rodzaj": "pompon", "rozmiar": 1-2 }`, `{ "rodzaj": "talerz", "rozmiar": 1-2 }`, `{ "rodzaj": "dzwonek", "rozmiar": 1-2 }`, `{ "rodzaj": "pak", "rozmiar": 1-2 }` albo brak; `rozmiar` - liczba albo `[od, do]` |
+| `kwiaty` | `{ "rodzaj": "baldach", "rozmiar": 1-2 }`, `{ "rodzaj": "klos", "rozmiar": 1-6, "okolki": true }` (długość kłosa; okółki - z przerwami), `{ "rodzaj": "pompon", "rozmiar": 1-2 }`, `{ "rodzaj": "talerz", "rozmiar": 1-2 }`, `{ "rodzaj": "dzwonek", "rozmiar": 1-2 }`, `{ "rodzaj": "pak", "rozmiar": 1-2 }` albo brak; `rozmiar` - liczba albo `[od, do]` |
 | `kolory` | 9 kolorów: `lisc`, `liscJasny`, `liscCiemny`, `lodyga`, `kwiat`, `kwiatJasny`, `kwiatCiemny`, `pak`, `srodek` (środek kwiatu) - dla całej paczki (obok `etapy`), etap może zmienić własnymi `model.kolory` |
 
 Kolory najlepiej wziąć z atlasu rośliny (`tools/rosliny_z_atlasu.py
@@ -247,6 +253,18 @@ małe dzwonki w ciemniejszych kolorach etapu):
 }
 ```
 
+Szałwia (te same części co lawenda i piwonia - krzak z dłuższymi liśćmi
+z boków, kłosy w okółkach):
+
+```json
+"model": {
+    "rodzaj": "kepka",
+    "liscie": { "uklad": "krzak", "promien": 4, "dlugosc": [4, 5], "brzeg": 3 },
+    "lodygi": { "ile": [3, 4], "wysokosc": [7, 9], "promien": 3, "rozchylone": true, "liscie": { "co": 3, "dlugosc": [2, 3] } },
+    "kwiaty": { "rodzaj": "klos", "rozmiar": 5, "okolki": true }
+}
+```
+
 ## Komendy
 
 | komenda | co robi |
@@ -280,7 +298,8 @@ zmniejszenie bywa 3-5 razy. Proponowane rozmiary (prawdziwa wysokość
 | **piwonia** | krzew ~1 m | **16 x 12 px** | **`kepka`: krzak, liście na łodygach, pompony - zrobione** (0.33.0) |
 | cynia, mikołajek | 0.3-0.9 m | 0.75 bloku (12 px) | krzyż |
 | **lawenda** | 0.3-0.6 m | **do 15 px (prawie blok)** | **`kepka`: kępa + rozchylone łodygi z kłosami - zrobione** (0.32.0) |
-| nagietek, wilczomlecz, szałwia, mięta wodna | 0.3-0.6 m | 0.6 bloku (10 px) | krzyż albo `kepka`; szałwia krzaczasta jak lawenda (kępa, kłosy), mięta przy wodzie |
+| **szałwia** | 0.3-0.6 m | **16 x 14 px** | **`kepka`: krzak, kłosy w okółkach - zrobione** (0.36.0) |
+| nagietek, wilczomlecz, mięta wodna | 0.3-0.6 m | 0.6 bloku (10 px) | `kepka`; mięta przy wodzie |
 | **dzwonek gołębi** | 0.3-0.5 m | **14 x 13 px** | **`kepka`: kępa liści, zwisające dzwonki - zrobione** (0.35.0) |
 | storczyk | 0.3-0.5 m | 0.5 bloku (8 px) | krzyż albo `kepka` |
 | **kocanka piaskowa** | 0.1-0.3 m | **do 10 px (0.6 bloku)** | **model z pikseli `kepka` - zrobione** (0.31.0): rozeta, łodygi, baldachy |

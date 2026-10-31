@@ -3384,7 +3384,7 @@ export const GAME_COMMANDS = [
                   (player.swimming ? ', pływasz' : player.onGround ? ', stoisz na dnie' : '') +
                   (game.water.underwater ? ', oczy pod wodą' : '');
 
-            return `Woda: ${state}. Woda dookoła: ${game.water.nearbyWater} kolumn. ` +
+            return `Woda: ${state}. Woda dookoła: ${game.water.nearbyWater} kolumn (płynącej: ${game.water.flowingWater ?? 0} - szum strumienia, reszta - fale). ` +
                 'Pływanie: Spacja - w górę, Shift - w dół, Spacja przy brzegu - wyjście. Dalej: /woda basen, /woda znajdz, /woda fale.';
 
         },

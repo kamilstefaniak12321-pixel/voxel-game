@@ -399,10 +399,12 @@ export class SoundManager {
 
         const control = {
 
+            // Pętla przesuwa się płynnie (ok. 0.15 s) - bez skoków
+            // dźwięku przy zmianie miejsca co klatkę albo co pomiar.
             setPosition(position) {
 
                 if (panner) {
-                    setPannerPosition(panner, position);
+                    glidePannerPosition(panner, position, context.currentTime);
                 }
 
             },
@@ -528,7 +530,12 @@ export class SoundManager {
 
             const distance = definition.distance ?? {};
 
-            panner.panningModel = definition.category === 'world' ? 'HRTF' : 'equalpower';
+            // HRTF (dźwięk "z góry/z dołu") tylko dla krótkich dźwięków
+            // zjawisk. Pętle (szum wody) - zwykłe stereo: HRTF przy źródle
+            // blisko pod/nad słuchaczem i przy rozglądaniu się nakłada na
+            // szum przesuwające się wycięcia częstotliwości - słychać
+            // pisk i jęk.
+            panner.panningModel = definition.category === 'world' && !loop ? 'HRTF' : 'equalpower';
             panner.distanceModel = 'inverse';
             panner.refDistance = distance.ref ?? 4;
             panner.maxDistance = distance.max ?? 64;
@@ -573,6 +580,25 @@ export class SoundManager {
         }
 
         return voice;
+
+    }
+
+}
+
+
+// Płynne przesunięcie pozycji (pętle): AudioParam dąży do celu.
+function glidePannerPosition(panner, position, now) {
+
+    if (panner.positionX) {
+
+        panner.positionX.setTargetAtTime(position.x, now, 0.05);
+        panner.positionY.setTargetAtTime(position.y, now, 0.05);
+        panner.positionZ.setTargetAtTime(position.z, now, 0.05);
+
+    }
+    else {
+
+        panner.setPosition(position.x, position.y, position.z);
 
     }
 

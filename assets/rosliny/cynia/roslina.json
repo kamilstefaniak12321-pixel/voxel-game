@@ -1,0 +1,59 @@
+{
+    "nazwa": "Cynia",
+    "nazwaAngielska": "Zinnia",
+    "opis": "prosta łodyga z parami liści na krzyż, na szczycie pełny, koralowy kwiat z pięter płatków i żółtym środkiem; rośnie w brzezinach i na łąkach",
+    "pierwszeId": 5021,
+    "etapy": [
+        {
+            "nazwa": "Młoda cynia",
+            "model": {
+                "rodzaj": "kepka",
+                "liscie": { "uklad": "brak" },
+                "lodygi": { "ile": [1, 2], "wysokosc": [6, 7], "promien": 1, "liscie": { "co": 2, "dlugosc": [2, 3], "naprzeciw": true } }
+            }
+        },
+        {
+            "nazwa": "Cynia (pąki)",
+            "model": {
+                "rodzaj": "kepka",
+                "liscie": { "uklad": "brak" },
+                "lodygi": { "ile": [1, 2], "wysokosc": [7, 9], "promien": 2, "rozchylone": true, "liscie": { "co": 2, "dlugosc": [2, 3], "naprzeciw": true } },
+                "kwiaty": { "rodzaj": "pak", "rozmiar": 2 }
+            }
+        },
+        {
+            "nazwa": "Cynia (kwitnie)",
+            "model": {
+                "rodzaj": "kepka",
+                "liscie": { "uklad": "brak" },
+                "lodygi": { "ile": [2, 3], "wysokosc": [8, 10], "promien": 3, "rozchylone": true, "liscie": { "co": 2, "dlugosc": [2, 3], "naprzeciw": true } },
+                "kwiaty": { "rodzaj": "warstwy", "rozmiar": [1, 2] }
+            }
+        }
+    ],
+    "kolory": {
+        "lisc": "#4f8a2c",
+        "liscJasny": "#78a848",
+        "liscCiemny": "#2c5a1c",
+        "lodyga": "#35661f",
+        "kwiat": "#f05a48",
+        "kwiatJasny": "#fd8a74",
+        "kwiatCiemny": "#c5362e",
+        "pak": "#e14c40",
+        "srodek": "#fcbe57"
+    },
+    "czasWzrostu": 270,
+    "przedmiot": {
+        "klucz": "kwiat",
+        "plik": "kwiat.png",
+        "nazwa": "Kwiat cynii",
+        "nazwaAngielska": "Zinnia Flower",
+        "kategoria": "ozdoby"
+    },
+    "zbior": { "ile": [1, 2], "wraca": 2 },
+    "gdzieRosnie": { "biomy": ["brzezina", "laka"], "plamy": 0.02, "gestosc": 0.35, "etapy": [0.2, 0.25, 0.55] },
+    "zrodlo": {
+        "atlas": "Atlas tekstur cynii koralowej.png",
+        "przedmiot": "kwiat: --wysokosc 16 --nazwy etap1,etap2,etap3,kwiat; etapy - model z pikseli (kępka: łodygi z parami liści, pąki, kwiaty z pięter płatków) w kolorach atlasu"
+    }
+}

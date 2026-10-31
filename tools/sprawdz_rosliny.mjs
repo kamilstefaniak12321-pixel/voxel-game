@@ -192,6 +192,12 @@ const marigold = P.getPlantPack('nagietek');
 assert.ok(marigold && marigold.stages[2].tuft.flower.kind === 'talerz', 'nagietek kwitnie talerzykami');
 assert.equal(R.getBlockId('nagietek_etap1'), 5018, 'nagietek od numeru 5018');
 
+// Cynia - liście naprzeciwległe (pary na krzyż), kwiaty z pięter płatków.
+const zinnia = P.getPlantPack('cynia');
+assert.ok(zinnia && zinnia.stages.every((stage) => stage.tuft?.stems.leaves?.opposite), 'cynia - liście parami');
+assert.equal(R.getBlockId('cynia_etap1'), 5021, 'cynia od numeru 5021');
+assert.equal(zinnia.stages[2].tuft.flower.kind, 'warstwy', 'cynia kwitnie piętrami płatków');
+
 // Amarantus - pierwsza roślina: 2 bloki wysokości, czerwona lampa.
 const amaranth = P.getPlantPack('amarantus');
 assert.ok(amaranth, 'amarantus');

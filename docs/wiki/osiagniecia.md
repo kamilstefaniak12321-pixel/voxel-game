@@ -2,7 +2,7 @@
 
 > Ta strona jest generowana z kodu gry (`python tools/wiki.py`) - nie zmieniaj jej ręcznie, zmiany przepadną przy następnym generowaniu.
 
-Wersja gry **0.37.0** - 45 osiągnięć. Księga osiągnięć: klawisz **L**. Uwaga, spoilery: sekretne osiągnięcia są tu opisane (w grze widać tylko „???”).
+Wersja gry **0.38.0** - 46 osiągnięć. Księga osiągnięć: klawisz **L**. Uwaga, spoilery: sekretne osiągnięcia są tu opisane (w grze widać tylko „???”).
 
 
 ## Zwykłe (10 pkt)
@@ -21,6 +21,7 @@ Wersja gry **0.37.0** - 45 osiągnięć. Księga osiągnięć: klawisz **L**. Uw
 | <img src="ikony/dzwonek_kwiat.png" width="32" height="32" alt=""> | **Kto dzwoni?** | Zbierz kwiat z kwitnącego dzwonka gołębiego (zwisające, liliowe dzwonki na halach i w skalistych górach). | „Dzwonki nie dzwonią. Sprawdzone trzy razy.” |
 | <img src="ikony/szalwia_lisc.png" width="32" height="32" alt=""> | **Ogródek zielarza** | Zbierz liście z kwitnącej szałwii (szarozielone krzaczki z fioletowymi kłosami na łąkach i w skalistych górach). | „Do herbaty, do pieczeni, do płukania gardła. Szałwia nie wybrzydza.” |
 | <img src="ikony/nagietek_kwiat.png" width="32" height="32" alt=""> | **Słoneczko** | Zbierz kwiat z kwitnącego nagietka (pomarańczowe koszyczki na łąkach i plażach). | „Otwiera się rano, zamyka wieczorem. Ma lepszy rytm dnia niż niejeden gracz.” |
+| <img src="ikony/cynia_kwiat.png" width="32" height="32" alt=""> | **Piętrowy kwiat** | Zbierz kwiat z kwitnącej cynii (koralowe kwiaty na prostych łodygach w brzezinach i na łąkach). | „Piętro na piętrze płatków. Cynia nie zna umiaru - i dobrze.” |
 | <img src="ikony/hazelnut.png" width="32" height="32" alt=""> | **Zielone palce** | Posadź owoc, orzech albo szyszkę. | „Teraz najtrudniejsza część ogrodnictwa: czekanie.” |
 | <img src="ikony/oak_log.png" width="32" height="32" alt=""> | **Drwal** | Zetnij pień drzewa. | „Drzewo nawet nie zdążyło krzyknąć „uwaga!”.” |
 | <img src="ikony/axe.png" width="32" height="32" alt=""> | **Ostrze w ruch** | W trybie przygody zetnij pień drzewa siekierą (idzie trzy razy szybciej niż ręką). | „Ręce bolą mniej. Drzewo - bardziej.” |

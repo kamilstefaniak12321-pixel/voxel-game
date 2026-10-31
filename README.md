@@ -418,6 +418,13 @@ na łąkach i plażach. PPM na kwitnącym - **kwiat nagietka**. Osiągnięcie
 
 ![Nagietek - pomarańczowe koszyczki](docs/rosliny-nagietek.png)
 
+Dziewiąta: **cynia** - proste łodygi z **parami liści na krzyż**, na
+szczycie pełny, **koralowy kwiat z pięter płatków** (szeroki, ciemny
+spód, jaśniejsze piętra, żółty środek). Rośnie w brzezinach i na
+łąkach. PPM na kwitnącej - **kwiat cynii**. Osiągnięcie *Piętrowy kwiat*.
+
+![Cynia - koralowe kwiaty z pięter płatków](docs/rosliny-cynia.png)
+
 - Tekstury z dużych atlasów "pixel art" robi
   `tools/rosliny_z_atlasu.py` (siatka pikseli rysunku, zmniejszanie bez
   mieszania kolorów, wszystkie etapy w tej samej skali).
@@ -428,7 +435,8 @@ na łąkach i plażach. PPM na kwitnącym - **kwiat nagietka**. Osiągnięcie
   `/rosliny znajdz lawenda`, `/daj lawenda_etap3 5`, `/rosliny ogrod piwonia`,
   `/daj piwonia_etap3 5`, `/rosliny ogrod zawilec`, `/daj zawilec_etap3 5`,
   `/rosliny ogrod dzwonek`, `/daj dzwonek_etap3 5`, `/rosliny ogrod szalwia`,
-  `/daj szalwia_etap3 5`, `/rosliny ogrod nagietek`, `/daj nagietek_etap3 5`.
+  `/daj szalwia_etap3 5`, `/rosliny ogrod nagietek`, `/daj nagietek_etap3 5`,
+  `/rosliny ogrod cynia`, `/daj cynia_etap3 5`.
 - Instrukcja, rozmiary i plan dla wszystkich 28 roślin z atlasów:
   [`docs/rosliny.md`](docs/rosliny.md).
 

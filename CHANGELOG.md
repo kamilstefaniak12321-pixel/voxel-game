@@ -11,6 +11,25 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 0.34.0 - Zawilec
+
+Zawilec - otwarte kwiaty z pikseli — PR #62 (zawiera #60 i #61).
+
+- Nowa roślina z paczki roślin: **zawilec** - niska kępka wcinanych
+  liści, na łodygach okółek trzech liści i **otwarte, brzoskwiniowe
+  kwiaty** z żółtym środkiem: miseczki przechylone na zewnątrz kępy
+  (widać je z góry i z boku). Trzy etapy: młody (liście na niskich
+  łodyżkach), pąki, kwitnący. Rośnie w **buczynach i lasach
+  liściastych**. PPM na kwitnącym - **kwiat zawilca** (obrazek
+  z atlasu), wraca do etapu z pąkami. Osiągnięcie *Pierwszy zwiastun*.
+- Model "kepka" umie więcej (bez kodu): kwiaty `talerz` (otwarta
+  miseczka, przechylona), okółek liści na łodydze (`okolek`) -
+  `docs/rosliny.md`.
+- Numery bloków zawilca: 5009-5011.
+- Wersja 0.34.0 wspólna dla Windowsa i Androida. Przygotowana w PR;
+  publikacja w `voxel-game-wydania` następuje przez workflow po scaleniu
+  (najpierw #60 i #61).
+
 ## 0.33.0 - Piwonia
 
 Piwonia - krzak z pikseli z kulistymi kwiatami — PR #61 (zawiera #60 - 0.32.0).

@@ -2,7 +2,7 @@
 
 > Ta strona jest generowana z kodu gry (`python tools/wiki.py`) - nie zmieniaj jej ręcznie, zmiany przepadną przy następnym generowaniu.
 
-Wersja gry **0.33.0** - 41 osiągnięć. Księga osiągnięć: klawisz **L**. Uwaga, spoilery: sekretne osiągnięcia są tu opisane (w grze widać tylko „???”).
+Wersja gry **0.34.0** - 42 osiągnięć. Księga osiągnięć: klawisz **L**. Uwaga, spoilery: sekretne osiągnięcia są tu opisane (w grze widać tylko „???”).
 
 
 ## Zwykłe (10 pkt)
@@ -17,6 +17,7 @@ Wersja gry **0.33.0** - 41 osiągnięć. Księga osiągnięć: klawisz **L**. Uw
 | <img src="ikony/kocanka_bukiet.png" width="32" height="32" alt=""> | **Nieśmiertelnik** | Zbierz bukiet z kwitnącej kocanki (niska, srebrzysta kępka na piasku w borach i na plażach). | „Zasuszona nie traci koloru - stąd druga nazwa: nieśmiertelnik.” |
 | <img src="ikony/lawenda_bukiet.png" width="32" height="32" alt=""> | **Zapach lata** | Zbierz bukiet z kwitnącej lawendy (krzaczki z fioletowymi kłosami na łąkach i halach). | „Mole uciekają, pszczoły się zlatują, a szafa pachnie jak u babci.” |
 | <img src="ikony/piwonia_kwiat.png" width="32" height="32" alt=""> | **Róża bez kolców** | Zbierz kwiat z kwitnącej piwonii (krzaki z różowymi kwiatami na skrajach lasów liściastych i w brzezinach). | „Pachnie prawie jak róża, a nie kłuje. W sam raz do wazonu.” |
+| <img src="ikony/zawilec_kwiat.png" width="32" height="32" alt=""> | **Pierwszy zwiastun** | Zbierz kwiat z kwitnącego zawilca (niskie kępki z brzoskwiniowymi kwiatami w buczynach i lasach liściastych). | „Zakwitł, zanim drzewa rozwinęły liście. Pośpiech się opłacił.” |
 | <img src="ikony/hazelnut.png" width="32" height="32" alt=""> | **Zielone palce** | Posadź owoc, orzech albo szyszkę. | „Teraz najtrudniejsza część ogrodnictwa: czekanie.” |
 | <img src="ikony/oak_log.png" width="32" height="32" alt=""> | **Drwal** | Zetnij pień drzewa. | „Drzewo nawet nie zdążyło krzyknąć „uwaga!”.” |
 | <img src="ikony/axe.png" width="32" height="32" alt=""> | **Ostrze w ruch** | W trybie przygody zetnij pień drzewa siekierą (idzie trzy razy szybciej niż ręką). | „Ręce bolą mniej. Drzewo - bardziej.” |

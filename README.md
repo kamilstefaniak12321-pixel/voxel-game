@@ -388,6 +388,14 @@ na skrajach lasów liściastych i w brzezinach. PPM na kwitnącej -
 
 ![Piwonia - krzaki z kulistymi kwiatami, obok lawenda](docs/rosliny-piwonia.png)
 
+Piąta: **zawilec** - niska kępka wcinanych liści, na łodygach okółek
+trzech liści (jak parasolka) i **otwarte, brzoskwiniowe kwiaty**
+z żółtym środkiem - miseczki przechylone na zewnątrz kępy, więc widać
+je z góry i z boku. Rośnie w buczynach i lasach liściastych. PPM na
+kwitnącym - **kwiat zawilca**. Osiągnięcie *Pierwszy zwiastun*.
+
+![Zawilec - kępki z otwartymi kwiatami, obok piwonia](docs/rosliny-zawilec.png)
+
 - Tekstury z dużych atlasów "pixel art" robi
   `tools/rosliny_z_atlasu.py` (siatka pikseli rysunku, zmniejszanie bez
   mieszania kolorów, wszystkie etapy w tej samej skali).
@@ -396,7 +404,7 @@ na skrajach lasów liściastych i w brzezinach. PPM na kwitnącej -
   `/rosliny kocanka`, `/rosliny ogrod kocanka`, `/daj kocanka_etap3 5`
   (sadzi się na piasku i trawie), `/rosliny ogrod lawenda`,
   `/rosliny znajdz lawenda`, `/daj lawenda_etap3 5`, `/rosliny ogrod piwonia`,
-  `/daj piwonia_etap3 5`.
+  `/daj piwonia_etap3 5`, `/rosliny ogrod zawilec`, `/daj zawilec_etap3 5`.
 - Instrukcja, rozmiary i plan dla wszystkich 28 roślin z atlasów:
   [`docs/rosliny.md`](docs/rosliny.md).
 

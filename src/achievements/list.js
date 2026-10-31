@@ -166,6 +166,19 @@ const PEONY = getPlantPack('piwonia')?.item ? [{
     when: (data) => data.item === 'piwonia_kwiat'
 }] : [];
 
+// Zawilec (assets/rosliny/zawilec) - wiosenny kwiat lasów liściastych.
+
+const ANEMONE = getPlantPack('zawilec')?.item ? [{
+    id: 'anemone',
+    tier: 'common',
+    title: 'Pierwszy zwiastun',
+    task: 'Zbierz kwiat z kwitnącego zawilca (niskie kępki z brzoskwiniowymi kwiatami w buczynach i lasach liściastych).',
+    comment: 'Zakwitł, zanim drzewa rozwinęły liście. Pośpiech się opłacił.',
+    icon: 'zawilec_kwiat',
+    on: 'harvested',
+    when: (data) => data.item === 'zawilec_kwiat'
+}] : [];
+
 
 // "Złota godzina": słońce nisko nad horyzontem (wschód albo zachód),
 // gracz patrzy prosto na nie i nic go nie zasłania.
@@ -271,6 +284,7 @@ export const ACHIEVEMENTS = [
     ...EVERLAST,
     ...LAVENDER,
     ...PEONY,
+    ...ANEMONE,
     {
         id: 'plant',
         tier: 'common',

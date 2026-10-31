@@ -1,0 +1,56 @@
+{
+    "nazwa": "Dzwonek gołębi",
+    "nazwaAngielska": "Dove Bellflower",
+    "opis": "kępa wąskich liści, nad nią łodygi z zwisającymi, szaroliliowymi dzwonkami na zagiętych szypułkach; rośnie na halach i w skalistych górach",
+    "pierwszeId": 5012,
+    "etapy": [
+        {
+            "nazwa": "Młody dzwonek",
+            "model": { "rodzaj": "kepka", "liscie": { "uklad": "kepa", "ile": [8, 10], "dlugosc": [4, 5], "promien": 2 } }
+        },
+        {
+            "nazwa": "Dzwonek (pąki)",
+            "model": {
+                "rodzaj": "kepka",
+                "liscie": { "uklad": "kepa", "ile": [10, 12], "dlugosc": [4, 6], "promien": 2 },
+                "lodygi": { "ile": [1, 2], "wysokosc": [8, 10], "promien": 2, "rozchylone": true },
+                "kwiaty": { "rodzaj": "dzwonek", "rozmiar": 1 },
+                "kolory": { "kwiat": "#7e7aa8", "kwiatJasny": "#8f8ab8", "srodek": "#7e7aa8" }
+            }
+        },
+        {
+            "nazwa": "Dzwonek (kwitnie)",
+            "model": {
+                "rodzaj": "kepka",
+                "liscie": { "uklad": "kepa", "ile": [12, 14], "dlugosc": [5, 7], "promien": 2 },
+                "lodygi": { "ile": [2, 3], "wysokosc": [10, 12], "promien": 3, "rozchylone": true },
+                "kwiaty": { "rodzaj": "dzwonek", "rozmiar": 2 }
+            }
+        }
+    ],
+    "kolory": {
+        "lisc": "#5a8a33",
+        "liscJasny": "#86b048",
+        "liscCiemny": "#3a6428",
+        "lodyga": "#4a6a2a",
+        "kwiat": "#9a92d0",
+        "kwiatJasny": "#b4aee0",
+        "kwiatCiemny": "#4a4570",
+        "pak": "#7e7aa8",
+        "srodek": "#e8dcc8"
+    },
+    "czasWzrostu": 300,
+    "przedmiot": {
+        "klucz": "kwiat",
+        "plik": "kwiat.png",
+        "nazwa": "Kwiat dzwonka",
+        "nazwaAngielska": "Bellflower",
+        "kategoria": "ozdoby"
+    },
+    "zbior": { "ile": [1, 3], "wraca": 2 },
+    "gdzieRosnie": { "biomy": ["hala", "skaly"], "plamy": 0.03, "gestosc": 0.35, "etapy": [0.2, 0.25, 0.55] },
+    "zrodlo": {
+        "atlas": "Dzwonek gołębi_ etapy wzrostu.png",
+        "przedmiot": "kwiat: --wysokosc 16 --nazwy etap1,etap2,etap3,kwiat; etapy - model z pikseli (kępka: kępa liści, łodygi ze zwisającymi dzwonkami) w kolorach atlasu"
+    }
+}

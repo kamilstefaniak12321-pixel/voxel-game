@@ -396,6 +396,14 @@ kwitnącym - **kwiat zawilca**. Osiągnięcie *Pierwszy zwiastun*.
 
 ![Zawilec - kępki z otwartymi kwiatami, obok piwonia](docs/rosliny-zawilec.png)
 
+Szósta: **dzwonek gołębi** - kępa wąskich liści, nad nią łodygi
+z **zwisającymi, liliowymi dzwonkami** na zagiętych szypułkach (zielony
+kielich, szeroki jasny brzeg, kremowe pręciki od spodu). Rośnie na
+halach i w skalistych górach. PPM na kwitnącym - **kwiat dzwonka**.
+Osiągnięcie *Kto dzwoni?*.
+
+![Dzwonek gołębi - zwisające dzwonki, obok zawilec](docs/rosliny-dzwonek.png)
+
 - Tekstury z dużych atlasów "pixel art" robi
   `tools/rosliny_z_atlasu.py` (siatka pikseli rysunku, zmniejszanie bez
   mieszania kolorów, wszystkie etapy w tej samej skali).
@@ -404,7 +412,8 @@ kwitnącym - **kwiat zawilca**. Osiągnięcie *Pierwszy zwiastun*.
   `/rosliny kocanka`, `/rosliny ogrod kocanka`, `/daj kocanka_etap3 5`
   (sadzi się na piasku i trawie), `/rosliny ogrod lawenda`,
   `/rosliny znajdz lawenda`, `/daj lawenda_etap3 5`, `/rosliny ogrod piwonia`,
-  `/daj piwonia_etap3 5`, `/rosliny ogrod zawilec`, `/daj zawilec_etap3 5`.
+  `/daj piwonia_etap3 5`, `/rosliny ogrod zawilec`, `/daj zawilec_etap3 5`,
+  `/rosliny ogrod dzwonek`, `/daj dzwonek_etap3 5`.
 - Instrukcja, rozmiary i plan dla wszystkich 28 roślin z atlasów:
   [`docs/rosliny.md`](docs/rosliny.md).
 

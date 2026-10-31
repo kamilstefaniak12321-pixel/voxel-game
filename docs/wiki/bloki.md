@@ -2,7 +2,7 @@
 
 > Ta strona jest generowana z kodu gry (`python tools/wiki.py`) - nie zmieniaj jej ręcznie, zmiany przepadną przy następnym generowaniu.
 
-Wersja gry **0.34.0** - 142 bloków (do tego 5 odmian, których nie ma w ekwipunku, np. wieniec zawieszony na boku bloku). Czas kopania dotyczy trybu przygody; w kreatywnym bloki znikają od razu.
+Wersja gry **0.35.0** - 145 bloków (do tego 5 odmian, których nie ma w ekwipunku, np. wieniec zawieszony na boku bloku). Czas kopania dotyczy trybu przygody; w kreatywnym bloki znikają od razu.
 
 [Ziemia](#ziemia) · [Skały](#skały) · [Drewno](#drewno) · [Budulec](#budulec) · [Rośliny](#rośliny) · [Światło](#światło) · [Ozdoby](#ozdoby)
 
@@ -161,6 +161,9 @@ Wersja gry **0.34.0** - 142 bloków (do tego 5 odmian, których nie ma w ekwipun
 | <img src="ikony/zawilec_etap1.png" width="32" height="32" alt=""> | **Młody zawilec** | `zawilec_etap1` | **Kopanie:** od razu<br>**Rośnie:** w: Zawilec (pąki)<br>**Skąd:** zniszczony blok: Zawilec (pąki); zniszczony blok: Zawilec (kwitnie) |
 | <img src="ikony/zawilec_etap2.png" width="32" height="32" alt=""> | **Zawilec (pąki)** | `zawilec_etap2` | **Kopanie:** od razu<br>**Daje:** Młody zawilec<br>**Rośnie:** w: Zawilec (kwitnie)<br>**Skąd:** wyrasta z: Młody zawilec |
 | <img src="ikony/zawilec_etap3.png" width="32" height="32" alt=""> | **Zawilec (kwitnie)** | `zawilec_etap3` | **Kopanie:** od razu<br>**Daje:** Młody zawilec<br>**Zbiór (PPM):** Kwiat zawilca 1-2<br>**Skąd:** wyrasta z: Zawilec (pąki) |
+| <img src="ikony/dzwonek_etap1.png" width="32" height="32" alt=""> | **Młody dzwonek** | `dzwonek_etap1` | **Kopanie:** od razu<br>**Rośnie:** w: Dzwonek (pąki)<br>**Skąd:** zniszczony blok: Dzwonek (pąki); zniszczony blok: Dzwonek (kwitnie) |
+| <img src="ikony/dzwonek_etap2.png" width="32" height="32" alt=""> | **Dzwonek (pąki)** | `dzwonek_etap2` | **Kopanie:** od razu<br>**Daje:** Młody dzwonek<br>**Rośnie:** w: Dzwonek (kwitnie)<br>**Skąd:** wyrasta z: Młody dzwonek |
+| <img src="ikony/dzwonek_etap3.png" width="32" height="32" alt=""> | **Dzwonek (kwitnie)** | `dzwonek_etap3` | **Kopanie:** od razu<br>**Daje:** Młody dzwonek<br>**Zbiór (PPM):** Kwiat dzwonka 1-3<br>**Skąd:** wyrasta z: Dzwonek (pąki) |
 
 ## Światło
 

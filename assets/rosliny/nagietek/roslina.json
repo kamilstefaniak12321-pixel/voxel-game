@@ -1,0 +1,55 @@
+{
+    "nazwa": "Nagietek",
+    "nazwaAngielska": "Marigold",
+    "opis": "kępa szerokich, jasnozielonych liści, na łodygach pomarańczowe koszyczki z brązowym środkiem; rośnie na łąkach i na plażach",
+    "pierwszeId": 5018,
+    "etapy": [
+        {
+            "nazwa": "Młody nagietek",
+            "model": { "rodzaj": "kepka", "liscie": { "uklad": "krzak", "promien": 2, "dlugosc": [2, 2], "brzeg": 3 } }
+        },
+        {
+            "nazwa": "Nagietek (pąki)",
+            "model": {
+                "rodzaj": "kepka",
+                "liscie": { "uklad": "krzak", "promien": 3, "dlugosc": [2, 3], "brzeg": 3 },
+                "lodygi": { "ile": [2, 3], "wysokosc": [6, 7], "promien": 2, "rozchylone": true, "liscie": { "co": 2, "dlugosc": [2, 3] } },
+                "kwiaty": { "rodzaj": "pak", "rozmiar": 2 }
+            }
+        },
+        {
+            "nazwa": "Nagietek (kwitnie)",
+            "model": {
+                "rodzaj": "kepka",
+                "liscie": { "uklad": "krzak", "promien": 3, "dlugosc": [3, 3], "brzeg": 3 },
+                "lodygi": { "ile": [2, 3], "wysokosc": [6, 8], "promien": 3, "rozchylone": true, "liscie": { "co": 2, "dlugosc": [2, 3] } },
+                "kwiaty": { "rodzaj": "talerz", "rozmiar": [1, 2] }
+            }
+        }
+    ],
+    "kolory": {
+        "lisc": "#3f7a18",
+        "liscJasny": "#64a024",
+        "liscCiemny": "#244a12",
+        "lodyga": "#3f6a18",
+        "kwiat": "#ff8410",
+        "kwiatJasny": "#ffaa1c",
+        "kwiatCiemny": "#4b7118",
+        "pak": "#f47a14",
+        "srodek": "#7a2a0e"
+    },
+    "czasWzrostu": 240,
+    "przedmiot": {
+        "klucz": "kwiat",
+        "plik": "kwiat.png",
+        "nazwa": "Kwiat nagietka",
+        "nazwaAngielska": "Marigold Flower",
+        "kategoria": "ozdoby"
+    },
+    "zbior": { "ile": [1, 3], "wraca": 2 },
+    "gdzieRosnie": { "biomy": ["laka", "plaza"], "plamy": 0.025, "gestosc": 0.35, "etapy": [0.2, 0.25, 0.55] },
+    "zrodlo": {
+        "atlas": "Atlas tekstur nagietka morelowego.png",
+        "przedmiot": "kwiat: --wysokosc 16 --nazwy etap1,etap2,etap3,kwiat; etapy - model z pikseli (kępka: krzak, liście na łodygach, pąki, talerzyki) w kolorach atlasu"
+    }
+}

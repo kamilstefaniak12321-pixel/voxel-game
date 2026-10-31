@@ -11,6 +11,22 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 0.37.0 - Nagietek
+
+Nagietek - pomarańczowe koszyczki — PR #65 (zawiera #64 - 0.36.0).
+
+- Nowa roślina z paczki roślin: **nagietek** - kępa szerokich,
+  jasnozielonych liści, na łodygach **pomarańczowe koszyczki
+  z brązowym środkiem** (otwarte, przechylone na zewnątrz kępy). Trzy
+  etapy: młody, okrągłe pąki, kwitnący. Rośnie na **łąkach i plażach**.
+  PPM na kwitnącym - **kwiat nagietka** (obrazek z atlasu), wraca do
+  etapu z pąkami. Osiągnięcie *Słoneczko*.
+- Bez nowego kodu - sam `roslina.json` z gotowych części modelu "kepka".
+- Numery bloków nagietka: 5018-5020.
+- Wersja 0.37.0 wspólna dla Windowsa i Androida. Przygotowana w PR;
+  publikacja w `voxel-game-wydania` następuje przez workflow po scaleniu
+  (najpierw #64).
+
 ## 0.36.0 - Szałwia
 
 Szałwia - zioło z kłosami w okółkach — PR #64.

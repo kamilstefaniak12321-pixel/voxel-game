@@ -13,6 +13,7 @@ const clamp = x => Math.max(0, Math.min(1, x));
 const smooth = x => { const t = clamp(x); return t * t * (3 - 2 * t); };
 const mix = (a, b, t) => a + (b - a) * t;
 const ROOT = [0, 0, 0];
+const SWAY_KEYS = [[0, 0], [.08, -2], [.19, 2.5], [.29, 2], [.41, -.8], [.5, -.3], [.56, 0]];
 
 export function blueberryPose(id) {
     const stage = STAGES.get(id);
@@ -23,12 +24,11 @@ export function blueberryPose(id) {
 
 // Radians; all clips start/end at zero and settle with a smaller second swing.
 function sway(t, delay = 0) {
-    const keys = [[0, 0], [.08, -2], [.19, 2.5], [.29, 2], [.41, -.8], [.5, -.3], [.56, 0]];
     t -= delay;
     if (t <= 0 || t >= .56) return 0;
-    for (let i = 1; i < keys.length; i++) {
-        if (t <= keys[i][0]) {
-            const [a, av] = keys[i - 1], [b, bv] = keys[i];
+    for (let i = 1; i < SWAY_KEYS.length; i++) {
+        if (t <= SWAY_KEYS[i][0]) {
+            const [a, av] = SWAY_KEYS[i - 1], [b, bv] = SWAY_KEYS[i];
             return mix(av, bv, smooth((t - a) / (b - a))) * Math.PI / 180;
         }
     }

@@ -27,3 +27,10 @@ Stare kafelki borówki pozostają dla zgodności narzędzi i paczek,
 ale modele świata i ręki już z nich nie korzystają. Ikona przedmiotu
 „Borówki” nadal przedstawia zbierane owoce; cztery ikony krzaków
 korzystają z podglądów nowego modelu.
+
+Od 0.43.0 borówka ma krótkie animacje interakcji oraz płynny wzrost.
+Krzywe Kamila z pliku „krzaczek borówki.bbmodel” przełożono na ruch
+zoptymalizowanych modeli gry: rdzeń (pierwsze 6 części), zewnętrzne
+liście (kolejne 9), owoce (ostatnie 24). Każdy owoc ma własny środek
+skalowania. Stałe modele źródłowe i ich UV pozostają bez zmian.
+Zasady kolejnych gatunków: [animacje roślin](../../../docs/animacje-roslin.md).

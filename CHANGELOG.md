@@ -13,6 +13,8 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ## 0.43.0 - Animacje borówki i płynny wzrost
 
+Animacje interakcji i wzrostu borówki — PR #72.
+
 - Stawianie, zbieranie, krótsze niszczenie oraz delikatna reakcja przy
   pełnym ekwipunku, na podstawie animacji Kamila z Blockbencha.
 - Borówki rosną i maleją wokół własnych środków. Krzak płynnie zmienia

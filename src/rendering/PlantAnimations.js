@@ -3,11 +3,11 @@ import { getBlueberryFaces } from './BlueberryGeometry.js';
 import { BLUEBERRY_IDS, isAnimatedPlant, animationKind, blueberryPose,
     sampleBlueberryAnimation, transformBlueberryVertex, PLANT_CLIP_SECONDS } from './BlueberryAnimation.js';
 
-export const MAX_PLANT_ANIMATIONS = 24;
+export const MAX_PLANT_ANIMATIONS = 12;
 export const PLANT_ANIMATION_DISTANCE = 48;
 
-// Transient visual overrides, never saved. A chunk remesh at each end changes
-// topology; in between only the affected vertex ranges are uploaded. No extra
+// Transient visual overrides, never saved. The normal block-change remesh adds
+// canonical topology; then only affected vertex ranges are uploaded. No extra
 // objects, materials, draw calls, or work for the other plants in the world.
 export class PlantAnimations {
     constructor(world, camera) {
@@ -65,14 +65,14 @@ export class PlantAnimations {
         return true;
     }
 
-    remove(event) {
+    remove(event, remesh = true) {
         if (!event) return;
         this.active.delete(event);
         const entries = this.chunks.get(event.chunk);
         entries?.delete(event.index);
         if (!entries?.size) this.chunks.delete(event.chunk);
         event.binding = null;
-        if (this.world.getChunk(event.chunk.cx, event.chunk.cz) === event.chunk) this.world.markDirty(event.chunk);
+        if (remesh && this.world.getChunk(event.chunk.cx, event.chunk.cz) === event.chunk) this.world.markDirty(event.chunk);
     }
 
     bindGeometry(geometry, ranges) {
@@ -130,7 +130,9 @@ export class PlantAnimations {
     }
 
     update(dt) {
+        if (!this.active.size) return;
         const changed = new Set();
+        const completed = new Set();
         for (const event of this.active) {
             const { chunk } = event;
             if (this.world.getChunk(chunk.cx, chunk.cz) !== chunk || chunk.blocks[event.index] !== event.after) {
@@ -144,9 +146,16 @@ export class PlantAnimations {
             event.time = Math.min(event.duration, event.time + Math.max(0, dt));
             this.paint(event);
             changed.add(chunk);
-            if (event.time >= event.duration) this.remove(event);
+            if (event.time >= event.duration) {
+                // The final pose already matches the real block. Collapsed
+                // faces are harmless until the next ordinary chunk remesh;
+                // rebuilding a whole terrain chunk here causes frame spikes.
+                this.remove(event, false);
+                completed.add(chunk);
+            }
         }
         for (const chunk of changed) this.onFrame?.(chunk);
+        for (const chunk of completed) this.world.onMeshChanged?.(chunk);
     }
 
     dispose() {

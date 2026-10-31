@@ -31,14 +31,17 @@ ponowne wczytanie pokazuje stabilną roślinę. Szybkie klikanie nie może
 powielać plonu ani resetować reakcji na pełny ekwipunek w nieskończoność.
 
 Nie twórz stale aktualizowanych obiektów/animatorów dla każdej dzikiej
-rośliny. W borówce maksymalnie 24 pobliskie rośliny (48 bloków) mają
+rośliny. W borówce maksymalnie 12 pobliskich roślin (48 bloków) ma
 tymczasowy stan animacji. Pozostałe od razu otrzymują prawidłowy etap.
 Rośliny za limitem nadal rosną i dają plon; ograniczenie dotyczy tylko
 przejścia, nie zasięgu widzenia roślinności.
 
-Borówka pozostaje we wspólnej geometrii i materiale chunka. Przebudowa
-geometrii następuje na początku i końcu przejścia; pomiędzy nimi zmieniają
-się tylko zakresy wierzchołków aktywnych krzaków. Te same pozycje obsługują
+Borówka pozostaje we wspólnej geometrii i materiale chunka. Zwykła przebudowa
+po zmianie bloku przygotowuje model; potem zmieniają się tylko zakresy
+wierzchołków aktywnych krzaków. Po zakończeniu zostaje końcowa poza,
+bez dodatkowej przebudowy całego terenu. Złożone do zerowej powierzchni
+ściany owoców usuwa następna zwykła przebudowa; nie ma już aktywnego
+animatora ani pracy CPU dla tej rośliny. Te same pozycje obsługują
 bliskie cienie. Zwykłe światło, mgła i wiatr pozostają wspólne ze światem.
 Nie ma dodatkowego rysowania każdego krzaka. Wygenerowanie lub wczytanie
 świata nie odtwarza zbiorowo animacji stawiania.

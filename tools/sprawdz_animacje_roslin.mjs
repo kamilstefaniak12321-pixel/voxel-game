@@ -42,7 +42,11 @@ const controller = new PlantAnimations(world, { position: new Vector3(-1,11,5) }
 const index=chunk.index(15,10,5);
 const event=()=>controller.overridesFor(chunk)?.get(index);
 const rebuild=()=>world.rebuildChunkMesh(chunk);
-const finish=()=>{controller.update(3);rebuild();assert.equal(controller.active.size,0);};
+const finish=()=>{
+    world.dirtyChunks.clear();controller.update(3);
+    assert.equal(world.dirtyChunks.size,0,'Finishing never schedules a second terrain remesh');
+    rebuild();assert.equal(controller.active.size,0);
+};
 const growth=new PlantGrowth(world);
 assert.equal(growth.grow(chunk,index,getGrowth('blueberry_sapling')),true);
 assert.equal(chunk.blocks[index],96,'Logical stage commits immediately');
@@ -77,7 +81,7 @@ for(let axis=0;axis<3;axis++) {
 const cube = getBlueberryFaces('full').filter(f=>f.partIndex===face.partIndex);
 for(let axis=0;axis<3;axis++) {
     const points=cube.flatMap(f=>f.vertices.map(v=>transformBlueberryVertex(f,v,pose,new Float64Array(7))[axis]));
-    near((Math.max(...points)+Math.min(...points))/2,face.center[axis],'');
+    near((Math.max(...points)+Math.min(...points))/2,face.center[axis]);
     near(Math.max(...points)-Math.min(...points),pose.fruit[0]/16);
 }
 // Full and few share their existing fruit, and all leaves reach exact static geometry.

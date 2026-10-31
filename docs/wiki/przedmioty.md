@@ -2,7 +2,7 @@
 
 > Ta strona jest generowana z kodu gry (`python tools/wiki.py`) - nie zmieniaj jej ręcznie, zmiany przepadną przy następnym generowaniu.
 
-Wersja gry **0.38.0** - 28 przedmiotów. Przedmiotu nie da się postawić jak bloku; owoce i nasiona posadzone na ziemi (PPM) wyrastają w krzak albo drzewo, narzędzia przyspieszają kopanie.
+Wersja gry **0.39.0** - 29 przedmiotów. Przedmiotu nie da się postawić jak bloku; owoce i nasiona posadzone na ziemi (PPM) wyrastają w krzak albo drzewo, narzędzia przyspieszają kopanie.
 
 
 ## Rośliny
@@ -41,6 +41,7 @@ Wersja gry **0.38.0** - 28 przedmiotów. Przedmiotu nie da się postawić jak bl
 | <img src="ikony/szalwia_lisc.png" width="32" height="32" alt=""> | **Liście szałwii** | `szalwia_lisc` | **Skąd:** zbiór (PPM): Szałwia (kwitnie) |
 | <img src="ikony/nagietek_kwiat.png" width="32" height="32" alt=""> | **Kwiat nagietka** | `nagietek_kwiat` | **Skąd:** zbiór (PPM): Nagietek (kwitnie) |
 | <img src="ikony/cynia_kwiat.png" width="32" height="32" alt=""> | **Kwiat cynii** | `cynia_kwiat` | **Skąd:** zbiór (PPM): Cynia (kwitnie) |
+| <img src="ikony/mikolajek_kwiat.png" width="32" height="32" alt=""> | **Kwiat mikołajka** | `mikolajek_kwiat` | **Skąd:** zbiór (PPM): Mikołajek (kwitnie) |
 
 ## Narzędzia i surowce
 

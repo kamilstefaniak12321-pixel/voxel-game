@@ -231,6 +231,19 @@ const ZINNIA = getPlantPack('cynia')?.item ? [{
     when: (data) => data.item === 'cynia_kwiat'
 }] : [];
 
+// Mikołajek (assets/rosliny/mikolajek) - kolczaste, niebieskie główki.
+
+const SEA_HOLLY = getPlantPack('mikolajek')?.item ? [{
+    id: 'sea_holly',
+    tier: 'common',
+    title: 'Kłujący błękit',
+    task: 'Zbierz kwiat z kwitnącego mikołajka (niebieskie główki na gwiazdach kolców, na plażach i w skalistych górach).',
+    comment: 'Niebieski, kłujący i dumny z tego. Nie przytulać.',
+    icon: 'mikolajek_kwiat',
+    on: 'harvested',
+    when: (data) => data.item === 'mikolajek_kwiat'
+}] : [];
+
 
 // "Złota godzina": słońce nisko nad horyzontem (wschód albo zachód),
 // gracz patrzy prosto na nie i nic go nie zasłania.
@@ -341,6 +354,7 @@ export const ACHIEVEMENTS = [
     ...SAGE,
     ...MARIGOLD,
     ...ZINNIA,
+    ...SEA_HOLLY,
     {
         id: 'plant',
         tier: 'common',

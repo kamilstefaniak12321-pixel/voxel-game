@@ -198,6 +198,16 @@ assert.ok(zinnia && zinnia.stages.every((stage) => stage.tuft?.stems.leaves?.opp
 assert.equal(R.getBlockId('cynia_etap1'), 5021, 'cynia od numeru 5021');
 assert.equal(zinnia.stages[2].tuft.flower.kind, 'warstwy', 'cynia kwitnie piętrami płatków');
 
+// Mikołajek - główki "oset" z gwiazdą kolczastych przysadek.
+const seaHolly = P.getPlantPack('mikolajek');
+assert.ok(seaHolly && seaHolly.stages[2].tuft.flower.kind === 'oset', 'mikołajek kwitnie główkami');
+assert.equal(R.getBlockId('mikolajek_etap1'), 5024, 'mikołajek od numeru 5024');
+{
+    const faces = getRiverPlantFaces(R.BLOCK_TYPES.mikolajek_etap3.riverPlant.kind, 0, false, seaHolly.stages[2].tuft);
+    const flat = faces.filter((face) => face.vertices.every((v) => Math.abs(v[1] - face.vertices[0][1]) < 1e-6) && Math.abs(face.vertices[0][1] * 16 % 1 - 0.5) < 1e-6);
+    assert.ok(flat.length > 0, 'gwiazdy przysadek - płaskie, w połowie piksela');
+}
+
 // Amarantus - pierwsza roślina: 2 bloki wysokości, czerwona lampa.
 const amaranth = P.getPlantPack('amarantus');
 assert.ok(amaranth, 'amarantus');

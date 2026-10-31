@@ -2,7 +2,7 @@
 
 > Ta strona jest generowana z kodu gry (`python tools/wiki.py`) - nie zmieniaj jej ręcznie, zmiany przepadną przy następnym generowaniu.
 
-Wersja gry **0.38.0** - 154 bloków (do tego 5 odmian, których nie ma w ekwipunku, np. wieniec zawieszony na boku bloku). Czas kopania dotyczy trybu przygody; w kreatywnym bloki znikają od razu.
+Wersja gry **0.39.0** - 157 bloków (do tego 5 odmian, których nie ma w ekwipunku, np. wieniec zawieszony na boku bloku). Czas kopania dotyczy trybu przygody; w kreatywnym bloki znikają od razu.
 
 [Ziemia](#ziemia) · [Skały](#skały) · [Drewno](#drewno) · [Budulec](#budulec) · [Rośliny](#rośliny) · [Światło](#światło) · [Ozdoby](#ozdoby)
 
@@ -173,6 +173,9 @@ Wersja gry **0.38.0** - 154 bloków (do tego 5 odmian, których nie ma w ekwipun
 | <img src="ikony/cynia_etap1.png" width="32" height="32" alt=""> | **Młoda cynia** | `cynia_etap1` | **Kopanie:** od razu<br>**Rośnie:** w: Cynia (pąki)<br>**Skąd:** zniszczony blok: Cynia (pąki); zniszczony blok: Cynia (kwitnie) |
 | <img src="ikony/cynia_etap2.png" width="32" height="32" alt=""> | **Cynia (pąki)** | `cynia_etap2` | **Kopanie:** od razu<br>**Daje:** Młoda cynia<br>**Rośnie:** w: Cynia (kwitnie)<br>**Skąd:** wyrasta z: Młoda cynia |
 | <img src="ikony/cynia_etap3.png" width="32" height="32" alt=""> | **Cynia (kwitnie)** | `cynia_etap3` | **Kopanie:** od razu<br>**Daje:** Młoda cynia<br>**Zbiór (PPM):** Kwiat cynii 1-2<br>**Skąd:** wyrasta z: Cynia (pąki) |
+| <img src="ikony/mikolajek_etap1.png" width="32" height="32" alt=""> | **Młody mikołajek** | `mikolajek_etap1` | **Kopanie:** od razu<br>**Rośnie:** w: Mikołajek (pąki)<br>**Skąd:** zniszczony blok: Mikołajek (pąki); zniszczony blok: Mikołajek (kwitnie) |
+| <img src="ikony/mikolajek_etap2.png" width="32" height="32" alt=""> | **Mikołajek (pąki)** | `mikolajek_etap2` | **Kopanie:** od razu<br>**Daje:** Młody mikołajek<br>**Rośnie:** w: Mikołajek (kwitnie)<br>**Skąd:** wyrasta z: Młody mikołajek |
+| <img src="ikony/mikolajek_etap3.png" width="32" height="32" alt=""> | **Mikołajek (kwitnie)** | `mikolajek_etap3` | **Kopanie:** od razu<br>**Daje:** Młody mikołajek<br>**Zbiór (PPM):** Kwiat mikołajka 1-2<br>**Skąd:** wyrasta z: Mikołajek (pąki) |
 
 ## Światło
 

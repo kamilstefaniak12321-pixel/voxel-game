@@ -11,6 +11,23 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 0.45.0 - Len
+
+Len - kwitnie i przekwita — PR #74 (zawiera #73 - 0.44.0).
+
+- Nowa roślina z paczki roślin: **len** - smukłe łodygi z wąskimi
+  listkami i **błękitnymi kwiatami**, potem **przekwita**: łodygi schną
+  na złoto, a na szczytach rosną kuliste torebki nasion. Trzy etapy:
+  młody, kwitnący, dojrzały (suchy). PPM na suchym - **wiązka lnu**
+  (obrazek z atlasu), len wraca do młodego (jak po wyrwaniu). Rośnie na
+  **halach** i rzadziej na łąkach. Osiągnięcie *Lniana robota*.
+- Model "kepka": kwiaty `torebka` (kulista torebka nasion); etap
+  z własnymi kolorami jako "przekwitła" roślina - `docs/rosliny.md`.
+- Numery bloków lnu: 5030-5032.
+- Wersja 0.45.0 wspólna dla Windowsa i Androida. Przygotowana w PR;
+  publikacja w `voxel-game-wydania` następuje przez workflow po scaleniu
+  (najpierw #73).
+
 ## 0.44.0 - Barwinek opada z terenem
 
 Barwinek spływa po stopniach terenu — PR #73.

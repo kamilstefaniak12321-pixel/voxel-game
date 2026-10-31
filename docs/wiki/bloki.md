@@ -2,7 +2,7 @@
 
 > Ta strona jest generowana z kodu gry (`python tools/wiki.py`) - nie zmieniaj jej ręcznie, zmiany przepadną przy następnym generowaniu.
 
-Wersja gry **0.44.0** - 160 bloków (do tego 5 odmian, których nie ma w ekwipunku, np. wieniec zawieszony na boku bloku). Czas kopania dotyczy trybu przygody; w kreatywnym bloki znikają od razu.
+Wersja gry **0.45.0** - 163 bloków (do tego 5 odmian, których nie ma w ekwipunku, np. wieniec zawieszony na boku bloku). Czas kopania dotyczy trybu przygody; w kreatywnym bloki znikają od razu.
 
 [Ziemia](#ziemia) · [Skały](#skały) · [Drewno](#drewno) · [Budulec](#budulec) · [Rośliny](#rośliny) · [Światło](#światło) · [Ozdoby](#ozdoby)
 
@@ -179,6 +179,9 @@ Wersja gry **0.44.0** - 160 bloków (do tego 5 odmian, których nie ma w ekwipun
 | <img src="ikony/barwinek_etap1.png" width="32" height="32" alt=""> | **Młody barwinek** | `barwinek_etap1` | **Kopanie:** od razu<br>**Rośnie:** w: Barwinek (pąki)<br>**Skąd:** zniszczony blok: Barwinek (pąki); zniszczony blok: Barwinek (kwitnie) |
 | <img src="ikony/barwinek_etap2.png" width="32" height="32" alt=""> | **Barwinek (pąki)** | `barwinek_etap2` | **Kopanie:** od razu<br>**Daje:** Młody barwinek<br>**Rośnie:** w: Barwinek (kwitnie)<br>**Skąd:** wyrasta z: Młody barwinek |
 | <img src="ikony/barwinek_etap3.png" width="32" height="32" alt=""> | **Barwinek (kwitnie)** | `barwinek_etap3` | **Kopanie:** od razu<br>**Daje:** Młody barwinek<br>**Zbiór (PPM):** Kwiat barwinka 1-2<br>**Skąd:** wyrasta z: Barwinek (pąki) |
+| <img src="ikony/len_etap1.png" width="32" height="32" alt=""> | **Młody len** | `len_etap1` | **Kopanie:** od razu<br>**Rośnie:** w: Len (kwitnie)<br>**Skąd:** zniszczony blok: Len (kwitnie); zniszczony blok: Len (dojrzały, suchy) |
+| <img src="ikony/len_etap2.png" width="32" height="32" alt=""> | **Len (kwitnie)** | `len_etap2` | **Kopanie:** od razu<br>**Daje:** Młody len<br>**Rośnie:** w: Len (dojrzały, suchy)<br>**Skąd:** wyrasta z: Młody len |
+| <img src="ikony/len_etap3.png" width="32" height="32" alt=""> | **Len (dojrzały, suchy)** | `len_etap3` | **Kopanie:** od razu<br>**Daje:** Młody len<br>**Zbiór (PPM):** Wiązka lnu 1-2<br>**Skąd:** wyrasta z: Len (kwitnie) |
 
 ## Światło
 

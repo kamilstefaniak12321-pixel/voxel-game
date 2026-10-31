@@ -56,6 +56,7 @@ tylko jako *Sekretne osiągnięcie* ze znakiem zapytania.
 | zwykłe | Piętrowy kwiat | zbierz kwiat z kwitnącej cynii (brzeziny i łąki, roślina z paczki roślin) |
 | zwykłe | Kłujący błękit | zbierz kwiat z kwitnącego mikołajka (plaże i skaliste góry, roślina z paczki roślin) |
 | zwykłe | Dywan z kwiatów | zbierz kwiat z kwitnącego barwinka (lasy liściaste, buczyny i łąki, roślina z paczki roślin) |
+| zwykłe | Lniana robota | zbierz wiązkę z dojrzałego, suchego lnu (hale i łąki, roślina z paczki roślin) |
 | rzadkie | Murarz | postaw 500 bloków (postęp liczy się w księdze) |
 | rzadkie | Głębinowiec | zanurkuj 10 bloków pod powierzchnię |
 | rzadkie | Ponad chmurami | wzleć na wysokość 1000 |

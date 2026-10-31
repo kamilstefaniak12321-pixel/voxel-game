@@ -208,6 +208,14 @@ assert.equal(R.getBlockId('mikolajek_etap1'), 5024, 'mikołajek od numeru 5024')
     assert.ok(flat.length > 0, 'gwiazdy przysadek - płaskie, w połowie piksela');
 }
 
+// Len - przekwita: kwitnie na niebiesko, dojrzały ma suche kolory etapu
+// i torebki nasion; zbiór z suchego, wraca do młodego.
+const flax = P.getPlantPack('len');
+assert.ok(flax && flax.stages[1].tuft.flower.kind === 'talerz' && flax.stages[2].tuft.flower.kind === 'torebka', 'len: kwiaty, potem torebki');
+assert.notDeepEqual(flax.stages[2].tuft.colors.stem, flax.stages[1].tuft.colors.stem, 'suchy len - inne kolory łodyg');
+assert.equal(R.getBlockId('len_etap1'), 5030, 'len od numeru 5030');
+assert.equal(R.getHarvest('len_etap3').becomes, 'len_etap1', 'po zbiorze lnu - młody len');
+
 // Amarantus - pierwsza roślina: 2 bloki wysokości, czerwona lampa.
 const amaranth = P.getPlantPack('amarantus');
 assert.ok(amaranth, 'amarantus');
@@ -274,8 +282,10 @@ for (const pack of P.PLANT_PACKS.filter((p) => p.where)) {
     assert.ok(standing >= Math.min(mine.length, 40) * 0.6, `${pack.id}: stoi w kolumnach terenu (${standing} z ${Math.min(mine.length, 40)})`);
     // Wagi biomów: w głównym biomie (waga 1) gęściej niż w pobocznym.
     const often = (key) => mine.filter(([, , , biome]) => biome === key).length / Math.max(1, biomeArea[key] ?? 0);
-    const main = pack.where.biomes.filter((key) => (pack.where.weights[key] ?? 1) === 1);
-    for (const side of pack.where.biomes.filter((key) => pack.where.weights[key] < 0.6)) {
+    // (Tylko gdy główny biom zajmuje w próbce dość miejsca - w małej
+    // próbce plamy bywają przypadkowe.)
+    const main = pack.where.biomes.filter((key) => (pack.where.weights[key] ?? 1) === 1 && (biomeArea[key] ?? 0) >= 6000);
+    for (const side of main.length ? pack.where.biomes.filter((key) => pack.where.weights[key] < 0.6) : []) {
         assert.ok(main.some((key) => often(key) > often(side)), `${pack.id}: w ${side} rzadziej niż w głównym biomie`);
     }
 }

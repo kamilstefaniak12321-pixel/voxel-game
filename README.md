@@ -447,6 +447,13 @@ Osiągnięcie *Dywan z kwiatów*.
 
 ![Barwinek opada z terenem - dywan po schodkach](docs/rosliny-barwinek-schodki.png)
 
+Dwunasta: **len** - smukłe łodygi z wąskimi listkami i **błękitnymi
+kwiatami**; potem **przekwita**: łodygi schną na złoto, a na szczytach
+rosną kuliste torebki nasion. PPM na suchym - **wiązka lnu**, len wraca
+do młodego. Rośnie na halach i łąkach. Osiągnięcie *Lniana robota*.
+
+![Len - kwitnący i dojrzały, suchy](docs/rosliny-len.png)
+
 - Tekstury z dużych atlasów "pixel art" robi
   `tools/rosliny_z_atlasu.py` (siatka pikseli rysunku, zmniejszanie bez
   mieszania kolorów, wszystkie etapy w tej samej skali).
@@ -460,7 +467,8 @@ Osiągnięcie *Dywan z kwiatów*.
   `/daj szalwia_etap3 5`, `/rosliny ogrod nagietek`, `/daj nagietek_etap3 5`,
   `/rosliny ogrod cynia`, `/daj cynia_etap3 5`, `/rosliny ogrod mikolajek`,
   `/daj mikolajek_etap3 5`, `/daj barwinek_etap3 64` (posadź kilka obok
-  siebie - połączą się), `/rosliny znajdz barwinek`.
+  siebie - połączą się), `/rosliny znajdz barwinek`, `/rosliny ogrod len`,
+  `/daj len_etap3 5`.
 - Każda roślina ma swój biom, gdzie rośnie najczęściej (wagi biomów
   w `roslina.json`) - tabela w `docs/rosliny.md`; `/rosliny <roslina>`
   pokazuje biomy (poboczne z dopiskiem "rzadziej").

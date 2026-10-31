@@ -834,6 +834,18 @@ export function makeTuftTemplate(tuft, variant, mask = 0) {
             continue;
         }
 
+        if (flower.kind === 'torebka') {
+            // Torebka nasienna (len): kulka na szczycie łodygi - rozmiar 1:
+            // jeden piksel, 2: ciemny spód, krzyżyk, jasny czubek.
+            box(x, top, z, 1, 1, 1, 'bud');
+            if (size >= 2) {
+                for (const [dx, dz] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) box(x + dx, top + 1, z + dz, 1, 1, 1, 'bud');
+                box(x, top + 1, z, 1, 1, 1, 'bud');
+                box(x, top + 2, z, 1, 1, 1, 'flowerLight');
+            }
+            continue;
+        }
+
         if (flower.kind === 'klos' && flower.whorls) {
             whorledSpike(box, x, top, z, size);
             continue;

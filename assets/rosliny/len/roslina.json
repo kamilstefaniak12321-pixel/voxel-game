@@ -1,0 +1,63 @@
+{
+    "nazwa": "Len",
+    "nazwaAngielska": "Flax",
+    "opis": "smukłe łodygi z wąskimi listkami i błękitnymi kwiatami; przekwita w suche, złote łodygi z kulistymi torebkami nasion - z nich wiązka lnu; rośnie na halach i łąkach",
+    "pierwszeId": 5030,
+    "etapy": [
+        {
+            "nazwa": "Młody len",
+            "model": { "rodzaj": "kepka", "liscie": { "uklad": "kepa", "ile": [10, 12], "dlugosc": [4, 6], "promien": 1 } }
+        },
+        {
+            "nazwa": "Len (kwitnie)",
+            "model": {
+                "rodzaj": "kepka",
+                "liscie": { "uklad": "kepa", "ile": [6, 8], "dlugosc": [3, 4], "promien": 1 },
+                "lodygi": { "ile": [5, 6], "wysokosc": [9, 12], "promien": 4, "rozchylone": true, "liscie": { "co": 3, "dlugosc": [1, 1] } },
+                "kwiaty": { "rodzaj": "talerz", "rozmiar": 1 }
+            }
+        },
+        {
+            "nazwa": "Len (dojrzały, suchy)",
+            "model": {
+                "rodzaj": "kepka",
+                "liscie": { "uklad": "kepa", "ile": [4, 5], "dlugosc": [3, 4], "promien": 1 },
+                "lodygi": { "ile": [5, 6], "wysokosc": [10, 13], "promien": 4, "rozchylone": true, "liscie": { "co": 4, "dlugosc": [1, 1] } },
+                "kwiaty": { "rodzaj": "torebka", "rozmiar": 2 },
+                "kolory": {
+                    "lisc": "#b8925a",
+                    "liscJasny": "#d2ad75",
+                    "liscCiemny": "#8a6438",
+                    "lodyga": "#a47f49",
+                    "pak": "#7b572b",
+                    "kwiatJasny": "#b08a51"
+                }
+            }
+        }
+    ],
+    "kolory": {
+        "lisc": "#5f7a2c",
+        "liscJasny": "#8ca046",
+        "liscCiemny": "#3c4b18",
+        "lodyga": "#4f6422",
+        "kwiat": "#8fa0e0",
+        "kwiatJasny": "#b0bcf0",
+        "kwiatCiemny": "#6a78b8",
+        "pak": "#7a88c8",
+        "srodek": "#ece2b8"
+    },
+    "czasWzrostu": 300,
+    "przedmiot": {
+        "klucz": "wiazka",
+        "plik": "wiazka.png",
+        "nazwa": "Wiązka lnu",
+        "nazwaAngielska": "Flax Bundle",
+        "kategoria": "ozdoby"
+    },
+    "zbior": { "ile": [1, 2], "wraca": 1 },
+    "gdzieRosnie": { "biomy": { "hala": 1, "laka": 0.4 }, "plamy": 0.025, "gestosc": 0.45, "etapy": [0.2, 0.45, 0.35] },
+    "zrodlo": {
+        "atlas": "Atlas lnu_ trzy etapy i wiązka.png",
+        "przedmiot": "wiazka: --wysokosc 16 --nazwy etap1,etap2,etap3,wiazka; etapy - model z pikseli (kępka: smukłe łodygi, błękitne talerzyki, suche torebki) w kolorach atlasu"
+    }
+}

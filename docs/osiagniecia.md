@@ -52,6 +52,7 @@ tylko jako *Sekretne osiągnięcie* ze znakiem zapytania.
 | zwykłe | Pierwszy zwiastun | zbierz kwiat z kwitnącego zawilca (buczyny i lasy liściaste, roślina z paczki roślin) |
 | zwykłe | Kto dzwoni? | zbierz kwiat z kwitnącego dzwonka gołębiego (hale i skaliste góry, roślina z paczki roślin) |
 | zwykłe | Ogródek zielarza | zbierz liście z kwitnącej szałwii (łąki i skaliste góry, roślina z paczki roślin) |
+| zwykłe | Słoneczko | zbierz kwiat z kwitnącego nagietka (łąki i plaże, roślina z paczki roślin) |
 | rzadkie | Murarz | postaw 500 bloków (postęp liczy się w księdze) |
 | rzadkie | Głębinowiec | zanurkuj 10 bloków pod powierzchnię |
 | rzadkie | Ponad chmurami | wzleć na wysokość 1000 |

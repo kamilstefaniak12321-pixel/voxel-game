@@ -187,6 +187,11 @@ assert.ok(sage && sage.stages.every((stage) => stage.tuft?.leaves.layout === 'kr
 assert.equal(R.getBlockId('szalwia_etap1'), 5015, 'szałwia od numeru 5015');
 assert.ok(sage.stages[2].tuft.flower.whorls && !sage.stages[1].tuft.flower.whorls, 'kwitnąca szałwia - kłosy w okółkach, pąki - zwykłe');
 
+// Nagietek - same gotowe części (krzak, liście łodyg, pąki, talerzyki).
+const marigold = P.getPlantPack('nagietek');
+assert.ok(marigold && marigold.stages[2].tuft.flower.kind === 'talerz', 'nagietek kwitnie talerzykami');
+assert.equal(R.getBlockId('nagietek_etap1'), 5018, 'nagietek od numeru 5018');
+
 // Amarantus - pierwsza roślina: 2 bloki wysokości, czerwona lampa.
 const amaranth = P.getPlantPack('amarantus');
 assert.ok(amaranth, 'amarantus');

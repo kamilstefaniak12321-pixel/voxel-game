@@ -2,7 +2,7 @@
 
 > Ta strona jest generowana z kodu gry (`python tools/wiki.py`) - nie zmieniaj jej ręcznie, zmiany przepadną przy następnym generowaniu.
 
-Wersja gry **0.36.0** - 148 bloków (do tego 5 odmian, których nie ma w ekwipunku, np. wieniec zawieszony na boku bloku). Czas kopania dotyczy trybu przygody; w kreatywnym bloki znikają od razu.
+Wersja gry **0.37.0** - 151 bloków (do tego 5 odmian, których nie ma w ekwipunku, np. wieniec zawieszony na boku bloku). Czas kopania dotyczy trybu przygody; w kreatywnym bloki znikają od razu.
 
 [Ziemia](#ziemia) · [Skały](#skały) · [Drewno](#drewno) · [Budulec](#budulec) · [Rośliny](#rośliny) · [Światło](#światło) · [Ozdoby](#ozdoby)
 
@@ -167,6 +167,9 @@ Wersja gry **0.36.0** - 148 bloków (do tego 5 odmian, których nie ma w ekwipun
 | <img src="ikony/szalwia_etap1.png" width="32" height="32" alt=""> | **Młoda szałwia** | `szalwia_etap1` | **Kopanie:** od razu<br>**Rośnie:** w: Szałwia (pąki)<br>**Skąd:** zniszczony blok: Szałwia (pąki); zniszczony blok: Szałwia (kwitnie) |
 | <img src="ikony/szalwia_etap2.png" width="32" height="32" alt=""> | **Szałwia (pąki)** | `szalwia_etap2` | **Kopanie:** od razu<br>**Daje:** Młoda szałwia<br>**Rośnie:** w: Szałwia (kwitnie)<br>**Skąd:** wyrasta z: Młoda szałwia |
 | <img src="ikony/szalwia_etap3.png" width="32" height="32" alt=""> | **Szałwia (kwitnie)** | `szalwia_etap3` | **Kopanie:** od razu<br>**Daje:** Młoda szałwia<br>**Zbiór (PPM):** Liście szałwii 1-3<br>**Skąd:** wyrasta z: Szałwia (pąki) |
+| <img src="ikony/nagietek_etap1.png" width="32" height="32" alt=""> | **Młody nagietek** | `nagietek_etap1` | **Kopanie:** od razu<br>**Rośnie:** w: Nagietek (pąki)<br>**Skąd:** zniszczony blok: Nagietek (pąki); zniszczony blok: Nagietek (kwitnie) |
+| <img src="ikony/nagietek_etap2.png" width="32" height="32" alt=""> | **Nagietek (pąki)** | `nagietek_etap2` | **Kopanie:** od razu<br>**Daje:** Młody nagietek<br>**Rośnie:** w: Nagietek (kwitnie)<br>**Skąd:** wyrasta z: Młody nagietek |
+| <img src="ikony/nagietek_etap3.png" width="32" height="32" alt=""> | **Nagietek (kwitnie)** | `nagietek_etap3` | **Kopanie:** od razu<br>**Daje:** Młody nagietek<br>**Zbiór (PPM):** Kwiat nagietka 1-3<br>**Skąd:** wyrasta z: Nagietek (pąki) |
 
 ## Światło
 

@@ -12,7 +12,8 @@ bez pisania kodu. Są dwa rodzaje:
   (kępa liści, wachlarz łodyg z fioletowymi kłosami), krzak **piwonia**
   (kopułka liści, kuliste różowe kwiaty), **zawilec** (okółki liści,
   otwarte, przechylone kwiaty), **dzwonek gołębi** (zwisające dzwonki)
-  albo **szałwia** (szarozielony krzak, kłosy w okółkach).
+  **szałwia** (szarozielony krzak, kłosy w okółkach) albo **nagietek**
+  (pomarańczowe koszyczki).
 
 ![Amarantus - trzy etapy wzrostu obok słupka z 2 bloków](rosliny-amarantus.png)
 
@@ -27,6 +28,8 @@ bez pisania kodu. Są dwa rodzaje:
 ![Dzwonek gołębi - zwisające dzwonki, obok zawilec](rosliny-dzwonek.png)
 
 ![Szałwia - szarozielone krzaczki z kłosami w okółkach](rosliny-szalwia.png)
+
+![Nagietek - pomarańczowe koszyczki](rosliny-nagietek.png)
 
 ## Skala: 16 pikseli na blok
 
@@ -170,7 +173,7 @@ i miejsca nad rośliną) wynika z parametrów: kocanka 8 x 4, 10 x 6
 i 10 x 10 pikseli, lawenda 12 x 6, 12 x 11 i 14 x 15 pikseli, piwonia
 12 x 6, 14 x 9 i 16 x 12 pikseli, zawilec 10 x 4, 12 x 8 i 12 x 12
 pikseli, dzwonek 12 x 5, 12 x 11 i 14 x 13 pikseli, szałwia 12 x 4, 14 x 11
-i 16 x 14 pikseli.
+i 16 x 14 pikseli, nagietek 12 x 3, 14 x 9 i 14 x 12 pikseli.
 
 ```json
 "etapy": [
@@ -299,7 +302,8 @@ zmniejszenie bywa 3-5 razy. Proponowane rozmiary (prawdziwa wysokość
 | cynia, mikołajek | 0.3-0.9 m | 0.75 bloku (12 px) | krzyż |
 | **lawenda** | 0.3-0.6 m | **do 15 px (prawie blok)** | **`kepka`: kępa + rozchylone łodygi z kłosami - zrobione** (0.32.0) |
 | **szałwia** | 0.3-0.6 m | **16 x 14 px** | **`kepka`: krzak, kłosy w okółkach - zrobione** (0.36.0) |
-| nagietek, wilczomlecz, mięta wodna | 0.3-0.6 m | 0.6 bloku (10 px) | `kepka`; mięta przy wodzie |
+| **nagietek** | 0.3-0.6 m | **14 x 12 px** | **`kepka`: krzak, talerzyki (tylko `roslina.json`) - zrobione** (0.37.0) |
+| wilczomlecz, mięta wodna | 0.3-0.6 m | 0.6 bloku (10 px) | `kepka`; mięta przy wodzie |
 | **dzwonek gołębi** | 0.3-0.5 m | **14 x 13 px** | **`kepka`: kępa liści, zwisające dzwonki - zrobione** (0.35.0) |
 | storczyk | 0.3-0.5 m | 0.5 bloku (8 px) | krzyż albo `kepka` |
 | **kocanka piaskowa** | 0.1-0.3 m | **do 10 px (0.6 bloku)** | **model z pikseli `kepka` - zrobione** (0.31.0): rozeta, łodygi, baldachy |

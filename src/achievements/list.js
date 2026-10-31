@@ -205,6 +205,19 @@ const SAGE = getPlantPack('szalwia')?.item ? [{
     when: (data) => data.item === 'szalwia_lisc'
 }] : [];
 
+// Nagietek (assets/rosliny/nagietek) - pomarańczowe koszyczki.
+
+const MARIGOLD = getPlantPack('nagietek')?.item ? [{
+    id: 'marigold',
+    tier: 'common',
+    title: 'Słoneczko',
+    task: 'Zbierz kwiat z kwitnącego nagietka (pomarańczowe koszyczki na łąkach i plażach).',
+    comment: 'Otwiera się rano, zamyka wieczorem. Ma lepszy rytm dnia niż niejeden gracz.',
+    icon: 'nagietek_kwiat',
+    on: 'harvested',
+    when: (data) => data.item === 'nagietek_kwiat'
+}] : [];
+
 
 // "Złota godzina": słońce nisko nad horyzontem (wschód albo zachód),
 // gracz patrzy prosto na nie i nic go nie zasłania.
@@ -313,6 +326,7 @@ export const ACHIEVEMENTS = [
     ...ANEMONE,
     ...BELLFLOWER,
     ...SAGE,
+    ...MARIGOLD,
     {
         id: 'plant',
         tier: 'common',

@@ -268,6 +268,11 @@ export async function createBlockIcons() {
 
         const textures = definition.textures;
 
+        if (definition.modelIcon) {
+            icons.set(type, new URL(`../../${definition.modelIcon}`, import.meta.url).href);
+            continue;
+        }
+
         if (definition.model === 'riverPlant') {
             icons.set(type, definition.riverPlant.tuft
                 ? pixelPlantIcon(getRiverPlantFaces(definition.riverPlant.kind, 0, false, definition.riverPlant.tuft))

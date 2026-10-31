@@ -194,7 +194,7 @@ const blocks = blockTypes.map((type) => {
         category: C.getCategory(type),
         model,
         creative: definition.creative !== false,
-        icon: definition.riverPlant?.tuft
+        icon: definition.modelIcon ? { kind: 'file', file: definition.modelIcon } : definition.riverPlant?.tuft
             // Mała roślina z pikseli - gotowe piksele 64 x 64 (jak w grze).
             ? { kind: 'pixels', size: 64, data: Buffer.from(pixelPlantIconPixels(getRiverPlantFaces(definition.riverPlant.kind, 0, false, definition.riverPlant.tuft), 64)).toString('base64') }
             : model === 'cross' || model === 'flat'

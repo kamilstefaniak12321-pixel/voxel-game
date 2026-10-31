@@ -11,6 +11,26 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 0.42.0 - Nowy model borówki
+
+Podmiana borówki na modele z paczki „Borowka-cztery-etapy-v1.2”.
+
+- Cztery przestrzenne modele: młody krzak, dorosły z kilkoma owocami,
+  pełny i dorosły po zbiorze. Liście mają prześwity, a owoce są
+  kostkami o krawędzi 1/16 bloku. Dorosły krzak ma 0,75 bloku wysokości.
+- Młody krzak dorasta do pierwszych owoców; po zbiorze zostaje dorosły
+  krzak, na którym odrastają owoce. Średni czas pierwszego pełnego plonu oraz
+  ilość zbieranych borówek pozostają zgodne z dotychczasową grą.
+- Nowe modele w świecie i w ręce, ikony ekwipunku oraz wiki, ramka
+  celowania dopasowana do kształtu i wysokości krzaka.
+- Zachowane numery wszystkich czterech bloków: istniejące światy
+  dostają nowy wygląd bez regeneracji terenu. Borówki nadal rosną
+  w dotychczasowych biomach, służą do sadzenia i niebieskich przepisów.
+- Modele korzystają ze wspólnego atlasu i rysowania roślin, wiatru
+  oraz oświetlenia gry. Pełny ekwipunek nie zabiera owoców z krzaka.
+- Wersja 0.42.0 dla Windowsa i Androida, przygotowana do publikacji
+  po scaleniu PR; wydanie 0.41.0 pozostaje ostatnią pobieralną bazą.
+
 ## 0.41.0 - Barwinek (dywan kwiatów)
 
 Barwinek - płożący się dywan kwiatów — PR #70 (zawiera #64-#69).

@@ -3,6 +3,7 @@ import * as THREE from 'three';
 import { PACK_TEXTURES, TREE_PACK_ERRORS } from '../blocks/treePacks.js';
 
 import { PLANT_TEXTURES, PLANT_PACK_ERRORS } from '../blocks/plantPacks.js';
+import { BLUEBERRY_TEXTURE, BLUEBERRY_ATLAS_URL } from '../blocks/blueberry.js';
 
 import { getPackInfo, loadPackTiles, gameResolution, safeResolution, startSucceeded } from './TexturePacks.js';
 
@@ -355,6 +356,12 @@ PACK_TILE_NAMES.forEach((name, i) => {
 // ich 16, ale ostatnie są puste - czekają na tekstury paczek drzew). Mniej
 // wierszy = mniej pamięci karty graficznej (ważne przy dużej paczce
 // tekstur). Paczki drzew z wieloma teksturami dokładają wiersze same.
+// Imported model atlas is packed below the plant sheets. It remains in the
+// same GPU texture and plant batch, including with high-resolution packs.
+ATLAS_TILES[BLUEBERRY_TEXTURE] = {
+    x: 0, y: Math.max(...Object.values(ATLAS_TILES).map(tile => tile.y + (tile.h ?? 1))),
+    w: 4, h: 4, pw: 64, ph: 64
+};
 export const ATLAS_ROWS = Math.max(...Object.values(ATLAS_TILES).map((tile) => tile.y + (tile.h ?? 1)));
 
 
@@ -490,10 +497,6 @@ async function buildBaseAtlas() {
 
     const base = await loadImage(atlasUrl.href);
 
-    if (PACK_TILE_NAMES.length === 0 && PLANT_TILE_NAMES.length === 0 && base.height === ATLAS_ROWS * ATLAS_TILE_SIZE) {
-        return base;
-    }
-
     const T = ATLAS_TILE_SIZE;
 
     const canvas = createCanvas(ATLAS_COLUMNS * T, ATLAS_ROWS * T);
@@ -576,6 +579,14 @@ async function buildBaseAtlas() {
 
     });
 
+
+    const blueberryAtlas = await loadImage(BLUEBERRY_ATLAS_URL);
+    if (blueberryAtlas.width !== 64 || blueberryAtlas.height !== 64) {
+        throw new Error('Atlas borówki musi mieć 64 × 64 piksele');
+    }
+    const blueberryTile = ATLAS_TILES[BLUEBERRY_TEXTURE];
+    context.clearRect(blueberryTile.x * T, blueberryTile.y * T, 64, 64);
+    context.drawImage(blueberryAtlas, blueberryTile.x * T, blueberryTile.y * T);
 
     // Gotowy atlas z powrotem jako zwykły obrazek (PNG) - tak jak sam
     // terrain.png. Rysowanie z obrazka (ikonki, średnie kolory, tekstura

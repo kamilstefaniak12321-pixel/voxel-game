@@ -1,6 +1,7 @@
 import { WATER_SURFACE } from '../config.js';
 import { createPixelPlant } from './PixelPlantBuilder.js';
 import { makeTuftTemplate } from './TuftGeometry.js';
+import { getBlueberryFaces } from './BlueberryGeometry.js';
 
 // Small reusable templates, appended to the ordinary chunk plant batch. There
 // are no Object3Ds, materials or draw calls per plant. Colours are linear RGB
@@ -142,6 +143,7 @@ function makeTemplate(kind, variant, waterlogged) {
 // mask - sąsiedzi dywanu (barwinek, TuftGeometry.js - carpet); inne
 // rośliny jej nie używają.
 export function getRiverPlantFaces(kind, variant, waterlogged = false, tuft = null, mask = 0) {
+    if (kind.startsWith('blueberry:')) return getBlueberryFaces(kind.slice(10));
     const normalizedVariant = variant & 7;
     const carpetMask = tuft?.carpet ? mask & 15 : 0;
     const key = `${kind}:${normalizedVariant}:${waterlogged ? 1 : 0}:${carpetMask}`;

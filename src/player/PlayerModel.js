@@ -449,14 +449,14 @@ export function buildBlockGeometry(type) {
     if (definition.model === 'riverPlant') {
         // Ten sam model co nad rzeką, bez otaczającej go wody.
         const positions = [], normals = [], uvs = [], colors = [], indices = [];
-        const uv = getAtlasUV('snow');
+        const uv = getAtlasUV(definition.riverPlant.texture ?? 'snow');
         const texel = [(uv.uMin + uv.uMax) / 2, (uv.vMin + uv.vMax) / 2];
         for (const face of getRiverPlantFaces(definition.riverPlant.kind, 0, definition.riverPlant.waterlogged, definition.riverPlant.tuft)) {
             const base = positions.length / 3;
             for (let i = 0; i < 4; i++) {
                 positions.push(...face.vertices[i]);
                 normals.push(...face.normal);
-                uvs.push(...texel);
+                uvs.push(...(face.uv ? [uv.uMin + face.uv[i][0] * (uv.uMax - uv.uMin), uv.vMax - face.uv[i][1] * (uv.vMax - uv.vMin)] : texel));
                 colors.push(...face.color.map(value => value / 255));
             }
             indices.push(base, base + 2, base + 1, base + 2, base + 3, base + 1);

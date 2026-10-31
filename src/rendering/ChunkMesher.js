@@ -744,8 +744,8 @@ function addRiverPlants(plants, faceCount, baseX, baseZ, grassDetail = null) {
                 normalBuffer[p + i * 3 + 2] = sin * face.normal[0] + cos * face.normal[2];
                 // A model pixel has one colour, without a whole 16x16 tile
                 // repeated inside it. Keep the shared atlas/material batch.
-                uvBuffer[t + i * 2] = (uMax + uMin) / 2;
-                uvBuffer[t + i * 2 + 1] = (vMin + vMax) / 2;
+                uvBuffer[t + i * 2] = face.uv ? uMin + face.uv[i][0] * (uMax - uMin) : (uMax + uMin) / 2;
+                uvBuffer[t + i * 2 + 1] = face.uv ? vMax - face.uv[i][1] * (vMax - vMin) : (vMin + vMax) / 2;
                 plantMotionBuffer[t + i * 2] = face.weights[i];
                 plantMotionBuffer[t + i * 2 + 1] = face.movement;
 

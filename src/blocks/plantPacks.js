@@ -213,8 +213,8 @@ function parseTuft(model, what, seedText, packColors) {
 
     const layout = leaves.uklad ?? 'rozeta';
 
-    if (!['rozeta', 'kepa', 'krzak', 'brak'].includes(layout)) {
-        fail(`"${what}.liscie.uklad": "rozeta" (przy ziemi), "kepa" (stojące liście), "krzak" (kopułka liści) albo "brak"`);
+    if (!['rozeta', 'kepa', 'krzak', 'dywan', 'brak'].includes(layout)) {
+        fail(`"${what}.liscie.uklad": "rozeta" (przy ziemi), "kepa" (stojące liście), "krzak" (kopułka liści), "dywan" (płoży się, łączy z sąsiadami) albo "brak"`);
     }
 
     const stemLeaves = stems.liscie;
@@ -245,7 +245,7 @@ function parseTuft(model, what, seedText, packColors) {
             layout,
             count: pixelRange(leaves.ile, [4, 6], `${what}.liscie.ile`, 0, layout === 'kepa' ? 32 : 12),
             length: pixelRange(leaves.dlugosc, [2, 4], `${what}.liscie.dlugosc`, 1, layout === 'kepa' ? 12 : 7),
-            radius: leaves.promien === undefined ? 2 : number(leaves.promien, `${what}.liscie.promien`, 0, 5),
+            radius: leaves.promien === undefined ? 2 : number(leaves.promien, `${what}.liscie.promien`, 0, layout === 'dywan' ? 7 : 5),
             edge: leaves.brzeg === undefined ? 2 : number(leaves.brzeg, `${what}.liscie.brzeg`, 1, 4)
         },
         stems: {
@@ -265,6 +265,17 @@ function parseTuft(model, what, seedText, packColors) {
         seed
     };
 
+    // Dywan (barwinek) łączy się z takimi samymi sąsiadami (ChunkMesher).
+    if (layout === 'dywan') {
+        tuft.carpet = true;
+        if (tuft.flower && !tuft.flower.count) {
+            tuft.flower.count = [2, 3];
+        }
+        if (tuft.flower && !['gwiazdka', 'pak'].includes(tuft.flower.kind)) {
+            fail(`"${what}.kwiaty": na dywanie tylko "gwiazdka" albo "pak"`);
+        }
+    }
+
     tuft.height = tuftPixels(tuft);
 
     return tuft;
@@ -277,12 +288,12 @@ function parseTuft(model, what, seedText, packColors) {
 // wysokości, w promieniu, odchylone o 3), łodygi z kwiatami (kłos ma
 // kwiatki o 1 z boku).
 
-const FLOWER_HEIGHT = { baldach: () => 2, klos: (size) => size, pak: (size) => size, pompon: (size) => size + 2, talerz: (size) => (size > 1 ? 4 : 3), dzwonek: () => 1, warstwy: (size) => size + 1, oset: (size) => size + 2 };
-const FLOWER_SIDE = { baldach: (size) => size, klos: (size) => (size >= 3 ? 1 : 0), pak: (size) => size - 1, pompon: (size) => size, talerz: (size) => size, dzwonek: () => 3, warstwy: (size) => size, oset: (size) => size + 1 };
+const FLOWER_HEIGHT = { baldach: () => 2, klos: (size) => size, pak: (size) => size, pompon: (size) => size + 2, talerz: (size) => (size > 1 ? 4 : 3), dzwonek: () => 1, warstwy: (size) => size + 1, oset: (size) => size + 2, gwiazdka: () => 1 };
+const FLOWER_SIDE = { baldach: (size) => size, klos: (size) => (size >= 3 ? 1 : 0), pak: (size) => size - 1, pompon: (size) => size, talerz: (size) => size, dzwonek: () => 3, warstwy: (size) => size, oset: (size) => size + 1, gwiazdka: (size) => size };
 
 // Kwiaty: rodzaj -> [domyślny rozmiar, najmniejszy, największy];
 // "rozmiar" to liczba albo [od, do] (każda łodyga losuje).
-const FLOWER_SIZES = { baldach: [1, 1, 2], klos: [3, 1, 6], pak: [1, 1, 2], pompon: [1, 1, 2], talerz: [1, 1, 2], dzwonek: [2, 1, 2], warstwy: [1, 1, 2], oset: [1, 1, 2] };
+const FLOWER_SIZES = { baldach: [1, 1, 2], klos: [3, 1, 6], pak: [1, 1, 2], pompon: [1, 1, 2], talerz: [1, 1, 2], dzwonek: [2, 1, 2], warstwy: [1, 1, 2], oset: [1, 1, 2], gwiazdka: [1, 1, 2] };
 
 function flowerSizes(flower, what) {
 
@@ -297,6 +308,12 @@ function flowerSizes(flower, what) {
 
     const result = { kind: flower.rodzaj, sizes: [sizes[0], sizes[sizes.length - 1]], size: sizes[sizes.length - 1] };
 
+    // Ile kwiatów na dywanie (barwinek) - kwiaty leżą na liściach, nie
+    // na łodygach.
+    if (flower.ile !== undefined) {
+        result.count = pixelRange(flower.ile, null, `${what}.ile`, 0, 8);
+    }
+
     if (flower.okolki) {
         result.whorls = true;
     }
@@ -307,6 +324,11 @@ function flowerSizes(flower, what) {
 
 function tuftPixels(tuft) {
 
+    // Dywan: liście na 1-2 pikselach, kwiaty i pąki na trzecim.
+    if (tuft.leaves.layout === 'dywan') {
+        return tuft.flower ? 3 : 2;
+    }
+
     const flower = tuft.flower ? FLOWER_HEIGHT[tuft.flower.kind](tuft.flower.size) : 0;
     const leaves = { kepa: tuft.leaves.length[1], rozeta: tuft.leaves.length[1] + 1, krzak: tuft.leaves.length[1] + 1, brak: 0 }[tuft.leaves.layout];
 
@@ -315,6 +337,11 @@ function tuftPixels(tuft) {
 }
 
 function tuftWidth(tuft) {
+
+    // Dywan: cała komórka (w stronę sąsiada aż do krawędzi).
+    if (tuft.leaves.layout === 'dywan') {
+        return 16;
+    }
 
     const flower = tuft.flower ? (tuft.flower.whorls ? 1 : FLOWER_SIDE[tuft.flower.kind](tuft.flower.size)) : 0;
     const leaves = { kepa: tuft.leaves.radius + 3 + 1, rozeta: tuft.leaves.length[1] + 1, krzak: tuft.leaves.radius + tuft.leaves.edge + 1, brak: 0 }[tuft.leaves.layout];

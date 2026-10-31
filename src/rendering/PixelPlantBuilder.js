@@ -41,7 +41,9 @@ export function createPixelPlant(palette, floating, movement, motionHeight) {
         if (sign) face(vertices, axis, sign, color);
         else { face(vertices, axis, 1, color); face(vertices, axis, -1, color); }
     }
-    function sheet(axis, plane, draw) {
+    // sign: 0 - widać z obu stron, 1 / -1 - tylko z jednej (np. dywan
+    // liści na ziemi - od spodu nikt nie patrzy).
+    function sheet(axis, plane, draw, sign = 0) {
         const cells = new Map();
         const pixel = (u, v, color) => cells.set(`${u},${v}`, color);
         const rect = (u, v, w, h, color) => {
@@ -56,7 +58,7 @@ export function createPixelPlant(palette, floating, movement, motionHeight) {
             }
         };
         draw({ pixel, rect, leaf });
-        for (const rectangle of pixelRectangles(cells)) surface(axis, plane, rectangle);
+        for (const rectangle of pixelRectangles(cells)) surface(axis, plane, rectangle, sign);
     }
     function box(x, y, z, width, height, depth, color, cap = color) {
         for (let j=0; j<height; j++) for (let k=0; k<depth; k++) for (let i=0; i<width; i++) {

@@ -1,0 +1,53 @@
+{
+    "nazwa": "Barwinek",
+    "nazwaAngielska": "Periwinkle",
+    "opis": "płoży się po ziemi - ciemnozielone, błyszczące liście na pędach i liliowoniebieskie kwiaty-gwiazdki; barwinki obok siebie łączą się w jeden dywan kwiatów w lasach i na łąkach",
+    "pierwszeId": 5027,
+    "etapy": [
+        {
+            "nazwa": "Młody barwinek",
+            "model": { "rodzaj": "kepka", "liscie": { "uklad": "dywan", "promien": 3, "ile": [2, 3] } }
+        },
+        {
+            "nazwa": "Barwinek (pąki)",
+            "model": {
+                "rodzaj": "kepka",
+                "liscie": { "uklad": "dywan", "promien": 5, "ile": [3, 4] },
+                "kwiaty": { "rodzaj": "pak", "ile": [2, 3] }
+            }
+        },
+        {
+            "nazwa": "Barwinek (kwitnie)",
+            "model": {
+                "rodzaj": "kepka",
+                "liscie": { "uklad": "dywan", "promien": 6, "ile": [3, 5] },
+                "kwiaty": { "rodzaj": "gwiazdka", "rozmiar": [1, 2], "ile": [2, 3] }
+            }
+        }
+    ],
+    "kolory": {
+        "lisc": "#467a2e",
+        "liscJasny": "#5f8a36",
+        "liscCiemny": "#264a20",
+        "lodyga": "#5a4a1e",
+        "kwiat": "#8a84d6",
+        "kwiatJasny": "#a49ee6",
+        "kwiatCiemny": "#565299",
+        "pak": "#6d69b2",
+        "srodek": "#f0ece0"
+    },
+    "czasWzrostu": 240,
+    "przedmiot": {
+        "klucz": "kwiat",
+        "plik": "kwiat.png",
+        "nazwa": "Kwiat barwinka",
+        "nazwaAngielska": "Periwinkle Flower",
+        "kategoria": "ozdoby"
+    },
+    "zbior": { "ile": [1, 2], "wraca": 2 },
+    "gdzieRosnie": { "biomy": { "las": 1, "buczyna": 0.7, "laka": 0.4 }, "plamy": 0.02, "gestosc": 0.85, "etapy": [0.15, 0.25, 0.6] },
+    "zrodlo": {
+        "atlas": "Pixelowy atlas barwinka do Minecrafta.png",
+        "przedmiot": "kwiat: --wysokosc 16 --nazwy etap1,etap2,etap3,kwiat; etapy - model z pikseli (dywan: kobierzec liści łączący się z sąsiadami, kwiaty-gwiazdki) w kolorach atlasu"
+    }
+}

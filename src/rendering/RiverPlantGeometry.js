@@ -139,11 +139,21 @@ function makeTemplate(kind, variant, waterlogged) {
 
 // tuft - kępka z paczki roślin (model "kepka", TuftGeometry.js): ten sam
 // model z pikseli, tylko kształt z parametrów rośliny, nie z nazwy.
-export function getRiverPlantFaces(kind, variant, waterlogged = false, tuft = null) {
+// mask - sąsiedzi dywanu (barwinek, TuftGeometry.js - carpet); inne
+// rośliny jej nie używają.
+export function getRiverPlantFaces(kind, variant, waterlogged = false, tuft = null, mask = 0) {
     const normalizedVariant = variant & 7;
-    const key = `${kind}:${normalizedVariant}:${waterlogged ? 1 : 0}`;
+    const carpetMask = tuft?.carpet ? mask & 15 : 0;
+    const key = `${kind}:${normalizedVariant}:${waterlogged ? 1 : 0}:${carpetMask}`;
     if (!cache.has(key)) {
-        cache.set(key, tuft ? makeTuftTemplate(tuft, normalizedVariant) : makeTemplate(kind, normalizedVariant, waterlogged));
+        cache.set(key, tuft ? makeTuftTemplate(tuft, normalizedVariant, carpetMask) : makeTemplate(kind, normalizedVariant, waterlogged));
     }
     return cache.get(key);
+}
+
+// Dywan (barwinek) leży na całej komórce bez obrotu i przesunięcia -
+// brzegi kobierców sąsiadów muszą do siebie pasować.
+export function plantTransform(x, y, z, tuft) {
+    const transform = riverPlantTransform(x, y, z);
+    return tuft?.carpet ? { variant: transform.variant, cos: 1, sin: 0, x: 0.5, z: 0.5 } : transform;
 }

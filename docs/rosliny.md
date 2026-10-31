@@ -14,7 +14,9 @@ bez pisania kodu. Są dwa rodzaje:
   otwarte, przechylone kwiaty), **dzwonek gołębi** (zwisające dzwonki)
   **szałwia** (szarozielony krzak, kłosy w okółkach), **nagietek**
   (pomarańczowe koszyczki), **cynia** (liście parami, kwiaty z pięter
-  płatków) albo **mikołajek** (niebieskie główki na gwiazdach kolców).
+  płatków), **mikołajek** (niebieskie główki na gwiazdach kolców) albo
+  **barwinek** - płoży się po ziemi i **łączy z sąsiednimi barwinkami
+  w jeden dywan kwiatów**.
 
 ![Amarantus - trzy etapy wzrostu obok słupka z 2 bloków](rosliny-amarantus.png)
 
@@ -35,6 +37,8 @@ bez pisania kodu. Są dwa rodzaje:
 ![Cynia - koralowe kwiaty z pięter płatków](rosliny-cynia.png)
 
 ![Mikołajek - niebieskie główki na gwiazdach kolców](rosliny-mikolajek.png)
+
+![Barwinek - dywan kwiatów na skraju lasu (wygenerowany teren)](rosliny-barwinek.png)
 
 ## Skala: 16 pikseli na blok
 
@@ -144,6 +148,17 @@ samej skali co bloki - jeden piksel modelu to 1/16 bloku:
     wierzch), z boków na różnych wysokościach wystają płaskie liście -
     postrzępiony, liściasty brzeg - piwonia,
   - `brak` - bez liści przy ziemi,
+  - `dywan` - roślina płożąca się (barwinek): płaski kobierzec na całą
+    komórkę - ciemne tło (cień między liśćmi), owalne liście, brązowe pędy
+    od środka na boki, wyżej jaśniejsze liście, na liściach kwiaty
+    (`gwiazdka` albo `pak`, `kwiaty.ile` na blok). **Łączy się
+    z sąsiadami**: w stronę, gdzie rośnie ta sama roślina (dowolny etap),
+    kobierzec sięga do samej krawędzi, a pęd przechodzi przez nią
+    w stałym miejscu - u sąsiada w tym samym, więc barwinki obok siebie
+    tworzą jeden dywan; od strony bez sąsiada brzeg jest postrzępiony.
+    Samotny barwinek to okrągła kępka. W połączonym dywanie więcej
+    kwiatów. Dywan leży bez obrotu, celownik - cała komórka. `promien` -
+    wielkość kępki (do 7 px), `ile` - jaśniejsze liście na wierzchu,
 - **łodygi** - słupki 1 x 1 piksel w różnych miejscach kępki (nie
   stykają się), na nich 1-2 listki; `rozchylone` - łodyga zaczyna się
   w kępie i schodkami odchyla się na swoje miejsce (wachlarz łodyg);
@@ -173,7 +188,9 @@ samej skali co bloki - jeden piksel modelu to 1/16 bloku:
   2 - 5 x 5, trzy piętra), `oset` - jajowata główka z kostek w kratkę
   (jasne i ciemne kwiatki na przemian), pod nią płaska gwiazda
   kolczastych przysadek w 8 stron w kolorze `liscJasny` (rozmiar 1 -
-  główka 3 x 3 x 3, 2 - 3 x 3 x 4), albo brak.
+  główka 3 x 3 x 3, 2 - 3 x 3 x 4), `gwiazdka` (tylko na dywanie) - płaski
+  kwiat leżący na liściach: krzyżyk 3 x 3 albo wiatraczek 5 x 5 z jasnym
+  `srodek`, albo brak.
   `rozmiar` może być zakresem `[od, do]` - każda łodyga losuje (piwonia
   ma duże i małe kwiaty).
 
@@ -186,7 +203,8 @@ i 10 x 10 pikseli, lawenda 12 x 6, 12 x 11 i 14 x 15 pikseli, piwonia
 12 x 6, 14 x 9 i 16 x 12 pikseli, zawilec 10 x 4, 12 x 8 i 12 x 12
 pikseli, dzwonek 12 x 5, 12 x 11 i 14 x 13 pikseli, szałwia 12 x 4, 14 x 11
 i 16 x 14 pikseli, nagietek 12 x 3, 14 x 9 i 14 x 12 pikseli, cynia 10 x 7, 12 x 11
-i 14 x 13 pikseli, mikołajek 12 x 3, 14 x 11 i 14 x 14 pikseli.
+i 14 x 13 pikseli, mikołajek 12 x 3, 14 x 11 i 14 x 14 pikseli; barwinek - cała komórka
+(16 x 16), 2-3 piksele wysokości.
 
 ```json
 "etapy": [
@@ -206,14 +224,14 @@ i 14 x 13 pikseli, mikołajek 12 x 3, 14 x 11 i 14 x 14 pikseli.
 
 | pole modelu | znaczenie (piksele = 1/16 bloku) |
 |---|---|
-| `liscie.uklad` | `rozeta` (domyślnie), `kepa`, `krzak` albo `brak` |
+| `liscie.uklad` | `rozeta` (domyślnie), `kepa`, `krzak`, `dywan` albo `brak` |
 | `liscie.ile`, `liscie.dlugosc` | rozeta: ile liści [od, do] (0-12), długość od środka (1-7); kępa: ile liści (0-32), wysokość (1-12); krzak: `dlugosc` - wysokość kopułki |
-| `liscie.promien` | kępa, krzak: promień kopułki (0-5, domyślnie 2); liście sięgają o 2 dalej |
+| `liscie.promien` | kępa, krzak: promień kopułki (0-5, domyślnie 2); liście sięgają o 2 dalej; dywan: wielkość samotnej kępki (do 7) |
 | `liscie.brzeg` | krzak: długość liści z boków kopułki (1-4, domyślnie 2) |
 | `lodygi.ile`, `lodygi.wysokosc`, `lodygi.promien` | łodygi: ile (0-12, domyślnie bez łodyg), wysokość [od, do] (1-24), jak daleko od środka szczyt (0-6) |
 | `lodygi.rozchylone` | `true` - łodygi wyrastają bliżej środka i odchylają się na boki (wachlarz) |
 | `lodygi.liscie` | `{ "co": 1-6, "dlugosc": [od, do] }` - płaskie liście na łodygach co tyle pikseli (nad kopułką krzaka), długość 1-5, `"naprzeciw": true` - parami; `{ "okolek": 2-5, "dlugosc": [od, do] }` - okółek liści w ok. połowie łodygi |
-| `kwiaty` | `{ "rodzaj": "baldach", "rozmiar": 1-2 }`, `{ "rodzaj": "klos", "rozmiar": 1-6, "okolki": true }` (długość kłosa; okółki - z przerwami), `{ "rodzaj": "pompon", "rozmiar": 1-2 }`, `{ "rodzaj": "talerz", "rozmiar": 1-2 }`, `{ "rodzaj": "dzwonek", "rozmiar": 1-2 }`, `{ "rodzaj": "warstwy", "rozmiar": 1-2 }`, `{ "rodzaj": "oset", "rozmiar": 1-2 }`, `{ "rodzaj": "pak", "rozmiar": 1-2 }` albo brak; `rozmiar` - liczba albo `[od, do]` |
+| `kwiaty` | `{ "rodzaj": "baldach", "rozmiar": 1-2 }`, `{ "rodzaj": "klos", "rozmiar": 1-6, "okolki": true }` (długość kłosa; okółki - z przerwami), `{ "rodzaj": "pompon", "rozmiar": 1-2 }`, `{ "rodzaj": "talerz", "rozmiar": 1-2 }`, `{ "rodzaj": "dzwonek", "rozmiar": 1-2 }`, `{ "rodzaj": "warstwy", "rozmiar": 1-2 }`, `{ "rodzaj": "oset", "rozmiar": 1-2 }`, `{ "rodzaj": "gwiazdka", "rozmiar": 1-2, "ile": [od, do] }` (dywan), `{ "rodzaj": "pak", "rozmiar": 1-2 }` albo brak; `rozmiar` - liczba albo `[od, do]` |
 | `kolory` | 9 kolorów: `lisc`, `liscJasny`, `liscCiemny`, `lodyga`, `kwiat`, `kwiatJasny`, `kwiatCiemny`, `pak`, `srodek` (środek kwiatu) - dla całej paczki (obok `etapy`), etap może zmienić własnymi `model.kolory` |
 
 Kolory najlepiej wziąć z atlasu rośliny (`tools/rosliny_z_atlasu.py
@@ -292,6 +310,18 @@ Cynia (bez liści przy ziemi, liście parami na krzyż, kwiaty z pięter):
 }
 ```
 
+Barwinek (dywan łączący się z sąsiadami, kwiaty-gwiazdki; w świecie
+gęste plamy - gestosc 0.85 - więc same tworzą się dywany):
+
+```json
+"model": {
+    "rodzaj": "kepka",
+    "liscie": { "uklad": "dywan", "promien": 6, "ile": [3, 5] },
+    "kwiaty": { "rodzaj": "gwiazdka", "rozmiar": [1, 2], "ile": [2, 3] }
+},
+"gdzieRosnie": { "biomy": { "las": 1, "buczyna": 0.7, "laka": 0.4 }, "plamy": 0.02, "gestosc": 0.85 }
+```
+
 ## Gdzie rosną
 
 Każda roślina ma **swój biom** (waga 1), gdzie rośnie najczęściej,
@@ -301,13 +331,13 @@ do numeru paczki - nowa roślina nie przesuwa plam innych.
 
 | biom | rośnie często | rzadziej |
 |---|---|---|
-| łąka | amarantus, nagietek | lawenda, szałwia, cynia |
+| łąka | amarantus, nagietek | lawenda, szałwia, cynia, barwinek |
 | hala | lawenda, dzwonek gołębi | - |
 | skaliste góry | szałwia | dzwonek gołębi, mikołajek |
 | plaża i wydmy | kocanka, mikołajek | nagietek |
 | bór sosnowy | kocanka | - |
-| las liściasty | piwonia | zawilec |
-| buczyna | zawilec | - |
+| las liściasty | piwonia, barwinek (dywany) | zawilec |
+| buczyna | zawilec | barwinek |
 | brzezina | cynia | piwonia |
 
 ## Komendy
@@ -351,7 +381,7 @@ zmniejszenie bywa 3-5 razy. Proponowane rozmiary (prawdziwa wysokość
 | storczyk | 0.3-0.5 m | 0.5 bloku (8 px) | krzyż albo `kepka` |
 | **kocanka piaskowa** | 0.1-0.3 m | **do 10 px (0.6 bloku)** | **model z pikseli `kepka` - zrobione** (0.31.0): rozeta, łodygi, baldachy |
 | **zawilec** | 0.1-0.3 m | **12 x 12 px** | **`kepka`: okółki liści, kwiaty-talerzyki - zrobione** (0.34.0) |
-| barwinek | 0.1-0.2 m, płożący | płasko | model płaski na ziemi (jak kępki mchu) z kwiatkami |
+| **barwinek** | 0.1-0.2 m, płożący | **płasko, cała komórka** | **`kepka` z liśćmi `dywan`: łączy się z sąsiadami w dywan kwiatów - zrobione** (0.41.0) |
 | porost oliwkowy, porost iglasty, żółta ochra | płaskie | płasko | model płaski na kamieniu i korze (jak opadłe liście), 4 odmiany |
 | grzyby półkowe | 5-30 cm | płasko na boku pnia | model przy ścianie (jak wieniec), na pniach |
 | lotos | liść 0.5 m na wodzie | liść płasko na tafli, kwiat 0.5 bloku nad wodą | jak grzybień (rośliny wodne 0.26.0) |

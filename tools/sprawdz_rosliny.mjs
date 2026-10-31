@@ -30,7 +30,8 @@ const P = await import('../src/blocks/plantPacks.js');
 const R = await import('../src/blocks/BlockRegistry.js');
 const { ITEM_TYPES } = await import('../src/items/ItemRegistry.js');
 const { GROUPS } = await import('../src/crafting/recipes.js');
-const { TREE_PACKS, PACK_ID_SLOTS } = await import('../src/blocks/treePacks.js');
+const { TREE_PACKS, PACK_ID_SLOTS, idsInRanges } = await import('../src/blocks/treePacks.js');
+const { getRiverPlantFaces } = await import('../src/rendering/RiverPlantGeometry.js');
 
 assert.deepEqual(P.PLANT_PACK_ERRORS, [], 'paczki roślin bez błędów');
 assert.ok(P.PLANT_PACKS.length > 0, 'jest choć jedna paczka');
@@ -41,6 +42,7 @@ function pngSize(path) {
 }
 
 let stages = 0;
+let tuftFaces = 0;
 
 for (const pack of P.PLANT_PACKS) {
 
@@ -55,17 +57,48 @@ for (const pack of P.PLANT_PACKS) {
 
         assert.ok(definition, `${type} jest blokiem`);
         assert.equal(definition.id, pack.firstId + i, `${type}: kolejny numer`);
-        assert.ok(definition.id >= 100 && definition.id <= 239, `${type}: numer w zakresie paczek`);
+        assert.ok(idsInRanges(definition.id, 1, P.PLANT_ID_RANGES), `${type}: numer w zakresie paczek roślin`);
 
         for (const tree of TREE_PACKS) {
             assert.ok(definition.id < tree.firstId || definition.id >= tree.firstId + PACK_ID_SLOTS, `${type}: nie zachodzi na drzewo ${tree.id}`);
         }
 
-        const [w, h] = pngSize(`${pack.folder}/${stage.file}`);
-        assert.equal(definition.plant.height, h / 16, `${type}: wysokość = obrazek / 16`);
-        assert.equal(definition.plant.width, w / 32, `${type}: pół szerokości = obrazek / 32`);
-        assert.deepEqual(definition.plant.sprite, { width: Math.ceil(w / 16), height: Math.ceil(h / 16) }, `${type}: kafelki obrazka`);
-        assert.equal(definition.model, 'cross');
+        if (stage.tuft) {
+
+            // Kępka z pikseli (model "kepka"): model rośliny jak nad rzeką,
+            // bez obrazka; rozmiar z modelu, wszystkie 8 odmian mieści się
+            // w opisanym rozmiarze.
+            assert.equal(definition.model, 'riverPlant', `${type}: model z pikseli`);
+            assert.equal(definition.riverPlant.waterlogged, false);
+            assert.equal(definition.riverPlant.tuft, stage.tuft);
+            assert.equal(definition.plant.height, stage.height / 16);
+            assert.ok(stage.file === null, `${type}: bez obrazka etapu`);
+
+            for (let variant = 0; variant < 8; variant++) {
+                const faces = getRiverPlantFaces(definition.riverPlant.kind, variant, false, stage.tuft);
+                assert.ok(faces.length > 0 && faces.length <= 320, `${type}: odmiana ${variant} ma ${faces.length} ścian (najwyżej 320)`);
+                const top = Math.max(...faces.flatMap((face) => face.vertices.map((v) => v[1])));
+                const side = Math.max(...faces.flatMap((face) => face.vertices.map((v) => Math.max(Math.abs(v[0]), Math.abs(v[2])))));
+                assert.ok(top <= definition.plant.height + 1e-6, `${type}: odmiana ${variant} nie wyższa niż ${definition.plant.height}`);
+                assert.ok(side <= definition.plant.width + 1 / 16 + 1e-6, `${type}: odmiana ${variant} nie szersza niż opis`);
+                assert.ok(faces.every((face) => face.normal[1] > 0.4), `${type}: miękkie światło (normalne w górę)`);
+                tuftFaces = Math.max(tuftFaces, faces.length);
+            }
+
+            assert.equal(R.canPlantStay(definition.id, R.getBlockId('sand')), (pack.ground ?? []).includes('sand'), `${type}: piasek tylko z "podloze"`);
+            assert.equal(R.canPlantStay(definition.id, R.getBlockId('grass')), true, `${type}: rośnie na trawie`);
+
+        }
+        else {
+
+            const [w, h] = pngSize(`${pack.folder}/${stage.file}`);
+            assert.equal(definition.plant.height, h / 16, `${type}: wysokość = obrazek / 16`);
+            assert.equal(definition.plant.width, w / 32, `${type}: pół szerokości = obrazek / 32`);
+            assert.deepEqual(definition.plant.sprite, { width: Math.ceil(w / 16), height: Math.ceil(h / 16) }, `${type}: kafelki obrazka`);
+            assert.equal(definition.model, 'cross');
+
+        }
+
         assert.equal(R.isPlantId(definition.id), true, `${type}: roślina`);
         assert.equal(R.getDropType(type), types[0], `${type}: zniszczony daje pierwszy etap`);
 
@@ -100,6 +133,12 @@ for (const pack of P.PLANT_PACKS) {
     }
 
 }
+
+// Kocanka - kępka z pikseli na piasku, numery 5000+ (2-bajtowe).
+const everlast = P.getPlantPack('kocanka');
+assert.ok(everlast && everlast.stages.every((stage) => stage.tuft), 'kocanka - same kępki');
+assert.equal(R.getBlockId('kocanka_etap1'), 5000, 'kocanka od numeru 5000');
+assert.ok(R.BLOCK_TYPES.kocanka_etap3.plant.height <= 0.75, 'kocanka niska (najwyżej 3/4 bloku)');
 
 // Amarantus - pierwsza roślina: 2 bloki wysokości, czerwona lampa.
 const amaranth = P.getPlantPack('amarantus');
@@ -158,4 +197,4 @@ for (const pack of P.PLANT_PACKS.filter((p) => p.where)) {
     }
 }
 
-console.log(`OK: paczki roślin (${P.PLANT_PACKS.length}), etapy: ${stages} (rozmiary z obrazków, wzrost, zbiór, łupy), przedmioty i grupy, 3 błędne paczki pominięte, ${found.length} roślin w terenie (biomy, etapy, powtarzalność).`);
+console.log(`OK: paczki roślin (${P.PLANT_PACKS.length}), etapy: ${stages}, kępki do ${tuftFaces} ścian (rozmiary z obrazków, wzrost, zbiór, łupy), przedmioty i grupy, 3 błędne paczki pominięte, ${found.length} roślin w terenie (biomy, etapy, powtarzalność).`);

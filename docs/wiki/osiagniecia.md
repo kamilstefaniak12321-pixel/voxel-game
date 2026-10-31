@@ -2,7 +2,7 @@
 
 > Ta strona jest generowana z kodu gry (`python tools/wiki.py`) - nie zmieniaj jej ręcznie, zmiany przepadną przy następnym generowaniu.
 
-Wersja gry **0.30.0** - 38 osiągnięć. Księga osiągnięć: klawisz **L**. Uwaga, spoilery: sekretne osiągnięcia są tu opisane (w grze widać tylko „???”).
+Wersja gry **0.31.0** - 39 osiągnięć. Księga osiągnięć: klawisz **L**. Uwaga, spoilery: sekretne osiągnięcia są tu opisane (w grze widać tylko „???”).
 
 
 ## Zwykłe (10 pkt)
@@ -14,6 +14,7 @@ Wersja gry **0.30.0** - 38 osiągnięć. Księga osiągnięć: klawisz **L**. Uw
 | <img src="ikony/strawberry.png" width="32" height="32" alt=""> | **Witaminki** | Zbierz owoce z krzaka (PPM). | „Babcia byłaby dumna. Krzak trochę mniej.” |
 | <img src="ikony/jablon_jablko.png" width="32" height="32" alt=""> | **Sadownik** | Zbierz owoce z drzewa owocowego (PPM na liściach z owocami). | „Jabłko pada niedaleko od jabłoni. Tym razem - prosto do kieszeni.” |
 | <img src="ikony/amarantus_wiecha.png" width="32" height="32" alt=""> | **Wyższy od ciebie** | Zbierz wiechy z dojrzałego amarantusa (rośnie kępami na łąkach, ma 2 bloki wysokości). | „Dwa metry rośliny, a najładniejsze i tak zwisa do samej ziemi.” |
+| <img src="ikony/kocanka_bukiet.png" width="32" height="32" alt=""> | **Nieśmiertelnik** | Zbierz bukiet z kwitnącej kocanki (niska, srebrzysta kępka na piasku w borach i na plażach). | „Zasuszona nie traci koloru - stąd druga nazwa: nieśmiertelnik.” |
 | <img src="ikony/hazelnut.png" width="32" height="32" alt=""> | **Zielone palce** | Posadź owoc, orzech albo szyszkę. | „Teraz najtrudniejsza część ogrodnictwa: czekanie.” |
 | <img src="ikony/oak_log.png" width="32" height="32" alt=""> | **Drwal** | Zetnij pień drzewa. | „Drzewo nawet nie zdążyło krzyknąć „uwaga!”.” |
 | <img src="ikony/axe.png" width="32" height="32" alt=""> | **Ostrze w ruch** | W trybie przygody zetnij pień drzewa siekierą (idzie trzy razy szybciej niż ręką). | „Ręce bolą mniej. Drzewo - bardziej.” |

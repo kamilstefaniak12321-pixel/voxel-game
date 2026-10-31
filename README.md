@@ -343,7 +343,7 @@ i świerczyn). Każdy rośnie w czterech etapach:
   `/krzaki znajdz` (najbliższy dziki krzak z owocami), `/krzaki tempo 60`
   (rosną 60 razy szybciej), `/krzaki rosnij 3`, `/daj truskawki 10`.
 
-### Rośliny z paczek (duże rośliny)
+### Rośliny z paczek (duże i małe rośliny)
 
 Nowe rośliny dochodzą jak paczki drzew - folder w `assets/rosliny/`
 z obrazkami etapów wzrostu i opisem `roslina.json`, bez kodu. Skala jak
@@ -360,11 +360,23 @@ ciebie*.
 
 ![Amarantus obok słupka z 2 bloków](docs/rosliny-amarantus.png)
 
+Druga: **kocanka piaskowa** - mała roślina (do 10 pikseli, ok. 0.6
+bloku), więc zamiast pomniejszonego obrazka ma **prawdziwy model
+z pikseli** (model `kepka`): rozeta srebrzystych liści przy ziemi,
+łodygi 1 x 1 piksel i baldachy złotych koszyczków z kostek 1/16 bloku;
+8 odmian, kołysze się na wietrze. Rośnie na piasku w borach i na
+plażach (numery bloków od 5000). PPM na kwitnącej - **bukiet kocanki**
+(obrazek z atlasu). Osiągnięcie *Nieśmiertelnik*.
+
+![Kocanka piaskowa - trzy etapy na piasku](docs/rosliny-kocanka.png)
+
 - Tekstury z dużych atlasów "pixel art" robi
   `tools/rosliny_z_atlasu.py` (siatka pikseli rysunku, zmniejszanie bez
   mieszania kolorów, wszystkie etapy w tej samej skali).
 - **Test:** `/rosliny`, `/rosliny amarantus`, `/rosliny ogrod`,
-  `/rosliny znajdz amarantus`, `/krzaki rosnij 2`, `/daj amarantus_etap1 5`.
+  `/rosliny znajdz amarantus`, `/krzaki rosnij 2`, `/daj amarantus_etap1 5`,
+  `/rosliny kocanka`, `/rosliny ogrod kocanka`, `/daj kocanka_etap3 5`
+  (sadzi się na piasku i trawie).
 - Instrukcja, rozmiary i plan dla wszystkich 28 roślin z atlasów:
   [`docs/rosliny.md`](docs/rosliny.md).
 

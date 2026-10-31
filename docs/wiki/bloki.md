@@ -2,7 +2,7 @@
 
 > Ta strona jest generowana z kodu gry (`python tools/wiki.py`) - nie zmieniaj jej ręcznie, zmiany przepadną przy następnym generowaniu.
 
-Wersja gry **0.30.0** - 130 bloków (do tego 5 odmian, których nie ma w ekwipunku, np. wieniec zawieszony na boku bloku). Czas kopania dotyczy trybu przygody; w kreatywnym bloki znikają od razu.
+Wersja gry **0.31.0** - 133 bloków (do tego 5 odmian, których nie ma w ekwipunku, np. wieniec zawieszony na boku bloku). Czas kopania dotyczy trybu przygody; w kreatywnym bloki znikają od razu.
 
 [Ziemia](#ziemia) · [Skały](#skały) · [Drewno](#drewno) · [Budulec](#budulec) · [Rośliny](#rośliny) · [Światło](#światło) · [Ozdoby](#ozdoby)
 
@@ -149,6 +149,9 @@ Wersja gry **0.30.0** - 130 bloków (do tego 5 odmian, których nie ma w ekwipun
 | <img src="ikony/amarantus_etap1.png" width="32" height="32" alt=""> | **Młody amarantus** | `amarantus_etap1` | **Kopanie:** od razu<br>**Rośnie:** w: Amarantus (zawiązuje wiechy)<br>**Skąd:** zniszczony blok: Amarantus (zawiązuje wiechy); zniszczony blok: Amarantus (dojrzałe wiechy) |
 | <img src="ikony/amarantus_etap2.png" width="32" height="32" alt=""> | **Amarantus (zawiązuje wiechy)** | `amarantus_etap2` | **Kopanie:** od razu<br>**Daje:** Młody amarantus<br>**Rośnie:** w: Amarantus (dojrzałe wiechy)<br>**Skąd:** wyrasta z: Młody amarantus |
 | <img src="ikony/amarantus_etap3.png" width="32" height="32" alt=""> | **Amarantus (dojrzałe wiechy)** | `amarantus_etap3` | **Kopanie:** od razu<br>**Daje:** Młody amarantus<br>**Zbiór (PPM):** Wiecha amarantusa 1-3<br>**Skąd:** wyrasta z: Amarantus (zawiązuje wiechy) |
+| <img src="ikony/kocanka_etap1.png" width="32" height="32" alt=""> | **Młoda kocanka** | `kocanka_etap1` | **Kopanie:** od razu<br>**Rośnie:** w: Kocanka (pąki)<br>**Skąd:** zniszczony blok: Kocanka (pąki); zniszczony blok: Kocanka (kwitnie) |
+| <img src="ikony/kocanka_etap2.png" width="32" height="32" alt=""> | **Kocanka (pąki)** | `kocanka_etap2` | **Kopanie:** od razu<br>**Daje:** Młoda kocanka<br>**Rośnie:** w: Kocanka (kwitnie)<br>**Skąd:** wyrasta z: Młoda kocanka |
+| <img src="ikony/kocanka_etap3.png" width="32" height="32" alt=""> | **Kocanka (kwitnie)** | `kocanka_etap3` | **Kopanie:** od razu<br>**Daje:** Młoda kocanka<br>**Zbiór (PPM):** Bukiet kocanki 1-2<br>**Skąd:** wyrasta z: Kocanka (pąki) |
 
 ## Światło
 

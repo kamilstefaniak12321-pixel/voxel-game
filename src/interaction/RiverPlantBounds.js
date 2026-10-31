@@ -11,7 +11,7 @@ export function riverPlantBounds(river, x, y, z) {
     if (cache.has(key)) return cache.get(key);
     const transform = riverPlantTransform(x, y, z);
     const min = [Infinity, Infinity, Infinity], max = [-Infinity, -Infinity, -Infinity];
-    for (const face of getRiverPlantFaces(river.kind, transform.variant, river.waterlogged)) {
+    for (const face of getRiverPlantFaces(river.kind, transform.variant, river.waterlogged, river.tuft)) {
         for (const vertex of face.vertices) {
             const point = [
                 transform.x + transform.cos * vertex[0] - transform.sin * vertex[2],

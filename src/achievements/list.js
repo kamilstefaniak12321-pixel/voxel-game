@@ -127,6 +127,19 @@ const AMARANTH = getPlantPack('amarantus')?.item ? [{
     when: (data) => data.item === 'amarantus_wiecha'
 }] : [];
 
+// Kocanka piaskowa (assets/rosliny/kocanka) - mała kępka z pikseli.
+
+const EVERLAST = getPlantPack('kocanka')?.item ? [{
+    id: 'everlast',
+    tier: 'common',
+    title: 'Nieśmiertelnik',
+    task: 'Zbierz bukiet z kwitnącej kocanki (niska, srebrzysta kępka na piasku w borach i na plażach).',
+    comment: 'Zasuszona nie traci koloru - stąd druga nazwa: nieśmiertelnik.',
+    icon: 'kocanka_bukiet',
+    on: 'harvested',
+    when: (data) => data.item === 'kocanka_bukiet'
+}] : [];
+
 
 // "Złota godzina": słońce nisko nad horyzontem (wschód albo zachód),
 // gracz patrzy prosto na nie i nic go nie zasłania.
@@ -229,6 +242,7 @@ export const ACHIEVEMENTS = [
     },
     ...ORCHARD,
     ...AMARANTH,
+    ...EVERLAST,
     {
         id: 'plant',
         tier: 'common',

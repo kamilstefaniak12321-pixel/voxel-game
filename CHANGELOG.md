@@ -11,6 +11,29 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 0.31.0 - Kocanka piaskowa
+
+Kocanka piaskowa - mała roślina z pikseli — PR #59 (zawiera #58 - 0.30.0).
+
+- Nowa roślina z paczki roślin: **kocanka piaskowa** - niska,
+  srebrzystozielona kępka z baldachami złotych koszyczków. Rośnie
+  plamami **na piasku w borach i na plażach**, trzy etapy: młoda rozeta
+  (8 x 4 piksele), pąki (10 x 6) i kwitnąca (10 x 10 pikseli, ok. 0.6
+  bloku). Sadzi się na piasku i na ziemi.
+- **Nowy model małych roślin "kepka"**: zamiast pomniejszonego obrazka
+  (przy kilku pikselach - plama) prawdziwy model z pikseli 1/16 bloku -
+  rozeta liści przy ziemi, łodygi 1 x 1 piksel z listkami, baldachy
+  z kostek albo pąki. 8 odmian, kołysze się na wietrze, miękkie światło
+  jak zwykłe rośliny, ikonka w ekwipunku - ten sam model z ukosa.
+  Kształt i kolory opisuje `roslina.json` (bez kodu) - `docs/rosliny.md`.
+- PPM na kwitnącej kocance - **bukiet kocanki** (obrazek z atlasu Kamila),
+  kocanka wraca do etapu z pąkami. Osiągnięcie *Nieśmiertelnik*.
+- Pierwsza roślina z numerami bloków 5000+ (2-bajtowe numery z 0.30.0).
+- `/rosliny kocanka` pokazuje, które etapy są kępkami z pikseli.
+- Wersja 0.31.0 wspólna dla Windowsa i Androida. Przygotowana w PR;
+  publikacja w `voxel-game-wydania` następuje przez workflow po scaleniu
+  (najpierw #58).
+
 ## 0.30.0 - Numery bloków do 65279
 
 Numery bloków 2-bajtowe — PR #58.

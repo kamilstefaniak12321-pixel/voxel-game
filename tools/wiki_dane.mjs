@@ -30,6 +30,8 @@ const { TOOL_MATERIALS, TOOL_SPEED } = await import(src('config.js'));
 const { TREE_SPECIES } = await import(src('blocks/trees.js'));
 const { PACK_TEXTURES, TREE_PACKS } = await import(src('blocks/treePacks.js'));
 const { PLANT_TEXTURES, PLANT_PACKS } = await import(src('blocks/plantPacks.js'));
+const { getRiverPlantFaces } = await import(src('rendering/RiverPlantGeometry.js'));
+const { pixelPlantIconPixels } = await import(src('ui/PixelPlantIcon.js'));
 
 
 // Kafelki atlasu: obiekt ATLAS_TILES z TextureAtlas.js (sam literał).
@@ -192,9 +194,12 @@ const blocks = blockTypes.map((type) => {
         category: C.getCategory(type),
         model,
         creative: definition.creative !== false,
-        icon: model === 'cross' || model === 'flat'
-            ? { kind: 'flat', tile: faceTexture(textures, 'front') }
-            : { kind: 'cube', top: faceTexture(textures, 'top'), front: faceTexture(textures, 'front'), right: faceTexture(textures, 'right') },
+        icon: definition.riverPlant?.tuft
+            // Mała roślina z pikseli - gotowe piksele 64 x 64 (jak w grze).
+            ? { kind: 'pixels', size: 64, data: Buffer.from(pixelPlantIconPixels(getRiverPlantFaces(definition.riverPlant.kind, 0, false, definition.riverPlant.tuft), 64)).toString('base64') }
+            : model === 'cross' || model === 'flat'
+                ? { kind: 'flat', tile: faceTexture(textures, 'front') }
+                : { kind: 'cube', top: faceTexture(textures, 'top'), front: faceTexture(textures, 'front'), right: faceTexture(textures, 'right') },
         light: definition.light ?? 0,
         lightColor: definition.lightColor ?? null,
         sound: SOUND_LABELS[R.getBlockSound(type)] ?? null,

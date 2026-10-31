@@ -3546,7 +3546,7 @@ export const GAME_COMMANDS = [
                 }
 
                 const stages = pack.stages.map((stage, index) =>
-                    `${index + 1}. ${stage.label} - ${blocksSize(stage.width)} x ${blocksSize(stage.height)} bloku (${stage.width} x ${stage.height} px, /daj ${plantStageType(pack, index)})`);
+                    `${index + 1}. ${stage.label} - ${blocksSize(stage.width)} x ${blocksSize(stage.height)} bloku (${stage.width} x ${stage.height} px${stage.tuft ? ', kępka z pikseli' : ''}, /daj ${plantStageType(pack, index)})`);
 
                 return `${pack.label} (${pack.folder}): ${pack.about || 'roślina z paczki roślin'}.\n` +
                     stages.join('\n') +

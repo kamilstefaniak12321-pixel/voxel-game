@@ -14,6 +14,8 @@ import {
 import {
     getFaceTexture
 } from '../rendering/BlockRenderData.js';
+import { getRiverPlantFaces } from '../rendering/RiverPlantGeometry.js';
+import { pixelPlantIconPixels } from './PixelPlantIcon.js';
 
 // ------------------------------------------------------------
 // IKONKI BLOKÓW
@@ -122,6 +124,24 @@ function flatIcon(atlas, tileName) {
     else if (tile) {
         ctx.drawImage(atlas, tile.x * T, tile.y * T, T, T, 0, 0, ICON_SIZE, ICON_SIZE);
     }
+
+    return canvas.toDataURL();
+
+}
+
+
+// Mała roślina z pikseli (kępka z paczki roślin): model z ukosa,
+// rysowany w src/ui/PixelPlantIcon.js (ten sam w wiki).
+
+function pixelPlantIcon(faces) {
+
+    const canvas = document.createElement('canvas');
+    canvas.width = canvas.height = ICON_SIZE;
+    const ctx = canvas.getContext('2d');
+    const image = ctx.createImageData(ICON_SIZE, ICON_SIZE);
+
+    image.data.set(pixelPlantIconPixels(faces, ICON_SIZE));
+    ctx.putImageData(image, 0, 0);
 
     return canvas.toDataURL();
 
@@ -249,7 +269,9 @@ export async function createBlockIcons() {
         const textures = definition.textures;
 
         if (definition.model === 'riverPlant') {
-            icons.set(type, riverPlantIcon(definition.riverPlant.kind));
+            icons.set(type, definition.riverPlant.tuft
+                ? pixelPlantIcon(getRiverPlantFaces(definition.riverPlant.kind, 0, false, definition.riverPlant.tuft))
+                : riverPlantIcon(definition.riverPlant.kind));
             continue;
         }
 

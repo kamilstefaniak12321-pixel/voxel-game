@@ -140,12 +140,13 @@ function makeTemplate(kind, variant, waterlogged) {
 
 // tuft - kępka z paczki roślin (model "kepka", TuftGeometry.js): ten sam
 // model z pikseli, tylko kształt z parametrów rośliny, nie z nazwy.
-// mask - sąsiedzi dywanu (barwinek, TuftGeometry.js - carpet); inne
+// mask - sąsiedzi dywanu (barwinek, TuftGeometry.js - carpet: bity 0-3
+// łączenie, 4-7 krótka zasłona, 8-11 zasłona do dywanu niżej); inne
 // rośliny jej nie używają.
 export function getRiverPlantFaces(kind, variant, waterlogged = false, tuft = null, mask = 0) {
     if (kind.startsWith('blueberry:')) return getBlueberryFaces(kind.slice(10));
     const normalizedVariant = variant & 7;
-    const carpetMask = tuft?.carpet ? mask & 15 : 0;
+    const carpetMask = tuft?.carpet ? mask & 0xfff : 0;
     const key = `${kind}:${normalizedVariant}:${waterlogged ? 1 : 0}:${carpetMask}`;
     if (!cache.has(key)) {
         cache.set(key, tuft ? makeTuftTemplate(tuft, normalizedVariant, carpetMask) : makeTemplate(kind, normalizedVariant, waterlogged));

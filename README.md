@@ -437,11 +437,15 @@ Jedenasta: **barwinek** - płoży się po ziemi: płaski kobierzec
 ciemnozielonych liści z pędami i **liliowoniebieskimi kwiatami-gwiazdkami**.
 **Barwinki obok siebie łączą się w jeden dywan kwiatów** (pędy i liście
 dochodzą do wspólnej krawędzi, także między chunkami); samotny to okrągła
-kępka. W świecie rośnie gęstymi plamami - dywany w lasach liściastych,
-buczynach i na łąkach. PPM na kwitnącym - **kwiat barwinka**.
+kępka. **Opada z terenem**: na krawędzi stopnia spływa zasłoną po boku
+bloku, a gdy niżej też rośnie barwinek - aż do niego (dywan po
+schodkach). W świecie rośnie gęstymi plamami - dywany w lasach
+liściastych, buczynach i na łąkach. PPM na kwitnącym - **kwiat barwinka**.
 Osiągnięcie *Dywan z kwiatów*.
 
 ![Barwinek - dywan kwiatów na skraju lasu](docs/rosliny-barwinek.png)
+
+![Barwinek opada z terenem - dywan po schodkach](docs/rosliny-barwinek-schodki.png)
 
 - Tekstury z dużych atlasów "pixel art" robi
   `tools/rosliny_z_atlasu.py` (siatka pikseli rysunku, zmniejszanie bez

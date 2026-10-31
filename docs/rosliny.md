@@ -40,6 +40,8 @@ bez pisania kodu. Są dwa rodzaje:
 
 ![Barwinek - dywan kwiatów na skraju lasu (wygenerowany teren)](rosliny-barwinek.png)
 
+![Barwinek opada z terenem - dywan po schodkach](rosliny-barwinek-schodki.png)
+
 ## Skala: 16 pikseli na blok
 
 Blok to 1 m, gracz ma 1.8 bloku. Każdy piksel tekstury rośliny ma ten
@@ -157,7 +159,11 @@ samej skali co bloki - jeden piksel modelu to 1/16 bloku:
     w stałym miejscu - u sąsiada w tym samym, więc barwinki obok siebie
     tworzą jeden dywan; od strony bez sąsiada brzeg jest postrzępiony.
     Samotny barwinek to okrągła kępka. W połączonym dywanie więcej
-    kwiatów. Dywan leży bez obrotu, celownik - cała komórka. `promien` -
+    kwiatów. **Opada z terenem**: tam, gdzie teren schodzi o blok,
+    kobierzec spływa zasłoną liści, pędów i kwiatów po boku bloku pod
+    sobą (krótko, z postrzępionym dołem), a gdy niżej rośnie barwinek -
+    aż do niego, więc dywan idzie po schodkach jednym kawałkiem. Dywan
+    leży bez obrotu, celownik - cała komórka. `promien` -
     wielkość kępki (do 7 px), `ile` - jaśniejsze liście na wierzchu,
 - **łodygi** - słupki 1 x 1 piksel w różnych miejscach kępki (nie
   stykają się), na nich 1-2 listki; `rozchylone` - łodyga zaczyna się

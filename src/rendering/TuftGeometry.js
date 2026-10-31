@@ -414,7 +414,7 @@ function cellRandom(variant, u, v, salt) {
 
 }
 
-function carpet(tuft, variant, mask, model) {
+function carpet(tuft, variant, fullMask, model) {
 
     const { sheet, box } = model;
     const radius = tuft.leaves.radius;
@@ -422,6 +422,8 @@ function carpet(tuft, variant, mask, model) {
     const high = new Map();
     const key = (u, v) => `${u},${v}`;
     const inside = (u, v) => u >= -8 && u <= 7 && v >= -8 && v <= 7;
+    // Strony "otwarte" do krawędzi: sąsiad-dywan albo zasłona w dół.
+    const mask = (fullMask | (fullMask >> 4) | (fullMask >> 8)) & 15;
     const side = (bit) => (mask & bit) !== 0;
 
     // Kształt kobierca: okrąg (postrzępiony brzeg), a w stronę sąsiada -
@@ -541,7 +543,77 @@ function carpet(tuft, variant, mask, model) {
         }
     }, 1);
 
+    // Zasłony: tam, gdzie teren opada o blok, dywan spływa po boku bloku
+    // pod sobą - krótko (postrzępiony brzeg), a gdy niżej rośnie dywan -
+    // aż do niego (bity 8-11).
+    CARPET_SIDES.forEach(({ bit }, n) => {
+        if (fullMask & (bit << 8)) curtain(tuft, variant, n, true, mask, sheet);
+        else if (fullMask & (bit << 4)) curtain(tuft, variant, n, false, mask, sheet);
+    });
+
     return model.finish();
+
+}
+
+// Zasłona dywanu na boku bloku (strona n z CARPET_SIDES): pionowa
+// płaszczyzna tuż przed ścianą (0.3 piksela), od góry w dół - ciemne tło,
+// liście, pęd w tym samym miejscu co na górze (łączy się z pędem
+// kobierca), czasem kwiat. Krótka: 4-8 pikseli z postrzępionym dołem;
+// pełna: 16 pikseli, do dywanu niżej. Na końcach - do rogu, gdy tam też
+// jest dywan albo zasłona, inaczej krócej.
+
+function curtain(tuft, variant, n, full, open, sheet) {
+
+    const { dx, dz, cross } = CARPET_SIDES[n];
+    const axis = dx !== 0 ? 0 : 2;
+    const outward = dx + dz > 0 ? 1 : -1;
+    // Końce zasłony: sąsiednie strony (dla ±x: -z i +z, dla ±z: -x i +x).
+    const [lowBit, highBit] = axis === 0 ? [8, 2] : [4, 1];
+    const from = open & lowBit ? -8 : -tuft.leaves.radius;
+    const to = open & highBit ? 7 : tuft.leaves.radius;
+    const salt = 30 + n;
+
+    sheet(axis, outward * 8.3, ({ pixel }) => {
+
+        for (let u = from; u <= to; u++) {
+
+            const end = u === from || u === to;
+            const length = full ? 16 : 4 + Math.floor(cellRandom(variant, u, salt, 20) * 5) - (end ? 2 : 0);
+
+            for (let k = 1; k <= length; k++) {
+                if (k > 2 && k < length && cellRandom(variant, u, k + 16 * salt, 21) < 0.08) continue;
+                const leaf = cellRandom(variant, u, Math.floor(k / 2) + 16 * salt, 22) < 0.42;
+                pixel(u, -k, leaf ? 'leaf' : 'leafDark');
+            }
+
+        }
+
+        // Pęd w dół - dalszy ciąg pędu z kobierca (to samo miejsce).
+        const runnerLength = full ? 16 : 6;
+        for (let k = 1, u = cross; k <= runnerLength; k++) {
+            if (k > 3 && cellRandom(variant, k, salt, 23) < 0.2) u += cellRandom(variant, k, salt, 24) < 0.5 ? -1 : 1;
+            u = Math.max(from, Math.min(to, u));
+            pixel(u, -k, 'stem');
+        }
+
+        // Kwiaty na zasłonie (płasko w płaszczyźnie): krzyżyk z jasnym
+        // środkiem.
+        if (tuft.flower?.kind === 'gwiazdka') {
+            const count = full ? 2 : 1;
+            for (let i = 0; i < count; i++) {
+                const u = from + 1 + Math.floor(cellRandom(variant, i, salt, 25) * Math.max(1, to - from - 1));
+                const k = 2 + Math.floor(cellRandom(variant, i, salt, 26) * (full ? 12 : 2));
+                pixel(u, -k, 'center');
+                for (const [a, b] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+                    if (u + a >= from && u + a <= to) pixel(u + a, -k + b, 'flowerLight');
+                }
+            }
+        }
+        else if (tuft.flower) {
+            pixel(from + 2, -2, 'bud');
+        }
+
+    }, outward);
 
 }
 

@@ -20,7 +20,7 @@ import { createPixelPlant } from './PixelPlantBuilder.js';
 //             length: [od, do], radius (kepa, krzak) }
 //   stems:  { count: [od, do], height: [od, do], radius, spread (rozchylone),
 //             leaves: null | { every, length } (liście na łodygach) }
-//   flower: null | { kind: 'baldach' | 'klos' | 'pak' | 'pompon',
+//   flower: null | { kind: 'baldach' | 'klos' | 'pak' | 'pompon' | 'talerz' | 'dzwonek',
 //             sizes: [od, do] }
 //   colors: { leaf, leafLight, leafDark, stem, flower, flowerLight,
 //             flowerDark, bud, center } - liniowe RGB 0-255 (jak COLORS
@@ -252,6 +252,38 @@ function dish(box, x, top, z, size, fx, fz) {
 
 }
 
+// Dzwonek (dzwonek gołębi): kwiat zwisający w dół z szypułki - na górze
+// zielony kielich, niżej wąska szyjka, coraz szerzej, na dole szeroki,
+// jaśniejszy brzeg, od spodu kremowe pręciki. Rozmiar 1 - 3 piksele
+// wysokości (wąski), 2 - 4 piksele (dzwon 3 x 3 u dołu).
+
+function bell(box, x, p, z, size) {
+
+    box(x, p, z, 1, 1, 1, 'leafLight');
+
+    const plus = (y, color, middle) => {
+        for (const [dx, dz] of [[0, 0], [1, 0], [-1, 0], [0, 1], [0, -1]]) {
+            box(x + dx, y, z + dz, 1, 1, 1, dx === 0 && dz === 0 ? middle : color);
+        }
+    };
+
+    if (size <= 1) {
+        box(x, p - 1, z, 1, 1, 1, 'flower');
+        plus(p - 2, 'flowerLight', 'center');
+        return;
+    }
+
+    box(x, p - 1, z, 1, 1, 1, 'flower');
+    plus(p - 2, 'flower', 'flowerDark');
+
+    for (let dz = -1; dz <= 1; dz++) {
+        for (let dx = -1; dx <= 1; dx++) {
+            box(x + dx, p - 3, z + dz, 1, 1, 1, dx === 0 && dz === 0 ? 'center' : 'flowerLight');
+        }
+    }
+
+}
+
 export function makeTuftTemplate(tuft, variant) {
 
     const random = randomFor(40503 + variant * 7919 + tuft.seed);
@@ -436,6 +468,26 @@ export function makeTuftTemplate(tuft, variant) {
 
         if (flower.kind === 'pompon') {
             pompon(box, x, top, z, size);
+            continue;
+        }
+
+        if (flower.kind === 'dzwonek') {
+            // Dzwonki: na szczycie łodygi zielony czubek, pod nim na
+            // krótkich, zagiętych szypułkach zwisające dzwonki - co 4
+            // piksele w dół, pierwszy na zewnątrz kępy, następne na boki.
+            box(x, top, z, 1, 1, 1, 'leafLight');
+            const out = Math.abs(x) >= Math.abs(z)
+                ? (x === 0 ? Math.floor(random() * 4) * 2 : (x > 0 ? 0 : 4))
+                : (z > 0 ? 2 : 6);
+            const sides = [out, (out + 2) % 8, (out + 6) % 8];
+            if (random() < 0.5) sides.reverse().unshift(sides.pop());
+            for (let k = 0, p = top - 2; k < 3 && p - (size + 2) >= Math.max(1, foliage - 1) && p >= top * 0.45; k++, p -= 4) {
+                const [dx, dz] = DIRECTIONS[sides[k]];
+                const [sx, sz] = at(p + 1);
+                box(sx + dx, p + 1, sz + dz, 1, 1, 1, 'stem');
+                box(sx + 2 * dx, p + 1, sz + 2 * dz, 1, 1, 1, 'stem');
+                bell(box, sx + 2 * dx, p, sz + 2 * dz, size);
+            }
             continue;
         }
 

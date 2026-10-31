@@ -170,6 +170,17 @@ assert.equal(R.getBlockId('zawilec_etap1'), 5009, 'zawilec od numeru 5009');
 assert.equal(anemone.stages[2].tuft.flower.kind, 'talerz', 'zawilec kwitnie talerzykami');
 assert.ok(R.BLOCK_TYPES.zawilec_etap3.plant.height <= 0.75, 'zawilec niski');
 
+// Dzwonek gołębi - kępa liści, zwisające dzwonki na szypułkach.
+const bellflower = P.getPlantPack('dzwonek');
+assert.ok(bellflower && bellflower.stages.every((stage) => stage.tuft?.leaves.layout === 'kepa'), 'dzwonek - kępa liści');
+assert.equal(R.getBlockId('dzwonek_etap1'), 5012, 'dzwonek od numeru 5012');
+assert.deepEqual(bellflower.stages[2].tuft.flower.sizes, [2, 2], 'dzwonek kwitnie dużymi dzwonkami');
+assert.equal(bellflower.stages[1].tuft.flower.kind, 'dzwonek', 'pąki - małe dzwonki');
+for (let variant = 0; variant < 8; variant++) {
+    const faces = getRiverPlantFaces(R.BLOCK_TYPES.dzwonek_etap3.riverPlant.kind, variant, false, bellflower.stages[2].tuft);
+    assert.ok(faces.every((face) => face.vertices.every((v) => v[1] >= 0)), 'dzwonki nie wchodzą pod ziemię');
+}
+
 // Amarantus - pierwsza roślina: 2 bloki wysokości, czerwona lampa.
 const amaranth = P.getPlantPack('amarantus');
 assert.ok(amaranth, 'amarantus');

@@ -10,8 +10,9 @@ bez pisania kodu. Są dwa rodzaje:
   z pikseli 1/16 bloku, bez obrazka etapu, np. **kocanka piaskowa**
   (do 10 pikseli, złote baldachy na piasku), krzaczek **lawenda**
   (kępa liści, wachlarz łodyg z fioletowymi kłosami), krzak **piwonia**
-  (kopułka liści, kuliste różowe kwiaty) albo **zawilec** (okółki liści,
-  otwarte, przechylone kwiaty).
+  (kopułka liści, kuliste różowe kwiaty), **zawilec** (okółki liści,
+  otwarte, przechylone kwiaty) albo **dzwonek gołębi** (zwisające
+  dzwonki).
 
 ![Amarantus - trzy etapy wzrostu obok słupka z 2 bloków](rosliny-amarantus.png)
 
@@ -22,6 +23,8 @@ bez pisania kodu. Są dwa rodzaje:
 ![Piwonia - krzaki z kulistymi kwiatami, obok lawenda](rosliny-piwonia.png)
 
 ![Zawilec - kępki z otwartymi kwiatami, obok piwonia](rosliny-zawilec.png)
+
+![Dzwonek gołębi - zwisające dzwonki, obok zawilec](rosliny-dzwonek.png)
 
 ## Skala: 16 pikseli na blok
 
@@ -147,7 +150,11 @@ samej skali co bloki - jeden piksel modelu to 1/16 bloku:
   piksel pąka (rozmiar 2 - okrągły pąk z krzyżyka kostek), `talerz` -
   otwarty kwiat jak miseczka (środek z pręcikami niżej, jaśniejszy brzeg
   płatków wyżej), przechylony na zewnątrz kępy - widać go z góry i z boku
-  (rozmiar 1 - 3 x 3, 2 - 5 x 5 pikseli), albo brak.
+  (rozmiar 1 - 3 x 3, 2 - 5 x 5 pikseli), `dzwonek` - zwisające dzwonki:
+  na szczycie łodygi zielony czubek, niżej co 4 piksele zagięta szypułka
+  (pierwsza na zewnątrz kępy, następne na boki) i dzwonek w dół - zielony
+  kielich, wąska szyjka, szeroki jaśniejszy brzeg, od spodu pręciki
+  (`srodek`); rozmiar 1 - wąski (pąk), 2 - dzwon 3 x 3, albo brak.
   `rozmiar` może być zakresem `[od, do]` - każda łodyga losuje (piwonia
   ma duże i małe kwiaty).
 
@@ -158,7 +165,7 @@ Ikonka w ekwipunku to ten sam model z ukosa. Rozmiar etapu (do `/rosliny`
 i miejsca nad rośliną) wynika z parametrów: kocanka 8 x 4, 10 x 6
 i 10 x 10 pikseli, lawenda 12 x 6, 12 x 11 i 14 x 15 pikseli, piwonia
 12 x 6, 14 x 9 i 16 x 12 pikseli, zawilec 10 x 4, 12 x 8 i 12 x 12
-pikseli.
+pikseli, dzwonek 12 x 5, 12 x 11 i 14 x 13 pikseli.
 
 ```json
 "etapy": [
@@ -184,7 +191,7 @@ pikseli.
 | `lodygi.ile`, `lodygi.wysokosc`, `lodygi.promien` | łodygi: ile (0-12, domyślnie bez łodyg), wysokość [od, do] (1-24), jak daleko od środka szczyt (0-6) |
 | `lodygi.rozchylone` | `true` - łodygi wyrastają bliżej środka i odchylają się na boki (wachlarz) |
 | `lodygi.liscie` | `{ "co": 1-6, "dlugosc": [od, do] }` - płaskie liście na łodygach co tyle pikseli (nad kopułką krzaka), długość 1-5; `{ "okolek": 2-5, "dlugosc": [od, do] }` - okółek liści w ok. połowie łodygi |
-| `kwiaty` | `{ "rodzaj": "baldach", "rozmiar": 1-2 }`, `{ "rodzaj": "klos", "rozmiar": 1-6 }` (długość kłosa), `{ "rodzaj": "pompon", "rozmiar": 1-2 }`, `{ "rodzaj": "talerz", "rozmiar": 1-2 }`, `{ "rodzaj": "pak", "rozmiar": 1-2 }` albo brak; `rozmiar` - liczba albo `[od, do]` |
+| `kwiaty` | `{ "rodzaj": "baldach", "rozmiar": 1-2 }`, `{ "rodzaj": "klos", "rozmiar": 1-6 }` (długość kłosa), `{ "rodzaj": "pompon", "rozmiar": 1-2 }`, `{ "rodzaj": "talerz", "rozmiar": 1-2 }`, `{ "rodzaj": "dzwonek", "rozmiar": 1-2 }`, `{ "rodzaj": "pak", "rozmiar": 1-2 }` albo brak; `rozmiar` - liczba albo `[od, do]` |
 | `kolory` | 9 kolorów: `lisc`, `liscJasny`, `liscCiemny`, `lodyga`, `kwiat`, `kwiatJasny`, `kwiatCiemny`, `pak`, `srodek` (środek kwiatu) - dla całej paczki (obok `etapy`), etap może zmienić własnymi `model.kolory` |
 
 Kolory najlepiej wziąć z atlasu rośliny (`tools/rosliny_z_atlasu.py
@@ -228,6 +235,18 @@ Zawilec (mała kępka liści, okółek na łodydze, kwiaty-talerzyki):
 }
 ```
 
+Dzwonek gołębi (kępa liści, łodygi ze zwisającymi dzwonkami; pąki to
+małe dzwonki w ciemniejszych kolorach etapu):
+
+```json
+"model": {
+    "rodzaj": "kepka",
+    "liscie": { "uklad": "kepa", "ile": [12, 14], "dlugosc": [5, 7], "promien": 2 },
+    "lodygi": { "ile": [2, 3], "wysokosc": [10, 12], "promien": 3, "rozchylone": true },
+    "kwiaty": { "rodzaj": "dzwonek", "rozmiar": 2 }
+}
+```
+
 ## Komendy
 
 | komenda | co robi |
@@ -262,7 +281,8 @@ zmniejszenie bywa 3-5 razy. Proponowane rozmiary (prawdziwa wysokość
 | cynia, mikołajek | 0.3-0.9 m | 0.75 bloku (12 px) | krzyż |
 | **lawenda** | 0.3-0.6 m | **do 15 px (prawie blok)** | **`kepka`: kępa + rozchylone łodygi z kłosami - zrobione** (0.32.0) |
 | nagietek, wilczomlecz, szałwia, mięta wodna | 0.3-0.6 m | 0.6 bloku (10 px) | krzyż albo `kepka`; szałwia krzaczasta jak lawenda (kępa, kłosy), mięta przy wodzie |
-| storczyk, dzwonek | 0.3-0.5 m | 0.5 bloku (8 px) | krzyż |
+| **dzwonek gołębi** | 0.3-0.5 m | **14 x 13 px** | **`kepka`: kępa liści, zwisające dzwonki - zrobione** (0.35.0) |
+| storczyk | 0.3-0.5 m | 0.5 bloku (8 px) | krzyż albo `kepka` |
 | **kocanka piaskowa** | 0.1-0.3 m | **do 10 px (0.6 bloku)** | **model z pikseli `kepka` - zrobione** (0.31.0): rozeta, łodygi, baldachy |
 | **zawilec** | 0.1-0.3 m | **12 x 12 px** | **`kepka`: okółki liści, kwiaty-talerzyki - zrobione** (0.34.0) |
 | barwinek | 0.1-0.2 m, płożący | płasko | model płaski na ziemi (jak kępki mchu) z kwiatkami |

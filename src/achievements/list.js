@@ -179,6 +179,19 @@ const ANEMONE = getPlantPack('zawilec')?.item ? [{
     when: (data) => data.item === 'zawilec_kwiat'
 }] : [];
 
+// Dzwonek gołębi (assets/rosliny/dzwonek) - zwisające dzwonki.
+
+const BELLFLOWER = getPlantPack('dzwonek')?.item ? [{
+    id: 'bellflower',
+    tier: 'common',
+    title: 'Kto dzwoni?',
+    task: 'Zbierz kwiat z kwitnącego dzwonka gołębiego (zwisające, liliowe dzwonki na halach i w skalistych górach).',
+    comment: 'Dzwonki nie dzwonią. Sprawdzone trzy razy.',
+    icon: 'dzwonek_kwiat',
+    on: 'harvested',
+    when: (data) => data.item === 'dzwonek_kwiat'
+}] : [];
+
 
 // "Złota godzina": słońce nisko nad horyzontem (wschód albo zachód),
 // gracz patrzy prosto na nie i nic go nie zasłania.
@@ -285,6 +298,7 @@ export const ACHIEVEMENTS = [
     ...LAVENDER,
     ...PEONY,
     ...ANEMONE,
+    ...BELLFLOWER,
     {
         id: 'plant',
         tier: 'common',

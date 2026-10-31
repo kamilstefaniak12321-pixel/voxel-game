@@ -11,6 +11,24 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 0.35.0 - Dzwonek gołębi
+
+Dzwonek gołębi - zwisające dzwonki z pikseli — PR #63 (zawiera #60-#62).
+
+- Nowa roślina z paczki roślin: **dzwonek gołębi** - kępa wąskich
+  liści, nad nią łodygi z **zwisającymi, liliowymi dzwonkami** na
+  zagiętych szypułkach (zielony kielich, wąska szyjka, szeroki jaśniejszy
+  brzeg, kremowe pręciki od spodu). Trzy etapy: młody (kępa liści),
+  pąki (małe, ciemniejsze dzwonki), kwitnący. Rośnie na **halach
+  i w skalistych górach**. PPM na kwitnącym - **kwiat dzwonka** (obrazek
+  z atlasu), wraca do etapu z pąkami. Osiągnięcie *Kto dzwoni?*.
+- Model "kepka" umie więcej (bez kodu): kwiaty `dzwonek` (zwisające
+  z szypułek) - `docs/rosliny.md`.
+- Numery bloków dzwonka: 5012-5014.
+- Wersja 0.35.0 wspólna dla Windowsa i Androida. Przygotowana w PR;
+  publikacja w `voxel-game-wydania` następuje przez workflow po scaleniu
+  (najpierw #60-#62).
+
 ## 0.34.0 - Zawilec
 
 Zawilec - otwarte kwiaty z pikseli — PR #62 (zawiera #60 i #61).

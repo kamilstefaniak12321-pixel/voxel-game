@@ -89,8 +89,10 @@ for (const pack of P.PLANT_PACKS) {
                 tuftFaces = Math.max(tuftFaces, faces.length);
             }
 
-            assert.equal(R.canPlantStay(definition.id, R.getBlockId('sand')), (pack.ground ?? []).includes('sand'), `${type}: piasek tylko z "podloze"`);
-            assert.equal(R.canPlantStay(definition.id, R.getBlockId('grass')), true, `${type}: rośnie na trawie`);
+            if (!R.getAttachedPlant(definition.id)) {
+                assert.equal(R.canPlantStay(definition.id, R.getBlockId('sand')), (pack.ground ?? []).includes('sand'), `${type}: piasek tylko z "podloze"`);
+                assert.equal(R.canPlantStay(definition.id, R.getBlockId('grass')), true, `${type}: rośnie na trawie`);
+            }
 
         }
         else {
@@ -274,7 +276,8 @@ const again = scan('lepidolit');
 
 assert.deepEqual(found, again, 'ten sam seed - te same rośliny');
 
-for (const pack of P.PLANT_PACKS.filter((p) => p.where)) {
+// (Porosty i huby - na skałach i pniach: tools/sprawdz_porosty.mjs.)
+for (const pack of P.PLANT_PACKS.filter((p) => p.where?.on.includes('ziemia'))) {
     const mine = found.filter(([, , id]) => id >= pack.firstId && id < pack.firstId + pack.stages.length);
     assert.ok(mine.length > 10, `${pack.id}: rośnie w świecie (${mine.length})`);
     assert.ok(mine.every(([, , , biome]) => pack.where.biomes.includes(biome)), `${pack.id}: tylko w swoich biomach`);

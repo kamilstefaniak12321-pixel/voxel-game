@@ -10,6 +10,7 @@ import {
     getBlockId,
     getBlockDefinition,
     getAttach,
+    getAttachedPlant,
     ATTACH_OFFSETS
 } from '../blocks/BlockRegistry.js';
 
@@ -145,6 +146,15 @@ export class BlockPlacer {
             isPlantId(plantId) &&
             !canPlantStay(plantId, this.world.getBlockId(x, y - 1, z), this.world.getBlockId(x, y + 1, z))
         ) {
+            return false;
+        }
+
+        // Porost i huba - przy ścianie (porost także na ziemi i pod
+        // sufitem), nie w pustym powietrzu.
+
+        const attached = getAttachedPlant(plantId);
+
+        if (attached && !this.world.attachedPlantSupported(x, y, z, attached)) {
             return false;
         }
 

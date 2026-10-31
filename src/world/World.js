@@ -22,6 +22,7 @@ import {
     isPlantId,
     isTreeId,
     getAttach,
+    getAttachedPlant,
     ATTACH_OFFSETS
 } from '../blocks/BlockRegistry.js';
 // ------------------------------------------------------------
@@ -576,10 +577,18 @@ export class World {
 
 
         // Płaskie dekoracje oparte o ten blok (opadłe liście na nim,
-        // wieniec na jego ścianie) bez oparcia też znikają.
+        // wieniec na jego ścianie) bez oparcia też znikają. Porost i huba
+        // obok - gdy nie mają już żadnej ściany.
 
         if (!isSolidId(id)) {
             this.removeUnsupported(x, y, z);
+            for (const [dx, dy, dz] of [[1, 0, 0], [-1, 0, 0], [0, 0, 1], [0, 0, -1], [0, 1, 0], [0, -1, 0]]) {
+                const ny = y + dy;
+                if (ny < 0 || ny >= CHUNK_HEIGHT) continue;
+                if (getAttachedPlant(this.getBlockId(x + dx, ny, z + dz)) && !this.attachedPlantSupported(x + dx, ny, z + dz)) {
+                    this.setBlock(x + dx, ny, z + dz, null);
+                }
+            }
         }
 
 
@@ -593,6 +602,22 @@ export class World {
     clearBlock(x, y, z) {
 
         return this.setBlock(x, y, z, null, false);
+
+    }
+
+
+    // Porost (każda ściana, także dół i góra) albo huba (bok) w (x, y, z)
+    // ma lity blok obok, o który się opiera.
+
+    attachedPlantSupported(x, y, z, kind = getAttachedPlant(this.getBlockId(x, y, z))) {
+
+        const sides = [[1, 0, 0], [-1, 0, 0], [0, 0, 1], [0, 0, -1]];
+
+        if (kind === 'coating') {
+            sides.push([0, -1, 0], [0, 1, 0]);
+        }
+
+        return sides.some(([dx, dy, dz]) => isSolidId(this.getBlockId(x + dx, y + dy, z + dz)));
 
     }
 

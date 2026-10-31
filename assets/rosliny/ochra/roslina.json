@@ -1,0 +1,82 @@
+{
+    "nazwa": "Żółta ochra",
+    "nazwaAngielska": "Yellow Ochre Lichen",
+    "opis": "skorupiasty porost - drobne, złotożółte grudki wrośnięte w kamień; świeci żółcią na skałach gór i wybrzeży",
+    "pierwszeId": 5042,
+    "etapy": [
+        {
+            "nazwa": "Żółta ochra (kropki)",
+            "model": {
+                "rodzaj": "kepka",
+                "liscie": {
+                    "uklad": "nalot",
+                    "wzor": "kropki",
+                    "promien": 3
+                }
+            }
+        },
+        {
+            "nazwa": "Żółta ochra",
+            "model": {
+                "rodzaj": "kepka",
+                "liscie": {
+                    "uklad": "nalot",
+                    "wzor": "kropki",
+                    "promien": 5
+                }
+            }
+        },
+        {
+            "nazwa": "Żółta ochra (skorupa)",
+            "model": {
+                "rodzaj": "kepka",
+                "liscie": {
+                    "uklad": "nalot",
+                    "wzor": "kropki",
+                    "promien": 8
+                }
+            }
+        }
+    ],
+    "kolory": {
+        "lisc": "#d0a828",
+        "liscJasny": "#f0d050",
+        "liscCiemny": "#9a7418"
+    },
+    "czasWzrostu": 600,
+    "przedmiot": {
+        "klucz": "grudka",
+        "plik": "grudka.png",
+        "nazwa": "Grudka żółtej ochry",
+        "nazwaAngielska": "Yellow Ochre Crust",
+        "kategoria": "ozdoby"
+    },
+    "zbior": {
+        "ile": [
+            1,
+            2
+        ],
+        "wraca": 1
+    },
+    "gdzieRosnie": {
+        "biomy": {
+            "skaly": 1,
+            "hala": 0.6,
+            "plaza": 0.3
+        },
+        "na": [
+            "kamien"
+        ],
+        "plamy": 0.2,
+        "gestosc": 0.35,
+        "etapy": [
+            0.3,
+            0.35,
+            0.35
+        ]
+    },
+    "zrodlo": {
+        "atlas": "Tekstury żółtej ochry w pikselach.png",
+        "przedmiot": "grudka: --wysokosc 16 --nazwy etap1,etap2,etap3,grudka; etapy - model z pikseli (nalot: wzór kropki na każdej ścianie obok) w kolorach atlasu"
+    }
+}

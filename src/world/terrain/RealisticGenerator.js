@@ -5,7 +5,7 @@ import {
     TERRAIN_DIRT_DEPTH
 } from '../../config.js';
 
-import { getBlockId, getBlockTypeById, FRUIT_BUSHES, bushStages } from '../../blocks/BlockRegistry.js';
+import { getBlockId, getBlockTypeById, FRUIT_BUSHES, bushStages, BLOCK_TYPES } from '../../blocks/BlockRegistry.js';
 
 import { PLANT_PACKS, plantStageType } from '../../blocks/plantPacks.js';
 
@@ -207,9 +207,14 @@ function resolveBiome(biome, key) {
                 density: pack.where.density,
                 level: patchLevel(pack.where.cover * (pack.where.weights?.[key] ?? 1)),
                 salt: pack.firstId,
-                // Rośnie też na piasku ("podloze": ["sand"] - kocanka,
-                // mikołajek, nagietek) - także na plaży i wydmach.
-                sand: (pack.ground ?? []).includes('sand')
+                // Na czym rośnie: "ziemia" (trawa), "piasek" (z "podloze":
+                // ["sand"] - kocanka, mikołajek, nagietek - plaże, wydmy),
+                // "kamien" (wierzch skał - porosty); "pnie" - osobno,
+                // decorateTrunks.
+                surfaces: new Set([
+                    ...pack.where.on,
+                    ...(pack.where.on.includes('ziemia') && (pack.ground ?? []).includes('sand') ? ['piasek'] : [])
+                ])
             };
         });
 
@@ -247,6 +252,19 @@ const PATCH_LEVELS = [
     [0.35, 0.16], [0.4, 0.1], [0.45, 0.05], [0.5, 0], [0.6, -0.1], [0.7, -0.21],
     [0.8, -0.34], [0.9, -0.51], [1, -1.01]
 ];
+
+// Pnie drzew (do porostów i hub - decorateTrunks) i paczki roślin, które
+// na nich rosną.
+
+const LOG_IDS = new Uint8Array(65536);
+
+for (const [type, definition] of Object.entries(BLOCK_TYPES)) {
+    if (definition.part === 'log' || /_log($|_)/.test(type)) {
+        LOG_IDS[definition.id] = 1;
+    }
+}
+
+const TRUNK_PACKS = PLANT_PACKS.filter((pack) => pack.where?.on.includes('pnie'));
 
 function patchLevel(cover) {
 
@@ -842,12 +860,93 @@ export class RealisticGenerator {
         this.forests.placeTrees(chunk);
 
 
+        // Porosty i huby na pniach (rośliny z "na": ["pnie"]).
+
+        this.decorateTrunks(chunk, baseX, baseZ, heights, samples, W);
+
+
         // Kolor trawy w rogach kolumn (ChunkMesher.js) - wysokość rogu
         // to średnia czterech kolumn wokół niego.
 
         chunk.tint = this.biomes.tintGrid(baseX, baseZ, (i, j) =>
             (heights[j * W + i] + heights[j * W + i + 1] + heights[(j + 1) * W + i] + heights[(j + 1) * W + i + 1]) / 4
         );
+
+    }
+
+
+    // Porosty i huby na bokach pni (paczki roślin z "na": ["pnie"]): od
+    // ziemi do 6 bloków w górę, w powietrzu obok pnia (w tym chunku),
+    // z szansą gestosc x waga biomu (plamy - ten sam szum co na ziemi,
+    // więc porośnięte są całe kępy drzew). Jedna roślina na komórkę.
+
+    decorateTrunks(chunk, baseX, baseZ, heights, samples, W) {
+
+        const packs = TRUNK_PACKS;
+
+        if (packs.length === 0) {
+            return;
+        }
+
+        const size = CHUNK_SIZE;
+        const steps = [[1, 0], [-1, 0], [0, 1], [0, -1]];
+
+        for (let lz = 0; lz < size; lz++) {
+
+            for (let lx = 0; lx < size; lx++) {
+
+                const x = baseX + lx;
+                const z = baseZ + lz;
+                const ground = heights[(lz + 1) * W + (lx + 1)];
+                const key = BIOME_KEYS[BIOME_INDEX[this.biomes.classify(x, z, samples[lz * size + lx])]];
+
+                for (let y = ground + 1; y <= ground + 6 && y < CHUNK_HEIGHT; y++) {
+
+                    if (!LOG_IDS[chunk.getId(lx, y, lz)]) {
+                        continue;
+                    }
+
+                    for (const [dx, dz] of steps) {
+
+                        const ax = lx + dx;
+                        const az = lz + dz;
+
+                        if (ax < 0 || az < 0 || ax >= size || az >= size || chunk.getId(ax, y, az) !== 0) {
+                            continue;
+                        }
+
+                        for (const pack of packs) {
+
+                            const weight = pack.where.weights[key];
+
+                            if (!weight) continue;
+
+                            const salt = pack.firstId;
+                            const wx = x + dx, wz = z + dz;
+
+                            if (
+                                this.field(this.noise.patches, wx + salt * 977, wz - salt * 613, 18, 2) > patchLevel(pack.where.cover * weight) &&
+                                hash01(this.plantSeed, wx * 7 + y, wz, 60 + salt) < pack.where.density
+                            ) {
+                                const stage = hash01(this.plantSeed, wx, wz * 3 + y, 80 + salt);
+                                let sum = 0, index = pack.where.stages.length - 1;
+                                for (let s = 0; s < pack.where.stages.length; s++) {
+                                    sum += pack.where.stages[s];
+                                    if (stage < sum) { index = s; break; }
+                                }
+                                chunk.setId(ax, y, az, getBlockId(plantStageType(pack, index)));
+                                break;
+                            }
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+        }
 
     }
 
@@ -1093,7 +1192,14 @@ export class RealisticGenerator {
         // Rośliny z paczek, które rosną na piasku (plamy jak na trawie).
 
         if (kind === 'sand' && ground !== this.ids.snow) {
-            const plant = this.patchPlantAt(x, z, biome, true);
+            const plant = this.patchPlantAt(x, z, biome, 'piasek');
+            if (plant) return plant;
+        }
+
+        // Porosty na wierzchu skał.
+
+        if (kind === 'rock' && ground !== this.ids.snow) {
+            const plant = this.patchPlantAt(x, z, biome, 'kamien');
             if (plant) return plant;
         }
 
@@ -1113,9 +1219,9 @@ export class RealisticGenerator {
 
 
     // Roślina z plam biomu (patches i paczki roślin) w kolumnie (x, z)
-    // albo 0. sandOnly - tylko te, które rosną na piasku.
+    // albo 0. surface - "ziemia", "piasek" albo "kamien".
 
-    patchPlantAt(x, z, biome, sandOnly) {
+    patchPlantAt(x, z, biome, surface) {
 
         const data = this.biomeData[biome].plants;
 
@@ -1128,7 +1234,8 @@ export class RealisticGenerator {
             const patch = data.patches[i];
             const salt = patch.salt ?? i;
 
-            if (sandOnly && !patch.sand) {
+            // Plamy biomu (bez surfaces) - tylko na ziemi.
+            if (patch.surfaces ? !patch.surfaces.has(surface) : surface !== 'ziemia') {
                 continue;
             }
 
@@ -1250,7 +1357,7 @@ export class RealisticGenerator {
 
         // Rośliny w plamach (wrzos, krokusy, kępki mchu, trzcina...).
 
-        const patched = this.patchPlantAt(x, z, biome, false);
+        const patched = this.patchPlantAt(x, z, biome, 'ziemia');
 
         if (patched) {
             return patched;

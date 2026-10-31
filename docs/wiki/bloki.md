@@ -2,7 +2,7 @@
 
 > Ta strona jest generowana z kodu gry (`python tools/wiki.py`) - nie zmieniaj jej ręcznie, zmiany przepadną przy następnym generowaniu.
 
-Wersja gry **0.46.0** - 166 bloków (do tego 5 odmian, których nie ma w ekwipunku, np. wieniec zawieszony na boku bloku). Czas kopania dotyczy trybu przygody; w kreatywnym bloki znikają od razu.
+Wersja gry **0.47.0** - 178 bloków (do tego 5 odmian, których nie ma w ekwipunku, np. wieniec zawieszony na boku bloku). Czas kopania dotyczy trybu przygody; w kreatywnym bloki znikają od razu.
 
 [Ziemia](#ziemia) · [Skały](#skały) · [Drewno](#drewno) · [Budulec](#budulec) · [Rośliny](#rośliny) · [Światło](#światło) · [Ozdoby](#ozdoby)
 
@@ -185,6 +185,18 @@ Wersja gry **0.46.0** - 166 bloków (do tego 5 odmian, których nie ma w ekwipun
 | <img src="ikony/gorczyca_etap1.png" width="32" height="32" alt=""> | **Młoda gorczyca** | `gorczyca_etap1` | **Kopanie:** od razu<br>**Rośnie:** w: Gorczyca (kwitnie)<br>**Skąd:** zniszczony blok: Gorczyca (kwitnie); zniszczony blok: Gorczyca (strąki) |
 | <img src="ikony/gorczyca_etap2.png" width="32" height="32" alt=""> | **Gorczyca (kwitnie)** | `gorczyca_etap2` | **Kopanie:** od razu<br>**Daje:** Młoda gorczyca<br>**Rośnie:** w: Gorczyca (strąki)<br>**Skąd:** wyrasta z: Młoda gorczyca |
 | <img src="ikony/gorczyca_etap3.png" width="32" height="32" alt=""> | **Gorczyca (strąki)** | `gorczyca_etap3` | **Kopanie:** od razu<br>**Daje:** Młoda gorczyca<br>**Zbiór (PPM):** Nasiona gorczycy 1-3<br>**Skąd:** wyrasta z: Gorczyca (kwitnie) |
+| <img src="ikony/porostoliwkowy_etap1.png" width="32" height="32" alt=""> | **Młody porost oliwkowy** | `porostoliwkowy_etap1` | **Kopanie:** od razu<br>**Rośnie:** w: Porost oliwkowy<br>**Skąd:** zniszczony blok: Porost oliwkowy; zniszczony blok: Porost oliwkowy (duża plecha) |
+| <img src="ikony/porostoliwkowy_etap2.png" width="32" height="32" alt=""> | **Porost oliwkowy** | `porostoliwkowy_etap2` | **Kopanie:** od razu<br>**Daje:** Młody porost oliwkowy<br>**Rośnie:** w: Porost oliwkowy (duża plecha)<br>**Skąd:** wyrasta z: Młody porost oliwkowy |
+| <img src="ikony/porostoliwkowy_etap3.png" width="32" height="32" alt=""> | **Porost oliwkowy (duża plecha)** | `porostoliwkowy_etap3` | **Kopanie:** od razu<br>**Daje:** Młody porost oliwkowy<br>**Zbiór (PPM):** Plecha porostu oliwkowego 1-2<br>**Skąd:** wyrasta z: Porost oliwkowy |
+| <img src="ikony/porostiglasty_etap1.png" width="32" height="32" alt=""> | **Młody porost iglasty** | `porostiglasty_etap1` | **Kopanie:** od razu<br>**Rośnie:** w: Porost iglasty<br>**Skąd:** zniszczony blok: Porost iglasty; zniszczony blok: Porost iglasty (gęsty) |
+| <img src="ikony/porostiglasty_etap2.png" width="32" height="32" alt=""> | **Porost iglasty** | `porostiglasty_etap2` | **Kopanie:** od razu<br>**Daje:** Młody porost iglasty<br>**Rośnie:** w: Porost iglasty (gęsty)<br>**Skąd:** wyrasta z: Młody porost iglasty |
+| <img src="ikony/porostiglasty_etap3.png" width="32" height="32" alt=""> | **Porost iglasty (gęsty)** | `porostiglasty_etap3` | **Kopanie:** od razu<br>**Daje:** Młody porost iglasty<br>**Zbiór (PPM):** Gałązki porostu iglastego 1-2<br>**Skąd:** wyrasta z: Porost iglasty |
+| <img src="ikony/ochra_etap1.png" width="32" height="32" alt=""> | **Żółta ochra (kropki)** | `ochra_etap1` | **Kopanie:** od razu<br>**Rośnie:** w: Żółta ochra<br>**Skąd:** zniszczony blok: Żółta ochra; zniszczony blok: Żółta ochra (skorupa) |
+| <img src="ikony/ochra_etap2.png" width="32" height="32" alt=""> | **Żółta ochra** | `ochra_etap2` | **Kopanie:** od razu<br>**Daje:** Żółta ochra (kropki)<br>**Rośnie:** w: Żółta ochra (skorupa)<br>**Skąd:** wyrasta z: Żółta ochra (kropki) |
+| <img src="ikony/ochra_etap3.png" width="32" height="32" alt=""> | **Żółta ochra (skorupa)** | `ochra_etap3` | **Kopanie:** od razu<br>**Daje:** Żółta ochra (kropki)<br>**Zbiór (PPM):** Grudka żółtej ochry 1-2<br>**Skąd:** wyrasta z: Żółta ochra |
+| <img src="ikony/huba_etap1.png" width="32" height="32" alt=""> | **Młoda huba** | `huba_etap1` | **Kopanie:** od razu<br>**Rośnie:** w: Huba<br>**Skąd:** zniszczony blok: Huba; zniszczony blok: Huba (stara, piętrowa) |
+| <img src="ikony/huba_etap2.png" width="32" height="32" alt=""> | **Huba** | `huba_etap2` | **Kopanie:** od razu<br>**Daje:** Młoda huba<br>**Rośnie:** w: Huba (stara, piętrowa)<br>**Skąd:** wyrasta z: Młoda huba |
+| <img src="ikony/huba_etap3.png" width="32" height="32" alt=""> | **Huba (stara, piętrowa)** | `huba_etap3` | **Kopanie:** od razu<br>**Daje:** Młoda huba<br>**Zbiór (PPM):** Huba 1-2<br>**Skąd:** wyrasta z: Huba |
 
 ## Światło
 

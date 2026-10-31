@@ -1,0 +1,83 @@
+{
+    "nazwa": "Porost oliwkowy",
+    "nazwaAngielska": "Olive Lichen",
+    "opis": "liściasty porost - zachodzące na siebie, oliwkowozielone płatki z jasnymi środkami; porasta kamienie i pnie, rośnie powoli",
+    "pierwszeId": 5036,
+    "etapy": [
+        {
+            "nazwa": "Młody porost oliwkowy",
+            "model": {
+                "rodzaj": "kepka",
+                "liscie": {
+                    "uklad": "nalot",
+                    "wzor": "listki",
+                    "promien": 3
+                }
+            }
+        },
+        {
+            "nazwa": "Porost oliwkowy",
+            "model": {
+                "rodzaj": "kepka",
+                "liscie": {
+                    "uklad": "nalot",
+                    "wzor": "listki",
+                    "promien": 5
+                }
+            }
+        },
+        {
+            "nazwa": "Porost oliwkowy (duża plecha)",
+            "model": {
+                "rodzaj": "kepka",
+                "liscie": {
+                    "uklad": "nalot",
+                    "wzor": "listki",
+                    "promien": 8
+                }
+            }
+        }
+    ],
+    "kolory": {
+        "lisc": "#8a9628",
+        "liscJasny": "#c2c650",
+        "liscCiemny": "#5a6418"
+    },
+    "czasWzrostu": 600,
+    "przedmiot": {
+        "klucz": "plecha",
+        "plik": "plecha.png",
+        "nazwa": "Plecha porostu oliwkowego",
+        "nazwaAngielska": "Olive Lichen Thallus",
+        "kategoria": "ozdoby"
+    },
+    "zbior": {
+        "ile": [
+            1,
+            2
+        ],
+        "wraca": 1
+    },
+    "gdzieRosnie": {
+        "biomy": {
+            "skaly": 1,
+            "las": 0.6,
+            "buczyna": 0.6
+        },
+        "na": [
+            "kamien",
+            "pnie"
+        ],
+        "plamy": 0.2,
+        "gestosc": 0.3,
+        "etapy": [
+            0.3,
+            0.35,
+            0.35
+        ]
+    },
+    "zrodlo": {
+        "atlas": "Atlas tekstur porostu oliwkowego.png",
+        "przedmiot": "plecha: --wysokosc 16 --nazwy etap1,etap2,etap3,plecha; etapy - model z pikseli (nalot: wzór listki na każdej ścianie obok) w kolorach atlasu"
+    }
+}

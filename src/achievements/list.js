@@ -283,6 +283,33 @@ const MUSTARD = getPlantPack('gorczyca')?.item ? [{
     when: (data) => data.item === 'gorczyca_nasiona'
 }] : [];
 
+// Porosty (assets/rosliny/porostoliwkowy, porostiglasty, ochra) i huba -
+// rośliny na skałach i pniach.
+
+const LICHEN_ITEMS = ['porostoliwkowy_plecha', 'porostiglasty_galazki', 'ochra_grudka'];
+
+const LICHENS = getPlantPack('porostoliwkowy')?.item ? [{
+    id: 'lichen',
+    tier: 'common',
+    title: 'Cierpliwość kamienia',
+    task: 'Zbierz duży porost ze skały albo pnia (oliwkowy, iglasty albo żółtą ochrę).',
+    comment: 'Rośnie kilka milimetrów na rok. Ten tutaj pamięta czasy, kiedy świat był jeszcze płaski.',
+    icon: 'ochra_grudka',
+    on: 'harvested',
+    when: (data) => LICHEN_ITEMS.includes(data.item)
+}] : [];
+
+const BRACKET = getPlantPack('huba')?.item ? [{
+    id: 'bracket_fungus',
+    tier: 'common',
+    title: 'Półka na pniu',
+    task: 'Zbierz hubę ze starej, piętrowej huby na pniu drzewa (lasy liściaste i buczyny).',
+    comment: 'Drzewo nie prosiło o półki. Dostało je i tak.',
+    icon: 'huba_huba',
+    on: 'harvested',
+    when: (data) => data.item === 'huba_huba'
+}] : [];
+
 
 // "Złota godzina": słońce nisko nad horyzontem (wschód albo zachód),
 // gracz patrzy prosto na nie i nic go nie zasłania.
@@ -397,6 +424,8 @@ export const ACHIEVEMENTS = [
     ...PERIWINKLE,
     ...FLAX,
     ...MUSTARD,
+    ...LICHENS,
+    ...BRACKET,
     {
         id: 'plant',
         tier: 'common',

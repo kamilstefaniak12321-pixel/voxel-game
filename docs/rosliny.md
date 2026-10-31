@@ -46,6 +46,8 @@ bez pisania kodu. Są dwa rodzaje:
 
 ![Gorczyca - żółte grona kwiatów i złote strąki](rosliny-gorczyca.png)
 
+![Porosty na kamieniach i pniu, huby na pniu](rosliny-porosty-huby.png)
+
 ## Skala: 16 pikseli na blok
 
 Blok to 1 m, gracz ma 1.8 bloku. Każdy piksel tekstury rośliny ma ten
@@ -127,6 +129,7 @@ piksele rysunku i wynik (powiększone).
 | `przedmiot` | przedmiot ze zbioru, obrazek 16 x 16; `grupy` - w których grupach składników jest (`red`, `green`, `blue`, `purple` - kolorowe lampy) |
 | `zbior` | PPM na ostatnim etapie: `ile` [od, do], `wraca` - do którego etapu wraca roślina |
 | `podloze` | na czym rośnie oprócz ziemi, np. `["sand"]` |
+| `gdzieRosnie.na` | gdzie rośnie: `ziemia` (domyślnie, trawa; piasek z `podloze`), `kamien` (wierzch skał - porosty), `pnie` (boki pni drzew, do 6 bloków nad ziemią - porosty, huby) |
 | `gdzieRosnie` | teren realistyczny: `biomy` - lista albo `{ "biom": waga }` (1 - główny biom rośliny, mniej - rośnie tam rzadziej, np. `{ "hala": 1, "laka": 0.3 }`), `plamy` (jaka część głównego biomu w plamach), `gestosc` (jak gęsto w plamie), `etapy` (jak często który etap) |
 | `zrodlo` | skąd są obrazki (dla porządku - gra tego nie czyta) |
 
@@ -153,6 +156,18 @@ samej skali co bloki - jeden piksel modelu to 1/16 bloku:
   - `krzak` - wysoka kopułka liści z kostek (spód w cieniu, jaśniejszy
     wierzch), z boków na różnych wysokościach wystają płaskie liście -
     postrzępiony, liściasty brzeg - piwonia,
+  - `nalot` - **porost**: plama na każdej ścianie komórki, za którą jest
+    lity blok (ziemia, kamień, bok pnia, nawet sufit) - płasko, 0.3 piksela
+    od ściany, jaśniejsze piksele o piksel wyżej. `wzor`: `listki`
+    (zachodzące płatki z wypukłymi środkami - porost oliwkowy), `galazki`
+    (rozgałęzione gałązki z jasnymi końcami - porost iglasty), `kropki`
+    (grudki skorupy - żółta ochra); `promien` - wielkość plamy (do 8),
+  - `huba` - **grzyb półkowy**: półki wyrastające z boku pnia (ściana
+    obok; przy kilku - jedna z odmiany): pół-elipsa z kostek, wierzch
+    w słojach (jasny brzeg, brązowe pasy, ciemna nasada), kremowy spód;
+    `ile` - ile półek, `dlugosc` - promień półki. Porost i huba nie
+    potrzebują ziemi - trzymają się ściany (stawia się je przy bloku,
+    znikają, gdy nie mają już żadnej ściany),
   - `brak` - bez liści przy ziemi,
   - `dywan` - roślina płożąca się (barwinek): płaski kobierzec na całą
     komórkę - ciemne tło (cień między liśćmi), owalne liście, brązowe pędy
@@ -357,6 +372,11 @@ do numeru paczki - nowa roślina nie przesuwa plam innych.
 | buczyna | zawilec | barwinek |
 | brzezina | cynia, gorczyca | piwonia |
 
+Porosty i huby (`"na"`): porost oliwkowy - skały, lasy liściaste
+i buczyny (kamienie i pnie); porost iglasty - świerczyny, bory, hale;
+żółta ochra - skały, hale, plaże (kamienie); huba - pnie w lasach
+liściastych i buczynach (rzadziej brzezina, świerczyna).
+
 ## Komendy
 
 | komenda | co robi |
@@ -399,8 +419,8 @@ zmniejszenie bywa 3-5 razy. Proponowane rozmiary (prawdziwa wysokość
 | **kocanka piaskowa** | 0.1-0.3 m | **do 10 px (0.6 bloku)** | **model z pikseli `kepka` - zrobione** (0.31.0): rozeta, łodygi, baldachy |
 | **zawilec** | 0.1-0.3 m | **12 x 12 px** | **`kepka`: okółki liści, kwiaty-talerzyki - zrobione** (0.34.0) |
 | **barwinek** | 0.1-0.2 m, płożący | **płasko, cała komórka** | **`kepka` z liśćmi `dywan`: łączy się z sąsiadami w dywan kwiatów - zrobione** (0.41.0) |
-| porost oliwkowy, porost iglasty, żółta ochra | płaskie | płasko | model płaski na kamieniu i korze (jak opadłe liście), 4 odmiany |
-| grzyby półkowe | 5-30 cm | płasko na boku pnia | model przy ścianie (jak wieniec), na pniach |
+| **porost oliwkowy, porost iglasty, żółta ochra** | płaskie | **plamy na ścianach** | **`kepka` z liśćmi `nalot`: płatki / gałązki / grudki na każdej ścianie obok - zrobione** (0.47.0) |
+| **grzyby półkowe (huba)** | 5-30 cm | **półki na boku pnia** | **`kepka` z liśćmi `huba`: półki ze słojami - zrobione** (0.47.0) |
 | lotos | liść 0.5 m na wodzie | liść płasko na tafli, kwiat 0.5 bloku nad wodą | jak grzybień (rośliny wodne 0.26.0) |
 | glony głębinowe, turkusowa alga | pod wodą | 1-2 bloki / 0.5-1 blok | roślina w wodzie (jak wywłócznik) |
 | rumianek, wrzos | 0.2-0.5 m | już są w grze | nowe tekstury dla obecnych bloków (14 px) |

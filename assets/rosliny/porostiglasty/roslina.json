@@ -1,0 +1,83 @@
+{
+    "nazwa": "Porost iglasty",
+    "nazwaAngielska": "Needle Lichen",
+    "opis": "krzaczkowaty porost - drobne, rozgałęzione, ciemnozielone gałązki z jasnymi końcami; porasta kamienie i pnie w borach i świerczynach",
+    "pierwszeId": 5039,
+    "etapy": [
+        {
+            "nazwa": "Młody porost iglasty",
+            "model": {
+                "rodzaj": "kepka",
+                "liscie": {
+                    "uklad": "nalot",
+                    "wzor": "galazki",
+                    "promien": 3
+                }
+            }
+        },
+        {
+            "nazwa": "Porost iglasty",
+            "model": {
+                "rodzaj": "kepka",
+                "liscie": {
+                    "uklad": "nalot",
+                    "wzor": "galazki",
+                    "promien": 5
+                }
+            }
+        },
+        {
+            "nazwa": "Porost iglasty (gęsty)",
+            "model": {
+                "rodzaj": "kepka",
+                "liscie": {
+                    "uklad": "nalot",
+                    "wzor": "galazki",
+                    "promien": 8
+                }
+            }
+        }
+    ],
+    "kolory": {
+        "lisc": "#3f8a5a",
+        "liscJasny": "#7cc492",
+        "liscCiemny": "#1e4a30"
+    },
+    "czasWzrostu": 600,
+    "przedmiot": {
+        "klucz": "galazki",
+        "plik": "galazki.png",
+        "nazwa": "Gałązki porostu iglastego",
+        "nazwaAngielska": "Needle Lichen Sprigs",
+        "kategoria": "ozdoby"
+    },
+    "zbior": {
+        "ile": [
+            1,
+            2
+        ],
+        "wraca": 1
+    },
+    "gdzieRosnie": {
+        "biomy": {
+            "swierczyna": 1,
+            "bor": 0.6,
+            "hala": 0.4
+        },
+        "na": [
+            "kamien",
+            "pnie"
+        ],
+        "plamy": 0.2,
+        "gestosc": 0.3,
+        "etapy": [
+            0.3,
+            0.35,
+            0.35
+        ]
+    },
+    "zrodlo": {
+        "atlas": "Czteropolowy atlas porostu iglastego.png",
+        "przedmiot": "galazki: --wysokosc 16 --nazwy etap1,etap2,etap3,galazki; etapy - model z pikseli (nalot: wzór galazki na każdej ścianie obok) w kolorach atlasu"
+    }
+}

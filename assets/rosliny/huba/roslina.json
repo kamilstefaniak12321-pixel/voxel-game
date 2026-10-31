@@ -1,0 +1,103 @@
+{
+    "nazwa": "Huba",
+    "nazwaAngielska": "Bracket Fungus",
+    "opis": "grzyb półkowy - twarde półki wyrastające z boku pnia, na wierzchu słoje (jasny brzeg, brązowe pasy), od spodu kremowe pory; rośnie na pniach w lasach",
+    "pierwszeId": 5045,
+    "etapy": [
+        {
+            "nazwa": "Młoda huba",
+            "model": {
+                "rodzaj": "kepka",
+                "liscie": {
+                    "uklad": "huba",
+                    "ile": [
+                        1,
+                        1
+                    ],
+                    "dlugosc": [
+                        2,
+                        3
+                    ]
+                }
+            }
+        },
+        {
+            "nazwa": "Huba",
+            "model": {
+                "rodzaj": "kepka",
+                "liscie": {
+                    "uklad": "huba",
+                    "ile": [
+                        1,
+                        2
+                    ],
+                    "dlugosc": [
+                        3,
+                        5
+                    ]
+                }
+            }
+        },
+        {
+            "nazwa": "Huba (stara, piętrowa)",
+            "model": {
+                "rodzaj": "kepka",
+                "liscie": {
+                    "uklad": "huba",
+                    "ile": [
+                        2,
+                        3
+                    ],
+                    "dlugosc": [
+                        4,
+                        6
+                    ]
+                }
+            }
+        }
+    ],
+    "kolory": {
+        "kwiat": "#a88a70",
+        "kwiatJasny": "#ead6b4",
+        "kwiatCiemny": "#7a6050",
+        "lodyga": "#5a4434",
+        "liscJasny": "#efe2c8"
+    },
+    "czasWzrostu": 600,
+    "przedmiot": {
+        "klucz": "huba",
+        "plik": "huba.png",
+        "nazwa": "Huba",
+        "nazwaAngielska": "Bracket Fungus",
+        "kategoria": "ozdoby"
+    },
+    "zbior": {
+        "ile": [
+            1,
+            2
+        ],
+        "wraca": 2
+    },
+    "gdzieRosnie": {
+        "biomy": {
+            "las": 1,
+            "buczyna": 1,
+            "brzezina": 0.6,
+            "swierczyna": 0.4
+        },
+        "na": [
+            "pnie"
+        ],
+        "plamy": 0.15,
+        "gestosc": 0.12,
+        "etapy": [
+            0.3,
+            0.35,
+            0.35
+        ]
+    },
+    "zrodlo": {
+        "atlas": "Pikselowy atlas czterech grzybów półkowych.png",
+        "przedmiot": "huba: --wysokosc 16 --nazwy etap1,etap2,etap3,huba; etapy - model z pikseli (półki ze słojami na boku pnia) w kolorach atlasu"
+    }
+}

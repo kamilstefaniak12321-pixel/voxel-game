@@ -648,6 +648,173 @@ function starFlower(box, x, y, z, size, n) {
 
 }
 
+// ------------------------------------------------------------
+// NALOT (porosty): plama porostu na każdej ścianie komórki, za którą
+// jest lity blok (mask: 1 +x, 2 +z, 4 -x, 8 -z, 16 dół, 32 góra - liczy
+// ChunkMesher). Płasko, 0.3 piksela od ściany, jaśniejsze piksele o piksel
+// wyżej (wypukłość). Wzór:
+//   listki  - zachodzące na siebie okrągłe płatki: ciemny brzeg, jasny,
+//             wypukły środek (porost liściasty - oliwkowy),
+//   galazki - rozgałęzione gałązki z jasnymi, wypukłymi końcami
+//             (porost krzaczkowaty - iglasty),
+//   kropki  - drobne grudki skorupy w trzech odcieniach (porost
+//             skorupiasty - żółta ochra).
+// leaves.radius - wielkość plamy (etap wzrostu).
+// ------------------------------------------------------------
+
+const COATING_FACES = [
+    { bit: 1, axis: 0, plane: 8, sign: -1 },
+    { bit: 2, axis: 2, plane: 8, sign: -1 },
+    { bit: 4, axis: 0, plane: -8, sign: 1 },
+    { bit: 8, axis: 2, plane: -8, sign: 1 },
+    { bit: 16, axis: 1, plane: 0, sign: 1 },
+    { bit: 32, axis: 1, plane: 16, sign: -1 }
+];
+
+function lichenPattern(tuft, variant, face) {
+
+    const flat = new Map();
+    const raised = new Map();
+    const radius = tuft.leaves.radius;
+    const rnd = (a, b, salt) => cellRandom(variant, a, b, salt + face * 17);
+    const ci = 8 + Math.floor(rnd(0, 0, 40) * 5) - 2;
+    const cj = 8 + Math.floor(rnd(1, 0, 40) * 5) - 2;
+    const inGrid = (i, j) => i >= 0 && i < 16 && j >= 0 && j < 16;
+    const near = (i, j, extra = 0) => Math.hypot(i - ci, j - cj) <= radius + extra + rnd(i, j, 41) * 1.5;
+
+    if (tuft.leaves.pattern === 'listki') {
+        const lobes = Math.max(1, Math.round(radius * 1.7));
+        for (let n = 0; n < lobes; n++) {
+            const angle = rnd(n, 1, 42) * Math.PI * 2;
+            const distance = rnd(n, 2, 42) * Math.max(0, radius - 1);
+            const li = ci + Math.cos(angle) * distance, lj = cj + Math.sin(angle) * distance;
+            const r = 1.4 + rnd(n, 3, 42) * 1.2;
+            for (let j = Math.floor(lj - r); j <= Math.ceil(lj + r); j++) {
+                for (let i = Math.floor(li - r); i <= Math.ceil(li + r); i++) {
+                    if (!inGrid(i, j)) continue;
+                    const d = Math.hypot(i - li, j - lj);
+                    if (d > r) continue;
+                    if (d < 0.8) raised.set(`${i},${j}`, 'leafLight');
+                    flat.set(`${i},${j}`, d > r - 0.9 ? 'leafDark' : 'leaf');
+                }
+            }
+        }
+    }
+    else if (tuft.leaves.pattern === 'galazki') {
+        const roots = 2 + Math.floor(radius / 2);
+        const branch = (i, j, di, dj, length, salt) => {
+            for (let k = 0; k < length; k++) {
+                if (!inGrid(i, j) || !near(i, j, 1)) break;
+                flat.set(`${i},${j}`, 'leaf');
+                if (inGrid(i + 1, j + 1) && !flat.has(`${i + 1},${j + 1}`)) flat.set(`${i + 1},${j + 1}`, 'leafDark');
+                if (rnd(k, salt, 43) < 0.22 && length - k > 2) {
+                    branch(i + dj, j + di, dj || di, di || dj, Math.ceil((length - k) / 2), salt * 7 + k);
+                }
+                if (rnd(k, salt, 44) < 0.3) [di, dj] = rnd(k, salt, 45) < 0.5 ? [di, dj || 1] : [di || 1, dj];
+                i += di;
+                j += dj;
+            }
+            if (inGrid(i - di, j - dj)) raised.set(`${i - di},${j - dj}`, 'leafLight');
+        };
+        const steps = [[1, 0], [0, 1], [-1, 0], [0, -1], [1, 1], [-1, 1], [1, -1], [-1, -1]];
+        for (let n = 0; n < roots; n++) {
+            const [di, dj] = steps[Math.floor(rnd(n, 5, 46) * 8)];
+            branch(ci, cj, di, dj, radius + 2, n + 1);
+        }
+    }
+    else {
+        for (let j = 0; j < 16; j++) {
+            for (let i = 0; i < 16; i++) {
+                if (!near(i, j)) continue;
+                const grain = rnd(i >> 1, j >> 1, 47);
+                if (grain < 0.35) continue;
+                const color = grain < 0.6 ? 'leafDark' : grain < 0.85 ? 'leaf' : 'leafLight';
+                flat.set(`${i},${j}`, color);
+                if (color === 'leafLight' && rnd(i, j, 48) < 0.4) raised.set(`${i},${j}`, 'leafLight');
+            }
+        }
+    }
+
+    return { flat, raised };
+
+}
+
+function coating(tuft, variant, mask, model) {
+
+    const { sheet } = model;
+
+    COATING_FACES.forEach(({ bit, axis, plane, sign }, face) => {
+
+        if (!(mask & bit)) return;
+
+        const { flat, raised } = lichenPattern(tuft, variant, face);
+
+        // Siatka 16 x 16 -> współrzędne ściany: na ścianach bocznych u to
+        // oś wzdłuż ściany (-8..7), v - wysokość (0..15); na dole i górze
+        // u = x, v = z (-8..7).
+        const draw = (cells, offset) => sheet(axis, plane + sign * offset, ({ pixel }) => {
+            for (const [cell, color] of cells) {
+                const [i, j] = cell.split(',').map(Number);
+                pixel(i - 8, axis === 1 ? j - 8 : j, color);
+            }
+        }, sign);
+
+        draw(flat, 0.3);
+        draw(raised, 1);
+
+    });
+
+    return model.finish();
+
+}
+
+// ------------------------------------------------------------
+// HUBA (grzyby półkowe): półki wyrastające z boku pnia. Ściana z maski
+// (bity 1 +x, 2 +z, 4 -x, 8 -z - lity blok obok); przy kilku - wybór
+// z odmiany. Półka: pół-elipsa z kostek, wierzch w słojach (jasny brzeg,
+// ciemniejsze pasy, ciemna nasada przy pniu), spód kremowy (pory),
+// leaves.count - ile półek (na różnych wysokościach), leaves.length -
+// promień półki w pikselach.
+// ------------------------------------------------------------
+
+function bracket(tuft, variant, mask, model) {
+
+    const { box } = model;
+    const walls = CARPET_SIDES.filter(({ bit }) => mask & bit);
+    const { dx, dz } = walls[Math.floor(cellRandom(variant, 0, 0, 50) * walls.length)];
+    const rnd = (a, b) => cellRandom(variant, a, b, 51);
+    const shelves = tuft.leaves.count[0] + Math.floor(rnd(0, 1) * (tuft.leaves.count[1] - tuft.leaves.count[0] + 1));
+    const used = [];
+
+    for (let n = 0; n < shelves; n++) {
+
+        const r = tuft.leaves.length[0] + Math.floor(rnd(n, 2) * (tuft.leaves.length[1] - tuft.leaves.length[0] + 1)) - (n > 0 ? 1 : 0);
+        let y = 3 + Math.floor(rnd(n, 3) * 10);
+        if (used.some((other) => Math.abs(other - y) < 3)) y = Math.min(13, Math.max(...used) + 3);
+        used.push(y);
+        const along = Math.floor(rnd(n, 4) * 7) - 3;
+        const depth = Math.max(2, Math.round(r * 0.8));
+
+        for (let b = 0; b < depth; b++) {
+            for (let a = -r; a <= r; a++) {
+                const d = Math.hypot(a / r, b / depth);
+                if (d > 1) continue;
+                const color = d > 0.9 ? 'flowerLight' : d > 0.74 ? 'flower' : d > 0.56 ? 'flowerDark' : d > 0.36 ? 'flower' : 'stem';
+                // Od ściany do środka komórki (ściana +x: x = 7, 6, ...).
+                const u = Math.max(-8, Math.min(7, along + a));
+                const x = dx > 0 ? 7 - b : dx < 0 ? -8 + b : u;
+                const z = dz > 0 ? 7 - b : dz < 0 ? -8 + b : u;
+                box(x, y, z, 1, 1, 1, color);
+                if (d < 0.6) box(x, y - 1, z, 1, 1, 1, 'leafLight');
+            }
+        }
+
+    }
+
+    return model.finish();
+
+}
+
 export function makeTuftTemplate(tuft, variant, mask = 0) {
 
     const random = randomFor(40503 + variant * 7919 + tuft.seed);
@@ -665,6 +832,14 @@ export function makeTuftTemplate(tuft, variant, mask = 0) {
 
     if (tuft.leaves.layout === 'dywan') {
         return soften(carpet(tuft, variant, mask, model));
+    }
+
+    if (tuft.leaves.layout === 'nalot') {
+        return soften(coating(tuft, variant, mask || 16, model));
+    }
+
+    if (tuft.leaves.layout === 'huba') {
+        return soften(bracket(tuft, variant, mask & 15 || 8, model));
     }
 
     if (tuft.leaves.layout === 'kepa') {

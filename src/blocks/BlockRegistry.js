@@ -246,6 +246,20 @@ function fruitBushBlocks() {
 // blok - plant.sprite: rozmiar obrazka w blokach (16 pikseli = 1 blok),
 // plant.width / height: zasięg rośliny dla celownika.
 
+// Numer dywanu paczki (1-255): wszystkie etapy jednej rośliny-dywanu
+// mają ten sam - barwinek łączy się z barwinkiem w każdym etapie.
+const CARPET_GROUPS = new Map();
+
+function carpetGroup(pack) {
+
+    if (!CARPET_GROUPS.has(pack.id)) {
+        CARPET_GROUPS.set(pack.id, Math.min(255, CARPET_GROUPS.size + 1));
+    }
+
+    return CARPET_GROUPS.get(pack.id);
+
+}
+
 function plantPackBlocks() {
 
     const blocks = {};
@@ -267,7 +281,8 @@ function plantPackBlocks() {
             const shape = stage.tuft
                 ? {
                     model: 'riverPlant',
-                    riverPlant: { kind: `kepka:${pack.id}:${index}`, waterlogged: false, tuft: stage.tuft },
+                    // carpet - numer dywanu (te same łączą się w jeden).
+                    riverPlant: { kind: `kepka:${pack.id}:${index}`, waterlogged: false, tuft: stage.tuft, carpet: stage.tuft.carpet ? carpetGroup(pack) : 0 },
                     plant: { height: stage.height / PLANT_PIXELS, width: stage.width / PLANT_PIXELS / 2 },
                     sound: 'plant',
                     textures: { all: pack.item ? plantTile(pack, pack.item.file) : 'tall_grass' }

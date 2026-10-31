@@ -12,7 +12,7 @@ import {
 
 import { WATER_FLOW_UV } from './BlockRenderData.js';
 import { atmosphericLightToBrightness } from './LightPolicy.js';
-import { getRiverPlantFaces, plantRandom, riverPlantTransform } from './RiverPlantGeometry.js';
+import { getRiverPlantFaces, plantRandom, plantTransform, riverPlantTransform } from './RiverPlantGeometry.js';
 import { getBushyGrassFaces } from './BushyGrassGeometry.js';
 import { getAtlasUV } from './TextureAtlas.js';
 
@@ -104,6 +104,16 @@ const padR = new Uint8Array(P_LAYER * (H + 2));
 const padG = new Uint8Array(P_LAYER * (H + 2));
 const padB = new Uint8Array(P_LAYER * (H + 2));
 
+// Numer dywanu w komórce (barwinek - TuftGeometry.js carpet), 0 - nie
+// dywan. Dywan łączy się z sąsiadem o tym samym numerze, także przez
+// granicę chunka.
+const padCarpet = new Uint8Array(P_LAYER * (H + 2));
+const CARPET_OF = new Uint8Array(blockRenderData.length);
+
+blockRenderData.forEach((data, id) => {
+    CARPET_OF[id] = data?.riverPlant?.carpet ?? 0;
+});
+
 
 // Najwyższa warstwa skopiowana dla obecnego chunka - wyżej w kopii
 // zostały dane poprzedniego chunka.
@@ -179,6 +189,7 @@ function fillPadding(chunk, world, height, first) {
                             padOpaque[p] = 0;
                             padShade[p] = 0;
                             padLiquid[p] = 0;
+                            padCarpet[p] = 0;
                             padSky[p] = MAX_LIGHT;
                             padR[p] = padG[p] = padB[p] = 0;
 
@@ -194,6 +205,7 @@ function fillPadding(chunk, world, height, first) {
                         padOpaque[p] = isOpaqueId(blockId) ? 1 : 0;
                         padShade[p] = padOpaque[p] | (isLeavesId(blockId) ? 1 : 0);
                         padLiquid[p] = getLiquidKindId(blockId);
+                        padCarpet[p] = CARPET_OF[blockId];
                         padSky[p] = source.skyLight[i];
                         padR[p] = source.lightR[i];
                         padG[p] = source.lightG[i];
@@ -692,15 +704,20 @@ function addRiverPlants(plants, faceCount, baseX, baseZ, grassDetail = null) {
         const lx = plants[k], y = plants[k + 1], lz = plants[k + 2];
         const data = grass ? { kind: 'grass', uv: grassUv } : blockRenderData[plants[k + 3]].riverPlant;
         const wx = baseX + lx, wz = baseZ + lz;
-        const transform = riverPlantTransform(wx, y, wz);
+        const transform = grass ? riverPlantTransform(wx, y, wz) : plantTransform(wx, y, wz, data.tuft);
+        const cell = padIndex(lx, y, lz);
+        // Dywan: z których stron rośnie taki sam (bity +x, +z, -x, -z).
+        const mask = !grass && data.carpet
+            ? (padCarpet[cell + 1] === data.carpet ? 1 : 0) | (padCarpet[cell + P] === data.carpet ? 2 : 0) |
+                (padCarpet[cell - 1] === data.carpet ? 4 : 0) | (padCarpet[cell - P] === data.carpet ? 8 : 0)
+            : 0;
         const faces = grass
             ? getBushyGrassFaces(plants[k + 3] === TALL_GRASS_ID, transform.variant, grassDetail)
-            : getRiverPlantFaces(data.kind, transform.variant, data.waterlogged, data.tuft);
+            : getRiverPlantFaces(data.kind, transform.variant, data.waterlogged, data.tuft, mask);
         const climate = grass && meshTint ? tintOfColumn(lx, lz) : null;
         const { cos, sin } = transform;
         const centerX = lx + transform.x;
         const centerZ = lz + transform.z;
-        const cell = padIndex(lx, y, lz);
         const red = padR[cell], green = padG[cell], blue = padB[cell];
         const strongest = Math.max(red, green, blue);
         const sky = BRIGHTNESS[padSky[cell] * LEVEL_STEPS];

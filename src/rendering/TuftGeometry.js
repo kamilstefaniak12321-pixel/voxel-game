@@ -383,7 +383,200 @@ function star(pixel, x, z, radius) {
 
 }
 
-export function makeTuftTemplate(tuft, variant) {
+// ------------------------------------------------------------
+// DYWAN (barwinek): roślina płożąca się po ziemi. Płaski kobierzec liści
+// na całą komórkę: ciemne tło (cień między liśćmi), na nim owalne liście,
+// brązowe pędy od środka na boki, wyżej kilka jaśniejszych liści
+// i kwiaty-gwiazdki (albo pąki) leżące na liściach.
+//
+// mask - z których stron rośnie taki sam dywan (bity: 1 +x, 2 +z, 4 -x,
+// 8 -z; liczy ChunkMesher): w tę stronę kobierzec sięga do samej
+// krawędzi, a pęd przechodzi przez nią w stałym miejscu - u sąsiada
+// zaczyna się w tym samym miejscu, więc barwinki łączą się w jeden
+// dywan. Bez sąsiadów - okrągła kępka. Wszystko losowane z (odmiana,
+// piksel), nie po kolei - sąsiad nie zmienia reszty kępki.
+// ------------------------------------------------------------
+
+const CARPET_SIDES = [
+    { bit: 1, dx: 1, dz: 0, cross: 1 },
+    { bit: 2, dx: 0, dz: 1, cross: -2 },
+    { bit: 4, dx: -1, dz: 0, cross: 1 },
+    { bit: 8, dx: 0, dz: -1, cross: -2 }
+];
+
+function cellRandom(variant, u, v, salt) {
+
+    let h = Math.imul(variant + 1, 374761393) ^ Math.imul(u + 64, 668265263) ^ Math.imul(v + 64, 2246822519) ^ Math.imul(salt + 7, 3266489917);
+    h = Math.imul(h ^ (h >>> 13), 1274126177);
+    h ^= h >>> 16;
+
+    return (h >>> 0) / 4294967296;
+
+}
+
+function carpet(tuft, variant, mask, model) {
+
+    const { sheet, box } = model;
+    const radius = tuft.leaves.radius;
+    const low = new Map();
+    const high = new Map();
+    const key = (u, v) => `${u},${v}`;
+    const inside = (u, v) => u >= -8 && u <= 7 && v >= -8 && v <= 7;
+    const side = (bit) => (mask & bit) !== 0;
+
+    // Kształt kobierca: okrąg (postrzępiony brzeg), a w stronę sąsiada -
+    // aż do krawędzi, na szerokość do sąsiednich boków (do samego rogu,
+    // gdy tam też jest dywan).
+    const covered = (u, v) => {
+        const edge = radius + (cellRandom(variant, u, v, 1) < 0.5 ? 0 : 1);
+        if (u * u + v * v <= edge * edge) return true;
+        const across = (lowBit, highBit, value) => (value < 0 ? (side(lowBit) ? -8 : -edge) <= value : value <= (side(highBit) ? 7 : edge));
+        if (side(1) && u >= 0 && across(8, 2, v)) return true;
+        if (side(4) && u <= 0 && across(8, 2, v)) return true;
+        if (side(2) && v >= 0 && across(4, 1, u)) return true;
+        if (side(8) && v <= 0 && across(4, 1, u)) return true;
+        return false;
+    };
+
+    // Brzeg od strony bez sąsiada postrzępiony (nie prosta linia na
+    // granicy komórek), przy sąsiedzie - pełny aż do krawędzi.
+    const frayed = (u, v) => [[1, 7 - u], [2, 7 - v], [4, u + 8], [8, v + 8]]
+        .some(([bit, distance]) => !side(bit) && distance <= 2 && cellRandom(variant, u, v, 12) < (3 - distance) * 0.3);
+
+    for (let v = -8; v <= 7; v++) {
+        for (let u = -8; u <= 7; u++) {
+            // Przy krawędzi sąsiada bez dziur - kobierce się stykają.
+            const seam = (side(1) && u >= 6) || (side(4) && u <= -7) || (side(2) && v >= 6) || (side(8) && v <= -7);
+            if (covered(u, v) && !frayed(u, v) && (seam || cellRandom(variant, u, v, 2) < 0.9)) {
+                low.set(key(u, v), 'leafDark');
+            }
+        }
+    }
+
+    // Liście: owalne, po 2 piksele, poziomo albo pionowo.
+    for (let v = -8; v <= 7; v++) {
+        for (let u = -8; u <= 7; u++) {
+            if (!low.has(key(u, v)) || cellRandom(variant, u, v, 3) > 0.42) continue;
+            const along = cellRandom(variant, u, v, 4) < 0.5;
+            const [u2, v2] = along ? [u + 1, v] : [u, v + 1];
+            low.set(key(u, v), 'leaf');
+            if (inside(u2, v2) && low.has(key(u2, v2))) low.set(key(u2, v2), 'leaf');
+        }
+    }
+
+    // Pędy: od środka w kilka stron (wężykiem), w stronę sąsiada - aż
+    // przez krawędź w stałym miejscu.
+    const runner = (dx, dz, length, salt, cross) => {
+        let u = 0, v = 0;
+        for (let k = 1; k <= length; k++) {
+            u += dx;
+            v += dz;
+            // Wężyk w poprzek, przy krawędzi sąsiada - do stałego miejsca.
+            const near = cross !== null && k >= length - 3;
+            if (dx !== 0) v = near ? v + Math.sign(cross - v) : v + (cellRandom(variant, k, salt, 5) < 0.25 ? (cellRandom(variant, k, salt, 6) < 0.5 ? -1 : 1) : 0);
+            else u = near ? u + Math.sign(cross - u) : u + (cellRandom(variant, k, salt, 5) < 0.25 ? (cellRandom(variant, k, salt, 6) < 0.5 ? -1 : 1) : 0);
+            if (!inside(u, v)) break;
+            // Pęd czasem schowany pod liśćmi (przy krawędzi sąsiada - nigdy).
+            if (!near && low.has(key(u, v)) && cellRandom(variant, u, v, 13) < 0.3) continue;
+            low.set(key(u, v), 'stem');
+        }
+    };
+
+    for (const [n, { bit, dx, dz, cross }] of CARPET_SIDES.entries()) {
+        if (side(bit)) {
+            runner(dx, dz, 8, n, cross);
+        }
+        else if (cellRandom(variant, n, 0, 7) < 0.7) {
+            runner(dx, dz, Math.max(1, radius - 1), n, null);
+        }
+    }
+
+    // Wyżej: kilka jaśniejszych liści (głębia kobierca).
+    const leaves = Math.round(tuft.leaves.count[0] + cellRandom(variant, 0, 0, 8) * (tuft.leaves.count[1] - tuft.leaves.count[0]));
+    for (let i = 0, placed = 0; i < 40 && placed < leaves * (1 + Math.min(3, popcount(mask)) * 0.5); i++) {
+        const u = Math.floor(cellRandom(variant, i, 0, 9) * 15) - 8;
+        const v = Math.floor(cellRandom(variant, i, 1, 9) * 15) - 8;
+        if (!low.has(key(u, v)) || !low.has(key(u + 1, v))) continue;
+        const color = cellRandom(variant, i, 2, 9) < 0.6 ? 'leafLight' : 'leaf';
+        high.set(key(u, v), color);
+        high.set(key(u + 1, v), color);
+        placed++;
+    }
+
+    // Kwiaty: z listy miejsc (odmiana) te na kobiercu, nie za blisko
+    // siebie ani krawędzi - w połączonym dywanie więcej kwiatów.
+    const flower = tuft.flower;
+    if (flower) {
+        const want = Math.round(flower.count[0] + cellRandom(variant, 0, 0, 10) * (flower.count[1] - flower.count[0])) * (1 + popcount(mask) * 0.35);
+        const spots = [];
+        for (let i = 0; i < 16 && spots.length < want; i++) {
+            const u = Math.floor(cellRandom(variant, i, 0, 11) * 12) - 6;
+            const v = Math.floor(cellRandom(variant, i, 1, 11) * 12) - 6;
+            if (!low.has(key(u, v)) || spots.some(([a, b]) => Math.abs(a - u) < 4 && Math.abs(b - v) < 4)) continue;
+            spots.push([u, v]);
+        }
+        for (const [n, [u, v]] of spots.entries()) {
+            const size = flower.sizes[0] === flower.sizes[1] ? flower.sizes[0] : (cellRandom(variant, n, 2, 11) < 0.5 ? flower.sizes[0] : flower.sizes[1]);
+            if (flower.kind === 'pak') {
+                box(u, 2, v, 1, 1, 1, 'bud');
+                high.set(key(u, v), 'leaf');
+            }
+            else {
+                starFlower(box, u, 2, v, size, n);
+            }
+        }
+    }
+
+    sheet(1, 0.5, ({ pixel }) => {
+        for (const [cell, color] of low) {
+            const [u, v] = cell.split(',').map(Number);
+            pixel(u, v, color);
+        }
+    }, 1);
+
+    sheet(1, 1.5, ({ pixel }) => {
+        for (const [cell, color] of high) {
+            const [u, v] = cell.split(',').map(Number);
+            pixel(u, v, color);
+        }
+    }, 1);
+
+    return model.finish();
+
+}
+
+function popcount(mask) {
+
+    return (mask & 1) + ((mask >> 1) & 1) + ((mask >> 2) & 1) + ((mask >> 3) & 1);
+
+}
+
+// Gwiazdka (barwinek): płaski kwiat leżący na liściach, jeden piksel
+// grubości. Rozmiar 1 - krzyżyk 3 x 3, 2 - wiatraczek 5 x 5 (cztery
+// płatki skręcone w jedną stronę, odbity co drugi kwiat), w środku jasna
+// gwiazdka (`srodek`).
+
+function starFlower(box, x, y, z, size, n) {
+
+    box(x, y, z, 1, 1, 1, 'center');
+
+    for (const [dx, dz] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+        box(x + dx, y, z + dz, 1, 1, 1, 'flowerLight');
+    }
+
+    if (size < 2) {
+        return;
+    }
+
+    const flip = n % 2 ? -1 : 1;
+
+    for (const [dx, dz] of [[2, 0], [2, flip], [-2, 0], [-2, -flip], [0, 2], [-flip, 2], [0, -2], [flip, -2]]) {
+        box(x + dx, y, z + dz, 1, 1, 1, 'flower');
+    }
+
+}
+
+export function makeTuftTemplate(tuft, variant, mask = 0) {
 
     const random = randomFor(40503 + variant * 7919 + tuft.seed);
     const between = ([low, high]) => low + Math.floor(random() * (high - low + 1));
@@ -397,6 +590,10 @@ export function makeTuftTemplate(tuft, variant) {
 
     // Płaskie liście (z łodyg i z brzegu krzaka): [x, y, z, kierunek, długość].
     const stemLeaves = [];
+
+    if (tuft.leaves.layout === 'dywan') {
+        return soften(carpet(tuft, variant, mask, model));
+    }
 
     if (tuft.leaves.layout === 'kepa') {
         mound(tuft, variant, random, between, model);
@@ -662,11 +859,18 @@ export function makeTuftTemplate(tuft, variant) {
         });
     }
 
-    // Światło jak na zwykłych roślinach (płaszczyznach z normalną w górę):
-    // boki kostek dostają normalną odchyloną mocno w górę, więc mała
-    // kępka nie ciemnieje, gdy słońce jest za nią - kształt dalej widać
-    // dzięki jaśniejszym i ciemniejszym pikselom.
-    return model.finish().map((face) => {
+    return soften(model.finish());
+
+}
+
+// Światło jak na zwykłych roślinach (płaszczyznach z normalną w górę):
+// boki kostek dostają normalną odchyloną mocno w górę, więc mała kępka
+// nie ciemnieje, gdy słońce jest za nią - kształt dalej widać dzięki
+// jaśniejszym i ciemniejszym pikselom.
+
+function soften(faces) {
+
+    return faces.map((face) => {
         const [x, y, z] = face.normal;
         const length = Math.hypot(x * 0.45, y + 1.4, z * 0.45);
         return { ...face, normal: [x * 0.45 / length, (y + 1.4) / length, z * 0.45 / length] };

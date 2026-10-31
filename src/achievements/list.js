@@ -244,6 +244,19 @@ const SEA_HOLLY = getPlantPack('mikolajek')?.item ? [{
     when: (data) => data.item === 'mikolajek_kwiat'
 }] : [];
 
+// Barwinek (assets/rosliny/barwinek) - dywan kwiatów łączący się z sąsiadami.
+
+const PERIWINKLE = getPlantPack('barwinek')?.item ? [{
+    id: 'periwinkle',
+    tier: 'common',
+    title: 'Dywan z kwiatów',
+    task: 'Zbierz kwiat z kwitnącego barwinka (płoży się po ziemi i łączy w dywany kwiatów w lasach liściastych, buczynach i na łąkach).',
+    comment: 'Barwinek nie rośnie sam - rozkłada się, łączy z sąsiadami i robi z lasu salon.',
+    icon: 'barwinek_kwiat',
+    on: 'harvested',
+    when: (data) => data.item === 'barwinek_kwiat'
+}] : [];
+
 
 // "Złota godzina": słońce nisko nad horyzontem (wschód albo zachód),
 // gracz patrzy prosto na nie i nic go nie zasłania.
@@ -355,6 +368,7 @@ export const ACHIEVEMENTS = [
     ...MARIGOLD,
     ...ZINNIA,
     ...SEA_HOLLY,
+    ...PERIWINKLE,
     {
         id: 'plant',
         tier: 'common',

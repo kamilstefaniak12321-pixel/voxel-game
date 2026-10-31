@@ -11,6 +11,34 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 0.41.0 - Barwinek (dywan kwiatów)
+
+Barwinek - płożący się dywan kwiatów — PR #70 (zawiera #64-#69).
+
+- Nowa roślina z paczki roślin: **barwinek** - płoży się po ziemi:
+  płaski kobierzec ciemnozielonych liści z brązowymi pędami
+  i **liliowoniebieskimi kwiatami-gwiazdkami** z jasnym środkiem.
+  Trzy etapy: młody (mała kępka), pąki, kwitnący.
+- **Barwinki obok siebie łączą się w jeden dywan**: w stronę sąsiada
+  (dowolny etap) kobierzec sięga do samej krawędzi, a pęd przechodzi przez
+  nią w stałym miejscu - u sąsiada w tym samym; działa też między
+  chunkami. Samotny barwinek to okrągła kępka z postrzępionym brzegiem,
+  w połączonym dywanie jest więcej kwiatów. Posadzenie albo zniszczenie
+  barwinka od razu zmienia sąsiadów.
+- W świecie rośnie **gęstymi plamami - dywany** w lasach liściastych
+  (często), buczynach i na łąkach. PPM na kwitnącym - **kwiat
+  barwinka** (obrazek z atlasu). Osiągnięcie *Dywan z kwiatów*.
+- Model "kepka": liście `dywan`, kwiaty `gwiazdka` (płaskie, leżące na
+  liściach), `kwiaty.ile`; płaszczyzny jednostronne (od spodu niewidoczne -
+  mniej ścian) - `docs/rosliny.md`. Wcześniejsze rośliny bez zmian.
+- Nowe sprawdzenie `tools/sprawdz_dywan.mjs` (w `npm test`): krawędzie
+  i pędy sąsiadów, maski sąsiadów w prawdziwym ChunkMesher (także przez
+  granicę chunka), łączenie etapów.
+- Numery bloków barwinka: 5027-5029.
+- Wersja 0.41.0 wspólna dla Windowsa i Androida. Przygotowana w PR;
+  publikacja w `voxel-game-wydania` następuje przez workflow po scaleniu
+  (najpierw #64-#69).
+
 ## 0.40.1 - Naprawa: rośliny z paczek w terenie realistycznym
 
 Naprawa numerów roślin w generatorze — PR #69 (zawiera #64-#68).

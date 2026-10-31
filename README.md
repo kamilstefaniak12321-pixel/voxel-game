@@ -433,6 +433,16 @@ Osiągnięcie *Kłujący błękit*.
 
 ![Mikołajek - niebieskie główki na gwiazdach kolców](docs/rosliny-mikolajek.png)
 
+Jedenasta: **barwinek** - płoży się po ziemi: płaski kobierzec
+ciemnozielonych liści z pędami i **liliowoniebieskimi kwiatami-gwiazdkami**.
+**Barwinki obok siebie łączą się w jeden dywan kwiatów** (pędy i liście
+dochodzą do wspólnej krawędzi, także między chunkami); samotny to okrągła
+kępka. W świecie rośnie gęstymi plamami - dywany w lasach liściastych,
+buczynach i na łąkach. PPM na kwitnącym - **kwiat barwinka**.
+Osiągnięcie *Dywan z kwiatów*.
+
+![Barwinek - dywan kwiatów na skraju lasu](docs/rosliny-barwinek.png)
+
 - Tekstury z dużych atlasów "pixel art" robi
   `tools/rosliny_z_atlasu.py` (siatka pikseli rysunku, zmniejszanie bez
   mieszania kolorów, wszystkie etapy w tej samej skali).
@@ -445,7 +455,8 @@ Osiągnięcie *Kłujący błękit*.
   `/rosliny ogrod dzwonek`, `/daj dzwonek_etap3 5`, `/rosliny ogrod szalwia`,
   `/daj szalwia_etap3 5`, `/rosliny ogrod nagietek`, `/daj nagietek_etap3 5`,
   `/rosliny ogrod cynia`, `/daj cynia_etap3 5`, `/rosliny ogrod mikolajek`,
-  `/daj mikolajek_etap3 5`.
+  `/daj mikolajek_etap3 5`, `/daj barwinek_etap3 64` (posadź kilka obok
+  siebie - połączą się), `/rosliny znajdz barwinek`.
 - Każda roślina ma swój biom, gdzie rośnie najczęściej (wagi biomów
   w `roslina.json`) - tabela w `docs/rosliny.md`; `/rosliny <roslina>`
   pokazuje biomy (poboczne z dopiskiem "rzadziej").

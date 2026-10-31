@@ -192,6 +192,9 @@ function resolveBiome(biome, key) {
 
     // Rośliny z paczek roślin (gdzieRosnie w roslina.json): plamy jak
     // "patches", w plamie losowy etap wzrostu (ids, wagi narastająco).
+    // Waga biomu (główny 1, poboczny mniej) - mniej plam. Pole plam
+    // i losowanie z numeru paczki (salt), nie z miejsca na liście - nowa
+    // roślina nie przesuwa plam innych.
 
     const packPatches = PLANT_PACKS
         .filter((pack) => pack.where?.biomes.includes(key))
@@ -202,7 +205,8 @@ function resolveBiome(biome, key) {
                 ids: pack.stages.map((_, stage) => getBlockId(plantStageType(pack, stage))),
                 weights: pack.where.stages.map((weight) => (sum += weight)),
                 density: pack.where.density,
-                level: patchLevel(pack.where.cover)
+                level: patchLevel(pack.where.cover * (pack.where.weights?.[key] ?? 1)),
+                salt: pack.firstId
             };
         });
 
@@ -1194,17 +1198,18 @@ export class RealisticGenerator {
         for (let i = 0; i < data.patches.length; i++) {
 
             const patch = data.patches[i];
+            const salt = patch.salt ?? i;
 
             if (
-                this.field(this.noise.patches, x + i * 977, z - i * 613, 18, 2) > patch.level &&
-                hash01(this.plantSeed, x, z, 20 + i) < patch.density
+                this.field(this.noise.patches, x + salt * 977, z - salt * 613, 18, 2) > patch.level &&
+                hash01(this.plantSeed, x, z, 20 + salt) < patch.density
             ) {
 
                 if (!patch.ids) {
                     return patch.id;
                 }
 
-                const stage = hash01(this.plantSeed, x, z, 40 + i);
+                const stage = hash01(this.plantSeed, x, z, 40 + salt);
 
                 const index = patch.weights.findIndex((limit) => stage < limit);
 

@@ -46,7 +46,7 @@
         "kategoria": "ozdoby"
     },
     "zbior": { "ile": [1, 3], "wraca": 2 },
-    "gdzieRosnie": { "biomy": ["laka", "skaly"], "plamy": 0.025, "gestosc": 0.35, "etapy": [0.2, 0.25, 0.55] },
+    "gdzieRosnie": { "biomy": { "skaly": 1, "laka": 0.25 }, "plamy": 0.025, "gestosc": 0.35, "etapy": [0.2, 0.25, 0.55] },
     "zrodlo": {
         "atlas": "Pikselowy atlas wzrostu szałwii.png",
         "przedmiot": "lisc: --wysokosc 16 --nazwy etap1,etap2,etap3,lisc; etapy - model z pikseli (kępka: krzak, liście na łodygach, kłosy) w kolorach atlasu"

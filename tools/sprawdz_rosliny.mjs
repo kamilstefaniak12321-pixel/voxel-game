@@ -234,15 +234,19 @@ assert.match(result.errors[2], /dwa razy|zachodzą/);
 const { RealisticGenerator, DETAIL_FULL } = await import('../src/world/terrain/RealisticGenerator.js');
 const { BIOME_KEYS } = await import('../src/world/terrain/Biomes.js');
 
+const biomeArea = {};
+
 function scan(seed) {
     const generator = new RealisticGenerator(seed);
     const found = [];
+    for (const key of Object.keys(biomeArea)) delete biomeArea[key];
     const ids = new Set(P.PLANT_PACKS.flatMap((pack) => pack.stages.map((_, i) => pack.firstId + i)));
     for (let x = -600; x <= 600; x += 3) {
         for (let z = -600; z <= 600; z += 3) {
             const sample = generator.compute(x, z, DETAIL_FULL, {});
             const biome = generator.biomeIndexAt(x, z, sample);
             const id = generator.plantAt(x, z, sample, biome);
+            biomeArea[BIOME_KEYS[biome]] = (biomeArea[BIOME_KEYS[biome]] ?? 0) + 1;
             if (ids.has(id)) {
                 found.push([x, z, id, BIOME_KEYS[biome]]);
             }
@@ -263,6 +267,17 @@ for (const pack of P.PLANT_PACKS.filter((p) => p.where)) {
     for (let i = 0; i < pack.stages.length; i++) {
         assert.ok(mine.some(([, , id]) => id === pack.firstId + i), `${pack.id}: jest etap ${i + 1}`);
     }
+    // Wagi biomów: w głównym biomie (waga 1) gęściej niż w pobocznym.
+    const often = (key) => mine.filter(([, , , biome]) => biome === key).length / Math.max(1, biomeArea[key] ?? 0);
+    const main = pack.where.biomes.filter((key) => (pack.where.weights[key] ?? 1) === 1);
+    for (const side of pack.where.biomes.filter((key) => pack.where.weights[key] < 0.6)) {
+        assert.ok(main.some((key) => often(key) > often(side)), `${pack.id}: w ${side} rzadziej niż w głównym biomie`);
+    }
 }
 
-console.log(`OK: paczki roślin (${P.PLANT_PACKS.length}), etapy: ${stages}, kępki do ${tuftFaces} ścian (rozmiary z obrazków, wzrost, zbiór, łupy), przedmioty i grupy, 3 błędne paczki pominięte, ${found.length} roślin w terenie (biomy, etapy, powtarzalność).`);
+// Łąka nie jest zatłoczona: każda roślina ma swój główny biom, na łące
+// głównie amarantus i nagietek.
+const meadowMain = P.PLANT_PACKS.filter((pack) => pack.where?.weights.meadow === 1).map((pack) => pack.id);
+assert.deepEqual(meadowMain.sort(), ['amarantus', 'nagietek'], 'na łące główne: amarantus i nagietek');
+
+console.log(`OK: paczki roślin (${P.PLANT_PACKS.length}), etapy: ${stages}, kępki do ${tuftFaces} ścian (rozmiary z obrazków, wzrost, zbiór, łupy), przedmioty i grupy, 3 błędne paczki pominięte, ${found.length} roślin w terenie (biomy z wagami, etapy, powtarzalność).`);

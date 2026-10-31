@@ -51,7 +51,7 @@
         "kategoria": "ozdoby"
     },
     "zbior": { "ile": [1, 2], "wraca": 2 },
-    "gdzieRosnie": { "biomy": ["brzezina", "laka"], "plamy": 0.02, "gestosc": 0.35, "etapy": [0.2, 0.25, 0.55] },
+    "gdzieRosnie": { "biomy": { "brzezina": 1, "laka": 0.25 }, "plamy": 0.02, "gestosc": 0.35, "etapy": [0.2, 0.25, 0.55] },
     "zrodlo": {
         "atlas": "Atlas tekstur cynii koralowej.png",
         "przedmiot": "kwiat: --wysokosc 16 --nazwy etap1,etap2,etap3,kwiat; etapy - model z pikseli (kępka: łodygi z parami liści, pąki, kwiaty z pięter płatków) w kolorach atlasu"

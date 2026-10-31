@@ -446,6 +446,9 @@ Osiągnięcie *Kłujący błękit*.
   `/daj szalwia_etap3 5`, `/rosliny ogrod nagietek`, `/daj nagietek_etap3 5`,
   `/rosliny ogrod cynia`, `/daj cynia_etap3 5`, `/rosliny ogrod mikolajek`,
   `/daj mikolajek_etap3 5`.
+- Każda roślina ma swój biom, gdzie rośnie najczęściej (wagi biomów
+  w `roslina.json`) - tabela w `docs/rosliny.md`; `/rosliny <roslina>`
+  pokazuje biomy (poboczne z dopiskiem "rzadziej").
 - Instrukcja, rozmiary i plan dla wszystkich 28 roślin z atlasów:
   [`docs/rosliny.md`](docs/rosliny.md).
 

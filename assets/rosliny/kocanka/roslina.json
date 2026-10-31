@@ -47,7 +47,7 @@
     },
     "zbior": { "ile": [1, 2], "wraca": 2 },
     "podloze": ["sand"],
-    "gdzieRosnie": { "biomy": ["bor", "plaza"], "plamy": 0.035, "gestosc": 0.3, "etapy": [0.2, 0.25, 0.55] },
+    "gdzieRosnie": { "biomy": { "bor": 1, "plaza": 1 }, "plamy": 0.035, "gestosc": 0.3, "etapy": [0.2, 0.25, 0.55] },
     "zrodlo": {
         "atlas": "Atlas kocanki piaskowej_ etapy wzrostu i bukiet.png",
         "przedmiot": "bukiet: --wysokosc 16 --nazwy etap1,etap2,etap3,bukiet; etapy - model z pikseli (kępka) w kolorach atlasu"

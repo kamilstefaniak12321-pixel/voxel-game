@@ -13,7 +13,7 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ## 0.42.0 - Nowy model borówki
 
-Podmiana borówki na modele z paczki „Borowka-cztery-etapy-v1.2”.
+Podmiana borówki na modele z paczki „Borowka-cztery-etapy-v1.2” — PR #71.
 
 - Cztery przestrzenne modele: młody krzak, dorosły z kilkoma owocami,
   pełny i dorosły po zbiorze. Liście mają prześwity, a owoce są

@@ -1,5 +1,7 @@
 # Borówka — modele v1.2 w wersji 0.42.0
 
+PR #71.
+
 Borówka korzysta z czterech modeli dostarczonych przez Kamila w paczce
 `Borowka-cztery-etapy-v1.2.zip`. To podmiana istniejącej rośliny, aktywna
 również w zapisanych światach. Nie wymaga dodatku eksperymentalnego,

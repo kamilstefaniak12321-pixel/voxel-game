@@ -216,6 +216,12 @@ assert.notDeepEqual(flax.stages[2].tuft.colors.stem, flax.stages[1].tuft.colors.
 assert.equal(R.getBlockId('len_etap1'), 5030, 'len od numeru 5030');
 assert.equal(R.getHarvest('len_etap3').becomes, 'len_etap1', 'po zbiorze lnu - młody len');
 
+// Gorczyca - grona kwiatów, potem strąki (kolory etapu), zbiór nasion.
+const mustard = P.getPlantPack('gorczyca');
+assert.ok(mustard && mustard.stages[2].tuft.flower.kind === 'straczki', 'gorczyca: strąki na ostatnim etapie');
+assert.equal(R.getBlockId('gorczyca_etap1'), 5033, 'gorczyca od numeru 5033');
+assert.equal(R.getHarvest('gorczyca_etap3').item, 'gorczyca_nasiona', 'zbiór - nasiona gorczycy');
+
 // Amarantus - pierwsza roślina: 2 bloki wysokości, czerwona lampa.
 const amaranth = P.getPlantPack('amarantus');
 assert.ok(amaranth, 'amarantus');

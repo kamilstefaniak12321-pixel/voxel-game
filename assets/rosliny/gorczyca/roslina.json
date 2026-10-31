@@ -1,0 +1,63 @@
+{
+    "nazwa": "Gorczyca",
+    "nazwaAngielska": "Mustard",
+    "opis": "rozeta szerokich liści, rozgałęzione łodygi z gronami drobnych żółtych kwiatów; przekwita w złote strąki pełne nasion; rośnie w brzezinach i na łąkach",
+    "pierwszeId": 5033,
+    "etapy": [
+        {
+            "nazwa": "Młoda gorczyca",
+            "model": { "rodzaj": "kepka", "liscie": { "uklad": "krzak", "promien": 2, "dlugosc": [2, 2], "brzeg": 3 } }
+        },
+        {
+            "nazwa": "Gorczyca (kwitnie)",
+            "model": {
+                "rodzaj": "kepka",
+                "liscie": { "uklad": "krzak", "promien": 3, "dlugosc": [2, 3], "brzeg": 3 },
+                "lodygi": { "ile": [4, 5], "wysokosc": [8, 11], "promien": 3, "rozchylone": true, "liscie": { "co": 3, "dlugosc": [2, 2] } },
+                "kwiaty": { "rodzaj": "baldach", "rozmiar": 1 }
+            }
+        },
+        {
+            "nazwa": "Gorczyca (strąki)",
+            "model": {
+                "rodzaj": "kepka",
+                "liscie": { "uklad": "krzak", "promien": 3, "dlugosc": [2, 2], "brzeg": 2 },
+                "lodygi": { "ile": [3, 4], "wysokosc": [9, 11], "promien": 3, "rozchylone": true },
+                "kwiaty": { "rodzaj": "straczki", "rozmiar": [3, 4] },
+                "kolory": {
+                    "lisc": "#8a8a2a",
+                    "liscJasny": "#a8a038",
+                    "liscCiemny": "#5d741e",
+                    "lodyga": "#9a6a10",
+                    "pak": "#aa7915",
+                    "kwiatJasny": "#d0a123"
+                }
+            }
+        }
+    ],
+    "kolory": {
+        "lisc": "#4d7a1c",
+        "liscJasny": "#86a42e",
+        "liscCiemny": "#344a0d",
+        "lodyga": "#56701a",
+        "kwiat": "#f2c82a",
+        "kwiatJasny": "#ffe060",
+        "kwiatCiemny": "#c8961c",
+        "pak": "#d0a123",
+        "srodek": "#f2c82a"
+    },
+    "czasWzrostu": 300,
+    "przedmiot": {
+        "klucz": "nasiona",
+        "plik": "nasiona.png",
+        "nazwa": "Nasiona gorczycy",
+        "nazwaAngielska": "Mustard Seeds",
+        "kategoria": "ozdoby"
+    },
+    "zbior": { "ile": [1, 3], "wraca": 1 },
+    "gdzieRosnie": { "biomy": { "brzezina": 1, "laka": 0.3 }, "plamy": 0.025, "gestosc": 0.4, "etapy": [0.2, 0.45, 0.35] },
+    "zrodlo": {
+        "atlas": "Atlas pikselowej gorczycy.png",
+        "przedmiot": "nasiona: --wysokosc 16 --nazwy etap1,etap2,etap3,nasiona; etapy - model z pikseli (kępka: krzak, łodygi, grona kwiatów, strąki) w kolorach atlasu"
+    }
+}

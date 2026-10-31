@@ -270,6 +270,19 @@ const FLAX = getPlantPack('len')?.item ? [{
     when: (data) => data.item === 'len_wiazka'
 }] : [];
 
+// Gorczyca (assets/rosliny/gorczyca) - kwitnie na żółto, potem strąki.
+
+const MUSTARD = getPlantPack('gorczyca')?.item ? [{
+    id: 'mustard',
+    tier: 'common',
+    title: 'Ziarnko gorczycy',
+    task: 'Zbierz nasiona z gorczycy pełnej złotych strąków (żółto kwitnie w brzezinach i na łąkach).',
+    comment: 'Najmniejsze z nasion, a roślina wyrosła większa niż one wszystkie razem.',
+    icon: 'gorczyca_nasiona',
+    on: 'harvested',
+    when: (data) => data.item === 'gorczyca_nasiona'
+}] : [];
+
 
 // "Złota godzina": słońce nisko nad horyzontem (wschód albo zachód),
 // gracz patrzy prosto na nie i nic go nie zasłania.
@@ -383,6 +396,7 @@ export const ACHIEVEMENTS = [
     ...SEA_HOLLY,
     ...PERIWINKLE,
     ...FLAX,
+    ...MUSTARD,
     {
         id: 'plant',
         tier: 'common',

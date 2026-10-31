@@ -11,6 +11,22 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 0.46.0 - Gorczyca
+
+Gorczyca - grona kwiatów i strąki — PR #75 (zawiera #73 i #74).
+
+- Nowa roślina z paczki roślin: **gorczyca** - rozeta szerokich liści,
+  rozgałęzione łodygi z **gronami żółtych kwiatów**, potem przekwita
+  w **złote strąki** sterczące ukosem z łodyg (żółknące liście). Trzy
+  etapy: młoda, kwitnąca, strąki. PPM na strąkach - **nasiona
+  gorczycy** (obrazek z atlasu), gorczyca wraca do młodej. Rośnie
+  w **brzezinach**, rzadziej na łąkach. Osiągnięcie *Ziarnko gorczycy*.
+- Model "kepka": kwiaty `straczki` (strąki) - `docs/rosliny.md`.
+- Numery bloków gorczycy: 5033-5035.
+- Wersja 0.46.0 wspólna dla Windowsa i Androida. Przygotowana w PR;
+  publikacja w `voxel-game-wydania` następuje przez workflow po scaleniu
+  (najpierw #73 i #74).
+
 ## 0.45.0 - Len
 
 Len - kwitnie i przekwita — PR #74 (zawiera #73 - 0.44.0).

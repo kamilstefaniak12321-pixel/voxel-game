@@ -44,6 +44,8 @@ bez pisania kodu. Są dwa rodzaje:
 
 ![Len - kwitnący na niebiesko i dojrzały, suchy z torebkami](rosliny-len.png)
 
+![Gorczyca - żółte grona kwiatów i złote strąki](rosliny-gorczyca.png)
+
 ## Skala: 16 pikseli na blok
 
 Blok to 1 m, gracz ma 1.8 bloku. Każdy piksel tekstury rośliny ma ten
@@ -199,7 +201,10 @@ samej skali co bloki - jeden piksel modelu to 1/16 bloku:
   główka 3 x 3 x 3, 2 - 3 x 3 x 4), `gwiazdka` (tylko na dywanie) - płaski
   kwiat leżący na liściach: krzyżyk 3 x 3 albo wiatraczek 5 x 5 z jasnym
   `srodek`, `torebka` - kulista torebka nasion (rozmiar 1 - piksel, 2 -
-  kulka: ciemny spód, krzyżyk, jasny czubek; len), albo brak. Roślina
+  kulka: ciemny spód, krzyżyk, jasny czubek; len), `straczki` - strąki
+  ukosem w górę na krótkich szypułkach wzdłuż góry łodygi, co 2 piksele
+  w inną stronę, na czubku strąk prosto (`rozmiar` - ile strąków bocznych,
+  1-5; gorczyca), albo brak. Roślina
   może **przekwitać**: ostatni etap z własnymi `kolory` (suche, złote
   łodygi) i torebkami zamiast kwiatów - len.
   `rozmiar` może być zakresem `[od, do]` - każda łodyga losuje (piwonia
@@ -215,7 +220,8 @@ i 10 x 10 pikseli, lawenda 12 x 6, 12 x 11 i 14 x 15 pikseli, piwonia
 pikseli, dzwonek 12 x 5, 12 x 11 i 14 x 13 pikseli, szałwia 12 x 4, 14 x 11
 i 16 x 14 pikseli, nagietek 12 x 3, 14 x 9 i 14 x 12 pikseli, cynia 10 x 7, 12 x 11
 i 14 x 13 pikseli, mikołajek 12 x 3, 14 x 11 i 14 x 14 pikseli; barwinek - cała komórka
-(16 x 16), 2-3 piksele wysokości; len 10 x 6, 12 x 15 i 12 x 16 pikseli.
+(16 x 16), 2-3 piksele wysokości; len 10 x 6, 12 x 15 i 12 x 16 pikseli, gorczyca 12 x 3, 14 x 13
+i 12 x 14 pikseli.
 
 ```json
 "etapy": [
@@ -242,7 +248,7 @@ i 14 x 13 pikseli, mikołajek 12 x 3, 14 x 11 i 14 x 14 pikseli; barwinek - cał
 | `lodygi.ile`, `lodygi.wysokosc`, `lodygi.promien` | łodygi: ile (0-12, domyślnie bez łodyg), wysokość [od, do] (1-24), jak daleko od środka szczyt (0-6) |
 | `lodygi.rozchylone` | `true` - łodygi wyrastają bliżej środka i odchylają się na boki (wachlarz) |
 | `lodygi.liscie` | `{ "co": 1-6, "dlugosc": [od, do] }` - płaskie liście na łodygach co tyle pikseli (nad kopułką krzaka), długość 1-5, `"naprzeciw": true` - parami; `{ "okolek": 2-5, "dlugosc": [od, do] }` - okółek liści w ok. połowie łodygi |
-| `kwiaty` | `{ "rodzaj": "baldach", "rozmiar": 1-2 }`, `{ "rodzaj": "klos", "rozmiar": 1-6, "okolki": true }` (długość kłosa; okółki - z przerwami), `{ "rodzaj": "pompon", "rozmiar": 1-2 }`, `{ "rodzaj": "talerz", "rozmiar": 1-2 }`, `{ "rodzaj": "dzwonek", "rozmiar": 1-2 }`, `{ "rodzaj": "warstwy", "rozmiar": 1-2 }`, `{ "rodzaj": "oset", "rozmiar": 1-2 }`, `{ "rodzaj": "gwiazdka", "rozmiar": 1-2, "ile": [od, do] }` (dywan), `{ "rodzaj": "torebka", "rozmiar": 1-2 }`, `{ "rodzaj": "pak", "rozmiar": 1-2 }` albo brak; `rozmiar` - liczba albo `[od, do]` |
+| `kwiaty` | `{ "rodzaj": "baldach", "rozmiar": 1-2 }`, `{ "rodzaj": "klos", "rozmiar": 1-6, "okolki": true }` (długość kłosa; okółki - z przerwami), `{ "rodzaj": "pompon", "rozmiar": 1-2 }`, `{ "rodzaj": "talerz", "rozmiar": 1-2 }`, `{ "rodzaj": "dzwonek", "rozmiar": 1-2 }`, `{ "rodzaj": "warstwy", "rozmiar": 1-2 }`, `{ "rodzaj": "oset", "rozmiar": 1-2 }`, `{ "rodzaj": "gwiazdka", "rozmiar": 1-2, "ile": [od, do] }` (dywan), `{ "rodzaj": "torebka", "rozmiar": 1-2 }`, `{ "rodzaj": "straczki", "rozmiar": 1-5 }`, `{ "rodzaj": "pak", "rozmiar": 1-2 }` albo brak; `rozmiar` - liczba albo `[od, do]` |
 | `kolory` | 9 kolorów: `lisc`, `liscJasny`, `liscCiemny`, `lodyga`, `kwiat`, `kwiatJasny`, `kwiatCiemny`, `pak`, `srodek` (środek kwiatu) - dla całej paczki (obok `etapy`), etap może zmienić własnymi `model.kolory` |
 
 Kolory najlepiej wziąć z atlasu rośliny (`tools/rosliny_z_atlasu.py
@@ -342,14 +348,14 @@ do numeru paczki - nowa roślina nie przesuwa plam innych.
 
 | biom | rośnie często | rzadziej |
 |---|---|---|
-| łąka | amarantus, nagietek | lawenda, szałwia, cynia, barwinek, len |
+| łąka | amarantus, nagietek | lawenda, szałwia, cynia, barwinek, len, gorczyca |
 | hala | lawenda, dzwonek gołębi, len | - |
 | skaliste góry | szałwia | dzwonek gołębi, mikołajek |
 | plaża i wydmy | kocanka, mikołajek | nagietek |
 | bór sosnowy | kocanka | - |
 | las liściasty | piwonia, barwinek (dywany) | zawilec |
 | buczyna | zawilec | barwinek |
-| brzezina | cynia | piwonia |
+| brzezina | cynia, gorczyca | piwonia |
 
 ## Komendy
 
@@ -378,7 +384,7 @@ zmniejszenie bywa 3-5 razy. Proponowane rozmiary (prawdziwa wysokość
 | **amarantus** | 1-2 m | **2 bloki (32 px)** | duży krzyż - **zrobione** |
 | czarny bez | 3-6 m | 2.5-3 bloki (40-48 px) | duży krzyż prawie bez zmniejszania (rysunek ~43 px); albo paczka drzew z owocami |
 | indygowiec | krzew 1-1.5 m | 1.25 bloku (20 px) | krzyż z 3 płaszczyznami (gęsty krzew); liście - "coś niebieskiego" |
-| gorczyca | 0.6-1.2 m | 1 blok (16 px) | krzyż; nasiona |
+| **gorczyca** | 0.6-1.2 m | **12 x 14 px** | **`kepka`: krzak, grona żółtych kwiatów, przekwita w strąki - zrobione** (0.46.0) |
 | **len** | 0.3-1 m | **12 x 16 px** | **`kepka`: smukłe łodygi, błękitne kwiaty, przekwita w suche łodygi z torebkami - zrobione** (0.45.0) |
 | marzanna barwierska | 0.6-1 m | 1 blok (16 px) | krzyż; korzenie - "coś czerwonego" |
 | **piwonia** | krzew ~1 m | **16 x 12 px** | **`kepka`: krzak, liście na łodygach, pompony - zrobione** (0.33.0) |

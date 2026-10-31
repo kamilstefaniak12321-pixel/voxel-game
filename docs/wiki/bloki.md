@@ -2,7 +2,7 @@
 
 > Ta strona jest generowana z kodu gry (`python tools/wiki.py`) - nie zmieniaj jej ręcznie, zmiany przepadną przy następnym generowaniu.
 
-Wersja gry **0.45.0** - 163 bloków (do tego 5 odmian, których nie ma w ekwipunku, np. wieniec zawieszony na boku bloku). Czas kopania dotyczy trybu przygody; w kreatywnym bloki znikają od razu.
+Wersja gry **0.46.0** - 166 bloków (do tego 5 odmian, których nie ma w ekwipunku, np. wieniec zawieszony na boku bloku). Czas kopania dotyczy trybu przygody; w kreatywnym bloki znikają od razu.
 
 [Ziemia](#ziemia) · [Skały](#skały) · [Drewno](#drewno) · [Budulec](#budulec) · [Rośliny](#rośliny) · [Światło](#światło) · [Ozdoby](#ozdoby)
 
@@ -182,6 +182,9 @@ Wersja gry **0.45.0** - 163 bloków (do tego 5 odmian, których nie ma w ekwipun
 | <img src="ikony/len_etap1.png" width="32" height="32" alt=""> | **Młody len** | `len_etap1` | **Kopanie:** od razu<br>**Rośnie:** w: Len (kwitnie)<br>**Skąd:** zniszczony blok: Len (kwitnie); zniszczony blok: Len (dojrzały, suchy) |
 | <img src="ikony/len_etap2.png" width="32" height="32" alt=""> | **Len (kwitnie)** | `len_etap2` | **Kopanie:** od razu<br>**Daje:** Młody len<br>**Rośnie:** w: Len (dojrzały, suchy)<br>**Skąd:** wyrasta z: Młody len |
 | <img src="ikony/len_etap3.png" width="32" height="32" alt=""> | **Len (dojrzały, suchy)** | `len_etap3` | **Kopanie:** od razu<br>**Daje:** Młody len<br>**Zbiór (PPM):** Wiązka lnu 1-2<br>**Skąd:** wyrasta z: Len (kwitnie) |
+| <img src="ikony/gorczyca_etap1.png" width="32" height="32" alt=""> | **Młoda gorczyca** | `gorczyca_etap1` | **Kopanie:** od razu<br>**Rośnie:** w: Gorczyca (kwitnie)<br>**Skąd:** zniszczony blok: Gorczyca (kwitnie); zniszczony blok: Gorczyca (strąki) |
+| <img src="ikony/gorczyca_etap2.png" width="32" height="32" alt=""> | **Gorczyca (kwitnie)** | `gorczyca_etap2` | **Kopanie:** od razu<br>**Daje:** Młoda gorczyca<br>**Rośnie:** w: Gorczyca (strąki)<br>**Skąd:** wyrasta z: Młoda gorczyca |
+| <img src="ikony/gorczyca_etap3.png" width="32" height="32" alt=""> | **Gorczyca (strąki)** | `gorczyca_etap3` | **Kopanie:** od razu<br>**Daje:** Młoda gorczyca<br>**Zbiór (PPM):** Nasiona gorczycy 1-3<br>**Skąd:** wyrasta z: Gorczyca (kwitnie) |
 
 ## Światło
 

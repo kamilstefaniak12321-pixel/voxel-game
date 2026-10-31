@@ -1107,7 +1107,7 @@ for (
             : null,
 
         riverPlant: definition.model === 'riverPlant'
-            ? { ...definition.riverPlant, uv: getAtlasUV('snow') }
+            ? { ...definition.riverPlant, uv: getAtlasUV(definition.riverPlant.texture ?? 'snow') }
             : null,
 
         leaves: definition.model === 'leaves',

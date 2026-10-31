@@ -9,6 +9,7 @@ import {
 
 import { treeBlocks } from './trees.js';
 import { RIVER_PLANT_BLOCKS } from './riverPlants.js';
+import { BLUEBERRY_STAGES, BLUEBERRY_TEXTURE, blueberryIcon } from './blueberry.js';
 import { PLANT_PACKS, PLANT_PIXELS, plantStageType, plantTile } from './plantPacks.js';
 
 // ID 0 jest zarezerwowane dla powietrza.
@@ -162,15 +163,15 @@ export const FRUIT_BUSHES = {
     },
 
     // Borówka czarna - niska krzewinka z borów i świerczyn (biomy).
-    // Własna tekstura krzaka (bushTexture) i niższa (height).
+    // Cztery importowane modele; numery 94-97 pozostają zgodne z zapisami.
     blueberry: {
         firstId: 94,
         name: 'Blueberry',
         item: 'blueberry',
-        labels: ['Sadzonka borówki', 'Krzak borówki', 'Krzak borówki (kilka owoców)', 'Krzak borówki (pełen owoców)'],
+        labels: ['Sadzonka borówki', 'Krzak borówki (po zbiorze)', 'Krzak borówki (kilka owoców)', 'Krzak borówki (pełen owoców)'],
         harvest: [[1, 3], [3, 5]],
         bushTexture: 'blueberry_bush',
-        height: 0.7
+        height: 0.75
     }
 
 };
@@ -201,6 +202,7 @@ function fruitBushBlocks() {
         stages.forEach((type, stage) => {
 
             const fruiting = stage >= 2;
+            const blueberry = species === 'blueberry';
 
             blocks[type] = {
 
@@ -209,9 +211,14 @@ function fruitBushBlocks() {
                 label: bush.labels[stage],
 
                 solid: false,
-                model: 'cross',
+                model: blueberry ? 'riverPlant' : 'cross',
+                ...(blueberry ? {
+                    riverPlant: { kind: `blueberry:${BLUEBERRY_STAGES[stage]}`, texture: BLUEBERRY_TEXTURE, waterlogged: false },
+                    modelIcon: blueberryIcon(BLUEBERRY_STAGES[stage]),
+                    sound: 'plant'
+                } : {}),
 
-                plant: stage === 0
+                plant: blueberry ? { height: stage === 0 ? .4125 : .75, width: stage === 0 ? .20625 : .375 } : stage === 0
                     ? { planes: 2, height, width: 0.42 }
                     : { planes: 3, height, width: 0.5 },
 
@@ -224,7 +231,7 @@ function fruitBushBlocks() {
                 stage,
 
                 grows: stage < 3
-                    ? { into: stages[stage + 1], seconds: BUSH_GROWTH_SECONDS }
+                    ? { into: stages[blueberry && stage === 0 ? 2 : stage + 1], seconds: BUSH_GROWTH_SECONDS * (blueberry && stage === 0 ? 2 : 1) }
                     : undefined,
 
                 harvest: fruiting

@@ -276,5 +276,23 @@ test('zbieranie rośliny pod taflą nie duplikuje pływających liści', () => {
     assert.equal(f.count('water_lily'), 0);
 });
 
+for (const stage of ['blueberry_bush_few', 'blueberry_bush_full']) {
+    test(`${stage}: pełny ekwipunek zachowuje owoce, zbiór zostawia dorosły krzak`, () => {
+        const f = fixture();
+        f.set(0,49,0,'dirt'); f.set(0,50,0,stage);
+        f.fill();
+        assert.equal(f.game.harvestTarget(f.hit()),false);
+        assert.equal(f.world.getBlock(0,50,0),stage);
+        f.game.inventory.set(0,null);
+        assert.equal(f.game.harvestTarget(f.hit()),true);
+        assert.equal(f.world.getBlock(0,50,0),'blueberry_bush');
+        assert.ok(f.count('blueberry') >= (stage.endsWith('_full') ? 3 : 1));
+        assert.ok(f.count('blueberry') <= (stage.endsWith('_full') ? 5 : 3));
+        const fruit = f.count('blueberry');
+        assert.equal(f.game.harvestTarget(f.hit()),false);
+        assert.equal(f.count('blueberry'),fruit,'No second harvest from empty bush');
+    });
+}
+
 console.log(`Sprawdzonych przypadków: ${checked}, błędów: ${failed}.`);
 process.exitCode = failed ? 1 : 0;

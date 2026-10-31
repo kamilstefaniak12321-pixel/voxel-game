@@ -215,6 +215,43 @@ function pompon(box, x, top, z, size) {
 
 }
 
+// Talerz (zawilec): otwarty kwiat, lekko wklęsły jak miseczka - środek
+// (pręciki) i wewnętrzne płatki niżej, brzegi płatków o piksel wyżej
+// i jaśniejsze (z boku widać brzeg miseczki). Kwiat jest przechylony na
+// zewnątrz kępy (fx, fz - kierunek): brzeg od strony kępy wyżej, od
+// zewnątrz niżej - patrzy w górę i w bok. Rozmiar 1 - 3 x 3 piksele,
+// 2 - 5 x 5 (bez rogów), środek - krzyżyk pręcików.
+
+function dish(box, x, top, z, size, fx, fz) {
+
+    for (let dz = -size; dz <= size; dz++) {
+        for (let dx = -size; dx <= size; dx++) {
+
+            const ring = Math.max(Math.abs(dx), Math.abs(dz));
+            const corner = size > 1 && Math.abs(dx) === size && Math.abs(dz) === size;
+            const far = Math.abs(dx) + Math.abs(dz);
+
+            if (corner) {
+                continue;
+            }
+
+            const center = size > 1 ? far <= 1 : far === 0;
+            const tilt = size > 1 ? -Math.round((dx * fx + dz * fz) * 0.5) : 0;
+
+            if (size === 1 ? far <= 1 : ring < size) {
+                box(x + dx, top + 1 + tilt, z + dz, 1, 1, 1, center ? 'center' : 'flower');
+            }
+            else {
+                box(x + dx, top + 2 + tilt, z + dz, 1, 1, 1, 'flowerLight');
+            }
+
+        }
+    }
+
+    box(x, top, z, 1, 1, 1, 'flowerDark');
+
+}
+
 export function makeTuftTemplate(tuft, variant) {
 
     const random = randomFor(40503 + variant * 7919 + tuft.seed);
@@ -334,7 +371,20 @@ export function makeTuftTemplate(tuft, variant) {
             box(x, 0, z, 1, top, 1, 'stem');
         }
 
-        if (tuft.stems.leaves) {
+        if (tuft.stems.leaves?.whorl) {
+
+            // Okółek (zawilec): kilka liści na jednej wysokości (ok. 0.55
+            // łodygi), rozłożonych dookoła - jak parasolka pod kwiatem.
+            const { whorl, length } = tuft.stems.leaves;
+            const y = Math.max(1, Math.round(top * 0.55));
+            const [sx, sz] = at(y);
+            const first = Math.floor(random() * 8);
+            for (let k = 0; k < whorl; k++) {
+                stemLeaves.push([sx, y, sz, (first + Math.round(k * 8 / whorl)) % 8, between(length)]);
+            }
+
+        }
+        else if (tuft.stems.leaves) {
 
             // Liście na łodydze (piwonia): co kilka pikseli liść w inną
             // stronę (obrót o 3/8), niżej dłuższe.
@@ -386,6 +436,15 @@ export function makeTuftTemplate(tuft, variant) {
 
         if (flower.kind === 'pompon') {
             pompon(box, x, top, z, size);
+            continue;
+        }
+
+        if (flower.kind === 'talerz') {
+            // Na zewnątrz kępy (główna oś), ze środka - w losową stronę.
+            const [fx, fz] = Math.abs(x) >= Math.abs(z)
+                ? [x === 0 ? (random() < 0.5 ? -1 : 1) : Math.sign(x), 0]
+                : [0, Math.sign(z)];
+            dish(box, x, top, z, size, fx, fz);
             continue;
         }
 

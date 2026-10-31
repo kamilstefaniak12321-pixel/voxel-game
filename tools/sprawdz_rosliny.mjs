@@ -163,6 +163,13 @@ assert.deepEqual(peony.stages[2].tuft.flower, { kind: 'pompon', sizes: [1, 2], s
 assert.deepEqual(peony.stages[1].tuft.flower.sizes, [2, 2], 'okrągłe pąki piwonii');
 assert.ok(R.BLOCK_TYPES.piwonia_etap3.plant.height <= 1 && R.BLOCK_TYPES.piwonia_etap3.plant.width <= 0.5, 'piwonia mieści się w bloku');
 
+// Zawilec - okółek liści na łodydze, otwarte kwiaty-talerzyki.
+const anemone = P.getPlantPack('zawilec');
+assert.ok(anemone && anemone.stages.every((stage) => stage.tuft?.stems.leaves?.whorl === 3), 'zawilec - okółek trzech liści');
+assert.equal(R.getBlockId('zawilec_etap1'), 5009, 'zawilec od numeru 5009');
+assert.equal(anemone.stages[2].tuft.flower.kind, 'talerz', 'zawilec kwitnie talerzykami');
+assert.ok(R.BLOCK_TYPES.zawilec_etap3.plant.height <= 0.75, 'zawilec niski');
+
 // Amarantus - pierwsza roślina: 2 bloki wysokości, czerwona lampa.
 const amaranth = P.getPlantPack('amarantus');
 assert.ok(amaranth, 'amarantus');

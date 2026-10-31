@@ -220,7 +220,7 @@ function parseTuft(model, what, seedText, packColors) {
     const stemLeaves = stems.liscie;
 
     if (stemLeaves !== undefined && (stemLeaves === null || typeof stemLeaves !== 'object')) {
-        fail(`"${what}.lodygi.liscie": { "co": 1-6, "dlugosc": [od, do] }`);
+        fail(`"${what}.lodygi.liscie": { "co": 1-6, "dlugosc": [od, do] } albo { "okolek": 2-5, "dlugosc": [od, do] }`);
     }
 
     if (stems.rozchylone !== undefined && typeof stems.rozchylone !== 'boolean') {
@@ -254,7 +254,8 @@ function parseTuft(model, what, seedText, packColors) {
             spread: stems.rozchylone === true,
             leaves: stemLeaves ? {
                 every: stemLeaves.co === undefined ? 2 : number(stemLeaves.co, `${what}.lodygi.liscie.co`, 1, 6),
-                length: pixelRange(stemLeaves.dlugosc, [2, 3], `${what}.lodygi.liscie.dlugosc`, 1, 5)
+                length: pixelRange(stemLeaves.dlugosc, [2, 3], `${what}.lodygi.liscie.dlugosc`, 1, 5),
+                whorl: stemLeaves.okolek === undefined ? 0 : number(stemLeaves.okolek, `${what}.lodygi.liscie.okolek`, 2, 5)
             } : null
         },
         flower: flower && flowerSizes(flower, `${what}.kwiaty`),
@@ -274,12 +275,12 @@ function parseTuft(model, what, seedText, packColors) {
 // wysokości, w promieniu, odchylone o 3), łodygi z kwiatami (kłos ma
 // kwiatki o 1 z boku).
 
-const FLOWER_HEIGHT = { baldach: () => 2, klos: (size) => size, pak: (size) => size, pompon: (size) => size + 2 };
-const FLOWER_SIDE = { baldach: (size) => size, klos: (size) => (size >= 3 ? 1 : 0), pak: (size) => size - 1, pompon: (size) => size };
+const FLOWER_HEIGHT = { baldach: () => 2, klos: (size) => size, pak: (size) => size, pompon: (size) => size + 2, talerz: (size) => (size > 1 ? 4 : 3) };
+const FLOWER_SIDE = { baldach: (size) => size, klos: (size) => (size >= 3 ? 1 : 0), pak: (size) => size - 1, pompon: (size) => size, talerz: (size) => size };
 
 // Kwiaty: rodzaj -> [domyślny rozmiar, najmniejszy, największy];
 // "rozmiar" to liczba albo [od, do] (każda łodyga losuje).
-const FLOWER_SIZES = { baldach: [1, 1, 2], klos: [3, 1, 6], pak: [1, 1, 2], pompon: [1, 1, 2] };
+const FLOWER_SIZES = { baldach: [1, 1, 2], klos: [3, 1, 6], pak: [1, 1, 2], pompon: [1, 1, 2], talerz: [1, 1, 2] };
 
 function flowerSizes(flower, what) {
 

@@ -1,0 +1,59 @@
+{
+    "nazwa": "Zawilec",
+    "nazwaAngielska": "Anemone",
+    "opis": "niska roślina wczesnej wiosny - kępka wcinanych liści, na łodygach okółek trzech liści i otwarte, brzoskwiniowe kwiaty z żółtym środkiem; rośnie w buczynach i lasach liściastych",
+    "pierwszeId": 5009,
+    "etapy": [
+        {
+            "nazwa": "Młody zawilec",
+            "model": {
+                "rodzaj": "kepka",
+                "liscie": { "uklad": "krzak", "promien": 1, "dlugosc": [1, 2] },
+                "lodygi": { "ile": [2, 3], "wysokosc": [3, 4], "promien": 2, "rozchylone": true, "liscie": { "okolek": 3, "dlugosc": [2, 2] } }
+            }
+        },
+        {
+            "nazwa": "Zawilec (pąki)",
+            "model": {
+                "rodzaj": "kepka",
+                "liscie": { "uklad": "krzak", "promien": 2, "dlugosc": [1, 2] },
+                "lodygi": { "ile": [2, 3], "wysokosc": [5, 6], "promien": 3, "rozchylone": true, "liscie": { "okolek": 3, "dlugosc": [2, 2] } },
+                "kwiaty": { "rodzaj": "pak", "rozmiar": 2 }
+            }
+        },
+        {
+            "nazwa": "Zawilec (kwitnie)",
+            "model": {
+                "rodzaj": "kepka",
+                "liscie": { "uklad": "krzak", "promien": 2, "dlugosc": [2, 2] },
+                "lodygi": { "ile": [2, 3], "wysokosc": [6, 8], "promien": 3, "rozchylone": true, "liscie": { "okolek": 3, "dlugosc": [2, 2] } },
+                "kwiaty": { "rodzaj": "talerz", "rozmiar": [1, 2] }
+            }
+        }
+    ],
+    "kolory": {
+        "lisc": "#5a8a33",
+        "liscJasny": "#7eaf42",
+        "liscCiemny": "#36692b",
+        "lodyga": "#4a6e2a",
+        "kwiat": "#fb8656",
+        "kwiatJasny": "#fda47a",
+        "kwiatCiemny": "#5a7a2e",
+        "pak": "#f0703f",
+        "srodek": "#fcd82e"
+    },
+    "czasWzrostu": 240,
+    "przedmiot": {
+        "klucz": "kwiat",
+        "plik": "kwiat.png",
+        "nazwa": "Kwiat zawilca",
+        "nazwaAngielska": "Anemone Flower",
+        "kategoria": "ozdoby"
+    },
+    "zbior": { "ile": [1, 2], "wraca": 2 },
+    "gdzieRosnie": { "biomy": ["buczyna", "las"], "plamy": 0.03, "gestosc": 0.4, "etapy": [0.2, 0.25, 0.55] },
+    "zrodlo": {
+        "atlas": "Atlas tekstur zawilca brzoskwiniowego.png",
+        "przedmiot": "kwiat: --wysokosc 16 --nazwy etap1,etap2,etap3,kwiat; etapy - model z pikseli (kępka: liście, okółki, kwiaty-talerzyki) w kolorach atlasu"
+    }
+}

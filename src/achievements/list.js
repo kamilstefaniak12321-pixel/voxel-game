@@ -218,6 +218,19 @@ const MARIGOLD = getPlantPack('nagietek')?.item ? [{
     when: (data) => data.item === 'nagietek_kwiat'
 }] : [];
 
+// Cynia (assets/rosliny/cynia) - pełne, koralowe kwiaty z pięter płatków.
+
+const ZINNIA = getPlantPack('cynia')?.item ? [{
+    id: 'zinnia',
+    tier: 'common',
+    title: 'Piętrowy kwiat',
+    task: 'Zbierz kwiat z kwitnącej cynii (koralowe kwiaty na prostych łodygach w brzezinach i na łąkach).',
+    comment: 'Piętro na piętrze płatków. Cynia nie zna umiaru - i dobrze.',
+    icon: 'cynia_kwiat',
+    on: 'harvested',
+    when: (data) => data.item === 'cynia_kwiat'
+}] : [];
+
 
 // "Złota godzina": słońce nisko nad horyzontem (wschód albo zachód),
 // gracz patrzy prosto na nie i nic go nie zasłania.
@@ -327,6 +340,7 @@ export const ACHIEVEMENTS = [
     ...BELLFLOWER,
     ...SAGE,
     ...MARIGOLD,
+    ...ZINNIA,
     {
         id: 'plant',
         tier: 'common',

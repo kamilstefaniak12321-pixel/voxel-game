@@ -21,7 +21,7 @@ import { createPixelPlant } from './PixelPlantBuilder.js';
 //             liści z boków kopułki) }
 //   stems:  { count: [od, do], height: [od, do], radius, spread (rozchylone),
 //             leaves: null | { every, length } (liście na łodygach) }
-//   flower: null | { kind: 'baldach' | 'klos' | 'pak' | 'pompon' | 'talerz' | 'dzwonek',
+//   flower: null | { kind: 'baldach' | 'klos' | 'pak' | 'pompon' | 'talerz' | 'dzwonek' | 'warstwy',
 //             sizes: [od, do] }
 //   colors: { leaf, leafLight, leafDark, stem, flower, flowerLight,
 //             flowerDark, bud, center } - liniowe RGB 0-255 (jak COLORS
@@ -310,6 +310,36 @@ function whorledSpike(box, x, top, z, size) {
 
 }
 
+// Warstwy (cynia): pełny kwiat z pięter płatków, coraz węższych ku górze -
+// szeroki, ciemniejszy spód, jaśniejsze piętra wyżej, na szczycie żółty
+// środek. Z boku widać schodki płatków. Rozmiar 1 - 3 x 3 piksele (dwa
+// piętra), 2 - 5 x 5 (trzy piętra).
+
+function tiers(box, x, top, z, size) {
+
+    const layer = (y, keep, color) => {
+        for (let dz = -size; dz <= size; dz++) {
+            for (let dx = -size; dx <= size; dx++) {
+                if (keep(Math.abs(dx), Math.abs(dz))) {
+                    box(x + dx, y, z + dz, 1, 1, 1, typeof color === 'function' ? color(dx, dz) : color);
+                }
+            }
+        }
+    };
+    const middle = (dx, dz) => (dx === 0 && dz === 0 ? 'center' : null);
+
+    if (size <= 1) {
+        layer(top, () => true, 'flowerDark');
+        layer(top + 1, (ax, az) => ax + az <= 1, (dx, dz) => middle(dx, dz) ?? 'flower');
+        return;
+    }
+
+    layer(top, (ax, az) => !(ax === 2 && az === 2), 'flowerDark');
+    layer(top + 1, (ax, az) => (ax <= 1 && az <= 1) || ax + az === 2 && (ax === 0 || az === 0), 'flower');
+    layer(top + 2, (ax, az) => ax + az <= 1, (dx, dz) => middle(dx, dz) ?? 'flowerLight');
+
+}
+
 export function makeTuftTemplate(tuft, variant) {
 
     const random = randomFor(40503 + variant * 7919 + tuft.seed);
@@ -445,14 +475,19 @@ export function makeTuftTemplate(tuft, variant) {
         else if (tuft.stems.leaves) {
 
             // Liście na łodydze (piwonia): co kilka pikseli liść w inną
-            // stronę (obrót o 3/8), niżej dłuższe.
-            const { every, length } = tuft.stems.leaves;
+            // stronę (obrót o 3/8), niżej dłuższe. Naprzeciwległe (cynia):
+            // na każdym piętrze para liści w przeciwne strony, następna
+            // para obrócona o ćwierć obrotu - na krzyż.
+            const { every, length, opposite } = tuft.stems.leaves;
             let turn = Math.floor(random() * 8);
             for (let y = Math.max(1, foliage - 1) + Math.floor(random() * every); y < top - 2; y += every) {
                 const [sx, sz] = at(y);
                 const size = Math.max(1, between(length) - (y > top * 0.6 ? 1 : 0));
                 stemLeaves.push([sx, y, sz, turn % 8, size]);
-                turn += 3;
+                if (opposite) {
+                    stemLeaves.push([sx, y, sz, (turn + 4) % 8, size]);
+                }
+                turn += opposite ? 2 : 3;
             }
 
         }
@@ -519,6 +554,11 @@ export function makeTuftTemplate(tuft, variant) {
                 box(sx + 2 * dx, p + 1, sz + 2 * dz, 1, 1, 1, 'stem');
                 bell(box, sx + 2 * dx, p, sz + 2 * dz, size);
             }
+            continue;
+        }
+
+        if (flower.kind === 'warstwy') {
+            tiers(box, x, top, z, size);
             continue;
         }
 

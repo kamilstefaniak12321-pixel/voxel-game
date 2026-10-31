@@ -11,6 +11,25 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 0.38.0 - Cynia
+
+Cynia - kwiaty z pięter płatków — PR #66 (zawiera #64 i #65).
+
+- Nowa roślina z paczki roślin: **cynia** - proste łodygi z **parami
+  liści na krzyż**, na szczycie pełny, **koralowy kwiat z pięter
+  płatków** (szeroki ciemny spód, jaśniejsze piętra, żółty środek).
+  Trzy etapy: młoda (łodyżki z liśćmi), okrągłe pąki, kwitnąca. Rośnie
+  w **brzezinach i na łąkach**. PPM na kwitnącej - **kwiat cynii**
+  (obrazek z atlasu), wraca do etapu z pąkami. Osiągnięcie *Piętrowy
+  kwiat*.
+- Model "kepka" umie więcej (bez kodu): kwiaty `warstwy` (piętra
+  płatków), liście naprzeciwległe (`"naprzeciw": true`) -
+  `docs/rosliny.md`. Wcześniejsze rośliny bez zmian.
+- Numery bloków cynii: 5021-5023.
+- Wersja 0.38.0 wspólna dla Windowsa i Androida. Przygotowana w PR;
+  publikacja w `voxel-game-wydania` następuje przez workflow po scaleniu
+  (najpierw #64 i #65).
+
 ## 0.37.0 - Nagietek
 
 Nagietek - pomarańczowe koszyczki — PR #65 (zawiera #64 - 0.36.0).

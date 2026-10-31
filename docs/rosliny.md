@@ -12,8 +12,9 @@ bez pisania kodu. Są dwa rodzaje:
   (kępa liści, wachlarz łodyg z fioletowymi kłosami), krzak **piwonia**
   (kopułka liści, kuliste różowe kwiaty), **zawilec** (okółki liści,
   otwarte, przechylone kwiaty), **dzwonek gołębi** (zwisające dzwonki)
-  **szałwia** (szarozielony krzak, kłosy w okółkach) albo **nagietek**
-  (pomarańczowe koszyczki).
+  **szałwia** (szarozielony krzak, kłosy w okółkach), **nagietek**
+  (pomarańczowe koszyczki) albo **cynia** (liście parami, kwiaty
+  z pięter płatków).
 
 ![Amarantus - trzy etapy wzrostu obok słupka z 2 bloków](rosliny-amarantus.png)
 
@@ -30,6 +31,8 @@ bez pisania kodu. Są dwa rodzaje:
 ![Szałwia - szarozielone krzaczki z kłosami w okółkach](rosliny-szalwia.png)
 
 ![Nagietek - pomarańczowe koszyczki](rosliny-nagietek.png)
+
+![Cynia - koralowe kwiaty z pięter płatków](rosliny-cynia.png)
 
 ## Skala: 16 pikseli na blok
 
@@ -145,7 +148,8 @@ samej skali co bloki - jeden piksel modelu to 1/16 bloku:
   `liscie` - co kilka pikseli płaski liść (z góry: środkowy listek
   i szersze boki, 3 piksele szerokości), za każdym razem w inną stronę,
   albo okółek (`okolek`: kilka liści na jednej wysokości, dookoła -
-  jak parasolka pod kwiatem zawilca),
+  jak parasolka pod kwiatem zawilca); `"naprzeciw": true` - liście
+  parami w przeciwne strony, kolejne pary na krzyż (cynia),
 - **kwiaty** na łodygach: `baldach` - kopułka z kostek (krzyżyk, nad nim
   jaśniejszy środek, jeden koszyczek w cieniu), `klos` - kolumna kwiatów
   (co drugi piksel kwiatek z boku, na zmianę z czterech stron; dół
@@ -161,7 +165,10 @@ samej skali co bloki - jeden piksel modelu to 1/16 bloku:
   na szczycie łodygi zielony czubek, niżej co 4 piksele zagięta szypułka
   (pierwsza na zewnątrz kępy, następne na boki) i dzwonek w dół - zielony
   kielich, wąska szyjka, szeroki jaśniejszy brzeg, od spodu pręciki
-  (`srodek`); rozmiar 1 - wąski (pąk), 2 - dzwon 3 x 3, albo brak.
+  (`srodek`); rozmiar 1 - wąski (pąk), 2 - dzwon 3 x 3, `warstwy` - pełny
+  kwiat z pięter płatków coraz węższych ku górze (ciemny, szeroki spód,
+  jaśniejsze piętra, `srodek` na szczycie; rozmiar 1 - 3 x 3, dwa piętra,
+  2 - 5 x 5, trzy piętra), albo brak.
   `rozmiar` może być zakresem `[od, do]` - każda łodyga losuje (piwonia
   ma duże i małe kwiaty).
 
@@ -173,7 +180,8 @@ i miejsca nad rośliną) wynika z parametrów: kocanka 8 x 4, 10 x 6
 i 10 x 10 pikseli, lawenda 12 x 6, 12 x 11 i 14 x 15 pikseli, piwonia
 12 x 6, 14 x 9 i 16 x 12 pikseli, zawilec 10 x 4, 12 x 8 i 12 x 12
 pikseli, dzwonek 12 x 5, 12 x 11 i 14 x 13 pikseli, szałwia 12 x 4, 14 x 11
-i 16 x 14 pikseli, nagietek 12 x 3, 14 x 9 i 14 x 12 pikseli.
+i 16 x 14 pikseli, nagietek 12 x 3, 14 x 9 i 14 x 12 pikseli, cynia 10 x 7, 12 x 11
+i 14 x 13 pikseli.
 
 ```json
 "etapy": [
@@ -199,8 +207,8 @@ i 16 x 14 pikseli, nagietek 12 x 3, 14 x 9 i 14 x 12 pikseli.
 | `liscie.brzeg` | krzak: długość liści z boków kopułki (1-4, domyślnie 2) |
 | `lodygi.ile`, `lodygi.wysokosc`, `lodygi.promien` | łodygi: ile (0-12, domyślnie bez łodyg), wysokość [od, do] (1-24), jak daleko od środka szczyt (0-6) |
 | `lodygi.rozchylone` | `true` - łodygi wyrastają bliżej środka i odchylają się na boki (wachlarz) |
-| `lodygi.liscie` | `{ "co": 1-6, "dlugosc": [od, do] }` - płaskie liście na łodygach co tyle pikseli (nad kopułką krzaka), długość 1-5; `{ "okolek": 2-5, "dlugosc": [od, do] }` - okółek liści w ok. połowie łodygi |
-| `kwiaty` | `{ "rodzaj": "baldach", "rozmiar": 1-2 }`, `{ "rodzaj": "klos", "rozmiar": 1-6, "okolki": true }` (długość kłosa; okółki - z przerwami), `{ "rodzaj": "pompon", "rozmiar": 1-2 }`, `{ "rodzaj": "talerz", "rozmiar": 1-2 }`, `{ "rodzaj": "dzwonek", "rozmiar": 1-2 }`, `{ "rodzaj": "pak", "rozmiar": 1-2 }` albo brak; `rozmiar` - liczba albo `[od, do]` |
+| `lodygi.liscie` | `{ "co": 1-6, "dlugosc": [od, do] }` - płaskie liście na łodygach co tyle pikseli (nad kopułką krzaka), długość 1-5, `"naprzeciw": true` - parami; `{ "okolek": 2-5, "dlugosc": [od, do] }` - okółek liści w ok. połowie łodygi |
+| `kwiaty` | `{ "rodzaj": "baldach", "rozmiar": 1-2 }`, `{ "rodzaj": "klos", "rozmiar": 1-6, "okolki": true }` (długość kłosa; okółki - z przerwami), `{ "rodzaj": "pompon", "rozmiar": 1-2 }`, `{ "rodzaj": "talerz", "rozmiar": 1-2 }`, `{ "rodzaj": "dzwonek", "rozmiar": 1-2 }`, `{ "rodzaj": "warstwy", "rozmiar": 1-2 }`, `{ "rodzaj": "pak", "rozmiar": 1-2 }` albo brak; `rozmiar` - liczba albo `[od, do]` |
 | `kolory` | 9 kolorów: `lisc`, `liscJasny`, `liscCiemny`, `lodyga`, `kwiat`, `kwiatJasny`, `kwiatCiemny`, `pak`, `srodek` (środek kwiatu) - dla całej paczki (obok `etapy`), etap może zmienić własnymi `model.kolory` |
 
 Kolory najlepiej wziąć z atlasu rośliny (`tools/rosliny_z_atlasu.py
@@ -268,6 +276,17 @@ z boków, kłosy w okółkach):
 }
 ```
 
+Cynia (bez liści przy ziemi, liście parami na krzyż, kwiaty z pięter):
+
+```json
+"model": {
+    "rodzaj": "kepka",
+    "liscie": { "uklad": "brak" },
+    "lodygi": { "ile": [2, 3], "wysokosc": [8, 10], "promien": 3, "rozchylone": true, "liscie": { "co": 2, "dlugosc": [2, 3], "naprzeciw": true } },
+    "kwiaty": { "rodzaj": "warstwy", "rozmiar": [1, 2] }
+}
+```
+
 ## Komendy
 
 | komenda | co robi |
@@ -299,7 +318,8 @@ zmniejszenie bywa 3-5 razy. Proponowane rozmiary (prawdziwa wysokość
 | len | 0.3-1 m | 0.9 bloku (14 px) | smukły krzyż; wiązka lnu |
 | marzanna barwierska | 0.6-1 m | 1 blok (16 px) | krzyż; korzenie - "coś czerwonego" |
 | **piwonia** | krzew ~1 m | **16 x 12 px** | **`kepka`: krzak, liście na łodygach, pompony - zrobione** (0.33.0) |
-| cynia, mikołajek | 0.3-0.9 m | 0.75 bloku (12 px) | krzyż |
+| **cynia** | 0.3-0.9 m | **14 x 13 px** | **`kepka`: liście parami, kwiaty z pięter - zrobione** (0.38.0) |
+| mikołajek | 0.3-0.9 m | 0.75 bloku (12 px) | `kepka` z kolczastymi główkami |
 | **lawenda** | 0.3-0.6 m | **do 15 px (prawie blok)** | **`kepka`: kępa + rozchylone łodygi z kłosami - zrobione** (0.32.0) |
 | **szałwia** | 0.3-0.6 m | **16 x 14 px** | **`kepka`: krzak, kłosy w okółkach - zrobione** (0.36.0) |
 | **nagietek** | 0.3-0.6 m | **14 x 12 px** | **`kepka`: krzak, talerzyki (tylko `roslina.json`) - zrobione** (0.37.0) |

@@ -14,7 +14,7 @@ więcej niż dotąd - bez kolejnej zmiany zapisu.
 | 256-999 | nowe bloki gry |
 | 100-239 | dawny zakres paczek: paczki drzew od dołu (100, 110...), paczki roślin od góry (amarantus 237-239) |
 | 1000-4999 | paczki drzew (po 10 numerów; `node tools/drzewa.mjs` nada wolny - najpierw w 100-239) |
-| 5000-9999 | paczki roślin (etapy po kolei, `docs/rosliny.md`; kocanka 5000-5002, lawenda 5003-5005, piwonia 5006-5008, zawilec 5009-5011, dzwonek 5012-5014, szałwia 5015-5017, nagietek 5018-5020, cynia 5021-5023, mikołajek 5024-5026, barwinek 5027-5029) |
+| 5000-9999 | paczki roślin (etapy po kolei, `docs/rosliny.md`; kocanka 5000-5002, lawenda 5003-5005, piwonia 5006-5008, zawilec 5009-5011, dzwonek 5012-5014, szałwia 5015-5017, nagietek 5018-5020, cynia 5021-5023, mikołajek 5024-5026, barwinek 5027-5029, len 5030-5032) |
 | 10000-65279 | wolne na przyszłość |
 | 65280-65535 | zarezerwowane dla gry, nigdy w zapisie (np. odcienie trawy dalekiego terenu) |
 

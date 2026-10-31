@@ -1,4 +1,4 @@
-# Paczka tekstur - szablon (Voxel Game 0.41.0)
+# Paczka tekstur - szablon (Voxel Game 0.45.0)
 
 Oryginalne tekstury gry, każda w osobnym pliku. Zrób z nich własną paczkę:
 
@@ -60,11 +60,11 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/blackberry_bush_few.png` | Krzak jeżyny (kilka owoców) |
 | `bloki/blackberry_bush_full.png` | Krzak jeżyny (pełen owoców) |
 | `bloki/blueberry.png` | Borówki |
-| `bloki/blueberry_bush.png` | Krzak borówki |
-| `bloki/blueberry_bush_few.png` | Krzak borówki (kilka owoców) |
-| `bloki/blueberry_bush_full.png` | Krzak borówki (pełen owoców) |
+| `bloki/blueberry_bush.png` | - |
+| `bloki/blueberry_bush_few.png` | - |
+| `bloki/blueberry_bush_full.png` | - |
 | `bloki/bush_leaves.png` | Krzak truskawki, Krzak jeżyny, Krzak papryczki chili, Leszczyna |
-| `bloki/bush_sapling.png` | Sadzonka truskawki, Sadzonka jeżyny, Sadzonka papryczki chili, Sadzonka leszczyny, Sadzonka borówki |
+| `bloki/bush_sapling.png` | Sadzonka truskawki, Sadzonka jeżyny, Sadzonka papryczki chili, Sadzonka leszczyny |
 | `bloki/chamomile.png` | Rumianek |
 | `bloki/chili_bush_few.png` | Krzak papryczki chili (kilka papryczek) |
 | `bloki/chili_bush_full.png` | Krzak papryczki chili (pełen papryczek) |
@@ -163,6 +163,7 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/rosliny/dzwonek/kwiat.png` | Kwiat dzwonka |
 | `bloki/rosliny/kocanka/bukiet.png` | Bukiet kocanki |
 | `bloki/rosliny/lawenda/bukiet.png` | Bukiet lawendy |
+| `bloki/rosliny/len/wiazka.png` | Wiązka lnu |
 | `bloki/rosliny/mikolajek/kwiat.png` | Kwiat mikołajka |
 | `bloki/rosliny/nagietek/kwiat.png` | Kwiat nagietka |
 | `bloki/rosliny/piwonia/kwiat.png` | Kwiat piwonii |

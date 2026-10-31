@@ -257,6 +257,19 @@ const PERIWINKLE = getPlantPack('barwinek')?.item ? [{
     when: (data) => data.item === 'barwinek_kwiat'
 }] : [];
 
+// Len (assets/rosliny/len) - kwitnie, przekwita, zbiór z suchego.
+
+const FLAX = getPlantPack('len')?.item ? [{
+    id: 'flax',
+    tier: 'common',
+    title: 'Lniana robota',
+    task: 'Zbierz wiązkę z dojrzałego, suchego lnu (najpierw kwitnie na niebiesko - hale i łąki).',
+    comment: 'Najpierw błękitne kwiaty, potem złote łodygi. Do lnianej koszuli jeszcze trochę brakuje.',
+    icon: 'len_wiazka',
+    on: 'harvested',
+    when: (data) => data.item === 'len_wiazka'
+}] : [];
+
 
 // "Złota godzina": słońce nisko nad horyzontem (wschód albo zachód),
 // gracz patrzy prosto na nie i nic go nie zasłania.
@@ -369,6 +382,7 @@ export const ACHIEVEMENTS = [
     ...ZINNIA,
     ...SEA_HOLLY,
     ...PERIWINKLE,
+    ...FLAX,
     {
         id: 'plant',
         tier: 'common',

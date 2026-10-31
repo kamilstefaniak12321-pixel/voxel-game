@@ -47,7 +47,7 @@
         "kategoria": "ozdoby"
     },
     "zbior": { "ile": [1, 3], "wraca": 2 },
-    "gdzieRosnie": { "biomy": ["laka", "plaza"], "plamy": 0.025, "gestosc": 0.35, "etapy": [0.2, 0.25, 0.55] },
+    "gdzieRosnie": { "biomy": { "laka": 1, "plaza": 0.4 }, "plamy": 0.025, "gestosc": 0.35, "etapy": [0.2, 0.25, 0.55] },
     "zrodlo": {
         "atlas": "Atlas tekstur nagietka morelowego.png",
         "przedmiot": "kwiat: --wysokosc 16 --nazwy etap1,etap2,etap3,kwiat; etapy - model z pikseli (kępka: krzak, liście na łodygach, pąki, talerzyki) w kolorach atlasu"

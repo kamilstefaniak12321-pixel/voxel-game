@@ -810,6 +810,20 @@ function plantPackByWord(word) {
 }
 
 
+// Biomy rośliny: najpierw główne, poboczne z dopiskiem "rzadziej".
+
+function plantBiomesText(pack) {
+
+    const weight = (key) => pack.where.weights?.[key] ?? 1;
+
+    return [...pack.where.biomes]
+        .sort((a, b) => weight(b) - weight(a))
+        .map((key) => BIOMES[key].name.toLowerCase() + (weight(key) < 1 ? ` (rzadziej)` : ''))
+        .join(', ');
+
+}
+
+
 // Rozmiar w blokach: "1.6 x 2".
 
 function blocksSize(pixels) {
@@ -3526,7 +3540,7 @@ export const GAME_COMMANDS = [
                 const found = nearestPlantPack(world, player.pos, pack);
 
                 if (!found) {
-                    return `We wczytanym terenie nie ma: ${pack.label.toLowerCase()}. Rośnie w biomach: ${pack.where ? pack.where.biomes.map((key) => BIOMES[key].name.toLowerCase()).join(', ') : 'nigdzie sama (tylko posadzona)'}.`;
+                    return `We wczytanym terenie nie ma: ${pack.label.toLowerCase()}. Rośnie w biomach: ${pack.where ? plantBiomesText(pack) : 'nigdzie sama (tylko posadzona)'}.`;
                 }
 
                 const { x, y, z, distance, stage } = found;
@@ -3553,7 +3567,7 @@ export const GAME_COMMANDS = [
                     `\nRośnie: etap średnio co ${pack.growthSeconds ?? BUSH_GROWTH_SECONDS} s (wyższy etap tylko z wolnym miejscem nad sobą).` +
                     (pack.item ? `\nPrzedmiot: ${pack.item.label} (/daj ${pack.item.type})` +
                         (pack.harvest ? ` - PPM na ostatnim etapie: ${pack.harvest.count[0]}-${pack.harvest.count[1]} szt., roślina wraca do etapu ${pack.harvest.back + 1}` : '') : '') +
-                    (pack.where ? `\nGdzie rośnie: ${pack.where.biomes.map((key) => BIOMES[key].name.toLowerCase()).join(', ')} (/rosliny znajdz ${pack.id})` : '') +
+                    (pack.where ? `\nGdzie rośnie: ${plantBiomesText(pack)} (/rosliny znajdz ${pack.id})` : '') +
                     `\nNumery bloków: ${pack.firstId}-${pack.firstId + pack.stages.length - 1}.`;
 
             }

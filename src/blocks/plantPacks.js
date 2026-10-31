@@ -508,17 +508,29 @@ async function validatePack(folder) {
 
         const where = json.gdzieRosnie;
 
-        if (!Array.isArray(where.biomy) || where.biomy.length === 0) {
-            fail(`"gdzieRosnie.biomy": lista biomów - do wyboru: ${LAND_BIOMES.map((key) => BIOMES[key].words[0]).join(', ')}`);
+        // "biomy": lista (wszędzie tak samo często) albo { biom: waga } -
+        // waga 1 to główny biom rośliny, mniej - rośnie tam rzadziej
+        // (mniej plam), np. { "hala": 1, "laka": 0.3 }.
+
+        const list = Array.isArray(where.biomy)
+            ? where.biomy.map((word) => [word, 1])
+            : where.biomy !== null && typeof where.biomy === 'object' ? Object.entries(where.biomy) : [];
+
+        if (list.length === 0) {
+            fail(`"gdzieRosnie.biomy": lista biomów albo { "biom": waga } - do wyboru: ${LAND_BIOMES.map((key) => BIOMES[key].words[0]).join(', ')}`);
         }
 
-        const biomes = where.biomy.map((word) => {
+        const weights = {};
+
+        const biomes = list.map(([word, weight]) => {
 
             const key = biomeByWord(word);
 
             if (!key || BIOMES[key].water) {
                 fail(`"gdzieRosnie.biomy": nieznany biom "${word}" - do wyboru: ${LAND_BIOMES.map((k) => BIOMES[k].words[0]).join(', ')}`);
             }
+
+            weights[key] = number(weight, `gdzieRosnie.biomy.${word}`, 0.05, 1);
 
             return key;
 
@@ -541,6 +553,7 @@ async function validatePack(folder) {
         // w src/world/terrain/Biomes.js.
         pack.where = {
             biomes,
+            weights,
             cover: where.plamy === undefined ? 0.04 : number(where.plamy, 'gdzieRosnie.plamy', 0.001, 0.9),
             density: where.gestosc === undefined ? 0.12 : number(where.gestosc, 'gdzieRosnie.gestosc', 0, 1),
             stages: stages.map((n) => n / sum)

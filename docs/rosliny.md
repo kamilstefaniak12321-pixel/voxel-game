@@ -103,7 +103,7 @@ piksele rysunku i wynik (powiększone).
     "czasWzrostu": 300,
     "przedmiot": { "klucz": "wiecha", "plik": "wiecha.png", "nazwa": "Wiecha amarantusa", "grupy": ["red"] },
     "zbior": { "ile": [1, 3], "wraca": 2 },
-    "gdzieRosnie": { "biomy": ["laka"], "plamy": 0.025, "gestosc": 0.22, "etapy": [0.2, 0.3, 0.5] },
+    "gdzieRosnie": { "biomy": { "laka": 1 }, "plamy": 0.025, "gestosc": 0.22, "etapy": [0.2, 0.3, 0.5] },
     "zrodlo": { "atlas": "Atlas tekstur bordowego amarantusa.png", "wysokosc": 32 }
 }
 ```
@@ -117,7 +117,7 @@ piksele rysunku i wynik (powiększone).
 | `przedmiot` | przedmiot ze zbioru, obrazek 16 x 16; `grupy` - w których grupach składników jest (`red`, `green`, `blue`, `purple` - kolorowe lampy) |
 | `zbior` | PPM na ostatnim etapie: `ile` [od, do], `wraca` - do którego etapu wraca roślina |
 | `podloze` | na czym rośnie oprócz ziemi, np. `["sand"]` |
-| `gdzieRosnie` | teren realistyczny: `biomy`, `plamy` (jaka część biomu w plamach), `gestosc` (jak gęsto w plamie), `etapy` (jak często który etap) |
+| `gdzieRosnie` | teren realistyczny: `biomy` - lista albo `{ "biom": waga }` (1 - główny biom rośliny, mniej - rośnie tam rzadziej, np. `{ "hala": 1, "laka": 0.3 }`), `plamy` (jaka część głównego biomu w plamach), `gestosc` (jak gęsto w plamie), `etapy` (jak często który etap) |
 | `zrodlo` | skąd są obrazki (dla porządku - gra tego nie czyta) |
 
 Zniszczona roślina daje młodą (pierwszy etap) - można ją posadzić.
@@ -291,6 +291,24 @@ Cynia (bez liści przy ziemi, liście parami na krzyż, kwiaty z pięter):
     "kwiaty": { "rodzaj": "warstwy", "rozmiar": [1, 2] }
 }
 ```
+
+## Gdzie rosną
+
+Każda roślina ma **swój biom** (waga 1), gdzie rośnie najczęściej,
+i czasem poboczny, gdzie jest rzadsza - łąka nie jest zatłoczona, a każdy
+krajobraz ma swoje kwiaty. Plamy roślin z paczek są na stałe przypisane
+do numeru paczki - nowa roślina nie przesuwa plam innych.
+
+| biom | rośnie często | rzadziej |
+|---|---|---|
+| łąka | amarantus, nagietek | lawenda, szałwia, cynia |
+| hala | lawenda, dzwonek gołębi | - |
+| skaliste góry | szałwia | dzwonek gołębi, mikołajek |
+| plaża i wydmy | kocanka, mikołajek | nagietek |
+| bór sosnowy | kocanka | - |
+| las liściasty | piwonia | zawilec |
+| buczyna | zawilec | - |
+| brzezina | cynia | piwonia |
 
 ## Komendy
 

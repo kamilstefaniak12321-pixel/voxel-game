@@ -11,6 +11,28 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 0.40.0 - Rośliny w swoich biomach
+
+Wagi biomów roślin — PR #68 (zawiera #64-#67).
+
+- Każda roślina z paczki ma teraz **swój biom**, gdzie rośnie
+  najczęściej, i czasem poboczny, gdzie jest rzadsza - łąka nie jest
+  zatłoczona (ok. połowa dawnej liczby roślin z paczek), a każdy
+  krajobraz ma swoje kwiaty: hala - lawenda i dzwonek, skały - szałwia,
+  plaże - kocanka i mikołajek, las liściasty - piwonia, buczyna -
+  zawilec, brzezina - cynia, łąka - amarantus i nagietek (tabela
+  w `docs/rosliny.md`).
+- `roslina.json`: `"biomy": { "hala": 1, "laka": 0.3 }` - waga biomu
+  (lista bez wag działa jak dotąd). `/rosliny <roslina>` pokazuje biomy,
+  poboczne z dopiskiem "rzadziej".
+- Plamy roślin z paczek są przypisane do numeru paczki, nie do miejsca
+  na liście - kolejne rośliny nie przesuwają plam innych (rośliny
+  z paczek w nowo wygenerowanym terenie są jednorazowo w innych
+  miejscach niż w 0.39.0; zapisany teren bez zmian).
+- Wersja 0.40.0 wspólna dla Windowsa i Androida. Przygotowana w PR;
+  publikacja w `voxel-game-wydania` następuje przez workflow po scaleniu
+  (najpierw #64-#67).
+
 ## 0.39.0 - Mikołajek
 
 Mikołajek - kolczaste, niebieskie główki — PR #67 (zawiera #64-#66).

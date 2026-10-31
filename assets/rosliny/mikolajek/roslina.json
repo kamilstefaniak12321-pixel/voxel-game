@@ -46,7 +46,7 @@
         "kategoria": "ozdoby"
     },
     "zbior": { "ile": [1, 2], "wraca": 2 },
-    "gdzieRosnie": { "biomy": ["plaza", "skaly"], "plamy": 0.02, "gestosc": 0.3, "etapy": [0.2, 0.25, 0.55] },
+    "gdzieRosnie": { "biomy": { "plaza": 1, "skaly": 0.3 }, "plamy": 0.02, "gestosc": 0.3, "etapy": [0.2, 0.25, 0.55] },
     "zrodlo": {
         "atlas": "Pikselowy atlas mikołajka stalowego.png",
         "przedmiot": "kwiat: --wysokosc 16 --nazwy etap1,etap2,etap3,kwiat; etapy - model z pikseli (kępka: krzak, liście na łodygach, główki z gwiazdą przysadek) w kolorach atlasu"

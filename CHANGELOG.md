@@ -11,6 +11,25 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 0.32.0 - Lawenda
+
+Lawenda - krzaczek z pikseli z kłosami — PR #60.
+
+- Nowa roślina z paczki roślin: **lawenda** - krzaczek z pikseli (do 15
+  pikseli wysokości, prawie blok): gęsta kępa wąskich liści wokół niskiej
+  kopułki z kostek, z niej wachlarz rozchylonych łodyg z **fioletowymi
+  kłosami**. Trzy etapy: młoda kępa, pąki (ciemny fiolet), kwitnąca.
+  Rośnie plamami na **łąkach i halach**. PPM na kwitnącej - **bukiet
+  lawendy** (obrazek z atlasu), lawenda wraca do etapu z pąkami.
+  Osiągnięcie *Zapach lata*.
+- Model "kepka" umie więcej (bez kodu, w `roslina.json`): liście
+  w układzie `kepa` (krzaczek z kopułką i wachlarzami liści), łodygi
+  `rozchylone`, kwiaty `klos` (kłos z kwiatkami z boku), etap może mieć
+  własne kolory (np. ciemniejsze pąki) - `docs/rosliny.md`.
+- Numery bloków lawendy: 5003-5005.
+- Wersja 0.32.0 wspólna dla Windowsa i Androida. Przygotowana w PR;
+  publikacja w `voxel-game-wydania` następuje przez workflow po scaleniu.
+
 ## 0.31.0 - Kocanka piaskowa
 
 Kocanka piaskowa - mała roślina z pikseli — PR #59 (zawiera #58 - 0.30.0).

@@ -207,8 +207,18 @@ function parseTuft(model, what, seedText, packColors) {
     const stems = model.lodygi ?? {};
     const flower = model.kwiaty ?? null;
 
-    if (flower !== null && (typeof flower !== 'object' || !['baldach', 'pak'].includes(flower.rodzaj))) {
-        fail(`"${what}.kwiaty": null albo { "rodzaj": "baldach" | "pak", "rozmiar": 1-2 }`);
+    if (flower !== null && (typeof flower !== 'object' || !['baldach', 'klos', 'pak'].includes(flower.rodzaj))) {
+        fail(`"${what}.kwiaty": null albo { "rodzaj": "baldach" | "klos" | "pak", "rozmiar": ... }`);
+    }
+
+    const layout = leaves.uklad ?? 'rozeta';
+
+    if (!['rozeta', 'kepa'].includes(layout)) {
+        fail(`"${what}.liscie.uklad": "rozeta" (przy ziemi) albo "kepa" (stojące liście)`);
+    }
+
+    if (stems.rozchylone !== undefined && typeof stems.rozchylone !== 'boolean') {
+        fail(`"${what}.lodygi.rozchylone": true albo false`);
     }
 
     const colors = {};
@@ -226,17 +236,22 @@ function parseTuft(model, what, seedText, packColors) {
 
     const tuft = {
         leaves: {
-            count: pixelRange(leaves.ile, [4, 6], `${what}.liscie.ile`, 0, 12),
-            length: pixelRange(leaves.dlugosc, [2, 4], `${what}.liscie.dlugosc`, 1, 7)
+            layout,
+            count: pixelRange(leaves.ile, [4, 6], `${what}.liscie.ile`, 0, layout === 'kepa' ? 32 : 12),
+            length: pixelRange(leaves.dlugosc, [2, 4], `${what}.liscie.dlugosc`, 1, layout === 'kepa' ? 12 : 7),
+            radius: leaves.promien === undefined ? 2 : number(leaves.promien, `${what}.liscie.promien`, 0, 5)
         },
         stems: {
-            count: pixelRange(stems.ile, [0, 0], `${what}.lodygi.ile`, 0, 8),
+            count: pixelRange(stems.ile, [0, 0], `${what}.lodygi.ile`, 0, 12),
             height: pixelRange(stems.wysokosc, [4, 6], `${what}.lodygi.wysokosc`, 1, 24),
-            radius: stems.promien === undefined ? 3 : number(stems.promien, `${what}.lodygi.promien`, 0, 6)
+            radius: stems.promien === undefined ? 3 : number(stems.promien, `${what}.lodygi.promien`, 0, 6),
+            spread: stems.rozchylone === true
         },
         flower: flower && {
             kind: flower.rodzaj,
-            size: flower.rozmiar === undefined ? 1 : number(flower.rozmiar, `${what}.kwiaty.rozmiar`, 1, 2)
+            size: flower.rozmiar === undefined
+                ? (flower.rodzaj === 'klos' ? 3 : 1)
+                : number(flower.rozmiar, `${what}.kwiaty.rozmiar`, 1, flower.rodzaj === 'klos' ? 6 : 2)
         },
         colors,
         seed
@@ -250,21 +265,28 @@ function parseTuft(model, what, seedText, packColors) {
 
 // Rozmiar kępki w pikselach (jak obrazek etapu) - z kształtu w
 // src/rendering/TuftGeometry.js: rozeta (liście do "dlugosc" pikseli od
-// środka, stojące o 1 wyższe, środek 2), łodygi z kwiatami.
+// środka, stojące o 1 wyższe, środek 2) albo kępa (liście do "dlugosc"
+// wysokości, w promieniu, odchylone o 3), łodygi z kwiatami (kłos ma
+// kwiatki o 1 z boku).
+
+const FLOWER_HEIGHT = { baldach: () => 2, klos: (size) => size, pak: () => 1 };
+const FLOWER_SIDE = { baldach: (size) => size, klos: (size) => (size >= 3 ? 1 : 0), pak: () => 0 };
 
 function tuftPixels(tuft) {
 
-    const flower = tuft.flower ? (tuft.flower.kind === 'baldach' ? 2 : 1) : 0;
+    const flower = tuft.flower ? FLOWER_HEIGHT[tuft.flower.kind](tuft.flower.size) : 0;
+    const leaves = tuft.leaves.layout === 'kepa' ? tuft.leaves.length[1] : tuft.leaves.length[1] + 1;
 
-    return Math.max(tuft.leaves.length[1] + 1, 2, tuft.stems.count[1] > 0 ? tuft.stems.height[1] + flower : 0);
+    return Math.max(leaves, 2, tuft.stems.count[1] > 0 ? tuft.stems.height[1] + flower : 0);
 
 }
 
 function tuftWidth(tuft) {
 
-    const flower = tuft.flower?.kind === 'baldach' ? tuft.flower.size : 0;
+    const flower = tuft.flower ? FLOWER_SIDE[tuft.flower.kind](tuft.flower.size) : 0;
+    const leaves = tuft.leaves.layout === 'kepa' ? tuft.leaves.radius + 3 + 1 : tuft.leaves.length[1] + 1;
 
-    return 2 * Math.max(tuft.leaves.length[1] + 1, 4, tuft.stems.count[1] > 0 ? tuft.stems.radius + flower + 1 : 0);
+    return 2 * Math.max(leaves, 4, tuft.stems.count[1] > 0 ? tuft.stems.radius + flower + 1 : 0);
 
 }
 

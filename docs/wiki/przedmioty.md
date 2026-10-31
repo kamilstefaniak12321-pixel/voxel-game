@@ -2,7 +2,7 @@
 
 > Ta strona jest generowana z kodu gry (`python tools/wiki.py`) - nie zmieniaj jej ręcznie, zmiany przepadną przy następnym generowaniu.
 
-Wersja gry **0.31.0** - 21 przedmiotów. Przedmiotu nie da się postawić jak bloku; owoce i nasiona posadzone na ziemi (PPM) wyrastają w krzak albo drzewo, narzędzia przyspieszają kopanie.
+Wersja gry **0.32.0** - 22 przedmiotów. Przedmiotu nie da się postawić jak bloku; owoce i nasiona posadzone na ziemi (PPM) wyrastają w krzak albo drzewo, narzędzia przyspieszają kopanie.
 
 
 ## Rośliny
@@ -34,6 +34,7 @@ Wersja gry **0.31.0** - 21 przedmiotów. Przedmiotu nie da się postawić jak bl
 | | Nazwa | W komendach | Najważniejsze |
 |---|---|---|---|
 | <img src="ikony/kocanka_bukiet.png" width="32" height="32" alt=""> | **Bukiet kocanki** | `kocanka_bukiet` | **Skąd:** zbiór (PPM): Kocanka (kwitnie) |
+| <img src="ikony/lawenda_bukiet.png" width="32" height="32" alt=""> | **Bukiet lawendy** | `lawenda_bukiet` | **Skąd:** zbiór (PPM): Lawenda (kwitnie) |
 
 ## Narzędzia i surowce
 

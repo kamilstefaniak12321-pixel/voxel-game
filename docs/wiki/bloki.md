@@ -2,7 +2,7 @@
 
 > Ta strona jest generowana z kodu gry (`python tools/wiki.py`) - nie zmieniaj jej ręcznie, zmiany przepadną przy następnym generowaniu.
 
-Wersja gry **0.31.0** - 133 bloków (do tego 5 odmian, których nie ma w ekwipunku, np. wieniec zawieszony na boku bloku). Czas kopania dotyczy trybu przygody; w kreatywnym bloki znikają od razu.
+Wersja gry **0.32.0** - 136 bloków (do tego 5 odmian, których nie ma w ekwipunku, np. wieniec zawieszony na boku bloku). Czas kopania dotyczy trybu przygody; w kreatywnym bloki znikają od razu.
 
 [Ziemia](#ziemia) · [Skały](#skały) · [Drewno](#drewno) · [Budulec](#budulec) · [Rośliny](#rośliny) · [Światło](#światło) · [Ozdoby](#ozdoby)
 
@@ -152,6 +152,9 @@ Wersja gry **0.31.0** - 133 bloków (do tego 5 odmian, których nie ma w ekwipun
 | <img src="ikony/kocanka_etap1.png" width="32" height="32" alt=""> | **Młoda kocanka** | `kocanka_etap1` | **Kopanie:** od razu<br>**Rośnie:** w: Kocanka (pąki)<br>**Skąd:** zniszczony blok: Kocanka (pąki); zniszczony blok: Kocanka (kwitnie) |
 | <img src="ikony/kocanka_etap2.png" width="32" height="32" alt=""> | **Kocanka (pąki)** | `kocanka_etap2` | **Kopanie:** od razu<br>**Daje:** Młoda kocanka<br>**Rośnie:** w: Kocanka (kwitnie)<br>**Skąd:** wyrasta z: Młoda kocanka |
 | <img src="ikony/kocanka_etap3.png" width="32" height="32" alt=""> | **Kocanka (kwitnie)** | `kocanka_etap3` | **Kopanie:** od razu<br>**Daje:** Młoda kocanka<br>**Zbiór (PPM):** Bukiet kocanki 1-2<br>**Skąd:** wyrasta z: Kocanka (pąki) |
+| <img src="ikony/lawenda_etap1.png" width="32" height="32" alt=""> | **Młoda lawenda** | `lawenda_etap1` | **Kopanie:** od razu<br>**Rośnie:** w: Lawenda (pąki)<br>**Skąd:** zniszczony blok: Lawenda (pąki); zniszczony blok: Lawenda (kwitnie) |
+| <img src="ikony/lawenda_etap2.png" width="32" height="32" alt=""> | **Lawenda (pąki)** | `lawenda_etap2` | **Kopanie:** od razu<br>**Daje:** Młoda lawenda<br>**Rośnie:** w: Lawenda (kwitnie)<br>**Skąd:** wyrasta z: Młoda lawenda |
+| <img src="ikony/lawenda_etap3.png" width="32" height="32" alt=""> | **Lawenda (kwitnie)** | `lawenda_etap3` | **Kopanie:** od razu<br>**Daje:** Młoda lawenda<br>**Zbiór (PPM):** Bukiet lawendy 1-2<br>**Skąd:** wyrasta z: Lawenda (pąki) |
 
 ## Światło
 

@@ -140,6 +140,19 @@ const EVERLAST = getPlantPack('kocanka')?.item ? [{
     when: (data) => data.item === 'kocanka_bukiet'
 }] : [];
 
+// Lawenda (assets/rosliny/lawenda) - krzaczek z pikseli z kłosami.
+
+const LAVENDER = getPlantPack('lawenda')?.item ? [{
+    id: 'lavender',
+    tier: 'common',
+    title: 'Zapach lata',
+    task: 'Zbierz bukiet z kwitnącej lawendy (krzaczki z fioletowymi kłosami na łąkach i halach).',
+    comment: 'Mole uciekają, pszczoły się zlatują, a szafa pachnie jak u babci.',
+    icon: 'lawenda_bukiet',
+    on: 'harvested',
+    when: (data) => data.item === 'lawenda_bukiet'
+}] : [];
+
 
 // "Złota godzina": słońce nisko nad horyzontem (wschód albo zachód),
 // gracz patrzy prosto na nie i nic go nie zasłania.
@@ -243,6 +256,7 @@ export const ACHIEVEMENTS = [
     ...ORCHARD,
     ...AMARANTH,
     ...EVERLAST,
+    ...LAVENDER,
     {
         id: 'plant',
         tier: 'common',

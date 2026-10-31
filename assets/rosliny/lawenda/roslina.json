@@ -1,0 +1,55 @@
+{
+    "nazwa": "Lawenda",
+    "nazwaAngielska": "Lavender",
+    "opis": "pachnący krzaczek - gęsta kępa wąskich liści, nad nią wachlarz łodyg z fioletowymi kłosami; rośnie na łąkach i halach",
+    "pierwszeId": 5003,
+    "etapy": [
+        {
+            "nazwa": "Młoda lawenda",
+            "model": { "rodzaj": "kepka", "liscie": { "uklad": "kepa", "ile": [10, 12], "dlugosc": [4, 6], "promien": 2 } }
+        },
+        {
+            "nazwa": "Lawenda (pąki)",
+            "model": {
+                "rodzaj": "kepka",
+                "liscie": { "uklad": "kepa", "ile": [14, 18], "dlugosc": [5, 7], "promien": 2 },
+                "lodygi": { "ile": [4, 6], "wysokosc": [7, 9], "promien": 3, "rozchylone": true },
+                "kwiaty": { "rodzaj": "klos", "rozmiar": 2 },
+                "kolory": { "kwiat": "#5e398a", "kwiatJasny": "#744aa3", "kwiatCiemny": "#4c2e70" }
+            }
+        },
+        {
+            "nazwa": "Lawenda (kwitnie)",
+            "model": {
+                "rodzaj": "kepka",
+                "liscie": { "uklad": "kepa", "ile": [20, 24], "dlugosc": [7, 9], "promien": 3 },
+                "lodygi": { "ile": [6, 8], "wysokosc": [8, 11], "promien": 5, "rozchylone": true },
+                "kwiaty": { "rodzaj": "klos", "rozmiar": 4 }
+            }
+        }
+    ],
+    "kolory": {
+        "lisc": "#76b02e",
+        "liscJasny": "#9ed23e",
+        "liscCiemny": "#4e8a2a",
+        "lodyga": "#6a9632",
+        "kwiat": "#9064c0",
+        "kwiatJasny": "#ad84d6",
+        "kwiatCiemny": "#744aa3",
+        "pak": "#5e398a"
+    },
+    "czasWzrostu": 300,
+    "przedmiot": {
+        "klucz": "bukiet",
+        "plik": "bukiet.png",
+        "nazwa": "Bukiet lawendy",
+        "nazwaAngielska": "Lavender Bouquet",
+        "kategoria": "ozdoby"
+    },
+    "zbior": { "ile": [1, 2], "wraca": 2 },
+    "gdzieRosnie": { "biomy": ["laka", "hala"], "plamy": 0.03, "gestosc": 0.35, "etapy": [0.2, 0.25, 0.55] },
+    "zrodlo": {
+        "atlas": "Pikselowy atlas lawendy i bukietu.png",
+        "przedmiot": "bukiet: --wysokosc 16 --nazwy etap1,etap2,etap3,bukiet; etapy - model z pikseli (kępka, układ kepa, kłosy) w kolorach atlasu"
+    }
+}

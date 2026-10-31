@@ -13,8 +13,8 @@ bez pisania kodu. Są dwa rodzaje:
   (kopułka liści, kuliste różowe kwiaty), **zawilec** (okółki liści,
   otwarte, przechylone kwiaty), **dzwonek gołębi** (zwisające dzwonki)
   **szałwia** (szarozielony krzak, kłosy w okółkach), **nagietek**
-  (pomarańczowe koszyczki) albo **cynia** (liście parami, kwiaty
-  z pięter płatków).
+  (pomarańczowe koszyczki), **cynia** (liście parami, kwiaty z pięter
+  płatków) albo **mikołajek** (niebieskie główki na gwiazdach kolców).
 
 ![Amarantus - trzy etapy wzrostu obok słupka z 2 bloków](rosliny-amarantus.png)
 
@@ -33,6 +33,8 @@ bez pisania kodu. Są dwa rodzaje:
 ![Nagietek - pomarańczowe koszyczki](rosliny-nagietek.png)
 
 ![Cynia - koralowe kwiaty z pięter płatków](rosliny-cynia.png)
+
+![Mikołajek - niebieskie główki na gwiazdach kolców](rosliny-mikolajek.png)
 
 ## Skala: 16 pikseli na blok
 
@@ -168,7 +170,10 @@ samej skali co bloki - jeden piksel modelu to 1/16 bloku:
   (`srodek`); rozmiar 1 - wąski (pąk), 2 - dzwon 3 x 3, `warstwy` - pełny
   kwiat z pięter płatków coraz węższych ku górze (ciemny, szeroki spód,
   jaśniejsze piętra, `srodek` na szczycie; rozmiar 1 - 3 x 3, dwa piętra,
-  2 - 5 x 5, trzy piętra), albo brak.
+  2 - 5 x 5, trzy piętra), `oset` - jajowata główka z kostek w kratkę
+  (jasne i ciemne kwiatki na przemian), pod nią płaska gwiazda
+  kolczastych przysadek w 8 stron w kolorze `liscJasny` (rozmiar 1 -
+  główka 3 x 3 x 3, 2 - 3 x 3 x 4), albo brak.
   `rozmiar` może być zakresem `[od, do]` - każda łodyga losuje (piwonia
   ma duże i małe kwiaty).
 
@@ -181,7 +186,7 @@ i 10 x 10 pikseli, lawenda 12 x 6, 12 x 11 i 14 x 15 pikseli, piwonia
 12 x 6, 14 x 9 i 16 x 12 pikseli, zawilec 10 x 4, 12 x 8 i 12 x 12
 pikseli, dzwonek 12 x 5, 12 x 11 i 14 x 13 pikseli, szałwia 12 x 4, 14 x 11
 i 16 x 14 pikseli, nagietek 12 x 3, 14 x 9 i 14 x 12 pikseli, cynia 10 x 7, 12 x 11
-i 14 x 13 pikseli.
+i 14 x 13 pikseli, mikołajek 12 x 3, 14 x 11 i 14 x 14 pikseli.
 
 ```json
 "etapy": [
@@ -208,7 +213,7 @@ i 14 x 13 pikseli.
 | `lodygi.ile`, `lodygi.wysokosc`, `lodygi.promien` | łodygi: ile (0-12, domyślnie bez łodyg), wysokość [od, do] (1-24), jak daleko od środka szczyt (0-6) |
 | `lodygi.rozchylone` | `true` - łodygi wyrastają bliżej środka i odchylają się na boki (wachlarz) |
 | `lodygi.liscie` | `{ "co": 1-6, "dlugosc": [od, do] }` - płaskie liście na łodygach co tyle pikseli (nad kopułką krzaka), długość 1-5, `"naprzeciw": true` - parami; `{ "okolek": 2-5, "dlugosc": [od, do] }` - okółek liści w ok. połowie łodygi |
-| `kwiaty` | `{ "rodzaj": "baldach", "rozmiar": 1-2 }`, `{ "rodzaj": "klos", "rozmiar": 1-6, "okolki": true }` (długość kłosa; okółki - z przerwami), `{ "rodzaj": "pompon", "rozmiar": 1-2 }`, `{ "rodzaj": "talerz", "rozmiar": 1-2 }`, `{ "rodzaj": "dzwonek", "rozmiar": 1-2 }`, `{ "rodzaj": "warstwy", "rozmiar": 1-2 }`, `{ "rodzaj": "pak", "rozmiar": 1-2 }` albo brak; `rozmiar` - liczba albo `[od, do]` |
+| `kwiaty` | `{ "rodzaj": "baldach", "rozmiar": 1-2 }`, `{ "rodzaj": "klos", "rozmiar": 1-6, "okolki": true }` (długość kłosa; okółki - z przerwami), `{ "rodzaj": "pompon", "rozmiar": 1-2 }`, `{ "rodzaj": "talerz", "rozmiar": 1-2 }`, `{ "rodzaj": "dzwonek", "rozmiar": 1-2 }`, `{ "rodzaj": "warstwy", "rozmiar": 1-2 }`, `{ "rodzaj": "oset", "rozmiar": 1-2 }`, `{ "rodzaj": "pak", "rozmiar": 1-2 }` albo brak; `rozmiar` - liczba albo `[od, do]` |
 | `kolory` | 9 kolorów: `lisc`, `liscJasny`, `liscCiemny`, `lodyga`, `kwiat`, `kwiatJasny`, `kwiatCiemny`, `pak`, `srodek` (środek kwiatu) - dla całej paczki (obok `etapy`), etap może zmienić własnymi `model.kolory` |
 
 Kolory najlepiej wziąć z atlasu rośliny (`tools/rosliny_z_atlasu.py
@@ -319,7 +324,7 @@ zmniejszenie bywa 3-5 razy. Proponowane rozmiary (prawdziwa wysokość
 | marzanna barwierska | 0.6-1 m | 1 blok (16 px) | krzyż; korzenie - "coś czerwonego" |
 | **piwonia** | krzew ~1 m | **16 x 12 px** | **`kepka`: krzak, liście na łodygach, pompony - zrobione** (0.33.0) |
 | **cynia** | 0.3-0.9 m | **14 x 13 px** | **`kepka`: liście parami, kwiaty z pięter - zrobione** (0.38.0) |
-| mikołajek | 0.3-0.9 m | 0.75 bloku (12 px) | `kepka` z kolczastymi główkami |
+| **mikołajek** | 0.3-0.9 m | **14 x 14 px** | **`kepka`: główki na gwiazdach kolców - zrobione** (0.39.0) |
 | **lawenda** | 0.3-0.6 m | **do 15 px (prawie blok)** | **`kepka`: kępa + rozchylone łodygi z kłosami - zrobione** (0.32.0) |
 | **szałwia** | 0.3-0.6 m | **16 x 14 px** | **`kepka`: krzak, kłosy w okółkach - zrobione** (0.36.0) |
 | **nagietek** | 0.3-0.6 m | **14 x 12 px** | **`kepka`: krzak, talerzyki (tylko `roslina.json`) - zrobione** (0.37.0) |

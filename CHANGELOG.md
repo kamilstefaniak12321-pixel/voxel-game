@@ -11,6 +11,25 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 0.39.0 - Mikołajek
+
+Mikołajek - kolczaste, niebieskie główki — PR #67 (zawiera #64-#66).
+
+- Nowa roślina z paczki roślin: **mikołajek** - kolczasta,
+  stalowoniebieska roślina: kępa liści o srebrnych końcach, na łodygach
+  **jajowate, niebieskie główki w kratkę na gwiazdach kolczastych
+  przysadek**. Trzy etapy: młody, pąki (małe główki), kwitnący. Rośnie
+  na **plażach i w skalistych górach**. PPM na kwitnącym - **kwiat
+  mikołajka** (obrazek z atlasu), wraca do etapu z pąkami. Osiągnięcie
+  *Kłujący błękit*.
+- Model "kepka" umie więcej (bez kodu): kwiaty `oset` (główka w kratkę
+  z gwiazdą przysadek) - `docs/rosliny.md`. Wcześniejsze rośliny bez
+  zmian.
+- Numery bloków mikołajka: 5024-5026.
+- Wersja 0.39.0 wspólna dla Windowsa i Androida. Przygotowana w PR;
+  publikacja w `voxel-game-wydania` następuje przez workflow po scaleniu
+  (najpierw #64-#66).
+
 ## 0.38.0 - Cynia
 
 Cynia - kwiaty z pięter płatków — PR #66 (zawiera #64 i #65).

@@ -1,0 +1,54 @@
+{
+    "nazwa": "Mikołajek",
+    "nazwaAngielska": "Sea Holly",
+    "opis": "kolczasta, stalowoniebieska roślina - kępa ząbkowanych liści, na łodygach jajowate, niebieskie główki na gwiazdach kolczastych przysadek; rośnie na plażach i w skalistych górach",
+    "pierwszeId": 5024,
+    "etapy": [
+        {
+            "nazwa": "Młody mikołajek",
+            "model": { "rodzaj": "kepka", "liscie": { "uklad": "krzak", "promien": 2, "dlugosc": [2, 2], "brzeg": 3 } }
+        },
+        {
+            "nazwa": "Mikołajek (pąki)",
+            "model": {
+                "rodzaj": "kepka",
+                "liscie": { "uklad": "krzak", "promien": 3, "dlugosc": [2, 3], "brzeg": 3 },
+                "lodygi": { "ile": [2, 3], "wysokosc": [6, 8], "promien": 2, "rozchylone": true, "liscie": { "co": 3, "dlugosc": [2, 2] } },
+                "kwiaty": { "rodzaj": "oset", "rozmiar": 1 }
+            }
+        },
+        {
+            "nazwa": "Mikołajek (kwitnie)",
+            "model": {
+                "rodzaj": "kepka",
+                "liscie": { "uklad": "krzak", "promien": 3, "dlugosc": [3, 3], "brzeg": 3 },
+                "lodygi": { "ile": [2, 3], "wysokosc": [8, 10], "promien": 3, "rozchylone": true, "liscie": { "co": 3, "dlugosc": [2, 3] } },
+                "kwiaty": { "rodzaj": "oset", "rozmiar": [1, 2] }
+            }
+        }
+    ],
+    "kolory": {
+        "lisc": "#4e6a3a",
+        "liscJasny": "#9fb4c4",
+        "liscCiemny": "#2f4524",
+        "lodyga": "#4a6a2c",
+        "kwiat": "#5878a8",
+        "kwiatJasny": "#8aa4cc",
+        "kwiatCiemny": "#34496e",
+        "pak": "#5878a8"
+    },
+    "czasWzrostu": 330,
+    "przedmiot": {
+        "klucz": "kwiat",
+        "plik": "kwiat.png",
+        "nazwa": "Kwiat mikołajka",
+        "nazwaAngielska": "Sea Holly Flower",
+        "kategoria": "ozdoby"
+    },
+    "zbior": { "ile": [1, 2], "wraca": 2 },
+    "gdzieRosnie": { "biomy": ["plaza", "skaly"], "plamy": 0.02, "gestosc": 0.3, "etapy": [0.2, 0.25, 0.55] },
+    "zrodlo": {
+        "atlas": "Pikselowy atlas mikołajka stalowego.png",
+        "przedmiot": "kwiat: --wysokosc 16 --nazwy etap1,etap2,etap3,kwiat; etapy - model z pikseli (kępka: krzak, liście na łodygach, główki z gwiazdą przysadek) w kolorach atlasu"
+    }
+}

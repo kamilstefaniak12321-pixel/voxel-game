@@ -21,7 +21,7 @@ import { createPixelPlant } from './PixelPlantBuilder.js';
 //             liści z boków kopułki) }
 //   stems:  { count: [od, do], height: [od, do], radius, spread (rozchylone),
 //             leaves: null | { every, length } (liście na łodygach) }
-//   flower: null | { kind: 'baldach' | 'klos' | 'pak' | 'pompon' | 'talerz' | 'dzwonek' | 'warstwy',
+//   flower: null | { kind: 'baldach' | 'klos' | 'pak' | 'pompon' | 'talerz' | 'dzwonek' | 'warstwy' | 'oset',
 //             sizes: [od, do] }
 //   colors: { leaf, leafLight, leafDark, stem, flower, flowerLight,
 //             flowerDark, bud, center } - liniowe RGB 0-255 (jak COLORS
@@ -340,6 +340,49 @@ function tiers(box, x, top, z, size) {
 
 }
 
+// Oset (mikołajek): jajowata główka z kostek w kratkę (jasne i ciemne
+// kwiatki na przemian), jasny czubek; pod nią płaska gwiazda kolczastych
+// przysadek w 8 stron (star). Rozmiar 1 - główka 3 x 3 x 3, 2 - 3 x 3 x 4
+// (szersza w środku), przysadki o piksel dłuższe od rozmiaru.
+
+function thistle(box, x, top, z, size) {
+
+    const checker = (dx, y, dz) => ((dx + dz + y) % 2 === 0 ? 'flower' : 'flowerDark');
+    const layer = (y, plus) => {
+        for (let dz = -1; dz <= 1; dz++) {
+            for (let dx = -1; dx <= 1; dx++) {
+                if (plus && dx !== 0 && dz !== 0) continue;
+                box(x + dx, y, z + dz, 1, 1, 1, checker(dx, y, dz));
+            }
+        }
+    };
+
+    if (size <= 1) {
+        box(x, top, z, 1, 1, 1, 'flowerDark');
+        layer(top + 1, true);
+        box(x, top + 2, z, 1, 1, 1, 'flowerLight');
+        return;
+    }
+
+    layer(top, true);
+    layer(top + 1, false);
+    layer(top + 2, true);
+    box(x, top + 3, z, 1, 1, 1, 'flowerLight');
+
+}
+
+function star(pixel, x, z, radius) {
+
+    DIRECTIONS.forEach(([dx, dz], direction) => {
+        // Kolce po skosie o piksel krótsze - gwiazda jest okrągła.
+        const length = direction % 2 ? radius - 1 : radius;
+        for (let k = 1; k <= length; k++) {
+            pixel(x + dx * k, z + dz * k, 'leafLight');
+        }
+    });
+
+}
+
 export function makeTuftTemplate(tuft, variant) {
 
     const random = randomFor(40503 + variant * 7919 + tuft.seed);
@@ -557,6 +600,14 @@ export function makeTuftTemplate(tuft, variant) {
             continue;
         }
 
+        if (flower.kind === 'oset') {
+            // Główka na gwieździe kolczastych przysadek (płaska gwiazda
+            // w połowie najniższego piętra główki - jak liście łodyg).
+            thistle(box, x, top, z, size);
+            stemLeaves.push([x, top, z, -1, size + 1]);
+            continue;
+        }
+
         if (flower.kind === 'warstwy') {
             tiers(box, x, top, z, size);
             continue;
@@ -605,7 +656,8 @@ export function makeTuftTemplate(tuft, variant) {
     for (const [y, leaves] of levels) {
         sheet(1, y + 0.5, ({ pixel }) => {
             for (const [sx, , sz, direction, size] of leaves) {
-                compoundLeaf(pixel, sx, sz, direction, size);
+                if (direction < 0) star(pixel, sx, sz, size);
+                else compoundLeaf(pixel, sx, sz, direction, size);
             }
         });
     }

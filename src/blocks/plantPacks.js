@@ -277,12 +277,12 @@ function parseTuft(model, what, seedText, packColors) {
 // wysokości, w promieniu, odchylone o 3), łodygi z kwiatami (kłos ma
 // kwiatki o 1 z boku).
 
-const FLOWER_HEIGHT = { baldach: () => 2, klos: (size) => size, pak: (size) => size, pompon: (size) => size + 2, talerz: (size) => (size > 1 ? 4 : 3), dzwonek: () => 1, warstwy: (size) => size + 1 };
-const FLOWER_SIDE = { baldach: (size) => size, klos: (size) => (size >= 3 ? 1 : 0), pak: (size) => size - 1, pompon: (size) => size, talerz: (size) => size, dzwonek: () => 3, warstwy: (size) => size };
+const FLOWER_HEIGHT = { baldach: () => 2, klos: (size) => size, pak: (size) => size, pompon: (size) => size + 2, talerz: (size) => (size > 1 ? 4 : 3), dzwonek: () => 1, warstwy: (size) => size + 1, oset: (size) => size + 2 };
+const FLOWER_SIDE = { baldach: (size) => size, klos: (size) => (size >= 3 ? 1 : 0), pak: (size) => size - 1, pompon: (size) => size, talerz: (size) => size, dzwonek: () => 3, warstwy: (size) => size, oset: (size) => size + 1 };
 
 // Kwiaty: rodzaj -> [domyślny rozmiar, najmniejszy, największy];
 // "rozmiar" to liczba albo [od, do] (każda łodyga losuje).
-const FLOWER_SIZES = { baldach: [1, 1, 2], klos: [3, 1, 6], pak: [1, 1, 2], pompon: [1, 1, 2], talerz: [1, 1, 2], dzwonek: [2, 1, 2], warstwy: [1, 1, 2] };
+const FLOWER_SIZES = { baldach: [1, 1, 2], klos: [3, 1, 6], pak: [1, 1, 2], pompon: [1, 1, 2], talerz: [1, 1, 2], dzwonek: [2, 1, 2], warstwy: [1, 1, 2], oset: [1, 1, 2] };
 
 function flowerSizes(flower, what) {
 

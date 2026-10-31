@@ -260,6 +260,32 @@ function plantPackBlocks() {
 
             const next = last ? null : pack.stages[index + 1];
 
+            // Mała roślina z pikseli (model "kepka" - TuftGeometry.js) idzie
+            // tą samą drogą co modele roślin nad rzeką (riverPlant); kolor
+            // odłamków - z obrazka przedmiotu (albo trawy).
+
+            const shape = stage.tuft
+                ? {
+                    model: 'riverPlant',
+                    riverPlant: { kind: `kepka:${pack.id}:${index}`, waterlogged: false, tuft: stage.tuft },
+                    plant: { height: stage.height / PLANT_PIXELS, width: stage.width / PLANT_PIXELS / 2 },
+                    sound: 'plant',
+                    textures: { all: pack.item ? plantTile(pack, pack.item.file) : 'tall_grass' }
+                }
+                : {
+                    model: 'cross',
+                    plant: {
+                        planes: stage.planes,
+                        height: stage.height / PLANT_PIXELS,
+                        width: stage.width / PLANT_PIXELS / 2,
+                        sprite: {
+                            width: Math.ceil(stage.width / PLANT_PIXELS),
+                            height: Math.ceil(stage.height / PLANT_PIXELS)
+                        }
+                    },
+                    textures: { all: plantTile(pack, stage.file) }
+                };
+
             blocks[types[index]] = {
 
                 id: pack.firstId + index,
@@ -267,20 +293,9 @@ function plantPackBlocks() {
                 label: stage.label,
 
                 solid: false,
-                model: 'cross',
                 category: 'rosliny',
 
-                plant: {
-                    planes: stage.planes,
-                    height: stage.height / PLANT_PIXELS,
-                    width: stage.width / PLANT_PIXELS / 2,
-                    sprite: {
-                        width: Math.ceil(stage.width / PLANT_PIXELS),
-                        height: Math.ceil(stage.height / PLANT_PIXELS)
-                    }
-                },
-
-                textures: { all: plantTile(pack, stage.file) },
+                ...shape,
 
                 ...(pack.ground ? { ground: pack.ground } : {}),
 

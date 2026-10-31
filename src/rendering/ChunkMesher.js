@@ -695,7 +695,7 @@ function addRiverPlants(plants, faceCount, baseX, baseZ, grassDetail = null) {
         const transform = riverPlantTransform(wx, y, wz);
         const faces = grass
             ? getBushyGrassFaces(plants[k + 3] === TALL_GRASS_ID, transform.variant, grassDetail)
-            : getRiverPlantFaces(data.kind, transform.variant, data.waterlogged);
+            : getRiverPlantFaces(data.kind, transform.variant, data.waterlogged, data.tuft);
         const climate = grass && meshTint ? tintOfColumn(lx, lz) : null;
         const { cos, sin } = transform;
         const centerX = lx + transform.x;

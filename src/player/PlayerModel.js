@@ -451,7 +451,7 @@ export function buildBlockGeometry(type) {
         const positions = [], normals = [], uvs = [], colors = [], indices = [];
         const uv = getAtlasUV('snow');
         const texel = [(uv.uMin + uv.uMax) / 2, (uv.vMin + uv.vMax) / 2];
-        for (const face of getRiverPlantFaces(definition.riverPlant.kind, 0, definition.riverPlant.waterlogged)) {
+        for (const face of getRiverPlantFaces(definition.riverPlant.kind, 0, definition.riverPlant.waterlogged, definition.riverPlant.tuft)) {
             const base = positions.length / 3;
             for (let i = 0; i < 4; i++) {
                 positions.push(...face.vertices[i]);

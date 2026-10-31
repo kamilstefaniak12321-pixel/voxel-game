@@ -1,10 +1,18 @@
 # Rośliny z paczek (assets/rosliny/)
 
 Nowe rośliny dodaje się jak paczki drzew - folder z obrazkami i opisem,
-bez pisania kodu. Pierwsza: **amarantus** (do 2 bloków wysokości,
-bordowe, zwisające wiechy).
+bez pisania kodu. Są dwa rodzaje:
+
+- **duża roślina z obrazka** - skrzyżowane płaszczyzny w rozmiarze
+  obrazka, np. **amarantus** (do 2 bloków wysokości, bordowe, zwisające
+  wiechy),
+- **mała roślina z pikseli** (model `kepka`) - prawdziwy, mały model
+  z pikseli 1/16 bloku, bez obrazka etapu, np. **kocanka piaskowa**
+  (do 10 pikseli, złote baldachy na piasku).
 
 ![Amarantus - trzy etapy wzrostu obok słupka z 2 bloków](rosliny-amarantus.png)
+
+![Kocanka piaskowa - trzy etapy na piasku](rosliny-kocanka.png)
 
 ## Skala: 16 pikseli na blok
 
@@ -82,7 +90,7 @@ piksele rysunku i wynik (powiększone).
 |---|---|
 | `nazwa`, `nazwaAngielska`, `opis` | nazwy i opis (`/rosliny amarantus`) |
 | `pierwszeId` | numer bloku pierwszego etapu; etapy biorą kolejne numery. Nowe rośliny: **5000-9999** (od 0.30.0, tylko rośliny); dawny zakres 100-239 jest wspólny z paczkami drzew (rośliny od góry - amarantus 237-239). Raz użytego numeru nie wolno zmieniać (zapisuje się w świecie) |
-| `etapy` | 1-4 etapy wzrostu: obrazek (do 64 x 64), nazwa, `plaszczyzny` (2-4, domyślnie 2) |
+| `etapy` | 1-4 etapy wzrostu: obrazek (do 64 x 64), nazwa, `plaszczyzny` (2-4, domyślnie 2) - albo zamiast obrazka `model` (mała roślina z pikseli, niżej) |
 | `czasWzrostu` | średnio sekund na etap (domyślnie jak krzaki, 150) |
 | `przedmiot` | przedmiot ze zbioru, obrazek 16 x 16; `grupy` - w których grupach składników jest (`red`, `green`, `blue`, `purple` - kolorowe lampy) |
 | `zbior` | PPM na ostatnim etapie: `ile` [od, do], `wraca` - do którego etapu wraca roślina |
@@ -94,6 +102,56 @@ Zniszczona roślina daje młodą (pierwszy etap) - można ją posadzić.
 Paczka z błędem jest pomijana, błąd jest na czacie i w `/rosliny bledy`.
 Paczka tekstur zmienia przedmiot (16 x 16), ale jeszcze nie duże obrazki
 etapów.
+
+## Mała roślina: model "kepka"
+
+Roślina niższa niż ok. pół bloku z obrazka 16 x 16 to plama kilku
+pikseli - pomniejszony rysunek traci kształt. Zamiast obrazka etap
+dostaje **model z pikseli** (`src/rendering/TuftGeometry.js`), w tej
+samej skali co bloki - jeden piksel modelu to 1/16 bloku:
+
+- **rozeta** - płaska gwiazda wąskich liści tuż nad ziemią (gracz patrzy
+  na małe rośliny z góry), w środku kilka stojących liści,
+- **łodygi** - słupki 1 x 1 piksel w różnych miejscach kępki (nie
+  stykają się), na nich 1-2 listki,
+- **kwiaty** na łodygach: `baldach` - kopułka z kostek (krzyżyk, nad nim
+  jaśniejszy środek, jeden koszyczek w cieniu), `pak` - jeden piksel pąka,
+  albo brak.
+
+Każda kępka ma **8 odmian** (losowane z numeru odmiany i nazwy paczki -
+ta sama w tym samym miejscu), kołysze się na wietrze, światło ma
+miękkie jak zwykłe rośliny (boki kostek nie ciemnieją pod słońce).
+Ikonka w ekwipunku to ten sam model z ukosa. Rozmiar etapu (do `/rosliny`
+i miejsca nad rośliną) wynika z parametrów: kocanka 8 x 4, 10 x 6
+i 10 x 10 pikseli.
+
+```json
+"etapy": [
+    { "nazwa": "Młoda kocanka",
+      "model": { "rodzaj": "kepka", "liscie": { "ile": [5, 7], "dlugosc": [2, 3] } } },
+    { "nazwa": "Kocanka (kwitnie)",
+      "model": {
+          "rodzaj": "kepka",
+          "liscie": { "ile": [7, 8], "dlugosc": [3, 4] },
+          "lodygi": { "ile": [4, 6], "wysokosc": [5, 8], "promien": 3 },
+          "kwiaty": { "rodzaj": "baldach", "rozmiar": 1 }
+      } }
+],
+"kolory": { "lisc": "#94a06a", "liscJasny": "#b4bc84", "liscCiemny": "#6d7448", "lodyga": "#9ea474",
+            "kwiat": "#e8b24a", "kwiatJasny": "#f7cf6c", "kwiatCiemny": "#bf8a35", "pak": "#cfc58a" }
+```
+
+| pole modelu | znaczenie (piksele = 1/16 bloku) |
+|---|---|
+| `liscie.ile`, `liscie.dlugosc` | liście rozety: ile [od, do] (0-12), długość od środka [od, do] (1-7) |
+| `lodygi.ile`, `lodygi.wysokosc`, `lodygi.promien` | łodygi: ile (0-8, domyślnie bez łodyg), wysokość [od, do] (1-24), jak daleko od środka (0-6) |
+| `kwiaty` | `{ "rodzaj": "baldach", "rozmiar": 1-2 }`, `{ "rodzaj": "pak" }` albo brak |
+| `kolory` | 8 kolorów: `lisc`, `liscJasny`, `liscCiemny`, `lodyga`, `kwiat`, `kwiatJasny`, `kwiatCiemny`, `pak` - dla całej paczki (obok `etapy`), etap może zmienić własnymi `model.kolory` |
+
+Kolory najlepiej wziąć z atlasu rośliny (`tools/rosliny_z_atlasu.py
+--podglad` pokazuje paletę). Przedmiot (np. bukiet) dalej jest obrazkiem
+16 x 16 z atlasu. Model ma najwyżej ok. 300 ścian na odmianę
+(`tools/sprawdz_rosliny.mjs` pilnuje 320).
 
 ## Komendy
 
@@ -129,7 +187,8 @@ zmniejszenie bywa 3-5 razy. Proponowane rozmiary (prawdziwa wysokość
 | cynia, mikołajek | 0.3-0.9 m | 0.75 bloku (12 px) | krzyż |
 | nagietek, wilczomlecz, szałwia, lawenda, mięta wodna | 0.3-0.6 m | 0.6 bloku (10 px) | krzyż; lawenda i szałwia krzaczaste (3 płaszczyzny), mięta przy wodzie |
 | storczyk, dzwonek | 0.3-0.5 m | 0.5 bloku (8 px) | krzyż |
-| zawilec, kocanka piaskowa | 0.1-0.3 m | 0.3 bloku | **kępka**: 2-3 małe roślinki (po 5-6 px) w jednym bloku, narysowane od nowa w tej skali (kwiat = 1-2 piksele koloru), zamiast jednej pomniejszonej |
+| **kocanka piaskowa** | 0.1-0.3 m | **do 10 px (0.6 bloku)** | **model z pikseli `kepka` - zrobione** (0.31.0): rozeta, łodygi, baldachy |
+| zawilec | 0.1-0.3 m | 6-8 px | `kepka`: rozeta + kilka łodyg z jednym białym kwiatem (np. nowy rodzaj kwiatu `kielich`) |
 | barwinek | 0.1-0.2 m, płożący | płasko | model płaski na ziemi (jak kępki mchu) z kwiatkami |
 | porost oliwkowy, porost iglasty, żółta ochra | płaskie | płasko | model płaski na kamieniu i korze (jak opadłe liście), 4 odmiany |
 | grzyby półkowe | 5-30 cm | płasko na boku pnia | model przy ścianie (jak wieniec), na pniach |
@@ -137,9 +196,11 @@ zmniejszenie bywa 3-5 razy. Proponowane rozmiary (prawdziwa wysokość
 | glony głębinowe, turkusowa alga | pod wodą | 1-2 bloki / 0.5-1 blok | roślina w wodzie (jak wywłócznik) |
 | rumianek, wrzos | 0.2-0.5 m | już są w grze | nowe tekstury dla obecnych bloków (14 px) |
 
-Mniejsze niż 0.6 bloku: zwykłe zmniejszenie traci szczegóły - narzędzie
-daje dobrą podstawę, ale przy 5-10 pikselach trzeba będzie poprawić
-piksele ręcznie albo zrobić kępkę kilku małych roślin.
+Mniejsze niż 0.6 bloku: zwykłe zmniejszenie traci szczegóły - takie
+rośliny lepiej zrobić modelem `kepka` (kolory z atlasu, kształt
+z parametrów) albo poprawić piksele ręcznie. Krzaczki mogą też dostać
+własne modele (np. obszerna kula liści z pikseli, blok liści z wystającymi
+gałązkami) - model `kepka` jest pierwszym z nich.
 
 **Numery bloków:** od 0.30.0 blok ma numer 2-bajtowy (do 65279) - nowe
 rośliny dostają numery **5000-9999** (osobny zakres tylko dla roślin),

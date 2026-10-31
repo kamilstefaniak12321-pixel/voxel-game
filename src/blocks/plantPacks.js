@@ -149,6 +149,126 @@ function png(file, what) {
 }
 
 
+// ------------------------------------------------------------
+// Model "kepka" (mała roślina z pikseli - src/rendering/TuftGeometry.js)
+// ------------------------------------------------------------
+
+export const TUFT_COLOR_NAMES = {
+    lisc: 'leaf', liscJasny: 'leafLight', liscCiemny: 'leafDark', lodyga: 'stem',
+    kwiat: 'flower', kwiatJasny: 'flowerLight', kwiatCiemny: 'flowerDark', pak: 'bud'
+};
+
+const TUFT_DEFAULT_COLORS = {
+    lisc: '#7f8a55', liscJasny: '#a3ab78', liscCiemny: '#59603a', lodyga: '#6b6338',
+    kwiat: '#ddbc79', kwiatJasny: '#ecd59a', kwiatCiemny: '#b08948', pak: '#b9b57e'
+};
+
+function hexColor(value, what) {
+
+    if (typeof value !== 'string' || !/^#[0-9a-fA-F]{6}$/.test(value)) {
+        fail(`"${what}": kolor jak "#ddbc79" (jest ${JSON.stringify(value)})`);
+    }
+
+    return parseInt(value.slice(1), 16);
+
+}
+
+// sRGB -> liniowe 0-255 (jak COLORS w src/rendering/RiverPlantGeometry.js).
+function linearColor(hex) {
+
+    return [16, 8, 0].map((shift) => {
+        const value = ((hex >> shift) & 255) / 255;
+        return Math.round((value <= 0.04045 ? value / 12.92 : ((value + 0.055) / 1.055) ** 2.4) * 255);
+    });
+
+}
+
+function pixelRange(value, fallback, what, min, max) {
+
+    const range = value ?? fallback;
+
+    if (!Array.isArray(range) || range.length !== 2 || range.some((n) => !Number.isInteger(n) || n < min || n > max) || range[0] > range[1]) {
+        fail(`"${what}": [od, do] - liczby całkowite ${min}-${max}`);
+    }
+
+    return range;
+
+}
+
+// packColors - "kolory" całej paczki (wspólne dla etapów), etap może
+// je zmienić własnymi "kolory".
+function parseTuft(model, what, seedText, packColors) {
+
+    if (model === null || typeof model !== 'object' || model.rodzaj !== 'kepka') {
+        fail(`"${what}": { "rodzaj": "kepka", ... } (docs/rosliny.md)`);
+    }
+
+    const leaves = model.liscie ?? {};
+    const stems = model.lodygi ?? {};
+    const flower = model.kwiaty ?? null;
+
+    if (flower !== null && (typeof flower !== 'object' || !['baldach', 'pak'].includes(flower.rodzaj))) {
+        fail(`"${what}.kwiaty": null albo { "rodzaj": "baldach" | "pak", "rozmiar": 1-2 }`);
+    }
+
+    const colors = {};
+
+    for (const [name, key] of Object.entries(TUFT_COLOR_NAMES)) {
+        const own = model.kolory?.[name];
+        colors[key] = linearColor(hexColor(own ?? packColors?.[name] ?? TUFT_DEFAULT_COLORS[name], own === undefined && packColors?.[name] !== undefined ? `kolory.${name}` : `${what}.kolory.${name}`));
+    }
+
+    let seed = 0;
+
+    for (const char of seedText) {
+        seed = (Math.imul(seed, 31) + char.charCodeAt(0)) | 0;
+    }
+
+    const tuft = {
+        leaves: {
+            count: pixelRange(leaves.ile, [4, 6], `${what}.liscie.ile`, 0, 12),
+            length: pixelRange(leaves.dlugosc, [2, 4], `${what}.liscie.dlugosc`, 1, 7)
+        },
+        stems: {
+            count: pixelRange(stems.ile, [0, 0], `${what}.lodygi.ile`, 0, 8),
+            height: pixelRange(stems.wysokosc, [4, 6], `${what}.lodygi.wysokosc`, 1, 24),
+            radius: stems.promien === undefined ? 3 : number(stems.promien, `${what}.lodygi.promien`, 0, 6)
+        },
+        flower: flower && {
+            kind: flower.rodzaj,
+            size: flower.rozmiar === undefined ? 1 : number(flower.rozmiar, `${what}.kwiaty.rozmiar`, 1, 2)
+        },
+        colors,
+        seed
+    };
+
+    tuft.height = tuftPixels(tuft);
+
+    return tuft;
+
+}
+
+// Rozmiar kępki w pikselach (jak obrazek etapu) - z kształtu w
+// src/rendering/TuftGeometry.js: rozeta (liście do "dlugosc" pikseli od
+// środka, stojące o 1 wyższe, środek 2), łodygi z kwiatami.
+
+function tuftPixels(tuft) {
+
+    const flower = tuft.flower ? (tuft.flower.kind === 'baldach' ? 2 : 1) : 0;
+
+    return Math.max(tuft.leaves.length[1] + 1, 2, tuft.stems.count[1] > 0 ? tuft.stems.height[1] + flower : 0);
+
+}
+
+function tuftWidth(tuft) {
+
+    const flower = tuft.flower?.kind === 'baldach' ? tuft.flower.size : 0;
+
+    return 2 * Math.max(tuft.leaves.length[1] + 1, 4, tuft.stems.count[1] > 0 ? tuft.stems.radius + flower + 1 : 0);
+
+}
+
+
 async function validatePack(folder) {
 
     if (typeof folder !== 'string' || !/^[a-z][a-z0-9]{1,23}$/.test(folder)) {
@@ -207,12 +327,19 @@ async function validatePack(folder) {
             fail(`"${what}": ma być { "plik": ..., "nazwa": ... }`);
         }
 
+        // Etap z obrazkiem (skrzyżowane płaszczyzny w rozmiarze obrazka)
+        // albo mała roślina jako model z pikseli ("model": { "rodzaj":
+        // "kepka", ... } - src/rendering/TuftGeometry.js), bez obrazka.
+
+        const tuft = stage.model === undefined ? null : parseTuft(stage.model, `${what}.model`, `${folder}:${index}`, json.kolory);
+
         pack.stages.push({
-            file: png(stage.plik, `${what}.plik`),
+            file: tuft ? null : png(stage.plik, `${what}.plik`),
             label: text(stage.nazwa, `${what}.nazwa`),
             planes: stage.plaszczyzny === undefined ? 2 : number(stage.plaszczyzny, `${what}.plaszczyzny`, 2, 4),
-            width: 0,
-            height: 0
+            tuft,
+            width: tuft ? tuftWidth(tuft) : 0,
+            height: tuft ? tuftPixels(tuft) : 0
         });
 
     }
@@ -370,6 +497,10 @@ async function validatePack(folder) {
 
     for (const [index, stage] of pack.stages.entries()) {
 
+        if (stage.tuft) {
+            continue;
+        }
+
         let data;
 
         try {
@@ -409,7 +540,7 @@ async function validatePack(folder) {
 
     }
 
-    pack.files = [...new Set([...pack.stages.map((stage) => stage.file), ...(pack.item ? [pack.item.file] : [])])];
+    pack.files = [...new Set([...pack.stages.filter((stage) => stage.file).map((stage) => stage.file), ...(pack.item ? [pack.item.file] : [])])];
 
     return pack;
 
@@ -509,7 +640,7 @@ export const PLANT_TEXTURES = {};
 
 for (const pack of PLANT_PACKS) {
 
-    for (const stage of pack.stages) {
+    for (const stage of pack.stages.filter((stage) => stage.file)) {
         PLANT_TEXTURES[plantTile(pack, stage.file)] = {
             pack: pack.id, file: stage.file, url: plantFileUrl(pack, stage.file),
             width: stage.width, height: stage.height

@@ -135,8 +135,13 @@ class Icons:
         key = entry['type']
         if key not in self.cache:
             icon = entry['icon']
-            self.cache[key] = (self.cube(icon['top'], icon['front'], icon['right'])
-                               if icon['kind'] == 'cube' else self.flat(icon['tile']))
+            if icon['kind'] == 'pixels':
+                # Mała roślina z pikseli - piksele z src/ui/PixelPlantIcon.js.
+                img = Image.frombytes('RGBA', (icon['size'], icon['size']), base64.b64decode(icon['data']))
+                self.cache[key] = img if icon['size'] == ICON else img.resize((ICON, ICON), Image.NEAREST)
+            else:
+                self.cache[key] = (self.cube(icon['top'], icon['front'], icon['right'])
+                                   if icon['kind'] == 'cube' else self.flat(icon['tile']))
         return self.cache[key]
 
 

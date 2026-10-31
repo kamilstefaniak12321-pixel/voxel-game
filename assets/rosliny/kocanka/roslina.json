@@ -1,0 +1,55 @@
+{
+    "nazwa": "Kocanka piaskowa",
+    "nazwaAngielska": "Dwarf Everlast",
+    "opis": "niska, srebrzystozielona kępka z baldachami złotych, suchych koszyczków; rośnie na piasku w borach i na wydmach",
+    "pierwszeId": 5000,
+    "etapy": [
+        {
+            "nazwa": "Młoda kocanka",
+            "model": { "rodzaj": "kepka", "liscie": { "ile": [5, 7], "dlugosc": [2, 3] } }
+        },
+        {
+            "nazwa": "Kocanka (pąki)",
+            "model": {
+                "rodzaj": "kepka",
+                "liscie": { "ile": [6, 8], "dlugosc": [2, 4] },
+                "lodygi": { "ile": [3, 4], "wysokosc": [3, 5], "promien": 2 },
+                "kwiaty": { "rodzaj": "pak" }
+            }
+        },
+        {
+            "nazwa": "Kocanka (kwitnie)",
+            "model": {
+                "rodzaj": "kepka",
+                "liscie": { "ile": [7, 8], "dlugosc": [3, 4] },
+                "lodygi": { "ile": [4, 6], "wysokosc": [5, 8], "promien": 3 },
+                "kwiaty": { "rodzaj": "baldach", "rozmiar": 1 }
+            }
+        }
+    ],
+    "kolory": {
+        "lisc": "#94a06a",
+        "liscJasny": "#b4bc84",
+        "liscCiemny": "#6d7448",
+        "lodyga": "#9ea474",
+        "kwiat": "#e8b24a",
+        "kwiatJasny": "#f7cf6c",
+        "kwiatCiemny": "#bf8a35",
+        "pak": "#cfc58a"
+    },
+    "czasWzrostu": 240,
+    "przedmiot": {
+        "klucz": "bukiet",
+        "plik": "bukiet.png",
+        "nazwa": "Bukiet kocanki",
+        "nazwaAngielska": "Everlast Bouquet",
+        "kategoria": "ozdoby"
+    },
+    "zbior": { "ile": [1, 2], "wraca": 2 },
+    "podloze": ["sand"],
+    "gdzieRosnie": { "biomy": ["bor", "plaza"], "plamy": 0.035, "gestosc": 0.3, "etapy": [0.2, 0.25, 0.55] },
+    "zrodlo": {
+        "atlas": "Atlas kocanki piaskowej_ etapy wzrostu i bukiet.png",
+        "przedmiot": "bukiet: --wysokosc 16 --nazwy etap1,etap2,etap3,bukiet; etapy - model z pikseli (kępka) w kolorach atlasu"
+    }
+}

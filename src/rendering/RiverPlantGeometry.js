@@ -1,5 +1,6 @@
 import { WATER_SURFACE } from '../config.js';
 import { createPixelPlant } from './PixelPlantBuilder.js';
+import { makeTuftTemplate } from './TuftGeometry.js';
 
 // Small reusable templates, appended to the ordinary chunk plant batch. There
 // are no Object3Ds, materials or draw calls per plant. Colours are linear RGB
@@ -136,9 +137,13 @@ function makeTemplate(kind, variant, waterlogged) {
     return model.finish();
 }
 
-export function getRiverPlantFaces(kind, variant, waterlogged = false) {
+// tuft - kępka z paczki roślin (model "kepka", TuftGeometry.js): ten sam
+// model z pikseli, tylko kształt z parametrów rośliny, nie z nazwy.
+export function getRiverPlantFaces(kind, variant, waterlogged = false, tuft = null) {
     const normalizedVariant = variant & 7;
     const key = `${kind}:${normalizedVariant}:${waterlogged ? 1 : 0}`;
-    if (!cache.has(key)) cache.set(key, makeTemplate(kind, normalizedVariant, waterlogged));
+    if (!cache.has(key)) {
+        cache.set(key, tuft ? makeTuftTemplate(tuft, normalizedVariant) : makeTemplate(kind, normalizedVariant, waterlogged));
+    }
     return cache.get(key);
 }

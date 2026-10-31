@@ -153,6 +153,19 @@ const LAVENDER = getPlantPack('lawenda')?.item ? [{
     when: (data) => data.item === 'lawenda_bukiet'
 }] : [];
 
+// Piwonia (assets/rosliny/piwonia) - krzak z pomponami kwiatów.
+
+const PEONY = getPlantPack('piwonia')?.item ? [{
+    id: 'peony',
+    tier: 'common',
+    title: 'Róża bez kolców',
+    task: 'Zbierz kwiat z kwitnącej piwonii (krzaki z różowymi kwiatami na skrajach lasów liściastych i w brzezinach).',
+    comment: 'Pachnie prawie jak róża, a nie kłuje. W sam raz do wazonu.',
+    icon: 'piwonia_kwiat',
+    on: 'harvested',
+    when: (data) => data.item === 'piwonia_kwiat'
+}] : [];
+
 
 // "Złota godzina": słońce nisko nad horyzontem (wschód albo zachód),
 // gracz patrzy prosto na nie i nic go nie zasłania.
@@ -257,6 +270,7 @@ export const ACHIEVEMENTS = [
     ...AMARANTH,
     ...EVERLAST,
     ...LAVENDER,
+    ...PEONY,
     {
         id: 'plant',
         tier: 'common',

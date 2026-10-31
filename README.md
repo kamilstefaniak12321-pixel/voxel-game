@@ -379,6 +379,15 @@ kwitnącej - **bukiet lawendy**. Osiągnięcie *Zapach lata*.
 
 ![Lawenda - krzaczki z kłosami, obok kocanka](docs/rosliny-lawenda.png)
 
+Czwarta: **piwonia** - obszerny krzak z pikseli na cały blok: wysoka
+kopułka liści z kostek z postrzępionym, liściastym brzegiem, nad nią
+łodygi z płaskimi liśćmi i **kuliste, pudrowo różowe kwiaty** (duże
+i małe, jasny wierzch, żółty środek). Pąki - okrągłe, różowe. Rośnie
+na skrajach lasów liściastych i w brzezinach. PPM na kwitnącej -
+**kwiat piwonii**. Osiągnięcie *Róża bez kolców*.
+
+![Piwonia - krzaki z kulistymi kwiatami, obok lawenda](docs/rosliny-piwonia.png)
+
 - Tekstury z dużych atlasów "pixel art" robi
   `tools/rosliny_z_atlasu.py` (siatka pikseli rysunku, zmniejszanie bez
   mieszania kolorów, wszystkie etapy w tej samej skali).
@@ -386,7 +395,8 @@ kwitnącej - **bukiet lawendy**. Osiągnięcie *Zapach lata*.
   `/rosliny znajdz amarantus`, `/krzaki rosnij 2`, `/daj amarantus_etap1 5`,
   `/rosliny kocanka`, `/rosliny ogrod kocanka`, `/daj kocanka_etap3 5`
   (sadzi się na piasku i trawie), `/rosliny ogrod lawenda`,
-  `/rosliny znajdz lawenda`, `/daj lawenda_etap3 5`.
+  `/rosliny znajdz lawenda`, `/daj lawenda_etap3 5`, `/rosliny ogrod piwonia`,
+  `/daj piwonia_etap3 5`.
 - Instrukcja, rozmiary i plan dla wszystkich 28 roślin z atlasów:
   [`docs/rosliny.md`](docs/rosliny.md).
 

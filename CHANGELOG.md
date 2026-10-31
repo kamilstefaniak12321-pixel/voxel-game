@@ -11,6 +11,29 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 0.33.0 - Piwonia
+
+Piwonia - krzak z pikseli z kulistymi kwiatami — PR #61 (zawiera #60 - 0.32.0).
+
+- Nowa roślina z paczki roślin: **piwonia** - obszerny krzak z pikseli na
+  cały blok: wysoka kopułka liści z kostek z postrzępionym brzegiem
+  (wystające liście), łodygi z płaskimi liśćmi i **kuliste, pudrowo
+  różowe kwiaty** dwóch wielkości (3 x 3 i 5 x 5 pikseli) z żółtym
+  środkiem. Trzy etapy: młoda, okrągłe pąki, kwitnąca. Rośnie na
+  skrajach **lasów liściastych i w brzezinach**. PPM na kwitnącej -
+  **kwiat piwonii** (obrazek z atlasu), piwonia wraca do etapu z pąkami.
+  Osiągnięcie *Róża bez kolców*.
+- Model "kepka" umie więcej (bez kodu): liście w układzie `krzak`
+  (kopułka liści z liściastym brzegiem) i `brak`, płaskie liście na
+  łodygach (`lodygi.liscie`), kwiaty `pompon`, okrągłe pąki (`pak`
+  rozmiar 2), `rozmiar` jako zakres (każda łodyga losuje), kolor
+  `srodek` - `docs/rosliny.md`. Kocanka i lawenda wyglądają tak samo
+  jak dotąd.
+- Numery bloków piwonii: 5006-5008.
+- Wersja 0.33.0 wspólna dla Windowsa i Androida. Przygotowana w PR;
+  publikacja w `voxel-game-wydania` następuje przez workflow po scaleniu
+  (najpierw #60).
+
 ## 0.32.0 - Lawenda
 
 Lawenda - krzaczek z pikseli z kłosami — PR #60.

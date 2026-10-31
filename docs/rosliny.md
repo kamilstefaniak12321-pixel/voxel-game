@@ -8,14 +8,17 @@ bez pisania kodu. Są dwa rodzaje:
   wiechy),
 - **mała roślina z pikseli** (model `kepka`) - prawdziwy, mały model
   z pikseli 1/16 bloku, bez obrazka etapu, np. **kocanka piaskowa**
-  (do 10 pikseli, złote baldachy na piasku) albo krzaczek **lawenda**
-  (kępa liści, wachlarz łodyg z fioletowymi kłosami).
+  (do 10 pikseli, złote baldachy na piasku), krzaczek **lawenda**
+  (kępa liści, wachlarz łodyg z fioletowymi kłosami) albo krzak
+  **piwonia** (kopułka liści, kuliste różowe kwiaty).
 
 ![Amarantus - trzy etapy wzrostu obok słupka z 2 bloków](rosliny-amarantus.png)
 
 ![Kocanka piaskowa - trzy etapy na piasku](rosliny-kocanka.png)
 
 ![Lawenda - krzaczki z kłosami, obok kocanka](rosliny-lawenda.png)
+
+![Piwonia - krzaki z kulistymi kwiatami, obok lawenda](rosliny-piwonia.png)
 
 ## Skala: 16 pikseli na blok
 
@@ -113,7 +116,7 @@ pikseli - pomniejszony rysunek traci kształt. Zamiast obrazka etap
 dostaje **model z pikseli** (`src/rendering/TuftGeometry.js`), w tej
 samej skali co bloki - jeden piksel modelu to 1/16 bloku:
 
-- **liście** w jednym z dwóch układów:
+- **liście** przy ziemi w jednym z układów:
   - `rozeta` (domyślny) - płaska gwiazda wąskich liści tuż nad ziemią
     (gracz patrzy na małe rośliny z góry), w środku kilka stojących
     liści - kocanka,
@@ -121,21 +124,32 @@ samej skali co bloki - jeden piksel modelu to 1/16 bloku:
     postrzępiona, z jaśniejszymi pikselami), z niej wachlarze wąskich,
     stojących liści w kilku pionowych płaszczyznach - z każdej strony
     widać kępę; liście z brzegu niższe i bardziej odchylone - lawenda,
+  - `krzak` - wysoka kopułka liści z kostek (spód w cieniu, jaśniejszy
+    wierzch), z boków na różnych wysokościach wystają płaskie liście -
+    postrzępiony, liściasty brzeg - piwonia,
+  - `brak` - bez liści przy ziemi,
 - **łodygi** - słupki 1 x 1 piksel w różnych miejscach kępki (nie
   stykają się), na nich 1-2 listki; `rozchylone` - łodyga zaczyna się
-  w kępie i schodkami odchyla się na swoje miejsce (wachlarz łodyg),
+  w kępie i schodkami odchyla się na swoje miejsce (wachlarz łodyg);
+  `liscie` - co kilka pikseli płaski liść (z góry: środkowy listek
+  i szersze boki, 3 piksele szerokości), za każdym razem w inną stronę,
 - **kwiaty** na łodygach: `baldach` - kopułka z kostek (krzyżyk, nad nim
   jaśniejszy środek, jeden koszyczek w cieniu), `klos` - kolumna kwiatów
   (co drugi piksel kwiatek z boku, na zmianę z czterech stron; dół
-  ciemny, czubek jasny; `rozmiar` 1-2 to zamknięte pąki), `pak` - jeden
-  piksel pąka, albo brak.
+  ciemny, czubek jasny; `rozmiar` 1-2 to zamknięte pąki), `pompon` -
+  pełny, kulisty kwiat (rozmiar 1 - 3 x 3, rozmiar 2 - 5 x 5 pikseli,
+  ciemny spód, jasny wierzch, `srodek` w innym kolorze), `pak` - jeden
+  piksel pąka (rozmiar 2 - okrągły pąk z krzyżyka kostek), albo brak.
+  `rozmiar` może być zakresem `[od, do]` - każda łodyga losuje (piwonia
+  ma duże i małe kwiaty).
 
 Każda kępka ma **8 odmian** (losowane z numeru odmiany i nazwy paczki -
 ta sama w tym samym miejscu), kołysze się na wietrze, światło ma
 miękkie jak zwykłe rośliny (boki kostek nie ciemnieją pod słońce).
 Ikonka w ekwipunku to ten sam model z ukosa. Rozmiar etapu (do `/rosliny`
 i miejsca nad rośliną) wynika z parametrów: kocanka 8 x 4, 10 x 6
-i 10 x 10 pikseli, lawenda 12 x 6, 12 x 11 i 14 x 15 pikseli.
+i 10 x 10 pikseli, lawenda 12 x 6, 12 x 11 i 14 x 15 pikseli, piwonia
+12 x 6, 14 x 9 i 16 x 12 pikseli.
 
 ```json
 "etapy": [
@@ -155,18 +169,20 @@ i 10 x 10 pikseli, lawenda 12 x 6, 12 x 11 i 14 x 15 pikseli.
 
 | pole modelu | znaczenie (piksele = 1/16 bloku) |
 |---|---|
-| `liscie.uklad` | `rozeta` (domyślnie) albo `kepa` |
-| `liscie.ile`, `liscie.dlugosc` | rozeta: ile liści [od, do] (0-12), długość od środka (1-7); kępa: ile liści (0-32), wysokość (1-12) |
-| `liscie.promien` | kępa: promień kopułki (0-5, domyślnie 2); liście sięgają o 2 dalej |
+| `liscie.uklad` | `rozeta` (domyślnie), `kepa`, `krzak` albo `brak` |
+| `liscie.ile`, `liscie.dlugosc` | rozeta: ile liści [od, do] (0-12), długość od środka (1-7); kępa: ile liści (0-32), wysokość (1-12); krzak: `dlugosc` - wysokość kopułki |
+| `liscie.promien` | kępa, krzak: promień kopułki (0-5, domyślnie 2); liście sięgają o 2 dalej |
 | `lodygi.ile`, `lodygi.wysokosc`, `lodygi.promien` | łodygi: ile (0-12, domyślnie bez łodyg), wysokość [od, do] (1-24), jak daleko od środka szczyt (0-6) |
 | `lodygi.rozchylone` | `true` - łodygi wyrastają bliżej środka i odchylają się na boki (wachlarz) |
-| `kwiaty` | `{ "rodzaj": "baldach", "rozmiar": 1-2 }`, `{ "rodzaj": "klos", "rozmiar": 1-6 }` (długość kłosa), `{ "rodzaj": "pak" }` albo brak |
-| `kolory` | 8 kolorów: `lisc`, `liscJasny`, `liscCiemny`, `lodyga`, `kwiat`, `kwiatJasny`, `kwiatCiemny`, `pak` - dla całej paczki (obok `etapy`), etap może zmienić własnymi `model.kolory` |
+| `lodygi.liscie` | `{ "co": 1-6, "dlugosc": [od, do] }` - płaskie liście na łodygach co tyle pikseli (nad kopułką krzaka), długość 1-5 |
+| `kwiaty` | `{ "rodzaj": "baldach", "rozmiar": 1-2 }`, `{ "rodzaj": "klos", "rozmiar": 1-6 }` (długość kłosa), `{ "rodzaj": "pompon", "rozmiar": 1-2 }`, `{ "rodzaj": "pak", "rozmiar": 1-2 }` albo brak; `rozmiar` - liczba albo `[od, do]` |
+| `kolory` | 9 kolorów: `lisc`, `liscJasny`, `liscCiemny`, `lodyga`, `kwiat`, `kwiatJasny`, `kwiatCiemny`, `pak`, `srodek` (środek kwiatu) - dla całej paczki (obok `etapy`), etap może zmienić własnymi `model.kolory` |
 
 Kolory najlepiej wziąć z atlasu rośliny (`tools/rosliny_z_atlasu.py
 --podglad` pokazuje paletę). Przedmiot (np. bukiet) dalej jest obrazkiem
-16 x 16 z atlasu. Mała kępka ma do ok. 300 ścian na odmianę, krzaczek
-z kłosami (lawenda) ok. 450 - `tools/sprawdz_rosliny.mjs` pilnuje 520.
+16 x 16 z atlasu. Mała kępka ma do ok. 300 ścian na odmianę, krzaczki
+z kwiatami (lawenda, piwonia) ok. 400-490 - `tools/sprawdz_rosliny.mjs`
+pilnuje 520.
 Etap może mieć własne `model.kolory` - lawenda ma pąki w ciemniejszym
 fiolecie niż kwiaty.
 
@@ -178,6 +194,17 @@ Lawenda (kępa, łodygi rozchylone, kłosy):
     "liscie": { "uklad": "kepa", "ile": [20, 24], "dlugosc": [7, 9], "promien": 3 },
     "lodygi": { "ile": [6, 8], "wysokosc": [8, 11], "promien": 5, "rozchylone": true },
     "kwiaty": { "rodzaj": "klos", "rozmiar": 4 }
+}
+```
+
+Piwonia (krzak, liście na łodygach, pompony dwóch wielkości):
+
+```json
+"model": {
+    "rodzaj": "kepka",
+    "liscie": { "uklad": "krzak", "promien": 4, "dlugosc": [4, 5] },
+    "lodygi": { "ile": [3, 5], "wysokosc": [6, 8], "promien": 4, "rozchylone": true, "liscie": { "co": 2, "dlugosc": [2, 3] } },
+    "kwiaty": { "rodzaj": "pompon", "rozmiar": [1, 2] }
 }
 ```
 
@@ -211,7 +238,7 @@ zmniejszenie bywa 3-5 razy. Proponowane rozmiary (prawdziwa wysokość
 | gorczyca | 0.6-1.2 m | 1 blok (16 px) | krzyż; nasiona |
 | len | 0.3-1 m | 0.9 bloku (14 px) | smukły krzyż; wiązka lnu |
 | marzanna barwierska | 0.6-1 m | 1 blok (16 px) | krzyż; korzenie - "coś czerwonego" |
-| piwonia | krzew ~1 m | 1 blok, szeroka (16 px) | krzyż z 3 płaszczyznami; kwiat |
+| **piwonia** | krzew ~1 m | **16 x 12 px** | **`kepka`: krzak, liście na łodygach, pompony - zrobione** (0.33.0) |
 | cynia, mikołajek | 0.3-0.9 m | 0.75 bloku (12 px) | krzyż |
 | **lawenda** | 0.3-0.6 m | **do 15 px (prawie blok)** | **`kepka`: kępa + rozchylone łodygi z kłosami - zrobione** (0.32.0) |
 | nagietek, wilczomlecz, szałwia, mięta wodna | 0.3-0.6 m | 0.6 bloku (10 px) | krzyż albo `kepka`; szałwia krzaczasta jak lawenda (kępa, kłosy), mięta przy wodzie |

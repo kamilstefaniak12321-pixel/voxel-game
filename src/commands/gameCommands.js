@@ -4392,7 +4392,7 @@ export const GAME_COMMANDS = [
                 let rock = 0;
                 let exposed = 0;
 
-                const buffer = new Uint8Array(CHUNK_HEIGHT);
+                const buffer = new Uint16Array(CHUNK_HEIGHT);
 
                 for (let dz = -radius; dz <= radius; dz += step) {
 
@@ -4485,7 +4485,7 @@ export const GAME_COMMANDS = [
 
                 const radius = radiusOf(192, 512);
 
-                const buffer = new Uint8Array(CHUNK_HEIGHT);
+                const buffer = new Uint16Array(CHUNK_HEIGHT);
 
                 const lepidoliteId = getBlockDefinition('lepidolite').id;
 

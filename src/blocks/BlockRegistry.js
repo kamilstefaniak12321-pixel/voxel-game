@@ -1298,6 +1298,33 @@ export function getBlockId(type) {
 }
 
 
+// Naprawa zapisów 0.31.0-0.40.0: generator terenu realistycznego miał
+// kolumnę z 1-bajtowymi numerami, więc rośliny z paczek (numery 5000+)
+// zapisały się z obciętym numerem (5000 -> 136 ...) - jako nieznane,
+// niewidoczne bloki. Nieznany numer 0-255, który pasuje do dokładnie
+// jednej rośliny z paczki (numer & 255), wraca do niej przy wczytaniu
+// chunka (Chunk.loadBlocks). 0 - nic do naprawy.
+
+export const TRUNCATED_PLANT_IDS = new Uint16Array(256);
+
+{
+    const candidates = new Map();
+
+    for (const definition of Object.values(BLOCK_TYPES)) {
+        if (definition.id > 255 && PLANT_PACKS.some((pack) => definition.id >= pack.firstId && definition.id < pack.firstId + pack.stages.length)) {
+            const low = definition.id & 255;
+            candidates.set(low, candidates.has(low) ? -1 : definition.id);
+        }
+    }
+
+    for (const [low, id] of candidates) {
+        if (id > 0 && typeById[low] === null) {
+            TRUNCATED_PLANT_IDS[low] = id;
+        }
+    }
+}
+
+
 // Zwraca nazwę bloku o podanym ID albo null dla powietrza.
 
 export function getBlockTypeById(id) {

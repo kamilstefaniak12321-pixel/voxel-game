@@ -267,6 +267,11 @@ for (const pack of P.PLANT_PACKS.filter((p) => p.where)) {
     for (let i = 0; i < pack.stages.length; i++) {
         assert.ok(mine.some(([, , id]) => id === pack.firstId + i), `${pack.id}: jest etap ${i + 1}`);
     }
+    // Roślina naprawdę stoi w kolumnie terenu (na swoim podłożu, z pełnym
+    // numerem bloku), nie tylko w losowaniu plantAt.
+    const generator = new RealisticGenerator('lepidolit');
+    const standing = mine.slice(0, 40).filter(([x, z, id]) => Array.from(generator.columnBlocks(x, z).blocks).includes(id)).length;
+    assert.ok(standing >= Math.min(mine.length, 40) * 0.6, `${pack.id}: stoi w kolumnach terenu (${standing} z ${Math.min(mine.length, 40)})`);
     // Wagi biomów: w głównym biomie (waga 1) gęściej niż w pobocznym.
     const often = (key) => mine.filter(([, , , biome]) => biome === key).length / Math.max(1, biomeArea[key] ?? 0);
     const main = pack.where.biomes.filter((key) => (pack.where.weights[key] ?? 1) === 1);

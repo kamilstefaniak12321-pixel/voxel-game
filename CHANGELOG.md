@@ -11,6 +11,31 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 0.40.1 - Naprawa: rośliny z paczek w terenie realistycznym
+
+Naprawa numerów roślin w generatorze — PR #69 (zawiera #64-#68).
+
+- **Rośliny z paczek nie pojawiały się w terenie realistycznym**
+  (kocanka, lawenda, piwonia, zawilec, dzwonek - od 0.31.0): generator
+  budował chunk w kolumnie z 1-bajtowymi numerami bloków, więc rośliny
+  z numerami 5000+ trafiały do świata z obciętym numerem jako
+  niewidoczne, nieznane bloki. Teraz kolumna ma 2 bajty - rośliny rosną
+  tam, gdzie powinny.
+- **Zapisane światy są naprawiane przy wczytaniu**: obcięty numer
+  rośliny wraca do właściwej rośliny (w miejscach, gdzie była
+  niewidoczna, pojawi się).
+- Rośliny z `"podloze": ["sand"]` rosną też na piasku (plaże, wydmy,
+  piaszczyste brzegi): kocanka, a od teraz także **mikołajek i nagietek**
+  - dotąd na plaży rosły tylko na rzadkich kawałkach trawy.
+- Te same 2 bajty w komendach czytających kolumny terenu
+  (`/skaly statystyki`, `/skaly zyla`).
+- Nowe sprawdzenia: prawdziwy chunk terenu realistycznego ma roślinę
+  z pełnym numerem, stary zapis z obciętym numerem jest naprawiany,
+  każda roślina naprawdę stoi w kolumnach terenu.
+- Wersja 0.40.1 wspólna dla Windowsa i Androida. Przygotowana w PR;
+  publikacja w `voxel-game-wydania` następuje przez workflow po scaleniu
+  (najpierw #64-#68).
+
 ## 0.40.0 - Rośliny w swoich biomach
 
 Wagi biomów roślin — PR #68 (zawiera #64-#67).

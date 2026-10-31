@@ -58,6 +58,8 @@ tylko jako *Sekretne osiągnięcie* ze znakiem zapytania.
 | zwykłe | Dywan z kwiatów | zbierz kwiat z kwitnącego barwinka (lasy liściaste, buczyny i łąki, roślina z paczki roślin) |
 | zwykłe | Lniana robota | zbierz wiązkę z dojrzałego, suchego lnu (hale i łąki, roślina z paczki roślin) |
 | zwykłe | Ziarnko gorczycy | zbierz nasiona z gorczycy pełnej strąków (brzeziny i łąki, roślina z paczki roślin) |
+| zwykłe | Cierpliwość kamienia | zbierz duży porost ze skały albo pnia (oliwkowy, iglasty, żółta ochra) |
+| zwykłe | Półka na pniu | zbierz hubę ze starej huby na pniu (lasy liściaste i buczyny) |
 | rzadkie | Murarz | postaw 500 bloków (postęp liczy się w księdze) |
 | rzadkie | Głębinowiec | zanurkuj 10 bloków pod powierzchnię |
 | rzadkie | Ponad chmurami | wzleć na wysokość 1000 |

@@ -9,7 +9,7 @@ const cache = new Map();
 export function riverPlantBounds(river, x, y, z) {
     // Dywan (barwinek): płaski kobierzec na całą komórkę (łączy się
     // z sąsiadami, więc model zależy od nich - celownik bierze komórkę).
-    if (river.tuft?.carpet) {
+    if (river.tuft?.carpet || river.tuft?.coating || river.tuft?.bracket) {
         return { min: [0, 0, 0], max: [1, river.tuft.height / 16 + 0.005, 1] };
     }
     const key = `${river.kind}:${river.waterlogged}:${x},${y},${z}`;

@@ -213,8 +213,12 @@ function parseTuft(model, what, seedText, packColors) {
 
     const layout = leaves.uklad ?? 'rozeta';
 
-    if (!['rozeta', 'kepa', 'krzak', 'dywan', 'brak'].includes(layout)) {
-        fail(`"${what}.liscie.uklad": "rozeta" (przy ziemi), "kepa" (stojące liście), "krzak" (kopułka liści), "dywan" (płoży się, łączy z sąsiadami) albo "brak"`);
+    if (!['rozeta', 'kepa', 'krzak', 'dywan', 'nalot', 'huba', 'brak'].includes(layout)) {
+        fail(`"${what}.liscie.uklad": "rozeta" (przy ziemi), "kepa" (stojące liście), "krzak" (kopułka liści), "dywan" (płoży się, łączy z sąsiadami), "nalot" (porost na ścianach), "huba" (półki na pniu) albo "brak"`);
+    }
+
+    if (layout === 'nalot' && !['listki', 'galazki', 'kropki'].includes(leaves.wzor)) {
+        fail(`"${what}.liscie.wzor": "listki", "galazki" albo "kropki" (porost)`);
     }
 
     const stemLeaves = stems.liscie;
@@ -245,7 +249,8 @@ function parseTuft(model, what, seedText, packColors) {
             layout,
             count: pixelRange(leaves.ile, [4, 6], `${what}.liscie.ile`, 0, layout === 'kepa' ? 32 : 12),
             length: pixelRange(leaves.dlugosc, [2, 4], `${what}.liscie.dlugosc`, 1, layout === 'kepa' ? 12 : 7),
-            radius: leaves.promien === undefined ? 2 : number(leaves.promien, `${what}.liscie.promien`, 0, layout === 'dywan' ? 7 : 5),
+            radius: leaves.promien === undefined ? 2 : number(leaves.promien, `${what}.liscie.promien`, 0, layout === 'dywan' || layout === 'nalot' ? 8 : 5),
+            pattern: layout === 'nalot' ? leaves.wzor : null,
             edge: leaves.brzeg === undefined ? 2 : number(leaves.brzeg, `${what}.liscie.brzeg`, 1, 4)
         },
         stems: {
@@ -266,6 +271,17 @@ function parseTuft(model, what, seedText, packColors) {
     };
 
     // Dywan (barwinek) łączy się z takimi samymi sąsiadami (ChunkMesher).
+    // Porost (nalot) i huba przylegają do ścian - ChunkMesher daje im
+    // maskę ścian obok (litych bloków), roślina trzyma się każdej ściany
+    // (porost) albo boku pnia (huba).
+    if (layout === 'nalot') {
+        tuft.coating = true;
+    }
+
+    if (layout === 'huba') {
+        tuft.bracket = true;
+    }
+
     if (layout === 'dywan') {
         tuft.carpet = true;
         if (tuft.flower && !tuft.flower.count) {
@@ -329,6 +345,11 @@ function tuftPixels(tuft) {
         return tuft.flower ? 3 : 2;
     }
 
+    // Porost i huba: na ścianach całej komórki.
+    if (tuft.leaves.layout === 'nalot' || tuft.leaves.layout === 'huba') {
+        return 16;
+    }
+
     const flower = tuft.flower ? FLOWER_HEIGHT[tuft.flower.kind](tuft.flower.size) : 0;
     const leaves = { kepa: tuft.leaves.length[1], rozeta: tuft.leaves.length[1] + 1, krzak: tuft.leaves.length[1] + 1, brak: 0 }[tuft.leaves.layout];
 
@@ -338,8 +359,8 @@ function tuftPixels(tuft) {
 
 function tuftWidth(tuft) {
 
-    // Dywan: cała komórka (w stronę sąsiada aż do krawędzi).
-    if (tuft.leaves.layout === 'dywan') {
+    // Dywan, porost, huba: cała komórka.
+    if (['dywan', 'nalot', 'huba'].includes(tuft.leaves.layout)) {
         return 16;
     }
 
@@ -578,9 +599,19 @@ async function validatePack(folder) {
         // plamy - jaka część biomu jest w plamach z tą rośliną (0-1),
         // gestosc - jak gęsto rośnie w plamie (0-1). Jak "patches"
         // w src/world/terrain/Biomes.js.
+        // "na": gdzie rośnie - "ziemia" (domyślnie, z piaskiem przy
+        // "podloze": ["sand"]), "kamien" (na wierzchu skał), "pnie" (na
+        // bokach pni drzew - porosty, huby).
+        const on = where.na ?? ['ziemia'];
+
+        if (!Array.isArray(on) || on.length === 0 || on.some((surface) => !['ziemia', 'kamien', 'pnie'].includes(surface))) {
+            fail('"gdzieRosnie.na": lista z "ziemia", "kamien", "pnie"');
+        }
+
         pack.where = {
             biomes,
             weights,
+            on,
             cover: where.plamy === undefined ? 0.04 : number(where.plamy, 'gdzieRosnie.plamy', 0.001, 0.9),
             density: where.gestosc === undefined ? 0.12 : number(where.gestosc, 'gdzieRosnie.gestosc', 0, 1),
             stages: stages.map((n) => n / sum)

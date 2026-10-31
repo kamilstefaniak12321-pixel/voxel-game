@@ -2,7 +2,7 @@
 
 > Ta strona jest generowana z kodu gry (`python tools/wiki.py`) - nie zmieniaj jej ręcznie, zmiany przepadną przy następnym generowaniu.
 
-Wersja gry **0.46.0** - 32 przedmiotów. Przedmiotu nie da się postawić jak bloku; owoce i nasiona posadzone na ziemi (PPM) wyrastają w krzak albo drzewo, narzędzia przyspieszają kopanie.
+Wersja gry **0.47.0** - 36 przedmiotów. Przedmiotu nie da się postawić jak bloku; owoce i nasiona posadzone na ziemi (PPM) wyrastają w krzak albo drzewo, narzędzia przyspieszają kopanie.
 
 
 ## Rośliny
@@ -45,6 +45,10 @@ Wersja gry **0.46.0** - 32 przedmiotów. Przedmiotu nie da się postawić jak bl
 | <img src="ikony/barwinek_kwiat.png" width="32" height="32" alt=""> | **Kwiat barwinka** | `barwinek_kwiat` | **Skąd:** zbiór (PPM): Barwinek (kwitnie) |
 | <img src="ikony/len_wiazka.png" width="32" height="32" alt=""> | **Wiązka lnu** | `len_wiazka` | **Skąd:** zbiór (PPM): Len (dojrzały, suchy) |
 | <img src="ikony/gorczyca_nasiona.png" width="32" height="32" alt=""> | **Nasiona gorczycy** | `gorczyca_nasiona` | **Skąd:** zbiór (PPM): Gorczyca (strąki) |
+| <img src="ikony/porostoliwkowy_plecha.png" width="32" height="32" alt=""> | **Plecha porostu oliwkowego** | `porostoliwkowy_plecha` | **Skąd:** zbiór (PPM): Porost oliwkowy (duża plecha) |
+| <img src="ikony/porostiglasty_galazki.png" width="32" height="32" alt=""> | **Gałązki porostu iglastego** | `porostiglasty_galazki` | **Skąd:** zbiór (PPM): Porost iglasty (gęsty) |
+| <img src="ikony/ochra_grudka.png" width="32" height="32" alt=""> | **Grudka żółtej ochry** | `ochra_grudka` | **Skąd:** zbiór (PPM): Żółta ochra (skorupa) |
+| <img src="ikony/huba_huba.png" width="32" height="32" alt=""> | **Huba** | `huba_huba` | **Skąd:** zbiór (PPM): Huba (stara, piętrowa) |
 
 ## Narzędzia i surowce
 

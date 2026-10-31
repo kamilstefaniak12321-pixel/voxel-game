@@ -1435,6 +1435,10 @@ export function canPlantStay(plantId, groundId, aboveId = AIR_ID) {
 
     const river = riverPlantById[plantId];
 
+    // Porost i huba trzymają się ścian, nie ziemi pod sobą - ich oparcie
+    // sprawdza świat (World.attachedPlantSupported).
+    if (river?.tuft?.coating || river?.tuft?.bracket) return true;
+
     // Wysokie pędy zajmują także część komórki nad korzeniami.
     if ((river?.kind === 'cattail' || river?.kind === 'loosestrife') && aboveId !== AIR_ID) return false;
 
@@ -1445,6 +1449,18 @@ export function canPlantStay(plantId, groundId, aboveId = AIR_ID) {
     }
 
     return canGrowOn(plantId, groundId);
+
+}
+
+
+// Porost (przylega do każdej ściany - 'coating') albo huba (do boku
+// pnia - 'bracket'); null - zwykła roślina.
+
+export function getAttachedPlant(id) {
+
+    const tuft = riverPlantById[id]?.tuft;
+
+    return tuft?.coating ? 'coating' : tuft?.bracket ? 'bracket' : null;
 
 }
 

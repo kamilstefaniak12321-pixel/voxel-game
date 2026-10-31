@@ -11,6 +11,33 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 0.47.0 - Porosty i huby
+
+Rośliny na skałach i pniach — PR #76 (zawiera #73-#75).
+
+- Trzy **porosty** z paczek roślin: **porost oliwkowy** (zachodzące,
+  oliwkowe płatki z wypukłymi środkami), **porost iglasty**
+  (rozgałęzione, ciemnozielone gałązki) i **żółta ochra** (złote grudki
+  skorupy). Porost **porasta każdą ścianę, przy której rośnie** - wierzch
+  kamienia, bok skały, korę pnia, nawet sufit. Trzy etapy (coraz większa
+  plama), PPM na dużym - plecha / gałązki / grudka (obrazki z atlasów).
+- **Huba** (grzyb półkowy): półki ze słojami (jasny brzeg, brązowe pasy,
+  kremowy spód) wyrastające z boku pnia; trzy etapy - jedna mała półka,
+  potem piętrowa kępa. PPM na starej - **huba**.
+- Porosty i huby **nie potrzebują ziemi**: stawia się je przy bloku,
+  znikają, gdy nie mają już żadnej ściany.
+- W świecie: porosty na skałach gór i wybrzeży oraz na pniach (lasy,
+  bory, świerczyny), huby na pniach w lasach liściastych i buczynach.
+  `gdzieRosnie.na`: `ziemia`, `kamien`, `pnie`.
+- Model "kepka": liście `nalot` (wzory `listki`, `galazki`, `kropki`)
+  i `huba` - `docs/rosliny.md`. Osiągnięcia *Cierpliwość kamienia*
+  i *Półka na pniu*.
+- Nowe sprawdzenie `tools/sprawdz_porosty.mjs` (w `npm test`).
+- Numery bloków: porosty 5036-5044, huba 5045-5047.
+- Wersja 0.47.0 wspólna dla Windowsa i Androida. Przygotowana w PR;
+  publikacja w `voxel-game-wydania` następuje przez workflow po scaleniu
+  (najpierw #73-#75).
+
 ## 0.46.0 - Gorczyca
 
 Gorczyca - grona kwiatów i strąki — PR #75 (zawiera #73 i #74).

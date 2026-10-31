@@ -462,6 +462,17 @@ gorczyca wraca do młodej. Rośnie w brzezinach i na łąkach. Osiągnięcie
 
 ![Gorczyca - kwitnąca i ze strąkami](docs/rosliny-gorczyca.png)
 
+Rośliny na skałach i pniach: **porosty** - oliwkowy (zachodzące płatki),
+iglasty (rozgałęzione gałązki) i **żółta ochra** (złote grudki) -
+porastają **każdą ścianę, przy której rosną** (wierzch kamienia, bok
+skały, kora pnia); **huba** - półki ze słojami wyrastające z boku pnia.
+Nie potrzebują ziemi: stawia się je przy bloku, a znikają, gdy nie mają
+ściany. W świecie: porosty na skałach gór i wybrzeży oraz na pniach,
+huby na pniach w lasach. Osiągnięcia *Cierpliwość kamienia* i *Półka na
+pniu*.
+
+![Porosty i huby](docs/rosliny-porosty-huby.png)
+
 - Tekstury z dużych atlasów "pixel art" robi
   `tools/rosliny_z_atlasu.py` (siatka pikseli rysunku, zmniejszanie bez
   mieszania kolorów, wszystkie etapy w tej samej skali).
@@ -476,7 +487,9 @@ gorczyca wraca do młodej. Rośnie w brzezinach i na łąkach. Osiągnięcie
   `/rosliny ogrod cynia`, `/daj cynia_etap3 5`, `/rosliny ogrod mikolajek`,
   `/daj mikolajek_etap3 5`, `/daj barwinek_etap3 64` (posadź kilka obok
   siebie - połączą się), `/rosliny znajdz barwinek`, `/rosliny ogrod len`,
-  `/daj len_etap3 5`, `/rosliny ogrod gorczyca`, `/daj gorczyca_etap3 5`.
+  `/daj len_etap3 5`, `/rosliny ogrod gorczyca`, `/daj gorczyca_etap3 5`,
+  `/daj porostoliwkowy_etap3 5` (postaw przy kamieniu), `/daj huba_etap3 5`
+  (postaw przy pniu), `/rosliny znajdz huba`.
 - Każda roślina ma swój biom, gdzie rośnie najczęściej (wagi biomów
   w `roslina.json`) - tabela w `docs/rosliny.md`; `/rosliny <roslina>`
   pokazuje biomy (poboczne z dopiskiem "rzadziej").

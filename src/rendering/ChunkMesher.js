@@ -728,6 +728,17 @@ function carpetMask(cell, y, group) {
 
 }
 
+// Porost i huba (TuftGeometry.js coating, bracket): lite bloki obok -
+// bity 1 +x, 2 +z, 4 -x, 8 -z, 16 dół, 32 góra.
+
+function wallMask(cell) {
+
+    return (padOpaque[cell + 1] ? 1 : 0) | (padOpaque[cell + P] ? 2 : 0) |
+        (padOpaque[cell - 1] ? 4 : 0) | (padOpaque[cell - P] ? 8 : 0) |
+        (padOpaque[cell - P_LAYER] ? 16 : 0) | (padOpaque[cell + P_LAYER] ? 32 : 0);
+
+}
+
 // ------------------------------------------------------------
 // Generated river plants share the existing plant material and chunk batch.
 // Their cached templates carry actual surface normals and a linear albedo tint.
@@ -742,7 +753,9 @@ function addRiverPlants(plants, faceCount, baseX, baseZ, grassDetail = null, ove
         const event = overrides?.get(y * LAYER + lz * S + lx);
         if (event) animationRanges.push({ event, start: faceCount, transform });
         const cell = padIndex(lx, y, lz);
-        const mask = !grass && data.carpet ? carpetMask(cell, y, data.carpet) : 0;
+        const mask = grass ? 0
+            : data.carpet ? carpetMask(cell, y, data.carpet)
+                : data.tuft?.coating || data.tuft?.bracket ? wallMask(cell) : 0;
         const faces = grass
             ? getBushyGrassFaces(plants[k + 3] === TALL_GRASS_ID, transform.variant, grassDetail)
             : getRiverPlantFaces(data.kind, transform.variant, data.waterlogged, data.tuft, mask);

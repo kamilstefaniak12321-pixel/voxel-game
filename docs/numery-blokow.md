@@ -34,9 +34,22 @@ w `src/blocks/plantPacks.js`. **Raz nadanego numeru nie wolno zmieniać.**
 - Starsza wersja gry (sprzed 0.30.0) nie wczyta poprawnie chunka z blokiem
   o numerze ponad 255 - dotyczy tylko powrotu do starej wersji.
 
+## Błąd 0.31.0-0.40.0 i naprawa (0.40.1)
+
+Generator terenu realistycznego budował chunk w kolumnie z 1-bajtowymi
+numerami (`columnBuffer`), więc rośliny z paczek (5000+) trafiały do
+świata z obciętym numerem (5000 -> 136, 5003 -> 139...) - jako nieznane,
+niewidoczne bloki. Od 0.40.1 kolumna ma 2 bajty, a zapisany chunk
+z takimi numerami jest naprawiany przy wczytaniu: nieznany numer 0-255,
+który pasuje do dokładnie jednej rośliny z paczki (`numer & 255`), wraca
+do niej (`BlockRegistry.TRUNCATED_PLANT_IDS`, `Chunk.loadBlocks`). Teren
+klasyczny i laboratorium światła nie miały tego błędu.
+
 ## Sprawdzenie
 
 `node tools/sprawdz_numery_blokow.mjs` (część `npm test`): numer 60000
 w chunku, zapis 1 / 2 bajty, stary i nowy zapis, prawdziwe `WorldStorage`
 z bazą w pamięci, nieznane numery, zakresy paczek, materiały dalekiego
-terenu (Uint16 bez zawijania), kolumny generatorów.
+terenu (Uint16 bez zawijania), kolumny generatorów, prawdziwy chunk terenu
+realistycznego z rośliną z paczki (pełny numer) i naprawa obciętych
+numerów ze starego zapisu.

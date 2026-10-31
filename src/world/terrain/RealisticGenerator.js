@@ -206,7 +206,10 @@ function resolveBiome(biome, key) {
                 weights: pack.where.stages.map((weight) => (sum += weight)),
                 density: pack.where.density,
                 level: patchLevel(pack.where.cover * (pack.where.weights?.[key] ?? 1)),
-                salt: pack.firstId
+                salt: pack.firstId,
+                // Rośnie też na piasku ("podloze": ["sand"] - kocanka,
+                // mikołajek, nagietek) - także na plaży i wydmach.
+                sand: (pack.ground ?? []).includes('sand')
             };
         });
 
@@ -374,7 +377,8 @@ export class RealisticGenerator {
             () => this.geology.createColumn()
         );
 
-        this.columnBuffer = new Uint8Array(CHUNK_HEIGHT);
+        // 2 bajty na blok - numery do 65279 (rośliny z paczek 5000+).
+        this.columnBuffer = new Uint16Array(CHUNK_HEIGHT);
 
 
         // Wynik ostatniego compute() (używany ponownie, bez tworzenia
@@ -1086,6 +1090,13 @@ export class RealisticGenerator {
             return ground === this.ids.snow ? 0 : this.plantAt(x, z, sample, biome);
         }
 
+        // Rośliny z paczek, które rosną na piasku (plamy jak na trawie).
+
+        if (kind === 'sand' && ground !== this.ids.snow) {
+            const plant = this.patchPlantAt(x, z, biome, true);
+            if (plant) return plant;
+        }
+
         // Piaskownica na wydmach (i rzadko na plaży).
 
         if (kind === 'sand' && key === 'beach') {
@@ -1093,6 +1104,50 @@ export class RealisticGenerator {
             const chance = 0.03 + 0.25 * smoothstep(0.3, 0.7, sample.duneZone ?? 0);
 
             return hash01(this.plantSeed, x, z, 8) < chance ? this.ids.duneGrass : 0;
+
+        }
+
+        return 0;
+
+    }
+
+
+    // Roślina z plam biomu (patches i paczki roślin) w kolumnie (x, z)
+    // albo 0. sandOnly - tylko te, które rosną na piasku.
+
+    patchPlantAt(x, z, biome, sandOnly) {
+
+        const data = this.biomeData[biome].plants;
+
+        if (!data) {
+            return 0;
+        }
+
+        for (let i = 0; i < data.patches.length; i++) {
+
+            const patch = data.patches[i];
+            const salt = patch.salt ?? i;
+
+            if (sandOnly && !patch.sand) {
+                continue;
+            }
+
+            if (
+                this.field(this.noise.patches, x + salt * 977, z - salt * 613, 18, 2) > patch.level &&
+                hash01(this.plantSeed, x, z, 20 + salt) < patch.density
+            ) {
+
+                if (!patch.ids) {
+                    return patch.id;
+                }
+
+                const stage = hash01(this.plantSeed, x, z, 40 + salt);
+
+                const index = patch.weights.findIndex((limit) => stage < limit);
+
+                return patch.ids[index < 0 ? patch.ids.length - 1 : index];
+
+            }
 
         }
 
@@ -1195,28 +1250,10 @@ export class RealisticGenerator {
 
         // Rośliny w plamach (wrzos, krokusy, kępki mchu, trzcina...).
 
-        for (let i = 0; i < data.patches.length; i++) {
+        const patched = this.patchPlantAt(x, z, biome, false);
 
-            const patch = data.patches[i];
-            const salt = patch.salt ?? i;
-
-            if (
-                this.field(this.noise.patches, x + salt * 977, z - salt * 613, 18, 2) > patch.level &&
-                hash01(this.plantSeed, x, z, 20 + salt) < patch.density
-            ) {
-
-                if (!patch.ids) {
-                    return patch.id;
-                }
-
-                const stage = hash01(this.plantSeed, x, z, 40 + salt);
-
-                const index = patch.weights.findIndex((limit) => stage < limit);
-
-                return patch.ids[index < 0 ? patch.ids.length - 1 : index];
-
-            }
-
+        if (patched) {
+            return patched;
         }
 
 

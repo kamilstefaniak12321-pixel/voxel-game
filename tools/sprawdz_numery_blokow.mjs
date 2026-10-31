@@ -157,6 +157,46 @@ for (const [type, definition] of Object.entries(R.BLOCK_TYPES)) {
 // --- Generatory ------------------------------------------------
 
 check(new RealisticGenerator('numery').columnBlocks(10, 10).blocks instanceof Uint16Array, 'teren realistyczny: kolumna Uint16Array');
+check(new RealisticGenerator('numery').columnBuffer instanceof Uint16Array, 'teren realistyczny: kolumna chunka Uint16Array (0.40.1)');
+
+// Prawdziwy chunk terenu realistycznego: roślina z paczki (numer 5000+)
+// ma pełny numer, nie obcięty do 1 bajtu (błąd 0.31.0-0.40.0).
+{
+    const generator = new RealisticGenerator('lepidolit');
+    const plantIds = new Set(PLANT_PACKS.flatMap((pack) => pack.stages.map((_, i) => pack.firstId + i)));
+    let spot = null;
+    for (let x = -400; x <= 400 && !spot; x += 4) {
+        for (let z = -400; z <= 400 && !spot; z += 4) {
+            const id = Array.from(generator.columnBlocks(x, z).blocks).find((block) => plantIds.has(block) && block > 255);
+            if (id) spot = [x, z, id];
+        }
+    }
+    check(spot !== null, 'jest roślina z paczki w terenie');
+    const [x, z] = spot;
+    const cx = Math.floor(x / CHUNK_SIZE), cz = Math.floor(z / CHUNK_SIZE);
+    const generated = new Chunk(cx, cz);
+    generator.generateChunk(generated);
+    const lx = x - cx * CHUNK_SIZE, lz = z - cz * CHUNK_SIZE;
+    const column = [];
+    for (let y = 0; y < generated.blocks.length / (CHUNK_SIZE * CHUNK_SIZE); y++) column.push(generated.getId(lx, y, lz));
+    check(column.some((id) => plantIds.has(id) && id > 255), `chunk terenu realistycznego: roślina ${spot[2]} z pełnym numerem`);
+    check(!column.some((id) => R.TRUNCATED_PLANT_IDS[id]), 'bez obciętych numerów w chunku');
+}
+
+// Naprawa zapisów 0.31.0-0.40.0: obcięty numer rośliny wraca przy
+// wczytaniu (tylko nieznane numery pasujące do jednej rośliny).
+{
+    const kocanka = R.getBlockId('kocanka_etap1');
+    check(R.TRUNCATED_PLANT_IDS[kocanka & 255] === kocanka, 'obcięty numer kocanki -> kocanka');
+    check(R.TRUNCATED_PLANT_IDS[stone] === 0 && R.TRUNCATED_PLANT_IDS[0] === 0, 'znane numery bez zmian');
+    const broken = new Uint8Array(CHUNK_SIZE * CHUNK_SIZE * 8);
+    const repaired = new Chunk(0, 0);
+    broken[repaired.index(3, 2, 3)] = kocanka & 255;
+    broken[repaired.index(3, 1, 3)] = stone;
+    check(repaired.loadBlocks(broken) && repaired.getId(3, 2, 3) === kocanka && repaired.getId(3, 1, 3) === stone, 'stary zapis z obciętą kocanką - naprawiony');
+    const fresh = new Chunk(0, 0);
+    check(fresh.loadBlocks(Uint16Array.from(broken)) && fresh.getId(3, 2, 3) === (kocanka & 255), 'zapis 2-bajtowy bez naprawy (numery pełne)');
+}
 check(new TerrainGenerator('numery').columnBlocks(10, 10).blocks instanceof Uint16Array, 'teren klasyczny: kolumna Uint16Array');
 check(CHUNK_SIZE === 16, 'chunk 16 x 16');
 

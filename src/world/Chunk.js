@@ -6,7 +6,8 @@ import {
 import {
     AIR_ID,
     isOpaqueId,
-    isGrowingId
+    isGrowingId,
+    TRUNCATED_PLANT_IDS
 } from '../blocks/BlockRegistry.js';
 
 // ------------------------------------------------------------
@@ -147,6 +148,19 @@ export class Chunk {
         this.blocks.fill(AIR_ID);
 
         this.blocks.set(data);
+
+
+        // Zapis 1-bajtowy z 0.31.0-0.40.0 mógł mieć roślinę z paczki
+        // z obciętym numerem (BlockRegistry.js - TRUNCATED_PLANT_IDS).
+
+        if (data instanceof Uint8Array) {
+            for (let i = 0; i < data.length; i++) {
+                const plant = TRUNCATED_PLANT_IDS[data[i]];
+                if (plant) {
+                    this.blocks[i] = plant;
+                }
+            }
+        }
 
 
         let count = 0;

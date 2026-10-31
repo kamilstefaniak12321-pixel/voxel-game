@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="pl"><meta charset="utf-8"><title>Borówka — cykl animacji 0.43.0</title>
+<style>body{margin:24px;background:#192128;color:#eee;font:18px system-ui}h1{font-size:24px}video{width:min(1100px,75vw);max-height:65vh;background:#111}#frames{display:flex;flex-wrap:wrap;gap:12px}figure{margin:0}canvas{width:260px;height:146px}figcaption{font-size:14px}a{color:#adcdff}</style>
+<h1>Borówka — cykl animacji 0.43.0</h1>
+<p>Tempo nagrania: 50% rzeczywistego. Usunięcie, posadzenie, wzrost krzaka i owoców, pełny ekwipunek, zbiór.</p>
+<video controls></video><p id="status">Odczyt klatek…</p><div id="frames"></div>
+<script type="module">
+const video=document.querySelector('video'), status=document.querySelector('#status');
+const loaded=new Promise(r=>video.addEventListener('loadeddata',r,{once:true}));
+video.src=location.protocol==='file:'?'cykl-borowki.webm':URL.createObjectURL(await(await fetch('cykl-borowki.webm')).blob());
+if(video.readyState<2)await loaded;
+const samples=[[.08,'Pełny krzak → usunięcie'],[1.5,'Pojawienie się sadzonki'],[3.3,'Wzrost krzaka'],[4.6,'Narastanie pierwszych owoców'],[8,'Odrastanie pełnego plonu'],[10.8,'Reakcja: pełny ekwipunek'],[13,'Po zbiorze']];
+for(const [time,label]of samples){
+  const seek=new Promise(r=>video.addEventListener('seeked',r,{once:true}));video.currentTime=time;await seek;
+  const figure=document.createElement('figure'),canvas=document.createElement('canvas'),caption=document.createElement('figcaption');
+  canvas.width=520;canvas.height=292;canvas.getContext('2d').drawImage(video,0,0,520,292);caption.textContent=time.toFixed(1)+' s — '+label;
+  figure.append(canvas,caption);document.querySelector('#frames').append(figure);
+}
+video.currentTime=0;status.textContent='Nagranie odczytane poprawnie: '+video.videoWidth+' × '+video.videoHeight+'.';
+</script></html>

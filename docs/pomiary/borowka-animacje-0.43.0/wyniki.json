@@ -1,0 +1,622 @@
+{
+  "date": "2026-10-31",
+  "version": "0.43.0",
+  "device": {
+    "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 3050 Laptop GPU (0x000025A2) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "drawingBuffer": [
+      1920,
+      1080
+    ],
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.7977.130 Electron/44.4.5 Safari/537.36"
+  },
+  "seed": 2138286349,
+  "conditions": {
+    "power": "AC, Windows BatteryStatus=2",
+    "refreshHz": 144,
+    "warmupSeconds": 10,
+    "measurementSeconds": 30,
+    "world": "classic, isolated test profile",
+    "bushes": 400,
+    "changedPerBatch": 24,
+    "batchIntervalSeconds": 2.4,
+    "animationLimit": 12,
+    "vsync": "default",
+    "note": "Baseline disables only transition starts; both runs still change stages and remesh. GPU timer queries exclude disjoint samples. 1% low = reciprocal of mean slowest 1% frame times."
+  },
+  "baseline": {
+    "point": "bez-animacji-400-krzakow",
+    "pose": {
+      "x": 0.5,
+      "y": 62,
+      "z": 4,
+      "yaw": 0,
+      "pitch": -0.35
+    },
+    "experiments": {
+      "bushyGrass": false
+    },
+    "settings": {
+      "potato": false,
+      "viewDistance": 48,
+      "farTerrain": 8192,
+      "farDetail": 2,
+      "fov": 75,
+      "brightness": 0,
+      "renderScale": 100,
+      "fpsLimit": 0,
+      "ambientOcclusion": 45,
+      "shadows": 3,
+      "lightingModel": "atmosphere",
+      "lightShafts": true,
+      "bounceLight": false,
+      "fancyLeaves": true,
+      "dynamicLight": true,
+      "loadBudget": 4,
+      "mouseSensitivity": 100,
+      "invertMouse": false,
+      "skinOverlay": true,
+      "showHand": false,
+      "viewBobbing": true,
+      "jointStyle": "smooth",
+      "cameraDistance": 4,
+      "volumeMaster": 80,
+      "volumeBlocks": 100,
+      "volumeWorld": 100,
+      "volumeUi": 80,
+      "theme": "default",
+      "inventoryStyle": "wood",
+      "hudScale": 100,
+      "showDebug": true,
+      "showFps": false,
+      "meteorites": true,
+      "autoUpdates": true,
+      "textureResolution": 0
+    },
+    "frames": {
+      "samples": 4267,
+      "averageMs": 7.028568080641052,
+      "fps": 142.27649053501,
+      "p99Ms": 10.5,
+      "maxMs": 27,
+      "low1Fps": 64.88607210115579,
+      "over33ms": 0
+    },
+    "renderCpu": {
+      "samples": 4268,
+      "averageMs": 3.2514058115779516,
+      "fps": 307.55927065120375,
+      "p99Ms": 7.3999998569488525,
+      "maxMs": 14.199999809265137,
+      "low1Fps": 114.42256520877088,
+      "over33ms": 0
+    },
+    "gpu": {
+      "samples": 4268,
+      "averageMs": 4.811633582005628,
+      "fps": 207.8296243794963,
+      "p99Ms": 5.460992,
+      "maxMs": 10.781696,
+      "low1Fps": 147.5861603885665,
+      "over33ms": 0
+    },
+    "renderInfo": {
+      "calls": 243,
+      "triangles": 834912
+    }
+  },
+  "animated": {
+    "point": "12-animacji-400-krzakow",
+    "pose": {
+      "x": 0.5,
+      "y": 62,
+      "z": 4,
+      "yaw": 0,
+      "pitch": -0.35
+    },
+    "experiments": {
+      "bushyGrass": false
+    },
+    "settings": {
+      "potato": false,
+      "viewDistance": 48,
+      "farTerrain": 8192,
+      "farDetail": 2,
+      "fov": 75,
+      "brightness": 0,
+      "renderScale": 100,
+      "fpsLimit": 0,
+      "ambientOcclusion": 45,
+      "shadows": 3,
+      "lightingModel": "atmosphere",
+      "lightShafts": true,
+      "bounceLight": false,
+      "fancyLeaves": true,
+      "dynamicLight": true,
+      "loadBudget": 4,
+      "mouseSensitivity": 100,
+      "invertMouse": false,
+      "skinOverlay": true,
+      "showHand": false,
+      "viewBobbing": true,
+      "jointStyle": "smooth",
+      "cameraDistance": 4,
+      "volumeMaster": 80,
+      "volumeBlocks": 100,
+      "volumeWorld": 100,
+      "volumeUi": 80,
+      "theme": "default",
+      "inventoryStyle": "wood",
+      "hudScale": 100,
+      "showDebug": true,
+      "showFps": false,
+      "meteorites": true,
+      "autoUpdates": true,
+      "textureResolution": 0
+    },
+    "activePeak": 12,
+    "animationCpu": {
+      "samples": 4228,
+      "averageMs": 0.4046594140770983,
+      "fps": 2471.2139770198783,
+      "p99Ms": 1.2000000476837158,
+      "maxMs": 2.4000000953674316,
+      "low1Fps": 716.6666609711118,
+      "over33ms": 0
+    },
+    "frames": {
+      "samples": 4225,
+      "averageMs": 7.098319526593361,
+      "fps": 140.87841442662162,
+      "p99Ms": 12.599999904632568,
+      "maxMs": 24.200000047683716,
+      "low1Fps": 57.81123962130035,
+      "over33ms": 0
+    },
+    "renderCpu": {
+      "samples": 4226,
+      "averageMs": 4.007406532566975,
+      "fps": 249.53794726671825,
+      "p99Ms": 8.5,
+      "maxMs": 12.900000095367432,
+      "low1Fps": 102.04081624570527,
+      "over33ms": 0
+    },
+    "gpu": {
+      "samples": 4226,
+      "averageMs": 5.53215741788926,
+      "fps": 180.76130602616513,
+      "p99Ms": 7.288832,
+      "maxMs": 12.012544,
+      "low1Fps": 128.4223541960684,
+      "over33ms": 0
+    },
+    "renderInfo": {
+      "calls": 245,
+      "triangles": 843154
+    }
+  },
+  "integration": [
+    {
+      "name": "Pełny ekwipunek zachowuje pełny krzak",
+      "ok": true
+    },
+    {
+      "name": "Uruchomiona reakcja odmowy",
+      "ok": true
+    },
+    {
+      "name": "Zbiór daje owoce i dorosły pusty krzak",
+      "ok": true,
+      "details": {
+        "type": "blueberry",
+        "count": 5
+      }
+    },
+    {
+      "name": "Owoce narastają częściowo",
+      "ok": true,
+      "details": [
+        0,
+        0.5132339000701904,
+        0,
+        0,
+        0,
+        0,
+        0.3905009627342224,
+        0,
+        0,
+        0,
+        0,
+        0.2737521231174469,
+        0,
+        0,
+        0,
+        0,
+        0.6352487802505493,
+        0,
+        0,
+        0.2737521231174469,
+        0,
+        0,
+        0,
+        0.2737521231174469
+      ]
+    },
+    {
+      "name": "Pierwsze owoce osiągają etap few",
+      "ok": true
+    },
+    {
+      "name": "Odrasta pełny plon",
+      "ok": true
+    },
+    {
+      "name": "Płynny rozmiar sadzonki",
+      "ok": true,
+      "details": 0.7074426798827667
+    },
+    {
+      "name": "Przerwanie wzrostu usunięciem bez resztek",
+      "ok": true
+    },
+    {
+      "name": "Zapis przechodzi",
+      "ok": true
+    },
+    {
+      "name": "Brak błędów JS",
+      "ok": true,
+      "details": []
+    }
+  ],
+  "errors": [],
+  "surfaceChecks": {
+    "status": "passed",
+    "variants": [
+      {
+        "atmosphere": 0,
+        "shadows": 0,
+        "potato": false,
+        "materials": [
+          "near",
+          "plant",
+          "leaf",
+          "water",
+          "riverPlant",
+          "model",
+          "heldGrass",
+          "far",
+          "debris"
+        ]
+      },
+      {
+        "atmosphere": 0,
+        "shadows": 0,
+        "potato": true,
+        "materials": [
+          "near",
+          "plant",
+          "leaf",
+          "water",
+          "riverPlant",
+          "model",
+          "heldGrass",
+          "far",
+          "debris"
+        ]
+      },
+      {
+        "atmosphere": 0,
+        "shadows": 1,
+        "potato": false,
+        "materials": [
+          "near",
+          "plant",
+          "leaf",
+          "water",
+          "riverPlant",
+          "model",
+          "heldGrass",
+          "far",
+          "debris"
+        ]
+      },
+      {
+        "atmosphere": 0,
+        "shadows": 1,
+        "potato": true,
+        "materials": [
+          "near",
+          "plant",
+          "leaf",
+          "water",
+          "riverPlant",
+          "model",
+          "heldGrass",
+          "far",
+          "debris"
+        ]
+      },
+      {
+        "atmosphere": 0,
+        "shadows": 3,
+        "potato": false,
+        "materials": [
+          "near",
+          "plant",
+          "leaf",
+          "water",
+          "riverPlant",
+          "model",
+          "heldGrass",
+          "far",
+          "debris"
+        ]
+      },
+      {
+        "atmosphere": 0,
+        "shadows": 3,
+        "potato": true,
+        "materials": [
+          "near",
+          "plant",
+          "leaf",
+          "water",
+          "riverPlant",
+          "model",
+          "heldGrass",
+          "far",
+          "debris"
+        ]
+      },
+      {
+        "atmosphere": 1,
+        "shadows": 0,
+        "potato": false,
+        "materials": [
+          "near",
+          "plant",
+          "leaf",
+          "water",
+          "riverPlant",
+          "model",
+          "heldGrass",
+          "far",
+          "debris"
+        ]
+      },
+      {
+        "atmosphere": 1,
+        "shadows": 0,
+        "potato": true,
+        "materials": [
+          "near",
+          "plant",
+          "leaf",
+          "water",
+          "riverPlant",
+          "model",
+          "heldGrass",
+          "far",
+          "debris"
+        ]
+      },
+      {
+        "atmosphere": 1,
+        "shadows": 1,
+        "potato": false,
+        "materials": [
+          "near",
+          "plant",
+          "leaf",
+          "water",
+          "riverPlant",
+          "model",
+          "heldGrass",
+          "far",
+          "debris"
+        ]
+      },
+      {
+        "atmosphere": 1,
+        "shadows": 1,
+        "potato": true,
+        "materials": [
+          "near",
+          "plant",
+          "leaf",
+          "water",
+          "riverPlant",
+          "model",
+          "heldGrass",
+          "far",
+          "debris"
+        ]
+      },
+      {
+        "atmosphere": 1,
+        "shadows": 3,
+        "potato": false,
+        "materials": [
+          "near",
+          "plant",
+          "leaf",
+          "water",
+          "riverPlant",
+          "model",
+          "heldGrass",
+          "far",
+          "debris"
+        ]
+      },
+      {
+        "atmosphere": 1,
+        "shadows": 3,
+        "potato": true,
+        "materials": [
+          "near",
+          "plant",
+          "leaf",
+          "water",
+          "riverPlant",
+          "model",
+          "heldGrass",
+          "far",
+          "debris"
+        ]
+      }
+    ],
+    "programs": 34,
+    "pixels": {
+      "natural": [
+        25,
+        25,
+        25
+      ],
+      "far": [
+        25,
+        25,
+        25
+      ],
+      "model": [
+        25,
+        25,
+        25
+      ],
+      "debris": [
+        25,
+        25,
+        25
+      ],
+      "riverDay": [
+        5,
+        13,
+        3
+      ],
+      "heldGrass": [
+        25,
+        25,
+        25
+      ],
+      "riverNight": [
+        1,
+        3,
+        0
+      ],
+      "lamp": [
+        14,
+        3,
+        0
+      ],
+      "combined": [
+        39,
+        29,
+        25
+      ],
+      "classicCombined": [
+        25,
+        25,
+        25
+      ],
+      "occludedAmbient": [
+        0,
+        0,
+        0
+      ],
+      "occludedDirect": [
+        25,
+        25,
+        25
+      ],
+      "direct": [
+        25,
+        25,
+        25
+      ],
+      "dark": [
+        0,
+        0,
+        0
+      ],
+      "emission": [
+        25,
+        25,
+        25
+      ],
+      "occludedEmission": [
+        25,
+        25,
+        25
+      ]
+    },
+    "webgl1": {
+      "status": "passed",
+      "version": "WebGL 1.0 (OpenGL ES 2.0 Chromium)",
+      "compiled": [
+        {
+          "atmosphere": 0,
+          "potato": false,
+          "dark": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "atmosphere": 0,
+          "potato": true,
+          "dark": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "atmosphere": 1,
+          "potato": false,
+          "dark": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "atmosphere": 1,
+          "potato": true,
+          "dark": [
+            0,
+            0,
+            0
+          ]
+        }
+      ],
+      "samples": {
+        "openAmbient": [
+          25,
+          25,
+          25
+        ],
+        "occludedAmbient": [
+          0,
+          0,
+          0
+        ],
+        "occludedDirect": [
+          25,
+          25,
+          25
+        ],
+        "direct": [
+          25,
+          25,
+          25
+        ]
+      }
+    },
+    "scope": "Prawdziwe materiały; liniowy render target 16x16; kontrolowane źródła i geometria.",
+    "initialSettings": {
+      "lightingModel": "atmosphere",
+      "shadows": 3
+    }
+  }
+}

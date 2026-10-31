@@ -28,6 +28,7 @@ import {
 import { getItemLabel, getPlacedBlock, getTool, itemExists } from '../items/ItemRegistry.js';
 import { Inventory } from './Inventory.js';
 import { PlantGrowth } from './PlantGrowth.js';
+import { PlantAnimations } from '../rendering/PlantAnimations.js';
 import { WaterEffects } from './WaterEffects.js';
 import { DynamicLight } from '../world/DynamicLight.js';
 import { FarTerrain, setFarTerrainShadows } from '../world/FarTerrain.js';
@@ -273,6 +274,7 @@ export class Game {
         // Rosnące rośliny (krzaki owocowe).
 
         this.plantGrowth = new PlantGrowth(this.world);
+        this.plantAnimations = new PlantAnimations(this.world, this.camera);
 
         this.plantGrowth.onTreeGrown = (species) => this.achieve('treeGrown', { species });
 
@@ -306,6 +308,7 @@ export class Game {
             this.bounce.markChunk(chunk);
 
         };
+        this.plantAnimations.onFrame = (chunk) => this.shadows.markPlantAnimation(chunk);
 
         this.lightShafts = new LightShafts(renderer);
 
@@ -778,6 +781,7 @@ export class Game {
         this.achievements?.update(dt);
 
         this.plantGrowth.update(dt);
+        this.plantAnimations.update(dt);
 
         this.updateOrbs(dt);
 
@@ -2196,6 +2200,7 @@ export class Game {
         if (!this.inventory.canAdd(harvest.item, harvest.count[1])) {
 
             this.onNotice?.('Ekwipunek pełny');
+            this.plantAnimations?.reject(x, y, z);
 
             return false;
 
@@ -2476,6 +2481,7 @@ export class Game {
 
         this.saver.stop();
 
+        this.plantAnimations.dispose();
         this.world.dispose();
 
         this.highlight.dispose();

@@ -11,6 +11,20 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 0.43.0 - Animacje borówki i płynny wzrost
+
+Animacje interakcji i wzrostu borówki — PR #72.
+
+- Stawianie, zbieranie, krótsze niszczenie oraz delikatna reakcja przy
+  pełnym ekwipunku, na podstawie animacji Kamila z Blockbencha.
+- Borówki rosną i maleją wokół własnych środków. Krzak płynnie zmienia
+  rozmiar, a nowe owoce pojawiają się stopniowo.
+- Przerywanie wzrostu zbiorem lub zniszczeniem zachowuje bieżącą pozę.
+  Zapis, ilość plonu i tempo wzrostu pozostają zgodne z 0.42.0.
+- Ograniczona liczba aktywnych animacji; wspólny materiał, światło, wiatr
+  i geometria terenu. Zasady zapisane dla kolejnych gatunków roślin.
+- Wersja 0.43.0 przygotowana do wydania po scaleniu PR; pobieralna baza 0.42.0.
+
 ## 0.42.0 - Nowy model borówki
 
 Podmiana borówki na modele z paczki „Borowka-cztery-etapy-v1.2” — PR #71.

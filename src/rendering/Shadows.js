@@ -907,6 +907,12 @@ export class SunShadows {
 
     }
 
+    // Tiny moving plants only invalidate the near shadow map. Distant terrain
+    // cascades keep their existing update budget and are refreshed at remesh.
+    markPlantAnimation(chunk) {
+        if (this.valid && this.near.frustum.intersectsBox(chunkBox(this.box, chunk))) this.changed = true;
+    }
+
 
     // Co klatkę (po Sky.update): które światło rzuca cienie, jak mocno,
     // czy trzeba przerysować mapy. focus - miejsce gracza.

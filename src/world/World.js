@@ -558,6 +558,8 @@ export class World {
         this.applyLightChanges();
 
 
+        this.plantAnimations?.blockChanged(chunk, chunk.index(lx, y, lz), previousId, id);
+
         // Zmienione podłoże lub przykryta tafla mogą usunąć roślinę.
         // Wodna odmiana oddaje wówczas swoją komórkę zwykłej wodzie.
         for (const py of [y - 1, y + 1]) {

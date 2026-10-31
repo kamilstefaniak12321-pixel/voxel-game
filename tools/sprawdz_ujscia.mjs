@@ -48,7 +48,10 @@ for (const ocean of [false, true]) {
     const out = { ocean, water: ocean ? SEA_LEVEL : 0, mountains: 0 };
     const height = mouth.shape(10, 8, 52, 52, out);
     assert.equal(out.river, 2);
-    assert.ok(height >= SEA_LEVEL + 1);
+    // Brzeg na poziomie wody rzeki (48 = SEA_LEVEL, od 0.47.1 bez bloku
+    // nad wodą) - suchy: tafla morza go nie zalewa (woda tylko powyżej
+    // wierzchu kolumny).
+    assert.ok(Math.floor(height) >= SEA_LEVEL);
 }
 
 // Wklęsły zarys jeziora: pusta część jego dużej ramki nie jest wodą

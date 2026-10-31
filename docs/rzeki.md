@@ -98,8 +98,16 @@ makrorzeźba co 16 bloków ──► spływ: z każdej kratki do najbardziej
    - brzegi opadają do wody najwyżej `bankSlope` bloku na blok (niziny
      łagodnie, góry stromiej), dalej dolina rozchyla się coraz bardziej
      - na końcu nie ścina już terenu, więc nie ma progu,
-   - tuż przy korycie brzeg jest **blok nad wodą** (także przy progach
-     na rzece) - woda nie wylewa się i nie stoi ścianą,
+   - tuż przy korycie brzeg jest **na poziomie wody** (od 0.47.1):
+     blok brzegu obok bloku wody, tafla tuż pod jego wierzchem - na
+     płaskim terenie płaski pas brzegu (do 2 bloków), dalej teren
+     wznosi się łagodnie; w górach pas prawie znika (stromy brzeg).
+     Brzeg nie jest niżej niż woda obok - o blok wyżej tylko przy
+     progach na rzece (wyższa woda do 2.5 bloku w górę nurtu, także
+     na innym odcinku obok) i przy wejściu rzeki do jeziora (poziom
+     zmienia się tam kolumna po kolumnie) - woda nie wylewa się i nie
+     stoi ścianą. (Do 0.47.0 brzeg był zawsze blok nad wodą, więc na
+     płaskim terenie rzeki płynęły w "okopach" z ziemnymi wałami.)
    - koryto: najgłębsze na środku (`depth` + część szerokości), dno
      z piasku, w górach ze żwiru; brzegi to trawa (nie skała, choć
      obok jest stromo), drzewa nie rosną w wodzie ani na samym brzegu.

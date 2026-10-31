@@ -79,6 +79,9 @@ const LAKE_RUN_CELLS = 3;
 // Najwięcej kroków rzeki (kratek).
 const MAX_STEPS = Math.ceil(RIVERS.maxLength / CELL) * 3;
 
+// Pas brzegu przy korycie (bloki od krawędzi wody): brzeg trzyma wodę.
+const RIM = 1.5;
+
 // Zasięg wpływu koryta: najszersza rzeka, brzegi, meandry.
 const INFLUENCE = RIVERS.halfWidth[1] + RIVERS.bank + 2;
 const MARGIN = INFLUENCE + RIVERS.meander + CELL * 2 + LAKE_SHORE;
@@ -1481,6 +1484,11 @@ export class Rivers {
         let bestT = 0;
         let bestDistance = 0;
 
+        // Najwyższa woda odcinków, przy których ta kolumna jest brzegiem
+        // (do RIM bloków od koryta) - brzeg nie niżej niż ona (zakręty,
+        // progi i dopływy: woda innego odcinka obok).
+        let rimLevel = -Infinity;
+
         const px = x + 0.5;
         const pz = z + 0.5;
 
@@ -1506,7 +1514,7 @@ export class Rivers {
 
             // Na pewno dalej niż najlepszy dotąd - bez pierwiastka.
 
-            const limit = bestGap + Math.max(segments[s + 6], segments[s + 7]);
+            const limit = Math.max(bestGap, RIM) + Math.max(segments[s + 6], segments[s + 7]);
 
             if (distance2 > limit * limit) {
                 continue;
@@ -1517,6 +1525,10 @@ export class Rivers {
             const width = segments[s + 6] + (segments[s + 7] - segments[s + 6]) * t;
 
             const gap = distance - width;
+
+            if (gap < RIM) {
+                rimLevel = Math.max(rimLevel, Math.floor(segments[s + 4] + (segments[s + 5] - segments[s + 4]) * t));
+            }
 
             if (gap < bestGap) {
                 bestGap = gap;
@@ -1611,6 +1623,12 @@ export class Rivers {
 
             let level = Math.floor(segments[best + 4] + (segments[best + 5] - segments[best + 4]) * bestT);
 
+            // Poziom z samego odcinka (przed dopasowaniem do jeziora i morza)
+            // - do progów przy brzegu.
+            const segmentLevel = level;
+
+            let nearLake = false;
+
             // Przy jeziorze, do którego rzeka wpływa (albo z którego
             // wypływa), poziom rzeki dochodzi do tafli: przy wodzie
             // jeziora jest równy tafli, dalej zmienia się najwyżej jak
@@ -1628,6 +1646,10 @@ export class Rivers {
             const endEdge = nearEdge(near, endLake);
 
             if (startEdge < Infinity || endEdge < Infinity) {
+
+                // Przy jeziorze poziom rzeki dochodzi do tafli kolumna po
+                // kolumnie - brzeg o blok wyżej (jak dawniej).
+                nearLake = true;
 
                 const startWater = startEdge + Math.max(0, macro - (startLake?.level ?? 0)) * 2;
                 const endWater = endEdge + Math.max(0, macro - (endLake?.level ?? 0)) * 2;
@@ -1658,8 +1680,11 @@ export class Rivers {
 
             if (bestDistance >= reach) {
 
-                // Brzeg: teren opada do wody łagodnie, a tuż przy korycie
-                // jest co najmniej na poziomie wody.
+                // Brzeg: teren opada do wody łagodnie. Przy samej wodzie -
+                // płaski pas brzegu na poziomie wody (blok brzegu obok
+                // bloku wody, tafla tuż pod jego wierzchem), na płaskim
+                // terenie szerszy (do 2 bloków), w górach prawie żaden
+                // (stromy brzeg). Dalej teren wznosi się po "steep".
 
                 // (Dalej od rzeki dolina rozchyla się coraz szybciej - na
                 // końcu zasięgu nie ścina już terenu, więc nie ma progu.)
@@ -1668,14 +1693,27 @@ export class Rivers {
 
                 const widen = 1 + 4 * smoothstep(INFLUENCE * 0.4, INFLUENCE, gap);
 
-                height = Math.min(height, level + 1.5 + steep * gap * widen);
+                const shelf = 1.5 * (1 - smoothstep(0.2, 0.7, out.mountains ?? 0));
 
-                // Tuż przy korycie brzeg jest blok nad wodą - także tam,
-                // gdzie poziom wody zmienia się o blok (próg na rzece).
+                height = Math.min(height, level + 0.5 + steep * Math.max(0, gap - shelf) * widen);
 
-                if (!seaWater && bestDistance < width + 1.5) {
+                // Tuż przy korycie brzeg trzyma wodę: nie niżej niż woda
+                // obok - także tam, gdzie poziom wody zmienia się o blok
+                // (próg na rzece: wyższa woda 2 bloki w górę lub w dół
+                // nurtu). Nie wyżej - bez wałów wzdłuż rzeki.
 
-                    height = Math.max(height, level + 1);
+                if (!seaWater && bestDistance < width + RIM) {
+
+                    // Poziom wody rośnie w górę nurtu (także za końcem
+                    // odcinka - sąsiedni zaczyna się na tym samym poziomie):
+                    // próg do 2.5 bloku stąd - brzeg o blok wyżej.
+                    const rise = Math.abs(segments[best + 5] - segments[best + 4]) / Math.max(1, Math.hypot(segments[best + 2] - segments[best], segments[best + 3] - segments[best + 1]));
+
+                    const raw = segments[best + 4] + (segments[best + 5] - segments[best + 4]) * bestT;
+
+                    const step = nearLake ? 1 : Math.max(0, Math.floor(raw + 2.5 * rise + 0.05) - segmentLevel, rimLevel - segmentLevel);
+
+                    height = Math.max(height, level + Math.min(2, step));
 
                     out.river = 2;
 

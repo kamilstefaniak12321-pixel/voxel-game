@@ -694,6 +694,40 @@ function addPlants(plants, faceCount, baseX, baseZ) {
 
 }
 
+// Dywan (barwinek - TuftGeometry.js carpet): z których stron (bity
+// +x, +z, -x, -z) rośnie taki sam dywan albo dywan wyżej na ścianie
+// (bity 0-3, łączenie), gdzie teren opada o blok - krótka zasłona po boku
+// pełnego bloku pod dywanem (bity 4-7), a gdy niżej rośnie taki sam dywan -
+// zasłona aż do niego (bity 8-11, dywany po schodkach).
+
+const CARPET_STEPS = [[1, 1], [2, P], [4, -1], [8, -P]];
+
+function carpetMask(cell, y, group) {
+
+    let mask = 0;
+
+    for (const [bit, step] of CARPET_STEPS) {
+
+        const side = cell + step;
+
+        if (padCarpet[side] === group) {
+            mask |= bit;
+        }
+        else if (padOpaque[side]) {
+            if (y + 1 <= padTop && padCarpet[side + P_LAYER] === group) {
+                mask |= bit;
+            }
+        }
+        else if (y - 1 >= padBottom && padOpaque[cell - P_LAYER] && !padOpaque[side - P_LAYER]) {
+            mask |= padCarpet[side - P_LAYER] === group ? bit << 8 : bit << 4;
+        }
+
+    }
+
+    return mask;
+
+}
+
 // ------------------------------------------------------------
 // Generated river plants share the existing plant material and chunk batch.
 // Their cached templates carry actual surface normals and a linear albedo tint.
@@ -708,11 +742,7 @@ function addRiverPlants(plants, faceCount, baseX, baseZ, grassDetail = null, ove
         const event = overrides?.get(y * LAYER + lz * S + lx);
         if (event) animationRanges.push({ event, start: faceCount, transform });
         const cell = padIndex(lx, y, lz);
-        // Dywan: z których stron rośnie taki sam (bity +x, +z, -x, -z).
-        const mask = !grass && data.carpet
-            ? (padCarpet[cell + 1] === data.carpet ? 1 : 0) | (padCarpet[cell + P] === data.carpet ? 2 : 0) |
-                (padCarpet[cell - 1] === data.carpet ? 4 : 0) | (padCarpet[cell - P] === data.carpet ? 8 : 0)
-            : 0;
+        const mask = !grass && data.carpet ? carpetMask(cell, y, data.carpet) : 0;
         const faces = grass
             ? getBushyGrassFaces(plants[k + 3] === TALL_GRASS_ID, transform.variant, grassDetail)
             : getRiverPlantFaces(data.kind, transform.variant, data.waterlogged, data.tuft, mask);

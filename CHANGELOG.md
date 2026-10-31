@@ -11,6 +11,23 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 0.44.0 - Barwinek opada z terenem
+
+Barwinek spływa po stopniach terenu — PR #73.
+
+- **Barwinek opada z terenem**: tam, gdzie teren schodzi o blok, dywan
+  spływa zasłoną liści, pędów i kwiatów po boku bloku pod sobą - krótko,
+  z postrzępionym dołem. Gdy niżej też rośnie barwinek, zasłona schodzi
+  aż do niego, a dolny dywan łączy się z nią - **dywan idzie po schodkach
+  jednym kawałkiem**. Pęd z kobierca biegnie dalej w dół zasłony.
+- Działa sam, bez nowych bloków: ChunkMesher patrzy na stopień terenu
+  obok (także przez granicę chunka); posadzenie, zniszczenie albo
+  wykopanie bloku obok od razu zmienia zasłonę.
+- `tools/sprawdz_dywan.mjs`: zasłony tuż przed ścianą, krótka i do dywanu
+  niżej, schodki w prawdziwym ChunkMesher (108 sprawdzeń).
+- Wersja 0.44.0 wspólna dla Windowsa i Androida. Przygotowana w PR;
+  publikacja w `voxel-game-wydania` następuje przez workflow po scaleniu.
+
 ## 0.43.0 - Animacje borówki i płynny wzrost
 
 Animacje interakcji i wzrostu borówki — PR #72.

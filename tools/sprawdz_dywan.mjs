@@ -145,4 +145,42 @@ const variantAt = (x, z) => plantTransform(x, 5, z, tuft).variant;
     geometry.dispose();
 }
 
-console.log(`OK: dywan barwinka - ${checks} sprawdzeń (krawędzie i pędy sąsiadów, maski w ChunkMesher także przez granicę chunka, etapy razem, bez obrotu, celownik).`);
+// Opadanie z terenem: zasłona po boku bloku pod dywanem (bity 4-7 krótka,
+// 8-11 do dywanu niżej) - poniżej komórki, tuż przed ścianą.
+for (let variant = 0; variant < 8; variant++) {
+    const below = (list) => list.filter((face) => face.vertices.some((v) => v[1] < -1e-6));
+    const short = below(faces(1 << 4, variant));
+    const full = below(faces(1 << 8, variant));
+    check(below(faces(0, variant)).length === 0, `odmiana ${variant}: bez zasłony nic pod komórką`);
+    check(short.length > 0 && short.every((face) => face.vertices.every((v) => Math.abs(v[0] - 0.5 - 0.3 / 16) < 1e-6)), `odmiana ${variant}: krótka zasłona tuż przed ścianą +x`);
+    check(Math.min(...short.flatMap((face) => face.vertices.map((v) => v[1]))) > -0.6, `odmiana ${variant}: krótka zasłona krótka`);
+    check(Math.min(...full.flatMap((face) => face.vertices.map((v) => v[1]))) <= -1 + 1e-6, `odmiana ${variant}: zasłona do dywanu niżej - cały blok`);
+    check(edgeLength(faces(1 << 4, variant), 1) >= 10, `odmiana ${variant}: kobierzec dochodzi do krawędzi zasłony`);
+    check(faces(0xf0, variant).length <= 520, `odmiana ${variant}: zasłony z 4 stron - najwyżej 520 ścian`);
+}
+
+{
+    // Stopień terenu: barwinek na kamieniu (4, 5, 4), obok niżej (5, 4, 4)
+    // też barwinek na kamieniu (5, 3, 4).
+    const stone = R.getBlockId('stone');
+    const chunk = new Chunk(0, 0);
+    chunk.skyLight.fill(15);
+    // Teren: kamień na wysokości 3, a dla x <= 4 też na 4 (stopień przy x = 4/5).
+    for (let x = 0; x < 16; x++) for (let z = 0; z < 16; z++) {
+        chunk.setId(x, 3, z, stone);
+        if (x <= 4) chunk.setId(x, 4, z, stone);
+    }
+    chunk.setId(4, 5, 4, id);
+    const world = { getChunk: (cx, cz) => (cx === 0 && cz === 0 ? chunk : null) };
+    const lone = buildChunkGeometry(chunk, world);
+    check(plantQuads(lone) === faces(1 << 4, variantAt(4, 4)).length, 'brzeg stopnia: krótka zasłona (+x)');
+    lone.dispose();
+    chunk.setId(5, 4, 4, id);
+    const steps = buildChunkGeometry(chunk, world);
+    const lowerTransform = plantTransform(5, 4, 4, tuft);
+    const lower = getRiverPlantFaces(kind, lowerTransform.variant, false, tuft, 4).length;
+    check(plantQuads(steps) === faces(1 << 8, variantAt(4, 4)).length + lower, 'dywany po schodkach: zasłona do dywanu niżej, dolny łączy się ze ścianą');
+    steps.dispose();
+}
+
+console.log(`OK: dywan barwinka - ${checks} sprawdzeń (krawędzie i pędy sąsiadów, maski w ChunkMesher także przez granicę chunka, etapy razem, bez obrotu, celownik, zasłony po stopniach terenu).`);

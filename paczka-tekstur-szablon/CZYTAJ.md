@@ -1,4 +1,4 @@
-# Paczka tekstur - szablon (Voxel Game 0.31.0)
+# Paczka tekstur - szablon (Voxel Game 0.32.0)
 
 Oryginalne tekstury gry, każda w osobnym pliku. Zrób z nich własną paczkę:
 
@@ -158,7 +158,8 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/reed.png` | Trzcina, Turzyca rzeczna, Pałka wodna, Pałka wodna (w wodzie) |
 | `bloki/resin.png` | Żywica |
 | `bloki/rosliny/amarantus/wiecha.png` | Wiecha amarantusa |
-| `bloki/rosliny/kocanka/bukiet.png` | Młoda kocanka, Kocanka (pąki), Kocanka (kwitnie), Bukiet kocanki |
+| `bloki/rosliny/kocanka/bukiet.png` | Bukiet kocanki |
+| `bloki/rosliny/lawenda/bukiet.png` | Bukiet lawendy |
 | `bloki/sand.png` | Piasek |
 | `bloki/sandstone_side.png` | Piaskowiec |
 | `bloki/sandstone_top.png` | Piaskowiec |

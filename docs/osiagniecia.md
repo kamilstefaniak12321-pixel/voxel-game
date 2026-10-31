@@ -47,6 +47,7 @@ tylko jako *Sekretne osiągnięcie* ze znakiem zapytania.
 | zwykłe | Borówkowy język | zbierz borówki z krzaka (bory i świerczyny) |
 | zwykłe | Wyższy od ciebie | zbierz wiechy z dojrzałego amarantusa (łąki, roślina z paczki roślin) |
 | zwykłe | Nieśmiertelnik | zbierz bukiet z kwitnącej kocanki (piasek w borach i na plażach, roślina z paczki roślin) |
+| zwykłe | Zapach lata | zbierz bukiet z kwitnącej lawendy (łąki i hale, roślina z paczki roślin) |
 | rzadkie | Murarz | postaw 500 bloków (postęp liczy się w księdze) |
 | rzadkie | Głębinowiec | zanurkuj 10 bloków pod powierzchnię |
 | rzadkie | Ponad chmurami | wzleć na wysokość 1000 |

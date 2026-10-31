@@ -370,13 +370,23 @@ plażach (numery bloków od 5000). PPM na kwitnącej - **bukiet kocanki**
 
 ![Kocanka piaskowa - trzy etapy na piasku](docs/rosliny-kocanka.png)
 
+Trzecia: **lawenda** - krzaczek z pikseli (do 15 pikseli wysokości,
+prawie blok): gęsta kępa wąskich liści wokół niskiej kopułki z kostek
+(jak mały blok liści), z niej wachlarz rozchylonych łodyg z **fioletowymi
+kłosami** (kwiatki z boku na zmianę, ciemny dół, jasny czubek). Pąki
+w ciemniejszym fiolecie. Rośnie plamami na łąkach i halach. PPM na
+kwitnącej - **bukiet lawendy**. Osiągnięcie *Zapach lata*.
+
+![Lawenda - krzaczki z kłosami, obok kocanka](docs/rosliny-lawenda.png)
+
 - Tekstury z dużych atlasów "pixel art" robi
   `tools/rosliny_z_atlasu.py` (siatka pikseli rysunku, zmniejszanie bez
   mieszania kolorów, wszystkie etapy w tej samej skali).
 - **Test:** `/rosliny`, `/rosliny amarantus`, `/rosliny ogrod`,
   `/rosliny znajdz amarantus`, `/krzaki rosnij 2`, `/daj amarantus_etap1 5`,
   `/rosliny kocanka`, `/rosliny ogrod kocanka`, `/daj kocanka_etap3 5`
-  (sadzi się na piasku i trawie).
+  (sadzi się na piasku i trawie), `/rosliny ogrod lawenda`,
+  `/rosliny znajdz lawenda`, `/daj lawenda_etap3 5`.
 - Instrukcja, rozmiary i plan dla wszystkich 28 roślin z atlasów:
   [`docs/rosliny.md`](docs/rosliny.md).
 

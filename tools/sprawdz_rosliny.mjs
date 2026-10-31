@@ -44,6 +44,10 @@ function pngSize(path) {
 let stages = 0;
 let tuftFaces = 0;
 
+// Najwięcej ścian jednej odmiany kępki (krzaczek z kępą liści, łodygami
+// i kłosami - lawenda - ma ok. 450; mała kocanka do 290).
+const TUFT_FACE_LIMIT = 520;
+
 for (const pack of P.PLANT_PACKS) {
 
     const types = pack.stages.map((_, i) => P.plantStageType(pack, i));
@@ -76,7 +80,7 @@ for (const pack of P.PLANT_PACKS) {
 
             for (let variant = 0; variant < 8; variant++) {
                 const faces = getRiverPlantFaces(definition.riverPlant.kind, variant, false, stage.tuft);
-                assert.ok(faces.length > 0 && faces.length <= 320, `${type}: odmiana ${variant} ma ${faces.length} ścian (najwyżej 320)`);
+                assert.ok(faces.length > 0 && faces.length <= TUFT_FACE_LIMIT, `${type}: odmiana ${variant} ma ${faces.length} ścian (najwyżej ${TUFT_FACE_LIMIT})`);
                 const top = Math.max(...faces.flatMap((face) => face.vertices.map((v) => v[1])));
                 const side = Math.max(...faces.flatMap((face) => face.vertices.map((v) => Math.max(Math.abs(v[0]), Math.abs(v[2])))));
                 assert.ok(top <= definition.plant.height + 1e-6, `${type}: odmiana ${variant} nie wyższa niż ${definition.plant.height}`);
@@ -139,6 +143,16 @@ const everlast = P.getPlantPack('kocanka');
 assert.ok(everlast && everlast.stages.every((stage) => stage.tuft), 'kocanka - same kępki');
 assert.equal(R.getBlockId('kocanka_etap1'), 5000, 'kocanka od numeru 5000');
 assert.ok(R.BLOCK_TYPES.kocanka_etap3.plant.height <= 0.75, 'kocanka niska (najwyżej 3/4 bloku)');
+
+// Lawenda - krzaczek: kępa liści, rozchylone łodygi z kłosami, numery
+// zaraz po kocance.
+const lavender = P.getPlantPack('lawenda');
+assert.ok(lavender && lavender.stages.every((stage) => stage.tuft?.leaves.layout === 'kepa'), 'lawenda - kępa liści');
+assert.equal(R.getBlockId('lawenda_etap1'), 5003, 'lawenda od numeru 5003');
+assert.equal(lavender.stages[2].tuft.flower.kind, 'klos', 'lawenda kwitnie kłosami');
+assert.ok(lavender.stages[2].tuft.stems.spread, 'łodygi lawendy rozchylone');
+assert.ok(R.BLOCK_TYPES.lawenda_etap3.plant.height <= 1, 'lawenda najwyżej blok');
+assert.notDeepEqual(lavender.stages[1].tuft.colors.flower, lavender.stages[2].tuft.colors.flower, 'pąki w kolorach etapu, kwiaty w kolorach paczki');
 
 // Amarantus - pierwsza roślina: 2 bloki wysokości, czerwona lampa.
 const amaranth = P.getPlantPack('amarantus');

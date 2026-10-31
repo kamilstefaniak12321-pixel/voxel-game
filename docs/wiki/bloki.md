@@ -2,7 +2,7 @@
 
 > Ta strona jest generowana z kodu gry (`python tools/wiki.py`) - nie zmieniaj jej ręcznie, zmiany przepadną przy następnym generowaniu.
 
-Wersja gry **0.32.0** - 136 bloków (do tego 5 odmian, których nie ma w ekwipunku, np. wieniec zawieszony na boku bloku). Czas kopania dotyczy trybu przygody; w kreatywnym bloki znikają od razu.
+Wersja gry **0.33.0** - 139 bloków (do tego 5 odmian, których nie ma w ekwipunku, np. wieniec zawieszony na boku bloku). Czas kopania dotyczy trybu przygody; w kreatywnym bloki znikają od razu.
 
 [Ziemia](#ziemia) · [Skały](#skały) · [Drewno](#drewno) · [Budulec](#budulec) · [Rośliny](#rośliny) · [Światło](#światło) · [Ozdoby](#ozdoby)
 
@@ -155,6 +155,9 @@ Wersja gry **0.32.0** - 136 bloków (do tego 5 odmian, których nie ma w ekwipun
 | <img src="ikony/lawenda_etap1.png" width="32" height="32" alt=""> | **Młoda lawenda** | `lawenda_etap1` | **Kopanie:** od razu<br>**Rośnie:** w: Lawenda (pąki)<br>**Skąd:** zniszczony blok: Lawenda (pąki); zniszczony blok: Lawenda (kwitnie) |
 | <img src="ikony/lawenda_etap2.png" width="32" height="32" alt=""> | **Lawenda (pąki)** | `lawenda_etap2` | **Kopanie:** od razu<br>**Daje:** Młoda lawenda<br>**Rośnie:** w: Lawenda (kwitnie)<br>**Skąd:** wyrasta z: Młoda lawenda |
 | <img src="ikony/lawenda_etap3.png" width="32" height="32" alt=""> | **Lawenda (kwitnie)** | `lawenda_etap3` | **Kopanie:** od razu<br>**Daje:** Młoda lawenda<br>**Zbiór (PPM):** Bukiet lawendy 1-2<br>**Skąd:** wyrasta z: Lawenda (pąki) |
+| <img src="ikony/piwonia_etap1.png" width="32" height="32" alt=""> | **Młoda piwonia** | `piwonia_etap1` | **Kopanie:** od razu<br>**Rośnie:** w: Piwonia (pąki)<br>**Skąd:** zniszczony blok: Piwonia (pąki); zniszczony blok: Piwonia (kwitnie) |
+| <img src="ikony/piwonia_etap2.png" width="32" height="32" alt=""> | **Piwonia (pąki)** | `piwonia_etap2` | **Kopanie:** od razu<br>**Daje:** Młoda piwonia<br>**Rośnie:** w: Piwonia (kwitnie)<br>**Skąd:** wyrasta z: Młoda piwonia |
+| <img src="ikony/piwonia_etap3.png" width="32" height="32" alt=""> | **Piwonia (kwitnie)** | `piwonia_etap3` | **Kopanie:** od razu<br>**Daje:** Młoda piwonia<br>**Zbiór (PPM):** Kwiat piwonii 1-2<br>**Skąd:** wyrasta z: Piwonia (pąki) |
 
 ## Światło
 

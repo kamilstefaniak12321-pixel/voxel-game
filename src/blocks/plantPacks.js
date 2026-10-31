@@ -155,12 +155,12 @@ function png(file, what) {
 
 export const TUFT_COLOR_NAMES = {
     lisc: 'leaf', liscJasny: 'leafLight', liscCiemny: 'leafDark', lodyga: 'stem',
-    kwiat: 'flower', kwiatJasny: 'flowerLight', kwiatCiemny: 'flowerDark', pak: 'bud'
+    kwiat: 'flower', kwiatJasny: 'flowerLight', kwiatCiemny: 'flowerDark', pak: 'bud', srodek: 'center'
 };
 
 const TUFT_DEFAULT_COLORS = {
     lisc: '#7f8a55', liscJasny: '#a3ab78', liscCiemny: '#59603a', lodyga: '#6b6338',
-    kwiat: '#ddbc79', kwiatJasny: '#ecd59a', kwiatCiemny: '#b08948', pak: '#b9b57e'
+    kwiat: '#ddbc79', kwiatJasny: '#ecd59a', kwiatCiemny: '#b08948', pak: '#b9b57e', srodek: '#e8c25a'
 };
 
 function hexColor(value, what) {
@@ -207,14 +207,20 @@ function parseTuft(model, what, seedText, packColors) {
     const stems = model.lodygi ?? {};
     const flower = model.kwiaty ?? null;
 
-    if (flower !== null && (typeof flower !== 'object' || !['baldach', 'klos', 'pak'].includes(flower.rodzaj))) {
-        fail(`"${what}.kwiaty": null albo { "rodzaj": "baldach" | "klos" | "pak", "rozmiar": ... }`);
+    if (flower !== null && (typeof flower !== 'object' || !FLOWER_SIZES[flower.rodzaj])) {
+        fail(`"${what}.kwiaty": null albo { "rodzaj": ${Object.keys(FLOWER_SIZES).map((kind) => `"${kind}"`).join(' | ')}, "rozmiar": ... }`);
     }
 
     const layout = leaves.uklad ?? 'rozeta';
 
-    if (!['rozeta', 'kepa'].includes(layout)) {
-        fail(`"${what}.liscie.uklad": "rozeta" (przy ziemi) albo "kepa" (stojące liście)`);
+    if (!['rozeta', 'kepa', 'krzak', 'brak'].includes(layout)) {
+        fail(`"${what}.liscie.uklad": "rozeta" (przy ziemi), "kepa" (stojące liście), "krzak" (kopułka liści) albo "brak"`);
+    }
+
+    const stemLeaves = stems.liscie;
+
+    if (stemLeaves !== undefined && (stemLeaves === null || typeof stemLeaves !== 'object')) {
+        fail(`"${what}.lodygi.liscie": { "co": 1-6, "dlugosc": [od, do] }`);
     }
 
     if (stems.rozchylone !== undefined && typeof stems.rozchylone !== 'boolean') {
@@ -245,14 +251,13 @@ function parseTuft(model, what, seedText, packColors) {
             count: pixelRange(stems.ile, [0, 0], `${what}.lodygi.ile`, 0, 12),
             height: pixelRange(stems.wysokosc, [4, 6], `${what}.lodygi.wysokosc`, 1, 24),
             radius: stems.promien === undefined ? 3 : number(stems.promien, `${what}.lodygi.promien`, 0, 6),
-            spread: stems.rozchylone === true
+            spread: stems.rozchylone === true,
+            leaves: stemLeaves ? {
+                every: stemLeaves.co === undefined ? 2 : number(stemLeaves.co, `${what}.lodygi.liscie.co`, 1, 6),
+                length: pixelRange(stemLeaves.dlugosc, [2, 3], `${what}.lodygi.liscie.dlugosc`, 1, 5)
+            } : null
         },
-        flower: flower && {
-            kind: flower.rodzaj,
-            size: flower.rozmiar === undefined
-                ? (flower.rodzaj === 'klos' ? 3 : 1)
-                : number(flower.rozmiar, `${what}.kwiaty.rozmiar`, 1, flower.rodzaj === 'klos' ? 6 : 2)
-        },
+        flower: flower && flowerSizes(flower, `${what}.kwiaty`),
         colors,
         seed
     };
@@ -269,13 +274,28 @@ function parseTuft(model, what, seedText, packColors) {
 // wysokości, w promieniu, odchylone o 3), łodygi z kwiatami (kłos ma
 // kwiatki o 1 z boku).
 
-const FLOWER_HEIGHT = { baldach: () => 2, klos: (size) => size, pak: () => 1 };
-const FLOWER_SIDE = { baldach: (size) => size, klos: (size) => (size >= 3 ? 1 : 0), pak: () => 0 };
+const FLOWER_HEIGHT = { baldach: () => 2, klos: (size) => size, pak: (size) => size, pompon: (size) => size + 2 };
+const FLOWER_SIDE = { baldach: (size) => size, klos: (size) => (size >= 3 ? 1 : 0), pak: (size) => size - 1, pompon: (size) => size };
+
+// Kwiaty: rodzaj -> [domyślny rozmiar, najmniejszy, największy];
+// "rozmiar" to liczba albo [od, do] (każda łodyga losuje).
+const FLOWER_SIZES = { baldach: [1, 1, 2], klos: [3, 1, 6], pak: [1, 1, 2], pompon: [1, 1, 2] };
+
+function flowerSizes(flower, what) {
+
+    const [fallback, min, max] = FLOWER_SIZES[flower.rodzaj];
+    const sizes = Array.isArray(flower.rozmiar)
+        ? pixelRange(flower.rozmiar, null, `${what}.rozmiar`, min, max)
+        : [flower.rozmiar === undefined ? fallback : number(flower.rozmiar, `${what}.rozmiar`, min, max)];
+
+    return { kind: flower.rodzaj, sizes: [sizes[0], sizes[sizes.length - 1]], size: sizes[sizes.length - 1] };
+
+}
 
 function tuftPixels(tuft) {
 
     const flower = tuft.flower ? FLOWER_HEIGHT[tuft.flower.kind](tuft.flower.size) : 0;
-    const leaves = tuft.leaves.layout === 'kepa' ? tuft.leaves.length[1] : tuft.leaves.length[1] + 1;
+    const leaves = { kepa: tuft.leaves.length[1], rozeta: tuft.leaves.length[1] + 1, krzak: tuft.leaves.length[1] + 1, brak: 0 }[tuft.leaves.layout];
 
     return Math.max(leaves, 2, tuft.stems.count[1] > 0 ? tuft.stems.height[1] + flower : 0);
 
@@ -284,9 +304,10 @@ function tuftPixels(tuft) {
 function tuftWidth(tuft) {
 
     const flower = tuft.flower ? FLOWER_SIDE[tuft.flower.kind](tuft.flower.size) : 0;
-    const leaves = tuft.leaves.layout === 'kepa' ? tuft.leaves.radius + 3 + 1 : tuft.leaves.length[1] + 1;
+    const leaves = { kepa: tuft.leaves.radius + 3 + 1, rozeta: tuft.leaves.length[1] + 1, krzak: tuft.leaves.radius + 2 + 1, brak: 0 }[tuft.leaves.layout];
+    const stemLeaf = tuft.stems.leaves ? tuft.stems.leaves.length[1] : 0;
 
-    return 2 * Math.max(leaves, 4, tuft.stems.count[1] > 0 ? tuft.stems.radius + flower + 1 : 0);
+    return 2 * Math.max(leaves, 4, tuft.stems.count[1] > 0 ? tuft.stems.radius + Math.max(flower, stemLeaf) + 1 : 0);
 
 }
 

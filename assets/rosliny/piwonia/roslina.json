@@ -1,0 +1,59 @@
+{
+    "nazwa": "Piwonia",
+    "nazwaAngielska": "Peony",
+    "opis": "obszerny krzak z dużymi, kulistymi, pudrowo różowymi kwiatami; rośnie na skrajach lasów liściastych i w brzezinach",
+    "pierwszeId": 5006,
+    "etapy": [
+        {
+            "nazwa": "Młoda piwonia",
+            "model": {
+                "rodzaj": "kepka",
+                "liscie": { "uklad": "krzak", "promien": 2, "dlugosc": [2, 2] },
+                "lodygi": { "ile": [3, 4], "wysokosc": [4, 6], "promien": 2, "rozchylone": true, "liscie": { "co": 2, "dlugosc": [2, 3] } }
+            }
+        },
+        {
+            "nazwa": "Piwonia (pąki)",
+            "model": {
+                "rodzaj": "kepka",
+                "liscie": { "uklad": "krzak", "promien": 3, "dlugosc": [3, 4] },
+                "lodygi": { "ile": [4, 5], "wysokosc": [5, 7], "promien": 3, "rozchylone": true, "liscie": { "co": 2, "dlugosc": [2, 3] } },
+                "kwiaty": { "rodzaj": "pak", "rozmiar": 2 }
+            }
+        },
+        {
+            "nazwa": "Piwonia (kwitnie)",
+            "model": {
+                "rodzaj": "kepka",
+                "liscie": { "uklad": "krzak", "promien": 4, "dlugosc": [4, 5] },
+                "lodygi": { "ile": [3, 5], "wysokosc": [6, 8], "promien": 4, "rozchylone": true, "liscie": { "co": 2, "dlugosc": [2, 3] } },
+                "kwiaty": { "rodzaj": "pompon", "rozmiar": [1, 2] }
+            }
+        }
+    ],
+    "kolory": {
+        "lisc": "#3f8a35",
+        "liscJasny": "#66a843",
+        "liscCiemny": "#2a6328",
+        "lodyga": "#4f7a2c",
+        "kwiat": "#de84a5",
+        "kwiatJasny": "#f5b2c7",
+        "kwiatCiemny": "#c6658b",
+        "pak": "#d37398",
+        "srodek": "#edbe73"
+    },
+    "czasWzrostu": 360,
+    "przedmiot": {
+        "klucz": "kwiat",
+        "plik": "kwiat.png",
+        "nazwa": "Kwiat piwonii",
+        "nazwaAngielska": "Peony Bloom",
+        "kategoria": "ozdoby"
+    },
+    "zbior": { "ile": [1, 2], "wraca": 2 },
+    "gdzieRosnie": { "biomy": ["las", "brzezina"], "plamy": 0.02, "gestosc": 0.3, "etapy": [0.2, 0.25, 0.55] },
+    "zrodlo": {
+        "atlas": "Atlas tekstur piwonii pudrowej.png",
+        "przedmiot": "kwiat: --wysokosc 16 --nazwy etap1,etap2,etap3,kwiat; etapy - model z pikseli (kępka: łodygi z liśćmi, pąki, pompony) w kolorach atlasu"
+    }
+}

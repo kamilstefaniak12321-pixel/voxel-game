@@ -44,8 +44,8 @@ function pngSize(path) {
 let stages = 0;
 let tuftFaces = 0;
 
-// Najwięcej ścian jednej odmiany kępki (krzaczek z kępą liści, łodygami
-// i kłosami - lawenda - ma ok. 450; mała kocanka do 290).
+// Najwięcej ścian jednej odmiany kępki (krzaczki z liśćmi, łodygami
+// i kwiatami - lawenda, piwonia - mają ok. 400-490; mała kocanka do 290).
 const TUFT_FACE_LIMIT = 520;
 
 for (const pack of P.PLANT_PACKS) {
@@ -153,6 +153,15 @@ assert.equal(lavender.stages[2].tuft.flower.kind, 'klos', 'lawenda kwitnie kłos
 assert.ok(lavender.stages[2].tuft.stems.spread, 'łodygi lawendy rozchylone');
 assert.ok(R.BLOCK_TYPES.lawenda_etap3.plant.height <= 1, 'lawenda najwyżej blok');
 assert.notDeepEqual(lavender.stages[1].tuft.colors.flower, lavender.stages[2].tuft.colors.flower, 'pąki w kolorach etapu, kwiaty w kolorach paczki');
+
+// Piwonia - krzak: kopułka liści, liście na łodygach, pąki i pompony
+// różnej wielkości.
+const peony = P.getPlantPack('piwonia');
+assert.ok(peony && peony.stages.every((stage) => stage.tuft?.leaves.layout === 'krzak' && stage.tuft.stems.leaves), 'piwonia - krzak z liśćmi na łodygach');
+assert.equal(R.getBlockId('piwonia_etap1'), 5006, 'piwonia od numeru 5006');
+assert.deepEqual(peony.stages[2].tuft.flower, { kind: 'pompon', sizes: [1, 2], size: 2 }, 'piwonia kwitnie pomponami 1-2');
+assert.deepEqual(peony.stages[1].tuft.flower.sizes, [2, 2], 'okrągłe pąki piwonii');
+assert.ok(R.BLOCK_TYPES.piwonia_etap3.plant.height <= 1 && R.BLOCK_TYPES.piwonia_etap3.plant.width <= 0.5, 'piwonia mieści się w bloku');
 
 // Amarantus - pierwsza roślina: 2 bloki wysokości, czerwona lampa.
 const amaranth = P.getPlantPack('amarantus');

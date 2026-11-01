@@ -1,0 +1,78 @@
+{
+  "device": {
+    "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 3050 Laptop GPU (0x000025A2) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "buffer": [
+      1920,
+      1080
+    ],
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.7977.130 Electron/44.4.5 Safari/537.36"
+  },
+  "checks": [
+    {
+      "name": "16 distinct texture frames, shared atlas 256x20",
+      "ok": true
+    },
+    {
+      "name": "square ash footprint, 14 by 14 pixels",
+      "ok": true
+    },
+    {
+      "name": "no shader errors with animated texture",
+      "ok": true
+    }
+  ],
+  "errors": [],
+  "results": [],
+  "fireStates": [
+    {
+      "x": -1,
+      "y": 61,
+      "z": 0,
+      "logs": [
+        {
+          "wood": "birch",
+          "burn": 0.37000374999998137
+        },
+        {
+          "wood": "birch",
+          "burn": 0.37000374999998137
+        },
+        {
+          "wood": "birch",
+          "burn": 0.37000374999998137
+        },
+        {
+          "wood": "birch",
+          "burn": 0.37000374999998137
+        },
+        {
+          "wood": "birch",
+          "burn": 0.37000374999998137
+        },
+        {
+          "wood": "birch",
+          "burn": 0.37000374999998137
+        }
+      ],
+      "tinder": null,
+      "phase": "burning",
+      "ignition": 1,
+      "collapse": 0,
+      "embers": 0,
+      "ash": false
+    },
+    {
+      "x": 2,
+      "y": 61,
+      "z": 0,
+      "logs": [],
+      "tinder": null,
+      "phase": "unlit",
+      "ignition": 0,
+      "collapse": 0,
+      "embers": 51.398200000004,
+      "ash": true
+    }
+  ],
+  "draws": 18
+}

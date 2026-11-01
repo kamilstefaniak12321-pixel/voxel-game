@@ -11,6 +11,13 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 0.51.1 - Animowana tekstura ognia i kwadratowy popiół
+
+Korekta wyglądu ognisk po 0.51.0 — numer PR zostanie uzupełniony.
+
+- Płomień animowany 16 klatkami tekstury przy 12 klatkach/s, z falowaniem modelu zmniejszonym o połowę.
+- Wypalone ognisko ma bardziej kwadratowy, pikselowy obrys popiołu i prostokątny układ węgli.
+
 ## 0.51.0 - Ogniska budowane z opału
 
 Nowa mechanika ognisk — PR #83.
@@ -19,7 +26,6 @@ Nowa mechanika ognisk — PR #83.
 - Budowanie w świecie: 6 polan, trawa na podpałkę i starter z dwóch patyków. Przytrzymanie PPM przez 5 sekund stopniowo rozpala ogień. Ognisko nie jest przedmiotem ekwipunku.
 - Około 8 minut spalania, płynne zwęglanie i żarzące szczeliny. Wypalone polana osiadają w popiół z powoli gasnącymi węglami. Ponowne rozpalenie wymaga 6 świeżych opałów i nowej podpałki.
 - Animowany ogień, delikatny dym, rzadkie iskry i ciepłe migoczące światło z cieniami terenu oraz roślin. Koszt efektów ograniczają wspólna pula drobin i przechowywane mapy cieni.
-- Płomień animowany klatkami tekstury, z falowaniem modelu zmniejszonym o połowę. Wypalone ognisko ma bardziej kwadratowy, pikselowy obrys popiołu i układ węgli.
 - Zapis stanu ogniska; odzyskiwanie świeżego opału przy rozbiórce, także przez usunięcie podłoża. Pełny ekwipunek blokuje rozbiórkę zamiast gubić opał.
 - Opały i starter mają modele 3D w ekwipunku oraz dłoni. Dotykowy przycisk „Postaw” obsługuje przytrzymanie do rozpalania.
 

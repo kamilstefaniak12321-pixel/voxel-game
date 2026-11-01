@@ -24,8 +24,6 @@ Poniższe kadry zapisano bezpośrednio z renderera natywnej gry, po końcowej ko
 
 ![Światło ogniska oraz cienie kamienia, drewna i rośliny](swiatlo-cienie.png)
 
-Korekta po ocenie podglądu: główny ruch płomienia przeniesiono na 16 klatek tekstury (12 klatek/s), a przemieszczenie modelu zmniejszono o 50% w obu osiach. Popiół ma kwadratowy, schodkowy obrys, a węgle układ prostokątny. `tekstura-popiol.json` potwierdza w natywnej grze 16 różnych klatek w atlasie 256 × 20, kwadratowy obrys 14 × 14 pikseli i brak błędów shaderów. Ponownie przeszły 86 sprawdzeń ognisk i dotyku. Powyższe pomiary wydajności pochodzą sprzed tej korekty; atlas powstaje jednorazowo, a animacja nie dodaje wywołań rysowania.
-
-![Animowana tekstura i kwadratowy popiół po korekcie](tekstura-popiol.png)
+Późniejszą korektę tekstury płomienia i kształtu popiołu sprawdzono osobno w [0.51.1](../ogniska-0.51.1/README.md).
 
 Uruchom serwer `node docs/pomiary/ogniska-0.51.0/serve-campfire-qa.cjs`, a następnie zainstalowanym Electronem `campfire-native-launcher.cjs` z tego folderu. Launcher ma osobny profil w katalogu tymczasowym. Przyciski panelu sterują scenami i zapisują wyniki do `wyniki/`. Nie wchodzą do instalatora gry. Przyspieszenie spalania działa wyłącznie w skrypcie prób.

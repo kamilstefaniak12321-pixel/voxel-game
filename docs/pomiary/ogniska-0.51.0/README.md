@@ -24,4 +24,6 @@ Poniższe kadry zapisano bezpośrednio z renderera natywnej gry, po końcowej ko
 
 ![Światło ogniska oraz cienie kamienia, drewna i rośliny](swiatlo-cienie.png)
 
+Późniejszą korektę tekstury płomienia i kształtu popiołu sprawdzono osobno w [0.51.1](../ogniska-0.51.1/README.md).
+
 Uruchom serwer `node docs/pomiary/ogniska-0.51.0/serve-campfire-qa.cjs`, a następnie zainstalowanym Electronem `campfire-native-launcher.cjs` z tego folderu. Launcher ma osobny profil w katalogu tymczasowym. Przyciski panelu sterują scenami i zapisują wyniki do `wyniki/`. Nie wchodzą do instalatora gry. Przyspieszenie spalania działa wyłącznie w skrypcie prób.

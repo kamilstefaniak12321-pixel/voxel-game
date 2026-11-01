@@ -5,6 +5,7 @@ import { blockAtlasTexture, getAtlasUV } from './TextureAtlas.js';
 import { CampfireLight } from './CampfireLight.js';
 import { fireIntensity } from '../game/CampfireState.js';
 import { atmosphericLightToBrightness } from './LightPolicy.js';
+import { FLAME_FRAMES, FLAME_FPS, makeFlameAtlas } from './CampfireFlame.js';
 
 const VIEW_RANGE = 72, MAX_VISIBLE = 32, PARTICLES = 96;
 const smooth = t => t * t * (3 - 2 * t);
@@ -63,26 +64,40 @@ export class CampfireRenderer {
         this.game = game; this.views = new Map(); this.geometry = new Map(); this.time = 0;
         this.light = new CampfireLight(game.renderer);
         this.flameTime = { value: 0 };
-        this.fireTexture = new THREE.TextureLoader().load(new URL('../../assets/models/campfire/plomienie.png', import.meta.url).href);
+        this.fireTexture = new THREE.TextureLoader().load(new URL('../../assets/models/campfire/plomienie.png', import.meta.url).href, texture => {
+            texture.image = makeFlameAtlas(texture.image);
+            texture.needsUpdate = true;
+        });
         this.fireTexture.magFilter = this.fireTexture.minFilter = THREE.NearestFilter;
         this.fireTexture.generateMipmaps = false; this.fireTexture.colorSpace = THREE.SRGBColorSpace;
-        // Approved flame silhouette occupies the top-left 16 x 20 pixels.
         this.flameGeometry = new THREE.PlaneGeometry(1, 1.25, 1, 10);
         this.flameGeometry.translate(0, .625, 0);
-        const uv = this.flameGeometry.attributes.uv;
-        for (let i=0;i<uv.count;i++) uv.setXY(i, uv.getX(i)*.5, .375 + uv.getY(i)*.625);
         this.flameMaterial = new THREE.MeshBasicMaterial({map:this.fireTexture, alphaTest:.5, side:THREE.DoubleSide, toneMapped:false});
         this.flameMaterial.onBeforeCompile = shader => {
             shader.uniforms.uFlameTime = this.flameTime;
-            shader.vertexShader = shader.vertexShader.replace('#include <common>', '#include <common>\nuniform float uFlameTime;')
+            shader.vertexShader = shader.vertexShader.replace('#include <common>', '#include <common>\nuniform float uFlameTime; varying float vFlamePhase;')
                 .replace('#include <begin_vertex>', `#include <begin_vertex>
+                    vFlamePhase = floor(fract(sin(dot(modelMatrix[3].xz, vec2(12.9898,78.233))) * 43758.5453) * ${FLAME_FRAMES}.0);
                     float h = max(position.y, 0.0);
-                    transformed.x += floor(sin(h * 6.0 - uFlameTime * 6.0 + modelMatrix[3].x) * h * 2.0) / 32.0;
-                    transformed.y *= .93 + .07 * sin(uFlameTime * 8.0 + position.x * 5.0 + modelMatrix[3].z);
+                    // Half the previous displacement: texture frames carry the animation.
+                    transformed.x += floor(sin(h * 6.0 - uFlameTime * 6.0 + modelMatrix[3].x) * h * 2.0) / 64.0;
+                    transformed.y *= .965 + .035 * sin(uFlameTime * 8.0 + position.x * 5.0 + modelMatrix[3].z);
+                `);
+            shader.fragmentShader = shader.fragmentShader.replace('#include <common>', '#include <common>\nuniform float uFlameTime; varying float vFlamePhase;')
+                .replace('#include <map_fragment>', `
+                    float frame = mod(floor(uFlameTime * ${FLAME_FPS}.0) + vFlamePhase, ${FLAME_FRAMES}.0);
+                    vec2 pixelUV = (floor(clamp(vMapUv, 0.0, .99999) * vec2(16.0,20.0)) + .5) / vec2(16.0,20.0);
+                    diffuseColor *= texture2D(map, vec2((frame + pixelUV.x) / ${FLAME_FRAMES}.0, pixelUV.y));
                 `);
         };
-        this.flameMaterial.customProgramCacheKey = () => 'campfire-flame-v1';
-        this.ashGeometry = new THREE.CylinderGeometry(.43, .48, .055, 8);
+        this.flameMaterial.customProgramCacheKey = () => 'campfire-flame-flipbook-v2';
+        // A square, pixel-stepped footprint instead of a round mound.
+        const ashOutline = new THREE.Shape([
+            [-7,-5],[-6,-5],[-6,-7],[5,-7],[5,-6],[7,-6],
+            [7,5],[6,5],[6,7],[-5,7],[-5,6],[-7,6]
+        ].map(([x,z]) => new THREE.Vector2(x/16,z/16)));
+        this.ashGeometry = new THREE.ExtrudeGeometry(ashOutline,{depth:1/16,bevelEnabled:false,steps:1});
+        this.ashGeometry.rotateX(-Math.PI/2);
         this.ashMaterial = new THREE.MeshLambertMaterial({color:0x615a51, flatShading:true});
         this.coalGeometry = new THREE.BoxGeometry(1/8, 1/16, 3/16);
         this.tinderGeometry = new THREE.BoxGeometry(.36, .035, .3);
@@ -120,13 +135,14 @@ export class CampfireRenderer {
             if(i>1) mesh.scale.set(.85,.6,.85);
             flames.add(mesh);
         }
-        const ash = new THREE.Mesh(this.ashGeometry,this.ashMaterial); ash.position.y=.028;
+        const ash = new THREE.Mesh(this.ashGeometry,this.ashMaterial);
         const coalMaterial = new THREE.MeshLambertMaterial({color:0x231d19,emissive:0xff3406});
         const coals = new THREE.Group();
-        for(let i=0;i<9;i++) {
+        const coalPositions = [[-4,-3],[-1,-4],[3,-4],[-4,0],[0,0],[4,0],[-3,4],[1,3],[4,4]];
+        for(let i=0;i<coalPositions.length;i++) {
             const coal = new THREE.Mesh(this.coalGeometry,coalMaterial);
-            const angle=i*2.4; coal.position.set(Math.sin(angle)*.26,.06,Math.cos(angle)*.26);
-            coal.rotation.y=angle; coals.add(coal);
+            const [x,z]=coalPositions[i]; coal.position.set(x/16,3/32,z/16);
+            coal.rotation.y=(i%3)*Math.PI/2; coals.add(coal);
         }
         const tinder = new THREE.Mesh(this.tinderGeometry,this.tinderMaterial); tinder.position.y=.27;
         group.add(flames,ash,coals,tinder); this.game.scene.add(group);

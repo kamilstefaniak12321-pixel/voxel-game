@@ -75,4 +75,22 @@ button('Test podpory i wody',async()=>{
  checks.push({name:'support with full inventory',ok:a},{name:'support returns fuel',ok:b},{name:'cannot place underwater',ok:c});
  await report('support');status.textContent='Podpora i woda: '+[a,b,c].join(', ');
 });
+button('Tekstura i kwadratowy popiół',async()=>{
+ clear();put(-1,0,'birch',.3);const ash=put(2,0);updateCampfire(ash,600);
+ ash.embers=85;teleport(1,62,4,-.5);point='texture-ash';
+ await pause(600);
+ const renderer=game.campfires.renderer,image=renderer.fireTexture.image;
+ const pixels=image.getContext('2d').getImageData(0,0,image.width,image.height).data;
+ const frames=[];
+ for(let frame=0;frame<16;frame++){
+   const values=[];
+   for(let y=0;y<20;y++)for(let x=0;x<16;x++)values.push(...pixels.slice((y*image.width+frame*16+x)*4,(y*image.width+frame*16+x)*4+4));
+   frames.push(values.join(','));
+ }
+ checks.push({name:'16 distinct texture frames, shared atlas 256x20',ok:image.width===256&&image.height===20&&new Set(frames).size===16});
+ renderer.ashGeometry.computeBoundingBox();const box=renderer.ashGeometry.boundingBox;
+ checks.push({name:'square ash footprint, 14 by 14 pixels',ok:Math.abs(box.max.x-box.min.x-.875)<1e-6&&Math.abs(box.max.z-box.min.z-.875)<1e-6});
+ checks.push({name:'no shader errors with animated texture',ok:errors.length===0});
+ await report('texture-ash');status.textContent='Tekstura: 16 klatek / 12 FPS; kwadratowy popiół';
+});
 await import('/src/main.js');

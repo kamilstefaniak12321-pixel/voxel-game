@@ -232,11 +232,13 @@ się tam naprawdę (`generator.farSurface`), ale bez pojedynczych bloków.
 
 - *mapa cieni* - świat narysowany „oczami słońca” (kamera ortograficzna
   z kierunku światła, sama głębia) w teksturze 1024 albo 2048 pikseli
-  na 32 albo 64 bloki wokół gracza - zawsze **16 pikseli na blok**, tyle
-  co tekstura bloku,
-- shader bloków dla każdego piksela ściany bierze **środek piksela
-  tekstury** (1/16 bloku) i sprawdza w mapie, czy coś zasłania słońce -
-  dlatego brzeg cienia jest pikselowy, jak w „Vibrant Visuals”,
+  na 32 albo 64 bloki wokół gracza — **16 próbek na blok**,
+- od 0.52.0 shader sprawdza cień w rzeczywistym punkcie powierzchni,
+  bez zaokrąglania do pikseli tekstury. Cztery porównania głębi z wagami
+  biliniowymi delikatnie wygładzają krawędź, także dla cienia gracza
+  i dalekiego terenu. To filtrowanie cienia, bez rozmywania tekstur.
+  Głębia każdej próbki jest korygowana do płaszczyzny odbiorcy, żeby
+  uniknąć samocienia podłoża przy niskim słońcu,
 - mapa nie jest rysowana co klatkę: tylko gdy słońce przesunie się
   o ~0,1° (`ANGLE_STEP`), gracz odejdzie o 1/4 zasięgu od środka mapy
   albo zmieni się chunk w jej zasięgu (najwyżej 10 razy na sekundę).
@@ -259,8 +261,9 @@ się tam naprawdę (`generator.farSurface`), ale bez pojedynczych bloków.
   słabsze (`SHADOW_SUN_BOOST`, `SHADOW_AMBIENT` w `config.js`), a tam,
   gdzie mało światła nieba, jest ciemniej (`SHADOW_INDOOR_DARKNESS`) -
   plamy słońca i cienie są wyraźne,
-- poza zasięgiem mapy (dalej niż 32/64 bloki) i na dalekim terenie
-  oświetlenie jest jak bez cieni (przy brzegu mapy przejście jest płynne).
+- przy wyłączonych dalekich cieniach poza zasięgiem mapy zostaje dostęp
+  do nieba. W jakości „Dalekie” większe mapy zachowują cień również
+  poza bliskimi chunkami; przejścia mają płynnie wygaszaną wagę.
 
 **Promienie światła** (`src/rendering/LightShafts.js`, ustawienie
 *Promienie światła*, wymaga cieni):
@@ -279,18 +282,16 @@ dworze zostaje blask wokół słońca (`SHAFT_...` w `config.js`).
 O wschodzie i zachodzie promienie są mocniejsze, nocą - słabe, w kolorze
 księżyca. Pod wodą ich nie ma.
 
-**Daleka mapa cieni** (jakość *Dalekie*): druga mapa 2048 pikseli na
-512 bloków wokół gracza (2 piksele na blok), razem z dalekim terenem
-(`FarTerrain.js` - w zasięgu chunków wycięty, jak przy rysowaniu). Kamera stoi tak daleko w stronę słońca, jak sięga daleki
-teren, więc o wschodzie i zachodzie góry rzucają cień na doliny,
-a słońce chowa się za grzbietem (daleki teren też dostaje te cienie).
-Rysowana rzadko (słońce o ~0,23°, gracz o 48 bloków, zmienione chunki
-najwyżej co 2 s) i po kawałku: kamera i lista chunków w pierwszej
-klatce, po ćwiartce chunków w kolejnych, daleki teren na końcu - do
-drugiej tekstury, która gotowa podmienia poprzednią (żadna klatka nie
-rysuje całego świata). Bloki biorą cień z bliskiej mapy, przy jej
-brzegu i dalej - z dalekiej. Promienie światła sięgają z nią dalej
-(`SHAFT_FAR_REACH`).
+**Dalekie mapy cieni** (jakość *Dalekie*): od 0.25.0 mapa średnia
+ma promień 256 bloków i rozdzielczość 1024, a zewnętrzna promień
+1024 i rozdzielczość 2048. Zachowują pełną wagę do 82% promienia,
+czyli około 800 bloków dla zewnętrznej mapy. Kamera obejmuje przeszkody
+w stronę światła, więc odległa góra może zacieniać również bliski teren.
+Mapy powstają do drugiego bufora we wspólnym budżecie 24 rysowań
+i 120 tys. trójkątów na klatkę; gotowa tekstura i jej macierz są
+publikowane razem. Od 0.52.0 wszystkie trzy mapy korzystają z tego
+samego filtra krawędzi, z mniejszą szczegółowością w oddali.
+Szczegóły: [cienie 0.25.0](cienie-0.25.0.md).
 
 Test: `/demo okno`, `/cienie`, `/cienie dalekie`, `/czas ustaw zachod`.
 

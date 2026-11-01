@@ -96,11 +96,11 @@ export async function checkDistantShadowRendering({ renderer, yieldBrowser }) {
         }
         throw new Error('Kaskady fixture nie ukończyły aktualnej rewizji w 180 krokach');
     };
-    const read = (name, z = 0, x = 0) => {
+    const read = (name, z = 0, x = 0, withModel = false) => {
         for (const [key, mesh] of receivers) { mesh.visible = key === name; mesh.position.set(x, 64, z); }
         camera.position.set(x, 80, z); camera.lookAt(x, 64, z);
-        // Fixture nie zawiera gracza rzucającego własny cień.
-        shadowUniforms.uSunShadowInfo.value.w = 0;
+        // Cień modelu włączamy tylko w osobnej próbie ciągłości krawędzi.
+        shadowUniforms.uSunShadowInfo.value.w = withModel ? 1 : 0;
         renderer.setRenderTarget(target); renderer.clear(); renderer.render(scene, camera);
         const rgba = new Uint8Array(4); renderer.readRenderTargetPixels(target, 8, 8, 1, 1, rgba);
         check(renderer.getContext().getError() === renderer.getContext().NO_ERROR, `${name}: błąd WebGL map cieni`);
@@ -231,8 +231,7 @@ export async function checkDistantShadowRendering({ renderer, yieldBrowser }) {
         roof.userData.chunk = { cx: 0, cz: 0, maxY: 66 }; roof.updateMatrixWorld();
         world.shadowScene.add(roof);
         orient(90); sun.intensity = Math.PI * 2;
-        // Mały wycinek sprawia, że próbka jest praktycznie w środku
-        // odbiorcy. Kwantyzacja do piksela bloku mieści się w 3/255.
+        // Mały wycinek sprawia, że próbka jest praktycznie w środku odbiorcy.
         camera.left = camera.bottom = -.016; camera.right = camera.top = .016;
         camera.updateProjectionMatrix();
         const results = []; let clear;
@@ -265,6 +264,39 @@ export async function checkDistantShadowRendering({ renderer, yieldBrowser }) {
             }
             return { status: 'passed', values: results };
         } finally { roof.removeFromParent(); }
+    };
+    // Obserwujemy wynik prawdziwej mapy, przesuwając odbiorcę o 1/512
+    // bloku przez skośną krawędź. Stara siatka 1/16 dawała jedną jasność
+    // wewnątrz całego piksela tekstury; nowy cień ma płynne wartości.
+    const checkContinuousEdges = async () => {
+        const caster = new THREE.Mesh(own(new THREE.BoxGeometry(1.4, .1, 1.4)), SHADOW_CASTER_MATERIALS[0]);
+        caster.position.set(0,65,0); caster.rotation.y=.37;
+        caster.userData.chunk={cx:0,cz:0,maxY:66}; caster.frustumCulled=false; caster.updateMatrixWorld();
+        orient(90); sun.intensity=Math.PI*2;
+        camera.left=camera.bottom=-.0001; camera.right=camera.top=.0001; camera.updateProjectionMatrix();
+        const results=[];
+        try {
+            for (const source of ['terrain','player']) {
+                shadows.setQuality(0); shadows.setQuality(2); setShadowDefine([nearMaterial],true,false);
+                if(source==='terrain')world.shadowScene.add(caster);else scene.add(caster);
+                shadows.update(.1,sky,focus); shadows.render(world,focus,null,scene,64,terrain);
+                if(source==='player')shadows.renderModel({object:caster},scene);
+                const withModel=source==='player';
+                const clear=read('near',.137,1.3,withModel),dark=read('near',.137,0,withModel);
+                check(clear>64&&clear<192&&dark<=3,`${source}: brak poprawnej próby cień/słońce (${dark}/${clear})`);
+                const cells=new Map(),values=[];
+                for(let i=0;i<=256;i++) {
+                    const x=.4+i/512,value=read('near',.137,x,withModel),cell=Math.floor(x*16);
+                    if(!cells.has(cell))cells.set(cell,new Set());cells.get(cell).add(value);values.push(value);
+                }
+                const levels=Math.max(...[...cells.values()].map(c=>c.size));
+                check(levels>=4,`${source}: cień nadal skacze po pikselach tekstury, tylko ${levels} poziomów w komórce 1/16`);
+                check(values.every((v,i)=>!i||v>=values[i-1]-1),`${source}: niestabilna lub odwrócona krawędź cienia`);
+                results.push({source,clear,dark,levelsWithinOneTexturePixel:levels,step:1/512,values});
+                caster.removeFromParent();await yieldBrowser();
+            }
+            return {status:'passed',results};
+        } finally {caster.removeFromParent();shadowUniforms.uSunShadowInfo.value.w=0;}
     };
     const samples = [], transitions = [], selfShadow = [], disabled = []; let inventoryPreview;
     try {
@@ -334,8 +366,8 @@ export async function checkDistantShadowRendering({ renderer, yieldBrowser }) {
             }
             selfShadow.push({ degrees, clear, values });
         }
-        const stats = shadows.stats(), nearOnly = await checkNearOnlyFalloff();
-        return { status: 'passed', casterDistance: 800, receiverHeight: 64, samples, transitions, selfShadow, inventoryPreview, disabled, nearOnly,
+        const stats = shadows.stats(), nearOnly = await checkNearOnlyFalloff(), continuousEdges = await checkContinuousEdges();
+        return { status: 'passed', casterDistance: 800, receiverHeight: 64, samples, transitions, selfShadow, inventoryPreview, disabled, nearOnly, continuousEdges,
             rasterSubpixelBits: renderer.getContext().getParameter(renderer.getContext().SUBPIXEL_BITS),
             stats, note: 'W próbie ściany 800 mapa near jest pusta. Osobna próba near-only zawiera dach i mierzy pojedyncze wygaszanie.' };
     } finally {

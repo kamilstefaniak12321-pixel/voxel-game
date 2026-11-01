@@ -11,6 +11,17 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 0.52.0 - Naturalne krawędzie cieni
+
+Zmiana wyglądu cieni słońca i księżyca — PR #85.
+
+- Cienie podążają za powierzchnią i kształtem przeszkody, bez przyciągania do siatki pikseli tekstury bloku.
+- Delikatnie wygładzone krawędzie cieni terenu, roślin i gracza; wspólne filtrowanie także na dalekim terenie.
+- Zachowany zasięg dalekich cieni około 800 bloków, rozdzielczości map i budżety ich aktualizacji.
+- Regresja WebGL sprawdza płynną krawędź wewnątrz pojedynczego piksela tekstury, a także dalekie przeszkody i bardzo niskie słońce.
+
+Wydanie Windows/Android przygotowane do publikacji po scaleniu PR.
+
 ## 0.51.1 - Animowana tekstura ognia i kwadratowy popiół
 
 Korekta wyglądu ognisk po 0.51.0 — PR #84.

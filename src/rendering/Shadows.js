@@ -18,10 +18,11 @@ import { isOpaqueId, isLeavesId } from '../blocks/BlockRegistry.js';
 //      jest. Jest - blok jest w cieniu i nie dostaje światła słońca
 //      (zostaje mu tylko światło z całego nieba).
 //
-// Cienie są PIKSELOWE (jak "Vibrant Visuals" w Minecrafcie): każdy
-// piksel tekstury bloku (1/16 bloku) jest albo cały w cieniu, albo cały
-// w słońcu - brzeg cienia idzie po pikselach tekstury, a nie
-// rozmytą kreską. Bliska mapa ma dokładnie 16 punktów na blok.
+// Cień jest liczony w rzeczywistym punkcie powierzchni, niezależnie
+// od pikseli tekstury bloku. Cztery porównania głębi z wagami biliniowymi
+// łagodzą krawędź bez rozmywania całego obrazu. Rozdzielczość bliskiej
+// mapy nadal wynosi 16 punktów na blok; siatka kamery stabilizuje ją
+// podczas ruchu gracza, lecz nie kwantyzuje odbiorców cienia.
 //
 // TRZY MAPY w jakości „Dalekie”:
 //   - bliska - 32 albo 64 bloki wokół gracza, 16 punktów na blok,
@@ -48,8 +49,8 @@ import { isOpaqueId, isLeavesId } from '../blocks/BlockRegistry.js';
 // ------------------------------------------------------------
 
 // Jakość: rozmiar bliskiej mapy (piksele), jej zasięg od gracza (bloki)
-// i czy jest daleka mapa. Bliska mapa ma zawsze 16 pikseli na blok,
-// czyli tyle, ile tekstura bloku.
+// i czy jest daleka mapa. Bliska mapa ma 16 próbek na blok; jej
+// rozdzielczość jest niezależna od filtrowanego brzegu cienia.
 
 export const SHADOW_QUALITY = {
     1: { size: 1024, radius: 32, far: false },
@@ -198,8 +199,8 @@ const LOOKUP_GLSL = `
         float edge = max(abs(s.x - 0.5), abs(s.y - 0.5)) * 2.0;
         if (edge >= 1.0 || s.z <= 0.0 || s.z >= 1.0) return 1.0;
 
-        // Głębia mapy pochodzi ze środka teksela. Przenieś punkt odbiorcy
-        // na ten sam promień, pozostając na jego płaszczyźnie. Wiersze
+        // Głębia mapy pochodzi ze środka teksela. Każdą z czterech próbek
+        // przenieś na ten sam promień, pozostając na płaszczyźnie odbiorcy. Wiersze
         // ortograficznej macierzy są prostopadłe, więc nie potrzeba
         // odwrotnej macierzy ani pochodnych ekranu. To usuwa samocień
         // przy niskim słońcu bez wieloblokowego zapasu głębi.
@@ -213,12 +214,11 @@ const LOOKUP_GLSL = `
         if (x2 <= 0.0 || y2 <= 0.0 || z2 <= 0.0 ||
             abs(planeZ) <= 0.00001 * sqrt(dot(worldNormal, worldNormal) * z2)) return 1.0;
         float uvTexel = info.y * sqrt(x2);
-        vec2 sampleUV = (floor(s.xy / uvTexel) + 0.5) * uvTexel;
-        vec2 deltaUV = sampleUV - s.xy;
+        vec2 texelPosition = s.xy / uvTexel - 0.5;
+        vec2 base = floor(texelPosition);
+        vec2 blend = fract(texelPosition);
         vec2 depthGradient = -vec2(dot(worldNormal, rowX) / x2,
             dot(worldNormal, rowY) / y2) * z2 / planeZ;
-        float planeDepth = s.z + dot(depthGradient, deltaUV);
-        if (planeDepth <= 0.0 || planeDepth >= 1.0) return 1.0;
 
         // Zapas także przy płaszczyznach near/far, bez twardego cięcia Z.
         coverage = (1.0 - smoothstep(fadeStart, 1.0, edge)) *
@@ -230,7 +230,18 @@ const LOOKUP_GLSL = `
         // i ruch roślin. Niezależne źródła błędu sumujemy.
         float rasterBias = uvTexel * (abs(depthGradient.x) + abs(depthGradient.y)) * uShadowRasterPrecision;
         float bias = max((info.y * 0.1 + extraBias) * info.x, 0.0000002) + rasterBias;
-        return step(planeDepth - bias, texture(depthMap, sampleUV).r);
+        float visibility = 0.0;
+        for (int tap = 0; tap < 4; tap++) {
+            vec2 corner = vec2(float(tap - (tap / 2) * 2), float(tap / 2));
+            vec2 sampleUV = clamp((base + corner + 0.5) * uvTexel,
+                vec2(0.5 * uvTexel), vec2(1.0 - 0.5 * uvTexel));
+            float planeDepth = s.z + dot(depthGradient, sampleUV - s.xy);
+            vec2 weight = mix(vec2(1.0) - blend, blend, corner);
+            float lit = planeDepth <= 0.0 || planeDepth >= 1.0 ? 1.0
+                : step(planeDepth - bias, texture(depthMap, sampleUV).r);
+            visibility += lit * weight.x * weight.y;
+        }
+        return visibility;
     }
 `;
 
@@ -282,14 +293,9 @@ export const SHADOW_GLSL = `
             return skyLight;
         }
 
-        // Środek piksela tekstury (1/16 bloku) na płaszczyźnie ściany,
-        // odsunięty o pół piksela od ściany w stronę, w którą patrzy.
-
-        vec3 pixel = (floor(worldPosition * 16.0) + 0.5) / 16.0;
-
-        vec3 axis = step(vec3(0.5), abs(worldNormal));
-
-        vec3 p = mix(pixel, worldPosition, axis) + worldNormal * (0.5 / 16.0);
+        // Ciągła pozycja powierzchni. Małe odsunięcie chroni przed
+        // samocieniem; nie przyciąga brzegu do siatki tekstury bloku.
+        vec3 p = worldPosition + worldNormal * (0.5 / 16.0);
 
         vec2 shadow = vec2(0.0);
 
@@ -309,14 +315,14 @@ export const SHADOW_GLSL = `
 
             // Cień gracza (model) - osobna mała mapa.
 
-            if (uSunShadowInfo.w > 0.5 && nearLit > 0.5) {
-
-                vec3 m = (uModelShadowMatrix * vec4(p, 1.0)).xyz;
-
-                if (all(greaterThan(m, vec3(0.0))) && all(lessThan(m, vec3(1.0)))) {
-                    nearLit = step(m.z - ${(0.06 / MODEL_MAP_FAR).toFixed(6)}, texture(uModelShadowMap, m.xy).r);
-                }
-
+            if (uSunShadowInfo.w > 0.5 && nearLit > 0.0) {
+                float modelCoverage;
+                float modelLit = shadowMapLookup(uModelShadowMap, uModelShadowMatrix,
+                    vec4(${1 / (MODEL_MAP_FAR - .1)}, ${2 * MODEL_MAP_RADIUS / MODEL_MAP_SIZE}, 1.0, 0.0),
+                    p, worldNormal, 0.06, 0.98, modelCoverage);
+                // Mapa modelu może tylko dodać przesłonięcie, nigdy
+                // rozjaśnić częściowo zacienionej krawędzi terenu.
+                nearLit = min(nearLit, mix(1.0, modelLit, modelCoverage));
             }
 
             shadow = max(shadow, vec2((1.0 - nearLit) * nearWeight, nearWeight));

@@ -1,4 +1,4 @@
-# Paczka tekstur - szablon (Voxel Game 0.49.0)
+# Paczka tekstur - szablon (Voxel Game 0.50.1)
 
 Oryginalne tekstury gry, każda w osobnym pliku. Zrób z nich własną paczkę:
 
@@ -56,19 +56,19 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/birch_sapling.png` | Sadzonka brzozy |
 | `bloki/birch_stripped_side.png` | Okorowany pień brzozy |
 | `bloki/birch_stripped_top.png` | Okorowany pień brzozy |
-| `bloki/blackberry.png` | Jeżyny |
-| `bloki/blackberry_bush_few.png` | Krzak jeżyny (kilka owoców) |
-| `bloki/blackberry_bush_full.png` | Krzak jeżyny (pełen owoców) |
-| `bloki/blueberry.png` | Borówki |
+| `bloki/blackberry.png` | - |
+| `bloki/blackberry_bush_few.png` | - |
+| `bloki/blackberry_bush_full.png` | - |
+| `bloki/blueberry.png` | - |
 | `bloki/blueberry_bush.png` | - |
 | `bloki/blueberry_bush_few.png` | - |
 | `bloki/blueberry_bush_full.png` | - |
-| `bloki/bush_leaves.png` | Krzak truskawki, Krzak jeżyny, Krzak papryczki chili, Leszczyna |
-| `bloki/bush_sapling.png` | Sadzonka truskawki, Sadzonka jeżyny, Sadzonka papryczki chili, Sadzonka leszczyny |
+| `bloki/bush_leaves.png` | - |
+| `bloki/bush_sapling.png` | - |
 | `bloki/chamomile.png` | Rumianek |
-| `bloki/chili_bush_few.png` | Krzak papryczki chili (kilka papryczek) |
-| `bloki/chili_bush_full.png` | Krzak papryczki chili (pełen papryczek) |
-| `bloki/chili_pepper.png` | Papryczki chili |
+| `bloki/chili_bush_few.png` | - |
+| `bloki/chili_bush_full.png` | - |
+| `bloki/chili_pepper.png` | - |
 | `bloki/clay.png` | Glina |
 | `bloki/clover.png` | Koniczyna, Grzybień biały, Rzęsa wodna |
 | `bloki/coarse_dirt.png` | Ziemia kamienista |
@@ -85,9 +85,9 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/grass_side.png` | Blok trawy |
 | `bloki/grass_top.png` | Blok trawy |
 | `bloki/gravel.png` | Żwir |
-| `bloki/hazel_bush_few.png` | Leszczyna (kilka orzechów) |
-| `bloki/hazel_bush_full.png` | Leszczyna (pełna orzechów) |
-| `bloki/hazelnut.png` | Orzech laskowy |
+| `bloki/hazel_bush_few.png` | - |
+| `bloki/hazel_bush_full.png` | - |
+| `bloki/hazelnut.png` | - |
 | `bloki/heather.png` | Wrzos |
 | `bloki/humus.png` | Czarnoziem |
 | `bloki/jablon/deski.png` | Deski jabłoniowe |
@@ -195,9 +195,9 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/spruce_wreath.png` | Wieniec świerkowy |
 | `bloki/stick.png` | Patyk |
 | `bloki/stone.png` | Kamień |
-| `bloki/strawberry.png` | Truskawki |
-| `bloki/strawberry_bush_few.png` | Krzak truskawki (kilka owoców) |
-| `bloki/strawberry_bush_full.png` | Krzak truskawki (pełen owoców) |
+| `bloki/strawberry.png` | - |
+| `bloki/strawberry_bush_few.png` | - |
+| `bloki/strawberry_bush_full.png` | - |
 | `bloki/tall_grass.png` | Wysoka trawa |
 | `bloki/terracotta.png` | Terakota |
 | `bloki/water.png` | Woda |

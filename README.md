@@ -1274,3 +1274,14 @@ pole `category`. Przepis na nową rzecz: `src/crafting/recipes.js`.
 odśwież wiki: `python tools/wiki.py` (potrzebny Node.js i Python
 z numpy, Pillow i markdown) - przerysuje ikonki i strony w
 `docs/wiki/`. Nową wersję gry dopisz też do `CHANGELOG.md`.
+
+## Licencja
+
+Voxel Game jest na licencji **PolyForm Noncommercial 1.0.0**
+([`LICENSE.md`](LICENSE.md)): grę można oglądać, zmieniać (mody, paczki
+tekstur, roślin i drzew) i udostępniać za darmo - **niekomercyjnie**,
+z informacją o autorze (linia `Required Notice:` z `LICENSE.md`).
+Sprzedawanie gry albo jej części i zarabianie na niej wymaga osobnej
+zgody autora. Części cudze (three.js - MIT, czcionka Pixelify Sans -
+OFL, Gradle Wrapper - Apache 2.0) zostają na swoich licencjach.
+Streszczenie po polsku i lista: [`docs/licencja.md`](docs/licencja.md).

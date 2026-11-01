@@ -109,8 +109,12 @@ ostatni stan). PR bez etykiety pokazuje przebieg jako pominięty
 (*skipped*) i nie zużywa minut. Tak samo działa *Laboratorium światła*
 (`swiatlo.yml`).
 
-Dlaczego: repozytorium gry jest prywatne, a darmowy plan GitHuba ma
-miesięczny limit minut Actions. Jedna próba to ok. 14 minut limitu:
+Dlaczego: w prywatnym repozytorium darmowy plan GitHuba ma miesięczny
+limit Actions (ok. $12 na maszyny i 0,5 GB na pliki z przebiegów). Po
+upublicznieniu repozytorium (licencja `LICENSE.md`, `docs/licencja.md`)
+zwykłe maszyny GitHuba są darmowe, ale etykieta zostaje - próba przy
+każdym pushu to strata czasu i miejsca na pliki. Jedna próba to ok. 14
+minut:
 Windows ok. 4 min (liczone podwójnie), Android ok. 3 min, Laboratorium
 światła ok. 2 min i sprawdzenie wersji 1 min. W październiku 2026 próby
 przy każdym pushu zużyły ok. 1 450 minut i 31.10 Actions się zatrzymały
@@ -127,15 +131,16 @@ plans → Usage**.
 
 Instalator z próby można pobrać
 z przebiegu w zakładce **Actions** (sekcja *Artifacts*, plik zip) przez
-**2 dni**. Dłużej nie: repozytorium gry jest prywatne, a darmowy plan
-GitHuba ma tylko 0,5 GB miejsca na takie pliki na miesiąc (liczone za
-każdą godzinę, w której leżą). Gdy miejsca zabraknie, GitHub przysyła
+**2 dni**. Dłużej nie: w prywatnym repozytorium darmowy plan GitHuba ma
+tylko 0,5 GB miejsca na takie pliki na miesiąc (liczone za każdą
+godzinę, w której leżą). Gdy miejsca zabraknie, GitHub przysyła
 maila *GitHub Actions Usage*, a pliki próbne przestają się zapisywać
 do początku następnego miesiąca - budowanie i wydania działają dalej.
 
-> Kod gry jest w prywatnym repozytorium `voxel-game`, a do publicznego
-> `voxel-game-wydania` trafiają tylko gotowe instalatory - zainstalowana
-> gra musi móc je pobrać bez logowania.
+> Kod gry jest w repozytorium `voxel-game` (licencja PolyForm
+> Noncommercial 1.0.0 - `docs/licencja.md`), a do publicznego
+> `voxel-game-wydania` trafiają gotowe instalatory - zainstalowana gra
+> musi móc je pobrać bez logowania.
 
 ## Jednorazowa konfiguracja (Kamil)
 
@@ -167,7 +172,8 @@ publikowania w nim.
    z instalatorem.
 
 Minuty GitHub Actions: w prywatnym repozytorium darmowy plan ma limit
-minut na miesiąc, a minuty na Windowsie liczą się podwójnie. Jedno
+na miesiąc, a minuta na Windowsie kosztuje ok. 1,7 razy tyle co na
+Linuksie; w publicznym zwykłe maszyny GitHuba są darmowe. Jedno
 zbudowanie to kilka minut, a przy scaleniu bez zmiany wersji działa
 tylko krótkie sprawdzenie na Linuksie.
 

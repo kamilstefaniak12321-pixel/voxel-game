@@ -2,7 +2,7 @@
 
 > Ta strona jest generowana z kodu gry (`python tools/wiki.py`) - nie zmieniaj jej ręcznie, zmiany przepadną przy następnym generowaniu.
 
-Wersja gry **0.49.0** - 184 bloków (do tego 5 odmian, których nie ma w ekwipunku, np. wieniec zawieszony na boku bloku). Czas kopania dotyczy trybu przygody; w kreatywnym bloki znikają od razu.
+Wersja gry **0.50.1** - 184 bloków (do tego 5 odmian, których nie ma w ekwipunku, np. wieniec zawieszony na boku bloku). Czas kopania dotyczy trybu przygody; w kreatywnym bloki znikają od razu.
 
 [Ziemia](#ziemia) · [Skały](#skały) · [Drewno](#drewno) · [Budulec](#budulec) · [Rośliny](#rośliny) · [Światło](#światło) · [Ozdoby](#ozdoby)
 
@@ -23,10 +23,6 @@ Wersja gry **0.49.0** - 184 bloków (do tego 5 odmian, których nie ma w ekwipun
 | <img src="ikony/snow.png" width="32" height="32" alt=""> | **Śnieg** | `snow` | **Kopanie:** 0,4 s (łopatą 0,13 s)<br>**Przepis:** Śnieg<br>**Przydaje się do:** Warstwa śniegu |
 | <img src="ikony/snow_layer.png" width="32" height="32" alt=""> | **Warstwa śniegu** | `snow_layer` | **Kopanie:** 0,4 s (łopatą 0,13 s)<br>**Przepis:** Warstwa śniegu x4<br>**Przydaje się do:** Śnieg |
 | <img src="ikony/moss.png" width="32" height="32" alt=""> | **Mech** | `moss` | **Kopanie:** 0,6 s (łopatą 0,2 s)<br>**Przepis:** Mech<br>**Przydaje się do:** Kępki mchu |
-| <img src="ikony/blueberry_sapling.png" width="32" height="32" alt=""> | **Sadzonka borówki** | `blueberry_sapling` | **Kopanie:** od razu<br>**Rośnie:** w: Krzak borówki (kilka owoców)<br>**Skąd:** zniszczony blok: Krzak borówki (po zbiorze); zniszczony blok: Krzak borówki (kilka owoców); zniszczony blok: Krzak borówki (pełen owoców); posadzony przedmiot: Borówki |
-| <img src="ikony/blueberry_bush.png" width="32" height="32" alt=""> | **Krzak borówki (po zbiorze)** | `blueberry_bush` | **Kopanie:** od razu<br>**Daje:** Sadzonka borówki<br>**Rośnie:** w: Krzak borówki (kilka owoców) |
-| <img src="ikony/blueberry_bush_few.png" width="32" height="32" alt=""> | **Krzak borówki (kilka owoców)** | `blueberry_bush_few` | **Kopanie:** od razu<br>**Daje:** Sadzonka borówki<br>**Zbiór (PPM):** Borówki 1-3<br>**Rośnie:** w: Krzak borówki (pełen owoców)<br>**Skąd:** wyrasta z: Sadzonka borówki; wyrasta z: Krzak borówki (po zbiorze) |
-| <img src="ikony/blueberry_bush_full.png" width="32" height="32" alt=""> | **Krzak borówki (pełen owoców)** | `blueberry_bush_full` | **Kopanie:** od razu<br>**Daje:** Sadzonka borówki<br>**Zbiór (PPM):** Borówki 3-5<br>**Skąd:** wyrasta z: Krzak borówki (kilka owoców) |
 
 ## Skały
 
@@ -120,6 +116,10 @@ Wersja gry **0.49.0** - 184 bloków (do tego 5 odmian, których nie ma w ekwipun
 | <img src="ikony/hazel_bush.png" width="32" height="32" alt=""> | **Leszczyna** | `hazel_bush` | **Kopanie:** od razu<br>**Daje:** Sadzonka leszczyny<br>**Rośnie:** w: Leszczyna (kilka orzechów)<br>**Skąd:** wyrasta z: Sadzonka leszczyny |
 | <img src="ikony/hazel_bush_few.png" width="32" height="32" alt=""> | **Leszczyna (kilka orzechów)** | `hazel_bush_few` | **Kopanie:** od razu<br>**Daje:** Sadzonka leszczyny<br>**Zbiór (PPM):** Orzech laskowy 1-2<br>**Rośnie:** w: Leszczyna (pełna orzechów)<br>**Skąd:** wyrasta z: Leszczyna |
 | <img src="ikony/hazel_bush_full.png" width="32" height="32" alt=""> | **Leszczyna (pełna orzechów)** | `hazel_bush_full` | **Kopanie:** od razu<br>**Daje:** Sadzonka leszczyny<br>**Zbiór (PPM):** Orzech laskowy 2-3<br>**Skąd:** wyrasta z: Leszczyna (kilka orzechów) |
+| <img src="ikony/blueberry_sapling.png" width="32" height="32" alt=""> | **Sadzonka borówki** | `blueberry_sapling` | **Kopanie:** od razu<br>**Rośnie:** w: Krzak borówki (kilka owoców)<br>**Skąd:** zniszczony blok: Krzak borówki (po zbiorze); zniszczony blok: Krzak borówki (kilka owoców); zniszczony blok: Krzak borówki (pełen owoców); posadzony przedmiot: Borówki |
+| <img src="ikony/blueberry_bush.png" width="32" height="32" alt=""> | **Krzak borówki (po zbiorze)** | `blueberry_bush` | **Kopanie:** od razu<br>**Daje:** Sadzonka borówki<br>**Rośnie:** w: Krzak borówki (kilka owoców) |
+| <img src="ikony/blueberry_bush_few.png" width="32" height="32" alt=""> | **Krzak borówki (kilka owoców)** | `blueberry_bush_few` | **Kopanie:** od razu<br>**Daje:** Sadzonka borówki<br>**Zbiór (PPM):** Borówki 1-3<br>**Rośnie:** w: Krzak borówki (pełen owoców)<br>**Skąd:** wyrasta z: Sadzonka borówki; wyrasta z: Krzak borówki (po zbiorze) |
+| <img src="ikony/blueberry_bush_full.png" width="32" height="32" alt=""> | **Krzak borówki (pełen owoców)** | `blueberry_bush_full` | **Kopanie:** od razu<br>**Daje:** Sadzonka borówki<br>**Zbiór (PPM):** Borówki 3-5<br>**Skąd:** wyrasta z: Krzak borówki (kilka owoców) |
 | <img src="ikony/spruce_leaves.png" width="32" height="32" alt=""> | **Igliwie świerka** | `spruce_leaves` | **Kopanie:** 0,35 s<br>**Czasem wypada:** Sadzonka świerka (5%), Szyszka świerka (8%)<br>**Przydaje się do:** Ściółka leśna, Wieniec świerkowy |
 | <img src="ikony/spruce_sapling.png" width="32" height="32" alt=""> | **Sadzonka świerka** | `spruce_sapling` | **Kopanie:** od razu<br>**Rośnie:** w drzewo, średnio po 5 min<br>**Skąd:** czasem z bloku: Igliwie świerka (5%); posadzony przedmiot: Szyszka świerka |
 | <img src="ikony/pine_leaves.png" width="32" height="32" alt=""> | **Igliwie sosny** | `pine_leaves` | **Kopanie:** 0,35 s<br>**Czasem wypada:** Sadzonka sosny (5%), Szyszka sosny (8%)<br>**Przydaje się do:** Ściółka leśna |

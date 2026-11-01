@@ -269,8 +269,8 @@ jobs:
           echo "::notice title=Instalator::$EXE ($SIZE MB), $EXE.blockmap, latest.yml"
 
       # Instalator do pobrania z przebiegu (Artifacts) - tylko na 2 dni:
-      # repozytorium jest prywatne, a darmowy plan ma 0,5 GB miejsca na
-      # takie pliki na miesiąc (liczone za każdą godzinę leżenia).
+      # w prywatnym repozytorium darmowy plan ma 0,5 GB miejsca na takie
+      # pliki na miesiąc (liczone za każdą godzinę leżenia).
       # Brak miejsca nie zatrzymuje wydania (continue-on-error).
       - uses: actions/upload-artifact@v6
         continue-on-error: true

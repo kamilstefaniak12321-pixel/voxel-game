@@ -35,7 +35,7 @@ export class WorldSaver {
 
     // time      - czas świata (WorldTime) albo null
 
-    constructor(storage, worldInfo, world, player, time = null) {
+    constructor(storage, worldInfo, world, player, time = null, campfires = null) {
 
         this.storage = storage;
         this.worldInfo = worldInfo;
@@ -43,6 +43,8 @@ export class WorldSaver {
         this.world = world;
         this.player = player;
         this.time = time;
+        this.campfires = campfires;
+        this.savedFireVersion = -1;
 
 
         // Czas od ostatniego zapisu i od pierwszej niezapisanej zmiany.
@@ -146,6 +148,8 @@ export class WorldSaver {
         const chunks = this.world.takeUnsavedChunks();
 
 
+        const fireVersion = this.campfires?.version ?? 0;
+        if (this.campfires) this.worldInfo.campfires = this.campfires.getState();
         this.worldInfo.player = this.player.getState();
         this.worldInfo.lastPlayed = Date.now();
 
@@ -162,6 +166,7 @@ export class WorldSaver {
             );
 
 
+            this.savedFireVersion = fireVersion;
             if (chunks.length > 0) {
                 this.showStatus('Świat zapisany');
             }
@@ -194,7 +199,7 @@ export class WorldSaver {
         this.timeSinceSave += dt;
 
 
-        if (this.world.hasUnsavedChanges()) {
+        if (this.world.hasUnsavedChanges() || (this.campfires && this.savedFireVersion !== this.campfires.version)) {
 
             this.timeSinceChange += dt;
 

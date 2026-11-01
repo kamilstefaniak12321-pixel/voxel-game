@@ -2,7 +2,7 @@ import * as THREE from 'three';
 
 import { getBlockDefinition } from '../blocks/BlockRegistry.js';
 import { isItemType } from '../items/ItemRegistry.js';
-import { getFruitItemModel } from '../rendering/FruitBushGeometry.js';
+import { getItemModel as getFruitItemModel } from '../rendering/ItemGeometry.js';
 import { blockAtlasTexture } from '../rendering/TextureAtlas.js';
 import { createModelMaterial } from '../rendering/ModelMaterial.js';
 import { setPotatoDefine } from '../rendering/BlockRenderData.js';

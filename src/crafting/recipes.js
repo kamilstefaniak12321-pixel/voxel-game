@@ -140,7 +140,14 @@ for (const pack of PLANT_PACKS) {
 }
 
 
+import { FIRE_WOODS, fuelType } from '../game/CampfireState.js';
+
 export const RECIPES = [
+    ...Object.keys(FIRE_WOODS).map(wood => ({ id: fuelType(wood), result: [fuelType(wood), 4],
+        ingredients: [`#${wood}_logs`, 'axe'], keep: ['axe'],
+        note: 'Siekiera zostaje. Opał: PPM na ziemię, potem dokładaj do 6 polan.' })),
+    { id: 'fire_starter', result: ['fire_starter', 1], ingredients: ['stick', 'stick'],
+        note: '6 polan + trawa; przytrzymaj PPM starterem przez 5 sekund.' },
 
     // DREWNO: pień -> 4 deski tego samego drzewa (także okorowany pień).
 

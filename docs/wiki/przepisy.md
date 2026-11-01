@@ -2,7 +2,7 @@
 
 > Ta strona jest generowana z kodu gry (`python tools/wiki.py`) - nie zmieniaj jej ręcznie, zmiany przepadną przy następnym generowaniu.
 
-Wersja gry **0.50.1** - 39 przepisów. Wytwarza się w ekwipunku (**E**): siatka 2 x 2 obok miejsc ekwipunku, wynik po prawej (klik - weź, Shift + klik - ile się da). Przycisk 📖 *Przepisy* otwiera księgę - klik na przepisie sam układa składniki. Przepisy *z kształtem* można przesuwać po siatce i odbijać w poziomie; przepisy *bez kształtu* - obojętne, gdzie leżą składniki. Z czatu: `/przepisy`, `/wytworz <przepis>`.
+Wersja gry **0.51.0** - 49 przepisów. Wytwarza się w ekwipunku (**E**): siatka 2 x 2 obok miejsc ekwipunku, wynik po prawej (klik - weź, Shift + klik - ile się da). Przycisk 📖 *Przepisy* otwiera księgę - klik na przepisie sam układa składniki. Przepisy *z kształtem* można przesuwać po siatce i odbijać w poziomie; przepisy *bez kształtu* - obojętne, gdzie leżą składniki. Z czatu: `/przepisy`, `/wytworz <przepis>`.
 
 
 ## Ziemia
@@ -54,6 +54,60 @@ Wersja gry **0.50.1** - 39 przepisów. Wytwarza się w ekwipunku (**E**): siatka
 
 
 ## Drewno
+
+### Opał — dąb x4
+
+<img src="przepisy/oak_firewood.png" alt="Opał — dąb x4: 1 x pień dębu (też okorowany) + 1 x Siekiera (zostaje) (obojętne gdzie)">
+
+1 x pień dębu (też okorowany) + 1 x Siekiera (bez kształtu). Nazwa przepisu: `oak_firewood`. Siekiera zostaje. Opał: PPM na ziemię, potem dokładaj do 6 polan.
+
+### Opał — brzoza x4
+
+<img src="przepisy/birch_firewood.png" alt="Opał — brzoza x4: 1 x pień brzozy (też okorowany) + 1 x Siekiera (zostaje) (obojętne gdzie)">
+
+1 x pień brzozy (też okorowany) + 1 x Siekiera (bez kształtu). Nazwa przepisu: `birch_firewood`. Siekiera zostaje. Opał: PPM na ziemię, potem dokładaj do 6 polan.
+
+### Opał — świerk x4
+
+<img src="przepisy/spruce_firewood.png" alt="Opał — świerk x4: 1 x pień świerka (też okorowany) + 1 x Siekiera (zostaje) (obojętne gdzie)">
+
+1 x pień świerka (też okorowany) + 1 x Siekiera (bez kształtu). Nazwa przepisu: `spruce_firewood`. Siekiera zostaje. Opał: PPM na ziemię, potem dokładaj do 6 polan.
+
+### Opał — sosna x4
+
+<img src="przepisy/pine_firewood.png" alt="Opał — sosna x4: 1 x pień sosny (też okorowany) + 1 x Siekiera (zostaje) (obojętne gdzie)">
+
+1 x pień sosny (też okorowany) + 1 x Siekiera (bez kształtu). Nazwa przepisu: `pine_firewood`. Siekiera zostaje. Opał: PPM na ziemię, potem dokładaj do 6 polan.
+
+### Opał — buk x4
+
+<img src="przepisy/beech_firewood.png" alt="Opał — buk x4: 1 x pień buka (też okorowany) + 1 x Siekiera (zostaje) (obojętne gdzie)">
+
+1 x pień buka (też okorowany) + 1 x Siekiera (bez kształtu). Nazwa przepisu: `beech_firewood`. Siekiera zostaje. Opał: PPM na ziemię, potem dokładaj do 6 polan.
+
+### Opał — lipa x4
+
+<img src="przepisy/linden_firewood.png" alt="Opał — lipa x4: 1 x pień lipy (też okorowany) + 1 x Siekiera (zostaje) (obojętne gdzie)">
+
+1 x pień lipy (też okorowany) + 1 x Siekiera (bez kształtu). Nazwa przepisu: `linden_firewood`. Siekiera zostaje. Opał: PPM na ziemię, potem dokładaj do 6 polan.
+
+### Opał — olcha x4
+
+<img src="przepisy/olcha_firewood.png" alt="Opał — olcha x4: 1 x pień olchy (też okorowany) + 1 x Siekiera (zostaje) (obojętne gdzie)">
+
+1 x pień olchy (też okorowany) + 1 x Siekiera (bez kształtu). Nazwa przepisu: `olcha_firewood`. Siekiera zostaje. Opał: PPM na ziemię, potem dokładaj do 6 polan.
+
+### Opał — wierzba x4
+
+<img src="przepisy/wierzba_firewood.png" alt="Opał — wierzba x4: 1 x pień wierzby (też okorowany) + 1 x Siekiera (zostaje) (obojętne gdzie)">
+
+1 x pień wierzby (też okorowany) + 1 x Siekiera (bez kształtu). Nazwa przepisu: `wierzba_firewood`. Siekiera zostaje. Opał: PPM na ziemię, potem dokładaj do 6 polan.
+
+### Opał — jabłoń x4
+
+<img src="przepisy/jablon_firewood.png" alt="Opał — jabłoń x4: 1 x pień jabłoni (też okorowany) + 1 x Siekiera (zostaje) (obojętne gdzie)">
+
+1 x pień jabłoni (też okorowany) + 1 x Siekiera (bez kształtu). Nazwa przepisu: `jablon_firewood`. Siekiera zostaje. Opał: PPM na ziemię, potem dokładaj do 6 polan.
 
 ### Deski świerkowe x4
 
@@ -237,6 +291,12 @@ Wersja gry **0.50.1** - 39 przepisów. Wytwarza się w ekwipunku (**E**): siatka
 
 
 ## Narzędzia i surowce
+
+### Starter ognia
+
+<img src="przepisy/fire_starter.png" alt="Starter ognia: 2 x Patyk (obojętne gdzie)">
+
+2 x Patyk (bez kształtu). Nazwa przepisu: `fire_starter`. 6 polan + trawa; przytrzymaj PPM starterem przez 5 sekund.
 
 ### Patyk x4
 

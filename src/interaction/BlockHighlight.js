@@ -101,7 +101,9 @@ export class BlockHighlight {
 
         const flat = FLAT_BOXES[definition?.flat?.attach];
 
-        if (flat) {
+        if (definition?.model === 'structure') { size[1] = .5; center[1] = .25; }
+
+        if (flat && definition?.model !== 'structure') {
 
             size[flat.axis] = FLAT_THICKNESS;
 

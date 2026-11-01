@@ -212,6 +212,12 @@ export class VoxelRaycast {
             // zebrać. Taflę wskazujemy osobno tylko podczas sadzenia.
             const id = this.world.getBlockId(x, y, z);
 
+            if (getBlockTypeById(id) === 'campfire') {
+                const intersection = intersectBounds(origin, dir, x, y, z, { min: [0, 0, 0], max: [1, .5, 1] }, distance, this.maxDistance);
+                if (intersection) return { hit: true, block: { x, y, z, type: 'campfire' }, ...intersection };
+                continue;
+            }
+
             if (id && ((!getRiverPlant(id) && !isLiquidId(id)) || (includeWater && isLiquidId(id)))) {
 
                 return {

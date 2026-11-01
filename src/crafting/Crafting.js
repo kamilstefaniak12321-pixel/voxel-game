@@ -159,6 +159,11 @@ for (const recipe of RECIPES) {
 
     }
 
+    for (const tool of recipe.keep ?? []) {
+        if (!specs.includes(tool) || specs.filter(spec => spec === tool).length !== 1) {
+            throw new Error(`${where}: zachowywane narzędzie musi być jednym składnikiem`);
+        }
+    }
     if (recipe.pattern) {
         recipe.shape = shapeOf(recipe);
     }
@@ -368,7 +373,7 @@ export function recipeText(recipe) {
     const [type, count] = recipe.result;
 
     const ingredients = recipeIngredients(recipe)
-        .map(({ spec, count: n }) => `${n} x ${ingredientLabel(spec)}`)
+        .map(({ spec, count: n }) => `${n} x ${ingredientLabel(spec)}${recipe.keep?.includes(spec) ? ' (zostaje)' : ''}`)
         .join(' + ');
 
     const shape = recipe.shape
@@ -422,11 +427,12 @@ function assignCells(recipe, counts, times) {
 
     for (const { spec, index } of order) {
 
+        const needed = recipe.keep?.includes(spec) ? 1 : times;
         let best = null;
 
         for (const type of ingredientTypes(spec)) {
 
-            if ((left.get(type) ?? 0) >= times && (best === null || left.get(type) > left.get(best))) {
+            if ((left.get(type) ?? 0) >= needed && (best === null || left.get(type) > left.get(best))) {
                 best = type;
             }
 
@@ -436,7 +442,7 @@ function assignCells(recipe, counts, times) {
             return null;
         }
 
-        left.set(best, left.get(best) - times);
+        left.set(best, left.get(best) - needed);
 
         result[index] = best;
 
@@ -541,9 +547,9 @@ export function fillGrid(inventory, recipe, times = 1) {
 
         if (type) {
 
-            inventory.remove(type, possible);
-
-            inventory.craft[index] = { type, count: possible };
+            const count = recipe.keep?.includes(type) ? 1 : possible;
+            inventory.remove(type, count);
+            inventory.craft[index] = { type, count };
 
         }
 
@@ -571,7 +577,7 @@ export function craftFromGrid(inventory) {
 
         const item = grid[i];
 
-        if (item) {
+        if (item && !result.recipe.keep?.includes(item.type)) {
 
             item.count--;
 

@@ -138,7 +138,7 @@ export class TouchControls {
         this.button(actions, 'jump', 'Skok', { key: 'Space' });
         this.button(actions, 'down', 'W dół', { key: 'ShiftLeft' });
         this.button(actions, 'break', 'Kop', { mouse: 0, hold: true });
-        this.button(actions, 'place', 'Postaw', { mouse: 2 });
+        this.button(actions, 'place', 'Postaw', { mouse: 2, hold: true });
 
         const top = this.element('div', 'touch-top');
 

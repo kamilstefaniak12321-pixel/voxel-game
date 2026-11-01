@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { campfireLightUniforms, CAMPFIRE_LIGHT_GLSL } from './CampfireLight.js';
 import { SURFACE_LIGHTING_GLSL } from './SurfaceLighting.js';
 
 import {
@@ -124,7 +125,7 @@ export function createModelMaterial({ map, alphaTest = 0, glow = 0, vertexColors
         const dynamic = renderer.capabilities.isWebGL2;
         const sceneShadows = dynamic && !previewRenderers.has(renderer);
 
-        if (sceneShadows) Object.assign(shader.uniforms, shadowUniforms);
+        if (sceneShadows) Object.assign(shader.uniforms, shadowUniforms, campfireLightUniforms);
 
         shader.fragmentShader = shader.fragmentShader
             .replace(
@@ -150,6 +151,7 @@ export function createModelMaterial({ map, alphaTest = 0, glow = 0, vertexColors
                 ${VIEW_GLSL}
                 ${SURFACE_LIGHTING_GLSL}
                 ${METEOR_LIGHT_GLSL}
+                ${sceneShadows ? CAMPFIRE_LIGHT_GLSL : 'vec3 campfireLight(vec3 p, vec3 n) { return vec3(0.0); }'}
 
                 #ifdef USE_DYNAMIC_LIGHT
                     uniform highp sampler3D uDynamicLight;
@@ -214,7 +216,7 @@ export function createModelMaterial({ map, alphaTest = 0, glow = 0, vertexColors
 
                 // Kula ognia meteorytu (rendering/meteorLight.js).
 
-                outgoingLight += modelTexel * meteorLight(vWorldPosition, vWorldNormal);
+                outgoingLight += modelTexel * (meteorLight(vWorldPosition, vWorldNormal) + campfireLight(vWorldPosition, vWorldNormal));
 
                 // Świecący blok w ręce (lampa) jest jasny sam z siebie.
 

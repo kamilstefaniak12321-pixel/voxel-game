@@ -1,0 +1,58 @@
+{
+  "device": {
+    "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 3050 Laptop GPU (0x000025A2) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "buffer": [
+      1920,
+      1080
+    ],
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.7977.130 Electron/44.4.5 Safari/537.36"
+  },
+  "checks": [
+    {
+      "name": "full application reload restores burning fire",
+      "ok": true
+    }
+  ],
+  "errors": [],
+  "results": [],
+  "fireStates": [
+    {
+      "x": 0,
+      "y": 61,
+      "z": 0,
+      "logs": [
+        {
+          "wood": "birch",
+          "burn": 0.30207458333333315
+        },
+        {
+          "wood": "birch",
+          "burn": 0.30207458333333315
+        },
+        {
+          "wood": "birch",
+          "burn": 0.30207458333333315
+        },
+        {
+          "wood": "birch",
+          "burn": 0.30207458333333315
+        },
+        {
+          "wood": "birch",
+          "burn": 0.30207458333333315
+        },
+        {
+          "wood": "birch",
+          "burn": 0.30207458333333315
+        }
+      ],
+      "tinder": null,
+      "phase": "burning",
+      "ignition": 0,
+      "collapse": 0,
+      "embers": 0,
+      "ash": false
+    }
+  ],
+  "draws": 6
+}

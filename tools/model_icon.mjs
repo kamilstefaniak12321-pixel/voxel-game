@@ -2,11 +2,15 @@
 // pure module used by the game; no browser or extra image dependency is needed.
 import { readFileSync } from 'node:fs';
 import { inflateSync } from 'node:zlib';
+import { FIRE_WOODS } from '../src/game/CampfireState.js';
 import { modelIconPixels } from '../src/ui/ModelIcon.js';
 
 const sources = {
     'models/blueberry/atlas': { file: '../assets/models/blueberry/atlas.png', x: 0, y: 0, width: 64, height: 64 },
     snow: { file: '../assets/textures/blocks/terrain.png', x: 4 * 16, y: 9 * 16, width: 16, height: 16 }
+};
+for (const [wood, [, file]] of Object.entries(FIRE_WOODS)) sources[`campfire_${wood}`] = {
+    file: `../assets/models/campfire/drewno-${file}.png`, x: 0, y: 0, width: 32, height: 32
 };
 const images = new Map();
 

@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { FIRE_WOODS } from '../game/CampfireState.js';
 
 import { PACK_TEXTURES, TREE_PACK_ERRORS } from '../blocks/treePacks.js';
 
@@ -362,6 +363,10 @@ ATLAS_TILES[BLUEBERRY_TEXTURE] = {
     x: 0, y: Math.max(...Object.values(ATLAS_TILES).map(tile => tile.y + (tile.h ?? 1))),
     w: 4, h: 4, pw: 64, ph: 64
 };
+const fireRow = ATLAS_TILES[BLUEBERRY_TEXTURE].y + 4;
+Object.keys(FIRE_WOODS).forEach((wood, i) => {
+    ATLAS_TILES[`campfire_${wood}`] = { x: (i % 8) * 2, y: fireRow + Math.floor(i / 8) * 2, w: 2, h: 2, pw: 32, ph: 32 };
+});
 export const ATLAS_ROWS = Math.max(...Object.values(ATLAS_TILES).map((tile) => tile.y + (tile.h ?? 1)));
 
 
@@ -587,6 +592,13 @@ async function buildBaseAtlas() {
     const blueberryTile = ATLAS_TILES[BLUEBERRY_TEXTURE];
     context.clearRect(blueberryTile.x * T, blueberryTile.y * T, 64, 64);
     context.drawImage(blueberryAtlas, blueberryTile.x * T, blueberryTile.y * T);
+
+    await Promise.all(Object.entries(FIRE_WOODS).map(async ([wood, [, file]]) => {
+        const image = await loadImage(new URL(`../../assets/models/campfire/drewno-${file}.png`, import.meta.url).href);
+        const tile = ATLAS_TILES[`campfire_${wood}`];
+        context.clearRect(tile.x * T, tile.y * T, 32, 32);
+        context.drawImage(image, tile.x * T, tile.y * T);
+    }));
 
     // Gotowy atlas z powrotem jako zwykły obrazek (PNG) - tak jak sam
     // terrain.png. Rysowanie z obrazka (ikonki, średnie kolory, tekstura

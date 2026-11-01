@@ -353,6 +353,9 @@ function plantPackBlocks() {
 // ------------------------------------------------------------
 
 export const BLOCK_TYPES = {
+    campfire: { id: 10000, name: 'Campfire', label: 'Ognisko', solid: false, opaque: false,
+        model: 'structure', flat: { attach: 'down' }, inventory: false, creative: false,
+        drops: null, sound: 'wood', pick: 'oak_firewood', textures: { all: 'oak_log_side' } },
 
     grass: {
 
@@ -1262,7 +1265,7 @@ for (const [type, definition] of Object.entries(BLOCK_TYPES)) {
 
     treeById[id] = definition.tree ? 1 : 0;
 
-    if (definition.model === 'flat') {
+    if (definition.model === 'flat' || definition.model === 'structure') {
 
         const attach = ATTACH_CODES[definition.flat?.attach];
 

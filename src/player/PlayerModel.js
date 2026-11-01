@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { getRiverPlantFaces } from '../rendering/RiverPlantGeometry.js';
-import { getFruitItemModel } from '../rendering/FruitBushGeometry.js';
+import { getItemModel as getFruitItemModel } from '../rendering/ItemGeometry.js';
 
 import { getBlockDefinition } from '../blocks/BlockRegistry.js';
 import { ITEM_TYPES, isItemType } from '../items/ItemRegistry.js';

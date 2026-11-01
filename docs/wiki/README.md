@@ -112,3 +112,7 @@ Opisy techniczne poszczególnych części gry są w `docs/`:
 [aplikacja](../aplikacja.md). Jak dodać blok, przedmiot albo przepis -
 w głównym [README](../../README.md). **Nowe drzewo bez programowania**
 (folder w `assets/drzewa/`) - [paczki drzew](../drzewa-paczki.md).
+
+## Ogniska
+
+Pień i siekiera dają 4 opały; siekiera zostaje. Ułóż 6 polan, dodaj trawę i przytrzymaj PPM starterem z dwóch patyków. Ognisko pali się około 8 minut, zwęgla się i zostawia żar oraz popiół. Pełna instrukcja: [ogniska](../ogniska.md).

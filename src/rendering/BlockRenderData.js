@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { campfireLightUniforms, CAMPFIRE_LIGHT_GLSL } from './CampfireLight.js';
 import { SURFACE_LIGHTING_GLSL } from './SurfaceLighting.js';
 import { getSurfaceFaceTexture } from './SurfaceMaterials.js';
 
@@ -207,7 +208,7 @@ blockMaterial.onBeforeCompile = (shader, renderer) => {
                 vec3(vSurfaceEmission * uAtmosphericLight), uNightDesaturation, uNightTint, uAtmosphericLight);
 
             #ifdef USE_DYNAMIC_LIGHT
-                outgoingLight += blockTexel * meteorLight(vWorldPosition, vWorldNormal);
+                outgoingLight += blockTexel * (meteorLight(vWorldPosition, vWorldNormal) + campfireLight(vWorldPosition, vWorldNormal));
             #endif
 
             // Ustawienie "Jasność" (viewUniforms.js).
@@ -347,7 +348,7 @@ blockMaterial.onBeforeCompile = (shader, renderer) => {
     // Dynamiczne światło potrzebuje tekstur 3D (WebGL2), cienie słońca -
     // tekstury głębi (też WebGL2).
 
-    Object.assign(shader.uniforms, dynamicLightUniforms, meteorLightUniforms, shadowUniforms, bounceUniforms);
+    Object.assign(shader.uniforms, dynamicLightUniforms, meteorLightUniforms, shadowUniforms, bounceUniforms, campfireLightUniforms);
 
     shader.vertexShader =
         shader.vertexShader
@@ -376,6 +377,7 @@ blockMaterial.onBeforeCompile = (shader, renderer) => {
             uniform float uDynamicSize;
             uniform float uDynamicEnabled;
             ${METEOR_LIGHT_GLSL}
+            ${CAMPFIRE_LIGHT_GLSL}
             ${SHADOW_GLSL}
 
             #ifndef USE_SUN_SHADOWS
@@ -1071,6 +1073,8 @@ for (
         BLOCK_TYPES
     )
 ) {
+
+    if (definition.model === 'structure') continue;
 
     const rotatedFaces =
         definition.randomRotation ?? [];

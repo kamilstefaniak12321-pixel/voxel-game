@@ -42,7 +42,13 @@ import { PLANT_PACKS, plantTile } from '../blocks/plantPacks.js';
 // światem (ekwipunek, /daj) chodzi o tę samą listę.
 // ------------------------------------------------------------
 
+import { FIRE_WOODS, fuelType } from '../game/CampfireState.js';
+
 export const ITEM_TYPES = {
+    ...Object.fromEntries(Object.entries(FIRE_WOODS).map(([wood, [label]]) => [fuelType(wood), {
+        name: `${wood} firewood`, label: `Opał — ${label}`, icon: `campfire_${wood}`, category: 'drewno'
+    }])),
+    fire_starter: { name: 'Fire starter', label: 'Starter ognia', icon: 'stick', category: 'narzedzia' },
 
     strawberry: {
         name: 'Strawberries',
@@ -290,7 +296,7 @@ export function isItemType(type) {
 
 export function itemExists(type) {
 
-    return blockExists(type) || isItemType(type);
+    return (blockExists(type) && BLOCK_TYPES[type].inventory !== false) || isItemType(type);
 
 }
 
@@ -313,7 +319,7 @@ export function getPlacedBlock(type) {
         return ITEM_TYPES[type].plants ?? null;
     }
 
-    return blockExists(type) ? type : null;
+    return itemExists(type) ? type : null;
 
 }
 

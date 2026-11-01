@@ -1,0 +1,184 @@
+{
+  "device": {
+    "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 3050 Laptop GPU (0x000025A2) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "buffer": [
+      1920,
+      1080
+    ],
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.7977.130 Electron/44.4.5 Safari/537.36"
+  },
+  "checks": [
+    {
+      "name": "six fuel consumed",
+      "ok": true
+    },
+    {
+      "name": "seventh refused",
+      "ok": true
+    },
+    {
+      "name": "one tinder consumed",
+      "ok": true
+    },
+    {
+      "name": "ignition grows",
+      "ok": true
+    },
+    {
+      "name": "ignited",
+      "ok": true
+    },
+    {
+      "name": "six visible logs",
+      "ok": true
+    },
+    {
+      "name": "local shadow light on",
+      "ok": true
+    },
+    {
+      "name": "save succeeded",
+      "ok": true
+    },
+    {
+      "name": "persisted fuel and burn",
+      "ok": true
+    },
+    {
+      "name": "coals and ash",
+      "ok": true
+    },
+    {
+      "name": "refuel consumed one",
+      "ok": true
+    },
+    {
+      "name": "full inventory prevents dismantle",
+      "ok": true
+    },
+    {
+      "name": "dismantle returns fresh fuel",
+      "ok": true
+    },
+    {
+      "name": "state cleaned after break",
+      "ok": true
+    },
+    {
+      "name": "no rendering errors",
+      "ok": true,
+      "detail": []
+    }
+  ],
+  "errors": [],
+  "results": [
+    {
+      "point": "perf-0",
+      "frames": {
+        "samples": 4316,
+        "averageMs": 6.950301204819277,
+        "fps": 143.8786565547129,
+        "p99Ms": 8.200000047683716,
+        "maxMs": 14.100000143051147,
+        "over33ms": 0
+      },
+      "cpu": {
+        "samples": 4317,
+        "averageMs": 2.9000694942827825,
+        "fps": 344.81932311325886,
+        "p99Ms": 6,
+        "maxMs": 10.900000095367432,
+        "over33ms": 0
+      },
+      "gpu": {
+        "samples": 4317,
+        "averageMs": 4.989399216122306,
+        "fps": 200.42493227815643,
+        "p99Ms": 5.132288,
+        "maxMs": 5.616288,
+        "over33ms": 0
+      },
+      "info": {
+        "frame": 192618,
+        "calls": 248,
+        "triangles": 573774,
+        "points": 4596,
+        "lines": 0
+      }
+    },
+    {
+      "point": "perf-1",
+      "frames": {
+        "samples": 4318,
+        "averageMs": 6.94539138491146,
+        "fps": 143.98036691963156,
+        "p99Ms": 8.200000047683716,
+        "maxMs": 13.399999856948853,
+        "over33ms": 0
+      },
+      "cpu": {
+        "samples": 4319,
+        "averageMs": 3.2921278068770357,
+        "fps": 303.75491434781685,
+        "p99Ms": 6.3999998569488525,
+        "maxMs": 12.299999952316284,
+        "over33ms": 0
+      },
+      "gpu": {
+        "samples": 4319,
+        "averageMs": 5.224044906691355,
+        "fps": 191.42255050662442,
+        "p99Ms": 5.393344,
+        "maxMs": 5.833536,
+        "over33ms": 0
+      },
+      "info": {
+        "frame": 289891,
+        "calls": 257,
+        "triangles": 573924,
+        "points": 4596,
+        "lines": 0
+      }
+    }
+  ],
+  "fireStates": [
+    {
+      "x": -2,
+      "y": 61,
+      "z": 0,
+      "logs": [
+        {
+          "wood": "oak",
+          "burn": 0.20337875000001365
+        },
+        {
+          "wood": "oak",
+          "burn": 0.20337875000001365
+        },
+        {
+          "wood": "oak",
+          "burn": 0.20337875000001365
+        },
+        {
+          "wood": "oak",
+          "burn": 0.20337875000001365
+        },
+        {
+          "wood": "oak",
+          "burn": 0.20337875000001365
+        },
+        {
+          "wood": "oak",
+          "burn": 0.20337875000001365
+        }
+      ],
+      "tinder": null,
+      "phase": "burning",
+      "ignition": 1,
+      "collapse": 0,
+      "embers": 0,
+      "ash": false
+    }
+  ],
+  "draws": 24
+}

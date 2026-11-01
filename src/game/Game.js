@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 
+import { Campfires } from './Campfires.js';
 import { World } from '../world/World.js';
 import { Player } from '../player/Player.js';
 import { VoxelRaycast } from '../interaction/VoxelRaycast.js';
@@ -306,6 +307,7 @@ export class Game {
             this.shadows.markChunk(chunk);
 
             this.bounce.markChunk(chunk);
+            this.campfires?.renderer.light.markChunk(chunk);
 
         };
         this.plantAnimations.onFrame = (chunk) => this.shadows.markPlantAnimation(chunk);
@@ -479,6 +481,8 @@ export class Game {
         this.swimDistance = 0;
 
 
+        this.campfires = new Campfires(this, worldInfo.campfires);
+
         // Autozapis.
 
         this.saver = new WorldSaver(
@@ -486,7 +490,8 @@ export class Game {
             worldInfo,
             this.world,
             this.player,
-            this.time
+            this.time,
+            this.campfires
         );
 
         this.saver.saveOnExit();
@@ -625,7 +630,13 @@ export class Game {
 
         const placing = !breakPressed;
 
-        if (placing && stripping) {
+        const fireInteraction = placing && !breakHeld && placePressed &&
+            this.campfires.interact(this.currentHit, this.selectedBlock);
+
+        if (fireInteraction) {
+            this.currentHit = this.raycast.castFromCamera(this.camera);
+        }
+        else if (placing && stripping) {
 
             this.stripTarget(this.currentHit);
 
@@ -731,6 +742,8 @@ export class Game {
 
         this.updateCameraRange();
 
+
+        this.campfires.update(dt, input.isMouseDown(2) && !breakHeld && !breakPressed);
 
         // Autozapis co jakiś czas.
 
@@ -1080,6 +1093,7 @@ export class Game {
         // Mapa cieni słońca (gdy trzeba) i cień gracza - przed światem.
 
         this.shadows.render(this.world, this.camera.position, this.model, this.scene, this.viewDistance, this.farTerrain);
+        this.campfires.renderer.renderShadows();
 
 
         renderer.clear();
@@ -2007,7 +2021,7 @@ export class Game {
 
         const { x, y, z, type } = hit.block;
 
-        const drops = this.breakDrops(type);
+        const drops = this.breakDrops(type, hit.block);
 
         // Te same sąsiednie bloki, które usuwa World.setBlock:
         // roślina nad podłożem i dekoracje przylegające do podpory.
@@ -2021,7 +2035,7 @@ export class Game {
                 supported.set(key, {
                     x: sx, y: sy, z: sz,
                     type: this.world.getBlock(sx, sy, sz),
-                    drops: this.breakDrops(this.world.getBlock(sx, sy, sz))
+                    drops: this.breakDrops(this.world.getBlock(sx, sy, sz), {x:sx,y:sy,z:sz})
                 });
             }
         };
@@ -2084,7 +2098,9 @@ export class Game {
     // Cała paczka ze zniszczonego bloku, bez zmieniania ekwipunku.
     // Ten sam wynik służy do sprawdzenia miejsca i przyznania łupów.
 
-    breakDrops(type) {
+    breakDrops(type, position = null) {
+
+        if (type === 'campfire') return this.campfires.drops(position);
 
         const drops = [];
         const drop = getDropType(type);
@@ -2497,6 +2513,7 @@ export class Game {
         this.removeOrbs();
 
         this.dynamicLight.dispose();
+        this.campfires.dispose();
 
         this.farTerrain.dispose();
 

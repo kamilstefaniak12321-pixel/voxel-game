@@ -33,7 +33,7 @@ const { PACK_TEXTURES, TREE_PACKS } = await import(src('blocks/treePacks.js'));
 const { PLANT_TEXTURES, PLANT_PACKS } = await import(src('blocks/plantPacks.js'));
 const { getRiverPlantFaces } = await import(src('rendering/RiverPlantGeometry.js'));
 const { pixelPlantIconPixels } = await import(src('ui/PixelPlantIcon.js'));
-const { getFruitItemModel } = await import(src('rendering/FruitBushGeometry.js'));
+const { getItemModel: getFruitItemModel } = await import(src('rendering/ItemGeometry.js'));
 
 function fruitIcon(type) {
     const fruit = getFruitItemModel(type);

@@ -2,8 +2,22 @@
 
 > Ta strona jest generowana z kodu gry (`python tools/wiki.py`) - nie zmieniaj jej ręcznie, zmiany przepadną przy następnym generowaniu.
 
-Wersja gry **0.50.1** - 38 przedmiotów. Przedmiotu nie da się postawić jak bloku; owoce i nasiona posadzone na ziemi (PPM) wyrastają w krzak albo drzewo, narzędzia przyspieszają kopanie.
+Wersja gry **0.51.0** - 48 przedmiotów. Przedmiotu nie da się postawić jak bloku; owoce i nasiona posadzone na ziemi (PPM) wyrastają w krzak albo drzewo, narzędzia przyspieszają kopanie.
 
+
+## Drewno
+
+| | Nazwa | W komendach | Najważniejsze |
+|---|---|---|---|
+| <img src="ikony/oak_firewood.png" width="32" height="32" alt=""> | **Opał — dąb** | `oak_firewood` | **Przepis:** Opał — dąb x4 |
+| <img src="ikony/birch_firewood.png" width="32" height="32" alt=""> | **Opał — brzoza** | `birch_firewood` | **Przepis:** Opał — brzoza x4 |
+| <img src="ikony/spruce_firewood.png" width="32" height="32" alt=""> | **Opał — świerk** | `spruce_firewood` | **Przepis:** Opał — świerk x4 |
+| <img src="ikony/pine_firewood.png" width="32" height="32" alt=""> | **Opał — sosna** | `pine_firewood` | **Przepis:** Opał — sosna x4 |
+| <img src="ikony/beech_firewood.png" width="32" height="32" alt=""> | **Opał — buk** | `beech_firewood` | **Przepis:** Opał — buk x4 |
+| <img src="ikony/linden_firewood.png" width="32" height="32" alt=""> | **Opał — lipa** | `linden_firewood` | **Przepis:** Opał — lipa x4 |
+| <img src="ikony/olcha_firewood.png" width="32" height="32" alt=""> | **Opał — olcha** | `olcha_firewood` | **Przepis:** Opał — olcha x4 |
+| <img src="ikony/wierzba_firewood.png" width="32" height="32" alt=""> | **Opał — wierzba** | `wierzba_firewood` | **Przepis:** Opał — wierzba x4 |
+| <img src="ikony/jablon_firewood.png" width="32" height="32" alt=""> | **Opał — jabłoń** | `jablon_firewood` | **Przepis:** Opał — jabłoń x4 |
 
 ## Rośliny
 
@@ -56,9 +70,10 @@ Wersja gry **0.50.1** - 38 przedmiotów. Przedmiotu nie da się postawić jak bl
 
 | | Nazwa | W komendach | Najważniejsze |
 |---|---|---|---|
+| <img src="ikony/fire_starter.png" width="32" height="32" alt=""> | **Starter ognia** | `fire_starter` | **Przepis:** Starter ognia |
 | <img src="ikony/resin.png" width="32" height="32" alt=""> | **Żywica** | `resin` | **Skąd:** zbiór (PPM): Pień sosny z żywicą<br>**Przydaje się do:** Lampa |
 | <img src="ikony/birch_bark.png" width="32" height="32" alt=""> | **Kora brzozowa** | `birch_bark` | **Skąd:** okorowanie siekierą: Pień brzozy<br>**Przydaje się do:** Lampa |
-| <img src="ikony/axe.png" width="32" height="32" alt=""> | **Siekiera** | `axe` | **Narzędzie:** kopie 3 razy szybciej: drewno<br>**Przepis:** Siekiera |
+| <img src="ikony/axe.png" width="32" height="32" alt=""> | **Siekiera** | `axe` | **Narzędzie:** kopie 3 razy szybciej: drewno<br>**Przepis:** Siekiera<br>**Przydaje się do:** Opał — dąb, Opał — brzoza, Opał — świerk, Opał — sosna, Opał — buk, Opał — lipa, Opał — olcha, Opał — wierzba, Opał — jabłoń |
 | <img src="ikony/pickaxe.png" width="32" height="32" alt=""> | **Kilof** | `pickaxe` | **Narzędzie:** kopie 3 razy szybciej: kamień<br>**Przepis:** Kilof |
 | <img src="ikony/shovel.png" width="32" height="32" alt=""> | **Łopata** | `shovel` | **Narzędzie:** kopie 3 razy szybciej: trawa, ziemia, piasek, żwir, błoto, snow<br>**Przepis:** Łopata |
-| <img src="ikony/stick.png" width="32" height="32" alt=""> | **Patyk** | `stick` | **Przepis:** Patyk x4<br>**Przydaje się do:** Siekiera, Kilof, Łopata |
+| <img src="ikony/stick.png" width="32" height="32" alt=""> | **Patyk** | `stick` | **Przepis:** Patyk x4<br>**Przydaje się do:** Starter ognia, Siekiera, Kilof, Łopata |

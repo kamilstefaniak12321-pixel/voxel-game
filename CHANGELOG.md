@@ -11,6 +11,19 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 0.51.0 - Ogniska budowane z opału
+
+Nowa mechanika ognisk — PR do uzupełnienia.
+
+- Dziewięć gatunków opału z zatwierdzonych modeli; można je mieszać w jednym ognisku. Pień i siekiera dają 4 opały, a siekiera zostaje.
+- Budowanie w świecie: 6 polan, trawa na podpałkę i starter z dwóch patyków. Przytrzymanie PPM przez 5 sekund stopniowo rozpala ogień. Ognisko nie jest przedmiotem ekwipunku.
+- Około 8 minut spalania, płynne zwęglanie i żarzące szczeliny. Wypalone polana osiadają w popiół z powoli gasnącymi węglami. Ponowne rozpalenie wymaga 6 świeżych opałów i nowej podpałki.
+- Animowany ogień, delikatny dym, rzadkie iskry i ciepłe migoczące światło z cieniami terenu oraz roślin. Koszt efektów ograniczają wspólna pula drobin i przechowywane mapy cieni.
+- Zapis stanu ogniska; odzyskiwanie świeżego opału przy rozbiórce, także przez usunięcie podłoża. Pełny ekwipunek blokuje rozbiórkę zamiast gubić opał.
+- Opały i starter mają modele 3D w ekwipunku oraz dłoni. Dotykowy przycisk „Postaw” obsługuje przytrzymanie do rozpalania.
+
+Instrukcja i limity: `docs/ogniska.md`. Wydanie Windows/Android przygotowane do publikacji po scaleniu PR.
+
 ## 0.50.1 - Licencja PolyForm Noncommercial (przed upublicznieniem kodu)
 
 Licencja gry - PR #82. Dla gracza w samej grze bez zmian względem 0.50.0.

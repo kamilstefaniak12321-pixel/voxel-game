@@ -17,7 +17,7 @@ import {
 import { getRiverPlantFaces } from '../rendering/RiverPlantGeometry.js';
 import { pixelPlantIconPixels } from './PixelPlantIcon.js';
 import { modelIconPixels } from './ModelIcon.js';
-import { getFruitItemModel } from '../rendering/FruitBushGeometry.js';
+import { getItemModel as getFruitItemModel } from '../rendering/ItemGeometry.js';
 
 // ------------------------------------------------------------
 // IKONKI BLOKÓW

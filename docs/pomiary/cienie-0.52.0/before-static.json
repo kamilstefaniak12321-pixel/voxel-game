@@ -1,0 +1,123 @@
+{
+  "device": {
+    "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 3050 Laptop GPU (0x000025A2) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "buffer": [
+      1920,
+      1080
+    ],
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.7977.130 Electron/44.4.5 Safari/537.36"
+  },
+  "settings": {
+    "potato": false,
+    "viewDistance": 48,
+    "farTerrain": 8192,
+    "farDetail": 2,
+    "fov": 75,
+    "brightness": 0,
+    "renderScale": 100,
+    "fpsLimit": 0,
+    "ambientOcclusion": 45,
+    "shadows": 3,
+    "lightingModel": "atmosphere",
+    "lightShafts": true,
+    "bounceLight": false,
+    "fancyLeaves": true,
+    "dynamicLight": true,
+    "loadBudget": 4,
+    "mouseSensitivity": 100,
+    "invertMouse": false,
+    "skinOverlay": true,
+    "showHand": false,
+    "viewBobbing": true,
+    "jointStyle": "smooth",
+    "cameraDistance": 4,
+    "volumeMaster": 80,
+    "volumeBlocks": 100,
+    "volumeWorld": 100,
+    "volumeUi": 80,
+    "theme": "default",
+    "inventoryStyle": "wood",
+    "hudScale": 100,
+    "showDebug": false,
+    "showFps": false,
+    "meteorites": false,
+    "autoUpdates": true,
+    "textureResolution": 0
+  },
+  "errors": [],
+  "results": [
+    {
+      "point": "static",
+      "frames": {
+        "samples": 4314,
+        "averageMs": 6.951900788131664,
+        "fps": 143.84555109117886,
+        "p99Ms": 8.200000047683716,
+        "maxMs": 12.199999809265137,
+        "over33ms": 0
+      },
+      "cpu": {
+        "samples": 4315,
+        "averageMs": 3.6205098502467434,
+        "fps": 276.2041926033839,
+        "p99Ms": 6.300000190734863,
+        "maxMs": 10.699999809265137,
+        "over33ms": 0
+      },
+      "gpu": {
+        "samples": 4315,
+        "averageMs": 2.7752003263035783,
+        "fps": 360.33434794667517,
+        "p99Ms": 3.008512,
+        "maxMs": 6.854656,
+        "over33ms": 0
+      },
+      "info": {
+        "frame": 68878,
+        "calls": 329,
+        "triangles": 698160,
+        "points": 96,
+        "lines": 0
+      }
+    }
+  ],
+  "gpuChecks": null,
+  "shadows": {
+    "budget": {
+      "draws": 24,
+      "triangles": 120000,
+      "milliseconds": 1.5
+    },
+    "lastFrame": {
+      "draws": 24,
+      "triangles": 55776,
+      "completed": 0,
+      "prepareMilliseconds": 0,
+      "submitMilliseconds": 0
+    },
+    "cascades": [
+      {
+        "name": "far",
+        "radius": 256,
+        "size": 1024,
+        "valid": true,
+        "building": false,
+        "remaining": 0,
+        "draws": 73,
+        "terrainRevision": 480,
+        "changed": false
+      },
+      {
+        "name": "distant",
+        "radius": 1024,
+        "size": 2048,
+        "valid": true,
+        "building": true,
+        "remaining": 234,
+        "draws": 64,
+        "terrainRevision": 480,
+        "changed": false
+      }
+    ]
+  }
+}

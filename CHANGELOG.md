@@ -13,7 +13,7 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ## 0.52.0 - Naturalne krawędzie cieni
 
-Zmiana wyglądu cieni słońca i księżyca — PR do uzupełnienia.
+Zmiana wyglądu cieni słońca i księżyca — PR #85.
 
 - Cienie podążają za powierzchnią i kształtem przeszkody, bez przyciągania do siatki pikseli tekstury bloku.
 - Delikatnie wygładzone krawędzie cieni terenu, roślin i gracza; wspólne filtrowanie także na dalekim terenie.

@@ -50,10 +50,26 @@ map ani przebiegów rysowania. Dalekie cienie zachowują pełną wagę do około
 800 bloków. To filtrowane mapy cieni, bez symulacji zmiennej szerokości
 półcienia; bardzo dalekie szczegóły nadal ogranicza rozdzielczość map.
 
-Pomiar porównawczy FPS pozostaje do wykonania: w czasie oględzin działała
-również zwykła aplikacja gry. Nie traktujemy tej sesji jako potwierdzenia
-stabilnych 60 FPS. Skrypt ma powtarzalny widok terenu i lot 256 bloków
-(10 s rozgrzewki + 30 s pomiaru, klatki CPU i zapytania czasu GPU).
+Pomiar A/B wykonano po zamknięciu zwykłej gry. Jedna kopia próbna naraz,
+VSync 144 Hz, brak limitu FPS w grze, po 10 s rozgrzewki i 30 s pomiaru.
+Świat klasyczny, otwarty teren (bez gęstego lasu), ta sama trasa i początkowy
+czas dnia; zegar świata działa podczas pomiaru.
+
+| Scena | FPS przed → po | P99 klatki przed → po | Średni czas GPU przed → po |
+|---|---:|---:|---:|
+| Nieruchomy widok terenu | 143,85 → 143,92 | 8,2 → 8,6 ms | 2,78 → 3,00 ms |
+| Lot 256 bloków | 142,78 → 143,38 | 10,6 → 9,5 ms | 2,72 → 2,93 ms |
+
+Źródła: [stary widok](before-static.json), [nowy widok](after-static.json),
+[stary lot](before-flight.json), [nowy lot](after-flight.json).
+
+W obu nowych próbach ponad 99% klatek zmieściło się w 10 ms; najdłuższa
+klatka lotu trwała 27,6 ms. Brak klatek powyżej 33,34 ms i błędów JS/WebGL.
+W tych scenach zachowano duży zapas względem 60 FPS. FPS ogranicza ekran,
+więc nie jest to dowód przyspieszenia: koszt GPU wzrósł o około 0,2 ms
+(7–8%). Są to pojedyncze przebiegi A/B, nie pomiar granicznego FPS ani
+gwarancja dla wszystkich światów. Liczba rysowań ostatniej klatki może
+różnić się przez porcjowaną aktualizację dalekich map.
 
 ## Odtworzenie
 

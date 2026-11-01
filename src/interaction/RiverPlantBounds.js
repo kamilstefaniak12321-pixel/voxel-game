@@ -12,6 +12,11 @@ export function riverPlantBounds(river, x, y, z) {
     if (river.tuft?.carpet || river.tuft?.coating || river.tuft?.bracket) {
         return { min: [0, 0, 0], max: [1, river.tuft.height / 16 + 0.005, 1] };
     }
+    // Duża roślina (krzew) wystaje poza komórkę - celownik bierze jej
+    // komórkę (bez brzegu, żeby dało się trafić bloki obok) i wysokość.
+    if (river.tuft?.wide) {
+        return { min: [0.0625, 0, 0.0625], max: [0.9375, river.tuft.height / 16 + 0.005, 0.9375] };
+    }
     const key = `${river.kind}:${river.waterlogged}:${x},${y},${z}`;
     if (cache.has(key)) return cache.get(key);
     const transform = riverPlantTransform(x, y, z);

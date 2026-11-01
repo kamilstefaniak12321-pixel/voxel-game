@@ -2,7 +2,7 @@
 
 > Ta strona jest generowana z kodu gry (`python tools/wiki.py`) - nie zmieniaj jej ręcznie, zmiany przepadną przy następnym generowaniu.
 
-Wersja gry **0.48.1** - 178 bloków (do tego 5 odmian, których nie ma w ekwipunku, np. wieniec zawieszony na boku bloku). Czas kopania dotyczy trybu przygody; w kreatywnym bloki znikają od razu.
+Wersja gry **0.49.0** - 184 bloków (do tego 5 odmian, których nie ma w ekwipunku, np. wieniec zawieszony na boku bloku). Czas kopania dotyczy trybu przygody; w kreatywnym bloki znikają od razu.
 
 [Ziemia](#ziemia) · [Skały](#skały) · [Drewno](#drewno) · [Budulec](#budulec) · [Rośliny](#rośliny) · [Światło](#światło) · [Ozdoby](#ozdoby)
 
@@ -197,6 +197,12 @@ Wersja gry **0.48.1** - 178 bloków (do tego 5 odmian, których nie ma w ekwipun
 | <img src="ikony/huba_etap1.png" width="32" height="32" alt=""> | **Młoda huba** | `huba_etap1` | **Kopanie:** od razu<br>**Rośnie:** w: Huba<br>**Skąd:** zniszczony blok: Huba; zniszczony blok: Huba (stara, piętrowa) |
 | <img src="ikony/huba_etap2.png" width="32" height="32" alt=""> | **Huba** | `huba_etap2` | **Kopanie:** od razu<br>**Daje:** Młoda huba<br>**Rośnie:** w: Huba (stara, piętrowa)<br>**Skąd:** wyrasta z: Młoda huba |
 | <img src="ikony/huba_etap3.png" width="32" height="32" alt=""> | **Huba (stara, piętrowa)** | `huba_etap3` | **Kopanie:** od razu<br>**Daje:** Młoda huba<br>**Zbiór (PPM):** Huba 1-2<br>**Skąd:** wyrasta z: Huba |
+| <img src="ikony/indygowiec_etap1.png" width="32" height="32" alt=""> | **Młody indygowiec** | `indygowiec_etap1` | **Kopanie:** od razu<br>**Rośnie:** w: Indygowiec<br>**Skąd:** zniszczony blok: Indygowiec; zniszczony blok: Indygowiec (kwitnie) |
+| <img src="ikony/indygowiec_etap2.png" width="32" height="32" alt=""> | **Indygowiec** | `indygowiec_etap2` | **Kopanie:** od razu<br>**Daje:** Młody indygowiec<br>**Rośnie:** w: Indygowiec (kwitnie)<br>**Skąd:** wyrasta z: Młody indygowiec |
+| <img src="ikony/indygowiec_etap3.png" width="32" height="32" alt=""> | **Indygowiec (kwitnie)** | `indygowiec_etap3` | **Kopanie:** od razu<br>**Daje:** Młody indygowiec<br>**Zbiór (PPM):** Liście indygowca 2-4<br>**Skąd:** wyrasta z: Indygowiec |
+| <img src="ikony/marzanna_etap1.png" width="32" height="32" alt=""> | **Młoda marzanna** | `marzanna_etap1` | **Kopanie:** od razu<br>**Rośnie:** w: Marzanna (pąki)<br>**Skąd:** zniszczony blok: Marzanna (pąki); zniszczony blok: Marzanna (kwitnie) |
+| <img src="ikony/marzanna_etap2.png" width="32" height="32" alt=""> | **Marzanna (pąki)** | `marzanna_etap2` | **Kopanie:** od razu<br>**Daje:** Młoda marzanna<br>**Rośnie:** w: Marzanna (kwitnie)<br>**Skąd:** wyrasta z: Młoda marzanna |
+| <img src="ikony/marzanna_etap3.png" width="32" height="32" alt=""> | **Marzanna (kwitnie)** | `marzanna_etap3` | **Kopanie:** od razu<br>**Daje:** Młoda marzanna<br>**Zbiór (PPM):** Korzeń marzanny 1-3<br>**Skąd:** wyrasta z: Marzanna (pąki) |
 
 ## Światło
 

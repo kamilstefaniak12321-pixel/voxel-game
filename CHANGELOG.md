@@ -11,6 +11,48 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 0.49.0 - Indygowiec i marzanna: duże rośliny barwierskie, animacje roślin
+
+Rośliny większe niż blok i animacje wszystkich roślin z paczek — PR #80
+(zawiera #79 - 0.48.1, #78 - 0.48.0 i #77 - 0.47.1).
+
+- **Indygowiec** (brzeziny, skraje łąk, buczyny) - pierwszy **duży
+  krzew**: u dołu obszerna kępa liści, z niej wachlarzem zdrewniałe pędy
+  z owalnymi liśćmi i ziarniste, fioletowo-granatowe grona kwiatów.
+  Kwitnący krzew ma ok. 1.4 bloku wysokości i wystaje na boki poza swój
+  blok. Trzy etapy: młody, krzew z pąkami, kwitnący. Zbiór z kwitnącego:
+  **liście indygowca** (2-4, grupa "coś niebieskiego" - przyszły
+  niebieski barwnik), krzew wraca do etapu z pąkami. Osiągnięcie
+  *Błękit z zieleni*.
+- **Marzanna barwierska** (mokradła, lasy): wysoka, rozgałęziona łodyga
+  z długimi, łukowatymi liśćmi parami na krzyż - dolne opadają aż do
+  ziemi i sięgają poza blok; czerwone pąki, potem kopułki kremowych
+  kwiatków z czerwonym środkiem; przy ziemi wystają czerwone korzenie.
+  Zbiór z kwitnącej: **korzeń marzanny** (1-3, grupa "coś czerwonego" -
+  przyszły czerwony barwnik), roślina wraca do młodej. Osiągnięcie
+  *Czerwień spod ziemi*.
+- **Rośliny większe niż blok**: model z pikseli może wystawać w bok
+  i w górę (do 2 bloków). Część, która weszłaby w lity blok obok (ściana,
+  pagórek, blok nad rośliną, także po skosie), jest ucinana - roślina nie
+  przebija bloków. Celownik bierze komórkę rośliny (bloki obok dalej da
+  się trafić). W świecie duże rośliny nie wyrastają tuż obok siebie.
+- **Animacje wszystkich roślin z paczek** (kępki i krzewy - od kocanki
+  po indygowiec), w kierunku borówki: posadzenie - roślina wyrasta
+  z lekkim przeskokiem i kołysaniem; wzrost - nowy etap rośnie płynnie od
+  wysokości poprzedniego; zbiór - kwiaty maleją wokół własnych środków,
+  potem płynnie etap po zbiorze; pełny ekwipunek - ugięcie i kołysanie
+  (kwiaty zostają); zniszczenie - szybki zanik. Tylko warstwa wizualna
+  (blok i zapis zmieniają się od razu), ten sam limit 12 roślin w pobliżu.
+  Dywany, porosty i huby jeszcze bez animacji.
+- Paczki roślin: nowe części modelu `kepka` - układ liści `krzew`,
+  łukowate liście łodyg (`"luk": true`), łodyga rozgałęziona
+  (`"rozgalezione": true`), kwiaty `grono` i `kwiatki`, korzenie przy
+  ziemi (`korzenie`, kolory `korzen` i `korzenJasny`) - opis w
+  `docs/rosliny.md`, animacje w `docs/animacje-roslin.md`.
+- Sprawdzenie `tools/sprawdz_animacje_kepek.mjs` (526 sprawdzeń: wymiary,
+  ucinanie przy ścianach, przejścia, neutralny początek i koniec, model
+  po animacji jak bez niej). Wiki i szablon paczki tekstur odświeżone.
+
 ## 0.48.1 - Oszczędniejsze kompilacje w GitHub Actions
 
 Próbne kompilacje tylko dla gotowych PR-ów — PR #79 (zawiera #78 - 0.48.0

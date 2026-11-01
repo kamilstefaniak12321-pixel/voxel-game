@@ -1,0 +1,65 @@
+{
+    "nazwa": "Marzanna barwierska",
+    "nazwaAngielska": "Madder",
+    "opis": "wysoka łodyga z bocznymi gałęziami, długie lancetowate liście parami, wygięte w łuk - dolne sięgają poza blok; czerwone pąki, potem kopułki kremowych kwiatków z czerwonym środkiem; przy ziemi wystają czerwone korzenie, z których robi się czerwony barwnik; rośnie na mokradłach i w lasach",
+    "pierwszeId": 5051,
+    "etapy": [
+        {
+            "nazwa": "Młoda marzanna",
+            "model": {
+                "rodzaj": "kepka",
+                "liscie": { "uklad": "brak" },
+                "lodygi": { "ile": [1, 1], "wysokosc": [7, 8], "rozgalezione": true, "liscie": { "co": 2, "dlugosc": [3, 6], "luk": true } },
+                "korzenie": 2
+            }
+        },
+        {
+            "nazwa": "Marzanna (pąki)",
+            "model": {
+                "rodzaj": "kepka",
+                "liscie": { "uklad": "brak" },
+                "lodygi": { "ile": [3, 3], "wysokosc": [12, 13], "promien": 4, "rozgalezione": true, "liscie": { "co": 3, "dlugosc": [4, 8], "luk": true } },
+                "kwiaty": { "rodzaj": "pak", "rozmiar": 2 },
+                "korzenie": 3
+            }
+        },
+        {
+            "nazwa": "Marzanna (kwitnie)",
+            "model": {
+                "rodzaj": "kepka",
+                "liscie": { "uklad": "brak" },
+                "lodygi": { "ile": [3, 3], "wysokosc": [16, 17], "promien": 5, "rozgalezione": true, "liscie": { "co": 3, "dlugosc": [4, 10], "luk": true } },
+                "kwiaty": { "rodzaj": "kwiatki", "rozmiar": [1, 2] },
+                "korzenie": 3
+            }
+        }
+    ],
+    "kolory": {
+        "lisc": "#3c6e1a",
+        "liscJasny": "#6f9a26",
+        "liscCiemny": "#1f420e",
+        "lodyga": "#566018",
+        "kwiat": "#e6cfa6",
+        "kwiatJasny": "#f5e6c4",
+        "kwiatCiemny": "#c9a77e",
+        "pak": "#a8402a",
+        "srodek": "#a83c24",
+        "korzen": "#8e2a1a",
+        "korzenJasny": "#c4523a"
+    },
+    "czasWzrostu": 330,
+    "przedmiot": {
+        "klucz": "korzen",
+        "plik": "korzen.png",
+        "nazwa": "Korzeń marzanny",
+        "nazwaAngielska": "Madder Root",
+        "kategoria": "rosliny",
+        "grupy": ["red"]
+    },
+    "zbior": { "ile": [1, 3], "wraca": 1 },
+    "gdzieRosnie": { "biomy": { "mokradla": 1, "las": 0.3 }, "plamy": 0.03, "gestosc": 0.4, "etapy": [0.25, 0.35, 0.4] },
+    "zrodlo": {
+        "atlas": "Atlas marzanny barwierskiej_ wzrost i korzenie.png",
+        "przedmiot": "korzen: --wysokosc 16 --nazwy etap1,etap2,etap3,korzen; etapy - model z pikseli (kępka: rozgałęziona łodyga, łukowate liście, pąki, kwiatki z czerwonym środkiem, korzenie) w kolorach atlasu"
+    }
+}

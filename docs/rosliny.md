@@ -168,6 +168,16 @@ samej skali co bloki - jeden piksel modelu to 1/16 bloku:
     `ile` - ile półek, `dlugosc` - promień półki. Porost i huba nie
     potrzebują ziemi - trzymają się ściany (stawia się je przy bloku,
     znikają, gdy nie mają już żadnej ściany),
+  - `krzew` - **duży krzew** (indygowiec): u dołu obszerna, nieregularna
+    kępa liści (kilka zlanych, spłaszczonych kul z kostek, warstwami po
+    2 piksele: ciemny spód, jaśniejszy odsłonięty wierzch), z niej
+    wachlarzem wyrastają zdrewniałe pędy (`lodygi.ile`) - ukosem w górę
+    i na boki, z owalnymi liśćmi z kostek na zmianę w lewo i w prawo,
+    na końcu pędu wachlarz liści i grono kwiatów (`kwiaty`: `grono`,
+    `ile` - ile gron). `promien` - zasięg krzewu w bok (do 12 pikseli -
+    wystaje poza blok), `wysokosc` - wysokość pędów [od, do] (do 32
+    pikseli - 2 bloki), `ile` - ile liści na pędach (do 60), `dlugosc` -
+    długość liścia,
   - `brak` - bez liści przy ziemi,
   - `dywan` - roślina płożąca się (barwinek): płaski kobierzec na całą
     komórkę - ciemne tło (cień między liśćmi), owalne liście, brązowe pędy
@@ -191,7 +201,14 @@ samej skali co bloki - jeden piksel modelu to 1/16 bloku:
   i szersze boki, 3 piksele szerokości), za każdym razem w inną stronę,
   albo okółek (`okolek`: kilka liści na jednej wysokości, dookoła -
   jak parasolka pod kwiatem zawilca); `"naprzeciw": true` - liście
-  parami w przeciwne strony, kolejne pary na krzyż (cynia),
+  parami w przeciwne strony, kolejne pary na krzyż (cynia);
+  `"luk": true` - **długie, łukowate liście** z kostek (marzanna):
+  parami na krzyż, od łodygi lekko w górę, potem wygięte i opadające
+  (czubek niżej niż nasada, najniżej na ziemi), w środku 2 piksele
+  szerokości; dolne najdłuższe (`dlugosc` do 12 - sięgają poza blok),
+  ku górze krótsze; `"rozgalezione": true` - pierwsza łodyga prosto ze
+  środka (najwyższa), pozostałe odchodzą od niej w 1/3 - 1/2 wysokości
+  i rosną ukosem na bok (na gałęziach tylko para liści pod kwiatami),
 - **kwiaty** na łodygach: `baldach` - kopułka z kostek (krzyżyk, nad nim
   jaśniejszy środek, jeden koszyczek w cieniu), `klos` - kolumna kwiatów
   (co drugi piksel kwiatek z boku, na zmianę z czterech stron; dół
@@ -219,11 +236,31 @@ samej skali co bloki - jeden piksel modelu to 1/16 bloku:
   kulka: ciemny spód, krzyżyk, jasny czubek; len), `straczki` - strąki
   ukosem w górę na krótkich szypułkach wzdłuż góry łodygi, co 2 piksele
   w inną stronę, na czubku strąk prosto (`rozmiar` - ile strąków bocznych,
-  1-5; gorczyca), albo brak. Roślina
+  1-5; gorczyca), `grono` - okrągła kiść drobnych kwiatów z kostek
+  (rozmiar 1 - krzyżyk z czubkiem, 2 - kulka 3 x 3 x 3 bez rogów; ciemny
+  spód, jasny wierzch; indygowiec), `kwiatki` - kopułka drobnych,
+  czteropłatkowych kwiatków z `srodek` w innym kolorze (rozmiar 1 - 3
+  kwiatki, 2 - 4: jeden na szczycie, reszta wiatraczkiem dookoła;
+  marzanna), albo brak. Roślina
   może **przekwitać**: ostatni etap z własnymi `kolory` (suche, złote
   łodygi) i torebkami zamiast kwiatów - len.
   `rozmiar` może być zakresem `[od, do]` - każda łodyga losuje (piwonia
   ma duże i małe kwiaty).
+
+- **korzenie** (`model.korzenie`: 0-8) - czerwone korzenie wystające
+  przy ziemi spod łodygi na boki (kolory `korzen`, `korzenJasny`) - znak
+  rośliny barwierskiej (marzanna).
+
+**Duże rośliny - cały blok i więcej.** Roślina może być większa niż
+blok: szersza (krzew indygowca ma do 30 pikseli szerokości, liście
+marzanny sięgają o kilka pikseli za brzeg) i wyższa (do 2 bloków). Gdy
+model wystaje poza swoją komórkę, część, która weszłaby w lity blok
+obok (ściana, pagórek, blok nad rośliną - także po skosie i piętro
+wyżej), jest **ucinana** - roślina nie przebija bloków. Taka roślina
+stoi bez obrotu (8 odmian kształtu dalej jest), a celownik bierze jej
+komórkę (żeby dało się trafić bloki obok). Do wyrośnięcia potrzebuje
+wolnego miejsca nad sobą jak wysoki amarantus. Duża roślina ma do ok.
+1100 ścian na odmianę (`tools/sprawdz_rosliny.mjs`).
 
 Każda kępka ma **8 odmian** (losowane z numeru odmiany i nazwy paczki -
 ta sama w tym samym miejscu), kołysze się na wietrze, światło ma
@@ -236,7 +273,8 @@ pikseli, dzwonek 12 x 5, 12 x 11 i 14 x 13 pikseli, szałwia 12 x 4, 14 x 11
 i 16 x 14 pikseli, nagietek 12 x 3, 14 x 9 i 14 x 12 pikseli, cynia 10 x 7, 12 x 11
 i 14 x 13 pikseli, mikołajek 12 x 3, 14 x 11 i 14 x 14 pikseli; barwinek - cała komórka
 (16 x 16), 2-3 piksele wysokości; len 10 x 6, 12 x 15 i 12 x 16 pikseli, gorczyca 12 x 3, 14 x 13
-i 12 x 14 pikseli.
+i 12 x 14 pikseli; indygowiec 18 x 10, 26 x 18 i 30 x 22 pikseli, marzanna
+20 x 8, 26 x 15 i 32 x 20 pikseli (duże rośliny - wystają poza blok).
 
 ```json
 "etapy": [
@@ -256,15 +294,18 @@ i 12 x 14 pikseli.
 
 | pole modelu | znaczenie (piksele = 1/16 bloku) |
 |---|---|
-| `liscie.uklad` | `rozeta` (domyślnie), `kepa`, `krzak`, `dywan` albo `brak` |
+| `liscie.uklad` | `rozeta` (domyślnie), `kepa`, `krzak`, `krzew`, `dywan`, `nalot`, `huba` albo `brak` |
+| `liscie.wysokosc` | krzew: wysokość pędów [od, do] (4-32 pikseli) |
 | `liscie.ile`, `liscie.dlugosc` | rozeta: ile liści [od, do] (0-12), długość od środka (1-7); kępa: ile liści (0-32), wysokość (1-12); krzak: `dlugosc` - wysokość kopułki |
-| `liscie.promien` | kępa, krzak: promień kopułki (0-5, domyślnie 2); liście sięgają o 2 dalej; dywan: wielkość samotnej kępki (do 7) |
+| `liscie.promien` | kępa, krzak: promień kopułki (0-5, domyślnie 2); liście sięgają o 2 dalej; dywan: wielkość samotnej kępki (do 7); krzew: zasięg w bok (do 12) |
 | `liscie.brzeg` | krzak: długość liści z boków kopułki (1-4, domyślnie 2) |
 | `lodygi.ile`, `lodygi.wysokosc`, `lodygi.promien` | łodygi: ile (0-12, domyślnie bez łodyg), wysokość [od, do] (1-24), jak daleko od środka szczyt (0-6) |
 | `lodygi.rozchylone` | `true` - łodygi wyrastają bliżej środka i odchylają się na boki (wachlarz) |
-| `lodygi.liscie` | `{ "co": 1-6, "dlugosc": [od, do] }` - płaskie liście na łodygach co tyle pikseli (nad kopułką krzaka), długość 1-5, `"naprzeciw": true` - parami; `{ "okolek": 2-5, "dlugosc": [od, do] }` - okółek liści w ok. połowie łodygi |
-| `kwiaty` | `{ "rodzaj": "baldach", "rozmiar": 1-2 }`, `{ "rodzaj": "klos", "rozmiar": 1-6, "okolki": true }` (długość kłosa; okółki - z przerwami), `{ "rodzaj": "pompon", "rozmiar": 1-2 }`, `{ "rodzaj": "talerz", "rozmiar": 1-2 }`, `{ "rodzaj": "dzwonek", "rozmiar": 1-2 }`, `{ "rodzaj": "warstwy", "rozmiar": 1-2 }`, `{ "rodzaj": "oset", "rozmiar": 1-2 }`, `{ "rodzaj": "gwiazdka", "rozmiar": 1-2, "ile": [od, do] }` (dywan), `{ "rodzaj": "torebka", "rozmiar": 1-2 }`, `{ "rodzaj": "straczki", "rozmiar": 1-5 }`, `{ "rodzaj": "pak", "rozmiar": 1-2 }` albo brak; `rozmiar` - liczba albo `[od, do]` |
-| `kolory` | 9 kolorów: `lisc`, `liscJasny`, `liscCiemny`, `lodyga`, `kwiat`, `kwiatJasny`, `kwiatCiemny`, `pak`, `srodek` (środek kwiatu) - dla całej paczki (obok `etapy`), etap może zmienić własnymi `model.kolory` |
+| `lodygi.rozgalezione` | `true` - jedna łodyga ze środka, pozostałe odchodzą od niej w 1/3 - 1/2 wysokości |
+| `lodygi.liscie` | `{ "co": 1-6, "dlugosc": [od, do] }` - płaskie liście na łodygach co tyle pikseli (nad kopułką krzaka), długość 1-5, `"naprzeciw": true` - parami; `"luk": true` - długie łukowate liście parami na krzyż (długość do 12, dolne najdłuższe); `{ "okolek": 2-5, "dlugosc": [od, do] }` - okółek liści w ok. połowie łodygi |
+| `korzenie` | 0-8 - czerwone korzenie przy ziemi (kolory `korzen`, `korzenJasny`) |
+| `kwiaty` | `{ "rodzaj": "baldach", "rozmiar": 1-2 }`, `{ "rodzaj": "klos", "rozmiar": 1-6, "okolki": true }` (długość kłosa; okółki - z przerwami), `{ "rodzaj": "pompon", "rozmiar": 1-2 }`, `{ "rodzaj": "talerz", "rozmiar": 1-2 }`, `{ "rodzaj": "dzwonek", "rozmiar": 1-2 }`, `{ "rodzaj": "warstwy", "rozmiar": 1-2 }`, `{ "rodzaj": "oset", "rozmiar": 1-2 }`, `{ "rodzaj": "gwiazdka", "rozmiar": 1-2, "ile": [od, do] }` (dywan), `{ "rodzaj": "torebka", "rozmiar": 1-2 }`, `{ "rodzaj": "straczki", "rozmiar": 1-5 }`, `{ "rodzaj": "grono", "rozmiar": 1-2, "ile": [od, do] }` (krzew - ile gron), `{ "rodzaj": "kwiatki", "rozmiar": 1-2 }`, `{ "rodzaj": "pak", "rozmiar": 1-2 }` albo brak; `rozmiar` - liczba albo `[od, do]` |
+| `kolory` | 11 kolorów: `lisc`, `liscJasny`, `liscCiemny`, `lodyga`, `kwiat`, `kwiatJasny`, `kwiatCiemny`, `pak`, `srodek` (środek kwiatu), `korzen`, `korzenJasny` - dla całej paczki (obok `etapy`), etap może zmienić własnymi `model.kolory` |
 
 Kolory najlepiej wziąć z atlasu rośliny (`tools/rosliny_z_atlasu.py
 --podglad` pokazuje paletę). Przedmiot (np. bukiet) dalej jest obrazkiem
@@ -342,6 +383,31 @@ Cynia (bez liści przy ziemi, liście parami na krzyż, kwiaty z pięter):
 }
 ```
 
+Indygowiec (duży krzew - kępa liści u dołu, pędy z liśćmi, grona;
+wystaje poza blok):
+
+```json
+"model": {
+    "rodzaj": "kepka",
+    "liscie": { "uklad": "krzew", "promien": 9, "wysokosc": [15, 16], "ile": [24, 26], "dlugosc": [3, 4] },
+    "lodygi": { "ile": [4, 5] },
+    "kwiaty": { "rodzaj": "grono", "rozmiar": [1, 2], "ile": [6, 8] }
+}
+```
+
+Marzanna barwierska (rozgałęziona łodyga, długie łukowate liście,
+kwiatki z czerwonym środkiem, czerwone korzenie przy ziemi):
+
+```json
+"model": {
+    "rodzaj": "kepka",
+    "liscie": { "uklad": "brak" },
+    "lodygi": { "ile": [3, 3], "wysokosc": [16, 17], "promien": 5, "rozgalezione": true, "liscie": { "co": 3, "dlugosc": [4, 10], "luk": true } },
+    "kwiaty": { "rodzaj": "kwiatki", "rozmiar": [1, 2] },
+    "korzenie": 3
+}
+```
+
 Barwinek (dywan łączący się z sąsiadami, kwiaty-gwiazdki; w świecie
 gęste plamy - gestosc 0.85 - więc same tworzą się dywany):
 
@@ -403,10 +469,10 @@ zmniejszenie bywa 3-5 razy. Proponowane rozmiary (prawdziwa wysokość
 |---|---|---|---|
 | **amarantus** | 1-2 m | **2 bloki (32 px)** | duży krzyż - **zrobione** |
 | czarny bez | 3-6 m | 2.5-3 bloki (40-48 px) | duży krzyż prawie bez zmniejszania (rysunek ~43 px); albo paczka drzew z owocami |
-| indygowiec | krzew 1-1.5 m | 1.25 bloku (20 px) | krzyż z 3 płaszczyznami (gęsty krzew); liście - "coś niebieskiego" |
+| **indygowiec** | krzew 1-1.5 m | **30 x 22 px (wystaje poza blok)** | **`kepka`: krzew - kępa liści, pędy z owalnymi liśćmi, fioletowe grona; liście - "coś niebieskiego" - zrobione** (0.49.0) |
 | **gorczyca** | 0.6-1.2 m | **12 x 14 px** | **`kepka`: krzak, grona żółtych kwiatów, przekwita w strąki - zrobione** (0.46.0) |
 | **len** | 0.3-1 m | **12 x 16 px** | **`kepka`: smukłe łodygi, błękitne kwiaty, przekwita w suche łodygi z torebkami - zrobione** (0.45.0) |
-| marzanna barwierska | 0.6-1 m | 1 blok (16 px) | krzyż; korzenie - "coś czerwonego" |
+| **marzanna barwierska** | 0.6-1 m | **32 x 20 px (wystaje poza blok)** | **`kepka`: rozgałęziona łodyga, łukowate liście, kwiatki, czerwone korzenie; korzeń - "coś czerwonego" - zrobione** (0.49.0) |
 | **piwonia** | krzew ~1 m | **16 x 12 px** | **`kepka`: krzak, liście na łodygach, pompony - zrobione** (0.33.0) |
 | **cynia** | 0.3-0.9 m | **14 x 13 px** | **`kepka`: liście parami, kwiaty z pięter - zrobione** (0.38.0) |
 | **mikołajek** | 0.3-0.9 m | **14 x 14 px** | **`kepka`: główki na gwiazdach kolców - zrobione** (0.39.0) |

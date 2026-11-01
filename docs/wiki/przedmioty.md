@@ -2,7 +2,7 @@
 
 > Ta strona jest generowana z kodu gry (`python tools/wiki.py`) - nie zmieniaj jej ręcznie, zmiany przepadną przy następnym generowaniu.
 
-Wersja gry **0.48.1** - 36 przedmiotów. Przedmiotu nie da się postawić jak bloku; owoce i nasiona posadzone na ziemi (PPM) wyrastają w krzak albo drzewo, narzędzia przyspieszają kopanie.
+Wersja gry **0.49.0** - 38 przedmiotów. Przedmiotu nie da się postawić jak bloku; owoce i nasiona posadzone na ziemi (PPM) wyrastają w krzak albo drzewo, narzędzia przyspieszają kopanie.
 
 
 ## Rośliny
@@ -10,6 +10,8 @@ Wersja gry **0.48.1** - 36 przedmiotów. Przedmiotu nie da się postawić jak bl
 | | Nazwa | W komendach | Najważniejsze |
 |---|---|---|---|
 | <img src="ikony/amarantus_wiecha.png" width="32" height="32" alt=""> | **Wiecha amarantusa** | `amarantus_wiecha` | **Skąd:** zbiór (PPM): Amarantus (dojrzałe wiechy)<br>**Przydaje się do:** Czerwona lampa |
+| <img src="ikony/indygowiec_liscie.png" width="32" height="32" alt=""> | **Liście indygowca** | `indygowiec_liscie` | **Skąd:** zbiór (PPM): Indygowiec (kwitnie)<br>**Przydaje się do:** Niebieska lampa |
+| <img src="ikony/marzanna_korzen.png" width="32" height="32" alt=""> | **Korzeń marzanny** | `marzanna_korzen` | **Skąd:** zbiór (PPM): Marzanna (kwitnie)<br>**Przydaje się do:** Czerwona lampa |
 
 ## Owoce i nasiona
 

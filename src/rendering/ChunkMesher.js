@@ -739,6 +739,28 @@ function wallMask(cell) {
 
 }
 
+// Duża roślina (TuftGeometry.js reachClipper): lite bloki wokół komórki -
+// bity 0-7 na tej samej wysokości (+x, +z, -x, -z, +x+z, -x+z, -x-z,
+// +x-z), 8-15 piętro wyżej, 16 - blok nad rośliną.
+
+const REACH_STEPS = [1, P, -1, -P, 1 + P, -1 + P, -1 - P, 1 - P];
+
+function reachMask(cell, y) {
+
+    let mask = 0;
+    const above = y + 1 <= padTop;
+
+    REACH_STEPS.forEach((step, bit) => {
+        if (padOpaque[cell + step]) mask |= 1 << bit;
+        if (above && padOpaque[cell + step + P_LAYER]) mask |= 1 << (bit + 8);
+    });
+
+    if (above && padOpaque[cell + P_LAYER]) mask |= 1 << 16;
+
+    return mask;
+
+}
+
 // ------------------------------------------------------------
 // Generated river plants share the existing plant material and chunk batch.
 // Their cached templates carry actual surface normals and a linear albedo tint.
@@ -751,11 +773,12 @@ function addRiverPlants(plants, faceCount, baseX, baseZ, grassDetail = null, ove
         const wx = baseX + lx, wz = baseZ + lz;
         const transform = grass ? riverPlantTransform(wx, y, wz) : plantTransform(wx, y, wz, data.tuft);
         const event = overrides?.get(y * LAYER + lz * S + lx);
-        if (event) animationRanges.push({ event, start: faceCount, transform });
         const cell = padIndex(lx, y, lz);
         const mask = grass ? 0
             : data.carpet ? carpetMask(cell, y, data.carpet)
-                : data.tuft?.coating || data.tuft?.bracket ? wallMask(cell) : 0;
+                : data.tuft?.coating || data.tuft?.bracket ? wallMask(cell)
+                    : data.tuft?.wide ? reachMask(cell, y) : 0;
+        if (event) animationRanges.push({ event, start: faceCount, transform, mask });
         const faces = grass
             ? getBushyGrassFaces(plants[k + 3] === TALL_GRASS_ID, transform.variant, grassDetail)
             : getRiverPlantFaces(data.kind, transform.variant, data.waterlogged, data.tuft, mask);

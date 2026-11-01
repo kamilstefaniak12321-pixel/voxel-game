@@ -146,7 +146,8 @@ function makeTemplate(kind, variant, waterlogged) {
 export function getRiverPlantFaces(kind, variant, waterlogged = false, tuft = null, mask = 0) {
     if (kind.startsWith('blueberry:')) return getBlueberryFaces(kind.slice(10));
     const normalizedVariant = variant & 7;
-    const carpetMask = tuft?.carpet || tuft?.coating || tuft?.bracket ? mask & 0xfff : 0;
+    // Duża roślina (tuft.wide): maska litych bloków obok (ChunkMesher reachMask).
+    const carpetMask = tuft?.carpet || tuft?.coating || tuft?.bracket ? mask & 0xfff : tuft?.wide ? mask & 0x1ffff : 0;
     const key = `${kind}:${normalizedVariant}:${waterlogged ? 1 : 0}:${carpetMask}`;
     if (!cache.has(key)) {
         cache.set(key, tuft ? makeTuftTemplate(tuft, normalizedVariant, carpetMask) : makeTemplate(kind, normalizedVariant, waterlogged));
@@ -156,7 +157,9 @@ export function getRiverPlantFaces(kind, variant, waterlogged = false, tuft = nu
 
 // Dywan (barwinek), porost i huba leżą na całej komórce bez obrotu
 // i przesunięcia - brzegi kobierców sąsiadów i ściany muszą pasować.
+// Duża roślina (wystaje poza komórkę) też - maska sąsiadów jest w kierunkach
+// świata.
 export function plantTransform(x, y, z, tuft) {
     const transform = riverPlantTransform(x, y, z);
-    return tuft?.carpet || tuft?.coating || tuft?.bracket ? { variant: transform.variant, cos: 1, sin: 0, x: 0.5, z: 0.5 } : transform;
+    return tuft?.carpet || tuft?.coating || tuft?.bracket || tuft?.wide ? { variant: transform.variant, cos: 1, sin: 0, x: 0.5, z: 0.5 } : transform;
 }

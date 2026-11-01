@@ -310,6 +310,31 @@ const BRACKET = getPlantPack('huba')?.item ? [{
     when: (data) => data.item === 'huba_huba'
 }] : [];
 
+// Rośliny barwierskie (assets/rosliny/indygowiec, marzanna) - przyszłe
+// barwniki: niebieski z liści indygowca, czerwony z korzeni marzanny.
+
+const INDIGO = getPlantPack('indygowiec')?.item ? [{
+    id: 'indigo',
+    tier: 'common',
+    title: 'Błękit z zieleni',
+    task: 'Zbierz liście z kwitnącego indygowca - rozłożystego krzewu z fioletowymi gronami (brzeziny, skraje łąk).',
+    comment: 'Zielone liście, a w środku najgłębszy granat świata. Natura lubi niespodzianki.',
+    icon: 'indygowiec_liscie',
+    on: 'harvested',
+    when: (data) => data.item === 'indygowiec_liscie'
+}] : [];
+
+const MADDER = getPlantPack('marzanna')?.item ? [{
+    id: 'madder',
+    tier: 'common',
+    title: 'Czerwień spod ziemi',
+    task: 'Wykop korzeń z kwitnącej marzanny barwierskiej (mokradła i lasy - szukaj kremowych kwiatków z czerwonym środkiem).',
+    comment: 'Na górze skromne kwiatki, a pod ziemią cała czerwień. Marzanna zawsze była tajemnicza.',
+    icon: 'marzanna_korzen',
+    on: 'harvested',
+    when: (data) => data.item === 'marzanna_korzen'
+}] : [];
+
 
 // "Złota godzina": słońce nisko nad horyzontem (wschód albo zachód),
 // gracz patrzy prosto na nie i nic go nie zasłania.
@@ -426,6 +451,8 @@ export const ACHIEVEMENTS = [
     ...MUSTARD,
     ...LICHENS,
     ...BRACKET,
+    ...INDIGO,
+    ...MADDER,
     {
         id: 'plant',
         tier: 'common',

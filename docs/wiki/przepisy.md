@@ -2,7 +2,7 @@
 
 > Ta strona jest generowana z kodu gry (`python tools/wiki.py`) - nie zmieniaj jej ręcznie, zmiany przepadną przy następnym generowaniu.
 
-Wersja gry **0.48.1** - 39 przepisów. Wytwarza się w ekwipunku (**E**): siatka 2 x 2 obok miejsc ekwipunku, wynik po prawej (klik - weź, Shift + klik - ile się da). Przycisk 📖 *Przepisy* otwiera księgę - klik na przepisie sam układa składniki. Przepisy *z kształtem* można przesuwać po siatce i odbijać w poziomie; przepisy *bez kształtu* - obojętne, gdzie leżą składniki. Z czatu: `/przepisy`, `/wytworz <przepis>`.
+Wersja gry **0.49.0** - 39 przepisów. Wytwarza się w ekwipunku (**E**): siatka 2 x 2 obok miejsc ekwipunku, wynik po prawej (klik - weź, Shift + klik - ile się da). Przycisk 📖 *Przepisy* otwiera księgę - klik na przepisie sam układa składniki. Przepisy *z kształtem* można przesuwać po siatce i odbijać w poziomie; przepisy *bez kształtu* - obojętne, gdzie leżą składniki. Z czatu: `/przepisy`, `/wytworz <przepis>`.
 
 
 ## Ziemia
@@ -162,9 +162,9 @@ Wersja gry **0.48.1** - 39 przepisów. Wytwarza się w ekwipunku (**E**): siatka
 
 ### Czerwona lampa
 
-<img src="przepisy/lamp_red.png" alt="Czerwona lampa: 1 x Lampa + 1 x coś czerwonego (mak, truskawki, papryczki chili, wiecha amarantusa) (obojętne gdzie)">
+<img src="przepisy/lamp_red.png" alt="Czerwona lampa: 1 x Lampa + 1 x coś czerwonego (mak, truskawki, papryczki chili, wiecha amarantusa, korzeń marzanny) (obojętne gdzie)">
 
-1 x Lampa + 1 x coś czerwonego (mak, truskawki, papryczki chili, wiecha amarantusa) (bez kształtu). Nazwa przepisu: `lamp_red`.
+1 x Lampa + 1 x coś czerwonego (mak, truskawki, papryczki chili, wiecha amarantusa, korzeń marzanny) (bez kształtu). Nazwa przepisu: `lamp_red`.
 
 ### Zielona lampa
 
@@ -174,9 +174,9 @@ Wersja gry **0.48.1** - 39 przepisów. Wytwarza się w ekwipunku (**E**): siatka
 
 ### Niebieska lampa
 
-<img src="przepisy/lamp_blue.png" alt="Niebieska lampa: 1 x Lampa + 1 x coś niebieskiego (chaber, borówki) (obojętne gdzie)">
+<img src="przepisy/lamp_blue.png" alt="Niebieska lampa: 1 x Lampa + 1 x coś niebieskiego (chaber, borówki, liście indygowca) (obojętne gdzie)">
 
-1 x Lampa + 1 x coś niebieskiego (chaber, borówki) (bez kształtu). Nazwa przepisu: `lamp_blue`.
+1 x Lampa + 1 x coś niebieskiego (chaber, borówki, liście indygowca) (bez kształtu). Nazwa przepisu: `lamp_blue`.
 
 ### Fioletowa lampa
 
@@ -272,8 +272,8 @@ Składnik z grupy to dowolna rzecz z listy (np. patyki z desek różnych drzew).
 - **szyszka (świerka albo sosny)**: Szyszka świerka, Szyszka sosny
 - **igliwie (świerka albo sosny)**: Igliwie świerka, Igliwie sosny
 - **opadłe liście (dowolne)**: Opadłe liście buka, Opadłe liście dębu, Opadłe liście jabłoni, Opadłe liście olchy, Opadłe liście wierzby
-- **coś czerwonego (mak, truskawki, papryczki chili, wiecha amarantusa)**: Mak, Truskawki, Papryczki chili, Wiecha amarantusa
+- **coś czerwonego (mak, truskawki, papryczki chili, wiecha amarantusa, korzeń marzanny)**: Mak, Truskawki, Papryczki chili, Wiecha amarantusa, Korzeń marzanny
 - **coś zielonego (koniczyna, pokrzywa, paproć)**: Koniczyna, Pokrzywa, Paproć
-- **coś niebieskiego (chaber, borówki)**: Chaber, Borówki
+- **coś niebieskiego (chaber, borówki, liście indygowca)**: Chaber, Borówki, Liście indygowca
 - **coś fioletowego (jeżyny, wrzos, krokus)**: Jeżyny, Wrzos, Krokus
 - **pień (gatunek)**: zwykły, okorowany, a u sosny także górny i z żywicą

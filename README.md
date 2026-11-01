@@ -473,6 +473,25 @@ pniu*.
 
 ![Porosty i huby](docs/rosliny-porosty-huby.png)
 
+Rośliny barwierskie - **większe niż blok** (wystają na boki i w górę;
+przy ścianie część, która weszłaby w blok, jest ucinana):
+**indygowiec** - duży krzew: kępa liści u dołu, zdrewniałe pędy
+z owalnymi liśćmi i fioletowo-granatowe grona (brzeziny, skraje łąk);
+PPM na kwitnącym - **liście indygowca** (przyszły niebieski barwnik);
+**marzanna barwierska** - rozgałęziona łodyga z długimi, łukowatymi
+liśćmi, kremowe kwiatki z czerwonym środkiem i czerwone korzenie przy
+ziemi (mokradła, lasy); PPM na kwitnącej - **korzeń marzanny** (przyszły
+czerwony barwnik). Osiągnięcia *Błękit z zieleni* i *Czerwień spod
+ziemi*.
+
+![Indygowiec i marzanna](docs/rosliny-barwierskie.png)
+
+**Animacje roślin z paczek** (wszystkie kępki i krzewy): posadzona
+roślina wyrasta z lekkim przeskokiem, nowy etap rośnie płynnie, przy
+zbiorze kwiaty maleją i roślina płynnie przechodzi do etapu po zbiorze,
+przy pełnym ekwipunku tylko się ugina - jak krzak borówki
+(`docs/animacje-roslin.md`).
+
 - Tekstury z dużych atlasów "pixel art" robi
   `tools/rosliny_z_atlasu.py` (siatka pikseli rysunku, zmniejszanie bez
   mieszania kolorów, wszystkie etapy w tej samej skali).
@@ -489,7 +508,10 @@ pniu*.
   siebie - połączą się), `/rosliny znajdz barwinek`, `/rosliny ogrod len`,
   `/daj len_etap3 5`, `/rosliny ogrod gorczyca`, `/daj gorczyca_etap3 5`,
   `/daj porostoliwkowy_etap3 5` (postaw przy kamieniu), `/daj huba_etap3 5`
-  (postaw przy pniu), `/rosliny znajdz huba`.
+  (postaw przy pniu), `/rosliny znajdz huba`, `/rosliny ogrod indygowiec`,
+  `/daj indygowiec_etap3 5`, `/rosliny ogrod marzanna`,
+  `/daj marzanna_etap3 5` (postaw przy ścianie - ucina się), `/krzaki
+  rosnij 2` przy młodych - animacja wzrostu.
 - Każda roślina ma swój biom, gdzie rośnie najczęściej (wagi biomów
   w `roslina.json`) - tabela w `docs/rosliny.md`; `/rosliny <roslina>`
   pokazuje biomy (poboczne z dopiskiem "rzadziej").

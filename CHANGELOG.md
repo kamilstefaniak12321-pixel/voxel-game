@@ -13,7 +13,7 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ## 0.51.1 - Animowana tekstura ognia i kwadratowy popiół
 
-Korekta wyglądu ognisk po 0.51.0 — numer PR zostanie uzupełniony.
+Korekta wyglądu ognisk po 0.51.0 — PR #84.
 
 - Płomień animowany 16 klatkami tekstury przy 12 klatkach/s, z falowaniem modelu zmniejszonym o połowę.
 - Wypalone ognisko ma bardziej kwadratowy, pikselowy obrys popiołu i prostokątny układ węgli.

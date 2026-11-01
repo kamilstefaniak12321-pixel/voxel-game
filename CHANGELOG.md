@@ -13,7 +13,7 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ## 0.50.0 - Puszyste krzaki i wspólne owoce 3D
 
-Nowy wygląd istniejących krzaków i ich owoców — PR do uzupełnienia.
+Nowy wygląd istniejących krzaków i ich owoców — PR #81.
 Zmiany względem opublikowanej wersji 0.49.0.
 
 - Truskawka, jeżyna, chili i leszczyna mają modele w stylu borówki:

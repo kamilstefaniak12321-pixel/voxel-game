@@ -1,0 +1,5 @@
+(node:30040) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/kamil/Documents/ChatGPT/ProjectZero/voxel-fruit-bushes/src/rendering/FruitBushGeometry.js is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\kamil\Documents\ChatGPT\ProjectZero\voxel-fruit-bushes\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+OK: krzaki owocowe — zgodne ID i zapisy, 4 etapy, wspólne owoce 3D, ikony, wzrost, zbiór, przerwania i ograniczony koszt.

@@ -1,0 +1,226 @@
+{
+  "device": {
+    "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 3050 Laptop GPU (0x000025A2) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "drawingBuffer": [
+      1920,
+      1080
+    ],
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.7977.130 Electron/44.4.5 Safari/537.36"
+  },
+  "seed": 2138286349,
+  "settings": {
+    "potato": false,
+    "viewDistance": 48,
+    "farTerrain": 8192,
+    "farDetail": 2,
+    "fov": 75,
+    "brightness": 0,
+    "renderScale": 100,
+    "fpsLimit": 0,
+    "ambientOcclusion": 45,
+    "shadows": 3,
+    "lightingModel": "atmosphere",
+    "lightShafts": true,
+    "bounceLight": false,
+    "fancyLeaves": true,
+    "dynamicLight": true,
+    "loadBudget": 4,
+    "mouseSensitivity": 100,
+    "invertMouse": false,
+    "skinOverlay": true,
+    "showHand": false,
+    "viewBobbing": true,
+    "jointStyle": "smooth",
+    "cameraDistance": 4,
+    "volumeMaster": 80,
+    "volumeBlocks": 100,
+    "volumeWorld": 100,
+    "volumeUi": 80,
+    "theme": "default",
+    "inventoryStyle": "wood",
+    "hudScale": 100,
+    "showDebug": true,
+    "showFps": false,
+    "meteorites": true,
+    "autoUpdates": true,
+    "textureResolution": 0
+  },
+  "results": [],
+  "integration": [
+    {
+      "name": "strawberry full inventory",
+      "ok": true
+    },
+    {
+      "name": "strawberry harvest",
+      "ok": true,
+      "details": {
+        "type": "strawberry",
+        "count": 2
+      }
+    },
+    {
+      "name": "strawberry partial fruit",
+      "ok": true
+    },
+    {
+      "name": "strawberry few",
+      "ok": true
+    },
+    {
+      "name": "strawberry full",
+      "ok": true
+    },
+    {
+      "name": "strawberry size between stages",
+      "ok": true,
+      "details": 0.7352151527028159
+    },
+    {
+      "name": "strawberry interrupted destruction",
+      "ok": true
+    },
+    {
+      "name": "blackberry full inventory",
+      "ok": true
+    },
+    {
+      "name": "blackberry harvest",
+      "ok": true,
+      "details": {
+        "type": "blackberry",
+        "count": 2
+      }
+    },
+    {
+      "name": "blackberry partial fruit",
+      "ok": true
+    },
+    {
+      "name": "blackberry few",
+      "ok": true
+    },
+    {
+      "name": "blackberry full",
+      "ok": true
+    },
+    {
+      "name": "blackberry size between stages",
+      "ok": true,
+      "details": 0.705666014292438
+    },
+    {
+      "name": "blackberry interrupted destruction",
+      "ok": true
+    },
+    {
+      "name": "chili full inventory",
+      "ok": true
+    },
+    {
+      "name": "chili harvest",
+      "ok": true,
+      "details": {
+        "type": "chili_pepper",
+        "count": 4
+      }
+    },
+    {
+      "name": "chili partial fruit",
+      "ok": true
+    },
+    {
+      "name": "chili few",
+      "ok": true
+    },
+    {
+      "name": "chili full",
+      "ok": true
+    },
+    {
+      "name": "chili size between stages",
+      "ok": true,
+      "details": 0.7352151527028159
+    },
+    {
+      "name": "chili interrupted destruction",
+      "ok": true
+    },
+    {
+      "name": "hazel full inventory",
+      "ok": true
+    },
+    {
+      "name": "hazel harvest",
+      "ok": true,
+      "details": {
+        "type": "hazelnut",
+        "count": 2
+      }
+    },
+    {
+      "name": "hazel partial fruit",
+      "ok": true
+    },
+    {
+      "name": "hazel few",
+      "ok": true
+    },
+    {
+      "name": "hazel full",
+      "ok": true
+    },
+    {
+      "name": "hazel size between stages",
+      "ok": true,
+      "details": 0.6940263986788094
+    },
+    {
+      "name": "hazel interrupted destruction",
+      "ok": true
+    },
+    {
+      "name": "blueberry full inventory",
+      "ok": true
+    },
+    {
+      "name": "blueberry harvest",
+      "ok": true,
+      "details": {
+        "type": "blueberry",
+        "count": 4
+      }
+    },
+    {
+      "name": "blueberry partial fruit",
+      "ok": true
+    },
+    {
+      "name": "blueberry few",
+      "ok": true
+    },
+    {
+      "name": "blueberry full",
+      "ok": true
+    },
+    {
+      "name": "blueberry size between stages",
+      "ok": true,
+      "details": 0.7352151527028328
+    },
+    {
+      "name": "blueberry interrupted destruction",
+      "ok": true
+    },
+    {
+      "name": "world saved",
+      "ok": true
+    },
+    {
+      "name": "no JS errors",
+      "ok": true,
+      "details": []
+    }
+  ],
+  "errors": []
+}

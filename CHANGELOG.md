@@ -49,6 +49,10 @@ Rośliny większe niż blok i animacje wszystkich roślin z paczek — PR #80
   (`"rozgalezione": true`), kwiaty `grono` i `kwiatki`, korzenie przy
   ziemi (`korzenie`, kolory `korzen` i `korzenJasny`) - opis w
   `docs/rosliny.md`, animacje w `docs/animacje-roslin.md`.
+- Szybsze budowanie modeli z pikseli (klucze liczbowe zamiast tekstu) -
+  kępki i rośliny nad rzeką ok. 2 razy szybciej, modele identyczne co do
+  bajtu. Animacja kępki nie przelicza kolorów co klatkę: 12 kwitnących
+  indygowców naraz to ok. 3 ms na klatkę (zwykle animuje się 1-2 rośliny).
 - Sprawdzenie `tools/sprawdz_animacje_kepek.mjs` (526 sprawdzeń: wymiary,
   ucinanie przy ścianach, przejścia, neutralny początek i koniec, model
   po animacji jak bez niej). Wiki i szablon paczki tekstur odświeżone.

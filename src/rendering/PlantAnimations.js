@@ -76,8 +76,14 @@ const TUFT = {
         return faces;
     },
     transform: transformTuftVertex,
-    shadeHeight: (vertex, pose, v) => v[1]
+    // Kępki: światło i cień jak w modelu bez animacji (bez przeliczania
+    // kolorów co klatkę - duże krzewy mają tysiące wierzchołków).
+    shadeHeight: null
 };
+
+// Atrybuty geometrii zmieniane przez animację (kępki - bez kolorów).
+const SHADED = ['position', 'normal', 'plantMotion', 'color', 'atmosphereLight', 'surfaceOcclusion'];
+const UNSHADED = ['position', 'normal', 'plantMotion'];
 
 const familyOf = (id) => (BLUEBERRY.isAnimated(id) ? BLUEBERRY : TUFT.isAnimated(id) ? TUFT : null);
 
@@ -153,7 +159,7 @@ export class PlantAnimations {
             const event = range.event;
             const faces = event.family.faces(event, range);
             const start = range.start * 4, count = faces.length * 4;
-            const copy = name => geometry.attributes[name].array.slice(start * 4, (start + count) * 4);
+            const copy = name => (event.family.shadeHeight ? geometry.attributes[name].array.slice(start * 4, (start + count) * 4) : null);
             event.binding = { geometry, start, count, faces, transform: range.transform,
                 color: copy('color'), atmosphereLight: copy('atmosphereLight') };
             this.paint(event);
@@ -180,18 +186,20 @@ export class PlantAnimations {
                 a.normal.array[p + 1] = v[4];
                 a.normal.array[p + 2] = sin * v[3] + cos * v[5];
                 a.plantMotion.array[vertexIndex * 2] = v[6];
-                // Match the static young model's shade at the endpoints.
-                const shade = .79 + Math.min(1, Math.max(0, family.shadeHeight(vertex, pose, v)) / .8) * .21;
-                const ratio = shade / (.79 + Math.min(1, vertex[1] / .8) * .21);
-                for (let channel = 0; channel < 4; channel++) {
-                    a.color.array[c + channel] = Math.round(binding.color[localIndex * 4 + channel] * ratio);
-                    a.atmosphereLight.array[c + channel] = Math.round(binding.atmosphereLight[localIndex * 4 + channel] * (channel === 3 ? 1 : ratio));
+                if (family.shadeHeight) {
+                    // Match the static young model's shade at the endpoints.
+                    const shade = .79 + Math.min(1, Math.max(0, family.shadeHeight(vertex, pose, v)) / .8) * .21;
+                    const ratio = shade / (.79 + Math.min(1, vertex[1] / .8) * .21);
+                    for (let channel = 0; channel < 4; channel++) {
+                        a.color.array[c + channel] = Math.round(binding.color[localIndex * 4 + channel] * ratio);
+                        a.atmosphereLight.array[c + channel] = Math.round(binding.atmosphereLight[localIndex * 4 + channel] * (channel === 3 ? 1 : ratio));
+                    }
+                    a.surfaceOcclusion.array[vertexIndex] = Math.round(shade * 255);
                 }
-                a.surfaceOcclusion.array[vertexIndex] = Math.round(shade * 255);
                 vertexIndex++; localIndex++;
             }
         }
-        for (const name of ['position', 'normal', 'plantMotion', 'color', 'atmosphereLight', 'surfaceOcclusion']) {
+        for (const name of family.shadeHeight ? SHADED : UNSHADED) {
             const attribute = a[name];
             // Union pending ranges, also when a chunk is outside the frustum:
             // updateRanges must not grow forever while nothing uploads them.

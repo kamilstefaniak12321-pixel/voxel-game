@@ -85,6 +85,10 @@ wysokości (pędy giną się, podstawa nie):
 
 Ten sam limit co borówka (12 roślin, 48 bloków, wspólny dla obu rodzin),
 ta sama wspólna geometria chunka - bez dodatkowych obiektów i rysowania.
+Kępka zmienia tylko położenie wierzchołków, normalne i wagi wiatru -
+światło i cień zostają jak w modelu bez animacji (duży krzew ma kilka
+tysięcy wierzchołków). 12 kwitnących indygowców naraz: ok. 3 ms na
+klatkę na procesorze, zwykle animują się 1-2 rośliny.
 Dywany (barwinek), porosty i huby zależą od sąsiadów - bez animacji.
 
 Kod: `src/rendering/TuftAnimation.js` (przejścia i pozy),

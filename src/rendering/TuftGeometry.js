@@ -628,7 +628,8 @@ function shrub(tuft, variant, random, between, model) {
     const reach = tuft.leaves.radius;
     const branches = Math.max(1, between(tuft.stems.count));
     const start = random() * Math.PI * 2;
-    const key = (x, y, z) => `${x},${y},${z}`;
+    // Klucz liczbowy kostki korony (szybciej niż tekst "x,y,z").
+    const key = (x, y, z) => ((x + 64) * 128 + (y + 64)) * 128 + (z + 64);
 
     // Kierunek z 8 najbliższy kątowi; "straight" - tylko 4 główne (liście
     // z prostych rzędów kostek mają mniej ścian).
@@ -678,7 +679,7 @@ function shrub(tuft, variant, random, between, model) {
     }
 
     for (const cell of mass) {
-        const [x, y, z] = cell.split(',').map(Number);
+        const x = Math.floor(cell / 16384) - 64, y = Math.floor(cell / 128) % 128 - 64, z = cell % 128 - 64;
         const open = !mass.has(key(x, y + 1, z)) || !mass.has(key(x, y + 2, z));
         box(x, y, z, 1, 1, 1, open && y > 2 ? 'leaf' : 'leafDark');
     }
@@ -1181,7 +1182,7 @@ export function makeTuftTemplate(tuft, variant, mask = 0) {
     const height = tuft.height / 16;
     const plain = createPixelPlant(tuft.colors, false, 0, Math.max(0.3, height));
     // Duża roślina (wystaje poza komórkę) - bez części w litych blokach obok.
-    const model = tuft.wide ? clippedModel(plain, reachClipper(mask)) : plain;
+    const model = tuft.wide && mask ? clippedModel(plain, reachClipper(mask)) : plain;
     const { sheet, box } = model;
 
 

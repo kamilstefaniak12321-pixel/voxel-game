@@ -119,3 +119,41 @@ for (const [i, j] of [[40, 5], [-120, -120], [0, 0]]) {
 }
 
 console.log('OK: suche szczeliny i prostokątne baseny znikają; pozostałe formy terenu oraz ciągły odpływ jeziora są zachowane.');
+
+// 0.47.1: płaskie brzegi. Na płaskim terenie brzeg przy wodzie rzeki jest
+// zwykle na poziomie wody (bez okopów i wałów), a woda nigdzie nie stoi
+// ścianą (kolumna obok wody rzeki: woda albo ziemia co najmniej do jej
+// poziomu).
+{
+    const banks = new RealisticGenerator('mapa');
+    const at = new Map();
+    const column = (x, z) => {
+        const key = x + ',' + z;
+        if (!at.has(key)) {
+            const sample = banks.compute(x, z, DETAIL_FULL, {});
+            at.set(key, { h: sample.height, w: sample.water, r: sample.river, m: sample.mountains ?? 0, lake: sample.lake });
+        }
+        return at.get(key);
+    };
+    let flat = 0, flush = 0, walls = 0, edges = 0;
+    for (let x = -260; x <= 260; x++) {
+        for (let z = -260; z <= 260; z++) {
+            const c = column(x, z);
+            if (c.r !== 1 || !(c.w > c.h) || c.lake) continue;
+            for (const [dx, dz] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+                const b = column(x + dx, z + dz);
+                if (b.w > b.h) continue;
+                edges++;
+                if (b.h < c.w) walls++;
+                if (b.m < 0.2) {
+                    flat++;
+                    if (b.h === c.w) flush++;
+                }
+            }
+        }
+    }
+    assert.ok(edges > 1000, `Próbka brzegów rzek (${edges})`);
+    assert.equal(walls, 0, 'Woda rzeki nigdzie nie stoi ścianą');
+    assert.ok(flush / flat > 0.75, `Na płaskim brzeg zwykle na poziomie wody (${flush}/${flat})`);
+    console.log(`OK: płaskie brzegi - ${flush}/${flat} na poziomie wody, ${edges} brzegów bez ściany wody.`);
+}

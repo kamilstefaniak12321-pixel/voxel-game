@@ -11,6 +11,26 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 0.47.1 - Płaskie brzegi rzek
+
+Rzeki bez okopów na płaskim terenie — PR #77.
+
+- **Brzegi rzek na poziomie wody**: dotąd brzeg tuż przy korycie był
+  zawsze blok nad wodą, więc na płaskim terenie rzeki płynęły w "okopach"
+  - między ziemnymi ścianami albo wałami. Teraz przy samej wodzie jest
+  płaski pas brzegu na poziomie wody (tafla tuż pod jego wierzchem), na
+  nizinach do 2 bloków szeroki, a dalej teren wznosi się łagodnie.
+  W górach brzegi zostają strome.
+- Brzeg jest o blok wyżej tylko tam, gdzie trzyma wyższą wodę: przy
+  progach na rzece (także na zakrętach i dopływach) i przy wejściu rzeki
+  do jeziora - woda nigdzie nie stoi ścianą (sprawdzone na 5 seedach).
+- Dotyczy nowo generowanego terenu; zapisane już kawałki świata
+  (odwiedzone wcześniej) zostają jak były.
+- `tools/sprawdz_teren_rzek.mjs`: na płaskim brzeg zwykle na poziomie
+  wody (ok. 90%), żadnej ściany wody.
+- Wersja 0.47.1 wspólna dla Windowsa i Androida. Przygotowana w PR;
+  publikacja w `voxel-game-wydania` następuje przez workflow po scaleniu.
+
 ## 0.47.0 - Porosty i huby
 
 Rośliny na skałach i pniach — PR #76 (zawiera #73-#75).

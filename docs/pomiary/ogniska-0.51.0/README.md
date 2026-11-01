@@ -16,4 +16,12 @@
 `reload.json`: zapis w IndexedDB, przeładowanie aplikacji i ponowne wejście do świata odtwarzają gatunek, sześć polan i postęp spalania.
 W raportach brak błędów JS i shaderów. Obejrzenie przez natywne okno: ruch płomienia, lekki dym, iskry, cienie za kamieniem i drewnem.
 
+Pełne `npm test` przeszło; nowe sprawdzenia obejmują 80 asercji stanu i craftingu oraz 6 asercji obsługi przytrzymania na dotyku. Po końcowej korekcie emisji ponownie obejrzano nocny żar: zachowuje pomarańczowo-czerwony kolor niezależnie od chłodnego światła księżyca.
+
+Poniższe kadry zapisano bezpośrednio z renderera natywnej gry, po końcowej korekcie żaru:
+
+![Różne gatunki i etapy spalania](galeria.png)
+
+![Światło ogniska oraz cienie kamienia, drewna i rośliny](swiatlo-cienie.png)
+
 Uruchom serwer `node docs/pomiary/ogniska-0.51.0/serve-campfire-qa.cjs`, a następnie zainstalowanym Electronem `campfire-native-launcher.cjs` z tego folderu. Launcher ma osobny profil w katalogu tymczasowym. Przyciski panelu sterują scenami i zapisują wyniki do `wyniki/`. Nie wchodzą do instalatora gry. Przyspieszenie spalania działa wyłącznie w skrypcie prób.

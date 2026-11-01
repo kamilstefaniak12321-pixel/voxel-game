@@ -13,7 +13,7 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ## 0.51.0 - Ogniska budowane z opału
 
-Nowa mechanika ognisk — PR do uzupełnienia.
+Nowa mechanika ognisk — PR #83.
 
 - Dziewięć gatunków opału z zatwierdzonych modeli; można je mieszać w jednym ognisku. Pień i siekiera dają 4 opały, a siekiera zostaje.
 - Budowanie w świecie: 6 polan, trawa na podpałkę i starter z dwóch patyków. Przytrzymanie PPM przez 5 sekund stopniowo rozpala ogień. Ognisko nie jest przedmiotem ekwipunku.

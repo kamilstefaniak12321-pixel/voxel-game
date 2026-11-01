@@ -16,7 +16,7 @@ Stan: przygotowane w PR; publikacja przez workflow po scaleniu do `main`.
 - [ ] Nowy numer uwzględnia `main`, otwarte PR-y i opublikowane wydania.
 - [ ] `CHANGELOG.md` opisuje tę wersję i wskazuje numer PR.
 - [ ] Sprawdzenia odpowiednie do zmiany przeszły.
-- [ ] Próbne kompilacje Windowsa i Androida przeszły.
+- [ ] Próbne kompilacje Windowsa i Androida przeszły (etykieta `kompilacja`, gdy PR jest gotowy).
 
 ## Ograniczenia
 

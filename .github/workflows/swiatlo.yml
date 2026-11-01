@@ -1,7 +1,13 @@
 name: Laboratorium światła
 
+# Pull request - tylko z etykietą "kompilacja" (jak próbne kompilacje
+# w aplikacja.yml): etykietę dodaje się, gdy PR jest gotowy, wtedy
+# każdy push sprawdza od nowa (starsze sprawdzenie jest przerywane).
+# Bez etykiety przebieg jest pomijany i nie zużywa minut Actions.
+# Ręcznie: Actions -> Laboratorium światła -> Run workflow.
 on:
   pull_request:
+    types: [opened, synchronize, reopened, labeled]
     paths:
       - 'src/**'
       - 'tools/sprawdz_swiatlo*.mjs'
@@ -21,8 +27,21 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: >-
+    ${{ github.event_name == 'pull_request'
+        && contains(github.event.pull_request.labels.*.name, 'kompilacja')
+        && (github.event.action != 'labeled' || github.event.label.name == 'kompilacja')
+        && format('swiatlo-pr-{0}', github.event.pull_request.number)
+    || format('swiatlo-{0}', github.run_id) }}
+  cancel-in-progress: true
+
 jobs:
   swiatlo:
+    if: >-
+      github.event_name != 'pull_request'
+      || (contains(github.event.pull_request.labels.*.name, 'kompilacja')
+          && (github.event.action != 'labeled' || github.event.label.name == 'kompilacja'))
     runs-on: ubuntu-24.04
     timeout-minutes: 8
     steps:

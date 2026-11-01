@@ -22,8 +22,13 @@ import { viewUniforms } from '../rendering/viewUniforms.js';
 //     i gra pętla "pod wodą", a main.js pokazuje niebieską nakładkę,
 //   - plusk przy wpadnięciu do wody (tym głośniejszy, im szybciej)
 //     i krople przy wychodzeniu,
-//   - fale: pętla z miejsca, gdzie jest woda, tym głośniej, im więcej
-//     wody w okolicy (sprawdzane dwa razy na sekundę).
+//   - szum wody: dwie pętle - strumień (płynąca woda rzek, kolumny
+//     z nurtem) i fale (stojąca woda jezior i morza) - z miejsca, gdzie
+//     jest woda, tym głośniej, im więcej wody w okolicy (sprawdzane dwa
+//     razy na sekundę). Punkt dźwięku jest zawsze co najmniej
+//     AMBIENT_MIN_DISTANCE bloków od gracza, na wysokości uszu, i przesuwa
+//     się płynnie - szum nie "skacze" i nie przechodzi tuż pod głową
+//     (dawniej przestrzenny filtr HRTF dawał wtedy pisk i jęk).
 // Ruch w wodzie (pływanie) - src/player/Player.js, wygląd wody -
 // src/rendering/BlockRenderData.js (waterMaterial).
 // ------------------------------------------------------------
@@ -37,8 +42,51 @@ const WAVES_FULL = 70;
 // Co ile sekund liczymy wodę dookoła.
 const WAVES_INTERVAL = 0.5;
 
+// Najbliżej (bloki, w poziomie) punktu, z którego słychać szum wody.
+const AMBIENT_MIN_DISTANCE = 4;
+
+// Pętle szumu wody: płynąca (kolumny z nurtem rzeki) i stojąca woda.
+const WATER_AMBIENCE = [
+    { sound: 'water_stream', flowing: true },
+    { sound: 'water_waves', flowing: false }
+];
+
 
 const baseFogColor = new THREE.Color(UNDERWATER_FOG_COLOR);
+
+
+// Punkt dźwięku szumu wody (out): w stronę środka wody (center) od uszu
+// (ear), w poziomie co najmniej AMBIENT_MIN_DISTANCE bloków, na wysokości
+// uszu. Gdy woda jest dookoła (środek tuż przy graczu) - przed graczem,
+// więc szum słychać równo z obu stron. Tak dźwięk nie przechodzi pod
+// głową ani przez nią (przestrzenny filtr dawał tam pisk i jęk).
+
+const forward = new THREE.Vector3();
+
+function ambientPosition(out, center, ear, camera) {
+
+    let dx = center.x - ear.x;
+    let dz = center.z - ear.z;
+    let length = Math.hypot(dx, dz);
+
+    if (length < 1.5) {
+
+        // Woda dookoła: kierunek mieszamy z kierunkiem patrzenia (blisko
+        // środka - prawie tylko patrzenie), bez nagłego przeskoku.
+        camera.getWorldDirection(forward);
+        const look = Math.hypot(forward.x, forward.z) || 1;
+        const k = length / 1.5;
+        dx = dx * k + forward.x / look * (1 - k) * 1.5;
+        dz = dz * k + forward.z / look * (1 - k) * 1.5;
+        length = Math.hypot(dx, dz) || 1;
+
+    }
+
+    const reach = Math.max(AMBIENT_MIN_DISTANCE, length);
+
+    out.set(ear.x + dx / length * reach, ear.y, ear.z + dz / length * reach);
+
+}
 
 
 export class WaterEffects {
@@ -52,12 +100,19 @@ export class WaterEffects {
 
         this.underwaterLoop = null;
 
-        this.wavesLoop = null;
-        this.wavesVolume = 0;
-        this.wavesTarget = 0;
-        this.wavesPosition = new THREE.Vector3();
+        // Szum wody: strumień i fale (WATER_AMBIENCE) - każdy ze swoją
+        // pętlą, głośnością i środkiem wody.
+        this.ambience = WATER_AMBIENCE.map(({ sound, flowing }) => ({
+            sound,
+            flowing,
+            loop: null,
+            volume: 0,
+            target: 0,
+            center: new THREE.Vector3(),
+            position: new THREE.Vector3(),
+            quiet: 0
+        }));
         this.wavesTimer = 0;
-        this.wavesQuiet = 0;
 
         // Ile kolumn z wodą jest teraz dookoła (/woda).
         this.nearbyWater = 0;
@@ -217,7 +272,8 @@ export class WaterEffects {
         }
 
 
-        // Fale: co chwilę liczymy wodę dookoła, głośność zmienia się płynnie.
+        // Szum wody: co chwilę liczymy wodę dookoła, głośność zmienia się
+        // płynnie.
 
         this.wavesTimer -= dt;
 
@@ -229,28 +285,36 @@ export class WaterEffects {
 
         }
 
-        const target = this.underwater ? 0 : this.wavesTarget;
+        const ear = game.camera.position;
 
-        this.wavesVolume += (target - this.wavesVolume) * Math.min(1, dt * 1.5);
+        for (const a of this.ambience) {
 
-        if (this.wavesVolume > 0.02 && !this.wavesLoop) {
-            this.wavesLoop = sounds.loop('water_waves', { position: this.wavesPosition, volume: this.wavesVolume });
-        }
+            const target = this.underwater ? 0 : a.target;
 
-        if (this.wavesLoop) {
+            a.volume += (target - a.volume) * Math.min(1, dt * 1.5);
 
-            this.wavesLoop.setVolume(this.wavesVolume, 0.2);
-            this.wavesLoop.setPosition(this.wavesPosition);
+            ambientPosition(a.position, a.center, ear, game.camera);
 
-            // Długo cicho - pętla się kończy (zwalnia miejsce na dźwięki).
+            if (a.volume > 0.02 && !a.loop) {
+                a.loop = sounds.loop(a.sound, { position: a.position, volume: a.volume });
+            }
 
-            this.wavesQuiet = this.wavesVolume < 0.01 ? this.wavesQuiet + dt : 0;
+            if (a.loop) {
 
-            if (this.wavesQuiet > 3) {
+                a.loop.setVolume(a.volume, 0.2);
+                a.loop.setPosition(a.position);
 
-                this.wavesLoop.stop(0.2);
+                // Długo cicho - pętla się kończy (zwalnia miejsce na dźwięki).
 
-                this.wavesLoop = null;
+                a.quiet = a.volume < 0.01 ? a.quiet + dt : 0;
+
+                if (a.quiet > 3) {
+
+                    a.loop.stop(0.2);
+
+                    a.loop = null;
+
+                }
 
             }
 
@@ -260,7 +324,7 @@ export class WaterEffects {
 
 
     // Kolumny z powierzchnią wody wokół gracza: ile ich jest i gdzie
-    // jest ich środek (stamtąd słychać fale).
+    // jest ich środek - osobno płynąca woda (nurt rzeki) i stojąca.
 
     measureWaves() {
 
@@ -272,10 +336,8 @@ export class WaterEffects {
         const cy = Math.floor(center.y);
         const cz = Math.floor(center.z);
 
-        let count = 0;
-        let sx = 0;
-        let sy = 0;
-        let sz = 0;
+        // [płynąca, stojąca]: liczba kolumn i suma ich środków.
+        const sums = [[0, 0, 0, 0], [0, 0, 0, 0]];
 
         const r = WAVES_RADIUS;
 
@@ -296,11 +358,12 @@ export class WaterEffects {
                         !isLiquidId(world.getBlockId(cx + dx, y + 1, cz + dz))
                     ) {
 
-                        count++;
+                        const sum = sums[world.getFlow(cx + dx, cz + dz) ? 0 : 1];
 
-                        sx += cx + dx + 0.5;
-                        sy += y + WATER_SURFACE;
-                        sz += cz + dz + 0.5;
+                        sum[0]++;
+                        sum[1] += cx + dx + 0.5;
+                        sum[2] += y + WATER_SURFACE;
+                        sum[3] += cz + dz + 0.5;
 
                         break;
 
@@ -312,12 +375,20 @@ export class WaterEffects {
 
         }
 
-        this.nearbyWater = count;
+        this.nearbyWater = sums[0][0] + sums[1][0];
 
-        this.wavesTarget = Math.min(1, count / WAVES_FULL);
+        this.flowingWater = sums[0][0];
 
-        if (count > 0) {
-            this.wavesPosition.set(sx / count, sy / count, sz / count);
+        for (const a of this.ambience) {
+
+            const [count, sx, sy, sz] = sums[a.flowing ? 0 : 1];
+
+            a.target = Math.min(1, count / WAVES_FULL);
+
+            if (count > 0) {
+                a.center.set(sx / count, sy / count, sz / count);
+            }
+
         }
 
     }
@@ -328,10 +399,14 @@ export class WaterEffects {
     dispose() {
 
         this.underwaterLoop?.stop(0.1);
-        this.wavesLoop?.stop(0.1);
 
         this.underwaterLoop = null;
-        this.wavesLoop = null;
+
+        for (const a of this.ambience) {
+            a.loop?.stop(0.1);
+            a.loop = null;
+            a.volume = 0;
+        }
 
         this.setUnderwater(false);
 

@@ -669,6 +669,67 @@ def water_waves(s):
     return normalize(loopable(out, 1.2), 0.7)
 
 
+def minnaert(s, f0, amp, rise):
+    """Pęcherzyk w strumieniu (model van den Doela): ton f0, tłumiony
+    współczynnikiem d (większe pęcherzyki - niżej, dłużej), wysokość
+    rośnie w miarę wypływania pęcherzyka (f0 * (1 + rise * d * t))."""
+    d = 0.13 * f0 + 0.0072 * f0 ** 1.5
+    length = 6.0 / d
+    n = samples(length)
+    t = time_axis(n)
+    f = f0 * (1 + rise * d * t)
+    phase = 2 * np.pi * np.cumsum(f) / SR
+    attack = np.minimum(1, t / 0.0015) ** 2
+    return np.sin(phase) * np.exp(-d * t) * attack * amp
+
+
+def water_stream(s):
+    """Strumień, rzeka (pętla): szemranie płynącej wody - szum przepływu
+    i setki pęcherzyków (Minnaert) w skupiskach, jak woda przelewająca się
+    przez kamienie. 24 s, bez wyraźnego rytmu."""
+    length = 26.0
+    n = samples(length)
+    t = time_axis(n)
+
+    # Przepływ: szum w paśmie wody, wolno falujący (kilka niezależnych
+    # "nurtów").
+    sway = 0.72 + 0.12 * np.sin(2 * np.pi * 0.071 * t + s.uniform(0, 6)) \
+        + 0.09 * np.sin(2 * np.pi * 0.23 * t + s.uniform(0, 6)) \
+        + 0.07 * np.sin(2 * np.pi * 0.53 * t + s.uniform(0, 6))
+    rush = band(s.noise(length), 220, 1500, order=2) * sway * 0.22
+    rush += band(s.noise(length), 1500, 5000, order=2) * sway * 0.035
+    rush += lowpass(s.brown(length), 160) * 0.2
+
+    # Pęcherzyki: tło (pojedyncze) i skupiska (bulgotanie przy kamieniu).
+    bubbles_out = np.zeros(n)
+
+    def drop_bubble(at, low, high):
+        # Rozkład rozmiarów: więcej małych (wysokich) niż dużych.
+        r = np.exp(s.uniform(np.log(3.26 / high), np.log(3.26 / low)))
+        f0 = 3.26 / r
+        amp = (low / f0) ** 0.6 * np.exp(s.rng.normal(0, 0.45))
+        place(bubbles_out, minnaert(s, f0, amp, s.uniform(0.04, 0.16)), at)
+
+    at = 0.0
+    while at < length:
+        at += s.rng.exponential(1 / 160)
+        drop_bubble(at, 450, 2600)
+
+    at = 0.0
+    while at < length:
+        at += s.rng.exponential(1 / 6)
+        size = int(s.uniform(8, 40))
+        spread = s.uniform(0.04, 0.22)
+        low = s.uniform(220, 600)
+        for _ in range(size):
+            drop_bubble(at + s.rng.exponential(spread), low, low * s.uniform(2.5, 5))
+
+    bubbles_out = lowpass(bubbles_out, 5000)
+    out = rush + bubbles_out * 0.5
+    out = loopable(out, 2.0)
+    return np.tanh(normalize(out, 0.95) / 0.8) * 0.7
+
+
 WATER = {
     'water_splash': (water_splash, 3, -12),
     'water_swim': (water_swim, 4, -19),
@@ -878,7 +939,7 @@ def save(path, data):
         )
 
 
-GROUPS = ['bloki', 'meteoryt', 'owoce', 'menu', 'woda', 'kosmos', 'osiagniecia', 'wytwarzanie', 'snieg']
+GROUPS = ['bloki', 'meteoryt', 'owoce', 'menu', 'woda', 'kosmos', 'osiagniecia', 'wytwarzanie', 'snieg', 'strumien']
 
 
 def generate(root=ROOT, only=None):
@@ -936,6 +997,11 @@ def generate(root=ROOT, only=None):
         if want('wytwarzanie'):
             sound = fade(loudness(make(Synth(seed)), level), 0.0005, 0.05)
             save(os.path.join(root, 'ui', f'{name}.ogg'), sound)
+
+
+    # Strumień (0.48.0) - własne ziarno, inne dźwięki bez zmian.
+    if want('strumien'):
+        save(os.path.join(root, 'water', 'water_stream.ogg'), water_stream(Synth(48_000)))
 
 
 if __name__ == '__main__':

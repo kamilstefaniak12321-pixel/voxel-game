@@ -11,6 +11,31 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 0.48.0 - Szum wody bez pisków, strumień przy rzekach
+
+Szum wody: naprawa pisku i nowy dźwięk strumienia — PR #78 (zawiera #77 - 0.47.1).
+
+- **Naprawa pisku i jęku zamiast szumu fal**: szum wody brzmiał z jednego
+  punktu - środka wody wokół gracza - a nad rzeką ten punkt leżał prawie
+  pod głową. Przestrzenny filtr HRTF przeglądarki (Chromium, Electron)
+  nakładał wtedy na szum przesuwające się wycięcia częstotliwości (jak
+  flanger) - przy rozglądaniu się albo przeskoku punktu słychać było pisk
+  i jęk. Teraz pętle (szum wody) grają zwykłym stereo, punkt dźwięku jest
+  zawsze co najmniej 4 bloki od gracza na wysokości uszu (gdy woda jest
+  dookoła - przed graczem, równo z obu stron) i przesuwa się płynnie.
+  Krótkie dźwięki zjawisk (meteoryt) zostają przestrzenne (HRTF).
+- **Nowy dźwięk: szemranie strumienia** przy rzekach - płynąca woda
+  (kolumny z nurtem) brzmi jak strumień: szum przepływu i setki
+  pęcherzyków w skupiskach (model fizyczny, 24 s pętla bez rytmu).
+  Fale zostają dla stojącej wody (jeziora, morze); oba szumy mieszają się
+  według tego, ile jakiej wody jest dookoła. `/woda` pokazuje, ile wody
+  płynie.
+- Strumień można podmienić nagraniem (`assets/sounds/water/water_stream.ogg`).
+- Nowe sprawdzenie `tools/sprawdz_szum_wody.mjs` (w `npm test`).
+- Wersja 0.48.0 wspólna dla Windowsa i Androida. Przygotowana w PR;
+  publikacja w `voxel-game-wydania` następuje przez workflow po scaleniu
+  (najpierw #77).
+
 ## 0.47.1 - Płaskie brzegi rzek
 
 Rzeki bez okopów na płaskim terenie — PR #77.

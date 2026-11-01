@@ -103,8 +103,20 @@ Object.assign(SOUNDS, {
         loop: true
     },
 
-    // Fale przy brzegu - pętla, z miejsca, gdzie jest woda (tym
-    // głośniej, im więcej wody dookoła).
+    // Szum płynącej wody (rzeki, strumienie) - pętla, z miejsca, gdzie
+    // płynie woda (tym głośniej, im więcej jej dookoła). Szemranie:
+    // szum przepływu i pęcherzyki (tools/dzwieki.py - water_stream);
+    // można podmienić nagraniem strumienia (.ogg, ta sama nazwa).
+    water_stream: {
+        files: ['water/water_stream.ogg'],
+        volume: 0.85,
+        category: 'world',
+        loop: true,
+        distance: { ref: 6, max: 64, rolloff: 1 }
+    },
+
+    // Fale przy brzegu stojącej wody (jeziora, morze) - pętla, z miejsca,
+    // gdzie jest woda (tym głośniej, im więcej wody dookoła).
     water_waves: {
         files: ['water/water_waves.ogg'],
         volume: 0.8,

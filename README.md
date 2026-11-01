@@ -563,7 +563,9 @@ a tekstura powoli **płynie** (dwie warstwy w różne strony).
 ekranu, a dźwięki gry są głuche. **Dźwięki:** plusk przy wpadnięciu
 (tym głośniejszy, im szybciej), ruchy ramion przy pływaniu, chlupanie
 przy chodzeniu w płytkiej wodzie, krople przy wychodzeniu, szum pod
-wodą i fale przy brzegu (z miejsca, gdzie jest woda). Postać pływa
+wodą, **szemranie strumienia** przy rzekach (płynąca woda) i fale przy
+brzegu jezior i morza (z miejsca, gdzie jest woda; szum zawsze trochę
+z boku, nie spod głowy - bez pisków przy patrzeniu w dół). Postać pływa
 żabką (z trzeciej osoby - F5): płynąc pochyla się prawie poziomo,
 w miejscu utrzymuje się na wodzie.
 
@@ -721,8 +723,12 @@ jedną i lekko zmienia wysokość), żeby się nie powtarzały.
 - **Zbieranie owoców** - szelest liści i miękkie "pyknięcia" zrywanych
   owoców (z miejsca krzaka).
 - **Woda** - plusk, pływanie, chlupanie w płytkiej wodzie, krople przy
-  wychodzeniu, szum pod wodą (reszta dźwięków jest wtedy głucha) i fale
-  przy brzegu (opis wyżej: *Woda*).
+  wychodzeniu, szum pod wodą (reszta dźwięków jest wtedy głucha),
+  szemranie strumienia przy rzekach i fale przy brzegu jezior i morza
+  (opis wyżej: *Woda*). Strumień (`assets/sounds/water/water_stream.ogg`)
+  to model szemrzącej wody - szum przepływu i setki pęcherzyków
+  (`tools/dzwieki.py`, grupa `strumien`); można go podmienić własnym
+  nagraniem o tej samej nazwie.
 - **Kosmos** - cichy pomruk wysoko w kosmosie, a przy spadaniu jak
   meteoryt zapłon, ryk ognia i pęd powietrza (`docs/kosmos.md`).
 - **Meteoryt** - huk lecącej kuli ognia narasta i robi się coraz

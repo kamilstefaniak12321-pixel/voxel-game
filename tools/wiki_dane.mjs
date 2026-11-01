@@ -15,6 +15,7 @@
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
+import { modelIconData } from './model_icon.mjs';
 
 const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -32,6 +33,12 @@ const { PACK_TEXTURES, TREE_PACKS } = await import(src('blocks/treePacks.js'));
 const { PLANT_TEXTURES, PLANT_PACKS } = await import(src('blocks/plantPacks.js'));
 const { getRiverPlantFaces } = await import(src('rendering/RiverPlantGeometry.js'));
 const { pixelPlantIconPixels } = await import(src('ui/PixelPlantIcon.js'));
+const { getFruitItemModel } = await import(src('rendering/FruitBushGeometry.js'));
+
+function fruitIcon(type) {
+    const fruit = getFruitItemModel(type);
+    return fruit ? modelIconData(fruit.faces, fruit.texture) : null;
+}
 
 
 // Kafelki atlasu: obiekt ATLAS_TILES z TextureAtlas.js (sam literał).
@@ -194,7 +201,9 @@ const blocks = blockTypes.map((type) => {
         category: C.getCategory(type),
         model,
         creative: definition.creative !== false,
-        icon: definition.modelIcon ? { kind: 'file', file: definition.modelIcon } : definition.riverPlant?.tuft
+        icon: definition.riverPlant && (definition.bush || definition.riverPlant.kind.startsWith('fruitBush:'))
+            ? modelIconData(getRiverPlantFaces(definition.riverPlant.kind, 0), definition.riverPlant.texture)
+            : definition.modelIcon ? { kind: 'file', file: definition.modelIcon } : definition.riverPlant?.tuft
             // Mała roślina z pikseli - gotowe piksele 64 x 64 (jak w grze).
             ? { kind: 'pixels', size: 64, data: Buffer.from(pixelPlantIconPixels(getRiverPlantFaces(definition.riverPlant.kind, 0, false, definition.riverPlant.tuft), 64)).toString('base64') }
             : model === 'cross' || model === 'flat'
@@ -229,7 +238,7 @@ const items = Object.entries(I.ITEM_TYPES).map(([type, item]) => ({
     name: item.name,
     label: item.label,
     category: C.getCategory(type),
-    icon: { kind: 'flat', tile: item.icon },
+    icon: fruitIcon(type) ?? { kind: 'flat', tile: item.icon },
     plants: item.plants ?? null,
     plantsLabel: item.plants ? R.getBlockLabel(item.plants) : null,
     tool: item.tool ?? null,

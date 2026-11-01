@@ -15,6 +15,11 @@ import { atmosphericLightToBrightness } from './LightPolicy.js';
 import { getRiverPlantFaces, plantRandom, plantTransform, riverPlantTransform } from './RiverPlantGeometry.js';
 import { getBushyGrassFaces } from './BushyGrassGeometry.js';
 import { getAtlasUV } from './TextureAtlas.js';
+const plantFaceUvCache = new Map();
+const plantFaceUV = texture => {
+    if (!plantFaceUvCache.has(texture)) plantFaceUvCache.set(texture, getAtlasUV(texture));
+    return plantFaceUvCache.get(texture);
+};
 
 
 import {
@@ -797,10 +802,12 @@ function addRiverPlants(plants, faceCount, baseX, baseZ, grassDetail = null, ove
         const atmosphereLamp = ATMOSPHERE_BRIGHTNESS[Math.round(COLOR_LEVEL[strongest] * LEVEL_STEPS)] * 0.75;
         const atmosphereScale = lamp > 0 ? atmosphereLamp / lamp : 0;
         const depthShade = data.kind === 'milfoil' ? waterDepthShade(cell) : 1;
-        const { uMin, uMax, vMin, vMax } = data.uv;
         ensureCapacity(faceCount + faces.length);
 
         for (const face of faces) {
+            // Leaf cards and solid fruit use different parts of the same atlas,
+            // without a separate material or draw call for each fruit.
+            const { uMin, uMax, vMin, vMax } = face.texture ? plantFaceUV(face.texture) : data.uv;
             const p = faceCount * 12, t = faceCount * 8, c = faceCount * 16;
             for (let i = 0; i < 4; i++) {
                 const vertex = face.vertices[i];

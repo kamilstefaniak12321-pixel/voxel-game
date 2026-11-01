@@ -16,6 +16,8 @@ import {
 } from '../rendering/BlockRenderData.js';
 import { getRiverPlantFaces } from '../rendering/RiverPlantGeometry.js';
 import { pixelPlantIconPixels } from './PixelPlantIcon.js';
+import { modelIconPixels } from './ModelIcon.js';
+import { getFruitItemModel } from '../rendering/FruitBushGeometry.js';
 
 // ------------------------------------------------------------
 // IKONKI BLOKÓW
@@ -24,7 +26,8 @@ import { pixelPlantIconPixels } from './PixelPlantIcon.js';
 // (góra + dwa boki), z tych samych tekstur co w świecie.
 // Wynik to obrazki (data URL), które pasek bloków wstawia
 // do <img>. Nowy blok dostaje ikonkę automatycznie. Roślina
-// i przedmiot (owoc) - płaski obrazek z atlasu.
+// i zwykły przedmiot - płaski obrazek z atlasu. Owoce krzaków mają
+// podgląd tego samego modelu 3D, który rośnie na roślinie.
 // ------------------------------------------------------------
 
 // Rozmiar ikonki w pikselach (na ekranie może być mniejsza).
@@ -248,6 +251,34 @@ export async function createBlockIcons() {
 
     const W = ICON_SIZE;
 
+    // Read only the tiles used by model icons, once each. The original atlas
+    // can be much taller than these tiny leaf/fruit regions with plant packs.
+    const modelTiles = new Map();
+    const sampleModelTexture = (name, u, v, out) => {
+        if (!modelTiles.has(name)) {
+            const tile = ATLAS_TILES[name];
+            if (!tile) throw new Error(`Nieznana tekstura modelu: ${name}`);
+            const canvas = document.createElement('canvas');
+            canvas.width = (tile.w ?? 1) * T; canvas.height = (tile.h ?? 1) * T;
+            const ctx = canvas.getContext('2d', { willReadFrequently: true });
+            ctx.drawImage(atlas, tile.x * T, tile.y * T, canvas.width, canvas.height,
+                0, 0, canvas.width, canvas.height);
+            modelTiles.set(name, ctx.getImageData(0, 0, canvas.width, canvas.height));
+        }
+        const tile = modelTiles.get(name);
+        const x = Math.min(tile.width - 1, Math.max(0, Math.floor(u * tile.width)));
+        const y = Math.min(tile.height - 1, Math.max(0, Math.floor(v * tile.height)));
+        const i = (y * tile.width + x) * 4;
+        for (let channel = 0; channel < 4; channel++) out[channel] = tile.data[i + channel];
+    };
+    const modelIcon = (faces, texture) => {
+        const canvas = document.createElement('canvas'); canvas.width = W; canvas.height = W;
+        const ctx = canvas.getContext('2d'), image = ctx.createImageData(W, W);
+        image.data.set(modelIconPixels(faces, W, sampleModelTexture, texture));
+        ctx.putImageData(image, 0, 0);
+        return canvas.toDataURL();
+    };
+
     // Jednostka: ile pikseli ikonki przypada na piksel tekstury
     // wzdłuż krawędzi ściany.
 
@@ -274,7 +305,9 @@ export async function createBlockIcons() {
         }
 
         if (definition.model === 'riverPlant') {
-            icons.set(type, definition.riverPlant.tuft
+            icons.set(type, definition.riverPlant.kind.startsWith('fruitBush:')
+                ? modelIcon(getRiverPlantFaces(definition.riverPlant.kind, 0), definition.riverPlant.texture)
+                : definition.riverPlant.tuft
                 ? pixelPlantIcon(getRiverPlantFaces(definition.riverPlant.kind, 0, false, definition.riverPlant.tuft))
                 : riverPlantIcon(definition.riverPlant.kind));
             continue;
@@ -317,7 +350,8 @@ export async function createBlockIcons() {
 
 
     for (const [type, item] of Object.entries(ITEM_TYPES)) {
-        icons.set(type, flatIcon(atlas, item.icon));
+        const fruit = getFruitItemModel(type);
+        icons.set(type, fruit ? modelIcon(fruit.faces, fruit.texture) : flatIcon(atlas, item.icon));
     }
 
 

@@ -2,6 +2,7 @@ import { WATER_SURFACE } from '../config.js';
 import { createPixelPlant } from './PixelPlantBuilder.js';
 import { makeTuftTemplate } from './TuftGeometry.js';
 import { getBlueberryFaces } from './BlueberryGeometry.js';
+import { getFruitBushFaces } from './FruitBushGeometry.js';
 
 // Small reusable templates, appended to the ordinary chunk plant batch. There
 // are no Object3Ds, materials or draw calls per plant. Colours are linear RGB
@@ -145,6 +146,10 @@ function makeTemplate(kind, variant, waterlogged) {
 // rośliny jej nie używają.
 export function getRiverPlantFaces(kind, variant, waterlogged = false, tuft = null, mask = 0) {
     if (kind.startsWith('blueberry:')) return getBlueberryFaces(kind.slice(10));
+    if (kind.startsWith('fruitBush:')) {
+        const [, species, stage] = kind.split(':');
+        return getFruitBushFaces(species, stage);
+    }
     const normalizedVariant = variant & 7;
     // Duża roślina (tuft.wide): maska litych bloków obok (ChunkMesher reachMask).
     const carpetMask = tuft?.carpet || tuft?.coating || tuft?.bracket ? mask & 0xfff : tuft?.wide ? mask & 0x1ffff : 0;

@@ -47,3 +47,8 @@ wdrożeniem; od 0.49.0 wszystkie rośliny z paczek z modelem `kepka`
 (kępki i krzewy) mają te reakcje automatycznie (`TuftAnimation.js`) —
 nowa roślina z paczki dostaje je bez dodatkowego kodu. Dywany, porosty
 i huby (zależą od sąsiadów) jeszcze bez animacji.
+
+Od 0.50.0 również truskawka, jeżyna, chili i leszczyna mają pełne
+przejścia wzrostu i owocowania (`FruitBushAnimation.js`). Model owocu
+w ekwipunku i w dłoni musi pochodzić z tej samej geometrii co owoc na
+roślinie (`FruitBushGeometry.js`), z zachowaniem kształtu i kolorów.

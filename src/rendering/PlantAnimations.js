@@ -6,6 +6,9 @@ import { tuftInfo, isTuftAnimated, tuftAnimationKind, TUFT_CLIP_SECONDS, TUFT_HA
     tuftPose, sampleTuftAnimation, transformTuftVertex, isFlowerFace } from './TuftAnimation.js';
 import { getRiverPlantFaces } from './RiverPlantGeometry.js';
 import { blockRenderData } from './BlockRenderData.js';
+import { getFruitBushFaces } from './FruitBushGeometry.js';
+import { fruitBushInfo, isFruitBushAnimated, fruitBushAnimationKind, fruitBushPose,
+    sampleFruitBushAnimation, transformFruitBushVertex } from './FruitBushAnimation.js';
 
 export const MAX_PLANT_ANIMATIONS = 12;
 export const PLANT_ANIMATION_DISTANCE = 48;
@@ -81,11 +84,33 @@ const TUFT = {
     shadeHeight: null
 };
 
+const FRUIT_BUSH = {
+    isAnimated: isFruitBushAnimated,
+    kind: fruitBushAnimationKind,
+    seconds: PLANT_CLIP_SECONDS,
+    begin(event, before, after, previous) {
+        const info = fruitBushInfo(after) ?? fruitBushInfo(before);
+        event.species = info.species;
+        const continuing = previous?.species === info.species;
+        const from = continuing ? sampleFruitBushAnimation(previous, previous.time) : fruitBushPose(before, info.species);
+        if (!continuing && event.kind === 'place') from.size = fruitBushPose(after, info.species).size;
+        event.from = from;
+        event.to = fruitBushPose(after, info.species);
+        if (event.kind === 'break') event.to.size = from.size;
+        event.renderId = info.fullId;
+        event.pose = fruitBushPose(0, info.species);
+    },
+    sample: sampleFruitBushAnimation,
+    faces: event => getFruitBushFaces(event.species, 'full'),
+    transform: transformFruitBushVertex,
+    shadeHeight: (vertex, pose) => vertex[1] * pose.size
+};
+
 // Atrybuty geometrii zmieniane przez animację (kępki - bez kolorów).
 const SHADED = ['position', 'normal', 'plantMotion', 'color', 'atmosphereLight', 'surfaceOcclusion'];
 const UNSHADED = ['position', 'normal', 'plantMotion'];
 
-const familyOf = (id) => (BLUEBERRY.isAnimated(id) ? BLUEBERRY : TUFT.isAnimated(id) ? TUFT : null);
+const familyOf = (id) => (BLUEBERRY.isAnimated(id) ? BLUEBERRY : FRUIT_BUSH.isAnimated(id) ? FRUIT_BUSH : TUFT.isAnimated(id) ? TUFT : null);
 
 // Transient visual overrides, never saved. The normal block-change remesh adds
 // canonical topology; then only affected vertex ranges are uploaded. No extra

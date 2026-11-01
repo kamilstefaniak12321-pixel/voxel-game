@@ -11,6 +11,27 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 0.50.0 - Puszyste krzaki i wspólne owoce 3D
+
+Nowy wygląd istniejących krzaków i ich owoców — PR do uzupełnienia.
+Zmiany względem opublikowanej wersji 0.49.0.
+
+- Truskawka, jeżyna, chili i leszczyna mają modele w stylu borówki:
+  puszyste liście, różne wysokości, odcienie i zagęszczenie korony.
+  Owoce mają osobne bryły: truskawki z szypułką i pestkami, ziarniste
+  jeżyny, zagięte papryczki oraz orzechy w zielonych okrywach.
+- Zebrany owoc ma ten sam model 3D co owoc na krzaku — w ekwipunku
+  i w dłoni, również dla borówki. Ikony są zapamiętywanymi podglądami
+  modeli, bez ciągłego renderowania osobnej sceny dla każdej kratki.
+- Cztery krzaki otrzymują płynny wzrost, odrastanie owoców i krótkie
+  reakcje na posadzenie, zbiór, brak miejsca oraz zniszczenie.
+  Wspólny limit 12 aktywnych animacji obejmuje też borówkę i kępki.
+- Istniejące światy automatycznie pokazują nowe modele. ID, plony,
+  czas wzrostu i zapis pozostają zgodne z 0.49.0. Wszystkie krzaki
+  znajdują się w kategorii „Rośliny”; dorosła leszczyna mieści się
+  w jednym bloku i nie przebija sufitu.
+- Sprawdzenia oraz pomiary: [krzaki-owocowe-0.50.0.md](docs/krzaki-owocowe-0.50.0.md).
+
 ## 0.49.0 - Indygowiec i marzanna: duże rośliny barwierskie, animacje roślin
 
 Rośliny większe niż blok i animacje wszystkich roślin z paczek — PR #80

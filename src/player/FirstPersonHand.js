@@ -2,6 +2,7 @@ import * as THREE from 'three';
 
 import { getBlockDefinition } from '../blocks/BlockRegistry.js';
 import { isItemType } from '../items/ItemRegistry.js';
+import { getFruitItemModel } from '../rendering/FruitBushGeometry.js';
 import { blockAtlasTexture } from '../rendering/TextureAtlas.js';
 import { createModelMaterial } from '../rendering/ModelMaterial.js';
 import { setPotatoDefine } from '../rendering/BlockRenderData.js';
@@ -64,6 +65,9 @@ export const POSES = {
     // Przedmiot (płaski obrazek): obrazek idzie w głąb ekranu, więc
     // trzonek jest w prawym dolnym rogu, a głowica wyżej, bliżej środka.
     item: { position: [0.45, -0.3, -0.75], rotation: [0, 2.07, 0.4], scale: 0.42 },
+
+    // Bryłka owocu: widać bok i górę, bez obracania jak kartka.
+    fruit: { position: [0.48, -0.3, -0.78], rotation: [0.2, -0.45, 0.12], scale: 0.38 },
 
     // Roślina: dwie skrzyżowane płaszczyzny.
     plant: { position: [0.55, -0.34, -0.8], rotation: [0.08, -0.4, 0.12], scale: 0.4 }
@@ -222,7 +226,8 @@ export class FirstPersonHand {
         // trzymasz jak w Minecrafcie: głowica / ostrze idzie w głąb ekranu
         // i do środka, trzonek - do prawego dolnego rogu.
 
-        const flat = isItemType(type) || model === 'flat';
+        const fruit = Boolean(getFruitItemModel(type));
+        const flat = (isItemType(type) && !fruit) || model === 'flat';
 
         if (flat) {
 
@@ -251,7 +256,7 @@ export class FirstPersonHand {
         this.arm.visible = false;
 
         this.pose =
-            flat ? POSES.item :
+            fruit ? POSES.fruit : flat ? POSES.item :
             model === 'cross' || model === 'riverPlant' ? POSES.plant :
             POSES.block;
 

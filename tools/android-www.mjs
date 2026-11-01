@@ -1,7 +1,8 @@
 // ------------------------------------------------------------
 // APLIKACJA NA TELEFON (Android) - pliki gry do aplikacji
 //
-// Kopiuje to, czego gra potrzebuje (index.html, src/, assets/, lib/)
+// Kopiuje to, czego gra potrzebuje (index.html, src/, assets/, lib/,
+// LICENSE.md)
 // do folderu www/, a stamtąd "npx cap sync android" wkłada je do
 // aplikacji (android/). Uruchamiane przez: npm run android:www
 // (w GitHub Actions - .github/workflows/aplikacja.yml). Opis:
@@ -22,7 +23,8 @@ import { cpSync, rmSync, mkdirSync, existsSync, readFileSync, readdirSync, statS
 import { createHash } from 'node:crypto';
 import { join } from 'node:path';
 
-const FILES = ['index.html', 'src', 'assets', 'lib'];
+// LICENSE.md - licencja gry (PolyForm Noncommercial, docs/licencja.md).
+const FILES = ['index.html', 'src', 'assets', 'lib', 'LICENSE.md'];
 
 // Część na telefon: zmiana czegoś tutaj = nowa aplikacja (.apk).
 const NATIVE_FILES = [

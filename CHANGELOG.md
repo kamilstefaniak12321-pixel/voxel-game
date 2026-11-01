@@ -11,6 +11,28 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 0.50.1 - Licencja PolyForm Noncommercial (przed upublicznieniem kodu)
+
+Licencja gry - PR #82. Dla gracza w samej grze bez zmian względem 0.50.0.
+
+- **Licencja: PolyForm Noncommercial 1.0.0** (`LICENSE.md` - oficjalny
+  tekst bez zmian i linia `Required Notice:` z autorem). Grę można
+  oglądać, zmieniać (mody, paczki tekstur, roślin i drzew) i udostępniać
+  za darmo - niekomercyjnie, z informacją o autorze; sprzedaż i
+  zarabianie na grze - tylko za zgodą autora. Streszczenie po polsku
+  i lista części na innych licencjach (three.js - MIT, Pixelify Sans -
+  OFL, Gradle Wrapper - Apache 2.0): `docs/licencja.md`, sekcja
+  *Licencja* w README.
+- `LICENSE.md` jedzie z grą: w instalatorze (electron-builder) i w
+  aplikacji na Androida (`tools/android-www.mjs`, paczka aktualizacji).
+- `package.json`: `"license": "PolyForm-Noncommercial-1.0.0"`.
+- `AGENTS.md`: zasady publicznego repozytorium (żadnych sekretów ani
+  danych osobowych, cudze pliki tylko na zgodnych licencjach).
+- `docs/aplikacja.md`: limity Actions dla repozytorium prywatnego
+  i publicznego.
+- Historia repozytorium sprawdzona przed upublicznieniem: brak tokenów,
+  kluczy i haseł poza celowo publicznym kluczem testowym Androida.
+
 ## 0.50.0 - Puszyste krzaki i wspólne owoce 3D
 
 Nowy wygląd istniejących krzaków i ich owoców — PR #81.

@@ -2,9 +2,90 @@ import { CHUNK_SIZE } from '../config.js';
 import { getBlueberryFaces } from './BlueberryGeometry.js';
 import { BLUEBERRY_IDS, isAnimatedPlant, animationKind, blueberryPose,
     sampleBlueberryAnimation, transformBlueberryVertex, PLANT_CLIP_SECONDS } from './BlueberryAnimation.js';
+import { tuftInfo, isTuftAnimated, tuftAnimationKind, TUFT_CLIP_SECONDS, TUFT_HARVEST_SWITCH,
+    tuftPose, sampleTuftAnimation, transformTuftVertex, isFlowerFace } from './TuftAnimation.js';
+import { getRiverPlantFaces } from './RiverPlantGeometry.js';
+import { blockRenderData } from './BlockRenderData.js';
 
 export const MAX_PLANT_ANIMATIONS = 12;
 export const PLANT_ANIMATION_DISTANCE = 48;
+
+// Rodziny animacji: borówka (jeden wspólny model wszystkich etapów,
+// BlueberryAnimation.js) i rośliny z paczek - kępki i krzewy (model
+// etapu, TuftAnimation.js). Ta sama obsługa przejść, limitu i przebudowy.
+const BLUEBERRY = {
+    isAnimated: isAnimatedPlant,
+    kind: animationKind,
+    seconds: PLANT_CLIP_SECONDS,
+    begin(event, before, after, previous) {
+        const from = previous ? sampleBlueberryAnimation(previous, previous.time) : blueberryPose(before);
+        // Placing a young plant grows to its own size, rather than shrinking
+        // an invisible adult; interrupted clips retain their current pose.
+        if (!previous && event.kind === 'place') from.size = blueberryPose(after).size;
+        event.from = from;
+        event.to = blueberryPose(after);
+        if (event.kind === 'break') event.to.size = from.size;
+        event.renderId = BLUEBERRY_IDS.full;
+        event.pose = blueberryPose(0);
+    },
+    sample: sampleBlueberryAnimation,
+    faces: () => getBlueberryFaces('full'),
+    transform: (face, vertex, index, pose, event, out) => transformBlueberryVertex(face, vertex, pose, out),
+    shadeHeight: (vertex, pose) => vertex[1] * pose.size
+};
+
+const TUFT = {
+    isAnimated: isTuftAnimated,
+    kind: tuftAnimationKind,
+    seconds: TUFT_CLIP_SECONDS,
+    begin(event, before, after, previous) {
+        const old = tuftInfo(before), next = tuftInfo(after);
+        const shown = previous ? sampleTuftAnimation(previous, previous.time).size * (previous.height ?? 1) : null;
+        const kind = event.kind;
+        // Model rysowany przez animację: przy zniszczeniu i na początku
+        // zbioru - poprzedni etap, poza tym - nowy.
+        const drawn = kind === 'break' || kind === 'harvest' ? before : after;
+        event.renderId = drawn;
+        event.height = tuftInfo(drawn).height;
+        event.phase = 0;
+        event.from = { size: 1 };
+        if (kind === 'place') event.from.size = shown !== null ? Math.min(1, shown / event.height) : .35;
+        else if (kind === 'grow') event.from.size = Math.max(.4, Math.min(1, (shown ?? old.height) / next.height));
+        else if (kind === 'break') event.from.size = shown !== null ? Math.min(1, shown / event.height) : 1;
+        event.afterHeight = next?.height ?? 0;
+        event.flowerFaces = kind === 'harvest' ? new WeakSet() : null;
+        event.pose = tuftPose();
+        // Ugięcie wzdłuż x albo z - różnie dla różnych miejsc.
+        event.swayX = ((event.x * 7 + event.z * 13) & 1) === 0;
+    },
+    // Zbiór: gdy kwiaty zniknęły, rysujemy etap po zbiorze - płynnie od
+    // wysokości poprzedniego. Zwraca true, gdy trzeba przebudować chunk.
+    advance(event) {
+        if (event.kind !== 'harvest' || event.phase !== 0 || event.time < TUFT_HARVEST_SWITCH) return false;
+        event.phase = 1;
+        event.from = { size: Math.max(1, Math.min(1.6, event.height / Math.max(.05, event.afterHeight))) };
+        event.renderId = event.after;
+        event.height = event.afterHeight;
+        return true;
+    },
+    sample: sampleTuftAnimation,
+    faces(event, range) {
+        const river = blockRenderData[event.renderId].riverPlant;
+        const faces = getRiverPlantFaces(river.kind, range.transform.variant, river.waterlogged, river.tuft, range.mask);
+        if (event.flowerFaces) for (const face of faces) if (isFlowerFace(face, river.tuft)) event.flowerFaces.add(face);
+        return faces;
+    },
+    transform: transformTuftVertex,
+    // Kępki: światło i cień jak w modelu bez animacji (bez przeliczania
+    // kolorów co klatkę - duże krzewy mają tysiące wierzchołków).
+    shadeHeight: null
+};
+
+// Atrybuty geometrii zmieniane przez animację (kępki - bez kolorów).
+const SHADED = ['position', 'normal', 'plantMotion', 'color', 'atmosphereLight', 'surfaceOcclusion'];
+const UNSHADED = ['position', 'normal', 'plantMotion'];
+
+const familyOf = (id) => (BLUEBERRY.isAnimated(id) ? BLUEBERRY : TUFT.isAnimated(id) ? TUFT : null);
 
 // Transient visual overrides, never saved. The normal block-change remesh adds
 // canonical topology; then only affected vertex ranges are uploaded. No extra
@@ -23,9 +104,10 @@ export class PlantAnimations {
     overridesFor(chunk) { return this.chunks.get(chunk); }
 
     blockChanged(chunk, index, before, after) {
-        if (!isAnimatedPlant(before) && !isAnimatedPlant(after) && !this.chunks.get(chunk)?.has(index)) return;
-        const kind = animationKind(before, after);
-        if (kind) this.start(chunk, index, before, after, kind);
+        const family = familyOf(after) ?? familyOf(before);
+        if (!family && !this.chunks.get(chunk)?.has(index)) return;
+        const kind = family?.kind(before, after);
+        if (kind) this.start(chunk, index, before, after, kind, family);
         else this.remove(this.chunks.get(chunk)?.get(index));
     }
 
@@ -34,30 +116,27 @@ export class PlantAnimations {
         if (!chunk) return false;
         const index = chunk.index(x - chunk.cx * CHUNK_SIZE, y, z - chunk.cz * CHUNK_SIZE);
         const id = chunk.blocks[index];
-        return isAnimatedPlant(id) && this.start(chunk, index, id, id, 'reject');
+        const family = familyOf(id);
+        return family !== null && this.start(chunk, index, id, id, 'reject', family);
     }
 
-    start(chunk, index, before, after, kind) {
-        const previous = this.chunks.get(chunk)?.get(index);
+    start(chunk, index, before, after, kind, family = familyOf(after) ?? familyOf(before)) {
+        const found = this.chunks.get(chunk)?.get(index);
+        const previous = found?.family === family ? found : null;
         if (previous?.kind === 'reject' && kind === 'reject') return false;
         const lx = index % CHUNK_SIZE, y = Math.floor(index / (CHUNK_SIZE * CHUNK_SIZE));
         const lz = Math.floor(index / CHUNK_SIZE) % CHUNK_SIZE;
         const x = chunk.cx * CHUNK_SIZE + lx, z = chunk.cz * CHUNK_SIZE + lz;
         const pos = this.camera.position;
         if (Math.hypot(x + .5 - pos.x, y + .4 - pos.y, z + .5 - pos.z) > PLANT_ANIMATION_DISTANCE ||
-            (!previous && this.active.size >= MAX_PLANT_ANIMATIONS) || !chunk.mesh) {
-            this.remove(previous);
+            (!found && this.active.size >= MAX_PLANT_ANIMATIONS) || !chunk.mesh) {
+            this.remove(found);
             return false;
         }
-        const from = previous ? sampleBlueberryAnimation(previous, previous.time) : blueberryPose(before);
-        // Placing a young plant grows to its own size, rather than shrinking
-        // an invisible adult; interrupted clips retain their current pose.
-        if (!previous && kind === 'place') from.size = blueberryPose(after).size;
-        this.remove(previous);
-        const event = { chunk, index, lx, y, lz, x, z, from, to: blueberryPose(after),
-            after, kind, duration: PLANT_CLIP_SECONDS[kind], time: 0, wait: 0,
-            renderId: BLUEBERRY_IDS.full, pose: blueberryPose(0), binding: null };
-        if (kind === 'break') event.to.size = from.size;
+        const event = { chunk, index, lx, y, lz, x, z, family, after, kind,
+            duration: family.seconds[kind], time: 0, wait: 0, binding: null };
+        family.begin(event, before, after, previous);
+        this.remove(found);
         if (!this.chunks.has(chunk)) this.chunks.set(chunk, new Map());
         this.chunks.get(chunk).set(index, event);
         this.active.add(event);
@@ -78,24 +157,27 @@ export class PlantAnimations {
     bindGeometry(geometry, ranges) {
         for (const range of ranges) {
             const event = range.event;
-            const start = range.start * 4, count = getBlueberryFaces('full').length * 4;
-            const copy = name => geometry.attributes[name].array.slice(start * 4, (start + count) * 4);
-            event.binding = { geometry, start, count, transform: range.transform,
+            const faces = event.family.faces(event, range);
+            const start = range.start * 4, count = faces.length * 4;
+            const copy = name => (event.family.shadeHeight ? geometry.attributes[name].array.slice(start * 4, (start + count) * 4) : null);
+            event.binding = { geometry, start, count, faces, transform: range.transform,
                 color: copy('color'), atmosphereLight: copy('atmosphereLight') };
             this.paint(event);
         }
     }
 
     paint(event) {
-        const pose = sampleBlueberryAnimation(event, event.time, event.pose);
+        const pose = event.family.sample(event, event.time, event.pose);
         const binding = event.binding;
-        const { geometry, start, count, transform } = binding;
+        const { geometry, start, count, transform, faces } = binding;
         const { cos, sin } = transform;
         const a = geometry.attributes;
+        const family = event.family;
         let vertexIndex = start, localIndex = 0;
-        for (const face of getBlueberryFaces('full')) {
-            for (const vertex of face.vertices) {
-                const v = transformBlueberryVertex(face, vertex, pose, this.scratch);
+        for (const face of faces) {
+            for (let i = 0; i < face.vertices.length; i++) {
+                const vertex = face.vertices[i];
+                const v = family.transform(face, vertex, i, pose, event, this.scratch);
                 const p = vertexIndex * 3, c = vertexIndex * 4;
                 a.position.array[p] = event.lx + transform.x + cos * v[0] - sin * v[2];
                 a.position.array[p + 1] = event.y + v[1];
@@ -104,18 +186,20 @@ export class PlantAnimations {
                 a.normal.array[p + 1] = v[4];
                 a.normal.array[p + 2] = sin * v[3] + cos * v[5];
                 a.plantMotion.array[vertexIndex * 2] = v[6];
-                // Match the static young model's shade at the endpoints.
-                const shade = .79 + Math.min(1, Math.max(0, vertex[1] * pose.size) / .8) * .21;
-                const ratio = shade / (.79 + Math.min(1, vertex[1] / .8) * .21);
-                for (let channel = 0; channel < 4; channel++) {
-                    a.color.array[c + channel] = Math.round(binding.color[localIndex * 4 + channel] * ratio);
-                    a.atmosphereLight.array[c + channel] = Math.round(binding.atmosphereLight[localIndex * 4 + channel] * (channel === 3 ? 1 : ratio));
+                if (family.shadeHeight) {
+                    // Match the static young model's shade at the endpoints.
+                    const shade = .79 + Math.min(1, Math.max(0, family.shadeHeight(vertex, pose, v)) / .8) * .21;
+                    const ratio = shade / (.79 + Math.min(1, vertex[1] / .8) * .21);
+                    for (let channel = 0; channel < 4; channel++) {
+                        a.color.array[c + channel] = Math.round(binding.color[localIndex * 4 + channel] * ratio);
+                        a.atmosphereLight.array[c + channel] = Math.round(binding.atmosphereLight[localIndex * 4 + channel] * (channel === 3 ? 1 : ratio));
+                    }
+                    a.surfaceOcclusion.array[vertexIndex] = Math.round(shade * 255);
                 }
-                a.surfaceOcclusion.array[vertexIndex] = Math.round(shade * 255);
                 vertexIndex++; localIndex++;
             }
         }
-        for (const name of ['position', 'normal', 'plantMotion', 'color', 'atmosphereLight', 'surfaceOcclusion']) {
+        for (const name of family.shadeHeight ? SHADED : UNSHADED) {
             const attribute = a[name];
             // Union pending ranges, also when a chunk is outside the frustum:
             // updateRanges must not grow forever while nothing uploads them.
@@ -144,6 +228,13 @@ export class PlantAnimations {
                 continue;
             }
             event.time = Math.min(event.duration, event.time + Math.max(0, dt));
+            if (event.family.advance?.(event)) {
+                // Inny model (np. etap po zbiorze) - zwykła przebudowa chunka.
+                event.binding = null;
+                event.wait = 0;
+                this.world.markDirty(chunk);
+                continue;
+            }
             this.paint(event);
             changed.add(chunk);
             if (event.time >= event.duration) {

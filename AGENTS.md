@@ -43,4 +43,7 @@ własnych środków, zachowaj zakorzenienie i neutralny początek/koniec.
 Animacja jest warstwą wizualną — nie opóźnia ani nie zmienia zasad
 ekwipunku, wzrostu i zapisu. Ogranicz koszt do aktywnych roślin i
 sprawdź przejścia oraz wydajność w grze. Borówka jest pierwszym
-wdrożeniem; pozostałe gatunki dostają tę zasadę przy ich opracowaniu.
+wdrożeniem; od 0.49.0 wszystkie rośliny z paczek z modelem `kepka`
+(kępki i krzewy) mają te reakcje automatycznie (`TuftAnimation.js`) —
+nowa roślina z paczki dostaje je bez dodatkowego kodu. Dywany, porosty
+i huby (zależą od sąsiadów) jeszcze bez animacji.

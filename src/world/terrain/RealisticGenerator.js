@@ -207,6 +207,9 @@ function resolveBiome(biome, key) {
                 density: pack.where.density,
                 level: patchLevel(pack.where.cover * (pack.where.weights?.[key] ?? 1)),
                 salt: pack.firstId,
+                // Duża roślina (wystaje poza blok - indygowiec): nie dwie
+                // obok siebie (patchPlantAt).
+                spaced: pack.stages.some((stage) => stage.tuft?.wide),
                 // Na czym rośnie: "ziemia" (trawa), "piasek" (z "podloze":
                 // ["sand"] - kocanka, mikołajek, nagietek - plaże, wydmy),
                 // "kamien" (wierzch skał - porosty); "pnie" - osobno,
@@ -1239,9 +1242,12 @@ export class RealisticGenerator {
                 continue;
             }
 
+            const roll = hash01(this.plantSeed, x, z, 20 + salt);
+
             if (
                 this.field(this.noise.patches, x + salt * 977, z - salt * 613, 18, 2) > patch.level &&
-                hash01(this.plantSeed, x, z, 20 + salt) < patch.density
+                roll < patch.density &&
+                (!patch.spaced || this.spacedPlant(x, z, salt, roll, patch.density))
             ) {
 
                 if (!patch.ids) {
@@ -1259,6 +1265,27 @@ export class RealisticGenerator {
         }
 
         return 0;
+
+    }
+
+
+    // Duże rośliny (wystają poza blok) nie rosną tuż obok siebie: z kilku
+    // wylosowanych w kwadracie 3 x 3 zostaje ta z najmniejszym losem
+    // (zawsze ta sama - świat jest powtarzalny).
+
+    spacedPlant(x, z, salt, roll, density) {
+
+        for (let dz = -1; dz <= 1; dz++) {
+            for (let dx = -1; dx <= 1; dx++) {
+                if (dx === 0 && dz === 0) continue;
+                const other = hash01(this.plantSeed, x + dx, z + dz, 20 + salt);
+                if (other < density && other < roll) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
 
     }
 

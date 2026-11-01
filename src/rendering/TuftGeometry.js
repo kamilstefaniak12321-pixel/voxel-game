@@ -384,6 +384,366 @@ function star(pixel, x, z, radius) {
 }
 
 // ------------------------------------------------------------
+// DUŻE ROŚLINY - cały blok i więcej (indygowiec, marzanna)
+//
+// Roślina może wystawać poza swoją komórkę (w bok i w górę). Gdy obok stoi
+// lity blok, część, która by w niego weszła, jest ucinana (maska od
+// ChunkMesher - reachMask): bity 0-7 - sąsiedzi na tej samej wysokości
+// (+x, +z, -x, -z, +x+z, -x+z, -x-z, +x-z), bity 8-15 - ci sami sąsiedzi
+// piętro wyżej, bit 16 - blok nad rośliną. Piksel (x, y, z) modelu leży
+// w komórce o 8 pikseli od środka - x od -8 do 7 to własna komórka.
+// ------------------------------------------------------------
+
+const REACH_SIDES = [[1, 0], [0, 1], [-1, 0], [0, -1], [1, 1], [-1, 1], [-1, -1], [1, -1]];
+
+function reachClipper(mask) {
+
+    return (x, y, z) => {
+        const cx = x >= 8 ? 1 : x < -8 ? -1 : 0;
+        const cz = z >= 8 ? 1 : z < -8 ? -1 : 0;
+        const level = y >= 16 ? 1 : 0;
+        if (cx === 0 && cz === 0) {
+            return level === 1 && (mask & 65536) !== 0;
+        }
+        const side = REACH_SIDES.findIndex(([dx, dz]) => dx === cx && dz === cz);
+        return (mask & (1 << (side + 8 * level))) !== 0;
+    };
+
+}
+
+// Model z ucinaniem: box i sheet jak w PixelPlantBuilder, ale bez pikseli
+// w litych blokach obok.
+
+function clippedModel(model, clipped) {
+
+    const box = (x, y, z, width, height, depth, color, cap = color) => {
+        for (let j = 0; j < height; j++) for (let k = 0; k < depth; k++) for (let i = 0; i < width; i++) {
+            if (!clipped(x + i, y + j, z + k)) {
+                model.box(x + i, y + j, z + k, 1, 1, 1, j === height - 1 ? cap : color);
+            }
+        }
+    };
+
+    const sheet = (axis, plane, draw, sign = 0) => model.sheet(axis, plane, (tools) => {
+        const at = (u, v) => (axis === 0 ? [plane, v, u] : axis === 1 ? [u, plane, v] : [u, v, plane]);
+        const pixel = (u, v, color) => {
+            const [x, y, z] = at(u, v);
+            if (!clipped(Math.floor(x), Math.floor(y), Math.floor(z))) tools.pixel(u, v, color);
+        };
+        const rect = (u, v, w, h, color) => {
+            for (let j = 0; j < h; j++) for (let i = 0; i < w; i++) pixel(u + i, v + j, color);
+        };
+        draw({ ...tools, pixel, rect });
+    }, sign);
+
+    return { ...model, box, sheet };
+
+}
+
+// Linia z kostek od punktu do punktu - kostki stykają się ścianami (przy
+// skosie najpierw krok w górę, potem w bok - schodki jak na obrazku).
+// shape(t) - ile drogi w bok przy wysokości t (0-1): t ** 1.6 - gałąź
+// najpierw rośnie w górę, potem rozkłada się na boki. Zwraca kostki.
+
+function voxelLine(from, to, shape = (t) => t) {
+
+    const cells = [];
+    const steps = Math.max(2, Math.ceil(Math.hypot(to[0] - from[0], to[1] - from[1], to[2] - from[2]) * 3));
+    let last = null;
+
+    for (let s = 0; s <= steps; s++) {
+        const t = s / steps;
+        const side = shape(t);
+        const next = [
+            Math.round(from[0] + (to[0] - from[0]) * side),
+            Math.round(from[1] + (to[1] - from[1]) * t),
+            Math.round(from[2] + (to[2] - from[2]) * side)
+        ];
+        if (last && next[0] === last[0] && next[1] === last[1] && next[2] === last[2]) continue;
+        if (last) {
+            // Po jednej osi naraz: y, potem x, potem z.
+            const cell = [...last];
+            for (const axis of [1, 0, 2]) {
+                while (cell[axis] !== next[axis]) {
+                    cell[axis] += Math.sign(next[axis] - cell[axis]);
+                    if (cell[0] !== next[0] || cell[1] !== next[1] || cell[2] !== next[2]) cells.push([...cell]);
+                }
+            }
+        }
+        cells.push(next);
+        last = next;
+    }
+
+    return cells;
+
+}
+
+// Owalny liść z kostek (indygowiec): od nasady (x, y, z) w kierunku
+// "direction" (jeden z 8), "length" pikseli, w połowie podnosi się o piksel.
+// Środek liścia w kolorze "color", druga połówka jaśniejsza albo
+// ciemniejsza (jak liście na atlasie), czubek jasny. Skośny liść: kostka
+// obok każdego kroku (inaczej kostki stykałyby się tylko krawędziami).
+
+function ovalLeaf(box, x, y, z, direction, length, color, half) {
+
+    const [dx, dz] = DIRECTIONS[direction];
+    const diagonal = dx !== 0 && dz !== 0;
+    const lift = Math.ceil(length / 2);
+
+    for (let s = 1; s <= length; s++) {
+        const h = y + (s > lift ? 1 : 0);
+        const px = x + dx * s, pz = z + dz * s;
+        box(px, h, pz, 1, 1, 1, s === length ? 'leafLight' : color);
+        if (s === lift + 1) {
+            // Schodek w górę - kostka pod spodem łączy obie połowy.
+            box(px - dx, h, pz - dz, 1, 1, 1, color);
+        }
+        if (s === length) break;
+        if (diagonal) {
+            box(px - dx, h, pz, 1, 1, 1, half);
+        }
+        else if (s > 1) {
+            box(px - dz, h, pz + dx, 1, 1, 1, half);
+        }
+    }
+
+}
+
+// Grono (indygowiec): okrągła kiść drobnych kwiatów z kostek - rozmiar 1:
+// krzyżyk z czubkiem i ciemnym spodem, 2: dwa piętra 3 x 3 bez rogów,
+// krzyżyk na górze. Kostki na zmianę jaśniejsze i ciemniejsze - kiść jest
+// "ziarnista" jak na atlasie.
+
+function cluster(box, x, y, z, size) {
+
+    const plus = [[0, 0], [1, 0], [-1, 0], [0, 1], [0, -1]];
+
+    if (size <= 1) {
+        box(x, y - 1, z, 1, 1, 1, 'flowerDark');
+        for (const [dx, dz] of plus) box(x + dx, y, z + dz, 1, 1, 1, dx === 0 && dz === 0 ? 'flowerLight' : 'flower');
+        box(x, y + 1, z, 1, 1, 1, 'flowerLight');
+        return;
+    }
+
+    // Okrągła kiść 3 x 3 x 3 (bez rogów): ciemny spód, środek z ciemnymi
+    // rogami, jasny wierzch.
+    for (const [dx, dz] of plus) box(x + dx, y - 1, z + dz, 1, 1, 1, 'flowerDark');
+    for (let dz = -1; dz <= 1; dz++) {
+        for (let dx = -1; dx <= 1; dx++) {
+            box(x + dx, y, z + dz, 1, 1, 1, Math.abs(dx) + Math.abs(dz) === 2 ? 'flowerDark' : 'flower');
+        }
+    }
+    for (const [dx, dz] of plus) box(x + dx, y + 1, z + dz, 1, 1, 1, 'flowerLight');
+
+}
+
+// Kwiatki (marzanna): kopułka drobnych, czteropłatkowych kwiatów -
+// płatki dookoła czerwonego środka. Rozmiar 1 - 3 kwiatki, 2 - 5
+// (jeden na szczycie, reszta wiatraczkiem dookoła, płatki sąsiadów się
+// stykają). Pod spodem zielone szypułki.
+
+const FLORETS = [[0, 1, 0], [2, 0, 1], [-1, 0, 2], [-2, 0, -1], [1, 0, -2]];
+
+function florets(box, x, top, z, size, turn) {
+
+    const count = size <= 1 ? 3 : 4;
+
+    box(x, top, z, 1, 1, 1, 'stem');
+
+    for (let k = 0; k < count; k++) {
+        let [fx, fy, fz] = FLORETS[k === 0 ? 0 : 1 + (k - 1 + turn) % 4];
+        if (count === 3 && k > 0) {
+            // Mniejsza kopułka: dwa kwiatki bliżej szczytu.
+            fx = Math.sign(fx) * Math.min(1, Math.abs(fx)) * 2;
+            fz = Math.sign(fz) * Math.min(1, Math.abs(fz));
+        }
+        const cx = x + fx, cy = top + 1 + fy, cz = z + fz;
+        box(cx, cy, cz, 1, 1, 1, 'center');
+        [[1, 0], [0, 1], [-1, 0], [0, -1]].forEach(([dx, dz], petal) => {
+            box(cx + dx, cy, cz + dz, 1, 1, 1, petal === (k + turn) % 4 ? 'flowerDark' : 'flower');
+        });
+    }
+
+}
+
+// Łukowaty liść (marzanna): długi, lancetowaty liść z kostek - od łodygi
+// lekko w górę i na zewnątrz, potem wygina się i opada (czubek niżej niż
+// nasada; dolne, najdłuższe liście sięgają poza blok). Środek liścia
+// szerszy (2 piksele), czubek jasny. Liść w jednym kolorze - kostki
+// łączą się w większe ściany.
+
+function archedLeaf(box, x, y, z, direction, length, color) {
+
+    const [dx, dz] = DIRECTIONS[direction];
+    const diagonal = dx !== 0 && dz !== 0;
+    let last = y;
+
+    for (let s = 1; s <= length; s++) {
+        const u = s / length;
+        // Czubek opada najwyżej do ziemi (leży na niej).
+        const h = Math.max(0, y + Math.round(length * (0.55 * u - 0.85 * u * u)));
+        const px = x + dx * s, pz = z + dz * s;
+        // Pionowy krok - kostki łączące (liść bez dziur).
+        if (h !== last) box(px, Math.min(h, last) + (h > last ? 0 : 1), pz, 1, Math.abs(h - last), 1, color);
+        box(px, h, pz, 1, 1, 1, s === length ? 'leafLight' : color);
+        if (u > 0.2 && u < 0.75) {
+            if (diagonal) box(px - dx, h, pz, 1, 1, 1, color);
+            else box(px - dz, h, pz + dx, 1, 1, 1, color);
+        }
+        last = h;
+    }
+
+}
+
+// Korzenie przy ziemi (marzanna): czerwone korzenie wystające spod
+// łodygi na boki - znak rośliny barwierskiej.
+
+function rootCrown(box, random, count) {
+
+    box(0, 0, 0, 1, 1, 1, 'root');
+    const first = Math.floor(random() * 8);
+
+    for (let k = 0; k < count; k++) {
+        const [dx, dz] = DIRECTIONS[(first + Math.round(k * 8 / count)) % 8];
+        const length = 2 + (random() < 0.5 ? 1 : 0);
+        for (let s = 1; s <= length; s++) {
+            box(dx * s, 0, dz * s, 1, 1, 1, s === length ? 'rootLight' : 'root');
+        }
+    }
+
+}
+
+// KRZEW (indygowiec): u dołu obszerna, nieregularna kępa liści (kilka
+// zlanych, spłaszczonych kul z kostek), z niej wyrastają wachlarzem
+// zdrewniałe pędy - ukosem w górę i na boki, z owalnymi liśćmi na zmianę
+// w lewo i w prawo, na końcu wachlarz liści i grono kwiatów. Kępa
+// warstwami po 2 piksele: spód w cieniu, środek, odsłonięty wierzch jasny -
+// ściany łączą się w duże prostokąty. Zajmuje cały blok i wystaje poza
+// niego.
+
+function shrub(tuft, variant, random, between, model) {
+
+    const { box } = model;
+    const top = between(tuft.leaves.height);
+    const reach = tuft.leaves.radius;
+    const branches = Math.max(1, between(tuft.stems.count));
+    const start = random() * Math.PI * 2;
+    // Klucz liczbowy kostki korony (szybciej niż tekst "x,y,z").
+    const key = (x, y, z) => ((x + 64) * 128 + (y + 64)) * 128 + (z + 64);
+
+    // Kierunek z 8 najbliższy kątowi; "straight" - tylko 4 główne (liście
+    // z prostych rzędów kostek mają mniej ścian).
+    const toward = (angle, straight) => {
+        const step = straight ? 2 : 1;
+        return ((Math.round(angle / (Math.PI / 4) / step) * step) % 8 + 8) % 8;
+    };
+
+    // Pędy: z ziemi (pierścień 1 piksel od środka) ukosem do końców.
+    const shoots = [];
+
+    for (let i = 0; i < branches; i++) {
+        const angle = start + (i + (random() - 0.5) * 0.5) * Math.PI * 2 / branches;
+        const out = reach * (0.5 + random() * 0.3);
+        const tip = [Math.cos(angle) * out, top * (0.82 + random() * 0.18), Math.sin(angle) * out];
+        const cells = voxelLine([Math.round(Math.cos(angle)), 0, Math.round(Math.sin(angle))], tip, (t) => t ** 1.1);
+        for (const [x, y, z] of cells) box(x, y, z, 1, 1, 1, 'stem');
+        shoots.push({ cells, angle });
+    }
+
+    // Kępa liści u dołu: środkowa i dookoła niej niższe, szersze.
+    const low = top * 0.55;
+    const clumps = [{ x: 0, z: 0, y: low * 0.6, rx: reach * 0.5, ry: low * 0.55 }];
+
+    for (let i = 0; i < 3; i++) {
+        const angle = start + 1 + i * Math.PI * 2 / 3 + (random() - 0.5) * 0.5;
+        const out = reach * (0.3 + random() * 0.12);
+        clumps.push({ x: Math.cos(angle) * out, z: Math.sin(angle) * out, y: low * 0.5, rx: reach * (0.38 + random() * 0.08), ry: low * 0.45 });
+    }
+
+    const mass = new Set();
+    const size = Math.ceil(reach) + 1;
+
+    for (let y = 1; y <= low + 1; y++) {
+        const band = y - ((y - 1) % 2) + 0.5;
+        for (let z = -size; z <= size; z++) {
+            for (let x = -size; x <= size; x++) {
+                if (y === 1 && x * x + z * z > (reach * 0.4) ** 2) continue;
+                for (const c of clumps) {
+                    if (((x - c.x) / c.rx) ** 2 + ((band - c.y) / c.ry) ** 2 + ((z - c.z) / c.rx) ** 2 <= 1) {
+                        mass.add(key(x, y, z));
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    for (const cell of mass) {
+        const x = Math.floor(cell / 16384) - 64, y = Math.floor(cell / 128) % 128 - 64, z = cell % 128 - 64;
+        const open = !mass.has(key(x, y + 1, z)) || !mass.has(key(x, y + 2, z));
+        box(x, y, z, 1, 1, 1, open && y > 2 ? 'leaf' : 'leafDark');
+    }
+
+    // Liście: najpierw wachlarz na końcach pędów, potem wzdłuż pędów nad
+    // kępą (co 2 kostki, na zmianę w lewo i w prawo), na końcu - z boków
+    // kępy.
+    const want = between(tuft.leaves.count);
+    let made = 0;
+    const leaf = ([x, y, z], direction, length, color = 'leaf') => {
+        ovalLeaf(box, x, y, z, direction, length, made % 4 === 3 ? 'leafLight' : color, color);
+        made++;
+    };
+
+    for (const { cells, angle } of shoots) {
+        const tip = cells[cells.length - 1];
+        leaf(tip, toward(angle + 0.8, true), between(tuft.leaves.length));
+        leaf(tip, toward(angle - 0.8, true), Math.max(2, between(tuft.leaves.length) - 1));
+    }
+
+    const along = [];
+    shoots.forEach(({ cells, angle }, n) => {
+        for (let k = cells.length - 3 - (n % 2); k > 0 && cells[k][1] > low - 1; k -= 2) {
+            along.push([cells[k], toward(angle + ((k >> 1) % 2 ? 1 : -1) * 1.1, true)]);
+        }
+    });
+    along.sort((a, b) => b[0][1] - a[0][1]);
+    for (let k = 0; k < along.length && made < want; k++) {
+        leaf(along[k][0], along[k][1], between(tuft.leaves.length));
+    }
+
+    for (let k = 0; made < want && k < 16; k++) {
+        const direction = toward(start + k * 2.4, k % 3 !== 2);
+        const [dx, dz] = DIRECTIONS[direction];
+        const y = 2 + Math.floor(random() * Math.max(1, low - 2));
+        let at = null;
+        for (let r = 0; r <= size; r++) if (mass.has(key(dx * r, y, dz * r))) at = [dx * r, y, dz * r];
+        if (at) leaf(at, direction, Math.max(2, between(tuft.leaves.length) - 1), 'leafDark');
+    }
+
+    // Grona: na końcach pędów, potem przy liściach na pędach (na zewnątrz).
+    const flower = tuft.flower;
+
+    if (flower) {
+        const count = flower.count ? between(flower.count) : shoots.length;
+        for (let k = 0; k < count; k++) {
+            const size2 = flower.sizes[0] === flower.sizes[1] ? flower.sizes[0] : between(flower.sizes);
+            if (k < shoots.length) {
+                const tip = shoots[k].cells[shoots[k].cells.length - 1];
+                cluster(box, tip[0], tip[1] + 2, tip[2], size2);
+            }
+            else if (k - shoots.length < along.length) {
+                const [[x, y, z], direction] = along[(k - shoots.length) * 2 % along.length];
+                const [dx, dz] = DIRECTIONS[(direction + 4) % 8];
+                cluster(box, x + dx * 2, y + 1, z + dz * 2, 1);
+            }
+        }
+    }
+
+    return top;
+
+}
+
+// ------------------------------------------------------------
 // DYWAN (barwinek): roślina płożąca się po ziemi. Płaski kobierzec liści
 // na całą komórkę: ciemne tło (cień między liśćmi), na nim owalne liście,
 // brązowe pędy od środka na boki, wyżej kilka jaśniejszych liści
@@ -820,7 +1180,9 @@ export function makeTuftTemplate(tuft, variant, mask = 0) {
     const random = randomFor(40503 + variant * 7919 + tuft.seed);
     const between = ([low, high]) => low + Math.floor(random() * (high - low + 1));
     const height = tuft.height / 16;
-    const model = createPixelPlant(tuft.colors, false, 0, Math.max(0.3, height));
+    const plain = createPixelPlant(tuft.colors, false, 0, Math.max(0.3, height));
+    // Duża roślina (wystaje poza komórkę) - bez części w litych blokach obok.
+    const model = tuft.wide && mask ? clippedModel(plain, reachClipper(mask)) : plain;
     const { sheet, box } = model;
 
 
@@ -840,6 +1202,12 @@ export function makeTuftTemplate(tuft, variant, mask = 0) {
 
     if (tuft.leaves.layout === 'huba') {
         return soften(bracket(tuft, variant, mask & 15 || 8, model));
+    }
+
+    if (tuft.leaves.layout === 'krzew') {
+        shrub(tuft, variant, random, between, model);
+        if (tuft.roots) rootCrown(box, random, tuft.roots);
+        return soften(model.finish());
     }
 
     if (tuft.leaves.layout === 'kepa') {
@@ -914,9 +1282,17 @@ export function makeTuftTemplate(tuft, variant, mask = 0) {
         }
     }
 
+    // Łodyga rozgałęziona (marzanna): pierwsza prosto w górę ze środka,
+    // najwyższa; pozostałe odchodzą od niej w 1/3 - 1/2 wysokości i rosną
+    // ukosem na bok.
+    const branching = tuft.stems.branching;
+    let mainTop = 0;
+
     for (let i = 0; i < stems && spots.length > 0; i++) {
 
-        const [x, z] = spots.splice(Math.floor(random() * spots.length), 1)[0];
+        const [x, z] = branching && i === 0
+            ? spots.splice(spots.findIndex(([sx, sz]) => sx === 0 && sz === 0), 1)[0]
+            : spots.splice(Math.floor(random() * spots.length), 1)[0];
 
         // Sąsiednie miejsca też odpadają - kwiaty się nie zlewają.
         for (let k = spots.length - 1; k >= 0; k--) {
@@ -925,18 +1301,36 @@ export function makeTuftTemplate(tuft, variant, mask = 0) {
             }
         }
 
-        const top = between(tuft.stems.height);
+        const top = branching && i === 0 ? tuft.stems.height[1] : between(tuft.stems.height);
 
         // Łodyga rozchylona: zaczyna się w kępie (bliżej środka niż jej
         // szczyt) i schodkami (piksel po pikselu) odchyla się na swoje
         // miejsce - wachlarz osobnych łodyg jak u lawendy.
-        const at = (y) => {
+        let at = (y) => {
             if (!tuft.stems.spread) return [x, z];
             const t = (y / Math.max(1, top - 1)) ** 0.8;
             return [Math.round(x * (0.4 + 0.6 * t)), Math.round(z * (0.4 + 0.6 * t))];
         };
 
-        if (tuft.stems.spread) {
+        // Gałąź rozgałęzionej łodygi: od głównej łodygi (fork) do szczytu.
+        let fork = 0;
+
+        if (branching && i === 0) {
+            mainTop = top;
+            box(0, 0, 0, 1, top, 1, 'stem');
+        }
+        else if (branching) {
+            fork = Math.round(mainTop * (0.32 + random() * 0.18));
+            const cells = voxelLine([0, fork, 0], [x, Math.min(top, mainTop - 1) - 1, z], (t) => t ** 0.7);
+            const byHeight = new Map();
+            for (const cell of cells) {
+                box(cell[0], cell[1], cell[2], 1, 1, 1, 'stem');
+                byHeight.set(cell[1], [cell[0], cell[2]]);
+            }
+            const end = cells[cells.length - 1];
+            at = (y) => (y < fork ? [0, 0] : byHeight.get(Math.min(y, end[1])) ?? [end[0], end[2]]);
+        }
+        else if (tuft.stems.spread) {
             for (let y = 0; y < top; y++) {
                 const [sx, sz] = at(y);
                 box(sx, y, sz, 1, 1, 1, 'stem');
@@ -946,7 +1340,31 @@ export function makeTuftTemplate(tuft, variant, mask = 0) {
             box(x, 0, z, 1, top, 1, 'stem');
         }
 
-        if (tuft.stems.leaves?.whorl) {
+        // Szczyt gałęzi rozgałęzionej łodygi - kwiaty tam, gdzie się kończy.
+        const crown = branching && i > 0 ? Math.min(top, mainTop - 1) - 1 : top;
+        const [tx, tz] = branching && i > 0 ? at(crown) : [x, z];
+
+        if (tuft.stems.leaves?.arch) {
+
+            // Łukowate liście (marzanna): parami naprzeciw, każda para
+            // obrócona o ćwierć obrotu; dolne najdłuższe (do "dlugosc"),
+            // ku górze krótsze. Na gałęziach - rzadziej.
+            // Na gałęzi tylko para liści pod kwiatami.
+            const { every, length } = tuft.stems.leaves;
+            let turn = Math.floor(random() * 4) * 2;
+            const first = branching && i > 0 ? Math.max(fork + 2, crown - 4) : 1 + Math.floor(random() * 2);
+            for (let y = first; y < crown - 2; y += every) {
+                const [sx, sz] = at(y);
+                const t = y / Math.max(1, crown);
+                const size = Math.max(length[0], Math.round(length[1] - (length[1] - length[0]) * t * 1.25));
+                const color = y < 3 ? 'leafDark' : (y + turn) % 3 === 0 ? 'leafLight' : 'leaf';
+                archedLeaf(box, sx, y, sz, turn % 8, size, color);
+                archedLeaf(box, sx, y, sz, (turn + 4) % 8, size, color);
+                turn += 2;
+            }
+
+        }
+        else if (tuft.stems.leaves?.whorl) {
 
             // Okółek (zawilec): kilka liści na jednej wysokości (ok. 0.55
             // łodygi), rozłożonych dookoła - jak parasolka pod kwiatem.
@@ -998,13 +1416,23 @@ export function makeTuftTemplate(tuft, variant, mask = 0) {
         // lawenda) wyglądają tak samo jak dotąd.
         const size = flower.sizes[0] === flower.sizes[1] ? flower.sizes[0] : between(flower.sizes);
 
+        if (flower.kind === 'kwiatki') {
+            florets(box, tx, crown, tz, size, Math.floor(random() * 4));
+            continue;
+        }
+
+        if (flower.kind === 'grono') {
+            cluster(box, tx, crown + 1, tz, size);
+            continue;
+        }
+
         if (flower.kind === 'pak') {
             // Pąk: jeden piksel albo (rozmiar 2) okrągły pąk - krzyżyk
             // z kostek i jaśniejszy czubek.
-            box(x, top, z, 1, 1, 1, 'bud');
+            box(tx, crown, tz, 1, 1, 1, 'bud');
             if (size >= 2) {
-                for (const [dx, dz] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) box(x + dx, top, z + dz, 1, 1, 1, 'bud');
-                box(x, top + 1, z, 1, 1, 1, 'flowerLight');
+                for (const [dx, dz] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) box(tx + dx, crown, tz + dz, 1, 1, 1, 'bud');
+                box(tx, crown + 1, tz, 1, 1, 1, 'flowerLight');
             }
             continue;
         }
@@ -1118,6 +1546,10 @@ export function makeTuftTemplate(tuft, variant, mask = 0) {
             }
         }
 
+    }
+
+    if (tuft.roots) {
+        rootCrown(box, random, tuft.roots);
     }
 
     // Liście łodyg: płaskie, poziome (gracz patrzy z góry) - wszystkie

@@ -1,0 +1,65 @@
+{
+    "nazwa": "Indygowiec",
+    "nazwaAngielska": "Indigo",
+    "opis": "rozłożysty krzew: zdrewniałe gałęzie z ziemi, owalne liście w odcieniach morskiej zieleni i ziarniste, fioletowo-granatowe grona kwiatów; większy niż blok - wystaje na boki; z liści robi się niebieski barwnik; rośnie w brzezinach, na skrajach łąk i w buczynach",
+    "pierwszeId": 5048,
+    "etapy": [
+        {
+            "nazwa": "Młody indygowiec",
+            "model": {
+                "rodzaj": "kepka",
+                "liscie": { "uklad": "krzew", "promien": 4, "wysokosc": [6, 7], "ile": [6, 8], "dlugosc": [2, 3] },
+                "lodygi": { "ile": [2, 3] }
+            }
+        },
+        {
+            "nazwa": "Indygowiec",
+            "model": {
+                "rodzaj": "kepka",
+                "liscie": { "uklad": "krzew", "promien": 7, "wysokosc": [11, 12], "ile": [14, 16], "dlugosc": [3, 4] },
+                "lodygi": { "ile": [3, 4] },
+                "kwiaty": { "rodzaj": "grono", "rozmiar": 1, "ile": [2, 3] },
+                "kolory": {
+                    "kwiat": "#2c2478",
+                    "kwiatJasny": "#463a9e",
+                    "kwiatCiemny": "#1c1652"
+                }
+            }
+        },
+        {
+            "nazwa": "Indygowiec (kwitnie)",
+            "model": {
+                "rodzaj": "kepka",
+                "liscie": { "uklad": "krzew", "promien": 9, "wysokosc": [15, 16], "ile": [24, 26], "dlugosc": [3, 4] },
+                "lodygi": { "ile": [4, 5] },
+                "kwiaty": { "rodzaj": "grono", "rozmiar": [1, 2], "ile": [6, 8] }
+            }
+        }
+    ],
+    "kolory": {
+        "lisc": "#3a7a38",
+        "liscJasny": "#7cae3e",
+        "liscCiemny": "#205832",
+        "lodyga": "#6a5a24",
+        "kwiat": "#3a2e98",
+        "kwiatJasny": "#6e5ad6",
+        "kwiatCiemny": "#211a66",
+        "pak": "#2c2478",
+        "srodek": "#6e5ad6"
+    },
+    "czasWzrostu": 360,
+    "przedmiot": {
+        "klucz": "liscie",
+        "plik": "liscie.png",
+        "nazwa": "Liście indygowca",
+        "nazwaAngielska": "Indigo Leaves",
+        "kategoria": "rosliny",
+        "grupy": ["blue"]
+    },
+    "zbior": { "ile": [2, 4], "wraca": 2 },
+    "gdzieRosnie": { "biomy": { "brzezina": 1, "laka": 0.35, "buczyna": 0.3 }, "plamy": 0.03, "gestosc": 0.45, "etapy": [0.25, 0.35, 0.4] },
+    "zrodlo": {
+        "atlas": "Atlas tekstur indygowca_ wzrost i zbiór.png",
+        "przedmiot": "liscie: --wysokosc 16 --nazwy etap1,etap2,etap3,liscie; etapy - model z pikseli (kępka: krzew - gałęzie, owalne liście, grona kwiatów) w kolorach atlasu"
+    }
+}

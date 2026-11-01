@@ -48,6 +48,10 @@ let tuftFaces = 0;
 // i kwiatami - lawenda, piwonia - mają ok. 400-490; mała kocanka do 290).
 const TUFT_FACE_LIMIT = 520;
 
+// Duże rośliny (wystają poza blok - krzew indygowca, marzanna z długimi
+// liśćmi) mają ok. 2-2.5 raza większą objętość - do 1100 ścian.
+const TUFT_WIDE_FACE_LIMIT = 1100;
+
 for (const pack of P.PLANT_PACKS) {
 
     const types = pack.stages.map((_, i) => P.plantStageType(pack, i));
@@ -80,7 +84,8 @@ for (const pack of P.PLANT_PACKS) {
 
             for (let variant = 0; variant < 8; variant++) {
                 const faces = getRiverPlantFaces(definition.riverPlant.kind, variant, false, stage.tuft);
-                assert.ok(faces.length > 0 && faces.length <= TUFT_FACE_LIMIT, `${type}: odmiana ${variant} ma ${faces.length} ścian (najwyżej ${TUFT_FACE_LIMIT})`);
+                const limit = stage.tuft.wide ? TUFT_WIDE_FACE_LIMIT : TUFT_FACE_LIMIT;
+                assert.ok(faces.length > 0 && faces.length <= limit, `${type}: odmiana ${variant} ma ${faces.length} ścian (najwyżej ${limit})`);
                 const top = Math.max(...faces.flatMap((face) => face.vertices.map((v) => v[1])));
                 const side = Math.max(...faces.flatMap((face) => face.vertices.map((v) => Math.max(Math.abs(v[0]), Math.abs(v[2])))));
                 assert.ok(top <= definition.plant.height + 1e-6, `${type}: odmiana ${variant} nie wyższa niż ${definition.plant.height}`);

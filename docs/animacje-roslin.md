@@ -59,3 +59,38 @@ Nie ma dodatkowego rysowania każdego krzaka. Wygenerowanie lub wczytanie
 Kod: `src/rendering/BlueberryAnimation.js` (krzywe i pozy),
 `PlantAnimations.js` (przejścia), `ChunkMesher.js` (wspólna geometria).
 Sprawdzenie: `node tools/sprawdz_animacje_roslin.mjs` oraz próba w grze.
+
+## Rośliny z paczek (kępki i krzewy) 0.49.0
+
+Ten sam kierunek dla wszystkich roślin z modelem z pikseli (`kepka` -
+od kocanki po indygowiec i marzannę). Każdy etap ma inny model (inne
+kostki), więc animacja rysuje model jednego etapu i zmienia go wokół
+podstawy - roślina stoi zakorzeniona, a ugięcie rośnie z kwadratem
+wysokości (pędy giną się, podstawa nie):
+
+- Posadzenie 0,60 s: wyrasta z ok. 1/3 rozmiaru z lekkim przeskokiem
+  (do ok. 106%) i wygasającym kołysaniem.
+- Wzrost 1,20 s: nowy etap rośnie płynnie od wysokości poprzedniego
+  (bez skoku), lekkie kołysanie.
+- Zbiór 0,70 s: najpierw kwiaty (części w kolorach kwiatów, pąków
+  i środka) maleją wokół własnych środków (0,24 s), potem widać etap po
+  zbiorze - płynnie od wysokości poprzedniego, z lekkim ugięciem
+  i kołysaniem. Zmiana modelu w połowie to jedna zwykła przebudowa
+  chunka (jak przy zmianie bloku).
+- Pełny ekwipunek 0,66 s: ugięcie i kołysanie, kwiaty zostają; kolejne
+  kliknięcia nie restartują reakcji.
+- Usunięcie 0,42 s: szybki zanik do podstawy (od obecnego rozmiaru, gdy
+  roślina akurat rosła).
+- Początek i koniec neutralne; koniec = model jak bez animacji.
+
+Ten sam limit co borówka (12 roślin, 48 bloków, wspólny dla obu rodzin),
+ta sama wspólna geometria chunka - bez dodatkowych obiektów i rysowania.
+Kępka zmienia tylko położenie wierzchołków, normalne i wagi wiatru -
+światło i cień zostają jak w modelu bez animacji (duży krzew ma kilka
+tysięcy wierzchołków). 12 kwitnących indygowców naraz: ok. 3 ms na
+klatkę na procesorze, zwykle animują się 1-2 rośliny.
+Dywany (barwinek), porosty i huby zależą od sąsiadów - bez animacji.
+
+Kod: `src/rendering/TuftAnimation.js` (przejścia i pozy),
+`PlantAnimations.js` (rodziny: borówka i paczki). Sprawdzenie:
+`node tools/sprawdz_animacje_kepek.mjs`.

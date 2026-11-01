@@ -829,7 +829,7 @@ atlasReady.then(
 
 // ------------------------------------------------------------
 
-export function getAtlasUV(tileName) {
+export function getAtlasUV(tileName, inset = ATLAS_UV_INSET) {
 
     const tile =
         ATLAS_TILES[tileName];
@@ -866,14 +866,16 @@ export function getAtlasUV(tileName) {
         ATLAS_ROWS;
 
 
-    // Odsunięcie od krawędzi kafelka, przeliczone na UV.
+    // Odsunięcie od krawędzi kafelka, przeliczone na UV. Importowane
+    // modele mają własne UV z marginesem każdej małej ściany: inset=0
+    // zachowuje ich pozycje pikseli zamiast ściskać cały region atlasu.
 
     const insetU =
-        ATLAS_UV_INSET /
+        inset /
         (ATLAS_COLUMNS * ATLAS_TILE_SIZE);
 
     const insetV =
-        ATLAS_UV_INSET /
+        inset /
         (ATLAS_ROWS * ATLAS_TILE_SIZE);
 
 

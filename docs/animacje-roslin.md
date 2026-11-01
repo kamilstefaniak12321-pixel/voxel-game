@@ -94,3 +94,24 @@ Dywany (barwinek), porosty i huby zależą od sąsiadów - bez animacji.
 Kod: `src/rendering/TuftAnimation.js` (przejścia i pozy),
 `PlantAnimations.js` (rodziny: borówka i paczki). Sprawdzenie:
 `node tools/sprawdz_animacje_kepek.mjs`.
+
+## Krzaki owocowe 0.50.0
+
+Truskawka, jeżyna, chili i leszczyna stosują te same krótkie reakcje
+co borówka. Dorosłe etapy mają wspólne liście; owoce narastają osobno,
+a sadzonka płynnie dorasta wokół podstawy. Wszystkie części jednego
+owocu (np. zagięta papryczka wraz z ogonkiem) mają wspólny środek
+skalowania i przesunięcie od wiatru. Krzak nie rozrywa owocu na kostki.
+
+Owoc na krzaku, jego ikona w ekwipunku oraz model w dłoni korzystają
+z jednej geometrii i tych samych kolorów/UV. Podgląd może zmieniać
+obrót i skalę wyświetlania, ale nie proporcje ani kształt. Dotyczy to
+również borówki: przedmiot jest jej oryginalną kostką 1/16 bloku.
+
+Limit 12 aktywnych przejść jest wspólny dla borówki, pozostałych krzaków
+owocowych i roślin z paczek. ID 34–49 i 94–97, plony, etapy biologicznego
+wzrostu oraz zapisy pozostają bez zmian. Krzaki istniejące w zapisach
+automatycznie otrzymują nowy wygląd, bez regenerowania świata.
+
+Kod: `FruitBushGeometry.js`, `FruitBushAnimation.js`, `ModelIcon.js`.
+Sprawdzenie: `node tools/sprawdz_krzaki_owocowe.mjs`.

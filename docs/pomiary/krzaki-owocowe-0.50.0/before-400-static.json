@@ -1,0 +1,143 @@
+{
+  "device": {
+    "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 3050 Laptop GPU (0x000025A2) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "drawingBuffer": [
+      1920,
+      1080
+    ],
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.7977.130 Electron/44.4.5 Safari/537.36"
+  },
+  "seed": 2138286349,
+  "settings": {
+    "potato": false,
+    "viewDistance": 48,
+    "farTerrain": 8192,
+    "farDetail": 2,
+    "fov": 75,
+    "brightness": 0,
+    "renderScale": 100,
+    "fpsLimit": 0,
+    "ambientOcclusion": 45,
+    "shadows": 3,
+    "lightingModel": "atmosphere",
+    "lightShafts": true,
+    "bounceLight": false,
+    "fancyLeaves": true,
+    "dynamicLight": true,
+    "loadBudget": 4,
+    "mouseSensitivity": 100,
+    "invertMouse": false,
+    "skinOverlay": true,
+    "showHand": false,
+    "viewBobbing": true,
+    "jointStyle": "smooth",
+    "cameraDistance": 4,
+    "volumeMaster": 80,
+    "volumeBlocks": 100,
+    "volumeWorld": 100,
+    "volumeUi": 80,
+    "theme": "default",
+    "inventoryStyle": "wood",
+    "hudScale": 100,
+    "showDebug": true,
+    "showFps": false,
+    "meteorites": true,
+    "autoUpdates": true,
+    "textureResolution": 0
+  },
+  "results": [
+    {
+      "point": "400-static",
+      "pose": {
+        "x": 0.5,
+        "y": 62,
+        "z": 4,
+        "yaw": 0,
+        "pitch": -0.35
+      },
+      "settings": {
+        "potato": false,
+        "viewDistance": 48,
+        "farTerrain": 8192,
+        "farDetail": 2,
+        "fov": 75,
+        "brightness": 0,
+        "renderScale": 100,
+        "fpsLimit": 0,
+        "ambientOcclusion": 45,
+        "shadows": 3,
+        "lightingModel": "atmosphere",
+        "lightShafts": true,
+        "bounceLight": false,
+        "fancyLeaves": true,
+        "dynamicLight": true,
+        "loadBudget": 4,
+        "mouseSensitivity": 100,
+        "invertMouse": false,
+        "skinOverlay": true,
+        "showHand": false,
+        "viewBobbing": true,
+        "jointStyle": "smooth",
+        "cameraDistance": 4,
+        "volumeMaster": 80,
+        "volumeBlocks": 100,
+        "volumeWorld": 100,
+        "volumeUi": 80,
+        "theme": "default",
+        "inventoryStyle": "wood",
+        "hudScale": 100,
+        "showDebug": true,
+        "showFps": false,
+        "meteorites": true,
+        "autoUpdates": true,
+        "textureResolution": 0
+      },
+      "activePeak": 0,
+      "frames": {
+        "samples": 4315,
+        "averageMs": 6.950150637333805,
+        "fps": 143.88177352996436,
+        "p99Ms": 8.799999952316284,
+        "maxMs": 12.700000047683716,
+        "low1Fps": 104.4634377849449,
+        "over33ms": 0
+      },
+      "renderCpu": {
+        "samples": 4316,
+        "averageMs": 2.8324374433907233,
+        "fps": 353.05281051605346,
+        "p99Ms": 6.700000047683716,
+        "maxMs": 9.700000047683716,
+        "low1Fps": 131.382501921464,
+        "over33ms": 0
+      },
+      "animationCpu": {
+        "samples": 4317,
+        "averageMs": 0.002640722690977265,
+        "fps": 378684.2152781765,
+        "p99Ms": 0.10000014305114746,
+        "maxMs": 0.3000001907348633,
+        "low1Fps": 9361.689685442612,
+        "over33ms": 0
+      },
+      "gpu": {
+        "samples": 4316,
+        "averageMs": 3.720684367006503,
+        "fps": 268.76775919709513,
+        "p99Ms": 4.015104,
+        "maxMs": 6.010848,
+        "low1Fps": 239.49363208204437,
+        "over33ms": 0
+      },
+      "renderInfo": {
+        "frame": 357119,
+        "calls": 242,
+        "triangles": 633772,
+        "points": 0,
+        "lines": 0
+      }
+    }
+  ],
+  "integration": [],
+  "errors": []
+}

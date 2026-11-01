@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { getRiverPlantFaces } from '../rendering/RiverPlantGeometry.js';
+import { getFruitItemModel } from '../rendering/FruitBushGeometry.js';
 
 import { getBlockDefinition } from '../blocks/BlockRegistry.js';
 import { ITEM_TYPES, isItemType } from '../items/ItemRegistry.js';
@@ -440,18 +441,29 @@ const HELD_ITEM_SCALE = 6.5;
 
 export function buildBlockGeometry(type) {
 
-    // Przedmiot ma tylko obrazek (ikonkę) - "tekstura" każdej ściany.
+    // Owoce krzaków korzystają z tych samych ścian co owoce na roślinie.
+    // Inne przedmioty zachowują płaski obrazek.
 
     const item = isItemType(type) ? ITEM_TYPES[type] : null;
+    const fruit = item && getFruitItemModel(type);
 
     const definition = item ? { textures: { all: item.icon } } : getBlockDefinition(type);
 
-    if (definition.model === 'riverPlant') {
+    if (fruit || definition.model === 'riverPlant') {
         // Ten sam model co nad rzeką, bez otaczającej go wody.
         const positions = [], normals = [], uvs = [], colors = [], indices = [];
-        const uv = getAtlasUV(definition.riverPlant.texture ?? 'snow');
-        const texel = [(uv.uMin + uv.uMax) / 2, (uv.vMin + uv.vMax) / 2];
-        for (const face of getRiverPlantFaces(definition.riverPlant.kind, 0, definition.riverPlant.waterlogged, definition.riverPlant.tuft)) {
+        const river = definition.riverPlant;
+        const texture = fruit ? fruit.texture : river.texture ?? 'snow';
+        const faces = fruit ? fruit.faces : getRiverPlantFaces(river.kind, 0, river.waterlogged, river.tuft);
+        const regions = new Map();
+        for (const face of faces) {
+            const name = face.texture ?? texture;
+            const region = `${name}:${face.uv ? 'model' : 'tile'}`;
+            // Source UVs already inset each little face. Insetting the whole
+            // atlas again can shift a berry's 2px patch into transparent pixels.
+            if (!regions.has(region)) regions.set(region, getAtlasUV(name, face.uv ? 0 : undefined));
+            const uv = regions.get(region);
+            const texel = [(uv.uMin + uv.uMax) / 2, (uv.vMin + uv.vMax) / 2];
             const base = positions.length / 3;
             for (let i = 0; i < 4; i++) {
                 positions.push(...face.vertices[i]);
@@ -468,6 +480,14 @@ export function buildBlockGeometry(type) {
         geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
         geometry.setIndex(indices);
         geometry.center();
+        if (fruit) {
+            // Display scale only; preserve all proportions and relative parts.
+            // A single 1/16 berry must remain readable in both camera modes.
+            geometry.computeBoundingBox();
+            const size = geometry.boundingBox.getSize(new THREE.Vector3());
+            const scale = .8 / Math.max(size.x, size.y, size.z, .001);
+            geometry.scale(scale, scale, scale);
+        }
         return geometry;
     }
 
@@ -727,7 +747,7 @@ export class PlayerModel {
 
         // Płaska dekoracja (wieniec, opadłe liście) - jak przedmiot.
 
-        const flat = isItemType(type) || block?.model === 'flat';
+        const flat = (isItemType(type) && !getFruitItemModel(type)) || block?.model === 'flat';
 
         this.held.scale.setScalar((flat ? HELD_ITEM_SCALE : HELD_BLOCK_SCALE) * MODEL_PIXEL);
 

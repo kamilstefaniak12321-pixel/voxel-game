@@ -1,0 +1,267 @@
+
+> voxel-game@0.50.0 test
+> node tools/sprawdz_ekwipunek.mjs && node tools/sprawdz_wyglad_ekwipunku.mjs && node tools/sprawdz_rosliny.mjs && node tools/sprawdz_dywan.mjs && node tools/sprawdz_porosty.mjs && node tools/sprawdz_szum_wody.mjs && node tools/sprawdz_numery_blokow.mjs && node tools/sprawdz_lupy.mjs && node tools/sprawdz_stan_gracza.mjs && node tools/sprawdz_przepisy.mjs && node tools/sprawdz_swiatlo.mjs && node tools/sprawdz_tarcze.mjs && node tools/sprawdz_ciemnosc.mjs && node tools/sprawdz_cienie.mjs && node tools/sprawdz_materialy.mjs && node tools/sprawdz_materialy_far.mjs && node tools/sprawdz_odlamki.mjs && node tools/sprawdz_warmup_wody.mjs && node tools/sprawdz_teren_rzek.mjs && node tools/sprawdz_ujscia.mjs && node tools/sprawdz_rzeki_zapisy.mjs && node tools/sprawdz_rzeki_kolejnosc.mjs && node tools/sprawdz_pozycje_po_generacji.mjs && node tools/sprawdz_roslinnosc_rzek.mjs && node tools/sprawdz_rosliny_woda.mjs && node tools/sprawdz_modele_roslin_rzecznych.mjs && node tools/sprawdz_drzewa_woda.mjs && node tools/sprawdz_komendy_czyszczenie.mjs && node tools/sprawdz_trawe_kepiasta.mjs && node tools/sprawdz_borowke.mjs && node tools/sprawdz_animacje_roslin.mjs && node tools/sprawdz_animacje_kepek.mjs && node tools/sprawdz_krzaki_owocowe.mjs
+
+(node:656) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/kamil/Documents/ChatGPT/ProjectZero/voxel-fruit-bushes/src/game/Inventory.js is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\kamil\Documents\ChatGPT\ProjectZero\voxel-fruit-bushes\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+OK: podniesiony stos trafia do zapisu i wraca do ekwipunku po wczytaniu
+OK: zamknięcie i ponowne otwarcie odkłada stos bez duplikacji
+OK: wynik craftingu nie ginie przy pełnym ekwipunku i siatce
+OK: wolna siatka przechowuje kursor, gdy ekwipunek jest pełny
+OK: dotyk nie zużywa składników, kiedy wynik nie mieści się w ekwipunku
+OK: częściowe odłożenie do stosów i siatki zachowuje nadmiar
+OK: klik poza oknem w przygodzie odkłada stos, a w kreatywnym go usuwa
+OK: wczytanie wykorzystuje wolne miejsce i zachowuje resztę kursora
+OK: stare zapisy i stare nazwy przedmiotów nadal się wczytują
+OK: wyczyszczenie ekwipunku obejmuje kursor
+OK: przełączenie świata nie przenosi ani nie usuwa jego kursora
+Sprawdzonych scenariuszy: 11, błędów: 0.
+OK: wygląd ekwipunku - ustawienie i zapis (6 przypadków), 68 selektorów tylko dla drewnianego, 4 tekstur z rozmiarami x3, ramki.
+(node:6688) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/kamil/Documents/ChatGPT/ProjectZero/voxel-fruit-bushes/src/settings/Settings.js is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\kamil\Documents\ChatGPT\ProjectZero\voxel-fruit-bushes\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+OK: paczki roślin (19), etapy: 57, kępki do 1028 ścian (rozmiary z obrazków, wzrost, zbiór, łupy), przedmioty i grupy, 3 błędne paczki pominięte, 1502 roślin w terenie (biomy z wagami, etapy, powtarzalność).
+(node:4800) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/kamil/Documents/ChatGPT/ProjectZero/voxel-fruit-bushes/assets/models/blueberry/model-data.js is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\kamil\Documents\ChatGPT\ProjectZero\voxel-fruit-bushes\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:1980) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/kamil/Documents/ChatGPT/ProjectZero/voxel-fruit-bushes/assets/models/blueberry/model-data.js is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\kamil\Documents\ChatGPT\ProjectZero\voxel-fruit-bushes\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+OK: dywan barwinka - 108 sprawdzeń (krawędzie i pędy sąsiadów, maski w ChunkMesher także przez granicę chunka, etapy razem, bez obrotu, celownik, zasłony po stopniach terenu).
+(node:4016) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/kamil/Documents/ChatGPT/ProjectZero/voxel-fruit-bushes/assets/models/blueberry/model-data.js is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\kamil\Documents\ChatGPT\ProjectZero\voxel-fruit-bushes\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+OK: porosty i huby - 137 sprawdzeń (plamy na ścianach z maski, półki huby, ChunkMesher, oparcie, skały: 146, pnie: huba 172, porosty 319).
+(node:4376) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/kamil/Documents/ChatGPT/ProjectZero/voxel-fruit-bushes/assets/models/blueberry/model-data.js is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\kamil\Documents\ChatGPT\ProjectZero\voxel-fruit-bushes\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(bez ffmpeg - szew pętli niesprawdzony)
+OK: szum wody - 83 sprawdzeń (stereo bez HRTF dla pętli, płynny ruch, strumień dla płynącej wody, punkt dźwięku z dala od głowy, pętla bez trzasku).
+(node:6168) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/kamil/Documents/ChatGPT/ProjectZero/voxel-fruit-bushes/assets/models/blueberry/model-data.js is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\kamil\Documents\ChatGPT\ProjectZero\voxel-fruit-bushes\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+OK: numery bloków 2-bajtowe - 249 sprawdzeń (chunk do 65535, zapis 1/2 bajty, stary i nowy zapis, baza, nieznane numery, zakresy paczek, materiały dalekiego terenu, generatory).
+(node:9780) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/kamil/Documents/ChatGPT/ProjectZero/voxel-fruit-bushes/src/game/Game.js is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\kamil\Documents\ChatGPT\ProjectZero\voxel-fruit-bushes\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+OK: cztery ściany i wierzch: każdy łup dokładnie raz
+OK: moss_carpet: zniszczenie podpory oddaje dekorację
+OK: snow_layer: zniszczenie podpory oddaje dekorację
+OK: beech_leaf_litter: zniszczenie podpory oddaje dekorację
+OK: pełny ekwipunek: miejsce na podporę nie wystarcza na dekorację
+OK: dwa rodzaje łupów nie mogą współdzielić ostatniego pustego slotu
+OK: dekoracje sumują ilość w istniejącym stosie
+OK: dekoracja oparta o inny blok pozostaje i nie daje łupu
+OK: krzak nad ziemią: sadzonka i wszystkie owoce trafiają do ekwipunku
+OK: krzak nad ziemią: brak miejsca na całą paczkę zachowuje oba bloki
+OK: łupy losowe z liści są sprawdzane razem z samym blokiem
+OK: tryb kreatywny usuwa bloki bez przyznawania łupów
+OK: nieudane niszczenie nie przyznaje żadnych łupów
+OK: łup dostają tylko faktycznie usunięte bloki podparte
+OK: water_milfoil: zbieranie zostawia wodę i oddaje jedną roślinę
+OK: water_lily: zbieranie zostawia wodę i oddaje jedną roślinę
+OK: duckweed: zbieranie zostawia wodę i oddaje jedną roślinę
+OK: cattail_water: zbieranie zostawia wodę i oddaje jedną roślinę
+OK: usunięcie dna zbiera zakorzenioną roślinę i zostawia jej wodę
+OK: pełny ekwipunek zachowuje dno, wodę i zakorzenioną roślinę
+OK: zbieranie rośliny pod taflą nie duplikuje pływających liści
+OK: blueberry_bush_few: pełny ekwipunek zachowuje owoce, zbiór zostawia dorosły krzak
+OK: blueberry_bush_full: pełny ekwipunek zachowuje owoce, zbiór zostawia dorosły krzak
+Sprawdzonych przypadków: 23, błędów: 0.
+(node:23648) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/kamil/Documents/ChatGPT/ProjectZero/voxel-fruit-bushes/assets/models/blueberry/model-data.js is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\kamil\Documents\ChatGPT\ProjectZero\voxel-fruit-bushes\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+OK: zapis lotu: creative, wysokość 100
+OK: zapis lotu: creative, wysokość 1100
+OK: zapis lotu: creative, wysokość 6000
+OK: zapis bez lotu nadal pozwala spadać: creative, wysokość 100
+OK: zapis bez lotu nadal pozwala spadać: creative, wysokość 6000
+OK: zapis lotu: adventure, wysokość 100
+OK: zapis lotu: adventure, wysokość 1100
+OK: zapis lotu: adventure, wysokość 6000
+OK: zapis bez lotu nadal pozwala spadać: adventure, wysokość 100
+OK: zapis bez lotu nadal pozwala spadać: adventure, wysokość 6000
+OK: stary zapis bez pola flying: wysokość 100
+OK: stary zapis bez pola flying: wysokość 6000
+OK: tylko boolean true przywraca lot: false
+OK: tylko boolean true przywraca lot: null
+OK: tylko boolean true przywraca lot: 0
+OK: tylko boolean true przywraca lot: 1
+OK: tylko boolean true przywraca lot: "true"
+OK: tylko boolean true przywraca lot: "false"
+OK: tylko boolean true przywraca lot: {}
+OK: tylko boolean true przywraca lot: []
+OK: uszkodzony zapis nie zmienia gracza: null
+OK: uszkodzony zapis nie zmienia gracza: {}
+OK: uszkodzony zapis nie zmienia gracza: {"x":null}
+OK: uszkodzony zapis nie zmienia gracza: {"y":null}
+OK: uszkodzony zapis nie zmienia gracza: {"z":"10"}
+OK: uszkodzony zapis nie zmienia gracza: {}
+OK: uszkodzony zapis nie zmienia gracza: {"pitch":null}
+Sprawdzono 27 przypadków zapisu i pierwszej klatki gracza, bez błędów.
+(node:25012) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/kamil/Documents/ChatGPT/ProjectZero/voxel-fruit-bushes/src/crafting/Crafting.js is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\kamil\Documents\ChatGPT\ProjectZero\voxel-fruit-bushes\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+Przepisów: 39, sprawdzonych układów: 881, błędów: 0.
+(node:15324) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/kamil/Documents/ChatGPT/ProjectZero/voxel-fruit-bushes/assets/models/blueberry/model-data.js is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\kamil\Documents\ChatGPT\ProjectZero\voxel-fruit-bushes\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+OK: atmosfera RGB, zmierzch, zaćmienie, cienie przy horyzoncie, powrót A/B, ustawienia, zapis typu świata, spójne chunki/mapa/LOD i stanowiska laboratorium.
+(node:21648) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/kamil/Documents/ChatGPT/ProjectZero/voxel-fruit-bushes/src/sky/SolarDisc.js is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\kamil\Documents\ChatGPT\ProjectZero\voxel-fruit-bushes\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+OK: pole tarczy względem próbek geometrycznych, widoczny wycinek, kierunek nad horyzontem, ciągły wschód/zachód i zaćmienie.
+(node:6684) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/kamil/Documents/ChatGPT/ProjectZero/voxel-fruit-bushes/assets/models/blueberry/model-data.js is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\kamil\Documents\ChatGPT\ProjectZero\voxel-fruit-bushes\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+OK: ciemność, 5 ścieżek meshera, oddzielne AO/sky/emisja, kolor i kodowanie lamp, głębokość wody oraz zgodność klasycznych meshy.
+(node:15964) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/kamil/Documents/ChatGPT/ProjectZero/voxel-fruit-bushes/assets/models/blueberry/model-data.js is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\kamil\Documents\ChatGPT\ProjectZero\voxel-fruit-bushes\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+OK: wspólny budżet kaskad, atomowa publikacja, streaming bez zagłodzenia, zmiany chunków, jakość 0/1/2/3, teleport, dzień/noc, kosmos i frustum przy niskim Słońcu.
+OK: 28 przypadków kontraktu materiałów: ciemność, suma/maksimum, emisja, noc, liniowy kolor, energia i brak akumulacji.
+(node:8436) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/kamil/Documents/ChatGPT/ProjectZero/voxel-fruit-bushes/assets/models/blueberry/model-data.js is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\kamil\Documents\ChatGPT\ProjectZero\voxel-fruit-bushes\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+OK: materiały far, worker/main, klasyczne bufory XYZ, cienie bez wody/kurtyn, podstawa ścian, snapshoty maski/geometrii i detal 800 przy horyzoncie 8192.
+(node:25688) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/kamil/Documents/ChatGPT/ProjectZero/voxel-fruit-bushes/assets/models/blueberry/model-data.js is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\kamil\Documents\ChatGPT\ProjectZero\voxel-fruit-bushes\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+OK: odłamki mają osobne liniowe albedo/niebo/RGB lamp/emisję, zero w ciemności, zgodność classic, przełączanie A/B i poprawne przenoszenie danych cząstek.
+(node:28836) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/kamil/Documents/ChatGPT/ProjectZero/voxel-fruit-bushes/assets/models/blueberry/model-data.js is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\kamil\Documents\ChatGPT\ProjectZero\voxel-fruit-bushes\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+OK: warmup wody: 7 ścieżek, oczekiwanie na obie strony, cleanup sukcesu/błędów, RGBA, właściwa scena i stabilny klucz wariantu.
+(node:29936) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/kamil/Documents/ChatGPT/ProjectZero/voxel-fruit-bushes/assets/models/blueberry/model-data.js is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\kamil\Documents\ChatGPT\ProjectZero\voxel-fruit-bushes\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+OK: suche szczeliny i prostokątne baseny znikają; pozostałe formy terenu oraz ciągły odpływ jeziora są zachowane.
+OK: płaskie brzegi - 3628/4011 na poziomie wody, 4367 brzegów bez ściany wody.
+(node:30904) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/kamil/Documents/ChatGPT/ProjectZero/voxel-fruit-bushes/assets/models/blueberry/model-data.js is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\kamil\Documents\ChatGPT\ProjectZero\voxel-fruit-bushes\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+Ujścia i zasięg jezior: OK (6165 zanurzonych próbek rzeczywistego świata).
+(node:33020) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/kamil/Documents/ChatGPT/ProjectZero/voxel-fruit-bushes/assets/models/blueberry/model-data.js is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\kamil\Documents\ChatGPT\ProjectZero\voxel-fruit-bushes\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+OK: zapis i ponowne wczytanie rzek, budowli i wykopu; nowy teren obok; ochrona w dalekim widoku.
+(node:15312) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/kamil/Documents/ChatGPT/ProjectZero/voxel-fruit-bushes/assets/models/blueberry/model-data.js is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\kamil\Documents\ChatGPT\ProjectZero\voxel-fruit-bushes\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+OK: 4445 próbek, powrót po nowych źródłach, 4 chunki i 90 próbek LOD; seed zgłoszenia 2138286349: 283 próbek i 18 próbek LOD; kolejność bez wpływu.
+(node:31672) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/kamil/Documents/ChatGPT/ProjectZero/voxel-fruit-bushes/assets/models/blueberry/model-data.js is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\kamil\Documents\ChatGPT\ProjectZero\voxel-fruit-bushes\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+OK: bezpieczny powrót po zasypaniu starej szczeliny; wczytane narożniki; zachowane jaskinia, budowla i lot; bloki nietknięte.
+(node:9752) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/kamil/Documents/ChatGPT/ProjectZero/voxel-fruit-bushes/assets/models/blueberry/model-data.js is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\kamil\Documents\ChatGPT\ProjectZero\voxel-fruit-bushes\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+{"seed":2138286349,"anchor":[188,-252],"counts":{"river_sedge":131,"cattail":25,"purple_loosestrife":9,"reed":6,"water_milfoil":32,"water_lily":19,"duckweed":6,"cattail_water":9},"examples":{"reed":[92,50,-314],"river_sedge":[92,50,-312],"purple_loosestrife":[96,51,-312],"cattail":[96,50,-308],"water_milfoil":[106,48,-298],"cattail_water":[108,49,-294],"water_lily":[142,50,-264],"duckweed":[178,50,-246]}}
+{"seed":"lighting-rtx3050-0231","anchor":[968,-216],"counts":{"river_sedge":13,"cattail":0,"purple_loosestrife":2,"reed":3,"water_milfoil":0,"water_lily":0,"duckweed":0,"cattail_water":0},"examples":{"river_sedge":[976,56,-228],"reed":[984,58,-228],"purple_loosestrife":[988,60,-244]}}
+{"seed":"lighting-rtx3050-0231","anchor":[-1768,-1848],"counts":{"river_sedge":0,"cattail":0,"purple_loosestrife":0,"reed":0,"water_milfoil":5,"water_lily":0,"duckweed":0,"cattail_water":0},"examples":{"water_milfoil":[-1832,67,-1908]}}
+OK: 8 gatunków, siedliska, otwarty nurt, zachowana woda i powtarzalne kolumny.
+(node:20104) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/kamil/Documents/ChatGPT/ProjectZero/voxel-fruit-bushes/assets/models/blueberry/model-data.js is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\kamil\Documents\ChatGPT\ProjectZero\voxel-fruit-bushes\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+OK: stałe ID nowych roślin oraz dawnych bloków
+OK: water_milfoil: zachowuje wodę, pływanie i brak kolizji
+OK: water_milfoil: sadzenie w powietrzu nie tworzy wody
+OK: water_lily: zachowuje wodę, pływanie i brak kolizji
+OK: water_lily: sadzenie w powietrzu nie tworzy wody
+OK: duckweed: zachowuje wodę, pływanie i brak kolizji
+OK: duckweed: sadzenie w powietrzu nie tworzy wody
+OK: cattail_water: zachowuje wodę, pływanie i brak kolizji
+OK: cattail_water: sadzenie w powietrzu nie tworzy wody
+OK: pałka dobiera suchą lub wodną postać i wymaga płytkiej wody
+OK: wywłócznik rośnie na dnie w wodzie; nie w kamieniu ani na tafli
+OK: water_lily: tylko odsłonięta tafla; przykrycie usuwa roślinę, nie wodę
+OK: duckweed: tylko odsłonięta tafla; przykrycie usuwa roślinę, nie wodę
+OK: zniszczenie lub wymiana dna usuwa korzenie, pozostawia wodę i taflę
+OK: solid zastępuje całą komórkę z rośliną, bez odtwarzania wody
+OK: sadzenie nie nadpisuje innego wodnego gatunku
+OK: suche rośliny nadal potrzebują ziemi; nie wypierają wody
+OK: celownik pomija czystą wodę, wskazuje roślinę i pozwala wybrać taflę
+OK: zapis i ponowne wczytanie utrzymuje rośliny, wodę oraz materiał LOD
+OK: cattail: celownik trafia górny pęd, ale nie powietrze/ścianę ani poza zasięgiem
+OK: cattail: posadzenie pod blokiem odrzucone, zakrycie usuwa wysoki pęd
+OK: cattail_water: celownik trafia górny pęd, ale nie powietrze/ścianę ani poza zasięgiem
+OK: cattail_water: posadzenie pod blokiem odrzucone, zakrycie usuwa wysoki pęd
+OK: purple_loosestrife: celownik trafia górny pęd, ale nie powietrze/ścianę ani poza zasięgiem
+OK: purple_loosestrife: posadzenie pod blokiem odrzucone, zakrycie usuwa wysoki pęd
+OK: pływające liście nie przechwytują promienia biegnącego pod nimi
+OK: pływające liście pozostają celem na grzbiecie i w dolinie fal x3
+Sprawdzonych przypadków roślin i wody: 27.
+(node:3432) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/kamil/Documents/ChatGPT/ProjectZero/voxel-fruit-bushes/assets/models/blueberry/model-data.js is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\kamil\Documents\ChatGPT\ProjectZero\voxel-fruit-bushes\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+OK: river models: {"sedge":78,"cattail":100,"loosestrife":116,"milfoil":92,"lily":68,"duckweed":12} quads max; 48 cached variants, roots/normals/bounds, water/flow continuity and chunk boundary culling.
+(node:24880) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/kamil/Documents/ChatGPT/ProjectZero/voxel-fruit-bushes/assets/models/blueberry/model-data.js is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\kamil\Documents\ChatGPT\ProjectZero\voxel-fruit-bushes\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+OK: drzewa i ściółka zachowują wodę z roślinami; przykrycie usuwa tylko niesamodzielną roślinę.
+(node:12364) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/kamil/Documents/ChatGPT/ProjectZero/voxel-fruit-bushes/assets/models/blueberry/model-data.js is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\kamil\Documents\ChatGPT\ProjectZero\voxel-fruit-bushes\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+OK: pełne czyszczenie usuwa komórkę raz, zbieranie nadal zachowuje wodę
+OK: wyczyszczenie samego dna nie usuwa wody sąsiedniej rośliny
+OK: /wypelnij powietrze usuwa wodne rośliny oraz poprawnie liczy zmiany
+OK: /woda basen zostawia powietrze nad zaplanowaną taflą
+OK: /demo skaly opróżnia wykop także z roślin wodnych
+OK: /demo swiatlo nie zostawia wiszącej wody we wnętrzu
+OK: /krzaki ogrod opróżnia miejsce nad sadzonkami
+OK: /demo okno usuwa wodę w roślinach przed oknami
+OK: misa krateru usuwa całą wodę, samo spalenie rośliny obok ją zostawia
+Sprawdzonych przypadków czyszczenia: 9.
+(node:29036) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/kamil/Documents/ChatGPT/ProjectZero/voxel-fruit-bushes/assets/models/blueberry/model-data.js is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\kamil\Documents\ChatGPT\ProjectZero\voxel-fruit-bushes\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+OK: trawa kępiasta — zapis per świat, opt-in i odwracalność, niezmienione bloki/woda, siatka 1/16, LOD 124/68/48 ścian oraz histereza.
+(node:8268) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/kamil/Documents/ChatGPT/ProjectZero/voxel-fruit-bushes/src/rendering/BlueberryGeometry.js is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\kamil\Documents\ChatGPT\ProjectZero\voxel-fruit-bushes\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+OK: borówka — zgodne ID/zapisy, cztery modele i UV, 24 kostki 1/16, niezmienne dorosłe liście, wzrost, celownik, wspólny mesh i model w ręce.
+(node:3600) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/kamil/Documents/ChatGPT/ProjectZero/voxel-fruit-bushes/src/rendering/PlantAnimations.js is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\kamil\Documents\ChatGPT\ProjectZero\voxel-fruit-bushes\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+OK: animacje roślin — wzrost, owoce, pełny ekwipunek, przerwania, remesh, zapis i ograniczony koszt.
+(node:13704) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/kamil/Documents/ChatGPT/ProjectZero/voxel-fruit-bushes/src/rendering/PlantAnimations.js is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\kamil\Documents\ChatGPT\ProjectZero\voxel-fruit-bushes\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+OK: duże rośliny i animacje roślin z paczek — 526 sprawdzeń (indygowiec, marzanna, ucinanie przy ścianach, posadzenie, wzrost, zbiór, pełny ekwipunek, zniszczenie).
+(node:10856) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/kamil/Documents/ChatGPT/ProjectZero/voxel-fruit-bushes/src/rendering/FruitBushGeometry.js is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\kamil\Documents\ChatGPT\ProjectZero\voxel-fruit-bushes\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+OK: krzaki owocowe — zgodne ID i zapisy, 4 etapy, wspólne owoce 3D, ikony, wzrost, zbiór, przerwania i ograniczony koszt.

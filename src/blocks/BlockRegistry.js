@@ -10,6 +10,7 @@ import {
 import { treeBlocks } from './trees.js';
 import { RIVER_PLANT_BLOCKS } from './riverPlants.js';
 import { BLUEBERRY_STAGES, BLUEBERRY_TEXTURE, blueberryIcon } from './blueberry.js';
+import { FRUIT_BUSH_PROFILES } from '../rendering/FruitBushGeometry.js';
 import { PLANT_PACKS, PLANT_PIXELS, plantStageType, plantTile } from './plantPacks.js';
 
 // ID 0 jest zarezerwowane dla powietrza.
@@ -195,14 +196,13 @@ function fruitBushBlocks() {
 
         const textures = ['bush_sapling', bush.bushTexture ?? 'bush_leaves', `${species}_bush_few`, `${species}_bush_full`];
 
-        const height = bush.height ?? 1;
-
         const names = ['Sapling', 'Bush', 'Bush (Few Fruits)', 'Bush (Full)'];
 
         stages.forEach((type, stage) => {
 
             const fruiting = stage >= 2;
             const blueberry = species === 'blueberry';
+            const profile = FRUIT_BUSH_PROFILES[species];
 
             blocks[type] = {
 
@@ -211,16 +211,20 @@ function fruitBushBlocks() {
                 label: bush.labels[stage],
 
                 solid: false,
-                model: blueberry ? 'riverPlant' : 'cross',
+                model: 'riverPlant',
+                category: 'rosliny',
                 ...(blueberry ? {
                     riverPlant: { kind: `blueberry:${BLUEBERRY_STAGES[stage]}`, texture: BLUEBERRY_TEXTURE, waterlogged: false },
                     modelIcon: blueberryIcon(BLUEBERRY_STAGES[stage]),
                     sound: 'plant'
-                } : {}),
+                } : {
+                    riverPlant: { kind: `fruitBush:${species}:${BLUEBERRY_STAGES[stage]}`, texture: BLUEBERRY_TEXTURE, waterlogged: false },
+                    sound: 'plant'
+                }),
 
-                plant: blueberry ? { height: stage === 0 ? .4125 : .75, width: stage === 0 ? .20625 : .375 } : stage === 0
-                    ? { planes: 2, height, width: 0.42 }
-                    : { planes: 3, height, width: 0.5 },
+                plant: blueberry ? { height: stage === 0 ? .4125 : .75, width: stage === 0 ? .20625 : .375 }
+                    : { height: profile.height * (stage === 0 ? profile.youngScale : 1),
+                        width: profile.width * (stage === 0 ? profile.youngScale : 1) / 2 },
 
                 textures: { all: textures[stage] },
 

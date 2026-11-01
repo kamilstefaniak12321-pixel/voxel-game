@@ -2,9 +2,11 @@
 # APLIKACJE - instalator dla Windowsa i aplikacja na Androida (.apk)
 #
 # - Pull request zmieniający aplikację (desktop/, android/,
-#   package.json...) - tylko próbne zbudowanie (instalator i .apk do
-#   pobrania przez 2 dni w zakładce Actions -> ten przebieg -> Artifacts), bez
-#   wydania.
+#   package.json...) z etykietą "kompilacja" - tylko próbne zbudowanie
+#   (instalator i .apk do pobrania przez 2 dni w zakładce Actions -> ten
+#   przebieg -> Artifacts), bez wydania. Etykietę dodaje się, gdy PR jest
+#   gotowy; potem każdy push buduje od nowa (starsza próba jest
+#   przerywana). PR bez etykiety nie zużywa minut Actions.
 # - Wypchnięcie na main: jeśli w repozytorium z wydaniami
 #   (package.json -> build.publish) nie ma jeszcze KOMPLETNEGO wydania
 #   tej wersji - instalatora .exe, pliku .blockmap i latest.yml (z niego
@@ -45,6 +47,8 @@ on:
   push:
     branches: [main]
   pull_request:
+    # labeled - dodanie etykiety "kompilacja" (niżej) uruchamia próbę.
+    types: [opened, synchronize, reopened, labeled]
     paths:
       - 'desktop/**'
       - 'android/**'
@@ -59,10 +63,34 @@ on:
 permissions:
   contents: read
 
+# Jeden przebieg naraz:
+# - w PR z etykietą "kompilacja" nowszy push przerywa starszą próbę
+#   (liczy się tylko ostatni stan PR-a),
+# - na main wydania czekają w kolejce (nie są przerywane); gdy czeka
+#   kilka, zostaje najnowszy - jego wydanie zawiera też wcześniejsze
+#   zmiany,
+# - przebiegi pominięte (PR bez etykiety, dodanie innej etykiety) mają
+#   własną grupę, więc niczego nie przerywają.
+concurrency:
+  group: >-
+    ${{ github.event_name != 'pull_request' && format('aplikacja-{0}', github.ref)
+    || (contains(github.event.pull_request.labels.*.name, 'kompilacja')
+        && (github.event.action != 'labeled' || github.event.label.name == 'kompilacja'))
+       && format('aplikacja-pr-{0}', github.event.pull_request.number)
+    || format('aplikacja-pominiety-{0}', github.run_id) }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 jobs:
 
   # Czy trzeba coś budować i czy publikować?
+  # Pull request: tylko z etykietą "kompilacja" (próba kosztuje ok.
+  # 14 minut z miesięcznego limitu Actions - Windows liczy się podwójnie).
+  # Bez etykiety przebieg jest pomijany (0 minut).
   wersja:
+    if: >-
+      github.event_name != 'pull_request'
+      || (contains(github.event.pull_request.labels.*.name, 'kompilacja')
+          && (github.event.action != 'labeled' || github.event.label.name == 'kompilacja'))
     runs-on: ubuntu-latest
     outputs:
       version: ${{ steps.check.outputs.version }}
@@ -328,10 +356,13 @@ jobs:
           node-version: 22
           cache: npm
 
+      # cache: gradle - Gradle i biblioteki Androida z poprzedniego
+      # przebiegu (bez pobierania wszystkiego od nowa).
       - uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: 21
+          cache: gradle
 
       - run: npm ci
 

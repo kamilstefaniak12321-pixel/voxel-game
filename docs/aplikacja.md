@@ -57,7 +57,8 @@ są zapisane w [`AGENTS.md`](../AGENTS.md).
    Numer sprawdza się względem `main`, otwartych PR-ów i wydań, żeby
    kolejne scalenia nie próbowały opublikować tego samego numeru.
    Android używa tej samej wersji i wylicza kod wersji automatycznie.
-   W PR sprawdza się próbne kompilacje Windowsa i Androida.
+   W PR sprawdza się próbne kompilacje Windowsa i Androida (etykieta
+   `kompilacja`, niżej).
 2. Zmiana trafia do gałęzi `main` (scalony pull request).
 3. GitHub Actions (`.github/workflows/aplikacja.yml`) widzi, że takiej
    wersji jeszcze nie ma w repozytorium z wydaniami, buduje instalator
@@ -97,8 +98,34 @@ adnotacje z ostatnimi liniami błędu):
 - inny błąd wysyłania - zwykle wystarczy **Run workflow** jeszcze raz:
   przebieg dośle brakujące pliki do istniejącego wydania.
 
+### Próbne kompilacje w pull requeście (etykieta `kompilacja`)
+
 Pull request, który zmienia aplikację (`desktop/`, `package.json`),
-buduje instalator na próbę - bez wydania. Ten instalator można pobrać
+buduje instalator i `.apk` na próbę - bez wydania - **dopiero z etykietą
+`kompilacja`** (po prawej stronie PR-a: *Labels*). Etykietę dodaje się,
+gdy PR jest gotowy; od tej chwili każdy kolejny push buduje od nowa,
+a starsza, jeszcze trwająca próba jest przerywana (liczy się tylko
+ostatni stan). PR bez etykiety pokazuje przebieg jako pominięty
+(*skipped*) i nie zużywa minut. Tak samo działa *Laboratorium światła*
+(`swiatlo.yml`).
+
+Dlaczego: repozytorium gry jest prywatne, a darmowy plan GitHuba ma
+miesięczny limit minut Actions. Jedna próba to ok. 14 minut limitu:
+Windows ok. 4 min (liczone podwójnie), Android ok. 3 min, Laboratorium
+światła ok. 2 min i sprawdzenie wersji 1 min. W październiku 2026 próby
+przy każdym pushu zużyły ok. 1 450 minut i 31.10 Actions się zatrzymały
+(*spending limit*). Zużycie widać na GitHubie: **Settings → Billing and
+plans → Usage**.
+
+- PR-y ułożone w stos (każdy zawiera poprzedni) - wystarczy etykieta
+  na najwyższym: jego próba buduje wszystkie zmiany naraz.
+- Wydania na `main` czekają w kolejce i nie są przerywane. Gdy czeka
+  ich kilka (kilka PR-ów scalonych jeden po drugim), zostaje najnowszy:
+  jego wydanie zawiera też zmiany poprzednich.
+- Android korzysta z zapisanego Gradle (`cache: gradle`), więc nie
+  pobiera wszystkiego od nowa.
+
+Instalator z próby można pobrać
 z przebiegu w zakładce **Actions** (sekcja *Artifacts*, plik zip) przez
 **2 dni**. Dłużej nie: repozytorium gry jest prywatne, a darmowy plan
 GitHuba ma tylko 0,5 GB miejsca na takie pliki na miesiąc (liczone za

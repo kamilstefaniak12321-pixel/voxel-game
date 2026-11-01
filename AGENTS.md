@@ -20,6 +20,10 @@ i przygotowywać ją do wydania w `kamilstefaniak12321-pixel/voxel-game-wydania`
   ale jeszcze niewydane poprawki.
 - Uruchom sprawdzenia odpowiednie do zmiany i sprawdź próbne kompilacje
   Windowsa i Androida w workflow „Aplikacje (komputer i telefon)”.
+  Próby ruszają dopiero po dodaniu etykiety `kompilacja` — dodaj ją,
+  gdy PR jest gotowy (testy lokalne przeszły), a nie przy każdej
+  poprawce: minuty Actions są ograniczone. Przy PR-ach ułożonych
+  w stos wystarczy etykieta na najwyższym. Opis: `docs/aplikacja.md`.
 - Przygotowanie PR nie oznacza publikacji. Obecny workflow publikuje
   nową wersję po scaleniu do `main`. W odpowiedzi jasno odróżnij
   „przygotowane w PR” od „wydane i dostępne do pobrania”.

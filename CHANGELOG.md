@@ -11,6 +11,26 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 0.48.1 - Oszczędniejsze kompilacje w GitHub Actions
+
+Próbne kompilacje tylko dla gotowych PR-ów — PR #79 (zawiera #78 - 0.48.0
+i #77 - 0.47.1).
+
+- **Dla gracza bez zmian** w samej grze - wydanie zawiera zmiany z 0.47.1
+  (płaskie brzegi rzek) i 0.48.0 (szum wody bez pisków, strumień).
+- **Próbne kompilacje Windowsa i Androida oraz Laboratorium światła
+  w pull requeście ruszają dopiero z etykietą `kompilacja`** - dodawaną,
+  gdy PR jest gotowy. Wcześniej budowały się przy każdym pushu (ok. 14
+  minut limitu Actions za każdym razem; w październiku ok. 1 450 minut,
+  po czym 31.10 GitHub zatrzymał Actions). PR bez etykiety pokazuje
+  przebieg jako pominięty i nie zużywa minut.
+- Nowszy push do PR-a przerywa starszą, jeszcze trwającą próbę. Wydania
+  na `main` czekają w kolejce (nie są przerywane); z kilku czekających
+  zostaje najnowsze.
+- Android: zapisany Gradle między przebiegami (`cache: gradle`).
+- Opis w `docs/aplikacja.md` (*Próbne kompilacje w pull requeście*),
+  zasada w `AGENTS.md` i w szablonie PR.
+
 ## 0.48.0 - Szum wody bez pisków, strumień przy rzekach
 
 Szum wody: naprawa pisku i nowy dźwięk strumienia — PR #78 (zawiera #77 - 0.47.1).

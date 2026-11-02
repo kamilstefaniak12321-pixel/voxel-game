@@ -51,6 +51,28 @@ wersji testowej "Voxel Game (test)" (hasło `android`, `docs/telefon.md`).
 Prawdziwy klucz wydań jest tylko w sekretach GitHuba i u autora - nigdy
 w repozytorium.
 
+## Źródło muzyki
+
+Poniższe pięć plików zostało dostarczonych przez Kamila 2 listopada
+2026 r. do włączenia do gry. Zachowano oryginalną zawartość MP3,
+zmieniając tylko nazwy plików.
+
+| Plik w `assets/music/` | Tytuł |
+|---|---|
+| `swiat-czeka.mp3` | Świat czeka |
+| `first-light-meadow.mp3` | First Light Meadow |
+| `pierwszy-dom.mp3` | Pierwszy dom |
+| `za-nastepnym-wzgorzem.mp3` | Za następnym wzgórzem |
+| `ostatnie-swiatlo.mp3` | Ostatnie światło |
+
+Metadane C2PA zawarte w plikach wskazują `Eleven Labs Inc.` oraz
+`trainedAlgorithmicMedia`. Odczyt tych metadanych nie jest weryfikacją
+podpisów C2PA ani dowodem licencji utworów lub warunków planu, w którym
+powstały. Ten zapis dokumentuje przekazane pliki i ich źródło; nie
+przypisuje autorstwa ani dodatkowej licencji na podstawie metadanych.
+[Opis nagrań i sumy kontrolne](../assets/music/README.md) znajdują się
+w katalogu muzyki.
+
 ## Dodawanie cudzych plików
 
 Nowy plik od kogoś innego (dźwięk, tekstura, biblioteka) może trafić do

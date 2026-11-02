@@ -18,6 +18,7 @@ import { PerfMonitor } from './game/PerfMonitor.js';
 import { TerrainMap } from './ui/TerrainMap.js';
 import { InventoryScreen } from './ui/InventoryScreen.js';
 import { SoundManager } from './audio/SoundManager.js';
+import { MusicManager } from './audio/MusicManager.js';
 import { setUiSounds, playUi } from './audio/ui.js';
 import { AndroidUpdates } from './app/AndroidUpdates.js';
 import { atlasReady, blockAtlasTexture, atlasUploadedAt } from './rendering/TextureAtlas.js';
@@ -200,12 +201,27 @@ const terrainMap = new TerrainMap();
 // wstrzymał). Menu i ekwipunek grają przez src/audio/ui.js.
 
 const sounds = new SoundManager(settings);
+const music = new MusicManager(sounds, settings);
+music.setForeground(!document.hidden && document.hasFocus());
 
 setUiSounds(sounds);
 
 for (const type of ['pointerdown', 'keydown']) {
-    window.addEventListener(type, () => sounds.unlock(), { capture: true });
+    window.addEventListener(type, () => {
+        sounds.unlock();
+        music.setForeground(!document.hidden);
+        music.unlock();
+    }, { capture: true });
 }
+
+// Ukryta karta lub aplikacja nie odtwarza muzyki. Powrót zachowuje
+// miejsce utworu i czas ciszy, także po zdarzeniu Androida „apppause”.
+window.addEventListener('blur', () => music.setForeground(false));
+window.addEventListener('focus', () => music.setForeground(!document.hidden));
+window.addEventListener('apppause', () => music.setForeground(false));
+window.addEventListener('pagehide', () => music.setForeground(false));
+window.addEventListener('pageshow', () => music.setForeground(!document.hidden && document.hasFocus()));
+document.addEventListener('visibilitychange', () => music.setForeground(!document.hidden && document.hasFocus()));
 
 
 // Księga osiągnięć - jedna na gracza, wspólna dla wszystkich światów
@@ -1240,6 +1256,7 @@ function animate(now) {
     // menu ma swoje - src/audio/ui.js).
 
     sounds.setActive(Boolean(game) && (state === 'playing' || state === 'chat' || state === 'inventory'));
+    music.update(dt, state);
 
 
     // Przyciski dotykowe (telefon) - zależnie od stanu.

@@ -1,0 +1,102 @@
+[
+  {
+    "id": "swiat-czeka",
+    "title": "Świat czeka",
+    "file": "swiat-czeka.mp3",
+    "bytes": 4337799,
+    "sha256": "5dd347422758b86c6ee95dfdae22f36c1e7f8708ff6b7eee2bf828602f1dd088",
+    "audioSha256": "6b14083836aa66029c07aa826eb3c7fca0c4ee3ef143c6a158c8a0c0d02f4817",
+    "frames": 6892,
+    "durationSeconds": 180.035918,
+    "sampleRates": [
+      44100
+    ],
+    "bitratesKbps": [
+      192
+    ],
+    "channels": [
+      2
+    ],
+    "id3Bytes": 16937
+  },
+  {
+    "id": "first-light-meadow",
+    "title": "First Light Meadow",
+    "file": "first-light-meadow.mp3",
+    "bytes": 4337799,
+    "sha256": "a70d124c951b7044a1d91ade76f92aa258b243d3a33891f4b5db8fb1780188a5",
+    "audioSha256": "bb019a242c409bb8823a2a6b5519b21c98bc1d4383a52fb4ee9c3501e593e55d",
+    "frames": 6892,
+    "durationSeconds": 180.035918,
+    "sampleRates": [
+      44100
+    ],
+    "bitratesKbps": [
+      192
+    ],
+    "channels": [
+      2
+    ],
+    "id3Bytes": 16937
+  },
+  {
+    "id": "pierwszy-dom",
+    "title": "Pierwszy dom",
+    "file": "pierwszy-dom.mp3",
+    "bytes": 4337799,
+    "sha256": "c94d67cb481f6bbad13a26d915677dc10d08fb390faa03d50b8b84e05d4edd43",
+    "audioSha256": "b60445f6acc5d6c716597d9ba3af98d083ad8ce6aa8bde931ead5ccf48f4df87",
+    "frames": 6892,
+    "durationSeconds": 180.035918,
+    "sampleRates": [
+      44100
+    ],
+    "bitratesKbps": [
+      192
+    ],
+    "channels": [
+      2
+    ],
+    "id3Bytes": 16937
+  },
+  {
+    "id": "za-nastepnym-wzgorzem",
+    "title": "Za następnym wzgórzem",
+    "file": "za-nastepnym-wzgorzem.mp3",
+    "bytes": 4337799,
+    "sha256": "1344cfba0869867870509ccb78caec577495e6dfa1a0d898cc795515280a6f10",
+    "audioSha256": "bbf02ad78c22b960f47f823b8e26fe88b2e9715d0b71da90ff286124a7071ec9",
+    "frames": 6892,
+    "durationSeconds": 180.035918,
+    "sampleRates": [
+      44100
+    ],
+    "bitratesKbps": [
+      192
+    ],
+    "channels": [
+      2
+    ],
+    "id3Bytes": 16937
+  },
+  {
+    "id": "ostatnie-swiatlo",
+    "title": "Ostatnie światło",
+    "file": "ostatnie-swiatlo.mp3",
+    "bytes": 4337799,
+    "sha256": "79c28af1e5d4b490f21adb8c481cb9110d7c1fd3a5a9f65136898d44885c6bcd",
+    "audioSha256": "e63318beb21d6121e1ead749c46986f673e4183859f56aa2976ea33ba05ca83d",
+    "frames": 6892,
+    "durationSeconds": 180.035918,
+    "sampleRates": [
+      44100
+    ],
+    "bitratesKbps": [
+      192
+    ],
+    "channels": [
+      2
+    ],
+    "id3Bytes": 16937
+  }
+]

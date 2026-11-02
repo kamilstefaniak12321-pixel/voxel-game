@@ -657,7 +657,9 @@ chodzeniu (wł./wył.), zgięcia rąk i nóg (gładkie albo klocki), odległoś�
 kamery z trzeciej osoby.
 
 **Dźwięk** - głośność całej gry, osobno bloków i kroków, otoczenia
-(woda, meteoryty) oraz menu i ekwipunku; 0 = wyłączone.
+(woda, meteoryty), menu i ekwipunku oraz muzyki; 0 = wyłączone.
+Pięć utworów gra od czasu do czasu w menu i świecie, z przerwami
+i łagodnym narastaniem. Szczegóły: [Muzyka w menu i świecie](docs/muzyka.md).
 
 **Tekstury** - własna **paczka tekstur** (plik `.zip`, tekstury
 w dowolnej rozdzielczości, np. 1254 x 1254), rozdzielczość w grze

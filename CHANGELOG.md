@@ -11,6 +11,18 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 0.53.0 - Pierwsza muzyka w menu i świecie
+
+Pięć pierwszych utworów muzycznych — PR #86.
+
+- „Świat czeka”, „First Light Meadow”, „Pierwszy dom”, „Za następnym wzgórzem” i „Ostatnie światło” grają w losowanej kolejności, bez natychmiastowych powtórek.
+- Muzyka pojawia się od czasu do czasu: po utworze 45–90 sekund ciszy w menu albo 2,5–5 minut w świecie. Łagodne narastanie i wygaszanie dźwięku.
+- Osobny suwak „Muzyka”; menu pauzy przycisza utwór, a wyciszenie i przejście aplikacji do tła zatrzymują go z zachowaniem pozycji. Przejście między menu, światem i ekwipunkiem nie restartuje nagrania.
+- Jeden strumień MP3 zamiast wczytywania całej kolekcji do pamięci. Naprawiona obsługa długości i zakresów MP3 w aplikacji komputerowej.
+- 119 sprawdzeń zachowania muzyki, 126 obsługi plików oraz 20 prób w grze, z odtwarzaniem wszystkich pięciu utworów.
+
+Opis: `docs/muzyka.md`. Wydanie Windows/Android przygotowane do publikacji po scaleniu PR.
+
 ## 0.52.0 - Naturalne krawędzie cieni
 
 Zmiana wyglądu cieni słońca i księżyca — PR #85.

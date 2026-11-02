@@ -152,6 +152,7 @@ export const TEXTS = {
     meteorites: (on) => `Spadające meteoryty: ${on ? 'Wł.' : 'Wył.'}`,
     autoUpdates: (on) => `Aktualizacje automatyczne: ${on ? 'Wł.' : 'Wył. (po kliknięciu Pobierz)'}`,
     volumeMaster: (value) => `Głośność: ${value > 0 ? `${value}%` : 'Wył.'}`,
+    volumeMusic: (value) => `Muzyka: ${value > 0 ? `${value}%` : 'Wył.'}`,
     volumeBlocks: (value) => `Bloki i kroki: ${value > 0 ? `${value}%` : 'Wył.'}`,
     volumeWorld: (value) => `Otoczenie (woda, meteoryt): ${value > 0 ? `${value}%` : 'Wył.'}`,
     volumeUi: (value) => `Menu, ekwipunek, osiągnięcia: ${value > 0 ? `${value}%` : 'Wył.'}`,

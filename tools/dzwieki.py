@@ -21,8 +21,16 @@
 # Każdy plik można też podmienić własnym nagraniem (.ogg, ta sama
 # nazwa) - gra niczego tu nie sprawdza. Lista dźwięków i ich
 # głośności: src/audio/sounds.js.
+#
+# NAGRANIA: pliki wypisane w assets/sounds/nagrania.json (od 0.54.0 -
+# prawie wszystkie: efekty z ElevenLabs, obrobione tools/nagrania.py)
+# ten skrypt POMIJA - nie nadpisze ich syntetycznymi. Syntetyczne
+# wersje mimo to (np. do porównania, do innego folderu):
+#
+#     python tools/dzwieki.py <folder> [grupa] --syntetyczne
 # ------------------------------------------------------------
 
+import json
 import os
 import subprocess
 import sys
@@ -928,7 +936,24 @@ CRAFT_SOUNDS = {
 # Zapis
 # ------------------------------------------------------------
 
+# Pliki z nagrań (assets/sounds/nagrania.json) - generate() ich nie
+# nadpisuje (chyba że --syntetyczne).
+KEEP = set()
+SKIPPED = []
+
+
+def recordings(root):
+    path = os.path.join(root, 'nagrania.json')
+    if not os.path.exists(path):
+        return set()
+    with open(path, encoding='utf-8') as f:
+        return {os.path.normpath(os.path.join(root, name)) for name in json.load(f)['pliki']}
+
+
 def save(path, data):
+    if os.path.normpath(path) in KEEP:
+        SKIPPED.append(path)
+        return
     os.makedirs(os.path.dirname(path), exist_ok=True)
     with tempfile.TemporaryDirectory() as tmp:
         wav = os.path.join(tmp, 'x.wav')
@@ -1005,9 +1030,15 @@ def generate(root=ROOT, only=None):
 
 
 if __name__ == '__main__':
-    root = sys.argv[1] if len(sys.argv) > 1 else ROOT
-    only = sys.argv[2] if len(sys.argv) > 2 else None
+    args = [a for a in sys.argv[1:] if a != '--syntetyczne']
+    root = args[0] if len(args) > 0 else ROOT
+    only = args[1] if len(args) > 1 else None
     if only is not None and only not in GROUPS:
         sys.exit(f'Nieznana grupa "{only}" - do wyboru: {", ".join(GROUPS)}')
+    if '--syntetyczne' not in sys.argv:
+        KEEP.update(recordings(root))
     generate(root, only)
     print('Gotowe:', os.path.abspath(root), f'(grupa: {only})' if only else '')
+    if SKIPPED:
+        print(f'Pominięte nagrania (assets/sounds/nagrania.json): {len(SKIPPED)} -'
+              ' syntetyczne wersje: --syntetyczne')

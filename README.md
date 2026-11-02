@@ -730,13 +730,14 @@ Pęknięcia kopanego bloku (10 etapów w pasku
 
 ## Dźwięki
 
-Dźwięki bloków są **miękkie i ciche** - mają być tłem, a nie zwracać na
-siebie uwagę: trawa lekko szeleści pod stopami, ziemia głucho stuka,
-kamień krótko puka, piasek cicho szumi, żwir chrzęści, błoto mlaszcze,
-liście szeleszczą, drewno (pnie, deski) ciepło i głucho puka, a szkło
-lamp cicho dzwoni. Bez trzasków na początku
-i bez syczących wysokich tonów; każdy krok ma 6 wersji (gra losuje
-jedną i lekko zmienia wysokość), żeby się nie powtarzały.
+Od 0.54.0 wszystkie dźwięki gry to **nagrania** - efekty wygenerowane
+przez Kamila w ElevenLabs (opis źródła: `docs/licencja.md`). Dźwięki
+bloków są ciche - mają być tłem, a nie zwracać na siebie uwagę: trawa
+szeleści pod stopami, ziemia głucho stuka, kamień krótko puka, piasek
+cicho chrzęści, żwir chrobocze kamyczkami, błoto mlaszcze, liście
+szeleszczą, drewno puka jak deski, szkło lamp stuka z lekkim
+dzwonieniem, a śnieg skrzypi. Każdy krok ma 6 wersji (gra losuje jedną
+i lekko zmienia wysokość), żeby się nie powtarzały.
 
 - **Kroki** - co krok dźwięk bloku pod stopami (trawa, ziemia, kamień,
   piasek, żwir, błoto, szkło lamp); kucanie - ciszej i rzadziej, bieg -
@@ -750,17 +751,16 @@ jedną i lekko zmienia wysokość), żeby się nie powtarzały.
   wychodzeniu, szum pod wodą (reszta dźwięków jest wtedy głucha),
   szemranie strumienia przy rzekach i fale przy brzegu jezior i morza
   (opis wyżej: *Woda*). Strumień (`assets/sounds/water/water_stream.ogg`)
-  to model szemrzącej wody - szum przepływu i setki pęcherzyków
-  (`tools/dzwieki.py`, grupa `strumien`); można go podmienić własnym
-  nagraniem o tej samej nazwie.
+  to leśny potok szemrzący po kamieniach - pętla ok. 18 s.
 - **Kosmos** - cichy pomruk wysoko w kosmosie, a przy spadaniu jak
   meteoryt zapłon, ryk ognia i pęd powietrza (`docs/kosmos.md`).
 - **Meteoryt** - huk lecącej kuli ognia narasta i robi się coraz
   wyższy, a uderzenie słychać trochę po błysku (dźwięk leci 343 bloki na
   sekundę - jak grzmot po błyskawicy). Potem grad odłamków i trzaskający,
   gasnący żar w kraterze. Dźwięki meteorytu są przestrzenne.
-- **Osiągnięcia** - melodyjka przy zdobyciu: dwa dźwięki dla zwykłych,
-  arpeggio z dzwoneczkami dla rzadszych, fanfara dla legendarnych.
+- **Osiągnięcia** - melodyjka przy zdobyciu: dwa dźwięki marimby dla
+  zwykłych, wznoszące dzwoneczki dla rzadkich, fanfara z harfą dla
+  epickich, orkiestrowa fanfara z chórem dla legendarnych.
 - **Menu** - każdy przycisk cicho "klika" (przyciski powrotu - *Wróć*,
   *Anuluj*, *Gotowe*, ESC - niżej), suwaki tykają przy każdym kroku
   (tym wyżej, im dalej w prawo; suwak głośności od razu gra nową
@@ -777,12 +777,30 @@ Głośność: *Ustawienia* → *Dźwięk* albo `/ustaw glosnosc 60`
 materiały po kolei), `/dzwiek menu` (dźwięki menu i ekwipunku),
 `/dzwiek meteor_impact` (jeden dźwięk).
 
-Pliki są w `assets/sounds/` (`.ogg`) - każdy można podmienić własnym
-nagraniem o tej samej nazwie. Lista dźwięków, ich głośność i zasięg:
-`src/audio/sounds.js`; materiał dźwięków bloku: pole `sound`
+Pliki są w `assets/sounds/` (`.ogg`, mono 44,1 kHz) - każdy można
+podmienić innym o tej samej nazwie. Lista dźwięków, ich głośność
+i zasięg: `src/audio/sounds.js`; materiał dźwięków bloku: pole `sound`
 w `src/blocks/BlockRegistry.js`; dźwięki menu gra `src/audio/ui.js`.
-Obecne dźwięki są syntetyczne - policzył je skrypt `tools/dzwieki.py`
-(Python z numpy i scipy + ffmpeg).
+
+**Nowe nagrania** (np. z ElevenLabs - pliki `.mp3`/`.wav` w folderach
+`<grupa>/<nazwa dźwięku>/`, jak `block/step_grass/`, kilka plików =
+kolejne wersje) zamienia na pliki gry skrypt `tools/nagrania.py`
+(Python z numpy i scipy + ffmpeg):
+
+    python3 tools/nagrania.py <folder z nagraniami> assets/sounds <wyjście> raport.json
+
+Przycina ciszę (dźwięk zaczyna się od razu, krok to jeden krok, limit
+długości), ustawia głośność jak dotychczasowego pliku o tej samej
+nazwie (głośności w `sounds.js` zostają dobre), szczyt najwyżej
+-1 dBFS, a pętle (strumień, fale, ogień, wiatr, kosmos) łączy płynnym
+przenikaniem końca z początkiem. Gotowe pliki trzeba skopiować do
+`assets/sounds/` i dopisać do `assets/sounds/nagrania.json`.
+
+Dawne dźwięki syntetyczne liczy skrypt `tools/dzwieki.py` - pliki
+z `nagrania.json` pomija (nie nadpisze nagrań); syntetyczne wersje do
+innego folderu: `python3 tools/dzwieki.py <folder> --syntetyczne`.
+Test plików (wszystkie są, mono 44,1 kHz, bez przesteru, bez ciszy na
+początku, pętle bez trzasku): `node tools/sprawdz_dzwieki.mjs`.
 
 ## Gracz
 
@@ -1286,4 +1304,5 @@ z informacją o autorze (linia `Required Notice:` z `LICENSE.md`).
 Sprzedawanie gry albo jej części i zarabianie na niej wymaga osobnej
 zgody autora. Części cudze (three.js - MIT, czcionka Pixelify Sans -
 OFL, Gradle Wrapper - Apache 2.0) zostają na swoich licencjach.
-Streszczenie po polsku i lista: [`docs/licencja.md`](docs/licencja.md).
+Efekty dźwiękowe: ElevenLabs (elevenlabs.io). Streszczenie po polsku,
+lista i źródła muzyki oraz dźwięków: [`docs/licencja.md`](docs/licencja.md).

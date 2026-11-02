@@ -73,6 +73,25 @@ przypisuje autorstwa ani dodatkowej licencji na podstawie metadanych.
 [Opis nagrań i sumy kontrolne](../assets/music/README.md) znajdują się
 w katalogu muzyki.
 
+## Źródło efektów dźwiękowych
+
+Wszystkie 159 plików dźwięków w `assets/sounds/` (kroki, bloki,
+zbieranie owoców, woda, meteoryt, kosmos, menu, ekwipunek,
+osiągnięcia) Kamil wygenerował w ElevenLabs Sound Effects
+(elevenlabs.io) z listy opisów przygotowanej do gry i dostarczył
+2 listopada 2026 r. (od wersji 0.54.0 zastępują dawne dźwięki
+syntetyczne z `tools/dzwieki.py`). Pliki zostały obrobione skryptem
+`tools/nagrania.py`: zamiana na mono 44,1 kHz `.ogg`, przycięcie ciszy
+i długości, wyrównanie głośności, pętle połączone przenikaniem. Lista
+plików i z którego nagrania powstał każdy z nich:
+`assets/sounds/nagrania.json`.
+
+Pliki źródłowe nie zawierały metadanych o pochodzeniu (C2PA). Warunki
+użycia efektów zależą od planu ElevenLabs, w którym powstały (plan
+darmowy - tylko użytek niekomercyjny i podpis "elevenlabs.io"; plany
+płatne - także komercyjny). Ten zapis dokumentuje przekazane pliki
+i ich źródło: **Efekty dźwiękowe: ElevenLabs (elevenlabs.io).**
+
 ## Dodawanie cudzych plików
 
 Nowy plik od kogoś innego (dźwięk, tekstura, biblioteka) może trafić do

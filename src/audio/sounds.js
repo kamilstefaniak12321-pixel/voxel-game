@@ -1,8 +1,12 @@
 // ------------------------------------------------------------
 // LISTA DŹWIĘKÓW
 //
-// Pliki są w assets/sounds/ (.ogg). Zrobił je tools/dzwieki.py, ale
-// każdy można podmienić własnym nagraniem o tej samej nazwie.
+// Pliki są w assets/sounds/ (.ogg). Od 0.54.0 to nagrania (efekty
+// z ElevenLabs, obrobione tools/nagrania.py - lista: nagrania.json);
+// wcześniej syntetyczne z tools/dzwieki.py (ten skrypt nagrań nie
+// nadpisuje). Każdy plik można podmienić innym o tej samej nazwie -
+// głośności niżej są dobrane do obecnych plików (nowe nagrania
+// tools/nagrania.py ustawia na tę samą głośność).
 //
 // Pola dźwięku:
 //   files    - pliki (przy każdym odtworzeniu gra losuje jeden),

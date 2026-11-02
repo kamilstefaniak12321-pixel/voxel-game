@@ -187,7 +187,8 @@ Wiersze 5-8 atlasu.
 
 Pnie i deski mają nowy materiał dźwięków **drewno** (`wood` - ciepłe,
 głuche puknięcie; przy niszczeniu ciche trzaski drzazg), liście -
-szelest liści (`plant`). `tools/dzwieki.py`.
+szelest liści (`plant`). Pliki: `assets/sounds/blocks/` (nagrania -
+README, *Dźwięki*).
 
 ## Do zrobienia później
 

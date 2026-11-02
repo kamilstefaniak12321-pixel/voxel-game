@@ -11,6 +11,18 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 0.54.0 - Nagrane efekty dźwiękowe
+
+Wszystkie dźwięki gry wymienione na nagrania — PR #87.
+
+- 159 plików z ElevenLabs Sound Effects (od Kamila) zamiast dźwięków syntetycznych: kroki (6 wersji na każdy z 10 materiałów), stawianie i niszczenie bloków, zbieranie owoców, woda (plusk, pływanie, brodzenie, wyjście, pod wodą, strumień, fale), meteoryt i ogień, kosmos i spadanie, menu, ekwipunek, wytwarzanie i melodyjki osiągnięć.
+- Obróbka do gry: mono 44,1 kHz `.ogg`, przycięta cisza (dźwięk odpowiada od razu, krok to jeden krok), głośność jak dawnych dźwięków (głośności w `src/audio/sounds.js` bez zmian), szczyt najwyżej -1 dBFS, pętle bez szwu i bez „pulsowania”.
+- Nowy skrypt `tools/nagrania.py` do kolejnych nagrań; `tools/dzwieki.py` nie nadpisuje plików z `assets/sounds/nagrania.json` (syntetyczne wersje: `--syntetyczne`).
+- Nowy test `tools/sprawdz_dzwieki.mjs` — 1022 sprawdzenia: wszystkie pliki są i są używane, mono 44,1 kHz, bez przesteru, bez ciszy na początku, krótkie kroki, pętle bez trzasku.
+- Źródło i podpis: `docs/licencja.md` („Efekty dźwiękowe: ElevenLabs (elevenlabs.io)”).
+
+Wydanie Windows/Android przygotowane do publikacji po scaleniu PR.
+
 ## 0.53.0 - Pierwsza muzyka w menu i świecie
 
 Pięć pierwszych utworów muzycznych — PR #86.

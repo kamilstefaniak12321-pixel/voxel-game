@@ -1,0 +1,1108 @@
+{
+ "opis": "Pliki z nagrań, nie z tools/dzwieki.py (ten skrypt ich nie nadpisuje). Wygenerował je Kamil w ElevenLabs Sound Effects (2026-11-02) z promptów z listy \"Dźwięki Voxel Game\"; obróbka: tools/nagrania.py (przycięcie, głośność jak dawnych dźwięków, mono 44,1 kHz, .ogg). Źródło i licencja: docs/licencja.md.",
+ "zrodlo": "ElevenLabs Sound Effects (elevenlabs.io)",
+ "pliki": {
+  "blocks/break_dirt_1.ogg": {
+   "zrodlo": "A_block_of_dirt_crum_#1-1793644097913.mp3",
+   "sekundy": 0.673,
+   "wzmocnienie_dB": 0.3,
+   "uwagi": []
+  },
+  "blocks/break_dirt_2.ogg": {
+   "zrodlo": "A_block_of_dirt_crum_#2-1793644099374.mp3",
+   "sekundy": 0.85,
+   "wzmocnienie_dB": 7.5,
+   "uwagi": [
+    "skrócony 0.89 -> 0.85 s"
+   ]
+  },
+  "blocks/break_dirt_3.ogg": {
+   "zrodlo": "A_block_of_dirt_crum_#4-1793644102093.mp3",
+   "sekundy": 0.674,
+   "wzmocnienie_dB": 11.0,
+   "uwagi": [
+    "początek bliżej szczytu (+0.16 s)"
+   ]
+  },
+  "blocks/break_glass_1.ogg": {
+   "zrodlo": "A_glass_pane_shatter_#1-1793644519158.mp3",
+   "sekundy": 0.66,
+   "wzmocnienie_dB": 0.4,
+   "uwagi": []
+  },
+  "blocks/break_glass_2.ogg": {
+   "zrodlo": "A_glass_pane_shatter_#2-1793644520049.mp3",
+   "sekundy": 0.641,
+   "wzmocnienie_dB": -1.2,
+   "uwagi": []
+  },
+  "blocks/break_glass_3.ogg": {
+   "zrodlo": "A_glass_pane_shatter_#3-1793644521093.mp3",
+   "sekundy": 0.774,
+   "wzmocnienie_dB": -1.0,
+   "uwagi": []
+  },
+  "blocks/break_grass_1.ogg": {
+   "zrodlo": "Digging_out_a_clump__#2-1793644040224.mp3",
+   "sekundy": 0.83,
+   "wzmocnienie_dB": 21.3,
+   "uwagi": [
+    "początek bliżej szczytu (+0.05 s)",
+    "ogranicznik 0.6 dB"
+   ]
+  },
+  "blocks/break_grass_2.ogg": {
+   "zrodlo": "Digging_out_a_clump__#3-1793644038518.mp3",
+   "sekundy": 0.693,
+   "wzmocnienie_dB": 6.5,
+   "uwagi": []
+  },
+  "blocks/break_grass_3.ogg": {
+   "zrodlo": "Digging_out_a_clump__#4-1793644037491.mp3",
+   "sekundy": 0.78,
+   "wzmocnienie_dB": 7.0,
+   "uwagi": []
+  },
+  "blocks/break_gravel_1.ogg": {
+   "zrodlo": "A_pile_of_gravel_col_#2-1793644307936.mp3",
+   "sekundy": 0.687,
+   "wzmocnienie_dB": -1.4,
+   "uwagi": []
+  },
+  "blocks/break_gravel_2.ogg": {
+   "zrodlo": "A_pile_of_gravel_col_#3-1793644309546.mp3",
+   "sekundy": 0.73,
+   "wzmocnienie_dB": 1.0,
+   "uwagi": []
+  },
+  "blocks/break_gravel_3.ogg": {
+   "zrodlo": "A_pile_of_gravel_col_#4-1793644310996.mp3",
+   "sekundy": 0.735,
+   "wzmocnienie_dB": -2.7,
+   "uwagi": []
+  },
+  "blocks/break_mud_1.ogg": {
+   "zrodlo": "Pulling_apart_a_lump_#3-1793644385597.mp3",
+   "sekundy": 0.67,
+   "wzmocnienie_dB": 8.1,
+   "uwagi": [
+    "początek bliżej szczytu (+0.08 s)"
+   ]
+  },
+  "blocks/break_mud_2.ogg": {
+   "zrodlo": "Pulling_apart_a_lump_#3-1793644408490.mp3",
+   "sekundy": 0.666,
+   "wzmocnienie_dB": 14.6,
+   "uwagi": [
+    "początek bliżej szczytu (+0.13 s)"
+   ]
+  },
+  "blocks/break_mud_3.ogg": {
+   "zrodlo": "Pulling_apart_a_lump_#4-1793644384096.mp3",
+   "sekundy": 0.661,
+   "wzmocnienie_dB": 13.1,
+   "uwagi": [
+    "początek bliżej szczytu (+0.17 s)"
+   ]
+  },
+  "blocks/break_plant_1.ogg": {
+   "zrodlo": "Snapping_a_plant_ste_#2-1793644457439.mp3",
+   "sekundy": 0.68,
+   "wzmocnienie_dB": 8.3,
+   "uwagi": []
+  },
+  "blocks/break_plant_2.ogg": {
+   "zrodlo": "Snapping_a_plant_ste_#3-1793644449992.mp3",
+   "sekundy": 0.548,
+   "wzmocnienie_dB": 10.3,
+   "uwagi": [
+    "ogranicznik 2.8 dB"
+   ]
+  },
+  "blocks/break_plant_3.ogg": {
+   "zrodlo": "Snapping_a_plant_ste_#4-1793644448542.mp3",
+   "sekundy": 0.591,
+   "wzmocnienie_dB": 13.0,
+   "uwagi": [
+    "początek bliżej szczytu (+0.01 s)",
+    "ogranicznik 1.4 dB"
+   ]
+  },
+  "blocks/break_sand_1.ogg": {
+   "zrodlo": "A_block_of_dry_sand__#3-1793644236367.mp3",
+   "sekundy": 0.58,
+   "wzmocnienie_dB": 28.8,
+   "uwagi": [
+    "początek bliżej szczytu (+0.22 s)"
+   ]
+  },
+  "blocks/break_sand_2.ogg": {
+   "zrodlo": "A_block_of_dry_sand__#4-1793644238066.mp3",
+   "sekundy": 0.701,
+   "wzmocnienie_dB": 28.2,
+   "uwagi": [
+    "początek bliżej szczytu (+0.19 s)"
+   ]
+  },
+  "blocks/break_sand_3.ogg": {
+   "zrodlo": "A_block_of_dry_sand__#4-1793644267374.mp3",
+   "sekundy": 0.626,
+   "wzmocnienie_dB": 27.5,
+   "uwagi": [
+    "początek bliżej szczytu (+0.26 s)"
+   ]
+  },
+  "blocks/break_snow_1.ogg": {
+   "zrodlo": "A_chunk_of_packed_sn_#2-1793644654760.mp3",
+   "sekundy": 0.731,
+   "wzmocnienie_dB": 6.4,
+   "uwagi": []
+  },
+  "blocks/break_snow_2.ogg": {
+   "zrodlo": "A_chunk_of_packed_sn_#3-1793644656323.mp3",
+   "sekundy": 0.728,
+   "wzmocnienie_dB": 8.3,
+   "uwagi": [
+    "początek bliżej szczytu (+0.13 s)"
+   ]
+  },
+  "blocks/break_snow_3.ogg": {
+   "zrodlo": "A_chunk_of_packed_sn_#4-1793644657829.mp3",
+   "sekundy": 0.843,
+   "wzmocnienie_dB": 14.9,
+   "uwagi": [
+    "początek bliżej szczytu (+0.01 s)"
+   ]
+  },
+  "blocks/break_stone_1.ogg": {
+   "zrodlo": "A_stone_block_cracki_#1-1793644171871.mp3",
+   "sekundy": 0.455,
+   "wzmocnienie_dB": 14.9,
+   "uwagi": []
+  },
+  "blocks/break_stone_2.ogg": {
+   "zrodlo": "A_stone_block_cracki_#2-1793644173162.mp3",
+   "sekundy": 0.59,
+   "wzmocnienie_dB": 16.5,
+   "uwagi": []
+  },
+  "blocks/break_stone_3.ogg": {
+   "zrodlo": "A_stone_block_cracki_#3-1793644174319.mp3",
+   "sekundy": 0.709,
+   "wzmocnienie_dB": 14.8,
+   "uwagi": [
+    "początek bliżej szczytu (+0.17 s)"
+   ]
+  },
+  "blocks/break_wood_1.ogg": {
+   "zrodlo": "A_wooden_block_break_#1-1793644574003.mp3",
+   "sekundy": 0.85,
+   "wzmocnienie_dB": 8.1,
+   "uwagi": [
+    "skrócony 0.88 -> 0.85 s"
+   ]
+  },
+  "blocks/break_wood_2.ogg": {
+   "zrodlo": "A_wooden_block_break_#1-1793644590382.mp3",
+   "sekundy": 0.465,
+   "wzmocnienie_dB": -0.4,
+   "uwagi": [
+    "ogranicznik 2.2 dB"
+   ]
+  },
+  "blocks/break_wood_3.ogg": {
+   "zrodlo": "A_wooden_block_break_#1-1793644605722.mp3",
+   "sekundy": 0.85,
+   "wzmocnienie_dB": -7.7,
+   "uwagi": [
+    "skrócony 0.89 -> 0.85 s"
+   ]
+  },
+  "blocks/harvest_1.ogg": {
+   "zrodlo": "Picking_ripe_berries_#2-1793644711472.mp3",
+   "sekundy": 0.722,
+   "wzmocnienie_dB": 27.8,
+   "uwagi": [
+    "początek bliżej szczytu (+0.14 s)"
+   ]
+  },
+  "blocks/harvest_2.ogg": {
+   "zrodlo": "Picking_ripe_berries_#3-1793644712875.mp3",
+   "sekundy": 0.608,
+   "wzmocnienie_dB": 30.8,
+   "uwagi": [
+    "początek bliżej szczytu (+0.26 s)"
+   ]
+  },
+  "blocks/harvest_3.ogg": {
+   "zrodlo": "Picking_ripe_berries_#4-1793644714574.mp3",
+   "sekundy": 0.565,
+   "wzmocnienie_dB": 28.2,
+   "uwagi": [
+    "początek bliżej szczytu (+0.29 s)"
+   ]
+  },
+  "blocks/place_dirt_1.ogg": {
+   "zrodlo": "Dropping_a_block_of__#1-1793643314322.mp3",
+   "sekundy": 0.6,
+   "wzmocnienie_dB": 7.4,
+   "uwagi": [
+    "skrócony 0.61 -> 0.60 s"
+   ]
+  },
+  "blocks/place_dirt_2.ogg": {
+   "zrodlo": "Dropping_a_block_of__#3-1793643320930.mp3",
+   "sekundy": 0.54,
+   "wzmocnienie_dB": 5.5,
+   "uwagi": []
+  },
+  "blocks/place_dirt_3.ogg": {
+   "zrodlo": "Dropping_a_block_of__#4-1793643320931.mp3",
+   "sekundy": 0.553,
+   "wzmocnienie_dB": 18.2,
+   "uwagi": []
+  },
+  "blocks/place_glass_1.ogg": {
+   "zrodlo": "Setting_a_glass_bloc_#2-1793643765168.mp3",
+   "sekundy": 0.6,
+   "wzmocnienie_dB": 17.6,
+   "uwagi": [
+    "skrócony 0.61 -> 0.60 s"
+   ]
+  },
+  "blocks/place_glass_2.ogg": {
+   "zrodlo": "Setting_a_glass_bloc_#3-1793643726966.mp3",
+   "sekundy": 0.6,
+   "wzmocnienie_dB": 13.5,
+   "uwagi": [
+    "skrócony 0.61 -> 0.60 s"
+   ]
+  },
+  "blocks/place_glass_3.ogg": {
+   "zrodlo": "Setting_a_glass_bloc_#4-1793643748144.mp3",
+   "sekundy": 0.6,
+   "wzmocnienie_dB": 6.9,
+   "uwagi": [
+    "skrócony 0.61 -> 0.60 s"
+   ]
+  },
+  "blocks/place_grass_1.ogg": {
+   "zrodlo": "Placing_a_chunk_of_g_#2-1793643162921.mp3",
+   "sekundy": 0.496,
+   "wzmocnienie_dB": 5.0,
+   "uwagi": []
+  },
+  "blocks/place_grass_2.ogg": {
+   "zrodlo": "Placing_a_chunk_of_g_#3-1793643161876.mp3",
+   "sekundy": 0.55,
+   "wzmocnienie_dB": 3.0,
+   "uwagi": []
+  },
+  "blocks/place_grass_3.ogg": {
+   "zrodlo": "Placing_a_chunk_of_g_#4-1793643160710.mp3",
+   "sekundy": 0.442,
+   "wzmocnienie_dB": 0.6,
+   "uwagi": []
+  },
+  "blocks/place_gravel_1.ogg": {
+   "zrodlo": "Dropping_a_handful_o_#2-1793643525130.mp3",
+   "sekundy": 0.6,
+   "wzmocnienie_dB": 17.6,
+   "uwagi": [
+    "skrócony 0.61 -> 0.60 s"
+   ]
+  },
+  "blocks/place_gravel_2.ogg": {
+   "zrodlo": "Dropping_a_handful_o_#3-1793643525130.mp3",
+   "sekundy": 0.6,
+   "wzmocnienie_dB": 11.3,
+   "uwagi": [
+    "skrócony 0.61 -> 0.60 s",
+    "ogranicznik 2.2 dB"
+   ]
+  },
+  "blocks/place_gravel_3.ogg": {
+   "zrodlo": "Dropping_a_handful_o_#4-1793643525130.mp3",
+   "sekundy": 0.582,
+   "wzmocnienie_dB": 8.2,
+   "uwagi": [
+    "początek bliżej szczytu (+0.02 s)"
+   ]
+  },
+  "blocks/place_mud_1.ogg": {
+   "zrodlo": "Slapping_a_lump_of_w_#2-1793643597391.mp3",
+   "sekundy": 0.478,
+   "wzmocnienie_dB": 7.2,
+   "uwagi": []
+  },
+  "blocks/place_mud_2.ogg": {
+   "zrodlo": "Slapping_a_lump_of_w_#2-1793643615437.mp3",
+   "sekundy": 0.562,
+   "wzmocnienie_dB": 7.9,
+   "uwagi": []
+  },
+  "blocks/place_mud_3.ogg": {
+   "zrodlo": "Slapping_a_lump_of_w_#4-1793643595430.mp3",
+   "sekundy": 0.312,
+   "wzmocnienie_dB": 8.1,
+   "uwagi": []
+  },
+  "blocks/place_plant_1.ogg": {
+   "zrodlo": "Pressing_a_small_pla_#2-1793643653463.mp3",
+   "sekundy": 0.553,
+   "wzmocnienie_dB": 22.8,
+   "uwagi": [
+    "początek bliżej szczytu (+0.00 s)"
+   ]
+  },
+  "blocks/place_plant_2.ogg": {
+   "zrodlo": "Pressing_a_small_pla_#3-1793643654977.mp3",
+   "sekundy": 0.439,
+   "wzmocnienie_dB": 11.2,
+   "uwagi": []
+  },
+  "blocks/place_plant_3.ogg": {
+   "zrodlo": "Pressing_a_small_pla_#4-1793643656343.mp3",
+   "sekundy": 0.402,
+   "wzmocnienie_dB": 15.1,
+   "uwagi": []
+  },
+  "blocks/place_sand_1.ogg": {
+   "zrodlo": "Patting_down_a_pile__#2-1793643428589.mp3",
+   "sekundy": 0.527,
+   "wzmocnienie_dB": 28.8,
+   "uwagi": [
+    "początek bliżej szczytu (+0.02 s)"
+   ]
+  },
+  "blocks/place_sand_2.ogg": {
+   "zrodlo": "Patting_down_a_pile__#2-1793643451762.mp3",
+   "sekundy": 0.6,
+   "wzmocnienie_dB": 20.6,
+   "uwagi": [
+    "skrócony 0.61 -> 0.60 s"
+   ]
+  },
+  "blocks/place_sand_3.ogg": {
+   "zrodlo": "Patting_down_a_pile__#3-1793643429939.mp3",
+   "sekundy": 0.496,
+   "wzmocnienie_dB": 27.1,
+   "uwagi": [
+    "początek bliżej szczytu (+0.08 s)"
+   ]
+  },
+  "blocks/place_snow_1.ogg": {
+   "zrodlo": "Packing_a_block_of_s_#2-1793643928154.mp3",
+   "sekundy": 0.492,
+   "wzmocnienie_dB": 3.8,
+   "uwagi": []
+  },
+  "blocks/place_snow_2.ogg": {
+   "zrodlo": "Packing_a_block_of_s_#3-1793643927065.mp3",
+   "sekundy": 0.6,
+   "wzmocnienie_dB": 7.1,
+   "uwagi": [
+    "skrócony 0.61 -> 0.60 s"
+   ]
+  },
+  "blocks/place_snow_3.ogg": {
+   "zrodlo": "Packing_a_block_of_s_#4-1793643925786.mp3",
+   "sekundy": 0.479,
+   "wzmocnienie_dB": 4.5,
+   "uwagi": []
+  },
+  "blocks/place_stone_1.ogg": {
+   "zrodlo": "Setting_a_heavy_ston_#1-1793643363882.mp3",
+   "sekundy": 0.6,
+   "wzmocnienie_dB": 8.2,
+   "uwagi": [
+    "skrócony 0.61 -> 0.60 s"
+   ]
+  },
+  "blocks/place_stone_2.ogg": {
+   "zrodlo": "Setting_a_heavy_ston_#2-1793643364959.mp3",
+   "sekundy": 0.6,
+   "wzmocnienie_dB": 5.4,
+   "uwagi": [
+    "skrócony 0.61 -> 0.60 s"
+   ]
+  },
+  "blocks/place_stone_3.ogg": {
+   "zrodlo": "Setting_a_heavy_ston_#4-1793643369949.mp3",
+   "sekundy": 0.472,
+   "wzmocnienie_dB": 2.3,
+   "uwagi": []
+  },
+  "blocks/place_wood_1.ogg": {
+   "zrodlo": "Placing_a_wooden_blo_#1-1793643821073.mp3",
+   "sekundy": 0.429,
+   "wzmocnienie_dB": 6.4,
+   "uwagi": []
+  },
+  "blocks/place_wood_2.ogg": {
+   "zrodlo": "Placing_a_wooden_blo_#2-1793643820133.mp3",
+   "sekundy": 0.339,
+   "wzmocnienie_dB": -0.1,
+   "uwagi": []
+  },
+  "blocks/place_wood_3.ogg": {
+   "zrodlo": "Placing_a_wooden_blo_#3-1793643819181.mp3",
+   "sekundy": 0.479,
+   "wzmocnienie_dB": 1.1,
+   "uwagi": []
+  },
+  "blocks/step_dirt_1.ogg": {
+   "zrodlo": "A_single_footstep_on_#1-1793641593703.mp3",
+   "sekundy": 0.333,
+   "wzmocnienie_dB": 3.2,
+   "uwagi": []
+  },
+  "blocks/step_dirt_2.ogg": {
+   "zrodlo": "A_single_footstep_on_#1-1793641613713.mp3",
+   "sekundy": 0.325,
+   "wzmocnienie_dB": 6.7,
+   "uwagi": []
+  },
+  "blocks/step_dirt_3.ogg": {
+   "zrodlo": "A_single_footstep_on_#2-1793641593704.mp3",
+   "sekundy": 0.334,
+   "wzmocnienie_dB": 10.0,
+   "uwagi": []
+  },
+  "blocks/step_dirt_4.ogg": {
+   "zrodlo": "A_single_footstep_on_#2-1793641610773.mp3",
+   "sekundy": 0.332,
+   "wzmocnienie_dB": 7.3,
+   "uwagi": []
+  },
+  "blocks/step_dirt_5.ogg": {
+   "zrodlo": "A_single_footstep_on_#3-1793641593705.mp3",
+   "sekundy": 0.326,
+   "wzmocnienie_dB": 12.0,
+   "uwagi": []
+  },
+  "blocks/step_dirt_6.ogg": {
+   "zrodlo": "A_single_footstep_on_#4-1793641593705.mp3",
+   "sekundy": 0.344,
+   "wzmocnienie_dB": 4.1,
+   "uwagi": []
+  },
+  "blocks/step_glass_1.ogg": {
+   "zrodlo": "A_single_footstep_on_#1-1793642857689.mp3",
+   "sekundy": 0.325,
+   "wzmocnienie_dB": 1.1,
+   "uwagi": [
+    "ogranicznik 0.4 dB"
+   ]
+  },
+  "blocks/step_glass_2.ogg": {
+   "zrodlo": "A_single_footstep_on_#2-1793642857690.mp3",
+   "sekundy": 0.34,
+   "wzmocnienie_dB": 3.6,
+   "uwagi": []
+  },
+  "blocks/step_glass_3.ogg": {
+   "zrodlo": "A_single_footstep_on_#2-1793642894303.mp3",
+   "sekundy": 0.373,
+   "wzmocnienie_dB": 2.2,
+   "uwagi": []
+  },
+  "blocks/step_glass_4.ogg": {
+   "zrodlo": "A_single_footstep_on_#3-1793642850376.mp3",
+   "sekundy": 0.339,
+   "wzmocnienie_dB": 3.2,
+   "uwagi": []
+  },
+  "blocks/step_glass_5.ogg": {
+   "zrodlo": "A_single_footstep_on_#3-1793642893241.mp3",
+   "sekundy": 0.315,
+   "wzmocnienie_dB": -0.3,
+   "uwagi": []
+  },
+  "blocks/step_glass_6.ogg": {
+   "zrodlo": "A_single_footstep_on_#4-1793642849165.mp3",
+   "sekundy": 0.325,
+   "wzmocnienie_dB": 4.0,
+   "uwagi": [
+    "ogranicznik 1.0 dB"
+   ]
+  },
+  "blocks/step_grass_1.ogg": {
+   "zrodlo": "A_single_soft_footst_#1-1793641452920.mp3",
+   "sekundy": 0.38,
+   "wzmocnienie_dB": 15.4,
+   "uwagi": [
+    "początek bliżej szczytu (+0.05 s)"
+   ]
+  },
+  "blocks/step_grass_2.ogg": {
+   "zrodlo": "A_single_soft_footst_#2-1793641452922.mp3",
+   "sekundy": 0.342,
+   "wzmocnienie_dB": 2.9,
+   "uwagi": []
+  },
+  "blocks/step_grass_3.ogg": {
+   "zrodlo": "A_single_soft_footst_#3-1793641479420.mp3",
+   "sekundy": 0.34,
+   "wzmocnienie_dB": 7.7,
+   "uwagi": []
+  },
+  "blocks/step_grass_4.ogg": {
+   "zrodlo": "A_single_soft_footst_#3-1793641507792.mp3",
+   "sekundy": 0.335,
+   "wzmocnienie_dB": 2.6,
+   "uwagi": []
+  },
+  "blocks/step_grass_5.ogg": {
+   "zrodlo": "A_single_soft_footst_#4-1793641479421.mp3",
+   "sekundy": 0.335,
+   "wzmocnienie_dB": 9.6,
+   "uwagi": []
+  },
+  "blocks/step_grass_6.ogg": {
+   "zrodlo": "A_single_soft_footst_#4-1793641509271.mp3",
+   "sekundy": 0.37,
+   "wzmocnienie_dB": 16.4,
+   "uwagi": []
+  },
+  "blocks/step_gravel_1.ogg": {
+   "zrodlo": "A_single_footstep_on_#1-1793642552938.mp3",
+   "sekundy": 0.342,
+   "wzmocnienie_dB": 0.1,
+   "uwagi": []
+  },
+  "blocks/step_gravel_2.ogg": {
+   "zrodlo": "A_single_footstep_on_#1-1793642578257.mp3",
+   "sekundy": 0.335,
+   "wzmocnienie_dB": -0.8,
+   "uwagi": []
+  },
+  "blocks/step_gravel_3.ogg": {
+   "zrodlo": "A_single_footstep_on_#2-1793642548405.mp3",
+   "sekundy": 0.344,
+   "wzmocnienie_dB": -0.0,
+   "uwagi": []
+  },
+  "blocks/step_gravel_4.ogg": {
+   "zrodlo": "A_single_footstep_on_#3-1793642548958.mp3",
+   "sekundy": 0.344,
+   "wzmocnienie_dB": -5.2,
+   "uwagi": []
+  },
+  "blocks/step_gravel_5.ogg": {
+   "zrodlo": "A_single_footstep_on_#3-1793642574345.mp3",
+   "sekundy": 0.38,
+   "wzmocnienie_dB": 4.4,
+   "uwagi": [
+    "początek bliżej szczytu (+0.01 s)"
+   ]
+  },
+  "blocks/step_gravel_6.ogg": {
+   "zrodlo": "A_single_footstep_on_#4-1793642550331.mp3",
+   "sekundy": 0.315,
+   "wzmocnienie_dB": -4.8,
+   "uwagi": []
+  },
+  "blocks/step_mud_1.ogg": {
+   "zrodlo": "A_single_footstep_in_#1-1793642647581.mp3",
+   "sekundy": 0.344,
+   "wzmocnienie_dB": 3.3,
+   "uwagi": []
+  },
+  "blocks/step_mud_2.ogg": {
+   "zrodlo": "A_single_footstep_in_#1-1793642664313.mp3",
+   "sekundy": 0.353,
+   "wzmocnienie_dB": 3.2,
+   "uwagi": []
+  },
+  "blocks/step_mud_3.ogg": {
+   "zrodlo": "A_single_footstep_in_#2-1793642646653.mp3",
+   "sekundy": 0.38,
+   "wzmocnienie_dB": 0.3,
+   "uwagi": [
+    "początek bliżej szczytu (+0.04 s)"
+   ]
+  },
+  "blocks/step_mud_4.ogg": {
+   "zrodlo": "A_single_footstep_in_#2-1793642663268.mp3",
+   "sekundy": 0.34,
+   "wzmocnienie_dB": 1.0,
+   "uwagi": []
+  },
+  "blocks/step_mud_5.ogg": {
+   "zrodlo": "A_single_footstep_in_#3-1793642645542.mp3",
+   "sekundy": 0.335,
+   "wzmocnienie_dB": 4.6,
+   "uwagi": []
+  },
+  "blocks/step_mud_6.ogg": {
+   "zrodlo": "A_single_footstep_in_#3-1793642662043.mp3",
+   "sekundy": 0.38,
+   "wzmocnienie_dB": 0.2,
+   "uwagi": [
+    "początek bliżej szczytu (+0.04 s)"
+   ]
+  },
+  "blocks/step_plant_1.ogg": {
+   "zrodlo": "Walking_through_tall_#1-1793642766114.mp3",
+   "sekundy": 0.38,
+   "wzmocnienie_dB": 14.7,
+   "uwagi": [
+    "początek bliżej szczytu (+0.07 s)"
+   ]
+  },
+  "blocks/step_plant_2.ogg": {
+   "zrodlo": "Walking_through_tall_#1-1793642782066.mp3",
+   "sekundy": 0.38,
+   "wzmocnienie_dB": 17.4,
+   "uwagi": [
+    "początek bliżej szczytu (+0.09 s)"
+   ]
+  },
+  "blocks/step_plant_3.ogg": {
+   "zrodlo": "Walking_through_tall_#2-1793642766115.mp3",
+   "sekundy": 0.375,
+   "wzmocnienie_dB": 20.6,
+   "uwagi": [
+    "początek bliżej szczytu (+0.21 s)"
+   ]
+  },
+  "blocks/step_plant_4.ogg": {
+   "zrodlo": "Walking_through_tall_#3-1793642784854.mp3",
+   "sekundy": 0.369,
+   "wzmocnienie_dB": 13.1,
+   "uwagi": [
+    "początek bliżej szczytu (+0.20 s)"
+   ]
+  },
+  "blocks/step_plant_5.ogg": {
+   "zrodlo": "Walking_through_tall_#4-1793642763315.mp3",
+   "sekundy": 0.38,
+   "wzmocnienie_dB": 15.4,
+   "uwagi": [
+    "początek bliżej szczytu (+0.05 s)"
+   ]
+  },
+  "blocks/step_plant_6.ogg": {
+   "zrodlo": "Walking_through_tall_#4-1793642786194.mp3",
+   "sekundy": 0.38,
+   "wzmocnienie_dB": 24.0,
+   "uwagi": [
+    "początek bliżej szczytu (+0.07 s)"
+   ]
+  },
+  "blocks/step_sand_1.ogg": {
+   "zrodlo": "A_single_footstep_si_#1-1793642474358.mp3",
+   "sekundy": 0.364,
+   "wzmocnienie_dB": 12.9,
+   "uwagi": []
+  },
+  "blocks/step_sand_2.ogg": {
+   "zrodlo": "A_single_footstep_si_#2-1793642472938.mp3",
+   "sekundy": 0.38,
+   "wzmocnienie_dB": 14.9,
+   "uwagi": [
+    "początek bliżej szczytu (+0.08 s)"
+   ]
+  },
+  "blocks/step_sand_3.ogg": {
+   "zrodlo": "A_single_footstep_si_#2-1793642496788.mp3",
+   "sekundy": 0.336,
+   "wzmocnienie_dB": 6.8,
+   "uwagi": []
+  },
+  "blocks/step_sand_4.ogg": {
+   "zrodlo": "A_single_footstep_si_#3-1793642471487.mp3",
+   "sekundy": 0.38,
+   "wzmocnienie_dB": 10.0,
+   "uwagi": [
+    "początek bliżej szczytu (+0.09 s)"
+   ]
+  },
+  "blocks/step_sand_5.ogg": {
+   "zrodlo": "A_single_footstep_si_#3-1793642493644.mp3",
+   "sekundy": 0.37,
+   "wzmocnienie_dB": 2.9,
+   "uwagi": []
+  },
+  "blocks/step_sand_6.ogg": {
+   "zrodlo": "A_single_footstep_si_#4-1793642469827.mp3",
+   "sekundy": 0.352,
+   "wzmocnienie_dB": 17.9,
+   "uwagi": [
+    "początek bliżej szczytu (+0.18 s)"
+   ]
+  },
+  "blocks/step_snow_1.ogg": {
+   "zrodlo": "A_single_footstep_in_#1-1793643053012.mp3",
+   "sekundy": 0.38,
+   "wzmocnienie_dB": -1.5,
+   "uwagi": [
+    "początek bliżej szczytu (+0.18 s)"
+   ]
+  },
+  "blocks/step_snow_2.ogg": {
+   "zrodlo": "A_single_footstep_in_#1-1793643067415.mp3",
+   "sekundy": 0.198,
+   "wzmocnienie_dB": 10.0,
+   "uwagi": [
+    "początek bliżej szczytu (+0.27 s)"
+   ]
+  },
+  "blocks/step_snow_3.ogg": {
+   "zrodlo": "A_single_footstep_in_#2-1793643037403.mp3",
+   "sekundy": 0.375,
+   "wzmocnienie_dB": 2.9,
+   "uwagi": [
+    "początek bliżej szczytu (+0.11 s)"
+   ]
+  },
+  "blocks/step_snow_4.ogg": {
+   "zrodlo": "A_single_footstep_in_#3-1793643049794.mp3",
+   "sekundy": 0.247,
+   "wzmocnienie_dB": 5.7,
+   "uwagi": [
+    "początek bliżej szczytu (+0.11 s)",
+    "drugi krok po 0.25 s - ucięty"
+   ]
+  },
+  "blocks/step_snow_5.ogg": {
+   "zrodlo": "A_single_footstep_in_#4-1793643048448.mp3",
+   "sekundy": 0.272,
+   "wzmocnienie_dB": 8.0,
+   "uwagi": [
+    "początek bliżej szczytu (+0.25 s)"
+   ]
+  },
+  "blocks/step_snow_6.ogg": {
+   "zrodlo": "A_single_footstep_in_#4-1793643071574.mp3",
+   "sekundy": 0.241,
+   "wzmocnienie_dB": 9.6,
+   "uwagi": [
+    "początek bliżej szczytu (+0.30 s)"
+   ]
+  },
+  "blocks/step_stone_1.ogg": {
+   "zrodlo": "A_single_footstep_wi_#1-1793642372805.mp3",
+   "sekundy": 0.281,
+   "wzmocnienie_dB": -2.1,
+   "uwagi": []
+  },
+  "blocks/step_stone_2.ogg": {
+   "zrodlo": "A_single_footstep_wi_#2-1793642373905.mp3",
+   "sekundy": 0.323,
+   "wzmocnienie_dB": 1.2,
+   "uwagi": []
+  },
+  "blocks/step_stone_3.ogg": {
+   "zrodlo": "A_single_footstep_wi_#3-1793642374875.mp3",
+   "sekundy": 0.325,
+   "wzmocnienie_dB": 0.3,
+   "uwagi": []
+  },
+  "blocks/step_stone_4.ogg": {
+   "zrodlo": "A_single_footstep_wi_#3-1793642403471.mp3",
+   "sekundy": 0.322,
+   "wzmocnienie_dB": 0.3,
+   "uwagi": []
+  },
+  "blocks/step_stone_5.ogg": {
+   "zrodlo": "A_single_footstep_wi_#4-1793642375875.mp3",
+   "sekundy": 0.306,
+   "wzmocnienie_dB": -0.4,
+   "uwagi": []
+  },
+  "blocks/step_stone_6.ogg": {
+   "zrodlo": "A_single_footstep_wi_#4-1793642404921.mp3",
+   "sekundy": 0.324,
+   "wzmocnienie_dB": -1.8,
+   "uwagi": []
+  },
+  "blocks/step_wood_1.ogg": {
+   "zrodlo": "A_single_footstep_on_#1-1793642963150.mp3",
+   "sekundy": 0.327,
+   "wzmocnienie_dB": 2.5,
+   "uwagi": []
+  },
+  "blocks/step_wood_2.ogg": {
+   "zrodlo": "A_single_footstep_on_#2-1793642964601.mp3",
+   "sekundy": 0.325,
+   "wzmocnienie_dB": 6.5,
+   "uwagi": []
+  },
+  "blocks/step_wood_3.ogg": {
+   "zrodlo": "A_single_footstep_on_#3-1793642965905.mp3",
+   "sekundy": 0.316,
+   "wzmocnienie_dB": 1.3,
+   "uwagi": []
+  },
+  "blocks/step_wood_4.ogg": {
+   "zrodlo": "A_single_footstep_on_#3-1793642985990.mp3",
+   "sekundy": 0.326,
+   "wzmocnienie_dB": 2.6,
+   "uwagi": []
+  },
+  "blocks/step_wood_5.ogg": {
+   "zrodlo": "A_single_footstep_on_#4-1793642967128.mp3",
+   "sekundy": 0.324,
+   "wzmocnienie_dB": 10.8,
+   "uwagi": []
+  },
+  "blocks/step_wood_6.ogg": {
+   "zrodlo": "A_single_footstep_on_#4-1793642987261.mp3",
+   "sekundy": 0.315,
+   "wzmocnienie_dB": -2.8,
+   "uwagi": []
+  },
+  "meteor/fire_crackle.ogg": {
+   "zrodlo": "Crackling_glowing_em_#3-1793646542143.mp3",
+   "sekundy": 13.5,
+   "wzmocnienie_dB": 18.7,
+   "uwagi": [
+    "szczyt - ciszej o 1.5 dB niż cel",
+    "ogranicznik 6.0 dB"
+   ]
+  },
+  "meteor/meteor_debris.ogg": {
+   "zrodlo": "Rocks_and_dirt_raini_#3-1793646467335.mp3",
+   "sekundy": 3.08,
+   "wzmocnienie_dB": 4.6,
+   "uwagi": [
+    "ogranicznik 1.4 dB"
+   ]
+  },
+  "meteor/meteor_flight.ogg": {
+   "zrodlo": "A_roaring_fireball_s_#3-1793646352827.mp3",
+   "sekundy": 8.5,
+   "wzmocnienie_dB": -7.3,
+   "uwagi": [
+    "wyrównane wahania głośności (60%)"
+   ]
+  },
+  "meteor/meteor_impact.ogg": {
+   "zrodlo": "Massive_meteor_impac_#2-1793646408937.mp3",
+   "sekundy": 4.655,
+   "wzmocnienie_dB": -0.2,
+   "uwagi": [
+    "ogranicznik 0.8 dB"
+   ]
+  },
+  "space/skyfall_ignite.ogg": {
+   "zrodlo": "Sudden_whoosh_as_a_f_#2-1793646820180.mp3",
+   "sekundy": 1.504,
+   "wzmocnienie_dB": 5.6,
+   "uwagi": [
+    "ogranicznik 2.0 dB"
+   ]
+  },
+  "space/skyfall_wind.ogg": {
+   "zrodlo": "Strong_rushing_wind__#2-1793646763128.mp3",
+   "sekundy": 8.5,
+   "wzmocnienie_dB": -9.5,
+   "uwagi": []
+  },
+  "space/space_ambient.ogg": {
+   "zrodlo": "Deep_space_ambience,_#4-1793646682719.mp3",
+   "sekundy": 18.7,
+   "wzmocnienie_dB": 17.6,
+   "uwagi": [
+    "wyrównane wahania głośności (50%)"
+   ]
+  },
+  "ui/achievement_common.ogg": {
+   "zrodlo": "Short_cheerful_two-n_#2-1793646052830.mp3",
+   "sekundy": 1.135,
+   "wzmocnienie_dB": -7.7,
+   "uwagi": []
+  },
+  "ui/achievement_epic.ogg": {
+   "zrodlo": "Short_triumphant_fan_#1-1793646173746.mp3",
+   "sekundy": 1.805,
+   "wzmocnienie_dB": -7.2,
+   "uwagi": []
+  },
+  "ui/achievement_legendary.ogg": {
+   "zrodlo": "Majestic_short_orche_#3-1793646233549.mp3",
+   "sekundy": 4.345,
+   "wzmocnienie_dB": -2.0,
+   "uwagi": []
+  },
+  "ui/achievement_rare.ogg": {
+   "zrodlo": "Bright_three-note_as_#3-1793646095486.wav",
+   "sekundy": 1.303,
+   "wzmocnienie_dB": -2.1,
+   "uwagi": []
+  },
+  "ui/item_craft.ogg": {
+   "zrodlo": "Crafting_finished_at_#2-1793645927553.mp3",
+   "sekundy": 0.564,
+   "wzmocnienie_dB": -1.8,
+   "uwagi": []
+  },
+  "ui/item_pick.ogg": {
+   "zrodlo": "Picking_up_a_small_o_#2-1793645788439.mp3",
+   "sekundy": 0.35,
+   "wzmocnienie_dB": 10.2,
+   "uwagi": [
+    "początek bliżej szczytu (+0.07 s)",
+    "skrócony 0.42 -> 0.35 s"
+   ]
+  },
+  "ui/item_place.ogg": {
+   "zrodlo": "Setting_a_small_obje_#4-1793645838203.mp3",
+   "sekundy": 0.281,
+   "wzmocnienie_dB": 26.2,
+   "uwagi": [
+    "początek bliżej szczytu (+0.25 s)"
+   ]
+  },
+  "ui/item_trash.ogg": {
+   "zrodlo": "Tossing_an_item_into_#4-1793645886883.mp3",
+   "sekundy": 0.504,
+   "wzmocnienie_dB": 22.2,
+   "uwagi": [
+    "początek bliżej szczytu (+0.08 s)"
+   ]
+  },
+  "ui/ui_click.ogg": {
+   "zrodlo": "Soft_wooden_button_c_#2-1793645546592.mp3",
+   "sekundy": 0.288,
+   "wzmocnienie_dB": 0.5,
+   "uwagi": []
+  },
+  "ui/ui_close.ogg": {
+   "zrodlo": "Closing_a_leather_sa_#4-1793645710282.mp3",
+   "sekundy": 0.315,
+   "wzmocnienie_dB": 29.2,
+   "uwagi": [
+    "początek bliżej szczytu (+0.25 s)"
+   ]
+  },
+  "ui/ui_error.ogg": {
+   "zrodlo": "Soft_low_muted_error_#1-1793645989120.mp3",
+   "sekundy": 0.563,
+   "wzmocnienie_dB": -1.1,
+   "uwagi": []
+  },
+  "ui/ui_open.ogg": {
+   "zrodlo": "Opening_a_leather_sa_#3-1793645673512.mp3",
+   "sekundy": 0.482,
+   "wzmocnienie_dB": 25.8,
+   "uwagi": [
+    "początek bliżej szczytu (+0.12 s)"
+   ]
+  },
+  "ui/ui_slider.ogg": {
+   "zrodlo": "Tiny_soft_tick_of_a__#4-1793645605759.mp3",
+   "sekundy": 0.179,
+   "wzmocnienie_dB": -1.8,
+   "uwagi": [
+    "początek bliżej szczytu (+0.03 s)"
+   ]
+  },
+  "water/water_exit_1.ogg": {
+   "zrodlo": "Climbing_out_of_a_la_#1-1793645076786.mp3",
+   "sekundy": 1.48,
+   "wzmocnienie_dB": 11.6,
+   "uwagi": []
+  },
+  "water/water_exit_2.ogg": {
+   "zrodlo": "Climbing_out_of_a_la_#3-1793645082754.mp3",
+   "sekundy": 1.39,
+   "wzmocnienie_dB": 12.1,
+   "uwagi": []
+  },
+  "water/water_splash_1.ogg": {
+   "zrodlo": "Jumping_into_a_calm__#1-1793644788276.mp3",
+   "sekundy": 1.48,
+   "wzmocnienie_dB": 18.9,
+   "uwagi": [
+    "ogranicznik 0.2 dB"
+   ]
+  },
+  "water/water_splash_2.ogg": {
+   "zrodlo": "Jumping_into_a_calm__#2-1793644790268.mp3",
+   "sekundy": 1.48,
+   "wzmocnienie_dB": 17.9,
+   "uwagi": []
+  },
+  "water/water_splash_3.ogg": {
+   "zrodlo": "Jumping_into_a_calm__#3-1793644792107.mp3",
+   "sekundy": 1.48,
+   "wzmocnienie_dB": 9.8,
+   "uwagi": []
+  },
+  "water/water_stream.ogg": {
+   "zrodlo": "Small_forest_brook_b_#3-1793645314564.mp3",
+   "sekundy": 18.58,
+   "wzmocnienie_dB": 26.7,
+   "uwagi": []
+  },
+  "water/water_swim_1.ogg": {
+   "zrodlo": "One_swimming_stroke,_#1-1793644860536.mp3",
+   "sekundy": 1.0,
+   "wzmocnienie_dB": 9.4,
+   "uwagi": []
+  },
+  "water/water_swim_2.ogg": {
+   "zrodlo": "One_swimming_stroke,_#2-1793644859005.mp3",
+   "sekundy": 1.0,
+   "wzmocnienie_dB": 6.7,
+   "uwagi": []
+  },
+  "water/water_swim_3.ogg": {
+   "zrodlo": "One_swimming_stroke,_#3-1793644857715.mp3",
+   "sekundy": 1.0,
+   "wzmocnienie_dB": 6.0,
+   "uwagi": []
+  },
+  "water/water_swim_4.ogg": {
+   "zrodlo": "One_swimming_stroke,_#4-1793644880227.mp3",
+   "sekundy": 1.0,
+   "wzmocnienie_dB": 2.3,
+   "uwagi": []
+  },
+  "water/water_underwater.ogg": {
+   "zrodlo": "Underwater_ambience__#4-1793645182462.mp3",
+   "sekundy": 13.5,
+   "wzmocnienie_dB": 7.4,
+   "uwagi": [
+    "wyrównane wahania głośności (60%)"
+   ]
+  },
+  "water/water_wade_1.ogg": {
+   "zrodlo": "A_single_step_wading_#1-1793644949033.mp3",
+   "sekundy": 0.329,
+   "wzmocnienie_dB": 12.0,
+   "uwagi": []
+  },
+  "water/water_wade_2.ogg": {
+   "zrodlo": "A_single_step_wading_#2-1793644944863.mp3",
+   "sekundy": 0.339,
+   "wzmocnienie_dB": 3.3,
+   "uwagi": []
+  },
+  "water/water_wade_3.ogg": {
+   "zrodlo": "A_single_step_wading_#3-1793644946284.mp3",
+   "sekundy": 0.367,
+   "wzmocnienie_dB": 0.4,
+   "uwagi": []
+  },
+  "water/water_wade_4.ogg": {
+   "zrodlo": "A_single_step_wading_#4-1793644947584.mp3",
+   "sekundy": 0.38,
+   "wzmocnienie_dB": 6.4,
+   "uwagi": [
+    "początek bliżej szczytu (+0.07 s)"
+   ]
+  },
+  "water/water_waves.ogg": {
+   "zrodlo": "Gentle_lake_waves_la_#3-1793645426420.mp3",
+   "sekundy": 18.58,
+   "wzmocnienie_dB": 20.0,
+   "uwagi": [
+    "ogranicznik 3.9 dB"
+   ]
+  }
+ }
+}

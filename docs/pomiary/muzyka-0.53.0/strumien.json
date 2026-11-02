@@ -1,0 +1,223 @@
+[
+  {
+    "electron": "44.4.5",
+    "fileSize": 4337799,
+    "registerSource": "undefined"
+  },
+  {
+    "url": "bundle/assets/music/swiat-czeka.mp3",
+    "range": null,
+    "status": 200,
+    "headers": [
+      [
+        "content-type",
+        "audio/mpeg"
+      ],
+      [
+        "last-modified",
+        "Mon, 02 Nov 2026 16:57:00 GMT"
+      ]
+    ],
+    "bytes": 4337799
+  },
+  {
+    "url": "bundle/assets/music/swiat-czeka.mp3",
+    "range": "bytes=0-",
+    "status": 200,
+    "headers": [
+      [
+        "content-type",
+        "audio/mpeg"
+      ],
+      [
+        "last-modified",
+        "Mon, 02 Nov 2026 16:57:00 GMT"
+      ]
+    ],
+    "bytes": 4337799
+  },
+  {
+    "url": "bundle/assets/music/swiat-czeka.mp3",
+    "range": "bytes=0-1023",
+    "status": 200,
+    "headers": [
+      [
+        "content-type",
+        "audio/mpeg"
+      ],
+      [
+        "last-modified",
+        "Mon, 02 Nov 2026 16:57:00 GMT"
+      ]
+    ],
+    "bytes": 1024
+  },
+  {
+    "url": "bundle/assets/music/swiat-czeka.mp3",
+    "range": "bytes=100000-",
+    "status": 200,
+    "headers": [
+      [
+        "content-type",
+        "audio/mpeg"
+      ],
+      [
+        "last-modified",
+        "Mon, 02 Nov 2026 16:57:00 GMT"
+      ]
+    ],
+    "bytes": 4237799
+  },
+  {
+    "url": "bundle/assets/music/swiat-czeka.mp3",
+    "range": "bytes=-1024",
+    "status": 200,
+    "headers": [
+      [
+        "content-type",
+        "audio/mpeg"
+      ],
+      [
+        "last-modified",
+        "Mon, 02 Nov 2026 16:57:00 GMT"
+      ]
+    ],
+    "bytes": 1024
+  },
+  {
+    "url": "probe://music/swiat-czeka.mp3",
+    "range": null,
+    "status": 200,
+    "headers": [
+      [
+        "accept-ranges",
+        "bytes"
+      ],
+      [
+        "content-length",
+        "4337799"
+      ],
+      [
+        "content-type",
+        "audio/mpeg"
+      ],
+      [
+        "last-modified",
+        "Mon, 02 Nov 2026 16:57:00 GMT"
+      ]
+    ],
+    "bytes": 4337799
+  },
+  {
+    "url": "probe://music/swiat-czeka.mp3",
+    "range": "bytes=0-",
+    "status": 206,
+    "headers": [
+      [
+        "accept-ranges",
+        "bytes"
+      ],
+      [
+        "content-length",
+        "4337799"
+      ],
+      [
+        "content-range",
+        "bytes 0-4337798/4337799"
+      ],
+      [
+        "content-type",
+        "audio/mpeg"
+      ],
+      [
+        "last-modified",
+        "Mon, 02 Nov 2026 16:57:00 GMT"
+      ]
+    ],
+    "bytes": 4337799
+  },
+  {
+    "url": "probe://music/swiat-czeka.mp3",
+    "range": "bytes=0-1023",
+    "status": 206,
+    "headers": [
+      [
+        "accept-ranges",
+        "bytes"
+      ],
+      [
+        "content-length",
+        "1024"
+      ],
+      [
+        "content-range",
+        "bytes 0-1023/4337799"
+      ],
+      [
+        "content-type",
+        "audio/mpeg"
+      ],
+      [
+        "last-modified",
+        "Mon, 02 Nov 2026 16:57:00 GMT"
+      ]
+    ],
+    "bytes": 1024
+  },
+  {
+    "url": "probe://music/swiat-czeka.mp3",
+    "range": "bytes=100000-",
+    "status": 206,
+    "headers": [
+      [
+        "accept-ranges",
+        "bytes"
+      ],
+      [
+        "content-length",
+        "4237799"
+      ],
+      [
+        "content-range",
+        "bytes 100000-4337798/4337799"
+      ],
+      [
+        "content-type",
+        "audio/mpeg"
+      ],
+      [
+        "last-modified",
+        "Mon, 02 Nov 2026 16:57:00 GMT"
+      ]
+    ],
+    "bytes": 4237799
+  },
+  {
+    "url": "probe://music/swiat-czeka.mp3",
+    "range": "bytes=-1024",
+    "status": 206,
+    "headers": [
+      [
+        "accept-ranges",
+        "bytes"
+      ],
+      [
+        "content-length",
+        "1024"
+      ],
+      [
+        "content-range",
+        "bytes 4336775-4337798/4337799"
+      ],
+      [
+        "content-type",
+        "audio/mpeg"
+      ],
+      [
+        "last-modified",
+        "Mon, 02 Nov 2026 16:57:00 GMT"
+      ]
+    ],
+    "bytes": 1024
+  }
+]

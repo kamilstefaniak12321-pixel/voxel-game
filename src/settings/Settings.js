@@ -69,6 +69,7 @@ export const SETTINGS_DEFAULTS = {
 
     // Dźwięk (procent; na ucho - suwak 50% to mniej więcej "o połowę ciszej")
     volumeMaster: 80,                              // głośność gry
+    volumeMusic: 60,                               // muzyka w menu i podczas gry
     volumeBlocks: 100,                             // kroki, stawianie i niszczenie bloków
     volumeWorld: 100,                              // otoczenie: woda, meteoryty
     volumeUi: 80,                                  // menu i ekwipunek
@@ -102,6 +103,7 @@ export const SETTINGS_RANGES = {
     mouseSensitivity: { min: 10, max: 200, step: 5 },
     hudScale: { min: 50, max: 200, step: 10 },
     volumeMaster: { min: 0, max: 100, step: 5 },
+    volumeMusic: { min: 0, max: 100, step: 5 },
     volumeBlocks: { min: 0, max: 100, step: 5 },
     volumeWorld: { min: 0, max: 100, step: 5 },
     volumeUi: { min: 0, max: 100, step: 5 },
@@ -267,6 +269,8 @@ export class Settings {
     onChange(listener) {
 
         this.listeners.add(listener);
+
+        return () => this.listeners.delete(listener);
 
     }
 

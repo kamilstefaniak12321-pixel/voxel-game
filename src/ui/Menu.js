@@ -113,6 +113,7 @@ const SETTINGS_TABS = {
 
     sound: [
         'volumeMaster',
+        'volumeMusic',
         'volumeBlocks',
         'volumeWorld',
         'volumeUi'

@@ -23,7 +23,7 @@ const { app, BrowserWindow, Menu, ipcMain, net, protocol, shell } = require('ele
 
 const path = require('node:path');
 const fs = require('node:fs');
-const { pathToFileURL } = require('node:url');
+const { serveFile } = require('./serve-file.cjs');
 
 
 // Folder z plikami gry (w zbudowanej aplikacji - wnętrze app.asar).
@@ -111,7 +111,7 @@ function serveGameFiles() {
             return new Response('Brak dostępu', { status: 403 });
         }
 
-        return net.fetch(pathToFileURL(file).toString());
+        return serveFile(request, file, (url, options) => net.fetch(url, options));
 
     });
 

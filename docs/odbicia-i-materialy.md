@@ -44,7 +44,9 @@ odbiornika; własna emisja pozostaje osobna.
 
 Promienie nie przenikają przez zamknięte ściany ani szczeliny na
 przekątnej siatki. Nieznany chunk jest traktowany konserwatywnie jako
-przeszkoda. Edycje bloków unieważniają lokalne próbki oraz widoczność
+przeszkoda. Widoczność źródła jest sprawdzana do 96 bloków; przy niskim
+słońcu niewczytany teren może konserwatywnie wyłączyć jego odbicie.
+Edycje bloków unieważniają lokalne próbki oraz widoczność
 źródeł. Dane odbicia są odtwarzane ze świata po wczytaniu, zamiast
 zapisywania potencjalnie nieaktualnego cache.
 

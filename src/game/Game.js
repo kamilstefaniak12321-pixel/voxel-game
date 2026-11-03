@@ -1760,6 +1760,17 @@ export class Game {
 
         this.player.invertMouse = settings.get('invertMouse');
 
+        // Ustawienia są zmieniane także w pauzie, bez Game.update().
+        // Odśwież tylko źródła i bieżące próbki, bez pracy solvera ani
+        // przesuwania jego cache. Dłoń i ogniska muszą zgasnąć razem z terenem.
+        this.bounce.update(null, null,
+            updateBounceLightingState(this.bounceLighting, settings, this.sky,
+                this.renderer.capabilities.isWebGL2));
+        const position = this.player.pos;
+        const bounce = this.bounce.sample(position.x, position.y + 1.2, position.z);
+        modelLight.uModelBounce.value.set(bounce[0], bounce[1], bounce[2]);
+        this.campfires?.renderer.updateBounce();
+
         // Po starcie: nowy kod shaderów przygotuj przy zmianie ustawień.
         // Nie odraczaj go do napotkania wody i nie zatrzymuj samych renderów
         // przy nadal działającej symulacji. Pierwszy warmup czeka w start().

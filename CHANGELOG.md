@@ -11,6 +11,21 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 0.58.0 - Odbicia otoczenia i światło materiałów
+
+Drugi pakiet planu światła: E05, E06 i dostrojenie materiałów E07 — PR #92.
+
+- Jedno lokalne odbicie światła od kolorów materiałów i biomu. Piasek, ziemia, śnieg czy drewno delikatnie wpływają na otoczenie, a odbite światło nie zasila kolejnych odbić.
+- Osobna energia słońca, księżyca i nieba; ściany blokują transport, a zmiany bloków oraz wczytanie świata odtwarzają aktualne odbicia.
+- Liście przeświecają pod światło zależnie od cienkości, dostępności źródła i położenia w krzewie. Gałęzie, kora, drewno i kamień pozostają matowe; owoce mają niewielki, szeroki refleks.
+- **Obraz → Zaawansowane** udostępnia profil światła materiałów, odbicia otoczenia i przeświecanie liści. Profil podstawowy oraz tryb ziemniaka wyłączają nowe dodatki. Telefon domyślnie korzysta z profilu podstawowego.
+- Wspólne zasady dla rozgrywki, menu i modeli przedmiotów; bez dodatkowych grup rysowania ani map cieni. Obliczenia odbić są porcjowane, a daleki teren zachowuje światło podstawy 0.57.0.
+- Scena `/scena materialy`, podglądy transmisji i refleksów oraz testy prawdziwych pikseli WebGL, szczelności pomieszczeń i zapisu po edycji.
+
+Opis i pomiary: `docs/odbicia-i-materialy.md`, `docs/pomiary/materialy-0.58.0/`.
+To przybliżenie jednego odbicia w pobliżu gracza, bez odbijania światła lamp i ogniska. Rozbudowana atmosfera E08 pozostaje osobnym etapem.
+Wydanie Windows/Android przygotowywane do publikacji po scaleniu PR; odbiór sprzętowy dotyczy PC, bez fizycznego telefonu.
+
 ## 0.57.0 - Podstawa naturalnego oświetlenia
 
 Pierwszy pakiet planu światła: E00–E04 i podstawowe presety E07 — PR #91.

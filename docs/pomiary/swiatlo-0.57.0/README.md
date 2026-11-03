@@ -1,5 +1,7 @@
 # Odbiór podstaw oświetlenia — 0.57.0
 
+Wykonany odbiór i jego ograniczenia: [WYNIKI.md](WYNIKI.md).
+
 Harness uruchamia prawdziwy `Game` z seedem 42 na placu `flat` i osobną
 sceną `paleta`. Nie uruchamia menu w tle. Ma własny profil Electron,
 nie otwiera IndexedDB i nie odczytuje/zapisuje ustawień gracza.

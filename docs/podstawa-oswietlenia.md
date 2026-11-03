@@ -60,6 +60,9 @@ Naturalna paleta nie używa dawnych mnożników kontrastu słońca ani
 odbarwiania całego naturalnego oświetlenia nocą. Ciepły kolor ogniska
 pozostaje kolorem źródła. Cień słoneczny ogranicza światło kierunkowe;
 AO ogranicza światło pośrednie i nie wygasza własnej emisji.
+Promienie w powietrzu otrzymują osobną kalibrację liniowej mocy (0.10
+dawnej skali ekranowej). Zachowuje to delikatne rozproszenie bez
+rozjaśniania całego lasu; efekt nie wykonuje drugiego tonowania.
 Voxelowe lampy zachowują istniejącą lokalną propagację oraz cieniowanie
 ścian; statyczna i dynamiczna reprezentacja tej samej lampy łączą się
 maksimum, aby nie liczyć jej dwa razy.

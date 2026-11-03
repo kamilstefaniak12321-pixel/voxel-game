@@ -1,8 +1,9 @@
 import { TEXTS } from './texts.js';
 import { TERRAIN_TYPES, terrainName } from '../world/terrain/generators.js';
 import { DEFAULT_TERRAIN, DEFAULT_GAME_MODE } from '../config.js';
-import { normalizeWorldExperiments } from '../world/WorldExperiments.js';
-import { SETTINGS_RANGES, SETTINGS_CHOICES } from '../settings/Settings.js';
+import { SETTINGS_RANGES, SETTINGS_CHOICES, graphicsPreset, nextGraphicsPreset } from '../settings/Settings.js';
+import { SETTINGS_TABS, ADVANCED_VIDEO } from './settingsLayout.js';
+import { SCENES, SCENE_TIMES } from '../dev/scenes.js';
 import { hasCustomSkin, chooseSkinFile, resetSkin } from '../player/skin.js';
 import {
     resolutionChoices,
@@ -73,67 +74,6 @@ function button(text, onClick, extraClass = '', back = false) {
 
 }
 
-
-// Co jest na której zakładce ustawień (kolejność = kolejność na ekranie).
-
-const SETTINGS_TABS = {
-
-    video: [
-        'potato',
-        'viewDistance',
-        'farTerrain',
-        'farDetail',
-        'fov',
-        'brightness',
-        'renderScale',
-        'fpsLimit',
-        'ambientOcclusion',
-        'shadows',
-        'lightingModel',
-        'lightShafts',
-        'bounceLight',
-        'fancyLeaves',
-        'dynamicLight',
-        'loadBudget'
-    ],
-
-    controls: [
-        'mouseSensitivity',
-        'invertMouse'
-    ],
-
-    player: [
-        'skin',
-        'skinOverlay',
-        'showHand',
-        'viewBobbing',
-        'jointStyle',
-        'cameraDistance'
-    ],
-
-    sound: [
-        'volumeMaster',
-        'volumeMusic',
-        'volumeBlocks',
-        'volumeWorld',
-        'volumeUi'
-    ],
-
-    textures: [
-        'texturePack'
-    ],
-
-    other: [
-        'theme',
-        'inventoryStyle',
-        'hudScale',
-        'showDebug',
-        'showFps',
-        'meteorites',
-        'autoUpdates'
-    ]
-
-};
 
 // Ustawienia tylko w aplikacji (komputer, telefon) - w przeglądarce ich nie
 // ma na liście.
@@ -460,8 +400,7 @@ export class Menu {
                     `${TEXTS.seed}: ${world.seed}  ·  ` +
                     `${TEXTS.terrain}: ${terrainName(world.terrain)}  ·  ` +
                     `${TEXTS.gameModes[world.gameMode ?? 'creative']}  ·  ` +
-                    `${TEXTS.lastPlayed}: ${formatDate(world.lastPlayed)}` +
-                    (world.experiments?.bushyGrass === true ? '  ·  ' + TEXTS.bushyGrass(true) : '')
+                    `${TEXTS.lastPlayed}: ${formatDate(world.lastPlayed)}`
                 )
             );
 
@@ -563,34 +502,46 @@ export class Menu {
         seedLabel.append(seedInput);
 
 
-        // Typ terenu: każde kliknięcie = następny (terrain/generators.js).
-
-        const terrainTypes = Object.keys(TERRAIN_TYPES);
-
-        let terrain = terrainTypes.includes(DEFAULT_TERRAIN) ? DEFAULT_TERRAIN : terrainTypes[0];
-
-        const terrainNote = el('p', 'menu-note');
-
-        const terrainButton = button(TEXTS.terrainType(terrainName(terrain)), () => {
-
-            terrain = terrainTypes[(terrainTypes.indexOf(terrain) + 1) % terrainTypes.length];
-
-            terrainButton.textContent = TEXTS.terrainType(terrainName(terrain));
-
-            terrainNote.textContent = TEXTS.terrainNotes[terrain] ?? '';
-
-        });
-
-        terrainNote.textContent = TEXTS.terrainNotes[terrain] ?? '';
-
-
-        // Tryb gry: przygoda / kreatywny.
+        // Tryb gry: przygoda / kreatywny / programista.
 
         const modes = Object.keys(TEXTS.gameModes);
 
         let gameMode = modes.includes(DEFAULT_GAME_MODE) ? DEFAULT_GAME_MODE : modes[0];
 
         const modeNote = el('p', 'menu-note', TEXTS.gameModeNotes[gameMode]);
+
+
+        // Typ terenu: każde kliknięcie = następny (terrain/generators.js).
+        // Plac testowy (developer: true) - tylko w trybie programisty,
+        // który zaczyna od niego.
+
+        const terrainTypes = () => Object.keys(TERRAIN_TYPES).filter((type) =>
+            !TERRAIN_TYPES[type].hidden && (gameMode === 'developer' || !TERRAIN_TYPES[type].developer));
+
+        let terrain = terrainTypes().includes(DEFAULT_TERRAIN) ? DEFAULT_TERRAIN : terrainTypes()[0];
+
+        const terrainNote = el('p', 'menu-note');
+
+        const terrainButton = button('', () => {
+
+            const types = terrainTypes();
+
+            terrain = types[(types.indexOf(terrain) + 1) % types.length];
+
+            showTerrain();
+
+        });
+
+        const showTerrain = () => {
+
+            terrainButton.textContent = TEXTS.terrainType(terrainName(terrain));
+
+            terrainNote.textContent = TEXTS.terrainNotes[terrain] ?? '';
+
+        };
+
+        showTerrain();
+
 
         const modeButton = button(TEXTS.gameMode(TEXTS.gameModes[gameMode]), () => {
 
@@ -600,15 +551,16 @@ export class Menu {
 
             modeNote.textContent = TEXTS.gameModeNotes[gameMode];
 
-        });
+            if (gameMode === 'developer') {
+                terrain = 'flat';
+            }
+            else if (!terrainTypes().includes(terrain)) {
+                terrain = DEFAULT_TERRAIN;
+            }
 
-        const experiments = normalizeWorldExperiments();
-        const grassButton = button(TEXTS.bushyGrass(false), () => {
-            experiments.bushyGrass = !experiments.bushyGrass;
-            grassButton.textContent = TEXTS.bushyGrass(experiments.bushyGrass);
-            grassButton.setAttribute('aria-pressed', String(experiments.bushyGrass));
+            showTerrain();
+
         });
-        grassButton.setAttribute('aria-pressed', 'false');
 
 
         const buttons = el('div', 'menu-row');
@@ -623,8 +575,7 @@ export class Menu {
         );
 
 
-        form.append(nameLabel, seedLabel, terrainButton, terrainNote, modeButton, modeNote,
-            grassButton, el('p', 'menu-note', TEXTS.bushyGrassNote), buttons);
+        form.append(nameLabel, seedLabel, modeButton, modeNote, terrainButton, terrainNote, buttons);
 
 
         // Enter w polu tekstowym też tworzy świat.
@@ -637,7 +588,7 @@ export class Menu {
                 nameInput.value.trim() ||
                 TEXTS.defaultWorldName(number);
 
-            this.handlers.createWorld(name, seedInput.value, terrain, gameMode, experiments);
+            this.handlers.createWorld(name, seedInput.value, terrain, gameMode);
 
         });
 
@@ -722,10 +673,16 @@ export class Menu {
         buttons.append(
             button(TEXTS.resume, () => this.handlers.resume(), '', true),
             button(TEXTS.achievements, () => this.showAchievements('pause')),
-            button(TEXTS.settings, () => this.showSettings('pause')),
-            button(TEXTS.worldExperiments, () => this.showWorldExperiments()),
-            button(TEXTS.saveAndQuit, () => this.handlers.quitToMenu())
+            button(TEXTS.settings, () => this.showSettings('pause'))
         );
+
+        // Tryb programisty: sceny testowe i pora dnia.
+
+        if (this.handlers.gameMode?.() === 'developer') {
+            buttons.append(button(TEXTS.scenes, () => this.showScenes()));
+        }
+
+        buttons.append(button(TEXTS.saveAndQuit, () => this.handlers.quitToMenu()));
 
 
         screen.append(
@@ -741,34 +698,60 @@ export class Menu {
     }
 
     // --------------------------------------------------------
-    // Eksperymentalne dodatki zapisane osobno dla bieżącego świata.
+    // Sceny testowe (tryb programisty - src/dev/scenes.js)
+    //
+    // Kliknięcie sceny stawia ją (handlers.buildScene) i wraca do gry.
+    // Pora dnia i zatrzymanie czasu działają od razu, bez wychodzenia.
     // --------------------------------------------------------
 
-    showWorldExperiments() {
-        const screen = this.newScreen('world-experiments', false);
+    showScenes() {
+
+        const screen = this.newScreen('scenes', false);
+
         this.onEscape = () => this.showPause();
-        const experiments = normalizeWorldExperiments(this.handlers.getWorldExperiments?.());
-        const note = el('p', 'menu-note', TEXTS.experimentsNote);
-        note.setAttribute('aria-live', 'polite');
-        const toggle = button(TEXTS.bushyGrass(experiments.bushyGrass), async () => {
-            experiments.bushyGrass = !experiments.bushyGrass;
-            toggle.textContent = TEXTS.bushyGrass(experiments.bushyGrass);
-            toggle.setAttribute('aria-pressed', String(experiments.bushyGrass));
-            toggle.disabled = true;
-            try {
-                const saved = await this.handlers.setWorldExperiments({ ...experiments });
-                note.textContent = saved ? TEXTS.experimentsSaved : TEXTS.experimentsSaveFailed;
-            } catch {
-                note.textContent = TEXTS.experimentsSaveFailed;
-            } finally {
-                toggle.disabled = false;
-            }
+
+
+        const list = el('div', 'scene-list');
+
+        for (const scene of SCENES) {
+
+            const item = button('', () => this.handlers.buildScene(scene.id), 'scene-item');
+
+            item.append(el('span', 'scene-name', scene.name), el('span', 'scene-note', scene.description));
+
+            list.append(item);
+
+        }
+
+
+        const times = el('div', 'menu-row scene-times');
+
+        times.append(el('span', 'scene-label', TEXTS.sceneTime));
+
+        for (const name of Object.keys(SCENE_TIMES)) {
+            times.append(button(TEXTS.sceneTimes[name], () => this.handlers.setSceneTime(name)));
+        }
+
+        const freeze = button(TEXTS.sceneFreeze(this.handlers.timeFrozen()), () => {
+            freeze.textContent = TEXTS.sceneFreeze(this.handlers.toggleTimeFreeze());
         });
-        toggle.setAttribute('aria-pressed', String(experiments.bushyGrass));
+
+        times.append(freeze);
+
+
         const buttons = el('div', 'menu-buttons');
-        buttons.append(toggle, button(TEXTS.back, () => this.showPause(), '', true));
-        screen.append(el('h2', 'menu-heading', TEXTS.worldExperiments), note,
-            el('p', 'menu-note', TEXTS.bushyGrassNote), buttons);
+
+        buttons.append(button(TEXTS.back, () => this.showPause(), '', true));
+
+
+        screen.append(
+            el('h2', 'menu-heading', TEXTS.scenes),
+            el('p', 'menu-note', TEXTS.scenesNote),
+            list,
+            times,
+            buttons
+        );
+
     }
 
     // Księga osiągnięć (z ekranu tytułowego albo z pauzy - returnTo).
@@ -986,14 +969,78 @@ export class Menu {
 
         const grid = el('div', 'settings-grid');
 
-        for (const key of SETTINGS_TABS[tab] ?? SETTINGS_TABS.video) {
+        const keys = SETTINGS_TABS[tab] ?? SETTINGS_TABS.video;
+
+        if (tab === 'experiments') {
+            grid.classList.add('settings-experiments');
+        }
+
+        for (const key of keys) {
 
             if (APP_ONLY_SETTINGS.has(key) && !this.appInfo) {
                 continue;
             }
 
-            grid.append(this.settingControl(key));
+            const control = this.settingControl(key);
 
+            // Eksperyment: przycisk i pod nim krótki opis.
+
+            if (tab === 'experiments') {
+
+                const card = el('div', 'settings-experiment');
+
+                card.append(control, el('p', 'menu-note', TEXTS.experimentNotes[key] ?? ''));
+
+                grid.append(card);
+
+            }
+            else {
+                grid.append(control);
+            }
+
+        }
+
+
+        // Obraz: "Zaawansowane" - pozostałe ustawienia obrazu, zwinięte.
+        // Rozwinięcie pamiętamy do końca sesji (this.showAdvanced).
+
+        const parts = [grid];
+
+        if (tab === 'video') {
+
+            const advanced = el('div', 'settings-grid settings-advanced');
+
+            for (const key of ADVANCED_VIDEO) {
+                advanced.append(this.settingControl(key));
+            }
+
+            const advancedNote = el('p', 'menu-note', TEXTS.advancedNote);
+
+            const toggle = button(TEXTS.advancedShow, () => {
+                this.showAdvanced = !this.showAdvanced;
+                refreshAdvanced();
+            }, 'settings-advanced-toggle');
+
+            const refreshAdvanced = () => {
+                advanced.hidden = advancedNote.hidden = !this.showAdvanced;
+                toggle.textContent = this.showAdvanced ? TEXTS.advancedHide : TEXTS.advancedShow;
+                toggle.setAttribute('aria-expanded', String(Boolean(this.showAdvanced)));
+            };
+
+            refreshAdvanced();
+
+            // Zmiana w zaawansowanych odświeża napis jakości (np. "Własna"),
+            // a wybór jakości - przyciski zaawansowanych.
+
+            advanced.addEventListener('click', () => this.refreshPreset(grid));
+            advanced.addEventListener('input', () => this.refreshPreset(grid));
+
+            parts.push(toggle, advancedNote, advanced);
+
+        }
+
+        if (tab === 'experiments') {
+            parts.unshift(el('p', 'menu-note settings-intro', TEXTS.experimentsIntro));
         }
 
 
@@ -1008,7 +1055,7 @@ export class Menu {
 
         refreshNote();
 
-        grid.addEventListener('click', refreshNote);
+        screen.addEventListener('click', refreshNote);
 
 
         const buttons = el('div', 'menu-row settings-buttons');
@@ -1029,7 +1076,7 @@ export class Menu {
         screen.append(
             el('h2', 'menu-heading', TEXTS.settingsTitle),
             tabs,
-            grid,
+            ...parts,
             note,
             buttons
         );
@@ -1046,6 +1093,19 @@ export class Menu {
 
     settingControl(key) {
 
+        const control = this.createSettingControl(key);
+
+        if (ADVANCED_VIDEO.includes(key)) {
+            control.dataset.setting = key;
+        }
+
+        return control;
+
+    }
+
+
+    createSettingControl(key) {
+
         const settings = this.settings;
 
         const label = TEXTS[key];
@@ -1053,6 +1113,25 @@ export class Menu {
 
         if (key === 'skin') {
             return this.skinControl();
+        }
+
+        if (key === 'graphicsPreset') {
+
+            // Jakość grafiki: każde kliknięcie = następna (Niska ... Najwyższa).
+            // Przyciski w "Zaawansowane" pokazują nowe wartości od razu.
+
+            const presetButton = button(TEXTS.graphicsPreset(graphicsPreset(settings)), () => {
+
+                nextGraphicsPreset(settings);
+
+                presetButton.textContent = TEXTS.graphicsPreset(graphicsPreset(settings));
+
+                this.refreshControls(presetButton.closest('.menu-screen'));
+
+            }, 'settings-preset');
+
+            return presetButton;
+
         }
 
         if (key === 'texturePack') {
@@ -1161,6 +1240,45 @@ export class Menu {
         );
 
         return toggle;
+
+    }
+
+
+    // Napis przycisku jakości grafiki po zmianie w "Zaawansowane".
+
+    refreshPreset(root) {
+
+        const preset = root.querySelector('.settings-preset');
+
+        if (preset) {
+            preset.textContent = TEXTS.graphicsPreset(graphicsPreset(this.settings));
+        }
+
+    }
+
+
+    // Przyciski i suwaki zaawansowanych ustawień obrazu po wyborze
+    // jakości (każdy element ma data-setting z kluczem ustawienia).
+
+    refreshControls(root) {
+
+        for (const control of root?.querySelectorAll('[data-setting]') ?? []) {
+
+            const key = control.dataset.setting;
+
+            const value = this.settings.get(key);
+
+            const range = control.querySelector('input[type=range]');
+
+            if (range) {
+                range.value = value;
+                control.querySelector('.menu-slider-label').textContent = TEXTS[key](value);
+            }
+            else {
+                control.textContent = TEXTS[key](value);
+            }
+
+        }
 
     }
 

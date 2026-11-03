@@ -314,18 +314,19 @@ body:not([data-screen="game"]) #crosshair {
 /* Zakładki nad ustawieniami - wybrana jest "wciśnięta". */
 
 .settings-tabs {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    display: flex;
+    flex-wrap: wrap;
     gap: var(--button-gap);
     width: var(--list-width);
     max-width: 100%;
     margin-bottom: 8px;
 }
 
-/* Pięć zakładek w jednym rzędzie - trochę mniejszy napis. */
+/* Sześć zakładek w jednym rzędzie - trochę mniejszy napis. */
 
 .settings-tabs .menu-button {
-    padding: 0 6px;
+    flex: 1 1 auto;
+    padding: 0 8px;
     font-size: 0.85em;
 }
 
@@ -356,6 +357,102 @@ body:not([data-screen="game"]) #crosshair {
 .settings-textures .menu-note {
     grid-column: 1 / -1;
     max-width: none;
+}
+
+/* Obraz: "Zaawansowane" - przycisk na całą szerokość, pod nim zwinięte
+   ustawienia. Jakość grafiki - wyróżniona (pierwsza na ekranie). */
+
+.settings-advanced-toggle {
+    width: var(--list-width);
+    max-width: 100%;
+    margin-top: 10px;
+}
+
+.settings-advanced[hidden] {
+    display: none;
+}
+
+.settings-preset {
+    color: var(--button-text-hover);
+}
+
+/* Eksperymenty: przycisk z opisem pod spodem, wstęp nad listą. */
+
+.settings-intro {
+    width: var(--list-width);
+    max-width: 100%;
+    margin-bottom: 8px;
+}
+
+.settings-experiment {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.settings-experiment .menu-note {
+    max-width: none;
+    font-size: 0.8em;
+    text-align: left;
+}
+
+/* Sceny testowe (tryb programisty): lista jak lista światów, każda
+   scena - przycisk z nazwą i opisem. */
+
+.scene-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: var(--button-gap);
+    width: var(--list-width);
+    max-width: 100%;
+    grid-auto-rows: max-content;
+    max-height: min(60vh, 600px);
+    overflow-y: auto;
+    margin: 8px 0;
+}
+
+.scene-item.menu-button {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 2px;
+    height: auto;
+    min-height: var(--button-height);
+    padding: 8px 12px 10px;
+    overflow: visible;
+    white-space: normal;
+    text-align: left;
+}
+
+.scene-name {
+    color: inherit;
+}
+
+.scene-note {
+    font-size: 0.75em;
+    line-height: 1.3;
+    color: var(--text-muted);
+}
+
+.scene-times {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: var(--button-gap);
+    width: var(--list-width);
+    max-width: 100%;
+}
+
+.scene-times .menu-button {
+    flex: 1 1 auto;
+}
+
+.scene-label {
+    color: var(--text-muted);
+    flex-basis: 100%;
+    text-align: center;
 }
 
 .settings-buttons {

@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 
-import { HOTBAR_SIZE } from '../config.js';
+import { HOTBAR_SIZE, isCreative } from '../config.js';
 import { CREATIVE_ITEMS, getItemLabel } from '../items/ItemRegistry.js';
 import { CATEGORIES, CATEGORY_ORDER, getCategory, sortByCategory } from '../items/categories.js';
 import { STACK_SIZE, SLOT_COUNT } from '../game/Inventory.js';
@@ -250,7 +250,7 @@ export class InventoryScreen {
 
         this.ghost = null;
 
-        if (game.mode !== 'creative') {
+        if (!isCreative(game.mode)) {
             this.tab = 'inventory';
         }
 
@@ -346,7 +346,7 @@ export class InventoryScreen {
 
         const game = this.game;
 
-        const creative = game.mode === 'creative';
+        const creative = isCreative(game.mode);
 
         // Wskazanie nie może odwoływać się do slotu ze starego układu
         // (np. po zmianie zakładki i naciśnięciu klawisza 1-9).
@@ -992,14 +992,14 @@ export class InventoryScreen {
 
             if (!event.target.closest('.inv-panel, .inv-book') && this.cursor) {
 
-                if (this.game.mode !== 'creative') {
+                if (!isCreative(this.game.mode)) {
                     this.returnCursor();
                 }
                 else {
                     this.cursor = null;
                 }
 
-                playUi(this.game.mode === 'creative' ? 'item_trash' : 'item_place');
+                playUi(isCreative(this.game.mode) ? 'item_trash' : 'item_place');
 
                 this.refresh();
 

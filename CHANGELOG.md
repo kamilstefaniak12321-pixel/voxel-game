@@ -11,6 +11,20 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 0.55.0 - Porządek w ustawieniach i tryb programisty
+
+Przejrzystsze ustawienia, zakładka eksperymentów i nowy tryb do testów — PR #88.
+
+- **Ustawienia**: sześć zakładek - *Obraz, Dźwięk, Gracz, Wygląd, Gra, Eksperymenty* (Sterowanie połączone z Graczem, Tekstury i motyw - w Wyglądzie, dawne „Inne” to Gra).
+- **Jakość grafiki** (*Niska / Średnia / Wysoka / Najwyższa*) - jedno kliknięcie ustawia cienie słońca, cienie w kątach, promienie, liście i tryb ziemniaka; ręczna zmiana któregoś z nich = *Własna*. Na wierzchu zakładki Obraz zostało 6 pozycji, reszta pod zwiniętym *Zaawansowane*. Komenda: `/ustaw jakosc wysoka`.
+- Z menu znikają *Wczytywanie (ms/klatkę)* i *Debug (F3)* - zostają w `/ustaw` i pod klawiszem F3. Krótsze napisy, które nie mieściły się na przyciskach.
+- **Eksperymenty** - nowa zakładka na funkcje, których nie jesteśmy pewni, każda z opisem: trawa kępiasta, światło odbite i model światła (*atmosferyczne* - domyślne, albo *klasyczne*). Trawa kępiasta działa teraz dla wszystkich światów naraz - zniknęły przełącznik przy tworzeniu świata i *Dodatki świata* w pauzie.
+- **Tryb programisty** - trzeci tryb gry: jak kreatywny, plus **sceny testowe** w pauzie i `/scena` (światło i materiały, kolorowe lampy, słońce przez okno, budulec i światło odbite, woda, rośliny, krzaki, drzewa, warstwy skał), pora dnia jednym kliknięciem i zatrzymanie czasu. Nowy teren **Plac testowy**, na którym każda scena staje zawsze w tym samym miejscu.
+- **Laboratorium światła usunięte** - jego stanowiska stawia scena *Światło i materiały*; stare światy z laboratorium dostają plac testowy. Workflow testów nazywa się teraz *Testy gry* (`testy.yml`) i sprawdza prawdziwą grę w trybie programisty.
+- Nowy test `tools/sprawdz_sceny.mjs` (264 sprawdzenia): każde ustawienie na zakładce, jakości grafiki, eksperymenty, tryb programisty, sceny w prawdziwym świecie. Opis: `docs/tryb-programisty.md`.
+
+Wydanie Windows/Android przygotowane do publikacji po scaleniu PR.
+
 ## 0.54.0 - Nagrane efekty dźwiękowe
 
 Wszystkie dźwięki gry wymienione na nagrania — PR #87.

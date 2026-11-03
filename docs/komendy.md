@@ -46,13 +46,16 @@ Współrzędne można podawać względem gracza: `~` (tu, gdzie stoję),
 | `/skorka plik` | wczytanie własnej skórki (PNG 64 x 64, układ jak w Minecrafcie) |
 | `/skorka domyslna` | powrót do domyślnej skórki |
 | `/pozycja` | pozycja i chunk |
-| `/tryb [przygoda \| kreatywny]` | tryb gry (bez słowa - jaki jest): przygoda - bloki się kopie (trzymany LPM), zniszczone trafiają do ekwipunku, stawianie je zużywa; kreatywny - bloki bez końca i znikają od razu, wszystkie bloki pod E, latanie po dwukliku Spacji. Skróty: `/gm p`, `/gm k` |
+| `/tryb [przygoda \| kreatywny \| programista]` | tryb gry (bez słowa - jaki jest): przygoda - bloki się kopie (trzymany LPM), zniszczone trafiają do ekwipunku, stawianie je zużywa; kreatywny - bloki bez końca i znikają od razu, wszystkie bloki pod E, latanie po dwukliku Spacji; programista - jak kreatywny + sceny testowe (`/scena`). Skróty: `/gm p`, `/gm k`, `/gm dev` |
+| `/scena lista` | sceny testowe (tryb programisty): nazwa, opis - [tryb programisty](tryb-programisty.md) |
+| `/scena <nazwa>` | stawia scenę (swiatlo, lampy, okno, dom, basen, rosliny, krzaki, drzewa, skaly) - na placu testowym zawsze w tym samym miejscu, w innym terenie przed graczem - i przenosi do niej gracza (zmienia świat) |
+| `/scena czas <swit \| poludnie \| zachod \| noc \| stop \| start>` | pora dnia jednym słowem (ten sam dzień) i zatrzymanie/wznowienie czasu |
 | `/kopanie [blok \| lista]` | ile trwa kopanie w trybie przygody: blok, na który patrzysz, albo podany (`/kopanie granit` - także kilofem, łopatą albo siekierą, jeśli przyspiesza), `lista` - czasy wszystkich bloków. Skrót: `/kop` |
 | `/przepisy [rzecz \| lista \| moge]` | przepisy wytwarzania: `/przepisy kilof` - jak zrobić i do czego się przydaje (też dla surowców: `/przepisy granit`), `lista` - wszystkie, `moge` - te, na które masz składniki (ile razy). Też `/recipes` |
 | `/wytworz <przepis> [ile razy]` | wytwarza od razu ze składników z ekwipunku (nazwa przepisu albo wyrobu, też po polsku: `/wytworz kilof`, `/wytworz stick 4`). Też `/craft` |
 | `/ekwipunek` | co jest w ekwipunku (ile sztuk każdego bloku, ile miejsc zajętych) |
 | `/ekwipunek wyczysc` | czyści cały ekwipunek (z paskiem) |
-| `/ekwipunek wyglad [drewniany \| jasny]` | wygląd okna ekwipunku (bez słowa - przełącza na drugi); to samo co *Ustawienia → Inne → Ekwipunek* |
+| `/ekwipunek wyglad [drewniany \| jasny]` | wygląd okna ekwipunku (bez słowa - przełącza na drugi); to samo co *Ustawienia → Wygląd → Ekwipunek* |
 | `/latanie` | włącza/wyłącza latanie w każdym trybie (Spacja w górę, Shift w dół) - do testów; w kreatywnym wystarczy 2× Spacja |
 | `/predkosc <0.1-20>` | prędkość ruchu (1 = normalnie) |
 | `/daj <blok albo przedmiot> [ilość]` | blok albo przedmiot (owoc) do ekwipunku: z ilością - tyle sztuk (do 2304, pierwsze wolne miejsca, najpierw pasek); bez ilości w trybie kreatywnym - jedna sztuka do wybranego miejsca paska, w przygodzie - stos 64. Nazwy też po polsku, bez ogonków: `granit`, `trawa`, `ziemia`, `mak`, `chaber`, `paproc`, `czarnoziem`, `krotka_trawa`, `truskawki` (`truskawka`), `jezyny`, `chili` (`papryczki`), `orzech`, `sadzonka_truskawki`, `leszczyna`... |
@@ -78,6 +81,7 @@ Współrzędne można podawać względem gracza: `~` (tu, gdzie stoję),
 | `/swiatlo` | światło przy głowie i przy wskazanej ścianie (niebo 0-15, lampy 0-15 i ich kolor) |
 | `/swiatlo dynamiczne [wl \| wyl]` | włącza/wyłącza dynamiczne światło (to samo co w ustawieniach) |
 | `/swiatlo odbite [wl \| wyl]` | włącza/wyłącza światło odbite od oświetlonych ścian (to samo co w ustawieniach) |
+| `/swiatlo model <atmosfera \| klasyczne>` | model światła (to samo co *Ustawienia → Eksperymenty → Światło*) |
 | `/demo swiatlo` | buduje zamknięty pokój z kolorowymi lampami i stawia w nim gracza |
 | `/demo okno` | buduje ciemny pokój z oknami od strony słońca (snopy światła, plamy słońca na podłodze) i stawia w nim gracza; w nocy albo przy słońcu za wysoko przestawia zegar na popołudnie (zmienia świat) |
 | `/demo dom` | buduje cztery pokoje obok siebie z różnego budulca (tynk wapienny, terakota, polerowany kamień, ciemne deski), każdy z oknem od strony słońca i przejściami między nimi - widać, jak budulec zmienia światło odbite (zmienia świat) |
@@ -132,6 +136,7 @@ Współrzędne można podawać względem gracza: `~` (tu, gdzie stoję),
 | `/tekstury [wczytaj \| rozdzielczosc <auto \| 16 ... 512> \| oryginalne \| szablon \| lista]` | paczka tekstur: stan; `wczytaj` - wybór pliku `.zip`; `rozdzielczosc` - piksele na blok w grze; `oryginalne` - bez paczki; `szablon` - szablon paczki z oryginalnymi teksturami; `lista` - brakujące i pominięte pliki paczki (zmiany - po ponownym uruchomieniu gry, z zapisem świata) - `docs/paczki-tekstur.md` |
 | `/ustaw` | lista ustawień z wartościami |
 | `/ustaw <ustawienie> <wartość>` | zmienia ustawienie, np. `/ustaw zasieg 256`, `/ustaw jasnosc 50`, `/ustaw licznik-fps wl` |
+| `/ustaw jakosc <niska \| srednia \| wysoka \| najwyzsza>` | jakość grafiki - kilka ustawień obrazu naraz (jak *Ustawienia → Obraz → Jakość grafiki*); bez słowa - jaka jest teraz |
 | `/ustaw domyslne` | przywraca domyślne ustawienia |
 | `/wydajnosc` | FPS, czasy klatki, rysowanie (wywołania, trójkąty), chunki, daleki teren, pamięć |
 | `/wydajnosc test [sekundy]` | test: kamera obraca się raz dookoła, wynik na czacie (domyślnie 10 s) |

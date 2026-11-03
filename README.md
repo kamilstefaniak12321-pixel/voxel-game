@@ -115,7 +115,16 @@ legendarne` (samo powiadomienie), `/osiagniecia daj <id>`.
 
 Tryb wybiera się przy tworzeniu świata (przycisk *Tryb gry*, domyślnie
 przygoda - `DEFAULT_GAME_MODE` w `src/config.js`) i można go zmienić
-w grze komendą `/tryb przygoda` albo `/tryb kreatywny`.
+w grze komendą `/tryb przygoda`, `/tryb kreatywny` albo `/tryb programista`.
+
+- **Programista** (od 0.55.0) - do testowania gry: działa jak kreatywny,
+  a do tego w pauzie są **Sceny testowe** (światło i materiały, kolorowe
+  lampy, słońce przez okno, budulec i światło odbite, woda, rośliny,
+  krzaki, drzewa, warstwy skał), pora dnia jednym kliknięciem i
+  zatrzymanie czasu (`/scena`). Nowy świat w tym trybie zaczyna się na
+  **placu testowym** - płaskim terenie, na którym każda scena staje
+  zawsze w tym samym miejscu (zrzuty i testy da się porównywać).
+  Opis i jak dodać scenę: [tryb programisty](docs/tryb-programisty.md).
 
 - **Przygoda** - zaczynasz z pustym ekwipunkiem. Blok się **kopie**:
   trzymasz LPM, ręka uderza, z bloku lecą odłamki, blok pęka (10 etapów
@@ -154,7 +163,7 @@ Okno ma wspólną ramkę: księgę przepisów po lewej, postać
 i wytwarzanie nad zapasami oraz pasek wyrównany z dziewięcioma
 kolumnami ekwipunku. Na węższym ekranie sekcje zmieniają ułożenie.
 
-**Wygląd ekwipunku** (*Ustawienia → Inne → Ekwipunek*, albo `/ekwipunek wyglad`):
+**Wygląd ekwipunku** (*Ustawienia → Wygląd → Ekwipunek*, albo `/ekwipunek wyglad`):
 **Drewniany** (domyślny) - okno z desek z mchem, liśćmi i pnączami,
 ciemne przegródki na przedmioty w drewnianych ramkach ze złotym
 brzegiem - albo **Jasny** (biało-szary). Układ i obsługa przedmiotów
@@ -614,74 +623,82 @@ Woda na razie **się nie rozlewa** - stoi tam, gdzie ją postawiono.
 
 ## Ustawienia
 
-W menu (z ekranu tytułowego i z pauzy) są zakładki:
+W menu (z ekranu tytułowego i z pauzy) jest sześć zakładek:
 
-**Obraz**
+**Obraz** - na wierzchu najważniejsze:
 
-- **tryb ziemniaka** - patrz niżej,
+- **jakość grafiki** - *Niska* (tryb ziemniaka, bez cieni), *Średnia*
+  (bez cieni słońca i promieni, szybkie liście - domyślna na telefonie),
+  *Wysoka* (zwykłe cienie słońca, promienie, ładne liście) albo
+  *Najwyższa* (dalekie cienie - domyślna na komputerze). Jedno kliknięcie
+  ustawia naraz cienie słońca, cienie w kątach, promienie, liście i tryb
+  ziemniaka; gdy zmienisz któreś z nich sam, jakość to *Własna*,
 - **zasięg widzenia** (24-384 bloków) - jak daleko widać prawdziwe bloki,
 - **daleki teren** (do 16 384 bloków albo wyłączony) - uproszczony,
-  kanciasty teren za zasięgiem widzenia, aż po horyzont (im dalej, tym
-  większe kratki),
-- **szczegóły dalekiego terenu** - *niskie* (większe kratki, ~2x mniej
-  trójkątów; na telefonie domyślnie), *średnie* albo *wysokie*
-  (drobniejsze kratki, ~1,7x więcej trójkątów),
+  kanciasty teren za zasięgiem widzenia, aż po horyzont,
 - **pole widzenia** (50-110°),
 - **jasność** - od *Nastrojowej* (zwykłej) do *Jasnej*: rozjaśnia półmrok
   i noc, pełnego światła nie zmienia,
-- **rozdzielczość** (25-100%) - mniej = szybciej, ale mniej ostro,
-- **limit FPS** (bez limitu, 30, 60, 120, 144),
-- **cienie w kątach** (0-100%),
-- **cienie słońca** - *wyłączone*, *zwykłe* (32 bloki wokół gracza),
-  *dokładne* (64 bloki) albo *dalekie* (do tego 512 bloków z dalekim
-  terenem - góry rzucają długie cienie) - pikselowe cienie słońca
-  i księżyca (patrz *Oświetlenie*; na telefonie domyślnie wyłączone),
-- **promienie światła** - widoczne snopy światła w powietrzu (tylko
-  z cieniami słońca),
-- **światło odbite** (eksperymentalne, domyślnie wyłączone) - oświetlone
-  słońcem ściany świecą dalej w kolorze swojej tekstury, światło „wlewa
-  się” do pokoju (tylko z cieniami słońca),
-- **liście drzew** - *ładne* (z prześwitami, widać głąb korony) albo
-  *szybkie* (pełne, bez ścian w środku korony - las mniej spowalnia
-  grę; na telefonie domyślnie),
-- **dynamiczne światło** (lampa w ręce, meteoryty),
-- **wczytywanie** (1-16 ms na klatkę) - ile czasu w każdej
-  klatce gra poświęca na nowe chunki: więcej = świat dogrywa się
-  szybciej (przy dużym zasięgu), ale mogą być przycięcia.
+- **limit FPS** (bez limitu, 30, 60, 120, 144).
 
-**Sterowanie** - czułość myszy (10-200%), odwrócona mysz (góra/dół).
-
-**Gracz** - skórka (wczytanie własnego pliku PNG albo domyślna), druga
-warstwa skórki, ręka w widoku z oczu (wł./wył.), kołysanie widoku przy
-chodzeniu (wł./wył.), zgięcia rąk i nóg (gładkie albo klocki), odległość
-kamery z trzeciej osoby.
+Pod przyciskiem **Zaawansowane** (zwinięte): cienie słońca (*wyłączone*,
+*zwykłe* - 32 bloki wokół gracza, *dokładne* - 64 bloki, *dalekie* - do
+tego ok. 800 bloków z dalekim terenem), cienie w kątach (0-100%),
+promienie światła (tylko z cieniami słońca), liście drzew (*ładne* albo
+*szybkie*), detale w oddali (kratki dalekiego terenu: niskie, średnie,
+wysokie), rozdzielczość (25-100%), dynamiczne światło (lampa w ręce,
+meteoryty) i tryb ziemniaka (patrz niżej).
 
 **Dźwięk** - głośność całej gry, osobno bloków i kroków, otoczenia
 (woda, meteoryty), menu i ekwipunku oraz muzyki; 0 = wyłączone.
 Pięć utworów gra od czasu do czasu w menu i świecie, z przerwami
 i łagodnym narastaniem. Szczegóły: [Muzyka w menu i świecie](docs/muzyka.md).
 
-**Tekstury** - własna **paczka tekstur** (plik `.zip`, tekstury
-w dowolnej rozdzielczości, np. 1254 x 1254), rozdzielczość w grze
-(automatyczna albo 16-512 pikseli na blok), powrót do oryginalnych
-tekstur, szablon paczki - niżej, *Tekstury*.
+**Gracz** - skórka (wczytanie własnego pliku PNG albo domyślna), czułość
+myszy (10-200%), odwrócona mysz, odległość kamery z trzeciej osoby, ręka
+w widoku z oczu, kołysanie widoku, druga warstwa skórki, zgięcia rąk
+i nóg (gładkie albo klocki).
 
-**Inne** - motyw menu, wygląd ekwipunku (drewniany albo jasny),
-rozmiar interfejsu w grze (pasek, czat, napisy),
-informacje debugowania (to samo co F3), licznik FPS w rogu ekranu,
-spadające meteoryty (wł./wył. - te, które robią kratery), w aplikacji
-(komputer, telefon) - **aktualizacje automatyczne** (wł. - nowa wersja
-pobiera się sama; wył. - gra tylko pokazuje, że jest, i pobiera po
-kliknięciu *Pobierz*).
+**Wygląd** - motyw menu, wygląd ekwipunku (drewniany albo jasny), rozmiar
+interfejsu w grze (pasek, czat, napisy) i własna **paczka tekstur** (plik
+`.zip`, tekstury w dowolnej rozdzielczości), rozdzielczość tekstur
+w grze, powrót do oryginalnych tekstur, szablon paczki - niżej, *Tekstury*.
+
+**Gra** - spadające meteoryty (te, które robią kratery), licznik FPS
+w rogu ekranu, w aplikacji (komputer, telefon) - **aktualizacje
+automatyczne** (wł. - nowa wersja pobiera się sama; wył. - gra tylko
+pokazuje, że jest, i pobiera po kliknięciu *Pobierz*).
+
+**Eksperymenty** - funkcje, których nie jesteśmy jeszcze pewni (mogą się
+zmienić albo zniknąć), każda z krótkim opisem, domyślnie wyłączone
+i dla wszystkich światów:
+
+- **trawa kępiasta** - przestrzenne, pikselowe kępki zamiast zwykłej
+  trawy ([opis](docs/trawa-kepiasta-0.29.0.md); do 0.54.0 włączało się ją
+  osobno dla każdego świata),
+- **światło odbite** - oświetlone słońcem ściany świecą dalej w kolorze
+  swojej tekstury, światło „wlewa się” do pokoju (tylko z cieniami słońca),
+- **światło** - *atmosferyczne* (domyślne: kolor i siła słońca zależą od
+  drogi przez powietrze) albo *klasyczne* (dawne, prostsze).
+
+Nowa niepewna funkcja trafia najpierw tutaj: klucz w `EXPERIMENTS`
+(`src/settings/Settings.js`), napis i opis w `src/ui/texts.js`
+(`experimentNotes`).
+
+Bez miejsca w menu (tylko z czatu): czas na wczytywanie chunków
+(`/ustaw wczytywanie 8`, 1-16 ms na klatkę) i napisy debugowania
+(klawisz F3 albo `/ustaw debug wyl`).
 
 Zmiany działają od razu, także w grze pod pauzą, i zapisują się
-w przeglądarce. Wartości domyślne są w `src/config.js`, a lista ustawień
-z zakresami w `src/settings/Settings.js`. Wszystko da się też zmienić
-z czatu: `/ustaw` (lista), np. `/ustaw zasieg 256`.
+w przeglądarce. Wartości domyślne są w `src/config.js`, lista ustawień
+z zakresami i jakości grafiki w `src/settings/Settings.js`, a co jest na
+której zakładce - w `src/ui/settingsLayout.js`. Wszystko da się też
+zmienić z czatu: `/ustaw` (lista), np. `/ustaw zasieg 256` albo
+`/ustaw jakosc wysoka`.
 
 ## Tekstury
 
-**Własne tekstury:** Ustawienia → **Tekstury** → *Wczytaj paczkę
+**Własne tekstury:** Ustawienia → **Wygląd** → *Wczytaj paczkę
 (.zip)* (na telefonie - plik z pamięci telefonu). Tekstury
 w paczce mogą mieć **dowolną rozdzielczość** - gra skaluje je do
 rozdzielczości w grze: automatycznie (jak paczka) albo wybranej,
@@ -842,7 +859,8 @@ Wszystko w grze działa tak samo - niebo, zaćmienia, daleki teren,
 - kolor mgły liczony w rogach ścian, a nie w każdym pikselu,
 - szybkie liście drzew (bez prześwitów).
 
-Włącza się go w *Ustawienia → Obraz → Tryb ziemniaka*, komendą
+Włącza go jakość grafiki *Niska* (albo *Ustawienia → Obraz → Zaawansowane
+→ Tryb ziemniaka*), komenda
 `/ziemniak` albo otwierając grę z dopiskiem `?ziemniak` w adresie
 (np. `http://localhost:5500/index.html?ziemniak`; `?ziemniak=0`
 wyłącza). Twoje własne ustawienia zostają - po wyłączeniu trybu
@@ -853,7 +871,7 @@ się 5-10 razy szybciej.
 
 ## Wydajność
 
-- **Licznik FPS** - ustawienie *Inne → Licznik FPS*; z F3 klatki na
+- **Licznik FPS** - ustawienie *Gra → Licznik FPS*; z F3 klatki na
   sekundę widać też w debugu.
 - `/wydajnosc` - klatki na sekundę, czasy klatki (średnia, najdłuższa,
   najwolniejsze 1%), ile czasu zajmuje gra, a ile rysowanie, liczba
@@ -957,9 +975,11 @@ nie da się policzyć światła i cieni na jego krawędziach).
 
 ## Oświetlenie
 
-**Eksperyment:** nowy teren „Laboratorium światła” i przełączany model
-atmosferyczny w Ustawienia → Obraz → Model światła. Instrukcja porównań,
-stanowiska i ograniczenia: [laboratorium światła](docs/eksperyment-swiatla.md).
+**Eksperyment:** model światła *atmosferyczny* (domyślny) albo
+*klasyczny* - Ustawienia → Eksperymenty → Światło. Stanowiska do porównań
+(dawne „Laboratorium światła”) stawia scena testowa *Światło i materiały*
+w trybie programisty; opis modelu i ograniczenia:
+[eksperyment światła](docs/eksperyment-swiatla.md).
 
 Światło działa jak w Minecrafcie - każde miejsce ma poziom od 0
 (ciemno) do 15:
@@ -1093,7 +1113,8 @@ Komendy służą do sprawdzania nowości w grze, np.:
 /model tempo 0.25          zwolnione animacje (/model klocki - inne zgięcia)
 /skorka plik               własna skórka gracza (PNG 64 x 64)
 /wydajnosc test            test wydajności z obrotem kamery
-/tryb kreatywny            tryb gry: przygoda albo kreatywny (/gm k, /gm p)
+/tryb kreatywny            tryb gry: przygoda, kreatywny albo programista (/gm k, /gm p)
+/scena swiatlo             scena testowa (tryb programisty; /scena lista, /scena czas poludnie)
 /ekwipunek                 co jest w ekwipunku (/ekwipunek wyczysc)
 /ekwipunek wyglad jasny    wygląd okna ekwipunku: drewniany albo jasny
 /latanie                   latanie w każdym trybie (Spacja w górę, Shift w dół)
@@ -1180,7 +1201,7 @@ z plikiem `theme.css` (kolory, czcionka, rozmiary) i teksturą tła
 `background.png`. W grze są dwa motywy: `default` (ziemia) i
 `lepidolit` (fioletowy).
 
-**Zmiana motywu:** w grze: *Ustawienia → Motyw*. Motyw domyślny
+**Zmiana motywu:** w grze: *Ustawienia → Wygląd → Motyw*. Motyw domyślny
 (przed pierwszym wyborem) ustawia `UI_THEME` w `src/config.js`.
 
 **Własny motyw:**
@@ -1189,7 +1210,7 @@ z plikiem `theme.css` (kolory, czcionka, rozmiary) i teksturą tła
 2. Podmień `background.png` na swoją teksturę (np. 16x16).
 3. Zmień kolory i rozmiary w `theme.css` - każda wartość ma opis.
 4. Dopisz go do `UI_THEMES` w `src/config.js` (nazwa folderu i nazwa
-   widoczna w grze) - pojawi się w *Ustawienia → Motyw*.
+   widoczna w grze) - pojawi się w *Ustawienia → Wygląd → Motyw*.
 
 **Kolory ekwipunku:** wspólna biała i jasnoszara baza znajduje się
 w `src/ui/inventory-theme.css`. Motyw może nadpisać zmienne `--inv-*`

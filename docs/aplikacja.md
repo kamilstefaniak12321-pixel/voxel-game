@@ -28,7 +28,7 @@ ekranu tytułowego). Gotowa aktualizacja instaluje się sama po zamknięciu
 gry, a przycisk **Zainstaluj teraz** na ekranie tytułowym zamyka grę
 (z zapisem świata), instaluje nową wersję i uruchamia ją od nowa.
 Wersja gry jest w lewym dolnym rogu ekranu tytułowego. Z ustawieniem
-**Aktualizacje automatyczne: Wył.** (Ustawienia → Inne) aplikacja tylko
+**Aktualizacje automatyczne: Wył.** (Ustawienia → Gra) aplikacja tylko
 sprawdza wydania i pokazuje nową wersję z przyciskiem **Pobierz**
 (ustawienie zapamiętuje w `aktualizacje.json` w swoim folderze -
 sprawdza wydania, zanim gra wystartuje).
@@ -106,8 +106,9 @@ buduje instalator i `.apk` na próbę - bez wydania - **dopiero z etykietą
 gdy PR jest gotowy; od tej chwili każdy kolejny push buduje od nowa,
 a starsza, jeszcze trwająca próba jest przerywana (liczy się tylko
 ostatni stan). PR bez etykiety pokazuje przebieg jako pominięty
-(*skipped*) i nie zużywa minut. Tak samo działa *Laboratorium światła*
-(`swiatlo.yml`).
+(*skipped*) i nie zużywa minut. Tak samo działają *Testy gry*
+(`testy.yml` - `npm test` i prawdziwa gra w Chrome na scenie testowej;
+do 0.54.0 „Laboratorium światła”, `swiatlo.yml`).
 
 Dlaczego: w prywatnym repozytorium darmowy plan GitHuba ma miesięczny
 limit Actions (ok. $12 na maszyny i 0,5 GB na pliki z przebiegów). Po

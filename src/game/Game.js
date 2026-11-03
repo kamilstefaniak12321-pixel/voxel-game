@@ -81,7 +81,8 @@ import {
     SHAFT_FAR_REACH,
     SHADOW_SUN_BOOST,
     BOUNCE_STRENGTH,
-    BOUNCE_OUTDOOR
+    BOUNCE_OUTDOOR,
+    isCreative
 } from '../config.js';
 
 
@@ -105,7 +106,8 @@ function smoothstep(a, b, x) {
 
 export const GAME_MODES = {
     adventure: 'Przygoda',
-    creative: 'Kreatywny'
+    creative: 'Kreatywny',
+    developer: 'Programista'
 };
 
 
@@ -268,7 +270,7 @@ export class Game {
             worldInfo.seed,
             savedChunks,
             worldInfo.terrain,
-            worldInfo.experiments
+            { bushyGrass: settings.get('bushyGrass') }
         );
 
 
@@ -464,7 +466,7 @@ export class Game {
             set selected(value) { inventory.selected = value; }
         };
 
-        this.player.canFly = this.mode === 'creative';
+        this.player.canFly = isCreative(this.mode);
 
         // Krótkie komunikaty nad paskiem (np. "Ekwipunek pełny") - main.js.
 
@@ -1640,6 +1642,10 @@ export class Game {
 
         this.sky.solarAtmosphere = usesSolarAtmosphere(settings.get('lightingModel'), this.worldInfo.terrain);
 
+        // Eksperyment: trawa kępiasta (tylko wygląd - bloki bez zmian).
+
+        this.world.setExperiments({ bushyGrass: settings.get('bushyGrass') });
+
 
         // Zasięg: prawdziwe chunki do viewDistance, dalej daleki teren.
         // Kamera świata musi sięgać do ostatnich wczytanych chunków.
@@ -1785,7 +1791,7 @@ export class Game {
     }
 
 
-    // Zmiana trybu gry ('adventure' / 'creative').
+    // Zmiana trybu gry ('adventure' / 'creative' / 'developer').
 
     setMode(mode) {
 
@@ -1797,9 +1803,9 @@ export class Game {
 
         this.worldInfo.gameMode = mode;
 
-        this.player.canFly = mode === 'creative';
+        this.player.canFly = isCreative(mode);
 
-        if (mode !== 'creative') {
+        if (!isCreative(mode)) {
             this.player.flying = false;
         }
 
@@ -2432,7 +2438,7 @@ export class Game {
         }
 
 
-        if (this.mode !== 'creative') {
+        if (!isCreative(this.mode)) {
             return;
         }
 

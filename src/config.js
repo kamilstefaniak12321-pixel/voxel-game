@@ -56,9 +56,16 @@ export const DEFAULT_TERRAIN = 'realistic';
 //   'adventure' - przygoda: zniszczone bloki trafiają do ekwipunku,
 //                 stawianie je zużywa,
 //   'creative'  - kreatywny: bloki bez końca (ekwipunek E - wszystkie
-//                 bloki), latanie po dwukrotnym wciśnięciu Spacji.
+//                 bloki), latanie po dwukrotnym wciśnięciu Spacji,
+//   'developer' - programista: jak kreatywny, a do tego sceny testowe
+//                 (src/dev/scenes.js) i plac testowy (teren 'flat').
 // Światy sprzed trybów są kreatywne.
 export const DEFAULT_GAME_MODE = 'adventure';
+
+// Czy tryb ma bloki bez końca i latanie (kreatywny i programista).
+export function isCreative(mode) {
+    return mode === 'creative' || mode === 'developer';
+}
 
 // Poziom morza w terenie realistycznym (y powierzchni wody).
 // Kształt terenu (niziny, wyżyny, góry...) - src/world/terrain/TerrainShape.js.

@@ -2,7 +2,7 @@
 
 Własne tekstury bloków, roślin i przedmiotów - w **dowolnej
 rozdzielczości** (np. 64 x 64, 512 x 512, 1254 x 1254). Paczka to plik
-`.zip`; gra wczytuje go w **Ustawienia → Tekstury** (na komputerze,
+`.zip`; gra wczytuje go w **Ustawienia → Wygląd** (na komputerze,
 w przeglądarce i w aplikacji na telefon - tam wybiera się plik z pamięci
 telefonu).
 
@@ -13,7 +13,7 @@ telefonu).
 Folder **`paczka-tekstur-szablon/`** w repozytorium - oryginalne
 tekstury gry, każda w osobnym pliku, z opisem (`CZYTAJ.md` - tabela:
 który plik to który blok). Spakowany jest też w każdym wydaniu gry:
-`Voxel-Game-paczka-tekstur.zip` (w grze: Ustawienia → Tekstury →
+`Voxel-Game-paczka-tekstur.zip` (w grze: Ustawienia → Wygląd →
 *Szablon paczki*, albo `/tekstury szablon`).
 
 Szablon robi `python tools/paczka_tekstur.py` (z `terrain.png`, paczek
@@ -30,7 +30,7 @@ go uruchomić jeszcze raz.
    oryginalne (powiększone, ostre piksele).
 4. Spakuj do `.zip` (zawartość folderu albo cały folder - gra sama
    pominie folder na początku ścieżek).
-5. Ustawienia → Tekstury → **Wczytaj paczkę (.zip)** → wybierz plik.
+5. Ustawienia → Wygląd → **Wczytaj paczkę (.zip)** → wybierz plik.
    Gra pokazuje postęp, potem uruchamia się ponownie (świat zapisuje
    się przedtem).
 

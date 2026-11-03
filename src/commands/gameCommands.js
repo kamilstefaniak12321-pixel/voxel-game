@@ -63,10 +63,14 @@ import {
 import {
     SETTINGS_DEFAULTS,
     SETTINGS_RANGES,
-    SETTINGS_CHOICES
+    SETTINGS_CHOICES,
+    GRAPHICS_PRESETS,
+    graphicsPreset
 } from '../settings/Settings.js';
 
 import { TEXTS } from '../ui/texts.js';
+
+import { SCENES, SCENE_TIMES, findScene, buildScene } from '../dev/scenes.js';
 
 import { compareVersions, megabytes } from '../app/AndroidUpdates.js';
 
@@ -119,7 +123,8 @@ import {
     SPACE_FULL,
     SPACE_MAX_ALTITUDE,
     SKYFALL_START,
-    CREATIVE_REPEAT_SECONDS
+    CREATIVE_REPEAT_SECONDS,
+    isCreative
 } from '../config.js';
 
 import { skyfallSpeed } from '../player/Player.js';
@@ -1558,6 +1563,7 @@ const SETTING_WORDS = {
     'swiatlo-odbite': 'bounceLight',
     'model-swiatla': 'lightingModel',
     odbicia: 'bounceLight',
+    'trawa-kepiasta': 'bushyGrass',
     liscie: 'fancyLeaves',
     'dynamiczne-swiatlo': 'dynamicLight',
     wczytywanie: 'loadBudget',
@@ -2577,20 +2583,21 @@ export const GAME_COMMANDS = [
     {
         name: 'tryb',
         aliases: ['gamemode', 'gm'],
-        usage: '/tryb [przygoda | kreatywny]',
-        description: 'Tryb gry: przygoda (zbierasz i zużywasz bloki) albo kreatywny (bloki bez końca, latanie - 2 x Spacja).',
+        usage: '/tryb [przygoda | kreatywny | programista]',
+        description: 'Tryb gry: przygoda (zbierasz i zużywasz bloki), kreatywny (bloki bez końca, latanie - 2 x Spacja) albo programista (jak kreatywny + sceny testowe: /scena).',
 
         run(args, { game }) {
 
             const word = simplify(args[0] ?? '');
 
             if (!word) {
-                return `Tryb gry: ${TEXTS.gameModes[game.mode]}. Zmiana: /tryb przygoda albo /tryb kreatywny.`;
+                return `Tryb gry: ${TEXTS.gameModes[game.mode]}. Zmiana: /tryb przygoda, /tryb kreatywny albo /tryb programista.`;
             }
 
             const mode =
                 ['przygoda', 'adventure', 'survival', 'p', '0'].includes(word) ? 'adventure' :
                 ['kreatywny', 'creative', 'k', '1'].includes(word) ? 'creative' :
+                ['programista', 'developer', 'dev', '3'].includes(word) ? 'developer' :
                 null;
 
             if (!mode) {
@@ -2599,14 +2606,16 @@ export const GAME_COMMANDS = [
 
             game.setMode(mode);
 
-            return mode === 'creative'
+            return mode === 'developer'
+                ? 'Tryb programisty: jak kreatywny, a do tego sceny testowe (Esc - Sceny testowe albo /scena lista).'
+                : mode === 'creative'
                 ? 'Tryb kreatywny: bloki się nie zużywają, E - wszystkie bloki, dwa razy Spacja - latanie.'
                 : 'Tryb przygody: kopanie trwa (trzymaj LPM - /kopanie), zniszczone bloki trafiają do ekwipunku, stawianie je zużywa.';
 
         },
 
         complete(args) {
-            return args.length === 1 ? ['przygoda', 'kreatywny'] : [];
+            return args.length === 1 ? ['przygoda', 'kreatywny', 'programista'] : [];
         }
     },
 
@@ -3136,7 +3145,7 @@ export const GAME_COMMANDS = [
             const inventory = game.inventory;
 
 
-            if (args[1] === undefined && game.mode === 'creative') {
+            if (args[1] === undefined && isCreative(game.mode)) {
 
                 inventory.set(inventory.selected, { type, count: 1 });
 
@@ -3845,17 +3854,17 @@ export const GAME_COMMANDS = [
     {
         name: 'swiatlo',
         aliases: ['light'],
-        usage: '/swiatlo | /swiatlo model <swiat | klasyczne | atmosfera> | /swiatlo dynamiczne <wl | wyl> | /swiatlo odbite <wl | wyl>',
-        description: 'Pomiar światła; model klasyczny lub eksperymentalna atmosfera; światło dynamiczne i odbite.',
+        usage: '/swiatlo | /swiatlo model <atmosfera | klasyczne> | /swiatlo dynamiczne <wl | wyl> | /swiatlo odbite <wl | wyl>',
+        description: 'Pomiar światła; model atmosferyczny (domyślny) albo klasyczny i światło odbite (oba - Ustawienia, Eksperymenty); światło dynamiczne.',
 
         run(args, { game, world }) {
 
             if (simplify(args[0] ?? '') === 'model') {
-                const choices = { swiat: 'world', klasyczne: 'classic', atmosfera: 'atmosphere' };
+                const choices = { swiat: 'world', atmosfera: 'world', domyslny: 'world', klasyczne: 'classic', klasyczny: 'classic' };
                 const choice = choices[simplify(args[1] ?? '')];
                 if (args.length !== 2 || !choice) throw usageError(this);
                 game.settings.set('lightingModel', choice);
-                return `${TEXTS.lightingModel(choice)}. Domyślny model atmosferyczny działa we wszystkich światach. Klasyczny pozostaje dostępny w ustawieniach.`;
+                return `${TEXTS.lightingModel(choice)} (Ustawienia - Eksperymenty).`;
             }
 
             if (args[0] !== undefined && simplify(args[0]) === 'odbite') {
@@ -3937,7 +3946,7 @@ export const GAME_COMMANDS = [
 
         complete(args) {
             if (args.length === 1) return ['model', 'dynamiczne', 'odbite'];
-            if (args.length === 2 && simplify(args[0]) === 'model') return ['swiat', 'klasyczne', 'atmosfera'];
+            if (args.length === 2 && simplify(args[0]) === 'model') return ['atmosfera', 'klasyczne'];
             if (args.length === 2) return ['wl', 'wyl'];
             return [];
         }
@@ -4100,6 +4109,80 @@ export const GAME_COMMANDS = [
 
             if (args.length === 1) return ['swiatlo', 'okno', 'dom', 'kula', 'skaly'];
             if (args.length === 2 && simplify(args[0]) === 'kula') return [...Object.keys(COLOR_NAMES), 'usun'];
+
+            return [];
+
+        }
+    },
+
+    // ========================================================
+    // SCENY TESTOWE (tryb programisty - src/dev/scenes.js)
+    // ========================================================
+
+    {
+        name: 'scena',
+        aliases: ['scene', 'sceny'],
+        usage: '/scena lista | /scena <nazwa> | /scena czas <swit | poludnie | zachod | noc | stop | start>',
+        description: 'Tryb programisty: gotowe sceny do testów (światło, lampy, okno, dom, basen, rośliny, krzaki, drzewa, skały) - ' +
+            'na placu testowym zawsze w tym samym miejscu; pora dnia jednym słowem i zatrzymanie czasu.',
+
+        run(args, ctx) {
+
+            const { game, time } = ctx;
+
+            const word = simplify(args[0] ?? '');
+
+
+            if (word === 'czas') {
+
+                const what = simplify(args[1] ?? '');
+
+                const times = { swit: 'dawn', poludnie: 'noon', zachod: 'dusk', noc: 'night' };
+
+                if (what in times) {
+                    setSceneTime(time, times[what]);
+                    return `Pora dnia: ${TEXTS.sceneTimes[times[what]]}${time.speed === 0 ? ' (czas stoi)' : ''}.`;
+                }
+
+                if (['stop', 'start'].includes(what)) {
+                    time.speed = what === 'stop' ? 0 : 1;
+                    return TEXTS.sceneFreeze(time.speed === 0) + '.';
+                }
+
+                throw usageError(this);
+
+            }
+
+
+            if (!word || word === 'lista') {
+
+                return 'Sceny testowe (/scena <nazwa>):\n' +
+                    SCENES.map((scene) => `${scene.id} - ${scene.name}: ${scene.description}`).join('\n');
+
+            }
+
+
+            if (game.mode !== 'developer') {
+                throw new CommandError('Sceny testowe są w trybie programisty: /tryb programista.');
+            }
+
+            const scene = findScene(word);
+
+            if (!scene) {
+                throw new CommandError(`Nie ma sceny "${args[0]}". Do wyboru: ${SCENES.map((s) => s.id).join(', ')}`);
+            }
+
+            const text = buildScene(scene, ctx, (name, commandArgs) =>
+                GAME_COMMANDS.find((command) => command.name === name).run(commandArgs, ctx));
+
+            return `${TEXTS.sceneBuilt(scene.name)} ${text}`.trim();
+
+        },
+
+        complete(args) {
+
+            if (args.length === 1) return ['lista', 'czas', ...SCENES.map((scene) => scene.id)];
+            if (args.length === 2 && simplify(args[0]) === 'czas') return ['swit', 'poludnie', 'zachod', 'noc', 'stop', 'start'];
 
             return [];
 
@@ -5137,6 +5220,31 @@ export const GAME_COMMANDS = [
             }
 
 
+            // Jakość grafiki - kilka ustawień obrazu naraz (Settings.js).
+
+            if (['jakosc', 'grafika'].includes(simplify(name))) {
+
+                const words = { niska: 'low', srednia: 'medium', wysoka: 'high', najwyzsza: 'ultra' };
+
+                if (value === undefined) {
+                    return TEXTS.graphicsPreset(graphicsPreset(settings));
+                }
+
+                const preset = words[simplify(value)];
+
+                if (!preset) {
+                    throw new CommandError('Jakość: niska, srednia, wysoka albo najwyzsza.');
+                }
+
+                for (const [setting, presetValue] of Object.entries(GRAPHICS_PRESETS[preset])) {
+                    settings.set(setting, presetValue);
+                }
+
+                return TEXTS.graphicsPreset(preset);
+
+            }
+
+
             const key = SETTING_WORDS[simplify(name)] ?? Object.keys(SETTINGS_DEFAULTS).find(
                 (setting) => simplify(setting) === simplify(name)
             );
@@ -5160,7 +5268,11 @@ export const GAME_COMMANDS = [
         complete(args) {
 
             if (args.length === 1) {
-                return [...Object.keys(SETTING_WORDS), 'domyslne'];
+                return [...Object.keys(SETTING_WORDS), 'jakosc', 'domyslne'];
+            }
+
+            if (args.length === 2 && simplify(args[0]) === 'jakosc') {
+                return ['niska', 'srednia', 'wysoka', 'najwyzsza'];
             }
 
             const key = SETTING_WORDS[simplify(args[0])];
@@ -6004,5 +6116,14 @@ function buildLightDemo({ player, world }) {
 
     return 'Zbudowano pokój z lampami: czerwona i niebieska (pośrodku fiolet), ' +
         'zielona, fioletowa i zwykła. Jesteś w środku.';
+
+}
+
+
+// Pora dnia ze scen (SCENE_TIMES) - tego samego dnia.
+
+export function setSceneTime(time, name) {
+
+    time.days = Math.floor(time.days) + SCENE_TIMES[name] + 1e-7;
 
 }

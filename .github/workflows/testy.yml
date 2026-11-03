@@ -1,27 +1,23 @@
-name: Laboratorium światła
+name: Testy gry
+
+# npm test (wszystkie testy) i prawdziwa gra w Chrome (WebGL2): świat
+# w trybie programisty ze sceną "Światło i materiały" (src/dev/scenes.js,
+# tools/sprawdz_swiatlo_webgl.mjs). Do 0.54.0 - "Laboratorium światła".
 
 # Pull request - tylko z etykietą "kompilacja" (jak próbne kompilacje
 # w aplikacja.yml): etykietę dodaje się, gdy PR jest gotowy, wtedy
 # każdy push sprawdza od nowa (starsze sprawdzenie jest przerywane).
 # Bez etykiety przebieg jest pomijany i nie zużywa minut Actions.
-# Ręcznie: Actions -> Laboratorium światła -> Run workflow.
+# Ręcznie: Actions -> Testy gry -> Run workflow.
 on:
   pull_request:
     types: [opened, synchronize, reopened, labeled]
     paths:
       - 'src/**'
-      - 'tools/sprawdz_swiatlo*.mjs'
-      - 'tools/sprawdz_tarcze.mjs'
-      - 'tools/sprawdz_ciemnosc.mjs'
-      - 'tools/sprawdz_cienie.mjs'
-      - 'tools/sprawdz_materialy*.mjs'
-      - 'tools/sprawdz_odlamki.mjs'
-      - 'tools/sprawdz_warmup_wody.mjs'
-      - 'tools/surface_render_checks.js'
-      - 'tools/shadow_render_checks.js'
-      - 'tools/light_room_checks.js'
+      - 'tools/**'
+      - 'assets/**'
       - 'package.json'
-      - '.github/workflows/swiatlo.yml'
+      - '.github/workflows/testy.yml'
   workflow_dispatch:
 
 permissions:
@@ -32,12 +28,12 @@ concurrency:
     ${{ github.event_name == 'pull_request'
         && contains(github.event.pull_request.labels.*.name, 'kompilacja')
         && (github.event.action != 'labeled' || github.event.label.name == 'kompilacja')
-        && format('swiatlo-pr-{0}', github.event.pull_request.number)
-    || format('swiatlo-{0}', github.run_id) }}
+        && format('testy-pr-{0}', github.event.pull_request.number)
+    || format('testy-{0}', github.run_id) }}
   cancel-in-progress: true
 
 jobs:
-  swiatlo:
+  testy:
     if: >-
       github.event_name != 'pull_request'
       || (contains(github.event.pull_request.labels.*.name, 'kompilacja')
@@ -56,6 +52,6 @@ jobs:
         if: always()
         continue-on-error: true
         with:
-          name: laboratorium-swiatla
-          path: test-results/light-lab/
+          name: testy-gry
+          path: test-results/sceny/
           retention-days: 7

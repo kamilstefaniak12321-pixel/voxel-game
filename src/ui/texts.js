@@ -45,27 +45,31 @@ export const TEXTS = {
     terrainNotes: {
         realistic: 'Morza, niziny, wyżyny i góry. W budowie - kolejne aktualizacje zmienią ten teren (Twoje budowle zostaną).',
         classic: 'Pierwszy generator gry: wzgórza i góry, bez morza. Nie będzie się już zmieniał.',
-        'light-lab': 'Stały plac testowy: materiały, słupy, liście, basen i pokój z otworem w dachu. Przy domyślnych ustawieniach używa eksperymentalnego światła atmosferycznego. Polecany tryb kreatywny. Seed nie zmienia stanowisk.'
+        flat: 'Płaski plac do testów: jasna posadzka przy starcie, trawa dookoła i trzy tarasy daleko na wschodzie (daleki teren). Sceny testowe stawiają się tu zawsze w tym samym miejscu.'
     },
     gameMode: (name) => `Tryb gry: ${name}`,
     gameModes: {
         adventure: 'Przygoda',
-        creative: 'Kreatywny'
+        creative: 'Kreatywny',
+        developer: 'Programista'
     },
     gameModeNotes: {
         adventure: 'Zniszczone bloki trafiają do ekwipunku, a stawianie je zużywa. Zaczynasz z pustymi rękami.',
-        creative: 'Wszystkie bloki bez końca (E - ekwipunek), latanie: dwa razy Spacja.'
+        creative: 'Wszystkie bloki bez końca (E - ekwipunek), latanie: dwa razy Spacja.',
+        developer: 'Do testowania gry: jak kreatywny, a do tego sceny testowe (pauza - Sceny testowe albo /scena), stała pora dnia jednym kliknięciem i plac testowy.'
     },
     createWorld: 'Utwórz świat',
     cancel: 'Anuluj',
     defaultWorldName: (number) => `Świat ${number}`,
 
-    worldExperiments: 'Dodatki świata',
-    experimentsNote: 'Eksperymentalne dodatki zapisują się osobno dla tego świata.',
-    bushyGrass: (on) => `Trawa kępiasta: ${on ? 'Wł.' : 'Wył.'} (eksperyment)`,
-    bushyGrassNote: 'Przestrzenne, pikselowe kępki zastępują zwykłą trawę. Możesz wrócić do poprzedniego wyglądu w dowolnej chwili.',
-    experimentsSaved: 'Zapisano. Nowy wygląd pojawi się stopniowo po powrocie do gry.',
-    experimentsSaveFailed: 'Zmiana działa w tej sesji, ale nie udało się jej zapisać. Spróbuj ponownie lub użyj „Zapisz i wyjdź”.',
+    // Tryb programisty - sceny testowe (src/dev/scenes.js)
+    scenes: 'Sceny testowe',
+    scenesNote: 'Scena stawia się na placu testowym zawsze w tym samym miejscu (w innym terenie - przed tobą) i przenosi cię do niej.',
+    sceneTime: 'Pora dnia',
+    sceneTimes: { dawn: 'Świt', noon: 'Południe', dusk: 'Zachód', night: 'Noc' },
+    sceneFreeze: (on) => on ? 'Czas stoi' : 'Czas płynie',
+    sceneBuilt: (name) => `Scena „${name}” gotowa.`,
+    developerHint: 'Tryb programisty: Esc - Sceny testowe (albo /scena lista), /scena czas poludnie, /scena czas stop. Lista komend: /pomoc.',
 
     // Usuwanie świata
     deleteQuestion: (name) => `Usunąć świat „${name}”?`,
@@ -117,12 +121,23 @@ export const TEXTS = {
     settingsTitle: 'Ustawienia',
     settingsTabs: {
         video: 'Obraz',
-        controls: 'Sterowanie',
-        player: 'Gracz',
         sound: 'Dźwięk',
-        textures: 'Tekstury',
-        other: 'Inne'
+        player: 'Gracz',
+        look: 'Wygląd',
+        game: 'Gra',
+        experiments: 'Eksperymenty'
     },
+    graphicsPreset: (name) => `Jakość grafiki: ${{ low: 'Niska', medium: 'Średnia', high: 'Wysoka', ultra: 'Najwyższa' }[name] ?? 'Własna'}`,
+    advancedShow: 'Zaawansowane ▾',
+    advancedHide: 'Zaawansowane ▴',
+    advancedNote: 'Cienie słońca „Dalekie” sięgają ok. 800 bloków. Zmiana któregoś z tych ustawień ustawia jakość grafiki na „Własna”.',
+    experimentsIntro: 'Funkcje, których nie jesteśmy jeszcze pewni - mogą się zmienić albo zniknąć w następnych wersjach. Działają we wszystkich światach i można je wyłączyć w każdej chwili.',
+    experimentNotes: {
+        bushyGrass: 'Przestrzenne, pikselowe kępki zamiast zwykłej trawy (więcej ścian do narysowania).',
+        bounceLight: 'Ściany oświetlone słońcem rozjaśniają pokój swoim kolorem. Działa tylko z cieniami słońca.',
+        lightingModel: 'Atmosferyczne: kolor i siła słońca zależą od drogi przez powietrze. Klasyczne: dawne, prostsze światło.'
+    },
+    bushyGrass: (on) => `Trawa kępiasta: ${on ? 'Wł.' : 'Wył.'}`,
     potato: (on) => `Tryb ziemniaka: ${on ? 'Wł.' : 'Wył.'}`,
     potatoReloadNote: 'Wygładzanie krawędzi zmieni się po odświeżeniu strony (F5).',
     mouseSensitivity: (value) => `Czułość myszy: ${value}%`,
@@ -130,17 +145,16 @@ export const TEXTS = {
     fov: (value) => `Pole widzenia: ${value}°`,
     viewDistance: (value) => `Zasięg widzenia: ${value} bloków`,
     farTerrain: (value) => value > 0 ? `Daleki teren: ${value} bloków` : 'Daleki teren: Wył.',
-    farDetail: (value) => `Szczegóły dalekiego terenu: ${['', 'Niskie', 'Średnie', 'Wysokie'][value] ?? 'Średnie'}`,
+    farDetail: (value) => `Detale w oddali: ${['', 'Niskie', 'Średnie', 'Wysokie'][value] ?? 'Średnie'}`,
     brightness: (value) =>
         `Jasność: ${value === 0 ? 'Nastrojowa' : value === 100 ? 'Jasna' : `+${value}%`}`,
     renderScale: (value) => `Rozdzielczość: ${value}%`,
     fpsLimit: (value) => `Limit FPS: ${value > 0 ? value : 'Bez limitu'}`,
     ambientOcclusion: (value) => `Cienie w kątach: ${value > 0 ? `${value}%` : 'Wył.'}`,
-    shadows: (value) => `Cienie słońca: ${['Wył.', 'Zwykłe', 'Dokładne', 'Dalekie (~800 bloków)'][value] ?? 'Wył.'}`,
-    lightingModel: (value) => `Model światła: ${{ world: 'Domyślny (atmosferyczny)', classic: 'Klasyczny', atmosphere: 'Atmosferyczny' }[value] ?? 'Domyślny (atmosferyczny)'}`,
-    lightLabHint: 'Laboratorium: /swiatlo model atmosfera lub klasyczne — porównanie; /czas predkosc 0 — zatrzymaj czas; /czas ustaw 06:15, 12:00 lub 17:45. Stanowiska są na północ od startu, tarasy LOD na wschodzie. /tryb kreatywny — latanie.',
+    shadows: (value) => `Cienie słońca: ${['Wył.', 'Zwykłe', 'Dokładne', 'Dalekie'][value] ?? 'Wył.'}`,
+    lightingModel: (value) => `Światło: ${value === 'classic' ? 'Klasyczne' : 'Atmosferyczne'}`,
     lightShafts: (on) => `Promienie światła: ${on ? 'Wł.' : 'Wył.'}`,
-    bounceLight: (on) => `Światło odbite (eksperymentalne): ${on ? 'Wł.' : 'Wył.'}`,
+    bounceLight: (on) => `Światło odbite: ${on ? 'Wł.' : 'Wył.'}`,
     fancyLeaves: (on) => `Liście drzew: ${on ? 'Ładne' : 'Szybkie'}`,
     theme: (name) => `Motyw: ${name}`,
     inventoryStyle: (value) => `Ekwipunek: ${value === 'light' ? 'Jasny' : 'Drewniany'}`,
@@ -171,7 +185,7 @@ export const TEXTS = {
         '(układ jak w Minecrafcie) - szablon w docs/gracz.md.',
     skinOverlay: (on) => `Druga warstwa skórki: ${on ? 'Wł.' : 'Wył.'}`,
     showHand: (on) => `Ręka w widoku z oczu: ${on ? 'Wł.' : 'Wył.'}`,
-    viewBobbing: (on) => `Kołysanie przy chodzeniu: ${on ? 'Wł.' : 'Wył.'}`,
+    viewBobbing: (on) => `Kołysanie widoku: ${on ? 'Wł.' : 'Wył.'}`,
     jointStyle: (value) => `Zgięcia rąk i nóg: ${value === 'blocks' ? 'Klocki' : 'Gładkie'}`,
     cameraDistance: (value) => `Kamera z tyłu (F5): ${value} ${value < 5 ? 'bloki' : 'bloków'}`,
     resetSettings: 'Przywróć domyślne',

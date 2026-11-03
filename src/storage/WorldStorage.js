@@ -14,7 +14,6 @@
 // ------------------------------------------------------------
 
 import { DEFAULT_TERRAIN, DEFAULT_GAME_MODE } from '../config.js';
-import { normalizeWorldExperiments } from '../world/WorldExperiments.js';
 
 const DB_NAME = 'voxel-game';
 
@@ -59,7 +58,7 @@ function transactionToPromise(transaction) {
 // Dane nowego świata (jeszcze niezapisane w bazie).
 // ------------------------------------------------------------
 
-export function createWorldInfo(name, seed, terrain = DEFAULT_TERRAIN, gameMode = DEFAULT_GAME_MODE, experiments) {
+export function createWorldInfo(name, seed, terrain = DEFAULT_TERRAIN, gameMode = DEFAULT_GAME_MODE) {
 
     const now = Date.now();
 
@@ -81,10 +80,10 @@ export function createWorldInfo(name, seed, terrain = DEFAULT_TERRAIN, gameMode 
         // Światy bez tego pola są klasyczne.
         terrain,
 
-        // Tryb gry ('adventure', 'creative'). Światy bez tego pola są kreatywne.
+        // Tryb gry ('adventure', 'creative', 'developer'). Światy bez tego
+        // pola są kreatywne. (Dawne pole "experiments" - trawa kępiasta
+        // - od 0.55.0 jest w ustawieniach: Eksperymenty.)
         gameMode,
-
-        experiments: normalizeWorldExperiments(experiments),
 
         // Ekwipunek z paskiem bloków (game/Inventory.js) - powstaje w grze.
         inventory: null,

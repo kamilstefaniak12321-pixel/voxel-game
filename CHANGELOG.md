@@ -13,7 +13,7 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ## 0.57.0 - Podstawa naturalnego oświetlenia
 
-Pierwszy pakiet planu światła: E00–E04 i podstawowe presety E07 — PR w przygotowaniu.
+Pierwszy pakiet planu światła: E00–E04 i podstawowe presety E07 — PR #91.
 
 - Wspólne liniowe składanie światła słońca, księżyca, nieba, lamp i emisji. Świat ma jeden końcowy etap tonowania i konwersji koloru, z zachowanym wygładzaniem krawędzi; interfejs i ikony pozostają poza nim.
 - Sześć profili: południe, złota godzina, zachód, zachmurzenie, błękitna godzina i noc. Kolory i moce przechodzą płynnie, a ciepłe źródła lokalne zachowują własną barwę. Profil chmur służy na razie próbom oświetlenia, bez nowego systemu pogody.

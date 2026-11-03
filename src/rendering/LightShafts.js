@@ -27,6 +27,13 @@ import { shadowUniforms } from './Shadows.js';
 
 const STEPS = 20;
 
+// Stare SHAFT_BRIGHTNESS kalibrowano jako poświatę dodawaną do obrazu
+// sRGB. W liniowym świecie ta sama liczba bardzo podnosiła czerń lasu.
+// Dla słabej smugi 1-exp(-0.1) ~= 0.095 sRGB odpowiada ~0.0093 liniowo:
+// skala 0.10 przenosi ją w zakres niskiej energii rozproszenia. To stała
+// moc źródła, bez drugiej tonemapy, dekodowania efektu ani adaptacji oka.
+const NATURAL_SCATTER_POWER = 0.10;
+
 
 const QUAD_VERTEX = `
 varying vec2 vUv;
@@ -471,9 +478,10 @@ export class LightShafts {
 
         this.drawQuad(this.blur, this.targets[0]);
 
+        const linearOutput = previousTarget?.isWorldOutputTarget === true;
         this.composite.uniforms.uInput.value = this.targets[0].texture;
-        this.composite.uniforms.uColor.value.copy(color);
-        this.composite.uniforms.uLinearOutput.value = previousTarget?.isWorldOutputTarget ? 1 : 0;
+        this.composite.uniforms.uColor.value.copy(color).multiplyScalar(linearOutput ? NATURAL_SCATTER_POWER : 1);
+        this.composite.uniforms.uLinearOutput.value = linearOutput ? 1 : 0;
 
         this.drawQuad(this.composite, previousTarget);
 

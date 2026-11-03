@@ -92,7 +92,7 @@ function report() {
         motion, motionPeriodSeconds: 30, plantShadowsRequested: plantShadows,
         debugView, components: { ...components },
         forest: sceneName === 'forest' ? { terrain: 'realistic', groundAtReference: game.world.generator.getHeight(188, -252),
-            referenceEye: [188, 132, -252], near: 64, horizon: 1024, shadowTarget: 800, lightShafts: true } : null,
+            referenceEye: [188, 132, -252], near: 64, horizon: 1024, shadowTarget: 800, lightShafts: settings.get('lightShafts') } : null,
         requested: LIGHTING_REFERENCE_PRESETS[preset],
         effective: { time: game.time.days, cloudCover: cloudsSupported ? settings.get('cloudCover') : null,
             lightingLook: lookSupported ? settings.get('lightingLook') : '0.56.1-original' },
@@ -101,6 +101,7 @@ function report() {
 const fileName = () => `${sceneName}-${camera}-${preset}-${look}-${motion}-${plantShadows ? 'plants' : 'no-plants'}-${debugView}`;
 function changed() {
     readySince = 0; settleFrames = 3; motionOrigin = performance.now();
+    panel.querySelector('[data-light-shafts]').checked = settings.get('lightShafts');
     for (const button of panel.querySelectorAll('[data-preset]')) button.setAttribute('aria-pressed', button.dataset.preset === preset);
     for (const button of panel.querySelectorAll('[data-camera]')) button.setAttribute('aria-pressed', button.dataset.camera === camera);
     for (const button of panel.querySelectorAll('[data-look]')) button.setAttribute('aria-pressed', button.dataset.look === look);
@@ -182,6 +183,7 @@ const setControls = busy => {
     panel.querySelector('[data-profiles-gray]').disabled = busy || !diagnostics;
     panel.querySelector('[data-animate]').disabled = busy;
     panel.querySelector('[data-plant-shadows]').disabled = busy || !game?.shadows?.setNaturalLighting;
+    panel.querySelector('[data-light-shafts]').disabled = busy;
     panel.querySelector('[data-motion]').disabled = busy;
     panel.querySelector('[data-debug-view]').disabled = busy || !diagnostics;
     for (const checkbox of panel.querySelectorAll('[data-component]')) checkbox.disabled = busy;
@@ -190,6 +192,10 @@ panel.querySelector('[data-plant-shadows]').disabled = !game.shadows.setNaturalL
 panel.querySelector('[data-plant-shadows]').onchange = event => {
     if (run || switching) return;
     plantShadows = event.target.checked; applyPlantShadowOverride(); changed();
+};
+panel.querySelector('[data-light-shafts]').onchange = event => {
+    if (run || photograph || switching) return;
+    settings.set('lightShafts', event.target.checked); changed();
 };
 panel.querySelector('[data-motion]').onchange = event => {
     if (run || switching) return;

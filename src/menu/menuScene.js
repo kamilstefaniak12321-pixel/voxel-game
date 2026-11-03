@@ -18,10 +18,10 @@ export function menuSettings(settings, mobile = false) {
     return {
         get(key) {
             const value = settings.get(key);
-            if (key === 'viewDistance') return Math.min(value, mobile ? 48 : 64);
-            if (key === 'farTerrain') return Math.min(value, mobile ? 1024 : 2048);
+            if (key === 'viewDistance') return mobile ? 128 : 256;
+            if (key === 'farTerrain') return mobile ? 768 : 1024;
             if (key === 'farDetail') return Math.min(value, 2);
-            if (key === 'loadBudget') return Math.min(value, 4);
+            if (key === 'loadBudget') return mobile ? 6 : 12;
             if (key === 'fov') return 58;
             return value;
         }

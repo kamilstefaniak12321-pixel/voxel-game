@@ -1597,6 +1597,9 @@ export class Game {
         this.farTerrain.setRange(inner, outer);
 
         viewUniforms.uFarEnabled.value = this.farTerrain.active ? 1 : 0;
+        // Materiały są wspólne z menu. Start, ustawienia i każda klatka gry
+        // przywracają dotychczasowe przejście tekstur w daleki teren.
+        viewUniforms.uFarTextureBlend.value = 1;
         viewUniforms.uFarInner.value = inner;
         viewUniforms.uFarOuter.value = Math.max(outer, inner);
 

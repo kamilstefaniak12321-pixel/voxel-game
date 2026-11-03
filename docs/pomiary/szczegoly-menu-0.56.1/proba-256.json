@@ -1,0 +1,134 @@
+{
+  "scene": {
+    "id": "river-valley-0.56",
+    "seed": 2138286349,
+    "terrain": "realistic",
+    "time": 0.4375,
+    "views": {
+      "home": {
+        "position": [
+          -480,
+          100,
+          384
+        ],
+        "target": [
+          -520,
+          88,
+          450
+        ]
+      },
+      "river": {
+        "position": [
+          -477,
+          79,
+          375
+        ],
+        "target": [
+          -510,
+          78,
+          420
+        ]
+      },
+      "forest": {
+        "position": [
+          -474,
+          78,
+          388
+        ],
+        "target": [
+          -481,
+          74.5,
+          349
+        ]
+      },
+      "mountains": {
+        "position": [
+          -476,
+          106,
+          426
+        ],
+        "target": [
+          -530,
+          103,
+          580
+        ]
+      }
+    }
+  },
+  "viewport": [
+    1920,
+    1057
+  ],
+  "summary": {
+    "home": {
+      "frames": 1800,
+      "fps": 60.00840117626006,
+      "frameP95": 21.5,
+      "cpuMean": 5.653777774969737,
+      "cpuP95": 7.900000095367432
+    }
+  },
+  "stats": {
+    "active": true,
+    "pending": false,
+    "failed": false,
+    "reducedMotion": false,
+    "view": "home",
+    "frames": 8206,
+    "ready": true,
+    "position": [
+      -480,
+      100.00195006537498,
+      384
+    ],
+    "warmed": true,
+    "chunks": 1009,
+    "loadQueue": 0,
+    "completeRadius": null,
+    "meshes": 869,
+    "far": {
+      "active": true,
+      "shown": 285,
+      "wanted": 285,
+      "missing": 0,
+      "cached": 375,
+      "triangles": 701032,
+      "shadowRevision": 939,
+      "detailDistance": 800,
+      "targetSpacing": 4,
+      "lodWithinTarget": {
+        "2": 42,
+        "4": 136
+      },
+      "workers": 3
+    },
+    "error": null
+  },
+  "resources": {
+    "triangles": 4313698,
+    "geometryMiB": 419.6140251159668,
+    "pendingMeshes": 140,
+    "dirty": 0,
+    "heapMiB": 761.4934244155884,
+    "elapsed": 141.9165
+  },
+  "travel": {
+    "frames": 124,
+    "p95": 21.299999952316284,
+    "max": 172.39999985694885
+  },
+  "activeGame": false,
+  "transitions": [
+    {
+      "view": "home",
+      "at": 3265.2000000476837,
+      "position": [
+        -480,
+        100.0004799994311,
+        384
+      ]
+    }
+  ],
+  "errors": [],
+  "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 3050 Laptop GPU (0x000025A2) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+}

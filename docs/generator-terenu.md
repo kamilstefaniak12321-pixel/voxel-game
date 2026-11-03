@@ -322,8 +322,11 @@ Jaskinie, rudy i warstwy skał, wodospady, klify nadmorskie, pory roku.
   etap (rzeki, biomy, drzewa) ma się zmieścić tak, żeby cały chunk
   był gotowy w kilku ms (`/wydajnosc`, `/wydajnosc test`).
 - **Wysokość świata**: 128 bloków (morze na 48). Chunk zajmuje teraz
-  ~160 KB (bloki + światło), więc przy największym zasięgu widzenia
-  (384) to ~300 MB. Gdyby góry miały być dużo wyższe albo pamięć
+  ~160 KB (bloki + światło), więc przy zasięgu widzenia 384 bloków
+  to ~300 MB. Limit suwaka wynosi teraz 800 bloków; koło wczytywanych
+  chunków ma wtedy około cztery razy więcej chunków niż przy 384.
+  Domyślny zasięg pozostaje bez zmian, a dalsze chunki dogrywają się
+  stopniowo w budżecie klatki. Gdyby góry miały być dużo wyższe albo pamięć
   zaczęła przeszkadzać - podział chunków na sekcje 16 x 16 x 16
   (puste powietrze i lita skała bez tablic).
 

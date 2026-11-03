@@ -633,7 +633,7 @@ W menu (z ekranu tytułowego i z pauzy) jest sześć zakładek:
   *Najwyższa* (dalekie cienie - domyślna na komputerze). Jedno kliknięcie
   ustawia naraz cienie słońca, cienie w kątach, promienie, liście i tryb
   ziemniaka; gdy zmienisz któreś z nich sam, jakość to *Własna*,
-- **zasięg widzenia** (24-384 bloków) - jak daleko widać prawdziwe bloki,
+- **zasięg widzenia** (24-800 bloków) - jak daleko widać prawdziwe bloki,
 - **daleki teren** (do 16 384 bloków albo wyłączony) - uproszczony,
   kanciasty teren za zasięgiem widzenia, aż po horyzont,
 - **pole widzenia** (50-110°),

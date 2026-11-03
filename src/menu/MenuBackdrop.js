@@ -65,7 +65,7 @@ export class MenuBackdrop {
             if (this.world.error) throw this.world.error;
             this.world.render();
             this.frames++;
-            if (this.world.ready) document.body.dataset.menuBackdrop = 'ready';
+            document.body.dataset.menuBackdrop = this.world.ready ? 'ready' : 'loading';
         } catch (error) {
             this.fail(error);
         }

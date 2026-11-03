@@ -133,7 +133,7 @@ export class CampfireRenderer {
                 if(uLightingNatural>.5) source=mix(source/12.92,pow((source+.055)/1.055,vec3(2.4)),step(vec3(.04045),source));
                 bool spark=vEmission>.5;
                 vec3 value=source*(spark?uLightingLocal.y:uLightingLocal.x);
-                if(uLightingDebug>0 && uLightingDebug<12) {
+                if(uLightingDebug>0 && uLightingDebug!=12) {
                     if(uLightingDebug==1) value=source;
                     else if(!((uLightingDebug==11 && spark)||(uLightingDebug==10 && !spark))) value=vec3(0.0);
                 }
@@ -144,6 +144,20 @@ export class CampfireRenderer {
             }`});
         this.points = new THREE.Points(geometry,this.particleMaterial); this.points.frustumCulled=false;
         this.game.scene.add(this.points);
+    }
+
+    updateBounce() {
+        // Drewno, podpałka i popiół pobierają odbicie ze swojego miejsca,
+        // nie spod nóg gracza. Wywoływane po aktualizacji źródeł światła.
+        for (const view of this.views.values()) {
+            if (!this.game.bounce.enabled) {
+                view.lighting.uModelBounce.value.set(0, 0, 0);
+                continue;
+            }
+            const p = view.group.position;
+            const color = this.game.bounce.sample(p.x, p.y + 0.25, p.z);
+            view.lighting.uModelBounce.value.set(color[0], color[1], color[2]);
+        }
     }
 
     createView(key, fire) {

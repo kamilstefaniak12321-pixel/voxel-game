@@ -1,901 +1,458 @@
 import * as THREE from 'three';
+import { CHUNK_SIZE, CHUNK_HEIGHT, BOUNCE_SIZE, BOUNCE_HEIGHT, LIGHT_CURVE } from '../config.js';
+import { BLOCK_TYPES, getBlockTypeById, isOpaqueId, isLeavesId } from '../blocks/BlockRegistry.js';
+import { atlasAveragesReady, getAtlasAverage, getTileColors } from '../rendering/TextureAtlas.js';
 
-import {
-    CHUNK_SIZE,
-    CHUNK_HEIGHT,
-    BOUNCE_SIZE,
-    BOUNCE_HEIGHT,
-    BOUNCE_SPREAD,
-    BOUNCE_MAX_REFLECT,
-    BOUNCE_OUTDOOR
-} from '../config.js';
+// Jedno odbicie: sonda zbiera tylko pierwszą widoczną powierzchnię.
+// Ściana odbija źródła i niebo, nigdy poprzedni wynik tego bufora.
+const NX = BOUNCE_SIZE + 2, NZ = NX, NY = BOUNCE_HEIGHT + 2;
+const NXZ = NX * NZ, CELLS = NXZ * NY, LAYER_BYTES = CELLS * 4;
+const REACH = 6, SOURCE_REACH = 96, MOVE_STEP = 8, ANGLE_STEP = 0.025;
+const NORMALS = [[1,0,0],[-1,0,0],[0,1,0],[0,-1,0],[0,0,1],[0,0,-1]];
+const DIRECTIONS = [...NORMALS], diagonal = 1 / Math.sqrt(3);
+for (const x of [-1, 1]) for (const y of [-1, 1]) for (const z of [-1, 1]) {
+    DIRECTIONS.push([x * diagonal, y * diagonal, z * diagonal]);
+}
+const STANDARD_RAYS = DIRECTIONS.length;
+for (let zero = 0; zero < 3; zero++) for (const a of [-1, 1]) for (const b of [-1, 1]) {
+    const direction = [0, 0, 0];
+    direction[(zero + 1) % 3] = a / Math.sqrt(2);
+    direction[(zero + 2) % 3] = b / Math.sqrt(2);
+    DIRECTIONS.push(direction);
+}
+const LUMA = [0.2126, 0.7152, 0.0722];
+const clamp = (x, lo = 0, hi = 1) => Math.max(lo, Math.min(hi, x));
+const smooth = (a, b, x) => { const t = clamp((x - a) / (b - a)); return t * t * (3 - 2 * t); };
+const finite = (x, fallback) => Number.isFinite(x) ? x : fallback;
+const rgbArray = color => color?.isColor ? [color.r, color.g, color.b] : color ?? [0, 0, 0];
+const dirArray = value => value?.isVector3 ? [value.x, value.y, value.z] : value ?? [0, -1, 0];
+const take = set => { const value = set.values().next().value; set.delete(value); return value; };
 
-import {
-    BLOCK_TYPES,
-    MAX_BLOCK_ID,
-    isOpaqueId
-} from '../blocks/BlockRegistry.js';
-
-import {
-    atlasAveragesReady,
-    getAtlasAverage
-} from '../rendering/TextureAtlas.js';
-
-import { SunShadows } from '../rendering/Shadows.js';
-
-// ------------------------------------------------------------
-// ŚWIATŁO ODBITE ("wlewanie się" światła)
-//
-// Słońce, które wpadnie przez okno, nie zostaje tylko na podłodze:
-// oświetlona podłoga sama świeci trochę dalej - w kolorze swojej
-// tekstury - i rozjaśnia ściany, sufit i kąty pokoju. Jasny tynk
-// odbija dużo światła (biały pokój jest jasny), ciemne deski mało
-// (pokój jest mroczny), czerwona terakota zabarwia pokój na ciepło.
-//
-// Jak to działa - wokół gracza jest PUDEŁKO komórek (jak w dynamicznym
-// świetle, DynamicLight.js):
-//   1. Kopiujemy z chunków, które komórki są pełne (ściany), i jak
-//      bardzo każda ściana odbija światło (kolor tekstury razy pole
-//      bloku "reflect" w BlockRegistry.js).
-//   2. ŹRÓDŁA: komórka powietrza przy ścianie, do której dochodzi
-//      słońce (promień w stronę słońca - SunShadows.sunVisibility),
-//      świeci tyle, ile odbija oświetlona ściana.
-//   3. ROZLEWANIE: światło rozchodzi się po powietrzu (nie przez
-//      ściany), słabnąc z odległością; przy jasnej ścianie wraca do
-//      pokoju (kolejne odbicia), przy ciemnej przepada.
-//   4. Wynik idzie na kartę graficzną jako tekstura 3D, a shader bloków
-//      (BlockRenderData.js) dodaje to światło do ścian - mnożąc je przez
-//      ich własny kolor.
-//
-// Liczenie jest rozłożone na wiele klatek (najwyżej kilka milisekund
-// na klatkę), więc nie przycina gry. Liczy się od nowa, gdy słońce
-// przesunie się o kawałek, gracz odejdzie od środka pudełka albo
-// zmienią się bloki w pudełku. Kolor i siłę światła (pora dnia) dodaje
-// shader, więc o zachodzie nic się nie przelicza.
-//
-// Liczby: BOUNCE_... w config.js. Opis: docs/niebo-i-swiatlo.md.
-// ------------------------------------------------------------
-
-// Wymiary pudełka (komórki): w poziomie i w pionie. Skrajne komórki to
-// ramka (pochłania światło), więc pudełko ma o 2 więcej.
-
-const NX = BOUNCE_SIZE + 2;
-const NZ = BOUNCE_SIZE + 2;
-const NY = BOUNCE_HEIGHT + 2;
-const NXZ = NX * NZ;
-const N3 = NX * NY * NZ;
-
-// Ile milisekund na klatkę może zająć liczenie.
-
-const FRAME_BUDGET_MS = 2.5;
-
-// Słońce przesunęło się o tyle (radiany) - źródła od nowa.
-
-const ANGLE_STEP = 0.025;
-
-// Gracz odszedł o tyle bloków od środka pudełka - pudełko idzie za nim.
-
-const MOVE_STEP = 8;
-
-// Jak daleko w stronę słońca sprawdzamy, czy coś je zasłania (bloki).
-
-const SUN_RAY = 80;
-
-// Rozlewanie: nadrelaksacja (szybsze dochodzenie do wyniku), kiedy
-// uznajemy, że światło się "ułożyło", i najwięcej kroków.
-
-const OVERRELAX = 1.6;
-const SETTLED = 0.0015;
-const MIN_SWEEPS = 12;
-const MAX_SWEEPS = 90;
-
-// Sąsiedzi z boków (w indeksach komórek).
-
-const SIDES = [1, -1, NX, -NX];
-
-// Najjaśniejsze światło zapisywane w teksturze (wyżej - ucięte).
-// Tekstura trzyma pierwiastek (więcej odcieni w półmroku).
-
-export const BOUNCE_RANGE = 3;
-
-
-// Wspólne wartości dla shaderów.
-
+export const BOUNCE_RANGE = 1;
 export const bounceUniforms = {
     uBounceLight: { value: null },
     uBounceOrigin: { value: new THREE.Vector3() },
     uBounceSize: { value: new THREE.Vector3(NX, NY, NZ) },
-
-    // Kolor i siła światła odbitego (0 = wyłączone) - ustawia Game.
+    uBounceSun: { value: new THREE.Color(0, 0, 0) },
+    uBounceMoon: { value: new THREE.Color(0, 0, 0) },
+    uBounceSky: { value: new THREE.Color(0, 0, 0) },
+    uBounceGround: { value: new THREE.Color(0, 0, 0) },
+    uBounceSaturation: { value: 0.65 },
+    // Kompatybilny master: strength albo 0. Wynik jest już radiancją.
     uBounceColor: { value: new THREE.Color(0, 0, 0) },
-
-    // O ile słabsze jest odbite światło pod gołym niebem (tam całe
-    // niebo i tak świeci) - 0-1.
-    uBounceOutdoor: { value: BOUNCE_OUTDOOR }
+    uBounceOutdoor: { value: 0 }
 };
 
-
-// GLSL: bounceLight(pozycja, normalna, światło nieba) - światło odbite
-// (liniowe) w miejscu ściany. Wymaga WebGL2 (tekstura 3D).
-
-export const BOUNCE_GLSL = `
+export const BOUNCE_GLSL = /* glsl */ `
     uniform highp sampler3D uBounceLight;
     uniform vec3 uBounceOrigin;
     uniform vec3 uBounceSize;
     uniform vec3 uBounceColor;
+    uniform vec3 uBounceSun;
+    uniform vec3 uBounceMoon;
+    uniform vec3 uBounceSky;
+    uniform vec3 uBounceGround;
+    uniform float uBounceSaturation;
     uniform float uBounceOutdoor;
-
+    vec3 bounceTransfer(vec3 cell, float layer) {
+        vec3 encoded = texture(uBounceLight, vec3(cell.x, cell.z, (cell.y + layer) * 0.25)).rgb;
+        vec3 transfer = encoded * encoded;
+        float luma = dot(transfer, vec3(0.2126, 0.7152, 0.0722));
+        return mix(vec3(luma), transfer, uBounceSaturation);
+    }
     vec3 bounceLight(vec3 worldPosition, vec3 worldNormal, float skyLight) {
-
-        if (uBounceColor.r + uBounceColor.g + uBounceColor.b <= 0.0) {
-            return vec3(0.0);
-        }
-
+        if (uBounceColor.r + uBounceColor.g + uBounceColor.b <= 0.0) return vec3(0.0);
         vec3 cell = (worldPosition + worldNormal * 0.5 - uBounceOrigin) / uBounceSize;
-
-        if (any(lessThan(cell, vec3(0.0))) || any(greaterThan(cell, vec3(1.0)))) {
-            return vec3(0.0);
-        }
-
-        // Przy brzegu pudełka płynnie znika.
-
-        vec3 toEdge = min(cell, 1.0 - cell) * uBounceSize;
-
-        float fade = smoothstep(1.0, 6.0, min(min(toEdge.x, toEdge.y), toEdge.z));
-
-        vec3 encoded = texture(uBounceLight, cell.xzy).rgb;
-
-        return encoded * encoded * ${BOUNCE_RANGE.toFixed(1)} * uBounceColor * fade * (1.0 - uBounceOutdoor * skyLight);
-
+        if (any(lessThan(cell, vec3(0.0))) || any(greaterThan(cell, vec3(1.0)))) return vec3(0.0);
+        vec3 edge = min(cell, 1.0 - cell) * uBounceSize;
+        float fade = smoothstep(1.0, 6.0, min(min(edge.x, edge.y), edge.z));
+        vec3 light = vec3(0.0);
+        if (dot(uBounceSun, vec3(1.0)) > 0.0) light += bounceTransfer(cell, 0.0) * uBounceSun;
+        if (dot(uBounceMoon, vec3(1.0)) > 0.0) light += bounceTransfer(cell, 1.0) * uBounceMoon;
+        if (dot(uBounceSky, vec3(1.0)) > 0.0) light += bounceTransfer(cell, 2.0) * uBounceSky;
+        if (dot(uBounceGround, vec3(1.0)) > 0.0) light += bounceTransfer(cell, 3.0) * uBounceGround;
+        return light * uBounceColor * fade;
     }
 `;
 
-// ------------------------------------------------------------
-// Ile światła odbija ściana bloku (kolor liniowy razy "reflect"):
-// osobno góra, boki i spód. Liczone z tekstur, gdy atlas się wczyta.
-// ------------------------------------------------------------
-
-const REFLECT_TOP = new Float32Array((MAX_BLOCK_ID + 1) * 3).fill(0.35);
-const REFLECT_SIDE = new Float32Array((MAX_BLOCK_ID + 1) * 3).fill(0.35);
-const REFLECT_BOTTOM = new Float32Array((MAX_BLOCK_ID + 1) * 3).fill(0.35);
-
-
-function fillReflect(table, id, tileName, reflect) {
-
-    const color = tileName ? getAtlasAverage(tileName) : null;
-
-    const r = color ? color.r : 0.35;
-    const g = color ? color.g : 0.35;
-    const b = color ? color.b : 0.35;
-
-    table[id * 3] = Math.min(BOUNCE_MAX_REFLECT, r * reflect);
-    table[id * 3 + 1] = Math.min(BOUNCE_MAX_REFLECT, g * reflect);
-    table[id * 3 + 2] = Math.min(BOUNCE_MAX_REFLECT, b * reflect);
-
-}
-
-
-atlasAveragesReady.then(() => {
-
-    for (const definition of Object.values(BLOCK_TYPES)) {
-
-        const textures = definition.textures ?? {};
-
-        const reflect = definition.reflect ?? 1;
-
-        const side = textures.side ?? textures.all ?? null;
-
-        fillReflect(REFLECT_TOP, definition.id, textures.top ?? side, reflect);
-        fillReflect(REFLECT_SIDE, definition.id, side, reflect);
-        fillReflect(REFLECT_BOTTOM, definition.id, textures.bottom ?? side, reflect);
-
+// Liniowe albedo z atlasu. Maska identyczna z BlockRenderData zachowuje
+// brąz ziemi na grass_side podczas nakładania koloru biomu.
+const materials = new Map();
+let materialRevision = 0;
+function textureReflectance(tile) {
+    const pixels = getTileColors(tile), base = [0, 0, 0], tinted = [0, 0, 0];
+    const average = getAtlasAverage(tile);
+    const samples = pixels.length ? pixels : [average ?? { r: 0.35, g: 0.35, b: 0.35 }];
+    for (const color of samples) {
+        const mask = smooth(0.01, 0.07, color.g - Math.max(color.r, color.b));
+        for (const [c, value] of [color.r, color.g, color.b].entries()) {
+            base[c] += value * (1 - mask) / samples.length;
+            tinted[c] += value * mask / samples.length;
+        }
     }
-
-});
-
-
-// Ile odbija dany blok (do /swiatlo i testów): [r, g, b] boku.
-
-export function getReflect(id) {
-
-    return [REFLECT_SIDE[id * 3], REFLECT_SIDE[id * 3 + 1], REFLECT_SIDE[id * 3 + 2]];
-
+    return { base, tinted };
 }
+function material(id) {
+    if (!materials.has(id)) {
+        const definition = BLOCK_TYPES[getBlockTypeById(id)], textures = definition?.textures ?? {};
+        const side = textures.side ?? textures.all;
+        materials.set(id, {
+            tint: definition?.tint === true, reflect: definition?.reflect ?? 1,
+            side: textureReflectance(side), top: textureReflectance(textures.top ?? side),
+            bottom: textureReflectance(textures.bottom ?? side)
+        });
+    }
+    return materials.get(id);
+}
+function reflectance(id, face, tint = [1, 1, 1]) {
+    const m = material(id), t = face === 2 ? m.top : face === 3 ? m.bottom : m.side;
+    return t.base.map((value, c) => clamp((value + t.tinted[c] * (m.tint ? tint[c] : 1)) * m.reflect, 0, 0.9));
+}
+atlasAveragesReady.then(() => { materials.clear(); materialRevision++; });
+export function getReflect(id) { return reflectance(id, 0); }
 
-// ------------------------------------------------------------
+// Jedna kolejka przestrzenna współdzielona przez sceny; blisko gracza
+// wynik pojawia się najpierw. Przy ruchu nie sortujemy komórek ponownie.
+const ORDER = Array.from({ length: CELLS }, (_, i) => i).filter(i => {
+    const x = i % NX, z = Math.floor(i / NX) % NZ, y = Math.floor(i / NXZ);
+    return x > 0 && z > 0 && y > 0 && x < NX - 1 && z < NZ - 1 && y < NY - 1;
+});
+const centerDistance = i => Math.abs(i % NX - NX / 2) + Math.abs(Math.floor(i / NX) % NZ - NZ / 2)
+    + Math.abs(Math.floor(i / NXZ) - NY / 2);
+ORDER.sort((a, b) => centerDistance(a) - centerDistance(b));
 
 export class BounceLight {
-
-    constructor() {
-
-        // Róg pudełka w świecie (ramka ma współrzędne origin - 1).
-
+    constructor({ budgetMs = 0.6, maxWork = 256, now = () => performance.now(), reflectance: sampler = reflectance } = {}) {
+        this.budgetMs = budgetMs; this.maxWork = maxWork; this.now = now; this.reflectance = sampler;
         this.origin = new THREE.Vector3(Infinity, 0, 0);
+        this.rays = STANDARD_RAYS;
+        this.hitKeys = new Int32Array(CELLS * this.rays).fill(-1);
+        this.hitWeights = new Uint8Array(CELLS * this.rays);
+        this.data = new Uint8Array(LAYER_BYTES * 4);
+        this.texture = new THREE.Data3DTexture(this.data, NX, NZ, NY * 4);
+        this.texture.format = THREE.RGBAFormat; this.texture.type = THREE.UnsignedByteType;
+        this.texture.minFilter = THREE.LinearFilter; this.texture.magFilter = THREE.LinearFilter;
+        this.texture.unpackAlignment = 1; this.texture.needsUpdate = true;
+        this.surfaces = new Map();
+        this.geometryQueue = new Set(); this.sourceQueue = new Set(); this.probeQueue = new Set();
+        this.initialCursor = ORDER.length; this.built = new Uint8Array(CELLS);
+        this.sourceInvalidation = false; this.dirtyRect = null; this.invalidationJob = null;
+        this.valid = true;
+        this.markStats = { calls: 0, milliseconds: 0, maxMilliseconds: 0 };
+        this.colors = Array.from({ length: 4 }, () => [0, 0, 0]);
+        this.directions = [[0, -1, 0], [0, -1, 0]]; this.activeSources = [false, false];
+        this.enabled = false; this.strength = 0.18; this.saturation = 0.65;
+        this.updates = 0; this.invalidations = 0; this.lastWrite = -Infinity;
+        this.lastFrame = { milliseconds: 0, work: 0 };
+        this.materialRevision = materialRevision; this.changed = false;
+    }
 
-        // Bloki w pudełku: ID (0 = powietrze albo nieprzezroczyste
-        // nie-ściany), czy komórka to ściana, światło nieba.
-
-        this.ids = new Uint8Array(N3);
-        this.solid = new Uint8Array(N3);
-        this.sky = new Uint8Array(N3);
-
-        // Odbicie od ścian wokół komórki (średnia z sześciu stron, RGB).
-
-        this.walls = new Float32Array(N3 * 3);
-
-        // Źródła (gotowe i liczone) i światło (RGB).
-
-        this.sources = new Float32Array(N3 * 3);
-        this.nextSources = new Float32Array(N3 * 3);
-        this.light = new Float32Array(N3 * 3);
-
-        // Tekstura 3D: pierwiastek światła, RGBA.
-
-        this.data = new Uint8Array(N3 * 4);
-
-        this.texture = new THREE.Data3DTexture(this.data, NX, NZ, NY);
-
-        this.texture.format = THREE.RGBAFormat;
-        this.texture.type = THREE.UnsignedByteType;
-        this.texture.minFilter = THREE.LinearFilter;
-        this.texture.magFilter = THREE.LinearFilter;
-        this.texture.unpackAlignment = 1;
-        this.texture.needsUpdate = true;
-
+    bind() {
         bounceUniforms.uBounceLight.value = this.texture;
-
-
-        // Stan liczenia.
-        //   blocksDirty  - trzeba skopiować bloki,
-        //   sourceJob    - liczenie źródeł w toku: { cells, next } albo null,
-        //   sweeps       - ile kroków rozlewania od ostatnich źródeł,
-        //   settled      - światło się ułożyło (nic do roboty).
-
-        this.blocksDirty = true;
-        this.sourcesDirty = true;
-        this.copyJob = null;
-        this.sourceJob = null;
-        this.sweeps = 0;
-        this.sweepCursor = 0;
-        this.sweepChange = 0;
-        this.lastWrite = 0;
-        this.settled = true;
-
-        this.direction = new THREE.Vector3(0, 1, 0);
-        this.sourceDirection = new THREE.Vector3(0, -1, 0);
-        this.sourceLight = null;
-
-        this.enabled = false;
-
-        // Liczniki (debug, /swiatlo).
-        this.updates = 0;
-        this.lastSourceCount = 0;
-
+        bounceUniforms.uBounceOrigin.value.copy(this.origin);
+        for (const [i, name] of ['uBounceSun','uBounceMoon','uBounceSky','uBounceGround'].entries()) {
+            bounceUniforms[name].value.setRGB(...this.colors[i]);
+        }
+        bounceUniforms.uBounceSaturation.value = this.saturation;
+        const power = this.enabled && this.valid ? this.strength : 0;
+        bounceUniforms.uBounceColor.value.setRGB(power, power, power);
+        return this;
     }
 
-
-    // Zmienił się mesh chunka (World.onMeshChanged) - jeśli leży
-    // w pudełku, bloki trzeba skopiować od nowa.
-
-    markChunk(chunk) {
-
-        const minX = chunk.cx * CHUNK_SIZE;
-        const minZ = chunk.cz * CHUNK_SIZE;
-
-        if (
-            minX <= this.origin.x + NX && minX + CHUNK_SIZE >= this.origin.x - 1 &&
-            minZ <= this.origin.z + NZ && minZ + CHUNK_SIZE >= this.origin.z - 1
-        ) {
-            this.blocksDirty = true;
+    update(world, center, options = {}) {
+        const start = this.now();
+        this.enabled = options.enabled === true;
+        this.strength = clamp(finite(options.strength, 0.18));
+        this.saturation = clamp(finite(options.saturation, 0.65));
+        const budget = options.budgetMs === undefined ? this.budgetMs : Math.max(0, finite(options.budgetMs, this.budgetMs));
+        this.activeBudget = budget;
+        for (const [i, name] of ['sun','moon','sky','ground'].entries()) {
+            const rgb = rgbArray(options[name]);
+            for (let c = 0; c < 3; c++) this.colors[i][c] = Math.max(0, finite(rgb[c], 0));
         }
-
-    }
-
-
-    // Co klatkę.
-    //   world     - World,
-    //   center    - gdzie jest gracz,
-    //   direction - kierunek do światła (słońca albo księżyca),
-    //   light     - 'sun' / 'moon',
-    //   enabled   - czy liczyć (ustawienie i siła światła).
-
-    update(world, center, direction, light, enabled) {
-
-        this.enabled = enabled;
-
-        if (!enabled) {
-            return;
+        this.bind(); // także wyłączenie źródła podczas wieloklatkowego zadania
+        this.lastFrame = { milliseconds: 0, work: 0 };
+        if (!this.enabled || this.strength === 0 || !world || !center) return;
+        const rays = options.quality === 'high' ? DIRECTIONS.length : STANDARD_RAYS;
+        if (rays !== this.rays) {
+            this.rays = rays;
+            this.hitKeys = new Int32Array(CELLS * rays).fill(-1);
+            this.hitWeights = new Uint8Array(CELLS * rays);
+            this.resetGeometry();
         }
-
-        const start = performance.now();
-
-        // Pudełko idzie za graczem (co MOVE_STEP bloków).
-
         const ox = Math.floor(center.x) - (NX >> 1);
         const oy = Math.max(-1, Math.min(CHUNK_HEIGHT - NY + 1, Math.floor(center.y) - (NY >> 1)));
         const oz = Math.floor(center.z) - (NZ >> 1);
-
-        if (
-            !Number.isFinite(this.origin.x) ||
-            Math.abs(ox - this.origin.x) >= MOVE_STEP ||
-            Math.abs(oy - this.origin.y) >= MOVE_STEP ||
-            Math.abs(oz - this.origin.z) >= MOVE_STEP
-        ) {
+        if (!Number.isFinite(this.origin.x) || Math.abs(ox - this.origin.x) >= MOVE_STEP
+            || Math.abs(oy - this.origin.y) >= MOVE_STEP || Math.abs(oz - this.origin.z) >= MOVE_STEP) {
             this.moveTo(ox, oy, oz);
         }
-
-
-        // Słońce się przesunęło - źródła od nowa.
-
-        this.direction.copy(direction);
-
-        if (direction.dot(this.sourceDirection) < Math.cos(ANGLE_STEP) || light !== this.sourceLight) {
-            this.sourcesDirty = true;
+        if (this.materialRevision !== materialRevision) {
+            this.materialRevision = materialRevision;
+            this.resetGeometry();
         }
-
-
-        // Kolejne kroki - ile się zmieści w budżecie klatki (każdy krok
-        // jest podzielony na kawałki, więc żadna klatka nie trwa długo).
-
-        const inBudget = () => performance.now() - start < FRAME_BUDGET_MS;
-
-        if (this.blocksDirty) {
-
-            this.copyJob = { z: 0, cell: 0 };
-
-            this.blocksDirty = false;
-            this.sourceJob = null;
-
-        }
-
-        if (this.copyJob) {
-
-            this.continueCopy(world, inBudget);
-
-            if (this.copyJob) {
-                return;
+        let directionChanged = false;
+        for (let i = 0; i < 2; i++) {
+            const raw = dirArray(options[i === 0 ? 'sunDirection' : 'moonDirection']);
+            const length = Math.hypot(...raw) || 1, next = raw.map(value => finite(value / length, 0));
+            const dot = next.reduce((sum, value, axis) => sum + value * this.directions[i][axis], 0);
+            const active = next[1] > 0 && this.colors[i].some(value => value > 0);
+            if (dot < Math.cos(ANGLE_STEP) || active !== this.activeSources[i]) {
+                this.directions[i] = next; this.activeSources[i] = active; directionChanged = true;
             }
-
-            this.sourcesDirty = true;
-
         }
-
-        if (this.sourcesDirty && !this.sourceJob) {
-
-            this.startSources(light);
-
-            this.sourcesDirty = false;
-
+        if (directionChanged) this.invalidateSources();
+        let work = 0;
+        while (work < this.maxWork && this.now() - start < budget) {
+            if (this.invalidationJob || this.sourceInvalidation || this.dirtyRect) this.continueInvalidation();
+            else if (this.sourceQueue.size) {
+                const surface = this.surfaces.get(take(this.sourceQueue));
+                if (surface) this.updateSurface(world, surface);
+            } else if (this.probeQueue.size) this.composeProbe(take(this.probeQueue));
+            else if (this.geometryQueue.size) this.gatherProbe(world, take(this.geometryQueue));
+            else if (this.initialCursor < ORDER.length) {
+                const i = ORDER[this.initialCursor++];
+                if (!this.built[i]) this.gatherProbe(world, i);
+            }
+            else break;
+            work++;
         }
-
-        if (this.sourceJob && inBudget()) {
-            this.continueSources(world, inBudget);
-        }
-
-        let changed = false;
-
-        while (!this.settled && inBudget()) {
-
-            this.sweep(inBudget);
-
-            changed = true;
-
-        }
-
-        // Tekstura - najwyżej kilka razy na sekundę (i na koniec).
-
-        if (changed && (this.settled || start - this.lastWrite > 120)) {
-
-            this.writeTexture();
-
-            this.lastWrite = start;
-
-        }
-
+        if (this.changed && (this.ready || start - this.lastWrite >= 125)) this.upload(start);
+        this.lastFrame = { milliseconds: Math.max(0, this.now() - start), work };
+        this.bind();
     }
 
-
-    // Przesuwa pudełko: światło w części wspólnej zostaje (płynnie),
-    // reszta liczy się od nowa.
-
-    moveTo(ox, oy, oz) {
-
-        const dx = ox - this.origin.x;
-        const dy = oy - this.origin.y;
-        const dz = oz - this.origin.z;
-
-        const light = this.light;
-
-        if (Number.isFinite(this.origin.x) && Math.abs(dx) < NX && Math.abs(dy) < NY && Math.abs(dz) < NZ) {
-
-            // Bufor pomocniczy: tablica ścian (i tak liczy się od nowa
-            // po przesunięciu) - bez nowej tablicy przy każdym kroku.
-
-            const moved = this.walls;
-
-            moved.fill(0);
-
-            for (let y = 0; y < NY; y++) {
-
-                const sy = y + dy;
-
-                if (sy < 0 || sy >= NY) continue;
-
-                for (let z = 0; z < NZ; z++) {
-
-                    const sz = z + dz;
-
-                    if (sz < 0 || sz >= NZ) continue;
-
-                    for (let x = 0; x < NX; x++) {
-
-                        const sx = x + dx;
-
-                        if (sx < 0 || sx >= NX) continue;
-
-                        const to = ((y * NZ + z) * NX + x) * 3;
-                        const from = ((sy * NZ + sz) * NX + sx) * 3;
-
-                        moved[to] = light[from];
-                        moved[to + 1] = light[from + 1];
-                        moved[to + 2] = light[from + 2];
-
-                    }
-
-                }
-
-            }
-
-            light.set(moved);
-
-        }
-        else {
-
-            light.fill(0);
-
-        }
-
-        this.origin.set(ox, oy, oz);
-
-        bounceUniforms.uBounceOrigin.value.set(ox, oy, oz);
-
-        this.blocksDirty = true;
-
-        this.writeTexture();
-
+    get ready() { return this.initialCursor === ORDER.length && !this.invalidationJob && !this.sourceInvalidation && !this.dirtyRect
+        && this.geometryQueue.size + this.sourceQueue.size + this.probeQueue.size === 0; }
+    moveTo(x, y, z) { this.origin.set(x, y, z); this.resetGeometry(); }
+    resetGeometry() {
+        this.surfaces.clear(); this.sourceQueue.clear(); this.probeQueue.clear();
+        this.geometryQueue.clear(); this.initialCursor = 0; this.built.fill(0);
+        this.sourceInvalidation = false; this.dirtyRect = null; this.invalidationJob = null; this.valid = true;
+        this.hitKeys.fill(-1); this.hitWeights.fill(0); this.data.fill(0);
+        this.upload(this.now()); this.invalidations++;
+    }
+    invalidateSources() {
+        if (!this.surfaces.size) return;
+        this.sourceInvalidation = true;
     }
 
-
-    // 1. Bloki z chunków: ściany, ich odbicie, światło nieba - po
-    // kawałku: najpierw rzędy z (kopia bloków), potem odbicie ścian.
-
-    continueCopy(world, inBudget) {
-
-        const job = this.copyJob;
-
-        while (job.z < NZ) {
-
-            this.copyRow(world, job.z++);
-
-            if (!inBudget()) {
-                return;
-            }
-
+    markChunk(chunk) {
+        const start = this.now();
+        if (!Number.isFinite(this.origin.x)) return;
+        const x0 = chunk.cx * CHUNK_SIZE, z0 = chunk.cz * CHUNK_SIZE;
+        const intersects = radius => x0 < this.origin.x + NX + radius && x0 + CHUNK_SIZE > this.origin.x - radius
+            && z0 < this.origin.z + NZ + radius && z0 + CHUNK_SIZE > this.origin.z - radius;
+        if (!intersects(SOURCE_REACH)) return;
+        // Tylko zebranie obszaru O(1). Skan i czyszczenie cache odbywają
+        // się raz dla paczki zmian, porcjami w budżecie update(). Master
+        // wygasa od razu, więc nowa ściana nie pokazuje starego światła.
+        this.valid = false; this.sourceInvalidation = true;
+        if (bounceUniforms.uBounceLight.value === this.texture) bounceUniforms.uBounceColor.value.setRGB(0, 0, 0);
+        if (intersects(REACH)) {
+            const r = this.dirtyRect;
+            this.dirtyRect = r ? { minX: Math.min(r.minX, x0 - 1), maxX: Math.max(r.maxX, x0 + CHUNK_SIZE),
+                minZ: Math.min(r.minZ, z0 - 1), maxZ: Math.max(r.maxZ, z0 + CHUNK_SIZE) }
+                : { minX: x0 - 1, maxX: x0 + CHUNK_SIZE, minZ: z0 - 1, maxZ: z0 + CHUNK_SIZE };
         }
-
-        while (job.cell < N3) {
-
-            const end = Math.min(N3, job.cell + 4096);
-
-            this.computeWalls(job.cell, end);
-
-            job.cell = end;
-
-            if (!inBudget()) {
-                return;
-            }
-
-        }
-
-        this.copyJob = null;
-
+        const elapsed = Math.max(0, this.now() - start);
+        this.markStats.calls++; this.markStats.milliseconds += elapsed;
+        this.markStats.maxMilliseconds = Math.max(this.markStats.maxMilliseconds, elapsed);
     }
 
-
-    copyRow(world, z) {
-
-        const { ids, solid, sky } = this;
-
-        const ox = this.origin.x;
-        const oy = this.origin.y;
-        const oz = this.origin.z;
-
-        const wz = oz + z;
-
-        const cz = Math.floor(wz / CHUNK_SIZE);
-
-        for (let x = 0; x < NX; x++) {
-
-            const wx = ox + x;
-
-            const border = x === 0 || z === 0 || x === NX - 1 || z === NZ - 1;
-
-            const cx = Math.floor(wx / CHUNK_SIZE);
-
-            const chunk = world.getChunk(cx, cz);
-
-            const column = (wz - cz * CHUNK_SIZE) * CHUNK_SIZE + (wx - cx * CHUNK_SIZE);
-
-            for (let y = 0; y < NY; y++) {
-
-                const i = (y * NZ + z) * NX + x;
-
-                const wy = oy + y;
-
-                let id = 0;
-                let light = 15;
-
-                if (wy < 0) {
-                    light = 0;
-                }
-                else if (chunk && wy < CHUNK_HEIGHT) {
-
-                    const index = wy * CHUNK_SIZE * CHUNK_SIZE + column;
-
-                    id = chunk.blocks[index];
-                    light = chunk.skyLight[index];
-
-                }
-
-                const wall = wy < 0 || isOpaqueId(id);
-
-                ids[i] = wall ? id : 0;
-                solid[i] = wall || border || y === 0 || y === NY - 1 ? 1 : 0;
-                sky[i] = light;
-
-            }
-
+    continueInvalidation() {
+        if (!this.invalidationJob) {
+            this.invalidationJob = { rect: this.dirtyRect, surfaces: this.surfaces.entries(), cursor: 0, sourcesDone: false };
+            this.dirtyRect = null; this.sourceInvalidation = false; this.valid = false;
+            this.data.fill(0, 0, LAYER_BYTES * 2);
+            this.changed = true; this.invalidations++;
         }
-
+        const job = this.invalidationJob, rect = job.rect;
+        if (!job.sourcesDone) {
+            for (let work = 0; work < 16; work++) {
+                const next = job.surfaces.next();
+                if (next.done) { job.sourcesDone = true; break; }
+                const [key, surface] = next.value;
+                if (rect && surface.x >= rect.minX && surface.x <= rect.maxX && surface.z >= rect.minZ && surface.z <= rect.maxZ) {
+                    this.surfaces.delete(key); this.sourceQueue.delete(key);
+                } else this.sourceQueue.add(key);
+            }
+            return;
+        }
+        const end = Math.min(ORDER.length, job.cursor + 32);
+        while (job.cursor < end) {
+            const i = ORDER[job.cursor++], x = this.origin.x + i % NX, z = this.origin.z + Math.floor(i / NX) % NZ;
+            if (rect && x >= rect.minX - REACH && x <= rect.maxX + REACH && z >= rect.minZ - REACH && z <= rect.maxZ + REACH) {
+                if (this.built[i]) { this.geometryQueue.add(i); this.built[i] = 0; }
+                this.probeQueue.delete(i);
+                this.hitKeys.fill(-1, i * this.rays, (i + 1) * this.rays);
+                this.hitWeights.fill(0, i * this.rays, (i + 1) * this.rays);
+                for (let layer = 0; layer < 4; layer++) this.data.fill(0, layer * LAYER_BYTES + i * 4, layer * LAYER_BYTES + i * 4 + 4);
+            } else if (this.built[i]) {
+                for (let k = i * this.rays; k < (i + 1) * this.rays; k++) {
+                    if (this.hitWeights[k]) { this.probeQueue.add(i); break; }
+                }
+            }
+        }
+        if (job.cursor === ORDER.length) {
+            this.invalidationJob = null;
+            this.valid = !this.dirtyRect && !this.sourceInvalidation;
+            // GPU nie może zobaczyć starych danych po przywróceniu mastera.
+            this.upload(this.now());
+        }
     }
 
-
-    // Odbicie od ścian wokół komórek powietrza [from, to): średnia
-    // z sześciu stron (pusta strona - 0).
-
-    computeWalls(from, to) {
-
-        const { ids, solid, walls } = this;
-
-        for (let i = from; i < to; i++) {
-
-            const o = i * 3;
-
-            if (solid[i]) {
-
-                walls[o] = walls[o + 1] = walls[o + 2] = 0;
-
-                continue;
-
-            }
-
-            let r = 0;
-            let g = 0;
-            let b = 0;
-
-            // Ściana pod komórką odbija górą, nad - spodem, z boków - bokiem.
-
-            let n = i - NXZ;
-
-            if (ids[n]) {
-                const t = ids[n] * 3;
-                r += REFLECT_TOP[t]; g += REFLECT_TOP[t + 1]; b += REFLECT_TOP[t + 2];
-            }
-
-            n = i + NXZ;
-
-            if (ids[n]) {
-                const t = ids[n] * 3;
-                r += REFLECT_BOTTOM[t]; g += REFLECT_BOTTOM[t + 1]; b += REFLECT_BOTTOM[t + 2];
-            }
-
-            for (const d of SIDES) {
-
-                n = i + d;
-
-                if (ids[n]) {
-                    const t = ids[n] * 3;
-                    r += REFLECT_SIDE[t]; g += REFLECT_SIDE[t + 1]; b += REFLECT_SIDE[t + 2];
-                }
-
-            }
-
-            walls[o] = r / 6;
-            walls[o + 1] = g / 6;
-            walls[o + 2] = b / 6;
-
-        }
-
+    // -1 oznacza nieznany/nieprzepuszczalny obszar, a nie otwarte niebo.
+    // ID pozostaje liczbą 16-bitową; stary Uint8 gubił paczki >255.
+    blockId(world, x, y, z) {
+        if (y < 0) return -1;
+        if (y >= CHUNK_HEIGHT) return 0;
+        const cx = Math.floor(x / CHUNK_SIZE), cz = Math.floor(z / CHUNK_SIZE);
+        const chunk = world.getChunk(cx, cz);
+        return chunk ? chunk.blocks[(y * CHUNK_SIZE + z - cz * CHUNK_SIZE) * CHUNK_SIZE + x - cx * CHUNK_SIZE] : -1;
     }
 
-
-    // 2. Źródła: komórki przy ścianach zwróconych do światła, do których
-    // dochodzi słońce - po kawałku: najpierw szukanie komórek, potem
-    // promienie w stronę słońca.
-
-    startSources(light) {
-
-        const d = this.direction;
-
-        this.sourceDirection.copy(d);
-        this.sourceLight = light;
-
-        // Ściany, które mogą być oświetlone: pod komórką (gdy światło
-        // z góry) i z boków zwróconych do światła.
-
-        const faces = [];
-
-        if (d.y > 0) faces.push([-NXZ, d.y, REFLECT_TOP]);
-        if (d.x > 0) faces.push([-1, d.x, REFLECT_SIDE]);
-        if (d.x < 0) faces.push([1, -d.x, REFLECT_SIDE]);
-        if (d.z > 0) faces.push([-NX, d.z, REFLECT_SIDE]);
-        if (d.z < 0) faces.push([NX, -d.z, REFLECT_SIDE]);
-
-        this.nextSources.fill(0);
-
-        this.sourceJob = { cells: [], faces, scan: d.y > 0 ? 0 : N3, next: 0 };
-
+    // Supercover: wszystkie komórki dotykane na krawędzi/narożniku.
+    // Zapobiega przeciekowi ukośnego promienia przez zamknięte ściany.
+    trace(world, origin, direction, reach, gather) {
+        const p = origin.map(Math.floor), steps = direction.map(Math.sign);
+        const delta = direction.map(value => value ? Math.abs(1 / value) : Infinity);
+        const next = direction.map((value, axis) => value > 0 ? (p[axis] + 1 - origin[axis]) * delta[axis]
+            : value < 0 ? (origin[axis] - p[axis]) * delta[axis] : Infinity);
+        let visibility = 1;
+        while (true) {
+            const distance = Math.min(...next);
+            if (distance > reach || !Number.isFinite(distance)) return gather ? null : visibility;
+            let axes = 0;
+            for (let axis = 0; axis < 3; axis++) if (Math.abs(next[axis] - distance) <= 1e-8) axes |= 1 << axis;
+            for (let subset = 1; subset <= 7; subset++) {
+                if ((subset & axes) !== subset) continue;
+                const x = p[0] + ((subset & 1) ? steps[0] : 0);
+                const y = p[1] + ((subset & 2) ? steps[1] : 0);
+                const z = p[2] + ((subset & 4) ? steps[2] : 0);
+                const id = this.blockId(world, x, y, z);
+                if (id < 0) return gather ? null : 0;
+                if (isOpaqueId(id)) {
+                    const axis = subset & 1 ? 0 : subset & 2 ? 1 : 2;
+                    return gather ? { id, x, y, z, face: axis * 2 + (steps[axis] > 0 ? 1 : 0), distance } : 0;
+                }
+                if (!gather && isLeavesId(id)) { visibility *= 0.55; if (visibility < 0.05) return 0; }
+            }
+            for (let axis = 0; axis < 3; axis++) if (axes & (1 << axis)) { p[axis] += steps[axis]; next[axis] += delta[axis]; }
+            if (!gather && p[1] >= CHUNK_HEIGHT) return visibility;
+        }
     }
 
-
-    continueSources(world, inBudget) {
-
-        const job = this.sourceJob;
-
-        const { ids, solid, sky, nextSources } = this;
-
-
-        // Szukanie komórek przy ścianach.
-
-        while (job.scan < N3) {
-
-            const end = Math.min(N3, job.scan + 8192);
-
-            for (let i = job.scan; i < end; i++) {
-
-                if (solid[i] || sky[i] === 0) {
-                    continue;
+    gatherProbe(world, i) {
+        this.built[i] = 1;
+        const x = i % NX, z = Math.floor(i / NX) % NZ, y = Math.floor(i / NXZ);
+        const position = [this.origin.x + x + 0.5, this.origin.y + y + 0.5, this.origin.z + z + 0.5];
+        const current = this.blockId(world, ...position.map(Math.floor));
+        if (current < 0 || isOpaqueId(current)) { this.composeProbe(i); return; }
+        for (let ray = 0; ray < this.rays; ray++) {
+            const hit = this.trace(world, position, DIRECTIONS[ray], REACH, true);
+            if (!hit) continue;
+            const hx = hit.x - this.origin.x, hy = hit.y - this.origin.y, hz = hit.z - this.origin.z;
+            if (hx < 0 || hy < 0 || hz < 0 || hx >= NX || hy >= NY || hz >= NZ) continue;
+            const key = ((hy * NZ + hz) * NX + hx) * 6 + hit.face;
+            if (!this.surfaces.has(key)) {
+                const tint = [1, 1, 1], cx = Math.floor(hit.x / CHUNK_SIZE), cz = Math.floor(hit.z / CHUNK_SIZE);
+                const chunk = world.getChunk(cx, cz), grid = chunk?.tint;
+                if (grid) for (let c = 0; c < 3; c++) {
+                    const at = ((hit.z - cz * CHUNK_SIZE) * (CHUNK_SIZE + 1) + hit.x - cx * CHUNK_SIZE) * 3 + c;
+                    tint[c] = (grid[at] + grid[at + 3] + grid[at + (CHUNK_SIZE + 1) * 3]
+                        + grid[at + (CHUNK_SIZE + 2) * 3]) / (4 * 127.5);
                 }
-
-                for (const [offset] of job.faces) {
-
-                    if (ids[i + offset]) {
-
-                        job.cells.push(i);
-
-                        break;
-
-                    }
-
-                }
-
+                this.surfaces.set(key, { x: hit.x, y: hit.y, z: hit.z, face: hit.face,
+                    reflect: this.reflectance(hit.id, hit.face, tint).map(value => clamp(finite(value, 0), 0, 0.9)), factors: [0, 0, 0, 0] });
+                this.sourceQueue.add(key);
             }
-
-            job.scan = end;
-
-            if (!inBudget()) {
-                return;
-            }
-
+            this.hitKeys[i * this.rays + ray] = key;
+            // Suma wag <=1, niezależnie od jakości: bez wzrostu energii.
+            this.hitWeights[i * this.rays + ray] = Math.floor(255 / (1 + hit.distance * hit.distance));
         }
-
-
-        // Promienie w stronę słońca.
-
-        const d = this.direction;
-
-        const ox = this.origin.x;
-        const oy = this.origin.y;
-        const oz = this.origin.z;
-
-        while (job.next < job.cells.length) {
-
-            const i = job.cells[job.next++];
-
-            const x = i % NX;
-            const z = Math.floor(i / NX) % NZ;
-            const y = Math.floor(i / NXZ);
-
-            const visible = SunShadows.sunVisibility(world, ox + x + 0.5, oy + y + 0.5, oz + z + 0.5, d, SUN_RAY);
-
-            if (visible > 0) {
-
-                let r = 0;
-                let g = 0;
-                let b = 0;
-
-                for (const [offset, facing, table] of job.faces) {
-
-                    const id = ids[i + offset];
-
-                    if (id) {
-                        const t = id * 3;
-                        r += table[t] * facing;
-                        g += table[t + 1] * facing;
-                        b += table[t + 2] * facing;
-                    }
-
-                }
-
-                nextSources[i * 3] = r * visible;
-                nextSources[i * 3 + 1] = g * visible;
-                nextSources[i * 3 + 2] = b * visible;
-
-            }
-
-            if ((job.next & 63) === 0 && !inBudget()) {
-                return;
-            }
-
-        }
-
-
-        // Gotowe - nowe źródła, światło rozlewa się od nowa (od tego, co
-        // było, więc zmiana jest płynna).
-
-        [this.sources, this.nextSources] = [this.nextSources, this.sources];
-
-        this.lastSourceCount = job.cells.length;
-
-        this.sourceJob = null;
-
-        this.sweeps = 0;
-        this.sweepCursor = 0;
-        this.sweepChange = 0;
-        this.settled = false;
-
+        this.probeQueue.add(i);
     }
 
-
-    // 3. Rozlewanie (nadrelaksacja Gaussa-Seidla, na zmianę w przód
-    // i w tył - po kawałku, ile się zmieści w klatce): światło komórki =
-    // źródło + część średniej z sąsiadów + to, co odbiją ściany wokół.
-
-    sweep(inBudget) {
-
-        const { solid, walls, sources, light } = this;
-
-        const a = BOUNCE_SPREAD / 6;
-
-        const forward = this.sweeps % 2 === 0;
-
-        let change = this.sweepChange;
-
-        while (this.sweepCursor < N3) {
-
-            const end = Math.min(N3, this.sweepCursor + 4096);
-
-            for (let k = this.sweepCursor; k < end; k++) {
-
-                const i = forward ? k : N3 - 1 - k;
-
-                if (solid[i]) {
-                    continue;
-                }
-
-                const o = i * 3;
-
-                const xm = o - 3;
-                const xp = o + 3;
-                const zm = o - NX * 3;
-                const zp = o + NX * 3;
-                const ym = o - NXZ * 3;
-                const yp = o + NXZ * 3;
-
-                for (let c = 0; c < 3; c++) {
-
-                    const neighbours =
-                        light[xm + c] + light[xp + c] +
-                        light[zm + c] + light[zp + c] +
-                        light[ym + c] + light[yp + c];
-
-                    const target = sources[o + c] + a * neighbours + BOUNCE_SPREAD * walls[o + c] * light[o + c];
-
-                    const value = light[o + c] + OVERRELAX * (target - light[o + c]);
-
-                    const next = value > 0 ? value : 0;
-
-                    const delta = next - light[o + c];
-
-                    if (delta > change) change = delta;
-                    else if (-delta > change) change = -delta;
-
-                    light[o + c] = next;
-
-                }
-
-            }
-
-            this.sweepCursor = end;
-
-            if (!inBudget()) {
-
-                this.sweepChange = change;
-
-                return;
-
-            }
-
+    updateSurface(world, surface) {
+        const normal = NORMALS[surface.face];
+        const position = [surface.x, surface.y, surface.z].map((value, axis) => value + 0.5 + normal[axis] * 0.501);
+        const blockPosition = position.map(Math.floor), air = this.blockId(world, ...blockPosition);
+        for (let light = 0; light < 2; light++) {
+            const direction = this.directions[light];
+            const cosine = Math.max(0, normal.reduce((sum, value, axis) => sum + value * direction[axis], 0));
+            surface.factors[light] = this.activeSources[light] && cosine > 0 && air >= 0 && !isOpaqueId(air)
+                ? cosine * this.trace(world, position, direction, SOURCE_REACH, false) : 0;
         }
-
-
-        // Cały krok gotowy.
-
-        this.sweepCursor = 0;
-        this.sweepChange = 0;
-
-        this.sweeps++;
-
-        if ((change < SETTLED && this.sweeps >= MIN_SWEEPS) || this.sweeps >= MAX_SWEEPS) {
-            this.settled = true;
-        }
-
+        const [x, y, z] = blockPosition, cx = Math.floor(x / CHUNK_SIZE), cz = Math.floor(z / CHUNK_SIZE);
+        const chunk = world.getChunk(cx, cz);
+        const skyLevel = y >= CHUNK_HEIGHT ? 15 : chunk?.skyLight?.[(y * CHUNK_SIZE + z - cz * CHUNK_SIZE) * CHUNK_SIZE + x - cx * CHUNK_SIZE] ?? 0;
+        const sky = air >= 0 && !isOpaqueId(air) ? clamp(skyLevel / 15) ** (LIGHT_CURVE * 2.2) : 0;
+        surface.factors[2] = sky * (normal[1] + 1) * 0.5;
+        surface.factors[3] = sky * (1 - normal[1]) * 0.5;
     }
 
-
-    // 4. Tekstura dla karty graficznej (pierwiastek - więcej odcieni
-    // w półmroku).
-
-    writeTexture() {
-
-        const { light, data } = this;
-
-        const scale = 1 / BOUNCE_RANGE;
-
-        for (let i = 0; i < N3; i++) {
-
-            const o = i * 3;
-            const t = i * 4;
-
-            data[t] = Math.min(255, Math.sqrt(light[o] * scale) * 255 + 0.5);
-            data[t + 1] = Math.min(255, Math.sqrt(light[o + 1] * scale) * 255 + 0.5);
-            data[t + 2] = Math.min(255, Math.sqrt(light[o + 2] * scale) * 255 + 0.5);
-            data[t + 3] = 255;
-
+    composeProbe(i) {
+        const values = new Float64Array(12);
+        for (let ray = 0; ray < this.rays; ray++) {
+            const at = i * this.rays + ray, weight = this.hitWeights[at] / (255 * this.rays);
+            if (!weight) continue;
+            const surface = this.surfaces.get(this.hitKeys[at]);
+            if (!surface) continue;
+            for (let layer = 0; layer < 4; layer++) for (let c = 0; c < 3; c++) {
+                values[layer * 3 + c] += surface.reflect[c] * surface.factors[layer] * weight;
+            }
         }
-
-        this.texture.needsUpdate = true;
-
-        this.updates++;
-
+        for (let layer = 0; layer < 4; layer++) {
+            const at = layer * LAYER_BYTES + i * 4;
+            for (let c = 0; c < 3; c++) this.data[at + c] = Math.round(Math.sqrt(clamp(values[layer * 3 + c])) * 255);
+            this.data[at + 3] = 255;
+        }
+        this.changed = true;
     }
-
-
-    // Światło odbite w miejscu (x, y, z) - [r, g, b] (bez koloru słońca).
+    upload(time) { this.texture.needsUpdate = true; this.lastWrite = time; this.changed = false; this.updates++; }
 
     sample(x, y, z) {
-
-        const lx = Math.floor(x) - this.origin.x;
-        const ly = Math.floor(y) - this.origin.y;
-        const lz = Math.floor(z) - this.origin.z;
-
-        if (lx < 1 || ly < 1 || lz < 1 || lx >= NX - 1 || ly >= NY - 1 || lz >= NZ - 1) {
-            return [0, 0, 0];
+        if (!this.enabled || !this.valid || this.strength === 0 || !Number.isFinite(this.origin.x)) return [0, 0, 0];
+        const p = [x - this.origin.x, y - this.origin.y, z - this.origin.z], size = [NX, NY, NZ];
+        const edge = Math.min(...p.map((value, axis) => Math.min(value, size[axis] - value)));
+        const fade = smooth(1, 6, edge);
+        if (fade === 0) return [0, 0, 0];
+        const base = p.map((value, axis) => clamp(Math.floor(value - 0.5), 0, size[axis] - 1));
+        const fraction = p.map(value => value - 0.5 - Math.floor(value - 0.5));
+        const result = [0, 0, 0];
+        for (let layer = 0; layer < 4; layer++) {
+            const encoded = [0, 0, 0];
+            for (let dy = 0; dy < 2; dy++) for (let dz = 0; dz < 2; dz++) for (let dx = 0; dx < 2; dx++) {
+                const i = ((Math.min(NY - 1, base[1] + dy) * NZ + Math.min(NZ - 1, base[2] + dz)) * NX + Math.min(NX - 1, base[0] + dx)) * 4;
+                const weight = (dx ? fraction[0] : 1 - fraction[0]) * (dy ? fraction[1] : 1 - fraction[1]) * (dz ? fraction[2] : 1 - fraction[2]);
+                for (let c = 0; c < 3; c++) encoded[c] += this.data[layer * LAYER_BYTES + i + c] / 255 * weight;
+            }
+            const transfer = encoded.map(value => value * value);
+            const luma = transfer.reduce((sum, value, c) => sum + value * LUMA[c], 0);
+            for (let c = 0; c < 3; c++) result[c] += (luma + (transfer[c] - luma) * this.saturation) * this.colors[layer][c];
         }
-
-        const o = ((ly * NZ + lz) * NX + lx) * 3;
-
-        return [this.light[o], this.light[o + 1], this.light[o + 2]];
-
+        return result.map(value => value * fade * this.strength);
     }
 
-
+    stats() {
+        const pending = { geometry: this.geometryQueue.size + ORDER.length - this.initialCursor,
+            sources: this.sourceQueue.size, probes: this.probeQueue.size,
+            invalidation: !!(this.invalidationJob || this.sourceInvalidation || this.dirtyRect) };
+        const typedArrayBytes = this.hitKeys.byteLength + this.hitWeights.byteLength + this.data.byteLength + this.built.byteLength;
+        const estimatedCacheBytes = this.surfaces.size * 160 + (pending.geometry + pending.sources + pending.probes) * 32;
+        return { enabled: this.enabled, ready: this.ready, pending, cache: { surfaces: this.surfaces.size, hitCapacity: this.hitKeys.length },
+            lastFrame: { ...this.lastFrame }, markChunk: { ...this.markStats }, updates: this.updates, invalidations: this.invalidations,
+            typedArrayBytes, estimatedCacheBytes, memoryBytes: typedArrayBytes + estimatedCacheBytes,
+            radius: REACH, sourceReach: SOURCE_REACH, rays: this.rays, budgetMs: this.activeBudget ?? this.budgetMs };
+    }
     dispose() {
-
-        this.texture.dispose();
-
-        bounceUniforms.uBounceColor.value.setRGB(0, 0, 0);
-
+        this.enabled = false;
+        if (bounceUniforms.uBounceLight.value === this.texture) {
+            bounceUniforms.uBounceColor.value.setRGB(0, 0, 0); bounceUniforms.uBounceLight.value = null;
+        }
+        this.texture.dispose(); this.surfaces.clear();
+        this.geometryQueue.clear(); this.sourceQueue.clear(); this.probeQueue.clear();
+        this.initialCursor = ORDER.length; this.invalidationJob = null; this.sourceInvalidation = false; this.dirtyRect = null;
     }
-
 }

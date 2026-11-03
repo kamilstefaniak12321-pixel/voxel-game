@@ -416,7 +416,9 @@ const resourceSource = `
         dispose(){super.dispose();this.chunks.clear();this.dirtyChunks.clear();this.loadQueue=[];}
     }
     export class Sky extends Resource {
-        constructor(){super();this.state={horizon:new Color()};}
+        constructor(){super();this.state={horizon:new Color(),sunLightColor:new Color(),moonLightColor:new Color(),
+            sunLightIntensity:1,moonLightIntensity:0,ambientColor:new Color(),ambientIntensity:1};
+            this.sunLightDirection=new Vector3(0,1,0);this.celestial={moonDirection:new Vector3(0,-1,0)};}
         attachLights(){}setLowDetail(){}update(){}applyShadowContrast(){}
         render(){this.fixture.draws.sky++;}
     }
@@ -434,6 +436,11 @@ const resourceSource = `
         markChunk(){}update(){}render(){this.fixture.draws.shadows++;}
     }
     export class LightShafts extends Resource {}
+    export class BounceLight extends Resource {
+        markChunk(){}update(world,center,options){this.enabled=options.enabled;}
+        bind(){this.fixture.bounceBinds=(this.fixture.bounceBinds??0)+1;}
+        stats(){return {enabled:!!this.enabled,pendingJobs:0};}
+    }
     export const usesSolarAtmosphere=()=>true, lightToBrightness=x=>x, atmosphericLightToBrightness=x=>x;
     export const setAmbientOcclusion=()=>{},setFastLeaves=()=>{},setPotatoDefine=()=>{},setLeafMaterialFast=()=>{},setShadowDefine=()=>{},setFarTerrainShadows=()=>{};
     export const blockMaterial={},plantMaterial={},waterMaterial={},leafMaterial={};
@@ -453,7 +460,7 @@ const worldHook = registerHooks({
     resolve(specifier, context, next) {
         if (context.parentURL?.includes('/src/menu/MenuWorld.js')) {
             if (specifier.endsWith('/menuScene.js') || specifier.endsWith('/WorldOutput.js') ||
-                specifier.endsWith('/LightingDiagnostics.js')) return next(specifier, context);
+                specifier.endsWith('/LightingDiagnostics.js') || specifier.endsWith('/MaterialLighting.js')) return next(specifier, context);
             return { url: 'test:menu-resources', shortCircuit: true };
         }
         if(specifier==='three') return next(new URL('../lib/three/three.module.js',import.meta.url).href,context);
@@ -476,7 +483,9 @@ function resources(overrides = {}) {
 }
 const worldSettings = { get: key => ({ viewDistance: 48, farTerrain: 192, farDetail: 2, potato: false,
     loadBudget: 4, bushyGrass: false, shadows: 3, lightShafts: false,
-    ambientOcclusion: 45, fancyLeaves: true, brightness: 0, lightingLook: 'baseline', cloudCover: 0 })[key] };
+    ambientOcclusion: 45, fancyLeaves: true, brightness: 0, lightingLook: 'baseline', cloudCover: 0,
+    lightingMaterials:'standard',surfaceBounce:true,leafTransmission:true,materialSpecular:true,
+    bounceLight:false,bounceStrength:18,bounceSaturation:65 })[key] };
 function makeWorld({ settings = worldSettings, spec = { ...MENU_SCENE, seed: 42 }, camera } = {}) {
     const fixture = globalThis.menuResources;
     const renderer = { getPixelRatio: () => 1, autoClear: true, info: { reset() {} },

@@ -1563,7 +1563,11 @@ const SETTING_WORDS = {
     promienie: 'lightShafts',
     'swiatlo-odbite': 'bounceLight',
     'model-swiatla': 'lightingModel',
-    odbicia: 'bounceLight',
+    odbicia: 'surfaceBounce',
+    'swiatlo-materialow': 'lightingMaterials',
+    'przeswiecanie-lisci': 'leafTransmission',
+    'sila-odbicia': 'bounceStrength',
+    'nasycenie-odbicia': 'bounceSaturation',
     'trawa-kepiasta': 'bushyGrass',
     liscie: 'fancyLeaves',
     'dynamiczne-swiatlo': 'dynamicLight',
@@ -3855,8 +3859,8 @@ export const GAME_COMMANDS = [
     {
         name: 'swiatlo',
         aliases: ['light'],
-        usage: '/swiatlo | /swiatlo paleta <naturalna | poprzednia> | /swiatlo widok <full | albedo | normals | sunVisibility | skyAccess | ao | sun | moon | sky | bounce | local | emission | grayscale> | /swiatlo zrodlo <sun | moon | sky | bounce | local | emission> <wl | wyl> | /swiatlo chmury <0–100> | /swiatlo reset | /swiatlo model <atmosfera | klasyczne> | /swiatlo dynamiczne <wl | wyl> | /swiatlo odbite <wl | wyl>',
-        description: 'Pomiar światła; model atmosferyczny (domyślny) albo klasyczny i światło odbite (oba - Ustawienia, Eksperymenty); światło dynamiczne.',
+        usage: '/swiatlo | /swiatlo paleta <naturalna | poprzednia> | /swiatlo widok <full | albedo | normals | sunVisibility | skyAccess | ao | sun | moon | sky | bounce | local | emission | grayscale | transmission | specular> | /swiatlo zrodlo <sun | moon | sky | bounce | local | emission | transmission | specular> <wl | wyl> | /swiatlo chmury <0–100> | /swiatlo reset | /swiatlo model <atmosfera | klasyczne> | /swiatlo dynamiczne <wl | wyl> | /swiatlo odbite <wl | wyl>',
+        description: 'Pomiar źródeł, odbić i materiałów; paleta, diagnostyka liści oraz światło dynamiczne.',
 
         run(args, { game, world }) {
 
@@ -3876,7 +3880,7 @@ export const GAME_COMMANDS = [
             if (action === 'zrodlo') {
                 const source = simplify(args[1] ?? '');
                 const value = simplify(args[2] ?? '');
-                if (args.length !== 3 || !['sun', 'moon', 'sky', 'bounce', 'local', 'emission'].includes(source)
+                if (args.length !== 3 || !['sun', 'moon', 'sky', 'bounce', 'local', 'emission', 'transmission', 'specular'].includes(source)
                     || ![...ON_WORDS, ...OFF_WORDS].includes(value)) throw usageError(this);
                 const enabled = ON_WORDS.includes(value);
                 setLightingComponent(source, enabled);
@@ -3908,15 +3912,17 @@ export const GAME_COMMANDS = [
             if (args[0] !== undefined && simplify(args[0]) === 'odbite') {
 
                 const mode = simplify(args[1] ?? '');
+                const key = game.settings.get('lightingLook') === 'natural' ? 'surfaceBounce' : 'bounceLight';
 
                 const on =
                     ON_WORDS.includes(mode) ? true :
                     OFF_WORDS.includes(mode) ? false :
-                    !game.settings.get('bounceLight');
+                    !game.settings.get(key);
 
-                game.settings.set('bounceLight', on);
+                game.settings.set(key, on);
 
-                return `${TEXTS.bounceLight(on)}${on && game.settings.get('shadows') === 0 ? ' (działa tylko z cieniami słońca: /cienie dalekie)' : ''}`;
+                return `${TEXTS[key](on)}${on && (game.settings.get('potato') || game.settings.get('lightingMaterials') === 'basic')
+                    ? ' (włącz Standardowe światło materiałów w zaawansowanych ustawieniach obrazu)' : ''}`;
 
             }
 
@@ -3955,7 +3961,7 @@ export const GAME_COMMANDS = [
                     ` | bezpośrednie RGB: ${sample.direct.map(v => v.toFixed(2)).join(' / ')}`;
             }
 
-            // Światło odbite (BounceLight.js), bez koloru słońca.
+            // Końcowe liniowe odbicie wraz z aktualną energią źródeł.
 
             if (game.bounce?.enabled) {
 
@@ -3986,7 +3992,7 @@ export const GAME_COMMANDS = [
             if (args.length === 1) return ['paleta', 'widok', 'zrodlo', 'chmury', 'reset', 'model', 'dynamiczne', 'odbite'];
             if (args.length === 2 && simplify(args[0]) === 'paleta') return ['naturalna', 'poprzednia'];
             if (args.length === 2 && simplify(args[0]) === 'widok') return LIGHTING_VIEWS;
-            if (args.length === 2 && simplify(args[0]) === 'zrodlo') return ['sun', 'moon', 'sky', 'bounce', 'local', 'emission'];
+            if (args.length === 2 && simplify(args[0]) === 'zrodlo') return ['sun', 'moon', 'sky', 'bounce', 'local', 'emission', 'transmission', 'specular'];
             if (args.length === 2 && simplify(args[0]) === 'model') return ['atmosfera', 'klasyczne'];
             if (args.length === 2) return ['wl', 'wyl'];
             return [];
@@ -6086,11 +6092,12 @@ function buildHouseDemo(ctx) {
 function shadowsNote(game) {
 
     if (game.settings.get('shadows') === 0 || game.settings.get('potato')) {
-        return ' Uwaga: cienie słońca są wyłączone (/cienie dalekie) - bez nich nie ma plam słońca ani światła odbitego.';
+        return ' Cienie słońca są wyłączone (/cienie dalekie). Odbicia otoczenia mają osobne ustawienie.';
     }
 
-    if (!game.settings.get('bounceLight')) {
-        return ' Uwaga: światło odbite (eksperymentalne) jest wyłączone - włącz: /swiatlo odbite wl.';
+    const natural = game.settings.get('lightingLook') === 'natural';
+    if (!game.settings.get(natural ? 'surfaceBounce' : 'bounceLight')) {
+        return ' Odbicia otoczenia są wyłączone — włącz: /swiatlo odbite wl.';
     }
 
     return '';

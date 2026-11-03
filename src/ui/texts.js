@@ -134,7 +134,7 @@ export const TEXTS = {
     experimentsIntro: 'Funkcje, których nie jesteśmy jeszcze pewni - mogą się zmienić albo zniknąć w następnych wersjach. Działają we wszystkich światach i można je wyłączyć w każdej chwili.',
     experimentNotes: {
         bushyGrass: 'Przestrzenne, pikselowe kępki zamiast zwykłej trawy (więcej ścian do narysowania).',
-        bounceLight: 'Ściany oświetlone słońcem rozjaśniają pokój swoim kolorem. Działa tylko z cieniami słońca.',
+        bounceLight: 'Odbicie dla poprzedniej palety. W palecie Naturalnej użyj Obraz → Zaawansowane → Odbicia otoczenia.',
         lightingModel: 'Dotyczy palety „Poprzednia (0.56.1)” w Obraz → Zaawansowane. Atmosferyczne: kolor i siła słońca zależą od drogi przez powietrze. Klasyczne: dawne, prostsze światło. Paleta Naturalna korzysta z nowego systemu.'
     },
     bushyGrass: (on) => `Trawa kępiasta: ${on ? 'Wł.' : 'Wył.'}`,
@@ -154,6 +154,12 @@ export const TEXTS = {
     shadows: (value) => `Cienie słońca: ${['Wył.', 'Zwykłe', 'Dokładne', 'Dalekie'][value] ?? 'Wył.'}`,
     lightingModel: (value) => `Światło: ${value === 'classic' ? 'Klasyczne' : 'Atmosferyczne'}`,
     lightingLook: (value) => `Paleta światła: ${value === 'baseline' ? 'Poprzednia (0.56.1)' : 'Naturalna'}`,
+    lightingMaterials: (value) => `Światło materiałów: ${{ basic: 'Podstawowe', standard: 'Standardowe', high: 'Dokładne' }[value] ?? 'Standardowe'}`,
+    surfaceBounce: (on) => `Odbicia otoczenia: ${on ? 'Wł.' : 'Wył.'}`,
+    leafTransmission: (on) => `Przeświecanie liści: ${on ? 'Wł.' : 'Wył.'}`,
+    materialSpecular: (on) => `Refleksy owoców: ${on ? 'Wł.' : 'Wył.'}`,
+    bounceStrength: (value) => `Siła odbicia: ${value}%`,
+    bounceSaturation: (value) => `Nasycenie odbicia: ${value}%`,
     cloudCover: (value) => `Zachmurzenie światła: ${value}%`,
     lightShafts: (on) => `Promienie światła: ${on ? 'Wł.' : 'Wył.'}`,
     bounceLight: (on) => `Światło odbite: ${on ? 'Wł.' : 'Wył.'}`,

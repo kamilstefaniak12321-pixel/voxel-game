@@ -21,6 +21,7 @@ registerHooks({
             source: `${layout}\n${uvFunction}\n
                 export const blockAtlasTexture=null,atlasAverageTexture=null;
                 export const atlasReady=Promise.resolve({tileSize:16,mipmaps:false}),atlasAveragesReady=Promise.resolve();
+                export const getTileColors = name => { const color = getAtlasAverage(name); return color ? [color] : []; };
                 export const getAtlasAverage=()=>null;` };
         return next(url, context);
     }

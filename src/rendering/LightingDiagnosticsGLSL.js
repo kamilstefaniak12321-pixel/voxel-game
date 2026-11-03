@@ -5,9 +5,14 @@ export const LIGHTING_DIAGNOSTICS_GLSL = `
     uniform int uLightingDebug;
     uniform vec4 uLightingComponents;
     uniform vec2 uLightingLocal;
+    uniform vec2 uLightingMaterial;
+    uniform float uSurfaceMaterials;
+    uniform float uLeafTransmission;
+    uniform float uMaterialSpecular;
     vec3 diagnosticSun = vec3(0.0), diagnosticMoon = vec3(0.0), diagnosticSky = vec3(0.0);
     vec3 diagnosticBounce = vec3(0.0), diagnosticLocal = vec3(0.0), diagnosticEmission = vec3(0.0);
     vec3 diagnosticBeforeDirect = vec3(0.0);
+    vec3 diagnosticTransmission = vec3(0.0), diagnosticSpecular = vec3(0.0);
     vec3 surfaceLocalRadiance(vec3 albedo, vec3 radiance) {
         vec3 result = albedo * radiance * uLightingLocal.x;
         diagnosticLocal += result;
@@ -29,6 +34,9 @@ export const LIGHTING_DIAGNOSTICS_GLSL = `
         if (uLightingDebug == 8) return diagnosticSky;
         if (uLightingDebug == 9) return diagnosticBounce;
         if (uLightingDebug == 10) return diagnosticLocal;
-        return diagnosticEmission;
+        if (uLightingDebug == 11) return diagnosticEmission;
+        if (uLightingDebug == 13) return diagnosticTransmission;
+        if (uLightingDebug == 14) return diagnosticSpecular;
+        return vec3(0.0);
     }
 `;

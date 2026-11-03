@@ -1,6 +1,7 @@
 import { getFruitItemModel } from './FruitBushGeometry.js';
 import { CAMPFIRE_LOGS } from './CampfireGeometry.js';
 import { fuelWood } from '../game/CampfireState.js';
+import { SURFACE_PROFILES } from './SurfaceProfiles.js';
 
 const cache = new Map();
 export function getItemModel(type) {
@@ -8,7 +9,7 @@ export function getItemModel(type) {
     if (!wood && type !== 'fire_starter') return getFruitItemModel(type);
     if (cache.has(type)) return cache.get(type);
     const texture = `campfire_${wood ?? 'oak'}`;
-    let faces = CAMPFIRE_LOGS[0].faces.map(face => ({ ...face, texture }));
+    let faces = CAMPFIRE_LOGS[0].faces.map(face => ({ ...face, texture, surfaceProfile: SURFACE_PROFILES.wood }));
     if (!wood) {
         // A horizontal hearth stick and a vertical rubbing spindle.
         faces = [0, 1].flatMap(axis => faces.map(face => ({ ...face,

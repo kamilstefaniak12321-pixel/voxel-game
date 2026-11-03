@@ -35,6 +35,7 @@ function stubSource(url) {
     }
     const special = {
         atlasReady: 'Promise.resolve({ tileSize: 16, mipmaps: false })', atlasAveragesReady: 'Promise.resolve()',
+        getTileColors: '() => []',
         getAtlasUV: '() => ({ uMin: 0, uMax: 1, vMin: 0, vMax: 1 })', ATLAS_TILES: '{ water: { x: 0, y: 0 } }',
         ATLAS_COLUMNS: '16', ATLAS_ROWS: '16', MAP_LAYERS: '{}', MAP_SCALES: '[]'
     };
@@ -69,6 +70,8 @@ const { SCENES, SCENE_TIMES, LIGHT_SCENE_BOXES, LIGHT_SCENE_VIEW, findScene, bui
 const { LIGHTING_REFERENCE_CAMERAS, LIGHTING_REFERENCE_PROBES, LIGHTING_REFERENCE_ORIGIN,
     placeLightingReferenceCamera } = await import('../src/dev/LightingReference.js');
 const { GAME_COMMANDS, setSceneTime } = await import('../src/commands/gameCommands.js');
+const { MATERIAL_REFERENCE_PROBES, MATERIAL_REFERENCE_CAMERAS, editLightingMaterialsReference,
+    placeLightingMaterialsCamera } = await import('../src/dev/LightingMaterialsReference.js');
 const { World } = await import('../src/world/World.js');
 const { getBlockId } = await import('../src/blocks/BlockRegistry.js');
 
@@ -285,6 +288,36 @@ check(direction.distanceTo(new THREE.Vector3(...targetView.target).sub(new THREE
 placeLightingReferenceCamera(player, 'chamber', { ...LIGHTING_REFERENCE_ORIGIN, x: LIGHTING_REFERENCE_ORIGIN.x + 7 });
 check(Math.abs(player.pos.x - targetView.position[0] - 7) < 1e-6, 'Paleta: kamera przesuwa się razem ze sceną poza placem');
 delete game.campfires;
+
+// E05/E06: słońce dociera wyłącznie do pierwszego pokoju. Przegroda
+// leży na granicy chunków; każda edycja używa zwykłej ścieżki World.
+buildScene(findScene('materialy'), ctx, run);
+const materialProbe = MATERIAL_REFERENCE_PROBES;
+check(skyAt(materialProbe.roomA) > 0 && skyAt(materialProbe.roomB) === 0,
+    `Materiały: otwarty dach A nie rozświetla zamkniętego pokoju B (A=${skyAt(materialProbe.roomA)}, B=${skyAt(materialProbe.roomB)})`);
+check(id(150, 16, -164) === getBlockId('dirt') && id(160, 16, -164) === getBlockId('sand') &&
+    id(170, 16, -164) === getBlockId('snow'), 'Materiały: trzy różne podłoża pod identycznymi odbiornikami');
+editLightingMaterialsReference(world, 'roof', false);
+check(skyAt(materialProbe.roomA) === 0 && skyAt(materialProbe.roomB) === 0,
+    'Materiały: zamknięcie dachu usuwa dzienne źródło z obu pokoi');
+editLightingMaterialsReference(world, 'lamp', true);
+check(world.getLight(...materialProbe.roomA).red > 0 && world.getLight(...materialProbe.roomB).red === 0,
+    'Materiały: lokalna lampa nie przechodzi przez wspólną ścianę');
+editLightingMaterialsReference(world, 'divider', true);
+check(world.getLight(...materialProbe.roomB).red > 0, 'Materiały: rzeczywisty otwór w przegrodzie wpuszcza światło');
+editLightingMaterialsReference(world, 'lamp', false);
+check(world.getLight(...materialProbe.roomA).red === 0 && world.getLight(...materialProbe.roomB).red === 0,
+    'Materiały: usunięcie źródła usuwa RGB po obu stronach otwartej przegrody');
+editLightingMaterialsReference(world, 'ground', 'snow');
+check(id(150, 16, -164) === getBlockId('snow'), 'Materiały: podmiana ziemi na śnieg jest edycją bloków');
+buildScene(findScene('materialy'), ctx, run);
+check(id(150, 16, -164) === getBlockId('dirt') && id(...materialProbe.divider) === getBlockId('lime_plaster') &&
+    id(...materialProbe.lamp) === 0 && skyAt(materialProbe.roomA) > 0 && skyAt(materialProbe.roomB) === 0,
+    'Materiały: odtworzenie przywraca podłoże, ścianę, dach i brak lampy');
+check(id(56, 17, -93) === getBlockId('blueberry_bush_full'), 'Materiały: nie narusza palety 0.57.0');
+placeLightingMaterialsCamera(player, 'leafSide');
+check(player.pos.distanceTo(new THREE.Vector3(...MATERIAL_REFERENCE_CAMERAS.leafSide.position)
+    .sub(new THREE.Vector3(0, player.eyeHeight, 0))) < 1e-6, 'Materiały: kamera zachowuje stałą pozycję oka');
 
 // Basen z komendy /woda basen - na swoim miejscu, przed graczem (+z).
 const pool = findScene('basen');

@@ -18,6 +18,7 @@ registerHooks({
                 export const atlasReady = Promise.resolve({ tileSize:16, mipmaps:false });
                 export const atlasAveragesReady = Promise.resolve();
                 export const getAtlasAverage = () => new Color(.4,.5,.6);
+                export const getTileColors = () => [];
                 export const getAtlasUV = () => ({uMin:0,uMax:1,vMin:0,vMax:1});
                 export const ATLAS_COLUMNS=16, ATLAS_ROWS=16, ATLAS_TILES={water:{x:0,y:0}};
             ` };
@@ -32,10 +33,15 @@ const { World } = await import('../src/world/World.js');
 const { WorldStorage, createWorldInfo } = await import('../src/storage/WorldStorage.js');
 const { WorldSaver } = await import('../src/storage/WorldSaver.js');
 const { WorldTime } = await import('../src/sky/WorldTime.js');
+const { BounceLight } = await import('../src/world/BounceLight.js');
 
 const storage = new WorldStorage(memoryDatabase());
 let info = createWorldInfo('Światło po wczytaniu', 42, 'flat', 'developer');
 let world = new World(new Scene(), info.seed, new Map(), info.terrain, {});
+let bounce = new BounceLight({ budgetMs: Infinity, maxWork: Infinity });
+const bounceState = { enabled: true, sunDirection: [0, 1, 0], moonDirection: [0, -1, 0],
+    sun: [1, 1, 1], moon: [0, 0, 0], sky: [0, 0, 0], ground: [0, 0, 0], strength: .18, saturation: .65 };
+const bounceCenter = { x: 16, y: 36, z: 16 };
 const time = new WorldTime(0.5);
 const player = { getState: () => ({ x: 16.5, y: 34, z: 16.5, yaw: 0, pitch: 0, flying: true }) };
 const roof = [16, 40, 16], lamp = [15, 36, 15];
@@ -57,11 +63,23 @@ world.setBlock(...lamp, 'lamp_red');
 const samples = [];
 for (let y = 33; y < 40; y++) for (let x = 13; x < 20; x++) for (let z = 13; z < 20; z++) samples.push([x, y, z]);
 const lightSnapshot = () => samples.map(point => world.getLight(...point));
+const bounceSnapshot = () => {
+    // CPU nie buduje meshy: przekazuje ten sam sygnał zmiany chunków,
+    // który Game otrzymuje od World.onMeshChanged przy zwykłej edycji.
+    for (const chunk of world.chunks.values()) bounce.markChunk(chunk);
+    bounce.update(world, bounceCenter, bounceState);
+    assert.equal(bounce.stats().ready, true, 'Odbicia muszą być gotowe przed porównaniem zapisu');
+    return samples.map(point => bounce.sample(...point.map(v => v + .5)));
+};
 const isBlack = sample => sample.sky === 0 && sample.red === 0 && sample.green === 0 && sample.blue === 0;
 const records = [];
 let iteration = 0;
 async function roundTrip(label) {
     const before = lightSnapshot();
+    const beforeBounce = bounceSnapshot();
+    const expectedBounce = world.getBlock(...roof) === null;
+    assert.equal(beforeBounce.some(rgb => rgb.some(v => v > 1e-5)), expectedBounce,
+        `${label}: dodatnia kontrola odbicia tylko przy otwartym dachu`);
     const expectedRoof = world.getBlock(...roof), expectedLamp = world.getBlock(...lamp);
     const saver = new WorldSaver(storage, info, world, player, time);
     assert.equal(await saver.flush(), true, `${label}: zapis musi dojść do WorldStorage`);
@@ -72,18 +90,22 @@ async function roundTrip(label) {
     assert.equal(savedInfo.time, time.days, `${label}: pora jest częścią zapisu`);
     const saved = await storage.loadChunks(info.id);
     assert.equal(saved.size, 4, `${label}: zapis zawiera wszystkie cztery zmienione chunki`);
-    world.dispose();
+    bounce.dispose(); world.dispose();
     info = savedInfo;
     world = new World(new Scene(), info.seed, saved, info.terrain, {});
+    bounce = new BounceLight({ budgetMs: Infinity, maxWork: Infinity });
     const order = chunkOrders[++iteration % chunkOrders.length];
     for (const point of order) world.generateChunk(...point);
     assert.equal(world.getBlock(...roof), expectedRoof, `${label}: dach odtworzony bez regeneracji`);
     assert.equal(world.getBlock(...lamp), expectedLamp, `${label}: stan źródła odtworzony bez regeneracji`);
     const after = lightSnapshot();
+    const afterBounce = bounceSnapshot();
     assert.deepEqual(after, before, `${label}: wszystkie kanały światła po nowym World i kolejności ${JSON.stringify(order)}`);
+    afterBounce.forEach((rgb, i) => rgb.forEach((v, c) => assert.ok(Math.abs(v - beforeBounce[i][c]) <= 1e-9,
+        `${label}: sonda odbicia ${i}, kanał ${c} zmieniła się po wczytaniu`)));
     assert.equal(world.hasUnsavedChanges(), false, `${label}: odtworzenie światła nie staje się edycją świata`);
     records.push({ label, samples: after.length, skyMax: Math.max(...after.map(value => value.sky)),
-        redMax: Math.max(...after.map(value => value.red)), order });
+        redMax: Math.max(...after.map(value => value.red)), bounceMax: Math.max(...afterBounce.flat()), order });
 }
 
 try {
@@ -109,6 +131,6 @@ try {
     assert.ok(light.some(value => value.sky > 0) && light.every(value => value.red === 0 && value.green === 0 && value.blue === 0),
         'Dalsza edycja po wczytaniu dodaje tylko niebo, nie przywraca źródła');
     await roundTrip('otwarty dach po wczytaniu, brak źródła');
-    console.log('OK: prawdziwe World/LightEngine/WorldSaver/WorldStorage, cztery cykle zapis→odczyt, 343 próbki × 4 kanały na cykl.');
+    console.log('OK: prawdziwe World/LightEngine/BounceLight/WorldSaver/WorldStorage, cztery cykle zapis→odczyt, 343 próbki światła i odbić na cykl.');
     console.log(JSON.stringify(records));
-} finally { world.dispose(); }
+} finally { bounce.dispose(); world.dispose(); }

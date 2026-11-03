@@ -1,4 +1,5 @@
 import { BLUEBERRY_MODELS } from '../../assets/models/blueberry/model-data.js';
+import { SURFACE_PROFILES } from './SurfaceProfiles.js';
 
 // Same four-vertex templates as the other chunk plants. Only leaf sheets
 // need a back face; berries are closed cubes. No meshes/materials per bush.
@@ -26,6 +27,10 @@ export function getBlueberryFaces(stage) {
                 // Keep both 16px leaf tiles and 1px berry swatches off seams.
                 const uv = order.map(i => source.uv[i].map((n, axis) => n + Math.sign(center[axis] - n) * .02 / 64));
                 faces.push({ vertices, uv, partIndex, berry: part.berry,
+                    // First six cards enclose the dense central crown; the
+                    // outer sheets have more exposed, thinner foliage.
+                    surfaceProfile: part.berry ? SURFACE_PROFILES.fruit
+                        : partIndex < 6 ? SURFACE_PROFILES.leafVoxel : SURFACE_PROFILES.leaf,
                     center: partCenter,
                     normal: order[0] === 0 ? normal : normal.map(n => -n),
                     color: [255,255,255], movement: 0,

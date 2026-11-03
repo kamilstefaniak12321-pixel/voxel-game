@@ -12,7 +12,7 @@ export async function checkDarkRoom({ game, settings, renderer, meanFrame, yield
         yaw: game.player.yaw, pitch: game.player.pitch, flying: game.player.flying,
         cameraMode: game.cameraMode, days: game.time.days, speed: game.time.speed,
         modelSky: game.modelSky, modelBlock: game.modelBlock.clone(),
-        modelBounce: game.modelBounce.clone(), fogBrightness: game.fogBrightness,
+        fogBrightness: game.fogBrightness,
         sunVisibility: game.sunVisibility
     };
     const blocks = [];
@@ -122,7 +122,6 @@ export async function checkDarkRoom({ game, settings, renderer, meanFrame, yield
         game.update(0);
         game.modelSky = saved.modelSky;
         game.modelBlock.copy(saved.modelBlock);
-        game.modelBounce.copy(saved.modelBounce);
         game.fogBrightness = saved.fogBrightness;
         game.sunVisibility = saved.sunVisibility;
         game.updateModel(0);

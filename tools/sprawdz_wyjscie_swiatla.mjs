@@ -164,7 +164,7 @@ for (const look of ['baseline', 'natural']) for (const debug of [0, 12]) {
     const output = new WorldOutput(renderer);
     const game = Object.assign(Object.create(Game.prototype), {
         renderer, worldOutput: output, scene: new THREE.Scene(), camera: new THREE.PerspectiveCamera(),
-        shadows: { render() {} }, campfires: { renderer: { renderShadows() {} } },
+        shadows: { render() {} }, campfires: { renderer: { renderShadows() {} } }, bounce: { bind() {} },
         sky: { lightingLook: look, render() {} }, meteorites: { shake: 0 }, skyfall: { shake: 0 },
         settings: { get: () => false }, landDip: 0, water: { underwater: false },
         spaceView: { renderBehind() {}, renderFront() {} }, farTerrain: { render() {} }, renderLightShafts() {}
@@ -207,13 +207,18 @@ lightingUniforms.uLightingDebug.value = 0;
     run(['paleta', 'naturalna']);
     assert.throws(() => run(['model', 'niepoprawny']));
     assert.equal(settings.get('lightingLook'), 'natural');
-    for (const [name, index] of [['skyAccess', 4], ['sunVisibility', 3], ['sky', 8]]) {
+    for (const [name, index] of [['skyAccess', 4], ['sunVisibility', 3], ['sky', 8], ['transmission', 13], ['specular', 14]]) {
         run(['widok', name]); assert.equal(lightingUniforms.uLightingDebug.value, index);
     }
     run(['zrodlo', 'sky', 'wyl']); assert.equal(lightingUniforms.uLightingComponents.value.z, 0);
+    run(['zrodlo', 'transmission', 'wyl']); assert.equal(lightingUniforms.uLightingMaterial.value.x, 0);
+    run(['zrodlo', 'specular', 'wyl']); assert.equal(lightingUniforms.uLightingMaterial.value.y, 0);
+    run(['odbite', 'wyl']); assert.equal(settings.get('surfaceBounce'), false);
+    run(['odbite', 'wl']); assert.equal(settings.get('surfaceBounce'), true);
     run(['reset']);
     assert.equal(lightingUniforms.uLightingDebug.value, 0);
     assert.deepEqual(lightingUniforms.uLightingComponents.value.toArray(), [1, 1, 1, 1]);
+    assert.deepEqual(lightingUniforms.uLightingMaterial.value.toArray(), [1, 1]);
     if (previousStorage === undefined) delete globalThis.localStorage;
     else globalThis.localStorage = previousStorage;
 }

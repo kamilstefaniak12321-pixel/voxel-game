@@ -16,6 +16,7 @@ registerHooks({
                 export const blockAtlasTexture = null, atlasAverageTexture = null;
                 export const atlasReady = Promise.resolve({ tileSize:16, mipmaps:false });
                 export const atlasAveragesReady = Promise.resolve();
+                export const getTileColors = name => { const color = getAtlasAverage(name); return color ? [color] : []; };
                 export function getAtlasAverage(name) {
                     if (!name) return null;
                     const code = [...name].reduce((sum,c) => sum + c.charCodeAt(0), 0);

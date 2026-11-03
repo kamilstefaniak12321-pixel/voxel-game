@@ -41,7 +41,8 @@ import { LightShafts } from '../rendering/LightShafts.js';
 import { WorldOutput } from '../rendering/WorldOutput.js';
 import { lightingUniforms, resetLightingDiagnostics } from '../rendering/LightingDiagnostics.js';
 import { prewarmWaterMaterial, waterShaderVariantKey } from '../rendering/WaterMaterialWarmup.js';
-import { BounceLight, bounceUniforms } from '../world/BounceLight.js';
+import { BounceLight } from '../world/BounceLight.js';
+import { applyMaterialLightingSettings, createBounceLightingState, updateBounceLightingState } from '../rendering/MaterialLighting.js';
 import { Meteorites } from './Meteorites.js';
 import { SpaceView } from '../space/SpaceView.js';
 import { Skyfall } from '../space/Skyfall.js';
@@ -81,9 +82,6 @@ import {
     SHAFT_DENSITY_OUTSIDE,
     SHAFT_DENSITY_INSIDE,
     SHAFT_FAR_REACH,
-    SHADOW_SUN_BOOST,
-    BOUNCE_STRENGTH,
-    BOUNCE_OUTDOOR,
     isCreative
 } from '../config.js';
 
@@ -310,6 +308,7 @@ export class Game {
         // Światło odbite od oświetlonych słońcem ścian (BounceLight.js).
 
         this.bounce = new BounceLight();
+        this.bounceLighting = createBounceLightingState();
 
         this.world.onMeshChanged = (chunk) => {
 
@@ -333,8 +332,6 @@ export class Game {
 
         // Światło odbite w miejscu gracza (model, ręka).
 
-        this.modelBounce = new THREE.Vector3();
-        this.bounceTarget = new THREE.Vector3();
 
 
         // Kosmos (sekret): z wysoka czarne niebo, planety i kula Ziemi
@@ -951,20 +948,12 @@ export class Game {
         const ambientStrength = shadows.active ? shadows.ambientStrength : 0;
         modelLight.uModelAmbient.value = this.modelSky ** (2.2 + SHADOW_INDOOR_DARKNESS * ambientStrength);
 
-        // Światło odbite w miejscu gracza (płynnie).
+        // Sonda już interpoluje lokalny transfer. Aktualne źródła stosujemy
+        // bez opóźnienia, żeby zgaszone światło nie pozostawało na dłoni.
 
         const bounce = this.bounce.enabled ? this.bounce.sample(player.pos.x, player.pos.y + 1.2, player.pos.z) : [0, 0, 0];
 
-        const bounceColor = bounceUniforms.uBounceColor.value;
-
-        const outdoor = 1 - BOUNCE_OUTDOOR * this.modelSky ** 2.2;
-
-        this.modelBounce.lerp(
-            this.bounceTarget.set(bounce[0] * bounceColor.r * outdoor, bounce[1] * bounceColor.g * outdoor, bounce[2] * bounceColor.b * outdoor),
-            rate
-        );
-
-        modelLight.uModelBounce.value.copy(this.modelBounce);
+        modelLight.uModelBounce.value.set(bounce[0], bounce[1], bounce[2]);
 
     }
 
@@ -1104,6 +1093,7 @@ export class Game {
 
         this.shadows.render(this.world, this.camera.position, this.model, this.scene, this.viewDistance, this.farTerrain);
         this.campfires.renderer.renderShadows();
+        this.bounce.bind();
 
 
         const naturalOutput = this.sky.lightingLook === 'natural';
@@ -1248,35 +1238,15 @@ export class Game {
     }
 
 
-    // Światło odbite (BounceLight.js): liczy się w tle (kawałek na
-    // klatkę), a jego kolor i siłę - kolor światła, które rzuca cienie,
-    // razy siłę cieni - dostaje shader.
+    // Jedno odbicie z lokalnie buforowaną geometrią. Źródła są aktualne
+    // w każdej klatce; paleta i maski nie uruchamiają przebudowy chunków.
 
     updateBounce() {
 
-        const shadows = this.shadows;
-
-        const enabled = this.bounceEnabled && shadows.active;
-
-        this.bounce.update(this.world, this.camera.position, shadows.direction, shadows.light, enabled);
-
-        const color = bounceUniforms.uBounceColor.value;
-
-        if (!enabled) {
-
-            color.setRGB(0, 0, 0);
-
-            return;
-
-        }
-
-        const state = this.sky.state;
-
-        const sun = shadows.light === 'sun';
-
-        color.copy(sun ? state.sunLightColor : state.moonLightColor)
-            .multiplyScalar((sun ? state.sunLightIntensity : state.moonLightIntensity) * shadows.strength *
-                (this.sky.atmosphere ? 1 : SHADOW_SUN_BOOST) * BOUNCE_STRENGTH);
+        this.bounce.update(this.world, this.camera.position,
+            updateBounceLightingState(this.bounceLighting, this.settings, this.sky,
+                this.renderer.capabilities.isWebGL2));
+        this.campfires.renderer.updateBounce();
 
     }
 
@@ -1289,7 +1259,7 @@ export class Game {
 
         const shadows = this.shadows;
         const debugView = lightingUniforms.uLightingDebug.value;
-        if (debugView > 0 && debugView < 12) return;
+        if (debugView > 0 && debugView !== 12) return;
 
         if (!this.shaftsEnabled || !shadows.active || this.water.underwater) {
             return;
@@ -1665,6 +1635,7 @@ export class Game {
         this.sky.lightingLook = settings.get('lightingLook');
         this.sky.cloudCover = settings.get('cloudCover') / 100;
         lightingUniforms.uLightingNatural.value = this.sky.lightingLook === 'natural' ? 1 : 0;
+        applyMaterialLightingSettings(settings);
         this.shadows.setNaturalLighting(this.sky.lightingLook === 'natural');
 
         this.sky.solarAtmosphere = usesSolarAtmosphere(settings.get('lightingModel'), this.worldInfo.terrain);
@@ -1731,8 +1702,6 @@ export class Game {
         modelLight.uModelDistantShadows.value = this.shadows.enabled ? 1 : 0;
 
         this.shaftsEnabled = !potato && settings.get('lightShafts');
-
-        this.bounceEnabled = !potato && settings.get('bounceLight');
 
 
         // Model gracza: wierzchnia warstwa skórki, styl zgięć, tryb ziemniaka.

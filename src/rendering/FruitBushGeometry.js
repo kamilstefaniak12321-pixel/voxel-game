@@ -65,7 +65,9 @@ function makeFruit(species) {
         purple: linear(0x30243e), purpleLight: linear(0x594461), purpleDark: linear(0x241f31),
         nut: linear(0xa46a36), nutLight: linear(0xc48b50), nutDark: linear(0x79502d)
     };
-    const model = createPixelPlant(palette, false, 0, 1);
+    const roles = Object.fromEntries(Object.keys(palette).map(name => [name,
+        name.startsWith('green') ? 'leaf' : 'fruit']));
+    const model = createPixelPlant(palette, false, 0, 1, roles);
     const { box } = model;
     if (species === 'strawberry') {
         // Tapered berry: three-pixel shoulders, a narrow tip and leafy calyx.

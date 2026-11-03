@@ -1,5 +1,6 @@
 // Model pixels are exactly 1/16 block. Greedy rectangles preserve the stepped
 // silhouette while avoiding one draw face per pixel; solids omit internal faces.
+import { pixelSurfaceProfile } from './SurfaceProfiles.js';
 export const PLANT_PIXEL = 1 / 16;
 
 // Klucze liczbowe zamiast tekstu "x,y,z" - duże modele (krzew indygowca,
@@ -43,22 +44,23 @@ function cellRectangles(cells) {
     return result;
 }
 
-export function createPixelPlant(palette, floating, movement, motionHeight) {
+export function createPixelPlant(palette, floating, movement, motionHeight, roles = null) {
     const faces = [], voxels = new Map();
-    function face(vertices, axis, sign, color) {
+    function face(vertices, axis, sign, color, sheet) {
         // Initial winding: XY +Z, ZY -X, XZ -Y. Reverse for the other side.
         if (sign !== (axis === 2 ? 1 : -1)) vertices = [vertices[0], vertices[2], vertices[1], vertices[3]];
         const normal = [0, 0, 0]; normal[axis] = sign;
         const weights = vertices.map(p => floating ? 255 : Math.round(Math.min(1, p[1] / motionHeight) * 255));
-        faces.push({ vertices, normal, color: palette[color], weights, movement });
+        faces.push({ vertices, normal, color: palette[color], weights, movement,
+            surfaceProfile: pixelSurfaceProfile(color, sheet, roles) });
     }
-    function surface(axis, plane, rectangle, sign = 0) {
+    function surface(axis, plane, rectangle, sign = 0, sheet = false) {
         const { u, v, width: w, height: h, color } = rectangle;
         const point = (a, b) => (axis === 0 ? [plane, b, a] : axis === 1 ? [a, plane, b] : [a, b, plane])
             .map(value => value * PLANT_PIXEL);
         const vertices = [point(u, v+h), point(u+w, v+h), point(u, v), point(u+w, v)];
-        if (sign) face(vertices, axis, sign, color);
-        else { face(vertices, axis, 1, color); face(vertices, axis, -1, color); }
+        if (sign) face(vertices, axis, sign, color, sheet);
+        else { face(vertices, axis, 1, color, true); face(vertices, axis, -1, color, true); }
     }
     // sign: 0 - widać z obu stron, 1 / -1 - tylko z jednej (np. dywan
     // liści na ziemi - od spodu nikt nie patrzy).
@@ -81,7 +83,7 @@ export function createPixelPlant(palette, floating, movement, motionHeight) {
             }
         };
         draw({ pixel, rect, leaf });
-        for (const rectangle of cellRectangles(cells)) surface(axis, plane, rectangle, sign);
+        for (const rectangle of cellRectangles(cells)) surface(axis, plane, rectangle, sign, true);
     }
     function box(x, y, z, width, height, depth, color, cap = color) {
         for (let j=0; j<height; j++) for (let k=0; k<depth; k++) for (let i=0; i<width; i++) {

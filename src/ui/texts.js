@@ -157,6 +157,8 @@ export const TEXTS = {
     bounceLight: (on) => `Światło odbite: ${on ? 'Wł.' : 'Wył.'}`,
     fancyLeaves: (on) => `Liście drzew: ${on ? 'Ładne' : 'Szybkie'}`,
     theme: (name) => `Motyw: ${name}`,
+    menuMotion: (value) => `Ruch menu: ${{ auto: 'System', full: 'Płynny', off: 'Wył.' }[value] ?? 'System'}`,
+    menuMotionNote: 'System dostosowuje ruch kamery menu do ustawień urządzenia. Wył. pokazuje nieruchome kadry.',
     inventoryStyle: (value) => `Ekwipunek: ${value === 'light' ? 'Jasny' : 'Drewniany'}`,
     hudScale: (value) => `Interfejs w grze: ${value}%`,
     showDebug: (on) => `Debug (F3): ${on ? 'Wł.' : 'Wył.'}`,

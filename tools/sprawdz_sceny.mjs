@@ -126,6 +126,26 @@ settings.reset();
 check(graphicsPreset(settings) === 'ultra', 'Przywróć domyślne - Najwyższa');
 
 
+// --- Dostępność ruchu w menu ---------------------------------------------
+
+check(settings.get('menuMotion') === 'auto' && phone.get('menuMotion') === 'auto',
+    'Menu domyślnie uwzględnia ustawienia ruchu urządzenia');
+for (const mode of ['auto', 'full', 'off']) {
+    check(settings.validate('menuMotion', mode) === mode, `Dozwolony ruch menu: ${mode}`);
+}
+for (const invalid of [null, true, 1, '', 'unknown']) {
+    check(settings.validate('menuMotion', invalid) === 'auto', 'Nieznany ruch menu wraca do System');
+}
+settings.set('menuMotion', 'off');
+check(new Settings().get('menuMotion') === 'off', 'Wyłączenie ruchu pozostaje po ponownym uruchomieniu');
+settings.reset();
+check(settings.get('menuMotion') === 'auto', 'Przywrócenie domyślnych przywraca System');
+const oldSettings = JSON.parse(store.get('voxel-game-settings'));
+delete oldSettings.menuMotion;
+store.set('voxel-game-settings', JSON.stringify(oldSettings));
+check(new Settings().get('menuMotion') === 'auto', 'Starszy zapis bez ruchu menu dostaje System');
+
+
 // --- Eksperymenty --------------------------------------------------------
 
 check(SETTINGS_TABS.experiments === EXPERIMENTS, 'Zakładka eksperymentów');

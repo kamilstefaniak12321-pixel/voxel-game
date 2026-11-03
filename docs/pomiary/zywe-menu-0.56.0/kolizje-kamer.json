@@ -1,0 +1,149 @@
+{
+  "scene": {
+    "id": "river-valley-0.56",
+    "seed": 2138286349,
+    "terrain": "realistic",
+    "time": 0.4375,
+    "views": {
+      "home": {
+        "position": [
+          -480,
+          100,
+          384
+        ],
+        "target": [
+          -520,
+          88,
+          450
+        ]
+      },
+      "river": {
+        "position": [
+          -477,
+          79,
+          375
+        ],
+        "target": [
+          -510,
+          78,
+          420
+        ]
+      },
+      "forest": {
+        "position": [
+          -474,
+          78,
+          388
+        ],
+        "target": [
+          -481,
+          74.5,
+          349
+        ]
+      },
+      "mountains": {
+        "position": [
+          -476,
+          106,
+          426
+        ],
+        "target": [
+          -530,
+          103,
+          580
+        ]
+      }
+    }
+  },
+  "method": {
+    "radius": 0.5,
+    "verticalDrift": 0.18,
+    "routeMaxStep": 0.3333333333333333,
+    "randomSeed": 7781,
+    "runs": 80,
+    "secondsPerRun": 15,
+    "simulationFps": 60,
+    "collisionCheckEveryFrames": 2
+  },
+  "points": [
+    {
+      "view": "home",
+      "position": [
+        -480,
+        100,
+        384
+      ],
+      "hits": []
+    },
+    {
+      "view": "river",
+      "position": [
+        -477,
+        79,
+        375
+      ],
+      "hits": []
+    },
+    {
+      "view": "forest",
+      "position": [
+        -474,
+        78,
+        388
+      ],
+      "hits": []
+    },
+    {
+      "view": "mountains",
+      "position": [
+        -476,
+        106,
+        426
+      ],
+      "hits": []
+    }
+  ],
+  "routes": [
+    {
+      "from": "home",
+      "to": "river",
+      "samples": 71,
+      "collision": null
+    },
+    {
+      "from": "home",
+      "to": "forest",
+      "samples": 71,
+      "collision": null
+    },
+    {
+      "from": "home",
+      "to": "mountains",
+      "samples": 129,
+      "collision": null
+    },
+    {
+      "from": "river",
+      "to": "forest",
+      "samples": 42,
+      "collision": null
+    },
+    {
+      "from": "river",
+      "to": "mountains",
+      "samples": 175,
+      "collision": null
+    },
+    {
+      "from": "forest",
+      "to": "mountains",
+      "samples": 143,
+      "collision": null
+    }
+  ],
+  "interrupted": {
+    "switches": 1292,
+    "collisionRuns": 0,
+    "collisions": []
+  }
+}

@@ -1,6 +1,6 @@
 import { TerrainGenerator } from '../TerrainGenerator.js';
 import { RealisticGenerator } from './RealisticGenerator.js';
-import { LightLabGenerator } from './LightLabGenerator.js';
+import { TestSiteGenerator } from './TestSiteGenerator.js';
 
 // ------------------------------------------------------------
 // TYPY TERENU (GENERATORY)
@@ -27,6 +27,9 @@ import { LightLabGenerator } from './LightLabGenerator.js';
 //                          /skaly)
 //   findSpawn(x, z)      - miejsce startu nowego świata
 //
+// Pola wpisu: name - nazwa w menu, developer - tylko w trybie
+// programisty, hidden - nie ma go przy tworzeniu świata (stare światy).
+//
 // Nowy typ terenu = nowa klasa z tymi metodami + wpis niżej.
 // ------------------------------------------------------------
 
@@ -42,9 +45,20 @@ export const TERRAIN_TYPES = {
         create: (seed) => new TerrainGenerator(seed)
     },
 
+    // Tylko w trybie programisty (Menu: developer).
+    flat: {
+        name: 'Plac testowy',
+        developer: true,
+        create: (seed) => new TestSiteGenerator(seed)
+    },
+
+    // Dawne "Laboratorium światła" (0.4x) - stare światy dostają plac
+    // testowy (bez stanowisk - te stawia scena "Światło i materiały").
+    // Nie ma go na liście przy tworzeniu świata.
     'light-lab': {
-        name: 'Laboratorium światła (eksperymentalne)',
-        create: (seed) => new LightLabGenerator(seed)
+        name: 'Plac testowy',
+        hidden: true,
+        create: (seed) => new TestSiteGenerator(seed)
     }
 
 };

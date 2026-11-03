@@ -1,4 +1,6 @@
 // Test prawdziwej gry w Chrome, bez npm install i bez bibliotek automatyzacji.
+// Świat w trybie programisty na placu testowym ze sceną "Światło
+// i materiały" (src/dev/scenes.js) - dawne laboratorium światła.
 // Node >= 22.15; Chrome w PATH lub CHROME_BIN=/pełna/ścieżka/do/chrome.
 import { createServer } from 'node:http';
 import { readFile, mkdir, mkdtemp, rm, writeFile } from 'node:fs/promises';
@@ -21,6 +23,7 @@ async function browserChecks() {
     const { atlasReady } = await import('/src/rendering/TextureAtlas.js');
     const { GAME_COMMANDS } = await import('/src/commands/gameCommands.js');
     const { createWorldInfo } = await import('/src/storage/WorldStorage.js');
+    const { findScene, buildScene } = await import('/src/dev/scenes.js');
     const { shadowUniforms } = await import('/src/rendering/Shadows.js');
     const { modelLight } = await import('/src/rendering/ModelMaterial.js');
     const { checkDarkRoom } = await import('/tools/light_room_checks.js');
@@ -34,12 +37,14 @@ async function browserChecks() {
     const settings = new Settings();
     for (const [key, value] of Object.entries({ viewDistance: 64, farTerrain: 512, loadBudget: 8, meteorites: false, lightShafts: false, bounceLight: false, showHand: true, lightingModel: 'world' })) settings.set(key, value);
     const input = new Proxy({}, { get: (_, name) => name === 'consumeMouseDelta' ? () => ({ x: 0, y: 0 }) : () => 0 });
-    const info = createWorldInfo('Test światła', 42, 'light-lab', 'creative');
+    const info = createWorldInfo('Test światła', 42, 'flat', 'developer');
     const game = await Game.start(renderer, input, null, info, settings);
     game.camera.aspect = 960 / 640;
     game.camera.updateProjectionMatrix();
     game.hand.resize(960 / 640);
     settings.onChange(key => game.applySettings(key));
+    const sceneContext = { game, world: game.world, player: game.player, sky: game.sky, time: game.time };
+    buildScene(findScene('swiatlo'), sceneContext, (name, args) => GAME_COMMANDS.find(c => c.name === name).run(args, sceneContext));
     game.player.flying = true;
     game.player.pos.set(7.5, 28, 34);
     game.player.pitch = -0.45;
@@ -51,8 +56,9 @@ async function browserChecks() {
     const yieldBrowser = () => new Promise(resolve => setTimeout(resolve, 0));
     // Dajemy wątkom dalekiego terenu i teksturom czas na odpowiedź.
     for (let i = 0; i < 32; i++) { frame(); await new Promise(r => setTimeout(r, 16)); }
-    check(game.sky.solarAtmosphere, 'Laboratorium nie włączyło atmosfery');
-    check(game.world.generator.type === 'light-lab', 'Niewłaściwy generator');
+    check(game.sky.solarAtmosphere, 'Domyślny model nie włączył atmosfery');
+    check(game.world.generator.type === 'flat', 'Niewłaściwy generator');
+    check(game.mode === 'developer' && game.player.canFly, 'Tryb programisty nie działa jak kreatywny');
     check(game.world.getLight(17, 20, 13).sky < game.world.getLight(7, 20, 30).sky, 'Dach nie ogranicza dostępu do nieba');
     check(game.world.getLight(16, 19, 6).red > 0, 'Brak czerwonego światła lampy');
     const command = GAME_COMMANDS.find(c => c.name === 'swiatlo');
@@ -178,7 +184,7 @@ async function browserChecks() {
 }
 
 const root = fileURLToPath(new URL('../', import.meta.url));
-const output = resolve(process.env.VOXEL_TEST_OUTPUT ?? 'test-results/light-lab');
+const output = resolve(process.env.VOXEL_TEST_OUTPUT ?? 'test-results/sceny');
 await mkdir(output, { recursive: true });
 const profile = await mkdtemp(resolve(tmpdir(), 'voxel-light-'));
 const html = `<!doctype html><html><head><meta charset="utf-8"><style>body{margin:0;background:#161c24;color:white}pre{white-space:pre-wrap}</style><script type="importmap">{"imports":{"three":"/lib/three/three.module.js"}}</script></head><body data-result="running"><pre id="result">Test WebGL…</pre><script type="module">(${browserChecks.toString()})().then(result=>{document.body.dataset.result='passed';document.querySelector('#result').textContent=JSON.stringify(result)}).catch(error=>{document.body.dataset.result='failed';document.querySelector('#result').textContent=error.stack;console.error(error)})</script></body></html>`;
@@ -258,9 +264,9 @@ try {
     }
     await writeFile(resolve(output, 'result.json'), JSON.stringify(result, null, 2));
     const shot = await call('Page.captureScreenshot', { format: 'png' });
-    await writeFile(resolve(output, 'laboratorium.png'), Buffer.from(shot.data, 'base64'));
+    await writeFile(resolve(output, 'scena-swiatlo.png'), Buffer.from(shot.data, 'base64'));
     if (result?.status !== 'passed') throw new Error(`Test WebGL nie przeszedł: ${result?.text ?? 'brak wyniku'}\n${logs.slice(-10000)}`);
-    console.log('OK: WebGL2, prawdziwa gra, cień dachu, lampy, 12 ujęć dnia/nocy, 6 położeń niskiego Słońca, widoczna tarcza, ciemny pokój z lampą, porównanie przecieku światła, A/B, cienie 0/1/3, trzecia osoba i tryb ziemniaka.');
+    console.log('OK: WebGL2, prawdziwa gra w trybie programisty (scena Światło i materiały), cień dachu, lampy, 12 ujęć dnia/nocy, 6 położeń niskiego Słońca, widoczna tarcza, ciemny pokój z lampą, porównanie przecieku światła, A/B, cienie 0/1/3, trzecia osoba i tryb ziemniaka.');
     console.log(result.text);
 } finally {
     await writeFile(resolve(output, 'chrome.log'), logs);

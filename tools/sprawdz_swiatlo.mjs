@@ -72,16 +72,19 @@ for (const altitude of [-12, -6, -3.5, 0, 2, 3.5, 25]) {
 for (const terrain of [undefined, 'classic', 'realistic', 'unknown']) {
     assert.equal(usesSolarAtmosphere('world', terrain), true);
 }
-assert.equal(usesSolarAtmosphere('world', 'light-lab'), true);
-assert.equal(usesSolarAtmosphere('classic', 'light-lab'), false);
+assert.equal(usesSolarAtmosphere('world', 'flat'), true);
+assert.equal(usesSolarAtmosphere('classic', 'flat'), false);
 assert.equal(usesSolarAtmosphere('atmosphere', 'classic'), true);
 
 const savedSettings = new Map();
 globalThis.localStorage = { getItem: key => savedSettings.get(key), setItem: (key, value) => savedSettings.set(key, value) };
 const settings = new Settings();
 assert.equal(settings.get('lightingModel'), 'world');
+settings.set('lightingModel', 'classic');
+assert.equal(new Settings().get('lightingModel'), 'classic');
+// Dawny wybór "Atmosferyczny" (zapis sprzed 0.55.0) to dziś domyślny model.
 settings.set('lightingModel', 'atmosphere');
-assert.equal(new Settings().get('lightingModel'), 'atmosphere');
+assert.equal(new Settings().get('lightingModel'), 'world');
 settings.set('lightingModel', 'invalid');
 assert.equal(settings.get('lightingModel'), 'world');
 
@@ -240,10 +243,13 @@ assert.equal(shadowUniforms.uFarShadowInfo.value.z, 0);
 assert.equal(shadows.needsDraw, false);
 shadows.dispose();
 
-assert.ok(TERRAIN_TYPES['light-lab']);
-const generator = createGenerator('light-lab', 123);
+// Plac testowy (tryb programisty); dawne światy "Laboratorium światła"
+// dostają ten sam plac (stanowiska stawia scena - sprawdz_sceny.mjs).
+assert.ok(TERRAIN_TYPES.flat?.developer);
+assert.ok(TERRAIN_TYPES['light-lab']?.hidden);
+const generator = createGenerator('flat', 123);
 const saved = JSON.parse(JSON.stringify(createWorldInfo('Lab', 123, 'light-lab', 'creative')));
-assert.equal(createGenerator(saved.terrain, saved.seed).type, 'light-lab');
+assert.equal(createGenerator(saved.terrain, saved.seed).type, 'flat');
 assert.equal(createGenerator(undefined, 123).type, 'classic');
 
 const positions = [[-2, -2], [-1, -2], [0, -2], [1, -2], [-2, 0], [-1, 0], [0, 0], [1, 0], [0, 1], [1, 1], [8, 0], [12, 0], [16, 0]];
@@ -251,7 +257,7 @@ for (const [cx, cz] of positions) {
     const chunk = new Chunk(cx, cz);
     generator.generateChunk(chunk);
     const repeated = new Chunk(cx, cz);
-    createGenerator('light-lab', 'different seed').generateChunk(repeated);
+    createGenerator('flat', 'different seed').generateChunk(repeated);
     assert.deepEqual(chunk.blocks, repeated.blocks);
     for (let z = 0; z < CHUNK_SIZE; z++) for (let x = 0; x < CHUNK_SIZE; x++) {
         const wx = cx * CHUNK_SIZE + x, wz = cz * CHUNK_SIZE + z;
@@ -266,11 +272,8 @@ const spawn = generator.findSpawn();
 assert.ok(isSolidId(at(spawn.x, 16, spawn.z)));
 assert.equal(at(spawn.x, 17, spawn.z), 0);
 assert.equal(at(spawn.x, 18, spawn.z), 0);
-assert.equal(at(20, 25, 13), 0, 'otwór w dachu');
-assert.equal(at(17, 25, 13), getBlockId('lime_plaster'), 'nieprzezroczysty dach');
-assert.equal(at(-20, 24, 8), getBlockId('oak_leaves'));
-assert.notEqual(getBlockId('oak_leaves'), 0);
-assert.notEqual(getBlockId('oak_log'), 0);
-assert.equal(at(-4, 15, 10), getBlockId('water'));
-assert.equal(at(16, 19, 5), getBlockId('lamp_red'));
-console.log('OK: atmosfera RGB, zmierzch, zaćmienie, cienie przy horyzoncie, powrót A/B, ustawienia, zapis typu świata, spójne chunki/mapa/LOD i stanowiska laboratorium.');
+assert.equal(at(0, 16, 5), getBlockId('terracotta'), 'oś placu');
+assert.equal(at(5, 16, 5), getBlockId('lime_plaster'), 'posadzka placu');
+assert.equal(at(60, 16, 5), getBlockId('grass'), 'trawa poza placem');
+assert.equal(generator.getHeight(200, 0), 48, 'taras dalekiego terenu');
+console.log('OK: atmosfera RGB, zmierzch, zaćmienie, cienie przy horyzoncie, powrót A/B, ustawienia, zapis typu świata, spójne chunki/mapa/LOD i plac testowy.');

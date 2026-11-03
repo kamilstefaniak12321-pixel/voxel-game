@@ -82,7 +82,7 @@ w gęstym lesie jest cień (`src/world/Light.js`). W kątach korony są
 cienie (jak przy zwykłych blokach). Na liściach da się stać (mają
 kolizję).
 
-Ustawienie **Liście drzew** (*Ustawienia → Obraz*, `/ustaw liscie`):
+Ustawienie **Liście drzew** (*Ustawienia → Obraz → Zaawansowane*, `/ustaw liscie`):
 *Ładne* - z prześwitami, *Szybkie* - bez ścian w środku korony
 i z zamalowanymi prześwitami (dużo mniej do rysowania - las nie
 spowalnia gry). Na telefonie domyślnie szybkie, w trybie ziemniaka

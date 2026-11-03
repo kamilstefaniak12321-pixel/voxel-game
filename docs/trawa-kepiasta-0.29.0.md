@@ -1,5 +1,9 @@
 # Trawa kępiasta — eksperyment 0.29.0
 
+> **Od 0.55.0** trawę kępiastą włącza się w *Ustawienia → Eksperymenty* -
+> dla wszystkich światów naraz (wcześniej: osobno dla każdego świata, przy
+> tworzeniu albo w pauzie → *Dodatki świata*; tamten zapis gra pomija).
+
 PR #57. Opcja zmienia modele `short_grass` i `tall_grass` w świecie.
 Włączenie: przy tworzeniu świata albo **Pauza → Dodatki świata →
 Trawa kępiasta**. Domyślnie wyłączona; wybór należy do zapisu świata,

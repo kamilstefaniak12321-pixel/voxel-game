@@ -20,6 +20,7 @@ registerHooks({
 const { getBushyGrassFaces } = await import('../src/rendering/BushyGrassGeometry.js');
 const { normalizeWorldExperiments, grassDetailAtDistance } = await import('../src/world/WorldExperiments.js');
 const { createWorldInfo } = await import('../src/storage/WorldStorage.js');
+const { SETTINGS_DEFAULTS, EXPERIMENTS } = await import('../src/settings/Settings.js');
 const { WorldSaver } = await import('../src/storage/WorldSaver.js');
 const { World } = await import('../src/world/World.js');
 const { Scene } = await import('three');
@@ -30,10 +31,13 @@ const { buildChunkGeometry } = await import('../src/rendering/ChunkMesher.js');
 for (const value of [undefined,null,{},true,{bushyGrass:'true'},{bushyGrass:1}]) {
     assert.equal(normalizeWorldExperiments(value).bushyGrass,false);
 }
-const info=createWorldInfo('Kępki',2138286349,'classic','creative',{bushyGrass:true});
-assert.equal(info.experiments.bushyGrass,true);
-assert.equal(createWorldInfo('Zwykły',1).experiments.bushyGrass,false);
-const world=new World(new Scene(),1,new Map(),'classic',info.experiments);
+// 0.55.0: trawa kępiasta to ustawienie (Ustawienia - Eksperymenty) dla
+// wszystkich światów, domyślnie wyłączone; świat jej nie zapisuje.
+const info=createWorldInfo('Kępki',2138286349,'classic','creative');
+assert.equal(info.experiments,undefined);
+assert.ok(EXPERIMENTS.includes('bushyGrass'));
+assert.equal(SETTINGS_DEFAULTS.bushyGrass,false);
+const world=new World(new Scene(),1,new Map(),'classic',{bushyGrass:true});
 const chunk=new Chunk(0,0);chunk.skyLight.fill(15);
 world.chunks.set('0,0',chunk);
 for (const [x,z,type] of [[2,2,'short_grass'],[5,2,'tall_grass'],[8,2,'fern'],[11,2,'water_lily'],[13,2,'stone'],[5,5,'amarantus_etap3']]) {
@@ -68,14 +72,13 @@ const restored=geometry();
 for (const attr of Object.keys(ordinary.attributes)) assert.deepEqual(restored.getAttribute(attr).array,ordinary.getAttribute(attr).array);
 assert.deepEqual(restored.index.array,ordinary.index.array);
 
-// Real saver round trip: the choice survives and remains local to this world.
-world.setExperiments(info.experiments);
+// Zapis świata: wybór zostaje w ustawieniach, nie w świecie.
+world.setExperiments({bushyGrass:true});
 let saved;
 const saver=new WorldSaver({saveWorldAndChunks:async value=>{saved=structuredClone(value);}}, info, world, {getState:()=>({x:0,y:10,z:0})});
 assert.equal(await saver.flush(),true);
-assert.equal(saved.experiments.bushyGrass,true);
-assert.equal(new World(new Scene(),1,new Map(),'classic',saved.experiments).experiments.bushyGrass,true);
-assert.equal(new World(new Scene(),1).experiments.bushyGrass,false,'No leakage to a different world');
+assert.equal(saved.experiments,undefined);
+assert.equal(new World(new Scene(),1).experiments.bushyGrass,false,'Bez ustawienia - zwykła trawa');
 
 const maxima=[0,0,0];
 for (const tall of [false,true]) for(let variant=0;variant<8;variant++) {
@@ -105,4 +108,4 @@ chunk.mesh={geometry:bushy};bushy.userData.bushyGrassDetail=0;
 world.dirtyChunks.clear();world.centerCx=4;world.updatePlantVisibility(chunk);
 assert.ok(world.dirtyChunks.has(chunk));
 for(const g of [ordinary,bushy,restored])g.dispose();
-console.log(`OK: trawa kępiasta — zapis per świat, opt-in i odwracalność, niezmienione bloki/woda, siatka 1/16, LOD ${maxima.join('/')} ścian oraz histereza.`);
+console.log(`OK: trawa kępiasta — ustawienie w Eksperymentach (nie w zapisie świata), opt-in i odwracalność, niezmienione bloki/woda, siatka 1/16, LOD ${maxima.join('/')} ścian oraz histereza.`);

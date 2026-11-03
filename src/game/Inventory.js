@@ -1,4 +1,4 @@
-import { HOTBAR_SIZE, HOTBAR_DEFAULT } from '../config.js';
+import { HOTBAR_SIZE, HOTBAR_DEFAULT, isCreative } from '../config.js';
 
 import { itemExists, currentType } from '../items/ItemRegistry.js';
 
@@ -96,7 +96,7 @@ export class Inventory {
             selected = oldHotbar.selected;
 
         }
-        else if (mode === 'creative') {
+        else if (isCreative(mode)) {
 
             for (let i = 0; i < HOTBAR_SIZE; i++) {
                 slots[i] = cleanItem({ type: HOTBAR_DEFAULT[i], count: 1 });

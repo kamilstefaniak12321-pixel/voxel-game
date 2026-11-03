@@ -49,7 +49,7 @@ const { TEXTS } = await import('../src/ui/texts.js');
 assert.match(TEXTS.inventoryStyle('wood'), /Drewniany/);
 assert.match(TEXTS.inventoryStyle('light'), /Jasny/);
 
-assert.match(read('src/ui/Menu.js'), /'theme',\s*'inventoryStyle',/, 'ustawienie na zakładce Inne');
+assert.match(read('src/ui/settingsLayout.js'), /'theme',\s*'inventoryStyle',/, 'ustawienie na zakładce Wygląd');
 assert.match(read('src/main.js'), /dataset\.invStyle = settings\.get\('inventoryStyle'\)/);
 assert.match(read('src/commands/gameCommands.js'), /settings\.set\('inventoryStyle', value\)/, 'komenda /ekwipunek wyglad');
 

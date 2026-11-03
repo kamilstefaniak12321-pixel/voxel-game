@@ -43,7 +43,7 @@ tylko jako *Sekretne osiągnięcie* ze znakiem zapytania.
 | zwykłe | Mokra robota | popływaj |
 | zwykłe | Nocny marek | bądź w świecie o północy |
 | zwykłe | Złota godzina | popatrz prosto na zachodzące (albo wschodzące) słońce |
-| zwykłe | Nowe szaty | zagraj z własną paczką tekstur (Ustawienia → Tekstury) |
+| zwykłe | Nowe szaty | zagraj z własną paczką tekstur (Ustawienia → Wygląd) |
 | zwykłe | Borówkowy język | zbierz borówki z krzaka (bory i świerczyny) |
 | zwykłe | Wyższy od ciebie | zbierz wiechy z dojrzałego amarantusa (łąki, roślina z paczki roślin) |
 | zwykłe | Nieśmiertelnik | zbierz bukiet z kwitnącej kocanki (piasek w borach i na plażach, roślina z paczki roślin) |

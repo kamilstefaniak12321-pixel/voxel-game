@@ -49,9 +49,7 @@ export const SETTINGS_DEFAULTS = {
     fpsLimit: 0,                                   // klatki na sekundę (0 = bez limitu)
     ambientOcclusion: Math.round(AMBIENT_OCCLUSION * 100),   // cienie w kątach, procent
     shadows: 3,                                    // cienie słońca: 0 - wył., 1 - zwykłe, 2 - dokładne, 3 - dalekie
-    lightingModel: 'world',                         // wspólny model atmosferyczny; classic pozostaje do wyboru
     lightShafts: true,                             // promienie światła w powietrzu
-    bounceLight: false,                            // światło odbite od ścian (eksperymentalne - na razie wyłączone)
     fancyLeaves: true,                             // liście z prześwitami (false = szybkie, pełne)
     dynamicLight: true,                            // lampa w ręce, meteoryty...
     loadBudget: CHUNK_LOAD_BUDGET_MS,              // ms na klatkę na wczytywanie chunków
@@ -84,7 +82,13 @@ export const SETTINGS_DEFAULTS = {
     autoUpdates: true,                             // aplikacje: nowa wersja pobiera się sama (Wył. - po kliknięciu Pobierz)
 
     // Tekstury (paczka tekstur - src/rendering/TexturePacks.js)
-    textureResolution: 0                           // piksele na blok w grze (0 = automatyczna, z paczki)
+    textureResolution: 0,                          // piksele na blok w grze (0 = automatyczna, z paczki)
+
+    // Eksperymenty (zakładka "Eksperymenty" - funkcje, których nie
+    // jesteśmy pewni: mogą się zmienić albo zniknąć; EXPERIMENTS niżej)
+    bushyGrass: false,                             // trawa kępiasta (przestrzenne kępki zamiast zwykłej trawy)
+    bounceLight: false,                            // światło odbite od ścian
+    lightingModel: 'world'                         // 'world' - atmosferyczny (domyślny), 'classic' - dawny
 
 };
 
@@ -119,12 +123,68 @@ export const SETTINGS_CHOICES = {
 
     fpsLimit: [0, 30, 60, 120, 144],
     shadows: [0, 1, 2, 3],
-    lightingModel: ['world', 'classic', 'atmosphere'],
+    lightingModel: ['world', 'classic'],
     farDetail: [1, 2, 3],
     jointStyle: ['smooth', 'blocks'],
     inventoryStyle: ['wood', 'light']
 
 };
+
+// Ustawienia z zakładki "Eksperymenty" (kolejność = na ekranie).
+export const EXPERIMENTS = ['bushyGrass', 'bounceLight', 'lightingModel'];
+
+
+// ------------------------------------------------------------
+// JAKOŚĆ GRAFIKI
+//
+// Jeden przycisk "Jakość grafiki" ustawia naraz kilka ustawień obrazu
+// (reszta - "Zaawansowane" w zakładce Obraz). Gdy gracz sam zmieni
+// któreś z nich, jakość to "Własna". Najwyższa = domyślna na komputerze,
+// średnia = domyślna na telefonie (config.js: TOUCH_SETTINGS).
+// ------------------------------------------------------------
+
+export const GRAPHICS_PRESETS = {
+    low: { potato: true, shadows: 0, ambientOcclusion: 0, lightShafts: false, fancyLeaves: false },
+    medium: { potato: false, shadows: 0, ambientOcclusion: Math.round(AMBIENT_OCCLUSION * 100), lightShafts: false, fancyLeaves: false },
+    high: { potato: false, shadows: 1, ambientOcclusion: Math.round(AMBIENT_OCCLUSION * 100), lightShafts: true, fancyLeaves: true },
+    ultra: { potato: false, shadows: 3, ambientOcclusion: Math.round(AMBIENT_OCCLUSION * 100), lightShafts: true, fancyLeaves: true }
+};
+
+export const GRAPHICS_PRESET_ORDER = Object.keys(GRAPHICS_PRESETS);
+
+
+// Nazwa jakości pasującej do obecnych ustawień albo 'custom'.
+
+export function graphicsPreset(settings) {
+
+    for (const [name, values] of Object.entries(GRAPHICS_PRESETS)) {
+
+        if (Object.entries(values).every(([key, value]) => settings.get(key) === value)) {
+            return name;
+        }
+
+    }
+
+    return 'custom';
+
+}
+
+
+// Następna jakość po kliknięciu (z "Własnej" - najwyższa).
+
+export function nextGraphicsPreset(settings) {
+
+    const now = GRAPHICS_PRESET_ORDER.indexOf(graphicsPreset(settings));
+
+    const name = GRAPHICS_PRESET_ORDER[(now + 1) % GRAPHICS_PRESET_ORDER.length];
+
+    for (const [key, value] of Object.entries(GRAPHICS_PRESETS[name])) {
+        settings.set(key, value);
+    }
+
+    return name;
+
+}
 
 // ------------------------------------------------------------
 
@@ -311,6 +371,11 @@ export class Settings {
 
 
         if (key in SETTINGS_CHOICES) {
+
+            // Dawny wybór "Atmosferyczny" to dziś domyślny model.
+            if (key === 'lightingModel' && value === 'atmosphere') {
+                return 'world';
+            }
 
             return SETTINGS_CHOICES[key].includes(value) ? value : fallback;
 

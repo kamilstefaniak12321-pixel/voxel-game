@@ -1,5 +1,17 @@
 # Laboratorium światła — wspólny model powierzchni 0.24.0
 
+> **Od 0.55.0** nie ma osobnego terenu „Laboratorium światła”. Te same
+> stanowiska (wnęki z materiałów, słupy, liście z pniem, basen, pokój
+> z lampami i otworem w dachu) stawia scena testowa **Światło i materiały**
+> w trybie programisty (pauza → *Sceny testowe* albo `/scena swiatlo`) -
+> na placu testowym dokładnie w dawnych współrzędnych. Model światła
+> wybiera się w *Ustawienia → Eksperymenty → Światło* (*atmosferyczne* -
+> domyślne, albo *klasyczne*; dawny wybór „Atmosferyczny” to dziś
+> domyślny). Stare światy z laboratorium dostają płaski plac testowy
+> (zmienione przez gracza miejsca zostają). Workflow nazywa się
+> „Testy gry”, wyniki - `test-results/sceny/`. Opis:
+> [tryb programisty](tryb-programisty.md). Niżej - opis z 0.24.0.
+
 Nowy teren **Laboratorium światła (eksperymentalne)** służy do powtarzalnych
 porównań światła. Wybierz go przy tworzeniu świata, najlepiej z trybem
 kreatywnym. Wszystkie seedy dają ten sam układ stanowisk. Istniejące światy

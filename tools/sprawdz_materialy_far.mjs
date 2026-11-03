@@ -37,7 +37,7 @@ const { SURFACE_FACE_NAMES, SURFACE_TINT_TYPES, SURFACE_MATERIAL_COUNT,
     getSurfaceFaceTexture, surfaceMaterialId, surfaceMaterialType } = await import('../src/rendering/SurfaceMaterials.js');
 const { KINDS, kindIndex, sampleFarTile, meshFarTile, createMeshScratch } = await import('../src/world/farSamples.js');
 const { FarTerrain, TARGET_DETAIL_DISTANCE } = await import('../src/world/FarTerrain.js');
-const { LightLabGenerator } = await import('../src/world/terrain/LightLabGenerator.js');
+const { TestSiteGenerator } = await import('../src/world/terrain/TestSiteGenerator.js');
 const { getAtlasAverage } = await import('../src/rendering/TextureAtlas.js');
 const { CHUNK_SIZE, CHUNK_HEIGHT } = await import('../src/config.js');
 const THREE = await import('three');
@@ -78,7 +78,7 @@ const sample = (generator, cells, x0 = 0, z0 = 0, spacing = 1) => {
 };
 const mesh = (raw, cells, spacing = 1) => meshFarTile(raw.heights, raw.kinds, cells, spacing,
     palette, createMeshScratch(cells), raw.materialIds, albedoPalette);
-const lab = new LightLabGenerator('surface-regression');
+const lab = new TestSiteGenerator('surface-regression');
 const raw = sample(lab, 8, -29, -31);
 const rows = buffers(8);
 for (let row = 0; row < 10; row++) {
@@ -86,7 +86,7 @@ for (let row = 0; row < 10; row++) {
 }
 assert.deepEqual(rows, raw, 'Próbkowanie w kawałkach jest identyczne z całym kafelkiem');
 assert.equal(lab.farSurface(-27, -29).material, 'lime_plaster');
-assert.equal(lab.farSurface(-27, -29).kind, 'rock', 'Klasyczny rodzaj laboratorium pozostaje bez zmian');
+assert.equal(lab.farSurface(-27, -29).kind, 'rock', 'Klasyczny rodzaj placu testowego pozostaje bez zmian');
 const tint = sample({ farSurface:() => ({top:20, kind:'grass_high'}) }, 1);
 assert.equal(tint.materialIds[4], MAX_BLOCK_ID + 3, 'Sampler nie zawija ID trawy do Uint8');
 
@@ -140,7 +140,7 @@ for (const [spacing, expected] of classicHashes) {
 const messages = [];
 globalThis.self = { postMessage:(message, transfer) => messages.push({message, transfer}) };
 await import('../src/world/FarTerrainWorker.js');
-self.onmessage({data:{type:'init', terrain:'light-lab', seed:'surface-regression'}});
+self.onmessage({data:{type:'init', terrain:'flat', seed:'surface-regression'}});
 self.onmessage({data:{type:'palette', colors:palette, albedo:albedoPalette}});
 self.onmessage({data:{type:'tile', id:1, x0:-29, z0:-31, spacing:1, cells:8}});
 const worker = messages.at(-1);

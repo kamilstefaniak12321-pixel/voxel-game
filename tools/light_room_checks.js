@@ -66,7 +66,7 @@ export async function checkDarkRoom({ game, settings, renderer, meanFrame, yield
     };
 
     try {
-        for (const [key, value] of Object.entries({ showHand: false, meteorites: false, lightShafts: false, bounceLight: false, dynamicLight: false, shadows: 0, lightingModel: 'atmosphere', brightness: 0, potato: false })) settings.set(key, value);
+        for (const [key, value] of Object.entries({ showHand: false, meteorites: false, lightShafts: false, bounceLight: false, dynamicLight: false, shadows: 0, lightingModel: 'world', brightness: 0, potato: false })) settings.set(key, value);
         game.setCameraMode('first');
         game.time.speed = 0;
         game.time.days = 0.5;
@@ -91,7 +91,7 @@ export async function checkDarkRoom({ game, settings, renderer, meanFrame, yield
         const classic = meanFrame();
         check(classic > atmosphere + 1, 'Klasyczne minimum jasności nie zostało zachowane');
 
-        settings.set('lightingModel', 'atmosphere');
+        settings.set('lightingModel', 'world');
         settings.set('shadows', 1);
         await settle();
         check(chunk.mesh.geometry === geometry, 'Powrót do atmosfery przebudował chunk');

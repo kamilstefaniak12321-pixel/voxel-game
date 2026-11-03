@@ -11,7 +11,7 @@ import { Hotbar } from './ui/Hotbar.js';
 import { createBlockIcons } from './ui/BlockIcons.js';
 import { Chat } from './ui/Chat.js';
 import { CommandRegistry } from './commands/CommandRegistry.js';
-import { GAME_COMMANDS } from './commands/gameCommands.js';
+import { GAME_COMMANDS, setSceneTime } from './commands/gameCommands.js';
 import { TREE_PACK_ERRORS } from './blocks/treePacks.js';
 import { PLANT_PACK_ERRORS } from './blocks/plantPacks.js';
 import { PerfMonitor } from './game/PerfMonitor.js';
@@ -307,12 +307,23 @@ const menu = new Menu(
         quitToMenu,
         quitWithoutSaving,
         reloadGame,
-        getWorldExperiments: () => game?.world.experiments ?? {},
-        setWorldExperiments: async (value) => {
+        // Tryb programisty: sceny testowe i pora dnia (Menu.showScenes).
+        gameMode: () => game?.mode ?? null,
+        buildScene: (id) => {
+            if (!game) return;
+            const result = commands.execute(`scena ${id}`, commandContext());
+            if (result.text) chat.print(result.text, result.ok ? 'success' : 'error');
+            if (!result.ok) playUi('ui_error');
+            resume();
+        },
+        setSceneTime: (name) => {
+            if (game) setSceneTime(game.time, name);
+        },
+        timeFrozen: () => game?.time.speed === 0,
+        toggleTimeFreeze: () => {
             if (!game) return false;
-            game.world.setExperiments(value);
-            game.worldInfo.experiments = { ...game.world.experiments };
-            return game.saver.flush();
+            game.time.speed = game.time.speed === 0 ? 1 : 0;
+            return game.time.speed === 0;
         }
     },
     settings,
@@ -390,9 +401,9 @@ async function openWorldList() {
 }
 
 
-async function createWorld(name, seedText, terrain, gameMode, experiments) {
+async function createWorld(name, seedText, terrain, gameMode) {
 
-    const worldInfo = createWorldInfo(name, seedFromText(seedText), terrain, gameMode, experiments);
+    const worldInfo = createWorldInfo(name, seedFromText(seedText), terrain, gameMode);
 
     if (storage) {
         await storage.saveWorld(worldInfo);
@@ -498,8 +509,8 @@ async function playWorld(worldInfo) {
 
     chat.print(touchMode ? TEXTS.touchHint : TEXTS.chatHint, 'hint');
 
-    if (game.worldInfo.terrain === 'light-lab') {
-        chat.print(TEXTS.lightLabHint, 'hint');
+    if (game.mode === 'developer') {
+        chat.print(TEXTS.developerHint, 'hint');
     }
 
     showTreePackErrors();

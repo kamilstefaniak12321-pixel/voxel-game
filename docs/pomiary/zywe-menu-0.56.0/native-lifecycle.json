@@ -1,0 +1,96 @@
+{
+  "viewport": [
+    1920,
+    1057
+  ],
+  "summary": {
+    "home": {
+      "frames": 1003,
+      "fps": 59.86951668595278,
+      "frameP95": 22.09999990463257,
+      "cpuMean": 3.3876370903501956,
+      "cpuP95": 4.6000001430511475
+    },
+    "river": {
+      "frames": 1800,
+      "fps": 60.003200170485016,
+      "frameP95": 21.40000009536743,
+      "cpuMean": 1.8852777740690443,
+      "cpuP95": 2.4000000953674316
+    }
+  },
+  "stats": {
+    "active": true,
+    "pending": false,
+    "failed": false,
+    "reducedMotion": false,
+    "view": "home",
+    "frames": 324,
+    "ready": true,
+    "position": [
+      -495,
+      100.13693267770323,
+      392
+    ],
+    "warmed": true,
+    "chunks": 81,
+    "loadQueue": 0,
+    "completeRadius": null,
+    "meshes": 45,
+    "far": {
+      "active": true,
+      "shown": 322,
+      "wanted": 322,
+      "missing": 0,
+      "cached": 323,
+      "triangles": 772496,
+      "shadowRevision": 358,
+      "detailDistance": 800,
+      "targetSpacing": 4,
+      "lodWithinTarget": {
+        "1": 83,
+        "2": 59,
+        "4": 131
+      },
+      "workers": 3
+    },
+    "error": null
+  },
+  "travel": {
+    "frames": 581,
+    "p95": 22.5,
+    "max": 27
+  },
+  "activeGame": false,
+  "transitions": [
+    {
+      "view": "home",
+      "at": 1856.4000000953674,
+      "position": [
+        -495,
+        100.0004799994311,
+        392
+      ]
+    },
+    {
+      "view": "river",
+      "at": 21259.400000095367,
+      "position": [
+        -494.99658740689193,
+        100.00287102282417,
+        391.9967769953979
+      ]
+    },
+    {
+      "view": "home",
+      "at": 201052.09999990463,
+      "position": [
+        -495,
+        100.00020159995785,
+        392
+      ]
+    }
+  ],
+  "errors": [],
+  "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 3050 Laptop GPU (0x000025A2) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+}

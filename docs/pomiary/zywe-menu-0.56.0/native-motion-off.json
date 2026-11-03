@@ -1,0 +1,112 @@
+{
+  "viewport": [
+    1920,
+    1057
+  ],
+  "summary": {
+    "home": {
+      "frames": 1800,
+      "fps": 59.99060147234065,
+      "frameP95": 21.90000009536743,
+      "cpuMean": 3.845111109548145,
+      "cpuP95": 4.799999952316284
+    },
+    "mountains": {
+      "frames": 1800,
+      "fps": 60.006600725984484,
+      "frameP95": 22.200000047683716,
+      "cpuMean": 2.7823333313730028,
+      "cpuP95": 4.200000047683716
+    },
+    "forest": {
+      "frames": 1800,
+      "fps": 60.013002817277076,
+      "frameP95": 22.09999990463257,
+      "cpuMean": 4.516944443782171,
+      "cpuP95": 5.3999998569488525
+    }
+  },
+  "stats": {
+    "active": true,
+    "pending": false,
+    "failed": false,
+    "reducedMotion": true,
+    "view": "forest",
+    "frames": 14072,
+    "ready": true,
+    "position": [
+      -474,
+      78,
+      388
+    ],
+    "warmed": true,
+    "chunks": 103,
+    "loadQueue": 0,
+    "completeRadius": null,
+    "meshes": 61,
+    "far": {
+      "active": true,
+      "shown": 335,
+      "wanted": 335,
+      "missing": 0,
+      "cached": 343,
+      "triangles": 789688,
+      "shadowRevision": 383,
+      "detailDistance": 800,
+      "targetSpacing": 4,
+      "lodWithinTarget": {
+        "1": 92,
+        "2": 65,
+        "4": 129
+      },
+      "workers": 3
+    },
+    "error": null
+  },
+  "travel": {
+    "frames": 877,
+    "p95": 22.200000047683716,
+    "max": 125
+  },
+  "activeGame": false,
+  "transitions": [
+    {
+      "view": "home",
+      "at": 1506.5999999046326,
+      "position": [
+        -480,
+        100.0004799994311,
+        384
+      ]
+    },
+    {
+      "view": "mountains",
+      "at": 25501.39999985695,
+      "position": [
+        -479.9970479380302,
+        99.8905812437794,
+        384.0309966506829
+      ]
+    },
+    {
+      "view": "home",
+      "at": 77420,
+      "position": [
+        -476.0065260672635,
+        105.91334513069357,
+        425.9314762937376
+      ]
+    },
+    {
+      "view": "forest",
+      "at": 107221.59999990463,
+      "position": [
+        -479.9954452583505,
+        99.81655822258287,
+        384.0030364944331
+      ]
+    }
+  ],
+  "errors": [],
+  "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 3050 Laptop GPU (0x000025A2) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+}

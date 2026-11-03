@@ -5,6 +5,7 @@ import { TouchControls } from './input/TouchControls.js';
 import { Game } from './game/Game.js';
 import { AchievementBook } from './achievements/AchievementBook.js';
 import { Menu } from './ui/Menu.js';
+import { MenuBackdrop } from './menu/MenuBackdrop.js';
 import { TEXTS } from './ui/texts.js';
 import { Settings } from './settings/Settings.js';
 import { Hotbar } from './ui/Hotbar.js';
@@ -233,6 +234,7 @@ const achievements = new AchievementBook(document.getElementById('achievements')
 let state = 'menu';
 
 let game = null;
+const menuBackdrop = new MenuBackdrop(renderer, settings, { mobile: touchMode });
 
 // ------------------------------------------------------------
 // MOTYW MENU
@@ -307,6 +309,11 @@ const menu = new Menu(
         quitToMenu,
         quitWithoutSaving,
         reloadGame,
+        onSceneView: (view) => {
+            if (game || state !== 'menu') return;
+            menuBackdrop.setView(view);
+            void menuBackdrop.start();
+        },
         // Tryb programisty: sceny testowe i pora dnia (Menu.showScenes).
         gameMode: () => game?.mode ?? null,
         buildScene: (id) => {
@@ -388,6 +395,7 @@ settings.onChange((key) => {
     }
 
     game?.applySettings(key);
+    menuBackdrop.applySettings();
 
 });
 
@@ -435,6 +443,7 @@ async function playWorld(worldInfo) {
     state = 'loading';
 
     menu.showLoading(TEXTS.loadingWorld);
+    menuBackdrop.stop();
 
 
     try {
@@ -1236,7 +1245,14 @@ function animate(now) {
     requestAnimationFrame(animate);
 
 
-    const limit = settings.get('fpsLimit');
+    if (!game && document.hidden) {
+        lastFrameTime = 0;
+        nextFrameTime = 0;
+        return;
+    }
+
+    const configuredLimit = settings.get('fpsLimit');
+    const limit = game ? configuredLimit : Math.min(configuredLimit || 60, 60);
 
     if (limit > 0) {
 
@@ -1283,6 +1299,7 @@ function animate(now) {
 
 
     if (!game) {
+        menuBackdrop.update(dt);
         return;
     }
 
@@ -1377,6 +1394,7 @@ window.addEventListener('resize', () => {
     applyAppSettings();
 
     game?.resize(window.innerWidth, window.innerHeight);
+    menuBackdrop.resize(window.innerWidth, window.innerHeight);
 
 });
 

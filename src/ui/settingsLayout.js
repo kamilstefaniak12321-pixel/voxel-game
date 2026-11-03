@@ -41,6 +41,7 @@ export const SETTINGS_TABS = {
 
     look: [
         'theme',
+        'menuMotion',
         'inventoryStyle',
         'hudScale',
         'texturePack'

@@ -82,6 +82,18 @@ const APP_ONLY_SETTINGS = new Set(['autoUpdates']);
 // Rozdzielczość tekstur zmienia się tyle ms po ostatnim kliknięciu.
 const RESOLUTION_APPLY_MS = 2000;
 
+// Ekrany należące do żywego menu. Pauza i jej podstrony korzystają
+// z zatrzymanego świata gracza, dlatego nigdy nie zmieniają tej kamery.
+const MENU_SCENE_VIEWS = {
+    title: 'home',
+    worlds: 'river',
+    create: 'river',
+    confirm: 'river',
+    achievements: 'mountains',
+    settings: 'forest',
+    error: 'home'
+};
+
 
 function formatDate(timestamp) {
 
@@ -98,7 +110,8 @@ export class Menu {
 
     // root     - element <div id="menu">
     // title    - nazwa gry na ekranie tytułowym
-    // handlers - funkcje z main.js wywoływane przez przyciski
+    // handlers - funkcje z main.js wywoływane przez przyciski;
+    //            onSceneView(view) wybiera ujęcie tła menu (opcjonalne)
     // settings - ustawienia gracza (Settings)
     // themes   - motywy do wyboru: { folder: 'nazwa w grze' }
 
@@ -176,6 +189,19 @@ export class Menu {
 
         document.body.dataset.screen = textured ? 'menu' : 'pause';
 
+        const view = textured ? MENU_SCENE_VIEWS[name] : null;
+
+        if (view) {
+            screen.classList.add('scene-menu');
+            screen.dataset.sceneView = view;
+
+            const panel = el('div', 'menu-scene-panel');
+            screen.append(panel);
+
+            this.handlers.onSceneView?.(view);
+            return panel;
+        }
+
         return screen;
 
     }
@@ -201,6 +227,7 @@ export class Menu {
         const screen = this.newScreen('title');
 
         screen.append(
+            el('p', 'menu-scene-eyebrow', 'Świat czeka'),
             el('h1', 'menu-title', this.title),
             el('div', 'menu-buttons')
         );
@@ -1041,6 +1068,10 @@ export class Menu {
 
         if (tab === 'experiments') {
             parts.unshift(el('p', 'menu-note settings-intro', TEXTS.experimentsIntro));
+        }
+
+        if (tab === 'look') {
+            parts.push(el('p', 'menu-note', TEXTS.menuMotionNote));
         }
 
 

@@ -74,6 +74,7 @@ export const SETTINGS_DEFAULTS = {
 
     // Inne
     theme: UI_THEME,                               // motyw menu
+    menuMotion: 'auto',                            // ruch kamery menu: ustawienie systemu / pełny / nieruchome kadry
     inventoryStyle: 'wood',                        // wygląd ekwipunku: wood - drewniany, light - jasny
     hudScale: 100,                                 // rozmiar paska, czatu i napisów w grze (procent)
     showDebug: true,                               // informacje F3
@@ -126,7 +127,8 @@ export const SETTINGS_CHOICES = {
     lightingModel: ['world', 'classic'],
     farDetail: [1, 2, 3],
     jointStyle: ['smooth', 'blocks'],
-    inventoryStyle: ['wood', 'light']
+    inventoryStyle: ['wood', 'light'],
+    menuMotion: ['auto', 'full', 'off']
 
 };
 

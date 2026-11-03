@@ -49,7 +49,10 @@ const { TEXTS } = await import('../src/ui/texts.js');
 assert.match(TEXTS.inventoryStyle('wood'), /Drewniany/);
 assert.match(TEXTS.inventoryStyle('light'), /Jasny/);
 
-assert.match(read('src/ui/settingsLayout.js'), /'theme',\s*'inventoryStyle',/, 'ustawienie na zakładce Wygląd');
+const { SETTINGS_TABS } = await import('../src/ui/settingsLayout.js');
+assert.ok(SETTINGS_TABS.look.includes('inventoryStyle'), 'ustawienie na zakładce Wygląd');
+assert.equal(Object.values(SETTINGS_TABS).flat().filter(key => key === 'inventoryStyle').length, 1,
+    'wygląd ekwipunku występuje w ustawieniach dokładnie raz');
 assert.match(read('src/main.js'), /dataset\.invStyle = settings\.get\('inventoryStyle'\)/);
 assert.match(read('src/commands/gameCommands.js'), /settings\.set\('inventoryStyle', value\)/, 'komenda /ekwipunek wyglad');
 

@@ -1,0 +1,193 @@
+{
+  "scene": {
+    "id": "river-valley-0.56",
+    "seed": 2138286349,
+    "terrain": "realistic",
+    "time": 0.4375,
+    "views": {
+      "home": {
+        "position": [
+          -480,
+          100,
+          384
+        ],
+        "target": [
+          -520,
+          88,
+          450
+        ]
+      },
+      "river": {
+        "position": [
+          -477,
+          79,
+          375
+        ],
+        "target": [
+          -510,
+          78,
+          420
+        ]
+      },
+      "forest": {
+        "position": [
+          -474,
+          78,
+          388
+        ],
+        "target": [
+          -481,
+          74.5,
+          349
+        ]
+      },
+      "mountains": {
+        "position": [
+          -476,
+          106,
+          426
+        ],
+        "target": [
+          -530,
+          103,
+          580
+        ]
+      }
+    }
+  },
+  "viewport": [
+    1920,
+    1057
+  ],
+  "summary": {
+    "home": {
+      "frames": 1800,
+      "fps": 59.990001666388935,
+      "frameP95": 21.899999856948853,
+      "cpuMean": 4.016722223493788,
+      "cpuP95": 4.800000190734863
+    },
+    "forest": {
+      "frames": 1800,
+      "fps": 60.00480038374457,
+      "frameP95": 22,
+      "cpuMean": 3.6245555546548633,
+      "cpuP95": 4.699999809265137
+    },
+    "mountains": {
+      "frames": 1800,
+      "fps": 60.0054004856622,
+      "frameP95": 21.90000009536743,
+      "cpuMean": 3.04244444542461,
+      "cpuP95": 4.299999952316284
+    },
+    "river": {
+      "frames": 1800,
+      "fps": 59.99180112022751,
+      "frameP95": 22.200000047683716,
+      "cpuMean": 4.521722219520145,
+      "cpuP95": 5.299999952316284
+    }
+  },
+  "stats": {
+    "active": true,
+    "pending": false,
+    "failed": false,
+    "reducedMotion": false,
+    "view": "river",
+    "frames": 21154,
+    "ready": true,
+    "position": [
+      -477.00000000000045,
+      78.97841729541588,
+      375.0000000000005
+    ],
+    "warmed": true,
+    "chunks": 105,
+    "loadQueue": 0,
+    "completeRadius": null,
+    "meshes": 70,
+    "far": {
+      "active": true,
+      "shown": 340,
+      "wanted": 340,
+      "missing": 0,
+      "cached": 351,
+      "triangles": 791666,
+      "shadowRevision": 394,
+      "detailDistance": 800,
+      "targetSpacing": 4,
+      "lodWithinTarget": {
+        "1": 96,
+        "2": 68,
+        "4": 127
+      },
+      "workers": 3
+    },
+    "error": null
+  },
+  "travel": {
+    "frames": 1367,
+    "p95": 22.299999952316284,
+    "max": 96.29999995231628
+  },
+  "activeGame": false,
+  "transitions": [
+    {
+      "view": "home",
+      "at": 1682.6000001430511,
+      "position": [
+        -480,
+        100.0004799994311,
+        384
+      ]
+    },
+    {
+      "view": "forest",
+      "at": 81122.20000004768,
+      "position": [
+        -479.9955719070453,
+        100.0069792975616,
+        384.0029520619698
+      ]
+    },
+    {
+      "view": "home",
+      "at": 176834.80000019073,
+      "position": [
+        -474.00988161739906,
+        78.08193128052355,
+        387.9934122550672
+      ]
+    },
+    {
+      "view": "mountains",
+      "at": 197562.90000009537,
+      "position": [
+        -479.9970479380297,
+        99.9893639170478,
+        384.0309966506834
+      ]
+    },
+    {
+      "view": "home",
+      "at": 264313.7000000477,
+      "position": [
+        -476.00295206197023,
+        105.82958991835166,
+        425.9690033493168
+      ]
+    },
+    {
+      "view": "river",
+      "at": 301517.60000014305,
+      "position": [
+        -479.9978172896319,
+        99.85033874807611,
+        383.9934518688975
+      ]
+    }
+  ],
+  "errors": [],
+  "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 3050 Laptop GPU (0x000025A2) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+}

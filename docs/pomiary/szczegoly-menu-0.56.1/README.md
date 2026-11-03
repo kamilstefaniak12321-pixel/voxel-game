@@ -57,6 +57,12 @@ Pomiar menu nie potwierdza 60 FPS w świecie ustawionym na 800 bloków.
 
 ## Powtórzenie
 
+Lokalne sprawdzenia: pełne `npm test` zakończone kodem 0 (199 kontroli
+menu, 293 scen i ustawień) oraz `tools/sprawdz_swiatlo_webgl.mjs` — PASS,
+44 warianty shaderów. Test WebGL w bezokienkowym Chrome / SwiftShader
+sprawdza obraz materiałów, zachowanie atmosfery i powrót ustawień gry;
+nie jest źródłem powyższych wyników wydajności.
+
 Uruchom `native-launcher.cjs` binarnym Electronem 44.4.5. Launcher
 korzysta z rzeczywistego protokołu plików gry, w tym strumieniowania MP3;
 `qa.js` jedynie narzuca odrębne ustawienia testowe, dodaje pomiar i zapis

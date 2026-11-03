@@ -4,17 +4,25 @@ export { LIGHTING_DIAGNOSTICS_GLSL } from './LightingDiagnosticsGLSL.js';
 
 // Wspólny stan: zmiana widoku/źródeł nie przebudowuje chunków ani shaderów.
 export const LIGHTING_VIEWS = ['full', 'albedo', 'normals', 'sunVisibility', 'skyAccess',
-    'ao', 'sun', 'moon', 'sky', 'bounce', 'local', 'emission', 'grayscale'];
+    'ao', 'sun', 'moon', 'sky', 'bounce', 'local', 'emission', 'grayscale', 'transmission', 'specular'];
 export const lightingUniforms = {
     uLightingNatural: { value: 0 },
     uLightingDebug: { value: 0 },
     uLightingComponents: { value: new THREE.Vector4(1, 1, 1, 1) },
-    uLightingLocal: { value: new THREE.Vector2(1, 1) }
+    uLightingLocal: { value: new THREE.Vector2(1, 1) },
+    uLightingMaterial: { value: new THREE.Vector2(1, 1) },
+    uSurfaceMaterials: { value: 0 },
+    uLeafTransmission: { value: 1 },
+    uMaterialSpecular: { value: 1 }
 };
 const previewUniforms = {
     uLightingNatural: { value: 0 }, uLightingDebug: { value: 0 },
     uLightingComponents: { value: new THREE.Vector4(1, 1, 1, 1) },
-    uLightingLocal: { value: new THREE.Vector2(1, 1) }
+    uLightingLocal: { value: new THREE.Vector2(1, 1) },
+    uLightingMaterial: { value: new THREE.Vector2(1, 1) },
+    uSurfaceMaterials: { value: 0 },
+    uLeafTransmission: { value: 0 },
+    uMaterialSpecular: { value: 0 }
 };
 export function setLightingView(name = 'full') {
     const index = LIGHTING_VIEWS.indexOf(name);
@@ -26,13 +34,15 @@ export function resetLightingDiagnostics() {
     setLightingView();
     lightingUniforms.uLightingComponents.value.set(1, 1, 1, 1);
     lightingUniforms.uLightingLocal.value.set(1, 1);
+    lightingUniforms.uLightingMaterial.value.set(1, 1);
 }
 export function setLightingComponent(name, enabled) {
-    const names = ['sun', 'moon', 'sky', 'bounce', 'local', 'emission'];
+    const names = ['sun', 'moon', 'sky', 'bounce', 'local', 'emission', 'transmission', 'specular'];
     const index = names.indexOf(name);
     if (index < 0) throw new RangeError(`Nieznane źródło: ${name}`);
-    (index < 4 ? lightingUniforms.uLightingComponents : lightingUniforms.uLightingLocal)
-        .value.setComponent(index < 4 ? index : index - 4, enabled ? 1 : 0);
+    const target = index < 4 ? lightingUniforms.uLightingComponents
+        : index < 6 ? lightingUniforms.uLightingLocal : lightingUniforms.uLightingMaterial;
+    target.value.setComponent(index < 4 ? index : index < 6 ? index - 4 : index - 6, enabled ? 1 : 0);
 }
 
 // Instrumentujemy istniejące obliczenie Lamberta, bez ponownego próbkowania
@@ -53,17 +63,32 @@ export function installLightingDiagnostics(shader, { albedo = 'diffuseColor.rgb'
             directLight.color *= UNROLLED_LOOP_INDEX == 0 ? uLightingComponents.x : uLightingComponents.y;
             ${direct}
             if (UNROLLED_LOOP_INDEX == 0) diagnosticSun += reflectedLight.directDiffuse - diagnosticBeforeDirect;
-            else diagnosticMoon += reflectedLight.directDiffuse - diagnosticBeforeDirect;`);
+            else diagnosticMoon += reflectedLight.directDiffuse - diagnosticBeforeDirect;
+            #ifdef USE_SURFACE_PROFILES
+                // directLight ma już widoczność źródła i maskę sun/moon.
+                // Dodatki materiału pozostają poza Lambertem i AO.
+                if (uSurfaceMaterials > 0.5 && uLightingNatural > 0.5) {
+                    diagnosticTransmission += thinLeafTransmission(${albedo}, geometryNormal,
+                        geometryViewDir, directLight.direction, directLight.color, vSurfaceProfile)
+                        * uLeafTransmission * uLightingMaterial.x;
+                    diagnosticSpecular += fruitSpecular(${albedo}, geometryNormal,
+                        geometryViewDir, directLight.direction, directLight.color, vSurfaceProfile)
+                        * uMaterialSpecular * uLightingMaterial.y;
+                }
+            #endif`);
     fragment = fragment.replace('#include <lights_fragment_end>', `
         #if defined(RE_IndirectDiffuse)
             irradiance *= uLightingComponents.z;
         #endif
         #include <lights_fragment_end>
         diagnosticSky = reflectedLight.indirectDiffuse;`);
+    fragment = fragment.replace('#include <opaque_fragment>', `
+        outgoingLight += diagnosticTransmission + diagnosticSpecular;
+        #include <opaque_fragment>`);
     // Nadpisanie po mgle: widok diagnostyczny pokazuje dane powierzchni,
     // a nie zmieszane z nimi niebo. Wyjście RT pozostaje liniowe.
     fragment = fragment.replace(/}\s*$/, `
-        if (uLightingDebug > 0 && uLightingDebug < 12) {
+        if (uLightingDebug > 0 && uLightingDebug != 12) {
             gl_FragColor.rgb = linearToOutputTexel(vec4(lightingDiagnostic(
                 ${albedo}, ${normal}, ${visibility}, ${sky}, ${ao}), 1.0)).rgb;
         }
@@ -82,7 +107,7 @@ export function installEmissionDiagnostics(shader) {
             outgoingLight = surfaceEmissionRadiance(outgoingLight);
             #include <opaque_fragment>`)
         .replace(/}\s*$/, `
-            if (uLightingDebug > 0 && uLightingDebug < 12) {
+            if (uLightingDebug > 0 && uLightingDebug != 12) {
                 vec3 value = uLightingDebug == 1 ? diffuseColor.rgb
                     : (uLightingDebug == 11 ? diagnosticEmission : vec3(0.0));
                 gl_FragColor.rgb = linearToOutputTexel(vec4(value, 1.0)).rgb;

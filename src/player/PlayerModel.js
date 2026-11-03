@@ -7,6 +7,7 @@ import { ITEM_TYPES, isItemType } from '../items/ItemRegistry.js';
 import { getAtlasUV, blockAtlasTexture } from '../rendering/TextureAtlas.js';
 import { getFaceTexture } from '../rendering/BlockRenderData.js';
 import { createModelMaterial } from '../rendering/ModelMaterial.js';
+import { blockSurfaceProfile, SURFACE_PROFILES } from '../rendering/SurfaceProfiles.js';
 import { skinTexture } from './skin.js';
 
 // ------------------------------------------------------------
@@ -451,7 +452,7 @@ export function buildBlockGeometry(type) {
 
     if (fruit || definition.model === 'riverPlant') {
         // Ten sam model co nad rzeką, bez otaczającej go wody.
-        const positions = [], normals = [], uvs = [], colors = [], indices = [];
+        const positions = [], normals = [], uvs = [], colors = [], indices = [], profiles = [];
         const river = definition.riverPlant;
         const texture = fruit ? fruit.texture : river.texture ?? 'snow';
         const faces = fruit ? fruit.faces : getRiverPlantFaces(river.kind, 0, river.waterlogged, river.tuft);
@@ -470,6 +471,7 @@ export function buildBlockGeometry(type) {
                 normals.push(...face.normal);
                 uvs.push(...(face.uv ? [uv.uMin + face.uv[i][0] * (uv.uMax - uv.uMin), uv.vMax - face.uv[i][1] * (uv.vMax - uv.vMin)] : texel));
                 colors.push(...face.color.map(value => value / 255));
+                profiles.push(...(face.surfaceProfile ?? SURFACE_PROFILES.matte));
             }
             indices.push(base, base + 2, base + 1, base + 2, base + 3, base + 1);
         }
@@ -478,6 +480,7 @@ export function buildBlockGeometry(type) {
         geometry.setAttribute('normal', new THREE.Float32BufferAttribute(normals, 3));
         geometry.setAttribute('uv', new THREE.Float32BufferAttribute(uvs, 2));
         geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
+        geometry.setAttribute('surfaceProfile', new THREE.Uint8BufferAttribute(profiles, 2));
         geometry.setIndex(indices);
         geometry.center();
         if (fruit) {
@@ -495,6 +498,8 @@ export function buildBlockGeometry(type) {
     const normals = [];
     const uvs = [];
     const indices = [];
+
+    const profiles = [];
 
     const faces =
         item || definition.model === 'flat' ? HELD_ITEM_FACES :
@@ -517,6 +522,7 @@ export function buildBlockGeometry(type) {
             positions.push(corners[i][0] - 0.5, corners[i][1] - 0.5, corners[i][2] - 0.5);
             normals.push(...normal);
             uvs.push(...cornerUv[i]);
+            profiles.push(...blockSurfaceProfile(definition, faceName));
 
         }
 
@@ -533,6 +539,7 @@ export function buildBlockGeometry(type) {
     // Wspólny materiał trzymanych roślin używa kolorów modeli rzecznych.
     // Biały mnożnik zachowuje tekstury dawnych przedmiotów i roślin.
     geometry.setAttribute('color', new THREE.Float32BufferAttribute(new Float32Array(positions.length).fill(1), 3));
+    geometry.setAttribute('surfaceProfile', new THREE.Uint8BufferAttribute(profiles, 2));
     geometry.setIndex(indices);
 
     // Roślina z paczki na kilku kafelkach (np. 2 x 3): bez rozciągania.

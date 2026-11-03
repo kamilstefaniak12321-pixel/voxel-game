@@ -16,6 +16,7 @@ import { meteorLightUniforms } from '../src/rendering/meteorLight.js';
 import { lightingUniforms, setLightingView, setLightingComponent, resetLightingDiagnostics } from '../src/rendering/LightingDiagnostics.js';
 import { campfireLightUniforms } from '../src/rendering/CampfireLight.js';
 import { newCampfire } from '../src/game/CampfireState.js';
+import { SURFACE_PROFILES } from '../src/rendering/SurfaceProfiles.js';
 
 export async function checkSurfaceRendering({ game, settings, renderer, yieldBrowser }) {
     const check = (condition, message) => { if (!condition) throw new Error(message); };
@@ -433,6 +434,115 @@ export async function checkSurfaceRendering({ game, settings, renderer, yieldBro
         pixels.diagnostics.local = { localOnly, emissionOnly, bounceOnly };
         resetLightingDiagnostics();
         ambient.color.setRGB(1, 1, 1); sun.color.setRGB(1, 1, 1); moon.color.setRGB(1, 1, 1);
+
+        // E06: prawdziwe adaptery bloków, wycięć, liści i modelu. Profil
+        // ma dwa surowe bajty, jak w chunku; pomyłka normalize wyzeruje
+        // dodatnią kontrolę liścia i owocu, zamiast dać pozorny PASS.
+        pixels.materialExtensions = {};
+        plane.setAttribute('surfaceProfile', new THREE.Uint8BufferAttribute(
+            Array(plane.getAttribute('position').count).fill(SURFACE_PROFILES.leaf).flat(), 2));
+        const profile = name => fill(plane, 'surfaceProfile', SURFACE_PROFILES[name]);
+        flags(0, false);
+        fill(plane, 'surfaceEmission', [0]); fill(plane, 'surfaceOcclusion', [1]);
+        fill(plane, 'atmosphereLight', [0, 0, 0, 1]); fill(plane, 'normal', [0, 0, 1]);
+        modelLight.uModelSky.value = 1; modelLight.uModelShadows.value = 0;
+        ambient.intensity = moon.intensity = 0; sun.intensity = Math.PI * .4;
+        sun.position.set(0, 0, -2);
+        lightingUniforms.uSurfaceMaterials.value = 1;
+        lightingUniforms.uLeafTransmission.value = lightingUniforms.uMaterialSpecular.value = 1;
+        for (const name of ['near', 'plant', 'leaf', 'model']) {
+            const sample = {};
+            profile('leaf'); setLightingView('transmission');
+            sample.backlit = draw(name);
+            check(sample.backlit.every(v => v > 4), `${name}: brak dodatniej kontroli przeświecania`);
+            fill(plane, 'normal', [0, 0, -1]);
+            close(draw(name), sample.backlit, `${name}: odwrócenie normalnej nie zmienia transmisji cienkiego liścia`);
+            fill(plane, 'normal', [0, .8, .6]);
+            close(draw(name), sample.backlit, `${name}: uproszczona normalna kępki nie tworzy skoku transmisji`);
+            fill(plane, 'normal', [0, 0, 1]);
+            profile('leafVoxel'); sample.voxel = draw(name);
+            profile('leafBlock'); sample.block = draw(name);
+            check(sample.voxel[0] < sample.backlit[0] && sample.block[0] < sample.voxel[0],
+                `${name}: większa objętość liści nie ogranicza przeświecania`);
+            for (const kind of ['branch', 'bark', 'wood', 'fruit', 'stone', 'emissive']) {
+                profile(kind); close(draw(name), [0, 0, 0], `${name}/${kind}: materiał niebędący liściem prześwieca`);
+            }
+            profile('leaf');
+            sun.position.set(0, 0, 2); close(draw(name), [0, 0, 0], `${name}: słońce przed liściem nie jest podświetleniem od tyłu`);
+            sun.position.set(2, 0, 0); close(draw(name), [0, 0, 0], `${name}: boczne słońce nie tworzy poświaty frontalnej`);
+            sun.position.set(0, 0, -2);
+            lightingUniforms.uLeafTransmission.value = 0;
+            close(draw(name), [0, 0, 0], `${name}: ustawienie OFF wyłącza transmisję`);
+            lightingUniforms.uLeafTransmission.value = 1;
+            setLightingComponent('transmission', false);
+            close(draw(name), [0, 0, 0], `${name}: maska transmisji wyłącza tylko nowy składnik`);
+            setLightingComponent('transmission', true);
+            lightingUniforms.uSurfaceMaterials.value = 0;
+            close(draw(name), [0, 0, 0], `${name}: profil podstawowy nie ma transmisji`);
+            lightingUniforms.uSurfaceMaterials.value = 1;
+            setLightingComponent('sun', false);
+            close(draw(name), [0, 0, 0], `${name}: wyłączone źródło nie pozostawia poświaty`);
+            setLightingComponent('sun', true);
+            fill(plane, 'atmosphereLight', [0, 0, 0, 0]); modelLight.uModelSky.value = 0;
+            close(draw(name), [0, 0, 0], `${name}: zasłonięte źródło nie prześwietla wnętrza`);
+            fill(plane, 'atmosphereLight', [0, 0, 0, 1]); modelLight.uModelSky.value = 1;
+            sun.intensity = 0;
+            close(draw(name), [0, 0, 0], `${name}: liść nie świeci w nocy bez źródła`);
+            sun.intensity = Math.PI * .4;
+            setLightingView('full'); const fullLeaf = draw(name);
+            setLightingComponent('transmission', false); const withoutLeaf = draw(name);
+            close(fullLeaf, withoutLeaf.map((v, i) => v + sample.backlit[i]), `${name}: transmisja dodana dokładnie raz`);
+            setLightingComponent('transmission', true);
+            setLightingView('albedo'); close(draw(name), [64, 64, 64], `${name}: transmisja nie zmienia albedo`);
+
+            sun.position.set(0, 0, 2); profile('fruit'); setLightingView('specular');
+            sample.fruit = draw(name);
+            check(sample.fruit.every(v => v > 3 && v < 20), `${name}: mały, ograniczony refleks owocu`);
+            for (const kind of ['leaf', 'branch', 'bark', 'wood', 'stone', 'emissive']) {
+                profile(kind); close(draw(name), [0, 0, 0], `${name}/${kind}: wspólny przypadkowy połysk`);
+            }
+            profile('fruit'); lightingUniforms.uMaterialSpecular.value = 0;
+            close(draw(name), [0, 0, 0], `${name}: refleks OFF`);
+            lightingUniforms.uMaterialSpecular.value = 1; setLightingComponent('specular', false);
+            close(draw(name), [0, 0, 0], `${name}: refleks mask OFF`);
+            setLightingComponent('specular', true); sun.intensity = 0;
+            close(draw(name), [0, 0, 0], `${name}: owoc nie świeci bez źródła`);
+            sun.intensity = Math.PI * .4; sun.position.set(0, 0, -2);
+            pixels.materialExtensions[name] = sample;
+        }
+        profile('matte'); setLightingView('full'); resetLightingDiagnostics();
+        sun.position.set(0, 0, 2); sun.intensity = 0;
+        // E05: prawdziwe próbkowanie czterech warstw tekstury 3D, również
+        // przy jakości cieni 0. Źródło testowe jest kontrolowanym transferem,
+        // nie ręcznym dodaniem koloru do końcowego shadera.
+        const bounceTexture = own(new THREE.Data3DTexture(new Uint8Array([
+            255, 255, 255, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255
+        ]), 1, 1, 4));
+        bounceTexture.format = THREE.RGBAFormat; bounceTexture.type = THREE.UnsignedByteType;
+        bounceTexture.minFilter = bounceTexture.magFilter = THREE.LinearFilter;
+        bounceTexture.unpackAlignment = 1; bounceTexture.needsUpdate = true;
+        bounceUniforms.uBounceLight.value = bounceTexture;
+        bounceUniforms.uBounceOrigin.value.set(-21, -13, -21);
+        bounceUniforms.uBounceSize.value.set(42, 26, 42);
+        bounceUniforms.uBounceSun.value.setRGB(1, .5, .25);
+        bounceUniforms.uBounceMoon.value.setRGB(0, 0, 0);
+        bounceUniforms.uBounceSky.value.setRGB(0, 0, 0);
+        bounceUniforms.uBounceGround.value.setRGB(0, 0, 0);
+        bounceUniforms.uBounceSaturation.value = 1;
+        bounceUniforms.uBounceColor.value.setRGB(.18, .18, .18);
+        pixels.materialBounceNoShadows = {};
+        setLightingView('bounce');
+        for (const name of ['near', 'plant', 'leaf']) {
+            const value = draw(name);
+            check(value[0] > 5 && value[0] > value[1] && value[1] > value[2] && value[2] > 0,
+                `${name}: brak rzeczywistego barwnego odbicia przy shadows=0`);
+            setLightingComponent('bounce', false);
+            close(draw(name), [0, 0, 0], `${name}: wyłączone odbicie nadal próbuje świecić`);
+            setLightingComponent('bounce', true);
+            pixels.materialBounceNoShadows[name] = value;
+        }
+        bounceUniforms.uBounceColor.value.setRGB(0, 0, 0); resetLightingDiagnostics();
+        await yieldBrowser();
 
         // Ognisko: prawdziwe materiały widoku, przy lokalnych danych
         // zamkniętej komory. Popiół/podpałka nie są emiterami; węgle,

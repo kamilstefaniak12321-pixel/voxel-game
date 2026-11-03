@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="pl"><head><meta charset="utf-8"><title>Odbicia i materiały — odbiór 0.58.0</title>
+<style>
+body { margin:0; overflow:hidden; background:#111; color:#eef2f3; font:13px system-ui; }
+canvas { display:block; } aside { position:fixed; top:12px; right:12px; z-index:10; width:365px;
+padding:12px; border-radius:6px; background:#15202bef; box-shadow:0 2px 18px #0008; max-height:calc(100vh - 48px); overflow:auto; }
+button,select { margin:3px 2px; padding:5px 7px; } button[aria-pressed=true] { background:#cce7cf; }
+button:disabled { opacity:.5; } p { margin:8px 0; } pre { max-height:130px; overflow:auto; white-space:pre-wrap; }
+small { color:#c5ccd4; } [data-status] { line-height:1.5; } hr { border:0; border-top:1px solid #52606d; }
+</style><script type="importmap">{"imports":{"three":"/lib/three/three.module.js","three/addons/":"/lib/three/addons/"}}</script>
+</head><body><aside><strong data-title>Odbicia i materiały — stała scena 42 / flat</strong>
+<div><button data-scene="materialy">Materiały E05/E06</button><button data-scene="paleta">Paleta 0.57</button><button data-scene="forest">Las / horyzont 800+</button></div>
+<p data-device>Wczytywanie materiałów i gry…</p><div data-presets></div><div data-cameras></div>
+<button data-backlight>Liście pod niskie słońce</button>
+<hr><strong>Naturalna paleta i ten sam HDR</strong>
+<div><label>Profil <select data-quality><option value="basic">Podstawowy</option><option value="standard" selected>Standard</option><option value="high">Wysoki</option></select></label></div>
+<label><input type="checkbox" data-effect="surfaceBounce" checked>Odbicia otoczenia</label>
+<label><input type="checkbox" data-effect="leafTransmission" checked>Cienkie liście</label>
+<label><input type="checkbox" data-effect="materialSpecular" checked>Refleks owoców</label>
+<div><label>Siła odbicia <input data-parameter="bounceStrength" type="number" min="0" max="100" value="18" style="width:45px"></label>
+<label>Nasycenie <input data-parameter="bounceSaturation" type="number" min="0" max="100" value="65" style="width:45px"></label></div>
+<button data-effects-off>Wszystkie efekty OFF</button><button data-effects-on>Wszystkie efekty ON</button>
+<label><input type="checkbox" data-animate checked>Ruch roślin i ognia</label>
+<label><input type="checkbox" data-plant-shadows checked>Cienie ruchomych roślin</label>
+<label><input type="checkbox" data-light-shafts>Promienie światła</label>
+<div data-forest-controls hidden><label>Ruch kamery <select data-motion><option value="static">Stała kamera</option>
+<option value="orbit">Orbita 30 s</option><option value="walk">Ciągła trasa 180 s</option></select></label></div>
+<details data-diagnostics><summary>Diagnostyka światła (nowa wersja)</summary>
+<label>Widok <select data-debug-view disabled><option value="full">Pełny obraz</option></select></label>
+<div data-components></div></details>
+<div><label>Czas próby <select data-duration><option value="30">30 s</option><option value="180">180 s bez przerw</option></select></label>
+<button data-measure>Pomiar + 10 s rozgrzewki</button><button data-cancel disabled>Anuluj</button>
+<button data-photo>Zapisz czysty kadr</button><button data-reset>Odtwórz scenę</button></div>
+<div><button data-profiles>Zapisz 6 profili</button><button data-profiles-gray disabled>6 profili w szarości</button></div>
+<div><button data-pairs>3 pary OFF/ON + rozbicie kosztu</button><button data-pair-photos>2 kadry OFF/ON</button></div>
+<details><summary>Edycja i zapis sceny materiałów</summary>
+<button data-edit="roof">Otwórz / zamknij dach A</button><button data-edit="divider">Otwórz / zamknij przegrodę</button>
+<button data-edit="lamp">Wstaw / usuń lampę A</button>
+<label>Podłoże pierwszej próbki <select data-edit="ground"><option value="dirt">Ziemia</option><option value="sand">Piasek</option><option value="snow">Śnieg</option></select></label>
+<button data-save-reload>Zapisz w pamięci → odtwórz świat</button></details>
+<button data-hide>Ukryj panel (F8)</button><p data-status>Przygotowanie…</p>
+<small>Bez zapisów gracza. Przywracanie używa izolowanego magazynu w pamięci. A/B zachowuje renderer, HDR, ekspozycję i cienie. Zasilacz; aktywne okno.</small>
+<details><summary>Ostatni raport</summary><pre></pre></details></aside>
+<script type="module" src="./qa.js"></script></body></html>

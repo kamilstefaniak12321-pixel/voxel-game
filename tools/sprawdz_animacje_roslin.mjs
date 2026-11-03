@@ -11,6 +11,7 @@ registerHooks({
             format: 'module', shortCircuit: true, source: `
                 export const blockAtlasTexture=null,atlasAverageTexture=null;
                 export const atlasReady=Promise.resolve({tileSize:16,mipmaps:false}),atlasAveragesReady=Promise.resolve();
+                export const getTileColors = name => { const color = getAtlasAverage(name); return color ? [color] : []; };
                 export const getAtlasAverage=()=>null;
                 export const getAtlasUV=()=>({uMin:0,uMax:1,vMin:0,vMax:1});
                 export const ATLAS_COLUMNS=16,ATLAS_ROWS=16,ATLAS_TILES={water:{x:0,y:0}};`

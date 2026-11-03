@@ -16,7 +16,8 @@ import { blockMaterial, plantMaterial, waterMaterial, leafMaterial,
     setPotatoDefine, setLeafMaterialFast, setShadowDefine } from '../rendering/BlockRenderData.js';
 import { prewarmWaterMaterial, waterShaderVariantKey } from '../rendering/WaterMaterialWarmup.js';
 import { dynamicLightUniforms } from '../world/DynamicLight.js';
-import { bounceUniforms } from '../world/BounceLight.js';
+import { BounceLight } from '../world/BounceLight.js';
+import { applyMaterialLightingSettings, createBounceLightingState, updateBounceLightingState } from '../rendering/MaterialLighting.js';
 import { campfireLightUniforms } from '../rendering/CampfireLight.js';
 import { CHUNK_SIZE, POTATO_VIEW_DISTANCE, SHAFT_BRIGHTNESS,
     SHAFT_DENSITY_OUTSIDE, SHAFT_DENSITY_INSIDE, SHAFT_FAR_REACH } from '../config.js';
@@ -59,12 +60,15 @@ export class MenuWorld {
             this.farTerrain = new FarTerrain(this.world);
             this.sky.attachLights(this.farTerrain.scene);
             this.shadows = new SunShadows(renderer);
+            this.bounce = new BounceLight();
+            this.bounceLighting = createBounceLightingState();
             this.lightShafts = new LightShafts(renderer);
             this.worldOutput = new WorldOutput(renderer);
             resetLightingDiagnostics();
             this.shaftColor = new THREE.Color();
             this.world.onMeshChanged = chunk => {
                 this.shadows.markChunk(chunk);
+                this.bounce.markChunk(chunk);
                 if (chunk.mesh) {
                     chunk.mesh.geometry.computeBoundingBox();
                     chunk.menuBounds = chunk.mesh.geometry.boundingBox.clone().expandByScalar(3);
@@ -119,6 +123,7 @@ export class MenuWorld {
         this.sky.lightingLook = settings.get('lightingLook');
         this.sky.cloudCover = settings.get('cloudCover') / 100;
         lightingUniforms.uLightingNatural.value = this.sky.lightingLook === 'natural' ? 1 : 0;
+        applyMaterialLightingSettings(settings);
         this.shadows.setNaturalLighting(this.sky.lightingLook === 'natural');
         const potato = settings.get('potato');
         const distance = this.viewDistance;
@@ -151,7 +156,6 @@ export class MenuWorld {
         viewUniforms.uGlobe.value = 0;
         viewUniforms.uFarTextureBlend.value = 0;
         dynamicLightUniforms.uDynamicEnabled.value = 0;
-        bounceUniforms.uBounceColor.value.setRGB(0, 0, 0);
         campfireLightUniforms.uFirePowers.value.fill(0);
         if (this.waterVariant !== undefined) this.warmWater();
     }
@@ -193,6 +197,8 @@ export class MenuWorld {
         this.scene.fog.color.copy(this.sky.state.horizon).multiplyScalar(skyUniforms.uFogBrightness.value);
         this.shadows.update(elapsed, this.sky, p);
         this.sky.applyShadowContrast(this.shadows.active ? this.shadows.strength : 0);
+        this.bounce.update(this.world, p, updateBounceLightingState(this.bounceLighting,
+            this.settings, this.sky, this.renderer.capabilities.isWebGL2));
         if (!this.firstReady) {
             const far = this.farTerrain.stats();
             this.firstReady = this.warmed && this.world.chunks.size > 0
@@ -215,6 +221,7 @@ export class MenuWorld {
         try {
             renderer.info.reset();
             this.shadows.render(this.world, camera.position, null, this.scene, this.viewDistance, this.farTerrain);
+            this.bounce.bind();
             // Wspólna bliska mapa może mieć cień gracza, lecz menu nie
             // ma modelu ani jego mapy. Nie próbuj próbkować pustej tekstury.
             shadowUniforms.uSunShadowInfo.value.w = 0;
@@ -242,7 +249,7 @@ export class MenuWorld {
     renderLightShafts() {
         const shadows = this.shadows;
         const debugView = lightingUniforms.uLightingDebug.value;
-        if (debugView > 0 && debugView < 12) return;
+        if (debugView > 0 && debugView !== 12) return;
         if (!this.shaftsEnabled || !shadows.active) return;
         const state = this.sky.state;
         const sun = shadows.light === 'sun';
@@ -268,6 +275,7 @@ export class MenuWorld {
         return { ready: this.ready, warmed: this.warmed, chunks: this.world.chunks.size,
             loadQueue: this.world.loadQueue.length, completeRadius: this.world.completeRadius(),
             meshes: this.world.shadowScene.children.length, far: this.farTerrain.stats(),
+            bounce: this.bounce.stats(),
             error: this.error ? String(this.error) : null };
     }
 
@@ -278,6 +286,7 @@ export class MenuWorld {
         ++this.warmEpoch;
         if (this.world) this.world.onMeshChanged = null;
         this.shadows?.dispose();
+        this.bounce?.dispose();
         this.lightShafts?.dispose();
         this.worldOutput?.dispose();
         this.farTerrain?.dispose();

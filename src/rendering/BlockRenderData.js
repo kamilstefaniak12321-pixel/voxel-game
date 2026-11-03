@@ -4,6 +4,8 @@ import { SURFACE_LIGHTING_GLSL } from './SurfaceLighting.js';
 import { installLightingDiagnostics } from './LightingDiagnostics.js';
 import { plantWindUniforms, PLANT_WIND_GLSL } from './PlantWind.js';
 import { getSurfaceFaceTexture } from './SurfaceMaterials.js';
+import { blockSurfaceProfile } from './SurfaceProfiles.js';
+import { installSurfaceProfiles } from './LeafLighting.js';
 
 
 import {
@@ -109,7 +111,9 @@ export const blockMaterial =
 // Działa tylko w WebGL2 (czyli w każdej współczesnej przeglądarce).
 // ------------------------------------------------------------
 
+blockMaterial.defaultAttributeValues = { ...blockMaterial.defaultAttributeValues, surfaceProfile: [0, 0] };
 blockMaterial.onBeforeCompile = (shader, renderer) => {
+    installSurfaceProfiles(shader);
 
     // Światło w rogach to jasność "na oko" (0.5 = wygląda na w pół
     // ciemniej), a karta liczy światło liniowo - stąd pow(..., 2.2).
@@ -160,10 +164,10 @@ blockMaterial.onBeforeCompile = (shader, renderer) => {
     shader.fragmentShader =
         shader.fragmentShader.replace(
             '#include <opaque_fragment>',
-            `#ifdef USE_SUN_SHADOWS
+            `#ifdef USE_DYNAMIC_LIGHT
 
-                // Światło odbite od oświetlonych słońcem ścian
-                // (src/world/BounceLight.js) - w kolorze tej ściany.
+                // The bounce solver has its own source visibility; disabling
+                // directional shadow maps must not disable terrain bounce.
 
                 blockBounce = bounceLight(vWorldPosition, vWorldNormal, blockSky);
                 blockBounce *= mix(1.0, surfaceDecodeLight(vSurfaceOcclusion), uAtmosphericLight);
@@ -388,9 +392,7 @@ blockMaterial.onBeforeCompile = (shader, renderer) => {
                 uniform int uSunShadowLight;
             #endif
 
-            #ifdef USE_SUN_SHADOWS
-                ${BOUNCE_GLSL}
-            #endif`
+            ${BOUNCE_GLSL}`
         );
 
 
@@ -452,7 +454,7 @@ export const plantMaterial =
 
 
 // Held items or small previews without animation data remain stationary.
-plantMaterial.defaultAttributeValues = { color: [1, 1, 1], uv: [0, 0], uv1: [0, 0], plantMotion: [0, 0] };
+plantMaterial.defaultAttributeValues = { color: [1, 1, 1], uv: [0, 0], uv1: [0, 0], plantMotion: [0, 0], surfaceProfile: [0, 0] };
 
 plantMaterial.onBeforeCompile = (shader, renderer) => {
 
@@ -509,6 +511,7 @@ export const leafMaterial =
     });
 
 
+leafMaterial.defaultAttributeValues = { ...leafMaterial.defaultAttributeValues, surfaceProfile: [0, 0] };
 leafMaterial.onBeforeCompile = (shader, renderer) => {
 
     // Szybkie liście (define FAST_LEAVES, bez alphaTest): prześwity
@@ -1085,6 +1088,7 @@ for (
 
 
     blockRenderData[definition.id] = {
+        surfaceProfiles: FACE_NAMES.map(faceName => blockSurfaceProfile(definition, faceName)),
 
         // Roślina: płaszczyzny z jedną teksturą (ChunkMesher.addPlants).
 

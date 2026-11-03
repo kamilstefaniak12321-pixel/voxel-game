@@ -13,7 +13,7 @@ const linear = (hex) => [16, 8, 0].map((shift) => {
 });
 const COLORS = {
     leaf: linear(0x668943), light: linear(0x83a452), dark: linear(0x456c37),
-    stem: linear(0x6a8142), reed: linear(0x80914c), brown: linear(0x765037),
+    stem: linear(0x6a8142), stemDark: linear(0x456c37), reed: linear(0x80914c), brown: linear(0x765037),
     brownTop: linear(0x9b7951), purple: linear(0xad659b), pink: linear(0xcb85ad),
     submerged: linear(0x52794a), pad: linear(0x5d873e), padLight: linear(0x739648),
     white: linear(0xf1eadb), petalPink: linear(0xe6b5c8), pollen: linear(0xd6ae4f),
@@ -56,7 +56,8 @@ function makeTemplate(kind, variant, waterlogged) {
     const floating = kind === 'lily' || kind === 'duckweed';
     const movement = floating ? 255 : kind === 'milfoil' ? 128 : 0;
     const height = kind === 'cattail' ? 1.9 : kind === 'loosestrife' ? 1.25 : 1;
-    const model = createPixelPlant(COLORS, floating, movement, height);
+    const model = createPixelPlant(COLORS, floating, movement, height,
+        { light: 'leaf', dark: 'leaf', reed: 'leaf', submerged: 'leaf', pad: 'leaf', padLight: 'leaf', stemDark: 'branch' });
     const { sheet, box } = model;
 
     if (kind === 'sedge') {
@@ -85,7 +86,7 @@ function makeTemplate(kind, variant, waterlogged) {
     } else if (kind === 'loosestrife') {
         for (let i=0; i<2; i++) {
             const x = i ? 2 : -3, z = i ? 1 : -1, top = 18 + pick(3) - i*2;
-            box(x, 0, z, 1, top, 1, 'dark');
+            box(x, 0, z, 1, top, 1, 'stemDark');
             for (const axis of [2, 0]) sheet(axis, axis === 2 ? z : x, ({ rect }) => {
                 const root = axis === 2 ? x : z;
                 for (let y=4; y<top-5; y+=4) {

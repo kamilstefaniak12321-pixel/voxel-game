@@ -12,6 +12,7 @@ import {
 
 import { WATER_FLOW_UV } from './BlockRenderData.js';
 import { atmosphericLightToBrightness } from './LightPolicy.js';
+import { SURFACE_PROFILES } from './SurfaceProfiles.js';
 import { getRiverPlantFaces, plantRandom, plantTransform, riverPlantTransform } from './RiverPlantGeometry.js';
 import { getBushyGrassFaces } from './BushyGrassGeometry.js';
 import { getAtlasUV } from './TextureAtlas.js';
@@ -450,6 +451,7 @@ let colorBuffer = null;
 let atmosphereLightBuffer = null;
 let surfaceOcclusionBuffer = null;
 let surfaceEmissionBuffer = null;
+let surfaceProfileBuffer = null;
 let tintBuffer = null;
 let plantMotionBuffer = null;
 let splitBuffer = null;
@@ -484,6 +486,7 @@ function ensureCapacity(faces) {
     atmosphereLightBuffer = grow(atmosphereLightBuffer, Uint8Array, capacity * 16);
     surfaceOcclusionBuffer = grow(surfaceOcclusionBuffer, Uint8Array, capacity * 4);
     surfaceEmissionBuffer = grow(surfaceEmissionBuffer, Uint8Array, capacity * 4);
+    surfaceProfileBuffer = grow(surfaceProfileBuffer, Uint8Array, capacity * 8);
     tintBuffer = grow(tintBuffer, Uint8Array, capacity * 16);
     plantMotionBuffer = grow(plantMotionBuffer, Uint8Array, capacity * 8);
     splitBuffer = grow(splitBuffer, Uint8Array, capacity);
@@ -571,7 +574,8 @@ function addPlants(plants, faceCount, baseX, baseZ) {
         const id = plants[k + 3];
         const emission = getLightEmission(id) / MAX_LIGHT * 255;
 
-        const { cross, tint } = blockRenderData[id];
+        const { cross, tint, surfaceProfiles } = blockRenderData[id];
+        const profile = surfaceProfiles[4];
 
         const wx = baseX + lx;
         const wz = baseZ + lz;
@@ -672,6 +676,8 @@ function addPlants(plants, faceCount, baseX, baseZ) {
                     atmosphereLightBuffer[c + i * 4 + 3] = atmosphereSky * 255 + 0.5;
                     surfaceOcclusionBuffer[faceCount * 4 + i] = shade * 255 + 0.5;
                     surfaceEmissionBuffer[faceCount * 4 + i] = emission + 0.5;
+                    surfaceProfileBuffer[t + i * 2] = profile[0];
+                    surfaceProfileBuffer[t + i * 2 + 1] = profile[1];
 
                     if (plantTint) {
                         tintBuffer[c + i * 4] = plantTint[0];
@@ -805,6 +811,7 @@ function addRiverPlants(plants, faceCount, baseX, baseZ, grassDetail = null, ove
         ensureCapacity(faceCount + faces.length);
 
         for (const face of faces) {
+            const profile = face.surfaceProfile ?? SURFACE_PROFILES.matte;
             // Leaf cards and solid fruit use different parts of the same atlas,
             // without a separate material or draw call for each fruit.
             const { uMin, uMax, vMin, vMax } = face.texture ? plantFaceUV(face.texture) : data.uv;
@@ -835,6 +842,8 @@ function addRiverPlants(plants, faceCount, baseX, baseZ, grassDetail = null, ove
                 atmosphereLightBuffer[c + i * 4 + 3] = atmosphereSky * depthShade * 255 + 0.5;
                 surfaceOcclusionBuffer[faceCount * 4 + i] = shade * 255 + 0.5;
                 surfaceEmissionBuffer[faceCount * 4 + i] = 0;
+                surfaceProfileBuffer[t + i * 2] = profile[0];
+                surfaceProfileBuffer[t + i * 2 + 1] = profile[1];
                 for (let channel = 0; channel < 3; channel++) {
                     tintBuffer[c + i * 4 + channel] = climate
                         ? Math.min(255, Math.round(face.color[channel] * climate[channel] / 128))
@@ -865,12 +874,13 @@ function addFlats(flats, faceCount, baseX, baseZ) {
         const lz = flats[k + 2];
 
         const id = flats[k + 3];
-        const { flat, uv, rotate, tint } = blockRenderData[id];
+        const { flat, uv, rotate, tint, surfaceProfiles } = blockRenderData[id];
         const emission = getLightEmission(id) / MAX_LIGHT * 255;
 
         const flatTint = tint && meshTint ? tintOfColumn(lx, lz) : null;
 
         const faceIndex = flat.face;
+        const profile = surfaceProfiles[faceIndex];
 
         const face = BLOCK_FACES[faceIndex];
 
@@ -940,6 +950,8 @@ function addFlats(flats, faceCount, baseX, baseZ) {
             atmosphereLightBuffer[c + i * 4 + 3] = atmosphereSky * 255 + 0.5;
             surfaceOcclusionBuffer[faceCount * 4 + i] = 255;
             surfaceEmissionBuffer[faceCount * 4 + i] = emission + 0.5;
+            surfaceProfileBuffer[t + i * 2] = profile[0];
+            surfaceProfileBuffer[t + i * 2 + 1] = profile[1];
 
             if (flatTint) {
                 tintBuffer[c + i * 4] = flatTint[0];
@@ -1282,6 +1294,8 @@ function addCubeFaces(id, renderData, lx, y, lz, faceCount, baseX, baseZ) {
             atmosphereLightBuffer[c + i * 4 + 3] = atmosphereA + 0.5;
             surfaceOcclusionBuffer[faceCount * 4 + i] = occlusion * 255 + 0.5;
             surfaceEmissionBuffer[faceCount * 4 + i] = emission + 0.5;
+            surfaceProfileBuffer[t + i * 2] = renderData.surfaceProfiles[faceIndex][0];
+            surfaceProfileBuffer[t + i * 2 + 1] = renderData.surfaceProfiles[faceIndex][1];
 
             if (tinted) {
                 writeTint(c + i * 4, lx + corner[0], lz + corner[2]);
@@ -1614,6 +1628,8 @@ export function buildChunkGeometry(chunk, world) {
         'surfaceEmission',
         new THREE.BufferAttribute(surfaceEmissionBuffer.slice(0, vertexCount), 1, true)
     );
+    geometry.setAttribute('surfaceProfile',
+        new THREE.BufferAttribute(surfaceProfileBuffer.slice(0, vertexCount * 2), 2));
 
     // Kolor trawy w rogach (r, g, b - 0.5 = bez zmiany; a = 1 - nie dotyczy).
 

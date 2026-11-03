@@ -511,6 +511,7 @@ export const TOUCH_SETTINGS = {
     shadows: 0,            // bez cieni słońca (mapa cieni to dużo pracy dla karty)
     lightShafts: false,    // bez promieni światła
     bounceLight: false,    // bez światła odbitego (liczenie w tle)
+    lightingMaterials: 'basic', // zachowaj lekką bazę, dopóki nie zmierzymy telefonu
     showDebug: false       // napisy F3 zasłaniałyby przyciski
 };
 // Ekran telefonu ma 2-3 piksele na punkt - rysujemy najwyżej tyle

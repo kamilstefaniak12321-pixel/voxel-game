@@ -18,7 +18,8 @@ export function getBushyGrassFaces(tall, variant, detail = 0) {
     detail = Math.max(0, Math.min(2, detail | 0));
     const key = `${!!tall}:${variant}:${detail}`;
     if (cache.has(key)) return cache.get(key);
-    const model = createPixelPlant(PALETTE, false, 0, tall ? 1 : .75);
+    const model = createPixelPlant(PALETTE, false, 0, tall ? 1 : .75,
+        { green: 'leaf', light: 'leaf', dark: 'leaf', dry: 'branch', root: 'branch' });
     const fans = [[2, -2], [0, 2], [2, 2], [0, -2]];
     for (let fan = 0; fan < (detail === 0 ? 4 : 2); fan++) {
         const [axis, plane] = fans[fan];

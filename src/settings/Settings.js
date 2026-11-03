@@ -46,6 +46,12 @@ export const SETTINGS_DEFAULTS = {
     fov: DEFAULT_FOV,                              // stopnie
     brightness: 0,                                 // procent (0 = nastrojowo, 100 = jasno)
     lightingLook: 'natural',                       // wspólna paleta 0.57 / porównanie z 0.56.1
+    lightingMaterials: 'standard',                 // podstawowe / pojedyncze odbicie / dokładniejsze sondy
+    surfaceBounce: true,                           // odbicia otoczenia w naturalnej palecie
+    leafTransmission: true,                        // światło przez cienkie liście
+    materialSpecular: true,                        // drobne refleksy owoców
+    bounceStrength: 18,                            // siła pojedynczego odbicia, procent
+    bounceSaturation: 65,                          // barwa odbijającej powierzchni, procent
     cloudCover: 0,                                // profil światła zachmurzonego (diagnostyka, bez pogody)
     renderScale: 100,                              // procent rozdzielczości ekranu
     fpsLimit: 0,                                   // klatki na sekundę (0 = bez limitu)
@@ -105,6 +111,8 @@ export const SETTINGS_RANGES = {
     fov: { min: 50, max: 110, step: 1 },
     brightness: { min: 0, max: 100, step: 5 },
     cloudCover: { min: 0, max: 100, step: 5 },
+    bounceStrength: { min: 0, max: 100, step: 1 },
+    bounceSaturation: { min: 0, max: 100, step: 5 },
     renderScale: { min: 25, max: 100, step: 5 },
     ambientOcclusion: { min: 0, max: 100, step: 5 },
     loadBudget: { min: 1, max: 16, step: 1 },
@@ -129,6 +137,7 @@ export const SETTINGS_CHOICES = {
     shadows: [0, 1, 2, 3],
     lightingModel: ['world', 'classic'],
     lightingLook: ['natural', 'baseline'],
+    lightingMaterials: ['basic', 'standard', 'high'],
     farDetail: [1, 2, 3],
     jointStyle: ['smooth', 'blocks'],
     inventoryStyle: ['wood', 'light'],
@@ -150,10 +159,10 @@ export const EXPERIMENTS = ['bushyGrass', 'bounceLight', 'lightingModel'];
 // ------------------------------------------------------------
 
 export const GRAPHICS_PRESETS = {
-    low: { potato: true, shadows: 0, ambientOcclusion: 0, lightShafts: false, fancyLeaves: false },
-    medium: { potato: false, shadows: 0, ambientOcclusion: Math.round(AMBIENT_OCCLUSION * 100), lightShafts: false, fancyLeaves: false },
-    high: { potato: false, shadows: 1, ambientOcclusion: Math.round(AMBIENT_OCCLUSION * 100), lightShafts: true, fancyLeaves: true },
-    ultra: { potato: false, shadows: 3, ambientOcclusion: Math.round(AMBIENT_OCCLUSION * 100), lightShafts: true, fancyLeaves: true }
+    low: { potato: true, shadows: 0, ambientOcclusion: 0, lightShafts: false, fancyLeaves: false, lightingMaterials: 'basic' },
+    medium: { potato: false, shadows: 0, ambientOcclusion: Math.round(AMBIENT_OCCLUSION * 100), lightShafts: false, fancyLeaves: false, lightingMaterials: 'basic' },
+    high: { potato: false, shadows: 1, ambientOcclusion: Math.round(AMBIENT_OCCLUSION * 100), lightShafts: true, fancyLeaves: true, lightingMaterials: 'standard' },
+    ultra: { potato: false, shadows: 3, ambientOcclusion: Math.round(AMBIENT_OCCLUSION * 100), lightShafts: true, fancyLeaves: true, lightingMaterials: 'standard' }
 };
 
 export const GRAPHICS_PRESET_ORDER = Object.keys(GRAPHICS_PRESETS);

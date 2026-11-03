@@ -20,6 +20,7 @@ Trzeci tryb gry obok przygody i kreatywnego - do sprawdzania gry
 |---|---|---|
 | Światło i materiały | `swiatlo` | dawne „Laboratorium światła”: wnęki z tynku, terakoty, ochry i ciemnych desek, słupy 2-12 bloków, liście z pniem, basen, pokój z lampami i otworem w dachu |
 | Paleta światła | `paleta` | materiały i owoce, taki sam krzak borówki w słońcu i pod dachem, okno, zamknięta komora na styku chunków, ciepła emisja meteorytu i ognisko |
+| Odbicia i cienkie liście | `materialy` | ziemia, piasek i śnieg z tym samym krzakiem, kontrolne podłoża, dwa pokoje z przegrodą oraz liście, owoce, kora, drewno i kamień |
 | Kolorowe lampy | `lampy` | zamknięty pokój z czterema kolorowymi lampami (`/demo swiatlo`) |
 | Słońce przez okno | `okno` | ciemny pokój z oknami od strony słońca (`/demo okno`) |
 | Budulec i światło odbite | `dom` | cztery pokoje z różnego budulca (`/demo dom`) |
@@ -58,6 +59,20 @@ granice chunków `x=80` i `z=-80`. Próba nieba: usuń blok dachu
 `(80,23,-80)`, sprawdź środek `(80,19,-80)` i sąsiednie chunki, następnie
 wstaw z powrotem jasny tynk. W pełni zamknięta komora ma być ciemna.
 Ponowne `/scena paleta` odtwarza bloki i początkowy stan ogniska.
+
+### Odbicia i materiały 0.58.0
+
+`/scena materialy` buduje osobny plac wokół `(160,16,-160)`, poza tarasami
+testowego generatora. `LightingMaterialsReference.js` udostępnia stałe
+kamery, sondy i edycje zwykłych bloków. Pokój A ma otwór w dachu, pokój B
+jest zamknięty; wspólna ściana leży na `x=160`, a oba pokoje przecinają
+granicę `z=-144`. Domyślnie nie ma lampy. Odtworzenie sceny usuwa edycje
+stanowiska, przywraca podłoża i przegrodę oraz otwiera dach A.
+
+[Natywny odbiór 0.58.0](pomiary/materialy-0.58.0/README.md) udostępnia
+niezależne przełączniki odbić, transmisji i refleksów, pary OFF/ON w tym
+samym rendererze, ciągłą trasę 180 s oraz zapis i wczytanie w izolowanej
+pamięci. Nie zmienia istniejącej sceny palety ani zapisów gracza.
 
 ## Testy
 

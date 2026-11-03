@@ -26,6 +26,7 @@
 
 import { TEST_SITE_FLOOR } from '../world/terrain/TestSiteGenerator.js';
 import { buildLightingReference, LIGHTING_REFERENCE_ORIGIN } from './LightingReference.js';
+import { buildLightingMaterialsReference, MATERIAL_REFERENCE_ORIGIN } from './LightingMaterialsReference.js';
 
 
 // Pory dnia z ekranu scen i /scena czas (część doby: 0,5 = południe).
@@ -164,6 +165,14 @@ export const SCENES = [
         description: 'Materiały i owoce, borówka w słońcu i cieniu, okno, zamknięta komora na granicy chunków i ciepłe światło.',
         build: buildLightingReference,
         slot: { x: LIGHTING_REFERENCE_ORIGIN.x, z: LIGHTING_REFERENCE_ORIGIN.z }
+    },
+
+    {
+        id: 'materialy',
+        name: 'Odbicia i cienkie liście',
+        description: 'Ziemia, piasek i śnieg, dwa oddzielone pokoje oraz liście, owoce, kora i kamień do porównań oświetlenia.',
+        build: buildLightingMaterialsReference,
+        slot: { x: MATERIAL_REFERENCE_ORIGIN.x, z: MATERIAL_REFERENCE_ORIGIN.z }
     },
 
     {

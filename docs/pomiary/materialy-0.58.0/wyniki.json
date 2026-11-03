@@ -1,0 +1,3807 @@
+{
+  "schemaVersion": 1,
+  "version": "0.58.0",
+  "status": "PC material-lighting acceptance recorded, including live-menu functional regression",
+  "scope": "PC RTX3050, E05/E06, same renderer OFF/ON",
+  "runs": [
+    {
+      "runId": "materials-2026-11-03T22-50-03-649Z",
+      "version": "0.58.0",
+      "commit": "5b6a2bc0a66577456d0fb8364f8654253a0074fc",
+      "dirty": true,
+      "sourceSha256": "3f9a0af6db8102cc9c49b9b570f55eafc17a8eac551a5d94a376db88762169ca",
+      "materialsReferenceSha256": "c47f015285a24788d6aae2f74f0aee621fbe1f8fac7ab0716daa9441344fb231",
+      "paletteReferenceSha256": "8ed4e1782da8e90837765f39cd03a99c018e61b3c2d84f5b839f7ba961ffd780",
+      "harnessSha256": "7460ebbba081c266710e04829a024fefb7b9c9084817f7ab7f330a076aa9598a",
+      "trackedDiffSha256": "b999368e8fa91e429adabf23ad535d2e6b5512d59f196c8ed9d4959cd7ab13d9",
+      "assetsInventorySha256": "c14621c39bc2a9e44bae0ab9dad01b7db5e9f70e228627d840823a63d3f67200",
+      "width": 1920,
+      "height": 1080,
+      "uncapped": false,
+      "displayHz": 144
+    },
+    {
+      "runId": "materials-2026-11-03T23-13-03-488Z",
+      "version": "0.58.0",
+      "commit": "06ee8d06977174a8b8ba0be7218b2d1755da8018",
+      "dirty": true,
+      "dirtyScope": "Only untracked WYNIKI.md/wyniki.json; tracked source clean",
+      "sourceSha256": "3a485a571f48ccbad65047f21e4f1e3240cb369ab976b606cb90d6ca7d02b843",
+      "materialsReferenceSha256": "57e8c10f6b85c90c8d8329d8b8f100dec2bf49fbafc00aab0bbd2561f213178e",
+      "paletteReferenceSha256": "8ed4e1782da8e90837765f39cd03a99c018e61b3c2d84f5b839f7ba961ffd780",
+      "harnessSha256": "7460ebbba081c266710e04829a024fefb7b9c9084817f7ab7f330a076aa9598a",
+      "trackedDiffSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "assetsInventorySha256": "c14621c39bc2a9e44bae0ab9dad01b7db5e9f70e228627d840823a63d3f67200",
+      "width": 1920,
+      "height": 1080,
+      "uncapped": false,
+      "displayHz": 144
+    },
+    {
+      "runId": "menu-2026-11-03T23-22-46-585Z",
+      "role": "Menu functional regression, not formal performance benchmark",
+      "version": "0.58.0",
+      "commit": "06ee8d06977174a8b8ba0be7218b2d1755da8018",
+      "dirty": true,
+      "dirtyScope": "Only untracked WYNIKI.md/wyniki.json; tracked source clean",
+      "sourceSha256": "3a485a571f48ccbad65047f21e4f1e3240cb369ab976b606cb90d6ca7d02b843",
+      "paletteReferenceSha256": "8ed4e1782da8e90837765f39cd03a99c018e61b3c2d84f5b839f7ba961ffd780",
+      "harnessSha256": "3dea5971ddc7dffef8febaeb29928cc9d9f94e0cad76ff8f2e60b96120322e6a",
+      "trackedDiffSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "assetsInventorySha256": "c14621c39bc2a9e44bae0ab9dad01b7db5e9f70e228627d840823a63d3f67200",
+      "width": 1920,
+      "height": 1080,
+      "uncapped": false,
+      "displayHz": 144
+    }
+  ],
+  "tests": {
+    "npm": {
+      "status": "passed",
+      "artifact": "npm-test.log",
+      "sha256": "a4655b23a5e026d2e1b9eb8238597ab7f8cc9bb32aaffae12e4d01cfb2902301",
+      "completedUtc": "2026-11-03T22:50:03.732Z",
+      "note": "Full suite confirmed by operator; before reference foliage relocation."
+    },
+    "headless": {
+      "status": "passed",
+      "artifact": "test-results/lighting-materials/result.json",
+      "sha256": "e21ed0473404a3c6d83b724bd89304b8e0cdc6229c599ff329ff551035d92b5a",
+      "completedUtc": "2026-11-03T22:48:53.103Z",
+      "shaders": 62,
+      "materialPixels": {
+        "near": {
+          "backlit": [
+            13,
+            12,
+            10
+          ],
+          "voxel": [
+            9,
+            8,
+            7
+          ],
+          "block": [
+            5,
+            4,
+            4
+          ],
+          "fruit": [
+            11,
+            11,
+            11
+          ]
+        },
+        "plant": {
+          "backlit": [
+            13,
+            12,
+            10
+          ],
+          "voxel": [
+            9,
+            8,
+            7
+          ],
+          "block": [
+            5,
+            4,
+            4
+          ],
+          "fruit": [
+            11,
+            11,
+            11
+          ]
+        },
+        "leaf": {
+          "backlit": [
+            13,
+            12,
+            10
+          ],
+          "voxel": [
+            9,
+            8,
+            7
+          ],
+          "block": [
+            5,
+            4,
+            4
+          ],
+          "fruit": [
+            11,
+            11,
+            11
+          ]
+        },
+        "model": {
+          "backlit": [
+            13,
+            12,
+            10
+          ],
+          "voxel": [
+            9,
+            8,
+            7
+          ],
+          "block": [
+            5,
+            4,
+            4
+          ],
+          "fruit": [
+            11,
+            11,
+            11
+          ]
+        }
+      },
+      "bounceNoShadowMapPixels": {
+        "near": [
+          11,
+          6,
+          3
+        ],
+        "plant": [
+          11,
+          6,
+          3
+        ],
+        "leaf": [
+          11,
+          6,
+          3
+        ]
+      }
+    },
+    "followup": {
+      "status": "passed",
+      "reportedBy": "Parent operator",
+      "commit": "06ee8d06977174a8b8ba0be7218b2d1755da8018",
+      "scope": [
+        "Pause/settings synchronization regression",
+        "Reference scenes363 checks",
+        "Bounce solver CPU regression"
+      ],
+      "note": "Reported after source changes; no separate log artifact supplied here."
+    }
+  },
+  "photos": [
+    {
+      "report": "materials-2026-11-03T22-50-03-649Z-002-materialy-leafBack-sunset-standard-b0-t0-s0-static-plants-full.json",
+      "image": "materials-2026-11-03T22-50-03-649Z-002-materialy-leafBack-sunset-standard-b0-t0-s0-static-plants-full.png",
+      "reportSha256": "9ca62a22d84674f2e3679add55adecc5f71428b0029dfee21cf22f0fb6d600a4",
+      "imageSha256": "ce9b308f85bbb1dbf50237144aa027a83a46d0ed746f426016aafcc94daff94b",
+      "runId": "materials-2026-11-03T22-50-03-649Z",
+      "scene": "materialy",
+      "camera": "leafBack",
+      "preset": "sunset",
+      "view": {
+        "position": [
+          182.99460510661785,
+          17.54610521290818,
+          -143.10505636374415
+        ],
+        "target": [
+          176,
+          17.8,
+          -143
+        ]
+      },
+      "effects": {
+        "bounce": false,
+        "transmission": false,
+        "specular": false
+      },
+      "role": "occluded-source-control; not open-sun foliage acceptance",
+      "errors": [],
+      "imageDimensions": [
+        1904,
+        1041
+      ]
+    },
+    {
+      "report": "materials-2026-11-03T22-50-03-649Z-003-materialy-leafBack-sunset-standard-b1-t1-s1-static-plants-full.json",
+      "image": "materials-2026-11-03T22-50-03-649Z-003-materialy-leafBack-sunset-standard-b1-t1-s1-static-plants-full.png",
+      "reportSha256": "a862896482a8cc34744208e961ce913822a0b60def2dc3fbf07325ea165d84eb",
+      "imageSha256": "0e91980e4dfd526925f6c5f4a78344d429f5ebeee6f97da3a4fdc9df4130cdaa",
+      "runId": "materials-2026-11-03T22-50-03-649Z",
+      "scene": "materialy",
+      "camera": "leafBack",
+      "preset": "sunset",
+      "view": {
+        "position": [
+          182.99460510661785,
+          17.54610521290818,
+          -143.10505636374415
+        ],
+        "target": [
+          176,
+          17.8,
+          -143
+        ]
+      },
+      "effects": {
+        "bounce": true,
+        "transmission": true,
+        "specular": true
+      },
+      "role": "occluded-source-control; not open-sun foliage acceptance",
+      "errors": [],
+      "imageDimensions": [
+        1904,
+        1041
+      ]
+    },
+    {
+      "report": "materials-2026-11-03T22-50-03-649Z-005-materialy-sand-noon-standard-b0-t0-s0-static-plants-full.json",
+      "image": "materials-2026-11-03T22-50-03-649Z-005-materialy-sand-noon-standard-b0-t0-s0-static-plants-full.png",
+      "reportSha256": "1251ca871376fcf5b68432d6e85265e0a7edb982e699d0188d0d008747bf53a6",
+      "imageSha256": "21b79f303428addd95b359684669c4cc234a86357081e88483919b6d6cae81b2",
+      "runId": "materials-2026-11-03T22-50-03-649Z",
+      "scene": "materialy",
+      "camera": "sand",
+      "preset": "noon",
+      "view": {
+        "position": [
+          161,
+          19.4,
+          -158
+        ],
+        "target": [
+          160,
+          17.5,
+          -164
+        ]
+      },
+      "effects": {
+        "bounce": false,
+        "transmission": false,
+        "specular": false
+      },
+      "role": "Supporting native noon sand OFF/ON view; complete geometry, no isolated per-surface numeric attribution",
+      "errors": [],
+      "imageDimensions": [
+        1904,
+        1041
+      ]
+    },
+    {
+      "report": "materials-2026-11-03T22-50-03-649Z-006-materialy-sand-noon-standard-b1-t1-s1-static-plants-full.json",
+      "image": "materials-2026-11-03T22-50-03-649Z-006-materialy-sand-noon-standard-b1-t1-s1-static-plants-full.png",
+      "reportSha256": "3e35659f84578626ee9623e77e19a794abf699894f440210e5e0ac3d68b0d7be",
+      "imageSha256": "d4ad9b1bd01f2491482906a6b7bbc757bba4b841167e8b57dd4edd3c531dd87c",
+      "runId": "materials-2026-11-03T22-50-03-649Z",
+      "scene": "materialy",
+      "camera": "sand",
+      "preset": "noon",
+      "view": {
+        "position": [
+          161,
+          19.4,
+          -158
+        ],
+        "target": [
+          160,
+          17.5,
+          -164
+        ]
+      },
+      "effects": {
+        "bounce": true,
+        "transmission": true,
+        "specular": true
+      },
+      "role": "Supporting native noon sand OFF/ON view; complete geometry, no isolated per-surface numeric attribution",
+      "errors": [],
+      "imageDimensions": [
+        1904,
+        1041
+      ]
+    },
+    {
+      "report": "materials-2026-11-03T22-50-03-649Z-009-materialy-roomA-noon-standard-b1-t1-s1-static-plants-full.json",
+      "image": "materials-2026-11-03T22-50-03-649Z-009-materialy-roomA-noon-standard-b1-t1-s1-static-plants-full.png",
+      "reportSha256": "16e448ef2ce3b887c74db25acb9de717ebc734a345674b949ec4b2ecb2838ac7",
+      "imageSha256": "15d0b94485da4ab9f16b2329e8cff3fa9eb0fde16eed0612441fb26c20ce47f4",
+      "runId": "materials-2026-11-03T22-50-03-649Z",
+      "scene": "materialy",
+      "camera": "roomA",
+      "preset": "noon",
+      "view": {
+        "position": [
+          154.2,
+          19.2,
+          -139.5
+        ],
+        "target": [
+          158,
+          18.3,
+          -144
+        ]
+      },
+      "effects": {
+        "bounce": true,
+        "transmission": true,
+        "specular": true
+      },
+      "role": "Supporting native closed-room saved-state view",
+      "errors": [],
+      "imageDimensions": [
+        1904,
+        1041
+      ]
+    },
+    {
+      "report": "materials-2026-11-03T23-13-03-488Z-002-materialy-leafBack-sunset-standard-b0-t0-s0-static-plants-full.json",
+      "image": "materials-2026-11-03T23-13-03-488Z-002-materialy-leafBack-sunset-standard-b0-t0-s0-static-plants-full.png",
+      "reportSha256": "efde91701e58eb301af1fb0df1949c56273dc4ee37fb7c33d0f9a17e4f51d50f",
+      "imageSha256": "b812e790e2b1765e9064e8f90fe4f14eb0ba76c75632f22ef3ecb8af9972fdf5",
+      "runId": "materials-2026-11-03T23-13-03-488Z",
+      "scene": "materialy",
+      "camera": "leafBack",
+      "preset": "sunset",
+      "view": {
+        "position": [
+          182.99460510661785,
+          17.54610521290818,
+          -178.10505636374415
+        ],
+        "target": [
+          176,
+          17.8,
+          -178
+        ]
+      },
+      "effects": {
+        "bounce": false,
+        "transmission": false,
+        "specular": false
+      },
+      "imageDimensions": [
+        1904,
+        1041
+      ],
+      "drawingBuffer": [
+        1920,
+        1080
+      ],
+      "animate": false,
+      "meshVersion": 199,
+      "role": "Native backlit foliage visual acceptance, three effects toggled together",
+      "errors": []
+    },
+    {
+      "report": "materials-2026-11-03T23-13-03-488Z-003-materialy-leafBack-sunset-standard-b1-t1-s1-static-plants-full.json",
+      "image": "materials-2026-11-03T23-13-03-488Z-003-materialy-leafBack-sunset-standard-b1-t1-s1-static-plants-full.png",
+      "reportSha256": "ac8c227e9fcea02b3c311f9cd88af790967697815658fb8e6a21ae871ffdbe58",
+      "imageSha256": "46fdf7bca34aa39008dfd34c2fec44deb3c48dfb3e2ee8737c74241326c6ff21",
+      "runId": "materials-2026-11-03T23-13-03-488Z",
+      "scene": "materialy",
+      "camera": "leafBack",
+      "preset": "sunset",
+      "view": {
+        "position": [
+          182.99460510661785,
+          17.54610521290818,
+          -178.10505636374415
+        ],
+        "target": [
+          176,
+          17.8,
+          -178
+        ]
+      },
+      "effects": {
+        "bounce": true,
+        "transmission": true,
+        "specular": true
+      },
+      "imageDimensions": [
+        1904,
+        1041
+      ],
+      "drawingBuffer": [
+        1920,
+        1080
+      ],
+      "animate": false,
+      "meshVersion": 199,
+      "role": "Native backlit foliage visual acceptance, three effects toggled together",
+      "errors": []
+    },
+    {
+      "report": "materials-2026-11-03T23-13-03-488Z-006-materialy-roomA-noon-standard-b1-t1-s1-static-plants-full.json",
+      "image": "materials-2026-11-03T23-13-03-488Z-006-materialy-roomA-noon-standard-b1-t1-s1-static-plants-full.png",
+      "reportSha256": "ef0ff949733f5055d31d10a227bf6daaeebc870f88d8a94fcbf165378f71a4ed",
+      "imageSha256": "e53cd55d733f1b758535bd12a3c5cee10a20da57bd3fdbf89a570e2f839d63de",
+      "runId": "materials-2026-11-03T23-13-03-488Z",
+      "scene": "materialy",
+      "camera": "roomA",
+      "preset": "noon",
+      "view": {
+        "position": [
+          154.2,
+          19.2,
+          -139.5
+        ],
+        "target": [
+          158,
+          18.3,
+          -144
+        ]
+      },
+      "effects": {
+        "bounce": true,
+        "transmission": true,
+        "specular": true
+      },
+      "imageDimensions": [
+        1904,
+        1041
+      ],
+      "drawingBuffer": [
+        1920,
+        1080
+      ],
+      "animate": true,
+      "meshVersion": 69,
+      "role": "RoomA open-roof view following successful positive-light save/reload",
+      "errors": []
+    }
+  ],
+  "saves": [
+    {
+      "source": "materials-2026-11-03T22-50-03-649Z-008-materials-save-reload.json",
+      "sha256": "758846ffcbc1f3b6abf5fa61aee1c1034277ad4bfd265db8b6bc699729b06dfe",
+      "valid": true,
+      "editState": {
+        "roof": false,
+        "divider": false,
+        "lamp": false,
+        "ground": "dirt"
+      },
+      "maxBounceDifference": 0,
+      "before": {
+        "roomA": {
+          "block": null,
+          "light": {
+            "sky": 0,
+            "red": 0,
+            "green": 0,
+            "blue": 0
+          },
+          "bounce": [
+            0,
+            0,
+            0
+          ]
+        },
+        "roomB": {
+          "block": null,
+          "light": {
+            "sky": 0,
+            "red": 0,
+            "green": 0,
+            "blue": 0
+          },
+          "bounce": [
+            0,
+            0,
+            0
+          ]
+        },
+        "earthReceiver": {
+          "block": "polished_stone",
+          "light": {
+            "sky": 0,
+            "red": 0,
+            "green": 0,
+            "blue": 0
+          },
+          "bounce": [
+            0,
+            0,
+            0
+          ]
+        },
+        "sandReceiver": {
+          "block": "polished_stone",
+          "light": {
+            "sky": 0,
+            "red": 0,
+            "green": 0,
+            "blue": 0
+          },
+          "bounce": [
+            0,
+            0,
+            0
+          ]
+        },
+        "snowReceiver": {
+          "block": "polished_stone",
+          "light": {
+            "sky": 0,
+            "red": 0,
+            "green": 0,
+            "blue": 0
+          },
+          "bounce": [
+            0,
+            0,
+            0
+          ]
+        }
+      },
+      "after": {
+        "roomA": {
+          "block": null,
+          "light": {
+            "sky": 0,
+            "red": 0,
+            "green": 0,
+            "blue": 0
+          },
+          "bounce": [
+            0,
+            0,
+            0
+          ]
+        },
+        "roomB": {
+          "block": null,
+          "light": {
+            "sky": 0,
+            "red": 0,
+            "green": 0,
+            "blue": 0
+          },
+          "bounce": [
+            0,
+            0,
+            0
+          ]
+        },
+        "earthReceiver": {
+          "block": "polished_stone",
+          "light": {
+            "sky": 0,
+            "red": 0,
+            "green": 0,
+            "blue": 0
+          },
+          "bounce": [
+            0,
+            0,
+            0
+          ]
+        },
+        "sandReceiver": {
+          "block": "polished_stone",
+          "light": {
+            "sky": 0,
+            "red": 0,
+            "green": 0,
+            "blue": 0
+          },
+          "bounce": [
+            0,
+            0,
+            0
+          ]
+        },
+        "snowReceiver": {
+          "block": "polished_stone",
+          "light": {
+            "sky": 0,
+            "red": 0,
+            "green": 0,
+            "blue": 0
+          },
+          "bounce": [
+            0,
+            0,
+            0
+          ]
+        }
+      },
+      "errors": [],
+      "storage": "WorldStorage + in-memory IndexedDB port, no user data or disk persistence"
+    },
+    {
+      "source": "materials-2026-11-03T23-13-03-488Z-005-materials-save-reload.json",
+      "sha256": "1eb5d7ae53ecd84305a3c303fa2e85a30a97a0fd1634ed01b98afe7a290577c0",
+      "runId": "materials-2026-11-03T23-13-03-488Z",
+      "valid": true,
+      "editState": {
+        "roof": true,
+        "divider": false,
+        "lamp": false,
+        "ground": "dirt"
+      },
+      "maxBounceDifference": 0,
+      "before": {
+        "roomA": {
+          "block": null,
+          "light": {
+            "sky": 15,
+            "red": 0,
+            "green": 0,
+            "blue": 0
+          },
+          "bounce": [
+            0.003855587369325981,
+            0.004089160425217895,
+            0.0038081778629258556
+          ]
+        },
+        "roomB": {
+          "block": null,
+          "light": {
+            "sky": 0,
+            "red": 0,
+            "green": 0,
+            "blue": 0
+          },
+          "bounce": [
+            0,
+            0,
+            0
+          ]
+        },
+        "earthReceiver": {
+          "block": "polished_stone",
+          "light": {
+            "sky": 0,
+            "red": 0,
+            "green": 0,
+            "blue": 0
+          },
+          "bounce": [
+            0,
+            0,
+            0
+          ]
+        },
+        "sandReceiver": {
+          "block": "polished_stone",
+          "light": {
+            "sky": 0,
+            "red": 0,
+            "green": 0,
+            "blue": 0
+          },
+          "bounce": [
+            0,
+            0,
+            0
+          ]
+        },
+        "snowReceiver": {
+          "block": "polished_stone",
+          "light": {
+            "sky": 0,
+            "red": 0,
+            "green": 0,
+            "blue": 0
+          },
+          "bounce": [
+            0,
+            0,
+            0
+          ]
+        }
+      },
+      "after": {
+        "roomA": {
+          "block": null,
+          "light": {
+            "sky": 15,
+            "red": 0,
+            "green": 0,
+            "blue": 0
+          },
+          "bounce": [
+            0.003855587369325981,
+            0.004089160425217895,
+            0.0038081778629258556
+          ]
+        },
+        "roomB": {
+          "block": null,
+          "light": {
+            "sky": 0,
+            "red": 0,
+            "green": 0,
+            "blue": 0
+          },
+          "bounce": [
+            0,
+            0,
+            0
+          ]
+        },
+        "earthReceiver": {
+          "block": "polished_stone",
+          "light": {
+            "sky": 0,
+            "red": 0,
+            "green": 0,
+            "blue": 0
+          },
+          "bounce": [
+            0,
+            0,
+            0
+          ]
+        },
+        "sandReceiver": {
+          "block": "polished_stone",
+          "light": {
+            "sky": 0,
+            "red": 0,
+            "green": 0,
+            "blue": 0
+          },
+          "bounce": [
+            0,
+            0,
+            0
+          ]
+        },
+        "snowReceiver": {
+          "block": "polished_stone",
+          "light": {
+            "sky": 0,
+            "red": 0,
+            "green": 0,
+            "blue": 0
+          },
+          "bounce": [
+            0,
+            0,
+            0
+          ]
+        }
+      },
+      "errors": [],
+      "storage": "WorldStorage + in-memory IndexedDB port, no user data or disk persistence",
+      "scope": "Positive bounced light survives reloading the open-roof room; adjacent closed room remains dark."
+    }
+  ],
+  "benchmarks": [
+    {
+      "source": "materials-2026-11-03T22-50-03-649Z-010-forest-bank-noon-standard-b0-t0-s0-static-plants-full.json",
+      "sha256": "df6050376c6d08fd5ff714a545a37211768633c1929ea604a430240372e7b44d",
+      "runId": "materials-2026-11-03T22-50-03-649Z",
+      "scene": "forest",
+      "camera": "bank",
+      "preset": "noon",
+      "motion": "static",
+      "effects": {
+        "bounce": false,
+        "transmission": false,
+        "specular": false
+      },
+      "valid": true,
+      "gpuValid": true,
+      "durationSeconds": 30,
+      "warmupSeconds": 10,
+      "frame": {
+        "samples": 4274,
+        "medianMs": 6.900000000023283,
+        "p95Ms": 7.2000000000116415,
+        "meanMs": 7.018062704726255,
+        "p99Ms": 8.900000000023283,
+        "maxMs": 16,
+        "averageFps": 142.48946498106358
+      },
+      "cpu": {
+        "samples": 4275,
+        "medianMs": 4.699999809265137,
+        "p95Ms": 8.200000047683716,
+        "meanMs": 4.837941521817481,
+        "p99Ms": 10,
+        "maxMs": 16,
+        "averageFps": 206.6994806552204
+      },
+      "gpu": {
+        "samples": 4275,
+        "medianMs": 6.339584,
+        "p95Ms": 6.642688,
+        "meanMs": 6.059724216140353,
+        "p99Ms": 6.752256,
+        "maxMs": 7.281664,
+        "averageFps": 165.02401170938674
+      },
+      "framesAbove60FpsBudget": 0,
+      "framesAbove33Ms": 0,
+      "gpuDisjointEvents": 0,
+      "gpuSkipped": 0,
+      "geometryChanges": 0,
+      "queues": {
+        "chunks": 0,
+        "dirty": 0,
+        "farMissing": 0
+      },
+      "worldOutput": {
+        "mode": "hdr16f",
+        "width": 1920,
+        "height": 1080,
+        "exposure": 1,
+        "estimatedBytes": 124416000,
+        "samples": 4
+      },
+      "bounce": {
+        "enabled": false,
+        "ready": true,
+        "pending": {
+          "geometry": 0,
+          "sources": 0,
+          "probes": 0,
+          "invalidation": false
+        },
+        "cache": {
+          "surfaces": 2342,
+          "hitCapacity": 642096
+        },
+        "lastFrame": {
+          "milliseconds": 0,
+          "work": 0
+        },
+        "markChunk": {
+          "calls": 24,
+          "milliseconds": 1.2999999523162842,
+          "maxMilliseconds": 0.40000009536743164
+        },
+        "updates": 177,
+        "invalidations": 9,
+        "typedArrayBytes": 3990168,
+        "estimatedCacheBytes": 374720,
+        "memoryBytes": 4364888,
+        "radius": 6,
+        "sourceReach": 96,
+        "rays": 14,
+        "budgetMs": 0.6
+      },
+      "render": {
+        "calls": 337,
+        "triangles": 720533
+      },
+      "memory": {
+        "geometries": 593,
+        "textures": 28
+      },
+      "heapMiB": 215.9599142074585,
+      "errors": []
+    },
+    {
+      "source": "materials-2026-11-03T22-50-03-649Z-011-forest-bank-noon-standard-b1-t1-s1-static-plants-full.json",
+      "sha256": "e68f00781884f58e4f69985f562f9cd8e1c39499735f36b4d79e0b0f8cbdc266",
+      "runId": "materials-2026-11-03T22-50-03-649Z",
+      "scene": "forest",
+      "camera": "bank",
+      "preset": "noon",
+      "motion": "static",
+      "effects": {
+        "bounce": true,
+        "transmission": true,
+        "specular": true
+      },
+      "valid": true,
+      "gpuValid": true,
+      "durationSeconds": 30,
+      "warmupSeconds": 10,
+      "frame": {
+        "samples": 4124,
+        "medianMs": 7,
+        "p95Ms": 7.599999999976717,
+        "meanMs": 7.27160523763336,
+        "p99Ms": 15.199999999953434,
+        "maxMs": 38.300000000046566,
+        "averageFps": 137.52121674931067
+      },
+      "cpu": {
+        "samples": 4125,
+        "medianMs": 4.900000095367432,
+        "p95Ms": 9.399999856948853,
+        "meanMs": 5.200121211947817,
+        "p99Ms": 13.100000143051147,
+        "maxMs": 34.700000047683716,
+        "averageFps": 192.3032097218035
+      },
+      "gpu": {
+        "samples": 4125,
+        "medianMs": 6.459168,
+        "p95Ms": 6.894592,
+        "meanMs": 6.116132530424242,
+        "p99Ms": 7.041792,
+        "maxMs": 7.387136,
+        "averageFps": 163.50201618842874
+      },
+      "framesAbove60FpsBudget": 22,
+      "framesAbove33Ms": 1,
+      "gpuDisjointEvents": 0,
+      "gpuSkipped": 0,
+      "geometryChanges": 0,
+      "queues": {
+        "chunks": 0,
+        "dirty": 0,
+        "farMissing": 0
+      },
+      "worldOutput": {
+        "mode": "hdr16f",
+        "width": 1920,
+        "height": 1080,
+        "exposure": 1,
+        "estimatedBytes": 124416000,
+        "samples": 4
+      },
+      "bounce": {
+        "enabled": true,
+        "ready": true,
+        "pending": {
+          "geometry": 0,
+          "sources": 0,
+          "probes": 0,
+          "invalidation": false
+        },
+        "cache": {
+          "surfaces": 2342,
+          "hitCapacity": 642096
+        },
+        "lastFrame": {
+          "milliseconds": 0,
+          "work": 0
+        },
+        "markChunk": {
+          "calls": 24,
+          "milliseconds": 1.2999999523162842,
+          "maxMilliseconds": 0.40000009536743164
+        },
+        "updates": 177,
+        "invalidations": 9,
+        "typedArrayBytes": 3990168,
+        "estimatedCacheBytes": 374720,
+        "memoryBytes": 4364888,
+        "radius": 6,
+        "sourceReach": 96,
+        "rays": 14,
+        "budgetMs": 0.6
+      },
+      "render": {
+        "calls": 337,
+        "triangles": 720533
+      },
+      "memory": {
+        "geometries": 593,
+        "textures": 28
+      },
+      "heapMiB": 181.60625457763672,
+      "errors": []
+    },
+    {
+      "source": "materials-2026-11-03T22-50-03-649Z-012-forest-bank-noon-standard-b1-t1-s1-static-plants-full.json",
+      "sha256": "062c574160c671a1b13d36c21301d92ecf9590d000a8131da4e60557d99fed74",
+      "runId": "materials-2026-11-03T22-50-03-649Z",
+      "scene": "forest",
+      "camera": "bank",
+      "preset": "noon",
+      "motion": "static",
+      "effects": {
+        "bounce": true,
+        "transmission": true,
+        "specular": true
+      },
+      "valid": true,
+      "gpuValid": true,
+      "durationSeconds": 30,
+      "warmupSeconds": 10,
+      "frame": {
+        "samples": 4131,
+        "medianMs": 7,
+        "p95Ms": 7.599999999976717,
+        "meanMs": 7.2616315662067406,
+        "p99Ms": 15.20000000006985,
+        "maxMs": 26.900000000023283,
+        "averageFps": 137.7100987405741
+      },
+      "cpu": {
+        "samples": 4132,
+        "medianMs": 4.799999952316284,
+        "p95Ms": 9.599999904632568,
+        "meanMs": 5.227057113825179,
+        "p99Ms": 12.5,
+        "maxMs": 19.59999990463257,
+        "averageFps": 191.3122390331405
+      },
+      "gpu": {
+        "samples": 4132,
+        "medianMs": 6.546432,
+        "p95Ms": 6.940672,
+        "meanMs": 6.1705137734753075,
+        "p99Ms": 7.065312,
+        "maxMs": 8.577856,
+        "averageFps": 162.06105953423517
+      },
+      "framesAbove60FpsBudget": 15,
+      "framesAbove33Ms": 0,
+      "gpuDisjointEvents": 0,
+      "gpuSkipped": 0,
+      "geometryChanges": 0,
+      "queues": {
+        "chunks": 0,
+        "dirty": 0,
+        "farMissing": 0
+      },
+      "worldOutput": {
+        "mode": "hdr16f",
+        "width": 1920,
+        "height": 1080,
+        "exposure": 1,
+        "estimatedBytes": 124416000,
+        "samples": 4
+      },
+      "bounce": {
+        "enabled": true,
+        "ready": true,
+        "pending": {
+          "geometry": 0,
+          "sources": 0,
+          "probes": 0,
+          "invalidation": false
+        },
+        "cache": {
+          "surfaces": 2342,
+          "hitCapacity": 642096
+        },
+        "lastFrame": {
+          "milliseconds": 0,
+          "work": 0
+        },
+        "markChunk": {
+          "calls": 24,
+          "milliseconds": 1.2999999523162842,
+          "maxMilliseconds": 0.40000009536743164
+        },
+        "updates": 177,
+        "invalidations": 9,
+        "typedArrayBytes": 3990168,
+        "estimatedCacheBytes": 374720,
+        "memoryBytes": 4364888,
+        "radius": 6,
+        "sourceReach": 96,
+        "rays": 14,
+        "budgetMs": 0.6
+      },
+      "render": {
+        "calls": 337,
+        "triangles": 720533
+      },
+      "memory": {
+        "geometries": 593,
+        "textures": 28
+      },
+      "heapMiB": 190.3162441253662,
+      "errors": []
+    },
+    {
+      "source": "materials-2026-11-03T22-50-03-649Z-013-forest-bank-noon-standard-b0-t0-s0-static-plants-full.json",
+      "sha256": "82a74368e5b1195889d67d47cd5d38341495a5dd0bb58e00f1e6bced1292bbba",
+      "runId": "materials-2026-11-03T22-50-03-649Z",
+      "scene": "forest",
+      "camera": "bank",
+      "preset": "noon",
+      "motion": "static",
+      "effects": {
+        "bounce": false,
+        "transmission": false,
+        "specular": false
+      },
+      "valid": true,
+      "gpuValid": true,
+      "durationSeconds": 30,
+      "warmupSeconds": 10,
+      "frame": {
+        "samples": 4209,
+        "medianMs": 6.900000000023283,
+        "p95Ms": 7.300000000046566,
+        "meanMs": 7.125469232596811,
+        "p99Ms": 14.300000000046566,
+        "maxMs": 23.800000000046566,
+        "averageFps": 140.34163468495663
+      },
+      "cpu": {
+        "samples": 4210,
+        "medianMs": 4.5,
+        "p95Ms": 8.599999904632568,
+        "meanMs": 4.800142519264493,
+        "p99Ms": 11.899999856948853,
+        "maxMs": 20.09999990463257,
+        "averageFps": 208.3271477850258
+      },
+      "gpu": {
+        "samples": 4210,
+        "medianMs": 6.454272,
+        "p95Ms": 6.723584,
+        "meanMs": 6.111290466508315,
+        "p99Ms": 6.864896,
+        "maxMs": 8.442624,
+        "averageFps": 163.63156120303833
+      },
+      "framesAbove60FpsBudget": 14,
+      "framesAbove33Ms": 0,
+      "gpuDisjointEvents": 0,
+      "gpuSkipped": 0,
+      "geometryChanges": 0,
+      "queues": {
+        "chunks": 0,
+        "dirty": 0,
+        "farMissing": 0
+      },
+      "worldOutput": {
+        "mode": "hdr16f",
+        "width": 1920,
+        "height": 1080,
+        "exposure": 1,
+        "estimatedBytes": 124416000,
+        "samples": 4
+      },
+      "bounce": {
+        "enabled": false,
+        "ready": true,
+        "pending": {
+          "geometry": 0,
+          "sources": 0,
+          "probes": 0,
+          "invalidation": false
+        },
+        "cache": {
+          "surfaces": 2342,
+          "hitCapacity": 642096
+        },
+        "lastFrame": {
+          "milliseconds": 0,
+          "work": 0
+        },
+        "markChunk": {
+          "calls": 24,
+          "milliseconds": 1.2999999523162842,
+          "maxMilliseconds": 0.40000009536743164
+        },
+        "updates": 177,
+        "invalidations": 9,
+        "typedArrayBytes": 3990168,
+        "estimatedCacheBytes": 374720,
+        "memoryBytes": 4364888,
+        "radius": 6,
+        "sourceReach": 96,
+        "rays": 14,
+        "budgetMs": 0.6
+      },
+      "render": {
+        "calls": 337,
+        "triangles": 720533
+      },
+      "memory": {
+        "geometries": 593,
+        "textures": 28
+      },
+      "heapMiB": 186.09863758087158,
+      "errors": []
+    },
+    {
+      "source": "materials-2026-11-03T22-50-03-649Z-014-forest-bank-noon-standard-b0-t0-s0-static-plants-full.json",
+      "sha256": "31fffcd7b971e651335f0994e9166ad4724a027b224f98780d1638e93e23db91",
+      "runId": "materials-2026-11-03T22-50-03-649Z",
+      "scene": "forest",
+      "camera": "bank",
+      "preset": "noon",
+      "motion": "static",
+      "effects": {
+        "bounce": false,
+        "transmission": false,
+        "specular": false
+      },
+      "valid": true,
+      "gpuValid": true,
+      "durationSeconds": 30,
+      "warmupSeconds": 10,
+      "frame": {
+        "samples": 4239,
+        "medianMs": 6.900000000023283,
+        "p95Ms": 7.300000000046566,
+        "meanMs": 7.074593064401971,
+        "p99Ms": 13.900000000023283,
+        "maxMs": 19.900000000023283,
+        "averageFps": 141.35088631907507
+      },
+      "cpu": {
+        "samples": 4240,
+        "medianMs": 4.6000001430511475,
+        "p95Ms": 8.299999952316284,
+        "meanMs": 4.798136793386261,
+        "p99Ms": 10.599999904632568,
+        "maxMs": 18.299999952316284,
+        "averageFps": 208.41423307863946
+      },
+      "gpu": {
+        "samples": 4240,
+        "medianMs": 6.471424,
+        "p95Ms": 6.814624,
+        "meanMs": 6.114928535849043,
+        "p99Ms": 6.969344,
+        "maxMs": 7.936832,
+        "averageFps": 163.53420880349705
+      },
+      "framesAbove60FpsBudget": 3,
+      "framesAbove33Ms": 0,
+      "gpuDisjointEvents": 0,
+      "gpuSkipped": 0,
+      "geometryChanges": 0,
+      "queues": {
+        "chunks": 0,
+        "dirty": 0,
+        "farMissing": 0
+      },
+      "worldOutput": {
+        "mode": "hdr16f",
+        "width": 1920,
+        "height": 1080,
+        "exposure": 1,
+        "estimatedBytes": 124416000,
+        "samples": 4
+      },
+      "bounce": {
+        "enabled": false,
+        "ready": true,
+        "pending": {
+          "geometry": 0,
+          "sources": 0,
+          "probes": 0,
+          "invalidation": false
+        },
+        "cache": {
+          "surfaces": 2342,
+          "hitCapacity": 642096
+        },
+        "lastFrame": {
+          "milliseconds": 0,
+          "work": 0
+        },
+        "markChunk": {
+          "calls": 24,
+          "milliseconds": 1.2999999523162842,
+          "maxMilliseconds": 0.40000009536743164
+        },
+        "updates": 177,
+        "invalidations": 9,
+        "typedArrayBytes": 3990168,
+        "estimatedCacheBytes": 374720,
+        "memoryBytes": 4364888,
+        "radius": 6,
+        "sourceReach": 96,
+        "rays": 14,
+        "budgetMs": 0.6
+      },
+      "render": {
+        "calls": 342,
+        "triangles": 751373
+      },
+      "memory": {
+        "geometries": 593,
+        "textures": 28
+      },
+      "heapMiB": 194.59705543518066,
+      "errors": []
+    },
+    {
+      "source": "materials-2026-11-03T22-50-03-649Z-015-forest-bank-noon-standard-b1-t1-s1-static-plants-full.json",
+      "sha256": "d8c52f6108667c5e77d8a61c548daa3e6498e0a498d04e2afc75a4e9f891c631",
+      "runId": "materials-2026-11-03T22-50-03-649Z",
+      "scene": "forest",
+      "camera": "bank",
+      "preset": "noon",
+      "motion": "static",
+      "effects": {
+        "bounce": true,
+        "transmission": true,
+        "specular": true
+      },
+      "valid": true,
+      "gpuValid": true,
+      "durationSeconds": 30,
+      "warmupSeconds": 10,
+      "frame": {
+        "samples": 4210,
+        "medianMs": 6.900000000023283,
+        "p95Ms": 7.300000000046566,
+        "meanMs": 7.1240142517814675,
+        "p99Ms": 14,
+        "maxMs": 24,
+        "averageFps": 140.3702975116782
+      },
+      "cpu": {
+        "samples": 4211,
+        "medianMs": 4.599999904632568,
+        "p95Ms": 8.5,
+        "meanMs": 4.826169557397027,
+        "p99Ms": 11.599999904632568,
+        "maxMs": 19,
+        "averageFps": 207.20366081363818
+      },
+      "gpu": {
+        "samples": 4211,
+        "medianMs": 6.5792,
+        "p95Ms": 7.032832,
+        "meanMs": 6.180700208026593,
+        "p99Ms": 7.149568,
+        "maxMs": 8.02304,
+        "averageFps": 161.7939661110477
+      },
+      "framesAbove60FpsBudget": 7,
+      "framesAbove33Ms": 0,
+      "gpuDisjointEvents": 0,
+      "gpuSkipped": 0,
+      "geometryChanges": 0,
+      "queues": {
+        "chunks": 0,
+        "dirty": 0,
+        "farMissing": 0
+      },
+      "worldOutput": {
+        "mode": "hdr16f",
+        "width": 1920,
+        "height": 1080,
+        "exposure": 1,
+        "estimatedBytes": 124416000,
+        "samples": 4
+      },
+      "bounce": {
+        "enabled": true,
+        "ready": true,
+        "pending": {
+          "geometry": 0,
+          "sources": 0,
+          "probes": 0,
+          "invalidation": false
+        },
+        "cache": {
+          "surfaces": 2342,
+          "hitCapacity": 642096
+        },
+        "lastFrame": {
+          "milliseconds": 0,
+          "work": 0
+        },
+        "markChunk": {
+          "calls": 24,
+          "milliseconds": 1.2999999523162842,
+          "maxMilliseconds": 0.40000009536743164
+        },
+        "updates": 177,
+        "invalidations": 9,
+        "typedArrayBytes": 3990168,
+        "estimatedCacheBytes": 374720,
+        "memoryBytes": 4364888,
+        "radius": 6,
+        "sourceReach": 96,
+        "rays": 14,
+        "budgetMs": 0.6
+      },
+      "render": {
+        "calls": 343,
+        "triangles": 755375
+      },
+      "memory": {
+        "geometries": 593,
+        "textures": 28
+      },
+      "heapMiB": 188.23776245117188,
+      "errors": []
+    },
+    {
+      "source": "materials-2026-11-03T22-50-03-649Z-016-forest-bank-noon-standard-b1-t0-s0-static-plants-full.json",
+      "sha256": "a86e91c515b222d81c50ea7f300ce923b80b1ae420fb70182f049282930d5689",
+      "runId": "materials-2026-11-03T22-50-03-649Z",
+      "scene": "forest",
+      "camera": "bank",
+      "preset": "noon",
+      "motion": "static",
+      "effects": {
+        "bounce": true,
+        "transmission": false,
+        "specular": false
+      },
+      "valid": true,
+      "gpuValid": true,
+      "durationSeconds": 30,
+      "warmupSeconds": 10,
+      "frame": {
+        "samples": 4235,
+        "medianMs": 6.900000000023283,
+        "p95Ms": 7.300000000046566,
+        "meanMs": 7.081605667060207,
+        "p99Ms": 13.900000000023283,
+        "maxMs": 22.099999999976717,
+        "averageFps": 141.2109127526626
+      },
+      "cpu": {
+        "samples": 4236,
+        "medianMs": 4.5,
+        "p95Ms": 8.5,
+        "meanMs": 4.756067042873084,
+        "p99Ms": 10.700000047683716,
+        "maxMs": 17.799999952316284,
+        "averageFps": 210.25775940195996
+      },
+      "gpu": {
+        "samples": 4236,
+        "medianMs": 6.597632,
+        "p95Ms": 6.986752,
+        "meanMs": 6.15998631916902,
+        "p99Ms": 7.126016,
+        "maxMs": 7.636992,
+        "averageFps": 162.33802287646958
+      },
+      "framesAbove60FpsBudget": 8,
+      "framesAbove33Ms": 0,
+      "gpuDisjointEvents": 0,
+      "gpuSkipped": 0,
+      "geometryChanges": 0,
+      "queues": {
+        "chunks": 0,
+        "dirty": 0,
+        "farMissing": 0
+      },
+      "worldOutput": {
+        "mode": "hdr16f",
+        "width": 1920,
+        "height": 1080,
+        "exposure": 1,
+        "estimatedBytes": 124416000,
+        "samples": 4
+      },
+      "bounce": {
+        "enabled": true,
+        "ready": true,
+        "pending": {
+          "geometry": 0,
+          "sources": 0,
+          "probes": 0,
+          "invalidation": false
+        },
+        "cache": {
+          "surfaces": 2342,
+          "hitCapacity": 642096
+        },
+        "lastFrame": {
+          "milliseconds": 0,
+          "work": 0
+        },
+        "markChunk": {
+          "calls": 24,
+          "milliseconds": 1.2999999523162842,
+          "maxMilliseconds": 0.40000009536743164
+        },
+        "updates": 177,
+        "invalidations": 9,
+        "typedArrayBytes": 3990168,
+        "estimatedCacheBytes": 374720,
+        "memoryBytes": 4364888,
+        "radius": 6,
+        "sourceReach": 96,
+        "rays": 14,
+        "budgetMs": 0.6
+      },
+      "render": {
+        "calls": 337,
+        "triangles": 720533
+      },
+      "memory": {
+        "geometries": 593,
+        "textures": 28
+      },
+      "heapMiB": 179.7014617919922,
+      "errors": []
+    },
+    {
+      "source": "materials-2026-11-03T22-50-03-649Z-017-forest-bank-noon-standard-b0-t1-s0-static-plants-full.json",
+      "sha256": "f26580d24a96a6e1275be15cc398c32ef0aacf443953349c97a7699c5d20dd23",
+      "runId": "materials-2026-11-03T22-50-03-649Z",
+      "scene": "forest",
+      "camera": "bank",
+      "preset": "noon",
+      "motion": "static",
+      "effects": {
+        "bounce": false,
+        "transmission": true,
+        "specular": false
+      },
+      "valid": true,
+      "gpuValid": true,
+      "durationSeconds": 30,
+      "warmupSeconds": 10,
+      "frame": {
+        "samples": 4274,
+        "medianMs": 6.900000000023283,
+        "p95Ms": 7.200000000069849,
+        "meanMs": 7.018273280299479,
+        "p99Ms": 8.400000000023283,
+        "maxMs": 20.900000000023283,
+        "averageFps": 142.48518974133316
+      },
+      "cpu": {
+        "samples": 4275,
+        "medianMs": 4.3999998569488525,
+        "p95Ms": 7.8999998569488525,
+        "meanMs": 4.620561404423407,
+        "p99Ms": 9.899999856948853,
+        "maxMs": 16,
+        "averageFps": 216.42391745788052
+      },
+      "gpu": {
+        "samples": 4275,
+        "medianMs": 6.502336,
+        "p95Ms": 6.794048,
+        "meanMs": 6.128287498479528,
+        "p99Ms": 6.914048,
+        "maxMs": 7.392256,
+        "averageFps": 163.1777230177447
+      },
+      "framesAbove60FpsBudget": 2,
+      "framesAbove33Ms": 0,
+      "gpuDisjointEvents": 0,
+      "gpuSkipped": 0,
+      "geometryChanges": 0,
+      "queues": {
+        "chunks": 0,
+        "dirty": 0,
+        "farMissing": 0
+      },
+      "worldOutput": {
+        "mode": "hdr16f",
+        "width": 1920,
+        "height": 1080,
+        "exposure": 1,
+        "estimatedBytes": 124416000,
+        "samples": 4
+      },
+      "bounce": {
+        "enabled": false,
+        "ready": true,
+        "pending": {
+          "geometry": 0,
+          "sources": 0,
+          "probes": 0,
+          "invalidation": false
+        },
+        "cache": {
+          "surfaces": 2342,
+          "hitCapacity": 642096
+        },
+        "lastFrame": {
+          "milliseconds": 0,
+          "work": 0
+        },
+        "markChunk": {
+          "calls": 24,
+          "milliseconds": 1.2999999523162842,
+          "maxMilliseconds": 0.40000009536743164
+        },
+        "updates": 177,
+        "invalidations": 9,
+        "typedArrayBytes": 3990168,
+        "estimatedCacheBytes": 374720,
+        "memoryBytes": 4364888,
+        "radius": 6,
+        "sourceReach": 96,
+        "rays": 14,
+        "budgetMs": 0.6
+      },
+      "render": {
+        "calls": 337,
+        "triangles": 720533
+      },
+      "memory": {
+        "geometries": 593,
+        "textures": 28
+      },
+      "heapMiB": 185.9349489212036,
+      "errors": []
+    },
+    {
+      "source": "materials-2026-11-03T22-50-03-649Z-018-forest-bank-noon-standard-b0-t0-s1-static-plants-full.json",
+      "sha256": "da91964a9aa1c8c71ca3ad640697fb24c6e45d8aaf648996631026fe250dc40b",
+      "runId": "materials-2026-11-03T22-50-03-649Z",
+      "scene": "forest",
+      "camera": "bank",
+      "preset": "noon",
+      "motion": "static",
+      "effects": {
+        "bounce": false,
+        "transmission": false,
+        "specular": true
+      },
+      "valid": true,
+      "gpuValid": true,
+      "durationSeconds": 30,
+      "warmupSeconds": 10,
+      "frame": {
+        "samples": 4271,
+        "medianMs": 6.900000000023283,
+        "p95Ms": 7.200000000069849,
+        "meanMs": 7.023460547881075,
+        "p99Ms": 8.70000000006985,
+        "maxMs": 24.5,
+        "averageFps": 142.3799554625095
+      },
+      "cpu": {
+        "samples": 4272,
+        "medianMs": 4.400000095367432,
+        "p95Ms": 7.700000047683716,
+        "meanMs": 4.600678838426701,
+        "p99Ms": 9.899999856948853,
+        "maxMs": 17.700000047683716,
+        "averageFps": 217.3592278703747
+      },
+      "gpu": {
+        "samples": 4272,
+        "medianMs": 6.493184,
+        "p95Ms": 6.843392,
+        "meanMs": 6.118812696629217,
+        "p99Ms": 7.0144,
+        "maxMs": 7.58048,
+        "averageFps": 163.43039893195103
+      },
+      "framesAbove60FpsBudget": 7,
+      "framesAbove33Ms": 0,
+      "gpuDisjointEvents": 0,
+      "gpuSkipped": 0,
+      "geometryChanges": 0,
+      "queues": {
+        "chunks": 0,
+        "dirty": 0,
+        "farMissing": 0
+      },
+      "worldOutput": {
+        "mode": "hdr16f",
+        "width": 1920,
+        "height": 1080,
+        "exposure": 1,
+        "estimatedBytes": 124416000,
+        "samples": 4
+      },
+      "bounce": {
+        "enabled": false,
+        "ready": true,
+        "pending": {
+          "geometry": 0,
+          "sources": 0,
+          "probes": 0,
+          "invalidation": false
+        },
+        "cache": {
+          "surfaces": 2342,
+          "hitCapacity": 642096
+        },
+        "lastFrame": {
+          "milliseconds": 0,
+          "work": 0
+        },
+        "markChunk": {
+          "calls": 24,
+          "milliseconds": 1.2999999523162842,
+          "maxMilliseconds": 0.40000009536743164
+        },
+        "updates": 177,
+        "invalidations": 9,
+        "typedArrayBytes": 3990168,
+        "estimatedCacheBytes": 374720,
+        "memoryBytes": 4364888,
+        "radius": 6,
+        "sourceReach": 96,
+        "rays": 14,
+        "budgetMs": 0.6
+      },
+      "render": {
+        "calls": 343,
+        "triangles": 755375
+      },
+      "memory": {
+        "geometries": 593,
+        "textures": 28
+      },
+      "heapMiB": 203.32094955444336,
+      "errors": []
+    }
+  ],
+  "acceptance": {
+    "gpuDeltaTargetMs": 1,
+    "targetFps": 60,
+    "performance": {
+      "status": "Working GPU budget met in static paired tests and one matched movement pair; occasional frame-budget overruns remain in both OFF and ON",
+      "gpuDeltaTargetMs": 1,
+      "observedMedianPairedGpuDeltaMs": 0.10777600000000032,
+      "scope": "Same 0.58.0 renderer and HDR; standard profile; forest-bank noon, static camera with animated plants.",
+      "movement": {
+        "averageFps": 122.33578004893437,
+        "frameP95Ms": 14.199999999953434,
+        "frameP99Ms": 20.800000000046566,
+        "framesAbove60FpsBudget": 371,
+        "totalFrameSamples": 22020,
+        "stable60FpsEveryFrame": false,
+        "attribution": "ON shows additional CPU cost and more long frames. Significant spikes also occur with all new effects OFF. Neither all stutter attributed to streaming nor ideal stable60FPS is demonstrated.",
+        "controlOffAverageFps": 132.43462023315652,
+        "observedGpuMedianDeltaMs": 0.19791999999999987
+      }
+    },
+    "foliage": "Revised native backlit view confirmed visually and by PNG pixels; native pair combines all effects, isolated semantics covered by renderer pixel tests.",
+    "android": "not tested; PC scope",
+    "save": "Native closed dark room and lit open-roof roundtrips valid; exact bounce match, closed adjacent room remains dark.",
+    "menu": "Functional live-menu regression passed: eight captures ready, complete LOD, zero JS/shader errors or output violations; timings not a formal FPS test."
+  },
+  "limitations": [
+    "First foliage OFF/ON pair is an occluded-source control: the oak obscures the bushes and the room blocks the low western sun.",
+    "Native saved-state 008 is a zero-light regression, not positive bounced-light evidence. CPU save regression also covers a lit open roof.",
+    "Native memory storage checks real WorldStorage logic but not disk persistence.",
+    "Static ON trials contain 22/15/7 frame intervals above 16.67ms, with one above33.33ms and max38.3ms; not a zero-stutter guarantee.",
+    "Isolated effect variants are single exploratory samples after paired trials; their differences are not additive.",
+    "OFF uses current 0.58.0 shaders and profile attributes; it is not an old 0.57.0 executable comparison.",
+    "The 180-second ON route has 371/22020 frame intervals above 16.67ms, 10 above 33.33ms, and max53ms. GPU percentiles have headroom, but ideal stable60 is not demonstrated.",
+    "The 180-second endpoint solver was still pending near the moving camera; typed arrays stayed fixed while estimated cache memory increased. Two memory snapshots cannot establish peak usage or long-session growth.",
+    "Final native foliage PNGs are1904x1041 while the WebGL drawing buffer and performance viewport are1920x1080; pixel coordinates refer to actual PNG pixels.",
+    "Final native foliage OFF/ON pair enables bounce/transmission/specular together. It confirms real image response but does not numerically isolate transmission.",
+    "Matched movement ON/OFF runs both include463 geometry changes. CPU median grows by1.1ms and budget-overrun frequency by0.745percentage points with effects ON; single-pair differences are not exact causal per-effect allocations.",
+    "Menu tour is functional coverage, not a formal FPS benchmark; camera sample counts are short and unequal, and terrain-ready does not imply bounce solver fully settled."
+  ],
+  "pairedPerformance": {
+    "source": "materials-2026-11-03T22-50-03-649Z-019-effects-paired-benchmarks.json",
+    "sha256": "e6b5684818cd69fa0ae5220ca0e6c142068d7223e3db6622bfad81b05f2c23f5",
+    "failure": null,
+    "protocol": "Same renderer/HDR/exposure/shadows; standard profile; OFF/ON, ON/OFF, OFF/ON, then isolated bounce/transmission/specular.",
+    "pairs": [
+      {
+        "pair": 1,
+        "order": "OFF/ON",
+        "off": "materials-2026-11-03T22-50-03-649Z-010-forest-bank-noon-standard-b0-t0-s0-static-plants-full.json",
+        "on": "materials-2026-11-03T22-50-03-649Z-011-forest-bank-noon-standard-b1-t1-s1-static-plants-full.json",
+        "gpuMedianOffMs": 6.339584,
+        "gpuMedianOnMs": 6.459168,
+        "gpuMedianDeltaMs": 0.11958399999999969,
+        "gpuMedianDeltaPercent": 1.886306735583898,
+        "gpuP95DeltaMs": 0.25190400000000057,
+        "cpuMedianDeltaMs": 0.20000028610229492,
+        "cpuP95DeltaMs": 1.1999998092651367
+      },
+      {
+        "pair": 2,
+        "order": "ON/OFF",
+        "off": "materials-2026-11-03T22-50-03-649Z-013-forest-bank-noon-standard-b0-t0-s0-static-plants-full.json",
+        "on": "materials-2026-11-03T22-50-03-649Z-012-forest-bank-noon-standard-b1-t1-s1-static-plants-full.json",
+        "gpuMedianOffMs": 6.454272,
+        "gpuMedianOnMs": 6.546432,
+        "gpuMedianDeltaMs": 0.09216000000000069,
+        "gpuMedianDeltaPercent": 1.4278914802475118,
+        "gpuP95DeltaMs": 0.2170880000000004,
+        "cpuMedianDeltaMs": 0.2999999523162842,
+        "cpuP95DeltaMs": 1
+      },
+      {
+        "pair": 3,
+        "order": "OFF/ON",
+        "off": "materials-2026-11-03T22-50-03-649Z-014-forest-bank-noon-standard-b0-t0-s0-static-plants-full.json",
+        "on": "materials-2026-11-03T22-50-03-649Z-015-forest-bank-noon-standard-b1-t1-s1-static-plants-full.json",
+        "gpuMedianOffMs": 6.471424,
+        "gpuMedianOnMs": 6.5792,
+        "gpuMedianDeltaMs": 0.10777600000000032,
+        "gpuMedianDeltaPercent": 1.6654139799833878,
+        "gpuP95DeltaMs": 0.21820799999999974,
+        "cpuMedianDeltaMs": -2.384185791015625e-7,
+        "cpuP95DeltaMs": 0.20000004768371582
+      }
+    ],
+    "medianPairedGpuDeltaMs": 0.10777600000000032,
+    "medianPairedGpuDeltaPercent": 1.6654139799833878,
+    "medianPairedGpuP95DeltaMs": 0.21820799999999974,
+    "medianPairedCpuDeltaMs": 0.20000028610229492,
+    "medianPairedCpuP95DeltaMs": 1,
+    "singleEffectReferenceGpuMs": 6.454272,
+    "singleEffects": [
+      {
+        "effect": "bounce",
+        "source": "materials-2026-11-03T22-50-03-649Z-016-forest-bank-noon-standard-b1-t0-s0-static-plants-full.json",
+        "gpuMedianMs": 6.597632,
+        "gpuP95Ms": 6.986752,
+        "gpuDeltaFromMedianOffMs": 0.14336000000000038
+      },
+      {
+        "effect": "transmission",
+        "source": "materials-2026-11-03T22-50-03-649Z-017-forest-bank-noon-standard-b0-t1-s0-static-plants-full.json",
+        "gpuMedianMs": 6.502336,
+        "gpuP95Ms": 6.794048,
+        "gpuDeltaFromMedianOffMs": 0.04806400000000011
+      },
+      {
+        "effect": "specular",
+        "source": "materials-2026-11-03T22-50-03-649Z-018-forest-bank-noon-standard-b0-t0-s1-static-plants-full.json",
+        "gpuMedianMs": 6.493184,
+        "gpuP95Ms": 6.843392,
+        "gpuDeltaFromMedianOffMs": 0.038912000000000724
+      }
+    ],
+    "singleEffectNote": "Each isolated variant measured once after paired trials; differences are diagnostic and must not be summed.",
+    "onFramesAboveBudget": [
+      {
+        "source": "materials-2026-11-03T22-50-03-649Z-011-forest-bank-noon-standard-b1-t1-s1-static-plants-full.json",
+        "samples": 4124,
+        "above16_67Ms": 22,
+        "above33_33Ms": 1,
+        "p99Ms": 15.199999999953434,
+        "maxMs": 38.300000000046566
+      },
+      {
+        "source": "materials-2026-11-03T22-50-03-649Z-012-forest-bank-noon-standard-b1-t1-s1-static-plants-full.json",
+        "samples": 4131,
+        "above16_67Ms": 15,
+        "above33_33Ms": 0,
+        "p99Ms": 15.20000000006985,
+        "maxMs": 26.900000000023283
+      },
+      {
+        "source": "materials-2026-11-03T22-50-03-649Z-015-forest-bank-noon-standard-b1-t1-s1-static-plants-full.json",
+        "samples": 4210,
+        "above16_67Ms": 7,
+        "above33_33Ms": 0,
+        "p99Ms": 14,
+        "maxMs": 24
+      }
+    ]
+  },
+  "nativeConfiguration": {
+    "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 3050 Laptop GPU (0x000025A2) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "width": 1920,
+    "height": 1080,
+    "devicePixelRatio": 1,
+    "webgl2": true,
+    "gpuTimerSupported": true,
+    "antialiasContext": true,
+    "lightingLook": "natural",
+    "lightingMaterials": "standard",
+    "viewDistance": 64,
+    "farTerrain": 1024,
+    "farDetail": 2,
+    "shadows": 3,
+    "lightShafts": true,
+    "bounceStrength": 18,
+    "bounceSaturation": 65,
+    "worldOutput": {
+      "mode": "hdr16f",
+      "width": 1920,
+      "height": 1080,
+      "exposure": 1,
+      "estimatedBytes": 124416000,
+      "samples": 4
+    },
+    "brightness": 0,
+    "cloudCover": 0,
+    "time": 0.5,
+    "seed": 2138286349,
+    "view": {
+      "position": [
+        188,
+        54.6,
+        -252
+      ],
+      "target": [
+        168,
+        52,
+        -265
+      ]
+    }
+  },
+  "movement": {
+    "source": "materials-2026-11-03T22-50-03-649Z-020-forest-bank-noon-standard-b1-t1-s1-walk-plants-full.json",
+    "sha256": "4fdb6e427aa37ac15eb4cba213b23e0c1beb94afd94333239926b2802b86c34b",
+    "runId": "materials-2026-11-03T22-50-03-649Z",
+    "scene": "forest",
+    "seed": 2138286349,
+    "camera": "bank",
+    "preset": "noon",
+    "motion": "walk",
+    "motionPeriodSeconds": 180,
+    "benchmarkKind": "movement-including-streaming",
+    "effects": {
+      "bounce": true,
+      "transmission": true,
+      "specular": true
+    },
+    "valid": true,
+    "gpuValid": true,
+    "durationSeconds": 180,
+    "warmupSeconds": 10,
+    "startedAt": "2026-11-03T23:07:08.989Z",
+    "frame": {
+      "samples": 22020,
+      "medianMs": 7,
+      "p95Ms": 14.199999999953434,
+      "meanMs": 8.174223433242503,
+      "p99Ms": 20.800000000046566,
+      "maxMs": 53,
+      "averageFps": 122.33578004893437
+    },
+    "cpu": {
+      "samples": 22021,
+      "medianMs": 7,
+      "p95Ms": 12.200000047683716,
+      "meanMs": 7.157449707186551,
+      "p99Ms": 17.399999856948853,
+      "maxMs": 51.59999990463257,
+      "averageFps": 139.71456886325504
+    },
+    "updateCpu": {
+      "samples": 22021,
+      "medianMs": 1,
+      "p95Ms": 2.0999999046325684,
+      "meanMs": 1.2441396985119626,
+      "p99Ms": 3.3999998569488525,
+      "maxMs": 47.200000047683716,
+      "averageFps": 803.7682594615679
+    },
+    "renderCpu": {
+      "samples": 22021,
+      "medianMs": 5.8999998569488525,
+      "p95Ms": 10.599999904632568,
+      "meanMs": 5.913310008674588,
+      "p99Ms": 14.200000047683716,
+      "maxMs": 30,
+      "averageFps": 169.11002442507498
+    },
+    "gpu": {
+      "samples": 22021,
+      "medianMs": 6.147072,
+      "p95Ms": 7.673856,
+      "meanMs": 6.277236342763726,
+      "p99Ms": 9.017344,
+      "maxMs": 27.414528,
+      "averageFps": 159.3057749295644
+    },
+    "gpuDisjointEvents": 0,
+    "gpuSkipped": 0,
+    "geometryChanges": 463,
+    "framesAbove60FpsBudget": 371,
+    "framesAbove33Ms": 10,
+    "fractionFramesAbove60FpsBudget": 0.01684831970935513,
+    "before": {
+      "chunks": 142,
+      "queued": 0,
+      "dirty": 0,
+      "meshVersion": 233,
+      "far": {
+        "active": true,
+        "shown": 351,
+        "wanted": 351,
+        "missing": 0,
+        "cached": 428,
+        "triangles": 861776,
+        "shadowRevision": 464,
+        "profile": "game",
+        "detailDistance": 800,
+        "detailTiers": [
+          {
+            "distance": 800,
+            "spacing": 4
+          }
+        ],
+        "maxDistance": null,
+        "targetSpacing": 4,
+        "lodWithinTarget": {
+          "1": 88,
+          "2": 69,
+          "4": 128
+        },
+        "workers": 3
+      },
+      "shadow": {
+        "budget": {
+          "draws": 24,
+          "triangles": 120000,
+          "milliseconds": 1.5
+        },
+        "lastFrame": {
+          "draws": 0,
+          "triangles": 0,
+          "completed": 0,
+          "prepareMilliseconds": 0,
+          "submitMilliseconds": 0
+        },
+        "plants": {
+          "enabled": true,
+          "budget": {
+            "draws": 8,
+            "triangles": 40000,
+            "milliseconds": 0.5
+          },
+          "lastFrame": {
+            "draws": 0,
+            "triangles": 0
+          },
+          "radius": 32,
+          "size": 1024,
+          "interval": 0.1,
+          "valid": true,
+          "building": false,
+          "draws": 4121,
+          "remaining": 0,
+          "sampleTime": 1019.2720999973659,
+          "age": 0.04880000000004657
+        },
+        "cascades": [
+          {
+            "name": "far",
+            "radius": 256,
+            "size": 1024,
+            "valid": true,
+            "building": false,
+            "remaining": 0,
+            "draws": 30,
+            "terrainRevision": 464,
+            "changed": false
+          },
+          {
+            "name": "distant",
+            "radius": 1024,
+            "size": 2048,
+            "valid": true,
+            "building": false,
+            "remaining": 0,
+            "draws": 24,
+            "terrainRevision": 464,
+            "changed": false
+          }
+        ]
+      },
+      "bounce": {
+        "enabled": true,
+        "ready": true,
+        "pending": {
+          "geometry": 0,
+          "sources": 0,
+          "probes": 0,
+          "invalidation": false
+        },
+        "cache": {
+          "surfaces": 2342,
+          "hitCapacity": 642096
+        },
+        "lastFrame": {
+          "milliseconds": 0,
+          "work": 0
+        },
+        "markChunk": {
+          "calls": 199,
+          "milliseconds": 4.700001001358032,
+          "maxMilliseconds": 0.7000000476837158
+        },
+        "updates": 564,
+        "invalidations": 51,
+        "typedArrayBytes": 3990168,
+        "estimatedCacheBytes": 374720,
+        "memoryBytes": 4364888,
+        "radius": 6,
+        "sourceReach": 96,
+        "rays": 14,
+        "budgetMs": 0.6
+      },
+      "worldOutput": {
+        "mode": "hdr16f",
+        "width": 1920,
+        "height": 1080,
+        "exposure": 1,
+        "estimatedBytes": 124416000,
+        "samples": 4
+      },
+      "render": {
+        "frame": 1170832,
+        "calls": 356,
+        "triangles": 764869,
+        "points": 96,
+        "lines": 0
+      },
+      "memory": {
+        "geometries": 796,
+        "textures": 28
+      },
+      "programs": 22,
+      "failedPrograms": 0,
+      "heapMiB": 259.3810863494873
+    },
+    "after": {
+      "chunks": 148,
+      "queued": 0,
+      "dirty": 0,
+      "meshVersion": 696,
+      "far": {
+        "active": true,
+        "shown": 354,
+        "wanted": 354,
+        "missing": 0,
+        "cached": 533,
+        "triangles": 845694,
+        "shadowRevision": 775,
+        "profile": "game",
+        "detailDistance": 800,
+        "detailTiers": [
+          {
+            "distance": 800,
+            "spacing": 4
+          }
+        ],
+        "maxDistance": null,
+        "targetSpacing": 4,
+        "lodWithinTarget": {
+          "1": 96,
+          "2": 71,
+          "4": 127
+        },
+        "workers": 3
+      },
+      "shadow": {
+        "budget": {
+          "draws": 24,
+          "triangles": 120000,
+          "milliseconds": 1.5
+        },
+        "lastFrame": {
+          "draws": 0,
+          "triangles": 0,
+          "completed": 0,
+          "prepareMilliseconds": 0,
+          "submitMilliseconds": 0
+        },
+        "plants": {
+          "enabled": true,
+          "budget": {
+            "draws": 8,
+            "triangles": 40000,
+            "milliseconds": 0.5
+          },
+          "lastFrame": {
+            "draws": 0,
+            "triangles": 0
+          },
+          "radius": 32,
+          "size": 1024,
+          "interval": 0.1,
+          "valid": true,
+          "building": false,
+          "draws": 5465,
+          "remaining": 0,
+          "sampleTime": 1209.2673999973795,
+          "age": 0.05569999999995343
+        },
+        "cascades": [
+          {
+            "name": "far",
+            "radius": 256,
+            "size": 1024,
+            "valid": true,
+            "building": false,
+            "remaining": 0,
+            "draws": 108,
+            "terrainRevision": 775,
+            "changed": false
+          },
+          {
+            "name": "distant",
+            "radius": 1024,
+            "size": 2048,
+            "valid": true,
+            "building": false,
+            "remaining": 0,
+            "draws": 94,
+            "terrainRevision": 775,
+            "changed": false
+          }
+        ]
+      },
+      "bounce": {
+        "enabled": true,
+        "ready": false,
+        "pending": {
+          "geometry": 38387,
+          "sources": 2,
+          "probes": 1,
+          "invalidation": false
+        },
+        "cache": {
+          "surfaces": 27,
+          "hitCapacity": 642096
+        },
+        "lastFrame": {
+          "milliseconds": 0.7000000476837158,
+          "work": 50
+        },
+        "markChunk": {
+          "calls": 684,
+          "milliseconds": 8.100000381469727,
+          "maxMilliseconds": 0.7000000476837158
+        },
+        "updates": 1980,
+        "invalidations": 190,
+        "typedArrayBytes": 3990168,
+        "estimatedCacheBytes": 1232800,
+        "memoryBytes": 5222968,
+        "radius": 6,
+        "sourceReach": 96,
+        "rays": 14,
+        "budgetMs": 0.6
+      },
+      "worldOutput": {
+        "mode": "hdr16f",
+        "width": 1920,
+        "height": 1080,
+        "exposure": 1,
+        "estimatedBytes": 124416000,
+        "samples": 4
+      },
+      "render": {
+        "frame": 1414347,
+        "calls": 569,
+        "triangles": 1138383,
+        "points": 96,
+        "lines": 0
+      },
+      "memory": {
+        "geometries": 960,
+        "textures": 28
+      },
+      "programs": 23,
+      "failedPrograms": 0,
+      "heapMiB": 313.3975839614868
+    },
+    "errors": [],
+    "controlOff": "materials-2026-11-03T23-13-03-488Z-007-forest-bank-noon-standard-b0-t0-s0-walk-plants-full.json",
+    "scope": "Continuous 180-second movement including streaming; valid sampling does not imply zero stutter or a fully settled endpoint solver."
+  },
+  "nativeFoliagePixels": {
+    "run": "materials-2026-11-03T23-13-03-488Z",
+    "off": {
+      "file": "materials-2026-11-03T23-13-03-488Z-002-materialy-leafBack-sunset-standard-b0-t0-s0-static-plants-full.png",
+      "sha256": "b812e790e2b1765e9064e8f90fe4f14eb0ba76c75632f22ef3ecb8af9972fdf5",
+      "width": 1904,
+      "height": 1041
+    },
+    "on": {
+      "file": "materials-2026-11-03T23-13-03-488Z-003-materialy-leafBack-sunset-standard-b1-t1-s1-static-plants-full.png",
+      "sha256": "46fdf7bca34aa39008dfd34c2fec44deb3c48dfb3e2ee8737c74241326c6ff21",
+      "width": 1904,
+      "height": 1041
+    },
+    "rois": [
+      {
+        "name": "blueberry central",
+        "rect": {
+          "x": 865,
+          "y": 548,
+          "width": 82,
+          "height": 72
+        },
+        "count": 5904,
+        "changed": 4203,
+        "positivePixels": 4203,
+        "negativePixels": 0,
+        "meanDelta": [
+          1.8246951219512195,
+          2.7557588075880757,
+          0.3350271002710027
+        ],
+        "meanBefore": [
+          39.24593495934959,
+          39.4359756097561,
+          19.554369918699187
+        ],
+        "meanAfter": [
+          41.07063008130081,
+          42.19173441734417,
+          19.88939701897019
+        ],
+        "maxChannelDelta": 17,
+        "examples": [
+          {
+            "x": 867,
+            "y": 565,
+            "before": [
+              23,
+              30,
+              11
+            ],
+            "after": [
+              39,
+              47,
+              13
+            ],
+            "delta": [
+              16,
+              17,
+              2
+            ]
+          }
+        ]
+      },
+      {
+        "name": "blueberry green mask",
+        "rect": {
+          "x": 865,
+          "y": 548,
+          "width": 82,
+          "height": 72
+        },
+        "count": 4633,
+        "changed": 3908,
+        "positivePixels": 3908,
+        "negativePixels": 0,
+        "meanDelta": [
+          2.2751996546514137,
+          3.402978631556227,
+          0.39261817396935034
+        ],
+        "meanBefore": [
+          20.38938053097345,
+          28.49169004964386,
+          9.35959421541118
+        ],
+        "meanAfter": [
+          22.664580185624864,
+          31.894668681200088,
+          9.752212389380531
+        ],
+        "maxChannelDelta": 17,
+        "examples": [
+          {
+            "x": 867,
+            "y": 565,
+            "before": [
+              23,
+              30,
+              11
+            ],
+            "after": [
+              39,
+              47,
+              13
+            ],
+            "delta": [
+              16,
+              17,
+              2
+            ]
+          }
+        ]
+      },
+      {
+        "name": "blueberry interior",
+        "rect": {
+          "x": 893,
+          "y": 567,
+          "width": 35,
+          "height": 34
+        },
+        "count": 1190,
+        "changed": 893,
+        "positivePixels": 893,
+        "negativePixels": 0,
+        "meanDelta": [
+          1.7201680672268909,
+          2.610924369747899,
+          0.3226890756302521
+        ],
+        "meanBefore": [
+          18.847899159663864,
+          22.454621848739496,
+          9.897478991596639
+        ],
+        "meanAfter": [
+          20.568067226890758,
+          25.065546218487395,
+          10.22016806722689
+        ],
+        "maxChannelDelta": 15,
+        "examples": [
+          {
+            "x": 898,
+            "y": 577,
+            "before": [
+              22,
+              29,
+              10
+            ],
+            "after": [
+              36,
+              44,
+              12
+            ],
+            "delta": [
+              14,
+              15,
+              2
+            ]
+          }
+        ]
+      },
+      {
+        "name": "fern",
+        "rect": {
+          "x": 1055,
+          "y": 548,
+          "width": 87,
+          "height": 67
+        },
+        "count": 5829,
+        "changed": 2318,
+        "positivePixels": 2318,
+        "negativePixels": 0,
+        "meanDelta": [
+          0.05747126436781609,
+          0.4297478126608338,
+          0.033453422542460115
+        ],
+        "meanBefore": [
+          72.54692056956597,
+          69.10379138788815,
+          37.7829816435066
+        ],
+        "meanAfter": [
+          72.60439183393378,
+          69.53353920054897,
+          37.81643506604907
+        ],
+        "maxChannelDelta": 2,
+        "examples": [
+          {
+            "x": 1056,
+            "y": 588,
+            "before": [
+              34,
+              51,
+              15
+            ],
+            "after": [
+              34,
+              53,
+              15
+            ],
+            "delta": [
+              0,
+              2,
+              0
+            ]
+          }
+        ]
+      },
+      {
+        "name": "sky control",
+        "rect": {
+          "x": 730,
+          "y": 300,
+          "width": 350,
+          "height": 160
+        },
+        "count": 56000,
+        "changed": 0,
+        "positivePixels": 0,
+        "negativePixels": 0,
+        "meanDelta": [
+          0,
+          0,
+          0
+        ],
+        "meanBefore": [
+          162.01530357142857,
+          140.47239285714286,
+          139.86844642857142
+        ],
+        "meanAfter": [
+          162.01530357142857,
+          140.47239285714286,
+          139.86844642857142
+        ],
+        "maxChannelDelta": 0,
+        "examples": [
+          {
+            "x": 730,
+            "y": 300,
+            "before": [
+              147,
+              132,
+              139
+            ],
+            "after": [
+              147,
+              132,
+              139
+            ],
+            "delta": [
+              0,
+              0,
+              0
+            ]
+          }
+        ]
+      },
+      {
+        "name": "ground control",
+        "rect": {
+          "x": 870,
+          "y": 700,
+          "width": 100,
+          "height": 80
+        },
+        "count": 8000,
+        "changed": 8000,
+        "positivePixels": 8000,
+        "negativePixels": 0,
+        "meanDelta": [
+          0.350375,
+          1.48925,
+          0.141375
+        ],
+        "meanBefore": [
+          20.1875,
+          48.9535,
+          9.082
+        ],
+        "meanAfter": [
+          20.537875,
+          50.44275,
+          9.223375
+        ],
+        "maxChannelDelta": 2,
+        "examples": [
+          {
+            "x": 870,
+            "y": 700,
+            "before": [
+              21,
+              48,
+              11
+            ],
+            "after": [
+              21,
+              50,
+              11
+            ],
+            "delta": [
+              0,
+              2,
+              0
+            ]
+          }
+        ]
+      }
+    ],
+    "interpretation": "Visible subtle brightening on leaves under low sun; sky ROI exactly unchanged. All three effects switched together, so this native pair is not transmission-only attribution.",
+    "geometry": "Identical camera/time/exposure; animation frozen; meshVersion199 in both captures; bounce queues empty."
+  },
+  "movementControl": {
+    "source": "materials-2026-11-03T23-13-03-488Z-007-forest-bank-noon-standard-b0-t0-s0-walk-plants-full.json",
+    "sha256": "1ed6f1960e10d62fef9ff42b28dd5ed6c2f00e175b116b17ef016f535a6a4e00",
+    "runId": "materials-2026-11-03T23-13-03-488Z",
+    "scene": "forest",
+    "seed": 2138286349,
+    "camera": "bank",
+    "preset": "noon",
+    "motion": "walk",
+    "motionPeriodSeconds": 180,
+    "benchmarkKind": "movement-including-streaming",
+    "effects": {
+      "bounce": false,
+      "transmission": false,
+      "specular": false
+    },
+    "valid": true,
+    "gpuValid": true,
+    "durationSeconds": 180,
+    "warmupSeconds": 10,
+    "startedAt": "2026-11-03T23:18:15.277Z",
+    "frame": {
+      "samples": 23837,
+      "medianMs": 7,
+      "p95Ms": 13.899999999965075,
+      "meanMs": 7.550895666400971,
+      "p99Ms": 16.199999999953434,
+      "maxMs": 49.800000000046566,
+      "averageFps": 132.43462023315652
+    },
+    "cpu": {
+      "samples": 23838,
+      "medianMs": 5.8999998569488525,
+      "p95Ms": 10.600000143051147,
+      "meanMs": 6.086349526671057,
+      "p99Ms": 15.5,
+      "maxMs": 48.200000047683716,
+      "averageFps": 164.30209859257826
+    },
+    "updateCpu": {
+      "samples": 23838,
+      "medianMs": 0.39999985694885254,
+      "p95Ms": 1.2000000476837158,
+      "meanMs": 0.545272255625958,
+      "p99Ms": 2.3000001907348633,
+      "maxMs": 43.799999952316284,
+      "averageFps": 1833.9462345320076
+    },
+    "renderCpu": {
+      "samples": 23838,
+      "medianMs": 5.5,
+      "p95Ms": 9.700000047683716,
+      "meanMs": 5.5410772710451,
+      "p99Ms": 12.600000143051147,
+      "maxMs": 25.90000009536743,
+      "averageFps": 180.47032212048373
+    },
+    "gpu": {
+      "samples": 23838,
+      "medianMs": 5.949152,
+      "p95Ms": 7.420928,
+      "meanMs": 6.062667805017189,
+      "p99Ms": 8.08448,
+      "maxMs": 35.987456,
+      "averageFps": 164.94388809699342
+    },
+    "gpuDisjointEvents": 0,
+    "gpuSkipped": 0,
+    "geometryChanges": 463,
+    "framesAbove60FpsBudget": 224,
+    "framesAbove33Ms": 7,
+    "fractionFramesAbove60FpsBudget": 0.009397155682342577,
+    "before": {
+      "chunks": 142,
+      "queued": 0,
+      "dirty": 0,
+      "meshVersion": 233,
+      "far": {
+        "active": true,
+        "shown": 351,
+        "wanted": 351,
+        "missing": 0,
+        "cached": 428,
+        "triangles": 861776,
+        "shadowRevision": 462,
+        "profile": "game",
+        "detailDistance": 800,
+        "detailTiers": [
+          {
+            "distance": 800,
+            "spacing": 4
+          }
+        ],
+        "maxDistance": null,
+        "targetSpacing": 4,
+        "lodWithinTarget": {
+          "1": 88,
+          "2": 69,
+          "4": 128
+        },
+        "workers": 3
+      },
+      "shadow": {
+        "budget": {
+          "draws": 24,
+          "triangles": 120000,
+          "milliseconds": 1.5
+        },
+        "lastFrame": {
+          "draws": 0,
+          "triangles": 0,
+          "completed": 0,
+          "prepareMilliseconds": 0,
+          "submitMilliseconds": 0
+        },
+        "plants": {
+          "enabled": true,
+          "budget": {
+            "draws": 8,
+            "triangles": 40000,
+            "milliseconds": 0.5
+          },
+          "lastFrame": {
+            "draws": 0,
+            "triangles": 0
+          },
+          "radius": 32,
+          "size": 1024,
+          "interval": 0.1,
+          "valid": true,
+          "building": false,
+          "draws": 656,
+          "remaining": 0,
+          "sampleTime": 302.8647000001246,
+          "age": 0.0415
+        },
+        "cascades": [
+          {
+            "name": "far",
+            "radius": 256,
+            "size": 1024,
+            "valid": true,
+            "building": false,
+            "remaining": 0,
+            "draws": 30,
+            "terrainRevision": 462,
+            "changed": false
+          },
+          {
+            "name": "distant",
+            "radius": 1024,
+            "size": 2048,
+            "valid": true,
+            "building": false,
+            "remaining": 0,
+            "draws": 23,
+            "terrainRevision": 462,
+            "changed": false
+          }
+        ]
+      },
+      "bounce": {
+        "enabled": false,
+        "ready": false,
+        "pending": {
+          "geometry": 0,
+          "sources": 0,
+          "probes": 0,
+          "invalidation": true
+        },
+        "cache": {
+          "surfaces": 0,
+          "hitCapacity": 642096
+        },
+        "lastFrame": {
+          "milliseconds": 0,
+          "work": 0
+        },
+        "markChunk": {
+          "calls": 172,
+          "milliseconds": 2.499999761581421,
+          "maxMilliseconds": 0.20000004768371582
+        },
+        "updates": 107,
+        "invalidations": 7,
+        "typedArrayBytes": 3990168,
+        "estimatedCacheBytes": 0,
+        "memoryBytes": 3990168,
+        "radius": 6,
+        "sourceReach": 96,
+        "rays": 14,
+        "budgetMs": 0.6
+      },
+      "worldOutput": {
+        "mode": "hdr16f",
+        "width": 1920,
+        "height": 1080,
+        "exposure": 1,
+        "estimatedBytes": 124416000,
+        "samples": 4
+      },
+      "render": {
+        "frame": 305705,
+        "calls": 356,
+        "triangles": 764869,
+        "points": 96,
+        "lines": 0
+      },
+      "memory": {
+        "geometries": 797,
+        "textures": 28
+      },
+      "programs": 23,
+      "failedPrograms": 0,
+      "heapMiB": 315.23253059387207
+    },
+    "after": {
+      "chunks": 148,
+      "queued": 0,
+      "dirty": 0,
+      "meshVersion": 696,
+      "far": {
+        "active": true,
+        "shown": 354,
+        "wanted": 354,
+        "missing": 0,
+        "cached": 533,
+        "triangles": 845694,
+        "shadowRevision": 774,
+        "profile": "game",
+        "detailDistance": 800,
+        "detailTiers": [
+          {
+            "distance": 800,
+            "spacing": 4
+          }
+        ],
+        "maxDistance": null,
+        "targetSpacing": 4,
+        "lodWithinTarget": {
+          "1": 96,
+          "2": 71,
+          "4": 127
+        },
+        "workers": 3
+      },
+      "shadow": {
+        "budget": {
+          "draws": 24,
+          "triangles": 120000,
+          "milliseconds": 1.5
+        },
+        "lastFrame": {
+          "draws": 0,
+          "triangles": 0,
+          "completed": 0,
+          "prepareMilliseconds": 0,
+          "submitMilliseconds": 0
+        },
+        "plants": {
+          "enabled": true,
+          "budget": {
+            "draws": 8,
+            "triangles": 40000,
+            "milliseconds": 0.5
+          },
+          "lastFrame": {
+            "draws": 8,
+            "triangles": 19720
+          },
+          "radius": 32,
+          "size": 1024,
+          "interval": 0.1,
+          "valid": true,
+          "building": true,
+          "draws": 2033,
+          "remaining": 25,
+          "sampleTime": 492.81760000028737,
+          "age": 0.10409999999997673
+        },
+        "cascades": [
+          {
+            "name": "far",
+            "radius": 256,
+            "size": 1024,
+            "valid": true,
+            "building": false,
+            "remaining": 0,
+            "draws": 108,
+            "terrainRevision": 774,
+            "changed": false
+          },
+          {
+            "name": "distant",
+            "radius": 1024,
+            "size": 2048,
+            "valid": true,
+            "building": false,
+            "remaining": 0,
+            "draws": 93,
+            "terrainRevision": 774,
+            "changed": false
+          }
+        ]
+      },
+      "bounce": {
+        "enabled": false,
+        "ready": false,
+        "pending": {
+          "geometry": 0,
+          "sources": 0,
+          "probes": 0,
+          "invalidation": true
+        },
+        "cache": {
+          "surfaces": 0,
+          "hitCapacity": 642096
+        },
+        "lastFrame": {
+          "milliseconds": 0,
+          "work": 0
+        },
+        "markChunk": {
+          "calls": 499,
+          "milliseconds": 6.400000095367432,
+          "maxMilliseconds": 0.40000009536743164
+        },
+        "updates": 107,
+        "invalidations": 7,
+        "typedArrayBytes": 3990168,
+        "estimatedCacheBytes": 0,
+        "memoryBytes": 3990168,
+        "radius": 6,
+        "sourceReach": 96,
+        "rays": 14,
+        "budgetMs": 0.6
+      },
+      "worldOutput": {
+        "mode": "hdr16f",
+        "width": 1920,
+        "height": 1080,
+        "exposure": 1,
+        "estimatedBytes": 124416000,
+        "samples": 4
+      },
+      "render": {
+        "frame": 567681,
+        "calls": 577,
+        "triangles": 1158103,
+        "points": 96,
+        "lines": 0
+      },
+      "memory": {
+        "geometries": 960,
+        "textures": 28
+      },
+      "programs": 23,
+      "failedPrograms": 0,
+      "heapMiB": 326.2225856781006
+    },
+    "errors": []
+  },
+  "movementComparison": {
+    "off": "materials-2026-11-03T23-13-03-488Z-007-forest-bank-noon-standard-b0-t0-s0-walk-plants-full.json",
+    "on": "materials-2026-11-03T22-50-03-649Z-020-forest-bank-noon-standard-b1-t1-s1-walk-plants-full.json",
+    "protocol": "One continuous180-second ON run and one matched OFF control in a reconstructed world, same seed/route/settings/HDR, both463 geometry changes. Two native sessions with distinct documented source fingerprints.",
+    "gpuMedianDeltaMs": 0.19791999999999987,
+    "gpuP95DeltaMs": 0.2529279999999998,
+    "gpuP99DeltaMs": 0.9328640000000004,
+    "cpuMedianDeltaMs": 1.1000001430511475,
+    "cpuP95DeltaMs": 1.5999999046325684,
+    "cpuP99DeltaMs": 1.8999998569488525,
+    "updateCpuMedianDeltaMs": 0.6000001430511475,
+    "renderCpuMedianDeltaMs": 0.39999985694885254,
+    "frameP95DeltaMs": 0.29999999998835847,
+    "frameP99DeltaMs": 4.600000000093132,
+    "onFramesOverBudgetPercent": 1.684831970935513,
+    "offFramesOverBudgetPercent": 0.9397155682342576,
+    "gpuTargetMet": true,
+    "interpretation": "ON shows additional CPU cost and more long frames. Significant spikes also occur with all new effects OFF. Neither all stutter attributed to streaming nor ideal stable60FPS is demonstrated.",
+    "limitations": "Single matched movement pair across two sessions, not repeated paired CPU causality profiling; final runtime includes the pause-settings correction and revised reference layout."
+  },
+  "menuRegression": {
+    "source": "menu-2026-11-03T23-22-46-585Z-010-menu-tour.json",
+    "sha256": "d4c4207cbb0aadf220eed085bc0d242d265b7d4b8dc4c67f05c633c1687ea399",
+    "artifactCollection": "lighting-update-proof/native",
+    "runId": "menu-2026-11-03T23-22-46-585Z",
+    "scope": "Functional regression of live MenuWorld and camera transitions; not a formal FPS benchmark.",
+    "scene": {
+      "id": "river-valley-0.56",
+      "seed": 2138286349,
+      "terrain": "realistic",
+      "time": 0.4375,
+      "views": {
+        "home": {
+          "position": [
+            -480,
+            100,
+            384
+          ],
+          "target": [
+            -520,
+            88,
+            450
+          ]
+        },
+        "river": {
+          "position": [
+            -477,
+            79,
+            375
+          ],
+          "target": [
+            -510,
+            78,
+            420
+          ]
+        },
+        "forest": {
+          "position": [
+            -474,
+            78,
+            388
+          ],
+          "target": [
+            -481,
+            74.5,
+            349
+          ]
+        },
+        "mountains": {
+          "position": [
+            -476,
+            106,
+            426
+          ],
+          "target": [
+            -530,
+            103,
+            580
+          ]
+        }
+      }
+    },
+    "looks": [
+      "natural",
+      "baseline"
+    ],
+    "baselineMeaning": "Current0.58.0 baseline lighting look, not an older executable.",
+    "photos": [
+      {
+        "source": "menu-2026-11-03T23-22-46-585Z-002-menu-natural-home.json",
+        "sha256": "154ce3bf6de28a6e77c89bc1d182afa31c49a752b63b66d7f6994663a1530dfb",
+        "image": "menu-2026-11-03T23-22-46-585Z-002-menu-natural-home.png",
+        "imageSha256": "fb2fd6f9b37a35854748ab007e4fb7ddc37a6a3387c4bcea73db9b1f1d91b7be",
+        "imageDimensions": [
+          1904,
+          1041
+        ],
+        "look": "natural",
+        "view": "home",
+        "ready": true,
+        "pending": false,
+        "failed": false,
+        "chunks": 1257,
+        "loadQueue": 0,
+        "far": {
+          "shown": 1219,
+          "wanted": 1219,
+          "missing": 0,
+          "detailDistance": 1024,
+          "detailTiers": [
+            {
+              "distance": 512,
+              "spacing": 1
+            },
+            {
+              "distance": 800,
+              "spacing": 2
+            },
+            {
+              "distance": 1024,
+              "spacing": 4
+            }
+          ]
+        },
+        "bounce": {
+          "enabled": true,
+          "ready": false,
+          "pending": {
+            "geometry": 3410,
+            "sources": 0,
+            "probes": 1,
+            "invalidation": false
+          }
+        },
+        "failedPrograms": 0,
+        "outputViolations": 0,
+        "errors": [],
+        "worldOutput": {
+          "mode": "hdr16f",
+          "width": 1920,
+          "height": 1080,
+          "exposure": 1,
+          "estimatedBytes": 124416000,
+          "samples": 4
+        }
+      },
+      {
+        "source": "menu-2026-11-03T23-22-46-585Z-003-menu-natural-river.json",
+        "sha256": "5723d7b8b4593ab6c611b3e09d5361589c639d7ed3fd8d963c7fb47edc7c74b0",
+        "image": "menu-2026-11-03T23-22-46-585Z-003-menu-natural-river.png",
+        "imageSha256": "173c8d650f979af8c0b6bf3445e7d28ed86bbc22f0e90cfeb9f19170619d4fa4",
+        "imageDimensions": [
+          1904,
+          1041
+        ],
+        "look": "natural",
+        "view": "river",
+        "ready": true,
+        "pending": false,
+        "failed": false,
+        "chunks": 1257,
+        "loadQueue": 0,
+        "far": {
+          "shown": 1219,
+          "wanted": 1219,
+          "missing": 0,
+          "detailDistance": 1024,
+          "detailTiers": [
+            {
+              "distance": 512,
+              "spacing": 1
+            },
+            {
+              "distance": 800,
+              "spacing": 2
+            },
+            {
+              "distance": 1024,
+              "spacing": 4
+            }
+          ]
+        },
+        "bounce": {
+          "enabled": true,
+          "ready": false,
+          "pending": {
+            "geometry": 31596,
+            "sources": 0,
+            "probes": 1,
+            "invalidation": false
+          }
+        },
+        "failedPrograms": 0,
+        "outputViolations": 0,
+        "errors": [],
+        "worldOutput": {
+          "mode": "hdr16f",
+          "width": 1920,
+          "height": 1080,
+          "exposure": 1,
+          "estimatedBytes": 124416000,
+          "samples": 4
+        }
+      },
+      {
+        "source": "menu-2026-11-03T23-22-46-585Z-004-menu-natural-forest.json",
+        "sha256": "1e1c84afa26c32818ce557d505dbf7a68067a55b68837b94aa50b0f3661db16b",
+        "image": "menu-2026-11-03T23-22-46-585Z-004-menu-natural-forest.png",
+        "imageSha256": "3090a95e8e77df5574e9ef10d55272eec79d07855329d4d4a0450b0e70478d86",
+        "imageDimensions": [
+          1904,
+          1041
+        ],
+        "look": "natural",
+        "view": "forest",
+        "ready": true,
+        "pending": false,
+        "failed": false,
+        "chunks": 1257,
+        "loadQueue": 0,
+        "far": {
+          "shown": 1219,
+          "wanted": 1219,
+          "missing": 0,
+          "detailDistance": 1024,
+          "detailTiers": [
+            {
+              "distance": 512,
+              "spacing": 1
+            },
+            {
+              "distance": 800,
+              "spacing": 2
+            },
+            {
+              "distance": 1024,
+              "spacing": 4
+            }
+          ]
+        },
+        "bounce": {
+          "enabled": true,
+          "ready": false,
+          "pending": {
+            "geometry": 31922,
+            "sources": 0,
+            "probes": 1,
+            "invalidation": false
+          }
+        },
+        "failedPrograms": 0,
+        "outputViolations": 0,
+        "errors": [],
+        "worldOutput": {
+          "mode": "hdr16f",
+          "width": 1920,
+          "height": 1080,
+          "exposure": 1,
+          "estimatedBytes": 124416000,
+          "samples": 4
+        }
+      },
+      {
+        "source": "menu-2026-11-03T23-22-46-585Z-005-menu-natural-mountains.json",
+        "sha256": "cdfa74e79c3d154fee718cc2c321af31e1e5dec679886a809a431292c20ac631",
+        "image": "menu-2026-11-03T23-22-46-585Z-005-menu-natural-mountains.png",
+        "imageSha256": "b61a0b83f22a91a4f9fd5cd95302f45722485289767d8f1e31803c67e71501c8",
+        "imageDimensions": [
+          1904,
+          1041
+        ],
+        "look": "natural",
+        "view": "mountains",
+        "ready": true,
+        "pending": false,
+        "failed": false,
+        "chunks": 1257,
+        "loadQueue": 0,
+        "far": {
+          "shown": 1219,
+          "wanted": 1219,
+          "missing": 0,
+          "detailDistance": 1024,
+          "detailTiers": [
+            {
+              "distance": 512,
+              "spacing": 1
+            },
+            {
+              "distance": 800,
+              "spacing": 2
+            },
+            {
+              "distance": 1024,
+              "spacing": 4
+            }
+          ]
+        },
+        "bounce": {
+          "enabled": true,
+          "ready": false,
+          "pending": {
+            "geometry": 32832,
+            "sources": 0,
+            "probes": 1,
+            "invalidation": false
+          }
+        },
+        "failedPrograms": 0,
+        "outputViolations": 0,
+        "errors": [],
+        "worldOutput": {
+          "mode": "hdr16f",
+          "width": 1920,
+          "height": 1080,
+          "exposure": 1,
+          "estimatedBytes": 124416000,
+          "samples": 4
+        }
+      },
+      {
+        "source": "menu-2026-11-03T23-22-46-585Z-006-menu-baseline-home.json",
+        "sha256": "dadef8488091e84019521528d56e5cf202d4835c60beadc2ba12ff304e1cdf46",
+        "image": "menu-2026-11-03T23-22-46-585Z-006-menu-baseline-home.png",
+        "imageSha256": "33d9e84e341f6e4de6a072228188c53061c7a8f4c96bab2aac72970afed4a735",
+        "imageDimensions": [
+          1904,
+          1041
+        ],
+        "look": "baseline",
+        "view": "home",
+        "ready": true,
+        "pending": false,
+        "failed": false,
+        "chunks": 1257,
+        "loadQueue": 0,
+        "far": {
+          "shown": 1219,
+          "wanted": 1219,
+          "missing": 0,
+          "detailDistance": 1024,
+          "detailTiers": [
+            {
+              "distance": 512,
+              "spacing": 1
+            },
+            {
+              "distance": 800,
+              "spacing": 2
+            },
+            {
+              "distance": 1024,
+              "spacing": 4
+            }
+          ]
+        },
+        "bounce": {
+          "enabled": false,
+          "ready": false,
+          "pending": {
+            "geometry": 32112,
+            "sources": 0,
+            "probes": 1,
+            "invalidation": false
+          }
+        },
+        "failedPrograms": 0,
+        "outputViolations": 0,
+        "errors": [],
+        "worldOutput": {
+          "mode": "hdr16f",
+          "width": 1920,
+          "height": 1080,
+          "exposure": 1,
+          "estimatedBytes": 124416000,
+          "samples": 4
+        }
+      },
+      {
+        "source": "menu-2026-11-03T23-22-46-585Z-007-menu-baseline-river.json",
+        "sha256": "e59c8cb9f5b007484fca205b31afc8379d4a5a9b6198b9ead577ba375a71c9f9",
+        "image": "menu-2026-11-03T23-22-46-585Z-007-menu-baseline-river.png",
+        "imageSha256": "ceecb19d1b3c6b9edc7a6a2175cc0f2efa158071783c662faea6a78876ceac2b",
+        "imageDimensions": [
+          1904,
+          1041
+        ],
+        "look": "baseline",
+        "view": "river",
+        "ready": true,
+        "pending": false,
+        "failed": false,
+        "chunks": 1257,
+        "loadQueue": 0,
+        "far": {
+          "shown": 1219,
+          "wanted": 1219,
+          "missing": 0,
+          "detailDistance": 1024,
+          "detailTiers": [
+            {
+              "distance": 512,
+              "spacing": 1
+            },
+            {
+              "distance": 800,
+              "spacing": 2
+            },
+            {
+              "distance": 1024,
+              "spacing": 4
+            }
+          ]
+        },
+        "bounce": {
+          "enabled": false,
+          "ready": false,
+          "pending": {
+            "geometry": 32112,
+            "sources": 0,
+            "probes": 1,
+            "invalidation": false
+          }
+        },
+        "failedPrograms": 0,
+        "outputViolations": 0,
+        "errors": [],
+        "worldOutput": {
+          "mode": "hdr16f",
+          "width": 1920,
+          "height": 1080,
+          "exposure": 1,
+          "estimatedBytes": 124416000,
+          "samples": 4
+        }
+      },
+      {
+        "source": "menu-2026-11-03T23-22-46-585Z-008-menu-baseline-forest.json",
+        "sha256": "9301e027202dd12ed4171b92847e5a1033fe7789aa0672ec5030f7ad3a2ed3a9",
+        "image": "menu-2026-11-03T23-22-46-585Z-008-menu-baseline-forest.png",
+        "imageSha256": "e318edbd51e93355828c6bc5dcbeaf2bd4f85d87590c1d5a4ecd4f2a08119d63",
+        "imageDimensions": [
+          1904,
+          1041
+        ],
+        "look": "baseline",
+        "view": "forest",
+        "ready": true,
+        "pending": false,
+        "failed": false,
+        "chunks": 1257,
+        "loadQueue": 0,
+        "far": {
+          "shown": 1219,
+          "wanted": 1219,
+          "missing": 0,
+          "detailDistance": 1024,
+          "detailTiers": [
+            {
+              "distance": 512,
+              "spacing": 1
+            },
+            {
+              "distance": 800,
+              "spacing": 2
+            },
+            {
+              "distance": 1024,
+              "spacing": 4
+            }
+          ]
+        },
+        "bounce": {
+          "enabled": false,
+          "ready": false,
+          "pending": {
+            "geometry": 32112,
+            "sources": 0,
+            "probes": 1,
+            "invalidation": false
+          }
+        },
+        "failedPrograms": 0,
+        "outputViolations": 0,
+        "errors": [],
+        "worldOutput": {
+          "mode": "hdr16f",
+          "width": 1920,
+          "height": 1080,
+          "exposure": 1,
+          "estimatedBytes": 124416000,
+          "samples": 4
+        }
+      },
+      {
+        "source": "menu-2026-11-03T23-22-46-585Z-009-menu-baseline-mountains.json",
+        "sha256": "cf4516e98482132e6310794c9bd1033b21ecb60f873a437965a94f74ce106653",
+        "image": "menu-2026-11-03T23-22-46-585Z-009-menu-baseline-mountains.png",
+        "imageSha256": "11166ffaa37f423f389b7a698f583b6a39764ab01cc4aef3d2daa871e7424b66",
+        "imageDimensions": [
+          1904,
+          1041
+        ],
+        "look": "baseline",
+        "view": "mountains",
+        "ready": true,
+        "pending": false,
+        "failed": false,
+        "chunks": 1257,
+        "loadQueue": 0,
+        "far": {
+          "shown": 1219,
+          "wanted": 1219,
+          "missing": 0,
+          "detailDistance": 1024,
+          "detailTiers": [
+            {
+              "distance": 512,
+              "spacing": 1
+            },
+            {
+              "distance": 800,
+              "spacing": 2
+            },
+            {
+              "distance": 1024,
+              "spacing": 4
+            }
+          ]
+        },
+        "bounce": {
+          "enabled": false,
+          "ready": false,
+          "pending": {
+            "geometry": 32112,
+            "sources": 0,
+            "probes": 1,
+            "invalidation": false
+          }
+        },
+        "failedPrograms": 0,
+        "outputViolations": 0,
+        "errors": [],
+        "worldOutput": {
+          "mode": "hdr16f",
+          "width": 1920,
+          "height": 1080,
+          "exposure": 1,
+          "estimatedBytes": 124416000,
+          "samples": 4
+        }
+      }
+    ],
+    "transitions": [
+      {
+        "view": "home",
+        "look": "natural",
+        "at": 741.2000000476837,
+        "position": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "view": "home",
+        "look": "natural",
+        "at": 37824.5,
+        "position": [
+          -480,
+          99.83728320115482,
+          384
+        ]
+      },
+      {
+        "view": "river",
+        "look": "natural",
+        "at": 44411.90000009537,
+        "position": [
+          -480,
+          99.98684989035942,
+          384
+        ]
+      },
+      {
+        "view": "home",
+        "look": "natural",
+        "at": 51014.40000009537,
+        "position": [
+          -477.00000054564555,
+          79.14983723899823,
+          375.00000163693636
+        ]
+      },
+      {
+        "view": "forest",
+        "look": "natural",
+        "at": 57019.299999952316,
+        "position": [
+          -479.9999973366654,
+          100.16757311724693,
+          383.9999920099963
+        ]
+      },
+      {
+        "view": "home",
+        "look": "natural",
+        "at": 63620.5,
+        "position": [
+          -474.0000011212621,
+          78.02554849643113,
+          387.99999925249193
+        ]
+      },
+      {
+        "view": "mountains",
+        "look": "natural",
+        "at": 69620.90000009537,
+        "position": [
+          -479.9999945118652,
+          99.86878820457312,
+          384.0000036587566
+        ]
+      },
+      {
+        "view": "home",
+        "look": "natural",
+        "at": 76159.29999995232,
+        "position": [
+          -476.0000008435142,
+          105.82769509084024,
+          425.9999911430975
+        ]
+      },
+      {
+        "view": "home",
+        "look": "baseline",
+        "at": 82190.29999995232,
+        "position": [
+          -479.999996631729,
+          99.94453208880971,
+          384.0000353668457
+        ]
+      },
+      {
+        "view": "river",
+        "look": "baseline",
+        "at": 89983.40000009537,
+        "position": [
+          -479.9999999999808,
+          100.0713211145623,
+          384.0000000002009
+        ]
+      },
+      {
+        "view": "home",
+        "look": "baseline",
+        "at": 96536.40000009537,
+        "position": [
+          -477.0000006404101,
+          79.17878480185624,
+          375.0000019212301
+        ]
+      },
+      {
+        "view": "forest",
+        "look": "baseline",
+        "at": 102541.40000009537,
+        "position": [
+          -479.9999973401824,
+          100.11952932292967,
+          383.9999920205475
+        ]
+      },
+      {
+        "view": "home",
+        "look": "baseline",
+        "at": 109138.5,
+        "position": [
+          -474.00000110265495,
+          77.94174906172137,
+          387.99999926489653
+        ]
+      },
+      {
+        "view": "mountains",
+        "look": "baseline",
+        "at": 115144.20000004768,
+        "position": [
+          -479.99999443593293,
+          99.82714121793029,
+          384.00000370937806
+        ]
+      },
+      {
+        "view": "home",
+        "look": "baseline",
+        "at": 121706.10000014305,
+        "position": [
+          -476.00000081879824,
+          105.87032564328457,
+          425.9999914026174
+        ]
+      }
+    ],
+    "final": {
+      "ready": true,
+      "pending": false,
+      "failed": false,
+      "view": "home",
+      "loadQueue": 0,
+      "chunks": 1257,
+      "far": {
+        "active": true,
+        "shown": 1219,
+        "wanted": 1219,
+        "missing": 0,
+        "cached": 1219,
+        "triangles": 1853498,
+        "shadowRevision": 1451,
+        "profile": "scenery",
+        "detailDistance": 1024,
+        "detailTiers": [
+          {
+            "distance": 512,
+            "spacing": 1
+          },
+          {
+            "distance": 800,
+            "spacing": 2
+          },
+          {
+            "distance": 1024,
+            "spacing": 4
+          }
+        ],
+        "maxDistance": 1024,
+        "targetSpacing": 4,
+        "lodWithinTarget": {
+          "1": 775,
+          "2": 358,
+          "4": 86
+        },
+        "workers": 3
+      },
+      "bounce": {
+        "enabled": false,
+        "ready": false,
+        "pending": {
+          "geometry": 32112,
+          "sources": 0,
+          "probes": 1,
+          "invalidation": false
+        },
+        "cache": {
+          "surfaces": 10,
+          "hitCapacity": 642096
+        },
+        "lastFrame": {
+          "milliseconds": 0,
+          "work": 0
+        },
+        "markChunk": {
+          "calls": 256,
+          "milliseconds": 5.29999852180481,
+          "maxMilliseconds": 0.19999980926513672
+        },
+        "updates": 586,
+        "invalidations": 42,
+        "typedArrayBytes": 3990168,
+        "estimatedCacheBytes": 1029216,
+        "memoryBytes": 5019384,
+        "radius": 6,
+        "sourceReach": 96,
+        "rays": 14,
+        "budgetMs": 0.6
+      },
+      "failedPrograms": 0,
+      "outputViolations": 0,
+      "errors": [],
+      "worldOutput": {
+        "mode": "hdr16f",
+        "width": 1920,
+        "height": 1080,
+        "exposure": 1,
+        "estimatedBytes": 124416000,
+        "samples": 4
+      }
+    },
+    "sampleCounts": {
+      "natural/home": {
+        "frames": 1250,
+        "cpu": 1250
+      },
+      "natural/river": {
+        "frames": 35,
+        "cpu": 35
+      },
+      "natural/forest": {
+        "frames": 33,
+        "cpu": 33
+      },
+      "natural/mountains": {
+        "frames": 31,
+        "cpu": 31
+      },
+      "baseline/home": {
+        "frames": 34,
+        "cpu": 34
+      },
+      "baseline/river": {
+        "frames": 32,
+        "cpu": 32
+      },
+      "baseline/forest": {
+        "frames": 33,
+        "cpu": 33
+      },
+      "baseline/mountains": {
+        "frames": 33,
+        "cpu": 33
+      }
+    },
+    "visualReview": {
+      "reportedBy": "Parent operator",
+      "views": [
+        "natural/home",
+        "natural/river"
+      ],
+      "transitions": true,
+      "result": "Correct native scene appearance and transitions."
+    },
+    "timingLimitation": "Only short holds after6-second settle, typically31-35 samples on completed non-home views (1-2 at some screenshot instants); natural/home1250. Unequal sample coverage and no formal GPU timing comparison; no menu FPS acceptance claimed.",
+    "readinessLimitation": "Terrain ready and no missing LOD does not mean all bounced-light probes settled; natural screenshots show ready=false in bounce stats during camera movement."
+  }
+}

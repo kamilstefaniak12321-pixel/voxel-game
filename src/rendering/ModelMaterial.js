@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import { campfireLightUniforms, CAMPFIRE_LIGHT_GLSL } from './CampfireLight.js';
 import { SURFACE_LIGHTING_GLSL } from './SurfaceLighting.js';
 import { installLightingDiagnostics } from './LightingDiagnostics.js';
+import { installSurfaceProfiles } from './LeafLighting.js';
 
 import {
     skyUniforms,
@@ -84,14 +85,16 @@ export function createModelMaterial({ map = null, alphaTest = 0, glow = 0, verte
     lighting = null, baselineLambert = false }) {
 
     const material = new THREE.MeshLambertMaterial({ map, alphaTest, vertexColors });
+    material.defaultAttributeValues = { ...material.defaultAttributeValues, surfaceProfile: [0, 0] };
 
     const own = { uModelGlow: { value: glow } };
 
     material.userData.uniforms = own;
-    material.customProgramCacheKey = () => `model-lighting-v3-${baselineLambert ? 'legacy-lambert' : 'model'}`;
+    material.customProgramCacheKey = () => `model-lighting-v4-${baselineLambert ? 'legacy-lambert' : 'model'}`;
 
 
     material.onBeforeCompile = (shader, renderer) => {
+        installSurfaceProfiles(shader);
 
         Object.assign(shader.uniforms, skyUniforms, viewUniforms, modelLight, meteorLightUniforms, own);
         if (lighting) Object.assign(shader.uniforms, lighting);

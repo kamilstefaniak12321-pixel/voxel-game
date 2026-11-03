@@ -14,6 +14,7 @@ registerHooks({
             format:'module', shortCircuit:true, source:`
                 export const blockAtlasTexture=null,atlasAverageTexture=null;
                 export const atlasReady=Promise.resolve({tileSize:16,mipmaps:false}),atlasAveragesReady=Promise.resolve();
+                export const getTileColors = name => { const color = getAtlasAverage(name); return color ? [color] : []; };
                 export const getAtlasAverage=()=>null;
                 export const getAtlasUV=name=>name==='models/blueberry/atlas'
                     ?{uMin:0,uMax:.25,vMin:0,vMax:.25}:{uMin:.5,uMax:.5625,vMin:.5,vMax:.5625};

@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { lightingUniforms } from '../rendering/LightingDiagnostics.js';
 
 import { SEA_LEVEL, GLOBE_RADIUS } from '../config.js';
 
@@ -64,6 +65,7 @@ const vertexShader = /* glsl */ `
 
 
 const commonShader = /* glsl */ `
+    uniform float uLightingNatural;
     uniform mat4 uProjectionInverse;
     uniform mat4 uCameraMatrix;
     uniform float uHeight;
@@ -396,7 +398,7 @@ const surfaceShader = /* glsl */ `
 
         vec3 color = albedo * max(light, vec3(0.0)) / 3.14159265;
 
-        float nightDesaturation = clamp(uNightDesaturation + daylightNight(sunHeight) - daylightNight(playerSun), 0.0, 1.0);
+        float nightDesaturation = uLightingNatural > 0.5 ? 0.0 : clamp(uNightDesaturation + daylightNight(sunHeight) - daylightNight(playerSun), 0.0, 1.0);
 
         color = mix(color, dot(color, VIEW_LUMINANCE) * uNightTint, nightDesaturation);
 
@@ -537,6 +539,7 @@ export class Globe {
 
             ...skyUniforms,
             ...viewUniforms,
+            ...lightingUniforms,
 
             uProjectionInverse: { value: new THREE.Matrix4() },
             uCameraMatrix: { value: new THREE.Matrix4() },

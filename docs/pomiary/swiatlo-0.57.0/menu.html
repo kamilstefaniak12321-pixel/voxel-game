@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="pl"><head><meta charset="utf-8"><title>Menu — odbiór HDR</title>
+<style>
+body{margin:0;overflow:hidden;background:#111;color:#eef2f3;font:13px system-ui}canvas{display:block}
+aside{position:fixed;top:12px;right:12px;width:350px;padding:12px;background:#15202bef;z-index:5;border-radius:6px}
+button{margin:3px;padding:6px}button[aria-pressed=true]{background:#cce7cf}pre{white-space:pre-wrap;max-height:220px;overflow:auto}
+small{color:#c5ccd4}p{margin:8px 0}
+</style><script type="importmap">{"imports":{"three":"/lib/three/three.module.js"}}</script></head>
+<body><aside><strong>Prawdziwe menu — cztery kamery i HDR</strong>
+<p>Wybór kamery uruchamia zwykły przejazd MenuCamera.</p>
+<div><button data-view="home">Główne</button><button data-view="river">Graj / rzeka</button>
+<button data-view="forest">Ustawienia / las</button><button data-view="mountains">Osiągnięcia / góry</button></div>
+<div><button data-look="natural">Naturalna</button><button data-look="baseline">Poprzednia</button></div>
+<button data-tour>Obie palety × cztery kamery</button><button data-cancel disabled>Przerwij</button>
+<button data-photo>Zapisz czysty kadr</button><button data-restart>Odtwórz menu</button>
+<button data-hide>Ukryj panel (F8)</button><p data-status>Wczytywanie…</p><pre></pre>
+<small>MenuBackdrop + MenuWorld z obecnego checkoutu. Bez Game, bazy światów i zapisu ustawień. Raporty klatek są pomiarem CPU/aplikacji, nie GPU.</small>
+</aside><script type="module" src="./menu-qa.js"></script></body></html>

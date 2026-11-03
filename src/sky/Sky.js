@@ -5,6 +5,7 @@ import { SkyState } from './SkyColors.js';
 import { skyUniforms } from './skyShader.js';
 import { sampleSolarAtmosphere } from './SolarAtmosphere.js';
 import { sampleNightIllumination } from './NightIllumination.js';
+import { sampleLightingPalette } from './LightingPalette.js';
 
 import { SkyDome } from './layers/SkyDome.js';
 import { Moon } from './layers/Moon.js';
@@ -72,6 +73,10 @@ export class Sky {
         this.state = new SkyState();
 
         this.solarAtmosphere = false;
+        // Game/Menu ustawiają zapisany wybór. Samodzielny Sky zostaje
+        // bazą porównawczą, także dla dotychczasowych narzędzi i testów.
+        this.lightingLook = 'baseline';
+        this.cloudCover = 0;
         this.atmosphere = null;
         this.sunLightDirection = new THREE.Vector3(0, 1, 0);
 
@@ -194,15 +199,24 @@ export class Sky {
 
         this.state.update(this.celestial, this.variant);
 
-        this.state.solarAtmosphere = this.solarAtmosphere;
+        const natural = this.lightingLook === 'natural';
+        this.state.solarAtmosphere = natural || this.solarAtmosphere;
         // Tarcza pozostaje na pozycji astronomicznej. Światło częściowo
         // widocznej tarczy biegnie ze środka jej odsłoniętego fragmentu.
         this.sunLightDirection ??= new THREE.Vector3();
         this.sunLightDirection.copy(this.celestial.sunDirection);
 
-        this.atmosphere = this.solarAtmosphere
-            ? sampleSolarAtmosphere(this.celestial.sunHeight, this.state.eclipse)
-            : null;
+        this.atmosphere = natural
+            ? sampleLightingPalette(this.celestial.sunHeight, {
+                cloudCover: this.cloudCover * (1 - this.space),
+                eclipse: this.state.eclipse,
+                moonHeight: this.celestial.moonHeight,
+                moonIllumination: this.celestial.moonIllumination,
+                moonTint: this.variant.moonColor?.toArray()
+            })
+            : this.solarAtmosphere
+                ? sampleSolarAtmosphere(this.celestial.sunHeight, this.state.eclipse)
+                : null;
 
         if (this.atmosphere) {
             const state = this.state;
@@ -221,15 +235,38 @@ export class Sky {
 
             // Księżyc i słabe tło nocne są osobnymi źródłami. Nie dodajemy
             // starej krzywej zmierzchu do zmierzchu obliczonego przez atmosferę.
-            sample.night = sampleNightIllumination(this.celestial.sunHeight, state.moonAmbientLight.toArray());
-            sample.sky = sample.sky.map((c, i) => c + sample.night.sky[i]);
-            sample.ground = sample.ground.map((c, i) => c + sample.night.ground[i]);
+            if (!natural) {
+                sample.night = sampleNightIllumination(this.celestial.sunHeight, state.moonAmbientLight.toArray());
+                sample.sky = sample.sky.map((c, i) => c + sample.night.sky[i]);
+                sample.ground = sample.ground.map((c, i) => c + sample.night.ground[i]);
+            }
 
             // Kula planety używa jednego koloru otoczenia zamiast półkul.
             state.ambientColor.setRGB(...sample.sky.map((c, i) => (c + sample.ground[i]) * 0.5));
             state.ambientIntensity = 1;
 
-            if (sample.discVisibility > 0 && this.space === 0) {
+            if (natural) {
+                const moonIntensity = Math.max(...sample.moon);
+                state.moonLightIntensity = moonIntensity;
+                state.moonLightColor.setRGB(...sample.moon).multiplyScalar(1 / Math.max(moonIntensity, 1e-8));
+                state.moonAmbientLight.setRGB(...sample.moonSky);
+                state.nightDesaturation = 0;
+                state.nightTint.setRGB(1, 1, 1);
+
+                state.zenith.setRGB(...sample.visual.zenith);
+                state.horizon.setRGB(...sample.visual.horizon);
+                state.sunset = sample.visual.sunset;
+                state.sunsetColor.setRGB(...sample.visual.sunsetColor);
+                state.sunsetHigh.setRGB(...sample.visual.sunsetHigh);
+                state.sunHalo.setRGB(...sample.visual.sunHalo);
+                if (this.space === 0) state.sunDiscColor.setRGB(...sample.sunDiscColor);
+                state.moonBrightness *= sample.cloudTransmission;
+                state.starVisibility *= 1 - sample.cloudCover;
+                state.galaxyVisibility *= 1 - sample.cloudCover;
+                state.meteorsPerMinute *= 1 - sample.cloudCover;
+                state.corona *= sample.cloudTransmission;
+                state.eclipseGlow *= 1 - sample.cloudCover;
+            } else if (sample.discVisibility > 0 && this.space === 0) {
                 state.sunDiscColor.setRGB(...sample.transmission).multiplyScalar(1 / sample.transmission[0]);
             }
         }

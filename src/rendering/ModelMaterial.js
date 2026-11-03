@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { campfireLightUniforms, CAMPFIRE_LIGHT_GLSL } from './CampfireLight.js';
 import { SURFACE_LIGHTING_GLSL } from './SurfaceLighting.js';
+import { installLightingDiagnostics } from './LightingDiagnostics.js';
 
 import {
     skyUniforms,
@@ -79,18 +80,21 @@ export function setModelPreviewRenderer(renderer) {
 // alphaTest - przezroczyste piksele (wierzchnia warstwa skórki),
 // glow      - ile blok sam świeci (0-1, lampa w ręce).
 
-export function createModelMaterial({ map, alphaTest = 0, glow = 0, vertexColors = false }) {
+export function createModelMaterial({ map = null, alphaTest = 0, glow = 0, vertexColors = false,
+    lighting = null, baselineLambert = false }) {
 
     const material = new THREE.MeshLambertMaterial({ map, alphaTest, vertexColors });
 
     const own = { uModelGlow: { value: glow } };
 
     material.userData.uniforms = own;
+    material.customProgramCacheKey = () => `model-lighting-v3-${baselineLambert ? 'legacy-lambert' : 'model'}`;
 
 
     material.onBeforeCompile = (shader, renderer) => {
 
         Object.assign(shader.uniforms, skyUniforms, viewUniforms, modelLight, meteorLightUniforms, own);
+        if (lighting) Object.assign(shader.uniforms, lighting);
 
         shader.uniforms.uSunShadowLight = shadowUniforms.uSunShadowLight;
 
@@ -171,19 +175,23 @@ export function createModelMaterial({ map, alphaTest = 0, glow = 0, vertexColors
                 '#include <color_fragment>',
                 `#include <color_fragment>
                 vec3 modelTexel = diffuseColor.rgb;
+                // Wcześniej gołe materiały Lamberta (popiół/podpałka)
+                // zachowują bazę A/B; nowy profil stosuje lokalne dane.
+                float modelBaselineLambert = ${baselineLambert ? '(1.0 - uLightingNatural)' : '0.0'};
                 float modelSky = surfaceDecodeLight(uModelSky);
                 float modelSun = uModelSun;
-                ${sceneShadows ? `if (uModelDistantShadows > 0.5) {
-                    modelSun = min(modelSun, distantShadowVisibility(vWorldPosition, normalize(vWorldNormal)));
+                ${sceneShadows ? `if (uModelDistantShadows > 0.5 && modelBaselineLambert < 0.5) {
+                    modelSun = environmentShadowVisibility(vWorldPosition, normalize(vWorldNormal), modelSun);
                 }` : ''}
-                if (uModelShadows < 0.5 && uAtmosphericLight < 0.5) {
+                if (uModelShadows < 0.5 && uAtmosphericLight < 0.5 && modelBaselineLambert < 0.5) {
                     diffuseColor.rgb *= modelSky;
                 }`
             )
             .replace(
                 '#include <lights_fragment_begin>',
                 shadowLightsChunk('(uModelShadows > 0.5 ? modelSun : modelSky)', 'modelSky',
-                    'mix(uModelAmbient, modelSky, uAtmosphericLight)', 'uModelShadows > 0.5 || uAtmosphericLight > 0.5')
+                    'mix(uModelAmbient, modelSky, uAtmosphericLight)',
+                    '(uModelShadows > 0.5 || uAtmosphericLight > 0.5) && modelBaselineLambert < 0.5')
             )
             .replace(
                 '#include <opaque_fragment>',
@@ -211,24 +219,39 @@ export function createModelMaterial({ map, alphaTest = 0, glow = 0, vertexColors
 
                 #endif
 
-                outgoingLight = surfaceRadiance(modelTexel, outgoingLight, modelLocal, uModelBounce,
+                // Standardowa emisja Lamberta już jest w outgoingLight.
+                // Wyjmujemy ją przed nocą/kompozycją i dokładamy raz,
+                // niezależnie od albedo, AO i dostępu do nieba.
+                vec3 modelNatural = outgoingLight - totalEmissiveRadiance;
+                if (modelBaselineLambert > 0.5) {
+                    outgoingLight = modelNatural + surfaceEmissionRadiance(totalEmissiveRadiance);
+                } else {
+                outgoingLight = surfaceRadiance(modelTexel, modelNatural, modelLocal, uModelBounce,
                     vec3(uModelGlow * uAtmosphericLight), uNightDesaturation, uNightTint, uAtmosphericLight);
+                outgoingLight += surfaceEmissionRadiance(totalEmissiveRadiance);
 
                 // Kula ognia meteorytu (rendering/meteorLight.js).
 
-                outgoingLight += modelTexel * (meteorLight(vWorldPosition, vWorldNormal) + campfireLight(vWorldPosition, vWorldNormal));
+                outgoingLight += surfaceLocalRadiance(modelTexel, meteorLight(vWorldPosition, vWorldNormal) + campfireLight(vWorldPosition, vWorldNormal));
 
                 // Świecący blok w ręce (lampa) jest jasny sam z siebie.
 
-                if (uAtmosphericLight < 0.5) outgoingLight = max(outgoingLight, modelTexel * uModelGlow);
+                if (uAtmosphericLight < 0.5) {
+                    vec3 ownGlow = surfaceEmissionRadiance(modelTexel * uModelGlow);
+                    outgoingLight = max(outgoingLight, ownGlow);
+                }
 
                 outgoingLight = applyBrightness(outgoingLight, modelTexel);
+                }
 
                 #include <opaque_fragment>`
             )
             .replace(
                 '#include <fog_fragment>',
                 `#ifdef USE_FOG
+                    if (modelBaselineLambert > 0.5) {
+                        #include <fog_fragment>
+                    } else {
                     if (uFarEnabled > 0.5) {
 
                         float haze = farHaze(vSkyDirection);
@@ -243,6 +266,7 @@ export function createModelMaterial({ map, alphaTest = 0, glow = 0, vertexColors
                         }
 
                     }
+                    }
                 #endif`
             );
 
@@ -250,6 +274,9 @@ export function createModelMaterial({ map, alphaTest = 0, glow = 0, vertexColors
         if (dynamic) {
             Object.assign(shader.uniforms, dynamicLightUniforms);
         }
+
+        installLightingDiagnostics(shader, { albedo: 'modelTexel', normal: 'vWorldNormal',
+            sky: 'modelSky', visibility: 'modelSun', preview: previewRenderers.has(renderer) });
 
     };
 

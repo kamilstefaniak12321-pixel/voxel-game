@@ -45,6 +45,8 @@ export const SETTINGS_DEFAULTS = {
     farDetail: 2,                                  // szczegóły dalekiego terenu: 1 - niskie, 2 - średnie, 3 - wysokie
     fov: DEFAULT_FOV,                              // stopnie
     brightness: 0,                                 // procent (0 = nastrojowo, 100 = jasno)
+    lightingLook: 'natural',                       // wspólna paleta 0.57 / porównanie z 0.56.1
+    cloudCover: 0,                                // profil światła zachmurzonego (diagnostyka, bez pogody)
     renderScale: 100,                              // procent rozdzielczości ekranu
     fpsLimit: 0,                                   // klatki na sekundę (0 = bez limitu)
     ambientOcclusion: Math.round(AMBIENT_OCCLUSION * 100),   // cienie w kątach, procent
@@ -102,6 +104,7 @@ export const SETTINGS_RANGES = {
     farTerrain: { min: 0, max: 16384, step: 256 },
     fov: { min: 50, max: 110, step: 1 },
     brightness: { min: 0, max: 100, step: 5 },
+    cloudCover: { min: 0, max: 100, step: 5 },
     renderScale: { min: 25, max: 100, step: 5 },
     ambientOcclusion: { min: 0, max: 100, step: 5 },
     loadBudget: { min: 1, max: 16, step: 1 },
@@ -125,6 +128,7 @@ export const SETTINGS_CHOICES = {
     fpsLimit: [0, 30, 60, 120, 144],
     shadows: [0, 1, 2, 3],
     lightingModel: ['world', 'classic'],
+    lightingLook: ['natural', 'baseline'],
     farDetail: [1, 2, 3],
     jointStyle: ['smooth', 'blocks'],
     inventoryStyle: ['wood', 'light'],

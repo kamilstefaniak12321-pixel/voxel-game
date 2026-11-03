@@ -1,0 +1,1024 @@
+{
+  "schemaVersion": 1,
+  "gameVersion": "0.57.0",
+  "status": "completed-record: native-static, short-movement, palette, menu-smoke-and-functional-tests; limitations-listed",
+  "platform": {
+    "os": "Windows",
+    "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 3050 Laptop GPU (0x000025A2) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "electron": "44.4.5",
+    "chromium": "152.0.7977.130",
+    "power": "AC, verified by operator",
+    "android": "not-tested; user selected PC scope; physical device unavailable"
+  },
+  "configuration": {
+    "width": 1920,
+    "height": 1080,
+    "devicePixelRatio": 1,
+    "antialiasContext": true,
+    "naturalWorldOutputSamples": 4,
+    "vsync": true,
+    "displayHz": 144,
+    "fpsLimit": 0,
+    "viewDistance": 64,
+    "farTerrain": 1024,
+    "farDetail": 2,
+    "shadowQuality": 3,
+    "brightness": 0,
+    "referenceExposure": 1,
+    "forestSeed": 2138286349,
+    "paletteSeed": 42
+  },
+  "runs": [
+    {
+      "runId": "baseline-2026-11-03T21-30-33-939Z",
+      "version": "0.56.1",
+      "commit": "253d9c3c278b3bb062a5ba1ad096aa053c58f9c3",
+      "dirty": false,
+      "sourceSha256": "d9d0f496c061faf5bf90f106d7e0ce72fd9614ce6667e8695efa2da3936b8975",
+      "referenceSha256": "1b09a83c7217ec20b512807971b2f358eb654230c5ed465ede26e592a4262bda",
+      "harnessSha256": "843bf7e8567d2b474bcd55a1a09f2e391da4a14107085dae97b91c9ed1ac2e50",
+      "trackedDiffSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "assetsInventorySha256": "c14621c39bc2a9e44bae0ab9dad01b7db5e9f70e228627d840823a63d3f67200",
+      "uncapped": false,
+      "displayHz": 144
+    },
+    {
+      "runId": "foundation-2026-11-03T21-38-52-478Z",
+      "version": "0.57.0",
+      "commit": "40903ebebbaa5e67bf7d1e4a4d2900b1efacd085",
+      "dirty": true,
+      "sourceSha256": "29adf516f00cd2b49f4b717ebfd0df683c3a8c6478cbd4a0a4a9f7a5340dc6eb",
+      "referenceSha256": "1b09a83c7217ec20b512807971b2f358eb654230c5ed465ede26e592a4262bda",
+      "harnessSha256": "7054d3da8814a9b16c248fd2db952d4f61e718edadfe76f84567e22ec702feab",
+      "trackedDiffSha256": "231c02ec6c1e640f1b0938c3a0247c686cfbb062d07b3f56bffc9ac95608c482",
+      "assetsInventorySha256": "c14621c39bc2a9e44bae0ab9dad01b7db5e9f70e228627d840823a63d3f67200",
+      "uncapped": false,
+      "displayHz": 144
+    },
+    {
+      "runId": "foundation-2026-11-03T21-47-40-317Z",
+      "version": "0.57.0",
+      "commit": "c187eaeff447fd1c3602e02d024bdf8e8b1d8d57",
+      "dirty": true,
+      "sourceSha256": "d3c1f0b6be1ef69eb3399b41dcea8fab5769fde2673de87ee4add23a25426847",
+      "referenceSha256": "1b09a83c7217ec20b512807971b2f358eb654230c5ed465ede26e592a4262bda",
+      "harnessSha256": "73083afe8f85aba127e07d5db576b6d6f0ce9e9c279a94dfd2d3b04c72980d41",
+      "trackedDiffSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "assetsInventorySha256": "c14621c39bc2a9e44bae0ab9dad01b7db5e9f70e228627d840823a63d3f67200",
+      "uncapped": false,
+      "displayHz": 144
+    },
+    {
+      "runId": "menu-2026-11-03T21-57-07-835Z",
+      "version": "0.57.0",
+      "commit": "c187eaeff447fd1c3602e02d024bdf8e8b1d8d57",
+      "dirty": true,
+      "sourceSha256": "d3c1f0b6be1ef69eb3399b41dcea8fab5769fde2673de87ee4add23a25426847",
+      "referenceSha256": "1b09a83c7217ec20b512807971b2f358eb654230c5ed465ede26e592a4262bda",
+      "harnessSha256": "173caeaf66a751afd2b9eb4f2e005f13d006a026dbab94b66826b0bc1d4f326d",
+      "trackedDiffSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "assetsInventorySha256": "c14621c39bc2a9e44bae0ab9dad01b7db5e9f70e228627d840823a63d3f67200",
+      "uncapped": false,
+      "displayHz": 144
+    }
+  ],
+  "tests": {
+    "npm": {
+      "status": "passed",
+      "artifact": "npm-test-final.log",
+      "sha256": "6e269408736e42048b6a93ef6a848228ff22e875658db9a54ad5244e4d9b8460",
+      "completedUtc": "2026-11-03T21:38:01.797Z",
+      "note": "Complete suite before final light-shaft calibration; ESM typeless-module warnings present."
+    },
+    "headless": {
+      "status": "passed",
+      "artifact": "test-results/lighting-foundation/result.json",
+      "sha256": "09dc86476e5043bdc1a21c01dde6a40cb2f0d7984ddce1f126cd2f795e870c68",
+      "completedUtc": "2026-11-03T21:47:03.600Z",
+      "shaderPrograms": 62,
+      "plantShadows": "passed",
+      "worldOutputPixelProbes": 5,
+      "note": "After light-shaft calibration. Functional image tests under SwiftShader, not RTX performance."
+    },
+    "lightShafts": {
+      "status": "passed",
+      "artifact": "promienie-final.log",
+      "sha256": "86656981a0839bde97c534388dd90da7dbd799fe77169a9277a093a536031973",
+      "completedUtc": "2026-11-03T21:58:06.425Z",
+      "note": "Final targeted check: linear intensity/colour, black source, weak scattering, unchanged baseline and render-target restoration."
+    }
+  },
+  "baseline": [
+    {
+      "source": "baseline-2026-11-03T21-30-33-939Z-003-forest-panorama-noon-baseline-static-plants-full.json",
+      "sourceSha256": "ad60323d074f7bd3f446511d0d6cc0a5efdb6d0048eb02c39c62bdf3140ddb7d",
+      "runId": "baseline-2026-11-03T21-30-33-939Z",
+      "scene": "forest",
+      "camera": "panorama",
+      "preset": "noon",
+      "motion": "static",
+      "look": "baseline",
+      "valid": true,
+      "durationSeconds": 30,
+      "warmupSeconds": 10,
+      "frame": {
+        "samples": 4272,
+        "medianMs": 6.900000000008731,
+        "p95Ms": 7.19999999999709,
+        "meanMs": 7.020458801498126,
+        "p99Ms": 13.69999999999709,
+        "maxMs": 17.90000000000873,
+        "averageFps": 142.44083303880447
+      },
+      "cpu": {
+        "samples": 4273,
+        "medianMs": 4,
+        "p95Ms": 8,
+        "meanMs": 4.377463142291015,
+        "p99Ms": 10.299999952316284,
+        "maxMs": 18.299999952316284,
+        "averageFps": 228.44281436408258
+      },
+      "gpu": {
+        "samples": 4273,
+        "medianMs": 4.368384,
+        "p95Ms": 4.564992,
+        "meanMs": 4.375333489351748,
+        "p99Ms": 4.705216,
+        "maxMs": 10.952704,
+        "averageFps": 228.55400678227173
+      },
+      "gpuDisjointEvents": 0,
+      "gpuSkipped": 0,
+      "geometryChanges": 0,
+      "drawingCalls": 386,
+      "triangles": 927694,
+      "heapMiB": 226.69989395141602,
+      "queues": {
+        "chunks": 0,
+        "dirty": 0,
+        "farMissing": 0
+      },
+      "worldOutput": {
+        "mode": "original-0.56.1",
+        "samples": 0,
+        "estimatedBytes": 0
+      },
+      "plantShadows": true,
+      "lightShafts": true,
+      "errors": []
+    },
+    {
+      "source": "baseline-2026-11-03T21-30-33-939Z-004-forest-bank-noon-baseline-static-plants-full.json",
+      "sourceSha256": "d59104f15c218ca782059e6b327bef27075117681c73ef02de7f1e3e8dfaca97",
+      "runId": "baseline-2026-11-03T21-30-33-939Z",
+      "scene": "forest",
+      "camera": "bank",
+      "preset": "noon",
+      "motion": "static",
+      "look": "baseline",
+      "valid": true,
+      "durationSeconds": 30,
+      "warmupSeconds": 10,
+      "frame": {
+        "samples": 4283,
+        "medianMs": 6.900000000023283,
+        "p95Ms": 7.2000000000116415,
+        "meanMs": 7.002871818818589,
+        "p99Ms": 7.7999999999883585,
+        "maxMs": 18.20000000001164,
+        "averageFps": 142.79855834469691
+      },
+      "cpu": {
+        "samples": 4284,
+        "medianMs": 3.799999952316284,
+        "p95Ms": 7.400000095367432,
+        "meanMs": 4.162931839680694,
+        "p99Ms": 9.700000047683716,
+        "maxMs": 14.200000047683716,
+        "averageFps": 240.2153190374364
+      },
+      "gpu": {
+        "samples": 4284,
+        "medianMs": 4.012032,
+        "p95Ms": 4.211712,
+        "meanMs": 4.016598999066294,
+        "p99Ms": 4.342784,
+        "maxMs": 7.642112,
+        "averageFps": 248.9668498728556
+      },
+      "gpuDisjointEvents": 0,
+      "gpuSkipped": 0,
+      "geometryChanges": 0,
+      "drawingCalls": 336,
+      "triangles": 720532,
+      "heapMiB": 219.62960147857666,
+      "queues": {
+        "chunks": 0,
+        "dirty": 0,
+        "farMissing": 0
+      },
+      "worldOutput": {
+        "mode": "original-0.56.1",
+        "samples": 0,
+        "estimatedBytes": 0
+      },
+      "plantShadows": true,
+      "lightShafts": true,
+      "errors": []
+    }
+  ],
+  "newNative": [
+    {
+      "source": "foundation-2026-11-03T21-47-40-317Z-002-forest-panorama-noon-natural-static-plants-full.json",
+      "sourceSha256": "cc059dda7f92f92360942f95d22267950436a23d3905116f89e99d1900e3bfdf",
+      "runId": "foundation-2026-11-03T21-47-40-317Z",
+      "scene": "forest",
+      "camera": "panorama",
+      "preset": "noon",
+      "motion": "static",
+      "look": "natural",
+      "valid": true,
+      "durationSeconds": 30,
+      "warmupSeconds": 10,
+      "frame": {
+        "samples": 4276,
+        "medianMs": 6.900000000023283,
+        "p95Ms": 7.2000000000116415,
+        "meanMs": 7.013587464920488,
+        "p99Ms": 8.10000000000582,
+        "maxMs": 20.60000000000582,
+        "averageFps": 142.5803848603372
+      },
+      "cpu": {
+        "samples": 4277,
+        "medianMs": 4.599999904632568,
+        "p95Ms": 8.299999952316284,
+        "meanMs": 4.846481178306881,
+        "p99Ms": 10.299999952316284,
+        "maxMs": 15.099999904632568,
+        "averageFps": 206.335269489141
+      },
+      "gpu": {
+        "samples": 4277,
+        "medianMs": 6.300672,
+        "p95Ms": 6.662016,
+        "meanMs": 6.140220356324523,
+        "p99Ms": 6.794208,
+        "maxMs": 11.848672,
+        "averageFps": 162.8606046638024
+      },
+      "gpuDisjointEvents": 0,
+      "gpuSkipped": 0,
+      "geometryChanges": 0,
+      "drawingCalls": 387,
+      "triangles": 927695,
+      "heapMiB": 200.20576286315918,
+      "queues": {
+        "chunks": 0,
+        "dirty": 0,
+        "farMissing": 0
+      },
+      "worldOutput": {
+        "mode": "hdr16f",
+        "width": 1920,
+        "height": 1080,
+        "exposure": 1,
+        "estimatedBytes": 124416000,
+        "samples": 4
+      },
+      "plantShadows": true,
+      "lightShafts": true,
+      "errors": []
+    },
+    {
+      "source": "foundation-2026-11-03T21-47-40-317Z-004-forest-bank-noon-natural-static-plants-full.json",
+      "sourceSha256": "3b272d56fbdde99043ea6ac868751c33ae4a78c767fb3553ffd05b78cc8efa71",
+      "runId": "foundation-2026-11-03T21-47-40-317Z",
+      "scene": "forest",
+      "camera": "bank",
+      "preset": "noon",
+      "motion": "static",
+      "look": "natural",
+      "valid": true,
+      "durationSeconds": 30,
+      "warmupSeconds": 10,
+      "frame": {
+        "samples": 4269,
+        "medianMs": 6.900000000023283,
+        "p95Ms": 7.2000000000116415,
+        "meanMs": 7.025392363551188,
+        "p99Ms": 13.300000000017462,
+        "maxMs": 20.79999999998836,
+        "averageFps": 142.34080436391756
+      },
+      "cpu": {
+        "samples": 4270,
+        "medianMs": 4.200000047683716,
+        "p95Ms": 7.700000047683716,
+        "meanMs": 4.520257612022918,
+        "p99Ms": 10.5,
+        "maxMs": 17.200000047683716,
+        "averageFps": 221.22632952162152
+      },
+      "gpu": {
+        "samples": 4270,
+        "medianMs": 6.141952,
+        "p95Ms": 6.366208,
+        "meanMs": 6.060925804215469,
+        "p99Ms": 6.517696,
+        "maxMs": 6.701056,
+        "averageFps": 164.99129543946643
+      },
+      "gpuDisjointEvents": 0,
+      "gpuSkipped": 0,
+      "geometryChanges": 0,
+      "drawingCalls": 337,
+      "triangles": 720533,
+      "heapMiB": 178.1779956817627,
+      "queues": {
+        "chunks": 0,
+        "dirty": 0,
+        "farMissing": 0
+      },
+      "worldOutput": {
+        "mode": "hdr16f",
+        "width": 1920,
+        "height": 1080,
+        "exposure": 1,
+        "estimatedBytes": 124416000,
+        "samples": 4
+      },
+      "plantShadows": true,
+      "lightShafts": true,
+      "errors": []
+    },
+    {
+      "source": "foundation-2026-11-03T21-47-40-317Z-005-forest-bank-noon-natural-static-no-plants-full.json",
+      "sourceSha256": "2e19ff4fe7a01d8539612b90cec20e73c86bfc6960b7084ec807eeda1cdae41d",
+      "runId": "foundation-2026-11-03T21-47-40-317Z",
+      "scene": "forest",
+      "camera": "bank",
+      "preset": "noon",
+      "motion": "static",
+      "look": "natural",
+      "valid": true,
+      "durationSeconds": 30,
+      "warmupSeconds": 10,
+      "frame": {
+        "samples": 4295,
+        "medianMs": 6.900000000023283,
+        "p95Ms": 7.2000000000116415,
+        "meanMs": 6.983445867287536,
+        "p99Ms": 7.5,
+        "maxMs": 21,
+        "averageFps": 143.19578314257248
+      },
+      "cpu": {
+        "samples": 4296,
+        "medianMs": 4.1000001430511475,
+        "p95Ms": 7.799999952316284,
+        "meanMs": 4.507658287577567,
+        "p99Ms": 9.699999809265137,
+        "maxMs": 18.100000143051147,
+        "averageFps": 221.84467770235614
+      },
+      "gpu": {
+        "samples": 4296,
+        "medianMs": 5.842944,
+        "p95Ms": 6.077376,
+        "meanMs": 5.804299843575413,
+        "p99Ms": 6.248352,
+        "maxMs": 6.609664,
+        "averageFps": 172.2860684233718
+      },
+      "gpuDisjointEvents": 0,
+      "gpuSkipped": 0,
+      "geometryChanges": 0,
+      "drawingCalls": 337,
+      "triangles": 720533,
+      "heapMiB": 181.15600681304932,
+      "queues": {
+        "chunks": 0,
+        "dirty": 0,
+        "farMissing": 0
+      },
+      "worldOutput": {
+        "mode": "hdr16f",
+        "width": 1920,
+        "height": 1080,
+        "exposure": 1,
+        "estimatedBytes": 124416000,
+        "samples": 4
+      },
+      "plantShadows": false,
+      "lightShafts": true,
+      "errors": []
+    },
+    {
+      "source": "foundation-2026-11-03T21-47-40-317Z-007-forest-bank-noon-natural-walk-plants-full.json",
+      "sourceSha256": "dfa01c22b524c4b90fd49d75da22e679e10f1348e195496816d04af62cdd4002",
+      "runId": "foundation-2026-11-03T21-47-40-317Z",
+      "scene": "forest",
+      "camera": "bank",
+      "preset": "noon",
+      "motion": "walk",
+      "motionPeriodSeconds": 30,
+      "look": "natural",
+      "valid": true,
+      "durationSeconds": 30,
+      "warmupSeconds": 10,
+      "benchmarkKind": "movement-including-streaming",
+      "frame": {
+        "samples": 4227,
+        "medianMs": 6.900000000023283,
+        "p95Ms": 7.2000000000116415,
+        "meanMs": 7.094677075940372,
+        "p99Ms": 14,
+        "maxMs": 28.5,
+        "averageFps": 140.9507422672164
+      },
+      "cpu": {
+        "samples": 4228,
+        "medianMs": 5.200000047683716,
+        "p95Ms": 8.899999856948853,
+        "meanMs": 5.2299668878570635,
+        "p99Ms": 11.5,
+        "maxMs": 27.59999990463257,
+        "averageFps": 191.20579947108266
+      },
+      "gpu": {
+        "samples": 4228,
+        "medianMs": 5.46304,
+        "p95Ms": 6.690784,
+        "meanMs": 5.638781449385053,
+        "p99Ms": 6.910976,
+        "maxMs": 18.690048,
+        "averageFps": 177.3432804545132
+      },
+      "gpuDisjointEvents": 0,
+      "gpuSkipped": 0,
+      "geometryChanges": 24,
+      "drawingCalls": 478,
+      "triangles": 965043,
+      "heapMiB": 248.12791633605957,
+      "queues": {
+        "chunks": 0,
+        "dirty": 0,
+        "farMissing": 0
+      },
+      "worldOutput": {
+        "mode": "hdr16f",
+        "width": 1920,
+        "height": 1080,
+        "exposure": 1,
+        "estimatedBytes": 124416000,
+        "samples": 4
+      },
+      "plantShadows": true,
+      "lightShafts": true,
+      "streaming": {
+        "chunksBefore": 142,
+        "chunksAfter": 152,
+        "farShownBefore": 338,
+        "farShownAfter": 344
+      },
+      "errors": []
+    }
+  ],
+  "palette": {
+    "runId": "foundation-2026-11-03T21-38-52-478Z",
+    "scene": "paleta",
+    "camera": "foliage",
+    "view": {
+      "position": [
+        59,
+        18.6,
+        -89
+      ],
+      "target": [
+        56,
+        17.6,
+        -93
+      ]
+    },
+    "lightShafts": false,
+    "animate": true,
+    "worldOutput": {
+      "mode": "hdr16f",
+      "width": 1920,
+      "height": 1080,
+      "exposure": 1,
+      "estimatedBytes": 124416000,
+      "samples": 4
+    },
+    "frames": [
+      {
+        "sequence": 2,
+        "preset": "noon",
+        "debugView": "full",
+        "time": 0.5,
+        "cloudCover": 0,
+        "reportSha256": "2177967e575f04f7bea71fae7392bb89c7cae855c683d0ebcf1d7f62dacaaf9c",
+        "imageSha256": "978669571ab1e890ce401417469f5e8c4cd292a59414cd8487db14ec37ddc5cf"
+      },
+      {
+        "sequence": 3,
+        "preset": "golden",
+        "debugView": "full",
+        "time": 0.6875,
+        "cloudCover": 0,
+        "reportSha256": "02850b74561f8561fa04f47c3f539e40674330a5991b2f8f37beb2e31b327285",
+        "imageSha256": "200eedf5cde3084c1a0710d93f4ed6000aa1ce42332b06d89a325d653e8082af"
+      },
+      {
+        "sequence": 4,
+        "preset": "sunset",
+        "debugView": "full",
+        "time": 0.7458333333333332,
+        "cloudCover": 0,
+        "reportSha256": "a349200f1a7527bda47abb6370701a11abd1539b55fa837437e861b25e9215b2",
+        "imageSha256": "3e4885058d975e84720be424b73a1e0077606c6cff7e6487a43d7c2957d406fd"
+      },
+      {
+        "sequence": 5,
+        "preset": "overcast",
+        "debugView": "full",
+        "time": 0.5,
+        "cloudCover": 100,
+        "reportSha256": "d68f2ce52833f6c172079a76a52cb350d734b709a9523e8a7e4c97030f36879d",
+        "imageSha256": "d1e7f3585f61aa0ce8b2d98198abae150151598a68e1edeb10524f564822b2e4"
+      },
+      {
+        "sequence": 6,
+        "preset": "blueHour",
+        "debugView": "full",
+        "time": 0.775,
+        "cloudCover": 0,
+        "reportSha256": "073cecfc5b9af8a67a82bf7a68b3085cc6b3f27883f13462cda86146823d31ff",
+        "imageSha256": "e1335ef6a41422562a9ba449e14575bdcbb07da204ef4d322c14234708747edd"
+      },
+      {
+        "sequence": 7,
+        "preset": "night",
+        "debugView": "full",
+        "time": 0,
+        "cloudCover": 0,
+        "reportSha256": "c2d0b4f37e3c9520923971381de771cfafb11aa3a7dd8d0ca9bcd292751b7c55",
+        "imageSha256": "864d29bba87a565da046f7ba125c96a2135e0e2ce4dc42bacce956073feb0250"
+      },
+      {
+        "sequence": 8,
+        "preset": "noon",
+        "debugView": "grayscale",
+        "time": 0.5,
+        "cloudCover": 0,
+        "reportSha256": "68c22f5034a11af8cb49982d9c4171eb6976030e6f7a6f0aaf1b5b1d90bdc87d",
+        "imageSha256": "554cc40295ea91351e7e9e4325adc6117edec061f242b6a28f7fcda1ef249830"
+      },
+      {
+        "sequence": 9,
+        "preset": "golden",
+        "debugView": "grayscale",
+        "time": 0.6875,
+        "cloudCover": 0,
+        "reportSha256": "228eed915a49523726304666d500a073ee4bfb69cde4f4ffc9d63d9fb4a8d5e3",
+        "imageSha256": "123acc38189f863762f9f2dd86ba1377588c219ac8fba8a077b4ed62dbcb9b95"
+      },
+      {
+        "sequence": 10,
+        "preset": "sunset",
+        "debugView": "grayscale",
+        "time": 0.7458333333333332,
+        "cloudCover": 0,
+        "reportSha256": "c8ee7bbcc82ec5ef4b2f4348a9c902beec6bceccfd804188836f2b60984ebe15",
+        "imageSha256": "9881f92ebfed6ddef640d6bb00c160fdaf3bbe408778dc245709fd940440586a"
+      },
+      {
+        "sequence": 11,
+        "preset": "overcast",
+        "debugView": "grayscale",
+        "time": 0.5,
+        "cloudCover": 100,
+        "reportSha256": "0f500f1e1daef550345415cf3b61fa4564882fa95473bb43518fec3cca938bba",
+        "imageSha256": "667ad32e8058bb3d9cbdc7b8b4e612e444666b3ab2c457bae6e7b575d81289ee"
+      },
+      {
+        "sequence": 12,
+        "preset": "blueHour",
+        "debugView": "grayscale",
+        "time": 0.775,
+        "cloudCover": 0,
+        "reportSha256": "a94e89d43271370db82c1114cfef0f772572e5902e5765c2bf1584fbf47421dd",
+        "imageSha256": "c76fca742745f47104a746fb4c7958cdbcff2216739c56d8d965e4f09e30d0db"
+      },
+      {
+        "sequence": 13,
+        "preset": "night",
+        "debugView": "grayscale",
+        "time": 0,
+        "cloudCover": 0,
+        "reportSha256": "1dd300b964a44aca614c0ab29c47f27fdda42897fc17c5c9ec220ad5b62df345",
+        "imageSha256": "770851041bb8a2ac19068daeab186c19fd974f373ce2872905fef116f2ff92be"
+      }
+    ],
+    "collages": [
+      {
+        "file": "palety-kolor.jpg",
+        "sha256": "d9c488aafc108997529de34b8a6f990701f0e4d5f20bce0f63c459b147bc012f"
+      },
+      {
+        "file": "palety-szarosc.jpg",
+        "sha256": "473dd360e6a3268edf53de6405d32a021a831acb6d1169375bb4a0a576877788"
+      }
+    ]
+  },
+  "limitations": [
+    "VSync at 144 Hz limits frame-rate comparisons; GPU and CPU times are separate metrics.",
+    "The 5% colour-only target has not been isolated from the HDR presentation cost.",
+    "The twelve palette frames have light shafts disabled and do not exercise the later light-shaft calibration.",
+    "No physical Android measurement; no full-chunk radius of 800.",
+    "Startup gpuFeatures can precede GPU initialization; actual WebGL renderer is NVIDIA RTX 3050 and GPU timer queries succeeded.",
+    "Single baseline run per camera, not three alternating pairs; one 30-second movement pass with streaming, no long traversal or paired baseline movement.",
+    "Menu: both looks use current 0.57.0 code with HDR. Natural/home has 1800 samples; other final buckets only 32–37. No GPU timing or rigorous paired menu performance claim."
+  ],
+  "comparisons": [
+    {
+      "camera": "panorama",
+      "baselineSource": "baseline-2026-11-03T21-30-33-939Z-003-forest-panorama-noon-baseline-static-plants-full.json",
+      "newSource": "foundation-2026-11-03T21-47-40-317Z-002-forest-panorama-noon-natural-static-plants-full.json",
+      "gpuMedianChangePercent": 44.23347398030941,
+      "gpuP95ChangePercent": 45.9370794078062,
+      "note": "Total rendering change including HDR16F output and MSAA4x; not isolated colour-only cost."
+    },
+    {
+      "camera": "bank",
+      "baselineSource": "baseline-2026-11-03T21-30-33-939Z-004-forest-bank-noon-baseline-static-plants-full.json",
+      "newSource": "foundation-2026-11-03T21-47-40-317Z-004-forest-bank-noon-natural-static-plants-full.json",
+      "gpuMedianChangePercent": 53.08831036242982,
+      "gpuP95ChangePercent": 51.15487478725991,
+      "note": "Total rendering change including HDR16F output and MSAA4x; not isolated colour-only cost."
+    }
+  ],
+  "plantShadowComparison": {
+    "enabledSource": "foundation-2026-11-03T21-47-40-317Z-004-forest-bank-noon-natural-static-plants-full.json",
+    "disabledSource": "foundation-2026-11-03T21-47-40-317Z-005-forest-bank-noon-natural-static-no-plants-full.json",
+    "gpuMedianDifferenceMs": 0.2990079999999997,
+    "gpuMedianChangePercent": 5.117420259376093,
+    "gpuP95DifferenceMs": 0.2888320000000002,
+    "note": "Additional animated-plant shadow map only. HDR remains enabled; static plant shadows are restored when the extra map is off. Not a colour-only measurement."
+  },
+  "menu": {
+    "runId": "menu-2026-11-03T21-57-07-835Z",
+    "source": "menu-2026-11-03T21-57-07-835Z-010-menu-tour.json",
+    "sourceSha256": "ae60ce5cff7309e953f317fe053650f8408287e443e551204189e3e68936b3ab",
+    "scope": "Real MenuBackdrop/MenuWorld/MenuCamera with isolated QA controls; visual transition smoke test, not full menu UI or paired legacy-build performance test.",
+    "scene": "river-valley-0.56",
+    "seed": 2138286349,
+    "time": 0.4375,
+    "views": {
+      "home": {
+        "position": [
+          -480,
+          100,
+          384
+        ],
+        "target": [
+          -520,
+          88,
+          450
+        ]
+      },
+      "river": {
+        "position": [
+          -477,
+          79,
+          375
+        ],
+        "target": [
+          -510,
+          78,
+          420
+        ]
+      },
+      "forest": {
+        "position": [
+          -474,
+          78,
+          388
+        ],
+        "target": [
+          -481,
+          74.5,
+          349
+        ]
+      },
+      "mountains": {
+        "position": [
+          -476,
+          106,
+          426
+        ],
+        "target": [
+          -530,
+          103,
+          580
+        ]
+      }
+    },
+    "ready": true,
+    "warmed": true,
+    "failed": false,
+    "queued": 0,
+    "chunks": 1257,
+    "far": {
+      "shown": 1219,
+      "wanted": 1219,
+      "missing": 0,
+      "maxDistance": 1024,
+      "detailTiers": [
+        {
+          "distance": 512,
+          "spacing": 1
+        },
+        {
+          "distance": 800,
+          "spacing": 2
+        },
+        {
+          "distance": 1024,
+          "spacing": 4
+        }
+      ]
+    },
+    "worldOutput": {
+      "mode": "hdr16f",
+      "width": 1920,
+      "height": 1080,
+      "exposure": 1,
+      "estimatedBytes": 124416000,
+      "samples": 4
+    },
+    "outputViolations": 0,
+    "failedPrograms": 0,
+    "errors": [],
+    "timing": {
+      "targetFps": 60,
+      "source": "Actual intervals between rendered requestAnimationFrame callbacks; not GPU presentation timing"
+    },
+    "measurements": {
+      "natural/home": {
+        "frames": {
+          "samples": 1800,
+          "meanMs": 16.91488888888889,
+          "p95Ms": 21.700000000004366,
+          "averageFps": 59.119513380716526
+        },
+        "cpu": {
+          "samples": 1800,
+          "meanMs": 14.847777775923412,
+          "p95Ms": 21,
+          "averageFps": 67.35014593372766
+        }
+      },
+      "natural/river": {
+        "frames": {
+          "samples": 34,
+          "meanMs": 16.576470588235036,
+          "p95Ms": 20.90000000000873,
+          "averageFps": 60.326472675657435
+        },
+        "cpu": {
+          "samples": 34,
+          "meanMs": 14.532352938371545,
+          "p95Ms": 18.59999990463257,
+          "averageFps": 68.81198139356896
+        }
+      },
+      "natural/forest": {
+        "frames": {
+          "samples": 37,
+          "meanMs": 16.627027027026948,
+          "p95Ms": 21.30000000000291,
+          "averageFps": 60.14304291287415
+        },
+        "cpu": {
+          "samples": 37,
+          "meanMs": 15.567567580455059,
+          "p95Ms": 20.5,
+          "averageFps": 64.23611105793374
+        }
+      },
+      "natural/mountains": {
+        "frames": {
+          "samples": 32,
+          "meanMs": 16.6875,
+          "p95Ms": 22.60000000000582,
+          "averageFps": 59.9250936329588
+        },
+        "cpu": {
+          "samples": 32,
+          "meanMs": 13.006250016391277,
+          "p95Ms": 18.200000047683716,
+          "averageFps": 76.88611234904283
+        }
+      },
+      "baseline/home": {
+        "frames": {
+          "samples": 33,
+          "meanMs": 16.721212121212208,
+          "p95Ms": 21.59999999999127,
+          "averageFps": 59.8042769119243
+        },
+        "cpu": {
+          "samples": 33,
+          "meanMs": 13.29696968829993,
+          "p95Ms": 20.799999952316284,
+          "averageFps": 75.20510488039278
+        }
+      },
+      "baseline/river": {
+        "frames": {
+          "samples": 36,
+          "meanMs": 16.630555555555475,
+          "p95Ms": 21.40000000000873,
+          "averageFps": 60.130282278269874
+        },
+        "cpu": {
+          "samples": 36,
+          "meanMs": 14.44166663620207,
+          "p95Ms": 19.899999856948853,
+          "averageFps": 69.24408554710858
+        }
+      },
+      "baseline/forest": {
+        "frames": {
+          "samples": 34,
+          "meanMs": 16.155882352941262,
+          "p95Ms": 21,
+          "averageFps": 61.896959766975826
+        },
+        "cpu": {
+          "samples": 34,
+          "meanMs": 14.882352962213403,
+          "p95Ms": 20.200000047683716,
+          "averageFps": 67.19367579434652
+        }
+      },
+      "baseline/mountains": {
+        "frames": {
+          "samples": 36,
+          "meanMs": 16.686111111110627,
+          "p95Ms": 21.20000000001164,
+          "averageFps": 59.93008157150165
+        },
+        "cpu": {
+          "samples": 36,
+          "meanMs": 13.252777781751421,
+          "p95Ms": 18.799999952316284,
+          "averageFps": 75.45587924796887
+        }
+      }
+    },
+    "frames": [
+      {
+        "source": "menu-2026-11-03T21-57-07-835Z-002-menu-natural-home.json",
+        "image": "menu-2026-11-03T21-57-07-835Z-002-menu-natural-home.png",
+        "reportSha256": "b3c9a2aec73f97fe7600c644331dabfc12af53b2fe527d4304836dec15a150cb",
+        "imageSha256": "a2f9b5a0ae7856e20737590cd3d84f14e0fbebd97557fd1bab02f80cd9d41c24",
+        "look": "natural",
+        "view": "home",
+        "ready": true,
+        "failed": false,
+        "queued": 0,
+        "farMissing": 0,
+        "failedPrograms": 0,
+        "outputViolations": 0,
+        "errors": []
+      },
+      {
+        "source": "menu-2026-11-03T21-57-07-835Z-003-menu-natural-river.json",
+        "image": "menu-2026-11-03T21-57-07-835Z-003-menu-natural-river.png",
+        "reportSha256": "0e790a52b0da821fc9c0dab93e238e2f2b201a1f1203e73a26d1c27a7beb8601",
+        "imageSha256": "a1c966cfe4bbdfbe7ec5d614e7d5cf2617b9657baf2eb1ba0a93cf5600b29417",
+        "look": "natural",
+        "view": "river",
+        "ready": true,
+        "failed": false,
+        "queued": 0,
+        "farMissing": 0,
+        "failedPrograms": 0,
+        "outputViolations": 0,
+        "errors": []
+      },
+      {
+        "source": "menu-2026-11-03T21-57-07-835Z-004-menu-natural-forest.json",
+        "image": "menu-2026-11-03T21-57-07-835Z-004-menu-natural-forest.png",
+        "reportSha256": "56794c851be6c46be6f70141fab22f14135424b154a0ea02cbdbd2144deb62f1",
+        "imageSha256": "6c63303b88e4d6e6d95642b4a97bba1937e2dd77a98272270c2c9e30e623c2ab",
+        "look": "natural",
+        "view": "forest",
+        "ready": true,
+        "failed": false,
+        "queued": 0,
+        "farMissing": 0,
+        "failedPrograms": 0,
+        "outputViolations": 0,
+        "errors": []
+      },
+      {
+        "source": "menu-2026-11-03T21-57-07-835Z-005-menu-natural-mountains.json",
+        "image": "menu-2026-11-03T21-57-07-835Z-005-menu-natural-mountains.png",
+        "reportSha256": "44df8569da394127788b1cf6509f2a5a5d254fb86283e7e4b72901721b4c01b3",
+        "imageSha256": "043a0fd57f8822c184b129ddcf6febc5f60b576766380fda2d54e2981faa6b74",
+        "look": "natural",
+        "view": "mountains",
+        "ready": true,
+        "failed": false,
+        "queued": 0,
+        "farMissing": 0,
+        "failedPrograms": 0,
+        "outputViolations": 0,
+        "errors": []
+      },
+      {
+        "source": "menu-2026-11-03T21-57-07-835Z-006-menu-baseline-home.json",
+        "image": "menu-2026-11-03T21-57-07-835Z-006-menu-baseline-home.png",
+        "reportSha256": "26b2f24ef159be7629b05c1402620a9756e66ea6b1279b671ac9606efb91380b",
+        "imageSha256": "c5538c85b68ba77eefd444ede268bda2299449839eb9dd816ce7a6535acf4b92",
+        "look": "baseline",
+        "view": "home",
+        "ready": true,
+        "failed": false,
+        "queued": 0,
+        "farMissing": 0,
+        "failedPrograms": 0,
+        "outputViolations": 0,
+        "errors": []
+      },
+      {
+        "source": "menu-2026-11-03T21-57-07-835Z-007-menu-baseline-river.json",
+        "image": "menu-2026-11-03T21-57-07-835Z-007-menu-baseline-river.png",
+        "reportSha256": "fa951b27c93bf74083e500a3c54dbe037c31f9a42d6db118e076166c66351b5d",
+        "imageSha256": "914e3380ac0d5f60808606ac774c65ee5e26f7e73758ab024ec5265f2f7e1a44",
+        "look": "baseline",
+        "view": "river",
+        "ready": true,
+        "failed": false,
+        "queued": 0,
+        "farMissing": 0,
+        "failedPrograms": 0,
+        "outputViolations": 0,
+        "errors": []
+      },
+      {
+        "source": "menu-2026-11-03T21-57-07-835Z-008-menu-baseline-forest.json",
+        "image": "menu-2026-11-03T21-57-07-835Z-008-menu-baseline-forest.png",
+        "reportSha256": "d67c0a82506bff2bb3898b9909e495a63fc301076d6355314622112996d03040",
+        "imageSha256": "a8b7fc089d2ef71205efa2630d02a036455dfff6a344c154eed2e3d0a4a1092b",
+        "look": "baseline",
+        "view": "forest",
+        "ready": true,
+        "failed": false,
+        "queued": 0,
+        "farMissing": 0,
+        "failedPrograms": 0,
+        "outputViolations": 0,
+        "errors": []
+      },
+      {
+        "source": "menu-2026-11-03T21-57-07-835Z-009-menu-baseline-mountains.json",
+        "image": "menu-2026-11-03T21-57-07-835Z-009-menu-baseline-mountains.png",
+        "reportSha256": "6e05f1c4b3d91e6c6adc822aa92772606dd8117060849a360625e608d6e6a5ce",
+        "imageSha256": "5784c9bee44563e7d7fdc006a5143f04d0fc3af47ed29154cf523eb3fe1f903d",
+        "look": "baseline",
+        "view": "mountains",
+        "ready": true,
+        "failed": false,
+        "queued": 0,
+        "farMissing": 0,
+        "failedPrograms": 0,
+        "outputViolations": 0,
+        "errors": []
+      }
+    ],
+    "visualReview": {
+      "by": "operator",
+      "scope": "Eight captured still images, not every transition frame.",
+      "observations": [
+        "All eight views have complete terrain and no black captured frame.",
+        "Natural palette is less saturated; bright light patches remain visible beneath trees."
+      ],
+      "userApproval": false
+    }
+  },
+  "forestPhoto": {
+    "source": "foundation-2026-11-03T21-47-40-317Z-006-forest-bank-noon-natural-static-plants-full.json",
+    "sourceSha256": "32ace325fd5b244ed130ce4f48122535d009e34f8ecb8e78819e02fe463cdd9d",
+    "image": "foundation-2026-11-03T21-47-40-317Z-006-forest-bank-noon-natural-static-plants-full.png",
+    "imageSha256": "28e0bdcdad330284a2be3d553f926bc8936bfe4151b1bda3947c06c1f6572063",
+    "publishedImage": "las-rzeka.jpg",
+    "publishedImageSha256": "f27cbf2d916aa28ea14bb4238d65c5e88f278be6c88562cdcebe7cd77e5ffa7e",
+    "review": "Operator inspected final bank frame; full natural look and light shafts enabled."
+  }
+}

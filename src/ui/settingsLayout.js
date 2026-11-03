@@ -58,6 +58,7 @@ export const SETTINGS_TABS = {
 };
 
 export const ADVANCED_VIDEO = [
+    'lightingLook',
     'shadows',
     'ambientOcclusion',
     'lightShafts',
@@ -72,4 +73,4 @@ export const ADVANCED_VIDEO = [
 // Ustawienia, których celowo nie ma w menu (tylko /ustaw): czas na
 // wczytywanie chunków, napisy F3 (klawisz F3), rozdzielczość tekstur
 // (w zakładce Wygląd - razem z paczką tekstur).
-export const COMMAND_ONLY_SETTINGS = ['loadBudget', 'showDebug', 'textureResolution'];
+export const COMMAND_ONLY_SETTINGS = ['loadBudget', 'showDebug', 'textureResolution', 'cloudCover'];

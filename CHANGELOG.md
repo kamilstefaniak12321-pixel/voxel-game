@@ -11,6 +11,21 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 0.57.0 - Podstawa naturalnego oświetlenia
+
+Pierwszy pakiet planu światła: E00–E04 i podstawowe presety E07 — PR #91.
+
+- Wspólne liniowe składanie światła słońca, księżyca, nieba, lamp i emisji. Świat ma jeden końcowy etap tonowania i konwersji koloru, z zachowanym wygładzaniem krawędzi; interfejs i ikony pozostają poza nim.
+- Sześć profili: południe, złota godzina, zachód, zachmurzenie, błękitna godzina i noc. Kolory i moce przechodzą płynnie, a ciepłe źródła lokalne zachowują własną barwę. Profil chmur służy na razie próbom oświetlenia, bez nowego systemu pogody.
+- Dostęp do światła nieba, bezpośrednie cienie i AO są rozdzielone. Popiół oraz podpałka ogniska uwzględniają osłonięcie; emisja żaru i płomienia nie zależy od AO.
+- Bliskie cienie traw i krzewów podążają za wiatrem dzięki osobnej, budżetowanej mapie. Duży teren i korony drzew nadal korzystają z dalekich kaskad cieni.
+- **Obraz → Zaawansowane → Paleta światła** pozwala wrócić do wyglądu 0.56.1. Tryb programisty ma scenę `/scena paleta`, podglądy składników i szarości oraz przełączniki źródeł.
+- Testy obejmują prawdziwe shadery WebGL, brak nieba w zamkniętej komorze, niezależność emisji, zgodność wiatru z cieniem i zapis/wczytanie po edycji dachu oraz usunięciu lampy.
+
+Opis, sposób porównania i pomiary: `docs/podstawa-oswietlenia.md`, `docs/pomiary/swiatlo-0.57.0/`.
+Odbicia otoczenia, transmisja liści i rozbudowana atmosfera pozostają kolejnymi etapami po ocenie podstawy.
+Wydanie Windows/Android przygotowywane do publikacji po scaleniu PR; fizycznego telefonu nie używano w tym odbiorze.
+
 ## 0.56.1 - Szczegółowe menu i zasięg do 800 bloków
 
 Poprawki scenerii menu i większy zakres ustawień obrazu — PR #90.

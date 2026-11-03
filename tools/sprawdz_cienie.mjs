@@ -19,7 +19,10 @@ registerHooks({
 
 const THREE = await import('three');
 const { SunShadows, shadowUniforms, SHADOW_CASTER_MATERIALS,
-    SHADOW_BUILD_BUDGET, DISTANT_SHADOW_CASCADES } = await import('../src/rendering/Shadows.js');
+    SHADOW_BUILD_BUDGET, DISTANT_SHADOW_CASCADES, PLANT_SHADOW_BUILD_BUDGET,
+    plantDepthMaterial } = await import('../src/rendering/Shadows.js');
+const { plantWindUniforms, plantShadowState } = await import('../src/rendering/PlantWind.js');
+const { CampfireLight } = await import('../src/rendering/CampfireLight.js');
 const { CHUNK_HEIGHT } = await import('../src/config.js');
 const near = (a, b) => assert.ok(Math.abs(a - b) < 1e-8, `${a} != ${b}`);
 
@@ -33,7 +36,8 @@ class CountingRenderer {
     setRenderTarget(target) { this.target = target; }
     clear() { this.clears.push(this.target); }
     render(scene) {
-        const counts = { scene, target: this.target, draws: 0, triangles: 0 };
+        const counts = { scene, target: this.target, draws: 0, triangles: 0,
+            plantTime: plantDepthMaterial.uniforms.uTime.value };
         scene.traverseVisible(mesh => {
             if (!mesh.isMesh) return;
             const geometry = mesh.geometry;
@@ -100,6 +104,10 @@ function fixture({ large = false, grouped = false, many = true } = {}) {
         assert.equal(shadows.stats().lastFrame.triangles, triangles, 'Statystyki liczą rzeczywisty drawRange');
         assert.ok(Number.isFinite(shadows.stats().lastFrame.prepareMilliseconds));
         assert.ok(Number.isFinite(shadows.stats().lastFrame.submitMilliseconds));
+        const plants = renderer.submissions.slice(before).filter(s => s.scene === shadows.plantScene);
+        assert.ok(plants.length <= 1, 'Najwyżej jedna paczka mapy roślin na klatkę');
+        assert.ok(plants.reduce((n, s) => n + s.draws, 0) <= PLANT_SHADOW_BUILD_BUDGET.draws);
+        assert.ok(plants.reduce((n, s) => n + s.triangles, 0) <= PLANT_SHADOW_BUILD_BUDGET.triangles);
     };
     const until = (condition, message) => {
         for (let i = 0; i < 100; i++) { if (condition()) return; step(); }
@@ -274,6 +282,113 @@ for (const jump of ['teleport', 'sun-angle', 'moon', 'space', 'no-light']) {
         }
         assert.deepEqual(DISTANT_SHADOW_CASCADES.map(c => c.radius), [256, 1024]);
     } finally { f.dispose(); }
+}
+
+// Wiatr ma niezależny, ograniczony budżet i jeden czas dla całej budowy.
+// Ukończone mapy terenu nie są odświeżane z powodu ruchu roślin.
+{
+    const f = fixture({ large: true });
+    try {
+        f.source.material = SHADOW_CASTER_MATERIALS;
+        f.source.geometry.addGroup(0, 3, 0);
+        f.source.geometry.addGroup(3, 120000 * 3, 1);
+        f.source.visible = false;
+        f.shadows.setNaturalLighting(true);
+        plantWindUniforms.uTime.value = 7;
+        f.step();
+        const build = f.shadows.plants.build;
+        assert.ok(build && build.cursor > 0 && build.cursor < build.jobs.length);
+        assert.equal(shadowUniforms.uPlantShadowMap.value, null, 'Nie publikuj częściowej mapy roślin');
+        for (let i = 0; i < 30 && f.shadows.plants.draws === 0; i++) {
+            plantWindUniforms.uTime.value += .016;
+            f.step(.016);
+            if (f.shadows.plants.build) assert.equal(f.shadows.plants.build, build);
+        }
+        assert.equal(f.shadows.plants.draws, 1);
+        assert.equal(f.shadows.plants.time, 7);
+        assert.ok(f.renderer.submissions.filter(s => s.scene === f.shadows.plantScene).every(s => s.plantTime === 7),
+            'Wszystkie porcje mapy mają tę samą fazę wiatru');
+        assert.equal(f.source.visible, false);
+        assert.equal(f.source.material, SHADOW_CASTER_MATERIALS);
+        f.settle();
+        const terrainDraws = [f.shadows.draws, ...f.shadows.cascades.map(c => c.draws)];
+        const plantDraws = f.shadows.plants.draws;
+        for (let i = 0; i < 30; i++) { plantWindUniforms.uTime.value += .016; f.step(.016); }
+        assert.ok(f.shadows.plants.draws > plantDraws, 'Ruch roślin odświeża własną mapę');
+        assert.deepEqual([f.shadows.draws, ...f.shadows.cascades.map(c => c.draws)], terrainDraws,
+            'Wiatr nie odświeża terenu ani kaskad');
+        f.shadows.markPlantAnimation(f.source.userData.chunk);
+        assert.equal(f.shadows.changed, false, 'Reakcja krzaka nie unieważnia pełnego terenu');
+        f.shadows.setNaturalLighting(false);
+        assert.equal(f.shadows.plants.target, null);
+        assert.equal(f.shadows.plants.backTarget, null);
+        assert.equal(f.shadows.plants.build, null);
+        assert.equal(shadowUniforms.uPlantShadowInfo.value.w, 0);
+        assert.equal(shadowUniforms.uPlantShadowMap.value, null);
+        f.settle();
+        assert.ok(f.renderer.submissions.some(s => s.scene === f.world.shadowScene && s.triangles > 120000),
+            'Porównanie bazowe zachowuje wcześniejszą statyczną mapę roślin');
+    } finally { f.dispose(); plantWindUniforms.uTime.value = 0; }
+}
+
+// Pusta mapa nie ma okresowego kosztu; dodanie roślin do istniejącego
+// chunka ją unieważnia, a wyłączenie jakości zwalnia także back buffer.
+{
+    const f = fixture({ many: false });
+    try {
+        f.shadows.setNaturalLighting(true); f.settle();
+        const draws = f.shadows.plants.draws;
+        for (let i = 0; i < 20; i++) f.step(.1);
+        assert.equal(f.shadows.plants.draws, draws);
+        f.source.material = SHADOW_CASTER_MATERIALS;
+        f.source.geometry.addGroup(0, 3, 1);
+        f.shadows.markChunk(f.source.userData.chunk); f.step(.1);
+        assert.equal(f.shadows.plants.hasCasters, true);
+        f.shadows.setQuality(0);
+        assert.equal(f.shadows.plants.target, null);
+        assert.equal(f.shadows.plants.backTarget, null);
+    } finally { f.dispose(); }
+}
+
+// Ognisko odświeża wszystkie sześć ścian z tą samą fazą wiatru,
+// najwyżej 4 Hz dla jednego źródła, tylko przy roślinach w zasięgu.
+{
+    class FireRenderer extends CountingRenderer {
+        viewport = new THREE.Vector4(0, 0, 100, 100);
+        scissor = this.viewport.clone(); scissorTest = false;
+        getViewport(v) { return v.copy(this.viewport); }
+        getScissor(v) { return v.copy(this.scissor); }
+        getScissorTest() { return this.scissorTest; }
+        setViewport(x, y, z, w) { x?.isVector4 ? this.viewport.copy(x) : this.viewport.set(x, y, z, w); }
+        setScissor(x, y, z, w) { x?.isVector4 ? this.scissor.copy(x) : this.scissor.set(x, y, z, w); }
+        setScissorTest(value) { this.scissorTest = value; }
+    }
+    const f = fixture({ many: false }), renderer = new FireRenderer(), fire = new CampfireLight(renderer);
+    try {
+        plantShadowState.natural = true;
+        f.source.material = SHADOW_CASTER_MATERIALS;
+        f.source.geometry.addGroup(0, 3, 1);
+        const sources = [{ key: 'fire', position: new THREE.Vector3(0, 64, 0), power: 1 }];
+        plantWindUniforms.uTime.value = 12;
+        fire.update(sources, 0); fire.render(f.world, 0);
+        assert.equal(fire.draws, 6);
+        assert.ok(renderer.submissions.every(s => s.plantTime === 12));
+        fire.update(sources, .24); fire.render(f.world, .24); assert.equal(fire.draws, 6);
+        plantWindUniforms.uTime.value = 12.25;
+        fire.update(sources, .25); fire.render(f.world, .25); assert.equal(fire.draws, 12);
+        assert.ok(renderer.submissions.slice(6).every(s => s.plantTime === 12.25));
+        assert.equal(f.source.material, SHADOW_CASTER_MATERIALS);
+        f.source.geometry.clearGroups(); f.source.material = SHADOW_CASTER_MATERIALS[0];
+        fire.markChunk(f.source.userData.chunk);
+        fire.update(sources, .5); fire.render(f.world, .5);
+        assert.equal(fire.slots[0].hasPlants, false);
+        const draws = fire.draws;
+        fire.update(sources, 2); fire.render(f.world, 2); assert.equal(fire.draws, draws);
+        plantShadowState.natural = false;
+        fire.update(sources, 3); fire.render(f.world, 3);
+        assert.equal(fire.draws, draws + 6, 'Zmiana porównania bazowego unieważnia poprzedni wariant mapy');
+        fire.update(sources, 4); fire.render(f.world, 4); assert.equal(fire.draws, draws + 6);
+    } finally { fire.dispose(); f.dispose(); plantShadowState.natural = false; plantWindUniforms.uTime.value = 0; }
 }
 
 // WebGL1 nie alokuje map głębi nawet po wybraniu jakości 3.

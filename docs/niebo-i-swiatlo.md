@@ -3,7 +3,12 @@
 Jak są zbudowane dzień i noc, niebo, daleki teren i oświetlenie
 bloków - i gdzie podepną się rzeczy planowane na później.
 
-## Jak to działa teraz
+Od 0.57.0 domyślny tor opisuje [Podstawa oświetlenia](podstawa-oswietlenia.md):
+naturalna paleta, liniowy bufor świata, końcowe tonowanie oraz rozdzielone
+składniki i diagnostyka. Poniższy opis dokumentuje wcześniejszą architekturę
+i kolejne etapy jej rozwoju; wariant „Poprzednia (0.56.1)” zachowuje dawny wygląd.
+
+## Wcześniejsza architektura
 
 ```
 czas świata (WorldTime)          jedna liczba: ile dni minęło (3.5 = 4. dzień, południe)

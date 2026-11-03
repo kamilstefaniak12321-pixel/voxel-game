@@ -4,6 +4,7 @@
 // Uruchomienie: node tools/sprawdz_rzeki_zapisy.mjs (Node 22.15+).
 import assert from 'node:assert/strict';
 import { registerHooks } from 'node:module';
+import { memoryDatabase } from './fixtures/memory-database.mjs';
 
 registerHooks({
     resolve(specifier, context, next) {
@@ -33,36 +34,6 @@ const { FarTerrain } = await import('../src/world/FarTerrain.js');
 const { sampleFarTile } = await import('../src/world/farSamples.js');
 const { getBlockId } = await import('../src/blocks/BlockRegistry.js');
 const { CHUNK_SIZE } = await import('../src/config.js');
-
-// Minimalny port bazy: transakcje i odczyty kończą się asynchronicznie,
-// a rekordy są kopiowane jak w IndexedDB. Nie odtwarzamy kodu zapisu gry.
-function memoryDatabase() {
-    const tables = { worlds: new Map(), chunks: new Map() };
-    const request = value => {
-        const result = { result: structuredClone(value) };
-        queueMicrotask(() => result.onsuccess?.());
-        return result;
-    };
-    return {
-        transaction() {
-            const transaction = {
-                objectStore(name) {
-                    const table = tables[name];
-                    return {
-                        put(record) {
-                            const key = name === 'worlds' ? record.id : JSON.stringify([record.worldId, record.cx, record.cz]);
-                            table.set(key, structuredClone(record));
-                        },
-                        getAll: () => request([...table.values()]),
-                        index: () => ({ getAll: id => request([...table.values()].filter(record => record.worldId === id)) })
-                    };
-                },
-                commit() { queueMicrotask(() => transaction.oncomplete?.()); }
-            };
-            return transaction;
-        }
-    };
-}
 
 function worldWith(generator, savedChunks = new Map()) {
     return Object.assign(Object.create(World.prototype), {

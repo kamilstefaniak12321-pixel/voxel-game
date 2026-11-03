@@ -52,6 +52,7 @@ import {
 import { grassTint } from './terrain/Biomes.js';
 import { SURFACE_FACE_NAMES, SURFACE_MATERIAL_COUNT, getSurfaceFaceTexture, surfaceMaterialId, surfaceMaterialType } from '../rendering/SurfaceMaterials.js';
 import { SURFACE_LIGHTING_GLSL } from '../rendering/SurfaceLighting.js';
+import { installLightingDiagnostics } from '../rendering/LightingDiagnostics.js';
 
 import {
     KINDS,
@@ -579,13 +580,17 @@ export function createFarTerrainMaterial(level = 0) {
 
                     vec3 farNormal = inverseTransformDirection(normal, viewMatrix);
 
-                    float extra =
-                        daylightAmbient(hereSun) - daylightAmbient(playerSun) +
-                        (daylightSun(hereSun) - daylightSun(playerSun)) * max(dot(farNormal, uSunDirection), 0.0);
+                    float extraSky = daylightAmbient(hereSun) - daylightAmbient(playerSun);
+                    float extraSun = (daylightSun(hereSun) - daylightSun(playerSun)) * max(dot(farNormal, uSunDirection), 0.0);
+                    if (uLightingNatural > 0.5) {
+                        diagnosticSky = max(diagnosticSky + diffuseColor.rgb * extraSky * RECIPROCAL_PI * uLightingComponents.z, vec3(0.0));
+                        diagnosticSun = max(diagnosticSun + diffuseColor.rgb * extraSun * RECIPROCAL_PI * uLightingComponents.x, vec3(0.0));
+                        outgoingLight = diagnosticSky + diagnosticSun + diagnosticMoon;
+                    } else {
+                        outgoingLight = max(outgoingLight + diffuseColor.rgb * (extraSky + extraSun) * RECIPROCAL_PI, vec3(0.0));
+                    }
 
-                    outgoingLight = max(outgoingLight + diffuseColor.rgb * extra * RECIPROCAL_PI, vec3(0.0));
-
-                    nightDesaturation = clamp(nightDesaturation + daylightNight(hereSun) - daylightNight(playerSun), 0.0, 1.0);
+                    if (uLightingNatural < 0.5) nightDesaturation = clamp(nightDesaturation + daylightNight(hereSun) - daylightNight(playerSun), 0.0, 1.0);
 
                 }
 
@@ -597,7 +602,7 @@ export function createFarTerrainMaterial(level = 0) {
 
                 // Kula ognia meteorytu oświetla też daleki teren.
 
-                outgoingLight += diffuseColor.rgb * meteorLight(vFarWorld, inverseTransformDirection(normal, viewMatrix));
+                outgoingLight += surfaceLocalRadiance(diffuseColor.rgb, meteorLight(vFarWorld, inverseTransformDirection(normal, viewMatrix)));
 
                 outgoingLight = applyBrightness(outgoingLight, diffuseColor.rgb);
 
@@ -621,6 +626,8 @@ export function createFarTerrainMaterial(level = 0) {
                     farHaze(farDirection)
                 );`
             );
+
+        installLightingDiagnostics(shader, { visibility: '\n#ifdef USE_FAR_SHADOWS\nfarSun\n#else\n1.0\n#endif\n' });
 
     };
 

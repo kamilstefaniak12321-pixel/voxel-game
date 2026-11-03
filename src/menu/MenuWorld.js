@@ -7,6 +7,8 @@ import { skyUniforms } from '../sky/skyShader.js';
 import { viewUniforms } from '../rendering/viewUniforms.js';
 import { SunShadows, shadowUniforms } from '../rendering/Shadows.js';
 import { LightShafts } from '../rendering/LightShafts.js';
+import { WorldOutput } from '../rendering/WorldOutput.js';
+import { lightingUniforms, resetLightingDiagnostics } from '../rendering/LightingDiagnostics.js';
 import { lightToBrightness } from '../world/Light.js';
 import { atmosphericLightToBrightness } from '../rendering/LightPolicy.js';
 import { setAmbientOcclusion, setFastLeaves } from '../rendering/ChunkMesher.js';
@@ -58,6 +60,8 @@ export class MenuWorld {
             this.sky.attachLights(this.farTerrain.scene);
             this.shadows = new SunShadows(renderer);
             this.lightShafts = new LightShafts(renderer);
+            this.worldOutput = new WorldOutput(renderer);
+            resetLightingDiagnostics();
             this.shaftColor = new THREE.Color();
             this.world.onMeshChanged = chunk => {
                 this.shadows.markChunk(chunk);
@@ -87,7 +91,8 @@ export class MenuWorld {
 
     warmWater() {
         if (this.disposed) return;
-        const variant = waterShaderVariantKey();
+        const natural = this.sky.lightingLook === 'natural';
+        const variant = waterShaderVariantKey(natural);
         if (variant === this.waterVariant) return;
         this.waterVariant = variant;
         this.warmed = false;
@@ -96,7 +101,8 @@ export class MenuWorld {
         const epoch = ++this.warmEpoch;
         const current = () => !this.disposed && epoch === this.warmEpoch;
         try {
-            this.warmup = Promise.resolve(prewarmWaterMaterial(this.renderer, this.scene, this.camera, true))
+            const target = natural ? this.worldOutput.prepareTarget() : null;
+            this.warmup = Promise.resolve(prewarmWaterMaterial(this.renderer, this.scene, this.camera, true, target))
                 .then(() => { if (current()) this.warmed = true; })
                 .catch(error => { if (current()) this.error = error; });
         } catch (error) {
@@ -110,6 +116,10 @@ export class MenuWorld {
     applySettings() {
         if (this.disposed) return;
         const settings = this.settings;
+        this.sky.lightingLook = settings.get('lightingLook');
+        this.sky.cloudCover = settings.get('cloudCover') / 100;
+        lightingUniforms.uLightingNatural.value = this.sky.lightingLook === 'natural' ? 1 : 0;
+        this.shadows.setNaturalLighting(this.sky.lightingLook === 'natural');
         const potato = settings.get('potato');
         const distance = this.viewDistance;
         this.camera.far = distance + 3 * CHUNK_SIZE + 64;
@@ -208,7 +218,10 @@ export class MenuWorld {
             // Wspólna bliska mapa może mieć cień gracza, lecz menu nie
             // ma modelu ani jego mapy. Nie próbuj próbkować pustej tekstury.
             shadowUniforms.uSunShadowInfo.value.w = 0;
-            renderer.clear();
+            const naturalOutput = this.sky.lightingLook === 'natural';
+            const grayscaleOutput = lightingUniforms.uLightingDebug.value === 12;
+            if (!this.worldOutput.begin(naturalOutput || grayscaleOutput,
+                { bypassTone: !naturalOutput && grayscaleOutput })) renderer.clear();
             this.sky.render(renderer, camera);
             renderer.clearDepth();
             this.farTerrain.render(renderer, camera);
@@ -216,21 +229,27 @@ export class MenuWorld {
             renderer.render(this.scene, camera);
             this.renderLightShafts();
         } finally {
-            renderer.autoClear = previousAutoClear;
-            // Błąd mapy cieni lub promieni nie może zostawić renderera
-            // przy celu, który Backdrop zaraz zwolni podczas fallbacku.
-            renderer.setRenderTarget(previousTarget);
+            try { this.worldOutput.end(); }
+            finally {
+                renderer.autoClear = previousAutoClear;
+                // Także błąd końcowej prezentacji HDR musi przywrócić stan
+                // renderera przed zwolnieniem menu i uruchomieniem gry.
+                renderer.setRenderTarget(previousTarget);
+            }
         }
     }
 
     renderLightShafts() {
         const shadows = this.shadows;
+        const debugView = lightingUniforms.uLightingDebug.value;
+        if (debugView > 0 && debugView < 12) return;
         if (!this.shaftsEnabled || !shadows.active) return;
         const state = this.sky.state;
         const sun = shadows.light === 'sun';
         const intensity = sun ? state.sunLightIntensity : state.moonLightIntensity * 1.6;
         const lowSun = 1 + 0.9 * (1 - smoothstep(0.06, 0.4, shadows.direction.y));
-        const amount = intensity * shadows.strength * lowSun * SHAFT_BRIGHTNESS;
+        const amount = intensity * shadows.strength * lowSun * SHAFT_BRIGHTNESS
+            * lightingUniforms.uLightingComponents.value.getComponent(sun ? 0 : 1);
         if (amount < 0.003) return;
         this.shaftColor.copy(sun ? state.sunLightColor : state.moonLightColor).multiplyScalar(amount);
         const inside = smoothstep(0.3, 0.8, 1 - this.fogBrightness);
@@ -260,6 +279,7 @@ export class MenuWorld {
         if (this.world) this.world.onMeshChanged = null;
         this.shadows?.dispose();
         this.lightShafts?.dispose();
+        this.worldOutput?.dispose();
         this.farTerrain?.dispose();
         this.world?.dispose();
         this.sky?.dispose();

@@ -1,6 +1,8 @@
 import * as THREE from 'three';
 import { campfireLightUniforms, CAMPFIRE_LIGHT_GLSL } from './CampfireLight.js';
 import { SURFACE_LIGHTING_GLSL } from './SurfaceLighting.js';
+import { installLightingDiagnostics } from './LightingDiagnostics.js';
+import { plantWindUniforms, PLANT_WIND_GLSL } from './PlantWind.js';
 import { getSurfaceFaceTexture } from './SurfaceMaterials.js';
 
 
@@ -208,7 +210,7 @@ blockMaterial.onBeforeCompile = (shader, renderer) => {
                 vec3(vSurfaceEmission * uAtmosphericLight), uNightDesaturation, uNightTint, uAtmosphericLight);
 
             #ifdef USE_DYNAMIC_LIGHT
-                outgoingLight += blockTexel * (meteorLight(vWorldPosition, vWorldNormal) + campfireLight(vWorldPosition, vWorldNormal));
+                outgoingLight += surfaceLocalRadiance(blockTexel, meteorLight(vWorldPosition, vWorldNormal) + campfireLight(vWorldPosition, vWorldNormal));
             #endif
 
             // Ustawienie "Jasność" (viewUniforms.js).
@@ -341,6 +343,8 @@ blockMaterial.onBeforeCompile = (shader, renderer) => {
             .replace('#include <common>', '#include <common>\nuniform int uSunShadowLight;')
             .replace('#include <lights_fragment_begin>',
                 shadowLightsChunk('blockSky', 'blockSky', 'blockAmbient', 'uAtmosphericLight > 0.5'));
+        installLightingDiagnostics(shader, { albedo: 'blockTexel', sky: 'blockSky',
+            ao: 'surfaceDecodeLight(vSurfaceOcclusion)', visibility: 'blockSky' });
         return;
     }
 
@@ -420,6 +424,9 @@ blockMaterial.onBeforeCompile = (shader, renderer) => {
             THREE.ShaderChunk.uv_pars_fragment.replace(before, after)
         );
 
+    installLightingDiagnostics(shader, { albedo: 'blockTexel', normal: 'vWorldNormal', sky: 'blockSky',
+        ao: 'surfaceDecodeLight(vSurfaceOcclusion)', visibility: '\n#ifdef USE_SUN_SHADOWS\nblockSun\n#else\nblockSky\n#endif\n' });
+
 };
 
 // ------------------------------------------------------------
@@ -450,12 +457,12 @@ plantMaterial.defaultAttributeValues = { color: [1, 1, 1], uv: [0, 0], uv1: [0, 
 plantMaterial.onBeforeCompile = (shader, renderer) => {
 
     blockMaterial.onBeforeCompile(shader, renderer);
-    shader.uniforms.uWaveHeight = waterUniforms.uWaveHeight;
+    Object.assign(shader.uniforms, plantWindUniforms);
 
     // Roślina kołysze się, a mapa cieni nie - większy zapas, żeby
     // źdźbła nie cieniowały same siebie w paski (Shadows.js).
 
-    shader.fragmentShader = `#define SUN_SHADOW_RECEIVER_BIAS 0.3\n${shader.fragmentShader}`;
+    shader.fragmentShader = `#define SUN_SHADOW_RECEIVER_BIAS (uPlantShadowInfo.w > 0.5 ? 0.03 : 0.3)\n${shader.fragmentShader}`;
 
 
     // Explicit motion weights keep roots anchored and let underwater plants
@@ -467,32 +474,15 @@ plantMaterial.onBeforeCompile = (shader, renderer) => {
             `#include <common>
             uniform float uTime;
             uniform float uWaveHeight;
-            attribute vec2 plantMotion;`
+            attribute vec2 plantMotion;
+            ${PLANT_WIND_GLSL}`
         )
         .replace(
             '#include <begin_vertex>',
             `#include <begin_vertex>
 
-            float plantTop = plantMotion.x;
-
             vec3 plantWorld = (modelMatrix * vec4(transformed, 1.0)).xyz;
-
-            float plantPhase = plantWorld.x * 0.45 + plantWorld.z * 0.35;
-
-            float gust = 0.75 + 0.25 * sin(uTime * 0.37 + plantWorld.x * 0.05);
-
-            if (plantMotion.y > 0.75) {
-                float padWave = sin(plantWorld.x * 0.9 + uTime * 1.3) * 0.5
-                    + sin(plantWorld.z * 1.3 - uTime * 1.05) * 0.35
-                    + sin((plantWorld.x + plantWorld.z) * 0.45 + uTime * 0.7) * 0.15;
-                transformed.y += padWave * uWaveHeight;
-            } else if (plantMotion.y > 0.25) {
-                transformed.x += plantTop * sin(uTime * 0.65 + plantPhase) * 0.018;
-                transformed.z += plantTop * cos(uTime * 0.5 + plantPhase) * 0.012;
-            } else {
-                transformed.x += plantTop * gust * (sin(uTime * 1.8 + plantPhase) * 0.07 + sin(uTime * 3.3 + plantPhase * 2.1) * 0.02);
-                transformed.z += plantTop * gust * cos(uTime * 1.45 + plantPhase * 1.3) * 0.055;
-            }`
+            transformed += plantWindOffset(plantWorld, plantMotion, uTime, uWaveHeight);`
         );
 
 };
@@ -607,7 +597,7 @@ const glslVec3 = (v) => `vec3(${v.map((x) => x.toFixed(3)).join(', ')})`;
 export const waterUniforms = {
 
     // Jak wysoko faluje powierzchnia (bloki; 0 = płaska) - /woda fale.
-    uWaveHeight: { value: WATER_WAVE_HEIGHT },
+    uWaveHeight: plantWindUniforms.uWaveHeight,
 
     uWaterOpacity: { value: WATER_OPACITY },
     uWaterOpacityGrazing: { value: WATER_OPACITY_GRAZING },

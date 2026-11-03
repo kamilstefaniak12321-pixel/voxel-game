@@ -6,6 +6,7 @@ import { CampfireLight } from './CampfireLight.js';
 import { fireIntensity } from '../game/CampfireState.js';
 import { atmosphericLightToBrightness } from './LightPolicy.js';
 import { FLAME_FRAMES, FLAME_FPS, makeFlameAtlas } from './CampfireFlame.js';
+import { installEmissionDiagnostics, lightingUniforms } from './LightingDiagnostics.js';
 
 const VIEW_RANGE = 72, MAX_VISIBLE = 32, PARTICLES = 96;
 const smooth = t => t * t * (3 - 2 * t);
@@ -49,9 +50,9 @@ function charMaterial(wood, lighting) {
             .replace('outgoingLight = applyBrightness(outgoingLight, modelTexel);', `
                 vec2 pixel = floor(vMapUv * vec2(textureSize(map, 0)));
                 float crack = step(.89, fract(sin(dot(pixel, vec2(12.9898,78.233))) * 43758.5453));
-                // Emission is local light: apply it after the moon's desaturation.
-                outgoingLight += vec3(1.0,.15,.012) * crack * uHeat * smoothstep(.12,.6,uChar)
-                    * (.65 + .2 * sin(uCoalTime * 2.0 + pixel.x));
+                // Żar jest emisją, oddzielną od oświetlenia sąsiadów.
+                outgoingLight += surfaceEmissionRadiance(vec3(1.0,.15,.012) * crack * uHeat * smoothstep(.12,.6,uChar)
+                    * (.65 + .2 * sin(uCoalTime * 2.0 + pixel.x)));
                 outgoingLight = applyBrightness(outgoingLight, modelTexel);
             `);
     };
@@ -89,6 +90,7 @@ export class CampfireRenderer {
                     vec2 pixelUV = (floor(clamp(vMapUv, 0.0, .99999) * vec2(16.0,20.0)) + .5) / vec2(16.0,20.0);
                     diffuseColor *= texture2D(map, vec2((frame + pixelUV.x) / ${FLAME_FRAMES}.0, pixelUV.y));
                 `);
+            installEmissionDiagnostics(shader);
         };
         this.flameMaterial.customProgramCacheKey = () => 'campfire-flame-flipbook-v2';
         // A square, pixel-stepped footprint instead of a round mound.
@@ -98,10 +100,8 @@ export class CampfireRenderer {
         ].map(([x,z]) => new THREE.Vector2(x/16,z/16)));
         this.ashGeometry = new THREE.ExtrudeGeometry(ashOutline,{depth:1/16,bevelEnabled:false,steps:1});
         this.ashGeometry.rotateX(-Math.PI/2);
-        this.ashMaterial = new THREE.MeshLambertMaterial({color:0x615a51, flatShading:true});
         this.coalGeometry = new THREE.BoxGeometry(1/8, 1/16, 3/16);
         this.tinderGeometry = new THREE.BoxGeometry(.36, .035, .3);
-        this.tinderMaterial = new THREE.MeshLambertMaterial({color:0x8c854b});
         this.createParticles();
     }
 
@@ -111,23 +111,45 @@ export class CampfireRenderer {
         this.particlePosition = new Float32Array(PARTICLES*3);
         this.particleColor = new Float32Array(PARTICLES*4);
         this.particleSize = new Float32Array(PARTICLES);
+        this.particleEmission = new Float32Array(PARTICLES);
         geometry.setAttribute('position',new THREE.BufferAttribute(this.particlePosition,3).setUsage(THREE.DynamicDrawUsage));
         geometry.setAttribute('particleColor',new THREE.BufferAttribute(this.particleColor,4).setUsage(THREE.DynamicDrawUsage));
         geometry.setAttribute('particleSize',new THREE.BufferAttribute(this.particleSize,1).setUsage(THREE.DynamicDrawUsage));
+        geometry.setAttribute('particleEmission',new THREE.BufferAttribute(this.particleEmission,1).setUsage(THREE.DynamicDrawUsage));
         this.particleMaterial = new THREE.ShaderMaterial({transparent:true,depthWrite:false,
-            uniforms:{uPixelScale:{value:700}},
+            uniforms:{uPixelScale:{value:700}, uLightingNatural:lightingUniforms.uLightingNatural,
+                uLightingDebug:lightingUniforms.uLightingDebug,uLightingLocal:lightingUniforms.uLightingLocal},
             vertexShader:`attribute vec4 particleColor; attribute float particleSize; varying vec4 vColor;
-                uniform float uPixelScale; void main(){ vColor=particleColor; vec4 p=modelViewMatrix*vec4(position,1.0);
+                attribute float particleEmission; varying float vEmission;
+                uniform float uPixelScale; void main(){ vColor=particleColor; vEmission=particleEmission; vec4 p=modelViewMatrix*vec4(position,1.0);
                 gl_Position=projectionMatrix*p; gl_PointSize=clamp(particleSize*uPixelScale/max(.1,-p.z),1.0,90.0); }`,
-            fragmentShader:`varying vec4 vColor; void main(){
+            fragmentShader:`varying vec4 vColor; varying float vEmission;
+                uniform float uLightingNatural; uniform int uLightingDebug; uniform vec2 uLightingLocal;
+                void main(){
                 vec2 p=abs(gl_PointCoord-.5); if(max(p.x,p.y)>.48 || (p.x>.31 && p.y>.31)) discard;
-                gl_FragColor=vColor; }`});
+                // Dawny shader zapisywał próbki sRGB prosto na ekran.
+                // W natural dekodujemy je przed liniowym mieszaniem.
+                vec3 source = vColor.rgb;
+                if(uLightingNatural>.5) source=mix(source/12.92,pow((source+.055)/1.055,vec3(2.4)),step(vec3(.04045),source));
+                bool spark=vEmission>.5;
+                vec3 value=source*(spark?uLightingLocal.y:uLightingLocal.x);
+                if(uLightingDebug>0 && uLightingDebug<12) {
+                    if(uLightingDebug==1) value=source;
+                    else if(!((uLightingDebug==11 && spark)||(uLightingDebug==10 && !spark))) value=vec3(0.0);
+                }
+                gl_FragColor=vec4(value,vColor.a);
+                if(uLightingNatural>.5) {
+                    #include <colorspace_fragment>
+                }
+            }`});
         this.points = new THREE.Points(geometry,this.particleMaterial); this.points.frustumCulled=false;
         this.game.scene.add(this.points);
     }
 
     createView(key, fire) {
         const group = new THREE.Group(); group.position.set(fire.x+.5,fire.y,fire.z+.5);
+        const lighting = {uModelSky:{value:1},uModelBlock:{value:new THREE.Vector3()},uModelSun:{value:1},
+            uModelDistantShadows:{value:1},uModelBounce:{value:new THREE.Vector3()}};
         const flames = new THREE.Group(); flames.position.y=.12;
         for(let i=0;i<4;i++) {
             const mesh = new THREE.Mesh(this.flameGeometry,this.flameMaterial);
@@ -135,8 +157,11 @@ export class CampfireRenderer {
             if(i>1) mesh.scale.set(.85,.6,.85);
             flames.add(mesh);
         }
-        const ash = new THREE.Mesh(this.ashGeometry,this.ashMaterial);
-        const coalMaterial = new THREE.MeshLambertMaterial({color:0x231d19,emissive:0xff3406});
+        const ashMaterial = createModelMaterial({lighting, baselineLambert:true});
+        ashMaterial.color.set(0x615a51); ashMaterial.flatShading = true;
+        const ash = new THREE.Mesh(this.ashGeometry,ashMaterial);
+        const coalMaterial = createModelMaterial({lighting, baselineLambert:true});
+        coalMaterial.color.set(0x231d19); coalMaterial.emissive.set(0xff3406);
         const coals = new THREE.Group();
         const coalPositions = [[-4,-3],[-1,-4],[3,-4],[-4,0],[0,0],[4,0],[-3,4],[1,3],[4,4]];
         for(let i=0;i<coalPositions.length;i++) {
@@ -144,10 +169,10 @@ export class CampfireRenderer {
             const [x,z]=coalPositions[i]; coal.position.set(x/16,3/32,z/16);
             coal.rotation.y=(i%3)*Math.PI/2; coals.add(coal);
         }
-        const tinder = new THREE.Mesh(this.tinderGeometry,this.tinderMaterial); tinder.position.y=.27;
+        const tinderMaterial = createModelMaterial({lighting, baselineLambert:true});
+        tinderMaterial.color.set(0x8c854b);
+        const tinder = new THREE.Mesh(this.tinderGeometry,tinderMaterial); tinder.position.y=.27;
         group.add(flames,ash,coals,tinder); this.game.scene.add(group);
-        const lighting = {uModelSky:{value:1},uModelBlock:{value:new THREE.Vector3()},uModelSun:{value:1},
-            uModelDistantShadows:{value:1},uModelBounce:{value:new THREE.Vector3()}};
         const view = {group,flames,ash,coals,coalMaterial,tinder,logs:[],lighting,smoke:0,spark:0,created:this.time};
         this.views.set(key,view); return view;
     }
@@ -183,6 +208,12 @@ export class CampfireRenderer {
         view.tinder.visible=Boolean(fire.tinder);
         const light=this.game.world.getLight(fire.x,fire.y+1,fire.z);
         view.lighting.uModelSky.value=atmosphericLightToBrightness(light.sky);
+        const natural = this.game.sky.lightingLook === 'natural';
+        // Mapa geometryczna zastępuje fallback tam, gdzie jest gotowa.
+        // Poza nią zamknięty pokój nie może dostać stałego uModelSun=1.
+        view.lighting.uModelSun.value = natural ? view.lighting.uModelSky.value ** 2.2 : 1;
+        view.lighting.uModelBlock.value.set(natural ? light.red / 255 : 0,
+            natural ? light.green / 255 : 0, natural ? light.blue / 255 : 0);
         if(intensity>.02) {
             view.smoke+=dt*2.2*intensity; view.spark+=dt;
             if(view.smoke>=1) { view.smoke%=1; this.emit(fire,false); }
@@ -219,6 +250,7 @@ export class CampfireRenderer {
                 p.x+=(p.vx+Math.sin(clock+p.seed)*.08)*dt; p.y+=p.vy*dt; p.z+=p.vz*dt;
                 this.particlePosition.set([p.x,p.y,p.z],i*3);
                 this.particleSize[i]=p.spark?.028:.15+age*.46;
+                this.particleEmission[i]=p.spark?1:0;
                 this.particleColor.set(p.spark?[1,.42,.06,Math.sin(age*Math.PI)]:[.35,.34,.32,Math.sin(age*Math.PI)*.14],i*4);
             } else { this.particleColor[i*4+3]=0; this.particleSize[i]=0; }
         });
@@ -226,12 +258,13 @@ export class CampfireRenderer {
         for(const attribute of Object.values(this.particleGeometry.attributes)) attribute.needsUpdate=true;
     }
 
-    removeView(key,view) { view.group.removeFromParent(); view.logs.forEach(log=>log.mesh.material.dispose()); view.coalMaterial.dispose(); this.views.delete(key); }
+    removeView(key,view) { view.group.removeFromParent(); view.logs.forEach(log=>log.mesh.material.dispose());
+        view.coalMaterial.dispose(); view.ash.material.dispose(); view.tinder.material.dispose(); this.views.delete(key); }
     renderShadows() { this.light.render(this.game.world,this.time); }
     dispose() {
         for(const [key,view] of this.views) this.removeView(key,view);
         this.geometry.forEach(g=>g.dispose()); this.light.dispose(); this.points.removeFromParent();
-        for(const resource of [this.fireTexture,this.flameGeometry,this.flameMaterial,this.ashGeometry,this.ashMaterial,
-            this.coalGeometry,this.tinderGeometry,this.tinderMaterial,this.particleGeometry,this.particleMaterial]) resource.dispose();
+        for(const resource of [this.fireTexture,this.flameGeometry,this.flameMaterial,this.ashGeometry,
+            this.coalGeometry,this.tinderGeometry,this.particleGeometry,this.particleMaterial]) resource.dispose();
     }
 }

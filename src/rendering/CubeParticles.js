@@ -7,6 +7,7 @@ import { viewUniforms, VIEW_GLSL } from './viewUniforms.js';
 import { meteorLightUniforms, METEOR_LIGHT_GLSL } from './meteorLight.js';
 
 import { SURFACE_LIGHTING_GLSL } from './SurfaceLighting.js';
+import { installLightingDiagnostics, installEmissionDiagnostics } from './LightingDiagnostics.js';
 
 // ------------------------------------------------------------
 // KANCIASTE CZĄSTECZKI
@@ -124,7 +125,7 @@ function createSolidMaterial(surfaceLighting) {
 
                 outgoingLight = mix(outgoingLight, particleLuminance * uNightTint, uNightDesaturation);
 
-                outgoingLight += diffuseColor.rgb * meteorLight(vParticleWorld, vParticleNormal);
+                outgoingLight += surfaceLocalRadiance(diffuseColor.rgb, meteorLight(vParticleWorld, vParticleNormal));
 
                 outgoingLight = applyBrightness(outgoingLight, diffuseColor.rgb);
 
@@ -165,9 +166,15 @@ function createSolidMaterial(surfaceLighting) {
                     `float particleLuminance = dot(outgoingLight, vec3(0.2126, 0.7152, 0.0722));
 
                 outgoingLight = mix(outgoingLight, particleLuminance * uNightTint, uNightDesaturation);`,
-                    `vec3 particleLocal = vParticleLight.rgb * surfaceDecodeLight(surfaceFaceShade(vParticleNormal));
+                    `float particleSky = mix(1.0, vParticleLight.a, uAtmosphericLight);
+                    // Pole odłamka ogranicza naturalne źródła już po
+                    // Lambert; diagnostyka musi pokazać tę samą energię.
+                    diagnosticSun *= particleSky;
+                    diagnosticMoon *= particleSky;
+                    diagnosticSky *= particleSky;
+                    vec3 particleLocal = vParticleLight.rgb * surfaceDecodeLight(surfaceFaceShade(vParticleNormal));
                     outgoingLight = surfaceRadiance(diffuseColor.rgb,
-                        outgoingLight * mix(1.0, vParticleLight.a, uAtmosphericLight),
+                        outgoingLight * particleSky,
                         particleLocal * uAtmosphericLight, vec3(0.0),
                         vec3(vParticleEmission * uAtmosphericLight),
                         uNightDesaturation, uNightTint, uAtmosphericLight);`
@@ -177,6 +184,11 @@ function createSolidMaterial(surfaceLighting) {
 
     };
 
+    const compile = material.onBeforeCompile;
+    material.onBeforeCompile = (shader, renderer) => {
+        compile(shader, renderer);
+        installLightingDiagnostics(shader, { normal: 'vParticleNormal', sky: surfaceLighting ? 'vParticleLight.a' : '1.0' });
+    };
     material.customProgramCacheKey = () => `cube-particles-surface-${surfaceLighting ? 1 : 0}`;
 
     return material;
@@ -212,6 +224,10 @@ export class CubeParticles {
         const material = glowing
             ? new THREE.MeshBasicMaterial({ vertexColors: true, fog: false })
             : createSolidMaterial(this.surfaceLighting);
+        if (glowing) {
+            material.onBeforeCompile = installEmissionDiagnostics;
+            material.customProgramCacheKey = () => 'cube-particles-emission-v1';
+        }
 
         this.mesh = new THREE.InstancedMesh(geometry, material, capacity);
 

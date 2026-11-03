@@ -19,6 +19,7 @@ Trzeci tryb gry obok przygody i kreatywnego - do sprawdzania gry
 | scena | `/scena` | co stawia |
 |---|---|---|
 | Światło i materiały | `swiatlo` | dawne „Laboratorium światła”: wnęki z tynku, terakoty, ochry i ciemnych desek, słupy 2-12 bloków, liście z pniem, basen, pokój z lampami i otworem w dachu |
+| Paleta światła | `paleta` | materiały i owoce, taki sam krzak borówki w słońcu i pod dachem, okno, zamknięta komora na styku chunków, ciepła emisja meteorytu i ognisko |
 | Kolorowe lampy | `lampy` | zamknięty pokój z czterema kolorowymi lampami (`/demo swiatlo`) |
 | Słońce przez okno | `okno` | ciemny pokój z oknami od strony słońca (`/demo okno`) |
 | Budulec i światło odbite | `dom` | cztery pokoje z różnego budulca (`/demo dom`) |
@@ -29,7 +30,7 @@ Trzeci tryb gry obok przygody i kreatywnego - do sprawdzania gry
 | Warstwy skał | `skaly` | odkrywka do dna świata (`/demo skaly`) |
 
   Na placu testowym każda scena ma swoje stałe miejsce (*Światło
-  i materiały* - środek placu, pozostałe - rząd na z = 100, co 80
+  i materiały* - środek placu, *Paleta światła* - (64, -96), pozostałe - rząd na z = 100, co 80
   bloków), a gracz trafia do punktu, z którego ją widać. Dzięki temu
   zrzuty ekranu i testy z różnych wersji gry da się porównywać. W innym
   terenie scena staje przed graczem.
@@ -39,6 +40,24 @@ Trzeci tryb gry obok przygody i kreatywnego - do sprawdzania gry
 
 Pozostałe komendy do testów działają w każdym trybie (`/pomoc`,
 [lista komend](komendy.md)).
+
+### Powtarzalne porównanie palety
+
+Nowy świat: seed `42`, teren `flat`, tryb `developer`, potem `/scena paleta`.
+`src/dev/LightingReference.js` eksportuje sześć par czasu i zachmurzenia
+(`LIGHTING_REFERENCE_PRESETS`), pozycje oczu i cele siedmiu kamer
+(`LIGHTING_REFERENCE_CAMERAS`) oraz `placeLightingReferenceCamera`.
+Scena nie zmienia ustawień ani czasu. Przed porównaniem wersji trzeba
+zablokować czas, ekspozycję, pogodę, rozdzielczość i jakość; poczekać na
+wczytanie geometrii. Kadry porównujemy z bieżącym wydaniem, nie tylko
+z dawnym modelem klasycznym. Ciepłą, stałą emisję zapewnia istniejący
+meteoryt; ognisko jest osobnym, animowanym źródłem.
+
+Zamknięta komora zajmuje `x=76..84, y=16..23, z=-84..-76`, przecinając
+granice chunków `x=80` i `z=-80`. Próba nieba: usuń blok dachu
+`(80,23,-80)`, sprawdź środek `(80,19,-80)` i sąsiednie chunki, następnie
+wstaw z powrotem jasny tynk. W pełni zamknięta komora ma być ciemna.
+Ponowne `/scena paleta` odtwarza bloki i początkowy stan ogniska.
 
 ## Testy
 

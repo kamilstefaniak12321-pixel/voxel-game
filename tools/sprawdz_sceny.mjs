@@ -66,6 +66,8 @@ const { TOUCH_SETTINGS, isCreative } = await import('../src/config.js');
 const { TERRAIN_TYPES, createGenerator } = await import('../src/world/terrain/generators.js');
 const { TEST_SITE_FLOOR } = await import('../src/world/terrain/TestSiteGenerator.js');
 const { SCENES, SCENE_TIMES, LIGHT_SCENE_BOXES, LIGHT_SCENE_VIEW, findScene, buildScene } = await import('../src/dev/scenes.js');
+const { LIGHTING_REFERENCE_CAMERAS, LIGHTING_REFERENCE_PROBES, LIGHTING_REFERENCE_ORIGIN,
+    placeLightingReferenceCamera } = await import('../src/dev/LightingReference.js');
 const { GAME_COMMANDS, setSceneTime } = await import('../src/commands/gameCommands.js');
 const { World } = await import('../src/world/World.js');
 const { getBlockId } = await import('../src/blocks/BlockRegistry.js');
@@ -247,6 +249,42 @@ const before = [...world.chunks.values()].map((chunk) => chunk.blocks.slice());
 buildScene(findScene('swiatlo'), ctx, run);
 const after = [...world.chunks.values()].map((chunk) => chunk.blocks.slice());
 check(before.every((blocks, i) => blocks.every((value, j) => value === after[i][j])), 'Światło: powtórna budowa bez zmian');
+
+// Osobna scena palety: rzeczywista komora na styku czterech chunków.
+// Otwarcie i zamknięcie dachu musi zmienić niebo także u sąsiadów.
+game.campfires = { fires: new Map(), version: 0 };
+buildScene(findScene('paleta'), ctx, run);
+const reference = LIGHTING_REFERENCE_PROBES;
+const chamberSamples = [[79, 19, -81], [80, 19, -81], [79, 19, -80], reference.chamber];
+const skyAt = point => world.getLight(...point).sky;
+check(chamberSamples.every(point => skyAt(point) === 0), 'Paleta: zamknięta komora jest ciemna w czterech chunkach');
+world.clearBlock(...reference.roof);
+check(chamberSamples.every(point => skyAt(point) > 0), 'Paleta: otwarcie dachu rozświetla cztery chunki');
+world.setBlock(...reference.roof, 'lime_plaster');
+check(chamberSamples.every(point => skyAt(point) === 0), 'Paleta: zamknięcie dachu usuwa światło w czterech chunkach');
+check(id(56, 17, -93) === getBlockId('blueberry_bush_full') && id(56, 17, -102) === getBlockId('blueberry_bush_full'),
+    'Paleta: taki sam krzak w słońcu i pod dachem');
+check(id(20, 25, 13) === 0 && id(16, 19, 5) === getBlockId('lamp_red'), 'Paleta: stare laboratorium pozostaje nienaruszone');
+const referenceFire = game.campfires.fires.get(reference.campfire.join(','));
+check(id(...reference.campfire) === getBlockId('campfire') && referenceFire.phase === 'burning' &&
+    referenceFire.logs.length === 6 && referenceFire.logs.every(log => log.burn === 24 / 480),
+    'Paleta: ognisko ma kompletny, powtarzalny stan zwykłego spalania');
+const referenceBlocks = new Map([...world.chunks].map(([key, chunk]) => [key, chunk.blocks.slice()]));
+buildScene(findScene('paleta'), ctx, run);
+check([...referenceBlocks].every(([key, blocks]) => blocks.every((value, i) => value === world.chunks.get(key).blocks[i])),
+    'Paleta: druga budowa odtwarza ten sam układ');
+check(game.campfires.fires.size === 1, 'Paleta: ponowna budowa nie mnoży źródeł ognia');
+const targetView = LIGHTING_REFERENCE_CAMERAS.chamber;
+player.eyeHeight = 1.2;
+placeLightingReferenceCamera(player, 'chamber');
+check(player.pos.distanceTo(new THREE.Vector3(targetView.position[0], targetView.position[1] - player.eyeHeight,
+    targetView.position[2])) < 1e-6, 'Paleta: stała pozycja oka niezależnie od wysokości gracza');
+const direction = new THREE.Vector3(0, 0, -1).applyEuler(new THREE.Euler(player.pitch, player.yaw, 0, 'YXZ'));
+check(direction.distanceTo(new THREE.Vector3(...targetView.target).sub(new THREE.Vector3(...targetView.position)).normalize()) < 1e-6,
+    'Paleta: gracz patrzy dokładnie w zapisany cel');
+placeLightingReferenceCamera(player, 'chamber', { ...LIGHTING_REFERENCE_ORIGIN, x: LIGHTING_REFERENCE_ORIGIN.x + 7 });
+check(Math.abs(player.pos.x - targetView.position[0] - 7) < 1e-6, 'Paleta: kamera przesuwa się razem ze sceną poza placem');
+delete game.campfires;
 
 // Basen z komendy /woda basen - na swoim miejscu, przed graczem (+z).
 const pool = findScene('basen');

@@ -38,6 +38,8 @@ import { viewUniforms } from '../rendering/viewUniforms.js';
 import { blockMaterial, plantMaterial, waterMaterial, leafMaterial, setPotatoDefine, setLeafMaterialFast, setShadowDefine } from '../rendering/BlockRenderData.js';
 import { SunShadows } from '../rendering/Shadows.js';
 import { LightShafts } from '../rendering/LightShafts.js';
+import { WorldOutput } from '../rendering/WorldOutput.js';
+import { lightingUniforms, resetLightingDiagnostics } from '../rendering/LightingDiagnostics.js';
 import { prewarmWaterMaterial, waterShaderVariantKey } from '../rendering/WaterMaterialWarmup.js';
 import { BounceLight, bounceUniforms } from '../world/BounceLight.js';
 import { Meteorites } from './Meteorites.js';
@@ -155,13 +157,15 @@ export class Game {
             savedChunks
         );
 
+        let waterTarget;
         try {
-            await prewarmWaterMaterial(renderer, game.scene, game.camera, true);
+            waterTarget = game.sky.lightingLook === 'natural' ? game.worldOutput.prepareTarget() : null;
+            await prewarmWaterMaterial(renderer, game.scene, game.camera, true, waterTarget);
         } catch (error) {
             await game.stop({ save: false });
             throw error;
         }
-        game.prewarmedWaterVariant = waterShaderVariantKey();
+        game.prewarmedWaterVariant = waterShaderVariantKey(waterTarget);
         return game;
 
     }
@@ -200,6 +204,9 @@ export class Game {
         this.time = new WorldTime(worldInfo.time);
 
         this.sky = new Sky(this.scene);
+        this.sky.lightingLook = settings.get('lightingLook');
+        this.sky.cloudCover = settings.get('cloudCover') / 100;
+        resetLightingDiagnostics();
 
         this.sky.solarAtmosphere = usesSolarAtmosphere(settings.get('lightingModel'), worldInfo.terrain);
 
@@ -315,6 +322,7 @@ export class Game {
         this.plantAnimations.onFrame = (chunk) => this.shadows.markPlantAnimation(chunk);
 
         this.lightShafts = new LightShafts(renderer);
+        this.worldOutput = new WorldOutput(renderer);
 
         this.shaftColor = new THREE.Color();
 
@@ -1098,7 +1106,12 @@ export class Game {
         this.campfires.renderer.renderShadows();
 
 
-        renderer.clear();
+        const naturalOutput = this.sky.lightingLook === 'natural';
+        const grayscaleOutput = lightingUniforms.uLightingDebug.value === 12;
+        const outputEnabled = this.worldOutput.begin(naturalOutput || grayscaleOutput,
+            { bypassTone: !naturalOutput && grayscaleOutput });
+        try {
+        if (!outputEnabled) renderer.clear();
 
 
         // Z trzeciej osoby kamera na czas rysowania przesuwa się za gracza
@@ -1228,6 +1241,10 @@ export class Game {
 
         }
 
+        } finally {
+            this.worldOutput.end();
+        }
+
     }
 
 
@@ -1271,6 +1288,8 @@ export class Game {
     renderLightShafts(camera) {
 
         const shadows = this.shadows;
+        const debugView = lightingUniforms.uLightingDebug.value;
+        if (debugView > 0 && debugView < 12) return;
 
         if (!this.shaftsEnabled || !shadows.active || this.water.underwater) {
             return;
@@ -1284,7 +1303,8 @@ export class Game {
 
         const lowSun = 1 + 0.9 * (1 - smoothstep(0.06, 0.4, shadows.direction.y));
 
-        const amount = intensity * shadows.strength * lowSun * SHAFT_BRIGHTNESS;
+        const amount = intensity * shadows.strength * lowSun * SHAFT_BRIGHTNESS
+            * lightingUniforms.uLightingComponents.value.getComponent(sun ? 0 : 1);
 
         if (amount < 0.003) {
             return;
@@ -1642,6 +1662,10 @@ export class Game {
     applySettings(key = null) {
 
         const settings = this.settings;
+        this.sky.lightingLook = settings.get('lightingLook');
+        this.sky.cloudCover = settings.get('cloudCover') / 100;
+        lightingUniforms.uLightingNatural.value = this.sky.lightingLook === 'natural' ? 1 : 0;
+        this.shadows.setNaturalLighting(this.sky.lightingLook === 'natural');
 
         this.sky.solarAtmosphere = usesSolarAtmosphere(settings.get('lightingModel'), this.worldInfo.terrain);
 
@@ -1704,7 +1728,7 @@ export class Game {
         setFarTerrainShadows(this.shadows.hasFar);
 
         modelLight.uModelShadows.value = this.shadows.enabled ? 1 : 0;
-        modelLight.uModelDistantShadows.value = this.shadows.hasFar ? 1 : 0;
+        modelLight.uModelDistantShadows.value = this.shadows.enabled ? 1 : 0;
 
         this.shaftsEnabled = !potato && settings.get('lightShafts');
 
@@ -1771,9 +1795,10 @@ export class Game {
         // Nie odraczaj go do napotkania wody i nie zatrzymuj samych renderów
         // przy nadal działającej symulacji. Pierwszy warmup czeka w start().
         if (this.prewarmedWaterVariant !== undefined) {
-            const variant = waterShaderVariantKey();
+            const waterTarget = this.sky.lightingLook === 'natural' ? this.worldOutput.prepareTarget() : null;
+            const variant = waterShaderVariantKey(waterTarget);
             if (variant !== this.prewarmedWaterVariant) {
-                prewarmWaterMaterial(this.renderer, this.scene, this.camera);
+                prewarmWaterMaterial(this.renderer, this.scene, this.camera, false, waterTarget);
                 this.prewarmedWaterVariant = variant;
             }
         }
@@ -2539,6 +2564,8 @@ export class Game {
         this.shadows.dispose();
 
         this.lightShafts.dispose();
+        this.worldOutput.dispose();
+        resetLightingDiagnostics();
 
         this.bounce.dispose();
 

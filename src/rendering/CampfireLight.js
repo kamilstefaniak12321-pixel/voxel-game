@@ -1,5 +1,7 @@
 import * as THREE from 'three';
 import { CHUNK_SIZE, CHUNK_HEIGHT } from '../config.js';
+import { plantWindUniforms, plantShadowState } from './PlantWind.js';
+import { plantCasterMaterials, plantDepthMaterial } from './Shadows.js';
 
 // Four nearby hearths, one shared atlas. Static terrain shadows are cached;
 // flickering changes four floats, never chunk meshes or shadow cameras.
@@ -55,7 +57,7 @@ export class CampfireLight {
         this.target.depthTexture = new THREE.DepthTexture(SIZE * 6, SIZE * 4, THREE.UnsignedIntType);
         this.target.depthTexture.minFilter = this.target.depthTexture.magFilter = THREE.NearestFilter;
         campfireLightUniforms.uFireShadowMap.value = this.target.depthTexture;
-        this.slots = Array.from({length: 4}, () => ({key:null, stamp:-1}));
+        this.slots = Array.from({length: 4}, () => ({key:null, stamp:-1, hasPlants:false, drawnAt:0, natural:false}));
         this.camera = new THREE.PerspectiveCamera(90, 1, .05, RANGE);
         this.frustum = new THREE.Frustum(); this.matrix = new THREE.Matrix4(); this.box = new THREE.Box3();
         this.meshVersion = 0; this.cursor = 0; this.nextDraw = 0; this.draws = 0;
@@ -67,6 +69,11 @@ export class CampfireLight {
             const source = this.sources[i], slot = this.slots[i];
             const key = source?.key ?? null;
             if (slot.key !== key) { slot.key = key; slot.stamp = -1; }
+            if (slot.natural !== plantShadowState.natural) {
+                slot.natural = plantShadowState.natural;
+                slot.stamp = -1;
+                slot.hasPlants = false;
+            }
             if (source) campfireLightUniforms.uFirePositions.value[i].copy(source.position);
             campfireLightUniforms.uFirePowers.value[i] = source && slot.stamp >= 0
                 ? source.power * (1 + .035 * Math.sin(clock * 9 + i) + .025 * Math.sin(clock * 17.3 + i)) : 0;
@@ -74,7 +81,8 @@ export class CampfireLight {
     }
 
     markChunk(chunk) {
-        // Distant streaming and wind do not invalidate a stationary hearth.
+        // Distant streaming does not invalidate a stationary hearth. Moving
+        // nearby plants have a separate, bounded refresh cadence below.
         this.box.min.set(chunk.cx * CHUNK_SIZE, 0, chunk.cz * CHUNK_SIZE);
         this.box.max.set((chunk.cx + 1) * CHUNK_SIZE, CHUNK_HEIGHT, (chunk.cz + 1) * CHUNK_SIZE);
         if (this.sources?.some(source => this.box.distanceToPoint(source.position) < RANGE)) this.meshVersion++;
@@ -85,7 +93,8 @@ export class CampfireLight {
         let index = -1;
         for (let step = 0; step < 4; step++) {
             const i = (this.cursor + step) % 4, slot = this.slots[i];
-            if (slot.key && slot.stamp !== this.meshVersion) { index = i; break; }
+            const movingPlants = plantShadowState.natural && slot.hasPlants && clock - slot.drawnAt >= .25;
+            if (slot.key && (slot.stamp !== this.meshVersion || movingPlants)) { index = i; break; }
         }
         if (index < 0) return;
         const renderer = this.renderer, camera = this.camera;
@@ -96,6 +105,9 @@ export class CampfireLight {
         const auto = renderer.autoClear;
         const casters = world.shadowScene.children;
         const visibility = casters.map(mesh => mesh.visible);
+        const materials = casters.map(mesh => mesh.material);
+        const previousTime = plantDepthMaterial.uniforms.uTime.value;
+        const previousWaveHeight = plantDepthMaterial.uniforms.uWaveHeight.value;
         const near = casters.map(mesh => {
             const c = mesh.userData.chunk;
             if (!c) return false;
@@ -103,7 +115,14 @@ export class CampfireLight {
             this.box.max.set((c.cx + 1) * CHUNK_SIZE, CHUNK_HEIGHT, (c.cz + 1) * CHUNK_SIZE);
             return this.box.distanceToPoint(position) < RANGE;
         });
+        this.slots[index].hasPlants = plantShadowState.natural && casters.some((mesh, j) => near[j] &&
+            Array.isArray(mesh.material) && mesh.geometry.groups.some(group => group.materialIndex === 1 && group.count > 0));
         try {
+            if (plantShadowState.natural) {
+                plantDepthMaterial.uniforms.uTime.value = plantWindUniforms.uTime.value;
+                plantDepthMaterial.uniforms.uWaveHeight.value = plantWindUniforms.uWaveHeight.value;
+                casters.forEach(mesh => { mesh.material = plantCasterMaterials(mesh); });
+            }
             renderer.autoClear = false; renderer.setRenderTarget(this.target); renderer.setScissorTest(true);
             camera.position.copy(position);
             for (let face = 0; face < 6; face++) {
@@ -126,12 +145,16 @@ export class CampfireLight {
                 renderer.render(world.shadowScene, camera); this.draws++;
             }
             this.slots[index].stamp = this.meshVersion;
+            this.slots[index].drawnAt = clock;
             this.cursor = (index + 1) % 4;
             // Never refresh more than one complete light per frame. Scene changes
             // share a 10 Hz budget; each completed six-face set becomes visible together.
             this.nextDraw = clock + .1;
         } finally {
             casters.forEach((mesh, i) => { mesh.visible = visibility[i]; });
+            casters.forEach((mesh, i) => { mesh.material = materials[i]; });
+            plantDepthMaterial.uniforms.uTime.value = previousTime;
+            plantDepthMaterial.uniforms.uWaveHeight.value = previousWaveHeight;
             renderer.setRenderTarget(previous); renderer.setViewport(viewport);
             renderer.setScissor(scissor); renderer.setScissorTest(scissorTest); renderer.autoClear = auto;
         }

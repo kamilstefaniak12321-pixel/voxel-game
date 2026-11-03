@@ -29,13 +29,16 @@ async function browserChecks() {
     const { checkDarkRoom } = await import('/tools/light_room_checks.js');
     const { checkSurfaceRendering } = await import('/tools/surface_render_checks.js');
     const { checkDistantShadowRendering } = await import('/tools/shadow_render_checks.js');
+    const { checkPlantShadowRendering } = await import('/tools/plant_shadow_render_checks.js');
+    const { setLightingView, resetLightingDiagnostics } = await import('/src/rendering/LightingDiagnostics.js');
+    const { sampleWorldOutput } = await import('/src/rendering/WorldOutput.js');
     await atlasReady;
     const renderer = new THREE.WebGLRenderer({ antialias: false, preserveDrawingBuffer: true });
     renderer.setSize(960, 640);
     document.body.prepend(renderer.domElement);
     check(renderer.capabilities.isWebGL2, 'Brak WebGL2');
     const settings = new Settings();
-    for (const [key, value] of Object.entries({ viewDistance: 64, farTerrain: 512, loadBudget: 8, meteorites: false, lightShafts: false, bounceLight: false, showHand: true, lightingModel: 'world' })) settings.set(key, value);
+    for (const [key, value] of Object.entries({ viewDistance: 64, farTerrain: 512, loadBudget: 8, meteorites: false, lightShafts: false, bounceLight: false, showHand: true, lightingModel: 'world', lightingLook: 'baseline', cloudCover: 0 })) settings.set(key, value);
     const input = new Proxy({}, { get: (_, name) => name === 'consumeMouseDelta' ? () => ({ x: 0, y: 0 }) : () => 0 });
     const info = createWorldInfo('Test światła', 42, 'flat', 'developer');
     const game = await Game.start(renderer, input, null, info, settings);
@@ -176,11 +179,80 @@ async function browserChecks() {
     const room = await checkDarkRoom({ game, settings, renderer, meanFrame, yieldBrowser });
     const surfaces = await checkSurfaceRendering({ game, settings, renderer, yieldBrowser });
     const distantShadows = await checkDistantShadowRendering({ renderer, yieldBrowser });
+    const plantShadows = await checkPlantShadowRendering({ renderer, yieldBrowser });
+
+    // Nowy profil ma osobny, jawny odbiór. Stare porównanie modeli
+    // powyżej pozostaje w bazie 0.56.1, którą nadal można przywrócić.
+    const naturalSamples = [];
+    const geometryBefore = new Map([...game.world.chunks.values()]
+        .filter(chunk => chunk.mesh).map(chunk => [chunk, chunk.mesh.geometry]));
+    const dirtyBefore = game.world.dirtyChunks.size;
+    settings.set('lightingLook', 'natural');
+    check(game.world.dirtyChunks.size === dirtyBefore, 'Sama zmiana palety oznaczyła chunki do przebudowy');
+    check([...geometryBefore].every(([chunk, geometry]) => chunk.mesh.geometry === geometry),
+        'Sama zmiana palety wymieniła geometrię');
+    for (const cloudCover of [0, 100]) {
+        settings.set('cloudCover', cloudCover);
+        for (const time of [0.23, 0.26, 0.5, 0.74, 0.77, 0.1]) {
+            game.time.days = time; frame();
+            check(game.sky.lightingLook === 'natural' && game.sky.atmosphere, 'Nowa paleta nie została wybrana');
+            check(game.sky.state.nightDesaturation === 0, 'Natural zachował nocny filtr obrazu');
+            check(renderer.getRenderTarget() === null && !game.worldOutput.active, 'HDR nie oddał renderera po klatce');
+            check(game.worldOutput.exposure === 1, 'Ekspozycja odniesienia zmieniła się wraz z porą');
+            check(renderer.getContext().getError() === renderer.getContext().NO_ERROR, 'Błąd WebGL po wyjściu HDR');
+            naturalSamples.push({ time, cloudCover, brightness: meanFrame(),
+                direct: game.sky.atmosphere.direct, sky: game.sky.atmosphere.sky,
+                moon: game.sky.atmosphere.moon, output: game.worldOutput.stats() });
+            await yieldBrowser();
+        }
+    }
+    for (const cloudCover of [0, 100]) {
+        const values = naturalSamples.filter(sample => sample.cloudCover === cloudCover);
+        check(values.find(sample => sample.time === .5).brightness > values.find(sample => sample.time === .1).brightness + 5,
+            `Natural (${cloudCover}% chmur): noc nie jest ciemniejsza od dnia`);
+    }
+    check(game.worldOutput.stats().mode === 'hdr16f', 'Kontekst referencyjny nie wykonał próby HDR');
+
+    // Znana radiancja przechodzi przez prawdziwy materiał, HDR i końcowe
+    // kodowanie ekranu. To wykrywa podwójną gammę/tone mapping oraz
+    // obcięcie wartości >1, czego sam test krzywej CPU nie sprawdza.
+    const outputSamples = [];
+    const outputScene = new THREE.Scene();
+    const outputCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, .1, 10);
+    outputCamera.position.z = 2;
+    const outputGeometry = new THREE.PlaneGeometry(2, 2);
+    const outputMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff, toneMapped: false });
+    outputScene.add(new THREE.Mesh(outputGeometry, outputMaterial));
+    for (const color of [[0, 0, 0], [.18, .18, .18], [1, 1, 1], [4, 1, .2], [.002, .003, .005]]) {
+        outputMaterial.color.setRGB(...color);
+        game.worldOutput.begin(true, { debugView: 0 });
+        renderer.render(outputScene, outputCamera);
+        game.worldOutput.end();
+        const rgba = new Uint8Array(4), context = renderer.getContext();
+        context.readPixels(480, 320, 1, 1, context.RGBA, context.UNSIGNED_BYTE, rgba);
+        const expected = sampleWorldOutput(color).map(value => Math.round(value * 255));
+        expected.forEach((value, channel) => check(Math.abs(value - rgba[channel]) <= 1,
+            `Wyjście HDR/sRGB ${color}, kanał${channel}: ${rgba[channel]} != ${value}`));
+        outputSamples.push({ linear: color, expected, pixel: [...rgba.slice(0, 3)] });
+    }
+    outputGeometry.dispose(); outputMaterial.dispose();
+    settings.set('cloudCover', 0); game.time.days = .5;
+    setLightingView('grayscale'); frame();
+    const gray = new Uint8Array(4), gl = renderer.getContext();
+    gl.readPixels(480, 320, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, gray);
+    check(Math.max(...gray.slice(0, 3)) - Math.min(...gray.slice(0, 3)) <= 1, 'Końcowy widok szarości pozostawił kolor');
+    setLightingView('albedo'); frame();
+    check(game.worldOutput.material.uniforms.uBypassTone.value === 1, 'Widok albedo nie omija tone mappingu');
+    resetLightingDiagnostics();
+    settings.set('lightingLook', 'baseline'); frame();
+    check(renderer.getRenderTarget() === null && !game.worldOutput.active, 'Powrót do bazy pozostawił aktywny pass HDR');
     game.time.days = 0.5; frame();
     check(renderer.info.programs.length > 0, 'Nie skompilowano shaderów');
     check(renderer.info.programs.every(p => p.diagnostics?.runnable !== false), 'Shader nie skompilował się');
     check(errors.length === 0, errors.join('\n'));
-    return { status: 'passed', shaders: renderer.info.programs.length, samples, horizonSamples, discSamples, room, surfaces, distantShadows, sunsetComparison: { fixedBrightness, legacyBrightness } };
+    return { status: 'passed', shaders: renderer.info.programs.length, samples, horizonSamples, discSamples,
+        room, surfaces, distantShadows, plantShadows, naturalSamples, outputSamples,
+        sunsetComparison: { fixedBrightness, legacyBrightness } };
 }
 
 const root = fileURLToPath(new URL('../', import.meta.url));

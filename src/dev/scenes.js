@@ -25,6 +25,7 @@
 // ------------------------------------------------------------
 
 import { TEST_SITE_FLOOR } from '../world/terrain/TestSiteGenerator.js';
+import { buildLightingReference, LIGHTING_REFERENCE_ORIGIN } from './LightingReference.js';
 
 
 // Pory dnia z ekranu scen i /scena czas (część doby: 0,5 = południe).
@@ -158,6 +159,14 @@ export const SCENES = [
     },
 
     {
+        id: 'paleta',
+        name: 'Paleta światła',
+        description: 'Materiały i owoce, borówka w słońcu i cieniu, okno, zamknięta komora na granicy chunków i ciepłe światło.',
+        build: buildLightingReference,
+        slot: { x: LIGHTING_REFERENCE_ORIGIN.x, z: LIGHTING_REFERENCE_ORIGIN.z }
+    },
+
+    {
         id: 'lampy',
         name: 'Kolorowe lampy',
         description: 'Zamknięty pokój z lampą czerwoną, niebieską, zieloną i fioletową; filar rzuca kolorowe cienie.',
@@ -257,11 +266,11 @@ export function buildScene(scene, ctx, runCommand) {
 
     if (scene.build) {
 
-        // Na placu - środek placu, gdzie indziej - pod graczem (stopy
+        // Na placu - slot sceny lub środek, gdzie indziej - pod graczem (stopy
         // gracza = wierzch posadzki + 1).
 
         const origin = testSite
-            ? { x: 0, y: TEST_SITE_FLOOR, z: 0 }
+            ? { x: scene.slot?.x ?? 0, y: TEST_SITE_FLOOR, z: scene.slot?.z ?? 0 }
             : { x: Math.floor(player.pos.x), y: Math.floor(player.pos.y) - 1, z: Math.floor(player.pos.z) };
 
         return scene.build(ctx, origin);

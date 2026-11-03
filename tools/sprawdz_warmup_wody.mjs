@@ -40,7 +40,7 @@ const microtasks = async () => { for (let i = 0; i < 5; i++) await Promise.resol
 function fixture({ asynchronous = true, compilationError = null, initializationError = null } = {}) {
     let finish, fail;
     const compilation = new Promise((resolve, reject) => { finish = resolve; fail = reject; });
-    const state = { calls: [], geometry: null, disposals: 0, backReady: false, initialized: [] };
+    const state = { calls: [], geometry: null, disposals: 0, backReady: false, initialized: [], compiledTargets: [] };
     const materialBefore = { side: waterMaterial.side, version: waterMaterial.version,
         defines: waterMaterial.defines && { ...waterMaterial.defines }, map: waterMaterial.map,
         transparent: waterMaterial.transparent, forceSinglePass: waterMaterial.forceSinglePass,
@@ -53,6 +53,7 @@ function fixture({ asynchronous = true, compilationError = null, initializationE
     const properties = { currentProgram: front, programs: new Map([['back', back], ['front', front]]) };
     const capture = (method, preparation, passedCamera, targetScene) => {
         state.calls.push(method);
+        state.compiledTargets.push(renderer.target);
         assert.notEqual(preparation, world, 'Pomocniczy mesh nie trafia do żywego świata');
         assert.equal(targetScene, world, 'Kompilacja musi używać świateł i mgły właściwej sceny');
         assert.equal(passedCamera, camera);
@@ -71,6 +72,21 @@ function fixture({ asynchronous = true, compilationError = null, initializationE
         if (compilationError) throw compilationError;
     };
     const renderer = {
+        target: { name: 'previous target' }, face: 2, level: 1,
+        viewport: new THREE.Vector4(3, 4, 64, 64), scissor: new THREE.Vector4(5, 6, 32, 32), scissorTest: true,
+        getRenderTarget() { return this.target; },
+        getActiveCubeFace() { return this.face; },
+        getActiveMipmapLevel() { return this.level; },
+        getViewport(out) { return out.copy(this.viewport); },
+        getScissor(out) { return out.copy(this.scissor); },
+        getScissorTest() { return this.scissorTest; },
+        setRenderTarget(target, face = 0, level = 0) {
+            this.target = target; this.face = face; this.level = level;
+            this.viewport.set(0, 0, 256, 256); this.scissor.set(0, 0, 256, 256); this.scissorTest = false;
+        },
+        setViewport(value) { this.viewport.copy(value); },
+        setScissor(value) { this.scissor.copy(value); },
+        setScissorTest(value) { this.scissorTest = value; },
         properties: { get(material) { assert.equal(material, waterMaterial); return properties; } },
         compile(...args) { capture('compile', ...args); }
     };
@@ -136,10 +152,42 @@ for (const asynchronous of [false, true]) {
     assert.deepEqual(f.state.calls, ['compile']); assert.deepEqual(f.state.initialized, ['back', 'front']); f.verify();
 }
 
+// HDR i ekran wymagają różnych programów. Wiązanie celu trwa tylko przez
+// synchroniczny początek compileAsync, również w ścieżce wyjątków.
+for (const asynchronous of [false, true]) {
+    const f = fixture({ asynchronous }), target = { name: 'linear HDR' };
+    const before = { target: f.renderer.target, face: f.renderer.face, level: f.renderer.level,
+        viewport: f.renderer.viewport.clone(), scissor: f.renderer.scissor.clone(), scissorTest: f.renderer.scissorTest };
+    f.state.backReady = true;
+    const pending = prewarmWaterMaterial(f.renderer, world, camera, asynchronous, target);
+    assert.deepEqual(f.state.compiledTargets, [target]);
+    for (const [key, value] of Object.entries(before)) assert.deepEqual(f.renderer[key], value, `Warmup zmienił renderer: ${key}`);
+    if (asynchronous) {
+        // Inna klatka może użyć renderera przed ukończeniem kompilacji.
+        const newerTarget = { name: 'next frame target' };
+        f.renderer.setRenderTarget(newerTarget);
+        f.finish(); await pending;
+        assert.equal(f.renderer.target, newerTarget, 'Zakończenie Promise nie przywraca starego render target');
+    }
+    f.verify();
+}
+{
+    const error = new Error('HDR compile threw'), f = fixture({ compilationError: error });
+    const previous = f.renderer.target;
+    assert.throws(() => prewarmWaterMaterial(f.renderer, world, camera, true, { name: 'HDR' }), error);
+    assert.equal(f.renderer.target, previous);
+    assert.deepEqual(f.renderer.viewport.toArray(), [3, 4, 64, 64]);
+    assert.deepEqual(f.renderer.scissor.toArray(), [5, 6, 32, 32]);
+    assert.equal(f.renderer.scissorTest, true); f.verify();
+}
+
 // Klucz opisuje kod shadera, nie kolejność wpisów ani bieżące uniformy.
 const originalDefines = waterMaterial.defines;
 try {
     waterMaterial.defines = { SECOND: 2, FIRST: '' }; const key = waterShaderVariantKey();
+    assert.notEqual(waterShaderVariantKey({ width: 100 }), key, 'Liniowy target wymaga odrębnego warmup');
+    assert.equal(waterShaderVariantKey({ width: 100 }), waterShaderVariantKey({ width: 200 }),
+        'Rozdzielczość render target nie zmienia wariantu programu');
     waterMaterial.defines = { FIRST: '', SECOND: 2 }; assert.equal(waterShaderVariantKey(), key);
     waterMaterial.needsUpdate = true; assert.equal(waterShaderVariantKey(), key);
     setShadowDefine([waterMaterial], true, false); const nearKey = waterShaderVariantKey(); assert.notEqual(nearKey, key);

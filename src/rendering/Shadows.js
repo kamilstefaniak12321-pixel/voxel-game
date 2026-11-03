@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 
 import { blockAtlasTexture } from './TextureAtlas.js';
+import { plantWindUniforms, plantShadowState, PLANT_WIND_GLSL } from './PlantWind.js';
 
 import { CHUNK_SIZE, CHUNK_HEIGHT, SHADOW_INDOOR_DARKNESS } from '../config.js';
 
@@ -94,6 +95,11 @@ export const DISTANT_SHADOW_CASCADES = [
 // pomiary prepare/submit w stats() ujawniają te koszty; to nie pomiar GPU.
 export const SHADOW_BUILD_BUDGET = { draws: 24, triangles: 120000, milliseconds: 1.5 };
 
+// Moving small vegetation has its own map: wind never redraws the terrain.
+// Large voxel tree crowns stay in the existing terrain cascades.
+export const PLANT_SHADOW_CONFIG = { size: 1024, radius: 32, interval: 0.1 };
+export const PLANT_SHADOW_BUILD_BUDGET = { draws: 8, triangles: 40000, milliseconds: 0.5 };
+
 // Cień gracza (mała mapa wokół modelu, rysowana co klatkę).
 
 const MODEL_MAP_SIZE = 256;
@@ -140,6 +146,11 @@ export const shadowUniforms = {
     // nieba (SHADOW_INDOOR_DARKNESS razy siła cieni) - wykładnik.
     uSunShadowAmbient: { value: 0 },
 
+    uPlantShadowMap: { value: null },
+    uPlantShadowMatrix: { value: new THREE.Matrix4() },
+    // depth scale, world texel, ready, natural lighting enabled.
+    uPlantShadowInfo: { value: new THREE.Vector4(1, 1 / 16, 0, 0) },
+
     // Daleka mapa: x - 1 / zakres głębi, y - rozmiar piksela (bloki),
     // z - 1 = mapa gotowa.
     uFarShadowMap: { value: null },
@@ -159,6 +170,9 @@ const COMMON_GLSL = `
     uniform vec3 uSunShadowDir;
     uniform float uShadowRasterPrecision;
     uniform int uSunShadowLight;
+    uniform highp sampler2D uPlantShadowMap;
+    uniform mat4 uPlantShadowMatrix;
+    uniform vec4 uPlantShadowInfo;
 
 `;
 
@@ -245,12 +259,25 @@ const LOOKUP_GLSL = `
     }
 `;
 
+const PLANT_LOOKUP_GLSL = `
+    float plantShadowOcclusion(vec3 p, vec3 normal, float bias) {
+        if (uPlantShadowInfo.w < 0.5) return 0.0;
+        float coverage;
+        float lit = shadowMapLookup(uPlantShadowMap, uPlantShadowMatrix,
+            uPlantShadowInfo, p, normal, bias, 0.8, coverage);
+        return (1.0 - lit) * coverage;
+    }
+`;
+
 // Modele mają własny test lokalnych bloków. Ten helper dokłada wyłącznie
 // większe mapy, bez cienia modelu gracza i bez zmiany naturalnej energii.
 export const DISTANT_SHADOW_GLSL = `
     ${COMMON_GLSL}
     ${LOOKUP_GLSL}
     ${FAR_GLSL}
+    ${PLANT_LOOKUP_GLSL}
+    uniform highp sampler2D uSunShadowMap;
+    uniform mat4 uSunShadowMatrix;
     float distantShadowVisibility(vec3 p, vec3 normal) {
         if (uSunShadowInfo.y <= 0.0) return 1.0;
         #ifdef USE_FAR_SHADOWS
@@ -258,6 +285,24 @@ export const DISTANT_SHADOW_GLSL = `
         #else
             return 1.0;
         #endif
+    }
+    // Models share alpha-cutout terrain/vegetation visibility, but do not
+    // sample the player's own map. CPU voxel visibility remains the fallback.
+    float environmentShadowVisibility(vec3 p, vec3 normal, float fallback) {
+        if (uPlantShadowInfo.w < 0.5) return min(fallback, distantShadowVisibility(p, normal));
+        if (uSunShadowInfo.y <= 0.0) return fallback;
+        p += normal * (0.5 / 16.0);
+        vec2 shadow = vec2(0.0);
+        #ifdef USE_FAR_SHADOWS
+            shadow = distantShadowOcclusion(p, normal, 0.0);
+        #endif
+        float coverage;
+        float lit = shadowMapLookup(uSunShadowMap, uSunShadowMatrix,
+            vec4(uSunShadowInfo.x, uSunShadowInfo.z, 1.0, 0.0), p, normal, 0.0, 0.85, coverage);
+        shadow = max(shadow, vec2((1.0 - lit) * coverage, coverage));
+        shadow.x = max(shadow.x, plantShadowOcclusion(p, normal, 0.0));
+        float visible = max(0.0, mix(fallback, 1.0, shadow.y) - shadow.x);
+        return mix(fallback, visible, uSunShadowInfo.y);
     }
 `;
 
@@ -278,6 +323,7 @@ export const SHADOW_GLSL = `
     ${COMMON_GLSL}
     ${LOOKUP_GLSL}
     ${FAR_GLSL}
+    ${PLANT_LOOKUP_GLSL}
 
     uniform highp sampler2D uSunShadowMap;
     uniform mat4 uSunShadowMatrix;
@@ -332,6 +378,7 @@ export const SHADOW_GLSL = `
         // Nie mnożymy ponownie przesłonięcia przez coverage. Pusta bliska
         // mapa nie rozjaśnia cienia dalszej góry; poza wszystkimi mapami
         // zostaje dotychczasowy dostęp do nieba.
+        shadow.x = max(shadow.x, plantShadowOcclusion(p, worldNormal, SUN_SHADOW_RECEIVER_BIAS));
         float visible = mix(skyLight, 1.0, shadow.y) - shadow.x;
         return mix(skyLight, max(0.0, visible), uSunShadowInfo.y);
 
@@ -350,6 +397,7 @@ export const FAR_TERRAIN_SHADOW_GLSL = `
     ${COMMON_GLSL}
     ${LOOKUP_GLSL}
     ${FAR_GLSL}
+    ${PLANT_LOOKUP_GLSL}
 
     uniform highp sampler2D uSunShadowMap;
     uniform mat4 uSunShadowMatrix;
@@ -365,7 +413,9 @@ export const FAR_TERRAIN_SHADOW_GLSL = `
         float coverage;
         float lit = shadowMapLookup(uSunShadowMap, uSunShadowMatrix,
             vec4(uSunShadowInfo.x, uSunShadowInfo.z, 1.0, 0.0), p, worldNormal, 0.0, 0.85, coverage);
-        return 1.0 - max(shadow.x, (1.0 - lit) * coverage) * uSunShadowInfo.y;
+        float occlusion = max(shadow.x, (1.0 - lit) * coverage);
+        occlusion = max(occlusion, plantShadowOcclusion(p, worldNormal, 0.0));
+        return 1.0 - occlusion * uSunShadowInfo.y;
 
     }
 
@@ -454,6 +504,41 @@ const cutoutDepthMaterial = new THREE.ShaderMaterial({
 });
 
 const hiddenMaterial = new THREE.MeshBasicMaterial({ visible: false });
+
+export const plantDepthMaterial = new THREE.ShaderMaterial({
+    vertexShader: `
+        varying vec2 vUv;
+        attribute vec2 plantMotion;
+        uniform float uTime;
+        uniform float uWaveHeight;
+        ${PLANT_WIND_GLSL}
+        void main() {
+            vUv = uv;
+            vec3 worldPosition = (modelMatrix * vec4(position, 1.0)).xyz;
+            vec3 transformed = position + plantWindOffset(worldPosition, plantMotion, uTime, uWaveHeight);
+            gl_Position = projectionMatrix * modelViewMatrix * vec4(transformed, 1.0);
+        }`,
+    fragmentShader: cutoutDepthMaterial.fragmentShader,
+    uniforms: { map: { value: blockAtlasTexture }, uTime: { value: 0 },
+        uWaveHeight: { value: plantWindUniforms.uWaveHeight.value } },
+    colorWrite: false,
+    side: THREE.DoubleSide
+});
+plantDepthMaterial.defaultAttributeValues = { uv: [0, 0], plantMotion: [0, 0] };
+
+// Replacement arrays leave live scene geometry/materials untouched. Campfire
+// cube faces also use this caster, with one time sample for all six faces.
+export function plantCasterMaterials(source, onlyPlants = false) {
+    if (!Array.isArray(source.material)) return onlyPlants ? hiddenMaterial : source.material;
+    return source.material.map((material, group) => group === 1 ? plantDepthMaterial
+        : onlyPlants ? hiddenMaterial : material);
+}
+
+function staticCasterMaterials(source) {
+    return Array.isArray(source.material)
+        ? source.material.map((material, group) => group === 1 ? hiddenMaterial : material)
+        : source.material;
+}
 
 export const SHADOW_CASTER_MATERIALS = [
     solidDepthMaterial,
@@ -667,6 +752,16 @@ export class SunShadows {
         this.quality = 0;
 
         this.near = new ShadowView(64, VERTICAL_RANGE);
+        this.naturalLighting = false;
+        const plantView = new ShadowView(PLANT_SHADOW_CONFIG.radius, 16, false);
+        plantView.size = PLANT_SHADOW_CONFIG.size;
+        this.plants = { view: plantView, target: null, backTarget: null, build: null,
+            valid: false, needed: false, changed: true, hasCasters: false,
+            center: new THREE.Vector3(), direction: new THREE.Vector3(), light: null,
+            changeRevision: 0, sinceDraw: 0, draws: 0, time: 0 };
+        this.plantScene = new THREE.Scene();
+        this.plantScene.matrixWorldAutoUpdate = false;
+        this.plantLastFrame = { draws: 0, triangles: 0 };
         this.cascades = DISTANT_SHADOW_CASCADES.map(config => {
             // Pełny kwadrat w przestrzeni światła. Przy niskim Słońcu
             // pionowego zakresu nie ścinamy do wysokości wokół gracza.
@@ -890,8 +985,46 @@ export class SunShadows {
         this.farValid = false;
         this.farBuild = null;
 
+        this.resetPlantMap();
+
         this.syncUniforms();
 
+    }
+
+    // The comparison mode preserves the former static vegetation shadows.
+    setNaturalLighting(enabled) {
+        enabled = !!enabled;
+        plantShadowState.natural = enabled;
+        if (enabled === this.naturalLighting) return;
+        this.naturalLighting = enabled;
+        this.valid = false;
+        for (const cascade of this.cascades) {
+            this.cancelBuild(cascade);
+            cascade.valid = false;
+            cascade.needed = true;
+        }
+        this.resetPlantMap();
+        this.syncUniforms();
+    }
+
+    resetPlantMap() {
+        const plants = this.plants;
+        this.cancelBuild(plants);
+        if (!this.enabled || !this.naturalLighting) {
+            disposeTarget(plants.target);
+            disposeTarget(plants.backTarget);
+            plants.target = plants.backTarget = null;
+        } else if (!plants.target) {
+            plants.target = createTarget(PLANT_SHADOW_CONFIG.size);
+            plants.backTarget = createTarget(PLANT_SHADOW_CONFIG.size);
+        }
+        plants.valid = false;
+        plants.needed = this.enabled && this.naturalLighting;
+        plants.changed = true;
+        plants.hasCasters = false;
+        plants.sinceDraw = 0;
+        shadowUniforms.uPlantShadowMap.value = null;
+        shadowUniforms.uPlantShadowInfo.value.z = 0;
     }
 
 
@@ -911,12 +1044,22 @@ export class SunShadows {
             }
         }
 
+        this.markPlantAnimation(chunk);
+
     }
 
     // Tiny moving plants only invalidate the near shadow map. Distant terrain
     // cascades keep their existing update budget and are refreshed at remesh.
     markPlantAnimation(chunk) {
-        if (this.valid && this.near.frustum.intersectsBox(chunkBox(this.box, chunk))) this.changed = true;
+        if (!this.naturalLighting) {
+            if (this.valid && this.near.frustum.intersectsBox(chunkBox(this.box, chunk))) this.changed = true;
+            return;
+        }
+        const plants = this.plants;
+        if ((plants.valid || plants.build) && plants.view.frustum.intersectsBox(chunkBox(this.box, chunk))) {
+            plants.changed = true;
+            plants.changeRevision++;
+        }
     }
 
 
@@ -926,6 +1069,7 @@ export class SunShadows {
     update(dt, sky, focus) {
 
         this.sinceDraw += dt;
+        this.plants.sinceDraw += dt;
         for (const cascade of this.cascades) cascade.sinceDraw += dt;
 
         const state = sky.state;
@@ -965,6 +1109,8 @@ export class SunShadows {
         if (!this.enabled || this.strength <= 0) {
 
             this.needsDraw = false;
+            this.plants.needed = false;
+            this.cancelBuild(this.plants);
             for (const cascade of this.cascades) {
                 cascade.needed = false;
                 this.cancelBuild(cascade);
@@ -990,6 +1136,22 @@ export class SunShadows {
         this.needsDraw =
             !this.valid || moved || turned ||
             (this.changed && this.sinceDraw >= CHUNK_REDRAW_SECONDS);
+
+        if (this.naturalLighting) {
+            const plants = this.plants;
+            const jump = plants.valid && (plants.light !== this.light ||
+                this.direction.dot(plants.direction) < Math.cos(0.08) ||
+                focus.distanceTo(plants.center) > PLANT_SHADOW_CONFIG.radius * 0.75);
+            const pendingJump = plants.build && (plants.build.light !== this.light ||
+                this.direction.dot(plants.build.direction) < Math.cos(0.08) ||
+                focus.distanceTo(plants.build.center) > PLANT_SHADOW_CONFIG.radius * 0.75);
+            if (jump) plants.valid = false;
+            if (pendingJump) this.cancelBuild(plants);
+            const moved = focus.distanceTo(plants.center) > PLANT_SHADOW_CONFIG.radius * MOVE_SHARE;
+            const turned = this.direction.dot(plants.direction) < Math.cos(ANGLE_STEP);
+            plants.needed = !plants.valid || moved || turned ||
+                ((plants.hasCasters || plants.changed) && plants.sinceDraw >= PLANT_SHADOW_CONFIG.interval);
+        }
 
 
         // Czy przerysować daleką mapę.
@@ -1047,6 +1209,8 @@ export class SunShadows {
         u.uSunShadowAmbient.value = SHADOW_INDOOR_DARKNESS * (this.active ? this.ambientStrength : 0);
         u.uFarShadowInfo.value.z = this.hasFar && this.farValid && strength > 0 ? 1 : 0;
         u.uDistantShadowInfo.value.z = this.hasFar && this.distantValid && strength > 0 ? 1 : 0;
+        u.uPlantShadowInfo.value.z = this.naturalLighting && this.plants.valid && strength > 0 ? 1 : 0;
+        u.uPlantShadowInfo.value.w = this.naturalLighting ? 1 : 0;
 
     }
 
@@ -1062,6 +1226,7 @@ export class SunShadows {
     render(world, focus, model, scene, loadedRadius, farTerrain = null) {
 
         this.lastFrame = { draws: 0, triangles: 0, completed: 0, prepareMilliseconds: 0, submitMilliseconds: 0 };
+        this.plantLastFrame = { draws: 0, triangles: 0 };
         if (!this.enabled || this.strength <= 0) {
             return;
         }
@@ -1084,8 +1249,10 @@ export class SunShadows {
             // Tylko chunki w zasięgu kamery słońca.
 
             const visibility = world.shadowScene.children.map(caster => caster.visible);
+            const materials = world.shadowScene.children.map(caster => caster.material);
             for (const caster of world.shadowScene.children) {
                 caster.visible = near.frustum.intersectsBox(chunkBox(this.box, caster.userData.chunk));
+                if (this.naturalLighting) caster.material = staticCasterMaterials(caster);
             }
 
             try {
@@ -1094,6 +1261,7 @@ export class SunShadows {
                 renderer.render(world.shadowScene, near.camera);
             } finally {
                 world.shadowScene.children.forEach((caster, i) => { caster.visible = visibility[i]; });
+                world.shadowScene.children.forEach((caster, i) => { caster.material = materials[i]; });
             }
 
             const u = shadowUniforms;
@@ -1112,6 +1280,8 @@ export class SunShadows {
             this.syncUniforms();
 
         }
+
+        if (this.naturalLighting) this.renderPlants(world, focus, loadedRadius);
 
 
         // Daleka mapa - kawałek na klatkę.
@@ -1138,6 +1308,76 @@ export class SunShadows {
 
     }
 
+
+    renderPlants(world, focus, loadedRadius) {
+        const plants = this.plants;
+        if (!plants.target || (!plants.build && !plants.needed)) return;
+        if (!plants.build) {
+            plants.view.place(focus, this.direction, Math.min(loadedRadius, 64) + PLANT_SHADOW_CONFIG.radius);
+            const jobs = [];
+            for (const source of world.shadowScene.children) {
+                const chunk = source.userData.chunk;
+                if (!chunk || !plants.view.frustum.intersectsBox(chunkBox(this.box, chunk)) ||
+                    this.box.distanceToPoint(focus) > PLANT_SHADOW_CONFIG.radius + CHUNK_SIZE) continue;
+                appendShadowJobs(jobs, source, true, plantCasterMaterials(source, true), PLANT_SHADOW_BUILD_BUDGET);
+            }
+            plants.build = { jobs, cursor: 0, cleared: false, time: plantWindUniforms.uTime.value,
+                waveHeight: plantWindUniforms.uWaveHeight.value,
+                center: focus.clone(), direction: this.direction.clone(), light: this.light,
+                worldRevision: plants.changeRevision };
+            plants.needed = false;
+        }
+        const build = plants.build, renderer = this.renderer;
+        const previous = renderer.getRenderTarget(), autoClear = renderer.autoClear;
+        const previousTime = plantDepthMaterial.uniforms.uTime.value;
+        const previousWaveHeight = plantDepthMaterial.uniforms.uWaveHeight.value;
+        const deadline = performance.now() + PLANT_SHADOW_BUILD_BUDGET.milliseconds;
+        try {
+            renderer.autoClear = false;
+            renderer.setRenderTarget(plants.backTarget);
+            plantDepthMaterial.uniforms.uTime.value = build.time;
+            plantDepthMaterial.uniforms.uWaveHeight.value = build.waveHeight;
+            if (!build.cleared) { renderer.clear(); build.cleared = true; }
+            this.plantScene.clear();
+            while (build.cursor < build.jobs.length) {
+                const job = build.jobs[build.cursor];
+                if (this.plantLastFrame.draws + job.draws > PLANT_SHADOW_BUILD_BUDGET.draws ||
+                    this.plantLastFrame.triangles + job.triangles > PLANT_SHADOW_BUILD_BUDGET.triangles ||
+                    (this.plantLastFrame.draws > 0 && performance.now() >= deadline)) break;
+                this.plantScene.add(job.mesh);
+                this.plantLastFrame.draws += job.draws;
+                this.plantLastFrame.triangles += job.triangles;
+                build.cursor++;
+            }
+            if (this.plantScene.children.length) renderer.render(this.plantScene, plants.view.camera);
+            this.plantScene.clear();
+            if (build.cursor === build.jobs.length) {
+                [plants.target, plants.backTarget] = [plants.backTarget, plants.target];
+                shadowUniforms.uPlantShadowMap.value = plants.target.depthTexture;
+                shadowUniforms.uPlantShadowMatrix.value.copy(plants.view.textureMatrix);
+                shadowUniforms.uPlantShadowInfo.value.x = plants.view.depthScale;
+                shadowUniforms.uPlantShadowInfo.value.y = plants.view.texel;
+                plants.center.copy(build.center);
+                plants.direction.copy(build.direction);
+                plants.light = build.light;
+                plants.time = build.time;
+                plants.hasCasters = build.jobs.length > 0;
+                plants.changed = plants.changeRevision !== build.worldRevision;
+                plants.valid = true;
+                plants.needed = false;
+                plants.sinceDraw = 0;
+                plants.draws++;
+                this.cancelBuild(plants);
+                this.syncUniforms();
+            }
+        } finally {
+            this.plantScene.clear();
+            plantDepthMaterial.uniforms.uTime.value = previousTime;
+            plantDepthMaterial.uniforms.uWaveHeight.value = previousWaveHeight;
+            renderer.autoClear = autoClear;
+            renderer.setRenderTarget(previous);
+        }
+    }
 
     // Jeden krok wspólnego schedulera. Obie kaskady dostają naprzemiennie
     // pracę; również kafle far są zwykłymi zadaniami pod tym samym limitem.
@@ -1211,7 +1451,7 @@ export class SunShadows {
         const jobs = [];
         for (const source of world.shadowScene.children) {
             if (cascade.view.frustum.intersectsBox(chunkBox(this.box, source.userData.chunk))) {
-                appendShadowJobs(jobs, source, true);
+                appendShadowJobs(jobs, source, true, this.naturalLighting ? staticCasterMaterials(source) : null);
             }
         }
         for (const source of terrain?.casters ?? []) appendShadowJobs(jobs, source, false);
@@ -1250,7 +1490,7 @@ export class SunShadows {
         cascade.build = null;
         const released = new Set();
         const retained = new Set();
-        for (const other of this.cascades) {
+        for (const other of [...this.cascades, this.plants]) {
             for (const job of other.build?.jobs ?? []) retained.add(job.original);
         }
         for (const job of build.jobs) {
@@ -1275,6 +1515,12 @@ export class SunShadows {
 
     stats() {
         return { budget: { ...SHADOW_BUILD_BUDGET }, lastFrame: { ...this.lastFrame },
+            plants: { enabled: this.naturalLighting, budget: { ...PLANT_SHADOW_BUILD_BUDGET },
+                lastFrame: { ...this.plantLastFrame }, radius: PLANT_SHADOW_CONFIG.radius,
+                size: PLANT_SHADOW_CONFIG.size, interval: PLANT_SHADOW_CONFIG.interval,
+                valid: this.plants.valid, building: !!this.plants.build, draws: this.plants.draws,
+                remaining: this.plants.build ? this.plants.build.jobs.length - this.plants.build.cursor : 0,
+                sampleTime: this.plants.time, age: this.plants.sinceDraw },
             cascades: this.cascades.map(cascade => ({ name: cascade.config.name,
                 radius: cascade.config.radius, size: cascade.config.size, valid: cascade.valid,
                 building: !!cascade.build, remaining: cascade.build ? cascade.build.jobs.length - cascade.build.cursor : 0,
@@ -1424,12 +1670,13 @@ function chunkBox(box, chunk) {
 // zmieniamy ich visible/drawRange. Nietypowo duża geometria jest dzielona
 // na lekkie widoki tych samych buforów, żeby również ona mieściła się
 // w pojedynczym budżecie; zwykłe meshe nie wymagają tych widoków.
-function appendShadowJobs(jobs, source, world) {
+function appendShadowJobs(jobs, source, world, materialOverride = null, budget = SHADOW_BUILD_BUDGET) {
     const original = source.geometry;
     const total = original.index?.count ?? original.getAttribute('position').count;
     const start = original.drawRange.start;
     const end = Math.min(total, start + original.drawRange.count);
-    const materials = Array.isArray(source.material) ? source.material.slice() : source.material;
+    const sourceMaterials = materialOverride ?? source.material;
+    const materials = Array.isArray(sourceMaterials) ? sourceMaterials.slice() : sourceMaterials;
     const groups = (Array.isArray(materials) ? original.groups : [{ start, count: end - start, materialIndex: 0 }])
         .map(group => ({ start: Math.max(start, group.start), end: Math.min(end, group.start + group.count),
             material: Array.isArray(materials) ? materials[group.materialIndex] : materials }))
@@ -1447,11 +1694,11 @@ function appendShadowJobs(jobs, source, world) {
         mesh.frustumCulled = false; // lista jest ograniczona frustum światła, nie widza
         jobs.push({ mesh, draws, triangles: count, world, source, original, view });
     };
-    if (triangles <= SHADOW_BUILD_BUDGET.triangles && groups.length <= SHADOW_BUILD_BUDGET.draws) {
+    if (triangles <= budget.triangles && groups.length <= budget.draws) {
         add(original, materials, groups.length, triangles, false);
         return;
     }
-    const page = Math.min(16000, SHADOW_BUILD_BUDGET.triangles) * 3;
+    const page = Math.min(16000, budget.triangles) * 3;
     for (const group of groups) {
         for (let offset = group.start; offset < group.end; offset += page) {
             const count = Math.min(page, group.end - offset);

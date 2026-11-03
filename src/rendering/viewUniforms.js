@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { plantWindUniforms } from './PlantWind.js';
 
 import { atlasAverageTexture } from './TextureAtlas.js';
 
@@ -61,7 +62,7 @@ export const viewUniforms = {
     // Czas w sekundach (kołysanie roślin na wietrze, płynąca woda) -
     // ustawia Game.
 
-    uTime: { value: 0 },
+    uTime: plantWindUniforms.uTime,
 
     // Kamera pod wodą: 1 = zamiast zwykłej mgły gęsta mgła w kolorze
     // wody (kolor liniowy i gęstość - Game.updateWater).

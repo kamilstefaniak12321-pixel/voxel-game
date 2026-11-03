@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { lightingUniforms } from '../../rendering/LightingDiagnostics.js';
 
 import {
     skyUniforms,
@@ -30,7 +31,7 @@ export class SkyDome {
 
         this.material = new THREE.ShaderMaterial({
 
-            uniforms: skyUniforms,
+            uniforms: { ...skyUniforms, uLightingNatural: lightingUniforms.uLightingNatural },
 
             vertexShader: /* glsl */ `
                 varying vec3 vDirection;
@@ -46,6 +47,7 @@ export class SkyDome {
 
                 uniform float uSpace;
                 uniform float uHorizonDip;
+                uniform float uLightingNatural;
 
                 ${SKY_COLOR_GLSL}
 
@@ -77,7 +79,7 @@ export class SkyDome {
 
                     float noise = fract(sin(dot(gl_FragCoord.xy, vec2(12.9898, 78.233))) * 43758.5453);
 
-                    gl_FragColor.rgb += (noise - 0.5) / 255.0;
+                    gl_FragColor.rgb += (noise - 0.5) / 255.0 * (1.0 - uLightingNatural);
 
                 }
             `,

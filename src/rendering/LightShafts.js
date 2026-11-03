@@ -196,6 +196,7 @@ void main() {
 const COMPOSITE_FRAGMENT = `
 uniform sampler2D uInput;
 uniform vec3 uColor;
+uniform float uLinearOutput;
 
 varying vec2 vUv;
 
@@ -206,11 +207,12 @@ void main() {
     // Bardzo jasny blask łagodnie dochodzi do pełnej jasności (bez
     // ostrego przepalenia).
 
-    vec3 light = 1.0 - exp(-uColor * amount);
+    vec3 radiance = uColor * amount;
+    vec3 light = uLinearOutput > 0.5 ? radiance : 1.0 - exp(-radiance);
 
     float dither = fract(52.9829189 * fract(dot(gl_FragCoord.xy, vec2(0.06711056, 0.00583715)))) - 0.5;
 
-    gl_FragColor = vec4(max(vec3(0.0), light + dither / 255.0), 1.0);
+    gl_FragColor = vec4(max(vec3(0.0), light + dither / 255.0 * (1.0 - uLinearOutput)), 1.0);
 
 }
 `;
@@ -306,7 +308,8 @@ export class LightShafts {
             fragmentShader: COMPOSITE_FRAGMENT,
             uniforms: {
                 uInput: { value: null },
-                uColor: { value: new THREE.Color() }
+                uColor: { value: new THREE.Color() },
+                uLinearOutput: { value: 0 }
             },
             depthTest: false,
             depthWrite: false,
@@ -386,6 +389,9 @@ export class LightShafts {
     render(camera, world, shadows, color, density, isotropic, maxDistance) {
 
         const renderer = this.renderer;
+        const previousTarget = renderer.getRenderTarget();
+
+        try {
 
         renderer.getDrawingBufferSize(this.size);
 
@@ -467,8 +473,13 @@ export class LightShafts {
 
         this.composite.uniforms.uInput.value = this.targets[0].texture;
         this.composite.uniforms.uColor.value.copy(color);
+        this.composite.uniforms.uLinearOutput.value = previousTarget?.isWorldOutputTarget ? 1 : 0;
 
-        this.drawQuad(this.composite, null);
+        this.drawQuad(this.composite, previousTarget);
+
+        } finally {
+            renderer.setRenderTarget(previousTarget);
+        }
 
     }
 

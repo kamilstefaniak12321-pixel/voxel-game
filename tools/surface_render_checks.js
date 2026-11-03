@@ -13,13 +13,17 @@ import { shadowUniforms } from '../src/rendering/Shadows.js';
 import { dynamicLightUniforms } from '../src/world/DynamicLight.js';
 import { bounceUniforms } from '../src/world/BounceLight.js';
 import { meteorLightUniforms } from '../src/rendering/meteorLight.js';
+import { lightingUniforms, setLightingView, setLightingComponent, resetLightingDiagnostics } from '../src/rendering/LightingDiagnostics.js';
+import { campfireLightUniforms } from '../src/rendering/CampfireLight.js';
+import { newCampfire } from '../src/game/CampfireState.js';
 
 export async function checkSurfaceRendering({ game, settings, renderer, yieldBrowser }) {
     const check = (condition, message) => { if (!condition) throw new Error(message); };
     const close = (actual, expected, label, tolerance = 2) => actual.forEach((v, i) =>
         check(Math.abs(v - expected[i]) <= tolerance, `${label}, RGB[${i}]: ${v} != ${expected[i]}`));
     const uniforms = [...new Set([skyUniforms, viewUniforms, chunkMaskUniforms, shadowUniforms,
-        dynamicLightUniforms, bounceUniforms, meteorLightUniforms, modelLight, waterUniforms].flatMap(Object.values))];
+        dynamicLightUniforms, bounceUniforms, meteorLightUniforms, modelLight, waterUniforms,
+        lightingUniforms, campfireLightUniforms].flatMap(Object.values))];
     const savedUniforms = uniforms.map(uniform => [uniform,
         uniform.value?.clone && !uniform.value.isTexture ? uniform.value.clone() : uniform.value]);
     const saved = { target: renderer.getRenderTarget(), autoClear: renderer.autoClear,
@@ -28,6 +32,7 @@ export async function checkSurfaceRendering({ game, settings, renderer, yieldBro
         viewport: renderer.getViewport(new THREE.Vector4()), scissor: renderer.getScissor(new THREE.Vector4()),
         scissorTest: renderer.getScissorTest() };
     const resources = [], variants = [], programs = new Set(), pixels = {};
+    let fireFixture = null, glowFixture = null;
     const own = resource => { resources.push(resource); return resource; };
     const target = own(new THREE.WebGLRenderTarget(16, 16));
     target.texture.colorSpace = THREE.LinearSRGBColorSpace;
@@ -42,7 +47,9 @@ export async function checkSurfaceRendering({ game, settings, renderer, yieldBro
     const ambient = new THREE.AmbientLight(0xffffff, Math.PI * .4);
     const sun = new THREE.DirectionalLight(0xffffff, 0);
     sun.position.set(0, 0, 2);
-    scene.add(ambient, sun);
+    const moon = new THREE.DirectionalLight(0xffffff, 0);
+    moon.position.set(0, 0, 2);
+    scene.add(ambient, sun, moon);
     const plane = own(new THREE.PlaneGeometry(2, 2));
     const fill = (geometry, name, values) => {
         const count = geometry.getAttribute('position').count;
@@ -218,6 +225,10 @@ export async function checkSurfaceRendering({ game, settings, renderer, yieldBro
         viewUniforms.uUnderwater.value = 0; viewUniforms.uTime.value = 0;
         chunkMaskUniforms.uChunkMaskOrigin.value.set(1e6, 1e6);
         skyUniforms.uNightDesaturation.value = 0; skyUniforms.uFogBrightness.value = 1;
+        resetLightingDiagnostics();
+        lightingUniforms.uLightingNatural.value = 1;
+        // Własna tablica: nie modyfikujemy zachowanego stanu ognisk gry.
+        campfireLightUniforms.uFirePowers.value = [0, 0, 0, 0];
         dynamicLightUniforms.uDynamicEnabled.value = 0;
         meteorLightUniforms.uMeteorColor.value.set(0, 0, 0);
         bounceUniforms.uBounceColor.value.setRGB(0, 0, 0);
@@ -337,6 +348,180 @@ export async function checkSurfaceRendering({ game, settings, renderer, yieldBro
         fill(plane, 'surfaceOcclusion', [0]); pixels.occludedEmission = draw('near');
         close(pixels.emission, [26, 26, 26], 'Liniowa emisja, bez dodatkowej gammy');
         close(pixels.occludedEmission, pixels.emission, 'AO nie tłumi własnej emisji');
+
+        // E01/E10: prawdziwy unroll Three dla Sun i Moon. Źródła mają
+        // rozłączne kanały, więc pomylenie indeksu albo przechwycenie
+        // skumulowanej energii jest widoczne w odczytanym pikselu.
+        pixels.diagnostics = {};
+        fill(plane, 'atmosphereLight', [0, 0, 0, 1]);
+        fill(plane, 'surfaceEmission', [0]); fill(plane, 'surfaceOcclusion', [1]);
+        ambient.color.setRGB(0, 1, 0); ambient.intensity = Math.PI * .3;
+        sun.color.setRGB(1, 0, 0); sun.intensity = Math.PI * .2;
+        moon.color.setRGB(0, 0, 1); moon.intensity = Math.PI * .1;
+        flags(0, false); skyUniforms.uAtmosphericLight.value = 1;
+        resetLightingDiagnostics();
+        for (const name of ['near', 'plant', 'leaf', 'model', 'far', 'debris']) {
+            const samples = {};
+            setLightingView('full'); samples.full = draw(name);
+            for (const source of ['sun', 'moon', 'sky']) {
+                setLightingView(source); samples[source] = draw(name);
+                const channel = source === 'sun' ? 0 : source === 'sky' ? 1 : 2;
+                check(samples[source][channel] > 3, `${name}/${source}: brak dodatniej kontroli źródła`);
+                close(samples[source].map((value, index) => index === channel ? 0 : value),
+                    [0, 0, 0], `${name}/${source}: do diagnostyki weszło inne źródło`);
+            }
+            close(samples.full, samples.sun.map((value, i) => value + samples.moon[i] + samples.sky[i]),
+                `${name}: suma diagnostyczna odtwarza liniowy obraz`);
+            setLightingView('full');
+            for (const source of ['sun', 'moon', 'sky']) {
+                setLightingComponent(source, false);
+                samples[`without_${source}`] = draw(name);
+                close(samples[`without_${source}`], samples.full.map((value, i) => value - samples[source][i]),
+                    `${name}: wyłączenie ${source} usuwa tylko jego składnik`);
+                setLightingView(source);
+                close(draw(name), [0, 0, 0], `${name}: wyłączony ${source} nie zostaje w diagnostyce`);
+                setLightingComponent(source, true); setLightingView('full');
+            }
+            pixels.diagnostics[name] = samples;
+        }
+
+        // Dane dostępu do nieba trafiają również do odłamka. Samo
+        // przechwycenie Three przed particleSky dawałoby fałszywie
+        // jasny widok diagnostyczny we wnętrzu zamkniętej komory.
+        const particleLight = debris.mesh.geometry.getAttribute('particleLight');
+        particleLight.setXYZW(0, 0, 0, 0, 0); particleLight.needsUpdate = true;
+        fill(plane, 'atmosphereLight', [0, 0, 0, 0]); modelLight.uModelSky.value = 0;
+        for (const name of ['near', 'plant', 'leaf', 'model', 'debris']) {
+            for (const source of ['full', 'sun', 'moon', 'sky']) {
+                setLightingView(source);
+                close(draw(name), [0, 0, 0], `${name}/${source}: zerowy dostęp nie może pokazywać energii`);
+            }
+        }
+        particleLight.setXYZW(0, 0, 0, 0, 1); particleLight.needsUpdate = true;
+        modelLight.uModelSky.value = 1;
+        fill(plane, 'atmosphereLight', [0, 0, 0, 1]);
+
+        // Lokalny składnik, emisja i odbicie mają własne przełączniki.
+        // Żaden z nich nie może zgasić pozostałych ani zmieniać albedo.
+        ambient.intensity = sun.intensity = moon.intensity = 0;
+        fill(plane, 'atmosphereLight', [.5, .25, 0, 0]);
+        fill(plane, 'surfaceEmission', [.4]);
+        setLightingView('local'); const localOnly = draw('near');
+        setLightingView('emission'); const emissionOnly = draw('near');
+        check(localOnly[0] > 5 && emissionOnly[0] > 5, 'Lokalna kontrola musi mieć obydwa dodatnie składniki');
+        setLightingView('full');
+        close(draw('near'), localOnly.map((value, i) => value + emissionOnly[i]), 'Lampa + emisja składają się raz');
+        setLightingComponent('local', false);
+        close(draw('near'), emissionOnly, 'Wyłączenie lokalnego światła zachowuje emisję');
+        setLightingView('local'); close(draw('near'), [0, 0, 0], 'Wyłączona lampa nie zostaje w diagnostyce');
+        setLightingComponent('local', true); setLightingComponent('emission', false); setLightingView('full');
+        close(draw('near'), localOnly, 'Wyłączenie emisji zachowuje lokalne światło');
+        setLightingView('emission'); close(draw('near'), [0, 0, 0], 'Wyłączona emisja nie zostaje w diagnostyce');
+        resetLightingDiagnostics();
+        fill(plane, 'atmosphereLight', [0, 0, 0, 0]);
+        fill(plane, 'surfaceOcclusion', [0]);
+        setLightingView('full'); close(draw('near'), emissionOnly, 'Natural: AO=0 nie wygasza emisji');
+        setLightingView('emission'); close(draw('near'), emissionOnly, 'Emisja przy AO=0 jest czytelna w diagnostyce');
+
+        modelLight.uModelBounce.value.set(0, .2, 0);
+        setLightingView('bounce'); const bounceOnly = draw('model');
+        check(bounceOnly[1] > 5 && bounceOnly[0] === 0 && bounceOnly[2] === 0, 'Brak odrębnej kontroli odbicia');
+        setLightingView('full'); close(draw('model'), bounceOnly, 'Odbicie mnoży albedo tylko raz');
+        setLightingComponent('bounce', false); close(draw('model'), [0, 0, 0], 'Wyłączenie odbicia usuwa jego energię');
+        setLightingView('albedo'); close(draw('model'), [64, 64, 64], 'Albedo nie zależy od źródeł');
+        modelLight.uModelBounce.value.set(0, 0, 0);
+        pixels.diagnostics.local = { localOnly, emissionOnly, bounceOnly };
+        resetLightingDiagnostics();
+        ambient.color.setRGB(1, 1, 1); sun.color.setRGB(1, 1, 1); moon.color.setRGB(1, 1, 1);
+
+        // Ognisko: prawdziwe materiały widoku, przy lokalnych danych
+        // zamkniętej komory. Popiół/podpałka nie są emiterami; węgle,
+        // szczeliny żaru, płomień i iskry mają oddzielną emisję.
+        pixels.campfire = {};
+        const fire = newCampfire(0, 40, 0);
+        fire.logs = [{ wood: 'oak', burn: .8 }]; fire.ash = true; fire.tinder = 'short_grass';
+        const fireRenderer = game.campfires.renderer;
+        fireFixture = { renderer: fireRenderer, key: '__lighting-material-test__' };
+        const view = fireFixture.view = fireRenderer.createView(fireFixture.key, fire);
+        fireRenderer.syncView(view, fire, 0, 0);
+        view.lighting.uModelSky.value = 0; view.lighting.uModelSun.value = 0;
+        view.lighting.uModelDistantShadows.value = 0; view.lighting.uModelBlock.value.set(0, 0, 0);
+        for (const [name, material] of [['ash', view.ash.material], ['tinder', view.tinder.material], ['coal', view.coalMaterial]]) {
+            add(name, material);
+            const legacy = own(new THREE.MeshLambertMaterial({ color: material.color, flatShading: material.flatShading,
+                emissive: material.emissive, emissiveIntensity: material.emissiveIntensity }));
+            add(`legacy_${name}`, legacy);
+        }
+        ambient.intensity = Math.PI * .4; sun.intensity = Math.PI * .2;
+        view.coalMaterial.emissiveIntensity = .4;
+        meshes.get('legacy_coal').material.emissiveIntensity = .4;
+        viewUniforms.uBrightness.value = .4; skyUniforms.uNightDesaturation.value = .6;
+        lightingUniforms.uLightingNatural.value = 0;
+        for (const name of ['ash', 'tinder', 'coal']) {
+            close(draw(name), draw(`legacy_${name}`), `${name}: baza zachowuje dawny Lambert bez dodatkowych filtrów`);
+        }
+        viewUniforms.uBrightness.value = 0; skyUniforms.uNightDesaturation.value = 0;
+        view.coalMaterial.emissiveIntensity = 0;
+        lightingUniforms.uLightingNatural.value = 1;
+        for (const name of ['ash', 'tinder', 'coal']) {
+            const dark = draw(name);
+            close(dark, [0, 0, 0], `${name}: zamknięta komora bez emisji jest ciemna`);
+            pixels.campfire[name] = dark;
+        }
+        view.coalMaterial.emissiveIntensity = .4;
+        const coal = draw('coal'); check(coal[0] > 15, 'Brak dodatniej próby żarzących węgli');
+        setLightingView('emission'); close(draw('coal'), coal, 'Emisja Lamberta jest oddzielna i liczona raz');
+        setLightingComponent('emission', false); setLightingView('full');
+        close(draw('coal'), [0, 0, 0], 'Wyłączenie emisji wygasza węgle bez rozjaśnienia niebem');
+        resetLightingDiagnostics();
+        pixels.campfire.embers = coal;
+
+        const charred = view.logs[0].mesh.material;
+        charred.userData.char.uChar.value = 1; charred.userData.char.uHeat.value = 1;
+        add('charred', charred);
+        const flame = own(fireRenderer.flameMaterial.clone());
+        flame.onBeforeCompile = fireRenderer.flameMaterial.onBeforeCompile;
+        flame.customProgramCacheKey = fireRenderer.flameMaterial.customProgramCacheKey;
+        add('flame', flame);
+        glowFixture = new CubeParticles(scene, { capacity: 1, glowing: true });
+        glowFixture.emit({ position: new THREE.Vector3(), size: 1, life: 10, colors: new THREE.Color(1, .42, .06) });
+        glowFixture.update(0, game.world); glowFixture.mesh.setMatrixAt(0, new THREE.Matrix4());
+        glowFixture.mesh.instanceMatrix.needsUpdate = true; meshes.set('spark', glowFixture.mesh);
+        const firePointGeometry = own(new THREE.BufferGeometry());
+        firePointGeometry.setAttribute('position', new THREE.Float32BufferAttribute([0, 0, 0], 3));
+        firePointGeometry.setAttribute('particleColor', new THREE.Float32BufferAttribute([1, .42, .06, 1], 4));
+        firePointGeometry.setAttribute('particleSize', new THREE.Float32BufferAttribute([.8], 1));
+        firePointGeometry.setAttribute('particleEmission', new THREE.Float32BufferAttribute([1], 1));
+        const firePointMaterial = own(fireRenderer.particleMaterial.clone());
+        Object.assign(firePointMaterial.uniforms, lightingUniforms);
+        firePointMaterial.uniforms.uPixelScale.value = 40;
+        const firePoint = new THREE.Points(firePointGeometry, firePointMaterial);
+        firePoint.frustumCulled = false; scene.add(firePoint); meshes.set('fireSpark', firePoint);
+        const energyOf = name => {
+            draw(name);
+            const rgba = new Uint8Array(16 * 16 * 4);
+            renderer.readRenderTargetPixels(target, 0, 0, 16, 16, rgba);
+            return rgba.reduce((sum, value, i) => sum + (i % 4 === 3 ? 0 : value), 0);
+        };
+        for (const name of ['charred', 'flame', 'spark', 'fireSpark']) {
+            setLightingView('full'); const energy = energyOf(name);
+            check(energy > 20, `${name}: brak dodatniej kontroli emisji`);
+            setLightingView('emission'); const diagnostic = energyOf(name);
+            check(Math.abs(diagnostic - energy) <= 8, `${name}: emisja rozbiega się z obrazem`);
+            setLightingComponent('emission', false); setLightingView('full');
+            check(energyOf(name) === 0, `${name}: wyłączona emisja nadal świeci`);
+            setLightingComponent('emission', true);
+            pixels.campfire[name] = { energy, diagnostic };
+        }
+        resetLightingDiagnostics();
+        firePointGeometry.getAttribute('particleEmission').setX(0, 0);
+        firePointGeometry.getAttribute('particleEmission').needsUpdate = true;
+        const smoke = energyOf('fireSpark');
+        setLightingComponent('emission', false);
+        check(energyOf('fireSpark') === smoke, 'Wyłączenie iskier nie usuwa rozpraszania dymu');
+        setLightingComponent('local', false);
+        check(energyOf('fireSpark') === 0, 'Rozpraszanie dymu należy do lokalnego składnika');
+        resetLightingDiagnostics();
         await yieldBrowser();
         const webgl1 = await checkWebGL1();
         return { status: 'passed', variants, programs: programs.size, pixels, webgl1,
@@ -351,6 +536,8 @@ export async function checkSurfaceRendering({ game, settings, renderer, yieldBro
         renderer.toneMapping = saved.toneMapping; renderer.outputColorSpace = saved.outputColorSpace;
         renderer.setClearColor(saved.clearColor, saved.clearAlpha);
         renderer.setViewport(saved.viewport); renderer.setScissor(saved.scissor); renderer.setScissorTest(saved.scissorTest);
+        if (fireFixture?.view) fireFixture.renderer.removeView(fireFixture.key, fireFixture.view);
+        glowFixture?.dispose();
         debris.dispose(); for (const resource of resources) resource.dispose();
     }
 }

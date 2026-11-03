@@ -429,6 +429,7 @@ const resourceSource = `
         render(){this.fixture.draws.far++;}
     }
     export class SunShadows extends Resource {
+        setNaturalLighting(enabled){this.naturalLighting=enabled;}
         setQuality(quality){this.enabled=quality>0;this.hasFar=quality===3;}
         markChunk(){}update(){}render(){this.fixture.draws.shadows++;}
     }
@@ -440,8 +441,9 @@ const resourceSource = `
     export const viewUniforms=Object.fromEntries(['uBrightness','uUnderwater','uCurvature','uGlobe','uFarTextureBlend','uFarEnabled','uFarInner','uFarOuter','uTime'].map(k=>[k,{value:0}]));
     export const dynamicLightUniforms={uDynamicEnabled:{value:0}},bounceUniforms={uBounceColor:{value:new Color()}},campfireLightUniforms={uFirePowers:{value:[0,0,0,0]}};
     export const CHUNK_SIZE=16,POTATO_VIEW_DISTANCE=24,SHAFT_BRIGHTNESS=1,SHAFT_DENSITY_OUTSIDE=1,SHAFT_DENSITY_INSIDE=1,SHAFT_FAR_REACH=800;
-    export const waterShaderVariantKey=()=>globalThis.menuResources.variant;
-    export function prewarmWaterMaterial(){
+    export const waterShaderVariantKey=target=>globalThis.menuResources.variant+(target?':linear':':screen');
+    export function prewarmWaterMaterial(renderer,scene,camera,asynchronous,target){
+        globalThis.menuResources.warmTargets.push(target);
         const item=globalThis.menuResources.warms.shift();
         if(item instanceof Error) throw item;
         return item;
@@ -450,9 +452,11 @@ const resourceSource = `
 const worldHook = registerHooks({
     resolve(specifier, context, next) {
         if (context.parentURL?.includes('/src/menu/MenuWorld.js')) {
-            if (specifier.endsWith('/menuScene.js')) return next(specifier, context);
+            if (specifier.endsWith('/menuScene.js') || specifier.endsWith('/WorldOutput.js') ||
+                specifier.endsWith('/LightingDiagnostics.js')) return next(specifier, context);
             return { url: 'test:menu-resources', shortCircuit: true };
         }
+        if(specifier==='three') return next(new URL('../lib/three/three.module.js',import.meta.url).href,context);
         return next(specifier, context);
     },
     load(url, context, next) {
@@ -464,7 +468,7 @@ const { MenuWorld } = await import('../src/menu/MenuWorld.js');
 const { viewUniforms: testedViewUniforms } = await import('test:menu-resources');
 worldHook.deregister();
 function resources(overrides = {}) {
-    globalThis.menuResources = { resources: [], variant: 'initial', warms: [Promise.resolve()],
+    globalThis.menuResources = { resources: [], variant: 'initial', warms: [Promise.resolve()], warmTargets: [], outputDraws: 0,
         chunkPlan: [[0, 0], [1, 0], [0, 1]], farWanted: 3, farMissing: 0,
         clock: 0, generateCost: 0, meshCost: 0, meshWhileLoading: false,
         draws: { sky: 0, far: 0, shadows: 0, world: 0 }, ...overrides };
@@ -472,12 +476,22 @@ function resources(overrides = {}) {
 }
 const worldSettings = { get: key => ({ viewDistance: 48, farTerrain: 192, farDetail: 2, potato: false,
     loadBudget: 4, bushyGrass: false, shadows: 3, lightShafts: false,
-    ambientOcclusion: 45, fancyLeaves: true, brightness: 0 })[key] };
+    ambientOcclusion: 45, fancyLeaves: true, brightness: 0, lightingLook: 'baseline', cloudCover: 0 })[key] };
 function makeWorld({ settings = worldSettings, spec = { ...MENU_SCENE, seed: 42 }, camera } = {}) {
     const fixture = globalThis.menuResources;
     const renderer = { getPixelRatio: () => 1, autoClear: true, info: { reset() {} },
+        capabilities: { isWebGL2: true }, extensions: { has: () => true },
+        getDrawingBufferSize: size => size.set(1280, 720),
         target: null, getRenderTarget() { return this.target; }, setRenderTarget(target) { this.target = target; },
-        clear() {}, clearDepth() {}, render() { fixture.draws.world++; } };
+        clear() {}, clearDepth() {}, render(scene) {
+            if(scene.children?.[0]?.material?.name==='WorldOutput') {
+                fixture.outputDraws++;
+                if(fixture.throwOutput)throw Error('Błąd prezentacji HDR');
+            } else {
+                fixture.draws.world++;
+                if(fixture.throwWorld)throw Error('Błąd rysowania świata HDR');
+            }
+        } };
     if (!camera) {
         camera = new THREE.PerspectiveCamera(58, 16 / 9, 0.1, 256);
         camera.position.fromArray(MENU_SCENE.views.home.position);
@@ -723,5 +737,42 @@ equal(renderTarget, previousTarget, 'Przerwana klatka przywraca poprzedni frameb
 equal(interruptedRender.renderer.autoClear, true, 'Przerwana klatka przywraca również autoClear');
 interruptedRender.dispose();
 check(allocated.resources.every(item => item.disposals === 1), 'Po przerwaniu renderowania można zwolnić wszystkie zasoby menu');
+
+// Prawdziwy WorldOutput, bez WebGL: naturalne menu przygotowuje wodę
+// dla tego samego liniowego celu, a obie ścieżki błędu oddają renderer.
+allocated = resources();
+let lightingLook = 'natural';
+const hdrMenu = makeWorld({ settings: { get: key => key === 'lightingLook' ? lightingLook : worldSettings.get(key) } });
+equal(allocated.warmTargets, [hdrMenu.worldOutput.target], 'Warmup naturalnego menu otrzymuje rzeczywisty docelowy RT');
+check(hdrMenu.worldOutput.target.texture.type === THREE.HalfFloatType, 'Warmup używa HDR16F na obsługującym go rendererze');
+check(!hdrMenu.worldOutput.active && hdrMenu.renderer.getRenderTarget() === null && allocated.outputDraws === 0,
+    'Przygotowanie HDR nie zaczyna ani nie prezentuje klatki');
+await hdrMenu.warmup;
+controlledTime(allocated, () => hdrMenu.update(1 / 60));
+const originalHdrTarget = { name: 'odbiorca HDR', width: 320, height: 180 };
+hdrMenu.renderer.setRenderTarget(originalHdrTarget);
+hdrMenu.render();
+equal(allocated.outputDraws, 1, 'Naturalny świat jest prezentowany jednym końcowym przebiegiem');
+equal(hdrMenu.renderer.getRenderTarget(), originalHdrTarget, 'Poprawna prezentacja przywraca cel wywołującego');
+equal(hdrMenu.renderer.autoClear, true, 'Poprawna prezentacja przywraca autoClear menu');
+for (const fault of ['throwWorld', 'throwOutput']) {
+    allocated[fault] = true;
+    assert.throws(() => hdrMenu.render(), /Błąd.*HDR/); checks++;
+    check(!hdrMenu.worldOutput.active, `${fault}: przerwana prezentacja kończy aktywną klatkę HDR`);
+    equal(hdrMenu.renderer.getRenderTarget(), originalHdrTarget, `${fault}: przywrócony cel renderowania`);
+    equal(hdrMenu.renderer.autoClear, true, `${fault}: przywrócone autoClear`);
+    allocated[fault] = false;
+}
+lightingLook = 'baseline'; allocated.warms.push(Promise.resolve()); hdrMenu.applySettings();
+equal(allocated.warmTargets.at(-1), null, 'Przejście do bazy przygotowuje wariant ekranu zamiast HDR');
+await hdrMenu.warmup; controlledTime(allocated, () => hdrMenu.update(1 / 60));
+const presentations = allocated.outputDraws;
+hdrMenu.render();
+equal(allocated.outputDraws, presentations, 'Porównanie bazowe omija prezentację HDR');
+let targetDisposals = 0;
+hdrMenu.worldOutput.target.addEventListener('dispose', () => targetDisposals++);
+hdrMenu.dispose(); hdrMenu.dispose();
+equal(targetDisposals, 1, 'Wyjście z menu zwalnia także wcześniej przygotowany bufor HDR dokładnie raz');
+check(allocated.resources.every(item => item.disposals === 1), 'Naturalne menu zwalnia pozostałe zasoby');
 
 console.log(`OK: kamera i scena menu — ${checks} sprawdzeń przejazdów, ustawień i cyklu życia.`);

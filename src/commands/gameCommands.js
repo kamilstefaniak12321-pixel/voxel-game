@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { LIGHTING_VIEWS, setLightingView, setLightingComponent, resetLightingDiagnostics } from '../rendering/LightingDiagnostics.js';
 
 import {
     CommandError,
@@ -3854,17 +3855,54 @@ export const GAME_COMMANDS = [
     {
         name: 'swiatlo',
         aliases: ['light'],
-        usage: '/swiatlo | /swiatlo model <atmosfera | klasyczne> | /swiatlo dynamiczne <wl | wyl> | /swiatlo odbite <wl | wyl>',
+        usage: '/swiatlo | /swiatlo paleta <naturalna | poprzednia> | /swiatlo widok <full | albedo | normals | sunVisibility | skyAccess | ao | sun | moon | sky | bounce | local | emission | grayscale> | /swiatlo zrodlo <sun | moon | sky | bounce | local | emission> <wl | wyl> | /swiatlo chmury <0–100> | /swiatlo reset | /swiatlo model <atmosfera | klasyczne> | /swiatlo dynamiczne <wl | wyl> | /swiatlo odbite <wl | wyl>',
         description: 'Pomiar światła; model atmosferyczny (domyślny) albo klasyczny i światło odbite (oba - Ustawienia, Eksperymenty); światło dynamiczne.',
 
         run(args, { game, world }) {
+
+            const action = simplify(args[0] ?? '');
+            if (action === 'paleta') {
+                const choice = { naturalna: 'natural', natural: 'natural', poprzednia: 'baseline', baseline: 'baseline' }[simplify(args[1] ?? '')];
+                if (args.length !== 2 || !choice) throw usageError(this);
+                game.settings.set('lightingLook', choice);
+                return TEXTS.lightingLook(choice);
+            }
+            if (action === 'widok') {
+                const name = LIGHTING_VIEWS.find(view => simplify(view) === simplify(args[1] ?? ''));
+                if (args.length !== 2 || !name) throw usageError(this);
+                setLightingView(name);
+                return `Widok światła: ${name}. Powrót: /swiatlo reset.`;
+            }
+            if (action === 'zrodlo') {
+                const source = simplify(args[1] ?? '');
+                const value = simplify(args[2] ?? '');
+                if (args.length !== 3 || !['sun', 'moon', 'sky', 'bounce', 'local', 'emission'].includes(source)
+                    || ![...ON_WORDS, ...OFF_WORDS].includes(value)) throw usageError(this);
+                const enabled = ON_WORDS.includes(value);
+                setLightingComponent(source, enabled);
+                return `Źródło ${source}: ${enabled ? 'włączone' : 'wyłączone'} (diagnostyka powierzchni).`;
+            }
+            if (action === 'chmury') {
+                const value = Number(args[1]);
+                if (args.length !== 2 || !Number.isFinite(value) || value < 0 || value > 100) throw usageError(this);
+                game.settings.set('cloudCover', value);
+                return `${TEXTS.cloudCover(game.settings.get('cloudCover'))}. Profil oświetlenia, bez symulacji pogody.`;
+            }
+            if (action === 'reset') {
+                if (args.length !== 1) throw usageError(this);
+                resetLightingDiagnostics();
+                return 'Pełny obraz i wszystkie źródła światła przywrócone.';
+            }
 
             if (simplify(args[0] ?? '') === 'model') {
                 const choices = { swiat: 'world', atmosfera: 'world', domyslny: 'world', klasyczne: 'classic', klasyczny: 'classic' };
                 const choice = choices[simplify(args[1] ?? '')];
                 if (args.length !== 2 || !choice) throw usageError(this);
+                // Te modele są odniesieniem sprzed naturalnej palety.
+                // Jawna komenda ma rzeczywiście przełączyć wygląd świata.
+                game.settings.set('lightingLook', 'baseline');
                 game.settings.set('lightingModel', choice);
-                return `${TEXTS.lightingModel(choice)} (Ustawienia - Eksperymenty).`;
+                return `${TEXTS.lightingModel(choice)}; ${TEXTS.lightingLook('baseline')}. Powrót: /swiatlo paleta naturalna.`;
             }
 
             if (args[0] !== undefined && simplify(args[0]) === 'odbite') {
@@ -3907,7 +3945,7 @@ export const GAME_COMMANDS = [
                 Math.floor(camera.x), Math.floor(camera.y), Math.floor(camera.z)
             ));
 
-            text += ` | model: ${game.sky.solarAtmosphere ? 'atmosferyczny' : 'klasyczny'}`;
+            text += ` | ${TEXTS.lightingLook(game.settings.get('lightingLook'))} | model: ${game.sky.atmosphere ? 'atmosferyczny' : 'klasyczny'}`;
             if (game.sky.atmosphere) {
                 const sample = game.sky.atmosphere;
                 text += ` | wysokość Słońca: ${sample.altitude.toFixed(1)}°` +
@@ -3945,7 +3983,10 @@ export const GAME_COMMANDS = [
         },
 
         complete(args) {
-            if (args.length === 1) return ['model', 'dynamiczne', 'odbite'];
+            if (args.length === 1) return ['paleta', 'widok', 'zrodlo', 'chmury', 'reset', 'model', 'dynamiczne', 'odbite'];
+            if (args.length === 2 && simplify(args[0]) === 'paleta') return ['naturalna', 'poprzednia'];
+            if (args.length === 2 && simplify(args[0]) === 'widok') return LIGHTING_VIEWS;
+            if (args.length === 2 && simplify(args[0]) === 'zrodlo') return ['sun', 'moon', 'sky', 'bounce', 'local', 'emission'];
             if (args.length === 2 && simplify(args[0]) === 'model') return ['atmosfera', 'klasyczne'];
             if (args.length === 2) return ['wl', 'wyl'];
             return [];

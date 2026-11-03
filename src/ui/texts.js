@@ -135,7 +135,7 @@ export const TEXTS = {
     experimentNotes: {
         bushyGrass: 'Przestrzenne, pikselowe kępki zamiast zwykłej trawy (więcej ścian do narysowania).',
         bounceLight: 'Ściany oświetlone słońcem rozjaśniają pokój swoim kolorem. Działa tylko z cieniami słońca.',
-        lightingModel: 'Atmosferyczne: kolor i siła słońca zależą od drogi przez powietrze. Klasyczne: dawne, prostsze światło.'
+        lightingModel: 'Dotyczy palety „Poprzednia (0.56.1)” w Obraz → Zaawansowane. Atmosferyczne: kolor i siła słońca zależą od drogi przez powietrze. Klasyczne: dawne, prostsze światło. Paleta Naturalna korzysta z nowego systemu.'
     },
     bushyGrass: (on) => `Trawa kępiasta: ${on ? 'Wł.' : 'Wył.'}`,
     potato: (on) => `Tryb ziemniaka: ${on ? 'Wł.' : 'Wył.'}`,
@@ -153,6 +153,8 @@ export const TEXTS = {
     ambientOcclusion: (value) => `Cienie w kątach: ${value > 0 ? `${value}%` : 'Wył.'}`,
     shadows: (value) => `Cienie słońca: ${['Wył.', 'Zwykłe', 'Dokładne', 'Dalekie'][value] ?? 'Wył.'}`,
     lightingModel: (value) => `Światło: ${value === 'classic' ? 'Klasyczne' : 'Atmosferyczne'}`,
+    lightingLook: (value) => `Paleta światła: ${value === 'baseline' ? 'Poprzednia (0.56.1)' : 'Naturalna'}`,
+    cloudCover: (value) => `Zachmurzenie światła: ${value}%`,
     lightShafts: (on) => `Promienie światła: ${on ? 'Wł.' : 'Wył.'}`,
     bounceLight: (on) => `Światło odbite: ${on ? 'Wł.' : 'Wył.'}`,
     fancyLeaves: (on) => `Liście drzew: ${on ? 'Ładne' : 'Szybkie'}`,

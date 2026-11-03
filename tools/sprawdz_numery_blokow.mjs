@@ -15,6 +15,7 @@
 // ------------------------------------------------------------
 
 import assert from 'node:assert/strict';
+import { memoryDatabase } from './fixtures/memory-database.mjs';
 import { registerHooks } from 'node:module';
 
 registerHooks({
@@ -79,34 +80,6 @@ check(fromNew.getId(5, 20, 6) === 60000, 'nowy zapis - numer ponad 255');
 
 
 // Prawdziwe WorldStorage z bazą w pamięci (kopie jak w IndexedDB).
-
-function memoryDatabase() {
-    const tables = { worlds: new Map(), chunks: new Map() };
-    const request = (value) => {
-        const result = { result: structuredClone(value) };
-        queueMicrotask(() => result.onsuccess?.());
-        return result;
-    };
-    return {
-        transaction() {
-            const transaction = {
-                objectStore(name) {
-                    const table = tables[name];
-                    return {
-                        put(record) {
-                            const key = name === 'worlds' ? record.id : JSON.stringify([record.worldId, record.cx, record.cz]);
-                            table.set(key, structuredClone(record));
-                        },
-                        getAll: () => request([...table.values()]),
-                        index: () => ({ getAll: (id) => request([...table.values()].filter((record) => record.worldId === id)) })
-                    };
-                },
-                commit() { queueMicrotask(() => transaction.oncomplete?.()); }
-            };
-            return transaction;
-        }
-    };
-}
 
 const storage = new WorldStorage(memoryDatabase());
 const info = createWorldInfo('Numery bloków', 'numery', 'classic', 'creative');

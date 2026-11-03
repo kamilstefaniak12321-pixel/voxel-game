@@ -11,6 +11,21 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 0.56.0 - Żywe menu główne
+
+Prawdziwy krajobraz gry i płynne przejazdy między zakładkami — PR #89.
+
+- Menu pokazuje dolinę z lasem, rzeką i górami, korzystając z aktualnego generatora, modeli roślin, animowanej wody, oświetlenia i cieni gry.
+- **Graj** przenosi kamerę nad rzekę, **Ustawienia** do lasku, a **Osiągnięcia** w stronę gór. Powrót przywraca główny kadr; szybka zmiana zakładki płynnie przekierowuje kamerę.
+- Jasny panel po lewej pozostawia krajobraz widoczny. Przyciski działają również podczas przygotowywania sceny i w razie jej błędu.
+- W **Ustawienia → Wygląd** pojawia się **Ruch menu: System / Płynny / Wył.**. Domyślnie respektowane jest systemowe ograniczenie animacji.
+- Osobna scena nie zapisuje świata gracza, zwalnia zasoby przed rozpoczęciem rozgrywki i zatrzymuje renderowanie po ukryciu okna. Menu ma limit 60 FPS oraz ograniczony koszt dalszego terenu.
+- Sceneria jest wydzielona do przyszłych większych aktualizacji; biomy, pogoda i pory roku mogą pokazywać wtedy aktualne możliwości gry.
+- Pełne testy gry, 138 sprawdzeń kamery i cyklu życia oraz próba 1292 zmian zakładek bez kolizji. Weryfikacja w aplikacji na RTX 3050 Laptop GPU: około 60 FPS w menu.
+
+Opis i pomiary: `docs/zywe-menu.md`, `docs/pomiary/zywe-menu-0.56.0/`.
+Wydanie Windows/Android przygotowane do publikacji po scaleniu PR.
+
 ## 0.55.0 - Porządek w ustawieniach i tryb programisty
 
 Przejrzystsze ustawienia, zakładka eksperymentów i nowy tryb do testów — PR #88.

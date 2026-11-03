@@ -40,6 +40,14 @@ export class MenuWorld {
         this.error = null;
         this.firstReady = false;
         this.warmEpoch = 0;
+        this.frustum = new THREE.Frustum();
+        this.frustumMatrix = new THREE.Matrix4();
+        const positions = Object.values(spec.views ?? { home: { position: camera.position.toArray() } })
+            .map(view => view.position);
+        const x = (Math.min(...positions.map(p => p[0])) + Math.max(...positions.map(p => p[0]))) / 2;
+        const z = (Math.min(...positions.map(p => p[2])) + Math.max(...positions.map(p => p[2]))) / 2;
+        this.focus = new THREE.Vector3(x, 0, z);
+        this.cameraReach = Math.max(...positions.map(p => Math.hypot(p[0] - x, p[2] - z))) + 2;
         try {
             this.scene = new THREE.Scene();
             this.scene.fog = new THREE.Fog(0x87ceeb, 20, 80);
@@ -51,7 +59,14 @@ export class MenuWorld {
             this.shadows = new SunShadows(renderer);
             this.lightShafts = new LightShafts(renderer);
             this.shaftColor = new THREE.Color();
-            this.world.onMeshChanged = chunk => this.shadows.markChunk(chunk);
+            this.world.onMeshChanged = chunk => {
+                this.shadows.markChunk(chunk);
+                if (chunk.mesh) {
+                    chunk.mesh.geometry.computeBoundingBox();
+                    chunk.menuBounds = chunk.mesh.geometry.boundingBox.clone().expandByScalar(3);
+                    chunk.menuBounds.translate(chunk.mesh.position);
+                }
+            };
             this.applySettings();
             this.sky.update(spec.time ?? 0.34, 0, renderer.getPixelRatio());
             this.warmWater();
@@ -76,6 +91,7 @@ export class MenuWorld {
         if (variant === this.waterVariant) return;
         this.waterVariant = variant;
         this.warmed = false;
+        this.firstReady = false;
         this.error = null;
         const epoch = ++this.warmEpoch;
         const current = () => !this.disposed && epoch === this.warmEpoch;
@@ -102,7 +118,7 @@ export class MenuWorld {
         this.scene.fog.far = distance;
         this.sky.solarAtmosphere = usesSolarAtmosphere(settings.get('lightingModel'), this.world.generator.type);
         this.sky.setLowDetail(potato);
-        this.farTerrain.setDetail(settings.get('farDetail'), potato);
+        this.farTerrain.setDetail(settings.get('farDetail'), potato, true);
         this.world.setExperiments({ bushyGrass: settings.get('bushyGrass') });
         setPotatoDefine(materials, potato);
         this.shadows.setQuality(potato ? 0 : settings.get('shadows'));
@@ -123,26 +139,37 @@ export class MenuWorld {
         viewUniforms.uUnderwater.value = 0;
         viewUniforms.uCurvature.value = 0;
         viewUniforms.uGlobe.value = 0;
+        viewUniforms.uFarTextureBlend.value = 0;
         dynamicLightUniforms.uDynamicEnabled.value = 0;
         bounceUniforms.uBounceColor.value.setRGB(0, 0, 0);
         campfireLightUniforms.uFirePowers.value.fill(0);
         if (this.waterVariant !== undefined) this.warmWater();
     }
 
-    update(dt, focus = this.camera.position) {
+    update(dt) {
         if (this.disposed || this.error) return;
         const elapsed = Number.isFinite(dt) ? Math.min(0.1, Math.max(0, dt)) : 0;
-        const radius = Math.ceil(this.viewDistance / CHUNK_SIZE) + 2;
-        this.world.update(focus.x, focus.z, radius, Math.max(1, this.settings.get('loadBudget')));
-        const loaded = Math.floor(this.world.completeRadius() / 8) * 8;
-        const inner = Math.max(16, Math.min(this.viewDistance, loaded));
+        // Jeden obszar pokrywa wszystkie kamery i ich przejazdy. Najpierw
+        // dane całego otoczenia, potem meshe: sąsiedzi nie przebudowują
+        // wielokrotnie tych samych siatek podczas pierwszego ładowania.
+        const radius = Math.ceil((this.viewDistance + this.cameraReach) / CHUNK_SIZE) + 2;
+        if (radius !== this.world.loadRadius) this.firstReady = false;
+        this.world.setCenter(this.focus.x, this.focus.z, radius);
+        const deadline = performance.now() + Math.max(1, this.settings.get('loadBudget'));
+        while (this.world.loadQueue.length && performance.now() < deadline) {
+            const [cx, cz] = this.world.loadQueue.pop();
+            this.world.generateChunk(cx, cz);
+        }
+        if (!this.world.loadQueue.length) this.world.updateMeshes(deadline);
+        const inner = this.viewDistance;
         const outer = this.settings.get('farTerrain');
         this.farTerrain.setRange(inner, outer);
         viewUniforms.uFarEnabled.value = this.farTerrain.active ? 1 : 0;
         viewUniforms.uFarInner.value = inner;
         viewUniforms.uFarOuter.value = Math.max(outer, inner);
         viewUniforms.uTime.value = (viewUniforms.uTime.value + elapsed) % 3600;
-        this.farTerrain.update(this.camera.position);
+        this.focus.y = this.camera.position.y;
+        this.farTerrain.update(this.focus);
         this.sky.horizonDip = this.farTerrain.active
             ? Math.min(0, (this.world.generator.baseHeight + 1 - this.camera.position.y) / this.farTerrain.outer) : 0;
         // Stała wybrana pora zachowuje kompozycję; animacje nieba,
@@ -156,13 +183,22 @@ export class MenuWorld {
         this.scene.fog.color.copy(this.sky.state.horizon).multiplyScalar(skyUniforms.uFogBrightness.value);
         this.shadows.update(elapsed, this.sky, p);
         this.sky.applyShadowContrast(this.shadows.active ? this.shadows.strength : 0);
-        this.firstReady ||= this.warmed && loaded >= Math.min(24, this.viewDistance)
-            && (!this.farTerrain.active || this.farTerrain.shown.size > 0);
+        if (!this.firstReady) {
+            const far = this.farTerrain.stats();
+            this.firstReady = this.warmed && this.world.chunks.size > 0
+                && this.world.loadQueue.length === 0 && this.world.dirtyChunks.size === 0
+                && (!this.farTerrain.active || (far.wanted > 0 && far.missing === 0));
+        }
     }
 
     render() {
-        if (this.disposed || this.error) return;
+        if (this.disposed || this.error || !this.ready) return;
         const renderer = this.renderer, camera = this.camera;
+        this.frustumMatrix.multiplyMatrices(camera.projectionMatrix, camera.matrixWorldInverse);
+        this.frustum.setFromProjectionMatrix(this.frustumMatrix);
+        for (const chunk of this.world.chunks.values()) {
+            if (chunk.mesh && chunk.menuBounds) chunk.mesh.visible = this.frustum.intersectsBox(chunk.menuBounds);
+        }
         const previousAutoClear = renderer.autoClear;
         const previousTarget = renderer.getRenderTarget();
         renderer.autoClear = false;
@@ -219,6 +255,7 @@ export class MenuWorld {
     dispose() {
         if (this.disposed) return;
         this.disposed = true;
+        viewUniforms.uFarTextureBlend.value = 1;
         ++this.warmEpoch;
         if (this.world) this.world.onMeshChanged = null;
         this.shadows?.dispose();

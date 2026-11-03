@@ -33,6 +33,9 @@ export async function checkSurfaceRendering({ game, settings, renderer, yieldBro
     target.texture.colorSpace = THREE.LinearSRGBColorSpace;
     const white = own(new THREE.DataTexture(new Uint8Array([255, 255, 255, 255]), 1, 1));
     white.needsUpdate = true;
+    const blackAverage = own(new THREE.DataTexture(new Uint8Array([0, 0, 0, 255]), 1, 1));
+    const matchingAverage = own(new THREE.DataTexture(new Uint8Array([64, 64, 64, 255]), 1, 1));
+    blackAverage.needsUpdate = matchingAverage.needsUpdate = true;
     const scene = new THREE.Scene();
     const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, .1, 10);
     camera.position.set(0, 0, 2); camera.lookAt(0, 0, 0);
@@ -200,6 +203,14 @@ export async function checkSurfaceRendering({ game, settings, renderer, yieldBro
         renderer.autoClear = true; renderer.toneMapping = THREE.NoToneMapping;
         renderer.outputColorSpace = THREE.LinearSRGBColorSpace;
         renderer.setClearColor(0, 1); renderer.setScissorTest(false);
+        // Wyjście z podglądu nie może pozostawić innego wyglądu zwykłej gry,
+        // również gdy uniform trzeba odzyskać już po zastosowaniu ustawień.
+        viewUniforms.uFarTextureBlend.value = 0;
+        game.applySettings();
+        check(viewUniforms.uFarTextureBlend.value === 1, 'Ustawienia gry nie przywróciły mieszania tekstur po menu');
+        viewUniforms.uFarTextureBlend.value = 0;
+        game.updateFarRange();
+        check(viewUniforms.uFarTextureBlend.value === 1, 'Aktualizacja gry nie przywróciła mieszania tekstur po menu');
         Object.assign(viewUniforms.uBrightness, { value: 0 });
         viewUniforms.uFarEnabled.value = 0; viewUniforms.uFarInner.value = 48;
         viewUniforms.uFarOuter.value = 1000; viewUniforms.uHazeMax.value = 0;
@@ -230,6 +241,43 @@ export async function checkSurfaceRendering({ game, settings, renderer, yieldBro
             pixels[name] = draw(name);
             close(pixels[name], pixels.natural, `Near/${name}: ten sam liniowy materiał i światło`);
         }
+
+        // Rzeczywisty shader: tekstura i jej średnia celowo różnią się.
+        // Menu zachowuje teksturę także ZA granicą pełnego mieszania, a 1
+        // przywraca dawną średnią bez wymiany programu/materiału.
+        const atlasAverage = viewUniforms.uAtlasAverage.value;
+        viewUniforms.uAtlasAverage.value = blackAverage;
+        viewUniforms.uFarInner.value = 1;
+        pixels.farTextureBlend = {};
+        for (const name of ['near', 'plant', 'leaf']) {
+            viewUniforms.uFarEnabled.value = 0;
+            const original = draw(name);
+            viewUniforms.uFarEnabled.value = 1;
+            viewUniforms.uFarTextureBlend.value = 0;
+            const sharp = draw(name);
+            close(sharp, original, `${name}: ostre menu zachowuje atlas mimo włączonego horyzontu`);
+            viewUniforms.uFarTextureBlend.value = 1;
+            const averaged = draw(name);
+            close(averaged, [0, 0, 0], `${name}: zwykła gra nadal korzysta ze średniej atlasu`);
+            viewUniforms.uFarTextureBlend.value = 0;
+            close(draw(name), sharp, `${name}: ponowne wejście do menu nie wymaga rekompilacji`);
+            pixels.farTextureBlend[name] = { original, sharp, averaged };
+        }
+        // Identyczne albedo obu ścieżek: zmiana mieszania nie zmienia mgły.
+        viewUniforms.uAtlasAverage.value = matchingAverage;
+        viewUniforms.uHazeMax.value = .6; viewUniforms.uHazeDistance.value = 1;
+        scene.fog = new THREE.Fog(0, 0, 1);
+        blockMaterials[0].fog = true; blockMaterials[0].needsUpdate = true;
+        const sharpHaze = draw('near');
+        viewUniforms.uFarTextureBlend.value = 1;
+        close(draw('near'), sharpHaze, 'Wyłączenie mieszania tekstur nie przełącza ani nie usuwa atmosfery');
+        pixels.farTextureBlend.haze = sharpHaze;
+        blockMaterials[0].fog = false; blockMaterials[0].needsUpdate = true;
+        scene.fog = null;
+        viewUniforms.uAtlasAverage.value = atlasAverage;
+        viewUniforms.uFarEnabled.value = 0; viewUniforms.uFarInner.value = 48;
+        viewUniforms.uHazeMax.value = 0;
+
         pixels.riverDay = draw('riverPlant');
         pixels.heldGrass = draw('heldGrass');
         close(pixels.heldGrass, pixels.natural,

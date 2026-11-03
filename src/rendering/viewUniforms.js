@@ -40,6 +40,10 @@ export const viewUniforms = {
 
     uFarEnabled: { value: 0 },
 
+    // Przejście tekstur w średni kolor przy horyzoncie. Menu może zachować
+    // ostre tekstury (0), niezależnie od dalekiego terenu i jego atmosfery.
+    uFarTextureBlend: { value: 1 },
+
     // Promień prawdziwych chunków (zasięg widzenia) i dalekiego terenu.
 
     uFarInner: { value: 48 },
@@ -123,6 +127,7 @@ export const VIEW_GLSL = /* glsl */ `
 
     uniform float uBrightness;
     uniform float uFarEnabled;
+    uniform float uFarTextureBlend;
     uniform float uFarInner;
     uniform float uFarOuter;
     uniform float uHazeDistance;

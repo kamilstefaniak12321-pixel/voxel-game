@@ -321,9 +321,17 @@ Jaskinie, rudy i warstwy skał, wodospady, klify nadmorskie, pory roku.
   do wysokości granitu. Każdy kolejny
   etap (rzeki, biomy, drzewa) ma się zmieścić tak, żeby cały chunk
   był gotowy w kilku ms (`/wydajnosc`, `/wydajnosc test`).
-- **Wysokość świata**: 128 bloków (morze na 48). Chunk zajmuje teraz
-  ~160 KB (bloki + światło), więc przy największym zasięgu widzenia
-  (384) to ~300 MB. Gdyby góry miały być dużo wyższe albo pamięć
+- **Wysokość świata**: 128 bloków (morze na 48). Same tablice bloków
+  (`Uint16Array`) i czterech kanałów światła (`Uint8Array`) zajmują
+  192 KiB na chunk 16 × 128 × 16. Przy zasięgu widzenia 384 bloków
+  promień wczytywania wynosi 26 chunków: pełne koło zawiera 2121 chunków,
+  czyli około 397,7 MiB tych tablic. Dla limitu suwaka 800 bloków promień
+  wynosi 52 chunki: 8497 chunków i około 1593,2 MiB (1,56 GiB) tablic.
+  To około cztery razy więcej, jeszcze przed siatkami, pamięcią GPU
+  i pozostałymi danymi; dodatkowy pas zatrzymanych chunków także zwiększa
+  rzeczywiste zużycie pamięci.
+  Domyślny zasięg pozostaje bez zmian, a dalsze chunki dogrywają się
+  stopniowo w budżecie klatki. Gdyby góry miały być dużo wyższe albo pamięć
   zaczęła przeszkadzać - podział chunków na sekcje 16 x 16 x 16
   (puste powietrze i lita skała bez tablic).
 

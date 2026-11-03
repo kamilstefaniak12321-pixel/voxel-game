@@ -98,7 +98,7 @@ export const SETTINGS_DEFAULTS = {
 
 export const SETTINGS_RANGES = {
 
-    viewDistance: { min: 24, max: 384, step: 8 },
+    viewDistance: { min: 24, max: 800, step: 8 },
     farTerrain: { min: 0, max: 16384, step: 256 },
     fov: { min: 50, max: 110, step: 1 },
     brightness: { min: 0, max: 100, step: 5 },

@@ -8,19 +8,23 @@ nieba, oświetlenia, cieni i dalekiego terenu. Nie jest filmem ani panoramą.
 
 - [`menuScene.js`](../src/menu/menuScene.js) opisuje scenerię: identyfikator,
   seed, generator, porę dnia oraz położenie i kierunek czterech kamer.
-  `menuSettings` ogranicza koszt podglądu bez zapisywania zmian w preferencjach
-  gracza: pełny teren do 64 bloków na komputerze / 48 na telefonie, horyzont
-  do 2048 / 1024, szczegółowość dalekiego terenu do 2, budżet ładowania do 4.
-  Niższe ustawienia użytkownika nadal obowiązują; FOV menu wynosi 58°.
+  `menuSettings` od 0.56.1 ustala własny zasięg podglądu, niezależny od
+  suwaków zasięgu gracza: pełny teren do 256 bloków na komputerze / 128 na
+  telefonie, horyzont do 1024 / 768. Nie zapisuje tych wartości w preferencjach
+  gracza. Budżet przygotowania terenu wynosi odpowiednio 12 / 6 ms na klatkę,
+  a FOV menu 58°. Pozostałe ustawienia efektów nadal pochodzą z preferencji
+  użytkownika; tryb ziemniaka zachowuje tańszy wariant.
 - [`MenuCamera.js`](../src/menu/MenuCamera.js) płynnie zmienia pozycję i cel
   patrzenia. Tłumiony ruch zachowuje prędkość przy zmianie zakładki w połowie
   przejazdu; powrót wybiera ponownie widok `home`. Dodaje niewielki pionowy
   dryf. Przy ograniczeniu ruchu wybiera kadr natychmiast, bez dryfu.
 - [`MenuWorld.js`](../src/menu/MenuWorld.js) składa `World`, `Sky`,
-  `FarTerrain`, `SunShadows` i `LightShafts`. `update` ładuje otoczenie kamery,
-  aktualizuje animacje, niebo i oświetlenie. `render` rysuje cienie, niebo,
-  daleki i bliski teren, następnie promienie światła. Pora dnia jest stała;
-  animacje wody i roślin pozostają aktywne.
+  `FarTerrain`, `SunShadows` i `LightShafts`. Przygotowuje jeden stały obszar
+  obejmujący wszystkie kadry i przejazdy; zmiana zakładki nie przesuwa kolejki
+  chunków. `update` aktualizuje animacje, niebo i oświetlenie. `render`
+  odrzuca chunki poza kadrem na podstawie ich przestrzennych obwiedni,
+  następnie rysuje cienie, niebo, daleki i bliski teren oraz promienie światła.
+  Pora dnia jest stała; animacje wody i roślin pozostają aktywne.
 - [`MenuBackdrop.js`](../src/menu/MenuBackdrop.js) obsługuje start po
   przygotowaniu atlasu, gotowość sceny, zmianę widoku, ustawienia, rozmiar
   okna i zwalnianie zasobów. Ukryte okno nie aktualizuje sceny. Błąd sceny
@@ -36,6 +40,56 @@ Podgląd i rozgrywka nie mogą działać jednocześnie: korzystają ze wspólnyc
 materiałów i uniformów rendererów. `dispose` zwalnia chunki, pracowników
 dalekiego terenu, mapy cieni i pozostałe zasoby własnej sceny; nie usuwa
 współdzielonych materiałów gry.
+
+## Szczegóły i przygotowanie sceny od 0.56.1
+
+Środek wczytywanego obszaru to środek prostokąta obejmującego pozycje
+wszystkich kamer w osiach X/Z. `cameraReach` jest największą odległością
+kamery od tego środka, powiększoną o 2 bloki zapasu. Promień wczytywania
+wynosi `ceil((viewDistance + cameraReach) / CHUNK_SIZE) + 2` chunków;
+ostatnie dwa pierścienie zapewniają sąsiadów potrzebnych do budowy siatek.
+Pełne chunki pokrywają więc zasięg 256 bloków na komputerze / 128 na
+telefonie wraz z zapasem dla przejazdów kamery.
+
+Najpierw powstają dane wszystkich chunków tego obszaru, a dopiero potem
+ich siatki. Oba etapy korzystają z budżetu 12 ms na komputerze / 6 ms na
+telefonie na klatkę. Pozwala to uniknąć wielokrotnego przebudowywania siatek
+po dograniu kolejnych sąsiadów. Są to budżety pracy, nie obietnica określonego
+czasu całego startu. Scena zostaje odsłonięta dopiero po opróżnieniu kolejek
+generacji i przebudowy, przygotowaniu shaderów wody oraz wszystkich
+aktualnie potrzebnych kafelków dalekiego terenu. Do tego czasu działa
+zwykłe tło i przyciski menu.
+
+Dalszy krajobraz pozostaje uproszczoną siatką terenu. Osobny profil menu
+dobiera krok próbkowania do 1 bloku w odległości 512, do 2 bloków w
+odległości 800 i do 4 bloków w odległości 1024. Horyzont telefonu kończy
+się wcześniej, na 768 blokach. To szczegółowszy daleki teren, a nie pełne
+chunki, roślinność i obiekty do 800 bloków. Tryb ziemniaka nadal korzysta
+z własnego oszczędnego profilu dalekiego terenu i ogranicza pełne chunki
+do 32 bloków.
+
+Tekstury pełnych chunków w menu nie przechodzą z odległością w jednolity
+kolor (`uFarTextureBlend = 0`); rozgrywka przywraca swój zwykły sposób
+przejścia. Przed rysowaniem `Frustum.intersectsBox` sprawdza obwiednie
+chunków, poszerzone o 3 bloki na animację roślin. Dzięki temu stały,
+większy obszar nie wymaga rysowania chunków znajdujących się poza kadrem.
+
+Wyniki sprawdzenia i ograniczenia pomiarów:
+[`szczegóły menu 0.56.1`](pomiary/szczegoly-menu-0.56.1/README.md).
+
+## Zasięg rozgrywki
+
+Od 0.56.1 suwak zasięgu pełnych bloków w ustawieniach gry obejmuje 24–800
+bloków, z krokiem 8. Domyślna wartość pozostaje 48 na komputerze i 32 na
+telefonie. Ten sam zakres obowiązuje komendę `/ustaw zasieg`, walidację
+i ponowne wczytanie ustawień. Zmiana suwaka nie zmienia stałego zasięgu
+scenografii menu.
+
+Wybranie 800 wymaga wczytania około czterech razy więcej chunków niż 384
+i zwiększa zużycie pamięci oraz koszt generowania i rysowania terenu.
+To opcjonalny limit, nie gwarancja 60 FPS na każdym sprzęcie; dalsze
+chunki powstają stopniowo. Tryb ziemniaka nadal ogranicza faktyczny zasięg
+do 32 bloków. Zasięg dekoracyjnej roślinności ma osobny limit.
 
 ## Sceneria 0.56.0 i kolejne wydania
 

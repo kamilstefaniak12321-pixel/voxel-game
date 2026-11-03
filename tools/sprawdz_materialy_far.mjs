@@ -41,7 +41,8 @@ const { TestSiteGenerator } = await import('../src/world/terrain/TestSiteGenerat
 const { getAtlasAverage } = await import('../src/rendering/TextureAtlas.js');
 const { CHUNK_SIZE, CHUNK_HEIGHT } = await import('../src/config.js');
 const THREE = await import('three');
-const { chunkMaskData, chunkMaskUniforms } = await import('../src/rendering/viewUniforms.js');
+const { chunkMaskData, chunkMaskUniforms, viewUniforms } = await import('../src/rendering/viewUniforms.js');
+assert.equal(viewUniforms.uFarTextureBlend.value, 1, 'Domyślny wygląd zwykłej gry zachowuje mieszanie tekstur');
 
 // Rejestr i paczki nie zmieniają ID; odcienie istnieją tylko w buforze Uint16.
 for (const [type, definition] of Object.entries(BLOCK_TYPES)) {
@@ -247,6 +248,54 @@ for (const [x, split] of [[-799, true], [-801, true], [-897, false], [-801, fals
     assert.equal(terrain.lodSplits.has(detailTile), split, `Oscylacja LOD przy x=${x}`);
 }
 
+// Menu dobiera prawdziwe kafelki w trzech pasach. Nie generujemy ich
+// wysokości ani siatek: sprawdzamy selekcję przestrzenną i izolację profilu.
+const menuCenter = { x: -480, z: 384, height: 0 };
+const selectionKeys = tiles => tiles.map(item => item.key).sort();
+terrain.setDetail(1);
+terrain.setRange(256, 8192);
+const lowGame = selectionKeys(terrain.selectTiles(menuCenter));
+terrain.setDetail(1, false, true);
+terrain.setRange(256, 8192);
+assert.equal(terrain.outer, 1024, 'Scenografia przekroczyła budżet horyzontu 1024');
+const menuTiles = terrain.selectTiles(menuCenter);
+assert.ok(menuTiles.some(item => item.distance > 800), 'Menu zgubiło zewnętrzny pas horyzontu');
+assert.ok(menuTiles.filter(item => item.distance <= 512).every(item => item.spacing === 1),
+    'Niskie ustawienie użytkownika zepsuło jednoblokowe kratki menu do 512');
+assert.ok(menuTiles.filter(item => item.distance <= 800).every(item => item.spacing <= 2),
+    'Brak kroku 2 lub mniejszego do 800');
+assert.ok(menuTiles.every(item => item.spacing <= 4 && item.distance <= 1024),
+    'Grube kratki albo kafelki poza horyzontem scenografii');
+for (const level of [0, 1, 2, 3]) {
+    terrain.setDetail(level, false, true);
+    assert.deepEqual(selectionKeys(terrain.selectTiles(menuCenter)), selectionKeys(menuTiles),
+        `Profil menu zależy od farDetail=${level}`);
+}
+terrain.wanted = menuTiles;
+const menuStats = terrain.stats();
+assert.equal(menuStats.profile, 'scenery');
+assert.equal(menuStats.maxDistance, 1024);
+assert.deepEqual(menuStats.detailTiers,
+    [{ distance: 512, spacing: 1 }, { distance: 800, spacing: 2 }, { distance: 1024, spacing: 4 }]);
+menuStats.detailTiers[0].spacing = 99;
+assert.equal(terrain.stats().detailTiers[0].spacing, 1, 'Odczyt statystyk udostępnił mutowalny profil');
+
+// Przejście z menu nie skraca horyzontu gry ani nie poprawia po cichu
+// jej wybranego niskiego detalu. Potato jest identyczny z flagą menu i bez.
+terrain.setDetail(1);
+terrain.setRange(256, 8192);
+assert.equal(terrain.outer, 8192);
+assert.deepEqual(selectionKeys(terrain.selectTiles(menuCenter)), lowGame);
+assert.equal(terrain.stats().profile, 'game');
+terrain.setDetail(1, true, false);
+const potatoGame = selectionKeys(terrain.selectTiles(menuCenter));
+terrain.setDetail(3, true, true);
+terrain.setRange(256, 8192);
+assert.equal(terrain.outer, 8192, 'Profil menu zmienił zasięg trybu ziemniaka');
+assert.deepEqual(selectionKeys(terrain.selectTiles(menuCenter)), potatoGame);
+assert.equal(terrain.stats().profile, 'potato');
+terrain.setDetail(2);
+
 // Pula nie tworzy nowego programu/tekstury co aktualizację cienia.
 // Reużycie jest dozwolone dopiero po release i nie rusza drugiej mapy.
 const poolTile = { key:'pool-fixture', x0:0, z0:0, spacing:1, cells:2, size:2, raw:source };
@@ -295,4 +344,4 @@ assert.ok([...poolDisposals.values()].every(count => count === 1), 'Zasoby puli 
 assert.equal(poolGeometryDisposals, 1);
 chunkMaskData[0] = oldMask; chunkMaskUniforms.uChunkMaskOrigin.value.copy(oldOrigin);
 
-console.log('OK: materiały far, worker/main, klasyczne bufory XYZ, cienie bez wody/kurtyn, podstawa ścian, snapshoty maski/geometrii i detal 800 przy horyzoncie 8192.');
+console.log('OK: materiały far, worker/main, klasyczne bufory XYZ, cienie bez wody/kurtyn, snapshoty, detal gry 800/8192 i osobny profil menu 1/512, 2/800, 4/1024.');

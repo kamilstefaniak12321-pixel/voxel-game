@@ -122,8 +122,8 @@ blockMaterial.onBeforeCompile = (shader, renderer) => {
     shader.fragmentShader =
         shader.fragmentShader.replace(
             '#include <color_fragment>',
-            `if (uFarEnabled > 0.5) {
-                float farBlur = smoothstep(uFarInner * 0.65, uFarInner, length(vSkyDirection.xz));
+            `if (uFarEnabled > 0.5 && uFarTextureBlend > 0.0) {
+                float farBlur = smoothstep(uFarInner * 0.65, uFarInner, length(vSkyDirection.xz)) * uFarTextureBlend;
                 diffuseColor.rgb = mix(diffuseColor.rgb, texture2D(uAtlasAverage, vMapUv).rgb, farBlur);
             }
             // Kolor trawy z klimatu (ChunkMesher - atrybut tint): tylko

@@ -146,6 +146,28 @@ store.set('voxel-game-settings', JSON.stringify(oldSettings));
 check(new Settings().get('menuMotion') === 'auto', 'Starszy zapis bez ruchu menu dostaje System');
 
 
+// --- Zasięg pełnych bloków do 800 ----------------------------------------
+
+check(SETTINGS_RANGES.viewDistance.max === 800, 'Suwak zasięgu udostępnia 800 bloków');
+check(settings.get('viewDistance') === SETTINGS_DEFAULTS.viewDistance,
+    'Zwiększenie limitu suwaka nie zmienia domyślnego zasięgu');
+for (const [input, expected] of [[800, 800], ['800', 800], [799, 800], [792, 792], [808, 800], [9000, 800], [-1, 24]]) {
+    check(settings.validate('viewDistance', input) === expected, `Walidacja zasięgu ${input} → ${expected}`);
+}
+settings.set('viewDistance', 800);
+check(new Settings().get('viewDistance') === 800, 'Zasięg 800 zostaje po ponownym uruchomieniu');
+const savedDistance = JSON.parse(store.get('voxel-game-settings'));
+savedDistance.viewDistance = 9000;
+store.set('voxel-game-settings', JSON.stringify(savedDistance));
+check(new Settings().get('viewDistance') === 800, 'Za duży zasięg w zapisie jest ograniczany do 800');
+const distanceCommand = GAME_COMMANDS.find(command => command.name === 'ustaw');
+const distanceResult = distanceCommand.run(['zasieg', '800'], { game: { settings } });
+check(settings.get('viewDistance') === 800 && distanceResult.includes('800'), 'Komenda /ustaw zasieg 800 działa tak samo jak suwak');
+check(distanceCommand.complete(['zasieg', '']).includes('800'), 'Podpowiedź komendy zawiera nowy maksymalny zasięg');
+settings.reset();
+check(settings.get('viewDistance') === SETTINGS_DEFAULTS.viewDistance, 'Reset przywraca wcześniejszy domyślny zasięg');
+
+
 // --- Eksperymenty --------------------------------------------------------
 
 check(SETTINGS_TABS.experiments === EXPERIMENTS, 'Zakładka eksperymentów');

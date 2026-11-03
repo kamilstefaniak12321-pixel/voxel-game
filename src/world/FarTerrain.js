@@ -125,6 +125,18 @@ const LOD_HYSTERESIS = 0.12;
 
 const DETAIL = DETAILS[2];
 
+// Stała scenografia menu: małe kratki zamiast zwiększania liczby pełnych
+// chunków wokół gracza. Profil nie zmienia ustawień ani detalu rozgrywki.
+const MENU_DETAIL = {
+    ...DETAIL,
+    maxDistance: 1024,
+    targetTiers: [
+        { distance: 512, spacing: 1 },
+        { distance: 800, spacing: 2 },
+        { distance: 1024, spacing: 4 }
+    ]
+};
+
 const POTATO_DETAIL = {
     cells: 16,
     minSpacing: 2,
@@ -1083,6 +1095,8 @@ export class FarTerrain {
 
     setRange(inner, outer) {
 
+        outer = Math.min(outer, this.detail?.maxDistance ?? Infinity);
+
         if (inner === this.inner && outer === this.outer) {
             return;
         }
@@ -1397,8 +1411,10 @@ export class FarTerrain {
         const key = `${cells}:${spacing}:${x0}:${z0}`;
         const wasSplit = this.lodSplits?.has(key) ?? false;
         const margin = wasSplit ? 1 + LOD_HYSTERESIS : 1;
-        const detailed = this.detail.targetSpacing && spacing > this.detail.targetSpacing &&
-            near <= TARGET_DETAIL_DISTANCE * margin;
+        const detailed = this.detail.targetTiers
+            ? this.detail.targetTiers.some(tier => spacing > tier.spacing && near <= tier.distance * margin)
+            : this.detail.targetSpacing && spacing > this.detail.targetSpacing &&
+                near <= TARGET_DETAIL_DISTANCE * margin;
 
         if (spacing > minSpacing && (near < size * lodDistance * margin || detailed)) {
 
@@ -1737,13 +1753,14 @@ export class FarTerrain {
 
     // Szczegóły (ustawienie farDetail: 1 - niskie, 2 - średnie,
     // 3 - wysokie); tryb ziemniaka: mniej kratek i mgiełka liczona
-    // w wierzchołkach.
+    // w wierzchołkach. Scenery wybiera osobny profil menu, niezależnie od
+    // ustawienia użytkownika; tryb ziemniaka nadal ma pierwszeństwo.
 
-    setDetail(level, potato = false) {
+    setDetail(level, potato = false, scenery = false) {
 
         setPotatoDefine(farMaterials, potato);
 
-        const detail = potato ? POTATO_DETAIL : DETAILS[level] ?? DETAIL;
+        const detail = potato ? POTATO_DETAIL : scenery ? MENU_DETAIL : DETAILS[level] ?? DETAIL;
 
         if (detail === this.detail) {
             return;
@@ -1903,12 +1920,15 @@ export class FarTerrain {
 
         let triangles = 0;
         const lodWithinTarget = {};
+        const detailTiers = this.detail.targetTiers ?? (this.detail.targetSpacing
+            ? [{ distance: TARGET_DETAIL_DISTANCE, spacing: this.detail.targetSpacing }] : []);
+        const detailDistance = detailTiers.at(-1)?.distance ?? 0;
 
         for (const tile of this.shown) {
             triangles += tile.mesh.geometry.index.count / 3;
             const dx = Math.max(tile.x0 - this.shadowCenter.x, 0, this.shadowCenter.x - (tile.x0 + tile.size));
             const dz = Math.max(tile.z0 - this.shadowCenter.y, 0, this.shadowCenter.y - (tile.z0 + tile.size));
-            if (Math.hypot(dx, dz) <= TARGET_DETAIL_DISTANCE) {
+            if (Math.hypot(dx, dz) <= detailDistance) {
                 lodWithinTarget[tile.spacing] = (lodWithinTarget[tile.spacing] ?? 0) + 1;
             }
         }
@@ -1921,7 +1941,10 @@ export class FarTerrain {
             cached: this.tiles.size,
             triangles,
             shadowRevision: this.shadowRevision,
-            detailDistance: this.detail.targetSpacing ? TARGET_DETAIL_DISTANCE : 0,
+            profile: this.detail === MENU_DETAIL ? 'scenery' : this.detail === POTATO_DETAIL ? 'potato' : 'game',
+            detailDistance,
+            detailTiers: detailTiers.map(tier => ({ ...tier })),
+            maxDistance: this.detail.maxDistance ?? null,
             targetSpacing: this.detail.targetSpacing ?? null,
             lodWithinTarget,
             workers: this.workers.filter((entry) => entry.ready).length

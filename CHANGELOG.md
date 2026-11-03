@@ -11,6 +11,19 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 0.56.1 - Szczegółowe menu i zasięg do 800 bloków
+
+Poprawki scenerii menu i większy zakres ustawień obrazu — PR #90.
+
+- **Zasięg widzenia** można zwiększyć do 800 bloków. Suwak, komenda i zapis ustawień obsługują nowy limit; dotychczasowe wartości domyślne pozostają bez zmian.
+- Menu przygotowuje stały obszar dla wszystkich czterech kamer przed odsłonięciem krajobrazu. Przejścia między zakładkami nie dogrywają kolejnych pasów terenu, a przyciski działają również podczas ładowania.
+- Pełny teren menu sięga 256 bloków na komputerze i 128 na telefonie, z zapasem na przejazdy. Odległe tekstury pełnych bloków zachowują szczegóły; dalszy horyzont ma drobniejszą geometrię: co 1 blok do 512, co 2 do 800 i co 4 do 1024.
+- Dokładniejsze odrzucanie fragmentów poza kadrem ogranicza koszt rysowania. Tryb ziemniaka nadal korzysta z tańszej scenerii.
+- Pełne testy gry, 199 sprawdzeń menu i regresje prawdziwych shaderów WebGL2. Próba na RTX 3050 Laptop GPU: 59–60 FPS w czterech kadrach menu po przygotowaniu; nie jest to pomiar rozgrywki przy zasięgu 800.
+
+Opis i pomiary: `docs/zywe-menu.md`, `docs/pomiary/szczegoly-menu-0.56.1/`.
+Wydanie Windows/Android przygotowane do publikacji po scaleniu PR.
+
 ## 0.56.0 - Żywe menu główne
 
 Prawdziwy krajobraz gry i płynne przejazdy między zakładkami — PR #89.

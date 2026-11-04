@@ -1,6 +1,6 @@
 // Pakowanie i transakcja dużego autozapisu poza wątkiem obrazu.
-// postMessage kopiuje stan w chwili wywołania; żywe tablice chunków
-// nie są przenoszone ani odłączane. Błąd zostawia zmiany do ponowienia.
+// Osobne kopie bloków trafiają do workera przez transfer; żywe tablice
+// chunków nie są odłączane. Błąd zostawia zmiany do ponowienia.
 export class StorageWorker {
     constructor(databaseName, workerFactory = url => new Worker(url, { type: 'module' }), timeoutMs = 30000) {
         this.pending = new Map();
@@ -47,8 +47,13 @@ export class StorageWorker {
             this.pending.set(id, { resolve, reject, timer });
             const start = performance.now();
             try {
-                this.worker.postMessage({ type: 'save', id, worldInfo,
-                    chunks: chunks.map(chunk => ({ cx: chunk.cx, cz: chunk.cz, blocks: chunk.blocks })) });
+                // Własne bufory migawki omijają koszt serializacji dużych
+                // ArrayBuffer w postMessage. Kopia nadal powstaje w tej samej
+                // synchronicznej operacji, przed następną zmianą świata.
+                const snapshot = chunks.map(chunk => ({ cx: chunk.cx, cz: chunk.cz,
+                    blocks: chunk.blocks.slice() }));
+                this.worker.postMessage({ type: 'save', id, worldInfo, chunks: snapshot },
+                    snapshot.map(chunk => chunk.blocks.buffer));
                 this.stats.lastSubmitMs = performance.now() - start;
             } catch (error) {
                 this.stop(error);

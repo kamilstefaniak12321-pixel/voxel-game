@@ -10,8 +10,9 @@ const database = memoryDatabase();
 const backend = new WorldStorage(database);
 class MemoryWorker {
     constructor() { this.messages = []; this.fail = false; }
-    postMessage(message) {
-        const snapshot = structuredClone(message);
+    postMessage(message, transfer = []) {
+        const snapshot = structuredClone(message, { transfer });
+        this.transferred = transfer;
         this.messages.push(snapshot);
         if (snapshot.type !== 'save') return;
         queueMicrotask(async () => {
@@ -39,6 +40,8 @@ assert.equal(loaded.get('1,-2')[0], 700);
 assert.equal((await storage.listWorlds())[0].player.x, 12);
 assert.equal((await storage.listWorlds())[0].campfires[0].fuel, 6);
 assert.equal(chunks[1].blocks.byteLength, 65536, 'Tablice gry nie mogą być odłączone');
+assert.equal(worker.transferred.length, 16, 'Każdy własny bufor migawki jest przekazany');
+assert.ok(worker.transferred.every(buffer => buffer.byteLength === 0), 'Transfer odłącza wyłącznie kopie');
 assert.equal(storage.background.stats.writes, 1);
 
 const submitted = worker.messages.length;

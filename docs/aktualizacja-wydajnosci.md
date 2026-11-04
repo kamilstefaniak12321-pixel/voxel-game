@@ -13,6 +13,10 @@ bloki, nurt, tint i dane biomu; główny wątek przyjmuje wynik i aktualizuje
 światło w budżecie ładowania. Oczekujące fragmenty pozostają w kolejce
 zasięgu, żeby daleki teren nie odsłaniał dziury przed ukończeniem pracy.
 
+Worker potwierdza gotowość dopiero po wczytaniu paczek modeli. Dopiero
+wtedy dostaje inicjalizację i zadania; wiadomości nie giną podczas
+asynchronicznych importów. Osobny limit czasu obejmuje jego uruchamianie.
+
 Po szybkim przeniesieniu gracz czeka na rzeczywiste bloki pod sobą.
 Nie wykonujemy wtedy zimnej generacji w klatce fizyki. Spóźniony wynik
 nie zastępuje fragmentu, który już powstał lub został zmieniony.
@@ -53,8 +57,9 @@ przekroczyć budżet pojedynczej klatki. Wyniki odbioru podają ten koszt.
 Duży autozapis (od 16 chunków) przekazuje migawkę danych do osobnego
 workera. Pakowanie bloków i transakcja IndexedDB wykonują się tam;
 potwierdzenie wraca dopiero po zakończeniu atomowej transakcji metadanych
-świata i bloków. Wiadomość kopiuje dane i nie odłącza tablic używanych
-przez grę. Koszt tej kopii nadal należy do głównego wątku.
+świata i bloków. Osobne kopie bloków są przekazywane przez transfer,
+bez odłączania tablic używanych przez grę. Koszt utworzenia tych kopii
+nadal należy do głównego wątku.
 
 Zamknięcie lub ukrycie strony uruchamia zapis bezpośrednio. Jeśli trwa
 zapis w tle, worker zostaje zatrzymany, jego pakiet wraca do bieżących
@@ -63,8 +68,9 @@ zostać uruchomiona później przez zatrzymany worker. Po powrocie do gry
 worker może powstać ponownie. Błędy zachowują zmiany do ponowienia;
 brak odpowiedzi przez 30 sekund kończy oczekiwanie błędem.
 
-Odczyt zapisanych chunków używa kursora zamiast dodatkowej tablicy
-wszystkich rekordów. **Wszystkie zmienione chunki nadal pozostają w mapie
+Odczyt zapisanych chunków pobiera partie po 64 rekordy w jednej transakcji,
+bez dodatkowej tablicy wszystkich rekordów ani osobnego wywołania bazy
+dla każdego chunka. **Wszystkie zmienione chunki nadal pozostają w mapie
 zapisu w pamięci** — to nie jest odczyt na żądanie. Zachowuje to zgodność
 z komendami, odradzaniem i odległym widokiem zmian gracza. Pełny zasięg
 800 bloków również nadal wymaga znacznej pamięci.

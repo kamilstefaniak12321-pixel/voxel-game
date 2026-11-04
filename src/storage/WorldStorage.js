@@ -255,8 +255,45 @@ export class WorldStorage {
         const transaction =
             this.db.transaction('chunks', 'readonly');
 
-        const index = transaction.objectStore('chunks').index('worldId');
+        const store = transaction.objectStore('chunks');
         const chunks = new Map();
+
+        // Bounded getAll avoids both a second array containing the whole save
+        // and one browser/database round-trip for every individual chunk.
+        // Queue the next request inside onsuccess, while this one readonly
+        // transaction is still active; every page sees the same snapshot.
+        if (typeof IDBKeyRange !== 'undefined' && typeof store.getAll === 'function' &&
+            Array.isArray(store.keyPath) && store.keyPath.join(',') === 'worldId,cx,cz') {
+            const batchSize = 64;
+            const upper = [worldId, Infinity, Infinity];
+            await new Promise((resolve, reject) => {
+                transaction.oncomplete = () => resolve();
+                transaction.onabort = () => reject(transaction.error || new Error('Przerwany odczyt świata.'));
+                transaction.onerror = () => reject(transaction.error || new Error('Błąd odczytu świata.'));
+                const next = (lower, exclusive) => {
+                    const request = store.getAll(IDBKeyRange.bound(lower, upper, exclusive, false), batchSize);
+                    request.onerror = () => reject(request.error || new Error('Błąd odczytu partii chunków.'));
+                    request.onsuccess = () => {
+                        try {
+                            const records = request.result;
+                            for (const record of records) {
+                                chunks.set(`${record.cx},${record.cz}`, record.blocks);
+                            }
+                            if (records.length === batchSize) {
+                                const last = records[records.length - 1];
+                                next([worldId, last.cx, last.cz], true);
+                            }
+                        } catch (error) {
+                            reject(error);
+                        }
+                    };
+                };
+                next([worldId, -Infinity, -Infinity], false);
+            });
+            return chunks;
+        }
+
+        const index = store.index('worldId');
 
         // Kursor nie tworzy dodatkowej tablicy wszystkich rekordów świata
         // i oddaje sterowanie między odczytami. Mapa pozostaje dostępna

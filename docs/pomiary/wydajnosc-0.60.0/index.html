@@ -1,0 +1,10 @@
+<!doctype html>
+<html lang="pl"><head><meta charset="utf-8"><title>Wydajność Voxel Game 0.60.0</title>
+<style>body{margin:0;overflow:hidden;background:#111;color:#eee;font:14px system-ui}canvas{display:block}aside{position:fixed;z-index:10;top:12px;right:12px;width:360px;padding:14px;background:#15202bef;border-radius:6px}button{padding:8px;margin:4px 2px}p{line-height:1.4}pre{font-size:11px;max-height:220px;overflow:auto;white-space:pre-wrap}small{color:#ccd}</style>
+<script type="importmap">{"imports":{"three":"/lib/three/three.module.js","three/addons/":"/lib/three/addons/"}}</script></head>
+<body><aside><strong>Aktualizacja wydajności — powtarzalny odbiór</strong><p data-device>Wczytuję…</p>
+<div><button data-scene="rivers">Rzeki i eksploracja</button><button data-scene="farm64">Ogród 64 roślin</button><button data-scene="farm256">Próba 256 roślin</button></div>
+<p>Naturalne światło · pełny teren 64 · LOD 1024 · cienie 3 · promienie ON · budżet ładowania 4 ms.</p>
+<button data-run>Pomiar: 90 s / ogród 60 s</button><button data-cancel disabled>Anuluj</button><button data-photo>Zapisz kadr</button><button data-reset>Nowy identyczny świat</button><button data-storage>Zapis IndexedDB 16/128/512</button>
+<button data-hide>Ukryj panel (F8)</button><p data-status>Przygotowanie…</p><small>Odizolowany świat bez zapisu. Zasilacz i aktywne okno. Rzeki: teleport w 10 s, następnie trasa 256 bloków. Ogród: jedna edycja na sekundę. Mierzymy całość wraz z doczytywaniem.</small><pre></pre></aside>
+<script type="module" src="./qa.js"></script></body></html>

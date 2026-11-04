@@ -518,13 +518,16 @@ export class Game {
         const input = this.input;
 
 
-        // Chunk pod graczem musi istnieć, zanim policzymy kolizje
-        // (np. po bardzo szybkim ruchu).
-
-        this.world.ensureColumnLoaded(
-            this.player.pos.x,
-            this.player.pos.z
+        // Przy bardzo szybkim locie nie generujemy zimnego regionu rzek
+        // w klatce fizyki. Obraz i interfejs nadal działają, a symulacja
+        // gracza czeka na prawdziwe bloki zamiast wpadać w pusty teren.
+        const playerColumn = this.world.ensurePlayerColumn(
+            this.player.pos.x, this.player.pos.z
         );
+        if (!playerColumn) {
+            this.updateWhileTerrainLoads(dt, input);
+            return;
+        }
 
 
         this.player.update(dt, input);
@@ -825,6 +828,30 @@ export class Game {
 
         this.updateFovBoost(dt);
 
+    }
+
+    // Brak danych pod graczem wstrzymuje ruch i edycje bloków, ale
+    // patrzenie myszą, niebo, woda, oświetlenie i zapis nadal działają.
+    updateWhileTerrainLoads(dt, input) {
+        this.player.updateLook(input);
+        this.player.updateCamera();
+        this.updateView();
+        this.time.update(dt);
+        this.world.update(this.player.pos.x, this.player.pos.z,
+            this.getLoadRadius(), this.settings.get('loadBudget'));
+        this.updateFarRange();
+        this.farTerrain.update(this.camera.position);
+        this.sky.update(this.time.days, dt, this.renderer.getPixelRatio());
+        this.updateFog(dt);
+        this.shadows.update(dt, this.sky, this.camera.position);
+        this.sky.applyShadowContrast(this.shadows.active ? this.shadows.strength : 0);
+        this.updateBounce();
+        this.updateDynamicLight();
+        this.plantAnimations.update(dt);
+        this.water.update(dt);
+        this.currentHit = null;
+        this.highlight.update(null);
+        this.saver?.update(dt);
     }
 
     // --------------------------------------------------------

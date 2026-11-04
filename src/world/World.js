@@ -1,5 +1,7 @@
 import * as THREE from 'three';
 import { normalizeWorldExperiments, grassDetailAtDistance } from './WorldExperiments.js';
+import { ChunkGeneration } from './ChunkGeneration.js';
+import { BIOME_KEYS } from './terrain/Biomes.js';
 // ------------------------------------------------------------
 import {
     CHUNK_SIZE,
@@ -34,7 +36,8 @@ import {
 } from '../rendering/BlockRenderData.js';
 // ------------------------------------------------------------
 import {
-    buildChunkGeometry
+    buildChunkGeometry,
+    prepareChunkPlantGeometry
 } from '../rendering/ChunkMesher.js';
 // ------------------------------------------------------------
 import {
@@ -153,6 +156,7 @@ export class World {
         this.terrain = terrain;
 
         this.generator = createGenerator(terrain, seed);
+        this.generation = new ChunkGeneration(terrain, seed);
 
 
         // Miejsce startu: w terenie realistycznym najbliższy ląd przy
@@ -204,6 +208,15 @@ export class World {
             this.chunkKey(cx, cz)
         ) || null;
 
+    }
+
+    biomeAt(x, z) {
+        x = Math.floor(x);
+        z = Math.floor(z);
+        const cx = this.toChunkCoord(x), cz = this.toChunkCoord(z);
+        const chunk = this.getChunk(cx, cz);
+        if (!chunk?.biomes) return null;
+        return BIOME_KEYS[chunk.biomes[(z - cz * CHUNK_SIZE) * CHUNK_SIZE + x - cx * CHUNK_SIZE]] ?? null;
     }
 
 
@@ -687,8 +700,8 @@ export class World {
 
     // Przebudowuje meshe zmienionych chunków, najbliższe graczowi
     // najpierw. deadline = performance.now(), po którym przerywamy
-    // (przynajmniej jeden chunk zawsze się przebuduje, więc
-    // postawiony blok pojawia się od razu).
+    // Kosztowne modele roślin przygotowujemy porcjami. Stara geometria
+    // zostaje widoczna aż gotowa jest cała nowa siatka.
 
     updateMeshes(deadline = Infinity) {
 
@@ -721,6 +734,11 @@ export class World {
 
 
         for (const chunk of chunks) {
+
+            if (performance.now() >= deadline || !prepareChunkPlantGeometry(chunk, this, deadline)
+                || performance.now() >= deadline) {
+                break;
+            }
 
             this.rebuildChunkMesh(chunk);
 
@@ -948,6 +966,8 @@ export class World {
 
     dispose() {
 
+        this.generation?.dispose();
+
         for (const chunk of this.chunks.values()) {
 
             if (chunk.mesh) {
@@ -972,6 +992,86 @@ export class World {
     // --------------------------------------------------------
     // GENEROWANIE
     // --------------------------------------------------------
+
+    // Testy mogą wstrzyknąć ten sam protokół przez worker_threads.
+    // Zwykła gra uruchamia jeden modułowy Worker dopiero przy streamingu.
+    enableChunkStreaming(options) {
+        this.generation?.dispose();
+        this.generation = new ChunkGeneration(this.terrain, this.seed, options);
+    }
+
+    applyGeneratedChunk(data) {
+        const existing = this.getChunk(data.cx, data.cz);
+        if (existing) return existing; // Nie zastępuj bloku postawionego w międzyczasie.
+        if (!this.chunkInsideBorder(data.cx, data.cz)) return null;
+        const started = performance.now();
+        const chunk = this.createChunk(data.cx, data.cz);
+        chunk.blocks = data.blocks;
+        chunk.flow = data.flow;
+        chunk.tint = data.tint;
+        chunk.biomes = data.biomes;
+        chunk.blockCount = data.blockCount;
+        chunk.maxY = data.maxY;
+        chunk.solidBelow = data.solidBelow;
+        chunk.growing = new Set(data.growing);
+        chunk.modified = data.modified;
+        if (data.invalidSaved) {
+            console.warn(`Zapisany chunk ${data.cx}, ${data.cz} ma zły rozmiar - generuję go od nowa.`);
+        }
+        this.light.initChunk(chunk);
+        this.markDirtyAround(chunk, ALL_EDGES);
+        this.applyLightChanges();
+        this.generation.applied(performance.now() - started);
+        return chunk;
+    }
+
+    // Kolizje nie mogą traktować oczekującego terenu jak powietrza.
+    // Przy bardzo szybkim ruchu czekamy na wątek, zamiast wykonywać
+    // zimne przygotowanie rzek synchronicznie w Game.update.
+    ensurePlayerColumn(x, z) {
+        const cx = this.toChunkCoord(Math.floor(x));
+        const cz = this.toChunkCoord(Math.floor(z));
+        // Ruch gracza sam obsługuje granicę świata; brak terenu poza nią
+        // nie jest zadaniem, na które można czekać w nieskończoność.
+        if (!this.chunkInsideBorder(cx, cz)) return true;
+        const existing = this.getChunk(cx, cz);
+        if (existing) return existing;
+        if (!this.generation?.checkHealth()) return this.generateChunk(cx, cz);
+        const saved = this.savedChunks.get(this.chunkKey(cx, cz));
+        const data = this.generation.take(cx, cz, saved);
+        if (data) return this.applyGeneratedChunk(data);
+        this.generation.request(cx, cz, saved);
+        return this.generation.enabled ? null : this.generateChunk(cx, cz);
+    }
+
+    streamChunks(deadline) {
+        // Przyjęcie wyników jest osobną, budżetowaną pracą. Sama
+        // odpowiedź workera nie zmienia świata ani świateł między klatkami.
+        while (this.loadQueue.length && this.getChunk(...this.loadQueue[this.loadQueue.length - 1])) {
+            this.loadQueue.pop();
+        }
+        const ready = this.generation.readyChunks().sort((a, b) =>
+            this.distanceToCenter(a) - this.distanceToCenter(b));
+        for (const { cx, cz } of ready) {
+            if (performance.now() >= deadline) break;
+            const saved = this.savedChunks.get(this.chunkKey(cx, cz));
+            const data = this.generation.take(cx, cz, saved);
+            if (!data) continue;
+            // Środek kolejki mógł zmienić się podczas pracy wątku.
+            // Przyjmujemy także gotowy nadal potrzebny wynik spoza jej
+            // początku, aby oba miejsca workera nie utknęły na zawsze.
+            const index = this.loadQueue.findIndex(([qx, qz]) => qx === cx && qz === cz);
+            if (index < 0) continue;
+            this.loadQueue.splice(index, 1);
+            this.applyGeneratedChunk(data);
+        }
+        // Nie usuwamy oczekujących wpisów: completeRadius nie może
+        // pokazać pustego pierścienia między chunkami i dalekim terenem.
+        for (let n = this.loadQueue.length - 1; n >= 0 && n >= this.loadQueue.length - 2; n--) {
+            const [cx, cz] = this.loadQueue[n];
+            this.generation.request(cx, cz, this.savedChunks.get(this.chunkKey(cx, cz)));
+        }
+    }
 
     // Tworzy chunk i wypełnia go terenem z generatora.
     // Jeśli chunk już istnieje, zostaje bez zmian.
@@ -1050,6 +1150,8 @@ export class World {
         this.applyLightChanges();
 
 
+        this.generation?.retain((qx, qz) => qx !== cx || qz !== cz);
+
         return chunk;
 
     }
@@ -1089,6 +1191,11 @@ export class World {
         // wygenerowane chunki stają się widoczne)...
 
         this.updateMeshes(deadline);
+
+        if (this.generation?.checkHealth()) {
+            this.streamChunks(deadline);
+            return;
+        }
 
 
         // ...potem nowe chunki, najbliższe najpierw - tylko jeśli
@@ -1194,6 +1301,9 @@ export class World {
         queue.sort((a, b) => b[2] - a[2]);
 
         this.loadQueue = queue;
+
+        const wanted = new Set(queue.map(([qx, qz]) => this.chunkKey(qx, qz)));
+        this.generation?.retain((qx, qz) => wanted.has(this.chunkKey(qx, qz)));
 
 
         // Usuwanie dalekich chunków.

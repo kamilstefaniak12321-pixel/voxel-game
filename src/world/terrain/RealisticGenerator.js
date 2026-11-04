@@ -764,6 +764,7 @@ export class RealisticGenerator {
     generateChunk(chunk) {
 
         const size = CHUNK_SIZE;
+        chunk.biomes = new Uint8Array(size * size);
         const baseX = chunk.cx * size;
         const baseZ = chunk.cz * size;
 
@@ -843,6 +844,7 @@ export class RealisticGenerator {
                 const kind = this.surfaceKind(x, z, sample, slope);
 
                 const biome = BIOME_INDEX[this.biomes.classify(x, z, sample)];
+                chunk.biomes[k] = biome;
 
                 const top = this.fillColumn(x, z, sample, kind, this.chunkColumns[k], buffer, lx, lz, biome);
 
@@ -960,6 +962,7 @@ export class RealisticGenerator {
     fillFlow(chunk) {
 
         const sample = {};
+        chunk.biomes = new Uint8Array(CHUNK_SIZE * CHUNK_SIZE);
 
         const W = CHUNK_SIZE + 2;
 
@@ -978,6 +981,8 @@ export class RealisticGenerator {
 
                 if (i > 0 && j > 0 && i <= CHUNK_SIZE && j <= CHUNK_SIZE) {
                     setFlow(chunk, i - 1, j - 1, sample);
+                    chunk.biomes[(j - 1) * CHUNK_SIZE + i - 1] =
+                        BIOME_INDEX[this.biomes.classify(baseX + i - 1, baseZ + j - 1, sample)];
                 }
 
             }

@@ -1699,12 +1699,18 @@ function appendShadowJobs(jobs, source, world, materialOverride = null, budget =
         return;
     }
     const page = Math.min(16000, budget.triangles) * 3;
+    // Three also needs bounds for render sorting when frustumCulled=false.
+    // Each view shares the entire vertex buffer: leaving its bounds empty
+    // rescans the full dense garden for every small shadow page. One existing
+    // conservative sphere covers all subsets without changing any draw range.
+    if (original.boundingSphere === null) original.computeBoundingSphere();
     for (const group of groups) {
         for (let offset = group.start; offset < group.end; offset += page) {
             const count = Math.min(page, group.end - offset);
             const view = new THREE.BufferGeometry();
             view.attributes = { ...original.attributes };
             view.index = original.index;
+            view.boundingSphere = original.boundingSphere.clone();
             view.setDrawRange(offset, count);
             add(view, group.material, 1, Math.floor(count / 3), true);
         }

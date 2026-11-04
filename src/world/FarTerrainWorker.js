@@ -1,4 +1,4 @@
-import { createGenerator } from './terrain/generators.js';
+import { TerrainGenerationCache } from './terrain/GenerationCache.js';
 
 import { sampleFarTile, meshFarTile, createMeshScratch } from './farSamples.js';
 
@@ -25,7 +25,7 @@ import { sampleFarTile, meshFarTile, createMeshScratch } from './farSamples.js';
 //                                          przekazane bez kopiowania.
 // ------------------------------------------------------------
 
-let generator = null;
+let generatorCache = null;
 
 let palette = null;
 let albedoPalette = null;
@@ -40,7 +40,7 @@ self.onmessage = (event) => {
 
     if (message.type === 'init') {
 
-        generator = createGenerator(message.terrain, message.seed);
+        generatorCache = new TerrainGenerationCache(message.terrain, message.seed);
 
         return;
 
@@ -57,7 +57,9 @@ self.onmessage = (event) => {
     }
 
 
-    if (message.type === 'tile' && generator) {
+    if (message.type === 'tile' && generatorCache) {
+
+        const generator = generatorCache.prepare();
 
         const { id, x0, z0, spacing, cells } = message;
 

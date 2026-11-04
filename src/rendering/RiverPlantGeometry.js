@@ -19,6 +19,13 @@ const COLORS = {
     white: linear(0xf1eadb), petalPink: linear(0xe6b5c8), pollen: linear(0xd6ae4f),
 };
 const cache = new Map();
+const MAX_CACHED_FACES = 65536;
+const MAX_CACHED_MODELS = 512;
+let cachedFaces = 0;
+
+export function riverPlantCacheStats() {
+    return { models: cache.size, faces: cachedFaces, maxFaces: MAX_CACHED_FACES, maxModels: MAX_CACHED_MODELS };
+}
 
 // Wspólne z mesherem i celownikiem: ta sama odmiana, obrót i pozycja.
 export function plantRandom(x, y, z, salt) {
@@ -155,10 +162,26 @@ export function getRiverPlantFaces(kind, variant, waterlogged = false, tuft = nu
     // Duża roślina (tuft.wide): maska litych bloków obok (ChunkMesher reachMask).
     const carpetMask = tuft?.carpet || tuft?.coating || tuft?.bracket ? mask & 0xfff : tuft?.wide ? mask & 0x1ffff : 0;
     const key = `${kind}:${normalizedVariant}:${waterlogged ? 1 : 0}:${carpetMask}`;
-    if (!cache.has(key)) {
-        cache.set(key, tuft ? makeTuftTemplate(tuft, normalizedVariant, carpetMask) : makeTemplate(kind, normalizedVariant, waterlogged));
+    let faces = cache.get(key);
+    if (faces) {
+        cache.delete(key);
+        cache.set(key, faces);
+        return faces;
     }
-    return cache.get(key);
+    faces = tuft ? makeTuftTemplate(tuft, normalizedVariant, carpetMask) : makeTemplate(kind, normalizedVariant, waterlogged);
+    // Neighbor masks can create many variants during exploration/building.
+    // These are deterministic derived models: eviction never changes blocks,
+    // silhouettes, vertex order, or arrays already held by an active animation.
+    while (cache.size && (cachedFaces + faces.length > MAX_CACHED_FACES || cache.size >= MAX_CACHED_MODELS)) {
+        const oldest = cache.keys().next().value;
+        cachedFaces -= cache.get(oldest).length;
+        cache.delete(oldest);
+    }
+    if (faces.length <= MAX_CACHED_FACES) {
+        cache.set(key, faces);
+        cachedFaces += faces.length;
+    }
+    return faces;
 }
 
 // Dywan (barwinek), porost i huba leżą na całej komórce bez obrotu

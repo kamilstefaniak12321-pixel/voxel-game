@@ -53,6 +53,10 @@ export class Chunk {
 
         this.tint = null;
 
+        // Dokładny biom każdej kolumny. Worker oblicza go wraz z terenem;
+        // osiągnięcia nie muszą ponownie przygotowywać rzek w klatce gry.
+        this.biomes = null;
+
         this.skyLight = new Uint8Array(this.blocks.length);
         this.lightR = new Uint8Array(this.blocks.length);
         this.lightG = new Uint8Array(this.blocks.length);

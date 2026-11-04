@@ -395,7 +395,8 @@ export const GAME_TITLE = 'Voxel Game';
 // i dopisz go tutaj.
 export const UI_THEMES = {
     default: 'Ziemia',
-    lepidolit: 'Lepidolit'
+    lepidolit: 'Lepidolit',
+    'grey-wood': 'Szare drewno'
 };
 
 // Motyw domyślny (zanim gracz wybierze inny w ustawieniach).

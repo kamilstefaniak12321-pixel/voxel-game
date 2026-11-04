@@ -343,6 +343,9 @@ body:not([data-screen="game"]) #crosshair {
     max-width: 100%;
 }
 
+.settings-inventory-style { display: grid; }
+.settings-inventory-style .inventory-theme-note { display: none; }
+
 /* Skórka gracza: dwa przyciski obok siebie i notka pod nimi, na całą szerokość. */
 
 .settings-skin,

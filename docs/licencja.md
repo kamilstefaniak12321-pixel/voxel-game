@@ -92,6 +92,14 @@ darmowy - tylko użytek niekomercyjny i podpis "elevenlabs.io"; plany
 płatne - także komercyjny). Ten zapis dokumentuje przekazane pliki
 i ich źródło: **Efekty dźwiękowe: ElevenLabs (elevenlabs.io).**
 
+## Tekstury motywu Szare drewno
+
+Tekstury `assets/ui/themes/grey-wood/` powstały na potrzeby gry z kodu
+`tools/szare_drewno.py`, w oparciu o koncepcję szarego, surowego drewna
+uzgodnioną z Kamilem. Do gry nie dołączono cudzej ilustracji referencyjnej
+ani wyciętych z niej elementów. Te tekstury i ich generator podlegają
+licencji projektu opisanej wyżej.
+
 ## Dodawanie cudzych plików
 
 Nowy plik od kogoś innego (dźwięk, tekstura, biblioteka) może trafić do

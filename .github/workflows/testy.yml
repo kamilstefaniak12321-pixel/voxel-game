@@ -46,6 +46,11 @@ jobs:
         with:
           node-version: 24
       - run: npm test
+      - name: Motywy GUI i ekwipunek w Chrome
+        timeout-minutes: 2
+        run: node tools/sprawdz_motyw_gui_webgl.mjs
+        env:
+          UI_SCREENSHOTS_IN_LOG: '1'
       - name: Gra i shadery w WebGL2
         run: node tools/sprawdz_swiatlo_webgl.mjs
       - uses: actions/upload-artifact@v6
@@ -53,5 +58,7 @@ jobs:
         continue-on-error: true
         with:
           name: testy-gry
-          path: test-results/sceny/
+          path: |
+            test-results/sceny/
+            test-results/grey-wood/
           retention-days: 7

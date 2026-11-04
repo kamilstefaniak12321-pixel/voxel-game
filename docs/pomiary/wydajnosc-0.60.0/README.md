@@ -81,6 +81,11 @@ ale nie zalicza testu usunięcia przycięć. Ostrzeżenia trafiają do raportu.
 Zapis raportuje czas zgłoszenia, całej transakcji, odczytu i odstępy rAF.
 Odczyt oraz pełna walidacja danych są poza pomiarem zapisu. Wszystkie tablice
 pozostają żywe; kopia `postMessage` także ma koszt CPU i pamięci.
+Pierwszy odcinek pomocniczego heartbeat zapisu jest niepełny, ponieważ
+odejmuje czas rozpoczęcia próby od timestampu klatki rAF; może być ujemny.
+Nie używamy zatem jego średniej/FPS ani maksimum do wniosków o zatrzymaniu
+obrazu. Koszt głównego wątku określa osobno zmierzony `submitMs`.
+To ograniczenie nie dotyczy właściwych pomiarów odstępów klatek gry.
 
 Oryginalne skrypty z paczki audytu są przechowywane poza repozytorium
 w `performance-proof/audit`. Ich wyniki CPU z Node Windows są odrębne

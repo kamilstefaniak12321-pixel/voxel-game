@@ -14,6 +14,7 @@
 // ------------------------------------------------------------
 
 import { DEFAULT_TERRAIN, DEFAULT_GAME_MODE } from '../config.js';
+import { StorageWorker } from './StorageWorker.js';
 
 const DB_NAME = 'voxel-game';
 
@@ -149,9 +150,12 @@ export function packChunkBlocks(blocks) {
 
 export class WorldStorage {
 
-    constructor(db) {
+    constructor(db, { background = false, workerFactory } = {}) {
 
         this.db = db;
+        this.workerFactory = workerFactory;
+        this.background = background && (workerFactory || typeof Worker !== 'undefined')
+            ? new StorageWorker(db.name, workerFactory) : null;
 
     }
 
@@ -205,7 +209,7 @@ export class WorldStorage {
 
         const db = await requestToPromise(request);
 
-        return new WorldStorage(db);
+        return new WorldStorage(db, { background: true });
 
     }
 
@@ -251,15 +255,67 @@ export class WorldStorage {
         const transaction =
             this.db.transaction('chunks', 'readonly');
 
-        const records = await requestToPromise(
-            transaction
-                .objectStore('chunks')
-                .index('worldId')
-                .getAll(worldId)
-        );
-
-
+        const store = transaction.objectStore('chunks');
         const chunks = new Map();
+
+        // Bounded getAll avoids both a second array containing the whole save
+        // and one browser/database round-trip for every individual chunk.
+        // Queue the next request inside onsuccess, while this one readonly
+        // transaction is still active; every page sees the same snapshot.
+        if (typeof IDBKeyRange !== 'undefined' && typeof store.getAll === 'function' &&
+            Array.isArray(store.keyPath) && store.keyPath.join(',') === 'worldId,cx,cz') {
+            const batchSize = 64;
+            const upper = [worldId, Infinity, Infinity];
+            await new Promise((resolve, reject) => {
+                transaction.oncomplete = () => resolve();
+                transaction.onabort = () => reject(transaction.error || new Error('Przerwany odczyt świata.'));
+                transaction.onerror = () => reject(transaction.error || new Error('Błąd odczytu świata.'));
+                const next = (lower, exclusive) => {
+                    const request = store.getAll(IDBKeyRange.bound(lower, upper, exclusive, false), batchSize);
+                    request.onerror = () => reject(request.error || new Error('Błąd odczytu partii chunków.'));
+                    request.onsuccess = () => {
+                        try {
+                            const records = request.result;
+                            for (const record of records) {
+                                chunks.set(`${record.cx},${record.cz}`, record.blocks);
+                            }
+                            if (records.length === batchSize) {
+                                const last = records[records.length - 1];
+                                next([worldId, last.cx, last.cz], true);
+                            }
+                        } catch (error) {
+                            reject(error);
+                        }
+                    };
+                };
+                next([worldId, -Infinity, -Infinity], false);
+            });
+            return chunks;
+        }
+
+        const index = store.index('worldId');
+
+        // Kursor nie tworzy dodatkowej tablicy wszystkich rekordów świata
+        // i oddaje sterowanie między odczytami. Mapa pozostaje dostępna
+        // synchronicznie dla komend, odradzania i dalekiego terenu.
+        if (typeof index.openCursor === 'function') {
+            await new Promise((resolve, reject) => {
+                const request = index.openCursor(worldId);
+                request.onerror = () => reject(request.error);
+                transaction.onabort = () => reject(transaction.error || new Error('Przerwany odczyt świata.'));
+                request.onsuccess = () => {
+                    const cursor = request.result;
+                    if (!cursor) return resolve();
+                    const record = cursor.value;
+                    chunks.set(`${record.cx},${record.cz}`, record.blocks);
+                    cursor.continue();
+                };
+            });
+            return chunks;
+        }
+
+        // Porty bazy w narzędziach mogą nie udostępniać kursora.
+        const records = await requestToPromise(index.getAll(worldId));
 
         for (const record of records) {
 
@@ -305,7 +361,15 @@ export class WorldStorage {
     // zapisze się albo wszystko, albo nic (świat nigdy nie zostaje
     // zapisany "w połowie").
 
-    async saveWorldAndChunks(worldInfo, chunks) {
+    async saveWorldAndChunks(worldInfo, chunks, { immediate = false } = {}) {
+
+        if (!immediate && this.background?.interrupted) {
+            this.background = new StorageWorker(this.db.name, this.workerFactory);
+        }
+        // Przy zamykaniu strony transakcję uruchamiamy od razu.
+        if (!immediate && chunks.length >= 16 && this.background && !this.background.disabled) {
+            return this.background.write(worldInfo, chunks);
+        }
 
         const transaction =
             this.db.transaction(['worlds', 'chunks'], 'readwrite');
@@ -344,6 +408,18 @@ export class WorldStorage {
 
         await done;
 
+    }
+
+    interruptBackgroundSave() {
+        if (!this.background?.pending.size) return false;
+        const error = new Error('Zapis w tle zastąpiony natychmiastowym zapisem przy wyjściu.');
+        error.code = 'BACKGROUND_SAVE_INTERRUPTED';
+        // Istniejąca transakcja workera jest przed nową lokalną transakcją
+        // w kolejce IndexedDB. Zatrzymany worker nie utworzy późniejszej,
+        // która mogłaby nadpisać najnowszą migawkę starszym stanem.
+        this.background.interrupted = true;
+        this.background.stop(error);
+        return true;
     }
 
 }

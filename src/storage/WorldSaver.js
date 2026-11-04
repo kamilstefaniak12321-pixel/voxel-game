@@ -58,6 +58,8 @@ export class WorldSaver {
 
         this.saving = null;
         this.queued = null;
+        this.queuedImmediate = false;
+        this.activeBatches = new Set();
 
         this.stopped = false;
 
@@ -71,18 +73,24 @@ export class WorldSaver {
     // Prośba o zapis. Zwraca Promise z wynikiem (true = udało się)
     // zapisu, który obejmuje stan świata z chwili wywołania.
 
-    save() {
+    save({ immediate = false } = {}) {
 
         if (!this.storage || this.stopped) {
             return Promise.resolve(false);
         }
 
 
-        if (!this.saving) {
+        const interrupted = immediate && this.storage.interruptBackgroundSave?.();
+        if (interrupted) {
+            for (const chunks of this.activeBatches) this.world.markUnsaved(chunks);
+        }
 
-            this.saving = this.write().finally(() => {
-                this.saving = null;
+        if (!this.saving || interrupted) {
+
+            const writing = this.write({ immediate }).finally(() => {
+                if (this.saving === writing) this.saving = null;
             });
+            this.saving = writing;
 
             return this.saving;
 
@@ -92,13 +100,15 @@ export class WorldSaver {
         // Zapis już trwa - kolejny zrobimy zaraz po nim.
         // Kilka próśb w tym czasie = jeden kolejny zapis.
 
+        this.queuedImmediate ||= immediate;
         if (!this.queued) {
 
             this.queued = this.saving.then(() => {
 
                 this.queued = null;
-
-                return this.save();
+                const nextImmediate = this.queuedImmediate;
+                this.queuedImmediate = false;
+                return this.save({ immediate: nextImmediate });
 
             });
 
@@ -136,7 +146,21 @@ export class WorldSaver {
 
     // Jeden zapis do bazy.
 
-    async write() {
+    latestChunks(chunks) {
+        const latest = new Map();
+        for (const chunk of chunks) {
+            const key = `${chunk.cx},${chunk.cz}`;
+            const current = this.world.getChunk?.(chunk.cx, chunk.cz);
+            const saved = this.world.savedChunks?.get(key);
+            // W czasie zapisu A mógł zostać usunięty z widoku i wczytany
+            // jako B. Ponowienie A nie może nadpisać nowszych edycji B.
+            latest.set(key, current ?? (saved && saved !== chunk.blocks
+                ? { cx: chunk.cx, cz: chunk.cz, blocks: saved, modified: true } : chunk));
+        }
+        return [...latest.values()];
+    }
+
+    async write({ immediate = false } = {}) {
 
         this.timeSinceSave = 0;
         this.timeSinceChange = 0;
@@ -145,7 +169,8 @@ export class WorldSaver {
         // Jeśli gracz zmieni coś w trakcie zapisu, ten chunk znowu
         // trafi na listę i zapisze się przy następnej okazji.
 
-        const chunks = this.world.takeUnsavedChunks();
+        const chunks = this.latestChunks(this.world.takeUnsavedChunks());
+        this.activeBatches.add(chunks);
 
 
         const fireVersion = this.campfires?.version ?? 0;
@@ -162,7 +187,8 @@ export class WorldSaver {
 
             await this.storage.saveWorldAndChunks(
                 this.worldInfo,
-                chunks
+                chunks,
+                { immediate }
             );
 
 
@@ -177,9 +203,12 @@ export class WorldSaver {
 
         catch (error) {
 
+            // Wyjście przejęło cały pakiet do natychmiastowej transakcji.
+            if (error?.code === 'BACKGROUND_SAVE_INTERRUPTED') return false;
+
             // Nie udało się - te chunki spróbujemy zapisać następnym razem.
 
-            this.world.markUnsaved(chunks);
+            this.world.markUnsaved(this.latestChunks(chunks));
 
             console.error('Nie udało się zapisać świata:', error);
 
@@ -187,6 +216,9 @@ export class WorldSaver {
 
             return false;
 
+        }
+        finally {
+            this.activeBatches.delete(chunks);
         }
 
     }
@@ -226,13 +258,13 @@ export class WorldSaver {
         this.onVisibilityChange = () => {
 
             if (document.visibilityState === 'hidden') {
-                this.save();
+                this.save({ immediate: true });
             }
 
         };
 
         this.onPageHide = () => {
-            this.save();
+            this.save({ immediate: true });
         };
 
 

@@ -11,6 +11,31 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 0.60.0 - Płynniejsza eksploracja i roślinność
+
+Aktualizacja wydajności przy zachowaniu wyglądu świata — PR #94.
+
+- Generowanie realistycznego terenu, rzek i nurtu podczas eksploracji działa
+  w tle. Szybkie przeniesienie gracza czeka na prawdziwy teren, zachowując
+  działanie obrazu, patrzenia i zapisu.
+- Szybsza przebudowa rozbudowanych roślin dzięki wspólnym wzorcom geometrii
+  i stopniowemu przygotowaniu nowych modeli. Zachowane kształty, tekstury,
+  światło, wiatr oraz animacje wzrostu i zbioru.
+- Ograniczone pamięci podręczne modeli i generatorów terenu w workerach.
+  Rozpoznawanie biomu korzysta z gotowych danych chunka.
+- Partie cieni współdzielą gotową obwiednię geometrii zamiast wielokrotnie
+  przeliczać wszystkie wierzchołki gęstej roślinności.
+- Pakowanie i transakcje dużych autozapisów wykonują się w tle; zamykanie
+  gry nadal uruchamia natychmiastowy, atomowy zapis ostatnich zmian.
+- Odczyt zapisanego świata nie tworzy dodatkowej tablicy wszystkich
+  rekordów. Zmienione chunki nadal pozostają w pamięci, aby komendy,
+  odradzanie i daleki widok zachowały zgodność z zapisami.
+
+Opis i ograniczenia: `docs/aktualizacja-wydajnosci.md`.
+Porównanie 0.59.0 i 0.60.0 na RTX 3050: `docs/pomiary/wydajnosc-0.60.0/`.
+Wydanie Windows/Android przygotowywane do publikacji po scaleniu PR.
+Dalszy etap atmosfery i oświetlenia pozostaje osobną aktualizacją.
+
 ## 0.59.0 - Motyw Szare drewno
 
 Nowy motyw GUI na podstawie koncepcji szarych desek — PR #93.

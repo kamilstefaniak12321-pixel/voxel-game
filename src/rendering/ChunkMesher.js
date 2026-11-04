@@ -16,6 +16,7 @@ import { SURFACE_PROFILES } from './SurfaceProfiles.js';
 import { getRiverPlantFaces, plantRandom, plantTransform, riverPlantTransform } from './RiverPlantGeometry.js';
 import { getBushyGrassFaces } from './BushyGrassGeometry.js';
 import { getAtlasUV } from './TextureAtlas.js';
+import { getPlantMeshTemplate, lightPlantMeshTemplate } from './PlantMeshTemplate.js';
 const plantFaceUvCache = new Map();
 const plantFaceUV = texture => {
     if (!plantFaceUvCache.has(texture)) plantFaceUvCache.set(texture, getAtlasUV(texture));
@@ -810,49 +811,26 @@ function addRiverPlants(plants, faceCount, baseX, baseZ, grassDetail = null, ove
         const depthShade = data.kind === 'milfoil' ? waterDepthShade(cell) : 1;
         ensureCapacity(faceCount + faces.length);
 
-        for (const face of faces) {
-            const profile = face.surfaceProfile ?? SURFACE_PROFILES.matte;
-            // Leaf cards and solid fruit use different parts of the same atlas,
-            // without a separate material or draw call for each fruit.
-            const { uMin, uMax, vMin, vMax } = face.texture ? plantFaceUV(face.texture) : data.uv;
-            const p = faceCount * 12, t = faceCount * 8, c = faceCount * 16;
-            for (let i = 0; i < 4; i++) {
-                const vertex = face.vertices[i];
-                positionBuffer[p + i * 3] = centerX + cos * vertex[0] - sin * vertex[2];
-                positionBuffer[p + i * 3 + 1] = y + vertex[1];
-                positionBuffer[p + i * 3 + 2] = centerZ + sin * vertex[0] + cos * vertex[2];
-                normalBuffer[p + i * 3] = cos * face.normal[0] - sin * face.normal[2];
-                normalBuffer[p + i * 3 + 1] = face.normal[1];
-                normalBuffer[p + i * 3 + 2] = sin * face.normal[0] + cos * face.normal[2];
-                // A model pixel has one colour, without a whole 16x16 tile
-                // repeated inside it. Keep the shared atlas/material batch.
-                uvBuffer[t + i * 2] = face.uv ? uMin + face.uv[i][0] * (uMax - uMin) : (uMax + uMin) / 2;
-                uvBuffer[t + i * 2 + 1] = face.uv ? vMax - face.uv[i][1] * (vMax - vMin) : (vMin + vMax) / 2;
-                plantMotionBuffer[t + i * 2] = face.weights[i];
-                plantMotionBuffer[t + i * 2 + 1] = face.movement;
-
-                const shade = (0.79 + Math.min(1, vertex[1] / 0.8) * 0.21) * depthShade;
-                colorBuffer[c + i * 4] = lampR * shade * 255 + 0.5;
-                colorBuffer[c + i * 4 + 1] = lampG * shade * 255 + 0.5;
-                colorBuffer[c + i * 4 + 2] = lampB * shade * 255 + 0.5;
-                colorBuffer[c + i * 4 + 3] = sky * shade * 255 + 0.5;
-                atmosphereLightBuffer[c + i * 4] = lampR * atmosphereScale * shade * 255 + 0.5;
-                atmosphereLightBuffer[c + i * 4 + 1] = lampG * atmosphereScale * shade * 255 + 0.5;
-                atmosphereLightBuffer[c + i * 4 + 2] = lampB * atmosphereScale * shade * 255 + 0.5;
-                atmosphereLightBuffer[c + i * 4 + 3] = atmosphereSky * depthShade * 255 + 0.5;
-                surfaceOcclusionBuffer[faceCount * 4 + i] = shade * 255 + 0.5;
-                surfaceEmissionBuffer[faceCount * 4 + i] = 0;
-                surfaceProfileBuffer[t + i * 2] = profile[0];
-                surfaceProfileBuffer[t + i * 2 + 1] = profile[1];
-                for (let channel = 0; channel < 3; channel++) {
-                    tintBuffer[c + i * 4 + channel] = climate
-                        ? Math.min(255, Math.round(face.color[channel] * climate[channel] / 128))
-                        : face.color[channel];
-                }
-                tintBuffer[c + i * 4 + 3] = 128;
-            }
-            splitBuffer[faceCount++] = 0;
+        const template = getPlantMeshTemplate(faces, data.uv, transform, plantFaceUV);
+        lightPlantMeshTemplate(template, sky, lampR, lampG, lampB, atmosphereSky, atmosphereScale, depthShade, climate);
+        const p = faceCount * 12, t = faceCount * 8, c = faceCount * 16, v = faceCount * 4;
+        const positions = template.positions;
+        for (let i = 0; i < positions.length; i += 3) {
+            positionBuffer[p + i] = centerX + cos * positions[i] - sin * positions[i + 2];
+            positionBuffer[p + i + 1] = y + positions[i + 1];
+            positionBuffer[p + i + 2] = centerZ + sin * positions[i] + cos * positions[i + 2];
         }
+        normalBuffer.set(template.normal, p);
+        uvBuffer.set(template.uv, t);
+        plantMotionBuffer.set(template.motion, t);
+        colorBuffer.set(template.color, c);
+        atmosphereLightBuffer.set(template.atmosphere, c);
+        surfaceOcclusionBuffer.set(template.occlusion, v);
+        surfaceEmissionBuffer.fill(0, v, v + template.count);
+        surfaceProfileBuffer.set(template.profile, t);
+        tintBuffer.set(template.tint, c);
+        splitBuffer.fill(0, faceCount, faceCount + faces.length);
+        faceCount += faces.length;
     }
     return faceCount;
 }
@@ -1380,7 +1358,57 @@ function hiddenBelow(chunk, world) {
 // Zwraca null, jeśli chunk nie ma żadnej widocznej ściany.
 // ------------------------------------------------------------
 
+const plantPreparation = new WeakMap();
+
+// Preparing eight unseen detailed models in one mesh used to make the first
+// visit much slower than later rebuilds. The visible update path warms one
+// model at a time until its deadline, leaving the old mesh intact. The cursor
+// only advances (even if the bounded template cache evicts earlier entries),
+// so a diverse garden cannot keep the chunk waiting forever.
+export function prepareChunkPlantGeometry(chunk, world, deadline) {
+    if (!Number.isFinite(deadline)) return true;
+    if (performance.now() >= deadline) return false;
+    if (plantPreparation.get(chunk) === Infinity) return true;
+    const overrides = world.plantAnimations?.overridesFor(chunk);
+    let height = Math.min(chunk.maxY, H);
+    if (overrides) for (const event of overrides.values()) height = Math.max(height, event.y + 1);
+    let start = hiddenBelow(chunk, world);
+    if (overrides) for (const event of overrides.values()) start = Math.min(start, event.y);
+    fillPadding(chunk, world, height, Math.max(0, start - 1));
+    const baseX = chunk.cx * S, baseZ = chunk.cz * S;
+    const grassDetail = world.experiments?.bushyGrass ? (world.getGrassDetail?.(chunk) ?? 0) : null;
+    let cursor = Math.max(start * LAYER, plantPreparation.get(chunk) ?? 0);
+    const end = height * LAYER;
+    for (; cursor < end; cursor++) {
+        const id = overrides?.get(cursor)?.renderId ?? chunk.blocks[cursor];
+        const grass = grassDetail !== null && (id === SHORT_GRASS_ID || id === TALL_GRASS_ID);
+        const data = blockRenderData[id]?.riverPlant;
+        if (!grass && !data) continue;
+        const lx = cursor % S, lz = Math.floor(cursor / S) % S, y = Math.floor(cursor / LAYER);
+        const transform = grass ? riverPlantTransform(baseX + lx, y, baseZ + lz)
+            : plantTransform(baseX + lx, y, baseZ + lz, data.tuft);
+        const cell = padIndex(lx, y, lz);
+        const mask = grass ? 0 : data.carpet ? carpetMask(cell, y, data.carpet)
+            : data.tuft?.coating || data.tuft?.bracket ? wallMask(cell)
+                : data.tuft?.wide ? reachMask(cell, y) : 0;
+        const faces = grass ? getBushyGrassFaces(id === TALL_GRASS_ID, transform.variant, grassDetail)
+            : getRiverPlantFaces(data.kind, transform.variant, data.waterlogged, data.tuft, mask);
+        getPlantMeshTemplate(faces, grass ? getAtlasUV('snow') : data.uv, transform, plantFaceUV);
+        if (performance.now() >= deadline) {
+            plantPreparation.set(chunk, cursor + 1);
+            return false;
+        }
+    }
+    // The caller may spend its last fraction of a millisecond on this scan.
+    // Keep completion until the actual build consumes it, otherwise small
+    // budgets could repeatedly scan a ready chunk without ever drawing it.
+    plantPreparation.set(chunk, Infinity);
+    return true;
+}
+
 export function buildChunkGeometry(chunk, world) {
+
+    plantPreparation.delete(chunk);
 
     const overrides = world.plantAnimations?.overridesFor(chunk);
     const animationRanges = [];

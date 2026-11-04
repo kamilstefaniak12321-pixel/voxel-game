@@ -41,6 +41,9 @@ class CountingRenderer {
         scene.traverseVisible(mesh => {
             if (!mesh.isMesh) return;
             const geometry = mesh.geometry;
+            // Three's render-list sorting requests this even for meshes with
+            // frustumCulled=false. Exercise the real hidden CPU cost of views.
+            if (geometry.boundingSphere === null) geometry.computeBoundingSphere();
             const end = Math.min(geometry.index?.count ?? geometry.attributes.position.count,
                 geometry.drawRange.start + geometry.drawRange.count);
             const groups = Array.isArray(mesh.material) ? geometry.groups : [{ start: 0, count: end, materialIndex: 0 }];
@@ -126,6 +129,12 @@ function fixture({ large = false, grouped = false, many = true } = {}) {
 // Dwie mapy muszą postępować naprzemiennie, bez nieograniczonej ostatniej paczki.
 {
     const f = fixture({ large: true });
+    const computeBounds = THREE.BufferGeometry.prototype.computeBoundingSphere;
+    let denseBoundsScans = 0;
+    THREE.BufferGeometry.prototype.computeBoundingSphere = function () {
+        if (this.attributes.position === f.source.geometry.attributes.position) denseBoundsScans++;
+        return computeBounds.call(this);
+    };
     try {
         const { source, shadows, renderer } = f;
         const index = source.geometry.index, attributes = source.geometry.attributes;
@@ -135,6 +144,7 @@ function fixture({ large = false, grouped = false, many = true } = {}) {
         f.step(); assert.ok(shadows.cascades.every(c => c.build?.cursor > 0), 'Brak zagłodzenia jednej kaskady');
         assert.equal(source.visible, false, 'Przywrócenie widoczności oryginalnego castera');
         f.settle();
+        assert.equal(denseBoundsScans, 1, 'Wiele stron cieni skanuje pełną geometrię tylko raz, także między kaskadami');
         assert.equal(source.geometry.index, index); assert.equal(source.geometry.attributes, attributes);
         assert.deepEqual(source.geometry.drawRange, range); assert.equal(source.parent, f.world.shadowScene);
         assert.equal(liveDisposals, 0, 'Widoki zakresów nie zwalniają buforów żywej geometrii');
@@ -144,7 +154,7 @@ function fixture({ large = false, grouped = false, many = true } = {}) {
         for (const c of shadows.cascades) {
             assert.equal(renderer.clears.filter(t => t === c.target).length, 1, 'Mapa czyszczona raz na budowę');
         }
-    } finally { f.dispose(); }
+    } finally { THREE.BufferGeometry.prototype.computeBoundingSphere = computeBounds; f.dispose(); }
 }
 
 // Jeden mesh z większą liczbą grup niż limit także wymaga podziału.

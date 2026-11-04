@@ -85,7 +85,9 @@ function currentBiome(game) {
         return cache.key;
     }
 
-    const key = generator.biomeAt(Math.floor(game.player.pos.x), Math.floor(game.player.pos.z));
+    // Dane przyjeżdżają razem z blokami. Ponowny compute() na głównym
+    // wątku odtwarzałby kosztowną sieć rzek mimo generowania w workerze.
+    const key = game.world.biomeAt(Math.floor(game.player.pos.x), Math.floor(game.player.pos.z));
 
     game.achievementBiome = { time: now, key };
 

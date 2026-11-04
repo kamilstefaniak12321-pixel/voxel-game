@@ -13,7 +13,7 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ## 0.60.0 - Płynniejsza eksploracja i roślinność
 
-Aktualizacja wydajności przy zachowaniu wyglądu świata — PR w przygotowaniu.
+Aktualizacja wydajności przy zachowaniu wyglądu świata — PR #94.
 
 - Generowanie realistycznego terenu, rzek i nurtu podczas eksploracji działa
   w tle. Szybkie przeniesienie gracza czeka na prawdziwy teren, zachowując

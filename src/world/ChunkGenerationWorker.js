@@ -13,3 +13,8 @@ self.onmessage = ({ data: message }) => {
         self.postMessage({ type: 'error', id: message.id, message: String(error?.message ?? error) });
     }
 };
+
+// Imports of the plant/tree packs use top-level await in browsers. Messages
+// sent while those imports are awaiting fetch can otherwise be lost before
+// the handler above exists (the same handshake as FarTerrainWorker).
+self.postMessage({ type: 'ready' });

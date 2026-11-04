@@ -6,10 +6,12 @@ import { WorldSaver } from '/src/storage/WorldSaver.js';
 import { atlasReady } from '/src/rendering/TextureAtlas.js';
 
 const panel = document.querySelector('aside'), status = panel.querySelector('[data-status]');
-const output = panel.querySelector('pre'), errors = [];
+const output = panel.querySelector('pre'), errors = [], warnings = [];
 const config = await window.performanceQA.config();
 const originalError = console.error;
 console.error = (...args) => { errors.push(args.map(String).join(' ')); originalError(...args); };
+const originalWarn = console.warn;
+console.warn = (...args) => { warnings.push(args.map(String).join(' ')); originalWarn(...args); };
 addEventListener('error', event => errors.push(String(event.error?.stack ?? event.message)));
 addEventListener('unhandledrejection', event => errors.push(String(event.reason?.stack ?? event.reason)));
 Settings.prototype.load = () => null;
@@ -71,7 +73,7 @@ function report() {
     return { scene, seed: scene === 'rivers' ? 'porownanie-kamila' : 42, device,
         settings: snapshotSettings(), actualCamera: { position: game.camera.position.toArray(),
             direction: game.camera.getWorldDirection(new THREE.Vector3()).toArray() },
-        resources: resources(), errors: [...errors] };
+        resources: resources(), errors: [...errors], warnings: [...warnings] };
 }
 function controls(busy) {
     for (const button of panel.querySelectorAll('button')) button.disabled = busy;
@@ -139,8 +141,12 @@ async function finish(reason = null) {
     const done = run; run = null;
     pending = pending.filter(q => { if (q.owner !== done) return true; gl.deleteQuery(q.query); return false; });
     const after = resources();
-    const result = { ...report(), valid: !reason && done.frames.length > 100 && done.errorsAtStart === errors.length && !after.failedPrograms,
-        invalidReason: reason, duration: done.duration, warmupSeconds: 10, startedAt: done.startedAt,
+    const streamingValid = config.baseline || scene !== 'rivers' || (after.streaming?.enabled === true && after.streaming.workerReady === true &&
+        after.streaming.failures === 0 && after.streaming.applied > (done.before?.streaming?.applied ?? 0) &&
+        worldTimings.prepareZone.length === 0);
+    const invalidReason = reason ?? (!streamingValid ? 'Worker terenu nie działał poprawnie lub główny wątek przygotowywał region rzek.' : null);
+    const result = { ...report(), valid: !invalidReason && done.frames.length > 100 && done.errorsAtStart === errors.length && !after.failedPrograms,
+        invalidReason, streamingValid, duration: done.duration, warmupSeconds: 10, startedAt: done.startedAt,
         frame: summary(done.frames), cpu: summary(done.cpu), updateCpu: summary(done.updateCpu), renderCpu: summary(done.renderCpu),
         gpu: summary(done.gpu), gpuValid: !!gpu && done.gpu.length > 100 && !done.disjoint,
         gpuDisjoint: done.disjoint, gpuSkipped: done.skipped,

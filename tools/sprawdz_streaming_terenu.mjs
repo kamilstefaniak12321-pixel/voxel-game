@@ -91,9 +91,10 @@ for (const [x,z,spacing] of [[176,-256,1],[240,0,4],[-1920,-1936,16],[8000,8000,
 eq(farCache.resets,4,'far cache resets between independent tiles');
 const farWorker = workerFactory('FarTerrainWorker');
 try {
-    let result;
-    farWorker.onmessage = ({data}) => { if(data.type==='tile') result=data; };
+    let result, ready=false;
+    farWorker.onmessage = ({data}) => { if(data.type==='ready') ready=true; if(data.type==='tile') result=data; };
     farWorker.onerror = error => { throw error; };
+    await until(()=>ready);
     farWorker.postMessage({type:'init',terrain:'realistic',seed});
     farWorker.postMessage({type:'tile',id:1,x0:176,z0:-256,spacing:4,cells:8});
     await until(()=>!!result);
@@ -101,6 +102,8 @@ try {
     for(const key of Object.keys(expected)) eq(result[key],expected[key],`actual LOD worker ${key}`);
 } finally { farWorker.terminate(); }
 try {
+    generation.start();
+    await until(()=>generation.workerReady);
     ok(generation.request(11,-16), 'first request accepted');
     ok(generation.request(12,-16), 'second request accepted');
     ok(!generation.request(13,-16), 'third request is backpressured');
@@ -146,7 +149,12 @@ try {
     world.update(8000,8000,3,4);
     ok(world.loadQueue.length > 0, 'pending chunks stay in load queue');
     ok(Number.isFinite(world.completeRadius()), 'incomplete radius stays finite');
-    await until(() => world.generation.getStats().ready === 2);
+    await until(() => {
+        // Pump frames while imports finish, but leave ready results unapplied
+        // so the subsequent queue-reordering assertion sees both of them.
+        world.update(8000,8000,3,0);
+        return world.generation.getStats().ready === 2;
+    });
     world.setCenter(8032,8000,3);
     eq(world.generation.getStats().ready, 2, 'ready jobs still wanted after centre moves');
     world.streamChunks(Infinity);
@@ -197,10 +205,27 @@ try {
     ok(!failed.enabled,'startup fallback enabled');
     let fake;
     const stalled = new ChunkGeneration('realistic', seed, { workerFactory: () => fake = { postMessage(){}, terminate(){ this.stopped=true; } } });
+    stalled.start();
+    fake.onmessage({data:{type:'ready'}});
     stalled.request(0,0);
     [...stalled.jobs.values()][0].started -= 20000;
     ok(!stalled.checkHealth(),'stalled worker falls back');
     ok(fake.stopped,'stalled worker stopped');
+    let delayed;
+    const starting = new ChunkGeneration('realistic',seed,{workerFactory:()=>delayed={
+        messages:[],postMessage(message){this.messages.push(message);},terminate(){}
+    }});
+    ok(!starting.request(0,0),'no chunk is sent before module imports finish');
+    eq(delayed.messages,[],'init also waits for installed message handler');
+    eq(starting.jobs.size,0,'requests remain in World queue until worker ready');
+    delayed.onmessage({data:{type:'ready'}});
+    eq(delayed.messages.map(message=>message.type),['init'],'ready handshake initializes generator');
+    ok(starting.request(0,0),'request accepted after ready');
+    eq(delayed.messages.map(message=>message.type),['init','chunk'],'init precedes first chunk');
+    starting.dispose();
+    const noReady = new ChunkGeneration('realistic',seed,{workerFactory:()=>({postMessage(){},terminate(){}})});
+    noReady.start(); noReady.started-=20000;
+    ok(!noReady.checkHealth(),'missing ready message cannot hang world forever');
     const fallback = new World(new Scene(), seed, new Map(), 'realistic');
     fallback.enableChunkStreaming({ workerFactory: () => { throw Error('unavailable'); } });
     try {

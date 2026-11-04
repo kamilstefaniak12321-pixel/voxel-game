@@ -73,6 +73,10 @@ Praca workera nie pojawia się jako główne zadanie `prepareZone`; sprawdzamy
 również jego statystyki, liczbę ukończonych chunków i czas dochodzenia terenu
 do gotowości. Skrócenie klatek kosztem niekończącego się doczytywania nie
 jest pozytywnym wynikiem. Utrata aktywności okna unieważnia próbę.
+Odbiór rzek w kandydacie wymaga aktywnego workera bez awarii, wzrostu
+liczby przyjętych wyników podczas trasy i braku `prepareZone` na głównym
+wątku. Synchroniczna ścieżka awaryjna jest użyteczna dla dostępności gry,
+ale nie zalicza testu usunięcia przycięć. Ostrzeżenia trafiają do raportu.
 
 Zapis raportuje czas zgłoszenia, całej transakcji, odczytu i odstępy rAF.
 Odczyt oraz pełna walidacja danych są poza pomiarem zapisu. Wszystkie tablice

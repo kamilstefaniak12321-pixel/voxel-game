@@ -6,5 +6,7 @@ registerHooks({ load(url, context, next) {
         ? { ...context, format: 'module' } : context);
 } });
 globalThis.self = { postMessage: (data, transfer) => parentPort.postMessage(data, transfer) };
+// Match a browser module worker: early messages during awaited imports do not
+// wait for an onmessage handler that has not been installed yet.
+parentPort.on('message', data => self.onmessage?.({ data }));
 await import(new URL(`../../src/world/${workerData?.module ?? 'ChunkGenerationWorker'}.js`, import.meta.url));
-parentPort.on('message', data => self.onmessage({ data }));

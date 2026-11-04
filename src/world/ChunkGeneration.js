@@ -11,11 +11,13 @@ export class ChunkGeneration {
         this.workerFactory = workerFactory ?? (typeof Worker === 'function' ? defaultWorker : null);
         this.enabled = terrain === 'realistic' && !!this.workerFactory;
         this.worker = null;
+        this.workerReady = false;
+        this.started = 0;
         this.jobs = new Map();
         this.nextId = 1;
         this.disposed = false;
         this.stats = { requested: 0, completed: 0, applied: 0, discarded: 0, failures: 0,
-            resets: 0, cache: null, workerMs: 0, lastApplyMs: 0, maxApplyMs: 0 };
+            resets: 0, cache: null, workerMs: 0, lastApplyMs: 0, maxApplyMs: 0, lastError: null };
     }
 
     start() {
@@ -24,9 +26,18 @@ export class ChunkGeneration {
         try {
             const worker = this.workerFactory();
             this.worker = worker;
+            this.started = performance.now();
             worker.onmessage = event => {
                 if (this.disposed || this.worker !== worker) return;
                 const message = event.data;
+                if (message.type === 'ready') {
+                    if (this.workerReady) return;
+                    this.workerReady = true;
+                    try {
+                        worker.postMessage({ type: 'init', terrain: this.terrain, seed: this.seed });
+                    } catch (error) { this.fail(error?.message ?? error); }
+                    return;
+                }
                 if (message.type === 'error') {
                     this.fail(message.message);
                     return;
@@ -47,7 +58,6 @@ export class ChunkGeneration {
             };
             worker.onerror = event => this.fail(event?.message ?? 'Błąd wątku terenu');
             worker.onmessageerror = () => this.fail('Nie udało się odebrać danych terenu');
-            worker.postMessage({ type: 'init', terrain: this.terrain, seed: this.seed });
             return true;
         } catch (error) {
             this.fail(error?.message ?? error);
@@ -58,7 +68,9 @@ export class ChunkGeneration {
     fail(message) {
         if (this.disposed || !this.enabled) return;
         this.stats.failures++;
+        this.stats.lastError = String(message);
         this.enabled = false;
+        this.workerReady = false;
         this.worker?.terminate();
         this.worker = null;
         this.jobs.clear();
@@ -75,7 +87,7 @@ export class ChunkGeneration {
 
     request(cx, cz, saved) {
         if (this.find(cx, cz)) return true;
-        if (!this.enabled || this.disposed || this.jobs.size >= MAX_JOBS || !this.start()) return false;
+        if (!this.enabled || this.disposed || this.jobs.size >= MAX_JOBS || !this.start() || !this.workerReady) return false;
         const id = this.nextId++;
         const job = { id, cx, cz, saved, data: null, cancelled: false, started: performance.now() };
         this.jobs.set(id, job);
@@ -107,6 +119,9 @@ export class ChunkGeneration {
 
     checkHealth() {
         const now = performance.now();
+        if (this.worker && !this.workerReady && now - this.started > JOB_TIMEOUT_MS) {
+            this.fail('Przekroczony czas uruchamiania wątku terenu');
+        }
         for (const job of this.jobs.values()) {
             if (!job.data && now - job.started > JOB_TIMEOUT_MS) {
                 this.fail('Przekroczony czas oczekiwania na teren');
@@ -140,12 +155,14 @@ export class ChunkGeneration {
     getStats() {
         let ready = 0;
         for (const job of this.jobs.values()) if (job.data) ready++;
-        return { enabled: this.enabled, pending: this.jobs.size - ready, ready, ...this.stats };
+        return { enabled: this.enabled, workerReady: this.workerReady,
+            pending: this.jobs.size - ready, ready, ...this.stats };
     }
 
     dispose() {
         this.disposed = true;
         this.enabled = false;
+        this.workerReady = false;
         this.worker?.terminate();
         this.worker = null;
         this.jobs.clear();

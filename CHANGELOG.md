@@ -13,6 +13,8 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ## 0.59.0 - Motyw Szare drewno
 
+Nowy motyw GUI na podstawie koncepcji szarych desek — PR #93.
+
 - Nowy motyw w **Ustawienia → Wygląd → Motyw: Szare drewno**: poszarzałe
   deski, drobne sęki i gwoździe, ciemne wnęki oraz jasne zaznaczenie.
 - Wspólny wygląd menu, ekwipunku, księgi przepisów, podpowiedzi i paska

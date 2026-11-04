@@ -11,6 +11,20 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 0.59.0 - Motyw Szare drewno
+
+Nowy motyw GUI na podstawie koncepcji szarych desek — PR #93.
+
+- Nowy motyw w **Ustawienia → Wygląd → Motyw: Szare drewno**: poszarzałe
+  deski, drobne sęki i gwoździe, ciemne wnęki oraz jasne zaznaczenie.
+- Wspólny wygląd menu, ekwipunku, księgi przepisów, podpowiedzi i paska
+  przedmiotów. Po powrocie do wcześniejszego motywu wraca wybrany wcześniej
+  wygląd ekwipunku (drewniany albo jasny).
+- Małe, powtarzalne tekstury GUI; zachowany układ kontrolek i obsługa
+  przedmiotów oraz dopasowanie do małych ekranów.
+
+Wydanie Windows/Android przygotowane do publikacji po scaleniu PR.
+
 ## 0.58.0 - Odbicia otoczenia i światło materiałów
 
 Drugi pakiet planu światła: E05, E06 i dostrojenie materiałów E07 — PR #92.

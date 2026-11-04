@@ -1126,6 +1126,13 @@ export class Menu {
 
         const control = this.createSettingControl(key);
 
+        if (key === 'inventoryStyle') {
+            const wrapper = el('div', 'settings-inventory-style');
+            wrapper.append(control, el('p', 'menu-note inventory-theme-note',
+                'Ekwipunek: Szare drewno — z motywu. Poprzedni wygląd pozostaje zapamiętany.'));
+            return wrapper;
+        }
+
         if (ADVANCED_VIDEO.includes(key)) {
             control.dataset.setting = key;
         }

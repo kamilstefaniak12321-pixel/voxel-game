@@ -49,6 +49,32 @@ laptopa (do 820 punktów wysokości) odstępy są mniejsze, a lista bloków
 okno mieści się w całości od 1366 x 768. Na małym ekranie (telefon)
 liście nie wystają za okno.
 
+## Motyw Szare drewno (0.59.0)
+
+W **Ustawienia → Wygląd → Motyw** wybierz **Szare drewno**. To wspólny
+motyw menu i interfejsu gry: surowe szare deski, proste gwoździe, ciemne
+wnęki oraz jasne zaznaczenie przedmiotu. Obejmuje ekwipunek w obu trybach,
+księgę przepisów, podpowiedzi, pasek przedmiotów i menu ustawień.
+
+Motyw przejmuje wygląd ekwipunku, zachowując w zapisie dotychczasowe
+ustawienie **Drewniany / Jasny**. Po przełączeniu na Ziemię albo Lepidolit
+wraca wybrany wcześniej wygląd. Nie zmienia liczby miejsc, receptur,
+przenoszenia stosów ani zawartości zapisów świata.
+
+Pliki motywu znajdują się w `assets/ui/themes/grey-wood/`; paleta i reguły
+kontrolek w `theme.css`. Tekstury powstają z kodu
+`python tools/szare_drewno.py`: `planks.png` (160 × 90), `board.png`
+(48 × 12), `frame.png` (64 × 64, wycinek ramy 8 pikseli).
+Tekstury są powiększane ×3; rama menu i małego ekranu ×2. Ramka nie ma
+ozdób wystających poza okno; mały ekran korzysta z istniejącego układu
+adaptacyjnego i przewijania.
+
+Sprawdzenie w Chrome: `node tools/sprawdz_motyw_gui_webgl.mjs`
+(Node 22.15 lub nowszy; `google-chrome` w PATH albo `CHROME_BIN`).
+Test uruchamia rzeczywiste komponenty GUI, sprawdza zmianę motywu,
+zapis ustawień, przenoszenie przedmiotów, wytwarzanie i rozmiary okien.
+Zrzuty ekranu trafiają do `test-results/grey-wood/`.
+
 ## Pliki
 
 - `src/ui/InventoryScreen.js` — budowa ekranu i dotychczasowe operacje

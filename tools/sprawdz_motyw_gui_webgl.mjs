@@ -20,6 +20,7 @@ async function setupUi(iconNames) {
     const { InventoryScreen } = await import('/src/ui/InventoryScreen.js');
     const { Inventory } = await import('/src/game/Inventory.js');
     const { Hotbar } = await import('/src/ui/Hotbar.js');
+    const { Chat } = await import('/src/ui/Chat.js');
     const { PlayerModel } = await import('/src/player/PlayerModel.js');
     const { atlasReady } = await import('/src/rendering/TextureAtlas.js');
     await atlasReady;
@@ -36,10 +37,19 @@ async function setupUi(iconNames) {
     for (const [index, type, count] of [[0,'pickaxe',1],[1,'axe',1],[2,'shovel',1],[9,'stone',32],[10,'oak_planks',16],[11,'blueberry',8],[18,'grass',24],[19,'stick',12]]) game.inventory.slots[index] = { type, count };
     const screen = new InventoryScreen(icons, { close() { screen.close(); } });
     const hotbar = new Hotbar(document.querySelector('#hotbar'), icons);
+    // Tak jak w grze: konstruktor chowa wiersz zamkniętego czatu.
+    const chat = new Chat(document.querySelector('#chat'), { submit() {}, cancel() {} });
+    chat.close();
     const menu = new Menu(document.querySelector('#menu'), 'Voxel Game', { openWorldList() {} }, settings, UI_THEMES);
     const tick = async () => {
         await new Promise(r => requestAnimationFrame(r)); screen.update(); await document.fonts.ready;
         await Promise.all([...document.images].filter(img => img.getAttribute('src')).map(img => img.decode()));
+        // Uchwyć gotowy panel, nie środkową klatkę wejścia (420 ms).
+        // Animacje ciągłe, np. migający kursor, nie zatrzymują sprawdzenia.
+        const finite = document.getAnimations().filter(animation => animation.playState === 'running'
+            && Number.isFinite(animation.effect?.getComputedTiming().endTime));
+        await Promise.all(finite.map(animation => animation.finished.catch(() => {})));
+        await new Promise(r => requestAnimationFrame(r)); screen.update();
     };
     const theme = async name => { settings.set('theme', name); await window.themeReady; await tick(); };
     const click = element => {
@@ -65,6 +75,19 @@ async function setupUi(iconNames) {
         const slots = [...document.querySelectorAll('.inv-hotbar .inv-slot')];
         check(slots.length === 9, 'Nie ma dziewięciu miejsc paska');
         return { width: innerWidth, height: innerHeight, panel: { x: rect.x, y: rect.y, width: rect.width, height: rect.height }, slots: slots.length };
+    };
+    const titlePresentation = () => {
+        const title = getComputedStyle(document.querySelector('#menu .menu-title'));
+        const panel = getComputedStyle(document.querySelector('#menu .menu-scene-panel'));
+        const play = getComputedStyle(document.querySelector('#menu .screen-title .menu-buttons .menu-button:first-child'));
+        check(title.color === 'rgb(238, 232, 220)', 'Tytuł menu zachował stary kolor');
+        check(panel.backgroundImage.includes('/grey-wood/planks.png'), 'Panel menu nie ma szarych desek');
+        check(panel.borderImageSource.includes('/grey-wood/frame.png'), 'Panel menu nie ma drewnianej ramy');
+        check(panel.opacity === '1', 'Animacja wejścia menu jeszcze trwa');
+        check(play.backgroundImage.includes('/grey-wood/board.png'), 'Przycisk Gra zachował stare tło');
+        check(play.color === 'rgb(38, 36, 32)', 'Przycisk Gra zachował stary kolor tekstu');
+        return { title: title.color, panel: panel.backgroundImage, frame: panel.borderImageSource,
+            opacity: panel.opacity, play: play.backgroundImage, playText: play.color };
     };
     const tests = [];
     window.uiQA = {
@@ -109,6 +132,8 @@ async function setupUi(iconNames) {
             check(document.querySelectorAll('.inv-creative-grid .inv-slot').length > 0, 'Wyszukiwanie kreatywne puste');
             await theme('lepidolit'); check(!getComputedStyle(document.querySelector('.inv-panel')).backgroundImage.includes('grey-wood'), 'Pozostała tekstura szarego drewna');
             await theme('grey-wood'); tests.push('Wyszukiwanie kreatywne i przejście przez Lepidolit');
+            screen.close(); menu.showTitle(); await tick(); titlePresentation();
+            tests.push('Menu główne: jasny tytuł, deski, rama i przycisk Gra po zakończeniu animacji');
             screen.close(); menu.showSettings('title', 'look'); await tick();
             const button = [...document.querySelectorAll('button')].find(e => e.textContent.includes('Motyw:'));
             check(button?.textContent.includes('Szare drewno'), 'Motyw nie jest widoczny w ustawieniach');
@@ -130,7 +155,9 @@ async function setupUi(iconNames) {
                 const rect = slot.getBoundingClientRect();
                 slot.dispatchEvent(new MouseEvent('mousemove', { bubbles: true, clientX: rect.right, clientY: rect.top }));
             }
-            await tick(); return view === 'menu' || view === 'settings' || view === 'hud' ? { view } : layout();
+            await tick();
+            if (view === 'menu') return { view, ...titlePresentation() };
+            return view === 'settings' || view === 'hud' ? { view } : layout();
         }
     };
     await theme('grey-wood'); await inventory();

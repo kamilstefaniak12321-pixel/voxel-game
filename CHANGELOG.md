@@ -13,6 +13,8 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ## 0.61.0 - Animowane pochodnie i barwniki
 
+Pochodnia Reactive Torch i roślinne pigmenty — PR #95.
+
 - Podstawowa pochodnia przeniesiona z Reactive Torch: oryginalne tekstury
   20 klatek, płynne przejścia i dwusekundowa pętla, także w dłoni.
 - 16 barwników z kwiatów, owoców, zielonych roślin i mieszania pigmentów.

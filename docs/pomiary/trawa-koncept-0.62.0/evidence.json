@@ -1,0 +1,508 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-11-05",
+  "baseline": {
+    "version": "0.61.0",
+    "commitAtLaunch": "2ac97b885f124c95b1866df1f141200021e0e4e2",
+    "sourceSha256": "aa97120280e83eba55ed132d08e9a5f1bf8210dc5ba709bce1f487eebd4c5b17",
+    "sourceFiles": 169,
+    "assetsInventorySha256": "28bd9c45c9152a8b2fda3e77c45ba055907d9174a1a9fbde22f59af040b53ece",
+    "uncommittedAtLaunch": false
+  },
+  "candidate": {
+    "version": "0.62.0",
+    "commitAtLaunch": "2ac97b885f124c95b1866df1f141200021e0e4e2",
+    "sourceSha256": "b56cefaad2a507261e774e9fff20ad96012aa0187658600a1f2365627647acaa",
+    "sourceFiles": 170,
+    "assetsInventorySha256": "d4e169499d0ab28cc1466a3bdc9a551b0e39ecd1116b3c463166c90eeb2d16ef",
+    "uncommittedAtLaunch": true,
+    "verifiedSourceCommit": "0e3e7e7e614f70feb8d99e3351faa96dd783b772",
+    "verifiedWorkingTreeSourceSha256": "b56cefaad2a507261e774e9fff20ad96012aa0187658600a1f2365627647acaa",
+    "verifiedSourceFiles": 170
+  },
+  "harnessSha256": "362e3fb0052ee4389d45de804e87402e8dc6d121b35078b7c1aa70c037116aad",
+  "device": {
+    "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 3050 Laptop GPU (0x000025A2) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "webgl2": true,
+    "gpuTimerSupported": true,
+    "drawingBuffer": [
+      1920,
+      1080
+    ],
+    "devicePixelRatio": 1,
+    "displayHz": 144,
+    "uncapped": false,
+    "electron": "44.4.5",
+    "chromium": "152.0.7977.130"
+  },
+  "conditions": {
+    "power": "AC, checked by operator",
+    "seed": 2138286349,
+    "worldTimeDays": 0.5,
+    "warmupSeconds": 10,
+    "measurementSeconds": 30,
+    "settings": {
+      "potato": false,
+      "renderScale": 100,
+      "farTerrain": 1024,
+      "farDetail": 2,
+      "fov": 75,
+      "brightness": 0,
+      "lightingLook": "natural",
+      "lightingMaterials": "standard",
+      "surfaceBounce": true,
+      "leafTransmission": true,
+      "materialSpecular": true,
+      "bounceStrength": 18,
+      "bounceSaturation": 65,
+      "cloudCover": 0,
+      "fpsLimit": 0,
+      "ambientOcclusion": 45,
+      "shadows": 3,
+      "lightShafts": true,
+      "fancyLeaves": true,
+      "dynamicLight": true,
+      "loadBudget": 4,
+      "meteorites": false,
+      "bushyGrass": true,
+      "bounceLight": false,
+      "lightingModel": "world"
+    }
+  },
+  "scenarios": {
+    "river": {
+      "terrain": "realistic",
+      "camera": {
+        "position": [
+          198,
+          63.6,
+          -261
+        ],
+        "direction": [
+          -0.6620137871626428,
+          -0.46417237573912895,
+          0.5884570937691788
+        ]
+      },
+      "fixtureCount": 0
+    },
+    "dense": {
+      "terrain": "flat",
+      "camera": {
+        "position": [
+          24,
+          24,
+          58
+        ],
+        "direction": [
+          0,
+          -0.18777580730124993,
+          -0.9822119151142304
+        ]
+      },
+      "fixtureCount": 2304
+    }
+  },
+  "runs": [
+    {
+      "report": "grass-baseline-2026-11-05T19-06-40-878Z-002-river-bushy-64.json",
+      "reportSha256": "c9a242bcb67668a4b3dbbcc412ad9995f0285157a89a768e52cd50af7e281f33",
+      "variant": "baseline",
+      "scene": "river",
+      "viewDistance": 64,
+      "valid": true,
+      "frames": {
+        "count": 4313,
+        "meanMs": 6.954,
+        "medianMs": 6.9,
+        "p95Ms": 7.1,
+        "p99Ms": 7.2,
+        "maxMs": 15.5,
+        "averageFps": 143.798,
+        "above16_67ms": 0,
+        "above33_33ms": 0,
+        "above50ms": 0
+      },
+      "cpu": {
+        "count": 4314,
+        "meanMs": 4.98,
+        "medianMs": 5.1,
+        "p95Ms": 7.5,
+        "p99Ms": 8.9,
+        "maxMs": 11.3
+      },
+      "gpu": {
+        "count": 4314,
+        "meanMs": 6.556,
+        "medianMs": 6.524,
+        "p95Ms": 6.899,
+        "p99Ms": 8.072,
+        "maxMs": 8.561,
+        "valid": true,
+        "disjoint": 0,
+        "skipped": 0
+      },
+      "loadedGrassByDetail": [
+        1887,
+        3689,
+        0
+      ],
+      "loadedChunks": 113,
+      "finalFrame": {
+        "drawCalls": 367,
+        "triangles": 1869199
+      },
+      "unsettledFrames": 0,
+      "longTasks": 0,
+      "errors": 0,
+      "failedPrograms": 0,
+      "warnings": {
+        "count": 6,
+        "codes": [
+          "X3595"
+        ]
+      }
+    },
+    {
+      "report": "grass-candidate-2026-11-05T18-51-53-850Z-002-river-bushy-64.json",
+      "reportSha256": "3a936fab7e328c103d794aeede46e552fffcf45054c242332623de19351085b5",
+      "variant": "candidate",
+      "scene": "river",
+      "viewDistance": 64,
+      "valid": true,
+      "frames": {
+        "count": 4319,
+        "meanMs": 6.944,
+        "medianMs": 6.9,
+        "p95Ms": 7.1,
+        "p99Ms": 7.2,
+        "maxMs": 13.5,
+        "averageFps": 144.012,
+        "above16_67ms": 0,
+        "above33_33ms": 0,
+        "above50ms": 0
+      },
+      "cpu": {
+        "count": 4320,
+        "meanMs": 4.375,
+        "medianMs": 4.3,
+        "p95Ms": 6.5,
+        "p99Ms": 8.1,
+        "maxMs": 10.5
+      },
+      "gpu": {
+        "count": 4320,
+        "meanMs": 6.526,
+        "medianMs": 6.278,
+        "p95Ms": 8.425,
+        "p99Ms": 8.814,
+        "maxMs": 8.919,
+        "valid": true,
+        "disjoint": 0,
+        "skipped": 0
+      },
+      "loadedGrassByDetail": [
+        1887,
+        3689,
+        0
+      ],
+      "loadedChunks": 113,
+      "finalFrame": {
+        "drawCalls": 365,
+        "triangles": 979385
+      },
+      "unsettledFrames": 0,
+      "longTasks": 0,
+      "errors": 0,
+      "failedPrograms": 0,
+      "warnings": {
+        "count": 6,
+        "codes": [
+          "X3595"
+        ]
+      }
+    },
+    {
+      "report": "grass-candidate-2026-11-05T18-51-53-850Z-003-river-bushy-64.json",
+      "reportSha256": "d70139c7080d259775727a8f77d77805dbb98a7d64a8ed3b0be19090f6878752",
+      "variant": "candidate",
+      "scene": "river",
+      "viewDistance": 64,
+      "valid": true,
+      "frames": {
+        "count": 4289,
+        "meanMs": 6.993,
+        "medianMs": 6.9,
+        "p95Ms": 7.2,
+        "p99Ms": 7.4,
+        "maxMs": 20.9,
+        "averageFps": 143.003,
+        "above16_67ms": 3,
+        "above33_33ms": 0,
+        "above50ms": 0
+      },
+      "cpu": {
+        "count": 4290,
+        "meanMs": 4.529,
+        "medianMs": 4.4,
+        "p95Ms": 7.4,
+        "p99Ms": 9.3,
+        "maxMs": 16
+      },
+      "gpu": {
+        "count": 4290,
+        "meanMs": 6.556,
+        "medianMs": 6.386,
+        "p95Ms": 8.419,
+        "p99Ms": 8.903,
+        "maxMs": 9.881,
+        "valid": true,
+        "disjoint": 0,
+        "skipped": 0
+      },
+      "loadedGrassByDetail": [
+        1887,
+        3689,
+        0
+      ],
+      "loadedChunks": 113,
+      "finalFrame": {
+        "drawCalls": 365,
+        "triangles": 979385
+      },
+      "unsettledFrames": 0,
+      "longTasks": 0,
+      "errors": 0,
+      "failedPrograms": 0,
+      "warnings": {
+        "count": 6,
+        "codes": [
+          "X3595"
+        ]
+      }
+    },
+    {
+      "report": "grass-baseline-2026-11-05T19-06-40-878Z-004-dense-bushy-64.json",
+      "reportSha256": "b14f1482f8040bf91d7413e4755140a1bc872c7edf71e6a2b797ea6226b3af13",
+      "variant": "baseline",
+      "scene": "dense",
+      "viewDistance": 64,
+      "valid": true,
+      "frames": {
+        "count": 4318,
+        "meanMs": 6.945,
+        "medianMs": 6.9,
+        "p95Ms": 7.1,
+        "p99Ms": 7.3,
+        "maxMs": 20.7,
+        "averageFps": 143.98,
+        "above16_67ms": 1,
+        "above33_33ms": 0,
+        "above50ms": 0
+      },
+      "cpu": {
+        "count": 4319,
+        "meanMs": 3.889,
+        "medianMs": 3.8,
+        "p95Ms": 5.9,
+        "p99Ms": 7.3,
+        "maxMs": 10.1
+      },
+      "gpu": {
+        "count": 4319,
+        "meanMs": 6.045,
+        "medianMs": 6.219,
+        "p95Ms": 6.305,
+        "p99Ms": 6.345,
+        "maxMs": 7.092,
+        "valid": true,
+        "disjoint": 0,
+        "skipped": 0
+      },
+      "loadedGrassByDetail": [
+        1536,
+        768,
+        0
+      ],
+      "loadedChunks": 113,
+      "finalFrame": {
+        "drawCalls": 253,
+        "triangles": 902445
+      },
+      "unsettledFrames": 0,
+      "longTasks": 0,
+      "errors": 0,
+      "failedPrograms": 0,
+      "warnings": {
+        "count": 6,
+        "codes": [
+          "X3595"
+        ]
+      }
+    },
+    {
+      "report": "grass-candidate-2026-11-05T18-51-53-850Z-005-dense-bushy-64.json",
+      "reportSha256": "c836d761ccfdcc38ea9f14275940d6092a0325ff7f131e025916f57645074589",
+      "variant": "candidate",
+      "scene": "dense",
+      "viewDistance": 64,
+      "valid": true,
+      "frames": {
+        "count": 4139,
+        "meanMs": 7.245,
+        "medianMs": 6.9,
+        "p95Ms": 7.3,
+        "p99Ms": 14,
+        "maxMs": 14.5,
+        "averageFps": 138.017,
+        "above16_67ms": 0,
+        "above33_33ms": 0,
+        "above50ms": 0
+      },
+      "cpu": {
+        "count": 4140,
+        "meanMs": 4.454,
+        "medianMs": 4.7,
+        "p95Ms": 6.5,
+        "p99Ms": 7.9,
+        "maxMs": 14
+      },
+      "gpu": {
+        "count": 4140,
+        "meanMs": 6.882,
+        "medianMs": 6.858,
+        "p95Ms": 7.091,
+        "p99Ms": 7.199,
+        "maxMs": 9.179,
+        "valid": true,
+        "disjoint": 0,
+        "skipped": 0
+      },
+      "loadedGrassByDetail": [
+        1536,
+        768,
+        0
+      ],
+      "loadedChunks": 113,
+      "finalFrame": {
+        "drawCalls": 252,
+        "triangles": 158345
+      },
+      "unsettledFrames": 0,
+      "longTasks": 0,
+      "errors": 0,
+      "failedPrograms": 0,
+      "warnings": {
+        "count": 6,
+        "codes": [
+          "X3595"
+        ]
+      }
+    },
+    {
+      "report": "grass-candidate-2026-11-05T18-51-53-850Z-008-river-bushy-128.json",
+      "reportSha256": "4ff667f41bee5f0610361bd6df6f4247139d19c6ab06a3feebf3b8fc9b2d5b8f",
+      "variant": "candidate",
+      "scene": "river",
+      "viewDistance": 128,
+      "valid": true,
+      "frames": {
+        "count": 3367,
+        "meanMs": 8.906,
+        "medianMs": 7,
+        "p95Ms": 14.1,
+        "p99Ms": 14.6,
+        "maxMs": 22.1,
+        "averageFps": 112.288,
+        "above16_67ms": 14,
+        "above33_33ms": 0,
+        "above50ms": 0
+      },
+      "cpu": {
+        "count": 3368,
+        "meanMs": 8.073,
+        "medianMs": 8.2,
+        "p95Ms": 11.9,
+        "p99Ms": 13.7,
+        "maxMs": 17.7
+      },
+      "gpu": {
+        "count": 3368,
+        "meanMs": 8.375,
+        "medianMs": 7.938,
+        "p95Ms": 10.512,
+        "p99Ms": 10.707,
+        "maxMs": 12.46,
+        "valid": true,
+        "disjoint": 0,
+        "skipped": 0
+      },
+      "loadedGrassByDetail": [
+        1887,
+        7123,
+        11276
+      ],
+      "loadedChunks": 317,
+      "finalFrame": {
+        "drawCalls": 776,
+        "triangles": 1863273
+      },
+      "unsettledFrames": 0,
+      "longTasks": 0,
+      "errors": 0,
+      "failedPrograms": 0,
+      "warnings": {
+        "count": 6,
+        "codes": [
+          "X3595"
+        ]
+      }
+    }
+  ],
+  "pictures": [
+    {
+      "name": "river-before.png",
+      "source": "grass-baseline-2026-11-05T19-06-40-878Z-003-river-bushy.png",
+      "sha256": "883938957975c7812a869e175790fe691cf846bd97d6e87207fd69611b3bf1d0",
+      "width": 1904,
+      "height": 1041
+    },
+    {
+      "name": "river-after.png",
+      "source": "grass-candidate-2026-11-05T18-51-53-850Z-004-river-bushy.png",
+      "sha256": "11489813224417d3d853759d63649d82c5707abe0802ae22e5cd0897f0a4b07d",
+      "width": 1904,
+      "height": 1041
+    },
+    {
+      "name": "river-far-after.png",
+      "source": "grass-candidate-2026-11-05T18-51-53-850Z-009-river-bushy.png",
+      "sha256": "5935875fbc8ffd5b7974726801d21bf8ff8fec128b88720f9e2b6ad5cd51334c",
+      "width": 1904,
+      "height": 1041
+    },
+    {
+      "name": "close-after.png",
+      "source": "grass-candidate-2026-11-05T18-51-53-850Z-007-close-bushy.png",
+      "sha256": "406cf88223927219facf5783c15ea57817858846af627402fee9c663bc02ff04",
+      "width": 1904,
+      "height": 1041
+    },
+    {
+      "name": "dense-after.png",
+      "source": "grass-candidate-2026-11-05T18-51-53-850Z-006-dense-bushy.png",
+      "sha256": "934d582aade38b8628d7c91414aa2d4738798930cfc5c8616a9acee132d314be",
+      "width": 1904,
+      "height": 1041
+    }
+  ],
+  "limitations": [
+    "Fixed, loaded midday scenes; not a streaming, gameplay or mobile benchmark.",
+    "144 Hz VSync limits observed FPS near 144; this is not an uncapped throughput comparison.",
+    "One baseline process and one candidate process; two candidate river64 repeats. No independent thermal/order-controlled repetitions.",
+    "Denser cards increase overlapping textured coverage; that is a plausible reason for the dense-scene GPU increase, not an isolated causal measurement.",
+    "Early app.getGPUFeatureStatus was captured before WebGL initialization; the renderer and valid timer queries identify the actual NVIDIA GPU used.",
+    "Original capturePage PNGs are 1904x1041 crops; all measured WebGL drawing buffers are 1920x1080.",
+    "Source fingerprint hashes raw working-tree bytes exactly as the launcher; it is not a git blob or line-ending-normalized hash."
+  ]
+}

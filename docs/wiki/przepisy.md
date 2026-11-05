@@ -2,7 +2,7 @@
 
 > Ta strona jest generowana z kodu gry (`python tools/wiki.py`) - nie zmieniaj jej ręcznie, zmiany przepadną przy następnym generowaniu.
 
-Wersja gry **0.60.0** - 49 przepisów. Wytwarza się w ekwipunku (**E**): siatka 2 x 2 obok miejsc ekwipunku, wynik po prawej (klik - weź, Shift + klik - ile się da). Przycisk 📖 *Przepisy* otwiera księgę - klik na przepisie sam układa składniki. Przepisy *z kształtem* można przesuwać po siatce i odbijać w poziomie; przepisy *bez kształtu* - obojętne, gdzie leżą składniki. Z czatu: `/przepisy`, `/wytworz <przepis>`.
+Wersja gry **0.62.0** - 82 przepisów. Wytwarza się w ekwipunku (**E**): siatka 2 x 2 obok miejsc ekwipunku, wynik po prawej (klik - weź, Shift + klik - ile się da). Przycisk 📖 *Przepisy* otwiera księgę - klik na przepisie sam układa składniki. Przepisy *z kształtem* można przesuwać po siatce i odbijać w poziomie; przepisy *bez kształtu* - obojętne, gdzie leżą składniki. Z czatu: `/przepisy`, `/wytworz <przepis>`.
 
 
 ## Ziemia
@@ -208,6 +208,108 @@ Wersja gry **0.60.0** - 49 przepisów. Wytwarza się w ekwipunku (**E**): siatka
 
 ## Światło
 
+### Pochodnia x4
+
+<img src="przepisy/torch.png" alt="Pochodnia x4: 1 x Patyk + 1 x Żywica (obojętne gdzie)">
+
+1 x Patyk + 1 x Żywica (bez kształtu). Nazwa przepisu: `torch`. Żywicę zbierz PPM z pnia sosny. Pochodnię postaw na podłożu albo na ścianie.
+
+### Pochodnia biała
+
+<img src="przepisy/torch_white.png" alt="Pochodnia biała: 1 x pochodnia (dowolny kolor) + 1 x Barwnik biały (obojętne gdzie)">
+
+1 x pochodnia (dowolny kolor) + 1 x Barwnik biały (bez kształtu). Nazwa przepisu: `torch_white`. Zmienia końcówki płomienia i odcień światła. Postawioną pochodnię można też zabarwić PPM.
+
+### Pochodnia pomarańczowa
+
+<img src="przepisy/torch_orange.png" alt="Pochodnia pomarańczowa: 1 x pochodnia (dowolny kolor) + 1 x Barwnik pomarańczowy (obojętne gdzie)">
+
+1 x pochodnia (dowolny kolor) + 1 x Barwnik pomarańczowy (bez kształtu). Nazwa przepisu: `torch_orange`. Zmienia końcówki płomienia i odcień światła. Postawioną pochodnię można też zabarwić PPM.
+
+### Pochodnia purpurowa
+
+<img src="przepisy/torch_magenta.png" alt="Pochodnia purpurowa: 1 x pochodnia (dowolny kolor) + 1 x Barwnik purpurowy (obojętne gdzie)">
+
+1 x pochodnia (dowolny kolor) + 1 x Barwnik purpurowy (bez kształtu). Nazwa przepisu: `torch_magenta`. Zmienia końcówki płomienia i odcień światła. Postawioną pochodnię można też zabarwić PPM.
+
+### Pochodnia jasnoniebieska
+
+<img src="przepisy/torch_light_blue.png" alt="Pochodnia jasnoniebieska: 1 x pochodnia (dowolny kolor) + 1 x Barwnik jasnoniebieski (obojętne gdzie)">
+
+1 x pochodnia (dowolny kolor) + 1 x Barwnik jasnoniebieski (bez kształtu). Nazwa przepisu: `torch_light_blue`. Zmienia końcówki płomienia i odcień światła. Postawioną pochodnię można też zabarwić PPM.
+
+### Pochodnia żółta
+
+<img src="przepisy/torch_yellow.png" alt="Pochodnia żółta: 1 x pochodnia (dowolny kolor) + 1 x Barwnik żółty (obojętne gdzie)">
+
+1 x pochodnia (dowolny kolor) + 1 x Barwnik żółty (bez kształtu). Nazwa przepisu: `torch_yellow`. Zmienia końcówki płomienia i odcień światła. Postawioną pochodnię można też zabarwić PPM.
+
+### Pochodnia limonkowa
+
+<img src="przepisy/torch_lime.png" alt="Pochodnia limonkowa: 1 x pochodnia (dowolny kolor) + 1 x Barwnik limonkowy (obojętne gdzie)">
+
+1 x pochodnia (dowolny kolor) + 1 x Barwnik limonkowy (bez kształtu). Nazwa przepisu: `torch_lime`. Zmienia końcówki płomienia i odcień światła. Postawioną pochodnię można też zabarwić PPM.
+
+### Pochodnia różowa
+
+<img src="przepisy/torch_pink.png" alt="Pochodnia różowa: 1 x pochodnia (dowolny kolor) + 1 x Barwnik różowy (obojętne gdzie)">
+
+1 x pochodnia (dowolny kolor) + 1 x Barwnik różowy (bez kształtu). Nazwa przepisu: `torch_pink`. Zmienia końcówki płomienia i odcień światła. Postawioną pochodnię można też zabarwić PPM.
+
+### Pochodnia szara
+
+<img src="przepisy/torch_gray.png" alt="Pochodnia szara: 1 x pochodnia (dowolny kolor) + 1 x Barwnik szary (obojętne gdzie)">
+
+1 x pochodnia (dowolny kolor) + 1 x Barwnik szary (bez kształtu). Nazwa przepisu: `torch_gray`. Zmienia końcówki płomienia i odcień światła. Postawioną pochodnię można też zabarwić PPM.
+
+### Pochodnia jasnoszara
+
+<img src="przepisy/torch_light_gray.png" alt="Pochodnia jasnoszara: 1 x pochodnia (dowolny kolor) + 1 x Barwnik jasnoszary (obojętne gdzie)">
+
+1 x pochodnia (dowolny kolor) + 1 x Barwnik jasnoszary (bez kształtu). Nazwa przepisu: `torch_light_gray`. Zmienia końcówki płomienia i odcień światła. Postawioną pochodnię można też zabarwić PPM.
+
+### Pochodnia turkusowa
+
+<img src="przepisy/torch_cyan.png" alt="Pochodnia turkusowa: 1 x pochodnia (dowolny kolor) + 1 x Barwnik turkusowy (obojętne gdzie)">
+
+1 x pochodnia (dowolny kolor) + 1 x Barwnik turkusowy (bez kształtu). Nazwa przepisu: `torch_cyan`. Zmienia końcówki płomienia i odcień światła. Postawioną pochodnię można też zabarwić PPM.
+
+### Pochodnia fioletowa
+
+<img src="przepisy/torch_purple.png" alt="Pochodnia fioletowa: 1 x pochodnia (dowolny kolor) + 1 x Barwnik fioletowy (obojętne gdzie)">
+
+1 x pochodnia (dowolny kolor) + 1 x Barwnik fioletowy (bez kształtu). Nazwa przepisu: `torch_purple`. Zmienia końcówki płomienia i odcień światła. Postawioną pochodnię można też zabarwić PPM.
+
+### Pochodnia niebieska
+
+<img src="przepisy/torch_blue.png" alt="Pochodnia niebieska: 1 x pochodnia (dowolny kolor) + 1 x Barwnik niebieski (obojętne gdzie)">
+
+1 x pochodnia (dowolny kolor) + 1 x Barwnik niebieski (bez kształtu). Nazwa przepisu: `torch_blue`. Zmienia końcówki płomienia i odcień światła. Postawioną pochodnię można też zabarwić PPM.
+
+### Pochodnia brązowa
+
+<img src="przepisy/torch_brown.png" alt="Pochodnia brązowa: 1 x pochodnia (dowolny kolor) + 1 x Barwnik brązowy (obojętne gdzie)">
+
+1 x pochodnia (dowolny kolor) + 1 x Barwnik brązowy (bez kształtu). Nazwa przepisu: `torch_brown`. Zmienia końcówki płomienia i odcień światła. Postawioną pochodnię można też zabarwić PPM.
+
+### Pochodnia zielona
+
+<img src="przepisy/torch_green.png" alt="Pochodnia zielona: 1 x pochodnia (dowolny kolor) + 1 x Barwnik zielony (obojętne gdzie)">
+
+1 x pochodnia (dowolny kolor) + 1 x Barwnik zielony (bez kształtu). Nazwa przepisu: `torch_green`. Zmienia końcówki płomienia i odcień światła. Postawioną pochodnię można też zabarwić PPM.
+
+### Pochodnia czerwona
+
+<img src="przepisy/torch_red.png" alt="Pochodnia czerwona: 1 x pochodnia (dowolny kolor) + 1 x Barwnik czerwony (obojętne gdzie)">
+
+1 x pochodnia (dowolny kolor) + 1 x Barwnik czerwony (bez kształtu). Nazwa przepisu: `torch_red`. Zmienia końcówki płomienia i odcień światła. Postawioną pochodnię można też zabarwić PPM.
+
+### Pochodnia czarna
+
+<img src="przepisy/torch_black.png" alt="Pochodnia czarna: 1 x pochodnia (dowolny kolor) + 1 x Barwnik czarny (obojętne gdzie)">
+
+1 x pochodnia (dowolny kolor) + 1 x Barwnik czarny (bez kształtu). Nazwa przepisu: `torch_black`. Zmienia końcówki płomienia i odcień światła. Postawioną pochodnię można też zabarwić PPM.
+
 ### Lampa x2
 
 <img src="przepisy/lamp.png" alt="Lampa x2: 1 x Lepidolit + 1 x Żywica + 1 x Kora brzozowa (obojętne gdzie)">
@@ -298,6 +400,102 @@ Wersja gry **0.60.0** - 49 przepisów. Wytwarza się w ekwipunku (**E**): siatka
 
 2 x Patyk (bez kształtu). Nazwa przepisu: `fire_starter`. 6 polan + trawa; przytrzymaj PPM starterem przez 5 sekund.
 
+### Barwnik czerwony
+
+<img src="przepisy/dye_red.png" alt="Barwnik czerwony: 1 x coś czerwonego (mak, truskawki, papryczki chili, wiecha amarantusa, korzeń marzanny) (obojętne gdzie)">
+
+1 x coś czerwonego (mak, truskawki, papryczki chili, wiecha amarantusa, korzeń marzanny) (bez kształtu). Nazwa przepisu: `dye_red`. Barwnikiem kliknij PPM postawioną pochodnię albo połącz go z pochodnią w tej siatce.
+
+### Barwnik żółty
+
+<img src="przepisy/dye_yellow.png" alt="Barwnik żółty: 1 x Mniszek (obojętne gdzie)">
+
+1 x Mniszek (bez kształtu). Nazwa przepisu: `dye_yellow`. Barwnikiem kliknij PPM postawioną pochodnię albo połącz go z pochodnią w tej siatce.
+
+### Barwnik biały
+
+<img src="przepisy/dye_white.png" alt="Barwnik biały: 1 x Rumianek (obojętne gdzie)">
+
+1 x Rumianek (bez kształtu). Nazwa przepisu: `dye_white`. Barwnikiem kliknij PPM postawioną pochodnię albo połącz go z pochodnią w tej siatce.
+
+### Barwnik zielony
+
+<img src="przepisy/dye_green.png" alt="Barwnik zielony: 1 x coś zielonego (koniczyna, pokrzywa, paproć) (obojętne gdzie)">
+
+1 x coś zielonego (koniczyna, pokrzywa, paproć) (bez kształtu). Nazwa przepisu: `dye_green`. Barwnikiem kliknij PPM postawioną pochodnię albo połącz go z pochodnią w tej siatce.
+
+### Barwnik niebieski
+
+<img src="przepisy/dye_blue.png" alt="Barwnik niebieski: 1 x coś niebieskiego (chaber, borówki, liście indygowca) (obojętne gdzie)">
+
+1 x coś niebieskiego (chaber, borówki, liście indygowca) (bez kształtu). Nazwa przepisu: `dye_blue`. Barwnikiem kliknij PPM postawioną pochodnię albo połącz go z pochodnią w tej siatce.
+
+### Barwnik fioletowy
+
+<img src="przepisy/dye_purple.png" alt="Barwnik fioletowy: 1 x coś fioletowego (jeżyny, wrzos, krokus) (obojętne gdzie)">
+
+1 x coś fioletowego (jeżyny, wrzos, krokus) (bez kształtu). Nazwa przepisu: `dye_purple`. Barwnikiem kliknij PPM postawioną pochodnię albo połącz go z pochodnią w tej siatce.
+
+### Barwnik brązowy
+
+<img src="przepisy/dye_brown.png" alt="Barwnik brązowy: 1 x Żołądź (obojętne gdzie)">
+
+1 x Żołądź (bez kształtu). Nazwa przepisu: `dye_brown`. Barwnikiem kliknij PPM postawioną pochodnię albo połącz go z pochodnią w tej siatce.
+
+### Barwnik pomarańczowy x2
+
+<img src="przepisy/dye_orange.png" alt="Barwnik pomarańczowy x2: 1 x Barwnik czerwony + 1 x Barwnik żółty (obojętne gdzie)">
+
+1 x Barwnik czerwony + 1 x Barwnik żółty (bez kształtu). Nazwa przepisu: `dye_orange`. Mieszanie barwników.
+
+### Barwnik purpurowy x2
+
+<img src="przepisy/dye_magenta.png" alt="Barwnik purpurowy x2: 1 x Barwnik fioletowy + 1 x Barwnik różowy (obojętne gdzie)">
+
+1 x Barwnik fioletowy + 1 x Barwnik różowy (bez kształtu). Nazwa przepisu: `dye_magenta`. Mieszanie barwników.
+
+### Barwnik jasnoniebieski x2
+
+<img src="przepisy/dye_light_blue.png" alt="Barwnik jasnoniebieski x2: 1 x Barwnik niebieski + 1 x Barwnik biały (obojętne gdzie)">
+
+1 x Barwnik niebieski + 1 x Barwnik biały (bez kształtu). Nazwa przepisu: `dye_light_blue`. Mieszanie barwników.
+
+### Barwnik limonkowy x2
+
+<img src="przepisy/dye_lime.png" alt="Barwnik limonkowy x2: 1 x Barwnik zielony + 1 x Barwnik biały (obojętne gdzie)">
+
+1 x Barwnik zielony + 1 x Barwnik biały (bez kształtu). Nazwa przepisu: `dye_lime`. Mieszanie barwników.
+
+### Barwnik różowy x2
+
+<img src="przepisy/dye_pink.png" alt="Barwnik różowy x2: 1 x Barwnik czerwony + 1 x Barwnik biały (obojętne gdzie)">
+
+1 x Barwnik czerwony + 1 x Barwnik biały (bez kształtu). Nazwa przepisu: `dye_pink`. Mieszanie barwników.
+
+### Barwnik szary x2
+
+<img src="przepisy/dye_gray.png" alt="Barwnik szary x2: 1 x Barwnik czarny + 1 x Barwnik biały (obojętne gdzie)">
+
+1 x Barwnik czarny + 1 x Barwnik biały (bez kształtu). Nazwa przepisu: `dye_gray`. Mieszanie barwników.
+
+### Barwnik jasnoszary x2
+
+<img src="przepisy/dye_light_gray.png" alt="Barwnik jasnoszary x2: 1 x Barwnik szary + 1 x Barwnik biały (obojętne gdzie)">
+
+1 x Barwnik szary + 1 x Barwnik biały (bez kształtu). Nazwa przepisu: `dye_light_gray`. Mieszanie barwników.
+
+### Barwnik turkusowy x2
+
+<img src="przepisy/dye_cyan.png" alt="Barwnik turkusowy x2: 1 x Barwnik niebieski + 1 x Barwnik zielony (obojętne gdzie)">
+
+1 x Barwnik niebieski + 1 x Barwnik zielony (bez kształtu). Nazwa przepisu: `dye_cyan`. Mieszanie barwników.
+
+### Barwnik czarny x3
+
+<img src="przepisy/dye_black.png" alt="Barwnik czarny x3: 1 x Barwnik czerwony + 1 x Barwnik zielony + 1 x Barwnik niebieski (obojętne gdzie)">
+
+1 x Barwnik czerwony + 1 x Barwnik zielony + 1 x Barwnik niebieski (bez kształtu). Nazwa przepisu: `dye_black`. Mieszanie barwników.
+
 ### Patyk x4
 
 <img src="przepisy/stick.png" alt="Patyk x4: 2 x deski (dowolne) (ułożenie: P / P; P = deski (dowolne))">
@@ -327,6 +525,7 @@ Wersja gry **0.60.0** - 49 przepisów. Wytwarza się w ekwipunku (**E**): siatka
 
 Składnik z grupy to dowolna rzecz z listy (np. patyki z desek różnych drzew).
 
+- **pochodnia (dowolny kolor)**: Pochodnia, Pochodnia biała, Pochodnia pomarańczowa, Pochodnia purpurowa, Pochodnia jasnoniebieska, Pochodnia żółta, Pochodnia limonkowa, Pochodnia różowa, Pochodnia szara, Pochodnia jasnoszara, Pochodnia turkusowa, Pochodnia fioletowa, Pochodnia niebieska, Pochodnia brązowa, Pochodnia zielona, Pochodnia czerwona, Pochodnia czarna
 - **deski (dowolne)**: Deski świerkowe, Deski sosnowe, Deski bukowe, Deski lipowe, Deski dębowe, Deski brzozowe, Deski jabłoniowe, Deski olchowe, Deski wierzbowe
 - **skała (kamień, granit, wapień, piaskowiec, łupek, bazalt)**: Kamień, Granit, Wapień, Piaskowiec, Łupek, Bazalt
 - **szyszka (świerka albo sosny)**: Szyszka świerka, Szyszka sosny

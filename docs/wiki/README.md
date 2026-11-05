@@ -81,6 +81,15 @@ Zmiana w trakcie gry: `/tryb przygoda` albo `/tryb kreatywny`.
   i **meteoryty**, które robią kratery.
 - **Daleki teren** - góry widać aż po horyzont.
 
+## Eksperymentalna trawa
+
+W **Ustawienia → Eksperymenty → Trawa kępiasta** można włączyć gęsty
+model trawy według koncepcji Kamila. Od 0.62.0 kępki mają osiem warstw
+z autorską teksturą 16 × 16, dwie wysokości i delikatny wiatr.
+Dalsze kępki zachowują tę samą teksturę, ale mają mniej warstw.
+Opcja jest domyślnie wyłączona, działa we wszystkich światach i nie
+zmienia bloków ani zapisów. Wyłączenie przywraca zwykłą trawę.
+
 ## Rozgrywka
 
 - **Kopanie** - blok pęka w 10 etapach, lecą odłamki; siekiera

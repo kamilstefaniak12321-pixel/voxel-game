@@ -11,6 +11,22 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 0.62.0 - Gęsta trawa według autorskiego modelu
+
+Nowy wygląd eksperymentalnej trawy — PR w przygotowaniu.
+
+- **Ustawienia → Eksperymenty → Trawa kępiasta** korzysta z modelu
+  Kamila: osiem krzyżujących się warstw i oryginalna tekstura 16 × 16.
+- Niska i wysoka trawa zachowują różne wysokości, losowy obrót i
+  przesunięcie. Delikatny wiatr porusza górą kępek, pozostawiając korzenie
+  przy ziemi; cienie korzystają z tego samego ruchu i prześwitów.
+- Dalsze kępki używają czterech, a potem dwóch warstw tej samej tekstury.
+  Wspólna geometria chunków nie wymaga osobnego rysowania każdej kępki.
+- Opcja pozostaje domyślnie wyłączona. Podmiana nie zmienia terenu,
+  roślinnych bloków ani zapisów świata; wyłączenie przywraca zwykłą trawę.
+
+Wersja przygotowana do wydania na Windows i Android po scaleniu PR.
+
 ## 0.61.0 - Animowane pochodnie i barwniki
 
 Pochodnia Reactive Torch i roślinne pigmenty — PR #95.

@@ -15,6 +15,7 @@ import { atmosphericLightToBrightness } from './LightPolicy.js';
 import { SURFACE_PROFILES } from './SurfaceProfiles.js';
 import { getRiverPlantFaces, plantRandom, plantTransform, riverPlantTransform } from './RiverPlantGeometry.js';
 import { getBushyGrassFaces } from './BushyGrassGeometry.js';
+import { BUSHY_GRASS_TEXTURE } from '../blocks/bushyGrass.js';
 import { getAtlasUV } from './TextureAtlas.js';
 import { getPlantMeshTemplate, lightPlantMeshTemplate } from './PlantMeshTemplate.js';
 const plantFaceUvCache = new Map();
@@ -778,7 +779,7 @@ function reachMask(cell, y) {
 // Their cached templates carry actual surface normals and a linear albedo tint.
 function addRiverPlants(plants, faceCount, baseX, baseZ, grassDetail = null, overrides = null, animationRanges = null) {
     const grass = grassDetail !== null;
-    const grassUv = grass ? getAtlasUV('snow') : null;
+    const grassUv = grass ? getAtlasUV(BUSHY_GRASS_TEXTURE) : null;
     for (let k = 0; k < plants.length; k += 4) {
         const lx = plants[k], y = plants[k + 1], lz = plants[k + 2];
         const data = grass ? { kind: 'grass', uv: grassUv } : blockRenderData[plants[k + 3]].riverPlant;
@@ -1393,7 +1394,7 @@ export function prepareChunkPlantGeometry(chunk, world, deadline) {
                 : data.tuft?.wide ? reachMask(cell, y) : 0;
         const faces = grass ? getBushyGrassFaces(id === TALL_GRASS_ID, transform.variant, grassDetail)
             : getRiverPlantFaces(data.kind, transform.variant, data.waterlogged, data.tuft, mask);
-        getPlantMeshTemplate(faces, grass ? getAtlasUV('snow') : data.uv, transform, plantFaceUV);
+        getPlantMeshTemplate(faces, grass ? getAtlasUV(BUSHY_GRASS_TEXTURE) : data.uv, transform, plantFaceUV);
         if (performance.now() >= deadline) {
             plantPreparation.set(chunk, cursor + 1);
             return false;
@@ -1704,7 +1705,10 @@ export function buildChunkGeometry(chunk, world) {
 
     geometry.boundingSphere = new THREE.Sphere(
         new THREE.Vector3(S / 2, height / 2, S / 2),
-        Math.sqrt((S / 2) * (S / 2) * 2 + (height / 2) * (height / 2)) + Math.max(riverPlants.length ? 1.2 : 0, spriteReach)
+        Math.sqrt((S / 2) * (S / 2) * 2 + (height / 2) * (height / 2))
+            // Full-width grass cards can cross the chunk edge with placement
+            // jitter (1/16) plus shared wind (up to .09/.055 on X/Z).
+            + Math.max(riverPlants.length ? 1.2 : 0, spriteReach, bushyGrass.length ? .25 : 0)
     );
 
     geometry.userData.bushyGrassDetail = grassDetail;

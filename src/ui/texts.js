@@ -133,7 +133,7 @@ export const TEXTS = {
     advancedNote: 'Cienie słońca „Dalekie” sięgają ok. 800 bloków. Zmiana któregoś z tych ustawień ustawia jakość grafiki na „Własna”.',
     experimentsIntro: 'Funkcje, których nie jesteśmy jeszcze pewni - mogą się zmienić albo zniknąć w następnych wersjach. Działają we wszystkich światach i można je wyłączyć w każdej chwili.',
     experimentNotes: {
-        bushyGrass: 'Przestrzenne, pikselowe kępki zamiast zwykłej trawy (więcej ścian do narysowania).',
+        bushyGrass: 'Gęste kępki z pikselową teksturą i delikatnym wiatrem. Zastępują zwykłą trawę; dalsze kępki mają mniej warstw.',
         bounceLight: 'Odbicie dla poprzedniej palety. W palecie Naturalnej użyj Obraz → Zaawansowane → Odbicia otoczenia.',
         lightingModel: 'Dotyczy palety „Poprzednia (0.56.1)” w Obraz → Zaawansowane. Atmosferyczne: kolor i siła słońca zależą od drogi przez powietrze. Klasyczne: dawne, prostsze światło. Paleta Naturalna korzysta z nowego systemu.'
     },

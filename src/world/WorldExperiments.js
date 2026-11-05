@@ -1,5 +1,5 @@
-// Experiments belong to a world, never to the global graphics settings.
-// Missing or malformed values keep the established appearance of old saves.
+// Runtime world options come from global Settings (they are not saved in worlds).
+// Missing or malformed values keep the ordinary grass appearance.
 export function normalizeWorldExperiments(value) {
     return { bushyGrass: value?.bushyGrass === true };
 }

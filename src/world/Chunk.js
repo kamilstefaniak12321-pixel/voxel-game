@@ -9,6 +9,7 @@ import {
     isGrowingId,
     TRUNCATED_PLANT_IDS
 } from '../blocks/BlockRegistry.js';
+import { isTorchId } from '../blocks/torches.js';
 
 // ------------------------------------------------------------
 // Chunk = kolumna CHUNK_SIZE x CHUNK_HEIGHT x CHUNK_SIZE bloków.
@@ -127,6 +128,11 @@ export class Chunk {
 
         this.growing = new Set();
 
+        // Indeks pochodni: renderer odwiedza tylko te komórki, nie całą
+        // tablicę terenu. Zmiana klatki płomienia nie dotyka tego indeksu.
+        this.torches = new Set();
+        this.torchRevision = 0;
+
     }
 
 
@@ -168,16 +174,19 @@ export class Chunk {
 
 
         let count = 0;
+        this.torches.clear();
 
         for (let i = 0; i < this.blocks.length; i++) {
 
             if (this.blocks[i] !== AIR_ID) {
                 count++;
             }
+            if (isTorchId(this.blocks[i])) this.torches.add(i);
 
         }
 
         this.blockCount = count;
+        this.torchRevision++;
 
 
         // Najwyższy niepusty blok.
@@ -306,6 +315,12 @@ export class Chunk {
 
 
         this.blocks[i] = id;
+
+        if (isTorchId(oldId) || isTorchId(id)) {
+            if (isTorchId(id)) this.torches.add(i);
+            else this.torches.delete(i);
+            this.torchRevision++;
+        }
 
 
         if (isGrowingId(id)) {

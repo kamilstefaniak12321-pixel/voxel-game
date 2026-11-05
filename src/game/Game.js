@@ -1,6 +1,8 @@
 import * as THREE from 'three';
 
 import { Campfires } from './Campfires.js';
+import { dyeTorch } from './TorchInteraction.js';
+import { TorchRenderer } from '../rendering/TorchRenderer.js';
 import { World } from '../world/World.js';
 import { Player } from '../player/Player.js';
 import { VoxelRaycast } from '../interaction/VoxelRaycast.js';
@@ -489,6 +491,8 @@ export class Game {
 
 
         this.campfires = new Campfires(this, worldInfo.campfires);
+        this.torches = new TorchRenderer(this);
+        this.torches.setLowDetail(this.settings.get('potato'));
 
         // Autozapis.
 
@@ -642,8 +646,10 @@ export class Game {
 
         const fireInteraction = placing && !breakHeld && placePressed &&
             this.campfires.interact(this.currentHit, this.selectedBlock);
+        const torchInteraction = !fireInteraction && placing && !breakHeld && placePressed &&
+            dyeTorch(this, this.currentHit, this.selectedBlock);
 
-        if (fireInteraction) {
+        if (fireInteraction || torchInteraction) {
             this.currentHit = this.raycast.castFromCamera(this.camera);
         }
         else if (placing && stripping) {
@@ -754,6 +760,7 @@ export class Game {
 
 
         this.campfires.update(dt, input.isMouseDown(2) && !breakHeld && !breakPressed);
+        this.torches.update(dt);
 
         // Autozapis co jakiś czas.
 
@@ -1274,6 +1281,7 @@ export class Game {
             updateBounceLightingState(this.bounceLighting, this.settings, this.sky,
                 this.renderer.capabilities.isWebGL2));
         this.campfires.renderer.updateBounce();
+        this.torches.updateBounce();
 
     }
 
@@ -1739,7 +1747,7 @@ export class Game {
 
             this.model.setStyle(settings.get('jointStyle'));
 
-            setPotatoDefine([...this.model.materials, this.model.heldMaterial, this.model.heldPlantMaterial], potato);
+            this.model.setLowDetail(potato);
 
         }
 
@@ -1753,6 +1761,8 @@ export class Game {
             this.hand.setOverlay(settings.get('skinOverlay'));
 
         }
+
+        this.torches?.setLowDetail(potato);
 
 
         // Cienie w kątach są zapisane w meshach chunków - po zmianie
@@ -1797,6 +1807,7 @@ export class Game {
         const bounce = this.bounce.sample(position.x, position.y + 1.2, position.z);
         modelLight.uModelBounce.value.set(bounce[0], bounce[1], bounce[2]);
         this.campfires?.renderer.updateBounce();
+        this.torches?.updateBounce();
 
         // Po starcie: nowy kod shaderów przygotuj przy zmianie ustawień.
         // Nie odraczaj go do napotkania wody i nie zatrzymuj samych renderów
@@ -2555,6 +2566,7 @@ export class Game {
 
         this.dynamicLight.dispose();
         this.campfires.dispose();
+        this.torches.dispose();
 
         this.farTerrain.dispose();
 

@@ -17,7 +17,7 @@ export class ChunkGenerationData extends TerrainGenerationCache {
         return {
             cx, cz, blocks: chunk.blocks, flow: chunk.flow, tint: chunk.tint, biomes: chunk.biomes,
             blockCount: chunk.blockCount, maxY: chunk.maxY,
-            solidBelow: chunk.solidBelow, growing: [...chunk.growing],
+            solidBelow: chunk.solidBelow, growing: [...chunk.growing], torches: [...chunk.torches],
             modified: loaded, invalidSaved: saved !== undefined && !loaded,
             workerMs: performance.now() - started,
             resets: this.resets, cache: generationCacheStats(this.generator)

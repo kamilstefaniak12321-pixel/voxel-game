@@ -11,6 +11,23 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 0.61.0 - Animowane pochodnie i barwniki
+
+Pochodnia Reactive Torch i roślinne pigmenty — PR #95.
+
+- Podstawowa pochodnia przeniesiona z Reactive Torch: oryginalne tekstury
+  20 klatek, płynne przejścia i dwusekundowa pętla, także w dłoni.
+- 16 barwników z kwiatów, owoców, zielonych roślin i mieszania pigmentów.
+  Barwnikiem można kliknąć postawioną pochodnię albo zabarwić ją w siatce
+  wytwarzania; końcówki płomienia, iskry i światło zmieniają kolor.
+- Patyk i żywica dają 4 pochodnie. Można je postawić na podłożu lub
+  czterech ścianach; kolor i mocowanie pozostają w zapisie świata.
+- Małe iskry i dym, osobna animacja GPU oraz indeks pochodni w chunkach:
+  klatki płomienia nie przebudowują terenu ani oświetlenia.
+
+Wersja przygotowana do wydania na Windows i Android po scaleniu PR.
+[Przepisy i opis działania](docs/pochodnie.md).
+
 ## 0.60.0 - Płynniejsza eksploracja i roślinność
 
 Aktualizacja wydajności przy zachowaniu wyglądu świata — PR #94.

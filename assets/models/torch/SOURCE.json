@@ -1,0 +1,168 @@
+{
+  "project": "Reactive Torch",
+  "author": "ktulman8",
+  "license": "MIT",
+  "archive": "reactive-torch-main (1).zip",
+  "frameSize": [
+    16,
+    16
+  ],
+  "frames": 20,
+  "frameTimeSeconds": 0.1,
+  "interpolate": true,
+  "textures": [
+    {
+      "file": "torch.png",
+      "source": "common/src/main/resources/assets/minecraft/textures/block/torch.png",
+      "sha256": "daf029ecfff744230ce4455222c2c7a46072721bd11e55258854a792557f4afa",
+      "size": [
+        16,
+        320
+      ]
+    },
+    {
+      "file": "torch_black.png",
+      "source": "common/src/main/resources/assets/reactive_torch/textures/block/tinted/torch_black_tips.png",
+      "sha256": "5a4fc7c18c8aaa44755f916ef0fc3940314d4f81013269400890a87782b2281d",
+      "size": [
+        16,
+        320
+      ]
+    },
+    {
+      "file": "torch_blue.png",
+      "source": "common/src/main/resources/assets/reactive_torch/textures/block/tinted/torch_blue_tips.png",
+      "sha256": "2cb72ed5e1b6c1aca3002ea84a6221eb0a28bdf37bbcd5d789e68b167f623e8f",
+      "size": [
+        16,
+        320
+      ]
+    },
+    {
+      "file": "torch_brown.png",
+      "source": "common/src/main/resources/assets/reactive_torch/textures/block/tinted/torch_brown_tips.png",
+      "sha256": "0d71cb9adaffe96c0e42e969376811504c14ea8a4dbaca5b7b60647bf4f4f303",
+      "size": [
+        16,
+        320
+      ]
+    },
+    {
+      "file": "torch_cyan.png",
+      "source": "common/src/main/resources/assets/reactive_torch/textures/block/tinted/torch_cyan_tips.png",
+      "sha256": "41f12ca3a4ddec7495a30d6773662c6d7f10cf9cc192ca2ccfab9a215b05fe24",
+      "size": [
+        16,
+        320
+      ]
+    },
+    {
+      "file": "torch_gray.png",
+      "source": "common/src/main/resources/assets/reactive_torch/textures/block/tinted/torch_gray_tips.png",
+      "sha256": "91f08a34b64d34d4e89ba97d5d34f3a438402c7473f65d26f9c76b44759e0c32",
+      "size": [
+        16,
+        320
+      ]
+    },
+    {
+      "file": "torch_green.png",
+      "source": "common/src/main/resources/assets/reactive_torch/textures/block/tinted/torch_green_tips.png",
+      "sha256": "fb647ba35f74320ace42751e4bbcdc76457b272095b9ba65ae46a3d4a705a4f5",
+      "size": [
+        16,
+        320
+      ]
+    },
+    {
+      "file": "torch_light_blue.png",
+      "source": "common/src/main/resources/assets/reactive_torch/textures/block/tinted/torch_light_blue_tips.png",
+      "sha256": "822b76f6463e7ebf0ed3877ecc1f8bbaed6e5cce7f4a7632d59151a299dd1150",
+      "size": [
+        16,
+        320
+      ]
+    },
+    {
+      "file": "torch_light_gray.png",
+      "source": "common/src/main/resources/assets/reactive_torch/textures/block/tinted/torch_light_gray_tips.png",
+      "sha256": "ff42cc4d8437aa0aa129fe7aa8afb2aba329e44120a464dff62ca570345c4b6f",
+      "size": [
+        16,
+        320
+      ]
+    },
+    {
+      "file": "torch_lime.png",
+      "source": "common/src/main/resources/assets/reactive_torch/textures/block/tinted/torch_lime_tips.png",
+      "sha256": "5bdd3470a20691b2d48f8b2db4782e64d9b84ed732c69304f9b14ba187e7c63e",
+      "size": [
+        16,
+        320
+      ]
+    },
+    {
+      "file": "torch_magenta.png",
+      "source": "common/src/main/resources/assets/reactive_torch/textures/block/tinted/torch_magenta_tips.png",
+      "sha256": "17a92615fa7850dc923eadf32885998d70205e79e8999e49f7c287997748c86f",
+      "size": [
+        16,
+        320
+      ]
+    },
+    {
+      "file": "torch_orange.png",
+      "source": "common/src/main/resources/assets/reactive_torch/textures/block/tinted/torch_orange_tips.png",
+      "sha256": "081a2e9fd2f01417ee230b1c30314433131a93f5ee10f5ba710d32dbdae4e7a3",
+      "size": [
+        16,
+        320
+      ]
+    },
+    {
+      "file": "torch_pink.png",
+      "source": "common/src/main/resources/assets/reactive_torch/textures/block/tinted/torch_pink_tips.png",
+      "sha256": "2c18354158ac65eee9acfbc5662a30bf6b7ac3af30cf39f4d7aff567664419a1",
+      "size": [
+        16,
+        320
+      ]
+    },
+    {
+      "file": "torch_purple.png",
+      "source": "common/src/main/resources/assets/reactive_torch/textures/block/tinted/torch_purple_tips.png",
+      "sha256": "3c1712b244e88ba70c73dde3b3962a702332806124998b5d9eea829e7dd7610e",
+      "size": [
+        16,
+        320
+      ]
+    },
+    {
+      "file": "torch_red.png",
+      "source": "common/src/main/resources/assets/reactive_torch/textures/block/tinted/torch_red_tips.png",
+      "sha256": "114730861439c534dbc958b3a9176ca36d9bfbba1341a267c08e378c96dc4e46",
+      "size": [
+        16,
+        320
+      ]
+    },
+    {
+      "file": "torch_white.png",
+      "source": "common/src/main/resources/assets/reactive_torch/textures/block/tinted/torch_white_tips.png",
+      "sha256": "a08d90fcb798f36051ef2faaa2427ce830f169e78f04f1d4e860f6c1db42502b",
+      "size": [
+        16,
+        320
+      ]
+    },
+    {
+      "file": "torch_yellow.png",
+      "source": "common/src/main/resources/assets/reactive_torch/textures/block/tinted/torch_yellow_tips.png",
+      "sha256": "4de385a932ca2c3fc68a4aa4aa1d971a7ff2ad2a2830bc858c1c2ca92c77a242",
+      "size": [
+        16,
+        320
+      ]
+    }
+  ]
+}

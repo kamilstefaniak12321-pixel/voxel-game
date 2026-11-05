@@ -9,6 +9,8 @@ import { setPotatoDefine } from '../rendering/BlockRenderData.js';
 import { VIEW_BOB_STEPS } from '../config.js';
 import { skinTexture } from './skin.js';
 import { buildArmGeometry, buildBlockGeometry } from './PlayerModel.js';
+import { getTorchInfo } from '../blocks/torches.js';
+import { createTorchModel, disposeTorchModel } from '../rendering/TorchMaterial.js';
 
 // ------------------------------------------------------------
 // RĘKA W WIDOKU Z OCZU
@@ -70,7 +72,10 @@ export const POSES = {
     fruit: { position: [0.48, -0.3, -0.78], rotation: [0.2, -0.45, 0.12], scale: 0.38 },
 
     // Roślina: dwie skrzyżowane płaszczyzny.
-    plant: { position: [0.55, -0.34, -0.8], rotation: [0.08, -0.4, 0.12], scale: 0.4 }
+    plant: { position: [0.55, -0.34, -0.8], rotation: [0.08, -0.4, 0.12], scale: 0.4 },
+
+    // Chwyt za dolną część trzonka; płomień pozostaje nad dłonią.
+    torch: { position: [0.43, -0.4, -0.75], rotation: [-0.12, -0.25, -0.12], scale: 0.75 }
 
 };
 
@@ -125,6 +130,8 @@ export class FirstPersonHand {
         this.held = new THREE.Mesh(new THREE.BufferGeometry(), this.heldMaterial);
 
         this.root.add(this.held);
+        this.torch = null;
+        this.lowDetail = false;
 
 
         this.type = undefined;
@@ -200,6 +207,11 @@ export class FirstPersonHand {
 
         this.held.geometry.dispose();
 
+        if (this.torch) {
+            disposeTorchModel(this.torch);
+            this.torch = null;
+        }
+
         const block = type && !isItemType(type) ? getBlockDefinition(type) : null;
 
         const model = block?.model ?? 'cube';
@@ -216,6 +228,17 @@ export class FirstPersonHand {
 
             return;
 
+        }
+
+        const torch = getTorchInfo(type);
+        if (torch) {
+            this.held.geometry = new THREE.BufferGeometry();
+            this.held.visible = this.arm.visible = false;
+            this.torch = createTorchModel(torch.colorKey, 'down');
+            this.root.add(this.torch);
+            this.pose = POSES.torch;
+            this.setLowDetail(this.lowDetail);
+            return;
         }
 
         this.held.geometry = buildBlockGeometry(type);
@@ -455,6 +478,11 @@ export class FirstPersonHand {
 
         }
 
+        if (this.torch) {
+            this.torch.rotation.set(...pose.rotation);
+            this.torch.scale.setScalar(pose.scale);
+        }
+
     }
 
 
@@ -498,12 +526,22 @@ export class FirstPersonHand {
 
     setLowDetail(on) {
 
-        setPotatoDefine([...this.armMaterials, this.heldMaterial, this.heldCutoutMaterial], on);
+        this.lowDetail = Boolean(on);
+        const materials = [...this.armMaterials, this.heldMaterial, this.heldCutoutMaterial];
+        this.torch?.traverse(object => {
+            if (object.isMesh) materials.push(...(Array.isArray(object.material) ? object.material : [object.material]));
+        });
+        setPotatoDefine(materials, this.lowDetail);
 
     }
 
 
     dispose() {
+
+        if (this.torch) {
+            disposeTorchModel(this.torch);
+            this.torch = null;
+        }
 
         this.arm.geometry.dispose();
 

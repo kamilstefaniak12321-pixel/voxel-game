@@ -2,6 +2,7 @@ import { BLOCK_TYPES } from '../blocks/BlockRegistry.js';
 import { TREE_NAMES, TREE_SPECIES } from '../blocks/trees.js';
 import { TREE_PACKS, TREE_PACK_ERRORS } from '../blocks/treePacks.js';
 import { PLANT_PACKS } from '../blocks/plantPacks.js';
+import { TORCH_VARIANTS } from '../blocks/torches.js';
 import { itemExists } from '../items/ItemRegistry.js';
 import { STACK_SIZE } from '../game/Inventory.js';
 
@@ -57,6 +58,12 @@ const PACK_LITTER = TREE_PACKS
 // label - jak grupa nazywa się w księdze przepisów, /przepisy i wiki.
 
 export const GROUPS = {
+
+    torches: {
+        label: 'pochodnia (dowolny kolor)',
+        icon: 'torch',
+        types: TORCH_VARIANTS.map(variant => variant.type)
+    },
 
     planks: {
         label: 'deski (dowolne)',
@@ -148,6 +155,33 @@ export const RECIPES = [
         note: 'Siekiera zostaje. Opał: PPM na ziemię, potem dokładaj do 6 polan.' })),
     { id: 'fire_starter', result: ['fire_starter', 1], ingredients: ['stick', 'stick'],
         note: '6 polan + trawa; przytrzymaj PPM starterem przez 5 sekund.' },
+
+    // Barwniki z roślin: paczki kwiatów/owoców przypisane do istniejących
+    // grup kolorów także stają się źródłem pigmentu.
+    ...[
+        ['red', '#red'], ['yellow', 'dandelion'], ['white', 'chamomile'],
+        ['green', '#green'], ['blue', '#blue'], ['purple', '#purple'], ['brown', 'acorn']
+    ].map(([color, source]) => ({
+        id: `dye_${color}`, result: [`dye_${color}`, 1], ingredients: [source],
+        note: 'Barwnikiem kliknij PPM postawioną pochodnię albo połącz go z pochodnią w tej siatce.'
+    })),
+    ...[
+        ['orange', 'red', 'yellow'], ['magenta', 'purple', 'pink'],
+        ['light_blue', 'blue', 'white'], ['lime', 'green', 'white'],
+        ['pink', 'red', 'white'], ['gray', 'black', 'white'],
+        ['light_gray', 'gray', 'white'], ['cyan', 'blue', 'green'],
+        ['black', 'red', 'green', 'blue']
+    ].map(([color, ...ingredients]) => ({
+        id: `dye_${color}`, result: [`dye_${color}`, ingredients.length],
+        ingredients: ingredients.map(key => `dye_${key}`),
+        note: 'Mieszanie barwników.'
+    })),
+    { id: 'torch', result: ['torch', 4], ingredients: ['stick', 'resin'],
+        note: 'Żywicę zbierz PPM z pnia sosny. Pochodnię postaw na podłożu albo na ścianie.' },
+    ...TORCH_VARIANTS.filter(variant => variant.key !== 'plain').map(variant => ({
+        id: variant.type, result: [variant.type, 1], ingredients: ['#torches', `dye_${variant.key}`],
+        note: 'Zmienia końcówki płomienia i odcień światła. Postawioną pochodnię można też zabarwić PPM.'
+    })),
 
     // DREWNO: pień -> 4 deski tego samego drzewa (także okorowany pień).
 

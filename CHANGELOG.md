@@ -13,7 +13,7 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ## 0.62.0 - Gęsta trawa według autorskiego modelu
 
-Nowy wygląd eksperymentalnej trawy — PR w przygotowaniu.
+Nowy wygląd eksperymentalnej trawy — PR #96.
 
 - **Ustawienia → Eksperymenty → Trawa kępiasta** korzysta z modelu
   Kamila: osiem krzyżujących się warstw i oryginalna tekstura 16 × 16.

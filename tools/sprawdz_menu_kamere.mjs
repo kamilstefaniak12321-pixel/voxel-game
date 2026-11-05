@@ -442,6 +442,7 @@ const resourceSource = `
         stats(){return {enabled:!!this.enabled,pendingJobs:0};}
     }
     export const usesSolarAtmosphere=()=>true, lightToBrightness=x=>x, atmosphericLightToBrightness=x=>x;
+    export const updateAerialPerspective=()=>{}; // Stan atmosfery ma osobne testy integracyjne.
     export const setAmbientOcclusion=()=>{},setFastLeaves=()=>{},setPotatoDefine=()=>{},setLeafMaterialFast=()=>{},setShadowDefine=()=>{},setFarTerrainShadows=()=>{};
     export const blockMaterial={},plantMaterial={},waterMaterial={},leafMaterial={};
     export const skyUniforms={uFogBrightness:{value:1}},shadowUniforms={uSunShadowInfo:{value:{w:0}}};

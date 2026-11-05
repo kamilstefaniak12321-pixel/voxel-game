@@ -65,7 +65,8 @@ const modelLight = { uModelBounce: { value: new THREE.Vector3() },
 globalThis.materialSettingsFixture = {
     modelLight, viewUniforms: { uBrightness: { value: 1 } },
     setPotatoDefine() {}, setShadowDefine() {}, setFarTerrainShadows() {},
-    setAmbientOcclusion() {}, setFastLeaves() {}, setLeafMaterialFast() {}
+    setAmbientOcclusion() {}, setFastLeaves() {}, setLeafMaterialFast() {},
+    updateAerialPerspective() {} // Osobny kontrakt stanu atmosfery: sprawdz_atmosfere.mjs.
 };
 const retained = new Set(['three', '../config.js', '../rendering/MaterialLighting.js',
     '../rendering/LightingDiagnostics.js', '../sky/SolarAtmosphere.js']);

@@ -1565,6 +1565,7 @@ const SETTING_WORDS = {
     'model-swiatla': 'lightingModel',
     odbicia: 'surfaceBounce',
     'swiatlo-materialow': 'lightingMaterials',
+    atmosfera: 'atmosphereLook',
     'przeswiecanie-lisci': 'leafTransmission',
     'sila-odbicia': 'bounceStrength',
     'nasycenie-odbicia': 'bounceSaturation',

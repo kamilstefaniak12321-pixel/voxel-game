@@ -41,7 +41,8 @@ import {
 
 import {
     skyUniforms,
-    SKY_COLOR_GLSL
+    SKY_COLOR_GLSL,
+    AERIAL_SKY_GLSL
 } from '../sky/skyShader.js';
 
 
@@ -253,7 +254,9 @@ blockMaterial.onBeforeCompile = (shader, renderer) => {
                 #ifdef POTATO
                     varying vec3 vFogSky;
                     uniform float uFogBrightness;
+                    uniform float uAerialPerspective;
                     ${SKY_COLOR_GLSL}
+                    ${AERIAL_SKY_GLSL}
                 #endif`
             )
             .replace(
@@ -277,7 +280,7 @@ blockMaterial.onBeforeCompile = (shader, renderer) => {
                     : tint.a < 0.75 ? vec4(tint.rgb, 1.0) : vec4(1.0, 1.0, 1.0, 0.0);
 
                 #ifdef POTATO
-                    vFogSky = skyColor(normalize(vSkyDirection)) * uFogBrightness;
+                    vFogSky = atmosphereFogColor(vSkyDirection, uAerialPerspective, uFogBrightness);
                 #endif`
             );
 
@@ -295,6 +298,7 @@ blockMaterial.onBeforeCompile = (shader, renderer) => {
                 uniform vec3 uNightTint;
                 uniform sampler2D uAtlasAverage;
                 ${SKY_COLOR_GLSL}
+                ${AERIAL_SKY_GLSL}
                 ${VIEW_GLSL}
                 ${SURFACE_LIGHTING_GLSL}
 
@@ -302,7 +306,7 @@ blockMaterial.onBeforeCompile = (shader, renderer) => {
                     varying vec3 vFogSky;
                     #define FOG_SKY vFogSky
                 #else
-                    #define FOG_SKY (skyColor(normalize(vSkyDirection)) * uFogBrightness)
+                    #define FOG_SKY atmosphereFogColor(vSkyDirection, uAerialPerspective, uFogBrightness)
                 #endif`
             )
             .replace(
@@ -316,19 +320,13 @@ blockMaterial.onBeforeCompile = (shader, renderer) => {
                         gl_FragColor.rgb = mix(gl_FragColor.rgb, linearToOutputTexel(vec4(uUnderwaterColor, 1.0)).rgb, waterFog);
 
                     }
-                    else if (uFarEnabled > 0.5) {
-
-                        // Z dalekim terenem: ta sama mgiełka co na nim
-                        // (rośnie z odległością), bez znikania bloków.
-
-                        float haze = farHaze(vSkyDirection);
-                        vec3 hazeSky = FOG_SKY;
-                        gl_FragColor.rgb = mix(gl_FragColor.rgb, linearToOutputTexel(vec4(hazeSky, 1.0)).rgb, haze);
-
-                    }
                     else {
 
-                        float fogFactor = smoothstep(fogNear, fogFar, vFogDepth);
+                        // Jeden wspólny callsite atmosfery także w dużym
+                        // shaderze wody. ANGLE rozwija te funkcje inline.
+                        float legacyFog = uFarEnabled > 0.5 ? farHaze(vSkyDirection)
+                            : smoothstep(fogNear, fogFar, vFogDepth);
+                        float fogFactor = atmosphereHaze(vSkyDirection, blockSky, legacyFog);
                         if (fogFactor > 0.0) {
                             vec3 fogSky = FOG_SKY;
                             gl_FragColor.rgb = mix(gl_FragColor.rgb, linearToOutputTexel(vec4(fogSky, 1.0)).rgb, fogFactor);

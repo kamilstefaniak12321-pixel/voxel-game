@@ -19,7 +19,8 @@ import {
 
 import {
     skyUniforms,
-    SKY_COLOR_GLSL
+    SKY_COLOR_GLSL,
+    AERIAL_SKY_GLSL
 } from '../sky/skyShader.js';
 
 import {
@@ -312,7 +313,9 @@ export function createFarTerrainMaterial(level = 0) {
                 #ifdef POTATO
                     varying vec3 vHazeSky;
                     uniform float uFogBrightness;
+                    uniform float uAerialPerspective;
                     ${SKY_COLOR_GLSL}
+                    ${AERIAL_SKY_GLSL}
                 #endif`
             )
             .replace(
@@ -449,7 +452,7 @@ export function createFarTerrainMaterial(level = 0) {
                 vFarWorld = (modelMatrix * vec4(transformed, 1.0)).xyz;
 
                 #ifdef POTATO
-                    vHazeSky = skyColor(normalize(vFarWorld - cameraPosition)) * uFogBrightness;
+                    vHazeSky = atmosphereFogColor(vFarWorld - cameraPosition, uAerialPerspective, uFogBrightness);
                 #endif`
             );
 
@@ -472,6 +475,7 @@ export function createFarTerrainMaterial(level = 0) {
                 uniform float uLodDebug;
                 ${CHUNK_MASK_GLSL}
                 ${SKY_COLOR_GLSL}
+                ${AERIAL_SKY_GLSL}
                 ${VIEW_GLSL}
                 ${GLOBE_LIGHT_GLSL}
                 ${METEOR_LIGHT_GLSL}
@@ -482,7 +486,7 @@ export function createFarTerrainMaterial(level = 0) {
                     varying vec3 vHazeSky;
                     #define HAZE_SKY vHazeSky
                 #else
-                    #define HAZE_SKY (skyColor(normalize(vFarWorld - cameraPosition)) * uFogBrightness)
+                    #define HAZE_SKY atmosphereFogColor(vFarWorld - cameraPosition, uAerialPerspective, uFogBrightness)
                 #endif`
             )
             .replace(
@@ -620,10 +624,20 @@ export function createFarTerrainMaterial(level = 0) {
                     hazeSky *= hazeScale(vFarSunHeight);
                 }
 
+                float haze = atmosphereHaze(farDirection, 1.0, farHaze(farDirection));
+
+                // Daleki teren i jego woda używają tej samej absorpcji
+                // pod wodą co bliskie powierzchnie. Baza A/B bez zmian.
+                if (uUnderwater > 0.5 && aerialPerspectiveEnabled()) {
+                    float waterFog = 1.0 - exp(-length(farDirection) * uUnderwaterDensity);
+                    haze = mix(haze, waterFog, clamp(uAerialPerspective, 0.0, 1.0));
+                    hazeSky = mix(hazeSky, uUnderwaterColor, clamp(uAerialPerspective, 0.0, 1.0));
+                }
+
                 gl_FragColor.rgb = mix(
                     gl_FragColor.rgb,
                     linearToOutputTexel(vec4(hazeSky, 1.0)).rgb,
-                    farHaze(farDirection)
+                    haze
                 );`
             );
 

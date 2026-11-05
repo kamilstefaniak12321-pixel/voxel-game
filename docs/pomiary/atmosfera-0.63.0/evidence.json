@@ -1,0 +1,5901 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-11-05",
+  "runId": "atmosphere-2026-11-05T22-03-51-398Z",
+  "comparison": "Same code 0.63.0, atmosphereLook baseline/natural; not old 0.62.0 executable",
+  "source": {
+    "baseCommitAtLaunch": "812cf8b7782d22935a307c80c63fa6ca5f0b1c60",
+    "uncommittedAtLaunch": true,
+    "sourceSha256": "7aaad48c30b78dd8dc0543ec29d6942204158250625fa8c3b0715c4fc1657ad5",
+    "sourceFiles": 173,
+    "verifiedAfterPerformanceSourceSha256": "7aaad48c30b78dd8dc0543ec29d6942204158250625fa8c3b0715c4fc1657ad5",
+    "assetsInventorySha256": "2b0e573fdf218bce2beee33b41eb5eb3f67f06039326581fe786035dd39d3e72",
+    "assetsFiles": 349,
+    "assetsInventoryMeaning": "Sorted relative filenames and byte lengths, not full asset-content digest",
+    "harnessSha256": "7aaf0deef532908c995a2e5716448a62f7a5e69db8c4123b600732a44a906704",
+    "finalHarnessSha256": "8ed9eb6978d5e6139de41401c38fc13d6ef5a44314d58424f2f9515dc040da81",
+    "postMeasurementHarnessChange": "stableWorld now waits for bounce readiness only when bounce.enabled=true. Standard measurements used enabled=true; runtime src files unchanged. Corrected gate not rerun natively."
+  },
+  "device": {
+    "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 3050 Laptop GPU (0x000025A2) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "webgl2": true,
+    "gpuTimerSupported": true,
+    "drawingBuffer": [
+      1920,
+      1080
+    ],
+    "devicePixelRatio": 1
+  },
+  "runtime": {
+    "electron": "44.4.5",
+    "chromium": "152.0.7977.130",
+    "displayHz": 144,
+    "uncapped": false
+  },
+  "conditions": {
+    "power": "AC, checked by operator",
+    "settings": {
+      "potato": false,
+      "viewDistance": 64,
+      "farTerrain": 1024,
+      "farDetail": 2,
+      "fov": 75,
+      "brightness": 0,
+      "lightingLook": "natural",
+      "atmosphereLook": "baseline",
+      "lightingMaterials": "standard",
+      "surfaceBounce": true,
+      "leafTransmission": true,
+      "materialSpecular": true,
+      "bounceStrength": 18,
+      "bounceSaturation": 65,
+      "cloudCover": 0,
+      "renderScale": 100,
+      "fpsLimit": 0,
+      "ambientOcclusion": 45,
+      "shadows": 3,
+      "lightShafts": true,
+      "fancyLeaves": true,
+      "dynamicLight": true,
+      "loadBudget": 4,
+      "mouseSensitivity": 100,
+      "invertMouse": false,
+      "skinOverlay": true,
+      "showHand": false,
+      "viewBobbing": true,
+      "jointStyle": "smooth",
+      "cameraDistance": 4,
+      "volumeMaster": 0,
+      "volumeMusic": 0,
+      "volumeBlocks": 100,
+      "volumeWorld": 100,
+      "volumeUi": 80,
+      "theme": "default",
+      "menuMotion": "auto",
+      "inventoryStyle": "wood",
+      "hudScale": 100,
+      "showDebug": true,
+      "showFps": false,
+      "meteorites": false,
+      "autoUpdates": false,
+      "textureResolution": 0,
+      "bushyGrass": true,
+      "bounceLight": false,
+      "lightingModel": "world"
+    },
+    "warmupSeconds": 10,
+    "staticSeconds": 30,
+    "flightSeconds": 120,
+    "exposure": 1,
+    "worldOutput": {
+      "mode": "hdr16f",
+      "width": 1920,
+      "height": 1080,
+      "exposure": 1,
+      "estimatedBytes": 124416000,
+      "samples": 4
+    }
+  },
+  "staticPairs": [
+    {
+      "pair": 1,
+      "baseline": "atmosphere-2026-11-05T22-03-51-398Z-004-forest-river-noon-baseline-static.json",
+      "natural": "atmosphere-2026-11-05T22-03-51-398Z-005-forest-river-noon-natural-static.json",
+      "gpuMedianDeltaMs": 0.19343999999999983,
+      "gpuMedianDeltaPercent": 2.767857142857144,
+      "gpuP95DeltaMs": 0.22540799999999983,
+      "cpuMedianDeltaMs": 0.10000014305114746
+    },
+    {
+      "pair": 2,
+      "baseline": "atmosphere-2026-11-05T22-03-51-398Z-007-forest-river-noon-baseline-static.json",
+      "natural": "atmosphere-2026-11-05T22-03-51-398Z-006-forest-river-noon-natural-static.json",
+      "gpuMedianDeltaMs": 0.11161599999999972,
+      "gpuMedianDeltaPercent": 1.5826920284594204,
+      "gpuP95DeltaMs": 0.10118399999999994,
+      "cpuMedianDeltaMs": -0.10000014305114746
+    },
+    {
+      "pair": 3,
+      "baseline": "atmosphere-2026-11-05T22-03-51-398Z-008-forest-river-noon-baseline-static.json",
+      "natural": "atmosphere-2026-11-05T22-03-51-398Z-009-forest-river-noon-natural-static.json",
+      "gpuMedianDeltaMs": 0.06092799999999965,
+      "gpuMedianDeltaPercent": 0.8606972370895472,
+      "gpuP95DeltaMs": 0.06655999999999995,
+      "cpuMedianDeltaMs": 0.09999990463256836
+    }
+  ],
+  "aggregate": {
+    "gpuMedianDeltaMs": 0.11161599999999972,
+    "gpuMedianDeltaPercent": 1.5826920284594204,
+    "gpuP95DeltaMs": 0.10118399999999994,
+    "cpuMedianDeltaMs": 0.09999990463256836
+  },
+  "trials": [
+    {
+      "report": "atmosphere-2026-11-05T22-03-51-398Z-004-forest-river-noon-baseline-static.json",
+      "reportSha256": "9283ad3810510c7cd251d7d6c91a3c61c79270b98125d3f83ec0177afaee3e40",
+      "scene": "forest",
+      "cameraName": "river",
+      "preset": "noon",
+      "look": "baseline",
+      "motion": "static",
+      "viewDistance": 64,
+      "farTerrain": 1024,
+      "camera": {
+        "position": [
+          198,
+          63.6,
+          -261
+        ],
+        "direction": [
+          -0.6624047861549933,
+          -0.4649331706597313,
+          0.5874155650808436
+        ]
+      },
+      "settings": {
+        "potato": false,
+        "viewDistance": 64,
+        "farTerrain": 1024,
+        "farDetail": 2,
+        "fov": 75,
+        "brightness": 0,
+        "lightingLook": "natural",
+        "atmosphereLook": "baseline",
+        "lightingMaterials": "standard",
+        "surfaceBounce": true,
+        "leafTransmission": true,
+        "materialSpecular": true,
+        "bounceStrength": 18,
+        "bounceSaturation": 65,
+        "cloudCover": 0,
+        "renderScale": 100,
+        "fpsLimit": 0,
+        "ambientOcclusion": 45,
+        "shadows": 3,
+        "lightShafts": true,
+        "fancyLeaves": true,
+        "dynamicLight": true,
+        "loadBudget": 4,
+        "mouseSensitivity": 100,
+        "invertMouse": false,
+        "skinOverlay": true,
+        "showHand": false,
+        "viewBobbing": true,
+        "jointStyle": "smooth",
+        "cameraDistance": 4,
+        "volumeMaster": 0,
+        "volumeMusic": 0,
+        "volumeBlocks": 100,
+        "volumeWorld": 100,
+        "volumeUi": 80,
+        "theme": "default",
+        "menuMotion": "auto",
+        "inventoryStyle": "wood",
+        "hudScale": 100,
+        "showDebug": true,
+        "showFps": false,
+        "meteorites": false,
+        "autoUpdates": false,
+        "textureResolution": 0,
+        "bushyGrass": true,
+        "bounceLight": false,
+        "lightingModel": "world"
+      },
+      "valid": true,
+      "invalidReason": null,
+      "gpuValid": true,
+      "durationSeconds": 30,
+      "warmupSeconds": 10,
+      "frame": {
+        "count": 4047,
+        "meanMs": 7.410476896466536,
+        "medianMs": 6.900000000023283,
+        "p95Ms": 13.899999999906868,
+        "p99Ms": 14,
+        "maxMs": 14.400000000023283,
+        "averageFps": 134.94408173336592,
+        "above16_67ms": 0,
+        "above33_33ms": 0,
+        "above50ms": 0
+      },
+      "cpu": {
+        "count": 4048,
+        "meanMs": 5.677371542032057,
+        "medianMs": 5.700000047683716,
+        "p95Ms": 8.100000143051147,
+        "p99Ms": 9.599999904632568,
+        "maxMs": 13.599999904632568,
+        "above16_67ms": 0,
+        "above33_33ms": 0,
+        "above50ms": 0
+      },
+      "gpu": {
+        "count": 4048,
+        "meanMs": 7.039806964426885,
+        "medianMs": 6.9888,
+        "p95Ms": 7.380768,
+        "p99Ms": 7.486464,
+        "maxMs": 10.0832,
+        "above16_67ms": 0,
+        "above33_33ms": 0,
+        "above50ms": 0
+      },
+      "gpuDisjoint": 0,
+      "gpuSkipped": 0,
+      "unsettledFrames": 0,
+      "meshRebuildsDuringSample": 0,
+      "errors": [],
+      "longTasks": [],
+      "before": {
+        "chunks": 130,
+        "meshVersion": 82,
+        "queued": 0,
+        "dirty": 0,
+        "memory": {
+          "geometries": 593,
+          "textures": 28
+        },
+        "programs": 22,
+        "heapMiB": 216.9725217819214,
+        "render": {
+          "frame": 735061,
+          "calls": 452,
+          "triangles": 1240331,
+          "points": 96,
+          "lines": 0
+        },
+        "far": {
+          "active": true,
+          "shown": 338,
+          "wanted": 338,
+          "missing": 0,
+          "cached": 349,
+          "triangles": 825966,
+          "shadowRevision": 368,
+          "profile": "game",
+          "detailDistance": 800,
+          "detailTiers": [
+            {
+              "distance": 800,
+              "spacing": 4
+            }
+          ],
+          "maxDistance": null,
+          "targetSpacing": 4,
+          "lodWithinTarget": {
+            "1": 92,
+            "2": 64,
+            "4": 130
+          },
+          "workers": 3
+        },
+        "worldOutput": {
+          "mode": "hdr16f",
+          "width": 1920,
+          "height": 1080,
+          "exposure": 1,
+          "estimatedBytes": 124416000,
+          "samples": 4
+        },
+        "streaming": {
+          "enabled": true,
+          "workerReady": true,
+          "pending": 0,
+          "ready": 0,
+          "requested": 49,
+          "completed": 49,
+          "applied": 49,
+          "discarded": 0,
+          "failures": 0,
+          "resets": 0,
+          "cache": {
+            "zones": 4,
+            "heightTiles": 221,
+            "drainageCells": 26483,
+            "routes": 587
+          },
+          "workerMs": 9.099999904632568,
+          "lastApplyMs": 0.2999999523162842,
+          "maxApplyMs": 7.599999904632568,
+          "lastError": null
+        },
+        "bounceMemoryBytes": 4320568
+      },
+      "after": {
+        "chunks": 130,
+        "meshVersion": 82,
+        "queued": 0,
+        "dirty": 0,
+        "memory": {
+          "geometries": 593,
+          "textures": 28
+        },
+        "programs": 22,
+        "heapMiB": 234.4387149810791,
+        "render": {
+          "frame": 790386,
+          "calls": 452,
+          "triangles": 1240331,
+          "points": 96,
+          "lines": 0
+        },
+        "far": {
+          "active": true,
+          "shown": 338,
+          "wanted": 338,
+          "missing": 0,
+          "cached": 349,
+          "triangles": 825966,
+          "shadowRevision": 368,
+          "profile": "game",
+          "detailDistance": 800,
+          "detailTiers": [
+            {
+              "distance": 800,
+              "spacing": 4
+            }
+          ],
+          "maxDistance": null,
+          "targetSpacing": 4,
+          "lodWithinTarget": {
+            "1": 92,
+            "2": 64,
+            "4": 130
+          },
+          "workers": 3
+        },
+        "worldOutput": {
+          "mode": "hdr16f",
+          "width": 1920,
+          "height": 1080,
+          "exposure": 1,
+          "estimatedBytes": 124416000,
+          "samples": 4
+        },
+        "streaming": {
+          "enabled": true,
+          "workerReady": true,
+          "pending": 0,
+          "ready": 0,
+          "requested": 49,
+          "completed": 49,
+          "applied": 49,
+          "discarded": 0,
+          "failures": 0,
+          "resets": 0,
+          "cache": {
+            "zones": 4,
+            "heightTiles": 221,
+            "drainageCells": 26483,
+            "routes": 587
+          },
+          "workerMs": 9.099999904632568,
+          "lastApplyMs": 0.2999999523162842,
+          "maxApplyMs": 7.599999904632568,
+          "lastError": null
+        },
+        "bounceMemoryBytes": 4320568
+      },
+      "milestones": [
+        {
+          "atMs": 3.8999999999068677,
+          "chunks": 130,
+          "queued": 0,
+          "dirty": 0,
+          "meshVersion": 82,
+          "render": {
+            "frame": 748746,
+            "calls": 452,
+            "triangles": 1240331,
+            "points": 96,
+            "lines": 0
+          },
+          "memory": {
+            "geometries": 593,
+            "textures": 28
+          },
+          "heapMiB": 217.59704494476318
+        },
+        {
+          "atMs": 10000.599999999977,
+          "chunks": 130,
+          "queued": 0,
+          "dirty": 0,
+          "meshVersion": 82,
+          "render": {
+            "frame": 762596,
+            "calls": 452,
+            "triangles": 1240331,
+            "points": 96,
+            "lines": 0
+          },
+          "memory": {
+            "geometries": 593,
+            "textures": 28
+          },
+          "heapMiB": 219.5210247039795
+        },
+        {
+          "atMs": 20004.29999999993,
+          "chunks": 130,
+          "queued": 0,
+          "dirty": 0,
+          "meshVersion": 82,
+          "render": {
+            "frame": 776491,
+            "calls": 452,
+            "triangles": 1240331,
+            "points": 96,
+            "lines": 0
+          },
+          "memory": {
+            "geometries": 593,
+            "textures": 28
+          },
+          "heapMiB": 230.39788627624512
+        }
+      ]
+    },
+    {
+      "report": "atmosphere-2026-11-05T22-03-51-398Z-005-forest-river-noon-natural-static.json",
+      "reportSha256": "b04a86e4cebf7932181769d1e0eb6ce4a96657ed3a1feb0f56cc1d0ef69d5e61",
+      "scene": "forest",
+      "cameraName": "river",
+      "preset": "noon",
+      "look": "natural",
+      "motion": "static",
+      "viewDistance": 64,
+      "farTerrain": 1024,
+      "camera": {
+        "position": [
+          198,
+          63.6,
+          -261
+        ],
+        "direction": [
+          -0.6624047861549933,
+          -0.4649331706597313,
+          0.5874155650808436
+        ]
+      },
+      "settings": {
+        "potato": false,
+        "viewDistance": 64,
+        "farTerrain": 1024,
+        "farDetail": 2,
+        "fov": 75,
+        "brightness": 0,
+        "lightingLook": "natural",
+        "atmosphereLook": "natural",
+        "lightingMaterials": "standard",
+        "surfaceBounce": true,
+        "leafTransmission": true,
+        "materialSpecular": true,
+        "bounceStrength": 18,
+        "bounceSaturation": 65,
+        "cloudCover": 0,
+        "renderScale": 100,
+        "fpsLimit": 0,
+        "ambientOcclusion": 45,
+        "shadows": 3,
+        "lightShafts": true,
+        "fancyLeaves": true,
+        "dynamicLight": true,
+        "loadBudget": 4,
+        "mouseSensitivity": 100,
+        "invertMouse": false,
+        "skinOverlay": true,
+        "showHand": false,
+        "viewBobbing": true,
+        "jointStyle": "smooth",
+        "cameraDistance": 4,
+        "volumeMaster": 0,
+        "volumeMusic": 0,
+        "volumeBlocks": 100,
+        "volumeWorld": 100,
+        "volumeUi": 80,
+        "theme": "default",
+        "menuMotion": "auto",
+        "inventoryStyle": "wood",
+        "hudScale": 100,
+        "showDebug": true,
+        "showFps": false,
+        "meteorites": false,
+        "autoUpdates": false,
+        "textureResolution": 0,
+        "bushyGrass": true,
+        "bounceLight": false,
+        "lightingModel": "world"
+      },
+      "valid": true,
+      "invalidReason": null,
+      "gpuValid": true,
+      "durationSeconds": 30,
+      "warmupSeconds": 10,
+      "frame": {
+        "count": 3923,
+        "meanMs": 7.644736171297459,
+        "medianMs": 7,
+        "p95Ms": 13.900000000023283,
+        "p99Ms": 14,
+        "maxMs": 34.70000000006985,
+        "averageFps": 130.8089615642394,
+        "above16_67ms": 1,
+        "above33_33ms": 1,
+        "above50ms": 0
+      },
+      "cpu": {
+        "count": 3924,
+        "meanMs": 5.782313966240722,
+        "medianMs": 5.800000190734863,
+        "p95Ms": 8.400000095367432,
+        "p99Ms": 9.900000095367432,
+        "maxMs": 15.599999904632568,
+        "above16_67ms": 0,
+        "above33_33ms": 0,
+        "above50ms": 0
+      },
+      "gpu": {
+        "count": 3924,
+        "meanMs": 7.25210577777778,
+        "medianMs": 7.18224,
+        "p95Ms": 7.606176,
+        "p99Ms": 7.831552,
+        "maxMs": 18.491392,
+        "above16_67ms": 1,
+        "above33_33ms": 0,
+        "above50ms": 0
+      },
+      "gpuDisjoint": 0,
+      "gpuSkipped": 0,
+      "unsettledFrames": 0,
+      "meshRebuildsDuringSample": 0,
+      "errors": [],
+      "longTasks": [],
+      "before": {
+        "chunks": 130,
+        "meshVersion": 82,
+        "queued": 0,
+        "dirty": 0,
+        "memory": {
+          "geometries": 593,
+          "textures": 28
+        },
+        "programs": 22,
+        "heapMiB": 231.28854846954346,
+        "render": {
+          "frame": 793141,
+          "calls": 452,
+          "triangles": 1240331,
+          "points": 96,
+          "lines": 0
+        },
+        "far": {
+          "active": true,
+          "shown": 338,
+          "wanted": 338,
+          "missing": 0,
+          "cached": 349,
+          "triangles": 825966,
+          "shadowRevision": 368,
+          "profile": "game",
+          "detailDistance": 800,
+          "detailTiers": [
+            {
+              "distance": 800,
+              "spacing": 4
+            }
+          ],
+          "maxDistance": null,
+          "targetSpacing": 4,
+          "lodWithinTarget": {
+            "1": 92,
+            "2": 64,
+            "4": 130
+          },
+          "workers": 3
+        },
+        "worldOutput": {
+          "mode": "hdr16f",
+          "width": 1920,
+          "height": 1080,
+          "exposure": 1,
+          "estimatedBytes": 124416000,
+          "samples": 4
+        },
+        "streaming": {
+          "enabled": true,
+          "workerReady": true,
+          "pending": 0,
+          "ready": 0,
+          "requested": 49,
+          "completed": 49,
+          "applied": 49,
+          "discarded": 0,
+          "failures": 0,
+          "resets": 0,
+          "cache": {
+            "zones": 4,
+            "heightTiles": 221,
+            "drainageCells": 26483,
+            "routes": 587
+          },
+          "workerMs": 9.099999904632568,
+          "lastApplyMs": 0.2999999523162842,
+          "maxApplyMs": 7.599999904632568,
+          "lastError": null
+        },
+        "bounceMemoryBytes": 4320568
+      },
+      "after": {
+        "chunks": 130,
+        "meshVersion": 82,
+        "queued": 0,
+        "dirty": 0,
+        "memory": {
+          "geometries": 593,
+          "textures": 28
+        },
+        "programs": 22,
+        "heapMiB": 217.11425590515137,
+        "render": {
+          "frame": 846887,
+          "calls": 452,
+          "triangles": 1240331,
+          "points": 96,
+          "lines": 0
+        },
+        "far": {
+          "active": true,
+          "shown": 338,
+          "wanted": 338,
+          "missing": 0,
+          "cached": 349,
+          "triangles": 825966,
+          "shadowRevision": 368,
+          "profile": "game",
+          "detailDistance": 800,
+          "detailTiers": [
+            {
+              "distance": 800,
+              "spacing": 4
+            }
+          ],
+          "maxDistance": null,
+          "targetSpacing": 4,
+          "lodWithinTarget": {
+            "1": 92,
+            "2": 64,
+            "4": 130
+          },
+          "workers": 3
+        },
+        "worldOutput": {
+          "mode": "hdr16f",
+          "width": 1920,
+          "height": 1080,
+          "exposure": 1,
+          "estimatedBytes": 124416000,
+          "samples": 4
+        },
+        "streaming": {
+          "enabled": true,
+          "workerReady": true,
+          "pending": 0,
+          "ready": 0,
+          "requested": 49,
+          "completed": 49,
+          "applied": 49,
+          "discarded": 0,
+          "failures": 0,
+          "resets": 0,
+          "cache": {
+            "zones": 4,
+            "heightTiles": 221,
+            "drainageCells": 26483,
+            "routes": 587
+          },
+          "workerMs": 9.099999904632568,
+          "lastApplyMs": 0.2999999523162842,
+          "maxApplyMs": 7.599999904632568,
+          "lastError": null
+        },
+        "bounceMemoryBytes": 4320568
+      },
+      "milestones": [
+        {
+          "atMs": 3.700000000069849,
+          "chunks": 130,
+          "queued": 0,
+          "dirty": 0,
+          "meshVersion": 82,
+          "render": {
+            "frame": 806491,
+            "calls": 457,
+            "triangles": 1252149,
+            "points": 96,
+            "lines": 0
+          },
+          "memory": {
+            "geometries": 593,
+            "textures": 28
+          },
+          "heapMiB": 232.0525941848755
+        },
+        {
+          "atMs": 10000.5,
+          "chunks": 130,
+          "queued": 0,
+          "dirty": 0,
+          "meshVersion": 82,
+          "render": {
+            "frame": 819977,
+            "calls": 452,
+            "triangles": 1240331,
+            "points": 96,
+            "lines": 0
+          },
+          "memory": {
+            "geometries": 593,
+            "textures": 28
+          },
+          "heapMiB": 218.78744220733643
+        },
+        {
+          "atMs": 20004.20000000007,
+          "chunks": 130,
+          "queued": 0,
+          "dirty": 0,
+          "meshVersion": 82,
+          "render": {
+            "frame": 833477,
+            "calls": 452,
+            "triangles": 1240331,
+            "points": 96,
+            "lines": 0
+          },
+          "memory": {
+            "geometries": 593,
+            "textures": 28
+          },
+          "heapMiB": 229.56631565093994
+        }
+      ]
+    },
+    {
+      "report": "atmosphere-2026-11-05T22-03-51-398Z-006-forest-river-noon-natural-static.json",
+      "reportSha256": "d9b6b81d3c3e6c44150f2d6b7a6e9af7be919af6aace85d356c70306622fe843",
+      "scene": "forest",
+      "cameraName": "river",
+      "preset": "noon",
+      "look": "natural",
+      "motion": "static",
+      "viewDistance": 64,
+      "farTerrain": 1024,
+      "camera": {
+        "position": [
+          198,
+          63.6,
+          -261
+        ],
+        "direction": [
+          -0.6624047861549933,
+          -0.4649331706597313,
+          0.5874155650808436
+        ]
+      },
+      "settings": {
+        "potato": false,
+        "viewDistance": 64,
+        "farTerrain": 1024,
+        "farDetail": 2,
+        "fov": 75,
+        "brightness": 0,
+        "lightingLook": "natural",
+        "atmosphereLook": "natural",
+        "lightingMaterials": "standard",
+        "surfaceBounce": true,
+        "leafTransmission": true,
+        "materialSpecular": true,
+        "bounceStrength": 18,
+        "bounceSaturation": 65,
+        "cloudCover": 0,
+        "renderScale": 100,
+        "fpsLimit": 0,
+        "ambientOcclusion": 45,
+        "shadows": 3,
+        "lightShafts": true,
+        "fancyLeaves": true,
+        "dynamicLight": true,
+        "loadBudget": 4,
+        "mouseSensitivity": 100,
+        "invertMouse": false,
+        "skinOverlay": true,
+        "showHand": false,
+        "viewBobbing": true,
+        "jointStyle": "smooth",
+        "cameraDistance": 4,
+        "volumeMaster": 0,
+        "volumeMusic": 0,
+        "volumeBlocks": 100,
+        "volumeWorld": 100,
+        "volumeUi": 80,
+        "theme": "default",
+        "menuMotion": "auto",
+        "inventoryStyle": "wood",
+        "hudScale": 100,
+        "showDebug": true,
+        "showFps": false,
+        "meteorites": false,
+        "autoUpdates": false,
+        "textureResolution": 0,
+        "bushyGrass": true,
+        "bounceLight": false,
+        "lightingModel": "world"
+      },
+      "valid": true,
+      "invalidReason": null,
+      "gpuValid": true,
+      "durationSeconds": 30,
+      "warmupSeconds": 10,
+      "frame": {
+        "count": 3943,
+        "meanMs": 7.6059092061881755,
+        "medianMs": 7,
+        "p95Ms": 13.900000000023283,
+        "p99Ms": 14,
+        "maxMs": 21.199999999953434,
+        "averageFps": 131.47672065114833,
+        "above16_67ms": 2,
+        "above33_33ms": 0,
+        "above50ms": 0
+      },
+      "cpu": {
+        "count": 3944,
+        "meanMs": 5.586460443224917,
+        "medianMs": 5.599999904632568,
+        "p95Ms": 8.199999809265137,
+        "p99Ms": 9.5,
+        "maxMs": 12.600000143051147,
+        "above16_67ms": 0,
+        "above33_33ms": 0,
+        "above50ms": 0
+      },
+      "gpu": {
+        "count": 3944,
+        "meanMs": 7.225593363083172,
+        "medianMs": 7.163904,
+        "p95Ms": 7.574336,
+        "p99Ms": 7.673856,
+        "maxMs": 10.185568,
+        "above16_67ms": 0,
+        "above33_33ms": 0,
+        "above50ms": 0
+      },
+      "gpuDisjoint": 0,
+      "gpuSkipped": 0,
+      "unsettledFrames": 0,
+      "meshRebuildsDuringSample": 0,
+      "errors": [],
+      "longTasks": [],
+      "before": {
+        "chunks": 130,
+        "meshVersion": 82,
+        "queued": 0,
+        "dirty": 0,
+        "memory": {
+          "geometries": 593,
+          "textures": 28
+        },
+        "programs": 22,
+        "heapMiB": 216.65711307525635,
+        "render": {
+          "frame": 849642,
+          "calls": 452,
+          "triangles": 1240331,
+          "points": 96,
+          "lines": 0
+        },
+        "far": {
+          "active": true,
+          "shown": 338,
+          "wanted": 338,
+          "missing": 0,
+          "cached": 349,
+          "triangles": 825966,
+          "shadowRevision": 368,
+          "profile": "game",
+          "detailDistance": 800,
+          "detailTiers": [
+            {
+              "distance": 800,
+              "spacing": 4
+            }
+          ],
+          "maxDistance": null,
+          "targetSpacing": 4,
+          "lodWithinTarget": {
+            "1": 92,
+            "2": 64,
+            "4": 130
+          },
+          "workers": 3
+        },
+        "worldOutput": {
+          "mode": "hdr16f",
+          "width": 1920,
+          "height": 1080,
+          "exposure": 1,
+          "estimatedBytes": 124416000,
+          "samples": 4
+        },
+        "streaming": {
+          "enabled": true,
+          "workerReady": true,
+          "pending": 0,
+          "ready": 0,
+          "requested": 49,
+          "completed": 49,
+          "applied": 49,
+          "discarded": 0,
+          "failures": 0,
+          "resets": 0,
+          "cache": {
+            "zones": 4,
+            "heightTiles": 221,
+            "drainageCells": 26483,
+            "routes": 587
+          },
+          "workerMs": 9.099999904632568,
+          "lastApplyMs": 0.2999999523162842,
+          "maxApplyMs": 7.599999904632568,
+          "lastError": null
+        },
+        "bounceMemoryBytes": 4320568
+      },
+      "after": {
+        "chunks": 130,
+        "meshVersion": 82,
+        "queued": 0,
+        "dirty": 0,
+        "memory": {
+          "geometries": 593,
+          "textures": 28
+        },
+        "programs": 22,
+        "heapMiB": 222.4398546218872,
+        "render": {
+          "frame": 903784,
+          "calls": 458,
+          "triangles": 1279031,
+          "points": 96,
+          "lines": 0
+        },
+        "far": {
+          "active": true,
+          "shown": 338,
+          "wanted": 338,
+          "missing": 0,
+          "cached": 349,
+          "triangles": 825966,
+          "shadowRevision": 368,
+          "profile": "game",
+          "detailDistance": 800,
+          "detailTiers": [
+            {
+              "distance": 800,
+              "spacing": 4
+            }
+          ],
+          "maxDistance": null,
+          "targetSpacing": 4,
+          "lodWithinTarget": {
+            "1": 92,
+            "2": 64,
+            "4": 130
+          },
+          "workers": 3
+        },
+        "worldOutput": {
+          "mode": "hdr16f",
+          "width": 1920,
+          "height": 1080,
+          "exposure": 1,
+          "estimatedBytes": 124416000,
+          "samples": 4
+        },
+        "streaming": {
+          "enabled": true,
+          "workerReady": true,
+          "pending": 0,
+          "ready": 0,
+          "requested": 49,
+          "completed": 49,
+          "applied": 49,
+          "discarded": 0,
+          "failures": 0,
+          "resets": 0,
+          "cache": {
+            "zones": 4,
+            "heightTiles": 221,
+            "drainageCells": 26483,
+            "routes": 587
+          },
+          "workerMs": 9.099999904632568,
+          "lastApplyMs": 0.2999999523162842,
+          "maxApplyMs": 7.599999904632568,
+          "lastError": null
+        },
+        "bounceMemoryBytes": 4320568
+      },
+      "milestones": [
+        {
+          "atMs": 3.900000000023283,
+          "chunks": 130,
+          "queued": 0,
+          "dirty": 0,
+          "meshVersion": 82,
+          "render": {
+            "frame": 863192,
+            "calls": 452,
+            "triangles": 1240331,
+            "points": 96,
+            "lines": 0
+          },
+          "memory": {
+            "geometries": 593,
+            "textures": 28
+          },
+          "heapMiB": 236.68546772003174
+        },
+        {
+          "atMs": 10007.5,
+          "chunks": 130,
+          "queued": 0,
+          "dirty": 0,
+          "meshVersion": 82,
+          "render": {
+            "frame": 876672,
+            "calls": 452,
+            "triangles": 1240331,
+            "points": 96,
+            "lines": 0
+          },
+          "memory": {
+            "geometries": 593,
+            "textures": 28
+          },
+          "heapMiB": 219.54232501983643
+        },
+        {
+          "atMs": 20004.099999999977,
+          "chunks": 130,
+          "queued": 0,
+          "dirty": 0,
+          "meshVersion": 82,
+          "render": {
+            "frame": 890212,
+            "calls": 452,
+            "triangles": 1240331,
+            "points": 96,
+            "lines": 0
+          },
+          "memory": {
+            "geometries": 593,
+            "textures": 28
+          },
+          "heapMiB": 236.98952198028564
+        }
+      ]
+    },
+    {
+      "report": "atmosphere-2026-11-05T22-03-51-398Z-007-forest-river-noon-baseline-static.json",
+      "reportSha256": "c26bc2ba87ee95ce7a8042b23ee84ce45577102ded11dfaaf9d6ed51da416dd8",
+      "scene": "forest",
+      "cameraName": "river",
+      "preset": "noon",
+      "look": "baseline",
+      "motion": "static",
+      "viewDistance": 64,
+      "farTerrain": 1024,
+      "camera": {
+        "position": [
+          198,
+          63.6,
+          -261
+        ],
+        "direction": [
+          -0.6624047861549933,
+          -0.4649331706597313,
+          0.5874155650808436
+        ]
+      },
+      "settings": {
+        "potato": false,
+        "viewDistance": 64,
+        "farTerrain": 1024,
+        "farDetail": 2,
+        "fov": 75,
+        "brightness": 0,
+        "lightingLook": "natural",
+        "atmosphereLook": "baseline",
+        "lightingMaterials": "standard",
+        "surfaceBounce": true,
+        "leafTransmission": true,
+        "materialSpecular": true,
+        "bounceStrength": 18,
+        "bounceSaturation": 65,
+        "cloudCover": 0,
+        "renderScale": 100,
+        "fpsLimit": 0,
+        "ambientOcclusion": 45,
+        "shadows": 3,
+        "lightShafts": true,
+        "fancyLeaves": true,
+        "dynamicLight": true,
+        "loadBudget": 4,
+        "mouseSensitivity": 100,
+        "invertMouse": false,
+        "skinOverlay": true,
+        "showHand": false,
+        "viewBobbing": true,
+        "jointStyle": "smooth",
+        "cameraDistance": 4,
+        "volumeMaster": 0,
+        "volumeMusic": 0,
+        "volumeBlocks": 100,
+        "volumeWorld": 100,
+        "volumeUi": 80,
+        "theme": "default",
+        "menuMotion": "auto",
+        "inventoryStyle": "wood",
+        "hudScale": 100,
+        "showDebug": true,
+        "showFps": false,
+        "meteorites": false,
+        "autoUpdates": false,
+        "textureResolution": 0,
+        "bushyGrass": true,
+        "bounceLight": false,
+        "lightingModel": "world"
+      },
+      "valid": true,
+      "invalidReason": null,
+      "gpuValid": true,
+      "durationSeconds": 30,
+      "warmupSeconds": 10,
+      "frame": {
+        "count": 4020,
+        "meanMs": 7.460248756218894,
+        "medianMs": 6.900000000023283,
+        "p95Ms": 13.900000000023283,
+        "p99Ms": 14,
+        "maxMs": 20.900000000023283,
+        "averageFps": 134.04378763729505,
+        "above16_67ms": 1,
+        "above33_33ms": 0,
+        "above50ms": 0
+      },
+      "cpu": {
+        "count": 4021,
+        "meanMs": 5.615866698426591,
+        "medianMs": 5.700000047683716,
+        "p95Ms": 7.700000047683716,
+        "p99Ms": 8.900000095367432,
+        "maxMs": 16,
+        "above16_67ms": 0,
+        "above33_33ms": 0,
+        "above50ms": 0
+      },
+      "gpu": {
+        "count": 4021,
+        "meanMs": 7.084052890325813,
+        "medianMs": 7.052288,
+        "p95Ms": 7.473152,
+        "p99Ms": 7.629728,
+        "maxMs": 9.754624,
+        "above16_67ms": 0,
+        "above33_33ms": 0,
+        "above50ms": 0
+      },
+      "gpuDisjoint": 0,
+      "gpuSkipped": 0,
+      "unsettledFrames": 0,
+      "meshRebuildsDuringSample": 0,
+      "errors": [],
+      "longTasks": [],
+      "before": {
+        "chunks": 130,
+        "meshVersion": 82,
+        "queued": 0,
+        "dirty": 0,
+        "memory": {
+          "geometries": 593,
+          "textures": 28
+        },
+        "programs": 22,
+        "heapMiB": 223.93594074249268,
+        "render": {
+          "frame": 906571,
+          "calls": 460,
+          "triangles": 1272343,
+          "points": 96,
+          "lines": 0
+        },
+        "far": {
+          "active": true,
+          "shown": 338,
+          "wanted": 338,
+          "missing": 0,
+          "cached": 349,
+          "triangles": 825966,
+          "shadowRevision": 368,
+          "profile": "game",
+          "detailDistance": 800,
+          "detailTiers": [
+            {
+              "distance": 800,
+              "spacing": 4
+            }
+          ],
+          "maxDistance": null,
+          "targetSpacing": 4,
+          "lodWithinTarget": {
+            "1": 92,
+            "2": 64,
+            "4": 130
+          },
+          "workers": 3
+        },
+        "worldOutput": {
+          "mode": "hdr16f",
+          "width": 1920,
+          "height": 1080,
+          "exposure": 1,
+          "estimatedBytes": 124416000,
+          "samples": 4
+        },
+        "streaming": {
+          "enabled": true,
+          "workerReady": true,
+          "pending": 0,
+          "ready": 0,
+          "requested": 49,
+          "completed": 49,
+          "applied": 49,
+          "discarded": 0,
+          "failures": 0,
+          "resets": 0,
+          "cache": {
+            "zones": 4,
+            "heightTiles": 221,
+            "drainageCells": 26483,
+            "routes": 587
+          },
+          "workerMs": 9.099999904632568,
+          "lastApplyMs": 0.2999999523162842,
+          "maxApplyMs": 7.599999904632568,
+          "lastError": null
+        },
+        "bounceMemoryBytes": 4320568
+      },
+      "after": {
+        "chunks": 130,
+        "meshVersion": 82,
+        "queued": 0,
+        "dirty": 0,
+        "memory": {
+          "geometries": 593,
+          "textures": 28
+        },
+        "programs": 22,
+        "heapMiB": 221.21179008483887,
+        "render": {
+          "frame": 961722,
+          "calls": 452,
+          "triangles": 1240331,
+          "points": 96,
+          "lines": 0
+        },
+        "far": {
+          "active": true,
+          "shown": 338,
+          "wanted": 338,
+          "missing": 0,
+          "cached": 349,
+          "triangles": 825966,
+          "shadowRevision": 368,
+          "profile": "game",
+          "detailDistance": 800,
+          "detailTiers": [
+            {
+              "distance": 800,
+              "spacing": 4
+            }
+          ],
+          "maxDistance": null,
+          "targetSpacing": 4,
+          "lodWithinTarget": {
+            "1": 92,
+            "2": 64,
+            "4": 130
+          },
+          "workers": 3
+        },
+        "worldOutput": {
+          "mode": "hdr16f",
+          "width": 1920,
+          "height": 1080,
+          "exposure": 1,
+          "estimatedBytes": 124416000,
+          "samples": 4
+        },
+        "streaming": {
+          "enabled": true,
+          "workerReady": true,
+          "pending": 0,
+          "ready": 0,
+          "requested": 49,
+          "completed": 49,
+          "applied": 49,
+          "discarded": 0,
+          "failures": 0,
+          "resets": 0,
+          "cache": {
+            "zones": 4,
+            "heightTiles": 221,
+            "drainageCells": 26483,
+            "routes": 587
+          },
+          "workerMs": 9.099999904632568,
+          "lastApplyMs": 0.2999999523162842,
+          "maxApplyMs": 7.599999904632568,
+          "lastError": null
+        },
+        "bounceMemoryBytes": 4320568
+      },
+      "milestones": [
+        {
+          "atMs": 3.800000000046566,
+          "chunks": 130,
+          "queued": 0,
+          "dirty": 0,
+          "meshVersion": 82,
+          "render": {
+            "frame": 920342,
+            "calls": 452,
+            "triangles": 1240331,
+            "points": 96,
+            "lines": 0
+          },
+          "memory": {
+            "geometries": 593,
+            "textures": 28
+          },
+          "heapMiB": 236.23932075500488
+        },
+        {
+          "atMs": 10000.5,
+          "chunks": 130,
+          "queued": 0,
+          "dirty": 0,
+          "meshVersion": 82,
+          "render": {
+            "frame": 934077,
+            "calls": 452,
+            "triangles": 1240331,
+            "points": 96,
+            "lines": 0
+          },
+          "memory": {
+            "geometries": 593,
+            "textures": 28
+          },
+          "heapMiB": 230.52777290344238
+        },
+        {
+          "atMs": 20004.20000000007,
+          "chunks": 130,
+          "queued": 0,
+          "dirty": 0,
+          "meshVersion": 82,
+          "render": {
+            "frame": 947899,
+            "calls": 458,
+            "triangles": 1279031,
+            "points": 96,
+            "lines": 0
+          },
+          "memory": {
+            "geometries": 593,
+            "textures": 28
+          },
+          "heapMiB": 237.97491264343262
+        }
+      ]
+    },
+    {
+      "report": "atmosphere-2026-11-05T22-03-51-398Z-008-forest-river-noon-baseline-static.json",
+      "reportSha256": "2698e5796b28d77a2a7d4933a61a572dedc2cb8377a1c712f2cd3e278809f185",
+      "scene": "forest",
+      "cameraName": "river",
+      "preset": "noon",
+      "look": "baseline",
+      "motion": "static",
+      "viewDistance": 64,
+      "farTerrain": 1024,
+      "camera": {
+        "position": [
+          198,
+          63.6,
+          -261
+        ],
+        "direction": [
+          -0.6624047861549933,
+          -0.4649331706597313,
+          0.5874155650808436
+        ]
+      },
+      "settings": {
+        "potato": false,
+        "viewDistance": 64,
+        "farTerrain": 1024,
+        "farDetail": 2,
+        "fov": 75,
+        "brightness": 0,
+        "lightingLook": "natural",
+        "atmosphereLook": "baseline",
+        "lightingMaterials": "standard",
+        "surfaceBounce": true,
+        "leafTransmission": true,
+        "materialSpecular": true,
+        "bounceStrength": 18,
+        "bounceSaturation": 65,
+        "cloudCover": 0,
+        "renderScale": 100,
+        "fpsLimit": 0,
+        "ambientOcclusion": 45,
+        "shadows": 3,
+        "lightShafts": true,
+        "fancyLeaves": true,
+        "dynamicLight": true,
+        "loadBudget": 4,
+        "mouseSensitivity": 100,
+        "invertMouse": false,
+        "skinOverlay": true,
+        "showHand": false,
+        "viewBobbing": true,
+        "jointStyle": "smooth",
+        "cameraDistance": 4,
+        "volumeMaster": 0,
+        "volumeMusic": 0,
+        "volumeBlocks": 100,
+        "volumeWorld": 100,
+        "volumeUi": 80,
+        "theme": "default",
+        "menuMotion": "auto",
+        "inventoryStyle": "wood",
+        "hudScale": 100,
+        "showDebug": true,
+        "showFps": false,
+        "meteorites": false,
+        "autoUpdates": false,
+        "textureResolution": 0,
+        "bushyGrass": true,
+        "bounceLight": false,
+        "lightingModel": "world"
+      },
+      "valid": true,
+      "invalidReason": null,
+      "gpuValid": true,
+      "durationSeconds": 30,
+      "warmupSeconds": 10,
+      "frame": {
+        "count": 3994,
+        "meanMs": 7.508813219829733,
+        "medianMs": 6.900000000023283,
+        "p95Ms": 13.900000000023283,
+        "p99Ms": 14,
+        "maxMs": 14.300000000046566,
+        "averageFps": 133.1768377670041,
+        "above16_67ms": 0,
+        "above33_33ms": 0,
+        "above50ms": 0
+      },
+      "cpu": {
+        "count": 3995,
+        "meanMs": 5.630337919072902,
+        "medianMs": 5.700000047683716,
+        "p95Ms": 8,
+        "p99Ms": 9.5,
+        "maxMs": 12.799999952316284,
+        "above16_67ms": 0,
+        "above33_33ms": 0,
+        "above50ms": 0
+      },
+      "gpu": {
+        "count": 3995,
+        "meanMs": 7.13507464330412,
+        "medianMs": 7.078912,
+        "p95Ms": 7.487488,
+        "p99Ms": 7.584544,
+        "maxMs": 9.503744,
+        "above16_67ms": 0,
+        "above33_33ms": 0,
+        "above50ms": 0
+      },
+      "gpuDisjoint": 0,
+      "gpuSkipped": 0,
+      "unsettledFrames": 0,
+      "meshRebuildsDuringSample": 0,
+      "errors": [],
+      "longTasks": [],
+      "before": {
+        "chunks": 130,
+        "meshVersion": 82,
+        "queued": 0,
+        "dirty": 0,
+        "memory": {
+          "geometries": 593,
+          "textures": 28
+        },
+        "programs": 22,
+        "heapMiB": 221.5711793899536,
+        "render": {
+          "frame": 964477,
+          "calls": 452,
+          "triangles": 1240331,
+          "points": 96,
+          "lines": 0
+        },
+        "far": {
+          "active": true,
+          "shown": 338,
+          "wanted": 338,
+          "missing": 0,
+          "cached": 349,
+          "triangles": 825966,
+          "shadowRevision": 368,
+          "profile": "game",
+          "detailDistance": 800,
+          "detailTiers": [
+            {
+              "distance": 800,
+              "spacing": 4
+            }
+          ],
+          "maxDistance": null,
+          "targetSpacing": 4,
+          "lodWithinTarget": {
+            "1": 92,
+            "2": 64,
+            "4": 130
+          },
+          "workers": 3
+        },
+        "worldOutput": {
+          "mode": "hdr16f",
+          "width": 1920,
+          "height": 1080,
+          "exposure": 1,
+          "estimatedBytes": 124416000,
+          "samples": 4
+        },
+        "streaming": {
+          "enabled": true,
+          "workerReady": true,
+          "pending": 0,
+          "ready": 0,
+          "requested": 49,
+          "completed": 49,
+          "applied": 49,
+          "discarded": 0,
+          "failures": 0,
+          "resets": 0,
+          "cache": {
+            "zones": 4,
+            "heightTiles": 221,
+            "drainageCells": 26483,
+            "routes": 587
+          },
+          "workerMs": 9.099999904632568,
+          "lastApplyMs": 0.2999999523162842,
+          "maxApplyMs": 7.599999904632568,
+          "lastError": null
+        },
+        "bounceMemoryBytes": 4320568
+      },
+      "after": {
+        "chunks": 130,
+        "meshVersion": 82,
+        "queued": 0,
+        "dirty": 0,
+        "memory": {
+          "geometries": 593,
+          "textures": 28
+        },
+        "programs": 22,
+        "heapMiB": 221.03935050964355,
+        "render": {
+          "frame": 1019368,
+          "calls": 457,
+          "triangles": 1252149,
+          "points": 96,
+          "lines": 0
+        },
+        "far": {
+          "active": true,
+          "shown": 338,
+          "wanted": 338,
+          "missing": 0,
+          "cached": 349,
+          "triangles": 825966,
+          "shadowRevision": 368,
+          "profile": "game",
+          "detailDistance": 800,
+          "detailTiers": [
+            {
+              "distance": 800,
+              "spacing": 4
+            }
+          ],
+          "maxDistance": null,
+          "targetSpacing": 4,
+          "lodWithinTarget": {
+            "1": 92,
+            "2": 64,
+            "4": 130
+          },
+          "workers": 3
+        },
+        "worldOutput": {
+          "mode": "hdr16f",
+          "width": 1920,
+          "height": 1080,
+          "exposure": 1,
+          "estimatedBytes": 124416000,
+          "samples": 4
+        },
+        "streaming": {
+          "enabled": true,
+          "workerReady": true,
+          "pending": 0,
+          "ready": 0,
+          "requested": 49,
+          "completed": 49,
+          "applied": 49,
+          "discarded": 0,
+          "failures": 0,
+          "resets": 0,
+          "cache": {
+            "zones": 4,
+            "heightTiles": 221,
+            "drainageCells": 26483,
+            "routes": 587
+          },
+          "workerMs": 9.099999904632568,
+          "lastApplyMs": 0.2999999523162842,
+          "maxApplyMs": 7.599999904632568,
+          "lastError": null
+        },
+        "bounceMemoryBytes": 4320568
+      },
+      "milestones": [
+        {
+          "atMs": 3.700000000069849,
+          "chunks": 130,
+          "queued": 0,
+          "dirty": 0,
+          "meshVersion": 82,
+          "render": {
+            "frame": 978253,
+            "calls": 452,
+            "triangles": 1240331,
+            "points": 96,
+            "lines": 0
+          },
+          "memory": {
+            "geometries": 593,
+            "textures": 28
+          },
+          "heapMiB": 230.8137903213501
+        },
+        {
+          "atMs": 10000.300000000047,
+          "chunks": 130,
+          "queued": 0,
+          "dirty": 0,
+          "meshVersion": 82,
+          "render": {
+            "frame": 991933,
+            "calls": 452,
+            "triangles": 1240331,
+            "points": 96,
+            "lines": 0
+          },
+          "memory": {
+            "geometries": 593,
+            "textures": 28
+          },
+          "heapMiB": 220.11036109924316
+        },
+        {
+          "atMs": 20004.20000000007,
+          "chunks": 130,
+          "queued": 0,
+          "dirty": 0,
+          "meshVersion": 82,
+          "render": {
+            "frame": 1005613,
+            "calls": 452,
+            "triangles": 1240331,
+            "points": 96,
+            "lines": 0
+          },
+          "memory": {
+            "geometries": 593,
+            "textures": 28
+          },
+          "heapMiB": 216.8338565826416
+        }
+      ]
+    },
+    {
+      "report": "atmosphere-2026-11-05T22-03-51-398Z-009-forest-river-noon-natural-static.json",
+      "reportSha256": "9a3c1384c92bdbdf962c346196103899d0354f06c84588ecc63992236d5b4937",
+      "scene": "forest",
+      "cameraName": "river",
+      "preset": "noon",
+      "look": "natural",
+      "motion": "static",
+      "viewDistance": 64,
+      "farTerrain": 1024,
+      "camera": {
+        "position": [
+          198,
+          63.6,
+          -261
+        ],
+        "direction": [
+          -0.6624047861549933,
+          -0.4649331706597313,
+          0.5874155650808436
+        ]
+      },
+      "settings": {
+        "potato": false,
+        "viewDistance": 64,
+        "farTerrain": 1024,
+        "farDetail": 2,
+        "fov": 75,
+        "brightness": 0,
+        "lightingLook": "natural",
+        "atmosphereLook": "natural",
+        "lightingMaterials": "standard",
+        "surfaceBounce": true,
+        "leafTransmission": true,
+        "materialSpecular": true,
+        "bounceStrength": 18,
+        "bounceSaturation": 65,
+        "cloudCover": 0,
+        "renderScale": 100,
+        "fpsLimit": 0,
+        "ambientOcclusion": 45,
+        "shadows": 3,
+        "lightShafts": true,
+        "fancyLeaves": true,
+        "dynamicLight": true,
+        "loadBudget": 4,
+        "mouseSensitivity": 100,
+        "invertMouse": false,
+        "skinOverlay": true,
+        "showHand": false,
+        "viewBobbing": true,
+        "jointStyle": "smooth",
+        "cameraDistance": 4,
+        "volumeMaster": 0,
+        "volumeMusic": 0,
+        "volumeBlocks": 100,
+        "volumeWorld": 100,
+        "volumeUi": 80,
+        "theme": "default",
+        "menuMotion": "auto",
+        "inventoryStyle": "wood",
+        "hudScale": 100,
+        "showDebug": true,
+        "showFps": false,
+        "meteorites": false,
+        "autoUpdates": false,
+        "textureResolution": 0,
+        "bushyGrass": true,
+        "bounceLight": false,
+        "lightingModel": "world"
+      },
+      "valid": true,
+      "invalidReason": null,
+      "gpuValid": true,
+      "durationSeconds": 30,
+      "warmupSeconds": 10,
+      "frame": {
+        "count": 3967,
+        "meanMs": 7.558205192840943,
+        "medianMs": 7,
+        "p95Ms": 13.900000000023283,
+        "p99Ms": 14,
+        "maxMs": 14.599999999976717,
+        "averageFps": 132.30654295376766,
+        "above16_67ms": 0,
+        "above33_33ms": 0,
+        "above50ms": 0
+      },
+      "cpu": {
+        "count": 3968,
+        "meanMs": 5.729863911086032,
+        "medianMs": 5.799999952316284,
+        "p95Ms": 7.900000095367432,
+        "p99Ms": 9.199999809265137,
+        "maxMs": 13.400000095367432,
+        "above16_67ms": 0,
+        "above33_33ms": 0,
+        "above50ms": 0
+      },
+      "gpu": {
+        "count": 3968,
+        "meanMs": 7.1818412903225655,
+        "medianMs": 7.1398399999999995,
+        "p95Ms": 7.554048,
+        "p99Ms": 7.668512,
+        "maxMs": 9.428768,
+        "above16_67ms": 0,
+        "above33_33ms": 0,
+        "above50ms": 0
+      },
+      "gpuDisjoint": 0,
+      "gpuSkipped": 0,
+      "unsettledFrames": 0,
+      "meshRebuildsDuringSample": 0,
+      "errors": [],
+      "longTasks": [],
+      "before": {
+        "chunks": 130,
+        "meshVersion": 82,
+        "queued": 0,
+        "dirty": 0,
+        "memory": {
+          "geometries": 593,
+          "textures": 28
+        },
+        "programs": 22,
+        "heapMiB": 220.689377784729,
+        "render": {
+          "frame": 1022113,
+          "calls": 452,
+          "triangles": 1240331,
+          "points": 96,
+          "lines": 0
+        },
+        "far": {
+          "active": true,
+          "shown": 338,
+          "wanted": 338,
+          "missing": 0,
+          "cached": 349,
+          "triangles": 825966,
+          "shadowRevision": 368,
+          "profile": "game",
+          "detailDistance": 800,
+          "detailTiers": [
+            {
+              "distance": 800,
+              "spacing": 4
+            }
+          ],
+          "maxDistance": null,
+          "targetSpacing": 4,
+          "lodWithinTarget": {
+            "1": 92,
+            "2": 64,
+            "4": 130
+          },
+          "workers": 3
+        },
+        "worldOutput": {
+          "mode": "hdr16f",
+          "width": 1920,
+          "height": 1080,
+          "exposure": 1,
+          "estimatedBytes": 124416000,
+          "samples": 4
+        },
+        "streaming": {
+          "enabled": true,
+          "workerReady": true,
+          "pending": 0,
+          "ready": 0,
+          "requested": 49,
+          "completed": 49,
+          "applied": 49,
+          "discarded": 0,
+          "failures": 0,
+          "resets": 0,
+          "cache": {
+            "zones": 4,
+            "heightTiles": 221,
+            "drainageCells": 26483,
+            "routes": 587
+          },
+          "workerMs": 9.099999904632568,
+          "lastApplyMs": 0.2999999523162842,
+          "maxApplyMs": 7.599999904632568,
+          "lastError": null
+        },
+        "bounceMemoryBytes": 4320568
+      },
+      "after": {
+        "chunks": 130,
+        "meshVersion": 82,
+        "queued": 0,
+        "dirty": 0,
+        "memory": {
+          "geometries": 593,
+          "textures": 28
+        },
+        "programs": 22,
+        "heapMiB": 238.2869930267334,
+        "render": {
+          "frame": 1076458,
+          "calls": 452,
+          "triangles": 1240331,
+          "points": 96,
+          "lines": 0
+        },
+        "far": {
+          "active": true,
+          "shown": 338,
+          "wanted": 338,
+          "missing": 0,
+          "cached": 349,
+          "triangles": 825966,
+          "shadowRevision": 368,
+          "profile": "game",
+          "detailDistance": 800,
+          "detailTiers": [
+            {
+              "distance": 800,
+              "spacing": 4
+            }
+          ],
+          "maxDistance": null,
+          "targetSpacing": 4,
+          "lodWithinTarget": {
+            "1": 92,
+            "2": 64,
+            "4": 130
+          },
+          "workers": 3
+        },
+        "worldOutput": {
+          "mode": "hdr16f",
+          "width": 1920,
+          "height": 1080,
+          "exposure": 1,
+          "estimatedBytes": 124416000,
+          "samples": 4
+        },
+        "streaming": {
+          "enabled": true,
+          "workerReady": true,
+          "pending": 0,
+          "ready": 0,
+          "requested": 49,
+          "completed": 49,
+          "applied": 49,
+          "discarded": 0,
+          "failures": 0,
+          "resets": 0,
+          "cache": {
+            "zones": 4,
+            "heightTiles": 221,
+            "drainageCells": 26483,
+            "routes": 587
+          },
+          "workerMs": 9.099999904632568,
+          "lastApplyMs": 0.2999999523162842,
+          "maxApplyMs": 7.599999904632568,
+          "lastError": null
+        },
+        "bounceMemoryBytes": 4320568
+      },
+      "milestones": [
+        {
+          "atMs": 3.699999999953434,
+          "chunks": 130,
+          "queued": 0,
+          "dirty": 0,
+          "meshVersion": 82,
+          "render": {
+            "frame": 1035633,
+            "calls": 452,
+            "triangles": 1240331,
+            "points": 96,
+            "lines": 0
+          },
+          "memory": {
+            "geometries": 593,
+            "textures": 28
+          },
+          "heapMiB": 237.21806812286377
+        },
+        {
+          "atMs": 10000.5,
+          "chunks": 130,
+          "queued": 0,
+          "dirty": 0,
+          "meshVersion": 82,
+          "render": {
+            "frame": 1049225,
+            "calls": 458,
+            "triangles": 1279031,
+            "points": 96,
+            "lines": 0
+          },
+          "memory": {
+            "geometries": 593,
+            "textures": 28
+          },
+          "heapMiB": 228.80672931671143
+        },
+        {
+          "atMs": 20004.29999999993,
+          "chunks": 130,
+          "queued": 0,
+          "dirty": 0,
+          "meshVersion": 82,
+          "render": {
+            "frame": 1062808,
+            "calls": 452,
+            "triangles": 1240331,
+            "points": 96,
+            "lines": 0
+          },
+          "memory": {
+            "geometries": 593,
+            "textures": 28
+          },
+          "heapMiB": 216.66570854187012
+        }
+      ]
+    },
+    {
+      "report": "atmosphere-2026-11-05T22-03-51-398Z-013-forest-horizon-noon-natural-static.json",
+      "reportSha256": "6817516c44baa3cd648d99ea7f8a8d3507749a9b92b18f31e0e3cad9bc2f3655",
+      "scene": "forest",
+      "cameraName": "horizon",
+      "preset": "noon",
+      "look": "natural",
+      "motion": "static",
+      "viewDistance": 128,
+      "farTerrain": 2048,
+      "camera": {
+        "position": [
+          188,
+          132,
+          -252
+        ],
+        "direction": [
+          0.7729892064814067,
+          -0.05000105006960146,
+          -0.632445714393878
+        ]
+      },
+      "settings": {
+        "potato": false,
+        "viewDistance": 128,
+        "farTerrain": 2048,
+        "farDetail": 2,
+        "fov": 75,
+        "brightness": 0,
+        "lightingLook": "natural",
+        "atmosphereLook": "natural",
+        "lightingMaterials": "standard",
+        "surfaceBounce": true,
+        "leafTransmission": true,
+        "materialSpecular": true,
+        "bounceStrength": 18,
+        "bounceSaturation": 65,
+        "cloudCover": 0,
+        "renderScale": 100,
+        "fpsLimit": 0,
+        "ambientOcclusion": 45,
+        "shadows": 3,
+        "lightShafts": true,
+        "fancyLeaves": true,
+        "dynamicLight": true,
+        "loadBudget": 4,
+        "mouseSensitivity": 100,
+        "invertMouse": false,
+        "skinOverlay": true,
+        "showHand": false,
+        "viewBobbing": true,
+        "jointStyle": "smooth",
+        "cameraDistance": 4,
+        "volumeMaster": 0,
+        "volumeMusic": 0,
+        "volumeBlocks": 100,
+        "volumeWorld": 100,
+        "volumeUi": 80,
+        "theme": "default",
+        "menuMotion": "auto",
+        "inventoryStyle": "wood",
+        "hudScale": 100,
+        "showDebug": true,
+        "showFps": false,
+        "meteorites": false,
+        "autoUpdates": false,
+        "textureResolution": 0,
+        "bushyGrass": true,
+        "bounceLight": false,
+        "lightingModel": "world"
+      },
+      "valid": true,
+      "invalidReason": null,
+      "gpuValid": true,
+      "durationSeconds": 30,
+      "warmupSeconds": 10,
+      "frame": {
+        "count": 4298,
+        "meanMs": 6.977733829688238,
+        "medianMs": 6.900000000023283,
+        "p95Ms": 7.099999999976717,
+        "p99Ms": 7.200000000069849,
+        "maxMs": 41.5,
+        "averageFps": 143.31300453813378,
+        "above16_67ms": 1,
+        "above33_33ms": 1,
+        "above50ms": 0
+      },
+      "cpu": {
+        "count": 4299,
+        "meanMs": 5.624563849452041,
+        "medianMs": 5.699999809265137,
+        "p95Ms": 7.700000047683716,
+        "p99Ms": 8.900000095367432,
+        "maxMs": 12.700000047683716,
+        "above16_67ms": 0,
+        "above33_33ms": 0,
+        "above50ms": 0
+      },
+      "gpu": {
+        "count": 4299,
+        "meanMs": 6.305871787857622,
+        "medianMs": 6.38352,
+        "p95Ms": 6.933504,
+        "p99Ms": 6.986752,
+        "maxMs": 7.420928,
+        "above16_67ms": 0,
+        "above33_33ms": 0,
+        "above50ms": 0
+      },
+      "gpuDisjoint": 0,
+      "gpuSkipped": 0,
+      "unsettledFrames": 0,
+      "meshRebuildsDuringSample": 0,
+      "errors": [],
+      "longTasks": [],
+      "before": {
+        "chunks": 346,
+        "meshVersion": 266,
+        "queued": 0,
+        "dirty": 0,
+        "memory": {
+          "geometries": 937,
+          "textures": 28
+        },
+        "programs": 22,
+        "heapMiB": 500.6843900680542,
+        "render": {
+          "frame": 1279242,
+          "calls": 491,
+          "triangles": 1075975,
+          "points": 96,
+          "lines": 0
+        },
+        "far": {
+          "active": true,
+          "shown": 378,
+          "wanted": 378,
+          "missing": 0,
+          "cached": 413,
+          "triangles": 1001596,
+          "shadowRevision": 560,
+          "profile": "game",
+          "detailDistance": 800,
+          "detailTiers": [
+            {
+              "distance": 800,
+              "spacing": 4
+            }
+          ],
+          "maxDistance": null,
+          "targetSpacing": 4,
+          "lodWithinTarget": {
+            "1": 66,
+            "2": 64,
+            "4": 129
+          },
+          "workers": 3
+        },
+        "worldOutput": {
+          "mode": "hdr16f",
+          "width": 1920,
+          "height": 1080,
+          "exposure": 1,
+          "estimatedBytes": 124416000,
+          "samples": 4
+        },
+        "streaming": {
+          "enabled": true,
+          "workerReady": true,
+          "pending": 0,
+          "ready": 0,
+          "requested": 265,
+          "completed": 265,
+          "applied": 265,
+          "discarded": 0,
+          "failures": 0,
+          "resets": 0,
+          "cache": {
+            "zones": 4,
+            "heightTiles": 221,
+            "drainageCells": 26483,
+            "routes": 587
+          },
+          "workerMs": 1.0999999046325684,
+          "lastApplyMs": 0.19999980926513672,
+          "maxApplyMs": 7.599999904632568,
+          "lastError": null
+        },
+        "bounceMemoryBytes": 3990168
+      },
+      "after": {
+        "chunks": 346,
+        "meshVersion": 266,
+        "queued": 0,
+        "dirty": 0,
+        "memory": {
+          "geometries": 937,
+          "textures": 28
+        },
+        "programs": 22,
+        "heapMiB": 408.39617347717285,
+        "render": {
+          "frame": 1336572,
+          "calls": 491,
+          "triangles": 1075975,
+          "points": 96,
+          "lines": 0
+        },
+        "far": {
+          "active": true,
+          "shown": 378,
+          "wanted": 378,
+          "missing": 0,
+          "cached": 413,
+          "triangles": 1001596,
+          "shadowRevision": 560,
+          "profile": "game",
+          "detailDistance": 800,
+          "detailTiers": [
+            {
+              "distance": 800,
+              "spacing": 4
+            }
+          ],
+          "maxDistance": null,
+          "targetSpacing": 4,
+          "lodWithinTarget": {
+            "1": 66,
+            "2": 64,
+            "4": 129
+          },
+          "workers": 3
+        },
+        "worldOutput": {
+          "mode": "hdr16f",
+          "width": 1920,
+          "height": 1080,
+          "exposure": 1,
+          "estimatedBytes": 124416000,
+          "samples": 4
+        },
+        "streaming": {
+          "enabled": true,
+          "workerReady": true,
+          "pending": 0,
+          "ready": 0,
+          "requested": 265,
+          "completed": 265,
+          "applied": 265,
+          "discarded": 0,
+          "failures": 0,
+          "resets": 0,
+          "cache": {
+            "zones": 4,
+            "heightTiles": 221,
+            "drainageCells": 26483,
+            "routes": 587
+          },
+          "workerMs": 1.0999999046325684,
+          "lastApplyMs": 0.19999980926513672,
+          "maxApplyMs": 7.599999904632568,
+          "lastError": null
+        },
+        "bounceMemoryBytes": 3990168
+      },
+      "milestones": [
+        {
+          "atMs": 3.699999999953434,
+          "chunks": 346,
+          "queued": 0,
+          "dirty": 0,
+          "meshVersion": 266,
+          "render": {
+            "frame": 1293572,
+            "calls": 491,
+            "triangles": 1075975,
+            "points": 96,
+            "lines": 0
+          },
+          "memory": {
+            "geometries": 937,
+            "textures": 28
+          },
+          "heapMiB": 501.2574186325073
+        },
+        {
+          "atMs": 10000.400000000023,
+          "chunks": 346,
+          "queued": 0,
+          "dirty": 0,
+          "meshVersion": 266,
+          "render": {
+            "frame": 1307882,
+            "calls": 491,
+            "triangles": 1075975,
+            "points": 96,
+            "lines": 0
+          },
+          "memory": {
+            "geometries": 937,
+            "textures": 28
+          },
+          "heapMiB": 405.6977939605713
+        },
+        {
+          "atMs": 20004.099999999977,
+          "chunks": 346,
+          "queued": 0,
+          "dirty": 0,
+          "meshVersion": 266,
+          "render": {
+            "frame": 1322162,
+            "calls": 491,
+            "triangles": 1075975,
+            "points": 96,
+            "lines": 0
+          },
+          "memory": {
+            "geometries": 937,
+            "textures": 28
+          },
+          "heapMiB": 407.9793872833252
+        }
+      ]
+    },
+    {
+      "report": "atmosphere-2026-11-05T22-03-51-398Z-020-forest-high-noon-natural-flight.json",
+      "reportSha256": "9ed9ff9d47eff9f607f5f11711be7bcdd6c7f50da9470656ce85c5a445614f2f",
+      "scene": "forest",
+      "cameraName": "high",
+      "preset": "noon",
+      "look": "natural",
+      "motion": "flight",
+      "viewDistance": 128,
+      "farTerrain": 2048,
+      "camera": {
+        "position": [
+          188.10254156471402,
+          69,
+          -252.00002738222784
+        ],
+        "direction": [
+          -0.5430753866417048,
+          -0.20365326999063926,
+          -0.8146130799625568
+        ]
+      },
+      "settings": {
+        "potato": false,
+        "viewDistance": 128,
+        "farTerrain": 2048,
+        "farDetail": 2,
+        "fov": 75,
+        "brightness": 0,
+        "lightingLook": "natural",
+        "atmosphereLook": "natural",
+        "lightingMaterials": "standard",
+        "surfaceBounce": true,
+        "leafTransmission": true,
+        "materialSpecular": true,
+        "bounceStrength": 18,
+        "bounceSaturation": 65,
+        "cloudCover": 0,
+        "renderScale": 100,
+        "fpsLimit": 0,
+        "ambientOcclusion": 45,
+        "shadows": 3,
+        "lightShafts": true,
+        "fancyLeaves": true,
+        "dynamicLight": true,
+        "loadBudget": 4,
+        "mouseSensitivity": 100,
+        "invertMouse": false,
+        "skinOverlay": true,
+        "showHand": false,
+        "viewBobbing": true,
+        "jointStyle": "smooth",
+        "cameraDistance": 4,
+        "volumeMaster": 0,
+        "volumeMusic": 0,
+        "volumeBlocks": 100,
+        "volumeWorld": 100,
+        "volumeUi": 80,
+        "theme": "default",
+        "menuMotion": "auto",
+        "inventoryStyle": "wood",
+        "hudScale": 100,
+        "showDebug": true,
+        "showFps": false,
+        "meteorites": false,
+        "autoUpdates": false,
+        "textureResolution": 0,
+        "bushyGrass": true,
+        "bounceLight": false,
+        "lightingModel": "world"
+      },
+      "valid": true,
+      "invalidReason": null,
+      "gpuValid": true,
+      "durationSeconds": 120,
+      "warmupSeconds": 10,
+      "frame": {
+        "count": 9944,
+        "meanMs": 12.067156074014486,
+        "medianMs": 13.800000000046566,
+        "p95Ms": 20.800000000046566,
+        "p99Ms": 21.199999999953434,
+        "maxMs": 41.9000000001397,
+        "averageFps": 82.86956710151519,
+        "above16_67ms": 962,
+        "above33_33ms": 14,
+        "above50ms": 0
+      },
+      "cpu": {
+        "count": 9945,
+        "meanMs": 11.25068878782281,
+        "medianMs": 10.700000047683716,
+        "p95Ms": 17.59999990463257,
+        "p99Ms": 22.09999990463257,
+        "maxMs": 39.700000047683716,
+        "above16_67ms": 661,
+        "above33_33ms": 4,
+        "above50ms": 0
+      },
+      "gpu": {
+        "count": 9945,
+        "meanMs": 9.298062025942649,
+        "medianMs": 9.003008,
+        "p95Ms": 12.464128,
+        "p99Ms": 15.827968,
+        "maxMs": 30.251008,
+        "above16_67ms": 64,
+        "above33_33ms": 0,
+        "above50ms": 0
+      },
+      "gpuDisjoint": 0,
+      "gpuSkipped": 0,
+      "unsettledFrames": 9809,
+      "meshRebuildsDuringSample": 807,
+      "errors": [],
+      "longTasks": [],
+      "before": {
+        "chunks": 346,
+        "meshVersion": 266,
+        "queued": 0,
+        "dirty": 0,
+        "memory": {
+          "geometries": 1046,
+          "textures": 32
+        },
+        "programs": 23,
+        "heapMiB": 508.2002468109131,
+        "render": {
+          "frame": 1639469,
+          "calls": 778,
+          "triangles": 1575797,
+          "points": 96,
+          "lines": 0
+        },
+        "far": {
+          "active": true,
+          "shown": 363,
+          "wanted": 363,
+          "missing": 0,
+          "cached": 434,
+          "triangles": 968976,
+          "shadowRevision": 562,
+          "profile": "game",
+          "detailDistance": 800,
+          "detailTiers": [
+            {
+              "distance": 800,
+              "spacing": 4
+            }
+          ],
+          "maxDistance": null,
+          "targetSpacing": 4,
+          "lodWithinTarget": {
+            "1": 50,
+            "2": 64,
+            "4": 130
+          },
+          "workers": 3
+        },
+        "worldOutput": {
+          "mode": "hdr16f",
+          "width": 1920,
+          "height": 1080,
+          "exposure": 1,
+          "estimatedBytes": 124416000,
+          "samples": 4
+        },
+        "streaming": {
+          "enabled": true,
+          "workerReady": true,
+          "pending": 0,
+          "ready": 0,
+          "requested": 265,
+          "completed": 265,
+          "applied": 265,
+          "discarded": 0,
+          "failures": 0,
+          "resets": 0,
+          "cache": {
+            "zones": 4,
+            "heightTiles": 221,
+            "drainageCells": 26483,
+            "routes": 587
+          },
+          "workerMs": 1.0999999046325684,
+          "lastApplyMs": 0.19999980926513672,
+          "maxApplyMs": 7.599999904632568,
+          "lastError": null
+        },
+        "bounceMemoryBytes": 3990168
+      },
+      "after": {
+        "chunks": 372,
+        "meshVersion": 1073,
+        "queued": 0,
+        "dirty": 0,
+        "memory": {
+          "geometries": 1353,
+          "textures": 32
+        },
+        "programs": 24,
+        "heapMiB": 765.6952352523804,
+        "render": {
+          "frame": 1759847,
+          "calls": 1039,
+          "triangles": 1863315,
+          "points": 96,
+          "lines": 0
+        },
+        "far": {
+          "active": true,
+          "shown": 403,
+          "wanted": 403,
+          "missing": 0,
+          "cached": 609,
+          "triangles": 1030812,
+          "shadowRevision": 1177,
+          "profile": "game",
+          "detailDistance": 800,
+          "detailTiers": [
+            {
+              "distance": 800,
+              "spacing": 4
+            }
+          ],
+          "maxDistance": null,
+          "targetSpacing": 4,
+          "lodWithinTarget": {
+            "1": 71,
+            "2": 71,
+            "4": 127
+          },
+          "workers": 3
+        },
+        "worldOutput": {
+          "mode": "hdr16f",
+          "width": 1920,
+          "height": 1080,
+          "exposure": 1,
+          "estimatedBytes": 124416000,
+          "samples": 4
+        },
+        "streaming": {
+          "enabled": true,
+          "workerReady": true,
+          "pending": 0,
+          "ready": 0,
+          "requested": 804,
+          "completed": 804,
+          "applied": 804,
+          "discarded": 0,
+          "failures": 0,
+          "resets": 0,
+          "cache": {
+            "zones": 8,
+            "heightTiles": 231,
+            "drainageCells": 27209,
+            "routes": 613
+          },
+          "workerMs": 2.299999952316284,
+          "lastApplyMs": 1,
+          "maxApplyMs": 7.599999904632568,
+          "lastError": null
+        },
+        "bounceMemoryBytes": 5218168
+      },
+      "milestones": [
+        {
+          "atMs": 3.699999999953434,
+          "chunks": 346,
+          "queued": 0,
+          "dirty": 0,
+          "meshVersion": 266,
+          "render": {
+            "frame": 1651820,
+            "calls": 773,
+            "triangles": 1537095,
+            "points": 96,
+            "lines": 0
+          },
+          "memory": {
+            "geometries": 1046,
+            "textures": 32
+          },
+          "heapMiB": 530.1556949615479
+        },
+        {
+          "atMs": 10000.5,
+          "chunks": 365,
+          "queued": 0,
+          "dirty": 0,
+          "meshVersion": 303,
+          "render": {
+            "frame": 1661450,
+            "calls": 879,
+            "triangles": 1853825,
+            "points": 96,
+            "lines": 0
+          },
+          "memory": {
+            "geometries": 1105,
+            "textures": 32
+          },
+          "heapMiB": 643.7729063034058
+        },
+        {
+          "atMs": 20004.199999999953,
+          "chunks": 371,
+          "queued": 0,
+          "dirty": 0,
+          "meshVersion": 379,
+          "render": {
+            "frame": 1670868,
+            "calls": 886,
+            "triangles": 1890021,
+            "points": 96,
+            "lines": 0
+          },
+          "memory": {
+            "geometries": 1180,
+            "textures": 32
+          },
+          "heapMiB": 839.3609199523926
+        },
+        {
+          "atMs": 30007.899999999907,
+          "chunks": 374,
+          "queued": 0,
+          "dirty": 0,
+          "meshVersion": 428,
+          "render": {
+            "frame": 1681240,
+            "calls": 819,
+            "triangles": 1773629,
+            "points": 96,
+            "lines": 0
+          },
+          "memory": {
+            "geometries": 1202,
+            "textures": 32
+          },
+          "heapMiB": 944.7140636444092
+        },
+        {
+          "atMs": 40011.5,
+          "chunks": 375,
+          "queued": 1,
+          "dirty": 1,
+          "meshVersion": 490,
+          "render": {
+            "frame": 1690969,
+            "calls": 856,
+            "triangles": 2138399,
+            "points": 96,
+            "lines": 12
+          },
+          "memory": {
+            "geometries": 1253,
+            "textures": 32
+          },
+          "heapMiB": 725.7247714996338
+        },
+        {
+          "atMs": 50001.39999999991,
+          "chunks": 374,
+          "queued": 0,
+          "dirty": 0,
+          "meshVersion": 542,
+          "render": {
+            "frame": 1701282,
+            "calls": 764,
+            "triangles": 1864367,
+            "points": 96,
+            "lines": 0
+          },
+          "memory": {
+            "geometries": 1251,
+            "textures": 32
+          },
+          "heapMiB": 875.3575172424316
+        },
+        {
+          "atMs": 60005.10000000009,
+          "chunks": 366,
+          "queued": 7,
+          "dirty": 1,
+          "meshVersion": 629,
+          "render": {
+            "frame": 1711322,
+            "calls": 743,
+            "triangles": 1557391,
+            "points": 96,
+            "lines": 0
+          },
+          "memory": {
+            "geometries": 1278,
+            "textures": 32
+          },
+          "heapMiB": 757.5728559494019
+        },
+        {
+          "atMs": 70001.8999999999,
+          "chunks": 371,
+          "queued": 0,
+          "dirty": 0,
+          "meshVersion": 749,
+          "render": {
+            "frame": 1720860,
+            "calls": 791,
+            "triangles": 1414589,
+            "points": 96,
+            "lines": 0
+          },
+          "memory": {
+            "geometries": 1279,
+            "textures": 32
+          },
+          "heapMiB": 978.9124565124512
+        },
+        {
+          "atMs": 80005.6000000001,
+          "chunks": 370,
+          "queued": 0,
+          "dirty": 0,
+          "meshVersion": 827,
+          "render": {
+            "frame": 1729533,
+            "calls": 832,
+            "triangles": 1282747,
+            "points": 96,
+            "lines": 0
+          },
+          "memory": {
+            "geometries": 1328,
+            "textures": 32
+          },
+          "heapMiB": 671.0094175338745
+        },
+        {
+          "atMs": 90002.3999999999,
+          "chunks": 374,
+          "queued": 0,
+          "dirty": 0,
+          "meshVersion": 896,
+          "render": {
+            "frame": 1737689,
+            "calls": 922,
+            "triangles": 1329073,
+            "points": 96,
+            "lines": 0
+          },
+          "memory": {
+            "geometries": 1344,
+            "textures": 32
+          },
+          "heapMiB": 822.9872703552246
+        },
+        {
+          "atMs": 100013.1000000001,
+          "chunks": 369,
+          "queued": 0,
+          "dirty": 0,
+          "meshVersion": 918,
+          "render": {
+            "frame": 1745202,
+            "calls": 1017,
+            "triangles": 1636943,
+            "points": 96,
+            "lines": 0
+          },
+          "memory": {
+            "geometries": 1348,
+            "textures": 32
+          },
+          "heapMiB": 906.0041351318359
+        },
+        {
+          "atMs": 110002.69999999995,
+          "chunks": 376,
+          "queued": 0,
+          "dirty": 0,
+          "meshVersion": 964,
+          "render": {
+            "frame": 1752329,
+            "calls": 1105,
+            "triangles": 1928569,
+            "points": 96,
+            "lines": 0
+          },
+          "memory": {
+            "geometries": 1355,
+            "textures": 32
+          },
+          "heapMiB": 608.4022941589355
+        }
+      ]
+    },
+    {
+      "report": "atmosphere-2026-11-05T22-03-51-398Z-021-forest-high-noon-baseline-flight.json",
+      "reportSha256": "ddd927de933728ada82a6b0b57f8e7abb41b790906252d827803f3e138ebbed4",
+      "scene": "forest",
+      "cameraName": "high",
+      "preset": "noon",
+      "look": "baseline",
+      "motion": "flight",
+      "viewDistance": 128,
+      "farTerrain": 2048,
+      "camera": {
+        "position": [
+          188.1729131661575,
+          69,
+          -252.00007786194604
+        ],
+        "direction": [
+          -0.5430753866417048,
+          -0.20365326999063926,
+          -0.8146130799625568
+        ]
+      },
+      "settings": {
+        "potato": false,
+        "viewDistance": 128,
+        "farTerrain": 2048,
+        "farDetail": 2,
+        "fov": 75,
+        "brightness": 0,
+        "lightingLook": "natural",
+        "atmosphereLook": "baseline",
+        "lightingMaterials": "standard",
+        "surfaceBounce": true,
+        "leafTransmission": true,
+        "materialSpecular": true,
+        "bounceStrength": 18,
+        "bounceSaturation": 65,
+        "cloudCover": 0,
+        "renderScale": 100,
+        "fpsLimit": 0,
+        "ambientOcclusion": 45,
+        "shadows": 3,
+        "lightShafts": true,
+        "fancyLeaves": true,
+        "dynamicLight": true,
+        "loadBudget": 4,
+        "mouseSensitivity": 100,
+        "invertMouse": false,
+        "skinOverlay": true,
+        "showHand": false,
+        "viewBobbing": true,
+        "jointStyle": "smooth",
+        "cameraDistance": 4,
+        "volumeMaster": 0,
+        "volumeMusic": 0,
+        "volumeBlocks": 100,
+        "volumeWorld": 100,
+        "volumeUi": 80,
+        "theme": "default",
+        "menuMotion": "auto",
+        "inventoryStyle": "wood",
+        "hudScale": 100,
+        "showDebug": true,
+        "showFps": false,
+        "meteorites": false,
+        "autoUpdates": false,
+        "textureResolution": 0,
+        "bushyGrass": true,
+        "bounceLight": false,
+        "lightingModel": "world"
+      },
+      "valid": true,
+      "invalidReason": null,
+      "gpuValid": true,
+      "durationSeconds": 120,
+      "warmupSeconds": 10,
+      "frame": {
+        "count": 9184,
+        "meanMs": 13.064993466898944,
+        "medianMs": 13.899999999906868,
+        "p95Ms": 20.899999999906868,
+        "p99Ms": 27.699999999953434,
+        "maxMs": 42,
+        "averageFps": 76.54041332156564,
+        "above16_67ms": 1243,
+        "above33_33ms": 19,
+        "above50ms": 0
+      },
+      "cpu": {
+        "count": 9185,
+        "meanMs": 12.230898204677834,
+        "medianMs": 12,
+        "p95Ms": 19,
+        "p99Ms": 22.699999809265137,
+        "maxMs": 35.5,
+        "above16_67ms": 931,
+        "above33_33ms": 3,
+        "above50ms": 0
+      },
+      "gpu": {
+        "count": 9185,
+        "meanMs": 9.403468632770814,
+        "medianMs": 9.049088,
+        "p95Ms": 12.930848,
+        "p99Ms": 15.978496,
+        "maxMs": 25.198272,
+        "above16_67ms": 63,
+        "above33_33ms": 0,
+        "above50ms": 0
+      },
+      "gpuDisjoint": 0,
+      "gpuSkipped": 0,
+      "unsettledFrames": 9119,
+      "meshRebuildsDuringSample": 884,
+      "errors": [],
+      "longTasks": [],
+      "before": {
+        "chunks": 372,
+        "meshVersion": 1073,
+        "queued": 0,
+        "dirty": 0,
+        "memory": {
+          "geometries": 1353,
+          "textures": 32
+        },
+        "programs": 24,
+        "heapMiB": 575.3963899612427,
+        "render": {
+          "frame": 1849831,
+          "calls": 1038,
+          "triangles": 1846165,
+          "points": 96,
+          "lines": 0
+        },
+        "far": {
+          "active": true,
+          "shown": 403,
+          "wanted": 403,
+          "missing": 0,
+          "cached": 609,
+          "triangles": 1030812,
+          "shadowRevision": 1177,
+          "profile": "game",
+          "detailDistance": 800,
+          "detailTiers": [
+            {
+              "distance": 800,
+              "spacing": 4
+            }
+          ],
+          "maxDistance": null,
+          "targetSpacing": 4,
+          "lodWithinTarget": {
+            "1": 71,
+            "2": 71,
+            "4": 127
+          },
+          "workers": 3
+        },
+        "worldOutput": {
+          "mode": "hdr16f",
+          "width": 1920,
+          "height": 1080,
+          "exposure": 1,
+          "estimatedBytes": 124416000,
+          "samples": 4
+        },
+        "streaming": {
+          "enabled": true,
+          "workerReady": true,
+          "pending": 0,
+          "ready": 0,
+          "requested": 804,
+          "completed": 804,
+          "applied": 804,
+          "discarded": 0,
+          "failures": 0,
+          "resets": 0,
+          "cache": {
+            "zones": 8,
+            "heightTiles": 231,
+            "drainageCells": 27209,
+            "routes": 613
+          },
+          "workerMs": 2.299999952316284,
+          "lastApplyMs": 1,
+          "maxApplyMs": 7.599999904632568,
+          "lastError": null
+        },
+        "bounceMemoryBytes": 3990168
+      },
+      "after": {
+        "chunks": 372,
+        "meshVersion": 1957,
+        "queued": 0,
+        "dirty": 0,
+        "memory": {
+          "geometries": 1353,
+          "textures": 32
+        },
+        "programs": 24,
+        "heapMiB": 637.0633087158203,
+        "render": {
+          "frame": 1959040,
+          "calls": 1062,
+          "triangles": 1866531,
+          "points": 96,
+          "lines": 0
+        },
+        "far": {
+          "active": true,
+          "shown": 403,
+          "wanted": 403,
+          "missing": 0,
+          "cached": 609,
+          "triangles": 1030812,
+          "shadowRevision": 1800,
+          "profile": "game",
+          "detailDistance": 800,
+          "detailTiers": [
+            {
+              "distance": 800,
+              "spacing": 4
+            }
+          ],
+          "maxDistance": null,
+          "targetSpacing": 4,
+          "lodWithinTarget": {
+            "1": 71,
+            "2": 71,
+            "4": 127
+          },
+          "workers": 3
+        },
+        "worldOutput": {
+          "mode": "hdr16f",
+          "width": 1920,
+          "height": 1080,
+          "exposure": 1,
+          "estimatedBytes": 124416000,
+          "samples": 4
+        },
+        "streaming": {
+          "enabled": true,
+          "workerReady": true,
+          "pending": 0,
+          "ready": 0,
+          "requested": 1363,
+          "completed": 1363,
+          "applied": 1362,
+          "discarded": 1,
+          "failures": 0,
+          "resets": 0,
+          "cache": {
+            "zones": 8,
+            "heightTiles": 231,
+            "drainageCells": 27209,
+            "routes": 613
+          },
+          "workerMs": 3.6000001430511475,
+          "lastApplyMs": 0.7000000476837158,
+          "maxApplyMs": 7.599999904632568,
+          "lastError": null
+        },
+        "bounceMemoryBytes": 5218168
+      },
+      "milestones": [
+        {
+          "atMs": 10.800000000046566,
+          "chunks": 372,
+          "queued": 0,
+          "dirty": 0,
+          "meshVersion": 1073,
+          "render": {
+            "frame": 1858693,
+            "calls": 1038,
+            "triangles": 1846165,
+            "points": 96,
+            "lines": 0
+          },
+          "memory": {
+            "geometries": 1353,
+            "textures": 32
+          },
+          "heapMiB": 573.7753038406372
+        },
+        {
+          "atMs": 10000.699999999953,
+          "chunks": 368,
+          "queued": 0,
+          "dirty": 0,
+          "meshVersion": 1189,
+          "render": {
+            "frame": 1866459,
+            "calls": 940,
+            "triangles": 1908283,
+            "points": 96,
+            "lines": 0
+          },
+          "memory": {
+            "geometries": 1347,
+            "textures": 32
+          },
+          "heapMiB": 650.6495199203491
+        },
+        {
+          "atMs": 20011.199999999953,
+          "chunks": 373,
+          "queued": 0,
+          "dirty": 0,
+          "meshVersion": 1273,
+          "render": {
+            "frame": 1874200,
+            "calls": 950,
+            "triangles": 1996747,
+            "points": 96,
+            "lines": 0
+          },
+          "memory": {
+            "geometries": 1351,
+            "textures": 32
+          },
+          "heapMiB": 822.2622184753418
+        },
+        {
+          "atMs": 30001.09999999986,
+          "chunks": 375,
+          "queued": 0,
+          "dirty": 0,
+          "meshVersion": 1321,
+          "render": {
+            "frame": 1883227,
+            "calls": 849,
+            "triangles": 1807319,
+            "points": 96,
+            "lines": 0
+          },
+          "memory": {
+            "geometries": 1353,
+            "textures": 32
+          },
+          "heapMiB": 930.619044303894
+        },
+        {
+          "atMs": 40011.69999999995,
+          "chunks": 374,
+          "queued": 2,
+          "dirty": 7,
+          "meshVersion": 1377,
+          "render": {
+            "frame": 1891905,
+            "calls": 863,
+            "triangles": 2121459,
+            "points": 96,
+            "lines": 12
+          },
+          "memory": {
+            "geometries": 1355,
+            "textures": 32
+          },
+          "heapMiB": 648.179370880127
+        },
+        {
+          "atMs": 50001.80000000005,
+          "chunks": 374,
+          "queued": 0,
+          "dirty": 0,
+          "meshVersion": 1428,
+          "render": {
+            "frame": 1901722,
+            "calls": 769,
+            "triangles": 1898163,
+            "points": 96,
+            "lines": 0
+          },
+          "memory": {
+            "geometries": 1345,
+            "textures": 32
+          },
+          "heapMiB": 797.2844352722168
+        },
+        {
+          "atMs": 60005.30000000005,
+          "chunks": 370,
+          "queued": 3,
+          "dirty": 9,
+          "meshVersion": 1518,
+          "render": {
+            "frame": 1911612,
+            "calls": 751,
+            "triangles": 1567297,
+            "points": 96,
+            "lines": 0
+          },
+          "memory": {
+            "geometries": 1354,
+            "textures": 32
+          },
+          "heapMiB": 1008.6068954467773
+        },
+        {
+          "atMs": 70008.8999999999,
+          "chunks": 371,
+          "queued": 0,
+          "dirty": 0,
+          "meshVersion": 1635,
+          "render": {
+            "frame": 1920840,
+            "calls": 819,
+            "triangles": 1501447,
+            "points": 96,
+            "lines": 0
+          },
+          "memory": {
+            "geometries": 1353,
+            "textures": 32
+          },
+          "heapMiB": 744.5934009552002
+        },
+        {
+          "atMs": 80012.69999999995,
+          "chunks": 370,
+          "queued": 0,
+          "dirty": 0,
+          "meshVersion": 1713,
+          "render": {
+            "frame": 1929481,
+            "calls": 840,
+            "triangles": 1321381,
+            "points": 96,
+            "lines": 0
+          },
+          "memory": {
+            "geometries": 1347,
+            "textures": 32
+          },
+          "heapMiB": 895.7453746795654
+        },
+        {
+          "atMs": 90023.5,
+          "chunks": 374,
+          "queued": 0,
+          "dirty": 0,
+          "meshVersion": 1782,
+          "render": {
+            "frame": 1937240,
+            "calls": 921,
+            "triangles": 1337129,
+            "points": 96,
+            "lines": 0
+          },
+          "memory": {
+            "geometries": 1340,
+            "textures": 32
+          },
+          "heapMiB": 584.6514530181885
+        },
+        {
+          "atMs": 100006.19999999995,
+          "chunks": 369,
+          "queued": 0,
+          "dirty": 0,
+          "meshVersion": 1804,
+          "render": {
+            "frame": 1944767,
+            "calls": 1025,
+            "triangles": 1674831,
+            "points": 96,
+            "lines": 0
+          },
+          "memory": {
+            "geometries": 1350,
+            "textures": 32
+          },
+          "heapMiB": 655.5688571929932
+        },
+        {
+          "atMs": 110009.8999999999,
+          "chunks": 375,
+          "queued": 0,
+          "dirty": 0,
+          "meshVersion": 1849,
+          "render": {
+            "frame": 1951760,
+            "calls": 1108,
+            "triangles": 1963099,
+            "points": 96,
+            "lines": 0
+          },
+          "memory": {
+            "geometries": 1355,
+            "textures": 32
+          },
+          "heapMiB": 807.1543064117432
+        }
+      ]
+    }
+  ],
+  "photos": [
+    {
+      "report": "atmosphere-2026-11-05T22-03-51-398Z-002-forest-river-noon-baseline.json",
+      "reportSha256": "32a5ee4fbcdea33c91d657b5d29eaf1350ee563ab2ac2e84aa3239108fc3db38",
+      "image": "atmosphere-2026-11-05T22-03-51-398Z-002-forest-river-noon-baseline.png",
+      "imageSha256": "56a0f482f30faff06c4bfc7996495a6dfd451b89b7e548001bbdba204834c6e0",
+      "size": [
+        1920,
+        1080
+      ],
+      "scene": "forest",
+      "cameraName": "river",
+      "preset": "noon",
+      "hallOpen": false,
+      "look": "baseline",
+      "settings": {
+        "potato": false,
+        "viewDistance": 64,
+        "farTerrain": 1024,
+        "farDetail": 2,
+        "fov": 75,
+        "brightness": 0,
+        "lightingLook": "natural",
+        "atmosphereLook": "baseline",
+        "lightingMaterials": "standard",
+        "surfaceBounce": true,
+        "leafTransmission": true,
+        "materialSpecular": true,
+        "bounceStrength": 18,
+        "bounceSaturation": 65,
+        "cloudCover": 0,
+        "renderScale": 100,
+        "fpsLimit": 0,
+        "ambientOcclusion": 45,
+        "shadows": 3,
+        "lightShafts": true,
+        "fancyLeaves": true,
+        "dynamicLight": true,
+        "loadBudget": 4,
+        "mouseSensitivity": 100,
+        "invertMouse": false,
+        "skinOverlay": true,
+        "showHand": false,
+        "viewBobbing": true,
+        "jointStyle": "smooth",
+        "cameraDistance": 4,
+        "volumeMaster": 0,
+        "volumeMusic": 0,
+        "volumeBlocks": 100,
+        "volumeWorld": 100,
+        "volumeUi": 80,
+        "theme": "default",
+        "menuMotion": "auto",
+        "inventoryStyle": "wood",
+        "hudScale": 100,
+        "showDebug": true,
+        "showFps": false,
+        "meteorites": false,
+        "autoUpdates": false,
+        "textureResolution": 0,
+        "bushyGrass": true,
+        "bounceLight": false,
+        "lightingModel": "world"
+      },
+      "camera": {
+        "position": [
+          198,
+          63.6,
+          -261
+        ],
+        "direction": [
+          -0.6624047861549933,
+          -0.4649331706597313,
+          0.5874155650808436
+        ]
+      },
+      "timeDays": 0.5,
+      "atmosphere": {
+        "view": {
+          "uFarEnabled": 1,
+          "uFarInner": 64,
+          "uFarOuter": 1024,
+          "uHazeDistance": 900,
+          "uHazeMax": 0.82,
+          "uAerialPerspective": 0,
+          "uAerialDensity": 0.82,
+          "uAerialHeight": 250,
+          "uAerialCameraSky": 1,
+          "uTime": 237.58710000007903,
+          "uUnderwater": 0,
+          "uUnderwaterColor": [
+            1,
+            1,
+            1
+          ],
+          "uUnderwaterDensity": 0.08
+        },
+        "sky": {
+          "uFogBrightness": 1
+        },
+        "cameraLight": {
+          "sky": 15,
+          "red": 0,
+          "green": 0,
+          "blue": 0
+        },
+        "hallProbes": null
+      },
+      "plantShadowSampleTime": 237.54530000007904,
+      "frozenAnimations": true,
+      "meshRebuildsSincePairStart": 0,
+      "errors": [],
+      "failedPrograms": 0,
+      "publishedImage": "river-before.png"
+    },
+    {
+      "report": "atmosphere-2026-11-05T22-03-51-398Z-003-forest-river-noon-natural.json",
+      "reportSha256": "c9039cc27b2f9c3a63346f074ab245e2d188de17d6665dd81dbcb4d1354dea15",
+      "image": "atmosphere-2026-11-05T22-03-51-398Z-003-forest-river-noon-natural.png",
+      "imageSha256": "eb18275bcf4af8069ac240a27e955cd27e90b5271fba34642a67a5aae5238b2c",
+      "size": [
+        1920,
+        1080
+      ],
+      "scene": "forest",
+      "cameraName": "river",
+      "preset": "noon",
+      "hallOpen": false,
+      "look": "natural",
+      "settings": {
+        "potato": false,
+        "viewDistance": 64,
+        "farTerrain": 1024,
+        "farDetail": 2,
+        "fov": 75,
+        "brightness": 0,
+        "lightingLook": "natural",
+        "atmosphereLook": "natural",
+        "lightingMaterials": "standard",
+        "surfaceBounce": true,
+        "leafTransmission": true,
+        "materialSpecular": true,
+        "bounceStrength": 18,
+        "bounceSaturation": 65,
+        "cloudCover": 0,
+        "renderScale": 100,
+        "fpsLimit": 0,
+        "ambientOcclusion": 45,
+        "shadows": 3,
+        "lightShafts": true,
+        "fancyLeaves": true,
+        "dynamicLight": true,
+        "loadBudget": 4,
+        "mouseSensitivity": 100,
+        "invertMouse": false,
+        "skinOverlay": true,
+        "showHand": false,
+        "viewBobbing": true,
+        "jointStyle": "smooth",
+        "cameraDistance": 4,
+        "volumeMaster": 0,
+        "volumeMusic": 0,
+        "volumeBlocks": 100,
+        "volumeWorld": 100,
+        "volumeUi": 80,
+        "theme": "default",
+        "menuMotion": "auto",
+        "inventoryStyle": "wood",
+        "hudScale": 100,
+        "showDebug": true,
+        "showFps": false,
+        "meteorites": false,
+        "autoUpdates": false,
+        "textureResolution": 0,
+        "bushyGrass": true,
+        "bounceLight": false,
+        "lightingModel": "world"
+      },
+      "camera": {
+        "position": [
+          198,
+          63.6,
+          -261
+        ],
+        "direction": [
+          -0.6624047861549933,
+          -0.4649331706597313,
+          0.5874155650808436
+        ]
+      },
+      "timeDays": 0.5,
+      "atmosphere": {
+        "view": {
+          "uFarEnabled": 1,
+          "uFarInner": 64,
+          "uFarOuter": 1024,
+          "uHazeDistance": 900,
+          "uHazeMax": 0.82,
+          "uAerialPerspective": 1,
+          "uAerialDensity": 0.82,
+          "uAerialHeight": 250,
+          "uAerialCameraSky": 1,
+          "uTime": 237.58710000007903,
+          "uUnderwater": 0,
+          "uUnderwaterColor": [
+            1,
+            1,
+            1
+          ],
+          "uUnderwaterDensity": 0.08
+        },
+        "sky": {
+          "uFogBrightness": 1
+        },
+        "cameraLight": {
+          "sky": 15,
+          "red": 0,
+          "green": 0,
+          "blue": 0
+        },
+        "hallProbes": null
+      },
+      "plantShadowSampleTime": 237.54530000007904,
+      "frozenAnimations": true,
+      "meshRebuildsSincePairStart": 0,
+      "errors": [],
+      "failedPrograms": 0,
+      "publishedImage": "river-after.png"
+    },
+    {
+      "report": "atmosphere-2026-11-05T22-03-51-398Z-011-forest-horizon-noon-baseline.json",
+      "reportSha256": "ce2b6ae696256fb61896f6791edd8ed8d3fcb25a53a145ce8c8658aa5fb92b0e",
+      "image": "atmosphere-2026-11-05T22-03-51-398Z-011-forest-horizon-noon-baseline.png",
+      "imageSha256": "0145a8abe5a0ad504de17733d6d2e1854f9b62a527070a1070d997cd2d25e032",
+      "size": [
+        1920,
+        1080
+      ],
+      "scene": "forest",
+      "cameraName": "horizon",
+      "preset": "noon",
+      "hallOpen": false,
+      "look": "baseline",
+      "settings": {
+        "potato": false,
+        "viewDistance": 128,
+        "farTerrain": 2048,
+        "farDetail": 2,
+        "fov": 75,
+        "brightness": 0,
+        "lightingLook": "natural",
+        "atmosphereLook": "baseline",
+        "lightingMaterials": "standard",
+        "surfaceBounce": true,
+        "leafTransmission": true,
+        "materialSpecular": true,
+        "bounceStrength": 18,
+        "bounceSaturation": 65,
+        "cloudCover": 0,
+        "renderScale": 100,
+        "fpsLimit": 0,
+        "ambientOcclusion": 45,
+        "shadows": 3,
+        "lightShafts": true,
+        "fancyLeaves": true,
+        "dynamicLight": true,
+        "loadBudget": 4,
+        "mouseSensitivity": 100,
+        "invertMouse": false,
+        "skinOverlay": true,
+        "showHand": false,
+        "viewBobbing": true,
+        "jointStyle": "smooth",
+        "cameraDistance": 4,
+        "volumeMaster": 0,
+        "volumeMusic": 0,
+        "volumeBlocks": 100,
+        "volumeWorld": 100,
+        "volumeUi": 80,
+        "theme": "default",
+        "menuMotion": "auto",
+        "inventoryStyle": "wood",
+        "hudScale": 100,
+        "showDebug": true,
+        "showFps": false,
+        "meteorites": false,
+        "autoUpdates": false,
+        "textureResolution": 0,
+        "bushyGrass": true,
+        "bounceLight": false,
+        "lightingModel": "world"
+      },
+      "camera": {
+        "position": [
+          188,
+          132,
+          -252
+        ],
+        "direction": [
+          0.7729892064814067,
+          -0.05000105006960146,
+          -0.632445714393878
+        ]
+      },
+      "timeDays": 0.5,
+      "atmosphere": {
+        "view": {
+          "uFarEnabled": 1,
+          "uFarInner": 128,
+          "uFarOuter": 2048,
+          "uHazeDistance": 900,
+          "uHazeMax": 0.82,
+          "uAerialPerspective": 0,
+          "uAerialDensity": 0.82,
+          "uAerialHeight": 250,
+          "uAerialCameraSky": 1,
+          "uTime": 891.0159999981773,
+          "uUnderwater": 0,
+          "uUnderwaterColor": [
+            1,
+            1,
+            1
+          ],
+          "uUnderwaterDensity": 0.08
+        },
+        "sky": {
+          "uFogBrightness": 1
+        },
+        "cameraLight": {
+          "sky": 15,
+          "red": 0,
+          "green": 0,
+          "blue": 0
+        },
+        "hallProbes": null
+      },
+      "plantShadowSampleTime": 859.4013999983865,
+      "frozenAnimations": true,
+      "meshRebuildsSincePairStart": 0,
+      "errors": [],
+      "failedPrograms": 0
+    },
+    {
+      "report": "atmosphere-2026-11-05T22-03-51-398Z-012-forest-horizon-noon-natural.json",
+      "reportSha256": "b8f5b13a2ff328498a1379509c391f9ef3c0388f4598acc72baaf90fef230792",
+      "image": "atmosphere-2026-11-05T22-03-51-398Z-012-forest-horizon-noon-natural.png",
+      "imageSha256": "bd2105df16c8f7431de74c6e9dcd78625c25775cf27eac2b0f255fe66f572304",
+      "size": [
+        1920,
+        1080
+      ],
+      "scene": "forest",
+      "cameraName": "horizon",
+      "preset": "noon",
+      "hallOpen": false,
+      "look": "natural",
+      "settings": {
+        "potato": false,
+        "viewDistance": 128,
+        "farTerrain": 2048,
+        "farDetail": 2,
+        "fov": 75,
+        "brightness": 0,
+        "lightingLook": "natural",
+        "atmosphereLook": "natural",
+        "lightingMaterials": "standard",
+        "surfaceBounce": true,
+        "leafTransmission": true,
+        "materialSpecular": true,
+        "bounceStrength": 18,
+        "bounceSaturation": 65,
+        "cloudCover": 0,
+        "renderScale": 100,
+        "fpsLimit": 0,
+        "ambientOcclusion": 45,
+        "shadows": 3,
+        "lightShafts": true,
+        "fancyLeaves": true,
+        "dynamicLight": true,
+        "loadBudget": 4,
+        "mouseSensitivity": 100,
+        "invertMouse": false,
+        "skinOverlay": true,
+        "showHand": false,
+        "viewBobbing": true,
+        "jointStyle": "smooth",
+        "cameraDistance": 4,
+        "volumeMaster": 0,
+        "volumeMusic": 0,
+        "volumeBlocks": 100,
+        "volumeWorld": 100,
+        "volumeUi": 80,
+        "theme": "default",
+        "menuMotion": "auto",
+        "inventoryStyle": "wood",
+        "hudScale": 100,
+        "showDebug": true,
+        "showFps": false,
+        "meteorites": false,
+        "autoUpdates": false,
+        "textureResolution": 0,
+        "bushyGrass": true,
+        "bounceLight": false,
+        "lightingModel": "world"
+      },
+      "camera": {
+        "position": [
+          188,
+          132,
+          -252
+        ],
+        "direction": [
+          0.7729892064814067,
+          -0.05000105006960146,
+          -0.632445714393878
+        ]
+      },
+      "timeDays": 0.5,
+      "atmosphere": {
+        "view": {
+          "uFarEnabled": 1,
+          "uFarInner": 128,
+          "uFarOuter": 2048,
+          "uHazeDistance": 900,
+          "uHazeMax": 0.82,
+          "uAerialPerspective": 1,
+          "uAerialDensity": 0.82,
+          "uAerialHeight": 250,
+          "uAerialCameraSky": 1,
+          "uTime": 891.0159999981773,
+          "uUnderwater": 0,
+          "uUnderwaterColor": [
+            1,
+            1,
+            1
+          ],
+          "uUnderwaterDensity": 0.08
+        },
+        "sky": {
+          "uFogBrightness": 1
+        },
+        "cameraLight": {
+          "sky": 15,
+          "red": 0,
+          "green": 0,
+          "blue": 0
+        },
+        "hallProbes": null
+      },
+      "plantShadowSampleTime": 859.4013999983865,
+      "frozenAnimations": true,
+      "meshRebuildsSincePairStart": 0,
+      "errors": [],
+      "failedPrograms": 0
+    },
+    {
+      "report": "atmosphere-2026-11-05T22-03-51-398Z-014-forest-horizon-sunset-baseline.json",
+      "reportSha256": "e0fa5327a6522b635f83d51839aad3ef940adfeeae194e1ed50d39b22dc933be",
+      "image": "atmosphere-2026-11-05T22-03-51-398Z-014-forest-horizon-sunset-baseline.png",
+      "imageSha256": "1c709310554371b569cb0eab3c999ae537ee7ef7d578d4639a4214c4dbcfbd5a",
+      "size": [
+        1920,
+        1080
+      ],
+      "scene": "forest",
+      "cameraName": "horizon",
+      "preset": "sunset",
+      "hallOpen": false,
+      "look": "baseline",
+      "settings": {
+        "potato": false,
+        "viewDistance": 128,
+        "farTerrain": 2048,
+        "farDetail": 2,
+        "fov": 75,
+        "brightness": 0,
+        "lightingLook": "natural",
+        "atmosphereLook": "baseline",
+        "lightingMaterials": "standard",
+        "surfaceBounce": true,
+        "leafTransmission": true,
+        "materialSpecular": true,
+        "bounceStrength": 18,
+        "bounceSaturation": 65,
+        "cloudCover": 0,
+        "renderScale": 100,
+        "fpsLimit": 0,
+        "ambientOcclusion": 45,
+        "shadows": 3,
+        "lightShafts": true,
+        "fancyLeaves": true,
+        "dynamicLight": true,
+        "loadBudget": 4,
+        "mouseSensitivity": 100,
+        "invertMouse": false,
+        "skinOverlay": true,
+        "showHand": false,
+        "viewBobbing": true,
+        "jointStyle": "smooth",
+        "cameraDistance": 4,
+        "volumeMaster": 0,
+        "volumeMusic": 0,
+        "volumeBlocks": 100,
+        "volumeWorld": 100,
+        "volumeUi": 80,
+        "theme": "default",
+        "menuMotion": "auto",
+        "inventoryStyle": "wood",
+        "hudScale": 100,
+        "showDebug": true,
+        "showFps": false,
+        "meteorites": false,
+        "autoUpdates": false,
+        "textureResolution": 0,
+        "bushyGrass": true,
+        "bounceLight": false,
+        "lightingModel": "world"
+      },
+      "camera": {
+        "position": [
+          188,
+          132,
+          -252
+        ],
+        "direction": [
+          0.7729892064814067,
+          -0.05000105006960146,
+          -0.632445714393878
+        ]
+      },
+      "timeDays": 0.7458333333333332,
+      "atmosphere": {
+        "view": {
+          "uFarEnabled": 1,
+          "uFarInner": 128,
+          "uFarOuter": 2048,
+          "uHazeDistance": 900,
+          "uHazeMax": 0.82,
+          "uAerialPerspective": 0,
+          "uAerialDensity": 0.9999897063123889,
+          "uAerialHeight": 200.0028593576697,
+          "uAerialCameraSky": 1,
+          "uTime": 1032.3728999973173,
+          "uUnderwater": 0,
+          "uUnderwaterColor": [
+            1,
+            1,
+            1
+          ],
+          "uUnderwaterDensity": 0.08
+        },
+        "sky": {
+          "uFogBrightness": 1
+        },
+        "cameraLight": {
+          "sky": 15,
+          "red": 0,
+          "green": 0,
+          "blue": 0
+        },
+        "hallProbes": null
+      },
+      "plantShadowSampleTime": 1020.6755999972861,
+      "frozenAnimations": true,
+      "meshRebuildsSincePairStart": 0,
+      "errors": [],
+      "failedPrograms": 0,
+      "publishedImage": "sunset-before.png"
+    },
+    {
+      "report": "atmosphere-2026-11-05T22-03-51-398Z-015-forest-horizon-sunset-natural.json",
+      "reportSha256": "a639d3386bbe1f6c33238d047979dd8e81321d8bfcc737a9b0cf2bc259586c03",
+      "image": "atmosphere-2026-11-05T22-03-51-398Z-015-forest-horizon-sunset-natural.png",
+      "imageSha256": "793f68372b3a3fa3a341b1dd243a48657a60a97aeeb6002ac2703b490ccfcde9",
+      "size": [
+        1920,
+        1080
+      ],
+      "scene": "forest",
+      "cameraName": "horizon",
+      "preset": "sunset",
+      "hallOpen": false,
+      "look": "natural",
+      "settings": {
+        "potato": false,
+        "viewDistance": 128,
+        "farTerrain": 2048,
+        "farDetail": 2,
+        "fov": 75,
+        "brightness": 0,
+        "lightingLook": "natural",
+        "atmosphereLook": "natural",
+        "lightingMaterials": "standard",
+        "surfaceBounce": true,
+        "leafTransmission": true,
+        "materialSpecular": true,
+        "bounceStrength": 18,
+        "bounceSaturation": 65,
+        "cloudCover": 0,
+        "renderScale": 100,
+        "fpsLimit": 0,
+        "ambientOcclusion": 45,
+        "shadows": 3,
+        "lightShafts": true,
+        "fancyLeaves": true,
+        "dynamicLight": true,
+        "loadBudget": 4,
+        "mouseSensitivity": 100,
+        "invertMouse": false,
+        "skinOverlay": true,
+        "showHand": false,
+        "viewBobbing": true,
+        "jointStyle": "smooth",
+        "cameraDistance": 4,
+        "volumeMaster": 0,
+        "volumeMusic": 0,
+        "volumeBlocks": 100,
+        "volumeWorld": 100,
+        "volumeUi": 80,
+        "theme": "default",
+        "menuMotion": "auto",
+        "inventoryStyle": "wood",
+        "hudScale": 100,
+        "showDebug": true,
+        "showFps": false,
+        "meteorites": false,
+        "autoUpdates": false,
+        "textureResolution": 0,
+        "bushyGrass": true,
+        "bounceLight": false,
+        "lightingModel": "world"
+      },
+      "camera": {
+        "position": [
+          188,
+          132,
+          -252
+        ],
+        "direction": [
+          0.7729892064814067,
+          -0.05000105006960146,
+          -0.632445714393878
+        ]
+      },
+      "timeDays": 0.7458333333333332,
+      "atmosphere": {
+        "view": {
+          "uFarEnabled": 1,
+          "uFarInner": 128,
+          "uFarOuter": 2048,
+          "uHazeDistance": 900,
+          "uHazeMax": 0.82,
+          "uAerialPerspective": 1,
+          "uAerialDensity": 0.9999897063123889,
+          "uAerialHeight": 200.0028593576697,
+          "uAerialCameraSky": 1,
+          "uTime": 1032.3728999973173,
+          "uUnderwater": 0,
+          "uUnderwaterColor": [
+            1,
+            1,
+            1
+          ],
+          "uUnderwaterDensity": 0.08
+        },
+        "sky": {
+          "uFogBrightness": 1
+        },
+        "cameraLight": {
+          "sky": 15,
+          "red": 0,
+          "green": 0,
+          "blue": 0
+        },
+        "hallProbes": null
+      },
+      "plantShadowSampleTime": 1020.6755999972861,
+      "frozenAnimations": true,
+      "meshRebuildsSincePairStart": 0,
+      "errors": [],
+      "failedPrograms": 0,
+      "publishedImage": "sunset-after.png"
+    },
+    {
+      "report": "atmosphere-2026-11-05T22-03-51-398Z-016-forest-horizon-overcast-baseline.json",
+      "reportSha256": "620b9a5231e8af4fdafd02373cf3706492705c9da4cc92e209578e2a6099e6ff",
+      "image": "atmosphere-2026-11-05T22-03-51-398Z-016-forest-horizon-overcast-baseline.png",
+      "imageSha256": "652cf4d95c9923ece8a842955b26bdfd7023b0bae7fcdc299897f1aefda13368",
+      "size": [
+        1920,
+        1080
+      ],
+      "scene": "forest",
+      "cameraName": "horizon",
+      "preset": "overcast",
+      "hallOpen": false,
+      "look": "baseline",
+      "settings": {
+        "potato": false,
+        "viewDistance": 128,
+        "farTerrain": 2048,
+        "farDetail": 2,
+        "fov": 75,
+        "brightness": 0,
+        "lightingLook": "natural",
+        "atmosphereLook": "baseline",
+        "lightingMaterials": "standard",
+        "surfaceBounce": true,
+        "leafTransmission": true,
+        "materialSpecular": true,
+        "bounceStrength": 18,
+        "bounceSaturation": 65,
+        "cloudCover": 100,
+        "renderScale": 100,
+        "fpsLimit": 0,
+        "ambientOcclusion": 45,
+        "shadows": 3,
+        "lightShafts": true,
+        "fancyLeaves": true,
+        "dynamicLight": true,
+        "loadBudget": 4,
+        "mouseSensitivity": 100,
+        "invertMouse": false,
+        "skinOverlay": true,
+        "showHand": false,
+        "viewBobbing": true,
+        "jointStyle": "smooth",
+        "cameraDistance": 4,
+        "volumeMaster": 0,
+        "volumeMusic": 0,
+        "volumeBlocks": 100,
+        "volumeWorld": 100,
+        "volumeUi": 80,
+        "theme": "default",
+        "menuMotion": "auto",
+        "inventoryStyle": "wood",
+        "hudScale": 100,
+        "showDebug": true,
+        "showFps": false,
+        "meteorites": false,
+        "autoUpdates": false,
+        "textureResolution": 0,
+        "bushyGrass": true,
+        "bounceLight": false,
+        "lightingModel": "world"
+      },
+      "camera": {
+        "position": [
+          188,
+          132,
+          -252
+        ],
+        "direction": [
+          0.7729892064814067,
+          -0.05000105006960146,
+          -0.632445714393878
+        ]
+      },
+      "timeDays": 0.5,
+      "atmosphere": {
+        "view": {
+          "uFarEnabled": 1,
+          "uFarInner": 128,
+          "uFarOuter": 2048,
+          "uHazeDistance": 900,
+          "uHazeMax": 0.82,
+          "uAerialPerspective": 0,
+          "uAerialDensity": 1.025,
+          "uAerialHeight": 200,
+          "uAerialCameraSky": 1,
+          "uTime": 1074.581799997385,
+          "uUnderwater": 0,
+          "uUnderwaterColor": [
+            1,
+            1,
+            1
+          ],
+          "uUnderwaterDensity": 0.08
+        },
+        "sky": {
+          "uFogBrightness": 1
+        },
+        "cameraLight": {
+          "sky": 15,
+          "red": 0,
+          "green": 0,
+          "blue": 0
+        },
+        "hallProbes": null
+      },
+      "plantShadowSampleTime": 1060.509799997375,
+      "frozenAnimations": true,
+      "meshRebuildsSincePairStart": 0,
+      "errors": [],
+      "failedPrograms": 0
+    },
+    {
+      "report": "atmosphere-2026-11-05T22-03-51-398Z-017-forest-horizon-overcast-natural.json",
+      "reportSha256": "ddbd8b52a798a29719c569552f2d8201416cb8fd9dd0e288639bb006c3a557c5",
+      "image": "atmosphere-2026-11-05T22-03-51-398Z-017-forest-horizon-overcast-natural.png",
+      "imageSha256": "dfd70150b33d3dfcfcee5259e08c0558c06ebd354a652235975f3f03511b5f80",
+      "size": [
+        1920,
+        1080
+      ],
+      "scene": "forest",
+      "cameraName": "horizon",
+      "preset": "overcast",
+      "hallOpen": false,
+      "look": "natural",
+      "settings": {
+        "potato": false,
+        "viewDistance": 128,
+        "farTerrain": 2048,
+        "farDetail": 2,
+        "fov": 75,
+        "brightness": 0,
+        "lightingLook": "natural",
+        "atmosphereLook": "natural",
+        "lightingMaterials": "standard",
+        "surfaceBounce": true,
+        "leafTransmission": true,
+        "materialSpecular": true,
+        "bounceStrength": 18,
+        "bounceSaturation": 65,
+        "cloudCover": 100,
+        "renderScale": 100,
+        "fpsLimit": 0,
+        "ambientOcclusion": 45,
+        "shadows": 3,
+        "lightShafts": true,
+        "fancyLeaves": true,
+        "dynamicLight": true,
+        "loadBudget": 4,
+        "mouseSensitivity": 100,
+        "invertMouse": false,
+        "skinOverlay": true,
+        "showHand": false,
+        "viewBobbing": true,
+        "jointStyle": "smooth",
+        "cameraDistance": 4,
+        "volumeMaster": 0,
+        "volumeMusic": 0,
+        "volumeBlocks": 100,
+        "volumeWorld": 100,
+        "volumeUi": 80,
+        "theme": "default",
+        "menuMotion": "auto",
+        "inventoryStyle": "wood",
+        "hudScale": 100,
+        "showDebug": true,
+        "showFps": false,
+        "meteorites": false,
+        "autoUpdates": false,
+        "textureResolution": 0,
+        "bushyGrass": true,
+        "bounceLight": false,
+        "lightingModel": "world"
+      },
+      "camera": {
+        "position": [
+          188,
+          132,
+          -252
+        ],
+        "direction": [
+          0.7729892064814067,
+          -0.05000105006960146,
+          -0.632445714393878
+        ]
+      },
+      "timeDays": 0.5,
+      "atmosphere": {
+        "view": {
+          "uFarEnabled": 1,
+          "uFarInner": 128,
+          "uFarOuter": 2048,
+          "uHazeDistance": 900,
+          "uHazeMax": 0.82,
+          "uAerialPerspective": 1,
+          "uAerialDensity": 1.025,
+          "uAerialHeight": 200,
+          "uAerialCameraSky": 1,
+          "uTime": 1074.581799997385,
+          "uUnderwater": 0,
+          "uUnderwaterColor": [
+            1,
+            1,
+            1
+          ],
+          "uUnderwaterDensity": 0.08
+        },
+        "sky": {
+          "uFogBrightness": 1
+        },
+        "cameraLight": {
+          "sky": 15,
+          "red": 0,
+          "green": 0,
+          "blue": 0
+        },
+        "hallProbes": null
+      },
+      "plantShadowSampleTime": 1060.509799997375,
+      "frozenAnimations": true,
+      "meshRebuildsSincePairStart": 0,
+      "errors": [],
+      "failedPrograms": 0
+    },
+    {
+      "report": "atmosphere-2026-11-05T22-03-51-398Z-018-forest-high-noon-baseline.json",
+      "reportSha256": "44ed9283b2f72faa0780e5c5835062e73e262bfe966883808f6595a94971c59b",
+      "image": "atmosphere-2026-11-05T22-03-51-398Z-018-forest-high-noon-baseline.png",
+      "imageSha256": "80ddbeddf8ce139727bf3f6c6ae1dbc924c18140dfb1b02eb7c67af99373da29",
+      "size": [
+        1920,
+        1080
+      ],
+      "scene": "forest",
+      "cameraName": "high",
+      "preset": "noon",
+      "hallOpen": false,
+      "look": "baseline",
+      "settings": {
+        "potato": false,
+        "viewDistance": 128,
+        "farTerrain": 2048,
+        "farDetail": 2,
+        "fov": 75,
+        "brightness": 0,
+        "lightingLook": "natural",
+        "atmosphereLook": "baseline",
+        "lightingMaterials": "standard",
+        "surfaceBounce": true,
+        "leafTransmission": true,
+        "materialSpecular": true,
+        "bounceStrength": 18,
+        "bounceSaturation": 65,
+        "cloudCover": 0,
+        "renderScale": 100,
+        "fpsLimit": 0,
+        "ambientOcclusion": 45,
+        "shadows": 3,
+        "lightShafts": true,
+        "fancyLeaves": true,
+        "dynamicLight": true,
+        "loadBudget": 4,
+        "mouseSensitivity": 100,
+        "invertMouse": false,
+        "skinOverlay": true,
+        "showHand": false,
+        "viewBobbing": true,
+        "jointStyle": "smooth",
+        "cameraDistance": 4,
+        "volumeMaster": 0,
+        "volumeMusic": 0,
+        "volumeBlocks": 100,
+        "volumeWorld": 100,
+        "volumeUi": 80,
+        "theme": "default",
+        "menuMotion": "auto",
+        "inventoryStyle": "wood",
+        "hudScale": 100,
+        "showDebug": true,
+        "showFps": false,
+        "meteorites": false,
+        "autoUpdates": false,
+        "textureResolution": 0,
+        "bushyGrass": true,
+        "bounceLight": false,
+        "lightingModel": "world"
+      },
+      "camera": {
+        "position": [
+          188,
+          420,
+          -252
+        ],
+        "direction": [
+          0.5760241044903107,
+          -0.4332384684196194,
+          -0.6931815494713908
+        ]
+      },
+      "timeDays": 0.5,
+      "atmosphere": {
+        "view": {
+          "uFarEnabled": 1,
+          "uFarInner": 128,
+          "uFarOuter": 2048,
+          "uHazeDistance": 900,
+          "uHazeMax": 0.82,
+          "uAerialPerspective": 0,
+          "uAerialDensity": 0.82,
+          "uAerialHeight": 250,
+          "uAerialCameraSky": 1,
+          "uTime": 1125.417699997417,
+          "uUnderwater": 0,
+          "uUnderwaterColor": [
+            1,
+            1,
+            1
+          ],
+          "uUnderwaterDensity": 0.08
+        },
+        "sky": {
+          "uFogBrightness": 1
+        },
+        "cameraLight": {
+          "sky": 15,
+          "red": 0,
+          "green": 0,
+          "blue": 0
+        },
+        "hallProbes": null
+      },
+      "plantShadowSampleTime": 1112.5835999974136,
+      "frozenAnimations": true,
+      "meshRebuildsSincePairStart": 0,
+      "errors": [],
+      "failedPrograms": 0
+    },
+    {
+      "report": "atmosphere-2026-11-05T22-03-51-398Z-019-forest-high-noon-natural.json",
+      "reportSha256": "056f9fac4db50bbf5088eb71287e21f969c74154636302f702de2dc91ab056b5",
+      "image": "atmosphere-2026-11-05T22-03-51-398Z-019-forest-high-noon-natural.png",
+      "imageSha256": "808a4b16e53d70fa20a4a87f1dd08758c70a6bad2f1e4a8eacb76b37e14a629d",
+      "size": [
+        1920,
+        1080
+      ],
+      "scene": "forest",
+      "cameraName": "high",
+      "preset": "noon",
+      "hallOpen": false,
+      "look": "natural",
+      "settings": {
+        "potato": false,
+        "viewDistance": 128,
+        "farTerrain": 2048,
+        "farDetail": 2,
+        "fov": 75,
+        "brightness": 0,
+        "lightingLook": "natural",
+        "atmosphereLook": "natural",
+        "lightingMaterials": "standard",
+        "surfaceBounce": true,
+        "leafTransmission": true,
+        "materialSpecular": true,
+        "bounceStrength": 18,
+        "bounceSaturation": 65,
+        "cloudCover": 0,
+        "renderScale": 100,
+        "fpsLimit": 0,
+        "ambientOcclusion": 45,
+        "shadows": 3,
+        "lightShafts": true,
+        "fancyLeaves": true,
+        "dynamicLight": true,
+        "loadBudget": 4,
+        "mouseSensitivity": 100,
+        "invertMouse": false,
+        "skinOverlay": true,
+        "showHand": false,
+        "viewBobbing": true,
+        "jointStyle": "smooth",
+        "cameraDistance": 4,
+        "volumeMaster": 0,
+        "volumeMusic": 0,
+        "volumeBlocks": 100,
+        "volumeWorld": 100,
+        "volumeUi": 80,
+        "theme": "default",
+        "menuMotion": "auto",
+        "inventoryStyle": "wood",
+        "hudScale": 100,
+        "showDebug": true,
+        "showFps": false,
+        "meteorites": false,
+        "autoUpdates": false,
+        "textureResolution": 0,
+        "bushyGrass": true,
+        "bounceLight": false,
+        "lightingModel": "world"
+      },
+      "camera": {
+        "position": [
+          188,
+          420,
+          -252
+        ],
+        "direction": [
+          0.5760241044903107,
+          -0.4332384684196194,
+          -0.6931815494713908
+        ]
+      },
+      "timeDays": 0.5,
+      "atmosphere": {
+        "view": {
+          "uFarEnabled": 1,
+          "uFarInner": 128,
+          "uFarOuter": 2048,
+          "uHazeDistance": 900,
+          "uHazeMax": 0.82,
+          "uAerialPerspective": 0.9895035533813261,
+          "uAerialDensity": 0.82,
+          "uAerialHeight": 250,
+          "uAerialCameraSky": 1,
+          "uTime": 1125.417699997417,
+          "uUnderwater": 0,
+          "uUnderwaterColor": [
+            1,
+            1,
+            1
+          ],
+          "uUnderwaterDensity": 0.08
+        },
+        "sky": {
+          "uFogBrightness": 1
+        },
+        "cameraLight": {
+          "sky": 15,
+          "red": 0,
+          "green": 0,
+          "blue": 0
+        },
+        "hallProbes": null
+      },
+      "plantShadowSampleTime": 1112.5835999974136,
+      "frozenAnimations": true,
+      "meshRebuildsSincePairStart": 0,
+      "errors": [],
+      "failedPrograms": 0
+    },
+    {
+      "report": "atmosphere-2026-11-05T22-03-51-398Z-022-hall-hall-noon-baseline.json",
+      "reportSha256": "7e6c9be0f7e8ba71ed0a6dd493625751d6679d82ceed2f9bb490af332527a966",
+      "image": "atmosphere-2026-11-05T22-03-51-398Z-022-hall-hall-noon-baseline.png",
+      "imageSha256": "796175ab76fabf8e0a732146795679f30184f934db170827d5f90eaa0676c199",
+      "size": [
+        1920,
+        1080
+      ],
+      "scene": "hall",
+      "cameraName": "hall",
+      "preset": "noon",
+      "hallOpen": false,
+      "look": "baseline",
+      "settings": {
+        "potato": false,
+        "viewDistance": 128,
+        "farTerrain": 2048,
+        "farDetail": 2,
+        "fov": 75,
+        "brightness": 0,
+        "lightingLook": "natural",
+        "atmosphereLook": "baseline",
+        "lightingMaterials": "standard",
+        "surfaceBounce": true,
+        "leafTransmission": true,
+        "materialSpecular": true,
+        "bounceStrength": 18,
+        "bounceSaturation": 65,
+        "cloudCover": 0,
+        "renderScale": 100,
+        "fpsLimit": 0,
+        "ambientOcclusion": 45,
+        "shadows": 3,
+        "lightShafts": true,
+        "fancyLeaves": true,
+        "dynamicLight": true,
+        "loadBudget": 4,
+        "mouseSensitivity": 100,
+        "invertMouse": false,
+        "skinOverlay": true,
+        "showHand": false,
+        "viewBobbing": true,
+        "jointStyle": "smooth",
+        "cameraDistance": 4,
+        "volumeMaster": 0,
+        "volumeMusic": 0,
+        "volumeBlocks": 100,
+        "volumeWorld": 100,
+        "volumeUi": 80,
+        "theme": "default",
+        "menuMotion": "auto",
+        "inventoryStyle": "wood",
+        "hudScale": 100,
+        "showDebug": true,
+        "showFps": false,
+        "meteorites": false,
+        "autoUpdates": false,
+        "textureResolution": 0,
+        "bushyGrass": true,
+        "bounceLight": false,
+        "lightingModel": "world"
+      },
+      "camera": {
+        "position": [
+          160.5,
+          19.4,
+          -131
+        ],
+        "direction": [
+          0,
+          0,
+          -1
+        ]
+      },
+      "timeDays": 0.5,
+      "atmosphere": {
+        "view": {
+          "uFarEnabled": 1,
+          "uFarInner": 128,
+          "uFarOuter": 2048,
+          "uHazeDistance": 900,
+          "uHazeMax": 0.82,
+          "uAerialPerspective": 0,
+          "uAerialDensity": 0.82,
+          "uAerialHeight": 250,
+          "uAerialCameraSky": 1.4595285785273976e-127,
+          "uTime": 1617.4536999968054,
+          "uUnderwater": 0,
+          "uUnderwaterColor": [
+            1,
+            1,
+            1
+          ],
+          "uUnderwaterDensity": 0.08
+        },
+        "sky": {
+          "uFogBrightness": 1.4595285785273976e-127
+        },
+        "cameraLight": {
+          "sky": 0,
+          "red": 4,
+          "green": 3,
+          "blue": 0
+        },
+        "hallProbes": {
+          "near": {
+            "sky": 0,
+            "red": 6,
+            "green": 4,
+            "blue": 0
+          },
+          "center": {
+            "sky": 0,
+            "red": 13,
+            "green": 9,
+            "blue": 4
+          },
+          "end": {
+            "sky": 0,
+            "red": 13,
+            "green": 9,
+            "blue": 4
+          },
+          "outside": {
+            "sky": 15,
+            "red": 0,
+            "green": 0,
+            "blue": 0
+          },
+          "wall": {
+            "sky": 0,
+            "red": 0,
+            "green": 0,
+            "blue": 0
+          }
+        }
+      },
+      "plantShadowSampleTime": 1573.9368999967787,
+      "frozenAnimations": true,
+      "meshRebuildsSincePairStart": 0,
+      "errors": [],
+      "failedPrograms": 0,
+      "publishedImage": "hall-before.png"
+    },
+    {
+      "report": "atmosphere-2026-11-05T22-03-51-398Z-023-hall-hall-noon-natural.json",
+      "reportSha256": "bb30e6ee71ffeba0b6b30025137fdce1e6334a368e68343129ea40c3dfb33a96",
+      "image": "atmosphere-2026-11-05T22-03-51-398Z-023-hall-hall-noon-natural.png",
+      "imageSha256": "ab2bc42665714240bc2a0dedf2de3702265143d5bcdd86324ab636d418c808b1",
+      "size": [
+        1920,
+        1080
+      ],
+      "scene": "hall",
+      "cameraName": "hall",
+      "preset": "noon",
+      "hallOpen": false,
+      "look": "natural",
+      "settings": {
+        "potato": false,
+        "viewDistance": 128,
+        "farTerrain": 2048,
+        "farDetail": 2,
+        "fov": 75,
+        "brightness": 0,
+        "lightingLook": "natural",
+        "atmosphereLook": "natural",
+        "lightingMaterials": "standard",
+        "surfaceBounce": true,
+        "leafTransmission": true,
+        "materialSpecular": true,
+        "bounceStrength": 18,
+        "bounceSaturation": 65,
+        "cloudCover": 0,
+        "renderScale": 100,
+        "fpsLimit": 0,
+        "ambientOcclusion": 45,
+        "shadows": 3,
+        "lightShafts": true,
+        "fancyLeaves": true,
+        "dynamicLight": true,
+        "loadBudget": 4,
+        "mouseSensitivity": 100,
+        "invertMouse": false,
+        "skinOverlay": true,
+        "showHand": false,
+        "viewBobbing": true,
+        "jointStyle": "smooth",
+        "cameraDistance": 4,
+        "volumeMaster": 0,
+        "volumeMusic": 0,
+        "volumeBlocks": 100,
+        "volumeWorld": 100,
+        "volumeUi": 80,
+        "theme": "default",
+        "menuMotion": "auto",
+        "inventoryStyle": "wood",
+        "hudScale": 100,
+        "showDebug": true,
+        "showFps": false,
+        "meteorites": false,
+        "autoUpdates": false,
+        "textureResolution": 0,
+        "bushyGrass": true,
+        "bounceLight": false,
+        "lightingModel": "world"
+      },
+      "camera": {
+        "position": [
+          160.5,
+          19.4,
+          -131
+        ],
+        "direction": [
+          0,
+          0,
+          -1
+        ]
+      },
+      "timeDays": 0.5,
+      "atmosphere": {
+        "view": {
+          "uFarEnabled": 1,
+          "uFarInner": 128,
+          "uFarOuter": 2048,
+          "uHazeDistance": 900,
+          "uHazeMax": 0.82,
+          "uAerialPerspective": 1,
+          "uAerialDensity": 0.82,
+          "uAerialHeight": 250,
+          "uAerialCameraSky": 1.4595285785273976e-127,
+          "uTime": 1617.4536999968054,
+          "uUnderwater": 0,
+          "uUnderwaterColor": [
+            1,
+            1,
+            1
+          ],
+          "uUnderwaterDensity": 0.08
+        },
+        "sky": {
+          "uFogBrightness": 1.4595285785273976e-127
+        },
+        "cameraLight": {
+          "sky": 0,
+          "red": 4,
+          "green": 3,
+          "blue": 0
+        },
+        "hallProbes": {
+          "near": {
+            "sky": 0,
+            "red": 6,
+            "green": 4,
+            "blue": 0
+          },
+          "center": {
+            "sky": 0,
+            "red": 13,
+            "green": 9,
+            "blue": 4
+          },
+          "end": {
+            "sky": 0,
+            "red": 13,
+            "green": 9,
+            "blue": 4
+          },
+          "outside": {
+            "sky": 15,
+            "red": 0,
+            "green": 0,
+            "blue": 0
+          },
+          "wall": {
+            "sky": 0,
+            "red": 0,
+            "green": 0,
+            "blue": 0
+          }
+        }
+      },
+      "plantShadowSampleTime": 1573.9368999967787,
+      "frozenAnimations": true,
+      "meshRebuildsSincePairStart": 0,
+      "errors": [],
+      "failedPrograms": 0,
+      "publishedImage": "hall-after.png"
+    },
+    {
+      "report": "atmosphere-2026-11-05T22-03-51-398Z-024-hall-window-noon-baseline.json",
+      "reportSha256": "0bdbb82babda6ba91cc8ba6f49a0c04b338bca21a9a16f90e8df1717d071f479",
+      "image": "atmosphere-2026-11-05T22-03-51-398Z-024-hall-window-noon-baseline.png",
+      "imageSha256": "8438a25a75c0282dab14d940df69530044898b1b7a8e646d6e6ece224f32f5cf",
+      "size": [
+        1920,
+        1080
+      ],
+      "scene": "hall",
+      "cameraName": "window",
+      "preset": "noon",
+      "hallOpen": true,
+      "look": "baseline",
+      "settings": {
+        "potato": false,
+        "viewDistance": 128,
+        "farTerrain": 2048,
+        "farDetail": 2,
+        "fov": 75,
+        "brightness": 0,
+        "lightingLook": "natural",
+        "atmosphereLook": "baseline",
+        "lightingMaterials": "standard",
+        "surfaceBounce": true,
+        "leafTransmission": true,
+        "materialSpecular": true,
+        "bounceStrength": 18,
+        "bounceSaturation": 65,
+        "cloudCover": 0,
+        "renderScale": 100,
+        "fpsLimit": 0,
+        "ambientOcclusion": 45,
+        "shadows": 3,
+        "lightShafts": true,
+        "fancyLeaves": true,
+        "dynamicLight": true,
+        "loadBudget": 4,
+        "mouseSensitivity": 100,
+        "invertMouse": false,
+        "skinOverlay": true,
+        "showHand": false,
+        "viewBobbing": true,
+        "jointStyle": "smooth",
+        "cameraDistance": 4,
+        "volumeMaster": 0,
+        "volumeMusic": 0,
+        "volumeBlocks": 100,
+        "volumeWorld": 100,
+        "volumeUi": 80,
+        "theme": "default",
+        "menuMotion": "auto",
+        "inventoryStyle": "wood",
+        "hudScale": 100,
+        "showDebug": true,
+        "showFps": false,
+        "meteorites": false,
+        "autoUpdates": false,
+        "textureResolution": 0,
+        "bushyGrass": true,
+        "bounceLight": false,
+        "lightingModel": "world"
+      },
+      "camera": {
+        "position": [
+          160.5,
+          19.4,
+          -181
+        ],
+        "direction": [
+          0,
+          0.007594717668728261,
+          -0.9999711597158853
+        ]
+      },
+      "timeDays": 0.5,
+      "atmosphere": {
+        "view": {
+          "uFarEnabled": 1,
+          "uFarInner": 128,
+          "uFarOuter": 2048,
+          "uHazeDistance": 900,
+          "uHazeMax": 0.82,
+          "uAerialPerspective": 0,
+          "uAerialDensity": 0.82,
+          "uAerialHeight": 250,
+          "uAerialCameraSky": 0.014279703453812997,
+          "uTime": 1709.7585999968703,
+          "uUnderwater": 0,
+          "uUnderwaterColor": [
+            1,
+            1,
+            1
+          ],
+          "uUnderwaterDensity": 0.08
+        },
+        "sky": {
+          "uFogBrightness": 0.014279703453812997
+        },
+        "cameraLight": {
+          "sky": 3,
+          "red": 9,
+          "green": 6,
+          "blue": 3
+        },
+        "hallProbes": {
+          "near": {
+            "sky": 0,
+            "red": 6,
+            "green": 4,
+            "blue": 0
+          },
+          "center": {
+            "sky": 0,
+            "red": 13,
+            "green": 9,
+            "blue": 4
+          },
+          "end": {
+            "sky": 12,
+            "red": 13,
+            "green": 9,
+            "blue": 4
+          },
+          "outside": {
+            "sky": 15,
+            "red": 0,
+            "green": 0,
+            "blue": 0
+          },
+          "wall": {
+            "sky": 0,
+            "red": 0,
+            "green": 0,
+            "blue": 0
+          }
+        }
+      },
+      "plantShadowSampleTime": 1695.5549999968646,
+      "frozenAnimations": true,
+      "meshRebuildsSincePairStart": 0,
+      "errors": [],
+      "failedPrograms": 0
+    },
+    {
+      "report": "atmosphere-2026-11-05T22-03-51-398Z-025-hall-window-noon-natural.json",
+      "reportSha256": "aac505cd2300a530ec4ea2a9752e7f0b62bcead7273ca1cadf917f0977126a72",
+      "image": "atmosphere-2026-11-05T22-03-51-398Z-025-hall-window-noon-natural.png",
+      "imageSha256": "47461c520285c04922e07d86223056eecbbb8060dca5171cb02fd2d80e612837",
+      "size": [
+        1920,
+        1080
+      ],
+      "scene": "hall",
+      "cameraName": "window",
+      "preset": "noon",
+      "hallOpen": true,
+      "look": "natural",
+      "settings": {
+        "potato": false,
+        "viewDistance": 128,
+        "farTerrain": 2048,
+        "farDetail": 2,
+        "fov": 75,
+        "brightness": 0,
+        "lightingLook": "natural",
+        "atmosphereLook": "natural",
+        "lightingMaterials": "standard",
+        "surfaceBounce": true,
+        "leafTransmission": true,
+        "materialSpecular": true,
+        "bounceStrength": 18,
+        "bounceSaturation": 65,
+        "cloudCover": 0,
+        "renderScale": 100,
+        "fpsLimit": 0,
+        "ambientOcclusion": 45,
+        "shadows": 3,
+        "lightShafts": true,
+        "fancyLeaves": true,
+        "dynamicLight": true,
+        "loadBudget": 4,
+        "mouseSensitivity": 100,
+        "invertMouse": false,
+        "skinOverlay": true,
+        "showHand": false,
+        "viewBobbing": true,
+        "jointStyle": "smooth",
+        "cameraDistance": 4,
+        "volumeMaster": 0,
+        "volumeMusic": 0,
+        "volumeBlocks": 100,
+        "volumeWorld": 100,
+        "volumeUi": 80,
+        "theme": "default",
+        "menuMotion": "auto",
+        "inventoryStyle": "wood",
+        "hudScale": 100,
+        "showDebug": true,
+        "showFps": false,
+        "meteorites": false,
+        "autoUpdates": false,
+        "textureResolution": 0,
+        "bushyGrass": true,
+        "bounceLight": false,
+        "lightingModel": "world"
+      },
+      "camera": {
+        "position": [
+          160.5,
+          19.4,
+          -181
+        ],
+        "direction": [
+          0,
+          0.007594717668728261,
+          -0.9999711597158853
+        ]
+      },
+      "timeDays": 0.5,
+      "atmosphere": {
+        "view": {
+          "uFarEnabled": 1,
+          "uFarInner": 128,
+          "uFarOuter": 2048,
+          "uHazeDistance": 900,
+          "uHazeMax": 0.82,
+          "uAerialPerspective": 1,
+          "uAerialDensity": 0.82,
+          "uAerialHeight": 250,
+          "uAerialCameraSky": 0.014279703453812997,
+          "uTime": 1709.7585999968703,
+          "uUnderwater": 0,
+          "uUnderwaterColor": [
+            1,
+            1,
+            1
+          ],
+          "uUnderwaterDensity": 0.08
+        },
+        "sky": {
+          "uFogBrightness": 0.014279703453812997
+        },
+        "cameraLight": {
+          "sky": 3,
+          "red": 9,
+          "green": 6,
+          "blue": 3
+        },
+        "hallProbes": {
+          "near": {
+            "sky": 0,
+            "red": 6,
+            "green": 4,
+            "blue": 0
+          },
+          "center": {
+            "sky": 0,
+            "red": 13,
+            "green": 9,
+            "blue": 4
+          },
+          "end": {
+            "sky": 12,
+            "red": 13,
+            "green": 9,
+            "blue": 4
+          },
+          "outside": {
+            "sky": 15,
+            "red": 0,
+            "green": 0,
+            "blue": 0
+          },
+          "wall": {
+            "sky": 0,
+            "red": 0,
+            "green": 0,
+            "blue": 0
+          }
+        }
+      },
+      "plantShadowSampleTime": 1695.5549999968646,
+      "frozenAnimations": true,
+      "meshRebuildsSincePairStart": 0,
+      "errors": [],
+      "failedPrograms": 0
+    },
+    {
+      "report": "atmosphere-2026-11-05T22-03-51-398Z-026-hall-window-noon-natural.json",
+      "reportSha256": "d50e027d03dbea81ee31170df2747dbcd0a708251b86fd9bbf33dfeec440bb14",
+      "image": "atmosphere-2026-11-05T22-03-51-398Z-026-hall-window-noon-natural.png",
+      "imageSha256": "44970035573c3c03c46166f0177da2fec3440a69244f05f7e96cdda6bdfb5d91",
+      "size": [
+        1920,
+        1080
+      ],
+      "scene": "hall",
+      "cameraName": "window",
+      "preset": "noon",
+      "hallOpen": false,
+      "look": "natural",
+      "settings": {
+        "potato": false,
+        "viewDistance": 128,
+        "farTerrain": 2048,
+        "farDetail": 2,
+        "fov": 75,
+        "brightness": 0,
+        "lightingLook": "natural",
+        "atmosphereLook": "natural",
+        "lightingMaterials": "standard",
+        "surfaceBounce": true,
+        "leafTransmission": true,
+        "materialSpecular": true,
+        "bounceStrength": 18,
+        "bounceSaturation": 65,
+        "cloudCover": 0,
+        "renderScale": 100,
+        "fpsLimit": 0,
+        "ambientOcclusion": 45,
+        "shadows": 3,
+        "lightShafts": true,
+        "fancyLeaves": true,
+        "dynamicLight": true,
+        "loadBudget": 4,
+        "mouseSensitivity": 100,
+        "invertMouse": false,
+        "skinOverlay": true,
+        "showHand": false,
+        "viewBobbing": true,
+        "jointStyle": "smooth",
+        "cameraDistance": 4,
+        "volumeMaster": 0,
+        "volumeMusic": 0,
+        "volumeBlocks": 100,
+        "volumeWorld": 100,
+        "volumeUi": 80,
+        "theme": "default",
+        "menuMotion": "auto",
+        "inventoryStyle": "wood",
+        "hudScale": 100,
+        "showDebug": true,
+        "showFps": false,
+        "meteorites": false,
+        "autoUpdates": false,
+        "textureResolution": 0,
+        "bushyGrass": true,
+        "bounceLight": false,
+        "lightingModel": "world"
+      },
+      "camera": {
+        "position": [
+          160.5,
+          19.4,
+          -181
+        ],
+        "direction": [
+          0,
+          0.007594717668728261,
+          -0.9999711597158853
+        ]
+      },
+      "timeDays": 0.5,
+      "atmosphere": {
+        "view": {
+          "uFarEnabled": 1,
+          "uFarInner": 128,
+          "uFarOuter": 2048,
+          "uHazeDistance": 900,
+          "uHazeMax": 0.82,
+          "uAerialPerspective": 1,
+          "uAerialDensity": 0.82,
+          "uAerialHeight": 250,
+          "uAerialCameraSky": 6.951552201195284e-48,
+          "uTime": 1760.9016999968974,
+          "uUnderwater": 0,
+          "uUnderwaterColor": [
+            1,
+            1,
+            1
+          ],
+          "uUnderwaterDensity": 0.08
+        },
+        "sky": {
+          "uFogBrightness": 6.951552201195284e-48
+        },
+        "cameraLight": {
+          "sky": 0,
+          "red": 9,
+          "green": 6,
+          "blue": 3
+        },
+        "hallProbes": {
+          "near": {
+            "sky": 0,
+            "red": 6,
+            "green": 4,
+            "blue": 0
+          },
+          "center": {
+            "sky": 0,
+            "red": 13,
+            "green": 9,
+            "blue": 4
+          },
+          "end": {
+            "sky": 0,
+            "red": 13,
+            "green": 9,
+            "blue": 4
+          },
+          "outside": {
+            "sky": 15,
+            "red": 0,
+            "green": 0,
+            "blue": 0
+          },
+          "wall": {
+            "sky": 0,
+            "red": 0,
+            "green": 0,
+            "blue": 0
+          }
+        }
+      },
+      "plantShadowSampleTime": 1745.2746999968906,
+      "frozenAnimations": true,
+      "meshRebuildsSincePairStart": 0,
+      "errors": [],
+      "failedPrograms": 0
+    },
+    {
+      "report": "atmosphere-2026-11-05T22-03-51-398Z-027-palette-materials-night-baseline.json",
+      "reportSha256": "8418b01946c413efc42a7803d29bc81eeb3da18b474c19fe8b47d5bd8456eee9",
+      "image": "atmosphere-2026-11-05T22-03-51-398Z-027-palette-materials-night-baseline.png",
+      "imageSha256": "1556ccf927b7ad87aa521295617557f9b63640a8dea6d2c22542de3a2d8f2875",
+      "size": [
+        1920,
+        1080
+      ],
+      "scene": "palette",
+      "cameraName": "materials",
+      "preset": "night",
+      "hallOpen": false,
+      "look": "baseline",
+      "settings": {
+        "potato": false,
+        "viewDistance": 128,
+        "farTerrain": 2048,
+        "farDetail": 2,
+        "fov": 75,
+        "brightness": 0,
+        "lightingLook": "natural",
+        "atmosphereLook": "baseline",
+        "lightingMaterials": "standard",
+        "surfaceBounce": true,
+        "leafTransmission": true,
+        "materialSpecular": true,
+        "bounceStrength": 18,
+        "bounceSaturation": 65,
+        "cloudCover": 0,
+        "renderScale": 100,
+        "fpsLimit": 0,
+        "ambientOcclusion": 45,
+        "shadows": 3,
+        "lightShafts": true,
+        "fancyLeaves": true,
+        "dynamicLight": true,
+        "loadBudget": 4,
+        "mouseSensitivity": 100,
+        "invertMouse": false,
+        "skinOverlay": true,
+        "showHand": false,
+        "viewBobbing": true,
+        "jointStyle": "smooth",
+        "cameraDistance": 4,
+        "volumeMaster": 0,
+        "volumeMusic": 0,
+        "volumeBlocks": 100,
+        "volumeWorld": 100,
+        "volumeUi": 80,
+        "theme": "default",
+        "menuMotion": "auto",
+        "inventoryStyle": "wood",
+        "hudScale": 100,
+        "showDebug": true,
+        "showFps": false,
+        "meteorites": false,
+        "autoUpdates": false,
+        "textureResolution": 0,
+        "bushyGrass": true,
+        "bounceLight": false,
+        "lightingModel": "world"
+      },
+      "camera": {
+        "position": [
+          67,
+          21,
+          -83
+        ],
+        "direction": [
+          -0.0948133539980957,
+          -0.3034027327939063,
+          -0.9481335399809572
+        ]
+      },
+      "timeDays": 0,
+      "atmosphere": {
+        "view": {
+          "uFarEnabled": 1,
+          "uFarInner": 128,
+          "uFarOuter": 2048,
+          "uHazeDistance": 900,
+          "uHazeMax": 0.82,
+          "uAerialPerspective": 0,
+          "uAerialDensity": 0.82,
+          "uAerialHeight": 250,
+          "uAerialCameraSky": 1,
+          "uTime": 1900.6887999969904,
+          "uUnderwater": 0,
+          "uUnderwaterColor": [
+            1,
+            1,
+            1
+          ],
+          "uUnderwaterDensity": 0.08
+        },
+        "sky": {
+          "uFogBrightness": 1
+        },
+        "cameraLight": {
+          "sky": 15,
+          "red": 0,
+          "green": 0,
+          "blue": 0
+        },
+        "hallProbes": null
+      },
+      "plantShadowSampleTime": 1900.62649999699,
+      "frozenAnimations": true,
+      "meshRebuildsSincePairStart": 0,
+      "errors": [],
+      "failedPrograms": 0
+    },
+    {
+      "report": "atmosphere-2026-11-05T22-03-51-398Z-028-palette-materials-night-natural.json",
+      "reportSha256": "824d54b1c000964321e6bb1dc794ed58763ac0df75d40cc6c1d9032e5adc8827",
+      "image": "atmosphere-2026-11-05T22-03-51-398Z-028-palette-materials-night-natural.png",
+      "imageSha256": "e134c3128995c9d591e1377ce89f6c50457ae928c79c20d6e836f34957249793",
+      "size": [
+        1920,
+        1080
+      ],
+      "scene": "palette",
+      "cameraName": "materials",
+      "preset": "night",
+      "hallOpen": false,
+      "look": "natural",
+      "settings": {
+        "potato": false,
+        "viewDistance": 128,
+        "farTerrain": 2048,
+        "farDetail": 2,
+        "fov": 75,
+        "brightness": 0,
+        "lightingLook": "natural",
+        "atmosphereLook": "natural",
+        "lightingMaterials": "standard",
+        "surfaceBounce": true,
+        "leafTransmission": true,
+        "materialSpecular": true,
+        "bounceStrength": 18,
+        "bounceSaturation": 65,
+        "cloudCover": 0,
+        "renderScale": 100,
+        "fpsLimit": 0,
+        "ambientOcclusion": 45,
+        "shadows": 3,
+        "lightShafts": true,
+        "fancyLeaves": true,
+        "dynamicLight": true,
+        "loadBudget": 4,
+        "mouseSensitivity": 100,
+        "invertMouse": false,
+        "skinOverlay": true,
+        "showHand": false,
+        "viewBobbing": true,
+        "jointStyle": "smooth",
+        "cameraDistance": 4,
+        "volumeMaster": 0,
+        "volumeMusic": 0,
+        "volumeBlocks": 100,
+        "volumeWorld": 100,
+        "volumeUi": 80,
+        "theme": "default",
+        "menuMotion": "auto",
+        "inventoryStyle": "wood",
+        "hudScale": 100,
+        "showDebug": true,
+        "showFps": false,
+        "meteorites": false,
+        "autoUpdates": false,
+        "textureResolution": 0,
+        "bushyGrass": true,
+        "bounceLight": false,
+        "lightingModel": "world"
+      },
+      "camera": {
+        "position": [
+          67,
+          21,
+          -83
+        ],
+        "direction": [
+          -0.0948133539980957,
+          -0.3034027327939063,
+          -0.9481335399809572
+        ]
+      },
+      "timeDays": 0,
+      "atmosphere": {
+        "view": {
+          "uFarEnabled": 1,
+          "uFarInner": 128,
+          "uFarOuter": 2048,
+          "uHazeDistance": 900,
+          "uHazeMax": 0.82,
+          "uAerialPerspective": 1,
+          "uAerialDensity": 0.82,
+          "uAerialHeight": 250,
+          "uAerialCameraSky": 1,
+          "uTime": 1900.6887999969904,
+          "uUnderwater": 0,
+          "uUnderwaterColor": [
+            1,
+            1,
+            1
+          ],
+          "uUnderwaterDensity": 0.08
+        },
+        "sky": {
+          "uFogBrightness": 1
+        },
+        "cameraLight": {
+          "sky": 15,
+          "red": 0,
+          "green": 0,
+          "blue": 0
+        },
+        "hallProbes": null
+      },
+      "plantShadowSampleTime": 1900.62649999699,
+      "frozenAnimations": true,
+      "meshRebuildsSincePairStart": 0,
+      "errors": [],
+      "failedPrograms": 0
+    },
+    {
+      "report": "atmosphere-2026-11-05T22-03-51-398Z-029-palette-local-night-baseline.json",
+      "reportSha256": "54a2ee9fe6cd5d34a5afdfed4761e2d0e6ec82538fc66553c75abf78c17c3bec",
+      "image": "atmosphere-2026-11-05T22-03-51-398Z-029-palette-local-night-baseline.png",
+      "imageSha256": "b8c443b7cebb84624312b896ffab024ec6847ca64d6271c218e428d0d01d9a1f",
+      "size": [
+        1920,
+        1080
+      ],
+      "scene": "palette",
+      "cameraName": "local",
+      "preset": "night",
+      "hallOpen": false,
+      "look": "baseline",
+      "settings": {
+        "potato": false,
+        "viewDistance": 128,
+        "farTerrain": 2048,
+        "farDetail": 2,
+        "fov": 75,
+        "brightness": 0,
+        "lightingLook": "natural",
+        "atmosphereLook": "baseline",
+        "lightingMaterials": "standard",
+        "surfaceBounce": true,
+        "leafTransmission": true,
+        "materialSpecular": true,
+        "bounceStrength": 18,
+        "bounceSaturation": 65,
+        "cloudCover": 0,
+        "renderScale": 100,
+        "fpsLimit": 0,
+        "ambientOcclusion": 45,
+        "shadows": 3,
+        "lightShafts": true,
+        "fancyLeaves": true,
+        "dynamicLight": true,
+        "loadBudget": 4,
+        "mouseSensitivity": 100,
+        "invertMouse": false,
+        "skinOverlay": true,
+        "showHand": false,
+        "viewBobbing": true,
+        "jointStyle": "smooth",
+        "cameraDistance": 4,
+        "volumeMaster": 0,
+        "volumeMusic": 0,
+        "volumeBlocks": 100,
+        "volumeWorld": 100,
+        "volumeUi": 80,
+        "theme": "default",
+        "menuMotion": "auto",
+        "inventoryStyle": "wood",
+        "hudScale": 100,
+        "showDebug": true,
+        "showFps": false,
+        "meteorites": false,
+        "autoUpdates": false,
+        "textureResolution": 0,
+        "bushyGrass": true,
+        "bounceLight": false,
+        "lightingModel": "world"
+      },
+      "camera": {
+        "position": [
+          65,
+          20,
+          -74
+        ],
+        "direction": [
+          -0.635998728003816,
+          -0.211999576001272,
+          -0.741998516004452
+        ]
+      },
+      "timeDays": 0,
+      "atmosphere": {
+        "view": {
+          "uFarEnabled": 1,
+          "uFarInner": 128,
+          "uFarOuter": 2048,
+          "uHazeDistance": 900,
+          "uHazeMax": 0.82,
+          "uAerialPerspective": 0,
+          "uAerialDensity": 0.82,
+          "uAerialHeight": 250,
+          "uAerialCameraSky": 1,
+          "uTime": 2023.233799997074,
+          "uUnderwater": 0,
+          "uUnderwaterColor": [
+            1,
+            1,
+            1
+          ],
+          "uUnderwaterDensity": 0.08
+        },
+        "sky": {
+          "uFogBrightness": 1
+        },
+        "cameraLight": {
+          "sky": 15,
+          "red": 0,
+          "green": 0,
+          "blue": 0
+        },
+        "hallProbes": null
+      },
+      "plantShadowSampleTime": 2023.1713999970743,
+      "frozenAnimations": true,
+      "meshRebuildsSincePairStart": 0,
+      "errors": [],
+      "failedPrograms": 0
+    },
+    {
+      "report": "atmosphere-2026-11-05T22-03-51-398Z-030-palette-local-night-natural.json",
+      "reportSha256": "c6b535ad20b43f659638d5b8189e973ab3ec3538f432ba9acfb90890cad8fc62",
+      "image": "atmosphere-2026-11-05T22-03-51-398Z-030-palette-local-night-natural.png",
+      "imageSha256": "469fec5abdf7b4b92c8f67dd32bd0b71fcea73403d9005de66546290a21f4745",
+      "size": [
+        1920,
+        1080
+      ],
+      "scene": "palette",
+      "cameraName": "local",
+      "preset": "night",
+      "hallOpen": false,
+      "look": "natural",
+      "settings": {
+        "potato": false,
+        "viewDistance": 128,
+        "farTerrain": 2048,
+        "farDetail": 2,
+        "fov": 75,
+        "brightness": 0,
+        "lightingLook": "natural",
+        "atmosphereLook": "natural",
+        "lightingMaterials": "standard",
+        "surfaceBounce": true,
+        "leafTransmission": true,
+        "materialSpecular": true,
+        "bounceStrength": 18,
+        "bounceSaturation": 65,
+        "cloudCover": 0,
+        "renderScale": 100,
+        "fpsLimit": 0,
+        "ambientOcclusion": 45,
+        "shadows": 3,
+        "lightShafts": true,
+        "fancyLeaves": true,
+        "dynamicLight": true,
+        "loadBudget": 4,
+        "mouseSensitivity": 100,
+        "invertMouse": false,
+        "skinOverlay": true,
+        "showHand": false,
+        "viewBobbing": true,
+        "jointStyle": "smooth",
+        "cameraDistance": 4,
+        "volumeMaster": 0,
+        "volumeMusic": 0,
+        "volumeBlocks": 100,
+        "volumeWorld": 100,
+        "volumeUi": 80,
+        "theme": "default",
+        "menuMotion": "auto",
+        "inventoryStyle": "wood",
+        "hudScale": 100,
+        "showDebug": true,
+        "showFps": false,
+        "meteorites": false,
+        "autoUpdates": false,
+        "textureResolution": 0,
+        "bushyGrass": true,
+        "bounceLight": false,
+        "lightingModel": "world"
+      },
+      "camera": {
+        "position": [
+          65,
+          20,
+          -74
+        ],
+        "direction": [
+          -0.635998728003816,
+          -0.211999576001272,
+          -0.741998516004452
+        ]
+      },
+      "timeDays": 0,
+      "atmosphere": {
+        "view": {
+          "uFarEnabled": 1,
+          "uFarInner": 128,
+          "uFarOuter": 2048,
+          "uHazeDistance": 900,
+          "uHazeMax": 0.82,
+          "uAerialPerspective": 1,
+          "uAerialDensity": 0.82,
+          "uAerialHeight": 250,
+          "uAerialCameraSky": 1,
+          "uTime": 2023.233799997074,
+          "uUnderwater": 0,
+          "uUnderwaterColor": [
+            1,
+            1,
+            1
+          ],
+          "uUnderwaterDensity": 0.08
+        },
+        "sky": {
+          "uFogBrightness": 1
+        },
+        "cameraLight": {
+          "sky": 15,
+          "red": 0,
+          "green": 0,
+          "blue": 0
+        },
+        "hallProbes": null
+      },
+      "plantShadowSampleTime": 2023.1713999970743,
+      "frozenAnimations": true,
+      "meshRebuildsSincePairStart": 0,
+      "errors": [],
+      "failedPrograms": 0
+    }
+  ],
+  "limitations": [
+    "FPS limited by display144Hz; CPU/GPU timing is not FPS.",
+    "Flight natural first, baseline second: warmer caches/order/thermal differences prevent controlled comparative cost inference.",
+    "Geometry/chunk cache grew in first flight; one short run cannot prove no memory leaks.",
+    "Distant LOD still omits detailed vegetation; unchanged by this PR.",
+    "Analytic endpoint sky-access approximates outdoor air and does not trace volume occlusion.",
+    "Early launch GPU feature snapshot preceded WebGL; actual renderer and valid GPU queries establish RTX3050 use.",
+    "No physical Android performance test."
+  ],
+  "excludedStartupRuns": [
+    {
+      "runId": "atmosphere-2026-11-05T21-51-02-861Z",
+      "reason": "Prototype shader caused GPU compiler process stack overflow during water warmup; no measurements accepted."
+    },
+    {
+      "runId": "atmosphere-2026-11-05T21-56-30-844Z",
+      "reason": "Second prototype also failed water warmup; source changed afterward to share one atmosphere and sky callsite."
+    }
+  ],
+  "photoPairs": [
+    {
+      "baseline": "atmosphere-2026-11-05T22-03-51-398Z-002-forest-river-noon-baseline.json",
+      "natural": "atmosphere-2026-11-05T22-03-51-398Z-003-forest-river-noon-natural.json",
+      "checks": {
+        "sameScene": true,
+        "onlyAtmosphereSettingChanged": true,
+        "sameCamera": true,
+        "sameWorldTime": true,
+        "sameAnimationTime": true,
+        "samePlantShadowSample": true,
+        "frozen": true,
+        "noMeshRebuilds": true,
+        "noErrors": true,
+        "sameSize": true
+      },
+      "valid": true
+    },
+    {
+      "baseline": "atmosphere-2026-11-05T22-03-51-398Z-011-forest-horizon-noon-baseline.json",
+      "natural": "atmosphere-2026-11-05T22-03-51-398Z-012-forest-horizon-noon-natural.json",
+      "checks": {
+        "sameScene": true,
+        "onlyAtmosphereSettingChanged": true,
+        "sameCamera": true,
+        "sameWorldTime": true,
+        "sameAnimationTime": true,
+        "samePlantShadowSample": true,
+        "frozen": true,
+        "noMeshRebuilds": true,
+        "noErrors": true,
+        "sameSize": true
+      },
+      "valid": true
+    },
+    {
+      "baseline": "atmosphere-2026-11-05T22-03-51-398Z-014-forest-horizon-sunset-baseline.json",
+      "natural": "atmosphere-2026-11-05T22-03-51-398Z-015-forest-horizon-sunset-natural.json",
+      "checks": {
+        "sameScene": true,
+        "onlyAtmosphereSettingChanged": true,
+        "sameCamera": true,
+        "sameWorldTime": true,
+        "sameAnimationTime": true,
+        "samePlantShadowSample": true,
+        "frozen": true,
+        "noMeshRebuilds": true,
+        "noErrors": true,
+        "sameSize": true
+      },
+      "valid": true
+    },
+    {
+      "baseline": "atmosphere-2026-11-05T22-03-51-398Z-016-forest-horizon-overcast-baseline.json",
+      "natural": "atmosphere-2026-11-05T22-03-51-398Z-017-forest-horizon-overcast-natural.json",
+      "checks": {
+        "sameScene": true,
+        "onlyAtmosphereSettingChanged": true,
+        "sameCamera": true,
+        "sameWorldTime": true,
+        "sameAnimationTime": true,
+        "samePlantShadowSample": true,
+        "frozen": true,
+        "noMeshRebuilds": true,
+        "noErrors": true,
+        "sameSize": true
+      },
+      "valid": true
+    },
+    {
+      "baseline": "atmosphere-2026-11-05T22-03-51-398Z-018-forest-high-noon-baseline.json",
+      "natural": "atmosphere-2026-11-05T22-03-51-398Z-019-forest-high-noon-natural.json",
+      "checks": {
+        "sameScene": true,
+        "onlyAtmosphereSettingChanged": true,
+        "sameCamera": true,
+        "sameWorldTime": true,
+        "sameAnimationTime": true,
+        "samePlantShadowSample": true,
+        "frozen": true,
+        "noMeshRebuilds": true,
+        "noErrors": true,
+        "sameSize": true
+      },
+      "valid": true
+    },
+    {
+      "baseline": "atmosphere-2026-11-05T22-03-51-398Z-022-hall-hall-noon-baseline.json",
+      "natural": "atmosphere-2026-11-05T22-03-51-398Z-023-hall-hall-noon-natural.json",
+      "checks": {
+        "sameScene": true,
+        "onlyAtmosphereSettingChanged": true,
+        "sameCamera": true,
+        "sameWorldTime": true,
+        "sameAnimationTime": true,
+        "samePlantShadowSample": true,
+        "frozen": true,
+        "noMeshRebuilds": true,
+        "noErrors": true,
+        "sameSize": true
+      },
+      "valid": true
+    },
+    {
+      "baseline": "atmosphere-2026-11-05T22-03-51-398Z-024-hall-window-noon-baseline.json",
+      "natural": "atmosphere-2026-11-05T22-03-51-398Z-025-hall-window-noon-natural.json",
+      "checks": {
+        "sameScene": true,
+        "onlyAtmosphereSettingChanged": true,
+        "sameCamera": true,
+        "sameWorldTime": true,
+        "sameAnimationTime": true,
+        "samePlantShadowSample": true,
+        "frozen": true,
+        "noMeshRebuilds": true,
+        "noErrors": true,
+        "sameSize": true
+      },
+      "valid": true
+    },
+    {
+      "baseline": "atmosphere-2026-11-05T22-03-51-398Z-027-palette-materials-night-baseline.json",
+      "natural": "atmosphere-2026-11-05T22-03-51-398Z-028-palette-materials-night-natural.json",
+      "checks": {
+        "sameScene": true,
+        "onlyAtmosphereSettingChanged": true,
+        "sameCamera": true,
+        "sameWorldTime": true,
+        "sameAnimationTime": true,
+        "samePlantShadowSample": true,
+        "frozen": true,
+        "noMeshRebuilds": true,
+        "noErrors": true,
+        "sameSize": true
+      },
+      "valid": true
+    },
+    {
+      "baseline": "atmosphere-2026-11-05T22-03-51-398Z-029-palette-local-night-baseline.json",
+      "natural": "atmosphere-2026-11-05T22-03-51-398Z-030-palette-local-night-natural.json",
+      "checks": {
+        "sameScene": true,
+        "onlyAtmosphereSettingChanged": true,
+        "sameCamera": true,
+        "sameWorldTime": true,
+        "sameAnimationTime": true,
+        "samePlantShadowSample": true,
+        "frozen": true,
+        "noMeshRebuilds": true,
+        "noErrors": true,
+        "sameSize": true
+      },
+      "valid": true
+    }
+  ],
+  "nativePotatoCheck": {
+    "method": "Root operator visual observation in native RTX3050 application; no frozen PNG pair and no performance sample",
+    "observed": "Forest/horizon atmosphere color and far-terrain continuity rendered correctly",
+    "limitation": "Frozen capture stability guard waited indefinitely for disabled bounce readiness; harness-only predicate corrected after native session closed"
+  }
+}

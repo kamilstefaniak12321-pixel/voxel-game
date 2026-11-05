@@ -164,3 +164,25 @@ export const SKY_COLOR_GLSL = /* glsl */ `
     }
 
 `;
+
+// Ta sama korekta obniżenia horyzontu co w SkyDome. Osobny fragment
+// pozwala zachować bazę A/B oraz nie dublować uniformu w samej kopule.
+// Parametr blend płynnie wraca do poprzedniej atmosfery przy locie
+// w kosmos; kolor nie jest przyciemniany globalnie po wejściu pod dach.
+export const AERIAL_SKY_GLSL = /* glsl */ `
+    uniform float uHorizonDip;
+    vec3 atmosphereFogColor(vec3 offset, float blend, float legacyBrightness) {
+        vec3 direction = offset / max(length(offset), 0.00001);
+        float amount = clamp(blend, 0.0, 1.0);
+        if (amount > 0.0) {
+            float correctedY = (direction.y - uHorizonDip) / max(1.0 - uHorizonDip, 0.05);
+            direction.y = mix(direction.y, correctedY, amount);
+            direction = normalize(direction);
+        }
+        // Jedno wywołanie rozbudowanego skyColor: kompilator ANGLE/D3D
+        // rozwija funkcje inline, więc oddzielne gałęzie mnożyły kod.
+        // Krańce przejścia pozostają identyczne; pomiędzy nimi zmienia
+        // się kierunek gradientu i dostępna jasność, nie dwie kopie nieba.
+        return skyColor(direction) * mix(legacyBrightness, 1.0, amount);
+    }
+`;

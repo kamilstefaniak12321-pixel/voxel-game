@@ -13,7 +13,7 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ## 0.63.0 - Atmosfera bliskiego i dalekiego świata
 
-Kolejny pakiet planu światła: perspektywa atmosferyczna E08 — PR w przygotowaniu.
+Kolejny pakiet planu światła: perspektywa atmosferyczna E08 — PR #97.
 
 - Mgła uwzględnia wysokość obu końców widoku, odległość, porę doby i
   zachmurzenie. Bliskie powierzchnie zachowują kontrast, a daleki teren

@@ -13,6 +13,7 @@ import {
     getAttachedPlant,
     ATTACH_OFFSETS
 } from '../blocks/BlockRegistry.js';
+import { getTorchInfo, torchType } from '../blocks/torches.js';
 
 // ------------------------------------------------------------
 // STAWIANIE BLOKÓW
@@ -94,9 +95,18 @@ export class BlockPlacer {
         // Wieniec: wersja zwrócona od klikniętej ściany (nie na górze
         // ani na spodzie bloku).
 
+        const torch = getTorchInfo(blockType);
         const wall = getBlockDefinition(blockType)?.wall;
 
-        if (wall) {
+        if (torch) {
+            // Pochodnia stoi na podłożu albo na ścianie. Zastępowana
+            // roślina ma podparcie na dole, niezależnie od jej trafionej strony.
+            const replacing = isReplaceableId(this.world.getBlockId(hit.block.x, hit.block.y, hit.block.z));
+            const attach = replacing || hit.normal.y === 1 ? 'down' : wallSide(hit.normal);
+            if (!attach) return false;
+            blockType = torchType(torch.colorKey, attach);
+        }
+        else if (wall) {
 
             const side = wallSide(hit.normal);
 
@@ -109,6 +119,8 @@ export class BlockPlacer {
         }
 
         const id = this.world.getBlockId(x, y, z);
+        // Płomień nie wypiera wody ani wodnej rośliny.
+        if (torch && (isLiquidId(id) || isWaterloggedPlantId(id))) return false;
 
         // Jedna sadzonka pałki ma suchą i płytkowodną postać.
         if (blockType === 'cattail' && getLiquidKindId(id) === getBlockId('water')) {

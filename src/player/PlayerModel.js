@@ -5,8 +5,11 @@ import { getItemModel as getFruitItemModel } from '../rendering/ItemGeometry.js'
 import { getBlockDefinition } from '../blocks/BlockRegistry.js';
 import { ITEM_TYPES, isItemType } from '../items/ItemRegistry.js';
 import { getAtlasUV, blockAtlasTexture } from '../rendering/TextureAtlas.js';
-import { getFaceTexture } from '../rendering/BlockRenderData.js';
+import { getFaceTexture, setPotatoDefine } from '../rendering/BlockRenderData.js';
 import { createModelMaterial } from '../rendering/ModelMaterial.js';
+import { getTorchInfo } from '../blocks/torches.js';
+import { getTorchFaces } from '../rendering/TorchGeometry.js';
+import { createTorchModel, disposeTorchModel } from '../rendering/TorchMaterial.js';
 import { blockSurfaceProfile, SURFACE_PROFILES } from '../rendering/SurfaceProfiles.js';
 import { skinTexture } from './skin.js';
 
@@ -447,15 +450,16 @@ export function buildBlockGeometry(type) {
 
     const item = isItemType(type) ? ITEM_TYPES[type] : null;
     const fruit = item && getFruitItemModel(type);
+    const torch = getTorchInfo(type);
 
     const definition = item ? { textures: { all: item.icon } } : getBlockDefinition(type);
 
-    if (fruit || definition.model === 'riverPlant') {
+    if (torch || fruit || definition.model === 'riverPlant') {
         // Ten sam model co nad rzeką, bez otaczającej go wody.
         const positions = [], normals = [], uvs = [], colors = [], indices = [], profiles = [];
         const river = definition.riverPlant;
-        const texture = fruit ? fruit.texture : river.texture ?? 'snow';
-        const faces = fruit ? fruit.faces : getRiverPlantFaces(river.kind, 0, river.waterlogged, river.tuft);
+        const texture = torch ? torch.variant.texture : fruit ? fruit.texture : river.texture ?? 'snow';
+        const faces = torch ? getTorchFaces(torch.colorKey, 'down') : fruit ? fruit.faces : getRiverPlantFaces(river.kind, 0, river.waterlogged, river.tuft);
         const regions = new Map();
         for (const face of faces) {
             const name = face.texture ?? texture;
@@ -614,6 +618,8 @@ export class PlayerModel {
         // Blok w prawej ręce (przy dłoni, na dole przedramienia).
 
         this.heldType = null;
+        this.heldTorch = null;
+        this.lowDetail = false;
 
         this.heldMaterial = createModelMaterial({ map: blockAtlasTexture });
 
@@ -744,7 +750,25 @@ export class PlayerModel {
 
         this.heldType = type;
 
+        if (this.heldTorch) {
+            disposeTorchModel(this.heldTorch);
+            this.heldTorch = null;
+        }
+
         this.held.geometry.dispose();
+
+        const torch = getTorchInfo(type);
+        if (torch) {
+            this.held.geometry = new THREE.BufferGeometry();
+            this.held.visible = false;
+            this.heldTorch = createTorchModel(torch.colorKey, 'down');
+            this.heldTorch.position.copy(this.held.position);
+            this.heldTorch.rotation.set(-0.3, Math.PI / 4, 0);
+            this.heldTorch.scale.setScalar(0.72);
+            this.bones.elbowR.add(this.heldTorch);
+            this.setLowDetail(this.lowDetail);
+            return;
+        }
 
         this.held.geometry = type ? buildBlockGeometry(type) : new THREE.BufferGeometry();
 
@@ -769,6 +793,16 @@ export class PlayerModel {
 
         this.heldMaterial.userData.uniforms.uModelGlow.value = light / 15;
 
+    }
+
+
+    setLowDetail(on) {
+        this.lowDetail = Boolean(on);
+        const materials = [...this.materials, this.heldMaterial, this.heldPlantMaterial];
+        this.heldTorch?.traverse(object => {
+            if (object.isMesh) materials.push(...(Array.isArray(object.material) ? object.material : [object.material]));
+        });
+        setPotatoDefine(materials, this.lowDetail);
     }
 
 
@@ -828,6 +862,11 @@ export class PlayerModel {
         this.mesh.skeleton.dispose();
 
         this.held.geometry.dispose();
+
+        if (this.heldTorch) {
+            disposeTorchModel(this.heldTorch);
+            this.heldTorch = null;
+        }
 
         for (const material of [...this.materials, this.heldMaterial, this.heldPlantMaterial]) {
             material.dispose();

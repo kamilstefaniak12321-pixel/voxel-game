@@ -18,6 +18,8 @@ import { getRiverPlantFaces } from '../rendering/RiverPlantGeometry.js';
 import { pixelPlantIconPixels } from './PixelPlantIcon.js';
 import { modelIconPixels } from './ModelIcon.js';
 import { getItemModel as getFruitItemModel } from '../rendering/ItemGeometry.js';
+import { getTorchInfo } from '../blocks/torches.js';
+import { getTorchFaces } from '../rendering/TorchGeometry.js';
 
 // ------------------------------------------------------------
 // IKONKI BLOKÓW
@@ -298,6 +300,12 @@ export async function createBlockIcons() {
 
 
         const textures = definition.textures;
+
+        const torch = getTorchInfo(type);
+        if (torch) {
+            icons.set(type, modelIcon(getTorchFaces(torch.colorKey, 'down'), torch.variant.texture));
+            continue;
+        }
 
         if (definition.modelIcon) {
             icons.set(type, new URL(`../../${definition.modelIcon}`, import.meta.url).href);

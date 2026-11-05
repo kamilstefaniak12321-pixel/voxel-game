@@ -53,6 +53,11 @@ jobs:
           UI_SCREENSHOTS_IN_LOG: '1'
       - name: Gra i shadery w WebGL2
         run: node tools/sprawdz_swiatlo_webgl.mjs
+      - name: Animowane pochodnie i barwniki w WebGL2
+        timeout-minutes: 2
+        run: node tools/sprawdz_pochodnie_webgl.mjs
+        env:
+          UI_SCREENSHOTS_IN_LOG: '1'
       - uses: actions/upload-artifact@v6
         if: always()
         continue-on-error: true
@@ -61,4 +66,5 @@ jobs:
           path: |
             test-results/sceny/
             test-results/grey-wood/
+            test-results/torches/
           retention-days: 7

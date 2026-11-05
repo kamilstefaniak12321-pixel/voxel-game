@@ -1,5 +1,7 @@
 import * as THREE from 'three';
 import { FIRE_WOODS } from '../game/CampfireState.js';
+import { TORCH_VARIANTS } from '../blocks/torches.js';
+import { DYE_ITEMS, drawDyeIcon } from '../items/dyes.js';
 
 import { PACK_TEXTURES, TREE_PACK_ERRORS } from '../blocks/treePacks.js';
 
@@ -367,6 +369,10 @@ const fireRow = ATLAS_TILES[BLUEBERRY_TEXTURE].y + 4;
 Object.keys(FIRE_WOODS).forEach((wood, i) => {
     ATLAS_TILES[`campfire_${wood}`] = { x: (i % 8) * 2, y: fireRow + Math.floor(i / 8) * 2, w: 2, h: 2, pw: 32, ph: 32 };
 });
+const torchRow = Math.max(...Object.values(ATLAS_TILES).map(tile => tile.y + (tile.h ?? 1)));
+[...TORCH_VARIANTS.map(variant => variant.texture), ...Object.keys(DYE_ITEMS)].forEach((name, i) => {
+    ATLAS_TILES[name] = { x: i % ATLAS_COLUMNS, y: torchRow + Math.floor(i / ATLAS_COLUMNS) };
+});
 export const ATLAS_ROWS = Math.max(...Object.values(ATLAS_TILES).map((tile) => tile.y + (tile.h ?? 1)));
 
 
@@ -599,6 +605,21 @@ async function buildBaseAtlas() {
         context.clearRect(tile.x * T, tile.y * T, 32, 32);
         context.drawImage(image, tile.x * T, tile.y * T);
     }));
+
+    // Ikonki i odłamki korzystają z pierwszej klatki oryginalnego arkusza.
+    // Świat i dłoń mają osobny materiał z pełną animacją na GPU.
+    await Promise.all(TORCH_VARIANTS.map(async variant => {
+        const image = await loadImage(new URL(`../../assets/models/torch/${variant.texture}.png`, import.meta.url).href);
+        if (image.width !== 16 || image.height !== 320) throw new Error(`Nieprawidłowy arkusz pochodni: ${variant.texture}`);
+        const tile = ATLAS_TILES[variant.texture];
+        context.clearRect(tile.x * T, tile.y * T, T, T);
+        context.drawImage(image, 0, 0, 16, 16, tile.x * T, tile.y * T, T, T);
+    }));
+    for (const [name, dye] of Object.entries(DYE_ITEMS)) {
+        const tile = ATLAS_TILES[name];
+        context.clearRect(tile.x * T, tile.y * T, T, T);
+        drawDyeIcon(context, dye.color, tile.x * T, tile.y * T);
+    }
 
     // Gotowy atlas z powrotem jako zwykły obrazek (PNG) - tak jak sam
     // terrain.png. Rysowanie z obrazka (ikonki, średnie kolory, tekstura

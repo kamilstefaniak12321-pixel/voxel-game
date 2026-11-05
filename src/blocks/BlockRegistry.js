@@ -12,6 +12,7 @@ import { RIVER_PLANT_BLOCKS } from './riverPlants.js';
 import { BLUEBERRY_STAGES, BLUEBERRY_TEXTURE, blueberryIcon } from './blueberry.js';
 import { FRUIT_BUSH_PROFILES } from '../rendering/FruitBushGeometry.js';
 import { PLANT_PACKS, PLANT_PIXELS, plantStageType, plantTile } from './plantPacks.js';
+import { TORCH_BLOCKS } from './torches.js';
 
 // ID 0 jest zarezerwowane dla powietrza.
 // Chunk przechowuje bloki jako liczby, więc pusta tablica = samo powietrze.
@@ -30,7 +31,8 @@ export const AIR_ID = 0;
 //                           drzewa od dołu, rośliny od góry),
 //   1000-4999               paczki drzew (treePacks.js),
 //   5000-9999               paczki roślin (plantPacks.js),
-//   10000-65279             wolne na przyszłość.
+//   10000-10099             konstrukcje (ognisko 10000, pochodnie 10010-10094),
+//   10100-65279             wolne na przyszłość.
 
 export const MAX_BLOCK_ID = 65279;
 
@@ -353,6 +355,7 @@ function plantPackBlocks() {
 // ------------------------------------------------------------
 
 export const BLOCK_TYPES = {
+    ...TORCH_BLOCKS,
     campfire: { id: 10000, name: 'Campfire', label: 'Ognisko', solid: false, opaque: false,
         model: 'structure', flat: { attach: 'down' }, inventory: false, creative: false,
         drops: null, sound: 'wood', pick: 'oak_firewood', textures: { all: 'oak_log_side' } },

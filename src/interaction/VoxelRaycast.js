@@ -2,6 +2,8 @@ import * as THREE from 'three';
 import { isLiquidId, getRiverPlant, getBlockTypeById } from '../blocks/BlockRegistry.js';
 import { riverPlantBounds } from './RiverPlantBounds.js';
 import { spritePlantBounds, SPRITE_PLANT_REACH } from './PlantBounds.js';
+import { getTorchInfo } from '../blocks/torches.js';
+import { getTorchBounds } from '../rendering/TorchGeometry.js';
 
 function intersectBounds(origin, direction, x, y, z, bounds, start, end) {
     let near = -Infinity, far = Infinity;
@@ -126,6 +128,7 @@ export class VoxelRaycast {
         let distance = 0;
 
         // Model może wejść do pustej komórki obok lub nad korzeniami.
+        // Dotyczy to również płomienia pochylonej pochodni ściennej.
         // Sprawdzamy tylko krótki odcinek bieżącej komórki DDA, dlatego
         // roślina za ścianą ani poza zasięgiem nie przechwytuje celu.
         const plantHit = (start, end) => {
@@ -136,8 +139,9 @@ export class VoxelRaycast {
                         const id = this.world.getBlockId(px, py, pz);
                         if (!id) continue;
                         const river = getRiverPlant(id);
+                        const torch = getTorchInfo(id);
                         // Duże rośliny z paczek roślin też wystają nad komórkę.
-                        const bounds = river
+                        const bounds = torch ? getTorchBounds(torch.attach) : river
                             ? (py >= y - 1 ? riverPlantBounds(river, px, py, pz) : null)
                             : spritePlantBounds(id, px, py, pz);
                         if (!bounds) continue;
@@ -218,7 +222,7 @@ export class VoxelRaycast {
                 continue;
             }
 
-            if (id && ((!getRiverPlant(id) && !isLiquidId(id)) || (includeWater && isLiquidId(id)))) {
+            if (id && !getTorchInfo(id) && ((!getRiverPlant(id) && !isLiquidId(id)) || (includeWater && isLiquidId(id)))) {
 
                 return {
 

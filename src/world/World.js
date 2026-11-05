@@ -1014,6 +1014,8 @@ export class World {
         chunk.maxY = data.maxY;
         chunk.solidBelow = data.solidBelow;
         chunk.growing = new Set(data.growing);
+        chunk.torches = new Set(data.torches ?? []);
+        chunk.torchRevision++;
         chunk.modified = data.modified;
         if (data.invalidSaved) {
             console.warn(`Zapisany chunk ${data.cx}, ${data.cz} ma zły rozmiar - generuję go od nowa.`);

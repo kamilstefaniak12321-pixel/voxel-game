@@ -5,6 +5,7 @@ import { Sky } from '../sky/Sky.js';
 import { usesSolarAtmosphere } from '../sky/SolarAtmosphere.js';
 import { skyUniforms } from '../sky/skyShader.js';
 import { viewUniforms } from '../rendering/viewUniforms.js';
+import { updateAerialPerspective } from '../rendering/AtmosphereState.js';
 import { SunShadows, shadowUniforms } from '../rendering/Shadows.js';
 import { LightShafts } from '../rendering/LightShafts.js';
 import { WorldOutput } from '../rendering/WorldOutput.js';
@@ -154,6 +155,7 @@ export class MenuWorld {
         viewUniforms.uUnderwater.value = 0;
         viewUniforms.uCurvature.value = 0;
         viewUniforms.uGlobe.value = 0;
+        updateAerialPerspective(settings, this.sky, this.fogBrightness ** 2.2);
         viewUniforms.uFarTextureBlend.value = 0;
         dynamicLightUniforms.uDynamicEnabled.value = 0;
         campfireLightUniforms.uFirePowers.value.fill(0);
@@ -194,6 +196,7 @@ export class MenuWorld {
         const target = this.sky.atmosphere ? atmosphericLightToBrightness(light.sky) : lightToBrightness(light.sky);
         this.fogBrightness += (target - this.fogBrightness) * Math.min(1, elapsed * 3);
         skyUniforms.uFogBrightness.value = this.fogBrightness ** 2.2;
+        updateAerialPerspective(this.settings, this.sky, skyUniforms.uFogBrightness.value);
         this.scene.fog.color.copy(this.sky.state.horizon).multiplyScalar(skyUniforms.uFogBrightness.value);
         this.shadows.update(elapsed, this.sky, p);
         this.sky.applyShadowContrast(this.shadows.active ? this.shadows.strength : 0);

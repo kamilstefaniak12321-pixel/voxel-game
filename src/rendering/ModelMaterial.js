@@ -6,7 +6,8 @@ import { installSurfaceProfiles } from './LeafLighting.js';
 
 import {
     skyUniforms,
-    SKY_COLOR_GLSL
+    SKY_COLOR_GLSL,
+    AERIAL_SKY_GLSL
 } from '../sky/skyShader.js';
 
 import {
@@ -90,7 +91,7 @@ export function createModelMaterial({ map = null, alphaTest = 0, glow = 0, verte
     const own = { uModelGlow: { value: glow } };
 
     material.userData.uniforms = own;
-    material.customProgramCacheKey = () => `model-lighting-v4-${baselineLambert ? 'legacy-lambert' : 'model'}`;
+    material.customProgramCacheKey = () => `model-lighting-v5-${baselineLambert ? 'legacy-lambert' : 'model'}`;
 
 
     material.onBeforeCompile = (shader, renderer) => {
@@ -113,7 +114,9 @@ export function createModelMaterial({ map = null, alphaTest = 0, glow = 0, verte
                 #ifdef POTATO
                     varying vec3 vFogSky;
                     uniform float uFogBrightness;
+                    uniform float uAerialPerspective;
                     ${SKY_COLOR_GLSL}
+                    ${AERIAL_SKY_GLSL}
                 #endif`
             )
             .replace(
@@ -124,7 +127,7 @@ export function createModelMaterial({ map = null, alphaTest = 0, glow = 0, verte
                 vSkyDirection = vWorldPosition - cameraPosition;
 
                 #ifdef POTATO
-                    vFogSky = skyColor(normalize(vSkyDirection)) * uFogBrightness;
+                    vFogSky = atmosphereFogColor(vSkyDirection, uAerialPerspective, uFogBrightness);
                 #endif`
             );
 
@@ -155,6 +158,7 @@ export function createModelMaterial({ map = null, alphaTest = 0, glow = 0, verte
                 uniform vec3 uModelBounce;
                 ${sceneShadows ? `#define USE_FAR_SHADOWS\n${DISTANT_SHADOW_GLSL}` : 'uniform int uSunShadowLight;'}
                 ${SKY_COLOR_GLSL}
+                ${AERIAL_SKY_GLSL}
                 ${VIEW_GLSL}
                 ${SURFACE_LIGHTING_GLSL}
                 ${METEOR_LIGHT_GLSL}
@@ -171,7 +175,7 @@ export function createModelMaterial({ map = null, alphaTest = 0, glow = 0, verte
                     varying vec3 vFogSky;
                     #define FOG_SKY vFogSky
                 #else
-                    #define FOG_SKY (skyColor(normalize(vSkyDirection)) * uFogBrightness)
+                    #define FOG_SKY atmosphereFogColor(vSkyDirection, uAerialPerspective, uFogBrightness)
                 #endif`
             )
             .replace(
@@ -255,15 +259,20 @@ export function createModelMaterial({ map = null, alphaTest = 0, glow = 0, verte
                     if (modelBaselineLambert > 0.5) {
                         #include <fog_fragment>
                     } else {
-                    if (uFarEnabled > 0.5) {
+                    if (uUnderwater > 0.5 && aerialPerspectiveEnabled()) {
 
-                        float haze = farHaze(vSkyDirection);
-                        gl_FragColor.rgb = mix(gl_FragColor.rgb, linearToOutputTexel(vec4(FOG_SKY, 1.0)).rgb, haze);
+                        // Tak samo jak bloki: przedmioty i ognisko pod
+                        // wodą nie korzystają z atmosfery powietrznej.
+                        float waterFog = 1.0 - exp(-length(vSkyDirection) * uUnderwaterDensity);
+                        gl_FragColor.rgb = mix(gl_FragColor.rgb,
+                            linearToOutputTexel(vec4(uUnderwaterColor, 1.0)).rgb, waterFog);
 
                     }
                     else {
 
-                        float fogFactor = smoothstep(fogNear, fogFar, vFogDepth);
+                        float legacyFog = uFarEnabled > 0.5 ? farHaze(vSkyDirection)
+                            : smoothstep(fogNear, fogFar, vFogDepth);
+                        float fogFactor = atmosphereHaze(vSkyDirection, modelSky, legacyFog);
                         if (fogFactor > 0.0) {
                             gl_FragColor.rgb = mix(gl_FragColor.rgb, linearToOutputTexel(vec4(FOG_SKY, 1.0)).rgb, fogFactor);
                         }

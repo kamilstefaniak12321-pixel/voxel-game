@@ -59,6 +59,7 @@ export const SETTINGS_TABS = {
 
 export const ADVANCED_VIDEO = [
     'lightingLook',
+    'atmosphereLook',
     'lightingMaterials',
     'surfaceBounce',
     'leafTransmission',

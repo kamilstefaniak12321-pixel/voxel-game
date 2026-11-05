@@ -28,6 +28,7 @@ async function browserChecks() {
     const { modelLight } = await import('/src/rendering/ModelMaterial.js');
     const { checkDarkRoom } = await import('/tools/light_room_checks.js');
     const { checkSurfaceRendering } = await import('/tools/surface_render_checks.js');
+    const { checkAtmosphereRendering } = await import('/tools/atmosphere_render_checks.js');
     const { checkDistantShadowRendering } = await import('/tools/shadow_render_checks.js');
     const { checkPlantShadowRendering } = await import('/tools/plant_shadow_render_checks.js');
     const { setLightingView, resetLightingDiagnostics } = await import('/src/rendering/LightingDiagnostics.js');
@@ -178,6 +179,7 @@ async function browserChecks() {
     probe.material.dispose();
     const room = await checkDarkRoom({ game, settings, renderer, meanFrame, yieldBrowser });
     const surfaces = await checkSurfaceRendering({ game, settings, renderer, yieldBrowser });
+    const atmosphere = await checkAtmosphereRendering({ renderer, yieldBrowser });
     const distantShadows = await checkDistantShadowRendering({ renderer, yieldBrowser });
     const plantShadows = await checkPlantShadowRendering({ renderer, yieldBrowser });
 
@@ -251,7 +253,7 @@ async function browserChecks() {
     check(renderer.info.programs.every(p => p.diagnostics?.runnable !== false), 'Shader nie skompilował się');
     check(errors.length === 0, errors.join('\n'));
     return { status: 'passed', shaders: renderer.info.programs.length, samples, horizonSamples, discSamples,
-        room, surfaces, distantShadows, plantShadows, naturalSamples, outputSamples,
+        room, surfaces, atmosphere, distantShadows, plantShadows, naturalSamples, outputSamples,
         sunsetComparison: { fixedBrightness, legacyBrightness } };
 }
 

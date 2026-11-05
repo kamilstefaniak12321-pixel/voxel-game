@@ -11,6 +11,24 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 0.63.0 - Atmosfera bliskiego i dalekiego świata
+
+Kolejny pakiet planu światła: perspektywa atmosferyczna E08 — PR w przygotowaniu.
+
+- Mgła uwzględnia wysokość obu końców widoku, odległość, porę doby i
+  zachmurzenie. Bliskie powierzchnie zachowują kontrast, a daleki teren
+  przechodzi ku barwie tego samego nieba, które widać nad nim.
+- Zamknięte wnętrza nie dostają zewnętrznej poświaty mgły. Widok na
+  otwartą przestrzeń przez okno nie ciemnieje od samej pozycji kamery.
+- Bloki, rośliny, modele i daleki teren korzystają ze wspólnych zasad;
+  pod wodą pozostaje osobna mgła wodna. Żywe menu używa tego samego stanu.
+- **Obraz → Zaawansowane → Atmosfera** pozwala porównać nowy wygląd
+  z poprzednią mgłą 0.62.0 przy zachowaniu palety i materiałów.
+- Aktualizacja nie dodaje przebiegów renderowania ani nowych map cieni.
+  Zmiana atmosfery nie wymaga przebudowy chunków.
+
+Wersja przygotowana do wydania na Windows i Android po scaleniu PR.
+
 ## 0.62.0 - Gęsta trawa według autorskiego modelu
 
 Nowy wygląd eksperymentalnej trawy — PR #96.

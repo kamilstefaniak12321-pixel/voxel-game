@@ -107,6 +107,11 @@ W *Ustawieniach* (ESC) są zakładki: Obraz (zasięg widzenia, daleki
 teren, tryb ziemniaka dla słabych komputerów, liście...), Sterowanie,
 Gracz (skórka, ręka w widoku z oczu, kołysanie), Dźwięk i Inne.
 
+**Obraz → Zaawansowane → Atmosfera** przełącza naturalną perspektywę
+powietrzną i poprzednią mgłę 0.62.0. Dalszy teren łagodnie przyjmuje barwę
+nieba; bliskie obiekty i zamknięte wnętrza zachowują kontrast. Ustawienie
+działa również w żywym menu. Szczegóły: [atmosfera](../atmosfera.md).
+
 Najważniejsze komendy: `/pomoc`, `/przepisy`, `/kopanie`, `/daj`,
 `/tryb`, `/czas ustaw noc`, `/tp`, `/drzewa`, `/krzaki`, `/mapa`,
 `/teren`, `/osiagniecia`. Pełna lista: [docs/komendy.md](../komendy.md).

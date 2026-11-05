@@ -46,6 +46,7 @@ export const SETTINGS_DEFAULTS = {
     fov: DEFAULT_FOV,                              // stopnie
     brightness: 0,                                 // procent (0 = nastrojowo, 100 = jasno)
     lightingLook: 'natural',                       // wspólna paleta 0.57 / porównanie z 0.56.1
+    atmosphereLook: 'natural',                     // perspektywa powietrzna / mgła z 0.62.0
     lightingMaterials: 'standard',                 // podstawowe / pojedyncze odbicie / dokładniejsze sondy
     surfaceBounce: true,                           // odbicia otoczenia w naturalnej palecie
     leafTransmission: true,                        // światło przez cienkie liście
@@ -137,6 +138,7 @@ export const SETTINGS_CHOICES = {
     shadows: [0, 1, 2, 3],
     lightingModel: ['world', 'classic'],
     lightingLook: ['natural', 'baseline'],
+    atmosphereLook: ['natural', 'baseline'],
     lightingMaterials: ['basic', 'standard', 'high'],
     farDetail: [1, 2, 3],
     jointStyle: ['smooth', 'blocks'],

@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import { plantWindUniforms } from './PlantWind.js';
 
 import { atlasAverageTexture } from './TextureAtlas.js';
+import { AERIAL_GROUND, AERIAL_NEAR_START, AERIAL_NEAR_END, AERIAL_SKY_OPEN } from '../sky/AerialPerspective.js';
 
 import {
     CHUNK_SIZE,
@@ -54,6 +55,13 @@ export const viewUniforms = {
 
     uHazeDistance: { value: FAR_HAZE_DISTANCE },
     uHazeMax: { value: FAR_HAZE_MAX },
+
+    // Naturalna perspektywa powietrzna E08. Wyłączona wartość zachowuje
+    // dokładnie dotychczasową mgłę; parametry doby ustawia Game/Menu.
+    uAerialPerspective: { value: 0 },
+    uAerialDensity: { value: 1 },
+    uAerialHeight: { value: 250 },
+    uAerialCameraSky: { value: 1 },
 
     // Średni kolor każdego kafelka atlasu (TextureAtlas.js).
 
@@ -133,6 +141,10 @@ export const VIEW_GLSL = /* glsl */ `
     uniform float uFarOuter;
     uniform float uHazeDistance;
     uniform float uHazeMax;
+    uniform float uAerialPerspective;
+    uniform float uAerialDensity;
+    uniform float uAerialHeight;
+    uniform float uAerialCameraSky;
     uniform float uUnderwater;
     uniform vec3 uUnderwaterColor;
     uniform float uUnderwaterDensity;
@@ -171,6 +183,60 @@ export const VIEW_GLSL = /* glsl */ `
 
         return mix(haze, 1.0, edge * 0.45);
 
+    }
+
+    // AtmosphereState płynnie wygasza dodatek przy locie w kosmos.
+    // Kula planety nadal używa starego hazeAlong zamiast tego dodatku.
+    bool aerialPerspectiveEnabled() {
+        return uAerialPerspective > 0.0;
+    }
+
+    float airOneMinusExp(float value) {
+        // GLSL ES nie ma expm1: szereg zapobiega utracie cyfr przy
+        // bardzo krótkiej drodze przecinającej granicę warstwy.
+        if (value < 0.001) return value * (1.0 - value * 0.5 + value * value / 6.0);
+        return 1.0 - exp(-value);
+    }
+
+    float meanAirDensity(float a, float b) {
+        float low = min(a, b) - ${AERIAL_GROUND.toFixed(1)};
+        float high = max(a, b) - ${AERIAL_GROUND.toFixed(1)};
+        float h = max(uAerialHeight, 1.0);
+        if (high <= 0.0) return 1.0;
+        float span = high - low;
+        if (low < 0.0) return clamp((-low + h * airOneMinusExp(high / h)) / span, 0.0, 1.0);
+        if (span < 0.001 * h) return exp(-max(0.0, (low + high) * 0.5) / h);
+        return clamp(h * exp(-low / h) * airOneMinusExp(span / h) / span, 0.0, 1.0);
+    }
+
+    float aerialSkyAccess(float surfaceSky) {
+        return smoothstep(0.0, ${AERIAL_SKY_OPEN.toFixed(2)},
+            max(clamp(uAerialCameraSky, 0.0, 1.0), clamp(surfaceSky, 0.0, 1.0)));
+    }
+
+    float aerialHaze(vec3 offset, float surfaceSky) {
+        float d = length(offset);
+        float optical = d * smoothstep(${AERIAL_NEAR_START.toFixed(1)}, ${AERIAL_NEAR_END.toFixed(1)}, d)
+            * meanAirDensity(cameraPosition.y, cameraPosition.y + offset.y)
+            * max(uAerialDensity, 0.0) / max(uHazeDistance, 1.0);
+        float haze = clamp(uHazeMax, 0.0, 1.0) * (1.0 - exp(-optical));
+        if (uFarEnabled > 0.5) {
+            float outer = max(uFarOuter, 1.0);
+            float edge = smoothstep(outer * 0.8, outer, length(offset.xz)) * (1.0 - uGlobe);
+            haze = mix(haze, 1.0, edge * 0.45);
+        }
+        return haze * aerialSkyAccess(surfaceSky);
+    }
+
+    float atmosphereHaze(vec3 offset, float surfaceSky, float legacyHaze) {
+        if (!aerialPerspectiveEnabled()) return legacyHaze;
+        float naturalHaze = aerialHaze(offset, surfaceSky);
+        // Bez LOD nadal trzeba ukryć granicę wczytanego świata.
+        // Zamknięte wnętrze nie dostaje od tej maski koloru nieba.
+        if (uFarEnabled < 0.5) {
+            naturalHaze = mix(naturalHaze, 1.0, legacyHaze * aerialSkyAccess(surfaceSky));
+        }
+        return mix(legacyHaze, naturalHaze, clamp(uAerialPerspective, 0.0, 1.0));
     }
 
 

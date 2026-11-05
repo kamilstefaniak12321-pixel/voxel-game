@@ -154,6 +154,7 @@ export const TEXTS = {
     shadows: (value) => `Cienie słońca: ${['Wył.', 'Zwykłe', 'Dokładne', 'Dalekie'][value] ?? 'Wył.'}`,
     lightingModel: (value) => `Światło: ${value === 'classic' ? 'Klasyczne' : 'Atmosferyczne'}`,
     lightingLook: (value) => `Paleta światła: ${value === 'baseline' ? 'Poprzednia (0.56.1)' : 'Naturalna'}`,
+    atmosphereLook: (value) => `Atmosfera: ${value === 'baseline' ? 'Poprzednia (0.62.0)' : 'Naturalna'}`,
     lightingMaterials: (value) => `Światło materiałów: ${{ basic: 'Podstawowe', standard: 'Standardowe', high: 'Dokładne' }[value] ?? 'Standardowe'}`,
     surfaceBounce: (on) => `Odbicia otoczenia: ${on ? 'Wł.' : 'Wył.'}`,
     leafTransmission: (on) => `Przeświecanie liści: ${on ? 'Wł.' : 'Wył.'}`,

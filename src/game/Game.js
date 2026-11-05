@@ -37,6 +37,7 @@ import { DynamicLight } from '../world/DynamicLight.js';
 import { FarTerrain, setFarTerrainShadows } from '../world/FarTerrain.js';
 import { setAmbientOcclusion, setFastLeaves } from '../rendering/ChunkMesher.js';
 import { viewUniforms } from '../rendering/viewUniforms.js';
+import { updateAerialPerspective } from '../rendering/AtmosphereState.js';
 import { blockMaterial, plantMaterial, waterMaterial, leafMaterial, setPotatoDefine, setLeafMaterialFast, setShadowDefine } from '../rendering/BlockRenderData.js';
 import { SunShadows } from '../rendering/Shadows.js';
 import { LightShafts } from '../rendering/LightShafts.js';
@@ -1567,6 +1568,7 @@ export class Game {
         const fog = this.fogBrightness ** 2.2;
 
         skyUniforms.uFogBrightness.value = fog;
+        updateAerialPerspective(this.settings, this.sky, fog);
 
         // Kolor mgły dla reszty obiektów (np. ramka wskazanego bloku).
 
@@ -1670,6 +1672,7 @@ export class Game {
         this.sky.lightingLook = settings.get('lightingLook');
         this.sky.cloudCover = settings.get('cloudCover') / 100;
         lightingUniforms.uLightingNatural.value = this.sky.lightingLook === 'natural' ? 1 : 0;
+        updateAerialPerspective(settings, this.sky, this.fogBrightness ** 2.2);
         applyMaterialLightingSettings(settings);
         this.shadows.setNaturalLighting(this.sky.lightingLook === 'natural');
 

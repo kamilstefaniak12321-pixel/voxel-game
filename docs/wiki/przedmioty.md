@@ -2,7 +2,7 @@
 
 > Ta strona jest generowana z kodu gry (`python tools/wiki.py`) - nie zmieniaj jej ręcznie, zmiany przepadną przy następnym generowaniu.
 
-Wersja gry **0.67.0** - 64 przedmiotów. Przedmiotu nie da się postawić jak bloku; owoce i nasiona posadzone na ziemi (PPM) wyrastają w krzak albo drzewo, narzędzia przyspieszają kopanie.
+Wersja gry **0.70.0** - 79 przedmiotów. Przedmiotu nie da się postawić jak bloku; owoce i nasiona posadzone na ziemi (PPM) wyrastają w krzak albo drzewo, narzędzia przyspieszają kopanie.
 
 
 ## Drewno
@@ -86,6 +86,21 @@ Wersja gry **0.67.0** - 64 przedmiotów. Przedmiotu nie da się postawić jak bl
 | <img src="ikony/dye_green.png" width="32" height="32" alt=""> | **Barwnik zielony** | `dye_green` | **Przepis:** Barwnik zielony<br>**Przydaje się do:** Pochodnia zielona, Barwnik limonkowy, Barwnik turkusowy, Barwnik czarny |
 | <img src="ikony/dye_red.png" width="32" height="32" alt=""> | **Barwnik czerwony** | `dye_red` | **Przepis:** Barwnik czerwony<br>**Przydaje się do:** Pochodnia czerwona, Barwnik pomarańczowy, Barwnik różowy, Barwnik czarny |
 | <img src="ikony/dye_black.png" width="32" height="32" alt=""> | **Barwnik czarny** | `dye_black` | **Przepis:** Barwnik czarny x3<br>**Przydaje się do:** Pochodnia czarna, Barwnik szary |
+| <img src="ikony/axe_granite.png" width="32" height="32" alt=""> | **Siekiera granitowa** | `axe_granite` | **Narzędzie:** kopie 3 razy szybciej: drewno<br>**Przepis:** Siekiera granitowa<br>**Przydaje się do:** Opał — dąb, Opał — brzoza, Opał — świerk, Opał — sosna, Opał — buk, Opał — lipa, Opał — olcha, Opał — wierzba, Opał — jabłoń |
+| <img src="ikony/axe_limestone.png" width="32" height="32" alt=""> | **Siekiera wapienna** | `axe_limestone` | **Narzędzie:** kopie 3 razy szybciej: drewno<br>**Przepis:** Siekiera wapienna<br>**Przydaje się do:** Opał — dąb, Opał — brzoza, Opał — świerk, Opał — sosna, Opał — buk, Opał — lipa, Opał — olcha, Opał — wierzba, Opał — jabłoń |
+| <img src="ikony/axe_sandstone.png" width="32" height="32" alt=""> | **Siekiera piaskowcowa** | `axe_sandstone` | **Narzędzie:** kopie 3 razy szybciej: drewno<br>**Przepis:** Siekiera piaskowcowa<br>**Przydaje się do:** Opał — dąb, Opał — brzoza, Opał — świerk, Opał — sosna, Opał — buk, Opał — lipa, Opał — olcha, Opał — wierzba, Opał — jabłoń |
+| <img src="ikony/axe_slate.png" width="32" height="32" alt=""> | **Siekiera łupkowa** | `axe_slate` | **Narzędzie:** kopie 3 razy szybciej: drewno<br>**Przepis:** Siekiera łupkowa<br>**Przydaje się do:** Opał — dąb, Opał — brzoza, Opał — świerk, Opał — sosna, Opał — buk, Opał — lipa, Opał — olcha, Opał — wierzba, Opał — jabłoń |
+| <img src="ikony/axe_basalt.png" width="32" height="32" alt=""> | **Siekiera bazaltowa** | `axe_basalt` | **Narzędzie:** kopie 3 razy szybciej: drewno<br>**Przepis:** Siekiera bazaltowa<br>**Przydaje się do:** Opał — dąb, Opał — brzoza, Opał — świerk, Opał — sosna, Opał — buk, Opał — lipa, Opał — olcha, Opał — wierzba, Opał — jabłoń |
+| <img src="ikony/pickaxe_granite.png" width="32" height="32" alt=""> | **Kilof granitowy** | `pickaxe_granite` | **Narzędzie:** kopie 3 razy szybciej: kamień<br>**Przepis:** Kilof granitowy |
+| <img src="ikony/pickaxe_limestone.png" width="32" height="32" alt=""> | **Kilof wapienny** | `pickaxe_limestone` | **Narzędzie:** kopie 3 razy szybciej: kamień<br>**Przepis:** Kilof wapienny |
+| <img src="ikony/pickaxe_sandstone.png" width="32" height="32" alt=""> | **Kilof piaskowcowy** | `pickaxe_sandstone` | **Narzędzie:** kopie 3 razy szybciej: kamień<br>**Przepis:** Kilof piaskowcowy |
+| <img src="ikony/pickaxe_slate.png" width="32" height="32" alt=""> | **Kilof łupkowy** | `pickaxe_slate` | **Narzędzie:** kopie 3 razy szybciej: kamień<br>**Przepis:** Kilof łupkowy |
+| <img src="ikony/pickaxe_basalt.png" width="32" height="32" alt=""> | **Kilof bazaltowy** | `pickaxe_basalt` | **Narzędzie:** kopie 3 razy szybciej: kamień<br>**Przepis:** Kilof bazaltowy |
+| <img src="ikony/shovel_granite.png" width="32" height="32" alt=""> | **Łopata granitowa** | `shovel_granite` | **Narzędzie:** kopie 3 razy szybciej: trawa, ziemia, piasek, żwir, błoto, snow<br>**Przepis:** Łopata granitowa |
+| <img src="ikony/shovel_limestone.png" width="32" height="32" alt=""> | **Łopata wapienna** | `shovel_limestone` | **Narzędzie:** kopie 3 razy szybciej: trawa, ziemia, piasek, żwir, błoto, snow<br>**Przepis:** Łopata wapienna |
+| <img src="ikony/shovel_sandstone.png" width="32" height="32" alt=""> | **Łopata piaskowcowa** | `shovel_sandstone` | **Narzędzie:** kopie 3 razy szybciej: trawa, ziemia, piasek, żwir, błoto, snow<br>**Przepis:** Łopata piaskowcowa |
+| <img src="ikony/shovel_slate.png" width="32" height="32" alt=""> | **Łopata łupkowa** | `shovel_slate` | **Narzędzie:** kopie 3 razy szybciej: trawa, ziemia, piasek, żwir, błoto, snow<br>**Przepis:** Łopata łupkowa |
+| <img src="ikony/shovel_basalt.png" width="32" height="32" alt=""> | **Łopata bazaltowa** | `shovel_basalt` | **Narzędzie:** kopie 3 razy szybciej: trawa, ziemia, piasek, żwir, błoto, snow<br>**Przepis:** Łopata bazaltowa |
 | <img src="ikony/fire_starter.png" width="32" height="32" alt=""> | **Starter ognia** | `fire_starter` | **Przepis:** Starter ognia |
 | <img src="ikony/resin.png" width="32" height="32" alt=""> | **Żywica** | `resin` | **Skąd:** zbiór (PPM): Pień sosny z żywicą<br>**Przydaje się do:** Pochodnia, Lampa |
 | <img src="ikony/birch_bark.png" width="32" height="32" alt=""> | **Kora brzozowa** | `birch_bark` | **Skąd:** okorowanie siekierą: Pień brzozy<br>**Przydaje się do:** Lampa |

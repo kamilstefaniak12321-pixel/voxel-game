@@ -256,7 +256,10 @@ const items = Object.entries(I.ITEM_TYPES).map(([type, item]) => ({
 }));
 
 
-const recipes = K.RECIPE_LIST.map((recipe) => ({
+// Material aliases are real craftable results. Include them in the wiki's
+// recipe index so each new tool's madeBy reference resolves to its own rock.
+const wikiRecipes = [...K.RECIPE_LIST, ...STONE_TOOL_TEXTURES.map(({ name }) => K.getRecipe(name))];
+const recipes = wikiRecipes.map((recipe) => ({
     id: recipe.id,
     result: { type: recipe.result[0], count: recipe.result[1], label: I.getItemLabel(recipe.result[0]) },
     category: K.recipeCategory(recipe),

@@ -162,6 +162,7 @@ export class MenuWorld {
         viewUniforms.uGlobe.value = 0;
         updateAerialPerspective(settings, this.sky, this.fogBrightness ** 2.2);
         viewUniforms.uFarTextureBlend.value = 0;
+        viewUniforms.uDistanceLodEnabled.value = 0;
         dynamicLightUniforms.uDynamicEnabled.value = 0;
         campfireLightUniforms.uFirePowers.value.fill(0);
         if (this.waterVariant !== undefined) this.warmWater();
@@ -169,6 +170,7 @@ export class MenuWorld {
 
     update(dt) {
         if (this.disposed || this.error) return;
+        viewUniforms.uDistanceLodEnabled.value = 0;
         const elapsed = Number.isFinite(dt) ? Math.min(0.1, Math.max(0, dt)) : 0;
         // Jeden obszar pokrywa wszystkie kamery i ich przejazdy. Najpierw
         // dane całego otoczenia, potem meshe: sąsiedzi nie przebudowują

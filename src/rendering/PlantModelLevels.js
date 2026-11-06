@@ -132,3 +132,10 @@ export function applyPlantModelLevel(level) {
 export function plantModelLevel() {
     return current;
 }
+
+// Original models are immutable references captured before the user's selected
+// level is installed. Distance LOD derives private draw data from them instead
+// of temporarily changing the global registry used by icons and animations.
+export function originalPlantRenderData(id) {
+    return ORIGINAL.get(id) ?? blockRenderData[id];
+}

@@ -1531,7 +1531,7 @@ export class RealisticGenerator {
 
     // Powierzchnia dla dalekiego terenu (spacing = odstęp próbek).
 
-    farSurface(x, z, spacing) {
+    farSurface(x, z, spacing, groundOnly = false) {
 
         const sample = this.compute(x, z, spacing <= 8 ? DETAIL_MEDIUM : DETAIL_COARSE, this.sample, spacing);
 
@@ -1563,7 +1563,7 @@ export class RealisticGenerator {
         // teren podniesiony do wysokości koron - na skraju lasu nisko,
         // w gęstym lesie wyżej, i trochę nierówno (pojedyncze korony).
 
-        if (kind === 'grass') {
+        if (kind === 'grass' && !groundOnly) {
 
             const forest = this.forests.forestAt(x, z, sample);
 

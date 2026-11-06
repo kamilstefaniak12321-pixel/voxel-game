@@ -152,7 +152,7 @@ export const TEXTS = {
     graphicsPreset: (name) => `Jakość grafiki: ${{ low: 'Niska', medium: 'Średnia', high: 'Wysoka', ultra: 'Najwyższa' }[name] ?? 'Własna'}`,
     advancedShow: 'Zaawansowane ▾',
     advancedHide: 'Zaawansowane ▴',
-    advancedNote: 'Cienie słońca „Dalekie” sięgają ok. 800 bloków. Zmiana któregoś z tych ustawień ustawia jakość grafiki na „Własna”.',
+    advancedNote: 'Odległy teren, drzewa i rośliny mają stopniowo mniej szczegółów. Cienie słońca „Dalekie” sięgają ok. 800 bloków. Zmiana któregoś z tych ustawień ustawia jakość grafiki na „Własna”.',
     experimentsIntro: 'Funkcje, których nie jesteśmy jeszcze pewni - mogą się zmienić albo zniknąć w następnych wersjach. Działają we wszystkich światach i można je wyłączyć w każdej chwili.',
     experimentNotes: {
         bushyGrass: 'Gęste kępki z pikselową teksturą i delikatnym wiatrem. Zastępują zwykłą trawę; dalsze kępki mają mniej warstw.',

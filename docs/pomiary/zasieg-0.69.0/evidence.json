@@ -1,0 +1,2200 @@
+{
+  "schema": 1,
+  "createdAt": "2026-11-06T20:30:26.059Z",
+  "scope": "Whole distance policies 0.68.0 versus 0.69.0, same visual settings and timed camera path; not identical geometry.",
+  "settings": {
+    "performanceLogs": true,
+    "potato": false,
+    "viewDistance": 800,
+    "farTerrain": 16384,
+    "farDetail": 1,
+    "fov": 70,
+    "brightness": 50,
+    "lightingLook": "natural",
+    "atmosphereLook": "natural",
+    "lightingMaterials": "standard",
+    "surfaceBounce": false,
+    "leafTransmission": true,
+    "materialSpecular": true,
+    "bounceStrength": 18,
+    "bounceSaturation": 65,
+    "cloudCover": 0,
+    "renderScale": 100,
+    "fpsLimit": 120,
+    "ambientOcclusion": 45,
+    "shadows": 3,
+    "lightShafts": true,
+    "fancyLeaves": true,
+    "dynamicLight": true,
+    "loadBudget": 4,
+    "mouseSensitivity": 100,
+    "invertMouse": false,
+    "skinOverlay": true,
+    "showHand": false,
+    "viewBobbing": true,
+    "jointStyle": "smooth",
+    "cameraDistance": 4,
+    "volumeMaster": 0,
+    "volumeMusic": 0,
+    "volumeBlocks": 100,
+    "volumeWorld": 100,
+    "volumeUi": 80,
+    "theme": "default",
+    "menuMotion": "auto",
+    "inventoryStyle": "wood",
+    "hudScale": 100,
+    "showDebug": true,
+    "showFps": false,
+    "meteorites": false,
+    "autoUpdates": false,
+    "textureResolution": 0,
+    "plantModels": "detailed",
+    "plantWind": true,
+    "plantAnimations": true,
+    "leafModel": "parts",
+    "bushyGrass": false,
+    "bounceLight": false,
+    "lightingModel": "world"
+  },
+  "method": {
+    "distance": 800,
+    "horizon": 16384,
+    "timing": {
+      "load": 60000,
+      "fixed": 20000,
+      "movement": 40000,
+      "settle": 180000,
+      "steady": 20000,
+      "visual": 8000
+    },
+    "camera": "Fixed -66,80,-99 for 60+20 s, then 195 blocks west and 36 south over 40 s with gentle scripted yaw.",
+    "notes": [
+      "Real Game.update/render with scripted input and a fresh isolated world; no installed saves.",
+      "Same harness, seed, settings and timed camera path against both source trees.",
+      "This compares the complete distance policy, NOT equal chunk sets or equal geometry.",
+      "Streaming remains active throughout; no reception cap or mesh pause.",
+      "Fixed stationary sample starts after 60 s regardless of readiness; unfinished queues are reported.",
+      "Steady state requires empty near load/mesh queues and zero missing, requested or transitioning far tiles for 3 s.",
+      "Audio, meteors and hand disabled; time .25 and plant growth frozen in both runs.",
+      "CPU closes the previous RAF interval; asynchronous GPU samples cannot be added to CPU time.",
+      "Draw counters include all passes; near/far CPU geometry buffers are not measured VRAM.",
+      "Visual-only camera poses follow the timed phases and do not count towards performance comparisons.",
+      "Guards: 6500 MiB JavaScript heap or 420 s; guards do not demonstrate full-distance completion."
+    ]
+  },
+  "comparison": {
+    "checks": {
+      "sameHarness": true,
+      "sameResolution": true,
+      "sameSettings": true,
+      "sameTiming": true,
+      "sameGpu": true,
+      "sameSeed": true,
+      "bothFixedSamples": true,
+      "sameFixedCamera": true,
+      "completeFixedSamples": true,
+      "noErrors": true,
+      "noFocusLoss": true
+    },
+    "policyComparisonValid": true,
+    "baseline": {
+      "run": "baseline-report-2026-11-06T19-59-23-538Z",
+      "commit": "73ef0c1f1bd16df14d02687cb6c8784afb966e80",
+      "version": "0.68.0",
+      "sourceSha256": "20da31700f18f3be523f9156273df816faa58a0a9c1b411178de96ec3089fa2e",
+      "harnessSha256": "c0df5dea4a3d56e80ec6b5f175919631c07f46020b11c0ff03e572be97e5e99f",
+      "reason": "heap-guard-6500MiB",
+      "valid": true,
+      "verificationWarnings": [],
+      "focusLostMs": 0,
+      "hiddenMs": 0,
+      "errors": [],
+      "steadyStateMeasured": false,
+      "phases": [
+        {
+          "name": "cold-streaming",
+          "timedPerformance": true,
+          "durationMs": 60020.200000000004,
+          "fps": 47.284081026054565,
+          "frameP95Ms": 34.700000000004366,
+          "frameP99Ms": 41.69999999999709,
+          "frameMaxMs": 2311.7,
+          "cpuMeanMs": 20.372515858941888,
+          "cpuP95Ms": 34,
+          "updateMeanMs": 4.544467937114627,
+          "renderMeanMs": 15.828047921827261,
+          "gpuSamples": 351,
+          "gpuMeanMs": 17.00340455840456,
+          "meanCalls": 1459.5862068965516,
+          "meanTriangles": 9511721.931034483,
+          "readyAtStart": {
+            "near": true,
+            "far": false,
+            "all": false
+          },
+          "readyAtEnd": {
+            "near": false,
+            "far": true,
+            "all": false
+          },
+          "readyThroughoutSample": false,
+          "beforeChunks": 81,
+          "afterChunks": 2818,
+          "afterHeapMiB": 3429.304630279541,
+          "afterGeometry": {
+            "plantMeshes": 206,
+            "plantVisible": 121,
+            "plantIndices": 23414676,
+            "emptyGroups": 0,
+            "leafLevels": [
+              2521,
+              0,
+              0
+            ],
+            "plantLevels": [
+              206,
+              0,
+              0
+            ],
+            "nearBytes": 2842301544,
+            "farBytes": 29535588,
+            "bytes": 2871837132,
+            "note": "Unique CPU typed-array buffers of resident near and far geometry, including cached far tiles; not VRAM."
+          },
+          "afterFar": {
+            "active": true,
+            "shown": 167,
+            "wanted": 167,
+            "missing": 0,
+            "cached": 215,
+            "triangles": 567296,
+            "shadowRevision": 1356,
+            "profile": "game",
+            "detailDistance": 800,
+            "detailTiers": [
+              {
+                "distance": 800,
+                "spacing": 8
+              }
+            ],
+            "maxDistance": null,
+            "targetSpacing": 8,
+            "lodWithinTarget": {
+              "4": 15,
+              "8": 34
+            },
+            "workers": 3,
+            "requests": 0
+          },
+          "afterLod": {
+            "enabled": false,
+            "loadRadiusChunks": 52
+          },
+          "afterDepth": {
+            "reused": null,
+            "source": null,
+            "extraDraws": null
+          },
+          "generationApplied": 2737
+        },
+        {
+          "name": "fixed-stationary",
+          "timedPerformance": true,
+          "durationMs": 20020.6,
+          "fps": 25.423813472123715,
+          "frameP95Ms": 48.59999999999127,
+          "frameP99Ms": 48.70000000001164,
+          "frameMaxMs": 69.5,
+          "cpuMeanMs": 38.74047151061547,
+          "cpuP95Ms": 45.69999980926514,
+          "updateMeanMs": 4.514734773598391,
+          "renderMeanMs": 34.22573673701708,
+          "gpuSamples": 62,
+          "gpuMeanMs": 29.915354838709682,
+          "meanCalls": 2743.4,
+          "meanTriangles": 14124524.2,
+          "readyAtStart": {
+            "near": false,
+            "far": true,
+            "all": false
+          },
+          "readyAtEnd": {
+            "near": false,
+            "far": true,
+            "all": false
+          },
+          "readyThroughoutSample": false,
+          "beforeChunks": 2818,
+          "afterChunks": 3327,
+          "afterHeapMiB": 3874.782935142517,
+          "afterGeometry": {
+            "plantMeshes": 206,
+            "plantVisible": 121,
+            "plantIndices": 23414676,
+            "emptyGroups": 0,
+            "leafLevels": [
+              3060,
+              0,
+              0
+            ],
+            "plantLevels": [
+              206,
+              0,
+              0
+            ],
+            "nearBytes": 3201148928,
+            "farBytes": 29535588,
+            "bytes": 3230684516,
+            "note": "Unique CPU typed-array buffers of resident near and far geometry, including cached far tiles; not VRAM."
+          },
+          "afterFar": {
+            "active": true,
+            "shown": 163,
+            "wanted": 163,
+            "missing": 0,
+            "cached": 215,
+            "triangles": 552144,
+            "shadowRevision": 1602,
+            "profile": "game",
+            "detailDistance": 800,
+            "detailTiers": [
+              {
+                "distance": 800,
+                "spacing": 8
+              }
+            ],
+            "maxDistance": null,
+            "targetSpacing": 8,
+            "lodWithinTarget": {
+              "4": 11,
+              "8": 34
+            },
+            "workers": 3,
+            "requests": 0
+          },
+          "afterLod": {
+            "enabled": false,
+            "loadRadiusChunks": 52
+          },
+          "afterDepth": {
+            "reused": null,
+            "source": null,
+            "extraDraws": null
+          },
+          "generationApplied": 509
+        },
+        {
+          "name": "movement",
+          "timedPerformance": true,
+          "durationMs": 40079.2,
+          "fps": 18.91255314477335,
+          "frameP95Ms": 76.30000000000291,
+          "frameP99Ms": 83.39999999999418,
+          "frameMaxMs": 118.10000000000582,
+          "cpuMeanMs": 52.17585752035508,
+          "cpuP95Ms": 71.40000009536743,
+          "updateMeanMs": 5.286147763672479,
+          "renderMeanMs": 46.889709756682606,
+          "gpuSamples": 93,
+          "gpuMeanMs": 44.42882795698923,
+          "meanCalls": 3767.025641025641,
+          "meanTriangles": 20148013.974358976,
+          "readyAtStart": {
+            "near": false,
+            "far": true,
+            "all": false
+          },
+          "readyAtEnd": {
+            "near": false,
+            "far": true,
+            "all": false
+          },
+          "readyThroughoutSample": false,
+          "beforeChunks": 3327,
+          "afterChunks": 4085,
+          "afterHeapMiB": 4920.127076148987,
+          "afterGeometry": {
+            "plantMeshes": 265,
+            "plantVisible": 184,
+            "plantIndices": 33249942,
+            "emptyGroups": 0,
+            "leafLevels": [
+              3420,
+              0,
+              0
+            ],
+            "plantLevels": [
+              265,
+              0,
+              0
+            ],
+            "nearBytes": 3864446880,
+            "farBytes": 31920504,
+            "bytes": 3896367384,
+            "note": "Unique CPU typed-array buffers of resident near and far geometry, including cached far tiles; not VRAM."
+          },
+          "afterFar": {
+            "active": true,
+            "shown": 178,
+            "wanted": 178,
+            "missing": 0,
+            "cached": 231,
+            "triangles": 590396,
+            "shadowRevision": 1896,
+            "profile": "game",
+            "detailDistance": 800,
+            "detailTiers": [
+              {
+                "distance": 800,
+                "spacing": 8
+              }
+            ],
+            "maxDistance": null,
+            "targetSpacing": 8,
+            "lodWithinTarget": {
+              "4": 20,
+              "8": 37
+            },
+            "workers": 3,
+            "requests": 0
+          },
+          "afterLod": {
+            "enabled": false,
+            "loadRadiusChunks": 52
+          },
+          "afterDepth": {
+            "reused": null,
+            "source": null,
+            "extraDraws": null
+          },
+          "generationApplied": 758
+        },
+        {
+          "name": "settling",
+          "timedPerformance": true,
+          "durationMs": 104835.39999990464,
+          "fps": 16.26393386763792,
+          "frameP95Ms": 76.30000000000291,
+          "frameP99Ms": 83.5,
+          "frameMaxMs": 152.8000000000029,
+          "cpuMeanMs": 60.71654930039191,
+          "cpuP95Ms": 73.10000014305115,
+          "updateMeanMs": 5.595305167313473,
+          "renderMeanMs": 55.121244133078434,
+          "gpuSamples": 212,
+          "gpuMeanMs": 50.95639150943397,
+          "meanCalls": 4330.009803921569,
+          "meanTriangles": 25268178.215686273,
+          "readyAtStart": {
+            "near": false,
+            "far": true,
+            "all": false
+          },
+          "readyAtEnd": {
+            "near": false,
+            "far": true,
+            "all": false
+          },
+          "readyThroughoutSample": false,
+          "beforeChunks": 4085,
+          "afterChunks": 5788,
+          "afterHeapMiB": 6506.077092170715,
+          "afterGeometry": {
+            "plantMeshes": 365,
+            "plantVisible": 191,
+            "plantIndices": 43446780,
+            "emptyGroups": 0,
+            "leafLevels": [
+              4589,
+              0,
+              0
+            ],
+            "plantLevels": [
+              365,
+              0,
+              0
+            ],
+            "nearBytes": 5436329468,
+            "farBytes": 31920504,
+            "bytes": 5468249972,
+            "note": "Unique CPU typed-array buffers of resident near and far geometry, including cached far tiles; not VRAM."
+          },
+          "afterFar": {
+            "active": true,
+            "shown": 161,
+            "wanted": 161,
+            "missing": 0,
+            "cached": 231,
+            "triangles": 540600,
+            "shadowRevision": 2571,
+            "profile": "game",
+            "detailDistance": 800,
+            "detailTiers": [
+              {
+                "distance": 800,
+                "spacing": 8
+              }
+            ],
+            "maxDistance": null,
+            "targetSpacing": 8,
+            "lodWithinTarget": {
+              "4": 3,
+              "8": 37
+            },
+            "workers": 3,
+            "requests": 0
+          },
+          "afterLod": {
+            "enabled": false,
+            "loadRadiusChunks": 52
+          },
+          "afterDepth": {
+            "reused": null,
+            "source": null,
+            "extraDraws": null
+          },
+          "generationApplied": 1703
+        }
+      ],
+      "checkpoints": [
+        {
+          "atMs": 30023.30000009537,
+          "ready": {
+            "near": false,
+            "far": true,
+            "all": false
+          },
+          "resources": {
+            "chunks": 1776,
+            "queued": 6721,
+            "dirty": 554,
+            "dirtyPlants": 0,
+            "meshJobs": [
+              {
+                "kind": "terrain",
+                "x": -22,
+                "z": -17
+              }
+            ],
+            "generation": {
+              "enabled": true,
+              "workerReady": true,
+              "pending": 0,
+              "ready": 2,
+              "requested": 1697,
+              "completed": 1697,
+              "applied": 1695,
+              "discarded": 0,
+              "failures": 0,
+              "resets": 0,
+              "cache": {
+                "zones": 14,
+                "heightTiles": 241,
+                "drainageCells": 33306,
+                "routes": 628
+              },
+              "workerMs": 1.5,
+              "lastApplyMs": 0.10000014305114746,
+              "maxApplyMs": 5.5,
+              "lastError": null
+            },
+            "meshVersion": 1222,
+            "render": {
+              "frame": 21079,
+              "calls": 1501,
+              "triangles": 10087147,
+              "points": 96,
+              "lines": 0
+            },
+            "memory": {
+              "geometries": 1509,
+              "textures": 28
+            },
+            "heapMiB": 2352.012861251831,
+            "far": {
+              "active": true,
+              "shown": 181,
+              "wanted": 181,
+              "missing": 0,
+              "cached": 215,
+              "triangles": 600334,
+              "shadowRevision": 861,
+              "profile": "game",
+              "detailDistance": 800,
+              "detailTiers": [
+                {
+                  "distance": 800,
+                  "spacing": 8
+                }
+              ],
+              "maxDistance": null,
+              "targetSpacing": 8,
+              "lodWithinTarget": {
+                "2": 2,
+                "4": 27,
+                "8": 34
+              },
+              "workers": 3,
+              "requests": 0
+            },
+            "shadows": {
+              "budget": {
+                "draws": 24,
+                "triangles": 120000,
+                "milliseconds": 1.5
+              },
+              "lastFrame": {
+                "draws": 15,
+                "triangles": 100070,
+                "completed": 0,
+                "prepareMilliseconds": 0,
+                "submitMilliseconds": 0.10000014305114746
+              },
+              "plants": {
+                "enabled": true,
+                "budget": {
+                  "draws": 8,
+                  "triangles": 40000,
+                  "milliseconds": 0.5
+                },
+                "lastFrame": {
+                  "draws": 1,
+                  "triangles": 30686
+                },
+                "radius": 32,
+                "size": 1024,
+                "interval": 0.1,
+                "valid": true,
+                "building": true,
+                "draws": 38,
+                "remaining": 18,
+                "sampleTime": 25.72919999999983,
+                "age": 0.8557000000000007
+              },
+              "cascades": [
+                {
+                  "name": "far",
+                  "radius": 256,
+                  "size": 1024,
+                  "valid": true,
+                  "building": true,
+                  "remaining": 127,
+                  "draws": 31,
+                  "terrainRevision": 755,
+                  "changed": true
+                },
+                {
+                  "name": "distant",
+                  "radius": 1024,
+                  "size": 2048,
+                  "valid": true,
+                  "building": true,
+                  "remaining": 545,
+                  "draws": 19,
+                  "terrainRevision": 760,
+                  "changed": true
+                }
+              ]
+            },
+            "lod": {
+              "enabled": false,
+              "loadRadiusChunks": 52
+            },
+            "depth": {
+              "reused": null,
+              "source": null,
+              "extraDraws": null
+            },
+            "output": {
+              "mode": "hdr16f",
+              "width": 1920,
+              "height": 1057,
+              "exposure": 1,
+              "estimatedBytes": 121766400,
+              "samples": 4
+            },
+            "camera": {
+              "position": [
+                -66,
+                80,
+                -99
+              ],
+              "yaw": -0.8,
+              "pitch": -0.25
+            },
+            "failedPrograms": 0,
+            "geometry": {
+              "plantMeshes": 206,
+              "plantVisible": 121,
+              "plantIndices": 23414676,
+              "emptyGroups": 0,
+              "leafLevels": [
+                1222,
+                0,
+                0
+              ],
+              "plantLevels": [
+                206,
+                0,
+                0
+              ],
+              "nearBytes": 1942248512,
+              "farBytes": 29535588,
+              "bytes": 1971784100,
+              "note": "Unique CPU typed-array buffers of resident near and far geometry, including cached far tiles; not VRAM."
+            }
+          }
+        }
+      ]
+    },
+    "candidate": {
+      "run": "candidate-report-2026-11-06T20-26-39-735Z",
+      "commit": "1a0c60d9cf299ed2b9966e473d97d2be4cd2c63a",
+      "version": "0.69.0",
+      "sourceSha256": "49e262c03e0c52e8d84650bbec480d4fac60a6a8521db0e977496689b08d4d48",
+      "harnessSha256": "c0df5dea4a3d56e80ec6b5f175919631c07f46020b11c0ff03e572be97e5e99f",
+      "reason": "completed",
+      "valid": true,
+      "verificationWarnings": [],
+      "focusLostMs": 0,
+      "hiddenMs": 0,
+      "errors": [],
+      "steadyStateMeasured": true,
+      "phases": [
+        {
+          "name": "cold-streaming",
+          "timedPerformance": true,
+          "durationMs": 60002.6,
+          "fps": 79.27989787109226,
+          "frameP95Ms": 20.700000000000728,
+          "frameP99Ms": 23.700000000000728,
+          "frameMaxMs": 2311.7999999999997,
+          "cpuMeanMs": 11.819255831664115,
+          "cpuP95Ms": 14.599999904632568,
+          "updateMeanMs": 0.8689510209334356,
+          "renderMeanMs": 10.95030481073068,
+          "gpuSamples": 591,
+          "gpuMeanMs": 10.856829103214888,
+          "meanCalls": 759.2203389830509,
+          "meanTriangles": 2636780.661016949,
+          "readyAtStart": {
+            "near": false,
+            "far": false,
+            "all": false
+          },
+          "readyAtEnd": {
+            "near": true,
+            "far": true,
+            "all": true
+          },
+          "readyThroughoutSample": false,
+          "beforeChunks": 81,
+          "afterChunks": 613,
+          "afterHeapMiB": 743.7571964263916,
+          "afterGeometry": {
+            "plantMeshes": 272,
+            "plantVisible": 272,
+            "plantIndices": 5923260,
+            "emptyGroups": 0,
+            "leafLevels": [
+              81,
+              64,
+              360
+            ],
+            "plantLevels": [
+              42,
+              25,
+              205
+            ],
+            "nearBytes": 408460780,
+            "farBytes": 72930212,
+            "bytes": 481390992,
+            "note": "Unique CPU typed-array buffers of resident near and far geometry, including cached far tiles; not VRAM."
+          },
+          "afterFar": {
+            "active": true,
+            "shown": 605,
+            "wanted": 605,
+            "missing": 0,
+            "cached": 647,
+            "triangles": 1550040,
+            "vegetationBySpacing": {
+              "1": {
+                "trees": 1715,
+                "plants": 1375,
+                "boxes": 8235,
+                "triangles": 93756
+              },
+              "2": {
+                "trees": 3233,
+                "plants": 3296,
+                "boxes": 16228,
+                "triangles": 182808
+              },
+              "4": {
+                "trees": 9592,
+                "plants": 2847,
+                "boxes": 31623,
+                "triangles": 369156
+              },
+              "8": {
+                "trees": 5098,
+                "plants": 325,
+                "boxes": 10521,
+                "triangles": 125080
+              }
+            },
+            "transitioningTiles": 0,
+            "shadowRevision": 1139,
+            "profile": "game",
+            "detailDistance": 800,
+            "detailTiers": [
+              {
+                "distance": 256,
+                "spacing": 1
+              },
+              {
+                "distance": 448,
+                "spacing": 2
+              },
+              {
+                "distance": 800,
+                "spacing": 4
+              }
+            ],
+            "maxDistance": null,
+            "targetSpacing": 4,
+            "lodWithinTarget": {
+              "1": 226,
+              "2": 141,
+              "4": 96
+            },
+            "workers": 3,
+            "requests": 0
+          },
+          "afterLod": {
+            "enabled": true,
+            "loadRadiusChunks": 14
+          },
+          "afterDepth": {
+            "reused": true,
+            "source": "main",
+            "extraDraws": 0
+          },
+          "generationApplied": 532
+        },
+        {
+          "name": "fixed-stationary",
+          "timedPerformance": true,
+          "durationMs": 20007.199999999997,
+          "fps": 86.91870926466473,
+          "frameP95Ms": 16.80000000000291,
+          "frameP99Ms": 23.69999999999709,
+          "frameMaxMs": 34.700000000004366,
+          "cpuMeanMs": 10.6212190863317,
+          "cpuP95Ms": 13.199999809265137,
+          "updateMeanMs": 0.41414605714316477,
+          "renderMeanMs": 10.207073029188537,
+          "gpuSamples": 207,
+          "gpuMeanMs": 10.830014492753623,
+          "meanCalls": 825.7,
+          "meanTriangles": 2742438,
+          "readyAtStart": {
+            "near": true,
+            "far": true,
+            "all": true
+          },
+          "readyAtEnd": {
+            "near": true,
+            "far": true,
+            "all": true
+          },
+          "readyThroughoutSample": true,
+          "beforeChunks": 613,
+          "afterChunks": 613,
+          "afterHeapMiB": 716.1446628570557,
+          "afterGeometry": {
+            "plantMeshes": 272,
+            "plantVisible": 272,
+            "plantIndices": 5923260,
+            "emptyGroups": 0,
+            "leafLevels": [
+              81,
+              64,
+              360
+            ],
+            "plantLevels": [
+              42,
+              25,
+              205
+            ],
+            "nearBytes": 408460780,
+            "farBytes": 72930212,
+            "bytes": 481390992,
+            "note": "Unique CPU typed-array buffers of resident near and far geometry, including cached far tiles; not VRAM."
+          },
+          "afterFar": {
+            "active": true,
+            "shown": 605,
+            "wanted": 605,
+            "missing": 0,
+            "cached": 647,
+            "triangles": 1550040,
+            "vegetationBySpacing": {
+              "1": {
+                "trees": 1715,
+                "plants": 1375,
+                "boxes": 8235,
+                "triangles": 93756
+              },
+              "2": {
+                "trees": 3233,
+                "plants": 3296,
+                "boxes": 16228,
+                "triangles": 182808
+              },
+              "4": {
+                "trees": 9592,
+                "plants": 2847,
+                "boxes": 31623,
+                "triangles": 369156
+              },
+              "8": {
+                "trees": 5098,
+                "plants": 325,
+                "boxes": 10521,
+                "triangles": 125080
+              }
+            },
+            "transitioningTiles": 0,
+            "shadowRevision": 1139,
+            "profile": "game",
+            "detailDistance": 800,
+            "detailTiers": [
+              {
+                "distance": 256,
+                "spacing": 1
+              },
+              {
+                "distance": 448,
+                "spacing": 2
+              },
+              {
+                "distance": 800,
+                "spacing": 4
+              }
+            ],
+            "maxDistance": null,
+            "targetSpacing": 4,
+            "lodWithinTarget": {
+              "1": 226,
+              "2": 141,
+              "4": 96
+            },
+            "workers": 3,
+            "requests": 0
+          },
+          "afterLod": {
+            "enabled": true,
+            "loadRadiusChunks": 14
+          },
+          "afterDepth": {
+            "reused": true,
+            "source": "main",
+            "extraDraws": 0
+          },
+          "generationApplied": 0
+        },
+        {
+          "name": "movement",
+          "timedPerformance": true,
+          "durationMs": 40011.600000000006,
+          "fps": 66.53070609523238,
+          "frameP95Ms": 23.69999999999709,
+          "frameP99Ms": 30.5,
+          "frameMaxMs": 44.40000000000873,
+          "cpuMeanMs": 14.039406458208383,
+          "cpuP95Ms": 21.100000143051147,
+          "updateMeanMs": 1.8580766288433461,
+          "renderMeanMs": 12.181329829365037,
+          "gpuSamples": 326,
+          "gpuMeanMs": 13.219134969325156,
+          "meanCalls": 1050.5128205128206,
+          "meanTriangles": 3286723,
+          "readyAtStart": {
+            "near": true,
+            "far": true,
+            "all": true
+          },
+          "readyAtEnd": {
+            "near": false,
+            "far": true,
+            "all": false
+          },
+          "readyThroughoutSample": false,
+          "beforeChunks": 613,
+          "afterChunks": 693,
+          "afterHeapMiB": 954.7130117416382,
+          "afterGeometry": {
+            "plantMeshes": 492,
+            "plantVisible": 492,
+            "plantIndices": 7550454,
+            "emptyGroups": 0,
+            "leafLevels": [
+              41,
+              97,
+              481
+            ],
+            "plantLevels": [
+              31,
+              58,
+              403
+            ],
+            "nearBytes": 526922352,
+            "farBytes": 99398336,
+            "bytes": 626320688,
+            "note": "Unique CPU typed-array buffers of resident near and far geometry, including cached far tiles; not VRAM."
+          },
+          "afterFar": {
+            "active": true,
+            "shown": 659,
+            "wanted": 659,
+            "missing": 0,
+            "cached": 842,
+            "triangles": 1811282,
+            "vegetationBySpacing": {
+              "1": {
+                "trees": 2226,
+                "plants": 2006,
+                "boxes": 10910,
+                "triangles": 123636
+              },
+              "2": {
+                "trees": 3917,
+                "plants": 4128,
+                "boxes": 19796,
+                "triangles": 222688
+              },
+              "4": {
+                "trees": 12850,
+                "plants": 3570,
+                "boxes": 42120,
+                "triangles": 492452
+              },
+              "8": {
+                "trees": 4024,
+                "plants": 333,
+                "boxes": 8381,
+                "triangles": 99352
+              }
+            },
+            "transitioningTiles": 0,
+            "shadowRevision": 1437,
+            "profile": "game",
+            "detailDistance": 800,
+            "detailTiers": [
+              {
+                "distance": 256,
+                "spacing": 1
+              },
+              {
+                "distance": 448,
+                "spacing": 2
+              },
+              {
+                "distance": 800,
+                "spacing": 4
+              }
+            ],
+            "maxDistance": null,
+            "targetSpacing": 4,
+            "lodWithinTarget": {
+              "1": 246,
+              "2": 156,
+              "4": 94
+            },
+            "workers": 3,
+            "requests": 0
+          },
+          "afterLod": {
+            "enabled": true,
+            "loadRadiusChunks": 14
+          },
+          "afterDepth": {
+            "reused": true,
+            "source": "main",
+            "extraDraws": 0
+          },
+          "generationApplied": 359
+        },
+        {
+          "name": "settling",
+          "timedPerformance": true,
+          "durationMs": 4254.399999999994,
+          "fps": 76.62655133508848,
+          "frameP95Ms": 20.89999999999418,
+          "frameP99Ms": 27.79999999998836,
+          "frameMaxMs": 55.60000000000582,
+          "cpuMeanMs": 11.495092023369725,
+          "cpuP95Ms": 17.299999952316284,
+          "updateMeanMs": 1.2193251562996146,
+          "renderMeanMs": 10.27576686707011,
+          "gpuSamples": 38,
+          "gpuMeanMs": 11.952868421052631,
+          "meanCalls": 1077.4,
+          "meanTriangles": 3837293,
+          "readyAtStart": {
+            "near": false,
+            "far": true,
+            "all": false
+          },
+          "readyAtEnd": {
+            "near": true,
+            "far": true,
+            "all": true
+          },
+          "readyThroughoutSample": false,
+          "beforeChunks": 693,
+          "afterChunks": 693,
+          "afterHeapMiB": 1001.7992734909058,
+          "afterGeometry": {
+            "plantMeshes": 523,
+            "plantVisible": 523,
+            "plantIndices": 7572366,
+            "emptyGroups": 0,
+            "leafLevels": [
+              41,
+              100,
+              478
+            ],
+            "plantLevels": [
+              30,
+              48,
+              445
+            ],
+            "nearBytes": 545909604,
+            "farBytes": 99398336,
+            "bytes": 645307940,
+            "note": "Unique CPU typed-array buffers of resident near and far geometry, including cached far tiles; not VRAM."
+          },
+          "afterFar": {
+            "active": true,
+            "shown": 659,
+            "wanted": 659,
+            "missing": 0,
+            "cached": 842,
+            "triangles": 1811282,
+            "vegetationBySpacing": {
+              "1": {
+                "trees": 2226,
+                "plants": 2006,
+                "boxes": 10910,
+                "triangles": 123636
+              },
+              "2": {
+                "trees": 3917,
+                "plants": 4128,
+                "boxes": 19796,
+                "triangles": 222688
+              },
+              "4": {
+                "trees": 12850,
+                "plants": 3570,
+                "boxes": 42120,
+                "triangles": 492452
+              },
+              "8": {
+                "trees": 4024,
+                "plants": 333,
+                "boxes": 8381,
+                "triangles": 99352
+              }
+            },
+            "transitioningTiles": 0,
+            "shadowRevision": 1437,
+            "profile": "game",
+            "detailDistance": 800,
+            "detailTiers": [
+              {
+                "distance": 256,
+                "spacing": 1
+              },
+              {
+                "distance": 448,
+                "spacing": 2
+              },
+              {
+                "distance": 800,
+                "spacing": 4
+              }
+            ],
+            "maxDistance": null,
+            "targetSpacing": 4,
+            "lodWithinTarget": {
+              "1": 246,
+              "2": 156,
+              "4": 94
+            },
+            "workers": 3,
+            "requests": 0
+          },
+          "afterLod": {
+            "enabled": true,
+            "loadRadiusChunks": 14
+          },
+          "afterDepth": {
+            "reused": true,
+            "source": "main",
+            "extraDraws": 0
+          },
+          "generationApplied": 0
+        },
+        {
+          "name": "settled-stationary",
+          "timedPerformance": true,
+          "durationMs": 20008.300000000017,
+          "fps": 86.81397220153629,
+          "frameP95Ms": 16.79999999998836,
+          "frameP99Ms": 23.70000000001164,
+          "frameMaxMs": 39.90000000000873,
+          "cpuMeanMs": 10.515947036243542,
+          "cpuP95Ms": 13.099999904632568,
+          "updateMeanMs": 0.4648244113296219,
+          "renderMeanMs": 10.05112262491392,
+          "gpuSamples": 207,
+          "gpuMeanMs": 11.125521739130436,
+          "meanCalls": 1063.6315789473683,
+          "meanTriangles": 3800867.6315789474,
+          "readyAtStart": {
+            "near": true,
+            "far": true,
+            "all": true
+          },
+          "readyAtEnd": {
+            "near": true,
+            "far": true,
+            "all": true
+          },
+          "readyThroughoutSample": true,
+          "beforeChunks": 693,
+          "afterChunks": 693,
+          "afterHeapMiB": 1021.5433301925659,
+          "afterGeometry": {
+            "plantMeshes": 523,
+            "plantVisible": 523,
+            "plantIndices": 7572366,
+            "emptyGroups": 0,
+            "leafLevels": [
+              41,
+              100,
+              478
+            ],
+            "plantLevels": [
+              30,
+              48,
+              445
+            ],
+            "nearBytes": 545909604,
+            "farBytes": 99398336,
+            "bytes": 645307940,
+            "note": "Unique CPU typed-array buffers of resident near and far geometry, including cached far tiles; not VRAM."
+          },
+          "afterFar": {
+            "active": true,
+            "shown": 659,
+            "wanted": 659,
+            "missing": 0,
+            "cached": 842,
+            "triangles": 1811282,
+            "vegetationBySpacing": {
+              "1": {
+                "trees": 2226,
+                "plants": 2006,
+                "boxes": 10910,
+                "triangles": 123636
+              },
+              "2": {
+                "trees": 3917,
+                "plants": 4128,
+                "boxes": 19796,
+                "triangles": 222688
+              },
+              "4": {
+                "trees": 12850,
+                "plants": 3570,
+                "boxes": 42120,
+                "triangles": 492452
+              },
+              "8": {
+                "trees": 4024,
+                "plants": 333,
+                "boxes": 8381,
+                "triangles": 99352
+              }
+            },
+            "transitioningTiles": 0,
+            "shadowRevision": 1437,
+            "profile": "game",
+            "detailDistance": 800,
+            "detailTiers": [
+              {
+                "distance": 256,
+                "spacing": 1
+              },
+              {
+                "distance": 448,
+                "spacing": 2
+              },
+              {
+                "distance": 800,
+                "spacing": 4
+              }
+            ],
+            "maxDistance": null,
+            "targetSpacing": 4,
+            "lodWithinTarget": {
+              "1": 246,
+              "2": 156,
+              "4": 94
+            },
+            "workers": 3,
+            "requests": 0
+          },
+          "afterLod": {
+            "enabled": true,
+            "loadRadiusChunks": 14
+          },
+          "afterDepth": {
+            "reused": true,
+            "source": "main",
+            "extraDraws": 0
+          },
+          "generationApplied": 0
+        }
+      ],
+      "checkpoints": [
+        {
+          "atMs": 30005.299999952316,
+          "ready": {
+            "near": true,
+            "far": true,
+            "all": true
+          },
+          "resources": {
+            "chunks": 613,
+            "queued": 0,
+            "dirty": 0,
+            "dirtyPlants": 0,
+            "meshJobs": [],
+            "generation": {
+              "enabled": true,
+              "workerReady": true,
+              "pending": 0,
+              "ready": 0,
+              "requested": 532,
+              "completed": 532,
+              "applied": 532,
+              "discarded": 0,
+              "failures": 0,
+              "resets": 0,
+              "cache": {
+                "zones": 8,
+                "heightTiles": 227,
+                "drainageCells": 31451,
+                "routes": 594
+              },
+              "workerMs": 2.5,
+              "lastApplyMs": 0.40000009536743164,
+              "maxApplyMs": 2.0999999046325684,
+              "lastError": null
+            },
+            "meshVersion": 505,
+            "render": {
+              "frame": 22337,
+              "calls": 826,
+              "triangles": 2741903,
+              "points": 96,
+              "lines": 0
+            },
+            "memory": {
+              "geometries": 1330,
+              "textures": 27
+            },
+            "heapMiB": 711.2168102264404,
+            "far": {
+              "active": true,
+              "shown": 605,
+              "wanted": 605,
+              "missing": 0,
+              "cached": 647,
+              "triangles": 1550040,
+              "vegetationBySpacing": {
+                "1": {
+                  "trees": 1715,
+                  "plants": 1375,
+                  "boxes": 8235,
+                  "triangles": 93756
+                },
+                "2": {
+                  "trees": 3233,
+                  "plants": 3296,
+                  "boxes": 16228,
+                  "triangles": 182808
+                },
+                "4": {
+                  "trees": 9592,
+                  "plants": 2847,
+                  "boxes": 31623,
+                  "triangles": 369156
+                },
+                "8": {
+                  "trees": 5098,
+                  "plants": 325,
+                  "boxes": 10521,
+                  "triangles": 125080
+                }
+              },
+              "transitioningTiles": 0,
+              "shadowRevision": 1139,
+              "profile": "game",
+              "detailDistance": 800,
+              "detailTiers": [
+                {
+                  "distance": 256,
+                  "spacing": 1
+                },
+                {
+                  "distance": 448,
+                  "spacing": 2
+                },
+                {
+                  "distance": 800,
+                  "spacing": 4
+                }
+              ],
+              "maxDistance": null,
+              "targetSpacing": 4,
+              "lodWithinTarget": {
+                "1": 226,
+                "2": 141,
+                "4": 96
+              },
+              "workers": 3,
+              "requests": 0
+            },
+            "shadows": {
+              "budget": {
+                "draws": 24,
+                "triangles": 120000,
+                "milliseconds": 1.5
+              },
+              "lastFrame": {
+                "draws": 0,
+                "triangles": 0,
+                "completed": 0,
+                "prepareMilliseconds": 0,
+                "submitMilliseconds": 0
+              },
+              "plants": {
+                "enabled": true,
+                "budget": {
+                  "draws": 8,
+                  "triangles": 40000,
+                  "milliseconds": 0.5
+                },
+                "lastFrame": {
+                  "draws": 2,
+                  "triangles": 24356
+                },
+                "radius": 32,
+                "size": 1024,
+                "interval": 0.1,
+                "valid": true,
+                "building": true,
+                "draws": 46,
+                "remaining": 73,
+                "sampleTime": 26.735900000000594,
+                "age": 0.1931000000000022
+              },
+              "cascades": [
+                {
+                  "name": "far",
+                  "radius": 256,
+                  "size": 1024,
+                  "valid": true,
+                  "building": false,
+                  "remaining": 0,
+                  "draws": 15,
+                  "terrainRevision": 1139,
+                  "changed": false
+                },
+                {
+                  "name": "distant",
+                  "radius": 1024,
+                  "size": 2048,
+                  "valid": true,
+                  "building": false,
+                  "remaining": 0,
+                  "draws": 9,
+                  "terrainRevision": 1139,
+                  "changed": false
+                }
+              ]
+            },
+            "lod": {
+              "enabled": true,
+              "loadRadiusChunks": 14
+            },
+            "depth": {
+              "reused": true,
+              "source": "main",
+              "extraDraws": 0
+            },
+            "output": {
+              "mode": "hdr16f",
+              "width": 1920,
+              "height": 1057,
+              "exposure": 1,
+              "estimatedBytes": 121766400,
+              "samples": 4
+            },
+            "camera": {
+              "position": [
+                -66,
+                80,
+                -99
+              ],
+              "yaw": -0.8,
+              "pitch": -0.25
+            },
+            "failedPrograms": 0,
+            "geometry": {
+              "plantMeshes": 272,
+              "plantVisible": 272,
+              "plantIndices": 5923260,
+              "emptyGroups": 0,
+              "leafLevels": [
+                81,
+                64,
+                360
+              ],
+              "plantLevels": [
+                42,
+                25,
+                205
+              ],
+              "nearBytes": 408460780,
+              "farBytes": 72930212,
+              "bytes": 481390992,
+              "note": "Unique CPU typed-array buffers of resident near and far geometry, including cached far tiles; not VRAM."
+            }
+          }
+        }
+      ]
+    },
+    "fixedPolicyChangesPercent": {
+      "fps": 241.87911801653175,
+      "frameP95Ms": -65.4320987654199,
+      "cpuMeanMs": -72.58366077598895,
+      "gpuMeanMs": -63.79780700866075,
+      "meanCalls": -69.90231100094773,
+      "afterHeapMiB": -81.51781209827395,
+      "geometryBytes": -85.09941191670353
+    },
+    "notes": [
+      "This is a comparison of full distance policies at identical visual settings and time windows, not identical geometry.",
+      "A fixed sample can still be streaming; ready fields say which version had completed its near and far world.",
+      "Only steadyStateMeasured plus drained queues certifies completed candidate distance coverage.",
+      "GPU means are sample-weighted. CPU and GPU overlap; do not add their times.",
+      "CPU geometry bytes include near and cached far buffers; these are not VRAM.",
+      "Visual-only phases are excluded from performance comparisons."
+    ]
+  },
+  "native": [
+    {
+      "runId": "baseline-report-2026-11-06T19-59-23-538Z",
+      "version": "0.68.0",
+      "commit": "73ef0c1f1bd16df14d02687cb6c8784afb966e80",
+      "dirty": false,
+      "sourceFiles": 184,
+      "sourceSha256": "20da31700f18f3be523f9156273df816faa58a0a9c1b411178de96ec3089fa2e",
+      "harnessSha256": "c0df5dea4a3d56e80ec6b5f175919631c07f46020b11c0ff03e572be97e5e99f",
+      "electron": "44.4.5",
+      "chromium": "152.0.7977.130",
+      "device": {
+        "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 3050 Laptop GPU (0x000025A2) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+        "drawingBuffer": [
+          1920,
+          1057
+        ],
+        "devicePixelRatio": 1,
+        "hardwareConcurrency": 16,
+        "deviceMemoryGiB": 16
+      },
+      "report": {
+        "bytes": 4474505,
+        "sha256": "59bd40d0420fa7a33c5092e950c6b13c5955f9e25488960c7ebe709864ec2980"
+      },
+      "screenshots": [
+        {
+          "file": "checkpoint-fixed-stationary.png",
+          "bytes": 2406907,
+          "sha256": "8f05c65e31fbffc74947aeac2117735f0374a0b7a735740a73af756098c1f473"
+        },
+        {
+          "file": "checkpoint-movement.png",
+          "bytes": 2427465,
+          "sha256": "e05ee2915f894b9eebd0d63e00bc412c99c5c04c8254a0660e680a221b2e35ac"
+        },
+        {
+          "file": "checkpoint-settling.png",
+          "bytes": 2327565,
+          "sha256": "4b10c84a221c8f4f3b72280af121db9d8a6da2b1313daa5ca1ebaa4774cc9ff6"
+        },
+        {
+          "file": "final.png",
+          "bytes": 2344774,
+          "sha256": "88a4a04d7a3d6cdc56fd1f34f604683b62938d0028a1657e6211b7bece52bd08"
+        },
+        {
+          "file": "fixed-half-load.png",
+          "bytes": 2329853,
+          "sha256": "bfb06c8d96192e8e9883af6a81ccc4a0dd3ced3024cc666042bde792a9119439"
+        }
+      ],
+      "nativeFailureFiles": [],
+      "reason": "heap-guard-6500MiB",
+      "valid": true,
+      "finished": true,
+      "steadyStateMeasured": false,
+      "finalReadiness": {
+        "near": false,
+        "far": true,
+        "all": false
+      },
+      "finalResources": {
+        "chunks": 5788,
+        "queued": 2709,
+        "dirty": 1198,
+        "dirtyPlants": 0,
+        "meshJobs": [
+          {
+            "kind": "terrain",
+            "x": -6,
+            "z": -39
+          }
+        ],
+        "generation": {
+          "enabled": true,
+          "workerReady": true,
+          "pending": 1,
+          "ready": 1,
+          "requested": 5709,
+          "completed": 5708,
+          "applied": 5707,
+          "discarded": 0,
+          "failures": 0,
+          "resets": 1,
+          "cache": {
+            "zones": 20,
+            "heightTiles": 260,
+            "drainageCells": 36502,
+            "routes": 695
+          },
+          "workerMs": 1.5,
+          "lastApplyMs": 0.10000014305114746,
+          "maxApplyMs": 5.5,
+          "lastError": null
+        },
+        "meshVersion": 4589,
+        "render": {
+          "frame": 69230,
+          "calls": 4414,
+          "triangles": 26398695,
+          "points": 96,
+          "lines": 0
+        },
+        "memory": {
+          "geometries": 4734,
+          "textures": 28
+        },
+        "heapMiB": 6506.077092170715,
+        "far": {
+          "active": true,
+          "shown": 161,
+          "wanted": 161,
+          "missing": 0,
+          "cached": 231,
+          "triangles": 540600,
+          "shadowRevision": 2571,
+          "profile": "game",
+          "detailDistance": 800,
+          "detailTiers": [
+            {
+              "distance": 800,
+              "spacing": 8
+            }
+          ],
+          "maxDistance": null,
+          "targetSpacing": 8,
+          "lodWithinTarget": {
+            "4": 3,
+            "8": 37
+          },
+          "workers": 3,
+          "requests": 0
+        },
+        "shadows": {
+          "budget": {
+            "draws": 24,
+            "triangles": 120000,
+            "milliseconds": 1.5
+          },
+          "lastFrame": {
+            "draws": 19,
+            "triangles": 116378,
+            "completed": 0,
+            "prepareMilliseconds": 0,
+            "submitMilliseconds": 0
+          },
+          "plants": {
+            "enabled": true,
+            "budget": {
+              "draws": 8,
+              "triangles": 40000,
+              "milliseconds": 0.5
+            },
+            "lastFrame": {
+              "draws": 2,
+              "triangles": 28382
+            },
+            "radius": 32,
+            "size": 1024,
+            "interval": 0.1,
+            "valid": true,
+            "building": true,
+            "draws": 119,
+            "remaining": 84,
+            "sampleTime": 194.02910000001197,
+            "age": 1.0500000000000003
+          },
+          "cascades": [
+            {
+              "name": "far",
+              "radius": 256,
+              "size": 1024,
+              "valid": true,
+              "building": true,
+              "remaining": 2119,
+              "draws": 47,
+              "terrainRevision": 2437,
+              "changed": true
+            },
+            {
+              "name": "distant",
+              "radius": 1024,
+              "size": 2048,
+              "valid": true,
+              "building": true,
+              "remaining": 2762,
+              "draws": 29,
+              "terrainRevision": 2266,
+              "changed": true
+            }
+          ]
+        },
+        "lod": {
+          "enabled": false,
+          "loadRadiusChunks": 52
+        },
+        "depth": {
+          "reused": null,
+          "source": null,
+          "extraDraws": null
+        },
+        "output": {
+          "mode": "hdr16f",
+          "width": 1920,
+          "height": 1057,
+          "exposure": 1,
+          "estimatedBytes": 121766400,
+          "samples": 4
+        },
+        "camera": {
+          "position": [
+            -261,
+            80,
+            -63
+          ],
+          "yaw": -0.8000000000000002,
+          "pitch": -0.25
+        },
+        "failedPrograms": 0,
+        "geometry": {
+          "plantMeshes": 365,
+          "plantVisible": 191,
+          "plantIndices": 43446780,
+          "emptyGroups": 0,
+          "leafLevels": [
+            4589,
+            0,
+            0
+          ],
+          "plantLevels": [
+            365,
+            0,
+            0
+          ],
+          "nearBytes": 5436329468,
+          "farBytes": 31920504,
+          "bytes": 5468249972,
+          "note": "Unique CPU typed-array buffers of resident near and far geometry, including cached far tiles; not VRAM."
+        }
+      },
+      "verificationWarnings": [],
+      "errors": [],
+      "focusLostMs": 0,
+      "hiddenMs": 0
+    },
+    {
+      "runId": "candidate-report-2026-11-06T20-26-39-735Z",
+      "version": "0.69.0",
+      "commit": "1a0c60d9cf299ed2b9966e473d97d2be4cd2c63a",
+      "dirty": false,
+      "sourceFiles": 187,
+      "sourceSha256": "49e262c03e0c52e8d84650bbec480d4fac60a6a8521db0e977496689b08d4d48",
+      "harnessSha256": "c0df5dea4a3d56e80ec6b5f175919631c07f46020b11c0ff03e572be97e5e99f",
+      "electron": "44.4.5",
+      "chromium": "152.0.7977.130",
+      "device": {
+        "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 3050 Laptop GPU (0x000025A2) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+        "drawingBuffer": [
+          1920,
+          1057
+        ],
+        "devicePixelRatio": 1,
+        "hardwareConcurrency": 16,
+        "deviceMemoryGiB": 16
+      },
+      "report": {
+        "bytes": 4732891,
+        "sha256": "5e76138df7eac5610330a02212922ccf6fd7d7677cc5fd3ad7afeb8a4bde3eac"
+      },
+      "screenshots": [
+        {
+          "file": "checkpoint-fixed-stationary.png",
+          "bytes": 2333734,
+          "sha256": "868deb09491e96715c66a6f089178c41e78c0f96541f12596d3471a641c1eb80"
+        },
+        {
+          "file": "checkpoint-movement.png",
+          "bytes": 2336097,
+          "sha256": "a074bea568d935b3d6c5e2d77668081e79d58e809bd114173ac31d63481e24e9"
+        },
+        {
+          "file": "checkpoint-settled-stationary.png",
+          "bytes": 2304116,
+          "sha256": "aaac108ab6369da1ce63eaf198a5d5dfbfb3b14e1502d4850f323ee5df029fb8"
+        },
+        {
+          "file": "checkpoint-settling.png",
+          "bytes": 2302449,
+          "sha256": "5491ad67d63f41c634cf1cf66c9c1322db4030f3ef76cf2fae75cf8e4be7c632"
+        },
+        {
+          "file": "final.png",
+          "bytes": 2084146,
+          "sha256": "3b245d64357889f61c183907d09e1cecf092dd5eaa6478f6423cdd24357f5b35"
+        },
+        {
+          "file": "fixed-half-load.png",
+          "bytes": 2326557,
+          "sha256": "c76b4cfc26b714051cf4c19f394dcbeecf9e388698e05ffd853ffdf25d68d28e"
+        },
+        {
+          "file": "visual-forest.png",
+          "bytes": 1895683,
+          "sha256": "68a6a011bb58c0b27e5c95a2a255d63d88945d7912b6c2a5531825fa37dab21d"
+        },
+        {
+          "file": "visual-horizon.png",
+          "bytes": 2084146,
+          "sha256": "2b4c4879f3eddd9f86bd8c875c45c715faf52f01f74d662426bd1faa0f285142"
+        },
+        {
+          "file": "visual-near-plants.png",
+          "bytes": 2110504,
+          "sha256": "9e27e555306f4d8f9845f4ebc451541944e6deb55acca023b6d70fe5cc1b250a"
+        },
+        {
+          "file": "visual-transition.png",
+          "bytes": 2500697,
+          "sha256": "bf921ab646254c2100a4f0fa366125e35bce9d2d4c500c9230c6258174c2436e"
+        }
+      ],
+      "nativeFailureFiles": [],
+      "reason": "completed",
+      "valid": true,
+      "finished": true,
+      "steadyStateMeasured": true,
+      "finalReadiness": {
+        "near": true,
+        "far": true,
+        "all": true
+      },
+      "finalResources": {
+        "chunks": 693,
+        "queued": 0,
+        "dirty": 0,
+        "dirtyPlants": 0,
+        "meshJobs": [],
+        "generation": {
+          "enabled": true,
+          "workerReady": true,
+          "pending": 0,
+          "ready": 0,
+          "requested": 892,
+          "completed": 892,
+          "applied": 891,
+          "discarded": 1,
+          "failures": 0,
+          "resets": 0,
+          "cache": {
+            "zones": 9,
+            "heightTiles": 229,
+            "drainageCells": 31775,
+            "routes": 599
+          },
+          "workerMs": 1.7999999523162842,
+          "lastApplyMs": 0.6000001430511475,
+          "maxApplyMs": 2.0999999046325684,
+          "lastError": null
+        },
+        "meshVersion": 1049,
+        "render": {
+          "frame": 142392,
+          "calls": 1040,
+          "triangles": 3703255,
+          "points": 96,
+          "lines": 0
+        },
+        "memory": {
+          "geometries": 2255,
+          "textures": 27
+        },
+        "heapMiB": 1022.5999746322632,
+        "far": {
+          "active": true,
+          "shown": 659,
+          "wanted": 659,
+          "missing": 0,
+          "cached": 842,
+          "triangles": 1811282,
+          "vegetationBySpacing": {
+            "1": {
+              "trees": 2226,
+              "plants": 2006,
+              "boxes": 10910,
+              "triangles": 123636
+            },
+            "2": {
+              "trees": 3917,
+              "plants": 4128,
+              "boxes": 19796,
+              "triangles": 222688
+            },
+            "4": {
+              "trees": 12850,
+              "plants": 3570,
+              "boxes": 42120,
+              "triangles": 492452
+            },
+            "8": {
+              "trees": 4024,
+              "plants": 333,
+              "boxes": 8381,
+              "triangles": 99352
+            }
+          },
+          "transitioningTiles": 0,
+          "shadowRevision": 1437,
+          "profile": "game",
+          "detailDistance": 800,
+          "detailTiers": [
+            {
+              "distance": 256,
+              "spacing": 1
+            },
+            {
+              "distance": 448,
+              "spacing": 2
+            },
+            {
+              "distance": 800,
+              "spacing": 4
+            }
+          ],
+          "maxDistance": null,
+          "targetSpacing": 4,
+          "lodWithinTarget": {
+            "1": 246,
+            "2": 156,
+            "4": 94
+          },
+          "workers": 3,
+          "requests": 0
+        },
+        "shadows": {
+          "budget": {
+            "draws": 24,
+            "triangles": 120000,
+            "milliseconds": 1.5
+          },
+          "lastFrame": {
+            "draws": 0,
+            "triangles": 0,
+            "completed": 0,
+            "prepareMilliseconds": 0,
+            "submitMilliseconds": 0
+          },
+          "plants": {
+            "enabled": true,
+            "budget": {
+              "draws": 8,
+              "triangles": 40000,
+              "milliseconds": 0.5
+            },
+            "lastFrame": {
+              "draws": 2,
+              "triangles": 32000
+            },
+            "radius": 32,
+            "size": 1024,
+            "interval": 0.1,
+            "valid": true,
+            "building": true,
+            "draws": 280,
+            "remaining": 32,
+            "sampleTime": 174.29870000001594,
+            "age": 0.5388999999999944
+          },
+          "cascades": [
+            {
+              "name": "far",
+              "radius": 256,
+              "size": 1024,
+              "valid": true,
+              "building": false,
+              "remaining": 0,
+              "draws": 40,
+              "terrainRevision": 1437,
+              "changed": false
+            },
+            {
+              "name": "distant",
+              "radius": 1024,
+              "size": 2048,
+              "valid": true,
+              "building": false,
+              "remaining": 0,
+              "draws": 30,
+              "terrainRevision": 1437,
+              "changed": false
+            }
+          ]
+        },
+        "lod": {
+          "enabled": true,
+          "loadRadiusChunks": 14
+        },
+        "depth": {
+          "reused": true,
+          "source": "main",
+          "extraDraws": 0
+        },
+        "output": {
+          "mode": "hdr16f",
+          "width": 1920,
+          "height": 1057,
+          "exposure": 1,
+          "estimatedBytes": 121766400,
+          "samples": 4
+        },
+        "camera": {
+          "position": [
+            -261,
+            80,
+            -63
+          ],
+          "yaw": -0.8000000000000002,
+          "pitch": -0.07
+        },
+        "failedPrograms": 0,
+        "geometry": {
+          "plantMeshes": 523,
+          "plantVisible": 523,
+          "plantIndices": 7572366,
+          "emptyGroups": 0,
+          "leafLevels": [
+            41,
+            100,
+            478
+          ],
+          "plantLevels": [
+            30,
+            48,
+            445
+          ],
+          "nearBytes": 545909604,
+          "farBytes": 99398336,
+          "bytes": 645307940,
+          "note": "Unique CPU typed-array buffers of resident near and far geometry, including cached far tiles; not VRAM."
+        }
+      },
+      "verificationWarnings": [],
+      "errors": [],
+      "focusLostMs": 0,
+      "hiddenMs": 0
+    }
+  ],
+  "currentRuntime": {
+    "sourceFiles": 187,
+    "sourceSha256": "49e262c03e0c52e8d84650bbec480d4fac60a6a8521db0e977496689b08d4d48"
+  },
+  "validation": [
+    {
+      "name": "npm-test",
+      "bytes": 43885,
+      "sha256": "298b41adeefefc78d69bd381553c2d5f7de749227ba5a9d257e95281e2d88c63",
+      "modifiedAt": "2026-11-06T20:25:09.114Z"
+    },
+    {
+      "name": "lighting-webgl",
+      "bytes": 21455,
+      "sha256": "582d0cf9b914b1a3c27b47468f1f3304808e5a00ee7065b91450634962d6f279",
+      "modifiedAt": "2026-11-06T19:53:16.973Z"
+    },
+    {
+      "name": "plant-split-webgl",
+      "bytes": 87,
+      "sha256": "4ea434d16c3ddc2896fd64277782d36b8fc779992b1b7d874edf2d76d5c1980b",
+      "modifiedAt": "2026-11-06T19:55:50.842Z"
+    },
+    {
+      "name": "menu",
+      "bytes": 83,
+      "sha256": "6fb11a4da4a22c19725c8969a352ced66abaa002c87c4b0180abb1e0dbbc0835",
+      "modifiedAt": "2026-11-06T19:32:25.212Z"
+    },
+    {
+      "name": "depth-and-transition-pixels",
+      "bytes": 1648,
+      "sha256": "3b2e191cebefc3374f7d4eb168ee3647cc107902150d5e2b762cc8d57eed7798",
+      "modifiedAt": "2026-11-06T19:54:59.618Z",
+      "result": {
+        "checks": [
+          "Main output preserves MSAA",
+          "Main output owns a depth texture",
+          "Resolved depth contains water surface, foliage and cutout gaps",
+          "Light shafts reuse main depth",
+          "Shared depth removes the extra world geometry pass",
+          "Shared depth uses its actual projection",
+          "Shared path allocates no fallback depth target",
+          "MSAA depth sampling and composition have no framebuffer errors",
+          "Legacy output retains its depth-pass fallback",
+          "Fallback depth sampling has no framebuffer errors",
+          "Near/far overlap has no missing pixels",
+          "Near details decrease gradually and far details fill their pixels",
+          "Pending far replacement retains every detailed pixel",
+          "Missing near mesh leaves the far representation intact",
+          "Transition shaders compile and render without GL errors",
+          "WebGL1 fallback context is available",
+          "WebGL1 uses the same ready transition without invalid texture formats or holes",
+          "WebGL1 mask updates preserve pending detailed coverage"
+        ],
+        "depthBands": {
+          "water": 3486,
+          "leaf": 1292,
+          "gapOrBackground": 7510
+        },
+        "blendCounts": [
+          {
+            "distance": 144,
+            "red": 12288,
+            "blue": 0,
+            "empty": 0
+          },
+          {
+            "distance": 156,
+            "red": 10371,
+            "blue": 1917,
+            "empty": 0
+          },
+          {
+            "distance": 168,
+            "red": 6140,
+            "blue": 6148,
+            "empty": 0
+          },
+          {
+            "distance": 180,
+            "red": 1920,
+            "blue": 10368,
+            "empty": 0
+          },
+          {
+            "distance": 192,
+            "red": 0,
+            "blue": 12288,
+            "empty": 0
+          }
+        ],
+        "samples": 4,
+        "avoidedDepthPasses": 1
+      }
+    },
+    {
+      "name": "plant-split-pixels",
+      "bytes": 606,
+      "sha256": "e097e4970ed5f5ec66ed150098b633f102eb0996d139d7a5187a0e2a0f155689",
+      "modifiedAt": "2026-11-06T19:55:50.809Z",
+      "result": {
+        "checks": [
+          "Terrain contains no empty or plant groups",
+          "Plants contain only nonempty plant groups",
+          "Same rendered image including submerged plants: 0 differing channels (max 0)",
+          "Splitting keeps every rendered triangle",
+          "Split geometry issues no zero-count WebGL draws",
+          "Hidden plants are omitted before draw submission",
+          "Returning plants restores draws without empty calls",
+          "Plant-free terrain has one nonempty material group"
+        ],
+        "counts": {
+          "before": 5,
+          "after": 5,
+          "hidden": 4
+        },
+        "triangles": 3080,
+        "different": 0,
+        "maxDifference": 0
+      }
+    }
+  ],
+  "acceptance": {
+    "matchingComparison": true,
+    "bothValid": true,
+    "noNativeFailureFiles": true,
+    "candidateReadySteadyState": true,
+    "candidateMatchesCurrentRuntime": true,
+    "visualReview": "Manual observations and limitations are recorded separately in WYNIKI.md."
+  },
+  "caveats": [
+    "The fixed stationary phase can still be streaming; its before/after readiness is part of the evidence.",
+    "Guarded or timed-out runs must not be described as complete-distance steady state.",
+    "Geometry bytes count unique CPU typed-array buffers of near and cached far meshes, not VRAM or every auxiliary allocation.",
+    "Recorded CPU and GPU times overlap and must not be added together.",
+    "Log fingerprints identify the coordinator-verified validation files; this script does not infer process exit status from console text.",
+    "Screenshot hashes establish provenance; appearance still requires an explicit visual review.",
+    "Raw frame arrays and isolated browser profiles remain outside the public compact evidence."
+  ]
+}

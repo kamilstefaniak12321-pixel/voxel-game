@@ -113,6 +113,9 @@ for (const hdr of [true, false]) {
     assert.equal(target.texture.type, hdr ? THREE.HalfFloatType : THREE.UnsignedByteType);
     assert.equal(target.texture.colorSpace, THREE.LinearSRGBColorSpace);
     assert.equal(target.samples, 4, 'HDR musi zachować wygładzanie krawędzi głównego kontekstu');
+    assert.equal(target.depthTexture.isDepthTexture, true, 'Main depth is available to post effects');
+    assert.equal(target.depthTexture.type, THREE.UnsignedIntType);
+    assert.equal(target.depthTexture.minFilter, THREE.NearestFilter);
     assert.equal(renderer.target, target);
     assert.equal(renderer.autoClear, false);
     assert.equal(renderer.clears, 1);

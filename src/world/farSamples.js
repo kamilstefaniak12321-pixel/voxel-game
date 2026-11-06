@@ -134,7 +134,7 @@ export function samplePosition(origin, index, spacing) {
 // materialIds (Uint16) - rzeczywisty materiał lub odcień trawy do atmosfery.
 // fromRow / toRow - tylko część rzędów (liczenie po kawałku w grze).
 
-export function sampleFarTile(generator, x0, z0, spacing, cells, heights, kinds, fromRow = 0, toRow = cells + 2, materialIds = null) {
+export function sampleFarTile(generator, x0, z0, spacing, cells, heights, kinds, fromRow = 0, toRow = cells + 2, materialIds = null, groundOnly = false) {
 
     const W = cells + 2;
 
@@ -146,7 +146,7 @@ export function sampleFarTile(generator, x0, z0, spacing, cells, heights, kinds,
 
             const x = samplePosition(x0, column - 1, spacing);
 
-            const surface = generator.farSurface(x, z, spacing);
+            const surface = generator.farSurface(x, z, spacing, groundOnly);
 
             heights[row * W + column] = surface.top;
             kinds[row * W + column] = kindIndex(surface.kind);

@@ -38,6 +38,8 @@ const RESET_AT_REVISION = {
 
 export const SETTINGS_DEFAULTS = {
 
+    performanceLogs: true,                         // lokalne raporty spadków FPS (błędy zawsze zapisywane)
+
     // Obraz
     potato: false,                                 // tryb ziemniaka (config.js: POTATO_...)
     viewDistance: DEFAULT_VIEW_DISTANCE,           // bloki (prawdziwe chunki)

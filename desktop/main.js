@@ -19,11 +19,13 @@
 // Klawisze: F11 - pełny ekran, F12 - narzędzia programisty.
 // ------------------------------------------------------------
 
-const { app, BrowserWindow, Menu, ipcMain, net, protocol, shell } = require('electron');
+const { app, BrowserWindow, Menu, ipcMain, net, protocol, shell, dialog } = require('electron');
 
 const path = require('node:path');
 const fs = require('node:fs');
 const { serveFile } = require('./serve-file.cjs');
+const { createDiagnosticsLog } = require('./diagnostics-log.cjs');
+const { installDiagnosticsIpc } = require('./diagnostics-ipc.cjs');
 
 
 // Folder z plikami gry (w zbudowanej aplikacji - wnętrze app.asar).
@@ -63,6 +65,45 @@ if (!app.requestSingleInstanceLock()) {
 
 
 let mainWindow = null;
+
+const diagnosticsLog = createDiagnosticsLog({
+    directory: path.join(app.getPath('userData'), 'logs'), version: app.getVersion()
+});
+
+// Monitor only: do not swallow a fatal exception or keep an unsafe process alive.
+// Node also reports fatal unhandled rejections here, with their original origin.
+process.on('uncaughtExceptionMonitor', (error, origin) => diagnosticsLog.fatal(error, origin));
+
+// Keep native errors (updater, preload, Chromium) when the renderer cannot report.
+// The cap also prevents a broken driver from filling the disk with repeated text.
+let nativeWindowStart = Date.now(), nativeEvents = 0;
+const nativeDuplicates = new Map();
+function nativeEvent(level, kind, message, data) {
+    const now = Date.now();
+    if (now - nativeWindowStart > 10000) {
+        nativeWindowStart = now; nativeEvents = 0; nativeDuplicates.clear();
+    }
+    const key = `${kind}:${String(message).slice(0, 512)}`;
+    if (nativeEvents >= 30 || nativeDuplicates.has(key)) return;
+    nativeEvents++;
+    nativeDuplicates.set(key, true);
+    void diagnosticsLog.event(level, kind, message, data);
+}
+for (const level of ['warn', 'error']) {
+    const original = console[level].bind(console);
+    console[level] = (...args) => {
+        nativeEvent(level, 'desktop.console', args.map(value => value?.message ?? String(value)).join(' '),
+            { stack: args.find(value => value instanceof Error)?.stack });
+        original(...args);
+    };
+}
+
+installDiagnosticsIpc({ ipcMain, getWindow: () => mainWindow, log: diagnosticsLog, dialog, shell });
+app.on('child-process-gone', (_event, details) => {
+    nativeEvent('error', 'desktop.child-process-gone', 'Zakończył się proces pomocniczy aplikacji.', {
+        type: details.type, reason: details.reason, exitCode: details.exitCode
+    });
+});
 
 // Stan aktualizacji wysyłany do gry (menu pokazuje go na ekranie
 // tytułowym): null albo { state, version, percent, message }.
@@ -145,6 +186,28 @@ function createWindow() {
 
     mainWindow.once('ready-to-show', () => mainWindow.show());
 
+    mainWindow.webContents.on('render-process-gone', (_event, details) => {
+        nativeEvent('error', 'desktop.renderer-gone', 'Proces gry został zakończony.', details);
+    });
+    mainWindow.webContents.on('unresponsive', () => {
+        nativeEvent('warn', 'desktop.unresponsive', 'Okno gry przestało odpowiadać.');
+    });
+    mainWindow.webContents.on('responsive', () => {
+        nativeEvent('info', 'desktop.responsive', 'Okno gry ponownie odpowiada.');
+    });
+    mainWindow.webContents.on('did-fail-load', (_event, code, description, url, isMainFrame) => {
+        if (code !== -3) nativeEvent('error', 'desktop.load-failed', 'Nie udało się wczytać zasobu gry.',
+            { code, description, url, isMainFrame });
+    });
+    mainWindow.webContents.on('console-message', (_event, details, oldMessage, oldLine, oldSource) => {
+        const item = typeof details === 'object' ? details
+            : { level: details, message: oldMessage, lineNumber: oldLine, sourceId: oldSource };
+        if (['warning', 'error', 2, 3].includes(item.level)) {
+            nativeEvent(item.level === 'error' || item.level === 3 ? 'error' : 'warn',
+                'desktop.renderer-console', item.message, { line: item.lineNumber, source: item.sourceId });
+        }
+    });
+
 
     // Linki do stron (np. w opisach) otwierają się w przeglądarce.
 
@@ -205,15 +268,25 @@ function createWindow() {
 
         const window = mainWindow;
 
-        const timer = setTimeout(() => window.destroy(), CLOSE_TIMEOUT_MS);
-
-        ipcMain.once('desktop:close-ready', () => {
-
+        let finishing = false;
+        const finishClose = async (timedOut) => {
+            if (finishing) return;
+            finishing = true;
             clearTimeout(timer);
-
-            window.destroy();
-
-        });
+            ipcMain.removeListener('desktop:close-ready', onReady);
+            if (timedOut) void diagnosticsLog.event('warn', 'desktop.close-timeout',
+                'Gra nie potwierdziła zapisu przed zamknięciem w ciągu 8 sekund.');
+            // Never hold game shutdown indefinitely on a slow or full disk.
+            await Promise.race([diagnosticsLog.close(!timedOut), new Promise(resolve => setTimeout(resolve, 500))]);
+            if (!window.isDestroyed()) window.destroy();
+        };
+        const onReady = (event) => {
+            if (event.sender === window.webContents && event.senderFrame === window.webContents.mainFrame) {
+                void finishClose(false);
+            }
+        };
+        const timer = setTimeout(() => { void finishClose(true); }, CLOSE_TIMEOUT_MS);
+        ipcMain.on('desktop:close-ready', onReady);
 
         window.webContents.send('desktop:close-request');
 

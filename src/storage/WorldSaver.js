@@ -30,6 +30,11 @@ const STATUS_DURATION = 2000;
 
 export class WorldSaver {
 
+    diagnostic(level, kind, message, data) {
+        try { this.onDiagnostic?.(level, kind, message, data); }
+        catch { /* Awaria logowania nigdy nie zmienia wyniku zapisu świata. */ }
+    }
+
     // storage   - WorldStorage albo null (zapis niedostępny)
     // worldInfo - dane świata (nazwa, seed, id...)
 
@@ -162,6 +167,8 @@ export class WorldSaver {
 
     async write({ immediate = false } = {}) {
 
+        const diagnosticStart = performance.now();
+
         this.timeSinceSave = 0;
         this.timeSinceChange = 0;
 
@@ -193,6 +200,9 @@ export class WorldSaver {
 
 
             this.savedFireVersion = fireVersion;
+            this.diagnostic('info', 'world.saved', 'Zakończono zapis świata.', {
+                chunks: chunks.length, immediate, wallMs: performance.now() - diagnosticStart
+            });
             if (chunks.length > 0) {
                 this.showStatus('Świat zapisany');
             }
@@ -210,7 +220,10 @@ export class WorldSaver {
 
             this.world.markUnsaved(this.latestChunks(chunks));
 
-            console.error('Nie udało się zapisać świata:', error);
+            if (this.onDiagnostic) this.diagnostic('error', 'world.save.failed', 'Nie udało się zapisać świata.', {
+                error, chunks: chunks.length, immediate, wallMs: performance.now() - diagnosticStart
+            });
+            else console.error('Nie udało się zapisać świata:', error);
 
             this.showStatus('Błąd zapisu świata!');
 
@@ -218,6 +231,7 @@ export class WorldSaver {
 
         }
         finally {
+            this.lastWriteMs = performance.now() - diagnosticStart;
             this.activeBatches.delete(chunks);
         }
 

@@ -521,15 +521,20 @@ export class Game {
     update(dt) {
 
         const input = this.input;
+        const profile = this.perfDiagnostics;
+        profile?.beginStage('player');
 
 
         // Przy bardzo szybkim locie nie generujemy zimnego regionu rzek
         // w klatce fizyki. Obraz i interfejs nadal działają, a symulacja
         // gracza czeka na prawdziwe bloki zamiast wpadać w pusty teren.
+        profile?.beginStage('generation');
         const playerColumn = this.world.ensurePlayerColumn(
             this.player.pos.x, this.player.pos.z
         );
+        profile?.endStage('generation');
         if (!playerColumn) {
+            profile?.endStage('player');
             this.updateWhileTerrainLoads(dt, input);
             return;
         }
@@ -737,20 +742,26 @@ export class Game {
         // Wczytywanie chunków wokół gracza i przebudowa meshy
         // (z limitem czasu na klatkę).
 
+        profile?.endStage('player');
+        this.world.perfDiagnostics = profile;
+        profile?.beginStage('stream');
         this.world.update(
             this.player.pos.x,
             this.player.pos.z,
             this.getLoadRadius(),
             this.settings.get('loadBudget')
         );
+        profile?.endStage('stream');
 
         // Daleki teren: wybór i budowanie kafelków (też z limitem czasu).
         // Zaczyna się na końcu zasięgu widzenia - albo bliżej, dopóki
         // dalsze chunki się wczytują (np. zaraz po wejściu do świata).
 
+        profile?.beginStage('far');
         this.updateFarRange();
 
         this.farTerrain.update(this.camera.position);
+        profile?.endStage('far');
 
 
         // Kosmos: jak wysoko jesteśmy (niebo, kula Ziemi) - przed niebem.
@@ -760,12 +771,16 @@ export class Game {
         this.updateCameraRange();
 
 
+        profile?.beginStage('effects');
         this.campfires.update(dt, input.isMouseDown(2) && !breakHeld && !breakPressed);
         this.torches.update(dt);
+        profile?.endStage('effects');
 
         // Autozapis co jakiś czas.
 
+        profile?.beginStage('save');
         this.saver.update(dt);
+        profile?.endStage('save');
 
 
         // Z dalekim terenem słońce zachodzi za jego brzegiem - z wysoka
@@ -781,6 +796,7 @@ export class Game {
             this.sky.horizonDip = Math.min(this.sky.horizonDip, this.spaceView.horizonDip);
         }
 
+        profile?.beginStage('light');
         this.sky.update(this.time.days, dt, this.renderer.getPixelRatio());
 
         this.updateFog(dt);
@@ -794,6 +810,7 @@ export class Game {
         this.sky.applyShadowContrast(this.shadows.active ? this.shadows.strength : 0);
 
         this.updateBounce();
+        profile?.endStage('light');
 
 
         // Spadanie z kosmosu (ogień, krater), meteoryty, rosnące krzaki,
@@ -811,12 +828,16 @@ export class Game {
 
         this.achievements?.update(dt);
 
+        profile?.beginStage('plants');
         this.plantGrowth.update(dt);
         this.plantAnimations.update(dt);
+        profile?.endStage('plants');
 
         this.updateOrbs(dt);
 
+        profile?.beginStage('light');
         this.updateDynamicLight();
+        profile?.endStage('light');
 
 
         this.highlight.update(this.currentHit);
@@ -841,25 +862,37 @@ export class Game {
     // Brak danych pod graczem wstrzymuje ruch i edycje bloków, ale
     // patrzenie myszą, niebo, woda, oświetlenie i zapis nadal działają.
     updateWhileTerrainLoads(dt, input) {
+        const profile = this.perfDiagnostics;
+        this.world.perfDiagnostics = profile;
         this.player.updateLook(input);
         this.player.updateCamera();
         this.updateView();
         this.time.update(dt);
+        profile?.beginStage('stream');
         this.world.update(this.player.pos.x, this.player.pos.z,
             this.getLoadRadius(), this.settings.get('loadBudget'));
+        profile?.endStage('stream');
+        profile?.beginStage('far');
         this.updateFarRange();
         this.farTerrain.update(this.camera.position);
+        profile?.endStage('far');
+        profile?.beginStage('light');
         this.sky.update(this.time.days, dt, this.renderer.getPixelRatio());
         this.updateFog(dt);
         this.shadows.update(dt, this.sky, this.camera.position);
         this.sky.applyShadowContrast(this.shadows.active ? this.shadows.strength : 0);
         this.updateBounce();
         this.updateDynamicLight();
+        profile?.endStage('light');
+        profile?.beginStage('plants');
         this.plantAnimations.update(dt);
+        profile?.endStage('plants');
         this.water.update(dt);
         this.currentHit = null;
         this.highlight.update(null);
+        profile?.beginStage('save');
         this.saver?.update(dt);
+        profile?.endStage('save');
     }
 
     // --------------------------------------------------------
@@ -1118,6 +1151,7 @@ export class Game {
     render() {
 
         const renderer = this.renderer;
+        const profile = this.perfDiagnostics;
 
         renderer.autoClear = false;
 
@@ -1126,8 +1160,10 @@ export class Game {
 
         // Mapa cieni słońca (gdy trzeba) i cień gracza - przed światem.
 
+        profile?.beginStage('shadows');
         this.shadows.render(this.world, this.camera.position, this.model, this.scene, this.viewDistance, this.farTerrain);
         this.campfires.renderer.renderShadows();
+        profile?.endStage('shadows');
         this.bounce.bind();
 
 
@@ -1225,6 +1261,7 @@ export class Game {
         }
         else {
 
+            profile?.beginStage('sky');
             this.sky.render(renderer, camera);
 
             renderer.clearDepth();
@@ -1236,17 +1273,22 @@ export class Game {
             this.farTerrain.render(renderer, camera);
 
             this.spaceView.renderFront(renderer, camera);
+            profile?.endStage('sky');
 
             renderer.clearDepth();
 
         }
 
+        profile?.beginStage('world');
         renderer.render(this.scene, camera);
+        profile?.endStage('world');
 
 
         // Promienie światła w powietrzu (na świecie, pod ręką).
 
+        profile?.beginStage('post');
         this.renderLightShafts(camera);
+        profile?.endStage('post');
 
 
         // Ręka w widoku z oczu - na wierzchu (nigdy nie wchodzi w ścianę).
@@ -1267,7 +1309,9 @@ export class Game {
         }
 
         } finally {
+            profile?.beginStage('post');
             this.worldOutput.end();
+            profile?.endStage('post');
         }
 
     }

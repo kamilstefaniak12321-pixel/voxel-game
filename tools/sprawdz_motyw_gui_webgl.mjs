@@ -173,7 +173,7 @@ const loadTheme = main.match(/function loadTheme\(name\) \{[\s\S]*?\n\}/)?.[0];
 assert.ok(loadTheme, 'Brak funkcji loadTheme w main.js');
 const iconNames = (await readdir(resolve(root, 'docs/wiki/ikony'))).filter(x => x.endsWith('.png')).map(x => x.slice(0,-4));
 const index = await readFile(resolve(root, 'index.html'), 'utf8');
-const html = index.replace('<script type="module" src="./src/main.js"></script>', `<script type="module">${loadTheme}\n(${setupUi.toString()})(${JSON.stringify(iconNames)}).then(()=>document.body.dataset.qa='ready').catch(e=>{document.body.dataset.qa='failed';document.body.dataset.error=e.stack;console.error(e)})</script>`);
+const html = index.replace('<script type="module" src="./src/bootstrap.js"></script>', `<script type="module">${loadTheme}\n(${setupUi.toString()})(${JSON.stringify(iconNames)}).then(()=>document.body.dataset.qa='ready').catch(e=>{document.body.dataset.qa='failed';document.body.dataset.error=e.stack;console.error(e)})</script>`);
 const mime = { '.js':'text/javascript', '.css':'text/css', '.json':'application/json', '.png':'image/png', '.jpg':'image/jpeg', '.woff2':'font/woff2', '.ogg':'audio/ogg' };
 const server = createServer(async(req,res) => {
     try {

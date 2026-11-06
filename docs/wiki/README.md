@@ -46,6 +46,7 @@ co z czego zrobić.
 | 1-9, kółko | miejsce na pasku |
 | E | ekwipunek i wytwarzanie |
 | F5 | widok: z oczu / zza pleców / z przodu |
+| F8 | zaznacz moment problemu w raporcie diagnostycznym |
 | T albo / | czat i komendy (`/pomoc`) |
 | M | mapa terenu |
 | L | księga osiągnięć |
@@ -102,6 +103,19 @@ zmienia bloków ani zapisów. Wyłączenie przywraca zwykłą trawę.
 - **Osiągnięcia** - 29 osiągnięć w czterech rangach (klawisz L).
 
 ## Ustawienia i komendy
+
+**Diagnostyka i logi** w menu pauzy oraz w **Ustawienia → Gra** pokazuje
+błędy i spadki FPS. Naciśnij **F8** podczas problemu albo wpisz
+`/logi problem`, a następnie otwórz panel poleceniem `/logi`.
+**Zapisz raport** eksportuje błędy, wcześniejsze pomiary, najdroższe
+etapy CPU i dostępne pomiary GPU. W Windows można też otworzyć folder
+automatycznych logów; **Pokaż treść** pozwala skopiować podsumowanie.
+
+**Gra → Logi wydajności** wyłącza nowe pomiary, zachowując zapis błędów.
+Raporty pozostają lokalne. Mogą zawierać seed i współrzędne; dane
+nie są automatycznie wysyłane. Wskazanie kosztownego etapu pomaga
+szukać przyczyny, ale nie oznacza, że każdy spadek udało się wyjaśnić.
+[Sposób pomiaru, limity i odczytywanie raportu](../logi.md).
 
 W *Ustawieniach* (ESC) są zakładki: Obraz (zasięg widzenia, daleki
 teren, tryb ziemniaka dla słabych komputerów, liście...), Sterowanie,

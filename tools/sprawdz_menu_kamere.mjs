@@ -446,7 +446,7 @@ const resourceSource = `
     export const setAmbientOcclusion=()=>{},setFastLeaves=()=>{},setPotatoDefine=()=>{},setLeafMaterialFast=()=>{},setShadowDefine=()=>{},setFarTerrainShadows=()=>{};
     export const blockMaterial={},plantMaterial={},waterMaterial={},leafMaterial={};
     export const skyUniforms={uFogBrightness:{value:1}},shadowUniforms={uSunShadowInfo:{value:{w:0}}};
-    export const viewUniforms=Object.fromEntries(['uBrightness','uUnderwater','uCurvature','uGlobe','uFarTextureBlend','uFarEnabled','uFarInner','uFarOuter','uTime'].map(k=>[k,{value:0}]));
+    export const viewUniforms=Object.fromEntries(['uBrightness','uUnderwater','uCurvature','uGlobe','uFarTextureBlend','uFarEnabled','uFarInner','uFarOuter','uTime','uDistanceLodEnabled'].map(k=>[k,{value:0}]));
     export const dynamicLightUniforms={uDynamicEnabled:{value:0}},bounceUniforms={uBounceColor:{value:new Color()}},campfireLightUniforms={uFirePowers:{value:[0,0,0,0]}};
     export const CHUNK_SIZE=16,POTATO_VIEW_DISTANCE=24,SHAFT_BRIGHTNESS=1,SHAFT_DENSITY_OUTSIDE=1,SHAFT_DENSITY_INSIDE=1,SHAFT_FAR_REACH=800;
     export const waterShaderVariantKey=target=>globalThis.menuResources.variant+(target?':linear':':screen');

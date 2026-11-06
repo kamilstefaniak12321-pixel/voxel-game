@@ -312,7 +312,7 @@ assert.equal(maskA.image.data[0], 11);
 assert.deepEqual(materialA.uniforms.uChunkMaskOrigin.value.toArray(), [11, 12]);
 assert.deepEqual(materialA.uniforms.uFarCenter.value.toArray(), [1, 2]);
 const poolSize = terrain.shadowResourcePool.length;
-assert.equal(poolSize, 2, 'Dwie jednoczesne mapy powinny używać dwóch slotów');
+assert.equal(poolSize, 3, 'Dwie mapy oraz migawka bez dalekich casterów zachowują niezależną maskę dla bliskich casterów');
 snapshotA.dispose();
 const versionA = maskA.version;
 chunkMaskData[0] = 33;

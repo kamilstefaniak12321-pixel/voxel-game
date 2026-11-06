@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { fullTerrainDistance, FULL_TERRAIN_DISTANCE, TERRAIN_TRANSITION_START } from '../world/DistanceLod.js';
 
 import { Campfires } from './Campfires.js';
 import { dyeTorch } from './TorchInteraction.js';
@@ -1294,7 +1295,10 @@ export class Game {
         // Ręka w widoku z oczu - na wierzchu (nigdy nie wchodzi w ścianę).
 
         if (!this.view && this.settings.get('showHand')) {
-            this.hand.render(renderer, camera);
+            const distanceLod = viewUniforms.uDistanceLodEnabled.value;
+            viewUniforms.uDistanceLodEnabled.value = 0;
+            try { this.hand.render(renderer, camera); }
+            finally { viewUniforms.uDistanceLodEnabled.value = distanceLod; }
         }
 
 
@@ -1643,13 +1647,15 @@ export class Game {
 
         const viewDistance = this.viewDistance;
 
-        const outer = this.settings.get('farTerrain');
+        const gradual = viewDistance > FULL_TERRAIN_DISTANCE;
+        const outer = gradual ? Math.max(viewDistance, this.settings.get('farTerrain')) : this.settings.get('farTerrain');
 
         // Zaokrąglone do 8 bloków, żeby nie wybierać kafelków co klatkę.
 
         const loaded = Math.floor(this.world.completeRadius() / 8) * 8;
 
-        let inner = Math.max(16, Math.min(viewDistance, loaded));
+        // Far tiles cover the overlap even while detailed geometry still exists.
+        let inner = Math.max(16, Math.min(gradual ? TERRAIN_TRANSITION_START : viewDistance, loaded));
 
 
         // Bardzo wysoko chunków już nie widać (updateCameraRange) -
@@ -1671,8 +1677,14 @@ export class Game {
         // Materiały są wspólne z menu. Start, ustawienia i każda klatka gry
         // przywracają dotychczasowe przejście tekstur w daleki teren.
         viewUniforms.uFarTextureBlend.value = 1;
-        viewUniforms.uFarInner.value = inner;
+        // Texture averaging meets the end of the overlap, independently of
+        // the earlier point where replacement tiles start being prepared.
+        viewUniforms.uFarInner.value = gradual ? FULL_TERRAIN_DISTANCE : inner;
         viewUniforms.uFarOuter.value = Math.max(outer, inner);
+        viewUniforms.uDistanceLodEnabled.value = gradual && !this.farUnderPlayer ? 1 : 0;
+        viewUniforms.uDistanceLodStart.value = TERRAIN_TRANSITION_START;
+        viewUniforms.uDistanceLodEnd.value = FULL_TERRAIN_DISTANCE;
+        viewUniforms.uDistanceLodCenter.value.set(this.player.pos.x, this.player.pos.z);
 
     }
 
@@ -1725,6 +1737,7 @@ export class Game {
         // Eksperyment: trawa kępiasta (tylko wygląd - bloki bez zmian).
 
         this.world.setExperiments({ bushyGrass: settings.get('bushyGrass') });
+        this.world.setDistanceLod(true);
 
         // Modele -> Animacje roślin (poziom modeli i wiatr - main.js,
         // applyPlantSettings - wspólne z tłem menu).
@@ -1732,7 +1745,7 @@ export class Game {
         this.plantAnimations?.setEnabled(settings.get('plantAnimations'));
 
 
-        // Zasięg: prawdziwe chunki do viewDistance, dalej daleki teren.
+        // Zasięg widoku: pełne bloki do 192, dalej stopniowo prostszy krajobraz.
         // Kamera świata musi sięgać do ostatnich wczytanych chunków.
 
         const viewDistance = this.viewDistance;
@@ -2553,15 +2566,15 @@ export class Game {
 
     // --------------------------------------------------------
 
-    // Promień wczytywania chunków wokół gracza (w chunkach):
-    // tyle, żeby krawędź widocznego terenu kryła się we mgle.
+    // Promień danych i pełnych bloków. Dalszy widok jest obsługiwany przez
+    // FarTerrain, z nakładającymi się strefami zamiast tysięcy pełnych chunków.
     // +2, bo najdalszy pierścień wczytanych chunków jest niewidoczny
     // (czeka na sąsiadów - patrz World.js).
 
     getLoadRadius() {
 
         return Math.ceil(
-            this.viewDistance / CHUNK_SIZE
+            fullTerrainDistance(this.viewDistance) / CHUNK_SIZE
         ) + 2;
 
     }

@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "createdAt": "2026-11-06T20:13:01.580Z",
+  "createdAt": "2026-11-06T20:30:26.059Z",
   "scope": "Whole distance policies 0.68.0 versus 0.69.0, same visual settings and timed camera path; not identical geometry.",
   "settings": {
     "performanceLogs": true,
@@ -648,10 +648,10 @@
       ]
     },
     "candidate": {
-      "run": "candidate-report-2026-11-06T20-05-06-006Z",
-      "commit": "589f39f2c951e6a608930bd8b9666cdb90602577",
+      "run": "candidate-report-2026-11-06T20-26-39-735Z",
+      "commit": "1a0c60d9cf299ed2b9966e473d97d2be4cd2c63a",
       "version": "0.69.0",
-      "sourceSha256": "1baf35252ae478e464bc669fac3f6755e7400e2c58315f4a7c57f0ff518cae16",
+      "sourceSha256": "49e262c03e0c52e8d84650bbec480d4fac60a6a8521db0e977496689b08d4d48",
       "harnessSha256": "c0df5dea4a3d56e80ec6b5f175919631c07f46020b11c0ff03e572be97e5e99f",
       "reason": "completed",
       "valid": true,
@@ -664,19 +664,19 @@
         {
           "name": "cold-streaming",
           "timedPerformance": true,
-          "durationMs": 60013.600000000006,
-          "fps": 77.9989868963035,
-          "frameP95Ms": 20.799999999999272,
-          "frameP99Ms": 23.700000000004366,
-          "frameMaxMs": 2332.6000000000004,
-          "cpuMeanMs": 12.027643665598132,
-          "cpuP95Ms": 15.299999952316284,
-          "updateMeanMs": 0.8806665215169331,
-          "renderMeanMs": 11.146977144081198,
-          "gpuSamples": 582,
-          "gpuMeanMs": 10.924041237113398,
-          "meanCalls": 756.2203389830509,
-          "meanTriangles": 2628614.627118644,
+          "durationMs": 60002.6,
+          "fps": 79.27989787109226,
+          "frameP95Ms": 20.700000000000728,
+          "frameP99Ms": 23.700000000000728,
+          "frameMaxMs": 2311.7999999999997,
+          "cpuMeanMs": 11.819255831664115,
+          "cpuP95Ms": 14.599999904632568,
+          "updateMeanMs": 0.8689510209334356,
+          "renderMeanMs": 10.95030481073068,
+          "gpuSamples": 591,
+          "gpuMeanMs": 10.856829103214888,
+          "meanCalls": 759.2203389830509,
+          "meanTriangles": 2636780.661016949,
           "readyAtStart": {
             "near": false,
             "far": false,
@@ -690,7 +690,7 @@
           "readyThroughoutSample": false,
           "beforeChunks": 81,
           "afterChunks": 613,
-          "afterHeapMiB": 732.7046327590942,
+          "afterHeapMiB": 743.7571964263916,
           "afterGeometry": {
             "plantMeshes": 272,
             "plantVisible": 272,
@@ -745,7 +745,7 @@
               }
             },
             "transitioningTiles": 0,
-            "shadowRevision": 1134,
+            "shadowRevision": 1139,
             "profile": "game",
             "detailDistance": 800,
             "detailTiers": [
@@ -786,19 +786,19 @@
         {
           "name": "fixed-stationary",
           "timedPerformance": true,
-          "durationMs": 20000.09999999999,
-          "fps": 87.84956075219628,
+          "durationMs": 20007.199999999997,
+          "fps": 86.91870926466473,
           "frameP95Ms": 16.80000000000291,
           "frameP99Ms": 23.69999999999709,
-          "frameMaxMs": 30.599999999998545,
-          "cpuMeanMs": 10.520034152401667,
-          "cpuP95Ms": 12.799999952316284,
-          "updateMeanMs": 0.4072282311586609,
-          "renderMeanMs": 10.112805921243007,
-          "gpuSamples": 208,
-          "gpuMeanMs": 10.797644230769233,
-          "meanCalls": 825.75,
-          "meanTriangles": 2743193,
+          "frameMaxMs": 34.700000000004366,
+          "cpuMeanMs": 10.6212190863317,
+          "cpuP95Ms": 13.199999809265137,
+          "updateMeanMs": 0.41414605714316477,
+          "renderMeanMs": 10.207073029188537,
+          "gpuSamples": 207,
+          "gpuMeanMs": 10.830014492753623,
+          "meanCalls": 825.7,
+          "meanTriangles": 2742438,
           "readyAtStart": {
             "near": true,
             "far": true,
@@ -812,7 +812,7 @@
           "readyThroughoutSample": true,
           "beforeChunks": 613,
           "afterChunks": 613,
-          "afterHeapMiB": 735.4132280349731,
+          "afterHeapMiB": 716.1446628570557,
           "afterGeometry": {
             "plantMeshes": 272,
             "plantVisible": 272,
@@ -867,7 +867,7 @@
               }
             },
             "transitioningTiles": 0,
-            "shadowRevision": 1134,
+            "shadowRevision": 1139,
             "profile": "game",
             "detailDistance": 800,
             "detailTiers": [
@@ -908,19 +908,19 @@
         {
           "name": "movement",
           "timedPerformance": true,
-          "durationMs": 40008.8,
-          "fps": 65.08568115014697,
+          "durationMs": 40011.600000000006,
+          "fps": 66.53070609523238,
           "frameP95Ms": 23.69999999999709,
-          "frameP99Ms": 30.39999999999418,
-          "frameMaxMs": 44.5,
-          "cpuMeanMs": 14.409639014077078,
-          "cpuP95Ms": 21.399999856948853,
-          "updateMeanMs": 1.8823348665567037,
-          "renderMeanMs": 12.527304147520374,
-          "gpuSamples": 320,
-          "gpuMeanMs": 13.496537499999999,
-          "meanCalls": 1080.076923076923,
-          "meanTriangles": 3371079.358974359,
+          "frameP99Ms": 30.5,
+          "frameMaxMs": 44.40000000000873,
+          "cpuMeanMs": 14.039406458208383,
+          "cpuP95Ms": 21.100000143051147,
+          "updateMeanMs": 1.8580766288433461,
+          "renderMeanMs": 12.181329829365037,
+          "gpuSamples": 326,
+          "gpuMeanMs": 13.219134969325156,
+          "meanCalls": 1050.5128205128206,
+          "meanTriangles": 3286723,
           "readyAtStart": {
             "near": true,
             "far": true,
@@ -934,11 +934,11 @@
           "readyThroughoutSample": false,
           "beforeChunks": 613,
           "afterChunks": 693,
-          "afterHeapMiB": 1074.9719715118408,
+          "afterHeapMiB": 954.7130117416382,
           "afterGeometry": {
             "plantMeshes": 492,
             "plantVisible": 492,
-            "plantIndices": 7413150,
+            "plantIndices": 7550454,
             "emptyGroups": 0,
             "leafLevels": [
               41,
@@ -946,13 +946,13 @@
               481
             ],
             "plantLevels": [
-              30,
-              53,
-              409
+              31,
+              58,
+              403
             ],
-            "nearBytes": 521857992,
+            "nearBytes": 526922352,
             "farBytes": 99398336,
-            "bytes": 621256328,
+            "bytes": 626320688,
             "note": "Unique CPU typed-array buffers of resident near and far geometry, including cached far tiles; not VRAM."
           },
           "afterFar": {
@@ -989,7 +989,7 @@
               }
             },
             "transitioningTiles": 0,
-            "shadowRevision": 1424,
+            "shadowRevision": 1437,
             "profile": "game",
             "detailDistance": 800,
             "detailTiers": [
@@ -1030,19 +1030,19 @@
         {
           "name": "settling",
           "timedPerformance": true,
-          "durationMs": 4250.699999999997,
-          "fps": 71.75288775966317,
-          "frameP95Ms": 23.39999999999418,
-          "frameP99Ms": 27.80000000000291,
-          "frameMaxMs": 48.60000000000582,
-          "cpuMeanMs": 12.329508184214108,
-          "cpuP95Ms": 17.699999809265137,
-          "updateMeanMs": 1.2908196746325884,
-          "renderMeanMs": 11.038688509581519,
-          "gpuSamples": 35,
-          "gpuMeanMs": 12.6374,
-          "meanCalls": 1180.5,
-          "meanTriangles": 4193845.5,
+          "durationMs": 4254.399999999994,
+          "fps": 76.62655133508848,
+          "frameP95Ms": 20.89999999999418,
+          "frameP99Ms": 27.79999999998836,
+          "frameMaxMs": 55.60000000000582,
+          "cpuMeanMs": 11.495092023369725,
+          "cpuP95Ms": 17.299999952316284,
+          "updateMeanMs": 1.2193251562996146,
+          "renderMeanMs": 10.27576686707011,
+          "gpuSamples": 38,
+          "gpuMeanMs": 11.952868421052631,
+          "meanCalls": 1077.4,
+          "meanTriangles": 3837293,
           "readyAtStart": {
             "near": false,
             "far": true,
@@ -1056,7 +1056,7 @@
           "readyThroughoutSample": false,
           "beforeChunks": 693,
           "afterChunks": 693,
-          "afterHeapMiB": 1117.4466915130615,
+          "afterHeapMiB": 1001.7992734909058,
           "afterGeometry": {
             "plantMeshes": 523,
             "plantVisible": 523,
@@ -1111,7 +1111,7 @@
               }
             },
             "transitioningTiles": 0,
-            "shadowRevision": 1424,
+            "shadowRevision": 1437,
             "profile": "game",
             "detailDistance": 800,
             "detailTiers": [
@@ -1152,19 +1152,19 @@
         {
           "name": "settled-stationary",
           "timedPerformance": true,
-          "durationMs": 20003,
-          "fps": 80.33794930760386,
-          "frameP95Ms": 16.800000000017462,
-          "frameP99Ms": 23.69999999999709,
-          "frameMaxMs": 44.39999999999418,
-          "cpuMeanMs": 11.412570001771899,
-          "cpuP95Ms": 14.600000143051147,
-          "updateMeanMs": 0.4745488459083258,
-          "renderMeanMs": 10.938021155863574,
-          "gpuSamples": 192,
-          "gpuMeanMs": 11.92813020833333,
-          "meanCalls": 1063.5,
-          "meanTriangles": 3803165.6,
+          "durationMs": 20008.300000000017,
+          "fps": 86.81397220153629,
+          "frameP95Ms": 16.79999999998836,
+          "frameP99Ms": 23.70000000001164,
+          "frameMaxMs": 39.90000000000873,
+          "cpuMeanMs": 10.515947036243542,
+          "cpuP95Ms": 13.099999904632568,
+          "updateMeanMs": 0.4648244113296219,
+          "renderMeanMs": 10.05112262491392,
+          "gpuSamples": 207,
+          "gpuMeanMs": 11.125521739130436,
+          "meanCalls": 1063.6315789473683,
+          "meanTriangles": 3800867.6315789474,
           "readyAtStart": {
             "near": true,
             "far": true,
@@ -1178,7 +1178,7 @@
           "readyThroughoutSample": true,
           "beforeChunks": 693,
           "afterChunks": 693,
-          "afterHeapMiB": 1123.4348697662354,
+          "afterHeapMiB": 1021.5433301925659,
           "afterGeometry": {
             "plantMeshes": 523,
             "plantVisible": 523,
@@ -1233,7 +1233,7 @@
               }
             },
             "transitioningTiles": 0,
-            "shadowRevision": 1424,
+            "shadowRevision": 1437,
             "profile": "game",
             "detailDistance": 800,
             "detailTiers": [
@@ -1274,7 +1274,7 @@
       ],
       "checkpoints": [
         {
-          "atMs": 30005.79999985695,
+          "atMs": 30005.299999952316,
           "ready": {
             "near": true,
             "far": true,
@@ -1303,24 +1303,24 @@
                 "drainageCells": 31451,
                 "routes": 594
               },
-              "workerMs": 1.5,
+              "workerMs": 2.5,
               "lastApplyMs": 0.40000009536743164,
-              "maxApplyMs": 2.3999998569488525,
+              "maxApplyMs": 2.0999999046325684,
               "lastError": null
             },
             "meshVersion": 505,
             "render": {
-              "frame": 21536,
+              "frame": 22337,
               "calls": 826,
-              "triangles": 2747289,
+              "triangles": 2741903,
               "points": 96,
               "lines": 0
             },
             "memory": {
-              "geometries": 1384,
+              "geometries": 1330,
               "textures": 27
             },
-            "heapMiB": 714.501317024231,
+            "heapMiB": 711.2168102264404,
             "far": {
               "active": true,
               "shown": 605,
@@ -1355,7 +1355,7 @@
                 }
               },
               "transitioningTiles": 0,
-              "shadowRevision": 1134,
+              "shadowRevision": 1139,
               "profile": "game",
               "detailDistance": 800,
               "detailTiers": [
@@ -1404,17 +1404,17 @@
                 },
                 "lastFrame": {
                   "draws": 2,
-                  "triangles": 29742
+                  "triangles": 24356
                 },
                 "radius": 32,
                 "size": 1024,
                 "interval": 0.1,
                 "valid": true,
                 "building": true,
-                "draws": 44,
-                "remaining": 10,
-                "sampleTime": 26.39550000000065,
-                "age": 0.5309000000000015
+                "draws": 46,
+                "remaining": 73,
+                "sampleTime": 26.735900000000594,
+                "age": 0.1931000000000022
               },
               "cascades": [
                 {
@@ -1425,7 +1425,7 @@
                   "building": false,
                   "remaining": 0,
                   "draws": 15,
-                  "terrainRevision": 1134,
+                  "terrainRevision": 1139,
                   "changed": false
                 },
                 {
@@ -1436,7 +1436,7 @@
                   "building": false,
                   "remaining": 0,
                   "draws": 9,
-                  "terrainRevision": 1134,
+                  "terrainRevision": 1139,
                   "changed": false
                 }
               ]
@@ -1493,12 +1493,12 @@
       ]
     },
     "fixedPolicyChangesPercent": {
-      "fps": 245.54045500892354,
+      "fps": 241.87911801653175,
       "frameP95Ms": -65.4320987654199,
-      "cpuMeanMs": -72.84484741101042,
-      "gpuMeanMs": -63.90601318625389,
-      "meanCalls": -69.90048844499526,
-      "afterHeapMiB": -81.0205309472923,
+      "cpuMeanMs": -72.58366077598895,
+      "gpuMeanMs": -63.79780700866075,
+      "meanCalls": -69.90231100094773,
+      "afterHeapMiB": -81.51781209827395,
       "geometryBytes": -85.09941191670353
     },
     "notes": [
@@ -1757,12 +1757,12 @@
       "hiddenMs": 0
     },
     {
-      "runId": "candidate-report-2026-11-06T20-05-06-006Z",
+      "runId": "candidate-report-2026-11-06T20-26-39-735Z",
       "version": "0.69.0",
-      "commit": "589f39f2c951e6a608930bd8b9666cdb90602577",
+      "commit": "1a0c60d9cf299ed2b9966e473d97d2be4cd2c63a",
       "dirty": false,
       "sourceFiles": 187,
-      "sourceSha256": "1baf35252ae478e464bc669fac3f6755e7400e2c58315f4a7c57f0ff518cae16",
+      "sourceSha256": "49e262c03e0c52e8d84650bbec480d4fac60a6a8521db0e977496689b08d4d48",
       "harnessSha256": "c0df5dea4a3d56e80ec6b5f175919631c07f46020b11c0ff03e572be97e5e99f",
       "electron": "44.4.5",
       "chromium": "152.0.7977.130",
@@ -1777,59 +1777,59 @@
         "deviceMemoryGiB": 16
       },
       "report": {
-        "bytes": 4734910,
-        "sha256": "efe015d08d7f65e83aa286b3d55872dc67f5ca9a81fc4292196f3c5ba368ace4"
+        "bytes": 4732891,
+        "sha256": "5e76138df7eac5610330a02212922ccf6fd7d7677cc5fd3ad7afeb8a4bde3eac"
       },
       "screenshots": [
         {
           "file": "checkpoint-fixed-stationary.png",
-          "bytes": 2334117,
-          "sha256": "c62e7e4aac4313141b7d058d1f91f86e111ad6085fbbc2d1ee79aac243e0b0d3"
+          "bytes": 2333734,
+          "sha256": "868deb09491e96715c66a6f089178c41e78c0f96541f12596d3471a641c1eb80"
         },
         {
           "file": "checkpoint-movement.png",
-          "bytes": 2336167,
-          "sha256": "cd5e45a27d57e362df94bb28ff6468a72332f96b10e1d09377bbe5b8b06edc1a"
+          "bytes": 2336097,
+          "sha256": "a074bea568d935b3d6c5e2d77668081e79d58e809bd114173ac31d63481e24e9"
         },
         {
           "file": "checkpoint-settled-stationary.png",
-          "bytes": 2303626,
-          "sha256": "b23917ad1cd52a8aef943b6cc59ce8b21420094a489be662d1818e9b0caa5b7a"
+          "bytes": 2304116,
+          "sha256": "aaac108ab6369da1ce63eaf198a5d5dfbfb3b14e1502d4850f323ee5df029fb8"
         },
         {
           "file": "checkpoint-settling.png",
-          "bytes": 2303299,
-          "sha256": "4d4c330d468e54f844da982b8d70e86282322bff56c3a5175e6127fbdf4e6e1a"
+          "bytes": 2302449,
+          "sha256": "5491ad67d63f41c634cf1cf66c9c1322db4030f3ef76cf2fae75cf8e4be7c632"
         },
         {
           "file": "final.png",
-          "bytes": 2085313,
-          "sha256": "0d5504b7a0568c8caa266deba4758d48d1e7149adc1b4cc280e956f1cd6f41e5"
+          "bytes": 2084146,
+          "sha256": "3b245d64357889f61c183907d09e1cecf092dd5eaa6478f6423cdd24357f5b35"
         },
         {
           "file": "fixed-half-load.png",
-          "bytes": 2326091,
-          "sha256": "de3372e6d76b8df52ac0a993b231fa9b6ca1b675a2a49811a0d37672efa39d4b"
+          "bytes": 2326557,
+          "sha256": "c76b4cfc26b714051cf4c19f394dcbeecf9e388698e05ffd853ffdf25d68d28e"
         },
         {
           "file": "visual-forest.png",
-          "bytes": 1894847,
-          "sha256": "474863869a6e2550e6e29e8099698e8e00a2195cd81ba8bfbbed1b3664ab3bbb"
+          "bytes": 1895683,
+          "sha256": "68a6a011bb58c0b27e5c95a2a255d63d88945d7912b6c2a5531825fa37dab21d"
         },
         {
           "file": "visual-horizon.png",
-          "bytes": 2084533,
-          "sha256": "7fe46907f54f4bee1827e7a0c941b3c5e7e69566e83e358e1ffb043c1e6908a4"
+          "bytes": 2084146,
+          "sha256": "2b4c4879f3eddd9f86bd8c875c45c715faf52f01f74d662426bd1faa0f285142"
         },
         {
           "file": "visual-near-plants.png",
-          "bytes": 2109836,
-          "sha256": "547d4759c8cdedd02279f77879219b33d7794672dda37c574d72ae433d3a4bc4"
+          "bytes": 2110504,
+          "sha256": "9e27e555306f4d8f9845f4ebc451541944e6deb55acca023b6d70fe5cc1b250a"
         },
         {
           "file": "visual-transition.png",
-          "bytes": 2500155,
-          "sha256": "3336e94801eb8070122e4e55ffe135614f685504102d5635c373c610532d85ec"
+          "bytes": 2500697,
+          "sha256": "bf921ab646254c2100a4f0fa366125e35bce9d2d4c500c9230c6258174c2436e"
         }
       ],
       "nativeFailureFiles": [],
@@ -1853,10 +1853,10 @@
           "workerReady": true,
           "pending": 0,
           "ready": 0,
-          "requested": 893,
-          "completed": 893,
+          "requested": 892,
+          "completed": 892,
           "applied": 891,
-          "discarded": 2,
+          "discarded": 1,
           "failures": 0,
           "resets": 0,
           "cache": {
@@ -1866,23 +1866,23 @@
             "routes": 599
           },
           "workerMs": 1.7999999523162842,
-          "lastApplyMs": 0.5,
-          "maxApplyMs": 3.1999998092651367,
+          "lastApplyMs": 0.6000001430511475,
+          "maxApplyMs": 2.0999999046325684,
           "lastError": null
         },
         "meshVersion": 1049,
         "render": {
-          "frame": 139009,
+          "frame": 142392,
           "calls": 1040,
           "triangles": 3703255,
           "points": 96,
           "lines": 0
         },
         "memory": {
-          "geometries": 2200,
+          "geometries": 2255,
           "textures": 27
         },
-        "heapMiB": 901.5851182937622,
+        "heapMiB": 1022.5999746322632,
         "far": {
           "active": true,
           "shown": 659,
@@ -1917,7 +1917,7 @@
             }
           },
           "transitioningTiles": 0,
-          "shadowRevision": 1424,
+          "shadowRevision": 1437,
           "profile": "game",
           "detailDistance": 800,
           "detailTiers": [
@@ -1973,10 +1973,10 @@
             "interval": 0.1,
             "valid": true,
             "building": true,
-            "draws": 274,
-            "remaining": 95,
-            "sampleTime": 174.54580000001403,
-            "age": 0.13730000000001746
+            "draws": 280,
+            "remaining": 32,
+            "sampleTime": 174.29870000001594,
+            "age": 0.5388999999999944
           },
           "cascades": [
             {
@@ -1987,7 +1987,7 @@
               "building": false,
               "remaining": 0,
               "draws": 40,
-              "terrainRevision": 1424,
+              "terrainRevision": 1437,
               "changed": false
             },
             {
@@ -1998,7 +1998,7 @@
               "building": false,
               "remaining": 0,
               "draws": 30,
-              "terrainRevision": 1424,
+              "terrainRevision": 1437,
               "changed": false
             }
           ]
@@ -2059,14 +2059,14 @@
   ],
   "currentRuntime": {
     "sourceFiles": 187,
-    "sourceSha256": "1baf35252ae478e464bc669fac3f6755e7400e2c58315f4a7c57f0ff518cae16"
+    "sourceSha256": "49e262c03e0c52e8d84650bbec480d4fac60a6a8521db0e977496689b08d4d48"
   },
   "validation": [
     {
       "name": "npm-test",
-      "bytes": 43888,
-      "sha256": "98308c5f956c195543f035d3fa6a6fba41d688b288b9c6004dc8ab4c0cebd455",
-      "modifiedAt": "2026-11-06T19:56:33.876Z"
+      "bytes": 43885,
+      "sha256": "298b41adeefefc78d69bd381553c2d5f7de749227ba5a9d257e95281e2d88c63",
+      "modifiedAt": "2026-11-06T20:25:09.114Z"
     },
     {
       "name": "lighting-webgl",

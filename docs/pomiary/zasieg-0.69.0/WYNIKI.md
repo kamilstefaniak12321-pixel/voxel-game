@@ -2,8 +2,8 @@
 
 Pomiar z 6 listopada 2026 r. do [PR #103](https://github.com/kamilstefaniak12321-pixel/voxel-game/pull/103).
 Porównano 0.68.0 z 0.69.0 na tym samym laptopie i przy tych samych ustawieniach.
-Nowy sposób rysowania zasięgu ukończył wczytywanie i osiągnął średnio **80,34 FPS**
-w nieruchomej, gotowej scenie. Podczas ruchu było **65,09 FPS średnio**, ale p95
+Nowy sposób rysowania zasięgu ukończył wczytywanie i osiągnął średnio **86,81 FPS**
+w nieruchomej, gotowej scenie. Podczas ruchu było **66,53 FPS średnio**, ale p95
 czasu klatki wyniosło 23,7 ms: ten wynik nie oznacza utrzymania 60 FPS w każdej
 chwili. Pełne warunki, ograniczenia oraz odciski danych są poniżej.
 
@@ -18,9 +18,10 @@ chwili. Pełne warunki, ograniczenia oraz odciski danych są poniżej.
 - Zatrzymany czas świata 0,25 i wzrost roślin; wyłączone dźwięk, meteoryty
   i ręka. Wiatr oraz oświetlenie działały. Kamera i przebieg są opisane
   w [README.md](README.md).
-- Przed próbami nie działała druga gra. Odczyt `Win32_Battery` przed i po
-  parze prób wskazywał `BatteryStatus=2`, 79% baterii, czyli zasilanie AC.
-  To kontrola na obu końcach, nie ciągły zapis zasilania.
+- Przed próbami nie działała druga gra. Odczyty `Win32_Battery` przed
+  próbami oraz przed i po końcowym uruchomieniu kandydata wskazywały
+  `BatteryStatus=2`, 79% baterii, czyli zasilanie AC.
+  To kontrole w określonych momentach, nie ciągły zapis zasilania.
 
 `compare.mjs` potwierdził wszystkie 11 warunków: identyczny harness,
 rozdzielczość, ustawienia, czasy faz, GPU i seed; obecność obu stałych próbek,
@@ -41,19 +42,19 @@ miał już gotowy bliski i daleki teren przez całą tę próbkę.
 
 | Pomiar, stała kamera po 60 s | 0.68.0 | 0.69.0 |
 | --- | ---: | ---: |
-| Średnie FPS | 25,42 | 87,85 |
+| Średnie FPS | 25,42 | 86,92 |
 | Czas klatki p95 / p99 | 48,6 / 48,7 ms | 16,8 / 23,7 ms |
-| Średni CPU update + render | 38,74 ms | 10,52 ms |
-| Średni GPU | 29,92 ms | 10,80 ms |
+| Średni CPU update + render | 38,74 ms | 10,62 ms |
+| Średni GPU | 29,92 ms | 10,83 ms |
 | Średnie polecenia rysowania, wszystkie przebiegi | 2743 | 826 |
 | Średnie trójkąty, wszystkie przebiegi | 14,12 mln | 2,74 mln |
-| Sterta JavaScript na końcu | 3875 MiB | 735 MiB |
+| Sterta JavaScript na końcu | 3875 MiB | 716 MiB |
 | Bufory geometrii CPU na końcu | 3081,0 MiB | 459,1 MiB |
 | Załadowane pełne chunki na końcu | 3327 | 613 |
 | Cały wybrany widok gotowy | nie | tak |
 
 W tej konkretnej fazie liczba poleceń spadła o **69,9%**, średni czas GPU
-o **63,9%**, a bufory geometrii CPU o **85,1%**. Średnie GPU są ważone
+o **63,8%**, a bufory geometrii CPU o **85,1%**. Średnie GPU są ważone
 liczbą rzeczywistych próbek. CPU i GPU pracują częściowo równolegle;
 podanych czasów nie należy dodawać. Bufory CPU obejmują bliskie siatki
 oraz wszystkie zachowane kafle dalekiego terenu, nie są pomiarem VRAM
@@ -61,12 +62,12 @@ ani wszystkich dodatkowych alokacji renderera.
 
 | Faza | 0.68.0 FPS | 0.69.0 FPS | 0.68.0 p95 | 0.69.0 p95 |
 | --- | ---: | ---: | ---: | ---: |
-| Pierwsze 60 s wczytywania | 47,28 | 78,00 | 34,7 ms | 20,8 ms |
-| 20 s stałej kamery | 25,42 | 87,85 | 48,6 ms | 16,8 ms |
-| 40 s ruchu | 18,91 | 65,09 | 76,3 ms | 23,7 ms |
+| Pierwsze 60 s wczytywania | 47,28 | 79,28 | 34,7 ms | 20,7 ms |
+| 20 s stałej kamery | 25,42 | 86,92 | 48,6 ms | 16,8 ms |
+| 40 s ruchu | 18,91 | 66,53 | 76,3 ms | 23,7 ms |
 
 Ruch obejmował 195 bloków na zachód i 36 na południe, z łagodnym obrotem
-kamery. W 0.69.0 p99 wynosiło wtedy 30,4 ms. Nowa wersja wyraźnie
+kamery. W 0.69.0 p99 wynosiło wtedy 30,5 ms. Nowa wersja wyraźnie
 ogranicza koszt zasięgu, ale krótsze spadki podczas przemieszczania nadal
 występują.
 
@@ -86,11 +87,11 @@ wszystkich próbkach sekundowych:
 
 | Gotowa scena 0.69.0, po ruchu | Wynik |
 | --- | ---: |
-| Średnie FPS | 80,34 |
+| Średnie FPS | 86,81 |
 | Czas klatki p95 / p99 | 16,8 / 23,7 ms |
-| Średni CPU / GPU | 11,41 / 11,93 ms |
+| Średni CPU / GPU | 10,52 / 11,13 ms |
 | Średnie polecenia / trójkąty | 1064 / 3,80 mln |
-| Sterta / bufory geometrii CPU | 1123 / 615,4 MiB |
+| Sterta / bufory geometrii CPU | 1022 / 615,4 MiB |
 | Pełne chunki / widoczne kafle dalekiego terenu | 693 / 659 |
 | Brakujące kafle / żądania / aktywne przenikania | 0 / 0 / 0 |
 | Puste grupy geometrii / błędne programy shaderów | 0 / 0 |
@@ -135,7 +136,7 @@ PNG są niezmienionymi zapisami okna próby.
 ## Sprawdzenia i pochodzenie dowodów
 
 Przeszło pełne `npm test`, w tym 659 kontroli modeli odległych, 42 kontroli
-stref, 918 kontroli dalekiej roślinności, 155 meshera partiami oraz
+stref, 1032 kontroli dalekiej roślinności, 155 meshera partiami oraz
 163794 kontroli katalogu modeli roślin. Osobne próby przeglądarkowe
 potwierdziły 57 wariantów shaderów, 18 kontroli głębi i przejścia
 WebGL2/WebGL1 oraz 8 kontroli rozdziału siatek roślin. Test przejścia
@@ -143,12 +144,19 @@ na dystansach 144/156/168/180/192 nie znalazł pustego piksela. Kontrola
 menu obejmowała 217 przypadków. Odciski logów oraz syntetyczne wyniki
 pikseli są w [evidence.json](evidence.json).
 
+Regresja nowo odsłoniętych kafli obejmuje brak, częściowe i pełne pokrycie
+poprzednim zestawem. Przenikanie zaczyna się od zera tylko przy pełnym
+pokryciu; pozostałe nowe kafle są od razu widoczne przed oddaniem im pikseli
+przez bliski teren. Kontrolne przywrócenie starego warunku powoduje błąd
+testu. Po poprawce powtórzono cały pomiar kandydata; zestawienie i jego
+kadry pochodzą wyłącznie z tego końcowego przebiegu.
+
 | Źródło | 0.68.0 | 0.69.0 |
 | --- | --- | --- |
-| Commit podczas startu | `73ef0c1f1bd16df14d02687cb6c8784afb966e80` | `589f39f2c951e6a608930bd8b9666cdb90602577` |
+| Commit podczas startu | `73ef0c1f1bd16df14d02687cb6c8784afb966e80` | `1a0c60d9cf299ed2b9966e473d97d2be4cd2c63a` |
 | Niezapisane zmiany podczas startu | brak | brak |
-| SHA256 `src` + Three.js | `20da31700f18f3be523f9156273df816faa58a0a9c1b411178de96ec3089fa2e` | `1baf35252ae478e464bc669fac3f6755e7400e2c58315f4a7c57f0ff518cae16` |
-| SHA256 surowego raportu | `59bd40d0420fa7a33c5092e950c6b13c5955f9e25488960c7ebe709864ec2980` | `efe015d08d7f65e83aa286b3d55872dc67f5ca9a81fc4292196f3c5ba368ace4` |
+| SHA256 `src` + Three.js | `20da31700f18f3be523f9156273df816faa58a0a9c1b411178de96ec3089fa2e` | `49e262c03e0c52e8d84650bbec480d4fac60a6a8521db0e977496689b08d4d48` |
+| SHA256 surowego raportu | `59bd40d0420fa7a33c5092e950c6b13c5955f9e25488960c7ebe709864ec2980` | `5e76138df7eac5610330a02212922ccf6fd7d7677cc5fd3ad7afeb8a4bde3eac` |
 
 Wspólny SHA256 harnessu:
 `c0df5dea4a3d56e80ec6b5f175919631c07f46020b11c0ff03e572be97e5e99f`.
@@ -158,7 +166,7 @@ Późniejsze dopisanie dokumentacji nie zmienia tego odcisku.
 
 Identyfikatory prób:
 `baseline-report-2026-11-06T19-59-23-538Z` oraz
-`candidate-report-2026-11-06T20-05-06-006Z`.
+`candidate-report-2026-11-06T20-26-39-735Z`.
 `evidence.json` zawiera skrócone dane i SHA256 wszystkich kadrów;
 pełne szeregi klatek i izolowane profile przeglądarki pozostają poza
 repozytorium. Odtworzenie zestawienia po nowych próbach:

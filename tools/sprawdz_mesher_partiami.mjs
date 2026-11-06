@@ -25,6 +25,7 @@ const { BufferGeometry } = await import('three');
 const { Chunk } = await import('../src/world/Chunk.js');
 const { getBlockId } = await import('../src/blocks/BlockRegistry.js');
 const { applyPlantModelLevel } = await import('../src/rendering/PlantModelLevels.js');
+const { PlantAnimations } = await import('../src/rendering/PlantAnimations.js');
 const { createChunkGeometryJob, buildChunkGeometry, setLeafParts, setAmbientOcclusion } =
     await import('../src/rendering/ChunkMesher.js');
 let checks = 0;
@@ -155,4 +156,49 @@ onlyWater.setId(4, 4, 4, getBlockId('water'));
 equal(createChunkGeometryJob(onlyWater, a.world, { terrain: false, plants: true }).step(Infinity).geometry,
     null, 'Water alone creates no plant geometry');
 for (const geometry of [terrainResult.geometry, plantResult.geometry, expectedTerrain, expectedPlants]) geometry.dispose();
+
+// A clip may finish after the incremental scan chose its full animated model
+// but before geometry emission. Completion deliberately does not enqueue a new
+// mesh. The finished job must still apply that event's final young/harvest pose.
+for (const [before, after, kind] of [[0, 94, 'place'], [97, 95, 'harvest']]) {
+    const chunk = new Chunk(0, 0);
+    chunk.setId(8, 5, 8, after);
+    chunk.skyLight.fill(15);
+    const world = { getChunk: (x, z) => x === 0 && z === 0 ? chunk : null,
+        markPlantsDirty: c => { c.plantRevision++; } };
+    chunk.plantMesh = { geometry: buildChunkGeometry(chunk, world, { terrain: false, plants: true }) };
+    const animations = new PlantAnimations(world, { position: { x: 8, y: 6, z: 8 } });
+    const index = chunk.index(8, 5, 8);
+    animations.blockChanged(chunk, index, before, after);
+    const event = [...animations.active][0];
+    equal(event.kind, kind, `Actual ${kind} clip starts`);
+    chunk.plantMesh.geometry.dispose();
+    chunk.plantMesh.geometry = buildChunkGeometry(chunk, world, { terrain: false, plants: true });
+    const visible = chunk.plantMesh.geometry;
+    let scanned = false;
+    const renderId = event.renderId;
+    Object.defineProperty(event, 'renderId', { configurable: true, get() { scanned = true; return renderId; } });
+    const pending = createChunkGeometryJob(chunk, world, { terrain: false, plants: true });
+    clock = 0;
+    Object.defineProperty(performance, 'now', { configurable: true, value: () => ++clock });
+    try {
+        let attempts = 0;
+        while (!scanned && attempts++ < 1000) pending.step(clock + 2);
+        check(scanned, `${kind}: full animated model scanned before emission`);
+    } finally {
+        if (realNow) Object.defineProperty(performance, 'now', realNow);
+        else delete performance.now;
+    }
+    const revision = chunk.plantRevision;
+    animations.update(event.duration + .1);
+    equal(animations.active.size, 0, `${kind}: actual completion removes the live event`);
+    equal(chunk.plantRevision, revision, `${kind}: completion intentionally keeps revision`);
+    const finished = pending.step(Infinity).geometry;
+    const ranges = finished.userData.plantAnimationRanges;
+    equal(ranges?.length, 1, `${kind}: pending geometry retains its final-pose binding`);
+    animations.bindGeometry(finished, ranges);
+    delete finished.userData.plantAnimationRanges;
+    sameGeometry(finished, visible, `${kind}: pending output equals the correct finished pose`);
+    finished.dispose(); visible.dispose(); animations.dispose();
+}
 console.log(`OK: mesher partiami — ${checks} sprawdzeń zgodności, budżetu, przeplatania i anulowania.`);

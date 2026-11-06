@@ -1766,7 +1766,13 @@ function* buildChunkGeometrySteps(chunk, world, { terrain, plants: includePlants
 
     plantPreparation.delete(chunk);
 
-    const overrides = world.plantAnimations?.overridesFor(chunk);
+    // Completion removes an event from the live map without invalidating the
+    // mesh: its last painted pose already matches the block. Keep that event
+    // through scan/emission/install, even if it completes between slices, or a
+    // scanned full-size animation model could be emitted without its final pose.
+    // Other animation changes invalidate World revisions and cancel this job.
+    const liveOverrides = world.plantAnimations?.overridesFor(chunk);
+    const overrides = liveOverrides?.size ? new Map(liveOverrides) : null;
     const animationRanges = [];
     if (chunk.blockCount === 0 && !overrides?.size) {
         return null;

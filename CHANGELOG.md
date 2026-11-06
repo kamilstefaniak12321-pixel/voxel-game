@@ -13,7 +13,7 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ## 0.68.0 - Sprawniejsze wczytywanie terenu i roślin
 
-Optymalizacja dużego zasięgu widzenia i zmiany jakości modeli roślin.
+Optymalizacja dużego zasięgu widzenia i zmiany jakości modeli roślin — PR #102.
 
 - Gotowy teren jest odbierany z wątku generatora także podczas dużej
   przebudowy modeli. Kolejka nie jest ponownie sortowana w każdej klatce.

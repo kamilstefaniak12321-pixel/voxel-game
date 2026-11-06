@@ -58,7 +58,7 @@ if (oldHeld && newHeld && result.matchedRenderingComparisonValid) {
     result.heldChangesPercent.geometryBytes = pct(oldRow.afterGeometry?.bytes,newRow.afterGeometry?.bytes);
 }
 result.notes = ['Positive FPS change is faster; negative time, call, or memory change is less work.',
-    'Held sample isolates the same bounded loaded terrain; full800 distance remained selected.',
+    'Held sample isolates the same bounded loaded terrain; full 800 distance remained selected.',
     'Unheld streaming phases may draw different amounts of completed world and are not pure rendering A/B.',
     'GPU mean is weighted by actual samples. No global GPU p95 is inferred from window percentiles.'];
 process.stdout.write(JSON.stringify(result, null, 2)+'\n');

@@ -46,6 +46,13 @@ export const viewUniforms = {
     // ostre tekstury (0), niezależnie od dalekiego terenu i jego atmosfery.
     uFarTextureBlend: { value: 1 },
 
+    // Complementary detail/horizon transition. Readiness lives in the chunk
+    // mask so streaming never fades a detailed chunk before its replacement.
+    uDistanceLodEnabled: { value: 0 },
+    uDistanceLodStart: { value: 144 },
+    uDistanceLodEnd: { value: 192 },
+    uDistanceLodCenter: { value: new THREE.Vector2() },
+
     // Promień prawdziwych chunków (zasięg widzenia) i dalekiego terenu.
 
     uFarInner: { value: 48 },
@@ -102,7 +109,30 @@ export const CHUNK_MASK_SIZE = 128;
 
 export const chunkMaskData = new Uint8Array(CHUNK_MASK_SIZE * CHUNK_MASK_SIZE);
 
-const chunkMaskTexture = new THREE.DataTexture(chunkMaskData, CHUNK_MASK_SIZE, CHUNK_MASK_SIZE, THREE.RedFormat, THREE.UnsignedByteType);
+// The live mask is also used by the WebGL1 surface fallback. RED is not a
+// legal texture format there, even when the LOD uniform is currently disabled.
+// Keep the compact CPU mask contract, and expand only when its revision is
+// uploaded. 128² RGBA8 is 64 KiB; this does not change coverage or LOD quality.
+class ChunkCoverageTexture extends THREE.DataTexture {
+    constructor(data = chunkMaskData) {
+        super(new Uint8Array(data.length * 4), CHUNK_MASK_SIZE, CHUNK_MASK_SIZE,
+            THREE.RGBAFormat, THREE.UnsignedByteType);
+        this.maskData = data;
+    }
+
+    set needsUpdate(value) {
+        if (value && this.maskData) {
+            const packed = this.image.data;
+            for (let i = 0; i < this.maskData.length; i++) {
+                const at = i * 4, coverage = this.maskData[i];
+                packed[at] = packed[at + 1] = packed[at + 2] = coverage;
+                packed[at + 3] = 255;
+            }
+        }
+        super.needsUpdate = value;
+    }
+}
+const chunkMaskTexture = new ChunkCoverageTexture(chunkMaskData);
 
 chunkMaskTexture.magFilter = THREE.NearestFilter;
 chunkMaskTexture.minFilter = THREE.NearestFilter;
@@ -115,8 +145,15 @@ export const chunkMaskUniforms = {
 
 export const CHUNK_MASK_GLSL = /* glsl */ `
 
+    #ifndef VOXEL_CHUNK_MASK
+    #define VOXEL_CHUNK_MASK
+
     uniform sampler2D uChunkMask;
     uniform vec2 uChunkMaskOrigin;
+    uniform float uDistanceLodEnabled;
+    uniform float uDistanceLodStart;
+    uniform float uDistanceLodEnd;
+    uniform vec2 uDistanceLodCenter;
 
     // Czy chunk w punkcie xz świata ma mesh.
 
@@ -129,6 +166,28 @@ export const CHUNK_MASK_GLSL = /* glsl */ `
             texture2D(uChunkMask, (chunk + 0.5) / ${CHUNK_MASK_SIZE.toFixed(1)}).r > 0.5;
 
     }
+
+    bool chunkLodReady(vec2 xz) {
+        vec2 chunk = floor(xz / ${CHUNK_SIZE.toFixed(1)}) - uChunkMaskOrigin;
+        return chunk.x >= 0.0 && chunk.y >= 0.0 &&
+            chunk.x < ${CHUNK_MASK_SIZE.toFixed(1)} && chunk.y < ${CHUNK_MASK_SIZE.toFixed(1)} &&
+            texture2D(uChunkMask, (chunk + 0.5) / ${CHUNK_MASK_SIZE.toFixed(1)}).r > 0.75;
+    }
+
+    float distanceLodNoise() {
+        return fract(52.9829189 * fract(dot(floor(gl_FragCoord.xy), vec2(0.06711056, 0.00583715))));
+    }
+
+    float distanceLodNearWeight(vec2 xz) {
+        return 1.0 - smoothstep(uDistanceLodStart, max(uDistanceLodStart + 1.0, uDistanceLodEnd),
+            length(xz - uDistanceLodCenter));
+    }
+
+    float effectiveNearLodWeight(vec2 xz) {
+        if (uDistanceLodEnabled < 0.5 || !chunkLodReady(xz)) return 1.0;
+        return distanceLodNearWeight(xz);
+    }
+    #endif
 `;
 
 

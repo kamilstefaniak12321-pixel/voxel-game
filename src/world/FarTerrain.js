@@ -54,6 +54,7 @@ import { grassTint } from './terrain/Biomes.js';
 import { SURFACE_FACE_NAMES, SURFACE_MATERIAL_COUNT, getSurfaceFaceTexture, surfaceMaterialId, surfaceMaterialType } from '../rendering/SurfaceMaterials.js';
 import { SURFACE_LIGHTING_GLSL } from '../rendering/SurfaceLighting.js';
 import { installLightingDiagnostics } from '../rendering/LightingDiagnostics.js';
+import { createFarVegetationJob, appendFarVegetation, FAR_VEGETATION_MAX_SPACING } from './farVegetation.js';
 
 import {
     KINDS,
@@ -114,11 +115,11 @@ import {
 // ~4x więcej). Ustawienie "Szczegóły dalekiego terenu" (farDetail)
 // wybiera jeden z DETAILS; tryb ziemniaka - POTATO_DETAIL (~8x mniej
 // trójkątów niż średnie).
-const DETAILS = {
-    1: { cells: 32, minSpacing: 2, rootSpacing: 256, lodDistance: 1, targetSpacing: 8 }, // niskie
-    2: { cells: 32, minSpacing: 1, rootSpacing: 256, lodDistance: 2, targetSpacing: 4 }, // średnie
-    3: { cells: 32, minSpacing: 1, rootSpacing: 256, lodDistance: 3, targetSpacing: 4 }  // wysokie
-};
+const GAME_TIERS = [{ distance: 256, spacing: 1 }, { distance: 448, spacing: 2 }, { distance: 800, spacing: 4 }];
+const DETAILS = Object.fromEntries([1, 2, 3].map(level => [level, {
+    cells: 32, minSpacing: 1, rootSpacing: 256, lodDistance: level,
+    targetSpacing: 4, targetTiers: GAME_TIERS
+}]));
 
 // Ten sam szczegółowy teren jest widoczny i rzuca cienie. To siatka LOD,
 // nie zwiększenie liczby pełnych chunków; dalszy horyzont pozostaje bez zmian.
@@ -263,7 +264,7 @@ const lodDebug = { value: 0 };
 const pixelAngle = { value: 0.0015 };
 
 
-export function createFarTerrainMaterial(level = 0) {
+export function createFarTerrainMaterial(level = 0, tileFade = { value: new THREE.Vector2(1, 0) }) {
 
     // Tylko przednie strony trójkątów - tylne (ścianki od drugiej
     // strony, spody) karta graficzna od razu pomija.
@@ -283,7 +284,8 @@ export function createFarTerrainMaterial(level = 0) {
             uLodTint: { value: lodColor },
             uLodDebug: lodDebug,
             uCellSize: { value: cellSize },
-            uPixelAngle: pixelAngle
+            uPixelAngle: pixelAngle,
+            uFarTileFade: tileFade
         });
 
 
@@ -473,6 +475,7 @@ export function createFarTerrainMaterial(level = 0) {
                 uniform vec3 uNightTint;
                 uniform vec3 uLodTint;
                 uniform float uLodDebug;
+                uniform vec2 uFarTileFade;
                 ${CHUNK_MASK_GLSL}
                 ${SKY_COLOR_GLSL}
                 ${AERIAL_SKY_GLSL}
@@ -502,9 +505,13 @@ export function createFarTerrainMaterial(level = 0) {
 
                 float farFlat = length(vFarFlatXZ - cameraPosition.xz);
 
-                if (chunkMeshed(vFarMaskXZ - vFarSide * 0.5)) {
+                vec2 farOwnershipXZ = vFarMaskXZ - vFarSide * 0.5;
+                float farNoise = distanceLodNoise();
+                if (chunkMeshed(farOwnershipXZ) && farNoise < effectiveNearLodWeight(farOwnershipXZ)) {
                     discard;
                 }
+                if ((uFarTileFade.y > 0.5 && farNoise >= uFarTileFade.x) ||
+                    (uFarTileFade.y < -0.5 && farNoise < uFarTileFade.x)) discard;
 
                 // Kurtyna (farSamples.js) - tylko zwrócona do prawdziwych
                 // chunków.
@@ -654,12 +661,27 @@ export function createFarTerrainMaterial(level = 0) {
 // Materiał dla każdej dokładności (indeks = poziom: 0 - kratka 1 blok).
 
 const farMaterials = Array.from({ length: LEVELS }, (_, level) => createFarTerrainMaterial(level));
+const tileMaterials = new Set();
 
 
 function levelOf(spacing) {
 
     return Math.max(0, Math.min(LEVELS - 1, Math.round(Math.log2(spacing))));
 
+}
+
+// Quadtree leaves never overlap. Sum their intersections instead of building
+// a full-world coverage grid: incoming rectangles may extend into a previously
+// omitted inner ring or beyond the old horizon. Those pixels have no outgoing
+// owner, so fading the whole new tile from zero would reveal holes.
+function tileFullyCovered(tile, previous) {
+    let covered = 0;
+    for (const old of previous) {
+        const width = Math.min(tile.x0 + tile.size, old.x0 + old.size) - Math.max(tile.x0, old.x0);
+        const depth = Math.min(tile.z0 + tile.size, old.z0 + old.size) - Math.max(tile.z0, old.z0);
+        if (width > 0 && depth > 0) covered += width * depth;
+    }
+    return covered >= tile.size * tile.size;
 }
 
 
@@ -681,7 +703,11 @@ function createFarShadowMaterial(mask, origin, center, outer) {
             uChunkMask: { value: mask },
             uChunkMaskOrigin: { value: origin },
             uFarCenter: { value: center },
-            uFarOuter: { value: outer }
+            uFarOuter: { value: outer },
+            uDistanceLodEnabled: { value: viewUniforms.uDistanceLodEnabled.value },
+            uDistanceLodStart: { value: viewUniforms.uDistanceLodStart.value },
+            uDistanceLodEnd: { value: viewUniforms.uDistanceLodEnd.value },
+            uDistanceLodCenter: { value: viewUniforms.uDistanceLodCenter.value.clone() }
         },
         vertexShader: `
             attribute vec4 shadowPosition;
@@ -705,7 +731,8 @@ function createFarShadowMaterial(mask, origin, center, outer) {
             varying vec2 vFarMaskXZ;
             varying vec2 vFarSide;
             void main() {
-                if (chunkMeshed(vFarMaskXZ - vFarSide * 0.5) ||
+                vec2 ownership = vFarMaskXZ - vFarSide * 0.5;
+                if ((chunkMeshed(ownership) && distanceLodNoise() < effectiveNearLodWeight(ownership)) ||
                     length(vFarMaskXZ - uFarCenter) > uFarOuter) discard;
             }
         `,
@@ -740,6 +767,10 @@ function acquireFarShadowResources(pool, origin, center, outer) {
         uniforms.uChunkMaskOrigin.value.copy(origin);
         uniforms.uFarCenter.value.copy(center);
         uniforms.uFarOuter.value = outer;
+        for (const key of ['uDistanceLodEnabled', 'uDistanceLodStart', 'uDistanceLodEnd']) {
+            uniforms[key].value = viewUniforms[key].value;
+        }
+        uniforms.uDistanceLodCenter.value.copy(viewUniforms.uDistanceLodCenter.value);
     }
     resources.busy = true;
     return resources;
@@ -798,6 +829,8 @@ export class FarTerrain {
 
         this.wanted = [];
         this.shown = new Set();
+        this.retiring = new Set();
+        this.coverageVersion = 0;
         this.shadowRevision = 0;
         this.shadowSnapshots = new Set();
         this.shadowResourcePool = [];
@@ -947,7 +980,7 @@ export class FarTerrain {
 
         tile.pending = 0;
 
-        tile.raw = { heights: message.heights, kinds: message.kinds, materialIds: message.materialIds };
+        tile.raw = { heights: message.heights, kinds: message.kinds, materialIds: message.materialIds, vegetation: message.vegetation };
 
         tile.workerMesh = message.mesh;
 
@@ -1143,6 +1176,7 @@ export class FarTerrain {
     update(cameraPosition) {
 
         this.frame++;
+        this.updateTileFade();
         this.shadowCenter.set(cameraPosition.x, cameraPosition.z);
 
         if (!this.active || !this.colorsReady) {
@@ -1251,11 +1285,13 @@ export class FarTerrain {
 
         const version = world.meshVersion ?? 0;
 
-        if (origin.x === ox && origin.y === oz && version === this.maskVersion) {
+        if (origin.x === ox && origin.y === oz && version === this.maskVersion &&
+            this.maskCoverageVersion === this.coverageVersion) {
             return;
         }
 
         this.maskVersion = version;
+        this.maskCoverageVersion = this.coverageVersion;
 
         origin.set(ox, oz);
 
@@ -1267,9 +1303,23 @@ export class FarTerrain {
             const j = chunk.cz - oz;
 
             if (chunk.mesh && i >= 0 && j >= 0 && i < CHUNK_MASK_SIZE && j < CHUNK_MASK_SIZE) {
-                chunkMaskData[j * CHUNK_MASK_SIZE + i] = 255;
+                chunkMaskData[j * CHUNK_MASK_SIZE + i] = 128;
             }
 
+        }
+
+        // Only a fully built, shown far tile may replace detailed fragments.
+        // Tile edges are chunk aligned; marking full cells is conservative.
+        for (const tile of this.shown) {
+            if (!tile.mesh) continue;
+            const x0 = Math.max(0, Math.ceil(tile.x0 / CHUNK_SIZE) - ox);
+            const z0 = Math.max(0, Math.ceil(tile.z0 / CHUNK_SIZE) - oz);
+            const x1 = Math.min(CHUNK_MASK_SIZE, Math.floor((tile.x0 + tile.size) / CHUNK_SIZE) - ox);
+            const z1 = Math.min(CHUNK_MASK_SIZE, Math.floor((tile.z0 + tile.size) / CHUNK_SIZE) - oz);
+            for (let z = z0; z < z1; z++) for (let x = x0; x < x1; x++) {
+                const at = z * CHUNK_MASK_SIZE + x;
+                if (chunkMaskData[at] === 128) chunkMaskData[at] = 255;
+            }
         }
 
         chunkMaskUniforms.uChunkMask.value.needsUpdate = true;
@@ -1316,7 +1366,8 @@ export class FarTerrain {
                 x0: tile.x0,
                 z0: tile.z0,
                 spacing: tile.spacing,
-                cells: tile.cells
+                cells: tile.cells,
+                vegetation: tile.vegetation
             });
 
             return;
@@ -1335,7 +1386,7 @@ export class FarTerrain {
 
         while (job.row < W && performance.now() < deadline) {
 
-            sampleFarTile(this.generator, tile.x0, tile.z0, tile.spacing, tile.cells, job.heights, job.kinds, job.row, job.row + 1, job.materialIds);
+            sampleFarTile(this.generator, tile.x0, tile.z0, tile.spacing, tile.cells, job.heights, job.kinds, job.row, job.row + 1, job.materialIds, tile.vegetation);
 
             job.row++;
 
@@ -1343,7 +1394,14 @@ export class FarTerrain {
 
         if (job.row === W) {
 
-            tile.raw = { heights: job.heights, kinds: job.kinds, materialIds: job.materialIds };
+            if (tile.vegetation) {
+                job.vegetationJob ??= createFarVegetationJob(this.generator, tile.x0, tile.z0, tile.size,
+                    tile.spacing, job.heights, job.kinds, tile.cells);
+                const result = job.vegetationJob.step(deadline);
+                if (!result.done) return;
+                job.vegetation = result.data;
+            }
+            tile.raw = { heights: job.heights, kinds: job.kinds, materialIds: job.materialIds, vegetation: job.vegetation };
 
             tile.job = null;
 
@@ -1424,13 +1482,17 @@ export class FarTerrain {
         // Za końcem dalekiego terenu albo w całości w zasięgu
         // prawdziwych chunków - nie jest potrzebny.
 
-        if (Math.hypot(dx, dz) > this.outer || far < this.inner - 8) {
+        const overlapInner = viewUniforms.uDistanceLodEnabled.value > 0.5
+            ? Math.min(this.inner, viewUniforms.uDistanceLodStart.value) : this.inner;
+        if (Math.hypot(dx, dz) > this.outer || far < overlapInner - 8) {
             return;
         }
 
 
-        const key = `${cells}:${spacing}:${x0}:${z0}`;
-        const wasSplit = this.lodSplits?.has(key) ?? false;
+        const vegetation = this.detail !== MENU_DETAIL && this.detail !== POTATO_DETAIL && spacing <= FAR_VEGETATION_MAX_SPACING;
+        const splitKey = `${cells}:${spacing}:${x0}:${z0}`;
+        const key = `${splitKey}${vegetation ? ':v' : ''}`;
+        const wasSplit = this.lodSplits?.has(splitKey) ?? false;
         const margin = wasSplit ? 1 + LOD_HYSTERESIS : 1;
         const detailed = this.detail.targetTiers
             ? this.detail.targetTiers.some(tier => spacing > tier.spacing && near <= tier.distance * margin)
@@ -1439,7 +1501,7 @@ export class FarTerrain {
 
         if (spacing > minSpacing && (near < size * lodDistance * margin || detailed)) {
 
-            splits.add(key);
+            splits.add(splitKey);
 
             const half = size / 2;
 
@@ -1464,6 +1526,7 @@ export class FarTerrain {
                 x0,
                 z0,
                 size,
+                vegetation,
                 raw: null,
                 workerMesh: null,
                 job: null,
@@ -1488,12 +1551,20 @@ export class FarTerrain {
 
         const wanted = new Set(this.wanted);
         const changed = wanted.size !== this.shown.size || [...wanted].some(tile => !this.shown.has(tile));
+        if (!changed) return;
+        this.finishTileFade();
+        const animate = this.complete && this.shown.size > 0;
+        const previous = [...this.shown];
+        this.retiring ??= new Set();
 
 
         for (const tile of this.shown) {
 
             if (!wanted.has(tile)) {
-                this.scene.remove(tile.mesh);
+                if (animate && tile.fade) {
+                    tile.fade.value.set(0, -1);
+                    this.retiring.add(tile);
+                } else this.scene.remove(tile.mesh);
             }
 
         }
@@ -1501,13 +1572,17 @@ export class FarTerrain {
         for (const tile of wanted) {
 
             if (!this.shown.has(tile)) {
+                const fadeIn = animate && tileFullyCovered(tile, previous);
+                tile.fade?.value.set(fadeIn ? 0 : 1, fadeIn ? 1 : 0);
                 this.scene.add(tile.mesh);
             }
 
         }
 
         this.shown = wanted;
-        if (changed) this.shadowRevision++;
+        this.shadowRevision++;
+        this.coverageVersion = (this.coverageVersion ?? 0) + 1;
+        this.fadeStarted = animate ? performance.now() : null;
 
 
         // Zapomniane kafelki (dawno niepotrzebne) zwalniają pamięć - zostaje
@@ -1518,7 +1593,7 @@ export class FarTerrain {
         if (this.tiles.size > keep + 32) {
 
             const old = [...this.tiles.values()]
-                .filter((tile) => !this.shown.has(tile))
+                .filter((tile) => !this.shown.has(tile) && !this.retiring.has(tile))
                 .sort((a, b) => a.usedAt - b.usedAt);
 
             for (const tile of old.slice(0, this.tiles.size - keep)) {
@@ -1527,6 +1602,25 @@ export class FarTerrain {
 
         }
 
+    }
+
+    finishTileFade() {
+        for (const tile of this.retiring ?? []) {
+            this.scene.remove(tile.mesh);
+            tile.fade?.value.set(1, 0);
+        }
+        this.retiring?.clear();
+        for (const tile of this.shown) tile.fade?.value.set(1, 0);
+        this.fadeStarted = null;
+    }
+
+    updateTileFade() {
+        if (this.fadeStarted == null) return;
+        const t = Math.min(1, (performance.now() - this.fadeStarted) / 550);
+        if (t >= 1) { this.finishTileFade(); return; }
+        const weight = t * t * (3 - 2 * t);
+        for (const tile of this.retiring ?? []) tile.fade?.value.set(weight, -1);
+        for (const tile of this.shown) if (tile.fade?.value.y > .5) tile.fade.value.x = weight;
     }
 
 
@@ -1543,6 +1637,7 @@ export class FarTerrain {
 
                 this.shown.add(tile);
                 this.shadowRevision++;
+                this.coverageVersion = (this.coverageVersion ?? 0) + 1;
 
             }
 
@@ -1553,6 +1648,8 @@ export class FarTerrain {
 
     hideAll() {
 
+        this.finishTileFade();
+        this.coverageVersion = (this.coverageVersion ?? 0) + 1;
         if (this.shown.size > 0) this.shadowRevision++;
 
         for (const tile of this.shown) {
@@ -1660,7 +1757,8 @@ export class FarTerrain {
         tile.workerMesh = null;
 
 
-        const modified = this.modifiedChunksIn(x0 - s, z0 - s, tile.size + 2 * s);
+        const padding = Math.max(s, tile.vegetation ? 7 : 0);
+        const modified = this.modifiedChunksIn(x0 - padding, z0 - padding, tile.size + 2 * padding);
 
         if (modified.size > 0 || !mesh) {
 
@@ -1697,6 +1795,7 @@ export class FarTerrain {
             }
 
             mesh = meshFarTile(heights, kinds, cells, s, this.kindColors, scratch, materialIds, this.surfaceAlbedoPalette);
+            mesh = appendFarVegetation(mesh, tile.raw.vegetation, x0, z0, this.kindColors, this.surfaceAlbedoPalette, modified);
 
         }
 
@@ -1731,7 +1830,11 @@ export class FarTerrain {
         }
         else {
 
-            const object = new THREE.Mesh(geometry, farMaterials[levelOf(s)]);
+            tile.fade = { value: new THREE.Vector2(1, 0) };
+            tile.material = createFarTerrainMaterial(levelOf(s), tile.fade);
+            tile.material.defines = { ...farMaterials[levelOf(s)].defines };
+            tileMaterials.add(tile.material);
+            const object = new THREE.Mesh(geometry, tile.material);
 
             object.position.set(x0, 0, z0);
             object.updateMatrix();
@@ -1742,6 +1845,7 @@ export class FarTerrain {
         }
 
         tile.geometryBundle = bundle;
+        tile.vegetationStats = mesh.vegetationStats;
         if (this.shown.has(tile)) this.shadowRevision++;
 
         tile.stale = false;
@@ -1779,7 +1883,7 @@ export class FarTerrain {
 
     setDetail(level, potato = false, scenery = false) {
 
-        setPotatoDefine(farMaterials, potato);
+        setPotatoDefine([...farMaterials, ...tileMaterials], potato);
 
         const detail = potato ? POTATO_DETAIL : scenery ? MENU_DETAIL : DETAILS[level] ?? DETAIL;
 
@@ -1845,11 +1949,13 @@ export class FarTerrain {
         const retained = [];
         const sphere = new THREE.Sphere();
         let triangleCount = 0;
-        let resources = null;
+        const resources = acquireFarShadowResources(this.shadowResourcePool,
+            chunkMaskUniforms.uChunkMaskOrigin.value, this.shadowCenter, this.outer);
         let disposed = false;
         const snapshot = {
             revision: this.shadowRevision,
             casters,
+            lodUniforms: resources.material.uniforms,
             triangleCount: 0,
             dispose: () => {
                 if (disposed) return;
@@ -1865,6 +1971,7 @@ export class FarTerrain {
                 this.shadowSnapshots.delete(snapshot);
             }
         };
+        this.shadowSnapshots.add(snapshot);
         if (!this.active) return snapshot;
 
         for (const tile of this.shown) {
@@ -1876,10 +1983,6 @@ export class FarTerrain {
             sphere.copy(bundle.geometry.boundingSphere).applyMatrix4(tile.mesh.matrix);
             if (frustum && !frustum.intersectsSphere(sphere)) continue;
 
-            if (!resources) {
-                resources = acquireFarShadowResources(this.shadowResourcePool,
-                    chunkMaskUniforms.uChunkMaskOrigin.value, this.shadowCenter, this.outer);
-            }
             const caster = new THREE.Mesh(bundle.shadowGeometry, resources.material);
             caster.matrixAutoUpdate = false;
             caster.matrix.copy(tile.mesh.matrix);
@@ -1892,7 +1995,6 @@ export class FarTerrain {
             casters.push(caster);
         }
         snapshot.triangleCount = triangleCount;
-        this.shadowSnapshots.add(snapshot);
         return snapshot;
     }
 
@@ -1941,12 +2043,17 @@ export class FarTerrain {
 
         let triangles = 0;
         const lodWithinTarget = {};
+        const vegetationBySpacing = {};
         const detailTiers = this.detail.targetTiers ?? (this.detail.targetSpacing
             ? [{ distance: TARGET_DETAIL_DISTANCE, spacing: this.detail.targetSpacing }] : []);
         const detailDistance = detailTiers.at(-1)?.distance ?? 0;
 
         for (const tile of this.shown) {
             triangles += tile.mesh.geometry.index.count / 3;
+            if (tile.vegetationStats) {
+                const group = vegetationBySpacing[tile.spacing] ??= { trees: 0, plants: 0, boxes: 0, triangles: 0 };
+                for (const key of Object.keys(group)) group[key] += tile.vegetationStats[key];
+            }
             const dx = Math.max(tile.x0 - this.shadowCenter.x, 0, this.shadowCenter.x - (tile.x0 + tile.size));
             const dz = Math.max(tile.z0 - this.shadowCenter.y, 0, this.shadowCenter.y - (tile.z0 + tile.size));
             if (Math.hypot(dx, dz) <= detailDistance) {
@@ -1961,6 +2068,8 @@ export class FarTerrain {
             missing: this.wanted.filter((tile) => !tile.mesh || tile.stale).length,
             cached: this.tiles.size,
             triangles,
+            vegetationBySpacing,
+            transitioningTiles: this.retiring?.size ?? 0,
             shadowRevision: this.shadowRevision,
             profile: this.detail === MENU_DETAIL ? 'scenery' : this.detail === POTATO_DETAIL ? 'potato' : 'game',
             detailDistance,
@@ -1981,10 +2090,17 @@ export class FarTerrain {
             this.scene.remove(tile.mesh);
 
             if (this.shown.delete(tile)) this.shadowRevision++;
+            this.retiring?.delete(tile);
+            this.coverageVersion = (this.coverageVersion ?? 0) + 1;
             retireFarGeometry(tile.geometryBundle);
             tile.geometryBundle = null;
 
             tile.mesh = null;
+            if (tile.material) {
+                tileMaterials.delete(tile.material);
+                tile.material.dispose();
+                tile.material = null;
+            }
 
         }
 
@@ -2032,7 +2148,7 @@ export class FarTerrain {
 
 export function setFarTerrainShadows(on) {
 
-    for (const material of farMaterials) {
+    for (const material of [...farMaterials, ...tileMaterials]) {
         setDefine(material, 'USE_FAR_SHADOWS', on);
     }
 

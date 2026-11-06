@@ -11,6 +11,19 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 0.69.0 - Stopniowa szczegółowość dalekiego świata
+
+Kolejny etap optymalizacji — PR #105, przywracający na `main` sprawdzone
+zmiany z PR #103. Oparty na wydanej wersji 0.68.0 z PR #102.
+
+- Bliskie liście i rośliny zachowują wybraną jakość, a dalej przechodzą
+  przez prostsze modele. Powrót gracza przywraca pełną szczegółowość.
+- Pełne bloki są wczytywane w ograniczonej strefie. Dalszy widok zachowuje
+  ukształtowanie terenu, uproszczone drzewa i przybliżoną roślinność.
+- Strefy nakładają się, a gotowe modele przejmują obraz stopniowo.
+- Promienie światła ponownie wykorzystują głębię głównego obrazu.
+  Stałe parametry cieni są obliczane przy aktualizacji mapy.
+
 ## 0.68.0 - Sprawniejsze wczytywanie terenu i roślin
 
 Optymalizacja dużego zasięgu widzenia i zmiany jakości modeli roślin — PR #102.

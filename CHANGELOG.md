@@ -13,7 +13,7 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ## 0.69.0 - Stopniowa szczegółowość dalekiego świata
 
-Kolejny etap optymalizacji, oparty na poprawkach 0.68.0 z PR #102.
+Kolejny etap optymalizacji — PR #103, oparty na poprawkach 0.68.0 z PR #102.
 
 - Bliskie liście i rośliny zachowują wybraną jakość, a dalej przechodzą
   przez prostsze modele. Powrót gracza przywraca pełną szczegółowość.

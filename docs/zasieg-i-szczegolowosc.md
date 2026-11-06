@@ -53,4 +53,4 @@ Wielkości zależne tylko od mapy cienia są przygotowywane przy jej
 aktualizacji. Obliczenia i próbki dające zerowy udział w ostatecznym
 kolorze są pomijane. Nie zmienia to ustawionej palety ani jakości cieni.
 
-Wyniki pomiaru i ograniczenia będą zapisane w `pomiary/zasieg-0.69.0/`.
+Wyniki pomiaru, kadry i ograniczenia: [próba 0.69.0](pomiary/zasieg-0.69.0/WYNIKI.md).

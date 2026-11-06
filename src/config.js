@@ -513,6 +513,7 @@ export const TOUCH_SETTINGS = {
     lightShafts: false,    // bez promieni światła
     bounceLight: false,    // bez światła odbitego (liczenie w tle)
     lightingMaterials: 'basic', // zachowaj lekką bazę, dopóki nie zmierzymy telefonu
+    leafModel: 'cube',     // liście jako bloki (8 części to więcej ścian)
     showDebug: false       // napisy F3 zasłaniałyby przyciski
 };
 // Ekran telefonu ma 2-3 piksele na punkt - rysujemy najwyżej tyle

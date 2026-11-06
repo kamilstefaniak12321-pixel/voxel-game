@@ -491,8 +491,9 @@ plantMaterial.onBeforeCompile = (shader, renderer) => {
 // MATERIAŁ LIŚCI (i płaskich dekoracji - opadłe liście, wieniec)
 //
 // Ten sam shader co bloki, a przezroczyste piksele tekstury są
-// pomijane (prześwity w liściach). Bez wiatru - liście to sześciany,
-// kołysząc się rozjechałyby się na szwach. Osobna grupa geometrii
+// pomijane (prześwity w liściach). Zwykłe liście (sześciany) stoją -
+// kołysząc się rozjechałyby się na szwach; liście z 8 części kołyszą się
+// każda część osobno (niżej). Osobna grupa geometrii
 // chunka (ChunkMesher.js), żeby zwykłe bloki nie płaciły za
 // przezroczystość.
 // ------------------------------------------------------------
@@ -509,7 +510,7 @@ export const leafMaterial =
     });
 
 
-leafMaterial.defaultAttributeValues = { ...leafMaterial.defaultAttributeValues, surfaceProfile: [0, 0] };
+leafMaterial.defaultAttributeValues = { ...leafMaterial.defaultAttributeValues, surfaceProfile: [0, 0], plantMotion: [0, 0] };
 leafMaterial.onBeforeCompile = (shader, renderer) => {
 
     // Szybkie liście (define FAST_LEAVES, bez alphaTest): prześwity
@@ -528,6 +529,35 @@ leafMaterial.onBeforeCompile = (shader, renderer) => {
         );
 
     blockMaterial.onBeforeCompile(shader, renderer);
+
+    // Liście z 8 części (ChunkMesher.addLeafParts): każda część kołysze
+    // się lekko w całości - plantMotion.x - siła, y - faza (zwykłe liście:
+    // 0, stoją). Kołysanie na wietrze wył. (uPlantSway) - stoją wszystkie.
+
+    shader.uniforms.uTime = plantWindUniforms.uTime;
+    shader.uniforms.uPlantSway = plantWindUniforms.uPlantSway;
+
+    shader.vertexShader = shader.vertexShader
+        .replace(
+            '#include <common>',
+            `#include <common>
+            uniform float uTime;
+            uniform float uPlantSway;
+            attribute vec2 plantMotion;`
+        )
+        .replace(
+            '#include <project_vertex>',
+            `if (plantMotion.x > 0.0) {
+                float leafPhase = plantMotion.y * 6.2831853;
+                float leafGust = 0.75 + 0.25 * sin(uTime * 0.37 + leafPhase * 0.5);
+                transformed += vec3(
+                    sin(uTime * 1.3 + leafPhase),
+                    0.45 * sin(uTime * 1.9 + leafPhase * 1.7),
+                    cos(uTime * 1.05 + leafPhase * 1.3)
+                ) * plantMotion.x * leafGust * 0.022 * uPlantSway;
+            }
+            #include <project_vertex>`
+        );
 
 };
 

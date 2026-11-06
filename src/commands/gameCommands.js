@@ -1592,7 +1592,8 @@ const SETTING_WORDS = {
     kamera: 'cameraDistance',
     'modele-roslin': 'plantModels',
     wiatr: 'plantWind',
-    'animacje-roslin': 'plantAnimations'
+    'animacje-roslin': 'plantAnimations',
+    'model-lisci': 'leafModel'
 };
 
 
@@ -1669,6 +1670,16 @@ function parseSettingValue(key, text) {
         if (OFF_WORDS.includes(word)) return false;
 
         throw new CommandError('Wpisz wl albo wyl');
+
+    }
+
+
+    if (key === 'leafModel') {
+
+        if (['czesci', 'czesciowe', '8', 'parts'].includes(word)) return 'parts';
+        if (['bloki', 'blok', 'szesciany', 'cube'].includes(word)) return 'cube';
+
+        throw new CommandError('Wpisz czesci albo bloki');
 
     }
 
@@ -5347,6 +5358,7 @@ export const GAME_COMMANDS = [
                 if (typeof SETTINGS_DEFAULTS[key] === 'boolean') return ['wl', 'wyl'];
                 if (key === 'jointStyle') return ['gladkie', 'klocki'];
                 if (key === 'plantModels') return ['proste', 'polrealistyczne', 'szczegolowe'];
+                if (key === 'leafModel') return ['czesci', 'bloki'];
                 if (key in SETTINGS_CHOICES) return SETTINGS_CHOICES[key].map(String);
                 if (key === 'theme') return Object.keys(UI_THEMES);
 

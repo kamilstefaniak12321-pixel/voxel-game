@@ -35,6 +35,17 @@ Z czatu: `/ustaw modele-roslin proste | polrealistyczne | szczegolowe`,
 `/ustaw wiatr wl | wyl`, `/ustaw animacje-roslin wl | wyl`. Porównanie:
 tryb programisty, `/scena modele` (wszystkie rośliny z listy w rzędach).
 
+## Liście z 8 części (0.66.0)
+
+*Ustawienia → Modele → Model liści*: **Z 8 części** (domyślne na
+komputerze) albo **Bloki** (domyślne na telefonie; tryb *potato* - zawsze
+bloki). Blok liści każdego drzewa składa się z ośmiu sześcianów
+8 × 8 × 8 pikseli z konceptu Kamila (`assets/models/leaves/`), każdy
+z teksturą liści swojego gatunku i własnym, lekkim kołysaniem (wyłącza
+je *Kołysanie na wietrze*). Bloki, zapisy, celownik i ikonki bez zmian.
+Z czatu: `/ustaw model-lisci czesci | bloki`. Porównanie: tryb
+programisty, `/scena drzewa`. Test: `node tools/sprawdz_liscie_czesci.mjs`.
+
 ## Pliki
 
 ```

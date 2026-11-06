@@ -1192,10 +1192,14 @@ export class World {
         // Najpierw meshe (postawione bloki i świeżo
         // wygenerowane chunki stają się widoczne)...
 
+        this.perfDiagnostics?.beginStage('mesh');
         this.updateMeshes(deadline);
+        this.perfDiagnostics?.endStage('mesh');
 
+        this.perfDiagnostics?.beginStage('generation');
         if (this.generation?.checkHealth()) {
             this.streamChunks(deadline);
+            this.perfDiagnostics?.endStage('generation');
             return;
         }
 
@@ -1213,6 +1217,7 @@ export class World {
             this.generateChunk(cx, cz);
 
         }
+        this.perfDiagnostics?.endStage('generation');
 
     }
 

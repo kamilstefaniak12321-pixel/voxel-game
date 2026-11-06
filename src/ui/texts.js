@@ -119,6 +119,7 @@ export const TEXTS = {
 
     // Ustawienia
     settingsTitle: 'Ustawienia',
+    performanceLogs: (on) => `Logi wydajności: ${on ? 'Wł.' : 'Wył.'}`,
     settingsTabs: {
         video: 'Obraz',
         sound: 'Dźwięk',

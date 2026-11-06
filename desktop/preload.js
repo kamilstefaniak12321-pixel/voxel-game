@@ -38,8 +38,20 @@ ipcRenderer.on('desktop:close-request', async () => {
         console.error('Zapis przed zamknięciem:', error);
     }
 
+    // Include the renderer's final error/save messages before the main process
+    // flushes its journal. Failure here must not block normal shutdown.
+    try { await ipcRenderer.invoke('diagnostics:flush'); } catch { /* best effort */ }
+
     ipcRenderer.send('desktop:close-ready');
 
+});
+
+contextBridge.exposeInMainWorld('voxelDiagnostics', {
+    append: batch => ipcRenderer.invoke('diagnostics:append', batch),
+    readPrevious: () => ipcRenderer.invoke('diagnostics:previous'),
+    flush: () => ipcRenderer.invoke('diagnostics:flush'),
+    exportReport: payload => ipcRenderer.invoke('diagnostics:export', payload),
+    openFolder: () => ipcRenderer.invoke('diagnostics:folder')
 });
 
 

@@ -1770,6 +1770,24 @@ function parseSettingValue(key, text) {
 
 export const GAME_COMMANDS = [
 
+    {
+        name: 'logi',
+        aliases: ['diagnostyka'],
+        usage: '/logi [problem]',
+        description: 'Otwiera raport błędów i wydajności; problem zaznacza bieżący moment (także F8).',
+        run(args, { diagnostics, openDiagnostics, markProblem }) {
+            if (args.length > 1 || (args.length && simplify(args[0]) !== 'problem')) throw usageError(this);
+            if (!diagnostics) throw new CommandError('Diagnostyka jest niedostępna w tej sesji.');
+            if (args.length) {
+                markProblem();
+                return 'Zaznaczono problem. Raport: Pauza → Diagnostyka i logi.';
+            }
+            openDiagnostics();
+            return 'Raport diagnostyczny został otwarty.';
+        },
+        complete(args) { return args.length === 1 ? ['problem'] : []; }
+    },
+
     // ========================================================
     // OGÓLNE
     // ========================================================

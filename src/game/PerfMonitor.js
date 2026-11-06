@@ -34,6 +34,8 @@ export class PerfMonitor {
         this.sectionStart = 0;
         this.currentUpdate = 0;
         this.currentRender = 0;
+        this.previousUpdate = 0;
+        this.previousRender = 0;
 
     }
 
@@ -82,8 +84,11 @@ export class PerfMonitor {
             const i = this.next;
 
             this.frameMs[i] = now - this.lastFrame;
-            this.updateMs[i] = this.currentUpdate;
-            this.renderMs[i] = this.currentRender;
+            // RAF odstęp zamyka POPRZEDNIĄ klatkę. Aktualny update/render
+            // wpływa dopiero na następny odstęp, więc nie przesuwamy kosztu
+            // ciężkiej klatki o jeden wiersz względem jej spadku FPS.
+            this.updateMs[i] = this.previousUpdate;
+            this.renderMs[i] = this.previousRender;
             this.at[i] = now;
 
             this.next = (i + 1) % HISTORY;
@@ -92,6 +97,8 @@ export class PerfMonitor {
         }
 
         this.lastFrame = now;
+        this.previousUpdate = this.currentUpdate;
+        this.previousRender = this.currentRender;
 
     }
 

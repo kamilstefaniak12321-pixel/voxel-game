@@ -16,6 +16,8 @@ import { GAME_COMMANDS, setSceneTime } from './commands/gameCommands.js';
 import { TREE_PACK_ERRORS } from './blocks/treePacks.js';
 import { PLANT_PACK_ERRORS } from './blocks/plantPacks.js';
 import { PerfMonitor } from './game/PerfMonitor.js';
+import { diagnostics } from './diagnostics/Diagnostics.js';
+import { PerfDiagnostics } from './diagnostics/PerfDiagnostics.js';
 import { TerrainMap } from './ui/TerrainMap.js';
 import { InventoryScreen } from './ui/InventoryScreen.js';
 import { SoundManager } from './audio/SoundManager.js';
@@ -147,6 +149,9 @@ const TEXTURE_FAIL_WINDOW_MS = 30000;
 
 renderer.domElement.addEventListener('webglcontextlost', () => {
 
+    diagnostics.record('error', 'gpu.context-lost', 'Utracono kontekst graficzny WebGL.');
+    void diagnostics.flush();
+
     atlasReady.then(async (atlas) => {
 
         if (!atlas.pack) {
@@ -192,6 +197,15 @@ const crosshairElement = document.getElementById('crosshair');
 // Pomiar czasu klatek (licznik FPS, /wydajnosc).
 
 const perf = new PerfMonitor();
+const frameDiagnostics = new PerfDiagnostics({
+    onSummary: summary => diagnostics.recordPerformance(summary),
+    onIncident: incident => diagnostics.record('warn', 'performance.drop', incident.message, incident)
+});
+frameDiagnostics.setEnabled(settings.get('performanceLogs'));
+renderer.domElement.addEventListener('webglcontextrestored', () => {
+    frameDiagnostics.reset('context-restored');
+    diagnostics.breadcrumb('gpu.context-restored', 'Przywrócono kontekst WebGL.');
+});
 
 
 // Mapa terenu z góry (/mapa, klawisz M).
@@ -237,6 +251,33 @@ const achievements = new AchievementBook(document.getElementById('achievements')
 let state = 'menu';
 
 let game = null;
+
+const gl = renderer.getContext();
+const debugGpu = gl.getExtension('WEBGL_debug_renderer_info');
+const diagnosticHardware = {
+    gpu: debugGpu ? gl.getParameter(debugGpu.UNMASKED_RENDERER_WEBGL) : gl.getParameter(gl.RENDERER),
+    webgl: renderer.capabilities.isWebGL2 ? 2 : 1,
+    logicalProcessors: navigator.hardwareConcurrency ?? null,
+    memoryGiB: navigator.deviceMemory ?? null,
+    platform: nativeApp ?? (window.desktop ? 'desktop' : 'browser')
+};
+diagnostics.setContextProvider(() => ({
+    state,
+    hardware: diagnosticHardware,
+    viewport: { width: renderer.domElement.width, height: renderer.domElement.height, dpr: window.devicePixelRatio },
+    world: game ? { seed: game.worldInfo.seed, terrain: game.worldInfo.terrain, mode: game.mode,
+        position: { x: Math.round(game.player.pos.x), y: Math.round(game.player.pos.y), z: Math.round(game.player.pos.z) } } : null,
+    settings: Object.fromEntries(Object.entries(settings.values).filter(([key]) => !['skin', 'texturePack'].includes(key))),
+    save: game ? { active: Boolean(game.saver.saving), queued: Boolean(game.saver.queued), lastWallMs: game.saver.lastWriteMs ?? null,
+        worker: game.saver.storage?.background?.stats ?? null } : null
+}));
+diagnostics.breadcrumb('app.ready', 'Uruchomiono renderer i ustawienia gry.');
+
+function markProblem() {
+    diagnostics.record('warn', 'user.problem', 'Gracz zaznaczył moment problemu.', { summary: frameDiagnostics.snapshot() });
+    void diagnostics.flush();
+    hotbar?.showName('Zaznaczono problem — Pauza → Diagnostyka i logi');
+}
 const menuBackdrop = new MenuBackdrop(renderer, settings, { mobile: touchMode });
 
 // ------------------------------------------------------------
@@ -312,6 +353,8 @@ const menu = new Menu(
         quitToMenu,
         quitWithoutSaving,
         reloadGame,
+        diagnostics,
+        markProblem,
         onSceneView: (view) => {
             if (game || state !== 'menu') return;
             menuBackdrop.setView(view);
@@ -409,6 +452,9 @@ applyPlantSettings();
 
 settings.onChange((key) => {
 
+    if (key === 'performanceLogs') frameDiagnostics.setEnabled(settings.get('performanceLogs'));
+    if (key !== 'skin' && key !== 'texturePack') diagnostics.breadcrumb('settings.changed', 'Zmieniono ustawienie gry.', { key, value: settings.get(key) });
+
     if (key === 'theme') {
         loadTheme(settings.get('theme'));
     }
@@ -468,6 +514,7 @@ async function playWorld(worldInfo) {
 
 
     state = 'loading';
+    diagnostics.breadcrumb('world.loading', 'Rozpoczęto wczytywanie świata.', { seed: worldInfo.seed, terrain: worldInfo.terrain });
 
     menu.showLoading(TEXTS.loadingWorld);
     menuBackdrop.stop();
@@ -476,6 +523,10 @@ async function playWorld(worldInfo) {
     try {
 
         game = await Game.start(renderer, input, storage, worldInfo, settings);
+        game.perfDiagnostics = frameDiagnostics;
+        game.world.perfDiagnostics = frameDiagnostics;
+        game.saver.onDiagnostic = (level, kind, message, data) => diagnostics.record(level, kind, message, data);
+        diagnostics.breadcrumb('world.ready', 'Świat gotowy do gry.');
 
         game.sounds = sounds;
 
@@ -525,7 +576,7 @@ async function playWorld(worldInfo) {
 
     catch (error) {
 
-        console.error(error);
+        diagnostics.error('world.load.failed', error, { seed: worldInfo.seed, terrain: worldInfo.terrain });
 
         game = null;
         state = 'menu';
@@ -872,6 +923,13 @@ function commandContext() {
         time: game.time,
         chat,
         commands,
+        diagnostics,
+        openDiagnostics: () => {
+            closeChat(false);
+            pauseGame();
+            menu.showDiagnostics('pause');
+        },
+        markProblem,
         map: terrainMap,
 
         // Aktualizacje aplikacji (/aktualizacja) - null w przeglądarce.
@@ -1142,6 +1200,8 @@ async function reloadGame() {
         await game.saver.flush();
     }
 
+    diagnostics.breadcrumb('app.reload', 'Ponowne uruchomienie gry.');
+    await diagnostics.flush();
     location.reload();
 
 }
@@ -1157,6 +1217,8 @@ async function reloadWithTouch(on) {
 
     params.set('dotyk', on ? '1' : '0');
 
+    diagnostics.breadcrumb('app.reload', 'Ponowne uruchomienie ze zmianą sterowania.');
+    await diagnostics.flush();
     location.search = params.toString();
 
 }
@@ -1231,6 +1293,10 @@ async function quitWithoutSaving() {
 
 function closeWorld() {
 
+    diagnostics.breadcrumb('world.closed', 'Zakończono rozgrywkę w świecie.');
+    void diagnostics.flush();
+    frameDiagnostics.reset('world-closed');
+
     game = null;
 
     achievements.detach();
@@ -1265,6 +1331,7 @@ let lastFrameTime = 0;
 let nextFrameTime = 0;
 
 let fpsShownAt = 0;
+let diagnosticState = null;
 
 
 function animate(now) {
@@ -1273,6 +1340,7 @@ function animate(now) {
 
 
     if (!game && document.hidden) {
+        frameDiagnostics.reset('hidden');
         lastFrameTime = 0;
         nextFrameTime = 0;
         return;
@@ -1304,6 +1372,16 @@ function animate(now) {
         : 1 / 60;
 
     lastFrameTime = now;
+
+    if (state !== diagnosticState) {
+        diagnostics.breadcrumb('app.state', 'Zmiana stanu gry.', { from: diagnosticState, to: state });
+        diagnosticState = state;
+    }
+    frameDiagnostics.beginFrame(now, {
+        active: Boolean(game) && ['playing', 'chat', 'inventory'].includes(state),
+        state, fpsLimit: configuredLimit, hidden: document.hidden
+    });
+    frameDiagnostics.beginStage('ui');
 
 
     // Dźwięki gry grają tylko w trakcie gry (w pauzie i w menu stoją;
@@ -1351,10 +1429,12 @@ function animate(now) {
 
 
         perf.begin();
+        frameDiagnostics.beginStage('update');
 
-        game.update(dt);
-
-        sounds.updateListener(game.camera);
+        try {
+            game.update(dt);
+            sounds.updateListener(game.camera);
+        } finally { frameDiagnostics.endStage('update'); }
 
         perf.endUpdate();
 
@@ -1375,12 +1455,19 @@ function animate(now) {
     // W pauzie świat dalej jest widoczny pod menu.
 
     perf.begin();
+    frameDiagnostics.beginStage('render');
+    frameDiagnostics.beginGpu(renderer);
 
-    game.render();
-
+    try { game.render(); }
+    finally {
+        frameDiagnostics.endGpu();
+        frameDiagnostics.endStage('render');
+    }
     perf.endRender();
 
     perf.endFrame();
+    frameDiagnostics.endStage('ui');
+    frameDiagnostics.endFrame({ game, renderer });
 
 
     // Licznik FPS w rogu (odświeżany dwa razy na sekundę).
@@ -1404,6 +1491,11 @@ function animate(now) {
 // F5 w grze zmienia widok kamery (zamiast odświeżać stronę).
 
 window.addEventListener('keydown', (event) => {
+
+    if ((event.code === 'F8' || event.key === 'F8') && !event.repeat && game) {
+        event.preventDefault();
+        markProblem();
+    }
 
     if (event.code === 'F3') {
         event.preventDefault();
@@ -1442,6 +1534,17 @@ const hotbar = new Hotbar(
     document.getElementById('hotbar'),
     blockIcons
 );
+
+let diagnosticErrorsShown = diagnostics.status().totalErrorOccurrences;
+let diagnosticNoticeAt = -Infinity;
+diagnostics.subscribe(status => {
+    const newError = status.totalErrorOccurrences > diagnosticErrorsShown;
+    diagnosticErrorsShown = status.totalErrorOccurrences;
+    if (newError && game && performance.now() - diagnosticNoticeAt > 10000) {
+        diagnosticNoticeAt = performance.now();
+        hotbar.showName('Wystąpił błąd — szczegóły: Pauza → Diagnostyka i logi');
+    }
+});
 
 
 // Ekwipunek (E) - te same ikonki.
@@ -1574,11 +1677,11 @@ function announceUpdate(status) {
 if (window.desktop) {
 
     window.desktop.onBeforeClose(async () => {
-
-        if (game) {
-            await game.saver.flush();
+        try {
+            if (game) await game.saver.flush();
+        } finally {
+            await diagnostics.dispose();
         }
-
     });
 
 

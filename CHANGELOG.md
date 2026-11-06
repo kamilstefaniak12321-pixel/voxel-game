@@ -11,6 +11,30 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 0.67.0 - Logi błędów i wydajności
+
+Lokalna diagnostyka przebiegu gry — PR w przygotowaniu.
+
+- **Pauza → Diagnostyka i logi** oraz **Ustawienia → Gra** pokazują błędy,
+  ostatnie spadki FPS i najdroższe zmierzone etapy pracy. **F8** lub
+  `/logi problem` zaznacza moment problemu; `/logi` otwiera panel.
+- Błędy zawierają czas, stos wywołań i kontekst: wersję gry, ustawienia,
+  GPU, seed i pozycję w świecie. Zapis obejmuje także błędy startu,
+  utratę WebGL i awarię procesu w aplikacji Windows.
+- Podsumowania wydajności rozdzielają pracę CPU, wysyłanie poleceń
+  renderowania i niezależnie próbkowany czas GPU. Wolne klatki zachowują
+  koszt budowania terenu, siatek, światła, cieni, roślin i interfejsu.
+  Raport wskazuje dowody oraz podejrzenia; nie zgaduje niezmierzonej przyczyny.
+- Logi na komputerze mają ograniczony rozmiar i zachowują poprzednią
+  sesję po awarii. Panel eksportuje JSON z czytelnym podsumowaniem lub TXT;
+  w przeglądarce dostępne są pobranie i kopiowanie raportu.
+- Dane pozostają na urządzeniu. Raport nie zawiera zawartości świata,
+  czatu ani ekwipunku. **Logi wydajności** można wyłączyć niezależnie
+  od rejestrowania błędów. Pauza, ukryte okno i wybrany limit FPS są
+  uwzględniane w ocenie płynności.
+- Poprawiono przypisanie czasu pracy CPU do właściwego odstępu między
+  klatkami także w dotychczasowym monitorze `/wydajnosc`.
+
 ## 0.66.0 - Liście z 8 części
 
 Bardziej realistyczne liście według konceptu Kamila — PR #100.

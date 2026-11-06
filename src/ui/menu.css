@@ -631,3 +631,15 @@ body:not([data-screen="game"]) #crosshair {
 .settings-experiment:has(.settings-model-picker) {
     grid-column: 1 / -1;
 }
+.diagnostics-panel { width: min(780px, 100%); text-align: left; }
+.diagnostics-metrics { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin: 18px 0; }
+.diagnostics-metric { display: grid; gap: 8px; padding: 12px; background: rgba(80, 80, 80, .18); border-radius: 4px; }
+.diagnostics-metric span { font-size: 12px; }
+.diagnostics-event { margin: 8px 0; padding: 8px; background: rgba(80, 80, 80, .14); overflow-wrap: anywhere; }
+.diagnostics-event summary { cursor: pointer; }
+.diagnostics-event pre { white-space: pre-wrap; font-size: 12px; }
+.diagnostics-actions { flex-wrap: wrap; }
+.diagnostics-report { box-sizing: border-box; width: 100%; min-height: 210px; margin: 12px 0; font: 12px/1.5 monospace; user-select: text; }
+.diagnostics-report[hidden] { display: none; }
+@media (max-width: 640px) { .diagnostics-metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 480px) { .diagnostics-actions { flex-direction: column; } .diagnostics-actions .menu-button { width: 100%; flex: none; } }

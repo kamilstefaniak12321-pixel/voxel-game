@@ -390,3 +390,4 @@ body[data-menu-backdrop="ready"] #menu .scene-menu::before {
         animation: none;
     }
 }
+#menu .screen-diagnostics .menu-scene-panel { width: min(900px, 100%); }

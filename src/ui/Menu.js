@@ -1,4 +1,5 @@
 import { TEXTS } from './texts.js';
+import { diagnosticsPanel } from './DiagnosticsPanel.js';
 import { TERRAIN_TYPES, terrainName } from '../world/terrain/generators.js';
 import { DEFAULT_TERRAIN, DEFAULT_GAME_MODE } from '../config.js';
 import { SETTINGS_RANGES, SETTINGS_CHOICES, graphicsPreset, nextGraphicsPreset } from '../settings/Settings.js';
@@ -91,6 +92,7 @@ const MENU_SCENE_VIEWS = {
     confirm: 'river',
     achievements: 'mountains',
     settings: 'forest',
+    diagnostics: 'forest',
     error: 'home'
 };
 
@@ -173,6 +175,10 @@ export class Menu {
 
     newScreen(name, textured = true) {
 
+        this.screenCleanup?.();
+        this.screenCleanup = null;
+        this.handlers.diagnostics?.breadcrumb('ui.screen', 'Otwarto ekran menu.', { screen: name, overlay: !textured });
+
         this.root.replaceChildren();
         this.root.hidden = false;
 
@@ -208,6 +214,9 @@ export class Menu {
 
 
     hide() {
+
+        this.screenCleanup?.();
+        this.screenCleanup = null;
 
         this.root.hidden = true;
         this.root.replaceChildren();
@@ -681,6 +690,7 @@ export class Menu {
         );
 
         screen.querySelector('.menu-buttons').append(
+            ...(this.handlers.diagnostics ? [button('Diagnostyka i logi', () => this.showDiagnostics('title'))] : []),
             button(TEXTS.back, () => this.showTitle(), '', true)
         );
 
@@ -710,6 +720,7 @@ export class Menu {
         }
 
         buttons.append(button(TEXTS.saveAndQuit, () => this.handlers.quitToMenu()));
+        if (this.handlers.diagnostics) buttons.append(button('Diagnostyka i logi', () => this.showDiagnostics('pause')));
 
 
         screen.append(
@@ -1048,6 +1059,9 @@ export class Menu {
         // Rozwinięcie pamiętamy do końca sesji (this.showAdvanced).
 
         const parts = [grid];
+        if (tab === 'game' && this.handlers.diagnostics) {
+            parts.push(button('Diagnostyka i logi', () => this.showDiagnostics(returnTo)));
+        }
 
         if (tab === 'video') {
 
@@ -1134,6 +1148,17 @@ export class Menu {
 
     }
 
+
+    showDiagnostics(returnTo = 'title') {
+        if (!this.handlers.diagnostics) return;
+        const screen = this.newScreen('diagnostics', returnTo !== 'pause');
+        const back = () => returnTo === 'pause' ? this.showPause() : this.showSettings('title', 'game');
+        this.onEscape = back;
+        const panel = diagnosticsPanel(this.handlers.diagnostics, button, this.handlers.markProblem);
+        this.screenCleanup = panel.dispose;
+        screen.append(el('h2', 'menu-heading', 'Diagnostyka i logi'), panel.element,
+            button(TEXTS.back, back, '', true));
+    }
 
     // Jeden element ustawień - rodzaj zależy od ustawienia:
     //   liczba z zakresem (SETTINGS_RANGES)  -> suwak,

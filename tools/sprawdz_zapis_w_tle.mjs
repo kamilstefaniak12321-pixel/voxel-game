@@ -66,6 +66,49 @@ worker.fail = false;
 assert.equal(await saver.flush(), true);
 assert.equal(dirty.size, 0);
 
+// Diagnostyka jest obserwatorem. Nawet rzucający callback nie może
+// zamienić udanej transakcji w błąd ani przerwać ponawiania po błędzie bazy.
+const diagnosticBackend = new WorldStorage(memoryDatabase());
+const diagnosticChunk = { cx: 3, cz: -4, blocks: new Uint8Array(32768).fill(7) };
+const diagnosticDirty = new Set([diagnosticChunk]);
+const diagnosticWorld = {
+    takeUnsavedChunks() { const result = [...diagnosticDirty]; diagnosticDirty.clear(); return result; },
+    markUnsaved(values) { for (const value of values) diagnosticDirty.add(value); },
+    hasUnsavedChanges: () => diagnosticDirty.size > 0
+};
+let diagnosticStorageFails = false;
+const diagnosticCalls = [];
+const diagnosticSaver = new WorldSaver({
+    async saveWorldAndChunks(...args) {
+        if (diagnosticStorageFails) throw new Error('QuotaExceededError');
+        return diagnosticBackend.saveWorldAndChunks(...args);
+    }
+}, { id: 'diagnostic-isolation' }, diagnosticWorld, { getState: () => ({ x: 30 }) });
+diagnosticSaver.onDiagnostic = (level, kind) => {
+    diagnosticCalls.push({ level, kind });
+    throw new Error('Uszkodzony odbiorca logów');
+};
+assert.equal(await diagnosticSaver.save(), true, 'Awaria callbacku logów nie zmienia sukcesu zapisu');
+assert.equal((await diagnosticBackend.loadChunks('diagnostic-isolation')).get('3,-4')[0], 7,
+    'Sukces jest potwierdzony odczytem faktycznej transakcji');
+assert.equal(diagnosticDirty.size, 0, 'Callback nie przywraca zapisanych chunków do niezapisanych');
+assert.equal(diagnosticSaver.getStatus(), 'Świat zapisany', 'HUD zachowuje prawdziwy wynik zapisu');
+assert.equal(diagnosticSaver.activeBatches.size, 0);
+diagnosticChunk.blocks[0] = 8;
+diagnosticDirty.add(diagnosticChunk);
+diagnosticStorageFails = true;
+assert.equal(await diagnosticSaver.save(), false, 'Awaria logów nie odrzuca Promise obsłużonego błędu zapisu');
+assert.equal(diagnosticDirty.size, 1, 'Błąd bazy zachowuje chunk do ponowienia mimo awarii logów');
+assert.equal(diagnosticSaver.getStatus(), 'Błąd zapisu świata!');
+assert.equal(diagnosticSaver.activeBatches.size, 0);
+assert.ok(Number.isFinite(diagnosticSaver.lastWriteMs));
+diagnosticStorageFails = false;
+assert.equal(await diagnosticSaver.flush(), true, 'Ponowienie działa po błędzie bazy i callbacku');
+assert.equal((await diagnosticBackend.loadChunks('diagnostic-isolation')).get('3,-4')[0], 8,
+    'Ponowienie zapisuje najnowszą edycję');
+assert.equal(diagnosticDirty.size, 0);
+assert.deepEqual(diagnosticCalls.map(call => call.kind), ['world.saved', 'world.save.failed', 'world.saved']);
+
 // Awaria procesu workera: pierwsza operacja odrzucona, następna korzysta
 // ze sprawdzonej ścieżki bezpośredniej, bez pozornego potwierdzenia zapisu.
 const pending = storage.saveWorldAndChunks(info, chunks);

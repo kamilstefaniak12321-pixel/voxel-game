@@ -1,0 +1,453 @@
+{
+  "schemaVersion": 1,
+  "version": "0.67.0",
+  "date": "2026-11-06",
+  "scope": "Initial native series and integration correctness; final recovery and benchmark may be appended separately.",
+  "sources": [
+    {
+      "name": "result.json",
+      "scope": "browser",
+      "sha256": "168b009602d3cfcfa01047597b5523f91003cc5a33c3d6cf8bbfa831057e1d58"
+    },
+    {
+      "name": "result-bench1.json",
+      "scope": "native",
+      "sha256": "9ddbbf0e9c5d12d4c7cddf8387e7a1d182e612f34f90ceb2e28f9a6c7e8256fd"
+    },
+    {
+      "name": "result-spike1.json",
+      "scope": "native",
+      "sha256": "ed359ade541738df7ef3ca840e09d95312023017815327e9c8250a8ce91f99dd"
+    },
+    {
+      "name": "result-errors1.json",
+      "scope": "native",
+      "sha256": "b532d29a7880579ba895f6c46e7ef28be6259e07d9c5482b04f20acfc783ae66"
+    },
+    {
+      "name": "export-native.json",
+      "scope": "native",
+      "sha256": "a237224aec725a5eb643078aca1eaa603e941c860bbbe49b6efb4723ef7d3a22"
+    },
+    {
+      "name": "result-crash1.json",
+      "scope": "native",
+      "sha256": "87ed765198c5e9a78f5c2ce3b3432a05b1325461ad24cd680d6ef869bf5c5402"
+    }
+  ],
+  "native": {
+    "hardware": {
+      "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 3050 Laptop GPU (0x000025A2) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "webgl": 2,
+      "logicalProcessors": 16,
+      "memoryGiB": 16,
+      "platform": "desktop"
+    },
+    "viewport": {
+      "width": 1920,
+      "height": 1080,
+      "dpr": 1
+    },
+    "world": {
+      "seed": 2138286349,
+      "terrain": "realistic",
+      "mode": "developer",
+      "position": {
+        "x": 198,
+        "y": 62,
+        "z": -261
+      }
+    },
+    "settings": {
+      "viewDistance": 64,
+      "farTerrain": 1024,
+      "fpsLimit": 0,
+      "lightingLook": "natural",
+      "atmosphereLook": "natural",
+      "lightingMaterials": "standard",
+      "shadows": 3,
+      "leafModel": "parts",
+      "plantModels": "semi",
+      "bushyGrass": false,
+      "renderScale": 100
+    },
+    "benchmark": {
+      "method": "4 ×20s stationary native real main, 5s warm-up, disabled/enabled/enabled/disabled; independent RAF observer and existing PerfMonitor CPU",
+      "vsyncHz": 144,
+      "cpuScope": "Existing PerfMonitor update + render; excludes some recorder work outside those stages.",
+      "rows": [
+        {
+          "order": 1,
+          "performanceLogs": false,
+          "frames": 2880,
+          "fps": 143.9971200575987,
+          "frameP95Ms": 7.099999999976717,
+          "frameMaxMs": 14.099999999976717,
+          "cpuMedianMs": 4.299999952316284,
+          "cpuP95Ms": 5.700000047683716,
+          "queuedAtEnd": 0,
+          "loggerLastWindow": null
+        },
+        {
+          "order": 2,
+          "performanceLogs": true,
+          "frames": 2881,
+          "fps": 144.0456786296413,
+          "frameP95Ms": 7.100000000034925,
+          "frameMaxMs": 7.7000000000116415,
+          "cpuMedianMs": 4.400000095367432,
+          "cpuP95Ms": 6,
+          "queuedAtEnd": 0,
+          "loggerLastWindow": {
+            "durationMs": 1006.6,
+            "frames": 145,
+            "gpu": {
+              "status": "ready",
+              "sampleEvery": 8,
+              "pending": 0,
+              "disjoint": 0,
+              "skipped": 0,
+              "expired": 0,
+              "samples": 18,
+              "meanMs": 5.783,
+              "p50Ms": 5.897,
+              "p95Ms": 6.038,
+              "p99Ms": 6.038,
+              "maxMs": 6.038,
+              "maxLatencyFrames": 4,
+              "sampledFrom": 430263.5,
+              "sampledTo": 431207.7,
+              "scope": "sampled render GPU time; delayed results, not exact attribution of each slow frame"
+            },
+            "overheadMs": 3.9,
+            "overheadScope": "recorder/GPU-query CPU per window; stage clock calls are inside measured CPU"
+          }
+        },
+        {
+          "order": 3,
+          "performanceLogs": true,
+          "frames": 2877,
+          "fps": 143.8456846294613,
+          "frameP95Ms": 7.099999999976717,
+          "frameMaxMs": 14.100000000034925,
+          "cpuMedianMs": 4.400000095367432,
+          "cpuP95Ms": 5.999999761581421,
+          "queuedAtEnd": 0,
+          "loggerLastWindow": {
+            "durationMs": 1006.7,
+            "frames": 145,
+            "gpu": {
+              "status": "ready",
+              "sampleEvery": 8,
+              "pending": 0,
+              "disjoint": 0,
+              "skipped": 0,
+              "expired": 0,
+              "samples": 19,
+              "meanMs": 5.816,
+              "p50Ms": 5.912,
+              "p95Ms": 6.001,
+              "p99Ms": 6.001,
+              "maxMs": 6.001,
+              "maxLatencyFrames": 4,
+              "sampledFrom": 455394.4,
+              "sampledTo": 456394,
+              "scope": "sampled render GPU time; delayed results, not exact attribution of each slow frame"
+            },
+            "overheadMs": 5.6,
+            "overheadScope": "recorder/GPU-query CPU per window; stage clock calls are inside measured CPU"
+          }
+        },
+        {
+          "order": 4,
+          "performanceLogs": false,
+          "frames": 2881,
+          "fps": 144.0456786296413,
+          "frameP95Ms": 7.099999999976717,
+          "frameMaxMs": 8.200000000011642,
+          "cpuMedianMs": 4.299999952316284,
+          "cpuP95Ms": 5.599999904632568,
+          "queuedAtEnd": 0,
+          "loggerLastWindow": null
+        }
+      ]
+    },
+    "controlledSpike": {
+      "injected": true,
+      "scope": "One deliberately added approximately 85ms player update, not a naturally occurring bug.",
+      "at": "2026-11-06T15:36:58.673Z",
+      "message": "Przycięcie 90.2 ms; 133.0 FPS w ostatnim okresie.",
+      "trigger": "hitch",
+      "frame": {
+        "samples": 144,
+        "meanMs": 7.52,
+        "p50Ms": 6.9,
+        "p95Ms": 7.2,
+        "p99Ms": 7.5,
+        "maxMs": 90.2,
+        "aboveBudget": 1,
+        "above33ms": 1,
+        "above50ms": 1
+      },
+      "cpu": {
+        "samples": 144,
+        "meanMs": 5.324,
+        "p50Ms": 4.9,
+        "p95Ms": 7.7,
+        "p99Ms": 10.8,
+        "maxMs": 89.6
+      },
+      "slowFrames": [
+        {
+          "at": 580777.5,
+          "frameMs": 90.2,
+          "cpuMs": 89.6,
+          "stages": [
+            {
+              "id": "player",
+              "label": "Gracz, fizyka i interakcje",
+              "ms": 86.5
+            },
+            {
+              "id": "sky",
+              "label": "Wysyłanie nieba i horyzontu (CPU)",
+              "ms": 0.8
+            },
+            {
+              "id": "world",
+              "label": "Wysyłanie świata (CPU)",
+              "ms": 0.6
+            },
+            {
+              "id": "update",
+              "label": "Pozostała logika gry",
+              "ms": 0.3
+            },
+            {
+              "id": "shadows",
+              "label": "Wysyłanie cieni (CPU)",
+              "ms": 0.3
+            }
+          ]
+        }
+      ],
+      "suspects": [
+        {
+          "kind": "cpu",
+          "message": "Gracz, fizyka i interakcje: zmierzony koszt CPU w tej samej wolnej klatce.",
+          "evidence": {
+            "stage": "player",
+            "ms": 86.5,
+            "cpuMs": 89.6,
+            "frameMs": 90.2,
+            "at": 580777.5
+          },
+          "certainty": "same-frame-measured-cost"
+        }
+      ]
+    },
+    "controlledErrors": [
+      {
+        "kind": "console.error",
+        "message": "QA: kontrolowany błąd konsoli QA_CONSOLE_TEST",
+        "count": 1,
+        "hasStack": true
+      },
+      {
+        "kind": "runtime.error",
+        "message": "QA_UNCAUGHT_TEST",
+        "count": 1,
+        "hasStack": true
+      },
+      {
+        "kind": "runtime.promise",
+        "message": "QA_REJECTION_TEST",
+        "count": 1,
+        "hasStack": true
+      }
+    ],
+    "export": {
+      "events": 71,
+      "performanceSamples": 180,
+      "errorOccurrences": 3,
+      "readableSummaryCharacters": 27610,
+      "nativeEventCount": 12,
+      "lastGpu": {
+        "status": "ready",
+        "sampleEvery": 8,
+        "pending": 1,
+        "disjoint": 0,
+        "skipped": 0,
+        "expired": 0,
+        "samples": 18,
+        "meanMs": 5.977,
+        "p50Ms": 6.08,
+        "p95Ms": 6.172,
+        "p99Ms": 6.172,
+        "maxMs": 6.172,
+        "maxLatencyFrames": 4,
+        "sampledFrom": 699614.2,
+        "sampledTo": 700558.7,
+        "scope": "sampled render GPU time; delayed results, not exact attribution of each slow frame"
+      },
+      "method": "Actual Windows save dialog operated by root; saved JSON read back."
+    },
+    "rendererCrash": {
+      "injected": true,
+      "method": "webContents.forcefullyCrashRenderer()",
+      "journalEvents": [
+        {
+          "at": "2026-11-06T15:50:33.076Z",
+          "level": "error",
+          "kind": "desktop.renderer-gone",
+          "message": "Proces gry został zakończony.",
+          "data": {
+            "reason": "crashed",
+            "exitCode": 2
+          }
+        }
+      ]
+    }
+  },
+  "browser": {
+    "status": "passed",
+    "count": 34,
+    "scope": "Actual browser integration correctness; SwiftShader is not a native performance measurement",
+    "checks": [
+      "Actual main/bootstrap initialized diagnostics",
+      "Browser version resolved from package",
+      "Startup has no unexpected errors",
+      "Button: Ustawienia",
+      "Button: Gra",
+      "Performance logging setting visible under Gra",
+      "Toggle disables real application recorder",
+      "Toggle persists across real reload",
+      "Button: Ustawienia",
+      "Button: Gra",
+      "Toggle re-enables recorder",
+      "Button: Diagnostyka i logi",
+      "Button: Zaznacz problem",
+      "Mark problem records through actual menu handler",
+      "Uncaught browser error retained",
+      "Unhandled promise retained",
+      "Actual flat test world started",
+      "Controlled 85ms meshing spike attributed to measured same-frame CPU",
+      "Paused game emits no performance samples",
+      "Real main loop passes chosen 30 FPS target",
+      "Hidden-tab guard excludes samples",
+      "Button: Diagnostyka i logi",
+      "Button: Pokaż treść",
+      "Readable fallback contains captured error",
+      "Button: Zapisz raport",
+      "Browser file export includes marker",
+      "Browser file export preserves precise spike evidence",
+      "Download contains readable report plus raw records",
+      "Diagnostic panel fits 1280×760",
+      "Diagnostic panel fits 390×844",
+      "No unexpected runtime errors: []",
+      "Button: Zapisz raport",
+      "Bootstrap catches module failure and exports diagnostic report",
+      "Next session preserves preceding session history"
+    ],
+    "layouts": [
+      {
+        "name": "diagnostyka-desktop.png",
+        "width": 1280,
+        "height": 760,
+        "panel": {
+          "left": 250,
+          "right": 1030,
+          "width": 780
+        },
+        "scrollWidth": 1280,
+        "buttons": [
+          {
+            "text": "Zapisz raport",
+            "width": 196
+          },
+          {
+            "text": "Zaznacz problem",
+            "width": 196
+          },
+          {
+            "text": "Pokaż treść",
+            "width": 196
+          }
+        ]
+      },
+      {
+        "name": "diagnostyka-mobile.png",
+        "width": 390,
+        "height": 844,
+        "panel": {
+          "left": 16,
+          "right": 374,
+          "width": 358
+        },
+        "scrollWidth": 390,
+        "buttons": [
+          {
+            "text": "Zapisz raport",
+            "width": 175
+          },
+          {
+            "text": "Zaznacz problem",
+            "width": 175
+          },
+          {
+            "text": "Pokaż treść",
+            "width": 175
+          }
+        ]
+      }
+    ],
+    "controlledSpike": {
+      "frame": {
+        "samples": 58,
+        "meanMs": 17.479,
+        "p50Ms": 13.9,
+        "p95Ms": 20.9,
+        "p99Ms": 83.4,
+        "maxMs": 83.4,
+        "aboveBudget": 12,
+        "above33ms": 1,
+        "above50ms": 1
+      },
+      "cpu": {
+        "samples": 58,
+        "meanMs": 2.269,
+        "p50Ms": 0.8,
+        "p95Ms": 1.1,
+        "p99Ms": 85.9,
+        "maxMs": 85.9
+      },
+      "suspects": [
+        {
+          "kind": "cpu",
+          "message": "Siatki bloków i roślin: zmierzony koszt CPU w tej samej wolnej klatce.",
+          "evidence": {
+            "stage": "mesh",
+            "ms": 85.1,
+            "cpuMs": 85.9,
+            "frameMs": 83.4,
+            "at": 3618.2
+          },
+          "certainty": "same-frame-measured-cost"
+        }
+      ]
+    },
+    "startupFailure": [
+      {
+        "kind": "startup.failed",
+        "message": "QA_EXPECTED_BOOT_FAILURE"
+      }
+    ]
+  },
+  "limitations": [
+    "Stationary VSync-limited initial native series does not establish all-world overhead or streaming performance.",
+    "GPU rows and overheadMs are last approximately one-second windows, not whole 20-second averages.",
+    "CPU render submission is not GPU execution.",
+    "Mobile viewport is not physical Android hardware testing.",
+    "Native renderer crash was deliberate."
+  ]
+}

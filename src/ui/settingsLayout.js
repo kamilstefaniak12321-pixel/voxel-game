@@ -50,6 +50,7 @@ export const SETTINGS_TABS = {
     game: [
         'meteorites',
         'showFps',
+        'performanceLogs',
         'autoUpdates'
     ],
 

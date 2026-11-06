@@ -3,6 +3,7 @@ import { itemExists, getItemLabel } from '../items/ItemRegistry.js';
 import { getCategory, CATEGORY_ORDER } from '../items/categories.js';
 import { STACK_SIZE } from '../game/Inventory.js';
 import { GROUPS, RECIPES } from './recipes.js';
+import { stoneToolInfo, stoneToolResult } from '../items/stoneTools.js';
 
 // ------------------------------------------------------------
 // WYTWARZANIE (crafting) - siatka 2 x 2 w ekwipunku
@@ -44,6 +45,10 @@ export function matchesIngredient(spec, type) {
 
     return type !== null && ingredientTypes(spec).includes(type);
 
+}
+
+function keepsIngredient(recipe, type) {
+    return recipe.keep?.some(spec => matchesIngredient(spec, type)) ?? false;
 }
 
 
@@ -185,7 +190,7 @@ export const RECIPE_LIST = RECIPES
 
 export function getRecipe(id) {
 
-    return RECIPES.find((recipe) => recipe.id === id) ?? null;
+    return RECIPES.find((recipe) => recipe.id === id) ?? materialToolRecipe(id);
 
 }
 
@@ -318,7 +323,9 @@ export function gridResult(grid) {
 
     const recipe = findRecipe(grid);
 
-    return recipe ? { recipe, type: recipe.result[0], count: recipe.result[1] } : null;
+    return recipe ? { recipe,
+        type: recipe.stoneTool ? stoneToolResult(recipe.stoneTool, grid) : recipe.result[0],
+        count: recipe.result[1] } : null;
 
 }
 
@@ -390,8 +397,25 @@ export function recipeText(recipe) {
 
 export function recipesFor(type) {
 
-    return RECIPE_LIST.filter((recipe) => recipe.result[0] === type);
+    const material = materialToolRecipe(type);
+    return material ? [material] : RECIPE_LIST.filter((recipe) => recipe.result[0] === type);
 
+}
+
+// Specific /przepisy and /wytworz requests must use the requested stone even
+// when a different rock is more plentiful in the inventory. The ordinary
+// recipe book keeps its existing three entries and supports mixed materials.
+const materialToolRecipes = new Map();
+function materialToolRecipe(type) {
+    const info = stoneToolInfo(type);
+    if (!info || info.stone === 'stone') return null;
+    if (!materialToolRecipes.has(type)) {
+        const base = RECIPES.find(recipe => recipe.id === info.tool);
+        const recipe = { ...base, id: type, result: [type, 1], key: { ...base.key, R: info.stone } };
+        recipe.shape = shapeOf(recipe);
+        materialToolRecipes.set(type, recipe);
+    }
+    return materialToolRecipes.get(type);
 }
 
 
@@ -547,7 +571,7 @@ export function fillGrid(inventory, recipe, times = 1) {
 
         if (type) {
 
-            const count = recipe.keep?.includes(type) ? 1 : possible;
+            const count = keepsIngredient(recipe, type) ? 1 : possible;
             inventory.remove(type, count);
             inventory.craft[index] = { type, count };
 
@@ -577,7 +601,7 @@ export function craftFromGrid(inventory) {
 
         const item = grid[i];
 
-        if (item && !result.recipe.keep?.includes(item.type)) {
+        if (item && !keepsIngredient(result.recipe, item.type)) {
 
             item.count--;
 
@@ -628,7 +652,7 @@ export function craftAll(inventory, limit = STACK_SIZE) {
 // Wytworzenie wprost z ekwipunku (komenda /wytworz): składniki z całego
 // ekwipunku, wynik do ekwipunku. Zwraca, ile razy się udało.
 
-export function craftFromInventory(inventory, recipe, times = 1) {
+export function craftFromInventory(inventory, recipe, times = 1, onCrafted = null) {
 
     const placed = fillGrid(inventory, recipe, times);
 
@@ -636,9 +660,11 @@ export function craftFromInventory(inventory, recipe, times = 1) {
         return 0;
     }
 
-    const [, crafted] = craftAll(inventory, placed);
+    const [result, crafted] = craftAll(inventory, placed);
 
     returnGrid(inventory);
+
+    if (crafted > 0) onCrafted?.(result, crafted);
 
     return crafted;
 

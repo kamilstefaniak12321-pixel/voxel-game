@@ -4,6 +4,7 @@ import { TREE_PACKS, TREE_PACK_ERRORS } from '../blocks/treePacks.js';
 import { PLANT_PACKS } from '../blocks/plantPacks.js';
 import { TORCH_VARIANTS } from '../blocks/torches.js';
 import { itemExists } from '../items/ItemRegistry.js';
+import { STONE_TOOL_MATERIALS, stoneToolType } from '../items/stoneTools.js';
 import { STACK_SIZE } from '../game/Inventory.js';
 
 // ------------------------------------------------------------
@@ -59,6 +60,12 @@ const PACK_LITTER = TREE_PACKS
 
 export const GROUPS = {
 
+    axes: {
+        label: 'siekiera (dowolny kamień)',
+        icon: 'axe',
+        types: STONE_TOOL_MATERIALS.map(material => stoneToolType('axe', material.stone))
+    },
+
     torches: {
         label: 'pochodnia (dowolny kolor)',
         icon: 'torch',
@@ -74,7 +81,7 @@ export const GROUPS = {
     rock: {
         label: 'skała (kamień, granit, wapień, piaskowiec, łupek, bazalt)',
         icon: 'stone',
-        types: ['stone', 'granite', 'limestone', 'sandstone', 'slate', 'basalt']
+        types: STONE_TOOL_MATERIALS.map(material => material.stone)
     },
 
     cone: {
@@ -151,7 +158,7 @@ import { FIRE_WOODS, fuelType } from '../game/CampfireState.js';
 
 export const RECIPES = [
     ...Object.keys(FIRE_WOODS).map(wood => ({ id: fuelType(wood), result: [fuelType(wood), 4],
-        ingredients: [`#${wood}_logs`, 'axe'], keep: ['axe'],
+        ingredients: [`#${wood}_logs`, '#axes'], keep: ['#axes'],
         note: 'Siekiera zostaje. Opał: PPM na ziemię, potem dokładaj do 6 polan.' })),
     { id: 'fire_starter', result: ['fire_starter', 1], ingredients: ['stick', 'stick'],
         note: '6 polan + trawa; przytrzymaj PPM starterem przez 5 sekund.' },
@@ -205,23 +212,26 @@ export const RECIPES = [
     {
         id: 'axe',
         result: ['axe', 1],
+        stoneTool: 'axe',
         pattern: ['RR', 'RS'],
         key: { R: '#rock', S: 'stick' },
-        note: 'Drewno kopie się 3 razy szybciej; PPM na pniu - okorowanie.'
+        note: 'Drewno kopie się 3 razy szybciej; PPM na pniu - okorowanie. Jeden rodzaj skały nadaje głowicy swój wygląd; mieszane skały dają zwykłą kamienną.'
     },
     {
         id: 'pickaxe',
         result: ['pickaxe', 1],
+        stoneTool: 'pickaxe',
         pattern: ['RR', '.S'],
         key: { R: '#rock', S: 'stick' },
-        note: 'Skały kopie się 3 razy szybciej.'
+        note: 'Skały kopie się 3 razy szybciej. Jeden rodzaj skały nadaje głowicy swój wygląd; mieszane skały dają zwykłą kamienną.'
     },
     {
         id: 'shovel',
         result: ['shovel', 1],
+        stoneTool: 'shovel',
         pattern: ['R', 'S'],
         key: { R: '#rock', S: 'stick' },
-        note: 'Ziemię, piasek, żwir i błoto kopie się 3 razy szybciej.'
+        note: 'Ziemię, piasek, żwir i błoto kopie się 3 razy szybciej. Wygląd głowicy zależy od użytej skały.'
     },
 
 

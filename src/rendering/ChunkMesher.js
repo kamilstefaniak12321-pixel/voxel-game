@@ -20,6 +20,7 @@ import { BUSHY_GRASS_TEXTURE } from '../blocks/bushyGrass.js';
 import { getAtlasUV } from './TextureAtlas.js';
 import { getPlantMeshTemplate, lightPlantMeshTemplate } from './PlantMeshTemplate.js';
 import { createPlantDetailLookup } from './PlantDistanceModels.js';
+import { PINE_UPPER_ID, pineBarkTransitionStage, mossCarpetVariant } from './SurfaceTextureVariants.js';
 const plantFaceUvCache = new Map();
 const plantFaceUV = texture => {
     if (!plantFaceUvCache.has(texture)) plantFaceUvCache.set(texture, getAtlasUV(texture));
@@ -1099,7 +1100,7 @@ function addFlats(flats, faceCount, baseX, baseZ, first = 0, end = flats.length)
         const lz = flats[k + 2];
 
         const id = flats[k + 3];
-        const { flat, uv, rotate, tint, surfaceProfiles } = blockRenderData[id];
+        const { flat, uv, rotate, tint, surfaceProfiles, worldTextureVariants } = blockRenderData[id];
         const emission = getLightEmission(id) / MAX_LIGHT * 255;
 
         const flatTint = tint && meshTint ? tintOfColumn(lx, lz) : null;
@@ -1111,7 +1112,8 @@ function addFlats(flats, faceCount, baseX, baseZ, first = 0, end = flats.length)
 
         const rotation = rotate[faceIndex] ? getRotationAt(baseX + lx, y, baseZ + lz) : 0;
 
-        const faceUv = uv[faceIndex][rotation];
+        const variantUV = worldTextureVariants?.[mossCarpetVariant(baseX + lx, y, baseZ + lz)] ?? uv;
+        const faceUv = variantUV[faceIndex][rotation];
 
 
         const cell = padIndex(lx, y, lz);
@@ -1408,11 +1410,12 @@ function cornerLight(block, faceIndex, i, front, depthShade) {
 }
 
 
-function addCubeFaces(id, renderData, lx, y, lz, faceCount, baseX, baseZ) {
+function addCubeFaces(id, renderData, lx, y, lz, faceCount, baseX, baseZ, textureVariant = 0) {
 
     const block = padIndex(lx, y, lz);
 
     const leaves = renderData.leaves;
+    const surfaceUV = renderData.worldTextureVariants?.[textureVariant] ?? renderData.uv;
 
     // W klasycznym modelu świecący blok jest jasny cały, bez cieni.
     // Atmosfera otrzymuje osobną emisję, niezależną od światła otoczenia.
@@ -1472,8 +1475,8 @@ function addCubeFaces(id, renderData, lx, y, lz, faceCount, baseX, baseZ) {
                 : 0;
 
         const uv = liquid
-            ? waterUv(renderData.uv[faceIndex][rotation], lx, lz)
-            : renderData.uv[faceIndex][rotation];
+            ? waterUv(surfaceUV[faceIndex][rotation], lx, lz)
+            : surfaceUV[faceIndex][rotation];
 
         // Ściana pod wodą (np. dno morza) ciemnieje z głębokością.
 
@@ -1950,7 +1953,9 @@ function* buildChunkGeometrySteps(chunk, world, { terrain, plants: includePlants
                 }
 
 
-                faceCount = addCubeFaces(id, renderData, lx, y, lz, faceCount, baseX, baseZ);
+                const textureVariant = id === PINE_UPPER_ID
+                    ? pineBarkTransitionStage(blocks, index, y, LAYER) : 0;
+                faceCount = addCubeFaces(id, renderData, lx, y, lz, faceCount, baseX, baseZ, textureVariant);
 
             }
 

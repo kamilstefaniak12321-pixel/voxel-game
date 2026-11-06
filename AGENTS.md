@@ -65,3 +65,11 @@ Od 0.50.0 również truskawka, jeżyna, chili i leszczyna mają pełne
 przejścia wzrostu i owocowania (`FruitBushAnimation.js`). Model owocu
 w ekwipunku i w dłoni musi pochodzić z tej samej geometrii co owoc na
 roślinie (`FruitBushGeometry.js`), z zachowaniem kształtu i kolorów.
+
+## Styl tekstur drewna i narzędzi
+
+Od 0.70.0 wzorcem jest atlas dostarczony przez Kamila: deski 16 × 16,
+cztery poziome pasy z przesuniętymi łączeniami, delikatny rysunek drewna
+i spójna paleta gatunku. Nowe deski twórz według tego schematu, a narzędzia
+według nowych sylwetek: materiał zmienia kamienną głowicę, zachowując
+trzonek i wiązanie. Szczegóły i źródła: [docs/styl-tekstur.md](docs/styl-tekstur.md).

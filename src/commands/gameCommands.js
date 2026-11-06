@@ -2766,13 +2766,14 @@ export const GAME_COMMANDS = [
                 throw new CommandError(`Ile razy: od 1 do ${STACK_SIZE}`);
             }
 
-            const done = craftFromInventory(game.inventory, recipe, times);
+            let craftedResult = null;
+            const done = craftFromInventory(game.inventory, recipe, times, result => { craftedResult = result; });
 
             if (done === 0) {
                 throw new CommandError(`Brakuje składników (albo miejsca w ekwipunku). ${recipeText(recipe)}`);
             }
 
-            const [type, count] = recipe.result;
+            const { type, count } = craftedResult;
 
             game.achieve?.('crafted', { type, count: count * done, recipe: recipe.id });
 

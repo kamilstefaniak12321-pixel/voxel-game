@@ -16,6 +16,8 @@ import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 import { modelIconData } from './model_icon.mjs';
+import { STONE_TOOL_TEXTURES } from '../src/rendering/StoneToolTextures.js';
+import { PINE_BARK_TEXTURES } from '../src/rendering/WoodAtlasTextures.js';
 
 const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -83,6 +85,11 @@ function atlasTiles() {
         };
     }
 
+    // Exported from the game's actual canvas atlas by the texture browser
+    // check, so documentation and downloadable packs use the same pixels.
+    for (const { name } of [...PINE_BARK_TEXTURES, ...STONE_TOOL_TEXTURES]) {
+        tiles[name] = { file: `assets/textures/derived/${name}.png` };
+    }
     return tiles;
 
 }

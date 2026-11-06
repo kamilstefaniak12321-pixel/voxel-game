@@ -34,53 +34,63 @@ for (let z = -1; z <= 1; z++) for (let x = -1; x <= 1; x++) {
     chunk.skyLight.fill(15);
 }
 const chunk = world.getChunk(0, 0);
-world.rebuildChunkMesh(chunk);
+world.markDirty(chunk);
+world.updateMeshes();
 const originalMesh = chunk.mesh, originalGeometry = originalMesh.geometry;
 for (const x of [1, 4, 8, 12]) chunk.setId(x, 10, 8, getBlockId('indygowiec_etap3'));
 world.markDirty(chunk);
 clearPlantMeshTemplates();
-let rebuilds = 0;
-const rebuild = world.rebuildChunkMesh.bind(world);
-world.rebuildChunkMesh = c => { rebuilds++; return rebuild(c); };
+let terrainCommits = 0, plantCommits = 0;
+const install = world.installChunkGeometry.bind(world);
+world.installChunkGeometry = (c, geometry, kind) => {
+    if (kind === 'terrain') terrainCommits++; else plantCommits++;
+    return install(c, geometry, kind);
+};
 let checks = 0;
 const equal = (actual, expected, label) => { assert.deepEqual(actual, expected, label); checks++; };
 
 world.updateMeshes(performance.now() - 1);
-equal(rebuilds, 0, 'An expired budget cannot start a dense rebuild');
+equal(terrainCommits, 0, 'An expired budget cannot start a dense rebuild');
 equal(chunk.mesh.geometry, originalGeometry, 'The old mesh stays visible');
 equal(world.dirtyChunks.has(chunk), true, 'The rebuild remains queued');
 
-// A controlled clock forces yields between models without a machine-dependent
-// millisecond assertion. Later edits must still appear in the final geometry.
+// Force actual scan/copy yields, not only template warming. An edit after the
+// first slice invalidates both cursors, including any captured padded lights.
 const realNow = Object.getOwnPropertyDescriptor(performance, 'now');
 let clock = 0, ticks = 0;
-Object.defineProperty(performance, 'now', { configurable: true, value: () => ++clock });
+Object.defineProperty(performance, 'now', { configurable: true, value: () => clock += .02 });
 try {
-    world.updateMeshes(clock + 4);
-    equal(rebuilds, 0, 'Cold model preparation yields before publishing a mesh');
+    world.updateMeshes(clock + .1);
+    equal(terrainCommits, 0, 'A tiny slice cannot publish a partially built mesh');
     equal(chunk.mesh.geometry, originalGeometry, 'Preparation is read-only');
     chunk.setId(1, 10, 8, getBlockId('marzanna_etap3'));
     chunk.setId(2, 11, 8, getBlockId('cattail'));
-    while (world.dirtyChunks.size && ticks++ < 30) world.updateMeshes(clock + 5);
-    equal(world.dirtyChunks.size, 0, 'The cursor eventually completes');
-    equal(rebuilds, 1, 'Exactly one final mesh replaces the old geometry');
+    world.markDirty(chunk);
+    while ((world.dirtyChunks.size || world.dirtyPlants.size) && ticks++ < 1000) world.updateMeshes(clock + 4);
+    equal(world.dirtyChunks.size, 0, 'Terrain cursor eventually completes');
+    equal(world.dirtyPlants.size, 0, 'Plant cursor eventually completes');
+    equal(terrainCommits, 1, 'Only current terrain is published');
+    equal(plantCommits, 1, 'Only current plants are published');
 } finally {
     if (realNow) Object.defineProperty(performance, 'now', realNow);
     else delete performance.now;
 }
-assert.ok(ticks > 0 && ticks < 30); checks++;
-equal(chunk.mesh, originalMesh, 'Mesh and shadow-scene identity stay stable');
-equal(chunk.shadowMesh.geometry, chunk.mesh.geometry, 'Shadow geometry updates together');
-const expected = buildChunkGeometry(chunk, world);
-for (const name of Object.keys(expected.attributes)) {
-    equal(chunk.mesh.geometry.attributes[name].array, expected.attributes[name].array, `Current ${name}, including edits during preparation`);
+assert.ok(ticks > 0 && ticks < 1000); checks++;
+equal(chunk.mesh, originalMesh, 'Terrain mesh identity stays stable');
+equal(chunk.shadowMesh.geometry, chunk.mesh.geometry, 'Terrain shadows update together');
+equal(chunk.plantShadowMesh.geometry, chunk.plantMesh.geometry, 'Plant shadows share the new buffer');
+for (const [kind, mesh] of [['terrain', chunk.mesh], ['plants', chunk.plantMesh]]) {
+    const expected = buildChunkGeometry(chunk, world, { terrain: kind === 'terrain', plants: kind === 'plants' });
+    for (const name of Object.keys(expected.attributes)) {
+        equal(mesh.geometry.attributes[name].array, expected.attributes[name].array, `Current ${kind}/${name}, including edits during slices`);
+    }
+    equal(mesh.geometry.index.array, expected.index.array, `Current ${kind} topology`);
+    expected.dispose();
 }
-equal(chunk.mesh.geometry.index.array, expected.index.array, 'Current topology');
-expected.dispose();
-
 world.markDirty(chunk);
 world.updateMeshes();
-equal(rebuilds, 2, 'Unbudgeted loading and direct synchronous use still work');
+equal(terrainCommits, 2, 'Unbudgeted loading also completes terrain');
+equal(plantCommits, 2, 'Unbudgeted loading also completes plants');
 const floor = world.getChunk(-1, -1);
 let paddingReads = 0;
 const getChunk = world.getChunk.bind(world);

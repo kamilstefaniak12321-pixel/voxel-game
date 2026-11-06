@@ -11,7 +11,7 @@ import { PLANT_MODELS, PLANT_MODEL_LEVELS, resolvePlantModel } from '../blocks/p
 // Zmienia tylko dane rysowania (blockRenderData - "cross" albo
 // "riverPlant") roślin z assets/models/rosliny/ - bloki, zapisy,
 // celownik, ikonki i przedmiot w dłoni zostają. Po zmianie chunki
-// przebudowują się stopniowo (World.remeshAll - main.js).
+// przebudowują się stopniowo tylko w pobliżu (World.remeshPlants - main.js).
 //
 //   simple   -> cross (obrazek: własny 16 x 16 albo z atlasu bloku);
 //               blok z własnym modelem (krzaki, rośliny nad wodą) - dwie

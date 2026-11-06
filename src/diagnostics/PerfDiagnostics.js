@@ -209,6 +209,8 @@ export class PerfDiagnostics {
         return {
             chunks: world?.chunks?.size ?? 0, queued: world?.loadQueue?.length ?? 0,
             dirty: world?.dirtyChunks?.size ?? 0, meshVersion: world?.meshVersion ?? 0,
+            dirtyPlants: world?.dirtyPlants?.size ?? 0,
+            meshJobs: { terrain: Boolean(world?.meshJobs?.terrain), plants: Boolean(world?.meshJobs?.plants) },
             generation: world?.generation?.getStats?.() ?? null,
             far: { shown: far?.shown?.size ?? 0, wanted: far?.wanted?.length ?? 0, cached: far?.tiles?.size ?? 0 },
             shadows: game.shadows?.stats?.() ?? null,

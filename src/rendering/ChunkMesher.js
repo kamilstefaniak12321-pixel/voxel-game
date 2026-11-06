@@ -102,21 +102,21 @@ const P = S + 2;
 const P_LAYER = P * P;
 
 
-const padOpaque = new Uint8Array(P_LAYER * (H + 2));
-const padShade = new Uint8Array(P_LAYER * (H + 2));
+let padOpaque = new Uint8Array(P_LAYER * (H + 2));
+let padShade = new Uint8Array(P_LAYER * (H + 2));
 
 // ID cieczy w komórce (0 = nie ciecz) - między dwiema komórkami tej
 // samej cieczy (np. woda przy wodzie) nie rysujemy ściany.
-const padLiquid = new Uint8Array(P_LAYER * (H + 2));
-const padSky = new Uint8Array(P_LAYER * (H + 2));
-const padR = new Uint8Array(P_LAYER * (H + 2));
-const padG = new Uint8Array(P_LAYER * (H + 2));
-const padB = new Uint8Array(P_LAYER * (H + 2));
+let padLiquid = new Uint8Array(P_LAYER * (H + 2));
+let padSky = new Uint8Array(P_LAYER * (H + 2));
+let padR = new Uint8Array(P_LAYER * (H + 2));
+let padG = new Uint8Array(P_LAYER * (H + 2));
+let padB = new Uint8Array(P_LAYER * (H + 2));
 
 // Numer dywanu w komórce (barwinek - TuftGeometry.js carpet), 0 - nie
 // dywan. Dywan łączy się z sąsiadem o tym samym numerze, także przez
 // granicę chunka.
-const padCarpet = new Uint8Array(P_LAYER * (H + 2));
+let padCarpet = new Uint8Array(P_LAYER * (H + 2));
 const CARPET_OF = new Uint8Array(blockRenderData.length);
 
 blockRenderData.forEach((data, id) => {
@@ -149,6 +149,10 @@ function padOffset(dx, dy, dz) {
 
 
 function fillPadding(chunk, world, height, first) {
+    for (const _ of fillPaddingSteps(chunk, world, height, first)) { /* synchronous callers */ }
+}
+
+function* fillPaddingSteps(chunk, world, height, first) {
 
     // Warstwy do skopiowania: od `first` do `last` (jedna nad
     // najwyższym blokiem chunka, jeśli mieści się w świecie).
@@ -158,7 +162,7 @@ function fillPadding(chunk, world, height, first) {
 
     padTop = last;
     padBottom = first;
-
+    let columns = 0;
 
     for (let dz = -1; dz <= 1; dz++) {
 
@@ -248,6 +252,8 @@ function fillPadding(chunk, world, height, first) {
 
                     }
 
+                    // At most eight short columns per unit (including edges).
+                    if ((++columns & 7) === 0) yield;
                 }
 
             }
@@ -772,9 +778,9 @@ const PLANT_BOTTOM_SHADE = 0.68;
 const SHORT_GRASS_ID = getBlockId('short_grass');
 const TALL_GRASS_ID = getBlockId('tall_grass');
 
-function addPlants(plants, faceCount, baseX, baseZ) {
+function addPlants(plants, faceCount, baseX, baseZ, first = 0, end = plants.length) {
 
-    for (let k = 0; k < plants.length; k += 4) {
+    for (let k = first; k < end; k += 4) {
 
         const lx = plants[k];
         const y = plants[k + 1];
@@ -983,10 +989,10 @@ function reachMask(cell, y) {
 // ------------------------------------------------------------
 // Generated river plants share the existing plant material and chunk batch.
 // Their cached templates carry actual surface normals and a linear albedo tint.
-function addRiverPlants(plants, faceCount, baseX, baseZ, grassDetail = null, overrides = null, animationRanges = null) {
+function addRiverPlants(plants, faceCount, baseX, baseZ, grassDetail = null, overrides = null, animationRanges = null, first = 0, end = plants.length) {
     const grass = grassDetail !== null;
     const grassUv = grass ? getAtlasUV(BUSHY_GRASS_TEXTURE) : null;
-    for (let k = 0; k < plants.length; k += 4) {
+    for (let k = first; k < end; k += 4) {
         const lx = plants[k], y = plants[k + 1], lz = plants[k + 2];
         const data = grass ? { kind: 'grass', uv: grassUv } : blockRenderData[plants[k + 3]].riverPlant;
         const wx = baseX + lx, wz = baseZ + lz;
@@ -1052,9 +1058,9 @@ function addRiverPlants(plants, faceCount, baseX, baseZ, grassDetail = null, ove
 // Jak daleko od ściany sąsiada (żeby nie migotała razem z nią).
 const FLAT_GAP = 0.03;
 
-function addFlats(flats, faceCount, baseX, baseZ) {
+function addFlats(flats, faceCount, baseX, baseZ, first = 0, end = flats.length) {
 
-    for (let k = 0; k < flats.length; k += 4) {
+    for (let k = first; k < end; k += 4) {
 
         const lx = flats[k];
         const y = flats[k + 1];
@@ -1646,7 +1652,117 @@ export function prepareChunkPlantGeometry(chunk, world, deadline) {
     return true;
 }
 
-export function buildChunkGeometry(chunk, world) {
+// Only unfinished jobs own scratch arrays. A tiny pool reuses allocations across
+// chunks without retaining chunk/world references or a buffer for every chunk.
+const meshScratchPool = [];
+
+function captureMeshScratch() {
+    return { padOpaque, padShade, padLiquid, padSky, padR, padG, padB, padCarpet,
+        padTop, padBottom, faceCapacity, positionBuffer, normalBuffer, uvBuffer,
+        colorBuffer, atmosphereLightBuffer, surfaceOcclusionBuffer, surfaceEmissionBuffer,
+        surfaceProfileBuffer, tintBuffer, plantMotionBuffer, splitBuffer,
+        meshTint, meshFlow, fastLeaves, leafParts, shade: SHADE.slice() };
+}
+
+function activateMeshScratch(state) {
+    ({ padOpaque, padShade, padLiquid, padSky, padR, padG, padB, padCarpet,
+        padTop, padBottom, faceCapacity, positionBuffer, normalBuffer, uvBuffer,
+        colorBuffer, atmosphereLightBuffer, surfaceOcclusionBuffer, surfaceEmissionBuffer,
+        surfaceProfileBuffer, tintBuffer, plantMotionBuffer, splitBuffer,
+        meshTint, meshFlow, fastLeaves, leafParts } = state);
+    for (let i = 0; i < SHADE.length; i++) SHADE[i] = state.shade[i];
+}
+
+function acquireMeshScratch() {
+    const state = meshScratchPool.pop() ?? {
+        padOpaque: new Uint8Array(P_LAYER * (H + 2)), padShade: new Uint8Array(P_LAYER * (H + 2)),
+        padLiquid: new Uint8Array(P_LAYER * (H + 2)), padSky: new Uint8Array(P_LAYER * (H + 2)),
+        padR: new Uint8Array(P_LAYER * (H + 2)), padG: new Uint8Array(P_LAYER * (H + 2)),
+        padB: new Uint8Array(P_LAYER * (H + 2)), padCarpet: new Uint8Array(P_LAYER * (H + 2)),
+        faceCapacity: 0, positionBuffer: null, normalBuffer: null, uvBuffer: null,
+        colorBuffer: null, atmosphereLightBuffer: null, surfaceOcclusionBuffer: null,
+        surfaceEmissionBuffer: null, surfaceProfileBuffer: null, tintBuffer: null,
+        plantMotionBuffer: null, splitBuffer: null
+    };
+    Object.assign(state, { padTop: 0, padBottom: 0, meshTint: null, meshFlow: null,
+        fastLeaves, leafParts, shade: SHADE.slice() });
+    return state;
+}
+
+function releaseMeshScratch(state) {
+    state.meshTint = state.meshFlow = null;
+    // Do not retain an exceptional giant plant/chunk allocation indefinitely.
+    if (meshScratchPool.length < 2 && state.faceCapacity <= 65536) meshScratchPool.push(state);
+}
+
+/**
+ * Incremental, unpublished geometry. World validates its chunk revision before
+ * each step and installs the result atomically. Terrain includes water inside
+ * waterlogged plants; plants-only never duplicates that water or tree leaves.
+ * Independent jobs can be interleaved safely, including synchronous builds.
+ */
+export function createChunkGeometryJob(chunk, world, options = {}) {
+    let iterator = buildChunkGeometrySteps(chunk, world,
+        { terrain: true, plants: false, legacyGroups: false, ...options });
+    let scratch = acquireMeshScratch();
+    let result = { done: false, geometry: null };
+    return {
+        step(deadline = Infinity) {
+            if (result.done || !iterator || performance.now() >= deadline) return result;
+            const previous = captureMeshScratch();
+            activateMeshScratch(scratch);
+            let failed = false;
+            try {
+                do {
+                    const next = iterator.next();
+                    if (next.done) {
+                        result = { done: true, geometry: next.value };
+                        iterator = null;
+                        break;
+                    }
+                } while (deadline === Infinity || performance.now() < deadline);
+            } catch (error) {
+                failed = true;
+                iterator = null;
+                throw error;
+            } finally {
+                scratch = captureMeshScratch();
+                activateMeshScratch(previous);
+                if (result.done || failed) {
+                    releaseMeshScratch(scratch);
+                    scratch = null;
+                }
+            }
+            return result;
+        },
+        cancel() {
+            if (!iterator) return;
+            // The generator disposes a partially copied BufferGeometry in its
+            // finally block. The old visible mesh belongs to World throughout.
+            iterator.return();
+            iterator = null;
+            releaseMeshScratch(scratch);
+            scratch = null;
+            result = { done: true, geometry: null };
+        }
+    };
+}
+
+// Compatibility for loading/tools that need one synchronous combined geometry.
+// Runtime uses the split incremental jobs above; tests can request split output
+// synchronously by passing the same terrain/plants options.
+export function buildChunkGeometry(chunk, world, options) {
+    const job = createChunkGeometryJob(chunk, world, options === undefined
+        ? { terrain: true, plants: true, legacyGroups: true } : options);
+    const geometry = job.step(Infinity).geometry;
+    if (geometry?.userData.plantAnimationRanges?.length) {
+        world.plantAnimations?.bindGeometry(geometry, geometry.userData.plantAnimationRanges);
+        delete geometry.userData.plantAnimationRanges;
+    }
+    return geometry;
+}
+
+function* buildChunkGeometrySteps(chunk, world, { terrain, plants: includePlants, legacyGroups }) {
 
     plantPreparation.delete(chunk);
 
@@ -1673,7 +1789,7 @@ export function buildChunkGeometry(chunk, world) {
     if (overrides) for (const event of overrides.values()) start = Math.min(start, event.y);
 
 
-    fillPadding(chunk, world, height, Math.max(0, start - 1));
+    yield* fillPaddingSteps(chunk, world, height, Math.max(0, start - 1));
 
 
     // Pozycja rogu chunka w świecie (w blokach) - do obrotu tekstur.
@@ -1728,30 +1844,30 @@ export function buildChunkGeometry(chunk, world) {
                 // Eksperyment "trawa kępiasta" ma pierwszeństwo przed
                 // poziomem modeli roślin (Ustawienia -> Modele).
                 if (grassDetail !== null && (id === SHORT_GRASS_ID || id === TALL_GRASS_ID)) {
-                    bushyGrass.push(lx, y, lz, id);
+                    if (includePlants) bushyGrass.push(lx, y, lz, id);
                     continue;
                 }
 
                 if (renderData.riverPlant) {
-                    riverPlants.push(lx, y, lz, id);
+                    if (includePlants) riverPlants.push(lx, y, lz, id);
                     // A waterlogged plant is still a full water cell. Drawing
                     // canonical water here also preserves flow UVs and hides
                     // faces against ordinary water and other aquatic species.
                     const liquid = getLiquidKindId(id);
-                    if (liquid) liquids.push(lx, y, lz, liquid);
+                    if (terrain && liquid) liquids.push(lx, y, lz, liquid);
                     continue;
                 }
 
                 if (renderData.cross) {
 
                     if (grassDetail !== null && (id === SHORT_GRASS_ID || id === TALL_GRASS_ID)) {
-                        bushyGrass.push(lx, y, lz, id);
+                        if (includePlants) bushyGrass.push(lx, y, lz, id);
                         continue;
                     }
 
-                    plants.push(lx, y, lz, id);
+                    if (includePlants) plants.push(lx, y, lz, id);
 
-                    if (renderData.cross.sprite) {
+                    if (includePlants && renderData.cross.sprite) {
                         spriteReach = Math.max(spriteReach, renderData.cross.sprite.height, renderData.cross.sprite.width);
                     }
 
@@ -1759,6 +1875,8 @@ export function buildChunkGeometry(chunk, world) {
 
                 }
 
+
+                if (!terrain) continue;
 
                 if (renderData.leaves) {
 
@@ -1793,6 +1911,8 @@ export function buildChunkGeometry(chunk, world) {
 
             }
 
+            // At most 32 cells, rather than the whole chunk, per scan unit.
+            if ((lz & 1) === 1) yield;
         }
 
     }
@@ -1800,9 +1920,18 @@ export function buildChunkGeometry(chunk, world) {
 
     const cubeFaces = faceCount;
 
-    faceCount = addPlants(plants, faceCount, baseX, baseZ);
-    faceCount = addRiverPlants(riverPlants, faceCount, baseX, baseZ, null, overrides, animationRanges);
-    faceCount = addRiverPlants(bushyGrass, faceCount, baseX, baseZ, grassDetail);
+    for (let k = 0; k < plants.length; k += 4) {
+        faceCount = addPlants(plants, faceCount, baseX, baseZ, k, k + 4);
+        yield;
+    }
+    for (let k = 0; k < riverPlants.length; k += 4) {
+        faceCount = addRiverPlants(riverPlants, faceCount, baseX, baseZ, null, overrides, animationRanges, k, k + 4);
+        yield;
+    }
+    for (let k = 0; k < bushyGrass.length; k += 4) {
+        faceCount = addRiverPlants(bushyGrass, faceCount, baseX, baseZ, grassDetail, null, null, k, k + 4);
+        yield;
+    }
 
     const plantFaces = faceCount - cubeFaces;
 
@@ -1811,10 +1940,14 @@ export function buildChunkGeometry(chunk, world) {
         const id = leaves[k + 3];
 
         faceCount = (leafParts ? addLeafParts : addCubeFaces)(id, blockRenderData[id], leaves[k], leaves[k + 1], leaves[k + 2], faceCount, baseX, baseZ);
+        if ((k & 31) === 28) yield;
 
     }
 
-    faceCount = addFlats(flats, faceCount, baseX, baseZ);
+    for (let k = 0; k < flats.length; k += 4) {
+        faceCount = addFlats(flats, faceCount, baseX, baseZ, k, k + 4);
+        if ((k & 63) === 60) yield;
+    }
 
     const cutoutFaces = faceCount - cubeFaces - plantFaces;
 
@@ -1823,6 +1956,7 @@ export function buildChunkGeometry(chunk, world) {
         const id = liquids[k + 3];
 
         faceCount = addCubeFaces(id, blockRenderData[id], liquids[k], liquids[k + 1], liquids[k + 2], faceCount, baseX, baseZ);
+        if ((k & 63) === 60) yield;
 
     }
 
@@ -1855,113 +1989,72 @@ export function buildChunkGeometry(chunk, world) {
         for (let i = 0; i < 6; i++) {
             indices[f * 6 + i] = f * 4 + pattern[i];
         }
+        if ((f & 511) === 511) yield;
 
     }
 
 
     const geometry = new THREE.BufferGeometry();
 
-    geometry.setAttribute(
-        'position',
-        new THREE.BufferAttribute(positionBuffer.slice(0, vertexCount * 3), 3)
-    );
+    // Copy in bounded slices: committing all ten dense attributes in one
+    // operation used to bypass the meshing deadline after the expensive scan.
+    let published = false;
+    try {
+        const attributes = [
+            ['position', positionBuffer, 3, false],
+            ['normal', normalBuffer, 3, false],
+            ['uv', uvBuffer, 2, false],
+            ['color', colorBuffer, 4, true],
+            ['atmosphereLight', atmosphereLightBuffer, 4, true],
+            ['surfaceOcclusion', surfaceOcclusionBuffer, 1, true],
+            ['surfaceEmission', surfaceEmissionBuffer, 1, true],
+            ['surfaceProfile', surfaceProfileBuffer, 2, false],
+            ['tint', tintBuffer, 4, true],
+            ['plantMotion', plantMotionBuffer, 2, true]
+        ];
+        for (const [name, source, itemSize, normalized] of attributes) {
+            const target = new source.constructor(vertexCount * itemSize);
+            for (let offset = 0; offset < target.length; offset += 32768) {
+                target.set(source.subarray(offset, Math.min(offset + 32768, target.length)), offset);
+                yield;
+            }
+            geometry.setAttribute(name, new THREE.BufferAttribute(target, itemSize, normalized));
+        }
 
-    geometry.setAttribute(
-        'normal',
-        new THREE.BufferAttribute(normalBuffer.slice(0, vertexCount * 3), 3)
-    );
-
-    geometry.setAttribute(
-        'uv',
-        new THREE.BufferAttribute(uvBuffer.slice(0, vertexCount * 2), 2)
-    );
-
-    // Światło rogów (lampy: czerwony, zielony, niebieski; niebo):
-    // liczby 0-255 czytane przez kartę jako 0-1.
-
-    geometry.setAttribute(
-        'color',
-        new THREE.BufferAttribute(colorBuffer.slice(0, vertexCount * 4), 4, true)
-    );
-
-    // Oba modele współdzielą mesh: przełączenie światła wybiera atrybut
-    // w shaderze. RGB zawiera odcień lamp, AO i cień kierunkowy;
-    // alfa tylko dostęp do nieba i tłumienie pod wodą, bez AO.
-    geometry.setAttribute(
-        'atmosphereLight',
-        new THREE.BufferAttribute(atmosphereLightBuffer.slice(0, vertexCount * 4), 4, true)
-    );
-
-    // Osobne bajty: zasłonięcie otoczenia (i dołu kępki) oraz liniowa
-    // emisja light / MAX_LIGHT. Emisja nie jest przyciemniana przez AO.
-    geometry.setAttribute(
-        'surfaceOcclusion',
-        new THREE.BufferAttribute(surfaceOcclusionBuffer.slice(0, vertexCount), 1, true)
-    );
-
-    geometry.setAttribute(
-        'surfaceEmission',
-        new THREE.BufferAttribute(surfaceEmissionBuffer.slice(0, vertexCount), 1, true)
-    );
-    geometry.setAttribute('surfaceProfile',
-        new THREE.BufferAttribute(surfaceProfileBuffer.slice(0, vertexCount * 2), 2));
-
-    // Kolor trawy w rogach (r, g, b - 0.5 = bez zmiany; a = 1 - nie dotyczy).
-
-    geometry.setAttribute(
-        'tint',
-        new THREE.BufferAttribute(tintBuffer.slice(0, vertexCount * 4), 4, true)
-    );
-
-    geometry.setAttribute(
-        'plantMotion',
-        new THREE.BufferAttribute(plantMotionBuffer.slice(0, vertexCount * 2), 2, true)
-    );
-
-    geometry.setIndex(
-        new THREE.BufferAttribute(indices, 1)
-    );
+        geometry.setIndex(
+            new THREE.BufferAttribute(indices, 1)
+        );
 
 
-    // Grupy (i materiały - World.js):
-    //   pierwsza - zwykłe ściany (materiał 0: blockMaterial),
-    //   druga    - rośliny (materiał 1: plantMaterial - przezroczystość,
-    //              wiatr; zawsze jest, choćby pusta - World.js chowa
-    //              rośliny z daleka),
-    //   potem    - liście i płaskie dekoracje (materiał 3: leafMaterial -
-    //              przezroczystość bez wiatru), jeśli są,
-    //   na końcu - woda (materiał 2: waterMaterial - półprzezroczysta,
-    //              fale), jeśli jest.
+        // Legacy synchronous fixtures retain the historic empty group slots.
+        // Runtime geometries omit them, so Three never submits an empty draw.
+        if (cubeFaces > 0 || legacyGroups) geometry.addGroup(0, cubeFaces * 6, 0);
+        if (plantFaces > 0 || legacyGroups) geometry.addGroup(cubeFaces * 6, plantFaces * 6, 1);
+        if (cutoutFaces > 0) geometry.addGroup((cubeFaces + plantFaces) * 6, cutoutFaces * 6, 3);
+        if (waterFaces > 0) geometry.addGroup((cubeFaces + plantFaces + cutoutFaces) * 6, waterFaces * 6, 2);
 
-    geometry.addGroup(0, cubeFaces * 6, 0);
+        // Kula obejmująca chunk - potrzebna, żeby three.js pomijał
+        // chunki poza kamerą. Liczymy ją od razu z wymiarów chunka.
 
-    geometry.addGroup(cubeFaces * 6, plantFaces * 6, 1);
+        geometry.boundingSphere = new THREE.Sphere(
+            new THREE.Vector3(S / 2, height / 2, S / 2),
+            Math.sqrt((S / 2) * (S / 2) * 2 + (height / 2) * (height / 2))
+                // Full-width grass cards can cross the chunk edge with placement
+                // jitter (1/16) plus shared wind (up to .09/.055 on X/Z).
+                + Math.max(riverPlants.length ? 1.2 : 0, spriteReach, bushyGrass.length ? .25 : 0)
+        );
 
-    if (cutoutFaces > 0) {
-        geometry.addGroup((cubeFaces + plantFaces) * 6, cutoutFaces * 6, 3);
+        geometry.userData.bushyGrassDetail = grassDetail;
+        geometry.userData.bushyGrassCount = bushyGrass.length / 4;
+        // Install bindings only when World publishes the finished geometry. A
+        // canceled or superseded slice must never steal a live animation binding.
+        if (animationRanges.length) geometry.userData.plantAnimationRanges = animationRanges;
+        geometry.userData.meshPart = terrain ? (includePlants ? 'combined' : 'terrain') : 'plants';
+
+
+        published = true;
+        return geometry;
+    } finally {
+        if (!published) geometry.dispose();
     }
-
-    if (waterFaces > 0) {
-        geometry.addGroup((cubeFaces + plantFaces + cutoutFaces) * 6, waterFaces * 6, 2);
-    }
-
-
-    // Kula obejmująca chunk - potrzebna, żeby three.js pomijał
-    // chunki poza kamerą. Liczymy ją od razu z wymiarów chunka.
-
-    geometry.boundingSphere = new THREE.Sphere(
-        new THREE.Vector3(S / 2, height / 2, S / 2),
-        Math.sqrt((S / 2) * (S / 2) * 2 + (height / 2) * (height / 2))
-            // Full-width grass cards can cross the chunk edge with placement
-            // jitter (1/16) plus shared wind (up to .09/.055 on X/Z).
-            + Math.max(riverPlants.length ? 1.2 : 0, spriteReach, bushyGrass.length ? .25 : 0)
-    );
-
-    geometry.userData.bushyGrassDetail = grassDetail;
-    geometry.userData.bushyGrassCount = bushyGrass.length / 4;
-    if (animationRanges.length) world.plantAnimations.bindGeometry(geometry, animationRanges);
-
-
-    return geometry;
-
 }

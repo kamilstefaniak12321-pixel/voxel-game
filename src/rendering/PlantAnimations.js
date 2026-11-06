@@ -137,6 +137,13 @@ export class PlantAnimations {
 
     overridesFor(chunk) { return this.chunks.get(chunk); }
 
+    invalidate(chunk) {
+        // The streaming renderer owns a separate near-plant layer. Combined
+        // synchronous meshes remain supported by model-preview/test tools.
+        if (!chunk.combinedGeometry && this.world.markPlantsDirty) this.world.markPlantsDirty(chunk);
+        else this.world.markDirty(chunk);
+    }
+
     blockChanged(chunk, index, before, after) {
         if (!this.enabled) return;
         const family = familyOf(after) ?? familyOf(before);
@@ -165,7 +172,7 @@ export class PlantAnimations {
         const x = chunk.cx * CHUNK_SIZE + lx, z = chunk.cz * CHUNK_SIZE + lz;
         const pos = this.camera.position;
         if (Math.hypot(x + .5 - pos.x, y + .4 - pos.y, z + .5 - pos.z) > PLANT_ANIMATION_DISTANCE ||
-            (!found && this.active.size >= MAX_PLANT_ANIMATIONS) || !chunk.mesh) {
+            (!found && this.active.size >= MAX_PLANT_ANIMATIONS) || !(chunk.plantMesh ?? chunk.mesh)) {
             this.remove(found);
             return false;
         }
@@ -176,7 +183,7 @@ export class PlantAnimations {
         if (!this.chunks.has(chunk)) this.chunks.set(chunk, new Map());
         this.chunks.get(chunk).set(index, event);
         this.active.add(event);
-        this.world.markDirty(chunk);
+        this.invalidate(chunk);
         return true;
     }
 
@@ -187,7 +194,7 @@ export class PlantAnimations {
         entries?.delete(event.index);
         if (!entries?.size) this.chunks.delete(event.chunk);
         event.binding = null;
-        if (remesh && this.world.getChunk(event.chunk.cx, event.chunk.cz) === event.chunk) this.world.markDirty(event.chunk);
+        if (remesh && this.world.getChunk(event.chunk.cx, event.chunk.cz) === event.chunk) this.invalidate(event.chunk);
     }
 
     bindGeometry(geometry, ranges) {
@@ -258,7 +265,7 @@ export class PlantAnimations {
             if (this.world.getChunk(chunk.cx, chunk.cz) !== chunk || chunk.blocks[event.index] !== event.after) {
                 this.remove(event); continue;
             }
-            if (!event.binding || event.binding.geometry !== chunk.mesh?.geometry) {
+            if (!event.binding || event.binding.geometry !== (chunk.plantMesh ?? chunk.mesh)?.geometry) {
                 event.wait += dt;
                 if (event.wait > 1) this.remove(event);
                 continue;
@@ -268,7 +275,7 @@ export class PlantAnimations {
                 // Inny model (np. etap po zbiorze) - zwykła przebudowa chunka.
                 event.binding = null;
                 event.wait = 0;
-                this.world.markDirty(chunk);
+                this.invalidate(chunk);
                 continue;
             }
             this.paint(event);

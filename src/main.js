@@ -429,7 +429,7 @@ applyAppSettings();
 
 // Modele roślin i kołysanie na wietrze (Ustawienia -> Modele) - wspólne
 // dla gry i tła menu (dane rysowania bloków są jedne). Zmiana poziomu
-// modeli przebudowuje chunki stopniowo, najbliższe najpierw.
+// modeli przebudowuje tylko rośliny w pobliżu; liście należą do terenu.
 
 function applyPlantSettings() {
 
@@ -437,9 +437,13 @@ function applyPlantSettings() {
 
     const leafParts = setLeafParts(settings.get('leafModel') === 'parts' && !settings.get('potato'));
 
-    if (applyPlantModelLevel(settings.get('plantModels')) > 0 || leafParts) {
+    const plantsChanged = applyPlantModelLevel(settings.get('plantModels')) > 0;
+    if (leafParts) {
         game?.world.remeshAll();
         menuBackdrop.world?.world?.remeshAll();
+    } else if (plantsChanged) {
+        game?.world.remeshPlants();
+        menuBackdrop.world?.world?.remeshPlants();
     }
 
 }

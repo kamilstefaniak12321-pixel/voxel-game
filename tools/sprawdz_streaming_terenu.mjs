@@ -164,7 +164,7 @@ try {
         return world.loadQueue.length === 0;
     });
     eq(world.chunks.size, 5, 'all requested chunks arrived');
-    eq(world.completeRadius(), Infinity, 'radius complete only after results are installed');
+    eq(world.completeRadius(), 0, 'Loaded data without complete mesh neighbours keeps horizon coverage');
     for (const chunk of world.chunks.values()) same(chunk, reference(baseline,chunk.cx,chunk.cz), 'World adoption');
     for (const [x,z] of [[8000,8000],[8015,8000],[7999,8000]]) {
         eq(world.biomeAt(x,z), baseline.biomeAt(x,z), 'cached exact biome');

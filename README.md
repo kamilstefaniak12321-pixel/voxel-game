@@ -673,9 +673,10 @@ pokazuje, że jest, i pobiera po kliknięciu *Pobierz*).
 *Proste* (obrazek 16 × 16 na skrzyżowanych płaszczyznach - najszybsze),
 *Półrealistyczne* (domyślne: liście, płatki i kwiaty z małych płaskich
 kart pod różnymi kątami) albo *Szczegółowe* (model z pikseli - każdy
-listek osobno). Każda wersja ma własną teksturę w siatce 16 × 16. Na
-razie wszystkie trzy mają mak, chaber, mniszek, rumianek i lawenda;
-pozostałe rośliny dostają najbliższą wersję, którą mają. Do tego
+listek osobno). Każda wersja ma własną teksturę w siatce 16 × 16. Od
+0.65.0 trzy wersje mają wszystkie rośliny - trawy, kwiaty, sadzonki
+drzew, krzaki owocowe, rośliny nad wodą i z paczek (poza leżącymi jedną
+warstwą: lilia wodna, rzęsa, wywłócznik, porosty, huby, barwinek). Do tego
 **kołysanie na wietrze** i **animacje roślin** (stawianie, wzrost, zbiór,
 zniszczenie) - osobno do wyłączenia. Zmienia tylko obraz - świat i zapisy
 zostają takie same. Opis i jak dodać roślinę:

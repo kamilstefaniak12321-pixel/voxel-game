@@ -1,0 +1,64 @@
+{
+    "nazwa": "Indygowiec",
+    "paczka": "indygowiec",
+    "etapy": [
+        {
+            "prosty": "prosty-1.png",
+            "polrealistyczny": {
+                "liscie": {
+                    "uklad": "kopula",
+                    "ile": 11,
+                    "dlugosc": 6,
+                    "promien": 6,
+                    "kopula": 8,
+                    "nachylenie": 45,
+                    "pien": true
+                }
+            },
+            "szczegolowy": null
+        },
+        {
+            "prosty": "prosty-2.png",
+            "polrealistyczny": {
+                "liscie": {
+                    "uklad": "kopula",
+                    "ile": 15,
+                    "dlugosc": 6,
+                    "promien": 7,
+                    "kopula": 12,
+                    "nachylenie": 45,
+                    "pien": true
+                },
+                "kwiat": {
+                    "rodzaj": "owoce",
+                    "ile": 2,
+                    "rozmiar": 4
+                }
+            },
+            "szczegolowy": null
+        },
+        {
+            "prosty": {
+                "plik": "prosty-3.png",
+                "rozmiar": 20
+            },
+            "polrealistyczny": {
+                "liscie": {
+                    "uklad": "kopula",
+                    "ile": 20,
+                    "dlugosc": 6,
+                    "promien": 8,
+                    "kopula": 16,
+                    "nachylenie": 45,
+                    "pien": true
+                },
+                "kwiat": {
+                    "rodzaj": "owoce",
+                    "ile": 7,
+                    "rozmiar": 4
+                }
+            },
+            "szczegolowy": null
+        }
+    ]
+}

@@ -1,0 +1,154 @@
+{
+    "nazwa": "Amarantus",
+    "paczka": "amarantus",
+    "etapy": [
+        {
+            "prosty": null,
+            "polrealistyczny": {
+                "liscie": {
+                    "ile": 4,
+                    "dlugosc": 6,
+                    "wysokosc": 2,
+                    "nachylenie": 45
+                },
+                "lodygi": {
+                    "ile": 1,
+                    "wysokosc": 6,
+                    "promien": 2,
+                    "pochylenie": 6
+                }
+            },
+            "szczegolowy": {
+                "rodzaj": "kepka",
+                "liscie": {
+                    "uklad": "brak"
+                },
+                "lodygi": {
+                    "ile": [
+                        1,
+                        1
+                    ],
+                    "wysokosc": [
+                        6,
+                        8
+                    ],
+                    "promien": 2,
+                    "liscie": {
+                        "co": 2,
+                        "dlugosc": [
+                            2,
+                            3
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "prosty": null,
+            "polrealistyczny": {
+                "liscie": {
+                    "ile": 5,
+                    "dlugosc": 7,
+                    "wysokosc": 2,
+                    "nachylenie": 45
+                },
+                "lodygi": {
+                    "ile": 2,
+                    "wysokosc": 10,
+                    "promien": 2,
+                    "pochylenie": 6
+                },
+                "kwiat": {
+                    "rodzaj": "klos",
+                    "rozmiar": 5
+                }
+            },
+            "szczegolowy": {
+                "rodzaj": "kepka",
+                "liscie": {
+                    "uklad": "brak"
+                },
+                "lodygi": {
+                    "ile": [
+                        1,
+                        2
+                    ],
+                    "wysokosc": [
+                        10,
+                        12
+                    ],
+                    "promien": 2,
+                    "liscie": {
+                        "co": 2,
+                        "dlugosc": [
+                            2,
+                            4
+                        ]
+                    }
+                },
+                "kwiaty": {
+                    "rodzaj": "grono",
+                    "rozmiar": 1
+                }
+            }
+        },
+        {
+            "prosty": null,
+            "polrealistyczny": {
+                "liscie": {
+                    "ile": 6,
+                    "dlugosc": 8,
+                    "wysokosc": 2,
+                    "nachylenie": 45
+                },
+                "lodygi": {
+                    "ile": 2,
+                    "wysokosc": 14,
+                    "promien": 2,
+                    "pochylenie": 6
+                },
+                "kwiat": {
+                    "rodzaj": "klos",
+                    "rozmiar": 6
+                }
+            },
+            "szczegolowy": {
+                "rodzaj": "kepka",
+                "liscie": {
+                    "uklad": "brak"
+                },
+                "lodygi": {
+                    "ile": [
+                        1,
+                        2
+                    ],
+                    "wysokosc": [
+                        14,
+                        16
+                    ],
+                    "promien": 2,
+                    "liscie": {
+                        "co": 2,
+                        "dlugosc": [
+                            2,
+                            4
+                        ]
+                    }
+                },
+                "kwiaty": {
+                    "rodzaj": "grono",
+                    "rozmiar": 2
+                }
+            }
+        }
+    ],
+    "kolory": {
+        "lisc": "#4a7a2a",
+        "liscJasny": "#6e9a3e",
+        "liscCiemny": "#2e5a1c",
+        "lodyga": "#7a3a3a",
+        "kwiat": "#9a1e3e",
+        "kwiatJasny": "#c43a5a",
+        "kwiatCiemny": "#6a1028"
+    }
+}

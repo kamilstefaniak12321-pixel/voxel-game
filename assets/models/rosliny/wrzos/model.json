@@ -1,0 +1,73 @@
+{
+    "nazwa": "Wrzos",
+    "bloki": [
+        "heather"
+    ],
+    "kolory": {
+        "lisc": "#4a6a3a",
+        "liscJasny": "#6a8a52",
+        "liscCiemny": "#2e4a26",
+        "lodyga": "#5a4a34",
+        "kwiat": "#c46aa8",
+        "kwiatJasny": "#e090c8",
+        "kwiatCiemny": "#8e4478",
+        "srodek": "#e090c8"
+    },
+    "etapy": [
+        {
+            "prosty": null,
+            "polrealistyczny": {
+                "liscie": {
+                    "uklad": "kopula",
+                    "ile": 10,
+                    "dlugosc": 5,
+                    "promien": 4,
+                    "kopula": 6,
+                    "nachylenie": 40
+                },
+                "kwiat": {
+                    "rodzaj": "owoce",
+                    "ile": 5,
+                    "rozmiar": 3
+                }
+            },
+            "szczegolowy": {
+                "rodzaj": "kepka",
+                "liscie": {
+                    "uklad": "krzak",
+                    "ile": [
+                        8,
+                        10
+                    ],
+                    "dlugosc": [
+                        2,
+                        3
+                    ],
+                    "promien": 3
+                },
+                "lodygi": {
+                    "ile": [
+                        4,
+                        6
+                    ],
+                    "wysokosc": [
+                        5,
+                        7
+                    ],
+                    "promien": 3,
+                    "liscie": {
+                        "co": 1,
+                        "dlugosc": [
+                            1,
+                            2
+                        ]
+                    }
+                },
+                "kwiaty": {
+                    "rodzaj": "kwiatki",
+                    "rozmiar": 1
+                }
+            }
+        }
+    ]
+}

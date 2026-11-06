@@ -1,0 +1,65 @@
+{
+    "nazwa": "Koniczyna",
+    "bloki": [
+        "clover"
+    ],
+    "kolory": {
+        "lisc": "#4c9a30",
+        "liscJasny": "#70ba48",
+        "liscCiemny": "#317022",
+        "lodyga": "#43852a",
+        "kwiat": "#e8a2c4",
+        "kwiatJasny": "#f8cce0",
+        "kwiatCiemny": "#b86a94"
+    },
+    "etapy": [
+        {
+            "prosty": null,
+            "polrealistyczny": {
+                "liscie": {
+                    "ile": 5,
+                    "dlugosc": 5,
+                    "nachylenie": 65
+                },
+                "lodygi": {
+                    "ile": 2,
+                    "wysokosc": 5,
+                    "promien": 2
+                },
+                "kwiat": {
+                    "rodzaj": "pompon",
+                    "rozmiar": 4
+                }
+            },
+            "szczegolowy": {
+                "rodzaj": "kepka",
+                "liscie": {
+                    "uklad": "rozeta",
+                    "ile": [
+                        5,
+                        6
+                    ],
+                    "dlugosc": [
+                        2,
+                        3
+                    ]
+                },
+                "lodygi": {
+                    "ile": [
+                        1,
+                        2
+                    ],
+                    "wysokosc": [
+                        4,
+                        5
+                    ],
+                    "promien": 2
+                },
+                "kwiaty": {
+                    "rodzaj": "pompon",
+                    "rozmiar": 1
+                }
+            }
+        }
+    ]
+}

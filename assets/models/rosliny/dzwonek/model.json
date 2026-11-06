@@ -1,0 +1,65 @@
+{
+    "nazwa": "Dzwonek gołębi",
+    "paczka": "dzwonek",
+    "etapy": [
+        {
+            "prosty": "prosty-1.png",
+            "polrealistyczny": {
+                "liscie": {
+                    "uklad": "pion",
+                    "ile": 4,
+                    "dlugosc": 7,
+                    "promien": 3,
+                    "nachylenie": 22
+                }
+            },
+            "szczegolowy": null
+        },
+        {
+            "prosty": "prosty-2.png",
+            "polrealistyczny": {
+                "liscie": {
+                    "uklad": "pion",
+                    "ile": 5,
+                    "dlugosc": 8,
+                    "promien": 3,
+                    "nachylenie": 22
+                },
+                "lodygi": {
+                    "ile": 2,
+                    "wysokosc": 10,
+                    "promien": 2,
+                    "pochylenie": 14
+                },
+                "kwiat": {
+                    "rodzaj": "dzwonek",
+                    "rozmiar": 4
+                }
+            },
+            "szczegolowy": null
+        },
+        {
+            "prosty": "prosty-3.png",
+            "polrealistyczny": {
+                "liscie": {
+                    "uklad": "pion",
+                    "ile": 6,
+                    "dlugosc": 9,
+                    "promien": 3,
+                    "nachylenie": 22
+                },
+                "lodygi": {
+                    "ile": 2,
+                    "wysokosc": 12,
+                    "promien": 3,
+                    "pochylenie": 14
+                },
+                "kwiat": {
+                    "rodzaj": "dzwonek",
+                    "rozmiar": 4
+                }
+            },
+            "szczegolowy": null
+        }
+    ]
+}

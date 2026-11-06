@@ -1,0 +1,53 @@
+{
+    "nazwa": "Sadzonka świerka",
+    "bloki": [
+        "spruce_sapling"
+    ],
+    "kolory": {
+        "lisc": "#2e5e3a",
+        "liscJasny": "#4a7e52",
+        "liscCiemny": "#1c3e26",
+        "lodyga": "#6a4a30"
+    },
+    "etapy": [
+        {
+            "prosty": null,
+            "polrealistyczny": {
+                "liscie": {
+                    "uklad": "kopula",
+                    "ile": 10,
+                    "dlugosc": 5,
+                    "promien": 3,
+                    "kopula": 11,
+                    "nachylenie": 70,
+                    "pien": true
+                }
+            },
+            "szczegolowy": {
+                "rodzaj": "kepka",
+                "liscie": {
+                    "uklad": "brak"
+                },
+                "lodygi": {
+                    "ile": [
+                        1,
+                        1
+                    ],
+                    "wysokosc": [
+                        9,
+                        11
+                    ],
+                    "promien": 0,
+                    "liscie": {
+                        "okolek": 5,
+                        "co": 1,
+                        "dlugosc": [
+                            2,
+                            4
+                        ]
+                    }
+                }
+            }
+        }
+    ]
+}

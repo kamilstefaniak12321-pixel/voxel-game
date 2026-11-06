@@ -25,6 +25,7 @@
 // ------------------------------------------------------------
 
 import { PLANT_MODELS } from '../blocks/plantModels.js';
+import { getBlockDefinition } from '../blocks/BlockRegistry.js';
 import { TEST_SITE_FLOOR } from '../world/terrain/TestSiteGenerator.js';
 import { buildLightingReference, LIGHTING_REFERENCE_ORIGIN } from './LightingReference.js';
 import { buildLightingMaterialsReference, MATERIAL_REFERENCE_ORIGIN } from './LightingMaterialsReference.js';
@@ -156,29 +157,27 @@ function buildLightScene({ world, player }, origin) {
 
 function buildPlantModelScene({ world, player }, origin) {
 
-    const columns = 7;
+    // Wszystkie etapy po kolei, rzędami po 12 (co 2 bloki).
+    const stages = PLANT_MODELS.flatMap((model) => model.stages);
+    const columns = 12;
 
     let placed = 0;
 
-    PLANT_MODELS.forEach((model, row) => {
+    stages.forEach((stage, i) => {
 
-        for (let column = 0; column < columns; column++) {
+        const x = origin.x - columns + 1 + (i % columns) * 2;
+        const z = origin.z + 3 + Math.floor(i / columns) * 2;
+        const ground = getBlockDefinition(stage.type)?.ground?.[0] ?? 'grass';
 
-            const x = origin.x - columns + 1 + column * 2;
-            const z = origin.z + 3 + row * 2;
-            const stage = model.stages[column % model.stages.length];
+        world.setBlock(x, origin.y, z, ground === 'sand' ? 'sand' : 'grass');
 
-            world.setBlock(x, origin.y, z, 'grass');
-
-            if (world.setBlock(x, origin.y + 1, z, stage.type)) placed++;
-
-        }
+        if (world.setBlock(x, origin.y + 1, z, stage.type)) placed++;
 
     });
 
-    place(player, origin.x + 0.5, origin.y + 3.5, origin.z - 3.5, Math.PI, -0.45);
+    place(player, origin.x + 0.5, origin.y + 6.5, origin.z - 4.5, Math.PI, -0.55);
 
-    return `${placed} roślin w ${PLANT_MODELS.length} rzędach (${PLANT_MODELS.map((model) => model.name).join(', ')}). ` +
+    return `${placed} roślin (${PLANT_MODELS.length} gatunków, wszystkie etapy). ` +
         'Wygląd: Ustawienia - Modele - Modele roślin.';
 
 }
@@ -280,7 +279,7 @@ export const SCENES = [
     {
         id: 'modele',
         name: 'Modele roślin',
-        description: 'Mak, chaber, mniszek, rumianek i lawenda w rzędach - do porównania prostych, półrealistycznych i szczegółowych modeli.',
+        description: 'Wszystkie rośliny w trzech wersjach we wszystkich etapach - do porównania prostych, półrealistycznych i szczegółowych modeli.',
         build: buildPlantModelScene,
         slot: { x: 360, z: 100 }
     }

@@ -1,0 +1,41 @@
+{
+    "nazwa": "Krótka trawa",
+    "bloki": [
+        "short_grass"
+    ],
+    "kolory": {
+        "lisc": "#5a9e34",
+        "liscJasny": "#7cbf48",
+        "liscCiemny": "#3c7a26",
+        "lodyga": "#4c8a2c"
+    },
+    "etapy": [
+        {
+            "prosty": null,
+            "polrealistyczny": {
+                "liscie": {
+                    "uklad": "pion",
+                    "ile": 5,
+                    "dlugosc": 9,
+                    "promien": 3,
+                    "nachylenie": 14
+                }
+            },
+            "szczegolowy": {
+                "rodzaj": "kepka",
+                "liscie": {
+                    "uklad": "kepa",
+                    "ile": [
+                        7,
+                        9
+                    ],
+                    "dlugosc": [
+                        4,
+                        7
+                    ],
+                    "promien": 2
+                }
+            }
+        }
+    ]
+}

@@ -795,7 +795,9 @@ function addRiverPlants(plants, faceCount, baseX, baseZ, grassDetail = null, ove
         const faces = grass
             ? getBushyGrassFaces(plants[k + 3] === TALL_GRASS_ID, transform.variant, grassDetail)
             : getRiverPlantFaces(data.kind, transform.variant, data.waterlogged, data.tuft, mask);
-        const climate = grass && meshTint ? tintOfColumn(lx, lz) : null;
+        // Trawa (kępiasta i modele trawy - PlantModelLevels.js: tint)
+        // dostaje kolor klimatu jak zwykła trawa.
+        const climate = (grass || data.tint) && meshTint ? tintOfColumn(lx, lz) : null;
         const { cos, sin } = transform;
         const centerX = lx + transform.x;
         const centerZ = lz + transform.z;
@@ -1485,6 +1487,13 @@ export function buildChunkGeometry(chunk, world) {
                     continue;
                 }
 
+
+                // Eksperyment "trawa kępiasta" ma pierwszeństwo przed
+                // poziomem modeli roślin (Ustawienia -> Modele).
+                if (grassDetail !== null && (id === SHORT_GRASS_ID || id === TALL_GRASS_ID)) {
+                    bushyGrass.push(lx, y, lz, id);
+                    continue;
+                }
 
                 if (renderData.riverPlant) {
                     riverPlants.push(lx, y, lz, id);

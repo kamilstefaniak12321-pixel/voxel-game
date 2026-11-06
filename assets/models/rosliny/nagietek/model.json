@@ -1,0 +1,68 @@
+{
+    "nazwa": "Nagietek",
+    "paczka": "nagietek",
+    "etapy": [
+        {
+            "prosty": "prosty-1.png",
+            "polrealistyczny": {
+                "liscie": {
+                    "uklad": "kopula",
+                    "ile": 8,
+                    "dlugosc": 4,
+                    "promien": 3,
+                    "kopula": 7,
+                    "nachylenie": 50
+                }
+            },
+            "szczegolowy": null
+        },
+        {
+            "prosty": "prosty-2.png",
+            "polrealistyczny": {
+                "liscie": {
+                    "uklad": "kopula",
+                    "ile": 10,
+                    "dlugosc": 4,
+                    "promien": 4,
+                    "kopula": 7,
+                    "nachylenie": 50
+                },
+                "lodygi": {
+                    "ile": 2,
+                    "wysokosc": 7,
+                    "promien": 2,
+                    "pochylenie": 14
+                },
+                "kwiat": {
+                    "rodzaj": "pompon",
+                    "rozmiar": 3
+                }
+            },
+            "szczegolowy": null
+        },
+        {
+            "prosty": "prosty-3.png",
+            "polrealistyczny": {
+                "liscie": {
+                    "uklad": "kopula",
+                    "ile": 12,
+                    "dlugosc": 6,
+                    "promien": 5,
+                    "kopula": 9,
+                    "nachylenie": 50
+                },
+                "lodygi": {
+                    "ile": 2,
+                    "wysokosc": 8,
+                    "promien": 3,
+                    "pochylenie": 14
+                },
+                "kwiat": {
+                    "rodzaj": "koszyczek",
+                    "rozmiar": 5
+                }
+            },
+            "szczegolowy": null
+        }
+    ]
+}

@@ -369,6 +369,274 @@ LAVENDER_SIMPLE = [
 ]
 
 
+
+# ============================================================
+# SZABLONY - pozostałe rośliny (0.65.0)
+#
+# Części arkusza narysowane literami ogólnymi; kolory bierze roślina
+# (paleta z kolorów paczki albo podana niżej):
+#   g liść  G liść jaśniejszy  l światło na liściu  n cień liścia
+#   s łodyga  F kwiat  H kwiat jasny  D kwiat ciemny  C środek  K środek
+#   ciemny  B pąk  R owoc  P owoc jasny  Q owoc ciemny  w odblask
+# ============================================================
+
+LEAVES = {
+    'klapowany': [row[:8] for row in POPPY_SHEET[8:16]],
+    'lancetowaty': [row[:8] for row in CORNFLOWER_SHEET[8:16]],
+    'zabkowany': [row[:8] for row in DANDELION_SHEET[8:16]],
+    'pierzasty': [row[:8] for row in CHAMOMILE_SHEET[8:16]],
+    'zdzblo': [
+        '...l..g.',
+        '...G..g.',
+        '..gG.gl.',
+        '..gl.gG.',
+        '.ngG.Gg.',
+        '.gGlgGn.',
+        '.nGgGgn.',
+        '..ngGn..',
+    ],
+    'owalny': [
+        '...ll...',
+        '..gGlg..',
+        '.gGGlGg.',
+        '.gGGlGg.',
+        '.ngGlGn.',
+        '..ngGn..',
+        '...gs...',
+        '...s....',
+    ],
+    'trojlistek': [
+        '.ll..ll.',
+        'gGlggGlg',
+        'gGGggGGn',
+        '.ngllgn.',
+        '..gGGg..',
+        '..nGGn..',
+        '...ss...',
+        '...s....',
+    ],
+    'paproc': [
+        '...l....',
+        '..lgl...',
+        '.lgGgl..',
+        '..gGg...',
+        'lgGgGgl.',
+        '.ngGgn..',
+        'ngGsGgn.',
+        '...s....',
+    ],
+    'pokrzywa': [
+        '...l....',
+        '..gGl...',
+        '.gGGlg..',
+        'ngGGlGg.',
+        '.gGlGGn.',
+        'ngGlGgn.',
+        '.nggGn..',
+        '...s....',
+    ],
+    'igly': [
+        'l..l..l.',
+        '.lgGgl..',
+        'g.gGg.g.',
+        '.ngGgn..',
+        'n.gGg.n.',
+        '.ngGgn..',
+        '..nsn...',
+        '...s....',
+    ],
+    'drzewny': [
+        '..lll...',
+        '.lGGGl..',
+        'gGGlGGg.',
+        'gGlGGGg.',
+        'ngGGGgn.',
+        '.ngGgn..',
+        '..nsn...',
+        '...s....',
+    ],
+    'kepka': [
+        '.l..ll..',
+        'lGllGGl.',
+        'gGGgGlg.',
+        'ngGGlGgn',
+        'gGlGGGgn',
+        'ngGgGgn.',
+        '.nggnn..',
+        '........',
+    ],
+    'waski': [row[:8].translate(str.maketrans('Vvu', 'lGn')) for row in LAVENDER_SHEET[8:16]],
+}
+
+STEM = ['ss', 'sG', 'ss', 'ns', 'ss', 'sG', 'ss', 'ns']
+
+# Kwiaty: (z boku 8x8, z góry 8x8, płatek/owoc 6x8).
+FLOWERS = {
+    'kielich': (
+        ['........', '.F.HH.F.', 'FHHHHHHF', 'FHHFFHHF', '.FHFFHF.', '.DFFFFD.', '..DKKD..', '...ss...'],
+        ['..FHHF..', '.FHHHHF.', 'FHFDDFHF', 'HFDKKDFH', 'HFDKKDFH', 'FHFDDFHF', '.FHHHHF.', '..FHHF..'],
+        ['.FHHF.', 'FHHHHF', 'FHHFHF', 'FHFFHF', 'FHFFFF', 'DFFFFD', '.DFFD.', '..DD..'],
+    ),
+    'gwiazda': (
+        ['F..F..F.', '.FHHHF..', 'FHHFHHF.', '.HFKKFH.', '.DFKKFD.', '..sGGs..', '...ss...', '...ss...'],
+        ['F..F..F.', '.FHFHF.F', '.HFHHFHF', 'FHHKKHH.', '.HHKKHHF', 'FHFHHFH.', '.FHHFHF.', '.F..F..F'],
+        ['......', '..FH..', '.FHHF.', '.BFFB.', '.sBBs.', '..ss..', '..sG..', '..sG..'],
+    ),
+    'pompon': (
+        ['........', '..FHHF..', '.FHHHHF.', 'FHHHHHHF', 'FHFHHFHF', '.DFFFFD.', '..sGGs..', '...ss...'],
+        ['..FHHF..', '.FHHHHF.', 'FHHFFHHF', 'HHFCCFHH', 'HHFCCFHH', 'FHHFFHHF', '.FHHHHF.', '..FHHF..'],
+        ['......', '..FF..', '.FHHF.', '.DFFD.', '.sDDs.', '..sG..', '..sG..', '..sG..'],
+    ),
+    'koszyczek': (
+        ['........', '........', '...CC...', '..KCCK..', 'FHFKKFHF', 'D.FHHF.D', '...ss...', '...s....'],
+        ['...H....', '.F.H..F.', '..FHFH..', 'HHFCCFHH', '.HFKCFH.', '..HFHF..', '.F..H.F.', '....F...'],
+        ['......', '......', '..CC..', '.KCCK.', '.DFFD.', '..ss..', '..sG..', '..sG..'],
+    ),
+    'klos': (
+        ['...H....', '..FHF...', '..HHH...', '..FHF...', '..DHD...', '..FHF...', '..DFD...', '...s....'],
+        ['........', '...F....', '..FHF...', '.FHHHF..', '..FHF...', '...F....', '........', '........'],
+        ['..H...', '.FHF..', '.HHHF.', '.FHF..', '.HHHF.', '.FHF..', '.DFD..', '..s...'],
+    ),
+    'dzwonek': (
+        ['...ss...', '...ss...', '..FHHF..', '.FHHHHF.', '.FHHHHF.', 'FHHFFHHF', 'F.DCCD.F', '...C....'],
+        ['..FHHF..', '.FHHHHF.', 'FHHDDHHF', 'HHDCCDHH', 'HHDCCDHH', 'FHHDDHHF', '.FHHHHF.', '..FHHF..'],
+        ['......', '..FH..', '.FHHF.', '.FHHF.', 'FHHHHF', 'F.DD.F', '..ss..', '..sG..'],
+    ),
+    'baldach': (
+        ['........', '........', 'H.F.H.F.', 'FHFHFHFH', '.s.s.s..', '..sss...', '...s....', '...s....'],
+        ['.H..F.H.', 'F.HF.HF.', '.HFHHFH.', 'H.FCHF.H', '.FHHCFH.', 'HF.HF.FH', '.HF.HF..', '..H..F..'],
+        ['......', '.H.F..', 'FHFHF.', '.s.s..', '..ss..', '..s...', '..sG..', '..sG..'],
+    ),
+    'grono': (
+        ['...s....', '..FsF...', '.FHFHF..', '..HFH...', '.FHFHF..', '..FHF...', '...D....', '........'],
+        ['........', '..F.F...', '.FHFHF..', '..HFH...', '.FHFHF..', '..F.F...', '........', '........'],
+        ['..s...', '.FsF..', 'FHFHF.', '.HFH..', 'FHFHF.', '.FHF..', '.DFD..', '..D...'],
+    ),
+    'straczki': (
+        ['...B....', '..BsB...', '.B.s.B..', '.B.s.B..', 'BB.s.BB.', '.B.s.B..', '...s....', '...s....'],
+        ['........', '...B....', '..BsB...', '.B.s.B..', '..BsB...', '...B....', '........', '........'],
+        ['.B..B.', '.B..B.', 'BB.sBB', 'BBssBB', '.Bs.B.', '.BssB.', '..ss..', '..s...'],
+    ),
+    'jagody': (
+        ['........', '..RP....', '.RRPQ.R.', '.QRQ.RPQ', '..Q..QR.', '...s....', '...s....', '...s....'],
+        ['........', '..RP.R..', '.RPRQRP.', '.QRwRRQ.', '..QRPQ..', '...Q....', '........', '........'],
+        ['......', '.RP...', 'RPRQ..', 'QRwRP.', '.QRPRQ', '..QRQ.', '...Q..', '......'],
+    ),
+    'papryczki': (
+        ['...s....', '..sGs...', '..RPR...', '..RPR...', '..RRQ...', '...RQ...', '...Q....', '........'],
+        ['........', '...s....', '..RPR...', '.RPRRQ..', '..RRQ...', '...Q....', '........', '........'],
+        ['..s...', '.sGs..', '.RPR..', '.RPR..', '.RRQ..', '..RQ..', '..RQ..', '..Q...'],
+    ),
+}
+
+FRUIT = {
+    'strawberry': ((214, 40, 40), (240, 96, 80), (150, 24, 28)),
+    'blackberry': ((52, 34, 74), (96, 72, 128), (28, 18, 44)),
+    'chili': ((206, 36, 24), (238, 84, 52), (140, 20, 18)),
+    'hazel': ((150, 104, 52), (190, 146, 84), (104, 70, 34)),
+    'blueberry': ((58, 76, 150), (98, 122, 196), (34, 44, 98)),
+}
+
+
+def hexrgb(value):
+    return tuple(int(value[i:i + 2], 16) for i in (1, 3, 5))
+
+
+def mix(a, b, t=0.5):
+    return tuple(round(a[i] * (1 - t) + b[i] * t) for i in range(3))
+
+
+def palette(colors, fruit=None):
+    c = {k: hexrgb(v) if isinstance(v, str) else v for k, v in colors.items()}
+    leaf = c.get('lisc', (80, 128, 50))
+    light = c.get('liscJasny', mix(leaf, (255, 255, 200), 0.3))
+    dark = c.get('liscCiemny', mix(leaf, (0, 0, 0), 0.35))
+    flower = c.get('kwiat', (220, 200, 120))
+    flight = c.get('kwiatJasny', mix(flower, (255, 255, 255), 0.35))
+    fdark = c.get('kwiatCiemny', mix(flower, (0, 0, 0), 0.3))
+    center = c.get('srodek', mix(flower, (240, 200, 60), 0.6))
+    out = {
+        'g': leaf, 'G': mix(leaf, light), 'l': light, 'n': dark, 's': c.get('lodyga', mix(leaf, dark)),
+        'F': flower, 'H': flight, 'D': fdark, 'C': center, 'K': mix(center, (0, 0, 0), 0.35),
+        'B': c.get('pak', mix(flower, leaf, 0.4)), 'w': (250, 245, 235),
+    }
+    if fruit:
+        out.update({'R': fruit[0], 'P': fruit[1], 'Q': fruit[2]})
+    return out
+
+
+def templated(leaf, flower):
+    side, top, petal = FLOWERS[flower]
+    return join(side, top, LEAVES[leaf], STEM, petal)
+
+
+# Rośliny: nazwa folderu -> (liść, kwiat, kolory, owoc).
+# Kolory paczek - z assets/rosliny/<paczka>/roslina.json ("kolory").
+
+VANILLA = {
+    'krotka-trawa': ('zdzblo', 'klos', {'lisc': '#5a9e34', 'liscJasny': '#7cbf48', 'liscCiemny': '#3c7a26', 'lodyga': '#4c8a2c', 'kwiat': '#8aa858'}),
+    'wysoka-trawa': ('zdzblo', 'klos', {'lisc': '#5a9e34', 'liscJasny': '#86c650', 'liscCiemny': '#3c7a26', 'lodyga': '#4c8a2c', 'kwiat': '#a0ac6a', 'kwiatJasny': '#c2c88a', 'kwiatCiemny': '#7a8648'}),
+    'paproc': ('paproc', 'klos', {'lisc': '#4a8a2a', 'liscJasny': '#6eae3c', 'liscCiemny': '#2e6420', 'lodyga': '#3c7024'}),
+    'koniczyna': ('trojlistek', 'pompon', {'lisc': '#4c9a30', 'liscJasny': '#70ba48', 'liscCiemny': '#317022', 'lodyga': '#43852a', 'kwiat': '#e8a2c4', 'kwiatJasny': '#f8cce0', 'kwiatCiemny': '#b86a94', 'srodek': '#f0b8d2'}),
+    'pokrzywa': ('pokrzywa', 'grono', {'lisc': '#3e7a28', 'liscJasny': '#5c9c38', 'liscCiemny': '#24561a', 'lodyga': '#3a6a22', 'kwiat': '#9aaa6a', 'kwiatJasny': '#bcc888', 'kwiatCiemny': '#6e7a44'}),
+    'babka': ('owalny', 'klos', {'lisc': '#4a8a30', 'liscJasny': '#6aa848', 'liscCiemny': '#2e6420', 'lodyga': '#5a7a3a', 'kwiat': '#8a7a52', 'kwiatJasny': '#b8a878', 'kwiatCiemny': '#5e5034'}),
+    'trzcina': ('zdzblo', 'klos', {'lisc': '#7a9a4a', 'liscJasny': '#9ab868', 'liscCiemny': '#56702e', 'lodyga': '#86964c', 'kwiat': '#8a6a4a', 'kwiatJasny': '#b08e6a', 'kwiatCiemny': '#5e4430'}),
+    'wrzos': ('igly', 'grono', {'lisc': '#4a6a3a', 'liscJasny': '#6a8a52', 'liscCiemny': '#2e4a26', 'lodyga': '#5a4a34', 'kwiat': '#c46aa8', 'kwiatJasny': '#e090c8', 'kwiatCiemny': '#8e4478'}),
+    'krokus': ('waski', 'kielich', {'lisc': '#5a8a3a', 'liscJasny': '#7aaa52', 'liscCiemny': '#3a6428', 'lodyga': '#c8d0a0', 'kwiat': '#9a6ad0', 'kwiatJasny': '#bc96e8', 'kwiatCiemny': '#6a42a0', 'srodek': '#f0a830'}),
+    'trawa-wydmowa': ('zdzblo', 'klos', {'lisc': '#9aaa7a', 'liscJasny': '#bcc89a', 'liscCiemny': '#6e7c54', 'lodyga': '#a8b080', 'kwiat': '#c8c098', 'kwiatJasny': '#e0dab8', 'kwiatCiemny': '#9a9070'}),
+    # Sadzonki drzew
+    'sadzonka-swierk': ('igly', 'klos', {'lisc': '#2e5e3a', 'liscJasny': '#4a7e52', 'liscCiemny': '#1c3e26', 'lodyga': '#6a4a30'}),
+    'sadzonka-sosna': ('igly', 'klos', {'lisc': '#4a7a3a', 'liscJasny': '#6a9a52', 'liscCiemny': '#2e5226', 'lodyga': '#7a5638'}),
+    'sadzonka-buk': ('drzewny', 'klos', {'lisc': '#5a9a34', 'liscJasny': '#7cba4a', 'liscCiemny': '#3a7024', 'lodyga': '#7a6a5a'}),
+    'sadzonka-lipa': ('drzewny', 'klos', {'lisc': '#5aa03a', 'liscJasny': '#80c054', 'liscCiemny': '#3a7428', 'lodyga': '#6a5040'}),
+    'sadzonka-dab': ('klapowany', 'klos', {'lisc': '#4e8a2a', 'liscJasny': '#70aa3e', 'liscCiemny': '#32621e', 'lodyga': '#6a4a30'}),
+    'sadzonka-brzoza': ('drzewny', 'klos', {'lisc': '#78b040', 'liscJasny': '#9ccc5a', 'liscCiemny': '#4e8228', 'lodyga': '#e0dcd0'}),
+    'sadzonka-jablon': ('drzewny', 'klos', {'lisc': '#4e9a32', 'liscJasny': '#72ba4a', 'liscCiemny': '#317022', 'lodyga': '#6a4e3a'}),
+    'sadzonka-olcha': ('drzewny', 'klos', {'lisc': '#3e7e2e', 'liscJasny': '#5e9e40', 'liscCiemny': '#265a1e', 'lodyga': '#5a4a40'}),
+    'sadzonka-wierzba': ('waski', 'klos', {'lisc': '#7aa04a', 'liscJasny': '#9cbe66', 'liscCiemny': '#527430', 'lodyga': '#8a7a4a'}),
+    # Rośliny nad wodą
+    'turzyca': ('zdzblo', 'klos', {'lisc': '#668943', 'liscJasny': '#83a452', 'liscCiemny': '#456c37', 'lodyga': '#6a8142', 'kwiat': '#80914c'}),
+    'palka': ('zdzblo', 'klos', {'lisc': '#668943', 'liscJasny': '#83a452', 'liscCiemny': '#456c37', 'lodyga': '#6a8142', 'kwiat': '#765037', 'kwiatJasny': '#9b7951', 'kwiatCiemny': '#4e3424'}),
+    'krwawnica': ('lancetowaty', 'klos', {'lisc': '#668943', 'liscJasny': '#83a452', 'liscCiemny': '#456c37', 'lodyga': '#456c37', 'kwiat': '#ad659b', 'kwiatJasny': '#cb85ad', 'kwiatCiemny': '#7e4470'}),
+}
+
+BUSHES = {
+    'truskawka': ('kepka', 'jagody', {'lisc': '#3e8a2e', 'liscJasny': '#62aa42', 'liscCiemny': '#265e1e', 'lodyga': '#4a7a2a'}, 'strawberry'),
+    'jezyna': ('kepka', 'jagody', {'lisc': '#3a7a2a', 'liscJasny': '#5a9a3c', 'liscCiemny': '#22521a', 'lodyga': '#5a4a2a'}, 'blackberry'),
+    'chili': ('kepka', 'papryczki', {'lisc': '#3e8a2e', 'liscJasny': '#62aa42', 'liscCiemny': '#265e1e', 'lodyga': '#4a7a2a'}, 'chili'),
+    'leszczyna': ('drzewny', 'jagody', {'lisc': '#4a8a2e', 'liscJasny': '#6eaa44', 'liscCiemny': '#2e601e', 'lodyga': '#6a5038'}, 'hazel'),
+    'borowka': ('kepka', 'jagody', {'lisc': '#3a7a3a', 'liscJasny': '#5a9a4e', 'liscCiemny': '#22522a', 'lodyga': '#5a6a3a'}, 'blueberry'),
+}
+
+# Paczki roślin: paczka -> (liść, kwiat). Kolory z roslina.json.
+PACKS = {
+    'amarantus': ('lancetowaty', 'grono'),
+    'kocanka': ('waski', 'baldach'),
+    'piwonia': ('klapowany', 'pompon'),
+    'zawilec': ('pierzasty', 'koszyczek'),
+    'dzwonek': ('lancetowaty', 'dzwonek'),
+    'szalwia': ('owalny', 'klos'),
+    'nagietek': ('lancetowaty', 'koszyczek'),
+    'cynia': ('owalny', 'pompon'),
+    'mikolajek': ('zabkowany', 'gwiazda'),
+    'len': ('waski', 'gwiazda'),
+    'gorczyca': ('zabkowany', 'straczki'),
+    'indygowiec': ('drzewny', 'grono'),
+    'marzanna': ('igly', 'baldach'),
+}
+
+AMARANTUS_COLORS = {'lisc': '#4a7a2a', 'liscJasny': '#6e9a3e', 'liscCiemny': '#2e5a1c', 'lodyga': '#7a3a3a',
+                    'kwiat': '#9a1e3e', 'kwiatJasny': '#c43a5a', 'kwiatCiemny': '#6a1028'}
+
+
+def pack_colors(pack):
+    import json
+    path = os.path.join(ROOT, '..', '..', 'rosliny', pack, 'roslina.json')
+    with open(path, encoding='utf-8') as f:
+        colors = json.load(f).get('kolory') or {}
+    return colors or AMARANTUS_COLORS
+
+
 SHEETS = {
     'mak': (POPPY_SHEET, POPPY),
     'chaber': (CORNFLOWER_SHEET, CORNFLOWER),
@@ -376,6 +644,15 @@ SHEETS = {
     'rumianek': (CHAMOMILE_SHEET, CHAMOMILE),
     'lawenda': (LAVENDER_SHEET, LAVENDER),
 }
+
+for name, (leaf, flower, colors) in VANILLA.items():
+    SHEETS[name] = (templated(leaf, flower), palette(colors))
+
+for name, (leaf, flower, colors, fruit) in BUSHES.items():
+    SHEETS[name] = (templated(leaf, flower), palette(colors, FRUIT[fruit]))
+
+for name, (leaf, flower) in PACKS.items():
+    SHEETS[name] = (templated(leaf, flower), palette(pack_colors(name)))
 
 
 def main():
@@ -386,6 +663,7 @@ def main():
         sheet(rows, palette).save(os.path.join(folder, 'polrealistyczny.png'))
     for index, rows in enumerate(LAVENDER_SIMPLE, 1):
         sheet(rows, LAVENDER).save(os.path.join(root, 'lawenda', f'prosty-{index}.png'))
+    print(f'Arkusze: {len(SHEETS)}')
     print('Gotowe:', os.path.abspath(root))
 
 

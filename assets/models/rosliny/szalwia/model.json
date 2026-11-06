@@ -1,0 +1,68 @@
+{
+    "nazwa": "Szałwia",
+    "paczka": "szalwia",
+    "etapy": [
+        {
+            "prosty": "prosty-1.png",
+            "polrealistyczny": {
+                "liscie": {
+                    "uklad": "kopula",
+                    "ile": 8,
+                    "dlugosc": 4,
+                    "promien": 3,
+                    "kopula": 7,
+                    "nachylenie": 50
+                }
+            },
+            "szczegolowy": null
+        },
+        {
+            "prosty": "prosty-2.png",
+            "polrealistyczny": {
+                "liscie": {
+                    "uklad": "kopula",
+                    "ile": 10,
+                    "dlugosc": 8,
+                    "promien": 4,
+                    "kopula": 11,
+                    "nachylenie": 50
+                },
+                "lodygi": {
+                    "ile": 2,
+                    "wysokosc": 9,
+                    "promien": 2,
+                    "pochylenie": 14
+                },
+                "kwiat": {
+                    "rodzaj": "klos",
+                    "rozmiar": 4
+                }
+            },
+            "szczegolowy": null
+        },
+        {
+            "prosty": "prosty-3.png",
+            "polrealistyczny": {
+                "liscie": {
+                    "uklad": "kopula",
+                    "ile": 12,
+                    "dlugosc": 8,
+                    "promien": 5,
+                    "kopula": 11,
+                    "nachylenie": 50
+                },
+                "lodygi": {
+                    "ile": 4,
+                    "wysokosc": 9,
+                    "promien": 3,
+                    "pochylenie": 14
+                },
+                "kwiat": {
+                    "rodzaj": "klos",
+                    "rozmiar": 4
+                }
+            },
+            "szczegolowy": null
+        }
+    ]
+}

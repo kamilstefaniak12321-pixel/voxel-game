@@ -1,0 +1,66 @@
+{
+    "nazwa": "Babka",
+    "bloki": [
+        "plantain"
+    ],
+    "kolory": {
+        "lisc": "#4a8a30",
+        "liscJasny": "#6aa848",
+        "liscCiemny": "#2e6420",
+        "lodyga": "#5a7a3a",
+        "kwiat": "#8a7a52",
+        "kwiatJasny": "#b8a878",
+        "kwiatCiemny": "#5e5034"
+    },
+    "etapy": [
+        {
+            "prosty": null,
+            "polrealistyczny": {
+                "liscie": {
+                    "ile": 5,
+                    "dlugosc": 7,
+                    "nachylenie": 72
+                },
+                "lodygi": {
+                    "ile": 2,
+                    "wysokosc": 9,
+                    "promien": 2,
+                    "pochylenie": 10
+                },
+                "kwiat": {
+                    "rodzaj": "klos",
+                    "rozmiar": 4
+                }
+            },
+            "szczegolowy": {
+                "rodzaj": "kepka",
+                "liscie": {
+                    "uklad": "rozeta",
+                    "ile": [
+                        5,
+                        6
+                    ],
+                    "dlugosc": [
+                        4,
+                        5
+                    ]
+                },
+                "lodygi": {
+                    "ile": [
+                        2,
+                        3
+                    ],
+                    "wysokosc": [
+                        7,
+                        9
+                    ],
+                    "promien": 2
+                },
+                "kwiaty": {
+                    "rodzaj": "klos",
+                    "rozmiar": 3
+                }
+            }
+        }
+    ]
+}

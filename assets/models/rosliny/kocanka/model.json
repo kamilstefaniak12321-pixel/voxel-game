@@ -1,0 +1,59 @@
+{
+    "nazwa": "Kocanka piaskowa",
+    "paczka": "kocanka",
+    "etapy": [
+        {
+            "prosty": "prosty-1.png",
+            "polrealistyczny": {
+                "liscie": {
+                    "ile": 6,
+                    "dlugosc": 4,
+                    "nachylenie": 70
+                }
+            },
+            "szczegolowy": null
+        },
+        {
+            "prosty": "prosty-2.png",
+            "polrealistyczny": {
+                "liscie": {
+                    "ile": 7,
+                    "dlugosc": 6,
+                    "nachylenie": 70
+                },
+                "lodygi": {
+                    "ile": 4,
+                    "wysokosc": 5,
+                    "promien": 2,
+                    "pochylenie": 8
+                },
+                "kwiat": {
+                    "rodzaj": "pompon",
+                    "rozmiar": 3
+                }
+            },
+            "szczegolowy": null
+        },
+        {
+            "prosty": "prosty-3.png",
+            "polrealistyczny": {
+                "liscie": {
+                    "ile": 8,
+                    "dlugosc": 8,
+                    "nachylenie": 70
+                },
+                "lodygi": {
+                    "ile": 5,
+                    "wysokosc": 7,
+                    "promien": 3,
+                    "pochylenie": 8
+                },
+                "kwiat": {
+                    "rodzaj": "koszyczek",
+                    "rozmiar": 5
+                }
+            },
+            "szczegolowy": null
+        }
+    ]
+}

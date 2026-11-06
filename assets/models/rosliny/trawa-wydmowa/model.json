@@ -1,0 +1,41 @@
+{
+    "nazwa": "Trawa wydmowa",
+    "bloki": [
+        "dune_grass"
+    ],
+    "kolory": {
+        "lisc": "#9aaa7a",
+        "liscJasny": "#bcc89a",
+        "liscCiemny": "#6e7c54",
+        "lodyga": "#a8b080"
+    },
+    "etapy": [
+        {
+            "prosty": null,
+            "polrealistyczny": {
+                "liscie": {
+                    "uklad": "pion",
+                    "ile": 6,
+                    "dlugosc": 12,
+                    "promien": 4,
+                    "nachylenie": 22
+                }
+            },
+            "szczegolowy": {
+                "rodzaj": "kepka",
+                "liscie": {
+                    "uklad": "kepa",
+                    "ile": [
+                        8,
+                        10
+                    ],
+                    "dlugosc": [
+                        6,
+                        9
+                    ],
+                    "promien": 3
+                }
+            }
+        }
+    ]
+}

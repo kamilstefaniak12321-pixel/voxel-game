@@ -1,0 +1,74 @@
+{
+    "nazwa": "Piwonia",
+    "paczka": "piwonia",
+    "etapy": [
+        {
+            "prosty": "prosty-1.png",
+            "polrealistyczny": {
+                "liscie": {
+                    "uklad": "kopula",
+                    "ile": 8,
+                    "dlugosc": 4,
+                    "promien": 3,
+                    "kopula": 7,
+                    "nachylenie": 50
+                },
+                "lodygi": {
+                    "ile": 4,
+                    "wysokosc": 6,
+                    "promien": 2,
+                    "pochylenie": 14
+                }
+            },
+            "szczegolowy": null
+        },
+        {
+            "prosty": "prosty-2.png",
+            "polrealistyczny": {
+                "liscie": {
+                    "uklad": "kopula",
+                    "ile": 10,
+                    "dlugosc": 8,
+                    "promien": 4,
+                    "kopula": 11,
+                    "nachylenie": 50
+                },
+                "lodygi": {
+                    "ile": 4,
+                    "wysokosc": 7,
+                    "promien": 3,
+                    "pochylenie": 14
+                },
+                "kwiat": {
+                    "rodzaj": "pompon",
+                    "rozmiar": 3
+                }
+            },
+            "szczegolowy": null
+        },
+        {
+            "prosty": "prosty-3.png",
+            "polrealistyczny": {
+                "liscie": {
+                    "uklad": "kopula",
+                    "ile": 12,
+                    "dlugosc": 8,
+                    "promien": 5,
+                    "kopula": 11,
+                    "nachylenie": 50
+                },
+                "lodygi": {
+                    "ile": 4,
+                    "wysokosc": 8,
+                    "promien": 4,
+                    "pochylenie": 14
+                },
+                "kwiat": {
+                    "rodzaj": "pompon",
+                    "rozmiar": 5
+                }
+            },
+            "szczegolowy": null
+        }
+    ]
+}

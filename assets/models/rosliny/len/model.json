@@ -1,0 +1,65 @@
+{
+    "nazwa": "Len",
+    "paczka": "len",
+    "etapy": [
+        {
+            "prosty": "prosty-1.png",
+            "polrealistyczny": {
+                "liscie": {
+                    "uklad": "pion",
+                    "ile": 5,
+                    "dlugosc": 8,
+                    "promien": 3,
+                    "nachylenie": 22
+                }
+            },
+            "szczegolowy": null
+        },
+        {
+            "prosty": "prosty-2.png",
+            "polrealistyczny": {
+                "liscie": {
+                    "uklad": "pion",
+                    "ile": 4,
+                    "dlugosc": 7,
+                    "promien": 3,
+                    "nachylenie": 22
+                },
+                "lodygi": {
+                    "ile": 6,
+                    "wysokosc": 11,
+                    "promien": 4,
+                    "pochylenie": 14
+                },
+                "kwiat": {
+                    "rodzaj": "koszyczek",
+                    "rozmiar": 5
+                }
+            },
+            "szczegolowy": null
+        },
+        {
+            "prosty": "prosty-3.png",
+            "polrealistyczny": {
+                "liscie": {
+                    "uklad": "pion",
+                    "ile": 4,
+                    "dlugosc": 7,
+                    "promien": 3,
+                    "nachylenie": 22
+                },
+                "lodygi": {
+                    "ile": 6,
+                    "wysokosc": 13,
+                    "promien": 4,
+                    "pochylenie": 14
+                },
+                "kwiat": {
+                    "rodzaj": "pompon",
+                    "rozmiar": 3
+                }
+            },
+            "szczegolowy": null
+        }
+    ]
+}

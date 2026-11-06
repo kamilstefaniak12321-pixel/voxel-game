@@ -41,7 +41,12 @@ export const PLANE_REGIONS = {
     petal: [10, 8, 6, 8]
 };
 
-export const PLANE_FLOWERS = ['kielich', 'gwiazda', 'pompon', 'koszyczek', 'klos'];
+export const PLANE_FLOWERS = ['kielich', 'gwiazda', 'pompon', 'koszyczek', 'klos', 'dzwonek', 'owoce'];
+
+// Układ liści: wokol - od podstawy łodygi dookoła (rozeta, kępa),
+// kopula - na kopułce (krzaki, sadzonki drzew), pion - prawie pionowe
+// źdźbła rozstawione w promieniu (trawy, trzcina).
+export const PLANE_LEAF_LAYOUTS = ['wokol', 'kopula', 'pion'];
 
 function randomFor(seed) {
     let value = seed | 0;
@@ -174,6 +179,18 @@ function flower(faces, texture, kind, top, size, yaw, height, random) {
 
     }
 
+    else if (kind === 'dzwonek') {
+
+        // Dzwonek: kwiat zwisa z wygiętej łodygi - dwie skrzyżowane karty
+        // z boku, trochę niżej i na zewnątrz końca łodygi.
+        const out = [Math.sin(yaw) * s * 0.35, -s * 0.85, Math.cos(yaw) * s * 0.35];
+        for (let i = 0; i < 2; i++) {
+            const angle = yaw + i * Math.PI / 2;
+            card(faces, texture, PLANE_REGIONS.side, add(top, out), [0, s, 0], [Math.cos(angle) * s / 2, 0, -Math.sin(angle) * s / 2], height, i === 1);
+        }
+
+    }
+
     else if (kind === 'klos') {
 
         // Kłos: dwie skrzyżowane, wąskie karty nad łodygą.
@@ -197,6 +214,24 @@ export function makePlaneModel(spec, texture, variant, seed = 0) {
 
     const faces = [];
 
+
+    // Prosty poziom bloku z własnym modelem (krzaki, rośliny nad wodą):
+    // dwie skrzyżowane karty z całym obrazkiem 16 x 16.
+
+    if (spec.krzyz) {
+
+        const size = spec.krzyz.rozmiar * PX;
+        const yaw = variant * Math.PI / 8;
+
+        for (let i = 0; i < 2; i++) {
+            const angle = yaw + Math.PI / 4 + i * Math.PI / 2;
+            card(faces, texture, [0, 0, 16, 16], [0, 0, 0], [0, size, 0], [Math.cos(angle) * size * 0.45, 0, -Math.sin(angle) * size * 0.45], size, i === 1);
+        }
+
+        return faces;
+
+    }
+
     const stems = spec.lodygi ?? { ile: 0 };
     const leaves = spec.liscie ?? { ile: 0 };
     const bloom = spec.kwiat ?? null;
@@ -204,13 +239,79 @@ export function makePlaneModel(spec, texture, variant, seed = 0) {
     const stemCount = stems.ile ?? 0;
     const stemHeight = (stems.wysokosc ?? 8) * PX;
     const flowerSize = bloom ? (bloom.rozmiar ?? 6) : 0;
-    const height = Math.max(stemHeight + flowerSize * PX, (leaves.dlugosc ?? 0) * PX, 0.1);
+    const layout = leaves.uklad ?? 'wokol';
+    const dome = (leaves.kopula ?? 8) * PX;
+    const height = Math.max(stemHeight + flowerSize * PX, (leaves.dlugosc ?? 0) * PX + (layout === 'kopula' ? dome : 0), 0.1);
     const yaw0 = variant * Math.PI / 4 + random() * 0.4;
+
+
+    // Kopułka: liście na kilku wysokościach, odchylone na zewnątrz
+    // (wyżej - mniej, u góry prawie płasko); owoce między nimi.
+
+    if (layout === 'kopula') {
+
+        const radius = (leaves.promien ?? 4) * PX;
+        const count = leaves.ile ?? 8;
+        const spots = [];
+
+        for (let i = 0; i < count; i++) {
+            const t = (i + 0.5) / count;
+            const yaw = yaw0 + i * 2.39996 + (random() - 0.5) * 0.4;
+            const level = Math.sqrt(t) * dome;
+            const out = radius * Math.sqrt(Math.max(0, 1 - (level / Math.max(dome, PX)) ** 2)) * (0.6 + random() * 0.4);
+            const length = (leaves.dlugosc ?? 6) * PX * (0.85 + random() * 0.3);
+            // Niżej - liście bardziej na boki, u góry - w górę: okrągła kopułka.
+            const tilt = ((leaves.nachylenie ?? 50) * (1.25 - 0.7 * t) + (random() - 0.5) * 14) * Math.PI / 180;
+            const base = [Math.sin(yaw) * out * 0.7, level * 0.8, Math.cos(yaw) * out * 0.7];
+            const right = [Math.cos(yaw) * length / 2, 0, -Math.sin(yaw) * length / 2];
+            card(faces, texture, PLANE_REGIONS.leaf, base, scale(direction(yaw, Math.min(1.45, tilt)), length), right, height, i % 2 === 1);
+            spots.push(add(base, scale(direction(yaw, Math.min(1.45, tilt)), length * 0.6)));
+        }
+
+        // Pień / gałązki w środku (sadzonki, krzaki).
+        if (leaves.pien) {
+            for (let j = 0; j < 2; j++) {
+                const angle = yaw0 + j * Math.PI / 2;
+                card(faces, texture, PLANE_REGIONS.stem, [0, 0, 0], [0, dome * 0.8, 0], [Math.cos(angle) * PX, 0, -Math.sin(angle) * PX], height, j === 1);
+            }
+        }
+
+        if (bloom?.rodzaj === 'owoce') {
+            const s = (bloom.rozmiar ?? 4) * PX;
+            for (let i = 0; i < (bloom.ile ?? 4); i++) {
+                const spot = spots[(i * 3 + variant) % spots.length];
+                const yaw = yaw0 + i * 1.7;
+                card(faces, texture, PLANE_REGIONS.petal, add(spot, [0, -s * 0.5, 0]), [0, s * 4 / 3, 0], [Math.cos(yaw) * s / 2, 0, -Math.sin(yaw) * s / 2], height, i % 2 === 1);
+            }
+        }
+
+    }
+
+
+    // Źdźbła: prawie pionowe, w promieniu, różnej długości.
+
+    else if (layout === 'pion') {
+
+        const radius = (leaves.promien ?? 3) * PX;
+
+        for (let i = 0; i < (leaves.ile ?? 6); i++) {
+            const yaw = yaw0 + i * 2.39996 + (random() - 0.5) * 0.6;
+            const out = radius * Math.sqrt((i + 0.5) / (leaves.ile ?? 6)) * (0.5 + random() * 0.5);
+            const length = (leaves.dlugosc ?? 12) * PX * (0.7 + random() * 0.45);
+            const tilt = ((leaves.nachylenie ?? 12) * (0.4 + random() * 0.9)) * Math.PI / 180;
+            const base = [Math.sin(yaw) * out, 0, Math.cos(yaw) * out];
+            const width = length * 0.5;
+            const turn = yaw + Math.PI / 2 + (random() - 0.5);
+            const right = [Math.cos(turn) * width / 2, 0, -Math.sin(turn) * width / 2];
+            card(faces, texture, PLANE_REGIONS.leaf, base, scale(direction(yaw, tilt), length), right, height, i % 2 === 1);
+        }
+
+    }
 
 
     // Liście przy łodydze, rozłożone dookoła.
 
-    for (let i = 0; i < (leaves.ile ?? 0); i++) {
+    else for (let i = 0; i < (leaves.ile ?? 0); i++) {
 
         const yaw = yaw0 + i * 2 * Math.PI / leaves.ile + (random() - 0.5) * 0.5;
         const length = (leaves.dlugosc ?? 6) * PX * (0.85 + random() * 0.3);
@@ -245,7 +346,7 @@ export function makePlaneModel(spec, texture, variant, seed = 0) {
             }
         }
 
-        if (bloom) {
+        if (bloom && bloom.rodzaj !== 'owoce') {
             flower(faces, texture, bloom.rodzaj, add(base, up), flowerSize * (0.85 + random() * 0.15), yaw, height, random);
         }
 

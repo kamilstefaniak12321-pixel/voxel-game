@@ -1,0 +1,66 @@
+{
+    "nazwa": "Pokrzywa",
+    "bloki": [
+        "nettle"
+    ],
+    "kolory": {
+        "lisc": "#3e7a28",
+        "liscJasny": "#5c9c38",
+        "liscCiemny": "#24561a",
+        "lodyga": "#3a6a22",
+        "kwiat": "#9aaa6a",
+        "kwiatJasny": "#bcc888",
+        "kwiatCiemny": "#6e7a44"
+    },
+    "etapy": [
+        {
+            "prosty": null,
+            "polrealistyczny": {
+                "liscie": {
+                    "ile": 6,
+                    "dlugosc": 6,
+                    "nachylenie": 40,
+                    "wysokosc": 3
+                },
+                "lodygi": {
+                    "ile": 2,
+                    "wysokosc": 12,
+                    "promien": 2
+                },
+                "kwiat": {
+                    "rodzaj": "klos",
+                    "rozmiar": 4
+                }
+            },
+            "szczegolowy": {
+                "rodzaj": "kepka",
+                "liscie": {
+                    "uklad": "brak"
+                },
+                "lodygi": {
+                    "ile": [
+                        2,
+                        3
+                    ],
+                    "wysokosc": [
+                        10,
+                        13
+                    ],
+                    "promien": 2,
+                    "liscie": {
+                        "co": 2,
+                        "dlugosc": [
+                            3,
+                            4
+                        ],
+                        "naprzeciw": true
+                    }
+                },
+                "kwiaty": {
+                    "rodzaj": "klos",
+                    "rozmiar": 1
+                }
+            }
+        }
+    ]
+}

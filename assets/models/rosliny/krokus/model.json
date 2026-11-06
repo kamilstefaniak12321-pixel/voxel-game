@@ -1,0 +1,69 @@
+{
+    "nazwa": "Krokus",
+    "bloki": [
+        "crocus"
+    ],
+    "kolory": {
+        "lisc": "#5a8a3a",
+        "liscJasny": "#7aaa52",
+        "liscCiemny": "#3a6428",
+        "lodyga": "#c8d0a0",
+        "kwiat": "#9a6ad0",
+        "kwiatJasny": "#bc96e8",
+        "kwiatCiemny": "#6a42a0",
+        "pak": "#9a6ad0",
+        "srodek": "#f0a830"
+    },
+    "etapy": [
+        {
+            "prosty": null,
+            "polrealistyczny": {
+                "liscie": {
+                    "uklad": "pion",
+                    "ile": 5,
+                    "dlugosc": 7,
+                    "promien": 2,
+                    "nachylenie": 12
+                },
+                "lodygi": {
+                    "ile": 1,
+                    "wysokosc": 5
+                },
+                "kwiat": {
+                    "rodzaj": "kielich",
+                    "rozmiar": 5
+                }
+            },
+            "szczegolowy": {
+                "rodzaj": "kepka",
+                "liscie": {
+                    "uklad": "kepa",
+                    "ile": [
+                        4,
+                        5
+                    ],
+                    "dlugosc": [
+                        4,
+                        6
+                    ],
+                    "promien": 1
+                },
+                "lodygi": {
+                    "ile": [
+                        1,
+                        2
+                    ],
+                    "wysokosc": [
+                        4,
+                        6
+                    ],
+                    "promien": 1
+                },
+                "kwiaty": {
+                    "rodzaj": "pak",
+                    "rozmiar": 2
+                }
+            }
+        }
+    ]
+}

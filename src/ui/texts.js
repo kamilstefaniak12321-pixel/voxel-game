@@ -129,7 +129,7 @@ export const TEXTS = {
         experiments: 'Eksperymenty'
     },
     // Modele (src/blocks/plantModels.js)
-    modelsIntro: 'Wygląd roślin i ich ruch. Zmienia tylko obraz - świat i zapisy zostają takie same. Na razie trzy wersje mają: mak, chaber, mniszek, rumianek i lawenda; pozostałe rośliny dostają najbliższą wersję, którą mają.',
+    modelsIntro: 'Wygląd wszystkich roślin i ich ruch. Zmienia tylko obraz - świat i zapisy zostają takie same. Rośliny leżące jedną warstwą (lilie wodne, rzęsa, porosty, huby, barwinek) wyglądają tak samo w każdej wersji.',
     plantModelsTitle: 'Modele roślin',
     plantModelNames: { simple: 'Proste', semi: 'Półrealistyczne', detailed: 'Szczegółowe' },
     plantModels: (value) => `Modele roślin: ${{ simple: 'Proste', semi: 'Półrealistyczne', detailed: 'Szczegółowe' }[value] ?? 'Półrealistyczne'}`,

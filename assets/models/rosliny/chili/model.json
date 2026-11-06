@@ -1,0 +1,89 @@
+{
+    "nazwa": "Papryczka chili",
+    "bloki": [
+        "chili_sapling",
+        "chili_bush",
+        "chili_bush_few",
+        "chili_bush_full"
+    ],
+    "etapy": [
+        {
+            "prosty": {
+                "kafelek": "bush_sapling"
+            },
+            "polrealistyczny": {
+                "liscie": {
+                    "uklad": "kopula",
+                    "ile": 5,
+                    "dlugosc": 4,
+                    "promien": 2,
+                    "kopula": 4,
+                    "nachylenie": 50,
+                    "pien": false
+                }
+            },
+            "szczegolowy": null
+        },
+        {
+            "prosty": {
+                "kafelek": "bush_leaves"
+            },
+            "polrealistyczny": {
+                "liscie": {
+                    "uklad": "kopula",
+                    "ile": 12,
+                    "dlugosc": 6,
+                    "promien": 5,
+                    "kopula": 9,
+                    "nachylenie": 50,
+                    "pien": false
+                }
+            },
+            "szczegolowy": null
+        },
+        {
+            "prosty": {
+                "kafelek": "chili_bush_few"
+            },
+            "polrealistyczny": {
+                "liscie": {
+                    "uklad": "kopula",
+                    "ile": 12,
+                    "dlugosc": 6,
+                    "promien": 5,
+                    "kopula": 9,
+                    "nachylenie": 50,
+                    "pien": false
+                },
+                "kwiat": {
+                    "rodzaj": "owoce",
+                    "ile": 3,
+                    "rozmiar": 4
+                }
+            },
+            "szczegolowy": null
+        },
+        {
+            "prosty": {
+                "kafelek": "chili_bush_full"
+            },
+            "polrealistyczny": {
+                "liscie": {
+                    "uklad": "kopula",
+                    "ile": 12,
+                    "dlugosc": 6,
+                    "promien": 5,
+                    "kopula": 9,
+                    "nachylenie": 50,
+                    "pien": false
+                },
+                "kwiat": {
+                    "rodzaj": "owoce",
+                    "ile": 7,
+                    "rozmiar": 4
+                }
+            },
+            "szczegolowy": null
+        }
+    ]
+}

@@ -1,0 +1,62 @@
+{
+    "nazwa": "Sadzonka olchy",
+    "bloki": [
+        "olcha_sapling"
+    ],
+    "kolory": {
+        "lisc": "#3e7e2e",
+        "liscJasny": "#5e9e40",
+        "liscCiemny": "#265a1e",
+        "lodyga": "#5a4a40"
+    },
+    "etapy": [
+        {
+            "prosty": null,
+            "polrealistyczny": {
+                "liscie": {
+                    "uklad": "kopula",
+                    "ile": 7,
+                    "dlugosc": 5,
+                    "promien": 3,
+                    "kopula": 9,
+                    "nachylenie": 45,
+                    "pien": true
+                }
+            },
+            "szczegolowy": {
+                "rodzaj": "kepka",
+                "liscie": {
+                    "uklad": "krzak",
+                    "ile": [
+                        6,
+                        8
+                    ],
+                    "dlugosc": [
+                        2,
+                        3
+                    ],
+                    "promien": 2
+                },
+                "lodygi": {
+                    "ile": [
+                        1,
+                        1
+                    ],
+                    "wysokosc": [
+                        7,
+                        9
+                    ],
+                    "promien": 0,
+                    "liscie": {
+                        "co": 1,
+                        "dlugosc": [
+                            3,
+                            4
+                        ],
+                        "naprzeciw": true
+                    }
+                }
+            }
+        }
+    ]
+}

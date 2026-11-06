@@ -1,0 +1,68 @@
+{
+    "nazwa": "Cynia",
+    "paczka": "cynia",
+    "etapy": [
+        {
+            "prosty": "prosty-1.png",
+            "polrealistyczny": {
+                "lodygi": {
+                    "ile": 2,
+                    "wysokosc": 7,
+                    "promien": 1,
+                    "pochylenie": 8
+                },
+                "liscie": {
+                    "ile": 3,
+                    "dlugosc": 5,
+                    "wysokosc": 3,
+                    "nachylenie": 40
+                }
+            },
+            "szczegolowy": null
+        },
+        {
+            "prosty": "prosty-2.png",
+            "polrealistyczny": {
+                "lodygi": {
+                    "ile": 2,
+                    "wysokosc": 9,
+                    "promien": 2,
+                    "pochylenie": 14
+                },
+                "liscie": {
+                    "ile": 3,
+                    "dlugosc": 5,
+                    "wysokosc": 3,
+                    "nachylenie": 40
+                },
+                "kwiat": {
+                    "rodzaj": "pompon",
+                    "rozmiar": 3
+                }
+            },
+            "szczegolowy": null
+        },
+        {
+            "prosty": "prosty-3.png",
+            "polrealistyczny": {
+                "lodygi": {
+                    "ile": 2,
+                    "wysokosc": 10,
+                    "promien": 3,
+                    "pochylenie": 14
+                },
+                "liscie": {
+                    "ile": 3,
+                    "dlugosc": 5,
+                    "wysokosc": 3,
+                    "nachylenie": 40
+                },
+                "kwiat": {
+                    "rodzaj": "pompon",
+                    "rozmiar": 5
+                }
+            },
+            "szczegolowy": null
+        }
+    ]
+}

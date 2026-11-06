@@ -1,0 +1,89 @@
+{
+    "nazwa": "Truskawka",
+    "bloki": [
+        "strawberry_sapling",
+        "strawberry_bush",
+        "strawberry_bush_few",
+        "strawberry_bush_full"
+    ],
+    "etapy": [
+        {
+            "prosty": {
+                "kafelek": "bush_sapling"
+            },
+            "polrealistyczny": {
+                "liscie": {
+                    "uklad": "kopula",
+                    "ile": 5,
+                    "dlugosc": 4,
+                    "promien": 2,
+                    "kopula": 4,
+                    "nachylenie": 50,
+                    "pien": false
+                }
+            },
+            "szczegolowy": null
+        },
+        {
+            "prosty": {
+                "kafelek": "bush_leaves"
+            },
+            "polrealistyczny": {
+                "liscie": {
+                    "uklad": "kopula",
+                    "ile": 10,
+                    "dlugosc": 6,
+                    "promien": 4,
+                    "kopula": 7,
+                    "nachylenie": 50,
+                    "pien": false
+                }
+            },
+            "szczegolowy": null
+        },
+        {
+            "prosty": {
+                "kafelek": "strawberry_bush_few"
+            },
+            "polrealistyczny": {
+                "liscie": {
+                    "uklad": "kopula",
+                    "ile": 10,
+                    "dlugosc": 6,
+                    "promien": 4,
+                    "kopula": 7,
+                    "nachylenie": 50,
+                    "pien": false
+                },
+                "kwiat": {
+                    "rodzaj": "owoce",
+                    "ile": 3,
+                    "rozmiar": 4
+                }
+            },
+            "szczegolowy": null
+        },
+        {
+            "prosty": {
+                "kafelek": "strawberry_bush_full"
+            },
+            "polrealistyczny": {
+                "liscie": {
+                    "uklad": "kopula",
+                    "ile": 10,
+                    "dlugosc": 6,
+                    "promien": 4,
+                    "kopula": 7,
+                    "nachylenie": 50,
+                    "pien": false
+                },
+                "kwiat": {
+                    "rodzaj": "owoce",
+                    "ile": 7,
+                    "rozmiar": 4
+                }
+            },
+            "szczegolowy": null
+        }
+    ]
+}

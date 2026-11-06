@@ -670,6 +670,20 @@ function levelOf(spacing) {
 
 }
 
+// Quadtree leaves never overlap. Sum their intersections instead of building
+// a full-world coverage grid: incoming rectangles may extend into a previously
+// omitted inner ring or beyond the old horizon. Those pixels have no outgoing
+// owner, so fading the whole new tile from zero would reveal holes.
+function tileFullyCovered(tile, previous) {
+    let covered = 0;
+    for (const old of previous) {
+        const width = Math.min(tile.x0 + tile.size, old.x0 + old.size) - Math.max(tile.x0, old.x0);
+        const depth = Math.min(tile.z0 + tile.size, old.z0 + old.size) - Math.max(tile.z0, old.z0);
+        if (width > 0 && depth > 0) covered += width * depth;
+    }
+    return covered >= tile.size * tile.size;
+}
+
 
 // Kolor (liniowy, 0-1) jako pierwiastek w bajcie (shader podnosi do
 // kwadratu - więcej odcieni w ciemnych kolorach).
@@ -1540,6 +1554,7 @@ export class FarTerrain {
         if (!changed) return;
         this.finishTileFade();
         const animate = this.complete && this.shown.size > 0;
+        const previous = [...this.shown];
         this.retiring ??= new Set();
 
 
@@ -1557,7 +1572,8 @@ export class FarTerrain {
         for (const tile of wanted) {
 
             if (!this.shown.has(tile)) {
-                tile.fade?.value.set(animate ? 0 : 1, animate ? 1 : 0);
+                const fadeIn = animate && tileFullyCovered(tile, previous);
+                tile.fade?.value.set(fadeIn ? 0 : 1, fadeIn ? 1 : 0);
                 this.scene.add(tile.mesh);
             }
 

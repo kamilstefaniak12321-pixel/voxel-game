@@ -25,8 +25,10 @@ pracę. Bliski model nigdy nie ma większej jakości niż wybrana w ustawieniach
 Daleki zamiennik musi być gotowy, zanim zacznie znikać pełna geometria.
 Maska chunków odróżnia brak pełnej siatki, pełną siatkę bez zamiennika oraz
 pełną siatkę z gotowym pokryciem oddali. Dwa ostatnie stany umożliwiają
-komplementarne, stopniowe przejście. Nowy zestaw kafelków horyzontu również
-zastępuje poprzedni przez krótkie przenikanie.
+komplementarne, stopniowe przejście. Nowe kafelki horyzontu zastępują stare
+przez krótkie przenikanie tylko tam, gdzie poprzedni zestaw pokrywa cały
+ich obszar; nowo odsłonięte fragmenty są w pełni widoczne, zanim bliska
+geometria zacznie oddawać im obraz.
 
 ## Dane świata
 

@@ -137,7 +137,7 @@ viewUniforms.uDistanceLodEnabled.value=0;
 
 // Replacing a quadtree keeps old coverage through the complementary fade;
 // interrupted transitions release their retired scene objects immediately.
-const makeTile=key=>({key,mesh:new THREE.Object3D(),fade:{value:new THREE.Vector2(1,0)}});
+const makeTile=(key,x0=0,z0=0,size=32)=>({key,x0,z0,size,mesh:new THREE.Object3D(),fade:{value:new THREE.Vector2(1,0)}});
 const oldTile=makeTile('old'),newTile=makeTile('new'),nextTile=makeTile('next');
 const fading=Object.assign(Object.create(FarTerrain.prototype),{scene:new THREE.Scene(),shown:new Set([oldTile]),
     wanted:[newTile],tiles:new Map([[oldTile.key,oldTile],[newTile.key,newTile],[nextTile.key,nextTile]]),complete:true,shadowRevision:0,coverageVersion:0});
@@ -156,4 +156,32 @@ fading.wanted=[nextTile];fading.showWanted();
 check(!fading.scene.children.includes(oldTile.mesh),'Interrupted transition releases oldest coverage');
 check(fading.scene.children.includes(newTile.mesh)&&fading.scene.children.includes(nextTile.mesh),'Latest two generations still overlap');
 fading.hideAll();equal(fading.scene.children.length,0,'Hide clears both generations');equal(fading.retiring.size,0,'No retired meshes remain');
+
+// Moving the inner ring can expose a new tile with no outgoing far geometry.
+// A fully or partly uncovered rectangle must be opaque before updateMask
+// grants the near world permission to hand its pixels to that rectangle.
+for (const [name,previous,expectedFade] of [
+    ['missing',[makeTile('outside',64,0,32)],[1,0]],
+    ['partial',[makeTile('quarter',0,0,16)],[1,0]],
+    ['complete',[makeTile('a',0,0,16),makeTile('b',16,0,16),makeTile('c',0,16,16),makeTile('d',16,16,16)],[0,1]]
+]) {
+    const incoming=makeTile('incoming');
+    const fixture=Object.assign(Object.create(FarTerrain.prototype),{scene:new THREE.Scene(),shown:new Set(previous),
+        wanted:[incoming],tiles:new Map([...previous,incoming].map(t=>[t.key,t])),complete:true,shadowRevision:0,coverageVersion:0,
+        world:{chunks:new Map([['0,0',{cx:0,cz:0,mesh:{}}]]),meshVersion:1}});
+    for(const tile of previous)fixture.scene.add(tile.mesh);
+    fixture.showWanted();
+    equal(incoming.fade.value.toArray(),expectedFade,`${name}: incoming opacity follows actual outgoing coverage`);
+    fixture.updateMask(new THREE.Vector3(0,60,0));
+    const index=-chunkMaskUniforms.uChunkMaskOrigin.value.y*CHUNK_MASK_SIZE-chunkMaskUniforms.uChunkMaskOrigin.value.x;
+    equal(chunkMaskData[index],255,`${name}: readiness publishes only after a safe incoming fade is installed`);
+    // Probe uncovered and covered quadrants at handoff weights. These are the
+    // actual masks selected by showWanted, not a distance-only readiness guess.
+    for(const [x,z] of [[8,8],[24,8],[8,24],[24,24]])for(const nearWeight of [0,.5,1])for(const noise of [.1,.6,.95]) {
+        const incomingDraws=incoming.fade.value.y===0||noise<incoming.fade.value.x;
+        const outgoingDraws=[...fixture.retiring].some(t=>x>=t.x0&&x<t.x0+t.size&&z>=t.z0&&z<t.z0+t.size&&noise>=t.fade.value.x);
+        check(noise<nearWeight||incomingDraws||outgoingDraws,`${name}: every handed-off pixel retains geometry coverage`);
+    }
+    fixture.hideAll();
+}
 console.log(`OK: daleka roślinność — ${checks} kontroli pozycji, geometrii, budżetu, zapisów i gotowości przejścia. Envelopes: ${JSON.stringify(envelopeStats)}`);

@@ -1,6 +1,8 @@
 # 0.69.0 — wynik próby zasięgu na RTX 3050
 
 Pomiar z 6 listopada 2026 r. do [PR #103](https://github.com/kamilstefaniak12321-pixel/voxel-game/pull/103).
+Ten sam kod gry przywraca do `main` [PR #105](https://github.com/kamilstefaniak12321-pixel/voxel-game/pull/105);
+zgodność z przetestowanym commitem `b7f4e00` potwierdzono przez porównanie plików.
 Porównano 0.68.0 z 0.69.0 na tym samym laptopie i przy tych samych ustawieniach.
 Nowy sposób rysowania zasięgu ukończył wczytywanie i osiągnął średnio **86,81 FPS**
 w nieruchomej, gotowej scenie. Podczas ruchu było **66,53 FPS średnio**, ale p95
@@ -176,4 +178,4 @@ node docs/pomiary/zasieg-0.69.0/prepare-evidence.mjs '<baseline-directory>' '<ca
 ```
 
 Próba lokalna nie oznacza opublikowania wersji. Status kompilacji
-Windows/Android i wydania należy sprawdzać w PR #103.
+Windows/Android i wydania należy sprawdzać w PR #105.

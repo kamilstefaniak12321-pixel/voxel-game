@@ -115,14 +115,6 @@ export const blockMaterial =
 blockMaterial.defaultAttributeValues = { ...blockMaterial.defaultAttributeValues, surfaceProfile: [0, 0] };
 blockMaterial.onBeforeCompile = (shader, renderer) => {
     installSurfaceProfiles(shader);
-    // Only terrain materials use this path. Hands and inventory have their
-    // own ModelMaterial, so global view distance never fades held objects.
-    Object.assign(shader.uniforms, chunkMaskUniforms);
-    shader.fragmentShader = shader.fragmentShader
-        .replace('#include <common>', `#include <common>\n${CHUNK_MASK_GLSL}`)
-        .replace('#include <clipping_planes_fragment>', `#include <clipping_planes_fragment>
-            if (uDistanceLodEnabled > 0.5 &&
-                distanceLodNoise() >= effectiveNearLodWeight(vSkyDirection.xz + cameraPosition.xz)) discard;`);
 
     // Światło w rogach to jasność "na oko" (0.5 = wygląda na w pół
     // ciemniej), a karta liczy światło liniowo - stąd pow(..., 2.2).

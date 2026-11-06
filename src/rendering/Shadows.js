@@ -2,7 +2,6 @@ import * as THREE from 'three';
 
 import { blockAtlasTexture } from './TextureAtlas.js';
 import { plantWindUniforms, plantShadowState, PLANT_WIND_GLSL } from './PlantWind.js';
-import { viewUniforms, chunkMaskUniforms, CHUNK_MASK_GLSL } from './viewUniforms.js';
 
 import { CHUNK_SIZE, CHUNK_HEIGHT, SHADOW_INDOOR_DARKNESS } from '../config.js';
 
@@ -121,7 +120,6 @@ export const shadowUniforms = {
     // Bliska mapa (głębia widziana od słońca) i przejście świat -> mapa.
     uSunShadowMap: { value: null },
     uSunShadowMatrix: { value: new THREE.Matrix4() },
-    uSunShadowMetrics: { value: new THREE.Vector4() },
 
     // x - 1 / zakres głębi (bloki -> jednostki mapy),
     // y - siła przesłonięcia 0-1 (atmosfera: wiązka słabnie osobno),
@@ -143,7 +141,6 @@ export const shadowUniforms = {
     // Mapa cienia modelu gracza.
     uModelShadowMap: { value: null },
     uModelShadowMatrix: { value: new THREE.Matrix4() },
-    uModelShadowMetrics: { value: new THREE.Vector4() },
 
     // O ile mocniej słabnie światło otoczenia tam, gdzie mało światła
     // nieba (SHADOW_INDOOR_DARKNESS razy siła cieni) - wykładnik.
@@ -151,7 +148,6 @@ export const shadowUniforms = {
 
     uPlantShadowMap: { value: null },
     uPlantShadowMatrix: { value: new THREE.Matrix4() },
-    uPlantShadowMetrics: { value: new THREE.Vector4() },
     // depth scale, world texel, ready, natural lighting enabled.
     uPlantShadowInfo: { value: new THREE.Vector4(1, 1 / 16, 0, 0) },
 
@@ -159,24 +155,12 @@ export const shadowUniforms = {
     // z - 1 = mapa gotowa.
     uFarShadowMap: { value: null },
     uFarShadowMatrix: { value: new THREE.Matrix4() },
-    uFarShadowMetrics: { value: new THREE.Vector4() },
     uFarShadowInfo: { value: new THREE.Vector4(1, 0.5, 0, 0) },
     uDistantShadowMap: { value: null },
     uDistantShadowMatrix: { value: new THREE.Matrix4() },
-    uDistantShadowMetrics: { value: new THREE.Vector4() },
     uDistantShadowInfo: { value: new THREE.Vector4(1, 1, 0, 0) }
 
 };
-
-// Matrix row lengths and the UV texel are constant for an entire published
-// map. Computing them here replaces three dots and a square root per lookup
-// per fragment, without changing the receiver-plane filtering or its taps.
-export function updateShadowSamplingMetrics(output, matrix, worldTexel) {
-    const m = matrix.elements;
-    const row2 = row => m[row] * m[row] + m[row + 4] * m[row + 4] + m[row + 8] * m[row + 8];
-    const x2 = row2(0), y2 = row2(1), z2 = row2(2);
-    return output.set(x2, y2, z2, Math.max(0, worldTexel) * Math.sqrt(x2));
-}
 
 
 // GLSL wspólny: uniformy światła.
@@ -188,7 +172,6 @@ const COMMON_GLSL = `
     uniform int uSunShadowLight;
     uniform highp sampler2D uPlantShadowMap;
     uniform mat4 uPlantShadowMatrix;
-    uniform vec4 uPlantShadowMetrics;
     uniform vec4 uPlantShadowInfo;
 
 `;
@@ -201,11 +184,9 @@ const FAR_GLSL = `
     #ifdef USE_FAR_SHADOWS
         uniform highp sampler2D uFarShadowMap;
         uniform mat4 uFarShadowMatrix;
-        uniform vec4 uFarShadowMetrics;
         uniform vec4 uFarShadowInfo;
         uniform highp sampler2D uDistantShadowMap;
         uniform mat4 uDistantShadowMatrix;
-        uniform vec4 uDistantShadowMetrics;
         uniform vec4 uDistantShadowInfo;
 
         // x = ważone przesłonięcie, y = pokrycie. Każda waga występuje
@@ -213,17 +194,17 @@ const FAR_GLSL = `
         vec2 distantShadowOcclusion(vec3 p, vec3 worldNormal, float extraBias) {
             float coverage;
             float lit = shadowMapLookup(uDistantShadowMap, uDistantShadowMatrix,
-                uDistantShadowInfo, uDistantShadowMetrics, p, worldNormal, extraBias, 0.82, coverage);
+                uDistantShadowInfo, p, worldNormal, extraBias, 0.82, coverage);
             vec2 result = vec2((1.0 - lit) * coverage, coverage);
             lit = shadowMapLookup(uFarShadowMap, uFarShadowMatrix,
-                uFarShadowInfo, uFarShadowMetrics, p, worldNormal, extraBias, 0.82, coverage);
+                uFarShadowInfo, p, worldNormal, extraBias, 0.82, coverage);
             return max(result, vec2((1.0 - lit) * coverage, coverage));
         }
     #endif
 `;
 
 const LOOKUP_GLSL = `
-    float shadowMapLookup(highp sampler2D depthMap, mat4 worldToMap, vec4 info, vec4 metrics,
+    float shadowMapLookup(highp sampler2D depthMap, mat4 worldToMap, vec4 info,
         vec3 p, vec3 worldNormal, float extraBias, float fadeStart,
         out float coverage) {
         coverage = 0.0;
@@ -240,13 +221,13 @@ const LOOKUP_GLSL = `
         vec3 rowX = vec3(worldToMap[0][0], worldToMap[1][0], worldToMap[2][0]);
         vec3 rowY = vec3(worldToMap[0][1], worldToMap[1][1], worldToMap[2][1]);
         vec3 rowZ = vec3(worldToMap[0][2], worldToMap[1][2], worldToMap[2][2]);
-        float x2 = metrics.x;
-        float y2 = metrics.y;
-        float z2 = metrics.z;
+        float x2 = dot(rowX, rowX);
+        float y2 = dot(rowY, rowY);
+        float z2 = dot(rowZ, rowZ);
         float planeZ = dot(worldNormal, rowZ);
         if (x2 <= 0.0 || y2 <= 0.0 || z2 <= 0.0 ||
-            planeZ * planeZ <= 0.0000000001 * dot(worldNormal, worldNormal) * z2) return 1.0;
-        float uvTexel = metrics.w;
+            abs(planeZ) <= 0.00001 * sqrt(dot(worldNormal, worldNormal) * z2)) return 1.0;
+        float uvTexel = info.y * sqrt(x2);
         vec2 texelPosition = s.xy / uvTexel - 0.5;
         vec2 base = floor(texelPosition);
         vec2 blend = fract(texelPosition);
@@ -283,7 +264,7 @@ const PLANT_LOOKUP_GLSL = `
         if (uPlantShadowInfo.w < 0.5) return 0.0;
         float coverage;
         float lit = shadowMapLookup(uPlantShadowMap, uPlantShadowMatrix,
-            uPlantShadowInfo, uPlantShadowMetrics, p, normal, bias, 0.8, coverage);
+            uPlantShadowInfo, p, normal, bias, 0.8, coverage);
         return (1.0 - lit) * coverage;
     }
 `;
@@ -297,7 +278,6 @@ export const DISTANT_SHADOW_GLSL = `
     ${PLANT_LOOKUP_GLSL}
     uniform highp sampler2D uSunShadowMap;
     uniform mat4 uSunShadowMatrix;
-    uniform vec4 uSunShadowMetrics;
     float distantShadowVisibility(vec3 p, vec3 normal) {
         if (uSunShadowInfo.y <= 0.0) return 1.0;
         #ifdef USE_FAR_SHADOWS
@@ -318,7 +298,7 @@ export const DISTANT_SHADOW_GLSL = `
         #endif
         float coverage;
         float lit = shadowMapLookup(uSunShadowMap, uSunShadowMatrix,
-            vec4(uSunShadowInfo.x, uSunShadowInfo.z, 1.0, 0.0), uSunShadowMetrics, p, normal, 0.0, 0.85, coverage);
+            vec4(uSunShadowInfo.x, uSunShadowInfo.z, 1.0, 0.0), p, normal, 0.0, 0.85, coverage);
         shadow = max(shadow, vec2((1.0 - lit) * coverage, coverage));
         shadow.x = max(shadow.x, plantShadowOcclusion(p, normal, 0.0));
         float visible = max(0.0, mix(fallback, 1.0, shadow.y) - shadow.x);
@@ -347,10 +327,8 @@ export const SHADOW_GLSL = `
 
     uniform highp sampler2D uSunShadowMap;
     uniform mat4 uSunShadowMatrix;
-    uniform vec4 uSunShadowMetrics;
     uniform highp sampler2D uModelShadowMap;
     uniform mat4 uModelShadowMatrix;
-    uniform vec4 uModelShadowMetrics;
     uniform float uSunShadowAmbient;
 
     float sunShadowLight(vec3 worldPosition, vec3 worldNormal, float skyLight) {
@@ -377,7 +355,7 @@ export const SHADOW_GLSL = `
 
         float nearWeight;
         float nearLit = shadowMapLookup(uSunShadowMap, uSunShadowMatrix,
-            vec4(uSunShadowInfo.x, uSunShadowInfo.z, 1.0, 0.0), uSunShadowMetrics, p, worldNormal,
+            vec4(uSunShadowInfo.x, uSunShadowInfo.z, 1.0, 0.0), p, worldNormal,
             SUN_SHADOW_RECEIVER_BIAS, 0.85, nearWeight);
         if (nearWeight > 0.0) {
 
@@ -387,7 +365,7 @@ export const SHADOW_GLSL = `
                 float modelCoverage;
                 float modelLit = shadowMapLookup(uModelShadowMap, uModelShadowMatrix,
                     vec4(${1 / (MODEL_MAP_FAR - .1)}, ${2 * MODEL_MAP_RADIUS / MODEL_MAP_SIZE}, 1.0, 0.0),
-                    uModelShadowMetrics, p, worldNormal, 0.06, 0.98, modelCoverage);
+                    p, worldNormal, 0.06, 0.98, modelCoverage);
                 // Mapa modelu może tylko dodać przesłonięcie, nigdy
                 // rozjaśnić częściowo zacienionej krawędzi terenu.
                 nearLit = min(nearLit, mix(1.0, modelLit, modelCoverage));
@@ -423,7 +401,6 @@ export const FAR_TERRAIN_SHADOW_GLSL = `
 
     uniform highp sampler2D uSunShadowMap;
     uniform mat4 uSunShadowMatrix;
-    uniform vec4 uSunShadowMetrics;
 
     float farTerrainSun(vec3 worldPosition, vec3 worldNormal) {
 
@@ -435,7 +412,7 @@ export const FAR_TERRAIN_SHADOW_GLSL = `
         vec2 shadow = distantShadowOcclusion(p, worldNormal, 0.0);
         float coverage;
         float lit = shadowMapLookup(uSunShadowMap, uSunShadowMatrix,
-            vec4(uSunShadowInfo.x, uSunShadowInfo.z, 1.0, 0.0), uSunShadowMetrics, p, worldNormal, 0.0, 0.85, coverage);
+            vec4(uSunShadowInfo.x, uSunShadowInfo.z, 1.0, 0.0), p, worldNormal, 0.0, 0.85, coverage);
         float occlusion = max(shadow.x, (1.0 - lit) * coverage);
         occlusion = max(occlusion, plantShadowOcclusion(p, worldNormal, 0.0));
         return 1.0 - occlusion * uSunShadowInfo.y;
@@ -491,60 +468,29 @@ export function shadowLightsChunk(sunLight, skyLight, ambientLight, condition = 
 
 const DEPTH_VERTEX = `
 varying vec2 vUv;
-varying vec2 vTerrainShadowXZ;
 
 void main() {
 
     vUv = uv;
-    vTerrainShadowXZ = (modelMatrix * vec4(position, 1.0)).xz;
 
     gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
 
 }
 `;
 
-const TERRAIN_DEPTH_LOD = `
-    ${CHUNK_MASK_GLSL}
-    varying vec2 vTerrainShadowXZ;
-    void discardTerrainLod() {
-        if (uDistanceLodEnabled > 0.5 &&
-            distanceLodNoise() >= effectiveNearLodWeight(vTerrainShadowXZ)) discard;
-    }
-`;
-const depthLodUniforms = Object.fromEntries([
-    'uDistanceLodEnabled', 'uDistanceLodStart', 'uDistanceLodEnd', 'uDistanceLodCenter'
-].map(name => [name, viewUniforms[name]]));
-Object.assign(depthLodUniforms, chunkMaskUniforms);
-
-// Shared near casters use exactly the far caster snapshot throughout a
-// multi-frame cascade. Restore live values before rendering the main world.
-function bindDepthLodSnapshot(snapshot) {
-    if (!snapshot) return () => {};
-    const saved = [];
-    for (const [name, uniform] of Object.entries(depthLodUniforms)) {
-        if (!snapshot[name]) continue;
-        saved.push([uniform, uniform.value]);
-        uniform.value = snapshot[name].value;
-    }
-    return () => { for (const [uniform, value] of saved) uniform.value = value; };
-}
-
 const solidDepthMaterial = new THREE.ShaderMaterial({
     vertexShader: DEPTH_VERTEX,
-    fragmentShader: `${TERRAIN_DEPTH_LOD}\nvoid main() { discardTerrainLod(); }`,
-    uniforms: { ...depthLodUniforms },
+    fragmentShader: 'void main() {}',
     colorWrite: false
 });
 
 const cutoutDepthMaterial = new THREE.ShaderMaterial({
     vertexShader: DEPTH_VERTEX,
     fragmentShader: `
-        ${TERRAIN_DEPTH_LOD}
         uniform sampler2D map;
         varying vec2 vUv;
 
         void main() {
-            discardTerrainLod();
 
             if (texture2D(map, vUv).a < 0.5) {
                 discard;
@@ -552,7 +498,7 @@ const cutoutDepthMaterial = new THREE.ShaderMaterial({
 
         }
     `,
-    uniforms: { map: { value: blockAtlasTexture }, ...depthLodUniforms },
+    uniforms: { map: { value: blockAtlasTexture } },
     colorWrite: false,
     side: THREE.DoubleSide
 });
@@ -562,7 +508,6 @@ const hiddenMaterial = new THREE.MeshBasicMaterial({ visible: false });
 export const plantDepthMaterial = new THREE.ShaderMaterial({
     vertexShader: `
         varying vec2 vUv;
-        varying vec2 vTerrainShadowXZ;
         attribute vec2 plantMotion;
         uniform float uTime;
         uniform float uWaveHeight;
@@ -571,13 +516,11 @@ export const plantDepthMaterial = new THREE.ShaderMaterial({
             vUv = uv;
             vec3 worldPosition = (modelMatrix * vec4(position, 1.0)).xyz;
             vec3 transformed = position + plantWindOffset(worldPosition, plantMotion, uTime, uWaveHeight);
-            vTerrainShadowXZ = (modelMatrix * vec4(transformed, 1.0)).xz;
             gl_Position = projectionMatrix * modelViewMatrix * vec4(transformed, 1.0);
         }`,
     fragmentShader: cutoutDepthMaterial.fragmentShader,
     uniforms: { map: { value: blockAtlasTexture }, uTime: { value: 0 },
-        uWaveHeight: { value: plantWindUniforms.uWaveHeight.value }, uPlantSway: plantWindUniforms.uPlantSway,
-        ...depthLodUniforms },
+        uWaveHeight: { value: plantWindUniforms.uWaveHeight.value }, uPlantSway: plantWindUniforms.uPlantSway },
     colorWrite: false,
     side: THREE.DoubleSide
 });
@@ -1326,7 +1269,6 @@ export class SunShadows {
             u.uSunShadowMatrix.value.copy(near.textureMatrix);
             u.uSunShadowInfo.value.x = near.depthScale;
             u.uSunShadowInfo.value.z = near.texel;
-            updateShadowSamplingMetrics(u.uSunShadowMetrics.value, near.textureMatrix, near.texel);
             u.uSunShadowMap.value = this.target.depthTexture;
 
             this.valid = true;
@@ -1415,8 +1357,6 @@ export class SunShadows {
                 shadowUniforms.uPlantShadowMatrix.value.copy(plants.view.textureMatrix);
                 shadowUniforms.uPlantShadowInfo.value.x = plants.view.depthScale;
                 shadowUniforms.uPlantShadowInfo.value.y = plants.view.texel;
-                updateShadowSamplingMetrics(shadowUniforms.uPlantShadowMetrics.value,
-                    plants.view.textureMatrix, plants.view.texel);
                 plants.center.copy(build.center);
                 plants.direction.copy(build.direction);
                 plants.light = build.light;
@@ -1470,7 +1410,6 @@ export class SunShadows {
         const previous = renderer.getRenderTarget();
         const autoClear = renderer.autoClear;
         const deadline = performance.now() + SHADOW_BUILD_BUDGET.milliseconds;
-        const restoreLod = bindDepthLodSnapshot(build.terrain?.lodUniforms);
         try {
             renderer.autoClear = false;
             renderer.setRenderTarget(cascade.backTarget);
@@ -1497,7 +1436,6 @@ export class SunShadows {
             this.buildScene.clear();
             if (build.cursor === build.jobs.length) this.publishBuild(cascade, farTerrain);
         } finally {
-            restoreLod();
             this.buildScene.clear();
             renderer.autoClear = autoClear;
             renderer.setRenderTarget(previous);
@@ -1530,8 +1468,6 @@ export class SunShadows {
         shadowUniforms[prefix + 'Matrix'].value.copy(cascade.view.textureMatrix);
         shadowUniforms[prefix + 'Info'].value.x = cascade.view.depthScale;
         shadowUniforms[prefix + 'Info'].value.y = cascade.view.texel;
-        updateShadowSamplingMetrics(shadowUniforms[prefix + 'Metrics'].value,
-            cascade.view.textureMatrix, cascade.view.texel);
         shadowUniforms[prefix + 'Map'].value = cascade.target.depthTexture;
         cascade.center.copy(build.center);
         cascade.direction.copy(build.direction);
@@ -1609,8 +1545,6 @@ export class SunShadows {
         this.matrix.multiplyMatrices(camera.projectionMatrix, camera.matrixWorldInverse);
 
         shadowUniforms.uModelShadowMatrix.value.multiplyMatrices(TO_TEXTURE, this.matrix);
-        updateShadowSamplingMetrics(shadowUniforms.uModelShadowMetrics.value,
-            shadowUniforms.uModelShadowMatrix.value, 2 * MODEL_MAP_RADIUS / MODEL_MAP_SIZE);
 
 
         // W widoku z oczu modelu nie widać, ale cień rzuca.

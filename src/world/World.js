@@ -2,7 +2,6 @@ import * as THREE from 'three';
 import { normalizeWorldExperiments, grassDetailAtDistance } from './WorldExperiments.js';
 import { ChunkGeneration } from './ChunkGeneration.js';
 import { MeshWorkQueue } from './MeshWorkQueue.js';
-import { detailAtDistance, DISTANCE_PLANT_PREFETCH, DISTANCE_PLANT_RETAIN } from './DistanceLod.js';
 import { BIOME_KEYS } from './terrain/Biomes.js';
 // ------------------------------------------------------------
 import {
@@ -233,8 +232,6 @@ export class World {
     createChunk(cx, cz) {
 
         const chunk = new Chunk(cx, cz);
-        chunk.leafDetail = this.getLeafDetail(chunk);
-        chunk.plantDetail = this.getPlantDetail(chunk);
 
         this.chunks.set(
             this.chunkKey(cx, cz),
@@ -279,35 +276,7 @@ export class World {
     }
 
     wantsPlants(chunk) {
-        const radius = this.distanceLod ? DISTANCE_PLANT_PREFETCH : PLANT_PREFETCH_DISTANCE;
-        return this.distanceToCenter(chunk) <= (radius / CHUNK_SIZE) ** 2;
-    }
-
-    setDistanceLod(enabled) {
-        if (!!this.distanceLod === !!enabled) return;
-        this.distanceLod = !!enabled;
-        for (const chunk of this.chunks.values()) this.updateDistanceDetail(chunk);
-    }
-
-    getLeafDetail(chunk) {
-        return this.distanceLod ? detailAtDistance(Math.sqrt(this.distanceToCenter(chunk)) * CHUNK_SIZE,
-            chunk.leafDetail, [64, 112]) : 0;
-    }
-
-    getPlantDetail(chunk) {
-        return this.distanceLod ? detailAtDistance(Math.sqrt(this.distanceToCenter(chunk)) * CHUNK_SIZE,
-            chunk.plantDetail, [48, 80], 12) : 0;
-    }
-
-    updateDistanceDetail(chunk) {
-        const leaf = this.getLeafDetail(chunk), plant = this.getPlantDetail(chunk);
-        if (leaf !== (chunk.leafDetail ?? 0)) {
-            chunk.meshRevision = (chunk.meshRevision ?? 0) + 1;
-            this.dirtyChunks.add(chunk);
-        }
-        if (plant !== (chunk.plantDetail ?? 0)) this.markPlantsDirty(chunk);
-        chunk.leafDetail = leaf;
-        chunk.plantDetail = plant;
+        return this.distanceToCenter(chunk) <= (PLANT_PREFETCH_DISTANCE / CHUNK_SIZE) ** 2;
     }
 
     meshPriority(chunk) {
@@ -796,8 +765,7 @@ export class World {
                 // A missing neighbour will enqueue this again on arrival.
                 pending = this.meshJobs[kind] = {
                     chunk, revision: chunk[revisionKey] ?? 0,
-                    job: createChunkGeometryJob(chunk, this, { terrain: kind === 'terrain', plants: kind === 'plants',
-                        leafDetail: this.getLeafDetail(chunk), plantDetail: this.getPlantDetail(chunk) })
+                    job: createChunkGeometryJob(chunk, this, { terrain: kind === 'terrain', plants: kind === 'plants' })
                 };
             }
             // A dense mesh cannot use the entire frame repeatedly. Alternating
@@ -1085,9 +1053,7 @@ export class World {
     // drawing radius, and released only outside the wider retention ring.
 
     updatePlantVisibility(chunk) {
-        // Let the shader hand retained plants to ready far geometry. Hiding
-        // whole chunks at 192 would bypass its readiness gate during streaming.
-        const radius = (this.distanceLod ? DISTANCE_PLANT_RETAIN : PLANT_VIEW_DISTANCE) / CHUNK_SIZE;
+        const radius = PLANT_VIEW_DISTANCE / CHUNK_SIZE;
         const distance = this.distanceToCenter(chunk);
         const visible = distance <= radius * radius;
         const geometry = (chunk.plantMesh ?? chunk.mesh)?.geometry;
@@ -1107,8 +1073,7 @@ export class World {
                 group.count = visible ? geometry.userData.plantCount : 0;
             }
         }
-        const retain = this.distanceLod ? DISTANCE_PLANT_RETAIN : PLANT_RETAIN_DISTANCE;
-        if (distance > (retain / CHUNK_SIZE) ** 2) {
+        if (distance > (PLANT_RETAIN_DISTANCE / CHUNK_SIZE) ** 2) {
             const hadPlants = !!chunk.plantMesh;
             this.removePlantMesh(chunk);
             chunk.plantsReady = false;
@@ -1121,7 +1086,7 @@ export class World {
         }
         if (!geometry) return;
         if (this.experiments.bushyGrass && geometry.userData.bushyGrassCount > 0 &&
-            Math.max(this.getPlantDetail(chunk), this.getGrassDetail(chunk)) !== geometry.userData.bushyGrassDetail) {
+            this.getGrassDetail(chunk) !== geometry.userData.bushyGrassDetail) {
             if (chunk.combinedGeometry || !chunk.plantMesh) this.markDirty(chunk);
             else this.markPlantsDirty(chunk);
         }
@@ -1443,7 +1408,6 @@ export class World {
 
 
         for (const chunk of this.chunks.values()) {
-            this.updateDistanceDetail(chunk);
             this.updatePlantVisibility(chunk);
         }
         this.dirtyChunks.reprioritize();

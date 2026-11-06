@@ -21,7 +21,7 @@ import { Noise } from '../Noise.js';
 
 import { FORESTS, SCALES, BIOME_SHAPE } from '../terrain/TerrainShape.js';
 
-import { buildTree, TREE_REACH, TREE_MAX_HEIGHT } from './TreeShapes.js';
+import { buildTree, TREE_REACH } from './TreeShapes.js';
 
 import { BIOMES, BIOME_KEYS } from '../terrain/Biomes.js';
 
@@ -162,7 +162,6 @@ export class Forests {
         };
 
         this.cache = new Map();
-        this.descriptorCache = new Map();
 
         this.sample = {};
 
@@ -391,18 +390,7 @@ export class Forests {
     }
 
 
-    // Distant silhouettes share placement with actual trees without retaining
-    // their thousands of voxel cells in every horizon worker.
-    descriptorAt(gx, gz) {
-        const key = `${gx},${gz}`;
-        if (this.descriptorCache.has(key)) return this.descriptorCache.get(key);
-        const tree = this.findTree(gx, gz, false);
-        if (this.descriptorCache.size >= CACHE_SIZE) this.descriptorCache.clear();
-        this.descriptorCache.set(key, tree);
-        return tree;
-    }
-
-    findTree(gx, gz, withShape = true) {
+    findTree(gx, gz) {
 
         const G = FORESTS.grid;
 
@@ -484,17 +472,13 @@ export class Forests {
 
         const size = 0.15 + 0.85 * random01(seed, gx, gz, 5);
 
-        // Only trees near the world ceiling need their exact shape to retain
-        // the original placement rejection. Everywhere else the known bound
-        // proves that a descriptor and a real tree make the same decision.
-        const shape = withShape || height + 1 + TREE_MAX_HEIGHT >= CHUNK_HEIGHT
-            ? buildTree(species, treeSeed, size) : null;
+        const shape = buildTree(species, treeSeed, size);
 
-        if (shape && height + 1 + shape.top >= CHUNK_HEIGHT) {
+        if (height + 1 + shape.top >= CHUNK_HEIGHT) {
             return null;
         }
 
-        return { x, y: height + 1, z, species, seed: treeSeed, size, shape: withShape ? shape : null };
+        return { x, y: height + 1, z, species, seed: treeSeed, size, shape };
 
     }
 

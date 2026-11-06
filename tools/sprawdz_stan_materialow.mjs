@@ -68,7 +68,7 @@ globalThis.materialSettingsFixture = {
     setAmbientOcclusion() {}, setFastLeaves() {}, setLeafMaterialFast() {},
     updateAerialPerspective() {} // Osobny kontrakt stanu atmosfery: sprawdz_atmosfere.mjs.
 };
-const retained = new Set(['three', '../config.js', '../world/DistanceLod.js', '../rendering/MaterialLighting.js',
+const retained = new Set(['three', '../config.js', '../rendering/MaterialLighting.js',
     '../rendering/LightingDiagnostics.js', '../sky/SolarAtmosphere.js']);
 const stubNames = new Map();
 for (const parent of [gameUrl, fireUrl]) {
@@ -109,7 +109,7 @@ const pausedSky = { ...sky, setLowDetail() {},
 const game = Object.assign(Object.create(Game.prototype), {
     settings: pausedSettings, sky: pausedSky, bounce, bounceLighting: createBounceLightingState(),
     renderer: { capabilities: { isWebGL2: true } }, worldInfo: { terrain: 'natural' },
-    world: { setExperiments() {}, setDistanceLod(on) { this.distanceLod=on; }, remeshAll() {}, getChunk() { assert.fail('Solver ruszył w pauzie'); } },
+    world: { setExperiments() {}, remeshAll() {}, getChunk() { assert.fail('Solver ruszył w pauzie'); } },
     scene: { fog: {} }, camera: new THREE.PerspectiveCamera(),
     player: { pos: new THREE.Vector3(0, 11, 0) },
     shadows: { setNaturalLighting() {}, setQuality() {}, enabled: true, hasFar: true },
@@ -150,23 +150,5 @@ game.renderer.capabilities.isWebGL2 = false; game.applySettings(); assertSamples
 assert.deepEqual(sampleHand(), [0, 0, 0]); assert.equal(bounce.enabled, false);
 assert.deepEqual(bounce.data, transferBefore); assert.equal(bounce.initialCursor, cursorBefore);
 assert.equal(bounce.updates, 0); assert.equal(bounce.invalidations, 0);
-assert.equal(game.world.distanceLod,true,'Ustawienia konfigurują odległe modele również w pauzie');
-
-// Real updateFarRange uses Player.pos, just like the production player. A
-// nonexistent player.position used to abort Game.start before the first frame.
-const rangeUniforms=globalThis.materialSettingsFixture.viewUniforms;
-for(const key of ['uFarEnabled','uFarTextureBlend','uFarInner','uFarOuter',
-    'uDistanceLodEnabled','uDistanceLodStart','uDistanceLodEnd']) rangeUniforms[key]={value:0};
-rangeUniforms.uDistanceLodCenter={value:new THREE.Vector2()};
-const range=Object.assign(Object.create(Game.prototype),{
-    settings:{get:key=>({viewDistance:800,farTerrain:0,potato:false})[key]},
-    world:{completeRadius:()=>Infinity},camera:{position:new THREE.Vector3(-66,80,-99)},
-    player:{pos:new THREE.Vector3(-66,80,-99)},
-    farTerrain:{active:true,setRange(inner,outer){this.range=[inner,outer];}}
-});
-range.updateFarRange();
-assert.deepEqual(rangeUniforms.uDistanceLodCenter.value.toArray(),[-66,-99],'Przejście LOD korzysta z rzeczywistej pozycji gracza');
-assert.deepEqual(range.farTerrain.range,[144,800],'Wybrany zasięg800 pozostaje pokryty także przy horyzoncie0');
-assert.equal(range.getLoadRadius(),14,'Daleki widok nie wymaga pełnych chunków do800');
 bounce.dispose(); hook.deregister(); delete globalThis.materialSettingsFixture;
 console.log('OK: wspólny stan materiałów, źródła, maski oraz rzeczywiste ustawienia w pauzie: teren, dłoń i ognisko bez solvera.');

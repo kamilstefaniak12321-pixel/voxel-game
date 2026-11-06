@@ -16,7 +16,7 @@ registerHooks({
         if (url.endsWith('/src/rendering/TextureAtlas.js')) {
             // Kontroler cieni działa naprawdę; tylko ładowanie obrazu
             // atlasu wymaga przeglądarki (sprawdzanej osobno w WebGL).
-            return { format: 'module', shortCircuit: true, source: 'export const blockAtlasTexture = null, atlasAverageTexture = null;' };
+            return { format: 'module', shortCircuit: true, source: 'export const blockAtlasTexture = null;' };
         }
         return next(url, url.endsWith('.js') && (url.includes('/src/') || url.includes('/lib/three/'))
             ? { ...context, format: 'module' } : context);

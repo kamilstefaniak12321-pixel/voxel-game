@@ -10,7 +10,7 @@ registerHooks({
     },
     load(url, context, next) {
         if (url.endsWith('/src/rendering/TextureAtlas.js')) {
-            return { format: 'module', shortCircuit: true, source: 'export const blockAtlasTexture = null, atlasAverageTexture = null;' };
+            return { format: 'module', shortCircuit: true, source: 'export const blockAtlasTexture = null;' };
         }
         return next(url, url.endsWith('.js') && (url.includes('/src/') || url.includes('/lib/three/'))
             ? { ...context, format: 'module' } : context);
@@ -20,26 +20,11 @@ registerHooks({
 const THREE = await import('three');
 const { SunShadows, shadowUniforms, SHADOW_CASTER_MATERIALS,
     SHADOW_BUILD_BUDGET, DISTANT_SHADOW_CASCADES, PLANT_SHADOW_BUILD_BUDGET,
-    plantDepthMaterial, updateShadowSamplingMetrics } = await import('../src/rendering/Shadows.js');
+    plantDepthMaterial } = await import('../src/rendering/Shadows.js');
 const { plantWindUniforms, plantShadowState } = await import('../src/rendering/PlantWind.js');
-const { viewUniforms, chunkMaskUniforms } = await import('../src/rendering/viewUniforms.js');
 const { CampfireLight } = await import('../src/rendering/CampfireLight.js');
 const { CHUNK_HEIGHT } = await import('../src/config.js');
 const near = (a, b) => assert.ok(Math.abs(a - b) < 1e-8, `${a} != ${b}`);
-
-// A rotated, non-square orthographic map has known axis scales independent
-// of its position/orientation. These constants must stay map-space, not be
-// inferred from matrix columns (which mix those scales after rotation).
-{
-    const camera = new THREE.OrthographicCamera(-64,64,32,-32,.1,1000.1);
-    camera.position.set(500,130,100);camera.lookAt(-40,6,-20);camera.updateMatrixWorld();
-    const toTexture = new THREE.Matrix4().set(.5,0,0,.5,0,.5,0,.5,0,0,.5,.5,0,0,0,1);
-    const matrix = new THREE.Matrix4().multiplyMatrices(camera.projectionMatrix,camera.matrixWorldInverse);
-    matrix.premultiply(toTexture);
-    const metrics = updateShadowSamplingMetrics(new THREE.Vector4(),matrix,128/2048);
-    near(metrics.x,1/(128*128));near(metrics.y,1/(64*64));near(metrics.z,1/(1000*1000));
-    near(metrics.w,1/2048);
-}
 
 class CountingRenderer {
     capabilities = { isWebGL2: true };
@@ -190,16 +175,13 @@ function fixture({ large = false, grouped = false, many = true } = {}) {
     try {
         f.settle();
         const before = f.shadows.cascades.map(c => ({ target: c.target,
-            matrix: shadowUniforms[c.config.name === 'far' ? 'uFarShadowMatrix' : 'uDistantShadowMatrix'].value.clone(),
-            metrics: shadowUniforms[c.config.name === 'far' ? 'uFarShadowMetrics' : 'uDistantShadowMetrics'].value.clone() }));
+            matrix: shadowUniforms[c.config.name === 'far' ? 'uFarShadowMatrix' : 'uDistantShadowMatrix'].value.clone() }));
         f.terrain.shadowRevision++; f.focus.z += 4; f.step(1); f.step();
         assert.ok(f.shadows.cascades.every(c => c.build));
         for (const [i, c] of f.shadows.cascades.entries()) {
             assert.equal(c.target, before[i].target, 'Częściowa mapa zostaje w backTarget');
             assert.deepEqual(shadowUniforms[c.config.name === 'far' ? 'uFarShadowMatrix' : 'uDistantShadowMatrix'].value.elements,
                 before[i].matrix.elements, 'Macierz opublikowana razem z kompletną mapą');
-            assert.deepEqual(shadowUniforms[c.config.name === 'far' ? 'uFarShadowMetrics' : 'uDistantShadowMetrics'].value,
-                before[i].metrics, 'Stałe filtrowania opublikowane razem z kompletną mapą');
         }
         f.shadows.markChunk(f.source.userData.chunk);
         const jobs = f.shadows.cascades.map(c => c.build);
@@ -217,41 +199,6 @@ function fixture({ large = false, grouped = false, many = true } = {}) {
         assert.ok(f.shadows.cascades.every((c, i) => c.draws > draws[i]), 'Budowa kończy się mimo streamingu');
         f.settle(); assert.ok(f.shadows.cascades.every(c => !c.changed));
     } finally { f.dispose(); }
-}
-
-// Near and far casters must see the same immutable LOD mask/centre while a
-// cascade is drawn over several frames. Afterwards the world sees live values,
-// including when the renderer aborts a batch.
-{
-    const f = fixture(), liveCenter = viewUniforms.uDistanceLodCenter.value;
-    const liveMask = chunkMaskUniforms.uChunkMask.value, liveOrigin = chunkMaskUniforms.uChunkMaskOrigin.value;
-    const liveEnabled = viewUniforms.uDistanceLodEnabled.value;
-    const center = new THREE.Vector2(5,7), origin = new THREE.Vector2(-20,-20), mask = {name:'frozen-mask'};
-    const collect = f.terrain.collectShadowCasters.bind(f.terrain);
-    f.terrain.collectShadowCasters = (...args) => Object.assign(collect(...args),{lodUniforms:{
-        uDistanceLodEnabled:{value:1},uDistanceLodStart:{value:144},uDistanceLodEnd:{value:192},
-        uDistanceLodCenter:{value:center},uChunkMask:{value:mask},uChunkMaskOrigin:{value:origin}
-    }});
-    const render = f.renderer.render.bind(f.renderer);let batches = 0,fail = false;
-    f.renderer.render = scene => {
-        if(scene===f.shadows.buildScene) {
-            batches++;
-            assert.equal(SHADOW_CASTER_MATERIALS[0].uniforms.uDistanceLodCenter.value,center);
-            assert.equal(SHADOW_CASTER_MATERIALS[0].uniforms.uChunkMask.value,mask);
-            if(fail)throw new Error('LOD batch failure');
-        }
-        render(scene);
-    };
-    try {
-        viewUniforms.uDistanceLodEnabled.value=1;
-        f.step();f.step();assert.ok(batches>0);
-        assert.equal(viewUniforms.uDistanceLodCenter.value,liveCenter);
-        assert.equal(chunkMaskUniforms.uChunkMask.value,liveMask);
-        assert.equal(chunkMaskUniforms.uChunkMaskOrigin.value,liveOrigin);
-        fail=true;assert.throws(()=>f.step(),/LOD batch failure/);
-        assert.equal(viewUniforms.uDistanceLodCenter.value,liveCenter);
-        assert.equal(chunkMaskUniforms.uChunkMask.value,liveMask);
-    } finally {viewUniforms.uDistanceLodEnabled.value=liveEnabled;f.dispose();}
 }
 
 // Sama edycja bliskiego chunka podczas budowy też utrzymuje dirty.

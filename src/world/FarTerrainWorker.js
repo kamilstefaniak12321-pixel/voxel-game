@@ -1,7 +1,6 @@
 import { TerrainGenerationCache } from './terrain/GenerationCache.js';
 
 import { sampleFarTile, meshFarTile, createMeshScratch } from './farSamples.js';
-import { createFarVegetationJob, appendFarVegetation } from './farVegetation.js';
 
 // ------------------------------------------------------------
 // WĄTEK DALEKIEGO TERENU
@@ -62,7 +61,7 @@ self.onmessage = (event) => {
 
         const generator = generatorCache.prepare();
 
-        const { id, x0, z0, spacing, cells, vegetation: withVegetation = false } = message;
+        const { id, x0, z0, spacing, cells } = message;
 
         const W = cells + 2;
 
@@ -70,14 +69,9 @@ self.onmessage = (event) => {
         const kinds = new Uint8Array(W * W);
         const materialIds = new Uint16Array(W * W);
 
-        sampleFarTile(generator, x0, z0, spacing, cells, heights, kinds, 0, W, materialIds, withVegetation);
-
-        const vegetation = withVegetation
-            ? createFarVegetationJob(generator, x0, z0, cells * spacing, spacing, heights, kinds, cells).step().data
-            : null;
+        sampleFarTile(generator, x0, z0, spacing, cells, heights, kinds, 0, W, materialIds);
 
         const transfer = [heights.buffer, kinds.buffer, materialIds.buffer];
-        if (vegetation) transfer.push(vegetation.buffer);
 
         let mesh = null;
 
@@ -88,13 +82,12 @@ self.onmessage = (event) => {
             }
 
             mesh = meshFarTile(heights, kinds, cells, spacing, palette, scratch, materialIds, albedoPalette);
-            mesh = appendFarVegetation(mesh, vegetation, x0, z0, palette, albedoPalette);
 
             transfer.push(mesh.positions.buffer, mesh.normals.buffer, mesh.colors.buffer, mesh.surfaceAlbedo.buffer, mesh.indices.buffer, mesh.shadowIndices.buffer);
 
         }
 
-        self.postMessage({ type: 'tile', id, heights, kinds, materialIds, vegetation, mesh }, transfer);
+        self.postMessage({ type: 'tile', id, heights, kinds, materialIds, mesh }, transfer);
 
     }
 

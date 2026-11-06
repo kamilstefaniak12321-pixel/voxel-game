@@ -10,8 +10,8 @@ import { shadowUniforms } from './Shadows.js';
 // wpada wtedy widoczny snop światła, a między drzewami - smugi.
 //
 // Jak to działa (co klatkę, po narysowaniu świata):
-//   1. Głębia gotowego obrazu świata - gdzie kończy się powietrze.
-//      Poprzednia ścieżka bez WorldOutput ma osobny, mniejszy pass.
+//   1. Głębia bliskich chunków (w połowie rozdzielczości) - gdzie
+//      kończy się powietrze w każdym punkcie ekranu.
 //   2. Dla każdego punktu idziemy od oka do tej ściany kilkanaście
 //      kroków i w mapie cieni (Shadows.js) sprawdzamy, w ilu z nich
 //      świeci słońce. Więcej oświetlonego powietrza = jaśniej.
@@ -261,8 +261,6 @@ export class LightShafts {
 
         this.depthTarget = null;
         this.targets = [];
-        this.lastDepthSource = 'none';
-        this.avoidedDepthPasses = 0;
 
         // Kamera do głębi: ta sama co gracza, ale tylko do maxDistance.
 
@@ -356,6 +354,8 @@ export class LightShafts {
         this.width = width;
         this.height = height;
 
+        this.depthTarget = createTarget(width, height, true);
+
         // Wynik w liczbach zmiennoprzecinkowych (płynne przejścia), jeśli
         // karta pozwala w nich rysować - inaczej 256 odcieni.
 
@@ -400,65 +400,51 @@ export class LightShafts {
 
         try {
 
-        const sharedDepth = previousTarget?.isWorldOutputTarget === true
-            ? previousTarget.depthTexture : null;
-        if (sharedDepth) this.size.set(previousTarget.width, previousTarget.height);
-        else renderer.getDrawingBufferSize(this.size);
+        renderer.getDrawingBufferSize(this.size);
 
         this.resize(this.size.x, this.size.y);
 
 
-        // 1. Reuse main depth including current alpha cutouts and wind. It
-        // belongs to WorldOutput: do not resize, dispose or render into it.
-        // A separate pass remains available for the legacy output path.
+        // 1. Głębia bliskich chunków.
 
-        let depthCamera = camera;
-        let depthTexture = sharedDepth;
-        this.lastDepthReused = !!sharedDepth;
-        this.lastDepthDraws = 0;
-        this.lastDepthSource = sharedDepth ? 'main' : 'fallback';
-        if (sharedDepth) this.avoidedDepthPasses++;
+        const depthCamera = this.camera;
 
-        if (!sharedDepth) {
-            if (!this.depthTarget) this.depthTarget = createTarget(this.width, this.height, true);
-            depthCamera = this.camera;
-            depthCamera.fov = camera.fov;
-            depthCamera.aspect = camera.aspect;
-            depthCamera.near = camera.near;
-            depthCamera.far = maxDistance;
-            depthCamera.zoom = camera.zoom;
-            depthCamera.updateProjectionMatrix();
-            depthCamera.position.copy(camera.position);
-            depthCamera.quaternion.copy(camera.quaternion);
-            depthCamera.updateMatrixWorld();
-            this.matrix.multiplyMatrices(depthCamera.projectionMatrix, depthCamera.matrixWorldInverse);
-            this.frustum.setFromProjectionMatrix(this.matrix);
+        depthCamera.fov = camera.fov;
+        depthCamera.aspect = camera.aspect;
+        depthCamera.near = camera.near;
+        depthCamera.far = maxDistance;
+        depthCamera.zoom = camera.zoom;
+        depthCamera.updateProjectionMatrix();
 
-            const visibility = world.shadowScene.children.map(caster => caster.visible);
-            try {
-                for (const caster of world.shadowScene.children) {
-                    const chunk = caster.userData.chunk;
-                    this.box.min.set(chunk.cx * 16, 0, chunk.cz * 16);
-                    this.box.max.set(chunk.cx * 16 + 16, chunk.maxY + 2, chunk.cz * 16 + 16);
-                    caster.visible = this.frustum.intersectsBox(this.box);
-                }
-                renderer.setRenderTarget(this.depthTarget);
-                renderer.clear();
-                renderer.render(world.shadowScene, depthCamera);
-                this.lastDepthDraws = 1;
-            } finally {
-                world.shadowScene.children.forEach((caster, i) => { caster.visible = visibility[i]; });
-            }
-            depthTexture = this.depthTarget.depthTexture;
+        depthCamera.position.copy(camera.position);
+        depthCamera.quaternion.copy(camera.quaternion);
+        depthCamera.updateMatrixWorld();
+
+        this.matrix.multiplyMatrices(depthCamera.projectionMatrix, depthCamera.matrixWorldInverse);
+
+        this.frustum.setFromProjectionMatrix(this.matrix);
+
+        for (const caster of world.shadowScene.children) {
+
+            const chunk = caster.userData.chunk;
+
+            this.box.min.set(chunk.cx * 16, 0, chunk.cz * 16);
+            this.box.max.set(chunk.cx * 16 + 16, chunk.maxY + 2, chunk.cz * 16 + 16);
+
+            caster.visible = this.frustum.intersectsBox(this.box);
+
         }
+
+        renderer.setRenderTarget(this.depthTarget);
+        renderer.clear();
+        renderer.render(world.shadowScene, depthCamera);
 
 
         // 2. Kroki przez powietrze.
 
         const march = this.march.uniforms;
 
-        march.uDepth.value = depthTexture;
-        march.uProjectionInverse.value = depthCamera.projectionMatrixInverse;
+        march.uDepth.value = this.depthTarget.depthTexture;
         march.uCameraWorld.value.copy(depthCamera.matrixWorld);
         march.uMaxDistance.value = maxDistance;
         march.uDensity.value = density;

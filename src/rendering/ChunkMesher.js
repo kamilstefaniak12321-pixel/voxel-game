@@ -19,7 +19,6 @@ import { LEAF_PARTS } from '../../assets/models/leaves/model-data.js';
 import { BUSHY_GRASS_TEXTURE } from '../blocks/bushyGrass.js';
 import { getAtlasUV } from './TextureAtlas.js';
 import { getPlantMeshTemplate, lightPlantMeshTemplate } from './PlantMeshTemplate.js';
-import { createPlantDetailLookup } from './PlantDistanceModels.js';
 const plantFaceUvCache = new Map();
 const plantFaceUV = texture => {
     if (!plantFaceUvCache.has(texture)) plantFaceUvCache.set(texture, getAtlasUV(texture));
@@ -407,15 +406,14 @@ export function setLeafParts(on) {
 // przez prześwity, a byłoby ich drugie tyle.
 
 
-function compileLeafPartFaces(parts) {
-    return parts.map((part, partIndex) => BLOCK_FACES.flatMap((face, faceIndex) => {
+const LEAF_PART_FACES = LEAF_PARTS.map((part, partIndex) => BLOCK_FACES.flatMap((face, faceIndex) => {
 
     const axis = face.normal.findIndex((n) => n !== 0);
     const sign = face.normal[axis];
     const plane = sign > 0 ? part.max[axis] : part.min[axis];
 
     // Ściana zakryta w całości inną częścią (tuż przed nią) - pomijamy.
-    const covered = parts.some((other, otherIndex) => otherIndex !== partIndex &&
+    const covered = LEAF_PARTS.some((other, otherIndex) => otherIndex !== partIndex &&
         [0, 1, 2].every((i) => i === axis
             ? other.min[i] <= plane + sign / 32 && other.max[i] >= plane + sign / 32
             : other.min[i] <= part.min[i] + 1e-6 && other.max[i] >= part.max[i] - 1e-6));
@@ -458,34 +456,7 @@ function compileLeafPartFaces(parts) {
 
     return [{ faceIndex, corners, uv, weights, partIndex, edge }];
 
-    }));
-}
-
-// The middle level joins vertically adjacent source pieces, retaining their
-// outer bounds. The last level keeps one envelope of the original leaf block.
-// Atlas coordinates remain block-sized, so simplifying geometry does not turn
-// the species texture into an unrelated solid color or change its texel scale.
-function mergeLeafParts(groups) {
-    return groups.map(group => {
-        const min = [0, 1, 2].map(axis => Math.min(...group.map(part => part.min[axis])));
-        const max = [0, 1, 2].map(axis => Math.max(...group.map(part => part.max[axis])));
-        return { min, max, faces: BLOCK_FACES.map(face => {
-            const vertices = face.corners.map(corner => corner.map((c, axis) => c ? max[axis] : min[axis]));
-            const uAxis = face.corners[1].findIndex((value, axis) => value !== face.corners[0][axis]);
-            const vAxis = face.corners[2].findIndex((value, axis) => value !== face.corners[0][axis]);
-            const uv = vertices.map(vertex => [uAxis, vAxis].map(axis => {
-                const start = face.corners[0][axis];
-                return Math.min(1, Math.max(0, start ? 1 - vertex[axis] : vertex[axis]));
-            }));
-            return { vertices, uv };
-        }) };
-    });
-}
-
-const LEAF_PART_FACES = compileLeafPartFaces(LEAF_PARTS);
-const LEAF_PART_LODS = [LEAF_PART_FACES,
-    compileLeafPartFaces(mergeLeafParts([[0, 4], [1, 5], [2, 6], [3, 7]].map(indices => indices.map(i => LEAF_PARTS[i])))),
-    compileLeafPartFaces(mergeLeafParts([LEAF_PARTS]))];
+}));
 
 
 const leafLight = new Float32Array(BLOCK_FACES.length * 4 * 10);
@@ -495,7 +466,7 @@ const leafLightReady = new Uint8Array(BLOCK_FACES.length);
 const leafValues = new Float64Array(10);
 
 
-function addLeafParts(id, renderData, lx, y, lz, faceCount, baseX, baseZ, faceGroups = LEAF_PART_FACES) {
+function addLeafParts(id, renderData, lx, y, lz, faceCount, baseX, baseZ) {
 
     const block = padIndex(lx, y, lz);
 
@@ -505,7 +476,7 @@ function addLeafParts(id, renderData, lx, y, lz, faceCount, baseX, baseZ, faceGr
 
     leafLightReady.fill(0);
 
-    for (const faces of faceGroups) {
+    for (const faces of LEAF_PART_FACES) {
 
         for (const part of faces) {
 
@@ -807,7 +778,7 @@ const PLANT_BOTTOM_SHADE = 0.68;
 const SHORT_GRASS_ID = getBlockId('short_grass');
 const TALL_GRASS_ID = getBlockId('tall_grass');
 
-function addPlants(plants, faceCount, baseX, baseZ, first = 0, end = plants.length, plantData = null) {
+function addPlants(plants, faceCount, baseX, baseZ, first = 0, end = plants.length) {
 
     for (let k = first; k < end; k += 4) {
 
@@ -817,7 +788,7 @@ function addPlants(plants, faceCount, baseX, baseZ, first = 0, end = plants.leng
         const id = plants[k + 3];
         const emission = getLightEmission(id) / MAX_LIGHT * 255;
 
-        const { cross, tint, surfaceProfiles } = plantData ? plantData(id) : blockRenderData[id];
+        const { cross, tint, surfaceProfiles } = blockRenderData[id];
         const profile = surfaceProfiles[4];
 
         const wx = baseX + lx;
@@ -1018,18 +989,15 @@ function reachMask(cell, y) {
 // ------------------------------------------------------------
 // Generated river plants share the existing plant material and chunk batch.
 // Their cached templates carry actual surface normals and a linear albedo tint.
-function addRiverPlants(plants, faceCount, baseX, baseZ, grassDetail = null, overrides = null, animationRanges = null, first = 0, end = plants.length, plantData = null) {
+function addRiverPlants(plants, faceCount, baseX, baseZ, grassDetail = null, overrides = null, animationRanges = null, first = 0, end = plants.length) {
     const grass = grassDetail !== null;
     const grassUv = grass ? getAtlasUV(BUSHY_GRASS_TEXTURE) : null;
     for (let k = first; k < end; k += 4) {
         const lx = plants[k], y = plants[k + 1], lz = plants[k + 2];
-        const event = overrides?.get(y * LAYER + lz * S + lx);
-        // An active clip owns the original topology, even if its chunk crosses
-        // a detail boundary. Never bind full-model vertices to simplified cards.
-        const data = grass ? { kind: 'grass', uv: grassUv }
-            : (plantData && !event ? plantData(plants[k + 3]) : blockRenderData[plants[k + 3]]).riverPlant;
+        const data = grass ? { kind: 'grass', uv: grassUv } : blockRenderData[plants[k + 3]].riverPlant;
         const wx = baseX + lx, wz = baseZ + lz;
         const transform = grass ? riverPlantTransform(wx, y, wz) : plantTransform(wx, y, wz, data.tuft);
+        const event = overrides?.get(y * LAYER + lz * S + lx);
         const cell = padIndex(lx, y, lz);
         const mask = grass ? 0
             : data.carpet ? carpetMask(cell, y, data.carpet)
@@ -1734,10 +1702,8 @@ function releaseMeshScratch(state) {
  * Independent jobs can be interleaved safely, including synchronous builds.
  */
 export function createChunkGeometryJob(chunk, world, options = {}) {
-    const plantDetail = Math.max(0, Math.min(2, Math.floor(Number(options.plantDetail) || 0)));
     let iterator = buildChunkGeometrySteps(chunk, world,
-        { terrain: true, plants: false, legacyGroups: false, ...options, plantDetail,
-            plantData: plantDetail > 0 ? createPlantDetailLookup(plantDetail) : null });
+        { terrain: true, plants: false, legacyGroups: false, ...options });
     let scratch = acquireMeshScratch();
     let result = { done: false, geometry: null };
     return {
@@ -1796,10 +1762,7 @@ export function buildChunkGeometry(chunk, world, options) {
     return geometry;
 }
 
-function* buildChunkGeometrySteps(chunk, world, { terrain, plants: includePlants, legacyGroups, leafDetail = 0, plantDetail, plantData }) {
-
-    leafDetail = Math.max(0, Math.min(2, Math.floor(Number(leafDetail) || 0)));
-    const leafFaces = LEAF_PART_LODS[leafDetail];
+function* buildChunkGeometrySteps(chunk, world, { terrain, plants: includePlants, legacyGroups }) {
 
     plantPreparation.delete(chunk);
 
@@ -1851,7 +1814,7 @@ function* buildChunkGeometrySteps(chunk, world, { terrain, plants: includePlants
     const plants = [];
     const riverPlants = [];
     const bushyGrass = [];
-    const grassDetail = world.experiments?.bushyGrass ? Math.max(plantDetail, world.getGrassDetail?.(chunk) ?? 0) : null;
+    const grassDetail = world.experiments?.bushyGrass ? (world.getGrassDetail?.(chunk) ?? 0) : null;
 
     // Najwyższa roślina z paczki (bloki) - wystaje nad swoją komórkę.
     let spriteReach = 0;
@@ -1877,7 +1840,7 @@ function* buildChunkGeometrySteps(chunk, world, { terrain, plants: includePlants
                 }
 
 
-                const renderData = plantData && !overrides?.has(index) ? plantData(id) : blockRenderData[id];
+                const renderData = blockRenderData[id];
 
                 if (!renderData) {
                     continue;
@@ -1964,11 +1927,11 @@ function* buildChunkGeometrySteps(chunk, world, { terrain, plants: includePlants
     const cubeFaces = faceCount;
 
     for (let k = 0; k < plants.length; k += 4) {
-        faceCount = addPlants(plants, faceCount, baseX, baseZ, k, k + 4, plantData);
+        faceCount = addPlants(plants, faceCount, baseX, baseZ, k, k + 4);
         yield;
     }
     for (let k = 0; k < riverPlants.length; k += 4) {
-        faceCount = addRiverPlants(riverPlants, faceCount, baseX, baseZ, null, overrides, animationRanges, k, k + 4, plantData);
+        faceCount = addRiverPlants(riverPlants, faceCount, baseX, baseZ, null, overrides, animationRanges, k, k + 4);
         yield;
     }
     for (let k = 0; k < bushyGrass.length; k += 4) {
@@ -1982,9 +1945,7 @@ function* buildChunkGeometrySteps(chunk, world, { terrain, plants: includePlants
 
         const id = leaves[k + 3];
 
-        faceCount = leafParts
-            ? addLeafParts(id, blockRenderData[id], leaves[k], leaves[k + 1], leaves[k + 2], faceCount, baseX, baseZ, leafFaces)
-            : addCubeFaces(id, blockRenderData[id], leaves[k], leaves[k + 1], leaves[k + 2], faceCount, baseX, baseZ);
+        faceCount = (leafParts ? addLeafParts : addCubeFaces)(id, blockRenderData[id], leaves[k], leaves[k + 1], leaves[k + 2], faceCount, baseX, baseZ);
         if ((k & 31) === 28) yield;
 
     }
@@ -2091,8 +2052,6 @@ function* buildChunkGeometrySteps(chunk, world, { terrain, plants: includePlants
 
         geometry.userData.bushyGrassDetail = grassDetail;
         geometry.userData.bushyGrassCount = bushyGrass.length / 4;
-        geometry.userData.leafDetail = leafDetail;
-        geometry.userData.plantDetail = plantDetail;
         // Install bindings only when World publishes the finished geometry. A
         // canceled or superseded slice must never steal a live animation binding.
         if (animationRanges.length) geometry.userData.plantAnimationRanges = animationRanges;

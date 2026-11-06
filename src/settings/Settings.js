@@ -42,7 +42,7 @@ export const SETTINGS_DEFAULTS = {
 
     // Obraz
     potato: false,                                 // tryb ziemniaka (config.js: POTATO_...)
-    viewDistance: DEFAULT_VIEW_DISTANCE,           // bloki; dalsze strefy stopniowo upraszczane
+    viewDistance: DEFAULT_VIEW_DISTANCE,           // bloki (prawdziwe chunki)
     farTerrain: DEFAULT_FAR_TERRAIN,               // bloki (0 = bez dalekiego terenu)
     farDetail: 2,                                  // szczegóły dalekiego terenu: 1 - niskie, 2 - średnie, 3 - wysokie
     fov: DEFAULT_FOV,                              // stopnie

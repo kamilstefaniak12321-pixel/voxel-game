@@ -127,14 +127,6 @@ export class WorldOutput {
             // zamiast gotowego blasku przeznaczonego dla ekranu bazy.
             this.target.isWorldOutputTarget = true;
             this.target.texture.name = 'WorldLinearColor';
-            // Reuse the depth already drawn with the world for light shafts.
-            // Three resolves multisampled depth with colour at the end of
-            // render(); the effect reads it only after switching targets.
-            if (renderer.capabilities.isWebGL2) {
-                this.target.depthTexture = new THREE.DepthTexture(width, height, THREE.UnsignedIntType);
-                this.target.depthTexture.name = 'WorldDepth';
-                this.target.depthTexture.minFilter = this.target.depthTexture.magFilter = THREE.NearestFilter;
-            }
         } else if (this.target.width !== width || this.target.height !== height) {
             this.target.setSize(width, height);
         }

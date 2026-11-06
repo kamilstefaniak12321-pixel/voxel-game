@@ -1,0 +1,74 @@
+{
+    "nazwa": "Marzanna barwierska",
+    "paczka": "marzanna",
+    "etapy": [
+        {
+            "prosty": "prosty-1.png",
+            "polrealistyczny": {
+                "lodygi": {
+                    "ile": 1,
+                    "wysokosc": 9,
+                    "promien": 3,
+                    "pochylenie": 8
+                },
+                "liscie": {
+                    "ile": 3,
+                    "dlugosc": 5,
+                    "wysokosc": 3,
+                    "nachylenie": 40
+                }
+            },
+            "szczegolowy": null
+        },
+        {
+            "prosty": {
+                "plik": "prosty-2.png",
+                "rozmiar": 18
+            },
+            "polrealistyczny": {
+                "lodygi": {
+                    "ile": 3,
+                    "wysokosc": 13,
+                    "promien": 4,
+                    "pochylenie": 8
+                },
+                "liscie": {
+                    "ile": 3,
+                    "dlugosc": 5,
+                    "wysokosc": 3,
+                    "nachylenie": 40
+                },
+                "kwiat": {
+                    "rodzaj": "pompon",
+                    "rozmiar": 3
+                }
+            },
+            "szczegolowy": null
+        },
+        {
+            "prosty": {
+                "plik": "prosty-3.png",
+                "rozmiar": 22
+            },
+            "polrealistyczny": {
+                "lodygi": {
+                    "ile": 3,
+                    "wysokosc": 17,
+                    "promien": 5,
+                    "pochylenie": 8
+                },
+                "liscie": {
+                    "ile": 3,
+                    "dlugosc": 5,
+                    "wysokosc": 3,
+                    "nachylenie": 40
+                },
+                "kwiat": {
+                    "rodzaj": "koszyczek",
+                    "rozmiar": 4
+                }
+            },
+            "szczegolowy": null
+        }
+    ]
+}

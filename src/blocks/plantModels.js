@@ -1,5 +1,5 @@
 import { PLANT_PACKS, plantStageType, parseTuftModel } from './plantPacks.js';
-import { PLANE_FLOWERS } from '../rendering/PlaneModelGeometry.js';
+import { PLANE_FLOWERS, PLANE_LEAF_LAYOUTS } from '../rendering/PlaneModelGeometry.js';
 
 // ------------------------------------------------------------
 // POZIOMY MODELI ROŚLIN (Ustawienia -> Modele -> Modele roślin)
@@ -85,28 +85,58 @@ function parseSemi(spec, what) {
         fail(`"${what}.kwiat.rodzaj": ${PLANE_FLOWERS.join(', ')}`);
     }
 
-    if (flower && !stems) {
-        fail(`"${what}.kwiat": kwiat potrzebuje "lodygi"`);
+    if (flower && !stems && !(flower.rodzaj === 'owoce' && leaves?.uklad === 'kopula')) {
+        fail(`"${what}.kwiat": kwiat potrzebuje "lodygi" (owoce - liści w kopułce)`);
+    }
+
+    if (leaves?.uklad !== undefined && !PLANE_LEAF_LAYOUTS.includes(leaves.uklad)) {
+        fail(`"${what}.liscie.uklad": ${PLANE_LEAF_LAYOUTS.join(', ')}`);
     }
 
     return {
         lodygi: stems && {
             ile: pixels(stems.ile ?? 1, `${what}.lodygi.ile`, 1, 12),
-            wysokosc: pixels(stems.wysokosc ?? 8, `${what}.lodygi.wysokosc`, 2, 24),
+            wysokosc: pixels(stems.wysokosc ?? 8, `${what}.lodygi.wysokosc`, 2, 32),
             promien: pixels(stems.promien ?? 2, `${what}.lodygi.promien`, 0, 8),
             pochylenie: pixels(stems.pochylenie ?? 6, `${what}.lodygi.pochylenie`, 0, 45)
         },
         liscie: leaves && {
-            ile: pixels(leaves.ile ?? 4, `${what}.liscie.ile`, 0, 16),
-            dlugosc: pixels(leaves.dlugosc ?? 6, `${what}.liscie.dlugosc`, 2, 16),
+            uklad: leaves.uklad ?? 'wokol',
+            ile: pixels(leaves.ile ?? 4, `${what}.liscie.ile`, 0, 24),
+            dlugosc: pixels(leaves.dlugosc ?? 6, `${what}.liscie.dlugosc`, 2, 24),
+            promien: pixels(leaves.promien ?? 4, `${what}.liscie.promien`, 0, 12),
+            kopula: pixels(leaves.kopula ?? 8, `${what}.liscie.kopula`, 2, 28),
+            pien: leaves.pien === true,
             wysokosc: pixels(leaves.wysokosc ?? 0, `${what}.liscie.wysokosc`, 0, 12),
             nachylenie: pixels(leaves.nachylenie ?? 50, `${what}.liscie.nachylenie`, 0, 85)
         },
         kwiat: flower && {
             rodzaj: flower.rodzaj,
-            rozmiar: pixels(flower.rozmiar ?? 6, `${what}.kwiat.rozmiar`, 2, 12)
+            rozmiar: pixels(flower.rozmiar ?? 6, `${what}.kwiat.rozmiar`, 2, 12),
+            ile: pixels(flower.ile ?? 4, `${what}.kwiat.ile`, 1, 16)
         }
     };
+
+}
+
+
+function parseSimple(id, value, what) {
+
+    if (value === null || value === undefined) return null;
+
+    if (typeof value === 'string') {
+        return { texture: textureName(id, png(value, what)), file: value, size: 16 };
+    }
+
+    if (typeof value === 'object' && typeof value.kafelek === 'string') {
+        return { texture: value.kafelek, file: null, size: pixels(value.rozmiar ?? 16, `${what}.rozmiar`, 4, 48) };
+    }
+
+    if (typeof value === 'object' && typeof value.plik === 'string') {
+        return { texture: textureName(id, png(value.plik, `${what}.plik`)), file: value.plik, size: pixels(value.rozmiar ?? 16, `${what}.rozmiar`, 4, 48) };
+    }
+
+    fail(`"${what}": "plik.png", { "plik", "rozmiar" }, { "kafelek" } albo null`);
 
 }
 
@@ -127,9 +157,14 @@ function png(file, what) {
 
 
 // Jedna roślina: { id, name, stages: [{ type, simple, semi, detailed }] }
-//   simple   - { texture } albo null (null - obrazek z atlasu bloku)
-//   semi     - { spec, texture } albo null
-//   detailed - { tuft } albo null (null - model z paczki, jeśli ma)
+//   simple   - { texture, file, size } albo null (null - obrazek bloku
+//              z atlasu, jeśli blok go ma); "prosty" w model.json:
+//              "plik.png", { "plik": "plik.png", "rozmiar": 30 } (ile
+//              pikseli rośliny mieści obrazek 16 x 16) albo
+//              { "kafelek": "nazwa" } (kafelek atlasu, np. krzaka),
+//   semi     - { spec, texture } albo null,
+//   detailed - { tuft } albo null (null - dotychczasowy model bloku, jeśli
+//              blok go ma: paczki, krzaki owocowe, rośliny nad wodą).
 
 async function loadModel(id) {
 
@@ -157,19 +192,21 @@ async function loadModel(id) {
 
     const sheet = 'polrealistyczny.png';
 
+    if (json.kolory !== undefined && (json.kolory === null || typeof json.kolory !== 'object')) {
+        fail('"kolory": { "lisc": "#...", ... } (wspólne dla szczegółowych etapów)');
+    }
+
     const stages = json.etapy.map((stage, index) => {
 
         const what = `etapy[${index}]`;
 
-        const packStage = pack?.stages[index];
-
         return {
             type: types[index],
-            simple: stage.prosty ? { texture: textureName(id, png(stage.prosty, `${what}.prosty`)), file: stage.prosty } : null,
+            simple: parseSimple(id, stage.prosty, `${what}.prosty`),
             semi: stage.polrealistyczny ? { spec: parseSemi(stage.polrealistyczny, `${what}.polrealistyczny`), texture: textureName(id, sheet), file: sheet } : null,
             detailed: stage.szczegolowy
-                ? { tuft: parseTuftModel(stage.szczegolowy, `${what}.szczegolowy`, `modele:${id}:${index}`, stage.szczegolowy.kolory ?? {}) }
-                : packStage?.tuft ? { tuft: packStage.tuft, fromPack: true } : null
+                ? { tuft: parseTuftModel(stage.szczegolowy, `${what}.szczegolowy`, `modele:${id}:${index}`, json.kolory ?? {}) }
+                : null
         };
 
     });
@@ -221,7 +258,7 @@ for (const model of PLANT_MODELS) {
     for (const stage of model.stages) {
 
         for (const level of [stage.simple, stage.semi]) {
-            if (level) {
+            if (level?.file) {
                 PLANT_MODEL_TEXTURES[level.texture] = new URL(`${model.folder}/${level.file}`, BASE).href;
             }
         }
@@ -232,15 +269,15 @@ for (const model of PLANT_MODELS) {
 
 
 // Który poziom dostaje etap rośliny przy wybranym poziomie: wybrany, a gdy
-// go nie ma - najbliższy (przy równej odległości - prostszy). 'simple'
-// jest zawsze (obrazek z atlasu) dla roślin spoza paczek.
+// go nie ma - najbliższy (przy równej odległości - prostszy).
+// block - co blok ma sam: { sprite (obrazek z atlasu), model (model bloku) }.
 
-export function resolvePlantModel(stage, level, hasAtlasSprite) {
+export function resolvePlantModel(stage, level, block = {}) {
 
     const has = {
-        simple: Boolean(stage.simple) || hasAtlasSprite,
+        simple: Boolean(stage.simple) || Boolean(block.sprite),
         semi: Boolean(stage.semi),
-        detailed: Boolean(stage.detailed)
+        detailed: Boolean(stage.detailed) || Boolean(block.model)
     };
 
     const wanted = Math.max(0, PLANT_MODEL_LEVELS.indexOf(level));

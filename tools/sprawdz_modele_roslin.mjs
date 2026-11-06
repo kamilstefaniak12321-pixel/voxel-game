@@ -73,7 +73,20 @@ const check = (condition, message) => { assert.ok(condition, message); checks++;
 // --- Opisy i tekstury -------------------------------------------------------
 
 check(PLANT_MODEL_ERRORS.length === 0, `Błędy modeli: ${PLANT_MODEL_ERRORS.join('; ')}`);
-check(PLANT_MODELS.map((model) => model.id).join() === 'mak,chaber,mniszek,rumianek,lawenda', 'Lista modeli roślin');
+check(PLANT_MODELS.length >= 45 && PLANT_MODELS.slice(0, 5).map((model) => model.id).join() === 'mak,chaber,mniszek,rumianek,lawenda', 'Lista modeli roślin');
+
+// Wszystkie rośliny gry mają trzy wersje - poza tymi, które leżą na
+// ścianie, ziemi albo wodzie jedną warstwą pikseli (jedna wersja na
+// wszystkie poziomy).
+const SINGLE_LAYER = new Set(['water_lily', 'duckweed', 'water_milfoil']);
+const modelled = new Set(PLANT_MODELS.flatMap((model) => model.stages.map((stage) => stage.type)));
+const { BLOCK_TYPES } = await import('../src/blocks/BlockRegistry.js');
+for (const [type, definition] of Object.entries(BLOCK_TYPES)) {
+    if (definition.model !== 'cross' && definition.model !== 'riverPlant') continue;
+    const tuft = definition.riverPlant?.tuft;
+    if (SINGLE_LAYER.has(type) || tuft?.carpet || tuft?.coating || tuft?.bracket) continue;
+    check(modelled.has(type), `Roślina bez trzech wersji: ${type}`);
+}
 
 for (const [name, url] of Object.entries(PLANT_MODEL_TEXTURES)) {
     const data = readFileSync(new URL(url));
@@ -86,21 +99,23 @@ for (const model of PLANT_MODELS) {
     for (const [index, stage] of model.stages.entries()) {
         stageCount++;
         check(getBlockId(stage.type), `${model.id}: nie ma bloku ${stage.type}`);
-        check(stage.semi && stage.detailed, `${model.id}[${index}]: półrealistyczny i szczegółowy`);
-        check(stage.simple || blockRenderData[getBlockId(stage.type)].cross, `${model.id}[${index}]: prosty obrazek`);
+        const own = blockRenderData[getBlockId(stage.type)];
+        check(stage.semi, `${model.id}[${index}]: półrealistyczny`);
+        check(stage.detailed || own.riverPlant, `${model.id}[${index}]: szczegółowy`);
+        check(stage.simple || own.cross, `${model.id}[${index}]: prosty obrazek`);
 
         // Model z płaszczyzn: wszystkie karty z tekstury etapu, w obrębie
         // obszarów arkusza, korzenie przy ziemi, mieści się nad komórką.
         for (let variant = 0; variant < 8; variant++) {
             const faces = makePlaneModel(stage.semi.spec, stage.semi.texture, variant, 7);
-            check(faces.length >= 8 && faces.length <= 240, `${model.id}[${index}]: ${faces.length} ścian`);
+            check(faces.length >= 8 && faces.length <= 400, `${model.id}[${index}]: ${faces.length} ścian`);
             for (const face of faces) {
                 check(face.texture === stage.semi.texture, 'Karta z tekstury etapu');
                 const regions = Object.values(PLANE_REGIONS).filter(([x, y, w, h]) =>
                     face.uv.every(([u, v]) => u >= x / 16 - 1e-9 && u <= (x + w) / 16 + 1e-9 && v >= y / 16 - 1e-9 && v <= (y + h) / 16 + 1e-9));
                 check(regions.length > 0, 'Karta w obszarze arkusza');
                 for (const point of face.vertices) {
-                    check(point[1] > -0.05 && point[1] < 1.6 && Math.abs(point[0]) < 1 && Math.abs(point[2]) < 1, `${model.id}: wierzchołek poza komórką ${point}`);
+                    check(point[1] > -0.05 && point[1] < 2.1 && Math.abs(point[0]) < 1.25 && Math.abs(point[2]) < 1.25, `${model.id}: wierzchołek za daleko ${point}`);
                 }
                 check(face.weights.every((w) => w >= 0 && w <= 255), 'Waga wiatru');
             }
@@ -120,6 +135,8 @@ const lavenderPack = lavender.map((id) => blockRenderData[id].riverPlant);
 
 check(SETTINGS_DEFAULTS.plantModels === 'semi' && SETTINGS_CHOICES.plantModels.join() === PLANT_MODEL_LEVELS.join(), 'Ustawienie modeli roślin');
 check(applyPlantModelLevel('semi') === stageCount && plantModelLevel() === 'semi', 'Półrealistyczne - wszystkie etapy');
+check(blockRenderData[getBlockId('short_grass')].riverPlant?.tint === true, 'Trawa z płaszczyzn - kolor klimatu');
+check(blockRenderData[getBlockId('cattail_water')].riverPlant?.waterlogged === true, 'Pałka w wodzie - woda zostaje');
 check(applyPlantModelLevel('semi') === 0, 'Ten sam poziom - bez przebudowy');
 check(blockRenderData[poppyId].cross === null && blockRenderData[poppyId].riverPlant.kind.startsWith('plane:'), 'Mak - płaszczyzny');
 check(getRiverPlantFaces(blockRenderData[poppyId].riverPlant.kind, 2).length > 0, 'Mak - ściany z płaszczyzn');
@@ -132,15 +149,22 @@ check(lavender.every((id, i) => blockRenderData[id].riverPlant === lavenderPack[
 
 applyPlantModelLevel('simple');
 check(blockRenderData[poppyId].riverPlant === null && blockRenderData[poppyId].cross === poppyCross, 'Mak - dawny obrazek');
-check(lavender.every((id, i) => blockRenderData[id].cross?.uv.name === `models/rosliny/lawenda/prosty-${i + 1}`), 'Lawenda - prosty obrazek');
+// Blok z własnym modelem (paczka) - prosty obrazek na dwóch kartach tą
+// samą drogą co model.
+check(lavender.every((id, i) => blockRenderData[id].riverPlant?.kind.endsWith(':simple') && blockRenderData[id].riverPlant.uv.name === `models/rosliny/lawenda/prosty-${i + 1}`), 'Lawenda - prosty obrazek');
+check(getRiverPlantFaces(blockRenderData[lavender[0]].riverPlant.kind, 0).length === 4, 'Prosty - dwie karty');
+const cattail = blockRenderData[getBlockId('cattail_water')].riverPlant;
+check(cattail.waterlogged === true && cattail.kind.endsWith(':simple'), 'Pałka w wodzie - prosty obrazek z wodą');
+const grass = blockRenderData[getBlockId('short_grass')];
+check(grass.cross && !grass.riverPlant, 'Trawa - dawny obrazek');
 check(tuftInfo(poppyId) === null, 'Prosty - bez animacji kępki');
 check(nettle.cross === nettleCross && nettle.riverPlant === null, 'Roślina bez modeli bez zmian');
 
 const only = (simple, semi, detailed) => ({ simple: simple ? {} : null, semi: semi ? {} : null, detailed: detailed ? {} : null });
-check(resolvePlantModel(only(0, 0, 1), 'simple', false) === 'detailed', 'Tylko szczegółowy');
-check(resolvePlantModel(only(0, 0, 1), 'semi', true) === 'simple', 'Brak półrealistycznego - prostszy');
-check(resolvePlantModel(only(1, 0, 1), 'detailed', false) === 'detailed', 'Wybrany, gdy jest');
-check(resolvePlantModel(only(0, 1, 0), 'detailed', false) === 'semi', 'Najbliższy');
+check(resolvePlantModel(only(0, 0, 1), 'simple', {}) === 'detailed', 'Tylko szczegółowy');
+check(resolvePlantModel(only(0, 0, 1), 'semi', { sprite: true }) === 'simple', 'Brak półrealistycznego - prostszy');
+check(resolvePlantModel(only(1, 0, 1), 'detailed', {}) === 'detailed', 'Wybrany, gdy jest');
+check(resolvePlantModel(only(0, 1, 0), 'detailed', {}) === 'semi', 'Najbliższy');
 applyPlantModelLevel('semi');
 
 

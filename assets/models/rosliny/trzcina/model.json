@@ -1,0 +1,69 @@
+{
+    "nazwa": "Trzcina",
+    "bloki": [
+        "reed"
+    ],
+    "kolory": {
+        "lisc": "#7a9a4a",
+        "liscJasny": "#9ab868",
+        "liscCiemny": "#56702e",
+        "lodyga": "#86964c",
+        "kwiat": "#8a6a4a",
+        "kwiatJasny": "#b08e6a",
+        "kwiatCiemny": "#5e4430"
+    },
+    "etapy": [
+        {
+            "prosty": null,
+            "polrealistyczny": {
+                "liscie": {
+                    "uklad": "pion",
+                    "ile": 7,
+                    "dlugosc": 18,
+                    "promien": 3,
+                    "nachylenie": 10
+                },
+                "lodygi": {
+                    "ile": 2,
+                    "wysokosc": 18,
+                    "promien": 2,
+                    "pochylenie": 5
+                },
+                "kwiat": {
+                    "rodzaj": "klos",
+                    "rozmiar": 5
+                }
+            },
+            "szczegolowy": {
+                "rodzaj": "kepka",
+                "liscie": {
+                    "uklad": "kepa",
+                    "ile": [
+                        6,
+                        8
+                    ],
+                    "dlugosc": [
+                        10,
+                        12
+                    ],
+                    "promien": 2
+                },
+                "lodygi": {
+                    "ile": [
+                        2,
+                        3
+                    ],
+                    "wysokosc": [
+                        14,
+                        16
+                    ],
+                    "promien": 2
+                },
+                "kwiaty": {
+                    "rodzaj": "klos",
+                    "rozmiar": 4
+                }
+            }
+        }
+    ]
+}

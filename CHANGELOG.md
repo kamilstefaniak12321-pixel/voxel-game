@@ -11,6 +11,29 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 0.65.0 - Trzy wersje wszystkich roślin
+
+Modele proste, półrealistyczne i szczegółowe dla reszty roślin — PR #99.
+
+- **Ustawienia → Modele → Modele roślin** zmienia teraz wygląd wszystkich
+  roślin: trawy, paproci, koniczyny, pokrzywy, babki, trzciny, wrzosu,
+  krokusa i trawy wydmowej, 9 sadzonek drzew, 5 krzaków owocowych (we
+  wszystkich etapach, z owocami), turzycy, pałki i krwawnicy oraz 13 roślin
+  z paczek — razem 45 gatunków i 89 etapów.
+- Nowe modele szczegółowe (z pikseli) dla roślin, które miały tylko
+  obrazek; nowe obrazki 16 × 16 dla roślin, które miały tylko model.
+  Każda roślina dostała arkusz części do modelu z płaskich kart.
+- Model z kart umie teraz kępkę źdźbeł (trawy, trzcina), kopułkę liści
+  z owocami (krzaki, wrzos, sadzonki, indygowiec) i zwisające dzwonki.
+- Trawa w modelach dalej zmienia kolor z klimatem, a pałka w wodzie
+  zostaje w wodzie. Eksperyment *Trawa kępiasta* ma pierwszeństwo.
+- Rośliny leżące jedną warstwą (lilia wodna, rzęsa, wywłócznik, porosty,
+  huby, barwinek) wyglądają tak samo w każdej wersji.
+- Scena *Modele roślin* pokazuje wszystkie rośliny i etapy w siatce.
+  Obrazki proste z modeli rysuje `tools/modele_roslin_proste.mjs`.
+
+Wersja przygotowana do wydania na Windows i Android po scaleniu PR.
+
 ## 0.64.0 - Modele roślin do wyboru
 
 Trzy wersje wyglądu roślin i przełączniki ruchu — PR #98.

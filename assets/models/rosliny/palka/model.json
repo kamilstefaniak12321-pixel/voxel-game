@@ -1,0 +1,61 @@
+{
+    "nazwa": "Pałka wodna",
+    "bloki": [
+        "cattail",
+        "cattail_water"
+    ],
+    "etapy": [
+        {
+            "prosty": {
+                "plik": "prosty-1.png",
+                "rozmiar": 26
+            },
+            "polrealistyczny": {
+                "liscie": {
+                    "uklad": "pion",
+                    "ile": 6,
+                    "dlugosc": 18,
+                    "promien": 3,
+                    "nachylenie": 10
+                },
+                "lodygi": {
+                    "ile": 2,
+                    "wysokosc": 24,
+                    "promien": 3,
+                    "pochylenie": 3
+                },
+                "kwiat": {
+                    "rodzaj": "klos",
+                    "rozmiar": 6
+                }
+            },
+            "szczegolowy": null
+        },
+        {
+            "prosty": {
+                "plik": "prosty-1.png",
+                "rozmiar": 26
+            },
+            "polrealistyczny": {
+                "liscie": {
+                    "uklad": "pion",
+                    "ile": 6,
+                    "dlugosc": 18,
+                    "promien": 3,
+                    "nachylenie": 10
+                },
+                "lodygi": {
+                    "ile": 2,
+                    "wysokosc": 24,
+                    "promien": 3,
+                    "pochylenie": 3
+                },
+                "kwiat": {
+                    "rodzaj": "klos",
+                    "rozmiar": 6
+                }
+            },
+            "szczegolowy": null
+        }
+    ]
+}

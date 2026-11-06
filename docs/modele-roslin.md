@@ -9,8 +9,14 @@
 | **Szczegółowe** (`detailed`) | model z pikseli - każdy listek i płatek osobno (model „kepka”, jak rośliny z paczek) | kolory z palety rośliny |
 
 Roślina, która nie ma wybranej wersji, dostaje najbliższą, którą ma
-(przy równej odległości - prostszą). Pełny komplet mają: **mak, chaber,
-mniszek, rumianek, lawenda**. Pozostałe rośliny wyglądają jak dotąd.
+(przy równej odległości - prostszą). Od 0.65.0 pełny komplet mają
+**wszystkie rośliny** (45 gatunków, 89 etapów - `lista.json`): kwiaty,
+trawy, paproć, koniczyna, pokrzywa, babka, trzcina, wrzos, krokus, trawa
+wydmowa, sadzonki drzew, krzaki owocowe (wszystkie etapy), turzyca,
+pałka, krwawnica i rośliny z paczek. Bez wersji zostają rośliny leżące
+jedną warstwą pikseli na ziemi, ścianie albo wodzie - lilia wodna, rzęsa,
+wywłócznik, porosty, huby i barwinek (wyglądają tak samo w każdej
+wersji).
 
 Zmiana działa od razu (chunki przebudowują się stopniowo, najbliższe
 najpierw). Zmienia tylko obraz: bloki, zapisy światów, celownik, ikonki
@@ -39,6 +45,19 @@ assets/models/rosliny/
   <roślina>/polrealistyczny.png
   <roślina>/prosty-<etap>.png   (tylko gdy roślina nie ma obrazka w atlasie)
 ```
+
+Skąd się biorą:
+
+- arkusze części - `tools/modele_roslin.py` (5 pierwszych roślin -
+  narysowane piksel po pikselu, reszta - ze szablonów liści i kwiatów
+  w kolorach rośliny: `LEAVES`, `FLOWERS`, palety `VANILLA`, `BUSHES`,
+  `PACKS`),
+- proste obrazki roślin, które miały tylko model z pikseli (paczki,
+  turzyca, pałka, krwawnica) - `tools/modele_roslin_proste.mjs`: widok
+  tego modelu z przodu, pomniejszony do 16 × 16 (`"rozmiar"` w
+  model.json),
+- krzaki owocowe - prosty obrazek z atlasu (`{ "kafelek": ... }`),
+  szczegółowy - ich dotychczasowy model.
 
 Kod: `src/blocks/plantModels.js` (wczytanie i sprawdzenie opisów, wybór
 najbliższego poziomu), `src/rendering/PlantModelLevels.js` (przełączenie
@@ -70,16 +89,18 @@ malować same pliki PNG).
 {
     "nazwa": "Mak",
     "bloki": ["poppy"],                   // albo "paczka": "lawenda" (etapy paczki)
+    "kolory": { "lisc": "#327c20" },      // wspólne kolory szczegółowych etapów (jak w paczkach)
     "etapy": [
         {
-            "prosty": null,               // null - obrazek bloku z atlasu; albo "prosty-1.png"
+            "prosty": null,               // null - obrazek bloku z atlasu; "prosty-1.png";
+                                          // { "plik": "prosty-1.png", "rozmiar": 26 }; { "kafelek": "bush_leaves" }
             "polrealistyczny": {
                 "lodygi": { "ile": 1, "wysokosc": 10, "promien": 2, "pochylenie": 6 },
                 "liscie": { "ile": 4, "dlugosc": 7, "nachylenie": 55, "wysokosc": 0 },
                 "kwiat": { "rodzaj": "kielich", "rozmiar": 6 }
             },
             "szczegolowy": { "rodzaj": "kepka", ... }   // jak w paczkach roślin (docs/rosliny.md);
-                                                        // null - model z paczki
+                                                        // null - dotychczasowy model bloku
         }
     ]
 }
@@ -87,13 +108,18 @@ malować same pliki PNG).
 
 - `lodygi` - ile (1-12), wysokość w pikselach (2-24), promień rozstawienia
   (0-8), pochylenie w stopniach (0-45),
-- `liscie` - ile (0-16), długość (2-16 pikseli), wysokość, na której
-  odchodzą od łodygi, nachylenie od pionu (0-85°),
+- `liscie` - ile (0-24), długość (2-24 pikseli), wysokość, na której
+  odchodzą od łodygi, nachylenie od pionu (0-85°); `uklad`: `wokol`
+  (domyślny - od podstawy dookoła), `kopula` (kopułka: `kopula` - wysokość
+  w pikselach, `promien`, `pien: true` - pień w środku; krzaki, wrzos,
+  sadzonki), `pion` (źdźbła w `promien`: trawy, trzcina, turzyca),
 - `kwiat.rodzaj` - `kielich` (cztery płatki z obszaru „płatek”, dno
   z góry - mak), `gwiazda` (dwie skrzyżowane karty z boku i karta z góry
   - chaber), `pompon` (trzy karty z boku i z góry - mniszek), `koszyczek`
   (karta z góry lekko przechylona i środek z boku - rumianek), `klos`
-  (dwie wąskie karty z obszaru „płatek” - lawenda); `rozmiar` 2-12 pikseli.
+  (dwie wąskie karty z obszaru „płatek” - lawenda), `dzwonek` (zwisa
+  z końca łodygi), `owoce` (karty z obszaru „płatek” między liśćmi
+  kopułki, `ile`); `rozmiar` 2-12 pikseli.
 
 Każda roślina dostaje 8 odmian (obrót liści, pochylenie łodyg) - sąsiednie
 nie są identyczne. Wiatr porusza górą, korzenie stoją.

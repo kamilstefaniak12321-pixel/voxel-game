@@ -1,0 +1,21 @@
+{
+    "nazwa": "Turzyca rzeczna",
+    "bloki": [
+        "river_sedge"
+    ],
+    "etapy": [
+        {
+            "prosty": "prosty-1.png",
+            "polrealistyczny": {
+                "liscie": {
+                    "uklad": "pion",
+                    "ile": 8,
+                    "dlugosc": 14,
+                    "promien": 3,
+                    "nachylenie": 18
+                }
+            },
+            "szczegolowy": null
+        }
+    ]
+}

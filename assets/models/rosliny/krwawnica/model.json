@@ -1,0 +1,32 @@
+{
+    "nazwa": "Krwawnica pospolita",
+    "bloki": [
+        "purple_loosestrife"
+    ],
+    "etapy": [
+        {
+            "prosty": {
+                "plik": "prosty-1.png",
+                "rozmiar": 19
+            },
+            "polrealistyczny": {
+                "liscie": {
+                    "ile": 4,
+                    "dlugosc": 6,
+                    "wysokosc": 4,
+                    "nachylenie": 40
+                },
+                "lodygi": {
+                    "ile": 2,
+                    "wysokosc": 16,
+                    "promien": 3
+                },
+                "kwiat": {
+                    "rodzaj": "klos",
+                    "rozmiar": 6
+                }
+            },
+            "szczegolowy": null
+        }
+    ]
+}

@@ -1,0 +1,50 @@
+{
+    "nazwa": "Paproć",
+    "bloki": [
+        "fern"
+    ],
+    "kolory": {
+        "lisc": "#4a8a2a",
+        "liscJasny": "#6eae3c",
+        "liscCiemny": "#2e6420",
+        "lodyga": "#3c7024"
+    },
+    "etapy": [
+        {
+            "prosty": null,
+            "polrealistyczny": {
+                "liscie": {
+                    "ile": 6,
+                    "dlugosc": 11,
+                    "nachylenie": 45
+                }
+            },
+            "szczegolowy": {
+                "rodzaj": "kepka",
+                "liscie": {
+                    "uklad": "brak"
+                },
+                "lodygi": {
+                    "ile": [
+                        5,
+                        6
+                    ],
+                    "wysokosc": [
+                        8,
+                        10
+                    ],
+                    "promien": 4,
+                    "rozchylone": true,
+                    "liscie": {
+                        "co": 1,
+                        "dlugosc": [
+                            2,
+                            3
+                        ],
+                        "naprzeciw": true
+                    }
+                }
+            }
+        }
+    ]
+}

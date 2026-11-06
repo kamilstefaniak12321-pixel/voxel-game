@@ -1,0 +1,59 @@
+{
+    "nazwa": "Wysoka trawa",
+    "bloki": [
+        "tall_grass"
+    ],
+    "kolory": {
+        "lisc": "#5a9e34",
+        "liscJasny": "#86c650",
+        "liscCiemny": "#3c7a26",
+        "lodyga": "#4c8a2c",
+        "kwiat": "#a0ac6a",
+        "kwiatJasny": "#c2c88a",
+        "kwiatCiemny": "#7a8648"
+    },
+    "etapy": [
+        {
+            "prosty": null,
+            "polrealistyczny": {
+                "liscie": {
+                    "uklad": "pion",
+                    "ile": 6,
+                    "dlugosc": 15,
+                    "promien": 4,
+                    "nachylenie": 12
+                }
+            },
+            "szczegolowy": {
+                "rodzaj": "kepka",
+                "liscie": {
+                    "uklad": "kepa",
+                    "ile": [
+                        10,
+                        12
+                    ],
+                    "dlugosc": [
+                        8,
+                        12
+                    ],
+                    "promien": 3
+                },
+                "lodygi": {
+                    "ile": [
+                        2,
+                        3
+                    ],
+                    "wysokosc": [
+                        12,
+                        14
+                    ],
+                    "promien": 2
+                },
+                "kwiaty": {
+                    "rodzaj": "klos",
+                    "rozmiar": 2
+                }
+            }
+        }
+    ]
+}

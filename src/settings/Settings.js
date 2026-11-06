@@ -98,6 +98,7 @@ export const SETTINGS_DEFAULTS = {
     plantModels: 'semi',                           // wygląd roślin: 'simple' | 'semi' | 'detailed'
     plantWind: true,                               // kołysanie roślin na wietrze
     plantAnimations: true,                         // animacje roślin: stawianie, wzrost, zbiór, zniszczenie
+    leafModel: 'parts',                            // liście drzew: 'parts' - z 8 części (kołyszą się), 'cube' - bloki
 
     // Eksperymenty (zakładka "Eksperymenty" - funkcje, których nie
     // jesteśmy pewni: mogą się zmienić albo zniknąć; EXPERIMENTS niżej)
@@ -143,6 +144,7 @@ export const SETTINGS_CHOICES = {
     shadows: [0, 1, 2, 3],
     lightingModel: ['world', 'classic'],
     plantModels: ['simple', 'semi', 'detailed'],
+    leafModel: ['cube', 'parts'],
     lightingLook: ['natural', 'baseline'],
     atmosphereLook: ['natural', 'baseline'],
     lightingMaterials: ['basic', 'standard', 'high'],

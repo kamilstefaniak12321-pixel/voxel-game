@@ -683,6 +683,13 @@ zostają takie same. Opis i jak dodać roślinę:
 [modele roślin](docs/modele-roslin.md); z czatu: `/ustaw modele-roslin
 szczegolowe`, `/ustaw wiatr wyl`, `/ustaw animacje-roslin wyl`.
 
+Od 0.66.0 w tej samej zakładce **Model liści**: *Z 8 części* (domyślne
+na komputerze - blok liści z ośmiu sześcianów według konceptu Kamila,
+każdy lekko kołysze się na wietrze, korona ma nierówny brzeg) albo
+*Bloki* (zwykłe sześciany - domyślne na telefonie, szybsze). Opis:
+[liście z 8 części](assets/models/leaves/README.md); z czatu:
+`/ustaw model-lisci czesci | bloki`.
+
 **Eksperymenty** - funkcje, których nie jesteśmy jeszcze pewni (mogą się
 zmienić albo zniknąć), każda z krótkim opisem, domyślnie wyłączone
 i dla wszystkich światów:

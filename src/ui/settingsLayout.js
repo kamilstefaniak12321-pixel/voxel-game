@@ -55,6 +55,7 @@ export const SETTINGS_TABS = {
 
     models: [
         'plantModels',
+        'leafModel',
         'plantWind',
         'plantAnimations'
     ],

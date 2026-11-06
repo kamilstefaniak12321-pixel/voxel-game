@@ -15,6 +15,7 @@ import { atmosphericLightToBrightness } from './LightPolicy.js';
 import { SURFACE_PROFILES } from './SurfaceProfiles.js';
 import { getRiverPlantFaces, plantRandom, plantTransform, riverPlantTransform } from './RiverPlantGeometry.js';
 import { getBushyGrassFaces } from './BushyGrassGeometry.js';
+import { LEAF_PARTS } from '../../assets/models/leaves/model-data.js';
 import { BUSHY_GRASS_TEXTURE } from '../blocks/bushyGrass.js';
 import { getAtlasUV } from './TextureAtlas.js';
 import { getPlantMeshTemplate, lightPlantMeshTemplate } from './PlantMeshTemplate.js';
@@ -370,6 +371,211 @@ let fastLeaves = false;
 export function setFastLeaves(on) {
 
     fastLeaves = on;
+
+}
+
+
+// Liście z 8 części (Ustawienia -> Modele -> Liście drzew, koncept
+// Kamila - assets/models/leaves): blok liści to 8 sześcianików, każdy
+// z inną ćwiartką tekstury, lekko kołyszący się osobno (leafMaterial).
+// Zwraca true, gdy się zmieniło (trzeba przebudować chunki).
+
+let leafParts = false;
+
+export function setLeafParts(on) {
+
+    const changed = leafParts !== Boolean(on);
+
+    leafParts = Boolean(on);
+
+    return changed;
+
+}
+
+
+// Ściany części przygotowane raz: dla każdej - numer ściany sześcianu
+// (ten sam kierunek), rogi w kolejności ścian bloku (BLOCK_FACES),
+// UV 0-1 z pliku Kamila i wagi czterech rogów ściany bloku (światło).
+// Ściany w środku bloku (między częściami) pomijamy - widać je tylko
+// przez prześwity, a byłoby ich drugie tyle.
+
+
+const LEAF_PART_FACES = LEAF_PARTS.map((part, partIndex) => BLOCK_FACES.flatMap((face, faceIndex) => {
+
+    const axis = face.normal.findIndex((n) => n !== 0);
+    const sign = face.normal[axis];
+    const plane = sign > 0 ? part.max[axis] : part.min[axis];
+
+    // Ściana zakryta w całości inną częścią (tuż przed nią) - pomijamy.
+    const covered = LEAF_PARTS.some((other, otherIndex) => otherIndex !== partIndex &&
+        [0, 1, 2].every((i) => i === axis
+            ? other.min[i] <= plane + sign / 32 && other.max[i] >= plane + sign / 32
+            : other.min[i] <= part.min[i] + 1e-6 && other.max[i] >= part.max[i] - 1e-6));
+
+    if (covered) {
+        return [];
+    }
+
+    // Na krawędzi bloku (do piksela) czy cofnięta w głąb.
+    const edge = sign > 0 ? plane >= 1 - 1 / 16 - 1e-6 : plane <= 1 / 16 + 1e-6;
+
+
+    const source = part.faces.find((candidate) => {
+        const values = candidate.vertices.map((v) => v[axis]);
+        return values.every((n) => Math.abs(n - plane) < 1e-6);
+    });
+
+    const corners = face.corners.map((corner) => corner.map((c, i) => (i === axis ? plane : c ? part.max[i] : part.min[i])));
+
+    // UV rogu: z najbliższego wierzchołka tej ściany w pliku.
+    const uv = corners.map((point) => {
+        let best = 0, distance = Infinity;
+        source.vertices.forEach((v, i) => {
+            const d = Math.hypot(v[0] - point[0], v[1] - point[1], v[2] - point[2]);
+            if (d < distance) { distance = d; best = i; }
+        });
+        return source.uv[best];
+    });
+
+    // Wagi rogów ściany bloku dla każdego rogu części (dwie osie ściany).
+    const weights = corners.map((point) => face.corners.map((corner) => {
+        let w = 1;
+        for (let i = 0; i < 3; i++) {
+            if (i === axis) continue;
+            const t = Math.min(1, Math.max(0, point[i]));
+            w *= corner[i] ? t : 1 - t;
+        }
+        return w;
+    }));
+
+    return [{ faceIndex, corners, uv, weights, partIndex, edge }];
+
+}));
+
+
+const leafLight = new Float32Array(BLOCK_FACES.length * 4 * 10);
+
+const leafLightReady = new Uint8Array(BLOCK_FACES.length);
+
+const leafValues = new Float64Array(10);
+
+
+function addLeafParts(id, renderData, lx, y, lz, faceCount, baseX, baseZ) {
+
+    const block = padIndex(lx, y, lz);
+
+    const tinted = renderData.tint && meshTint !== null;
+
+    const wx = baseX + lx, wz = baseZ + lz;
+
+    leafLightReady.fill(0);
+
+    for (const faces of LEAF_PART_FACES) {
+
+        for (const part of faces) {
+
+            const faceIndex = part.faceIndex;
+
+            const front = block + FACE_FRONT[faceIndex];
+
+            if (padOpaque[front]) continue;
+
+            // Ściana na krawędzi bloku znika w głębi korony jak ściana
+            // zwykłych liści; cofnięta w głąb bloku - przy każdym sąsiednim
+            // bloku liści (szczelina między blokami liści i tak prześwituje).
+            if (padShade[front] && (!part.edge || fastLeaves || deepInLeaves(block, lx, y, lz, faceIndex))) continue;
+
+
+            // Światło czterech rogów ściany bloku - raz na kierunek.
+
+            const depthShade = padLiquid[front] ? waterDepthShade(front) : 1;
+
+            if (!leafLightReady[faceIndex]) {
+
+                for (let i = 0; i < 4; i++) {
+                    const light = cornerLight(block, faceIndex, i, front, depthShade);
+                    const o = (faceIndex * 4 + i) * 10;
+                    leafLight[o] = light.r; leafLight[o + 1] = light.g; leafLight[o + 2] = light.b; leafLight[o + 3] = light.a;
+                    leafLight[o + 4] = light.atmosphereR; leafLight[o + 5] = light.atmosphereG;
+                    leafLight[o + 6] = light.atmosphereB; leafLight[o + 7] = light.atmosphereA;
+                    leafLight[o + 8] = light.brightness; leafLight[o + 9] = light.occlusion;
+                }
+
+                leafLightReady[faceIndex] = 1;
+
+            }
+
+
+            ensureCapacity(faceCount + 1);
+
+            const p = faceCount * 12, t = faceCount * 8, c = faceCount * 16;
+
+            const uv = renderData.uv[faceIndex][0];
+            const uMin = Math.min(uv[0], uv[2], uv[4], uv[6]), uMax = Math.max(uv[0], uv[2], uv[4], uv[6]);
+            const vMin = Math.min(uv[1], uv[3], uv[5], uv[7]), vMax = Math.max(uv[1], uv[3], uv[5], uv[7]);
+
+            // Kołysanie części: siła i faza z miejsca bloku i numeru części.
+            const amplitude = 150 + plantRandom(wx, y, wz, 61 + part.partIndex) * 105;
+            const phase = plantRandom(wx, y, wz, 71 + part.partIndex) * 255;
+
+            const face = BLOCK_FACES[faceIndex];
+
+            let b0 = 0, b1 = 0, b2 = 0, b3 = 0;
+
+            for (let i = 0; i < 4; i++) {
+
+                const corner = part.corners[i];
+
+                positionBuffer[p + i * 3] = lx + corner[0];
+                positionBuffer[p + i * 3 + 1] = y + corner[1];
+                positionBuffer[p + i * 3 + 2] = lz + corner[2];
+
+                normalBuffer[p + i * 3] = face.normal[0];
+                normalBuffer[p + i * 3 + 1] = face.normal[1];
+                normalBuffer[p + i * 3 + 2] = face.normal[2];
+
+                uvBuffer[t + i * 2] = uMin + part.uv[i][0] * (uMax - uMin);
+                uvBuffer[t + i * 2 + 1] = vMax - part.uv[i][1] * (vMax - vMin);
+
+                plantMotionBuffer[t + i * 2] = amplitude;
+                plantMotionBuffer[t + i * 2 + 1] = phase;
+
+                const values = leafValues.fill(0);
+                const weights = part.weights[i];
+                for (let k = 0; k < 4; k++) {
+                    const o = (faceIndex * 4 + k) * 10;
+                    for (let n = 0; n < 10; n++) values[n] += leafLight[o + n] * weights[k];
+                }
+
+                colorBuffer[c + i * 4] = values[0] + 0.5;
+                colorBuffer[c + i * 4 + 1] = values[1] + 0.5;
+                colorBuffer[c + i * 4 + 2] = values[2] + 0.5;
+                colorBuffer[c + i * 4 + 3] = values[3] + 0.5;
+                atmosphereLightBuffer[c + i * 4] = values[4] + 0.5;
+                atmosphereLightBuffer[c + i * 4 + 1] = values[5] + 0.5;
+                atmosphereLightBuffer[c + i * 4 + 2] = values[6] + 0.5;
+                atmosphereLightBuffer[c + i * 4 + 3] = values[7] + 0.5;
+                surfaceOcclusionBuffer[faceCount * 4 + i] = values[9] * 255 + 0.5;
+                surfaceEmissionBuffer[faceCount * 4 + i] = 0;
+                surfaceProfileBuffer[t + i * 2] = renderData.surfaceProfiles[faceIndex][0];
+                surfaceProfileBuffer[t + i * 2 + 1] = renderData.surfaceProfiles[faceIndex][1];
+
+                if (tinted) writeTint(c + i * 4, lx + corner[0], lz + corner[2]);
+                else clearTint(c + i * 4);
+
+                if (i === 0) b0 = values[8]; else if (i === 1) b1 = values[8]; else if (i === 2) b2 = values[8]; else b3 = values[8];
+
+            }
+
+            splitBuffer[faceCount] = b0 + b3 > b1 + b2 ? 1 : 0;
+
+            faceCount++;
+
+        }
+
+    }
+
+    return faceCount;
 
 }
 
@@ -1024,6 +1230,146 @@ function waterUv(uv, lx, lz) {
 }
 
 
+// Światło jednego rogu ściany sześcianu (ściana faceIndex bloku block,
+// róg i; front - komórka przed ścianą). Wspólne dla zwykłych ścian
+// i liści z części (addLeafParts). Wynik w CORNER (bez kopiowania).
+
+const CORNER = { r: 0, g: 0, b: 0, a: 0, atmosphereR: 0, atmosphereG: 0, atmosphereB: 0, atmosphereA: 0, brightness: 1, occlusion: 1 };
+
+function cornerLight(block, faceIndex, i, front, depthShade) {
+
+    let r = FACE_SHADE[faceIndex] * 255;
+    let g = r;
+    let b = r;
+    let a = 255;
+
+    // Atmosfera zawsze próbuje rzeczywiste światło otoczenia,
+    // również dla emisyjnych powierzchni.
+    let atmosphereR = r;
+    let atmosphereG = g;
+    let atmosphereB = b;
+    let atmosphereA = a;
+
+    let brightness = 1;
+    let occlusion = 1;
+
+
+    {
+
+        const s = faceIndex * 12 + i * 3;
+
+        const side1 = block + CORNER_SAMPLES[s];
+        const side2 = block + CORNER_SAMPLES[s + 1];
+        const diagonal = block + CORNER_SAMPLES[s + 2];
+
+
+        // Światło bierzemy z komórek bez bloku.
+        // Gdy oba boki są zajęte, komórka po skosie
+        // jest od ściany odcięta - nie liczy się.
+        // Cień w kącie rzucają też liście (padShade).
+
+        let count = 0;
+
+        sampleCells[count++] = front;
+
+        const shadeCount =
+            padShade[side1] && padShade[side2]
+                ? 3
+                : padShade[side1] + padShade[side2] + padShade[diagonal];
+
+
+        if (!(padOpaque[side1] && padOpaque[side2]) && !padOpaque[diagonal]) {
+            sampleCells[count++] = diagonal;
+        }
+
+        if (!padOpaque[side1]) sampleCells[count++] = side1;
+        if (!padOpaque[side2]) sampleCells[count++] = side2;
+
+
+        // Średnia: poziom nieba, poziom lamp (z najmocniejszego
+        // kanału) i suma kanałów - z niej bierzemy kolor.
+
+        let sky = 0;
+        let lampLevel = 0;
+        let red = 0;
+        let green = 0;
+        let blue = 0;
+
+        for (let n = 0; n < count; n++) {
+
+            const cell = sampleCells[n];
+
+            const cr = padR[cell];
+            const cg = padG[cell];
+            const cb = padB[cell];
+
+            sky += padSky[cell];
+
+            red += cr;
+            green += cg;
+            blue += cb;
+
+            lampLevel += COLOR_LEVEL[cr > cg ? (cr > cb ? cr : cb) : (cg > cb ? cg : cb)];
+
+        }
+
+
+        const skyBrightness =
+            BRIGHTNESS[Math.round(sky * LEVEL_STEPS / count)];
+
+        const lampBrightness =
+            BRIGHTNESS[Math.round(lampLevel * LEVEL_STEPS / count)];
+
+        const shade = SHADE[shadeCount];
+        occlusion = shade;
+
+        const skyValue = skyBrightness * shade;
+
+        const lampValue =
+            lampBrightness * shade * LAMP_FACE_SHADE[faceIndex] * 255;
+
+
+        // Kolor lamp: proporcje kanałów (najmocniejszy = 1).
+
+        const strongest = Math.max(red, green, blue);
+
+        if (strongest > 0) {
+
+            r = lampValue * red / strongest;
+            g = lampValue * green / strongest;
+            b = lampValue * blue / strongest;
+
+        }
+        else {
+
+            r = g = b = lampValue;
+
+        }
+
+        a = skyValue * depthShade * 255;
+
+        const atmosphereLampValue =
+            ATMOSPHERE_BRIGHTNESS[Math.round(lampLevel * LEVEL_STEPS / count)] * shade * LAMP_FACE_SHADE[faceIndex] * 255;
+        const atmosphereScale = lampValue > 0 ? atmosphereLampValue / lampValue : 0;
+        atmosphereR = r * atmosphereScale;
+        atmosphereG = g * atmosphereScale;
+        atmosphereB = b * atmosphereScale;
+        atmosphereA = ATMOSPHERE_BRIGHTNESS[Math.round(sky * LEVEL_STEPS / count)] * depthShade * 255;
+
+        brightness = Math.max(skyValue, lampValue / 255);
+
+    }
+
+    CORNER.r = r; CORNER.g = g; CORNER.b = b; CORNER.a = a;
+    CORNER.atmosphereR = atmosphereR; CORNER.atmosphereG = atmosphereG;
+    CORNER.atmosphereB = atmosphereB; CORNER.atmosphereA = atmosphereA;
+    CORNER.brightness = brightness; CORNER.occlusion = occlusion;
+
+    return CORNER;
+
+}
+
+
 function addCubeFaces(id, renderData, lx, y, lz, faceCount, baseX, baseZ) {
 
     const block = padIndex(lx, y, lz);
@@ -1134,127 +1480,18 @@ function addCubeFaces(id, renderData, lx, y, lz, faceCount, baseX, baseZ) {
             //   a       - światło nieba
             // Świecący blok: pełne światło, bez cieni w kątach.
 
-            let r = FACE_SHADE[faceIndex] * 255;
-            let g = r;
-            let b = r;
-            let a = 255;
+            const light = cornerLight(block, faceIndex, i, front, depthShade);
 
-            // Atmosfera zawsze próbuje rzeczywiste światło otoczenia,
-            // również dla emisyjnych powierzchni.
-            let atmosphereR = r;
-            let atmosphereG = g;
-            let atmosphereB = b;
-            let atmosphereA = a;
-
-            let brightness = 1;
-            let occlusion = 1;
-
-
-            {
-
-                const s = faceIndex * 12 + i * 3;
-
-                const side1 = block + CORNER_SAMPLES[s];
-                const side2 = block + CORNER_SAMPLES[s + 1];
-                const diagonal = block + CORNER_SAMPLES[s + 2];
-
-
-                // Światło bierzemy z komórek bez bloku.
-                // Gdy oba boki są zajęte, komórka po skosie
-                // jest od ściany odcięta - nie liczy się.
-                // Cień w kącie rzucają też liście (padShade).
-
-                let count = 0;
-
-                sampleCells[count++] = front;
-
-                const shadeCount =
-                    padShade[side1] && padShade[side2]
-                        ? 3
-                        : padShade[side1] + padShade[side2] + padShade[diagonal];
-
-
-                if (!(padOpaque[side1] && padOpaque[side2]) && !padOpaque[diagonal]) {
-                    sampleCells[count++] = diagonal;
-                }
-
-                if (!padOpaque[side1]) sampleCells[count++] = side1;
-                if (!padOpaque[side2]) sampleCells[count++] = side2;
-
-
-                // Średnia: poziom nieba, poziom lamp (z najmocniejszego
-                // kanału) i suma kanałów - z niej bierzemy kolor.
-
-                let sky = 0;
-                let lampLevel = 0;
-                let red = 0;
-                let green = 0;
-                let blue = 0;
-
-                for (let n = 0; n < count; n++) {
-
-                    const cell = sampleCells[n];
-
-                    const cr = padR[cell];
-                    const cg = padG[cell];
-                    const cb = padB[cell];
-
-                    sky += padSky[cell];
-
-                    red += cr;
-                    green += cg;
-                    blue += cb;
-
-                    lampLevel += COLOR_LEVEL[cr > cg ? (cr > cb ? cr : cb) : (cg > cb ? cg : cb)];
-
-                }
-
-
-                const skyBrightness =
-                    BRIGHTNESS[Math.round(sky * LEVEL_STEPS / count)];
-
-                const lampBrightness =
-                    BRIGHTNESS[Math.round(lampLevel * LEVEL_STEPS / count)];
-
-                const shade = SHADE[shadeCount];
-                occlusion = shade;
-
-                const skyValue = skyBrightness * shade;
-
-                const lampValue =
-                    lampBrightness * shade * LAMP_FACE_SHADE[faceIndex] * 255;
-
-
-                // Kolor lamp: proporcje kanałów (najmocniejszy = 1).
-
-                const strongest = Math.max(red, green, blue);
-
-                if (strongest > 0) {
-
-                    r = lampValue * red / strongest;
-                    g = lampValue * green / strongest;
-                    b = lampValue * blue / strongest;
-
-                }
-                else {
-
-                    r = g = b = lampValue;
-
-                }
-
-                a = skyValue * depthShade * 255;
-
-                const atmosphereLampValue =
-                    ATMOSPHERE_BRIGHTNESS[Math.round(lampLevel * LEVEL_STEPS / count)] * shade * LAMP_FACE_SHADE[faceIndex] * 255;
-                const atmosphereScale = lampValue > 0 ? atmosphereLampValue / lampValue : 0;
-                atmosphereR = r * atmosphereScale;
-                atmosphereG = g * atmosphereScale;
-                atmosphereB = b * atmosphereScale;
-                atmosphereA = ATMOSPHERE_BRIGHTNESS[Math.round(sky * LEVEL_STEPS / count)] * depthShade * 255;
-
-                brightness = Math.max(skyValue, lampValue / 255);
-
-            }
+            let r = light.r;
+            let g = light.g;
+            let b = light.b;
+            let a = light.a;
+            let atmosphereR = light.atmosphereR;
+            let atmosphereG = light.atmosphereG;
+            let atmosphereB = light.atmosphereB;
+            let atmosphereA = light.atmosphereA;
+            let brightness = light.brightness;
+            const occlusion = light.occlusion;
 
             // Zachowujemy bajty i przekątną klasycznego mesha lampy.
             // Jej własna emisja nie udaje już pełnego dostępu do nieba.
@@ -1573,7 +1810,7 @@ export function buildChunkGeometry(chunk, world) {
 
         const id = leaves[k + 3];
 
-        faceCount = addCubeFaces(id, blockRenderData[id], leaves[k], leaves[k + 1], leaves[k + 2], faceCount, baseX, baseZ);
+        faceCount = (leafParts ? addLeafParts : addCubeFaces)(id, blockRenderData[id], leaves[k], leaves[k + 1], leaves[k + 2], faceCount, baseX, baseZ);
 
     }
 

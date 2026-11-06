@@ -11,6 +11,24 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 0.66.0 - Liście z 8 części
+
+Bardziej realistyczne liście według konceptu Kamila — PR #100.
+
+- **Ustawienia → Modele → Model liści**: *Z 8 części* (domyślne na
+  komputerze) albo *Bloki* (domyślne na telefonie; *potato* - zawsze
+  bloki). Z czatu: `/ustaw model-lisci czesci | bloki`.
+- Blok liści składa się z ośmiu sześcianów 8 × 8 × 8 pikseli ułożonych
+  jak w modelu z Blockbencha (`assets/models/leaves/`, importer
+  `tools/import_liscie.mjs`) - korony mają nierówny, „pierzasty” brzeg.
+  Każdy gatunek drzewa zostaje przy swojej teksturze i barwach biomu.
+- Każda część kołysze się osobno, lekko i z własną fazą (shader liści);
+  wyłącza je *Kołysanie na wietrze*.
+- Ściany zakryte inną częścią, przy pełnym sąsiedzie i w głębi korony nie
+  są rysowane; światło narożników jak przy zwykłych liściach. Korona ma
+  ok. 5 razy więcej ścian niż z blokami.
+- Test `tools/sprawdz_liscie_czesci.mjs` (w `npm test`).
+
 ## 0.65.0 - Trzy wersje wszystkich roślin
 
 Modele proste, półrealistyczne i szczegółowe dla reszty roślin — PR #99.

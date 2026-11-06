@@ -187,7 +187,7 @@ animations.setEnabled(true);
 
 // --- Ustawienia na ekranie ---------------------------------------------------
 
-check(SETTINGS_TABS.models?.join() === 'plantModels,plantWind,plantAnimations', 'Zakładka Modele');
+check(SETTINGS_TABS.models?.join() === 'plantModels,leafModel,plantWind,plantAnimations', 'Zakładka Modele');
 check(TEXTS.settingsTabs.models === 'Modele', 'Nazwa zakładki');
 for (const level of PLANT_MODEL_LEVELS) {
     check(TEXTS.plantModels(level).length > 15 && TEXTS.modelNotes.plantModels(level).length > 20, `Napis i opis: ${level}`);

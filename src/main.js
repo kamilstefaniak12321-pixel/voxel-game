@@ -25,6 +25,7 @@ import { AndroidUpdates } from './app/AndroidUpdates.js';
 import { atlasReady, blockAtlasTexture, atlasUploadedAt } from './rendering/TextureAtlas.js';
 import { markTextureFailure } from './rendering/TexturePacks.js';
 import { applyPlantModelLevel } from './rendering/PlantModelLevels.js';
+import { setLeafParts } from './rendering/ChunkMesher.js';
 import { plantWindUniforms } from './rendering/PlantWind.js';
 import {
     WorldStorage,
@@ -391,7 +392,9 @@ function applyPlantSettings() {
 
     plantWindUniforms.uPlantSway.value = settings.get('plantWind') ? 1 : 0;
 
-    if (applyPlantModelLevel(settings.get('plantModels')) > 0) {
+    const leafParts = setLeafParts(settings.get('leafModel') === 'parts' && !settings.get('potato'));
+
+    if (applyPlantModelLevel(settings.get('plantModels')) > 0 || leafParts) {
         game?.world.remeshAll();
         menuBackdrop.world?.world?.remeshAll();
     }
@@ -414,7 +417,7 @@ settings.onChange((key) => {
         applyAppSettings();
     }
 
-    if (key === null || ['plantModels', 'plantWind'].includes(key)) {
+    if (key === null || ['plantModels', 'plantWind', 'leafModel', 'potato'].includes(key)) {
         applyPlantSettings();
     }
 

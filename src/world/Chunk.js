@@ -114,6 +114,12 @@ export class Chunk {
         // albo jeszcze nie został zbudowany).
 
         this.mesh = null;
+        this.plantMesh = null;
+        this.plantShadowMesh = null;
+        this.meshRevision = 0;
+        this.plantRevision = 0;
+        this.terrainReady = false;
+        this.plantsReady = false;
 
 
         // Czy gracz kiedyś zmienił ten chunk. Taki chunk przy

@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { normalizeWorldExperiments, grassDetailAtDistance } from './WorldExperiments.js';
 import { ChunkGeneration } from './ChunkGeneration.js';
+import { MeshWorkQueue } from './MeshWorkQueue.js';
 import { BIOME_KEYS } from './terrain/Biomes.js';
 // ------------------------------------------------------------
 import {
@@ -37,7 +38,7 @@ import {
 // ------------------------------------------------------------
 import {
     buildChunkGeometry,
-    prepareChunkPlantGeometry
+    createChunkGeometryJob
 } from '../rendering/ChunkMesher.js';
 // ------------------------------------------------------------
 import {
@@ -91,6 +92,10 @@ import {
 // i usuwaniu tego samego chunka, gdy gracz chodzi po granicy.
 
 const UNLOAD_MARGIN = 2;
+// Build ahead of the existing visible ring; retain a wider ring to avoid churn
+// when walking back across a boundary. These do not change drawing distance.
+export const PLANT_PREFETCH_DISTANCE = PLANT_VIEW_DISTANCE + 48;
+export const PLANT_RETAIN_DISTANCE = PLANT_VIEW_DISTANCE + 64;
 
 export class World {
 
@@ -116,7 +121,11 @@ export class World {
 
         // Chunki, których mesh trzeba przebudować.
 
-        this.dirtyChunks = new Set();
+        this.dirtyChunks = new MeshWorkQueue(chunk => this.meshPriority(chunk));
+        this.dirtyPlants = new MeshWorkQueue(chunk => this.distanceToCenter(chunk));
+        this.missingTerrain = new MeshWorkQueue(chunk => this.distanceToCenter(chunk));
+        this.meshJobs = { terrain: null, plants: null };
+        this.meshTurn = 'terrain';
 
         // Chunki zmienione przez gracza, wczytane z zapisu.
 
@@ -228,6 +237,7 @@ export class World {
             this.chunkKey(cx, cz),
             chunk
         );
+        this.missingTerrain?.add(chunk);
 
 
         // Łączymy chunk z wczytanymi sąsiadami (w obie strony).
@@ -251,9 +261,28 @@ export class World {
     markDirty(chunk) {
 
         if (chunk) {
+            chunk.meshRevision = (chunk.meshRevision ?? 0) + 1;
             this.dirtyChunks.add(chunk);
+            this.markPlantsDirty(chunk);
         }
 
+    }
+
+    markPlantsDirty(chunk) {
+        if (!chunk) return;
+        chunk.plantRevision = (chunk.plantRevision ?? 0) + 1;
+        chunk.plantsReady = false;
+        if (this.wantsPlants(chunk)) this.dirtyPlants.add(chunk);
+    }
+
+    wantsPlants(chunk) {
+        return this.distanceToCenter(chunk) <= (PLANT_PREFETCH_DISTANCE / CHUNK_SIZE) ** 2;
+    }
+
+    meshPriority(chunk) {
+        const distance = this.distanceToCenter(chunk);
+        // Edits at the player's feet, then missing terrain, then cosmetic work.
+        return distance + (distance <= 4 ? 0 : !chunk.mesh ? 1e6 : 2e6);
     }
 
 
@@ -704,53 +733,67 @@ export class World {
     // zostaje widoczna aż gotowa jest cała nowa siatka.
 
     updateMeshes(deadline = Infinity) {
-
-        if (this.dirtyChunks.size === 0) {
-            return;
+        // Separate cursors let nearby plants/animations advance even while a
+        // large terrain mesh is being built. Each slice restores mesher scratch.
+        while (performance.now() < deadline) {
+            let kind = this.meshTurn;
+            this.meshTurn = kind === 'terrain' ? 'plants' : 'terrain';
+            if (!this.meshJobs[kind] && !(kind === 'terrain' ? this.dirtyChunks : this.dirtyPlants).size) {
+                kind = this.meshTurn;
+                if (!this.meshJobs[kind] && !(kind === 'terrain' ? this.dirtyChunks : this.dirtyPlants).size) break;
+            }
+            const queue = kind === 'terrain' ? this.dirtyChunks : this.dirtyPlants;
+            const revisionKey = kind === 'terrain' ? 'meshRevision' : 'plantRevision';
+            let pending = this.meshJobs[kind];
+            const first = queue.peek();
+            const urgent = first && pending && first !== pending.chunk &&
+                this.distanceToCenter(first) <= 16 && this.distanceToCenter(pending.chunk) > 16;
+            if (pending && (this.getChunk(pending.chunk.cx, pending.chunk.cz) !== pending.chunk ||
+                pending.revision !== (pending.chunk[revisionKey] ?? 0) ||
+                !this.hasAllNeighbors(pending.chunk) || urgent ||
+                (kind === 'plants' && !this.wantsPlants(pending.chunk)))) {
+                pending.job.cancel();
+                this.meshJobs[kind] = pending = null;
+            }
+            if (!pending) {
+                const chunk = queue.peek();
+                if (!chunk) continue;
+                if (this.getChunk(chunk.cx, chunk.cz) !== chunk || !this.hasAllNeighbors(chunk) ||
+                    (kind === 'plants' && (!this.wantsPlants(chunk) || (!chunk.mesh && !chunk.terrainReady)))) {
+                    queue.delete(chunk); continue;
+                }
+                // A missing neighbour will enqueue this again on arrival.
+                pending = this.meshJobs[kind] = {
+                    chunk, revision: chunk[revisionKey] ?? 0,
+                    job: createChunkGeometryJob(chunk, this, { terrain: kind === 'terrain', plants: kind === 'plants' })
+                };
+            }
+            // A dense mesh cannot use the entire frame repeatedly. Alternating
+            // short slices also prevents terrain loading from starving plants.
+            const slice = Number.isFinite(deadline) ? Math.min(deadline, performance.now() + 1) : Infinity;
+            const result = pending.job.step(slice);
+            if (result.done) {
+                this.meshJobs[kind] = null;
+                if (this.getChunk(pending.chunk.cx, pending.chunk.cz) === pending.chunk &&
+                    pending.revision === (pending.chunk[revisionKey] ?? 0) && this.hasAllNeighbors(pending.chunk)) {
+                    queue.delete(pending.chunk);
+                    this.installChunkGeometry(pending.chunk, result.geometry, kind);
+                } else {
+                    result.geometry?.dispose();
+                }
+            }
+            // A test clock or genuinely expired slice may yield without work.
+            if (Number.isFinite(deadline) && performance.now() >= deadline) break;
         }
+    }
 
-
-        // Chunk bez kompletu sąsiadów jeszcze czeka - wróci na listę,
-        // gdy wczyta się któryś z nich (generateChunk oznacza
-        // wtedy wszystkich sąsiadów do przebudowy).
-
-        const chunks = [];
-
-        for (const chunk of this.dirtyChunks) {
-
-            if (this.hasAllNeighbors(chunk)) {
-                chunks.push(chunk);
+    cancelMeshJobs(chunk = null) {
+        for (const kind of ['terrain', 'plants']) {
+            const pending = this.meshJobs?.[kind];
+            if (pending && (!chunk || pending.chunk === chunk)) {
+                pending.job.cancel(); this.meshJobs[kind] = null;
             }
-            else {
-                this.dirtyChunks.delete(chunk);
-            }
-
         }
-
-
-        chunks.sort(
-            (a, b) => this.distanceToCenter(a) - this.distanceToCenter(b)
-        );
-
-
-        for (const chunk of chunks) {
-
-            if (performance.now() >= deadline || !prepareChunkPlantGeometry(chunk, this, deadline)
-                || performance.now() >= deadline) {
-                break;
-            }
-
-            this.rebuildChunkMesh(chunk);
-
-            this.dirtyChunks.delete(chunk);
-
-
-            if (performance.now() >= deadline) {
-                break;
-            }
-
-        }
-
     }
 
 
@@ -760,14 +803,15 @@ export class World {
     // w czasie wczytywania nie było dziury między nim a chunkami.
 
     completeRadius() {
-
-        if (this.loadQueue.length === 0) {
+        const unmeshed = this.missingTerrain?.peek();
+        if (this.loadQueue.length === 0 && !unmeshed) {
             return Infinity;
         }
-
-        // Kolejka jest posortowana - na końcu najbliższy brakujący chunk.
-
-        const nearest = Math.sqrt(this.loadQueue[this.loadQueue.length - 1][2]);
+        // Data can arrive faster than incremental geometry. Keep the horizon
+        // over chunks that have data but still lack their first terrain mesh.
+        const dataDistance = this.loadQueue.length ? this.loadQueue[this.loadQueue.length - 1][2] : Infinity;
+        const meshDistance = unmeshed ? this.distanceToCenter(unmeshed) : Infinity;
+        const nearest = Math.sqrt(Math.min(dataDistance, meshDistance));
 
         // Mesh powstaje dopiero z kompletem sąsiadów - stąd zapas.
 
@@ -783,9 +827,13 @@ export class World {
     remeshAll() {
 
         for (const chunk of this.chunks.values()) {
-            this.dirtyChunks.add(chunk);
+            this.markDirty(chunk);
         }
 
+    }
+
+    remeshPlants() {
+        for (const chunk of this.chunks.values()) this.markPlantsDirty(chunk);
     }
 
     setExperiments(value) {
@@ -793,12 +841,12 @@ export class World {
         if (next.bushyGrass === this.experiments.bushyGrass) return;
         this.experiments = next;
         // This changes rendering only. Block IDs and saved chunks stay intact.
-        this.remeshAll();
+        this.remeshPlants();
     }
 
     getGrassDetail(chunk) {
         return grassDetailAtDistance(Math.sqrt(this.distanceToCenter(chunk)) * CHUNK_SIZE,
-            chunk.mesh?.geometry.userData.bushyGrassDetail);
+            (chunk.plantMesh ?? chunk.mesh)?.geometry.userData.bushyGrassDetail);
     }
 
 
@@ -818,6 +866,11 @@ export class World {
 
         const geometry =
             buildChunkGeometry(chunk, this);
+        // Synchronous combined helper retained for model tools. Runtime uses
+        // separately budgeted terrain and plant jobs below.
+        chunk.combinedGeometry = true;
+        chunk.terrainReady = true;
+        this.missingTerrain.delete(chunk);
 
 
         // Stara geometria nie jest już potrzebna -
@@ -913,6 +966,68 @@ export class World {
     }
 
 
+    installChunkGeometry(chunk, geometry, kind) {
+        const plants = kind === 'plants';
+        const meshKey = plants ? 'plantMesh' : 'mesh';
+        const shadowKey = plants ? 'plantShadowMesh' : 'shadowMesh';
+        const old = chunk[meshKey];
+        if (!plants) {
+            chunk.combinedGeometry = false; chunk.terrainReady = true;
+            this.missingTerrain.delete(chunk);
+        }
+        if (plants) chunk.plantsReady = true; // Also remember an empty plant layer.
+        if (!geometry) {
+            if (old) {
+                if (plants) this.removePlantMesh(chunk);
+                else { old.geometry.dispose(); this.removeChunkMesh(chunk); }
+                this.onMeshChanged?.(chunk);
+            }
+            if (!plants) this.updatePlantVisibility(chunk);
+            return;
+        }
+        if (old) {
+            old.geometry.dispose();
+            old.geometry = geometry;
+            chunk[shadowKey].geometry = geometry;
+        } else {
+            const mesh = new THREE.Mesh(geometry, [blockMaterial, plantMaterial, waterMaterial, leafMaterial]);
+            mesh.position.set(chunk.cx * CHUNK_SIZE, 0, chunk.cz * CHUNK_SIZE);
+            this.scene.add(mesh);
+            chunk[meshKey] = mesh;
+            const shadow = new THREE.Mesh(geometry, SHADOW_CASTER_MATERIALS);
+            shadow.position.copy(mesh.position);
+            shadow.frustumCulled = false;
+            shadow.userData.chunk = chunk;
+            this.shadowScene.add(shadow);
+            shadow.updateMatrixWorld();
+            chunk[shadowKey] = shadow;
+            if (!plants) this.meshVersion = (this.meshVersion ?? 0) + 1;
+        }
+        if (plants) {
+            geometry.userData.plantGroups = geometry.groups;
+            const ranges = geometry.userData.plantAnimationRanges;
+            if (ranges) {
+                this.plantAnimations?.bindGeometry(geometry, ranges);
+                delete geometry.userData.plantAnimationRanges;
+            }
+        }
+        this.updatePlantVisibility(chunk);
+        this.onMeshChanged?.(chunk);
+    }
+
+    removePlantMesh(chunk) {
+        if (chunk.plantMesh) {
+            this.scene.remove(chunk.plantMesh);
+            chunk.plantMesh.geometry.dispose();
+            chunk.plantMesh = null;
+        }
+        if (chunk.plantShadowMesh) {
+            this.shadowScene.remove(chunk.plantShadowMesh);
+            chunk.plantShadowMesh = null;
+        }
+    }
+
+
     // Usuwa mesh chunka (i jego kopię do cieni) ze sceny.
 
     removeChunkMesh(chunk) {
@@ -934,29 +1049,46 @@ export class World {
     }
 
 
-    // Rośliny dalej niż PLANT_VIEW_DISTANCE nie są rysowane: grupa
-    // roślin w geometrii dostaje 0 trójkątów (pełna liczba zostaje
-    // w userData, więc po podejściu bliżej wracają bez przebudowy).
+    // Separate plant buffers are prefetched, hidden outside the original
+    // drawing radius, and released only outside the wider retention ring.
 
     updatePlantVisibility(chunk) {
-
-        const geometry = chunk.mesh?.geometry;
-
-        const group = geometry?.groups[1];
-
-        if (!group) {
+        const radius = PLANT_VIEW_DISTANCE / CHUNK_SIZE;
+        const distance = this.distanceToCenter(chunk);
+        const visible = distance <= radius * radius;
+        const geometry = (chunk.plantMesh ?? chunk.mesh)?.geometry;
+        if (chunk.plantMesh) {
+            chunk.plantMesh.visible = visible;
+            chunk.plantShadowMesh.visible = visible;
+            // Shadow passes select their own casters and override .visible.
+            // Removing groups also skips prefetched vegetation in those passes
+            // without issuing the former empty gl.drawElements(..., 0, ...).
+            geometry.groups = visible ? geometry.userData.plantGroups : [];
+            geometry.setDrawRange(0, visible ? geometry.index.count : 0);
+        } else if (chunk.combinedGeometry || geometry?.groups[1]?.materialIndex === 1) {
+            // Combined synchronous model-preview helper, not streaming meshes.
+            const group = geometry?.groups.find(group => group.materialIndex === 1);
+            if (group) {
+                geometry.userData.plantCount ??= group.count;
+                group.count = visible ? geometry.userData.plantCount : 0;
+            }
+        }
+        if (distance > (PLANT_RETAIN_DISTANCE / CHUNK_SIZE) ** 2) {
+            const hadPlants = !!chunk.plantMesh;
+            this.removePlantMesh(chunk);
+            chunk.plantsReady = false;
+            this.dirtyPlants.delete(chunk);
+            if (hadPlants) this.onMeshChanged?.(chunk);
             return;
         }
-
-        geometry.userData.plantCount ??= group.count;
-
-        const radius = PLANT_VIEW_DISTANCE / CHUNK_SIZE;
-
-        group.count = this.distanceToCenter(chunk) <= radius * radius ? geometry.userData.plantCount : 0;
-
+        if (this.wantsPlants(chunk) && !chunk.plantsReady && !chunk.combinedGeometry) {
+            this.dirtyPlants.add(chunk);
+        }
+        if (!geometry) return;
         if (this.experiments.bushyGrass && geometry.userData.bushyGrassCount > 0 &&
             this.getGrassDetail(chunk) !== geometry.userData.bushyGrassDetail) {
-            this.dirtyChunks.add(chunk);
+            if (chunk.combinedGeometry || !chunk.plantMesh) this.markDirty(chunk);
+            else this.markPlantsDirty(chunk);
         }
 
     }
@@ -967,8 +1099,10 @@ export class World {
     dispose() {
 
         this.generation?.dispose();
+        this.cancelMeshJobs();
 
         for (const chunk of this.chunks.values()) {
+            this.removePlantMesh(chunk);
 
             if (chunk.mesh) {
 
@@ -983,6 +1117,8 @@ export class World {
 
         this.chunks.clear();
         this.dirtyChunks.clear();
+        this.dirtyPlants.clear();
+        this.missingTerrain.clear();
         this.unsavedChunks.clear();
 
         this.loadQueue = [];
@@ -1046,7 +1182,7 @@ export class World {
         return this.generation.enabled ? null : this.generateChunk(cx, cz);
     }
 
-    streamChunks(deadline) {
+    streamChunks(deadline, maxApply = Infinity, forceOne = false) {
         // Przyjęcie wyników jest osobną, budżetowaną pracą. Sama
         // odpowiedź workera nie zmienia świata ani świateł między klatkami.
         while (this.loadQueue.length && this.getChunk(...this.loadQueue[this.loadQueue.length - 1])) {
@@ -1054,8 +1190,9 @@ export class World {
         }
         const ready = this.generation.readyChunks().sort((a, b) =>
             this.distanceToCenter(a) - this.distanceToCenter(b));
+        let applied = 0;
         for (const { cx, cz } of ready) {
-            if (performance.now() >= deadline) break;
+            if (applied >= maxApply || (performance.now() >= deadline && !(forceOne && applied === 0))) break;
             const saved = this.savedChunks.get(this.chunkKey(cx, cz));
             const data = this.generation.take(cx, cz, saved);
             if (!data) continue;
@@ -1066,6 +1203,7 @@ export class World {
             if (index < 0) continue;
             this.loadQueue.splice(index, 1);
             this.applyGeneratedChunk(data);
+            applied++;
         }
         // Nie usuwamy oczekujących wpisów: completeRadius nie może
         // pokazać pustego pierścienia między chunkami i dalekim terenem.
@@ -1189,33 +1327,34 @@ export class World {
         this.setCenter(x, z, radius);
 
 
-        // Najpierw meshe (postawione bloki i świeżo
-        // wygenerowane chunki stają się widoczne)...
-
+        this.perfDiagnostics?.beginStage('generation');
+        if (this.generation?.checkHealth()) {
+            // Reserve one reception before meshing. Even when thousands of
+            // chunks await cosmetic rebuilds, the two worker slots keep moving.
+            // Zero budget deliberately requests work without adopting results.
+            const receptionDeadline = budgetMs > 0 ? Math.min(deadline, performance.now() + Math.max(.5, budgetMs * .25)) : deadline;
+            this.streamChunks(receptionDeadline, budgetMs > 0 ? 1 : 0, budgetMs > 0);
+            this.perfDiagnostics?.endStage('generation');
+            this.perfDiagnostics?.beginStage('mesh');
+            this.updateMeshes(deadline);
+            this.perfDiagnostics?.endStage('mesh');
+            return;
+        }
+        // Worker fallback alternates its first task with meshing. A slow
+        // synchronous generator must not permanently starve either queue.
+        this.fallbackGenerationTurn = !this.fallbackGenerationTurn;
+        if (this.fallbackGenerationTurn && budgetMs > 0 && this.loadQueue.length) {
+            const [cx, cz] = this.loadQueue.pop();
+            this.generateChunk(cx, cz);
+        }
+        this.perfDiagnostics?.endStage('generation');
         this.perfDiagnostics?.beginStage('mesh');
         this.updateMeshes(deadline);
         this.perfDiagnostics?.endStage('mesh');
-
         this.perfDiagnostics?.beginStage('generation');
-        if (this.generation?.checkHealth()) {
-            this.streamChunks(deadline);
-            this.perfDiagnostics?.endStage('generation');
-            return;
-        }
-
-
-        // ...potem nowe chunki, najbliższe najpierw - tylko jeśli
-        // w tej klatce zostało jeszcze trochę czasu.
-
-        while (
-            this.loadQueue.length > 0 &&
-            performance.now() < deadline
-        ) {
-
+        while (this.loadQueue.length > 0 && performance.now() < deadline) {
             const [cx, cz] = this.loadQueue.pop();
-
             this.generateChunk(cx, cz);
-
         }
         this.perfDiagnostics?.endStage('generation');
 
@@ -1271,6 +1410,9 @@ export class World {
         for (const chunk of this.chunks.values()) {
             this.updatePlantVisibility(chunk);
         }
+        this.dirtyChunks.reprioritize();
+        this.dirtyPlants.reprioritize();
+        this.missingTerrain.reprioritize();
 
 
         // Brakujące chunki w kole o promieniu radius.
@@ -1333,6 +1475,12 @@ export class World {
     unloadChunk(chunk) {
 
         const key = this.chunkKey(chunk.cx, chunk.cz);
+        this.cancelMeshJobs(chunk);
+        const hadPlants = !!chunk.plantMesh;
+        this.removePlantMesh(chunk);
+        this.dirtyPlants?.delete(chunk);
+        this.missingTerrain?.delete(chunk);
+        if (hadPlants && !chunk.mesh) this.onMeshChanged?.(chunk);
 
 
         // Chunk zmieniony przez gracza zachowujemy w pamięci, żeby

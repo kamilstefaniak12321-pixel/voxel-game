@@ -93,7 +93,7 @@ export function diagnosticsReportText(report) {
                 lines.push(`  Wolna klatka ${number(frame.frameMs)} ms: CPU ${number(frame.cpuMs)} ms. Etapy: ${list(frame.stages).map(stage => `${stage.label || stage.id} ${number(stage.ms, 2)} ms`).join('; ')}.`);
             }
             for (const suspect of list(summary.suspects)) if (suspect) lines.push(`  Wskazanie: ${suspect.message} ${details(suspect.evidence || {})}`);
-            if (summary.resources) lines.push(`  Teren: ${summary.resources.chunks ?? '?'} chunków, kolejka ${summary.resources.queued ?? '?'}, do przebudowy ${summary.resources.dirty ?? '?'}.`);
+            if (summary.resources) lines.push(`  Teren: ${summary.resources.chunks ?? '?'} chunków, kolejka ${summary.resources.queued ?? '?'}, do przebudowy ${summary.resources.dirty ?? '?'}, rośliny do przebudowy ${summary.resources.dirtyPlants ?? '?'}.`);
         } else if (event.data?.error) {
             const error = event.data.error;
             lines.push(`  ${error.stack || details(error)}`);

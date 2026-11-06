@@ -16,6 +16,16 @@ function profiler() {
     return { recorder, summaries, incidents, time: n => { clock = n; }, add: n => { clock += n; } };
 }
 
+// Separate geometry queues must remain visible in exported diagnostics.
+{
+    const { recorder } = profiler();
+    recorder.lastGame = { world: { dirtyChunks: new Set([1,2]), dirtyPlants: new Set([3,4,5]),
+        meshJobs: { terrain: null, plants: {} } } };
+    equal(recorder.resources().dirty, 2, 'Terrain backlog is retained');
+    equal(recorder.resources().dirtyPlants, 3, 'Plant backlog is reported separately');
+    equal(recorder.resources().meshJobs, { terrain: false, plants: true }, 'Unfinished sliced jobs remain visible');
+}
+
 // CPU work of frame A must be paired with A→B, never with B's CPU work.
 {
     const p = profiler(), r = p.recorder;

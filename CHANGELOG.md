@@ -11,6 +11,23 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 0.68.0 - Sprawniejsze wczytywanie terenu i roślin
+
+Optymalizacja dużego zasięgu widzenia i zmiany jakości modeli roślin — PR #102.
+
+- Gotowy teren jest odbierany z wątku generatora także podczas dużej
+  przebudowy modeli. Kolejka nie jest ponownie sortowana w każdej klatce.
+- Budowa geometrii jest rozłożona na krótkie porcje. Poprzedni model
+  pozostaje widoczny do ukończenia nowego; zmiana bloku, światła lub
+  ustawień unieważnia nieaktualne zadanie.
+- Szczegółowe rośliny mają osobne bufory, przygotowywane przed zbliżeniem
+  gracza i zwalniane po oddaleniu. Zmiana ich jakości przebudowuje tylko
+  pobliskie rośliny, zachowując geometrię ziemi.
+- Niewidoczne rośliny i puste grupy materiałów nie wysyłają pustych
+  poleceń rysowania. Widoczny zasięg roślin, modele i oświetlenie zostają.
+- Daleki teren czeka na gotowość bliskiej siatki, zapobiegając dziurom
+  podczas szybszego odbioru danych. Logi pokazują osobno kolejkę roślin.
+
 ## 0.67.0 - Logi błędów i wydajności
 
 Lokalna diagnostyka przebiegu gry — PR #101.

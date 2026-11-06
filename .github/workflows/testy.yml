@@ -46,6 +46,9 @@ jobs:
         with:
           node-version: 24
       - run: npm test
+      - name: Podzielone siatki terenu i roślin w WebGL2
+        timeout-minutes: 2
+        run: node tools/sprawdz_streaming_webgl.mjs
       - name: Logi, raport i obsługa błędów w prawdziwej grze
         timeout-minutes: 2
         run: node tools/sprawdz_logi_webgl.mjs
@@ -67,6 +70,7 @@ jobs:
         with:
           name: testy-gry
           path: |
+            test-results/streaming/
             test-results/diagnostics/
             test-results/sceny/
             test-results/grey-wood/

@@ -75,6 +75,11 @@ export class MenuWorld {
                     chunk.menuBounds = chunk.mesh.geometry.boundingBox.clone().expandByScalar(3);
                     chunk.menuBounds.translate(chunk.mesh.position);
                 }
+                if (chunk.plantMesh) {
+                    chunk.plantMesh.geometry.computeBoundingBox();
+                    chunk.menuPlantBounds = chunk.plantMesh.geometry.boundingBox.clone().expandByScalar(3);
+                    chunk.menuPlantBounds.translate(chunk.plantMesh.position);
+                }
             };
             this.applySettings();
             this.sky.update(spec.time ?? 0.34, 0, renderer.getPixelRatio());
@@ -206,6 +211,7 @@ export class MenuWorld {
             const far = this.farTerrain.stats();
             this.firstReady = this.warmed && this.world.chunks.size > 0
                 && this.world.loadQueue.length === 0 && this.world.dirtyChunks.size === 0
+                && !(this.world.dirtyPlants?.size > 0)
                 && (!this.farTerrain.active || (far.wanted > 0 && far.missing === 0));
         }
     }
@@ -217,6 +223,9 @@ export class MenuWorld {
         this.frustum.setFromProjectionMatrix(this.frustumMatrix);
         for (const chunk of this.world.chunks.values()) {
             if (chunk.mesh && chunk.menuBounds) chunk.mesh.visible = this.frustum.intersectsBox(chunk.menuBounds);
+            if (chunk.plantMesh && chunk.menuPlantBounds) {
+                chunk.plantMesh.visible = chunk.plantMesh.geometry.drawRange.count > 0 && this.frustum.intersectsBox(chunk.menuPlantBounds);
+            }
         }
         const previousAutoClear = renderer.autoClear;
         const previousTarget = renderer.getRenderTarget();

@@ -86,7 +86,7 @@ const special = new Set(['graphicsPreset', 'skin', 'texturePack']);
 
 check(new Set(shown).size === shown.length, 'Ustawienie na dwóch zakładkach');
 check(Object.keys(SETTINGS_TABS).every((tab) => typeof TEXTS.settingsTabs[tab] === 'string'), 'Zakładka bez nazwy');
-check(Object.keys(SETTINGS_TABS).length <= 6, 'Za dużo zakładek');
+check(Object.keys(SETTINGS_TABS).length <= 7, 'Za dużo zakładek');
 
 for (const key of Object.keys(SETTINGS_DEFAULTS)) {
     check(shown.includes(key) || COMMAND_ONLY_SETTINGS.includes(key), `Ustawienia ${key} nie ma w menu`);

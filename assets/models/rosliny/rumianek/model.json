@@ -1,0 +1,24 @@
+{
+    "nazwa": "Rumianek",
+    "bloki": ["chamomile"],
+    "etapy": [
+        {
+            "prosty": null,
+            "polrealistyczny": {
+                "lodygi": { "ile": 3, "wysokosc": 9, "promien": 3, "pochylenie": 10 },
+                "liscie": { "ile": 4, "dlugosc": 6, "nachylenie": 45, "wysokosc": 0 },
+                "kwiat": { "rodzaj": "koszyczek", "rozmiar": 6 }
+            },
+            "szczegolowy": {
+                "rodzaj": "kepka",
+                "liscie": { "uklad": "kepa", "ile": [6, 8], "dlugosc": [3, 5], "promien": 2 },
+                "lodygi": { "ile": [3, 5], "wysokosc": [7, 10], "promien": 3, "rozgalezione": true },
+                "kwiaty": { "rodzaj": "talerz", "rozmiar": 1 },
+                "kolory": {
+                    "lisc": "#327c20", "liscJasny": "#5cb02e", "liscCiemny": "#246018", "lodyga": "#3e8a26",
+                    "kwiat": "#ececE4", "kwiatJasny": "#fafaf4", "kwiatCiemny": "#bababa", "srodek": "#f6d23a"
+                }
+            }
+        }
+    ]
+}

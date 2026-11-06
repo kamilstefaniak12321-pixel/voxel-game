@@ -24,6 +24,8 @@ import { setUiSounds, playUi } from './audio/ui.js';
 import { AndroidUpdates } from './app/AndroidUpdates.js';
 import { atlasReady, blockAtlasTexture, atlasUploadedAt } from './rendering/TextureAtlas.js';
 import { markTextureFailure } from './rendering/TexturePacks.js';
+import { applyPlantModelLevel } from './rendering/PlantModelLevels.js';
+import { plantWindUniforms } from './rendering/PlantWind.js';
 import {
     WorldStorage,
     createWorldInfo,
@@ -381,6 +383,24 @@ function applyAppSettings() {
 applyAppSettings();
 
 
+// Modele roślin i kołysanie na wietrze (Ustawienia -> Modele) - wspólne
+// dla gry i tła menu (dane rysowania bloków są jedne). Zmiana poziomu
+// modeli przebudowuje chunki stopniowo, najbliższe najpierw.
+
+function applyPlantSettings() {
+
+    plantWindUniforms.uPlantSway.value = settings.get('plantWind') ? 1 : 0;
+
+    if (applyPlantModelLevel(settings.get('plantModels')) > 0) {
+        game?.world.remeshAll();
+        menuBackdrop.world?.world?.remeshAll();
+    }
+
+}
+
+applyPlantSettings();
+
+
 // Zmiana w ustawieniach działa od razu: nowy motyw menu,
 // a w uruchomionej grze nowe pole widzenia, zasięg, jasność...
 
@@ -392,6 +412,10 @@ settings.onChange((key) => {
 
     if (['renderScale', 'hudScale', 'showFps', 'potato', 'inventoryStyle'].includes(key)) {
         applyAppSettings();
+    }
+
+    if (key === null || ['plantModels', 'plantWind'].includes(key)) {
+        applyPlantSettings();
     }
 
     game?.applySettings(key);

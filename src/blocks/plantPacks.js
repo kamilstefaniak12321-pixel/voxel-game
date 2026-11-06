@@ -322,6 +322,20 @@ function parseTuft(model, what, seedText, packColors) {
 
 }
 
+// Kępka spoza paczki (szczegółowy poziom modelu - src/blocks/plantModels.js):
+// to samo sprawdzenie i ten sam wynik co dla etapu paczki; błąd - zwykły
+// Error z opisem.
+export function parseTuftModel(model, what, seedText, colors = {}) {
+
+    try {
+        return parseTuft(model, what, seedText, colors);
+    }
+    catch (error) {
+        throw new Error(error.message);
+    }
+
+}
+
 // Rozmiar kępki w pikselach (jak obrazek etapu) - z kształtu w
 // src/rendering/TuftGeometry.js: rozeta (liście do "dlugosc" pikseli od
 // środka, stojące o 1 wyższe, środek 2) albo kępa (liście do "dlugosc"

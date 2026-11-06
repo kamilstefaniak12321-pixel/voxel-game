@@ -124,11 +124,21 @@ export class PlantAnimations {
         this.onFrame = null;
         this.scratch = new Float64Array(7);
         world.plantAnimations = this;
+        // Ustawienia -> Modele -> Animacje roślin (Game.applySettings).
+        this.enabled = true;
+    }
+
+    // Wyłączenie kończy trwające animacje (rośliny wracają do zwykłego
+    // modelu); bloki, wzrost i zbiór działają tak samo.
+    setEnabled(on) {
+        this.enabled = Boolean(on);
+        if (!this.enabled) for (const event of [...this.active]) this.remove(event);
     }
 
     overridesFor(chunk) { return this.chunks.get(chunk); }
 
     blockChanged(chunk, index, before, after) {
+        if (!this.enabled) return;
         const family = familyOf(after) ?? familyOf(before);
         if (!family && !this.chunks.get(chunk)?.has(index)) return;
         const kind = family?.kind(before, after);
@@ -137,6 +147,7 @@ export class PlantAnimations {
     }
 
     reject(x, y, z) {
+        if (!this.enabled) return false;
         const chunk = this.world.getChunk(Math.floor(x / CHUNK_SIZE), Math.floor(z / CHUNK_SIZE));
         if (!chunk) return false;
         const index = chunk.index(x - chunk.cx * CHUNK_SIZE, y, z - chunk.cz * CHUNK_SIZE);

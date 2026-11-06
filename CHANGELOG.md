@@ -11,6 +11,30 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 0.64.0 - Modele roślin do wyboru
+
+Trzy wersje wyglądu roślin i przełączniki ruchu — PR #98.
+
+- Nowa zakładka **Ustawienia → Modele**: wygląd roślin wybierany na trzech
+  obrazkach — *Proste* (obrazek 16 × 16 na skrzyżowanych płaszczyznach),
+  *Półrealistyczne* (liście, płatki i kwiaty z małych płaskich kart pod
+  różnymi kątami — domyślne) i *Szczegółowe* (model z pikseli).
+- Każda wersja ma własną teksturę w siatce 16 × 16 z namalowanym
+  cieniowaniem. Na początek pełny komplet mają **mak, chaber, mniszek,
+  rumianek i lawenda** (szczegółowe modele maku, chabra, mniszka
+  i rumianku są nowe, lawenda dostała prosty obrazek i model z kart).
+  Pozostałe rośliny wyglądają jak dotąd.
+- **Kołysanie na wietrze** i **animacje roślin** (stawianie, wzrost, zbiór,
+  zniszczenie) można osobno wyłączyć; liście na wodzie dalej falują.
+- Zmiana działa od razu, bez ponownego uruchomienia — chunki przebudowują
+  się stopniowo. Bloki, zapisy światów, ikonki i przedmioty bez zmian.
+- Scena testowa *Modele roślin* (tryb programisty, `/scena modele`) i
+  komendy `/ustaw modele-roslin`, `/ustaw wiatr`, `/ustaw animacje-roslin`.
+- Nowy test `tools/sprawdz_modele_roslin.mjs`; tekstury rysuje
+  `tools/modele_roslin.py`, opis: `docs/modele-roslin.md`.
+
+Wersja przygotowana do wydania na Windows i Android po scaleniu PR.
+
 ## 0.63.0 - Atmosfera bliskiego i dalekiego świata
 
 Kolejny pakiet planu światła: perspektywa atmosferyczna E08 — PR #97.

@@ -1,0 +1,31 @@
+{
+    "nazwa": "Lawenda",
+    "paczka": "lawenda",
+    "etapy": [
+        {
+            "prosty": "prosty-1.png",
+            "polrealistyczny": {
+                "liscie": { "ile": 7, "dlugosc": 8, "nachylenie": 25, "wysokosc": 0 }
+            },
+            "szczegolowy": null
+        },
+        {
+            "prosty": "prosty-2.png",
+            "polrealistyczny": {
+                "lodygi": { "ile": 4, "wysokosc": 9, "promien": 3, "pochylenie": 12 },
+                "liscie": { "ile": 7, "dlugosc": 8, "nachylenie": 25, "wysokosc": 0 },
+                "kwiat": { "rodzaj": "klos", "rozmiar": 3 }
+            },
+            "szczegolowy": null
+        },
+        {
+            "prosty": "prosty-3.png",
+            "polrealistyczny": {
+                "lodygi": { "ile": 6, "wysokosc": 11, "promien": 4, "pochylenie": 14 },
+                "liscie": { "ile": 8, "dlugosc": 9, "nachylenie": 28, "wysokosc": 0 },
+                "kwiat": { "rodzaj": "klos", "rozmiar": 6 }
+            },
+            "szczegolowy": null
+        }
+    ]
+}

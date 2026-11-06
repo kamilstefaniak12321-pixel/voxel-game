@@ -998,7 +998,12 @@ export class Menu {
 
         const keys = SETTINGS_TABS[tab] ?? SETTINGS_TABS.video;
 
-        if (tab === 'experiments') {
+        // Eksperymenty i Modele: każde ustawienie z opisem pod spodem
+        // (opis może zależeć od wybranej wartości).
+
+        const notes = tab === 'experiments' ? TEXTS.experimentNotes : tab === 'models' ? TEXTS.modelNotes : null;
+
+        if (notes) {
             grid.classList.add('settings-experiments');
         }
 
@@ -1012,11 +1017,22 @@ export class Menu {
 
             // Eksperyment: przycisk i pod nim krótki opis.
 
-            if (tab === 'experiments') {
+            if (notes) {
 
                 const card = el('div', 'settings-experiment');
 
-                card.append(control, el('p', 'menu-note', TEXTS.experimentNotes[key] ?? ''));
+                const note = el('p', 'menu-note');
+
+                const describe = () => {
+                    const text = notes[key];
+                    note.textContent = typeof text === 'function' ? text(settings.get(key)) : text ?? '';
+                };
+
+                describe();
+
+                card.addEventListener('click', describe);
+
+                card.append(control, note);
 
                 grid.append(card);
 
@@ -1064,6 +1080,10 @@ export class Menu {
 
             parts.push(toggle, advancedNote, advanced);
 
+        }
+
+        if (tab === 'models') {
+            parts.unshift(el('p', 'menu-note settings-intro', TEXTS.modelsIntro));
         }
 
         if (tab === 'experiments') {
@@ -1151,6 +1171,10 @@ export class Menu {
 
         if (key === 'skin') {
             return this.skinControl();
+        }
+
+        if (key === 'plantModels') {
+            return this.plantModelPicker();
         }
 
         if (key === 'graphicsPreset') {
@@ -1278,6 +1302,54 @@ export class Menu {
         );
 
         return toggle;
+
+    }
+
+
+    // Modele roślin: trzy obrazki (ten sam mak w każdej wersji) - kliknięcie
+    // wybiera wersję (Settings.plantModels, main.js applyPlantSettings).
+
+    plantModelPicker() {
+
+        const picker = el('div', 'settings-model-picker');
+
+        picker.setAttribute('role', 'radiogroup');
+
+        picker.setAttribute('aria-label', TEXTS.plantModelsTitle);
+
+        const options = SETTINGS_CHOICES.plantModels.map((level) => {
+
+            const option = button('', () => {
+                this.settings.set('plantModels', level);
+                refresh();
+            }, 'settings-model-option');
+
+            const image = el('img');
+            image.src = new URL(`../../assets/models/rosliny/podglad/${level}.png`, import.meta.url).href;
+            image.alt = '';
+            image.draggable = false;
+
+            option.append(image, el('span', 'settings-model-label', TEXTS.plantModelNames[level]));
+            option.setAttribute('role', 'radio');
+            option.dataset.level = level;
+
+            return option;
+
+        });
+
+        const refresh = () => {
+            for (const option of options) {
+                const on = option.dataset.level === this.settings.get('plantModels');
+                option.classList.toggle('selected', on);
+                option.setAttribute('aria-checked', String(on));
+            }
+        };
+
+        refresh();
+
+        picker.append(...options);
+
+        return picker;
 
     }
 

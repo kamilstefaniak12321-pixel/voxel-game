@@ -24,6 +24,7 @@
 // Nowa scena = nowy wpis w SCENES (i opis w docs/tryb-programisty.md).
 // ------------------------------------------------------------
 
+import { PLANT_MODELS } from '../blocks/plantModels.js';
 import { TEST_SITE_FLOOR } from '../world/terrain/TestSiteGenerator.js';
 import { buildLightingReference, LIGHTING_REFERENCE_ORIGIN } from './LightingReference.js';
 import { buildLightingMaterialsReference, MATERIAL_REFERENCE_ORIGIN } from './LightingMaterialsReference.js';
@@ -147,6 +148,43 @@ function buildLightScene({ world, player }, origin) {
 
 
 // ------------------------------------------------------------
+// Modele roślin (Ustawienia -> Modele): każda roślina z listy modeli
+// we wszystkich etapach, w rzędach - po przełączeniu poziomu modeli
+// widać od razu, jak wygląda każda. Rząd = roślina, kolumny - etapy
+// powtarzane (różne odmiany: obrót, pochylenie łodyg).
+// ------------------------------------------------------------
+
+function buildPlantModelScene({ world, player }, origin) {
+
+    const columns = 7;
+
+    let placed = 0;
+
+    PLANT_MODELS.forEach((model, row) => {
+
+        for (let column = 0; column < columns; column++) {
+
+            const x = origin.x - columns + 1 + column * 2;
+            const z = origin.z + 3 + row * 2;
+            const stage = model.stages[column % model.stages.length];
+
+            world.setBlock(x, origin.y, z, 'grass');
+
+            if (world.setBlock(x, origin.y + 1, z, stage.type)) placed++;
+
+        }
+
+    });
+
+    place(player, origin.x + 0.5, origin.y + 3.5, origin.z - 3.5, Math.PI, -0.45);
+
+    return `${placed} roślin w ${PLANT_MODELS.length} rzędach (${PLANT_MODELS.map((model) => model.name).join(', ')}). ` +
+        'Wygląd: Ustawienia - Modele - Modele roślin.';
+
+}
+
+
+// ------------------------------------------------------------
 // Lista scen (kolejność = kolejność w menu)
 // ------------------------------------------------------------
 
@@ -237,6 +275,14 @@ export const SCENES = [
         description: 'Odkrywka do dna świata - widać warstwy skał pod terenem.',
         command: ['demo', 'skaly'],
         slot: { x: 280, z: 100 }
+    },
+
+    {
+        id: 'modele',
+        name: 'Modele roślin',
+        description: 'Mak, chaber, mniszek, rumianek i lawenda w rzędach - do porównania prostych, półrealistycznych i szczegółowych modeli.',
+        build: buildPlantModelScene,
+        slot: { x: 360, z: 100 }
     }
 
 ];

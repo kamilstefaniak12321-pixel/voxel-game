@@ -3,6 +3,7 @@ import { createPixelPlant } from './PixelPlantBuilder.js';
 import { makeTuftTemplate } from './TuftGeometry.js';
 import { getBlueberryFaces } from './BlueberryGeometry.js';
 import { getFruitBushFaces } from './FruitBushGeometry.js';
+import { getPlaneModelFaces } from './PlaneModelGeometry.js';
 
 // Small reusable templates, appended to the ordinary chunk plant batch. There
 // are no Object3Ds, materials or draw calls per plant. Colours are linear RGB
@@ -154,6 +155,8 @@ function makeTemplate(kind, variant, waterlogged) {
 // rośliny jej nie używają.
 export function getRiverPlantFaces(kind, variant, waterlogged = false, tuft = null, mask = 0) {
     if (kind.startsWith('blueberry:')) return getBlueberryFaces(kind.slice(10));
+    // Półrealistyczny poziom modelu rośliny (PlantModelLevels.js).
+    if (kind.startsWith('plane:')) return getPlaneModelFaces(kind, variant);
     if (kind.startsWith('fruitBush:')) {
         const [, species, stage] = kind.split(':');
         return getFruitBushFaces(species, stage);

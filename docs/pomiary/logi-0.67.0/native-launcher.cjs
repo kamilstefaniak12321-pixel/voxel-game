@@ -11,18 +11,20 @@ app.setPath('userData', profile);
 app.setPath('sessionData', profile);
 app.commandLine.appendSwitch('force-device-scale-factor', '1');
 const write = (name, data) => fs.writeFileSync(path.join(proof, name), JSON.stringify(data, null, 2));
-let win, busy = false, lastCommand = null;
+let win, busy = false, ready = false, lastCommand = null;
 app.on('browser-window-created', (_event, window) => {
     win = window;
     win.webContents.on('did-finish-load', async () => {
+        ready = false;
         try {
             const state = await win.webContents.executeJavaScript("import('/docs/pomiary/logi-0.67.0/native-qa.js').then(m=>m.setup())");
+            ready = true;
             write('ready.json', state);
         } catch (error) { write('startup-error.json', { message: error.message }); }
     });
 });
 setInterval(async () => {
-    if (!win || win.isDestroyed() || busy) return;
+    if (!win || win.isDestroyed() || busy || !ready) return;
     let command;
     try { command = JSON.parse(fs.readFileSync(path.join(proof, 'command.json'), 'utf8')); } catch { return; }
     if (!command.id || command.id === lastCommand) return;

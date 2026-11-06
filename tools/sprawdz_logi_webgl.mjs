@@ -209,6 +209,20 @@ try {
     check(await evaluate('diagnosticsQA.diagnostics.status().samples') === hiddenBefore, 'Hidden-tab guard excludes samples');
     await evaluate(`delete document.hidden;document.dispatchEvent(new Event('visibilitychange'));diagnosticsQA.phase('paused');diagnosticsQA.menu.showPause();true`);
     await click('Diagnostyka i logi');
+    const expandedSpike = await evaluate(`(() => {
+        const event=diagnosticsQA.diagnostics.snapshot().events.find(e=>e.kind==='performance.drop'&&e.data?.summary?.suspects?.some(s=>s.evidence?.stage==='mesh'&&s.evidence?.ms>=75));
+        const detail=[...document.querySelectorAll('.diagnostics-event')].find(node=>node.dataset.eventId===event?.id);
+        if(!detail)return null;
+        detail.querySelector('summary').click();
+        return {open:detail.open,text:detail.querySelector('pre').textContent,
+            evidence:event.data.summary.suspects.find(s=>s.evidence?.stage==='mesh').evidence};
+    })()`);
+    check(expandedSpike?.open && expandedSpike.text.includes(expandedSpike.evidence.ms.toFixed(2)+' ms'),
+        'Expanded slow event shows measured stage cost in milliseconds');
+    check(expandedSpike.text.includes(expandedSpike.evidence.cpuMs.toFixed(2)+' ms')
+        && expandedSpike.text.includes(expandedSpike.evidence.frameMs.toFixed(2)+' ms'),
+        'Expanded slow event distinguishes same-frame CPU work and frame interval');
+    results.expandedSpike = expandedSpike;
     await click('Pokaż treść');
     check(await evaluate(`document.querySelector('.diagnostics-report').value.includes('QA_EXPECTED_WINDOW_ERROR')`), 'Readable fallback contains captured error');
     await click('Zapisz raport');

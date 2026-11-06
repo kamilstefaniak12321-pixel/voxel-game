@@ -13,7 +13,7 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ## 0.67.0 - Logi błędów i wydajności
 
-Lokalna diagnostyka przebiegu gry — PR w przygotowaniu.
+Lokalna diagnostyka przebiegu gry — PR #101.
 
 - **Pauza → Diagnostyka i logi** oraz **Ustawienia → Gra** pokazują błędy,
   ostatnie spadki FPS i najdroższe zmierzone etapy pracy. **F8** lub

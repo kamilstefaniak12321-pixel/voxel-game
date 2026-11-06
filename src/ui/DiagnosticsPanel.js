@@ -1,6 +1,26 @@
 // Panel operuje tylko na zebranych podsumowaniach. Otwieranie raportu
 // nie uruchamia benchmarku ani kosztownych pomiarów w świecie.
 const ms = value => Number.isFinite(value) ? `${value.toFixed(2)} ms` : 'brak pomiaru';
+function performanceEvidence(summary) {
+    if (!summary || typeof summary !== 'object') return '';
+    const explanations = (summary.suspects ?? []).map(suspect => {
+        const evidence = suspect.evidence ?? {};
+        const measurements = [];
+        if (Number.isFinite(evidence.ms)) measurements.push(`Koszt etapu: ${ms(evidence.ms)}`);
+        if (Number.isFinite(evidence.cpuMs)) measurements.push(`praca CPU tej klatki: ${ms(evidence.cpuMs)}`);
+        if (Number.isFinite(evidence.frameMs)) measurements.push(`odstęp między klatkami: ${ms(evidence.frameMs)}`);
+        if (Number.isFinite(evidence.p95Ms)) measurements.push(`P95 ${suspect.kind === 'gpu' ? 'GPU' : 'CPU'}: ${ms(evidence.p95Ms)}`);
+        if (Number.isFinite(evidence.meanMs)) measurements.push(`średnio: ${ms(evidence.meanMs)}`);
+        if (Number.isFinite(evidence.samples)) measurements.push(`próbki: ${evidence.samples}`);
+        if (Number.isFinite(evidence.cpuP95Ms)) measurements.push(`P95 CPU: ${ms(evidence.cpuP95Ms)}`);
+        if (Number.isFinite(evidence.gpuSamples)) measurements.push(`próbki GPU: ${evidence.gpuSamples}`);
+        return `${suspect.message}${measurements.length ? `\n${measurements.join(' · ')}.` : ''}`;
+    });
+    if (explanations.length) return explanations.join('\n\n');
+    const stages = summary.stages?.slice(0, 3).map(stage => `${stage.label}: średnio ${ms(stage.meanMs)}, P95 ${ms(stage.p95Ms)}`) ?? [];
+    return [`Ostatni pomiar: ${Number.isFinite(summary.fps) ? `${summary.fps.toFixed(1)} FPS` : 'brak FPS'}; P95 klatki: ${ms(summary.frame?.p95Ms)}.`,
+        ...stages, 'Brak wystarczających danych, aby wskazać przyczynę problemu.'].join('\n');
+}
 const node = (tag, text = '', className = '') => {
     const element = document.createElement(tag);
     element.textContent = text;
@@ -113,8 +133,10 @@ export function diagnosticsPanel(diagnostics, button, markProblem) {
             item.open = opened.has(event.id);
             const time = new Date(event.at).toLocaleTimeString('pl-PL');
             item.append(node('summary', `${time} · ${event.message}${event.count > 1 ? ` (×${event.count})` : ''}`));
-            const evidence = event.data?.summary?.suspects?.map(suspect => suspect.message).join('\n');
-            item.append(node('pre', evidence || JSON.stringify(event.data ?? {}, null, 2).slice(0, 6000)));
+            const evidence = performanceEvidence(event.data?.summary);
+            item.append(node('pre', evidence || (event.kind === 'performance.drop'
+                ? 'Brak szczegółowego pomiaru dla tego zdarzenia.'
+                : JSON.stringify(event.data ?? {}, null, 2).slice(0, 6000))));
             events.append(item);
         }
     }

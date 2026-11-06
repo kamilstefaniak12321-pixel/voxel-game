@@ -68,6 +68,37 @@ To celowe wymuszenie służące sprawdzeniu diagnostyki, a nie nowy błąd
 fizyki. Wcześniejsze incydenty obecne w sesji są oddzielone w skrócie
 dowodowym od tego wymuszenia.
 
+Po końcowej serii powtórzono tę samą kontrolę: **90,0 ms odstępu
+klatki, 88,6 ms CPU i 85,3 ms etapu gracza**. Ponownie wskazany został
+zmierzony koszt gracza w tej samej wolnej klatce. Raport zachował
+te konkretne dane mimo niskiego P95 pozostałych klatek.
+
+## Końcowa seria po ponownym uruchomieniu
+
+Powtórzono tę samą metodę 4×20 s i kolejność wyłączone/włączone/
+włączone/wyłączone na końcowym kodzie gry, po poprawce obsługi F8.
+Kamera, 1920×1080, zakres 64/1024 i ustawienia sceny pozostały takie
+jak w pierwszej serii. Każda próbka zaczynała się po 5 s rozgrzewki.
+
+| Kolejność | Logi wydajności | Klatki | FPS | P95 klatki | Maks. klatka | Mediana CPU | P95 CPU |
+| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| 1 | Wyłączone | 2878 | 143,90 | 7,1 ms | 13,9 ms | 4,6 ms | 6,0 ms |
+| 2 | Włączone | 2881 | 144,05 | 7,1 ms | 7,4 ms | 4,4 ms | 5,7 ms |
+| 3 | Włączone | 2880 | 144,00 | 7,1 ms | 13,9 ms | 4,5 ms | 5,8 ms |
+| 4 | Wyłączone | 2878 | 143,90 | 7,1 ms | 14,4 ms | 4,3 ms | 5,7 ms |
+
+Wszystkie końcowe kolejki terenu były puste. FPS pozostał ograniczony
+odświeżaniem, a mediany CPU zmieniały się między 4,3 a 4,6 ms również
+przy wyłączonych logach. Ta seria nie wykazała powtarzalnego wzrostu
+mediany CPU; nie interpretujemy jej jako przyspieszenia dzięki logom
+ani dowodu zerowego kosztu. Obie serie opisują nieruchomy kadr,
+nie wielominutowy lot z doczytywaniem świata.
+
+Ostatnie okna loggera miały po 145 klatek i 18 ważnych próbek GPU.
+Średnia GPU tych okien: 5,855/5,833 ms; `disjoint`, `skipped`, `expired`
+wynosiły zero. `overheadMs` wynosiło 4,2/4,7 ms **na około sekundę**,
+z tymi samymi ograniczeniami zakresu pomiaru co wyżej.
+
 ## Błędy, eksport i awaria procesu
 
 Wymuszono trzy rozróżnialne zdarzenia: `console.error`, nieobsłużony
@@ -83,12 +114,35 @@ Natywny dziennik zachował `desktop.renderer-gone`, `reason=crashed`,
 `exitCode=2`. To celowa awaria procesu renderera; nie jest dowodem
 samoczynnego błędu gry ani awarii całego systemu operacyjnego.
 
+Po ponownym uruchomieniu aplikacji `previousAvailable=true`;
+odzyskano **57 rekordów poprzedniej sesji, w tym 49 próbek wydajności**
+oraz zdarzenie `desktop.renderer-gone`. Raport oznaczył sesję jako
+niezamkniętą prawidłowo (`cleanExit=false`) i historię jako skróconą
+(`truncated=true`) zgodnie z limitem odzyskiwania. Osobna próba
+zwykłego zamknięcia zachowała kolejno `session.end`, rekord sesji
+z `cleanShutdown=true` i `desktop.session.end`; następny start
+rozpoznał ją jako zamkniętą prawidłowo.
+
+F8 sprawdzono także natywnie. Narzędzie sterujące klawiaturą przekazało
+`key=F8` z pustym `code`; obsługa logicznego klawisza utworzyła
+`user.problem` z ostatnim pomiarem wydajności. Cztery dodatkowe
+kontrole przeglądarkowe potwierdzają kontekst znacznika oraz brak
+zalewu zdarzeń przy trzymaniu klawisza.
+
+Końcowa sesja zawiera jeden błąd **narzędzia QA**: pomocnicza komenda
+statusu wywołała `window.diagnosticsQA.status()` przed zakończeniem
+inicjalizacji harnessu (`<anonymous>:1:22`). Logger zachował ten
+błąd poprawnie. Wystąpił przed pomiarem; nie jest awarią kodu gry.
+Launcher dostał później warunek oczekiwania na gotowość przed
+obsługą komend. Nie ukrywamy tego wpisu ani nie opisujemy całej
+końcowej sesji jako pozbawionej błędów.
+
 Zarejestrowane ostrzeżenia kompilatora ANGLE `X3595` pozostają
 ostrzeżeniami. Raport nie zamienia ich w nieudane kompilacje shaderów.
 
 ## Integracja przeglądarkowa
 
-Próba zakończyła się **34 sprawdzeniami PASS**. Obejmuje rzeczywisty
+Próba zakończyła się **40 sprawdzeniami PASS**. Obejmuje rzeczywisty
 bootstrap i obsługę przycisków, wyłączanie/włączanie logów oraz pamięć
 ustawienia po ponownym uruchomieniu, oznaczenie problemu, wyjątek i
 Promise, brak próbek podczas pauzy i ukrycia strony, cel 30 FPS,
@@ -100,6 +154,32 @@ Panel mieścił się w widokach **1280×760** i **390×844**, bez poziomego
 przewijania. Drugi rozmiar jest testem układu mobilnego w przeglądarce,
 nie pomiarem na telefonie z Androidem. Renderer SwiftShader tej próby
 nie służy do oceny wydajności RTX 3050.
+
+Końcowa kontrola rozwiniętego incydentu potwierdza widoczność trzech
+osobnych wartości: kosztu etapu, CPU tej samej klatki i odstępu między
+klatkami. Poniższy kadr pokazuje tę końcową wersję opisu.
+
+![Końcowy panel w przeglądarce z konkretnymi czasami incydentu](diagnostyka-desktop.png)
+
+[Kadr układu 390×844](diagnostyka-mobile.png) pokazuje ten sam panel
+w wąskim widoku; dłuższa zawartość przewija się pionowo.
+
+## Testy automatyczne
+
+Końcowe pełne **`npm test` zakończyło się kodem 0**. Obejmuje również
+testy rejestratora, pamięci, redakcji danych, rotacji dziennika,
+odzyskiwania sesji, IPC/eksportu oraz pomiarów CPU i zapytań GPU.
+Hash pełnego logu testów zapisano w `evidence.json`; nie publikujemy
+lokalnych ścieżek z ostrzeżeń narzędzi.
+
+## Panel w natywnej grze
+
+Oryginalny kadr 1920×1080 po końcowym kontrolowanym przycięciu.
+Widoczny pojedynczy błąd pochodzi z opisanej wyżej komendy QA.
+Kadr wykonano przed drobnym dopisaniem wartości milisekund do
+rozwiniętego opisu wskazania; pomiar i dane raportu pozostają te same.
+
+![Panel diagnostyki w natywnej grze](native-panel.png)
 
 ## Granice wnioskowania
 

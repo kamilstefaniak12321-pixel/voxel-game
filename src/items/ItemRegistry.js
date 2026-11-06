@@ -11,6 +11,7 @@ import { TREE_PACKS, packTile } from '../blocks/treePacks.js';
 
 import { PLANT_PACKS, plantTile } from '../blocks/plantPacks.js';
 import { DYE_ITEMS } from './dyes.js';
+import { STONE_TOOL_ITEMS } from './stoneTools.js';
 
 // ------------------------------------------------------------
 // PRZEDMIOTY
@@ -47,6 +48,7 @@ import { FIRE_WOODS, fuelType } from '../game/CampfireState.js';
 
 export const ITEM_TYPES = {
     ...DYE_ITEMS,
+    ...STONE_TOOL_ITEMS,
     ...Object.fromEntries(Object.entries(FIRE_WOODS).map(([wood, [label]]) => [fuelType(wood), {
         name: `${wood} firewood`, label: `Opał — ${label}`, icon: `campfire_${wood}`, category: 'drewno'
     }])),

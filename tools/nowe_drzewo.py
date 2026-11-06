@@ -150,6 +150,8 @@ def textures(seed, colors, conifer, fruit):
     out['pien_gora'] = opaque(rings(seed + 1, wood, heart, bark=side))
     out['okorowany_bok'] = opaque(grain(seed + 2, wood))
     out['okorowany_gora'] = opaque(rings(seed + 3, wood, heart))
+    # Wspólny autorski układ 16 x 16 z atlasu, własny odcień gatunku.
+    # Zasady rozwoju wzorca: docs/styl-tekstur.md.
     out['deski'] = opaque(planks(seed + 4, board))
     if conifer:
         rgb, alpha = needles(seed + 5, leaf, 60, (3, 4), holes=0.12)

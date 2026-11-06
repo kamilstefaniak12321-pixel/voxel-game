@@ -2,7 +2,7 @@
 
 > Ta strona jest generowana z kodu gry (`python tools/wiki.py`) - nie zmieniaj jej ręcznie, zmiany przepadną przy następnym generowaniu.
 
-Wersja gry **0.67.0** - 82 przepisów. Wytwarza się w ekwipunku (**E**): siatka 2 x 2 obok miejsc ekwipunku, wynik po prawej (klik - weź, Shift + klik - ile się da). Przycisk 📖 *Przepisy* otwiera księgę - klik na przepisie sam układa składniki. Przepisy *z kształtem* można przesuwać po siatce i odbijać w poziomie; przepisy *bez kształtu* - obojętne, gdzie leżą składniki. Z czatu: `/przepisy`, `/wytworz <przepis>`.
+Wersja gry **0.70.0** - 97 przepisów. Wytwarza się w ekwipunku (**E**): siatka 2 x 2 obok miejsc ekwipunku, wynik po prawej (klik - weź, Shift + klik - ile się da). Przycisk 📖 *Przepisy* otwiera księgę - klik na przepisie sam układa składniki. Przepisy *z kształtem* można przesuwać po siatce i odbijać w poziomie; przepisy *bez kształtu* - obojętne, gdzie leżą składniki. Z czatu: `/przepisy`, `/wytworz <przepis>`.
 
 
 ## Ziemia
@@ -57,57 +57,57 @@ Wersja gry **0.67.0** - 82 przepisów. Wytwarza się w ekwipunku (**E**): siatka
 
 ### Opał — dąb x4
 
-<img src="przepisy/oak_firewood.png" alt="Opał — dąb x4: 1 x pień dębu (też okorowany) + 1 x Siekiera (zostaje) (obojętne gdzie)">
+<img src="przepisy/oak_firewood.png" alt="Opał — dąb x4: 1 x pień dębu (też okorowany) + 1 x siekiera (dowolny kamień) (zostaje) (obojętne gdzie)">
 
-1 x pień dębu (też okorowany) + 1 x Siekiera (bez kształtu). Nazwa przepisu: `oak_firewood`. Siekiera zostaje. Opał: PPM na ziemię, potem dokładaj do 6 polan.
+1 x pień dębu (też okorowany) + 1 x siekiera (dowolny kamień) (bez kształtu). Nazwa przepisu: `oak_firewood`. Siekiera zostaje. Opał: PPM na ziemię, potem dokładaj do 6 polan.
 
 ### Opał — brzoza x4
 
-<img src="przepisy/birch_firewood.png" alt="Opał — brzoza x4: 1 x pień brzozy (też okorowany) + 1 x Siekiera (zostaje) (obojętne gdzie)">
+<img src="przepisy/birch_firewood.png" alt="Opał — brzoza x4: 1 x pień brzozy (też okorowany) + 1 x siekiera (dowolny kamień) (zostaje) (obojętne gdzie)">
 
-1 x pień brzozy (też okorowany) + 1 x Siekiera (bez kształtu). Nazwa przepisu: `birch_firewood`. Siekiera zostaje. Opał: PPM na ziemię, potem dokładaj do 6 polan.
+1 x pień brzozy (też okorowany) + 1 x siekiera (dowolny kamień) (bez kształtu). Nazwa przepisu: `birch_firewood`. Siekiera zostaje. Opał: PPM na ziemię, potem dokładaj do 6 polan.
 
 ### Opał — świerk x4
 
-<img src="przepisy/spruce_firewood.png" alt="Opał — świerk x4: 1 x pień świerka (też okorowany) + 1 x Siekiera (zostaje) (obojętne gdzie)">
+<img src="przepisy/spruce_firewood.png" alt="Opał — świerk x4: 1 x pień świerka (też okorowany) + 1 x siekiera (dowolny kamień) (zostaje) (obojętne gdzie)">
 
-1 x pień świerka (też okorowany) + 1 x Siekiera (bez kształtu). Nazwa przepisu: `spruce_firewood`. Siekiera zostaje. Opał: PPM na ziemię, potem dokładaj do 6 polan.
+1 x pień świerka (też okorowany) + 1 x siekiera (dowolny kamień) (bez kształtu). Nazwa przepisu: `spruce_firewood`. Siekiera zostaje. Opał: PPM na ziemię, potem dokładaj do 6 polan.
 
 ### Opał — sosna x4
 
-<img src="przepisy/pine_firewood.png" alt="Opał — sosna x4: 1 x pień sosny (też okorowany) + 1 x Siekiera (zostaje) (obojętne gdzie)">
+<img src="przepisy/pine_firewood.png" alt="Opał — sosna x4: 1 x pień sosny (też okorowany) + 1 x siekiera (dowolny kamień) (zostaje) (obojętne gdzie)">
 
-1 x pień sosny (też okorowany) + 1 x Siekiera (bez kształtu). Nazwa przepisu: `pine_firewood`. Siekiera zostaje. Opał: PPM na ziemię, potem dokładaj do 6 polan.
+1 x pień sosny (też okorowany) + 1 x siekiera (dowolny kamień) (bez kształtu). Nazwa przepisu: `pine_firewood`. Siekiera zostaje. Opał: PPM na ziemię, potem dokładaj do 6 polan.
 
 ### Opał — buk x4
 
-<img src="przepisy/beech_firewood.png" alt="Opał — buk x4: 1 x pień buka (też okorowany) + 1 x Siekiera (zostaje) (obojętne gdzie)">
+<img src="przepisy/beech_firewood.png" alt="Opał — buk x4: 1 x pień buka (też okorowany) + 1 x siekiera (dowolny kamień) (zostaje) (obojętne gdzie)">
 
-1 x pień buka (też okorowany) + 1 x Siekiera (bez kształtu). Nazwa przepisu: `beech_firewood`. Siekiera zostaje. Opał: PPM na ziemię, potem dokładaj do 6 polan.
+1 x pień buka (też okorowany) + 1 x siekiera (dowolny kamień) (bez kształtu). Nazwa przepisu: `beech_firewood`. Siekiera zostaje. Opał: PPM na ziemię, potem dokładaj do 6 polan.
 
 ### Opał — lipa x4
 
-<img src="przepisy/linden_firewood.png" alt="Opał — lipa x4: 1 x pień lipy (też okorowany) + 1 x Siekiera (zostaje) (obojętne gdzie)">
+<img src="przepisy/linden_firewood.png" alt="Opał — lipa x4: 1 x pień lipy (też okorowany) + 1 x siekiera (dowolny kamień) (zostaje) (obojętne gdzie)">
 
-1 x pień lipy (też okorowany) + 1 x Siekiera (bez kształtu). Nazwa przepisu: `linden_firewood`. Siekiera zostaje. Opał: PPM na ziemię, potem dokładaj do 6 polan.
+1 x pień lipy (też okorowany) + 1 x siekiera (dowolny kamień) (bez kształtu). Nazwa przepisu: `linden_firewood`. Siekiera zostaje. Opał: PPM na ziemię, potem dokładaj do 6 polan.
 
 ### Opał — olcha x4
 
-<img src="przepisy/olcha_firewood.png" alt="Opał — olcha x4: 1 x pień olchy (też okorowany) + 1 x Siekiera (zostaje) (obojętne gdzie)">
+<img src="przepisy/olcha_firewood.png" alt="Opał — olcha x4: 1 x pień olchy (też okorowany) + 1 x siekiera (dowolny kamień) (zostaje) (obojętne gdzie)">
 
-1 x pień olchy (też okorowany) + 1 x Siekiera (bez kształtu). Nazwa przepisu: `olcha_firewood`. Siekiera zostaje. Opał: PPM na ziemię, potem dokładaj do 6 polan.
+1 x pień olchy (też okorowany) + 1 x siekiera (dowolny kamień) (bez kształtu). Nazwa przepisu: `olcha_firewood`. Siekiera zostaje. Opał: PPM na ziemię, potem dokładaj do 6 polan.
 
 ### Opał — wierzba x4
 
-<img src="przepisy/wierzba_firewood.png" alt="Opał — wierzba x4: 1 x pień wierzby (też okorowany) + 1 x Siekiera (zostaje) (obojętne gdzie)">
+<img src="przepisy/wierzba_firewood.png" alt="Opał — wierzba x4: 1 x pień wierzby (też okorowany) + 1 x siekiera (dowolny kamień) (zostaje) (obojętne gdzie)">
 
-1 x pień wierzby (też okorowany) + 1 x Siekiera (bez kształtu). Nazwa przepisu: `wierzba_firewood`. Siekiera zostaje. Opał: PPM na ziemię, potem dokładaj do 6 polan.
+1 x pień wierzby (też okorowany) + 1 x siekiera (dowolny kamień) (bez kształtu). Nazwa przepisu: `wierzba_firewood`. Siekiera zostaje. Opał: PPM na ziemię, potem dokładaj do 6 polan.
 
 ### Opał — jabłoń x4
 
-<img src="przepisy/jablon_firewood.png" alt="Opał — jabłoń x4: 1 x pień jabłoni (też okorowany) + 1 x Siekiera (zostaje) (obojętne gdzie)">
+<img src="przepisy/jablon_firewood.png" alt="Opał — jabłoń x4: 1 x pień jabłoni (też okorowany) + 1 x siekiera (dowolny kamień) (zostaje) (obojętne gdzie)">
 
-1 x pień jabłoni (też okorowany) + 1 x Siekiera (bez kształtu). Nazwa przepisu: `jablon_firewood`. Siekiera zostaje. Opał: PPM na ziemię, potem dokładaj do 6 polan.
+1 x pień jabłoni (też okorowany) + 1 x siekiera (dowolny kamień) (bez kształtu). Nazwa przepisu: `jablon_firewood`. Siekiera zostaje. Opał: PPM na ziemię, potem dokładaj do 6 polan.
 
 ### Deski świerkowe x4
 
@@ -506,25 +506,116 @@ Wersja gry **0.67.0** - 82 przepisów. Wytwarza się w ekwipunku (**E**): siatka
 
 <img src="przepisy/axe.png" alt="Siekiera: 3 x skała (kamień, granit, wapień, piaskowiec, łupek, bazalt) + 1 x Patyk (ułożenie: RR / RS; R = skała (kamień, granit, wapień, piaskowiec, łupek, bazalt), S = Patyk)">
 
-3 x skała (kamień, granit, wapień, piaskowiec, łupek, bazalt) + 1 x Patyk (z kształtem). Nazwa przepisu: `axe`. Drewno kopie się 3 razy szybciej; PPM na pniu - okorowanie.
+3 x skała (kamień, granit, wapień, piaskowiec, łupek, bazalt) + 1 x Patyk (z kształtem). Nazwa przepisu: `axe`. Drewno kopie się 3 razy szybciej; PPM na pniu - okorowanie. Jeden rodzaj skały nadaje głowicy swój wygląd; mieszane skały dają zwykłą kamienną.
 
 ### Kilof
 
 <img src="przepisy/pickaxe.png" alt="Kilof: 2 x skała (kamień, granit, wapień, piaskowiec, łupek, bazalt) + 1 x Patyk (ułożenie: RR / _S; R = skała (kamień, granit, wapień, piaskowiec, łupek, bazalt), S = Patyk)">
 
-2 x skała (kamień, granit, wapień, piaskowiec, łupek, bazalt) + 1 x Patyk (z kształtem). Nazwa przepisu: `pickaxe`. Skały kopie się 3 razy szybciej.
+2 x skała (kamień, granit, wapień, piaskowiec, łupek, bazalt) + 1 x Patyk (z kształtem). Nazwa przepisu: `pickaxe`. Skały kopie się 3 razy szybciej. Jeden rodzaj skały nadaje głowicy swój wygląd; mieszane skały dają zwykłą kamienną.
 
 ### Łopata
 
 <img src="przepisy/shovel.png" alt="Łopata: 1 x skała (kamień, granit, wapień, piaskowiec, łupek, bazalt) + 1 x Patyk (ułożenie: R / S; R = skała (kamień, granit, wapień, piaskowiec, łupek, bazalt), S = Patyk)">
 
-1 x skała (kamień, granit, wapień, piaskowiec, łupek, bazalt) + 1 x Patyk (z kształtem). Nazwa przepisu: `shovel`. Ziemię, piasek, żwir i błoto kopie się 3 razy szybciej.
+1 x skała (kamień, granit, wapień, piaskowiec, łupek, bazalt) + 1 x Patyk (z kształtem). Nazwa przepisu: `shovel`. Ziemię, piasek, żwir i błoto kopie się 3 razy szybciej. Wygląd głowicy zależy od użytej skały.
+
+### Siekiera granitowa
+
+<img src="przepisy/axe_granite.png" alt="Siekiera granitowa: 3 x Granit + 1 x Patyk (ułożenie: RR / RS; R = Granit, S = Patyk)">
+
+3 x Granit + 1 x Patyk (z kształtem). Nazwa przepisu: `axe_granite`. Drewno kopie się 3 razy szybciej; PPM na pniu - okorowanie. Jeden rodzaj skały nadaje głowicy swój wygląd; mieszane skały dają zwykłą kamienną.
+
+### Siekiera wapienna
+
+<img src="przepisy/axe_limestone.png" alt="Siekiera wapienna: 3 x Wapień + 1 x Patyk (ułożenie: RR / RS; R = Wapień, S = Patyk)">
+
+3 x Wapień + 1 x Patyk (z kształtem). Nazwa przepisu: `axe_limestone`. Drewno kopie się 3 razy szybciej; PPM na pniu - okorowanie. Jeden rodzaj skały nadaje głowicy swój wygląd; mieszane skały dają zwykłą kamienną.
+
+### Siekiera piaskowcowa
+
+<img src="przepisy/axe_sandstone.png" alt="Siekiera piaskowcowa: 3 x Piaskowiec + 1 x Patyk (ułożenie: RR / RS; R = Piaskowiec, S = Patyk)">
+
+3 x Piaskowiec + 1 x Patyk (z kształtem). Nazwa przepisu: `axe_sandstone`. Drewno kopie się 3 razy szybciej; PPM na pniu - okorowanie. Jeden rodzaj skały nadaje głowicy swój wygląd; mieszane skały dają zwykłą kamienną.
+
+### Siekiera łupkowa
+
+<img src="przepisy/axe_slate.png" alt="Siekiera łupkowa: 3 x Łupek + 1 x Patyk (ułożenie: RR / RS; R = Łupek, S = Patyk)">
+
+3 x Łupek + 1 x Patyk (z kształtem). Nazwa przepisu: `axe_slate`. Drewno kopie się 3 razy szybciej; PPM na pniu - okorowanie. Jeden rodzaj skały nadaje głowicy swój wygląd; mieszane skały dają zwykłą kamienną.
+
+### Siekiera bazaltowa
+
+<img src="przepisy/axe_basalt.png" alt="Siekiera bazaltowa: 3 x Bazalt + 1 x Patyk (ułożenie: RR / RS; R = Bazalt, S = Patyk)">
+
+3 x Bazalt + 1 x Patyk (z kształtem). Nazwa przepisu: `axe_basalt`. Drewno kopie się 3 razy szybciej; PPM na pniu - okorowanie. Jeden rodzaj skały nadaje głowicy swój wygląd; mieszane skały dają zwykłą kamienną.
+
+### Kilof granitowy
+
+<img src="przepisy/pickaxe_granite.png" alt="Kilof granitowy: 2 x Granit + 1 x Patyk (ułożenie: RR / _S; R = Granit, S = Patyk)">
+
+2 x Granit + 1 x Patyk (z kształtem). Nazwa przepisu: `pickaxe_granite`. Skały kopie się 3 razy szybciej. Jeden rodzaj skały nadaje głowicy swój wygląd; mieszane skały dają zwykłą kamienną.
+
+### Kilof wapienny
+
+<img src="przepisy/pickaxe_limestone.png" alt="Kilof wapienny: 2 x Wapień + 1 x Patyk (ułożenie: RR / _S; R = Wapień, S = Patyk)">
+
+2 x Wapień + 1 x Patyk (z kształtem). Nazwa przepisu: `pickaxe_limestone`. Skały kopie się 3 razy szybciej. Jeden rodzaj skały nadaje głowicy swój wygląd; mieszane skały dają zwykłą kamienną.
+
+### Kilof piaskowcowy
+
+<img src="przepisy/pickaxe_sandstone.png" alt="Kilof piaskowcowy: 2 x Piaskowiec + 1 x Patyk (ułożenie: RR / _S; R = Piaskowiec, S = Patyk)">
+
+2 x Piaskowiec + 1 x Patyk (z kształtem). Nazwa przepisu: `pickaxe_sandstone`. Skały kopie się 3 razy szybciej. Jeden rodzaj skały nadaje głowicy swój wygląd; mieszane skały dają zwykłą kamienną.
+
+### Kilof łupkowy
+
+<img src="przepisy/pickaxe_slate.png" alt="Kilof łupkowy: 2 x Łupek + 1 x Patyk (ułożenie: RR / _S; R = Łupek, S = Patyk)">
+
+2 x Łupek + 1 x Patyk (z kształtem). Nazwa przepisu: `pickaxe_slate`. Skały kopie się 3 razy szybciej. Jeden rodzaj skały nadaje głowicy swój wygląd; mieszane skały dają zwykłą kamienną.
+
+### Kilof bazaltowy
+
+<img src="przepisy/pickaxe_basalt.png" alt="Kilof bazaltowy: 2 x Bazalt + 1 x Patyk (ułożenie: RR / _S; R = Bazalt, S = Patyk)">
+
+2 x Bazalt + 1 x Patyk (z kształtem). Nazwa przepisu: `pickaxe_basalt`. Skały kopie się 3 razy szybciej. Jeden rodzaj skały nadaje głowicy swój wygląd; mieszane skały dają zwykłą kamienną.
+
+### Łopata granitowa
+
+<img src="przepisy/shovel_granite.png" alt="Łopata granitowa: 1 x Granit + 1 x Patyk (ułożenie: R / S; R = Granit, S = Patyk)">
+
+1 x Granit + 1 x Patyk (z kształtem). Nazwa przepisu: `shovel_granite`. Ziemię, piasek, żwir i błoto kopie się 3 razy szybciej. Wygląd głowicy zależy od użytej skały.
+
+### Łopata wapienna
+
+<img src="przepisy/shovel_limestone.png" alt="Łopata wapienna: 1 x Wapień + 1 x Patyk (ułożenie: R / S; R = Wapień, S = Patyk)">
+
+1 x Wapień + 1 x Patyk (z kształtem). Nazwa przepisu: `shovel_limestone`. Ziemię, piasek, żwir i błoto kopie się 3 razy szybciej. Wygląd głowicy zależy od użytej skały.
+
+### Łopata piaskowcowa
+
+<img src="przepisy/shovel_sandstone.png" alt="Łopata piaskowcowa: 1 x Piaskowiec + 1 x Patyk (ułożenie: R / S; R = Piaskowiec, S = Patyk)">
+
+1 x Piaskowiec + 1 x Patyk (z kształtem). Nazwa przepisu: `shovel_sandstone`. Ziemię, piasek, żwir i błoto kopie się 3 razy szybciej. Wygląd głowicy zależy od użytej skały.
+
+### Łopata łupkowa
+
+<img src="przepisy/shovel_slate.png" alt="Łopata łupkowa: 1 x Łupek + 1 x Patyk (ułożenie: R / S; R = Łupek, S = Patyk)">
+
+1 x Łupek + 1 x Patyk (z kształtem). Nazwa przepisu: `shovel_slate`. Ziemię, piasek, żwir i błoto kopie się 3 razy szybciej. Wygląd głowicy zależy od użytej skały.
+
+### Łopata bazaltowa
+
+<img src="przepisy/shovel_basalt.png" alt="Łopata bazaltowa: 1 x Bazalt + 1 x Patyk (ułożenie: R / S; R = Bazalt, S = Patyk)">
+
+1 x Bazalt + 1 x Patyk (z kształtem). Nazwa przepisu: `shovel_basalt`. Ziemię, piasek, żwir i błoto kopie się 3 razy szybciej. Wygląd głowicy zależy od użytej skały.
 
 
 ## Grupy składników
 
 Składnik z grupy to dowolna rzecz z listy (np. patyki z desek różnych drzew).
 
+- **siekiera (dowolny kamień)**: Siekiera, Siekiera granitowa, Siekiera wapienna, Siekiera piaskowcowa, Siekiera łupkowa, Siekiera bazaltowa
 - **pochodnia (dowolny kolor)**: Pochodnia, Pochodnia biała, Pochodnia pomarańczowa, Pochodnia purpurowa, Pochodnia jasnoniebieska, Pochodnia żółta, Pochodnia limonkowa, Pochodnia różowa, Pochodnia szara, Pochodnia jasnoszara, Pochodnia turkusowa, Pochodnia fioletowa, Pochodnia niebieska, Pochodnia brązowa, Pochodnia zielona, Pochodnia czerwona, Pochodnia czarna
 - **deski (dowolne)**: Deski świerkowe, Deski sosnowe, Deski bukowe, Deski lipowe, Deski dębowe, Deski brzozowe, Deski jabłoniowe, Deski olchowe, Deski wierzbowe
 - **skała (kamień, granit, wapień, piaskowiec, łupek, bazalt)**: Kamień, Granit, Wapień, Piaskowiec, Łupek, Bazalt

@@ -6,6 +6,7 @@ import { plantWindUniforms, PLANT_WIND_GLSL } from './PlantWind.js';
 import { getSurfaceFaceTexture } from './SurfaceMaterials.js';
 import { blockSurfaceProfile } from './SurfaceProfiles.js';
 import { installSurfaceProfiles } from './LeafLighting.js';
+import { PINE_TRANSITION_TEXTURES, MOSS_CARPET_TEXTURES } from './SurfaceTextureVariants.js';
 
 
 import {
@@ -1125,6 +1126,16 @@ for (
 
     blockRenderData[definition.id] = {
         surfaceProfiles: FACE_NAMES.map(faceName => blockSurfaceProfile(definition, faceName)),
+
+        // Composed once while loading the atlas; variants reuse the same
+        // opaque/cutout face and material instead of adding overlay geometry.
+        worldTextureVariants: name === 'pine_log_upper'
+            ? [definition.textures.side, ...PINE_TRANSITION_TEXTURES].map(texture => FACE_NAMES.map(faceName =>
+                createRotatedUVs(['top', 'bottom'].includes(faceName)
+                    ? getFaceTexture(definition.textures, faceName) : texture)))
+            : name === 'moss_carpet'
+                ? MOSS_CARPET_TEXTURES.map(texture => FACE_NAMES.map(() => createRotatedUVs(texture)))
+                : null,
 
         // Roślina: płaszczyzny z jedną teksturą (ChunkMesher.addPlants).
 

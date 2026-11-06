@@ -11,8 +11,8 @@
 #   - kora: płytki, łuski albo bruzdy (mapa wysokości) oświetlone
 #     z lewej góry, szczeliny ciemne,
 #   - słoje: pierścienie od środka pnia, kora dookoła,
-#   - deski: cztery deski, jasna górna krawędź, ciemna szpara,
-#     usłojenie wzdłuż deski,
+#   - deski: autorski wzorzec z terrain.png (od 0.70.0), cztery
+#     spokojne pasy i przesunięte łączenia; zmienia się paleta gatunku,
 #   - liście: pojedyncze listki / igły z cieniem, prześwity są
 #     przezroczyste (w grze widać przez nie głąb korony),
 #   - sadzonki i przedmioty: obrazki z przezroczystym tłem, przedmioty
@@ -432,32 +432,28 @@ def grain(seed, wood, heart_mix=0.0, streaks=6, contrast=1.0):
 
 
 def planks(seed, wood, contrast=1.0):
-    """Deski: cztery deski po 4 piksele (3 deska + 1 szpara), lekko
-    jaśniejsza górna krawędź, usłojenie wzdłuż deski, końce desek
-    (pionowe łączenia) w różnych miejscach."""
-    r = rng(seed)
-    rgb = np.zeros((N, N, 3))
-    palette = shades(wood, 7, 0.7, 1.16, (1.0, 0.96, 0.92))
-    joints = r.permutation(np.arange(3, N - 3, 3))
-    for board in range(4):
-        y0 = board * 4
-        tone_board = r.uniform(-0.06, 0.06)
-        streak = noise(r, 4)
-        line = np.repeat(np.linspace(0, 1, N)[None, :], 4, axis=0)
-        grain_ = np.sin((line * 2.3 + streak[y0:y0 + 4] * 0.9) * 2 * np.pi * 2 + r.uniform(0, 6)) * 0.06 * contrast
-        tone = 0.55 + tone_board + grain_ + (noise(r, 8)[y0:y0 + 4] - 0.5) * 0.09
-        tone[0] += 0.06
-        tone[2] -= 0.06
-        rgb[y0:y0 + 4] = paint(palette, np.clip(tone, 0, 1), 0)
-        rgb[y0 + 3] = np.array(wood) * 0.6
-        # łączenie desek (jedno na deskę, w różnych miejscach)
-        x = int(joints[board % len(joints)])
-        rgb[y0:y0 + 3, x] = np.array(wood) * 0.66
-        # sęczek
-        if r.random() < 0.45:
-            kx = int(r.integers(1, N - 1))
-            rgb[y0 + 1, kx] = np.array(wood) * 0.72
-    return np.clip(rgb, 0, 255)
+    """Nowy gatunek korzysta z autorskiego układu desek świerkowych.
+
+    Kafelek (0, 7) jest wzorcem kształtu i względnej jasności z atlasu,
+    a wood wybiera paletę nowego gatunku. Nie losujemy czarnych szpar,
+    kropek ani sęków. seed pozostaje argumentem dla zgodności wywołań;
+    contrast może tylko złagodzić wzorzec, nigdy go przerysować.
+    Funkcja nie zapisuje atlasu ani istniejących paczek.
+    """
+    with Image.open(ATLAS) as atlas:
+        tile = np.asarray(atlas.convert('RGBA').crop((0, 7 * N, N, 8 * N)), dtype=float)
+    if tile.shape != (N, N, 4) or not np.all(tile[..., 3] == 255):
+        raise ValueError('Wzorzec desek (0, 7) musi być pełnym kafelkiem 16 x 16.')
+    color = np.asarray(wood, dtype=float)
+    if color.shape != (3,) or not np.all(np.isfinite(color)):
+        raise ValueError('Kolor drewna musi zawierać trzy skończone wartości RGB.')
+    luminance = tile[..., :3] @ np.array([0.2126, 0.7152, 0.0722])
+    mean = float(luminance.mean())
+    if mean <= 0:
+        raise ValueError('Wzorzec desek nie może być całkowicie czarny.')
+    strength = float(np.clip(contrast, 0.0, 1.0))
+    tone = 1.0 + (luminance / mean - 1.0) * strength
+    return np.clip(tone[..., None] * color, 0, 255)
 
 
 # ------------------------------------------------------------

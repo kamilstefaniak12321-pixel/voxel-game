@@ -32,6 +32,7 @@ import { WORLD_BORDER } from '../config.js';
 import { getBlockDefinition, isOpaqueId } from '../blocks/BlockRegistry.js';
 
 import { BASE_TREE_NAMES } from '../blocks/trees.js';
+import { getTool } from '../items/ItemRegistry.js';
 
 import { TREE_PACKS } from '../blocks/treePacks.js';
 
@@ -650,7 +651,7 @@ export const ACHIEVEMENTS = [
         comment: 'Teraz brakuje tylko skrzynki na narzędzia. I garażu. I warsztatu.',
         icon: 'pickaxe',
         on: 'crafted',
-        when: (data, book) => ['axe', 'pickaxe', 'shovel'].includes(data.type) && book.collect('tools', data.type) >= 3,
+        when: (data, book) => Boolean(getTool(data.type)) && book.collect('tools', getTool(data.type)) >= 3,
         goal: { key: 'tools', count: 3 }
     },
     {

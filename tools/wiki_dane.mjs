@@ -16,6 +16,8 @@ import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 import { modelIconData } from './model_icon.mjs';
+import { STONE_TOOL_TEXTURES } from '../src/rendering/StoneToolTextures.js';
+import { PINE_BARK_TEXTURES } from '../src/rendering/WoodAtlasTextures.js';
 
 const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -83,6 +85,11 @@ function atlasTiles() {
         };
     }
 
+    // Exported from the game's actual canvas atlas by the texture browser
+    // check, so documentation and downloadable packs use the same pixels.
+    for (const { name } of [...PINE_BARK_TEXTURES, ...STONE_TOOL_TEXTURES]) {
+        tiles[name] = { file: `assets/textures/derived/${name}.png` };
+    }
     return tiles;
 
 }
@@ -249,7 +256,10 @@ const items = Object.entries(I.ITEM_TYPES).map(([type, item]) => ({
 }));
 
 
-const recipes = K.RECIPE_LIST.map((recipe) => ({
+// Material aliases are real craftable results. Include them in the wiki's
+// recipe index so each new tool's madeBy reference resolves to its own rock.
+const wikiRecipes = [...K.RECIPE_LIST, ...STONE_TOOL_TEXTURES.map(({ name }) => K.getRecipe(name))];
+const recipes = wikiRecipes.map((recipe) => ({
     id: recipe.id,
     result: { type: recipe.result[0], count: recipe.result[1], label: I.getItemLabel(recipe.result[0]) },
     category: K.recipeCategory(recipe),

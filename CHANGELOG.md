@@ -11,6 +11,22 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 0.70.0 - Autorskie tekstury drewna i kamienne narzędzia
+
+Nowy atlas Kamila i warianty materiałów — PR #106, bezpośrednio do `main`.
+
+- Deski sześciu gatunków i ciemne deski, słoje pni, narzędzia oraz patyk
+  korzystają z nowych autorskich tekstur. Schemat desek jest wzorcem
+  dla generatora kolejnych gatunków.
+- Trzy nakładki kory tworzą przejście z dolnego brązowego do górnego
+  pomarańczowego pnia sosny, bez dodawania bloków i dodatkowych ścian.
+- Mech dywanowy miesza trzy stabilne warianty zależne od pozycji.
+- Siekiery, kilofy i łopaty mają wyglądy odpowiadające użytej skale:
+  kamieniowi, granitowi, wapieniowi, piaskowcowi, łupkowi i bazaltowi.
+  Trzonki i zasady działania pozostają wspólne. Wszystkie siekiery
+  pozostają po przygotowaniu opału.
+- Szablon paczki tekstur zawiera nowe wzory i złożone warianty.
+
 ## 0.69.0 - Stopniowa szczegółowość dalekiego świata
 
 Kolejny etap optymalizacji — PR #105, przywracający na `main` sprawdzone

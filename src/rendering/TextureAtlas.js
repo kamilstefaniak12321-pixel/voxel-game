@@ -2,6 +2,8 @@ import * as THREE from 'three';
 import { FIRE_WOODS } from '../game/CampfireState.js';
 import { TORCH_VARIANTS } from '../blocks/torches.js';
 import { DYE_ITEMS, drawDyeIcon } from '../items/dyes.js';
+import { PINE_BARK_TEXTURES, drawPineBarkTextures } from './WoodAtlasTextures.js';
+import { STONE_TOOL_TEXTURES, drawStoneToolTextures } from './StoneToolTextures.js';
 
 import { PACK_TEXTURES, TREE_PACK_ERRORS } from '../blocks/treePacks.js';
 
@@ -19,7 +21,7 @@ export const ATLAS_COLUMNS = 16;
 // (assets/drzewa/, src/blocks/treePacks.js), po kolei, kafelek za
 // kafelkiem. Nie trzeba ich wklejać do terrain.png - gra dorysowuje je
 // sama przy starcie.
-export const PACK_ATLAS_ROW = 10;
+export const PACK_ATLAS_ROW = 11;
 
 const PACK_TILE_NAMES = Object.keys(PACK_TEXTURES);
 
@@ -240,6 +242,9 @@ export const ATLAS_TILES = {
     birch_log_top: { x: 11, y: 5 },
     pine_log_upper_side: { x: 12, y: 5 },
     pine_log_resin_side: { x: 13, y: 5 },
+    pine_bark_overlay_dense: { x: 14, y: 5 },
+    pine_bark_overlay_medium: { x: 15, y: 5 },
+    pine_bark_overlay_sparse: { x: 15, y: 6 },
 
     // Wiersz 6 - okorowane pnie.
 
@@ -305,7 +310,11 @@ export const ATLAS_TILES = {
     snow: { x: 4, y: 9 },
     moss_top: { x: 5, y: 9 },
     moss_side: { x: 6, y: 9 },
-    moss_carpet: { x: 7, y: 9 }
+    moss_carpet: { x: 7, y: 9 },
+    moss_carpet_2: { x: 8, y: 9 },
+    moss_carpet_3: { x: 9, y: 9 },
+    // Reserved authored handle study; the inventory stick stays at (0, 9).
+    tool_handle_source: { x: 0, y: 10 }
 
 };
 
@@ -374,7 +383,8 @@ Object.keys(FIRE_WOODS).forEach((wood, i) => {
 const torchRow = Math.max(...Object.values(ATLAS_TILES).map(tile => tile.y + (tile.h ?? 1)));
 // Tekstury poziomów modeli roślin (src/blocks/plantModels.js) - po 16 x 16.
 [...TORCH_VARIANTS.map(variant => variant.texture), ...Object.keys(DYE_ITEMS), BUSHY_GRASS_TEXTURE,
-    ...Object.keys(PLANT_MODEL_TEXTURES)].forEach((name, i) => {
+    ...Object.keys(PLANT_MODEL_TEXTURES), ...PINE_BARK_TEXTURES.map(tile => tile.name),
+    ...STONE_TOOL_TEXTURES.map(tile => tile.name)].forEach((name, i) => {
     ATLAS_TILES[name] = { x: i % ATLAS_COLUMNS, y: torchRow + Math.floor(i / ATLAS_COLUMNS) };
 });
 export const ATLAS_ROWS = Math.max(...Object.values(ATLAS_TILES).map((tile) => tile.y + (tile.h ?? 1)));
@@ -644,6 +654,8 @@ async function buildBaseAtlas() {
         context.clearRect(tile.x * T, tile.y * T, T, T);
         drawDyeIcon(context, dye.color, tile.x * T, tile.y * T);
     }
+    drawPineBarkTextures(context, ATLAS_TILES);
+    drawStoneToolTextures(context, ATLAS_TILES);
 
     // Gotowy atlas z powrotem jako zwykły obrazek (PNG) - tak jak sam
     // terrain.png. Rysowanie z obrazka (ikonki, średnie kolory, tekstura
@@ -745,6 +757,10 @@ async function buildPackAtlas(base, pack) {
     }
 
 
+    // Inherit a pack's orange bark/overlays unless it supplies a complete
+    // transition tile of its own. Also works with high-resolution packs.
+    drawPineBarkTextures(context, ATLAS_TILES, T, pack.tiles);
+    drawStoneToolTextures(context, ATLAS_TILES, T, pack.tiles);
     const levels = [level0];
 
     if (T > B) {

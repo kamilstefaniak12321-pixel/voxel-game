@@ -52,10 +52,9 @@ def main():
                     if entry['label'] not in labels:
                         labels.append(entry['label'])
 
-    if os.path.isdir(OUT):
-        shutil.rmtree(OUT)
-    os.makedirs(os.path.join(OUT, 'bloki'))
-    os.makedirs(os.path.join(OUT, 'niebo'))
+    # Refresh known files in place; do not recursively remove the template.
+    os.makedirs(os.path.join(OUT, 'bloki'), exist_ok=True)
+    os.makedirs(os.path.join(OUT, 'niebo'), exist_ok=True)
 
     atlas = Image.open(os.path.join(ROOT, 'assets', 'textures', 'blocks', 'terrain.png')).convert('RGBA')
 
@@ -67,10 +66,11 @@ def main():
             continue
         if 'file' in tile:
             # Tekstura z paczki drzewa (assets/drzewa/) - nazwa "jablon/liscie.png".
-            target = os.path.join(OUT, 'bloki', *name.split('/'))
+            relative = name if name.endswith('.png') else f'{name}.png'
+            target = os.path.join(OUT, 'bloki', *relative.split('/'))
             os.makedirs(os.path.dirname(target), exist_ok=True)
             Image.open(os.path.join(ROOT, tile['file'])).convert('RGBA').save(target, optimize=True)
-            path = f'bloki/{name}'
+            path = f'bloki/{relative}'
         else:
             x, y = tile['x'] * TILE, tile['y'] * TILE
             atlas.crop((x, y, x + TILE, y + TILE)).save(os.path.join(OUT, 'bloki', f'{name}.png'), optimize=True)

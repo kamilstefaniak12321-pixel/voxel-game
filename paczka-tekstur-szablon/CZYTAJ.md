@@ -1,4 +1,4 @@
-# Paczka tekstur - szablon (Voxel Game 0.50.1)
+# Paczka tekstur - szablon (Voxel Game 0.70.0)
 
 Oryginalne tekstury gry, każda w osobnym pliku. Zrób z nich własną paczkę:
 
@@ -37,6 +37,11 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 |---|---|
 | `bloki/acorn.png` | Żołądź |
 | `bloki/axe.png` | Siekiera |
+| `bloki/axe_basalt.png` | Siekiera bazaltowa |
+| `bloki/axe_granite.png` | Siekiera granitowa |
+| `bloki/axe_limestone.png` | Siekiera wapienna |
+| `bloki/axe_sandstone.png` | Siekiera piaskowcowa |
+| `bloki/axe_slate.png` | Siekiera łupkowa |
 | `bloki/basalt_side.png` | Bazalt |
 | `bloki/basalt_top.png` | Bazalt |
 | `bloki/beech_leaf_litter.png` | Opadłe liście buka |
@@ -119,13 +124,15 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/linden_stripped_top.png` | Okorowany pień lipy |
 | `bloki/meteorite.png` | Meteoryt |
 | `bloki/moss_carpet.png` | Kępki mchu |
+| `bloki/moss_carpet_2.png` | - |
+| `bloki/moss_carpet_3.png` | - |
 | `bloki/moss_side.png` | Mech |
 | `bloki/moss_top.png` | Mech |
 | `bloki/mud.png` | Błoto |
 | `bloki/nettle.png` | Pokrzywa |
 | `bloki/oak_leaf_litter.png` | Opadłe liście dębu |
 | `bloki/oak_leaves.png` | Liście dębu |
-| `bloki/oak_log_side.png` | Pień dębu |
+| `bloki/oak_log_side.png` | Ognisko, Pień dębu |
 | `bloki/oak_log_top.png` | Pień dębu |
 | `bloki/oak_planks.png` | Deski dębowe |
 | `bloki/oak_sapling.png` | Sadzonka dębu |
@@ -142,11 +149,22 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/olcha/sadzonka.png` | Sadzonka olchy |
 | `bloki/olcha/szyszki.png` | Szyszeczki olchy |
 | `bloki/pickaxe.png` | Kilof |
+| `bloki/pickaxe_basalt.png` | Kilof bazaltowy |
+| `bloki/pickaxe_granite.png` | Kilof granitowy |
+| `bloki/pickaxe_limestone.png` | Kilof wapienny |
+| `bloki/pickaxe_sandstone.png` | Kilof piaskowcowy |
+| `bloki/pickaxe_slate.png` | Kilof łupkowy |
+| `bloki/pine_bark_overlay_dense.png` | - |
+| `bloki/pine_bark_overlay_medium.png` | - |
+| `bloki/pine_bark_overlay_sparse.png` | - |
 | `bloki/pine_cone.png` | Szyszka sosny |
 | `bloki/pine_leaves.png` | Igliwie sosny |
 | `bloki/pine_log_resin_side.png` | Pień sosny z żywicą |
 | `bloki/pine_log_side.png` | Pień sosny |
 | `bloki/pine_log_top.png` | Pień sosny, Pień sosny (górny), Pień sosny z żywicą |
+| `bloki/pine_log_transition_1.png` | - |
+| `bloki/pine_log_transition_2.png` | - |
+| `bloki/pine_log_transition_3.png` | - |
 | `bloki/pine_log_upper_side.png` | Pień sosny (górny) |
 | `bloki/pine_planks.png` | Deski sosnowe |
 | `bloki/pine_sapling.png` | Sadzonka sosny |
@@ -181,6 +199,11 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/sandstone_top.png` | Piaskowiec |
 | `bloki/short_grass.png` | Krótka trawa |
 | `bloki/shovel.png` | Łopata |
+| `bloki/shovel_basalt.png` | Łopata bazaltowa |
+| `bloki/shovel_granite.png` | Łopata granitowa |
+| `bloki/shovel_limestone.png` | Łopata wapienna |
+| `bloki/shovel_sandstone.png` | Łopata piaskowcowa |
+| `bloki/shovel_slate.png` | Łopata łupkowa |
 | `bloki/slate_side.png` | Łupek |
 | `bloki/slate_top.png` | Łupek |
 | `bloki/snow.png` | Śnieg, Warstwa śniegu |
@@ -200,6 +223,7 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/strawberry_bush_full.png` | - |
 | `bloki/tall_grass.png` | Wysoka trawa |
 | `bloki/terracotta.png` | Terakota |
+| `bloki/tool_handle_source.png` | - |
 | `bloki/water.png` | Woda |
 | `bloki/wierzba/bazie.png` | Bazie |
 | `bloki/wierzba/deski.png` | Deski wierzbowe |

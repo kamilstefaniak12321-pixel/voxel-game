@@ -94,6 +94,11 @@ export const SETTINGS_DEFAULTS = {
     // Tekstury (paczka tekstur - src/rendering/TexturePacks.js)
     textureResolution: 0,                          // piksele na blok w grze (0 = automatyczna, z paczki)
 
+    // Modele (zakładka "Modele" - src/blocks/plantModels.js)
+    plantModels: 'semi',                           // wygląd roślin: 'simple' | 'semi' | 'detailed'
+    plantWind: true,                               // kołysanie roślin na wietrze
+    plantAnimations: true,                         // animacje roślin: stawianie, wzrost, zbiór, zniszczenie
+
     // Eksperymenty (zakładka "Eksperymenty" - funkcje, których nie
     // jesteśmy pewni: mogą się zmienić albo zniknąć; EXPERIMENTS niżej)
     bushyGrass: false,                             // trawa kępiasta (przestrzenne kępki zamiast zwykłej trawy)
@@ -137,6 +142,7 @@ export const SETTINGS_CHOICES = {
     fpsLimit: [0, 30, 60, 120, 144],
     shadows: [0, 1, 2, 3],
     lightingModel: ['world', 'classic'],
+    plantModels: ['simple', 'semi', 'detailed'],
     lightingLook: ['natural', 'baseline'],
     atmosphereLook: ['natural', 'baseline'],
     lightingMaterials: ['basic', 'standard', 'high'],

@@ -1,0 +1,24 @@
+{
+    "nazwa": "Chaber",
+    "bloki": ["cornflower"],
+    "etapy": [
+        {
+            "prosty": null,
+            "polrealistyczny": {
+                "lodygi": { "ile": 2, "wysokosc": 11, "promien": 2, "pochylenie": 8 },
+                "liscie": { "ile": 3, "dlugosc": 7, "nachylenie": 30, "wysokosc": 1 },
+                "kwiat": { "rodzaj": "gwiazda", "rozmiar": 5 }
+            },
+            "szczegolowy": {
+                "rodzaj": "kepka",
+                "liscie": { "uklad": "kepa", "ile": [6, 8], "dlugosc": [4, 6], "promien": 2 },
+                "lodygi": { "ile": [2, 3], "wysokosc": [9, 12], "promien": 2, "rozgalezione": true },
+                "kwiaty": { "rodzaj": "oset", "rozmiar": 1 },
+                "kolory": {
+                    "lisc": "#4a7a3a", "liscJasny": "#6e9a52", "liscCiemny": "#34582a", "lodyga": "#4f7f3c",
+                    "kwiat": "#4a70de", "kwiatJasny": "#769cf4", "kwiatCiemny": "#283e96", "pak": "#627858", "srodek": "#42306e"
+                }
+            }
+        }
+    ]
+}

@@ -520,7 +520,7 @@ export const plantDepthMaterial = new THREE.ShaderMaterial({
         }`,
     fragmentShader: cutoutDepthMaterial.fragmentShader,
     uniforms: { map: { value: blockAtlasTexture }, uTime: { value: 0 },
-        uWaveHeight: { value: plantWindUniforms.uWaveHeight.value } },
+        uWaveHeight: { value: plantWindUniforms.uWaveHeight.value }, uPlantSway: plantWindUniforms.uPlantSway },
     colorWrite: false,
     side: THREE.DoubleSide
 });

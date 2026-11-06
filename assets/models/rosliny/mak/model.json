@@ -1,0 +1,24 @@
+{
+    "nazwa": "Mak",
+    "bloki": ["poppy"],
+    "etapy": [
+        {
+            "prosty": null,
+            "polrealistyczny": {
+                "lodygi": { "ile": 1, "wysokosc": 10 },
+                "liscie": { "ile": 4, "dlugosc": 7, "nachylenie": 55, "wysokosc": 0 },
+                "kwiat": { "rodzaj": "kielich", "rozmiar": 6 }
+            },
+            "szczegolowy": {
+                "rodzaj": "kepka",
+                "liscie": { "uklad": "rozeta", "ile": [4, 5], "dlugosc": [3, 4] },
+                "lodygi": { "ile": [1, 2], "wysokosc": [9, 11], "promien": 1, "liscie": { "co": 4, "dlugosc": [2, 3] } },
+                "kwiaty": { "rodzaj": "talerz", "rozmiar": 2 },
+                "kolory": {
+                    "lisc": "#327c20", "liscJasny": "#5cb02e", "liscCiemny": "#246018", "lodyga": "#3e8a26",
+                    "kwiat": "#d52b21", "kwiatJasny": "#ec543e", "kwiatCiemny": "#8a1614", "srodek": "#281c1e"
+                }
+            }
+        }
+    ]
+}

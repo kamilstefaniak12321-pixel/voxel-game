@@ -125,7 +125,24 @@ export const TEXTS = {
         player: 'Gracz',
         look: 'Wygląd',
         game: 'Gra',
+        models: 'Modele',
         experiments: 'Eksperymenty'
+    },
+    // Modele (src/blocks/plantModels.js)
+    modelsIntro: 'Wygląd roślin i ich ruch. Zmienia tylko obraz - świat i zapisy zostają takie same. Na razie trzy wersje mają: mak, chaber, mniszek, rumianek i lawenda; pozostałe rośliny dostają najbliższą wersję, którą mają.',
+    plantModelsTitle: 'Modele roślin',
+    plantModelNames: { simple: 'Proste', semi: 'Półrealistyczne', detailed: 'Szczegółowe' },
+    plantModels: (value) => `Modele roślin: ${{ simple: 'Proste', semi: 'Półrealistyczne', detailed: 'Szczegółowe' }[value] ?? 'Półrealistyczne'}`,
+    plantWind: (on) => `Kołysanie na wietrze: ${on ? 'Wł.' : 'Wył.'}`,
+    plantAnimations: (on) => `Animacje roślin: ${on ? 'Wł.' : 'Wył.'}`,
+    modelNotes: {
+        plantModels: (value) => ({
+            simple: 'Proste: obrazek 16 × 16 na skrzyżowanych płaszczyznach - najszybsze, jak dawne kwiaty.',
+            semi: 'Półrealistyczne: liście, płatki i kwiaty z małych płaskich kart ustawionych pod różnymi kątami.',
+            detailed: 'Szczegółowe: model z pikseli - każdy listek i płatek osobno (najwięcej do narysowania).'
+        }[value] ?? ''),
+        plantWind: 'Trawa, kwiaty i krzaki poruszają się na wietrze. Liście na wodzie dalej falują z wodą.',
+        plantAnimations: 'Sprężyste reakcje roślin: postawienie, wzrost, zbiór owoców i kwiatów, zniszczenie.'
     },
     graphicsPreset: (name) => `Jakość grafiki: ${{ low: 'Niska', medium: 'Średnia', high: 'Wysoka', ultra: 'Najwyższa' }[name] ?? 'Własna'}`,
     advancedShow: 'Zaawansowane ▾',

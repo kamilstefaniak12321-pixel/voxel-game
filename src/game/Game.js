@@ -1682,6 +1682,11 @@ export class Game {
 
         this.world.setExperiments({ bushyGrass: settings.get('bushyGrass') });
 
+        // Modele -> Animacje roślin (poziom modeli i wiatr - main.js,
+        // applyPlantSettings - wspólne z tłem menu).
+
+        this.plantAnimations?.setEnabled(settings.get('plantAnimations'));
+
 
         // Zasięg: prawdziwe chunki do viewDistance, dalej daleki teren.
         // Kamera świata musi sięgać do ostatnich wczytanych chunków.

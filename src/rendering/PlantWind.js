@@ -4,12 +4,16 @@ import { WATER_WAVE_HEIGHT } from '../config.js';
 // passes own their time sample so a multi-frame map never mixes wind poses.
 export const plantWindUniforms = {
     uTime: { value: 0 },
-    uWaveHeight: { value: WATER_WAVE_HEIGHT }
+    uWaveHeight: { value: WATER_WAVE_HEIGHT },
+    // Kołysanie roślin na wietrze: 1 - wł., 0 - wył. (Ustawienia -> Modele).
+    // Liście na wodzie dalej falują razem z wodą.
+    uPlantSway: { value: 1 }
 };
 
 export const plantShadowState = { natural: false };
 
 export const PLANT_WIND_GLSL = /* glsl */ `
+    uniform float uPlantSway;
     vec3 plantWindOffset(vec3 worldPosition, vec2 motion, float time, float waveHeight) {
         vec3 offset = vec3(0.0);
         float phase = worldPosition.x * 0.45 + worldPosition.z * 0.35;
@@ -27,6 +31,7 @@ export const PLANT_WIND_GLSL = /* glsl */ `
                 + sin(time * 3.3 + phase * 2.1) * 0.02);
             offset.z = motion.x * gust * cos(time * 1.45 + phase * 1.3) * 0.055;
         }
+        if (motion.y <= 0.75) offset *= uPlantSway;
         return offset;
     }
 `;

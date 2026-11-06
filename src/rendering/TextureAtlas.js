@@ -8,6 +8,7 @@ import { PACK_TEXTURES, TREE_PACK_ERRORS } from '../blocks/treePacks.js';
 import { PLANT_TEXTURES, PLANT_PACK_ERRORS } from '../blocks/plantPacks.js';
 import { BLUEBERRY_TEXTURE, BLUEBERRY_ATLAS_URL } from '../blocks/blueberry.js';
 import { BUSHY_GRASS_TEXTURE, BUSHY_GRASS_TEXTURE_URL } from '../blocks/bushyGrass.js';
+import { PLANT_MODEL_TEXTURES } from '../blocks/plantModels.js';
 
 import { getPackInfo, loadPackTiles, gameResolution, safeResolution, startSucceeded } from './TexturePacks.js';
 
@@ -371,7 +372,9 @@ Object.keys(FIRE_WOODS).forEach((wood, i) => {
     ATLAS_TILES[`campfire_${wood}`] = { x: (i % 8) * 2, y: fireRow + Math.floor(i / 8) * 2, w: 2, h: 2, pw: 32, ph: 32 };
 });
 const torchRow = Math.max(...Object.values(ATLAS_TILES).map(tile => tile.y + (tile.h ?? 1)));
-[...TORCH_VARIANTS.map(variant => variant.texture), ...Object.keys(DYE_ITEMS), BUSHY_GRASS_TEXTURE].forEach((name, i) => {
+// Tekstury poziomów modeli roślin (src/blocks/plantModels.js) - po 16 x 16.
+[...TORCH_VARIANTS.map(variant => variant.texture), ...Object.keys(DYE_ITEMS), BUSHY_GRASS_TEXTURE,
+    ...Object.keys(PLANT_MODEL_TEXTURES)].forEach((name, i) => {
     ATLAS_TILES[name] = { x: i % ATLAS_COLUMNS, y: torchRow + Math.floor(i / ATLAS_COLUMNS) };
 });
 export const ATLAS_ROWS = Math.max(...Object.values(ATLAS_TILES).map((tile) => tile.y + (tile.h ?? 1)));
@@ -607,6 +610,18 @@ async function buildBaseAtlas() {
     const grassTile = ATLAS_TILES[BUSHY_GRASS_TEXTURE];
     context.clearRect(grassTile.x * T, grassTile.y * T, T, T);
     context.drawImage(grassTexture, grassTile.x * T, grassTile.y * T);
+
+    await Promise.all(Object.entries(PLANT_MODEL_TEXTURES).map(async ([name, url]) => {
+        const tile = ATLAS_TILES[name];
+        context.clearRect(tile.x * T, tile.y * T, T, T);
+        const image = await loadImage(url).catch(() => null);
+        if (!image || image.width !== 16 || image.height !== 16) {
+            drawMissing(context, tile.x, tile.y);
+            PLANT_PACK_ERRORS.push(`Model rośliny: ${name}.png ${image ? 'ma mieć 16 × 16 pikseli' : '- brak pliku'} (w grze - fioletowa szachownica)`);
+            return;
+        }
+        context.drawImage(image, tile.x * T, tile.y * T);
+    }));
 
     await Promise.all(Object.entries(FIRE_WOODS).map(async ([wood, [, file]]) => {
         const image = await loadImage(new URL(`../../assets/models/campfire/drewno-${file}.png`, import.meta.url).href);

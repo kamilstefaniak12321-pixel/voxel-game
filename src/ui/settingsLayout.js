@@ -53,6 +53,12 @@ export const SETTINGS_TABS = {
         'autoUpdates'
     ],
 
+    models: [
+        'plantModels',
+        'plantWind',
+        'plantAnimations'
+    ],
+
     experiments: EXPERIMENTS
 
 };

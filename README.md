@@ -623,7 +623,7 @@ Woda na razie **się nie rozlewa** - stoi tam, gdzie ją postawiono.
 
 ## Ustawienia
 
-W menu (z ekranu tytułowego i z pauzy) jest sześć zakładek:
+W menu (z ekranu tytułowego i z pauzy) jest siedem zakładek:
 
 **Obraz** - na wierzchu najważniejsze:
 
@@ -668,6 +668,19 @@ w grze, powrót do oryginalnych tekstur, szablon paczki - niżej, *Tekstury*.
 w rogu ekranu, w aplikacji (komputer, telefon) - **aktualizacje
 automatyczne** (wł. - nowa wersja pobiera się sama; wył. - gra tylko
 pokazuje, że jest, i pobiera po kliknięciu *Pobierz*).
+
+**Modele** (od 0.64.0) - wygląd roślin, do wyboru na trzech obrazkach:
+*Proste* (obrazek 16 × 16 na skrzyżowanych płaszczyznach - najszybsze),
+*Półrealistyczne* (domyślne: liście, płatki i kwiaty z małych płaskich
+kart pod różnymi kątami) albo *Szczegółowe* (model z pikseli - każdy
+listek osobno). Każda wersja ma własną teksturę w siatce 16 × 16. Na
+razie wszystkie trzy mają mak, chaber, mniszek, rumianek i lawenda;
+pozostałe rośliny dostają najbliższą wersję, którą mają. Do tego
+**kołysanie na wietrze** i **animacje roślin** (stawianie, wzrost, zbiór,
+zniszczenie) - osobno do wyłączenia. Zmienia tylko obraz - świat i zapisy
+zostają takie same. Opis i jak dodać roślinę:
+[modele roślin](docs/modele-roslin.md); z czatu: `/ustaw modele-roslin
+szczegolowe`, `/ustaw wiatr wyl`, `/ustaw animacje-roslin wyl`.
 
 **Eksperymenty** - funkcje, których nie jesteśmy jeszcze pewni (mogą się
 zmienić albo zniknąć), każda z krótkim opisem, domyślnie wyłączone

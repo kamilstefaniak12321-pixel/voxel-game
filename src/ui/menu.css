@@ -399,6 +399,46 @@ body:not([data-screen="game"]) #crosshair {
     text-align: left;
 }
 
+/* Modele roślin: trzy obrazki do wyboru (zakładka Modele). */
+
+.settings-model-picker {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--button-gap);
+}
+
+.settings-model-option.menu-button {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    height: auto;
+    padding: 6px;
+    white-space: normal;
+}
+
+.settings-model-option img {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    image-rendering: pixelated;
+    opacity: 0.7;
+}
+
+.settings-model-option.selected {
+    outline: 2px solid var(--button-text-hover);
+    outline-offset: -2px;
+    color: var(--button-text-hover);
+}
+
+.settings-model-option.selected img {
+    opacity: 1;
+}
+
+.settings-model-label {
+    font-size: 0.85em;
+}
+
 /* Sceny testowe (tryb programisty): lista jak lista światów, każda
    scena - przycisk z nazwą i opisem. */
 
@@ -585,4 +625,9 @@ body:not([data-screen="game"]) #crosshair {
 .menu-app-info .menu-button {
     height: auto;
     padding: 6px 14px;
+}
+
+/* Wybór modeli roślin - na całą szerokość zakładki. */
+.settings-experiment:has(.settings-model-picker) {
+    grid-column: 1 / -1;
 }

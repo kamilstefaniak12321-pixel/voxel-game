@@ -44,8 +44,11 @@ export function tuftInfo(id) {
     if (tuft && !tuft.carpet && !tuft.coating && !tuft.bracket && !river.waterlogged) {
         const type = getBlockTypeById(id);
         const definition = getBlockDefinition(type);
-        if (definition?.plantPack) {
-            result = { type, pack: definition.plantPack, stage: definition.stage, height: tuft.height / 16, tuft };
+        // Roślina z paczki albo szczegółowy model zwykłej rośliny
+        // (PlantModelLevels.js - animatePack).
+        const pack = definition?.plantPack ?? river.animatePack;
+        if (pack) {
+            result = { type, pack, stage: definition.stage ?? 0, height: tuft.height / 16, tuft };
         }
     }
 
@@ -55,6 +58,11 @@ export function tuftInfo(id) {
 }
 
 export const isTuftAnimated = (id) => tuftInfo(id) !== null;
+
+// Po zmianie poziomu modeli roślin (PlantModelLevels.js) - od nowa.
+export function clearTuftInfo() {
+    INFO.clear();
+}
 
 export function tuftAnimationKind(before, after) {
 

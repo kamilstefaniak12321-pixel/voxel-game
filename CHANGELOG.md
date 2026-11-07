@@ -13,7 +13,7 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ## 0.71.0 - Mniejsza pamięć zapisów i tańsze doczytywanie
 
-Przygotowanie wydania w PR do `main`; publikacja Windows/Android po scaleniu.
+Przygotowanie wydania w PR #107 do `main`; publikacja Windows/Android po scaleniu.
 
 - Zapisane zmiany świata zajmują w RAM bezstratnie spakowane migawki.
   Pełne tablice bloków są odtwarzane na żądanie; ich cache ma limit

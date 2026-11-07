@@ -48,7 +48,7 @@ zwiększają pamięć. Wyniki surowe:
 [saved-cpu-candidate.json](saved-cpu-candidate.json).
 
 Wyniki rzeczywistego Chromium/IndexedDB i stan sprawdzeń są podane w opisie
-PR. Artefakt Actions `pamiec-zapisow-ab` zachowuje osobne wyniki wszystkich
+[PR #107](https://github.com/kamilstefaniak12321-pixel/voxel-game/pull/107). Artefakt Actions `pamiec-zapisow-ab` zachowuje osobne wyniki wszystkich
 par, `comparison.json`, wersję przeglądarki, sprzęt runnera, skróty kodu
 i skryptów oraz logi Chrome. Nie należy utożsamiać czasów lokalnego Node
 z czasami przeglądarki.

@@ -1,0 +1,75 @@
+{
+  "checks": 10517,
+  "node": "v24.22.1",
+  "platform": "linux",
+  "arch": "x64",
+  "kind": "CPU surface discovery with real Uint16 chunks, not GPU/frame FPS",
+  "caps": {
+    "emitters": 12,
+    "potatoEmitters": 4,
+    "candidates": 64,
+    "cellsPerEmitter": 169,
+    "cellsPerUpdate": 48,
+    "msPerUpdate": 0.35
+  },
+  "fixture": {
+    "emitters": 12,
+    "fall": 16,
+    "sourcePoolWidth": 13,
+    "settledFramesPerTrial": 1000,
+    "refreshesPerTrial": 100,
+    "warmupTrials": 1,
+    "measuredTrials": 5
+  },
+  "stableFrameBlockReads": 0,
+  "trials": [
+    {
+      "slices": 35,
+      "maximumSliceMs": 0.08294499999999516,
+      "processed": 1644,
+      "maxCells": 48,
+      "settledMs": 0.00249123400000002,
+      "refreshMs": 0.010614490000000103,
+      "patches": 1632
+    },
+    {
+      "slices": 35,
+      "maximumSliceMs": 0.09288999999998282,
+      "processed": 1644,
+      "maxCells": 48,
+      "settledMs": 0.002909895000000006,
+      "refreshMs": 0.007377919999999847,
+      "patches": 1632
+    },
+    {
+      "slices": 35,
+      "maximumSliceMs": 0.08222399999999652,
+      "processed": 1644,
+      "maxCells": 48,
+      "settledMs": 0.002770984999999996,
+      "refreshMs": 0.009765510000000007,
+      "patches": 1632
+    },
+    {
+      "slices": 35,
+      "maximumSliceMs": 0.12261499999999614,
+      "processed": 1644,
+      "maxCells": 48,
+      "settledMs": 0.002118011999999993,
+      "refreshMs": 0.008421889999999906,
+      "patches": 1632
+    },
+    {
+      "slices": 35,
+      "maximumSliceMs": 0.10280499999998938,
+      "processed": 1644,
+      "maxCells": 48,
+      "settledMs": 0.0022728150000000083,
+      "refreshMs": 0.00724741999999992,
+      "patches": 1632
+    }
+  ],
+  "medianSettledMs": 0.00249123400000002,
+  "medianRefreshMs": 0.008421889999999906,
+  "maximumSliceMs": 0.12261499999999614
+}

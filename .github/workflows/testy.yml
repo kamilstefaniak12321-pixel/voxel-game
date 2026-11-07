@@ -39,13 +39,16 @@ jobs:
       || (contains(github.event.pull_request.labels.*.name, 'kompilacja')
           && (github.event.action != 'labeled' || github.event.label.name == 'kompilacja'))
     runs-on: ubuntu-24.04
-    timeout-minutes: 10
+    timeout-minutes: 12
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-node@v5
         with:
           node-version: 24
       - run: npm test
+      - name: Wodospady, zapętlone kręgi i koszt efektów w WebGL2
+        timeout-minutes: 3
+        run: node tools/sprawdz_fale_wodospadow_webgl.mjs
       - name: Rozlewanie wody, zapis i koszt zalewania w WebGL2
         timeout-minutes: 3
         run: node tools/sprawdz_wode_webgl.mjs
@@ -79,6 +82,7 @@ jobs:
         with:
           name: testy-gry
           path: |
+            test-results/waterfall-ripples/
             test-results/water-flow/
             test-results/streaming/
             test-results/depth-reuse/

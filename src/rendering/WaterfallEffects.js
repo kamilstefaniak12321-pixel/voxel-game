@@ -3,10 +3,9 @@ import * as THREE from 'three';
 import { getWaterLevel } from '../blocks/BlockRegistry.js';
 
 import { CubeParticles } from './CubeParticles.js';
+import { WaterfallRipples } from './WaterfallRipples.js';
 
-import { lightToBrightness, COLOR_LEVEL } from '../world/Light.js';
-
-import { atmosphericLightToBrightness } from './LightPolicy.js';
+import { waterfallLightingAt } from './WaterfallLighting.js';
 
 // ------------------------------------------------------------
 // ROZBRYZG POD WODOSPADEM (0.73.0)
@@ -78,6 +77,7 @@ export class WaterfallEffects {
         this.world = world;
 
         this.particles = new CubeParticles(scene, { capacity: 1600, surfaceLighting: true });
+        this.ripples = new WaterfallRipples(scene, world);
 
         this.landings = [];
         this.refresh = 0;
@@ -94,6 +94,8 @@ export class WaterfallEffects {
     setAmount(amount) {
 
         this.amount = Math.max(0, amount);
+        this.ripples.setLandings(this.landings, this.amount);
+        this.refresh = 0;
 
     }
 
@@ -112,6 +114,7 @@ export class WaterfallEffects {
         found.length = 0;
 
         if (!fluids?.forEachLanding) {
+            this.ripples.setLandings(found, this.amount);
             return;
         }
 
@@ -146,30 +149,13 @@ export class WaterfallEffects {
             found.length = MAX_LANDINGS;
         }
 
+        this.ripples.setLandings(found, this.amount);
+
     }
 
 
     lightingAt(x, y, z) {
-
-        const light = this.world.getLight(x, y, z);
-
-        const strongest = Math.max(light.red, light.green, light.blue);
-
-        const sky = lightToBrightness(light.sky) ** 2.2;
-
-        const lamp = strongest > 0 ? (lightToBrightness(COLOR_LEVEL[strongest]) ** 2.2) * 0.75 : 0;
-
-        const atmosphereLamp = strongest > 0 ? atmosphericLightToBrightness(COLOR_LEVEL[strongest]) : 0;
-
-        return {
-            sky: atmosphericLightToBrightness(light.sky) ** 2.2,
-            local: strongest > 0
-                ? [light.red, light.green, light.blue].map((channel) => (atmosphereLamp * channel / strongest) ** 2.2)
-                : [0, 0, 0],
-            emission: 0,
-            classicShade: Math.max(sky, lamp)
-        };
-
+        return waterfallLightingAt(this.world, x, y, z);
     }
 
 
@@ -190,6 +176,7 @@ export class WaterfallEffects {
 
         }
 
+        this.ripples.update(dt);
         this.particles.update(dt, null);
 
     }
@@ -315,6 +302,7 @@ export class WaterfallEffects {
     dispose() {
 
         this.particles.dispose();
+        this.ripples.dispose();
 
     }
 

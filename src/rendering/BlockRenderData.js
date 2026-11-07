@@ -3,6 +3,7 @@ import { campfireLightUniforms, CAMPFIRE_LIGHT_GLSL } from './CampfireLight.js';
 import { SURFACE_LIGHTING_GLSL } from './SurfaceLighting.js';
 import { installLightingDiagnostics } from './LightingDiagnostics.js';
 import { plantWindUniforms, PLANT_WIND_GLSL } from './PlantWind.js';
+import { WATER_WAVE_GLSL } from './WaterWave.js';
 import { getSurfaceFaceTexture } from './SurfaceMaterials.js';
 import { blockSurfaceProfile } from './SurfaceProfiles.js';
 import { installSurfaceProfiles } from './LeafLighting.js';
@@ -712,7 +713,8 @@ waterMaterial.onBeforeCompile = (shader, renderer) => {
             attribute vec2 plantMotion;
             varying vec3 vWaterWorld;
             varying vec3 vWaterNormal;
-            varying float vWaterFace;`
+            varying float vWaterFace;
+            ${WATER_WAVE_GLSL}`
         )
         .replace(
             '#include <begin_vertex>',
@@ -726,10 +728,7 @@ waterMaterial.onBeforeCompile = (shader, renderer) => {
 
             if (plantMotion.x > 0.0) {
 
-                float wave =
-                    sin(waterWorld.x * 0.9 + uTime * 1.3) * 0.5 +
-                    sin(waterWorld.z * 1.3 - uTime * 1.05) * 0.35 +
-                    sin((waterWorld.x + waterWorld.z) * 0.45 + uTime * 0.7) * 0.15;
+                float wave = waterWave(waterWorld.xz, uTime);
 
                 transformed.y += wave * uWaveHeight * plantMotion.x;
                 waterWorld.y += wave * uWaveHeight * plantMotion.x;

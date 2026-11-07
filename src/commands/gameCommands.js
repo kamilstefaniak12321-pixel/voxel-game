@@ -3422,6 +3422,29 @@ export const GAME_COMMANDS = [
 
 
     {
+        name: 'pogoda',
+        aliases: ['weather'],
+        usage: '/pogoda | /pogoda deszcz [0-100] | /pogoda sucho',
+        description: 'Lokalny deszcz i kręgi kropel na odkrytej wodzie, na czas bieżącej sesji.',
+        run(args, { game }) {
+            const rain = game?.rain;
+            if (!rain) throw new CommandError('Deszcz jest dostępny po wejściu do świata.');
+            if (!args.length) return rain.intensity > 0
+                ? `Deszcz: ${Math.round(rain.intensity * 100)}%.` : 'Brak deszczu. Włącz: /pogoda deszcz.';
+            const word = simplify(args[0]);
+            if (word === 'sucho' && args.length === 1) {
+                rain.setIntensity(0); return 'Deszcz ustał.';
+            }
+            if (word !== 'deszcz' || args.length > 2) throw usageError(this);
+            const amount = args[1] === undefined ? 100 : parseNumber(args[1], 'natężenie deszczu');
+            if (amount < 0 || amount > 100) throw new CommandError('Natężenie deszczu: od 0 do 100.');
+            rain.setIntensity(amount / 100);
+            return amount > 0 ? `Deszcz: ${amount}%.` : 'Deszcz ustał.';
+        },
+        complete(args) { return args.length === 1 ? ['deszcz', 'sucho'] : []; }
+    },
+
+    {
         name: 'woda',
         aliases: ['water', 'plywanie'],
         usage: '/woda | /woda basen | /woda znajdz | /woda fale <0-3>',

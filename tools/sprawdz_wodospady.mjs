@@ -3,7 +3,8 @@
 //
 // - spadająca woda liczy bloki spadku (1-16) i jest zwykłą pełną wodą,
 // - bok spadającej wody niesie w UV spadek (shader przyspiesza teksturę),
-// - rozbryzg rośnie ze spadkiem (krople, piana sięga dalej, mgiełka),
+// - rozbryzg kropli rośnie ze spadkiem (piana i mgiełka od 0.75 mają
+//   osobny test rzeczywistej siatki: sprawdz_piane_mgielke.mjs),
 // - rzeki w terenie realistycznym: przy spadku od RIVERS.waterfall bloków
 //   jest wodospad - woda nad nim i pod nim płaska, pod nim sadzawka
 //   głębsza i szersza niż koryto, woda nigdzie nie ucieka na boki,
@@ -41,7 +42,7 @@ const { getBlockId, getWaterLevel, isFlowingWaterId, isFallingWaterId, waterFall
 const { buildChunkGeometry } = await import('../src/rendering/ChunkMesher.js');
 const { WATER_FLOW_UV, WATER_FALL_MARK } = await import('../src/rendering/BlockRenderData.js');
 const { Chunk } = await import('../src/world/Chunk.js');
-const { waterfallStrength, MIST_FALL } = await import('../src/rendering/WaterfallEffects.js');
+const { waterfallStrength } = await import('../src/rendering/WaterfallEffects.js');
 const { RealisticGenerator, DETAIL_FULL } = await import('../src/world/terrain/RealisticGenerator.js');
 const { RIVERS } = await import('../src/world/terrain/TerrainShape.js');
 const { SCENES } = await import('../src/dev/scenes.js');
@@ -93,11 +94,9 @@ let previous = null;
 for (let fall = 1; fall <= 16; fall++) {
     const strength = waterfallStrength(fall);
     if (previous) {
-        check(strength.splash > previous.splash && strength.foam > previous.foam, 'Więcej kropli i piany');
-        check(strength.foamLife * strength.foamSpeed > previous.foamLife * previous.foamSpeed, 'Piana sięga dalej w dół rzeki');
+        check(strength.splash > previous.splash, 'Więcej kropli');
         check(strength.rise >= previous.rise, 'Krople wyżej');
     }
-    check((strength.mist > 0) === (fall >= MIST_FALL), 'Mgiełka tylko pod wysokim wodospadem');
     previous = strength;
 }
 

@@ -27,10 +27,11 @@ function sameLighting(a, b) {
  * never partially discovered cells. setLandings is normally called every .3s.
  */
 export class WaterfallRippleSurface {
-    constructor(world, { now = () => performance.now(), lightingAt = null } = {}) {
+    constructor(world, { now = () => performance.now(), lightingAt = null, transient = false } = {}) {
         this.world = world;
         this.now = now;
         this.lightingAt = lightingAt;
+        this.transient = transient;
         this.entries = [];
         this.jobs = [];
         this.revision = 0;
@@ -43,16 +44,22 @@ export class WaterfallRippleSurface {
 
     candidate(landing) {
         if (![landing?.x, landing?.y, landing?.z, landing?.fall].every(Number.isFinite)) return null;
+        if (this.transient && ![landing.radius ?? 1, landing.opacity ?? .35,
+            landing.birth ?? 0, landing.lifetime ?? 1.5].every(Number.isFinite)) return null;
         const x = Math.floor(landing.x), y = Math.floor(landing.y), z = Math.floor(landing.z);
         const cx = Math.floor(x / S), cz = Math.floor(z / S);
         const chunk = this.world.getChunk(cx, cz);
         if (!chunk || y < 0 || y >= CHUNK_HEIGHT) return null;
         const below = readChunk(chunk, x, y - 1, z, cx, cz);
-        const receivingY = getWaterLevel(below) >= 0 ? y - 1 : y;
+        const receivingY = this.transient ? y : getWaterLevel(below) >= 0 ? y - 1 : y;
         if (getWaterLevel(readChunk(chunk, x, receivingY, z, cx, cz)) < 0) return null;
-        return { key: `${x},${receivingY},${z}`, x, y: receivingY, z,
+        return { key: this.transient ? String(landing.key) : `${x},${receivingY},${z}`, x, y: receivingY, z,
             fall: Math.max(1, Math.min(16, landing.fall)), distance: landing.distance ?? 0,
-            lighting: landing.lighting };
+            lighting: landing.lighting,
+            ...(this.transient ? { centerX: landing.x, centerZ: landing.z,
+                radius: Math.max(.35, Math.min(6, landing.radius ?? 1)),
+                opacity: Math.max(0, Math.min(1, landing.opacity ?? .35)),
+                birth: landing.birth ?? 0, lifetime: Math.max(.1, landing.lifetime ?? 1.5) } : {}) };
     }
 
     setLandings(landings, amount = 1) {
@@ -68,7 +75,7 @@ export class WaterfallRippleSurface {
         candidates.sort((a, b) => b.fall - a.fall || a.distance - b.distance || a.x - b.x || a.z - b.z || a.y - b.y);
         const selected = [];
         for (const candidate of candidates) {
-            if (!selected.some(other => other.y === candidate.y &&
+            if (this.transient || !selected.some(other => other.y === candidate.y &&
                 (other.x - candidate.x) ** 2 + (other.z - candidate.z) ** 2 <= 4)) selected.push(candidate);
         }
         selected.sort((a, b) => a.distance - b.distance || b.fall - a.fall || a.x - b.x || a.z - b.z || a.y - b.y);
@@ -80,16 +87,19 @@ export class WaterfallRippleSurface {
             let entry = previous.get(candidate.key);
             previous.delete(candidate.key);
             if (!entry) {
-                entry = { id: this.nextId++, key: candidate.key, x: candidate.x + .5, y: candidate.y, z: candidate.z + .5,
-                    fall: candidate.fall, radius: 2 + .25 * candidate.fall, opacity: .12 + .02 * candidate.fall,
+                entry = { id: this.nextId++, key: candidate.key, x: candidate.centerX ?? candidate.x + .5,
+                    y: candidate.y, z: candidate.centerZ ?? candidate.z + .5,
+                    fall: candidate.fall, radius: candidate.radius ?? 2 + .25 * candidate.fall,
+                    opacity: candidate.opacity ?? .12 + .02 * candidate.fall,
+                    birth: candidate.birth ?? 0, lifetime: candidate.lifetime ?? 0,
                     lighting: candidate.lighting, patches: EMPTY, revision: 0, dependencies: EMPTY, job: null };
                 this.restart(entry);
             } else {
-                const resized = entry.fall !== candidate.fall;
+                const resized = entry.fall !== candidate.fall || entry.radius !== (candidate.radius ?? 2 + .25 * candidate.fall);
                 const relit = !sameLighting(entry.lighting, candidate.lighting);
                 entry.fall = candidate.fall;
-                entry.radius = 2 + .25 * candidate.fall;
-                entry.opacity = .12 + .02 * candidate.fall;
+                entry.radius = candidate.radius ?? 2 + .25 * candidate.fall;
+                entry.opacity = candidate.opacity ?? .12 + .02 * candidate.fall;
                 entry.lighting = candidate.lighting;
                 if (relit && !this.lightingAt) {
                     for (const patch of entry.patches) patch.lighting = candidate.lighting;
@@ -185,8 +195,11 @@ export class WaterfallRippleSurface {
     }
 
     enqueue(job, dx, dz) {
+        const x = job.x + dx, z = job.z + dz;
+        const gapX = job.entry.x - Math.max(x, Math.min(job.entry.x, x + 1));
+        const gapZ = job.entry.z - Math.max(z, Math.min(job.entry.z, z + 1));
         if (Math.abs(dx) > job.extent || Math.abs(dz) > job.extent ||
-            Math.max(0, Math.abs(dx) - .5) ** 2 + Math.max(0, Math.abs(dz) - .5) ** 2 > job.entry.radius ** 2) return;
+            gapX * gapX + gapZ * gapZ > job.entry.radius ** 2) return;
         const index = (dz + job.extent) * job.width + dx + job.extent;
         if (job.seen[index]) return;
         job.seen[index] = 1;
@@ -210,16 +223,17 @@ export class WaterfallRippleSurface {
         this.enqueue(job, dx, dz + 1);
     }
 
-    update() {
+    update(cellBudget = RIPPLE_SURFACE_CAPS.cellsPerUpdate) {
         this.lastProcessed = 0;
         this.lastMs = 0;
         if (!this.world || !this.entries.length) return;
         const start = this.now(), deadline = start + RIPPLE_SURFACE_CAPS.msPerUpdate;
+        const maxCells = Math.max(0, Math.min(RIPPLE_SURFACE_CAPS.cellsPerUpdate, Math.floor(cellBudget) || 0));
         // Metadata only: at most four chunk dependencies per emitter. No
         // settled water cells are revisited on normal frames, yet edits and
         // unloads remove stale geometry before another frame can draw it.
         for (const entry of this.entries) if (!this.valid(entry.dependencies)) this.restart(entry);
-        while (this.jobs.length && this.lastProcessed < RIPPLE_SURFACE_CAPS.cellsPerUpdate && this.now() < deadline) {
+        while (this.jobs.length && this.lastProcessed < maxCells && this.now() < deadline) {
             this.cursor %= this.jobs.length;
             const job = this.jobs[this.cursor];
             this.inspect(job);

@@ -12,7 +12,7 @@ const root = fileURLToPath(new URL('../', import.meta.url));
 const output = resolve(process.env.VOXEL_TEST_OUTPUT ?? 'test-results/waterfall-ripples');
 await mkdir(output, { recursive: true });
 const profile = await mkdtemp(resolve(output, 'voxel-ripples-'));
-const result = { scope: 'Real Game ripple on/off comparison and lifecycle; CPU timings are not gameplay FPS',
+const result = { scope: 'Real Game water-effect on/off comparisons, Player/rain impulses, Web Audio and lifecycle; CPU timings are not gameplay FPS',
     started: new Date().toISOString(), stage: 'chrome-startup', errors: [], screenshots: [] };
 const mime = { '.js': 'text/javascript', '.mjs': 'text/javascript', '.json': 'application/json',
     '.png': 'image/png', '.jpg': 'image/jpeg', '.webp': 'image/webp', '.css': 'text/css' };
@@ -39,6 +39,8 @@ try {
         ? 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe' : 'google-chrome'), [
         '--headless', '--no-sandbox', '--disable-dev-shm-usage', '--use-angle=swiftshader', '--enable-unsafe-swiftshader',
         '--no-first-run', '--disable-background-networking', '--window-size=720,480',
+        // Keep actual Web Audio nodes and clocks; mute only the browser output.
+        '--autoplay-policy=no-user-gesture-required', '--mute-audio',
         '--remote-debugging-port=0', `--user-data-dir=${profile}`, 'about:blank'
     ], { stdio: ['ignore', 'pipe', 'pipe'] });
     chrome.on('error', error => startupError = error);
@@ -107,16 +109,57 @@ try {
     }
     for (const [i, phase] of [.2, .8, 1.4, 2.6].entries()) await capture('drop-16', phase, true, `loop-${i}.png`);
     result.animation = await evaluate('rippleQA.animation()');
-    result.stage = 'shadow-variants';
-    result.shadowVariants = await evaluate('rippleQA.shadowVariants()');
     result.stage = 'measurement';
     result.measurement = await evaluate('rippleQA.measure()');
+    result.stage = 'five-water-effects';
+    const captureEffect = async (kind, light, enabled, suffix = '') => {
+        const metadata = await evaluate(`rippleQA.renderEffect(${JSON.stringify(kind)},${JSON.stringify(light)},${enabled})`);
+        const image = await call('Page.captureScreenshot', { format: 'png' });
+        const name = `${kind}-${light}-${enabled ? 'on' : 'off'}${suffix}.png`;
+        await writeFile(resolve(output, name), Buffer.from(image.data, 'base64'));
+        result.screenshots.push({ name, ...metadata });
+    };
+    result.effects = { comparisons: {} };
+    for (const kind of ['foam', 'mist', 'wet']) for (const light of ['day', 'night']) {
+        await captureEffect(kind, light, false); await captureEffect(kind, light, true);
+        result.effects.comparisons[`${kind}-${light}`] = await evaluate(`rippleQA.compareEffect('${kind}','${light}')`);
+    }
+    result.effects.lighting = await evaluate('rippleQA.lightingComparison()');
+    result.stage = 'dynamic-torch-light';
+    result.effects.dynamicLight = {};
+    for (const kind of ['ripples', 'foam', 'wet']) {
+        for (const enabled of [false, true]) {
+            const metadata = await evaluate(`rippleQA.renderDynamicLight('${kind}',${enabled})`);
+            const screenshot = await call('Page.captureScreenshot', { format: 'png' });
+            const name = `${kind}-night-torch-${enabled ? 'on' : 'off'}.png`;
+            await writeFile(resolve(output, name), Buffer.from(screenshot.data, 'base64'));
+            result.screenshots.push({ name, ...metadata });
+        }
+        result.effects.dynamicLight[kind] = await evaluate(`rippleQA.compareDynamicLight('${kind}')`);
+    }
+    result.effects.dynamicLight.restored = await evaluate('rippleQA.finishDynamicLight()');
+    result.stage = 'player-impulses';
+    result.effects.player = await evaluate('rippleQA.playerImpulses()');
+    await captureEffect('impacts', 'day', false, '-player'); await captureEffect('impacts', 'day', true, '-player');
+    result.effects.playerImage = await evaluate("rippleQA.compareEffect('impacts','day')");
+    result.stage = 'rain-impulses';
+    result.effects.rain = await evaluate('rippleQA.rainImpulses(false)');
+    for (const kind of ['impacts', 'rain']) {
+        await captureEffect(kind, 'day', false, '-rain'); await captureEffect(kind, 'day', true, '-rain');
+        result.effects[`${kind}RainImage`] = await evaluate(`rippleQA.compareEffect('${kind}','day')`);
+    }
+    result.stage = 'shadow-variants';
+    result.shadowVariants = await evaluate('rippleQA.shadowVariants()');
+    result.effects.roof = await evaluate('rippleQA.rainImpulses(true)');
+    result.stage = 'web-audio';
+    result.effects.audio = await evaluate('rippleQA.audioChecks()');
+    result.effects.limits = await evaluate('rippleQA.effectLimits()');
     result.stage = 'lifecycle';
     result.lifecycle = await evaluate('rippleQA.lifecycle()');
-    await evaluate('rippleQA.dispose()');
+    result.disposal = await evaluate('rippleQA.dispose()');
     assert.deepEqual(result.errors, [], 'No JavaScript or WebGL console errors');
     result.valid = true; result.stage = 'complete';
-    console.log(`OK: ripple rendering, loop, CPU caps and ${result.lifecycle.checks.length} lifecycle checks.`);
+    console.log(`OK: ripple loop, foam/mist/wet day/night images, player/rain impacts, real Web Audio, CPU caps and ${result.lifecycle.checks.length} lifecycle checks.`);
     console.log('WATERFALL_RIPPLE_RESULT=' + JSON.stringify(result));
 } catch (error) {
     result.valid = false; result.errors.push(error.stack ?? String(error));

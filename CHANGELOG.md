@@ -11,6 +11,28 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 0.75.0 - Wyporność, ciągły nurt i żywa woda
+
+Przygotowanie kolejnego wydania po 0.74.0 — PR do powiązania.
+
+- Gracz automatycznie utrzymuje się przy tafli z oczami nad wodą.
+  Shift pozwala świadomie nurkować, Spacja unosi wyżej i nadal służy
+  do wychodzenia na brzeg. Pionowa struga nie działa jak automatyczna winda.
+- Naprawiona blokada na spadkach rzek: lokalny gradient nie odwraca
+  proceduralnego nurtu. Kierunek i prędkość są spójne w naturalnym
+  korycie, a baseny nad rzeką nie dziedziczą jej ruchu.
+- Płaska, nieregularna piana niesiona nurtem i miękka mgiełka zastępują
+  sześcienne odpowiedniki; krople rozbryzgu pozostają.
+- Odsłonięte skały przy uderzeniu są ciemniejsze i delikatnie połyskują.
+  Szum wodospadu zależy od spadku, przeszkód i zanurzenia słuchacza.
+- Krótkie kręgi po ruchu i wejściu gracza do wody oraz po kroplach
+  deszczu. Pierwszy prosty opad: `/pogoda deszcz [0-100]` i `/pogoda sucho`.
+  Dachy zatrzymują krople przed taflą; pogoda dotyczy bieżącej sesji.
+- Limity pracy, siatek, kropli i głosów, współdzielony budżet odkrywania
+  kręgów oraz obsługa zmian i wyładowania chunków. Testy fizyki 30/60/120 Hz,
+  naturalnej rzeki, pięciu efektów, ciemności, nagrań i zwalniania zasobów.
+  [Opis, pomysły i pomiary](docs/woda-0.75.0.md).
+
 ## 0.74.0 - Kręgi na tafli pod wodospadami
 
 Przygotowanie kolejnego wydania po 0.73.0 — PR #110.

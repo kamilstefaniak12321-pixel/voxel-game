@@ -4,6 +4,9 @@ import { getWaterLevel } from '../blocks/BlockRegistry.js';
 
 import { CubeParticles } from './CubeParticles.js';
 import { WaterfallRipples } from './WaterfallRipples.js';
+import { WaterfallFoam } from './WaterfallFoam.js';
+import { WaterfallMist, MIST_MIN_FALL } from './WaterfallMist.js';
+import { effectAmount } from './WaterfallEffectMaterial.js';
 
 import { waterfallLightingAt } from './WaterfallLighting.js';
 
@@ -15,11 +18,12 @@ import { waterfallLightingAt } from './WaterfallLighting.js';
 // dół każdego strumienia (WaterSimulation.landing) - tu, przy graczu,
 // z tych miejsc lecą:
 //   - krople w górę i na boki - im wyższy spadek, tym wyżej i więcej,
-//   - piana na tafli, niesiona nurtem (albo na boki) - im wyższy spadek,
-//     tym jej więcej i dłużej płynie, więc sięga dalej w dół rzeki,
+//   - płaska piana na tafli, z teksturą przesuwaną nurtem - im wyższy
+//     spadek, tym większa i bardziej widoczna plama,
 //   - mgiełka - tylko pod wysokim wodospadem (od MIST_FALL bloków).
-// Cząsteczki to małe sześciany (CubeParticles.js, jedno rysowanie),
-// oświetlone jak teren w miejscu wodospadu.
+// Krople zachowują sześciany. Piana wykorzystuje gotową maskę tafli
+// fal, a mgiełka miękkie billboardy. Każda warstwa ma jedno rysowanie,
+// twardy limit i wspólne z wodą oświetlenie/cienie.
 // ------------------------------------------------------------
 
 // Jak daleko od gracza (w poziomie) wodospady chlapią.
@@ -32,16 +36,12 @@ const MAX_LANDINGS = 64;
 const REFRESH = 0.3;
 
 // Od jakiego spadku jest mgiełka.
-export const MIST_FALL = 6;
+export const MIST_FALL = MIST_MIN_FALL;
 
 // Ile cząsteczek na sekundę z jednego dołu (spadek 1 i za każdy blok).
 export const SPLASH_RATE = [3, 1.6];
-export const FOAM_RATE = [2, 0.9];
-const MIST_RATE = 0.5;
 
 const DROP_COLORS = [new THREE.Color(0.92, 0.97, 1.0), new THREE.Color(0.7, 0.84, 0.95), new THREE.Color(0.55, 0.72, 0.9)];
-const FOAM_COLORS = [new THREE.Color(1, 1, 1), new THREE.Color(0.93, 0.97, 1), new THREE.Color(0.8, 0.9, 0.97)];
-const MIST_COLORS = [new THREE.Color(0.95, 0.97, 1), new THREE.Color(0.9, 0.94, 0.98), new THREE.Color(0.85, 0.9, 0.95)];
 
 
 function random(min, max) {
@@ -51,7 +51,7 @@ function random(min, max) {
 }
 
 
-// Ile piany i jak długo płynie przy danym spadku - też do testów.
+// Stawka i wysokość zachowanych sześciennych kropli.
 
 export function waterfallStrength(fall) {
 
@@ -59,12 +59,7 @@ export function waterfallStrength(fall) {
 
     return {
         splash: SPLASH_RATE[0] + SPLASH_RATE[1] * (f - 1),
-        foam: FOAM_RATE[0] + FOAM_RATE[1] * (f - 1),
-        mist: f >= MIST_FALL ? MIST_RATE * f : 0,
-        // Prędkość kropli w górę (bloki/s) i jak długo płynie piana (s).
-        rise: Math.min(6.5, 2 + f * 0.3),
-        foamLife: 0.9 + f * 0.3,
-        foamSpeed: 0.7 + f * 0.07
+        rise: Math.min(6.5, 2 + f * 0.3)
     };
 
 }
@@ -78,10 +73,15 @@ export class WaterfallEffects {
 
         this.particles = new CubeParticles(scene, { capacity: 1600, surfaceLighting: true });
         this.ripples = new WaterfallRipples(scene, world);
+        this.foam = new WaterfallFoam(scene, this.ripples.surface);
+        this.mist = new WaterfallMist(scene);
+        this.materials = [this.ripples.material, this.foam.material, this.mist.material];
 
         this.landings = [];
         this.refresh = 0;
         this.amount = 1;
+        this.landingRevision = 0;
+        this.disposed = false;
 
         this.position = new THREE.Vector3();
         this.velocity = new THREE.Vector3();
@@ -93,8 +93,11 @@ export class WaterfallEffects {
 
     setAmount(amount) {
 
-        this.amount = Math.max(0, amount);
+        if (this.disposed) return;
+        this.amount = effectAmount(amount);
         this.ripples.setLandings(this.landings, this.amount);
+        this.foam.setAmount(this.amount);
+        this.mist.setAmount(this.amount);
         this.refresh = 0;
 
     }
@@ -105,6 +108,7 @@ export class WaterfallEffects {
 
     findLandings(x, z) {
 
+        if (this.disposed) return;
         const fluids = this.world.fluids;
 
         const found = this.landings;
@@ -112,9 +116,12 @@ export class WaterfallEffects {
         const previous = new Map(found.map((landing) => [landing.key, landing]));
 
         found.length = 0;
+        this.landingRevision++;
 
         if (!fluids?.forEachLanding) {
             this.ripples.setLandings(found, this.amount);
+            this.foam.setLandings(found);
+            this.mist.setLandings(found);
             return;
         }
 
@@ -126,20 +133,20 @@ export class WaterfallEffects {
 
             const below = this.world.getBlockId(lx, ly - 1, lz);
 
-            // Na tafli źródła - piana tuż pod jej wierzchem; na dnie -
-            // na rozlanej cienkiej wodzie.
+            // Punkt startu kropli i mgiełki. Piana ma osobno dokładne
+            // wysokości maski tafli, wspólne z siatką wody i falami.
             const surface = getWaterLevel(below) === 0 ? ly - 0.12 : ly + 0.2;
 
-            const flow = this.world.getFlow?.(lx, lz) ?? this.world.getFlow?.(lx, lz + 1) ?? null;
+            const receivingY = getWaterLevel(below) >= 0 ? ly - 1 : ly;
+            const flow = this.world.getWaterFlow?.(lx, receivingY, lz)
+                ?? this.world.getFlow?.(lx, lz) ?? this.world.getFlow?.(lx, lz + 1) ?? null;
 
             found.push({
                 key, x: lx, y: ly, z: lz, fall, surface,
                 flowX: flow ? flow[0] : 0, flowZ: flow ? flow[1] : 0,
                 distance: Math.hypot(lx + 0.5 - x, lz + 0.5 - z),
                 lighting: this.lightingAt(lx, ly, lz),
-                splash: old?.splash ?? Math.random(),
-                foam: old?.foam ?? Math.random(),
-                mist: old?.mist ?? Math.random()
+                splash: old?.splash ?? Math.random()
             });
 
         });
@@ -150,6 +157,8 @@ export class WaterfallEffects {
         }
 
         this.ripples.setLandings(found, this.amount);
+        this.foam.setLandings(found);
+        this.mist.setLandings(found);
 
     }
 
@@ -159,8 +168,10 @@ export class WaterfallEffects {
     }
 
 
-    update(dt, player) {
+    update(dt, player, camera = null) {
 
+        if (this.disposed) return;
+        dt = Number.isFinite(dt) ? Math.max(0, dt) : 0;
         if (player && this.amount > 0) {
 
             this.refresh -= dt;
@@ -177,6 +188,8 @@ export class WaterfallEffects {
         }
 
         this.ripples.update(dt);
+        this.foam.update(dt);
+        this.mist.update(dt, camera ?? player?.camera);
         this.particles.update(dt, null);
 
     }
@@ -192,19 +205,9 @@ export class WaterfallEffects {
         const scale = this.amount * near;
 
         landing.splash += strength.splash * scale * dt;
-        landing.foam += strength.foam * scale * dt;
-        landing.mist += strength.mist * scale * dt;
 
         for (; landing.splash >= 1; landing.splash--) {
             this.drop(landing, strength);
-        }
-
-        for (; landing.foam >= 1; landing.foam--) {
-            this.foam(landing, strength);
-        }
-
-        for (; landing.mist >= 1; landing.mist--) {
-            this.mist(landing);
         }
 
     }
@@ -237,61 +240,6 @@ export class WaterfallEffects {
     }
 
 
-    foam(landing, strength) {
-
-        // Z nurtem rzeki, a gdzie nurtu nie ma - na boki od wodospadu.
-
-        const flowing = Math.hypot(landing.flowX, landing.flowZ) > 0.05;
-
-        const angle = flowing
-            ? Math.atan2(landing.flowZ, landing.flowX) + random(-0.5, 0.5)
-            : Math.random() * Math.PI * 2;
-
-        const speed = strength.foamSpeed * random(0.7, 1.2);
-
-        this.position.set(landing.x + 0.5 + random(-0.6, 0.6), landing.surface, landing.z + 0.5 + random(-0.6, 0.6));
-
-        this.velocity.set(Math.cos(angle) * speed, 0, Math.sin(angle) * speed);
-
-        this.particles.emit({
-            position: this.position,
-            velocity: this.velocity,
-            life: strength.foamLife * random(0.7, 1.2),
-            size: random(0.12, 0.22),
-            sizeEnd: 0.06,
-            fade: 0.4,
-            colors: FOAM_COLORS,
-            lighting: landing.lighting,
-            drag: 0.25,
-            spin: 1
-        });
-
-    }
-
-
-    mist(landing) {
-
-        this.position.set(landing.x + random(-0.3, 1.3), landing.surface + random(0, 0.6), landing.z + random(-0.3, 1.3));
-
-        this.velocity.set(random(-0.4, 0.4), random(0.3, 0.8), random(-0.4, 0.4));
-
-        this.particles.emit({
-            position: this.position,
-            velocity: this.velocity,
-            life: random(1.0, 1.8),
-            size: random(0.18, 0.3),
-            sizeEnd: 0.4,
-            fade: 0.5,
-            colors: MIST_COLORS,
-            lighting: landing.lighting,
-            lift: 0.4,
-            drag: 1.2,
-            spin: 1
-        });
-
-    }
-
-
     get count() {
 
         return this.particles.count;
@@ -299,10 +247,22 @@ export class WaterfallEffects {
     }
 
 
+    stats() {
+        return { drops: this.count, landingRevision: this.landingRevision,
+            ripples: this.ripples.stats(), foam: this.foam.stats(), mist: this.mist.stats() };
+    }
+
+
     dispose() {
 
+        if (this.disposed) return;
+        this.disposed = true;
         this.particles.dispose();
+        this.foam.dispose();
+        this.mist.dispose();
         this.ripples.dispose();
+        this.landings.length = 0;
+        this.world = null;
 
     }
 

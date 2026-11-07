@@ -394,5 +394,13 @@ export const RIVERS = {
     meanderScale: 70,
     meanderSlope: [0.004, 0.03],
     flow: [0.6, 3.2],
-    flowSlope: 45
+    flowSlope: 45,
+    // Wodospad (0.73.0): gdzie poziom wody między sąsiednimi kratkami
+    // spada o waterfall bloków albo więcej, rzeka nie schodzi łagodnie
+    // po progach, tylko płynie płasko i spada naraz z krawędzi; pod nią
+    // sadzawka (pool: o ile szersza niż koryto i głębsza niż dno -
+    // najmniej i ile dochodzi na blok spadku, najwięcej).
+    waterfall: 5,
+    poolWiden: [1.5, 0.25, 4],
+    poolDepth: [1.5, 0.3, 4]
 };

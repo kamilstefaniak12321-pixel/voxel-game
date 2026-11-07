@@ -619,6 +619,16 @@ const waterTile = ATLAS_TILES.water;
 // przesunięty o nurt / 3.97 bloku/s razy WATER_FLOW_UV rozmiaru kafelka.
 export const WATER_FLOW_UV = 0.35;
 
+// Bok spadającej wody (0.73.0): zamiast nurtu UV niesie spadek (u: 1/16
+// na blok spadku) i znacznik WATER_FALL_MARK (v poza kafelkiem). Im dłużej
+// woda spada, tym szybciej płynie tekstura i tym dłuższe są smugi -
+// WATER_FALL_SPEED razy szybciej na każdy blok spadku, WATER_FALL_STRETCH
+// dłuższe smugi. Górna część bloku przechodzi w prędkość bloku nad nim,
+// więc między blokami nie ma szwu.
+export const WATER_FALL_MARK = 2;
+export const WATER_FALL_SPEED = 0.3;
+export const WATER_FALL_STRETCH = 0.06;
+
 // Woda z bliska jest półprzezroczysta (widać przez nią ciemne dno), więc
 // wydaje się trochę jaśniejsza i mniej niebieska niż sama tekstura -
 // daleka (nieprzezroczysta) woda dostaje taki odcień: mnożnik koloru
@@ -804,6 +814,48 @@ waterMaterial.onBeforeCompile = (shader, renderer) => {
                 0.5
             );
 
+            // Bok spadającej wody: im dłuższy spadek, tym szybciej (i w
+            // dłuższych smugach) - u góry bloku jak blok nad nim. Szybka
+            // woda jest spieniona: bielsza w smugach i mniej przezroczysta.
+
+            float waterFoam = 0.0;
+
+            if (abs(vWaterFace) <= 0.5 && riverFlow.y > ${(WATER_FALL_MARK * 127 / 32 * 0.6).toFixed(3)}) {
+
+                float fall = floor(riverFlow.x * ${(32 / 127 * 16).toFixed(4)} + 0.5);
+
+                float upper = max(fall - 1.0, 0.0);
+
+                float blend = smoothstep(0.6, 1.0, fract(vWaterWorld.y));
+
+                float stretch = 1.0 + ${WATER_FALL_STRETCH.toFixed(3)} * mix(fall, upper, blend);
+
+                float speed = 1.0 + ${WATER_FALL_SPEED.toFixed(3)} * fall;
+                float upperSpeed = 1.0 + ${WATER_FALL_SPEED.toFixed(3)} * upper;
+
+                vec2 fallPlane = vec2(waterPlane.x, waterPlane.y / stretch);
+
+                vec4 fallA = waterTexel(fallPlane + flowA * speed * uTime, waterLod);
+                vec4 fallB = waterTexel(fallPlane + flowB * speed * uTime + 0.37, waterLod);
+
+                if (blend > 0.0) {
+
+                    fallA = mix(fallA, waterTexel(fallPlane + flowA * upperSpeed * uTime, waterLod), blend);
+                    fallB = mix(fallB, waterTexel(fallPlane + flowB * upperSpeed * uTime + 0.37, waterLod), blend);
+
+                }
+
+                // Smugi piany tam, gdzie dwie warstwy się różnią.
+
+                float streak = clamp(abs(dot(fallA.rgb - fallB.rgb, vec3(0.333))) * 8.0, 0.0, 1.0);
+
+                waterFoam = min(0.6, 0.15 + 0.035 * mix(fall, upper, blend));
+
+                waterColor = mix(fallA, fallB, 0.5);
+                waterColor.rgb = mix(waterColor.rgb, vec3(1.0), waterFoam * (0.45 + 0.75 * streak));
+
+            }
+
             diffuseColor *= waterColor;`
         )
         .replace(
@@ -815,6 +867,10 @@ waterMaterial.onBeforeCompile = (shader, renderer) => {
             float waterFacing = abs(dot(normalize(cameraPosition - vWaterWorld), waterNormal));
 
             diffuseColor.a = mix(uWaterOpacityGrazing, uWaterOpacity, pow(waterFacing, 0.6));
+
+            // Spieniona spadająca woda prawie nie prześwituje.
+
+            diffuseColor.a = max(diffuseColor.a, waterFoam * 1.4);
 
             // Przy granicy prawdziwych chunków (z dalekim terenem za nimi):
             // promień przez wodę schodzi pod powierzchnię i wychodzi poza

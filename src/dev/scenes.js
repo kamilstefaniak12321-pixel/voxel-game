@@ -184,6 +184,57 @@ function buildPlantModelScene({ world, player }, origin) {
 
 
 // ------------------------------------------------------------
+// Wodospady (0.73.0): trzy skały z korytem na górze - woda spada 3, 8
+// i 16 bloków do sadzawek. Im wyższy spadek, tym szybsza woda,
+// więcej kropli i piany (WaterfallEffects.js).
+// ------------------------------------------------------------
+
+export const WATERFALL_SCENE_FALLS = [3, 8, 16];
+
+function buildWaterfallScene({ world, player }, origin) {
+
+    let placed = 0;
+
+    const set = (x, y, z, type) => {
+        if (type === null ? world.clearBlock(x, y, z) : world.setBlock(x, y, z, type)) placed++;
+    };
+
+    WATERFALL_SCENE_FALLS.forEach((fall, i) => {
+
+        const cx = origin.x + (1 - i) * 12;
+        const top = origin.y + fall + 1;
+
+        // Sadzawka w posadzce (3 bloki głęboka) przed skałą.
+
+        for (let x = cx - 3; x <= cx + 3; x++) {
+            for (let z = origin.z + 7; z <= origin.z + 13; z++) {
+                for (let y = origin.y - 2; y <= origin.y; y++) set(x, y, z, 'water');
+            }
+        }
+
+        // Skała, a na niej koryto ze źródłami - woda wylewa się
+        // krawędzią od strony sadzawki (z tyłu ściana).
+
+        for (let x = cx - 2; x <= cx + 2; x++) {
+            for (let z = origin.z + 14; z <= origin.z + 21; z++) {
+                for (let y = origin.y + 1; y <= top; y++) {
+                    const channel = y === top && Math.abs(x - cx) <= 1 && z <= origin.z + 20;
+                    set(x, y, z, channel ? 'water' : 'stone');
+                }
+            }
+        }
+
+    });
+
+    place(player, origin.x + 0.5, origin.y + 5, origin.z - 8.5, Math.PI, 0.12);
+
+    return `Wodospady ${WATERFALL_SCENE_FALLS.join(', ')} bloków (${placed} bloków). Woda zaczyna płynąć po chwili; ` +
+        'im dłużej spada, tym szybciej płynie i mocniej chlapie. W świecie realistycznym: /rzeka wodospad tp.';
+
+}
+
+
+// ------------------------------------------------------------
 // Lista scen (kolejność = kolejność w menu)
 // ------------------------------------------------------------
 
@@ -274,6 +325,14 @@ export const SCENES = [
         description: 'Odkrywka do dna świata - widać warstwy skał pod terenem.',
         command: ['demo', 'skaly'],
         slot: { x: 280, z: 100 }
+    },
+
+    {
+        id: 'wodospady',
+        name: 'Wodospady',
+        description: 'Trzy wodospady (3, 8 i 16 bloków) z sadzawkami - przyspieszanie spadającej wody, krople, piana i mgiełka.',
+        build: buildWaterfallScene,
+        slot: { x: 440, z: 100 }
     },
 
     {

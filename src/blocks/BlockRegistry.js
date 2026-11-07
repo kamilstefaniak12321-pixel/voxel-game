@@ -13,8 +13,8 @@ import { BLUEBERRY_STAGES, BLUEBERRY_TEXTURE, blueberryIcon } from './blueberry.
 import { FRUIT_BUSH_PROFILES } from '../rendering/FruitBushGeometry.js';
 import { PLANT_PACKS, PLANT_PIXELS, plantStageType, plantTile } from './plantPacks.js';
 import { TORCH_BLOCKS } from './torches.js';
-import { FLOWING_WATER_BLOCKS, WATER_SOURCE_ID, WATER_FALLING_ID, plainWaterLevel, waterHeightForLevel } from './water.js';
-export { WATER_SOURCE_ID, WATER_FALLING_ID, waterIdForLevel } from './water.js';
+import { FLOWING_WATER_BLOCKS, WATER_SOURCE_ID, WATER_FALLING_LAST_ID, plainWaterLevel, waterHeightForLevel } from './water.js';
+export { WATER_SOURCE_ID, WATER_FALLING_ID, WATER_FALL_MAX, waterIdForLevel, isFallingWaterId, waterFallDistance, fallingWaterId } from './water.js';
 
 // ID 0 jest zarezerwowane dla powietrza.
 // Chunk przechowuje bloki jako liczby, więc pusta tablica = samo powietrze.
@@ -35,7 +35,8 @@ export const AIR_ID = 0;
 //   5000-9999               paczki roślin (plantPacks.js),
 //   10000-10099             konstrukcje (ognisko 10000, pochodnie 10010-10094),
 //   10100-10107             wewnętrzne poziomy i spadanie wody,
-//   10108-65279             wolne na przyszłość.
+//   10108-10122             spadanie wody 2-16 bloków (0.73.0),
+//   10123-65279             wolne na przyszłość.
 
 export const MAX_BLOCK_ID = 65279;
 
@@ -1415,7 +1416,7 @@ export function getWaterLevel(id) {
 export function isWaterSourceId(id) { return getWaterLevel(id) === 0; }
 
 export function isFlowingWaterId(id) {
-    return id > WATER_SOURCE_ID && id <= WATER_FALLING_ID && plainWaterLevel(id) > 0;
+    return id > WATER_SOURCE_ID && id <= WATER_FALLING_LAST_ID && plainWaterLevel(id) > 0;
 }
 
 export function getWaterBaseHeight(id) { return waterHeightForLevel(getWaterLevel(id)); }

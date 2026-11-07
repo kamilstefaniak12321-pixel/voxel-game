@@ -1183,7 +1183,10 @@ export class Rivers {
             segmentEndLakes: [],
             bins: Array.from({ length: BINS * BINS }, () => []),
             lakes: [],
-            lakeBins: Array.from({ length: BINS * BINS }, () => [])
+            lakeBins: Array.from({ length: BINS * BINS }, () => []),
+            // Wodospady: krawędź, kierunek nurtu, poziom wody nad i pod nim.
+            falls: [],
+            fallKeys: new Set()
         };
 
         const done = new Set();
@@ -1308,8 +1311,23 @@ export class Rivers {
         const P = p >= 0 ? this.pointOf(p) : null;
         const Q = q >= 0 ? this.pointOf(q) : null;
 
-        const A = P ? average(P, C) : C;
-        const B = Q ? average(C, Q) : C;
+        let A = P ? average(P, C) : C;
+        let B = Q ? average(C, Q) : C;
+
+        // Wodospad: przy spadku o RIVERS.waterfall bloków (albo więcej)
+        // do następnej kratki woda w tej kratce stoi płasko do samej
+        // krawędzi (B) - tam spada naraz; tak samo poniżej (A) zaczyna
+        // płasko od razu na dole. Piętra rzeki zamiast schodków.
+
+        const fallsHere = Q && !startLake && !endLake && C.level - Q.level >= RIVERS.waterfall;
+
+        if (P && P.level - C.level >= RIVERS.waterfall) {
+            A = { ...A, level: C.level };
+        }
+
+        if (Q && C.level - Q.level >= RIVERS.waterfall) {
+            B = { ...B, level: C.level };
+        }
 
 
         // Krzywa Béziera A -> C -> B (bez p albo q - prosto).
@@ -1399,6 +1417,27 @@ export class Rivers {
 
             previous = point;
 
+            // Krawędź wodospadu (koniec krzywej) - do sadzawki pod nim.
+
+            if (s === steps && fallsHere) {
+
+                const key = `${c},${q}`;
+
+                if (!zone.fallKeys.has(key)) {
+
+                    zone.fallKeys.add(key);
+
+                    zone.falls.push({
+                        x: point.x, z: point.z,
+                        dirX: tx / length, dirZ: tz / length,
+                        top: Math.floor(C.level), bottom: Math.floor(Q.level),
+                        width: point.width
+                    });
+
+                }
+
+            }
+
         }
 
     }
@@ -1446,6 +1485,7 @@ export class Rivers {
         out.flowZ = 0;
         out.riverGap = Infinity;
         out.lakeGap = Infinity;
+        out.waterfallPool = 0;
 
         // Naturalnie zanurzone dno morza nie potrzebuje wałów przy
         // korycie. Rzeka może je pogłębić, ale nie usypuje wysp ani
@@ -1713,7 +1753,16 @@ export class Rivers {
 
                     const step = nearLake ? 1 : Math.max(0, Math.floor(raw + 2.5 * rise + 0.05) - segmentLevel, rimLevel - segmentLevel);
 
-                    height = Math.max(height, level + Math.min(2, step));
+                    // Obok wodospadu (woda innego odcinka wyżej o cały
+                    // spadek): brzeg poniżej krawędzi to skała wodospadu -
+                    // górna woda nie rozlewa się na boki, tylko spada
+                    // korytem.
+                    if (!nearLake && rimLevel - segmentLevel >= RIVERS.waterfall) {
+                        height = Math.max(height, rimLevel + 1);
+                    }
+                    else {
+                        height = Math.max(height, level + Math.min(2, step));
+                    }
 
                     out.river = 2;
 
@@ -1749,6 +1798,16 @@ export class Rivers {
 
             }
 
+        }
+
+
+        // Sadzawka pod wodospadem: po stronie w dół nurtu od krawędzi
+        // misa szersza i głębsza niż koryto (tym bardziej, im wyższy
+        // spadek), z wodą na poziomie rzeki poniżej; wokół niej brzeg
+        // trzyma wodę.
+
+        if (spacing === 1 && zone.falls?.length > 0 && lake === null && !seaWater) {
+            height = this.pool(zone.falls, px, pz, height, out);
         }
 
 
@@ -1789,6 +1848,107 @@ export class Rivers {
         }
 
         return height;
+
+    }
+
+
+    // Sadzawki pod wodospadami (shape): wysokość terenu w kolumnie
+    // o środku (px, pz).
+
+    pool(falls, px, pz, height, out) {
+
+        for (const fall of falls) {
+
+            const drop = fall.top - fall.bottom;
+
+            const radius = fall.width + Math.min(RIVERS.poolWiden[2], RIVERS.poolWiden[0] + RIVERS.poolWiden[1] * drop);
+
+            const dx = px - fall.x;
+            const dz = pz - fall.z;
+
+            if (Math.abs(dx) > radius + RIM || Math.abs(dz) > radius + RIM) {
+                continue;
+            }
+
+            // Tylko w dół nurtu od krawędzi (w górę - skała wodospadu).
+
+            if (dx * fall.dirX + dz * fall.dirZ < 0) {
+                continue;
+            }
+
+            // Górna rzeka (wyżej niż dno wodospadu) zostaje.
+
+            if (out.water > fall.bottom) {
+                continue;
+            }
+
+            const distance = Math.hypot(dx, dz);
+
+            if (distance < radius) {
+
+                const across = distance / radius;
+
+                const depth = RIVERS.depth + Math.min(RIVERS.poolDepth[2], RIVERS.poolDepth[0] + RIVERS.poolDepth[1] * drop);
+
+                const bed = fall.bottom - 1 - depth * (1 - across * across);
+
+                height = Math.min(height, bed + 0.99);
+
+                out.water = Math.max(out.water, fall.bottom);
+
+                if (out.river !== 1) {
+                    out.river = 1;
+                    out.flowX = fall.dirX * RIVERS.flow[0];
+                    out.flowZ = fall.dirZ * RIVERS.flow[0];
+                }
+
+                out.waterfallPool = Math.max(out.waterfallPool ?? 0, drop);
+
+            }
+            else if (distance < radius + RIM && out.river !== 1) {
+
+                // Brzeg sadzawki - nie niżej niż jej woda.
+
+                height = Math.max(height, fall.bottom + 1);
+
+            }
+
+        }
+
+        return height;
+
+    }
+
+
+    // Wodospady w pobliżu (x, z) - do scen i testów: krawędź, kierunek,
+    // poziom wody nad i pod nim.
+
+    waterfalls(x, z, radius = 128) {
+
+        const found = [];
+
+        for (let zx = Math.floor((x - radius) / ZONE); zx <= Math.floor((x + radius) / ZONE); zx++) {
+
+            for (let zz = Math.floor((z - radius) / ZONE); zz <= Math.floor((z + radius) / ZONE); zz++) {
+
+                const zone = this.zoneAt(zx * ZONE, zz * ZONE);
+
+                for (const fall of zone.falls ?? []) {
+
+                    if (
+                        Math.abs(fall.x - x) <= radius && Math.abs(fall.z - z) <= radius &&
+                        !found.some((other) => Math.abs(other.x - fall.x) < 0.01 && Math.abs(other.z - fall.z) < 0.01)
+                    ) {
+                        found.push(fall);
+                    }
+
+                }
+
+            }
+
+        }
+
+        return found;
 
     }
 

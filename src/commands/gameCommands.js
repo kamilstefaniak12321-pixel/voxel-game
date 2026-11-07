@@ -3250,8 +3250,8 @@ export const GAME_COMMANDS = [
     {
         name: 'rzeka',
         aliases: ['rzeki', 'river', 'nurt'],
-        usage: '/rzeka | /rzeka znajdz [tp] | /rzeka jezioro [tp] | /rzeka nurt <0-3> | /rzeka statystyki',
-        description: 'Rzeki i jeziora: nurt tam, gdzie jesteś, i dokąd płynie woda; najbliższa rzeka albo jezioro (z teleportem nad brzeg); siła nurtu (0 - nie niesie); liczby sieci rzek.',
+        usage: '/rzeka | /rzeka znajdz [tp] | /rzeka jezioro [tp] | /rzeka wodospad [tp] | /rzeka nurt <0-3> | /rzeka statystyki',
+        description: 'Rzeki i jeziora: nurt tam, gdzie jesteś, i dokąd płynie woda; najbliższa rzeka, jezioro albo wodospad (z teleportem); siła nurtu (0 - nie niesie); liczby sieci rzek.',
 
         run(args, { game, player, world }) {
 
@@ -3303,6 +3303,45 @@ export const GAME_COMMANDS = [
                     `(${found.x} ${found.z}, woda na wysokości ${found.level}` +
                     `${lake ? `, ${found.cells * 256} m², ${found.outlet ? 'wypływa z niego rzeka' : 'bez odpływu'}` : `, szerokość ok. ${Math.round(found.width)}`}). ` +
                     `Teleport: /rzeka ${lake ? 'jezioro' : 'znajdz'} tp`;
+
+            }
+
+
+            if (['wodospad', 'wodospady', 'waterfall'].includes(word)) {
+
+                const falls = rivers.waterfalls(px, pz, 1024)
+                    .map((fall) => ({ ...fall, distance: Math.hypot(fall.x - player.pos.x, fall.z - player.pos.z) }))
+                    .sort((a, b) => a.distance - b.distance);
+
+                if (falls.length === 0) {
+                    return 'W promieniu 1024 bloków nie ma wodospadu (rzeka spada tylko tam, gdzie teren opada o 5 bloków i więcej). Plac testowy: /scena wodospady.';
+                }
+
+                const fall = falls[0];
+
+                if (teleport) {
+
+                    // Przed wodospadem, w dół rzeki, na brzegu sadzawki - z widokiem
+                    // na spadającą wodę.
+
+                    const x = Math.floor(fall.x + fall.dirX * (fall.width + 8) - fall.dirZ * (fall.width + 4));
+                    const z = Math.floor(fall.z + fall.dirZ * (fall.width + 8) + fall.dirX * (fall.width + 4));
+
+                    world.ensureColumnLoaded(x, z);
+
+                    player.pos.set(x + 0.5, Math.max(world.getSurfaceY(x, z), fall.bottom + 2), z + 0.5);
+                    player.vel.set(0, 0, 0);
+                    player.yaw = Math.atan2(-(fall.x - x), -(fall.z - z));
+                    player.pitch = 0.1;
+                    player.updateCamera();
+
+                    return `Przeniesiono pod wodospad: ${fall.top - fall.bottom} bloków (${Math.round(fall.x)} ${Math.round(fall.z)}).`;
+
+                }
+
+                return `Najbliższy wodospad: ${Math.round(fall.distance)} bloków ${directionName(fall.x - player.pos.x, fall.z - player.pos.z)} ` +
+                    `(${Math.round(fall.x)} ${Math.round(fall.z)}), spada ${fall.top - fall.bottom} bloków z ${fall.top} do ${fall.bottom}; ` +
+                    `w promieniu 1024 bloków: ${falls.length}. Teleport: /rzeka wodospad tp`;
 
             }
 
@@ -3377,7 +3416,7 @@ export const GAME_COMMANDS = [
         },
 
         complete(args) {
-            return args.length === 1 ? ['znajdz', 'jezioro', 'nurt', 'statystyki'] : args.length === 2 && ['znajdz', 'jezioro'].includes(simplify(args[0])) ? ['tp'] : [];
+            return args.length === 1 ? ['znajdz', 'jezioro', 'wodospad', 'nurt', 'statystyki'] : args.length === 2 && ['znajdz', 'jezioro', 'wodospad'].includes(simplify(args[0])) ? ['tp'] : [];
         }
     },
 

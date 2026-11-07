@@ -176,18 +176,35 @@ function countWater(world) {
     eq(countWater(world),0,'all downstream levels disappear after the last source is removed');
 }
 
+// A tall waterfall counts its fall block by block and stays at the cap.
+{
+    const world = grid(neighborhood());
+    world.edit(8,30,8,SOURCE);
+    settle(world,'tall waterfall');
+    eq(world.read(8,29,8),FALLING,'first falling block counts one');
+    eq(world.read(8,14,8),FALLING + 15,'sixteen blocks of fall');
+    eq(world.read(8,1,8),FALLING + 15,'longer falls stay at the cap');
+    ok(getWaterLevel(FALLING + 15) === 8,'every falling state is a full water cell');
+}
+
 // Downward channels take priority; lateral spreading starts only at their floor.
 {
     const world = grid(neighborhood());
     world.edit(8,8,8,SOURCE);
     settle(world,'waterfall');
-    for (let y = 1; y < 8; y++) eq(world.read(8,y,8),FALLING,`falling column y=${y}`);
+    for (let y = 1; y < 8; y++) eq(world.read(8,y,8),FALLING + 7 - y,`falling column y=${y} counts ${8 - y} blocks of fall`);
+    const landings = [];
+    world.fluids.forEachLanding(8.5, 8.5, 4, (x, y, z, fall) => landings.push([x, y, z, fall]));
+    eq(landings,[[8,1,8,7]],'the bottom of the waterfall is registered with its fall height');
     for (let y = 2; y <= 8; y++) for (const [dx,dz] of [[-1,0],[1,0],[0,-1],[0,1]]) {
         eq(world.read(8+dx,y,8+dz),0,'a free downward route suppresses lateral spill');
     }
     eq(world.read(9,1,8),waterIdForLevel(1),'the waterfall spreads after reaching a floor');
     world.edit(8,8,8,0);
     settle(world,'draining waterfall');
+    const drained = [];
+    world.fluids.forEachLanding(8.5, 8.5, 4, (...landing) => drained.push(landing));
+    eq(drained,[],'a drained waterfall has no splash left');
     eq(countWater(world),0,'a falling column never becomes its own source');
 }
 

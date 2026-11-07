@@ -47,6 +47,7 @@ import { STONE_TOOL_ITEMS } from './stoneTools.js';
 import { FIRE_WOODS, fuelType } from '../game/CampfireState.js';
 
 export const ITEM_TYPES = {
+    raft: { name: 'Raft', label: 'Tratwa', icon: 'oak_planks', category: 'narzedzia' },
     ...DYE_ITEMS,
     ...STONE_TOOL_ITEMS,
     ...Object.fromEntries(Object.entries(FIRE_WOODS).map(([wood, [label]]) => [fuelType(wood), {

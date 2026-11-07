@@ -40,7 +40,7 @@ export class WorldSaver {
 
     // time      - czas świata (WorldTime) albo null
 
-    constructor(storage, worldInfo, world, player, time = null, campfires = null) {
+    constructor(storage, worldInfo, world, player, time = null, campfires = null, rafts = null) {
 
         this.storage = storage;
         this.worldInfo = worldInfo;
@@ -49,6 +49,8 @@ export class WorldSaver {
         this.player = player;
         this.time = time;
         this.campfires = campfires;
+        this.rafts = rafts;
+        this.savedRaftVersion = -1;
         this.savedFireVersion = -1;
 
 
@@ -182,6 +184,8 @@ export class WorldSaver {
         this.activeBatches.add(chunks);
 
 
+        const raftVersion = this.rafts?.version ?? 0;
+        if (this.rafts) this.worldInfo.rafts = this.rafts.getState();
         const fireVersion = this.campfires?.version ?? 0;
         if (this.campfires) this.worldInfo.campfires = this.campfires.getState();
         this.worldInfo.player = this.player.getState();
@@ -202,6 +206,7 @@ export class WorldSaver {
 
 
             this.savedFireVersion = fireVersion;
+            this.savedRaftVersion = raftVersion;
             this.diagnostic('info', 'world.saved', 'Zakończono zapis świata.', {
                 chunks: chunks.length, immediate, wallMs: performance.now() - diagnosticStart
             });
@@ -247,7 +252,7 @@ export class WorldSaver {
         this.timeSinceSave += dt;
 
 
-        if (this.world.hasUnsavedChanges() || (this.campfires && this.savedFireVersion !== this.campfires.version)) {
+        if (this.world.hasUnsavedChanges() || (this.campfires && this.savedFireVersion !== this.campfires.version) || (this.rafts && this.savedRaftVersion !== this.rafts.version)) {
 
             this.timeSinceChange += dt;
 

@@ -94,6 +94,12 @@ zależności ani uruchamiania okna gry i nie zmieniają zapisanych światów.
 | przyciski u góry | pauza, ekwipunek, czat, osiągnięcia, widok (F5), mapa, pełny ekran |
 | "wstecz" w telefonie | pauza (nie wychodzi z gry) |
 
+**Tratwa (0.76.0):** dwie dowolne deski obok siebie w siatce dają jedną
+tratwę 2×1. Wybierz ją na pasku i użyj PPM na tafli wody. Kolejne PPM na
+tratwie pozwala wsiąść: WASD / joystick sterują, nurt sam niesie pokład,
+a wodospady można spływać. Shift / przycisk ▼ pozwala wysiąść; LPM / Kop
+zabiera pustą tratwę do ekwipunku. [Szczegóły i testy](docs/tratwa.md).
+
 ## Osiągnięcia
 
 Za ciekawe rzeczy w grze dostajesz **osiągnięcia** w czterech rangach:

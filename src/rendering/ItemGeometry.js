@@ -3,8 +3,11 @@ import { CAMPFIRE_LOGS } from './CampfireGeometry.js';
 import { fuelWood } from '../game/CampfireState.js';
 import { SURFACE_PROFILES } from './SurfaceProfiles.js';
 
+import { RAFT_MODEL } from './RaftModel.js';
+
 const cache = new Map();
 export function getItemModel(type) {
+    if (type === 'raft') return RAFT_MODEL;
     const wood = fuelWood(type);
     if (!wood && type !== 'fire_starter') return getFruitItemModel(type);
     if (cache.has(type)) return cache.get(type);

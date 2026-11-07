@@ -12,6 +12,7 @@ import {
 
 import { viewUniforms } from '../rendering/viewUniforms.js';
 import { waterSurfaceHeight } from '../world/WaterSurface.js';
+import { WaterfallAudio } from '../audio/WaterfallAudio.js';
 
 // ------------------------------------------------------------
 // WODA WOKÓŁ GRACZA - obraz i dźwięk
@@ -99,6 +100,7 @@ export class WaterEffects {
         this.underwater = false;
 
         this.underwaterLoop = null;
+        this.waterfallAudio = new WaterfallAudio(game);
 
         // Szum wody: strumień i fale (WATER_AMBIENCE) - każdy ze swoją
         // pętlą, głośnością i środkiem wody.
@@ -236,6 +238,8 @@ export class WaterEffects {
         if (!sounds) {
             return;
         }
+
+        this.waterfallAudio.update(dt, this.underwater);
 
 
         // Plusk przy wpadnięciu do wody: szybciej = głośniej i niżej.
@@ -399,6 +403,8 @@ export class WaterEffects {
     // Przy wyjściu ze świata.
 
     dispose() {
+
+        this.waterfallAudio.dispose();
 
         this.underwaterLoop?.stop(0.1);
 

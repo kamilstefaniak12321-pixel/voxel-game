@@ -17,7 +17,10 @@ import {
     RIVER_PUSH,
     WATER_GRAVITY_FACTOR,
     WATER_DRAG,
-    SWIM_UP_ACCELERATION,
+    WATER_FLOAT_START,
+    WATER_FLOAT_SUBMERGED,
+    WATER_SWIM_SUBMERGED,
+    WATER_FLOAT_DRAG,
     SWIM_DOWN_ACCELERATION,
     WATER_CLIMB_SPEED,
     SEA_LEVEL,
@@ -30,7 +33,7 @@ import {
     SKYFALL_MAX_SPEED
 } from '../config.js';
 
-import { isLiquidId } from '../blocks/BlockRegistry.js';
+import { isLiquidId, isFallingWaterId } from '../blocks/BlockRegistry.js';
 import { waterSurfaceHeight } from '../world/WaterSurface.js';
 
 // Maksymalna odległość pokonywana w jednym kroku kolizji.
@@ -153,6 +156,9 @@ export class Player {
         //               (0 = nie), dla dźwięku plusku,
         //   leftWater - wyszedł z wody w tej klatce.
         this.submerged = 0;
+        // Struga spadająca zwilża ciało, ale sama nie podtrzymuje go
+        // przy tafli. Spacja nadal pozwala świadomie płynąć w niej w górę.
+        this.buoyantSubmerged = 0;
         this.waterCellY = null;
         this.swimming = false;
         this.splash = 0;
@@ -526,21 +532,13 @@ updateSkyfall(dt) {
 
 
 // Ruch w pionie w wodzie (water - jaka część ciała jest zanurzona):
-//   - słabsza grawitacja i opór wody - gracz powoli opada na dno,
-//   - Spacja - płynie w górę; przy powierzchni siła słabnie, więc
-//     unosi się z oczami tuż nad wodą,
+//   - wyporność podtrzymuje gracza z oczami nad taflą,
+//   - Spacja - płynie trochę wyżej, także świadomie w spadającej wodzie,
 //   - Shift - nurkuje,
 //   - Spacja przy ścianie brzegu - wybicie w górę (wyjście z wody),
 //   - w płytkiej wodzie (do pasa) Spacja to zwykły skok z dna.
 
 updateSwimming(dt, water, space, input) {
-
-    const deep = clamp01(water / 0.5);
-
-    this.vel.y += GRAVITY * (1 + (WATER_GRAVITY_FACTOR - 1) * deep) * dt;
-
-    this.vel.y *= Math.exp(-WATER_DRAG * deep * dt);
-
 
     if (space && this.onGround && water < 0.6) {
 
@@ -552,17 +550,33 @@ updateSwimming(dt, water, space, input) {
 
     }
 
-    if (space) {
-        this.vel.y += SWIM_UP_ACCELERATION * clamp01((water - 0.72) / 0.15) * dt;
-    }
-
+    const deep = clamp01(water / 0.5);
     const shift = input.isKeyDown('ShiftLeft') || input.isKeyDown('ShiftRight');
+    // Automatycznie podtrzymuje tylko spokojna i rozlana woda. Woda
+    // falling pozostaje w pomiarze oporu, plusku i świadomego pływania.
+    const support = space ? water : this.buoyantSubmerged;
+    const floating = !shift && support > WATER_FLOAT_START;
+    let acceleration = GRAVITY * (1 + (WATER_GRAVITY_FACTOR - 1) * deep);
+
+    if (floating) {
+        const target = space ? WATER_SWIM_SUBMERGED : WATER_FLOAT_SUBMERGED;
+        acceleration += -GRAVITY * WATER_GRAVITY_FACTOR
+            * (support - WATER_FLOAT_START) / (target - WATER_FLOAT_START);
+    }
 
     if (shift && water > 0.5) {
-        this.vel.y -= SWIM_DOWN_ACCELERATION * dt;
+        acceleration -= SWIM_DOWN_ACCELERATION;
     }
 
-    if (space && this.touchingWall && water > 0.2) {
+    // Dokładny krok prędkości dla stałej siły i oporu liniowego.
+    // Wyporność i ciężar muszą wejść do tego samego kroku: dodawanie
+    // jednej siły dopiero po tłumieniu przesuwa równowagę wraz z FPS.
+    const drag = (floating ? WATER_FLOAT_DRAG : WATER_DRAG) * deep;
+    const decay = Math.exp(-drag * dt);
+    const response = drag > 0 ? -Math.expm1(-drag * dt) / drag : dt;
+    this.vel.y = this.vel.y * decay + acceleration * response;
+
+    if (space && !shift && this.touchingWall && water > 0.2) {
         this.vel.y = Math.max(this.vel.y, WATER_CLIMB_SPEED);
     }
 
@@ -608,20 +622,23 @@ updateWater() {
 
     const x = Math.floor(this.pos.x), z = Math.floor(this.pos.z);
     const top = this.pos.y + this.height;
-    let depth = 0;
+    let depth = 0, buoyantDepth = 0;
     this.waterCellY = null;
 
     // Liczymy tylko część ciała rzeczywiście przecinającą wodę.
     // Powietrze pod wiszącą strugą nie daje wyporności ani nurtu.
     for (let y = Math.floor(this.pos.y); y < top; y++) {
-        if (!isLiquidId(this.world.getBlockId(x, y, z))) continue;
+        const id = this.world.getBlockId(x, y, z);
+        if (!isLiquidId(id)) continue;
         const surface = y + waterSurfaceHeight(this.world, x, y, z, this.pos.x - x, this.pos.z - z);
         const wet = Math.max(0, Math.min(top, surface) - Math.max(this.pos.y, y));
         if (wet > 0 && this.waterCellY === null) this.waterCellY = y;
         depth += wet;
+        if (!isFallingWaterId(id)) buoyantDepth += wet;
     }
 
     this.submerged = clamp01(depth / STAND_HEIGHT);
+    this.buoyantSubmerged = clamp01(buoyantDepth / STAND_HEIGHT);
 
     this.swimming = !this.flying && this.submerged > 0.6 && !this.onGround;
 

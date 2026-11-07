@@ -99,6 +99,20 @@ import {
 // i usuwaniu tego samego chunka, gdy gracz chodzi po granicy.
 
 const UNLOAD_MARGIN = 2;
+const CURRENT_SIDES = [[-1,0],[1,0],[0,-1],[0,1]];
+const currentCanEnter = id => id >= AIR_ID && !isSolidId(id);
+function inRiverChannel(chunk, x, y, z) {
+    if (!chunk?.flowBounds) return false;
+    const column = (z - chunk.cz * CHUNK_SIZE) * CHUNK_SIZE + x - chunk.cx * CHUNK_SIZE;
+    return chunk.flowBounds[column] > 0 && y >= chunk.flowBounds[column] - 1 &&
+        y < chunk.flowBounds[CHUNK_SIZE * CHUNK_SIZE + column];
+}
+function currentCellHeight(fluids, id, x, y, z) {
+    const base = getWaterBaseHeight(id);
+    if (base === 1) return 1;
+    const above = fluids.read(x, y + 1, z);
+    return getWaterLevel(above) >= 0 || isOpaqueId(above) ? 1 : base;
+}
 // Build ahead of the existing visible ring; retain a wider ring to avoid churn
 // when walking back across a boundary. These do not change drawing distance.
 export const PLANT_PREFETCH_DISTANCE = PLANT_VIEW_DISTANCE + 48;
@@ -721,18 +735,58 @@ export class World {
         x = Math.floor(x); y = Math.floor(y); z = Math.floor(z);
         const id = this.getBlockId(x, y, z), level = getWaterLevel(id);
         if (level < 0) return null;
-        const center = getWaterBaseHeight(id);
+        const chunk = this.getChunk(this.toChunkCoord(x), this.toChunkCoord(z));
+        const west = this.fluids.read(x - 1, y, z), east = this.fluids.read(x + 1, y, z);
+        const north = this.fluids.read(x, y, z - 1), south = this.fluids.read(x, y, z + 1);
+        let river = inRiverChannel(chunk, x, y, z) ? this.getFlow(x, z) : null;
+        if (!river && level > 0 && chunk?.flowBounds) {
+            // The first spill/falling column can sit above the lower river's
+            // natural surface. Preserve speed while it directly touches the
+            // upstream channel; detached pools cannot satisfy this condition.
+            const candidate = this.getFlow(x, z);
+            if (candidate) for (let side = 0; side < 4; side++) {
+                const neighbor = side === 0 ? west : side === 1 ? east : side === 2 ? north : south;
+                if (getWaterLevel(neighbor) < 0) continue;
+                const nx = x + CURRENT_SIDES[side][0], nz = z + CURRENT_SIDES[side][1];
+                if (inRiverChannel(this.getChunk(this.toChunkCoord(nx), this.toChunkCoord(nz)), nx, y, nz)) {
+                    river = candidate; break;
+                }
+            }
+        }
+        if (river) {
+            // River direction and speed remain authoritative inside its natural
+            // channel. Local level noise must not reverse a swimmer at a drop.
+            // A real dam/bank still removes the component facing its solid wall.
+            const rx = currentCanEnter(river[0] < 0 ? west : east) ? river[0] : 0;
+            const rz = currentCanEnter(river[1] < 0 ? north : south) ? river[1] : 0;
+            if (rx || rz) return [rx, rz];
+        }
+        // Covered source water is full height, just like an adjacent falling
+        // cell. Comparing their raw .875/1 shapes creates a fictitious uphill.
+        const center = currentCellHeight(this.fluids, id, x, y, z);
         let vx = 0, vz = 0;
-        for (const [dx, dz] of [[-1,0], [1,0], [0,-1], [0,1]]) {
-            const neighbor = this.fluids.read(x + dx, y, z + dz);
+        for (let side = 0; side < 4; side++) {
+            const [dx, dz] = CURRENT_SIDES[side];
+            const neighbor = side === 0 ? west : side === 1 ? east : side === 2 ? north : south;
             let difference = 0;
-            if (getWaterLevel(neighbor) >= 0) difference = center - getWaterBaseHeight(neighbor);
+            if (getWaterLevel(neighbor) >= 0) difference = center - currentCellHeight(this.fluids, neighbor, x + dx, y, z + dz);
             else if (neighbor === AIR_ID && getWaterLevel(this.fluids.read(x + dx, y - 1, z + dz)) >= 0) difference = center;
             vx += dx * difference; vz += dz * difference;
         }
+        if (river) {
+            // A completely blocked river may escape sideways down a real local
+            // slope, but never acquires an opposing current from that slope.
+            const opposing = Math.min(0, (vx * river[0] + vz * river[1]) / (river[0] ** 2 + river[1] ** 2));
+            vx -= opposing * river[0]; vz -= opposing * river[1];
+        }
+        if (!currentCanEnter(vx < 0 ? west : east)) vx = 0;
+        if (!currentCanEnter(vz < 0 ? north : south)) vz = 0;
         const length = Math.hypot(vx, vz);
-        if (length > .001) return [vx / length, vz / length];
-        return this.getFlow(x, z) ?? (level === 8 ? [0, 0] : null);
+        if (length > .001) {
+            const speed = river ? Math.hypot(river[0], river[1]) : 1;
+            return [vx / length * speed, vz / length * speed];
+        }
+        return level === 8 ? [0, 0] : null;
     }
 
 
@@ -1248,6 +1302,7 @@ export class World {
         const chunk = this.createChunk(data.cx, data.cz);
         chunk.blocks = data.blocks;
         chunk.flow = data.flow;
+        chunk.flowBounds = data.flowBounds;
         chunk.tint = data.tint;
         chunk.biomes = data.biomes;
         chunk.waterBounds = data.waterBounds;

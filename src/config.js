@@ -267,14 +267,19 @@ export const WATER_SURFACE = 0.875;
 
 // Ruch w wodzie: prędkość pozioma (razy zwykła; z biegiem - razy
 // SPRINT_SPEED_FACTOR), grawitacja (razy zwykła), opór (im więcej, tym
-// szybciej woda hamuje: przy 4 gracz opada najwyżej ~1,5 bloku/s).
+// szybciej woda hamuje: przy 4 bez wyporności gracz opada najwyżej
+// ~1,5 bloku/s, np. w pionowej spadającej strudze).
 export const WATER_SPEED_FACTOR = 0.5;
 export const WATER_GRAVITY_FACTOR = 0.2;
 export const WATER_DRAG = 4;
 
-// Pływanie w górę (Spacja): przyspieszenie (bloki/s²). Przy powierzchni
-// słabnie - gracz unosi się z oczami tuż nad wodą.
-export const SWIM_UP_ACCELERATION = 22;
+// Wyporność zaczyna działać powyżej pasa. Bez klawiszy równoważy
+// ciężar przy zanurzeniu 78% (oczy ~20 cm nad taflą); Spacja unosi
+// trochę wyżej. Mocniejsze tłumienie zapobiega kołysaniu przy tafli.
+export const WATER_FLOAT_START = 0.55;
+export const WATER_FLOAT_SUBMERGED = 0.78;
+export const WATER_SWIM_SUBMERGED = 0.70;
+export const WATER_FLOAT_DRAG = 8;
 
 // Shift w wodzie: nurkowanie (dodatkowe przyspieszenie w dół).
 export const SWIM_DOWN_ACCELERATION = 10;

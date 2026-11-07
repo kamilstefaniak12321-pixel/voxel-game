@@ -1,0 +1,139 @@
+{
+  "checks": 3482,
+  "node": "v24.22.1",
+  "platform": "linux",
+  "arch": "x64",
+  "kind": "CPU controller with real SoundManager and controlled Web Audio nodes; no acoustic/FPS claim",
+  "caps": {
+    "voices": 4,
+    "potatoVoices": 2,
+    "candidates": 64,
+    "radius": 40,
+    "enterRadius": 38,
+    "refresh": 0.3,
+    "rayCells": 72,
+    "cellsPerUpdate": 96,
+    "msPerUpdate": 0.25
+  },
+  "warmupTrials": 1,
+  "measuredTrials": 5,
+  "trials": [
+    {
+      "settledMs": 0.0025707561111111155,
+      "settledRayCells": 0,
+      "raySamples": [
+        {
+          "ms": 0.03972000000001685,
+          "cells": 96
+        },
+        {
+          "ms": 0.018097000000011576,
+          "cells": 52
+        }
+      ],
+      "voices": 4,
+      "peakVoices": 4
+    },
+    {
+      "settledMs": 0.0018947711111111213,
+      "settledRayCells": 0,
+      "raySamples": [
+        {
+          "ms": 0.03247900000002346,
+          "cells": 96
+        },
+        {
+          "ms": 0.015883999999999787,
+          "cells": 52
+        }
+      ],
+      "voices": 4,
+      "peakVoices": 4
+    },
+    {
+      "settledMs": 0.0015941127777777807,
+      "settledRayCells": 0,
+      "raySamples": [
+        {
+          "ms": 0.022544000000010556,
+          "cells": 96
+        },
+        {
+          "ms": 0.009964999999994006,
+          "cells": 52
+        }
+      ],
+      "voices": 4,
+      "peakVoices": 4
+    },
+    {
+      "settledMs": 0.001042748888888888,
+      "settledRayCells": 0,
+      "raySamples": [
+        {
+          "ms": 0.01794799999998986,
+          "cells": 96
+        },
+        {
+          "ms": 0.008062999999992826,
+          "cells": 52
+        }
+      ],
+      "voices": 4,
+      "peakVoices": 4
+    },
+    {
+      "settledMs": 0.0018355822222222192,
+      "settledRayCells": 0,
+      "raySamples": [
+        {
+          "ms": 0.03346099999998842,
+          "cells": 96
+        },
+        {
+          "ms": 0.01345999999998071,
+          "cells": 52
+        }
+      ],
+      "voices": 4,
+      "peakVoices": 4
+    }
+  ],
+  "medianSettledMs": 0.0018355822222222192,
+  "fixture": {
+    "emitters": 4,
+    "fall": 16,
+    "listener": [
+      0.5,
+      6.2,
+      0.5
+    ],
+    "relativeSourceXZ": [
+      [
+        36,
+        0
+      ],
+      [
+        -36,
+        0
+      ],
+      [
+        0,
+        36
+      ],
+      [
+        0,
+        -36
+      ]
+    ],
+    "dt": 0.016666666666666666,
+    "settleFrames": 60,
+    "measuredFrames": 1800,
+    "obstacle": [
+      10,
+      6,
+      0
+    ],
+    "obstacleFrames": 10
+  }
+}

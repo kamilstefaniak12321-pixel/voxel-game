@@ -48,6 +48,10 @@ export class Chunk {
         // Int8Array 16 x 16 x 2) albo null - bez rzeki (RealisticGenerator).
 
         this.flow = null;
+        // Natural river bed/surface bounds, rebuilt with flow from the seed.
+        // Separate from editable waterBounds so elevated/underground pools
+        // cannot inherit a river's current. Lazy: 512 bytes per river chunk.
+        this.flowBounds = null;
 
         // Lazy 512-byte column bounds for water bootstrap. Dry chunks allocate
         // nothing; edits only widen bounds, so removal needs no column rescan.

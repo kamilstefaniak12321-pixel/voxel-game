@@ -193,6 +193,10 @@ function expandIncludes(source) {
         ok(/if\s*\(uUnderwater > 0\.5\) discard/.test(shader.fragmentShader),'surface ripples are explicitly hidden underwater');
         ok(/if\s*\(radial >= 1\.0\) discard/.test(shader.fragmentShader),'radial profile cannot shade beyond its radius');
         ok(shader.fragmentShader.includes('surfaceRadiance(')&&shader.fragmentShader.includes('applyBrightness('),'surface lighting and brightness are applied');
+        ok(!shader.fragmentShader.includes('vRippleLight.rgb * uAtmosphericLight'),
+            'classic lighting does not disable the receiving surface\'s colored lamps');
+        eq(composeSurfaceRadiance({albedo:[.5,.6,.7],natural:[0,0,0],local:[.8,0,0],atmosphere:false}),
+            [.4,0,0],'a red lamp illuminates a classic-mode ripple with no natural light');
         ok(shader.fragmentShader.includes('sunShadowLight(vRipplePosition, normalize(vRippleNormal), rippleSky)'),
             'shadow lookup uses actual wave-displaced world coordinates and slope normals');
         ok(shader.vertexShader.includes('rippleWorld.y += rippleWave'),'shadow receiver follows animated water height');

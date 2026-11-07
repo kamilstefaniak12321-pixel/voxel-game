@@ -399,6 +399,11 @@ export class SoundManager {
 
         const control = {
 
+            // stopped means a fade/stop was scheduled; ended means the real
+            // AudioBufferSource has released its voice. Bounded effect pools
+            // must wait for the latter before reusing a fading slot.
+            ended: false,
+
             // Pętla przesuwa się płynnie (ok. 0.15 s) - bez skoków
             // dźwięku przy zmianie miejsca co klatkę albo co pomiar.
             setPosition(position) {
@@ -437,6 +442,14 @@ export class SoundManager {
 
             }
 
+        };
+
+        const releaseVoice = source.onended;
+        source.onended = () => {
+            if (control.ended) return;
+            control.ended = true;
+            this.loops.delete(control);
+            releaseVoice();
         };
 
         this.loops.add(control);

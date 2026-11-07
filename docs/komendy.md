@@ -29,6 +29,7 @@ Współrzędne można podawać względem gracza: `~` (tu, gdzie stoję),
 | `/ksiezyc` | faza, oświetlenie, czy jest nad horyzontem, kolor |
 | `/ksiezyc faza <now \| sierp \| kwadra \| garb \| pelnia \| ubywajacy-garb \| ostatnia-kwadra \| ubywajacy-sierp>` | przesuwa czas o pełne doby do tej fazy i mówi, o której księżyc jest najwyżej |
 | `/ksiezyc kolor <kolor \| domyslny>` | kolor księżyca (zabarwia też światło nocą) |
+| `/pogoda [deszcz [0-100] \| sucho]` | stan opadu albo zmiana natężenia deszczu (domyślnie 40%); na czas bieżącej sesji, dach zatrzymuje krople, trafienia w wodę tworzą kręgi |
 | `/niebo` | wysokość słońca, łuna, ile gwiazd widać, Droga Mleczna, spadające gwiazdy na minutę, trwające zaćmienie |
 | `/niebo zachod <kolor \| domyslny>` | kolor łuny wschodu i zachodu (zabarwia też światło) |
 | `/zacmienie` | kiedy następne zaćmienie słońca (dzień, godzina, pełne czy częściowe); jeśli trwa - ile słońca jest zasłonięte |

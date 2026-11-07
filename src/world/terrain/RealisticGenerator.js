@@ -154,6 +154,16 @@ function setFlow(chunk, lx, lz, sample) {
     chunk.flow[n] = clamp(Math.round(sample.flowX * 32), -127, 127);
     chunk.flow[n + 1] = clamp(Math.round(sample.flowZ * 32), -127, 127);
 
+    // Capture the natural channel in the existing generation/restoration pass.
+    // A save may contain a different pool above or below this column; its water
+    // must not inherit the procedural current merely by sharing x/z.
+    const bounds = chunk.flowBounds ??= new Uint8Array(CHUNK_SIZE * CHUNK_SIZE * 2);
+    const column = lz * CHUNK_SIZE + lx;
+    if (sample.water > sample.height) {
+        bounds[column] = Math.max(0, sample.height + 1) + 1;
+        bounds[CHUNK_SIZE * CHUNK_SIZE + column] = Math.min(CHUNK_HEIGHT - 1, sample.water) + 1;
+    }
+
 }
 
 

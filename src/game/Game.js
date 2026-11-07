@@ -65,6 +65,9 @@ import { FirstPersonHand } from '../player/FirstPersonHand.js';
 import { modelLight } from '../rendering/ModelMaterial.js';
 import { BlockDebris } from '../rendering/BlockDebris.js';
 import { WaterfallEffects } from '../rendering/WaterfallEffects.js';
+import { WaterfallWetRocks } from '../rendering/WaterfallWetRocks.js';
+import { WaterImpactRipples } from '../rendering/WaterImpactRipples.js';
+import { RainEffects } from '../rendering/RainEffects.js';
 import { BlockCracks } from '../interaction/BlockCracks.js';
 import { COLOR_LEVEL } from '../world/Light.js';
 
@@ -452,7 +455,14 @@ export class Game {
 
         this.waterfalls = new WaterfallEffects(this.scene, this.world);
         this.waterfalls.setAmount(this.settings.get('potato') ? 0.35 : 1);
-        setShadowDefine([this.waterfalls.ripples.material], this.shadows.enabled, this.shadows.hasFar);
+        this.wetRocks = new WaterfallWetRocks(this.scene, this.world);
+        this.waterImpacts = new WaterImpactRipples(this.scene, this.world);
+        this.rain = new RainEffects(this.scene, this.world, this.waterImpacts);
+        this.waterLandingRevision = -1;
+        for (const effect of [this.wetRocks, this.waterImpacts, this.rain]) {
+            effect.setAmount(this.settings.get('potato') ? .35 : 1);
+        }
+        setShadowDefine(this.waterSurfaceMaterials(), this.shadows.enabled, this.shadows.hasFar);
 
         this.mining = null;
 
@@ -837,7 +847,8 @@ export class Game {
         this.debris.update(dt);
 
         profile?.beginStage('waterfalls');
-        this.waterfalls.update(dt, this.player);
+        this.waterfalls.update(dt, this.player, this.camera);
+        this.updateWaterSurfaceEffects(dt);
         profile?.endStage('waterfalls');
 
         // Osiągnięcia sprawdzane co chwilę (wysokość, nurkowanie...).
@@ -875,6 +886,23 @@ export class Game {
 
     }
 
+    waterSurfaceMaterials() {
+        return [...(this.waterfalls?.materials ?? (this.waterfalls ? [this.waterfalls.ripples.material] : [])),
+            this.wetRocks?.material, this.waterImpacts?.material].filter(Boolean);
+    }
+
+    updateWaterSurfaceEffects(dt) {
+        if (!this.waterfalls || !this.wetRocks || !this.waterImpacts || !this.rain) return;
+        if (this.waterLandingRevision !== this.waterfalls.landingRevision) {
+            this.waterLandingRevision = this.waterfalls.landingRevision;
+            this.wetRocks.setLandings(this.waterfalls.landings);
+        }
+        this.wetRocks.update(dt);
+        this.rain.update(dt, this.camera, this.sky.state);
+        // One shared discovery allowance for persistent and short-lived rings.
+        this.waterImpacts.update(dt, this.player, Math.max(0, 48 - this.waterfalls.ripples.surface.lastProcessed));
+    }
+
     // Brak danych pod graczem wstrzymuje ruch i edycje bloków, ale
     // patrzenie myszą, niebo, woda, oświetlenie i zapis nadal działają.
     updateWhileTerrainLoads(dt, input) {
@@ -905,7 +933,8 @@ export class Game {
         profile?.endStage('plants');
         this.water.update(dt);
         profile?.beginStage('waterfalls');
-        this.waterfalls?.update(dt, this.player);
+        this.waterfalls?.update(dt, this.player, this.camera);
+        this.updateWaterSurfaceEffects?.(dt);
         profile?.endStage('waterfalls');
         this.currentHit = null;
         this.highlight.update(null);
@@ -1808,6 +1837,10 @@ export class Game {
         setPotatoDefine([blockMaterial, plantMaterial, waterMaterial, leafMaterial], potato);
 
         this.waterfalls?.setAmount(potato ? 0.35 : 1);
+        this.wetRocks?.setAmount(potato ? .35 : 1);
+        this.waterImpacts?.setAmount(potato ? .35 : 1);
+        this.rain?.setAmount(potato ? .35 : 1);
+        this.water?.waterfallAudio?.setAmount(potato ? .35 : 1);
 
 
         // Cienie słońca i promienie światła (nie w trybie ziemniaka).
@@ -1815,7 +1848,7 @@ export class Game {
         this.shadows.setQuality(potato ? 0 : settings.get('shadows'));
 
         setShadowDefine([blockMaterial, plantMaterial, waterMaterial, leafMaterial], this.shadows.enabled, this.shadows.hasFar);
-        if (this.waterfalls) setShadowDefine([this.waterfalls.ripples.material], this.shadows.enabled, this.shadows.hasFar);
+        if (this.waterfalls) setShadowDefine(this.waterSurfaceMaterials(), this.shadows.enabled, this.shadows.hasFar);
 
         setFarTerrainShadows(this.shadows.hasFar);
 
@@ -2667,6 +2700,9 @@ export class Game {
         this.debris.dispose();
 
         this.waterfalls.dispose();
+        this.wetRocks.dispose();
+        this.waterImpacts.dispose();
+        this.rain.dispose();
 
         this.shadows.dispose();
 

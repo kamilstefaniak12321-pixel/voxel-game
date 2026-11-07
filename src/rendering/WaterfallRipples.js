@@ -8,6 +8,7 @@ import { SURFACE_LIGHTING_GLSL } from './SurfaceLighting.js';
 import { installLightingDiagnostics } from './LightingDiagnostics.js';
 import { shadowUniforms, SHADOW_GLSL, shadowLightsChunk } from './Shadows.js';
 import { waterfallLightingAt } from './WaterfallLighting.js';
+import { waterEffectLightUniforms, WATER_EFFECT_DYNAMIC_LIGHT_GLSL } from './WaterEffectDynamicLight.js';
 
 export const RIPPLE_PERIOD = 2.4;
 export const RIPPLE_MAX_EMITTERS = 12;
@@ -41,10 +42,10 @@ function createMaterial(profile) {
         transparent: true, depthWrite: false, side: THREE.FrontSide,
         polygonOffset: true, polygonOffsetFactor: -1, polygonOffsetUnits: -1 });
     material.name = 'Waterfall surface ripples';
-    material.uniforms = { uRippleTime: { value: 0 }, uRippleAmount: { value: 1 },
+    material.uniforms = { uRippleTime: { value: 0 }, uRippleClock: { value: 0 }, uRippleAmount: { value: 1 },
         uRippleProfile: { value: profile } };
     material.onBeforeCompile = shader => {
-        Object.assign(shader.uniforms, material.uniforms, plantWindUniforms, viewUniforms, skyUniforms, shadowUniforms);
+        Object.assign(shader.uniforms, material.uniforms, plantWindUniforms, viewUniforms, skyUniforms, shadowUniforms, waterEffectLightUniforms);
         shader.vertexShader = shader.vertexShader
             .replace('#include <common>', `#include <common>
                 uniform float uTime;
@@ -52,12 +53,14 @@ function createMaterial(profile) {
                 attribute vec4 rippleParams;
                 attribute vec3 rippleMeta;
                 attribute vec4 rippleLight;
+                attribute vec2 rippleLife;
                 varying vec2 vRippleWorld;
                 varying vec3 vRipplePosition;
                 varying vec3 vRippleNormal;
                 varying vec4 vRippleParams;
                 varying vec3 vRippleMeta;
                 varying vec4 vRippleLight;
+                varying vec2 vRippleLife;
                 ${WATER_WAVE_GLSL}`)
             .replace('#include <begin_vertex>', `#include <begin_vertex>
                 vec3 rippleWorld = (modelMatrix * vec4(transformed, 1.0)).xyz;
@@ -69,10 +72,12 @@ function createMaterial(profile) {
                 vRippleNormal = normalize(mat3(modelMatrix) * objectNormal);
                 vRippleParams = rippleParams;
                 vRippleMeta = rippleMeta;
-                vRippleLight = rippleLight;`);
+                vRippleLight = rippleLight;
+                vRippleLife = rippleLife;`);
         shader.fragmentShader = shader.fragmentShader
             .replace('#include <common>', `#include <common>
                 uniform float uRippleTime;
+                uniform float uRippleClock;
                 uniform float uRippleAmount;
                 uniform sampler2D uRippleProfile;
                 uniform float uNightDesaturation;
@@ -83,8 +88,10 @@ function createMaterial(profile) {
                 varying vec4 vRippleParams;
                 varying vec3 vRippleMeta;
                 varying vec4 vRippleLight;
+                varying vec2 vRippleLife;
                 ${VIEW_GLSL}
                 ${SURFACE_LIGHTING_GLSL}
+                ${WATER_EFFECT_DYNAMIC_LIGHT_GLSL}
                 ${SHADOW_GLSL}
                 #ifndef USE_SUN_SHADOWS
                     uniform int uSunShadowLight;
@@ -97,10 +104,22 @@ function createMaterial(profile) {
                 float radial = length(pixel - vRippleParams.xy) / vRippleParams.z;
                 if (radial >= 1.0) discard;
                 float phase = fract(radial * 3.0 - uRippleTime * ${(3 / RIPPLE_PERIOD).toFixed(6)} + vRippleMeta.y);
+                float impulseFade = 1.0;
+                if (vRippleLife.y > 0.0) {
+                    float age = (uRippleClock - vRippleLife.x) / vRippleLife.y;
+                    if (age < 0.0 || age >= 1.0) discard;
+                    // One expanding crest, never a repeating train of rings.
+                    // Clamp the profile coordinate so its RepeatWrapping cannot
+                    // introduce a second crest on a short-lived impact.
+                    phase = clamp(0.53 + (radial - age) * 1.8, 0.0, 0.99999);
+                    impulseFade = pow(1.0 - age, 1.1) * smoothstep(0.0, 0.08, age);
+                }
                 vec2 crest = texture2D(uRippleProfile, vec2(phase, 0.5)).rg;
-                float fade = pow(max(0.0, 1.0 - radial), 1.35)
-                    * smoothstep(0.22, 0.75, radial * vRippleParams.z);
-                diffuseColor.a *= (crest.r + crest.g * 0.45) * fade * vRippleParams.w * uRippleAmount;
+                float innerFade = vRippleLife.y > 0.0
+                    ? smoothstep(0.025, 0.12, radial * vRippleParams.z)
+                    : smoothstep(0.22, 0.75, radial * vRippleParams.z);
+                float fade = pow(max(0.0, 1.0 - radial), 1.35) * innerFade;
+                diffuseColor.a *= (crest.r + crest.g * 0.45) * fade * impulseFade * vRippleParams.w * uRippleAmount;
                 if (diffuseColor.a < 0.003) discard;
                 diffuseColor.rgb *= mix(vec3(0.36, 0.58, 0.68), vec3(1.0),
                     crest.r / max(0.0001, crest.r + crest.g));
@@ -114,13 +133,15 @@ function createMaterial(profile) {
             .replace('#include <lights_fragment_begin>', shadowLightsChunk('rippleSun', 'rippleSky', 'rippleAmbient'))
             .replace('#include <opaque_fragment>', `
                 outgoingLight = surfaceRadiance(diffuseColor.rgb, outgoingLight,
-                    vRippleLight.rgb * uAtmosphericLight, vec3(0.0), vec3(0.0),
+                    waterEffectLocalLight(vRippleLight.rgb, vRipplePosition, normalize(vRippleNormal), 1.0),
+                    vec3(0.0), vec3(0.0),
                     uNightDesaturation, uNightTint, uAtmosphericLight);
+                outgoingLight += waterEffectAnalyticRadiance(diffuseColor.rgb, vRipplePosition, normalize(vRippleNormal));
                 outgoingLight = applyBrightness(outgoingLight, diffuseColor.rgb);
                 #include <opaque_fragment>`);
         installLightingDiagnostics(shader, { sky: 'vRippleLight.a', normal: 'normalize(vRippleNormal)', visibility: 'rippleSun' });
     };
-    material.customProgramCacheKey = () => 'waterfall-ripples-v1';
+    material.customProgramCacheKey = () => 'waterfall-ripples-v2';
     return material;
 }
 
@@ -134,7 +155,7 @@ export class WaterfallRipples {
         this.geometry = new THREE.BufferGeometry();
         const vertices = RIPPLE_MAX_TILES * 4;
         for (const [name, size] of [['position', 3], ['normal', 3], ['rippleParams', 4],
-            ['rippleMeta', 3], ['rippleLight', 4]]) {
+            ['rippleMeta', 3], ['rippleLight', 4], ['rippleLife', 2]]) {
             this.geometry.setAttribute(name, new THREE.BufferAttribute(new Float32Array(vertices * size), size)
                 .setUsage(THREE.DynamicDrawUsage));
         }
@@ -161,12 +182,13 @@ export class WaterfallRipples {
         this.material.uniforms.uRippleAmount.value = amount > 0 ? (amount <= .35 ? .75 : 1) : 0;
     }
 
-    update(dt) {
+    update(dt, cellBudget) {
         if (this.disposed) return;
         const start = performance.now();
         const time = this.material.uniforms.uRippleTime;
         time.value = (time.value + Math.max(0, Number.isFinite(dt) ? dt : 0)) % RIPPLE_PERIOD;
-        this.surface.update();
+        this.material.uniforms.uRippleClock.value += Math.max(0, Number.isFinite(dt) ? dt : 0);
+        this.surface.update(cellBudget);
         if (this.surfaceRevision !== this.surface.revision) this.syncGeometry();
         this.lastMs = performance.now() - start;
     }
@@ -209,7 +231,7 @@ export class WaterfallRipples {
     }
 
     writeEntry(entry, slot) {
-        const { position, normal, rippleParams, rippleMeta, rippleLight } = this.geometry.attributes;
+        const { position, normal, rippleParams, rippleMeta, rippleLight, rippleLife } = this.geometry.attributes;
         const first = slot * RIPPLE_PATCHES_PER_EMITTER * 4;
         const length = Math.min(entry.patches.length, RIPPLE_PATCHES_PER_EMITTER);
         // Stable phase: refreshing or rebuilding a patch never restarts rings.
@@ -229,6 +251,7 @@ export class WaterfallRipples {
                 rippleParams.setXYZW(at, entry.x, entry.z, entry.radius, entry.opacity);
                 rippleMeta.setXYZ(at, patch.waves[c] / 255, phase, light.classicShade);
                 rippleLight.setXYZW(at, light.local[0], light.local[1], light.local[2], light.sky);
+                rippleLife.setXY(at, entry.birth ?? 0, entry.lifetime ?? 0);
             }
         }
         if (length) for (const attribute of Object.values(this.geometry.attributes)) {

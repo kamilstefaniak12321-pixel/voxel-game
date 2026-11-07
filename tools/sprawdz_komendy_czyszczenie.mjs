@@ -123,4 +123,17 @@ test('misa krateru usuwa całą wodę, samo spalenie rośliny obok ją zostawia'
     assert.equal(f.world.getBlock(6,50,0),'water');
 });
 
-console.log(`Sprawdzonych przypadków czyszczenia: ${checked}.`);
+test('/pogoda steruje rzeczywistym przełącznikiem deszczu i odrzuca błędne natężenie',()=>{
+    const command=GAME_COMMANDS.find(item=>item.name==='pogoda');
+    const rain={intensity:0,setIntensity(value){this.intensity=value;}};
+    const run=args=>command.run(args,{game:{rain}});
+    assert.match(run([]),/Brak deszczu/);assert.equal(rain.intensity,0);
+    run(['deszcz']);assert.equal(rain.intensity,1);
+    run(['deszcz','40']);assert.equal(rain.intensity,.4);
+    for(const args of [['deszcz','-1'],['deszcz','101'],['deszcz','abc'],['sucho','extra']]){
+        assert.throws(()=>run(args));assert.equal(rain.intensity,.4);
+    }
+    run(['sucho']);assert.equal(rain.intensity,0);
+    assert.throws(()=>command.run(['deszcz'],{}));
+});
+console.log(`Sprawdzonych przypadków komend: ${checked}.`);

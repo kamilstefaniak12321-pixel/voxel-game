@@ -70,6 +70,7 @@ export class Rafts {
         const p=this.game.player;
         if(!body.loaded() || body.collides(undefined,undefined,undefined,undefined,{width:p.width,height:1.8})){this.say('Brak miejsca dla pasażera.');return false;}
         this.mounted=body;this.notice='';this.noticeUntil=0;this.version++;p.flying=false;p.height=1.8;p.eyeHeight=1.6;p.crouching=false;p.sprinting=false;p.skyfall=false;
+        p.sprintLatched=false;p.lastJumpPress=p.lastForwardPress=-Infinity;
         this.anchor();return true;
     }
     anchor() {
@@ -143,6 +144,8 @@ export class Rafts {
         const exitDown=input.isKeyDown('ShiftLeft')||input.isKeyDown('ShiftRight');
         if(riding) {
             p.clock+=dt;p.updateLook(input);
+            // Walking's double-tap edges must not remain queued until dismount.
+            input.consumeKeyPress?.('Space');input.consumeKeyPress?.('KeyW');
             if(exitDown && !this.exitHeld)this.dismount();
         }
         this.exitHeld=exitDown;

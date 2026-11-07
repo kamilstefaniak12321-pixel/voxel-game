@@ -52,6 +52,7 @@ import { SpaceView } from '../space/SpaceView.js';
 import { Skyfall } from '../space/Skyfall.js';
 import { createGlowSprite } from '../rendering/Glow.js';
 import { WorldSaver } from '../storage/WorldSaver.js';
+import { summarizeSavedChunk } from '../world/SavedChunkSurface.js';
 import { lightToBrightness, describeLight } from '../world/Light.js';
 import { atmosphericLightToBrightness } from '../rendering/LightPolicy.js';
 import { WorldTime } from '../sky/WorldTime.js';
@@ -147,7 +148,9 @@ export class Game {
 
         const savedChunks =
             storage
-                ? await storage.loadChunks(worldInfo.id)
+                ? await (storage.loadSavedChunks
+                    ? storage.loadSavedChunks(worldInfo.id, { summarize: summarizeSavedChunk })
+                    : storage.loadChunks(worldInfo.id))
                 : new Map();
 
         const game = new Game(

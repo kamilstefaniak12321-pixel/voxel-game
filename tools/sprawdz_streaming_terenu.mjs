@@ -19,6 +19,7 @@ registerHooks({
     }
 });
 const { ChunkGeneration } = await import('../src/world/ChunkGeneration.js');
+const { SavedChunkStore } = await import('../src/storage/SavedChunkStore.js');
 const { ChunkGenerationData } = await import('../src/world/ChunkGenerationData.js');
 const { RealisticGenerator } = await import('../src/world/terrain/RealisticGenerator.js');
 const { Chunk } = await import('../src/world/Chunk.js');
@@ -135,6 +136,25 @@ try {
     generation.request(11,-16,saved);
     await until(() => generation.getStats().ready === 1);
     eq(generation.take(11,-16,saved.slice()), null, 'new save snapshot invalidates queued data');
+
+    // Cache eviction changes array identity, not the snapshot. The real worker
+    // must still be adopted, while a replacement record must invalidate it.
+    const compact = new SavedChunkStore({ maxDecodedBytes: 0 });
+    compact.set('11,-16', saved);
+    const firstDecoded = compact.get('11,-16');
+    generation.request(11,-16,firstDecoded,compact.revision('11,-16'));
+    await until(() => generation.getStats().ready === 1);
+    const decodedAgain = compact.get('11,-16');
+    ok(firstDecoded !== decodedAgain, 'zero cache forces a genuinely new decoded array');
+    same(generation.take(11,-16,decodedAgain,compact.revision('11,-16')),
+        reference(baseline,11,-16,saved),'evicted snapshot still adopts the exact worker result');
+    generation.request(11,-16,compact.get('11,-16'),compact.revision('11,-16'));
+    await until(() => generation.getStats().ready === 1);
+    const changed = saved.slice(); changed[0] = getBlockId('granite');
+    compact.set('11,-16',changed);
+    eq(generation.take(11,-16,undefined,compact.revision('11,-16')),null,
+        'new compact revision invalidates an old worker result');
+    compact.dispose();
 } finally { generation.dispose(); }
 eq(generation.getStats().pending, 0, 'dispose clears pending work');
 ok(!generation.request(0,0), 'disposed stream cannot restart');

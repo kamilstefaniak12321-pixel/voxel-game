@@ -70,10 +70,26 @@ brak odpowiedzi przez 30 sekund kończy oczekiwanie błędem.
 
 Odczyt zapisanych chunków pobiera partie po 64 rekordy w jednej transakcji,
 bez dodatkowej tablicy wszystkich rekordów ani osobnego wywołania bazy
-dla każdego chunka. **Wszystkie zmienione chunki nadal pozostają w mapie
-zapisu w pamięci** — to nie jest odczyt na żądanie. Zachowuje to zgodność
-z komendami, odradzaniem i odległym widokiem zmian gracza. Pełny zasięg
-800 bloków również nadal wymaga znacznej pamięci.
+dla każdego chunka. Od 0.71.0 każda partia od razu trafia do
+`SavedChunkStore`: bezstratnie spakowanych migawek i dokładnych podsumowań
+powierzchni. Pełne tablice bloków są odtwarzane na żądanie, z limitem
+pamięci podręcznej 8 MiB i 128 wpisów. Po przekazaniu bloków do świata lub
+workera nie trzeba zachowywać drugiej rozpakowanej kopii w cache.
+
+Indeks przestrzenny pozwala dalekiemu terenowi odwiedzać tylko potrzebne
+podsumowania bez odtwarzania całego zapisu. Typ Uint8/Uint16, dane jaskiń,
+wody i budowli oraz istniejący format dyskowy pozostają zachowane.
+Rewizja migawki oddziela prawdziwą edycję od samego usunięcia tablicy z cache.
+Ponowne odwiedzanie niezmienionych budowli nie pakuje ich ponownie przy
+wyładowaniu. Autozapis używa dostępnego żywego chunka bez dekodowania
+jego wcześniejszej migawki.
+
+**Cały spakowany zapis nadal pozostaje w RAM.** To nie jest stronicowanie
+z IndexedDB na żądanie ani stały limit pamięci całej gry. Nieskompresowalne
+chunki zachowują surową kopię, a otwarcie dużego świata wykonuje dodatkową
+pracę pakowania. Liczniki w diagnostyce podają osobno bajty migawek,
+podsumowań i rozpakowanego cache; nie obejmują narzutu obiektów JS ani VRAM.
+Metodyka, wyniki i ograniczenia: [pamięć i streaming 0.71.0](pomiary/pamiec-streaming-0.71.0/WYNIKI.md).
 
 ## Odbiór
 

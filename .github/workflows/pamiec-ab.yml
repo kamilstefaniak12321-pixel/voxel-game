@@ -1,0 +1,62 @@
+name: Pamięć zapisów — porównanie A/B
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, labeled]
+    paths:
+      - 'src/**'
+      - 'tools/**'
+      - 'package.json'
+      - '.github/workflows/pamiec-ab.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pamiec-ab-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  porownanie:
+    if: >-
+      contains(github.event.pull_request.labels.*.name, 'kompilacja')
+      && (github.event.action != 'labeled' || github.event.label.name == 'kompilacja')
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+      - uses: actions/checkout@v5
+        with:
+          ref: ${{ github.event.pull_request.base.sha }}
+          path: baseline-source
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+      - name: Te same zapisy w Chrome — trzy naprzemienne pary
+        env:
+          CHROME_BIN: /usr/bin/google-chrome
+        run: |
+          for pair in 1 2 3; do
+            if [ "$pair" = 2 ]; then
+              variants="candidate baseline"
+            else
+              variants="baseline candidate"
+            fi
+            for variant in $variants; do
+              root="."
+              if [ "$variant" = baseline ]; then root="baseline-source"; fi
+              node tools/benchmark_saved_streaming.mjs --root "$root" \
+                --output "test-results/saved-streaming/$variant-$pair" \
+                --chunks 4096 --samples 1
+            done
+          done
+      - name: Zestawienie pomiarów i kontrola porównywalności
+        run: node tools/compare_saved_streaming.mjs test-results/saved-streaming
+      - uses: actions/upload-artifact@v6
+        if: always()
+        with:
+          name: pamiec-zapisow-ab
+          path: test-results/saved-streaming/
+          retention-days: 7

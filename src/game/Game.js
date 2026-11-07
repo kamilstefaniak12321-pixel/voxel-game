@@ -452,6 +452,7 @@ export class Game {
 
         this.waterfalls = new WaterfallEffects(this.scene, this.world);
         this.waterfalls.setAmount(this.settings.get('potato') ? 0.35 : 1);
+        setShadowDefine([this.waterfalls.ripples.material], this.shadows.enabled, this.shadows.hasFar);
 
         this.mining = null;
 
@@ -835,7 +836,9 @@ export class Game {
 
         this.debris.update(dt);
 
+        profile?.beginStage('waterfalls');
         this.waterfalls.update(dt, this.player);
+        profile?.endStage('waterfalls');
 
         // Osiągnięcia sprawdzane co chwilę (wysokość, nurkowanie...).
 
@@ -901,6 +904,9 @@ export class Game {
         this.plantAnimations.update(dt);
         profile?.endStage('plants');
         this.water.update(dt);
+        profile?.beginStage('waterfalls');
+        this.waterfalls?.update(dt, this.player);
+        profile?.endStage('waterfalls');
         this.currentHit = null;
         this.highlight.update(null);
         profile?.beginStage('save');
@@ -1809,6 +1815,7 @@ export class Game {
         this.shadows.setQuality(potato ? 0 : settings.get('shadows'));
 
         setShadowDefine([blockMaterial, plantMaterial, waterMaterial, leafMaterial], this.shadows.enabled, this.shadows.hasFar);
+        if (this.waterfalls) setShadowDefine([this.waterfalls.ripples.material], this.shadows.enabled, this.shadows.hasFar);
 
         setFarTerrainShadows(this.shadows.hasFar);
 

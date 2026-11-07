@@ -109,6 +109,7 @@ export class WaterSimulation {
     // pod nią znów jest miejsce) - usuwa.
     forEachLanding(x, z, radius, visit) {
         for (const [chunk, cells] of this.landings) {
+            if (this.world.getChunk(chunk.cx, chunk.cz) !== chunk) { this.landings.delete(chunk); continue; }
             const x0 = chunk.cx * S, z0 = chunk.cz * S;
             if (x0 + S < x - radius || x0 > x + radius || z0 + S < z - radius || z0 > z + radius) continue;
             for (const [index, id] of cells) {
@@ -116,7 +117,8 @@ export class WaterSimulation {
                 const lx = x0 + column % S, lz = z0 + Math.floor(column / S);
                 const current = chunk.blocks[index];
                 const distance = waterFallDistance(current);
-                if (!distance || this.enterable(this.read(lx, ly - 1, lz))) { cells.delete(index); continue; }
+                const below = this.read(lx, ly - 1, lz);
+                if (!distance || below === UNKNOWN || this.enterable(below)) { cells.delete(index); continue; }
                 if (current !== id) cells.set(index, current);
                 if (Math.abs(lx + .5 - x) <= radius && Math.abs(lz + .5 - z) <= radius) visit(lx, ly, lz, distance);
             }
@@ -194,13 +196,19 @@ export class WaterSimulation {
                 if (n === 0) sources++;
                 if (n < 0) continue;
                 const bottom = this.read(x + dx, y - 1, z + dz);
-                // Prioritize a downward channel. Falling columns only fan out
-                // once they reach a floor or a source pool.
-                if (bottom === UNKNOWN || this.enterable(bottom)) continue;
+                // Prioritize a downward channel. Falling columns fan out on
+                // a floor; source pools receive them at the lower water layer.
+                if (bottom === UNKNOWN || this.enterable(bottom) || (n === 8 && isWaterSourceId(bottom))) continue;
                 best = Math.min(best, (n === 8 ? 0 : n) + 1);
             }
             // A missing upstream chunk must never drain a persisted stream.
-            if (unknown && level > 0) return;
+            if (unknown && level > 0) {
+                // A restored edge column still has a known vertical impact.
+                // Freezing its state must not hide it until a side chunk loads.
+                const below = this.read(x, y - 1, z);
+                if (level === 8 && below !== UNKNOWN && !this.enterable(below)) this.landing(x, y, z, id);
+                return;
+            }
             if (sources >= 2 && this.supported(this.read(x, y - 1, z))) desired = WATER_SOURCE_ID;
             // Spadająca woda: o blok dłuższy spadek niż woda nad nią
             // (pod źródłem albo nurtem - 1).
@@ -225,12 +233,19 @@ export class WaterSimulation {
         if (below === UNKNOWN) return;
         // Dół wodospadu: spadająca woda na dnie albo na tafli. Efekty
         // (WaterfallEffects.js) biorą stąd miejsca rozbryzgu.
-        if (current === 8) this.landing(x, y, z, desired);
+        if (current === 8) {
+            this.landing(x, y, z, desired);
+            // The receiving pool is already one cell lower. Spreading here
+            // would raise a second sheet of water above its existing surface.
+            if (isWaterSourceId(below)) return;
+        }
         const incoming = (current === 8 ? 0 : current) + 1;
         if (incoming > 7) return;
         for (const [dx, dz] of SIDES) {
             const neighbor = this.read(x + dx, y, z + dz), n = getWaterLevel(neighbor);
-            if (this.enterable(neighbor) && (n < 0 || n > incoming)) this.enqueue(x + dx, y, z + dz);
+            // Falling neighbors are maintained by their own vertical supply.
+            // Waking them laterally makes settled broad waterfalls ping-pong.
+            if (this.enterable(neighbor) && (n < 0 || (n > incoming && n !== 8))) this.enqueue(x + dx, y, z + dz);
         }
     }
 

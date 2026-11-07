@@ -11,6 +11,26 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 0.74.0 - Kręgi na tafli pod wodospadami
+
+Przygotowanie kolejnego wydania po 0.73.0.
+
+- Płaskie, zapętlone kręgi rozchodzą się od uderzenia wodospadu po
+  połączonej tafli wody. Zasięg i wyrazistość rosną z liczbą spadku
+  1–16, a siła słabnie z odległością. Animacja przechodzi przez granice
+  bloków i chunków, omija ląd, wyspy i przykryte powierzchnie.
+- Kręgi dopasowują się do pochyłych strumieni, zwykłych fal, światła
+  i cieni. Niski detal ogranicza liczbę aktywnych miejsc uderzenia.
+- Jedno dodatkowe rysowanie; wspólna tekstura profilu 128 × 1 pikseli.
+  Wyszukiwanie tafli działa porcjami, a spokojna animacja nie skanuje
+  bloków ani nie przebudowuje geometrii.
+- Poprawione wodospady 0.73: brak dodatkowej warstwy wody nad sadzawką,
+  brak ciągłego wzajemnego budzenia ustabilizowanych strumieni i poprawne
+  efekty na granicy wczytanego terenu. Zachowana zgodność zapisów.
+- Testy obejmują rzeczywiste wodospady 3, 8 i 16 bloków, połączone
+  powierzchnie, usuwanie dopływu, wyładowanie chunków, cienie,
+  zapętlenie obrazu i koszt CPU. [Opis i dalsze efekty](docs/fale-wodospadow-0.74.0.md).
+
 ## 0.73.0 - Wodospady
 
 Licznik spadku wody, rozbryzg i rzeki piętrami — PR #109.

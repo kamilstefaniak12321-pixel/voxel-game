@@ -680,7 +680,18 @@ export async function createWaterfallRippleQA() {
             const slowest = frames => [...frames].sort((a, b) => b.totalMs - a.totalMs).slice(0, 12);
             const paced = diagnosticFrames.filter(frame => frame.mode === 'raf');
             check(paced.length === 60, 'Sixty real animation frames measure the complete WaterEffects.updateSounds path');
+            // Control for the removed key comparator, after every measured
+            // gameplay frame. Its first native collation call can have a cold
+            // initialization cost; do not warm it up before the real test.
+            const legacyKeyComparison = { keys: audio.selected.map(item => item.key), samplesMs: [],
+                scope: 'Diagnostic control only: old localeCompare sort after all gameplay measurements, not part of the game update' };
+            for (let trial = 0; trial < 3; trial++) {
+                const keys = legacyKeyComparison.keys.slice(), start = performance.now();
+                keys.sort((a, b) => a.localeCompare(b));
+                legacyKeyComparison.samplesMs.push(performance.now() - start);
+            }
             const diagnostics = { firstFrame: diagnosticFrames[0], frames: diagnosticFrames.length, phases,
+                legacyKeyComparison,
                 slowFrames: slowest(diagnosticFrames.filter(frame => frame.scope === 'full-updateSounds')),
                 pacedRAF: { updateSounds: quantiles(paced.map(frame => frame.totalMs)), intervals: quantiles(intervals), slowFrames: slowest(paced) },
                 scope: 'All samples retain outliers. Instrumented nested spans are inclusive and must not be summed. Listener/submersion setup is outside updateSounds. Control-call counts approximate scheduling: setPosition schedules three AudioParams. rAF runs full WaterEffects.updateSounds; visual-plus-waterfall-only excludes legacy ambience.' };

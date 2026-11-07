@@ -174,6 +174,60 @@ equal(waterfallAudioProfile(900), waterfallAudioProfile(16), 'Height upper clamp
     f.dispose();
 }
 
+// Symmetric equal-height/equal-distance impacts exercise both tie breakers.
+// Re-enabling removes retention priority, so input order cannot hide a changed
+// cold selection. Neither selection nor deduplication needs language collation.
+{
+    const originalLocaleCompare = String.prototype.localeCompare, originalCollator = Intl.Collator;
+    String.prototype.localeCompare = () => { throw new Error('Audio selection must not initialize locale collation'); };
+    Intl.Collator = () => { throw new Error('Audio selection must not construct an Intl collator'); };
+    try {
+        for (const potato of [false, true]) {
+            const f = fixture({ potato });
+            try {
+                for (const [x, z] of [[10, 0], [-10, 0], [0, 10], [0, -10], [6, 8], [-6, 8], [6, -8], [-6, -8]]) {
+                    f.landing(x, z, 8);
+                }
+                const landings = [...f.game.waterfalls.landings], limit = potato ? 2 : 4;
+                const expected = ['-10,6,0', '-6,6,-8', '-6,6,8', '0,6,-10'].slice(0, limit);
+                equal(new Set(landings.map(p => Math.hypot(p.x, p.z))).size, 1,
+                    'Fixture has genuinely equal horizontal distances for all eight impacts');
+                for (let shift = 0; shift < landings.length; shift++) {
+                    const order = [...landings.slice(shift), ...landings.slice(0, shift)];
+                    if (shift % 2) order.reverse();
+                    f.game.waterfalls.landings = order;
+                    f.audio.setAmount(1); f.run(.4);
+                    equal(f.audio.selected.map(p => p.key), expected,
+                        `Cold/re-enabled symmetric selection is deterministic: shift${shift}, cap${limit}`);
+                    equal(f.audio.stats().loops, limit, 'Equal scores fill exactly the configured voice limit');
+                    const controls = f.audio.slots.map(slot => slot.loop);
+                    f.game.waterfalls.landings.reverse(); f.audio.refresh = 0; f.tick();
+                    equal(f.audio.selected.map(p => p.key), expected, 'Warm input reordering keeps the same selected IDs');
+                    equal(f.audio.slots.map(slot => slot.loop), controls, 'Warm reordering never restarts equal-score voices');
+                    f.audio.setAmount(0); f.run(.4);
+                    equal([f.sounds.voices, f.audio.stats().reserved], [0, 0],
+                        'Disable releases real fade tails and retention before another cold tie');
+                    check(f.sounds.context.peak <= limit, 'Symmetric selection and repeated restarts respect the actual voice cap');
+                }
+            } finally { f.dispose(); }
+        }
+        const f = fixture();
+        try {
+            for (const [x, z] of [[8, 1], [-8, 1], [8, -1], [-8, -1]]) f.landing(x, z, 8);
+            for (let order = 0; order < 2; order++) {
+                f.game.waterfalls.landings.reverse(); f.audio.setAmount(1); f.run(.4);
+                equal(f.audio.selected.map(p => p.key), ['-8,6,-1', '8,6,-1'],
+                    'Same-plane symmetric neighboring impacts choose stable representatives before deduplication');
+                equal(f.sounds.voices, 2, 'Two adjacent pairs create two actual voices');
+                f.audio.setAmount(0); f.run(.4);
+            }
+        } finally { f.dispose(); }
+    } finally {
+        String.prototype.localeCompare = originalLocaleCompare;
+        Intl.Collator = originalCollator;
+    }
+}
+
 // Recording and emitter replacement waits for source.onended. Suspending the
 // audio clock must not release a fading reservation early using frame dt.
 {

@@ -20,6 +20,12 @@ function blockAt(chunk, x, y, z, cx, cz) {
     return y < 0 || y >= CHUNK_HEIGHT ? 0 : chunk.blocks[(y * S + z - cz * S) * S + x - cx * S] ?? 0;
 }
 
+// Coordinate IDs have no language semantics. Keep equal-score selection
+// deterministic without initializing locale-aware collation on an audio tick.
+function compareImpactKeys(a, b) {
+    return a.key < b.key ? -1 : a.key > b.key ? 1 : 0;
+}
+
 /** Four positional waterfall voices (two in low detail), including fade tails.
  * Landings come from WaterfallEffects; no second terrain/water search is done.
  * Occlusion is a cached, budgeted voxel ray. The existing SoundManager game
@@ -97,11 +103,11 @@ export class WaterfallAudio {
                 x: x + .5, y: surface, z: z + .5, fall, distance,
                 priority: distance - (known ? 1.5 : 0), ...waterfallAudioProfile(fall) });
         }
-        candidates.sort((a, b) => b.fall - a.fall || a.priority - b.priority || a.key.localeCompare(b.key));
+        candidates.sort((a, b) => b.fall - a.fall || a.priority - b.priority || compareImpactKeys(a, b));
         const distinct = [];
         for (const candidate of candidates) if (!distinct.some(other => other.cellY === candidate.cellY &&
             (other.x - candidate.x) ** 2 + (other.z - candidate.z) ** 2 <= 4)) distinct.push(candidate);
-        distinct.sort((a, b) => a.priority - b.priority || a.key.localeCompare(b.key));
+        distinct.sort((a, b) => a.priority - b.priority || compareImpactKeys(a, b));
         distinct.length = Math.min(distinct.length, this.limit);
         this.selected = distinct;
         this.refreshes++;

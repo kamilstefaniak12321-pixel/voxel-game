@@ -122,6 +122,14 @@ i spływ naturalną rzeką seed 42. Wyniki: `test-results/river-swimming/`.
 dzień/noc, deszcz i dach, dźwięki Web Audio, mutacje i wyjście ze świata.
 Wyniki: `test-results/waterfall-ripples/`.
 
+Raport `audio-diagnostics.json` zachowuje pierwszą i najwolniejsze
+aktualizacje, czasy wyboru emiterów, skanowania starego szumu wody,
+tworzenia głosów i sterowania nimi. Osobno mierzy 60 rzeczywistych
+klatek `requestAnimationFrame`. Klucze współrzędnych emiterów mają
+prosty deterministyczny porządek, bez kolacji językowej; kontrolny pomiar
+starego `localeCompare` odbywa się dopiero po pomiarach gry. Nie wchodzi
+do czasu aktualizacji ani nie rozgrzewa tej ścieżki przed testem.
+
 [Pięć prób kontrolera dźwięków](pomiary/woda-0.75.0/dzwiek-cpu.json):
 mediana stabilnej aktualizacji 0,00184 ms; największa próbka ponownego
 odkrywania przeszkody 0,03972 ms. To CPU kontrolera z kontrolowanym

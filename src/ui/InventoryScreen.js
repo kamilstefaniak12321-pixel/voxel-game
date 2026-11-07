@@ -24,6 +24,8 @@ import {
 } from '../crafting/Crafting.js';
 import { modelLight, setModelPreviewRenderer } from '../rendering/ModelMaterial.js';
 import { playUi } from '../audio/ui.js';
+import { ChestView, CHEST_VIEW_WIDTH, CHEST_VIEW_HEIGHT } from './ChestView.js';
+import { coveredItem, insertIntoChest, putIntoCell, takeFromCell, visibleItem } from '../game/ChestState.js';
 import { skyUniforms } from '../sky/skyShader.js';
 
 // ------------------------------------------------------------
@@ -196,11 +198,24 @@ export class InventoryScreen {
         // (każdy nowy renderer to nowy kontekst WebGL, a przeglądarka
         // pozwala tylko na kilka naraz).
 
+        // Renderer rysuje do płótna poza stroną: postać (160 x 224 z lewej)
+        // i skrzynię (obok) - stamtąd kopie trafiają na płótna w oknie.
+
+        this.glCanvas = document.createElement('canvas');
+        this.glCanvas.width = 160 + CHEST_VIEW_WIDTH;
+        this.glCanvas.height = Math.max(224, CHEST_VIEW_HEIGHT);
+
         this.previewCanvas = el('canvas', 'inv-preview');
         this.previewCanvas.width = 160;
         this.previewCanvas.height = 224;
 
         this.preview = null;
+
+        // Otwarta skrzynia (ChestState.js) i jej okno w strefie
+        // rzemieślniczej (ChestView.js) - albo null.
+
+        this.chest = null;
+        this.chestView = null;
 
 
         this.root.addEventListener('mousedown', (event) => this.onMouseDown(event));
@@ -253,14 +268,25 @@ export class InventoryScreen {
     }
 
 
-    open(game) {
+    // chest - skrzynia otwarta PPM (jej wnętrze w strefie
+    // rzemieślniczej) albo null.
+
+    open(game, chest = null) {
 
         this.game = game;
 
         this.ghost = null;
 
-        if (!isCreative(game.mode)) {
+        this.chest = chest;
+
+        if (!isCreative(game.mode) || chest) {
             this.tab = 'inventory';
+        }
+
+        if (chest) {
+            this.chestView ??= new ChestView(this.icons);
+            this.chestView.show(chest);
+            game.chests?.setOpen(chest);
         }
 
         this.root.hidden = false;
@@ -289,6 +315,11 @@ export class InventoryScreen {
 
         this.hover = null;
         this.ghost = null;
+
+        if (this.chest) {
+            this.game?.chests?.setOpen(null);
+            this.chest = null;
+        }
 
         this.root.hidden = true;
         this.cursorElement.hidden = true;
@@ -423,7 +454,7 @@ export class InventoryScreen {
                 equipment.append(slot);
             });
 
-            top.append(preview, equipment, this.craftElement());
+            top.append(preview, equipment, this.chest ? this.chestElement() : this.craftElement());
 
             const slots = el('div', 'inv-grid inv-items');
             for (let i = HOTBAR_SIZE; i < SLOT_COUNT; i++) {
@@ -593,6 +624,21 @@ export class InventoryScreen {
         slot.append(el('img'), el('span', 'inv-count'));
 
         return slot;
+
+    }
+
+
+    // Strefa rzemieślnicza z otwartą skrzynią: jej wnętrze (ChestView.js).
+
+    chestElement() {
+
+        const box = el('div', 'inv-zone inv-chest');
+
+        box.title = '';
+        box.setAttribute('aria-label', 'Skrzynia - 4 x 3 przegródki, dwie warstwy');
+        box.append(this.chestView.canvas);
+
+        return box;
 
     }
 
@@ -988,6 +1034,8 @@ export class InventoryScreen {
 
         this.refreshBook();
 
+        this.chestView?.sync();
+
 
         this.cursorElement.hidden = !this.cursor;
 
@@ -1059,9 +1107,25 @@ export class InventoryScreen {
         }
 
 
-        const slot = event.target.closest('.inv-slot');
-
         const right = event.button === 2;
+
+        // Wnętrze skrzyni.
+
+        if (this.chest && event.target === this.chestView?.canvas) {
+
+            const cell = this.chestView.cellAtEvent(event);
+
+            if (cell >= 0) {
+                this.clickChest(cell, right, event.shiftKey);
+                this.refresh();
+                this.updateTooltip(event);
+            }
+
+            return;
+
+        }
+
+        const slot = event.target.closest('.inv-slot');
 
 
         if (!slot) {
@@ -1342,6 +1406,54 @@ export class InventoryScreen {
     }
 
 
+    // Klik w przegródkę skrzyni. Bierze się z wierzchu; inny przedmiot
+    // kładzie się na wierzch tego, co leży na spodzie (ChestState.js).
+
+    clickChest(cell, right, shift) {
+
+        const chest = this.chest;
+
+        const before = JSON.stringify([chest.layers, this.cursor]);
+        const held = Boolean(this.cursor);
+
+        if (shift && !this.cursor) {
+
+            // Ze skrzyni do ekwipunku (co się nie zmieści - zostaje).
+
+            const item = visibleItem(chest, cell);
+
+            if (item) {
+                const left = this.game.inventory.add(item.type, item.count);
+                takeFromCell(chest, cell, item.count - left);
+            }
+
+        }
+        else if (!this.cursor) {
+
+            const item = visibleItem(chest, cell);
+
+            if (item) {
+                this.cursor = takeFromCell(chest, cell, right ? Math.ceil(item.count / 2) : item.count);
+            }
+
+        }
+        else {
+
+            this.cursor = putIntoCell(chest, cell, this.cursor, right ? 1 : Infinity);
+
+        }
+
+        if (JSON.stringify([chest.layers, this.cursor]) !== before) {
+            this.game.chests?.changed();
+            playUi(!held && this.cursor ? 'item_pick' : 'item_place');
+        }
+        else if (this.cursor) {
+            playUi('ui_error');
+        }
+
+    }
+
+
     clickSlot(kind, index, right, shift) {
 
         const inventory = this.game.inventory;
@@ -1372,6 +1484,20 @@ export class InventoryScreen {
 
             else if (this.tab === 'blocks' && index < HOTBAR_SIZE) {
                 inventory.set(index, null);
+            }
+            else if (this.chest && item) {
+
+                // Otwarta skrzynia: z ekwipunku do skrzyni.
+
+                const left = insertIntoChest(this.chest, item.type, item.count);
+
+                slots.set(index, left > 0 ? { type: item.type, count: left } : null);
+
+                if (left < item.count) {
+                    this.game.chests?.changed();
+                    playUi('item_place');
+                }
+
             }
             else {
                 inventory.quickMove(index);
@@ -1540,6 +1666,35 @@ export class InventoryScreen {
         const slot = event.target.closest?.('.inv-slot');
 
         this.hover = null;
+
+        // Wnętrze skrzyni: co leży na wierzchu (i co pod spodem).
+
+        if (this.chest && this.chestView) {
+
+            const cell = event.target === this.chestView.canvas ? this.chestView.cellAtEvent(event) : -1;
+
+            this.chestView.setHover(cell);
+
+            if (cell >= 0) {
+
+                const item = visibleItem(this.chest, cell);
+                const covered = coveredItem(this.chest, cell);
+
+                this.tooltip.hidden = !item || Boolean(this.cursor);
+
+                if (!this.tooltip.hidden) {
+                    this.tooltip.replaceChildren(
+                        el('div', 'inv-tooltip-title', `${getItemLabel(item.type)}${item.count > 1 ? ` x${item.count}` : ''}`),
+                        ...(covered ? [el('div', 'inv-tooltip-note', `Pod spodem: ${getItemLabel(covered.type)}${covered.count > 1 ? ` x${covered.count}` : ''}`)] : [])
+                    );
+                    this.placeTooltip(event);
+                }
+
+                return;
+
+            }
+
+        }
 
         let label = '';
 
@@ -1778,9 +1933,9 @@ export class InventoryScreen {
             return;
         }
 
-        const model = this.game.model;
+        const canvas = this.glCanvas;
 
-        const canvas = this.previewCanvas;
+        const model = this.game.model;
 
 
         if (!this.preview) {
@@ -1801,7 +1956,7 @@ export class InventoryScreen {
 
             scene.add(sun);
 
-            const camera = new THREE.PerspectiveCamera(30, canvas.width / canvas.height, 0.1, 20);
+            const camera = new THREE.PerspectiveCamera(30, 160 / 224, 0.1, 20);
 
             camera.position.set(0, 1.05, -4.4);
             camera.lookAt(0, 0.92, 0);
@@ -1845,7 +2000,7 @@ export class InventoryScreen {
 
         // Głowa za myszką.
 
-        const rect = canvas.getBoundingClientRect();
+        const rect = this.previewCanvas.getBoundingClientRect();
 
         const dx = (this.mouse.x - (rect.left + rect.width / 2)) / 300;
         const dy = (this.mouse.y - (rect.top + rect.height * 0.2)) / 300;
@@ -1857,7 +2012,26 @@ export class InventoryScreen {
             'YXZ'
         );
 
+        // Postać - lewy fragment płótna renderera, kopia na płótno okna.
+
+        const glY = canvas.height - 224;
+
+        renderer.setViewport(0, glY, 160, 224);
+        renderer.setScissor(0, glY, 160, 224);
+        renderer.setScissorTest(true);
+        renderer.setClearColor(0x000000, 0);
+        renderer.clear();
         renderer.render(scene, camera);
+
+        const preview = this.previewCanvas.getContext('2d');
+        preview.clearRect(0, 0, 160, 224);
+        preview.drawImage(canvas, 0, 0, 160, 224, 0, 0, 160, 224);
+
+        // Skrzynia - obok (w tym samym pełnym świetle).
+
+        if (this.chest && this.chestView) {
+            this.chestView.render(renderer, 160, 0);
+        }
 
 
         parent?.add(object);

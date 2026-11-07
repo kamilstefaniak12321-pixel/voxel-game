@@ -2,7 +2,7 @@
 
 > Ta strona jest generowana z kodu gry (`python tools/wiki.py`) - nie zmieniaj jej ręcznie, zmiany przepadną przy następnym generowaniu.
 
-Wersja gry **0.73.0** - 79 przedmiotów. Przedmiotu nie da się postawić jak bloku; owoce i nasiona posadzone na ziemi (PPM) wyrastają w krzak albo drzewo, narzędzia przyspieszają kopanie.
+Wersja gry **0.78.0** - 80 przedmiotów. Przedmiotu nie da się postawić jak bloku; owoce i nasiona posadzone na ziemi (PPM) wyrastają w krzak albo drzewo, narzędzia przyspieszają kopanie.
 
 
 ## Drewno
@@ -70,6 +70,7 @@ Wersja gry **0.73.0** - 79 przedmiotów. Przedmiotu nie da się postawić jak bl
 
 | | Nazwa | W komendach | Najważniejsze |
 |---|---|---|---|
+| <img src="ikony/raft.png" width="32" height="32" alt=""> | **Tratwa** | `raft` | **Przepis:** Tratwa |
 | <img src="ikony/dye_white.png" width="32" height="32" alt=""> | **Barwnik biały** | `dye_white` | **Przepis:** Barwnik biały<br>**Przydaje się do:** Pochodnia biała, Barwnik jasnoniebieski, Barwnik limonkowy, Barwnik różowy, Barwnik szary, Barwnik jasnoszary |
 | <img src="ikony/dye_orange.png" width="32" height="32" alt=""> | **Barwnik pomarańczowy** | `dye_orange` | **Przepis:** Barwnik pomarańczowy x2<br>**Przydaje się do:** Pochodnia pomarańczowa |
 | <img src="ikony/dye_magenta.png" width="32" height="32" alt=""> | **Barwnik purpurowy** | `dye_magenta` | **Przepis:** Barwnik purpurowy x2<br>**Przydaje się do:** Pochodnia purpurowa |

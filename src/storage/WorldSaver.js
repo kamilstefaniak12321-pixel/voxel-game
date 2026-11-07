@@ -40,7 +40,7 @@ export class WorldSaver {
 
     // time      - czas świata (WorldTime) albo null
 
-    constructor(storage, worldInfo, world, player, time = null, campfires = null, rafts = null) {
+    constructor(storage, worldInfo, world, player, time = null, campfires = null, rafts = null, chests = null) {
 
         this.storage = storage;
         this.worldInfo = worldInfo;
@@ -50,7 +50,9 @@ export class WorldSaver {
         this.time = time;
         this.campfires = campfires;
         this.rafts = rafts;
+        this.chests = chests;
         this.savedRaftVersion = -1;
+        this.savedChestVersion = -1;
         this.savedFireVersion = -1;
 
 
@@ -188,6 +190,8 @@ export class WorldSaver {
         if (this.rafts) this.worldInfo.rafts = this.rafts.getState();
         const fireVersion = this.campfires?.version ?? 0;
         if (this.campfires) this.worldInfo.campfires = this.campfires.getState();
+        const chestVersion = this.chests?.version ?? 0;
+        if (this.chests) this.worldInfo.chests = this.chests.getState();
         this.worldInfo.player = this.player.getState();
         this.worldInfo.lastPlayed = Date.now();
 
@@ -207,6 +211,7 @@ export class WorldSaver {
 
             this.savedFireVersion = fireVersion;
             this.savedRaftVersion = raftVersion;
+            this.savedChestVersion = chestVersion;
             this.diagnostic('info', 'world.saved', 'Zakończono zapis świata.', {
                 chunks: chunks.length, immediate, wallMs: performance.now() - diagnosticStart
             });
@@ -252,7 +257,7 @@ export class WorldSaver {
         this.timeSinceSave += dt;
 
 
-        if (this.world.hasUnsavedChanges() || (this.campfires && this.savedFireVersion !== this.campfires.version) || (this.rafts && this.savedRaftVersion !== this.rafts.version)) {
+        if (this.world.hasUnsavedChanges() || (this.campfires && this.savedFireVersion !== this.campfires.version) || (this.rafts && this.savedRaftVersion !== this.rafts.version) || (this.chests && this.savedChestVersion !== this.chests.version)) {
 
             this.timeSinceChange += dt;
 

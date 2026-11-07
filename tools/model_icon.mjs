@@ -7,7 +7,10 @@ import { modelIconPixels } from '../src/ui/ModelIcon.js';
 
 const sources = {
     'models/blueberry/atlas': { file: '../assets/models/blueberry/atlas.png', x: 0, y: 0, width: 64, height: 64 },
-    snow: { file: '../assets/textures/blocks/terrain.png', x: 4 * 16, y: 9 * 16, width: 16, height: 16 }
+    snow: { file: '../assets/textures/blocks/terrain.png', x: 4 * 16, y: 9 * 16, width: 16, height: 16 },
+    // Tratwa (0.76.0) i skrzynia (0.78.0).
+    oak_planks: { file: '../assets/textures/blocks/terrain.png', x: 4 * 16, y: 7 * 16, width: 16, height: 16 },
+    chest: { file: '../assets/models/chest/skrzynia.png', x: 0, y: 0, width: 32, height: 32 }
 };
 for (const [wood, [, file]] of Object.entries(FIRE_WOODS)) sources[`campfire_${wood}`] = {
     file: `../assets/models/campfire/drewno-${file}.png`, x: 0, y: 0, width: 32, height: 32

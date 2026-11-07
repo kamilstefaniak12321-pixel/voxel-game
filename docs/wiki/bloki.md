@@ -2,7 +2,7 @@
 
 > Ta strona jest generowana z kodu gry (`python tools/wiki.py`) - nie zmieniaj jej ręcznie, zmiany przepadną przy następnym generowaniu.
 
-Wersja gry **0.73.0** - 201 bloków (do tego 97 odmian, których nie ma w ekwipunku, np. wieniec zawieszony na boku bloku). Czas kopania dotyczy trybu przygody; w kreatywnym bloki znikają od razu.
+Wersja gry **0.78.0** - 202 bloków (do tego 100 odmian, których nie ma w ekwipunku, np. wieniec zawieszony na boku bloku). Czas kopania dotyczy trybu przygody; w kreatywnym bloki znikają od razu.
 
 [Ziemia](#ziemia) · [Skały](#skały) · [Drewno](#drewno) · [Budulec](#budulec) · [Rośliny](#rośliny) · [Światło](#światło) · [Ozdoby](#ozdoby)
 
@@ -41,35 +41,36 @@ Wersja gry **0.73.0** - 201 bloków (do tego 97 odmian, których nie ma w ekwipu
 
 | | Nazwa | W komendach | Najważniejsze |
 |---|---|---|---|
+| <img src="ikony/chest.png" width="32" height="32" alt=""> | **Skrzynia** | `chest` | **Kopanie:** 1,2 s (siekierą 0,4 s)<br>**Skąd:** zniszczony blok: Skrzynia<br>**Przepis:** Skrzynia |
 | <img src="ikony/spruce_log.png" width="32" height="32" alt=""> | **Pień świerka** | `spruce_log` | **Kopanie:** 2 s (siekierą 0,67 s)<br>**Siekierą (PPM):** Okorowany pień świerka<br>**Przydaje się do:** Opał — świerk, Deski świerkowe |
 | <img src="ikony/spruce_log_stripped.png" width="32" height="32" alt=""> | **Okorowany pień świerka** | `spruce_log_stripped` | **Kopanie:** 2 s (siekierą 0,67 s)<br>**Skąd:** siekierą (PPM) z bloku: Pień świerka<br>**Przydaje się do:** Opał — świerk, Deski świerkowe |
-| <img src="ikony/spruce_planks.png" width="32" height="32" alt=""> | **Deski świerkowe** | `spruce_planks` | **Kopanie:** 2 s (siekierą 0,67 s)<br>**Przepis:** Deski świerkowe x4<br>**Przydaje się do:** Ciemne deski, Patyk |
+| <img src="ikony/spruce_planks.png" width="32" height="32" alt=""> | **Deski świerkowe** | `spruce_planks` | **Kopanie:** 2 s (siekierą 0,67 s)<br>**Przepis:** Deski świerkowe x4<br>**Przydaje się do:** Skrzynia, Ciemne deski, Tratwa, Patyk |
 | <img src="ikony/pine_log.png" width="32" height="32" alt=""> | **Pień sosny** | `pine_log` | **Kopanie:** 2 s (siekierą 0,67 s)<br>**Siekierą (PPM):** Okorowany pień sosny<br>**Skąd:** zniszczony blok: Pień sosny z żywicą<br>**Przydaje się do:** Opał — sosna, Deski sosnowe |
 | <img src="ikony/pine_log_upper.png" width="32" height="32" alt=""> | **Pień sosny (górny)** | `pine_log_upper` | **Kopanie:** 2 s (siekierą 0,67 s)<br>**Siekierą (PPM):** Okorowany pień sosny<br>**Przydaje się do:** Opał — sosna, Deski sosnowe |
 | <img src="ikony/pine_log_resin.png" width="32" height="32" alt=""> | **Pień sosny z żywicą** | `pine_log_resin` | **Kopanie:** 2 s (siekierą 0,67 s)<br>**Daje:** Pień sosny<br>**Zbiór (PPM):** Żywica 1-2<br>**Siekierą (PPM):** Okorowany pień sosny<br>**Przydaje się do:** Opał — sosna, Deski sosnowe |
 | <img src="ikony/pine_log_stripped.png" width="32" height="32" alt=""> | **Okorowany pień sosny** | `pine_log_stripped` | **Kopanie:** 2 s (siekierą 0,67 s)<br>**Skąd:** siekierą (PPM) z bloku: Pień sosny; siekierą (PPM) z bloku: Pień sosny (górny); siekierą (PPM) z bloku: Pień sosny z żywicą<br>**Przydaje się do:** Opał — sosna, Deski sosnowe |
-| <img src="ikony/pine_planks.png" width="32" height="32" alt=""> | **Deski sosnowe** | `pine_planks` | **Kopanie:** 2 s (siekierą 0,67 s)<br>**Przepis:** Deski sosnowe x4<br>**Przydaje się do:** Ciemne deski, Patyk |
+| <img src="ikony/pine_planks.png" width="32" height="32" alt=""> | **Deski sosnowe** | `pine_planks` | **Kopanie:** 2 s (siekierą 0,67 s)<br>**Przepis:** Deski sosnowe x4<br>**Przydaje się do:** Skrzynia, Ciemne deski, Tratwa, Patyk |
 | <img src="ikony/beech_log.png" width="32" height="32" alt=""> | **Pień buka** | `beech_log` | **Kopanie:** 2 s (siekierą 0,67 s)<br>**Siekierą (PPM):** Okorowany pień buka<br>**Przydaje się do:** Opał — buk, Deski bukowe |
 | <img src="ikony/beech_log_stripped.png" width="32" height="32" alt=""> | **Okorowany pień buka** | `beech_log_stripped` | **Kopanie:** 2 s (siekierą 0,67 s)<br>**Skąd:** siekierą (PPM) z bloku: Pień buka<br>**Przydaje się do:** Opał — buk, Deski bukowe |
-| <img src="ikony/beech_planks.png" width="32" height="32" alt=""> | **Deski bukowe** | `beech_planks` | **Kopanie:** 2 s (siekierą 0,67 s)<br>**Przepis:** Deski bukowe x4<br>**Przydaje się do:** Ciemne deski, Patyk |
+| <img src="ikony/beech_planks.png" width="32" height="32" alt=""> | **Deski bukowe** | `beech_planks` | **Kopanie:** 2 s (siekierą 0,67 s)<br>**Przepis:** Deski bukowe x4<br>**Przydaje się do:** Skrzynia, Ciemne deski, Tratwa, Patyk |
 | <img src="ikony/linden_log.png" width="32" height="32" alt=""> | **Pień lipy** | `linden_log` | **Kopanie:** 2 s (siekierą 0,67 s)<br>**Siekierą (PPM):** Okorowany pień lipy<br>**Przydaje się do:** Opał — lipa, Deski lipowe |
 | <img src="ikony/linden_log_stripped.png" width="32" height="32" alt=""> | **Okorowany pień lipy** | `linden_log_stripped` | **Kopanie:** 2 s (siekierą 0,67 s)<br>**Skąd:** siekierą (PPM) z bloku: Pień lipy<br>**Przydaje się do:** Opał — lipa, Deski lipowe |
-| <img src="ikony/linden_planks.png" width="32" height="32" alt=""> | **Deski lipowe** | `linden_planks` | **Kopanie:** 2 s (siekierą 0,67 s)<br>**Przepis:** Deski lipowe x4<br>**Przydaje się do:** Ciemne deski, Patyk |
+| <img src="ikony/linden_planks.png" width="32" height="32" alt=""> | **Deski lipowe** | `linden_planks` | **Kopanie:** 2 s (siekierą 0,67 s)<br>**Przepis:** Deski lipowe x4<br>**Przydaje się do:** Skrzynia, Ciemne deski, Tratwa, Patyk |
 | <img src="ikony/oak_log.png" width="32" height="32" alt=""> | **Pień dębu** | `oak_log` | **Kopanie:** 2 s (siekierą 0,67 s)<br>**Siekierą (PPM):** Okorowany pień dębu<br>**Przydaje się do:** Opał — dąb, Deski dębowe |
 | <img src="ikony/oak_log_stripped.png" width="32" height="32" alt=""> | **Okorowany pień dębu** | `oak_log_stripped` | **Kopanie:** 2 s (siekierą 0,67 s)<br>**Skąd:** siekierą (PPM) z bloku: Pień dębu<br>**Przydaje się do:** Opał — dąb, Deski dębowe |
-| <img src="ikony/oak_planks.png" width="32" height="32" alt=""> | **Deski dębowe** | `oak_planks` | **Kopanie:** 2 s (siekierą 0,67 s)<br>**Przepis:** Deski dębowe x4<br>**Przydaje się do:** Ciemne deski, Patyk |
+| <img src="ikony/oak_planks.png" width="32" height="32" alt=""> | **Deski dębowe** | `oak_planks` | **Kopanie:** 2 s (siekierą 0,67 s)<br>**Przepis:** Deski dębowe x4<br>**Przydaje się do:** Skrzynia, Ciemne deski, Tratwa, Patyk |
 | <img src="ikony/birch_log.png" width="32" height="32" alt=""> | **Pień brzozy** | `birch_log` | **Kopanie:** 2 s (siekierą 0,67 s)<br>**Siekierą (PPM):** Okorowany pień brzozy + Kora brzozowa<br>**Przydaje się do:** Opał — brzoza, Deski brzozowe |
 | <img src="ikony/birch_log_stripped.png" width="32" height="32" alt=""> | **Okorowany pień brzozy** | `birch_log_stripped` | **Kopanie:** 2 s (siekierą 0,67 s)<br>**Skąd:** siekierą (PPM) z bloku: Pień brzozy<br>**Przydaje się do:** Opał — brzoza, Deski brzozowe |
-| <img src="ikony/birch_planks.png" width="32" height="32" alt=""> | **Deski brzozowe** | `birch_planks` | **Kopanie:** 2 s (siekierą 0,67 s)<br>**Przepis:** Deski brzozowe x4<br>**Przydaje się do:** Ciemne deski, Patyk |
+| <img src="ikony/birch_planks.png" width="32" height="32" alt=""> | **Deski brzozowe** | `birch_planks` | **Kopanie:** 2 s (siekierą 0,67 s)<br>**Przepis:** Deski brzozowe x4<br>**Przydaje się do:** Skrzynia, Ciemne deski, Tratwa, Patyk |
 | <img src="ikony/jablon_log.png" width="32" height="32" alt=""> | **Pień jabłoni** | `jablon_log` | **Kopanie:** 2 s (siekierą 0,67 s)<br>**Siekierą (PPM):** Okorowany pień jabłoni<br>**Paczka drzewa:** assets/drzewa/jablon<br>**Przydaje się do:** Opał — jabłoń, Deski jabłoniowe |
 | <img src="ikony/jablon_log_stripped.png" width="32" height="32" alt=""> | **Okorowany pień jabłoni** | `jablon_log_stripped` | **Kopanie:** 2 s (siekierą 0,67 s)<br>**Paczka drzewa:** assets/drzewa/jablon<br>**Skąd:** siekierą (PPM) z bloku: Pień jabłoni<br>**Przydaje się do:** Opał — jabłoń, Deski jabłoniowe |
-| <img src="ikony/jablon_planks.png" width="32" height="32" alt=""> | **Deski jabłoniowe** | `jablon_planks` | **Kopanie:** 2 s (siekierą 0,67 s)<br>**Paczka drzewa:** assets/drzewa/jablon<br>**Przepis:** Deski jabłoniowe x4<br>**Przydaje się do:** Ciemne deski, Patyk |
+| <img src="ikony/jablon_planks.png" width="32" height="32" alt=""> | **Deski jabłoniowe** | `jablon_planks` | **Kopanie:** 2 s (siekierą 0,67 s)<br>**Paczka drzewa:** assets/drzewa/jablon<br>**Przepis:** Deski jabłoniowe x4<br>**Przydaje się do:** Skrzynia, Ciemne deski, Tratwa, Patyk |
 | <img src="ikony/olcha_log.png" width="32" height="32" alt=""> | **Pień olchy** | `olcha_log` | **Kopanie:** 2 s (siekierą 0,67 s)<br>**Siekierą (PPM):** Okorowany pień olchy<br>**Paczka drzewa:** assets/drzewa/olcha<br>**Przydaje się do:** Opał — olcha, Deski olchowe |
 | <img src="ikony/olcha_log_stripped.png" width="32" height="32" alt=""> | **Okorowany pień olchy** | `olcha_log_stripped` | **Kopanie:** 2 s (siekierą 0,67 s)<br>**Paczka drzewa:** assets/drzewa/olcha<br>**Skąd:** siekierą (PPM) z bloku: Pień olchy<br>**Przydaje się do:** Opał — olcha, Deski olchowe |
-| <img src="ikony/olcha_planks.png" width="32" height="32" alt=""> | **Deski olchowe** | `olcha_planks` | **Kopanie:** 2 s (siekierą 0,67 s)<br>**Paczka drzewa:** assets/drzewa/olcha<br>**Przepis:** Deski olchowe x4<br>**Przydaje się do:** Ciemne deski, Patyk |
+| <img src="ikony/olcha_planks.png" width="32" height="32" alt=""> | **Deski olchowe** | `olcha_planks` | **Kopanie:** 2 s (siekierą 0,67 s)<br>**Paczka drzewa:** assets/drzewa/olcha<br>**Przepis:** Deski olchowe x4<br>**Przydaje się do:** Skrzynia, Ciemne deski, Tratwa, Patyk |
 | <img src="ikony/wierzba_log.png" width="32" height="32" alt=""> | **Pień wierzby** | `wierzba_log` | **Kopanie:** 2 s (siekierą 0,67 s)<br>**Siekierą (PPM):** Okorowany pień wierzby<br>**Paczka drzewa:** assets/drzewa/wierzba<br>**Przydaje się do:** Opał — wierzba, Deski wierzbowe |
 | <img src="ikony/wierzba_log_stripped.png" width="32" height="32" alt=""> | **Okorowany pień wierzby** | `wierzba_log_stripped` | **Kopanie:** 2 s (siekierą 0,67 s)<br>**Paczka drzewa:** assets/drzewa/wierzba<br>**Skąd:** siekierą (PPM) z bloku: Pień wierzby<br>**Przydaje się do:** Opał — wierzba, Deski wierzbowe |
-| <img src="ikony/wierzba_planks.png" width="32" height="32" alt=""> | **Deski wierzbowe** | `wierzba_planks` | **Kopanie:** 2 s (siekierą 0,67 s)<br>**Paczka drzewa:** assets/drzewa/wierzba<br>**Przepis:** Deski wierzbowe x4<br>**Przydaje się do:** Ciemne deski, Patyk |
+| <img src="ikony/wierzba_planks.png" width="32" height="32" alt=""> | **Deski wierzbowe** | `wierzba_planks` | **Kopanie:** 2 s (siekierą 0,67 s)<br>**Paczka drzewa:** assets/drzewa/wierzba<br>**Przepis:** Deski wierzbowe x4<br>**Przydaje się do:** Skrzynia, Ciemne deski, Tratwa, Patyk |
 
 ## Budulec
 

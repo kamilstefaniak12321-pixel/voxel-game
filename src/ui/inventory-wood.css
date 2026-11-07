@@ -57,6 +57,8 @@
     --wood-grid-frame: 6px;
     --wood-chrome: calc((var(--wood-frame) + var(--wood-pad)) * 2);
     --wood-framed-grid: calc(var(--inv-grid-width) + var(--wood-grid-frame) * 2);
+    --inv-framed-grid: var(--wood-framed-grid);
+    --inv-grid-inset: var(--wood-grid-frame);
 }
 
 

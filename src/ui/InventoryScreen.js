@@ -29,13 +29,18 @@ import { skyUniforms } from '../sky/skyShader.js';
 // ------------------------------------------------------------
 // EKWIPUNEK (klawisz E)
 //
-// Tryb kreatywny: zakładki - "Wszystkie bloki" (każdy blok gry
-// i przedmiot - z kategoriami i wyszukiwaniem) i "Ekwipunek". Tryb
-// przygody: sam ekwipunek.
-// W zakładce ekwipunku: postać gracza, 27 miejsc, WYTWARZANIE (siatka
-// 2 x 2 i wynik - src/crafting/) i przycisk KSIĘGI PRZEPISÓW (panel
-// z lewej: przepisy według kategorii, klik układa składniki w siatce).
-// Na dole zawsze pasek bloków (9 miejsc), w kreatywnym także kosz.
+// Układ (0.77.0, projekt Kamila): nad ramą mały pasek (tytuł albo
+// wyszukiwanie, przejście Bloki / Ekwipunek, Przepisy, kosz, zamknięcie),
+// pod ramą krótka pomoc.
+// Ekwipunek: postać gracza (2 kolumny) | 3 miejsca na przyszłe ubrania,
+// plecaki i paski na narzędzia | STREFA RZEMIEŚLNICZA (siatka 2 x 2
+// i wynik - src/crafting/; później tu będzie też widok otwartej
+// skrzyni); pod spodem 27 miejsc i pasek - razem 4 x 9. Przycisk KSIĘGI
+// PRZEPISÓW otwiera panel z lewej (przepisy według kategorii, klik
+// układa składniki w siatce).
+// Kreatywny ("Bloki"): 9 łukowatych zakładek kategorii (ponowny klik -
+// wszystko), 5 przewijanych rzędów bloków, pod nimi pasek; wyszukiwanie
+// szuka we wszystkich kategoriach.
 //
 // Obsługa jak w Minecrafcie:
 //   klik             - weź stos / połóż / zamień / dołóż do takiego samego,
@@ -56,9 +61,13 @@ import { skyUniforms } from '../sky/skyShader.js';
 // ------------------------------------------------------------
 
 const TABS = {
-    blocks: 'Wszystkie bloki',
+    blocks: 'Bloki',
     inventory: 'Ekwipunek'
 };
+
+// Trzy miejsca obok postaci - na przyszłe ubrania, plecaki i paski na
+// narzędzia (na razie nic się w nich nie kładzie).
+export const EQUIPMENT_SLOTS = ['Ubranie', 'Plecak', 'Pas na narzędzia'];
 
 const HELP = {
     blocks: 'Klik - weź stos | PPM - jedna sztuka | Shift + klik - na pasek | 1-9 - na to miejsce paska | kosz - usuń | E - zamknij',
@@ -353,53 +362,18 @@ export class InventoryScreen {
         this.hover = null;
         this.tooltip.hidden = true;
         this.bookGrid = null;
+        this.searchInput = null;
+
+        // Okno: mały pasek nad ramą (przyciski, w kreatywnym wyszukiwanie
+        // i kosz), rama z miejscami i krótka pomoc pod ramą.
+
+        const frame = el('div', 'inv-window');
+        frame.setAttribute('role', 'dialog');
+        frame.setAttribute('aria-modal', 'true');
+        frame.setAttribute('aria-label', 'Ekwipunek');
 
         const panel = el('div', 'inv-panel');
-        panel.setAttribute('role', 'dialog');
-        panel.setAttribute('aria-modal', 'true');
-        panel.setAttribute('aria-label', 'Ekwipunek');
 
-        const header = el('div', 'inv-header');
-        const actions = el('div', 'inv-header-actions');
-
-        if (this.tab === 'inventory') {
-            const toggle = el('button', `inv-book-toggle${this.book.open ? ' selected' : ''}`, 'Przepisy');
-            toggle.type = 'button';
-            toggle.title = 'Pokaż lub schowaj księgę przepisów';
-            toggle.setAttribute('aria-pressed', String(this.book.open));
-            actions.append(toggle);
-        }
-
-        const close = el('button', 'inv-close', '✕');
-        close.type = 'button';
-        close.title = 'Zamknij ekwipunek';
-        close.setAttribute('aria-label', 'Zamknij ekwipunek');
-        actions.append(close);
-
-        header.append(el('h2', 'inv-title', 'Ekwipunek'), actions);
-        panel.append(header);
-
-
-        // Zakładki trybu kreatywnego; nagłówek i rama są wspólne.
-
-        if (creative) {
-
-            const tabs = el('div', 'inv-tabs');
-
-            for (const [id, name] of Object.entries(TABS)) {
-
-                const tab = el('button', `inv-tab${id === this.tab ? ' selected' : ''}`, name);
-
-                tab.type = 'button';
-                tab.dataset.tab = id;
-
-                tabs.append(tab);
-
-            }
-
-            panel.append(tabs);
-
-        }
         const workspace = el('div', 'inv-workspace');
         const main = el('div', 'inv-main');
         const storageScroll = el('div', 'inv-storage-scroll');
@@ -409,7 +383,96 @@ export class InventoryScreen {
 
         if (this.tab === 'blocks') {
 
+            // Kreatywny: 9 zakładek kategorii nad siatką bloków
+            // (5 rzędów, przewijana), pod nią pasek.
+
             panel.classList.add('inv-creative');
+
+            this.creativeChips = this.categoryTabs();
+
+            this.creativeGrid = el('div', 'inv-grid inv-creative-grid');
+
+            const scroll = el('div', 'inv-scroll inv-creative-scroll');
+
+            scroll.append(this.creativeGrid);
+
+            storage.append(this.creativeChips, scroll);
+
+            this.fillCreative();
+
+        }
+        else {
+
+            // Ekwipunek: postać, 3 miejsca na przyszłe ubrania, plecaki
+            // i paski, strefa rzemieślnicza; pod spodem 3 rzędy
+            // przedmiotów i pasek.
+
+            panel.classList.add('inv-crafting');
+
+            const top = el('div', 'inv-top');
+
+            const preview = el('div', 'inv-character');
+            preview.append(this.previewCanvas);
+
+            const equipment = el('div', 'inv-equipment');
+
+            EQUIPMENT_SLOTS.forEach((label, index) => {
+                const slot = this.slotElement(index, 'equip');
+                slot.dataset.label = label;
+                slot.setAttribute('aria-label', `${label} (wkrótce)`);
+                equipment.append(slot);
+            });
+
+            top.append(preview, equipment, this.craftElement());
+
+            const slots = el('div', 'inv-grid inv-items');
+            for (let i = HOTBAR_SIZE; i < SLOT_COUNT; i++) {
+                slots.append(this.slotElement(i));
+            }
+            storage.append(top, slots);
+
+            if (this.book.open) {
+                panel.classList.add('has-book');
+                workspace.append(this.bookPanel());
+            }
+
+        }
+
+
+        // Pasek bloków - ostatni rząd.
+
+        const bottom = el('div', 'inv-bottom');
+
+        const hotbar = el('div', 'inv-grid inv-hotbar');
+
+        for (let i = 0; i < HOTBAR_SIZE; i++) {
+            hotbar.append(this.slotElement(i));
+        }
+
+        bottom.append(hotbar);
+
+        storage.append(bottom);
+        main.append(storageScroll);
+        workspace.append(main);
+        panel.append(workspace);
+
+        frame.append(this.barElement(creative), panel, el('p', 'inv-help inv-footer', (game.touchMode ? HELP_TOUCH : HELP)[this.tab]));
+
+        this.root.replaceChildren(frame);
+
+        this.refresh();
+
+    }
+
+
+    // Mały pasek nad ramą: w kreatywnym wyszukiwanie, przejście między
+    // blokami a ekwipunkiem i kosz; księga przepisów i zamknięcie.
+
+    barElement(creative) {
+
+        const bar = el('div', 'inv-bar');
+
+        if (this.tab === 'blocks') {
 
             const search = el('input', 'inv-search');
 
@@ -428,57 +491,38 @@ export class InventoryScreen {
 
             this.searchInput = search;
 
-            this.creativeChips = this.chipRow('creative', this.category);
-
-            this.creativeGrid = el('div', 'inv-grid inv-creative-grid');
-
-            const scroll = el('div', 'inv-scroll inv-creative-scroll');
-
-            scroll.append(this.creativeGrid);
-
-            main.append(this.creativeChips, search);
-            storage.append(scroll);
-
-            this.fillCreative();
+            bar.append(search);
 
         }
         else {
 
-            this.searchInput = null;
-
-            panel.classList.add('inv-crafting');
-
-            const top = el('div', 'inv-top');
-            const preview = el('div', 'inv-character');
-            preview.append(this.previewCanvas);
-            top.append(preview, this.craftElement());
-            main.append(top);
-
-            const slots = el('div', 'inv-grid inv-items');
-            for (let i = HOTBAR_SIZE; i < SLOT_COUNT; i++) {
-                slots.append(this.slotElement(i));
-            }
-            storage.append(el('div', 'inv-section-label', 'Przedmioty'), slots);
-
-            if (this.book.open) {
-                panel.classList.add('has-book');
-                workspace.append(this.bookPanel());
-            }
+            bar.append(el('h2', 'inv-title', 'Ekwipunek'));
 
         }
 
+        const actions = el('div', 'inv-header-actions');
 
-        // Pasek bloków (+ kosz w trybie kreatywnym).
+        if (creative) {
 
-        const bottom = el('div', 'inv-bottom');
+            const other = this.tab === 'blocks' ? 'inventory' : 'blocks';
 
-        const hotbar = el('div', 'inv-grid inv-hotbar');
+            const tab = el('button', 'inv-tab', TABS[other]);
 
-        for (let i = 0; i < HOTBAR_SIZE; i++) {
-            hotbar.append(this.slotElement(i));
+            tab.type = 'button';
+            tab.dataset.tab = other;
+            tab.title = other === 'blocks' ? 'Wszystkie bloki gry' : 'Ekwipunek i wytwarzanie';
+
+            actions.append(tab);
+
         }
 
-        bottom.append(hotbar);
+        if (this.tab === 'inventory') {
+            const toggle = el('button', `inv-book-toggle${this.book.open ? ' selected' : ''}`, 'Przepisy');
+            toggle.type = 'button';
+            toggle.title = 'Pokaż lub schowaj księgę przepisów';
+            toggle.setAttribute('aria-pressed', String(this.book.open));
+            actions.append(toggle);
+        }
 
         if (creative) {
 
@@ -487,18 +531,52 @@ export class InventoryScreen {
             trash.dataset.kind = 'trash';
             trash.title = 'Kosz - upuść tu blok, żeby go usunąć';
 
-            bottom.append(trash);
+            actions.append(trash);
 
         }
 
-        storage.append(bottom);
-        main.append(storageScroll);
-        workspace.append(main);
-        panel.append(workspace, el('p', 'inv-help inv-footer', (game.touchMode ? HELP_TOUCH : HELP)[this.tab]));
+        const close = el('button', 'inv-close', '✕');
+        close.type = 'button';
+        close.title = 'Zamknij ekwipunek';
+        close.setAttribute('aria-label', 'Zamknij ekwipunek');
+        actions.append(close);
 
-        this.root.replaceChildren(panel);
+        bar.append(actions);
 
-        this.refresh();
+        return bar;
+
+    }
+
+
+    // Zakładki kategorii trybu kreatywnego - po jednej na kolumnę
+    // siatki. Kliknięcie wybranej pokazuje znowu wszystkie bloki.
+
+    categoryTabs() {
+
+        const row = el('div', 'inv-cat-tabs');
+
+        for (const category of CATEGORY_ORDER) {
+
+            const tab = el('button', `inv-chip inv-cat-tab${this.category === category ? ' selected' : ''}`);
+
+            tab.type = 'button';
+            tab.dataset.where = 'creative';
+            tab.dataset.category = category;
+            tab.title = CATEGORIES[category].label;
+            tab.setAttribute('aria-pressed', String(this.category === category));
+
+            const image = el('img');
+
+            image.src = this.icons.get(CATEGORIES[category].icon) ?? '';
+            image.draggable = false;
+
+            tab.append(image);
+
+            row.append(tab);
+
+        }
+
+        return row;
 
     }
 
@@ -519,13 +597,14 @@ export class InventoryScreen {
     }
 
 
-    // Wytwarzanie: siatka 2 x 2 -> wynik, nad miejscami ekwipunku.
+    // Strefa rzemieślnicza (prawe górne okno): siatka 2 x 2 -> wynik.
+    // Później w tym miejscu będzie też widok otwartej skrzyni.
 
     craftElement() {
 
-        const box = el('div', 'inv-craft');
+        const box = el('div', 'inv-craft inv-zone');
 
-        box.append(el('div', 'inv-craft-title', 'Wytwarzanie'));
+        box.title = 'Strefa rzemieślnicza - wytwarzanie';
 
         const area = el('div', 'inv-craft-area');
 
@@ -603,7 +682,7 @@ export class InventoryScreen {
         const query = simplify(this.search.trim());
 
         const items = sortByCategory(CREATIVE_ITEMS).filter((type) =>
-            (this.category === null || getCategory(type) === this.category) &&
+            (this.category === null || query || getCategory(type) === this.category) &&
             (!query || simplify(getItemLabel(type)).includes(query) || type.includes(query))
         );
 
@@ -990,7 +1069,7 @@ export class InventoryScreen {
             // Klik obok okna z blokiem pod kursorem: w kreatywnym blok
             // znika, w przygodzie wraca do ekwipunku.
 
-            if (!event.target.closest('.inv-panel, .inv-book') && this.cursor) {
+            if (!event.target.closest('.inv-panel, .inv-book, .inv-bar') && this.cursor) {
 
                 if (!isCreative(this.game.mode)) {
                     this.returnCursor();
@@ -1034,6 +1113,12 @@ export class InventoryScreen {
         else if (kind === 'recipe') {
             this.clickRecipe(slot.dataset.recipe, event.shiftKey);
         }
+        else if (kind === 'equip') {
+            // Na razie nic się tu nie kładzie.
+            if (this.cursor) {
+                playUi('ui_error');
+            }
+        }
         else {
             this.clickSlot(kind, Number(slot.dataset.index), right, event.shiftKey);
         }
@@ -1062,11 +1147,16 @@ export class InventoryScreen {
 
         if (chip) {
 
-            const category = chip.dataset.category || null;
+            let category = chip.dataset.category || null;
 
             playUi('ui_click');
 
             if (chip.dataset.where === 'creative') {
+
+                // Wybrana zakładka jeszcze raz - znowu wszystkie bloki.
+                if (category === this.category) {
+                    category = null;
+                }
 
                 this.category = category;
 
@@ -1129,6 +1219,7 @@ export class InventoryScreen {
 
         for (const chip of row.querySelectorAll('.inv-chip')) {
             chip.classList.toggle('selected', (chip.dataset.category || null) === category);
+            if (chip.hasAttribute('aria-pressed')) chip.setAttribute('aria-pressed', String((chip.dataset.category || null) === category));
         }
 
     }
@@ -1490,6 +1581,20 @@ export class InventoryScreen {
             recipe = getRecipe(slot.dataset.recipe);
 
         }
+        else if (kind === 'equip') {
+
+            this.tooltip.hidden = false;
+
+            this.tooltip.replaceChildren(
+                el('div', 'inv-tooltip-title', slot.dataset.label),
+                el('div', 'inv-tooltip-note', 'Wkrótce - ubrania, plecaki i paski na narzędzia.')
+            );
+
+            this.placeTooltip(event);
+
+            return;
+
+        }
 
 
         const show = Boolean(label || recipe) && !this.cursor;
@@ -1510,7 +1615,14 @@ export class InventoryScreen {
             this.tooltip.replaceChildren(getItemLabel(label), el('span', 'inv-tooltip-id', label));
         }
 
-        // Przy prawej / dolnej krawędzi ekranu - z drugiej strony kursora.
+        this.placeTooltip(event);
+
+    }
+
+
+    // Przy prawej / dolnej krawędzi ekranu - z drugiej strony kursora.
+
+    placeTooltip(event) {
 
         const width = this.tooltip.offsetWidth;
         const height = this.tooltip.offsetHeight;

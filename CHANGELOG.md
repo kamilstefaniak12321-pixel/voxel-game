@@ -11,6 +11,25 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 0.77.0 - Nowy układ ekwipunku
+
+Układ okna ekwipunku według projektu Kamila — PR #113.
+
+- Nad ramą mały pasek: tytuł albo wyszukiwanie, *Bloki* / *Ekwipunek*
+  (kreatywny), *Przepisy*, kosz (kreatywny) i zamknięcie; krótka pomoc
+  pod ramą.
+- Ekwipunek: u góry postać gracza, obok trzy miejsca na przyszłe
+  ubrania, plecaki i paski na narzędzia (na razie puste, z opisem)
+  i strefa rzemieślnicza z wytwarzaniem - w tym oknie będzie później
+  widać otwartą skrzynię. Pod spodem 4 rzędy po 9 (przedmioty i pasek)
+  bez przerwy. Księga przepisów jak dotąd z lewej.
+- Kreatywny: 9 łukowatych zakładek kategorii nad siatką (ponowne
+  kliknięcie - wszystkie bloki), 5 przewijanych rzędów i pasek pod nimi;
+  wyszukiwanie szuka we wszystkich kategoriach.
+- Wszystkie wyglądy (drewniany, jasny, szare drewno, Lepidolit) - ten
+  sam układ; tło i ramki zostają z motywu.
+- Test GUI (`tools/sprawdz_motyw_gui_webgl.mjs`) sprawdza nowy układ.
+
 ## 0.76.0 - Tratwa na rzeki i wodospady
 
 Przygotowanie kolejnego wydania po 0.75.0 — [PR #112](https://github.com/kamilstefaniak12321-pixel/voxel-game/pull/112).

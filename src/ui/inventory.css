@@ -8,6 +8,10 @@
     --inv-scrollbar-space: 18px;
     --inv-grid-width: calc(var(--inv-slot-size) * 9 + var(--inv-gap) * 8);
     --inv-book-width: calc(var(--inv-slot-size) * 5 + var(--inv-gap) * 4 + 37px);
+    /* Siatka razem z ramką motywu i odstęp ramki od pierwszego miejsca
+       (motywy z grubszą ramką siatki ustawiają je u siebie). */
+    --inv-framed-grid: var(--inv-grid-width);
+    --inv-grid-inset: 0px;
 }
 
 #inventory {
@@ -527,4 +531,221 @@
     .inv-book { gap: 6px; }
     .inv-book-scroll { max-height: 112px; }
     .inv-creative-scroll { max-height: 160px; }
+}
+
+
+/* ============================================================
+   UKŁAD 0.77.0 (projekt Kamila)
+   ------------------------------------------------------------
+   Nad ramą mały pasek (tytuł albo wyszukiwanie, przyciski, kosz),
+   w ramie:
+     ekwipunek  - postać (2 kolumny) | 3 miejsca na ubrania, plecaki
+                  i paski | strefa rzemieślnicza (6 kolumn); pod spodem
+                  3 rzędy przedmiotów i pasek - razem 4 x 9,
+     kreatywny  - 9 łukowatych zakładek kategorii, 5 przewijanych
+                  rzędów bloków i pasek.
+   Pod ramą krótka pomoc. Tło i ramki zostają z motywu.
+   ============================================================ */
+
+.inv-window {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    width: max-content;
+    max-width: 100%;
+    max-height: 100%;
+    min-height: 0;
+}
+
+.inv-window > .inv-panel {
+    min-height: 0;
+    flex-shrink: 1;
+}
+
+/* Pasek i pomoc nie poszerzają okna - mają szerokość ramy. */
+.inv-bar,
+#inventory .inv-window > .inv-footer {
+    width: 0;
+    min-width: 100%;
+    box-sizing: border-box;
+}
+
+.inv-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    flex-shrink: 0;
+    padding: 4px 6px;
+    background: var(--inv-surface-bg);
+    border: 2px solid var(--inv-border);
+    box-shadow: 0 3px 0 var(--inv-shadow);
+}
+
+.inv-bar .inv-title {
+    padding-left: 4px;
+    font-size: 18px;
+    white-space: nowrap;
+}
+
+.inv-bar .inv-search {
+    flex: 1 1 auto;
+    width: auto;
+    min-width: 80px;
+}
+
+.inv-bar .inv-header-actions {
+    gap: 6px;
+}
+
+.inv-bar .inv-tab,
+.inv-bar .inv-book-toggle,
+.inv-bar .inv-close {
+    min-height: 34px;
+}
+
+#inventory .inv-bar .inv-trash {
+    width: 36px;
+    height: 36px;
+    font-size: 18px;
+}
+
+#inventory .inv-window > .inv-footer {
+    padding: 4px 6px;
+    border: 0;
+    box-shadow: none;
+    font-size: 12px;
+    background: var(--inv-surface-bg);
+}
+
+#inventory .inv-panel {
+    gap: 0;
+}
+
+
+/* --- Ekwipunek: górny rząd ------------------------------------- */
+
+.inv-top {
+    display: grid;
+    grid-template-columns:
+        calc(var(--inv-slot-size) * 2 + var(--inv-gap))
+        var(--inv-slot-size)
+        minmax(0, 1fr);
+    grid-template-rows: repeat(3, var(--inv-slot-size));
+    align-items: stretch;
+    column-gap: var(--inv-gap);
+    row-gap: var(--inv-gap);
+    box-sizing: border-box;
+    width: var(--inv-framed-grid);
+    margin-bottom: calc(var(--inv-gap) * 2 + 4px);
+    padding-inline: var(--inv-grid-inset);
+}
+
+#inventory .inv-top .inv-character {
+    grid-column: 1;
+    grid-row: 1 / 4;
+    min-height: 0;
+    margin: 0;
+    overflow: hidden;
+}
+
+.inv-top .inv-preview {
+    width: 100%;
+    height: 100%;
+}
+
+.inv-equipment {
+    grid-column: 2;
+    grid-row: 1 / 4;
+    display: grid;
+    grid-template-rows: repeat(3, var(--inv-slot-size));
+    gap: var(--inv-gap);
+}
+
+/* Miejsca na przyszłe ubrania: puste, przygaszone. */
+.inv-slot[data-kind="equip"] {
+    cursor: help;
+    opacity: 0.75;
+}
+
+.inv-slot[data-kind="equip"]::after {
+    content: '';
+    position: absolute;
+    inset: 28%;
+    border: 2px dashed var(--inv-muted);
+    opacity: 0.35;
+    pointer-events: none;
+}
+
+/* Strefa rzemieślnicza - wnęka jak przy postaci. */
+#inventory .inv-zone {
+    grid-column: 3;
+    grid-row: 1 / 4;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 0;
+    background: var(--inv-surface-bg);
+    border: 2px solid var(--inv-border);
+    box-shadow: inset 1px 1px 0 var(--inv-shadow);
+}
+
+#inventory .inv-zone .inv-craft-area {
+    gap: 10px;
+}
+
+/* Rzędy przedmiotów i pasek - jedna siatka 4 x 9 (bez kreski). */
+#inventory .inv-bottom {
+    width: auto;
+    margin-top: var(--inv-gap);
+    padding-top: 0;
+    border-top: 0;
+    box-shadow: none;
+}
+
+
+/* --- Kreatywny: zakładki i 5 przewijanych rzędów -------------------- */
+
+.inv-cat-tabs {
+    display: grid;
+    grid-template-columns: repeat(9, var(--inv-slot-size));
+    gap: var(--inv-gap);
+    padding-inline: var(--inv-grid-inset);
+    margin-bottom: 4px;
+}
+
+#inventory .inv-chip.inv-cat-tab {
+    box-sizing: border-box;
+    width: var(--inv-slot-size);
+    height: calc(var(--inv-slot-size) * 0.9);
+    min-width: 0;
+    min-height: 0;
+    padding: 6px 0 0;
+    border-radius: 50% 50% 0 0 / 42% 42% 0 0;
+    align-items: center;
+}
+
+#inventory .inv-chip.inv-cat-tab img {
+    width: 58%;
+    height: 58%;
+}
+
+#inventory .inv-chip.inv-cat-tab.selected {
+    filter: brightness(1.15);
+}
+
+#inventory .inv-creative-scroll {
+    height: calc(var(--inv-slot-size) * 5 + var(--inv-gap) * 4 + var(--inv-grid-inset) * 2);
+    max-height: max(112px, calc(100dvh - 280px));
+    overflow-y: scroll;
+    box-sizing: border-box;
+}
+
+
+@media (max-height: 520px) {
+    .inv-window { gap: 4px; }
+    .inv-bar { padding: 2px 4px; }
+    .inv-bar .inv-title { font-size: 16px; }
+    #inventory .inv-window > .inv-footer { display: none; }
+    #inventory .inv-creative-scroll { max-height: calc(100dvh - 190px); }
 }

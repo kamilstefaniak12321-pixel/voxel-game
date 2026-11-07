@@ -158,16 +158,23 @@ patrzysz), `/kopanie granit`, `/kopanie lista`.
 
 **Ekwipunek** (klawisz **E**) ma 36 miejsc: 9 na pasku na dole ekranu
 (klawisze 1-9) i 27 w trzech rzędach. Stos to najwyżej 64 sztuki.
-W trybie kreatywnym okno ma zakładki: *Wszystkie bloki* (ułożone
-w kategorie - Ziemia, Skały, Drewno, Rośliny, Owoce i nasiona,
-Światło, Ozdoby, Narzędzia i surowce - z przyciskami kategorii
-i wyszukiwaniem po polsku i po nazwie bloku, np. „ziem” albo „humus”)
-i *Ekwipunek*. W zakładce ekwipunku widać postać gracza - głowa patrzy
-za myszką - i **wytwarzanie** (niżej).
 
-Okno ma wspólną ramkę: księgę przepisów po lewej, postać
-i wytwarzanie nad zapasami oraz pasek wyrównany z dziewięcioma
-kolumnami ekwipunku. Na węższym ekranie sekcje zmieniają ułożenie.
+Układ okna (od 0.77.0, według projektu Kamila): nad ramą mały pasek
+z przyciskami (*Przepisy*, zamknięcie; w kreatywnym także wyszukiwanie,
+przejście *Bloki* / *Ekwipunek* i kosz). W ramie u góry **postać
+gracza** (głowa patrzy za myszką), obok **trzy miejsca na przyszłe
+ubrania, plecaki i paski na narzędzia** (na razie puste) i **strefa
+rzemieślnicza** - wytwarzanie (niżej); później w tym oknie będzie też
+widać otwartą skrzynię. Pod spodem 4 rzędy po 9: trzy rzędy przedmiotów
+i pasek. Księga przepisów otwiera się z lewej strony ramy.
+
+W trybie kreatywnym zakładka *Bloki* ma **9 łukowatych zakładek
+kategorii** (Ziemia, Skały, Drewno, Budulec, Rośliny, Owoce i nasiona,
+Światło, Ozdoby, Narzędzia i surowce - ponowne kliknięcie pokazuje
+wszystko), pod nimi 5 przewijanych rzędów bloków i pasek. Wyszukiwanie
+(w pasku nad ramą) szuka we wszystkich kategoriach, po polsku i po
+nazwie bloku, np. „ziem” albo „humus”. Na wąskim ekranie siatka
+przewija się w bok.
 
 **Wygląd ekwipunku** (*Ustawienia → Wygląd → Ekwipunek*, albo `/ekwipunek wyglad`):
 **Drewniany** (domyślny) - okno z desek z mchem, liśćmi i pnączami,
@@ -186,7 +193,7 @@ Układ i wygląd są oddzielone: `src/ui/inventory.css` (układ),
 |---|---|
 | klik | weź stos / połóż / zamień / dołóż do takiego samego |
 | prawy przycisk | weź połowę stosu / połóż jedną sztukę (na bloku z listy kreatywnej: +1 sztuka) |
-| Shift + klik | pasek ↔ reszta ekwipunku (blok z listy kreatywnej - prosto na pasek; w zakładce *Wszystkie bloki* Shift + klik na pasku czyści miejsce) |
+| Shift + klik | pasek ↔ reszta ekwipunku (blok z listy kreatywnej - prosto na pasek; w zakładce *Bloki* Shift + klik na pasku czyści miejsce) |
 | 1-9 nad miejscem | zamiana z tym miejscem paska |
 | klik na wyniku wytwarzania | wyrób pod kursor (kolejny klik dokłada) |
 | Shift + klik na wyniku | wytwórz, ile się da, prosto do ekwipunku |

@@ -219,6 +219,8 @@
     --grey-pad: 12px;
     --grey-chrome: calc((var(--grey-frame) + var(--grey-pad)) * 2);
     --grey-grid-width: calc(var(--inv-grid-width) + 8px);
+    --inv-framed-grid: var(--grey-grid-width);
+    --inv-grid-inset: 4px;
 }
 
 :root[data-inv-style] #inventory { padding: 16px; }

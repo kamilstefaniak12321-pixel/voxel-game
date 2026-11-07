@@ -1,9 +1,18 @@
 # Ekwipunek: wspólny panel, wygląd i motywy
 
-Ekwipunek ma jedną wspólną ramkę. Po lewej znajduje się otwarta księga
-przepisów, a po prawej postać, wytwarzanie, 27 miejsc i wyrównany pasek
-9 miejsc. Księga jest częścią tego samego okna. Tryb kreatywny zachowuje
-wyszukiwanie bloków, kategorie i kosz.
+Ekwipunek ma jedną wspólną ramkę, a nad nią mały pasek z przyciskami
+(od 0.77.0, układ według projektu Kamila). W ramie u góry: postać
+(2 kolumny), trzy miejsca na przyszłe ubrania, plecaki i paski
+(1 kolumna) i strefa rzemieślnicza (6 kolumn); pod spodem 27 miejsc
+i pasek - 4 × 9. Otwarta księga przepisów jest z lewej, w tej samej
+ramie. Tryb kreatywny: 9 łukowatych zakładek kategorii, 5 przewijanych
+rzędów bloków i pasek; wyszukiwanie i kosz są w pasku nad ramą.
+
+Układ jest wspólny dla wszystkich wyglądów - motyw zmienia tylko kolory,
+tekstury i grubość ramek. Motyw z grubszą ramką siatek ustawia
+`--inv-framed-grid` (szerokość siatki z ramką) i `--inv-grid-inset`
+(odstęp ramki od pierwszego miejsca), żeby górny rząd i zakładki stały
+równo nad kolumnami.
 
 ![Wspólny panel w uruchomionej grze](ekwipunek-wspolny-panel.png)
 

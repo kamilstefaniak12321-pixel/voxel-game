@@ -13,7 +13,7 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ## 0.75.0 - Wyporność, ciągły nurt i żywa woda
 
-Przygotowanie kolejnego wydania po 0.74.0 — PR do powiązania.
+Przygotowanie kolejnego wydania po 0.74.0 — [PR #111](https://github.com/kamilstefaniak12321-pixel/voxel-game/pull/111).
 
 - Gracz automatycznie utrzymuje się przy tafli z oczami nad wodą.
   Shift pozwala świadomie nurkować, Spacja unosi wyżej i nadal służy

@@ -1,5 +1,6 @@
 # Pływanie i efekty wody — 0.75.0
 
+Implementacja: [PR #111](https://github.com/kamilstefaniak12321-pixel/voxel-game/pull/111).
 Baza: wydana 0.74.0. Kolejność prac zatwierdzona przez Kamila:
 najpierw wyporność gracza i ciągłość spływania rzeką, następnie pięć
 poniższych efektów. Funkcje wizualne i dźwiękowe nie sterują fizyką gracza.

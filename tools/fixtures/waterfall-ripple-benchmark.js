@@ -527,89 +527,169 @@ export async function createWaterfallRippleQA() {
         check(sounds.context.state === 'running', 'A real running AudioContext drives the waterfall voices');
         game.camera.position.set(-.5, 18, 9.5);
         game.player.splash = 0; game.player.leftWater = false;
-        const tick = (count = 60) => {
+        // Keep cold spikes and their phase/index. Nested spans are inclusive:
+        // loop includes createVoice, and waterfallAudio includes select/trace.
+        const diagnosticFrames = [], restorers = [], wrappedControls = new WeakSet();
+        let currentFrame = null;
+        const wrap = (object, name, label, returned = null) => {
+            const original = object[name];
+            object[name] = function (...args) {
+                const frame = currentFrame, start = frame ? performance.now() : 0;
+                try {
+                    const result = original.apply(this, args);
+                    returned?.(result, frame);
+                    return result;
+                } finally {
+                    if (frame) {
+                        frame.ms[label] = (frame.ms[label] ?? 0) + performance.now() - start;
+                        frame.calls[label] = (frame.calls[label] ?? 0) + 1;
+                    }
+                }
+            };
+            restorers.push(() => { object[name] = original; });
+        };
+        wrap(audio, 'update', 'waterfallAudio'); wrap(audio, 'select', 'select'); wrap(audio, 'trace', 'trace');
+        wrap(game.water, 'measureWaves', 'measureWaves');
+        wrap(sounds, 'createVoice', 'createVoice', (voice, frame) => {
+            if (!voice || !frame) return;
+            frame.created.sources++; frame.created.gains++; frame.created.panners += Number(Boolean(voice.panner));
+        });
+        wrap(sounds, 'loop', 'loop', (control, frame) => {
+            if (!control) return;
+            if (frame) frame.loopsStarted++;
+            if (wrappedControls.has(control)) return;
+            wrappedControls.add(control);
+            for (const name of ['setVolume', 'setPosition', 'setPitch', 'stop']) wrap(control, name, name);
+        });
+        const measured = (phase, scope, work, mode = 'accelerated') => {
+            const frame = { index: diagnosticFrames.length, phase, scope, mode,
+                cold: diagnosticFrames.length === 0, ms: {}, calls: {}, created: { sources: 0, gains: 0, panners: 0 },
+                loopsStarted: 0, voicesBefore: sounds.voices, contextTime: sounds.context.currentTime,
+                wallTime: performance.now() };
+            currentFrame = frame;
+            const start = performance.now();
+            try { work(); }
+            finally {
+                frame.totalMs = performance.now() - start; currentFrame = null;
+                frame.updateSoundsMs = scope === 'full-updateSounds' ? frame.totalMs : null;
+                frame.contextEndTime = sounds.context.currentTime; frame.voicesAfter = sounds.voices;
+                const stats = audio.stats();
+                frame.reportedWaterfallAudioMs = stats.lastMs; frame.lastProcessed = stats.lastProcessed;
+                frame.rayCells = stats.rayCells; frame.fading = stats.fading;
+                diagnosticFrames.push(frame);
+            }
+            return frame.totalMs;
+        };
+        const tick = (count, phase, dt = 1 / 60, mode = 'accelerated') => {
             for (let i = 0; i < count; i++) {
                 sounds.updateListener(game.camera);
                 game.water.setUnderwater(game.water.isUnderwater(game.camera.position));
-                const start = performance.now(); game.water.updateSounds(1 / 60); times.push(performance.now() - start);
+                const elapsed = measured(phase, 'full-updateSounds', () => game.water.updateSounds(dt), mode);
+                if (mode === 'accelerated') times.push(elapsed);
                 const stats = audio.stats();
                 ensure(stats.lastProcessed <= stats.caps.cellsPerUpdate && stats.voices <= 4 && stats.reserved <= 4,
                     'Web Audio frame respects the voxel and real active/fading voice caps');
             }
         };
-        const drain = async () => {
+        const drain = async phase => {
             // AudioBufferSource.onended follows the real audio clock, not our
             // accelerated fixed-step clock. Keep tails counted until it fires.
             const deadline = performance.now() + 2000;
             do {
-                await new Promise(resolve => setTimeout(resolve, 50)); tick(2);
+                await new Promise(resolve => setTimeout(resolve, 50)); tick(2, `${phase}:fade-wait`);
                 if (audio.stats().fading === 0) return;
             } while (performance.now() < deadline);
             throw new Error('Web Audio fade tails did not release their real voices');
         };
-        audio.setAmount(1); audio.refresh = 0; tick();
-        const open = audio.stats();
-        check(open.loops >= 3 && open.voices <= 4 && open.sources.some(source => source.sound === 'water_waves') &&
-            open.sources.some(source => source.sound === 'water_stream'),
-            'Short and tall real falls create distinct positional loops within the four-voice cap');
-        check([...sounds.gameVoices].some(voice => voice.panner && voice.source instanceof AudioBufferSourceNode),
-            'Waterfall playback owns actual AudioBufferSourceNode and positional PannerNode objects');
-
-        const edits = [];
-        for (let x = -18; x <= 4; x++) for (let y = 17; y <= 22; y++) {
-            edits.push([x, y, 11, world.getBlockId(x, y, 11)]); world.setBlock(x, y, 11, 'stone');
-        }
-        let occluded;
         try {
-            audio.refresh = 0; tick(); occluded = audio.stats();
-            const before = open.sources.find(source => source.fall === 16);
-            const after = occluded.sources.find(source => source.key === before?.key);
-            check(before && after && after.occlusion < before.occlusion && after.target < before.target,
-                'A real intervening stone wall reduces the matching tall-waterfall voice');
-        } finally {
-            for (const [x, y, z, id] of edits) world.setBlock(x, y, z, id ? getBlockTypeById(id) : null);
-        }
-        game.camera.position.set(-11.5, 17.1, 9.5); audio.refresh = 0; tick();
-        const above = audio.stats();
-        game.camera.position.y = 16.3; tick();
-        await new Promise(resolve => setTimeout(resolve, 250));
-        const submerged = audio.stats();
-        const source = above.sources.find(item => item.fall === 16);
-        const muffled = submerged.sources.find(item => item.key === source?.key);
-        check(submerged.underwater && sounds.underwater && sounds.muffle.frequency.value < 2000 &&
-            source && muffled && muffled.target < source.target * .5,
-            'Actual camera submersion lowers waterfall gain and the shared real lowpass frequency');
-        game.camera.position.y = 18; tick(2);
-        audio.setAmount(.35); tick(); await drain();
-        const low = audio.stats();
-        check(low.limit === 2 && low.voices <= 2 && low.reserved <= 2, 'Low detail finishes old fades before keeping at most two voices');
-        const cycles = [];
-        for (let i = 0; i < 2; i++) {
-            audio.setAmount(0); tick(2); await drain();
-            const disabled = audio.stats();
-            check(disabled.loops === 0 && disabled.voices === 0 && disabled.reserved === 0,
-                `Audio disable cycle ${i + 1} releases real fade tails and reservations`);
-            audio.setAmount(1); tick(); cycles.push(audio.stats());
-            check(cycles.at(-1).loops > 0 && cycles.at(-1).voices <= 4,
-                `Audio re-enable cycle ${i + 1} starts bounded real voices`);
-        }
-        const freeze = audio.stats();
-        sounds.setActive(false); tick(3);
-        check(audio.stats().voices === freeze.voices && audio.stats().lastProcessed === 0,
-            'Paused audio does not create voices or perform occlusion work');
-        sounds.setActive(true);
-        const integratedMs = [], audioMs = [];
-        for (let i = 0; i < 360; i++) {
-            const start = performance.now(); updateEffects(1 / 60); integratedMs.push(performance.now() - start);
-            audioMs.push(audio.stats().lastMs); boundedEffects(`Integrated audio/visual frame ${i}`);
-            ensure(audio.stats().lastProcessed <= 96 && audio.stats().voices <= 4, 'Integrated audio work stays bounded');
-            if (i % 120 === 119) await pause();
-        }
-        return { checks: checks.slice(first), decodedFiles: sounds.loadedCount, missingFiles: sounds.missing,
-            context: sounds.context.state, open, occluded, above, submerged, low, cycles,
-            updateSounds: quantiles(times), integratedEffects: quantiles(integratedMs), waterfallAudio: quantiles(audioMs),
-            integratedScope: 'Whole waterfalls.update + Game.updateWaterSurfaceEffects + waterfallAudio.update, including periodic landing selection/sorting/packing; 360 frames, no rendering',
-            scope: 'Real Web Audio decoding, nodes, positional parameters, lowpass and onended cleanup; not a listening-quality test' };
+            audio.setAmount(1); audio.refresh = 0; tick(60, 'first-start');
+            const open = audio.stats();
+            check(open.loops >= 3 && open.voices <= 4 && open.sources.some(source => source.sound === 'water_waves') &&
+                open.sources.some(source => source.sound === 'water_stream'),
+                'Short and tall real falls create distinct positional loops within the four-voice cap');
+            check([...sounds.gameVoices].some(voice => voice.panner && voice.source instanceof AudioBufferSourceNode),
+                'Waterfall playback owns actual AudioBufferSourceNode and positional PannerNode objects');
+
+            const edits = [];
+            for (let x = -18; x <= 4; x++) for (let y = 17; y <= 22; y++) {
+                edits.push([x, y, 11, world.getBlockId(x, y, 11)]); world.setBlock(x, y, 11, 'stone');
+            }
+            let occluded;
+            try {
+                audio.refresh = 0; tick(60, 'stone-wall'); occluded = audio.stats();
+                const before = open.sources.find(source => source.fall === 16);
+                const after = occluded.sources.find(source => source.key === before?.key);
+                check(before && after && after.occlusion < before.occlusion && after.target < before.target,
+                    'A real intervening stone wall reduces the matching tall-waterfall voice');
+            } finally {
+                for (const [x, y, z, id] of edits) world.setBlock(x, y, z, id ? getBlockTypeById(id) : null);
+            }
+            game.camera.position.set(-11.5, 17.1, 9.5); audio.refresh = 0; tick(60, 'above-water');
+            const above = audio.stats();
+            game.camera.position.y = 16.3; tick(60, 'underwater');
+            await new Promise(resolve => setTimeout(resolve, 250));
+            const submerged = audio.stats();
+            const source = above.sources.find(item => item.fall === 16);
+            const muffled = submerged.sources.find(item => item.key === source?.key);
+            check(submerged.underwater && sounds.underwater && sounds.muffle.frequency.value < 2000 &&
+                source && muffled && muffled.target < source.target * .5,
+                'Actual camera submersion lowers waterfall gain and the shared real lowpass frequency');
+            game.camera.position.y = 18; tick(2, 'leave-water');
+            audio.setAmount(.35); tick(60, 'low-detail'); await drain('low-detail');
+            const low = audio.stats();
+            check(low.limit === 2 && low.voices <= 2 && low.reserved <= 2, 'Low detail finishes old fades before keeping at most two voices');
+            const cycles = [];
+            for (let i = 0; i < 2; i++) {
+                audio.setAmount(0); tick(2, `disable-${i + 1}`); await drain(`disable-${i + 1}`);
+                const disabled = audio.stats();
+                check(disabled.loops === 0 && disabled.voices === 0 && disabled.reserved === 0,
+                    `Audio disable cycle ${i + 1} releases real fade tails and reservations`);
+                audio.setAmount(1); tick(60, `re-enable-${i + 1}`); cycles.push(audio.stats());
+                check(cycles.at(-1).loops > 0 && cycles.at(-1).voices <= 4,
+                    `Audio re-enable cycle ${i + 1} starts bounded real voices`);
+            }
+            const freeze = audio.stats();
+            sounds.setActive(false); tick(3, 'paused');
+            check(audio.stats().voices === freeze.voices && audio.stats().lastProcessed === 0,
+                'Paused audio does not create voices or perform occlusion work');
+            sounds.setActive(true);
+            const integratedMs = [], audioMs = [];
+            for (let i = 0; i < 360; i++) {
+                integratedMs.push(measured('visual-plus-waterfall-only', 'visual-plus-waterfall-only', () => updateEffects(1 / 60)));
+                audioMs.push(audio.stats().lastMs); boundedEffects(`Integrated audio/visual frame ${i}`);
+                ensure(audio.stats().lastProcessed <= 96 && audio.stats().voices <= 4, 'Integrated audio work stays bounded');
+                if (i % 120 === 119) await pause();
+            }
+            const intervals = [];
+            let previousRAF;
+            for (let i = 0; i < 60; i++) {
+                const now = await new Promise(resolve => requestAnimationFrame(resolve));
+                const interval = previousRAF === undefined ? 1000 / 60 : now - previousRAF;
+                if (previousRAF !== undefined) intervals.push(interval);
+                previousRAF = now;
+                tick(1, 'raf-steady', Math.min(.1, Math.max(0, interval / 1000)), 'raf');
+            }
+            const phases = [...new Set(diagnosticFrames.map(frame => frame.phase))].map(phase => {
+                const frames = diagnosticFrames.filter(frame => frame.phase === phase), first = frames[0], last = frames.at(-1);
+                const labels = [...new Set(frames.flatMap(frame => Object.keys(frame.calls)))];
+                return { phase, mode: first.mode, scope: first.scope, firstIndex: first.index, timing: quantiles(frames.map(frame => frame.totalMs)),
+                    contextSeconds: last.contextEndTime - first.contextTime, wallMs: last.wallTime + last.totalMs - first.wallTime,
+                    spans: Object.fromEntries(labels.map(label => [label, { ...quantiles(frames.map(frame => frame.ms[label] ?? 0)),
+                        calls: frames.reduce((total, frame) => total + (frame.calls[label] ?? 0), 0) }])) };
+            });
+            const slowest = frames => [...frames].sort((a, b) => b.totalMs - a.totalMs).slice(0, 12);
+            const paced = diagnosticFrames.filter(frame => frame.mode === 'raf');
+            check(paced.length === 60, 'Sixty real animation frames measure the complete WaterEffects.updateSounds path');
+            const diagnostics = { firstFrame: diagnosticFrames[0], frames: diagnosticFrames.length, phases,
+                slowFrames: slowest(diagnosticFrames.filter(frame => frame.scope === 'full-updateSounds')),
+                pacedRAF: { updateSounds: quantiles(paced.map(frame => frame.totalMs)), intervals: quantiles(intervals), slowFrames: slowest(paced) },
+                scope: 'All samples retain outliers. Instrumented nested spans are inclusive and must not be summed. Listener/submersion setup is outside updateSounds. Control-call counts approximate scheduling: setPosition schedules three AudioParams. rAF runs full WaterEffects.updateSounds; visual-plus-waterfall-only excludes legacy ambience.' };
+            return { checks: checks.slice(first), decodedFiles: sounds.loadedCount, missingFiles: sounds.missing,
+                context: sounds.context.state, open, occluded, above, submerged, low, cycles,
+                updateSounds: quantiles(times), integratedEffects: quantiles(integratedMs), waterfallAudio: quantiles(audioMs), diagnostics,
+                integratedScope: 'Whole waterfalls.update + Game.updateWaterSurfaceEffects + waterfallAudio.update, including periodic landing selection/sorting/packing; 360 frames, no rendering',
+                scope: 'Real Web Audio decoding, nodes, positional parameters, lowpass and onended cleanup; not a listening-quality test' };
+        } finally { restorers.reverse().forEach(restore => restore()); }
     }
 
     async function effectLimits() {

@@ -153,6 +153,9 @@ try {
     result.effects.roof = await evaluate('rippleQA.rainImpulses(true)');
     result.stage = 'web-audio';
     result.effects.audio = await evaluate('rippleQA.audioChecks()');
+    await writeFile(resolve(output, 'audio-diagnostics.json'), JSON.stringify(result.effects.audio.diagnostics, null, 2));
+    const audioPeak = result.effects.audio.diagnostics.slowFrames[0];
+    console.log(`Audio diagnostic peak: ${audioPeak.totalMs.toFixed(3)} ms, phase=${audioPeak.phase}, frame=${audioPeak.index}; rAF max=${result.effects.audio.diagnostics.pacedRAF.updateSounds.maxMs.toFixed(3)} ms.`);
     result.effects.limits = await evaluate('rippleQA.effectLimits()');
     result.stage = 'lifecycle';
     result.lifecycle = await evaluate('rippleQA.lifecycle()');

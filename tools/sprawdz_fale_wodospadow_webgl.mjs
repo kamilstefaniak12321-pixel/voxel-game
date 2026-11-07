@@ -107,6 +107,8 @@ try {
     }
     for (const [i, phase] of [.2, .8, 1.4, 2.6].entries()) await capture('drop-16', phase, true, `loop-${i}.png`);
     result.animation = await evaluate('rippleQA.animation()');
+    result.stage = 'shadow-variants';
+    result.shadowVariants = await evaluate('rippleQA.shadowVariants()');
     result.stage = 'measurement';
     result.measurement = await evaluate('rippleQA.measure()');
     result.stage = 'lifecycle';

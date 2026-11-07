@@ -7,6 +7,8 @@ import { createWorldInfo } from '../../src/storage/WorldStorage.js';
 import { findScene } from '../../src/dev/scenes.js';
 import { atlasReady } from '../../src/rendering/TextureAtlas.js';
 import { plantWindUniforms } from '../../src/rendering/PlantWind.js';
+import { setShadowDefine } from '../../src/rendering/BlockRenderData.js';
+import { shadowUniforms } from '../../src/rendering/Shadows.js';
 import { RIPPLE_PERIOD } from '../../src/rendering/WaterfallRipples.js';
 import { getWaterLevel } from '../../src/blocks/BlockRegistry.js';
 import { waterSurfaceHeight } from '../../src/world/WaterSurface.js';
@@ -231,6 +233,41 @@ export async function createWaterfallRippleQA() {
         return { periodSeconds: RIPPLE_PERIOD, movingPixels, loopPixels, loopMaxChannelDifference: loopMax };
     }
 
+    function shadowVariants() {
+        const first = checks.length, variants = [], failures = [], gl = renderer.getContext();
+        const material = ripples.material, oldDefines = material.defines ?? {};
+        const oldSun = 'USE_SUN_SHADOWS' in oldDefines, oldFar = 'USE_FAR_SHADOWS' in oldDefines;
+        const oldHook = ripples.mesh.onBeforeRender, oldError = renderer.debug.onShaderError;
+        const oldDebug = renderer.debug.checkShaderErrors, revision = ripples.stats().geometryRevision;
+        check(!game.shadows.enabled && shadowUniforms.uSunShadowInfo.value.y === 0,
+            'Shadow variant smoke uses inactive shadow maps and zero shadow strength');
+        check(ripples.mesh.visible && ripples.geometry.drawRange.count > 0,
+            'Shadow shader variants execute on the existing visible ripple mesh');
+        let submitted = 0;
+        ripples.mesh.onBeforeRender = function (...args) { submitted++; oldHook.apply(this, args); };
+        renderer.debug.checkShaderErrors = true;
+        renderer.debug.onShaderError = (context, program, vertex, fragment) => failures.push(
+            [context.getProgramInfoLog(program), context.getShaderInfoLog(vertex), context.getShaderInfoLog(fragment)].join('\n'));
+        try {
+            for (const far of [false, true]) {
+                setShadowDefine([material], true, far);
+                submitted = 0;
+                game.render(); gl.finish();
+                const name = far ? 'sun-and-far' : 'sun-only';
+                check(failures.length === 0, `${name}: ripple shaders link successfully: ${failures.join('\n')}`);
+                check(submitted > 0 && gl.getError() === gl.NO_ERROR, `${name}: the ripple variant draws without a WebGL error`);
+                variants.push({ name, sun: true, far, rippleSubmissions: submitted, drawCalls: renderer.info.render.calls });
+            }
+        } finally {
+            setShadowDefine([material], oldSun, oldFar);
+            ripples.mesh.onBeforeRender = oldHook;
+            renderer.debug.onShaderError = oldError; renderer.debug.checkShaderErrors = oldDebug;
+        }
+        check(ripples.stats().geometryRevision === revision, 'Compiling shadow variants does not rebuild ripple geometry');
+        return { checks: checks.slice(first), variants,
+            scope: 'GPU shader compilation and draw smoke with shadow weight zero; not a physical shadow-quality test' };
+    }
+
     async function measure() {
         await refreshRipples('Measurement warmup');
         const first = checks.length, effectsMs = [], rippleMs = [], discoveryMs = [];
@@ -281,5 +318,5 @@ export async function createWaterfallRippleQA() {
     async function dispose() {
         await game.stop({ save: false }); renderer.dispose(); renderer.domElement.remove(); frames.clear();
     }
-    return { initialize, render, compare, animation, measure, lifecycle, dispose };
+    return { initialize, render, compare, animation, shadowVariants, measure, lifecycle, dispose };
 }

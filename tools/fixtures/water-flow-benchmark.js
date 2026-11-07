@@ -3,6 +3,7 @@ import { Game } from '../../src/game/Game.js';
 import { Settings } from '../../src/settings/Settings.js';
 import { WorldStorage, createWorldInfo } from '../../src/storage/WorldStorage.js';
 import { atlasReady } from '../../src/rendering/TextureAtlas.js';
+import { waterSurfaceHeight } from '../../src/world/WaterSurface.js';
 import { getBlockId, getWaterLevel, isWaterSourceId, isFlowingWaterId,
     waterIdForLevel } from '../../src/blocks/BlockRegistry.js';
 
@@ -205,11 +206,36 @@ export async function createWaterQA() {
     }
 
     const views = {
-        spill: { eye: [-12, 34, 5], target: [-15, 25, -8] },
-        waterfall: { eye: [16, 36, 5], target: [4, 28, -8] },
-        breach: { eye: [-7, 36, 23], target: [-13, 25, 7] },
+        // Look along each open channel, not through its enclosing stone wall.
+        spill: { eye: [-10.5, 34, -7.5], target: [-15.5, 25.5, -7.5],
+            probes: [{ cell: [-17, 25, -8] }, { cell: [-13, 25, -8] }] },
+        waterfall: { eye: [9, 35, -7.5], target: [3.5, 29, -7.5],
+            probes: [{ cell: [4, 28, -8], face: 'east' }, { cell: [5, 25, -8] }] },
+        breach: { eye: [-5.5, 35, 7.5], target: [-13, 25.5, 7.5],
+            probes: [{ cell: [-11, 25, 7] }, { cell: [-9, 25, 7] }] },
         overview: { eye: [24, 48, 34], target: [-5, 26, 0] }
     };
+    function visibleFlow(name, probes = []) {
+        const meshes = [...world().chunks.values()].flatMap(chunk => [chunk.mesh, chunk.plantMesh]).filter(mesh => mesh?.visible);
+        const ray = new THREE.Raycaster();
+        return probes.map(({ cell, face = 'top' }) => {
+            const [x, y, z] = cell, block = id(x, y, z);
+            check(isFlowingWaterId(block), `${name}: visibility probe ${cell} targets flowing water`);
+            const point = face === 'east' ? new THREE.Vector3(x + 1, y + .5, z + .5)
+                : new THREE.Vector3(x + .5, y + waterSurfaceHeight(world(), x, y, z), z + .5);
+            const projected = point.clone().project(game.camera);
+            const screen = [(projected.x + 1) * 360, (1 - projected.y) * 240];
+            check(projected.z > -1 && projected.z < 1 && screen[0] > 8 && screen[0] < 712 && screen[1] > 8 && screen[1] < 472,
+                `${name}: flowing water at ${cell} is inside the screenshot`);
+            // Check the exact visible mesh, including opaque stone. A water
+            // group elsewhere or water hidden behind a wall cannot satisfy it.
+            ray.setFromCamera(new THREE.Vector2(projected.x, projected.y), game.camera);
+            const hit = ray.intersectObjects(meshes, false)[0];
+            check(hit?.face?.materialIndex === 2 && hit.point.distanceTo(point) < .01,
+                `${name}: first visible triangle at ${cell} is the intended ${face} water face`);
+            return { cell, face, level: getWaterLevel(block), screen, point: point.toArray(), firstHitDistance: hit.distance };
+        });
+    }
     function view(name) {
         const value = views[name]; if (!value) throw new Error(`Unknown view ${name}`);
         world().updateMeshes(Infinity);
@@ -217,8 +243,9 @@ export async function createWaterQA() {
         // inspection cameras see all three fixtures through the fog.
         game.scene.fog.near = 80; game.scene.fog.far = 160;
         game.camera.position.set(...value.eye); game.camera.lookAt(...value.target);
-        game.camera.aspect = 720 / 480; game.camera.updateProjectionMatrix();
+        game.camera.fov = 60; game.camera.aspect = 720 / 480; game.camera.updateProjectionMatrix();
         game.render();
+        const visibleFlowProbes = visibleFlow(name, value.probes);
         const gl = renderer.getContext();
         check(gl.getError() === gl.NO_ERROR, `${name}: WebGL completed without an error`);
         let waterTriangles = 0;
@@ -242,7 +269,7 @@ export async function createWaterQA() {
         for (let at = 0; at < pixels.length; at += 97 * 4) colors.add(`${pixels[at]},${pixels[at + 1]},${pixels[at + 2]}`);
         check(colors.size > 16, `${name}: WebGL produced a nonblank scene`);
         return { waterTriangles, fractionalHeights: [...heights].sort((a, b) => a - b),
-            sampledColors: colors.size,
+            sampledColors: colors.size, visibleFlowProbes,
             drawCalls: renderer.info.render.calls, triangles: renderer.info.render.triangles,
             renderer: extension ? gl.getParameter(extension.UNMASKED_RENDERER_WEBGL) : gl.getParameter(gl.RENDERER) };
     }

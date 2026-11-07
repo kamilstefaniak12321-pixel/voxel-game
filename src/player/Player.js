@@ -13,7 +13,6 @@ import {
     CROUCH_EYE_HEIGHT,
     SPRINT_SPEED_FACTOR,
     SPRINT_DOUBLE_TAP,
-    WATER_SURFACE,
     WATER_SPEED_FACTOR,
     RIVER_PUSH,
     WATER_GRAVITY_FACTOR,
@@ -31,10 +30,8 @@ import {
     SKYFALL_MAX_SPEED
 } from '../config.js';
 
-import {
-    isLiquidId,
-    isOpaqueId
-} from '../blocks/BlockRegistry.js';
+import { isLiquidId } from '../blocks/BlockRegistry.js';
+import { waterSurfaceHeight } from '../world/WaterSurface.js';
 
 // Maksymalna odległość pokonywana w jednym kroku kolizji.
 // Szybszy ruch jest dzielony na kilka krótszych kroków,
@@ -156,6 +153,7 @@ export class Player {
         //               (0 = nie), dla dźwięku plusku,
         //   leftWater - wyszedł z wody w tej klatce.
         this.submerged = 0;
+        this.waterCellY = null;
         this.swimming = false;
         this.splash = 0;
         this.leftWater = false;
@@ -409,7 +407,11 @@ updateMovement(dt, input) {
 
     if (water > 0.1) {
 
-        const flow = this.world.getFlow(Math.floor(this.pos.x), Math.floor(this.pos.z));
+        const x = Math.floor(this.pos.x), z = Math.floor(this.pos.z);
+        const y = this.waterCellY ?? Math.floor(this.pos.y + Math.min(this.height, water * STAND_HEIGHT) / 2);
+        const flow = this.world.getWaterFlow
+            ? this.world.getWaterFlow(x, y, z)
+            : this.world.getFlow?.(x, z);
 
         if (flow) {
 
@@ -593,9 +595,9 @@ waterLevel() {
         y++;
     }
 
-    // Górny blok wody jest niższy, chyba że przykrywa go pełny blok.
-
-    return y + (isOpaqueId(world.getBlockId(x, y + 1, z)) ? 1 : WATER_SURFACE);
+    // Ten sam trójkąt tafli co w siatce: także cienka struga, spadek
+    // między poziomami i pełny słup spadającej wody.
+    return y + waterSurfaceHeight(world, x, y, z, this.pos.x - x, this.pos.z - z);
 
 }
 
@@ -604,9 +606,22 @@ waterLevel() {
 
 updateWater() {
 
-    const level = this.waterLevel();
+    const x = Math.floor(this.pos.x), z = Math.floor(this.pos.z);
+    const top = this.pos.y + this.height;
+    let depth = 0;
+    this.waterCellY = null;
 
-    this.submerged = clamp01((level - this.pos.y) / STAND_HEIGHT);
+    // Liczymy tylko część ciała rzeczywiście przecinającą wodę.
+    // Powietrze pod wiszącą strugą nie daje wyporności ani nurtu.
+    for (let y = Math.floor(this.pos.y); y < top; y++) {
+        if (!isLiquidId(this.world.getBlockId(x, y, z))) continue;
+        const surface = y + waterSurfaceHeight(this.world, x, y, z, this.pos.x - x, this.pos.z - z);
+        const wet = Math.max(0, Math.min(top, surface) - Math.max(this.pos.y, y));
+        if (wet > 0 && this.waterCellY === null) this.waterCellY = y;
+        depth += wet;
+    }
+
+    this.submerged = clamp01(depth / STAND_HEIGHT);
 
     this.swimming = !this.flying && this.submerged > 0.6 && !this.onGround;
 

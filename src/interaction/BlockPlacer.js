@@ -4,7 +4,7 @@ import {
     canPlantStay,
     getRiverPlant,
     isWaterloggedPlantId,
-    getLiquidKindId,
+    isWaterSourceId,
     isSolidId,
     isReplaceableId,
     getBlockId,
@@ -123,7 +123,7 @@ export class BlockPlacer {
         if (torch && (isLiquidId(id) || isWaterloggedPlantId(id))) return false;
 
         // Jedna sadzonka pałki ma suchą i płytkowodną postać.
-        if (blockType === 'cattail' && getLiquidKindId(id) === getBlockId('water')) {
+        if (blockType === 'cattail' && isWaterSourceId(id)) {
             blockType = 'cattail_water';
         }
 
@@ -135,7 +135,9 @@ export class BlockPlacer {
             // w powietrzu ani nie nadpisujemy innej posadzonej rośliny.
             if (isWaterloggedPlantId(id)) return false;
             if (river.waterlogged) {
-                if (getLiquidKindId(id) !== getBlockId('water')) return false;
+                // Roślina przechowuje pełne źródło. Posadzenie jej w
+                // strudze nie może zamieniać przepływu w nową wodę.
+                if (!isWaterSourceId(id)) return false;
             }
             else if (isLiquidId(id)) return false;
         }

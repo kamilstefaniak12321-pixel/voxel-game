@@ -753,7 +753,8 @@ export class Game {
             this.player.pos.x,
             this.player.pos.z,
             this.getLoadRadius(),
-            this.settings.get('loadBudget')
+            this.settings.get('loadBudget'),
+            dt
         );
         profile?.endStage('stream');
 
@@ -874,7 +875,7 @@ export class Game {
         this.time.update(dt);
         profile?.beginStage('stream');
         this.world.update(this.player.pos.x, this.player.pos.z,
-            this.getLoadRadius(), this.settings.get('loadBudget'));
+            this.getLoadRadius(), this.settings.get('loadBudget'), dt);
         profile?.endStage('stream');
         profile?.beginStage('far');
         this.updateFarRange();

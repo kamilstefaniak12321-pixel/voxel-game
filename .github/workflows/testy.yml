@@ -39,13 +39,16 @@ jobs:
       || (contains(github.event.pull_request.labels.*.name, 'kompilacja')
           && (github.event.action != 'labeled' || github.event.label.name == 'kompilacja'))
     runs-on: ubuntu-24.04
-    timeout-minutes: 8
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-node@v5
         with:
           node-version: 24
       - run: npm test
+      - name: Rozlewanie wody, zapis i koszt zalewania w WebGL2
+        timeout-minutes: 3
+        run: node tools/sprawdz_wode_webgl.mjs
       - name: Podzielone siatki terenu i roślin w WebGL2
         timeout-minutes: 2
         run: node tools/sprawdz_streaming_webgl.mjs
@@ -76,6 +79,7 @@ jobs:
         with:
           name: testy-gry
           path: |
+            test-results/water-flow/
             test-results/streaming/
             test-results/depth-reuse/
             test-results/wood-textures/

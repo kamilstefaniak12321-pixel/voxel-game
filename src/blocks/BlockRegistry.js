@@ -13,6 +13,8 @@ import { BLUEBERRY_STAGES, BLUEBERRY_TEXTURE, blueberryIcon } from './blueberry.
 import { FRUIT_BUSH_PROFILES } from '../rendering/FruitBushGeometry.js';
 import { PLANT_PACKS, PLANT_PIXELS, plantStageType, plantTile } from './plantPacks.js';
 import { TORCH_BLOCKS } from './torches.js';
+import { FLOWING_WATER_BLOCKS, WATER_SOURCE_ID, WATER_FALLING_ID, plainWaterLevel, waterHeightForLevel } from './water.js';
+export { WATER_SOURCE_ID, WATER_FALLING_ID, waterIdForLevel } from './water.js';
 
 // ID 0 jest zarezerwowane dla powietrza.
 // Chunk przechowuje bloki jako liczby, więc pusta tablica = samo powietrze.
@@ -32,7 +34,8 @@ export const AIR_ID = 0;
 //   1000-4999               paczki drzew (treePacks.js),
 //   5000-9999               paczki roślin (plantPacks.js),
 //   10000-10099             konstrukcje (ognisko 10000, pochodnie 10010-10094),
-//   10100-65279             wolne na przyszłość.
+//   10100-10107             wewnętrzne poziomy i spadanie wody,
+//   10108-65279             wolne na przyszłość.
 
 export const MAX_BLOCK_ID = 65279;
 
@@ -609,8 +612,8 @@ export const BLOCK_TYPES = {
 
     // Woda - morze w terenie realistycznym (i postawiona przez gracza).
     // Półprzezroczysta i falująca (BlockRenderData.js - waterMaterial),
-    // spowalnia i da się w niej pływać (Player.js). Na razie się nie
-    // rozlewa - stoi tam, gdzie ją postawiono.
+    // spowalnia i da się w niej pływać (Player.js). ID 12 jest źródłem,
+    // pozostałe poziomy rozlewania mają osobne, trwałe ID.
     //   liquid - ciecz: ściany między dwoma blokami wody nie są
     //            rysowane, a celownik i stawianie bloków przez nią przechodzą.
 
@@ -1129,6 +1132,8 @@ export const BLOCK_TYPES = {
 
     ...RIVER_PLANT_BLOCKS,
 
+    ...FLOWING_WATER_BLOCKS,
+
     // Paczki roślin (assets/rosliny/) - po bloku na etap wzrostu.
 
     ...plantPackBlocks()
@@ -1399,9 +1404,21 @@ export function isWaterloggedPlantId(id) {
 // Ten sam rodzaj cieczy także pod rośliną: pływanie, ściany wody i LOD.
 export function getLiquidKindId(id) {
 
-    return isWaterloggedPlantId(id) ? BLOCK_TYPES.water.id : (isLiquidId(id) ? id : AIR_ID);
+    return getWaterLevel(id) >= 0 ? WATER_SOURCE_ID : (isLiquidId(id) ? id : AIR_ID);
 
 }
+
+export function getWaterLevel(id) {
+    return isWaterloggedPlantId(id) ? 0 : plainWaterLevel(id);
+}
+
+export function isWaterSourceId(id) { return getWaterLevel(id) === 0; }
+
+export function isFlowingWaterId(id) {
+    return id > WATER_SOURCE_ID && id <= WATER_FALLING_ID && plainWaterLevel(id) > 0;
+}
+
+export function getWaterBaseHeight(id) { return waterHeightForLevel(getWaterLevel(id)); }
 
 
 export function getRiverPlant(id) {

@@ -13,7 +13,7 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ## 0.76.0 - Tratwa na rzeki i wodospady
 
-Przygotowanie kolejnego wydania po 0.75.0 — PR w przygotowaniu.
+Przygotowanie kolejnego wydania po 0.75.0 — [PR #112](https://github.com/kamilstefaniak12321-pixel/voxel-game/pull/112).
 
 - Dwie dowolne deski obok siebie dają tratwę: płaski pokład 2×1
   z istniejącą teksturą desek, także jako model w dłoni i ekwipunku.

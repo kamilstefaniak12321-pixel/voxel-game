@@ -13,7 +13,7 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ## 0.72.0 - Rozlewanie wody i pochyła powierzchnia
 
-Przygotowanie wydania w PR do `main`; publikacja Windows/Android po scaleniu.
+Przygotowanie wydania w PR #108 do `main`; publikacja Windows/Android po scaleniu.
 
 - Źródła zalewają otwarte komórki: najpierw w dół, potem do siedmiu
   poziomów w bok. Odcięty strumień stopniowo zanika. Dwa źródła poziomo

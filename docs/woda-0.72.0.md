@@ -86,7 +86,7 @@ stary zapis → zalewanie → przerwanie brzegu → 64 źródła → zapis 16-bi
 symulacji oraz budowy siatek w `test-results/water-flow/`.
 
 Końcowe wyniki, stan testów WebGL i kompilacji oraz linki do artefaktów
-są w opisie PR przygotowującego 0.72.0. Pomiary programowego WebGL w CI
+są w opisie [PR #108](https://github.com/kamilstefaniak12321-pixel/voxel-game/pull/108), przygotowującego 0.72.0. Pomiary programowego WebGL w CI
 nie są pomiarem karty gracza i nie stanowią gwarancji stałego FPS.
 
 Lokalny mikrobenchmark geometrii (Node 24.22.1, pięć prób) dał medianę

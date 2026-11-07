@@ -46,6 +46,9 @@ jobs:
         with:
           node-version: 24
       - run: npm test
+      - name: Tratwa, sterowanie i spływ wodospadem w prawdziwej grze
+        timeout-minutes: 3
+        run: node tools/sprawdz_tratwe_webgl.mjs
       - name: Wyporność i ciągły spływ rzeką w prawdziwej grze
         timeout-minutes: 3
         run: node tools/sprawdz_plywanie_webgl.mjs
@@ -85,6 +88,7 @@ jobs:
         with:
           name: testy-gry
           path: |
+            test-results/rafts/
             test-results/river-swimming/
             test-results/waterfall-ripples/
             test-results/water-flow/

@@ -33,6 +33,7 @@ import { getItemLabel, getPlacedBlock, getTool, itemExists } from '../items/Item
 import { Inventory } from './Inventory.js';
 import { PlantGrowth } from './PlantGrowth.js';
 import { PlantAnimations } from '../rendering/PlantAnimations.js';
+import { Rafts } from './Rafts.js';
 import { WaterEffects } from './WaterEffects.js';
 import { DynamicLight } from '../world/DynamicLight.js';
 import { FarTerrain, setFarTerrainShadows } from '../world/FarTerrain.js';
@@ -518,13 +519,16 @@ export class Game {
 
         // Autozapis.
 
+        this.rafts = new Rafts(this, worldInfo.rafts);
+
         this.saver = new WorldSaver(
             storage,
             worldInfo,
             this.world,
             this.player,
             this.time,
-            this.campfires
+            this.campfires,
+            this.rafts
         );
 
         this.saver.saveOnExit();
@@ -561,7 +565,7 @@ export class Game {
         }
 
 
-        this.player.update(dt, input);
+        if (!this.rafts?.update(dt, input)) this.player.update(dt, input);
 
         this.updateFootsteps();
 
@@ -621,13 +625,15 @@ export class Game {
         // wciśnięto LPM i PPM, wygrywa niszczenie, a PPM przepada
         // (inaczej blok postawiłby się klatkę później sam z siebie).
 
-        const breakPressed = input.consumeMousePress(0);
-        const placePressed = input.consumeMousePress(2);
+        let breakPressed = input.consumeMousePress(0);
+        let placePressed = input.consumeMousePress(2);
+        const raftInteraction = this.rafts?.interact({ breakPressed, placePressed, terrainHit: this.currentHit });
+        if (raftInteraction) { breakPressed = false; placePressed = false; this.mining = null; }
 
         // Trzymany LPM: w przygodzie kopie (blok pęka i znika po czasie
         // kopania), w kreatywnym niszczy kolejne bloki co chwilę.
 
-        const breakHeld = input.isMouseDown(0);
+        const breakHeld = !raftInteraction && !this.rafts?.mounted && input.isMouseDown(0);
 
 
         // PPM siekierą na pniu - okorowanie.
@@ -2699,6 +2705,7 @@ export class Game {
 
         this.debris.dispose();
 
+        this.rafts?.dispose();
         this.waterfalls.dispose();
         this.wetRocks.dispose();
         this.waterImpacts.dispose();
@@ -2728,7 +2735,7 @@ export class Game {
     updateHud(element) {
 
         const debug = this.settings.get('showDebug');
-        const status = this.saver.getStatus();
+        const status = [this.saver.getStatus(), this.rafts?.hint].filter(Boolean).join(' • ');
         const now = performance.now();
         const hud = this.hudState ??= { element: null, debug: null, status: null, html: null, nextUpdate: 0 };
 

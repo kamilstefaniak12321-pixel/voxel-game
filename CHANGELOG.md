@@ -11,6 +11,23 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 0.76.0 - Tratwa na rzeki i wodospady
+
+Przygotowanie kolejnego wydania po 0.75.0 — PR w przygotowaniu.
+
+- Dwie dowolne deski obok siebie dają tratwę: płaski pokład 2×1
+  z istniejącą teksturą desek, także jako model w dłoni i ekwipunku.
+- PPM stawia tratwę na wodzie i pozwala wsiąść. WASD / joystick steruje,
+  Shift / ▼ wysiada, LPM / Kop zabiera pusty pokład. Nurt niesie tratwę;
+  spadanie z wodospadów kończy się odzyskaniem wyporności na dolnej tafli.
+- Kolizje obracanego pokładu, pasażera i bezpieczne wysiadanie, zapis
+  pozycji i zajętej tratwy razem ze światem. Nieudane postawienie ani
+  pełny ekwipunek przy zbieraniu nie zabierają przedmiotu.
+- Maksymalnie 8 aktywnych tratw i 32 zapisane w świecie, wspólna
+  geometria 20 trójkątów, ograniczone kroki fizyki i brak ładowania
+  chunków przez pojazd. Testy wodospadów 1–32 bloki, 30/60/120 Hz,
+  rzeczywistej rzeki, zapisu i integracji w WebGL2. [Opis](docs/tratwa.md).
+
 ## 0.75.0 - Wyporność, ciągły nurt i żywa woda
 
 Przygotowanie kolejnego wydania po 0.74.0 — [PR #111](https://github.com/kamilstefaniak12321-pixel/voxel-game/pull/111).

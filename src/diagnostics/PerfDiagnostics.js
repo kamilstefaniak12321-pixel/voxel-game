@@ -220,6 +220,7 @@ export class PerfDiagnostics {
             savedChunks: world?.savedChunks?.stats?.() ?? null,
             water: world?.fluids?.stats?.() ?? null,
             waterfallRipples: game.waterfalls?.ripples?.stats?.() ?? null,
+            rafts: game.rafts?.stats?.() ?? null,
             waterfallFoam: game.waterfalls?.foam?.stats?.() ?? null,
             waterfallMist: game.waterfalls?.mist?.stats?.() ?? null,
             wetRocks: game.wetRocks?.stats?.() ?? null,

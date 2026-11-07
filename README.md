@@ -168,6 +168,13 @@ rzemieślnicza** - wytwarzanie (niżej); później w tym oknie będzie też
 widać otwartą skrzynię. Pod spodem 4 rzędy po 9: trzy rzędy przedmiotów
 i pasek. Księga przepisów otwiera się z lewej strony ramy.
 
+**Skrzynia** (od 0.78.0; przepis: 4 deski): PPM otwiera ekwipunek,
+a w strefie rzemieślniczej widać samą skrzynię - wieko się otwiera,
+a przedmioty leżą w środku, w **4 × 3 przegródkach z dwiema warstwami**.
+Inny przedmiot kładzie się na wierzch tego, co leży na spodzie; żeby
+wyjąć coś ze spodu, trzeba najpierw zdjąć wierzch. Pełną skrzynię
+trzeba opróżnić, zanim się ją rozbije. [Szczegóły](docs/skrzynia.md).
+
 W trybie kreatywnym zakładka *Bloki* ma **9 łukowatych zakładek
 kategorii** (Ziemia, Skały, Drewno, Budulec, Rośliny, Owoce i nasiona,
 Światło, Ozdoby, Narzędzia i surowce - ponowne kliknięcie pokazuje

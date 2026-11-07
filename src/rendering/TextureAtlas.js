@@ -387,6 +387,8 @@ const torchRow = Math.max(...Object.values(ATLAS_TILES).map(tile => tile.y + (ti
     ...STONE_TOOL_TEXTURES.map(tile => tile.name)].forEach((name, i) => {
     ATLAS_TILES[name] = { x: i % ATLAS_COLUMNS, y: torchRow + Math.floor(i / ATLAS_COLUMNS) };
 });
+// Skrzynia (0.78.0): jeden kafelek 2 x 2 (32 x 32 piksele) pod resztą.
+ATLAS_TILES.chest = { x: 0, y: Math.max(...Object.values(ATLAS_TILES).map(tile => tile.y + (tile.h ?? 1))), w: 2, h: 2, pw: 32, ph: 32 };
 export const ATLAS_ROWS = Math.max(...Object.values(ATLAS_TILES).map((tile) => tile.y + (tile.h ?? 1)));
 
 
@@ -639,6 +641,13 @@ async function buildBaseAtlas() {
         context.clearRect(tile.x * T, tile.y * T, 32, 32);
         context.drawImage(image, tile.x * T, tile.y * T);
     }));
+
+    {
+        const image = await loadImage(new URL('../../assets/models/chest/skrzynia.png', import.meta.url).href);
+        const tile = ATLAS_TILES.chest;
+        context.clearRect(tile.x * T, tile.y * T, 32, 32);
+        context.drawImage(image, tile.x * T, tile.y * T);
+    }
 
     // Ikonki i odłamki korzystają z pierwszej klatki oryginalnego arkusza.
     // Świat i dłoń mają osobny materiał z pełną animacją na GPU.

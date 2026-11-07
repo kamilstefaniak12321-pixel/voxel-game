@@ -105,6 +105,11 @@ export class BlockHighlight {
 
         if (definition?.model === 'structure' && !torch) { size[1] = .5; center[1] = .25; }
 
+        // Skrzynia: 14 x 14 pikseli, 14 wysokości.
+        if (definition?.model === 'chest') {
+            size[0] = size[2] = 14 / 16; size[1] = 14 / 16; center[1] = 7 / 16;
+        }
+
         if (flat && definition?.model !== 'structure') {
 
             size[flat.axis] = FLAT_THICKNESS;

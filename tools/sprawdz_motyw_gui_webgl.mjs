@@ -158,6 +158,24 @@ async function setupUi(iconNames) {
             check(document.querySelectorAll('.inv-creative-grid .inv-slot').length > 0, 'Wyszukiwanie kreatywne puste');
             await theme('lepidolit'); check(!getComputedStyle(document.querySelector('.inv-panel')).backgroundImage.includes('grey-wood'), 'Pozostała tekstura szarego drewna');
             await theme('grey-wood'); tests.push('Wyszukiwanie kreatywne i przejście przez Lepidolit');
+            // Skrzynia (0.78.0): wnętrze w strefie rzemieślniczej, dwie warstwy.
+            const { newChest } = await import('/src/game/ChestState.js');
+            const chest = window.testChest = newChest(0, 0, 0);
+            chest.layers[0][0] = { type: 'stone', count: 12 }; chest.layers[1][0] = { type: 'oak_planks', count: 3 };
+            screen.close(); game.mode = 'adventure'; screen.open(game, chest); await tick();
+            check(document.querySelector('.inv-zone.inv-chest canvas.inv-chest-view') && !document.querySelector('.inv-craft-grid'), 'Skrzynia nie zastąpiła wytwarzania');
+            for (let i = 0; i < 30; i++) { await new Promise(r => requestAnimationFrame(r)); screen.update(); }
+            const at = (cell) => { const p = screen.chestView.cellClientPoint(cell); check(screen.chestView.cellAtEvent({ clientX: p.x, clientY: p.y }) === cell, `Przegródka ${cell} nie trafia w siebie`); return p; };
+            const chestClick = (cell, extra = {}) => { const p = at(cell); screen.chestView.canvas.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, button: 0, clientX: p.x, clientY: p.y, ...extra })); };
+            for (const cell of [0, 3, 5, 8, 11]) at(cell);
+            chestClick(0); check(screen.cursor?.type === 'oak_planks' && chest.layers[0][0]?.type === 'stone' && !chest.layers[1][0], 'Nie wzięto z wierzchu');
+            chestClick(0); check(!screen.cursor && chest.layers[1][0]?.type === 'oak_planks', 'Inny przedmiot nie leży na wierzchu');
+            const sticks = game.inventory.slots[19]; check(sticks?.type === 'stick', 'Brak patyków w ekwipunku testu');
+            click(document.querySelector('[data-kind="slot"][data-index="19"]')); chestClick(7);
+            check(chest.layers[0][7]?.type === 'stick' && !screen.cursor, 'Pusta przegródka nie przyjęła stosu');
+            chestClick(7, { shiftKey: true }); check(!chest.layers[0][7] && game.inventory.slots.some(item => item?.type === 'stick'), 'Shift + klik nie przeniósł do ekwipunku');
+            screen.close(); check(!screen.chest, 'Zamknięcie nie zamknęło skrzyni');
+            tests.push('Skrzynia: okno w strefie, wierzch i spód, Shift + klik');
             screen.close(); menu.showTitle(); await tick(); titlePresentation();
             tests.push('Menu główne: jasny tytuł, deski, rama i przycisk Gra po zakończeniu animacji');
             screen.close(); menu.showSettings('title', 'look'); await tick();
@@ -175,6 +193,16 @@ async function setupUi(iconNames) {
             if (view === 'menu') { screen.close(); menu.showTitle(); }
             else if (view === 'settings') { screen.close(); menu.showSettings('title', 'look'); }
             else if (view === 'hud') { screen.close(); menu.hide(); hotbar.update(game.inventory.slots.slice(0,9),0); }
+            else if (view === 'chest') {
+                await inventory();
+                const { newChest } = await import('/src/game/ChestState.js');
+                const chest = newChest(0, 0, 0);
+                [['stone', 12], ['oak_planks', 3], null, ['stick', 7], ['blueberry', 5], null, ['grass', 24], null, null, ['pickaxe', 1], null, ['oak_log', 6]]
+                    .forEach((item, cell) => { if (item) chest.layers[0][cell] = { type: item[0], count: item[1] }; });
+                chest.layers[1][0] = { type: 'oak_planks', count: 16 }; chest.layers[1][6] = { type: 'stick', count: 2 };
+                screen.close(); screen.open(game, chest);
+                for (let i = 0; i < 40; i++) { await new Promise(r => requestAnimationFrame(r)); screen.update(); }
+            }
             else { await inventory(view === 'creative' ? 'creative' : 'adventure', view === 'book'); }
             if (view === 'tooltip') {
                 const slot = document.querySelector('[data-kind="slot"][data-index="0"]');
@@ -227,7 +255,7 @@ try {
     while(Date.now()<until){ready=await evaluate('({qa:document.body?.dataset.qa,error:document.body?.dataset.error})');if(ready?.qa==='failed')throw Error(ready.error);if(ready?.qa==='ready')break;await pause(100);}
     assert.equal(ready?.qa,'ready','Nie uruchomiono komponentów GUI');
     const tests=await evaluate('uiQA.verify()');const layouts=[];
-    for(const [name,width,height,view] of [['menu',1100,800,'menu'],['ekwipunek',1100,900,'inventory'],['opis-przedmiotu',1100,900,'tooltip'],['ksiega',1366,900,'book'],['kreatywny',1100,900,'creative'],['telefon',390,844,'inventory'],['telefon-ksiega',390,844,'book'],['telefon-kreatywny',390,844,'creative'],['niski-ekran',844,390,'book'],['ustawienia',1100,900,'settings'],['pasek',390,844,'hud']]){
+    for(const [name,width,height,view] of [['menu',1100,800,'menu'],['ekwipunek',1100,900,'inventory'],['opis-przedmiotu',1100,900,'tooltip'],['ksiega',1366,900,'book'],['kreatywny',1100,900,'creative'],['skrzynia',1100,900,'chest'],['telefon',390,844,'inventory'],['telefon-ksiega',390,844,'book'],['telefon-kreatywny',390,844,'creative'],['niski-ekran',844,390,'book'],['ustawienia',1100,900,'settings'],['pasek',390,844,'hud']]){
         await call('Emulation.setDeviceMetricsOverride',{width,height,deviceScaleFactor:1,mobile:false});
         layouts.push({name,...await evaluate(`uiQA.show(${JSON.stringify(view)})`)});
         const shot=await call('Page.captureScreenshot',{format:'png'});await writeFile(resolve(output,`${name}.png`),Buffer.from(shot.data,'base64'));
@@ -243,7 +271,7 @@ try {
         }
     }
     const errors=await evaluate('uiQA.errors');assert.deepEqual(errors,[]);
-    const result={status:'passed',tests,layouts};await writeFile(resolve(output,'result.json'),JSON.stringify(result,null,2));console.log('OK: motyw GUI, rzeczywiste komponenty menu/ekwipunku/księgi/HUD, przełączanie, zapis, przenoszenie stosów, wytwarzanie i 11 ujęć desktop/telefon.');console.log(JSON.stringify(result));
+    const result={status:'passed',tests,layouts};await writeFile(resolve(output,'result.json'),JSON.stringify(result,null,2));console.log('OK: motyw GUI, rzeczywiste komponenty menu/ekwipunku/księgi/HUD, przełączanie, zapis, przenoszenie stosów, wytwarzanie, skrzynia i 12 ujęć desktop/telefon.');console.log(JSON.stringify(result));
 } finally {
     await writeFile(resolve(output,'chrome.log'),logs);socket?.close();
     if(chrome?.pid&&chrome.exitCode===null&&!chrome.signalCode){const ended=once(chrome,'exit');chrome.kill('SIGKILL');await ended;}

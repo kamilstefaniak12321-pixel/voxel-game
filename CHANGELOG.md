@@ -13,7 +13,7 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ## 0.74.0 - Kręgi na tafli pod wodospadami
 
-Przygotowanie kolejnego wydania po 0.73.0.
+Przygotowanie kolejnego wydania po 0.73.0 — PR #110.
 
 - Płaskie, zapętlone kręgi rozchodzą się od uderzenia wodospadu po
   połączonej tafli wody. Zasięg i wyrazistość rosną z liczbą spadku

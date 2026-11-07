@@ -1,7 +1,9 @@
 # Kręgi wodospadów 0.74.0
 
 Baza: wydana 0.73.0, commit `f2ddcae0ed6e0d37b38ac30b0194d7c9f0fe45a8`.
-Wersja przygotowywana do wydania; publikacja zgodnie z workflow po scaleniu PR.
+Wersja przygotowywana w [PR #110](https://github.com/kamilstefaniak12321-pixel/voxel-game/pull/110);
+publikacja zgodnie z workflow po scaleniu PR. Końcowe wyniki CI i linki do
+próbnych kompilacji są w opisie PR.
 
 ## Efekt na tafli
 
@@ -51,7 +53,7 @@ dyfrakcji i hydrodynamicznej interferencji.
 - Zmiana terenu i wyładowanie chunka unieważniają stare fragmenty przed
   kolejnym rysowaniem. Usunięte miejsca uderzenia znikają po odświeżeniu
   istniejącej listy wodospadów (najwyżej 0,3 s).
-- CPU aktualizuje tylko czas shadera. Obraz nie dodaje impulsów do
+- Animacja gotowej tafli wymaga tylko zmiany czasu shadera. Obraz nie dodaje impulsów do
   kolejki symulacji wody, nie generuje chunków i nie zmienia zapisów.
 
 Raport wydajności zawiera etap `waterfalls` oraz `waterfallRipples`:
@@ -85,6 +87,11 @@ tego jednego efektu, nie udaje uruchomienia całej starej wersji 0.73.
 Test kontroluje też ląd, kamienną wyspę, płytki odpływ, zmianę wysokości,
 odcięcie źródeł i wyładowanie chunków. Pomiary CPU i programowy WebGL
 w CI nie są pomiarem FPS na fizycznej karcie gracza.
+
+Lokalny test CPU (Node 24.22.1, pięć prób, 12 wodospadów o sile 16)
+odkrył 1632 kafelki w 35 porcjach po najwyżej 48 komórek. Największa
+zmierzona porcja zajęła 0,123 ms; mediana stabilnej aktualizacji wyniosła
+0,00249 ms, bez odczytów bloków. [Surowe próbki i warunki](pomiary/fale-0.74.0/powierzchnie-cpu.json).
 
 ## Proponowane dalsze efekty
 

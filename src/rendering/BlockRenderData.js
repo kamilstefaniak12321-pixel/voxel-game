@@ -32,7 +32,6 @@ import {
 
 
 import {
-    WATER_SURFACE,
     WATER_WAVE_HEIGHT,
     RIVER_TEXTURE,
     WATER_OPACITY,
@@ -607,7 +606,7 @@ export function setLeafMaterialFast(on) {
 //     (pod małym kątem) jest gęstsza, jak prawdziwa woda,
 //   - tekstura wody powoli płynie: dwie warstwy w różne strony,
 //     piksele zostają ostre,
-//   - powierzchnia faluje (wierzchołki na wysokości WATER_SURFACE),
+//   - powierzchnia faluje również na pochyłych, płytkich strumieniach,
 //   - widać ją z obu stron (spod wody też).
 // Woda jest w osobnej grupie geometrii chunka (ChunkMesher.js),
 // rysowanej po wszystkim, co nieprzezroczyste.
@@ -681,6 +680,11 @@ export const waterMaterial =
 
     });
 
+// The existing chunk attribute doubles as water wave/face metadata. Defaults
+// also allow the empty prewarm geometry to compile this exact shader variant.
+waterMaterial.defaultAttributeValues = {
+    ...waterMaterial.defaultAttributeValues, plantMotion: [0, 1], surfaceProfile: [0, 0]
+};
 
 waterMaterial.onBeforeCompile = (shader, renderer) => {
 
@@ -695,8 +699,10 @@ waterMaterial.onBeforeCompile = (shader, renderer) => {
             `#include <common>
             uniform float uTime;
             uniform float uWaveHeight;
+            attribute vec2 plantMotion;
             varying vec3 vWaterWorld;
-            varying vec3 vWaterNormal;`
+            varying vec3 vWaterNormal;
+            varying float vWaterFace;`
         )
         .replace(
             '#include <begin_vertex>',
@@ -704,24 +710,25 @@ waterMaterial.onBeforeCompile = (shader, renderer) => {
 
             vec3 waterWorld = (modelMatrix * vec4(transformed, 1.0)).xyz;
 
-            // Wierzchołki na wysokości powierzchni falują: kilka fal
+            // Wierzchołki powierzchni falują: kilka fal
             // w różnych kierunkach. Zależy tylko od miejsca w świecie,
             // więc sąsiednie bloki (i chunki) falują razem, bez szpar.
 
-            if (abs(fract(waterWorld.y) - ${WATER_SURFACE.toFixed(4)}) < 0.01) {
+            if (plantMotion.x > 0.0) {
 
                 float wave =
                     sin(waterWorld.x * 0.9 + uTime * 1.3) * 0.5 +
                     sin(waterWorld.z * 1.3 - uTime * 1.05) * 0.35 +
                     sin((waterWorld.x + waterWorld.z) * 0.45 + uTime * 0.7) * 0.15;
 
-                transformed.y += wave * uWaveHeight;
-                waterWorld.y += wave * uWaveHeight;
+                transformed.y += wave * uWaveHeight * plantMotion.x;
+                waterWorld.y += wave * uWaveHeight * plantMotion.x;
 
             }
 
             vWaterWorld = waterWorld;
-            vWaterNormal = normalize(mat3(modelMatrix) * objectNormal);`
+            vWaterNormal = normalize(mat3(modelMatrix) * objectNormal);
+            vWaterFace = plantMotion.y * 2.0 - 1.0;`
         );
 
 
@@ -737,6 +744,7 @@ waterMaterial.onBeforeCompile = (shader, renderer) => {
             uniform float uWaterOpacityGrazing;
             varying vec3 vWaterWorld;
             varying vec3 vWaterNormal;
+            varying float vWaterFace;
             ${CHUNK_MASK_GLSL}`
         )
         .replace(
@@ -760,14 +768,14 @@ waterMaterial.onBeforeCompile = (shader, renderer) => {
 
             // Płaszczyzna tekstury: góra / dół - x, z; boki - poziomo i y.
 
-            vec2 waterPlane = abs(waterNormal.y) > 0.5
+            vec2 waterPlane = abs(vWaterFace) > 0.5
                 ? vWaterWorld.xz
                 : (abs(waterNormal.x) > 0.5 ? vWaterWorld.zy : vWaterWorld.xy);
 
             // Dwie warstwy płyną w różne strony (na bokach - w dół).
 
-            vec2 flowA = abs(waterNormal.y) > 0.5 ? vec2(0.06, 0.025) : vec2(0.0, 0.35);
-            vec2 flowB = abs(waterNormal.y) > 0.5 ? vec2(-0.035, 0.05) : vec2(0.02, 0.22);
+            vec2 flowA = abs(vWaterFace) > 0.5 ? vec2(0.06, 0.025) : vec2(0.0, 0.35);
+            vec2 flowB = abs(vWaterFace) > 0.5 ? vec2(-0.035, 0.05) : vec2(0.02, 0.22);
 
             // Rzeka: nurt zapisany w UV (środek kafelka przesunięty o nurt) -
             // na wierzchu obie warstwy płyną z nurtem (trochę inaczej, żeby
@@ -775,7 +783,7 @@ waterMaterial.onBeforeCompile = (shader, renderer) => {
 
             vec2 riverFlow = ((vMapUv - uWaterTile.xy) / uWaterTile.zw - 0.5) / ${WATER_FLOW_UV.toFixed(3)} * ${(127 / 32).toFixed(4)};
 
-            if (abs(waterNormal.y) > 0.5 && dot(riverFlow, riverFlow) > 0.01) {
+            if (abs(vWaterFace) > 0.5 && dot(riverFlow, riverFlow) > 0.01) {
 
                 vec2 across = vec2(-riverFlow.y, riverFlow.x);
 
@@ -817,7 +825,7 @@ waterMaterial.onBeforeCompile = (shader, renderer) => {
             // tym bardziej woda jest nieprzezroczysta, w kolorze dalekiej
             // wody.
 
-            if (uFarEnabled > 0.5 && waterNormal.y > 0.5) {
+            if (uFarEnabled > 0.5 && vWaterFace > 0.5) {
 
                 vec3 waterRay = vWaterWorld - cameraPosition;
 

@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { normalizeWorldExperiments, grassDetailAtDistance } from './WorldExperiments.js';
 import { ChunkGeneration } from './ChunkGeneration.js';
+import { WaterSimulation } from './WaterSimulation.js';
 import { MeshWorkQueue } from './MeshWorkQueue.js';
 import { detailAtDistance, DISTANCE_PLANT_PREFETCH, DISTANCE_PLANT_RETAIN } from './DistanceLod.js';
 import { BIOME_KEYS } from './terrain/Biomes.js';
@@ -20,6 +21,11 @@ import {
     getBlockId,
     getBlockTypeById,
     isSolidId,
+    isOpaqueId,
+    isLeavesId,
+    getLightEmission,
+    getWaterLevel,
+    getWaterBaseHeight,
     canPlantStay,
     isWaterloggedPlantId,
     getLiquidKindId,
@@ -135,6 +141,8 @@ export class World {
         // Chunki zmienione od ostatniego zapisu świata.
 
         this.unsavedChunks = new Set();
+        this.fluidDirty = new Map();
+        this.fluids = new WaterSimulation(this);
 
 
         // Rośnie przy każdej zmianie bloku - po tym np. dynamiczne
@@ -536,7 +544,7 @@ export class World {
     // Zbieranie rośliny zachowuje wodę; clearBlock opróżnia całą komórkę.
     // Zwraca true, jeśli świat faktycznie się zmienił.
 
-    setBlock(x, y, z, type, preserveWater = true) {
+    setBlock(x, y, z, type, preserveWater = true, fluidUpdate = false) {
 
         let id = AIR_ID;
 
@@ -584,7 +592,7 @@ export class World {
 
         // Chunk jeszcze niewczytany powstaje na żądanie.
 
-        const chunk = this.generateChunk(cx, cz);
+        const chunk = fluidUpdate ? this.getChunk(cx, cz) : this.generateChunk(cx, cz);
 
         if (!chunk) {
             return false;
@@ -619,18 +627,26 @@ export class World {
 
         // Światło wokół zmienionego bloku liczy się od nowa.
 
-        this.light.blockChanged(
-            chunk,
-            chunk.index(lx, y, lz)
-        );
+        // Air and unlit transparent water/plants have identical propagation.
+        // Removing and flooding four light channels for each flowing level
+        // would dominate the bounded water queue. Other edits keep relighting.
+        const sameLight = fluidUpdate && !isOpaqueId(previousId) && !isOpaqueId(id) &&
+            !isLeavesId(previousId) && !isLeavesId(id) &&
+            getLightEmission(previousId) === 0 && getLightEmission(id) === 0;
+        if (!sameLight) this.light.blockChanged(chunk, chunk.index(lx, y, lz));
 
 
         // Blok na krawędzi chunka zmienia też ściany (i cienie)
         // w sąsiednim chunku, więc sąsiada też trzeba przebudować.
 
-        this.markDirtyAround(chunk, edgesAt(lx, lz));
+        if (fluidUpdate) {
+            this.fluidDirty.set(chunk, (this.fluidDirty.get(chunk) ?? 0) | edgesAt(lx, lz));
+            if (isPlantId(previousId) || isPlantId(id)) this.markPlantsDirty(chunk);
+        } else this.markDirtyAround(chunk, edgesAt(lx, lz));
+        if (!sameLight) this.applyLightChanges();
+        this.fluids?.blockChanged(x, y, z, previousId);
 
-        this.applyLightChanges();
+        if (fluidUpdate && getWaterLevel(previousId) >= 0 && getWaterLevel(id) >= 0) return true;
 
 
         this.plantAnimations?.blockChanged(chunk, chunk.index(lx, y, lz), previousId, id);
@@ -654,7 +670,7 @@ export class World {
         // wieniec na jego ścianie) bez oparcia też znikają. Porost i huba
         // obok - gdy nie mają już żadnej ściany.
 
-        if (!isSolidId(id)) {
+        if (!isSolidId(id) && (!fluidUpdate || isSolidId(previousId))) {
             this.removeUnsupported(x, y, z);
             for (const [dx, dy, dz] of [[1, 0, 0], [-1, 0, 0], [0, 0, 1], [0, 0, -1], [0, 1, 0], [0, -1, 0]]) {
                 const ny = y + dy;
@@ -668,6 +684,55 @@ export class World {
 
         return true;
 
+    }
+
+
+    setFluidBlock(x, y, z, id) {
+        if (id !== AIR_ID && getWaterLevel(id) < 0) return false;
+        return this.setBlock(x, y, z, id === AIR_ID ? null : getBlockTypeById(id), false, true);
+    }
+
+    // One terrain invalidation per affected chunk and frame. Water levels do
+    // not rebuild every plant model; actual washed-away plants do so above.
+    flushFluidChanges() {
+        if (!this.fluidDirty.size) return;
+        const dirty = new Set();
+        for (const [chunk, edges] of this.fluidDirty) {
+            dirty.add(chunk);
+            const west = edges & EDGE_WEST, east = edges & EDGE_EAST;
+            const north = edges & EDGE_NORTH, south = edges & EDGE_SOUTH;
+            if (west) dirty.add(chunk.west);
+            if (east) dirty.add(chunk.east);
+            if (north) dirty.add(chunk.north);
+            if (south) dirty.add(chunk.south);
+            if (west && north) dirty.add(this.getChunk(chunk.cx - 1, chunk.cz - 1));
+            if (west && south) dirty.add(this.getChunk(chunk.cx - 1, chunk.cz + 1));
+            if (east && north) dirty.add(this.getChunk(chunk.cx + 1, chunk.cz - 1));
+            if (east && south) dirty.add(this.getChunk(chunk.cx + 1, chunk.cz + 1));
+        }
+        this.fluidDirty.clear();
+        for (const chunk of dirty) if (chunk) {
+            chunk.meshRevision = (chunk.meshRevision ?? 0) + 1;
+            this.dirtyChunks.add(chunk);
+        }
+    }
+
+    getWaterFlow(x, y, z) {
+        x = Math.floor(x); y = Math.floor(y); z = Math.floor(z);
+        const id = this.getBlockId(x, y, z), level = getWaterLevel(id);
+        if (level < 0) return null;
+        const center = getWaterBaseHeight(id);
+        let vx = 0, vz = 0;
+        for (const [dx, dz] of [[-1,0], [1,0], [0,-1], [0,1]]) {
+            const neighbor = this.fluids.read(x + dx, y, z + dz);
+            let difference = 0;
+            if (getWaterLevel(neighbor) >= 0) difference = center - getWaterBaseHeight(neighbor);
+            else if (neighbor === AIR_ID && getWaterLevel(this.fluids.read(x + dx, y - 1, z + dz)) >= 0) difference = center;
+            vx += dx * difference; vz += dz * difference;
+        }
+        const length = Math.hypot(vx, vz);
+        if (length > .001) return [vx / length, vz / length];
+        return this.getFlow(x, z) ?? (level === 8 ? [0, 0] : null);
     }
 
 
@@ -1134,6 +1199,8 @@ export class World {
 
     dispose() {
 
+        this.fluids?.dispose();
+        this.fluidDirty?.clear();
         this.generation?.dispose();
         this.cancelMeshJobs();
 
@@ -1183,6 +1250,7 @@ export class World {
         chunk.flow = data.flow;
         chunk.tint = data.tint;
         chunk.biomes = data.biomes;
+        chunk.waterBounds = data.waterBounds;
         chunk.blockCount = data.blockCount;
         chunk.maxY = data.maxY;
         chunk.solidBelow = data.solidBelow;
@@ -1197,6 +1265,7 @@ export class World {
         this.light.initChunk(chunk);
         this.markDirtyAround(chunk, ALL_EDGES);
         this.applyLightChanges();
+        this.fluids?.chunkLoaded(chunk);
         this.generation.applied(performance.now() - started);
         return chunk;
     }
@@ -1353,6 +1422,7 @@ export class World {
 
 
         this.generation?.retain((qx, qz) => qx !== cx || qz !== cz);
+        this.fluids?.chunkLoaded(chunk);
 
         return chunk;
 
@@ -1378,7 +1448,7 @@ export class World {
     // radius   - promień wczytywania w chunkach
     // budgetMs - ile milisekund może zająć ta klatka
 
-    update(x, z, radius, budgetMs) {
+    update(x, z, radius, budgetMs, dt = 0) {
 
         // Czas liczymy od samego początku - układanie kolejki
         // i usuwanie dalekich chunków też się w nim mieści.
@@ -1387,6 +1457,12 @@ export class World {
 
 
         this.setCenter(x, z, radius);
+
+        // Water shares the existing streaming deadline instead of adding an
+        // unbounded simulation phase. Rendering retains the remaining budget.
+        this.perfDiagnostics?.beginStage('water');
+        this.fluids?.update(dt, Math.min(.6, Math.max(0, deadline - performance.now()) * .2));
+        this.perfDiagnostics?.endStage('water');
 
 
         this.perfDiagnostics?.beginStage('generation');
@@ -1538,6 +1614,8 @@ export class World {
     unloadChunk(chunk) {
 
         const key = this.chunkKey(chunk.cx, chunk.cz);
+        this.fluids?.chunkUnloaded(chunk);
+        this.fluidDirty?.delete(chunk);
         this.cancelMeshJobs(chunk);
         const hadPlants = !!chunk.plantMesh;
         this.removePlantMesh(chunk);

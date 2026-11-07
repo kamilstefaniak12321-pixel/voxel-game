@@ -1,17 +1,17 @@
 import * as THREE from 'three';
 
 import {
-    WATER_SURFACE,
     UNDERWATER_FOG_COLOR,
     UNDERWATER_FOG_DENSITY
 } from '../config.js';
 
 import {
     isLiquidId,
-    isOpaqueId
+    isFlowingWaterId
 } from '../blocks/BlockRegistry.js';
 
 import { viewUniforms } from '../rendering/viewUniforms.js';
+import { waterSurfaceHeight } from '../world/WaterSurface.js';
 
 // ------------------------------------------------------------
 // WODA WOKÓŁ GRACZA - obraz i dźwięk
@@ -143,8 +143,7 @@ export class WaterEffects {
     }
 
 
-    // Czy punkt jest pod powierzchnią wody (górny blok wody jest
-    // niższy - WATER_SURFACE).
+    // Czy punkt jest pod dokładną powierzchnią widoczną w siatce wody.
 
     isUnderwater(point) {
 
@@ -158,9 +157,7 @@ export class WaterEffects {
             return false;
         }
 
-        const above = world.getBlockId(x, y + 1, z);
-
-        const surface = isLiquidId(above) || isOpaqueId(above) ? 1 : WATER_SURFACE;
+        const surface = waterSurfaceHeight(world, x, y, z, point.x - x, point.z - z);
 
         return point.y - y < surface;
 
@@ -179,13 +176,15 @@ export class WaterEffects {
 
         let y = Math.floor(point.y);
 
+        if (!isLiquidId(world.getBlockId(x, y, z))) return 0;
+
         const limit = y + 64;
 
         while (y < limit && isLiquidId(world.getBlockId(x, y + 1, z))) {
             y++;
         }
 
-        return Math.max(0, y + WATER_SURFACE - point.y);
+        return Math.max(0, y + waterSurfaceHeight(world, x, y, z, point.x - x, point.z - z) - point.y);
 
     }
 
@@ -358,11 +357,14 @@ export class WaterEffects {
                         !isLiquidId(world.getBlockId(cx + dx, y + 1, cz + dz))
                     ) {
 
-                        const sum = sums[world.getFlow(cx + dx, cz + dz) ? 0 : 1];
+                        const x = cx + dx, z = cz + dz;
+                        const flow = world.getWaterFlow ? world.getWaterFlow(x, y, z) : world.getFlow?.(x, z);
+                        const flowing = isFlowingWaterId(world.getBlockId(x, y, z)) || !!flow;
+                        const sum = sums[flowing ? 0 : 1];
 
                         sum[0]++;
                         sum[1] += cx + dx + 0.5;
-                        sum[2] += y + WATER_SURFACE;
+                        sum[2] += y + waterSurfaceHeight(world, x, y, z);
                         sum[3] += cz + dz + 0.5;
 
                         break;

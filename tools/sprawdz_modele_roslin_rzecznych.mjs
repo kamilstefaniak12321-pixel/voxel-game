@@ -116,11 +116,23 @@ for (const species of aquatic) {
     assert.ok(after.groups[1].count > 0, `${species}: missing foliage`);
     // Identical water geometry, UV flow and light despite changing its owner
     // block ID. In particular, no interior wall next to ordinary water.
-    for (const attribute of ['position', 'normal', 'uv', 'color', 'atmosphereLight']) {
+    for (const attribute of ['position', 'normal', 'uv', 'color', 'atmosphereLight', 'plantMotion']) {
         assert.deepEqual(groupData(after, 2, attribute), groupData(before, 2, attribute), `${species}: changed water ${attribute}`);
     }
     assert.equal(after.groups.find((g) => g.materialIndex === 2).count, 10 * 6);
-    assert.ok(groupData(after, 2, 'plantMotion').every((value) => value === 0), 'Water must not inherit stale plant motion');
+    // Water intentionally reuses these bytes for wave weight and face type.
+    // Both source cells have a flat exposed surface: only their upper edge
+    // waves, and each face must replace any prior plant movement/phase bytes.
+    const positions = groupData(after, 2, 'position');
+    const normals = groupData(after, 2, 'normal');
+    const motion = groupData(after, 2, 'plantMotion');
+    for (let i = 0; i < positions.length / 3; i++) {
+        assert.equal(motion[i * 2], positions[i * 3 + 1] === 5 + WATER_SURFACE ? 255 : 0,
+            `${species}: water wave weight must not inherit plant motion`);
+        const normalY = normals[i * 3 + 1];
+        assert.equal(motion[i * 2 + 1], normalY > 0 ? 255 : normalY < 0 ? 0 : 128,
+            `${species}: water top/bottom/side flag must not inherit plant phase`);
+    }
     before.dispose(); after.dispose();
 }
 

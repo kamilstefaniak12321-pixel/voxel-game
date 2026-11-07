@@ -4,6 +4,7 @@ import { riverPlantBounds } from './RiverPlantBounds.js';
 import { spritePlantBounds, SPRITE_PLANT_REACH } from './PlantBounds.js';
 import { getTorchInfo } from '../blocks/torches.js';
 import { getTorchBounds } from '../rendering/TorchGeometry.js';
+import { waterSurfaceHeight } from '../world/WaterSurface.js';
 
 function intersectBounds(origin, direction, x, y, z, bounds, start, end) {
     let near = -Infinity, far = Infinity;
@@ -28,6 +29,37 @@ function intersectBounds(origin, direction, x, y, z, bounds, start, end) {
     }
     const distance = Math.max(0, start, near);
     return far >= distance && distance <= end ? { distance, normal } : null;
+}
+
+// W obrębie komórki DDA tafla ma dwa płaskie trójkąty, rozdzielone
+// przekątną fx + fz = 1. Odcinek promienia przecinamy w tym samym
+// miejscu, więc nie trafia w powietrze nad płytką lub pochyłą strugą.
+function intersectWater(world, origin, direction, x, y, z, start, end, normal) {
+    const gapAt = distance => {
+        const fx = Math.max(0, Math.min(1, origin.x + direction.x * distance - x));
+        const fz = Math.max(0, Math.min(1, origin.z + direction.z * distance - z));
+        return origin.y + direction.y * distance - y - waterSurfaceHeight(world, x, y, z, fx, fz);
+    };
+    let distance = start, gap = gapAt(start);
+    if (gap <= 1e-10) return { distance, normal };
+
+    const diagonalSpeed = direction.x + direction.z;
+    const diagonal = Math.abs(diagonalSpeed) > 1e-12
+        ? (1 - (origin.x - x) - (origin.z - z)) / diagonalSpeed : Infinity;
+    const boundaries = diagonal > start && diagonal < end ? [diagonal, end] : [end];
+    for (const next of boundaries) {
+        const nextGap = gapAt(next);
+        if (nextGap <= 1e-10) {
+            return {
+                distance: distance + (next - distance) * gap / (gap - nextGap),
+                // Stawianie bloków korzysta z całkowitej normalnej ściany.
+                normal: { x: 0, y: 1, z: 0 }
+            };
+        }
+        distance = next;
+        gap = nextGap;
+    }
+    return null;
 }
 
 
@@ -156,8 +188,19 @@ export class VoxelRaycast {
             return closest;
         };
 
-        const initialPlant = plantHit(0, Math.min(tMaxX, tMaxY, tMaxZ, this.maxDistance));
-        if (initialPlant) return initialPlant;
+        const waterHit = (start, end, normal) => {
+            if (!includeWater) return null;
+            const id = this.world.getBlockId(x, y, z);
+            if (!isLiquidId(id)) return null;
+            const intersection = intersectWater(this.world, origin, dir, x, y, z, start, end, normal);
+            return intersection ? { hit: true, block: { x, y, z, type: getBlockTypeById(id) }, ...intersection } : null;
+        };
+
+        const initialEnd = Math.min(tMaxX, tMaxY, tMaxZ, this.maxDistance);
+        const initialPlant = plantHit(0, initialEnd);
+        const initialWater = waterHit(0, initialEnd, { x: 0, y: 1, z: 0 });
+        if (initialPlant && (!initialWater || initialPlant.distance <= initialWater.distance)) return initialPlant;
+        if (initialWater) return initialWater;
 
 
         while (distance <= this.maxDistance) {
@@ -222,7 +265,7 @@ export class VoxelRaycast {
                 continue;
             }
 
-            if (id && !getTorchInfo(id) && ((!getRiverPlant(id) && !isLiquidId(id)) || (includeWater && isLiquidId(id)))) {
+            if (id && !getTorchInfo(id) && !getRiverPlant(id) && !isLiquidId(id)) {
 
                 return {
 
@@ -247,8 +290,11 @@ export class VoxelRaycast {
 
             }
 
-            const plant = plantHit(distance, Math.min(tMaxX, tMaxY, tMaxZ, this.maxDistance));
-            if (plant) return plant;
+            const end = Math.min(tMaxX, tMaxY, tMaxZ, this.maxDistance);
+            const plant = plantHit(distance, end);
+            const water = waterHit(distance, end, { x: normalX, y: normalY, z: normalZ });
+            if (plant && (!water || plant.distance <= water.distance)) return plant;
+            if (water) return water;
 
         }
 

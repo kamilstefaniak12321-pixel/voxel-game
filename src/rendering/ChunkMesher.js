@@ -11,6 +11,7 @@ import {
 } from '../config.js';
 
 import { WATER_FLOW_UV } from './BlockRenderData.js';
+import { getWaterCornerHeight } from '../world/WaterSurface.js';
 import { atmosphericLightToBrightness } from './LightPolicy.js';
 import { SURFACE_PROFILES } from './SurfaceProfiles.js';
 import { getRiverPlantFaces, plantRandom, plantTransform, riverPlantTransform } from './RiverPlantGeometry.js';
@@ -34,6 +35,8 @@ import {
     isOpaqueId,
     isLiquidId,
     getLiquidKindId,
+    getWaterBaseHeight,
+    WATER_SOURCE_ID,
     isLeavesId,
     getLightEmission
 } from '../blocks/BlockRegistry.js';
@@ -110,6 +113,9 @@ let padShade = new Uint8Array(P_LAYER * (H + 2));
 // ID cieczy w komórce (0 = nie ciecz) - między dwiema komórkami tej
 // samej cieczy (np. woda przy wodzie) nie rysujemy ściany.
 let padLiquid = new Uint8Array(P_LAYER * (H + 2));
+// Water heights are exact multiples of 1/128; keep their state separately
+// from the canonical liquid kind (which suppresses internal water faces).
+let padWaterHeight = new Uint8Array(P_LAYER * (H + 2));
 let padSky = new Uint8Array(P_LAYER * (H + 2));
 let padR = new Uint8Array(P_LAYER * (H + 2));
 let padG = new Uint8Array(P_LAYER * (H + 2));
@@ -204,6 +210,7 @@ function* fillPaddingSteps(chunk, world, height, first) {
                             padOpaque[p] = 0;
                             padShade[p] = 0;
                             padLiquid[p] = 0;
+                            padWaterHeight[p] = 0;
                             padCarpet[p] = 0;
                             padSky[p] = MAX_LIGHT;
                             padR[p] = padG[p] = padB[p] = 0;
@@ -220,6 +227,7 @@ function* fillPaddingSteps(chunk, world, height, first) {
                         padOpaque[p] = isOpaqueId(blockId) ? 1 : 0;
                         padShade[p] = padOpaque[p] | (isLeavesId(blockId) ? 1 : 0);
                         padLiquid[p] = getLiquidKindId(blockId);
+                        padWaterHeight[p] = padLiquid[p] === WATER_SOURCE_ID ? getWaterBaseHeight(blockId) * 128 : 0;
                         padCarpet[p] = CARPET_OF[blockId];
                         padSky[p] = source.skyLight[i];
                         padR[p] = source.lightR[i];
@@ -236,6 +244,7 @@ function* fillPaddingSteps(chunk, world, height, first) {
                     padOpaque[below] = 1;
                     padShade[below] = 1;
                     padLiquid[below] = 0;
+                    padWaterHeight[below] = 0;
                     padSky[below] = 0;
                     padR[below] = padG[below] = padB[below] = 0;
 
@@ -249,6 +258,7 @@ function* fillPaddingSteps(chunk, world, height, first) {
                         padOpaque[above] = 0;
                         padShade[above] = 0;
                         padLiquid[above] = 0;
+                        padWaterHeight[above] = 0;
                         padSky[above] = MAX_LIGHT;
                         padR[above] = padG[above] = padB[above] = 0;
 
@@ -1241,8 +1251,56 @@ let meshFlow = null;
 // nurtu - sam środek kafelka.
 
 const flowUv = new Float32Array(8);
+const waterCorners = new Float64Array(4); // (0,0), (1,0), (0,1), (1,1)
+const waterNormals = new Float64Array(12);
+let waterSlopeX = 0, waterSlopeZ = 0;
 
-function waterUv(uv, lx, lz) {
+function paddedWaterHeight(cell) {
+    const height = padWaterHeight[cell];
+    return height && (padLiquid[cell + P_LAYER] === WATER_SOURCE_ID || padOpaque[cell + P_LAYER])
+        ? 1 : height / 128;
+}
+
+function prepareWaterSurface(block) {
+    const center = paddedWaterHeight(block);
+    if (center === 1) {
+        waterCorners.fill(1);
+    } else {
+        const west = paddedWaterHeight(block - 1), east = paddedWaterHeight(block + 1);
+        const north = paddedWaterHeight(block - P), south = paddedWaterHeight(block + P);
+        waterCorners[0] = getWaterCornerHeight(paddedWaterHeight(block - P - 1), north, west, center);
+        waterCorners[1] = getWaterCornerHeight(north, paddedWaterHeight(block - P + 1), center, east);
+        waterCorners[2] = getWaterCornerHeight(west, center, paddedWaterHeight(block + P - 1), south);
+        waterCorners[3] = getWaterCornerHeight(center, east, south, paddedWaterHeight(block + P + 1));
+    }
+
+    // Area-weighted normals of the fixed two triangles. Their shared vertices
+    // average both planes; flat source water retains exactly (0,1,0).
+    const ax = waterCorners[0] - waterCorners[1], az = waterCorners[0] - waterCorners[2];
+    const bx = waterCorners[2] - waterCorners[3], bz = waterCorners[1] - waterCorners[3];
+    waterSlopeX = ax + bx;
+    waterSlopeZ = az + bz;
+    const slopeLength = Math.hypot(waterSlopeX, waterSlopeZ);
+    if (slopeLength > 0) {
+        waterSlopeX *= 32 / (127 * slopeLength);
+        waterSlopeZ *= 32 / (127 * slopeLength);
+    }
+    if (ax === 0 && az === 0 && bx === 0 && bz === 0) {
+        waterNormals.fill(0);
+        waterNormals[1] = waterNormals[4] = waterNormals[7] = waterNormals[10] = 1;
+        return;
+    }
+    for (let i = 0; i < 4; i++) {
+        const nx = i === 0 ? ax : i === 3 ? bx : (ax + bx) * 0.5;
+        const nz = i === 0 ? az : i === 3 ? bz : (az + bz) * 0.5;
+        const length = Math.sqrt(nx * nx + nz * nz + 1);
+        waterNormals[i * 3] = nx / length;
+        waterNormals[i * 3 + 1] = 1 / length;
+        waterNormals[i * 3 + 2] = nz / length;
+    }
+}
+
+function waterUv(uv, lx, lz, sloped) {
 
     const uMin = Math.min(uv[0], uv[2], uv[4], uv[6]);
     const uMax = Math.max(uv[0], uv[2], uv[4], uv[6]);
@@ -1255,6 +1313,13 @@ function waterUv(uv, lx, lz) {
     if (meshFlow) {
         fx = meshFlow[(lz * S + lx) * 2] / 127;
         fz = meshFlow[(lz * S + lx) * 2 + 1] / 127;
+    }
+
+    // Generated river currents keep their direction and speed. New streams
+    // outside rivers derive a downhill current from this cell's surface.
+    if (sloped && fx === 0 && fz === 0) {
+        fx = waterSlopeX;
+        fz = waterSlopeZ;
     }
 
     const u = uMin + (0.5 + WATER_FLOW_UV * fx) * (uMax - uMin);
@@ -1424,6 +1489,7 @@ function addCubeFaces(id, renderData, lx, y, lz, faceCount, baseX, baseZ, textur
     const glowing = emission > 0;
 
     const liquid = getLiquidKindId(id);
+    const water = liquid === WATER_SOURCE_ID;
 
     const tinted = renderData.tint && meshTint !== null;
 
@@ -1436,6 +1502,8 @@ function addCubeFaces(id, renderData, lx, y, lz, faceCount, baseX, baseZ, textur
         liquid && padLiquid[above] !== liquid && !padOpaque[above]
             ? WATER_SURFACE
             : 1;
+
+    if (water) prepareWaterSurface(block);
 
 
     for (
@@ -1475,7 +1543,7 @@ function addCubeFaces(id, renderData, lx, y, lz, faceCount, baseX, baseZ, textur
                 : 0;
 
         const uv = liquid
-            ? waterUv(surfaceUV[faceIndex][rotation], lx, lz)
+            ? waterUv(surfaceUV[faceIndex][rotation], lx, lz, water)
             : surfaceUV[faceIndex][rotation];
 
         // Ściana pod wodą (np. dno morza) ciemnieje z głębokością.
@@ -1501,19 +1569,26 @@ function addCubeFaces(id, renderData, lx, y, lz, faceCount, baseX, baseZ, textur
         for (let i = 0; i < 4; i++) {
 
             const corner = face.corners[i];
+            const waterCorner = corner[2] * 2 + corner[0];
+            const height = water ? waterCorners[waterCorner] : topHeight;
 
             positionBuffer[p + i * 3] = lx + corner[0];
-            positionBuffer[p + i * 3 + 1] = y + (corner[1] === 1 ? topHeight : 0);
+            positionBuffer[p + i * 3 + 1] = y + (corner[1] === 1 ? height : 0);
             positionBuffer[p + i * 3 + 2] = lz + corner[2];
 
-            normalBuffer[p + i * 3] = face.normal[0];
-            normalBuffer[p + i * 3 + 1] = face.normal[1];
-            normalBuffer[p + i * 3 + 2] = face.normal[2];
+            normalBuffer[p + i * 3] = water && faceIndex === TOP_FACE ? waterNormals[waterCorner * 3] : face.normal[0];
+            normalBuffer[p + i * 3 + 1] = water && faceIndex === TOP_FACE ? waterNormals[waterCorner * 3 + 1] : face.normal[1];
+            normalBuffer[p + i * 3 + 2] = water && faceIndex === TOP_FACE ? waterNormals[waterCorner * 3 + 2] : face.normal[2];
 
             uvBuffer[t + i * 2] = uv[i * 2];
             uvBuffer[t + i * 2 + 1] = uv[i * 2 + 1];
-            plantMotionBuffer[t + i * 2] = 0;
-            plantMotionBuffer[t + i * 2 + 1] = 0;
+            // Water reuses the otherwise idle plant bytes: x = wave weight,
+            // y = top (255), bottom (0), side (128). Side upper edges receive
+            // the same wave as the top; integer-height waterfall joins do not.
+            plantMotionBuffer[t + i * 2] = water && corner[1] === 1 && height < 1
+                ? Math.round(height / WATER_SURFACE * 255) : 0;
+            plantMotionBuffer[t + i * 2 + 1] = water
+                ? face.normal[1] > 0 ? 255 : face.normal[1] < 0 ? 0 : 128 : 0;
 
 
             // Kolor rogu:
@@ -1573,7 +1648,7 @@ function addCubeFaces(id, renderData, lx, y, lz, faceCount, baseX, baseZ, textur
 
 
         splitBuffer[faceCount] =
-            brightness0 + brightness3 > brightness1 + brightness2
+            !water && brightness0 + brightness3 > brightness1 + brightness2
                 ? 1
                 : 0;
 
@@ -1692,7 +1767,7 @@ export function prepareChunkPlantGeometry(chunk, world, deadline) {
 const meshScratchPool = [];
 
 function captureMeshScratch() {
-    return { padOpaque, padShade, padLiquid, padSky, padR, padG, padB, padCarpet,
+    return { padOpaque, padShade, padLiquid, padWaterHeight, padSky, padR, padG, padB, padCarpet,
         padTop, padBottom, faceCapacity, positionBuffer, normalBuffer, uvBuffer,
         colorBuffer, atmosphereLightBuffer, surfaceOcclusionBuffer, surfaceEmissionBuffer,
         surfaceProfileBuffer, tintBuffer, plantMotionBuffer, splitBuffer,
@@ -1700,7 +1775,7 @@ function captureMeshScratch() {
 }
 
 function activateMeshScratch(state) {
-    ({ padOpaque, padShade, padLiquid, padSky, padR, padG, padB, padCarpet,
+    ({ padOpaque, padShade, padLiquid, padWaterHeight, padSky, padR, padG, padB, padCarpet,
         padTop, padBottom, faceCapacity, positionBuffer, normalBuffer, uvBuffer,
         colorBuffer, atmosphereLightBuffer, surfaceOcclusionBuffer, surfaceEmissionBuffer,
         surfaceProfileBuffer, tintBuffer, plantMotionBuffer, splitBuffer,
@@ -1712,6 +1787,7 @@ function acquireMeshScratch() {
     const state = meshScratchPool.pop() ?? {
         padOpaque: new Uint8Array(P_LAYER * (H + 2)), padShade: new Uint8Array(P_LAYER * (H + 2)),
         padLiquid: new Uint8Array(P_LAYER * (H + 2)), padSky: new Uint8Array(P_LAYER * (H + 2)),
+        padWaterHeight: new Uint8Array(P_LAYER * (H + 2)),
         padR: new Uint8Array(P_LAYER * (H + 2)), padG: new Uint8Array(P_LAYER * (H + 2)),
         padB: new Uint8Array(P_LAYER * (H + 2)), padCarpet: new Uint8Array(P_LAYER * (H + 2)),
         faceCapacity: 0, positionBuffer: null, normalBuffer: null, uvBuffer: null,

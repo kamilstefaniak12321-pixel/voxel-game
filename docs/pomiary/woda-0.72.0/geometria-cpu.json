@@ -1,0 +1,43 @@
+{
+  "checks": 1046,
+  "node": "v24.22.1",
+  "kind": "CPU helper/mesher; not FPS or GPU timing",
+  "surfaceQuery": {
+    "iterationsPerTrial": 100000,
+    "samplesMs": [
+      0.0002997682700000001,
+      0.00028425182000000004,
+      0.00030855931,
+      0.00026201254000000006,
+      0.0002669747000000001
+    ],
+    "medianMs": 0.00028425182000000004,
+    "checksum": 264551.4375,
+    "maximumBlockReads": 18
+  },
+  "sparseChunkMesh": {
+    "iterationsPerTrial": 100,
+    "samplesMs": [
+      0.10219474999999989,
+      0.0808586200000002,
+      0.13002464000000033,
+      0.10717194000000006,
+      0.06837793999999973
+    ],
+    "medianMs": 0.10219474999999989
+  },
+  "denseFlowChunkMesh": {
+    "waterCells": 256,
+    "iterationsPerTrial": 100,
+    "samplesMs": [
+      0.3876923400000004,
+      0.39007701999999994,
+      0.3813097200000004,
+      0.3862262400000009,
+      0.3848291200000006
+    ],
+    "medianMs": 0.3862262400000009
+  },
+  "additionalPaddingBytesPerActiveMesher": 42120,
+  "additionalGeometryAttributes": 0
+}

@@ -11,6 +11,27 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 0.72.0 - Rozlewanie wody i pochyła powierzchnia
+
+Przygotowanie wydania w PR #108 do `main`; publikacja Windows/Android po scaleniu.
+
+- Źródła zalewają otwarte komórki: najpierw w dół, potem do siedmiu
+  poziomów w bok. Odcięty strumień stopniowo zanika. Dwa źródła poziomo
+  odnawiają źródło między nimi przy podparciu blokiem lub źródłem od dołu.
+- Sąsiednie poziomy tworzą pochyłą taflę ze wspólnymi narożnikami także
+  między chunkami. Zachowane fale, tekstura nurtu rzek i rośliny wodne.
+- Pływanie, zanurzenie, dźwięki i wskazywanie wody uwzględniają jej
+  rzeczywistą wysokość. Sadzenie roślin wodnych wymaga źródła.
+- Symulacja pracuje tylko na wczytanym terenie, z limitem czasu oraz
+  liczby zmian; po ustabilizowaniu nie przegląda rzek i jezior co klatkę.
+  Mokre kolumny mają mały indeks do wznowienia przepływu po wczytaniu.
+- Aktualizacje wody współdzielą budżet streamingu, nie przeliczają
+  niezmienionego światła i łączą przebudowy siatek. Stare źródła i format
+  zapisu pozostają zgodne; nowe poziomy zapisują się jako ID 16-bitowe.
+- Testy obejmują granice chunków, źródła, wodospady, cofanie strumienia,
+  zapis i restart, pochyłe siatki oraz pomiar intensywnego zalewania.
+  [Zasady i sprawdzanie](docs/woda-0.72.0.md).
+
 ## 0.71.0 - Mniejsza pamięć zapisów i tańsze doczytywanie
 
 Przygotowanie wydania w PR #107 do `main`; publikacja Windows/Android po scaleniu.

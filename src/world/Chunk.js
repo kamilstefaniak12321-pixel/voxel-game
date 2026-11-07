@@ -6,6 +6,7 @@ import {
 import {
     AIR_ID,
     isOpaqueId,
+    isLiquidId,
     isGrowingId,
     TRUNCATED_PLANT_IDS
 } from '../blocks/BlockRegistry.js';
@@ -47,6 +48,10 @@ export class Chunk {
         // Int8Array 16 x 16 x 2) albo null - bez rzeki (RealisticGenerator).
 
         this.flow = null;
+
+        // Lazy 512-byte column bounds for water bootstrap. Dry chunks allocate
+        // nothing; edits only widen bounds, so removal needs no column rescan.
+        this.waterBounds = null;
 
         // Kolor trawy w rogach kolumn (Uint8Array 17 x 17 x 3, r g b -
         // 128 = bez zmiany) albo null (RealisticGenerator - biomy,
@@ -181,6 +186,7 @@ export class Chunk {
 
         let count = 0;
         this.torches.clear();
+        this.waterBounds = null;
 
         for (let i = 0; i < this.blocks.length; i++) {
 
@@ -188,6 +194,7 @@ export class Chunk {
                 count++;
             }
             if (isTorchId(this.blocks[i])) this.torches.add(i);
+            if (isLiquidId(this.blocks[i])) this.includeWater(i);
 
         }
 
@@ -296,6 +303,14 @@ export class Chunk {
 
     }
 
+    includeWater(index) {
+        const layer = CHUNK_SIZE * CHUNK_SIZE;
+        const bounds = this.waterBounds ??= new Uint8Array(layer * 2);
+        const column = index % layer, height = Math.floor(index / layer) + 1;
+        if (!bounds[column] || height < bounds[column]) bounds[column] = height;
+        if (height > bounds[layer + column]) bounds[layer + column] = height;
+    }
+
 
     // Zwraca true, jeśli blok faktycznie się zmienił.
 
@@ -321,6 +336,7 @@ export class Chunk {
 
 
         this.blocks[i] = id;
+        if (isLiquidId(id)) this.includeWater(i);
 
         if (isTorchId(oldId) || isTorchId(id)) {
             if (isTorchId(id)) this.torches.add(i);

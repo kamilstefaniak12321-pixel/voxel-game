@@ -607,7 +607,17 @@ prąd da się płynąć tylko tam, gdzie nurt jest wolny. `/rzeka` -
 nurt i dokąd płynie woda, `/rzeka znajdz tp` - nad najbliższą rzekę
 (więcej: `docs/rzeki.md`).
 
-Woda na razie **się nie rozlewa** - stoi tam, gdzie ją postawiono.
+Od 0.72.0 woda **się rozlewa**: źródło płynie najpierw w dół, a na
+dnie do siedmiu bloków w bok (szczegóły: `docs/woda-0.72.0.md`). Od
+0.73.0 **spadająca woda liczy, ile bloków już spada** - im dłużej, tym
+szybciej płynie jej tekstura (w dłuższych, bielszych smugach piany),
+a na dole mocniej chlapie: krople, piana niesiona nurtem dalej w dół
+rzeki i mgiełka pod wysokim wodospadem. **Rzeki** schodzą **piętrami**:
+gdzie teren opada o 5 bloków i więcej, rzeka płynie płasko do krawędzi
+i spada **wodospadem** do **sadzawki** (szerszej i głębszej niż koryto),
+a dalej płynie niżej. `/rzeka wodospad tp` - pod najbliższy wodospad,
+w trybie programisty `/scena wodospady` (spadki 3, 8 i 16 bloków).
+Opis: `docs/wodospady-0.73.0.md`.
 
 - **Test:** `/woda basen` (basen przed tobą: brodzik i głęboka część),
   `/woda znajdz` (najbliższa woda i komenda `/tp`), `/woda` (jak głęboko
@@ -931,8 +941,8 @@ bez zmian, wyżej jest po prostu powietrze).
   są **biomy** (niżej). Kolejne aktualizacje będą ten teren zmieniać
   (rzeki główne, strumyki...), więc w takim świecie nowe chunki mogą wyglądać
   inaczej niż wcześniej (Twoje budowle zostają). Woda jest
-  półprzezroczysta i da się w niej pływać (niżej: *Woda*); na razie się
-  nie rozlewa.
+  półprzezroczysta, da się w niej pływać i się rozlewa, a rzeki na
+  stromych zboczach spadają wodospadami (niżej: *Woda*).
 - **Klasyczny** - pierwszy generator gry (wzgórza i góry, bez morza).
   Już się nie zmienia. Wszystkie światy sprzed tej aktualizacji są
   klasyczne.

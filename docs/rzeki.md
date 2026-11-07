@@ -13,7 +13,9 @@ rozdziału o terenie: `docs/generator-terenu.md` (etap 3).
   **rzeki główne** (dużo szersze) i **strumyki** (węższe).
 - Rzeka płynie **zawsze w dół** (albo prawie poziomo, ale nigdy pod
   górę) - **wzdłuż spadku terenu**, dnem doliny, a nie w poprzek
-  zbocza. Nie robi zalewisk ani wielkich ścian wody.
+  zbocza. Nie robi zalewisk ani wielkich ścian wody - poza
+  **wodospadami** (od 0.73.0): gdzie teren opada o 5 bloków i więcej,
+  rzeka schodzi piętrami (niżej, *Wodospady*).
 - Kończy się w **morzu** albo w **jeziorze**. Morze ma zawsze jeden
   poziom (48), jeziora mogą być na różnych wysokościach - np. w górach
   między szczytami.
@@ -133,6 +135,31 @@ prawdziwych chunków robi się nieprzezroczysta w kolorze dalekiej wody
 (`waterMaterial` w `BlockRenderData.js`) - tam pod nią nie ma już
 narysowanego dna, więc przez wodę widać by jasny pas nieba.
 
+## Wodospady (0.73.0)
+
+Poziom wody liczony jest dla kratek co 16 bloków. Gdy między sąsiednimi
+kratkami spada o `waterfall` (5) bloków albo więcej, rzeka nie schodzi
+po małych progach: w wyższej kratce woda stoi płasko aż do krawędzi
+(połowa drogi między kratkami), w niższej zaczyna płasko od razu na
+dole (`addCurve`). Krawędź trafia do listy wodospadów obszaru
+(`zone.falls`: miejsce, kierunek nurtu, poziom wody nad i pod nim).
+Kilka stromych kratek po kolei daje kilka pięter - wodospad pod
+wodospadem.
+
+- **Skała wodospadu** - brzeg tuż obok krawędzi (w zasięgu wody
+  wyższego odcinka) jest o blok wyżej niż górna woda, więc woda nie
+  wylewa się na boki, tylko spada korytem.
+- **Sadzawka** (`pool`) - w dół nurtu od krawędzi misa szersza od
+  koryta o `poolWiden` (1,5 bloku + 0,25 na blok spadku, najwyżej 4)
+  i głębsza o `poolDepth` (1,5 + 0,3 na blok spadku, najwyżej 4), z wodą
+  na poziomie dolnej rzeki; wokół niej brzeg nie niżej niż jej woda.
+- Samą spadającą wodę robi symulacja wody (0.72.0): górne źródło przy
+  krawędzi ma obok pustkę nad dolną wodą, więc woda wylewa się i spada.
+  Spadająca woda liczy bloki spadku - szybsza tekstura i rozbryzg na
+  dole (`docs/wodospady-0.73.0.md`).
+
+`/rzeka wodospad [tp]` - najbliższy wodospad (do 1024 bloków).
+
 ## Liczby (RIVERS w TerrainShape.js)
 
 | liczba | co robi |
@@ -148,6 +175,8 @@ narysowanego dna, więc przez wodę widać by jasny pas nieba.
 | `bankSlope`, `bank` | jak stromo opadają brzegi (niziny, góry); pas wygładzonych wzgórz |
 | `meander`, `meanderScale`, `meanderSlope` | meandry: jak daleko w bok, co ile bloków zakręt, od jakiego spadku rzeka płynie prosto |
 | `flow`, `flowSlope` | nurt: najwolniejszy i najszybszy, jak zależy od spadku |
+| `waterfall` | od jakiego spadku poziomu wody między kratkami jest wodospad |
+| `poolWiden`, `poolDepth` | sadzawka pod wodospadem: o ile szersza i głębsza (najmniej, na blok spadku, najwięcej) |
 
 W `src/config.js`: `RIVER_PUSH` (jak mocno nurt niesie gracza),
 `RIVER_TEXTURE` (jak szybko płynie tekstura), `WATER_FLOW_MAX`.

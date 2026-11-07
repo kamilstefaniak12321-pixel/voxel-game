@@ -1,10 +1,12 @@
 import { CHUNK_SIZE as S, CHUNK_HEIGHT as H, WORLD_BORDER } from '../config.js';
-import { AIR_ID, WATER_SOURCE_ID, WATER_FALLING_ID, getWaterLevel, waterIdForLevel,
+import { AIR_ID, WATER_SOURCE_ID, getWaterLevel, waterIdForLevel, fallingWaterId, waterFallDistance,
     isSolidId, isPlantId, isReplaceableId, isWaterSourceId } from '../blocks/BlockRegistry.js';
 
 const LAYER = S * S;
 const UNKNOWN = -1, WALL = -2;
 const SIDES = [[-1, 0], [1, 0], [0, -1], [0, 1]];
+const chunkAt = (world, x, z) => world.getChunk(Math.floor(x / S), Math.floor(z / S));
+const cellIndex = (x, y, z) => y * LAYER + (z - Math.floor(z / S) * S) * S + x - Math.floor(x / S) * S;
 const ADJACENT = [[0,0,0], [-1,0,0], [1,0,0], [0,0,-1], [0,0,1], [0,1,0], [0,-1,0]];
 export const WATER_STEP_SECONDS = .12;
 export const WATER_BUDGET_MS = .6;
@@ -23,6 +25,8 @@ export class WaterSimulation {
         this.next = new Map();
         this.scans = new Map();
         this.boundaries = new Map();
+        // Doły wodospadów w wczytanych chunkach: chunk -> Map(indeks, ID).
+        this.landings = new Map();
         this.elapsed = 0;
         this.pending = 0;
         this.processed = 0;
@@ -89,6 +93,35 @@ export class WaterSimulation {
         }
         this.scans.delete(chunk);
         this.boundaries.delete(chunk);
+        this.landings.delete(chunk);
+    }
+
+    landing(x, y, z, id) {
+        const chunk = chunkAt(this.world, x, z);
+        if (!chunk) return;
+        let cells = this.landings.get(chunk);
+        if (!cells) this.landings.set(chunk, cells = new Map());
+        cells.set(cellIndex(x, y, z), id);
+    }
+
+    // Doły wodospadów bliżej niż radius (w poziomie) od (x, z): wywołuje
+    // visit(x, y, z, spadek). Nieaktualne (już nie spadająca woda albo
+    // pod nią znów jest miejsce) - usuwa.
+    forEachLanding(x, z, radius, visit) {
+        for (const [chunk, cells] of this.landings) {
+            const x0 = chunk.cx * S, z0 = chunk.cz * S;
+            if (x0 + S < x - radius || x0 > x + radius || z0 + S < z - radius || z0 > z + radius) continue;
+            for (const [index, id] of cells) {
+                const ly = Math.floor(index / LAYER), column = index % LAYER;
+                const lx = x0 + column % S, lz = z0 + Math.floor(column / S);
+                const current = chunk.blocks[index];
+                const distance = waterFallDistance(current);
+                if (!distance || this.enterable(this.read(lx, ly - 1, lz))) { cells.delete(index); continue; }
+                if (current !== id) cells.set(index, current);
+                if (Math.abs(lx + .5 - x) <= radius && Math.abs(lz + .5 - z) <= radius) visit(lx, ly, lz, distance);
+            }
+            if (!cells.size) this.landings.delete(chunk);
+        }
     }
 
     inspect(chunk, index) {
@@ -169,7 +202,9 @@ export class WaterSimulation {
             // A missing upstream chunk must never drain a persisted stream.
             if (unknown && level > 0) return;
             if (sources >= 2 && this.supported(this.read(x, y - 1, z))) desired = WATER_SOURCE_ID;
-            else if (getWaterLevel(this.read(x, y + 1, z)) >= 0) desired = WATER_FALLING_ID;
+            // Spadająca woda: o blok dłuższy spadek niż woda nad nią
+            // (pod źródłem albo nurtem - 1).
+            else if (getWaterLevel(this.read(x, y + 1, z)) >= 0) desired = fallingWaterId(waterFallDistance(this.read(x, y + 1, z)) + 1);
             else desired = best < 8 ? waterIdForLevel(best) : level > 0 ? AIR_ID : id;
         }
 
@@ -182,10 +217,15 @@ export class WaterSimulation {
         if (current < 0) return;
         const below = this.read(x, y - 1, z);
         if (this.enterable(below)) {
-            if (below !== WATER_FALLING_ID) this.enqueue(x, y - 1, z);
+            // Niżej nie ta liczba spadku (albo jeszcze nie woda) - do poprawy.
+            if (below !== fallingWaterId(waterFallDistance(desired) + 1)) this.enqueue(x, y - 1, z);
+            this.landings.get(chunkAt(this.world, x, z))?.delete(cellIndex(x, y, z));
             return;
         }
         if (below === UNKNOWN) return;
+        // Dół wodospadu: spadająca woda na dnie albo na tafli. Efekty
+        // (WaterfallEffects.js) biorą stąd miejsca rozbryzgu.
+        if (current === 8) this.landing(x, y, z, desired);
         const incoming = (current === 8 ? 0 : current) + 1;
         if (incoming > 7) return;
         for (const [dx, dz] of SIDES) {
@@ -229,7 +269,7 @@ export class WaterSimulation {
     }
 
     dispose() {
-        this.ready.clear(); this.next.clear(); this.scans.clear(); this.boundaries.clear();
+        this.ready.clear(); this.next.clear(); this.scans.clear(); this.boundaries.clear(); this.landings.clear();
         this.pending = 0; this.disposed = true;
     }
 }

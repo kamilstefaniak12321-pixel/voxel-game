@@ -10,7 +10,7 @@ import {
     WATER_DEPTH_LIGHT_MIN
 } from '../config.js';
 
-import { WATER_FLOW_UV } from './BlockRenderData.js';
+import { WATER_FLOW_UV, WATER_FALL_MARK } from './BlockRenderData.js';
 import { getWaterCornerHeight } from '../world/WaterSurface.js';
 import { atmosphericLightToBrightness } from './LightPolicy.js';
 import { SURFACE_PROFILES } from './SurfaceProfiles.js';
@@ -36,6 +36,8 @@ import {
     isLiquidId,
     getLiquidKindId,
     getWaterBaseHeight,
+    waterFallDistance,
+    WATER_FALL_MAX,
     WATER_SOURCE_ID,
     isLeavesId,
     getLightEmission
@@ -1300,6 +1302,27 @@ function prepareWaterSurface(block) {
     }
 }
 
+// Bok spadającej wody: w UV zamiast nurtu - spadek (u: 1/16 na blok)
+// i znacznik (v poza kafelkiem). Shader wody liczy z tego prędkość.
+function fallingWaterUv(uv, fall) {
+
+    const uMin = Math.min(uv[0], uv[2], uv[4], uv[6]);
+    const uMax = Math.max(uv[0], uv[2], uv[4], uv[6]);
+    const vMin = Math.min(uv[1], uv[3], uv[5], uv[7]);
+    const vMax = Math.max(uv[1], uv[3], uv[5], uv[7]);
+
+    const u = uMin + (0.5 + WATER_FLOW_UV * fall / WATER_FALL_MAX) * (uMax - uMin);
+    const v = vMin + (0.5 + WATER_FLOW_UV * WATER_FALL_MARK) * (vMax - vMin);
+
+    for (let i = 0; i < 4; i++) {
+        flowUv[i * 2] = u;
+        flowUv[i * 2 + 1] = v;
+    }
+
+    return flowUv;
+
+}
+
 function waterUv(uv, lx, lz, sloped) {
 
     const uMin = Math.min(uv[0], uv[2], uv[4], uv[6]);
@@ -1505,6 +1528,10 @@ function addCubeFaces(id, renderData, lx, y, lz, faceCount, baseX, baseZ, textur
 
     if (water) prepareWaterSurface(block);
 
+    // Spadająca woda: ile bloków już spada (1-16) - boki płyną tym
+    // szybciej (waterMaterial).
+    const fall = water ? waterFallDistance(id) : 0;
+
 
     for (
         let faceIndex = 0;
@@ -1543,7 +1570,9 @@ function addCubeFaces(id, renderData, lx, y, lz, faceCount, baseX, baseZ, textur
                 : 0;
 
         const uv = liquid
-            ? waterUv(surfaceUV[faceIndex][rotation], lx, lz, water)
+            ? (water && fall > 0 && face.normal[1] === 0
+                ? fallingWaterUv(surfaceUV[faceIndex][rotation], fall)
+                : waterUv(surfaceUV[faceIndex][rotation], lx, lz, water))
             : surfaceUV[faceIndex][rotation];
 
         // Ściana pod wodą (np. dno morza) ciemnieje z głębokością.

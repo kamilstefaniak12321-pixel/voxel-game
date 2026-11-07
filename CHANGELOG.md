@@ -11,6 +11,27 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 0.73.0 - Wodospady
+
+Licznik spadku wody, rozbryzg i rzeki piętrami — PR #109.
+
+- Spadająca woda liczy, ile bloków już spada (1-16): każdy blok bierze
+  liczbę z bloku nad sobą i dodaje 1. Stare zapisy bez zmian (pierwszy
+  blok spadku ma dawny numer), nowe stany to ID 10108-10122.
+- Im dłużej woda spada, tym szybciej płynie jej tekstura, w dłuższych,
+  bielszych smugach piany - płynnie, bez szwów między blokami.
+- Pod wodospadem krople, piana niesiona nurtem (przy wyższym spadku
+  więcej i dalej w dół rzeki) i mgiełka od 6 bloków
+  (`WaterfallEffects.js`; tryb ziemniaka - mniej).
+- Rzeki w terenie realistycznym schodzą piętrami: gdzie poziom wody
+  spada o 5 bloków i więcej, rzeka płynie płasko do krawędzi, spada
+  wodospadem do sadzawki (szerszej i głębszej niż koryto) i płynie
+  dalej niżej. Brzeg przy krawędzi trzyma wodę w korycie.
+- `/rzeka wodospad [tp]`, scena `/scena wodospady` (3, 8 i 16 bloków),
+  test `tools/sprawdz_wodospady.mjs`. [Opis](docs/wodospady-0.73.0.md).
+- W nowych chunkach rzek na stromych zboczach teren może wyglądać
+  inaczej niż wcześniej (budowle zostają).
+
 ## 0.72.0 - Rozlewanie wody i pochyła powierzchnia
 
 Przygotowanie wydania w PR #108 do `main`; publikacja Windows/Android po scaleniu.

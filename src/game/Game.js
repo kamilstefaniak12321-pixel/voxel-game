@@ -64,6 +64,7 @@ import { PlayerAnimator } from '../player/PlayerAnimator.js';
 import { FirstPersonHand } from '../player/FirstPersonHand.js';
 import { modelLight } from '../rendering/ModelMaterial.js';
 import { BlockDebris } from '../rendering/BlockDebris.js';
+import { WaterfallEffects } from '../rendering/WaterfallEffects.js';
 import { BlockCracks } from '../interaction/BlockCracks.js';
 import { COLOR_LEVEL } from '../world/Light.js';
 
@@ -447,6 +448,11 @@ export class Game {
 
         this.debris = new BlockDebris(this.scene, this.world);
 
+        // Krople, piana i mgiełka pod wodospadami (WaterfallEffects.js).
+
+        this.waterfalls = new WaterfallEffects(this.scene, this.world);
+        this.waterfalls.setAmount(this.settings.get('potato') ? 0.35 : 1);
+
         this.mining = null;
 
         this.miningDelay = 0;
@@ -828,6 +834,8 @@ export class Game {
         // Odłamki niszczonych bloków.
 
         this.debris.update(dt);
+
+        this.waterfalls.update(dt, this.player);
 
         // Osiągnięcia sprawdzane co chwilę (wysokość, nurkowanie...).
 
@@ -1793,6 +1801,8 @@ export class Game {
 
         setPotatoDefine([blockMaterial, plantMaterial, waterMaterial, leafMaterial], potato);
 
+        this.waterfalls?.setAmount(potato ? 0.35 : 1);
+
 
         // Cienie słońca i promienie światła (nie w trybie ziemniaka).
 
@@ -2648,6 +2658,8 @@ export class Game {
         this.cracks.dispose();
 
         this.debris.dispose();
+
+        this.waterfalls.dispose();
 
         this.shadows.dispose();
 

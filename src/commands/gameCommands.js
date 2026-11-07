@@ -5448,8 +5448,12 @@ export const GAME_COMMANDS = [
                 chunkBytes += chunk.blocks.byteLength + chunk.blocks.length * 4;
             }
 
-            for (const blocks of world.savedChunks.values()) {
-                chunkBytes += blocks.byteLength;
+            const savedMemory = world.savedChunks.stats?.();
+            if (savedMemory) {
+                // Counting memory must never decode every saved chunk.
+                chunkBytes += savedMemory.encodedBytes + savedMemory.summaryBytes + savedMemory.decodedBytes;
+            } else {
+                for (const blocks of world.savedChunks.values()) chunkBytes += blocks.byteLength;
             }
 
             const memory =

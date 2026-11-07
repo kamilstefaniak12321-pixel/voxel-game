@@ -1,0 +1,440 @@
+{
+  "scope": "Node CPU/data-footprint with a bounded generated-page database port; no real IndexedDB, graphics or FPS",
+  "node": "v24.22.1",
+  "cpu": "AMD EPYC 9V74 80-Core Processor",
+  "logicalCpus": 9,
+  "count": 4096,
+  "repetitions": 3,
+  "ids": {
+    "stone": 3,
+    "dirt": 2,
+    "grass": 1,
+    "planks": 72,
+    "modern": 5050
+  },
+  "commit": "635d2a6174e280b1e1e0fb87e12fc5eb48925575",
+  "harnessSha256": "b11dd85a4e49f55ace306c304ff4eb3b99dfc2f87eecdc22a09a0dfe00a86679",
+  "dataSha256": "cd356cc217de008b1152476a2f84a67fb8eba318e73434896d61e98a4afac41d",
+  "sourceSha256": {
+    "src/storage/WorldStorage.js": "4afe768302f5120435cea2a0024e67203d318ebe95997edd43d3b90ba91606a9",
+    "src/storage/SavedChunkStore.js": "d1a16875099dd671f40f11ca35c5b84b5697939b88eaa8136bbc5a8a58464d95",
+    "src/world/SavedChunkSurface.js": "7c03388207f419661233ec317bf472168db486a9797498d2eee7aa32e8860174"
+  },
+  "samples": [
+    {
+      "terrain": {
+        "sample": 0,
+        "total": 4096,
+        "noise": false,
+        "openingMs": 757.231624,
+        "atOpen": {
+          "mode": "compact",
+          "entries": 4096,
+          "buckets": 16,
+          "encodedBytes": 8816640,
+          "summaryBytes": 3145728,
+          "decodedBytes": 0,
+          "decodedEntries": 0,
+          "maxDecodedBytes": 8388608,
+          "maxDecodedEntries": 128,
+          "totalBytes": 11962368,
+          "hits": 0,
+          "misses": 0,
+          "evictions": 0
+        },
+        "afterTraversal": {
+          "mode": "compact",
+          "entries": 4096,
+          "buckets": 16,
+          "encodedBytes": 8816640,
+          "summaryBytes": 3145728,
+          "decodedBytes": 6291456,
+          "decodedEntries": 128,
+          "maxDecodedBytes": 8388608,
+          "maxDecodedEntries": 128,
+          "totalBytes": 18253824,
+          "hits": 0,
+          "misses": 512,
+          "evictions": 384
+        },
+        "source": {
+          "requests": 65,
+          "maxPage": 64,
+          "sourceBytes": 201326592
+        },
+        "reads": {
+          "count": 512,
+          "p50Ms": 0.02727099999992788,
+          "p95Ms": 0.06516799999997147,
+          "maxMs": 0.29662599999994654
+        },
+        "checks": {
+          "checksumAndType": 7,
+          "decodedLimit": true
+        },
+        "memory": {
+          "before": {
+            "rss": 55115776,
+            "heapTotal": 21549056,
+            "heapUsed": 11771368,
+            "external": 5151451,
+            "arrayBuffers": 1127713
+          },
+          "retained": {
+            "rss": 173584384,
+            "heapTotal": 33607680,
+            "heapUsed": 15316552,
+            "external": 42941822,
+            "arrayBuffers": 38779027
+          },
+          "forcedGc": true
+        }
+      },
+      "noise": {
+        "sample": 0,
+        "total": 64,
+        "noise": true,
+        "openingMs": 17.07229899999993,
+        "atOpen": {
+          "mode": "compact",
+          "entries": 64,
+          "buckets": 4,
+          "encodedBytes": 4194304,
+          "summaryBytes": 49152,
+          "decodedBytes": 0,
+          "decodedEntries": 0,
+          "maxDecodedBytes": 8388608,
+          "maxDecodedEntries": 128,
+          "totalBytes": 4243456,
+          "hits": 0,
+          "misses": 0,
+          "evictions": 0
+        },
+        "afterTraversal": {
+          "mode": "compact",
+          "entries": 64,
+          "buckets": 4,
+          "encodedBytes": 4194304,
+          "summaryBytes": 49152,
+          "decodedBytes": 4194304,
+          "decodedEntries": 64,
+          "maxDecodedBytes": 8388608,
+          "maxDecodedEntries": 128,
+          "totalBytes": 8437760,
+          "hits": 0,
+          "misses": 64,
+          "evictions": 0
+        },
+        "source": {
+          "requests": 2,
+          "maxPage": 64,
+          "sourceBytes": 4194304
+        },
+        "reads": {
+          "count": 64,
+          "p50Ms": 0.00806199999999535,
+          "p95Ms": 0.009214000000042688,
+          "maxMs": 0.036875000000009095
+        },
+        "checks": {
+          "checksumAndType": 7,
+          "decodedLimit": true
+        },
+        "memory": {
+          "before": {
+            "rss": 173584384,
+            "heapTotal": 32559104,
+            "heapUsed": 10521360,
+            "external": 23444862,
+            "arrayBuffers": 18888150
+          },
+          "retained": {
+            "rss": 173846528,
+            "heapTotal": 29937664,
+            "heapUsed": 10592888,
+            "external": 18232702,
+            "arrayBuffers": 10039955
+          },
+          "forcedGc": true
+        }
+      }
+    },
+    {
+      "terrain": {
+        "sample": 1,
+        "total": 4096,
+        "noise": false,
+        "openingMs": 737.0971639999999,
+        "atOpen": {
+          "mode": "compact",
+          "entries": 4096,
+          "buckets": 16,
+          "encodedBytes": 8816640,
+          "summaryBytes": 3145728,
+          "decodedBytes": 0,
+          "decodedEntries": 0,
+          "maxDecodedBytes": 8388608,
+          "maxDecodedEntries": 128,
+          "totalBytes": 11962368,
+          "hits": 0,
+          "misses": 0,
+          "evictions": 0
+        },
+        "afterTraversal": {
+          "mode": "compact",
+          "entries": 4096,
+          "buckets": 16,
+          "encodedBytes": 8816640,
+          "summaryBytes": 3145728,
+          "decodedBytes": 6291456,
+          "decodedEntries": 128,
+          "maxDecodedBytes": 8388608,
+          "maxDecodedEntries": 128,
+          "totalBytes": 18253824,
+          "hits": 0,
+          "misses": 512,
+          "evictions": 384
+        },
+        "source": {
+          "requests": 65,
+          "maxPage": 64,
+          "sourceBytes": 201326592
+        },
+        "reads": {
+          "count": 512,
+          "p50Ms": 0.01642400000014277,
+          "p95Ms": 0.031526999999869076,
+          "maxMs": 0.17917000000011285
+        },
+        "checks": {
+          "checksumAndType": 7,
+          "decodedLimit": true
+        },
+        "memory": {
+          "before": {
+            "rss": 173977600,
+            "heapTotal": 29413376,
+            "heapUsed": 10543136,
+            "external": 13596030,
+            "arrayBuffers": 7442323
+          },
+          "retained": {
+            "rss": 176205824,
+            "heapTotal": 50384896,
+            "heapUsed": 15350464,
+            "external": 55721342,
+            "arrayBuffers": 48594067
+          },
+          "forcedGc": true
+        }
+      },
+      "noise": {
+        "sample": 1,
+        "total": 64,
+        "noise": true,
+        "openingMs": 10.378889999999956,
+        "atOpen": {
+          "mode": "compact",
+          "entries": 64,
+          "buckets": 4,
+          "encodedBytes": 4194304,
+          "summaryBytes": 49152,
+          "decodedBytes": 0,
+          "decodedEntries": 0,
+          "maxDecodedBytes": 8388608,
+          "maxDecodedEntries": 128,
+          "totalBytes": 4243456,
+          "hits": 0,
+          "misses": 0,
+          "evictions": 0
+        },
+        "afterTraversal": {
+          "mode": "compact",
+          "entries": 64,
+          "buckets": 4,
+          "encodedBytes": 4194304,
+          "summaryBytes": 49152,
+          "decodedBytes": 4194304,
+          "decodedEntries": 64,
+          "maxDecodedBytes": 8388608,
+          "maxDecodedEntries": 128,
+          "totalBytes": 8437760,
+          "hits": 0,
+          "misses": 64,
+          "evictions": 0
+        },
+        "source": {
+          "requests": 2,
+          "maxPage": 64,
+          "sourceBytes": 4194304
+        },
+        "reads": {
+          "count": 64,
+          "p50Ms": 0.007931999999982509,
+          "p95Ms": 0.00942399999985355,
+          "maxMs": 0.03604400000017449
+        },
+        "checks": {
+          "checksumAndType": 7,
+          "decodedLimit": true
+        },
+        "memory": {
+          "before": {
+            "rss": 176205824,
+            "heapTotal": 47501312,
+            "heapUsed": 10549840,
+            "external": 23444862,
+            "arrayBuffers": 19346330
+          },
+          "retained": {
+            "rss": 176205824,
+            "heapTotal": 46452736,
+            "heapUsed": 10633320,
+            "external": 18232702,
+            "arrayBuffers": 10042771
+          },
+          "forcedGc": true
+        }
+      }
+    },
+    {
+      "terrain": {
+        "sample": 2,
+        "total": 4096,
+        "noise": false,
+        "openingMs": 763.9603559999998,
+        "atOpen": {
+          "mode": "compact",
+          "entries": 4096,
+          "buckets": 16,
+          "encodedBytes": 8816640,
+          "summaryBytes": 3145728,
+          "decodedBytes": 0,
+          "decodedEntries": 0,
+          "maxDecodedBytes": 8388608,
+          "maxDecodedEntries": 128,
+          "totalBytes": 11962368,
+          "hits": 0,
+          "misses": 0,
+          "evictions": 0
+        },
+        "afterTraversal": {
+          "mode": "compact",
+          "entries": 4096,
+          "buckets": 16,
+          "encodedBytes": 8816640,
+          "summaryBytes": 3145728,
+          "decodedBytes": 6291456,
+          "decodedEntries": 128,
+          "maxDecodedBytes": 8388608,
+          "maxDecodedEntries": 128,
+          "totalBytes": 18253824,
+          "hits": 0,
+          "misses": 512,
+          "evictions": 384
+        },
+        "source": {
+          "requests": 65,
+          "maxPage": 64,
+          "sourceBytes": 201326592
+        },
+        "reads": {
+          "count": 512,
+          "p50Ms": 0.016383999999561638,
+          "p95Ms": 0.020992000000205735,
+          "maxMs": 0.16465800000014497
+        },
+        "checks": {
+          "checksumAndType": 7,
+          "decodedLimit": true
+        },
+        "memory": {
+          "before": {
+            "rss": 176205824,
+            "heapTotal": 46452736,
+            "heapUsed": 10552264,
+            "external": 13596030,
+            "arrayBuffers": 6978451
+          },
+          "retained": {
+            "rss": 177123328,
+            "heapTotal": 50647040,
+            "heapUsed": 15426104,
+            "external": 71695742,
+            "arrayBuffers": 64566163
+          },
+          "forcedGc": true
+        }
+      },
+      "noise": {
+        "sample": 2,
+        "total": 64,
+        "noise": true,
+        "openingMs": 12.70048399999996,
+        "atOpen": {
+          "mode": "compact",
+          "entries": 64,
+          "buckets": 4,
+          "encodedBytes": 4194304,
+          "summaryBytes": 49152,
+          "decodedBytes": 0,
+          "decodedEntries": 0,
+          "maxDecodedBytes": 8388608,
+          "maxDecodedEntries": 128,
+          "totalBytes": 4243456,
+          "hits": 0,
+          "misses": 0,
+          "evictions": 0
+        },
+        "afterTraversal": {
+          "mode": "compact",
+          "entries": 64,
+          "buckets": 4,
+          "encodedBytes": 4194304,
+          "summaryBytes": 49152,
+          "decodedBytes": 4194304,
+          "decodedEntries": 64,
+          "maxDecodedBytes": 8388608,
+          "maxDecodedEntries": 128,
+          "totalBytes": 8437760,
+          "hits": 0,
+          "misses": 64,
+          "evictions": 0
+        },
+        "source": {
+          "requests": 2,
+          "maxPage": 64,
+          "sourceBytes": 4194304
+        },
+        "reads": {
+          "count": 64,
+          "p50Ms": 0.008573000000069442,
+          "p95Ms": 0.01611400000001595,
+          "maxMs": 0.018827999999757594
+        },
+        "checks": {
+          "checksumAndType": 7,
+          "decodedLimit": true
+        },
+        "memory": {
+          "before": {
+            "rss": 177123328,
+            "heapTotal": 49598464,
+            "heapUsed": 10551680,
+            "external": 23444862,
+            "arrayBuffers": 19261328
+          },
+          "retained": {
+            "rss": 177123328,
+            "heapTotal": 46977024,
+            "heapUsed": 10627928,
+            "external": 18232702,
+            "arrayBuffers": 10029203
+          },
+          "forcedGc": true
+        }
+      }
+    }
+  ],
+  "valid": true
+}

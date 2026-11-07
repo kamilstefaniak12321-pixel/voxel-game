@@ -15,6 +15,7 @@
 
 import { DEFAULT_TERRAIN, DEFAULT_GAME_MODE } from '../config.js';
 import { StorageWorker } from './StorageWorker.js';
+import { SavedChunkStore } from './SavedChunkStore.js';
 
 const DB_NAME = 'voxel-game';
 
@@ -252,11 +253,29 @@ export class WorldStorage {
 
     async loadChunks(worldId) {
 
+        return this.readChunks(worldId, new Map());
+
+    }
+
+    // Runtime ingestion encodes each bounded page immediately, so opening a
+    // large save never first creates a Map of every full block array. The disk
+    // schema and loadChunks() used by tools/export remain backward compatible.
+    async loadSavedChunks(worldId, options) {
+        const chunks = new SavedChunkStore(options);
+        try {
+            return await this.readChunks(worldId, chunks);
+        } catch (error) {
+            chunks.dispose();
+            throw error;
+        }
+    }
+
+    async readChunks(worldId, chunks) {
+
         const transaction =
             this.db.transaction('chunks', 'readonly');
 
         const store = transaction.objectStore('chunks');
-        const chunks = new Map();
 
         // Bounded getAll avoids both a second array containing the whole save
         // and one browser/database round-trip for every individual chunk.
@@ -285,6 +304,7 @@ export class WorldStorage {
                             }
                         } catch (error) {
                             reject(error);
+                            try { transaction.abort?.(); } catch { /* Already completed/aborted. */ }
                         }
                     };
                 };
@@ -304,11 +324,16 @@ export class WorldStorage {
                 request.onerror = () => reject(request.error);
                 transaction.onabort = () => reject(transaction.error || new Error('Przerwany odczyt świata.'));
                 request.onsuccess = () => {
-                    const cursor = request.result;
-                    if (!cursor) return resolve();
-                    const record = cursor.value;
-                    chunks.set(`${record.cx},${record.cz}`, record.blocks);
-                    cursor.continue();
+                    try {
+                        const cursor = request.result;
+                        if (!cursor) return resolve();
+                        const record = cursor.value;
+                        chunks.set(`${record.cx},${record.cz}`, record.blocks);
+                        cursor.continue();
+                    } catch (error) {
+                        reject(error);
+                        try { transaction.abort?.(); } catch { /* Already completed/aborted. */ }
+                    }
                 };
             });
             return chunks;

@@ -610,6 +610,7 @@ export class World {
         // Chunk zmieniony przez gracza trafi do zapisu.
 
         chunk.modified = true;
+        chunk.savedSnapshotRevision = undefined;
 
         this.unsavedChunks.add(chunk);
 
@@ -1155,6 +1156,7 @@ export class World {
         this.dirtyPlants.clear();
         this.missingTerrain.clear();
         this.unsavedChunks.clear();
+        this.savedChunks.dispose?.();
 
         this.loadQueue = [];
 
@@ -1188,6 +1190,7 @@ export class World {
         chunk.torches = new Set(data.torches ?? []);
         chunk.torchRevision++;
         chunk.modified = data.modified;
+        chunk.savedSnapshotRevision = data.savedSnapshotRevision;
         if (data.invalidSaved) {
             console.warn(`Zapisany chunk ${data.cx}, ${data.cz} ma zły rozmiar - generuję go od nowa.`);
         }
@@ -1210,11 +1213,33 @@ export class World {
         const existing = this.getChunk(cx, cz);
         if (existing) return existing;
         if (!this.generation?.checkHealth()) return this.generateChunk(cx, cz);
-        const saved = this.savedChunks.get(this.chunkKey(cx, cz));
-        const data = this.generation.take(cx, cz, saved);
+        const data = this.takeGeneratedChunk(cx, cz);
         if (data) return this.applyGeneratedChunk(data);
-        this.generation.request(cx, cz, saved);
+        this.requestGeneratedChunk(cx, cz);
         return this.generation.enabled ? null : this.generateChunk(cx, cz);
+    }
+
+    takeGeneratedChunk(cx, cz) {
+        const key = this.chunkKey(cx, cz);
+        // Checking a completed job must not decode the save again. Map-backed
+        // worlds retain the original reference check for tools and old ports.
+        if (this.savedChunks.revision) {
+            const revision = this.savedChunks.revision(key);
+            const data = this.generation.take(cx, cz, undefined, revision);
+            if (data) data.savedSnapshotRevision = revision;
+            return data;
+        }
+        return this.generation.take(cx, cz, this.savedChunks.get(key));
+    }
+
+    requestGeneratedChunk(cx, cz) {
+        if (this.generation.find?.(cx, cz)) return true;
+        const key = this.chunkKey(cx, cz);
+        const saved = this.savedChunks.get(key);
+        const accepted = this.generation.request(cx, cz, saved,
+            this.savedChunks.revision ? this.savedChunks.revision(key) : saved);
+        if (accepted) this.savedChunks.releaseDecoded?.(key);
+        return accepted;
     }
 
     streamChunks(deadline, maxApply = Infinity, forceOne = false) {
@@ -1228,8 +1253,7 @@ export class World {
         let applied = 0;
         for (const { cx, cz } of ready) {
             if (applied >= maxApply || (performance.now() >= deadline && !(forceOne && applied === 0))) break;
-            const saved = this.savedChunks.get(this.chunkKey(cx, cz));
-            const data = this.generation.take(cx, cz, saved);
+            const data = this.takeGeneratedChunk(cx, cz);
             if (!data) continue;
             // Środek kolejki mógł zmienić się podczas pracy wątku.
             // Przyjmujemy także gotowy nadal potrzebny wynik spoza jej
@@ -1244,7 +1268,7 @@ export class World {
         // pokazać pustego pierścienia między chunkami i dalekim terenem.
         for (let n = this.loadQueue.length - 1; n >= 0 && n >= this.loadQueue.length - 2; n--) {
             const [cx, cz] = this.loadQueue[n];
-            this.generation.request(cx, cz, this.savedChunks.get(this.chunkKey(cx, cz)));
+            this.requestGeneratedChunk(cx, cz);
         }
     }
 
@@ -1281,6 +1305,9 @@ export class World {
         const loaded =
             saved !== undefined &&
             chunk.loadBlocks(saved);
+
+        chunk.savedSnapshotRevision = loaded ? this.savedChunks.revision?.(this.chunkKey(cx, cz)) : undefined;
+        this.savedChunks.releaseDecoded?.(this.chunkKey(cx, cz));
 
 
         if (saved !== undefined && !loaded) {
@@ -1525,7 +1552,13 @@ export class World {
 
         if (chunk.modified) {
 
-            this.savedChunks.set(key, chunk.blocks);
+            // Merely visiting an old build must not recompress it when the
+            // player leaves. Actual edits clear the marker in setBlock().
+            if (!chunk.savedSnapshotRevision ||
+                chunk.savedSnapshotRevision !== this.savedChunks.revision?.(key)) {
+                this.savedChunks.set(key, chunk.blocks);
+            }
+            this.savedChunks.releaseDecoded?.(key);
 
             this.onModifiedChunkUnloaded?.(chunk);
 

@@ -1,0 +1,354 @@
+{
+  "scope": "Node CPU/data-footprint with a bounded generated-page database port; no real IndexedDB, graphics or FPS",
+  "node": "v24.22.1",
+  "cpu": "AMD EPYC 9V74 80-Core Processor",
+  "logicalCpus": 9,
+  "count": 4096,
+  "repetitions": 3,
+  "ids": {
+    "stone": 3,
+    "dirt": 2,
+    "grass": 1,
+    "planks": 72,
+    "modern": 5050
+  },
+  "commit": "635d2a6174e280b1e1e0fb87e12fc5eb48925575",
+  "harnessSha256": "b11dd85a4e49f55ace306c304ff4eb3b99dfc2f87eecdc22a09a0dfe00a86679",
+  "dataSha256": "cd356cc217de008b1152476a2f84a67fb8eba318e73434896d61e98a4afac41d",
+  "sourceSha256": {
+    "src/storage/WorldStorage.js": "295e3d12dc6b1145925d2a8215cceb44c1e627edf992e4cece5f44ff2eeff4b7"
+  },
+  "samples": [
+    {
+      "terrain": {
+        "sample": 0,
+        "total": 4096,
+        "noise": false,
+        "openingMs": 57.067859,
+        "atOpen": {
+          "mode": "eager-map",
+          "entries": 4096,
+          "encodedBytes": 201326592,
+          "summaryBytes": 0,
+          "decodedBytes": 0,
+          "totalBytes": 201326592
+        },
+        "afterTraversal": {
+          "mode": "eager-map",
+          "entries": 4096,
+          "encodedBytes": 201326592,
+          "summaryBytes": 0,
+          "decodedBytes": 0,
+          "totalBytes": 201326592
+        },
+        "source": {
+          "requests": 65,
+          "maxPage": 64,
+          "sourceBytes": 201326592
+        },
+        "reads": {
+          "count": 512,
+          "p50Ms": 0.0005010000000140735,
+          "p95Ms": 0.0008810000000210039,
+          "maxMs": 0.025357999999982894
+        },
+        "checks": {
+          "checksumAndType": 7,
+          "decodedLimit": false
+        },
+        "memory": {
+          "before": {
+            "rss": 51310592,
+            "heapTotal": 21286912,
+            "heapUsed": 11737896,
+            "external": 4944688,
+            "arrayBuffers": 930707
+          },
+          "retained": {
+            "rss": 220655616,
+            "heapTotal": 31248384,
+            "heapUsed": 12851536,
+            "external": 206589280,
+            "arrayBuffers": 202322835
+          },
+          "forcedGc": true
+        }
+      },
+      "noise": {
+        "sample": 0,
+        "total": 64,
+        "noise": true,
+        "openingMs": 9.157933999999983,
+        "atOpen": {
+          "mode": "eager-map",
+          "entries": 64,
+          "encodedBytes": 4194304,
+          "summaryBytes": 0,
+          "decodedBytes": 0,
+          "totalBytes": 4194304
+        },
+        "afterTraversal": {
+          "mode": "eager-map",
+          "entries": 64,
+          "encodedBytes": 4194304,
+          "summaryBytes": 0,
+          "decodedBytes": 0,
+          "totalBytes": 4194304
+        },
+        "source": {
+          "requests": 2,
+          "maxPage": 64,
+          "sourceBytes": 4194304
+        },
+        "reads": {
+          "count": 64,
+          "p50Ms": 0.00014999999999076863,
+          "p95Ms": 0.00018000000000029104,
+          "maxMs": 0.0025440000000003238
+        },
+        "checks": {
+          "checksumAndType": 7,
+          "decodedLimit": false
+        },
+        "memory": {
+          "before": {
+            "rss": 220655616,
+            "heapTotal": 30986240,
+            "heapUsed": 11818736,
+            "external": 206294368,
+            "arrayBuffers": 186495891
+          },
+          "retained": {
+            "rss": 221966336,
+            "heapTotal": 29937664,
+            "heapUsed": 11838216,
+            "external": 9555296,
+            "arrayBuffers": 5190547
+          },
+          "forcedGc": true
+        }
+      }
+    },
+    {
+      "terrain": {
+        "sample": 1,
+        "total": 4096,
+        "noise": false,
+        "openingMs": 37.28805000000003,
+        "atOpen": {
+          "mode": "eager-map",
+          "entries": 4096,
+          "encodedBytes": 201326592,
+          "summaryBytes": 0,
+          "decodedBytes": 0,
+          "totalBytes": 201326592
+        },
+        "afterTraversal": {
+          "mode": "eager-map",
+          "entries": 4096,
+          "encodedBytes": 201326592,
+          "summaryBytes": 0,
+          "decodedBytes": 0,
+          "totalBytes": 201326592
+        },
+        "source": {
+          "requests": 65,
+          "maxPage": 64,
+          "sourceBytes": 201326592
+        },
+        "reads": {
+          "count": 512,
+          "p50Ms": 0.0003810000000044056,
+          "p95Ms": 0.0006109999999921456,
+          "maxMs": 0.0021729999999706706
+        },
+        "checks": {
+          "checksumAndType": 7,
+          "decodedLimit": false
+        },
+        "memory": {
+          "before": {
+            "rss": 221966336,
+            "heapTotal": 29937664,
+            "heapUsed": 11837040,
+            "external": 9162080,
+            "arrayBuffers": 930707
+          },
+          "retained": {
+            "rss": 260616192,
+            "heapTotal": 30724096,
+            "heapUsed": 11474856,
+            "external": 206583934,
+            "arrayBuffers": 202322835
+          },
+          "forcedGc": true
+        }
+      },
+      "noise": {
+        "sample": 1,
+        "total": 64,
+        "noise": true,
+        "openingMs": 4.717704999999967,
+        "atOpen": {
+          "mode": "eager-map",
+          "entries": 64,
+          "encodedBytes": 4194304,
+          "summaryBytes": 0,
+          "decodedBytes": 0,
+          "totalBytes": 4194304
+        },
+        "afterTraversal": {
+          "mode": "eager-map",
+          "entries": 64,
+          "encodedBytes": 4194304,
+          "summaryBytes": 0,
+          "decodedBytes": 0,
+          "totalBytes": 4194304
+        },
+        "source": {
+          "requests": 2,
+          "maxPage": 64,
+          "sourceBytes": 4194304
+        },
+        "reads": {
+          "count": 64,
+          "p50Ms": 0.00015000000001919034,
+          "p95Ms": 0.0002000000000066393,
+          "maxMs": 0.0008809999999925822
+        },
+        "checks": {
+          "checksumAndType": 7,
+          "decodedLimit": false
+        },
+        "memory": {
+          "before": {
+            "rss": 260616192,
+            "heapTotal": 30461952,
+            "heapUsed": 10434320,
+            "external": 206289022,
+            "arrayBuffers": 190329747
+          },
+          "retained": {
+            "rss": 260616192,
+            "heapTotal": 29675520,
+            "heapUsed": 10450336,
+            "external": 9549950,
+            "arrayBuffers": 5190547
+          },
+          "forcedGc": true
+        }
+      }
+    },
+    {
+      "terrain": {
+        "sample": 2,
+        "total": 4096,
+        "noise": false,
+        "openingMs": 28.14401799999996,
+        "atOpen": {
+          "mode": "eager-map",
+          "entries": 4096,
+          "encodedBytes": 201326592,
+          "summaryBytes": 0,
+          "decodedBytes": 0,
+          "totalBytes": 201326592
+        },
+        "afterTraversal": {
+          "mode": "eager-map",
+          "entries": 4096,
+          "encodedBytes": 201326592,
+          "summaryBytes": 0,
+          "decodedBytes": 0,
+          "totalBytes": 201326592
+        },
+        "source": {
+          "requests": 65,
+          "maxPage": 64,
+          "sourceBytes": 201326592
+        },
+        "reads": {
+          "count": 512,
+          "p50Ms": 0.0001999999999497959,
+          "p95Ms": 0.00032999999996263796,
+          "maxMs": 0.0013920000000098298
+        },
+        "checks": {
+          "checksumAndType": 7,
+          "decodedLimit": false
+        },
+        "memory": {
+          "before": {
+            "rss": 260616192,
+            "heapTotal": 29675520,
+            "heapUsed": 10436712,
+            "external": 9156734,
+            "arrayBuffers": 930707
+          },
+          "retained": {
+            "rss": 260616192,
+            "heapTotal": 30724096,
+            "heapUsed": 11458624,
+            "external": 206583934,
+            "arrayBuffers": 202322835
+          },
+          "forcedGc": true
+        }
+      },
+      "noise": {
+        "sample": 2,
+        "total": 64,
+        "noise": true,
+        "openingMs": 4.42113999999998,
+        "atOpen": {
+          "mode": "eager-map",
+          "entries": 64,
+          "encodedBytes": 4194304,
+          "summaryBytes": 0,
+          "decodedBytes": 0,
+          "totalBytes": 4194304
+        },
+        "afterTraversal": {
+          "mode": "eager-map",
+          "entries": 64,
+          "encodedBytes": 4194304,
+          "summaryBytes": 0,
+          "decodedBytes": 0,
+          "totalBytes": 4194304
+        },
+        "source": {
+          "requests": 2,
+          "maxPage": 64,
+          "sourceBytes": 4194304
+        },
+        "reads": {
+          "count": 64,
+          "p50Ms": 0.00015100000001666558,
+          "p95Ms": 0.0002000000000066393,
+          "maxMs": 0.0006909999999606953
+        },
+        "checks": {
+          "checksumAndType": 7,
+          "decodedLimit": false
+        },
+        "memory": {
+          "before": {
+            "rss": 260616192,
+            "heapTotal": 30199808,
+            "heapUsed": 10424016,
+            "external": 206289022,
+            "arrayBuffers": 187970451
+          },
+          "retained": {
+            "rss": 260616192,
+            "heapTotal": 29413376,
+            "heapUsed": 10439168,
+            "external": 9549950,
+            "arrayBuffers": 5190547
+          },
+          "forcedGc": true
+        }
+      }
+    }
+  ],
+  "valid": true
+}

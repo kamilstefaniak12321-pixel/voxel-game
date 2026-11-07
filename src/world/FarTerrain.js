@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { modifiedChunksInBounds } from './ModifiedChunks.js';
 
 import {
     CHUNK_SIZE,
@@ -1282,10 +1283,11 @@ export class FarTerrain {
         const oz = Math.floor(cameraPosition.z / CHUNK_SIZE) - (CHUNK_MASK_SIZE >> 1);
 
         const origin = chunkMaskUniforms.uChunkMaskOrigin.value;
+        const originChanged = origin.x !== ox || origin.y !== oz;
 
         const version = world.meshVersion ?? 0;
 
-        if (origin.x === ox && origin.y === oz && version === this.maskVersion &&
+        if (!originChanged && version === this.maskVersion &&
             this.maskCoverageVersion === this.coverageVersion) {
             return;
         }
@@ -1295,33 +1297,48 @@ export class FarTerrain {
 
         origin.set(ox, oz);
 
-        chunkMaskData.fill(0);
+        // Only a fully built, shown far tile may replace detailed fragments.
+        // Its coverage is independent of new near meshes. Reuse these 16 KiB
+        // while chunks stream in, instead of walking all far rectangles again
+        // for every meshVersion. Keep the exact same full-cell edge rule.
+        const coverage = this.coverageMask ??= new Uint8Array(chunkMaskData.length);
+        if (this.coverageMaskX !== ox || this.coverageMaskZ !== oz ||
+            this.coverageMaskVersion !== this.coverageVersion) {
+            coverage.fill(0);
+            for (const tile of this.shown) {
+                if (!tile.mesh) continue;
+                const x0 = Math.max(0, Math.ceil(tile.x0 / CHUNK_SIZE) - ox);
+                const z0 = Math.max(0, Math.ceil(tile.z0 / CHUNK_SIZE) - oz);
+                const x1 = Math.min(CHUNK_MASK_SIZE, Math.floor((tile.x0 + tile.size) / CHUNK_SIZE) - ox);
+                const z1 = Math.min(CHUNK_MASK_SIZE, Math.floor((tile.z0 + tile.size) / CHUNK_SIZE) - oz);
+                if (x0 >= x1 || z0 >= z1) continue;
+                for (let z = z0; z < z1; z++) coverage.fill(1, z * CHUNK_MASK_SIZE + x0, z * CHUNK_MASK_SIZE + x1);
+            }
+            this.coverageMaskX = ox;
+            this.coverageMaskZ = oz;
+            this.coverageMaskVersion = this.coverageVersion;
+        }
 
+        const nextMask = this.nextMask ??= new Uint8Array(chunkMaskData.length);
+        nextMask.fill(0);
         for (const chunk of world.chunks.values()) {
-
             const i = chunk.cx - ox;
             const j = chunk.cz - oz;
-
             if (chunk.mesh && i >= 0 && j >= 0 && i < CHUNK_MASK_SIZE && j < CHUNK_MASK_SIZE) {
-                chunkMaskData[j * CHUNK_MASK_SIZE + i] = 128;
-            }
-
-        }
-
-        // Only a fully built, shown far tile may replace detailed fragments.
-        // Tile edges are chunk aligned; marking full cells is conservative.
-        for (const tile of this.shown) {
-            if (!tile.mesh) continue;
-            const x0 = Math.max(0, Math.ceil(tile.x0 / CHUNK_SIZE) - ox);
-            const z0 = Math.max(0, Math.ceil(tile.z0 / CHUNK_SIZE) - oz);
-            const x1 = Math.min(CHUNK_MASK_SIZE, Math.floor((tile.x0 + tile.size) / CHUNK_SIZE) - ox);
-            const z1 = Math.min(CHUNK_MASK_SIZE, Math.floor((tile.z0 + tile.size) / CHUNK_SIZE) - oz);
-            for (let z = z0; z < z1; z++) for (let x = x0; x < x1; x++) {
-                const at = z * CHUNK_MASK_SIZE + x;
-                if (chunkMaskData[at] === 128) chunkMaskData[at] = 255;
+                const at = j * CHUNK_MASK_SIZE + i;
+                nextMask[at] = coverage[at] ? 255 : 128;
             }
         }
 
+        // Replacing a mesh (light, foliage detail or editing) often preserves
+        // its coverage. Keep the uploaded mask and far shadow revision intact
+        // in that case; World.onMeshChanged separately tracks real geometry.
+        let changed = originChanged;
+        if (!changed) for (let i = 0; i < nextMask.length; i++) {
+            if (nextMask[i] !== chunkMaskData[i]) { changed = true; break; }
+        }
+        if (!changed) return;
+        chunkMaskData.set(nextMask);
         chunkMaskUniforms.uChunkMask.value.needsUpdate = true;
         this.shadowRevision++;
 
@@ -1549,9 +1566,11 @@ export class FarTerrain {
 
     showWanted() {
 
-        const wanted = new Set(this.wanted);
-        const changed = wanted.size !== this.shown.size || [...wanted].some(tile => !this.shown.has(tile));
+        // selectTiles returns unique tiles. A completed set is tested each
+        // frame; avoid allocating a Set and an array until it really changes.
+        const changed = this.wanted.length !== this.shown.size || this.wanted.some(tile => !this.shown.has(tile));
         if (!changed) return;
+        const wanted = new Set(this.wanted);
         this.finishTileFade();
         const animate = this.complete && this.shown.size > 0;
         const previous = [...this.shown];
@@ -1672,37 +1691,9 @@ export class FarTerrain {
     // (bloki z pamięci albo z zapisu): Map "cx,cz" -> bloki.
 
     modifiedChunksIn(x0, z0, size) {
-
-        const found = new Map();
-
-        const minCx = Math.floor(x0 / CHUNK_SIZE);
-        const maxCx = Math.floor((x0 + size) / CHUNK_SIZE);
-        const minCz = Math.floor(z0 / CHUNK_SIZE);
-        const maxCz = Math.floor((z0 + size) / CHUNK_SIZE);
-
-        const inside = (cx, cz) => cx >= minCx && cx <= maxCx && cz >= minCz && cz <= maxCz;
-
-
-        for (const [key, blocks] of this.world.savedChunks) {
-
-            const [cx, cz] = key.split(',').map(Number);
-
-            if (inside(cx, cz)) {
-                found.set(key, blocks);
-            }
-
-        }
-
-        for (const chunk of this.world.chunks.values()) {
-
-            if (chunk.modified && inside(chunk.cx, chunk.cz)) {
-                found.set(`${chunk.cx},${chunk.cz}`, chunk.blocks);
-            }
-
-        }
-
-        return found;
-
+        return modifiedChunksInBounds(this.world,
+            Math.floor(x0 / CHUNK_SIZE), Math.floor(z0 / CHUNK_SIZE),
+            Math.floor((x0 + size) / CHUNK_SIZE), Math.floor((z0 + size) / CHUNK_SIZE));
     }
 
 
@@ -1722,6 +1713,16 @@ export class FarTerrain {
 
         const lx = x - cx * CHUNK_SIZE;
         const lz = z - cz * CHUNK_SIZE;
+
+        // A compressed saved chunk exposes just its exact top layer here.
+        // Looking at distant edits must never decompress all of their voxels.
+        if (blocks.heights && blocks.materials) {
+            const column = lz * CHUNK_SIZE + lx;
+            const top = blocks.heights[column];
+            if (!top) return { top: 0, kind: 'rock' };
+            const material = getBlockTypeById(blocks.materials[column]);
+            return { top, kind: BLOCK_KINDS[material] ?? 'grass', material };
+        }
 
         for (let y = CHUNK_HEIGHT - 1; y >= 0; y--) {
 

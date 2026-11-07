@@ -215,6 +215,7 @@ export class PerfDiagnostics {
             shaftDepthSource: game.lightShafts?.lastDepthSource ?? 'unknown',
             meshJobs: { terrain: Boolean(world?.meshJobs?.terrain), plants: Boolean(world?.meshJobs?.plants) },
             generation: world?.generation?.getStats?.() ?? null,
+            savedChunks: world?.savedChunks?.stats?.() ?? null,
             far: { shown: far?.shown?.size ?? 0, wanted: far?.wanted?.length ?? 0, cached: far?.tiles?.size ?? 0 },
             shadows: game.shadows?.stats?.() ?? null,
             bounce: game.bounce?.stats?.() ?? null,

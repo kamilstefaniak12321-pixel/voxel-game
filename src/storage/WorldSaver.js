@@ -156,7 +156,9 @@ export class WorldSaver {
         for (const chunk of chunks) {
             const key = `${chunk.cx},${chunk.cz}`;
             const current = this.world.getChunk?.(chunk.cx, chunk.cz);
-            const saved = this.world.savedChunks?.get(key);
+            // The live chunk already contains the latest edits. Decoding its
+            // older snapshot would only add autosave work and cache pressure.
+            const saved = current ? undefined : this.world.savedChunks?.get(key);
             // W czasie zapisu A mógł zostać usunięty z widoku i wczytany
             // jako B. Ponowienie A nie może nadpisać nowszych edycji B.
             latest.set(key, current ?? (saved && saved !== chunk.blocks

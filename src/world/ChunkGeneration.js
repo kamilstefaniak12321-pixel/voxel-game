@@ -85,11 +85,11 @@ export class ChunkGeneration {
         return null;
     }
 
-    request(cx, cz, saved) {
+    request(cx, cz, saved, revision = saved) {
         if (this.find(cx, cz)) return true;
         if (!this.enabled || this.disposed || this.jobs.size >= MAX_JOBS || !this.start() || !this.workerReady) return false;
         const id = this.nextId++;
-        const job = { id, cx, cz, saved, data: null, cancelled: false, started: performance.now() };
+        const job = { id, cx, cz, saved, revision, data: null, cancelled: false, started: performance.now() };
         this.jobs.set(id, job);
         try {
             // Saved blocks are cloned, never transferred/detached from the save.
@@ -102,11 +102,13 @@ export class ChunkGeneration {
         }
     }
 
-    take(cx, cz, saved) {
+    take(cx, cz, saved, revision = saved) {
         const job = this.find(cx, cz);
         if (!job?.data) return null;
         this.jobs.delete(job.id);
-        if (job.saved !== saved) {
+        // Decoding an evicted cache entry creates a different array. Only a
+        // changed snapshot revision makes the worker's result stale.
+        if (job.revision !== revision) {
             this.stats.discarded++;
             return null;
         }
@@ -142,6 +144,7 @@ export class ChunkGeneration {
                 // against MAX_JOBS, even after a teleport or distance change.
                 job.cancelled = true;
                 job.saved = undefined;
+                job.revision = undefined;
             }
         }
     }

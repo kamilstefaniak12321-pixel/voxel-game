@@ -11,6 +11,24 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 0.71.0 - Mniejsza pamięć zapisów i tańsze doczytywanie
+
+Przygotowanie wydania w PR do `main`; publikacja Windows/Android po scaleniu.
+
+- Zapisane zmiany świata zajmują w RAM bezstratnie spakowane migawki.
+  Pełne tablice bloków są odtwarzane na żądanie; ich cache ma limit
+  8 MiB i 128 wpisów. Istniejące zapisy zachowują format i zawartość.
+- Daleki teren korzysta z indeksu zmienionych obszarów i dokładnych
+  podsumowań powierzchni, bez skanowania i rozpakowywania całego zapisu.
+- Pokrycie dalekiego terenu jest współdzielone między przebudowami
+  bliskich chunków. Identyczna maska nie wywołuje ponownego przesłania
+  tekstury ani dodatkowego odświeżania dalekich cieni.
+- Odwiedzanie niezmienionych budowli nie pakuje ich ponownie przy
+  oddalaniu, a autozapis nie dekoduje niepotrzebnych starych migawek.
+- Testy obejmują błędy zapisu, starsze ID, cache, wyniki workera,
+  identyczne powierzchnie i maski oraz porównanie A/B w Chromium.
+  [Wyniki i ograniczenia](docs/pomiary/pamiec-streaming-0.71.0/WYNIKI.md).
+
 ## 0.70.0 - Autorskie tekstury drewna i kamienne narzędzia
 
 Nowy atlas Kamila i warianty materiałów — PR #106, bezpośrednio do `main`.

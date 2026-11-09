@@ -72,6 +72,12 @@ Współrzędne można podawać względem gracza: `~` (tu, gdzie stoję),
 | `/krzaki rosnij [1-3]` | krzaki do 64 bloków od ciebie od razu rosną o tyle etapów (3 = od sadzonki do pełnego owoców) |
 | `/krzaki tempo [0-500]` | tempo wzrostu krzaków: 60 = etap średnio co 2,5 s zamiast 150 s, 0 = nie rosną, 1 = normalnie; bez liczby - jakie jest (nie zapisuje się) |
 | `/drzewa` | drzewa do 64 bloków od ciebie (ile każdego gatunku - z generatora terenu), las w miejscu gracza, tempo wzrostu sadzonek (`docs/drzewa.md`) |
+| `/drzewa lista` | katalog dziewięciu gatunków i przykłady pokazów |
+| `/drzewa las <gatunek> [liczba 1-36] [seed]` | losowy las jednego gatunku przed graczem, domyślnie 16 drzew; omija przeszkody i podaje wynik |
+| `/drzewa warianty <gatunek> [seed]` | galeria dostępnych szablonów, rozmiarów i stanów specjalnych (np. kwitnąca lipa, owocująca jabłoń) |
+| `/drzewa porownanie [seed]` | wszystkie gatunki obok siebie; razem z galerią wymaga wolnej ziemi na komplet drzew, najlepiej na trawie obok centralnego placu świata programisty |
+| `/drzewa ostatnie` | powtarza nazwy, współrzędne i seed ostatniego pokazu |
+| `/drzewa cofnij` | cofa ostatni nowy pokaz w tej sesji; zachowuje późniejsze zmiany bloków. Pamięć cofnięcia znika po wyjściu ze świata |
 | `/drzewa posadz <gatunek> [0-100]` | drzewo 5 bloków przed tobą (gatunki: `swierk`, `sosna`, `buk`, `lipa`, `dab`, `brzoza` i drzewa z paczek, np. `jablon`; rozmiar 0 - małe, 100 - duże, bez - losowy); krócej: `/drzewa dab` |
 | `/drzewa aleja` | wszystkie gatunki (także z paczek) w rzędzie przed tobą, co 12 bloków (zmienia świat) |
 | `/drzewa znajdz <gatunek> [tp]` | najbliższe drzewo gatunku w świecie (do 1500 bloków): odległość, kierunek; `tp` - przeniesienie pod nie |

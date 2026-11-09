@@ -5,6 +5,7 @@ import { WaterSimulation } from './WaterSimulation.js';
 import { MeshWorkQueue } from './MeshWorkQueue.js';
 import { detailAtDistance, DISTANCE_PLANT_PREFETCH, DISTANCE_PLANT_RETAIN } from './DistanceLod.js';
 import { BIOME_KEYS } from './terrain/Biomes.js';
+import { disposeTreeShowcase } from './trees/TreeShowcase.js';
 // ------------------------------------------------------------
 import {
     CHUNK_SIZE,
@@ -1252,6 +1253,8 @@ export class World {
     // pamięć na karcie graficznej (przy wyjściu ze świata).
 
     dispose() {
+
+        disposeTreeShowcase(this);
 
         this.fluids?.dispose();
         this.fluidDirty?.clear();

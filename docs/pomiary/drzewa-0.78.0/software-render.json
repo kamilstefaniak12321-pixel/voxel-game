@@ -1,0 +1,863 @@
+{
+  "checks": [
+    "Actual game uses WebGL2",
+    "/drzewa lista: success (Gatunki drzew (9):\nswierk — Świerk pospolity\nsosna — Sosna zwyczajna\nbuk — Buk zwyczajny\nlipa — Lipa drobnolistna\ndab — Dąb szypułkowy\nbrzoza — Brzoza brodawkowata\njablon — Jabłoń domowa\nolcha — Olcha czarna\nwierzba — Wierzba biała\nLosowy las: /drzewa las sosna 16. Warianty: /drzewa warianty sosna. Wszystkie gatunki: /drzewa porownanie.\nNa końcu możesz podać seed, np. /drzewa las sosna 16 12345. Te same parametry odtwarzają ten sam zestaw.\nWarianty pokazują dostępne szablony, rozmiary i stany specjalne. Kształty proceduralne mają wiele losowych odmian.)",
+    "List includes spruce",
+    "List includes pine",
+    "List includes beech",
+    "List includes linden",
+    "List includes oak",
+    "List includes birch",
+    "List includes jablon",
+    "List includes olcha",
+    "List includes wierzba",
+    "Tab completes lista",
+    "Tab completes las",
+    "Tab completes warianty",
+    "Tab completes porownanie",
+    "Tab completes cofnij",
+    "/drzewa las sosna 0: rejected (Liczba drzew: liczba całkowita od 1 do 36.)",
+    "/drzewa las sosna 0 leaves the world unchanged",
+    "/drzewa las sosna 37: rejected (Liczba drzew: liczba całkowita od 1 do 36.)",
+    "/drzewa las sosna 37 leaves the world unchanged",
+    "/drzewa las nieistnieje: rejected (Podaj gatunek drzewa: swierk, sosna, buk, lipa, dab, brzoza, jablon, olcha, wierzba.)",
+    "/drzewa las nieistnieje leaves the world unchanged",
+    "/drzewa las sosna 4 -1: rejected (Seed: liczba całkowita od 0 do 4294967295.)",
+    "/drzewa las sosna 4 -1 leaves the world unchanged",
+    "/drzewa las sosna 4 4294967296: rejected (Seed: liczba całkowita od 0 do 4294967295.)",
+    "/drzewa las sosna 4 4294967296 leaves the world unchanged",
+    "/drzewa porownanie 12345: success (Przygotowuję porównanie gatunków przed tobą (seed 12345). Wynik pojawi się na czacie.)",
+    "/drzewa porownanie 12345: asynchronous command finishes",
+    "/drzewa porownanie 12345: Pokaz drzew gotowy: 9 drzew, seed 12345.\n1. Świerk pospolity — -233 17 -12\n2. Sosna zwyczajna — -215 17 -12\n3. Buk zwyczajny — -197 17 -12\n4. Lipa drobnolistna — -179 17 -12\n5. Dąb szypułkowy — -161 17 -12\n6. Brzoza brodawkowata — -143 17 -12\n7. Jabłoń domowa — -125 17 -12\n8. Olcha czarna — -107 17 -12\n9. Wierzba biała — -89 17 -12\nPozycje: /drzewa ostatnie. Cofnięcie ostatniego pokazu w tej sesji: /drzewa cofnij.",
+    "comparison: command creates real blocks",
+    "Comparison contains all nine registered tree species",
+    "comparison: no WebGL error",
+    "comparison: shaders compiled",
+    "comparison: no runtime/console errors",
+    "/drzewa cofnij: success (Cofanie ostatniego pokazu drzew…)",
+    "/drzewa cofnij: asynchronous command finishes",
+    "/drzewa cofnij: Cofnięto pokaz drzew: 2325 bloków.",
+    "Undo restores every loaded block to the original generated world",
+    "/drzewa las sosna 16 12345: success (Przygotowuję las przed tobą (seed 12345). Wynik pojawi się na czacie.)",
+    "/drzewa las sosna 16 12345: asynchronous command finishes",
+    "/drzewa las sosna 16 12345: Pokaz drzew gotowy: 16 drzew, seed 12345.\n1. sosna 1 (59%) — -191 17 -11\n2. sosna 2 (26%) — -172 17 -11\n3. sosna 3 (57%) — -147 17 -14\n4. sosna 4 (70%) — -125 17 -15\n5. sosna 5 (82%) — -194 17 -33\n6. sosna 6 (83%) — -171 17 -36\n7. sosna 7 (46%) — -150 17 -31\n8. sosna 8 (42%) — -126 17 -31\n9. sosna 9 (48%) — -193 17 -59\n10. sosna 10 (85%) — -175 17 -57\n11. sosna 11 (95%) — -149 17 -57\n12. sosna 12 (67%) — -128 17 -59\n13. sosna 13 (41%) — -194 17 -76\n14. sosna 14 (28%) — -170 17 -77\n15. sosna 15 (32%) — -150 17 -81\n16. sosna 16 (54%) — -130 17 -80\nPozycje: /drzewa ostatnie. Cofnięcie ostatniego pokazu w tej sesji: /drzewa cofnij.",
+    "pine-forest: command creates real blocks",
+    "Pine forest contains only pine trees",
+    "pine-forest: no WebGL error",
+    "pine-forest: shaders compiled",
+    "pine-forest: no runtime/console errors",
+    "/drzewa cofnij: success (Cofanie ostatniego pokazu drzew…)",
+    "/drzewa cofnij: asynchronous command finishes",
+    "/drzewa cofnij: Cofnięto pokaz drzew: 3196 bloków.",
+    "Undo restores every loaded block to the original generated world",
+    "/drzewa warianty jablon 12345: success (Przygotowuję warianty drzewa przed tobą (seed 12345). Wynik pojawi się na czacie.)",
+    "/drzewa warianty jablon 12345: asynchronous command finishes",
+    "/drzewa warianty jablon 12345: Pokaz drzew gotowy: 9 drzew, seed 12345.\n1. jabłoń: zwykłe, szablon 1/3 — -179 17 -12\n2. jabłoń: zwykłe, szablon 2/3 — -161 17 -12\n3. jabłoń: zwykłe, szablon 3/3 — -143 17 -12\n4. jabłoń: Liście jabłoni z jabłkami, szablon 1/3 — -179 17 -30\n5. jabłoń: Liście jabłoni z jabłkami, szablon 2/3 — -161 17 -30\n6. jabłoń: Liście jabłoni z jabłkami, szablon 3/3 — -143 17 -30\n7. jabłoń: Liście jabłoni (jabłka odrastają), szablon 1/3 — -179 17 -48\n8. jabłoń: Liście jabłoni (jabłka odrastają), szablon 2/3 — -161 17 -48\n9. jabłoń: Liście jabłoni (jabłka odrastają), szablon 3/3 — -143 17 -48\nPozycje: /drzewa ostatnie. Cofnięcie ostatniego pokazu w tej sesji: /drzewa cofnij.",
+    "apple-variants: command creates real blocks",
+    "Apple showcase includes ordinary, fruiting and regrowing leaves",
+    "apple-variants: no WebGL error",
+    "apple-variants: shaders compiled",
+    "apple-variants: no runtime/console errors",
+    "/drzewa cofnij: success (Cofanie ostatniego pokazu drzew…)",
+    "/drzewa cofnij: asynchronous command finishes",
+    "/drzewa cofnij: Cofnięto pokaz drzew: 1005 bloków.",
+    "Undo restores every loaded block to the original generated world",
+    "/drzewa warianty lipa 12345: success (Przygotowuję warianty drzewa przed tobą (seed 12345). Wynik pojawi się na czacie.)",
+    "/drzewa warianty lipa 12345: asynchronous command finishes",
+    "/drzewa warianty lipa 12345: Pokaz drzew gotowy: 10 drzew, seed 12345.\n1. lipa: zwykłe, 0% — -197 17 -12\n2. lipa: zwykłe, 25% — -179 17 -12\n3. lipa: zwykłe, 50% — -161 17 -12\n4. lipa: zwykłe, 75% — -143 17 -12\n5. lipa: zwykłe, 100% — -125 17 -12\n6. lipa: kwitnąca, 0% — -197 17 -30\n7. lipa: kwitnąca, 25% — -179 17 -30\n8. lipa: kwitnąca, 50% — -161 17 -30\n9. lipa: kwitnąca, 75% — -143 17 -30\n10. lipa: kwitnąca, 100% — -125 17 -30\nPozycje: /drzewa ostatnie. Cofnięcie ostatniego pokazu w tej sesji: /drzewa cofnij.",
+    "linden-variants: command creates real blocks",
+    "Linden showcase includes ordinary and flowering leaves",
+    "linden-variants: no WebGL error",
+    "linden-variants: shaders compiled",
+    "linden-variants: no runtime/console errors",
+    "/drzewa cofnij: success (Cofanie ostatniego pokazu drzew…)",
+    "/drzewa cofnij: asynchronous command finishes",
+    "/drzewa cofnij: Cofnięto pokaz drzew: 1872 bloków.",
+    "Undo restores every loaded block to the original generated world",
+    "/drzewa las sosna 16 12345: success (Przygotowuję las przed tobą (seed 12345). Wynik pojawi się na czacie.)",
+    "/drzewa las sosna 16 12345: asynchronous command finishes",
+    "/drzewa las sosna 16 12345: Pokaz drzew gotowy: 16 drzew, seed 12345.\n1. sosna 1 (59%) — -191 17 -11\n2. sosna 2 (26%) — -172 17 -11\n3. sosna 3 (57%) — -147 17 -14\n4. sosna 4 (70%) — -125 17 -15\n5. sosna 5 (82%) — -194 17 -33\n6. sosna 6 (83%) — -171 17 -36\n7. sosna 7 (46%) — -150 17 -31\n8. sosna 8 (42%) — -126 17 -31\n9. sosna 9 (48%) — -193 17 -59\n10. sosna 10 (85%) — -175 17 -57\n11. sosna 11 (95%) — -149 17 -57\n12. sosna 12 (67%) — -128 17 -59\n13. sosna 13 (41%) — -194 17 -76\n14. sosna 14 (28%) — -170 17 -77\n15. sosna 15 (32%) — -150 17 -81\n16. sosna 16 (54%) — -130 17 -80\nPozycje: /drzewa ostatnie. Cofnięcie ostatniego pokazu w tej sesji: /drzewa cofnij.",
+    "Same seed reproduces the exact same placed forest after undo",
+    "/drzewa cofnij: success (Cofanie ostatniego pokazu drzew…)",
+    "/drzewa cofnij: asynchronous command finishes",
+    "/drzewa cofnij: Cofnięto pokaz drzew: 3196 bloków.",
+    "Undo restores every loaded block to the original generated world",
+    "/drzewa las sosna 16 12346: success (Przygotowuję las przed tobą (seed 12346). Wynik pojawi się na czacie.)",
+    "/drzewa las sosna 16 12346: asynchronous command finishes",
+    "/drzewa las sosna 16 12346: Pokaz drzew gotowy: 16 drzew, seed 12346.\n1. sosna 1 (37%) — -195 17 -14\n2. sosna 2 (40%) — -169 17 -13\n3. sosna 3 (32%) — -148 17 -14\n4. sosna 4 (93%) — -130 17 -14\n5. sosna 5 (77%) — -195 17 -33\n6. sosna 6 (62%) — -169 17 -32\n7. sosna 7 (69%) — -151 17 -33\n8. sosna 8 (99%) — -125 17 -34\n9. sosna 9 (83%) — -195 17 -58\n10. sosna 10 (60%) — -173 17 -53\n11. sosna 11 (79%) — -152 17 -55\n12. sosna 12 (46%) — -126 17 -57\n13. sosna 13 (76%) — -191 17 -77\n14. sosna 14 (60%) — -175 17 -77\n15. sosna 15 (31%) — -153 17 -81\n16. sosna 16 (97%) — -126 17 -75\nPozycje: /drzewa ostatnie. Cofnięcie ostatniego pokazu w tej sesji: /drzewa cofnij.",
+    "Different seed changes the actual forest",
+    "/drzewa cofnij: success (Cofanie ostatniego pokazu drzew…)",
+    "/drzewa cofnij: asynchronous command finishes",
+    "/drzewa cofnij: Cofnięto pokaz drzew: 3279 bloków.",
+    "Undo restores every loaded block to the original generated world",
+    "/drzewa las sosna 36 12345: success (Przygotowuję las przed tobą (seed 12345). Wynik pojawi się na czacie.)",
+    "/drzewa las sosna 36 12345: asynchronous command finishes",
+    "/drzewa las sosna 36 12345: Pokaz drzew gotowy: 36 drzew, seed 12345.\n1. sosna 1 (59%) — -213 17 -11\n2. sosna 2 (26%) — -194 17 -11\n3. sosna 3 (57%) — -169 17 -14\n4. sosna 4 (70%) — -147 17 -15\n5. sosna 5 (82%) — -128 17 -11\n6. sosna 6 (83%) — -105 17 -14\n7. sosna 7 (46%) — -216 17 -31\n8. sosna 8 (42%) — -192 17 -31\n9. sosna 9 (48%) — -171 17 -37\n10. sosna 10 (85%) — -153 17 -35\n11. sosna 11 (95%) — -127 17 -35\n12. sosna 12 (67%) — -106 17 -37\n13. sosna 13 (41%) — -216 17 -54\n14. sosna 14 (28%) — -192 17 -55\n15. sosna 15 (32%) — -172 17 -59\n16. sosna 16 (54%) — -152 17 -58\n17. sosna 17 (49%) — -128 17 -53\n18. sosna 18 (44%) — -103 17 -58\n19. sosna 19 (60%) — -215 17 -76\n20. sosna 20 (39%) — -192 17 -81\n21. sosna 21 (97%) — -173 17 -80\n22. sosna 22 (63%) — -147 17 -81\n23. sosna 23 (73%) — -127 17 -79\n24. sosna 24 (98%) — -103 17 -80\n25. sosna 25 (39%) — -216 17 -99\n26. sosna 26 (33%) — -191 17 -100\n27. sosna 27 (53%) — -173 17 -98\n28. sosna 28 (97%) — -148 17 -99\n29. sosna 29 (33%) — -127 17 -101\n30. sosna 30 (73%) — -103 17 -97\n31. sosna 31 (28%) — -214 17 -121\n32. sosna 32 (71%) — -195 17 -119\n33. sosna 33 (68%) — -175 17 -121\n34. sosna 34 (86%) — -149 17 -125\n35. sosna 35 (96%) — -126 17 -121\n36. sosna 36 (90%) — -106 17 -123\nPozycje: /drzewa ostatnie. Cofnięcie ostatniego pokazu w tej sesji: /drzewa cofnij.",
+    "Maximum forest creates all 36 trees in the real game",
+    "/drzewa cofnij: success (Cofanie ostatniego pokazu drzew…)",
+    "/drzewa cofnij: asynchronous command finishes",
+    "/drzewa cofnij: Cofnięto pokaz drzew: 6973 bloków.",
+    "Undo restores every loaded block to the original generated world"
+  ],
+  "errors": [],
+  "commands": [
+    {
+      "line": "/drzewa lista",
+      "ok": true,
+      "text": "Gatunki drzew (9):\nswierk — Świerk pospolity\nsosna — Sosna zwyczajna\nbuk — Buk zwyczajny\nlipa — Lipa drobnolistna\ndab — Dąb szypułkowy\nbrzoza — Brzoza brodawkowata\njablon — Jabłoń domowa\nolcha — Olcha czarna\nwierzba — Wierzba biała\nLosowy las: /drzewa las sosna 16. Warianty: /drzewa warianty sosna. Wszystkie gatunki: /drzewa porownanie.\nNa końcu możesz podać seed, np. /drzewa las sosna 16 12345. Te same parametry odtwarzają ten sam zestaw.\nWarianty pokazują dostępne szablony, rozmiary i stany specjalne. Kształty proceduralne mają wiele losowych odmian.",
+      "messages": [],
+      "milliseconds": 0.6
+    },
+    {
+      "line": "/drzewa las sosna 0",
+      "ok": false,
+      "text": "Liczba drzew: liczba całkowita od 1 do 36.",
+      "messages": [],
+      "milliseconds": 0.5
+    },
+    {
+      "line": "/drzewa las sosna 37",
+      "ok": false,
+      "text": "Liczba drzew: liczba całkowita od 1 do 36.",
+      "messages": [],
+      "milliseconds": 0.1
+    },
+    {
+      "line": "/drzewa las nieistnieje",
+      "ok": false,
+      "text": "Podaj gatunek drzewa: swierk, sosna, buk, lipa, dab, brzoza, jablon, olcha, wierzba.",
+      "messages": [],
+      "milliseconds": 0.3
+    },
+    {
+      "line": "/drzewa las sosna 4 -1",
+      "ok": false,
+      "text": "Seed: liczba całkowita od 0 do 4294967295.",
+      "messages": [],
+      "milliseconds": 0.1
+    },
+    {
+      "line": "/drzewa las sosna 4 4294967296",
+      "ok": false,
+      "text": "Seed: liczba całkowita od 0 do 4294967295.",
+      "messages": [],
+      "milliseconds": 0
+    },
+    {
+      "line": "/drzewa porownanie 12345",
+      "ok": true,
+      "text": "Przygotowuję porównanie gatunków przed tobą (seed 12345). Wynik pojawi się na czacie.",
+      "messages": [
+        {
+          "text": "Pokaz drzew gotowy: 9 drzew, seed 12345.\n1. Świerk pospolity — -233 17 -12\n2. Sosna zwyczajna — -215 17 -12\n3. Buk zwyczajny — -197 17 -12\n4. Lipa drobnolistna — -179 17 -12\n5. Dąb szypułkowy — -161 17 -12\n6. Brzoza brodawkowata — -143 17 -12\n7. Jabłoń domowa — -125 17 -12\n8. Olcha czarna — -107 17 -12\n9. Wierzba biała — -89 17 -12\nPozycje: /drzewa ostatnie. Cofnięcie ostatniego pokazu w tej sesji: /drzewa cofnij.",
+          "kind": "success"
+        }
+      ],
+      "milliseconds": 123.8
+    },
+    {
+      "line": "/drzewa cofnij",
+      "ok": true,
+      "text": "Cofanie ostatniego pokazu drzew…",
+      "messages": [
+        {
+          "text": "Cofnięto pokaz drzew: 2325 bloków.",
+          "kind": "success"
+        }
+      ],
+      "milliseconds": 88.8
+    },
+    {
+      "line": "/drzewa las sosna 16 12345",
+      "ok": true,
+      "text": "Przygotowuję las przed tobą (seed 12345). Wynik pojawi się na czacie.",
+      "messages": [
+        {
+          "text": "Pokaz drzew gotowy: 16 drzew, seed 12345.\n1. sosna 1 (59%) — -191 17 -11\n2. sosna 2 (26%) — -172 17 -11\n3. sosna 3 (57%) — -147 17 -14\n4. sosna 4 (70%) — -125 17 -15\n5. sosna 5 (82%) — -194 17 -33\n6. sosna 6 (83%) — -171 17 -36\n7. sosna 7 (46%) — -150 17 -31\n8. sosna 8 (42%) — -126 17 -31\n9. sosna 9 (48%) — -193 17 -59\n10. sosna 10 (85%) — -175 17 -57\n11. sosna 11 (95%) — -149 17 -57\n12. sosna 12 (67%) — -128 17 -59\n13. sosna 13 (41%) — -194 17 -76\n14. sosna 14 (28%) — -170 17 -77\n15. sosna 15 (32%) — -150 17 -81\n16. sosna 16 (54%) — -130 17 -80\nPozycje: /drzewa ostatnie. Cofnięcie ostatniego pokazu w tej sesji: /drzewa cofnij.",
+          "kind": "success"
+        }
+      ],
+      "milliseconds": 175.6
+    },
+    {
+      "line": "/drzewa cofnij",
+      "ok": true,
+      "text": "Cofanie ostatniego pokazu drzew…",
+      "messages": [
+        {
+          "text": "Cofnięto pokaz drzew: 3196 bloków.",
+          "kind": "success"
+        }
+      ],
+      "milliseconds": 85.5
+    },
+    {
+      "line": "/drzewa warianty jablon 12345",
+      "ok": true,
+      "text": "Przygotowuję warianty drzewa przed tobą (seed 12345). Wynik pojawi się na czacie.",
+      "messages": [
+        {
+          "text": "Pokaz drzew gotowy: 9 drzew, seed 12345.\n1. jabłoń: zwykłe, szablon 1/3 — -179 17 -12\n2. jabłoń: zwykłe, szablon 2/3 — -161 17 -12\n3. jabłoń: zwykłe, szablon 3/3 — -143 17 -12\n4. jabłoń: Liście jabłoni z jabłkami, szablon 1/3 — -179 17 -30\n5. jabłoń: Liście jabłoni z jabłkami, szablon 2/3 — -161 17 -30\n6. jabłoń: Liście jabłoni z jabłkami, szablon 3/3 — -143 17 -30\n7. jabłoń: Liście jabłoni (jabłka odrastają), szablon 1/3 — -179 17 -48\n8. jabłoń: Liście jabłoni (jabłka odrastają), szablon 2/3 — -161 17 -48\n9. jabłoń: Liście jabłoni (jabłka odrastają), szablon 3/3 — -143 17 -48\nPozycje: /drzewa ostatnie. Cofnięcie ostatniego pokazu w tej sesji: /drzewa cofnij.",
+          "kind": "success"
+        }
+      ],
+      "milliseconds": 60.9
+    },
+    {
+      "line": "/drzewa cofnij",
+      "ok": true,
+      "text": "Cofanie ostatniego pokazu drzew…",
+      "messages": [
+        {
+          "text": "Cofnięto pokaz drzew: 1005 bloków.",
+          "kind": "success"
+        }
+      ],
+      "milliseconds": 11.2
+    },
+    {
+      "line": "/drzewa warianty lipa 12345",
+      "ok": true,
+      "text": "Przygotowuję warianty drzewa przed tobą (seed 12345). Wynik pojawi się na czacie.",
+      "messages": [
+        {
+          "text": "Pokaz drzew gotowy: 10 drzew, seed 12345.\n1. lipa: zwykłe, 0% — -197 17 -12\n2. lipa: zwykłe, 25% — -179 17 -12\n3. lipa: zwykłe, 50% — -161 17 -12\n4. lipa: zwykłe, 75% — -143 17 -12\n5. lipa: zwykłe, 100% — -125 17 -12\n6. lipa: kwitnąca, 0% — -197 17 -30\n7. lipa: kwitnąca, 25% — -179 17 -30\n8. lipa: kwitnąca, 50% — -161 17 -30\n9. lipa: kwitnąca, 75% — -143 17 -30\n10. lipa: kwitnąca, 100% — -125 17 -30\nPozycje: /drzewa ostatnie. Cofnięcie ostatniego pokazu w tej sesji: /drzewa cofnij.",
+          "kind": "success"
+        }
+      ],
+      "milliseconds": 52.9
+    },
+    {
+      "line": "/drzewa cofnij",
+      "ok": true,
+      "text": "Cofanie ostatniego pokazu drzew…",
+      "messages": [
+        {
+          "text": "Cofnięto pokaz drzew: 1872 bloków.",
+          "kind": "success"
+        }
+      ],
+      "milliseconds": 37.8
+    },
+    {
+      "line": "/drzewa las sosna 16 12345",
+      "ok": true,
+      "text": "Przygotowuję las przed tobą (seed 12345). Wynik pojawi się na czacie.",
+      "messages": [
+        {
+          "text": "Pokaz drzew gotowy: 16 drzew, seed 12345.\n1. sosna 1 (59%) — -191 17 -11\n2. sosna 2 (26%) — -172 17 -11\n3. sosna 3 (57%) — -147 17 -14\n4. sosna 4 (70%) — -125 17 -15\n5. sosna 5 (82%) — -194 17 -33\n6. sosna 6 (83%) — -171 17 -36\n7. sosna 7 (46%) — -150 17 -31\n8. sosna 8 (42%) — -126 17 -31\n9. sosna 9 (48%) — -193 17 -59\n10. sosna 10 (85%) — -175 17 -57\n11. sosna 11 (95%) — -149 17 -57\n12. sosna 12 (67%) — -128 17 -59\n13. sosna 13 (41%) — -194 17 -76\n14. sosna 14 (28%) — -170 17 -77\n15. sosna 15 (32%) — -150 17 -81\n16. sosna 16 (54%) — -130 17 -80\nPozycje: /drzewa ostatnie. Cofnięcie ostatniego pokazu w tej sesji: /drzewa cofnij.",
+          "kind": "success"
+        }
+      ],
+      "milliseconds": 193.2
+    },
+    {
+      "line": "/drzewa cofnij",
+      "ok": true,
+      "text": "Cofanie ostatniego pokazu drzew…",
+      "messages": [
+        {
+          "text": "Cofnięto pokaz drzew: 3196 bloków.",
+          "kind": "success"
+        }
+      ],
+      "milliseconds": 108.3
+    },
+    {
+      "line": "/drzewa las sosna 16 12346",
+      "ok": true,
+      "text": "Przygotowuję las przed tobą (seed 12346). Wynik pojawi się na czacie.",
+      "messages": [
+        {
+          "text": "Pokaz drzew gotowy: 16 drzew, seed 12346.\n1. sosna 1 (37%) — -195 17 -14\n2. sosna 2 (40%) — -169 17 -13\n3. sosna 3 (32%) — -148 17 -14\n4. sosna 4 (93%) — -130 17 -14\n5. sosna 5 (77%) — -195 17 -33\n6. sosna 6 (62%) — -169 17 -32\n7. sosna 7 (69%) — -151 17 -33\n8. sosna 8 (99%) — -125 17 -34\n9. sosna 9 (83%) — -195 17 -58\n10. sosna 10 (60%) — -173 17 -53\n11. sosna 11 (79%) — -152 17 -55\n12. sosna 12 (46%) — -126 17 -57\n13. sosna 13 (76%) — -191 17 -77\n14. sosna 14 (60%) — -175 17 -77\n15. sosna 15 (31%) — -153 17 -81\n16. sosna 16 (97%) — -126 17 -75\nPozycje: /drzewa ostatnie. Cofnięcie ostatniego pokazu w tej sesji: /drzewa cofnij.",
+          "kind": "success"
+        }
+      ],
+      "milliseconds": 189.3
+    },
+    {
+      "line": "/drzewa cofnij",
+      "ok": true,
+      "text": "Cofanie ostatniego pokazu drzew…",
+      "messages": [
+        {
+          "text": "Cofnięto pokaz drzew: 3279 bloków.",
+          "kind": "success"
+        }
+      ],
+      "milliseconds": 105.7
+    },
+    {
+      "line": "/drzewa las sosna 36 12345",
+      "ok": true,
+      "text": "Przygotowuję las przed tobą (seed 12345). Wynik pojawi się na czacie.",
+      "messages": [
+        {
+          "text": "Pokaz drzew gotowy: 36 drzew, seed 12345.\n1. sosna 1 (59%) — -213 17 -11\n2. sosna 2 (26%) — -194 17 -11\n3. sosna 3 (57%) — -169 17 -14\n4. sosna 4 (70%) — -147 17 -15\n5. sosna 5 (82%) — -128 17 -11\n6. sosna 6 (83%) — -105 17 -14\n7. sosna 7 (46%) — -216 17 -31\n8. sosna 8 (42%) — -192 17 -31\n9. sosna 9 (48%) — -171 17 -37\n10. sosna 10 (85%) — -153 17 -35\n11. sosna 11 (95%) — -127 17 -35\n12. sosna 12 (67%) — -106 17 -37\n13. sosna 13 (41%) — -216 17 -54\n14. sosna 14 (28%) — -192 17 -55\n15. sosna 15 (32%) — -172 17 -59\n16. sosna 16 (54%) — -152 17 -58\n17. sosna 17 (49%) — -128 17 -53\n18. sosna 18 (44%) — -103 17 -58\n19. sosna 19 (60%) — -215 17 -76\n20. sosna 20 (39%) — -192 17 -81\n21. sosna 21 (97%) — -173 17 -80\n22. sosna 22 (63%) — -147 17 -81\n23. sosna 23 (73%) — -127 17 -79\n24. sosna 24 (98%) — -103 17 -80\n25. sosna 25 (39%) — -216 17 -99\n26. sosna 26 (33%) — -191 17 -100\n27. sosna 27 (53%) — -173 17 -98\n28. sosna 28 (97%) — -148 17 -99\n29. sosna 29 (33%) — -127 17 -101\n30. sosna 30 (73%) — -103 17 -97\n31. sosna 31 (28%) — -214 17 -121\n32. sosna 32 (71%) — -195 17 -119\n33. sosna 33 (68%) — -175 17 -121\n34. sosna 34 (86%) — -149 17 -125\n35. sosna 35 (96%) — -126 17 -121\n36. sosna 36 (90%) — -106 17 -123\nPozycje: /drzewa ostatnie. Cofnięcie ostatniego pokazu w tej sesji: /drzewa cofnij.",
+          "kind": "success"
+        }
+      ],
+      "milliseconds": 304.1
+    },
+    {
+      "line": "/drzewa cofnij",
+      "ok": true,
+      "text": "Cofanie ostatniego pokazu drzew…",
+      "messages": [
+        {
+          "text": "Cofnięto pokaz drzew: 6973 bloków.",
+          "kind": "success"
+        }
+      ],
+      "milliseconds": 140.3
+    }
+  ],
+  "captures": [
+    {
+      "name": "comparison",
+      "command": "/drzewa porownanie 12345",
+      "changes": {
+        "count": 2325,
+        "hash": 2049810247,
+        "bounds": {
+          "minX": -237,
+          "minY": 17,
+          "minZ": -17,
+          "maxX": -84,
+          "maxY": 37,
+          "maxZ": -6
+        },
+        "species": {
+          "spruce": 273,
+          "pine": 164,
+          "beech": 235,
+          "linden": 219,
+          "oak": 286,
+          "birch": 75,
+          "jablon": 191,
+          "olcha": 266,
+          "wierzba": 616
+        },
+        "types": {
+          "spruce_log": 17,
+          "spruce_leaves": 256,
+          "pine_log": 8,
+          "pine_log_upper": 19,
+          "pine_leaves": 137,
+          "beech_leaf_litter": 14,
+          "beech_log": 21,
+          "beech_leaves": 200,
+          "linden_log": 15,
+          "linden_leaves": 158,
+          "linden_leaves_flowering": 46,
+          "oak_leaves": 236,
+          "oak_leaf_litter": 14,
+          "oak_log": 36,
+          "birch_leaves": 60,
+          "birch_log": 15,
+          "jablon_leaves_jablka": 20,
+          "jablon_leaves": 149,
+          "jablon_leaf_litter": 6,
+          "jablon_log": 16,
+          "olcha_leaf_litter": 8,
+          "olcha_log": 21,
+          "olcha_leaves": 237,
+          "wierzba_leaf_litter": 6,
+          "wierzba_leaves": 589,
+          "wierzba_log": 21
+        }
+      },
+      "drawCalls": 1,
+      "triangles": 1,
+      "eye": [
+        -160.5,
+        47.71,
+        65
+      ],
+      "target": [
+        -160.5,
+        23,
+        -11.5
+      ],
+      "specimens": [
+        {
+          "species": "spruce",
+          "label": "Świerk pospolity",
+          "x": -233,
+          "y": 17,
+          "z": -12
+        },
+        {
+          "species": "pine",
+          "label": "Sosna zwyczajna",
+          "x": -215,
+          "y": 17,
+          "z": -12
+        },
+        {
+          "species": "beech",
+          "label": "Buk zwyczajny",
+          "x": -197,
+          "y": 17,
+          "z": -12
+        },
+        {
+          "species": "linden",
+          "label": "Lipa drobnolistna",
+          "x": -179,
+          "y": 17,
+          "z": -12
+        },
+        {
+          "species": "oak",
+          "label": "Dąb szypułkowy",
+          "x": -161,
+          "y": 17,
+          "z": -12
+        },
+        {
+          "species": "birch",
+          "label": "Brzoza brodawkowata",
+          "x": -143,
+          "y": 17,
+          "z": -12
+        },
+        {
+          "species": "jablon",
+          "label": "Jabłoń domowa",
+          "x": -125,
+          "y": 17,
+          "z": -12
+        },
+        {
+          "species": "olcha",
+          "label": "Olcha czarna",
+          "x": -107,
+          "y": 17,
+          "z": -12
+        },
+        {
+          "species": "wierzba",
+          "label": "Wierzba biała",
+          "x": -89,
+          "y": 17,
+          "z": -12
+        }
+      ]
+    },
+    {
+      "name": "pine-forest",
+      "command": "/drzewa las sosna 16 12345",
+      "changes": {
+        "count": 3196,
+        "hash": 3197973088,
+        "bounds": {
+          "minX": -199,
+          "minY": 17,
+          "minZ": -85,
+          "maxX": -120,
+          "maxY": 39,
+          "maxZ": -6
+        },
+        "species": {
+          "pine": 3196
+        },
+        "types": {
+          "pine_leaves": 2700,
+          "pine_log": 117,
+          "pine_log_upper": 366,
+          "pine_log_resin": 13
+        }
+      },
+      "drawCalls": 1,
+      "triangles": 1,
+      "eye": [
+        -146.86,
+        65.07,
+        29.549999999999997
+      ],
+      "target": [
+        -159.5,
+        23.6,
+        -45.5
+      ],
+      "specimens": [
+        {
+          "species": "pine",
+          "label": "sosna 1 (59%)",
+          "x": -191,
+          "y": 17,
+          "z": -11
+        },
+        {
+          "species": "pine",
+          "label": "sosna 2 (26%)",
+          "x": -172,
+          "y": 17,
+          "z": -11
+        },
+        {
+          "species": "pine",
+          "label": "sosna 3 (57%)",
+          "x": -147,
+          "y": 17,
+          "z": -14
+        },
+        {
+          "species": "pine",
+          "label": "sosna 4 (70%)",
+          "x": -125,
+          "y": 17,
+          "z": -15
+        },
+        {
+          "species": "pine",
+          "label": "sosna 5 (82%)",
+          "x": -194,
+          "y": 17,
+          "z": -33
+        },
+        {
+          "species": "pine",
+          "label": "sosna 6 (83%)",
+          "x": -171,
+          "y": 17,
+          "z": -36
+        },
+        {
+          "species": "pine",
+          "label": "sosna 7 (46%)",
+          "x": -150,
+          "y": 17,
+          "z": -31
+        },
+        {
+          "species": "pine",
+          "label": "sosna 8 (42%)",
+          "x": -126,
+          "y": 17,
+          "z": -31
+        },
+        {
+          "species": "pine",
+          "label": "sosna 9 (48%)",
+          "x": -193,
+          "y": 17,
+          "z": -59
+        },
+        {
+          "species": "pine",
+          "label": "sosna 10 (85%)",
+          "x": -175,
+          "y": 17,
+          "z": -57
+        },
+        {
+          "species": "pine",
+          "label": "sosna 11 (95%)",
+          "x": -149,
+          "y": 17,
+          "z": -57
+        },
+        {
+          "species": "pine",
+          "label": "sosna 12 (67%)",
+          "x": -128,
+          "y": 17,
+          "z": -59
+        },
+        {
+          "species": "pine",
+          "label": "sosna 13 (41%)",
+          "x": -194,
+          "y": 17,
+          "z": -76
+        },
+        {
+          "species": "pine",
+          "label": "sosna 14 (28%)",
+          "x": -170,
+          "y": 17,
+          "z": -77
+        },
+        {
+          "species": "pine",
+          "label": "sosna 15 (32%)",
+          "x": -150,
+          "y": 17,
+          "z": -81
+        },
+        {
+          "species": "pine",
+          "label": "sosna 16 (54%)",
+          "x": -130,
+          "y": 17,
+          "z": -80
+        }
+      ]
+    },
+    {
+      "name": "apple-variants",
+      "command": "/drzewa warianty jablon 12345",
+      "changes": {
+        "count": 1005,
+        "hash": 1050461108,
+        "bounds": {
+          "minX": -181,
+          "minY": 17,
+          "minZ": -52,
+          "maxX": -139,
+          "maxY": 24,
+          "maxZ": -8
+        },
+        "species": {
+          "jablon": 1005
+        },
+        "types": {
+          "jablon_leaves": 807,
+          "jablon_leaves_jablka_growing": 36,
+          "jablon_log": 90,
+          "jablon_leaf_litter": 36,
+          "jablon_leaves_jablka": 36
+        }
+      },
+      "drawCalls": 1,
+      "triangles": 1,
+      "eye": [
+        -152.96,
+        38.52,
+        11.799999999999997
+      ],
+      "target": [
+        -160,
+        19.1,
+        -30
+      ],
+      "specimens": [
+        {
+          "species": "jablon",
+          "label": "jabłoń: zwykłe, szablon 1/3",
+          "x": -179,
+          "y": 17,
+          "z": -12
+        },
+        {
+          "species": "jablon",
+          "label": "jabłoń: zwykłe, szablon 2/3",
+          "x": -161,
+          "y": 17,
+          "z": -12
+        },
+        {
+          "species": "jablon",
+          "label": "jabłoń: zwykłe, szablon 3/3",
+          "x": -143,
+          "y": 17,
+          "z": -12
+        },
+        {
+          "species": "jablon",
+          "label": "jabłoń: Liście jabłoni z jabłkami, szablon 1/3",
+          "x": -179,
+          "y": 17,
+          "z": -30
+        },
+        {
+          "species": "jablon",
+          "label": "jabłoń: Liście jabłoni z jabłkami, szablon 2/3",
+          "x": -161,
+          "y": 17,
+          "z": -30
+        },
+        {
+          "species": "jablon",
+          "label": "jabłoń: Liście jabłoni z jabłkami, szablon 3/3",
+          "x": -143,
+          "y": 17,
+          "z": -30
+        },
+        {
+          "species": "jablon",
+          "label": "jabłoń: Liście jabłoni (jabłka odrastają), szablon 1/3",
+          "x": -179,
+          "y": 17,
+          "z": -48
+        },
+        {
+          "species": "jablon",
+          "label": "jabłoń: Liście jabłoni (jabłka odrastają), szablon 2/3",
+          "x": -161,
+          "y": 17,
+          "z": -48
+        },
+        {
+          "species": "jablon",
+          "label": "jabłoń: Liście jabłoni (jabłka odrastają), szablon 3/3",
+          "x": -143,
+          "y": 17,
+          "z": -48
+        }
+      ]
+    },
+    {
+      "name": "linden-variants",
+      "command": "/drzewa warianty lipa 12345",
+      "changes": {
+        "count": 1872,
+        "hash": 2034646203,
+        "bounds": {
+          "minX": -199,
+          "minY": 17,
+          "minZ": -33,
+          "maxX": -122,
+          "maxY": 33,
+          "maxZ": -9
+        },
+        "species": {
+          "linden": 1872
+        },
+        "types": {
+          "linden_log": 142,
+          "linden_leaves": 1393,
+          "linden_leaves_flowering": 337
+        }
+      },
+      "drawCalls": 1,
+      "triangles": 1,
+      "eye": [
+        -148.18,
+        58.41,
+        52.14999999999999
+      ],
+      "target": [
+        -160.5,
+        21.8,
+        -21
+      ],
+      "specimens": [
+        {
+          "species": "linden",
+          "label": "lipa: zwykłe, 0%",
+          "x": -197,
+          "y": 17,
+          "z": -12
+        },
+        {
+          "species": "linden",
+          "label": "lipa: zwykłe, 25%",
+          "x": -179,
+          "y": 17,
+          "z": -12
+        },
+        {
+          "species": "linden",
+          "label": "lipa: zwykłe, 50%",
+          "x": -161,
+          "y": 17,
+          "z": -12
+        },
+        {
+          "species": "linden",
+          "label": "lipa: zwykłe, 75%",
+          "x": -143,
+          "y": 17,
+          "z": -12
+        },
+        {
+          "species": "linden",
+          "label": "lipa: zwykłe, 100%",
+          "x": -125,
+          "y": 17,
+          "z": -12
+        },
+        {
+          "species": "linden",
+          "label": "lipa: kwitnąca, 0%",
+          "x": -197,
+          "y": 17,
+          "z": -30
+        },
+        {
+          "species": "linden",
+          "label": "lipa: kwitnąca, 25%",
+          "x": -179,
+          "y": 17,
+          "z": -30
+        },
+        {
+          "species": "linden",
+          "label": "lipa: kwitnąca, 50%",
+          "x": -161,
+          "y": 17,
+          "z": -30
+        },
+        {
+          "species": "linden",
+          "label": "lipa: kwitnąca, 75%",
+          "x": -143,
+          "y": 17,
+          "z": -30
+        },
+        {
+          "species": "linden",
+          "label": "lipa: kwitnąca, 100%",
+          "x": -125,
+          "y": 17,
+          "z": -30
+        }
+      ]
+    }
+  ],
+  "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+  "resolution": [
+    1280,
+    800
+  ],
+  "syntheticWorld": true,
+  "hardwarePerformanceMeasurement": false,
+  "leafModel": "parts",
+  "species": [
+    {
+      "id": "spruce",
+      "name": "Świerk pospolity"
+    },
+    {
+      "id": "pine",
+      "name": "Sosna zwyczajna"
+    },
+    {
+      "id": "beech",
+      "name": "Buk zwyczajny"
+    },
+    {
+      "id": "linden",
+      "name": "Lipa drobnolistna"
+    },
+    {
+      "id": "oak",
+      "name": "Dąb szypułkowy"
+    },
+    {
+      "id": "birch",
+      "name": "Brzoza brodawkowata"
+    },
+    {
+      "id": "jablon",
+      "name": "Jabłoń domowa"
+    },
+    {
+      "id": "olcha",
+      "name": "Olcha czarna"
+    },
+    {
+      "id": "wierzba",
+      "name": "Wierzba biała"
+    }
+  ],
+  "source": {
+    "sha256": "4436c4dd51e25217b039c6604c45873bc82f44036145690d06d24e820a6cbc5c",
+    "files": 214
+  },
+  "version": "0.78.0",
+  "nativeElectron": false
+}

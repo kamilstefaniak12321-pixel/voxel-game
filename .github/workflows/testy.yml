@@ -46,6 +46,9 @@ jobs:
         with:
           node-version: 24
       - run: npm test
+      - name: Losowe lasy, warianty i porównanie drzew w grze
+        timeout-minutes: 3
+        run: node tools/sprawdz_pokaz_drzew_webgl.mjs
       - name: Tratwa, sterowanie i spływ wodospadem w prawdziwej grze
         timeout-minutes: 3
         run: node tools/sprawdz_tratwe_webgl.mjs
@@ -88,6 +91,7 @@ jobs:
         with:
           name: testy-gry
           path: |
+            test-results/tree-showcase/
             test-results/rafts/
             test-results/river-swimming/
             test-results/waterfall-ripples/

@@ -106,6 +106,7 @@ import { TREE_PACKS, TREE_PACK_ERRORS, PACK_ID_SLOTS } from '../blocks/treePacks
 import { PLANT_PACKS, PLANT_PACK_ERRORS, PLANT_PIXELS, plantStageType, getPlantPack } from '../blocks/plantPacks.js';
 
 import { plantTree } from '../world/trees/plantTree.js';
+import { startTreeShowcase, getTreeShowcase, undoTreeShowcase } from '../world/trees/TreeShowcase.js';
 
 import { LOD_LEGEND } from '../world/FarTerrain.js';
 
@@ -958,6 +959,90 @@ function treeSpecies(word) {
 function treeName(species) {
 
     return TREE_SPECIES[species].short;
+
+}
+
+
+function treeCatalogText() {
+
+    return [
+        `Gatunki drzew (${TREE_NAMES.length}):`,
+        ...TREE_NAMES.map((name) => `${simplify(TREE_SPECIES[name].short)} — ${TREE_SPECIES[name].species[0]}`),
+        'Losowy las: /drzewa las sosna 16. Warianty: /drzewa warianty sosna. Wszystkie gatunki: /drzewa porownanie.',
+        'Na końcu możesz podać seed, np. /drzewa las sosna 16 12345. Te same parametry odtwarzają ten sam zestaw.',
+        'Warianty pokazują dostępne szablony, rozmiary i stany specjalne. Kształty proceduralne mają wiele losowych odmian.'
+    ].join('\n');
+
+}
+
+
+function treeShowcaseInteger(value, label, min, max, fallback) {
+
+    if (value === undefined) return fallback;
+    const number = parseNumber(value, label);
+    if (!Number.isInteger(number) || number < min || number > max) {
+        throw new CommandError(`${label}: liczba całkowita od ${min} do ${max}.`);
+    }
+    return number;
+
+}
+
+
+function treeShowcaseText(job) {
+
+    if (!job) return 'Nie ma jeszcze pokazu drzew w tej sesji. Zacznij od /drzewa lista.';
+    if (job.phase === 'failed') return `Pokaz przerwany: ${job.error}. Ukończoną część możesz usunąć przez /drzewa cofnij.`;
+    if (job.phase !== 'complete') {
+        const phase = { preparing: 'sprawdzanie miejsca', planting: 'sadzenie drzew', undoing: 'cofanie zmian' }[job.phase] ?? 'praca w toku';
+        return `Pokaz drzew: ${phase}. Poczekaj na wynik na czacie.`;
+    }
+    return [
+        `Pokaz drzew gotowy: ${job.placed.length} drzew, seed ${job.plan.seed}` +
+            (job.skipped.length ? `, pominięto ${job.skipped.length} zajętych miejsc.` : '.'),
+        ...job.placed.map((tree, index) => `${index + 1}. ${tree.label} — ${tree.x} ${tree.y} ${tree.z}`),
+        'Pozycje: /drzewa ostatnie. Cofnięcie ostatniego pokazu w tej sesji: /drzewa cofnij.'
+    ].join('\n');
+
+}
+
+
+function runTreeShowcase(args, { world, player, chat }) {
+
+    const word = simplify(args[0]);
+    if (word === 'ostatnie') {
+        if (args.length !== 1) throw new CommandError('Użycie: /drzewa ostatnie');
+        return treeShowcaseText(getTreeShowcase(world));
+    }
+    if (word === 'cofnij') {
+        if (args.length !== 1) throw new CommandError('Użycie: /drzewa cofnij');
+        undoTreeShowcase(world)
+            .then(({ restored, skipped }) => chat?.print(
+                `Cofnięto pokaz drzew: ${restored} bloków.` +
+                (skipped ? ` Zachowano ${skipped} bloków zmienionych później.` : ''), 'success'))
+            .catch((error) => chat?.print(error.message, 'error'));
+        return 'Cofanie ostatniego pokazu drzew…';
+    }
+
+    const mode = { las: 'forest', warianty: 'variants', porownanie: 'comparison' }[word];
+    const expected = mode === 'forest' ? 4 : mode === 'variants' ? 3 : 2;
+    if (args.length > expected) throw new CommandError(`Za dużo argumentów. Pomoc: /pomoc drzewa.`);
+    const species = mode === 'comparison' ? undefined : treeSpecies(args[1]);
+    const count = mode === 'forest' ? treeShowcaseInteger(args[2], 'Liczba drzew', 1, 36, 16) : undefined;
+    const seed = treeShowcaseInteger(args[expected - 1], 'Seed', 0, 4294967295, (Math.random() * 4294967296) >>> 0);
+    const axes = lookAxes(player);
+    let job;
+    try {
+        job = startTreeShowcase(world, {
+            mode, species, count, seed,
+            origin: { x: Math.floor(player.pos.x) + axes.forwardX * 12, z: Math.floor(player.pos.z) + axes.forwardZ * 12 },
+            axes
+        });
+    } catch (error) {
+        throw new CommandError(error.message);
+    }
+    job.promise.then((result) => chat?.print(treeShowcaseText(result), 'success'))
+        .catch((error) => chat?.print(error.message, 'error'));
+    return `Przygotowuję ${mode === 'forest' ? 'las' : mode === 'variants' ? 'warianty drzewa' : 'porównanie gatunków'} przed tobą (seed ${seed}). Wynik pojawi się na czacie.`;
 
 }
 
@@ -3728,14 +3813,23 @@ export const GAME_COMMANDS = [
     {
         name: 'drzewa',
         aliases: ['drzewo', 'trees', 'tree', 'las'],
-        usage: '/drzewa | /drzewa posadz <gatunek> [rozmiar 0-100] | /drzewa aleja | /drzewa znajdz <gatunek> [tp] | /drzewa rosnij | /drzewa tempo <0-500> | /drzewa paczki',
-        description: 'Drzewa (świerk, sosna, buk, lipa, dąb, brzoza i drzewa z paczek): jakie rosną w okolicy, drzewo przed tobą (posadz), wszystkie gatunki w rzędzie (aleja), najbliższe drzewo gatunku (znajdz), sadzonki rosną od razu (rosnij) albo szybciej (tempo), paczki drzew i ich błędy (paczki).',
+        usage: '/drzewa lista | /drzewa las <gatunek> [liczba 1-36] [seed] | /drzewa warianty <gatunek> [seed] | /drzewa porownanie [seed] | /drzewa ostatnie | /drzewa cofnij | /drzewa posadz <gatunek> [rozmiar 0-100] | /drzewa aleja | /drzewa znajdz <gatunek> [tp] | /drzewa rosnij | /drzewa tempo <0-500> | /drzewa paczki',
+        description: 'Lista gatunków, losowy las jednego gatunku (domyślnie 16 drzew), pokaz rozmiarów i stanów specjalnych, wszystkie gatunki obok siebie. Pokazy sadzą na wolnej ziemi przed graczem; nie wycinają istniejących drzew ani budowli. Najwygodniej oglądać na płaskiej trawie obok placu testowego. Seed odtwarza zestaw, ostatnie przypomina pozycje, cofnij usuwa ostatni pokaz w tej sesji. Pozostałe opcje: pojedyncze drzewo, aleja, wyszukiwanie, wzrost, paczki.',
 
-        run(args, { game, player, world }) {
+        run(args, { game, player, world, chat }) {
 
             const word = simplify(args[0] ?? '');
 
             const growth = game.plantGrowth;
+
+            if (word === 'lista') {
+                if (args.length !== 1) throw new CommandError('Użycie: /drzewa lista');
+                return treeCatalogText();
+            }
+
+            if (['las', 'warianty', 'porownanie', 'ostatnie', 'cofnij'].includes(word)) {
+                return runTreeShowcase(args, { world, player, chat });
+            }
 
 
             if (['posadz', 'plant', 'wyhoduj', 'postaw'].includes(word) || TREE_WORDS[word]) {
@@ -3886,8 +3980,12 @@ export const GAME_COMMANDS = [
 
             const species = TREE_NAMES.map((name) => simplify(TREE_SPECIES[name].short));
 
-            if (args.length === 1) return ['posadz', 'aleja', 'znajdz', 'rosnij', 'tempo', 'paczki', ...species];
-            if (args.length === 2 && ['posadz', 'znajdz'].includes(simplify(args[0]))) return species;
+            if (args.length === 1) return ['lista', 'las', 'warianty', 'porownanie', 'ostatnie', 'cofnij', 'posadz', 'aleja', 'znajdz', 'rosnij', 'tempo', 'paczki', ...species];
+            if (args.length === 2 && ['las', 'warianty', 'posadz', 'znajdz'].includes(simplify(args[0]))) return species;
+            if (args.length === 3 && simplify(args[0]) === 'las') return ['9', '16', '25', '36'];
+            if ((args.length === 4 && simplify(args[0]) === 'las') ||
+                (args.length === 3 && simplify(args[0]) === 'warianty') ||
+                (args.length === 2 && simplify(args[0]) === 'porownanie')) return ['12345'];
             if (args.length === 3 && simplify(args[0]) === 'znajdz') return ['tp'];
             if (args.length === 3 && simplify(args[0]) === 'posadz') return ['20', '60', '100'];
             if (args.length === 2 && simplify(args[0]) === 'tempo') return ['1', '10', '60'];

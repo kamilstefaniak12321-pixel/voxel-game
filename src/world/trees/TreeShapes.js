@@ -387,12 +387,24 @@ function pine(tree, size) {
 
     // Żywica: jeden albo dwa bloki nisko na pniu.
 
+    // Pień już istnieje. Zmieniamy tylko jego korę: tree.log() chroni
+    // istniejący pień przed nadpisaniem przez blok o tej samej sile.
+    const resinAt = (y) => {
+
+        const cell = tree.cells.get(tree.key(0, y, 0));
+
+        if (cell?.[3] === 'pine_log' || cell?.[3] === 'pine_log_upper') {
+            cell[3] = 'pine_log_resin';
+        }
+
+    };
+
     if (random() < 0.4) {
 
-        tree.log(0, 1 + Math.floor(random() * 3), 0, 'pine_log_resin');
+        resinAt(1 + Math.floor(random() * 3));
 
         if (random() < 0.3) {
-            tree.log(0, 4 + Math.floor(random() * 2), 0, 'pine_log_resin');
+            resinAt(4 + Math.floor(random() * 2));
         }
 
     }

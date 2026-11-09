@@ -1,10 +1,23 @@
 # Drzewa
 
-Sześć gatunków drzew z koncepcji Kamila: **świerk pospolity**, **sosna
-zwyczajna**, **buk zwyczajny**, **lipa drobnolistna**, **dąb szypułkowy**
-i **brzoza brodawkowata**. Każdy ma swoje bloki, dodatki, wygląd w świecie
-i miejsca, w których rośnie. To pierwszy kawałek etapu 4 (biomy) z
-`docs/generator-terenu.md` - same drzewa i lasy, jeszcze bez biomów.
+Gra ma **dziewięć gatunków drzew**. Sześć podstawowych powstaje
+proceduralnie, a trzy kolejne korzystają z paczek z szablonami.
+Każdy ma własne bloki, wygląd i zasady występowania w świecie.
+
+| Gatunek | Nazwa do komendy |
+|---|---|
+| Świerk pospolity | `swierk` (także `spruce`) |
+| Sosna zwyczajna | `sosna` (także `pine`) |
+| Buk zwyczajny | `buk` (także `beech`) |
+| Lipa drobnolistna | `lipa` (także `linden`) |
+| Dąb szypułkowy | `dab` (także `oak`) |
+| Brzoza brodawkowata | `brzoza` (także `birch`) |
+| Jabłoń domowa | `jablon` |
+| Olcha czarna | `olcha` |
+| Wierzba biała | `wierzba` |
+
+Polskie znaki też działają (`dąb`, `jabłoń`, `świerk`). Leszczyna
+jest obecnie krzewem owocowym, opisanym w osobnym systemie krzaków.
 
 Nowe gatunki można dodawać **bez programowania** - jako paczki drzew
 w `assets/drzewa/` (przykład: jabłoń). Instrukcja krok po kroku:
@@ -13,6 +26,47 @@ w `assets/drzewa/` (przykład: jabłoń). Instrukcja krok po kroku:
 ![Drzewa w grze](drzewa-galeria.jpg)
 
 ![Bloki i dodatki drzew](drzewa-bloki.png)
+
+## Oglądanie drzew — od 0.78.0
+
+Otwórz czat klawiszem **T** albo **/**. Trzy tryby pokazu:
+
+```text
+/drzewa las sosna 16 12345
+/drzewa warianty sosna 12345
+/drzewa porownanie 12345
+```
+
+- **las** sadzi wybrany gatunek w losowym układzie, z różnymi rozmiarami
+  i kształtami. Liczba drzew: 1–36, domyślnie 16. Zajęte miejsca omija
+  i podaje liczbę faktycznie posadzonych drzew.
+- **warianty** pokazuje rozmiary i stany specjalne gatunku w rzędach:
+  sosny z żywicą i bez, lipy kwitnące i zwykłe, jabłonie z owocami,
+  bez owoców i po zbiorze. Jabłoń, olcha i wierzba mają po trzy
+  szablony wielkości; gatunki proceduralne pokazujemy w pięciu rozmiarach.
+- **porownanie** sadzi wszystkie dziewięć gatunków obok siebie.
+
+Ostatni argument to opcjonalny **seed pokazu** (0–4294967295).
+Bez niego komenda losuje nowy zestaw; z nim można odtworzyć te same
+drzewa i ich rozstaw. Seed pokazu jest niezależny od seeda świata.
+Różny teren może zmienić wysokość posadzenia i dostępność miejsc.
+Kształty proceduralne nie mają zamkniętej listy wszystkich możliwych
+odmian — zmiana seeda pozwala oglądać kolejne sylwetki.
+
+Pokaz powstaje **przed graczem, na istniejącej ziemi**, bez wycinania
+drzew i budowli. Dla równego porównania najlepiej utworzyć osobny
+świat w trybie programisty i odejść na **trawę obok centralnego placu**
+(na jego posadzce drzewa nie rosną). Galeria wariantów
+i porównanie wymagają miejsca na wszystkie egzemplarze; gdy przeszkadza
+istniejący blok albo limit wysokości, komenda podaje problem, zanim
+zacznie sadzić. Duży las powstaje partiami, a wynik pojawia się na czacie.
+
+`/drzewa lista` wypisuje aktualny katalog, a `/drzewa ostatnie`
+przypomina nazwy i współrzędne okazów ostatniego pokazu.
+`/drzewa cofnij` cofa ostatni pokaz **w bieżącej sesji świata**,
+zachowując bloki zmienione później przez gracza. Kolejny udany pokaz
+zastępuje poprzednią możliwość cofnięcia. Same posadzone drzewa są
+zwykłymi blokami świata i trafiają do zapisu.
 
 ## Bloki
 
@@ -167,7 +221,13 @@ ziemi (nie na koronie). Meteoryt zmiata drzewa nad kraterem.
 | `/drzewa` | ile drzew rośnie w okolicy (gatunki), las w miejscu gracza |
 | `/drzewa posadz <gatunek> [0-100]` | drzewo 5 bloków przed tobą (rozmiar 0 - małe, 100 - duże) |
 | `/drzewa <gatunek>` | to samo, krócej - np. `/drzewa dab` |
-| `/drzewa aleja` | wszystkie sześć gatunków w rzędzie przed tobą |
+| `/drzewa lista` | wszystkie gatunki i pomoc do nowych pokazów |
+| `/drzewa las <gatunek> [1-36] [seed]` | losowy las jednego gatunku, domyślnie 16 drzew |
+| `/drzewa warianty <gatunek> [seed]` | rozmiary, szablony i stany specjalne gatunku |
+| `/drzewa porownanie [seed]` | wszystkie gatunki obok siebie, z kontrolą wolnego miejsca |
+| `/drzewa ostatnie` | nazwy i pozycje okazów ostatniego pokazu |
+| `/drzewa cofnij` | cofa ostatni nowy pokaz w bieżącej sesji |
+| `/drzewa aleja` | starsza komenda sadząca wszystkie gatunki w rzędzie, co 12 bloków |
 | `/drzewa znajdz <gatunek> [tp]` | najbliższe drzewo gatunku w świecie (tp - przeniesienie pod nie) |
 | `/drzewa rosnij` | sadzonki do 64 bloków od ciebie rosną od razu |
 | `/drzewa tempo <0-500>` | szybszy wzrost (to samo co `/krzaki tempo`) |

@@ -5,6 +5,7 @@ import { Campfires } from './Campfires.js';
 import { dyeTorch } from './TorchInteraction.js';
 import { TorchRenderer } from '../rendering/TorchRenderer.js';
 import { World } from '../world/World.js';
+import { waitForTreeShowcase } from '../world/trees/TreeShowcase.js';
 import { Player } from '../player/Player.js';
 import { VoxelRaycast } from '../interaction/VoxelRaycast.js';
 import { BlockHighlight } from '../interaction/BlockHighlight.js';
@@ -2666,6 +2667,10 @@ export class Game {
     // Po udanym stop() tego obiektu nie da się już używać.
 
     async stop({ save = true } = {}) {
+
+        // A tree command writes over several frames. Finish before the final
+        // snapshot so leaving the world cannot save a half-built specimen.
+        await waitForTreeShowcase(this.world);
 
         if (save && !(await this.saver.flush())) {
             return false;

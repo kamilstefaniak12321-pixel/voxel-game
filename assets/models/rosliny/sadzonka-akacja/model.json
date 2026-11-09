@@ -1,0 +1,27 @@
+{
+    "nazwa": "Sadzonka akacji",
+    "bloki": ["acacia_sapling"],
+    "kolory": {
+        "lisc": "#71913e",
+        "liscJasny": "#91ab5a",
+        "liscCiemny": "#526e2d",
+        "lodyga": "#75604b"
+    },
+    "etapy": [{
+        "prosty": null,
+        "polrealistyczny": {
+            "liscie": {
+                "uklad": "kopula", "ile": 9, "dlugosc": 5,
+                "promien": 4, "kopula": 9, "nachylenie": 25, "pien": true
+            }
+        },
+        "szczegolowy": {
+            "rodzaj": "kepka",
+            "liscie": {"uklad": "brak"},
+            "lodygi": {
+                "ile": [2, 3], "wysokosc": [7, 9], "promien": 1,
+                "liscie": {"co": 2, "dlugosc": [3, 5], "naprzeciw": true, "luk": true}
+            }
+        }
+    }]
+}

@@ -4,7 +4,7 @@ import {
     isPlantId, isReplaceableId, isSoilId
 } from '../../blocks/BlockRegistry.js';
 import { TREE_NAMES, TREE_SPECIES, packVariantType } from '../../blocks/trees.js';
-import { buildTree, seededRandom, TREE_REACH } from './TreeShapes.js';
+import { buildTree, seededRandom, treeShapeLimits } from './TreeShapes.js';
 
 // Arboretum uses exactly the same geometry as naturally generated trees.
 // Only the explicit state rows change leaves/resin; they keep the same seeds
@@ -95,9 +95,10 @@ export function createTreeShowcasePlan({ mode, species, count = 16, seed = 0 } =
 
     if (mode === 'forest') {
         const columns = Math.ceil(Math.sqrt(count));
+        const spacing = Math.max(22, treeShapeLimits(species).reach * 2 + 8);
         for (let i = 0; i < count; i++) {
-            const dx = Math.round((i % columns - (columns - 1) / 2) * 22) + Math.floor(random() * 7) - 3;
-            const dz = Math.floor(i / columns) * 22 + Math.floor(random() * 7) - 3;
+            const dx = Math.round((i % columns - (columns - 1) / 2) * spacing) + Math.floor(random() * 7) - 3;
+            const dz = Math.floor(i / columns) * spacing + Math.floor(random() * 7) - 3;
             const size = 0.2 + random() * 0.8;
             add(species, size, Math.floor(random() * 4294967296), dx, dz, null,
                 `${TREE_SPECIES[species].short} ${i + 1} (${Math.round(size * 100)}%)`);
@@ -105,20 +106,30 @@ export function createTreeShowcasePlan({ mode, species, count = 16, seed = 0 } =
     } else if (mode === 'comparison') {
         TREE_NAMES.forEach((name, index) => add(name, 0.75, Math.floor(random() * 4294967296),
             (index - (TREE_NAMES.length - 1) / 2) * SPACING, 0, null, TREE_SPECIES[name].species[0]));
+        // Wider species need more room, while the existing trees retain their
+        // 18-block spacing. Centre the complete row in front of the player.
+        let offset = 0;
+        specimens.forEach((tree, index) => {
+            if (index) offset += Math.max(SPACING,
+                treeShapeLimits(specimens[index - 1].species).reach + treeShapeLimits(tree.species).reach + 4);
+            tree.dx = offset;
+        });
+        for (const tree of specimens) tree.dx -= Math.round(offset / 2);
     } else {
+        const spacing = Math.max(SPACING, treeShapeLimits(species).reach * 2 + 4);
         const templates = TREE_SPECIES[species].pack?.shape?.templates;
         const sizes = templates?.length ? templates.map((_, i) => templates.length === 1 ? 0.5 : i / (templates.length - 1))
             : [0, 0.25, 0.5, 0.75, 1];
         const seeds = sizes.map(() => Math.floor(random() * 4294967296));
         states(species).forEach((state, row) => sizes.forEach((size, column) => add(species, size, seeds[column],
-            (column - (sizes.length - 1) / 2) * SPACING, row * SPACING, state,
+            (column - (sizes.length - 1) / 2) * spacing, row * spacing, state,
             `${TREE_SPECIES[species].short}: ${state.label}, ${templates?.length ? `szablon ${column + 1}/${sizes.length}` : `${Math.round(size * 100)}%`}`)));
     }
     const bounds = {
-        minX: Math.min(...specimens.map((tree) => tree.dx)) - TREE_REACH - 1,
-        maxX: Math.max(...specimens.map((tree) => tree.dx)) + TREE_REACH + 1,
-        minZ: Math.min(...specimens.map((tree) => tree.dz)) - TREE_REACH - 1,
-        maxZ: Math.max(...specimens.map((tree) => tree.dz)) + TREE_REACH + 1
+        minX: Math.min(...specimens.map((tree) => tree.dx - treeShapeLimits(tree.species).reach - 1)),
+        maxX: Math.max(...specimens.map((tree) => tree.dx + treeShapeLimits(tree.species).reach + 1)),
+        minZ: Math.min(...specimens.map((tree) => tree.dz - treeShapeLimits(tree.species).reach - 1)),
+        maxZ: Math.max(...specimens.map((tree) => tree.dz + treeShapeLimits(tree.species).reach + 1))
     };
     return { mode, species, count: specimens.length, seed, specimens, bounds };
 }
@@ -247,8 +258,11 @@ async function runShowcase(world, job, position, isActive) {
         const { x, z } = position(specimen.dx, specimen.dz);
         // Include surrounding plants: setBlock can remove a plant obscured
         // by the new crown, even if the plant's cell is not a tree cell.
-        for (let dx = -TREE_REACH - 1; dx <= TREE_REACH + 1; dx += CHUNK_SIZE) {
-            for (let dz = -TREE_REACH - 1; dz <= TREE_REACH + 1; dz += CHUNK_SIZE) await load(x + dx, z + dz);
+        const reach = treeShapeLimits(specimen.species).reach + 1;
+        // Include every intersected chunk, also when a broad crown spans
+        // three chunks (sampling only corners used to miss the final edge).
+        for (let cx = Math.floor((x - reach) / CHUNK_SIZE); cx <= Math.floor((x + reach) / CHUNK_SIZE); cx++) {
+            for (let cz = Math.floor((z - reach) / CHUNK_SIZE); cz <= Math.floor((z + reach) / CHUNK_SIZE); cz++) await load(cx * CHUNK_SIZE, cz * CHUNK_SIZE);
         }
         await load(x, z);
         ensureLoaded(x, z);

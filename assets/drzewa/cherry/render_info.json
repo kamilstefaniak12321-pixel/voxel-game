@@ -1,0 +1,13 @@
+{
+ "height": 9.0,
+ "crown": 11.0,
+ "far": {
+  "dist": 19.0,
+  "fov": 55.0
+ },
+ "near": {
+  "fov": 96.43054443659308,
+  "cam_to_player": 5.5,
+  "player_to_trunk": 2.23606797749979
+ }
+}

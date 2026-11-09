@@ -9,7 +9,8 @@ export const CAMPFIRE_EMBER_SECONDS = 90;
 export const FIRE_WOODS = {
     oak: ['dąb', 'dab'], birch: ['brzoza', 'brzoza'], spruce: ['świerk', 'swierk'],
     pine: ['sosna', 'sosna'], beech: ['buk', 'buk'], linden: ['lipa', 'lipa'],
-    olcha: ['olcha', 'olcha'], wierzba: ['wierzba', 'wierzba'], jablon: ['jabłoń', 'jablon']
+    olcha: ['olcha', 'olcha'], wierzba: ['wierzba', 'wierzba'], jablon: ['jabłoń', 'jablon'],
+    acacia: ['akacja', 'akacja'], bald_cypress: ['cypryśnik', 'cyprysnik'], cherry: ['wiśnia', 'wisnia']
 };
 export const fuelType = wood => `${wood}_firewood`;
 export const fuelWood = type => Object.keys(FIRE_WOODS).find(wood => fuelType(wood) === type) ?? null;

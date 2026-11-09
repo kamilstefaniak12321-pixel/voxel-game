@@ -29,7 +29,7 @@ export async function run() {
         lightingModel: 'world', lightingLook: 'natural', viewBobbing: false, volumeMusic: 0,
         leafModel: 'parts', fancyLeaves: true, plantWind: false })) settings.set(key, value);
     const input = new Proxy({}, { get: (_, name) => name === 'consumeMouseDelta' ? () => ({ x: 0, y: 0 }) : () => 0 });
-    const info = createWorldInfo('Próba komend drzew 0.78.0', 42, 'flat', 'developer');
+    const info = createWorldInfo('Próba komend drzew', 42, 'flat', 'developer');
     const game = await Game.start(renderer, input, null, info, settings);
     game.camera.aspect = width / height; game.camera.updateProjectionMatrix();
     settings.onChange(key => game.applySettings(key));
@@ -109,7 +109,7 @@ export async function run() {
         check(changes().count === 0, `${line} leaves the world unchanged`);
     }
     const scenes = {
-        comparison: { command: '/drzewa porownanie 12345', label: 'Wszystkie gatunki — świerk, sosna, buk, lipa, dąb, brzoza, jabłoń, olcha, wierzba' },
+        comparison: { command: '/drzewa porownanie 12345', label: `Wszystkie gatunki — ${TREE_NAMES.map(name => TREE_SPECIES[name].short).join(', ')}` },
         'pine-forest': { command: '/drzewa las sosna 16 12345', label: 'Losowy las sosnowy — 16 drzew, stały seed 12345' },
         'apple-variants': { command: '/drzewa warianty jablon 12345', label: 'Jabłoń — trzy szablony, zwykłe liście, owoce i stan po zbiorze' },
         'linden-variants': { command: '/drzewa warianty lipa 12345', label: 'Lipa — rozmiary oraz liście zwykłe i kwitnące' }
@@ -121,7 +121,7 @@ export async function run() {
         await reset(); await command(scene.command);
         const state = changes();
         check(state.count > 0, `${name}: command creates real blocks`);
-        if (name === 'comparison') check(TREE_NAMES.every(species => state.species[species]), 'Comparison contains all nine registered tree species');
+        if (name === 'comparison') check(TREE_NAMES.every(species => state.species[species]), 'Comparison contains all registered tree species');
         if (name === 'pine-forest') {
             check(Object.keys(state.species).join() === 'pine', 'Pine forest contains only pine trees'); pineForest = state;
         }

@@ -325,8 +325,8 @@ def main():
     a = parser.parse_args()
 
     folder = a.folder
-    if not re.fullmatch(r'[a-z][a-z0-9]{1,23}', folder):
-        sys.exit('Nazwa folderu: same małe litery (bez polskich) i cyfry, bez spacji i _, np. grusza.')
+    if not re.fullmatch(r'[a-z][a-z0-9_]{1,23}', folder):
+        sys.exit('Nazwa folderu: małe litery (bez polskich), cyfry i _, bez spacji; pierwsza musi być literą, np. grusza.')
     if folder in RESERVED:
         sys.exit(f'Nazwa "{folder}" jest zajęta przez gatunek albo blok gry - wybierz inną.')
     path = os.path.join(DIR, folder)

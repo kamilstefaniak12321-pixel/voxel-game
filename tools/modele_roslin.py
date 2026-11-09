@@ -594,6 +594,10 @@ VANILLA = {
     'sadzonka-jablon': ('drzewny', 'klos', {'lisc': '#4e9a32', 'liscJasny': '#72ba4a', 'liscCiemny': '#317022', 'lodyga': '#6a4e3a'}),
     'sadzonka-olcha': ('drzewny', 'klos', {'lisc': '#3e7e2e', 'liscJasny': '#5e9e40', 'liscCiemny': '#265a1e', 'lodyga': '#5a4a40'}),
     'sadzonka-wierzba': ('waski', 'klos', {'lisc': '#7aa04a', 'liscJasny': '#9cbe66', 'liscCiemny': '#527430', 'lodyga': '#8a7a4a'}),
+    # Nowe gatunki zachowują paletę sadzonek z paczek drzew.
+    'sadzonka-akacja': ('pierzasty', 'klos', {'lisc': '#71913e', 'liscJasny': '#91ab5a', 'liscCiemny': '#526e2d', 'lodyga': '#75604b'}),
+    'sadzonka-cyprysnik': ('igly', 'klos', {'lisc': '#4b7e34', 'liscJasny': '#6b984c', 'liscCiemny': '#315726', 'lodyga': '#80674e'}),
+    'sadzonka-wisnia': ('drzewny', 'klos', {'lisc': '#da88a9', 'liscJasny': '#f2b4cf', 'liscCiemny': '#ac6086', 'lodyga': '#6e4e4b'}),
     # Rośliny nad wodą
     'turzyca': ('zdzblo', 'klos', {'lisc': '#668943', 'liscJasny': '#83a452', 'liscCiemny': '#456c37', 'lodyga': '#6a8142', 'kwiat': '#80914c'}),
     'palka': ('zdzblo', 'klos', {'lisc': '#668943', 'liscJasny': '#83a452', 'liscCiemny': '#456c37', 'lodyga': '#6a8142', 'kwiat': '#765037', 'kwiatJasny': '#9b7951', 'kwiatCiemny': '#4e3424'}),

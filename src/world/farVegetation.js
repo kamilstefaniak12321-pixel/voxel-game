@@ -1,6 +1,6 @@
 import { TREE_SPECIES } from '../blocks/trees.js';
 import { surfaceMaterialId } from '../rendering/SurfaceMaterials.js';
-import { seededRandom, TREE_REACH } from './trees/TreeShapes.js';
+import { seededRandom, treeShapeLimits, treeVisualDimensions } from './trees/TreeShapes.js';
 import { kindIndex, KINDS } from './farSamples.js';
 
 // Fixed world positions, not camera-facing cards. The same tree seed/species
@@ -20,7 +20,9 @@ export function treeSilhouette(tree, spacing) {
     const random = seededRandom(tree.seed), size = tree.size;
     const pack = TREE_SPECIES[tree.species]?.pack;
     const species = pack?.similar ?? tree.species;
-    if (pack?.shape?.templates) return templateSilhouette(tree, spacing, pack, random);
+    if (pack?.shape?.templates?.length) return templateSilhouette(tree, spacing, pack, random);
+    const dimensions = treeVisualDimensions(tree.species, size);
+    if (dimensions) return matureTreeSilhouette(tree, spacing, pack, dimensions);
     let height, radius, tall, crownBase, crownX = 0, crownZ = 0;
     if (species === 'spruce') {
         height = Math.round(lerp(10, 17, size) + random() * 2);
@@ -64,7 +66,7 @@ export function treeSilhouette(tree, spacing) {
     const push = (x0, y0, z0, x1, y1, z1, material, kind, shade = 1) => {
         boxes.push(Math.round(tree.x + x0), Math.round(tree.y + y0), Math.round(tree.z + z0),
             Math.round(tree.x + x1), Math.round(tree.y + y1), Math.round(tree.z + z1),
-            material, kind, tree.x, tree.z, TREE_REACH, shade);
+            material, kind, tree.x, tree.z, treeShapeLimits(tree.species).reach, shade);
     };
     const trunkWidth = species === 'oak' && size > .45 ? 2 : 1;
     push(0, -1, 0, trunkWidth, Math.max(height, crownBase + 1), trunkWidth, log, kindIndex('rock'));
@@ -81,6 +83,55 @@ export function treeSilhouette(tree, spacing) {
     return boxes;
 }
 
+// Mature species keep their actual height and crown diameter at each LOD.
+// Shared scale values cost a few arithmetic operations; distant tiles never
+// construct the thousands of individual blocks in a full tree.
+function matureTreeSilhouette(tree, spacing, pack, { height, radius, trunkWidth, crownBase }) {
+    const result = [], kind = pack.shape.kind;
+    const leaf = surfaceMaterialId(`${tree.species}_leaves`), log = surfaceMaterialId(`${tree.species}_log`);
+    const leafKind = kindIndex(`${pack.similar}_leaves`), reach = treeShapeLimits(tree.species).reach;
+    const append = (x0, y0, z0, x1, y1, z1, material, surfaceKind, shade = .95) => result.push(
+        tree.x + Math.round(x0), tree.y + Math.round(y0), tree.z + Math.round(z0),
+        tree.x + Math.round(x1), tree.y + Math.round(y1), tree.z + Math.round(z1),
+        material, surfaceKind, tree.x, tree.z, reach, shade);
+    const top = kind === 'bald_cypress' ? height - 1 : crownBase + 1;
+    append(0, 0, 0, trunkWidth, top, trunkWidth, log, kindIndex('rock'));
+    if (kind === 'bald_cypress') {
+        append(-1, 0, -1, trunkWidth + 1, Math.max(2, Math.round(height * .1)) + 1, trunkWidth + 1, log, kindIndex('rock'));
+        const layers = spacing <= 2 ? 6 : spacing <= 4 ? 4 : 2;
+        const bottom = crownBase - 1, tall = height - bottom;
+        for (let i = 0; i < layers; i++) {
+            const t = i / (layers - 1), r = Math.max(1, radius * (1 - .7 * t));
+            const y0 = bottom + t * (tall - 3);
+            // Layer gaps retain the characteristic light between branches.
+            const thickness = i === layers - 1 ? 3 : Math.max(2, tall / layers * .65);
+            append(-r, y0, -r, r + 1, Math.min(height, y0 + thickness), r + 1, leaf, leafKind, .92 + t * .06);
+        }
+    } else if (kind === 'acacia') {
+        const bottom = Math.max(2, height - 5);
+        if (spacing > 4) append(-radius, bottom + 1, -radius, radius + 1, height, radius + 1, leaf, leafKind);
+        else {
+            const r = radius * .55;
+            append(-r, bottom + 1, -r, r + 1, height, r + 1, leaf, leafKind);
+            const lobes = spacing <= 2 ? 4 : 2;
+            const phase = seededRandom(tree.seed)() * Math.PI * 2;
+            for (let i = 0; i < lobes; i++) {
+                const angle = phase + i * Math.PI * 2 / lobes;
+                const x = Math.cos(angle) * radius * .48, z = Math.sin(angle) * radius * .48;
+                append(x - r, bottom, z - r, x + r + 1, height - 1, z + r + 1, leaf, leafKind);
+            }
+        }
+    } else {
+        const layers = spacing <= 2 ? 3 : spacing <= 4 ? 2 : 1;
+        const bottom = Math.max(1, crownBase - 1), tall = height - bottom;
+        for (let i = 0; i < layers; i++) {
+            const r = radius * (layers === 1 ? .9 : i === 0 ? .85 : i === layers - 1 ? .7 : 1);
+            append(-r, bottom + i * tall / layers, -r, r + 1, bottom + (i + 1) * tall / layers, r + 1, leaf, leafKind);
+        }
+    }
+    return result;
+}
+
 function templateSilhouette(tree, spacing, pack, random) {
     const templates=pack.shape.templates;
     const source=templates[Math.min(templates.length-1,Math.floor(tree.size*templates.length))];
@@ -95,7 +146,7 @@ function templateSilhouette(tree, spacing, pack, random) {
     const bounds=cells=>[Math.min(...cells.map(c=>c[0])),Math.min(...cells.map(c=>c[1])),Math.min(...cells.map(c=>c[2])),
         Math.max(...cells.map(c=>c[0]))+1,Math.max(...cells.map(c=>c[1]))+1,Math.max(...cells.map(c=>c[2]))+1];
     const append=(b,material,kind)=>result.push(b[0]+tree.x,b[1]+tree.y,b[2]+tree.z,b[3]+tree.x,b[4]+tree.y,b[5]+tree.z,
-        material,kind,tree.x,tree.z,TREE_REACH,.95);
+        material,kind,tree.x,tree.z,treeShapeLimits(tree.species).reach,.95);
     if(logs.length) {
         const bottom=leaves.length?Math.min(...leaves.map(c=>c[1])):Infinity;
         append(bounds(logs.filter(c=>c[1]<=bottom)),surfaceMaterialId(`${tree.species}_log`),kindIndex('rock'));

@@ -1,0 +1,753 @@
+{
+  "checks": [
+    "Every tree texture pack loads without errors",
+    "Plant quality models load without errors",
+    "Registered species: acacia",
+    "Registered species: bald_cypress",
+    "Registered species: cherry",
+    "Actual player model is 1.8 blocks tall",
+    "Actual Game uses WebGL2",
+    "acacia: adult tree fits on real ground",
+    "acacia: every generated block is present across chunk borders",
+    "bald_cypress: adult tree fits on real ground",
+    "bald_cypress: every generated block is present across chunk borders",
+    "cherry: adult tree fits on real ground",
+    "cherry: every generated block is present across chunk borders",
+    "Adult bald cypress exceeds the old 28-block tree ceiling",
+    "Bald cypress visibly dwarfs the ornamental cherry",
+    "No WebGL error after rendering",
+    "All active shaders compiled",
+    "No game or console errors",
+    "No WebGL error after rendering",
+    "All active shaders compiled",
+    "No game or console errors",
+    "No WebGL error after rendering",
+    "All active shaders compiled",
+    "No game or console errors",
+    "No WebGL error after rendering",
+    "All active shaders compiled",
+    "No game or console errors",
+    "No WebGL error after rendering",
+    "All active shaders compiled",
+    "No game or console errors",
+    "No WebGL error after rendering",
+    "All active shaders compiled",
+    "No game or console errors",
+    "No WebGL error after rendering",
+    "All active shaders compiled",
+    "No game or console errors",
+    "No WebGL error after rendering",
+    "All active shaders compiled",
+    "No game or console errors",
+    "/drzewa lista: accepted by real command parser (Gatunki drzew (12):\nswierk — Świerk pospolity\nsosna — Sosna zwyczajna\nbuk — Buk zwyczajny\nlipa — Lipa drobnolistna\ndab — Dąb szypułkowy\nbrzoza — Brzoza brodawkowata\njablon — Jabłoń domowa\nolcha — Olcha czarna\nwierzba — Wierzba biała\nakacja — Akacja parasolowata\ncyprysnik — Cypryśnik błotny\nwisnia — Wiśnia japońska\nLosowy las: /drzewa las sosna 16. Warianty: /drzewa warianty sosna. Wszystkie gatunki: /drzewa porownanie.\nNa końcu możesz podać seed, np. /drzewa las sosna 16 12345. Te same parametry odtwarzają ten sam zestaw.\nWarianty pokazują dostępne szablony, rozmiary i stany specjalne. Kształty proceduralne mają wiele losowych odmian.)",
+    "acacia: listed by command",
+    "bald_cypress: listed by command",
+    "cherry: listed by command",
+    "/drzewa warianty acacia 12345: accepted by real command parser (Przygotowuję warianty drzewa przed tobą (seed 12345). Wynik pojawi się na czacie.)",
+    "/drzewa warianty acacia 12345: background operation reports completion",
+    "/drzewa warianty acacia 12345: Pokaz drzew gotowy: 10 drzew, seed 12345.\n1. akacja: zwykłe, 0% — -524 17 -12\n2. akacja: zwykłe, 25% — -502 17 -12\n3. akacja: zwykłe, 50% — -480 17 -12\n4. akacja: zwykłe, 75% — -458 17 -12\n5. akacja: zwykłe, 100% — -436 17 -12\n6. akacja: Kwitnące liście akacji, 0% — -524 17 -34\n7. akacja: Kwitnące liście akacji, 25% — -502 17 -34\n8. akacja: Kwitnące liście akacji, 50% — -480 17 -34\n9. akacja: Kwitnące liście akacji, 75% — -458 17 -34\n10. akacja: Kwitnące liście akacji, 100% — -436 17 -34\nPozycje: /drzewa ostatnie. Cofnięcie ostatniego pokazu w tej sesji: /drzewa cofnij.",
+    "acacia: all size and texture variant specimens placed",
+    "akacja: zwykłe, 0%: full generated geometry present",
+    "akacja: zwykłe, 25%: full generated geometry present",
+    "akacja: zwykłe, 50%: full generated geometry present",
+    "akacja: zwykłe, 75%: full generated geometry present",
+    "akacja: zwykłe, 100%: full generated geometry present",
+    "akacja: Kwitnące liście akacji, 0%: full generated geometry present",
+    "akacja: Kwitnące liście akacji, 25%: full generated geometry present",
+    "akacja: Kwitnące liście akacji, 50%: full generated geometry present",
+    "akacja: Kwitnące liście akacji, 75%: full generated geometry present",
+    "akacja: Kwitnące liście akacji, 100%: full generated geometry present",
+    "/drzewa cofnij: accepted by real command parser (Cofanie ostatniego pokazu drzew…)",
+    "/drzewa cofnij: background operation reports completion",
+    "/drzewa cofnij: Cofnięto pokaz drzew: 3378 bloków.",
+    "acacia: undo restores original blocks",
+    "/drzewa warianty bald_cypress 12345: accepted by real command parser (Przygotowuję warianty drzewa przed tobą (seed 12345). Wynik pojawi się na czacie.)",
+    "/drzewa warianty bald_cypress 12345: background operation reports completion",
+    "/drzewa warianty bald_cypress 12345: Pokaz drzew gotowy: 10 drzew, seed 12345.\n1. cypryśnik: zwykłe, 0% — -516 17 -12\n2. cypryśnik: zwykłe, 25% — -498 17 -12\n3. cypryśnik: zwykłe, 50% — -480 17 -12\n4. cypryśnik: zwykłe, 75% — -462 17 -12\n5. cypryśnik: zwykłe, 100% — -444 17 -12\n6. cypryśnik: Jesienne igliwie cypryśnika, 0% — -516 17 -30\n7. cypryśnik: Jesienne igliwie cypryśnika, 25% — -498 17 -30\n8. cypryśnik: Jesienne igliwie cypryśnika, 50% — -480 17 -30\n9. cypryśnik: Jesienne igliwie cypryśnika, 75% — -462 17 -30\n10. cypryśnik: Jesienne igliwie cypryśnika, 100% — -444 17 -30\nPozycje: /drzewa ostatnie. Cofnięcie ostatniego pokazu w tej sesji: /drzewa cofnij.",
+    "bald_cypress: all size and texture variant specimens placed",
+    "cypryśnik: zwykłe, 0%: full generated geometry present",
+    "cypryśnik: zwykłe, 25%: full generated geometry present",
+    "cypryśnik: zwykłe, 50%: full generated geometry present",
+    "cypryśnik: zwykłe, 75%: full generated geometry present",
+    "cypryśnik: zwykłe, 100%: full generated geometry present",
+    "cypryśnik: Jesienne igliwie cypryśnika, 0%: full generated geometry present",
+    "cypryśnik: Jesienne igliwie cypryśnika, 25%: full generated geometry present",
+    "cypryśnik: Jesienne igliwie cypryśnika, 50%: full generated geometry present",
+    "cypryśnik: Jesienne igliwie cypryśnika, 75%: full generated geometry present",
+    "cypryśnik: Jesienne igliwie cypryśnika, 100%: full generated geometry present",
+    "/drzewa cofnij: accepted by real command parser (Cofanie ostatniego pokazu drzew…)",
+    "/drzewa cofnij: background operation reports completion",
+    "/drzewa cofnij: Cofnięto pokaz drzew: 4854 bloków.",
+    "bald_cypress: undo restores original blocks",
+    "/drzewa warianty cherry 12345: accepted by real command parser (Przygotowuję warianty drzewa przed tobą (seed 12345). Wynik pojawi się na czacie.)",
+    "/drzewa warianty cherry 12345: background operation reports completion",
+    "/drzewa warianty cherry 12345: Pokaz drzew gotowy: 10 drzew, seed 12345.\n1. wiśnia: zwykłe, 0% — -516 17 -12\n2. wiśnia: zwykłe, 25% — -498 17 -12\n3. wiśnia: zwykłe, 50% — -480 17 -12\n4. wiśnia: zwykłe, 75% — -462 17 -12\n5. wiśnia: zwykłe, 100% — -444 17 -12\n6. wiśnia: Liście wiśni — rzadsze kwiaty, 0% — -516 17 -30\n7. wiśnia: Liście wiśni — rzadsze kwiaty, 25% — -498 17 -30\n8. wiśnia: Liście wiśni — rzadsze kwiaty, 50% — -480 17 -30\n9. wiśnia: Liście wiśni — rzadsze kwiaty, 75% — -462 17 -30\n10. wiśnia: Liście wiśni — rzadsze kwiaty, 100% — -444 17 -30\nPozycje: /drzewa ostatnie. Cofnięcie ostatniego pokazu w tej sesji: /drzewa cofnij.",
+    "cherry: all size and texture variant specimens placed",
+    "wiśnia: zwykłe, 0%: full generated geometry present",
+    "wiśnia: zwykłe, 25%: full generated geometry present",
+    "wiśnia: zwykłe, 50%: full generated geometry present",
+    "wiśnia: zwykłe, 75%: full generated geometry present",
+    "wiśnia: zwykłe, 100%: full generated geometry present",
+    "wiśnia: Liście wiśni — rzadsze kwiaty, 0%: full generated geometry present",
+    "wiśnia: Liście wiśni — rzadsze kwiaty, 25%: full generated geometry present",
+    "wiśnia: Liście wiśni — rzadsze kwiaty, 50%: full generated geometry present",
+    "wiśnia: Liście wiśni — rzadsze kwiaty, 75%: full generated geometry present",
+    "wiśnia: Liście wiśni — rzadsze kwiaty, 100%: full generated geometry present",
+    "/drzewa cofnij: accepted by real command parser (Cofanie ostatniego pokazu drzew…)",
+    "/drzewa cofnij: background operation reports completion",
+    "/drzewa cofnij: Cofnięto pokaz drzew: 2322 bloków.",
+    "cherry: undo restores original blocks",
+    "/drzewa porownanie 12345: accepted by real command parser (Przygotowuję porównanie gatunków przed tobą (seed 12345). Wynik pojawi się na czacie.)",
+    "/drzewa porownanie 12345: background operation reports completion",
+    "/drzewa porownanie 12345: Pokaz drzew gotowy: 12 drzew, seed 12345.\n1. Świerk pospolity — -581 17 -12\n2. Sosna zwyczajna — -563 17 -12\n3. Buk zwyczajny — -545 17 -12\n4. Lipa drobnolistna — -527 17 -12\n5. Dąb szypułkowy — -509 17 -12\n6. Brzoza brodawkowata — -491 17 -12\n7. Jabłoń domowa — -473 17 -12\n8. Olcha czarna — -455 17 -12\n9. Wierzba biała — -437 17 -12\n10. Akacja parasolowata — -417 17 -12\n11. Cypryśnik błotny — -397 17 -12\n12. Wiśnia japońska — -379 17 -12\nPozycje: /drzewa ostatnie. Cofnięcie ostatniego pokazu w tej sesji: /drzewa cofnij.",
+    "Comparison includes every old and new tree species",
+    "/drzewa cofnij: accepted by real command parser (Cofanie ostatniego pokazu drzew…)",
+    "/drzewa cofnij: background operation reports completion",
+    "/drzewa cofnij: Cofnięto pokaz drzew: 3630 bloków.",
+    "acacia_sapling: has dedicated plant quality model",
+    "acacia_sapling: uses requested simple quality",
+    "acacia_sapling: active renderer data for simple",
+    "bald_cypress_sapling: has dedicated plant quality model",
+    "bald_cypress_sapling: uses requested simple quality",
+    "bald_cypress_sapling: active renderer data for simple",
+    "cherry_sapling: has dedicated plant quality model",
+    "cherry_sapling: uses requested simple quality",
+    "cherry_sapling: active renderer data for simple",
+    "No WebGL error after rendering",
+    "All active shaders compiled",
+    "No game or console errors",
+    "simple: actual scene generates sapling mesh vertices",
+    "acacia_sapling: has dedicated plant quality model",
+    "acacia_sapling: uses requested semi quality",
+    "acacia_sapling: active renderer data for semi",
+    "bald_cypress_sapling: has dedicated plant quality model",
+    "bald_cypress_sapling: uses requested semi quality",
+    "bald_cypress_sapling: active renderer data for semi",
+    "cherry_sapling: has dedicated plant quality model",
+    "cherry_sapling: uses requested semi quality",
+    "cherry_sapling: active renderer data for semi",
+    "No WebGL error after rendering",
+    "All active shaders compiled",
+    "No game or console errors",
+    "semi: actual scene generates sapling mesh vertices",
+    "acacia_sapling: has dedicated plant quality model",
+    "acacia_sapling: uses requested detailed quality",
+    "acacia_sapling: active renderer data for detailed",
+    "bald_cypress_sapling: has dedicated plant quality model",
+    "bald_cypress_sapling: uses requested detailed quality",
+    "bald_cypress_sapling: active renderer data for detailed",
+    "cherry_sapling: has dedicated plant quality model",
+    "cherry_sapling: uses requested detailed quality",
+    "cherry_sapling: active renderer data for detailed",
+    "No WebGL error after rendering",
+    "All active shaders compiled",
+    "No game or console errors",
+    "detailed: actual scene generates sapling mesh vertices",
+    "Quality changes real sapling geometry",
+    "/drzewa las pine 36 12345: accepted by real command parser (Przygotowuję las przed tobą (seed 12345). Wynik pojawi się na czacie.)",
+    "/drzewa las pine 36 12345: background operation reports completion",
+    "/drzewa las pine 36 12345: Pokaz drzew gotowy: 36 drzew, seed 12345.\n1. sosna 1 (59%) — -852 17 -11\n2. sosna 2 (26%) — -833 17 -11\n3. sosna 3 (57%) — -808 17 -14\n4. sosna 4 (70%) — -786 17 -15\n5. sosna 5 (82%) — -767 17 -11\n6. sosna 6 (83%) — -744 17 -14\n7. sosna 7 (46%) — -855 17 -31\n8. sosna 8 (42%) — -831 17 -31\n9. sosna 9 (48%) — -810 17 -37\n10. sosna 10 (85%) — -792 17 -35\n11. sosna 11 (95%) — -766 17 -35\n12. sosna 12 (67%) — -745 17 -37\n13. sosna 13 (41%) — -855 17 -54\n14. sosna 14 (28%) — -831 17 -55\n15. sosna 15 (32%) — -811 17 -59\n16. sosna 16 (54%) — -791 17 -58\n17. sosna 17 (49%) — -767 17 -53\n18. sosna 18 (44%) — -742 17 -58\n19. sosna 19 (60%) — -854 17 -76\n20. sosna 20 (39%) — -831 17 -81\n21. sosna 21 (97%) — -812 17 -80\n22. sosna 22 (63%) — -786 17 -81\n23. sosna 23 (73%) — -766 17 -79\n24. sosna 24 (98%) — -742 17 -80\n25. sosna 25 (39%) — -855 17 -99\n26. sosna 26 (33%) — -830 17 -100\n27. sosna 27 (53%) — -812 17 -98\n28. sosna 28 (97%) — -787 17 -99\n29. sosna 29 (33%) — -766 17 -101\n30. sosna 30 (73%) — -742 17 -97\n31. sosna 31 (28%) — -853 17 -121\n32. sosna 32 (71%) — -834 17 -119\n33. sosna 33 (68%) — -814 17 -121\n34. sosna 34 (86%) — -788 17 -125\n35. sosna 35 (96%) — -765 17 -121\n36. sosna 36 (90%) — -745 17 -123\nPozycje: /drzewa ostatnie. Cofnięcie ostatniego pokazu w tej sesji: /drzewa cofnij.",
+    "pine: all 36 benchmark trees planted",
+    "No WebGL error after rendering",
+    "All active shaders compiled",
+    "No game or console errors",
+    "pine: benchmark renders actual forest geometry",
+    "/drzewa cofnij: accepted by real command parser (Cofanie ostatniego pokazu drzew…)",
+    "/drzewa cofnij: background operation reports completion",
+    "/drzewa cofnij: Cofnięto pokaz drzew: 6973 bloków.",
+    "/drzewa las bald_cypress 36 12345: accepted by real command parser (Przygotowuję las przed tobą (seed 12345). Wynik pojawi się na czacie.)",
+    "/drzewa las bald_cypress 36 12345: background operation reports completion",
+    "/drzewa las bald_cypress 36 12345: Pokaz drzew gotowy: 36 drzew, seed 12345.\n1. cypryśnik 1 (59%) — -852 17 -11\n2. cypryśnik 2 (26%) — -833 17 -11\n3. cypryśnik 3 (57%) — -808 17 -14\n4. cypryśnik 4 (70%) — -786 17 -15\n5. cypryśnik 5 (82%) — -767 17 -11\n6. cypryśnik 6 (83%) — -744 17 -14\n7. cypryśnik 7 (46%) — -855 17 -31\n8. cypryśnik 8 (42%) — -831 17 -31\n9. cypryśnik 9 (48%) — -810 17 -37\n10. cypryśnik 10 (85%) — -792 17 -35\n11. cypryśnik 11 (95%) — -766 17 -35\n12. cypryśnik 12 (67%) — -745 17 -37\n13. cypryśnik 13 (41%) — -855 17 -54\n14. cypryśnik 14 (28%) — -831 17 -55\n15. cypryśnik 15 (32%) — -811 17 -59\n16. cypryśnik 16 (54%) — -791 17 -58\n17. cypryśnik 17 (49%) — -767 17 -53\n18. cypryśnik 18 (44%) — -742 17 -58\n19. cypryśnik 19 (60%) — -854 17 -76\n20. cypryśnik 20 (39%) — -831 17 -81\n21. cypryśnik 21 (97%) — -812 17 -80\n22. cypryśnik 22 (63%) — -786 17 -81\n23. cypryśnik 23 (73%) — -766 17 -79\n24. cypryśnik 24 (98%) — -742 17 -80\n25. cypryśnik 25 (39%) — -855 17 -99\n26. cypryśnik 26 (33%) — -830 17 -100\n27. cypryśnik 27 (53%) — -812 17 -98\n28. cypryśnik 28 (97%) — -787 17 -99\n29. cypryśnik 29 (33%) — -766 17 -101\n30. cypryśnik 30 (73%) — -742 17 -97\n31. cypryśnik 31 (28%) — -853 17 -121\n32. cypryśnik 32 (71%) — -834 17 -119\n33. cypryśnik 33 (68%) — -814 17 -121\n34. cypryśnik 34 (86%) — -788 17 -125\n35. cypryśnik 35 (96%) — -765 17 -121\n36. cypryśnik 36 (90%) — -745 17 -123\nPozycje: /drzewa ostatnie. Cofnięcie ostatniego pokazu w tej sesji: /drzewa cofnij.",
+    "bald_cypress: all 36 benchmark trees planted",
+    "No WebGL error after rendering",
+    "All active shaders compiled",
+    "No game or console errors",
+    "bald_cypress: benchmark renders actual forest geometry",
+    "/drzewa cofnij: accepted by real command parser (Cofanie ostatniego pokazu drzew…)",
+    "/drzewa cofnij: background operation reports completion",
+    "/drzewa cofnij: Cofnięto pokaz drzew: 19107 bloków."
+  ],
+  "errors": [],
+  "captures": [
+    {
+      "name": "comparison",
+      "eye": [
+        -164,
+        35,
+        30
+      ],
+      "target": [
+        -164,
+        31,
+        -32
+      ],
+      "eyeHeightAboveGround": null,
+      "fov": 70,
+      "actualPlayerModelHeight": 1.8,
+      "specimen": null,
+      "triangles": 65963,
+      "drawCalls": 130
+    },
+    {
+      "name": "acacia-whole",
+      "eye": [
+        -192.575,
+        21.18,
+        -7.25
+      ],
+      "target": [
+        -200,
+        21.95,
+        -32
+      ],
+      "eyeHeightAboveGround": null,
+      "fov": 70,
+      "actualPlayerModelHeight": 1.8,
+      "specimen": {
+        "species": "acacia",
+        "x": -200,
+        "y": 17,
+        "z": -32,
+        "height": 11,
+        "crown": {
+          "x": 15,
+          "z": 15
+        },
+        "blocks": 406,
+        "label": "Akacja parasolowata"
+      },
+      "triangles": 51741,
+      "drawCalls": 101
+    },
+    {
+      "name": "acacia-ground",
+      "eye": [
+        -197,
+        18.6,
+        -23
+      ],
+      "target": [
+        -200,
+        23.16,
+        -32
+      ],
+      "eyeHeightAboveGround": 1.6,
+      "fov": 70,
+      "actualPlayerModelHeight": 1.8,
+      "specimen": {
+        "species": "acacia",
+        "x": -200,
+        "y": 17,
+        "z": -32,
+        "height": 11,
+        "crown": {
+          "x": 15,
+          "z": 15
+        },
+        "blocks": 406,
+        "label": "Akacja parasolowata"
+      },
+      "triangles": 54647,
+      "drawCalls": 106
+    },
+    {
+      "name": "bald_cypress-whole",
+      "eye": [
+        -150.338,
+        29.54,
+        13.54
+      ],
+      "target": [
+        -164,
+        31.85,
+        -32
+      ],
+      "eyeHeightAboveGround": null,
+      "fov": 70,
+      "actualPlayerModelHeight": 1.8,
+      "specimen": {
+        "species": "bald_cypress",
+        "x": -164,
+        "y": 17,
+        "z": -32,
+        "height": 33,
+        "crown": {
+          "x": 12,
+          "z": 11
+        },
+        "blocks": 595,
+        "label": "Cypryśnik błotny"
+      },
+      "triangles": 81835,
+      "drawCalls": 161
+    },
+    {
+      "name": "bald_cypress-ground",
+      "eye": [
+        -161,
+        18.6,
+        -21
+      ],
+      "target": [
+        -164,
+        31,
+        -32
+      ],
+      "eyeHeightAboveGround": 1.6,
+      "fov": 70,
+      "actualPlayerModelHeight": 1.8,
+      "specimen": {
+        "species": "bald_cypress",
+        "x": -164,
+        "y": 17,
+        "z": -32,
+        "height": 33,
+        "crown": {
+          "x": 12,
+          "z": 11
+        },
+        "blocks": 595,
+        "label": "Cypryśnik błotny"
+      },
+      "triangles": 11489,
+      "drawCalls": 25
+    },
+    {
+      "name": "bald_cypress-base",
+      "eye": [
+        -159,
+        18.6,
+        -22
+      ],
+      "target": [
+        -163,
+        21,
+        -31
+      ],
+      "eyeHeightAboveGround": 1.6,
+      "fov": 70,
+      "actualPlayerModelHeight": 1.8,
+      "specimen": {
+        "species": "bald_cypress",
+        "x": -164,
+        "y": 17,
+        "z": -32,
+        "height": 33,
+        "crown": {
+          "x": 12,
+          "z": 11
+        },
+        "blocks": 595,
+        "label": "Cypryśnik błotny"
+      },
+      "triangles": 71653,
+      "drawCalls": 141
+    },
+    {
+      "name": "cherry-whole",
+      "eye": [
+        -122.555,
+        20.42,
+        -13.850000000000001
+      ],
+      "target": [
+        -128,
+        21.05,
+        -32
+      ],
+      "eyeHeightAboveGround": null,
+      "fov": 70,
+      "actualPlayerModelHeight": 1.8,
+      "specimen": {
+        "species": "cherry",
+        "x": -128,
+        "y": 17,
+        "z": -32,
+        "height": 9,
+        "crown": {
+          "x": 11,
+          "z": 11
+        },
+        "blocks": 294,
+        "label": "Wiśnia japońska"
+      },
+      "triangles": 80551,
+      "drawCalls": 160
+    },
+    {
+      "name": "cherry-ground",
+      "eye": [
+        -125,
+        18.6,
+        -23
+      ],
+      "target": [
+        -128,
+        22.04,
+        -32
+      ],
+      "eyeHeightAboveGround": 1.6,
+      "fov": 70,
+      "actualPlayerModelHeight": 1.8,
+      "specimen": {
+        "species": "cherry",
+        "x": -128,
+        "y": 17,
+        "z": -32,
+        "height": 9,
+        "crown": {
+          "x": 11,
+          "z": 11
+        },
+        "blocks": 294,
+        "label": "Wiśnia japońska"
+      },
+      "triangles": 74407,
+      "drawCalls": 148
+    },
+    {
+      "name": "saplings-detailed",
+      "eye": [
+        -480,
+        18.6,
+        -2
+      ],
+      "target": [
+        -480,
+        17.6,
+        -8
+      ],
+      "actualPlayerModelHeight": 1.8,
+      "eyeHeightAboveGround": 1.6,
+      "fov": 70
+    }
+  ],
+  "commands": [
+    {
+      "line": "/drzewa lista",
+      "milliseconds": 0.5,
+      "text": "Gatunki drzew (12):\nswierk — Świerk pospolity\nsosna — Sosna zwyczajna\nbuk — Buk zwyczajny\nlipa — Lipa drobnolistna\ndab — Dąb szypułkowy\nbrzoza — Brzoza brodawkowata\njablon — Jabłoń domowa\nolcha — Olcha czarna\nwierzba — Wierzba biała\nakacja — Akacja parasolowata\ncyprysnik — Cypryśnik błotny\nwisnia — Wiśnia japońska\nLosowy las: /drzewa las sosna 16. Warianty: /drzewa warianty sosna. Wszystkie gatunki: /drzewa porownanie.\nNa końcu możesz podać seed, np. /drzewa las sosna 16 12345. Te same parametry odtwarzają ten sam zestaw.\nWarianty pokazują dostępne szablony, rozmiary i stany specjalne. Kształty proceduralne mają wiele losowych odmian."
+    },
+    {
+      "line": "/drzewa warianty acacia 12345",
+      "milliseconds": 321.2,
+      "text": "Przygotowuję warianty drzewa przed tobą (seed 12345). Wynik pojawi się na czacie."
+    },
+    {
+      "line": "/drzewa cofnij",
+      "milliseconds": 196.4,
+      "text": "Cofanie ostatniego pokazu drzew…"
+    },
+    {
+      "line": "/drzewa warianty bald_cypress 12345",
+      "milliseconds": 328.2,
+      "text": "Przygotowuję warianty drzewa przed tobą (seed 12345). Wynik pojawi się na czacie."
+    },
+    {
+      "line": "/drzewa cofnij",
+      "milliseconds": 210.8,
+      "text": "Cofanie ostatniego pokazu drzew…"
+    },
+    {
+      "line": "/drzewa warianty cherry 12345",
+      "milliseconds": 204.9,
+      "text": "Przygotowuję warianty drzewa przed tobą (seed 12345). Wynik pojawi się na czacie."
+    },
+    {
+      "line": "/drzewa cofnij",
+      "milliseconds": 137.3,
+      "text": "Cofanie ostatniego pokazu drzew…"
+    },
+    {
+      "line": "/drzewa porownanie 12345",
+      "milliseconds": 278.1,
+      "text": "Przygotowuję porównanie gatunków przed tobą (seed 12345). Wynik pojawi się na czacie."
+    },
+    {
+      "line": "/drzewa cofnij",
+      "milliseconds": 171.9,
+      "text": "Cofanie ostatniego pokazu drzew…"
+    },
+    {
+      "line": "/drzewa las pine 36 12345",
+      "milliseconds": 553.1,
+      "text": "Przygotowuję las przed tobą (seed 12345). Wynik pojawi się na czacie."
+    },
+    {
+      "line": "/drzewa cofnij",
+      "milliseconds": 394.8,
+      "text": "Cofanie ostatniego pokazu drzew…"
+    },
+    {
+      "line": "/drzewa las bald_cypress 36 12345",
+      "milliseconds": 1146.2,
+      "text": "Przygotowuję las przed tobą (seed 12345). Wynik pojawi się na czacie."
+    },
+    {
+      "line": "/drzewa cofnij",
+      "milliseconds": 763.5,
+      "text": "Cofanie ostatniego pokazu drzew…"
+    }
+  ],
+  "specimens": [
+    {
+      "species": "acacia",
+      "x": -200,
+      "y": 17,
+      "z": -32,
+      "height": 11,
+      "crown": {
+        "x": 15,
+        "z": 15
+      },
+      "blocks": 406,
+      "label": "Akacja parasolowata"
+    },
+    {
+      "species": "bald_cypress",
+      "x": -164,
+      "y": 17,
+      "z": -32,
+      "height": 33,
+      "crown": {
+        "x": 12,
+        "z": 11
+      },
+      "blocks": 595,
+      "label": "Cypryśnik błotny"
+    },
+    {
+      "species": "cherry",
+      "x": -128,
+      "y": 17,
+      "z": -32,
+      "height": 9,
+      "crown": {
+        "x": 11,
+        "z": 11
+      },
+      "blocks": 294,
+      "label": "Wiśnia japońska"
+    }
+  ],
+  "saplingSamples": [
+    {
+      "level": "simple",
+      "vertices": 48,
+      "positions": [
+        {
+          "species": "acacia",
+          "x": -482,
+          "z": -8,
+          "y": 17
+        },
+        {
+          "species": "bald_cypress",
+          "x": -480,
+          "z": -8,
+          "y": 17
+        },
+        {
+          "species": "cherry",
+          "x": -478,
+          "z": -8,
+          "y": 17
+        }
+      ],
+      "drawCalls": 26,
+      "triangles": 7975
+    },
+    {
+      "level": "semi",
+      "vertices": 288,
+      "positions": [
+        {
+          "species": "acacia",
+          "x": -482,
+          "z": -8,
+          "y": 17
+        },
+        {
+          "species": "bald_cypress",
+          "x": -480,
+          "z": -8,
+          "y": 17
+        },
+        {
+          "species": "cherry",
+          "x": -478,
+          "z": -8,
+          "y": 17
+        }
+      ],
+      "drawCalls": 31,
+      "triangles": 10655
+    },
+    {
+      "level": "detailed",
+      "vertices": 1960,
+      "positions": [
+        {
+          "species": "acacia",
+          "x": -482,
+          "z": -8,
+          "y": 17
+        },
+        {
+          "species": "bald_cypress",
+          "x": -480,
+          "z": -8,
+          "y": 17
+        },
+        {
+          "species": "cherry",
+          "x": -478,
+          "z": -8,
+          "y": 17
+        }
+      ],
+      "drawCalls": 31,
+      "triangles": 11491
+    }
+  ],
+  "performanceSamples": [
+    {
+      "species": "pine",
+      "count": 36,
+      "resolution": [
+        1920,
+        1080
+      ],
+      "frames": 180,
+      "frameWorkMs": {
+        "mean": 3.5355555542641217,
+        "median": 3.2999999821186066,
+        "p95": 5.4000000059604645,
+        "max": 11.699999988079071
+      },
+      "triangles": 124717,
+      "calls": 225,
+      "eye": [
+        -800,
+        29,
+        24
+      ],
+      "target": [
+        -800,
+        28,
+        -60
+      ],
+      "quality": {
+        "viewDistance": 160,
+        "farTerrain": 0,
+        "loadBudget": 8,
+        "meteorites": false,
+        "lightShafts": true,
+        "bounceLight": true,
+        "showHand": false,
+        "shadows": 3,
+        "cloudCover": 0,
+        "lightingModel": "world",
+        "lightingLook": "natural",
+        "viewBobbing": false,
+        "volumeMusic": 0,
+        "leafModel": "parts",
+        "fancyLeaves": true,
+        "plantWind": false,
+        "plantModels": "semi",
+        "fov": 70,
+        "renderScale": 100
+      },
+      "warmed": true,
+      "presentedFpsMeasured": false,
+      "method": "Unpaced Game.update + render + gl.finish; preloaded flat world, hidden native window"
+    },
+    {
+      "species": "bald_cypress",
+      "count": 36,
+      "resolution": [
+        1920,
+        1080
+      ],
+      "frames": 180,
+      "frameWorkMs": {
+        "mean": 3.3055555565489665,
+        "median": 3.0999999940395355,
+        "p95": 5.199999988079071,
+        "max": 7.800000011920929
+      },
+      "triangles": 200537,
+      "calls": 226,
+      "eye": [
+        -800,
+        29,
+        24
+      ],
+      "target": [
+        -800,
+        28,
+        -60
+      ],
+      "quality": {
+        "viewDistance": 160,
+        "farTerrain": 0,
+        "loadBudget": 8,
+        "meteorites": false,
+        "lightShafts": true,
+        "bounceLight": true,
+        "showHand": false,
+        "shadows": 3,
+        "cloudCover": 0,
+        "lightingModel": "world",
+        "lightingLook": "natural",
+        "viewBobbing": false,
+        "volumeMusic": 0,
+        "leafModel": "parts",
+        "fancyLeaves": true,
+        "plantWind": false,
+        "plantModels": "semi",
+        "fov": 70,
+        "renderScale": 100
+      },
+      "warmed": true,
+      "presentedFpsMeasured": false,
+      "method": "Unpaced Game.update + render + gl.finish; preloaded flat world, hidden native window"
+    }
+  ],
+  "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 3050 Laptop GPU (0x000025A2) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+  "resolution": [
+    1280,
+    800
+  ],
+  "quality": {
+    "viewDistance": 160,
+    "farTerrain": 0,
+    "loadBudget": 8,
+    "meteorites": false,
+    "lightShafts": false,
+    "bounceLight": false,
+    "showHand": false,
+    "shadows": 1,
+    "cloudCover": 0,
+    "lightingModel": "world",
+    "lightingLook": "natural",
+    "viewBobbing": false,
+    "volumeMusic": 0,
+    "leafModel": "parts",
+    "fancyLeaves": true,
+    "plantWind": false,
+    "plantModels": "semi",
+    "fov": 70,
+    "renderScale": 100
+  },
+  "syntheticWorld": true,
+  "originalPlayerModel": true,
+  "actualPlayerHeight": 1.8,
+  "eyeHeight": 1.6,
+  "source": {
+    "sha256": "9f55917e04a3c0005b539be589f696d108cd8e9b741c636f240388e45fa7be93",
+    "files": 455
+  },
+  "version": "0.79.0",
+  "nativeElectron": true
+}

@@ -1,4 +1,5 @@
 import { TREE_SPECIES, TREE_NAMES, treeParts, packVariantType } from '../../blocks/trees.js';
+import { PACK_REACH, PACK_MAX_HEIGHT, SPECIES_SHAPE_LIMITS } from '../../blocks/treePacks.js';
 
 // ------------------------------------------------------------
 // KSZTAŁTY DRZEW
@@ -32,9 +33,35 @@ import { TREE_SPECIES, TREE_NAMES, treeParts, packVariantType } from '../../bloc
 // Najdalej od pnia (w poziomie) i najwyżej, gdzie może być blok
 // drzewa - generator terenu sprawdza drzewa z tylu bloków wokół chunka.
 
-export const TREE_REACH = 7;
+export const TREE_REACH = Math.max(PACK_REACH, ...Object.values(SPECIES_SHAPE_LIMITS).map((limits) => limits.reach));
 
-export const TREE_MAX_HEIGHT = 28;
+export const TREE_MAX_HEIGHT = Math.max(PACK_MAX_HEIGHT, ...Object.values(SPECIES_SHAPE_LIMITS).map((limits) => limits.maxHeight));
+
+const ORIGINAL_LIMITS = Object.freeze({ reach: PACK_REACH, maxHeight: PACK_MAX_HEIGHT });
+
+export function treeShapeLimits(species) {
+    return SPECIES_SHAPE_LIMITS[TREE_SPECIES[species]?.pack?.shape.kind] ?? ORIGINAL_LIMITS;
+}
+
+// Shared near/far scale, in blocks (one block is approximately one metre).
+// Only the mature-sized species use this contract; legacy silhouettes retain
+// their original formulas and random sequence.
+export function treeVisualDimensions(species, size = 0.5) {
+    const shape = TREE_SPECIES[species]?.pack?.shape;
+    if (!shape || !Object.hasOwn(SPECIES_SHAPE_LIMITS, shape.kind)) return null;
+    const amount = Math.max(0, Math.min(1, size));
+    const height = Math.round(lerp(shape.height[0], shape.height[1], amount));
+    const radius = lerp(shape.radius[0], shape.radius[1], amount);
+    if (shape.kind === 'bald_cypress') return {
+        height, radius, trunkWidth: amount >= 0.35 ? 2 : 1,
+        crownBase: Math.round(height * 0.38)
+    };
+    if (shape.kind === 'acacia') return {
+        height, radius, trunkWidth: amount >= 0.65 ? 2 : 1,
+        crownBase: height - Math.max(3, Math.round(height * 0.3))
+    };
+    return { height, radius, trunkWidth: 1, crownBase: Math.max(2, Math.round(height * 0.35)) };
+}
 
 
 // Generator liczb 0-1 z seeda (mulberry32).
@@ -81,6 +108,7 @@ class TreeBuilder {
         this.species = species;
         this.random = random;
         this.parts = treeParts(species);
+        this.limits = treeShapeLimits(species);
 
         // klucz komórki -> [x, y, z, typ, siła]
         this.cells = new Map();
@@ -117,7 +145,7 @@ class TreeBuilder {
         y = Math.round(y);
         z = Math.round(z);
 
-        if (Math.abs(x) > TREE_REACH || Math.abs(z) > TREE_REACH || y < 0 || y > TREE_MAX_HEIGHT) {
+        if (Math.abs(x) > this.limits.reach || Math.abs(z) > this.limits.reach || y < 0 || y > this.limits.maxHeight) {
             return;
         }
 
@@ -804,6 +832,99 @@ function sizes(tree, size, shape) {
 
 
 const PACK_SHAPES = {
+
+    // An umbrella made from separate flattened crowns on spreading limbs.
+    // Its broad shade is deliberately much wider than the standing player.
+    acacia(tree, size, shape) {
+
+        const { height, radius, trunkWidth, crownBase } = treeVisualDimensions(tree.species, size);
+        const random = tree.random;
+        const fork = Math.max(3, crownBase - 1);
+        tree.trunk(0, 0, 0, fork + 1);
+        if (trunkWidth === 2) {
+            for (const [x, z] of [[1, 0], [0, 1], [1, 1]]) tree.trunk(x, z, 0, fork - 2);
+        }
+        const limbs = 5 + Math.floor(random() * 2);
+        const angle0 = random() * Math.PI * 2;
+        const crownY = height - 2.5;
+        tree.blob(0, crownY, 0, radius * 0.5, 1.45, radius * 0.5, 0.68, shape.density);
+        for (let i = 0; i < limbs; i++) {
+            const angle = angle0 + i * Math.PI * 2 / limbs + (random() - 0.5) * 0.25;
+            const reach = radius * (0.52 + random() * 0.05);
+            const x = Math.cos(angle) * reach, z = Math.sin(angle) * reach;
+            const y = crownY - (i % 3 === 0 ? 0.7 : 0);
+            tree.branch(0, fork, 0, x, y - 0.5, z);
+            tree.blob(x, y, z, radius * 0.45, 1.45, radius * 0.45, 0.66, shape.density);
+        }
+        tree.leaf(0, height - 1, 0);
+
+    },
+
+    // Tall, tapered swamp tree: a buttressed base, low root knees and airy
+    // tiers of horizontal limbs. Roots are placed by the existing terrain
+    // rules and therefore never overwrite water or a player's construction.
+    bald_cypress(tree, size, shape) {
+
+        const { height, radius, trunkWidth, crownBase } = treeVisualDimensions(tree.species, size);
+        const random = tree.random;
+        tree.trunk(0, 0, 0, height - 2);
+        if (trunkWidth === 2) {
+            for (const [x, z] of [[1, 0], [0, 1], [1, 1]]) tree.trunk(x, z, 0, Math.round(height * 0.66));
+        }
+        const footHeight = Math.max(2, Math.round(height * 0.1));
+        for (const [x, z] of [[-1, 0], [0, -1], [2, 1], [1, 2]]) tree.trunk(x, z, 0, footHeight);
+        for (const [x, z] of [[-1, 1], [1, -1], [2, 0], [0, 2]]) tree.trunk(x, z, 0, 1);
+        const phase = random() * Math.PI * 2;
+        for (let i = 0; i < 4; i++) {
+            const angle = phase + i * Math.PI / 2;
+            const reach = 3 + Math.floor(random() * 2);
+            const x = Math.round(Math.cos(angle) * reach), z = Math.round(Math.sin(angle) * reach);
+            tree.trunk(x, z, 0, random() < 0.3 ? 1 : 0);
+        }
+        const tiers = Math.max(4, Math.round((height - crownBase) / 3.3));
+        for (let tier = 0; tier < tiers; tier++) {
+            const t = tier / tiers;
+            const y = Math.round(lerp(crownBase + 1, height - 4, t));
+            const tierRadius = radius * (1 - t * 0.66);
+            const phaseAtTier = phase + tier * 1.7;
+            tree.blob(0, y, 0, Math.max(1, tierRadius * 0.5), 1.25, Math.max(1, tierRadius * 0.5), 0.65, shape.density);
+            for (let branch = 0; branch < 3; branch++) {
+                const angle = phaseAtTier + branch * Math.PI * 2 / 3 + (random() - 0.5) * 0.3;
+                const x = Math.cos(angle) * tierRadius * 0.59, z = Math.sin(angle) * tierRadius * 0.59;
+                tree.branch(0, y - 1, 0, x, y, z);
+                const r = Math.max(1, tierRadius * 0.46);
+                tree.blob(x, y + 0.5, z, r, 1.25, r, 0.66, shape.density);
+            }
+        }
+        tree.blob(0, height - 3, 0, Math.max(1.4, radius * 0.3), 2, Math.max(1.4, radius * 0.3), 0.68, shape.density);
+        tree.leaf(0, height - 1, 0);
+
+    },
+
+    // A low fork and spreading round blossom clusters leave room beneath
+    // an adult crown, instead of scaling a sapling into a thin tall pole.
+    cherry(tree, size, shape) {
+
+        const { height, radius, crownBase } = treeVisualDimensions(tree.species, size);
+        const random = tree.random;
+        const fork = Math.max(2, crownBase - 1);
+        tree.trunk(0, 0, 0, fork + 1);
+        if (size > 0.65) tree.trunk(1, 0, 0, 0);
+        const tall = (height - 1 - crownBase) / 2;
+        const crownY = height - 1 - tall;
+        tree.blob(0, crownY, 0, radius * 0.6, tall, radius * 0.6, 0.7, shape.density);
+        const limbs = 4 + Math.floor(random() * 2);
+        const phase = random() * Math.PI * 2;
+        for (let i = 0; i < limbs; i++) {
+            const angle = phase + i * Math.PI * 2 / limbs + (random() - 0.5) * 0.25;
+            const x = Math.cos(angle) * radius * 0.5, z = Math.sin(angle) * radius * 0.5;
+            const y = crownY - (i % 3 === 0 ? 0.6 : 0);
+            tree.branch(0, fork, 0, x, y, z);
+            tree.blob(x, y, z, radius * 0.53, tall, radius * 0.53, 0.68, shape.density);
+        }
+        tree.leaf(0, height - 1, 0);
+
+    },
 
     // Kula: zaokrąglona korona (jak lipa, jabłoń).
     kula(tree, size, shape) {

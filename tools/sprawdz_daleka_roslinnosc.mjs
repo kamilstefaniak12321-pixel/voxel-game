@@ -18,7 +18,7 @@ const { RealisticGenerator } = await import('../src/world/terrain/RealisticGener
 const { FarTerrain } = await import('../src/world/FarTerrain.js');
 const { createFarVegetationJob, appendFarVegetation, treeSilhouette, VEGETATION_STRIDE } = await import('../src/world/farVegetation.js');
 const { sampleFarTile, meshFarTile, createMeshScratch, KINDS, kindIndex } = await import('../src/world/farSamples.js');
-const { SURFACE_MATERIAL_COUNT } = await import('../src/rendering/SurfaceMaterials.js');
+const { SURFACE_MATERIAL_COUNT, surfaceMaterialId } = await import('../src/rendering/SurfaceMaterials.js');
 const { TREE_NAMES } = await import('../src/blocks/trees.js');
 const { buildTree } = await import('../src/world/trees/TreeShapes.js');
 const { chunkMaskData, chunkMaskUniforms, viewUniforms, CHUNK_MASK_SIZE } = await import('../src/rendering/viewUniforms.js');
@@ -54,7 +54,7 @@ for(const species of TREE_NAMES)for(const size of [0,.25,.5,.75,1])for(const see
     if(!actual.length)continue;
     const expected=[0,1,2].map(axis=>[Math.min(...actual.map(b=>b[axis])),Math.max(...actual.map(b=>b[axis]))+1]);
     const proxy=treeSilhouette({species,size,seed,x:0,y:0,z:0},1);
-    const boxes=[];for(let at=12;at<proxy.length;at+=12)boxes.push(proxy.slice(at,at+6));
+    const boxes=[];for(let at=0;at<proxy.length;at+=12)if(proxy[at+6]===surfaceMaterialId(`${species}_leaves`))boxes.push(proxy.slice(at,at+6));
     const observed=[0,1,2].map(axis=>[Math.min(...boxes.map(b=>b[axis])),Math.max(...boxes.map(b=>b[axis+3]))]);
     const error=Math.max(...expected.flatMap((range,axis)=>range.map((value,side)=>Math.abs(value-observed[axis][side]))));
     envelopeStats[species]=Math.max(envelopeStats[species]??0,error);

@@ -1,0 +1,75 @@
+{
+    "sourceArchive": "acacia.zip",
+    "suppliedBy": "Kamil",
+    "importDate": "2026-11-09",
+    "note": "Supplied texture PNG files and render_info.json are copied byte for byte; archive contains no geometry. Species identity inferred from the silhouette and generic filename. The game creates procedural geometry at one block ≈ one metre.",
+    "scientificReference": "Vachellia tortilis",
+    "referenceDimensionsMetres": {
+        "height": 10,
+        "crown": 16
+    },
+    "botanicalSource": "https://pza.sanbi.org/vachellia-tortilis",
+    "originalFiles": {
+        "log_side.png": {
+            "sha256": "c98efaa77494693395586d71e91deba48d255759bdd7cc319a6957fade7081d8",
+            "bytes": 524
+        },
+        "log_top.png": {
+            "sha256": "57123b69d88b07fba789790f1f10bc726d9f9a25708bcec5dd8e95abad305774",
+            "bytes": 334
+        },
+        "planks.png": {
+            "sha256": "790c83327fc617dfc3b565b5e52bb20bfef4c7555fee5e434fa0713d64d1ba65",
+            "bytes": 238
+        },
+        "leaves.png": {
+            "sha256": "a9824a4620ae0af5af4041d93a76971d9d5e0630afec6e911aee13ab11749095",
+            "bytes": 496
+        },
+        "leaves_variant.png": {
+            "sha256": "b0cd27b08c592b140d38cd4f603e41eddd4574629af7d9c8f8063a82b9845449",
+            "bytes": 645
+        },
+        "render_info.json": {
+            "sha256": "b8a6b85acc5abcbcdd291162f34dfd17ffbb767691002ba8ca74690f23799245",
+            "bytes": 198
+        }
+    },
+    "referencePreview": {
+        "archivePath": "acacia/preview.png",
+        "sha256": "c60c61aae137fe6fc345ad8a5007c70c660ade1270bc1c13545f79e57387868f"
+    },
+    "derivedFiles": {
+        "stripped_side.png": {
+            "sha256": "867fe9cb40b0d92db7c527d62a3ddd1cdc4d4a12222d22fefd33d3e91234ce2f",
+            "size": [
+                16,
+                16
+            ]
+        },
+        "stripped_top.png": {
+            "sha256": "9e114c284830929f905e5fb81fa6743ae73790c04137c72cb4841565309fc378",
+            "size": [
+                16,
+                16
+            ]
+        },
+        "sapling.png": {
+            "sha256": "0fd9217b476f1b6944769f2eb741310413dfec2f7b01ee2e7e9f95db7693d67c",
+            "size": [
+                16,
+                16
+            ]
+        }
+    },
+    "campfireTexture": {
+        "path": "assets/models/campfire/drewno-akacja.png",
+        "size": [
+            32,
+            32
+        ],
+        "sha256": "eff63cd940a3bc4e447b38432a2e9a97d48f98f7e2cf4032a19b152445e00cff"
+    },
+    "generator": "tools/tekstury_nowych_drzew.py; existing tekstury_drzew.py and nowe_drzewo.py pixel pipeline",
+    "sourceArchiveSha256": "695b927c377849f59bee48f4118c34e10c8adca5329c0f89ea8935f04782dc2c"
+}

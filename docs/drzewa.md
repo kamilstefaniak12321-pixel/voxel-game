@@ -1,7 +1,8 @@
 # Drzewa
 
-Gra ma **dziewięć gatunków drzew**. Sześć podstawowych powstaje
-proceduralnie, a trzy kolejne korzystają z paczek z szablonami.
+Gra ma **dwanaście gatunków drzew**. Sześć podstawowych powstaje
+proceduralnie; paczki dodają trzy gatunki z szablonów i trzy z własnymi
+generatorami sylwetek w skali człowieka.
 Każdy ma własne bloki, wygląd i zasady występowania w świecie.
 
 | Gatunek | Nazwa do komendy |
@@ -15,6 +16,9 @@ Każdy ma własne bloki, wygląd i zasady występowania w świecie.
 | Jabłoń domowa | `jablon` |
 | Olcha czarna | `olcha` |
 | Wierzba biała | `wierzba` |
+| Akacja parasolowata | `akacja` (także `acacia`) |
+| Cypryśnik błotny | `cyprysnik` (także `bald_cypress`) |
+| Wiśnia japońska | `wisnia` (także `cherry`) |
 
 Polskie znaki też działają (`dąb`, `jabłoń`, `świerk`). Leszczyna
 jest obecnie krzewem owocowym, opisanym w osobnym systemie krzaków.
@@ -44,7 +48,7 @@ Otwórz czat klawiszem **T** albo **/**. Trzy tryby pokazu:
   sosny z żywicą i bez, lipy kwitnące i zwykłe, jabłonie z owocami,
   bez owoców i po zbiorze. Jabłoń, olcha i wierzba mają po trzy
   szablony wielkości; gatunki proceduralne pokazujemy w pięciu rozmiarach.
-- **porownanie** sadzi wszystkie dziewięć gatunków obok siebie.
+- **porownanie** sadzi wszystkie dwanaście gatunków obok siebie.
 
 Ostatni argument to opcjonalny **seed pokazu** (0–4294967295).
 Bez niego komenda losuje nowy zestaw; z nim można odtworzyć te same
@@ -67,6 +71,41 @@ przypomina nazwy i współrzędne okazów ostatniego pokazu.
 zachowując bloki zmienione później przez gracza. Kolejny udany pokaz
 zastępuje poprzednią możliwość cofnięcia. Same posadzone drzewa są
 zwykłymi blokami świata i trafiają do zapisu.
+
+## Nowe drzewa w skali gracza — 0.79.0
+
+Przyjęto około **1 metra na blok**: postać ma 1,8 bloku wysokości,
+a kamera z pierwszej osoby znajduje się 1,6 bloku nad stopami.
+Rozmiary dotyczą dojrzałych drzew, z kilkoma losowymi sylwetkami,
+od niższych okazów po duże. Korony są rozłożyste, a konary pozostawiają
+miejsce, aby wejść pod drzewo i zobaczyć jego rozmiar z ziemi.
+
+| Gatunek | Wysokość | Średnica korony | Charakterystyczna sylwetka |
+|---|---|---|---|
+| Akacja parasolowata | 8–12 bloków | około 12–18 bloków | szeroki parasol na rozchodzących się konarach |
+| Cypryśnik błotny | 24–36 bloków | około 8–14 bloków | wysoki pień, rozszerzona podstawa, korzenie kolankowe i piętra gałęzi |
+| Wiśnia japońska | 6–10 bloków | około 8–12 bloków | niskie rozwidlenie i szeroka, różowa korona |
+
+To zakresy przyjęte do gry, z zaokrągleniem geometrii do bloków.
+Paczki Kamila zawierały tekstury i podglądy, więc sylwetki odtworzono
+proceduralnie. Oryginalne tekstury zostały zachowane. Odniesienia
+botaniczne i sumy kontrolne są w README każdej paczki:
+[akacja](../assets/drzewa/acacia/README.md),
+[cypryśnik](../assets/drzewa/bald_cypress/README.md),
+[wiśnia](../assets/drzewa/cherry/README.md).
+
+Akacje mogą pojawić się na ciepłych, suchych łąkach, cypryśniki na
+niezalanej ziemi mokradeł, wiśnie na umiarkowanych łąkach i w lasach
+liściastych. W istniejących zapisach nowe gatunki pojawiają się na
+nowo generowanym terenie; zapisane budowle i stare drzewa pozostają.
+Każdy gatunek ma sadzonkę, liście i ich odmianę, pień do okorowania,
+deski oraz opał (pień + siekiera → 4 opały, siekiera zostaje).
+
+Do szybkiego oglądania użyj `/drzewa posadz cyprysnik 75`,
+`/drzewa warianty akacja` lub `/drzewa las wisnia 16`.
+Galeria automatycznie dobiera odstępy do szerokich koron. Uproszczone
+modele dalekiego terenu korzystają z tych samych wymiarów co pełne
+drzewa i zachowują ich wysokość oraz własne kolory liści.
 
 ## Bloki
 

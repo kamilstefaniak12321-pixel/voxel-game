@@ -1,0 +1,75 @@
+{
+    "sourceArchive": "cherry.zip",
+    "suppliedBy": "Kamil",
+    "importDate": "2026-11-09",
+    "note": "Supplied texture PNG files and render_info.json are copied byte for byte; archive contains no geometry. Species identity inferred from the silhouette and generic filename. The game creates procedural geometry at one block ≈ one metre.",
+    "scientificReference": "Prunus serrulata",
+    "referenceDimensionsMetres": {
+        "height": 9,
+        "crown": 11
+    },
+    "botanicalSource": "https://woodyplants.cals.cornell.edu/plant/print/194",
+    "originalFiles": {
+        "log_side.png": {
+            "sha256": "5b066836f16c17bfd4208621aa2328301ff0d9536078fa5d666d2fcb1841fef2",
+            "bytes": 337
+        },
+        "log_top.png": {
+            "sha256": "359e0bdd985d8a8b37c14fcca6baef404e05736fb5d233a93311039ecf0f7ead",
+            "bytes": 320
+        },
+        "planks.png": {
+            "sha256": "6f263f4e0a1c109e2e6f638e21c4908cf9767ca6e7512d9b496d2dca5a447daf",
+            "bytes": 266
+        },
+        "leaves.png": {
+            "sha256": "5a18adbade7702f7540213589773609bff8ad33479a66de40f23d4df2c5eda8c",
+            "bytes": 546
+        },
+        "leaves_variant.png": {
+            "sha256": "4dc76deb9814059d58731b30bf52b924de1200c7bcd5379208e44718c394fa07",
+            "bytes": 533
+        },
+        "render_info.json": {
+            "sha256": "c0374129ca2d86a749270d5c99f32a064e219043cedddeb1f2522f7d7b2199ff",
+            "bytes": 183
+        }
+    },
+    "referencePreview": {
+        "archivePath": "cherry/preview.png",
+        "sha256": "e7ea017bc279443675f0bbf39cd83bc291a276afd3643840b1184341b3b71a83"
+    },
+    "derivedFiles": {
+        "stripped_side.png": {
+            "sha256": "e5e2b290a55a1a3a235aab042780274e97a026bdfffff0cd2f7e2e2bddb8a142",
+            "size": [
+                16,
+                16
+            ]
+        },
+        "stripped_top.png": {
+            "sha256": "5d1673ea062fe642e7eb332b937ff997ec821c8437f1d24f5ab2e6a6f573741b",
+            "size": [
+                16,
+                16
+            ]
+        },
+        "sapling.png": {
+            "sha256": "f2d19e36c15683f39106f9d05f5957cd195d169638634a739cf31411588c94d9",
+            "size": [
+                16,
+                16
+            ]
+        }
+    },
+    "campfireTexture": {
+        "path": "assets/models/campfire/drewno-wisnia.png",
+        "size": [
+            32,
+            32
+        ],
+        "sha256": "27d3ff0f439d1dc86a20bbb97789e41fa169f81d7b8cc1edf02d7e524dadb7fe"
+    },
+    "generator": "tools/tekstury_nowych_drzew.py; existing tekstury_drzew.py and nowe_drzewo.py pixel pipeline",
+    "sourceArchiveSha256": "8246a8616da31647faac263f2de60712a04d617ca156e327826e3bb634fd3dc7"
+}

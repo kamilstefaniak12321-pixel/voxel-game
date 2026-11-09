@@ -1,0 +1,75 @@
+{
+    "sourceArchive": "bald_cypress.zip",
+    "suppliedBy": "Kamil",
+    "importDate": "2026-11-09",
+    "note": "Supplied texture PNG files and render_info.json are copied byte for byte; archive contains no geometry. Species identity inferred from the silhouette and generic filename. The game creates procedural geometry at one block ≈ one metre.",
+    "scientificReference": "Taxodium distichum",
+    "referenceDimensionsMetres": {
+        "height": 32,
+        "crown": 12
+    },
+    "botanicalSource": "https://ask.ifas.ufl.edu/publication/st620",
+    "originalFiles": {
+        "log_side.png": {
+            "sha256": "8fee6ec249f15c8143fc4eb7afee444b664421260379335c8b5a0874f4efb87a",
+            "bytes": 428
+        },
+        "log_top.png": {
+            "sha256": "e15e22f0a3dc9eaab5877e7f1251c71bced5f54b27bb0401858280404a21436d",
+            "bytes": 368
+        },
+        "planks.png": {
+            "sha256": "c76ef1081b506107c757ca5d23e63cac48be24efa7bae92729ecc06a5b0d9982",
+            "bytes": 263
+        },
+        "leaves.png": {
+            "sha256": "ddf6526fa8d513096865ee243dac45ea46c0cabb2691e5df1f6aef4e5263644b",
+            "bytes": 469
+        },
+        "leaves_variant.png": {
+            "sha256": "9876b941751a507f46f168210d237f1a1337481a89d2fce5ac6fe3fd577e1710",
+            "bytes": 613
+        },
+        "render_info.json": {
+            "sha256": "33d7ce37d42b0e3b8a697d8ba11836c4c04c0441a372bcb55a6a8c7f30498b08",
+            "bytes": 199
+        }
+    },
+    "referencePreview": {
+        "archivePath": "bald_cypress/preview.png",
+        "sha256": "5f0dcf6641df88315b2d6c27374e016af9374c53831316526a2e386b62d380dd"
+    },
+    "derivedFiles": {
+        "stripped_side.png": {
+            "sha256": "bc016a6440e69959fda3ed9f913de7567d6e19650bd40c5814842727b30152a1",
+            "size": [
+                16,
+                16
+            ]
+        },
+        "stripped_top.png": {
+            "sha256": "07337efa5570e42f2354e4d8b6fbd36d4c14a646b9c7a03a48a3829b00b17d4e",
+            "size": [
+                16,
+                16
+            ]
+        },
+        "sapling.png": {
+            "sha256": "eceefea5b2f1bce518454c638e00b32a80a05b50574a1b0a76bfa2df359144e3",
+            "size": [
+                16,
+                16
+            ]
+        }
+    },
+    "campfireTexture": {
+        "path": "assets/models/campfire/drewno-cyprysnik.png",
+        "size": [
+            32,
+            32
+        ],
+        "sha256": "89238cf0baa0ee1309ac99e3611ec0f988640cf705d4efa357048d33d4417171"
+    },
+    "generator": "tools/tekstury_nowych_drzew.py; existing tekstury_drzew.py and nowe_drzewo.py pixel pipeline",
+    "sourceArchiveSha256": "6fb4ece826ddcbd6951b9248874ee8228c9528c03f39c35e89813c8506c7b944"
+}

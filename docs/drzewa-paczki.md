@@ -94,7 +94,7 @@ nową nazwą (np. `grusza`), w `drzewo.json` zmień nazwy i usuń linię
 `"pierwszeId"` - numery nada `node tools/drzewa.mjs` albo akcja na GitHubie.
 
 **Nazwa folderu** to nazwa drzewa w grze: same małe litery bez polskich
-znaków i cyfry, bez spacji (`grusza`, `modrzew`, `wisnia2`). Z niej
+znaków, cyfry i podkreślenie, bez spacji (`grusza`, `modrzew`, `bald_cypress`). Z niej
 powstają nazwy bloków: `grusza_log`, `grusza_leaves`, `grusza_sapling`...
 Nie może się nazywać jak drzewo gry (`oak`, `buk`...).
 
@@ -290,6 +290,14 @@ dużego drzewa]`:
 pnia w bok (najwyżej 7), `wysokoscKorony` - ile bloków ma korona,
 `gestosc` 0-1 - jak gęsty jest brzeg korony (1 - pełny, 0 - bardzo
 postrzępiony). Pień + korona najwyżej 28 bloków.
+
+Od 0.79.0 są też trzy generatory o skali dojrzałych drzew:
+`acacia`, `bald_cypress`, `cherry`. Używają `wysokosc: [min, max]`
+(całe drzewo), `promienKorony: [min, max]` i `gestosc`.
+Ich własne limity zasięgu/wysokości to odpowiednio 9/16, 7/40 i 6/14
+bloków. Starsze szablony i gotowe kształty zachowują dotychczasowe limity.
+Przykłady kompletnych paczek: `assets/drzewa/acacia/`,
+`assets/drzewa/bald_cypress/`, `assets/drzewa/cherry/`.
 
 ---
 

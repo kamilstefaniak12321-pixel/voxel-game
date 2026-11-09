@@ -11,6 +11,29 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 0.79.0 - Akacja, cypryśnik i wiśnia w skali gracza
+
+Trzy nowe drzewa z paczek Kamila — PR #116.
+
+- Akacja parasolowata ma 8–12 bloków wysokości i szeroką koronę,
+  cypryśnik błotny 24–36 bloków, masywną podstawę i korzenie kolankowe,
+  a wiśnia japońska 6–10 bloków i rozłożyste różowe kwiaty. Skala około
+  1 metra na blok pozwala odczuć rozmiar drzewa przy postaci 1,8 bloku.
+- Zachowane oryginalne tekstury; własne sadzonki w trzech poziomach
+  szczegółowości, liście i ich odmiany, pnie, okorowane drewno, deski
+  oraz opał pasujący do ogniska.
+- Naturalne występowanie odpowiednio na ciepłych suchych łąkach,
+  mokradłach oraz umiarkowanych łąkach i w lasach liściastych.
+  Nowe drzewa pojawiają się na nowo generowanym terenie.
+- Katalog, lasy i galerie obsługują 12 gatunków. Nazwy do komend:
+  `akacja`, `cyprysnik`, `wisnia`. Odstępy pokazów i wczytywanie chunków
+  uwzględniają szerokie korony, a dalekie sylwetki zachowują rozmiar
+  i kolor nowych gatunków. Dotychczasowe drzewa zachowują geometrię.
+- Testy naturalnej generacji, wzrostu, granic chunków, zapisu i komend;
+  próby w grze na RTX 3050 z porównaniem do postaci oraz kontrolą
+  kosztu lasu 36 dużych drzew. Kadry i zakres pomiarów:
+  `docs/pomiary/drzewa-0.79.0/`.
+
 ## 0.78.0 - Losowe lasy i przegląd wariantów drzew
 
 Komendy do oglądania i porównywania drzew — PR #115.

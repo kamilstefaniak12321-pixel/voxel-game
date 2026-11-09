@@ -52,6 +52,19 @@ wersji testowej "Voxel Game (test)" (hasło `android`, `docs/telefon.md`).
 Prawdziwy klucz wydań jest tylko w sekretach GitHuba i u autora - nigdy
 w repozytorium.
 
+## Tekstury nowych drzew
+
+Paczki `acacia.zip`, `bald_cypress.zip` i `cherry.zip` zostały przekazane
+przez Kamila 9 listopada 2026 r. do dodania do gry. Oryginalne tekstury
+w `assets/drzewa/acacia/`, `assets/drzewa/bald_cypress/` i
+`assets/drzewa/cherry/` zachowano bez zmian; pliki `source.json`
+dokumentują ich pochodzenie i sumy kontrolne. Materiał nie zawierał
+osobnego dokumentu licencyjnego; zapis dokumentuje przekazanie przez
+autora gry, bez przypisywania dodatkowej licencji źródłom botanicznym.
+Geometrię oraz brakujące tekstury sadzonek, okorowanego drewna i opału
+przygotowano w repozytorium. Strony botaniczne służą jedynie jako
+odniesienie wymiarów — nie pobierano z nich grafiki.
+
 ## Źródło muzyki
 
 Poniższe pięć plików zostało dostarczonych przez Kamila 2 listopada

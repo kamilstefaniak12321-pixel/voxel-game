@@ -85,7 +85,16 @@ export const PACK_REACH = 7;
 
 export const PACK_MAX_HEIGHT = 28;
 
-export const PACK_SHAPES = ['szablon', 'kula', 'stozek', 'parasol', 'kolumna'];
+// Existing packs keep their original envelope. Species with mature-sized
+// silhouettes opt into their own bounded shape, rather than silently changing
+// the geometry or validation of older packs.
+export const SPECIES_SHAPE_LIMITS = Object.freeze({
+    acacia: Object.freeze({ reach: 9, maxHeight: 16 }),
+    bald_cypress: Object.freeze({ reach: 7, maxHeight: 40 }),
+    cherry: Object.freeze({ reach: 6, maxHeight: 14 })
+});
+
+export const PACK_SHAPES = ['szablon', 'kula', 'stozek', 'parasol', 'kolumna', ...Object.keys(SPECIES_SHAPE_LIMITS)];
 
 // Gatunki gry (do "podobnyDo" - jak drzewo wygląda z daleka).
 
@@ -360,8 +369,8 @@ export function parseTemplate(source, allowed, what) {
 
 async function validatePack(folder) {
 
-    if (typeof folder !== 'string' || !/^[a-z][a-z0-9]{1,23}$/.test(folder)) {
-        fail(`zła nazwa folderu - same małe litery (bez polskich) i cyfry, bez spacji i _, np. jablon`);
+    if (typeof folder !== 'string' || !/^[a-z][a-z0-9_]{1,23}$/.test(folder)) {
+        fail(`zła nazwa folderu - małe litery (bez polskich), cyfry i _, bez spacji, np. jablon lub bald_cypress`);
     }
 
     let json;
@@ -648,6 +657,14 @@ async function validatePack(folder) {
             pack.shape.templates.push(parseTemplate(source, allowed, file));
 
         }
+
+    }
+    else if (Object.hasOwn(SPECIES_SHAPE_LIMITS, shape.rodzaj)) {
+
+        const limits = SPECIES_SHAPE_LIMITS[shape.rodzaj];
+        pack.shape.height = range(shape.wysokosc, 'ksztalt.wysokosc', 4, limits.maxHeight);
+        pack.shape.radius = range(shape.promienKorony, 'ksztalt.promienKorony', 2, limits.reach);
+        pack.shape.density = shape.gestosc === undefined ? 0.65 : number(shape.gestosc, 'ksztalt.gestosc', 0, 1);
 
     }
     else {

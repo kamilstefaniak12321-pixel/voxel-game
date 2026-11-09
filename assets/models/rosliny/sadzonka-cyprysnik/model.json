@@ -1,0 +1,27 @@
+{
+    "nazwa": "Sadzonka cypryśnika",
+    "bloki": ["bald_cypress_sapling"],
+    "kolory": {
+        "lisc": "#4b7e34",
+        "liscJasny": "#6b984c",
+        "liscCiemny": "#315726",
+        "lodyga": "#80674e"
+    },
+    "etapy": [{
+        "prosty": null,
+        "polrealistyczny": {
+            "liscie": {
+                "uklad": "kopula", "ile": 12, "dlugosc": 5,
+                "promien": 3, "kopula": 12, "nachylenie": 70, "pien": true
+            }
+        },
+        "szczegolowy": {
+            "rodzaj": "kepka",
+            "liscie": {"uklad": "brak"},
+            "lodygi": {
+                "ile": [1, 1], "wysokosc": [11, 13], "promien": 0,
+                "liscie": {"okolek": 4, "co": 1, "dlugosc": [2, 4]}
+            }
+        }
+    }]
+}

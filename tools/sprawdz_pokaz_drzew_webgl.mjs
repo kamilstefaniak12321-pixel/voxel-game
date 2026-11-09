@@ -42,7 +42,7 @@ const server = createServer(async (req, res) => {
                 #qa-heading{position:fixed;top:12px;left:12px;right:12px;z-index:10000;padding:10px 14px;
                     background:#fffffff0;color:#20242a;font:16px system-ui;border:1px solid #bbb;border-radius:4px}
                 #qa-command{font:13px monospace;color:#46566b;margin-top:5px}
-                </style><body><div id="qa-heading"><span id="qa-title">Próba drzew 0.78.0</span><div id="qa-command"></div></div>
+                </style><body><div id="qa-heading"><span id="qa-title">Próba drzew</span><div id="qa-command"></div></div>
                 <script type="importmap">{"imports":{"three":"/lib/three/three.module.js"}}</script>
                 <script type="module">import {run} from '/tools/fixtures/tree-showcase.js';
                 try{window.treeQA=await run();window.treeReady=true}catch(error){window.treeError=error.stack;console.error(error)}</script>`);

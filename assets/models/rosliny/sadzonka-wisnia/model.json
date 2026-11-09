@@ -1,0 +1,27 @@
+{
+    "nazwa": "Sadzonka wiśni",
+    "bloki": ["cherry_sapling"],
+    "kolory": {
+        "lisc": "#da88a9",
+        "liscJasny": "#f2b4cf",
+        "liscCiemny": "#ac6086",
+        "lodyga": "#6e4e4b"
+    },
+    "etapy": [{
+        "prosty": null,
+        "polrealistyczny": {
+            "liscie": {
+                "uklad": "kopula", "ile": 9, "dlugosc": 5,
+                "promien": 4, "kopula": 9, "nachylenie": 40, "pien": true
+            }
+        },
+        "szczegolowy": {
+            "rodzaj": "kepka",
+            "liscie": {"uklad": "krzak", "ile": [6, 8], "dlugosc": [2, 3], "promien": 2},
+            "lodygi": {
+                "ile": [1, 1], "wysokosc": [7, 9], "promien": 0,
+                "liscie": {"co": 1, "dlugosc": [3, 4], "naprzeciw": true}
+            }
+        }
+    }]
+}

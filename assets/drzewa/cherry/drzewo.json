@@ -1,0 +1,78 @@
+{
+    "pierwszeId": 1020,
+    "gatunek": "Wiśnia japońska",
+    "gatunekDopelniacz": "wiśni",
+    "krotko": "wiśnia",
+    "nazwaAngielska": "Japanese Flowering Cherry",
+    "podobnyDo": "lipa",
+    "bloki": {
+        "pien": {
+            "nazwa": "Pień wiśni",
+            "bok": "log_side.png",
+            "gora": "log_top.png"
+        },
+        "okorowany": {
+            "nazwa": "Okorowany pień wiśni",
+            "bok": "stripped_side.png",
+            "gora": "stripped_top.png"
+        },
+        "deski": {
+            "nazwa": "Deski wiśni",
+            "tekstura": "planks.png"
+        },
+        "liscie": {
+            "nazwa": "Liście wiśni",
+            "tekstura": "leaves.png"
+        },
+        "sadzonka": {
+            "nazwa": "Sadzonka wiśni",
+            "tekstura": "sapling.png"
+        }
+    },
+    "odmianyLisci": [
+        {
+            "id": "rzadsze_kwiaty",
+            "nazwa": "Liście wiśni — rzadsze kwiaty",
+            "tekstura": "leaves_variant.png",
+            "udzial": 0.2
+        }
+    ],
+    "lupy": [
+        [
+            "sadzonka",
+            0.05
+        ]
+    ],
+    "czasWzrostu": 300,
+    "ksztalt": {
+        "rodzaj": "cherry",
+        "wysokosc": [
+            6,
+            10
+        ],
+        "promienKorony": [
+            4,
+            6
+        ],
+        "gestosc": 0.82
+    },
+    "gdzieRosnie": {
+        "czestosc": 0.1,
+        "biomy": [
+            "laka",
+            "lisciasty"
+        ],
+        "temperatura": [
+            -0.15,
+            0.7
+        ],
+        "wilgotnosc": [
+            -0.25,
+            0.75
+        ],
+        "wysokosc": [
+            2,
+            36
+        ]
+    }
+}

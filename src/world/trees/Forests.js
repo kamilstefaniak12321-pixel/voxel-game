@@ -21,7 +21,7 @@ import { Noise } from '../Noise.js';
 
 import { FORESTS, SCALES, BIOME_SHAPE } from '../terrain/TerrainShape.js';
 
-import { buildTree, TREE_REACH, TREE_MAX_HEIGHT } from './TreeShapes.js';
+import { buildTree, TREE_REACH, treeShapeLimits } from './TreeShapes.js';
 
 import { BIOMES, BIOME_KEYS } from '../terrain/Biomes.js';
 
@@ -487,7 +487,7 @@ export class Forests {
         // Only trees near the world ceiling need their exact shape to retain
         // the original placement rejection. Everywhere else the known bound
         // proves that a descriptor and a real tree make the same decision.
-        const shape = withShape || height + 1 + TREE_MAX_HEIGHT >= CHUNK_HEIGHT
+        const shape = withShape || height + 1 + treeShapeLimits(species).maxHeight >= CHUNK_HEIGHT
             ? buildTree(species, treeSeed, size) : null;
 
         if (shape && height + 1 + shape.top >= CHUNK_HEIGHT) {
@@ -519,7 +519,8 @@ export class Forests {
                     continue;
                 }
 
-                if (tree.x + R < x0 || tree.x - R > x1 || tree.z + R < z0 || tree.z - R > z1) {
+                const reach = treeShapeLimits(tree.species).reach;
+                if (tree.x + reach < x0 || tree.x - reach > x1 || tree.z + reach < z0 || tree.z - reach > z1) {
                     continue;
                 }
 

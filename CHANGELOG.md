@@ -11,6 +11,28 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 0.78.0 - Losowe lasy i przegląd wariantów drzew
+
+Komendy do oglądania i porównywania drzew — PR #115.
+
+- `/drzewa lista`: pełny katalog dziewięciu gatunków, także jabłoni,
+  olchy i wierzby z paczek.
+- `/drzewa las <gatunek> [liczba 1-36] [seed]`: losowy rozstaw, rozmiary
+  i kształty jednego gatunku; ten sam seed odtwarza zestaw.
+- `/drzewa warianty <gatunek> [seed]`: pięć rozmiarów proceduralnych
+  lub wszystkie szablony paczki, z osobnymi rzędami stanów specjalnych
+  (żywica sosny, kwitnienie lipy, owoce jabłoni i liście po zbiorze).
+- `/drzewa porownanie [seed]`: wszystkie gatunki obok siebie;
+  `/drzewa ostatnie` przypomina nazwy i współrzędne okazów.
+- Pokazy powstają partiami na wolnej ziemi przed graczem. Galeria
+  sprawdza miejsce na cały zestaw, a las omija przeszkody. Cofnięcie
+  ostatniego pokazu (`/drzewa cofnij`, w bieżącej sesji) zachowuje
+  późniejsze zmiany gracza, także po oddaleniu się i wczytaniu terenu.
+- Naprawiona żywica na naturalnych sosnach: losowanie wcześniej
+  nie zmieniało już postawionej kory. Kształty drzew pozostają takie same.
+- Testy komend i cofania oraz cztery widoki w prawdziwej grze, sprawdzone
+  również na RTX 3050 Laptop GPU. Dowody: `docs/pomiary/drzewa-0.78.0/`.
+
 ## 0.77.0 - Nowy układ ekwipunku
 
 Układ okna ekwipunku według projektu Kamila — PR #113.

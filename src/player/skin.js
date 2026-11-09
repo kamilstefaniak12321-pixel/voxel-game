@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { loadTextureRegion } from '../rendering/TextureSheets.js';
 
 // ------------------------------------------------------------
 // SKÓRKA GRACZA (tekstura modelu)
@@ -7,7 +8,7 @@ import * as THREE from 'three';
 // (głowa, tułów, ręce i nogi + druga, wierzchnia warstwa: czapka,
 // kurtka, rękawy, nogawki) - opis i szablon: docs/gracz.md.
 //
-// Domyślna skórka: assets/textures/player/skin.png. Gracz może
+// Domyślna skórka pochodzi ze wspólnego arkusza gracza. Gracz może
 // wczytać własną (Ustawienia -> Gracz albo /skorka plik) - zostaje
 // zapamiętana w przeglądarce. Stary format 64 x 32 też działa (lewa
 // ręka i noga są wtedy kopią prawych).
@@ -15,7 +16,7 @@ import * as THREE from 'three';
 
 const STORAGE_KEY = 'voxel-game-skin';
 
-const DEFAULT_URL = new URL('../../assets/textures/player/skin.png', import.meta.url).href;
+const DEFAULT_TEXTURE = 'assets/textures/player/skin.png';
 
 const SIZE = 64;
 
@@ -133,7 +134,7 @@ export async function loadSkin() {
     }
 
 
-    drawSkin(await loadImage(DEFAULT_URL));
+    drawSkin(await loadTextureRegion(DEFAULT_TEXTURE));
 
     return 'default';
 

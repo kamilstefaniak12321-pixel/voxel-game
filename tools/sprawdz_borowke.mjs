@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
+import { readTexturePng } from './texture_regions.mjs';
 import { registerHooks } from 'node:module';
 registerHooks({
     resolve(specifier, context, next) {
@@ -35,7 +36,7 @@ assert.deepEqual(stages.map(getBlockId), [94,95,96,97], 'Existing block IDs must
 for (const type of stages) {
     assert.equal(isPlantId(getBlockId(type)), true);
     assert.equal(getBlockSound(type), 'plant');
-    const icon = await readFile(new URL('../' + getBlockDefinition(type).modelIcon, import.meta.url));
+    const icon = readTexturePng(getBlockDefinition(type).modelIcon);
     assert.equal(icon.subarray(1,4).toString(), 'PNG');
 }
 const counts = { young:30, empty:30, few:66, full:174 };

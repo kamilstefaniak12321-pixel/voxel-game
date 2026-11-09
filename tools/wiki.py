@@ -35,11 +35,11 @@ from datetime import date
 
 import numpy as np
 from PIL import Image, ImageDraw
+from atlasy import read_texture
 import markdown
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
 WIKI = os.path.join(ROOT, 'docs', 'wiki')
-ATLAS = os.path.join(ROOT, 'assets', 'textures', 'blocks', 'terrain.png')
 TILE = 16
 ICON = 64
 
@@ -66,7 +66,6 @@ def load_data():
 class Icons:
 
     def __init__(self, data):
-        self.atlas = np.asarray(Image.open(ATLAS).convert('RGBA')).astype(np.float64)
         self.tiles = data['tiles']
         self.cache = {}
         self.files = {}
@@ -75,17 +74,10 @@ class Icons:
         pos = self.tiles.get(name)
         if not pos:
             return np.zeros((TILE, TILE, 4))
-        if 'file' in pos:
-            # Tekstura z paczki drzewa (assets/drzewa/<drzewo>/<plik>.png).
-            if name not in self.files:
-                try:
-                    img = Image.open(os.path.join(ROOT, pos['file'])).convert('RGBA').resize((TILE, TILE), Image.NEAREST)
-                    self.files[name] = np.asarray(img).astype(np.float64)
-                except OSError:
-                    self.files[name] = np.zeros((TILE, TILE, 4))
-            return self.files[name]
-        x, y = pos['x'], pos['y']
-        return self.atlas[y * TILE:(y + 1) * TILE, x * TILE:(x + 1) * TILE]
+        if name not in self.files:
+            img = read_texture(pos.get('texture', name)).resize((TILE, TILE), Image.Resampling.NEAREST)
+            self.files[name] = np.asarray(img).astype(np.float64)
+        return self.files[name]
 
     def flat(self, name):
         pos = self.tiles.get(name) or {}
@@ -93,7 +85,7 @@ class Icons:
             # Roślina z paczki roślin: obrazek w swoim rozmiarze, jak
             # największy w ikonce, w całych pikselach (jak BlockIcons.js).
             try:
-                img = Image.open(os.path.join(ROOT, pos['file'])).convert('RGBA')
+                img = read_texture(pos.get('texture', name))
             except OSError:
                 return Image.new('RGBA', (ICON, ICON))
             fit = ICON / max(img.size)
@@ -136,7 +128,7 @@ class Icons:
         if key not in self.cache:
             icon = entry['icon']
             if icon['kind'] == 'file':
-                img = Image.open(os.path.join(ROOT, icon['file'])).convert('RGBA')
+                img = read_texture(icon['file'])
                 img.thumbnail((ICON, ICON), Image.Resampling.NEAREST)
                 out = Image.new('RGBA', (ICON, ICON))
                 out.alpha_composite(img, ((ICON - img.width) // 2, (ICON - img.height) // 2))
@@ -277,8 +269,6 @@ class Wiki:
                 out.append(('Posadzony (PPM na ziemi)', entry['plantsLabel']))
             if entry['tool']:
                 out.append(('Narzędzie', f'kopie 3 razy szybciej: {", ".join(entry["toolMaterials"])}'))
-        if entry.get('pack'):
-            out.append(('Paczka drzewa', f'assets/drzewa/{entry["pack"]}'))
         if entry['sources']:
             out.append(('Skąd', '; '.join(entry['sources'])))
         if entry['madeBy']:

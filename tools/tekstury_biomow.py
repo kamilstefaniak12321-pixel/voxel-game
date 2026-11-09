@@ -24,6 +24,9 @@ import sys
 
 import numpy as np
 from PIL import Image
+from atlasy import read_texture, write_texture
+
+# ATLAS jest roboczą kompozycją kafelków; zapis trafia do arkuszy tematycznych.
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
@@ -462,25 +465,24 @@ def generate_atlas():
     return tiles
 
 
-def save_packs():
+def save_tree_regions():
     packs = {'olcha': alder_textures(), 'wierzba': willow_textures()}
     for folder, textures in packs.items():
-        os.makedirs(os.path.join(DRZEWA, folder), exist_ok=True)
         for name, img in textures.items():
-            as_image(img).save(os.path.join(DRZEWA, folder, name), optimize=True)
+            write_texture(os.path.join(DRZEWA, folder, name), as_image(img))
     return packs
 
 
 def main():
-    atlas = Image.open(ATLAS).convert('RGBA')
+    atlas = read_texture(ATLAS)
     tiles = generate_atlas()
     for name, img in tiles.items():
         x, y = TILES[name]
         atlas.paste(Image.new('RGBA', (N, N), (0, 0, 0, 0)), (x * N, y * N))
         atlas.paste(as_image(img), (x * N, y * N))
-    atlas.save(ATLAS)
-    packs = save_packs()
-    print('Gotowe:', len(tiles), 'tekstur w', os.path.relpath(ATLAS, ROOT), '+ paczki drzew:',
+    write_texture(ATLAS, atlas)
+    packs = save_tree_regions()
+    print('Gotowe:', len(tiles), 'tekstur w', 'assets/textures/*.png', '+ tekstury drzew:',
           ', '.join(f'{k} ({len(v)})' for k, v in packs.items()))
     if len(sys.argv) > 1:
         preview({**tiles, **{f'olcha/{k}': v for k, v in packs['olcha'].items()},

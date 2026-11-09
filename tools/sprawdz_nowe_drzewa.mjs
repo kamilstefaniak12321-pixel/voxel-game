@@ -4,6 +4,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import { registerHooks } from 'node:module';
+import { readTextureRegion } from './texture_regions.mjs';
 
 registerHooks({
     resolve(specifier, context, next) {
@@ -26,7 +27,7 @@ registerHooks({
 });
 
 const { TREE_NAMES, TREE_SPECIES } = await import('../src/blocks/trees.js');
-const { TREE_PACK_ERRORS, PACK_TEXTURES, packTile } = await import('../src/blocks/treePacks.js');
+const { TREE_TEXTURE_NAMES, TREE_DEFINITIONS } = await import('../src/blocks/treeCatalog.js');
 const { buildTree, treeShapeLimits, treeVisualDimensions, TREE_REACH, TREE_MAX_HEIGHT } = await import('../src/world/trees/TreeShapes.js');
 const { Chunk } = await import('../src/world/Chunk.js');
 const { World } = await import('../src/world/World.js');
@@ -48,10 +49,10 @@ const widths = shape => {
     return [0, 2].map(axis => Math.max(...leaves.map(cell => cell[axis])) - Math.min(...leaves.map(cell => cell[axis])) + 1);
 };
 
-equal(TREE_PACK_ERRORS, [], 'Every tree pack loads, including the underscore in bald_cypress');
+equal(TREE_DEFINITIONS.length, 12, 'Every built-in tree species is registered');
 check(species.every(name => TREE_NAMES.includes(name)), 'All new species are registered');
 for (const [index, name] of species.entries()) {
-    const pack = TREE_SPECIES[name].pack;
+    const pack = TREE_SPECIES[name];
     equal(pack.firstId, 1000 + index * 10, `${name}: stable reserved IDs`);
     for (const [offset, part] of ['log', 'log_stripped', 'planks', 'leaves', 'sapling'].entries()) {
         equal(getBlockId(`${name}_${part}`), pack.firstId + offset, `${name}: ${part} ID`);
@@ -62,12 +63,12 @@ for (const [index, name] of species.entries()) {
     equal(gridResult([{ type: `${name}_log_stripped`, count: 1 }, null, null, null])?.count, 4, `${name}: stripped log crafts four planks`);
     check(getRecipe(`${name}_planks`), `${name}: planks have a recipe`);
     check(matchesIngredient('#planks', `${name}_planks`), `${name}: planks work in shared wooden recipes`);
-    const provenance = JSON.parse(readFileSync(new URL(`../assets/drzewa/${name}/source.json`, import.meta.url)));
+    const baseline = JSON.parse(readFileSync(new URL('./fixtures/texture-atlas-079.json', import.meta.url)));
     for (const file of ['leaves.png', 'leaves_variant.png', 'log_side.png', 'log_top.png', 'planks.png']) {
-        const bytes = readFileSync(new URL(`../assets/drzewa/${name}/${file}`, import.meta.url));
-        equal(sha(bytes), provenance.originalFiles[file].sha256, `${name}/${file}: supplied pixels remain unmodified`);
-        equal([bytes.readUInt32BE(16), bytes.readUInt32BE(20)], [16, 16], `${name}/${file}: 16x16 texels`);
-        check(PACK_TEXTURES[packTile(pack, file)], `${name}/${file}: texture enters atlas`);
+        const region = readTextureRegion(`${name}/${file}`);
+        equal(sha(region.rgba), baseline.tiles[`${name}/${file}`].rgbaSha256, `${name}/${file}: supplied pixels remain unmodified`);
+        equal([region.width, region.height], [16, 16], `${name}/${file}: 16x16 texels`);
+        check(TREE_TEXTURE_NAMES.includes(`${name}/${file}`), `${name}/${file}: texture enters atlas`);
     }
 }
 
@@ -138,7 +139,7 @@ for (const [index, name] of species.entries()) {
 
 // Fixed points discovered in a bounded scan of the actual seed42 world.
 // They exercise climate, biome, density, ground and other pack priorities;
-// merely calling packSpecies with an invented climate would miss conflicts.
+// merely calling catalogSpecies with an invented climate would miss conflicts.
 const natural = new RealisticGenerator(42);
 for (const [name, gx, gz, x, y, z] of [
     ['acacia', 215, 137, 862, 51, 550],

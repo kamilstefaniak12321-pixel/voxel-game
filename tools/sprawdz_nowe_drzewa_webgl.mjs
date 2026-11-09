@@ -23,7 +23,7 @@ async function fingerprint() {
         }
     }
     await walk('src');
-    await walk('assets/drzewa');
+    await walk('assets/textures');
     await walk('assets/models/rosliny');
     await walk('assets/models/campfire');
     return { sha256: hash.digest('hex'), files };

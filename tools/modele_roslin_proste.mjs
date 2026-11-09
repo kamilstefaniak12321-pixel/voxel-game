@@ -11,12 +11,11 @@
 //   node tools/modele_roslin_proste.mjs            (wszystkie)
 //   node tools/modele_roslin_proste.mjs piwonia    (jedna)
 //
-// Zapisuje assets/models/rosliny/<roślina>/prosty-<etap>.png i wypisuje
-// rozmiary. Obrazki można potem poprawiać ręcznie.
+// Zapisuje regiony prosty-<etap> w assets/textures/rosliny.png i wypisuje
+// rozmiary. Obrazki można potem poprawiać ręcznie w arkuszu.
 // ------------------------------------------------------------
 
-import { writeFileSync, mkdirSync } from 'node:fs';
-import { deflateSync } from 'node:zlib';
+import { writeTextureRegion } from './texture_regions.mjs';
 import { registerHooks } from 'node:module';
 import { readFileSync } from 'node:fs';
 
@@ -147,43 +146,15 @@ function render(type) {
 
 }
 
-function png(pixels) {
-    const crcTable = Array.from({ length: 256 }, (_, n) => {
-        let c = n;
-        for (let k = 0; k < 8; k++) c = c & 1 ? 0xedb88320 ^ (c >>> 1) : c >>> 1;
-        return c >>> 0;
-    });
-    const crc = (buffer) => {
-        let c = 0xffffffff;
-        for (const byte of buffer) c = crcTable[(c ^ byte) & 255] ^ (c >>> 8);
-        return (c ^ 0xffffffff) >>> 0;
-    };
-    const chunk = (type, data) => {
-        const out = Buffer.alloc(12 + data.length);
-        out.writeUInt32BE(data.length, 0);
-        out.write(type, 4, 'latin1');
-        data.copy(out, 8);
-        out.writeUInt32BE(crc(out.subarray(4, 8 + data.length)), 8 + data.length);
-        return out;
-    };
-    const header = Buffer.alloc(13);
-    header.writeUInt32BE(16, 0); header.writeUInt32BE(16, 4);
-    header[8] = 8; header[9] = 6;
-    const raw = Buffer.alloc(16 * (16 * 4 + 1));
-    for (let y = 0; y < 16; y++) Buffer.from(pixels.subarray(y * 64, y * 64 + 64)).copy(raw, y * 65 + 1);
-    return Buffer.concat([Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]), chunk('IHDR', header), chunk('IDAT', deflateSync(raw)), chunk('IEND', Buffer.alloc(0))]);
-}
-
 const only = process.argv[2];
 const sizes = {};
 
 for (const [folder, types] of Object.entries(SIMPLE_FROM_MODEL)) {
     if (only && folder !== only) continue;
-    const dir = new URL(`../assets/models/rosliny/${folder}/`, import.meta.url);
-    mkdirSync(dir, { recursive: true });
     sizes[folder] = types.map((type, index) => {
         const { pixels, size } = render(type);
-        writeFileSync(new URL(`prosty-${index + 1}.png`, dir), png(pixels));
+        writeTextureRegion(`assets/models/rosliny/${folder}/prosty-${index + 1}.png`,
+            { width: 16, height: 16, rgba: pixels });
         return size;
     });
 }

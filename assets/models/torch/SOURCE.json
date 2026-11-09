@@ -18,7 +18,9 @@
       "size": [
         16,
         320
-      ]
+      ],
+      "rgbaSha256": "41ad793c2240bed4d4d68cb97d21276e74a2076e5047af15236e360302d38108",
+      "firstFrameRgbaSha256": "25e332502e2708db5f64a078cbe59e6403b97bd4301a4a4ebdda6a631f2b4db1"
     },
     {
       "file": "torch_black.png",
@@ -27,7 +29,9 @@
       "size": [
         16,
         320
-      ]
+      ],
+      "rgbaSha256": "457132048203e800512be12428490dab0a41dbb569457950da297ae84208d3a6",
+      "firstFrameRgbaSha256": "eeccb082c18bea638f18a6528eda869c8f50c9b3abeca0a08f313f43f6d3e419"
     },
     {
       "file": "torch_blue.png",
@@ -36,7 +40,9 @@
       "size": [
         16,
         320
-      ]
+      ],
+      "rgbaSha256": "22101a992f0f5777632928e42b3ac95443525c007b08a5088c74d637892a2478",
+      "firstFrameRgbaSha256": "1d4f9e3bd3561905f26efeea241dbde0e758f4386ea10dccf795e9bdbc891b72"
     },
     {
       "file": "torch_brown.png",
@@ -45,7 +51,9 @@
       "size": [
         16,
         320
-      ]
+      ],
+      "rgbaSha256": "6deddeed7f19eb6cd2c27efafbeb44f3b3d25f64f23c3f514ad43825a70ec5a1",
+      "firstFrameRgbaSha256": "bbc361e14dd92e68ac5739caf037fb0b9fab602cd5b009486ff0281fd0bf909a"
     },
     {
       "file": "torch_cyan.png",
@@ -54,7 +62,9 @@
       "size": [
         16,
         320
-      ]
+      ],
+      "rgbaSha256": "9c7035e4841ceb421e6a9f8ea0f07ece90f6ad2939f6ef545837d11926107c1a",
+      "firstFrameRgbaSha256": "b224692e1603a4162d1837d880197c0beecb7e005a176f74153ba8652f1608a4"
     },
     {
       "file": "torch_gray.png",
@@ -63,7 +73,9 @@
       "size": [
         16,
         320
-      ]
+      ],
+      "rgbaSha256": "fa8f497707dd63a2c4f86efe903ddd79ce38248958bbe336503f68e2d273bcc5",
+      "firstFrameRgbaSha256": "d536c35229bf361e13bf4c9c0d8cd78195a0245cbebdd4b109c3219fc34d6a76"
     },
     {
       "file": "torch_green.png",
@@ -72,7 +84,9 @@
       "size": [
         16,
         320
-      ]
+      ],
+      "rgbaSha256": "9a347a0a53adf89a5e420c497606e05e499d8009d58f9be26332152f321398e5",
+      "firstFrameRgbaSha256": "9368b3da8cef47f0c35165b0c2d95a947f4b499a3bd73787659e5c9b6355ebe5"
     },
     {
       "file": "torch_light_blue.png",
@@ -81,7 +95,9 @@
       "size": [
         16,
         320
-      ]
+      ],
+      "rgbaSha256": "e684b3e959d6ae5d883105358a05153dd259ddb2460edc03f4c558a4c8c58c22",
+      "firstFrameRgbaSha256": "9d356c81e4ed5242d5099f3f580a50524baa500a0b61934163b0e964f827a0c7"
     },
     {
       "file": "torch_light_gray.png",
@@ -90,7 +106,9 @@
       "size": [
         16,
         320
-      ]
+      ],
+      "rgbaSha256": "5514ae84d3222d7364baa4d355a7357ad0a9306367d9f9e8e5bf5cbdd1b967aa",
+      "firstFrameRgbaSha256": "7111fc29161aef07d1e6816aec234867f2824f9fe047b7d69151a3b81256eb86"
     },
     {
       "file": "torch_lime.png",
@@ -99,7 +117,9 @@
       "size": [
         16,
         320
-      ]
+      ],
+      "rgbaSha256": "1defaf7c944f137c01f99d34f716c0d307008afb62f53bba76560d7f1e55776a",
+      "firstFrameRgbaSha256": "082f93ddb8bce3424d9393ca2be5e095fd0ec4b2a3ac785d231c7971b370873d"
     },
     {
       "file": "torch_magenta.png",
@@ -108,7 +128,9 @@
       "size": [
         16,
         320
-      ]
+      ],
+      "rgbaSha256": "51d2c9f3ec805db0faa9e1b667163ea6f4516a9ecd59f9d540e4bd06361ac745",
+      "firstFrameRgbaSha256": "8db433733f66a26b26e83d963b5801ba695516248f5346754637f31b19bd5cdc"
     },
     {
       "file": "torch_orange.png",
@@ -117,7 +139,9 @@
       "size": [
         16,
         320
-      ]
+      ],
+      "rgbaSha256": "5aafb3061fcb37e862235e676bffb030103d462b8be8eb051f1b3e1db99462be",
+      "firstFrameRgbaSha256": "465f40ce52361cc5286133f3e649438c2647e7fef4067ad8d37d09b9c2fb3e91"
     },
     {
       "file": "torch_pink.png",
@@ -126,7 +150,9 @@
       "size": [
         16,
         320
-      ]
+      ],
+      "rgbaSha256": "b19af04e322c22c65ab57ba74939bb32a3b653f6b5761d19f4c33020164df223",
+      "firstFrameRgbaSha256": "47e24969af84fb5bf5bca11fcde5462a17b5ffbd2bc5db477abfd9c076917d79"
     },
     {
       "file": "torch_purple.png",
@@ -135,7 +161,9 @@
       "size": [
         16,
         320
-      ]
+      ],
+      "rgbaSha256": "f240be9e518579c61a9df5717d7752bc059e943094714efddef801f5f138d983",
+      "firstFrameRgbaSha256": "2b1c29cc7b0bd94bc0c10cb7b8f4c7f60da7e1941a02e1013dd1c737741af5ff"
     },
     {
       "file": "torch_red.png",
@@ -144,7 +172,9 @@
       "size": [
         16,
         320
-      ]
+      ],
+      "rgbaSha256": "1f62c02ecc368701d9a4ed3cd547311e683adb1fd2dff63d3da4e50a2d890090",
+      "firstFrameRgbaSha256": "9b33cecfc25528e2744ddbce231b20240cef9001a0a730c572b2297e87f44022"
     },
     {
       "file": "torch_white.png",
@@ -153,7 +183,9 @@
       "size": [
         16,
         320
-      ]
+      ],
+      "rgbaSha256": "54bfe843c3890c7b9fb3d857aca57be2461bd5b20833a4e3c6b1321970894be1",
+      "firstFrameRgbaSha256": "88fcfe2da9c266e9b976c181f44b11b4fac11b92275af0f4bea7c8afd546c390"
     },
     {
       "file": "torch_yellow.png",
@@ -162,7 +194,10 @@
       "size": [
         16,
         320
-      ]
+      ],
+      "rgbaSha256": "ab6abe4940d7bb9fd8fdeb4b88501ade181eb4ee2cacd6a3695fa7d978a0f1ca",
+      "firstFrameRgbaSha256": "9a294964288b679af4c8e6827939828bba6a44be9ce062dc2b3a12ef35db65e3"
     }
-  ]
+  ],
+  "atlasNote": "Since 0.80.0 textures are regions in assets/textures/efekty.png. sha256 retains the original archive PNG provenance; rgbaSha256 verifies the unchanged decoded source pixels."
 }

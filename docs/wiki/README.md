@@ -2,7 +2,7 @@
 
 Klockowa gra w przeglądarce, na komputerze (Windows) i na telefonie
 (Android). Nieskończony świat z prawdziwymi formami terenu i skałami,
-lasy sześciu gatunków drzew (i jabłonie), krzaki owocowe, woda, dzień i noc
+lasy dwunastu gatunków drzew, krzaki owocowe, woda, dzień i noc
 z fazami księżyca, meteoryty, kopanie, wytwarzanie - i jeden sekret
 wysoko nad chmurami.
 
@@ -138,8 +138,8 @@ Opisy techniczne poszczególnych części gry są w `docs/`:
 [niebo i światło](../niebo-i-swiatlo.md), [kosmos](../kosmos.md),
 [osiągnięcia](../osiagniecia.md), [telefon](../telefon.md),
 [aplikacja](../aplikacja.md). Jak dodać blok, przedmiot albo przepis -
-w głównym [README](../../README.md). **Nowe drzewo bez programowania**
-(folder w `assets/drzewa/`) - [paczki drzew](../drzewa-paczki.md).
+w głównym [README](../../README.md). Wszystkie drzewa opisuje wspólny
+katalog `src/blocks/treeCatalog.js`, a tekstury są w [arkuszach tematycznych](../tekstury-atlasy.md).
 
 ## Ogniska
 

@@ -113,19 +113,21 @@ decyduje o biomach.
 | Piaskownica (`dune_grass`) | wydmy | trawa wydmowa, rośnie na piasku |
 | Borówka (`blueberry_...`) | bory, świerczyny, brzeziny, hale | krzak owocowy (4 etapy jak truskawka), owoce **borówki** - do niebieskiej lampy, posadzone dają krzak |
 
-Drzewa z mokradeł to **paczki drzew** (`assets/drzewa/`, bez kodu):
+Drzewa mokradeł należą do wspólnego katalogu `src/blocks/treeCatalog.js`:
 **olcha czarna** (`olcha` - ciemna kora, rude drewno, okrągłe liście,
 szyszeczki) i **wierzba biała** (`wierzba` - szeroka korona ze
 zwisającymi liśćmi, srebrzyste liście, bazie). Rosną same tylko na
-mokradłach - nowe pole paczek drzew `"biomy"` w `gdzieRosnie`
-(`docs/drzewa-paczki.md`). Jabłonie rosną teraz na łąkach i w lasach
+mokradłach, zgodnie z polem `climate.biomes` gatunku. Na niezalanej ziemi
+mokradeł występuje także cypryśnik błotny. Jabłonie rosną na łąkach i w lasach
 liściastych.
 
-Tekstury: `python tools/tekstury_biomow.py` (bloki w atlasie i tekstury
-olchy i wierzby), kształty drzew - szablony `ksztalt_*.txt` w paczkach.
+Tekstury terenu i drzew są odpowiednio w `assets/textures/teren.png`
+i `assets/textures/drzewa.png`. Szablony warstw olchy i wierzby są
+wspólnie z pozostałymi gatunkami w `treeCatalog.js`; proceduralne
+sylwetki opisuje `TreeShapes.js`. [Edycja atlasów](tekstury-atlasy.md).
 
 **Numery bloków:** 1-99 się skończyły - bloki gry mają teraz też numery
-240-255, a paczki drzew 100-239. Od 0.30.0 numery są 2-bajtowe
+240-255, a starsze dodatkowe drzewa zachowują numery 100-239. Od 0.30.0 numery są 2-bajtowe
 (`docs/numery-blokow.md`) - nowe bloki gry: 256-999.
 
 ## Komendy

@@ -93,22 +93,22 @@ for (const leaves of LEAF_KINDS) {
 
 BLOCK_KINDS.linden_leaves_flowering = 'linden_leaves';
 
-// Drzewa z paczek z daleka wyglądają jak gatunek gry z "podobnyDo"
+// Dalsze modele drzew używają materiału gatunku wskazanego przez "similar"
 // (wszystkie ich liście, także odmiany).
 
 for (const species of TREE_NAMES) {
 
-    const pack = TREE_SPECIES[species].pack;
+    const definition = TREE_SPECIES[species];
 
-    if (!pack) {
+    if (!definition.shape) {
         continue;
     }
 
-    const kind = `${pack.similar}_leaves`;
+    const kind = `${definition.similar}_leaves`;
 
     BLOCK_KINDS[`${species}_leaves`] = kind;
 
-    for (const variant of pack.variants) {
+    for (const variant of definition.variants) {
         BLOCK_KINDS[`${species}_leaves_${variant.key}`] = kind;
         BLOCK_KINDS[`${species}_leaves_${variant.key}_growing`] = kind;
     }

@@ -46,6 +46,9 @@ jobs:
         with:
           node-version: 24
       - run: npm test
+      - name: Atlasy tekstur — zgodność pikseli, modeli i ikon w grze
+        timeout-minutes: 3
+        run: node tools/sprawdz_atlasy_webgl.mjs
       - name: Akacja, cypryśnik i wiśnia w skali gracza
         timeout-minutes: 3
         run: node tools/sprawdz_nowe_drzewa_webgl.mjs
@@ -94,6 +97,7 @@ jobs:
         with:
           name: testy-gry
           path: |
+            test-results/texture-atlases/
             test-results/new-trees/
             test-results/tree-showcase/
             test-results/rafts/

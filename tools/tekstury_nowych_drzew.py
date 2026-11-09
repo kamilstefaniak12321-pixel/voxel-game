@@ -1,32 +1,23 @@
-"""Support tiles for the three supplied 0.79.0 tree texture packs.
+"""Support regions for the three supplied 0.79.0 tree species.
 
-Original log_side/log_top/planks/leaves/leaves_variant PNGs stay byte-identical.
+Original log_side/log_top/planks/leaves/leaves_variant pixels stay identical.
 This extends the existing procedural pixel-art pipeline for missing saplings,
 stripped logs and the established 32 x 32 campfire UV sheet. No resampling or
 colour changes are applied to the original tree tiles.
 
     python tools/tekstury_nowych_drzew.py
 """
-from pathlib import Path
-import hashlib
-import json
-
 import numpy as np
 from PIL import Image
-from tekstury_drzew import as_image, opaque, grain, rings, sapling_broadleaf
-from nowe_drzewo import conifer_sapling
+from atlasy import read_texture, write_texture
+from tekstury_drzew import as_image, opaque, grain, rings, sapling_broadleaf, conifer_sapling
 
-ROOT = Path(__file__).resolve().parent.parent
-PACKS = {
+SPECIES = {
     'acacia': {'seed': 1000, 'file': 'akacja', 'foliage': (113, 145, 62)},
     'bald_cypress': {'seed': 1010, 'file': 'cyprysnik', 'foliage': (75, 126, 52)},
     'cherry': {'seed': 1020, 'file': 'wisnia', 'foliage': (218, 136, 169)},
 }
 ORIGINALS = ['log_side.png', 'log_top.png', 'planks.png', 'leaves.png', 'leaves_variant.png']
-
-
-def sha(path):
-    return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
 def campfire_sheet(bark, end, seed):
@@ -51,34 +42,32 @@ def campfire_sheet(bark, end, seed):
     return Image.fromarray(pixels)
 
 
-for species, settings in PACKS.items():
-    folder = ROOT / 'assets' / 'drzewa' / species
-    bark = Image.open(folder / 'log_side.png').convert('RGBA')
-    top = Image.open(folder / 'log_top.png').convert('RGBA')
-    # The central end-grain pixels supply the wood palette, excluding dark bark.
-    wood = tuple(np.median(np.asarray(top)[3:13, 3:13, :3], axis=(0, 1)).astype(int))
-    stem = tuple(np.median(np.asarray(bark)[..., :3], axis=(0, 1)).astype(int))
-    seed = settings['seed']
-    as_image(opaque(grain(seed, wood, streaks=5, contrast=.65))).save(folder / 'stripped_side.png')
-    as_image(opaque(rings(seed + 1, wood, tuple(int(value * .78) for value in wood)))).save(folder / 'stripped_top.png')
-    if species == 'bald_cypress':
-        sapling = conifer_sapling(settings['foliage'])
-    else:
-        sapling = sapling_broadleaf(seed + 2, stem, settings['foliage'],
-            [(7.5, 3.5, -1.2), (3.6, 6.5, -2.4), (11.8, 5.5, -.5), (5.0, 10.0, 2.5)],
-            round_=species == 'cherry')
-    as_image(sapling).save(folder / 'sapling.png')
-    fuel_path = ROOT / 'assets' / 'models' / 'campfire' / f"drewno-{settings['file']}.png"
-    campfire_sheet(bark, top, seed).save(fuel_path)
-    manifest = json.loads((folder / 'source.json').read_text(encoding='utf-8'))
-    # This also proves rerunning the generator did not modify supplied tiles.
-    for name in ORIGINALS:
-        assert sha(folder / name) == manifest['originalFiles'][name]['sha256'], name
-    manifest['derivedFiles'] = {
-        name: {'sha256': sha(folder / name), 'size': [16, 16]}
-        for name in ['stripped_side.png', 'stripped_top.png', 'sapling.png']
-    }
-    manifest['campfireTexture'] = {'path': fuel_path.relative_to(ROOT).as_posix(), 'size': [32, 32], 'sha256': sha(fuel_path)}
-    manifest['generator'] = 'tools/tekstury_nowych_drzew.py; existing tekstury_drzew.py and nowe_drzewo.py pixel pipeline'
-    (folder / 'source.json').write_text(json.dumps(manifest, ensure_ascii=False, indent=4) + '\n', encoding='utf-8')
-    print(f'{species}: original tiles intact; stripped wood, sapling and firewood ready')
+def main():
+    for species, settings in SPECIES.items():
+        # These are logical aliases, not directories to recreate.
+        prefix = f'assets/drzewa/{species}/'
+        original = {name: read_texture(prefix + name).tobytes() for name in ORIGINALS}
+        bark = read_texture(prefix + 'log_side.png')
+        top = read_texture(prefix + 'log_top.png')
+        # The central end-grain pixels supply the wood palette, excluding dark bark.
+        wood = tuple(np.median(np.asarray(top)[3:13, 3:13, :3], axis=(0, 1)).astype(int))
+        stem = tuple(np.median(np.asarray(bark)[..., :3], axis=(0, 1)).astype(int))
+        seed = settings['seed']
+        write_texture(prefix + 'stripped_side.png', as_image(opaque(grain(seed, wood, streaks=5, contrast=.65))))
+        write_texture(prefix + 'stripped_top.png', as_image(opaque(rings(seed + 1, wood, tuple(int(value * .78) for value in wood)))))
+        if species == 'bald_cypress':
+            sapling = conifer_sapling(settings['foliage'])
+        else:
+            sapling = sapling_broadleaf(seed + 2, stem, settings['foliage'],
+                [(7.5, 3.5, -1.2), (3.6, 6.5, -2.4), (11.8, 5.5, -.5), (5.0, 10.0, 2.5)],
+                round_=species == 'cherry')
+        write_texture(prefix + 'sapling.png', as_image(sapling))
+        write_texture(f"assets/models/campfire/drewno-{settings['file']}.png", campfire_sheet(bark, top, seed))
+        # PNG encoding/layout may change; supplied RGBA pixels may not.
+        for name, pixels in original.items():
+            assert read_texture(prefix + name).tobytes() == pixels, name
+        print(f'{species}: original pixels intact; stripped wood, sapling and firewood regions ready')
+
+
+if __name__ == '__main__':
+    main()

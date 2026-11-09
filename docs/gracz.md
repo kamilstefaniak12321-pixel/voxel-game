@@ -76,10 +76,14 @@ stary 64 x 32). Każda część ma 6 ścian, ułożonych jak siatka pudełka:
 - **Staw jest w połowie** ręki, nogi i tułowia (biała przerywana linia
   na rysunku). Ubranie, które się tam zmienia (podwinięty rękaw, pasek,
   cholewka buta), ładnie pokazuje zgięcie.
-- Szablon do zamalowania (kolorowe pola): `assets/textures/player/skin-szablon.png`.
-- Domyślna skórka: `assets/textures/player/skin.png` ("Wędrowiec":
+- Szablon do zamalowania (kolorowe pola) i domyślna skórka są od 0.80.0
+  regionami po 64 × 64 w [`assets/textures/gracz.png`](../assets/textures/gracz.png).
+  Współrzędne zawiera `assets/textures/atlas.json`; wcześniejsze ścieżki
+  `assets/textures/player/skin-szablon.png` i `assets/textures/player/skin.png`
+  pozostają nazwami tych regionów.
+- Domyślna skórka to "Wędrowiec":
   oliwkowa kurtka z podwiniętymi rękawami, fioletowy szalik w kolorze
-  lepidolitu, pasek w talii, skórzane buty do kolan).
+  lepidolitu, pasek w talii, skórzane buty do kolan.
 
 **Własna skórka:** *Ustawienia → Gracz → Skórka - wczytaj plik...*
 albo `/skorka plik`. Zostaje zapamiętana w przeglądarce;

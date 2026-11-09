@@ -24,6 +24,9 @@ async function setupUi(iconNames) {
     const { PlayerModel } = await import('/src/player/PlayerModel.js');
     const { atlasReady } = await import('/src/rendering/TextureAtlas.js');
     await atlasReady;
+    const { loadTextureRegionURL } = await import('/src/rendering/TextureSheets.js');
+    const greyTextures = Object.fromEntries(await Promise.all(['planks', 'board', 'frame'].map(async name =>
+        [name, await loadTextureRegionURL(`assets/ui/themes/grey-wood/${name}.png`)])));
     const { skinReady } = await import('/src/player/skin.js');
     check(await skinReady !== 'error', 'Nie wczytano skórki gracza');
     const settings = window.settings = new Settings();
@@ -81,27 +84,27 @@ async function setupUi(iconNames) {
         const panel = getComputedStyle(document.querySelector('#menu .menu-scene-panel'));
         const play = getComputedStyle(document.querySelector('#menu .screen-title .menu-buttons .menu-button:first-child'));
         check(title.color === 'rgb(238, 232, 220)', 'Tytuł menu zachował stary kolor');
-        check(panel.backgroundImage.includes('/grey-wood/planks.png'), 'Panel menu nie ma szarych desek');
-        check(panel.borderImageSource.includes('/grey-wood/frame.png'), 'Panel menu nie ma drewnianej ramy');
+        check(panel.backgroundImage.includes(greyTextures.planks), 'Panel menu nie ma szarych desek');
+        check(panel.borderImageSource.includes(greyTextures.frame), 'Panel menu nie ma drewnianej ramy');
         check(panel.opacity === '1', 'Animacja wejścia menu jeszcze trwa');
-        check(play.backgroundImage.includes('/grey-wood/board.png'), 'Przycisk Gra zachował stare tło');
+        check(play.backgroundImage.includes(greyTextures.board), 'Przycisk Gra zachował stare tło');
         check(play.color === 'rgb(38, 36, 32)', 'Przycisk Gra zachował stary kolor tekstu');
-        return { title: title.color, panel: panel.backgroundImage, frame: panel.borderImageSource,
-            opacity: panel.opacity, play: play.backgroundImage, playText: play.color };
+        return { title: title.color, panel: 'grey-wood/planks', frame: 'grey-wood/frame',
+            opacity: panel.opacity, play: 'grey-wood/board', playText: play.color };
     };
     const tests = [];
     window.uiQA = {
         errors, tests, settings, game, screen, menu,
         async verify() {
             for (const name of ['planks', 'board', 'frame']) {
-                const texture = new Image(); texture.src = `/assets/ui/themes/grey-wood/${name}.png`;
+                const texture = new Image(); texture.src = greyTextures[name];
                 await texture.decode(); check(texture.naturalWidth > 0, `Brak tekstury ${name}`);
             }
             tests.push('Trzy tekstury poprawnie zdekodowane');
             for (const style of ['wood', 'light']) {
                 settings.set('inventoryStyle', style); await theme('default'); await inventory(); const before = signature();
                 await theme('grey-wood'); const after = signature();
-                check(after !== before && after.includes('/grey-wood/'), `Motyw nie objął ekwipunku ${style}`);
+                check(after !== before && after.includes(greyTextures.planks) && after.includes(greyTextures.frame), `Motyw nie objął ekwipunku ${style}`);
                 check(getComputedStyle(document.querySelector('.inv-slot')).backgroundColor === 'rgb(53, 51, 48)', `Stary kolor przegródek ${style}`);
                 check(getComputedStyle(document.querySelector('.hotbar-slot')).backgroundColor === 'rgb(53, 51, 48)', 'Motyw nie objął HUD');
                 check(settings.get('inventoryStyle') === style, 'Motyw nadpisał preferencję ekwipunku');
@@ -156,7 +159,7 @@ async function setupUi(iconNames) {
             tests.push('Kreatywny: 9 zakładek, 5 rzędów, pasek nad ramą');
             const search = document.querySelector('.inv-search'); search.value = 'kamie'; search.dispatchEvent(new Event('input', { bubbles: true }));
             check(document.querySelectorAll('.inv-creative-grid .inv-slot').length > 0, 'Wyszukiwanie kreatywne puste');
-            await theme('lepidolit'); check(!getComputedStyle(document.querySelector('.inv-panel')).backgroundImage.includes('grey-wood'), 'Pozostała tekstura szarego drewna');
+            await theme('lepidolit'); check(!getComputedStyle(document.querySelector('.inv-panel')).backgroundImage.includes(greyTextures.planks), 'Pozostała tekstura szarego drewna');
             await theme('grey-wood'); tests.push('Wyszukiwanie kreatywne i przejście przez Lepidolit');
             screen.close(); menu.showTitle(); await tick(); titlePresentation();
             tests.push('Menu główne: jasny tytuł, deski, rama i przycisk Gra po zakończeniu animacji');
@@ -199,7 +202,7 @@ const loadTheme = main.match(/function loadTheme\(name\) \{[\s\S]*?\n\}/)?.[0];
 assert.ok(loadTheme, 'Brak funkcji loadTheme w main.js');
 const iconNames = (await readdir(resolve(root, 'docs/wiki/ikony'))).filter(x => x.endsWith('.png')).map(x => x.slice(0,-4));
 const index = await readFile(resolve(root, 'index.html'), 'utf8');
-const html = index.replace('<script type="module" src="./src/bootstrap.js"></script>', `<script type="module">${loadTheme}\n(${setupUi.toString()})(${JSON.stringify(iconNames)}).then(()=>document.body.dataset.qa='ready').catch(e=>{document.body.dataset.qa='failed';document.body.dataset.error=e.stack;console.error(e)})</script>`);
+const html = index.replace('<script type="module" src="./src/bootstrap.js"></script>', `<script type="module">import { installUiTextureSheets } from "/src/ui/UiTextureSheets.js"; await installUiTextureSheets(); ${loadTheme}\n(${setupUi.toString()})(${JSON.stringify(iconNames)}).then(()=>document.body.dataset.qa='ready').catch(e=>{document.body.dataset.qa='failed';document.body.dataset.error=e.stack;console.error(e)})</script>`);
 const mime = { '.js':'text/javascript', '.css':'text/css', '.json':'application/json', '.png':'image/png', '.jpg':'image/jpeg', '.woff2':'font/woff2', '.ogg':'audio/ogg' };
 const server = createServer(async(req,res) => {
     try {

@@ -78,12 +78,12 @@ Współrzędne można podawać względem gracza: `~` (tu, gdzie stoję),
 | `/drzewa porownanie [seed]` | wszystkie gatunki obok siebie; razem z galerią wymaga wolnej ziemi na komplet drzew, najlepiej na trawie obok centralnego placu świata programisty |
 | `/drzewa ostatnie` | powtarza nazwy, współrzędne i seed ostatniego pokazu |
 | `/drzewa cofnij` | cofa ostatni nowy pokaz w tej sesji; zachowuje późniejsze zmiany bloków. Pamięć cofnięcia znika po wyjściu ze świata |
-| `/drzewa posadz <gatunek> [0-100]` | drzewo 5 bloków przed tobą (gatunki: `swierk`, `sosna`, `buk`, `lipa`, `dab`, `brzoza` i drzewa z paczek, np. `jablon`; rozmiar 0 - małe, 100 - duże, bez - losowy); krócej: `/drzewa dab` |
-| `/drzewa aleja` | wszystkie gatunki (także z paczek) w rzędzie przed tobą, co 12 bloków (zmienia świat) |
+| `/drzewa posadz <gatunek> [0-100]` | drzewo 5 bloków przed tobą (gatunki: `swierk`, `sosna`, `buk`, `lipa`, `dab`, `brzoza`, `jablon`, `olcha`, `wierzba`, `akacja`, `cyprysnik`, `wisnia`; rozmiar 0 - małe, 100 - duże, bez - losowy); krócej: `/drzewa dab` |
+| `/drzewa aleja` | wszystkie gatunki w rzędzie przed tobą, co 12 bloków (zmienia świat) |
 | `/drzewa znajdz <gatunek> [tp]` | najbliższe drzewo gatunku w świecie (do 1500 bloków): odległość, kierunek; `tp` - przeniesienie pod nie |
 | `/drzewa rosnij` | sadzonki (i krzaki) do 64 bloków od ciebie rosną od razu - sadzonka bez miejsca nad sobą czeka |
 | `/drzewa tempo [0-500]` | tempo wzrostu roślin (to samo co `/krzaki tempo`): 60 = sadzonka wyrasta średnio po 5 s zamiast 5 min |
-| `/drzewa paczki` | paczki drzew z `assets/drzewa/`: numery bloków, kształt, odmiany liści, czy rosną w lesie, i błędy paczek pominiętych przez grę (`docs/drzewa-paczki.md`) |
+| `/drzewa paczki` | starszy alias `/drzewa lista`; od 0.80.0 wszystkie gatunki są we wspólnym katalogu, bez osobnego mechanizmu paczek drzew |
 | `/wypelnij <x1> <y1> <z1> <x2> <y2> <z2> <blok \| powietrze>` | wypełnia prostopadłościan (do 16 384 bloków) |
 | `/swiatlo` | światło przy głowie i przy wskazanej ścianie (niebo 0-15, lampy 0-15 i ich kolor) |
 | `/swiatlo dynamiczne [wl \| wyl]` | włącza/wyłącza dynamiczne światło (to samo co w ustawieniach) |

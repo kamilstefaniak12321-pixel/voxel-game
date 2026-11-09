@@ -6,7 +6,7 @@ import { registerHooks } from 'node:module';
 // Only browser image/GPU initialization is omitted, so the test can reproduce
 // the nested-inset bug that an identity UV mock would hide.
 const atlasSource = await readFile(new URL('../src/rendering/TextureAtlas.js', import.meta.url), 'utf8');
-const layout = atlasSource.slice(0, atlasSource.indexOf('const atlasUrl ='))
+const layout = atlasSource.slice(0, atlasSource.indexOf('export const blockAtlasTexture ='))
     .replace(/^import \* as THREE from 'three';\r?\n/m, '')
     .replace(/^import \{[^\n]+\} from '.\/TexturePacks.js';\r?\n/m, '');
 const uvFunction = atlasSource.match(/export function getAtlasUV\([\s\S]+?\r?\n\}/)?.[0];

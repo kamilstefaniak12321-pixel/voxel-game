@@ -1,6 +1,7 @@
 # ------------------------------------------------------------
 # DREWNIANY EKWIPUNEK - tekstury
 #
+# Zapisuje regiony assets/textures/interfejs.png (poniżej klucze logiczne).
 # Rysuje tekstury wyglądu "Drewniany" ekwipunku (src/ui/inventory-wood.css):
 #   assets/ui/inventory/wood/planks.png - deski (tło okna, kafelek bez szwów),
 #   assets/ui/inventory/wood/frame.png  - rama okna (9 części: rogi z liśćmi,
@@ -23,6 +24,7 @@ import os
 import sys
 
 import numpy as np
+from atlasy import write_texture
 from PIL import Image
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -56,8 +58,7 @@ def put(img, x, y, color, alpha=255):
 
 
 def save(img, name):
-    os.makedirs(OUT, exist_ok=True)
-    Image.fromarray(img, 'RGBA').save(os.path.join(OUT, name), optimize=True)
+    write_texture(os.path.join(OUT, name), Image.fromarray(img, 'RGBA'))
     return img
 
 
@@ -393,7 +394,7 @@ def preview(path, parts):
 
 def main():
     parts = (planks(), frame(), board())
-    print('Zapisano:', ', '.join(os.path.relpath(os.path.join(OUT, n), ROOT) for n in ('planks.png', 'frame.png', 'frame-compact.png', 'board.png')))
+    print('Zapisano regiony w assets/textures/interfejs.png: planks, frame, frame-compact, board')
     if len(sys.argv) > 1:
         preview(sys.argv[1], parts)
         print('Podgląd:', sys.argv[1])

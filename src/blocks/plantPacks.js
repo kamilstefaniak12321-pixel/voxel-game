@@ -24,7 +24,9 @@
 // rośnie), recipes.js (grupy składników), gameCommands.js (/rosliny).
 // ------------------------------------------------------------
 
-import { TREE_PACKS, PACK_ID_SLOTS, idsInRanges, rangesText } from './treePacks.js';
+import { TREE_ID_RESERVATIONS } from './treeCatalog.js';
+import { TREE_ID_SLOTS, idsInRanges, rangesText } from './blockIdRanges.js';
+import { regionInfo } from '../rendering/TextureSheets.js';
 import { BIOMES, LAND_BIOMES, biomeByWord } from '../world/terrain/Biomes.js';
 
 // Numery bloków: etapy zajmują kolejne numery od "pierwszeId". Zakresy
@@ -80,7 +82,7 @@ async function readFile(relative, binary = false) {
 
 export function plantFileUrl(pack, file) {
 
-    return new URL(`${pack.folder}/${file}`, BASE).href;
+    return `assets/rosliny/${pack.folder}/${file}`;
 
 }
 
@@ -93,20 +95,6 @@ export function plantTile(pack, file) {
 
 }
 
-
-// Rozmiar obrazka PNG z nagłówka (bajty 16-23).
-
-function pngSize(data, file) {
-
-    if (data.length < 24 || String.fromCharCode(data[1], data[2], data[3]) !== 'PNG') {
-        fail(`${file} to nie jest obrazek PNG`);
-    }
-
-    const view = new DataView(data.buffer, data.byteOffset, data.byteLength);
-
-    return [view.getUint32(16), view.getUint32(20)];
-
-}
 
 // ------------------------------------------------------------
 // Sprawdzanie roslina.json
@@ -511,11 +499,11 @@ async function validatePack(folder) {
 
     pack.firstId = firstId;
 
-    const tree = TREE_PACKS.find((other) =>
-        firstId <= other.firstId + PACK_ID_SLOTS - 1 && other.firstId <= firstId + pack.stages.length - 1);
+    const tree = TREE_ID_RESERVATIONS.find((other) =>
+        firstId <= other.firstId + TREE_ID_SLOTS - 1 && other.firstId <= firstId + pack.stages.length - 1);
 
     if (tree) {
-        fail(`numery ${firstId}-${firstId + pack.stages.length - 1} zachodzą na numery drzewa "${tree.id}" (${tree.firstId}-${tree.firstId + PACK_ID_SLOTS - 1})`);
+        fail(`numery ${firstId}-${firstId + pack.stages.length - 1} zachodzą na numery drzewa "${tree.id}" (${tree.firstId}-${tree.firstId + TREE_ID_SLOTS - 1})`);
     }
 
 
@@ -668,7 +656,7 @@ async function validatePack(folder) {
     }
 
 
-    // Obrazki: rozmiary z nagłówków PNG (rozmiar obrazka = rozmiar rośliny).
+    // Rozmiar regionu w arkuszu nadal wyznacza rozmiar rośliny w świecie.
 
     for (const [index, stage] of pack.stages.entries()) {
 
@@ -676,16 +664,7 @@ async function validatePack(folder) {
             continue;
         }
 
-        let data;
-
-        try {
-            data = await readFile(`${folder}/${stage.file}`, true);
-        }
-        catch {
-            fail(`brak obrazka ${stage.file}`);
-        }
-
-        const [width, height] = pngSize(data, stage.file);
+        const { width, height } = regionInfo(plantFileUrl(pack, stage.file));
 
         if (width < 1 || height < 1 || width > PLANT_MAX_SIZE || height > PLANT_MAX_SIZE) {
             fail(`etapy[${index}]: ${stage.file} ma ${width} x ${height} pikseli - najwyżej ${PLANT_MAX_SIZE} x ${PLANT_MAX_SIZE} (${PLANT_MAX_SIZE / PLANT_PIXELS} x ${PLANT_MAX_SIZE / PLANT_PIXELS} bloki)`);
@@ -698,16 +677,7 @@ async function validatePack(folder) {
 
     if (pack.item) {
 
-        let data;
-
-        try {
-            data = await readFile(`${folder}/${pack.item.file}`, true);
-        }
-        catch {
-            fail(`brak obrazka ${pack.item.file}`);
-        }
-
-        const [width, height] = pngSize(data, pack.item.file);
+        const { width, height } = regionInfo(plantFileUrl(pack, pack.item.file));
 
         if (width !== 16 || height !== 16) {
             fail(`${pack.item.file}: przedmiot ma mieć 16 x 16 pikseli (ma ${width} x ${height})`);

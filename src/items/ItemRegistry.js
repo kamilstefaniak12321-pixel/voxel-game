@@ -7,7 +7,7 @@ import {
 
 import { TOOL_MATERIALS } from '../config.js';
 
-import { TREE_PACKS, packTile } from '../blocks/treePacks.js';
+import { TREE_DEFINITIONS } from '../blocks/treeCatalog.js';
 
 import { PLANT_PACKS, plantTile } from '../blocks/plantPacks.js';
 import { DYE_ITEMS } from './dyes.js';
@@ -36,9 +36,8 @@ import { STONE_TOOL_ITEMS } from './stoneTools.js';
 // Skąd się biorą i do czego służą: przepisy (src/crafting/recipes.js),
 // sadzenie (plants), łupy z liści i zbiory (BlockRegistry.js).
 //
-// Przedmioty z paczek drzew ("przedmioty" w assets/drzewa/<drzewo>/
-// drzewo.json) dochodzą na koniec listy jako <drzewo>_<klucz>, np.
-// jablon_jablko.
+// Przedmioty drzew ze wspólnego katalogu mają stałe identyfikatory
+// <gatunek>_<klucz>, np. jablon_jablko.
 //
 // Nazwy przedmiotów i bloków nie mogą się powtarzać - wszędzie poza
 // światem (ekwipunek, /daj) chodzi o tę samą listę.
@@ -179,19 +178,19 @@ export const ITEM_TYPES = {
 };
 
 
-// Przedmioty z paczek drzew (src/blocks/treePacks.js).
+// Przedmioty drzew ze wspólnego katalogu.
 
-for (const pack of TREE_PACKS) {
+for (const pack of TREE_DEFINITIONS) {
 
     for (const item of Object.values(pack.items)) {
 
         ITEM_TYPES[item.type] = {
             name: item.label,
             label: item.label,
-            icon: packTile(pack, item.texture),
+            icon: item.texture,
             plants: item.plants ? `${pack.id}_sapling` : undefined,
             category: item.category,
-            pack: pack.id
+            tree: pack.id
         };
 
     }

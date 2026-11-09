@@ -18,11 +18,11 @@ const hash = (x, z, salt = 0) => {
 
 export function treeSilhouette(tree, spacing) {
     const random = seededRandom(tree.seed), size = tree.size;
-    const pack = TREE_SPECIES[tree.species]?.pack;
-    const species = pack?.similar ?? tree.species;
-    if (pack?.shape?.templates?.length) return templateSilhouette(tree, spacing, pack, random);
+    const definition = TREE_SPECIES[tree.species];
+    const species = definition?.similar ?? tree.species;
+    if (definition?.shape?.templates?.length) return templateSilhouette(tree, spacing, definition, random);
     const dimensions = treeVisualDimensions(tree.species, size);
-    if (dimensions) return matureTreeSilhouette(tree, spacing, pack, dimensions);
+    if (dimensions) return matureTreeSilhouette(tree, spacing, definition, dimensions);
     let height, radius, tall, crownBase, crownX = 0, crownZ = 0;
     if (species === 'spruce') {
         height = Math.round(lerp(10, 17, size) + random() * 2);
@@ -54,8 +54,8 @@ export function treeSilhouette(tree, spacing) {
         radius = size > .45 ? lerp(5, 6, size) : lerp(3.8, 4.8, size);
         tall = 7; crownBase = height + .5; crownX = crownZ = size > .45 ? .5 : 0;
     }
-    if (pack?.shape) {
-        const shape = pack.shape;
+    if (definition?.shape) {
+        const shape = definition.shape;
         height = mix(shape.trunk, size, height);
         radius = mix(shape.radius, size, radius);
         tall = mix(shape.crown, size, tall);
@@ -86,10 +86,10 @@ export function treeSilhouette(tree, spacing) {
 // Mature species keep their actual height and crown diameter at each LOD.
 // Shared scale values cost a few arithmetic operations; distant tiles never
 // construct the thousands of individual blocks in a full tree.
-function matureTreeSilhouette(tree, spacing, pack, { height, radius, trunkWidth, crownBase }) {
-    const result = [], kind = pack.shape.kind;
+function matureTreeSilhouette(tree, spacing, definition, { height, radius, trunkWidth, crownBase }) {
+    const result = [], kind = definition.shape.kind;
     const leaf = surfaceMaterialId(`${tree.species}_leaves`), log = surfaceMaterialId(`${tree.species}_log`);
-    const leafKind = kindIndex(`${pack.similar}_leaves`), reach = treeShapeLimits(tree.species).reach;
+    const leafKind = kindIndex(`${definition.similar}_leaves`), reach = treeShapeLimits(tree.species).reach;
     const append = (x0, y0, z0, x1, y1, z1, material, surfaceKind, shade = .95) => result.push(
         tree.x + Math.round(x0), tree.y + Math.round(y0), tree.z + Math.round(z0),
         tree.x + Math.round(x1), tree.y + Math.round(y1), tree.z + Math.round(z1),
@@ -132,8 +132,8 @@ function matureTreeSilhouette(tree, spacing, pack, { height, radius, trunkWidth,
     return result;
 }
 
-function templateSilhouette(tree, spacing, pack, random) {
-    const templates=pack.shape.templates;
+function templateSilhouette(tree, spacing, definition, random) {
+    const templates=definition.shape.templates;
     const source=templates[Math.min(templates.length-1,Math.floor(tree.size*templates.length))];
     const turn=Math.floor(random()*4),mirror=random()<.5;
     const leaves=[],logs=[];
@@ -155,7 +155,7 @@ function templateSilhouette(tree, spacing, pack, random) {
         const range=bounds(leaves),height=range[4]-range[1];
         for(let i=0;i<layers;i++) {
             const cells=leaves.filter(c=>c[1]>=range[1]+i*height/layers&&c[1]<range[1]+(i+1)*height/layers);
-            if(cells.length)append(bounds(cells),surfaceMaterialId(`${tree.species}_leaves`),kindIndex(`${pack.similar}_leaves`));
+            if(cells.length)append(bounds(cells),surfaceMaterialId(`${tree.species}_leaves`),kindIndex(`${definition.similar}_leaves`));
         }
     }
     return result;

@@ -27,7 +27,8 @@ registerHooks({
 const { Chunk } = await import('../src/world/Chunk.js');
 const R = await import('../src/blocks/BlockRegistry.js');
 const { WorldStorage, createWorldInfo, packChunkBlocks } = await import('../src/storage/WorldStorage.js');
-const { TREE_ID_RANGES, idsInRanges, TREE_PACKS, PACK_ID_SLOTS } = await import('../src/blocks/treePacks.js');
+const { TREE_ID_RESERVATIONS } = await import('../src/blocks/treeCatalog.js');
+const { TREE_ID_RANGES, TREE_ID_SLOTS, idsInRanges } = await import('../src/blocks/blockIdRanges.js');
 const { PLANT_ID_RANGES, PLANT_PACKS } = await import('../src/blocks/plantPacks.js');
 const { SURFACE_MATERIAL_COUNT, surfaceMaterialId } = await import('../src/rendering/SurfaceMaterials.js');
 const { RealisticGenerator } = await import('../src/world/terrain/RealisticGenerator.js');
@@ -105,14 +106,14 @@ check(R.getBlockTypeById(R.MAX_BLOCK_ID) === null, 'najwyższy numer bez bloku')
 
 // --- Zakresy paczek i materiały dalekiego terenu ----------------
 
-check(idsInRanges(100, PACK_ID_SLOTS, TREE_ID_RANGES) && idsInRanges(1000, PACK_ID_SLOTS, TREE_ID_RANGES), 'drzewa: 100 i 1000');
-check(!idsInRanges(235, PACK_ID_SLOTS, TREE_ID_RANGES) && !idsInRanges(4995, PACK_ID_SLOTS, TREE_ID_RANGES), 'drzewo nie wychodzi poza zakres');
-check(!idsInRanges(5000, PACK_ID_SLOTS, TREE_ID_RANGES), '5000 - nie dla drzew');
+check(idsInRanges(100, TREE_ID_SLOTS, TREE_ID_RANGES) && idsInRanges(1000, TREE_ID_SLOTS, TREE_ID_RANGES), 'drzewa: 100 i 1000');
+check(!idsInRanges(235, TREE_ID_SLOTS, TREE_ID_RANGES) && !idsInRanges(4995, TREE_ID_SLOTS, TREE_ID_RANGES), 'drzewo nie wychodzi poza zakres');
+check(!idsInRanges(5000, TREE_ID_SLOTS, TREE_ID_RANGES), '5000 - nie dla drzew');
 check(idsInRanges(5000, 3, PLANT_ID_RANGES) && idsInRanges(237, 3, PLANT_ID_RANGES), 'rośliny: 5000 i 237');
 check(!idsInRanges(1000, 3, PLANT_ID_RANGES) && !idsInRanges(9998, 3, PLANT_ID_RANGES), 'roślina nie w zakresie drzew ani poza nim');
 
-for (const pack of TREE_PACKS) {
-    check(idsInRanges(pack.firstId, PACK_ID_SLOTS, TREE_ID_RANGES), `drzewo ${pack.id} w zakresie`);
+for (const pack of TREE_ID_RESERVATIONS) {
+    check(idsInRanges(pack.firstId, TREE_ID_SLOTS, TREE_ID_RANGES), `drzewo ${pack.id} w zakresie`);
 }
 
 for (const pack of PLANT_PACKS) {

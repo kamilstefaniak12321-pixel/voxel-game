@@ -7,6 +7,7 @@ import { fireIntensity } from '../game/CampfireState.js';
 import { atmosphericLightToBrightness } from './LightPolicy.js';
 import { FLAME_FRAMES, FLAME_FPS, makeFlameAtlas } from './CampfireFlame.js';
 import { installEmissionDiagnostics, lightingUniforms } from './LightingDiagnostics.js';
+import { loadTextureRegion } from './TextureSheets.js';
 
 const VIEW_RANGE = 72, MAX_VISIBLE = 32, PARTICLES = 96;
 const smooth = t => t * t * (3 - 2 * t);
@@ -65,10 +66,11 @@ export class CampfireRenderer {
         this.game = game; this.views = new Map(); this.geometry = new Map(); this.time = 0;
         this.light = new CampfireLight(game.renderer);
         this.flameTime = { value: 0 };
-        this.fireTexture = new THREE.TextureLoader().load(new URL('../../assets/models/campfire/plomienie.png', import.meta.url).href, texture => {
-            texture.image = makeFlameAtlas(texture.image);
-            texture.needsUpdate = true;
-        });
+        this.fireTexture = new THREE.Texture();
+        loadTextureRegion('assets/models/campfire/plomienie.png').then(image => {
+            this.fireTexture.image = makeFlameAtlas(image);
+            this.fireTexture.needsUpdate = true;
+        }).catch(error => console.warn('Tekstura płomieni ogniska:', error));
         this.fireTexture.magFilter = this.fireTexture.minFilter = THREE.NearestFilter;
         this.fireTexture.generateMipmaps = false; this.fireTexture.colorSpace = THREE.SRGBColorSpace;
         this.flameGeometry = new THREE.PlaneGeometry(1, 1.25, 1, 10);

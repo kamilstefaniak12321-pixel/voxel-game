@@ -34,7 +34,7 @@ import { getBlockDefinition, isOpaqueId } from '../blocks/BlockRegistry.js';
 import { BASE_TREE_NAMES } from '../blocks/trees.js';
 import { getTool } from '../items/ItemRegistry.js';
 
-import { TREE_PACKS } from '../blocks/treePacks.js';
+import { TREE_DEFINITIONS } from '../blocks/treeCatalog.js';
 
 import { getPlantPack } from '../blocks/plantPacks.js';
 
@@ -97,10 +97,9 @@ function currentBiome(game) {
 }
 
 
-// Owoce drzew z paczek (assets/drzewa/) - zbiór z odmian liści.
-// Osiągnięcie "Sadownik" jest tylko wtedy, gdy jakaś paczka je ma.
+// Owoce drzew ze wspólnego katalogu - zbiór z odmian liści.
 
-const TREE_FRUIT = TREE_PACKS.flatMap((pack) =>
+const TREE_FRUIT = TREE_DEFINITIONS.flatMap((pack) =>
     pack.variants.filter((variant) => variant.harvest).map((variant) => variant.harvest.item)
 );
 
@@ -112,7 +111,7 @@ const ORCHARD = TREE_FRUIT.length === 0 ? [] : [{
     comment: 'Jabłko pada niedaleko od jabłoni. Tym razem - prosto do kieszeni.',
     icon: TREE_FRUIT[0],
     on: 'harvested',
-    when: (data) => getBlockDefinition(data.type)?.pack !== undefined && TREE_FRUIT.includes(data.item)
+    when: (data) => getBlockDefinition(data.type)?.tree !== undefined && TREE_FRUIT.includes(data.item)
 }];
 
 

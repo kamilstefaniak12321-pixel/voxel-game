@@ -1,9 +1,8 @@
 # Drzewa
 
-Gra ma **dwanaście gatunków drzew**. Sześć podstawowych powstaje
-proceduralnie; paczki dodają trzy gatunki z szablonów i trzy z własnymi
-generatorami sylwetek w skali człowieka.
-Każdy ma własne bloki, wygląd i zasady występowania w świecie.
+Gra ma **dwanaście gatunków drzew**, zapisanych we wspólnym katalogu
+`src/blocks/treeCatalog.js`. Każdy ma własne bloki, wygląd i zasady
+występowania. Tekstury wszystkich gatunków są w `assets/textures/drzewa.png`.
 
 | Gatunek | Nazwa do komendy |
 |---|---|
@@ -23,9 +22,8 @@ Każdy ma własne bloki, wygląd i zasady występowania w świecie.
 Polskie znaki też działają (`dąb`, `jabłoń`, `świerk`). Leszczyna
 jest obecnie krzewem owocowym, opisanym w osobnym systemie krzaków.
 
-Nowe gatunki można dodawać **bez programowania** - jako paczki drzew
-w `assets/drzewa/` (przykład: jabłoń). Instrukcja krok po kroku:
-[`docs/drzewa-paczki.md`](drzewa-paczki.md).
+Organizacja tekstur i edycja katalogu: [arkusze tematyczne](tekstury-atlasy.md).
+Od 0.80.0 gra nie wczytuje osobnych paczek drzew.
 
 ![Drzewa w grze](drzewa-galeria.jpg)
 
@@ -89,10 +87,10 @@ miejsce, aby wejść pod drzewo i zobaczyć jego rozmiar z ziemi.
 To zakresy przyjęte do gry, z zaokrągleniem geometrii do bloków.
 Paczki Kamila zawierały tekstury i podglądy, więc sylwetki odtworzono
 proceduralnie. Oryginalne tekstury zostały zachowane. Odniesienia
-botaniczne i sumy kontrolne są w README każdej paczki:
-[akacja](../assets/drzewa/acacia/README.md),
-[cypryśnik](../assets/drzewa/bald_cypress/README.md),
-[wiśnia](../assets/drzewa/cherry/README.md).
+botaniczne i sumy kontrolne są w historycznych opisach źródeł:
+[akacja](zrodla/drzewa-0.79/acacia/README.md),
+[cypryśnik](zrodla/drzewa-0.79/bald_cypress/README.md),
+[wiśnia](zrodla/drzewa-0.79/cherry/README.md).
 
 Akacje mogą pojawić się na ciepłych, suchych łąkach, cypryśniki na
 niezalanej ziemi mokradeł, wiśnie na umiarkowanych łąkach i w lasach
@@ -208,7 +206,7 @@ w `src/world/terrain/TerrainShape.js`.
   - buczyna - prawie same buki,
   - las liściasty - dęby i lipy (trochę buków i brzóz),
   - brzezina - brzozy (trochę sosen, dębów, świerków),
-  - mokradła - olchy i wierzby (paczki drzew), brzozy,
+  - mokradła - olchy i wierzby, brzozy,
   - łąka - pojedyncze dęby, lipy, brzozy, sosny i jabłonie,
   - hala - pojedyncze świerki, plaża - pojedyncze sosny.
   Każde drzewo sprawdza biom trochę obok siebie, więc na granicach

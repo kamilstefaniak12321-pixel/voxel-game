@@ -20,32 +20,15 @@ Kolejne gatunki mają korzystać z tego samego schematu:
 - Odcień odróżnia gatunki, a układ desek pozostaje wspólny. Nowy wariant
   trzeba obejrzeć także jako powtarzającą się ścianę i podłogę.
 
-Wzorzec techniczny to kafelek `spruce_planks`, kolumna 0, wiersz 7
-w `assets/textures/blocks/terrain.png` (indeksy od zera). Funkcja
-`planks()` w `tools/tekstury_drzew.py` przenosi jego względną jasność
-na wybrany kolor drewna. Zachowuje układ każdego piksela i nie dodaje
-szumu zależnego od seeda. Parametr `contrast` może złagodzić wzorzec;
-wartość większa niż 1 nie wzmacnia kontrastu.
+Wzorzec techniczny to region `spruce_planks` w `assets/textures/drzewa.png`.
+Położenie podaje `assets/textures/atlas.json`. Funkcja `planks()`
+w `tools/tekstury_drzew.py` przenosi jego względną jasność na wybrany
+kolor drewna. Zachowuje układ pikseli. Nowy region dodaje się do wspólnego
+arkusza i katalogu — mechanizm osobnych paczek drzew został usunięty.
 
-`tools/nowe_drzewo.py` korzysta z tej funkcji przy tworzeniu nowych
-paczek. Samo odczytanie wzorca nie zmienia atlasu ani istniejących
-paczek. Obecne deski jabłoni, olchy i wierzby pozostały bez podmiany;
-ich przyszłe odświeżenie powinno zachować odcień gatunku i zastosować
-powyższy układ.
-
-Nie należy uruchamiać zbiorczego generatora `tekstury_drzew.py` tylko
-po to, by dodać jeden gatunek: jego główne polecenie zapisuje również
-inne proceduralne tekstury. Nowe paczki tworzy się przez
-`nowe_drzewo.py`, a ręczne kafelki atlasu pozostają wzorcem.
-
-Kontrola bez zapisu plików:
-
-```sh
-python tools/sprawdz_styl_desek.py
-```
-
-Wymaga numpy i Pillow. Sprawdza przesunięte łączenia, zachowanie palety,
-rzeczywistą ścieżkę tworzenia nowego drzewa i brak zmian istniejących PNG.
+Nie uruchamiaj zbiorczego generatora tylko po to, by poprawić jedne deski.
+Do wycięcia i wklejenia pojedynczego regionu służy `tools/atlasy.py`.
+Pełny opis: [arkusze tekstur](tekstury-atlasy.md).
 
 ## Narzędzia i patyk
 

@@ -110,5 +110,5 @@
 .menu-screen.textured {
     background-image:
         linear-gradient(var(--menu-background-tint), var(--menu-background-tint)),
-        url('background.png');
+        var(--texture-lepidolit-background);
 }

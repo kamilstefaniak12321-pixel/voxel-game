@@ -1,11 +1,9 @@
 import { BLOCK_TYPES } from '../blocks/BlockRegistry.js';
 import { TREE_NAMES, TREE_SPECIES } from '../blocks/trees.js';
-import { TREE_PACKS, TREE_PACK_ERRORS } from '../blocks/treePacks.js';
+import { TREE_DEFINITIONS } from '../blocks/treeCatalog.js';
 import { PLANT_PACKS } from '../blocks/plantPacks.js';
 import { TORCH_VARIANTS } from '../blocks/torches.js';
-import { itemExists } from '../items/ItemRegistry.js';
 import { STONE_TOOL_MATERIALS, stoneToolType } from '../items/stoneTools.js';
-import { STACK_SIZE } from '../game/Inventory.js';
 
 // ------------------------------------------------------------
 // PRZEPISY (crafting w ekwipunku - siatka 2 x 2)
@@ -30,9 +28,9 @@ import { STACK_SIZE } from '../game/Inventory.js';
 // src/items/categories.js), do /przepisy i do wiki (tools/wiki.mjs).
 // Literówka w nazwie = błąd od razu przy starcie gry (Crafting.js).
 //
-// Drzewa z paczek (assets/drzewa/) same dostają deski z pnia (i opadłe
-// liście z liści, jeśli je mają), a swoje przepisy mogą dopisać
-// w drzewo.json ("przepisy" - PACK_RECIPES na dole pliku).
+// Wszystkie drzewa dostają deski z pnia i opadłe liście, jeśli je mają.
+// Dodatkowe przepisy są zapisane
+// we wspólnym rejestrze RECIPES poniżej.
 // ------------------------------------------------------------
 
 
@@ -50,8 +48,8 @@ function logsOf(species) {
 
 // Opadłe liście drzew z paczek.
 
-const PACK_LITTER = TREE_PACKS
-    .filter((pack) => pack.textures.opadleLiscie)
+const TREE_LITTER = TREE_DEFINITIONS
+    .filter((pack) => pack.textures.leafLitter)
     .map((pack) => `${pack.id}_leaf_litter`);
 
 
@@ -97,9 +95,9 @@ export const GROUPS = {
     },
 
     litter: {
-        label: PACK_LITTER.length > 0 ? 'opadłe liście (dowolne)' : 'opadłe liście (bukowe albo dębowe)',
+        label: TREE_LITTER.length > 0 ? 'opadłe liście (dowolne)' : 'opadłe liście (bukowe albo dębowe)',
         icon: 'beech_leaf_litter',
-        types: ['beech_leaf_litter', 'oak_leaf_litter', ...PACK_LITTER]
+        types: ['beech_leaf_litter', 'oak_leaf_litter', ...TREE_LITTER]
     },
 
     red: {
@@ -379,7 +377,7 @@ export const RECIPES = [
 
     // Opadłe liście drzew z paczek - z liści, jak bukowe i dębowe.
 
-    ...PACK_LITTER.map((litter) => ({
+    ...TREE_LITTER.map((litter) => ({
         id: litter,
         result: [litter, 2],
         ingredients: [litter.replace(/_leaf_litter$/, '_leaves')]
@@ -388,161 +386,14 @@ export const RECIPES = [
 ];
 
 // ------------------------------------------------------------
-// PRZEPISY Z PACZEK DRZEW ("przepisy" w drzewo.json)
-//
-//   { "wynik": "lamp_red", "ile": 1, "skladniki": ["lamp", "jablko"] }
-//   { "wynik": "stick", "ile": 2, "wzor": ["D", "D"], "klucz": { "D": "deski" } }
-//
-// Nazwy: bloki i przedmioty gry (np. "stick", "lamp", "#planks") albo
-// rzeczy z paczki: "pien", "okorowany", "deski", "liscie", "sadzonka",
-// "opadleLiscie", "liscie_<odmiana>" i klucze z "przedmioty". Przepis
-// z błędem jest pomijany (błąd trafia na czat gry, jak inne błędy
-// paczek), reszta działa.
-// ------------------------------------------------------------
-
-const PACK_NAMES = {
-    pien: '_log',
-    okorowany: '_log_stripped',
-    deski: '_planks',
-    liscie: '_leaves',
-    sadzonka: '_sapling',
-    opadleLiscie: '_leaf_litter'
-};
-
-
-function packRecipe(pack, entry, index) {
-
-    const where = `przepisy[${index}]`;
-
-    const fail = (message) => {
-        throw new Error(`${where}: ${message}`);
-    };
-
-    const name = (value, what) => {
-
-        if (typeof value !== 'string' || value === '') {
-            fail(`${what}: brak nazwy`);
-        }
-
-        let type = value;
-
-        if (Object.hasOwn(PACK_NAMES, value)) {
-            type = pack.id + PACK_NAMES[value];
-        }
-        else if (Object.hasOwn(pack.items, value)) {
-            type = pack.items[value].type;
-        }
-        else if (value.startsWith('liscie_')) {
-            type = `${pack.id}_leaves_${value.slice('liscie_'.length)}`;
-        }
-
-        const known = type.startsWith('#') ? Object.hasOwn(GROUPS, type.slice(1)) : itemExists(type);
-
-        if (!known) {
-            fail(`${what}: nie ma takiego bloku, przedmiotu ani grupy: "${value}"`);
-        }
-
-        return type;
-
-    };
-
-    if (!entry || typeof entry !== 'object') {
-        fail('ma być { "wynik": ..., ... }');
+// Dodatkowe przepisy drzew zachowują historyczne nazwy i wyniki.
+RECIPES.push(
+    {
+        id: 'jablon_czerwona_lampa', result: ['lamp_red', 1],
+        ingredients: ['lamp', 'jablon_jablko'], note: 'Jabłko też jest czerwone.', tree: 'jablon'
+    },
+    {
+        id: 'wierzba_srebrna_lampa', result: ['lamp', 1],
+        ingredients: ['lamp_blue', 'wierzba_bazie'], note: 'Bazie zdejmują z lampy niebieski kolor.', tree: 'wierzba'
     }
-
-    const result = name(entry.wynik, 'wynik');
-
-    if (result.startsWith('#')) {
-        fail('wynik nie może być grupą');
-    }
-
-    const count = entry.ile ?? 1;
-
-    if (!Number.isInteger(count) || count < 1 || count > STACK_SIZE) {
-        fail(`ile: liczba od 1 do ${STACK_SIZE}`);
-    }
-
-    const recipe = {
-        id: `${pack.id}_${typeof entry.id === 'string' && /^[a-z0-9_]+$/.test(entry.id) ? entry.id : index + 1}`,
-        result: [result, count],
-        note: typeof entry.opis === 'string' ? entry.opis : undefined,
-        pack: pack.id
-    };
-
-    if (Array.isArray(entry.skladniki) === Array.isArray(entry.wzor)) {
-        fail('potrzebne albo "skladniki" (lista), albo "wzor" z "klucz"');
-    }
-
-    if (entry.skladniki) {
-
-        if (entry.skladniki.length < 1 || entry.skladniki.length > 4) {
-            fail('skladniki: od 1 do 4');
-        }
-
-        recipe.ingredients = entry.skladniki.map((spec, i) => name(spec, `skladniki[${i}]`));
-
-    }
-    else {
-
-        const pattern = entry.wzor;
-
-        if (pattern.length < 1 || pattern.length > 2 || pattern.some((line) => typeof line !== 'string' || line.length < 1 || line.length > 2)) {
-            fail('wzor: 1 albo 2 wiersze po 1 albo 2 znaki (siatka 2 x 2), np. ["DD", ".D"]');
-        }
-
-        const key = {};
-
-        for (const char of pattern.join('')) {
-
-            if (char === '.' || char === ' ' || key[char]) {
-                continue;
-            }
-
-            if (!entry.klucz || entry.klucz[char] === undefined) {
-                fail(`klucz: brak znaczenia litery "${char}" ze wzoru`);
-            }
-
-            key[char] = name(entry.klucz[char], `klucz.${char}`);
-
-        }
-
-        if (Object.keys(key).length === 0) {
-            fail('wzor: pusty');
-        }
-
-        recipe.pattern = pattern;
-        recipe.key = key;
-
-    }
-
-    return recipe;
-
-}
-
-
-const PACK_RECIPES = [];
-
-for (const pack of TREE_PACKS) {
-
-    pack.recipes.forEach((entry, index) => {
-
-        try {
-
-            const recipe = packRecipe(pack, entry, index);
-
-            if ([...RECIPES, ...PACK_RECIPES].some((other) => other.id === recipe.id)) {
-                throw new Error(`przepisy[${index}]: dwa przepisy o nazwie "${recipe.id}"`);
-            }
-
-            PACK_RECIPES.push(recipe);
-
-        }
-        catch (error) {
-            TREE_PACK_ERRORS.push(`Drzewo "${pack.id}": ${error.message}`);
-        }
-
-    });
-
-}
-
-RECIPES.push(...PACK_RECIPES);
+);

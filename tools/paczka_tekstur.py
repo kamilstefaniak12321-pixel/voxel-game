@@ -22,6 +22,7 @@ import subprocess
 import sys
 
 from PIL import Image
+from atlasy import read_texture
 
 ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..')
 OUT = os.path.join(ROOT, 'paczka-tekstur-szablon')
@@ -56,29 +57,21 @@ def main():
     os.makedirs(os.path.join(OUT, 'bloki'), exist_ok=True)
     os.makedirs(os.path.join(OUT, 'niebo'), exist_ok=True)
 
-    atlas = Image.open(os.path.join(ROOT, 'assets', 'textures', 'blocks', 'terrain.png')).convert('RGBA')
-
     rows = []
     for name, tile in tiles.items():
         if tile.get('region'):
             # Duża roślina z paczki roślin (kilka kafelków) - paczka tekstur
             # jeszcze jej nie zmienia (docs/rosliny.md).
             continue
-        if 'file' in tile:
-            # Tekstura z paczki drzewa (assets/drzewa/) - nazwa "jablon/liscie.png".
-            relative = name if name.endswith('.png') else f'{name}.png'
-            target = os.path.join(OUT, 'bloki', *relative.split('/'))
-            os.makedirs(os.path.dirname(target), exist_ok=True)
-            Image.open(os.path.join(ROOT, tile['file'])).convert('RGBA').save(target, optimize=True)
-            path = f'bloki/{relative}'
-        else:
-            x, y = tile['x'] * TILE, tile['y'] * TILE
-            atlas.crop((x, y, x + TILE, y + TILE)).save(os.path.join(OUT, 'bloki', f'{name}.png'), optimize=True)
-            path = f'bloki/{name}.png'
+        relative = name if name.endswith('.png') else f'{name}.png'
+        target = os.path.join(OUT, 'bloki', *relative.split('/'))
+        os.makedirs(os.path.dirname(target), exist_ok=True)
+        read_texture(name).save(target, optimize=True)
+        path = f'bloki/{relative}'
         rows.append((path, ', '.join(used.get(name, [])) or '-'))
 
-    shutil.copy(os.path.join(ROOT, 'assets', 'textures', 'blocks', 'cracks.png'), os.path.join(OUT, 'pekniecia.png'))
-    shutil.copy(os.path.join(ROOT, 'assets', 'textures', 'sky', 'moon.png'), os.path.join(OUT, 'niebo', 'ksiezyc.png'))
+    read_texture('assets/textures/blocks/cracks.png').save(os.path.join(OUT, 'pekniecia.png'))
+    read_texture('assets/textures/sky/moon.png').save(os.path.join(OUT, 'niebo', 'ksiezyc.png'))
 
     with open(os.path.join(OUT, 'paczka.json'), 'w', encoding='utf-8') as file:
         json.dump({

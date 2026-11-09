@@ -31,7 +31,7 @@ export const AIR_ID = 0;
 //   1-99, 240-255, 256-999  bloki gry,
 //   100-239                 paczki drzew i paczki roślin (dawny zakres -
 //                           drzewa od dołu, rośliny od góry),
-//   1000-4999               paczki drzew (treePacks.js),
+//   1000-4999               dodatkowe drzewa (treeCatalog.js),
 //   5000-9999               paczki roślin (plantPacks.js),
 //   10000-10099             konstrukcje (ognisko 10000, pochodnie 10010-10094),
 //   10100-10107             wewnętrzne poziomy i spadanie wody,

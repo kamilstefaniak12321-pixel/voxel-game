@@ -33,7 +33,7 @@ registerHooks({
 });
 
 const { BLOCK_TYPES, MAX_BLOCK_ID, getBlockId, getBlockDefinition } = await import('../src/blocks/BlockRegistry.js');
-const { TREE_PACKS } = await import('../src/blocks/treePacks.js');
+const { TREE_DEFINITIONS } = await import('../src/blocks/treeCatalog.js');
 const { SURFACE_FACE_NAMES, SURFACE_TINT_TYPES, SURFACE_MATERIAL_COUNT,
     getSurfaceFaceTexture, surfaceMaterialId, surfaceMaterialType } = await import('../src/rendering/SurfaceMaterials.js');
 const { KINDS, kindIndex, sampleFarTile, meshFarTile, createMeshScratch } = await import('../src/world/farSamples.js');
@@ -51,7 +51,7 @@ for (const [type, definition] of Object.entries(BLOCK_TYPES)) {
     assert.equal(surfaceMaterialId(type), definition.id);
     assert.equal(surfaceMaterialType(definition.id), type);
 }
-for (const pack of TREE_PACKS) {
+for (const pack of TREE_DEFINITIONS) {
     assert.ok(surfaceMaterialId(`${pack.id}_leaves`) > 0, `Paczka ${pack.id}`);
 }
 for (const [index, type] of SURFACE_TINT_TYPES.entries()) {

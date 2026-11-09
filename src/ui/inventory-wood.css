@@ -5,7 +5,7 @@
    ekwipunku", main.js). Okno z desek z mchem i liśćmi, ciemne
    przegródki na przedmioty w drewnianych ramkach ze złotym brzegiem.
 
-   Tekstury: assets/ui/inventory/wood/ (tools/ekwipunek_drewno.py).
+   Tekstury: wspólny arkusz interfejsu, regiony w UiTextureSheets.js.
    Piksel tekstury = 3 piksele ekranu.
    Układ i obsługa przedmiotów są w inventory.css i InventoryScreen.js;
    tu są tylko kolory, tekstury i grubości ramek (z poprawionymi
@@ -53,7 +53,7 @@
        wystają na zewnątrz. Ramki siatek: 3 px obrysu + 3 px złota. */
     --wood-frame: 24px;
     --wood-pad: 14px;
-    --wood-image: url('../../assets/ui/inventory/wood/frame.png') 28 / 84px / 36px repeat;
+    --wood-image: var(--texture-wood-frame) 28 / 84px / 36px repeat;
     --wood-grid-frame: 6px;
     --wood-chrome: calc((var(--wood-frame) + var(--wood-pad)) * 2);
     --wood-framed-grid: calc(var(--inv-grid-width) + var(--wood-grid-frame) * 2);
@@ -73,7 +73,7 @@
     padding: var(--wood-pad);
     border: var(--wood-frame) solid transparent;
     border-image: var(--wood-image);
-    background: url('../../assets/ui/inventory/wood/planks.png') 0 0 / 480px 270px repeat;
+    background: var(--texture-wood-planks) 0 0 / 480px 270px repeat;
     background-origin: border-box;
     box-shadow: none;
     image-rendering: pixelated;
@@ -294,7 +294,7 @@
 :root[data-inv-style="wood"] .inv-close {
     color: var(--wood-text-dark);
     text-shadow: 1px 1px 0 rgba(255, 230, 180, 0.35);
-    background: url('../../assets/ui/inventory/wood/board.png') 0 0 / 144px 36px repeat;
+    background: var(--texture-wood-board) 0 0 / 144px 36px repeat;
     border: 3px solid var(--wood-outline);
     border-radius: 0;
     box-shadow:
@@ -307,7 +307,7 @@
 :root[data-inv-style="wood"] .inv-book-toggle:hover,
 :root[data-inv-style="wood"] .inv-book-close:hover,
 :root[data-inv-style="wood"] .inv-close:hover {
-    background: url('../../assets/ui/inventory/wood/board.png') 0 0 / 144px 36px repeat;
+    background: var(--texture-wood-board) 0 0 / 144px 36px repeat;
     border-color: var(--wood-outline);
     filter: brightness(1.12);
 }
@@ -391,7 +391,7 @@
     :root[data-inv-style="wood"] {
         --wood-frame: 15px;
         --wood-pad: 8px;
-        --wood-image: url('../../assets/ui/inventory/wood/frame-compact.png') 16 / 48px / 0 repeat;
+        --wood-image: var(--texture-wood-frame-compact) 16 / 48px / 0 repeat;
     }
     :root[data-inv-style="wood"] #inventory {
         padding: 8px;

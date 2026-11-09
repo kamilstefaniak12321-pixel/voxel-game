@@ -311,10 +311,27 @@ def main():
     args = parser.parse_args()
     names = args.nazwy.split(',')
     data = convert(args.atlas, args.wysokosc, names)
-    os.makedirs(args.folder, exist_ok=True)
+    from pathlib import Path
+    from atlasy import region, write_texture
+    folder = Path(args.folder).resolve()
+    in_assets = folder.is_relative_to(Path(__file__).resolve().parent.parent / 'assets')
+    outputs = [(folder / f'{name}.png', Image.fromarray(result))
+               for name, result in zip(names, data['results'])]
+    # Imports into the game update existing regions; a new region must first
+    # be explicitly allocated in atlas.json. External folders remain exports.
+    if in_assets:
+        for path, image in outputs:
+            spec = region(path)
+            if image.size != (spec['width'], spec['height']):
+                raise ValueError(f'{path}: size does not match atlas.json')
+    else:
+        folder.mkdir(parents=True, exist_ok=True)
     print(f'Siatka rysunku: {data["step"][0]:.2f} x {data["step"][1]:.2f} px, skala {data["factor"]:.3f}')
-    for name, native, result in zip(names, data['natives'], data['results']):
-        Image.fromarray(result).save(os.path.join(args.folder, f'{name}.png'), optimize=True)
+    for name, native, result, (path, image) in zip(names, data['natives'], data['results'], outputs):
+        if in_assets:
+            write_texture(path, image)
+        else:
+            image.save(path, optimize=True)
         print(f'  {name}.png: {result.shape[1]} x {result.shape[0]} (rysunek {native.shape[1]} x {native.shape[0]})')
     if args.podglad:
         preview(args.podglad, args.atlas, data, names)

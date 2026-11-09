@@ -70,6 +70,7 @@ async function browserChecks() {
     // z oryginalnym PNG, także alfa oraz przejście ostatniej klatki do pierwszej.
     const sourceCanvas=document.createElement('canvas');sourceCanvas.width=16;sourceCanvas.height=320;
     const sourceContext=sourceCanvas.getContext('2d',{willReadFrequently:true});
+    if(data.texture.userData.regionImageFlipped){sourceContext.translate(0,320);sourceContext.scale(1,-1);}
     sourceContext.drawImage(data.texture.image,0,0);
     const source=sourceContext.getImageData(0,0,16,320).data;
     const pixelTarget=new THREE.WebGLRenderTarget(16,16);

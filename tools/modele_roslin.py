@@ -1,7 +1,8 @@
 # ------------------------------------------------------------
 # TEKSTURY POZIOMÓW MODELI ROŚLIN (src/blocks/plantModels.js)
 #
-# Rysuje tekstury 16 x 16 do assets/models/rosliny/<roślina>/:
+# Rysuje regiony 16 x 16 w assets/textures/rosliny.png:
+#   klucze logiczne: assets/models/rosliny/<roślina>/...
 #   polrealistyczny.png - arkusz części dla modelu z płaszczyzn
 #                         (kwiat z boku, z góry, liść, łodyga, płatek -
 #                         układ: src/rendering/PlaneModelGeometry.js),
@@ -10,14 +11,16 @@
 #
 # Piksele są tu narysowane literami (paleta niżej) - łatwo poprawić
 # jeden piksel. Po zmianie: python3 tools/modele_roslin.py
-# Pliki PNG można też malować ręcznie - skrypt nadpisze je tylko po
-# uruchomieniu.
+# Regiony PNG można też malować ręcznie - skrypt nadpisze je tylko po
+# uruchomieniu. Opcjonalny katalog poza assets eksportuje luźne podglądy.
 # ------------------------------------------------------------
 
 import os
 import sys
+from pathlib import Path
 
 from PIL import Image
+from atlasy import region, write_texture
 
 ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'assets', 'models', 'rosliny')
 
@@ -660,15 +663,27 @@ for name, (leaf, flower) in PACKS.items():
 
 
 def main():
-    root = sys.argv[1] if len(sys.argv) > 1 else ROOT
+    root = Path(sys.argv[1] if len(sys.argv) > 1 else ROOT).resolve()
+    in_assets = root.is_relative_to(Path(__file__).resolve().parent.parent / 'assets')
+    outputs = []
     for name, (rows, palette) in SHEETS.items():
-        folder = os.path.join(root, name)
-        os.makedirs(folder, exist_ok=True)
-        sheet(rows, palette).save(os.path.join(folder, 'polrealistyczny.png'))
+        outputs.append((root / name / 'polrealistyczny.png', sheet(rows, palette)))
     for index, rows in enumerate(LAVENDER_SIMPLE, 1):
-        sheet(rows, LAVENDER).save(os.path.join(root, 'lawenda', f'prosty-{index}.png'))
+        outputs.append((root / 'lawenda' / f'prosty-{index}.png', sheet(rows, LAVENDER)))
+    # Validate every existing region before changing any of the shared sheets.
+    if in_assets:
+        for path, image in outputs:
+            spec = region(path)
+            if image.size != (spec['width'], spec['height']):
+                raise ValueError(f'{path}: size does not match atlas.json')
+    for path, image in outputs:
+        if in_assets:
+            write_texture(path, image)
+        else:
+            path.parent.mkdir(parents=True, exist_ok=True)
+            image.save(path)
     print(f'Arkusze: {len(SHEETS)}')
-    print('Gotowe:', os.path.abspath(root))
+    print('Gotowe:', 'assets/textures/rosliny.png' if in_assets else root)
 
 
 if __name__ == '__main__':

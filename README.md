@@ -244,12 +244,12 @@ półprzezroczyście, a podpowiedź mówi, czego brakuje. Na wąskim
 ekranie (telefon) księga znajduje się pod ekwipunkiem. Wszystkie miejsca
 pozostają dostępne, a zapasy i pasek przewijają się razem w poziomie.
 
-Co jest teraz (30 przepisów razem z drzewami z paczek, pełna lista z obrazkami:
+Przykładowe przepisy (pełna, aktualna lista z obrazkami:
 [`docs/wiki/przepisy.md`](docs/wiki/przepisy.md)):
 
 | Wyrób | Z czego |
 |---|---|
-| deski x4 (6 gatunków) | pień tego drzewa (też okorowany) |
+| deski x4 (12 gatunków) | pień tego drzewa (też okorowany) |
 | patyki x4 | 2 deski jedna nad drugą |
 | siekiera / kilof / łopata | skała (kamień, granit, wapień, piaskowiec, łupek, bazalt) i patyk |
 | lampa x2 | lepidolit + żywica + kora brzozowa |
@@ -293,10 +293,10 @@ Oprócz trawy, ziemi, piasku i skał są:
   a także wrzos, trzcina, piaskownica (trawa wydmowa) i kępki mchu,
 - **krzaki owocowe:** truskawka, jeżyna, papryczka chili, leszczyna
   (orzechy laskowe) i borówka - opis niżej,
-- **drzewa:** świerk, sosna, buk, lipa, dąb i brzoza - pnie, deski,
-  liście, sadzonki i dodatki - oraz z paczek drzew: jabłoń, olcha
-  i wierzba; w terenie realistycznym rosną lasy - opis niżej
-  i w `docs/drzewa.md`.
+- **drzewa:** świerk, sosna, buk, lipa, dąb, brzoza, jabłoń, olcha,
+  wierzba, akacja, cypryśnik i wiśnia — pnie, deski, liście, sadzonki
+  i dodatki. Wszystkie gatunki są we wspólnym katalogu; opis lasów
+  i modeli w `docs/drzewa.md`.
 
 Co gdzie rośnie, zależy od **biomu** (niżej, *Świat*: łąka, lasy,
 hala, mokradła...).
@@ -367,8 +367,9 @@ i świerczyn). Każdy rośnie w czterech etapach:
 
 ### Rośliny z paczek (duże i małe rośliny)
 
-Nowe rośliny dochodzą jak paczki drzew - folder w `assets/rosliny/`
-z obrazkami etapów wzrostu i opisem `roslina.json`, bez kodu. Skala jak
+Opisy roślin pozostają w folderach `assets/rosliny/` jako `roslina.json`,
+a obrazy etapów wzrostu są regionami wspólnego arkusza
+`assets/textures/rosliny.png`. Skala jak
 bloki: **16 pikseli tekstury na blok**, więc rozmiar obrazka to rozmiar
 rośliny - roślina może być większa niż blok (wystaje nad swoją komórkę,
 celownik trafia ją też tam). Wyższy etap rośnie tylko z wolnym miejscem
@@ -542,9 +543,9 @@ przy pełnym ekwipunku tylko się ugina - jak krzak borówki
 
 ### Drzewa i lasy
 
-Sześć gatunków z koncepcji Kamila: **świerk pospolity**, **sosna
-zwyczajna**, **buk zwyczajny**, **lipa drobnolistna**, **dąb szypułkowy**
-i **brzoza brodawkowata**. Wszystko o nich: `docs/drzewa.md`.
+Dwanaście gatunków: **świerk, sosna, buk, lipa, dąb, brzoza, jabłoń,
+olcha, wierzba, akacja, cypryśnik i wiśnia**. Własne sylwetki, rozmiary
+i występowanie opisuje `docs/drzewa.md`.
 
 - **Bloki** każdego gatunku: pień (`oak_log`), okorowany pień
   (`oak_log_stripped`), deski (`oak_planks`), liście albo igliwie
@@ -571,17 +572,15 @@ i **brzoza brodawkowata**. Wszystko o nich: `docs/drzewa.md`.
   dab` (jedno drzewo), `/drzewa znajdz sosna tp`, `/mapa lasy`,
   `/drzewa tempo 60`, `/daj axe`.
 
-**Nowe drzewa bez programowania - paczki drzew.** Każdy folder
-w `assets/drzewa/` to jeden gatunek: tekstury PNG 16 x 16, opis
-`drzewo.json` (nazwy, bloki, odmiany liści - np. z owocami, które się
-zbiera i które odrastają - przedmioty, gdzie rośnie, przepisy) i kształt
-drzewa narysowany literkami w pliku `.txt`. Gra sama robi z tego bloki,
-przedmioty, ikonki, przepisy, drzewa w lesie i z sadzonek. Przykład:
-**jabłoń** (`assets/drzewa/jablon/`, `/drzewa posadz jablon`) - jabłka
-zbiera się PPM i odrastają po 10 minutach. Nowa paczka: `python
-tools/nowe_drzewo.py grusza`, sprawdzenie: `node tools/drzewa.mjs`,
-w grze: `/drzewa paczki`. Folder wgrany na GitHuba dopisuje do gry akcja
-*Drzewa (paczki)*. **Instrukcja krok po kroku: `docs/drzewa-paczki.md`.**
+**Wspólny katalog drzew.** Od 0.80.0 wszystkie gatunki mają konfigurację
+w `src/blocks/treeCatalog.js`: stałe numery bloków, nazwy, wzrost,
+warianty liści, zbiory, klimat i szablony warstw. Tekstury drzew,
+drewna, liści i opału są razem w `assets/textures/drzewa.png`.
+Osobny mechanizm paczek drzew i automatycznego wykrywania folderów
+został usunięty. Drzewa, sadzonki, owoce i komendy działają jak wcześniej.
+Przykład: `/drzewa posadz jablon` — jabłka zbiera się PPM i odrastają
+po 10 minutach. Katalog: `/drzewa lista`; modele: `/drzewa warianty
+akacja`, `/drzewa las cyprysnik 16`, `/drzewa porownanie`.
 
 ## Woda
 
@@ -753,41 +752,31 @@ teksturami (każda w osobnym pliku, z opisem): folder
 w wydaniach (w grze: *Szablon paczki*). Komenda `/tekstury`. Opis:
 `docs/paczki-tekstur.md`.
 
-Bloki mają tekstury 16 x 16 pikseli (atlas `assets/textures/blocks/terrain.png`)
-w stylu pikselowym, ale **wygładzone i wycieniowane**: każda pokazuje
-fakturę swojego bloku - grudki ziemi, kamyki w żwirze, warstwy piaskowca
-i łupka, słupy bazaltu, kryształy granitu, łuski miki w lepidolicie,
-liście na ściółce, mokry połysk błota, żarzące się żyłki meteorytu.
-Światło pada z lewej góry: to, co wystaje, jest jaśniejsze z lewej i od
-góry, a szczeliny są ciemne. Kolory przechodzą płynnie, bez
-przypadkowego "szumu", a każda tekstura łączy się bez szwów z sąsiednim
-blokiem. Średni kolor każdej tekstury jest taki jak dawniej (z daleka
-świat wygląda tak samo - daleki teren liczy kolory ze średniej).
+Źródłowe grafiki gry są zebrane w dziewięciu PNG w `assets/textures/`:
+`drzewa.png`, `teren.png`, `rosliny.png`, `przedmioty.png`, `efekty.png`,
+`niebo.png`, `gracz.png`, `interfejs.png` i `podglady.png`.
+Każdy nazwany region opisuje `atlas.json`. Bloki zachowują siatkę
+16 × 16 pikseli; większe modele i pełne paski animacji zachowują swoje
+rozmiary. Wygląd, przezroczystość i numery bloków pozostają zgodne.
 
-Tekstury rysuje skrypt **`tools/tekstury.py`** (Python z numpy i Pillow):
-`python tools/tekstury.py` wkleja je do atlasu, `python tools/tekstury.py
-podglad.png` dodatkowo zapisuje powiększony podgląd. Każdy blok to jedna
-funkcja (np. `stone()`, `gravel()`), z własnym numerem losowania - ten
-sam numer, ta sama tekstura. Trawa z wierzchu, woda, rośliny, krzaki
-i owoce są rysowane ręcznie - skrypt ich nie zmienia (bok trawy dostaje
-tylko nową ziemię pod tą samą trawą).
+Można edytować arkusz bezpośrednio albo wyeksportować pojedynczy region:
 
-Drzewa (pnie, słoje, deski, liście, sadzonki i dodatki - wiersze 5-8
-atlasu) rysuje osobny skrypt **`tools/tekstury_drzew.py`**, w tym samym
-stylu: `python tools/tekstury_drzew.py [podglad.png]`.
+```text
+python tools/atlasy.py list drzewa
+python tools/atlasy.py export oak_planks deski.png
+python tools/atlasy.py replace oak_planks deski.png
+python tools/atlasy.py check
+```
 
-Ikonki narzędzi i surowców (patyk, kilof, łopata - wiersz 9 atlasu)
-rysuje **`tools/tekstury_narzedzi.py`** w tym samym stylu co siekiera:
-`python tools/tekstury_narzedzi.py [podglad.png]`.
+Zmiana położenia regionów wymaga uaktualnienia `atlas.json` i wykonania
+`python tools/atlasy.py sync`. Po zmianie samych pikseli wystarczy ponownie
+uruchomić grę. Szczegóły i podział grup: [arkusze tekstur](docs/tekstury-atlasy.md).
+Skrypty rysujące tekstury i generator wiki korzystają z tych samych arkuszy.
 
-Tekstury drzew z paczek (`assets/drzewa/<drzewo>/*.png`) **nie są**
-w `terrain.png` - gra dokłada je do atlasu sama przy starcie, od
-wiersza 10 (`docs/drzewa-paczki.md`). Wiersze 10-15 pliku zostają więc
-wolne dla nich.
-
-Pęknięcia kopanego bloku (10 etapów w pasku
-`assets/textures/blocks/cracks.png`) rysuje **`tools/pekniecia.py`**:
-`python tools/pekniecia.py [podglad.png]` (podgląd - etapy na kamieniu).
+Gra nadal składa tekstury świata do wspólnego atlasu GPU, zachowując
+współrzędne UV i zgodność z paczkami użytkownika. Folder eksportowanej
+paczki zawiera osobne kafelki dla wygody edycji, ale nie jest źródłem
+tekstur dołączanych do gry.
 
 ## Dźwięki
 
@@ -1278,16 +1267,13 @@ desktop/                    aplikacja na komputer (okno, aktualizacje, ikonka)
 android/                    aplikacja na telefon (Android, Capacitor): pełny ekran, ikonki
 capacitor.config.json       aplikacja na telefon: nazwa, identyfikator
 lib/three/                  three.js 0.160.0 (biblioteka 3D)
-.github/workflows/          automatyczne budowanie instalatora i wydań, sprawdzanie paczek drzew
-assets/textures/blocks/     tekstury bloków (terrain.png = atlas)
-assets/textures/sky/        tekstury nieba (księżyc)
-assets/textures/player/     skórka gracza i szablon skórki
-assets/ui/themes/           motywy menu (kolory, czcionka, tło)
+.github/workflows/          testy gry oraz automatyczne budowanie instalatora i wydań
+assets/textures/            dziewięć arkuszy tematycznych PNG i atlas.json (docs/tekstury-atlasy.md)
+assets/ui/themes/           opisy motywów menu (kolory, czcionka; grafiki w interfejs.png)
 assets/fonts/               czcionki
 assets/sounds/              dźwięki (.ogg): bloki, kroki, zbieranie, meteoryt, menu (ui/), woda, kosmos
-assets/drzewa/              paczki drzew: folder = gatunek (drzewo.json, tekstury, kształt), lista.json (docs/drzewa-paczki.md)
-assets/rosliny/             paczki roślin: folder = roślina (roslina.json, obrazki etapów i przedmiotu), lista.json (docs/rosliny.md)
-tools/                      skrypty pomocnicze (tekstury, tekstury drzew i narzędzi, nowe drzewo i sprawdzanie paczek, pęknięcia, dźwięki, wiki, ikonki i pliki aplikacji na Androida)
+assets/rosliny/             opisy roślin i etapów (roslina.json), lista.json; obrazy w rosliny.png
+tools/                      narzędzia atlasów, generatory tekstur, testy, dźwięki, wiki i pliki aplikacji na Androida
 docs/                       opisy, jak działają większe części gry
 docs/wiki/                  wiki gry dla graczy (strony generuje tools/wiki.py)
 CHANGELOG.md                historia zmian - wszystkie wersje gry
@@ -1297,7 +1283,7 @@ src/
   game/                     jeden uruchomiony świat (Game), ekwipunek, meteoryty, wzrost roślin, woda (obraz i dźwięk)
   ui/                       ekrany menu, pasek bloków, ikonki, napisy
   settings/                 ustawienia gracza (zapis w przeglądarce)
-  blocks/                   lista bloków (BlockRegistry), krzaki owocowe, drzewa (trees.js), paczki drzew (treePacks.js)
+  blocks/                   lista bloków (BlockRegistry), krzaki owocowe, drzewa (trees.js) i wspólny katalog gatunków (treeCatalog.js)
   items/                    przedmioty, które nie są blokami (owoce, szyszki, narzędzia...), kategorie
   crafting/                 wytwarzanie: przepisy (recipes.js) i siatka 2 x 2 (Crafting.js)
   world/                    świat, chunki, szum, światło, daleki teren
@@ -1318,13 +1304,16 @@ src/
 
 ## Dodawanie nowego bloku
 
-**Nowe drzewo** (pień, deski, liście, odmiany liści z owocami,
-sadzonka, kształt, gdzie rośnie) nie wymaga kodu - to paczka drzewa
-w `assets/drzewa/`: `docs/drzewa-paczki.md`. Poniżej - każdy inny blok.
+**Nowe drzewo** wymaga wpisu w `src/blocks/treeCatalog.js`, wolnego
+stałego zakresu numerów bloków i regionów w `drzewa.png` oraz
+`atlas.json`. Opis: `docs/drzewa.md` i `docs/tekstury-atlasy.md`.
+Poniżej — pozostałe bloki.
 
-1. Narysuj teksturę 16x16 i wklej ją do wolnego kafelka w `assets/textures/blocks/terrain.png`
-   (albo dopisz jej funkcję w `tools/tekstury.py` - patrz *Tekstury*).
-2. Dopisz pozycję kafelka w `ATLAS_TILES` w `src/rendering/TextureAtlas.js`.
+1. Narysuj teksturę 16×16 i umieść ją w odpowiednim arkuszu tematycznym
+   w `assets/textures/`. Dodaj nazwany region do `atlas.json`.
+2. Dodaj stabilne miejsce kafelka w sekcji `tiles` manifestu i wykonaj
+   `python tools/atlasy.py sync`. Nie przesuwaj istniejących regionów bez
+   aktualizacji mapowania i sprawdzenia gry.
 3. Dopisz blok w `BLOCK_TYPES` w `src/blocks/BlockRegistry.js` (nowe, unikalne `id` -
    bloki gry: 256-999, numery 2-bajtowe: `docs/numery-blokow.md`;
    polska nazwa w `label`). Opis wszystkich pól jest na początku pliku.

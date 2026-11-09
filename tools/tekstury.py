@@ -32,6 +32,9 @@ import sys
 
 import numpy as np
 from PIL import Image
+from atlasy import read_texture, write_texture
+
+# ATLAS jest roboczą kompozycją kafelków; zapis trafia do arkuszy tematycznych.
 
 N = 16
 
@@ -701,14 +704,14 @@ def generate():
 
 
 def main():
-    atlas = Image.open(ATLAS).convert('RGBA')
+    atlas = read_texture(ATLAS)
     tiles = generate()
     tiles['grass_side'] = grass_side(atlas, tiles['dirt'])
     for name, rgb in tiles.items():
         x, y = TILES[name]
         atlas.paste(as_image(rgb), (x * N, y * N))
-    atlas.save(ATLAS)
-    print('Gotowe:', len(tiles), 'tekstur w', os.path.relpath(ATLAS, ROOT))
+    write_texture(ATLAS, atlas)
+    print('Gotowe:', len(tiles), 'tekstur w', 'assets/textures/*.png')
     if len(sys.argv) > 1:
         preview(atlas, tiles, sys.argv[1])
 

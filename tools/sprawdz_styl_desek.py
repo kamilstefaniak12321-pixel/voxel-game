@@ -1,4 +1,4 @@
-"""Sprawdza wzorzec przyszłych desek bez tworzenia ani nadpisywania paczek.
+"""Sprawdza wzorzec przyszłych desek bez nadpisywania arkuszy tekstur.
 
 Uruchomienie: python tools/sprawdz_styl_desek.py (numpy i Pillow).
 """
@@ -6,11 +6,10 @@ import hashlib
 from pathlib import Path
 
 import numpy as np
-from PIL import Image
+from atlasy import read_texture
 
 from tekstury import ATLAS, ROOT
-from tekstury_drzew import planks
-from nowe_drzewo import textures
+from tekstury_drzew import planks, tree_texture_set
 
 
 checks = 0
@@ -33,9 +32,9 @@ def ranks(rgb):
     return np.unique(brightness, return_inverse=True)[1].reshape(16, 16)
 
 
-protected = [Path(ATLAS), *Path(ROOT, 'assets', 'drzewa').glob('*/deski.png')]
+protected = list(Path(ROOT, 'assets', 'textures').glob('*.png'))
 before = {path: digest(path) for path in protected}
-with Image.open(ATLAS) as atlas:
+with read_texture(ATLAS) as atlas:
     template = np.asarray(atlas.convert('RGB').crop((0, 112, 16, 128)), dtype=float)
 template_ranks = ranks(template)
 check(np.all(template_ranks[[3, 7, 11, 15]] == 0), 'Four continuous horizontal seams in the source')
@@ -54,10 +53,10 @@ for color in [(200, 120, 50), (80, 60, 40), (180, 190, 160)]:
     check(np.ptp(soft) < np.ptp(tile), 'Reduced contrast is actually softer')
 
 colors = {'kora': (100, 80, 60), 'drewno': (200, 160, 100), 'liscie': (70, 130, 50)}
-new_tree = textures(123, colors, conifer=False, fruit=None)
+new_tree = tree_texture_set(123, colors, conifer=False, fruit=None)
 check(new_tree['deski'].shape == (16, 16, 4), 'New-tree generator uses an RGBA plank tile')
 check(np.all(new_tree['deski'][..., 3] == 255), 'New planks remain solid')
 check(np.array_equal(ranks(new_tree['deski'][..., :3]), template_ranks), 'Actual new-tree path follows the authored template')
-check(before == {path: digest(path) for path in protected}, 'Reading the pattern never rewrites the atlas or existing packs')
+check(before == {path: digest(path) for path in protected}, 'Reading the pattern never rewrites the themed sheets')
 
 print(f'OK: styl desek — {checks} kontroli wzorca, palety, generatora i ochrony istniejących plików.')

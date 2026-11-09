@@ -1,0 +1,5098 @@
+{
+  "version": 1,
+  "tileSize": 16,
+  "columns": 16,
+  "rows": 35,
+  "sheets": {
+    "drzewa": {
+      "file": "drzewa.png",
+      "width": 256,
+      "height": 320
+    },
+    "teren": {
+      "file": "teren.png",
+      "width": 256,
+      "height": 48
+    },
+    "rosliny": {
+      "file": "rosliny.png",
+      "width": 256,
+      "height": 224
+    },
+    "przedmioty": {
+      "file": "przedmioty.png",
+      "width": 256,
+      "height": 48
+    },
+    "efekty": {
+      "file": "efekty.png",
+      "width": 256,
+      "height": 640
+    },
+    "niebo": {
+      "file": "niebo.png",
+      "width": 256,
+      "height": 32
+    },
+    "gracz": {
+      "file": "gracz.png",
+      "width": 256,
+      "height": 64
+    },
+    "interfejs": {
+      "file": "interfejs.png",
+      "width": 512,
+      "height": 498
+    },
+    "podglady": {
+      "file": "podglady.png",
+      "width": 1800,
+      "height": 2040
+    }
+  },
+  "regions": {
+    "spruce_log_side": {
+      "sheet": "drzewa",
+      "x": 0,
+      "y": 0,
+      "width": 16,
+      "height": 16
+    },
+    "spruce_log_top": {
+      "sheet": "drzewa",
+      "x": 16,
+      "y": 0,
+      "width": 16,
+      "height": 16
+    },
+    "pine_log_side": {
+      "sheet": "drzewa",
+      "x": 32,
+      "y": 0,
+      "width": 16,
+      "height": 16
+    },
+    "pine_log_top": {
+      "sheet": "drzewa",
+      "x": 48,
+      "y": 0,
+      "width": 16,
+      "height": 16
+    },
+    "beech_log_side": {
+      "sheet": "drzewa",
+      "x": 64,
+      "y": 0,
+      "width": 16,
+      "height": 16
+    },
+    "beech_log_top": {
+      "sheet": "drzewa",
+      "x": 80,
+      "y": 0,
+      "width": 16,
+      "height": 16
+    },
+    "linden_log_side": {
+      "sheet": "drzewa",
+      "x": 96,
+      "y": 0,
+      "width": 16,
+      "height": 16
+    },
+    "linden_log_top": {
+      "sheet": "drzewa",
+      "x": 112,
+      "y": 0,
+      "width": 16,
+      "height": 16
+    },
+    "oak_log_side": {
+      "sheet": "drzewa",
+      "x": 128,
+      "y": 0,
+      "width": 16,
+      "height": 16
+    },
+    "oak_log_top": {
+      "sheet": "drzewa",
+      "x": 144,
+      "y": 0,
+      "width": 16,
+      "height": 16
+    },
+    "birch_log_side": {
+      "sheet": "drzewa",
+      "x": 160,
+      "y": 0,
+      "width": 16,
+      "height": 16
+    },
+    "birch_log_top": {
+      "sheet": "drzewa",
+      "x": 176,
+      "y": 0,
+      "width": 16,
+      "height": 16
+    },
+    "pine_log_upper_side": {
+      "sheet": "drzewa",
+      "x": 192,
+      "y": 0,
+      "width": 16,
+      "height": 16
+    },
+    "pine_log_resin_side": {
+      "sheet": "drzewa",
+      "x": 208,
+      "y": 0,
+      "width": 16,
+      "height": 16
+    },
+    "pine_bark_overlay_dense": {
+      "sheet": "drzewa",
+      "x": 224,
+      "y": 0,
+      "width": 16,
+      "height": 16
+    },
+    "pine_bark_overlay_medium": {
+      "sheet": "drzewa",
+      "x": 240,
+      "y": 0,
+      "width": 16,
+      "height": 16
+    },
+    "pine_bark_overlay_sparse": {
+      "sheet": "drzewa",
+      "x": 0,
+      "y": 16,
+      "width": 16,
+      "height": 16
+    },
+    "spruce_stripped_side": {
+      "sheet": "drzewa",
+      "x": 16,
+      "y": 16,
+      "width": 16,
+      "height": 16
+    },
+    "spruce_stripped_top": {
+      "sheet": "drzewa",
+      "x": 32,
+      "y": 16,
+      "width": 16,
+      "height": 16
+    },
+    "pine_stripped_side": {
+      "sheet": "drzewa",
+      "x": 48,
+      "y": 16,
+      "width": 16,
+      "height": 16
+    },
+    "pine_stripped_top": {
+      "sheet": "drzewa",
+      "x": 64,
+      "y": 16,
+      "width": 16,
+      "height": 16
+    },
+    "beech_stripped_side": {
+      "sheet": "drzewa",
+      "x": 80,
+      "y": 16,
+      "width": 16,
+      "height": 16
+    },
+    "beech_stripped_top": {
+      "sheet": "drzewa",
+      "x": 96,
+      "y": 16,
+      "width": 16,
+      "height": 16
+    },
+    "linden_stripped_side": {
+      "sheet": "drzewa",
+      "x": 112,
+      "y": 16,
+      "width": 16,
+      "height": 16
+    },
+    "linden_stripped_top": {
+      "sheet": "drzewa",
+      "x": 128,
+      "y": 16,
+      "width": 16,
+      "height": 16
+    },
+    "oak_stripped_side": {
+      "sheet": "drzewa",
+      "x": 144,
+      "y": 16,
+      "width": 16,
+      "height": 16
+    },
+    "oak_stripped_top": {
+      "sheet": "drzewa",
+      "x": 160,
+      "y": 16,
+      "width": 16,
+      "height": 16
+    },
+    "birch_stripped_side": {
+      "sheet": "drzewa",
+      "x": 176,
+      "y": 16,
+      "width": 16,
+      "height": 16
+    },
+    "birch_stripped_top": {
+      "sheet": "drzewa",
+      "x": 192,
+      "y": 16,
+      "width": 16,
+      "height": 16
+    },
+    "spruce_planks": {
+      "sheet": "drzewa",
+      "x": 208,
+      "y": 16,
+      "width": 16,
+      "height": 16
+    },
+    "pine_planks": {
+      "sheet": "drzewa",
+      "x": 224,
+      "y": 16,
+      "width": 16,
+      "height": 16
+    },
+    "beech_planks": {
+      "sheet": "drzewa",
+      "x": 240,
+      "y": 16,
+      "width": 16,
+      "height": 16
+    },
+    "linden_planks": {
+      "sheet": "drzewa",
+      "x": 0,
+      "y": 32,
+      "width": 16,
+      "height": 16
+    },
+    "oak_planks": {
+      "sheet": "drzewa",
+      "x": 16,
+      "y": 32,
+      "width": 16,
+      "height": 16
+    },
+    "birch_planks": {
+      "sheet": "drzewa",
+      "x": 32,
+      "y": 32,
+      "width": 16,
+      "height": 16
+    },
+    "spruce_leaves": {
+      "sheet": "drzewa",
+      "x": 48,
+      "y": 32,
+      "width": 16,
+      "height": 16
+    },
+    "pine_leaves": {
+      "sheet": "drzewa",
+      "x": 64,
+      "y": 32,
+      "width": 16,
+      "height": 16
+    },
+    "beech_leaves": {
+      "sheet": "drzewa",
+      "x": 80,
+      "y": 32,
+      "width": 16,
+      "height": 16
+    },
+    "linden_leaves": {
+      "sheet": "drzewa",
+      "x": 96,
+      "y": 32,
+      "width": 16,
+      "height": 16
+    },
+    "oak_leaves": {
+      "sheet": "drzewa",
+      "x": 112,
+      "y": 32,
+      "width": 16,
+      "height": 16
+    },
+    "birch_leaves": {
+      "sheet": "drzewa",
+      "x": 128,
+      "y": 32,
+      "width": 16,
+      "height": 16
+    },
+    "linden_leaves_flowering": {
+      "sheet": "drzewa",
+      "x": 144,
+      "y": 32,
+      "width": 16,
+      "height": 16
+    },
+    "beech_leaf_litter": {
+      "sheet": "drzewa",
+      "x": 160,
+      "y": 32,
+      "width": 16,
+      "height": 16
+    },
+    "oak_leaf_litter": {
+      "sheet": "drzewa",
+      "x": 176,
+      "y": 32,
+      "width": 16,
+      "height": 16
+    },
+    "spruce_wreath": {
+      "sheet": "drzewa",
+      "x": 192,
+      "y": 32,
+      "width": 16,
+      "height": 16
+    },
+    "spruce_sapling": {
+      "sheet": "drzewa",
+      "x": 208,
+      "y": 32,
+      "width": 16,
+      "height": 16
+    },
+    "pine_sapling": {
+      "sheet": "drzewa",
+      "x": 224,
+      "y": 32,
+      "width": 16,
+      "height": 16
+    },
+    "beech_sapling": {
+      "sheet": "drzewa",
+      "x": 240,
+      "y": 32,
+      "width": 16,
+      "height": 16
+    },
+    "linden_sapling": {
+      "sheet": "drzewa",
+      "x": 0,
+      "y": 48,
+      "width": 16,
+      "height": 16
+    },
+    "oak_sapling": {
+      "sheet": "drzewa",
+      "x": 16,
+      "y": 48,
+      "width": 16,
+      "height": 16
+    },
+    "birch_sapling": {
+      "sheet": "drzewa",
+      "x": 32,
+      "y": 48,
+      "width": 16,
+      "height": 16
+    },
+    "spruce_cone": {
+      "sheet": "drzewa",
+      "x": 48,
+      "y": 48,
+      "width": 16,
+      "height": 16
+    },
+    "pine_cone": {
+      "sheet": "drzewa",
+      "x": 64,
+      "y": 48,
+      "width": 16,
+      "height": 16
+    },
+    "resin": {
+      "sheet": "drzewa",
+      "x": 80,
+      "y": 48,
+      "width": 16,
+      "height": 16
+    },
+    "linden_flower": {
+      "sheet": "drzewa",
+      "x": 96,
+      "y": 48,
+      "width": 16,
+      "height": 16
+    },
+    "acorn": {
+      "sheet": "drzewa",
+      "x": 112,
+      "y": 48,
+      "width": 16,
+      "height": 16
+    },
+    "birch_bark": {
+      "sheet": "drzewa",
+      "x": 128,
+      "y": 48,
+      "width": 16,
+      "height": 16
+    },
+    "jablon/pien_bok.png": {
+      "sheet": "drzewa",
+      "x": 144,
+      "y": 48,
+      "width": 16,
+      "height": 16
+    },
+    "jablon/pien_gora.png": {
+      "sheet": "drzewa",
+      "x": 160,
+      "y": 48,
+      "width": 16,
+      "height": 16
+    },
+    "jablon/okorowany_bok.png": {
+      "sheet": "drzewa",
+      "x": 176,
+      "y": 48,
+      "width": 16,
+      "height": 16
+    },
+    "jablon/okorowany_gora.png": {
+      "sheet": "drzewa",
+      "x": 192,
+      "y": 48,
+      "width": 16,
+      "height": 16
+    },
+    "jablon/deski.png": {
+      "sheet": "drzewa",
+      "x": 208,
+      "y": 48,
+      "width": 16,
+      "height": 16
+    },
+    "jablon/liscie.png": {
+      "sheet": "drzewa",
+      "x": 224,
+      "y": 48,
+      "width": 16,
+      "height": 16
+    },
+    "jablon/sadzonka.png": {
+      "sheet": "drzewa",
+      "x": 240,
+      "y": 48,
+      "width": 16,
+      "height": 16
+    },
+    "jablon/opadle_liscie.png": {
+      "sheet": "drzewa",
+      "x": 0,
+      "y": 64,
+      "width": 16,
+      "height": 16
+    },
+    "jablon/jablko.png": {
+      "sheet": "drzewa",
+      "x": 16,
+      "y": 64,
+      "width": 16,
+      "height": 16
+    },
+    "jablon/liscie_jablka.png": {
+      "sheet": "drzewa",
+      "x": 32,
+      "y": 64,
+      "width": 16,
+      "height": 16
+    },
+    "olcha/pien_bok.png": {
+      "sheet": "drzewa",
+      "x": 48,
+      "y": 64,
+      "width": 16,
+      "height": 16
+    },
+    "olcha/pien_gora.png": {
+      "sheet": "drzewa",
+      "x": 64,
+      "y": 64,
+      "width": 16,
+      "height": 16
+    },
+    "olcha/okorowany_bok.png": {
+      "sheet": "drzewa",
+      "x": 80,
+      "y": 64,
+      "width": 16,
+      "height": 16
+    },
+    "olcha/okorowany_gora.png": {
+      "sheet": "drzewa",
+      "x": 96,
+      "y": 64,
+      "width": 16,
+      "height": 16
+    },
+    "olcha/deski.png": {
+      "sheet": "drzewa",
+      "x": 112,
+      "y": 64,
+      "width": 16,
+      "height": 16
+    },
+    "olcha/liscie.png": {
+      "sheet": "drzewa",
+      "x": 128,
+      "y": 64,
+      "width": 16,
+      "height": 16
+    },
+    "olcha/sadzonka.png": {
+      "sheet": "drzewa",
+      "x": 144,
+      "y": 64,
+      "width": 16,
+      "height": 16
+    },
+    "olcha/opadle_liscie.png": {
+      "sheet": "drzewa",
+      "x": 160,
+      "y": 64,
+      "width": 16,
+      "height": 16
+    },
+    "olcha/szyszki.png": {
+      "sheet": "drzewa",
+      "x": 176,
+      "y": 64,
+      "width": 16,
+      "height": 16
+    },
+    "wierzba/pien_bok.png": {
+      "sheet": "drzewa",
+      "x": 192,
+      "y": 64,
+      "width": 16,
+      "height": 16
+    },
+    "wierzba/pien_gora.png": {
+      "sheet": "drzewa",
+      "x": 208,
+      "y": 64,
+      "width": 16,
+      "height": 16
+    },
+    "wierzba/okorowany_bok.png": {
+      "sheet": "drzewa",
+      "x": 224,
+      "y": 64,
+      "width": 16,
+      "height": 16
+    },
+    "wierzba/okorowany_gora.png": {
+      "sheet": "drzewa",
+      "x": 240,
+      "y": 64,
+      "width": 16,
+      "height": 16
+    },
+    "wierzba/deski.png": {
+      "sheet": "drzewa",
+      "x": 0,
+      "y": 80,
+      "width": 16,
+      "height": 16
+    },
+    "wierzba/liscie.png": {
+      "sheet": "drzewa",
+      "x": 16,
+      "y": 80,
+      "width": 16,
+      "height": 16
+    },
+    "wierzba/sadzonka.png": {
+      "sheet": "drzewa",
+      "x": 32,
+      "y": 80,
+      "width": 16,
+      "height": 16
+    },
+    "wierzba/opadle_liscie.png": {
+      "sheet": "drzewa",
+      "x": 48,
+      "y": 80,
+      "width": 16,
+      "height": 16
+    },
+    "wierzba/bazie.png": {
+      "sheet": "drzewa",
+      "x": 64,
+      "y": 80,
+      "width": 16,
+      "height": 16
+    },
+    "acacia/log_side.png": {
+      "sheet": "drzewa",
+      "x": 80,
+      "y": 80,
+      "width": 16,
+      "height": 16
+    },
+    "acacia/log_top.png": {
+      "sheet": "drzewa",
+      "x": 96,
+      "y": 80,
+      "width": 16,
+      "height": 16
+    },
+    "acacia/stripped_side.png": {
+      "sheet": "drzewa",
+      "x": 112,
+      "y": 80,
+      "width": 16,
+      "height": 16
+    },
+    "acacia/stripped_top.png": {
+      "sheet": "drzewa",
+      "x": 128,
+      "y": 80,
+      "width": 16,
+      "height": 16
+    },
+    "acacia/planks.png": {
+      "sheet": "drzewa",
+      "x": 144,
+      "y": 80,
+      "width": 16,
+      "height": 16
+    },
+    "acacia/leaves.png": {
+      "sheet": "drzewa",
+      "x": 160,
+      "y": 80,
+      "width": 16,
+      "height": 16
+    },
+    "acacia/sapling.png": {
+      "sheet": "drzewa",
+      "x": 176,
+      "y": 80,
+      "width": 16,
+      "height": 16
+    },
+    "acacia/leaves_variant.png": {
+      "sheet": "drzewa",
+      "x": 192,
+      "y": 80,
+      "width": 16,
+      "height": 16
+    },
+    "bald_cypress/log_side.png": {
+      "sheet": "drzewa",
+      "x": 208,
+      "y": 80,
+      "width": 16,
+      "height": 16
+    },
+    "bald_cypress/log_top.png": {
+      "sheet": "drzewa",
+      "x": 224,
+      "y": 80,
+      "width": 16,
+      "height": 16
+    },
+    "bald_cypress/stripped_side.png": {
+      "sheet": "drzewa",
+      "x": 240,
+      "y": 80,
+      "width": 16,
+      "height": 16
+    },
+    "bald_cypress/stripped_top.png": {
+      "sheet": "drzewa",
+      "x": 0,
+      "y": 96,
+      "width": 16,
+      "height": 16
+    },
+    "bald_cypress/planks.png": {
+      "sheet": "drzewa",
+      "x": 16,
+      "y": 96,
+      "width": 16,
+      "height": 16
+    },
+    "bald_cypress/leaves.png": {
+      "sheet": "drzewa",
+      "x": 32,
+      "y": 96,
+      "width": 16,
+      "height": 16
+    },
+    "bald_cypress/sapling.png": {
+      "sheet": "drzewa",
+      "x": 48,
+      "y": 96,
+      "width": 16,
+      "height": 16
+    },
+    "bald_cypress/leaves_variant.png": {
+      "sheet": "drzewa",
+      "x": 64,
+      "y": 96,
+      "width": 16,
+      "height": 16
+    },
+    "cherry/log_side.png": {
+      "sheet": "drzewa",
+      "x": 80,
+      "y": 96,
+      "width": 16,
+      "height": 16
+    },
+    "cherry/log_top.png": {
+      "sheet": "drzewa",
+      "x": 96,
+      "y": 96,
+      "width": 16,
+      "height": 16
+    },
+    "cherry/stripped_side.png": {
+      "sheet": "drzewa",
+      "x": 112,
+      "y": 96,
+      "width": 16,
+      "height": 16
+    },
+    "cherry/stripped_top.png": {
+      "sheet": "drzewa",
+      "x": 128,
+      "y": 96,
+      "width": 16,
+      "height": 16
+    },
+    "cherry/planks.png": {
+      "sheet": "drzewa",
+      "x": 144,
+      "y": 96,
+      "width": 16,
+      "height": 16
+    },
+    "cherry/leaves.png": {
+      "sheet": "drzewa",
+      "x": 160,
+      "y": 96,
+      "width": 16,
+      "height": 16
+    },
+    "cherry/sapling.png": {
+      "sheet": "drzewa",
+      "x": 176,
+      "y": 96,
+      "width": 16,
+      "height": 16
+    },
+    "cherry/leaves_variant.png": {
+      "sheet": "drzewa",
+      "x": 192,
+      "y": 96,
+      "width": 16,
+      "height": 16
+    },
+    "campfire_oak": {
+      "sheet": "drzewa",
+      "x": 208,
+      "y": 96,
+      "width": 32,
+      "height": 32
+    },
+    "campfire_birch": {
+      "sheet": "drzewa",
+      "x": 0,
+      "y": 128,
+      "width": 32,
+      "height": 32
+    },
+    "campfire_spruce": {
+      "sheet": "drzewa",
+      "x": 32,
+      "y": 128,
+      "width": 32,
+      "height": 32
+    },
+    "campfire_pine": {
+      "sheet": "drzewa",
+      "x": 64,
+      "y": 128,
+      "width": 32,
+      "height": 32
+    },
+    "campfire_beech": {
+      "sheet": "drzewa",
+      "x": 96,
+      "y": 128,
+      "width": 32,
+      "height": 32
+    },
+    "campfire_linden": {
+      "sheet": "drzewa",
+      "x": 128,
+      "y": 128,
+      "width": 32,
+      "height": 32
+    },
+    "campfire_olcha": {
+      "sheet": "drzewa",
+      "x": 160,
+      "y": 128,
+      "width": 32,
+      "height": 32
+    },
+    "campfire_wierzba": {
+      "sheet": "drzewa",
+      "x": 192,
+      "y": 128,
+      "width": 32,
+      "height": 32
+    },
+    "campfire_jablon": {
+      "sheet": "drzewa",
+      "x": 224,
+      "y": 128,
+      "width": 32,
+      "height": 32
+    },
+    "campfire_acacia": {
+      "sheet": "drzewa",
+      "x": 0,
+      "y": 160,
+      "width": 32,
+      "height": 32
+    },
+    "campfire_bald_cypress": {
+      "sheet": "drzewa",
+      "x": 32,
+      "y": 160,
+      "width": 32,
+      "height": 32
+    },
+    "campfire_cherry": {
+      "sheet": "drzewa",
+      "x": 64,
+      "y": 160,
+      "width": 32,
+      "height": 32
+    },
+    "models/rosliny/sadzonka-swierk/polrealistyczny": {
+      "sheet": "drzewa",
+      "x": 96,
+      "y": 160,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/sadzonka-sosna/polrealistyczny": {
+      "sheet": "drzewa",
+      "x": 112,
+      "y": 160,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/sadzonka-buk/polrealistyczny": {
+      "sheet": "drzewa",
+      "x": 128,
+      "y": 160,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/sadzonka-lipa/polrealistyczny": {
+      "sheet": "drzewa",
+      "x": 144,
+      "y": 160,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/sadzonka-dab/polrealistyczny": {
+      "sheet": "drzewa",
+      "x": 160,
+      "y": 160,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/sadzonka-brzoza/polrealistyczny": {
+      "sheet": "drzewa",
+      "x": 176,
+      "y": 160,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/sadzonka-jablon/polrealistyczny": {
+      "sheet": "drzewa",
+      "x": 192,
+      "y": 160,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/sadzonka-olcha/polrealistyczny": {
+      "sheet": "drzewa",
+      "x": 208,
+      "y": 160,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/sadzonka-wierzba/polrealistyczny": {
+      "sheet": "drzewa",
+      "x": 224,
+      "y": 160,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/sadzonka-akacja/polrealistyczny": {
+      "sheet": "drzewa",
+      "x": 240,
+      "y": 160,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/sadzonka-cyprysnik/polrealistyczny": {
+      "sheet": "drzewa",
+      "x": 0,
+      "y": 192,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/sadzonka-wisnia/polrealistyczny": {
+      "sheet": "drzewa",
+      "x": 16,
+      "y": 192,
+      "width": 16,
+      "height": 16
+    },
+    "pine_log_transition_1": {
+      "sheet": "drzewa",
+      "x": 32,
+      "y": 192,
+      "width": 16,
+      "height": 16
+    },
+    "pine_log_transition_2": {
+      "sheet": "drzewa",
+      "x": 48,
+      "y": 192,
+      "width": 16,
+      "height": 16
+    },
+    "pine_log_transition_3": {
+      "sheet": "drzewa",
+      "x": 64,
+      "y": 192,
+      "width": 16,
+      "height": 16
+    },
+    "assets/models/leaves/texture.png": {
+      "sheet": "drzewa",
+      "x": 80,
+      "y": 192,
+      "width": 16,
+      "height": 16
+    },
+    "assets/textures/blocks/pine-bark-reference.png": {
+      "sheet": "drzewa",
+      "x": 96,
+      "y": 192,
+      "width": 128,
+      "height": 128
+    },
+    "grass_top": {
+      "sheet": "teren",
+      "x": 0,
+      "y": 0,
+      "width": 16,
+      "height": 16
+    },
+    "grass_side": {
+      "sheet": "teren",
+      "x": 16,
+      "y": 0,
+      "width": 16,
+      "height": 16
+    },
+    "dirt": {
+      "sheet": "teren",
+      "x": 32,
+      "y": 0,
+      "width": 16,
+      "height": 16
+    },
+    "stone": {
+      "sheet": "teren",
+      "x": 48,
+      "y": 0,
+      "width": 16,
+      "height": 16
+    },
+    "lamp": {
+      "sheet": "teren",
+      "x": 64,
+      "y": 0,
+      "width": 16,
+      "height": 16
+    },
+    "lepidolite": {
+      "sheet": "teren",
+      "x": 80,
+      "y": 0,
+      "width": 16,
+      "height": 16
+    },
+    "lamp_red": {
+      "sheet": "teren",
+      "x": 96,
+      "y": 0,
+      "width": 16,
+      "height": 16
+    },
+    "lamp_green": {
+      "sheet": "teren",
+      "x": 112,
+      "y": 0,
+      "width": 16,
+      "height": 16
+    },
+    "lamp_blue": {
+      "sheet": "teren",
+      "x": 128,
+      "y": 0,
+      "width": 16,
+      "height": 16
+    },
+    "lamp_purple": {
+      "sheet": "teren",
+      "x": 144,
+      "y": 0,
+      "width": 16,
+      "height": 16
+    },
+    "meteorite": {
+      "sheet": "teren",
+      "x": 160,
+      "y": 0,
+      "width": 16,
+      "height": 16
+    },
+    "sand": {
+      "sheet": "teren",
+      "x": 176,
+      "y": 0,
+      "width": 16,
+      "height": 16
+    },
+    "water": {
+      "sheet": "teren",
+      "x": 192,
+      "y": 0,
+      "width": 16,
+      "height": 16
+    },
+    "granite": {
+      "sheet": "teren",
+      "x": 208,
+      "y": 0,
+      "width": 16,
+      "height": 16
+    },
+    "limestone": {
+      "sheet": "teren",
+      "x": 224,
+      "y": 0,
+      "width": 16,
+      "height": 16
+    },
+    "sandstone_side": {
+      "sheet": "teren",
+      "x": 240,
+      "y": 0,
+      "width": 16,
+      "height": 16
+    },
+    "sandstone_top": {
+      "sheet": "teren",
+      "x": 0,
+      "y": 16,
+      "width": 16,
+      "height": 16
+    },
+    "slate_side": {
+      "sheet": "teren",
+      "x": 16,
+      "y": 16,
+      "width": 16,
+      "height": 16
+    },
+    "slate_top": {
+      "sheet": "teren",
+      "x": 32,
+      "y": 16,
+      "width": 16,
+      "height": 16
+    },
+    "basalt_side": {
+      "sheet": "teren",
+      "x": 48,
+      "y": 16,
+      "width": 16,
+      "height": 16
+    },
+    "basalt_top": {
+      "sheet": "teren",
+      "x": 64,
+      "y": 16,
+      "width": 16,
+      "height": 16
+    },
+    "humus": {
+      "sheet": "teren",
+      "x": 80,
+      "y": 16,
+      "width": 16,
+      "height": 16
+    },
+    "coarse_dirt": {
+      "sheet": "teren",
+      "x": 96,
+      "y": 16,
+      "width": 16,
+      "height": 16
+    },
+    "forest_floor_top": {
+      "sheet": "teren",
+      "x": 112,
+      "y": 16,
+      "width": 16,
+      "height": 16
+    },
+    "forest_floor_side": {
+      "sheet": "teren",
+      "x": 128,
+      "y": 16,
+      "width": 16,
+      "height": 16
+    },
+    "mud": {
+      "sheet": "teren",
+      "x": 144,
+      "y": 16,
+      "width": 16,
+      "height": 16
+    },
+    "clay": {
+      "sheet": "teren",
+      "x": 160,
+      "y": 16,
+      "width": 16,
+      "height": 16
+    },
+    "gravel": {
+      "sheet": "teren",
+      "x": 176,
+      "y": 16,
+      "width": 16,
+      "height": 16
+    },
+    "lime_plaster": {
+      "sheet": "teren",
+      "x": 192,
+      "y": 16,
+      "width": 16,
+      "height": 16
+    },
+    "ochre_plaster": {
+      "sheet": "teren",
+      "x": 208,
+      "y": 16,
+      "width": 16,
+      "height": 16
+    },
+    "terracotta": {
+      "sheet": "teren",
+      "x": 224,
+      "y": 16,
+      "width": 16,
+      "height": 16
+    },
+    "polished_stone": {
+      "sheet": "teren",
+      "x": 240,
+      "y": 16,
+      "width": 16,
+      "height": 16
+    },
+    "stick": {
+      "sheet": "teren",
+      "x": 0,
+      "y": 32,
+      "width": 16,
+      "height": 16
+    },
+    "dark_planks": {
+      "sheet": "teren",
+      "x": 16,
+      "y": 32,
+      "width": 16,
+      "height": 16
+    },
+    "snow": {
+      "sheet": "teren",
+      "x": 32,
+      "y": 32,
+      "width": 16,
+      "height": 16
+    },
+    "moss_top": {
+      "sheet": "teren",
+      "x": 48,
+      "y": 32,
+      "width": 16,
+      "height": 16
+    },
+    "moss_side": {
+      "sheet": "teren",
+      "x": 64,
+      "y": 32,
+      "width": 16,
+      "height": 16
+    },
+    "moss_carpet": {
+      "sheet": "teren",
+      "x": 80,
+      "y": 32,
+      "width": 16,
+      "height": 16
+    },
+    "moss_carpet_2": {
+      "sheet": "teren",
+      "x": 96,
+      "y": 32,
+      "width": 16,
+      "height": 16
+    },
+    "moss_carpet_3": {
+      "sheet": "teren",
+      "x": 112,
+      "y": 32,
+      "width": 16,
+      "height": 16
+    },
+    "tool_handle_source": {
+      "sheet": "teren",
+      "x": 128,
+      "y": 32,
+      "width": 16,
+      "height": 16
+    },
+    "short_grass": {
+      "sheet": "rosliny",
+      "x": 0,
+      "y": 0,
+      "width": 16,
+      "height": 16
+    },
+    "tall_grass": {
+      "sheet": "rosliny",
+      "x": 16,
+      "y": 0,
+      "width": 16,
+      "height": 16
+    },
+    "fern": {
+      "sheet": "rosliny",
+      "x": 32,
+      "y": 0,
+      "width": 16,
+      "height": 16
+    },
+    "clover": {
+      "sheet": "rosliny",
+      "x": 48,
+      "y": 0,
+      "width": 16,
+      "height": 16
+    },
+    "nettle": {
+      "sheet": "rosliny",
+      "x": 64,
+      "y": 0,
+      "width": 16,
+      "height": 16
+    },
+    "plantain": {
+      "sheet": "rosliny",
+      "x": 80,
+      "y": 0,
+      "width": 16,
+      "height": 16
+    },
+    "poppy": {
+      "sheet": "rosliny",
+      "x": 96,
+      "y": 0,
+      "width": 16,
+      "height": 16
+    },
+    "cornflower": {
+      "sheet": "rosliny",
+      "x": 112,
+      "y": 0,
+      "width": 16,
+      "height": 16
+    },
+    "chamomile": {
+      "sheet": "rosliny",
+      "x": 128,
+      "y": 0,
+      "width": 16,
+      "height": 16
+    },
+    "dandelion": {
+      "sheet": "rosliny",
+      "x": 144,
+      "y": 0,
+      "width": 16,
+      "height": 16
+    },
+    "reed": {
+      "sheet": "rosliny",
+      "x": 160,
+      "y": 0,
+      "width": 16,
+      "height": 16
+    },
+    "heather": {
+      "sheet": "rosliny",
+      "x": 176,
+      "y": 0,
+      "width": 16,
+      "height": 16
+    },
+    "crocus": {
+      "sheet": "rosliny",
+      "x": 192,
+      "y": 0,
+      "width": 16,
+      "height": 16
+    },
+    "dune_grass": {
+      "sheet": "rosliny",
+      "x": 208,
+      "y": 0,
+      "width": 16,
+      "height": 16
+    },
+    "bush_sapling": {
+      "sheet": "rosliny",
+      "x": 224,
+      "y": 0,
+      "width": 16,
+      "height": 16
+    },
+    "bush_leaves": {
+      "sheet": "rosliny",
+      "x": 240,
+      "y": 0,
+      "width": 16,
+      "height": 16
+    },
+    "strawberry_bush_few": {
+      "sheet": "rosliny",
+      "x": 0,
+      "y": 16,
+      "width": 16,
+      "height": 16
+    },
+    "strawberry_bush_full": {
+      "sheet": "rosliny",
+      "x": 16,
+      "y": 16,
+      "width": 16,
+      "height": 16
+    },
+    "blackberry_bush_few": {
+      "sheet": "rosliny",
+      "x": 32,
+      "y": 16,
+      "width": 16,
+      "height": 16
+    },
+    "blackberry_bush_full": {
+      "sheet": "rosliny",
+      "x": 48,
+      "y": 16,
+      "width": 16,
+      "height": 16
+    },
+    "chili_bush_few": {
+      "sheet": "rosliny",
+      "x": 64,
+      "y": 16,
+      "width": 16,
+      "height": 16
+    },
+    "chili_bush_full": {
+      "sheet": "rosliny",
+      "x": 80,
+      "y": 16,
+      "width": 16,
+      "height": 16
+    },
+    "hazel_bush_few": {
+      "sheet": "rosliny",
+      "x": 96,
+      "y": 16,
+      "width": 16,
+      "height": 16
+    },
+    "hazel_bush_full": {
+      "sheet": "rosliny",
+      "x": 112,
+      "y": 16,
+      "width": 16,
+      "height": 16
+    },
+    "blueberry_bush_few": {
+      "sheet": "rosliny",
+      "x": 128,
+      "y": 16,
+      "width": 16,
+      "height": 16
+    },
+    "blueberry_bush_full": {
+      "sheet": "rosliny",
+      "x": 144,
+      "y": 16,
+      "width": 16,
+      "height": 16
+    },
+    "blueberry_bush": {
+      "sheet": "rosliny",
+      "x": 160,
+      "y": 16,
+      "width": 16,
+      "height": 16
+    },
+    "rosliny/amarantus/etap1.png": {
+      "sheet": "rosliny",
+      "x": 176,
+      "y": 16,
+      "width": 32,
+      "height": 32
+    },
+    "rosliny/amarantus/etap2.png": {
+      "sheet": "rosliny",
+      "x": 208,
+      "y": 16,
+      "width": 32,
+      "height": 32
+    },
+    "rosliny/amarantus/etap3.png": {
+      "sheet": "rosliny",
+      "x": 0,
+      "y": 48,
+      "width": 32,
+      "height": 32
+    },
+    "rosliny/amarantus/wiecha.png": {
+      "sheet": "rosliny",
+      "x": 32,
+      "y": 48,
+      "width": 16,
+      "height": 16
+    },
+    "rosliny/kocanka/bukiet.png": {
+      "sheet": "rosliny",
+      "x": 48,
+      "y": 48,
+      "width": 16,
+      "height": 16
+    },
+    "rosliny/lawenda/bukiet.png": {
+      "sheet": "rosliny",
+      "x": 64,
+      "y": 48,
+      "width": 16,
+      "height": 16
+    },
+    "rosliny/piwonia/kwiat.png": {
+      "sheet": "rosliny",
+      "x": 80,
+      "y": 48,
+      "width": 16,
+      "height": 16
+    },
+    "rosliny/zawilec/kwiat.png": {
+      "sheet": "rosliny",
+      "x": 96,
+      "y": 48,
+      "width": 16,
+      "height": 16
+    },
+    "rosliny/dzwonek/kwiat.png": {
+      "sheet": "rosliny",
+      "x": 112,
+      "y": 48,
+      "width": 16,
+      "height": 16
+    },
+    "rosliny/szalwia/lisc.png": {
+      "sheet": "rosliny",
+      "x": 128,
+      "y": 48,
+      "width": 16,
+      "height": 16
+    },
+    "rosliny/nagietek/kwiat.png": {
+      "sheet": "rosliny",
+      "x": 144,
+      "y": 48,
+      "width": 16,
+      "height": 16
+    },
+    "rosliny/cynia/kwiat.png": {
+      "sheet": "rosliny",
+      "x": 160,
+      "y": 48,
+      "width": 16,
+      "height": 16
+    },
+    "rosliny/mikolajek/kwiat.png": {
+      "sheet": "rosliny",
+      "x": 176,
+      "y": 48,
+      "width": 16,
+      "height": 16
+    },
+    "rosliny/barwinek/kwiat.png": {
+      "sheet": "rosliny",
+      "x": 192,
+      "y": 48,
+      "width": 16,
+      "height": 16
+    },
+    "rosliny/len/wiazka.png": {
+      "sheet": "rosliny",
+      "x": 208,
+      "y": 48,
+      "width": 16,
+      "height": 16
+    },
+    "rosliny/gorczyca/nasiona.png": {
+      "sheet": "rosliny",
+      "x": 224,
+      "y": 48,
+      "width": 16,
+      "height": 16
+    },
+    "rosliny/porostoliwkowy/plecha.png": {
+      "sheet": "rosliny",
+      "x": 240,
+      "y": 48,
+      "width": 16,
+      "height": 16
+    },
+    "rosliny/porostiglasty/galazki.png": {
+      "sheet": "rosliny",
+      "x": 0,
+      "y": 80,
+      "width": 16,
+      "height": 16
+    },
+    "rosliny/ochra/grudka.png": {
+      "sheet": "rosliny",
+      "x": 16,
+      "y": 80,
+      "width": 16,
+      "height": 16
+    },
+    "rosliny/huba/huba.png": {
+      "sheet": "rosliny",
+      "x": 32,
+      "y": 80,
+      "width": 16,
+      "height": 16
+    },
+    "rosliny/indygowiec/liscie.png": {
+      "sheet": "rosliny",
+      "x": 48,
+      "y": 80,
+      "width": 16,
+      "height": 16
+    },
+    "rosliny/marzanna/korzen.png": {
+      "sheet": "rosliny",
+      "x": 64,
+      "y": 80,
+      "width": 16,
+      "height": 16
+    },
+    "models/blueberry/atlas": {
+      "sheet": "rosliny",
+      "x": 80,
+      "y": 80,
+      "width": 64,
+      "height": 64
+    },
+    "models/bushy-grass/texture": {
+      "sheet": "rosliny",
+      "x": 144,
+      "y": 80,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/mak/polrealistyczny": {
+      "sheet": "rosliny",
+      "x": 160,
+      "y": 80,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/chaber/polrealistyczny": {
+      "sheet": "rosliny",
+      "x": 176,
+      "y": 80,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/mniszek/polrealistyczny": {
+      "sheet": "rosliny",
+      "x": 192,
+      "y": 80,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/rumianek/polrealistyczny": {
+      "sheet": "rosliny",
+      "x": 208,
+      "y": 80,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/lawenda/prosty-1": {
+      "sheet": "rosliny",
+      "x": 224,
+      "y": 80,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/lawenda/polrealistyczny": {
+      "sheet": "rosliny",
+      "x": 240,
+      "y": 80,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/lawenda/prosty-2": {
+      "sheet": "rosliny",
+      "x": 0,
+      "y": 144,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/lawenda/prosty-3": {
+      "sheet": "rosliny",
+      "x": 16,
+      "y": 144,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/krotka-trawa/polrealistyczny": {
+      "sheet": "rosliny",
+      "x": 32,
+      "y": 144,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/wysoka-trawa/polrealistyczny": {
+      "sheet": "rosliny",
+      "x": 48,
+      "y": 144,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/paproc/polrealistyczny": {
+      "sheet": "rosliny",
+      "x": 64,
+      "y": 144,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/koniczyna/polrealistyczny": {
+      "sheet": "rosliny",
+      "x": 80,
+      "y": 144,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/pokrzywa/polrealistyczny": {
+      "sheet": "rosliny",
+      "x": 96,
+      "y": 144,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/babka/polrealistyczny": {
+      "sheet": "rosliny",
+      "x": 112,
+      "y": 144,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/trzcina/polrealistyczny": {
+      "sheet": "rosliny",
+      "x": 128,
+      "y": 144,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/wrzos/polrealistyczny": {
+      "sheet": "rosliny",
+      "x": 144,
+      "y": 144,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/krokus/polrealistyczny": {
+      "sheet": "rosliny",
+      "x": 160,
+      "y": 144,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/trawa-wydmowa/polrealistyczny": {
+      "sheet": "rosliny",
+      "x": 176,
+      "y": 144,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/truskawka/polrealistyczny": {
+      "sheet": "rosliny",
+      "x": 192,
+      "y": 144,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/jezyna/polrealistyczny": {
+      "sheet": "rosliny",
+      "x": 208,
+      "y": 144,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/chili/polrealistyczny": {
+      "sheet": "rosliny",
+      "x": 224,
+      "y": 144,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/leszczyna/polrealistyczny": {
+      "sheet": "rosliny",
+      "x": 240,
+      "y": 144,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/borowka/polrealistyczny": {
+      "sheet": "rosliny",
+      "x": 0,
+      "y": 160,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/turzyca/prosty-1": {
+      "sheet": "rosliny",
+      "x": 16,
+      "y": 160,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/turzyca/polrealistyczny": {
+      "sheet": "rosliny",
+      "x": 32,
+      "y": 160,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/palka/prosty-1": {
+      "sheet": "rosliny",
+      "x": 48,
+      "y": 160,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/palka/polrealistyczny": {
+      "sheet": "rosliny",
+      "x": 64,
+      "y": 160,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/krwawnica/prosty-1": {
+      "sheet": "rosliny",
+      "x": 80,
+      "y": 160,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/krwawnica/polrealistyczny": {
+      "sheet": "rosliny",
+      "x": 96,
+      "y": 160,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/amarantus/polrealistyczny": {
+      "sheet": "rosliny",
+      "x": 112,
+      "y": 160,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/kocanka/prosty-1": {
+      "sheet": "rosliny",
+      "x": 128,
+      "y": 160,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/kocanka/polrealistyczny": {
+      "sheet": "rosliny",
+      "x": 144,
+      "y": 160,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/kocanka/prosty-2": {
+      "sheet": "rosliny",
+      "x": 160,
+      "y": 160,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/kocanka/prosty-3": {
+      "sheet": "rosliny",
+      "x": 176,
+      "y": 160,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/piwonia/prosty-1": {
+      "sheet": "rosliny",
+      "x": 192,
+      "y": 160,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/piwonia/polrealistyczny": {
+      "sheet": "rosliny",
+      "x": 208,
+      "y": 160,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/piwonia/prosty-2": {
+      "sheet": "rosliny",
+      "x": 224,
+      "y": 160,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/piwonia/prosty-3": {
+      "sheet": "rosliny",
+      "x": 240,
+      "y": 160,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/zawilec/prosty-1": {
+      "sheet": "rosliny",
+      "x": 0,
+      "y": 176,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/zawilec/polrealistyczny": {
+      "sheet": "rosliny",
+      "x": 16,
+      "y": 176,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/zawilec/prosty-2": {
+      "sheet": "rosliny",
+      "x": 32,
+      "y": 176,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/zawilec/prosty-3": {
+      "sheet": "rosliny",
+      "x": 48,
+      "y": 176,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/dzwonek/prosty-1": {
+      "sheet": "rosliny",
+      "x": 64,
+      "y": 176,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/dzwonek/polrealistyczny": {
+      "sheet": "rosliny",
+      "x": 80,
+      "y": 176,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/dzwonek/prosty-2": {
+      "sheet": "rosliny",
+      "x": 96,
+      "y": 176,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/dzwonek/prosty-3": {
+      "sheet": "rosliny",
+      "x": 112,
+      "y": 176,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/szalwia/prosty-1": {
+      "sheet": "rosliny",
+      "x": 128,
+      "y": 176,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/szalwia/polrealistyczny": {
+      "sheet": "rosliny",
+      "x": 144,
+      "y": 176,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/szalwia/prosty-2": {
+      "sheet": "rosliny",
+      "x": 160,
+      "y": 176,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/szalwia/prosty-3": {
+      "sheet": "rosliny",
+      "x": 176,
+      "y": 176,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/nagietek/prosty-1": {
+      "sheet": "rosliny",
+      "x": 192,
+      "y": 176,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/nagietek/polrealistyczny": {
+      "sheet": "rosliny",
+      "x": 208,
+      "y": 176,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/nagietek/prosty-2": {
+      "sheet": "rosliny",
+      "x": 224,
+      "y": 176,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/nagietek/prosty-3": {
+      "sheet": "rosliny",
+      "x": 240,
+      "y": 176,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/cynia/prosty-1": {
+      "sheet": "rosliny",
+      "x": 0,
+      "y": 192,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/cynia/polrealistyczny": {
+      "sheet": "rosliny",
+      "x": 16,
+      "y": 192,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/cynia/prosty-2": {
+      "sheet": "rosliny",
+      "x": 32,
+      "y": 192,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/cynia/prosty-3": {
+      "sheet": "rosliny",
+      "x": 48,
+      "y": 192,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/mikolajek/prosty-1": {
+      "sheet": "rosliny",
+      "x": 64,
+      "y": 192,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/mikolajek/polrealistyczny": {
+      "sheet": "rosliny",
+      "x": 80,
+      "y": 192,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/mikolajek/prosty-2": {
+      "sheet": "rosliny",
+      "x": 96,
+      "y": 192,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/mikolajek/prosty-3": {
+      "sheet": "rosliny",
+      "x": 112,
+      "y": 192,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/len/prosty-1": {
+      "sheet": "rosliny",
+      "x": 128,
+      "y": 192,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/len/polrealistyczny": {
+      "sheet": "rosliny",
+      "x": 144,
+      "y": 192,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/len/prosty-2": {
+      "sheet": "rosliny",
+      "x": 160,
+      "y": 192,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/len/prosty-3": {
+      "sheet": "rosliny",
+      "x": 176,
+      "y": 192,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/gorczyca/prosty-1": {
+      "sheet": "rosliny",
+      "x": 192,
+      "y": 192,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/gorczyca/polrealistyczny": {
+      "sheet": "rosliny",
+      "x": 208,
+      "y": 192,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/gorczyca/prosty-2": {
+      "sheet": "rosliny",
+      "x": 224,
+      "y": 192,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/gorczyca/prosty-3": {
+      "sheet": "rosliny",
+      "x": 240,
+      "y": 192,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/indygowiec/prosty-1": {
+      "sheet": "rosliny",
+      "x": 0,
+      "y": 208,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/indygowiec/polrealistyczny": {
+      "sheet": "rosliny",
+      "x": 16,
+      "y": 208,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/indygowiec/prosty-2": {
+      "sheet": "rosliny",
+      "x": 32,
+      "y": 208,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/indygowiec/prosty-3": {
+      "sheet": "rosliny",
+      "x": 48,
+      "y": 208,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/marzanna/prosty-1": {
+      "sheet": "rosliny",
+      "x": 64,
+      "y": 208,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/marzanna/polrealistyczny": {
+      "sheet": "rosliny",
+      "x": 80,
+      "y": 208,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/marzanna/prosty-2": {
+      "sheet": "rosliny",
+      "x": 96,
+      "y": 208,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/marzanna/prosty-3": {
+      "sheet": "rosliny",
+      "x": 112,
+      "y": 208,
+      "width": 16,
+      "height": 16
+    },
+    "strawberry": {
+      "sheet": "przedmioty",
+      "x": 0,
+      "y": 0,
+      "width": 16,
+      "height": 16
+    },
+    "blackberry": {
+      "sheet": "przedmioty",
+      "x": 16,
+      "y": 0,
+      "width": 16,
+      "height": 16
+    },
+    "chili_pepper": {
+      "sheet": "przedmioty",
+      "x": 32,
+      "y": 0,
+      "width": 16,
+      "height": 16
+    },
+    "hazelnut": {
+      "sheet": "przedmioty",
+      "x": 48,
+      "y": 0,
+      "width": 16,
+      "height": 16
+    },
+    "blueberry": {
+      "sheet": "przedmioty",
+      "x": 64,
+      "y": 0,
+      "width": 16,
+      "height": 16
+    },
+    "beechnuts": {
+      "sheet": "przedmioty",
+      "x": 80,
+      "y": 0,
+      "width": 16,
+      "height": 16
+    },
+    "axe": {
+      "sheet": "przedmioty",
+      "x": 96,
+      "y": 0,
+      "width": 16,
+      "height": 16
+    },
+    "pickaxe": {
+      "sheet": "przedmioty",
+      "x": 112,
+      "y": 0,
+      "width": 16,
+      "height": 16
+    },
+    "shovel": {
+      "sheet": "przedmioty",
+      "x": 128,
+      "y": 0,
+      "width": 16,
+      "height": 16
+    },
+    "dye_white": {
+      "sheet": "przedmioty",
+      "x": 144,
+      "y": 0,
+      "width": 16,
+      "height": 16
+    },
+    "dye_orange": {
+      "sheet": "przedmioty",
+      "x": 160,
+      "y": 0,
+      "width": 16,
+      "height": 16
+    },
+    "dye_magenta": {
+      "sheet": "przedmioty",
+      "x": 176,
+      "y": 0,
+      "width": 16,
+      "height": 16
+    },
+    "dye_light_blue": {
+      "sheet": "przedmioty",
+      "x": 192,
+      "y": 0,
+      "width": 16,
+      "height": 16
+    },
+    "dye_yellow": {
+      "sheet": "przedmioty",
+      "x": 208,
+      "y": 0,
+      "width": 16,
+      "height": 16
+    },
+    "dye_lime": {
+      "sheet": "przedmioty",
+      "x": 224,
+      "y": 0,
+      "width": 16,
+      "height": 16
+    },
+    "dye_pink": {
+      "sheet": "przedmioty",
+      "x": 240,
+      "y": 0,
+      "width": 16,
+      "height": 16
+    },
+    "dye_gray": {
+      "sheet": "przedmioty",
+      "x": 0,
+      "y": 16,
+      "width": 16,
+      "height": 16
+    },
+    "dye_light_gray": {
+      "sheet": "przedmioty",
+      "x": 16,
+      "y": 16,
+      "width": 16,
+      "height": 16
+    },
+    "dye_cyan": {
+      "sheet": "przedmioty",
+      "x": 32,
+      "y": 16,
+      "width": 16,
+      "height": 16
+    },
+    "dye_purple": {
+      "sheet": "przedmioty",
+      "x": 48,
+      "y": 16,
+      "width": 16,
+      "height": 16
+    },
+    "dye_blue": {
+      "sheet": "przedmioty",
+      "x": 64,
+      "y": 16,
+      "width": 16,
+      "height": 16
+    },
+    "dye_brown": {
+      "sheet": "przedmioty",
+      "x": 80,
+      "y": 16,
+      "width": 16,
+      "height": 16
+    },
+    "dye_green": {
+      "sheet": "przedmioty",
+      "x": 96,
+      "y": 16,
+      "width": 16,
+      "height": 16
+    },
+    "dye_red": {
+      "sheet": "przedmioty",
+      "x": 112,
+      "y": 16,
+      "width": 16,
+      "height": 16
+    },
+    "dye_black": {
+      "sheet": "przedmioty",
+      "x": 128,
+      "y": 16,
+      "width": 16,
+      "height": 16
+    },
+    "axe_granite": {
+      "sheet": "przedmioty",
+      "x": 144,
+      "y": 16,
+      "width": 16,
+      "height": 16
+    },
+    "axe_limestone": {
+      "sheet": "przedmioty",
+      "x": 160,
+      "y": 16,
+      "width": 16,
+      "height": 16
+    },
+    "axe_sandstone": {
+      "sheet": "przedmioty",
+      "x": 176,
+      "y": 16,
+      "width": 16,
+      "height": 16
+    },
+    "axe_slate": {
+      "sheet": "przedmioty",
+      "x": 192,
+      "y": 16,
+      "width": 16,
+      "height": 16
+    },
+    "axe_basalt": {
+      "sheet": "przedmioty",
+      "x": 208,
+      "y": 16,
+      "width": 16,
+      "height": 16
+    },
+    "pickaxe_granite": {
+      "sheet": "przedmioty",
+      "x": 224,
+      "y": 16,
+      "width": 16,
+      "height": 16
+    },
+    "pickaxe_limestone": {
+      "sheet": "przedmioty",
+      "x": 240,
+      "y": 16,
+      "width": 16,
+      "height": 16
+    },
+    "pickaxe_sandstone": {
+      "sheet": "przedmioty",
+      "x": 0,
+      "y": 32,
+      "width": 16,
+      "height": 16
+    },
+    "pickaxe_slate": {
+      "sheet": "przedmioty",
+      "x": 16,
+      "y": 32,
+      "width": 16,
+      "height": 16
+    },
+    "pickaxe_basalt": {
+      "sheet": "przedmioty",
+      "x": 32,
+      "y": 32,
+      "width": 16,
+      "height": 16
+    },
+    "shovel_granite": {
+      "sheet": "przedmioty",
+      "x": 48,
+      "y": 32,
+      "width": 16,
+      "height": 16
+    },
+    "shovel_limestone": {
+      "sheet": "przedmioty",
+      "x": 64,
+      "y": 32,
+      "width": 16,
+      "height": 16
+    },
+    "shovel_sandstone": {
+      "sheet": "przedmioty",
+      "x": 80,
+      "y": 32,
+      "width": 16,
+      "height": 16
+    },
+    "shovel_slate": {
+      "sheet": "przedmioty",
+      "x": 96,
+      "y": 32,
+      "width": 16,
+      "height": 16
+    },
+    "shovel_basalt": {
+      "sheet": "przedmioty",
+      "x": 112,
+      "y": 32,
+      "width": 16,
+      "height": 16
+    },
+    "assets/models/campfire/plomienie.png": {
+      "sheet": "efekty",
+      "x": 0,
+      "y": 0,
+      "width": 32,
+      "height": 32
+    },
+    "assets/models/torch/torch.png": {
+      "sheet": "efekty",
+      "x": 32,
+      "y": 0,
+      "width": 16,
+      "height": 320
+    },
+    "assets/models/torch/torch_black.png": {
+      "sheet": "efekty",
+      "x": 48,
+      "y": 0,
+      "width": 16,
+      "height": 320
+    },
+    "assets/models/torch/torch_blue.png": {
+      "sheet": "efekty",
+      "x": 64,
+      "y": 0,
+      "width": 16,
+      "height": 320
+    },
+    "assets/models/torch/torch_brown.png": {
+      "sheet": "efekty",
+      "x": 80,
+      "y": 0,
+      "width": 16,
+      "height": 320
+    },
+    "assets/models/torch/torch_cyan.png": {
+      "sheet": "efekty",
+      "x": 96,
+      "y": 0,
+      "width": 16,
+      "height": 320
+    },
+    "assets/models/torch/torch_gray.png": {
+      "sheet": "efekty",
+      "x": 112,
+      "y": 0,
+      "width": 16,
+      "height": 320
+    },
+    "assets/models/torch/torch_green.png": {
+      "sheet": "efekty",
+      "x": 128,
+      "y": 0,
+      "width": 16,
+      "height": 320
+    },
+    "assets/models/torch/torch_light_blue.png": {
+      "sheet": "efekty",
+      "x": 144,
+      "y": 0,
+      "width": 16,
+      "height": 320
+    },
+    "assets/models/torch/torch_light_gray.png": {
+      "sheet": "efekty",
+      "x": 160,
+      "y": 0,
+      "width": 16,
+      "height": 320
+    },
+    "assets/models/torch/torch_lime.png": {
+      "sheet": "efekty",
+      "x": 176,
+      "y": 0,
+      "width": 16,
+      "height": 320
+    },
+    "assets/models/torch/torch_magenta.png": {
+      "sheet": "efekty",
+      "x": 192,
+      "y": 0,
+      "width": 16,
+      "height": 320
+    },
+    "assets/models/torch/torch_orange.png": {
+      "sheet": "efekty",
+      "x": 208,
+      "y": 0,
+      "width": 16,
+      "height": 320
+    },
+    "assets/models/torch/torch_pink.png": {
+      "sheet": "efekty",
+      "x": 224,
+      "y": 0,
+      "width": 16,
+      "height": 320
+    },
+    "assets/models/torch/torch_purple.png": {
+      "sheet": "efekty",
+      "x": 240,
+      "y": 0,
+      "width": 16,
+      "height": 320
+    },
+    "assets/models/torch/torch_red.png": {
+      "sheet": "efekty",
+      "x": 0,
+      "y": 320,
+      "width": 16,
+      "height": 320
+    },
+    "assets/models/torch/torch_white.png": {
+      "sheet": "efekty",
+      "x": 16,
+      "y": 320,
+      "width": 16,
+      "height": 320
+    },
+    "assets/models/torch/torch_yellow.png": {
+      "sheet": "efekty",
+      "x": 32,
+      "y": 320,
+      "width": 16,
+      "height": 320
+    },
+    "assets/textures/blocks/cracks.png": {
+      "sheet": "efekty",
+      "x": 48,
+      "y": 320,
+      "width": 160,
+      "height": 16
+    },
+    "assets/textures/sky/moon.png": {
+      "sheet": "niebo",
+      "x": 0,
+      "y": 0,
+      "width": 32,
+      "height": 32
+    },
+    "assets/textures/player/skin-szablon.png": {
+      "sheet": "gracz",
+      "x": 0,
+      "y": 0,
+      "width": 64,
+      "height": 64
+    },
+    "assets/textures/player/skin.png": {
+      "sheet": "gracz",
+      "x": 64,
+      "y": 0,
+      "width": 64,
+      "height": 64
+    },
+    "assets/ui/inventory/wood/board.png": {
+      "sheet": "interfejs",
+      "x": 0,
+      "y": 0,
+      "width": 48,
+      "height": 12
+    },
+    "assets/ui/inventory/wood/frame-compact.png": {
+      "sheet": "interfejs",
+      "x": 48,
+      "y": 0,
+      "width": 232,
+      "height": 192
+    },
+    "assets/ui/inventory/wood/frame.png": {
+      "sheet": "interfejs",
+      "x": 0,
+      "y": 192,
+      "width": 256,
+      "height": 216
+    },
+    "assets/ui/inventory/wood/planks.png": {
+      "sheet": "interfejs",
+      "x": 256,
+      "y": 192,
+      "width": 160,
+      "height": 90
+    },
+    "assets/ui/themes/default/background.png": {
+      "sheet": "interfejs",
+      "x": 416,
+      "y": 192,
+      "width": 16,
+      "height": 16
+    },
+    "assets/ui/themes/grey-wood/board.png": {
+      "sheet": "interfejs",
+      "x": 432,
+      "y": 192,
+      "width": 48,
+      "height": 12
+    },
+    "assets/ui/themes/grey-wood/frame.png": {
+      "sheet": "interfejs",
+      "x": 0,
+      "y": 408,
+      "width": 64,
+      "height": 64
+    },
+    "assets/ui/themes/grey-wood/planks.png": {
+      "sheet": "interfejs",
+      "x": 64,
+      "y": 408,
+      "width": 160,
+      "height": 90
+    },
+    "assets/ui/themes/lepidolit/background.png": {
+      "sheet": "interfejs",
+      "x": 224,
+      "y": 408,
+      "width": 16,
+      "height": 16
+    },
+    "assets/models/blueberry/empty.png": {
+      "sheet": "podglady",
+      "x": 0,
+      "y": 0,
+      "width": 900,
+      "height": 900
+    },
+    "assets/models/blueberry/few.png": {
+      "sheet": "podglady",
+      "x": 900,
+      "y": 0,
+      "width": 900,
+      "height": 900
+    },
+    "assets/models/blueberry/full.png": {
+      "sheet": "podglady",
+      "x": 0,
+      "y": 900,
+      "width": 900,
+      "height": 900
+    },
+    "assets/models/blueberry/young.png": {
+      "sheet": "podglady",
+      "x": 900,
+      "y": 900,
+      "width": 900,
+      "height": 900
+    },
+    "assets/models/rosliny/podglad/detailed.png": {
+      "sheet": "podglady",
+      "x": 0,
+      "y": 1800,
+      "width": 320,
+      "height": 240
+    },
+    "assets/models/rosliny/podglad/semi.png": {
+      "sheet": "podglady",
+      "x": 320,
+      "y": 1800,
+      "width": 320,
+      "height": 240
+    },
+    "assets/models/rosliny/podglad/simple.png": {
+      "sheet": "podglady",
+      "x": 640,
+      "y": 1800,
+      "width": 320,
+      "height": 240
+    },
+    "torch": {
+      "sheet": "efekty",
+      "x": 32,
+      "y": 0,
+      "width": 16,
+      "height": 16
+    },
+    "torch_white": {
+      "sheet": "efekty",
+      "x": 16,
+      "y": 320,
+      "width": 16,
+      "height": 16
+    },
+    "torch_orange": {
+      "sheet": "efekty",
+      "x": 208,
+      "y": 0,
+      "width": 16,
+      "height": 16
+    },
+    "torch_magenta": {
+      "sheet": "efekty",
+      "x": 192,
+      "y": 0,
+      "width": 16,
+      "height": 16
+    },
+    "torch_light_blue": {
+      "sheet": "efekty",
+      "x": 144,
+      "y": 0,
+      "width": 16,
+      "height": 16
+    },
+    "torch_yellow": {
+      "sheet": "efekty",
+      "x": 32,
+      "y": 320,
+      "width": 16,
+      "height": 16
+    },
+    "torch_lime": {
+      "sheet": "efekty",
+      "x": 176,
+      "y": 0,
+      "width": 16,
+      "height": 16
+    },
+    "torch_pink": {
+      "sheet": "efekty",
+      "x": 224,
+      "y": 0,
+      "width": 16,
+      "height": 16
+    },
+    "torch_gray": {
+      "sheet": "efekty",
+      "x": 112,
+      "y": 0,
+      "width": 16,
+      "height": 16
+    },
+    "torch_light_gray": {
+      "sheet": "efekty",
+      "x": 160,
+      "y": 0,
+      "width": 16,
+      "height": 16
+    },
+    "torch_cyan": {
+      "sheet": "efekty",
+      "x": 96,
+      "y": 0,
+      "width": 16,
+      "height": 16
+    },
+    "torch_purple": {
+      "sheet": "efekty",
+      "x": 240,
+      "y": 0,
+      "width": 16,
+      "height": 16
+    },
+    "torch_blue": {
+      "sheet": "efekty",
+      "x": 64,
+      "y": 0,
+      "width": 16,
+      "height": 16
+    },
+    "torch_brown": {
+      "sheet": "efekty",
+      "x": 80,
+      "y": 0,
+      "width": 16,
+      "height": 16
+    },
+    "torch_green": {
+      "sheet": "efekty",
+      "x": 128,
+      "y": 0,
+      "width": 16,
+      "height": 16
+    },
+    "torch_red": {
+      "sheet": "efekty",
+      "x": 0,
+      "y": 320,
+      "width": 16,
+      "height": 16
+    },
+    "torch_black": {
+      "sheet": "efekty",
+      "x": 48,
+      "y": 0,
+      "width": 16,
+      "height": 16
+    },
+    "assets/rosliny/amarantus/etap1.png": {
+      "sheet": "rosliny",
+      "x": 183,
+      "y": 27,
+      "width": 17,
+      "height": 21
+    },
+    "assets/rosliny/amarantus/etap2.png": {
+      "sheet": "rosliny",
+      "x": 214,
+      "y": 21,
+      "width": 20,
+      "height": 27
+    },
+    "assets/rosliny/amarantus/etap3.png": {
+      "sheet": "rosliny",
+      "x": 3,
+      "y": 48,
+      "width": 26,
+      "height": 32
+    }
+  },
+  "aliases": {
+    "assets/drzewa/acacia/leaves.png": "acacia/leaves.png",
+    "assets/drzewa/acacia/leaves_variant.png": "acacia/leaves_variant.png",
+    "assets/drzewa/acacia/log_side.png": "acacia/log_side.png",
+    "assets/drzewa/acacia/log_top.png": "acacia/log_top.png",
+    "assets/drzewa/acacia/planks.png": "acacia/planks.png",
+    "assets/drzewa/acacia/sapling.png": "acacia/sapling.png",
+    "assets/drzewa/acacia/stripped_side.png": "acacia/stripped_side.png",
+    "assets/drzewa/acacia/stripped_top.png": "acacia/stripped_top.png",
+    "assets/drzewa/bald_cypress/leaves.png": "bald_cypress/leaves.png",
+    "assets/drzewa/bald_cypress/leaves_variant.png": "bald_cypress/leaves_variant.png",
+    "assets/drzewa/bald_cypress/log_side.png": "bald_cypress/log_side.png",
+    "assets/drzewa/bald_cypress/log_top.png": "bald_cypress/log_top.png",
+    "assets/drzewa/bald_cypress/planks.png": "bald_cypress/planks.png",
+    "assets/drzewa/bald_cypress/sapling.png": "bald_cypress/sapling.png",
+    "assets/drzewa/bald_cypress/stripped_side.png": "bald_cypress/stripped_side.png",
+    "assets/drzewa/bald_cypress/stripped_top.png": "bald_cypress/stripped_top.png",
+    "assets/drzewa/cherry/leaves.png": "cherry/leaves.png",
+    "assets/drzewa/cherry/leaves_variant.png": "cherry/leaves_variant.png",
+    "assets/drzewa/cherry/log_side.png": "cherry/log_side.png",
+    "assets/drzewa/cherry/log_top.png": "cherry/log_top.png",
+    "assets/drzewa/cherry/planks.png": "cherry/planks.png",
+    "assets/drzewa/cherry/sapling.png": "cherry/sapling.png",
+    "assets/drzewa/cherry/stripped_side.png": "cherry/stripped_side.png",
+    "assets/drzewa/cherry/stripped_top.png": "cherry/stripped_top.png",
+    "assets/drzewa/jablon/deski.png": "jablon/deski.png",
+    "assets/drzewa/jablon/jablko.png": "jablon/jablko.png",
+    "assets/drzewa/jablon/liscie.png": "jablon/liscie.png",
+    "assets/drzewa/jablon/liscie_jablka.png": "jablon/liscie_jablka.png",
+    "assets/drzewa/jablon/okorowany_bok.png": "jablon/okorowany_bok.png",
+    "assets/drzewa/jablon/okorowany_gora.png": "jablon/okorowany_gora.png",
+    "assets/drzewa/jablon/opadle_liscie.png": "jablon/opadle_liscie.png",
+    "assets/drzewa/jablon/pien_bok.png": "jablon/pien_bok.png",
+    "assets/drzewa/jablon/pien_gora.png": "jablon/pien_gora.png",
+    "assets/drzewa/jablon/sadzonka.png": "jablon/sadzonka.png",
+    "assets/drzewa/olcha/deski.png": "olcha/deski.png",
+    "assets/drzewa/olcha/liscie.png": "olcha/liscie.png",
+    "assets/drzewa/olcha/okorowany_bok.png": "olcha/okorowany_bok.png",
+    "assets/drzewa/olcha/okorowany_gora.png": "olcha/okorowany_gora.png",
+    "assets/drzewa/olcha/opadle_liscie.png": "olcha/opadle_liscie.png",
+    "assets/drzewa/olcha/pien_bok.png": "olcha/pien_bok.png",
+    "assets/drzewa/olcha/pien_gora.png": "olcha/pien_gora.png",
+    "assets/drzewa/olcha/sadzonka.png": "olcha/sadzonka.png",
+    "assets/drzewa/olcha/szyszki.png": "olcha/szyszki.png",
+    "assets/drzewa/wierzba/bazie.png": "wierzba/bazie.png",
+    "assets/drzewa/wierzba/deski.png": "wierzba/deski.png",
+    "assets/drzewa/wierzba/liscie.png": "wierzba/liscie.png",
+    "assets/drzewa/wierzba/okorowany_bok.png": "wierzba/okorowany_bok.png",
+    "assets/drzewa/wierzba/okorowany_gora.png": "wierzba/okorowany_gora.png",
+    "assets/drzewa/wierzba/opadle_liscie.png": "wierzba/opadle_liscie.png",
+    "assets/drzewa/wierzba/pien_bok.png": "wierzba/pien_bok.png",
+    "assets/drzewa/wierzba/pien_gora.png": "wierzba/pien_gora.png",
+    "assets/drzewa/wierzba/sadzonka.png": "wierzba/sadzonka.png",
+    "assets/models/blueberry/atlas.png": "models/blueberry/atlas",
+    "assets/models/blueberry/empty.png": "assets/models/blueberry/empty.png",
+    "assets/models/blueberry/few.png": "assets/models/blueberry/few.png",
+    "assets/models/blueberry/full.png": "assets/models/blueberry/full.png",
+    "assets/models/blueberry/young.png": "assets/models/blueberry/young.png",
+    "assets/models/bushy-grass/texture.png": "models/bushy-grass/texture",
+    "assets/models/campfire/drewno-akacja.png": "campfire_acacia",
+    "assets/models/campfire/drewno-brzoza.png": "campfire_birch",
+    "assets/models/campfire/drewno-buk.png": "campfire_beech",
+    "assets/models/campfire/drewno-cyprysnik.png": "campfire_bald_cypress",
+    "assets/models/campfire/drewno-dab.png": "campfire_oak",
+    "assets/models/campfire/drewno-jablon.png": "campfire_jablon",
+    "assets/models/campfire/drewno-lipa.png": "campfire_linden",
+    "assets/models/campfire/drewno-olcha.png": "campfire_olcha",
+    "assets/models/campfire/drewno-sosna.png": "campfire_pine",
+    "assets/models/campfire/drewno-swierk.png": "campfire_spruce",
+    "assets/models/campfire/drewno-wierzba.png": "campfire_wierzba",
+    "assets/models/campfire/drewno-wisnia.png": "campfire_cherry",
+    "assets/models/campfire/plomienie.png": "assets/models/campfire/plomienie.png",
+    "assets/models/leaves/texture.png": "assets/models/leaves/texture.png",
+    "assets/models/rosliny/amarantus/polrealistyczny.png": "models/rosliny/amarantus/polrealistyczny",
+    "assets/models/rosliny/babka/polrealistyczny.png": "models/rosliny/babka/polrealistyczny",
+    "assets/models/rosliny/borowka/polrealistyczny.png": "models/rosliny/borowka/polrealistyczny",
+    "assets/models/rosliny/chaber/polrealistyczny.png": "models/rosliny/chaber/polrealistyczny",
+    "assets/models/rosliny/chili/polrealistyczny.png": "models/rosliny/chili/polrealistyczny",
+    "assets/models/rosliny/cynia/polrealistyczny.png": "models/rosliny/cynia/polrealistyczny",
+    "assets/models/rosliny/cynia/prosty-1.png": "models/rosliny/cynia/prosty-1",
+    "assets/models/rosliny/cynia/prosty-2.png": "models/rosliny/cynia/prosty-2",
+    "assets/models/rosliny/cynia/prosty-3.png": "models/rosliny/cynia/prosty-3",
+    "assets/models/rosliny/dzwonek/polrealistyczny.png": "models/rosliny/dzwonek/polrealistyczny",
+    "assets/models/rosliny/dzwonek/prosty-1.png": "models/rosliny/dzwonek/prosty-1",
+    "assets/models/rosliny/dzwonek/prosty-2.png": "models/rosliny/dzwonek/prosty-2",
+    "assets/models/rosliny/dzwonek/prosty-3.png": "models/rosliny/dzwonek/prosty-3",
+    "assets/models/rosliny/gorczyca/polrealistyczny.png": "models/rosliny/gorczyca/polrealistyczny",
+    "assets/models/rosliny/gorczyca/prosty-1.png": "models/rosliny/gorczyca/prosty-1",
+    "assets/models/rosliny/gorczyca/prosty-2.png": "models/rosliny/gorczyca/prosty-2",
+    "assets/models/rosliny/gorczyca/prosty-3.png": "models/rosliny/gorczyca/prosty-3",
+    "assets/models/rosliny/indygowiec/polrealistyczny.png": "models/rosliny/indygowiec/polrealistyczny",
+    "assets/models/rosliny/indygowiec/prosty-1.png": "models/rosliny/indygowiec/prosty-1",
+    "assets/models/rosliny/indygowiec/prosty-2.png": "models/rosliny/indygowiec/prosty-2",
+    "assets/models/rosliny/indygowiec/prosty-3.png": "models/rosliny/indygowiec/prosty-3",
+    "assets/models/rosliny/jezyna/polrealistyczny.png": "models/rosliny/jezyna/polrealistyczny",
+    "assets/models/rosliny/kocanka/polrealistyczny.png": "models/rosliny/kocanka/polrealistyczny",
+    "assets/models/rosliny/kocanka/prosty-1.png": "models/rosliny/kocanka/prosty-1",
+    "assets/models/rosliny/kocanka/prosty-2.png": "models/rosliny/kocanka/prosty-2",
+    "assets/models/rosliny/kocanka/prosty-3.png": "models/rosliny/kocanka/prosty-3",
+    "assets/models/rosliny/koniczyna/polrealistyczny.png": "models/rosliny/koniczyna/polrealistyczny",
+    "assets/models/rosliny/krokus/polrealistyczny.png": "models/rosliny/krokus/polrealistyczny",
+    "assets/models/rosliny/krotka-trawa/polrealistyczny.png": "models/rosliny/krotka-trawa/polrealistyczny",
+    "assets/models/rosliny/krwawnica/polrealistyczny.png": "models/rosliny/krwawnica/polrealistyczny",
+    "assets/models/rosliny/krwawnica/prosty-1.png": "models/rosliny/krwawnica/prosty-1",
+    "assets/models/rosliny/lawenda/polrealistyczny.png": "models/rosliny/lawenda/polrealistyczny",
+    "assets/models/rosliny/lawenda/prosty-1.png": "models/rosliny/lawenda/prosty-1",
+    "assets/models/rosliny/lawenda/prosty-2.png": "models/rosliny/lawenda/prosty-2",
+    "assets/models/rosliny/lawenda/prosty-3.png": "models/rosliny/lawenda/prosty-3",
+    "assets/models/rosliny/len/polrealistyczny.png": "models/rosliny/len/polrealistyczny",
+    "assets/models/rosliny/len/prosty-1.png": "models/rosliny/len/prosty-1",
+    "assets/models/rosliny/len/prosty-2.png": "models/rosliny/len/prosty-2",
+    "assets/models/rosliny/len/prosty-3.png": "models/rosliny/len/prosty-3",
+    "assets/models/rosliny/leszczyna/polrealistyczny.png": "models/rosliny/leszczyna/polrealistyczny",
+    "assets/models/rosliny/mak/polrealistyczny.png": "models/rosliny/mak/polrealistyczny",
+    "assets/models/rosliny/marzanna/polrealistyczny.png": "models/rosliny/marzanna/polrealistyczny",
+    "assets/models/rosliny/marzanna/prosty-1.png": "models/rosliny/marzanna/prosty-1",
+    "assets/models/rosliny/marzanna/prosty-2.png": "models/rosliny/marzanna/prosty-2",
+    "assets/models/rosliny/marzanna/prosty-3.png": "models/rosliny/marzanna/prosty-3",
+    "assets/models/rosliny/mikolajek/polrealistyczny.png": "models/rosliny/mikolajek/polrealistyczny",
+    "assets/models/rosliny/mikolajek/prosty-1.png": "models/rosliny/mikolajek/prosty-1",
+    "assets/models/rosliny/mikolajek/prosty-2.png": "models/rosliny/mikolajek/prosty-2",
+    "assets/models/rosliny/mikolajek/prosty-3.png": "models/rosliny/mikolajek/prosty-3",
+    "assets/models/rosliny/mniszek/polrealistyczny.png": "models/rosliny/mniszek/polrealistyczny",
+    "assets/models/rosliny/nagietek/polrealistyczny.png": "models/rosliny/nagietek/polrealistyczny",
+    "assets/models/rosliny/nagietek/prosty-1.png": "models/rosliny/nagietek/prosty-1",
+    "assets/models/rosliny/nagietek/prosty-2.png": "models/rosliny/nagietek/prosty-2",
+    "assets/models/rosliny/nagietek/prosty-3.png": "models/rosliny/nagietek/prosty-3",
+    "assets/models/rosliny/palka/polrealistyczny.png": "models/rosliny/palka/polrealistyczny",
+    "assets/models/rosliny/palka/prosty-1.png": "models/rosliny/palka/prosty-1",
+    "assets/models/rosliny/paproc/polrealistyczny.png": "models/rosliny/paproc/polrealistyczny",
+    "assets/models/rosliny/piwonia/polrealistyczny.png": "models/rosliny/piwonia/polrealistyczny",
+    "assets/models/rosliny/piwonia/prosty-1.png": "models/rosliny/piwonia/prosty-1",
+    "assets/models/rosliny/piwonia/prosty-2.png": "models/rosliny/piwonia/prosty-2",
+    "assets/models/rosliny/piwonia/prosty-3.png": "models/rosliny/piwonia/prosty-3",
+    "assets/models/rosliny/podglad/detailed.png": "assets/models/rosliny/podglad/detailed.png",
+    "assets/models/rosliny/podglad/semi.png": "assets/models/rosliny/podglad/semi.png",
+    "assets/models/rosliny/podglad/simple.png": "assets/models/rosliny/podglad/simple.png",
+    "assets/models/rosliny/pokrzywa/polrealistyczny.png": "models/rosliny/pokrzywa/polrealistyczny",
+    "assets/models/rosliny/rumianek/polrealistyczny.png": "models/rosliny/rumianek/polrealistyczny",
+    "assets/models/rosliny/sadzonka-akacja/polrealistyczny.png": "models/rosliny/sadzonka-akacja/polrealistyczny",
+    "assets/models/rosliny/sadzonka-brzoza/polrealistyczny.png": "models/rosliny/sadzonka-brzoza/polrealistyczny",
+    "assets/models/rosliny/sadzonka-buk/polrealistyczny.png": "models/rosliny/sadzonka-buk/polrealistyczny",
+    "assets/models/rosliny/sadzonka-cyprysnik/polrealistyczny.png": "models/rosliny/sadzonka-cyprysnik/polrealistyczny",
+    "assets/models/rosliny/sadzonka-dab/polrealistyczny.png": "models/rosliny/sadzonka-dab/polrealistyczny",
+    "assets/models/rosliny/sadzonka-jablon/polrealistyczny.png": "models/rosliny/sadzonka-jablon/polrealistyczny",
+    "assets/models/rosliny/sadzonka-lipa/polrealistyczny.png": "models/rosliny/sadzonka-lipa/polrealistyczny",
+    "assets/models/rosliny/sadzonka-olcha/polrealistyczny.png": "models/rosliny/sadzonka-olcha/polrealistyczny",
+    "assets/models/rosliny/sadzonka-sosna/polrealistyczny.png": "models/rosliny/sadzonka-sosna/polrealistyczny",
+    "assets/models/rosliny/sadzonka-swierk/polrealistyczny.png": "models/rosliny/sadzonka-swierk/polrealistyczny",
+    "assets/models/rosliny/sadzonka-wierzba/polrealistyczny.png": "models/rosliny/sadzonka-wierzba/polrealistyczny",
+    "assets/models/rosliny/sadzonka-wisnia/polrealistyczny.png": "models/rosliny/sadzonka-wisnia/polrealistyczny",
+    "assets/models/rosliny/szalwia/polrealistyczny.png": "models/rosliny/szalwia/polrealistyczny",
+    "assets/models/rosliny/szalwia/prosty-1.png": "models/rosliny/szalwia/prosty-1",
+    "assets/models/rosliny/szalwia/prosty-2.png": "models/rosliny/szalwia/prosty-2",
+    "assets/models/rosliny/szalwia/prosty-3.png": "models/rosliny/szalwia/prosty-3",
+    "assets/models/rosliny/trawa-wydmowa/polrealistyczny.png": "models/rosliny/trawa-wydmowa/polrealistyczny",
+    "assets/models/rosliny/truskawka/polrealistyczny.png": "models/rosliny/truskawka/polrealistyczny",
+    "assets/models/rosliny/trzcina/polrealistyczny.png": "models/rosliny/trzcina/polrealistyczny",
+    "assets/models/rosliny/turzyca/polrealistyczny.png": "models/rosliny/turzyca/polrealistyczny",
+    "assets/models/rosliny/turzyca/prosty-1.png": "models/rosliny/turzyca/prosty-1",
+    "assets/models/rosliny/wrzos/polrealistyczny.png": "models/rosliny/wrzos/polrealistyczny",
+    "assets/models/rosliny/wysoka-trawa/polrealistyczny.png": "models/rosliny/wysoka-trawa/polrealistyczny",
+    "assets/models/rosliny/zawilec/polrealistyczny.png": "models/rosliny/zawilec/polrealistyczny",
+    "assets/models/rosliny/zawilec/prosty-1.png": "models/rosliny/zawilec/prosty-1",
+    "assets/models/rosliny/zawilec/prosty-2.png": "models/rosliny/zawilec/prosty-2",
+    "assets/models/rosliny/zawilec/prosty-3.png": "models/rosliny/zawilec/prosty-3",
+    "assets/models/torch/torch.png": "assets/models/torch/torch.png",
+    "assets/models/torch/torch_black.png": "assets/models/torch/torch_black.png",
+    "assets/models/torch/torch_blue.png": "assets/models/torch/torch_blue.png",
+    "assets/models/torch/torch_brown.png": "assets/models/torch/torch_brown.png",
+    "assets/models/torch/torch_cyan.png": "assets/models/torch/torch_cyan.png",
+    "assets/models/torch/torch_gray.png": "assets/models/torch/torch_gray.png",
+    "assets/models/torch/torch_green.png": "assets/models/torch/torch_green.png",
+    "assets/models/torch/torch_light_blue.png": "assets/models/torch/torch_light_blue.png",
+    "assets/models/torch/torch_light_gray.png": "assets/models/torch/torch_light_gray.png",
+    "assets/models/torch/torch_lime.png": "assets/models/torch/torch_lime.png",
+    "assets/models/torch/torch_magenta.png": "assets/models/torch/torch_magenta.png",
+    "assets/models/torch/torch_orange.png": "assets/models/torch/torch_orange.png",
+    "assets/models/torch/torch_pink.png": "assets/models/torch/torch_pink.png",
+    "assets/models/torch/torch_purple.png": "assets/models/torch/torch_purple.png",
+    "assets/models/torch/torch_red.png": "assets/models/torch/torch_red.png",
+    "assets/models/torch/torch_white.png": "assets/models/torch/torch_white.png",
+    "assets/models/torch/torch_yellow.png": "assets/models/torch/torch_yellow.png",
+    "assets/rosliny/amarantus/etap1.png": "assets/rosliny/amarantus/etap1.png",
+    "assets/rosliny/amarantus/etap2.png": "assets/rosliny/amarantus/etap2.png",
+    "assets/rosliny/amarantus/etap3.png": "assets/rosliny/amarantus/etap3.png",
+    "assets/rosliny/amarantus/wiecha.png": "rosliny/amarantus/wiecha.png",
+    "assets/rosliny/barwinek/kwiat.png": "rosliny/barwinek/kwiat.png",
+    "assets/rosliny/cynia/kwiat.png": "rosliny/cynia/kwiat.png",
+    "assets/rosliny/dzwonek/kwiat.png": "rosliny/dzwonek/kwiat.png",
+    "assets/rosliny/gorczyca/nasiona.png": "rosliny/gorczyca/nasiona.png",
+    "assets/rosliny/huba/huba.png": "rosliny/huba/huba.png",
+    "assets/rosliny/indygowiec/liscie.png": "rosliny/indygowiec/liscie.png",
+    "assets/rosliny/kocanka/bukiet.png": "rosliny/kocanka/bukiet.png",
+    "assets/rosliny/lawenda/bukiet.png": "rosliny/lawenda/bukiet.png",
+    "assets/rosliny/len/wiazka.png": "rosliny/len/wiazka.png",
+    "assets/rosliny/marzanna/korzen.png": "rosliny/marzanna/korzen.png",
+    "assets/rosliny/mikolajek/kwiat.png": "rosliny/mikolajek/kwiat.png",
+    "assets/rosliny/nagietek/kwiat.png": "rosliny/nagietek/kwiat.png",
+    "assets/rosliny/ochra/grudka.png": "rosliny/ochra/grudka.png",
+    "assets/rosliny/piwonia/kwiat.png": "rosliny/piwonia/kwiat.png",
+    "assets/rosliny/porostiglasty/galazki.png": "rosliny/porostiglasty/galazki.png",
+    "assets/rosliny/porostoliwkowy/plecha.png": "rosliny/porostoliwkowy/plecha.png",
+    "assets/rosliny/szalwia/lisc.png": "rosliny/szalwia/lisc.png",
+    "assets/rosliny/zawilec/kwiat.png": "rosliny/zawilec/kwiat.png",
+    "assets/textures/blocks/cracks.png": "assets/textures/blocks/cracks.png",
+    "assets/textures/blocks/dirt.png": "dirt",
+    "assets/textures/blocks/grass_side.png": "grass_side",
+    "assets/textures/blocks/grass_top.png": "grass_top",
+    "assets/textures/blocks/lamp.png": "lamp",
+    "assets/textures/blocks/lepidolite.png": "lepidolite",
+    "assets/textures/blocks/pine-bark-reference.png": "assets/textures/blocks/pine-bark-reference.png",
+    "assets/textures/blocks/stone.png": "stone",
+    "assets/textures/derived/axe_basalt.png": "axe_basalt",
+    "assets/textures/derived/axe_granite.png": "axe_granite",
+    "assets/textures/derived/axe_limestone.png": "axe_limestone",
+    "assets/textures/derived/axe_sandstone.png": "axe_sandstone",
+    "assets/textures/derived/axe_slate.png": "axe_slate",
+    "assets/textures/derived/pickaxe_basalt.png": "pickaxe_basalt",
+    "assets/textures/derived/pickaxe_granite.png": "pickaxe_granite",
+    "assets/textures/derived/pickaxe_limestone.png": "pickaxe_limestone",
+    "assets/textures/derived/pickaxe_sandstone.png": "pickaxe_sandstone",
+    "assets/textures/derived/pickaxe_slate.png": "pickaxe_slate",
+    "assets/textures/derived/pine_log_transition_1.png": "pine_log_transition_1",
+    "assets/textures/derived/pine_log_transition_2.png": "pine_log_transition_2",
+    "assets/textures/derived/pine_log_transition_3.png": "pine_log_transition_3",
+    "assets/textures/derived/shovel_basalt.png": "shovel_basalt",
+    "assets/textures/derived/shovel_granite.png": "shovel_granite",
+    "assets/textures/derived/shovel_limestone.png": "shovel_limestone",
+    "assets/textures/derived/shovel_sandstone.png": "shovel_sandstone",
+    "assets/textures/derived/shovel_slate.png": "shovel_slate",
+    "assets/textures/player/skin-szablon.png": "assets/textures/player/skin-szablon.png",
+    "assets/textures/player/skin.png": "assets/textures/player/skin.png",
+    "assets/textures/sky/moon.png": "assets/textures/sky/moon.png",
+    "assets/ui/inventory/wood/board.png": "assets/ui/inventory/wood/board.png",
+    "assets/ui/inventory/wood/frame-compact.png": "assets/ui/inventory/wood/frame-compact.png",
+    "assets/ui/inventory/wood/frame.png": "assets/ui/inventory/wood/frame.png",
+    "assets/ui/inventory/wood/planks.png": "assets/ui/inventory/wood/planks.png",
+    "assets/ui/themes/default/background.png": "assets/ui/themes/default/background.png",
+    "assets/ui/themes/grey-wood/board.png": "assets/ui/themes/grey-wood/board.png",
+    "assets/ui/themes/grey-wood/frame.png": "assets/ui/themes/grey-wood/frame.png",
+    "assets/ui/themes/grey-wood/planks.png": "assets/ui/themes/grey-wood/planks.png",
+    "assets/ui/themes/lepidolit/background.png": "assets/ui/themes/lepidolit/background.png"
+  },
+  "tiles": {
+    "grass_top": {
+      "x": 0,
+      "y": 0,
+      "region": "grass_top"
+    },
+    "grass_side": {
+      "x": 1,
+      "y": 0,
+      "region": "grass_side"
+    },
+    "dirt": {
+      "x": 2,
+      "y": 0,
+      "region": "dirt"
+    },
+    "stone": {
+      "x": 3,
+      "y": 0,
+      "region": "stone"
+    },
+    "lamp": {
+      "x": 4,
+      "y": 0,
+      "region": "lamp"
+    },
+    "lepidolite": {
+      "x": 5,
+      "y": 0,
+      "region": "lepidolite"
+    },
+    "lamp_red": {
+      "x": 6,
+      "y": 0,
+      "region": "lamp_red"
+    },
+    "lamp_green": {
+      "x": 7,
+      "y": 0,
+      "region": "lamp_green"
+    },
+    "lamp_blue": {
+      "x": 8,
+      "y": 0,
+      "region": "lamp_blue"
+    },
+    "lamp_purple": {
+      "x": 9,
+      "y": 0,
+      "region": "lamp_purple"
+    },
+    "meteorite": {
+      "x": 10,
+      "y": 0,
+      "region": "meteorite"
+    },
+    "sand": {
+      "x": 11,
+      "y": 0,
+      "region": "sand"
+    },
+    "water": {
+      "x": 12,
+      "y": 0,
+      "region": "water"
+    },
+    "granite": {
+      "x": 13,
+      "y": 0,
+      "region": "granite"
+    },
+    "limestone": {
+      "x": 14,
+      "y": 0,
+      "region": "limestone"
+    },
+    "sandstone_side": {
+      "x": 15,
+      "y": 0,
+      "region": "sandstone_side"
+    },
+    "sandstone_top": {
+      "x": 0,
+      "y": 1,
+      "region": "sandstone_top"
+    },
+    "slate_side": {
+      "x": 1,
+      "y": 1,
+      "region": "slate_side"
+    },
+    "slate_top": {
+      "x": 2,
+      "y": 1,
+      "region": "slate_top"
+    },
+    "basalt_side": {
+      "x": 3,
+      "y": 1,
+      "region": "basalt_side"
+    },
+    "basalt_top": {
+      "x": 4,
+      "y": 1,
+      "region": "basalt_top"
+    },
+    "humus": {
+      "x": 5,
+      "y": 1,
+      "region": "humus"
+    },
+    "coarse_dirt": {
+      "x": 6,
+      "y": 1,
+      "region": "coarse_dirt"
+    },
+    "forest_floor_top": {
+      "x": 7,
+      "y": 1,
+      "region": "forest_floor_top"
+    },
+    "forest_floor_side": {
+      "x": 8,
+      "y": 1,
+      "region": "forest_floor_side"
+    },
+    "mud": {
+      "x": 9,
+      "y": 1,
+      "region": "mud"
+    },
+    "clay": {
+      "x": 10,
+      "y": 1,
+      "region": "clay"
+    },
+    "gravel": {
+      "x": 11,
+      "y": 1,
+      "region": "gravel"
+    },
+    "lime_plaster": {
+      "x": 12,
+      "y": 1,
+      "region": "lime_plaster"
+    },
+    "ochre_plaster": {
+      "x": 13,
+      "y": 1,
+      "region": "ochre_plaster"
+    },
+    "terracotta": {
+      "x": 14,
+      "y": 1,
+      "region": "terracotta"
+    },
+    "polished_stone": {
+      "x": 15,
+      "y": 1,
+      "region": "polished_stone"
+    },
+    "short_grass": {
+      "x": 0,
+      "y": 2,
+      "region": "short_grass"
+    },
+    "tall_grass": {
+      "x": 1,
+      "y": 2,
+      "region": "tall_grass"
+    },
+    "fern": {
+      "x": 2,
+      "y": 2,
+      "region": "fern"
+    },
+    "clover": {
+      "x": 3,
+      "y": 2,
+      "region": "clover"
+    },
+    "nettle": {
+      "x": 4,
+      "y": 2,
+      "region": "nettle"
+    },
+    "plantain": {
+      "x": 5,
+      "y": 2,
+      "region": "plantain"
+    },
+    "poppy": {
+      "x": 6,
+      "y": 2,
+      "region": "poppy"
+    },
+    "cornflower": {
+      "x": 7,
+      "y": 2,
+      "region": "cornflower"
+    },
+    "chamomile": {
+      "x": 8,
+      "y": 2,
+      "region": "chamomile"
+    },
+    "dandelion": {
+      "x": 9,
+      "y": 2,
+      "region": "dandelion"
+    },
+    "reed": {
+      "x": 10,
+      "y": 2,
+      "region": "reed"
+    },
+    "heather": {
+      "x": 11,
+      "y": 2,
+      "region": "heather"
+    },
+    "crocus": {
+      "x": 12,
+      "y": 2,
+      "region": "crocus"
+    },
+    "dune_grass": {
+      "x": 13,
+      "y": 2,
+      "region": "dune_grass"
+    },
+    "bush_sapling": {
+      "x": 0,
+      "y": 3,
+      "region": "bush_sapling"
+    },
+    "bush_leaves": {
+      "x": 1,
+      "y": 3,
+      "region": "bush_leaves"
+    },
+    "strawberry_bush_few": {
+      "x": 2,
+      "y": 3,
+      "region": "strawberry_bush_few"
+    },
+    "strawberry_bush_full": {
+      "x": 3,
+      "y": 3,
+      "region": "strawberry_bush_full"
+    },
+    "blackberry_bush_few": {
+      "x": 4,
+      "y": 3,
+      "region": "blackberry_bush_few"
+    },
+    "blackberry_bush_full": {
+      "x": 5,
+      "y": 3,
+      "region": "blackberry_bush_full"
+    },
+    "chili_bush_few": {
+      "x": 6,
+      "y": 3,
+      "region": "chili_bush_few"
+    },
+    "chili_bush_full": {
+      "x": 7,
+      "y": 3,
+      "region": "chili_bush_full"
+    },
+    "hazel_bush_few": {
+      "x": 8,
+      "y": 3,
+      "region": "hazel_bush_few"
+    },
+    "hazel_bush_full": {
+      "x": 9,
+      "y": 3,
+      "region": "hazel_bush_full"
+    },
+    "blueberry_bush_few": {
+      "x": 10,
+      "y": 3,
+      "region": "blueberry_bush_few"
+    },
+    "blueberry_bush_full": {
+      "x": 11,
+      "y": 3,
+      "region": "blueberry_bush_full"
+    },
+    "blueberry_bush": {
+      "x": 12,
+      "y": 3,
+      "region": "blueberry_bush"
+    },
+    "strawberry": {
+      "x": 0,
+      "y": 4,
+      "region": "strawberry"
+    },
+    "blackberry": {
+      "x": 1,
+      "y": 4,
+      "region": "blackberry"
+    },
+    "chili_pepper": {
+      "x": 2,
+      "y": 4,
+      "region": "chili_pepper"
+    },
+    "hazelnut": {
+      "x": 3,
+      "y": 4,
+      "region": "hazelnut"
+    },
+    "blueberry": {
+      "x": 4,
+      "y": 4,
+      "region": "blueberry"
+    },
+    "spruce_log_side": {
+      "x": 0,
+      "y": 5,
+      "region": "spruce_log_side"
+    },
+    "spruce_log_top": {
+      "x": 1,
+      "y": 5,
+      "region": "spruce_log_top"
+    },
+    "pine_log_side": {
+      "x": 2,
+      "y": 5,
+      "region": "pine_log_side"
+    },
+    "pine_log_top": {
+      "x": 3,
+      "y": 5,
+      "region": "pine_log_top"
+    },
+    "beech_log_side": {
+      "x": 4,
+      "y": 5,
+      "region": "beech_log_side"
+    },
+    "beech_log_top": {
+      "x": 5,
+      "y": 5,
+      "region": "beech_log_top"
+    },
+    "linden_log_side": {
+      "x": 6,
+      "y": 5,
+      "region": "linden_log_side"
+    },
+    "linden_log_top": {
+      "x": 7,
+      "y": 5,
+      "region": "linden_log_top"
+    },
+    "oak_log_side": {
+      "x": 8,
+      "y": 5,
+      "region": "oak_log_side"
+    },
+    "oak_log_top": {
+      "x": 9,
+      "y": 5,
+      "region": "oak_log_top"
+    },
+    "birch_log_side": {
+      "x": 10,
+      "y": 5,
+      "region": "birch_log_side"
+    },
+    "birch_log_top": {
+      "x": 11,
+      "y": 5,
+      "region": "birch_log_top"
+    },
+    "pine_log_upper_side": {
+      "x": 12,
+      "y": 5,
+      "region": "pine_log_upper_side"
+    },
+    "pine_log_resin_side": {
+      "x": 13,
+      "y": 5,
+      "region": "pine_log_resin_side"
+    },
+    "pine_bark_overlay_dense": {
+      "x": 14,
+      "y": 5,
+      "region": "pine_bark_overlay_dense"
+    },
+    "pine_bark_overlay_medium": {
+      "x": 15,
+      "y": 5,
+      "region": "pine_bark_overlay_medium"
+    },
+    "pine_bark_overlay_sparse": {
+      "x": 15,
+      "y": 6,
+      "region": "pine_bark_overlay_sparse"
+    },
+    "spruce_stripped_side": {
+      "x": 0,
+      "y": 6,
+      "region": "spruce_stripped_side"
+    },
+    "spruce_stripped_top": {
+      "x": 1,
+      "y": 6,
+      "region": "spruce_stripped_top"
+    },
+    "pine_stripped_side": {
+      "x": 2,
+      "y": 6,
+      "region": "pine_stripped_side"
+    },
+    "pine_stripped_top": {
+      "x": 3,
+      "y": 6,
+      "region": "pine_stripped_top"
+    },
+    "beech_stripped_side": {
+      "x": 4,
+      "y": 6,
+      "region": "beech_stripped_side"
+    },
+    "beech_stripped_top": {
+      "x": 5,
+      "y": 6,
+      "region": "beech_stripped_top"
+    },
+    "linden_stripped_side": {
+      "x": 6,
+      "y": 6,
+      "region": "linden_stripped_side"
+    },
+    "linden_stripped_top": {
+      "x": 7,
+      "y": 6,
+      "region": "linden_stripped_top"
+    },
+    "oak_stripped_side": {
+      "x": 8,
+      "y": 6,
+      "region": "oak_stripped_side"
+    },
+    "oak_stripped_top": {
+      "x": 9,
+      "y": 6,
+      "region": "oak_stripped_top"
+    },
+    "birch_stripped_side": {
+      "x": 10,
+      "y": 6,
+      "region": "birch_stripped_side"
+    },
+    "birch_stripped_top": {
+      "x": 11,
+      "y": 6,
+      "region": "birch_stripped_top"
+    },
+    "spruce_planks": {
+      "x": 0,
+      "y": 7,
+      "region": "spruce_planks"
+    },
+    "pine_planks": {
+      "x": 1,
+      "y": 7,
+      "region": "pine_planks"
+    },
+    "beech_planks": {
+      "x": 2,
+      "y": 7,
+      "region": "beech_planks"
+    },
+    "linden_planks": {
+      "x": 3,
+      "y": 7,
+      "region": "linden_planks"
+    },
+    "oak_planks": {
+      "x": 4,
+      "y": 7,
+      "region": "oak_planks"
+    },
+    "birch_planks": {
+      "x": 5,
+      "y": 7,
+      "region": "birch_planks"
+    },
+    "spruce_leaves": {
+      "x": 6,
+      "y": 7,
+      "region": "spruce_leaves"
+    },
+    "pine_leaves": {
+      "x": 7,
+      "y": 7,
+      "region": "pine_leaves"
+    },
+    "beech_leaves": {
+      "x": 8,
+      "y": 7,
+      "region": "beech_leaves"
+    },
+    "linden_leaves": {
+      "x": 9,
+      "y": 7,
+      "region": "linden_leaves"
+    },
+    "oak_leaves": {
+      "x": 10,
+      "y": 7,
+      "region": "oak_leaves"
+    },
+    "birch_leaves": {
+      "x": 11,
+      "y": 7,
+      "region": "birch_leaves"
+    },
+    "linden_leaves_flowering": {
+      "x": 12,
+      "y": 7,
+      "region": "linden_leaves_flowering"
+    },
+    "beech_leaf_litter": {
+      "x": 13,
+      "y": 7,
+      "region": "beech_leaf_litter"
+    },
+    "oak_leaf_litter": {
+      "x": 14,
+      "y": 7,
+      "region": "oak_leaf_litter"
+    },
+    "spruce_wreath": {
+      "x": 15,
+      "y": 7,
+      "region": "spruce_wreath"
+    },
+    "spruce_sapling": {
+      "x": 0,
+      "y": 8,
+      "region": "spruce_sapling"
+    },
+    "pine_sapling": {
+      "x": 1,
+      "y": 8,
+      "region": "pine_sapling"
+    },
+    "beech_sapling": {
+      "x": 2,
+      "y": 8,
+      "region": "beech_sapling"
+    },
+    "linden_sapling": {
+      "x": 3,
+      "y": 8,
+      "region": "linden_sapling"
+    },
+    "oak_sapling": {
+      "x": 4,
+      "y": 8,
+      "region": "oak_sapling"
+    },
+    "birch_sapling": {
+      "x": 5,
+      "y": 8,
+      "region": "birch_sapling"
+    },
+    "spruce_cone": {
+      "x": 6,
+      "y": 8,
+      "region": "spruce_cone"
+    },
+    "pine_cone": {
+      "x": 7,
+      "y": 8,
+      "region": "pine_cone"
+    },
+    "resin": {
+      "x": 8,
+      "y": 8,
+      "region": "resin"
+    },
+    "beechnuts": {
+      "x": 9,
+      "y": 8,
+      "region": "beechnuts"
+    },
+    "linden_flower": {
+      "x": 10,
+      "y": 8,
+      "region": "linden_flower"
+    },
+    "acorn": {
+      "x": 11,
+      "y": 8,
+      "region": "acorn"
+    },
+    "birch_bark": {
+      "x": 12,
+      "y": 8,
+      "region": "birch_bark"
+    },
+    "axe": {
+      "x": 13,
+      "y": 8,
+      "region": "axe"
+    },
+    "stick": {
+      "x": 0,
+      "y": 9,
+      "region": "stick"
+    },
+    "pickaxe": {
+      "x": 1,
+      "y": 9,
+      "region": "pickaxe"
+    },
+    "shovel": {
+      "x": 2,
+      "y": 9,
+      "region": "shovel"
+    },
+    "dark_planks": {
+      "x": 3,
+      "y": 9,
+      "region": "dark_planks"
+    },
+    "snow": {
+      "x": 4,
+      "y": 9,
+      "region": "snow"
+    },
+    "moss_top": {
+      "x": 5,
+      "y": 9,
+      "region": "moss_top"
+    },
+    "moss_side": {
+      "x": 6,
+      "y": 9,
+      "region": "moss_side"
+    },
+    "moss_carpet": {
+      "x": 7,
+      "y": 9,
+      "region": "moss_carpet"
+    },
+    "moss_carpet_2": {
+      "x": 8,
+      "y": 9,
+      "region": "moss_carpet_2"
+    },
+    "moss_carpet_3": {
+      "x": 9,
+      "y": 9,
+      "region": "moss_carpet_3"
+    },
+    "tool_handle_source": {
+      "x": 0,
+      "y": 10,
+      "region": "tool_handle_source"
+    },
+    "jablon/pien_bok.png": {
+      "x": 0,
+      "y": 11,
+      "region": "jablon/pien_bok.png"
+    },
+    "jablon/pien_gora.png": {
+      "x": 1,
+      "y": 11,
+      "region": "jablon/pien_gora.png"
+    },
+    "jablon/okorowany_bok.png": {
+      "x": 2,
+      "y": 11,
+      "region": "jablon/okorowany_bok.png"
+    },
+    "jablon/okorowany_gora.png": {
+      "x": 3,
+      "y": 11,
+      "region": "jablon/okorowany_gora.png"
+    },
+    "jablon/deski.png": {
+      "x": 4,
+      "y": 11,
+      "region": "jablon/deski.png"
+    },
+    "jablon/liscie.png": {
+      "x": 5,
+      "y": 11,
+      "region": "jablon/liscie.png"
+    },
+    "jablon/sadzonka.png": {
+      "x": 6,
+      "y": 11,
+      "region": "jablon/sadzonka.png"
+    },
+    "jablon/opadle_liscie.png": {
+      "x": 7,
+      "y": 11,
+      "region": "jablon/opadle_liscie.png"
+    },
+    "jablon/jablko.png": {
+      "x": 8,
+      "y": 11,
+      "region": "jablon/jablko.png"
+    },
+    "jablon/liscie_jablka.png": {
+      "x": 9,
+      "y": 11,
+      "region": "jablon/liscie_jablka.png"
+    },
+    "olcha/pien_bok.png": {
+      "x": 10,
+      "y": 11,
+      "region": "olcha/pien_bok.png"
+    },
+    "olcha/pien_gora.png": {
+      "x": 11,
+      "y": 11,
+      "region": "olcha/pien_gora.png"
+    },
+    "olcha/okorowany_bok.png": {
+      "x": 12,
+      "y": 11,
+      "region": "olcha/okorowany_bok.png"
+    },
+    "olcha/okorowany_gora.png": {
+      "x": 13,
+      "y": 11,
+      "region": "olcha/okorowany_gora.png"
+    },
+    "olcha/deski.png": {
+      "x": 14,
+      "y": 11,
+      "region": "olcha/deski.png"
+    },
+    "olcha/liscie.png": {
+      "x": 15,
+      "y": 11,
+      "region": "olcha/liscie.png"
+    },
+    "olcha/sadzonka.png": {
+      "x": 0,
+      "y": 12,
+      "region": "olcha/sadzonka.png"
+    },
+    "olcha/opadle_liscie.png": {
+      "x": 1,
+      "y": 12,
+      "region": "olcha/opadle_liscie.png"
+    },
+    "olcha/szyszki.png": {
+      "x": 2,
+      "y": 12,
+      "region": "olcha/szyszki.png"
+    },
+    "wierzba/pien_bok.png": {
+      "x": 3,
+      "y": 12,
+      "region": "wierzba/pien_bok.png"
+    },
+    "wierzba/pien_gora.png": {
+      "x": 4,
+      "y": 12,
+      "region": "wierzba/pien_gora.png"
+    },
+    "wierzba/okorowany_bok.png": {
+      "x": 5,
+      "y": 12,
+      "region": "wierzba/okorowany_bok.png"
+    },
+    "wierzba/okorowany_gora.png": {
+      "x": 6,
+      "y": 12,
+      "region": "wierzba/okorowany_gora.png"
+    },
+    "wierzba/deski.png": {
+      "x": 7,
+      "y": 12,
+      "region": "wierzba/deski.png"
+    },
+    "wierzba/liscie.png": {
+      "x": 8,
+      "y": 12,
+      "region": "wierzba/liscie.png"
+    },
+    "wierzba/sadzonka.png": {
+      "x": 9,
+      "y": 12,
+      "region": "wierzba/sadzonka.png"
+    },
+    "wierzba/opadle_liscie.png": {
+      "x": 10,
+      "y": 12,
+      "region": "wierzba/opadle_liscie.png"
+    },
+    "wierzba/bazie.png": {
+      "x": 11,
+      "y": 12,
+      "region": "wierzba/bazie.png"
+    },
+    "acacia/log_side.png": {
+      "x": 12,
+      "y": 12,
+      "region": "acacia/log_side.png"
+    },
+    "acacia/log_top.png": {
+      "x": 13,
+      "y": 12,
+      "region": "acacia/log_top.png"
+    },
+    "acacia/stripped_side.png": {
+      "x": 14,
+      "y": 12,
+      "region": "acacia/stripped_side.png"
+    },
+    "acacia/stripped_top.png": {
+      "x": 15,
+      "y": 12,
+      "region": "acacia/stripped_top.png"
+    },
+    "acacia/planks.png": {
+      "x": 0,
+      "y": 13,
+      "region": "acacia/planks.png"
+    },
+    "acacia/leaves.png": {
+      "x": 1,
+      "y": 13,
+      "region": "acacia/leaves.png"
+    },
+    "acacia/sapling.png": {
+      "x": 2,
+      "y": 13,
+      "region": "acacia/sapling.png"
+    },
+    "acacia/leaves_variant.png": {
+      "x": 3,
+      "y": 13,
+      "region": "acacia/leaves_variant.png"
+    },
+    "bald_cypress/log_side.png": {
+      "x": 4,
+      "y": 13,
+      "region": "bald_cypress/log_side.png"
+    },
+    "bald_cypress/log_top.png": {
+      "x": 5,
+      "y": 13,
+      "region": "bald_cypress/log_top.png"
+    },
+    "bald_cypress/stripped_side.png": {
+      "x": 6,
+      "y": 13,
+      "region": "bald_cypress/stripped_side.png"
+    },
+    "bald_cypress/stripped_top.png": {
+      "x": 7,
+      "y": 13,
+      "region": "bald_cypress/stripped_top.png"
+    },
+    "bald_cypress/planks.png": {
+      "x": 8,
+      "y": 13,
+      "region": "bald_cypress/planks.png"
+    },
+    "bald_cypress/leaves.png": {
+      "x": 9,
+      "y": 13,
+      "region": "bald_cypress/leaves.png"
+    },
+    "bald_cypress/sapling.png": {
+      "x": 10,
+      "y": 13,
+      "region": "bald_cypress/sapling.png"
+    },
+    "bald_cypress/leaves_variant.png": {
+      "x": 11,
+      "y": 13,
+      "region": "bald_cypress/leaves_variant.png"
+    },
+    "cherry/log_side.png": {
+      "x": 12,
+      "y": 13,
+      "region": "cherry/log_side.png"
+    },
+    "cherry/log_top.png": {
+      "x": 13,
+      "y": 13,
+      "region": "cherry/log_top.png"
+    },
+    "cherry/stripped_side.png": {
+      "x": 14,
+      "y": 13,
+      "region": "cherry/stripped_side.png"
+    },
+    "cherry/stripped_top.png": {
+      "x": 15,
+      "y": 13,
+      "region": "cherry/stripped_top.png"
+    },
+    "cherry/planks.png": {
+      "x": 0,
+      "y": 14,
+      "region": "cherry/planks.png"
+    },
+    "cherry/leaves.png": {
+      "x": 1,
+      "y": 14,
+      "region": "cherry/leaves.png"
+    },
+    "cherry/sapling.png": {
+      "x": 2,
+      "y": 14,
+      "region": "cherry/sapling.png"
+    },
+    "cherry/leaves_variant.png": {
+      "x": 3,
+      "y": 14,
+      "region": "cherry/leaves_variant.png"
+    },
+    "rosliny/amarantus/etap1.png": {
+      "x": 0,
+      "y": 15,
+      "w": 2,
+      "h": 2,
+      "pw": 17,
+      "ph": 21,
+      "region": "rosliny/amarantus/etap1.png"
+    },
+    "rosliny/amarantus/etap2.png": {
+      "x": 2,
+      "y": 15,
+      "w": 2,
+      "h": 2,
+      "pw": 20,
+      "ph": 27,
+      "region": "rosliny/amarantus/etap2.png"
+    },
+    "rosliny/amarantus/etap3.png": {
+      "x": 4,
+      "y": 15,
+      "w": 2,
+      "h": 2,
+      "pw": 26,
+      "ph": 32,
+      "region": "rosliny/amarantus/etap3.png"
+    },
+    "rosliny/amarantus/wiecha.png": {
+      "x": 6,
+      "y": 15,
+      "w": 1,
+      "h": 1,
+      "pw": 16,
+      "ph": 16,
+      "region": "rosliny/amarantus/wiecha.png"
+    },
+    "rosliny/kocanka/bukiet.png": {
+      "x": 7,
+      "y": 15,
+      "w": 1,
+      "h": 1,
+      "pw": 16,
+      "ph": 16,
+      "region": "rosliny/kocanka/bukiet.png"
+    },
+    "rosliny/lawenda/bukiet.png": {
+      "x": 8,
+      "y": 15,
+      "w": 1,
+      "h": 1,
+      "pw": 16,
+      "ph": 16,
+      "region": "rosliny/lawenda/bukiet.png"
+    },
+    "rosliny/piwonia/kwiat.png": {
+      "x": 9,
+      "y": 15,
+      "w": 1,
+      "h": 1,
+      "pw": 16,
+      "ph": 16,
+      "region": "rosliny/piwonia/kwiat.png"
+    },
+    "rosliny/zawilec/kwiat.png": {
+      "x": 10,
+      "y": 15,
+      "w": 1,
+      "h": 1,
+      "pw": 16,
+      "ph": 16,
+      "region": "rosliny/zawilec/kwiat.png"
+    },
+    "rosliny/dzwonek/kwiat.png": {
+      "x": 11,
+      "y": 15,
+      "w": 1,
+      "h": 1,
+      "pw": 16,
+      "ph": 16,
+      "region": "rosliny/dzwonek/kwiat.png"
+    },
+    "rosliny/szalwia/lisc.png": {
+      "x": 12,
+      "y": 15,
+      "w": 1,
+      "h": 1,
+      "pw": 16,
+      "ph": 16,
+      "region": "rosliny/szalwia/lisc.png"
+    },
+    "rosliny/nagietek/kwiat.png": {
+      "x": 13,
+      "y": 15,
+      "w": 1,
+      "h": 1,
+      "pw": 16,
+      "ph": 16,
+      "region": "rosliny/nagietek/kwiat.png"
+    },
+    "rosliny/cynia/kwiat.png": {
+      "x": 14,
+      "y": 15,
+      "w": 1,
+      "h": 1,
+      "pw": 16,
+      "ph": 16,
+      "region": "rosliny/cynia/kwiat.png"
+    },
+    "rosliny/mikolajek/kwiat.png": {
+      "x": 15,
+      "y": 15,
+      "w": 1,
+      "h": 1,
+      "pw": 16,
+      "ph": 16,
+      "region": "rosliny/mikolajek/kwiat.png"
+    },
+    "rosliny/barwinek/kwiat.png": {
+      "x": 0,
+      "y": 17,
+      "w": 1,
+      "h": 1,
+      "pw": 16,
+      "ph": 16,
+      "region": "rosliny/barwinek/kwiat.png"
+    },
+    "rosliny/len/wiazka.png": {
+      "x": 1,
+      "y": 17,
+      "w": 1,
+      "h": 1,
+      "pw": 16,
+      "ph": 16,
+      "region": "rosliny/len/wiazka.png"
+    },
+    "rosliny/gorczyca/nasiona.png": {
+      "x": 2,
+      "y": 17,
+      "w": 1,
+      "h": 1,
+      "pw": 16,
+      "ph": 16,
+      "region": "rosliny/gorczyca/nasiona.png"
+    },
+    "rosliny/porostoliwkowy/plecha.png": {
+      "x": 3,
+      "y": 17,
+      "w": 1,
+      "h": 1,
+      "pw": 16,
+      "ph": 16,
+      "region": "rosliny/porostoliwkowy/plecha.png"
+    },
+    "rosliny/porostiglasty/galazki.png": {
+      "x": 4,
+      "y": 17,
+      "w": 1,
+      "h": 1,
+      "pw": 16,
+      "ph": 16,
+      "region": "rosliny/porostiglasty/galazki.png"
+    },
+    "rosliny/ochra/grudka.png": {
+      "x": 5,
+      "y": 17,
+      "w": 1,
+      "h": 1,
+      "pw": 16,
+      "ph": 16,
+      "region": "rosliny/ochra/grudka.png"
+    },
+    "rosliny/huba/huba.png": {
+      "x": 6,
+      "y": 17,
+      "w": 1,
+      "h": 1,
+      "pw": 16,
+      "ph": 16,
+      "region": "rosliny/huba/huba.png"
+    },
+    "rosliny/indygowiec/liscie.png": {
+      "x": 7,
+      "y": 17,
+      "w": 1,
+      "h": 1,
+      "pw": 16,
+      "ph": 16,
+      "region": "rosliny/indygowiec/liscie.png"
+    },
+    "rosliny/marzanna/korzen.png": {
+      "x": 8,
+      "y": 17,
+      "w": 1,
+      "h": 1,
+      "pw": 16,
+      "ph": 16,
+      "region": "rosliny/marzanna/korzen.png"
+    },
+    "models/blueberry/atlas": {
+      "x": 0,
+      "y": 18,
+      "w": 4,
+      "h": 4,
+      "pw": 64,
+      "ph": 64,
+      "region": "models/blueberry/atlas"
+    },
+    "campfire_oak": {
+      "x": 0,
+      "y": 22,
+      "w": 2,
+      "h": 2,
+      "pw": 32,
+      "ph": 32,
+      "region": "campfire_oak"
+    },
+    "campfire_birch": {
+      "x": 2,
+      "y": 22,
+      "w": 2,
+      "h": 2,
+      "pw": 32,
+      "ph": 32,
+      "region": "campfire_birch"
+    },
+    "campfire_spruce": {
+      "x": 4,
+      "y": 22,
+      "w": 2,
+      "h": 2,
+      "pw": 32,
+      "ph": 32,
+      "region": "campfire_spruce"
+    },
+    "campfire_pine": {
+      "x": 6,
+      "y": 22,
+      "w": 2,
+      "h": 2,
+      "pw": 32,
+      "ph": 32,
+      "region": "campfire_pine"
+    },
+    "campfire_beech": {
+      "x": 8,
+      "y": 22,
+      "w": 2,
+      "h": 2,
+      "pw": 32,
+      "ph": 32,
+      "region": "campfire_beech"
+    },
+    "campfire_linden": {
+      "x": 10,
+      "y": 22,
+      "w": 2,
+      "h": 2,
+      "pw": 32,
+      "ph": 32,
+      "region": "campfire_linden"
+    },
+    "campfire_olcha": {
+      "x": 12,
+      "y": 22,
+      "w": 2,
+      "h": 2,
+      "pw": 32,
+      "ph": 32,
+      "region": "campfire_olcha"
+    },
+    "campfire_wierzba": {
+      "x": 14,
+      "y": 22,
+      "w": 2,
+      "h": 2,
+      "pw": 32,
+      "ph": 32,
+      "region": "campfire_wierzba"
+    },
+    "campfire_jablon": {
+      "x": 0,
+      "y": 24,
+      "w": 2,
+      "h": 2,
+      "pw": 32,
+      "ph": 32,
+      "region": "campfire_jablon"
+    },
+    "campfire_acacia": {
+      "x": 2,
+      "y": 24,
+      "w": 2,
+      "h": 2,
+      "pw": 32,
+      "ph": 32,
+      "region": "campfire_acacia"
+    },
+    "campfire_bald_cypress": {
+      "x": 4,
+      "y": 24,
+      "w": 2,
+      "h": 2,
+      "pw": 32,
+      "ph": 32,
+      "region": "campfire_bald_cypress"
+    },
+    "campfire_cherry": {
+      "x": 6,
+      "y": 24,
+      "w": 2,
+      "h": 2,
+      "pw": 32,
+      "ph": 32,
+      "region": "campfire_cherry"
+    },
+    "torch": {
+      "x": 0,
+      "y": 26,
+      "region": "torch"
+    },
+    "torch_white": {
+      "x": 1,
+      "y": 26,
+      "region": "torch_white"
+    },
+    "torch_orange": {
+      "x": 2,
+      "y": 26,
+      "region": "torch_orange"
+    },
+    "torch_magenta": {
+      "x": 3,
+      "y": 26,
+      "region": "torch_magenta"
+    },
+    "torch_light_blue": {
+      "x": 4,
+      "y": 26,
+      "region": "torch_light_blue"
+    },
+    "torch_yellow": {
+      "x": 5,
+      "y": 26,
+      "region": "torch_yellow"
+    },
+    "torch_lime": {
+      "x": 6,
+      "y": 26,
+      "region": "torch_lime"
+    },
+    "torch_pink": {
+      "x": 7,
+      "y": 26,
+      "region": "torch_pink"
+    },
+    "torch_gray": {
+      "x": 8,
+      "y": 26,
+      "region": "torch_gray"
+    },
+    "torch_light_gray": {
+      "x": 9,
+      "y": 26,
+      "region": "torch_light_gray"
+    },
+    "torch_cyan": {
+      "x": 10,
+      "y": 26,
+      "region": "torch_cyan"
+    },
+    "torch_purple": {
+      "x": 11,
+      "y": 26,
+      "region": "torch_purple"
+    },
+    "torch_blue": {
+      "x": 12,
+      "y": 26,
+      "region": "torch_blue"
+    },
+    "torch_brown": {
+      "x": 13,
+      "y": 26,
+      "region": "torch_brown"
+    },
+    "torch_green": {
+      "x": 14,
+      "y": 26,
+      "region": "torch_green"
+    },
+    "torch_red": {
+      "x": 15,
+      "y": 26,
+      "region": "torch_red"
+    },
+    "torch_black": {
+      "x": 0,
+      "y": 27,
+      "region": "torch_black"
+    },
+    "dye_white": {
+      "x": 1,
+      "y": 27,
+      "region": "dye_white"
+    },
+    "dye_orange": {
+      "x": 2,
+      "y": 27,
+      "region": "dye_orange"
+    },
+    "dye_magenta": {
+      "x": 3,
+      "y": 27,
+      "region": "dye_magenta"
+    },
+    "dye_light_blue": {
+      "x": 4,
+      "y": 27,
+      "region": "dye_light_blue"
+    },
+    "dye_yellow": {
+      "x": 5,
+      "y": 27,
+      "region": "dye_yellow"
+    },
+    "dye_lime": {
+      "x": 6,
+      "y": 27,
+      "region": "dye_lime"
+    },
+    "dye_pink": {
+      "x": 7,
+      "y": 27,
+      "region": "dye_pink"
+    },
+    "dye_gray": {
+      "x": 8,
+      "y": 27,
+      "region": "dye_gray"
+    },
+    "dye_light_gray": {
+      "x": 9,
+      "y": 27,
+      "region": "dye_light_gray"
+    },
+    "dye_cyan": {
+      "x": 10,
+      "y": 27,
+      "region": "dye_cyan"
+    },
+    "dye_purple": {
+      "x": 11,
+      "y": 27,
+      "region": "dye_purple"
+    },
+    "dye_blue": {
+      "x": 12,
+      "y": 27,
+      "region": "dye_blue"
+    },
+    "dye_brown": {
+      "x": 13,
+      "y": 27,
+      "region": "dye_brown"
+    },
+    "dye_green": {
+      "x": 14,
+      "y": 27,
+      "region": "dye_green"
+    },
+    "dye_red": {
+      "x": 15,
+      "y": 27,
+      "region": "dye_red"
+    },
+    "dye_black": {
+      "x": 0,
+      "y": 28,
+      "region": "dye_black"
+    },
+    "models/bushy-grass/texture": {
+      "x": 1,
+      "y": 28,
+      "region": "models/bushy-grass/texture"
+    },
+    "models/rosliny/mak/polrealistyczny": {
+      "x": 2,
+      "y": 28,
+      "region": "models/rosliny/mak/polrealistyczny"
+    },
+    "models/rosliny/chaber/polrealistyczny": {
+      "x": 3,
+      "y": 28,
+      "region": "models/rosliny/chaber/polrealistyczny"
+    },
+    "models/rosliny/mniszek/polrealistyczny": {
+      "x": 4,
+      "y": 28,
+      "region": "models/rosliny/mniszek/polrealistyczny"
+    },
+    "models/rosliny/rumianek/polrealistyczny": {
+      "x": 5,
+      "y": 28,
+      "region": "models/rosliny/rumianek/polrealistyczny"
+    },
+    "models/rosliny/lawenda/prosty-1": {
+      "x": 6,
+      "y": 28,
+      "region": "models/rosliny/lawenda/prosty-1"
+    },
+    "models/rosliny/lawenda/polrealistyczny": {
+      "x": 7,
+      "y": 28,
+      "region": "models/rosliny/lawenda/polrealistyczny"
+    },
+    "models/rosliny/lawenda/prosty-2": {
+      "x": 8,
+      "y": 28,
+      "region": "models/rosliny/lawenda/prosty-2"
+    },
+    "models/rosliny/lawenda/prosty-3": {
+      "x": 9,
+      "y": 28,
+      "region": "models/rosliny/lawenda/prosty-3"
+    },
+    "models/rosliny/krotka-trawa/polrealistyczny": {
+      "x": 10,
+      "y": 28,
+      "region": "models/rosliny/krotka-trawa/polrealistyczny"
+    },
+    "models/rosliny/wysoka-trawa/polrealistyczny": {
+      "x": 11,
+      "y": 28,
+      "region": "models/rosliny/wysoka-trawa/polrealistyczny"
+    },
+    "models/rosliny/paproc/polrealistyczny": {
+      "x": 12,
+      "y": 28,
+      "region": "models/rosliny/paproc/polrealistyczny"
+    },
+    "models/rosliny/koniczyna/polrealistyczny": {
+      "x": 13,
+      "y": 28,
+      "region": "models/rosliny/koniczyna/polrealistyczny"
+    },
+    "models/rosliny/pokrzywa/polrealistyczny": {
+      "x": 14,
+      "y": 28,
+      "region": "models/rosliny/pokrzywa/polrealistyczny"
+    },
+    "models/rosliny/babka/polrealistyczny": {
+      "x": 15,
+      "y": 28,
+      "region": "models/rosliny/babka/polrealistyczny"
+    },
+    "models/rosliny/trzcina/polrealistyczny": {
+      "x": 0,
+      "y": 29,
+      "region": "models/rosliny/trzcina/polrealistyczny"
+    },
+    "models/rosliny/wrzos/polrealistyczny": {
+      "x": 1,
+      "y": 29,
+      "region": "models/rosliny/wrzos/polrealistyczny"
+    },
+    "models/rosliny/krokus/polrealistyczny": {
+      "x": 2,
+      "y": 29,
+      "region": "models/rosliny/krokus/polrealistyczny"
+    },
+    "models/rosliny/trawa-wydmowa/polrealistyczny": {
+      "x": 3,
+      "y": 29,
+      "region": "models/rosliny/trawa-wydmowa/polrealistyczny"
+    },
+    "models/rosliny/sadzonka-swierk/polrealistyczny": {
+      "x": 4,
+      "y": 29,
+      "region": "models/rosliny/sadzonka-swierk/polrealistyczny"
+    },
+    "models/rosliny/sadzonka-sosna/polrealistyczny": {
+      "x": 5,
+      "y": 29,
+      "region": "models/rosliny/sadzonka-sosna/polrealistyczny"
+    },
+    "models/rosliny/sadzonka-buk/polrealistyczny": {
+      "x": 6,
+      "y": 29,
+      "region": "models/rosliny/sadzonka-buk/polrealistyczny"
+    },
+    "models/rosliny/sadzonka-lipa/polrealistyczny": {
+      "x": 7,
+      "y": 29,
+      "region": "models/rosliny/sadzonka-lipa/polrealistyczny"
+    },
+    "models/rosliny/sadzonka-dab/polrealistyczny": {
+      "x": 8,
+      "y": 29,
+      "region": "models/rosliny/sadzonka-dab/polrealistyczny"
+    },
+    "models/rosliny/sadzonka-brzoza/polrealistyczny": {
+      "x": 9,
+      "y": 29,
+      "region": "models/rosliny/sadzonka-brzoza/polrealistyczny"
+    },
+    "models/rosliny/sadzonka-jablon/polrealistyczny": {
+      "x": 10,
+      "y": 29,
+      "region": "models/rosliny/sadzonka-jablon/polrealistyczny"
+    },
+    "models/rosliny/sadzonka-olcha/polrealistyczny": {
+      "x": 11,
+      "y": 29,
+      "region": "models/rosliny/sadzonka-olcha/polrealistyczny"
+    },
+    "models/rosliny/sadzonka-wierzba/polrealistyczny": {
+      "x": 12,
+      "y": 29,
+      "region": "models/rosliny/sadzonka-wierzba/polrealistyczny"
+    },
+    "models/rosliny/truskawka/polrealistyczny": {
+      "x": 13,
+      "y": 29,
+      "region": "models/rosliny/truskawka/polrealistyczny"
+    },
+    "models/rosliny/jezyna/polrealistyczny": {
+      "x": 14,
+      "y": 29,
+      "region": "models/rosliny/jezyna/polrealistyczny"
+    },
+    "models/rosliny/chili/polrealistyczny": {
+      "x": 15,
+      "y": 29,
+      "region": "models/rosliny/chili/polrealistyczny"
+    },
+    "models/rosliny/leszczyna/polrealistyczny": {
+      "x": 0,
+      "y": 30,
+      "region": "models/rosliny/leszczyna/polrealistyczny"
+    },
+    "models/rosliny/borowka/polrealistyczny": {
+      "x": 1,
+      "y": 30,
+      "region": "models/rosliny/borowka/polrealistyczny"
+    },
+    "models/rosliny/turzyca/prosty-1": {
+      "x": 2,
+      "y": 30,
+      "region": "models/rosliny/turzyca/prosty-1"
+    },
+    "models/rosliny/turzyca/polrealistyczny": {
+      "x": 3,
+      "y": 30,
+      "region": "models/rosliny/turzyca/polrealistyczny"
+    },
+    "models/rosliny/palka/prosty-1": {
+      "x": 4,
+      "y": 30,
+      "region": "models/rosliny/palka/prosty-1"
+    },
+    "models/rosliny/palka/polrealistyczny": {
+      "x": 5,
+      "y": 30,
+      "region": "models/rosliny/palka/polrealistyczny"
+    },
+    "models/rosliny/krwawnica/prosty-1": {
+      "x": 6,
+      "y": 30,
+      "region": "models/rosliny/krwawnica/prosty-1"
+    },
+    "models/rosliny/krwawnica/polrealistyczny": {
+      "x": 7,
+      "y": 30,
+      "region": "models/rosliny/krwawnica/polrealistyczny"
+    },
+    "models/rosliny/amarantus/polrealistyczny": {
+      "x": 8,
+      "y": 30,
+      "region": "models/rosliny/amarantus/polrealistyczny"
+    },
+    "models/rosliny/kocanka/prosty-1": {
+      "x": 9,
+      "y": 30,
+      "region": "models/rosliny/kocanka/prosty-1"
+    },
+    "models/rosliny/kocanka/polrealistyczny": {
+      "x": 10,
+      "y": 30,
+      "region": "models/rosliny/kocanka/polrealistyczny"
+    },
+    "models/rosliny/kocanka/prosty-2": {
+      "x": 11,
+      "y": 30,
+      "region": "models/rosliny/kocanka/prosty-2"
+    },
+    "models/rosliny/kocanka/prosty-3": {
+      "x": 12,
+      "y": 30,
+      "region": "models/rosliny/kocanka/prosty-3"
+    },
+    "models/rosliny/piwonia/prosty-1": {
+      "x": 13,
+      "y": 30,
+      "region": "models/rosliny/piwonia/prosty-1"
+    },
+    "models/rosliny/piwonia/polrealistyczny": {
+      "x": 14,
+      "y": 30,
+      "region": "models/rosliny/piwonia/polrealistyczny"
+    },
+    "models/rosliny/piwonia/prosty-2": {
+      "x": 15,
+      "y": 30,
+      "region": "models/rosliny/piwonia/prosty-2"
+    },
+    "models/rosliny/piwonia/prosty-3": {
+      "x": 0,
+      "y": 31,
+      "region": "models/rosliny/piwonia/prosty-3"
+    },
+    "models/rosliny/zawilec/prosty-1": {
+      "x": 1,
+      "y": 31,
+      "region": "models/rosliny/zawilec/prosty-1"
+    },
+    "models/rosliny/zawilec/polrealistyczny": {
+      "x": 2,
+      "y": 31,
+      "region": "models/rosliny/zawilec/polrealistyczny"
+    },
+    "models/rosliny/zawilec/prosty-2": {
+      "x": 3,
+      "y": 31,
+      "region": "models/rosliny/zawilec/prosty-2"
+    },
+    "models/rosliny/zawilec/prosty-3": {
+      "x": 4,
+      "y": 31,
+      "region": "models/rosliny/zawilec/prosty-3"
+    },
+    "models/rosliny/dzwonek/prosty-1": {
+      "x": 5,
+      "y": 31,
+      "region": "models/rosliny/dzwonek/prosty-1"
+    },
+    "models/rosliny/dzwonek/polrealistyczny": {
+      "x": 6,
+      "y": 31,
+      "region": "models/rosliny/dzwonek/polrealistyczny"
+    },
+    "models/rosliny/dzwonek/prosty-2": {
+      "x": 7,
+      "y": 31,
+      "region": "models/rosliny/dzwonek/prosty-2"
+    },
+    "models/rosliny/dzwonek/prosty-3": {
+      "x": 8,
+      "y": 31,
+      "region": "models/rosliny/dzwonek/prosty-3"
+    },
+    "models/rosliny/szalwia/prosty-1": {
+      "x": 9,
+      "y": 31,
+      "region": "models/rosliny/szalwia/prosty-1"
+    },
+    "models/rosliny/szalwia/polrealistyczny": {
+      "x": 10,
+      "y": 31,
+      "region": "models/rosliny/szalwia/polrealistyczny"
+    },
+    "models/rosliny/szalwia/prosty-2": {
+      "x": 11,
+      "y": 31,
+      "region": "models/rosliny/szalwia/prosty-2"
+    },
+    "models/rosliny/szalwia/prosty-3": {
+      "x": 12,
+      "y": 31,
+      "region": "models/rosliny/szalwia/prosty-3"
+    },
+    "models/rosliny/nagietek/prosty-1": {
+      "x": 13,
+      "y": 31,
+      "region": "models/rosliny/nagietek/prosty-1"
+    },
+    "models/rosliny/nagietek/polrealistyczny": {
+      "x": 14,
+      "y": 31,
+      "region": "models/rosliny/nagietek/polrealistyczny"
+    },
+    "models/rosliny/nagietek/prosty-2": {
+      "x": 15,
+      "y": 31,
+      "region": "models/rosliny/nagietek/prosty-2"
+    },
+    "models/rosliny/nagietek/prosty-3": {
+      "x": 0,
+      "y": 32,
+      "region": "models/rosliny/nagietek/prosty-3"
+    },
+    "models/rosliny/cynia/prosty-1": {
+      "x": 1,
+      "y": 32,
+      "region": "models/rosliny/cynia/prosty-1"
+    },
+    "models/rosliny/cynia/polrealistyczny": {
+      "x": 2,
+      "y": 32,
+      "region": "models/rosliny/cynia/polrealistyczny"
+    },
+    "models/rosliny/cynia/prosty-2": {
+      "x": 3,
+      "y": 32,
+      "region": "models/rosliny/cynia/prosty-2"
+    },
+    "models/rosliny/cynia/prosty-3": {
+      "x": 4,
+      "y": 32,
+      "region": "models/rosliny/cynia/prosty-3"
+    },
+    "models/rosliny/mikolajek/prosty-1": {
+      "x": 5,
+      "y": 32,
+      "region": "models/rosliny/mikolajek/prosty-1"
+    },
+    "models/rosliny/mikolajek/polrealistyczny": {
+      "x": 6,
+      "y": 32,
+      "region": "models/rosliny/mikolajek/polrealistyczny"
+    },
+    "models/rosliny/mikolajek/prosty-2": {
+      "x": 7,
+      "y": 32,
+      "region": "models/rosliny/mikolajek/prosty-2"
+    },
+    "models/rosliny/mikolajek/prosty-3": {
+      "x": 8,
+      "y": 32,
+      "region": "models/rosliny/mikolajek/prosty-3"
+    },
+    "models/rosliny/len/prosty-1": {
+      "x": 9,
+      "y": 32,
+      "region": "models/rosliny/len/prosty-1"
+    },
+    "models/rosliny/len/polrealistyczny": {
+      "x": 10,
+      "y": 32,
+      "region": "models/rosliny/len/polrealistyczny"
+    },
+    "models/rosliny/len/prosty-2": {
+      "x": 11,
+      "y": 32,
+      "region": "models/rosliny/len/prosty-2"
+    },
+    "models/rosliny/len/prosty-3": {
+      "x": 12,
+      "y": 32,
+      "region": "models/rosliny/len/prosty-3"
+    },
+    "models/rosliny/gorczyca/prosty-1": {
+      "x": 13,
+      "y": 32,
+      "region": "models/rosliny/gorczyca/prosty-1"
+    },
+    "models/rosliny/gorczyca/polrealistyczny": {
+      "x": 14,
+      "y": 32,
+      "region": "models/rosliny/gorczyca/polrealistyczny"
+    },
+    "models/rosliny/gorczyca/prosty-2": {
+      "x": 15,
+      "y": 32,
+      "region": "models/rosliny/gorczyca/prosty-2"
+    },
+    "models/rosliny/gorczyca/prosty-3": {
+      "x": 0,
+      "y": 33,
+      "region": "models/rosliny/gorczyca/prosty-3"
+    },
+    "models/rosliny/indygowiec/prosty-1": {
+      "x": 1,
+      "y": 33,
+      "region": "models/rosliny/indygowiec/prosty-1"
+    },
+    "models/rosliny/indygowiec/polrealistyczny": {
+      "x": 2,
+      "y": 33,
+      "region": "models/rosliny/indygowiec/polrealistyczny"
+    },
+    "models/rosliny/indygowiec/prosty-2": {
+      "x": 3,
+      "y": 33,
+      "region": "models/rosliny/indygowiec/prosty-2"
+    },
+    "models/rosliny/indygowiec/prosty-3": {
+      "x": 4,
+      "y": 33,
+      "region": "models/rosliny/indygowiec/prosty-3"
+    },
+    "models/rosliny/marzanna/prosty-1": {
+      "x": 5,
+      "y": 33,
+      "region": "models/rosliny/marzanna/prosty-1"
+    },
+    "models/rosliny/marzanna/polrealistyczny": {
+      "x": 6,
+      "y": 33,
+      "region": "models/rosliny/marzanna/polrealistyczny"
+    },
+    "models/rosliny/marzanna/prosty-2": {
+      "x": 7,
+      "y": 33,
+      "region": "models/rosliny/marzanna/prosty-2"
+    },
+    "models/rosliny/marzanna/prosty-3": {
+      "x": 8,
+      "y": 33,
+      "region": "models/rosliny/marzanna/prosty-3"
+    },
+    "models/rosliny/sadzonka-akacja/polrealistyczny": {
+      "x": 9,
+      "y": 33,
+      "region": "models/rosliny/sadzonka-akacja/polrealistyczny"
+    },
+    "models/rosliny/sadzonka-cyprysnik/polrealistyczny": {
+      "x": 10,
+      "y": 33,
+      "region": "models/rosliny/sadzonka-cyprysnik/polrealistyczny"
+    },
+    "models/rosliny/sadzonka-wisnia/polrealistyczny": {
+      "x": 11,
+      "y": 33,
+      "region": "models/rosliny/sadzonka-wisnia/polrealistyczny"
+    },
+    "pine_log_transition_1": {
+      "x": 12,
+      "y": 33,
+      "region": "pine_log_transition_1"
+    },
+    "pine_log_transition_2": {
+      "x": 13,
+      "y": 33,
+      "region": "pine_log_transition_2"
+    },
+    "pine_log_transition_3": {
+      "x": 14,
+      "y": 33,
+      "region": "pine_log_transition_3"
+    },
+    "axe_granite": {
+      "x": 15,
+      "y": 33,
+      "region": "axe_granite"
+    },
+    "axe_limestone": {
+      "x": 0,
+      "y": 34,
+      "region": "axe_limestone"
+    },
+    "axe_sandstone": {
+      "x": 1,
+      "y": 34,
+      "region": "axe_sandstone"
+    },
+    "axe_slate": {
+      "x": 2,
+      "y": 34,
+      "region": "axe_slate"
+    },
+    "axe_basalt": {
+      "x": 3,
+      "y": 34,
+      "region": "axe_basalt"
+    },
+    "pickaxe_granite": {
+      "x": 4,
+      "y": 34,
+      "region": "pickaxe_granite"
+    },
+    "pickaxe_limestone": {
+      "x": 5,
+      "y": 34,
+      "region": "pickaxe_limestone"
+    },
+    "pickaxe_sandstone": {
+      "x": 6,
+      "y": 34,
+      "region": "pickaxe_sandstone"
+    },
+    "pickaxe_slate": {
+      "x": 7,
+      "y": 34,
+      "region": "pickaxe_slate"
+    },
+    "pickaxe_basalt": {
+      "x": 8,
+      "y": 34,
+      "region": "pickaxe_basalt"
+    },
+    "shovel_granite": {
+      "x": 9,
+      "y": 34,
+      "region": "shovel_granite"
+    },
+    "shovel_limestone": {
+      "x": 10,
+      "y": 34,
+      "region": "shovel_limestone"
+    },
+    "shovel_sandstone": {
+      "x": 11,
+      "y": 34,
+      "region": "shovel_sandstone"
+    },
+    "shovel_slate": {
+      "x": 12,
+      "y": 34,
+      "region": "shovel_slate"
+    },
+    "shovel_basalt": {
+      "x": 13,
+      "y": 34,
+      "region": "shovel_basalt"
+    }
+  }
+}

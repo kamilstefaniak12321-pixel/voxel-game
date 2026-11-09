@@ -1,7 +1,10 @@
 # Rośliny z paczek (assets/rosliny/)
 
-Nowe rośliny dodaje się jak paczki drzew - folder z obrazkami i opisem,
-bez pisania kodu. Są dwa rodzaje:
+Konfiguracje roślin pozostają w `assets/rosliny/`, ale od 0.80.0 ich
+grafiki są regionami wspólnego `assets/textures/rosliny.png`. Pola
+`plik` w opisach są stałymi nazwami logicznymi: `atlas.json` wskazuje
+ich położenie i rozmiar. Osobny system paczek drzew został usunięty.
+Są dwa rodzaje roślin:
 
 - **duża roślina z obrazka** - skrzyżowane płaszczyzny w rozmiarze
   obrazka, np. **amarantus** (do 2 bloków wysokości, bordowe, zwisające
@@ -67,6 +70,12 @@ na wietrze. Celownik trafia ją także w części nad komórką. Wyższy etap
 rośnie tylko, gdy nad rośliną jest wolne miejsce - pod daszkiem czeka.
 
 ## Z atlasu do gry
+
+Od 0.80.0 importer zastępuje istniejące regiony w arkuszu. Przy dodawaniu
+nowej rośliny najpierw przydziel region i nazwę w `atlas.json`, uzupełnij
+pozycję w `tiles` oraz wykonaj `python tools/atlasy.py sync`. Instrukcja:
+[arkusze tekstur](tekstury-atlasy.md). Nazwy folderów poniżej wskazują
+konfigurację i logiczne klucze, a nie osobne katalogi PNG.
 
 Obrazki roślin są narysowane jak pixel art na dużym obrazku (np. 1254 x
 1254), cztery na jednym: zwykle trzy etapy wzrostu i przedmiot. "Piksel"

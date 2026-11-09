@@ -15,7 +15,7 @@ export async function run() {
     const { GAME_COMMANDS } = await import('/src/commands/gameCommands.js');
     const { CommandRegistry } = await import('/src/commands/CommandRegistry.js');
     const { TREE_NAMES, TREE_SPECIES } = await import('/src/blocks/trees.js');
-    const { TREE_PACK_ERRORS } = await import('/src/blocks/treePacks.js');
+    const { TREE_DEFINITIONS } = await import('/src/blocks/treeCatalog.js');
     const { plantTree } = await import('/src/world/trees/plantTree.js');
     const { getTreeShowcase, waitForTreeShowcase } = await import('/src/world/trees/TreeShowcase.js');
     const { PlayerModel, createPose, MODEL_PIXEL } = await import('/src/player/PlayerModel.js');
@@ -24,7 +24,7 @@ export async function run() {
     const { applyPlantModelLevel } = await import('/src/rendering/PlantModelLevels.js');
     const { blockRenderData } = await import('/src/rendering/BlockRenderData.js');
     await atlasReady;
-    check(TREE_PACK_ERRORS.length === 0, 'Every tree texture pack loads without errors');
+    check(TREE_DEFINITIONS.length === 12, 'All twelve built-in tree definitions are available');
     check(PLANT_MODEL_ERRORS.length === 0, 'Plant quality models load without errors');
     const names = ['acacia', 'bald_cypress', 'cherry'];
     for (const name of names) check(TREE_NAMES.includes(name), `Registered species: ${name}`);

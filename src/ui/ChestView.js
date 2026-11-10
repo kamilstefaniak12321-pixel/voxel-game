@@ -25,7 +25,8 @@ import { CHEST_CELLS, CHEST_COLUMNS, CHEST_LAYERS, CHEST_ROWS, topLayer } from '
 export const CHEST_VIEW_WIDTH = 320;
 export const CHEST_VIEW_HEIGHT = 160;
 
-const CARD = 0.16;
+// Karta trochę mniejsza od przegródki (0,1875 x 0,25 bloku).
+const CARD = 0.175;
 // Wierzch leży trochę wyżej, bliżej i w bok - spod niego wystaje spód.
 const LIFT = [0, 0.05];
 const SHIFT = [[0.022, 0.035], [-0.02, -0.03]];
@@ -47,11 +48,12 @@ export class ChestView {
         sun.position.set(-2, 4, -5);
         this.scene.add(sun);
 
-        // Z przodu i z góry - dno z przegródkami wypełnia okno, za nim
-        // otwarte wieko.
+        // Z przodu i z góry, blisko - dno z przegródkami wypełnia okno
+        // (0.82.2: wcześniej skrzynia zajmowała ok. 1/3 szerokości), za
+        // nim otwarte wieko.
         this.camera = new THREE.PerspectiveCamera(37, CHEST_VIEW_WIDTH / CHEST_VIEW_HEIGHT, 0.05, 10);
-        this.camera.position.set(0, 2.05, -0.62);
-        this.camera.lookAt(0, 0.16, 0.24);
+        this.camera.position.set(0, 1.6, -0.56);
+        this.camera.lookAt(0, 0.13, 0.16);
 
         this.material = createModelMaterial({ map: blockAtlasTexture });
         const { group, lid } = createChestModel(this.material);
@@ -299,7 +301,10 @@ export class ChestView {
 
         const font = getComputedStyle(this.canvas).fontFamily || 'monospace';
 
-        ctx.font = `12px ${font}`;
+        // Liczby jak w miejscach ekwipunku: większe, z obrysem.
+        ctx.font = `16px ${font}`;
+        ctx.lineWidth = 3;
+        ctx.lineJoin = 'round';
         ctx.textAlign = 'right';
         ctx.textBaseline = 'bottom';
 
@@ -322,8 +327,8 @@ export class ChestView {
             const px = (corner.x + 1) / 2 * CHEST_VIEW_WIDTH + 2;
             const py = (1 - corner.y) / 2 * CHEST_VIEW_HEIGHT + 2;
 
-            ctx.fillStyle = '#1a0f08';
-            ctx.fillText(String(item.count), px + 1, py + 1);
+            ctx.strokeStyle = '#1a0f08';
+            ctx.strokeText(String(item.count), px, py);
             ctx.fillStyle = '#fff4dc';
             ctx.fillText(String(item.count), px, py);
 

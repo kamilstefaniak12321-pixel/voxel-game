@@ -11,6 +11,25 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 0.82.2 - Czytelniejsza skrzynia i opis komend pod kontrolą
+
+Poprawki z przeglądu repozytorium — PR #121 (po 0.82.1):
+
+- **Skrzynia w ekwipunku bliżej:** kamera w strefie rzemieślniczej
+  patrzy z bliższa, więc dno z przegródkami zajmuje większą część okna,
+  przedmioty są trochę większe (karta 0,175 zamiast 0,16 bloku), a liczby
+  sztuk - większe (16 px) i z obrysem, czytelne na jasnym drewnie.
+- **Drewniany ekwipunek:** liście i mech wystające z ramy nie zasłaniają
+  już napisu „Ekwipunek” ani przycisku zamknięcia (odstęp pod paskiem;
+  na małych ekranach, gdzie liście nie wystają, bez zmian).
+- **Nowy test `tools/sprawdz_komendy_opis.mjs`** (w `npm test`):
+  każda komenda i podkomenda, każda nazwa ustawienia z `/ustaw` i każda
+  scena testowa muszą być opisane w `docs/komendy.md`
+  i `docs/tryb-programisty.md`. Od razu znalazł brakujące opisy
+  `/swiatlo paleta | widok | zrodlo | chmury | reset`
+  i `daleki-teren-szczegoly` — dopisane.
+- Zrzuty ekwipunku i skrzyni w dokumentacji i wiki - po zmianach.
+
 ## 0.82.0 - Spadające liście, owoce i smugi wiatru
 
 Cząsteczki drzew i wiatru według pomysłu Kamila — PR #119 (po 0.81.0,

@@ -59,7 +59,19 @@ def free_cells(tiles, rows):
         for dy in range(tile.get('h', 1)):
             for dx in range(tile.get('w', 1)):
                 taken.add((tile['x'] + dx, tile['y'] + dy))
-    return taken, [(x, y) for y in range(rows) for x in range(16) if (x, y) not in taken]
+    # Obok desek i drewna ognisk dawnych gatunków nic nowego: ikony
+    # bloków w ekwipunku rysowane skośnie łapią brzeg sąsiedniego
+    # kafelka (tools/sprawdz_atlasy_webgl.mjs pilnuje ich pikseli).
+    near = set()
+    for name, tile in tiles.items():
+        if name.split('/')[0] in SPECIES or name.removeprefix('campfire_') in SPECIES:
+            continue
+        if not (name.endswith('planks') or name.endswith('planks.png') or name.endswith('deski.png') or name.startswith('campfire_')):
+            continue
+        for y in range(tile['y'] - 1, tile['y'] + tile.get('h', 1) + 1):
+            for x in range(tile['x'] - 1, tile['x'] + tile.get('w', 1) + 1):
+                near.add((x, y))
+    return taken | near, [(x, y) for y in range(rows) for x in range(16) if (x, y) not in taken and (x, y) not in near]
 
 
 def add_regions():

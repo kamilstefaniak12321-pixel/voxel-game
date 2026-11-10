@@ -136,7 +136,9 @@ try {
     else {
         const expected = JSON.parse(await readFile(referenceFile, 'utf8'));
         assert.deepEqual(report.extraTextures, expected.extraTextures, 'Skin and complete animated textures preserve every visible pixel');
-        assert.deepEqual(report.iconHashes, expected.iconHashes, 'Inventory model icons preserve every visible pixel');
+        // Ikony z 0.79.0 bez zmian; nowe gatunki (np. deski z 0.83.0) tylko dochodzą.
+        const kept = Object.fromEntries(Object.keys(expected.iconHashes).map(name => [name, report.iconHashes[name]]));
+        assert.deepEqual(kept, expected.iconHashes, 'Inventory model icons preserve every visible pixel');
         assert.ok(report.textureRequests.length <= 9, 'At most nine thematic image requests instead of individual tiles');
     }
     assert.deepEqual(await fingerprint(), source, 'Game source did not change during QA');

@@ -49,7 +49,7 @@ Współrzędne można podawać względem gracza: `~` (tu, gdzie stoję),
 | `/pozycja` | pozycja i chunk |
 | `/tryb [przygoda \| kreatywny \| programista]` | tryb gry (bez słowa - jaki jest): przygoda - bloki się kopie (trzymany LPM), zniszczone trafiają do ekwipunku, stawianie je zużywa; kreatywny - bloki bez końca i znikają od razu, wszystkie bloki pod E, latanie po dwukliku Spacji; programista - jak kreatywny + sceny testowe (`/scena`). Skróty: `/gm p`, `/gm k`, `/gm dev` |
 | `/scena lista` | sceny testowe (tryb programisty): nazwa, opis - [tryb programisty](tryb-programisty.md) |
-| `/scena <nazwa>` | stawia scenę (swiatlo, lampy, okno, dom, basen, rosliny, krzaki, drzewa, skaly) - na placu testowym zawsze w tym samym miejscu, w innym terenie przed graczem - i przenosi do niej gracza (zmienia świat) |
+| `/scena <nazwa>` | stawia scenę (swiatlo, paleta, materialy, lampy, okno, dom, basen, rosliny, krzaki, drzewa, skaly, wodospady, modele) - na placu testowym zawsze w tym samym miejscu, w innym terenie przed graczem - i przenosi do niej gracza (zmienia świat) |
 | `/scena czas <swit \| poludnie \| zachod \| noc \| stop \| start>` | pora dnia jednym słowem (ten sam dzień) i zatrzymanie/wznowienie czasu |
 | `/kopanie [blok \| lista]` | ile trwa kopanie w trybie przygody: blok, na który patrzysz, albo podany (`/kopanie granit` - także kilofem, łopatą albo siekierą, jeśli przyspiesza), `lista` - czasy wszystkich bloków. Skrót: `/kop` |
 | `/przepisy [rzecz \| lista \| moge]` | przepisy wytwarzania: `/przepisy kilof` - jak zrobić i do czego się przydaje (też dla surowców: `/przepisy granit`), `lista` - wszystkie, `moge` - te, na które masz składniki (ile razy). Też `/recipes` |
@@ -115,6 +115,7 @@ Współrzędne można podawać względem gracza: `~` (tu, gdzie stoję),
 | `/rzeka` | rzeka tam, gdzie jesteś: nurt (siła, kierunek), dokąd płynie woda (do morza albo jeziora, ile bloków, przez ile jezior); poza rzeką - najbliższa rzeka |
 | `/rzeka znajdz [tp]` | najbliższa rzeka; z `tp` - teleport nad brzeg, twarzą do wody |
 | `/rzeka jezioro [tp]` | najbliższe jezioro, do którego wpływa rzeka (wielkość, czy ma odpływ) |
+| `/rzeka wodospad [tp]` | najbliższy wodospad (do 1024 bloków; rzeka spada tam, gdzie teren opada o 5 bloków i więcej): wysokość, odległość, kierunek; `tp` - teleport nad sadzawkę. Na placu testowym: `/scena wodospady` |
 | `/rzeka nurt [0-3]` | jak mocno nurt niesie gracza (0 - wcale, 1 - zwykle); bez liczby - jak jest |
 | `/rzeka statystyki` | ile rzek, źródeł, jezior i obszarów policzono dotąd (`docs/rzeki.md`) |
 | `/dzwiek menu` | po kolei dźwięki menu i ekwipunku: przycisk, "Wróć", suwak, otwarcie ekwipunku, wzięcie, odłożenie, kosz, zamknięcie, błąd, zbieranie owoców |
@@ -147,6 +148,7 @@ Współrzędne można podawać względem gracza: `~` (tu, gdzie stoję),
 | `/ustaw domyslne` | przywraca domyślne ustawienia |
 | `/wydajnosc` | FPS, czasy klatki, rysowanie (wywołania, trójkąty), chunki, daleki teren, pamięć |
 | `/wydajnosc test [sekundy]` | test: kamera obraca się raz dookoła, wynik na czacie (domyślnie 10 s) |
+| `/logi [problem]` | raport błędów i wydajności (to samo co *Pauza → Diagnostyka i logi*); `problem` zaznacza bieżący moment (też **F8**). Też `/diagnostyka` |
 | `/osiagniecia` | osiągnięcia: co zdobyte, punkty, id (opis: `docs/osiagniecia.md`) |
 | `/osiagniecia ksiega` | otwiera księgę osiągnięć (to samo co klawisz L) |
 | `/osiagniecia pokaz <zwykle \| rzadkie \| bardzo-rzadkie \| legendarne \| id>` | samo powiadomienie o osiągnięciu (bez zdobywania) |
@@ -155,13 +157,16 @@ Współrzędne można podawać względem gracza: `~` (tu, gdzie stoję),
 Kolory: `czerwony`, `krwawy`, `pomaranczowy`, `zloty`, `zolty`, `zielony`,
 `turkusowy`, `niebieski`, `fioletowy`, `rozowy`, `bialy` albo `#rrggbb`.
 
-Nazwy ustawień w `/ustaw`: `ziemniak`, `zasieg`, `daleki-teren`, `pole`, `jasnosc`,
+Nazwy ustawień w `/ustaw`: `ziemniak`, `zasieg`, `daleki-teren`, `szczegoly-terenu`, `pole`, `jasnosc`,
 `rozdzielczosc`, `fps` (limit), `cienie` (cienie w kątach, 0-100), `cienie-slonca` (`wyl` / `zwykle` / `dokladne` / `dalekie`), `promienie` (promienie światła: `wl` / `wyl`),
 `swiatlo-odbite` (też `odbicia`: `wl` / `wyl`),
-`liscie` (ładne liście z prześwitami: `wl` / `wyl`), `dynamiczne-swiatlo`, `wczytywanie`, `czulosc`,
+`model-swiatla`, `swiatlo-materialow`, `atmosfera`, `przeswiecanie-lisci`, `sila-odbicia`, `nasycenie-odbicia`,
+`liscie` (ładne liście z prześwitami: `wl` / `wyl`), `trawa-kepiasta`, `dynamiczne-swiatlo`, `wczytywanie`, `czulosc`,
 `odwroc-mysz`, `motyw`, `interfejs`, `debug`, `licznik-fps`, `meteoryty`,
 `warstwa-skorki`, `reka` (ręka w widoku z oczu), `kolysanie` (kołysanie widoku przy chodzeniu),
 `zgiecia` (`gladkie` / `klocki`), `kamera` (odległość kamery z F5, 2-8),
+`modele-roslin`, `model-lisci`, `wiatr` (rośliny kołyszą się na wietrze), `animacje-roslin`,
+`spadajace-liscie` (liście i owoce spadające z drzew), `smugi-wiatru` (zakładka *Modele*),
 `glosnosc`, `glosnosc-bloki`, `glosnosc-otoczenie` (też `glosnosc-zjawiska`), `glosnosc-menu` (0-100).
 Wartości tak/nie: `wl` / `wyl`.
 

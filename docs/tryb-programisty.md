@@ -29,6 +29,8 @@ Trzeci tryb gry obok przygody i kreatywnego - do sprawdzania gry
 | Krzaki owocowe | `krzaki` | wszystkie krzaki we wszystkich etapach (`/krzaki ogrod`) |
 | Drzewa | `drzewa` | aleja wszystkich gatunków (`/drzewa aleja`) |
 | Warstwy skał | `skaly` | odkrywka do dna świata (`/demo skaly`) |
+| Wodospady | `wodospady` | trzy wodospady (3, 8 i 16 bloków) z sadzawkami: przyspieszanie spadającej wody, krople, piana i mgiełka (0.73.0) |
+| Modele roślin | `modele` | wszystkie rośliny w trzech wersjach (proste, półrealistyczne, szczegółowe) we wszystkich etapach |
 
   Na placu testowym każda scena ma swoje stałe miejsce (*Światło
   i materiały* - środek placu, *Paleta światła* - (64, -96), pozostałe - rząd na z = 100, co 80

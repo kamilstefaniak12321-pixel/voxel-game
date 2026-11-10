@@ -137,6 +137,8 @@ export const TEXTS = {
     plantWind: (on) => `Kołysanie na wietrze: ${on ? 'Wł.' : 'Wył.'}`,
     leafModel: (value) => `Model liści: ${value === 'cube' ? 'Bloki' : 'Z 8 części'}`,
     plantAnimations: (on) => `Animacje roślin: ${on ? 'Wł.' : 'Wył.'}`,
+    fallingLeaves: (on) => `Spadające liście i owoce: ${on ? 'Wł.' : 'Wył.'}`,
+    windStreaks: (on) => `Smugi wiatru: ${on ? 'Wł.' : 'Wył.'}`,
     modelNotes: {
         plantModels: (value) => ({
             simple: 'Proste: obrazek 16 × 16 na skrzyżowanych płaszczyznach - najszybsze, jak dawne kwiaty.',
@@ -147,7 +149,9 @@ export const TEXTS = {
             ? 'Bloki: liście drzew to zwykłe sześciany - najmniej do narysowania.'
             : 'Z 8 części: każdy blok liści to 8 mniejszych sześcianów z różnymi kawałkami tekstury, każdy lekko kołysze się na wietrze.',
         plantWind: 'Trawa, kwiaty, krzaki i części liści poruszają się na wietrze. Liście na wodzie dalej falują z wodą.',
-        plantAnimations: 'Sprężyste reakcje roślin: postawienie, wzrost, zbiór owoców i kwiatów, zniszczenie.'
+        plantAnimations: 'Sprężyste reakcje roślin: postawienie, wzrost, zbiór owoców i kwiatów, zniszczenie.',
+        fallingLeaves: 'Z koron drzew powoli spadają liście w ich kolorach, z drzew owocowych (np. jabłoni) czasem spadnie owoc. Tylko obraz - owoce do zbioru zostają.',
+        windStreaks: 'Delikatne, półprzezroczyste smugi płynące z wiatrem na otwartym powietrzu. W trybie ziemniaka wyłączone.'
     },
     graphicsPreset: (name) => `Jakość grafiki: ${{ low: 'Niska', medium: 'Średnia', high: 'Wysoka', ultra: 'Najwyższa' }[name] ?? 'Własna'}`,
     advancedShow: 'Zaawansowane ▾',

@@ -11,6 +11,23 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 0.82.0 - Spadające liście, owoce i smugi wiatru
+
+Cząsteczki drzew i wiatru według pomysłu Kamila — PR #119 (po 0.81.0,
+PR #118).
+
+- Z dolnych bloków koron powoli spadają płatki liści w kolorach gatunku.
+  Kołyszą się na boki, płyną z wiatrem i chwilę leżą na ziemi.
+- Z liści z owocami (jabłoń) czasem spada owoc w kolorach swojej ikonki
+  i zostaje na trawie. To tylko obraz: owoce do zbioru zostają.
+- Jeden łagodny wiatr dla świata (`AmbientWind.js`), kręcący się wokół
+  wschodu, z porywami. Na otwartym powietrzu płyną z nim delikatne,
+  półprzezroczyste smugi (nie w lesie, w jaskini ani pod wodą).
+- **Ustawienia → Modele:** *Spadające liście i owoce*, *Smugi wiatru*
+  (`/ustaw spadajace-liscie`, `/ustaw smugi-wiatru`). W trybie ziemniaka
+  liści jest mniej, a smug nie ma.
+- `CubeParticles`: płaskie płatki, kołysanie i niesienie przez wiatr.
+- Test `tools/sprawdz_czasteczki_drzew.mjs`. [Opis](docs/czasteczki-drzew.md).
 ## 0.81.0 - Skrzynia
 
 Skrzynia według pomysłu Kamila — PR #118. Ta sama zmiana co w PR #114:

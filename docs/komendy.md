@@ -88,6 +88,11 @@ Współrzędne można podawać względem gracza: `~` (tu, gdzie stoję),
 | `/swiatlo` | światło przy głowie i przy wskazanej ścianie (niebo 0-15, lampy 0-15 i ich kolor) |
 | `/swiatlo dynamiczne [wl \| wyl]` | włącza/wyłącza dynamiczne światło (to samo co w ustawieniach) |
 | `/swiatlo odbite [wl \| wyl]` | włącza/wyłącza światło odbite od oświetlonych ścian (to samo co w ustawieniach) |
+| `/swiatlo paleta <naturalna \| poprzednia>` | paleta światła: naturalna albo poprzednia (porównanie A/B) - [podstawa oświetlenia](podstawa-oswietlenia.md) |
+| `/swiatlo widok <full \| albedo \| normals \| sunVisibility \| skyAccess \| ao \| sun \| moon \| sky \| bounce \| local \| emission \| grayscale \| transmission \| specular>` | diagnostyka: pokazuje jedną składową obrazu (dane materiału albo jedno źródło światła); `full` albo `/swiatlo reset` - zwykły obraz |
+| `/swiatlo zrodlo <sun \| moon \| sky \| bounce \| local \| emission \| transmission \| specular> <wl \| wyl>` | diagnostyka: włącza / wyłącza jedno źródło światła |
+| `/swiatlo chmury <0-100>` | zachmurzenie w profilu oświetlenia (bez symulacji pogody) |
+| `/swiatlo reset` | pełny obraz i wszystkie źródła światła z powrotem |
 | `/swiatlo model <atmosfera \| klasyczne>` | model światła (to samo co *Ustawienia → Eksperymenty → Światło*) |
 | `/demo swiatlo` | buduje zamknięty pokój z kolorowymi lampami i stawia w nim gracza |
 | `/demo okno` | buduje ciemny pokój z oknami od strony słońca (snopy światła, plamy słońca na podłodze) i stawia w nim gracza; w nocy albo przy słońcu za wysoko przestawia zegar na popołudnie (zmienia świat) |
@@ -157,7 +162,7 @@ Współrzędne można podawać względem gracza: `~` (tu, gdzie stoję),
 Kolory: `czerwony`, `krwawy`, `pomaranczowy`, `zloty`, `zolty`, `zielony`,
 `turkusowy`, `niebieski`, `fioletowy`, `rozowy`, `bialy` albo `#rrggbb`.
 
-Nazwy ustawień w `/ustaw`: `ziemniak`, `zasieg`, `daleki-teren`, `szczegoly-terenu`, `pole`, `jasnosc`,
+Nazwy ustawień w `/ustaw`: `ziemniak`, `zasieg`, `daleki-teren`, `szczegoly-terenu` (też `daleki-teren-szczegoly`), `pole`, `jasnosc`,
 `rozdzielczosc`, `fps` (limit), `cienie` (cienie w kątach, 0-100), `cienie-slonca` (`wyl` / `zwykle` / `dokladne` / `dalekie`), `promienie` (promienie światła: `wl` / `wyl`),
 `swiatlo-odbite` (też `odbicia`: `wl` / `wyl`),
 `model-swiatla`, `swiatlo-materialow`, `atmosfera`, `przeswiecanie-lisci`, `sila-odbicia`, `nasycenie-odbicia`,
@@ -227,3 +232,9 @@ pogrupowana tematami). Nowa komenda to nowy obiekt na tej liście:
 
 Pomocnicze funkcje na górze pliku: `parseNumber`, `parseCoordinate`
 (obsługuje `~`), `parseColor`, `parseClock`, `blockArgument`.
+
+**Opis musi nadążać:** `node tools/sprawdz_komendy_opis.mjs` (w `npm test`,
+od 0.82.2) sprawdza, czy każda komenda i podkomenda z `usage`, każda
+nazwa ustawienia z `/ustaw` (`SETTING_WORDS`) i każda scena testowa są
+opisane w tym pliku (sceny także w `docs/tryb-programisty.md`). Nowa
+komenda bez wiersza w tabeli wyżej = czerwony test.

@@ -53,10 +53,11 @@ ustawienia na telefonie i co jeszcze nie działa: `docs/telefon.md`.
 
 ## Testy poprawności
 
-`npm test` uruchamia po kolei 90 sprawdzeń z `tools/sprawdz_*.mjs` -
+`npm test` uruchamia po kolei 91 sprawdzeń z `tools/sprawdz_*.mjs` -
 od przedmiotów pod kursorem, łupów i przepisów, przez numery bloków,
 zapis świata, atlasy tekstur, drzewa, rośliny, wodę, wodospady
-i rzeki, po ekwipunek, skrzynię, cząsteczki drzew i diagnostykę.
+i rzeki, po ekwipunek, skrzynię, cząsteczki drzew, diagnostykę
+i zgodność opisu komend z grą.
 Potrzebny jest Node.js 22.15 lub nowszy; testy nie wymagają instalowania
 zależności ani uruchamiania okna gry i nie zmieniają zapisanych światów.
 Testy w prawdziwej grze (Chrome, WebGL2: tratwa, wodospady, rozlewanie,

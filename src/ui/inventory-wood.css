@@ -90,6 +90,13 @@
 }
 
 
+/* Pasek nad ramą: odstęp na liście i mech, które wystają z ramy
+   w górę (border-image z odsunięciem) - bez niego zasłaniały napis
+   "Ekwipunek" i przycisk zamknięcia (0.82.2). */
+:root[data-inv-style="wood"] .inv-bar {
+    margin-bottom: 22px;
+}
+
 /* --- Napisy ----------------------------------------------- */
 
 :root[data-inv-style="wood"] .inv-title {
@@ -395,5 +402,9 @@
     }
     :root[data-inv-style="wood"] #inventory {
         padding: 8px;
+    }
+    /* Liście nie wystają z ramy - odstęp nad nią niepotrzebny. */
+    :root[data-inv-style="wood"] .inv-bar {
+        margin-bottom: 0;
     }
 }

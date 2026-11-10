@@ -1599,7 +1599,7 @@ const MATERIAL_WORDS = {
 
 // Ustawienia do wpisania w /ustaw (polska nazwa -> klucz w Settings).
 
-const SETTING_WORDS = {
+export const SETTING_WORDS = {
     ziemniak: 'potato',
     zasieg: 'viewDistance',
     'daleki-teren': 'farTerrain',

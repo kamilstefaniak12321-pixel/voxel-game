@@ -2,7 +2,7 @@
 
 > Ta strona jest generowana z kodu gry (`python tools/wiki.py`) - nie zmieniaj jej ręcznie, zmiany przepadną przy następnym generowaniu.
 
-Wersja gry **0.82.2** - 83 przedmiotów. Przedmiotu nie da się postawić jak bloku; owoce i nasiona posadzone na ziemi (PPM) wyrastają w krzak albo drzewo, narzędzia przyspieszają kopanie.
+Wersja gry **0.83.0** - 91 przedmiotów. Przedmiotu nie da się postawić jak bloku; owoce i nasiona posadzone na ziemi (PPM) wyrastają w krzak albo drzewo, narzędzia przyspieszają kopanie.
 
 
 ## Drewno
@@ -21,6 +21,11 @@ Wersja gry **0.82.2** - 83 przedmiotów. Przedmiotu nie da się postawić jak bl
 | <img src="ikony/acacia_firewood.png" width="32" height="32" alt=""> | **Opał — akacja** | `acacia_firewood` | **Przepis:** Opał — akacja x4 |
 | <img src="ikony/bald_cypress_firewood.png" width="32" height="32" alt=""> | **Opał — cypryśnik** | `bald_cypress_firewood` | **Przepis:** Opał — cypryśnik x4 |
 | <img src="ikony/cherry_firewood.png" width="32" height="32" alt=""> | **Opał — wiśnia** | `cherry_firewood` | **Przepis:** Opał — wiśnia x4 |
+| <img src="ikony/maple_firewood.png" width="32" height="32" alt=""> | **Opał — klon** | `maple_firewood` | **Przepis:** Opał — klon x4 |
+| <img src="ikony/mugo_firewood.png" width="32" height="32" alt=""> | **Opał — kosodrzewina** | `mugo_firewood` | **Przepis:** Opał — kosodrzewina x4 |
+| <img src="ikony/olive_firewood.png" width="32" height="32" alt=""> | **Opał — oliwka** | `olive_firewood` | **Przepis:** Opał — oliwka x4 |
+| <img src="ikony/rainbow_eucalyptus_firewood.png" width="32" height="32" alt=""> | **Opał — eukaliptus** | `rainbow_eucalyptus_firewood` | **Przepis:** Opał — eukaliptus x4 |
+| <img src="ikony/sequoia_firewood.png" width="32" height="32" alt=""> | **Opał — sekwoja** | `sequoia_firewood` | **Przepis:** Opał — sekwoja x4 |
 
 ## Rośliny
 
@@ -47,6 +52,9 @@ Wersja gry **0.82.2** - 83 przedmiotów. Przedmiotu nie da się postawić jak bl
 | <img src="ikony/jablon_jablko.png" width="32" height="32" alt=""> | **Jabłko** | `jablon_jablko` | **Posadzony (PPM na ziemi):** Sadzonka jabłoni<br>**Skąd:** czasem z bloku: Liście jabłoni (5%); czasem z bloku: Liście jabłoni z jabłkami (5%); zbiór (PPM): Liście jabłoni z jabłkami; czasem z bloku: Liście jabłoni (jabłka odrastają) (5%)<br>**Przydaje się do:** Czerwona lampa |
 | <img src="ikony/olcha_szyszki.png" width="32" height="32" alt=""> | **Szyszeczki olchy** | `olcha_szyszki` | **Posadzony (PPM na ziemi):** Sadzonka olchy<br>**Skąd:** czasem z bloku: Liście olchy (6%) |
 | <img src="ikony/wierzba_bazie.png" width="32" height="32" alt=""> | **Bazie** | `wierzba_bazie` | **Posadzony (PPM na ziemi):** Sadzonka wierzby<br>**Skąd:** czasem z bloku: Liście wierzby (6%)<br>**Przydaje się do:** Lampa |
+| <img src="ikony/mugo_cone.png" width="32" height="32" alt=""> | **Szyszka kosodrzewiny** | `mugo_cone` | **Posadzony (PPM na ziemi):** Sadzonka kosodrzewiny<br>**Skąd:** czasem z bloku: Igliwie kosodrzewiny (7%); czasem z bloku: Igliwie kosodrzewiny z młodymi pędami (7%) |
+| <img src="ikony/olive_oliwki.png" width="32" height="32" alt=""> | **Oliwki** | `olive_oliwki` | **Posadzony (PPM na ziemi):** Sadzonka oliwki<br>**Skąd:** czasem z bloku: Liście oliwki (5%); czasem z bloku: Liście oliwki z oliwkami (5%); zbiór (PPM): Liście oliwki z oliwkami; czasem z bloku: Liście oliwki (oliwki odrastają) (5%) |
+| <img src="ikony/sequoia_cone.png" width="32" height="32" alt=""> | **Szyszka sekwoi** | `sequoia_cone` | **Posadzony (PPM na ziemi):** Sadzonka sekwoi<br>**Skąd:** czasem z bloku: Igliwie sekwoi (6%); czasem z bloku: Igliwie sekwoi z szyszkami (6%); zbiór (PPM): Igliwie sekwoi z szyszkami; czasem z bloku: Igliwie sekwoi (szyszki odrastają) (6%) |
 
 ## Ozdoby
 
@@ -90,11 +98,11 @@ Wersja gry **0.82.2** - 83 przedmiotów. Przedmiotu nie da się postawić jak bl
 | <img src="ikony/dye_green.png" width="32" height="32" alt=""> | **Barwnik zielony** | `dye_green` | **Przepis:** Barwnik zielony<br>**Przydaje się do:** Pochodnia zielona, Barwnik limonkowy, Barwnik turkusowy, Barwnik czarny |
 | <img src="ikony/dye_red.png" width="32" height="32" alt=""> | **Barwnik czerwony** | `dye_red` | **Przepis:** Barwnik czerwony<br>**Przydaje się do:** Pochodnia czerwona, Barwnik pomarańczowy, Barwnik różowy, Barwnik czarny |
 | <img src="ikony/dye_black.png" width="32" height="32" alt=""> | **Barwnik czarny** | `dye_black` | **Przepis:** Barwnik czarny x3<br>**Przydaje się do:** Pochodnia czarna, Barwnik szary |
-| <img src="ikony/axe_granite.png" width="32" height="32" alt=""> | **Siekiera granitowa** | `axe_granite` | **Narzędzie:** kopie 3 razy szybciej: drewno<br>**Przepis:** Siekiera granitowa<br>**Przydaje się do:** Opał — dąb, Opał — brzoza, Opał — świerk, Opał — sosna, Opał — buk, Opał — lipa, Opał — olcha, Opał — wierzba, Opał — jabłoń, Opał — akacja, Opał — cypryśnik, Opał — wiśnia |
-| <img src="ikony/axe_limestone.png" width="32" height="32" alt=""> | **Siekiera wapienna** | `axe_limestone` | **Narzędzie:** kopie 3 razy szybciej: drewno<br>**Przepis:** Siekiera wapienna<br>**Przydaje się do:** Opał — dąb, Opał — brzoza, Opał — świerk, Opał — sosna, Opał — buk, Opał — lipa, Opał — olcha, Opał — wierzba, Opał — jabłoń, Opał — akacja, Opał — cypryśnik, Opał — wiśnia |
-| <img src="ikony/axe_sandstone.png" width="32" height="32" alt=""> | **Siekiera piaskowcowa** | `axe_sandstone` | **Narzędzie:** kopie 3 razy szybciej: drewno<br>**Przepis:** Siekiera piaskowcowa<br>**Przydaje się do:** Opał — dąb, Opał — brzoza, Opał — świerk, Opał — sosna, Opał — buk, Opał — lipa, Opał — olcha, Opał — wierzba, Opał — jabłoń, Opał — akacja, Opał — cypryśnik, Opał — wiśnia |
-| <img src="ikony/axe_slate.png" width="32" height="32" alt=""> | **Siekiera łupkowa** | `axe_slate` | **Narzędzie:** kopie 3 razy szybciej: drewno<br>**Przepis:** Siekiera łupkowa<br>**Przydaje się do:** Opał — dąb, Opał — brzoza, Opał — świerk, Opał — sosna, Opał — buk, Opał — lipa, Opał — olcha, Opał — wierzba, Opał — jabłoń, Opał — akacja, Opał — cypryśnik, Opał — wiśnia |
-| <img src="ikony/axe_basalt.png" width="32" height="32" alt=""> | **Siekiera bazaltowa** | `axe_basalt` | **Narzędzie:** kopie 3 razy szybciej: drewno<br>**Przepis:** Siekiera bazaltowa<br>**Przydaje się do:** Opał — dąb, Opał — brzoza, Opał — świerk, Opał — sosna, Opał — buk, Opał — lipa, Opał — olcha, Opał — wierzba, Opał — jabłoń, Opał — akacja, Opał — cypryśnik, Opał — wiśnia |
+| <img src="ikony/axe_granite.png" width="32" height="32" alt=""> | **Siekiera granitowa** | `axe_granite` | **Narzędzie:** kopie 3 razy szybciej: drewno<br>**Przepis:** Siekiera granitowa<br>**Przydaje się do:** Opał — dąb, Opał — brzoza, Opał — świerk, Opał — sosna, Opał — buk, Opał — lipa, Opał — olcha, Opał — wierzba, Opał — jabłoń, Opał — akacja, Opał — cypryśnik, Opał — wiśnia, Opał — klon, Opał — kosodrzewina, Opał — oliwka, Opał — eukaliptus, Opał — sekwoja |
+| <img src="ikony/axe_limestone.png" width="32" height="32" alt=""> | **Siekiera wapienna** | `axe_limestone` | **Narzędzie:** kopie 3 razy szybciej: drewno<br>**Przepis:** Siekiera wapienna<br>**Przydaje się do:** Opał — dąb, Opał — brzoza, Opał — świerk, Opał — sosna, Opał — buk, Opał — lipa, Opał — olcha, Opał — wierzba, Opał — jabłoń, Opał — akacja, Opał — cypryśnik, Opał — wiśnia, Opał — klon, Opał — kosodrzewina, Opał — oliwka, Opał — eukaliptus, Opał — sekwoja |
+| <img src="ikony/axe_sandstone.png" width="32" height="32" alt=""> | **Siekiera piaskowcowa** | `axe_sandstone` | **Narzędzie:** kopie 3 razy szybciej: drewno<br>**Przepis:** Siekiera piaskowcowa<br>**Przydaje się do:** Opał — dąb, Opał — brzoza, Opał — świerk, Opał — sosna, Opał — buk, Opał — lipa, Opał — olcha, Opał — wierzba, Opał — jabłoń, Opał — akacja, Opał — cypryśnik, Opał — wiśnia, Opał — klon, Opał — kosodrzewina, Opał — oliwka, Opał — eukaliptus, Opał — sekwoja |
+| <img src="ikony/axe_slate.png" width="32" height="32" alt=""> | **Siekiera łupkowa** | `axe_slate` | **Narzędzie:** kopie 3 razy szybciej: drewno<br>**Przepis:** Siekiera łupkowa<br>**Przydaje się do:** Opał — dąb, Opał — brzoza, Opał — świerk, Opał — sosna, Opał — buk, Opał — lipa, Opał — olcha, Opał — wierzba, Opał — jabłoń, Opał — akacja, Opał — cypryśnik, Opał — wiśnia, Opał — klon, Opał — kosodrzewina, Opał — oliwka, Opał — eukaliptus, Opał — sekwoja |
+| <img src="ikony/axe_basalt.png" width="32" height="32" alt=""> | **Siekiera bazaltowa** | `axe_basalt` | **Narzędzie:** kopie 3 razy szybciej: drewno<br>**Przepis:** Siekiera bazaltowa<br>**Przydaje się do:** Opał — dąb, Opał — brzoza, Opał — świerk, Opał — sosna, Opał — buk, Opał — lipa, Opał — olcha, Opał — wierzba, Opał — jabłoń, Opał — akacja, Opał — cypryśnik, Opał — wiśnia, Opał — klon, Opał — kosodrzewina, Opał — oliwka, Opał — eukaliptus, Opał — sekwoja |
 | <img src="ikony/pickaxe_granite.png" width="32" height="32" alt=""> | **Kilof granitowy** | `pickaxe_granite` | **Narzędzie:** kopie 3 razy szybciej: kamień<br>**Przepis:** Kilof granitowy |
 | <img src="ikony/pickaxe_limestone.png" width="32" height="32" alt=""> | **Kilof wapienny** | `pickaxe_limestone` | **Narzędzie:** kopie 3 razy szybciej: kamień<br>**Przepis:** Kilof wapienny |
 | <img src="ikony/pickaxe_sandstone.png" width="32" height="32" alt=""> | **Kilof piaskowcowy** | `pickaxe_sandstone` | **Narzędzie:** kopie 3 razy szybciej: kamień<br>**Przepis:** Kilof piaskowcowy |
@@ -108,7 +116,7 @@ Wersja gry **0.82.2** - 83 przedmiotów. Przedmiotu nie da się postawić jak bl
 | <img src="ikony/fire_starter.png" width="32" height="32" alt=""> | **Starter ognia** | `fire_starter` | **Przepis:** Starter ognia |
 | <img src="ikony/resin.png" width="32" height="32" alt=""> | **Żywica** | `resin` | **Skąd:** zbiór (PPM): Pień sosny z żywicą<br>**Przydaje się do:** Pochodnia, Lampa |
 | <img src="ikony/birch_bark.png" width="32" height="32" alt=""> | **Kora brzozowa** | `birch_bark` | **Skąd:** okorowanie siekierą: Pień brzozy<br>**Przydaje się do:** Lampa |
-| <img src="ikony/axe.png" width="32" height="32" alt=""> | **Siekiera** | `axe` | **Narzędzie:** kopie 3 razy szybciej: drewno<br>**Przepis:** Siekiera<br>**Przydaje się do:** Opał — dąb, Opał — brzoza, Opał — świerk, Opał — sosna, Opał — buk, Opał — lipa, Opał — olcha, Opał — wierzba, Opał — jabłoń, Opał — akacja, Opał — cypryśnik, Opał — wiśnia |
+| <img src="ikony/axe.png" width="32" height="32" alt=""> | **Siekiera** | `axe` | **Narzędzie:** kopie 3 razy szybciej: drewno<br>**Przepis:** Siekiera<br>**Przydaje się do:** Opał — dąb, Opał — brzoza, Opał — świerk, Opał — sosna, Opał — buk, Opał — lipa, Opał — olcha, Opał — wierzba, Opał — jabłoń, Opał — akacja, Opał — cypryśnik, Opał — wiśnia, Opał — klon, Opał — kosodrzewina, Opał — oliwka, Opał — eukaliptus, Opał — sekwoja |
 | <img src="ikony/pickaxe.png" width="32" height="32" alt=""> | **Kilof** | `pickaxe` | **Narzędzie:** kopie 3 razy szybciej: kamień<br>**Przepis:** Kilof |
 | <img src="ikony/shovel.png" width="32" height="32" alt=""> | **Łopata** | `shovel` | **Narzędzie:** kopie 3 razy szybciej: trawa, ziemia, piasek, żwir, błoto, snow<br>**Przepis:** Łopata |
 | <img src="ikony/stick.png" width="32" height="32" alt=""> | **Patyk** | `stick` | **Przepis:** Patyk x4<br>**Przydaje się do:** Pochodnia, Starter ognia, Siekiera, Kilof, Łopata |

@@ -292,6 +292,111 @@ export const BIOMES = {
             patches: [['reed', 0.6, 0.2], ['moss_carpet', 0.4, 0.15]],
             bushes: { species: ['blackberry'], density: 0.5 }
         }
+    },
+
+    // ---- 0.83.0: biomy nowych drzew (paczki Kamila) ----
+
+    maple_forest: {
+        name: 'Klonowy las jesienny',
+        about: 'klony w jesiennych kolorach, dywan opadłych liści, trochę buków i lip, leszczyna i jeżyny',
+        words: ['klonowy', 'klon', 'jesien', 'jesień'],
+        color: '#d0662c',
+        ground: [['forest_floor', 0.5]],
+        trees: { maple: 0.82, beech: 0.06, linden: 0.06, oak: 0.06 },
+        density: 1,
+        lone: 0.3,
+        plants: {
+            grass: [0.04, 0.25],
+            tall: [0.15, 0.4],
+            flowers: ['chamomile'],
+            flowerDensity: 0.15,
+            fern: 0.08,
+            herbs: [['nettle', 0.01]],
+            patches: [['moss_carpet', 0.4, 0.1]],
+            bushes: { species: ['hazel', 'blackberry'], density: 0.6 }
+        }
+    },
+
+    sequoia_forest: {
+        name: 'Las sekwojowy',
+        about: 'olbrzymie sekwoje nad świerkami i sosnami, mech, dużo paproci, borówki - chłodno i wilgotno',
+        words: ['sekwojowy', 'sekwoja', 'sekwoje'],
+        color: '#7a4a32',
+        ground: [['forest_floor', 0.6], ['moss', 0.25]],
+        trees: { sequoia: 0.72, spruce: 0.18, pine: 0.1 },
+        density: 0.85,
+        lone: 0.3,
+        plants: {
+            grass: [0.02, 0.1],
+            tall: [0.1, 0.3],
+            flowers: null,
+            fern: 0.3,
+            herbs: [],
+            patches: [['moss_carpet', 0.6, 0.25]],
+            bushes: { species: ['blueberry'], density: 0.8 }
+        }
+    },
+
+    eucalyptus_forest: {
+        name: 'Las eukaliptusowy',
+        about: 'bardzo wysokie eukaliptusy tęczowe z kolorową korą, gęsta wysoka trawa i paprocie - ciepło i wilgotno',
+        words: ['eukaliptusowy', 'eukaliptus', 'tropikalny'],
+        color: '#2f9a72',
+        ground: [['forest_floor', 0.35], ['moss', 0.15]],
+        trees: { rainbow_eucalyptus: 0.9, linden: 0.1 },
+        density: 1,
+        lone: 0.3,
+        plants: {
+            grass: [0.2, 0.55],
+            tall: [0.4, 0.8],
+            flowers: ['poppy'],
+            flowerDensity: 0.2,
+            fern: 0.35,
+            herbs: [['nettle', 0.02]],
+            patches: [['moss_carpet', 0.5, 0.15]],
+            bushes: { species: ['chili', 'blackberry'], density: 0.9 }
+        }
+    },
+
+    olive_grove: {
+        name: 'Gaj oliwny',
+        about: 'rozrzucone, sękate oliwki na suchej, ciepłej ziemi, trochę sosen i akacji, maki, rumianek, lawenda, papryczki',
+        words: ['gaj', 'oliwny', 'oliwki'],
+        color: '#b4b06a',
+        ground: [['coarse_dirt', 0.3]],
+        trees: { olive: 0.82, pine: 0.1, acacia: 0.08 },
+        density: 0.22,
+        lone: 0.07,
+        plants: {
+            grass: [0.08, 0.35],
+            tall: [0.05, 0.25],
+            flowers: ['poppy', 'chamomile'],
+            flowerDensity: 0.5,
+            fern: 0,
+            herbs: [['plantain', 0.01], ['clover', 0.008]],
+            bushes: { species: ['chili', 'strawberry'], density: 0.5 }
+        }
+    },
+
+    mugo_scrub: {
+        name: 'Kosodrzewina',
+        about: 'gęste łany niskiej kosodrzewiny tuż nad granicą lasu, krokusy, borówki, mech',
+        words: ['kosodrzewina', 'kosowka', 'kosówka', 'kosowa'],
+        color: '#46704a',
+        ground: [['coarse_dirt', 0.12], ['moss', 0.18]],
+        trees: { mugo: 0.94, spruce: 0.06 },
+        density: 1,
+        lone: 0.3,
+        plants: {
+            grass: [0.15, 0.45],
+            tall: [0, 0.12],
+            flowers: ['crocus'],
+            flowerDensity: 0.4,
+            fern: 0,
+            herbs: [['clover', 0.01]],
+            patches: [['crocus', 0.4, 0.15]],
+            bushes: { species: ['blueberry'], density: 1 }
+        }
     }
 
 };
@@ -370,7 +475,14 @@ export function biomeByWord(word) {
 
 // Kolumny biomu w kolejności rodzajów lasu (scores).
 
-const FOREST_TYPES = ['spruce', 'pine', 'beech', 'birch', 'deciduous'];
+const FOREST_TYPES = ['spruce', 'pine', 'beech', 'birch', 'deciduous',
+    'maple_forest', 'sequoia_forest', 'eucalyptus_forest', 'olive_grove'];
+
+// Pole lasów, od którego w lesie (nie na łące) liczy się gęstość lasów
+// w Forests.js - kosodrzewina i gaj oliwny tylko powyżej (z zapasem),
+// żeby szybkie odrzucanie kratek bez drzew działało jak dotąd.
+
+const GROVE_FOREST = Math.min(BIOME_SHAPE.forestFrom - BIOME_SHAPE.forestHumid, BIOME_SHAPE.alpineForest) - 0.12;
 
 
 function clamp(value, min, max) {
@@ -400,9 +512,12 @@ const CACHE_BITS = 14;
 const CACHE_SIZE = 1 << CACHE_BITS;
 
 // Wartości w węźle: temperatura (bez wysokości), wilgotność, pole lasów,
-// plamy mokradeł, falowanie granicy śniegu, 5 ocen rodzajów lasu.
+// plamy mokradeł, falowanie granicy śniegu, oceny rodzajów lasu
+// (FOREST_TYPES), plamy kosodrzewiny.
 
-const VALUES = 10;
+const MUGO_FIELD = 5 + FOREST_TYPES.length;
+
+const VALUES = MUGO_FIELD + 1;
 
 // ------------------------------------------------------------
 
@@ -419,7 +534,8 @@ export class Biomes {
             edgeZ: noise(41),
             types: noise(42),
             wet: noise(43),
-            snow: noise(44)
+            snow: noise(44),
+            mugo: noise(45)
         };
 
         // Wynik ostatniego classify (bez tworzenia obiektów).
@@ -464,6 +580,8 @@ export class Biomes {
         for (let i = 0; i < FOREST_TYPES.length; i++) {
             out[5 + i] = this.field(this.noise.types, cx + i * 2711, cz - i * 1291, B.forestScale, 1);
         }
+
+        out[MUGO_FIELD] = this.field(this.noise.mugo, cx, cz, B.mugoScale, 2);
 
         return out;
 
@@ -683,6 +801,17 @@ export class Biomes {
         const mountain = above >= B.mountainAbove || sample.mountains > B.mountainField;
 
         if (mountain && (above >= treeLine || forest < B.alpineForest)) {
+
+            // Kosodrzewina: pas tuż nad granicą lasu (szerszy, gdy
+            // wilgotno), w plamach - między nimi hala.
+
+            const band = B.mugoBand[0] + (B.mugoBand[1] - B.mugoBand[0]) * smoothstep(-0.4, 0.5, humidity);
+
+            if (above >= treeLine && above < treeLine + band && forest > GROVE_FOREST && fields[MUGO_FIELD] > B.mugoPatch) {
+                info.biome = 'mugo_scrub';
+                return info.biome;
+            }
+
             info.biome = 'alpine';
             return info.biome;
         }
@@ -716,7 +845,12 @@ export class Biomes {
         // Las albo łąka: pole lasów (w wilgotnym klimacie las łatwiej).
 
         if (forest < B.forestFrom - B.forestHumid * humidity) {
-            info.biome = 'meadow';
+
+            // Na ciepłych, suchych łąkach - gaj oliwny (rzadkie drzewa).
+
+            info.biome = !mountain && forest > GROVE_FOREST && this.oliveScore(temperature, humidity, above) + B.forestMix * fields[5 + 8] > B.oliveMeadow
+                ? 'olive_grove' : 'meadow';
+
             return info.biome;
         }
 
@@ -742,6 +876,16 @@ export class Biomes {
         s[3] = 0.22 + 0.5 * smoothstep(0.05, 0.5, h) + 0.4 * smoothstep(8, 2, above) - 0.45 * smoothstep(0, 0.4, t);
         s[4] = 0.45 + 0.5 * smoothstep(-0.3, 0.3, t) + 0.2 * smoothstep(12, 4, above) - 0.3 * smoothstep(0.2, 0.7, h);
 
+        // 0.83.0 - każdy tylko w swoim klimacie (poza nim przegrywa):
+        // klon - umiarkowanie i średnio wilgotno, sekwoja - chłodno,
+        // bardzo wilgotno i nisko, eukaliptus - ciepło i wilgotno,
+        // oliwka - ciepło i sucho.
+        const F = BIOME_SHAPE.newForests;
+        s[5] = F.maple[0] + F.maple[1] * smoothstep(-0.7, -0.4, t) * (1 - smoothstep(0, 0.3, t)) * smoothstep(-0.25, 0.1, h);
+        s[6] = F.sequoia[0] + F.sequoia[1] * smoothstep(0.15, 0.45, h) * smoothstep(-0.95, -0.6, t) * (1 - smoothstep(-0.1, 0.2, t)) * smoothstep(26, 14, above);
+        s[7] = F.eucalyptus[0] + F.eucalyptus[1] * smoothstep(0.05, 0.35, t) * smoothstep(-0.05, 0.25, h) * smoothstep(22, 10, above);
+        s[8] = this.oliveScore(t, h, above);
+
         let best = 0;
 
         for (let i = 0; i < s.length; i++) {
@@ -755,6 +899,17 @@ export class Biomes {
         }
 
         return FOREST_TYPES[best];
+
+    }
+
+
+    // Ocena gaju oliwnego (ciepło i sucho, nisko).
+
+    oliveScore(t, h, above) {
+
+        const F = BIOME_SHAPE.newForests;
+
+        return F.olive[0] + F.olive[1] * smoothstep(0.1, 0.4, t) * smoothstep(-0.05, -0.3, h) * smoothstep(30, 16, above);
 
     }
 

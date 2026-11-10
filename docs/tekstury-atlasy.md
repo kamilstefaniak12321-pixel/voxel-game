@@ -46,7 +46,7 @@ PNG wystarczy ponownie uruchomić grę. Po zmianie układu manifestu wykonaj
 
 ## Drzewa
 
-Osobny mechanizm paczek drzew został usunięty. Wszystkie 12 gatunków
+Osobny mechanizm paczek drzew został usunięty. Wszystkie gatunki
 opisuje jeden katalog `src/blocks/treeCatalog.js`: nazwy, tekstury,
 numery bloków, wzrost, owoce, występowanie i szablony sylwetek.
 Modele proceduralne korzystają z `TreeShapes.js`. Drzewa, komendy lasów

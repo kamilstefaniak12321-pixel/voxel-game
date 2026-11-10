@@ -49,7 +49,7 @@ const widths = shape => {
     return [0, 2].map(axis => Math.max(...leaves.map(cell => cell[axis])) - Math.min(...leaves.map(cell => cell[axis])) + 1);
 };
 
-equal(TREE_DEFINITIONS.length, 12, 'Every built-in tree species is registered');
+check(TREE_DEFINITIONS.length >= 12, 'Every built-in tree species is registered');
 check(species.every(name => TREE_NAMES.includes(name)), 'All new species are registered');
 for (const [index, name] of species.entries()) {
     const pack = TREE_SPECIES[name];

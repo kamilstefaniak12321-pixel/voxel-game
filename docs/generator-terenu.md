@@ -69,7 +69,7 @@ na RTX 3050 Laptop na zasilaczu oraz spójny daleki widok.
   Opis: `docs/drzewa.md`, liczby: `FORESTS` (`TerrainShape.js`), kod:
   `src/world/trees/`. `columnBlocks` (przekrój, `/skaly`) drzew nie
   zawiera - to sama kolumna terenu.
-- **Biomy** (zrobione - etap 4) - 11 biomów lądowych (łąka, las
+- **Biomy** (zrobione - etap 4) - 11 biomów lądowych, od 0.83.0 - 16 (łąka, las
   liściasty, buczyna, brzezina, bór sosnowy, świerczyna, hala, skaliste
   góry, ośnieżone szczyty, mokradła, plaża i wydmy) z wysokości,
   klimatu, wody w pobliżu i pola lasów; każdy z własnym wierzchem

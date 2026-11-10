@@ -95,7 +95,33 @@ function matureTreeSilhouette(tree, spacing, definition, { height, radius, trunk
         tree.x + Math.round(x1), tree.y + Math.round(y1), tree.z + Math.round(z1),
         material, surfaceKind, tree.x, tree.z, reach, shade);
     const top = kind === 'bald_cypress' ? height - 1 : crownBase + 1;
+    if (kind === 'sequoia') {
+        // Gruby pień środkiem (jak w TreeShapes), korona od połowy wysokości:
+        // najszersza w dolnej jednej trzeciej, ku górze coraz węższa.
+        const low = -Math.floor((trunkWidth - 1) / 2), centre = low + trunkWidth / 2;
+        append(low, 0, low, low + trunkWidth, height - 2, low + trunkWidth, log, kindIndex('rock'));
+        const layers = spacing <= 2 ? 5 : spacing <= 4 ? 3 : 2;
+        const tall = height - crownBase;
+        for (let i = 0; i < layers; i++) {
+            const t = (i + .5) / layers;
+            const width = radius * (t < .3 ? .75 + t : 1.05 - (t - .3) * .95);
+            const r = trunkWidth / 2 + width * 1.1;
+            append(centre - r, crownBase + i * tall / layers, centre - r, centre + r, crownBase + (i + 1) * tall / layers, centre + r, leaf, leafKind, .92 + t * .06);
+        }
+        return result;
+    }
     append(0, 0, 0, trunkWidth, top, trunkWidth, log, kindIndex('rock'));
+    if (kind === 'rainbow_eucalyptus') {
+        // Goły pień i parasol z chmur liści tylko na samej górze.
+        append(0, 0, 0, trunkWidth, height - 2, trunkWidth, log, kindIndex('rock'));
+        const bottom = crownBase + 3, r = radius + .5;
+        if (spacing > 4) append(-r, bottom, -r, r + 1, height, r + 1, leaf, leafKind);
+        else {
+            append(-r * .7, bottom, -r * .7, r * .7 + 1, height, r * .7 + 1, leaf, leafKind);
+            append(-r, bottom + 1, -r, r + 1, height - 2, r + 1, leaf, leafKind, .93);
+        }
+        return result;
+    }
     if (kind === 'bald_cypress') {
         append(-1, 0, -1, trunkWidth + 1, Math.max(2, Math.round(height * .1)) + 1, trunkWidth + 1, log, kindIndex('rock'));
         const layers = spacing <= 2 ? 6 : spacing <= 4 ? 4 : 2;

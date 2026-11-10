@@ -1,4 +1,4 @@
-// Built-in tree catalog. All twelve species share this one definition file.
+// Built-in tree catalog. All seventeen species share this one definition file.
 // Numeric IDs, texture keys, template cell order and climate order are stable:
 // existing worlds and user texture overrides depend on them.
 // One block is approximately one metre; mature silhouettes live in TreeShapes.
@@ -8,7 +8,13 @@ export const ORIGINAL_TREE_LIMITS = Object.freeze({ reach: 7, maxHeight: 28 });
 export const SPECIES_SHAPE_LIMITS = Object.freeze({
     acacia: Object.freeze({ reach: 9, maxHeight: 16 }),
     bald_cypress: Object.freeze({ reach: 7, maxHeight: 40 }),
-    cherry: Object.freeze({ reach: 6, maxHeight: 14 })
+    cherry: Object.freeze({ reach: 6, maxHeight: 14 }),
+    // 0.83.0 (paczki Kamila): rozmiary dojrzałych drzew w skali 1 blok = 1 m.
+    maple: Object.freeze({ reach: 9, maxHeight: 23 }),
+    mugo: Object.freeze({ reach: 6, maxHeight: 6 }),
+    olive: Object.freeze({ reach: 8, maxHeight: 10 }),
+    rainbow_eucalyptus: Object.freeze({ reach: 12, maxHeight: 51 }),
+    sequoia: Object.freeze({ reach: 8, maxHeight: 73 })
 });
 export const TREE_SLOT = { log: 0, stripped: 1, planks: 2, leaves: 3, sapling: 4, litter: 5, variants: 6 };
 
@@ -1720,7 +1726,7 @@ export const TREE_CATALOG = {
             "temperature": [0.28, 3],
             "humidity": [-3, -0.08],
             "height": [1, 38],
-            "biomes": new Set(["meadow"])
+            "biomes": new Set(["meadow", "olive_grove"])
         },
         "similar": "pine"
     },
@@ -1823,6 +1829,269 @@ export const TREE_CATALOG = {
             "biomes": new Set(["meadow", "deciduous"])
         },
         "similar": "linden"
+    },
+    "maple": {
+        "id": "maple",
+        "firstId": 1030,
+        "name": "Sugar Maple",
+        "species": ["Klon cukrowy", "klonu"],
+        "short": "klon",
+        "labels": ["Pień klonu", "Okorowany pień klonu", "Deski klonowe", "Liście klonu", "Sadzonka klonu"],
+        "loot": [
+            ["maple_sapling", 0.05]
+        ],
+        "growthSeconds": 300,
+        "textures": {
+            "logTop": "maple/log_top.png",
+            "logSide": "maple/log_side.png",
+            "strippedTop": "maple/stripped_top.png",
+            "strippedSide": "maple/stripped_side.png",
+            "planks": "maple/planks.png",
+            "leaves": "maple/leaves.png",
+            "sapling": "maple/sapling.png",
+            "leafLitter": "maple/leaf_litter.png"
+        },
+        "litterLabel": "Opadłe liście klonu",
+        "variants": [
+            {
+                "key": "zlote",
+                "label": "Złote liście klonu",
+                "afterLabel": null,
+                "texture": "maple/leaves_variant.png",
+                "char": null,
+                "share": 0.3,
+                "harvest": null,
+                "regrow": null
+            }
+        ],
+        "items": {},
+        "shape": {
+            "kind": "maple",
+            "litter": 0.14,
+            "templates": [],
+            "height": [14, 22],
+            "radius": [5, 8],
+            "density": 0.84
+        },
+        "climate": {
+            "chance": 0.07,
+            "temperature": [-0.55, 0.4],
+            "humidity": [-0.3, 3],
+            "height": [1, 30],
+            "biomes": new Set(["deciduous", "beech"])
+        },
+        "similar": "linden"
+    },
+    "mugo": {
+        "id": "mugo",
+        "firstId": 1040,
+        "name": "Mountain Pine",
+        "species": ["Sosna kosodrzewina", "kosodrzewiny"],
+        "short": "kosodrzewina",
+        "labels": ["Pień kosodrzewiny", "Okorowany pień kosodrzewiny", "Deski z kosodrzewiny", "Igliwie kosodrzewiny", "Sadzonka kosodrzewiny"],
+        "loot": [
+            ["mugo_sapling", 0.04],
+            ["mugo_cone", 0.07]
+        ],
+        "growthSeconds": 300,
+        "textures": {
+            "logTop": "mugo/log_top.png",
+            "logSide": "mugo/log_side.png",
+            "strippedTop": "mugo/stripped_top.png",
+            "strippedSide": "mugo/stripped_side.png",
+            "planks": "mugo/planks.png",
+            "leaves": "mugo/leaves.png",
+            "sapling": "mugo/sapling.png"
+        },
+        "variants": [
+            {
+                "key": "mlode",
+                "label": "Igliwie kosodrzewiny z młodymi pędami",
+                "afterLabel": null,
+                "texture": "mugo/leaves_variant.png",
+                "char": null,
+                "share": 0.18,
+                "harvest": null,
+                "regrow": null
+            }
+        ],
+        "items": {
+            "szyszka": {
+                "type": "mugo_cone",
+                "label": "Szyszka kosodrzewiny",
+                "texture": "mugo/cone.png",
+                "plants": true
+            }
+        },
+        "shape": {
+            "kind": "mugo",
+            "litter": 0,
+            "templates": [],
+            "height": [3, 5],
+            "radius": [3, 5],
+            "density": 0.86
+        },
+        "climate": {
+            "chance": 0.5,
+            "temperature": [-3, 3],
+            "humidity": [-3, 3],
+            "height": [10, 80],
+            "biomes": new Set(["alpine"])
+        },
+        "similar": "pine"
+    },
+    "olive": {
+        "id": "olive",
+        "firstId": 1050,
+        "name": "European Olive",
+        "species": ["Oliwka europejska", "oliwki"],
+        "short": "oliwka",
+        "labels": ["Pień oliwki", "Okorowany pień oliwki", "Deski oliwkowe", "Liście oliwki", "Sadzonka oliwki"],
+        "loot": [
+            ["olive_sapling", 0.05],
+            ["olive_oliwki", 0.05]
+        ],
+        "growthSeconds": 300,
+        "textures": {
+            "logTop": "olive/log_top.png",
+            "logSide": "olive/log_side.png",
+            "strippedTop": "olive/stripped_top.png",
+            "strippedSide": "olive/stripped_side.png",
+            "planks": "olive/planks.png",
+            "leaves": "olive/leaves.png",
+            "sapling": "olive/sapling.png"
+        },
+        "variants": [
+            {
+                "key": "oliwki",
+                "label": "Liście oliwki z oliwkami",
+                "afterLabel": "Liście oliwki (oliwki odrastają)",
+                "texture": "olive/leaves_variant.png",
+                "char": null,
+                "share": 0.1,
+                "harvest": {
+                    "item": "olive_oliwki",
+                    "count": [1, 3]
+                },
+                "regrow": 900
+            }
+        ],
+        "items": {
+            "oliwki": {
+                "type": "olive_oliwki",
+                "label": "Oliwki",
+                "texture": "olive/olives.png",
+                "plants": true
+            }
+        },
+        "shape": {
+            "kind": "olive",
+            "litter": 0,
+            "templates": [],
+            "height": [5, 8],
+            "radius": [4, 6],
+            "density": 0.8
+        },
+        "climate": {
+            "chance": 0.1,
+            "temperature": [0.25, 3],
+            "humidity": [-3, -0.1],
+            "height": [1, 30],
+            "biomes": new Set(["meadow"])
+        },
+        "similar": "oak"
+    },
+    "rainbow_eucalyptus": {
+        "id": "rainbow_eucalyptus",
+        "firstId": 1060,
+        "name": "Rainbow Eucalyptus",
+        "species": ["Eukaliptus tęczowy", "eukaliptusa"],
+        "short": "eukaliptus",
+        "labels": ["Pień eukaliptusa", "Okorowany pień eukaliptusa", "Deski eukaliptusowe", "Liście eukaliptusa", "Sadzonka eukaliptusa"],
+        "loot": [
+            ["rainbow_eucalyptus_sapling", 0.05]
+        ],
+        "growthSeconds": 300,
+        "textures": {
+            "logTop": "rainbow_eucalyptus/log_top.png",
+            "logSide": "rainbow_eucalyptus/log_side.png",
+            "strippedTop": "rainbow_eucalyptus/stripped_top.png",
+            "strippedSide": "rainbow_eucalyptus/stripped_side.png",
+            "planks": "rainbow_eucalyptus/planks.png",
+            "leaves": "rainbow_eucalyptus/leaves.png",
+            "sapling": "rainbow_eucalyptus/sapling.png"
+        },
+        "variants": [],
+        "items": {},
+        "shape": {
+            "kind": "rainbow_eucalyptus",
+            "spacing": 2,
+            "under": null,
+            "litter": 0,
+            "templates": [],
+            "height": [32, 50],
+            "radius": [7.5, 10.5],
+            "density": 0.8
+        },
+        "climate": null,
+        "similar": "linden"
+    },
+    "sequoia": {
+        "id": "sequoia",
+        "firstId": 1070,
+        "name": "Giant Sequoia",
+        "species": ["Sekwoja olbrzymia", "sekwoi"],
+        "short": "sekwoja",
+        "labels": ["Pień sekwoi", "Okorowany pień sekwoi", "Deski sekwojowe", "Igliwie sekwoi", "Sadzonka sekwoi"],
+        "loot": [
+            ["sequoia_sapling", 0.04],
+            ["sequoia_cone", 0.06]
+        ],
+        "growthSeconds": 300,
+        "textures": {
+            "logTop": "sequoia/log_top.png",
+            "logSide": "sequoia/log_side.png",
+            "strippedTop": "sequoia/stripped_top.png",
+            "strippedSide": "sequoia/stripped_side.png",
+            "planks": "sequoia/planks.png",
+            "leaves": "sequoia/leaves.png",
+            "sapling": "sequoia/sapling.png"
+        },
+        "variants": [
+            {
+                "key": "szyszki",
+                "label": "Igliwie sekwoi z szyszkami",
+                "afterLabel": "Igliwie sekwoi (szyszki odrastają)",
+                "texture": "sequoia/leaves_variant.png",
+                "char": null,
+                "share": 0.08,
+                "harvest": {
+                    "item": "sequoia_cone",
+                    "count": [1, 2]
+                },
+                "regrow": 900
+            }
+        ],
+        "items": {
+            "szyszka": {
+                "type": "sequoia_cone",
+                "label": "Szyszka sekwoi",
+                "texture": "sequoia/cone.png",
+                "plants": true
+            }
+        },
+        "shape": {
+            "kind": "sequoia",
+            "spacing": 3,
+            "under": "spruce",
+            "litter": 0,
+            "templates": [],
+            "height": [46, 72],
+            "radius": [3.5, 5.2],
+            "density": 0.82
+        },
+        "climate": null,
+        "similar": "spruce"
     }
 };
 
@@ -1885,5 +2154,48 @@ export const TREE_TEXTURE_NAMES = [
     "cherry/planks.png",
     "cherry/leaves.png",
     "cherry/sapling.png",
-    "cherry/leaves_variant.png"
+    "cherry/leaves_variant.png",
+    "maple/log_side.png",
+    "maple/log_top.png",
+    "maple/stripped_side.png",
+    "maple/stripped_top.png",
+    "maple/planks.png",
+    "maple/leaves.png",
+    "maple/sapling.png",
+    "maple/leaves_variant.png",
+    "maple/leaf_litter.png",
+    "mugo/log_side.png",
+    "mugo/log_top.png",
+    "mugo/stripped_side.png",
+    "mugo/stripped_top.png",
+    "mugo/planks.png",
+    "mugo/leaves.png",
+    "mugo/sapling.png",
+    "mugo/leaves_variant.png",
+    "mugo/cone.png",
+    "olive/log_side.png",
+    "olive/log_top.png",
+    "olive/stripped_side.png",
+    "olive/stripped_top.png",
+    "olive/planks.png",
+    "olive/leaves.png",
+    "olive/sapling.png",
+    "olive/leaves_variant.png",
+    "olive/olives.png",
+    "rainbow_eucalyptus/log_side.png",
+    "rainbow_eucalyptus/log_top.png",
+    "rainbow_eucalyptus/stripped_side.png",
+    "rainbow_eucalyptus/stripped_top.png",
+    "rainbow_eucalyptus/planks.png",
+    "rainbow_eucalyptus/leaves.png",
+    "rainbow_eucalyptus/sapling.png",
+    "sequoia/log_side.png",
+    "sequoia/log_top.png",
+    "sequoia/stripped_side.png",
+    "sequoia/stripped_top.png",
+    "sequoia/planks.png",
+    "sequoia/leaves.png",
+    "sequoia/sapling.png",
+    "sequoia/leaves_variant.png",
+    "sequoia/cone.png"
 ];

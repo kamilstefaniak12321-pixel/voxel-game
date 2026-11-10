@@ -318,7 +318,15 @@ export const BIOME_SHAPE = {
     forestFrom: 0.02,
     forestHumid: 0.12,
     forestMix: 0.35,
-    forestScale: 420
+    forestScale: 420,
+    // 0.83.0: kosodrzewina - pas nad granicą lasu (bloki: sucho..wilgotno),
+    // plamy (próg szumu, skala), nowe lasy - [podstawa, siła] oceny
+    // (Biomes.forestType), gaj oliwny na łące od oceny oliveMeadow.
+    mugoBand: [3, 7],
+    mugoPatch: -0.25,
+    mugoScale: 70,
+    newForests: { maple: [0.05, 0.85], sequoia: [-0.35, 1.4], eucalyptus: [-0.05, 1.4], olive: [-0.1, 1.4] },
+    oliveMeadow: 0.55
 };
 
 

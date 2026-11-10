@@ -55,6 +55,9 @@ jobs:
       - name: Losowe lasy, warianty i porównanie drzew w grze
         timeout-minutes: 3
         run: node tools/sprawdz_pokaz_drzew_webgl.mjs
+      - name: Klon, kosodrzewina, oliwka, eukaliptus i sekwoja oraz ich biomy
+        timeout-minutes: 8
+        run: node tools/sprawdz_drzewa_083_webgl.mjs
       - name: Tratwa, sterowanie i spływ wodospadem w prawdziwej grze
         timeout-minutes: 3
         run: node tools/sprawdz_tratwe_webgl.mjs
@@ -99,6 +102,7 @@ jobs:
           path: |
             test-results/texture-atlases/
             test-results/new-trees/
+            test-results/trees-083/
             test-results/tree-showcase/
             test-results/rafts/
             test-results/river-swimming/

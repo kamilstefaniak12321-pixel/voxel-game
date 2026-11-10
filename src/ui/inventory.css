@@ -749,3 +749,19 @@
     #inventory .inv-window > .inv-footer { display: none; }
     #inventory .inv-creative-scroll { max-height: calc(100dvh - 190px); }
 }
+
+
+/* Otwarta skrzynia w strefie rzemieślniczej (ChestView.js). */
+#inventory .inv-chest {
+    padding: 0;
+    overflow: hidden;
+}
+
+.inv-chest-view {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    image-rendering: pixelated;
+    cursor: pointer;
+}

@@ -5,6 +5,8 @@ a w strefie rzemieślniczej (prawe górne okno) widać samą skrzynię -
 z otwierającym się wiekiem i przedmiotami leżącymi w środku. Gracz ma
 wrażenie, że naprawdę wkłada rzeczy do skrzyni.
 
+![Otwarta skrzynia w strefie rzemieślniczej ekwipunku](skrzynia.png)
+
 ## W grze
 
 - **Przepis:** 4 deski (dowolne drzewo, siatka 2 × 2) → skrzynia.

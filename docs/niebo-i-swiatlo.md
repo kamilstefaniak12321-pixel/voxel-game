@@ -364,7 +364,7 @@ strony słońca), `/swiatlo` (ile światła odbitego jest przy głowie),
   `MOON_ORBIT_TILT`). Faza nie jest „wpisana” - wynika z tego, gdzie
   księżyc jest względem słońca, a tarcza jest oświetlana z kierunku
   słońca. Inny cykl albo inna orbita = fazy dalej się zgadzają.
-- Wygląd: `layers/Moon.js` i `assets/textures/sky/moon.png`.
+- Wygląd: `layers/Moon.js` i region `assets/textures/sky/moon.png` w arkuszu `assets/textures/niebo.png`.
 - Pomysły: zaćmienie księżyca (pełnia w cieniu Ziemi - czerwona tarcza;
   działałoby jak zaćmienie słońca, tylko w pełni), krwawy księżyc,
   faza wpływająca na potwory.
@@ -473,7 +473,7 @@ w scenie świata; kolor z `SkyState` (różowe o zachodzie, szare nocą).
 | kolory nieba i światła o różnych porach | `src/sky/SkyColors.js` |
 | wygląd gradientu, łuny zachodu, poświaty słońca | `src/sky/skyShader.js` |
 | rozmiar i wygląd słońca / księżyca | `src/sky/layers/Sun.js`, `Moon.js` |
-| teksturę księżyca | `assets/textures/sky/moon.png` |
+| teksturę księżyca | region `assets/textures/sky/moon.png` w `assets/textures/niebo.png` (`tools/atlasy.py`) |
 | jak światło słabnie z odległością, domyślny kolor lamp, cienie w kątach | `src/config.js` (OŚWIETLENIE) |
 | kolor i siłę światła konkretnego bloku | `src/blocks/BlockRegistry.js` (`light`, `lightColor`) |
 | jak mocno niebo i księżyc barwią światło | `src/sky/SkyColors.js` (`AMBIENT_TINT_...`, `SUN_TINT`, `MOON_TINT`) |

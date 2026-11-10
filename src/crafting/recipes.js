@@ -155,6 +155,8 @@ for (const pack of PLANT_PACKS) {
 import { FIRE_WOODS, fuelType } from '../game/CampfireState.js';
 
 export const RECIPES = [
+    { id: 'chest', result: ['chest', 1], pattern: ['PP', 'PP'], key: { P: '#planks' },
+        note: 'Cztery deski (dowolne drzewo). PPM na skrzyni: otwórz - 4 x 3 przegródki, w każdej dwie warstwy (najpierw zdejmij wierzch).' },
     { id: 'raft', result: ['raft', 1], pattern: ['PP'], key: { P: '#planks' },
         note: 'Dwie deski obok siebie. PPM na wodzie: postaw; PPM na tratwie: wsiądź. WASD: płyń, Shift: wysiądź, LPM: zabierz.' },
     ...Object.keys(FIRE_WOODS).map(wood => ({ id: fuelType(wood), result: [fuelType(wood), 4],

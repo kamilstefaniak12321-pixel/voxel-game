@@ -13,6 +13,7 @@ import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 import { modelIconData } from './model_icon.mjs';
+import { getChestFaces } from '../src/rendering/ChestGeometry.js';
 import { STONE_TOOL_TEXTURES } from '../src/rendering/StoneToolTextures.js';
 
 const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
@@ -162,7 +163,8 @@ const blocks = blockTypes.map((type) => {
         category: C.getCategory(type),
         model,
         creative: definition.creative !== false,
-        icon: definition.riverPlant && (definition.bush || definition.riverPlant.kind.startsWith('fruitBush:'))
+        icon: model === 'chest' ? modelIconData(getChestFaces(), 'chest')
+            : definition.riverPlant && (definition.bush || definition.riverPlant.kind.startsWith('fruitBush:'))
             ? modelIconData(getRiverPlantFaces(definition.riverPlant.kind, 0), definition.riverPlant.texture)
             : definition.modelIcon ? { kind: 'file', file: definition.modelIcon } : definition.riverPlant?.tuft
             // Mała roślina z pikseli - gotowe piksele 64 x 64 (jak w grze).

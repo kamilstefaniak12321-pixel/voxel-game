@@ -569,6 +569,7 @@ async function playWorld(worldInfo) {
         // Krótkie komunikaty (np. "Ekwipunek pełny") - nad paskiem bloków.
 
         game.onNotice = (text) => hotbar.showName(text);
+        game.onOpenChest = (chest) => openInventory(chest);
 
         // Pomiar wydajności (komenda /wydajnosc).
 
@@ -1040,7 +1041,9 @@ function openAchievements() {
 }
 
 
-function openInventory() {
+// chest - skrzynia otwarta PPM (ChestState.js) albo nic (klawisz E).
+
+function openInventory(chest = null) {
 
     if (!game || state !== 'playing' || !inventoryScreen) {
         return;
@@ -1052,7 +1055,7 @@ function openInventory() {
 
     input.enabled = false;
 
-    inventoryScreen.open(game);
+    inventoryScreen.open(game, Array.isArray(chest?.layers) ? chest : null);
 
     document.exitPointerLock();
 

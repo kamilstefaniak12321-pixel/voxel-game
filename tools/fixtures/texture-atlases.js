@@ -13,8 +13,9 @@ export async function run(expected) {
     const atlas=await import('/src/rendering/TextureAtlas.js'), ready=await atlas.atlasReady;
     const pixels=imageData(ready.image), atlasHashes={};
     check(ready.image.width===expected.width&&ready.image.height===expected.height,'GPU atlas dimensions unchanged');
-    check(JSON.stringify(Object.keys(atlas.ATLAS_TILES))===JSON.stringify(Object.keys(expected.tiles)),'All original texture names preserved');
-    for(const [name,tile] of Object.entries(atlas.ATLAS_TILES)) {
+    check(JSON.stringify(Object.keys(atlas.ATLAS_TILES).slice(0,Object.keys(expected.tiles).length))===JSON.stringify(Object.keys(expected.tiles)),'All original texture names preserved');
+    // Nowe tekstury (np. skrzynia 0.81.0) dochodzą na końcu - porównujemy dawne.
+    for(const [name,tile] of Object.entries(atlas.ATLAS_TILES).filter(([name])=>Object.hasOwn(expected.tiles,name))) {
         const {rgbaSha256,...rect}=expected.tiles[name];
         check(JSON.stringify(tile)===JSON.stringify(rect),`${name}: original runtime UV rectangle`);
         const rgba=pixels.ctx.getImageData(tile.x*16,tile.y*16,(tile.w??1)*16,(tile.h??1)*16).data;

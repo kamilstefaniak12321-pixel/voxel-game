@@ -24,15 +24,19 @@ function canonical(value) {
     return value;
 }
 
-assert.deepEqual(TREE_NAMES, baseline.species, 'Species IDs and catalog order stay stable');
-assert.deepEqual(TREE_TEXTURE_NAMES, baseline.textureNames, 'Legacy logical keys keep texture override compatibility');
-assert.equal(createHash('sha256').update(JSON.stringify(canonical(treeBlocks()))).digest('hex'), baseline.blocksSha256,
+// Nowe gatunki (0.83.0+) dochodzą na końcu: dawne zostają bez zmian.
+assert.deepEqual(TREE_NAMES.slice(0, baseline.species.length), baseline.species, 'Species IDs and catalog order stay stable');
+assert.deepEqual(TREE_TEXTURE_NAMES.slice(0, baseline.textureNames.length), baseline.textureNames, 'Legacy logical keys keep texture override compatibility');
+const legacyBlocks = Object.fromEntries(Object.entries(treeBlocks()).filter(([, block]) => baseline.species.includes(block.tree)));
+assert.equal(createHash('sha256').update(JSON.stringify(canonical(legacyBlocks))).digest('hex'), baseline.blocksSha256,
     'Every tree block retains ID, label, textures, harvest/growth and loot from 0.79.0');
-for (const species of TREE_NAMES) {
+const ids = Object.values(treeBlocks()).map(block => block.id);
+assert.equal(new Set(ids).size, ids.length, 'New species never reuse a block ID');
+for (const species of baseline.species) {
     const hash = createHash('sha256');
     for (let seed = 0; seed < 100; seed++) for (const size of [0, .25, .5, .75, 1]) {
         hash.update(JSON.stringify(buildTree(species, seed, size)) + '\n');
     }
     assert.equal(hash.digest('hex'), baseline.shapeSha256[species], `${species}: 500 reference shapes remain identical`);
 }
-console.log('OK: wspólny katalog — 12 gatunków, wszystkie definicje bloków i 6000 drzew zgodnych z 0.79.0.');
+console.log(`OK: wspólny katalog — ${TREE_NAMES.length} gatunków; ${baseline.species.length} dawnych: definicje bloków i ${baseline.species.length * 500} drzew zgodnych z 0.79.0.`);

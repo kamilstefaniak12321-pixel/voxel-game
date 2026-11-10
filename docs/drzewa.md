@@ -1,6 +1,6 @@
 # Drzewa
 
-Gra ma **dwanaście gatunków drzew**, zapisanych we wspólnym katalogu
+Gra ma **siedemnaście gatunków drzew**, zapisanych we wspólnym katalogu
 `src/blocks/treeCatalog.js`. Każdy ma własne bloki, wygląd i zasady
 występowania. Tekstury wszystkich gatunków są w `assets/textures/drzewa.png`.
 
@@ -18,6 +18,11 @@ występowania. Tekstury wszystkich gatunków są w `assets/textures/drzewa.png`.
 | Akacja parasolowata | `akacja` (także `acacia`) |
 | Cypryśnik błotny | `cyprysnik` (także `bald_cypress`) |
 | Wiśnia japońska | `wisnia` (także `cherry`) |
+| Klon cukrowy (jesienny) | `klon` (także `maple`) |
+| Sosna kosodrzewina | `kosodrzewina` (także `mugo`) |
+| Oliwka europejska | `oliwka` (także `olive`) |
+| Eukaliptus tęczowy | `eukaliptus` (także `rainbow_eucalyptus`) |
+| Sekwoja olbrzymia | `sekwoja` (także `sequoia`) |
 
 Polskie znaki też działają (`dąb`, `jabłoń`, `świerk`). Leszczyna
 jest obecnie krzewem owocowym, opisanym w osobnym systemie krzaków.
@@ -46,7 +51,7 @@ Otwórz czat klawiszem **T** albo **/**. Trzy tryby pokazu:
   sosny z żywicą i bez, lipy kwitnące i zwykłe, jabłonie z owocami,
   bez owoców i po zbiorze. Jabłoń, olcha i wierzba mają po trzy
   szablony wielkości; gatunki proceduralne pokazujemy w pięciu rozmiarach.
-- **porownanie** sadzi wszystkie dwanaście gatunków obok siebie.
+- **porownanie** sadzi wszystkie gatunki obok siebie.
 
 Ostatni argument to opcjonalny **seed pokazu** (0–4294967295).
 Bez niego komenda losuje nowy zestaw; z nim można odtworzyć te same
@@ -104,6 +109,43 @@ Do szybkiego oglądania użyj `/drzewa posadz cyprysnik 75`,
 Galeria automatycznie dobiera odstępy do szerokich koron. Uproszczone
 modele dalekiego terenu korzystają z tych samych wymiarów co pełne
 drzewa i zachowują ich wysokość oraz własne kolory liści.
+
+## Pięć drzew z paczek Kamila i ich biomy — 0.83.0
+
+![Klon, kosodrzewina, oliwka, eukaliptus tęczowy i sekwoja obok postaci gracza](drzewa-083.jpg)
+
+![Porównanie i pięć nowych biomów w świecie seed 42](drzewa-biomy-083.jpg)
+
+| Gatunek | Wysokość | Korona | Sylwetka | Wyroby i dodatki | Biom |
+|---|---|---|---|---|---|
+| Klon cukrowy | 14–22 | 10–16 | krótki pień, szeroka, zaokrąglona korona z kopuł, pomarańczowa ze złotymi plamami | deski klonowe, opał, **opadłe liście klonu** pod koroną | **Klonowy las jesienny** (`klonowy`); pojedynczo w lasach liściastych i buczynach |
+| Kosodrzewina | 3–5 | 6–11 | bez prostego pnia: pokładające się pnie rozchodzą się przy ziemi, na końcach płaskie kępy igliwia; sąsiednie krzewy zrastają się w łany | deski, opał, **szyszka kosodrzewiny** (posadzona daje sadzonkę) | **Kosodrzewina** (`kosodrzewina`) - pas tuż nad granicą lasu w górach; pojedynczo na halach |
+| Oliwka europejska | 5–8 | 8–13 | gruby, sękaty, skręcony pień (duże 2 x 2), płaska, szeroka, szarozielona korona | deski oliwkowe, opał, **oliwki** - zbiór PPM z liści z oliwkami (odrastają), posadzone dają sadzonkę | **Gaj oliwny** (`gaj`) - ciepło i sucho; pojedynczo na ciepłych, suchych łąkach |
+| Eukaliptus tęczowy | 32–50 | 13–19 | bardzo wysoki, prosty, kolorowy pień, parasol z płaskich chmur liści na samej górze | deski, opał | **Las eukaliptusowy** (`eukaliptusowy`) - ciepło i wilgotno |
+| Sekwoja olbrzymia | 46–72 | 11–17 | gruby (3 x 3, duże 4 x 4) rudy pień ze schodkową podstawą, długo goły, korona w górnej połowie, zwężona ku czubkowi | deski sekwojowe, opał, **szyszka sekwoi** (z igliwia z szyszkami - PPM, odrastają) | **Las sekwojowy** (`sekwojowy`) - chłodno, bardzo wilgotno, nisko; między sekwojami świerki i sosny |
+
+Wszystkie mają sadzonkę (także model 3D w trzech jakościach), liście
+i odmianę liści, pień do okorowania, deski (we wspólnych przepisach:
+skrzynia, tratwa...) i własny **opał do ogniska** z własnym drewnem.
+Liście spadają z koron jako cząsteczki w swoich kolorach (jesienne
+klonu najładniej), a oliwki i szyszki sekwoi czasem spadają jak jabłka.
+
+Oryginalne tekstury z paczek (pień, słoje, deski, liście, odmiana liści)
+są w grze piksel w piksel; okorowany pień, sadzonkę, drewno ogniska,
+oliwki, szyszki i opadłe liście klonu rysuje
+`python tools/tekstury_drzew_083.py` w tym samym stylu.
+
+Olbrzymy nie wchodzą na siebie: sekwoja rośnie tylko w co trzeciej
+kratce siatki drzew (między nimi świerki), eukaliptus w co drugiej.
+Pod limitem wysokości świata (128) sekwoja jest niższa, zamiast znikać.
+W istniejących zapisach nowe drzewa i biomy pojawiają się na nowo
+generowanym terenie.
+
+```text
+/drzewa porownanie
+/drzewa las sekwoja 9
+/biom znajdz klonowy
+```
 
 ## Bloki
 
@@ -270,8 +312,9 @@ ziemi (nie na koronie). Meteoryt zmiata drzewa nad kraterem.
 | `/drzewa tempo <0-500>` | szybszy wzrost (to samo co `/krzaki tempo`) |
 | `/mapa lasy` | mapa lasów |
 
-Gatunki w komendach: `swierk`, `sosna`, `buk`, `lipa`, `dab`, `brzoza`
-(albo po angielsku).
+Gatunki w komendach: `swierk`, `sosna`, `buk`, `lipa`, `dab`, `brzoza`,
+`jablon`, `olcha`, `wierzba`, `akacja`, `cyprysnik`, `wisnia`, `klon`,
+`kosodrzewina`, `oliwka`, `eukaliptus`, `sekwoja` (albo po angielsku).
 
 ## Tekstury i dźwięki
 

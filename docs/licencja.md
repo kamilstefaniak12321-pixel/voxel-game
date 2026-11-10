@@ -65,6 +65,15 @@ Geometrię oraz brakujące tekstury sadzonek, okorowanego drewna i opału
 przygotowano w repozytorium. Strony botaniczne służą jedynie jako
 odniesienie wymiarów — nie pobierano z nich grafiki.
 
+Paczki `maple_autumn.zip`, `mugo.zip`, `olive.zip`,
+`rainbow_eucalyptus.zip` i `sequoia.zip` Kamil przekazał 10 listopada
+2026 r. (0.83.0). Oryginalne tekstury (pień, słoje, deski, liście,
+odmiana liści) są w `assets/textures/drzewa.png` piksel w piksel - sumy
+kontrolne sprawdza `tools/sprawdz_drzewa_083.mjs`. Sylwetki i wymiary
+z `render_info.json` paczek i podglądów; okorowane drewno, sadzonki,
+opał, oliwki, szyszki i opadłe liście klonu rysuje
+`tools/tekstury_drzew_083.py`.
+
 ## Źródło muzyki
 
 Poniższe pięć plików zostało dostarczonych przez Kamila 2 listopada

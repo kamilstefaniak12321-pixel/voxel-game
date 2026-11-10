@@ -262,7 +262,7 @@ Przykładowe przepisy (pełna, aktualna lista z obrazkami:
 
 | Wyrób | Z czego |
 |---|---|
-| deski x4 (12 gatunków) | pień tego drzewa (też okorowany) |
+| deski x4 (17 gatunków) | pień tego drzewa (też okorowany) |
 | patyki x4 | 2 deski jedna nad drugą |
 | siekiera / kilof / łopata | skała (kamień, granit, wapień, piaskowiec, łupek, bazalt) i patyk |
 | lampa x2 | lepidolit + żywica + kora brzozowa |
@@ -307,7 +307,8 @@ Oprócz trawy, ziemi, piasku i skał są:
 - **krzaki owocowe:** truskawka, jeżyna, papryczka chili, leszczyna
   (orzechy laskowe) i borówka - opis niżej,
 - **drzewa:** świerk, sosna, buk, lipa, dąb, brzoza, jabłoń, olcha,
-  wierzba, akacja, cypryśnik i wiśnia — pnie, deski, liście, sadzonki
+  wierzba, akacja, cypryśnik, wiśnia, klon, kosodrzewina, oliwka,
+  eukaliptus tęczowy i sekwoja — pnie, deski, liście, sadzonki
   i dodatki. Wszystkie gatunki są we wspólnym katalogu; opis lasów
   i modeli w `docs/drzewa.md`.
 
@@ -556,9 +557,13 @@ przy pełnym ekwipunku tylko się ugina - jak krzak borówki
 
 ### Drzewa i lasy
 
-Dwanaście gatunków: **świerk, sosna, buk, lipa, dąb, brzoza, jabłoń,
-olcha, wierzba, akacja, cypryśnik i wiśnia**. Własne sylwetki, rozmiary
-i występowanie opisuje `docs/drzewa.md`.
+Siedemnaście gatunków: **świerk, sosna, buk, lipa, dąb, brzoza, jabłoń,
+olcha, wierzba, akacja, cypryśnik, wiśnia, klon, kosodrzewina, oliwka,
+eukaliptus tęczowy i sekwoja**. Własne sylwetki, rozmiary
+i występowanie opisuje `docs/drzewa.md`. Pięć ostatnich (0.83.0) ma
+własne biomy: klonowy las jesienny, kosodrzewinę w górach, gaj oliwny,
+las eukaliptusowy i las sekwojowy z drzewami do 72 bloków
+([biomy](docs/biomy.md)).
 
 - **Bloki** każdego gatunku: pień (`oak_log`), okorowany pień
   (`oak_log_stripped`), deski (`oak_planks`), liście albo igliwie

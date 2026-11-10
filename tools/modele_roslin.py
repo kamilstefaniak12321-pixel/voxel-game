@@ -601,6 +601,12 @@ VANILLA = {
     'sadzonka-akacja': ('pierzasty', 'klos', {'lisc': '#71913e', 'liscJasny': '#91ab5a', 'liscCiemny': '#526e2d', 'lodyga': '#75604b'}),
     'sadzonka-cyprysnik': ('igly', 'klos', {'lisc': '#4b7e34', 'liscJasny': '#6b984c', 'liscCiemny': '#315726', 'lodyga': '#80674e'}),
     'sadzonka-wisnia': ('drzewny', 'klos', {'lisc': '#da88a9', 'liscJasny': '#f2b4cf', 'liscCiemny': '#ac6086', 'lodyga': '#6e4e4b'}),
+    # 0.83.0 - kolory z liści paczek Kamila.
+    'sadzonka-klon': ('klapowany', 'klos', {'lisc': '#d6542a', 'liscJasny': '#f08a32', 'liscCiemny': '#a8361e', 'lodyga': '#5a4232'}),
+    'sadzonka-kosodrzewina': ('igly', 'klos', {'lisc': '#2c5c34', 'liscJasny': '#467a46', 'liscCiemny': '#1a3e22', 'lodyga': '#5a4a40'}),
+    'sadzonka-oliwka': ('waski', 'klos', {'lisc': '#7c8a60', 'liscJasny': '#9ca87e', 'liscCiemny': '#5a6644', 'lodyga': '#6a5640'}),
+    'sadzonka-eukaliptus': ('lancetowaty', 'klos', {'lisc': '#3a8048', 'liscJasny': '#58a064', 'liscCiemny': '#245a30', 'lodyga': '#a8b060'}),
+    'sadzonka-sekwoja': ('igly', 'klos', {'lisc': '#608846', 'liscJasny': '#80a660', 'liscCiemny': '#40622e', 'lodyga': '#8a4a30'}),
     # Rośliny nad wodą
     'turzyca': ('zdzblo', 'klos', {'lisc': '#668943', 'liscJasny': '#83a452', 'liscCiemny': '#456c37', 'lodyga': '#6a8142', 'kwiat': '#80914c'}),
     'palka': ('zdzblo', 'klos', {'lisc': '#668943', 'liscJasny': '#83a452', 'liscCiemny': '#456c37', 'lodyga': '#6a8142', 'kwiat': '#765037', 'kwiatJasny': '#9b7951', 'kwiatCiemny': '#4e3424'}),

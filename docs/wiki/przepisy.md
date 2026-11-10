@@ -2,7 +2,7 @@
 
 > Ta strona jest generowana z kodu gry (`python tools/wiki.py`) - nie zmieniaj jej ręcznie, zmiany przepadną przy następnym generowaniu.
 
-Wersja gry **0.82.2** - 105 przepisów. Wytwarza się w ekwipunku (**E**): siatka 2 x 2 obok miejsc ekwipunku, wynik po prawej (klik - weź, Shift + klik - ile się da). Przycisk 📖 *Przepisy* otwiera księgę - klik na przepisie sam układa składniki. Przepisy *z kształtem* można przesuwać po siatce i odbijać w poziomie; przepisy *bez kształtu* - obojętne, gdzie leżą składniki. Z czatu: `/przepisy`, `/wytworz <przepis>`.
+Wersja gry **0.83.0** - 116 przepisów. Wytwarza się w ekwipunku (**E**): siatka 2 x 2 obok miejsc ekwipunku, wynik po prawej (klik - weź, Shift + klik - ile się da). Przycisk 📖 *Przepisy* otwiera księgę - klik na przepisie sam układa składniki. Przepisy *z kształtem* można przesuwać po siatce i odbijać w poziomie; przepisy *bez kształtu* - obojętne, gdzie leżą składniki. Z czatu: `/przepisy`, `/wytworz <przepis>`.
 
 
 ## Ziemia
@@ -133,6 +133,36 @@ Wersja gry **0.82.2** - 105 przepisów. Wytwarza się w ekwipunku (**E**): siatk
 
 1 x pień wiśni (też okorowany) + 1 x siekiera (dowolny kamień) (bez kształtu). Nazwa przepisu: `cherry_firewood`. Siekiera zostaje. Opał: PPM na ziemię, potem dokładaj do 6 polan.
 
+### Opał — klon x4
+
+<img src="przepisy/maple_firewood.png" alt="Opał — klon x4: 1 x pień klonu (też okorowany) + 1 x siekiera (dowolny kamień) (zostaje) (obojętne gdzie)">
+
+1 x pień klonu (też okorowany) + 1 x siekiera (dowolny kamień) (bez kształtu). Nazwa przepisu: `maple_firewood`. Siekiera zostaje. Opał: PPM na ziemię, potem dokładaj do 6 polan.
+
+### Opał — kosodrzewina x4
+
+<img src="przepisy/mugo_firewood.png" alt="Opał — kosodrzewina x4: 1 x pień kosodrzewiny (też okorowany) + 1 x siekiera (dowolny kamień) (zostaje) (obojętne gdzie)">
+
+1 x pień kosodrzewiny (też okorowany) + 1 x siekiera (dowolny kamień) (bez kształtu). Nazwa przepisu: `mugo_firewood`. Siekiera zostaje. Opał: PPM na ziemię, potem dokładaj do 6 polan.
+
+### Opał — oliwka x4
+
+<img src="przepisy/olive_firewood.png" alt="Opał — oliwka x4: 1 x pień oliwki (też okorowany) + 1 x siekiera (dowolny kamień) (zostaje) (obojętne gdzie)">
+
+1 x pień oliwki (też okorowany) + 1 x siekiera (dowolny kamień) (bez kształtu). Nazwa przepisu: `olive_firewood`. Siekiera zostaje. Opał: PPM na ziemię, potem dokładaj do 6 polan.
+
+### Opał — eukaliptus x4
+
+<img src="przepisy/rainbow_eucalyptus_firewood.png" alt="Opał — eukaliptus x4: 1 x pień eukaliptusa (też okorowany) + 1 x siekiera (dowolny kamień) (zostaje) (obojętne gdzie)">
+
+1 x pień eukaliptusa (też okorowany) + 1 x siekiera (dowolny kamień) (bez kształtu). Nazwa przepisu: `rainbow_eucalyptus_firewood`. Siekiera zostaje. Opał: PPM na ziemię, potem dokładaj do 6 polan.
+
+### Opał — sekwoja x4
+
+<img src="przepisy/sequoia_firewood.png" alt="Opał — sekwoja x4: 1 x pień sekwoi (też okorowany) + 1 x siekiera (dowolny kamień) (zostaje) (obojętne gdzie)">
+
+1 x pień sekwoi (też okorowany) + 1 x siekiera (dowolny kamień) (bez kształtu). Nazwa przepisu: `sequoia_firewood`. Siekiera zostaje. Opał: PPM na ziemię, potem dokładaj do 6 polan.
+
 ### Deski świerkowe x4
 
 <img src="przepisy/spruce_planks.png" alt="Deski świerkowe x4: 1 x pień świerka (też okorowany) (obojętne gdzie)">
@@ -204,6 +234,36 @@ Wersja gry **0.82.2** - 105 przepisów. Wytwarza się w ekwipunku (**E**): siatk
 <img src="przepisy/cherry_planks.png" alt="Deski wiśni x4: 1 x pień wiśni (też okorowany) (obojętne gdzie)">
 
 1 x pień wiśni (też okorowany) (bez kształtu). Nazwa przepisu: `cherry_planks`.
+
+### Deski klonowe x4
+
+<img src="przepisy/maple_planks.png" alt="Deski klonowe x4: 1 x pień klonu (też okorowany) (obojętne gdzie)">
+
+1 x pień klonu (też okorowany) (bez kształtu). Nazwa przepisu: `maple_planks`.
+
+### Deski z kosodrzewiny x4
+
+<img src="przepisy/mugo_planks.png" alt="Deski z kosodrzewiny x4: 1 x pień kosodrzewiny (też okorowany) (obojętne gdzie)">
+
+1 x pień kosodrzewiny (też okorowany) (bez kształtu). Nazwa przepisu: `mugo_planks`.
+
+### Deski oliwkowe x4
+
+<img src="przepisy/olive_planks.png" alt="Deski oliwkowe x4: 1 x pień oliwki (też okorowany) (obojętne gdzie)">
+
+1 x pień oliwki (też okorowany) (bez kształtu). Nazwa przepisu: `olive_planks`.
+
+### Deski eukaliptusowe x4
+
+<img src="przepisy/rainbow_eucalyptus_planks.png" alt="Deski eukaliptusowe x4: 1 x pień eukaliptusa (też okorowany) (obojętne gdzie)">
+
+1 x pień eukaliptusa (też okorowany) (bez kształtu). Nazwa przepisu: `rainbow_eucalyptus_planks`.
+
+### Deski sekwojowe x4
+
+<img src="przepisy/sequoia_planks.png" alt="Deski sekwojowe x4: 1 x pień sekwoi (też okorowany) (obojętne gdzie)">
+
+1 x pień sekwoi (też okorowany) (bez kształtu). Nazwa przepisu: `sequoia_planks`.
 
 
 ## Budulec
@@ -432,6 +492,12 @@ Wersja gry **0.82.2** - 105 przepisów. Wytwarza się w ekwipunku (**E**): siatk
 <img src="przepisy/wierzba_leaf_litter.png" alt="Opadłe liście wierzby x2: 1 x Liście wierzby (obojętne gdzie)">
 
 1 x Liście wierzby (bez kształtu). Nazwa przepisu: `wierzba_leaf_litter`.
+
+### Opadłe liście klonu x2
+
+<img src="przepisy/maple_leaf_litter.png" alt="Opadłe liście klonu x2: 1 x Liście klonu (obojętne gdzie)">
+
+1 x Liście klonu (bez kształtu). Nazwa przepisu: `maple_leaf_litter`.
 
 
 ## Narzędzia i surowce
@@ -665,11 +731,11 @@ Składnik z grupy to dowolna rzecz z listy (np. patyki z desek różnych drzew).
 
 - **siekiera (dowolny kamień)**: Siekiera, Siekiera granitowa, Siekiera wapienna, Siekiera piaskowcowa, Siekiera łupkowa, Siekiera bazaltowa
 - **pochodnia (dowolny kolor)**: Pochodnia, Pochodnia biała, Pochodnia pomarańczowa, Pochodnia purpurowa, Pochodnia jasnoniebieska, Pochodnia żółta, Pochodnia limonkowa, Pochodnia różowa, Pochodnia szara, Pochodnia jasnoszara, Pochodnia turkusowa, Pochodnia fioletowa, Pochodnia niebieska, Pochodnia brązowa, Pochodnia zielona, Pochodnia czerwona, Pochodnia czarna
-- **deski (dowolne)**: Deski świerkowe, Deski sosnowe, Deski bukowe, Deski lipowe, Deski dębowe, Deski brzozowe, Deski jabłoniowe, Deski olchowe, Deski wierzbowe, Deski akacji, Deski cypryśnika, Deski wiśni
+- **deski (dowolne)**: Deski świerkowe, Deski sosnowe, Deski bukowe, Deski lipowe, Deski dębowe, Deski brzozowe, Deski jabłoniowe, Deski olchowe, Deski wierzbowe, Deski akacji, Deski cypryśnika, Deski wiśni, Deski klonowe, Deski z kosodrzewiny, Deski oliwkowe, Deski eukaliptusowe, Deski sekwojowe
 - **skała (kamień, granit, wapień, piaskowiec, łupek, bazalt)**: Kamień, Granit, Wapień, Piaskowiec, Łupek, Bazalt
 - **szyszka (świerka albo sosny)**: Szyszka świerka, Szyszka sosny
 - **igliwie (świerka albo sosny)**: Igliwie świerka, Igliwie sosny
-- **opadłe liście (dowolne)**: Opadłe liście buka, Opadłe liście dębu, Opadłe liście jabłoni, Opadłe liście olchy, Opadłe liście wierzby
+- **opadłe liście (dowolne)**: Opadłe liście buka, Opadłe liście dębu, Opadłe liście jabłoni, Opadłe liście olchy, Opadłe liście wierzby, Opadłe liście klonu
 - **coś czerwonego (mak, truskawki, papryczki chili, wiecha amarantusa, korzeń marzanny)**: Mak, Truskawki, Papryczki chili, Wiecha amarantusa, Korzeń marzanny
 - **coś zielonego (koniczyna, pokrzywa, paproć)**: Koniczyna, Pokrzywa, Paproć
 - **coś niebieskiego (chaber, borówki, liście indygowca)**: Chaber, Borówki, Liście indygowca

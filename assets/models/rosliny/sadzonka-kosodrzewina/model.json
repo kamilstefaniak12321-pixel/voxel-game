@@ -1,0 +1,53 @@
+{
+    "nazwa": "Sadzonka kosodrzewiny",
+    "bloki": [
+        "mugo_sapling"
+    ],
+    "kolory": {
+        "lisc": "#2c5c34",
+        "liscJasny": "#467a46",
+        "liscCiemny": "#1a3e22",
+        "lodyga": "#5a4a40"
+    },
+    "etapy": [
+        {
+            "prosty": null,
+            "polrealistyczny": {
+                "liscie": {
+                    "uklad": "kopula",
+                    "ile": 12,
+                    "dlugosc": 5,
+                    "promien": 3,
+                    "kopula": 12,
+                    "nachylenie": 45,
+                    "pien": true
+                }
+            },
+            "szczegolowy": {
+                "rodzaj": "kepka",
+                "liscie": {
+                    "uklad": "brak"
+                },
+                "lodygi": {
+                    "ile": [
+                        2,
+                        3
+                    ],
+                    "wysokosc": [
+                        5,
+                        7
+                    ],
+                    "promien": 1,
+                    "liscie": {
+                        "okolek": 4,
+                        "co": 1,
+                        "dlugosc": [
+                            2,
+                            4
+                        ]
+                    }
+                }
+            }
+        }
+    ]
+}

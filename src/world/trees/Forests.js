@@ -13,7 +13,7 @@ import {
     getAttach
 } from '../../blocks/BlockRegistry.js';
 
-import { BASE_TREE_NAMES } from '../../blocks/trees.js';
+import { TREE_NAMES, TREE_SPECIES } from '../../blocks/trees.js';
 
 import { TREE_DEFINITIONS } from '../../blocks/treeCatalog.js';
 
@@ -22,6 +22,8 @@ import { Noise } from '../Noise.js';
 import { FORESTS, SCALES, BIOME_SHAPE } from '../terrain/TerrainShape.js';
 
 import { buildTree, TREE_REACH, treeShapeLimits } from './TreeShapes.js';
+
+import { SPECIES_SHAPE_LIMITS } from '../../blocks/treeCatalog.js';
 
 import { BIOMES, BIOME_KEYS } from '../terrain/Biomes.js';
 
@@ -118,7 +120,8 @@ const WILD_SPECIES = TREE_DEFINITIONS
 // nimi (OPEN_LONE). Biom lasu jest tylko tam, gdzie pole lasów jest
 // wyższe niż FOREST_FIELD (z zapasem na poszarpane granice).
 
-const FOREST_TYPES = ['deciduous', 'beech', 'birch', 'pine', 'spruce'];
+const FOREST_TYPES = ['deciduous', 'beech', 'birch', 'pine', 'spruce',
+    'maple_forest', 'sequoia_forest', 'eucalyptus_forest', 'olive_grove', 'mugo_scrub'];
 
 const FOREST_LONE = Math.max(...FOREST_TYPES.map((key) => BIOMES[key].lone ?? 0));
 
@@ -130,11 +133,14 @@ const FOREST_FIELD = Math.min(BIOME_SHAPE.forestFrom - BIOME_SHAPE.forestHumid, 
 
 const TREE_BIOME_JITTER = 6;
 
-// Gatunki drzew biomów: [[numer w BASE_TREE_NAMES, udział], ...].
+// Gatunki drzew biomów: [[numer w TREE_NAMES, udział], ...]. Sześć
+// pierwszych to dawne gatunki podstawowe (te same numery co wcześniej,
+// więc istniejące lasy się nie zmieniają); od 0.83.0 biom może też mieć
+// gatunki z katalogu (klonowy las - klony, gaj oliwny - oliwki...).
 
 const BIOME_TREES = Object.fromEntries(BIOME_KEYS.map((key) => [
     key,
-    Object.entries(BIOMES[key].trees ?? {}).map(([species, share]) => [BASE_TREE_NAMES.indexOf(species), share])
+    Object.entries(BIOMES[key].trees ?? {}).map(([species, share]) => [TREE_NAMES.indexOf(species), share])
 ]));
 
 
@@ -167,7 +173,7 @@ export class Forests {
 
         this.neighbor = {};
 
-        this.scores = new Float32Array(BASE_TREE_NAMES.length);
+        this.scores = new Float32Array(TREE_NAMES.length);
 
         this.ids = new Map();
 
@@ -290,7 +296,7 @@ export class Forests {
         }
 
         if (pick === null) {
-            return BASE_TREE_NAMES[best];
+            return TREE_NAMES[best];
         }
 
         let left = pick * total;
@@ -300,12 +306,12 @@ export class Forests {
             left -= s[index];
 
             if (left < 0) {
-                return BASE_TREE_NAMES[index];
+                return TREE_NAMES[index];
             }
 
         }
 
-        return BASE_TREE_NAMES[trees[trees.length - 1][0]];
+        return TREE_NAMES[trees[trees.length - 1][0]];
 
     }
 
@@ -473,7 +479,17 @@ export class Forests {
         }
 
 
-        const species = this.catalogSpecies(gx, gz, climate, biome) ?? this.biomeSpecies(x, z, biome, random01(seed, gx, gz, 10));
+        let species = this.catalogSpecies(gx, gz, climate, biome) ?? this.biomeSpecies(x, z, biome, random01(seed, gx, gz, 10));
+
+        // Olbrzymy (sekwoja, eukaliptus) tylko w co n-tej kratce - inaczej
+        // grube pnie i szerokie korony wchodziłyby jedne w drugie. W
+        // pozostałych kratkach rośnie podszyt gatunku (under) albo nic.
+
+        const spacing = TREE_SPECIES[species]?.shape?.spacing;
+
+        if (spacing && (((gx % spacing) + spacing) % spacing || ((gz % spacing) + spacing) % spacing)) {
+            species = TREE_SPECIES[species].shape.under ?? null;
+        }
 
         if (!species) {
             return null;
@@ -481,7 +497,20 @@ export class Forests {
 
         const treeSeed = hash01(seed, gx, gz, 4);
 
-        const size = 0.15 + 0.85 * random01(seed, gx, gz, 5);
+        let size = 0.15 + 0.85 * random01(seed, gx, gz, 5);
+
+        // Bardzo wysokie gatunki (0.83.0) pod limitem świata są niższe,
+        // zamiast znikać: rozmiar przycięty tak, żeby czubek się zmieścił.
+
+        const tall = TREE_SPECIES[species].shape;
+
+        if (tall?.spacing && Object.hasOwn(SPECIES_SHAPE_LIMITS, tall.kind)) {
+
+            const room = CHUNK_HEIGHT - 3 - (height + 1) - tall.height[0];
+
+            size = Math.min(size, Math.max(0, room / (tall.height[1] - tall.height[0])));
+
+        }
 
         // Only trees near the world ceiling need their exact shape to retain
         // the original placement rejection. Everywhere else the known bound

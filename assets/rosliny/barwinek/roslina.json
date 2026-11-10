@@ -45,7 +45,7 @@
         "kategoria": "ozdoby"
     },
     "zbior": { "ile": [1, 2], "wraca": 2 },
-    "gdzieRosnie": { "biomy": { "las": 1, "buczyna": 0.7, "laka": 0.4 }, "plamy": 0.02, "gestosc": 0.85, "etapy": [0.15, 0.25, 0.6] },
+    "gdzieRosnie": { "biomy": { "las": 1, "buczyna": 0.7, "laka": 0.4, "klonowy": 0.6 }, "plamy": 0.02, "gestosc": 0.85, "etapy": [0.15, 0.25, 0.6] },
     "zrodlo": {
         "atlas": "Pixelowy atlas barwinka do Minecrafta.png",
         "przedmiot": "kwiat: --wysokosc 16 --nazwy etap1,etap2,etap3,kwiat; etapy - model z pikseli (dywan: kobierzec liści łączący się z sąsiadami, kwiaty-gwiazdki) w kolorach atlasu"

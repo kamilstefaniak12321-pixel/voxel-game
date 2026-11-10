@@ -71,7 +71,7 @@ tylko jako *Sekretne osiągnięcie* ze znakiem zapytania.
 | rzadkie | Kopalnia w kieszeni | zagraj na telefonie / tablecie i zniszcz blok palcem (`docs/telefon.md`) |
 | rzadkie | Lokator z ikonką | zagraj w aplikacji na Androida (`docs/telefon.md`) |
 | rzadkie | Spływ | daj się ponieść nurtowi rzeki przez 100 bloków (`docs/rzeki.md`) |
-| rzadkie | Turysta | odwiedź każdy z 11 biomów lądowych (`docs/biomy.md`, `/biom lista`) |
+| rzadkie | Turysta | odwiedź każdy z 16 biomów lądowych (`docs/biomy.md`, `/biom lista`) |
 | rzadkie | Dach świata | stań na śniegu na ośnieżonym szczycie (`/biom znajdz snieg tp`) |
 | rzadkie | Projektant wnętrz | postaw każdy z pięciu budulców: tynk wapienny, tynk ochrowy, terakotę, polerowany kamień i ciemne deski (postęp w księdze) |
 | rzadkie | Promyk słońca | stań w plamie słońca pod dachem (słońce przez okno - `/demo okno`) |

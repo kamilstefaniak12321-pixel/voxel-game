@@ -24,7 +24,7 @@ export async function run() {
     const { applyPlantModelLevel } = await import('/src/rendering/PlantModelLevels.js');
     const { blockRenderData } = await import('/src/rendering/BlockRenderData.js');
     await atlasReady;
-    check(TREE_DEFINITIONS.length === 12, 'All twelve built-in tree definitions are available');
+    check(TREE_DEFINITIONS.length >= 12, 'All built-in tree definitions (twelve from 0.79.0 and later species) are available');
     check(PLANT_MODEL_ERRORS.length === 0, 'Plant quality models load without errors');
     const names = ['acacia', 'bald_cypress', 'cherry'];
     for (const name of names) check(TREE_NAMES.includes(name), `Registered species: ${name}`);

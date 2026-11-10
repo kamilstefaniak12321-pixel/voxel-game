@@ -47,7 +47,7 @@
         "kategoria": "ozdoby"
     },
     "zbior": { "ile": [1, 2], "wraca": 2 },
-    "gdzieRosnie": { "biomy": { "hala": 1, "laka": 0.3 }, "plamy": 0.03, "gestosc": 0.35, "etapy": [0.2, 0.25, 0.55] },
+    "gdzieRosnie": { "biomy": { "hala": 1, "laka": 0.3, "gaj": 1 }, "plamy": 0.03, "gestosc": 0.35, "etapy": [0.2, 0.25, 0.55] },
     "zrodlo": {
         "atlas": "Pikselowy atlas lawendy i bukietu.png",
         "przedmiot": "bukiet: --wysokosc 16 --nazwy etap1,etap2,etap3,bukiet; etapy - model z pikseli (kępka, układ kepa, kłosy) w kolorach atlasu"

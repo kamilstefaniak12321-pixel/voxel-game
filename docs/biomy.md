@@ -21,10 +21,17 @@ nie ma (już się nie zmienia).
 | **Skaliste góry** | `skaly` | ponad granicą gołej skały | skała, piargi (żwir, ziemia kamienista), pod szczytami **płaty śniegu** |
 | **Ośnieżone szczyty** | `snieg` | najwyżej (w cieplejszym klimacie granica śniegu wyżej) | **śnieg** |
 | **Mokradła** | `mokradla` | przy rzekach i jeziorach na nizinach, w depresjach, w wilgotnych obniżeniach | **błoto** przy wodzie, mech, **trzcina**, wysoka trawa, pokrzywy, **olchy**, **wierzby** i brzozy, dno rzek z błota i gliny |
+| **Klonowy las jesienny** (0.83.0) | `klonowy` | umiarkowanie, średnio wilgotno | **klony** w jesiennych kolorach, dywan opadłych liści, trochę buków, lip i dębów, leszczyna, jeżyny |
+| **Las sekwojowy** (0.83.0) | `sekwojowy` | chłodno, bardzo wilgotno, nisko | olbrzymie **sekwoje** (do 72 bloków) nad świerkami i sosnami, mech, dużo paproci, borówki |
+| **Las eukaliptusowy** (0.83.0) | `eukaliptusowy` | ciepło i wilgotno, nisko | wysokie **eukaliptusy tęczowe**, gęsta wysoka trawa, paprocie, papryczki, jeżyny |
+| **Gaj oliwny** (0.83.0) | `gaj` | ciepło i sucho, nisko (zamiast części łąk i lasów) | rozrzucone **oliwki**, trochę sosen i akacji, ziemia kamienista, maki, rumianek, lawenda, szałwia |
+| **Kosodrzewina** (0.83.0) | `kosodrzewina` | góry: pas tuż nad granicą lasu, w plamach (wilgotniej - szerszy) | gęste łany **kosodrzewiny**, krokusy, borówki, mech |
 | **Plaża i wydmy** | `plaza` | wybrzeża | piasek, na niektórych płaskich wybrzeżach **wydmy** porośnięte **piaskownicą**, za wydmami pojedyncze sosny |
 | Morze, Jezioro, Rzeka | `morze`, `jezioro`, `rzeka` | woda | (biomy wodne) |
 
 Pogrubione - nowe bloki (niżej).
+
+![Nowe biomy 0.83.0: klonowy las jesienny, kosodrzewina, gaj oliwny, las eukaliptusowy, las sekwojowy](drzewa-biomy-083.jpg)
 
 ## Jak powstają
 
@@ -38,15 +45,18 @@ po kolei, pierwszy pasujący wygrywa:
    morzem, w cieple wyżej, pofalowana),
 4. **skaliste góry** - ponad granicą gołej skały,
 5. **góry** (od 30 bloków nad morzem): **hala** nad granicą lasu i na
-   polanach, niżej **świerczyna** (w ciepłym klimacie też buczyna),
+   polanach, w plamach tuż nad granicą lasu **kosodrzewina**, niżej
+   **świerczyna** (w ciepłym klimacie też buczyna),
 6. **mokradła** - na nizinach blisko rzeki i jeziora (im wilgotniej, tym
    szerszy pas), w depresjach i w wilgotnych plamach,
 7. **las** tam, gdzie pole lasów (plamy ~190 bloków) jest wysokie - w
    wilgotnym klimacie las łatwiej; rodzaj lasu z klimatu: świerczyna
    (zimno, wysoko), bór (sucho), buczyna (wyżyny), brzezina (chłodno
-   i wilgotno), las liściasty (ciepło); rodzaje lasu przeplatają się
-   w dużych plamach,
-8. **łąka** - wszystko inne.
+   i wilgotno), las liściasty (ciepło), a od 0.83.0 klonowy las
+   jesienny (umiarkowanie), las sekwojowy (chłodno, bardzo wilgotno,
+   nisko), las eukaliptusowy (ciepło i wilgotno) i gaj oliwny (ciepło
+   i sucho); rodzaje lasu przeplatają się w dużych plamach,
+8. **łąka** - wszystko inne (na ciepłych, suchych łąkach - gaj oliwny).
 
 Klimat (temperatura - wyżej chłodniej - i wilgotność) zmienia się
 wolno (plamy kilku tysięcy bloków), więc biomy to duże krainy.
@@ -143,7 +153,7 @@ sylwetki opisuje `TreeShapes.js`. [Edycja atlasów](tekstury-atlasy.md).
 ## Osiągnięcia
 
 - **Borówkowy język** (zwykłe) - zbierz borówki z krzaka,
-- **Turysta** (rzadkie) - odwiedź każdy z 11 biomów lądowych (postęp
+- **Turysta** (rzadkie) - odwiedź każdy z 16 biomów lądowych (postęp
   w księdze i w `/biom lista`),
 - **Dach świata** (rzadkie) - stań na śniegu na ośnieżonym szczycie,
 - **Pełne kosze** - teraz pięć rodzajów owoców (z borówkami).

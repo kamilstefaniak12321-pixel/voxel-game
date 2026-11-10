@@ -11,6 +11,43 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 0.83.0 - Pięć nowych drzew i ich biomy leśne
+
+Paczki drzew Kamila — PR #122 (po 0.82.2):
+
+- **Pięć nowych gatunków** (razem 17): **klon cukrowy** w jesiennych
+  kolorach (14–22 bloków), **kosodrzewina** - niska, pokładająca się
+  (3–5), **oliwka** z sękatym pniem i płaską koroną (5–8), **eukaliptus
+  tęczowy** z kolorowym pniem i parasolem liści (32–50) i **sekwoja
+  olbrzymia** z grubym pniem 3 x 3 / 4 x 4 i schodkową podstawą
+  (46–72 bloków). Wysokości i korony jak w `render_info.json` paczek.
+- **Wyroby każdego:** pień, okorowany pień (siekiera), deski (też
+  w skrzyni, tratwie i innych przepisach z dowolnych desek), liście
+  i ich odmiana, sadzonka (z modelem 3D w trzech jakościach) i własny
+  **opał do ogniska** z własnym drewnem. Do tego: **opadłe liście klonu**,
+  **oliwki** (PPM na liściach z oliwkami, odrastają; posadzone dają
+  sadzonkę), **szyszki sekwoi** (z igliwia z szyszkami) i **szyszki
+  kosodrzewiny**.
+- **Cząsteczki:** liście spadają z koron w swoich kolorach (jesienny
+  klon), oliwki i szyszki sekwoi czasem spadają jak jabłka.
+- **Pięć nowych biomów** terenu realistycznego (razem 16 lądowych):
+  **klonowy las jesienny** (umiarkowanie), **las sekwojowy** (chłodno,
+  bardzo wilgotno, nisko - sekwoje nad świerkami i sosnami), **las
+  eukaliptusowy** (ciepło i wilgotno), **gaj oliwny** (ciepło i sucho,
+  z akacjami, lawendą i szałwią) i **kosodrzewina** (pas tuż nad granicą
+  lasu w górach). Własne rośliny, krzaki, ziemia i kolory na mapie;
+  `/biom znajdz klonowy|sekwojowy|eukaliptusowy|gaj|kosodrzewina`.
+  W próbce trzech światów: ok. 3% świata to lasy klonowe, po ok. 1%
+  pozostałe nowe biomy.
+- Olbrzymy nie wchodzą na siebie (sekwoja w co trzeciej kratce siatki
+  drzew, eukaliptus w co drugiej); pod limitem wysokości świata sekwoja
+  jest niższa, zamiast znikać. Dawne gatunki i lasy bez zmian (6000
+  drzew wzorcowych z 0.79.0 identycznych); w starych zapisach nowe
+  drzewa i biomy pojawiają się na nowo generowanym terenie.
+- Testy: `tools/sprawdz_drzewa_083.mjs` (5238 sprawdzeń: numery, wyroby,
+  oryginalne piksele paczek, kształty, biomy w świecie, czas chunków)
+  i `tools/sprawdz_drzewa_083_webgl.mjs` w prawdziwej grze (11 widoków).
+
 ## 0.82.2 - Czytelniejsza skrzynia i opis komend pod kontrolą
 
 Poprawki z przeglądu repozytorium — PR #121 (po 0.82.1):

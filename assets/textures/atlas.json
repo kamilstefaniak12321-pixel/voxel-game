@@ -7,7 +7,7 @@
     "drzewa": {
       "file": "drzewa.png",
       "width": 256,
-      "height": 320
+      "height": 480
     },
     "teren": {
       "file": "teren.png",
@@ -2899,6 +2899,377 @@
       "y": 208,
       "width": 32,
       "height": 32
+    },
+    "maple/log_side.png": {
+      "sheet": "drzewa",
+      "x": 0,
+      "y": 320,
+      "width": 16,
+      "height": 16
+    },
+    "maple/log_top.png": {
+      "sheet": "drzewa",
+      "x": 16,
+      "y": 320,
+      "width": 16,
+      "height": 16
+    },
+    "maple/stripped_side.png": {
+      "sheet": "drzewa",
+      "x": 32,
+      "y": 320,
+      "width": 16,
+      "height": 16
+    },
+    "maple/stripped_top.png": {
+      "sheet": "drzewa",
+      "x": 48,
+      "y": 320,
+      "width": 16,
+      "height": 16
+    },
+    "maple/planks.png": {
+      "sheet": "drzewa",
+      "x": 64,
+      "y": 320,
+      "width": 16,
+      "height": 16
+    },
+    "maple/leaves.png": {
+      "sheet": "drzewa",
+      "x": 80,
+      "y": 320,
+      "width": 16,
+      "height": 16
+    },
+    "maple/sapling.png": {
+      "sheet": "drzewa",
+      "x": 96,
+      "y": 320,
+      "width": 16,
+      "height": 16
+    },
+    "maple/leaves_variant.png": {
+      "sheet": "drzewa",
+      "x": 112,
+      "y": 320,
+      "width": 16,
+      "height": 16
+    },
+    "maple/leaf_litter.png": {
+      "sheet": "drzewa",
+      "x": 0,
+      "y": 336,
+      "width": 16,
+      "height": 16
+    },
+    "campfire_maple": {
+      "sheet": "drzewa",
+      "x": 128,
+      "y": 320,
+      "width": 32,
+      "height": 32
+    },
+    "mugo/log_side.png": {
+      "sheet": "drzewa",
+      "x": 0,
+      "y": 352,
+      "width": 16,
+      "height": 16
+    },
+    "mugo/log_top.png": {
+      "sheet": "drzewa",
+      "x": 16,
+      "y": 352,
+      "width": 16,
+      "height": 16
+    },
+    "mugo/stripped_side.png": {
+      "sheet": "drzewa",
+      "x": 32,
+      "y": 352,
+      "width": 16,
+      "height": 16
+    },
+    "mugo/stripped_top.png": {
+      "sheet": "drzewa",
+      "x": 48,
+      "y": 352,
+      "width": 16,
+      "height": 16
+    },
+    "mugo/planks.png": {
+      "sheet": "drzewa",
+      "x": 64,
+      "y": 352,
+      "width": 16,
+      "height": 16
+    },
+    "mugo/leaves.png": {
+      "sheet": "drzewa",
+      "x": 80,
+      "y": 352,
+      "width": 16,
+      "height": 16
+    },
+    "mugo/sapling.png": {
+      "sheet": "drzewa",
+      "x": 96,
+      "y": 352,
+      "width": 16,
+      "height": 16
+    },
+    "mugo/leaves_variant.png": {
+      "sheet": "drzewa",
+      "x": 112,
+      "y": 352,
+      "width": 16,
+      "height": 16
+    },
+    "mugo/cone.png": {
+      "sheet": "drzewa",
+      "x": 0,
+      "y": 368,
+      "width": 16,
+      "height": 16
+    },
+    "campfire_mugo": {
+      "sheet": "drzewa",
+      "x": 128,
+      "y": 352,
+      "width": 32,
+      "height": 32
+    },
+    "olive/log_side.png": {
+      "sheet": "drzewa",
+      "x": 0,
+      "y": 384,
+      "width": 16,
+      "height": 16
+    },
+    "olive/log_top.png": {
+      "sheet": "drzewa",
+      "x": 16,
+      "y": 384,
+      "width": 16,
+      "height": 16
+    },
+    "olive/stripped_side.png": {
+      "sheet": "drzewa",
+      "x": 32,
+      "y": 384,
+      "width": 16,
+      "height": 16
+    },
+    "olive/stripped_top.png": {
+      "sheet": "drzewa",
+      "x": 48,
+      "y": 384,
+      "width": 16,
+      "height": 16
+    },
+    "olive/planks.png": {
+      "sheet": "drzewa",
+      "x": 64,
+      "y": 384,
+      "width": 16,
+      "height": 16
+    },
+    "olive/leaves.png": {
+      "sheet": "drzewa",
+      "x": 80,
+      "y": 384,
+      "width": 16,
+      "height": 16
+    },
+    "olive/sapling.png": {
+      "sheet": "drzewa",
+      "x": 96,
+      "y": 384,
+      "width": 16,
+      "height": 16
+    },
+    "olive/leaves_variant.png": {
+      "sheet": "drzewa",
+      "x": 112,
+      "y": 384,
+      "width": 16,
+      "height": 16
+    },
+    "olive/olives.png": {
+      "sheet": "drzewa",
+      "x": 0,
+      "y": 400,
+      "width": 16,
+      "height": 16
+    },
+    "campfire_olive": {
+      "sheet": "drzewa",
+      "x": 128,
+      "y": 384,
+      "width": 32,
+      "height": 32
+    },
+    "rainbow_eucalyptus/log_side.png": {
+      "sheet": "drzewa",
+      "x": 0,
+      "y": 416,
+      "width": 16,
+      "height": 16
+    },
+    "rainbow_eucalyptus/log_top.png": {
+      "sheet": "drzewa",
+      "x": 16,
+      "y": 416,
+      "width": 16,
+      "height": 16
+    },
+    "rainbow_eucalyptus/stripped_side.png": {
+      "sheet": "drzewa",
+      "x": 32,
+      "y": 416,
+      "width": 16,
+      "height": 16
+    },
+    "rainbow_eucalyptus/stripped_top.png": {
+      "sheet": "drzewa",
+      "x": 48,
+      "y": 416,
+      "width": 16,
+      "height": 16
+    },
+    "rainbow_eucalyptus/planks.png": {
+      "sheet": "drzewa",
+      "x": 64,
+      "y": 416,
+      "width": 16,
+      "height": 16
+    },
+    "rainbow_eucalyptus/leaves.png": {
+      "sheet": "drzewa",
+      "x": 80,
+      "y": 416,
+      "width": 16,
+      "height": 16
+    },
+    "rainbow_eucalyptus/sapling.png": {
+      "sheet": "drzewa",
+      "x": 96,
+      "y": 416,
+      "width": 16,
+      "height": 16
+    },
+    "campfire_rainbow_eucalyptus": {
+      "sheet": "drzewa",
+      "x": 128,
+      "y": 416,
+      "width": 32,
+      "height": 32
+    },
+    "sequoia/log_side.png": {
+      "sheet": "drzewa",
+      "x": 0,
+      "y": 448,
+      "width": 16,
+      "height": 16
+    },
+    "sequoia/log_top.png": {
+      "sheet": "drzewa",
+      "x": 16,
+      "y": 448,
+      "width": 16,
+      "height": 16
+    },
+    "sequoia/stripped_side.png": {
+      "sheet": "drzewa",
+      "x": 32,
+      "y": 448,
+      "width": 16,
+      "height": 16
+    },
+    "sequoia/stripped_top.png": {
+      "sheet": "drzewa",
+      "x": 48,
+      "y": 448,
+      "width": 16,
+      "height": 16
+    },
+    "sequoia/planks.png": {
+      "sheet": "drzewa",
+      "x": 64,
+      "y": 448,
+      "width": 16,
+      "height": 16
+    },
+    "sequoia/leaves.png": {
+      "sheet": "drzewa",
+      "x": 80,
+      "y": 448,
+      "width": 16,
+      "height": 16
+    },
+    "sequoia/sapling.png": {
+      "sheet": "drzewa",
+      "x": 96,
+      "y": 448,
+      "width": 16,
+      "height": 16
+    },
+    "sequoia/leaves_variant.png": {
+      "sheet": "drzewa",
+      "x": 112,
+      "y": 448,
+      "width": 16,
+      "height": 16
+    },
+    "sequoia/cone.png": {
+      "sheet": "drzewa",
+      "x": 0,
+      "y": 464,
+      "width": 16,
+      "height": 16
+    },
+    "campfire_sequoia": {
+      "sheet": "drzewa",
+      "x": 128,
+      "y": 448,
+      "width": 32,
+      "height": 32
+    },
+    "models/rosliny/sadzonka-klon/polrealistyczny": {
+      "sheet": "drzewa",
+      "x": 32,
+      "y": 336,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/sadzonka-kosodrzewina/polrealistyczny": {
+      "sheet": "drzewa",
+      "x": 32,
+      "y": 368,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/sadzonka-oliwka/polrealistyczny": {
+      "sheet": "drzewa",
+      "x": 32,
+      "y": 400,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/sadzonka-eukaliptus/polrealistyczny": {
+      "sheet": "drzewa",
+      "x": 32,
+      "y": 432,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/sadzonka-sekwoja/polrealistyczny": {
+      "sheet": "drzewa",
+      "x": 32,
+      "y": 464,
+      "width": 16,
+      "height": 16
     }
   },
   "aliases": {
@@ -3143,7 +3514,12 @@
     "assets/ui/themes/grey-wood/board.png": "assets/ui/themes/grey-wood/board.png",
     "assets/ui/themes/grey-wood/frame.png": "assets/ui/themes/grey-wood/frame.png",
     "assets/ui/themes/grey-wood/planks.png": "assets/ui/themes/grey-wood/planks.png",
-    "assets/ui/themes/lepidolit/background.png": "assets/ui/themes/lepidolit/background.png"
+    "assets/ui/themes/lepidolit/background.png": "assets/ui/themes/lepidolit/background.png",
+    "assets/models/rosliny/sadzonka-klon/polrealistyczny.png": "models/rosliny/sadzonka-klon/polrealistyczny",
+    "assets/models/rosliny/sadzonka-kosodrzewina/polrealistyczny.png": "models/rosliny/sadzonka-kosodrzewina/polrealistyczny",
+    "assets/models/rosliny/sadzonka-oliwka/polrealistyczny.png": "models/rosliny/sadzonka-oliwka/polrealistyczny",
+    "assets/models/rosliny/sadzonka-eukaliptus/polrealistyczny.png": "models/rosliny/sadzonka-eukaliptus/polrealistyczny",
+    "assets/models/rosliny/sadzonka-sekwoja/polrealistyczny.png": "models/rosliny/sadzonka-sekwoja/polrealistyczny"
   },
   "tiles": {
     "grass_top": {
@@ -5109,6 +5485,291 @@
       "pw": 32,
       "ph": 32,
       "region": "chest"
+    },
+    "maple/log_side.png": {
+      "x": 14,
+      "y": 2,
+      "region": "maple/log_side.png"
+    },
+    "maple/log_top.png": {
+      "x": 15,
+      "y": 2,
+      "region": "maple/log_top.png"
+    },
+    "maple/stripped_side.png": {
+      "x": 13,
+      "y": 3,
+      "region": "maple/stripped_side.png"
+    },
+    "maple/stripped_top.png": {
+      "x": 14,
+      "y": 3,
+      "region": "maple/stripped_top.png"
+    },
+    "maple/planks.png": {
+      "x": 15,
+      "y": 3,
+      "region": "maple/planks.png"
+    },
+    "maple/leaves.png": {
+      "x": 5,
+      "y": 4,
+      "region": "maple/leaves.png"
+    },
+    "maple/sapling.png": {
+      "x": 6,
+      "y": 4,
+      "region": "maple/sapling.png"
+    },
+    "maple/leaves_variant.png": {
+      "x": 7,
+      "y": 4,
+      "region": "maple/leaves_variant.png"
+    },
+    "maple/leaf_litter.png": {
+      "x": 8,
+      "y": 4,
+      "region": "maple/leaf_litter.png"
+    },
+    "campfire_maple": {
+      "x": 14,
+      "y": 8,
+      "w": 2,
+      "h": 2,
+      "pw": 32,
+      "ph": 32,
+      "region": "campfire_maple"
+    },
+    "mugo/log_side.png": {
+      "x": 9,
+      "y": 4,
+      "region": "mugo/log_side.png"
+    },
+    "mugo/log_top.png": {
+      "x": 10,
+      "y": 4,
+      "region": "mugo/log_top.png"
+    },
+    "mugo/stripped_side.png": {
+      "x": 11,
+      "y": 4,
+      "region": "mugo/stripped_side.png"
+    },
+    "mugo/stripped_top.png": {
+      "x": 12,
+      "y": 4,
+      "region": "mugo/stripped_top.png"
+    },
+    "mugo/planks.png": {
+      "x": 13,
+      "y": 4,
+      "region": "mugo/planks.png"
+    },
+    "mugo/leaves.png": {
+      "x": 14,
+      "y": 4,
+      "region": "mugo/leaves.png"
+    },
+    "mugo/sapling.png": {
+      "x": 15,
+      "y": 4,
+      "region": "mugo/sapling.png"
+    },
+    "mugo/leaves_variant.png": {
+      "x": 12,
+      "y": 6,
+      "region": "mugo/leaves_variant.png"
+    },
+    "mugo/cone.png": {
+      "x": 13,
+      "y": 6,
+      "region": "mugo/cone.png"
+    },
+    "campfire_mugo": {
+      "x": 10,
+      "y": 9,
+      "w": 2,
+      "h": 2,
+      "pw": 32,
+      "ph": 32,
+      "region": "campfire_mugo"
+    },
+    "olive/log_side.png": {
+      "x": 14,
+      "y": 6,
+      "region": "olive/log_side.png"
+    },
+    "olive/log_top.png": {
+      "x": 12,
+      "y": 9,
+      "region": "olive/log_top.png"
+    },
+    "olive/stripped_side.png": {
+      "x": 13,
+      "y": 9,
+      "region": "olive/stripped_side.png"
+    },
+    "olive/stripped_top.png": {
+      "x": 1,
+      "y": 10,
+      "region": "olive/stripped_top.png"
+    },
+    "olive/planks.png": {
+      "x": 2,
+      "y": 10,
+      "region": "olive/planks.png"
+    },
+    "olive/leaves.png": {
+      "x": 3,
+      "y": 10,
+      "region": "olive/leaves.png"
+    },
+    "olive/sapling.png": {
+      "x": 4,
+      "y": 10,
+      "region": "olive/sapling.png"
+    },
+    "olive/leaves_variant.png": {
+      "x": 5,
+      "y": 10,
+      "region": "olive/leaves_variant.png"
+    },
+    "olive/olives.png": {
+      "x": 6,
+      "y": 10,
+      "region": "olive/olives.png"
+    },
+    "campfire_olive": {
+      "x": 10,
+      "y": 16,
+      "w": 2,
+      "h": 2,
+      "pw": 32,
+      "ph": 32,
+      "region": "campfire_olive"
+    },
+    "rainbow_eucalyptus/log_side.png": {
+      "x": 7,
+      "y": 10,
+      "region": "rainbow_eucalyptus/log_side.png"
+    },
+    "rainbow_eucalyptus/log_top.png": {
+      "x": 8,
+      "y": 10,
+      "region": "rainbow_eucalyptus/log_top.png"
+    },
+    "rainbow_eucalyptus/stripped_side.png": {
+      "x": 9,
+      "y": 10,
+      "region": "rainbow_eucalyptus/stripped_side.png"
+    },
+    "rainbow_eucalyptus/stripped_top.png": {
+      "x": 12,
+      "y": 10,
+      "region": "rainbow_eucalyptus/stripped_top.png"
+    },
+    "rainbow_eucalyptus/planks.png": {
+      "x": 13,
+      "y": 10,
+      "region": "rainbow_eucalyptus/planks.png"
+    },
+    "rainbow_eucalyptus/leaves.png": {
+      "x": 14,
+      "y": 10,
+      "region": "rainbow_eucalyptus/leaves.png"
+    },
+    "rainbow_eucalyptus/sapling.png": {
+      "x": 15,
+      "y": 10,
+      "region": "rainbow_eucalyptus/sapling.png"
+    },
+    "campfire_rainbow_eucalyptus": {
+      "x": 12,
+      "y": 16,
+      "w": 2,
+      "h": 2,
+      "pw": 32,
+      "ph": 32,
+      "region": "campfire_rainbow_eucalyptus"
+    },
+    "sequoia/log_side.png": {
+      "x": 4,
+      "y": 14,
+      "region": "sequoia/log_side.png"
+    },
+    "sequoia/log_top.png": {
+      "x": 5,
+      "y": 14,
+      "region": "sequoia/log_top.png"
+    },
+    "sequoia/stripped_side.png": {
+      "x": 6,
+      "y": 14,
+      "region": "sequoia/stripped_side.png"
+    },
+    "sequoia/stripped_top.png": {
+      "x": 7,
+      "y": 14,
+      "region": "sequoia/stripped_top.png"
+    },
+    "sequoia/planks.png": {
+      "x": 8,
+      "y": 14,
+      "region": "sequoia/planks.png"
+    },
+    "sequoia/leaves.png": {
+      "x": 9,
+      "y": 14,
+      "region": "sequoia/leaves.png"
+    },
+    "sequoia/sapling.png": {
+      "x": 10,
+      "y": 14,
+      "region": "sequoia/sapling.png"
+    },
+    "sequoia/leaves_variant.png": {
+      "x": 11,
+      "y": 14,
+      "region": "sequoia/leaves_variant.png"
+    },
+    "sequoia/cone.png": {
+      "x": 12,
+      "y": 14,
+      "region": "sequoia/cone.png"
+    },
+    "campfire_sequoia": {
+      "x": 14,
+      "y": 16,
+      "w": 2,
+      "h": 2,
+      "pw": 32,
+      "ph": 32,
+      "region": "campfire_sequoia"
+    },
+    "models/rosliny/sadzonka-klon/polrealistyczny": {
+      "x": 13,
+      "y": 14,
+      "region": "models/rosliny/sadzonka-klon/polrealistyczny"
+    },
+    "models/rosliny/sadzonka-kosodrzewina/polrealistyczny": {
+      "x": 14,
+      "y": 14,
+      "region": "models/rosliny/sadzonka-kosodrzewina/polrealistyczny"
+    },
+    "models/rosliny/sadzonka-oliwka/polrealistyczny": {
+      "x": 15,
+      "y": 14,
+      "region": "models/rosliny/sadzonka-oliwka/polrealistyczny"
+    },
+    "models/rosliny/sadzonka-eukaliptus/polrealistyczny": {
+      "x": 6,
+      "y": 16,
+      "region": "models/rosliny/sadzonka-eukaliptus/polrealistyczny"
+    },
+    "models/rosliny/sadzonka-sekwoja/polrealistyczny": {
+      "x": 7,
+      "y": 16,
+      "region": "models/rosliny/sadzonka-sekwoja/polrealistyczny"
     }
   }
 }

@@ -19,6 +19,8 @@ import { Geology } from './Geology.js';
 
 import { Forests } from '../trees/Forests.js';
 
+import { TREE_SPECIES } from '../../blocks/trees.js';
+
 import { Rivers } from './Rivers.js';
 
 import { RiverVegetation } from './RiverVegetation.js';
@@ -174,10 +176,18 @@ const FAR_FOREST_DENSITY = 0.16;
 
 const FAR_CANOPY = { spruce: 13, pine: 15, beech: 10, linden: 10, oak: 8, birch: 10 };
 
+// Pozostałe gatunki (0.83.0: klon, sekwoja...): średnia wysokość dojrzałego
+// drzewa z katalogu, bez małych krzewów kosodrzewiny ponad ziemię.
+
+function farCanopy(species) {
+    const shape = TREE_SPECIES[species]?.shape;
+    return FAR_CANOPY[species] ?? (shape?.height ? Math.round((shape.height[0] + shape.height[1]) / 2 * 0.85) : 10);
+}
+
 
 // Biomy leśne (w gęstym lesie więcej ściółki).
 
-const FOREST_BIOMES = new Set(['deciduous', 'beech', 'birch', 'pine', 'spruce']);
+const FOREST_BIOMES = new Set(['deciduous', 'beech', 'birch', 'pine', 'spruce', 'maple_forest', 'sequoia_forest', 'eucalyptus_forest']);
 
 
 // Dokładność liczenia: pełna (chunki), średnia i zgrubna (daleki teren -
@@ -1584,7 +1594,7 @@ export class RealisticGenerator {
                 const bump = 0.75 + 0.5 * hash01(this.plantSeed, x, z, 9);
 
                 return {
-                    top: sample.height + 1 + Math.round(FAR_CANOPY[forest.species] * cover * bump),
+                    top: sample.height + 1 + Math.round(farCanopy(forest.species) * cover * bump),
                     kind: `${forest.species}_leaves`
                 };
 

@@ -145,8 +145,17 @@ Z oczu widać to, co trzymasz w prawej ręce - jak w Minecrafcie:
 |---|---|
 | nic | prawa ręka ze skórki (z rękawem z drugiej warstwy): pięść z prawej, trochę poniżej środka, reszta ręki idzie w prawy dolny róg |
 | blok | sześcian obrócony tak, że widać dwa boki i wierzch |
-| przedmiot (siekiera, owoc, szyszka...) i płaskie bloki (wieniec, ściółka) | płaski obrazek: głowica / czubek w głąb ekranu i do środka, trzonek w prawym dolnym rogu |
+| przedmiot (siekiera, owoc, szyszka...) i płaskie bloki (wieniec, ściółka) | obrazek z grubością (od 0.84.0): głowica / czubek w głąb ekranu i do środka, trzonek w prawym dolnym rogu |
 | roślina (kwiat, sadzonka) | dwie skrzyżowane płaszczyzny jak w świecie |
+
+**Grube przedmioty (0.84.0):** przedmioty i narzędzia w dłoni (z oczu
+i u postaci) nie są już cienką kartką - mają grubość jednego piksela
+tekstury, a boki każdego widocznego piksela są w jego kolorze (jak
+w Minecrafcie; `buildExtrudedItemGeometry` w `PlayerModel.js`, kształt
+z atlasu - `getTileMask`). Postać trzyma narzędzia (siekiera, kilof,
+łopata, patyk) za koniec trzonka, głowicą do przodu i w górę, ostrzem
+w dół; resztę przedmiotów - mniej więcej za środek. Test:
+`node tools/sprawdz_modele_przedmiotow.mjs`.
 
 Ręka ma **własną scenę i kamerę** (pole widzenia stałe - 70°, nie
 zmienia się przy biegu), rysowaną na samym końcu na wyczyszczonej

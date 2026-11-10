@@ -371,7 +371,7 @@ i świerczyn). Każdy rośnie w czterech etapach:
 - **Owoce** to pierwsze **przedmioty**, które nie są blokami: truskawki,
   jeżyny, papryczki chili, orzech laskowy, borówki (`src/items/ItemRegistry.js`). Leżą
   w ekwipunku jak bloki (stosy po 64), w ręce postaci widać je jako
-  płaski obrazek. Na razie służą do sadzenia - jedzenie przyjdzie
+  obrazek z grubością jednego piksela (od 0.84.0). Na razie służą do sadzenia - jedzenie przyjdzie
   z głodem.
 - **Tekstury:** wiersz 3 atlasu (krzaki - sadzonka i krzak bez owoców są
   wspólne dla gatunków) i wiersz 4 (ikonki owoców).

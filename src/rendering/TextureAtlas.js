@@ -542,6 +542,41 @@ export function getTileColors(tileName) {
 }
 
 
+// Kształt kafelka 16 x 16 (1 - piksel widoczny, wiersz 0 = góra
+// obrazka) albo null, dopóki atlas się nie wczyta. Do grubych
+// przedmiotów w ręce (PlayerModel.buildExtrudedItemGeometry).
+
+const tileMasks = new Map();
+
+export function getTileMask(tileName) {
+
+    if (tileMasks.has(tileName)) {
+        return tileMasks.get(tileName);
+    }
+
+    const tile = ATLAS_TILES[tileName];
+
+    if (!atlasPixels || !tile || (tile.w ?? 1) !== 1 || (tile.h ?? 1) !== 1) {
+        return null;
+    }
+
+    const mask = new Uint8Array(ATLAS_TILE_SIZE * ATLAS_TILE_SIZE);
+    const width = ATLAS_COLUMNS * ATLAS_TILE_SIZE;
+
+    for (let y = 0; y < ATLAS_TILE_SIZE; y++) {
+        for (let x = 0; x < ATLAS_TILE_SIZE; x++) {
+            const i = ((tile.y * ATLAS_TILE_SIZE + y) * width + tile.x * ATLAS_TILE_SIZE + x) * 4;
+            mask[y * ATLAS_TILE_SIZE + x] = atlasPixels[i + 3] >= 128 ? 1 : 0;
+        }
+    }
+
+    tileMasks.set(tileName, mask);
+
+    return mask;
+
+}
+
+
 function srgbToLinear(value) {
 
     return value <= 0.04045

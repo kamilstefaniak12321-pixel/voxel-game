@@ -2005,9 +2005,12 @@ export class InventoryScreen {
         const dx = (this.mouse.x - (rect.left + rect.width / 2)) / 300;
         const dy = (this.mouse.y - (rect.top + rect.height * 0.2)) / 300;
 
+        // Kamera patrzy na postać od przodu (od -z), więc myszka w prawo
+        // na ekranie to głowa obrócona w lewo postaci (dodatni obrót) -
+        // do 0.83.0 znak był odwrotny i postać patrzyła w drugą stronę.
         model.bones.neck.rotation.set(
             Math.max(-0.7, Math.min(0.7, -dy)),
-            Math.max(-1, Math.min(1, -dx)) - 0.35,
+            Math.max(-1, Math.min(1, dx)) - 0.35,
             0,
             'YXZ'
         );

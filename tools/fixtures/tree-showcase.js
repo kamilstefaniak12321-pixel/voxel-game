@@ -118,7 +118,11 @@ export async function run() {
     const yieldBrowser = () => new Promise(resolve => setTimeout(resolve, 0));
     async function capture(name) {
         const scene = scenes[name]; if (!scene) throw Error(`Unknown scene: ${name}`);
-        await reset(); await command(scene.command);
+        await reset();
+        // Porównanie wszystkich gatunków (od 0.83.0 - 17, z olbrzymami) to
+        // rząd dłuższy niż 300 bloków: zaczynamy dalej na zachód od placu.
+        if (name === 'comparison') { game.player.pos.set(-320.5, 18, .5); game.world.loadAround(-320.5, .5, 3); }
+        await command(scene.command);
         const state = changes();
         check(state.count > 0, `${name}: command creates real blocks`);
         if (name === 'comparison') check(TREE_NAMES.every(species => state.species[species]), 'Comparison contains all registered tree species');

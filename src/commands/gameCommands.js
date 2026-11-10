@@ -1644,7 +1644,9 @@ const SETTING_WORDS = {
     'modele-roslin': 'plantModels',
     wiatr: 'plantWind',
     'animacje-roslin': 'plantAnimations',
-    'model-lisci': 'leafModel'
+    'model-lisci': 'leafModel',
+    'spadajace-liscie': 'fallingLeaves',
+    'smugi-wiatru': 'windStreaks'
 };
 
 

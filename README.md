@@ -712,6 +712,12 @@ każdy lekko kołysze się na wietrze, korona ma nierówny brzeg) albo
 [liście z 8 części](assets/models/leaves/README.md); z czatu:
 `/ustaw model-lisci czesci | bloki`.
 
+Od 0.82.0 drzewa ożywają: **z koron powoli spadają liście** w ich
+kolorach (kołyszą się i płyną z wiatrem), **z jabłoni czasem spadnie
+jabłko**, a na otwartym powietrzu płyną **delikatne smugi wiatru**.
+Wyłącza się je w tej samej zakładce (*Spadające liście i owoce*,
+*Smugi wiatru*). [Szczegóły](docs/czasteczki-drzew.md).
+
 **Eksperymenty** - funkcje, których nie jesteśmy jeszcze pewni (mogą się
 zmienić albo zniknąć), każda z krótkim opisem, domyślnie wyłączone
 i dla wszystkich światów:

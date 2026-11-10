@@ -67,6 +67,9 @@ import { FirstPersonHand } from '../player/FirstPersonHand.js';
 import { modelLight } from '../rendering/ModelMaterial.js';
 import { BlockDebris } from '../rendering/BlockDebris.js';
 import { WaterfallEffects } from '../rendering/WaterfallEffects.js';
+import { TreeParticles } from '../rendering/TreeParticles.js';
+import { WindStreaks } from '../rendering/WindStreaks.js';
+import { windAt } from '../world/AmbientWind.js';
 import { WaterfallWetRocks } from '../rendering/WaterfallWetRocks.js';
 import { WaterImpactRipples } from '../rendering/WaterImpactRipples.js';
 import { RainEffects } from '../rendering/RainEffects.js';
@@ -457,6 +460,14 @@ export class Game {
 
         this.waterfalls = new WaterfallEffects(this.scene, this.world);
         this.waterfalls.setAmount(this.settings.get('potato') ? 0.35 : 1);
+
+        // Spadające liście i owoce, smugi wiatru (0.82.0) - jeden wiatr
+        // dla obu (AmbientWind.js), liczony z czasu gry.
+        this.windClock = 0;
+        this.wind = windAt(0);
+        this.treeParticles = new TreeParticles(this.scene, this.world);
+        this.windStreaks = new WindStreaks(this.scene, this.world);
+        this.applyAmbientParticles();
         this.wetRocks = new WaterfallWetRocks(this.scene, this.world);
         this.waterImpacts = new WaterImpactRipples(this.scene, this.world);
         this.rain = new RainEffects(this.scene, this.world, this.waterImpacts);
@@ -852,6 +863,13 @@ export class Game {
         // Odłamki niszczonych bloków.
 
         this.debris.update(dt);
+
+        // Wiatr, spadające liście i owoce, smugi wiatru.
+
+        this.windClock += dt;
+        this.wind = windAt(this.windClock);
+        this.treeParticles.update(dt, this.player, this.wind);
+        this.windStreaks.update(dt, this.player, this.wind, this.sky.state?.daylight ?? 1);
 
         profile?.beginStage('waterfalls');
         this.waterfalls.update(dt, this.player, this.camera);
@@ -1773,6 +1791,20 @@ export class Game {
     }
 
 
+    // Spadające liście i owoce, smugi wiatru (Ustawienia -> Modele);
+    // tryb ziemniaka - mniej liści, bez smug.
+
+    applyAmbientParticles() {
+
+        const potato = Boolean(this.settings.get('potato'));
+
+        this.treeParticles?.setEnabled(this.settings.get('fallingLeaves') !== false);
+        this.treeParticles?.setAmount(potato ? 0.35 : 1);
+        this.windStreaks?.setEnabled(this.settings.get('windStreaks') !== false && !potato);
+
+    }
+
+
     // Stosuje ustawienia gracza. Wywoływane przy starcie
     // i po każdej zmianie w ekranie ustawień (key = co się zmieniło).
 
@@ -1844,6 +1876,7 @@ export class Game {
         setPotatoDefine([blockMaterial, plantMaterial, waterMaterial, leafMaterial], potato);
 
         this.waterfalls?.setAmount(potato ? 0.35 : 1);
+        this.applyAmbientParticles();
         this.wetRocks?.setAmount(potato ? .35 : 1);
         this.waterImpacts?.setAmount(potato ? .35 : 1);
         this.rain?.setAmount(potato ? .35 : 1);
@@ -2712,6 +2745,10 @@ export class Game {
 
         this.rafts?.dispose();
         this.waterfalls.dispose();
+
+        this.treeParticles.dispose();
+
+        this.windStreaks.dispose();
         this.wetRocks.dispose();
         this.waterImpacts.dispose();
         this.rain.dispose();

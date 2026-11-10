@@ -43,7 +43,10 @@ const GRAVITY = 26, DRAG = 27, COLLIDE = 28, RESTING = 29, LIFT = 30;
 const LIGHT_RED = 31, LIGHT_GREEN = 32, LIGHT_BLUE = 33, LIGHT_SKY = 34;
 const EMISSION = 35, CLASSIC_SHADE = 36;
 
-const STRIDE = 37;
+// Liście (0.82.0): kołysanie na boki w locie i niesienie przez wiatr.
+const FLUTTER = 37, PHASE = 38, CARRY = 39;
+
+const STRIDE = 40;
 
 // Kiedy w życiu cząsteczki jest kolor "middle".
 const MIDDLE = 0.35;
@@ -201,7 +204,14 @@ export class CubeParticles {
 
     // capacity - najwięcej cząsteczek naraz (nowe ponad limit są pomijane)
 
-    constructor(scene, { capacity = 2000, glowing = false, surfaceLighting = false } = {}) {
+    // flat - grubość względem rozmiaru (1 - sześcian, 0.2 - płatek liścia).
+
+    constructor(scene, { capacity = 2000, glowing = false, surfaceLighting = false, flat = 1 } = {}) {
+
+        this.flat = flat;
+
+        // Wiatr niosący cząsteczki z carry > 0 (bloki/s, x i z).
+        this.wind = { x: 0, z: 0 };
 
         this.capacity = capacity;
         this.surfaceLighting = surfaceLighting && !glowing;
@@ -271,6 +281,9 @@ export class CubeParticles {
         lift = 0,
         spin = 6,
         collide = false,
+        // Kołysanie na boki w locie (bloki/s) i ile niesie wiatr (0-1).
+        flutter = 0,
+        carry = 0,
         // Liniowe mnożniki światła oddzielone od colors (albedo).
         // classicShade pozwala odtworzyć dawny wygląd bez wypalania go w albedo.
         lighting = null
@@ -335,6 +348,9 @@ export class CubeParticles {
         d[o + LIGHT_SKY] = lighting?.sky ?? 1;
         d[o + EMISSION] = lighting?.emission ?? 0;
         d[o + CLASSIC_SHADE] = lighting?.classicShade ?? 1;
+        d[o + FLUTTER] = flutter;
+        d[o + PHASE] = Math.random() * Math.PI * 2;
+        d[o + CARRY] = carry;
 
         return true;
 
@@ -387,6 +403,19 @@ export class CubeParticles {
                 d[o + PY] += d[o + VY] * dt;
                 d[o + PZ] += d[o + VZ] * dt;
 
+                // Liść: kołysze się na boki i płynie z wiatrem.
+
+                if (d[o + FLUTTER] > 0 || d[o + CARRY] > 0) {
+
+                    const age = d[o + AGE], phase = d[o + PHASE], flutter = d[o + FLUTTER];
+
+                    d[o + PX] += (Math.cos(age * 2.3 + phase) * flutter + this.wind.x * d[o + CARRY]) * dt;
+                    d[o + PZ] += (Math.sin(age * 1.7 + phase * 1.3) * flutter + this.wind.z * d[o + CARRY]) * dt;
+                    // Na przemian trochę wolniej i szybciej - jak płatek.
+                    d[o + PY] += Math.sin(age * 4.6 + phase) * flutter * 0.25 * dt;
+
+                }
+
                 d[o + RX] += d[o + SX] * dt;
                 d[o + RY] += d[o + SY] * dt;
                 d[o + RZ] += d[o + SZ] * dt;
@@ -415,7 +444,7 @@ export class CubeParticles {
 
         const d = this.data;
 
-        const half = this.currentSize(o) / 2;
+        const half = this.currentSize(o) * this.flat / 2;
 
         const bottom = d[o + PY] - half;
 
@@ -493,7 +522,7 @@ export class CubeParticles {
 
             this.quaternion.setFromEuler(this.euler);
 
-            this.scale.setScalar(size);
+            this.scale.set(size, size * this.flat, size);
 
             this.matrix.compose(this.position, this.quaternion, this.scale);
 

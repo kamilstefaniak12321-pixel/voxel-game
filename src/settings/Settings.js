@@ -100,6 +100,8 @@ export const SETTINGS_DEFAULTS = {
     plantModels: 'semi',                           // wygląd roślin: 'simple' | 'semi' | 'detailed'
     plantWind: true,                               // kołysanie roślin na wietrze
     plantAnimations: true,                         // animacje roślin: stawianie, wzrost, zbiór, zniszczenie
+    fallingLeaves: true,                           // spadające liście i owoce z drzew (0.82.0)
+    windStreaks: true,                             // smugi wiatru (0.82.0)
     leafModel: 'parts',                            // liście drzew: 'parts' - z 8 części (kołyszą się), 'cube' - bloki
 
     // Eksperymenty (zakładka "Eksperymenty" - funkcje, których nie

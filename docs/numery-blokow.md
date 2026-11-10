@@ -15,7 +15,10 @@ więcej niż dotąd - bez kolejnej zmiany zapisu.
 | 100-239 | dawny wspólny zakres: jabłoń, olcha i wierzba od dołu (100, 110...), rośliny od góry (amarantus 237-239) |
 | 1000-4999 | dodatkowe drzewa w `treeCatalog.js`, po 10 zarezerwowanych numerów; akacja 1000-1009, cypryśnik 1010-1019, wiśnia 1020-1029 |
 | 5000-9999 | paczki roślin (etapy po kolei, `docs/rosliny.md`; kocanka 5000-5002, lawenda 5003-5005, piwonia 5006-5008, zawilec 5009-5011, dzwonek 5012-5014, szałwia 5015-5017, nagietek 5018-5020, cynia 5021-5023, mikołajek 5024-5026, barwinek 5027-5029, len 5030-5032, gorczyca 5033-5035, porosty 5036-5044, huba 5045-5047) |
-| 10000-65279 | wolne na przyszłość |
+| 10000-10099 | konstrukcje: ognisko 10000, pochodnie 10010-10094 (17 kolorów × 5 ustawień), skrzynia 10095-10098 (4 kierunki, 0.81.0) |
+| 10100-10107 | woda płynąca (poziomy rozlewania) i pierwszy blok spadającej wody (10107) |
+| 10108-10122 | spadająca woda, która spada już 2-16 bloków (0.73.0, `src/blocks/water.js`) |
+| 10123-65279 | wolne na przyszłość |
 | 65280-65535 | zarezerwowane dla gry, nigdy w zapisie (np. odcienie trawy dalekiego terenu) |
 
 Stałe: `MAX_BLOCK_ID` w `src/blocks/BlockRegistry.js` (tam też ta lista),

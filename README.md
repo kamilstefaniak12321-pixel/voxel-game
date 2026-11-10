@@ -53,10 +53,16 @@ ustawienia na telefonie i co jeszcze nie działa: `docs/telefon.md`.
 
 ## Testy poprawności
 
-`npm test` sprawdza zachowanie przedmiotów pod kursorem, łupy z bloków
-i ich dekoracji, zapis lotu gracza oraz wszystkie przepisy wytwarzania.
+`npm test` uruchamia po kolei 91 sprawdzeń z `tools/sprawdz_*.mjs` -
+od przedmiotów pod kursorem, łupów i przepisów, przez numery bloków,
+zapis świata, atlasy tekstur, drzewa, rośliny, wodę, wodospady
+i rzeki, po ekwipunek, skrzynię, cząsteczki drzew, diagnostykę
+i zgodność opisu komend z grą.
 Potrzebny jest Node.js 22.15 lub nowszy; testy nie wymagają instalowania
 zależności ani uruchamiania okna gry i nie zmieniają zapisanych światów.
+Testy w prawdziwej grze (Chrome, WebGL2: tratwa, wodospady, rozlewanie,
+logi...) uruchamia workflow *Testy gry* w GitHub Actions
+(`.github/workflows/`).
 
 ## Sterowanie
 
@@ -164,8 +170,8 @@ z przyciskami (*Przepisy*, zamknięcie; w kreatywnym także wyszukiwanie,
 przejście *Bloki* / *Ekwipunek* i kosz). W ramie u góry **postać
 gracza** (głowa patrzy za myszką), obok **trzy miejsca na przyszłe
 ubrania, plecaki i paski na narzędzia** (na razie puste) i **strefa
-rzemieślnicza** - wytwarzanie (niżej); później w tym oknie będzie też
-widać otwartą skrzynię. Pod spodem 4 rzędy po 9: trzy rzędy przedmiotów
+rzemieślnicza** - wytwarzanie (niżej), a przy otwartej skrzyni (od
+0.81.0) sama skrzynia. Pod spodem 4 rzędy po 9: trzy rzędy przedmiotów
 i pasek. Księga przepisów otwiera się z lewej strony ramy.
 
 **Skrzynia** (od 0.81.0; przepis: 4 deski): PPM otwiera ekwipunek,
@@ -193,8 +199,8 @@ są te same.
 
 Układ i wygląd są oddzielone: `src/ui/inventory.css` (układ),
 `src/ui/inventory-theme.css` (jasne kolory), `src/ui/inventory-wood.css`
-(drewniany wygląd, tekstury w `assets/ui/inventory/wood/` z
-`tools/ekwipunek_drewno.py`). [Opis wyglądów ekwipunku](docs/ekwipunek-motywy.md).
+(drewniany wygląd, tekstury `assets/ui/inventory/wood/*` jako regiony
+arkusza `assets/textures/interfejs.png`, z `tools/ekwipunek_drewno.py`). [Opis wyglądów ekwipunku](docs/ekwipunek-motywy.md).
 
 | W oknie ekwipunku | Akcja |
 |---|---|
@@ -648,7 +654,10 @@ Opis: `docs/wodospady-0.73.0.md`.
   (woda w osobnej grupie meshu, obniżona powierzchnia, ciemniejące dno),
   `src/rendering/BlockRenderData.js` (`waterMaterial` - przezroczystość,
   fale, płynąca tekstura), `src/game/WaterEffects.js` (widok spod wody,
-  dźwięki).
+  dźwięki), `src/world/WaterSimulation.js` (rozlewanie i spadanie wody),
+  `src/blocks/water.js` (poziomy i spadek), `src/rendering/WaterfallEffects.js`
+  (krople, piana i mgiełka pod wodospadem), `src/world/terrain/Rivers.js`
+  (rzeki, jeziora, wodospady i sadzawki).
 
 ## Ustawienia
 
@@ -875,7 +884,8 @@ niszczeniu i stawianiu, latanie; głowa patrzy tam, gdzie kamera.
 W prawej ręce jest blok wybrany na pasku (owoc - jako płaski obrazek).
 
 **Skórka** to obrazek 64 x 64 w układzie skórek Minecrafta (z drugą
-warstwą). Domyślna: `assets/textures/player/skin.png`; własną wczytuje
+warstwą). Domyślna: region `assets/textures/player/skin.png` w arkuszu
+`assets/textures/gracz.png` ([arkusze](docs/tekstury-atlasy.md)); własną wczytuje
 się w *Ustawienia → Gracz* albo `/skorka plik`.
 
 **Z oczu** widać prawą rękę (ze skórki, z rękawem) albo to, co
@@ -1215,8 +1225,9 @@ w debugu (F3) widać godzinę, numer dnia i fazę księżyca, a klawisze
 - **Mgła** ma zawsze kolor nieba za terenem, także o zachodzie.
 
 Kolory nieba i światła o każdej porze dnia są w `src/sky/SkyColors.js`
-(jedna tabela), tekstura księżyca w `assets/textures/sky/moon.png`
-(32x32, poza tarczą przezroczysta).
+(jedna tabela), tekstura księżyca - region `assets/textures/sky/moon.png`
+w arkuszu `assets/textures/niebo.png` (32x32, poza tarczą przezroczysta;
+edycja: `python3 tools/atlasy.py export|replace`).
 
 Jak jest zbudowane niebo i jak dokładać kolejne rzeczy (kolorowe
 i dynamiczne światło, meteoryty, chmury...) - `docs/niebo-i-swiatlo.md`.
@@ -1291,9 +1302,13 @@ docs/                       opisy, jak działają większe części gry
 docs/wiki/                  wiki gry dla graczy (strony generuje tools/wiki.py)
 CHANGELOG.md                historia zmian - wszystkie wersje gry
 src/
+  bootstrap.js              start: diagnostyka przed grą, komunikat o nieudanym starcie
   main.js                   start aplikacji, menu, pauza, pętla
   config.js                 ustawienia: chunki, teren, światło, dzień i noc, gracz, menu
-  game/                     jeden uruchomiony świat (Game), ekwipunek, meteoryty, wzrost roślin, woda (obraz i dźwięk)
+  game/                     jeden uruchomiony świat (Game), ekwipunek, skrzynie, ogniska, tratwy, meteoryty, wzrost roślin, woda (obraz i dźwięk)
+  menu/                     żywe tło menu (mały świat za ekranem tytułowym)
+  dev/                      tryb programisty: sceny testowe (scenes.js) i wzorce światła
+  diagnostics/              logi, raport błędów i wydajności (/logi, F8)
   ui/                       ekrany menu, pasek bloków, ikonki, napisy
   settings/                 ustawienia gracza (zapis w przeglądarce)
   blocks/                   lista bloków (BlockRegistry), krzaki owocowe, drzewa (trees.js) i wspólny katalog gatunków (treeCatalog.js)
@@ -1306,7 +1321,7 @@ src/
   space/                    sekret: kosmos - kula Ziemi, spadanie jak meteoryt
   achievements/             osiągnięcia: lista (list.js) i księga (zapis, powiadomienia)
   storage/                  zapis i wczytywanie światów
-  rendering/                atlas tekstur, budowanie meshy chunków
+  rendering/                atlas tekstur, budowanie meshy chunków, cienie, cząsteczki (drzewa, wiatr, wodospady), modele (skrzynia, ognisko, rośliny)
   player/                   ruch i kolizje gracza, model, animacje, skórka
   input/                    klawiatura i mysz, sterowanie dotykowe (telefon)
   audio/                    dźwięk (lista dźwięków, odtwarzanie, dźwięki menu)
@@ -1350,8 +1365,9 @@ Poniżej — pozostałe bloki.
    (chyba że ma `creative: false`). Szybki test: `/daj <nazwa>`.
 
 **Nowy przedmiot** (coś, czego nie da się postawić jak bloku - np. owoc):
-ikonka 16x16 w wolnym kafelku atlasu (wiersze 4, 8 i 9) + wpis w `ATLAS_TILES`,
-potem wpis w `ITEM_TYPES` w `src/items/ItemRegistry.js` (polska nazwa,
+ikonka 16x16 jako nowy region w `assets/textures/przedmioty.png` + wpis
+w `regions` i `tiles` w `atlas.json`, potem `python tools/atlasy.py sync`
+([arkusze](docs/tekstury-atlasy.md)), a na końcu wpis w `ITEM_TYPES` w `src/items/ItemRegistry.js` (polska nazwa,
 ikonka, opcjonalnie `plants` - jaka roślina wyrasta po posadzeniu,
 `tool` - narzędzie). Kategoria (ekwipunek kreatywny, księga przepisów,
 wiki) dobiera się sama (`src/items/categories.js`), a inną podaje

@@ -30,6 +30,31 @@ Poprawki z przeglądu repozytorium — PR #121 (po 0.82.1):
   i `daleki-teren-szczegoly` — dopisane.
 - Zrzuty ekwipunku i skrzyni w dokumentacji i wiki - po zmianach.
 
+## 0.82.1 - Przegląd dokumentacji po 0.73.0-0.82.0
+
+Porządki po serii zmian (woda, ekwipunek, arkusze tekstur, skrzynia,
+cząsteczki) — PR #120 (po 0.82.0). W samej grze nic się nie zmienia,
+poprawione są opisy i zrzuty ekranu:
+
+- `docs/komendy.md`: brakujące `/logi` (raport błędów, F8)
+  i `/rzeka wodospad [tp]`, pełna lista scen w `/scena`, wszystkie
+  nazwy ustawień w `/ustaw` (m.in. `spadajace-liscie`, `smugi-wiatru`,
+  `model-lisci`, `modele-roslin`, `wiatr`, `szczegoly-terenu`,
+  ustawienia światła).
+- `docs/tryb-programisty.md`: sceny `wodospady` i `modele` w tabeli.
+- `docs/numery-blokow.md`: zakresy 10000+ — ognisko, pochodnie,
+  skrzynia, płynąca i spadająca woda (wcześniej „wolne”).
+- README: ścieżki tekstur jako regiony arkuszy (ekwipunek, skórka,
+  księżyc), opis `npm test` (90 sprawdzeń) i testów w prawdziwej grze,
+  pliki wody i wodospadów, nowe foldery w strukturze projektu
+  (`dev/`, `diagnostics/`, `menu/`), dodawanie przedmiotu przez
+  `atlas.json` + `tools/atlasy.py sync`, skrzynia w strefie
+  rzemieślniczej. `docs/niebo-i-swiatlo.md`: księżyc w `niebo.png`.
+- Nowe zrzuty w układzie 0.77.0+: drewniany ekwipunek z księgą
+  (`docs/ekwipunek-drewniany.png`, `docs/wiki/wytwarzanie.jpg`)
+  i otwarta skrzynia (`docs/skrzynia.png`).
+- Wiki odświeżone dla 0.82.1.
+
 ## 0.82.0 - Spadające liście, owoce i smugi wiatru
 
 Cząsteczki drzew i wiatru według pomysłu Kamila — PR #119 (po 0.81.0,

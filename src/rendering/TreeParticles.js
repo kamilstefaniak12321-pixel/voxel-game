@@ -38,6 +38,85 @@ const LAYER = CHUNK_SIZE * CHUNK_SIZE;
 const random = (min, max) => min + Math.random() * (max - min);
 
 
+// Kształty spadających liści (0.84.0): obrazki 6 x 6 "minipikseli"
+// (CubeParticles - spriteTexture), w kolorach liści gatunku. Szary
+// obrazek: h - jasny, o - zwykły, d - żyłka, s - ogonek.
+
+export const LEAF_SPRITES = {
+    owalny: [
+        '....hh',
+        '..ohhh',
+        '.ohdho',
+        '.odoo.',
+        '.doo..',
+        's.....'
+    ],
+    okragly: [
+        '..hh..',
+        '.ohhh.',
+        '.ohdo.',
+        '.odoo.',
+        '..do..',
+        '..s...'
+    ],
+    klon: [
+        '..h...',
+        'h.hh.h',
+        'hhdhhh',
+        '.hdhh.',
+        'hh.d.h',
+        '...s..'
+    ],
+    waski: [
+        '....hh',
+        '...hho',
+        '..hdo.',
+        '.odo..',
+        '.do...',
+        's.....'
+    ],
+    igly: [
+        '.h..h.',
+        'h.hh.h',
+        '.h.dh.',
+        'h.hd.h',
+        '.h.d..',
+        '...s..'
+    ],
+    galazka: [
+        'h..h..',
+        '.h.h.h',
+        '..hd..',
+        '.hd.h.',
+        'hd.h..',
+        's.....'
+    ],
+    platek: [
+        '.hhh..',
+        'hhhhh.',
+        'hhdhh.',
+        '.hhho.',
+        '..ho..',
+        '......'
+    ]
+};
+
+const SPRITE_NAMES = Object.keys(LEAF_SPRITES);
+
+// Gatunek -> kształty liścia (losowo jeden z listy).
+const SPECIES_SPRITES = {
+    spruce: ['igly', 'galazka'], pine: ['igly', 'galazka'], bald_cypress: ['galazka', 'igly'],
+    mugo: ['igly', 'galazka'], sequoia: ['galazka', 'igly'],
+    maple: ['klon'], cherry: ['platek', 'okragly'],
+    olive: ['waski'], wierzba: ['waski'], rainbow_eucalyptus: ['waski', 'owalny'], acacia: ['waski', 'okragly'],
+    birch: ['okragly', 'owalny'], linden: ['okragly', 'owalny']
+};
+
+export function leafSprites(species) {
+    return (SPECIES_SPRITES[species] ?? ['owalny', 'okragly']).map((name) => SPRITE_NAMES.indexOf(name));
+}
+
+
 // Liść z owocem drzewa (zbiór daje owoc z katalogu drzew - ma pole
 // tree, np. jabłko; kwiaty lipy nie).
 
@@ -53,8 +132,9 @@ export class TreeParticles {
 
         this.world = world;
 
-        // Płatki liści i owoce - osobno (płaskie / sześciany).
-        this.leaves = new CubeParticles(scene, { capacity: 700, surfaceLighting: true, flat: 0.22 });
+        // Liście - obrazki 6 x 6 (liść, gałązka igieł, płatek), owoce - sześciany.
+        this.leaves = new CubeParticles(scene, { capacity: 700, surfaceLighting: true, flat: 0.05,
+            sprites: SPRITE_NAMES.map((name) => LEAF_SPRITES[name]) });
         this.fruits = new CubeParticles(scene, { capacity: 80, surfaceLighting: true });
 
         // Doły koron w chunkach: chunk -> { revision, scanned, leaves: [x, y, z, id...], fruits: [...] }.
@@ -257,6 +337,9 @@ export class TreeParticles {
 
         const pick = () => colors[Math.floor(Math.random() * colors.length)];
 
+        const definition = getBlockDefinition(getBlockTypeById(cell.id));
+        const sprites = leafSprites(definition?.tree);
+
         this.position.set(cell.x + random(0.1, 0.9), cell.y - 0.03, cell.z + random(0.1, 0.9));
         this.velocity.set(random(-0.15, 0.15), random(-0.3, -0.1), random(-0.15, 0.15));
 
@@ -264,13 +347,16 @@ export class TreeParticles {
             position: this.position,
             velocity: this.velocity,
             life: random(9, 15),
-            size: random(0.12, 0.17),
+            // 6 x 6 minipikseli na 0,2-0,26 bloku (minipiksel to ok. 2/3
+            // piksela bloku) - liść nie wychodzi za duży.
+            size: random(0.2, 0.26),
+            sprite: sprites[Math.floor(Math.random() * sprites.length)],
             fade: 0.12,
             colors: [pick(), pick(), pick()],
             lighting: this.lightingAt(cell.x, cell.y - 1, cell.z),
             gravity: 0.9,
             drag: 2.2,
-            spin: 2.2,
+            spin: 1.6,
             collide: true,
             flutter: random(0.35, 0.7),
             carry: random(0.35, 0.6)

@@ -12,7 +12,7 @@ registerHooks({
         if (url.endsWith('/src/player/skin.js')) return { format:'module', shortCircuit:true, source:'export const skinTexture=null;' };
         if (url.endsWith('/src/rendering/TextureAtlas.js')) return {
             format:'module', shortCircuit:true, source:`
-                export const blockAtlasTexture=null,atlasAverageTexture=null;
+                export const blockAtlasTexture=null,atlasAverageTexture=null,getTileMask=()=>null;
                 export const atlasReady=Promise.resolve({tileSize:16,mipmaps:false}),atlasAveragesReady=Promise.resolve();
                 export const getTileColors = name => { const color = getAtlasAverage(name); return color ? [color] : []; };
                 export const getAtlasAverage=()=>null;

@@ -11,6 +11,31 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 0.84.0 - Liście z minipikseli, grube przedmioty w dłoni
+
+Prośba Kamila — PR #123 (po 0.83.0):
+
+- **Spadające liście jak prawdziwe liście:** zamiast kwadratowych płatków
+  z koron lecą małe obrazki 6 × 6 „minipikseli” w kształcie liścia
+  gatunku - **igły i gałązki** z iglaków (świerk, sosna, cyprys błotny,
+  kosodrzewina, sekwoja), **liście klonu** z wcięciami, **płatki wiśni**,
+  wąskie liście oliwki, wierzby, akacji i eukaliptusa, okrągłe brzozy
+  i lipy, owalne reszty drzew. Kolory jak dotąd z liści gatunku, ostre
+  piksele, ten sam spokojny lot z wiatrem; wielkość jak dawne płatki.
+  Wszystko w jednym rysowaniu (kształt na instancję).
+- **Grube przedmioty w dłoni:** narzędzia, patyk, owoce, szyszki i inne
+  przedmioty (z oczu i u postaci) mają grubość jednego piksela tekstury,
+  a boki każdego widocznego piksela są w jego kolorze - jak w Minecrafcie,
+  zamiast kartki grubości 0,1 mm.
+- **Siekiera (i inne narzędzia) w dobrą stronę:** postać trzyma narzędzie
+  za koniec trzonka, głowicą do przodu i w górę, ostrzem w dół (wcześniej
+  trzymała je za środek, odwrócone). Barwniki i tratwa - za środek.
+- **Postać w ekwipunku patrzy za myszką** (wcześniej odwracała głowę
+  w przeciwną stronę).
+- **Testy:** nowy `tools/sprawdz_modele_przedmiotow.mjs` (grubość, ścianki
+  na brzegach pikseli, chwyt, kierunek siekiery), kształty liści
+  w `tools/sprawdz_czasteczki_drzew.mjs`.
+
 ## 0.83.0 - Pięć nowych drzew i ich biomy leśne
 
 Paczki drzew Kamila — PR #122 (po 0.82.2):

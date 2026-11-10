@@ -66,7 +66,7 @@ export const POSES = {
 
     // Przedmiot (płaski obrazek): obrazek idzie w głąb ekranu, więc
     // trzonek jest w prawym dolnym rogu, a głowica wyżej, bliżej środka.
-    item: { position: [0.45, -0.3, -0.75], rotation: [0, 2.07, 0.4], scale: 0.42 },
+    item: { position: [0.45, -0.3, -0.75], rotation: [0, 2.07, 0.4], scale: 0.5 },
 
     // Bryłka owocu: widać bok i górę, bez obracania jak kartka.
     fruit: { position: [0.48, -0.3, -0.78], rotation: [0.2, -0.45, 0.12], scale: 0.38 },
@@ -252,10 +252,11 @@ export class FirstPersonHand {
         const fruit = Boolean(getFruitItemModel(type));
         const flat = (isItemType(type) && !fruit) || model === 'flat';
 
-        if (flat) {
+        // Gruby przedmiot (0.84.0) jest już w płaszczyźnie obrazka, a jego
+        // tył - odbity jak prawdziwy przedmiot; dawny płaski - obracamy.
 
+        if (flat && !this.held.geometry.userData.extruded) {
             const geometry = this.held.geometry;
-
             geometry.rotateY(-Math.PI / 4);
 
             const uv = geometry.attributes.uv;

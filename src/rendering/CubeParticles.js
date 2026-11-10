@@ -46,7 +46,10 @@ const EMISSION = 35, CLASSIC_SHADE = 36;
 // Liście (0.82.0): kołysanie na boki w locie i niesienie przez wiatr.
 const FLUTTER = 37, PHASE = 38, CARRY = 39;
 
-const STRIDE = 40;
+// Obrazek (0.84.0): który kształt z paska obrazków (sprites).
+const SPRITE = 40;
+
+const STRIDE = 41;
 
 // Kiedy w życiu cząsteczki jest kolor "middle".
 const MIDDLE = 0.35;
@@ -198,6 +201,60 @@ function createSolidMaterial(surfaceLighting) {
 
 }
 
+
+// ------------------------------------------------------------
+// OBRAZKI ZAMIAST SZEŚCIANÓW (0.84.0, pomysł Kamila)
+//
+// Płaski kwadrat z małym obrazkiem 6 x 6 "minipikseli" (liść, gałązka
+// igieł, płatek). Obrazek jest szary - jasność; kolor daje cząsteczka
+// (np. kolor liści gatunku). Wszystkie kształty w jednym pasku tekstury,
+// cząsteczka wybiera swój (sprite przy emit).
+//
+// Znaki: . - przezroczysty, h - jasny, o - zwykły, d - żyłka / cień,
+// s - ogonek.
+// ------------------------------------------------------------
+
+export const SPRITE_PIXELS = 6;
+const SPRITE_SHADES = { h: 1, o: 0.84, d: 0.62, s: 0.48 };
+
+export function spriteTexture(shapes) {
+
+    const N = SPRITE_PIXELS, width = N * shapes.length;
+    const data = new Uint8Array(width * N * 4);
+
+    shapes.forEach((rows, index) => {
+        if (rows.length !== N || rows.some((row) => row.length !== N)) throw new Error('Obrazek cząsteczki musi mieć 6 x 6');
+        rows.forEach((row, y) => {
+            for (let x = 0; x < N; x++) {
+                const shade = SPRITE_SHADES[row[x]];
+                // Wiersz 0 tekstury to dół obrazka.
+                const i = ((N - 1 - y) * width + index * N + x) * 4;
+                if (shade === undefined) continue;
+                data.fill(Math.round(shade * 255), i, i + 3);
+                data[i + 3] = 255;
+            }
+        });
+    });
+
+    const texture = new THREE.DataTexture(data, width, N, THREE.RGBAFormat);
+    texture.magFilter = THREE.NearestFilter;
+    texture.minFilter = THREE.NearestFilter;
+    texture.generateMipmaps = false;
+    texture.needsUpdate = true;
+    return texture;
+
+}
+
+
+function createSpriteGeometry() {
+
+    // Poziomy kwadrat (leży jak liść); obie strony widoczne.
+    const geometry = new THREE.PlaneGeometry(1, 1).rotateX(-Math.PI / 2);
+    geometry.setAttribute('color', new THREE.BufferAttribute(new Float32Array(4 * 3).fill(1), 3));
+    return geometry;
+
+}
+
 // ------------------------------------------------------------
 
 export class CubeParticles {
@@ -206,9 +263,14 @@ export class CubeParticles {
 
     // flat - grubość względem rozmiaru (1 - sześcian, 0.2 - płatek liścia).
 
-    constructor(scene, { capacity = 2000, glowing = false, surfaceLighting = false, flat = 1 } = {}) {
+    // sprites - kształty 6 x 6 (spriteTexture): płaskie obrazki zamiast
+    // sześcianów.
+
+    constructor(scene, { capacity = 2000, glowing = false, surfaceLighting = false, flat = 1, sprites = null } = {}) {
 
         this.flat = flat;
+
+        this.sprites = sprites?.length ? sprites.length : 0;
 
         // Wiatr niosący cząsteczki z carry > 0 (bloki/s, x i z).
         this.wind = { x: 0, z: 0 };
@@ -221,7 +283,13 @@ export class CubeParticles {
         this.count = 0;
 
 
-        const geometry = createCubeGeometry(glowing ? GLOW_SHADE : SOLID_SHADE);
+        const geometry = this.sprites ? createSpriteGeometry() : createCubeGeometry(glowing ? GLOW_SHADE : SOLID_SHADE);
+
+        if (this.sprites) {
+            const attribute = new THREE.InstancedBufferAttribute(new Float32Array(capacity), 1);
+            attribute.setUsage(THREE.DynamicDrawUsage);
+            geometry.setAttribute('particleSprite', attribute);
+        }
 
         if (this.surfaceLighting) {
             for (const [name, size] of [['particleLight', 4], ['particleEmission', 2]]) {
@@ -237,6 +305,24 @@ export class CubeParticles {
         if (glowing) {
             material.onBeforeCompile = installEmissionDiagnostics;
             material.customProgramCacheKey = () => 'cube-particles-emission-v1';
+        }
+
+        if (this.sprites) {
+            material.map = spriteTexture(sprites);
+            material.alphaTest = 0.5;
+            material.side = THREE.DoubleSide;
+            const compile = material.onBeforeCompile, key = material.customProgramCacheKey;
+            const count = this.sprites.toFixed(1);
+            material.onBeforeCompile = (shader, renderer) => {
+                compile(shader, renderer);
+                shader.vertexShader = shader.vertexShader
+                    .replace('#include <common>', '#include <common>\nattribute float particleSprite;')
+                    .replace('#include <uv_vertex>', `#include <uv_vertex>
+                    #ifdef USE_MAP
+                        vMapUv = vec2((uv.x + particleSprite) / ${count}, uv.y);
+                    #endif`);
+            };
+            material.customProgramCacheKey = () => `${key()}-sprites-${this.sprites}`;
         }
 
         this.mesh = new THREE.InstancedMesh(geometry, material, capacity);
@@ -286,7 +372,9 @@ export class CubeParticles {
         carry = 0,
         // Liniowe mnożniki światła oddzielone od colors (albedo).
         // classicShade pozwala odtworzyć dawny wygląd bez wypalania go w albedo.
-        lighting = null
+        lighting = null,
+        // Numer kształtu (gdy cząsteczki są obrazkami).
+        sprite = 0
     }) {
 
         if (this.count >= this.capacity) {
@@ -351,6 +439,8 @@ export class CubeParticles {
         d[o + FLUTTER] = flutter;
         d[o + PHASE] = Math.random() * Math.PI * 2;
         d[o + CARRY] = carry;
+
+        d[o + SPRITE] = this.sprites ? Math.max(0, Math.min(this.sprites - 1, Math.floor(sprite))) : 0;
 
         return true;
 
@@ -548,6 +638,8 @@ export class CubeParticles {
 
             mesh.setColorAt(i, this.color);
 
+            if (this.sprites) mesh.geometry.getAttribute('particleSprite').setX(i, d[o + SPRITE]);
+
             if (this.surfaceLighting) {
                 mesh.geometry.getAttribute('particleLight').setXYZW(i,
                     d[o + LIGHT_RED], d[o + LIGHT_GREEN], d[o + LIGHT_BLUE], d[o + LIGHT_SKY]);
@@ -562,6 +654,7 @@ export class CubeParticles {
         if (this.count > 0) {
             mesh.instanceMatrix.needsUpdate = true;
             mesh.instanceColor.needsUpdate = true;
+            if (this.sprites) mesh.geometry.getAttribute('particleSprite').needsUpdate = true;
             if (this.surfaceLighting) {
                 mesh.geometry.getAttribute('particleLight').needsUpdate = true;
                 mesh.geometry.getAttribute('particleEmission').needsUpdate = true;
@@ -585,6 +678,7 @@ export class CubeParticles {
         this.mesh.removeFromParent();
 
         this.mesh.geometry.dispose();
+        this.mesh.material.map?.dispose();
         this.mesh.material.dispose();
 
     }

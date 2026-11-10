@@ -7,7 +7,9 @@
 // - płatek liścia spada powoli, kołysze się i płynie z wiatrem,
 //   owoc spada szybko i zostaje na ziemi,
 // - smugi wiatru: tylko pod gołym niebem, półprzezroczyste, wyłączalne,
-// - ustawienia: w zakładce Modele, domyślnie włączone.
+// - ustawienia: w zakładce Modele, domyślnie włączone,
+// - 0.84.0: liście to obrazki 6 x 6 minipikseli - igły i gałązki dla
+//   iglaków, klonowy liść dla klonu, płatki wiśni itd.
 //
 // Uruchomienie: node tools/sprawdz_czasteczki_drzew.mjs
 // ------------------------------------------------------------
@@ -35,9 +37,10 @@ registerHooks({
 });
 
 const { windAt, WIND_SPEED, WIND_BASE_ANGLE, WIND_SWING } = await import('../src/world/AmbientWind.js');
-const { TreeParticles, fruitOf, LEAF_SECONDS } = await import('../src/rendering/TreeParticles.js');
+const { TreeParticles, fruitOf, LEAF_SECONDS, LEAF_SPRITES, leafSprites } = await import('../src/rendering/TreeParticles.js');
+const { TREE_CATALOG } = await import('../src/blocks/treeCatalog.js');
 const { WindStreaks, WIND_STREAKS } = await import('../src/rendering/WindStreaks.js');
-const { CubeParticles } = await import('../src/rendering/CubeParticles.js');
+const { CubeParticles, SPRITE_PIXELS, spriteTexture } = await import('../src/rendering/CubeParticles.js');
 const { getBlockId, getBlockDefinition } = await import('../src/blocks/BlockRegistry.js');
 const { CHUNK_SIZE, CHUNK_HEIGHT } = await import('../src/config.js');
 const { SETTINGS_DEFAULTS } = await import('../src/settings/Settings.js');
@@ -105,6 +108,33 @@ for (let i = 0; i < 60 * 30; i++) trees.update(1 / 60, player, windAt(i / 60));
 check(trees.cells.size === 1, 'Chunk przejrzany');
 const expected = 8 / LEAF_SECONDS * 30;
 check(trees.leaves.count > 0 && trees.leaves.count <= expected * 3, `Liście spadają spokojnie (${trees.leaves.count}, ok. ${expected.toFixed(1)})`);
+// Kształty 6 x 6 (0.84.0): każdy gatunek ma swój obrazek liścia.
+const SHAPES = Object.keys(LEAF_SPRITES);
+for (const [name, rows] of Object.entries(LEAF_SPRITES)) {
+    check(rows.length === SPRITE_PIXELS && rows.every((row) => row.length === SPRITE_PIXELS && /^[.hods]+$/.test(row)), `${name}: obrazek 6 x 6`);
+    const filled = rows.join('').replace(/\./g, '').length;
+    check(filled >= 8 && filled <= 26, `${name}: liść, nie pełny kwadrat (${filled} z 36 pikseli)`);
+}
+for (const species of Object.keys(TREE_CATALOG)) {
+    const sprites = leafSprites(species);
+    check(sprites.length > 0 && sprites.every((index) => index >= 0 && index < SHAPES.length), `${species}: kształt liścia z listy`);
+}
+for (const conifer of ['spruce', 'pine', 'mugo', 'sequoia', 'bald_cypress']) {
+    check(leafSprites(conifer).every((index) => ['igly', 'galazka'].includes(SHAPES[index])), `${conifer}: igły i gałązki`);
+}
+check(leafSprites('maple').every((index) => SHAPES[index] === 'klon'), 'Klon: liść klonu');
+check(leafSprites('cherry').includes(SHAPES.indexOf('platek')), 'Wiśnia: płatki');
+const strip = spriteTexture(Object.values(LEAF_SPRITES));
+check(strip.image.width === SPRITE_PIXELS * SHAPES.length && strip.image.height === SPRITE_PIXELS, 'Pasek obrazków w jednej teksturze');
+check(strip.magFilter === THREE.NearestFilter, 'Ostre minipiksele (bez rozmycia)');
+const oak = leafSprites('oak');
+let emitted = 0;
+for (let i = 0; i < trees.leaves.count; i++, emitted++) {
+    check(oak.includes(trees.leaves.data[i * 41 + 40]), 'Spadający liść dębu ma kształt dębu');
+}
+check(emitted > 0, 'Sprawdzone kształty spadających liści');
+check(trees.leaves.mesh.geometry.getAttribute('particleSprite')?.itemSize === 1, 'Kształt na instancję (atrybut)');
+
 trees.setEnabled(false);
 check(trees.leaves.count === 0 && trees.fruits.count === 0, 'Wyłączone - bez cząsteczek');
 trees.setEnabled(true);
@@ -152,4 +182,4 @@ check(SETTINGS_DEFAULTS.fallingLeaves === true && SETTINGS_DEFAULTS.windStreaks 
 check(SETTINGS_TABS.models.includes('fallingLeaves') && SETTINGS_TABS.models.includes('windStreaks'), 'W zakładce Modele');
 check(TEXTS.fallingLeaves(true) && TEXTS.windStreaks(false) && TEXTS.modelNotes.fallingLeaves && TEXTS.modelNotes.windStreaks, 'Napisy');
 
-console.log(`OK: cząsteczki drzew i wiatru - ${checks} sprawdzeń (wiatr, doły koron, owoce, płatki, smugi, ustawienia).`);
+console.log(`OK: cząsteczki drzew i wiatru - ${checks} sprawdzeń (wiatr, doły koron, owoce, kształty liści, płatki, smugi, ustawienia).`);

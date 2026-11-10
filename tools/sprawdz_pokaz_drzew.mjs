@@ -81,8 +81,8 @@ await test('galeria pokazuje wszystkie rozmiary szablonów i skrajne rozmiary pr
     for (const species of TREE_NAMES) {
         const plan = createTreeShowcasePlan({ mode: 'variants', species, seed: 17 });
         const sizes = [...new Set(plan.specimens.map(tree => tree.size))];
-        const pack = TREE_SPECIES[species].pack;
-        if (pack?.shape.kind === 'szablon') {
+        const pack = TREE_SPECIES[species];
+        if (pack?.shape?.kind === 'szablon') {
             const n = pack.shape.templates.length;
             assert.deepEqual([...new Set(sizes.map(size => Math.min(n - 1, Math.floor(size * n))))].sort(), Array.from({ length: n }, (_, i) => i));
         } else {
@@ -316,7 +316,7 @@ await test('dispose w trakcie sadzenia zatrzymuje zapis przy najbliższej granic
 // remains a Node regression test, independent of the renderer and browser.
 const commandUrl = new URL('../src/commands/gameCommands.js', import.meta.url).href;
 const allowed = new Set(['./CommandRegistry.js', '../blocks/BlockRegistry.js', '../items/ItemRegistry.js',
-    '../blocks/trees.js', '../blocks/treePacks.js', '../config.js', '../world/trees/TreeShowcase.js',
+    '../blocks/trees.js', '../blocks/treeCatalog.js', '../config.js', '../world/trees/TreeShowcase.js',
     '../audio/sounds.js', '../world/terrain/rocks.js']);
 const stubs = new Map();
 for (const [, bindings, specifier] of readFileSync(new URL(commandUrl), 'utf8').matchAll(/^import\s+([\s\S]*?)\s+from\s+['"]([^'"]+)['"];$/gm)) {

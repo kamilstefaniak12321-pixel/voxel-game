@@ -55,10 +55,11 @@ export async function run() {
         }
         check(warmPixels > 0, `${spec.name} keeps its authored warm handle and binding`);
     }
-    const sourceImage = new Image(); sourceImage.src = '/assets/textures/blocks/terrain.png'; await sourceImage.decode();
-    const sourceCanvas = document.createElement('canvas'); sourceCanvas.width = sourceCanvas.height = 256;
+    const { loadTextureRegion } = await import('/src/rendering/TextureSheets.js');
+    const sourceImage = await loadTextureRegion('stick');
+    const sourceCanvas = document.createElement('canvas'); sourceCanvas.width = sourceCanvas.height = 16;
     const sourceContext = sourceCanvas.getContext('2d', { willReadFrequently: true }); sourceContext.drawImage(sourceImage, 0, 0);
-    check(same(sample('stick'), sourceContext.getImageData(0, 144, 16, 16).data), 'Stick uses the exact updated atlas tile at 0,9');
+    check(same(sample('stick'), sourceContext.getImageData(0, 0, 16, 16).data), 'Stick uses the exact authored region in the item sheet');
 
     // The same composition helpers also receive high-resolution pack tiles.
     // Test a 32-pixel sheet and explicit user-painted target overrides.

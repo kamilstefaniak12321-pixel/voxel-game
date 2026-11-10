@@ -3,11 +3,12 @@ import * as THREE from 'three';
 import { MOON_DIAMETER } from '../../config.js';
 
 import { atlasReady, loadPackImage } from '../../rendering/TextureAtlas.js';
+import { loadTextureRegion } from '../../rendering/TextureSheets.js';
 
 // ------------------------------------------------------------
 // WARSTWA: KSIĘŻYC
 //
-// Tekstura assets/textures/sky/moon.png (można ją podmienić - ważne,
+// Tekstura księżyca z arkusza nieba (można ją podmienić - ważne,
 // żeby poza tarczą była przezroczysta) oświetlona z kierunku słońca
 // jak kula. Dzięki temu fazy (sierp, kwadra, pełnia) i to, z której
 // strony świeci tarcza, wychodzą same z położenia słońca i księżyca.
@@ -38,8 +39,11 @@ export class Moon {
 
     constructor() {
 
-        const texture =
-            new THREE.TextureLoader().load('./assets/textures/sky/moon.png');
+        const texture = new THREE.Texture();
+        const baseReady = loadTextureRegion('assets/textures/sky/moon.png').then(image => {
+            texture.image = image;
+            texture.needsUpdate = true;
+        }).catch(error => console.warn('Tekstura księżyca:', error));
 
         texture.colorSpace = THREE.SRGBColorSpace;
         texture.magFilter = THREE.NearestFilter;
@@ -51,6 +55,8 @@ export class Moon {
         // oryginalnego; uTextureSize - jego rozdzielczość (piksele tarczy).
 
         atlasReady.then(async ({ extras }) => {
+
+            await baseReady;
 
             if (!extras?.moon) {
                 return;

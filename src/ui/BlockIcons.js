@@ -20,6 +20,8 @@ import { modelIconPixels } from './ModelIcon.js';
 import { getItemModel as getFruitItemModel } from '../rendering/ItemGeometry.js';
 import { getTorchInfo } from '../blocks/torches.js';
 import { getTorchFaces } from '../rendering/TorchGeometry.js';
+import { loadTextureRegionURL } from '../rendering/TextureSheets.js';
+import { installUiTextureSheets } from './UiTextureSheets.js';
 
 // ------------------------------------------------------------
 // IKONKI BLOKÓW
@@ -227,6 +229,8 @@ function riverPlantIcon(kind) {
 
 export async function createBlockIcons() {
 
+    await installUiTextureSheets();
+
     const icons = new Map();
 
     let atlas;
@@ -308,7 +312,7 @@ export async function createBlockIcons() {
         }
 
         if (definition.modelIcon) {
-            icons.set(type, new URL(`../../${definition.modelIcon}`, import.meta.url).href);
+            icons.set(type, await loadTextureRegionURL(definition.modelIcon));
             continue;
         }
 

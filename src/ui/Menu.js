@@ -1,4 +1,5 @@
 import { TEXTS } from './texts.js';
+import { loadTextureRegionURL } from '../rendering/TextureSheets.js';
 import { diagnosticsPanel } from './DiagnosticsPanel.js';
 import { TERRAIN_TYPES, terrainName } from '../world/terrain/generators.js';
 import { DEFAULT_TERRAIN, DEFAULT_GAME_MODE } from '../config.js';
@@ -1350,7 +1351,9 @@ export class Menu {
             }, 'settings-model-option');
 
             const image = el('img');
-            image.src = new URL(`../../assets/models/rosliny/podglad/${level}.png`, import.meta.url).href;
+            loadTextureRegionURL(`assets/models/rosliny/podglad/${level}.png`)
+                .then(url => { image.src = url; })
+                .catch(error => console.warn('Podgląd modelu rośliny:', error));
             image.alt = '';
             image.draggable = false;
 

@@ -101,7 +101,7 @@ import { chooseSkinFile, resetSkin, hasCustomSkin } from '../player/skin.js';
 
 import { TREE_SPECIES, TREE_NAMES } from '../blocks/trees.js';
 
-import { TREE_PACKS, TREE_PACK_ERRORS, PACK_ID_SLOTS } from '../blocks/treePacks.js';
+import { TREE_DEFINITIONS } from '../blocks/treeCatalog.js';
 
 import { PLANT_PACKS, PLANT_PACK_ERRORS, PLANT_PIXELS, plantStageType, getPlantPack } from '../blocks/plantPacks.js';
 
@@ -931,9 +931,9 @@ const TREE_WORDS = {
     brzoza: 'birch', birch: 'birch'
 };
 
-// Drzewa z paczek (assets/drzewa/): nazwa folderu i krótka nazwa.
+// Wszystkie drzewa: stały identyfikator oraz krótka nazwa gatunku.
 
-for (const pack of TREE_PACKS) {
+for (const pack of TREE_DEFINITIONS) {
     TREE_WORDS[pack.id] = pack.id;
     TREE_WORDS[simplify(pack.short)] ??= pack.id;
 }
@@ -1078,40 +1078,6 @@ function growTreeAt(world, species, x, z, size, force) {
     const shape = plantTree(world, x, y, z, species, seed, size, force);
 
     return shape ? { x, y, z, shape } : null;
-
-}
-
-
-// Paczki drzew (/drzewa paczki): co jest wczytane i co ma błędy.
-
-function treePacksText() {
-
-    const lines = TREE_PACKS.map((pack) => {
-
-        const variants = pack.variants.map((variant) => variant.label.toLowerCase()).join(', ');
-
-        const items = Object.values(pack.items).map((item) => item.label.toLowerCase()).join(', ');
-
-        return `- ${pack.short} (folder ${pack.folder}, bloki ${pack.firstId}-${pack.firstId + PACK_ID_SLOTS - 1}, ` +
-            `kształt: ${pack.shape.kind}` +
-            (variants ? `, odmiany liści: ${variants}` : '') +
-            (items ? `, przedmioty: ${items}` : '') +
-            `, w lesie: ${pack.climate.chance > 0 ? `${Math.round(pack.climate.chance * 100)}% drzew tam, gdzie pasuje klimat` : 'nie (tylko sadzonka i /drzewa posadz)'})`;
-
-    });
-
-    const errors = TREE_PACK_ERRORS.map((error) => `- BŁĄD: ${error}`);
-
-    if (lines.length === 0 && errors.length === 0) {
-        return 'Brak paczek drzew. Nowe drzewo: folder w assets/drzewa/ - instrukcja w docs/drzewa-paczki.md.';
-    }
-
-    return [
-        `Paczki drzew (assets/drzewa/): wczytane ${TREE_PACKS.length}` + (errors.length > 0 ? `, błędy: ${errors.length}` : ''),
-        ...lines,
-        ...errors,
-        'Posadzenie: /drzewa posadz <nazwa>, bloki: E albo /daj <nazwa>_log. Instrukcja: docs/drzewa-paczki.md.'
-    ].join('\n');
 
 }
 
@@ -3813,8 +3779,8 @@ export const GAME_COMMANDS = [
     {
         name: 'drzewa',
         aliases: ['drzewo', 'trees', 'tree', 'las'],
-        usage: '/drzewa lista | /drzewa las <gatunek> [liczba 1-36] [seed] | /drzewa warianty <gatunek> [seed] | /drzewa porownanie [seed] | /drzewa ostatnie | /drzewa cofnij | /drzewa posadz <gatunek> [rozmiar 0-100] | /drzewa aleja | /drzewa znajdz <gatunek> [tp] | /drzewa rosnij | /drzewa tempo <0-500> | /drzewa paczki',
-        description: 'Lista gatunków, losowy las jednego gatunku (domyślnie 16 drzew), pokaz rozmiarów i stanów specjalnych, wszystkie gatunki obok siebie. Pokazy sadzą na wolnej ziemi przed graczem; nie wycinają istniejących drzew ani budowli. Najwygodniej oglądać na płaskiej trawie obok placu testowego. Seed odtwarza zestaw, ostatnie przypomina pozycje, cofnij usuwa ostatni pokaz w tej sesji. Pozostałe opcje: pojedyncze drzewo, aleja, wyszukiwanie, wzrost, paczki.',
+        usage: '/drzewa lista | /drzewa las <gatunek> [liczba 1-36] [seed] | /drzewa warianty <gatunek> [seed] | /drzewa porownanie [seed] | /drzewa ostatnie | /drzewa cofnij | /drzewa posadz <gatunek> [rozmiar 0-100] | /drzewa aleja | /drzewa znajdz <gatunek> [tp] | /drzewa rosnij | /drzewa tempo <0-500>',
+        description: 'Lista gatunków, losowy las jednego gatunku (domyślnie 16 drzew), pokaz rozmiarów i stanów specjalnych, wszystkie gatunki obok siebie. Pokazy sadzą na wolnej ziemi przed graczem; nie wycinają istniejących drzew ani budowli. Najwygodniej oglądać na płaskiej trawie obok placu testowego. Seed odtwarza zestaw, ostatnie przypomina pozycje, cofnij usuwa ostatni pokaz w tej sesji. Pozostałe opcje: pojedyncze drzewo, aleja, wyszukiwanie, wzrost.',
 
         run(args, { game, player, world, chat }) {
 
@@ -3865,8 +3831,9 @@ export const GAME_COMMANDS = [
             }
 
 
+            // Compatibility alias for the former diagnostic command.
             if (['paczki', 'paczka', 'packs'].includes(word)) {
-                return treePacksText();
+                return treeCatalogText();
             }
 
 
@@ -3980,7 +3947,7 @@ export const GAME_COMMANDS = [
 
             const species = TREE_NAMES.map((name) => simplify(TREE_SPECIES[name].short));
 
-            if (args.length === 1) return ['lista', 'las', 'warianty', 'porownanie', 'ostatnie', 'cofnij', 'posadz', 'aleja', 'znajdz', 'rosnij', 'tempo', 'paczki', ...species];
+            if (args.length === 1) return ['lista', 'las', 'warianty', 'porownanie', 'ostatnie', 'cofnij', 'posadz', 'aleja', 'znajdz', 'rosnij', 'tempo', ...species];
             if (args.length === 2 && ['las', 'warianty', 'posadz', 'znajdz'].includes(simplify(args[0]))) return species;
             if (args.length === 3 && simplify(args[0]) === 'las') return ['9', '16', '25', '36'];
             if ((args.length === 4 && simplify(args[0]) === 'las') ||

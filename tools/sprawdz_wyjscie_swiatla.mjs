@@ -10,7 +10,7 @@ const allowedImports = new Map([
     [gameUrl, new Set(['three', '../rendering/WorldOutput.js', '../rendering/LightingDiagnostics.js', '../config.js'])],
     [commandUrl, new Set(['./CommandRegistry.js', '../rendering/LightingDiagnostics.js', '../settings/Settings.js',
         '../ui/texts.js', '../blocks/BlockRegistry.js', '../items/ItemRegistry.js', '../blocks/trees.js',
-        '../blocks/treePacks.js', '../audio/sounds.js', '../world/terrain/rocks.js', '../config.js'])]
+        '../blocks/treeCatalog.js', '../audio/sounds.js', '../world/terrain/rocks.js', '../config.js'])]
 ]);
 const stubNames = new Map();
 for (const [parent, allowed] of allowedImports) {

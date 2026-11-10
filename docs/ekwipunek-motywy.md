@@ -40,17 +40,20 @@ z `data-inv-style="wood"` - jasny wygląd i motywy menu działają jak
 przedtem. Drewniany wygląd ma swoje kolory (`--inv-*` na
 `:root[data-inv-style="wood"]`), więc motyw menu ich nie zmienia.
 
-**Tekstury** (`assets/ui/inventory/wood/`) rysuje
-`python tools/ekwipunek_drewno.py` (z podglądem:
-`python tools/ekwipunek_drewno.py podglad.png`). Piksel tekstury to
-3 piksele ekranu:
+Od **0.80.0 tekstury wszystkich motywów są razem** w
+[`assets/textures/interfejs.png`](../assets/textures/interfejs.png).
+Granice regionów opisuje `assets/textures/atlas.json`; rysunek zmieniamy
+bezpośrednio w odpowiednim miejscu tego arkusza. `UiTextureSheets.js`
+wycina regiony raz przy starcie i udostępnia je jako zmienne CSS, dzięki
+czemu powtarzanie desek i ramki `border-image` zachowują dotychczasowy
+wygląd. Piksel tekstury to 3 piksele ekranu:
 
-| plik | co to jest |
+| Zmienna CSS obrazu | Co to jest |
 | --- | --- |
-| `planks.png` | deski - tło okna (160 x 90, łączy się bez szwów) |
-| `frame.png` | rama okna (`border-image`, wycinek 28): 12 pikseli na zewnątrz okna (liście, pnącza), dalej obrys i mech; krawędzie powtarzają się co 200 / 160 pikseli |
-| `frame-compact.png` | ta sama rama bez części na zewnątrz - mały ekran (do 480 punktów szerokości albo 520 wysokości) |
-| `board.png` | jasna deseczka - przyciski |
+| `--texture-wood-planks` | deski - tło okna (160 x 90, łączy się bez szwów) |
+| `--texture-wood-frame` | rama okna (`border-image`, wycinek 28): 12 pikseli na zewnątrz okna (liście, pnącza), dalej obrys i mech; krawędzie powtarzają się co 200 / 160 pikseli |
+| `--texture-wood-frame-compact` | ta sama rama bez części na zewnątrz - mały ekran (do 480 punktów szerokości albo 520 wysokości) |
+| `--texture-wood-board` | jasna deseczka - przyciski |
 
 **Miejsce na ekranie:** rama zajmuje więcej niż jasna. Na ekranie
 laptopa (do 820 punktów wysokości) odstępy są mniejsze, a lista bloków
@@ -70,10 +73,11 @@ ustawienie **Drewniany / Jasny**. Po przełączeniu na Ziemię albo Lepidolit
 wraca wybrany wcześniej wygląd. Nie zmienia liczby miejsc, receptur,
 przenoszenia stosów ani zawartości zapisów świata.
 
-Pliki motywu znajdują się w `assets/ui/themes/grey-wood/`; paleta i reguły
-kontrolek w `theme.css`. Tekstury powstają z kodu
-`python tools/szare_drewno.py`: `planks.png` (160 × 90), `board.png`
-(48 × 12), `frame.png` (64 × 64, wycinek ramy 8 pikseli).
+Paleta i reguły kontrolek są w `assets/ui/themes/grey-wood/theme.css`.
+Tekstury mieszczą się we wspólnym `assets/textures/interfejs.png`:
+zmienne `--texture-grey-wood-planks` (160 × 90),
+`--texture-grey-wood-board` (48 × 12),
+`--texture-grey-wood-frame` (64 × 64, wycinek ramy 8 pikseli).
 Tekstury są powiększane ×3; rama menu i małego ekranu ×2. Ramka nie ma
 ozdób wystających poza okno; mały ekran korzysta z istniejącego układu
 adaptacyjnego i przewijania.
@@ -94,6 +98,8 @@ Zrzuty ekranu trafiają do `test-results/grey-wood/`.
   grubości ramek).
 - `assets/ui/themes/<motyw>/theme.css` — opcjonalne nadpisania motywu;
   ten plik jest ładowany jako ostatni.
+- `assets/textures/interfejs.png` — wspólne tekstury motywów, ramek
+  i przycisków; `src/ui/UiTextureSheets.js` wiąże regiony ze zmiennymi CSS.
 
 Motyw dziedziczy wszystkie niepodane kolory z jasnej bazy. Dotychczasowe
 motywy menu działają dalej; ich kolory ekwipunku można dodać oddzielnie.

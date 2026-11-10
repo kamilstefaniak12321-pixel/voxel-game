@@ -26,6 +26,7 @@ import os
 import sys
 
 import numpy as np
+from atlasy import read_texture, write_texture
 from PIL import Image
 
 N = 16
@@ -105,11 +106,11 @@ def main():
     r = np.random.default_rng(SEED)
     frames = stages(grow(r))
     strip = np.concatenate([encode(f) for f in frames], axis=1)
-    Image.fromarray(strip, 'RGBA').save(OUT, optimize=True)
-    print('Gotowe:', os.path.relpath(OUT, ROOT))
+    write_texture(OUT, Image.fromarray(strip, 'RGBA'))
+    print('Gotowe: region pęknięć w assets/textures/efekty.png')
     if len(sys.argv) > 1:
         # podgląd: każdy etap na kamieniu, piasku i korze dębu, powiększony
-        atlas = np.asarray(Image.open(os.path.join(ROOT, 'assets', 'textures', 'blocks', 'terrain.png')).convert('RGB')).astype(float)
+        atlas = np.asarray(read_texture('assets/textures/blocks/terrain.png').convert('RGB')).astype(float)
         tiles = [(0, 3), (0, 11), (5, 8)]   # (wiersz, kolumna) w atlasie: kamień, piasek, kora dębu
         S = 6
         sheet = Image.new('RGB', (STAGES * (N * S + 6) - 6, len(tiles) * (N * S + 6) - 6), (40, 40, 46))

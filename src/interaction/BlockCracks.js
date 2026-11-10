@@ -3,12 +3,13 @@ import * as THREE from 'three';
 import { getBlockDefinition } from '../blocks/BlockRegistry.js';
 
 import { atlasReady, loadPackImage } from '../rendering/TextureAtlas.js';
+import { loadTextureRegion } from '../rendering/TextureSheets.js';
 
 // ------------------------------------------------------------
 // PĘKNIĘCIA KOPANEGO BLOKU (tryb przygody)
 //
 // Na blok, który kopiesz, kładziemy odrobinę większy sześcian z teksturą
-// pęknięć - 10 etapów w pasku assets/textures/blocks/cracks.png
+// pęknięć - 10 etapów w jednym regionie arkusza efektów
 // (rysuje je tools/pekniecia.py). Etap = jak daleko jest kopanie (0-1).
 // Tekstura to mnożnik (jak w Minecrafcie): kolor bloku x 2 x piksel -
 // szary 128 nic nie zmienia, rysy przyciemniają, jasne brzegi rozjaśniają.
@@ -18,9 +19,11 @@ import { atlasReady, loadPackImage } from '../rendering/TextureAtlas.js';
 
 const STAGES = 10;
 
-const texture = new THREE.TextureLoader().load(
-    new URL('../../assets/textures/blocks/cracks.png', import.meta.url).href
-);
+const texture = new THREE.Texture();
+const baseReady = loadTextureRegion('assets/textures/blocks/cracks.png').then(image => {
+    texture.image = image;
+    texture.needsUpdate = true;
+}).catch(error => console.warn('Tekstura pęknięć:', error));
 
 texture.magFilter = THREE.NearestFilter;
 texture.minFilter = THREE.NearestFilter;
@@ -32,6 +35,8 @@ texture.repeat.set(1 / STAGES, 1);
 // oryginalnych, gdy paczka je ma.
 
 atlasReady.then(async ({ extras }) => {
+
+    await baseReady;
 
     if (!extras?.cracks) {
         return;

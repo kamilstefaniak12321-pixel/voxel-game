@@ -15,7 +15,7 @@ import {
 
 import { BASE_TREE_NAMES } from '../../blocks/trees.js';
 
-import { TREE_PACKS } from '../../blocks/treePacks.js';
+import { TREE_DEFINITIONS } from '../../blocks/treeCatalog.js';
 
 import { Noise } from '../Noise.js';
 
@@ -48,11 +48,10 @@ import { BIOMES, BIOME_KEYS } from '../terrain/Biomes.js';
 // jeden, dwa). Biom sprawdzamy w miejscu drzewa trochę przesuniętym
 // (TREE_BIOME_JITTER), więc na granicy biomów drzewa się przeplatają.
 //
-// Drzewa z paczek (assets/drzewa/, "gdzieRosnie" w drzewo.json): w kratce,
-// w której ma stać drzewo, paczka "losuje" swoją szansę (czestosc) -
-// jeśli biom (biomy), klimat i wysokość pasują do jej zakresów
-// i wypadło, stoi tam drzewo z paczki zamiast zwykłego (olcha i wierzba
-// na mokradłach, jabłoń na łąkach).
+// Własne reguły gatunków ze wspólnego katalogu (climate): w kratce
+// drzewa losujemy szansę zgodnie z biomem, klimatem i wysokością.
+// Kolejność gatunków pozostaje stała, np. olcha i wierzba na mokradłach,
+// jabłoń na łąkach.
 // ------------------------------------------------------------
 
 function clamp(value, min, max) {
@@ -107,11 +106,11 @@ function nameSalt(name) {
 }
 
 
-// Paczki, które rosną same w lesie (czestosc > 0).
+// Gatunki katalogu, które mają własne reguły występowania w lesie.
 
-const WILD_PACKS = TREE_PACKS
-    .filter((pack) => pack.climate.chance > 0)
-    .map((pack) => ({ id: pack.id, climate: pack.climate, salt: nameSalt(pack.id) }));
+const WILD_SPECIES = TREE_DEFINITIONS
+    .filter((definition) => definition.climate?.chance > 0)
+    .map((definition) => ({ id: definition.id, climate: definition.climate, salt: nameSalt(definition.id) }));
 
 
 // Najmniejsza gęstość (pojedyncze drzewa) w którymkolwiek biomie - do
@@ -314,11 +313,11 @@ export class Forests {
     // Gatunek z paczki w kratce (gx, gz) albo null. climate - klimat
     // w miejscu drzewa ({ temperature, humidity, above }).
 
-    packSpecies(gx, gz, climate, biome = null) {
+    catalogSpecies(gx, gz, climate, biome = null) {
 
-        for (const pack of WILD_PACKS) {
+        for (const definition of WILD_SPECIES) {
 
-            const { chance, temperature, humidity, height, biomes } = pack.climate;
+            const { chance, temperature, humidity, height, biomes } = definition.climate;
 
             if (biomes && !biomes.has(biome)) {
                 continue;
@@ -332,8 +331,8 @@ export class Forests {
                 continue;
             }
 
-            if (random01(this.seed, gx, gz, pack.salt) < chance) {
-                return pack.id;
+            if (random01(this.seed, gx, gz, definition.salt) < chance) {
+                return definition.id;
             }
 
         }
@@ -474,7 +473,7 @@ export class Forests {
         }
 
 
-        const species = this.packSpecies(gx, gz, climate, biome) ?? this.biomeSpecies(x, z, biome, random01(seed, gx, gz, 10));
+        const species = this.catalogSpecies(gx, gz, climate, biome) ?? this.biomeSpecies(x, z, biome, random01(seed, gx, gz, 10));
 
         if (!species) {
             return null;

@@ -3,7 +3,7 @@
    ------------------------------------------------------------
    Jak zrobić własny motyw:
      1. Skopiuj cały ten folder (np. jako "moj-motyw").
-     2. Podmień background.png na swoją teksturę (np. 16x16).
+     2. Wskaż tło zmienną --texture-default-background z arkusza interfejs.png.
      3. Zmień wartości poniżej.
      4. W src/config.js ustaw: UI_THEME = 'moj-motyw'.
 
@@ -124,10 +124,10 @@
 
 /* --- Tekstura tła ------------------------------------------
    Ścieżka do obrazka jest liczona względem TEGO pliku,
-   więc background.png musi leżeć w tym samym folderze. */
+   tło pochodzi ze wspólnego arkusza tekstur interfejsu. */
 
 .menu-screen.textured {
     background-image:
         linear-gradient(var(--menu-background-tint), var(--menu-background-tint)),
-        url('background.png');
+        var(--texture-default-background);
 }

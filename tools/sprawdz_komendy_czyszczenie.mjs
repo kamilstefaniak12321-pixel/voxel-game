@@ -10,7 +10,7 @@ const worldUrl = url('src/world/World.js');
 const meteorUrl = url('src/game/Meteorites.js');
 const realImports = new Map([
     [commandUrl, new Set(['./CommandRegistry.js', '../blocks/BlockRegistry.js', '../items/ItemRegistry.js',
-        '../blocks/trees.js', '../blocks/treePacks.js', '../audio/sounds.js', '../world/terrain/rocks.js', '../config.js'])],
+        '../blocks/trees.js', '../blocks/treeCatalog.js', '../audio/sounds.js', '../world/terrain/rocks.js', '../config.js'])],
     [worldUrl, new Set(['../blocks/BlockRegistry.js', '../config.js', './Chunk.js', './Light.js'])],
     [meteorUrl, new Set(['three', '../blocks/BlockRegistry.js', '../config.js'])]
 ]);

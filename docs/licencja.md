@@ -56,9 +56,9 @@ w repozytorium.
 
 Paczki `acacia.zip`, `bald_cypress.zip` i `cherry.zip` zostały przekazane
 przez Kamila 9 listopada 2026 r. do dodania do gry. Oryginalne tekstury
-w `assets/drzewa/acacia/`, `assets/drzewa/bald_cypress/` i
-`assets/drzewa/cherry/` zachowano bez zmian; pliki `source.json`
-dokumentują ich pochodzenie i sumy kontrolne. Materiał nie zawierał
+przeniesiono do `assets/textures/drzewa.png`. Historyczne pliki
+`source.json` w `docs/zrodla/drzewa-0.79/` dokumentują archiwa i ich
+sumy kontrolne; testy migracji sprawdzają zgodność pikseli regionów. Materiał nie zawierał
 osobnego dokumentu licencyjnego; zapis dokumentuje przekazanie przez
 autora gry, bez przypisywania dodatkowej licencji źródłom botanicznym.
 Geometrię oraz brakujące tekstury sadzonek, okorowanego drewna i opału

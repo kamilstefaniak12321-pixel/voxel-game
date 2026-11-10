@@ -68,7 +68,7 @@
 }
 
 .menu-screen.textured {
-    background-image: linear-gradient(var(--menu-background-tint), var(--menu-background-tint)), url('planks.png');
+    background-image: linear-gradient(var(--menu-background-tint), var(--menu-background-tint)), var(--texture-grey-wood-planks);
 }
 
 /* Scena w menu zachowuje krajobraz i układ, a deski zastępują jasny panel.
@@ -106,9 +106,9 @@
 
 #menu .menu-scene-panel,
 #menu .scene-menu.screen-title .menu-scene-panel {
-    background: linear-gradient(rgba(20, 19, 17, 0.76), rgba(20, 19, 17, 0.76)), url('planks.png') 0 0 / 480px 270px;
+    background: linear-gradient(rgba(20, 19, 17, 0.76), rgba(20, 19, 17, 0.76)), var(--texture-grey-wood-planks) 0 0 / 480px 270px;
     border: 16px solid transparent;
-    border-image: url('frame.png') 8 / 1 / 0 stretch;
+    border-image: var(--texture-grey-wood-frame) 8 / 1 / 0 stretch;
     border-radius: 0;
     box-shadow: 0 5px 0 rgba(18, 17, 15, 0.5);
     scrollbar-color: #999289 #353330;
@@ -127,7 +127,7 @@
 #menu .scene-menu.screen-title .menu-buttons .menu-button:first-child {
     color: var(--button-text);
     text-shadow: none;
-    background: #999289 url('board.png') 0 0 / 144px 36px repeat;
+    background: #999289 var(--texture-grey-wood-board) 0 0 / 144px 36px repeat;
     border-color: #484641;
     box-shadow: inset 0 2px 0 #b4aca0, inset 0 -2px 0 #605c55;
     image-rendering: pixelated;
@@ -136,7 +136,7 @@
 #menu .menu-button:hover:not(:disabled),
 #menu .scene-menu.screen-title .menu-buttons .menu-button:first-child:hover {
     color: var(--button-text-hover);
-    background-image: linear-gradient(#ffffff18, #ffffff18), url('board.png');
+    background-image: linear-gradient(#ffffff18, #ffffff18), var(--texture-grey-wood-board);
     border-color: #ded8cc;
 }
 
@@ -228,8 +228,8 @@
     width: calc(var(--grey-grid-width) + var(--grey-chrome) + var(--inv-scrollbar-space));
     padding: var(--grey-pad);
     border: var(--grey-frame) solid transparent;
-    border-image: url('frame.png') 8 / 1 / 0 stretch;
-    background: linear-gradient(rgba(20, 19, 17, 0.68), rgba(20, 19, 17, 0.68)), url('planks.png') 0 0 / 480px 270px;
+    border-image: var(--texture-grey-wood-frame) 8 / 1 / 0 stretch;
+    background: linear-gradient(rgba(20, 19, 17, 0.68), rgba(20, 19, 17, 0.68)), var(--texture-grey-wood-planks) 0 0 / 480px 270px;
     background-origin: border-box;
     box-shadow: 0 5px 0 var(--inv-shadow);
     image-rendering: pixelated;
@@ -244,7 +244,7 @@
 
 :root[data-inv-style] .inv-header {
     padding: 5px 8px;
-    background: #999289 url('board.png') 0 0 / 144px 36px repeat;
+    background: #999289 var(--texture-grey-wood-board) 0 0 / 144px 36px repeat;
     border: 0;
     box-shadow: inset 0 2px 0 #b4aca0, inset 0 -2px 0 #605c55;
 }
@@ -342,7 +342,7 @@
 :root[data-inv-style] .inv-close {
     color: #262420;
     text-shadow: none;
-    background: #999289 url('board.png') 0 0 / 144px 36px repeat;
+    background: #999289 var(--texture-grey-wood-board) 0 0 / 144px 36px repeat;
     border: 2px solid #484641;
     border-radius: 0;
     box-shadow: inset 0 2px 0 #b4aca0, inset 0 -2px 0 #605c55;
@@ -352,7 +352,7 @@
 :root[data-inv-style] .inv-book-toggle:hover,
 :root[data-inv-style] .inv-book-close:hover,
 :root[data-inv-style] .inv-close:hover {
-    background: #aaa399 url('board.png') 0 0 / 144px 36px repeat;
+    background: #aaa399 var(--texture-grey-wood-board) 0 0 / 144px 36px repeat;
     border-color: #ded8cc;
     filter: brightness(1.08);
 }
@@ -387,7 +387,7 @@
 
 /* Pasek w grze korzysta z tych samych przegródek co okno ekwipunku. */
 .hotbar-slots {
-    background: #827d77 url('board.png') 0 0 / 144px 36px repeat;
+    background: #827d77 var(--texture-grey-wood-board) 0 0 / 144px 36px repeat;
     image-rendering: pixelated;
 }
 .hotbar-slot { background: #353330; box-shadow: inset 1px 1px 0 #24221f; }

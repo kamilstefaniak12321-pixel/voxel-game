@@ -3,8 +3,8 @@
 #
 # Rysuje tekstury sześciu gatunków drzew (świerk, sosna, buk, lipa,
 # dąb, brzoza) i ich dodatków i wkleja je do atlasu
-# assets/textures/blocks/terrain.png - wiersze 5-8 (miejsca kafelków:
-# ATLAS_TILES w src/rendering/TextureAtlas.js, bloki: src/blocks/trees.js).
+# assets/textures/drzewa.png (miejsca regionów: assets/textures/atlas.json,
+# układ roboczy kafelków zachowany, bloki: src/blocks/trees.js).
 #
 # Ten sam styl co tools/tekstury.py (z niego są narzędzia: szum,
 # komórki, światło z lewej góry, palety):
@@ -19,7 +19,7 @@
 #     z ciemnym obrysem (jak owoce w wierszu 4).
 #
 # Uruchomienie (w folderze gry, potrzebny Python z numpy i Pillow):
-#     python tools/tekstury_drzew.py               do terrain.png
+#     python tools/tekstury_drzew.py               do drzewa.png
 #     python tools/tekstury_drzew.py podglad.png   do tego podgląd
 # ------------------------------------------------------------
 
@@ -28,6 +28,9 @@ import sys
 
 import numpy as np
 from PIL import Image
+from atlasy import read_texture, write_texture
+
+# ATLAS jest roboczą kompozycją kafelków; zapis trafia do arkuszy tematycznych.
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
@@ -438,9 +441,9 @@ def planks(seed, wood, contrast=1.0):
     a wood wybiera paletę nowego gatunku. Nie losujemy czarnych szpar,
     kropek ani sęków. seed pozostaje argumentem dla zgodności wywołań;
     contrast może tylko złagodzić wzorzec, nigdy go przerysować.
-    Funkcja nie zapisuje atlasu ani istniejących paczek.
+    Funkcja nie zapisuje żadnego arkusza.
     """
-    with Image.open(ATLAS) as atlas:
+    with read_texture(ATLAS) as atlas:
         tile = np.asarray(atlas.convert('RGBA').crop((0, 7 * N, N, 8 * N)), dtype=float)
     if tile.shape != (N, N, 4) or not np.all(tile[..., 3] == 255):
         raise ValueError('Wzorzec desek (0, 7) musi być pełnym kafelkiem 16 x 16.')
@@ -938,16 +941,105 @@ def generate():
     return out
 
 
+# Narzędzia tekstur nowych gatunków; bez tworzenia paczek ani konfiguracji.
+def conifer_sapling(green):
+    img = empty()
+    trunk = (96, 66, 46)
+    for y in range(11, 16):
+        put(img, 7, y, trunk)
+        put(img, 8, y, np.array(trunk) * 0.8)
+    palette = shades(green, 5, 0.6, 1.3, (0.9, 1.0, 1.05))
+    for top, half in [(3, 2), (5, 3), (8, 4), (11, 5)]:
+        for row in range(3):
+            y = top + row
+            w = max(1, half - (2 - row))
+            for x in range(8 - w, 8 + w):
+                t = 0.75 - (x - 8 + w) / (2 * w) * 0.5 - row * 0.08
+                put(img, x, y, palette[int(np.clip(round(t * 4), 0, 4))])
+    put(img, 7, 1, palette[3])
+    put(img, 7, 2, palette[4])
+    put(img, 8, 2, palette[2])
+    return img
+
+
+def fruit_on_leaves(leaves, fruit, seed):
+    """Liście z owocami: na liściach kilka okrągłych owoców 2 x 2
+    z jasnym bokiem i ogonkiem."""
+    img = leaves.copy()
+    r = rng(seed)
+    light = np.clip(np.array(fruit) * 1.3 + 20, 0, 255)
+    dark = np.array(fruit) * 0.68
+    for x, y in scatter(r, 5, 4.6):
+        x, y = int(x) % (N - 1), int(y) % (N - 1)
+        put(img, x, y, light)
+        put(img, x + 1, y, fruit)
+        put(img, x, y + 1, fruit)
+        put(img, x + 1, y + 1, dark)
+        put(img, x + 1, (y - 1) % N, (92, 70, 40))
+    return img
+
+
+def fruit_item(fruit, leaf):
+    """Owoc (przedmiot): okrągły, z ogonkiem i listkiem."""
+    img = empty()
+    body = ellipse(8.0, 9.6, 5.2, 5.0)
+    shape = shade_shape(body, shades(fruit, 6, 0.6, 1.3, (1.0, 0.95, 0.92)), strength=1.5)
+    img[body] = shape[body]
+    for x, y in line_cells(8, 5, 9, 2):
+        put(img, x, y, (98, 70, 42))
+    leaf_mask = ellipse(11.6, 3.2, 2.4, 1.2, -0.5)
+    leaf_img = shade_shape(leaf_mask, shades(leaf, 5, 0.65, 1.25), strength=1.0)
+    img[leaf_mask] = leaf_img[leaf_mask]
+    put(img, 5, 7, np.clip(np.array(fruit) * 1.4 + 40, 0, 255))
+    put(img, 6, 6, np.clip(np.array(fruit) * 1.25 + 30, 0, 255))
+    return outline(img, 0.42)
+
+
+def tree_texture_set(seed, colors, conifer, fruit):
+    bark, wood, leaf = colors['kora'], colors['drewno'], colors['liscie']
+    heart = tuple(np.array(wood) * 0.86)
+    board = tuple(np.array(wood) * 0.92)
+    out = {}
+    if conifer:
+        side = plates_bark(seed, bark, count=12, gap=3.0, stretch=1.8, crack=0.55, variation=0.12)
+    else:
+        side = furrow_bark(seed, bark, ridges=4, depth=1.0, cross=0.3)
+    out['pien_bok'] = opaque(side)
+    out['pien_gora'] = opaque(rings(seed + 1, wood, heart, bark=side))
+    out['okorowany_bok'] = opaque(grain(seed + 2, wood))
+    out['okorowany_gora'] = opaque(rings(seed + 3, wood, heart))
+    # Wspólny autorski układ 16 x 16 z atlasu, własny odcień gatunku.
+    # Zasady rozwoju wzorca: docs/styl-tekstur.md.
+    out['deski'] = opaque(planks(seed + 4, board))
+    if conifer:
+        rgb, alpha = needles(seed + 5, leaf, 60, (3, 4), holes=0.12)
+    else:
+        rgb, alpha = leaf_cells(seed + 5, leaf, 30, 2.4, holes=0.12)
+    out['liscie'] = leaves_tile(rgb, alpha)
+    if conifer:
+        out['sadzonka'] = conifer_sapling(leaf)
+    else:
+        out['sadzonka'] = sapling_broadleaf(seed + 6, (110, 82, 60), leaf,
+                                            [(8.0, 3.5, -0.9), (3.6, 6.5, -2.4), (11.8, 5.5, -0.6), (5.0, 10.0, 2.6)])
+    autumn = [tuple(mix(leaf, c, 0.85)) for c in [(206, 128, 52), (184, 102, 40), (222, 170, 74), (150, 96, 46)]]
+    out['opadle_liscie'] = litter(seed + 7, autumn, 11)
+    if fruit:
+        out['liscie_owoce'] = fruit_on_leaves(out['liscie'], colors['owoc'], seed + 8)
+        out['owoc'] = fruit_item(colors['owoc'], leaf)
+    return out
+
+
+
 def main():
-    atlas = Image.open(ATLAS).convert('RGBA')
+    atlas = read_texture(ATLAS)
     tiles = generate()
     for name, img in tiles.items():
         x, y = TILES[name]
         # kafelek czyścimy (przezroczyste piksele mają być przezroczyste)
         atlas.paste(Image.new('RGBA', (N, N), (0, 0, 0, 0)), (x * N, y * N))
         atlas.paste(as_image(img), (x * N, y * N))
-    atlas.save(ATLAS)
-    print('Gotowe:', len(tiles), 'tekstur drzew w', os.path.relpath(ATLAS, ROOT))
+    write_texture(ATLAS, atlas)
+    print('Gotowe:', len(tiles), 'tekstur drzew w', 'assets/textures/*.png')
     if len(sys.argv) > 1:
         preview(tiles, sys.argv[1])
 

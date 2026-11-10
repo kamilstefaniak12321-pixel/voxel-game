@@ -259,7 +259,7 @@ for (const model of PLANT_MODELS) {
 
         for (const level of [stage.simple, stage.semi]) {
             if (level?.file) {
-                PLANT_MODEL_TEXTURES[level.texture] = new URL(`${model.folder}/${level.file}`, BASE).href;
+                PLANT_MODEL_TEXTURES[level.texture] = `assets/models/rosliny/${model.folder}/${level.file}`;
             }
         }
 

@@ -17,6 +17,7 @@
 import assert from 'node:assert/strict';
 import { registerHooks } from 'node:module';
 import { readFileSync } from 'node:fs';
+import { readTexturePng } from './texture_regions.mjs';
 import { execFileSync } from 'node:child_process';
 
 registerHooks({
@@ -30,14 +31,15 @@ const P = await import('../src/blocks/plantPacks.js');
 const R = await import('../src/blocks/BlockRegistry.js');
 const { ITEM_TYPES } = await import('../src/items/ItemRegistry.js');
 const { GROUPS } = await import('../src/crafting/recipes.js');
-const { TREE_PACKS, PACK_ID_SLOTS, idsInRanges } = await import('../src/blocks/treePacks.js');
+const { TREE_ID_RESERVATIONS } = await import('../src/blocks/treeCatalog.js');
+const { TREE_ID_RANGES, TREE_ID_SLOTS, idsInRanges } = await import('../src/blocks/blockIdRanges.js');
 const { getRiverPlantFaces } = await import('../src/rendering/RiverPlantGeometry.js');
 
 assert.deepEqual(P.PLANT_PACK_ERRORS, [], 'paczki roślin bez błędów');
 assert.ok(P.PLANT_PACKS.length > 0, 'jest choć jedna paczka');
 
 function pngSize(path) {
-    const data = readFileSync(new URL(`../assets/rosliny/${path}`, import.meta.url));
+    const data = readTexturePng(`assets/rosliny/${path}`);
     return [data.readUInt32BE(16), data.readUInt32BE(20)];
 }
 
@@ -67,8 +69,8 @@ for (const pack of P.PLANT_PACKS) {
         assert.equal(definition.id, pack.firstId + i, `${type}: kolejny numer`);
         assert.ok(idsInRanges(definition.id, 1, P.PLANT_ID_RANGES), `${type}: numer w zakresie paczek roślin`);
 
-        for (const tree of TREE_PACKS) {
-            assert.ok(definition.id < tree.firstId || definition.id >= tree.firstId + PACK_ID_SLOTS, `${type}: nie zachodzi na drzewo ${tree.id}`);
+        for (const tree of TREE_ID_RESERVATIONS) {
+            assert.ok(definition.id < tree.firstId || definition.id >= tree.firstId + TREE_ID_SLOTS, `${type}: nie zachodzi na drzewo ${tree.id}`);
         }
 
         if (stage.tuft) {

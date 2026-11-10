@@ -11,6 +11,28 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 0.80.0 - Wspólne arkusze tekstur i prostszy katalog drzew
+
+Porządek w zasobach bez zmiany wyglądu świata — PR #117.
+
+- 243 osobne PNG zastępuje dziewięć arkuszy w `assets/textures/`:
+  drzewa, teren, rośliny, przedmioty, efekty, niebo, gracz, interfejs
+  i podglądy. Kora, słoje, deski, liście, sadzonki i opał wszystkich
+  gatunków są razem w `drzewa.png`.
+- Usunięty osobny system paczek drzew. Wszystkie 12 gatunków opisuje
+  teraz jeden katalog, z zachowaniem numerów bloków, modeli, wzrostu,
+  owoców, receptur, naturalnej generacji i komend pokazów.
+- Nazwy i UV tekstur, zapisane światy, własne paczki gracza oraz skórki
+  pozostają zgodne. Pełne animacje pochodni zachowują półprzezroczystość;
+  ikonka i płomień korzystają z tej samej pierwszej klatki.
+- Narzędzie `tools/atlasy.py` wypisuje, wycina, podmienia i sprawdza
+  regiony. Generatory, importery modeli, wiki i eksport paczek korzystają
+  ze wspólnych arkuszy. Instrukcja: `docs/tekstury-atlasy.md`.
+- Porównanie z 0.79.0 potwierdza identyczne 363 kafelki GPU i 6000
+  wygenerowanych drzew. Próby gry na RTX 3050 i w Chrome zachowują
+  tekstury modeli, animacje i ikony. W kontrolowanej scenie liczba
+  żądań PNG spadła ze 142–143 do 7; atlas GPU nadal ma 256×560 pikseli.
+
 ## 0.79.0 - Akacja, cypryśnik i wiśnia w skali gracza
 
 Trzy nowe drzewa z paczek Kamila — PR #116.

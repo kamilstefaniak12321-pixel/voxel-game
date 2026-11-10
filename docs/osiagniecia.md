@@ -32,7 +32,7 @@ tylko jako *Sekretne osiągnięcie* ze znakiem zapytania.
 | zwykłe | Od czegoś trzeba zacząć | zniszcz pierwszy blok |
 | zwykłe | Architekt amator | postaw pierwszy blok |
 | zwykłe | Witaminki | zbierz owoce z krzaka |
-| zwykłe | Sadownik | zbierz owoce z drzewa owocowego (np. jabłka z jabłoni) - jest, gdy któraś paczka drzewa ma owoce (`docs/drzewa-paczki.md`) |
+| zwykłe | Sadownik | zbierz owoce z drzewa owocowego, np. jabłka z jabłoni (`docs/drzewa.md`) |
 | zwykłe | Zielone palce | posadź owoc, orzech albo szyszkę |
 | zwykłe | Drwal | zetnij pień drzewa |
 | zwykłe | Brzozowy papirus | zdejmij siekierą korę z brzozy |

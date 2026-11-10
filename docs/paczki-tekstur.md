@@ -16,9 +16,10 @@ który plik to który blok). Spakowany jest też w każdym wydaniu gry:
 `Voxel-Game-paczka-tekstur.zip` (w grze: Ustawienia → Wygląd →
 *Szablon paczki*, albo `/tekstury szablon`).
 
-Szablon robi `python tools/paczka_tekstur.py` (z `terrain.png`, paczek
-drzew, pęknięć i księżyca) - po zmianie tekstur albo nowym bloku trzeba
-go uruchomić jeszcze raz.
+Szablon eksportuje `python tools/paczka_tekstur.py` ze wspólnych arkuszy
+w `assets/textures/`. Po zmianie tekstur albo nowym bloku trzeba go
+odświeżyć. Pojedyncze PNG w szablonie służą zgodności paczek gracza;
+źródłem grafiki pozostają [arkusze tematyczne](tekstury-atlasy.md).
 
 ## Jak zrobić paczkę
 
@@ -40,7 +41,7 @@ Plik paczki:
 |---|---|
 | `paczka.json` | `{ "nazwa": "...", "autor": "...", "opis": "..." }` (niekonieczny) |
 | `bloki/<nazwa>.png` | tekstura kafelka atlasu, np. `bloki/grass_top.png` - nazwy jak w `ATLAS_TILES` (`src/rendering/TextureAtlas.js`) i w szablonie |
-| `bloki/<drzewo>/<plik>.png` | tekstury drzew z paczek drzew (`assets/drzewa/`), np. `bloki/jablon/liscie.png` |
+| `bloki/<drzewo>/<plik>.png` | zachowane nazwy tekstur drzew (obecnie regiony `drzewa.png`), np. `bloki/jablon/liscie.png` |
 | `pekniecia.png` | pęknięcia kopanego bloku - 10 etapów obok siebie |
 | `niebo/ksiezyc.png` | tarcza księżyca |
 
@@ -83,7 +84,7 @@ piksele.
   rozdzielczości w grze (PNG) - przy starcie wczytują się szybko.
   Rozdzielczość (`gameResolution`, `maxResolution`).
 - `src/rendering/TextureAtlas.js` - atlas przy starcie gry: oryginalny
-  (`terrain.png` + paczki drzew), a z paczką - kafelki T x T (z paczki
+  (arkusze tematyczne z `assets/textures/`), a z paczką - kafelki T x T (z paczki
   albo powiększone oryginalne) i **mipmapy**: pomniejszone kopie atlasu
   (T/2, T/4... do 1 piksela), każdy kafelek pomniejszany osobno, więc
   kolory sąsiednich kafelków się nie mieszają. Z daleka karta bierze

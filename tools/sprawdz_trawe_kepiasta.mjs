@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
+import { readTexturePng } from './texture_regions.mjs';
 import { registerHooks } from 'node:module';
 import { inflateSync } from 'node:zlib';
 registerHooks({
@@ -166,7 +167,7 @@ for(const i of grassVertices) {
 
 // Transparent pixels are essential: an opaque image turns eight cards into
 // intersecting green walls. Decode the tiny authored PNG without a browser.
-const png=readFileSync(new URL(BUSHY_GRASS_TEXTURE_URL));
+const png=readTexturePng(BUSHY_GRASS_TEXTURE_URL);
 assert.equal(png.subarray(0,8).toString('hex'),'89504e470d0a1a0a');
 assert.equal(png.readUInt32BE(16),16);assert.equal(png.readUInt32BE(20),16);
 assert.equal(png[24],8);assert.equal(png[25],6,'RGBA texture preserves cutout alpha');

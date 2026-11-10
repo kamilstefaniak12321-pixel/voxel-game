@@ -14,6 +14,7 @@ Stałe ziarno zapewnia identyczne PNG przy ponownym uruchomieniu.
 from pathlib import Path
 
 import numpy as np
+from atlasy import write_texture
 from PIL import Image
 
 from ekwipunek_drewno import canvas, grain_line, hex_rgb, put
@@ -137,12 +138,11 @@ def frame():
 
 
 def main():
-    OUT.mkdir(parents=True, exist_ok=True)
     for name, make in (('planks.png', planks), ('board.png', board), ('frame.png', frame)):
         image = Image.fromarray(make())
         path = OUT / name
-        image.save(path, optimize=True)
-        print(f'{path.relative_to(ROOT)}: {image.width} x {image.height}')
+        write_texture(path, image)
+        print(f'interfejs.png — {name}: {image.width} x {image.height}')
 
 
 if __name__ == '__main__':

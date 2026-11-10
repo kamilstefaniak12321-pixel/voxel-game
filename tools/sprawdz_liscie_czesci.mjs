@@ -44,6 +44,7 @@ const { leafMaterial } = await import('../src/rendering/BlockRenderData.js');
 const { SETTINGS_DEFAULTS, SETTINGS_CHOICES } = await import('../src/settings/Settings.js');
 const { TOUCH_SETTINGS } = await import('../src/config.js');
 const { readFileSync } = await import('node:fs');
+const { readTexturePng } = await import('./texture_regions.mjs');
 
 let checks = 0;
 const check = (condition, message) => { assert.ok(condition, message); checks++; };
@@ -57,7 +58,7 @@ for (const part of LEAF_PARTS) {
     check(part.min.every((n) => n >= -1 / 16) && part.max.every((n) => n <= 1 + 1 / 16 + 1e-9), 'Część najwyżej piksel poza blokiem');
     for (const face of part.faces) check(face.uv.flat().every((n) => n >= 0 && n <= 1), 'UV w teksturze');
 }
-const texture = readFileSync(new URL('../assets/models/leaves/texture.png', import.meta.url));
+const texture = readTexturePng('assets/models/leaves/texture.png');
 check(texture.readUInt32BE(16) === 16 && texture.readUInt32BE(20) === 16, 'Tekstura 16 x 16');
 check(/^[0-9a-f]{64}$/.test(LEAF_PARTS_SOURCE.sourceSha256), 'Źródło zapisane');
 

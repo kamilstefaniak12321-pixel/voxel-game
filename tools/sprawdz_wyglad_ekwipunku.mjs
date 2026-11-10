@@ -13,9 +13,10 @@
 // ------------------------------------------------------------
 
 import assert from 'node:assert/strict';
-import { readFileSync, existsSync } from 'node:fs';
+import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, resolve } from 'node:path';
+import { readTextureRegion } from './texture_regions.mjs';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const read = (path) => readFileSync(resolve(ROOT, path), 'utf8');
@@ -83,26 +84,24 @@ for (const match of css.matchAll(/([^{}]+)\{/g)) {
 }
 assert.ok(rules > 40, 'za mało reguł - czy plik się wczytał?');
 
-// Rozmiar PNG z nagłówka (IHDR).
-function pngSize(path) {
-    const data = readFileSync(path);
-    assert.equal(data.toString('ascii', 1, 4), 'PNG', `${path} to nie PNG`);
-    return [data.readUInt32BE(16), data.readUInt32BE(20)];
-}
-
-const cssDir = dirname(resolve(ROOT, cssPath));
+// The real CSS variables point to isolated regions of the shared UI sheet.
+// Decode their pixels too, so missing/out-of-bounds regions cannot pass.
+const bindings = new Map([...read('src/ui/UiTextureSheets.js').matchAll(/'([^']+)': '([^']+)'/g)]
+    .map(match => [match[1], match[2]]));
 const images = new Map();
-for (const match of css.matchAll(/url\('([^']+)'\)/g)) {
-    const file = resolve(cssDir, match[1]);
-    assert.ok(existsSync(file), `brak obrazka ${match[1]}`);
-    images.set(match[1].split('/').pop(), pngSize(file));
+for (const match of css.matchAll(/var\(--texture-([a-z-]+)\)/g)) {
+    const file = bindings.get(match[1]);
+    assert.ok(file, `brak regionu dla zmiennej ${match[1]}`);
+    const image = readTextureRegion(file);
+    assert.ok(image.rgba.length === image.width * image.height * 4, `brak pikseli ${file}`);
+    images.set(file.split('/').pop(), [image.width, image.height]);
 }
 for (const name of ['planks.png', 'board.png', 'frame.png', 'frame-compact.png']) {
     assert.ok(images.has(name), `CSS nie używa ${name}`);
 }
 
 // background-size = 3 x rozmiar tekstury.
-for (const match of css.matchAll(/url\('[^']*\/(planks|board)\.png'\)\s+0 0 \/ (\d+)px (\d+)px/g)) {
+for (const match of css.matchAll(/var\(--texture-wood-(planks|board)\)\s+0 0 \/ (\d+)px (\d+)px/g)) {
     const [w, h] = images.get(`${match[1]}.png`);
     assert.equal(Number(match[2]), w * PIXEL, `${match[1]}.png - szerokość w CSS`);
     assert.equal(Number(match[3]), h * PIXEL, `${match[1]}.png - wysokość w CSS`);
@@ -110,7 +109,7 @@ for (const match of css.matchAll(/url\('[^']*\/(planks|board)\.png'\)\s+0 0 \/ (
 
 // border-image: wycinek x 3 = szerokość; obrazek to 2 wycinki + krawędzie.
 let frames = 0;
-for (const match of css.matchAll(/url\('[^']*\/(frame(?:-compact)?)\.png'\)\s+(\d+)\s*\/\s*(\d+)px\s*\/\s*(\d+)(?:px)?/g)) {
+for (const match of css.matchAll(/var\(--texture-wood-(frame(?:-compact)?)\)\s+(\d+)\s*\/\s*(\d+)px\s*\/\s*(\d+)(?:px)?/g)) {
     frames++;
     const [w, h] = images.get(`${match[1]}.png`);
     const slice = Number(match[2]);

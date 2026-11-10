@@ -1,5 +1,5 @@
-import { TREE_SPECIES, TREE_NAMES, treeParts, packVariantType } from '../../blocks/trees.js';
-import { PACK_REACH, PACK_MAX_HEIGHT, SPECIES_SHAPE_LIMITS } from '../../blocks/treePacks.js';
+import { TREE_SPECIES, TREE_NAMES, treeParts, treeVariantType } from '../../blocks/trees.js';
+import { ORIGINAL_TREE_LIMITS, SPECIES_SHAPE_LIMITS } from '../../blocks/treeCatalog.js';
 
 // ------------------------------------------------------------
 // KSZTAŁTY DRZEW
@@ -25,29 +25,28 @@ import { PACK_REACH, PACK_MAX_HEIGHT, SPECIES_SHAPE_LIMITS } from '../../blocks/
 //   brzoza  - smukły biały pień (czasem lekko pochylony), lekka,
 //             ażurowa korona ze zwisającymi gałązkami.
 //
-// Gatunki z paczek drzew (assets/drzewa/) - na dole pliku: kształt
-// narysowany w szablonie (pliki .txt) albo jeden z gotowych (kula,
-// stożek, parasol, kolumna) z liczbami z drzewo.json.
+// Pozostałe gatunki korzystają z rysunków warstw albo generatorów
+// sylwetek opisanych we wspólnym treeCatalog.js.
 // ------------------------------------------------------------
 
 // Najdalej od pnia (w poziomie) i najwyżej, gdzie może być blok
 // drzewa - generator terenu sprawdza drzewa z tylu bloków wokół chunka.
 
-export const TREE_REACH = Math.max(PACK_REACH, ...Object.values(SPECIES_SHAPE_LIMITS).map((limits) => limits.reach));
+export const TREE_REACH = Math.max(ORIGINAL_TREE_LIMITS.reach, ...Object.values(SPECIES_SHAPE_LIMITS).map((limits) => limits.reach));
 
-export const TREE_MAX_HEIGHT = Math.max(PACK_MAX_HEIGHT, ...Object.values(SPECIES_SHAPE_LIMITS).map((limits) => limits.maxHeight));
+export const TREE_MAX_HEIGHT = Math.max(ORIGINAL_TREE_LIMITS.maxHeight, ...Object.values(SPECIES_SHAPE_LIMITS).map((limits) => limits.maxHeight));
 
-const ORIGINAL_LIMITS = Object.freeze({ reach: PACK_REACH, maxHeight: PACK_MAX_HEIGHT });
+const ORIGINAL_LIMITS = ORIGINAL_TREE_LIMITS;
 
 export function treeShapeLimits(species) {
-    return SPECIES_SHAPE_LIMITS[TREE_SPECIES[species]?.pack?.shape.kind] ?? ORIGINAL_LIMITS;
+    return SPECIES_SHAPE_LIMITS[TREE_SPECIES[species]?.shape?.kind] ?? ORIGINAL_LIMITS;
 }
 
 // Shared near/far scale, in blocks (one block is approximately one metre).
 // Only the mature-sized species use this contract; legacy silhouettes retain
 // their original formulas and random sequence.
 export function treeVisualDimensions(species, size = 0.5) {
-    const shape = TREE_SPECIES[species]?.pack?.shape;
+    const shape = TREE_SPECIES[species]?.shape;
     if (!shape || !Object.hasOwn(SPECIES_SHAPE_LIMITS, shape.kind)) return null;
     const amount = Math.max(0, Math.min(1, size));
     const height = Math.round(lerp(shape.height[0], shape.height[1], amount));
@@ -748,7 +747,7 @@ function birch(tree, size) {
 
 
 // ------------------------------------------------------------
-// PACZKI DRZEW (src/blocks/treePacks.js, docs/drzewa-paczki.md)
+// WŁASNE KSZTAŁTY Z WSPÓLNEGO KATALOGU DRZEW
 // ------------------------------------------------------------
 
 // Szablon: komórki [x, y, z, znak] narysowane w pliku .txt. Rozmiar
@@ -759,11 +758,11 @@ function birch(tree, size) {
 //   L     - liście, l - liście, ale nie zawsze (70%),
 //   inny  - odmiana liści z tym "znakiem" (np. J - liście z jabłkami).
 
-function templateTree(tree, size, pack) {
+function templateTree(tree, size, definition) {
 
     const random = tree.random;
 
-    const templates = pack.shape.templates;
+    const templates = definition.shape.templates;
 
     const cells = templates[Math.min(templates.length - 1, Math.floor(size * templates.length))];
 
@@ -772,7 +771,7 @@ function templateTree(tree, size, pack) {
     const mirror = random() < 0.5;
 
     const variants = new Map(
-        pack.variants.filter((variant) => variant.char).map((variant) => [variant.char, packVariantType(pack.id, variant.key)])
+        definition.variants.filter((variant) => variant.char).map((variant) => [variant.char, treeVariantType(definition.id, variant.key)])
     );
 
 
@@ -831,7 +830,7 @@ function sizes(tree, size, shape) {
 }
 
 
-const PACK_SHAPES = {
+const CATALOG_SHAPES = {
 
     // An umbrella made from separate flattened crowns on spreading limbs.
     // Its broad shade is deliberately much wider than the standing player.
@@ -1013,9 +1012,9 @@ const PACK_SHAPES = {
 // Odmiany liści z "udzial" - taka część liści na wierzchu korony
 // (z co najmniej jednym pustym sąsiadem - widać je z zewnątrz).
 
-function packVariants(tree, pack) {
+function applyLeafVariants(tree, definition) {
 
-    const variants = pack.variants.filter((variant) => variant.share > 0);
+    const variants = definition.variants.filter((variant) => variant.share > 0);
 
     if (variants.length === 0) {
         return;
@@ -1044,7 +1043,7 @@ function packVariants(tree, pack) {
 
             if (random() < variant.share) {
 
-                cell[3] = packVariantType(pack.id, variant.key);
+                cell[3] = treeVariantType(definition.id, variant.key);
 
                 break;
 
@@ -1057,23 +1056,23 @@ function packVariants(tree, pack) {
 }
 
 
-function packShape(pack) {
+function catalogShape(definition) {
 
     return (tree, size) => {
 
-        if (pack.shape.kind === 'szablon') {
-            templateTree(tree, size, pack);
+        if (definition.shape.kind === 'szablon') {
+            templateTree(tree, size, definition);
         }
         else {
-            PACK_SHAPES[pack.shape.kind](tree, size, pack.shape);
+            CATALOG_SHAPES[definition.shape.kind](tree, size, definition.shape);
         }
 
-        packVariants(tree, pack);
+        applyLeafVariants(tree, definition);
 
 
         // Opadłe liście pod koroną.
 
-        if (pack.shape.litter > 0) {
+        if (definition.shape.litter > 0) {
 
             let radius = 2;
 
@@ -1085,7 +1084,7 @@ function packShape(pack) {
 
             }
 
-            tree.fallen(Math.min(6, Math.round(radius)), pack.shape.litter);
+            tree.fallen(Math.min(6, Math.round(radius)), definition.shape.litter);
 
         }
 
@@ -1098,10 +1097,10 @@ const SHAPES = { spruce, pine, beech, linden, oak, birch };
 
 for (const species of TREE_NAMES) {
 
-    const pack = TREE_SPECIES[species].pack;
+    const definition = TREE_SPECIES[species];
 
-    if (pack) {
-        SHAPES[species] = packShape(pack);
+    if (definition.shape) {
+        SHAPES[species] = catalogShape(definition);
     }
 
 }

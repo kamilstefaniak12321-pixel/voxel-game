@@ -10,10 +10,10 @@ import { TEXTS } from './ui/texts.js';
 import { Settings } from './settings/Settings.js';
 import { Hotbar } from './ui/Hotbar.js';
 import { createBlockIcons } from './ui/BlockIcons.js';
+import { installUiTextureSheets } from './ui/UiTextureSheets.js';
 import { Chat } from './ui/Chat.js';
 import { CommandRegistry } from './commands/CommandRegistry.js';
 import { GAME_COMMANDS, setSceneTime } from './commands/gameCommands.js';
-import { TREE_PACK_ERRORS } from './blocks/treePacks.js';
 import { PLANT_PACK_ERRORS } from './blocks/plantPacks.js';
 import { PerfMonitor } from './game/PerfMonitor.js';
 import { diagnostics } from './diagnostics/Diagnostics.js';
@@ -291,7 +291,7 @@ function loadTheme(name) {
 
     const link = document.getElementById('theme-css');
 
-    return new Promise((resolve) => {
+    return installUiTextureSheets().then(() => new Promise((resolve) => {
 
         link.onload = () => resolve(name);
 
@@ -310,7 +310,7 @@ function loadTheme(name) {
 
         link.href = `./assets/ui/themes/${name}/theme.css`;
 
-    });
+    }));
 
 }
 
@@ -604,7 +604,7 @@ async function playWorld(worldInfo) {
         chat.print(TEXTS.developerHint, 'hint');
     }
 
-    showTreePackErrors();
+    showPlantPackErrors();
 
     // Świat z paczką tekstur - osiągnięcie "Nowe szaty".
 
@@ -617,10 +617,9 @@ async function playWorld(worldInfo) {
 }
 
 
-// Paczki drzew z błędami (assets/drzewa/) - gra je pomija, a na czacie
-// mówi, co poprawić (wszystkie: /drzewa paczki).
+// Błędy opcjonalnych paczek roślin są pokazywane na czacie.
 
-function showTreePackErrors() {
+function showPlantPackErrors() {
 
     // Paczki roślin (assets/rosliny/) - tak samo.
 
@@ -637,18 +636,6 @@ function showTreePackErrors() {
 
     }
 
-    if (TREE_PACK_ERRORS.length === 0) {
-        return;
-    }
-
-    const shown = TREE_PACK_ERRORS.slice(0, 4);
-
-    chat.print(
-        `Paczki drzew - błędy do poprawienia (drzewo z błędem w opisie albo kształcie gra pomija):\n${shown.map((error) => `- ${error}`).join('\n')}` +
-        (TREE_PACK_ERRORS.length > shown.length ? `\n... i ${TREE_PACK_ERRORS.length - shown.length} więcej` : '') +
-        '\nWszystkie: /drzewa paczki, instrukcja: docs/drzewa-paczki.md',
-        'error'
-    );
 
 }
 

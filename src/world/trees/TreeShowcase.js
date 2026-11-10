@@ -3,7 +3,7 @@ import {
     AIR_ID, getBlockId, getBlockTypeById, isLeavesId, isLiquidId,
     isPlantId, isReplaceableId, isSoilId
 } from '../../blocks/BlockRegistry.js';
-import { TREE_NAMES, TREE_SPECIES, packVariantType } from '../../blocks/trees.js';
+import { TREE_NAMES, TREE_SPECIES, treeVariantType } from '../../blocks/trees.js';
 import { buildTree, seededRandom, treeShapeLimits } from './TreeShapes.js';
 
 // Arboretum uses exactly the same geometry as naturally generated trees.
@@ -31,7 +31,7 @@ function states(species) {
     const result = [{ id: 'ordinary', label: 'zwykłe' }];
     if (species === 'pine') result.push({ id: 'resin', label: 'z żywicą' });
     if (species === 'linden') result.push({ id: 'flowering', label: 'kwitnąca' });
-    for (const variant of TREE_SPECIES[species].pack?.variants ?? []) {
+    for (const variant of TREE_SPECIES[species].variants ?? []) {
         result.push({ id: variant.key, label: variant.label, variant });
         if (variant.regrow) result.push({
             id: `${variant.key}_growing`, label: variant.afterLabel ?? `${variant.label} (po zbiorze)`,
@@ -57,8 +57,8 @@ function specimenShape(species, seed, size, state) {
     }
     if (state.id === 'flowering' || state.variant) {
         const type = state.id === 'flowering' ? 'linden_leaves_flowering'
-            : packVariantType(species, state.variant.key) + (state.regrowing ? '_growing' : '');
-        const sourceType = state.id === 'flowering' ? type : packVariantType(species, state.variant.key);
+            : treeVariantType(species, state.variant.key) + (state.regrowing ? '_growing' : '');
+        const sourceType = state.id === 'flowering' ? type : treeVariantType(species, state.variant.key);
         const random = seededRandom(seed ^ 0x679263ab);
         const cells = new Set(shape.blocks.map(([x, y, z]) => key(x, y, z)));
         const outside = shape.blocks.map(([x, y, z, blockType], index) => {
@@ -117,7 +117,7 @@ export function createTreeShowcasePlan({ mode, species, count = 16, seed = 0 } =
         for (const tree of specimens) tree.dx -= Math.round(offset / 2);
     } else {
         const spacing = Math.max(SPACING, treeShapeLimits(species).reach * 2 + 4);
-        const templates = TREE_SPECIES[species].pack?.shape?.templates;
+        const templates = TREE_SPECIES[species].shape?.templates;
         const sizes = templates?.length ? templates.map((_, i) => templates.length === 1 ? 0.5 : i / (templates.length - 1))
             : [0, 0.25, 0.5, 0.75, 1];
         const seeds = sizes.map(() => Math.floor(random() * 4294967296));

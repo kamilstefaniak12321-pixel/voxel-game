@@ -5,11 +5,8 @@
 // osiągnięcia) i wypisuje wszystko jako JSON na standardowe wyjście.
 // Nic nie zapisuje. Sam: node tools/wiki_dane.mjs > dane.json
 //
-// Moduły, które potrzebują three.js (atlas tekstur), nie wczytają się
-// w Node - pozycje kafelków atlasu czytamy więc wprost z tekstu
-// src/rendering/TextureAtlas.js, a ścianę bloku dobieramy tak samo jak
-// getFaceTexture w BlockRenderData.js. Tekstury drzew z paczek
-// (assets/drzewa/) mają w "tiles" ścieżkę pliku zamiast pozycji.
+// Regiony tekstur pochodzą z assets/textures/atlas.json. Ikony i modele
+// używają tych samych nazw i pikseli co gra, bez osobnych plików drzew.
 // ------------------------------------------------------------
 
 import { readFileSync } from 'node:fs';
@@ -17,7 +14,6 @@ import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 import { modelIconData } from './model_icon.mjs';
 import { STONE_TOOL_TEXTURES } from '../src/rendering/StoneToolTextures.js';
-import { PINE_BARK_TEXTURES } from '../src/rendering/WoodAtlasTextures.js';
 
 const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -31,8 +27,8 @@ const { GROUPS } = await import(src('crafting/recipes.js'));
 const A = await import(src('achievements/list.js'));
 const { TOOL_MATERIALS, TOOL_SPEED } = await import(src('config.js'));
 const { TREE_SPECIES } = await import(src('blocks/trees.js'));
-const { PACK_TEXTURES, TREE_PACKS } = await import(src('blocks/treePacks.js'));
-const { PLANT_TEXTURES, PLANT_PACKS } = await import(src('blocks/plantPacks.js'));
+const { TREE_DEFINITIONS } = await import(src('blocks/treeCatalog.js'));
+const { PLANT_TEXTURES } = await import(src('blocks/plantPacks.js'));
 const { getRiverPlantFaces } = await import(src('rendering/RiverPlantGeometry.js'));
 const { pixelPlantIconPixels } = await import(src('ui/PixelPlantIcon.js'));
 const { getItemModel: getFruitItemModel } = await import(src('rendering/ItemGeometry.js'));
@@ -43,55 +39,13 @@ function fruitIcon(type) {
 }
 
 
-// Kafelki atlasu: obiekt ATLAS_TILES z TextureAtlas.js (sam literał).
-
+// Named source regions use the same themed sheets as the renderer.
 function atlasTiles() {
-
-    const text = readFileSync(path.join(ROOT, 'src/rendering/TextureAtlas.js'), 'utf8');
-
-    const start = text.indexOf('export const ATLAS_TILES = {');
-
-    const open = text.indexOf('{', start);
-
-    let depth = 0;
-    let end = open;
-
-    for (; end < text.length; end++) {
-
-        if (text[end] === '{') depth++;
-        if (text[end] === '}') depth--;
-
-        if (depth === 0) {
-            break;
-        }
-
-    }
-
-    const literal = text.slice(open, end + 1);
-
-    const tiles = new Function(`return (${literal});`)();
-
-    for (const [name, texture] of Object.entries(PACK_TEXTURES)) {
-        tiles[name] = { file: `assets/drzewa/${texture.pack}/${texture.file}` };
-    }
-
-    // Obrazki paczek roślin (dowolny rozmiar; region - większy niż jeden
-    // kafelek, paczka tekstur go jeszcze nie zmienia).
-    for (const [name, texture] of Object.entries(PLANT_TEXTURES)) {
-        tiles[name] = {
-            file: `assets/rosliny/${texture.pack}/${texture.file}`,
-            sprite: true,
-            region: texture.width > 16 || texture.height > 16
-        };
-    }
-
-    // Exported from the game's actual canvas atlas by the texture browser
-    // check, so documentation and downloadable packs use the same pixels.
-    for (const { name } of [...PINE_BARK_TEXTURES, ...STONE_TOOL_TEXTURES]) {
-        tiles[name] = { file: `assets/textures/derived/${name}.png` };
-    }
-    return tiles;
-
+    const manifest = JSON.parse(readFileSync(path.join(ROOT, 'assets/textures/atlas.json'), 'utf8'));
+    return Object.fromEntries(Object.entries(manifest.tiles).map(([name, tile]) => [name, {
+        ...tile, texture: tile.region, sprite: Object.hasOwn(PLANT_TEXTURES, name),
+        region: (tile.w ?? 1) > 1 || (tile.h ?? 1) > 1
+    }]));
 }
 
 
@@ -232,7 +186,6 @@ const blocks = blockTypes.map((type) => {
         bark: definition.bark ?? null,
         grows: definition.grows ? { ...definition.grows } : null,
         tree: definition.tree ? TREE_SPECIES[definition.tree]?.species?.[0] ?? definition.tree : null,
-        pack: definition.pack ?? null,
         sources: sources.get(type) ?? [],
         ...recipeRefs(type)
     };
@@ -249,7 +202,6 @@ const items = Object.entries(I.ITEM_TYPES).map(([type, item]) => ({
     plants: item.plants ?? null,
     plantsLabel: item.plants ? R.getBlockLabel(item.plants) : null,
     tool: item.tool ?? null,
-    pack: item.pack ?? null,
     toolMaterials: item.tool ? TOOL_MATERIALS[item.tool].map((material) => SOUND_LABELS[material] ?? material) : null,
     sources: sources.get(type) ?? [],
     ...recipeRefs(type)
@@ -310,7 +262,7 @@ const data = {
         speed: TOOL_SPEED
     }])),
     tiles: atlasTiles(),
-    packs: TREE_PACKS.map((pack) => ({ id: pack.id, name: pack.species[0], firstId: pack.firstId })),
+    trees: TREE_DEFINITIONS.map((tree) => ({ id: tree.id, name: tree.species[0], firstId: tree.firstId })),
     blocks,
     items,
     recipes,

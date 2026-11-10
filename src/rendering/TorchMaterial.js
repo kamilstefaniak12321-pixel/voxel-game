@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { createModelMaterial } from './ModelMaterial.js';
 import { installEmissionDiagnostics } from './LightingDiagnostics.js';
+import { loadTextureRegionBitmap } from './TextureSheets.js';
 import { getTorchFaces, getTorchFlamePosition, torchTextureName,
     TORCH_COLORS, TORCH_ATTACHMENTS, TORCH_ANIMATION_SECONDS } from './TorchGeometry.js';
 
@@ -24,11 +25,13 @@ function textureFor(colorKey) {
     let loaded;
     const ready = new Promise(resolve => { loaded = resolve; });
     const record = {texture: null, ready, error: null};
-    const texture = new THREE.TextureLoader().load(
-        new URL(`../../assets/models/torch/${key}.png`, import.meta.url).href,
-        value => { loaded(value); }, undefined,
-        error => { record.error = new Error(`Nie udało się wczytać ${key}.png`, {cause:error}); loaded(null); }
-    );
+    const texture = new THREE.Texture();
+    texture.userData.regionImageFlipped = true;
+    loadTextureRegionBitmap(`assets/models/torch/${key}.png`, true).then(image => {
+        texture.image = image; texture.needsUpdate = true; loaded(texture);
+    }, error => {
+        record.error = new Error(`Nie udało się wczytać ${key}.png`, {cause:error}); loaded(null);
+    });
     texture.magFilter = texture.minFilter = THREE.NearestFilter;
     texture.wrapS = texture.wrapT = THREE.ClampToEdgeWrapping;
     texture.generateMipmaps = false;

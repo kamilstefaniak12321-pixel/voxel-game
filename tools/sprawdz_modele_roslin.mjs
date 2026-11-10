@@ -15,6 +15,7 @@
 import assert from 'node:assert/strict';
 import { registerHooks } from 'node:module';
 import { readFileSync } from 'node:fs';
+import { readTexturePng } from './texture_regions.mjs';
 
 // Moduły przeglądarki (pliki, tekstury, mapa) - zaślepki z tymi samymi
 // nazwami eksportów (funkcje nic nie robią). Komendy i świat - prawdziwe.
@@ -89,7 +90,7 @@ for (const [type, definition] of Object.entries(BLOCK_TYPES)) {
 }
 
 for (const [name, url] of Object.entries(PLANT_MODEL_TEXTURES)) {
-    const data = readFileSync(new URL(url));
+    const data = readTexturePng(url);
     check(data.toString('latin1', 1, 4) === 'PNG', `${name}: PNG`);
     check(data.readUInt32BE(16) === 16 && data.readUInt32BE(20) === 16, `${name}: 16 x 16 pikseli`);
 }

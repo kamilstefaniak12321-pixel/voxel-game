@@ -1,4 +1,4 @@
-# Paczka tekstur - szablon (Voxel Game 0.70.0)
+# Paczka tekstur - szablon (Voxel Game 0.80.0)
 
 Oryginalne tekstury gry, każda w osobnym pliku. Zrób z nich własną paczkę:
 
@@ -35,6 +35,14 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 
 | plik | co go używa |
 |---|---|
+| `bloki/acacia/leaves.png` | Liście akacji |
+| `bloki/acacia/leaves_variant.png` | Kwitnące liście akacji |
+| `bloki/acacia/log_side.png` | Pień akacji |
+| `bloki/acacia/log_top.png` | Pień akacji |
+| `bloki/acacia/planks.png` | Deski akacji |
+| `bloki/acacia/sapling.png` | Sadzonka akacji |
+| `bloki/acacia/stripped_side.png` | Okorowany pień akacji |
+| `bloki/acacia/stripped_top.png` | Okorowany pień akacji |
 | `bloki/acorn.png` | Żołądź |
 | `bloki/axe.png` | Siekiera |
 | `bloki/axe_basalt.png` | Siekiera bazaltowa |
@@ -42,6 +50,14 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/axe_limestone.png` | Siekiera wapienna |
 | `bloki/axe_sandstone.png` | Siekiera piaskowcowa |
 | `bloki/axe_slate.png` | Siekiera łupkowa |
+| `bloki/bald_cypress/leaves.png` | Igliwie cypryśnika |
+| `bloki/bald_cypress/leaves_variant.png` | Jesienne igliwie cypryśnika |
+| `bloki/bald_cypress/log_side.png` | Pień cypryśnika |
+| `bloki/bald_cypress/log_top.png` | Pień cypryśnika |
+| `bloki/bald_cypress/planks.png` | Deski cypryśnika |
+| `bloki/bald_cypress/sapling.png` | Sadzonka cypryśnika |
+| `bloki/bald_cypress/stripped_side.png` | Okorowany pień cypryśnika |
+| `bloki/bald_cypress/stripped_top.png` | Okorowany pień cypryśnika |
 | `bloki/basalt_side.png` | Bazalt |
 | `bloki/basalt_top.png` | Bazalt |
 | `bloki/beech_leaf_litter.png` | Opadłe liście buka |
@@ -71,6 +87,14 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/bush_leaves.png` | - |
 | `bloki/bush_sapling.png` | - |
 | `bloki/chamomile.png` | Rumianek |
+| `bloki/cherry/leaves.png` | Liście wiśni |
+| `bloki/cherry/leaves_variant.png` | Liście wiśni — rzadsze kwiaty |
+| `bloki/cherry/log_side.png` | Pień wiśni |
+| `bloki/cherry/log_top.png` | Pień wiśni |
+| `bloki/cherry/planks.png` | Deski wiśni |
+| `bloki/cherry/sapling.png` | Sadzonka wiśni |
+| `bloki/cherry/stripped_side.png` | Okorowany pień wiśni |
+| `bloki/cherry/stripped_top.png` | Okorowany pień wiśni |
 | `bloki/chili_bush_few.png` | - |
 | `bloki/chili_bush_full.png` | - |
 | `bloki/chili_pepper.png` | - |
@@ -83,6 +107,22 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/dark_planks.png` | Ciemne deski |
 | `bloki/dirt.png` | Ziemia |
 | `bloki/dune_grass.png` | Piaskownica (trawa wydmowa) |
+| `bloki/dye_black.png` | Barwnik czarny |
+| `bloki/dye_blue.png` | Barwnik niebieski |
+| `bloki/dye_brown.png` | Barwnik brązowy |
+| `bloki/dye_cyan.png` | Barwnik turkusowy |
+| `bloki/dye_gray.png` | Barwnik szary |
+| `bloki/dye_green.png` | Barwnik zielony |
+| `bloki/dye_light_blue.png` | Barwnik jasnoniebieski |
+| `bloki/dye_light_gray.png` | Barwnik jasnoszary |
+| `bloki/dye_lime.png` | Barwnik limonkowy |
+| `bloki/dye_magenta.png` | Barwnik purpurowy |
+| `bloki/dye_orange.png` | Barwnik pomarańczowy |
+| `bloki/dye_pink.png` | Barwnik różowy |
+| `bloki/dye_purple.png` | Barwnik fioletowy |
+| `bloki/dye_red.png` | Barwnik czerwony |
+| `bloki/dye_white.png` | Barwnik biały |
+| `bloki/dye_yellow.png` | Barwnik żółty |
 | `bloki/fern.png` | Paproć, Wywłócznik |
 | `bloki/forest_floor_side.png` | Ściółka leśna |
 | `bloki/forest_floor_top.png` | Ściółka leśna |
@@ -123,6 +163,97 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/linden_stripped_side.png` | Okorowany pień lipy |
 | `bloki/linden_stripped_top.png` | Okorowany pień lipy |
 | `bloki/meteorite.png` | Meteoryt |
+| `bloki/models/bushy-grass/texture.png` | - |
+| `bloki/models/rosliny/amarantus/polrealistyczny.png` | - |
+| `bloki/models/rosliny/babka/polrealistyczny.png` | - |
+| `bloki/models/rosliny/borowka/polrealistyczny.png` | - |
+| `bloki/models/rosliny/chaber/polrealistyczny.png` | - |
+| `bloki/models/rosliny/chili/polrealistyczny.png` | - |
+| `bloki/models/rosliny/cynia/polrealistyczny.png` | - |
+| `bloki/models/rosliny/cynia/prosty-1.png` | - |
+| `bloki/models/rosliny/cynia/prosty-2.png` | - |
+| `bloki/models/rosliny/cynia/prosty-3.png` | - |
+| `bloki/models/rosliny/dzwonek/polrealistyczny.png` | - |
+| `bloki/models/rosliny/dzwonek/prosty-1.png` | - |
+| `bloki/models/rosliny/dzwonek/prosty-2.png` | - |
+| `bloki/models/rosliny/dzwonek/prosty-3.png` | - |
+| `bloki/models/rosliny/gorczyca/polrealistyczny.png` | - |
+| `bloki/models/rosliny/gorczyca/prosty-1.png` | - |
+| `bloki/models/rosliny/gorczyca/prosty-2.png` | - |
+| `bloki/models/rosliny/gorczyca/prosty-3.png` | - |
+| `bloki/models/rosliny/indygowiec/polrealistyczny.png` | - |
+| `bloki/models/rosliny/indygowiec/prosty-1.png` | - |
+| `bloki/models/rosliny/indygowiec/prosty-2.png` | - |
+| `bloki/models/rosliny/indygowiec/prosty-3.png` | - |
+| `bloki/models/rosliny/jezyna/polrealistyczny.png` | - |
+| `bloki/models/rosliny/kocanka/polrealistyczny.png` | - |
+| `bloki/models/rosliny/kocanka/prosty-1.png` | - |
+| `bloki/models/rosliny/kocanka/prosty-2.png` | - |
+| `bloki/models/rosliny/kocanka/prosty-3.png` | - |
+| `bloki/models/rosliny/koniczyna/polrealistyczny.png` | - |
+| `bloki/models/rosliny/krokus/polrealistyczny.png` | - |
+| `bloki/models/rosliny/krotka-trawa/polrealistyczny.png` | - |
+| `bloki/models/rosliny/krwawnica/polrealistyczny.png` | - |
+| `bloki/models/rosliny/krwawnica/prosty-1.png` | - |
+| `bloki/models/rosliny/lawenda/polrealistyczny.png` | - |
+| `bloki/models/rosliny/lawenda/prosty-1.png` | - |
+| `bloki/models/rosliny/lawenda/prosty-2.png` | - |
+| `bloki/models/rosliny/lawenda/prosty-3.png` | - |
+| `bloki/models/rosliny/len/polrealistyczny.png` | - |
+| `bloki/models/rosliny/len/prosty-1.png` | - |
+| `bloki/models/rosliny/len/prosty-2.png` | - |
+| `bloki/models/rosliny/len/prosty-3.png` | - |
+| `bloki/models/rosliny/leszczyna/polrealistyczny.png` | - |
+| `bloki/models/rosliny/mak/polrealistyczny.png` | - |
+| `bloki/models/rosliny/marzanna/polrealistyczny.png` | - |
+| `bloki/models/rosliny/marzanna/prosty-1.png` | - |
+| `bloki/models/rosliny/marzanna/prosty-2.png` | - |
+| `bloki/models/rosliny/marzanna/prosty-3.png` | - |
+| `bloki/models/rosliny/mikolajek/polrealistyczny.png` | - |
+| `bloki/models/rosliny/mikolajek/prosty-1.png` | - |
+| `bloki/models/rosliny/mikolajek/prosty-2.png` | - |
+| `bloki/models/rosliny/mikolajek/prosty-3.png` | - |
+| `bloki/models/rosliny/mniszek/polrealistyczny.png` | - |
+| `bloki/models/rosliny/nagietek/polrealistyczny.png` | - |
+| `bloki/models/rosliny/nagietek/prosty-1.png` | - |
+| `bloki/models/rosliny/nagietek/prosty-2.png` | - |
+| `bloki/models/rosliny/nagietek/prosty-3.png` | - |
+| `bloki/models/rosliny/palka/polrealistyczny.png` | - |
+| `bloki/models/rosliny/palka/prosty-1.png` | - |
+| `bloki/models/rosliny/paproc/polrealistyczny.png` | - |
+| `bloki/models/rosliny/piwonia/polrealistyczny.png` | - |
+| `bloki/models/rosliny/piwonia/prosty-1.png` | - |
+| `bloki/models/rosliny/piwonia/prosty-2.png` | - |
+| `bloki/models/rosliny/piwonia/prosty-3.png` | - |
+| `bloki/models/rosliny/pokrzywa/polrealistyczny.png` | - |
+| `bloki/models/rosliny/rumianek/polrealistyczny.png` | - |
+| `bloki/models/rosliny/sadzonka-akacja/polrealistyczny.png` | - |
+| `bloki/models/rosliny/sadzonka-brzoza/polrealistyczny.png` | - |
+| `bloki/models/rosliny/sadzonka-buk/polrealistyczny.png` | - |
+| `bloki/models/rosliny/sadzonka-cyprysnik/polrealistyczny.png` | - |
+| `bloki/models/rosliny/sadzonka-dab/polrealistyczny.png` | - |
+| `bloki/models/rosliny/sadzonka-jablon/polrealistyczny.png` | - |
+| `bloki/models/rosliny/sadzonka-lipa/polrealistyczny.png` | - |
+| `bloki/models/rosliny/sadzonka-olcha/polrealistyczny.png` | - |
+| `bloki/models/rosliny/sadzonka-sosna/polrealistyczny.png` | - |
+| `bloki/models/rosliny/sadzonka-swierk/polrealistyczny.png` | - |
+| `bloki/models/rosliny/sadzonka-wierzba/polrealistyczny.png` | - |
+| `bloki/models/rosliny/sadzonka-wisnia/polrealistyczny.png` | - |
+| `bloki/models/rosliny/szalwia/polrealistyczny.png` | - |
+| `bloki/models/rosliny/szalwia/prosty-1.png` | - |
+| `bloki/models/rosliny/szalwia/prosty-2.png` | - |
+| `bloki/models/rosliny/szalwia/prosty-3.png` | - |
+| `bloki/models/rosliny/trawa-wydmowa/polrealistyczny.png` | - |
+| `bloki/models/rosliny/truskawka/polrealistyczny.png` | - |
+| `bloki/models/rosliny/trzcina/polrealistyczny.png` | - |
+| `bloki/models/rosliny/turzyca/polrealistyczny.png` | - |
+| `bloki/models/rosliny/turzyca/prosty-1.png` | - |
+| `bloki/models/rosliny/wrzos/polrealistyczny.png` | - |
+| `bloki/models/rosliny/wysoka-trawa/polrealistyczny.png` | - |
+| `bloki/models/rosliny/zawilec/polrealistyczny.png` | - |
+| `bloki/models/rosliny/zawilec/prosty-1.png` | - |
+| `bloki/models/rosliny/zawilec/prosty-2.png` | - |
+| `bloki/models/rosliny/zawilec/prosty-3.png` | - |
 | `bloki/moss_carpet.png` | Kępki mchu |
 | `bloki/moss_carpet_2.png` | - |
 | `bloki/moss_carpet_3.png` | - |
@@ -224,7 +355,24 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/tall_grass.png` | Wysoka trawa |
 | `bloki/terracotta.png` | Terakota |
 | `bloki/tool_handle_source.png` | - |
-| `bloki/water.png` | Woda |
+| `bloki/torch.png` | Pochodnia |
+| `bloki/torch_black.png` | Pochodnia czarna |
+| `bloki/torch_blue.png` | Pochodnia niebieska |
+| `bloki/torch_brown.png` | Pochodnia brązowa |
+| `bloki/torch_cyan.png` | Pochodnia turkusowa |
+| `bloki/torch_gray.png` | Pochodnia szara |
+| `bloki/torch_green.png` | Pochodnia zielona |
+| `bloki/torch_light_blue.png` | Pochodnia jasnoniebieska |
+| `bloki/torch_light_gray.png` | Pochodnia jasnoszara |
+| `bloki/torch_lime.png` | Pochodnia limonkowa |
+| `bloki/torch_magenta.png` | Pochodnia purpurowa |
+| `bloki/torch_orange.png` | Pochodnia pomarańczowa |
+| `bloki/torch_pink.png` | Pochodnia różowa |
+| `bloki/torch_purple.png` | Pochodnia fioletowa |
+| `bloki/torch_red.png` | Pochodnia czerwona |
+| `bloki/torch_white.png` | Pochodnia biała |
+| `bloki/torch_yellow.png` | Pochodnia żółta |
+| `bloki/water.png` | Woda, Płynąca woda |
 | `bloki/wierzba/bazie.png` | Bazie |
 | `bloki/wierzba/deski.png` | Deski wierzbowe |
 | `bloki/wierzba/liscie.png` | Liście wierzby |

@@ -2,6 +2,7 @@
 // Node >= 22.15, bez instalowania zależności.
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
+import { readTexturePng } from './texture_regions.mjs';
 import { createHash } from 'node:crypto';
 import { inflateSync } from 'node:zlib';
 import { registerHooks } from 'node:module';
@@ -195,9 +196,9 @@ const sourceManifest=JSON.parse(await readFile(new URL('../assets/models/torch/S
 check(sourceManifest.textures.length===17,'Manifest obejmuje wszystkie tekstury moda');
 for(const color of colors){
     const name=color==='plain'?'torch':`torch_${color}`;
-    const png=await readFile(new URL(`../assets/models/torch/${name}.png`,import.meta.url));
-    check(createHash('sha256').update(png).digest('hex')===sourceManifest.textures.find(entry=>entry.file===`${name}.png`)?.sha256,`${name}: oryginalny plik PNG bez zmian`);
+    const png=readTexturePng(`assets/models/torch/${name}.png`);
     const {width,height,pixels}=rgbaPng(png);
+    check(createHash('sha256').update(pixels).digest('hex')===sourceManifest.textures.find(entry=>entry.file===`${name}.png`)?.rgbaSha256,`${name}: oryginalne piksele RGBA bez zmian po przeniesieniu do arkusza`);
     check(width===16&&height===320,`${name}: pełne 20 klatek`);
     const frames=Array.from({length:20},(_,i)=>createHash('sha256').update(pixels.subarray(i*1024,(i+1)*1024)).digest('hex'));
     check(new Set(frames).size===20,`${name}: wszystkie klatki różne`);

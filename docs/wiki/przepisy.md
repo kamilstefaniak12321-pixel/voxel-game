@@ -2,7 +2,7 @@
 
 > Ta strona jest generowana z kodu gry (`python tools/wiki.py`) - nie zmieniaj jej ręcznie, zmiany przepadną przy następnym generowaniu.
 
-Wersja gry **0.73.0** - 97 przepisów. Wytwarza się w ekwipunku (**E**): siatka 2 x 2 obok miejsc ekwipunku, wynik po prawej (klik - weź, Shift + klik - ile się da). Przycisk 📖 *Przepisy* otwiera księgę - klik na przepisie sam układa składniki. Przepisy *z kształtem* można przesuwać po siatce i odbijać w poziomie; przepisy *bez kształtu* - obojętne, gdzie leżą składniki. Z czatu: `/przepisy`, `/wytworz <przepis>`.
+Wersja gry **0.80.0** - 104 przepisów. Wytwarza się w ekwipunku (**E**): siatka 2 x 2 obok miejsc ekwipunku, wynik po prawej (klik - weź, Shift + klik - ile się da). Przycisk 📖 *Przepisy* otwiera księgę - klik na przepisie sam układa składniki. Przepisy *z kształtem* można przesuwać po siatce i odbijać w poziomie; przepisy *bez kształtu* - obojętne, gdzie leżą składniki. Z czatu: `/przepisy`, `/wytworz <przepis>`.
 
 
 ## Ziemia
@@ -109,6 +109,24 @@ Wersja gry **0.73.0** - 97 przepisów. Wytwarza się w ekwipunku (**E**): siatka
 
 1 x pień jabłoni (też okorowany) + 1 x siekiera (dowolny kamień) (bez kształtu). Nazwa przepisu: `jablon_firewood`. Siekiera zostaje. Opał: PPM na ziemię, potem dokładaj do 6 polan.
 
+### Opał — akacja x4
+
+<img src="przepisy/acacia_firewood.png" alt="Opał — akacja x4: 1 x pień akacji (też okorowany) + 1 x siekiera (dowolny kamień) (zostaje) (obojętne gdzie)">
+
+1 x pień akacji (też okorowany) + 1 x siekiera (dowolny kamień) (bez kształtu). Nazwa przepisu: `acacia_firewood`. Siekiera zostaje. Opał: PPM na ziemię, potem dokładaj do 6 polan.
+
+### Opał — cypryśnik x4
+
+<img src="przepisy/bald_cypress_firewood.png" alt="Opał — cypryśnik x4: 1 x pień cypryśnika (też okorowany) + 1 x siekiera (dowolny kamień) (zostaje) (obojętne gdzie)">
+
+1 x pień cypryśnika (też okorowany) + 1 x siekiera (dowolny kamień) (bez kształtu). Nazwa przepisu: `bald_cypress_firewood`. Siekiera zostaje. Opał: PPM na ziemię, potem dokładaj do 6 polan.
+
+### Opał — wiśnia x4
+
+<img src="przepisy/cherry_firewood.png" alt="Opał — wiśnia x4: 1 x pień wiśni (też okorowany) + 1 x siekiera (dowolny kamień) (zostaje) (obojętne gdzie)">
+
+1 x pień wiśni (też okorowany) + 1 x siekiera (dowolny kamień) (bez kształtu). Nazwa przepisu: `cherry_firewood`. Siekiera zostaje. Opał: PPM na ziemię, potem dokładaj do 6 polan.
+
 ### Deski świerkowe x4
 
 <img src="przepisy/spruce_planks.png" alt="Deski świerkowe x4: 1 x pień świerka (też okorowany) (obojętne gdzie)">
@@ -162,6 +180,24 @@ Wersja gry **0.73.0** - 97 przepisów. Wytwarza się w ekwipunku (**E**): siatka
 <img src="przepisy/wierzba_planks.png" alt="Deski wierzbowe x4: 1 x pień wierzby (też okorowany) (obojętne gdzie)">
 
 1 x pień wierzby (też okorowany) (bez kształtu). Nazwa przepisu: `wierzba_planks`.
+
+### Deski akacji x4
+
+<img src="przepisy/acacia_planks.png" alt="Deski akacji x4: 1 x pień akacji (też okorowany) (obojętne gdzie)">
+
+1 x pień akacji (też okorowany) (bez kształtu). Nazwa przepisu: `acacia_planks`.
+
+### Deski cypryśnika x4
+
+<img src="przepisy/bald_cypress_planks.png" alt="Deski cypryśnika x4: 1 x pień cypryśnika (też okorowany) (obojętne gdzie)">
+
+1 x pień cypryśnika (też okorowany) (bez kształtu). Nazwa przepisu: `bald_cypress_planks`.
+
+### Deski wiśni x4
+
+<img src="przepisy/cherry_planks.png" alt="Deski wiśni x4: 1 x pień wiśni (też okorowany) (obojętne gdzie)">
+
+1 x pień wiśni (też okorowany) (bez kształtu). Nazwa przepisu: `cherry_planks`.
 
 
 ## Budulec
@@ -394,6 +430,12 @@ Wersja gry **0.73.0** - 97 przepisów. Wytwarza się w ekwipunku (**E**): siatka
 
 ## Narzędzia i surowce
 
+### Tratwa
+
+<img src="przepisy/raft.png" alt="Tratwa: 2 x deski (dowolne) (ułożenie: PP; P = deski (dowolne))">
+
+2 x deski (dowolne) (z kształtem). Nazwa przepisu: `raft`. Dwie deski obok siebie. PPM na wodzie: postaw; PPM na tratwie: wsiądź. WASD: płyń, Shift: wysiądź, LPM: zabierz.
+
 ### Starter ognia
 
 <img src="przepisy/fire_starter.png" alt="Starter ognia: 2 x Patyk (obojętne gdzie)">
@@ -617,7 +659,7 @@ Składnik z grupy to dowolna rzecz z listy (np. patyki z desek różnych drzew).
 
 - **siekiera (dowolny kamień)**: Siekiera, Siekiera granitowa, Siekiera wapienna, Siekiera piaskowcowa, Siekiera łupkowa, Siekiera bazaltowa
 - **pochodnia (dowolny kolor)**: Pochodnia, Pochodnia biała, Pochodnia pomarańczowa, Pochodnia purpurowa, Pochodnia jasnoniebieska, Pochodnia żółta, Pochodnia limonkowa, Pochodnia różowa, Pochodnia szara, Pochodnia jasnoszara, Pochodnia turkusowa, Pochodnia fioletowa, Pochodnia niebieska, Pochodnia brązowa, Pochodnia zielona, Pochodnia czerwona, Pochodnia czarna
-- **deski (dowolne)**: Deski świerkowe, Deski sosnowe, Deski bukowe, Deski lipowe, Deski dębowe, Deski brzozowe, Deski jabłoniowe, Deski olchowe, Deski wierzbowe
+- **deski (dowolne)**: Deski świerkowe, Deski sosnowe, Deski bukowe, Deski lipowe, Deski dębowe, Deski brzozowe, Deski jabłoniowe, Deski olchowe, Deski wierzbowe, Deski akacji, Deski cypryśnika, Deski wiśni
 - **skała (kamień, granit, wapień, piaskowiec, łupek, bazalt)**: Kamień, Granit, Wapień, Piaskowiec, Łupek, Bazalt
 - **szyszka (świerka albo sosny)**: Szyszka świerka, Szyszka sosny
 - **igliwie (świerka albo sosny)**: Igliwie świerka, Igliwie sosny

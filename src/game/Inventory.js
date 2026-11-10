@@ -34,7 +34,7 @@ export const CRAFT_SLOTS = 4;
 
 // Poprawny stos albo null (zapis mógł być uszkodzony, blok usunięty z gry).
 
-function cleanItem(item) {
+export function cleanItem(item) {
 
     // Przedmiot o starej nazwie (np. maliny z 0.4.0) - pod nową.
 

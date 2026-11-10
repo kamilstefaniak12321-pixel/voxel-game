@@ -1167,7 +1167,8 @@ for (
     )
 ) {
 
-    if (definition.model === 'structure') continue;
+    // Ognisko, pochodnie i skrzynie rysują własne modele.
+    if (definition.model === 'structure' || definition.model === 'chest') continue;
 
     const rotatedFaces =
         definition.randomRotation ?? [];

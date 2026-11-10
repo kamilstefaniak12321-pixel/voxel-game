@@ -22,6 +22,7 @@ import { getTorchInfo } from '../blocks/torches.js';
 import { getTorchFaces } from '../rendering/TorchGeometry.js';
 import { loadTextureRegionURL } from '../rendering/TextureSheets.js';
 import { installUiTextureSheets } from './UiTextureSheets.js';
+import { getChestFaces, CHEST_TEXTURE } from '../rendering/ChestGeometry.js';
 
 // ------------------------------------------------------------
 // IKONKI BLOKÓW
@@ -308,6 +309,11 @@ export async function createBlockIcons() {
         const torch = getTorchInfo(type);
         if (torch) {
             icons.set(type, modelIcon(getTorchFaces(torch.colorKey, 'down'), torch.variant.texture));
+            continue;
+        }
+
+        if (definition.model === 'chest') {
+            icons.set(type, modelIcon(getChestFaces(), CHEST_TEXTURE));
             continue;
         }
 

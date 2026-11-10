@@ -18,7 +18,8 @@ register(`data:text/javascript,${encodeURIComponent(`
             const sources = {
                 'three': 'export {};',
                 '../rendering/ModelMaterial.js': 'export const modelLight = {}; export function setModelPreviewRenderer() {}',
-                '../sky/skyShader.js': 'export const skyUniforms = {};'
+                '../sky/skyShader.js': 'export const skyUniforms = {};',
+                './ChestView.js': 'export const CHEST_VIEW_WIDTH = 320, CHEST_VIEW_HEIGHT = 160; export class ChestView {}'
             };
             if (Object.hasOwn(sources, specifier)) {
                 return { url: 'data:text/javascript,' + encodeURIComponent(sources[specifier]), shortCircuit: true };

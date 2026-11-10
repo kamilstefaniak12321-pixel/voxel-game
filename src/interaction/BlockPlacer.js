@@ -14,6 +14,7 @@ import {
     ATTACH_OFFSETS
 } from '../blocks/BlockRegistry.js';
 import { getTorchInfo, torchType } from '../blocks/torches.js';
+import { chestFacingForYaw } from '../blocks/chest.js';
 
 // ------------------------------------------------------------
 // STAWIANIE BLOKÓW
@@ -116,6 +117,14 @@ export class BlockPlacer {
 
             blockType = wall[side];
 
+        }
+
+        // Skrzynia: przodem do gracza.
+
+        const facings = getBlockDefinition(blockType)?.facings;
+
+        if (facings) {
+            blockType = facings[chestFacingForYaw(this.player?.yaw ?? 0)];
         }
 
         const id = this.world.getBlockId(x, y, z);

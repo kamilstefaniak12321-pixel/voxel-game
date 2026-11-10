@@ -2892,6 +2892,13 @@
       "y": 48,
       "width": 26,
       "height": 32
+    },
+    "chest": {
+      "sheet": "drzewa",
+      "x": 0,
+      "y": 208,
+      "width": 32,
+      "height": 32
     }
   },
   "aliases": {
@@ -5093,6 +5100,15 @@
       "x": 13,
       "y": 34,
       "region": "shovel_basalt"
+    },
+    "chest": {
+      "x": 8,
+      "y": 24,
+      "w": 2,
+      "h": 2,
+      "pw": 32,
+      "ph": 32,
+      "region": "chest"
     }
   }
 }

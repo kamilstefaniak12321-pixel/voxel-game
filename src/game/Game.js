@@ -4,6 +4,8 @@ import { fullTerrainDistance, FULL_TERRAIN_DISTANCE, TERRAIN_TRANSITION_START } 
 import { Campfires } from './Campfires.js';
 import { dyeTorch } from './TorchInteraction.js';
 import { TorchRenderer } from '../rendering/TorchRenderer.js';
+import { Chests } from './Chests.js';
+import { isChestType } from '../blocks/chest.js';
 import { World } from '../world/World.js';
 import { waitForTreeShowcase } from '../world/trees/TreeShowcase.js';
 import { Player } from '../player/Player.js';
@@ -526,6 +528,11 @@ export class Game {
 
 
         this.campfires = new Campfires(this, worldInfo.campfires);
+
+        // Skrzynie: zawartość i modele (Chests.js); PPM otwiera ekwipunek
+        // ze skrzynią (onOpenChest - main.js).
+        this.chests = new Chests(this, worldInfo.chests);
+        this.onOpenChest = null;
         this.torches = new TorchRenderer(this);
         this.torches.setLowDetail(this.settings.get('potato'));
 
@@ -540,7 +547,8 @@ export class Game {
             this.player,
             this.time,
             this.campfires,
-            this.rafts
+            this.rafts,
+            this.chests
         );
 
         this.saver.saveOnExit();
@@ -689,12 +697,17 @@ export class Game {
 
         const placing = !breakPressed;
 
-        const fireInteraction = placing && !breakHeld && placePressed &&
+        const chestInteraction = placing && !breakHeld && placePressed &&
+            this.chests.interact(this.currentHit);
+        const fireInteraction = !chestInteraction && placing && !breakHeld && placePressed &&
             this.campfires.interact(this.currentHit, this.selectedBlock);
         const torchInteraction = !fireInteraction && placing && !breakHeld && placePressed &&
             dyeTorch(this, this.currentHit, this.selectedBlock);
 
-        if (fireInteraction || torchInteraction) {
+        if (chestInteraction) {
+            // Ekwipunek ze skrzynią już się otwiera.
+        }
+        else if (fireInteraction || torchInteraction) {
             this.currentHit = this.raycast.castFromCamera(this.camera);
         }
         else if (placing && stripping) {
@@ -742,6 +755,11 @@ export class Game {
                 if (placed) {
 
                     this.playBlockSound('place', block, target);
+
+                    // Nowa skrzynia - pusta zawartość (i model).
+                    if (isChestType(placed)) {
+                        this.chests.ensure(target);
+                    }
 
                     this.achieve('blockPlaced', { type: block });
 
@@ -813,6 +831,8 @@ export class Game {
 
         profile?.beginStage('effects');
         this.campfires.update(dt, input.isMouseDown(2) && !breakHeld && !breakPressed);
+
+        this.chests.update(dt);
         this.torches.update(dt);
         profile?.endStage('effects');
 
@@ -1922,6 +1942,7 @@ export class Game {
         }
 
         this.torches?.setLowDetail(potato);
+        this.chests?.renderer.setLowDetail(potato);
 
 
         // Cienie w kątach są zapisane w meshach chunków - po zmianie
@@ -2208,6 +2229,13 @@ export class Game {
     breakTarget(hit) {
 
         if (!hit || !hit.hit) {
+            return false;
+        }
+
+        // Skrzynia z czymś w środku - najpierw trzeba ją opróżnić.
+
+        if (this.chests && !this.chests.canBreak(hit.block)) {
+            this.onNotice?.('Najpierw opróżnij skrzynię');
             return false;
         }
 
@@ -2729,6 +2757,8 @@ export class Game {
 
         this.dynamicLight.dispose();
         this.campfires.dispose();
+
+        this.chests.dispose();
         this.torches.dispose();
 
         this.farTerrain.dispose();

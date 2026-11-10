@@ -13,6 +13,7 @@ import { BLUEBERRY_STAGES, BLUEBERRY_TEXTURE, blueberryIcon } from './blueberry.
 import { FRUIT_BUSH_PROFILES } from '../rendering/FruitBushGeometry.js';
 import { PLANT_PACKS, PLANT_PIXELS, plantStageType, plantTile } from './plantPacks.js';
 import { TORCH_BLOCKS } from './torches.js';
+import { CHEST_BLOCKS } from './chest.js';
 import { FLOWING_WATER_BLOCKS, WATER_SOURCE_ID, WATER_FALLING_LAST_ID, plainWaterLevel, waterHeightForLevel } from './water.js';
 export { WATER_SOURCE_ID, WATER_FALLING_ID, WATER_FALL_MAX, waterIdForLevel, isFallingWaterId, waterFallDistance, fallingWaterId } from './water.js';
 
@@ -33,7 +34,8 @@ export const AIR_ID = 0;
 //                           drzewa od dołu, rośliny od góry),
 //   1000-4999               dodatkowe drzewa (treeCatalog.js),
 //   5000-9999               paczki roślin (plantPacks.js),
-//   10000-10099             konstrukcje (ognisko 10000, pochodnie 10010-10094),
+//   10000-10099             konstrukcje (ognisko 10000, pochodnie 10010-10094,
+//                           skrzynia 10095-10098),
 //   10100-10107             wewnętrzne poziomy i spadanie wody,
 //   10108-10122             spadanie wody 2-16 bloków (0.73.0),
 //   10123-65279             wolne na przyszłość.
@@ -360,6 +362,7 @@ function plantPackBlocks() {
 
 export const BLOCK_TYPES = {
     ...TORCH_BLOCKS,
+    ...CHEST_BLOCKS,
     campfire: { id: 10000, name: 'Campfire', label: 'Ognisko', solid: false, opaque: false,
         model: 'structure', flat: { attach: 'down' }, inventory: false, creative: false,
         drops: null, sound: 'wood', pick: 'oak_firewood', textures: { all: 'oak_log_side' } },

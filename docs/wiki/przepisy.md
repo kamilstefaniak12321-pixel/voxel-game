@@ -2,7 +2,7 @@
 
 > Ta strona jest generowana z kodu gry (`python tools/wiki.py`) - nie zmieniaj jej ręcznie, zmiany przepadną przy następnym generowaniu.
 
-Wersja gry **0.82.0** - 104 przepisów. Wytwarza się w ekwipunku (**E**): siatka 2 x 2 obok miejsc ekwipunku, wynik po prawej (klik - weź, Shift + klik - ile się da). Przycisk 📖 *Przepisy* otwiera księgę - klik na przepisie sam układa składniki. Przepisy *z kształtem* można przesuwać po siatce i odbijać w poziomie; przepisy *bez kształtu* - obojętne, gdzie leżą składniki. Z czatu: `/przepisy`, `/wytworz <przepis>`.
+Wersja gry **0.82.0** - 105 przepisów. Wytwarza się w ekwipunku (**E**): siatka 2 x 2 obok miejsc ekwipunku, wynik po prawej (klik - weź, Shift + klik - ile się da). Przycisk 📖 *Przepisy* otwiera księgę - klik na przepisie sam układa składniki. Przepisy *z kształtem* można przesuwać po siatce i odbijać w poziomie; przepisy *bez kształtu* - obojętne, gdzie leżą składniki. Z czatu: `/przepisy`, `/wytworz <przepis>`.
 
 
 ## Ziemia
@@ -54,6 +54,12 @@ Wersja gry **0.82.0** - 104 przepisów. Wytwarza się w ekwipunku (**E**): siatk
 
 
 ## Drewno
+
+### Skrzynia
+
+<img src="przepisy/chest.png" alt="Skrzynia: 4 x deski (dowolne) (ułożenie: PP / PP; P = deski (dowolne))">
+
+4 x deski (dowolne) (z kształtem). Nazwa przepisu: `chest`. Cztery deski (dowolne drzewo). PPM na skrzyni: otwórz - 4 x 3 przegródki, w każdej dwie warstwy (najpierw zdejmij wierzch).
 
 ### Opał — dąb x4
 

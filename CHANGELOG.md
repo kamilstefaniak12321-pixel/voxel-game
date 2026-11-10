@@ -28,6 +28,26 @@ PR #118).
   liści jest mniej, a smug nie ma.
 - `CubeParticles`: płaskie płatki, kołysanie i niesienie przez wiatr.
 - Test `tools/sprawdz_czasteczki_drzew.mjs`. [Opis](docs/czasteczki-drzew.md).
+## 0.81.0 - Skrzynia
+
+Skrzynia według pomysłu Kamila — PR #118. Ta sama zmiana co w PR #114:
+#114 był ułożony na #113 i po jego scaleniu trafił do gałęzi
+`feat/nowy-uklad-ekwipunku` zamiast do `main`, więc nie było go w grze.
+
+- Nowy blok **Skrzynia** (4 deski → skrzynia), stawiany przodem do gracza.
+- PPM na skrzyni otwiera ekwipunek. W strefie rzemieślniczej widać
+  wnętrze skrzyni: wieko się otwiera (także w świecie), a przedmioty leżą
+  w środku.
+- 4 × 3 przegródki, każda z dwiema warstwami. Inny przedmiot kładzie się
+  na wierzch tego, co leży na spodzie, a żeby wyjąć coś ze spodu, trzeba
+  najpierw zdjąć wierzch. Podpowiedź mówi, co leży pod spodem. Działa
+  Shift + klik w obie strony.
+- Pełnej skrzyni nie da się rozbić, dopóki się jej nie opróżni (nic nie
+  ginie). Zawartość zapisuje się ze światem.
+- Tekstura w nowych arkuszach: obszar `chest` w `drzewa.png`
+  (`tools/skrzynia_tekstura.py`, `tools/atlasy.py`).
+- Testy: `tools/sprawdz_skrzynie.mjs`; test GUI sprawdza okno skrzyni.
+  [Opis](docs/skrzynia.md).
 
 ## 0.80.0 - Wspólne arkusze tekstur i prostszy katalog drzew
 

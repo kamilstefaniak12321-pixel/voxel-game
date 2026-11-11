@@ -293,7 +293,7 @@ export class InventoryScreen {
 
         if (chest) {
             this.chestView ??= new ChestView(this.icons);
-            this.chestView.show(chest);
+            this.chestView.show(chest, game.chests?.textureOf?.(chest) ?? 'chest');
             game.chests?.setOpen(chest);
         }
 

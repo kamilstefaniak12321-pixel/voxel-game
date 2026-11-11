@@ -2,12 +2,12 @@
   "version": 1,
   "tileSize": 16,
   "columns": 16,
-  "rows": 36,
+  "rows": 43,
   "sheets": {
     "drzewa": {
       "file": "drzewa.png",
       "width": 256,
-      "height": 544
+      "height": 640
     },
     "teren": {
       "file": "teren.png",
@@ -3410,6 +3410,139 @@
       "y": 512,
       "width": 32,
       "height": 32
+    },
+    "chest_spruce": {
+      "sheet": "drzewa",
+      "x": 0,
+      "y": 544,
+      "width": 32,
+      "height": 32
+    },
+    "chest_pine": {
+      "sheet": "drzewa",
+      "x": 32,
+      "y": 544,
+      "width": 32,
+      "height": 32
+    },
+    "chest_beech": {
+      "sheet": "drzewa",
+      "x": 64,
+      "y": 544,
+      "width": 32,
+      "height": 32
+    },
+    "chest_linden": {
+      "sheet": "drzewa",
+      "x": 96,
+      "y": 544,
+      "width": 32,
+      "height": 32
+    },
+    "chest_birch": {
+      "sheet": "drzewa",
+      "x": 128,
+      "y": 544,
+      "width": 32,
+      "height": 32
+    },
+    "chest_dark": {
+      "sheet": "drzewa",
+      "x": 160,
+      "y": 544,
+      "width": 32,
+      "height": 32
+    },
+    "chest_jablon": {
+      "sheet": "drzewa",
+      "x": 192,
+      "y": 544,
+      "width": 32,
+      "height": 32
+    },
+    "chest_olcha": {
+      "sheet": "drzewa",
+      "x": 224,
+      "y": 544,
+      "width": 32,
+      "height": 32
+    },
+    "chest_wierzba": {
+      "sheet": "drzewa",
+      "x": 0,
+      "y": 576,
+      "width": 32,
+      "height": 32
+    },
+    "chest_acacia": {
+      "sheet": "drzewa",
+      "x": 32,
+      "y": 576,
+      "width": 32,
+      "height": 32
+    },
+    "chest_bald_cypress": {
+      "sheet": "drzewa",
+      "x": 64,
+      "y": 576,
+      "width": 32,
+      "height": 32
+    },
+    "chest_cherry": {
+      "sheet": "drzewa",
+      "x": 96,
+      "y": 576,
+      "width": 32,
+      "height": 32
+    },
+    "chest_maple": {
+      "sheet": "drzewa",
+      "x": 128,
+      "y": 576,
+      "width": 32,
+      "height": 32
+    },
+    "chest_mugo": {
+      "sheet": "drzewa",
+      "x": 160,
+      "y": 576,
+      "width": 32,
+      "height": 32
+    },
+    "chest_olive": {
+      "sheet": "drzewa",
+      "x": 192,
+      "y": 576,
+      "width": 32,
+      "height": 32
+    },
+    "chest_rainbow_eucalyptus": {
+      "sheet": "drzewa",
+      "x": 224,
+      "y": 576,
+      "width": 32,
+      "height": 32
+    },
+    "chest_sequoia": {
+      "sheet": "drzewa",
+      "x": 0,
+      "y": 608,
+      "width": 32,
+      "height": 32
+    },
+    "chest_ginkgo": {
+      "sheet": "drzewa",
+      "x": 32,
+      "y": 608,
+      "width": 32,
+      "height": 32
+    },
+    "chest_jacaranda": {
+      "sheet": "drzewa",
+      "x": 64,
+      "y": 608,
+      "width": 32,
+      "height": 32
     }
   },
   "aliases": {
@@ -6020,6 +6153,177 @@
       "x": 1,
       "y": 35,
       "region": "models/rosliny/sadzonka-jakaranda/polrealistyczny"
+    },
+    "chest_spruce": {
+      "x": 0,
+      "y": 37,
+      "w": 2,
+      "h": 2,
+      "pw": 32,
+      "ph": 32,
+      "region": "chest_spruce"
+    },
+    "chest_pine": {
+      "x": 2,
+      "y": 37,
+      "w": 2,
+      "h": 2,
+      "pw": 32,
+      "ph": 32,
+      "region": "chest_pine"
+    },
+    "chest_beech": {
+      "x": 4,
+      "y": 37,
+      "w": 2,
+      "h": 2,
+      "pw": 32,
+      "ph": 32,
+      "region": "chest_beech"
+    },
+    "chest_linden": {
+      "x": 6,
+      "y": 37,
+      "w": 2,
+      "h": 2,
+      "pw": 32,
+      "ph": 32,
+      "region": "chest_linden"
+    },
+    "chest_birch": {
+      "x": 8,
+      "y": 37,
+      "w": 2,
+      "h": 2,
+      "pw": 32,
+      "ph": 32,
+      "region": "chest_birch"
+    },
+    "chest_dark": {
+      "x": 10,
+      "y": 37,
+      "w": 2,
+      "h": 2,
+      "pw": 32,
+      "ph": 32,
+      "region": "chest_dark"
+    },
+    "chest_jablon": {
+      "x": 12,
+      "y": 37,
+      "w": 2,
+      "h": 2,
+      "pw": 32,
+      "ph": 32,
+      "region": "chest_jablon"
+    },
+    "chest_olcha": {
+      "x": 14,
+      "y": 37,
+      "w": 2,
+      "h": 2,
+      "pw": 32,
+      "ph": 32,
+      "region": "chest_olcha"
+    },
+    "chest_wierzba": {
+      "x": 0,
+      "y": 39,
+      "w": 2,
+      "h": 2,
+      "pw": 32,
+      "ph": 32,
+      "region": "chest_wierzba"
+    },
+    "chest_acacia": {
+      "x": 2,
+      "y": 39,
+      "w": 2,
+      "h": 2,
+      "pw": 32,
+      "ph": 32,
+      "region": "chest_acacia"
+    },
+    "chest_bald_cypress": {
+      "x": 4,
+      "y": 39,
+      "w": 2,
+      "h": 2,
+      "pw": 32,
+      "ph": 32,
+      "region": "chest_bald_cypress"
+    },
+    "chest_cherry": {
+      "x": 6,
+      "y": 39,
+      "w": 2,
+      "h": 2,
+      "pw": 32,
+      "ph": 32,
+      "region": "chest_cherry"
+    },
+    "chest_maple": {
+      "x": 8,
+      "y": 39,
+      "w": 2,
+      "h": 2,
+      "pw": 32,
+      "ph": 32,
+      "region": "chest_maple"
+    },
+    "chest_mugo": {
+      "x": 10,
+      "y": 39,
+      "w": 2,
+      "h": 2,
+      "pw": 32,
+      "ph": 32,
+      "region": "chest_mugo"
+    },
+    "chest_olive": {
+      "x": 12,
+      "y": 39,
+      "w": 2,
+      "h": 2,
+      "pw": 32,
+      "ph": 32,
+      "region": "chest_olive"
+    },
+    "chest_rainbow_eucalyptus": {
+      "x": 14,
+      "y": 39,
+      "w": 2,
+      "h": 2,
+      "pw": 32,
+      "ph": 32,
+      "region": "chest_rainbow_eucalyptus"
+    },
+    "chest_sequoia": {
+      "x": 0,
+      "y": 41,
+      "w": 2,
+      "h": 2,
+      "pw": 32,
+      "ph": 32,
+      "region": "chest_sequoia"
+    },
+    "chest_ginkgo": {
+      "x": 2,
+      "y": 41,
+      "w": 2,
+      "h": 2,
+      "pw": 32,
+      "ph": 32,
+      "region": "chest_ginkgo"
+    },
+    "chest_jacaranda": {
+      "x": 4,
+      "y": 41,
+      "w": 2,
+      "h": 2,
+      "pw": 32,
+      "ph": 32,
+      "region": "chest_jacaranda"
     }
   }
 }

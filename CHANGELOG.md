@@ -13,7 +13,7 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ## 0.85.0 - Miłorząb, jakaranda i bezpieczne przenoszenie ze skrzyni
 
-Dwa drzewa z paczek Kamila oraz poprawki po przeglądzie 0.84.0.
+Dwa drzewa z paczek Kamila oraz poprawki po przeglądzie 0.84.0 — PR #124.
 
 - Miłorząb dwuklapowy ma 18–26 bloków wysokości i złotą koronę na
   nieregularnych piętrach gałęzi. Jakaranda mimozolistna ma 8–14 bloków,

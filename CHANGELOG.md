@@ -11,6 +11,24 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 0.87.0 - Pikselowe wodospady
+
+Koncept Kamila — PR #126 (po 0.86.0):
+
+- **Wodospady jak animacja pikselowa:** bok spadającej wody nie jest już
+  ciemną, prawie przezroczystą płachtą z przewijaną teksturą. U krawędzi
+  płyną ciemne smugi z jasnymi kreskami, niżej coraz więcej białej piany
+  z niebieskimi kreskami, a po kilku blokach spadku - prawie sama piana.
+  Ostre minipiksele (16 na blok) przesuwają się w dół o cały piksel.
+  Kolory pochodzą ze średniej tekstury wody (paczki tekstur też działają),
+  światło i noc jak dotąd. Z daleka - spokojny średni kolor bez migotania.
+- **Biała plama piany na tafli** pod każdym wodospadem: biel z kropkami
+  odpływającymi od środka, z postrzępionym brzegiem; większa przy
+  wyższym spadku. Kręgi, krople, mgiełka i wyspy piany niesione nurtem
+  zostają. Bez nowych tekstur i rysowań.
+- **Test:** `tools/sprawdz_wodospady_pikselowe_webgl.mjs` w CI (21 sprawdzeń
+  z ekranu prawdziwej gry). Opis: `docs/wodospady-0.87.0.md`.
+
 ## 0.86.0 - Światło lasu, nowe żywe menu i większy ekwipunek
 
 Cztery poprawki według zrzutów Kamila — PR #125.

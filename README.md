@@ -639,9 +639,11 @@ nurt i dokąd płynie woda, `/rzeka znajdz tp` - nad najbliższą rzekę
 
 Od 0.72.0 woda **się rozlewa**: źródło płynie najpierw w dół, a na
 dnie do siedmiu bloków w bok (szczegóły: `docs/woda-0.72.0.md`). Od
-0.73.0 **spadająca woda liczy, ile bloków już spada** - im dłużej, tym
-szybciej płynie jej tekstura (w dłuższych, bielszych smugach piany),
-a na dole mocniej chlapie: krople, piana niesiona nurtem dalej w dół
+0.73.0 **spadająca woda liczy, ile bloków już spada**, a od 0.87.0
+wodospady są **pikselowe**: u krawędzi ciemne smugi z jasnymi kreskami,
+niżej coraz więcej białej piany z niebieskimi kreskami, na tafli pod
+spodem biała plama piany (`docs/wodospady-0.87.0.md`). Na dole woda
+mocniej chlapie: krople, piana niesiona nurtem dalej w dół
 rzeki i mgiełka pod wysokim wodospadem. **Rzeki** schodzą **piętrami**:
 gdzie teren opada o 5 bloków i więcej, rzeka płynie płasko do krawędzi
 i spada **wodospadem** do **sadzawki** (szerszej i głębszej niż koryto),

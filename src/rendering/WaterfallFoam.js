@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import { WATER_WAVE_GLSL } from './WaterWave.js';
 import { RIPPLE_MAX_EMITTERS, RIPPLE_PATCHES_PER_EMITTER, RIPPLE_MAX_TILES } from './WaterfallRipples.js';
 import { createWaterfallEffectMaterial, effectAmount, advanceEffectTime, setEffectTime } from './WaterfallEffectMaterial.js';
+import { WATERFALL_PIXEL_GLSL, WATERFALL_POOL_FOAM_GLSL, waterfallColorUniforms } from './WaterfallPixels.js';
 
 const CORNERS = [[0, 0], [1, 0], [0, 1], [1, 1]];
 const INDICES = [0, 2, 1, 1, 2, 3];
@@ -41,9 +42,9 @@ export function createFoamPattern() {
 }
 
 function createMaterial(texture) {
-    return createWaterfallEffectMaterial({ name: 'Waterfall flat foam', key: 'waterfall-foam-v1',
+    return createWaterfallEffectMaterial({ name: 'Waterfall flat foam', key: 'waterfall-foam-v2',
         color: 0xe4f2ee, surface: true,
-        uniforms: { uFoamTime: { value: 0 }, uFoamPattern: { value: texture } },
+        uniforms: { uFoamTime: { value: 0 }, uFoamPattern: { value: texture }, ...waterfallColorUniforms },
         vertexDeclarations: `
             uniform float uTime;
             uniform float uWaveHeight;
@@ -64,9 +65,12 @@ function createMaterial(texture) {
         fragmentDeclarations: `
             uniform float uFoamTime;
             uniform sampler2D uFoamPattern;
+            uniform vec3 uWaterAverage;
             varying vec4 vFoamParams;
             varying vec2 vFoamFlow;
-            varying float vFoamPhase;`,
+            varying float vFoamPhase;
+            ${WATERFALL_PIXEL_GLSL}
+            ${WATERFALL_POOL_FOAM_GLSL}`,
         fragmentColor: `
             vec2 pixel = (floor(vEffectWorld.xz * 16.0) + 0.5) / 16.0;
             float radial = length(pixel - vFoamParams.xy) / vFoamParams.z;
@@ -78,8 +82,17 @@ function createMaterial(texture) {
             float islands = smoothstep(0.42, 0.70, broad * 0.78 + detail * 0.22
                 + sin(uFoamTime * 0.65 + vFoamPhase * 6.283 + broad * 5.0) * 0.045);
             float spread = 1.0 - smoothstep(0.12, 1.0, radial);
-            diffuseColor.a *= islands * spread * vFoamParams.w;
-            diffuseColor.rgb *= 0.84 + 0.16 * detail;`
+            // 0.87.0: tuż pod wodospadem gęsta, pikselowa plama piany
+            // (WaterfallPixels.js), dalej - wyspy piany niesione nurtem.
+            vec4 poolFoam = waterfallPoolFoam(vEffectWorld.xz, vFoamParams.xy,
+                clamp(0.9 + vFoamParams.z * 0.3, 1.6, 2.6), uFoamTime, uWaterAverage);
+            if (poolFoam.a > 0.0) {
+                diffuseColor.rgb = poolFoam.rgb;
+                diffuseColor.a = poolFoam.a;
+            } else {
+                diffuseColor.a *= islands * spread * vFoamParams.w;
+                diffuseColor.rgb *= 0.84 + 0.16 * detail;
+            }`
     });
 }
 

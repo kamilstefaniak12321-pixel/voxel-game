@@ -8,6 +8,7 @@ import { getSurfaceFaceTexture } from './SurfaceMaterials.js';
 import { blockSurfaceProfile } from './SurfaceProfiles.js';
 import { installSurfaceProfiles } from './LeafLighting.js';
 import { CANOPY_LIGHTING_GLSL } from './CanopyLighting.js';
+import { WATERFALL_PIXEL_GLSL, WATERFALL_AVERAGE_GLSL, waterfallColorUniforms } from './WaterfallPixels.js';
 import { PINE_TRANSITION_TEXTURES, MOSS_CARPET_TEXTURES } from './SurfaceTextureVariants.js';
 
 
@@ -29,7 +30,9 @@ import {
     getAtlasUV,
     ATLAS_TILES,
     ATLAS_COLUMNS,
-    ATLAS_ROWS
+    ATLAS_ROWS,
+    atlasAveragesReady,
+    getAtlasAverage
 } from './TextureAtlas.js';
 
 
@@ -635,14 +638,9 @@ const waterTile = ATLAS_TILES.water;
 export const WATER_FLOW_UV = 0.35;
 
 // Bok spadającej wody (0.73.0): zamiast nurtu UV niesie spadek (u: 1/16
-// na blok spadku) i znacznik WATER_FALL_MARK (v poza kafelkiem). Im dłużej
-// woda spada, tym szybciej płynie tekstura i tym dłuższe są smugi -
-// WATER_FALL_SPEED razy szybciej na każdy blok spadku, WATER_FALL_STRETCH
-// dłuższe smugi. Górna część bloku przechodzi w prędkość bloku nad nim,
-// więc między blokami nie ma szwu.
+// na blok spadku) i znacznik WATER_FALL_MARK (v poza kafelkiem). Od 0.87.0
+// shader rysuje z tego pikselowe smugi i pianę (WaterfallPixels.js).
 export const WATER_FALL_MARK = 2;
-export const WATER_FALL_SPEED = 0.3;
-export const WATER_FALL_STRETCH = 0.06;
 
 // Woda z bliska jest półprzezroczysta (widać przez nią ciemne dno), więc
 // wydaje się trochę jaśniejsza i mniej niebieska niż sama tekstura -
@@ -680,9 +678,19 @@ export const waterUniforms = {
     // atlas ma mipmapy (TextureAtlas.js) - woda sama wybiera kopię
     // atlasu (textureLod), bo jej współrzędne skaczą co piksel.
     uAtlasTile: { value: 16 },
-    uAtlasMipmaps: { value: 0 }
+    uAtlasMipmaps: { value: 0 },
+
+    // Średni kolor tekstury wody (liniowy) - z niego kolory wodospadów.
+    uWaterAverage: waterfallColorUniforms.uWaterAverage
 
 };
+
+atlasAveragesReady.then(() => {
+
+    const average = getAtlasAverage('water');
+    if (average) waterUniforms.uWaterAverage.value.copy(average);
+
+}, () => {});
 
 atlasReady.then((atlas) => {
 
@@ -765,6 +773,7 @@ waterMaterial.onBeforeCompile = (shader, renderer) => {
             uniform float uAtlasMipmaps;
             uniform float uWaterOpacity;
             uniform float uWaterOpacityGrazing;
+            uniform vec3 uWaterAverage;
             varying vec3 vWaterWorld;
             varying vec3 vWaterNormal;
             varying float vWaterFace;
@@ -783,7 +792,10 @@ waterMaterial.onBeforeCompile = (shader, renderer) => {
 
                 return textureLod(map, uWaterTile.xy + cell * uWaterTile.zw, lod);
 
-            }`
+            }
+
+            ${WATERFALL_PIXEL_GLSL}
+            ${WATERFALL_AVERAGE_GLSL}`
         )
         .replace(
             '#include <map_fragment>',
@@ -827,9 +839,9 @@ waterMaterial.onBeforeCompile = (shader, renderer) => {
                 0.5
             );
 
-            // Bok spadającej wody: im dłuższy spadek, tym szybciej (i w
-            // dłuższych smugach) - u góry bloku jak blok nad nim. Szybka
-            // woda jest spieniona: bielsza w smugach i mniej przezroczysta.
+            // Bok spadającej wody (0.87.0): pikselowe smugi - u góry ciemne,
+            // niżej coraz więcej piany (WaterfallPixels.js). Spadek liczony
+            // ciągle: góra bloku = spadek bloku nad nim, więc bez szwów.
 
             float waterFoam = 0.0;
 
@@ -837,35 +849,17 @@ waterMaterial.onBeforeCompile = (shader, renderer) => {
 
                 float fall = floor(riverFlow.x * ${(32 / 127 * 16).toFixed(4)} + 0.5);
 
-                float upper = max(fall - 1.0, 0.0);
+                float depth = fall - fract(vWaterWorld.y);
 
-                float blend = smoothstep(0.6, 1.0, fract(vWaterWorld.y));
+                vec4 fallPixel = waterfallPixel(waterPlane, depth, uTime, uWaterAverage);
 
-                float stretch = 1.0 + ${WATER_FALL_STRETCH.toFixed(3)} * mix(fall, upper, blend);
+                // Z daleka (piksel mniejszy niż piksel ekranu) - średni kolor.
+                float fallFar = smoothstep(0.6, 1.8, max(waterLod, log2(max(waterTexels.x, waterTexels.y) * 16.0 / uAtlasTile)));
 
-                float speed = 1.0 + ${WATER_FALL_SPEED.toFixed(3)} * fall;
-                float upperSpeed = 1.0 + ${WATER_FALL_SPEED.toFixed(3)} * upper;
+                waterColor = vec4(mix(fallPixel.rgb, waterfallAverage(depth, uWaterAverage), fallFar), 1.0);
 
-                vec2 fallPlane = vec2(waterPlane.x, waterPlane.y / stretch);
-
-                vec4 fallA = waterTexel(fallPlane + flowA * speed * uTime, waterLod);
-                vec4 fallB = waterTexel(fallPlane + flowB * speed * uTime + 0.37, waterLod);
-
-                if (blend > 0.0) {
-
-                    fallA = mix(fallA, waterTexel(fallPlane + flowA * upperSpeed * uTime, waterLod), blend);
-                    fallB = mix(fallB, waterTexel(fallPlane + flowB * upperSpeed * uTime + 0.37, waterLod), blend);
-
-                }
-
-                // Smugi piany tam, gdzie dwie warstwy się różnią.
-
-                float streak = clamp(abs(dot(fallA.rgb - fallB.rgb, vec3(0.333))) * 8.0, 0.0, 1.0);
-
-                waterFoam = min(0.6, 0.15 + 0.035 * mix(fall, upper, blend));
-
-                waterColor = mix(fallA, fallB, 0.5);
-                waterColor.rgb = mix(waterColor.rgb, vec3(1.0), waterFoam * (0.45 + 0.75 * streak));
+                // Spadająca woda jest gęsta, piana prawie całkiem kryje.
+                waterFoam = 0.62 + 0.1 * fallPixel.a;
 
             }
 

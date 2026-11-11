@@ -153,11 +153,13 @@ for (const pack of PLANT_PACKS) {
 
 
 import { FIRE_WOODS, fuelType } from '../game/CampfireState.js';
+import { CHEST_KINDS } from '../blocks/chest.js';
 import { WOODS } from '../blocks/woods.js';
 
 export const RECIPES = [
-    { id: 'chest', result: ['chest', 1], pattern: ['PP', 'PP'], key: { P: '#planks' },
-        note: 'Cztery deski (dowolne drzewo). PPM na skrzyni: otwórz - 4 x 3 przegródki, w każdej dwie warstwy (najpierw zdejmij wierzch).' },
+    // Skrzynie (0.89.0): z każdego rodzaju desek - skrzynia tego drewna.
+    ...CHEST_KINDS.map(({ type, planks }) => ({ id: type, result: [type, 1], pattern: ['PP', 'PP'], key: { P: planks },
+        note: 'Cztery deski jednego drzewa - skrzynia z tego drewna. PPM na skrzyni: otwórz - 4 x 3 przegródki, w każdej dwie warstwy (najpierw zdejmij wierzch).' })),
     // Stół stolarski (0.90.0): dwie deski na dwóch patykach - stół z tego
     // drewna (długi na dwa bloki; na nim robi się schody, półbloki,
     // płoty i furtki).

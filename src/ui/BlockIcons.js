@@ -22,7 +22,7 @@ import { getTorchInfo } from '../blocks/torches.js';
 import { getTorchFaces } from '../rendering/TorchGeometry.js';
 import { loadTextureRegionURL } from '../rendering/TextureSheets.js';
 import { installUiTextureSheets } from './UiTextureSheets.js';
-import { getChestFaces, CHEST_TEXTURE } from '../rendering/ChestGeometry.js';
+import { getChestFaces } from '../rendering/ChestGeometry.js';
 import { itemShapeFaces } from '../rendering/ShapeGeometry.js';
 
 // ------------------------------------------------------------
@@ -323,7 +323,7 @@ export async function createBlockIcons() {
         }
 
         if (definition.model === 'chest') {
-            icons.set(type, modelIcon(getChestFaces(), CHEST_TEXTURE));
+            icons.set(type, modelIcon(getChestFaces(definition.chest.texture), definition.chest.texture));
             continue;
         }
 

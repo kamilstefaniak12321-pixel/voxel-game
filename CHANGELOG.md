@@ -11,6 +11,28 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 0.89.0 - Skrzynie z każdego rodzaju desek
+
+Prośba Kamila — PR #128 (po 0.88.0):
+
+- **20 skrzyń:** 4 deski jednego drzewa (siatka 2 × 2) dają skrzynię
+  z tego drewna: dębową, świerkową, sosnową, bukową, lipową, brzozową,
+  ciemną, jabłoniową, olchową, wierzbową, z akacji, z cypryśnika,
+  wiśniową, klonową, z kosodrzewiny, oliwkową, eukaliptusową, sekwojową,
+  miłorzębową i jakarandową.
+- **Wspólne:** model, wieko, przegródki 4 × 3 × 2, zapis i zasady.
+- **Tekstury:** deski i rama w kolorach danego drewna (tekstury 32 × 32
+  z desek gatunku), ten sam żelazny zamek. Ikonki, model w świecie, okno
+  skrzyni w ekwipunku i dźwięk otwierania pasują do drewna.
+- **Dawna skrzynia to teraz „Skrzynia dębowa”** - te same numery bloków,
+  więc stare światy i ich zawartość zostają.
+- **Zmiana przepisu:** z mieszanych desek nie ma już skrzyni (wcześniej
+  dowolne deski dawały dębową).
+- **Atlas:** 7 nowych wierszy na dole (kafelki 2 × 2), dawne kafelki bez
+  zmian.
+- **Testy:** `tools/sprawdz_skrzynie.mjs` sprawdza teraz 240 rzeczy
+  (numery, kierunki, przepisy i tekstury każdej skrzyni).
+
 ## 0.88.0 - Liście na wodzie
 
 Prośba Kamila — PR #127 (po 0.87.0):

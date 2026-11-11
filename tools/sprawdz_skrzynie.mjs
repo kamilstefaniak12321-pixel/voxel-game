@@ -7,6 +7,8 @@
 // - blok: cztery kierunki, przód do gracza, przepis z 4 desek,
 // - model: przegródki trafiają w siebie, wymiary, ikonka przodem.
 //
+// - 0.89.0: skrzynie z każdego rodzaju desek (numery, przepisy, tekstury).
+//
 // Uruchomienie: node tools/sprawdz_skrzynie.mjs
 // ------------------------------------------------------------
 import assert from 'node:assert/strict';
@@ -32,10 +34,11 @@ registerHooks({
 const S = await import('../src/game/ChestState.js');
 const { Inventory, SLOT_COUNT } = await import('../src/game/Inventory.js');
 const { InventoryScreen } = await import('../src/ui/InventoryScreen.js');
-const { CHEST_BLOCKS, chestFacingForYaw, isChestId, isChestType, CHEST_FACINGS } = await import('../src/blocks/chest.js');
+const { CHEST_BLOCKS, CHEST_KINDS, WOOD_CHESTS, chestFacingForYaw, isChestId, isChestType, chestTexture, chestPlanks, CHEST_FACINGS } = await import('../src/blocks/chest.js');
 const { getBlockId, getBlockDefinition, isSolidId } = await import('../src/blocks/BlockRegistry.js');
 const { chestCellCenter, chestCellAt, CHEST_FACES, getChestFaces, CHEST_BOUNDS } = await import('../src/rendering/ChestGeometry.js');
-const { getRecipe } = await import('../src/crafting/Crafting.js');
+const { getRecipe, findRecipe } = await import('../src/crafting/Crafting.js');
+const { WORLD_ATLAS_TILES: ATLAS_TILES } = await import('../src/rendering/TextureSheetData.js');
 
 let checks = 0;
 const check = (condition, message) => { assert.ok(condition, message); checks++; };
@@ -132,10 +135,26 @@ check(S.restoreChest({ x: 0.5, y: 0, z: 0 }) === null && S.restoreChest({ x: 0, 
 // --- Blok -----------------------------------------------------------------
 
 const types = Object.keys(CHEST_BLOCKS);
-check(types.length === 4 && types.every((type) => isChestType(type) && isChestId(getBlockId(type))), 'Cztery kierunki skrzyni');
-check(getBlockDefinition('chest').inventory !== false && types.slice(1).every((type) => getBlockDefinition(type).inventory === false), 'W ekwipunku jedna skrzynia');
-check(types.every((type) => getBlockDefinition(type).drops === 'chest' && getBlockDefinition(type).pick === 'chest'), 'Każda daje skrzynię');
-check(types.every((type) => isSolidId(getBlockId(type))), 'Skrzynia jest stała (nie przepuszcza wody, da się na niej stanąć)');
+check(types.length === CHEST_KINDS.length * 4 && types.every((type) => isChestType(type) && isChestId(getBlockId(type))), 'Cztery kierunki każdej skrzyni');
+check(CHEST_KINDS.length === 1 + WOOD_CHESTS.length && CHEST_KINDS[0].type === 'chest', 'Dębowa (dawna) i skrzynie z innych desek');
+const ids = types.map((type) => getBlockId(type));
+check(new Set(ids).size === ids.length, 'Numery bez powtórzeń');
+check(['chest', 'chest_east', 'chest_south', 'chest_west'].map((type) => getBlockId(type)).join() === '10095,10096,10097,10098', 'Dębowa skrzynia - stare numery (zapisy światów)');
+check(ids.filter((id) => id >= 10200).every((id) => id < 10300) && getBlockId('spruce_chest') === 10200, 'Nowe skrzynie w zakresie 10200-10299');
+for (const { type, planks, texture, label } of CHEST_KINDS) {
+    const facings = getBlockDefinition(type).facings;
+    check(CHEST_FACINGS.every((facing) => facings[facing] && getBlockDefinition(facings[facing]).drops === type && getBlockDefinition(facings[facing]).pick === type), `${type}: każdy kierunek daje tę skrzynię`);
+    check(getBlockDefinition(type).inventory !== false && CHEST_FACINGS.slice(1).every((facing) => getBlockDefinition(facings[facing]).inventory === false), `${type}: w ekwipunku jedna`);
+    check(CHEST_FACINGS.every((facing) => isSolidId(getBlockId(facings[facing]))), `${type}: stała`);
+    check(getBlockId(planks) > 0 && /^Skrzynia|skrzynia$/.test(label), `${type}: z desek ${planks} (${label})`);
+    check(ATLAS_TILES[texture]?.w === 2 && ATLAS_TILES[texture]?.h === 2, `${type}: tekstura 32 x 32 w atlasie (${texture})`);
+    check(chestTexture(facings.west) === texture && chestPlanks(facings.east) === planks, `${type}: tekstura i deski w każdym kierunku`);
+    const recipe = getRecipe(type);
+    check(recipe && recipe.result[0] === type && recipe.pattern.join('') === 'PPPP' && recipe.key.P === planks, `${type}: przepis z 4 desek ${planks}`);
+    check(findRecipe([planks, planks, planks, planks])?.result[0] === type, `${type}: siatka 2 x 2 tych desek daje tę skrzynię`);
+}
+check(new Set(CHEST_KINDS.map(({ texture }) => texture)).size === CHEST_KINDS.length, 'Każda skrzynia ma swoją teksturę');
+check(findRecipe(['oak_planks', 'spruce_planks', 'oak_planks', 'oak_planks']) === null, 'Mieszane deski - bez skrzyni (z jakiego drewna?)');
 check(chestFacingForYaw(0) === 'south' && chestFacingForYaw(Math.PI) === 'north' &&
     chestFacingForYaw(Math.PI / 2) === 'east' && chestFacingForYaw(-Math.PI / 2) === 'west', 'Przodem do gracza');
 check(CHEST_FACINGS.every((facing) => getBlockDefinition('chest').facings[facing]), 'Placer zna wszystkie kierunki');
@@ -159,4 +178,4 @@ check(CHEST_FACES.every((face) => face.uv.every(([u, v]) => u >= 0 && u <= 1 && 
 const latch = getChestFaces().filter((face) => face.part === 'lid').flatMap((face) => face.vertices);
 check(Math.max(...latch.map((v) => v[2])) > 15 / 16, 'Ikonka: zamek z przodu (do patrzącego)');
 
-console.log(`OK: skrzynie - ${checks} sprawdzeń (warstwy, wkładanie, zapis, blok, przepis, model).`);
+console.log(`OK: skrzynie - ${checks} sprawdzeń (warstwy, wkładanie, zapis, skrzynie z 20 rodzajów desek, przepisy, model).`);

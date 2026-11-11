@@ -4,6 +4,7 @@ import { getBlockDefinition } from '../blocks/BlockRegistry.js';
 import { riverPlantBounds } from './RiverPlantBounds.js';
 import { spritePlantBounds } from './PlantBounds.js';
 import { getTorchBounds } from '../rendering/TorchGeometry.js';
+import { shapeBoxes, boundsOf } from '../world/ShapeBoxes.js';
 
 
 // Ramka płaskiej dekoracji (model 'flat'): wzdłuż której osi cienka
@@ -104,6 +105,15 @@ export class BlockHighlight {
         const flat = FLAT_BOXES[definition?.flat?.attach];
 
         if (definition?.model === 'structure' && !torch) { size[1] = .5; center[1] = .25; }
+
+        // Schody, półbloki, płot (słupek), furtka, stół - obrys pudełek.
+        const shape = definition?.model === 'shape' ? boundsOf(shapeBoxes(definition.id, 'outline', 0)) : null;
+        if (shape) {
+            for (let axis = 0; axis < 3; axis++) {
+                size[axis] = Math.max(0.01, shape[axis + 3] - shape[axis]);
+                center[axis] = (shape[axis] + shape[axis + 3]) / 2;
+            }
+        }
 
         // Skrzynia: 14 x 14 pikseli, 14 wysokości.
         if (definition?.model === 'chest') {

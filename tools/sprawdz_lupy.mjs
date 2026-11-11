@@ -19,8 +19,8 @@ const worldUrl = url('src/world/World.js');
 // Importujemy całe klasy, bez wycinania ani kopiowania badanych metod.
 // Pozostałe zależności Game/World dotyczą grafiki i nie są tu wywoływane.
 const realImports = new Map([
-    [gameUrl, new Set(['../world/World.js', '../world/Light.js', '../blocks/BlockRegistry.js', '../items/ItemRegistry.js', './Inventory.js', '../config.js'])],
-    [worldUrl, new Set(['../blocks/BlockRegistry.js', '../config.js', './Chunk.js', './Light.js'])]
+    [gameUrl, new Set(['../world/World.js', '../world/Light.js', '../blocks/BlockRegistry.js', '../items/ItemRegistry.js', './Inventory.js', '../config.js', '../blocks/woodShapes.js'])],
+    [worldUrl, new Set(['../blocks/BlockRegistry.js', '../config.js', './Chunk.js', './Light.js', '../blocks/woodShapes.js', './ShapeBoxes.js'])]
 ]);
 const stubs = new Map();
 for (const [parent, allowed] of realImports) {

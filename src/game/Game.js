@@ -5,6 +5,8 @@ import { Campfires } from './Campfires.js';
 import { dyeTorch } from './TorchInteraction.js';
 import { TorchRenderer } from '../rendering/TorchRenderer.js';
 import { Chests } from './Chests.js';
+import { CarpenterTables } from './CarpenterTables.js';
+import { shapeItem, shapeInfo } from '../blocks/woodShapes.js';
 import { isChestType } from '../blocks/chest.js';
 import { World } from '../world/World.js';
 import { waitForTreeShowcase } from '../world/trees/TreeShowcase.js';
@@ -19,6 +21,7 @@ import {
     getLightEmission,
     getLightColor,
     getDropType,
+    getDropCount,
     getBlockSound,
     getHarvest,
     getLoot,
@@ -532,6 +535,8 @@ export class Game {
         // Skrzynie: zawartość i modele (Chests.js); PPM otwiera ekwipunek
         // ze skrzynią (onOpenChest - main.js).
         this.chests = new Chests(this, worldInfo.chests);
+        // Stoły stolarskie i furtki (0.90.0) - deski na blatach w zapisie.
+        this.carpenterTables = new CarpenterTables(this, worldInfo.carpenterTables);
         this.onOpenChest = null;
         this.torches = new TorchRenderer(this);
         this.torches.setLowDetail(this.settings.get('potato'));
@@ -548,7 +553,8 @@ export class Game {
             this.time,
             this.campfires,
             this.rafts,
-            this.chests
+            this.chests,
+            this.carpenterTables
         );
 
         this.saver.saveOnExit();
@@ -697,15 +703,22 @@ export class Game {
 
         const placing = !breakPressed;
 
-        const chestInteraction = placing && !breakHeld && placePressed &&
+        // Stół stolarski (deski na blat, wyroby) i furtka (otwórz/zamknij).
+        // Z Shiftem i blokiem w ręce przy furtce - stawia się blok obok.
+        const hitShape = this.currentHit?.hit ? shapeInfo(this.world.getBlockId(this.currentHit.block.x, this.currentHit.block.y, this.currentHit.block.z)) : null;
+        const shapeInteraction = placing && !breakHeld && placePressed && hitShape &&
+            (hitShape.kind === 'table' || (hitShape.kind === 'gate' && !(this.player.crouching && this.selectedBlock))) &&
+            this.carpenterTables.interact(this.currentHit, this.selectedBlock, this.player.crouching);
+        if (shapeInteraction) this.currentHit = this.raycast.castFromCamera(this.camera);
+        const chestInteraction = !shapeInteraction && placing && !breakHeld && placePressed &&
             this.chests.interact(this.currentHit);
         const fireInteraction = !chestInteraction && placing && !breakHeld && placePressed &&
             this.campfires.interact(this.currentHit, this.selectedBlock);
         const torchInteraction = !fireInteraction && placing && !breakHeld && placePressed &&
             dyeTorch(this, this.currentHit, this.selectedBlock);
 
-        if (chestInteraction) {
-            // Ekwipunek ze skrzynią już się otwiera.
+        if (chestInteraction || shapeInteraction) {
+            // Ekwipunek ze skrzynią już się otwiera / stół i furtka obsłużone.
         }
         else if (fireInteraction || torchInteraction) {
             this.currentHit = this.raycast.castFromCamera(this.camera);
@@ -747,10 +760,15 @@ export class Game {
                     : this.currentHit;
                 const target = this.placer.targetOf(placeHit, block);
 
-                const placed = this.placer.placeBlock(
-                    placeHit,
-                    block
-                );
+                // Stół stolarski - dwa bloki naraz (CarpenterTables.place).
+                const table = shapeItem(block)?.kind === 'table' ? shapeItem(block) : null;
+
+                const placed = table
+                    ? (target ? this.carpenterTables.place(target, table.wood, this.player.yaw, this.player) : false)
+                    : this.placer.placeBlock(
+                        placeHit,
+                        block
+                    );
 
                 if (placed) {
 
@@ -833,6 +851,7 @@ export class Game {
         this.campfires.update(dt, input.isMouseDown(2) && !breakHeld && !breakPressed);
 
         this.chests.update(dt);
+        this.carpenterTables.update(dt);
         this.torches.update(dt);
         profile?.endStage('effects');
 
@@ -2239,11 +2258,21 @@ export class Game {
             return false;
         }
 
+        // Stół z deskami na blacie - najpierw zabierz deski.
+        if (this.carpenterTables && !this.carpenterTables.canBreak(hit.block)) {
+            this.onNotice?.('Najpierw zabierz deski ze stołu');
+            return false;
+        }
+
+        const brokenShape = shapeInfo(this.world.getBlockId(hit.block.x, hit.block.y, hit.block.z));
+
         if (this.mode !== 'adventure') {
 
             const broken = this.breaker.breakBlock(hit);
 
             if (broken) {
+
+                this.carpenterTables?.broken(hit.block, brokenShape);
 
                 this.playBlockSound('break', hit.block.type, hit.block);
 
@@ -2313,6 +2342,8 @@ export class Game {
             return false;
         }
 
+        this.carpenterTables?.broken(hit.block, brokenShape);
+
         for (const block of supported.values()) {
             if (this.world.getBlock(block.x, block.y, block.z) !== block.type) {
                 drops.push(...block.drops);
@@ -2345,7 +2376,7 @@ export class Game {
         const drop = getDropType(type);
 
         if (drop) {
-            drops.push({ type: drop, count: 1 });
+            drops.push({ type: drop, count: getDropCount(type) });
         }
 
         const harvest = getHarvest(type);
@@ -2759,6 +2790,7 @@ export class Game {
         this.campfires.dispose();
 
         this.chests.dispose();
+        this.carpenterTables.dispose();
         this.torches.dispose();
 
         this.farTerrain.dispose();

@@ -2,7 +2,7 @@
 
 > Ta strona jest generowana z kodu gry (`python tools/wiki.py`) - nie zmieniaj jej ręcznie, zmiany przepadną przy następnym generowaniu.
 
-Wersja gry **0.89.0** - 93 przedmiotów. Przedmiotu nie da się postawić jak bloku; owoce i nasiona posadzone na ziemi (PPM) wyrastają w krzak albo drzewo, narzędzia przyspieszają kopanie.
+Wersja gry **0.90.0** - 93 przedmiotów. Przedmiotu nie da się postawić jak bloku; owoce i nasiona posadzone na ziemi (PPM) wyrastają w krzak albo drzewo, narzędzia przyspieszają kopanie.
 
 
 ## Drewno
@@ -121,4 +121,4 @@ Wersja gry **0.89.0** - 93 przedmiotów. Przedmiotu nie da się postawić jak bl
 | <img src="ikony/axe.png" width="32" height="32" alt=""> | **Siekiera** | `axe` | **Narzędzie:** kopie 3 razy szybciej: drewno<br>**Przepis:** Siekiera<br>**Przydaje się do:** Opał — dąb, Opał — brzoza, Opał — świerk, Opał — sosna, Opał — buk, Opał — lipa, Opał — olcha, Opał — wierzba, Opał — jabłoń, Opał — akacja, Opał — cypryśnik, Opał — wiśnia, Opał — klon, Opał — kosodrzewina, Opał — oliwka, Opał — eukaliptus, Opał — sekwoja, Opał — miłorząb, Opał — jakaranda |
 | <img src="ikony/pickaxe.png" width="32" height="32" alt=""> | **Kilof** | `pickaxe` | **Narzędzie:** kopie 3 razy szybciej: kamień<br>**Przepis:** Kilof |
 | <img src="ikony/shovel.png" width="32" height="32" alt=""> | **Łopata** | `shovel` | **Narzędzie:** kopie 3 razy szybciej: trawa, ziemia, piasek, żwir, błoto, snow<br>**Przepis:** Łopata |
-| <img src="ikony/stick.png" width="32" height="32" alt=""> | **Patyk** | `stick` | **Przepis:** Patyk x4<br>**Przydaje się do:** Pochodnia, Starter ognia, Siekiera, Kilof, Łopata |
+| <img src="ikony/stick.png" width="32" height="32" alt=""> | **Patyk** | `stick` | **Przepis:** Patyk x4<br>**Przydaje się do:** Stół stolarski świerkowy, Stół stolarski sosnowy, Stół stolarski bukowy, Stół stolarski lipowy, Stół stolarski dębowy, Stół stolarski brzozowy, Stół stolarski z ciemnego drewna, Stół stolarski jabłoniowy, Stół stolarski olchowy, Stół stolarski wierzbowy, Stół stolarski z akacji, Stół stolarski z cypryśnika, Stół stolarski wiśniowy, Stół stolarski klonowy, Stół stolarski z kosodrzewiny, Stół stolarski oliwkowy, Stół stolarski eukaliptusowy, Stół stolarski sekwojowy, Stół stolarski miłorzębowy, Stół stolarski jakarandowy, Pochodnia, Starter ognia, Siekiera, Kilof, Łopata |

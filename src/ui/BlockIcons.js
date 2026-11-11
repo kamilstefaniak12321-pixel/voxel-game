@@ -23,6 +23,7 @@ import { getTorchFaces } from '../rendering/TorchGeometry.js';
 import { loadTextureRegionURL } from '../rendering/TextureSheets.js';
 import { installUiTextureSheets } from './UiTextureSheets.js';
 import { getChestFaces } from '../rendering/ChestGeometry.js';
+import { itemShapeFaces } from '../rendering/ShapeGeometry.js';
 
 // ------------------------------------------------------------
 // IKONKI BLOKÓW
@@ -310,6 +311,15 @@ export async function createBlockIcons() {
         if (torch) {
             icons.set(type, modelIcon(getTorchFaces(torch.colorKey, 'down'), torch.variant.texture));
             continue;
+        }
+
+        // Schody, półbloki, płoty, furtki, stół (0.90.0) - prawdziwy model.
+        if (definition.model === 'shape') {
+            const faces = itemShapeFaces(definition.pick);
+            if (faces) {
+                icons.set(type, modelIcon(faces, definition.textures.all));
+                continue;
+            }
         }
 
         if (definition.model === 'chest') {

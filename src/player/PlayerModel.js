@@ -8,6 +8,7 @@ import { getAtlasUV, blockAtlasTexture, getTileMask } from '../rendering/Texture
 import { getFaceTexture, setPotatoDefine } from '../rendering/BlockRenderData.js';
 import { createModelMaterial } from '../rendering/ModelMaterial.js';
 import { getTorchInfo } from '../blocks/torches.js';
+import { itemShapeFaces, buildFacesGeometry } from '../rendering/ShapeGeometry.js';
 import { getTorchFaces } from '../rendering/TorchGeometry.js';
 import { createTorchModel, disposeTorchModel } from '../rendering/TorchMaterial.js';
 import { blockSurfaceProfile, SURFACE_PROFILES } from '../rendering/SurfaceProfiles.js';
@@ -552,6 +553,22 @@ export function buildBlockGeometry(type) {
     const torch = getTorchInfo(type);
 
     const definition = item ? { textures: { all: item.icon } } : getBlockDefinition(type);
+
+    // Schody, półbloki, płoty, furtki, stół (0.90.0): ten sam model co
+    // ikonka, wyśrodkowany (stół - zmniejszony, bo ma dwa bloki).
+    const shapeFaces = !item && definition.model === 'shape' ? itemShapeFaces(definition.pick) : null;
+    if (shapeFaces) {
+        const geometry = buildFacesGeometry(shapeFaces);
+        geometry.center();
+        geometry.computeBoundingBox();
+        const size = geometry.boundingBox.getSize(new THREE.Vector3());
+        const scale = 1 / Math.max(1, size.x, size.y, size.z);
+        geometry.scale(scale, scale, scale);
+        const count = geometry.getAttribute('position').count;
+        geometry.setAttribute('color', new THREE.Float32BufferAttribute(new Array(count * 3).fill(1), 3));
+        geometry.setAttribute('surfaceProfile', new THREE.Uint8BufferAttribute(new Array(count * 2).fill(0).map((_, i) => SURFACE_PROFILES.matte[i % 2]), 2));
+        return geometry;
+    }
 
     if (torch || fruit || definition.model === 'riverPlant') {
         // Ten sam model co nad rzeką, bez otaczającej go wody.

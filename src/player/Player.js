@@ -47,6 +47,11 @@ const MAX_STEP_DISTANCE = 0.25;
 
 const COLLISION_EPSILON = 0.0001;
 
+// Najwyższy stopień, na który się wchodzi bez skoku (schody, półbloki).
+const STEP_HEIGHT = 0.5 + 0.01;
+
+const FULL_BLOCK = [[0, 0, 0, 1, 1, 1]];
+
 // Ile razy szybciej gracz porusza się w locie (/latanie).
 
 const FLY_SPEED_FACTOR = 2;
@@ -248,27 +253,56 @@ updateLook(input) {
 
 collidesAt(pos) {
 
+    return this.collisionExtent(pos, null, 0) !== null;
+
+}
+
+
+// Kolizje z pudełkami bloków (0.90.0: schody, półbloki, płoty 1,5 bloku
+// - World.collisionBoxes). Zwraca null (wolne) albo - dla osi - najbliższą
+// ścianę pudełka w kierunku ruchu: dla direction > 0 najmniejsze min,
+// dla direction < 0 największe max. Bez osi - true przy pierwszej kolizji.
+
+collisionExtent(pos, axis, direction) {
+
     const half = this.width / 2;
 
+    const minX = pos.x - half, maxX = pos.x + half;
+    const minY = pos.y, maxY = pos.y + this.height;
+    const minZ = pos.z - half, maxZ = pos.z + half;
 
-    const minX = Math.floor(pos.x - half);
-    const maxX = Math.floor(pos.x + half);
+    const index = axis === 'x' ? 0 : axis === 'y' ? 1 : 2;
+    let extent = null;
 
-    const minY = Math.floor(pos.y);
-    const maxY = Math.floor(pos.y + this.height);
+    // Płot sięga 1,5 bloku - sprawdzamy też warstwę pod stopami.
+    for (let x = Math.floor(minX); x <= Math.floor(maxX); x++) {
 
-    const minZ = Math.floor(pos.z - half);
-    const maxZ = Math.floor(pos.z + half);
+        for (let y = Math.floor(minY) - 1; y <= Math.floor(maxY); y++) {
 
+            for (let z = Math.floor(minZ); z <= Math.floor(maxZ); z++) {
 
-    for (let x = minX; x <= maxX; x++) {
+                const boxes = this.world.collisionBoxes
+                    ? this.world.collisionBoxes(x, y, z)
+                    : (this.world.isSolid(x, y, z) ? FULL_BLOCK : null);
 
-        for (let y = minY; y <= maxY; y++) {
+                if (!boxes) continue;
 
-            for (let z = minZ; z <= maxZ; z++) {
+                for (const box of boxes) {
 
-                if (this.world.isSolid(x, y, z)) {
-                    return true;
+                    if (maxX > x + box[0] && minX < x + box[3] &&
+                        maxY > y + box[1] && minY < y + box[4] &&
+                        maxZ > z + box[2] && minZ < z + box[5]) {
+
+                        if (!axis) return true;
+
+                        const origin = index === 0 ? x : index === 1 ? y : z;
+                        const value = direction > 0 ? origin + box[index] : origin + box[index + 3];
+
+                        extent = extent === null ? value
+                            : direction > 0 ? Math.min(extent, value) : Math.max(extent, value);
+
+                    }
+
                 }
 
             }
@@ -277,8 +311,7 @@ collidesAt(pos) {
 
     }
 
-
-    return false;
+    return extent;
 
 }
 
@@ -731,6 +764,9 @@ resolveMovement(dt) {
 
     this.edgeGuard = this.crouching && this.onGround && !this.flying;
 
+    // Wejście na stopień - tylko z ziemi (nie w locie, nie w skoku).
+    this.stepReady = this.onGround && !this.flying && this.vel.y <= 0;
+
     this.onGround = false;
 
     this.touchingWall = false;
@@ -848,6 +884,31 @@ moveAxis(axis, delta) {
     }
 
 
+    // Schody i półbloki (0.90.0): na ziemi gracz wchodzi na stopień do
+    // pół bloku bez skakania (jak w Minecrafcie). Pełny blok wymaga skoku.
+
+    if (axis !== 'y' && this.stepReady) {
+
+        const y = this.pos.y;
+
+        // Najwyższa ściana pudełek, w które weszliśmy - stopień.
+        const top = this.collisionExtent(this.pos, 'y', -1);
+
+        if (top !== null && top - y <= STEP_HEIGHT) {
+
+            this.pos.y = top + COLLISION_EPSILON;
+
+            if (!this.collidesAt(this.pos)) {
+                this.stepped = true;
+                return false;
+            }
+
+        }
+
+        this.pos.y = y;
+
+    }
+
     // Odległość od pozycji gracza do krawędzi jego "pudełka":
     // w poziomie pozycja jest na środku, w pionie przy stopach.
 
@@ -865,15 +926,17 @@ moveAxis(axis, delta) {
     let snapped;
 
 
+    // Ściana pudełka, w które wszedł gracz (pełny blok - granica bloku,
+    // schody i półbloki - ich ściana).
+
+    const wall = this.collisionExtent(this.pos, axis, delta);
+
     if (delta > 0) {
 
         // Przednia krawędź gracza weszła w blok -
-        // ustawiamy ją tuż przed granicą tego bloku.
+        // ustawiamy ją tuż przed ścianą.
 
-        snapped =
-            Math.floor(this.pos[axis] + toMax) -
-            toMax -
-            COLLISION_EPSILON;
+        snapped = wall - toMax - COLLISION_EPSILON;
 
         snapped = Math.max(oldValue, snapped);
 
@@ -881,11 +944,7 @@ moveAxis(axis, delta) {
 
     else {
 
-        snapped =
-            Math.floor(this.pos[axis] - toMin) +
-            1 +
-            toMin +
-            COLLISION_EPSILON;
+        snapped = wall + toMin + COLLISION_EPSILON;
 
         snapped = Math.min(oldValue, snapped);
 
@@ -913,23 +972,8 @@ moveAxis(axis, delta) {
 
 hasGroundBelow() {
 
-    const half = this.width / 2;
-
-    const y = Math.floor(this.pos.y - 0.05);
-
-    for (let x = Math.floor(this.pos.x - half); x <= Math.floor(this.pos.x + half); x++) {
-
-        for (let z = Math.floor(this.pos.z - half); z <= Math.floor(this.pos.z + half); z++) {
-
-            if (this.world.isSolid(x, y, z)) {
-                return true;
-            }
-
-        }
-
-    }
-
-    return false;
+    // Pod stopami (do 0,05 niżej) jest pudełko jakiegoś bloku.
+    return this.collidesAt({ x: this.pos.x, y: this.pos.y - 0.05, z: this.pos.z });
 
 }
 

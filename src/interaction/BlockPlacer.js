@@ -8,6 +8,7 @@ import {
     isSolidId,
     isReplaceableId,
     getBlockId,
+    getBlockTypeById,
     getBlockDefinition,
     getAttach,
     getAttachedPlant,
@@ -15,6 +16,7 @@ import {
 } from '../blocks/BlockRegistry.js';
 import { getTorchInfo, torchType } from '../blocks/torches.js';
 import { chestFacingForYaw } from '../blocks/chest.js';
+import { shapeItem, shapeId, shapeInfo, lookFacing } from '../blocks/woodShapes.js';
 
 // ------------------------------------------------------------
 // STAWIANIE BLOKÓW
@@ -83,6 +85,18 @@ export class BlockPlacer {
     // albo false.
 
     placeBlock(hit, blockType) {
+
+        // Schody, półbloki, płoty, furtki (0.90.0) - kierunek i połowa.
+        const item = shapeItem(blockType);
+        if (item && item.kind !== 'table') {
+            const shaped = this.shapeVariant(hit, item);
+            if (!shaped) return false;
+            if (shaped.merge) {
+                if (this.player?.intersectsBlock(shaped.merge.x, shaped.merge.y, shaped.merge.z)) return false;
+                return this.world.setBlock(shaped.merge.x, shaped.merge.y, shaped.merge.z, shaped.type) ? shaped.type : false;
+            }
+            blockType = shaped.type;
+        }
 
         const target = this.targetOf(hit, blockType);
 
@@ -213,6 +227,48 @@ export class BlockPlacer {
         // (np. ponad limitem wysokości blok się nie postawi).
 
         return this.world.setBlock(x, y, z, blockType) ? blockType : false;
+
+    }
+
+
+    // Wariant wyrobu stolarskiego: { type } albo { type, merge } - drugi
+    // półblok tego samego drewna dopełnia pierwszy do pełnego bloku.
+    shapeVariant(hit, { wood, kind }) {
+
+        if (!hit?.hit) return null;
+
+        const yaw = this.player?.yaw ?? 0;
+        const look = lookFacing(yaw);
+        const normal = hit.normal ?? { x: 0, y: 0, z: 0 };
+        const fraction = hit.point ? hit.point.y - Math.floor(hit.point.y) : 0;
+        // Górna połowa: klik w spód bloku albo w górną połowę ściany.
+        const upper = normal.y === -1 || (normal.y === 0 && fraction > 0.5);
+
+        if (kind === 'slab') {
+            // Klik w półblok tego drewna od strony jego pustej połowy.
+            const hitInfo = shapeInfo(this.world.getBlockId(hit.block.x, hit.block.y, hit.block.z));
+            if (hitInfo?.kind === 'slab' && hitInfo.wood === wood &&
+                ((hitInfo.half === 'bottom' && normal.y === 1) || (hitInfo.half === 'top' && normal.y === -1))) {
+                return { type: getBlockTypeById(shapeId(wood, 'slab', { half: 'double' })), merge: hit.block };
+            }
+            // Albo w miejsce, gdzie już leży półblok tego drewna (druga połowa).
+            const target = this.targetOf(hit);
+            const there = target ? shapeInfo(this.world.getBlockId(target.x, target.y, target.z)) : null;
+            if (there?.kind === 'slab' && there.wood === wood && there.half !== 'double') {
+                return { type: getBlockTypeById(shapeId(wood, 'slab', { half: 'double' })), merge: target };
+            }
+            return { type: getBlockTypeById(shapeId(wood, 'slab', { half: upper ? 'top' : 'bottom' })) };
+        }
+
+        if (kind === 'stairs') {
+            return { type: getBlockTypeById(shapeId(wood, 'stairs', { facing: look, half: upper ? 'top' : 'bottom' })) };
+        }
+
+        if (kind === 'gate') {
+            return { type: getBlockTypeById(shapeId(wood, 'gate', { facing: look })) };
+        }
+
+        return { type: getBlockTypeById(shapeId(wood, kind)) };
 
     }
 

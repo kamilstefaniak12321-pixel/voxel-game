@@ -2,7 +2,7 @@
 
 > Ta strona jest generowana z kodu gry (`python tools/wiki.py`) - nie zmieniaj jej ręcznie, zmiany przepadną przy następnym generowaniu.
 
-Wersja gry **0.89.0** - 139 przepisów. Wytwarza się w ekwipunku (**E**): siatka 2 x 2 obok miejsc ekwipunku, wynik po prawej (klik - weź, Shift + klik - ile się da). Przycisk 📖 *Przepisy* otwiera księgę - klik na przepisie sam układa składniki. Przepisy *z kształtem* można przesuwać po siatce i odbijać w poziomie; przepisy *bez kształtu* - obojętne, gdzie leżą składniki. Z czatu: `/przepisy`, `/wytworz <przepis>`.
+Wersja gry **0.90.0** - 159 przepisów. Wytwarza się w ekwipunku (**E**): siatka 2 x 2 obok miejsc ekwipunku, wynik po prawej (klik - weź, Shift + klik - ile się da). Przycisk 📖 *Przepisy* otwiera księgę - klik na przepisie sam układa składniki. Przepisy *z kształtem* można przesuwać po siatce i odbijać w poziomie; przepisy *bez kształtu* - obojętne, gdzie leżą składniki. Z czatu: `/przepisy`, `/wytworz <przepis>`.
 
 
 ## Ziemia
@@ -174,6 +174,126 @@ Wersja gry **0.89.0** - 139 przepisów. Wytwarza się w ekwipunku (**E**): siatk
 <img src="przepisy/jacaranda_chest.png" alt="Skrzynia jakarandowa: 4 x Deski jakarandowe (ułożenie: PP / PP; P = Deski jakarandowe)">
 
 4 x Deski jakarandowe (z kształtem). Nazwa przepisu: `jacaranda_chest`. Cztery deski jednego drzewa - skrzynia z tego drewna. PPM na skrzyni: otwórz - 4 x 3 przegródki, w każdej dwie warstwy (najpierw zdejmij wierzch).
+
+### Stół stolarski świerkowy
+
+<img src="przepisy/spruce_carpenter_table.png" alt="Stół stolarski świerkowy: 2 x Deski świerkowe + 2 x Patyk (ułożenie: PP / SS; P = Deski świerkowe, S = Patyk)">
+
+2 x Deski świerkowe + 2 x Patyk (z kształtem). Nazwa przepisu: `spruce_carpenter_table`. Długi na dwa bloki. PPM deskami w lewą część blatu - deski na stół; PPM w wyrób na prawej części - schody, półbloki, płoty, furtki (Shift - ile się da).
+
+### Stół stolarski sosnowy
+
+<img src="przepisy/pine_carpenter_table.png" alt="Stół stolarski sosnowy: 2 x Deski sosnowe + 2 x Patyk (ułożenie: PP / SS; P = Deski sosnowe, S = Patyk)">
+
+2 x Deski sosnowe + 2 x Patyk (z kształtem). Nazwa przepisu: `pine_carpenter_table`. Długi na dwa bloki. PPM deskami w lewą część blatu - deski na stół; PPM w wyrób na prawej części - schody, półbloki, płoty, furtki (Shift - ile się da).
+
+### Stół stolarski bukowy
+
+<img src="przepisy/beech_carpenter_table.png" alt="Stół stolarski bukowy: 2 x Deski bukowe + 2 x Patyk (ułożenie: PP / SS; P = Deski bukowe, S = Patyk)">
+
+2 x Deski bukowe + 2 x Patyk (z kształtem). Nazwa przepisu: `beech_carpenter_table`. Długi na dwa bloki. PPM deskami w lewą część blatu - deski na stół; PPM w wyrób na prawej części - schody, półbloki, płoty, furtki (Shift - ile się da).
+
+### Stół stolarski lipowy
+
+<img src="przepisy/linden_carpenter_table.png" alt="Stół stolarski lipowy: 2 x Deski lipowe + 2 x Patyk (ułożenie: PP / SS; P = Deski lipowe, S = Patyk)">
+
+2 x Deski lipowe + 2 x Patyk (z kształtem). Nazwa przepisu: `linden_carpenter_table`. Długi na dwa bloki. PPM deskami w lewą część blatu - deski na stół; PPM w wyrób na prawej części - schody, półbloki, płoty, furtki (Shift - ile się da).
+
+### Stół stolarski dębowy
+
+<img src="przepisy/oak_carpenter_table.png" alt="Stół stolarski dębowy: 2 x Deski dębowe + 2 x Patyk (ułożenie: PP / SS; P = Deski dębowe, S = Patyk)">
+
+2 x Deski dębowe + 2 x Patyk (z kształtem). Nazwa przepisu: `oak_carpenter_table`. Długi na dwa bloki. PPM deskami w lewą część blatu - deski na stół; PPM w wyrób na prawej części - schody, półbloki, płoty, furtki (Shift - ile się da).
+
+### Stół stolarski brzozowy
+
+<img src="przepisy/birch_carpenter_table.png" alt="Stół stolarski brzozowy: 2 x Deski brzozowe + 2 x Patyk (ułożenie: PP / SS; P = Deski brzozowe, S = Patyk)">
+
+2 x Deski brzozowe + 2 x Patyk (z kształtem). Nazwa przepisu: `birch_carpenter_table`. Długi na dwa bloki. PPM deskami w lewą część blatu - deski na stół; PPM w wyrób na prawej części - schody, półbloki, płoty, furtki (Shift - ile się da).
+
+### Stół stolarski z ciemnego drewna
+
+<img src="przepisy/dark_carpenter_table.png" alt="Stół stolarski z ciemnego drewna: 2 x Ciemne deski + 2 x Patyk (ułożenie: PP / SS; P = Ciemne deski, S = Patyk)">
+
+2 x Ciemne deski + 2 x Patyk (z kształtem). Nazwa przepisu: `dark_carpenter_table`. Długi na dwa bloki. PPM deskami w lewą część blatu - deski na stół; PPM w wyrób na prawej części - schody, półbloki, płoty, furtki (Shift - ile się da).
+
+### Stół stolarski jabłoniowy
+
+<img src="przepisy/jablon_carpenter_table.png" alt="Stół stolarski jabłoniowy: 2 x Deski jabłoniowe + 2 x Patyk (ułożenie: PP / SS; P = Deski jabłoniowe, S = Patyk)">
+
+2 x Deski jabłoniowe + 2 x Patyk (z kształtem). Nazwa przepisu: `jablon_carpenter_table`. Długi na dwa bloki. PPM deskami w lewą część blatu - deski na stół; PPM w wyrób na prawej części - schody, półbloki, płoty, furtki (Shift - ile się da).
+
+### Stół stolarski olchowy
+
+<img src="przepisy/olcha_carpenter_table.png" alt="Stół stolarski olchowy: 2 x Deski olchowe + 2 x Patyk (ułożenie: PP / SS; P = Deski olchowe, S = Patyk)">
+
+2 x Deski olchowe + 2 x Patyk (z kształtem). Nazwa przepisu: `olcha_carpenter_table`. Długi na dwa bloki. PPM deskami w lewą część blatu - deski na stół; PPM w wyrób na prawej części - schody, półbloki, płoty, furtki (Shift - ile się da).
+
+### Stół stolarski wierzbowy
+
+<img src="przepisy/wierzba_carpenter_table.png" alt="Stół stolarski wierzbowy: 2 x Deski wierzbowe + 2 x Patyk (ułożenie: PP / SS; P = Deski wierzbowe, S = Patyk)">
+
+2 x Deski wierzbowe + 2 x Patyk (z kształtem). Nazwa przepisu: `wierzba_carpenter_table`. Długi na dwa bloki. PPM deskami w lewą część blatu - deski na stół; PPM w wyrób na prawej części - schody, półbloki, płoty, furtki (Shift - ile się da).
+
+### Stół stolarski z akacji
+
+<img src="przepisy/acacia_carpenter_table.png" alt="Stół stolarski z akacji: 2 x Deski akacji + 2 x Patyk (ułożenie: PP / SS; P = Deski akacji, S = Patyk)">
+
+2 x Deski akacji + 2 x Patyk (z kształtem). Nazwa przepisu: `acacia_carpenter_table`. Długi na dwa bloki. PPM deskami w lewą część blatu - deski na stół; PPM w wyrób na prawej części - schody, półbloki, płoty, furtki (Shift - ile się da).
+
+### Stół stolarski z cypryśnika
+
+<img src="przepisy/bald_cypress_carpenter_table.png" alt="Stół stolarski z cypryśnika: 2 x Deski cypryśnika + 2 x Patyk (ułożenie: PP / SS; P = Deski cypryśnika, S = Patyk)">
+
+2 x Deski cypryśnika + 2 x Patyk (z kształtem). Nazwa przepisu: `bald_cypress_carpenter_table`. Długi na dwa bloki. PPM deskami w lewą część blatu - deski na stół; PPM w wyrób na prawej części - schody, półbloki, płoty, furtki (Shift - ile się da).
+
+### Stół stolarski wiśniowy
+
+<img src="przepisy/cherry_carpenter_table.png" alt="Stół stolarski wiśniowy: 2 x Deski wiśni + 2 x Patyk (ułożenie: PP / SS; P = Deski wiśni, S = Patyk)">
+
+2 x Deski wiśni + 2 x Patyk (z kształtem). Nazwa przepisu: `cherry_carpenter_table`. Długi na dwa bloki. PPM deskami w lewą część blatu - deski na stół; PPM w wyrób na prawej części - schody, półbloki, płoty, furtki (Shift - ile się da).
+
+### Stół stolarski klonowy
+
+<img src="przepisy/maple_carpenter_table.png" alt="Stół stolarski klonowy: 2 x Deski klonowe + 2 x Patyk (ułożenie: PP / SS; P = Deski klonowe, S = Patyk)">
+
+2 x Deski klonowe + 2 x Patyk (z kształtem). Nazwa przepisu: `maple_carpenter_table`. Długi na dwa bloki. PPM deskami w lewą część blatu - deski na stół; PPM w wyrób na prawej części - schody, półbloki, płoty, furtki (Shift - ile się da).
+
+### Stół stolarski z kosodrzewiny
+
+<img src="przepisy/mugo_carpenter_table.png" alt="Stół stolarski z kosodrzewiny: 2 x Deski z kosodrzewiny + 2 x Patyk (ułożenie: PP / SS; P = Deski z kosodrzewiny, S = Patyk)">
+
+2 x Deski z kosodrzewiny + 2 x Patyk (z kształtem). Nazwa przepisu: `mugo_carpenter_table`. Długi na dwa bloki. PPM deskami w lewą część blatu - deski na stół; PPM w wyrób na prawej części - schody, półbloki, płoty, furtki (Shift - ile się da).
+
+### Stół stolarski oliwkowy
+
+<img src="przepisy/olive_carpenter_table.png" alt="Stół stolarski oliwkowy: 2 x Deski oliwkowe + 2 x Patyk (ułożenie: PP / SS; P = Deski oliwkowe, S = Patyk)">
+
+2 x Deski oliwkowe + 2 x Patyk (z kształtem). Nazwa przepisu: `olive_carpenter_table`. Długi na dwa bloki. PPM deskami w lewą część blatu - deski na stół; PPM w wyrób na prawej części - schody, półbloki, płoty, furtki (Shift - ile się da).
+
+### Stół stolarski eukaliptusowy
+
+<img src="przepisy/rainbow_eucalyptus_carpenter_table.png" alt="Stół stolarski eukaliptusowy: 2 x Deski eukaliptusowe + 2 x Patyk (ułożenie: PP / SS; P = Deski eukaliptusowe, S = Patyk)">
+
+2 x Deski eukaliptusowe + 2 x Patyk (z kształtem). Nazwa przepisu: `rainbow_eucalyptus_carpenter_table`. Długi na dwa bloki. PPM deskami w lewą część blatu - deski na stół; PPM w wyrób na prawej części - schody, półbloki, płoty, furtki (Shift - ile się da).
+
+### Stół stolarski sekwojowy
+
+<img src="przepisy/sequoia_carpenter_table.png" alt="Stół stolarski sekwojowy: 2 x Deski sekwojowe + 2 x Patyk (ułożenie: PP / SS; P = Deski sekwojowe, S = Patyk)">
+
+2 x Deski sekwojowe + 2 x Patyk (z kształtem). Nazwa przepisu: `sequoia_carpenter_table`. Długi na dwa bloki. PPM deskami w lewą część blatu - deski na stół; PPM w wyrób na prawej części - schody, półbloki, płoty, furtki (Shift - ile się da).
+
+### Stół stolarski miłorzębowy
+
+<img src="przepisy/ginkgo_carpenter_table.png" alt="Stół stolarski miłorzębowy: 2 x Deski miłorzębowe + 2 x Patyk (ułożenie: PP / SS; P = Deski miłorzębowe, S = Patyk)">
+
+2 x Deski miłorzębowe + 2 x Patyk (z kształtem). Nazwa przepisu: `ginkgo_carpenter_table`. Długi na dwa bloki. PPM deskami w lewą część blatu - deski na stół; PPM w wyrób na prawej części - schody, półbloki, płoty, furtki (Shift - ile się da).
+
+### Stół stolarski jakarandowy
+
+<img src="przepisy/jacaranda_carpenter_table.png" alt="Stół stolarski jakarandowy: 2 x Deski jakarandowe + 2 x Patyk (ułożenie: PP / SS; P = Deski jakarandowe, S = Patyk)">
+
+2 x Deski jakarandowe + 2 x Patyk (z kształtem). Nazwa przepisu: `jacaranda_carpenter_table`. Długi na dwa bloki. PPM deskami w lewą część blatu - deski na stół; PPM w wyrób na prawej części - schody, półbloki, płoty, furtki (Shift - ile się da).
 
 ### Opał — dąb x4
 

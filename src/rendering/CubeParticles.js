@@ -49,7 +49,17 @@ const FLUTTER = 37, PHASE = 38, CARRY = 39;
 // Obrazek (0.84.0): który kształt z paska obrazków (sprites).
 const SPRITE = 40;
 
-const STRIDE = 41;
+// Pływanie po wodzie (0.88.0, FloatingLeaves.js): czy może pływać, w którym
+// bloku wody leży, nurt pod nim i za ile sprawdzić nurt ponownie.
+const FLOATS = 41, WATER_Y = 42, FLOW_X = 43, FLOW_Z = 44, FLOW_T = 45;
+
+const STRIDE = 46;
+
+// RESTING: 0 - leci, 1 - leży na bloku, 2 - pływa po wodzie.
+const ON_GROUND = 1, ON_WATER = 2;
+
+// Dla testów: układ pól jednej cząsteczki.
+export const PARTICLE_LAYOUT = Object.freeze({ STRIDE, SPRITE, RESTING, PX, PY, PZ, VX, VZ, AGE, LIFE });
 
 // Kiedy w życiu cząsteczki jest kolor "middle".
 const MIDDLE = 0.35;
@@ -266,7 +276,7 @@ export class CubeParticles {
     // sprites - kształty 6 x 6 (spriteTexture): płaskie obrazki zamiast
     // sześcianów.
 
-    constructor(scene, { capacity = 2000, glowing = false, surfaceLighting = false, flat = 1, sprites = null } = {}) {
+    constructor(scene, { capacity = 2000, glowing = false, surfaceLighting = false, flat = 1, sprites = null, water = null } = {}) {
 
         this.flat = flat;
 
@@ -274,6 +284,10 @@ export class CubeParticles {
 
         // Wiatr niosący cząsteczki z carry > 0 (bloki/s, x i z).
         this.wind = { x: 0, z: 0 };
+
+        // Liście na wodzie: obiekt z FloatingLeaves.js (null - bez pływania).
+        this.water = water;
+        this.probe = { top: 0, deeper: false, underFall: false };
 
         this.capacity = capacity;
         this.surfaceLighting = surfaceLighting && !glowing;
@@ -374,7 +388,9 @@ export class CubeParticles {
         // classicShade pozwala odtworzyć dawny wygląd bez wypalania go w albedo.
         lighting = null,
         // Numer kształtu (gdy cząsteczki są obrazkami).
-        sprite = 0
+        sprite = 0,
+        // Pływa po wodzie (z opcją water w konstruktorze).
+        floats = false
     }) {
 
         if (this.count >= this.capacity) {
@@ -441,6 +457,10 @@ export class CubeParticles {
         d[o + CARRY] = carry;
 
         d[o + SPRITE] = this.sprites ? Math.max(0, Math.min(this.sprites - 1, Math.floor(sprite))) : 0;
+
+        d[o + FLOATS] = floats && this.water ? 1 : 0;
+        d[o + WATER_Y] = 0;
+        d[o + FLOW_X] = d[o + FLOW_Z] = d[o + FLOW_T] = 0;
 
         return true;
 
@@ -516,6 +536,11 @@ export class CubeParticles {
                 }
 
             }
+            else if (d[o + RESTING] === ON_WATER) {
+
+                this.drift(o, dt, world);
+
+            }
 
             i++;
 
@@ -542,6 +567,25 @@ export class CubeParticles {
         const by = Math.floor(bottom);
         const bz = Math.floor(d[o + PZ]);
 
+        // Liść trafił w wodę: kładzie się na tafli i pływa (FloatingLeaves.js).
+        // W spadającej wodzie (wodospad) leci w dół razem z nią.
+
+        if (d[o + FLOATS]) {
+
+            const kind = this.water.probe(world, d[o + PX], d[o + PZ], by, this.probe);
+
+            if (kind === 1 && bottom <= this.probe.top) {
+                this.startFloating(o, by);
+                return;
+            }
+
+            if (kind === 2) {
+                this.intoWaterfall(o);
+                return;
+            }
+
+        }
+
         if (!world.isSolid(bx, by, bz)) {
             return;
         }
@@ -559,7 +603,7 @@ export class CubeParticles {
 
         if (Math.abs(d[o + VY]) < 1.2) {
 
-            d[o + RESTING] = 1;
+            d[o + RESTING] = ON_GROUND;
 
             d[o + VX] = d[o + VY] = d[o + VZ] = 0;
 
@@ -568,6 +612,166 @@ export class CubeParticles {
             d[o + RZ] = 0;
 
         }
+
+    }
+
+
+    // Liść kładzie się płasko na tafli w bloku wody "by" i od tej chwili
+    // pływa jeszcze przez chwilę (czas życia liczony od nowa).
+
+    startFloating(o, by) {
+
+        const d = this.data;
+
+        d[o + RESTING] = ON_WATER;
+        d[o + WATER_Y] = by;
+        d[o + PY] = this.probe.top;
+
+        d[o + VY] = 0;
+        d[o + VX] *= 0.3;
+        d[o + VZ] *= 0.3;
+
+        d[o + RX] = 0;
+        d[o + RZ] = 0;
+        d[o + SX] = 0;
+        d[o + SZ] = 0;
+        d[o + SY] = (Math.random() * 2 - 1) * 0.5;
+
+        d[o + FLOW_T] = 0;
+        d[o + LIFE] = d[o + AGE] + this.water.floatSeconds();
+
+    }
+
+
+    // Z tafli w spadającą wodę: leci w dół szybko, jak woda (bez kołysania).
+
+    intoWaterfall(o) {
+
+        const d = this.data;
+
+        d[o + RESTING] = 0;
+        d[o + GRAVITY] = Math.max(d[o + GRAVITY], 9);
+        d[o + DRAG] = Math.min(d[o + DRAG], 0.6);
+        d[o + FLUTTER] = 0;
+        d[o + CARRY] = 0;
+        d[o + VY] = Math.min(d[o + VY], -0.5);
+        d[o + SX] = (Math.random() * 2 - 1) * 4;
+        d[o + SZ] = (Math.random() * 2 - 1) * 4;
+
+    }
+
+
+    // Pływanie: z nurtem (albo powoli krąży na stojącej wodzie), unosi się
+    // z falami, zatrzymuje przy brzegu, z krawędzi spada wodospadem.
+
+    drift(o, dt, world) {
+
+        const d = this.data;
+        const water = this.water;
+        const by = d[o + WATER_Y];
+
+        // Nurt co ok. 0,3 s (getWaterFlow czyta kilka bloków).
+
+        d[o + FLOW_T] -= dt;
+
+        if (d[o + FLOW_T] <= 0) {
+
+            const flow = water.flow(world, d[o + PX], by, d[o + PZ]);
+
+            d[o + FLOW_X] = flow ? flow[0] : 0;
+            d[o + FLOW_Z] = flow ? flow[1] : 0;
+            d[o + FLOW_T] = 0.25 + Math.random() * 0.1;
+
+        }
+
+        const age = d[o + AGE], phase = d[o + PHASE];
+        const still = Math.hypot(d[o + FLOW_X], d[o + FLOW_Z]) < 0.05;
+        const wander = still ? water.wander : water.wander / 3;
+
+        let tx = d[o + FLOW_X] * water.drift + this.wind.x * water.wind + Math.cos(age * 0.37 + phase) * wander;
+        let tz = d[o + FLOW_Z] * water.drift + this.wind.z * water.wind + Math.sin(age * 0.29 + phase * 1.7) * wander;
+
+        // Pod spadającą wodą: woda odpycha liść od środka kolumny.
+        if (this.probe.underFall) {
+            const ox = d[o + PX] - Math.floor(d[o + PX]) - 0.5, oz = d[o + PZ] - Math.floor(d[o + PZ]) - 0.5;
+            const length = Math.hypot(ox, oz) || 1;
+            tx += ox / length * water.push;
+            tz += oz / length * water.push;
+        }
+
+        // Na stojącej wodzie liść długo niesie rozpęd (np. spod wodospadu).
+        const follow = Math.min(1, dt * (still && !this.probe.underFall ? 0.5 : 1.5));
+
+        d[o + VX] += (tx - d[o + VX]) * follow;
+        d[o + VZ] += (tz - d[o + VZ]) * follow;
+
+
+        // Ruch osobno w x i z: na brzegu (blok albo sucho) liść staje,
+        // a gdy dalej jest spadająca woda albo pusto pod spodem - spada.
+
+        for (let axis = 0; axis < 2; axis++) {
+
+            const P = axis ? PZ : PX, V = axis ? VZ : VX;
+            const next = d[o + P] + d[o + V] * dt;
+
+            if (Math.floor(next) !== Math.floor(d[o + P])) {
+
+                const x = axis ? d[o + PX] : next, z = axis ? next : d[o + PZ];
+                const kind = water.probe(world, x, z, by, this.probe);
+
+                if (kind === 0) {
+
+                    // Pusto (krawędź bez wody) - spada; blok albo brzeg - staje.
+                    const bx = Math.floor(x), bz = Math.floor(z);
+
+                    if (world.isSolid(bx, by, bz) || world.isSolid(bx, by - 1, bz) || !world.getBlockId) {
+                        d[o + V] = 0;
+                        continue;
+                    }
+
+                    d[o + P] = next;
+                    this.intoWaterfall(o);
+                    return;
+
+                }
+
+                if (kind === 2) {
+                    d[o + P] = next;
+                    this.intoWaterfall(o);
+                    return;
+                }
+
+            }
+
+            d[o + P] = next;
+
+        }
+
+
+        // Wysokość tafli (z falą); woda zniknęła - liść opada dalej.
+
+        const kind = water.probe(world, d[o + PX], d[o + PZ], by, this.probe);
+
+        if (kind !== 1) {
+            d[o + RESTING] = 0;
+            d[o + VY] = -0.2;
+            return;
+        }
+
+        if (this.probe.deeper) {
+            d[o + WATER_Y] = by + 1;
+        }
+
+        // Pod koniec liść nasiąka i powoli schodzi pod wodę.
+        const left = d[o + LIFE] - age;
+        const sink = left < 2 ? (2 - left) * 0.03 : 0;
+
+        d[o + PY] = this.probe.top - sink;
+
+        // Kręci się powoli i kiwa z falami.
+        d[o + RY] += d[o + SY] * dt;
+        d[o + RX] = Math.sin(age * 1.3 + phase) * 0.06;
+        d[o + RZ] = Math.cos(age * 1.1 + phase) * 0.06;
 
     }
 

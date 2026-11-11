@@ -11,6 +11,21 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 0.88.0 - Liście na wodzie
+
+Prośba Kamila — PR #127 (po 0.87.0):
+
+- **Liść, który spadnie na wodę, pływa:** zamiast tonąć na dno kładzie
+  się płasko na tafli i kołysze z jej falami. Zostaje tak 10–18 s,
+  a potem nasiąka i powoli znika pod wodą.
+- **Z nurtem rzeki:** na rzece liść płynie z nurtem (ok. 85% jego
+  prędkości, ten sam nurt co niesie gracza). Na stawie tylko powoli krąży
+  i lekko płynie z wiatrem, a przy brzegu się zatrzymuje.
+- **Przez wodospad:** liść z górnej rzeki spada z krawędzi razem z wodą,
+  woda wypycha go spod kolumny i liść dalej pływa w sadzawce.
+- **Test:** `tools/sprawdz_liscie_na_wodzie.mjs` (21 sprawdzeń: staw, fale,
+  rzeka, brzeg, wodospad, czas, płytka woda) w `npm test`.
+
 ## 0.87.0 - Pikselowe wodospady
 
 Koncept Kamila — PR #126 (po 0.86.0):

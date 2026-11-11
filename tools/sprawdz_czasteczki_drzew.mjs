@@ -40,7 +40,7 @@ const { windAt, WIND_SPEED, WIND_BASE_ANGLE, WIND_SWING } = await import('../src
 const { TreeParticles, fruitOf, LEAF_SECONDS, LEAF_SPRITES, leafSprites } = await import('../src/rendering/TreeParticles.js');
 const { TREE_CATALOG } = await import('../src/blocks/treeCatalog.js');
 const { WindStreaks, WIND_STREAKS } = await import('../src/rendering/WindStreaks.js');
-const { CubeParticles, SPRITE_PIXELS, spriteTexture } = await import('../src/rendering/CubeParticles.js');
+const { CubeParticles, SPRITE_PIXELS, spriteTexture, PARTICLE_LAYOUT } = await import('../src/rendering/CubeParticles.js');
 const { getBlockId, getBlockDefinition } = await import('../src/blocks/BlockRegistry.js');
 const { CHUNK_SIZE, CHUNK_HEIGHT } = await import('../src/config.js');
 const { SETTINGS_DEFAULTS } = await import('../src/settings/Settings.js');
@@ -130,7 +130,7 @@ check(strip.magFilter === THREE.NearestFilter, 'Ostre minipiksele (bez rozmycia)
 const oak = leafSprites('oak');
 let emitted = 0;
 for (let i = 0; i < trees.leaves.count; i++, emitted++) {
-    check(oak.includes(trees.leaves.data[i * 41 + 40]), 'Spadający liść dębu ma kształt dębu');
+    check(oak.includes(trees.leaves.data[i * PARTICLE_LAYOUT.STRIDE + PARTICLE_LAYOUT.SPRITE]), 'Spadający liść dębu ma kształt dębu');
 }
 check(emitted > 0, 'Sprawdzone kształty spadających liści');
 check(trees.leaves.mesh.geometry.getAttribute('particleSprite')?.itemSize === 1, 'Kształt na instancję (atrybut)');

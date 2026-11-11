@@ -4,6 +4,7 @@ import { CHUNK_SIZE, CHUNK_HEIGHT } from '../config.js';
 import { getBlockDefinition, getBlockTypeById, isLeavesId, isSolidId } from '../blocks/BlockRegistry.js';
 import { ITEM_TYPES } from '../items/ItemRegistry.js';
 import { CubeParticles } from './CubeParticles.js';
+import { leafWater } from './FloatingLeaves.js';
 import { getTileColors } from './TextureAtlas.js';
 import { lightToBrightness, COLOR_LEVEL } from '../world/Light.js';
 import { atmosphericLightToBrightness } from './LightPolicy.js';
@@ -142,7 +143,7 @@ export class TreeParticles {
         this.world = world;
 
         // Liście - obrazki 6 x 6 (liść, gałązka igieł, płatek), owoce - sześciany.
-        this.leaves = new CubeParticles(scene, { capacity: 700, surfaceLighting: true, flat: 0.05,
+        this.leaves = new CubeParticles(scene, { capacity: 700, surfaceLighting: true, flat: 0.05, water: leafWater,
             sprites: SPRITE_NAMES.map((name) => LEAF_SPRITES[name]) });
         this.fruits = new CubeParticles(scene, { capacity: 80, surfaceLighting: true });
 
@@ -368,7 +369,9 @@ export class TreeParticles {
             spin: 1.6,
             collide: true,
             flutter: random(0.35, 0.7),
-            carry: random(0.35, 0.6)
+            carry: random(0.35, 0.6),
+            // Na wodzie pływa i płynie z nurtem (FloatingLeaves.js).
+            floats: true
         });
 
     }

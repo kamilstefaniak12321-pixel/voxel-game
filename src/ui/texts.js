@@ -195,6 +195,7 @@ export const TEXTS = {
     menuMotion: (value) => `Ruch menu: ${{ auto: 'System', full: 'Płynny', off: 'Wył.' }[value] ?? 'System'}`,
     menuMotionNote: 'System dostosowuje ruch kamery menu do ustawień urządzenia. Wył. pokazuje nieruchome kadry.',
     inventoryStyle: (value) => `Ekwipunek: ${value === 'light' ? 'Jasny' : 'Drewniany'}`,
+    inventoryScale: (value) => `Rozmiar ekwipunku: ${value}%`,
     hudScale: (value) => `Interfejs w grze: ${value}%`,
     showDebug: (on) => `Debug (F3): ${on ? 'Wł.' : 'Wył.'}`,
     showFps: (on) => `Licznik FPS: ${on ? 'Wł.' : 'Wył.'}`,

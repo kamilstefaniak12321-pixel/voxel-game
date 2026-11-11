@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { plantWindUniforms } from './PlantWind.js';
+import { TERRAIN_UNDERLAY_BLEND } from '../world/DistanceLod.js';
 
 import { atlasAverageTexture } from './TextureAtlas.js';
 import { AERIAL_GROUND, AERIAL_NEAR_START, AERIAL_NEAR_END, AERIAL_SKY_OPEN } from '../sky/AerialPerspective.js';
@@ -186,6 +187,16 @@ export const CHUNK_MASK_GLSL = /* glsl */ `
     float effectiveNearLodWeight(vec2 xz) {
         if (uDistanceLodEnabled < 0.5 || !chunkLodReady(xz)) return 1.0;
         return distanceLodNearWeight(xz);
+    }
+
+    // Fill the coarse underlay first, then dissolve the detailed foreground.
+    // Real and simplified crowns do not project to identical pixels. Using
+    // complementary masks at their separate world positions leaves sky holes.
+    float effectiveFarLodHideWeight(vec2 xz) {
+        if (uDistanceLodEnabled < 0.5 || !chunkLodReady(xz)) return 1.0;
+        float end = max(uDistanceLodStart, 1.0);
+        float start = max(0.0, end - ${TERRAIN_UNDERLAY_BLEND.toFixed(1)});
+        return 1.0 - smoothstep(start, end, length(xz - uDistanceLodCenter));
     }
     #endif
 `;

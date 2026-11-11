@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { modifiedChunksInBounds } from './ModifiedChunks.js';
+import { TERRAIN_UNDERLAY_BLEND } from './DistanceLod.js';
 
 import {
     CHUNK_SIZE,
@@ -54,6 +55,8 @@ import {
 import { grassTint } from './terrain/Biomes.js';
 import { SURFACE_FACE_NAMES, SURFACE_MATERIAL_COUNT, getSurfaceFaceTexture, surfaceMaterialId, surfaceMaterialType } from '../rendering/SurfaceMaterials.js';
 import { SURFACE_LIGHTING_GLSL } from '../rendering/SurfaceLighting.js';
+import { CANOPY_LIGHTING_GLSL } from '../rendering/CanopyLighting.js';
+import { OPEN_CANOPY_PACKED } from './FarCanopy.js';
 import { installLightingDiagnostics } from '../rendering/LightingDiagnostics.js';
 import { createFarVegetationJob, appendFarVegetation, FAR_VEGETATION_MAX_SPACING } from './farVegetation.js';
 
@@ -273,6 +276,7 @@ export function createFarTerrainMaterial(level = 0, tileFade = { value: new THRE
     const material = new THREE.MeshLambertMaterial({
         vertexColors: true
     });
+    material.defaultAttributeValues = { ...material.defaultAttributeValues, canopyLow: [127] };
 
     const lodColor = new THREE.Color(LOD_COLORS[level][0]);
 
@@ -302,6 +306,8 @@ export function createFarTerrainMaterial(level = 0, tileFade = { value: new THRE
                 varying vec3 vFarCell;
                 varying float vFarSunHeight;
                 attribute vec4 surfaceAlbedo;
+                attribute float canopyLow;
+                varying vec3 vFarCanopy;
                 uniform float uAtmosphericLight;
                 uniform float uCurvature;
                 uniform float uCellSize;
@@ -329,7 +335,11 @@ export function createFarTerrainMaterial(level = 0, tileFade = { value: new THRE
                 // w ciemnych kolorach przy 8 bitach).
 
                 vColor.rgb = mix(vColor.rgb * vColor.rgb,
-                    surfaceAlbedo.rgb * surfaceAlbedo.rgb, uAtmosphericLight);`
+                    surfaceAlbedo.rgb * surfaceAlbedo.rgb, uAtmosphericLight);
+                float canopyPacked = surfaceAlbedo.a > 0.5 ? ${OPEN_CANOPY_PACKED.toFixed(1)}
+                    : floor(surfaceAlbedo.a * 255.0 + 0.5) * 256.0 + canopyLow + 128.0;
+                vFarCanopy = vec3(floor(canopyPacked / 1024.0),
+                    mod(floor(canopyPacked / 32.0), 32.0), mod(canopyPacked, 32.0)) / 31.0;`
             )
             .replace(
                 '#include <beginnormal_vertex>',
@@ -465,6 +475,7 @@ export function createFarTerrainMaterial(level = 0, tileFade = { value: new THRE
                 '#include <common>',
                 `#include <common>
                 varying vec3 vFarWorld;
+                varying vec3 vFarCanopy;
                 varying vec2 vFarFlatXZ;
                 varying vec2 vFarMaskXZ;
                 varying vec2 vFarSide;
@@ -485,6 +496,7 @@ export function createFarTerrainMaterial(level = 0, tileFade = { value: new THRE
                 ${METEOR_LIGHT_GLSL}
                 ${FAR_TERRAIN_SHADOW_GLSL}
                 ${SURFACE_LIGHTING_GLSL}
+                ${CANOPY_LIGHTING_GLSL}
 
                 #ifdef POTATO
                     varying vec3 vHazeSky;
@@ -508,7 +520,7 @@ export function createFarTerrainMaterial(level = 0, tileFade = { value: new THRE
 
                 vec2 farOwnershipXZ = vFarMaskXZ - vFarSide * 0.5;
                 float farNoise = distanceLodNoise();
-                if (chunkMeshed(farOwnershipXZ) && farNoise < effectiveNearLodWeight(farOwnershipXZ)) {
+                if (chunkMeshed(farOwnershipXZ) && farNoise < effectiveFarLodHideWeight(farOwnershipXZ)) {
                     discard;
                 }
                 if ((uFarTileFade.y > 0.5 && farNoise >= uFarTileFade.x) ||
@@ -577,6 +589,15 @@ export function createFarTerrainMaterial(level = 0, tileFade = { value: new THRE
                 #else
                     #include <lights_fragment_begin>
                 #endif`
+            )
+            .replace(
+                '#include <lights_fragment_end>',
+                `#if defined(RE_IndirectDiffuse)
+                    float canopyEnergy = max(vFarCanopy.r, max(vFarCanopy.g, vFarCanopy.b));
+                    vec3 canopyHue = vFarCanopy / max(canopyEnergy, 0.0001);
+                    irradiance *= mix(1.0, canopyEnergy, uAtmosphericLight) * canopySkyTint(canopyHue);
+                #endif
+                #include <lights_fragment_end>`
             )
             .replace(
                 '#include <opaque_fragment>',
@@ -733,7 +754,7 @@ function createFarShadowMaterial(mask, origin, center, outer) {
             varying vec2 vFarSide;
             void main() {
                 vec2 ownership = vFarMaskXZ - vFarSide * 0.5;
-                if ((chunkMeshed(ownership) && distanceLodNoise() < effectiveNearLodWeight(ownership)) ||
+                if ((chunkMeshed(ownership) && distanceLodNoise() < effectiveFarLodHideWeight(ownership)) ||
                     length(vFarMaskXZ - uFarCenter) > uFarOuter) discard;
             }
         `,
@@ -1500,7 +1521,7 @@ export class FarTerrain {
         // prawdziwych chunków - nie jest potrzebny.
 
         const overlapInner = viewUniforms.uDistanceLodEnabled.value > 0.5
-            ? Math.min(this.inner, viewUniforms.uDistanceLodStart.value) : this.inner;
+            ? Math.min(this.inner, Math.max(0, viewUniforms.uDistanceLodStart.value - TERRAIN_UNDERLAY_BLEND)) : this.inner;
         if (Math.hypot(dx, dz) > this.outer || far < overlapInner - 8) {
             return;
         }
@@ -1804,7 +1825,11 @@ export class FarTerrain {
         const geometry = new THREE.BufferGeometry();
 
         geometry.setAttribute('position', new THREE.BufferAttribute(mesh.positions, 4));
-        geometry.setAttribute('normal', new THREE.BufferAttribute(mesh.normals, 4, true));
+        if (mesh.canopyPacked) {
+            const normalData = new THREE.InterleavedBuffer(mesh.normals, 4);
+            geometry.setAttribute('normal', new THREE.InterleavedBufferAttribute(normalData, 3, 0, true));
+            geometry.setAttribute('canopyLow', new THREE.InterleavedBufferAttribute(normalData, 1, 3));
+        } else geometry.setAttribute('normal', new THREE.BufferAttribute(mesh.normals, 4, true));
         geometry.setAttribute('color', new THREE.BufferAttribute(mesh.colors, 4, true));
         geometry.setAttribute('surfaceAlbedo', new THREE.BufferAttribute(mesh.surfaceAlbedo, 4, true));
         geometry.setIndex(new THREE.BufferAttribute(mesh.indices, 1));

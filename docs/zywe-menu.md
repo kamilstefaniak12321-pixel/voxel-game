@@ -25,6 +25,14 @@ nieba, oświetlenia, cieni i dalekiego terenu. Nie jest filmem ani panoramą.
   odrzuca chunki poza kadrem na podstawie ich przestrzennych obwiedni,
   następnie rysuje cienie, niebo, daleki i bliski teren oraz promienie światła.
   Pora dnia jest stała; animacje wody i roślin pozostają aktywne.
+- [`MenuEffects.js`](../src/menu/MenuEffects.js) od 0.86.0 uruchamia te same
+  ograniczone efekty co rozgrywka: spadające liście i owoce, smugi wiatru,
+  rozpryski, pianę, mgiełkę i mokre skały przy wodospadach. Kamera zastępuje
+  tylko punkt obserwacji. Przełączniki liści i smug respektują ustawienia
+  gracza; tryb ziemniaka zmniejsza ilość efektów i wyłącza smugi.
+  `MenuWorld` aktualizuje własną symulację wody z limitem 0,6 ms, mieszczącym
+  się w pozostałym budżecie przygotowania klatki. Dzięki temu efekty kaskad
+  korzystają z rzeczywistych miejsc upadku wody, zamiast sztucznych emiterów.
 - [`MenuBackdrop.js`](../src/menu/MenuBackdrop.js) obsługuje start po
   przygotowaniu atlasu, gotowość sceny, zmianę widoku, ustawienia, rozmiar
   okna i zwalnianie zasobów. Ukryte okno nie aktualizuje sceny. Błąd sceny
@@ -33,7 +41,7 @@ nieba, oświetlenia, cieni i dalekiego terenu. Nie jest filmem ani panoramą.
 - [`main.js`](../src/main.js) łączy nawigację UI z podglądem oraz zatrzymuje
   podgląd przed rozpoczęciem gry.
 
-Podgląd nie tworzy `Game` ani `Player`, nie uruchamia symulacji rozgrywki
+Podgląd nie tworzy `Game` ani `Player`, nie uruchamia interakcji rozgrywki
 i nie odczytuje ani nie zapisuje świata gracza. Używa pustej mapy zmian.
 Ekran listy światów nadal działa niezależnie, zgodnie z normalnymi zasadami UI.
 Podgląd i rozgrywka nie mogą działać jednocześnie: korzystają ze wspólnych
@@ -91,7 +99,28 @@ To opcjonalny limit, nie gwarancja 60 FPS na każdym sprzęcie; dalsze
 chunki powstają stopniowo. Tryb ziemniaka nadal ogranicza faktyczny zasięg
 do 32 bloków. Zasięg dekoracyjnej roślinności ma osobny limit.
 
-## Sceneria 0.56.0 i kolejne wydania
+## Sceneria 0.86.0
+
+`autumn-cascades-0.86` korzysta z seedu `86`, generatora `realistic` i godziny
+10:42. To naturalne miejsce obecnego generatora, bez sadzenia drzew ani
+przebudowy terenu na potrzeby menu. W zasięgu kadru rosną m.in. klony,
+miłorzęby, dęby, buki i brzozy; obok są dwie naturalne kaskady rzeki:
+`(-768, 192): 80 → 73` oraz `(-752, 208): 73 → 62` (X/Z i poziomy wody).
+
+| Ekran | Kadr | Położenie kamery X/Y/Z |
+| --- | --- | --- |
+| Główny | Ciepły las i meandrująca rzeka | -779 / 77 / 257 |
+| Graj, nowy świat, potwierdzenia | Rzadszy las i dwie kaskady po prawej stronie panelu | -752 / 76 / 236 |
+| Ustawienia, diagnostyka | Neutralny zielony las z kolorowymi drzewami na obrzeżu | -775 / 80 / 266 |
+| Osiągnięcia | Drugi punkt nad ciepłym lasem | -773 / 82 / 244 |
+
+Zachowano wewnętrzne identyfikatory `home`, `river`, `forest`, `mountains`;
+ostatnia nazwa jest tylko kompatybilnym kluczem nawigacji, nie widokiem gór.
+Przejazdy odbywają się w jednym wczytanym obszarze, bez doczytywania nowej
+sceny przy zmianie zakładki. Liście, wiatr, nurt i wodospady pozostają żywe.
+Wyniki, kadry i ograniczenia pomiaru: [menu 0.86.0](pomiary/menu-0.86.0/README.md).
+
+## Historyczna sceneria 0.56.0
 
 `river-valley-0.56` korzysta z liczbowego seedu `2138286349`, generatora
 `realistic` i godziny 10:30. Główny kadr jest nad doliną; widoki zakładek
@@ -114,15 +143,21 @@ Z katalogu głównego repozytorium, w Node.js 24:
 
 ```sh
 node tools/sprawdz_menu_kamere.mjs
-node docs/pomiary/zywe-menu-0.56.0/sprawdz-kolizje.mjs
+node tools/sprawdz_scene_menu_086.mjs
 ```
 
-Drugi skrypt generuje prawdziwe chunki aktualnej scenerii, sprawdza końce
-i sześć bezpośrednich tras, a następnie 80 deterministycznych sekwencji
-po 15 sekund z losowym przerywaniem animacji. Uwzględnia promień kamery
-0,5 bloku i cały dryf ±0,18; wynik zapisuje obok skryptu w
-[`kolizje-kamer.json`](pomiary/zywe-menu-0.56.0/kolizje-kamer.json).
+Drugi skrypt generuje prawdziwe chunki aktualnej scenerii, sprawdza wszystkie
+16 skierowanych połączeń kamer wraz z odwróceniem ruchu, a następnie 80
+deterministycznych sekwencji po 15 sekund z przerywaniem animacji. Sprawdza
+przestrzeń ±0,4 bloku poziomo i ±0,6 pionowo (zapas obejmuje dryf ±0,18).
+Weryfikuje również naturalne kaskady i gatunki drzew w tym miejscu.
 To próba CPU geometrii, bez WebGL i zapisów świata, a nie pomiar FPS.
 Próbkowanie nie stanowi dowodu bezpieczeństwa każdej możliwej sekwencji.
 Po zmianie generatora lub kamer powtórz tę próbę i sprawdzenie wizualne
 w aplikacji, w tym start gry, powrót do menu i koszt renderowania.
+
+Pełna próba renderowania to `node tools/sprawdz_menu_086_webgl.mjs`.
+`VOXEL_QA_ELECTRON` wskazuje lokalny Electron używający rzeczywistej karty,
+`VOXEL_QA_WIDTH` i `VOXEL_QA_HEIGHT` ustalają rozdzielczość; `VOXEL_QA_PERF=1`
+włącza pomiar ukończonych klatek. To test lokalny wymagający GPU i całej
+scenerii. Szybkie testy kamer oraz generacji wystarczają do rutynowego CI.

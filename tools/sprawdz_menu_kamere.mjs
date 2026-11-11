@@ -436,6 +436,11 @@ const resourceSource = `
         markChunk(){}update(){}render(){this.fixture.draws.shadows++;}
     }
     export class LightShafts extends Resource {}
+    export class MenuEffects extends Resource {
+        applySettings(settings){this.settings=settings;}
+        update(){this.updates=(this.updates??0)+1;}
+        stats(){return {updates:this.updates??0};}
+    }
     export class BounceLight extends Resource {
         markChunk(){}update(world,center,options){this.enabled=options.enabled;}
         bind(){this.fixture.bounceBinds=(this.fixture.bounceBinds??0)+1;}

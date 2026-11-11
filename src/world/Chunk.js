@@ -68,6 +68,10 @@ export class Chunk {
         this.biomes = null;
 
         this.skyLight = new Uint8Array(this.blocks.length);
+        // Direct vertical sky (including filtered canopy light), never saved.
+        // Kept apart from lateral flood light so roofs/leaf edits can remove
+        // dependent light and restore only sources that still see the sky.
+        this.skySources = new Uint8Array(this.blocks.length);
         this.lightR = new Uint8Array(this.blocks.length);
         this.lightG = new Uint8Array(this.blocks.length);
         this.lightB = new Uint8Array(this.blocks.length);

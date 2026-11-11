@@ -11,6 +11,34 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 0.86.0 - Światło lasu, nowe żywe menu i większy ekwipunek
+
+Cztery poprawki według zrzutów Kamila — PR do uzupełnienia.
+
+- Światło nieba przechodzi przez korony z tłumieniem zależnym od liczby
+  warstw liści. Powietrze między wysoką koroną a ziemią nie wygasza go
+  dodatkowo. Las pozostaje zacieniony, ale jego wnętrze jest czytelniejsze;
+  nieprzezroczyste dachy, jaskinie i noc zachowują ciemność.
+- Rozproszone światło pod koroną dostaje delikatny kolor rzeczywistych
+  tekstur liści. Zieleń, złoto miłorzębu i ciepły klon tworzą różny klimat.
+  Filtr działa w naturalnym oświetleniu z włączonym przenikaniem liści,
+  nie zmienia koloru lamp. Daleka roślinność używa oszczędnego przybliżenia
+  tej samej zasady, bez powiększania jej buforów geometrii.
+- Uproszczony teren pojawia się pod szczegółowym przed jego wygaszeniem.
+  Ten zapas ogranicza białe prześwity widoczne wysoko nad koronami przy
+  przejściu między poziomami szczegółów. Płynne upraszczanie pozostaje.
+- Menu pokazuje naturalne lasy seedu 86: ciepłe klony i miłorzęby,
+  zielony las oraz rzadszy brzeg z dwiema kaskadami. Przejazdy kamery
+  omijają pnie i liście; w tle działają wiatr, spadające liście,
+  animacja wody, piana i mokre skały.
+- Ekwipunek ma domyślnie skalę 175%, osobny suwak 75–200% w ustawieniach
+  wyglądu oraz automatyczne dopasowanie do ekranu. Powiększają się też
+  przepisy, podgląd postaci i napisy. Skala HUD-u pozostaje osobna.
+- Sprawdzenia obejmują edycję liści i dachów, granice chunków, noc,
+  przejścia LOD, kamery menu, skrzynię oraz klikanie i przewijanie
+  większego ekwipunku. Wyniki i kadry: `docs/pomiary/las-0.86.0/`,
+  `docs/pomiary/menu-0.86.0/` i `docs/pomiary/ekwipunek-0.86.0/`.
+
 ## 0.85.0 - Miłorząb, jakaranda i bezpieczne przenoszenie ze skrzyni
 
 Dwa drzewa z paczek Kamila oraz poprawki po przeglądzie 0.84.0 — PR #124.

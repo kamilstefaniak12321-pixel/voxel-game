@@ -12,6 +12,7 @@ import {
     getLightEmission,
     getLightColor
 } from '../blocks/BlockRegistry.js';
+import { CANOPY_SKY_LEVELS } from './CanopyPolicy.js';
 
 // ------------------------------------------------------------
 // ŚWIATŁO
@@ -34,9 +35,9 @@ import {
 // nieba sięga 14 bloków w głąb tunelu.
 //
 // Światło nie przechodzi przez bloki, które zasłaniają (opaque).
-// Liście przepuszczają światło, ale pełne światło nieba wpada tylko
-// do pierwszego bloku liści - dalej słabnie o 1 na blok (także w dół),
-// więc pod koroną drzewa i w gęstym lesie jest cień.
+// Liście filtrują pionowe światło nieba warstwa po warstwie. Powietrze
+// poniżej korony go nie pochłania; rozchodzenie boczne nadal słabnie
+// o 1 na blok. Dach lub skała kończą pionową drogę do nieba.
 //
 // Liczenie to "rozlewanie": zaczynamy od źródeł i krok po kroku
 // oddajemy sąsiadom słabsze światło, dopóki coś się zmienia.
@@ -425,18 +426,21 @@ export class LightEngine {
         const heights = this.skyHeights;
 
         const top = chunk.maxY;
+        sky.fill(0);
+        chunk.skySources.fill(0);
 
 
-        // 1. Niebo świeci z góry w dół, aż do pierwszego bloku,
-        //    który zasłania (albo do pierwszych liści - od nich
-        //    światło rozleje się słabsze). Nad najwyższym blokiem
-        //    chunka jest samo powietrze, więc tę część wypełniamy od razu.
+        // 1. Direct vertical sources. Foliage filters the column, while an
+        // opaque roof/rock ends it. Clear air below a tall crown stays lit.
 
         sky.fill(MAX_LIGHT, top * LAYER);
+        chunk.skySources.fill(MAX_LIGHT, top * LAYER);
 
         for (let column = 0; column < LAYER; column++) {
 
             let y = top - 1;
+            let layers = 0;
+            let firstFilter = -1;
 
             while (y >= 0) {
 
@@ -448,21 +452,25 @@ export class LightEngine {
                     break;
                 }
 
-                sky[i] = MAX_LIGHT;
+                sky[i] = chunk.skySources[i] = CANOPY_SKY_LEVELS[layers];
 
                 y--;
 
                 if (FILTERS[id]) {
-
-                    this.addToSpread(chunk, i);
-
-                    break;
-
+                    if (firstFilter < 0) firstFilter = y + 1;
+                    layers++;
                 }
 
             }
 
-            heights[column] = y + 1;
+            heights[column] = firstFilter < 0 ? y + 1 : firstFilter;
+
+            // Filtered columns can exchange light with a less dense adjacent
+            // crown even when both columns end at the same ground height.
+            if (layers) for (let scan = y + 1; scan < top; scan++) {
+                const i = scan * LAYER + column;
+                if (sky[i] > 0) this.addToSpread(chunk, i);
+            }
 
         }
 
@@ -626,10 +634,46 @@ export class LightEngine {
 
     blockChanged(chunk, index) {
 
-        for (let channel = 0; channel < CHANNEL_COUNT; channel++) {
+        this.relightSkyColumn(chunk, index);
+        for (let channel = 1; channel < CHANNEL_COUNT; channel++) {
             this.relight(chunk, index, channel);
         }
 
+    }
+
+    relightSkyColumn(chunk, editedIndex) {
+        const column = editedIndex % LAYER;
+        let layers = 0, blocked = false;
+        for (let y = H - 1; y >= 0; y--) {
+            const index = y * LAYER + column, id = chunk.blocks[index];
+            blocked ||= isOpaqueId(id);
+            const source = blocked ? 0 : CANOPY_SKY_LEVELS[layers];
+            const previous = chunk.skySources[index];
+            chunk.skySources[index] = source;
+            if ((source < previous || index === editedIndex) && chunk.skyLight[index] > 0) {
+                const oldLevel = chunk.skyLight[index];
+                this.setLevel(chunk, index, 0, SKY);
+                this.addToRemove(chunk, index, oldLevel);
+            }
+            if (FILTERS[id]) layers++;
+        }
+        this.remove(SKY);
+        for (let y = 0; y < H; y++) {
+            const index = y * LAYER + column, source = chunk.skySources[index];
+            if (source > chunk.skyLight[index]) {
+                this.setLevel(chunk, index, source, SKY);
+                this.addToSpread(chunk, index);
+            }
+        }
+        if (!isOpaqueId(chunk.blocks[editedIndex])) {
+            this.getNeighbors(chunk, editedIndex);
+            for (let k = 0; k < 6; k++) {
+                const neighbor = this.neighborChunks[k];
+                if (neighbor && neighbor.skyLight[this.neighborIndices[k]] > 0)
+                    this.addToSpread(neighbor, this.neighborIndices[k]);
+            }
+        }
+        this.spread(SKY);
     }
 
 
@@ -853,7 +897,7 @@ export class LightEngine {
                 this.addToRemove(neighbor, neighborIndex, neighborLevel);
 
 
-                if (emissionOf(channel, neighbor.blocks[neighborIndex]) > 0) {
+                if ((isSky ? neighbor.skySources[neighborIndex] : emissionOf(channel, neighbor.blocks[neighborIndex])) > 0) {
                     this.relightChunks.push(neighbor);
                     this.relightIndices.push(neighborIndex);
                 }
@@ -875,7 +919,7 @@ export class LightEngine {
             const chunk = this.relightChunks[q];
             const index = this.relightIndices[q];
 
-            const emission = emissionOf(channel, chunk.blocks[index]);
+            const emission = isSky ? chunk.skySources[index] : emissionOf(channel, chunk.blocks[index]);
 
             if (emission > chunk.lightChannels[channel][index]) {
 

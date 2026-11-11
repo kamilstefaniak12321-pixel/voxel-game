@@ -20,6 +20,7 @@ import { dynamicLightUniforms } from '../world/DynamicLight.js';
 import { BounceLight } from '../world/BounceLight.js';
 import { applyMaterialLightingSettings, createBounceLightingState, updateBounceLightingState } from '../rendering/MaterialLighting.js';
 import { campfireLightUniforms } from '../rendering/CampfireLight.js';
+import { MenuEffects } from './MenuEffects.js';
 import { CHUNK_SIZE, POTATO_VIEW_DISTANCE, SHAFT_BRIGHTNESS,
     SHAFT_DENSITY_OUTSIDE, SHAFT_DENSITY_INSIDE, SHAFT_FAR_REACH } from '../config.js';
 
@@ -65,6 +66,7 @@ export class MenuWorld {
             this.bounceLighting = createBounceLightingState();
             this.lightShafts = new LightShafts(renderer);
             this.worldOutput = new WorldOutput(renderer);
+            this.effects = new MenuEffects(this.scene, this.world, camera);
             resetLightingDiagnostics();
             this.shaftColor = new THREE.Color();
             this.world.onMeshChanged = chunk => {
@@ -145,6 +147,7 @@ export class MenuWorld {
         this.shadows.setQuality(potato ? 0 : settings.get('shadows'));
         setShadowDefine(materials, this.shadows.enabled, this.shadows.hasFar);
         setFarTerrainShadows(this.shadows.hasFar);
+        this.effects.applySettings(settings, this.shadows);
         this.shaftsEnabled = !potato && settings.get('lightShafts');
         const ao = settings.get('ambientOcclusion') / 100;
         const fastLeaves = potato || !settings.get('fancyLeaves');
@@ -183,6 +186,9 @@ export class MenuWorld {
             const [cx, cz] = this.world.loadQueue.pop();
             this.world.generateChunk(cx, cz);
         }
+        // Naturalne kaskady korzystają z tej samej relaksacji wody co gra.
+        // Jej limit jest częścią budżetu ładowania, również po preloadzie.
+        this.world.fluids?.update(elapsed, Math.min(.6, Math.max(0, deadline - performance.now())));
         if (!this.world.loadQueue.length) this.world.updateMeshes(deadline);
         const inner = this.viewDistance;
         const outer = this.settings.get('farTerrain');
@@ -209,6 +215,7 @@ export class MenuWorld {
         this.sky.applyShadowContrast(this.shadows.active ? this.shadows.strength : 0);
         this.bounce.update(this.world, p, updateBounceLightingState(this.bounceLighting,
             this.settings, this.sky, this.renderer.capabilities.isWebGL2));
+        if (this.firstReady) this.effects.update(elapsed, this.sky.state.daylight ?? 1);
         if (!this.firstReady) {
             const far = this.farTerrain.stats();
             this.firstReady = this.warmed && this.world.chunks.size > 0
@@ -290,6 +297,7 @@ export class MenuWorld {
             loadQueue: this.world.loadQueue.length, completeRadius: this.world.completeRadius(),
             meshes: this.world.shadowScene.children.length, far: this.farTerrain.stats(),
             bounce: this.bounce.stats(),
+            effects: this.effects.stats(), water: this.world.fluids?.stats(),
             error: this.error ? String(this.error) : null };
     }
 
@@ -303,6 +311,7 @@ export class MenuWorld {
         this.bounce?.dispose();
         this.lightShafts?.dispose();
         this.worldOutput?.dispose();
+        this.effects?.dispose();
         this.farTerrain?.dispose();
         this.world?.dispose();
         this.sky?.dispose();

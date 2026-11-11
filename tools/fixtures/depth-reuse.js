@@ -86,16 +86,16 @@ export async function run() {
         chunkMaskUniforms.uChunkMaskOrigin.value.set(-64,-64);
         viewUniforms.uDistanceLodEnabled.value=1;viewUniforms.uDistanceLodStart.value=144;
         viewUniforms.uDistanceLodEnd.value=192;viewUniforms.uDistanceLodCenter.value.set(0,0);
-        const uniforms={...viewUniforms,...chunkMaskUniforms,point:{value:new THREE.Vector2()},near:{value:1}};
+        const uniforms={...viewUniforms,...chunkMaskUniforms,point:{value:new THREE.Vector2()},farPoint:{value:new THREE.Vector2()},near:{value:1}};
         const blendMaterial=own(new THREE.ShaderMaterial({depthTest:false,depthWrite:false,vertexShader:vertex,
             uniforms,fragmentShader:`${CHUNK_MASK_GLSL}
-            uniform vec2 point;uniform float near;
+            uniform vec2 point;uniform vec2 farPoint;uniform float near;
             void main(){float weight=effectiveNearLodWeight(point);float noise=distanceLodNoise();
-            if(near>0.5?noise>=weight:(chunkMeshed(point)&&noise<weight))discard;
+            if(near>0.5?noise>=weight:(chunkMeshed(farPoint)&&noise<effectiveFarLodHideWeight(farPoint)))discard;
             gl_FragColor=near>0.5?vec4(1,0,0,1):vec4(0,0,1,1);}`}));
         quad.material=blendMaterial;
-        const blend=(distance,nearPresent=true)=>{
-            uniforms.point.value.set(distance,0);renderer.setRenderTarget(readTarget);renderer.clear();
+        const blend=(distance,nearPresent=true,farDistance=distance)=>{
+            uniforms.point.value.set(distance,0);uniforms.farPoint.value.set(farDistance,0);renderer.setRenderTarget(readTarget);renderer.clear();
             uniforms.near.value=0;renderer.render(quadScene,quadCamera);
             if(nearPresent){uniforms.near.value=1;renderer.render(quadScene,quadCamera);}
             const pixels=read();let red=0,blue=0,empty=0;
@@ -106,6 +106,10 @@ export async function run() {
         check(blendCounts.every(x=>x.empty===0),'Near/far overlap has no missing pixels');
         check(blendCounts[0].blue===0&&blendCounts.at(-1).red===0&&blendCounts.every((x,i)=>!i||x.red<blendCounts[i-1].red),
             'Near details decrease gradually and far details fill their pixels');
+        for(const [nearDistance,farDistance] of [[156,132],[168,144],[180,156],[192,160]]) {
+            const result=blend(nearDistance,true,farDistance);
+            check(result.empty===0,`Different projected crown depths ${nearDistance}/${farDistance} have no sky holes`);
+        }
         chunkMaskData.fill(128);chunkMaskUniforms.uChunkMask.value.needsUpdate=true;
         check(blend(180).blue===0,'Pending far replacement retains every detailed pixel');
         chunkMaskData.fill(0);chunkMaskUniforms.uChunkMask.value.needsUpdate=true;
@@ -121,7 +125,7 @@ export async function run() {
         try {
             fallback.autoClear=false;fallback.setSize(16,16);fallback.setRenderTarget(fallbackTarget);
             chunkMaskData.fill(255);chunkMaskUniforms.uChunkMask.value.needsUpdate=true;
-            uniforms.point.value.set(168,0);fallback.clear();
+            uniforms.point.value.set(168,0);uniforms.farPoint.value.set(144,0);fallback.clear();
             uniforms.near.value=0;fallback.render(quadScene,quadCamera);
             uniforms.near.value=1;fallback.render(quadScene,quadCamera);
             const bytes=new Uint8Array(16*16*4);fallback.readRenderTargetPixels(fallbackTarget,0,0,16,16,bytes);

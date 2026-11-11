@@ -87,6 +87,7 @@ export const SETTINGS_DEFAULTS = {
     theme: UI_THEME,                               // motyw menu
     menuMotion: 'auto',                            // ruch kamery menu: ustawienie systemu / pełny / nieruchome kadry
     inventoryStyle: 'wood',                        // wygląd ekwipunku: wood - drewniany, light - jasny
+    inventoryScale: 175,                           // rozmiar całego okna ekwipunku; dopasowany do ekranu
     hudScale: 100,                                 // rozmiar paska, czatu i napisów w grze (procent)
     showDebug: true,                               // informacje F3
     showFps: false,                                // licznik klatek w rogu ekranu
@@ -129,6 +130,7 @@ export const SETTINGS_RANGES = {
     loadBudget: { min: 1, max: 16, step: 1 },
     mouseSensitivity: { min: 10, max: 200, step: 5 },
     hudScale: { min: 50, max: 200, step: 10 },
+    inventoryScale: { min: 75, max: 200, step: 5 },
     volumeMaster: { min: 0, max: 100, step: 5 },
     volumeMusic: { min: 0, max: 100, step: 5 },
     volumeBlocks: { min: 0, max: 100, step: 5 },

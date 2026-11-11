@@ -16,6 +16,22 @@ równo nad kolumnami.
 
 ![Wspólny panel w uruchomionej grze](ekwipunek-wspolny-panel.png)
 
+## Rozmiar okna od 0.86.0
+
+**Ustawienia → Wygląd → Skala ekwipunku** pozwala wybrać 75–200%.
+Domyślne 175% powiększa jednocześnie miejsca, przedmioty, postać, przepisy
+i napisy. 100% odpowiada poprzedniemu rozmiarowi. To osobne ustawienie
+od skali paska przedmiotów i pozostałego HUD-u.
+
+Okno automatycznie dopasowuje się do dostępnej szerokości i maksymalnie
+88% wysokości ekranu. Dzięki temu księga przepisów lub grubsza drewniana
+rama nie wypadają poza ekran. Dopasowanie może ograniczyć wybrane 200%.
+Na telefonie i bardzo niskim oknie pozostają dostępne przewijanie oraz
+przyciski zamykania i przełączania zakładek.
+
+Próby rozmiarów, kliknięć, skrzyni i motywów:
+[`ekwipunek 0.86.0`](pomiary/ekwipunek-0.86.0/README.md).
+
 ## Wygląd: drewniany i jasny
 
 Okno ma dwa wyglądy do wyboru: *Ustawienia → Wygląd → Ekwipunek*

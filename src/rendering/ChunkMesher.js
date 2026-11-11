@@ -22,6 +22,7 @@ import { getAtlasUV } from './TextureAtlas.js';
 import { getPlantMeshTemplate, lightPlantMeshTemplate } from './PlantMeshTemplate.js';
 import { createPlantDetailLookup } from './PlantDistanceModels.js';
 import { PINE_UPPER_ID, pineBarkTransitionStage, mossCarpetVariant } from './SurfaceTextureVariants.js';
+import { createCanopySampler } from './CanopyLighting.js';
 const plantFaceUvCache = new Map();
 const plantFaceUV = texture => {
     if (!plantFaceUvCache.has(texture)) plantFaceUvCache.set(texture, getAtlasUV(texture));
@@ -2175,6 +2176,24 @@ function* buildChunkGeometrySteps(chunk, world, { terrain, plants: includePlants
             }
             geometry.setAttribute(name, new THREE.BufferAttribute(target, itemSize, normalized));
         }
+
+        // Color of diffuse sky transmitted through the actual overhead leaves.
+        // Three bytes per vertex, only for geometry touching a canopy. Bounded
+        // slices preserve the existing meshing deadline and job cancellation.
+        const canopy = createCanopySampler(world);
+        let canopyColors = null;
+        for (let vertex = 0; vertex < vertexCount; vertex++) {
+            const offset = vertex * 3;
+            const color = canopy.sample(chunk.cx * S + positionBuffer[offset] + normalBuffer[offset] * .01,
+                positionBuffer[offset + 1] + normalBuffer[offset + 1] * .01,
+                chunk.cz * S + positionBuffer[offset + 2] + normalBuffer[offset + 2] * .01);
+            if (color[0] < .999 || color[1] < .999 || color[2] < .999) {
+                canopyColors ??= new Uint8Array(vertexCount * 3).fill(255);
+                for (let c = 0; c < 3; c++) canopyColors[offset + c] = Math.round(color[c] * 255);
+            }
+            if ((vertex & 511) === 511) yield;
+        }
+        if (canopyColors) geometry.setAttribute('canopyTint', new THREE.BufferAttribute(canopyColors, 3, true));
 
         geometry.setIndex(
             new THREE.BufferAttribute(indices, 1)

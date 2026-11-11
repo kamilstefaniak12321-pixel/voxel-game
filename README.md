@@ -183,6 +183,13 @@ Inny przedmiot kładzie się na wierzch tego, co leży na spodzie; żeby
 wyjąć coś ze spodu, trzeba najpierw zdjąć wierzch. Pełną skrzynię
 trzeba opróżnić, zanim się ją rozbije. [Szczegóły](docs/skrzynia.md).
 
+**Stół stolarski** (od 0.90.0; przepis: 2 deski nad 2 patykami): długi
+na dwa bloki, z każdego drewna. PPM deskami w lewą część blatu kładzie
+deski na stół, a na prawej części pojawiają się wyroby z tego drewna:
+**schody, półbloki, płoty i furtki**. PPM w wyrób - do ekwipunku (Shift -
+ile się da). Na schody i półbloki wchodzi się bez skakania, płotu nie da
+się przeskoczyć, furtka otwiera się PPM. [Szczegóły](docs/stolarstwo.md).
+
 W trybie kreatywnym zakładka *Bloki* ma **9 łukowatych zakładek
 kategorii** (Ziemia, Skały, Drewno, Budulec, Rośliny, Owoce i nasiona,
 Światło, Ozdoby, Narzędzia i surowce - ponowne kliknięcie pokazuje

@@ -11,6 +11,37 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 0.90.0 - Stół stolarski: schody, półbloki, płoty i furtki
+
+Prośba Kamila — PR #129 (po 0.89.0):
+
+- **Stół stolarski:**
+  - Z każdego z 20 rodzajów desek (2 deski nad 2 patykami), długi na dwa
+    bloki.
+  - Praca na blacie, w świecie: PPM deskami w lewą część kładzie deski
+    na stół (do 64, jeden rodzaj naraz). Na prawej części pojawiają się
+    małe modele wyrobów z tego drewna, a PPM w wyrób daje partię
+    (Shift - ile się da).
+  - Proporcje: schody 3 deski → 2, półblok 1 → 2, płot 3 → 2, furtka
+    4 → 1.
+  - Deski wraca się PPM pustą ręką. Stołu z deskami na blacie nie da się
+    rozbić, a deski zapisują się ze światem.
+- **Schody:** kierunek od gracza, do góry nogami po kliknięciu w spód
+  albo górną połowę ściany.
+- **Półbloki:** dolne i górne, dwa w jeden pełny blok (daje 2 półbloki).
+- **Płoty i furtki:** płoty łączą się z płotami, blokami i furtkami.
+  Przez płot (kolizja 1,5 bloku) nie da się przeskoczyć. Furtka otwiera
+  się PPM od gracza, a przez otwartą się przechodzi.
+- **Nowe kształty w silniku:**
+  - Bloki z pudełek: rysowanie, kolizje gracza, celownik i obrys.
+  - Na schody i półbloki **wchodzi się bez skakania** (stopień do pół
+    bloku).
+  - Ikonki i model w dłoni pokazują prawdziwy kształt.
+- **Osiągnięcie** *Stolarz*.
+- **Zakres numerów:** 10300-10859 (po 28 na drewno, `woodShapes.js`).
+- **Testy:** `tools/sprawdz_stolarstwo.mjs` (373 sprawdzenia). Opis:
+  `docs/stolarstwo.md`.
+
 ## 0.89.0 - Skrzynie z każdego rodzaju desek
 
 Prośba Kamila — PR #128 (po 0.88.0):

@@ -2,7 +2,7 @@
 
 > Ta strona jest generowana z kodu gry (`python tools/wiki.py`) - nie zmieniaj jej ręcznie, zmiany przepadną przy następnym generowaniu.
 
-Wersja gry **0.89.0** - 54 osiągnięć. Księga osiągnięć: klawisz **L**. Uwaga, spoilery: sekretne osiągnięcia są tu opisane (w grze widać tylko „???”).
+Wersja gry **0.90.0** - 55 osiągnięć. Księga osiągnięć: klawisz **L**. Uwaga, spoilery: sekretne osiągnięcia są tu opisane (w grze widać tylko „???”).
 
 
 ## Zwykłe (10 pkt)
@@ -35,6 +35,7 @@ Wersja gry **0.89.0** - 54 osiągnięć. Księga osiągnięć: klawisz **L**. Uw
 | <img src="ikony/axe.png" width="32" height="32" alt=""> | **Ostrze w ruch** | W trybie przygody zetnij pień drzewa siekierą (idzie trzy razy szybciej niż ręką). | „Ręce bolą mniej. Drzewo - bardziej.” |
 | <img src="ikony/stone.png" width="32" height="32" alt=""> | **Prawie robi różnicę** *(sekret)* | W trybie przygody kop blok i puść przycisk, gdy jest już prawie rozbity. | „Blok odetchnął z ulgą. Na razie.” |
 | <img src="ikony/stick.png" width="32" height="32" alt=""> | **Złota rączka** | Wytwórz coś w ekwipunku (siatka 2 x 2 - E). | „Z dwóch desek cztery patyki. Matematyka się nie zgadza, ale działa.” |
+| <img src="ikony/oak_stairs.png" width="32" height="32" alt=""> | **Stolarz** | Zrób coś na stole stolarskim (deski na lewą część blatu, PPM w wyrób). | „Schody do nieba to na razie schody do szopy. Ale zawsze.” |
 | <img src="ikony/lamp_purple.png" width="32" height="32" alt=""> | **Kolorowe światła** | Zrób kolorową lampę (lampa i coś w tym kolorze). | „Disco w jaskini. Nietoperze są zachwycone.” |
 | <img src="ikony/birch_bark.png" width="32" height="32" alt=""> | **Brzozowy papirus** | Zdejmij siekierą korę z brzozy (PPM siekierą na pniu). | „Dawniej pisano na niej listy. Ty możesz napisać listę zakupów.” |
 | <img src="ikony/water.png" width="32" height="32" alt=""> | **Mokra robota** | Popływaj w wodzie. | „Potwierdzone naukowo: woda jest mokra.” |

@@ -1,0 +1,87 @@
+{
+  "sourceArchive": "jacaranda.zip",
+  "sourceArchiveSha256": "8d4a28db385fc4857a83a83fdf7be1b601cb9427f7daeea35e4924149cd2d249",
+  "suppliedBy": "Kamil",
+  "importDate": "2026-11-11",
+  "note": "Original PNG RGBA pixels are copied into drzewa.png without resampling or recolouring. The archive contains a reference preview and dimensions, but no geometry. Procedural trees use approximately one metre per block.",
+  "scientificReference": "Jacaranda mimosifolia",
+  "botanicalSource": "https://ask.ifas.ufl.edu/publication/ST317",
+  "referenceDimensionsMetres": {
+    "height": 13.0,
+    "crown": 15.0
+  },
+  "originalFiles": {
+    "log_side.png": {
+      "sha256": "01e25c2e7550d3a00acefd1df151f72e9d2fca65050f3ceb72e8300ce8c8b9ec",
+      "bytes": 291,
+      "rgbaSha256": "600251d27fdc357cc909ab17f9c8919f6ae1ee899e755deddcd210486afb9c24",
+      "width": 16,
+      "height": 16
+    },
+    "log_top.png": {
+      "sha256": "d359fb429f834441fa2b00387d64f5be0026fb8a91cdc2b72152dbe93874796a",
+      "bytes": 411,
+      "rgbaSha256": "4c3cedcea8d1db970ec458cd5231ca887c6cfd51bd30c0c57c87ce12394c73d8",
+      "width": 16,
+      "height": 16
+    },
+    "planks.png": {
+      "sha256": "4954944e39073a09d062089f47f95b7a68bf97c1ca8ffb994c53581f425c0036",
+      "bytes": 244,
+      "rgbaSha256": "afae5f140daacb79235088b9e57ea5136440b9f478f10257e30931dd237e2b0b",
+      "width": 16,
+      "height": 16
+    },
+    "leaves.png": {
+      "sha256": "0b2a9e4df40b2f9586b39d70617de3c396c6c30f119de568fe98110939629471",
+      "bytes": 430,
+      "rgbaSha256": "e9552a9c96f8ff91993bab76ce6eb47290351f4e41bd0a47d039b14324c0ac73",
+      "width": 16,
+      "height": 16
+    },
+    "leaves_variant.png": {
+      "sha256": "b1d801e1ab533c7b37f9646a36eb57d647484f2c265777bed8e28ec02a597a06",
+      "bytes": 439,
+      "rgbaSha256": "c51630106d625f4af27e173cabf04128c1260e8f94ff2711b67731ba651a8c8c",
+      "width": 16,
+      "height": 16
+    },
+    "render_info.json": {
+      "sha256": "4916b792b7e79b6cbf39e023553889a1d57e80ee4a6ec3839c6202e4abe6d033",
+      "bytes": 199
+    }
+  },
+  "referencePreview": {
+    "archivePath": "jacaranda/preview.png",
+    "sha256": "dca9bcd6044365f244c6300213febe3b1ae67ce3eff603fd2aabfd8ef3d529f0",
+    "bytes": 539411
+  },
+  "generator": "tools/tekstury_drzew_085.py; tools/modele_roslin.py",
+  "derivedRegions": {
+    "jacaranda/stripped_side.png": {
+      "rgbaSha256": "0845e737d0430a20d76e9a5e37cc912ac5fc9089722a0341a936d4d185ba1d8e",
+      "width": 16,
+      "height": 16
+    },
+    "jacaranda/stripped_top.png": {
+      "rgbaSha256": "508615d552123e282f5812e0a8acaeca994c6a8c5bdc8333542db10d994581d5",
+      "width": 16,
+      "height": 16
+    },
+    "jacaranda/sapling.png": {
+      "rgbaSha256": "f1833b9daeb4a68ef15df13f881ced1fb89f215114f83e8cf2c21fb64f647377",
+      "width": 16,
+      "height": 16
+    },
+    "campfire_jacaranda": {
+      "rgbaSha256": "b38feafe148f4ff779d9f1891ae064964f4ae52c1aa05a0a4dbb3656793cce7d",
+      "width": 32,
+      "height": 32
+    },
+    "models/rosliny/sadzonka-jakaranda/polrealistyczny": {
+      "rgbaSha256": "83644c357d682d19a5dd9283a2174a64d5a2ebe6afbf3e0ff895a0cfdf835520",
+      "width": 16,
+      "height": 16
+    }
+  }
+}

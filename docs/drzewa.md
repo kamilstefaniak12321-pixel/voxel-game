@@ -1,6 +1,6 @@
 # Drzewa
 
-Gra ma **siedemnaście gatunków drzew**, zapisanych we wspólnym katalogu
+Gra ma **dziewiętnaście gatunków drzew**, zapisanych we wspólnym katalogu
 `src/blocks/treeCatalog.js`. Każdy ma własne bloki, wygląd i zasady
 występowania. Tekstury wszystkich gatunków są w `assets/textures/drzewa.png`.
 
@@ -23,6 +23,8 @@ występowania. Tekstury wszystkich gatunków są w `assets/textures/drzewa.png`.
 | Oliwka europejska | `oliwka` (także `olive`) |
 | Eukaliptus tęczowy | `eukaliptus` (także `rainbow_eucalyptus`) |
 | Sekwoja olbrzymia | `sekwoja` (także `sequoia`) |
+| Miłorząb dwuklapowy | `milorzab` (także `ginkgo`) |
+| Jakaranda mimozolistna | `jakaranda` (także `jacaranda`) |
 
 Polskie znaki też działają (`dąb`, `jabłoń`, `świerk`). Leszczyna
 jest obecnie krzewem owocowym, opisanym w osobnym systemie krzaków.
@@ -146,6 +148,49 @@ generowanym terenie.
 /drzewa las sekwoja 9
 /biom znajdz klonowy
 ```
+
+## Miłorząb i jakaranda — 0.85.0
+
+Oba gatunki korzystają z oryginalnych tekstur paczek Kamila i wspólnego
+arkusza `drzewa.png`. Paczki zawierały podglądy i wymiary, a geometrię
+odtworzono proceduralnie. Przy skali około **1 m na blok** postać gracza
+ma 1,8 m, dzięki czemu wysokość i szerokość korony widać także z ziemi.
+
+| Gatunek | Wysokość dojrzałych okazów | Średnica korony | Wygląd |
+|---|---|---|---|
+| Miłorząb dwuklapowy (*Ginkgo biloba*) | 18–26 bloków | około 10–16 bloków | wysoki pień, nieregularne piętra gałęzi i złota korona |
+| Jakaranda mimozolistna (*Jacaranda mimosifolia*) | 8–14 bloków | około 12–18 bloków | rozchodzące się konary i szeroka, lekka fioletowa korona |
+
+Źródłowy miłorząb ma w `render_info.json` wysokość 25 m i koronę 13 m,
+a jakaranda odpowiednio 13 m i 15 m. Losowe sylwetki gry obejmują
+mniejsze i większe dojrzałe okazy; bryły zaokrąglamy do pełnych bloków.
+To wybór reprezentatywnej skali, nie symulacja wieku ani wszystkich
+rekordowych rozmiarów gatunku. Odniesienia: [University of Minnesota —
+miłorząb](https://trees.umn.edu/nursery-tour/species/gi),
+[UF/IFAS — jakaranda](https://ask.ifas.ufl.edu/publication/ST317)
+i [RHS — jakaranda](https://www.rhs.org.uk/plants/jacaranda/growing-guide).
+
+Każdy ma sadzonkę w trzech jakościach modeli, dwie odmiany liści,
+pień, okorowane drewno, deski i opał. Uproszczone sylwetki zachowują
+skalę oraz kolory. Nowe drzewa pojawiają się na nowo generowanym terenie;
+zapisane wcześniej budowle i drzewa pozostają na swoich miejscach.
+
+```text
+/drzewa posadz milorzab 75
+/drzewa warianty jakaranda 12345
+/drzewa las milorzab 16 12345
+/drzewa porownanie 12345
+```
+
+Metadane i sumy źródeł: `docs/zrodla/drzewa-0.85/`.
+Kadry z gry i wyniki sprawdzeń: [próba 0.85.0](pomiary/drzewa-0.85.0/README.md).
+
+Miłorząb pojawia się pojedynczo w umiarkowanych lasach liściastych,
+buczynach i lasach klonowych. Jakaranda wybiera ciepłe łąki, lasy
+liściaste i eukaliptusowe. Nie dochodzi nowy rodzaj biomu.
+Opadające liście miłorzębu mają wachlarzowaty kształt; jakaranda gubi
+drobne fioletowe płatki i wąskie liście.
+
 
 ## Bloki
 
@@ -314,7 +359,8 @@ ziemi (nie na koronie). Meteoryt zmiata drzewa nad kraterem.
 
 Gatunki w komendach: `swierk`, `sosna`, `buk`, `lipa`, `dab`, `brzoza`,
 `jablon`, `olcha`, `wierzba`, `akacja`, `cyprysnik`, `wisnia`, `klon`,
-`kosodrzewina`, `oliwka`, `eukaliptus`, `sekwoja` (albo po angielsku).
+`kosodrzewina`, `oliwka`, `eukaliptus`, `sekwoja`, `milorzab`,
+`jakaranda` (albo po angielsku).
 
 ## Tekstury i dźwięki
 

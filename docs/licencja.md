@@ -74,7 +74,17 @@ z `render_info.json` paczek i podglądów; okorowane drewno, sadzonki,
 opał, oliwki, szyszki i opadłe liście klonu rysuje
 `tools/tekstury_drzew_083.py`.
 
+Paczki `ginkgo.zip` i `jacaranda.zip` Kamil przekazał do włączenia do gry
+(0.85.0, potwierdzenie 11 listopada 2026 r.). Pięć oryginalnych kafelków
+każdego drzewa zachowuje swoje piksele w `assets/textures/drzewa.png`.
+Archiwa zawierały tekstury, podgląd i wymiary, bez siatki modelu ani
+osobnego dokumentu licencyjnego. Sumy kontrolne i metadane zapisano
+w `docs/zrodla/drzewa-0.85/`. Proceduralne sylwetki, sadzonki, okorowane
+drewno i opał przygotowano w repozytorium; źródła botaniczne posłużyły
+wyłącznie do porównania skali, bez kopiowania ich ilustracji.
+
 ## Źródło muzyki
+
 
 Poniższe pięć plików zostało dostarczonych przez Kamila 2 listopada
 2026 r. do włączenia do gry. Zachowano oryginalną zawartość MP3,

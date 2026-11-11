@@ -15,7 +15,7 @@ const equal=(actual,expected,message)=>{assert.deepEqual(actual,expected,message
 const check=(condition,message)=>{assert.ok(condition,message);checks++;};
 equal(data.tileSize,baseline.tileSize,'Texture pixel scale is unchanged');
 equal(data.columns,baseline.columns,'GPU atlas width is unchanged');
-equal(data.rows,baseline.rows,'GPU atlas height and memory use are unchanged');
+check(data.rows>=baseline.rows,'GPU atlas retains every original row');
 // Nowe tekstury (np. skrzynia 0.81.0) dochodzą na końcu, w wolnych miejscach.
 equal(Object.keys(data.tiles).slice(0,Object.keys(baseline.tiles).length),Object.keys(baseline.tiles),'All existing texture keys and ordering survive');
 {

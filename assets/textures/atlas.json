@@ -2,12 +2,12 @@
   "version": 1,
   "tileSize": 16,
   "columns": 16,
-  "rows": 35,
+  "rows": 36,
   "sheets": {
     "drzewa": {
       "file": "drzewa.png",
       "width": 256,
-      "height": 480
+      "height": 544
     },
     "teren": {
       "file": "teren.png",
@@ -3270,6 +3270,146 @@
       "y": 464,
       "width": 16,
       "height": 16
+    },
+    "ginkgo/log_side.png": {
+      "sheet": "drzewa",
+      "x": 0,
+      "y": 480,
+      "width": 16,
+      "height": 16
+    },
+    "ginkgo/log_top.png": {
+      "sheet": "drzewa",
+      "x": 16,
+      "y": 480,
+      "width": 16,
+      "height": 16
+    },
+    "ginkgo/stripped_side.png": {
+      "sheet": "drzewa",
+      "x": 32,
+      "y": 480,
+      "width": 16,
+      "height": 16
+    },
+    "ginkgo/stripped_top.png": {
+      "sheet": "drzewa",
+      "x": 48,
+      "y": 480,
+      "width": 16,
+      "height": 16
+    },
+    "ginkgo/planks.png": {
+      "sheet": "drzewa",
+      "x": 64,
+      "y": 480,
+      "width": 16,
+      "height": 16
+    },
+    "ginkgo/leaves.png": {
+      "sheet": "drzewa",
+      "x": 80,
+      "y": 480,
+      "width": 16,
+      "height": 16
+    },
+    "ginkgo/sapling.png": {
+      "sheet": "drzewa",
+      "x": 96,
+      "y": 480,
+      "width": 16,
+      "height": 16
+    },
+    "ginkgo/leaves_variant.png": {
+      "sheet": "drzewa",
+      "x": 112,
+      "y": 480,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/sadzonka-milorzab/polrealistyczny": {
+      "sheet": "drzewa",
+      "x": 0,
+      "y": 496,
+      "width": 16,
+      "height": 16
+    },
+    "campfire_ginkgo": {
+      "sheet": "drzewa",
+      "x": 128,
+      "y": 480,
+      "width": 32,
+      "height": 32
+    },
+    "jacaranda/log_side.png": {
+      "sheet": "drzewa",
+      "x": 0,
+      "y": 512,
+      "width": 16,
+      "height": 16
+    },
+    "jacaranda/log_top.png": {
+      "sheet": "drzewa",
+      "x": 16,
+      "y": 512,
+      "width": 16,
+      "height": 16
+    },
+    "jacaranda/stripped_side.png": {
+      "sheet": "drzewa",
+      "x": 32,
+      "y": 512,
+      "width": 16,
+      "height": 16
+    },
+    "jacaranda/stripped_top.png": {
+      "sheet": "drzewa",
+      "x": 48,
+      "y": 512,
+      "width": 16,
+      "height": 16
+    },
+    "jacaranda/planks.png": {
+      "sheet": "drzewa",
+      "x": 64,
+      "y": 512,
+      "width": 16,
+      "height": 16
+    },
+    "jacaranda/leaves.png": {
+      "sheet": "drzewa",
+      "x": 80,
+      "y": 512,
+      "width": 16,
+      "height": 16
+    },
+    "jacaranda/sapling.png": {
+      "sheet": "drzewa",
+      "x": 96,
+      "y": 512,
+      "width": 16,
+      "height": 16
+    },
+    "jacaranda/leaves_variant.png": {
+      "sheet": "drzewa",
+      "x": 112,
+      "y": 512,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/sadzonka-jakaranda/polrealistyczny": {
+      "sheet": "drzewa",
+      "x": 0,
+      "y": 528,
+      "width": 16,
+      "height": 16
+    },
+    "campfire_jacaranda": {
+      "sheet": "drzewa",
+      "x": 128,
+      "y": 512,
+      "width": 32,
+      "height": 32
     }
   },
   "aliases": {
@@ -3519,7 +3659,9 @@
     "assets/models/rosliny/sadzonka-kosodrzewina/polrealistyczny.png": "models/rosliny/sadzonka-kosodrzewina/polrealistyczny",
     "assets/models/rosliny/sadzonka-oliwka/polrealistyczny.png": "models/rosliny/sadzonka-oliwka/polrealistyczny",
     "assets/models/rosliny/sadzonka-eukaliptus/polrealistyczny.png": "models/rosliny/sadzonka-eukaliptus/polrealistyczny",
-    "assets/models/rosliny/sadzonka-sekwoja/polrealistyczny.png": "models/rosliny/sadzonka-sekwoja/polrealistyczny"
+    "assets/models/rosliny/sadzonka-sekwoja/polrealistyczny.png": "models/rosliny/sadzonka-sekwoja/polrealistyczny",
+    "assets/models/rosliny/sadzonka-milorzab/polrealistyczny.png": "models/rosliny/sadzonka-milorzab/polrealistyczny",
+    "assets/models/rosliny/sadzonka-jakaranda/polrealistyczny.png": "models/rosliny/sadzonka-jakaranda/polrealistyczny"
   },
   "tiles": {
     "grass_top": {
@@ -5770,6 +5912,114 @@
       "pw": 32,
       "ph": 32,
       "region": "campfire_sequoia"
+    },
+    "campfire_ginkgo": {
+      "x": 4,
+      "y": 19,
+      "region": "campfire_ginkgo",
+      "w": 2,
+      "h": 2,
+      "pw": 32,
+      "ph": 32
+    },
+    "campfire_jacaranda": {
+      "x": 11,
+      "y": 19,
+      "region": "campfire_jacaranda",
+      "w": 2,
+      "h": 2,
+      "pw": 32,
+      "ph": 32
+    },
+    "ginkgo/log_side.png": {
+      "x": 6,
+      "y": 19,
+      "region": "ginkgo/log_side.png"
+    },
+    "ginkgo/log_top.png": {
+      "x": 13,
+      "y": 19,
+      "region": "ginkgo/log_top.png"
+    },
+    "ginkgo/stripped_side.png": {
+      "x": 14,
+      "y": 19,
+      "region": "ginkgo/stripped_side.png"
+    },
+    "ginkgo/stripped_top.png": {
+      "x": 15,
+      "y": 19,
+      "region": "ginkgo/stripped_top.png"
+    },
+    "ginkgo/planks.png": {
+      "x": 6,
+      "y": 20,
+      "region": "ginkgo/planks.png"
+    },
+    "ginkgo/leaves.png": {
+      "x": 13,
+      "y": 20,
+      "region": "ginkgo/leaves.png"
+    },
+    "ginkgo/sapling.png": {
+      "x": 14,
+      "y": 20,
+      "region": "ginkgo/sapling.png"
+    },
+    "ginkgo/leaves_variant.png": {
+      "x": 15,
+      "y": 20,
+      "region": "ginkgo/leaves_variant.png"
+    },
+    "models/rosliny/sadzonka-milorzab/polrealistyczny": {
+      "x": 10,
+      "y": 25,
+      "region": "models/rosliny/sadzonka-milorzab/polrealistyczny"
+    },
+    "jacaranda/log_side.png": {
+      "x": 11,
+      "y": 25,
+      "region": "jacaranda/log_side.png"
+    },
+    "jacaranda/log_top.png": {
+      "x": 12,
+      "y": 25,
+      "region": "jacaranda/log_top.png"
+    },
+    "jacaranda/stripped_side.png": {
+      "x": 13,
+      "y": 25,
+      "region": "jacaranda/stripped_side.png"
+    },
+    "jacaranda/stripped_top.png": {
+      "x": 14,
+      "y": 25,
+      "region": "jacaranda/stripped_top.png"
+    },
+    "jacaranda/planks.png": {
+      "x": 15,
+      "y": 25,
+      "region": "jacaranda/planks.png"
+    },
+    "jacaranda/leaves.png": {
+      "x": 14,
+      "y": 34,
+      "region": "jacaranda/leaves.png"
+    },
+    "jacaranda/sapling.png": {
+      "x": 15,
+      "y": 34,
+      "region": "jacaranda/sapling.png"
+    },
+    "jacaranda/leaves_variant.png": {
+      "x": 0,
+      "y": 35,
+      "region": "jacaranda/leaves_variant.png"
+    },
+    "models/rosliny/sadzonka-jakaranda/polrealistyczny": {
+      "x": 1,
+      "y": 35,
+      "region": "models/rosliny/sadzonka-jakaranda/polrealistyczny"
     }
   }
 }

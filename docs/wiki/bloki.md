@@ -2,7 +2,7 @@
 
 > Ta strona jest generowana z kodu gry (`python tools/wiki.py`) - nie zmieniaj jej ręcznie, zmiany przepadną przy następnym generowaniu.
 
-Wersja gry **0.84.0** - 250 bloków (do tego 102 odmian, których nie ma w ekwipunku, np. wieniec zawieszony na boku bloku). Czas kopania dotyczy trybu przygody; w kreatywnym bloki znikają od razu.
+Wersja gry **0.85.0** - 262 bloków (do tego 102 odmian, których nie ma w ekwipunku, np. wieniec zawieszony na boku bloku). Czas kopania dotyczy trybu przygody; w kreatywnym bloki znikają od razu.
 
 [Ziemia](#ziemia) · [Skały](#skały) · [Drewno](#drewno) · [Budulec](#budulec) · [Rośliny](#rośliny) · [Światło](#światło) · [Ozdoby](#ozdoby)
 
@@ -95,6 +95,12 @@ Wersja gry **0.84.0** - 250 bloków (do tego 102 odmian, których nie ma w ekwip
 | <img src="ikony/sequoia_log.png" width="32" height="32" alt=""> | **Pień sekwoi** | `sequoia_log` | **Kopanie:** 2 s (siekierą 0,67 s)<br>**Siekierą (PPM):** Okorowany pień sekwoi<br>**Przydaje się do:** Opał — sekwoja, Deski sekwojowe |
 | <img src="ikony/sequoia_log_stripped.png" width="32" height="32" alt=""> | **Okorowany pień sekwoi** | `sequoia_log_stripped` | **Kopanie:** 2 s (siekierą 0,67 s)<br>**Skąd:** siekierą (PPM) z bloku: Pień sekwoi<br>**Przydaje się do:** Opał — sekwoja, Deski sekwojowe |
 | <img src="ikony/sequoia_planks.png" width="32" height="32" alt=""> | **Deski sekwojowe** | `sequoia_planks` | **Kopanie:** 2 s (siekierą 0,67 s)<br>**Przepis:** Deski sekwojowe x4<br>**Przydaje się do:** Skrzynia, Ciemne deski, Tratwa, Patyk |
+| <img src="ikony/ginkgo_log.png" width="32" height="32" alt=""> | **Pień miłorzębu** | `ginkgo_log` | **Kopanie:** 2 s (siekierą 0,67 s)<br>**Siekierą (PPM):** Okorowany pień miłorzębu<br>**Przydaje się do:** Opał — miłorząb, Deski miłorzębowe |
+| <img src="ikony/ginkgo_log_stripped.png" width="32" height="32" alt=""> | **Okorowany pień miłorzębu** | `ginkgo_log_stripped` | **Kopanie:** 2 s (siekierą 0,67 s)<br>**Skąd:** siekierą (PPM) z bloku: Pień miłorzębu<br>**Przydaje się do:** Opał — miłorząb, Deski miłorzębowe |
+| <img src="ikony/ginkgo_planks.png" width="32" height="32" alt=""> | **Deski miłorzębowe** | `ginkgo_planks` | **Kopanie:** 2 s (siekierą 0,67 s)<br>**Przepis:** Deski miłorzębowe x4<br>**Przydaje się do:** Skrzynia, Ciemne deski, Tratwa, Patyk |
+| <img src="ikony/jacaranda_log.png" width="32" height="32" alt=""> | **Pień jakarandy** | `jacaranda_log` | **Kopanie:** 2 s (siekierą 0,67 s)<br>**Siekierą (PPM):** Okorowany pień jakarandy<br>**Przydaje się do:** Opał — jakaranda, Deski jakarandowe |
+| <img src="ikony/jacaranda_log_stripped.png" width="32" height="32" alt=""> | **Okorowany pień jakarandy** | `jacaranda_log_stripped` | **Kopanie:** 2 s (siekierą 0,67 s)<br>**Skąd:** siekierą (PPM) z bloku: Pień jakarandy<br>**Przydaje się do:** Opał — jakaranda, Deski jakarandowe |
+| <img src="ikony/jacaranda_planks.png" width="32" height="32" alt=""> | **Deski jakarandowe** | `jacaranda_planks` | **Kopanie:** 2 s (siekierą 0,67 s)<br>**Przepis:** Deski jakarandowe x4<br>**Przydaje się do:** Skrzynia, Ciemne deski, Tratwa, Patyk |
 
 ## Budulec
 
@@ -188,6 +194,12 @@ Wersja gry **0.84.0** - 250 bloków (do tego 102 odmian, których nie ma w ekwip
 | <img src="ikony/sequoia_leaves.png" width="32" height="32" alt=""> | **Igliwie sekwoi** | `sequoia_leaves` | **Kopanie:** 0,35 s<br>**Czasem wypada:** Sadzonka sekwoi (4%), Szyszka sekwoi (6%)<br>**Skąd:** zniszczony blok: Igliwie sekwoi z szyszkami; zniszczony blok: Igliwie sekwoi (szyszki odrastają) |
 | <img src="ikony/sequoia_leaves_szyszki.png" width="32" height="32" alt=""> | **Igliwie sekwoi z szyszkami** | `sequoia_leaves_szyszki` | **Kopanie:** 0,35 s<br>**Daje:** Igliwie sekwoi<br>**Czasem wypada:** Sadzonka sekwoi (4%), Szyszka sekwoi (6%)<br>**Zbiór (PPM):** Szyszka sekwoi 1-2<br>**Skąd:** wyrasta z: Igliwie sekwoi (szyszki odrastają) |
 | <img src="ikony/sequoia_sapling.png" width="32" height="32" alt=""> | **Sadzonka sekwoi** | `sequoia_sapling` | **Kopanie:** od razu<br>**Rośnie:** w drzewo, średnio po 5 min<br>**Skąd:** czasem z bloku: Igliwie sekwoi (4%); czasem z bloku: Igliwie sekwoi z szyszkami (4%); czasem z bloku: Igliwie sekwoi (szyszki odrastają) (4%); posadzony przedmiot: Szyszka sekwoi |
+| <img src="ikony/ginkgo_leaves.png" width="32" height="32" alt=""> | **Liście miłorzębu** | `ginkgo_leaves` | **Kopanie:** 0,35 s<br>**Czasem wypada:** Sadzonka miłorzębu (5%)<br>**Skąd:** zniszczony blok: Liście miłorzębu — jasne złoto |
+| <img src="ikony/ginkgo_leaves_zlote.png" width="32" height="32" alt=""> | **Liście miłorzębu — jasne złoto** | `ginkgo_leaves_zlote` | **Kopanie:** 0,35 s<br>**Daje:** Liście miłorzębu<br>**Czasem wypada:** Sadzonka miłorzębu (5%) |
+| <img src="ikony/ginkgo_sapling.png" width="32" height="32" alt=""> | **Sadzonka miłorzębu** | `ginkgo_sapling` | **Kopanie:** od razu<br>**Rośnie:** w drzewo, średnio po 5 min<br>**Skąd:** czasem z bloku: Liście miłorzębu (5%); czasem z bloku: Liście miłorzębu — jasne złoto (5%) |
+| <img src="ikony/jacaranda_leaves.png" width="32" height="32" alt=""> | **Liście jakarandy** | `jacaranda_leaves` | **Kopanie:** 0,35 s<br>**Czasem wypada:** Sadzonka jakarandy (5%)<br>**Skąd:** zniszczony blok: Liście jakarandy — jasne kwiaty |
+| <img src="ikony/jacaranda_leaves_kwiaty.png" width="32" height="32" alt=""> | **Liście jakarandy — jasne kwiaty** | `jacaranda_leaves_kwiaty` | **Kopanie:** 0,35 s<br>**Daje:** Liście jakarandy<br>**Czasem wypada:** Sadzonka jakarandy (5%) |
+| <img src="ikony/jacaranda_sapling.png" width="32" height="32" alt=""> | **Sadzonka jakarandy** | `jacaranda_sapling` | **Kopanie:** od razu<br>**Rośnie:** w drzewo, średnio po 5 min<br>**Skąd:** czasem z bloku: Liście jakarandy (5%); czasem z bloku: Liście jakarandy — jasne kwiaty (5%) |
 | <img src="ikony/river_sedge.png" width="32" height="32" alt=""> | **Turzyca rzeczna** | `river_sedge` | **Kopanie:** od razu |
 | <img src="ikony/cattail.png" width="32" height="32" alt=""> | **Pałka wodna** | `cattail` | **Kopanie:** od razu<br>**Skąd:** zniszczony blok: Pałka wodna (w wodzie) |
 | <img src="ikony/purple_loosestrife.png" width="32" height="32" alt=""> | **Krwawnica pospolita** | `purple_loosestrife` | **Kopanie:** od razu |

@@ -53,7 +53,7 @@ ustawienia na telefonie i co jeszcze nie działa: `docs/telefon.md`.
 
 ## Testy poprawności
 
-`npm test` uruchamia po kolei 91 sprawdzeń z `tools/sprawdz_*.mjs` -
+`npm test` uruchamia po kolei 94 sprawdzenia z `tools/sprawdz_*.mjs` -
 od przedmiotów pod kursorem, łupów i przepisów, przez numery bloków,
 zapis świata, atlasy tekstur, drzewa, rośliny, wodę, wodospady
 i rzeki, po ekwipunek, skrzynię, cząsteczki drzew, diagnostykę
@@ -262,7 +262,7 @@ Przykładowe przepisy (pełna, aktualna lista z obrazkami:
 
 | Wyrób | Z czego |
 |---|---|
-| deski x4 (17 gatunków) | pień tego drzewa (też okorowany) |
+| deski x4 (19 gatunków) | pień tego drzewa (też okorowany) |
 | patyki x4 | 2 deski jedna nad drugą |
 | siekiera / kilof / łopata | skała (kamień, granit, wapień, piaskowiec, łupek, bazalt) i patyk |
 | lampa x2 | lepidolit + żywica + kora brzozowa |

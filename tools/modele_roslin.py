@@ -458,6 +458,17 @@ LEAVES = {
         '..nsn...',
         '...s....',
     ],
+    # Dwuklapowy wachlarz miłorzębu, na tej samej siatce 1/16 bloku.
+    'wachlarz': [
+        '.ll..ll.',
+        'lGGlGGl.',
+        'gGlGGGg.',
+        '.gGGlg..',
+        '..gGg...',
+        '...ns...',
+        '...s....',
+        '...s....',
+    ],
     'kepka': [
         '.l..ll..',
         'lGllGGl.',
@@ -607,6 +618,9 @@ VANILLA = {
     'sadzonka-oliwka': ('waski', 'klos', {'lisc': '#7c8a60', 'liscJasny': '#9ca87e', 'liscCiemny': '#5a6644', 'lodyga': '#6a5640'}),
     'sadzonka-eukaliptus': ('lancetowaty', 'klos', {'lisc': '#3a8048', 'liscJasny': '#58a064', 'liscCiemny': '#245a30', 'lodyga': '#a8b060'}),
     'sadzonka-sekwoja': ('igly', 'klos', {'lisc': '#608846', 'liscJasny': '#80a660', 'liscCiemny': '#40622e', 'lodyga': '#8a4a30'}),
+    # 0.85.0 - złoty miłorząb i kwitnąca fioletowa jakaranda z paczek Kamila.
+    'sadzonka-milorzab': ('wachlarz', 'klos', {'lisc': '#f0d030', 'liscJasny': '#ffe040', 'liscCiemny': '#bfa830', 'lodyga': '#8a7a68'}),
+    'sadzonka-jakaranda': ('pierzasty', 'klos', {'lisc': '#8048b8', 'liscJasny': '#c8a8f0', 'liscCiemny': '#421e6c', 'lodyga': '#594e3e'}),
     # Rośliny nad wodą
     'turzyca': ('zdzblo', 'klos', {'lisc': '#668943', 'liscJasny': '#83a452', 'liscCiemny': '#456c37', 'lodyga': '#6a8142', 'kwiat': '#80914c'}),
     'palka': ('zdzblo', 'klos', {'lisc': '#668943', 'liscJasny': '#83a452', 'liscCiemny': '#456c37', 'lodyga': '#6a8142', 'kwiat': '#765037', 'kwiatJasny': '#9b7951', 'kwiatCiemny': '#4e3424'}),

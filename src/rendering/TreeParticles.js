@@ -91,6 +91,14 @@ export const LEAF_SPRITES = {
         'hd.h..',
         's.....'
     ],
+    wachlarz: [
+        '.hh.hh',
+        'hhhhhh',
+        'ohhdho',
+        '.oddo.',
+        '..dd..',
+        '..s...'
+    ],
     platek: [
         '.hhh..',
         'hhhhh.',
@@ -108,6 +116,7 @@ const SPECIES_SPRITES = {
     spruce: ['igly', 'galazka'], pine: ['igly', 'galazka'], bald_cypress: ['galazka', 'igly'],
     mugo: ['igly', 'galazka'], sequoia: ['galazka', 'igly'],
     maple: ['klon'], cherry: ['platek', 'okragly'],
+    ginkgo: ['wachlarz'], jacaranda: ['platek', 'waski'],
     olive: ['waski'], wierzba: ['waski'], rainbow_eucalyptus: ['waski', 'owalny'], acacia: ['waski', 'okragly'],
     birch: ['okragly', 'owalny'], linden: ['okragly', 'owalny']
 };

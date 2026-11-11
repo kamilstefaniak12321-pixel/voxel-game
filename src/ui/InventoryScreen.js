@@ -1424,7 +1424,8 @@ export class InventoryScreen {
 
             if (item) {
                 const left = this.game.inventory.add(item.type, item.count);
-                takeFromCell(chest, cell, item.count - left);
+                const moved = item.count - left;
+                if (moved > 0) takeFromCell(chest, cell, moved);
             }
 
         }

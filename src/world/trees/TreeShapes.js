@@ -77,6 +77,14 @@ export function treeVisualDimensions(species, size = 0.5) {
         height, radius, trunkWidth: amount >= 0.7 ? 2 : 1,
         crownBase: Math.max(3, Math.round(height * 0.3))
     };
+    if (shape.kind === 'ginkgo') return {
+        height, radius, trunkWidth: amount >= 0.65 ? 2 : 1,
+        crownBase: Math.max(4, Math.round(height * 0.25))
+    };
+    if (shape.kind === 'jacaranda') return {
+        height, radius, trunkWidth: 1,
+        crownBase: Math.max(2, Math.round(height * 0.25))
+    };
     return { height, radius, trunkWidth: 1, crownBase: Math.max(2, Math.round(height * 0.35)) };
 }
 
@@ -1114,6 +1122,78 @@ const CATALOG_SHAPES = {
         }
         tree.blob(centre, top - 2, centre, trunkWidth / 2 + 1.2, 2.4, trunkWidth / 2 + 1.2, 0.62, shape.density);
         tree.leaf(Math.round(centre), top, Math.round(centre));
+
+    },
+
+    // Miłorząb: wysoki przewodnik, grubszy dół pnia i nieregularne piętra
+    // wznoszących się konarów. Kępy zostawiają prześwity między piętrami;
+    // złota korona zwęża się ku górze, ale nie tworzy równego stożka.
+    ginkgo(tree, size, shape) {
+
+        const { height, radius, trunkWidth, crownBase } = treeVisualDimensions(tree.species, size);
+        const random = tree.random, top = height - 1;
+        tree.trunk(0, 0, 0, top - 2);
+        if (trunkWidth === 2) {
+            for (const [x, z] of [[1, 0], [0, 1], [1, 1]]) tree.trunk(x, z, 0, crownBase + 2);
+        }
+        const tiers = 4 + Math.round(size);
+        const phase = random() * Math.PI * 2;
+        for (let tier = 0; tier < tiers; tier++) {
+            const t = tier / (tiers - 1);
+            const y = Math.round(lerp(crownBase + 1, top - 3, t));
+            const width = radius * (t < 0.3 ? 0.9 + t / 3 : 1 - (t - 0.3) * 0.8);
+            const thickness = 1.4 + size * 0.3;
+            // Keep the central leader inside a small leaf cluster, while
+            // most foliage grows at irregular branch tips around it.
+            tree.blob(0, y + 0.4, 0, Math.max(1.5, width * 0.4), thickness, Math.max(1.5, width * 0.4), 0.64, shape.density);
+            for (let limb = 0; limb < 4; limb++) {
+                const angle = phase + tier * 1.1 + limb * Math.PI / 2 + (random() - 0.5) * 0.3;
+                const reach = width * (0.58 + random() * 0.06);
+                const x = Math.cos(angle) * reach, z = Math.sin(angle) * reach;
+                const lift = (limb % 2) * 0.5;
+                tree.branch(0, y - 2, 0, x * 0.55, y - 0.4, z * 0.55);
+                tree.branch(x * 0.55, y - 0.4, z * 0.55, x, y + lift, z);
+                const r = width * (0.41 + random() * 0.04);
+                tree.blob(x, y + lift + 0.4, z, r, thickness, r, 0.65, shape.density);
+            }
+        }
+        tree.blob(0, top - 1.4, 0, Math.max(1.5, radius * 0.3), 1.4, Math.max(1.5, radius * 0.3), 0.65, shape.density);
+        tree.leaf(0, top, 0);
+
+    },
+
+    // Jakaranda: nisko rozwidlony pień i długie, łukowate konary.
+    // Korona jest szerokim, płytkim sklepieniem z osobnych chmur kwiatów;
+    // od spodu pozostaje przestrzeń na spacer przy pniu.
+    jacaranda(tree, size, shape) {
+
+        const { height, radius, crownBase } = treeVisualDimensions(tree.species, size);
+        const random = tree.random, top = height - 1;
+        const phase = random() * Math.PI * 2;
+        const crownY = top - 1.7;
+        const thickness = 1.4 + size * 0.3;
+        tree.trunk(0, 0, 0, crownBase);
+        if (size > 0.7) tree.trunk(1, 0, 0, 1);
+        const limbs = 6 + Math.floor(random() * 2);
+        for (let limb = 0; limb < limbs; limb++) {
+            const angle = phase + limb * Math.PI * 2 / limbs + (random() - 0.5) * 0.22;
+            const reach = radius * (0.58 + random() * 0.05);
+            const x = Math.cos(angle) * reach, z = Math.sin(angle) * reach;
+            const y = crownY - (limb % 3 === 0 ? 0.8 : 0);
+            const middleY = crownBase + (y - crownBase) * 0.65;
+            tree.branch(0, crownBase - 1, 0, x * 0.45, middleY, z * 0.45);
+            tree.branch(x * 0.45, middleY, z * 0.45, x, y - 0.4, z);
+            const r = radius * (0.39 + random() * 0.04);
+            tree.blob(x, y, z, r, thickness, r, 0.6, shape.density);
+            // A shorter side branch breaks the perfect radial symmetry.
+            const side = angle + 0.7;
+            const sx = x * 0.55 + Math.cos(side) * radius * 0.22;
+            const sz = z * 0.55 + Math.sin(side) * radius * 0.22;
+            tree.branch(x * 0.45, middleY, z * 0.45, sx, y - 1, sz);
+            tree.blob(sx, y - 0.5, sz, r * 0.7, thickness * 0.8, r * 0.7, 0.6, shape.density);
+        }
+        tree.blob(0, crownY + 0.25, 0, radius * 0.46, 1.4, radius * 0.46, 0.63, shape.density);
+        tree.leaf(0, top, 0);
 
     },
 

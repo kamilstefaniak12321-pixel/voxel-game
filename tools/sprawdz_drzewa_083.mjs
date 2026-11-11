@@ -98,7 +98,7 @@ const ORIGINALS = {
 
 // --- Bloki, przedmioty, przepisy ----------------------------------------
 
-equal(TREE_NAMES.slice(-5), Object.keys(NEW), 'Nowe gatunki na końcu katalogu');
+equal(TREE_NAMES.slice(12, 17), Object.keys(NEW), 'Gatunki 0.83 zachowują pozycje katalogu po dodawaniu kolejnych');
 for (const [name, info] of Object.entries(NEW)) {
     const tree = TREE_SPECIES[name];
     equal(tree.firstId, info.first, `${name}: stały pierwszy numer`);

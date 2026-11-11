@@ -1,4 +1,4 @@
-// Built-in tree catalog. All seventeen species share this one definition file.
+// Built-in tree catalog. All nineteen species share this one definition file.
 // Numeric IDs, texture keys, template cell order and climate order are stable:
 // existing worlds and user texture overrides depend on them.
 // One block is approximately one metre; mature silhouettes live in TreeShapes.
@@ -14,7 +14,9 @@ export const SPECIES_SHAPE_LIMITS = Object.freeze({
     mugo: Object.freeze({ reach: 6, maxHeight: 6 }),
     olive: Object.freeze({ reach: 8, maxHeight: 10 }),
     rainbow_eucalyptus: Object.freeze({ reach: 12, maxHeight: 51 }),
-    sequoia: Object.freeze({ reach: 8, maxHeight: 73 })
+    sequoia: Object.freeze({ reach: 8, maxHeight: 73 }),
+    ginkgo: Object.freeze({ reach: 8, maxHeight: 26 }),
+    jacaranda: Object.freeze({ reach: 10, maxHeight: 14 })
 });
 export const TREE_SLOT = { log: 0, stripped: 1, planks: 2, leaves: 3, sapling: 4, litter: 5, variants: 6 };
 
@@ -2092,6 +2094,76 @@ export const TREE_CATALOG = {
         },
         "climate": null,
         "similar": "spruce"
+    },
+    "ginkgo": {
+        "id": "ginkgo",
+        "firstId": 1080,
+        "name": "Ginkgo",
+        "species": ["Miłorząb dwuklapowy", "miłorzębu"],
+        "short": "miłorząb",
+        "labels": ["Pień miłorzębu", "Okorowany pień miłorzębu", "Deski miłorzębowe", "Liście miłorzębu", "Sadzonka miłorzębu"],
+        "loot": [["ginkgo_sapling", 0.05]],
+        "growthSeconds": 300,
+        "textures": {
+            "logTop": "ginkgo/log_top.png",
+            "logSide": "ginkgo/log_side.png",
+            "strippedTop": "ginkgo/stripped_top.png",
+            "strippedSide": "ginkgo/stripped_side.png",
+            "planks": "ginkgo/planks.png",
+            "leaves": "ginkgo/leaves.png",
+            "sapling": "ginkgo/sapling.png"
+        },
+        "variants": [{
+            "key": "zlote", "label": "Liście miłorzębu — jasne złoto",
+            "afterLabel": null, "texture": "ginkgo/leaves_variant.png",
+            "char": null, "share": 0.24, "harvest": null, "regrow": null
+        }],
+        "items": {},
+        "shape": {
+            "kind": "ginkgo", "litter": 0, "templates": [],
+            "height": [18, 26], "radius": [5, 7.5], "density": 0.8
+        },
+        "climate": {
+            "chance": 0.06,
+            "temperature": [-0.2, 0.65], "humidity": [-0.3, 0.75],
+            "height": [2, 30], "biomes": new Set(["deciduous", "beech", "maple_forest"])
+        },
+        "similar": "linden"
+    },
+    "jacaranda": {
+        "id": "jacaranda",
+        "firstId": 1090,
+        "name": "Jacaranda",
+        "species": ["Jakaranda mimozolistna", "jakarandy"],
+        "short": "jakaranda",
+        "labels": ["Pień jakarandy", "Okorowany pień jakarandy", "Deski jakarandowe", "Liście jakarandy", "Sadzonka jakarandy"],
+        "loot": [["jacaranda_sapling", 0.05]],
+        "growthSeconds": 300,
+        "textures": {
+            "logTop": "jacaranda/log_top.png",
+            "logSide": "jacaranda/log_side.png",
+            "strippedTop": "jacaranda/stripped_top.png",
+            "strippedSide": "jacaranda/stripped_side.png",
+            "planks": "jacaranda/planks.png",
+            "leaves": "jacaranda/leaves.png",
+            "sapling": "jacaranda/sapling.png"
+        },
+        "variants": [{
+            "key": "kwiaty", "label": "Liście jakarandy — jasne kwiaty",
+            "afterLabel": null, "texture": "jacaranda/leaves_variant.png",
+            "char": null, "share": 0.22, "harvest": null, "regrow": null
+        }],
+        "items": {},
+        "shape": {
+            "kind": "jacaranda", "litter": 0, "templates": [],
+            "height": [8, 14], "radius": [6, 9], "density": 0.76
+        },
+        "climate": {
+            "chance": 0.07,
+            "temperature": [0.25, 3], "humidity": [-0.1, 0.8],
+            "height": [2, 24], "biomes": new Set(["meadow", "deciduous", "eucalyptus_forest"])
+        },
+        "similar": "linden"
     }
 };
 
@@ -2197,5 +2269,21 @@ export const TREE_TEXTURE_NAMES = [
     "sequoia/leaves.png",
     "sequoia/sapling.png",
     "sequoia/leaves_variant.png",
-    "sequoia/cone.png"
+    "sequoia/cone.png",
+    "ginkgo/log_side.png",
+    "ginkgo/log_top.png",
+    "ginkgo/stripped_side.png",
+    "ginkgo/stripped_top.png",
+    "ginkgo/planks.png",
+    "ginkgo/leaves.png",
+    "ginkgo/sapling.png",
+    "ginkgo/leaves_variant.png",
+    "jacaranda/log_side.png",
+    "jacaranda/log_top.png",
+    "jacaranda/stripped_side.png",
+    "jacaranda/stripped_top.png",
+    "jacaranda/planks.png",
+    "jacaranda/leaves.png",
+    "jacaranda/sapling.png",
+    "jacaranda/leaves_variant.png"
 ];

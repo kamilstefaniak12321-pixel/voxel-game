@@ -111,6 +111,40 @@ function matureTreeSilhouette(tree, spacing, definition, { height, radius, trunk
         return result;
     }
     append(0, 0, 0, trunkWidth, top, trunkWidth, log, kindIndex('rock'));
+    if (kind === 'ginkgo') {
+        // A tall leader with separated, tapered levels rather than a round
+        // deciduous blob. The same height/radius contract drives real blocks.
+        append(0, 0, 0, 1, height - 2, 1, log, kindIndex('rock'));
+        const layers = spacing <= 2 ? 5 : spacing <= 4 ? 3 : 2;
+        const bottom = crownBase, tall = height - bottom;
+        for (let i = 0; i < layers; i++) {
+            const t = i / (layers - 1);
+            const r = radius * (t < .3 ? .9 + t / 3 : 1 - (t - .3) * .8);
+            const y0 = bottom + t * (tall - 3);
+            const thickness = i === layers - 1 ? 3 : Math.max(2, tall / layers * .72);
+            append(-r, y0, -r, r + 1, Math.min(height, y0 + thickness), r + 1, leaf, leafKind, .91 + .07 * t);
+        }
+        return result;
+    }
+    if (kind === 'jacaranda') {
+        // Keep a clear space beneath a wide, shallow flowering canopy even
+        // at the coarsest LOD. Nearer proxies retain several canopy lobes.
+        const bottom = height - 5, center = height - 3;
+        append(0, crownBase, 0, 1, center, 1, log, kindIndex('rock'));
+        if (spacing > 4) append(-radius, bottom + 1, -radius, radius + 1, height, radius + 1, leaf, leafKind);
+        else {
+            const r = radius * .46;
+            append(-r, bottom + 1, -r, r + 1, height, r + 1, leaf, leafKind);
+            const lobes = spacing <= 2 ? 6 : 3;
+            const phase = seededRandom(tree.seed)() * Math.PI * 2;
+            for (let i = 0; i < lobes; i++) {
+                const angle = phase + i * Math.PI * 2 / lobes;
+                const x = Math.cos(angle) * radius * .55, z = Math.sin(angle) * radius * .55;
+                append(x - r, bottom, z - r, x + r + 1, height - 1, z + r + 1, leaf, leafKind, .94);
+            }
+        }
+        return result;
+    }
     if (kind === 'rainbow_eucalyptus') {
         // Goły pień i parasol z chmur liści tylko na samej górze.
         append(0, 0, 0, trunkWidth, height - 2, trunkWidth, log, kindIndex('rock'));

@@ -11,6 +11,34 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 0.85.0 - Miłorząb, jakaranda i bezpieczne przenoszenie ze skrzyni
+
+Dwa drzewa z paczek Kamila oraz poprawki po przeglądzie 0.84.0.
+
+- Miłorząb dwuklapowy ma 18–26 bloków wysokości i złotą koronę na
+  nieregularnych piętrach gałęzi. Jakaranda mimozolistna ma 8–14 bloków,
+  niskie rozwidlenie i szerokie fioletowe sklepienie. Skala około 1 m
+  na blok odpowiada graczowi o wysokości 1,8 bloku i wymiarom z paczek.
+- Katalog obejmuje 19 gatunków. Nowe drzewa mają sadzonki w trzech
+  jakościach, liście i odmianę, okorowane drewno, deski oraz własny opał.
+  Działają w lasach i galeriach `/drzewa`; miłorząb występuje w
+  umiarkowanych lasach, jakaranda na ciepłych łąkach i w lasach.
+  Dalekie sylwetki zachowują skalę i kolory. Spadające liście miłorzębu
+  mają kształt wachlarza, jakaranda gubi drobne płatki i wąskie liście.
+- Oryginalne tekstury obu paczek są zachowane w `drzewa.png`.
+  Wspólny atlas GPU zyskał jeden wiersz (256×576, dodatkowe 16 KiB RGBA),
+  bez przesuwania starych kafelków i naruszania odstępów przy ikonach.
+- Shift + klik w skrzyni przy pełnym ekwipunku niczego nie usuwa.
+  Przy częściowo wolnym ekwipunku pobierana jest wyłącznie liczba,
+  która faktycznie się zmieściła; obie warstwy zachowują zawartość.
+- Pochodnia w dłoni postaci ma stały chwyt, również po siekierze
+  lub patyku. Jej pozycja w F5 i ekwipunku nie zależy od poprzedniego
+  przedmiotu.
+- Testy obejmują utratę przedmiotów, zmianę chwytu, zachowanie starych
+  gatunków i tekstur, nowe wymiary, wzrost, wyroby, granice chunków
+  i naturalne występowanie. Kadry oraz próby gry:
+  `docs/pomiary/drzewa-0.85.0/`.
+
 ## 0.84.0 - Liście z minipikseli, grube przedmioty w dłoni
 
 Prośba Kamila — PR #123 (po 0.83.0):

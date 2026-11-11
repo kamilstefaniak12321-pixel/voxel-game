@@ -52,6 +52,9 @@ jobs:
       - name: Akacja, cypryśnik i wiśnia w skali gracza
         timeout-minutes: 3
         run: node tools/sprawdz_nowe_drzewa_webgl.mjs
+      - name: Miłorząb, jakaranda oraz regresje skrzyni i pochodni
+        timeout-minutes: 3
+        run: node tools/sprawdz_drzewa_085_webgl.mjs
       - name: Losowe lasy, warianty i porównanie drzew w grze
         timeout-minutes: 3
         run: node tools/sprawdz_pokaz_drzew_webgl.mjs
@@ -101,6 +104,7 @@ jobs:
           name: testy-gry
           path: |
             test-results/texture-atlases/
+            test-results/trees-085/
             test-results/new-trees/
             test-results/trees-083/
             test-results/tree-showcase/

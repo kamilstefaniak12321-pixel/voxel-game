@@ -82,6 +82,13 @@ export class PlantGrowth {
                 continue;
             }
 
+            // Gra wieloosobowa: chunk rośnie u gracza, który jest najbliżej
+            // (src/net/) - każdy wzrost tylko raz.
+
+            if (this.shouldTick && !this.shouldTick(chunk)) {
+                continue;
+            }
+
             for (const index of [...chunk.growing]) {
 
                 const growth = getGrowth(getBlockTypeById(chunk.blocks[index]));

@@ -363,7 +363,10 @@ export class Meteorites {
     // (poziomy), z którego przylatuje; bez niego - losowy.
     // Zwraca meteoryt albo null, jeśli nie ma dobrego miejsca.
 
-    spawn(landing = null, { from = null } = {}) {
+    // remote - meteoryt od gospodarza (gra wieloosobowa): tylko przelot
+    // i wybuch, krater wykopuje gospodarz (bloki przychodzą z sieci).
+
+    spawn(landing = null, { from = null, remote = false } = {}) {
 
         const target = landing ?? this.findLandingSpot();
 
@@ -377,6 +380,8 @@ export class Meteorites {
         const flat = from
             ? new THREE.Vector3(from.x, 0, from.z).normalize()
             : new THREE.Vector3().setFromCylindricalCoords(1, Math.random() * Math.PI * 2, 0);
+
+        this.onSpawn?.(target, flat);
 
         const rise = random(0.36, 0.5);
 
@@ -456,6 +461,7 @@ export class Meteorites {
             history: [],
             carry: { embers: 0, smoke: 0 },
             nextFragment: random(1.2, 2),
+            remote,
             light: {
                 position: start.clone(),
                 color: FIRE_LIGHT,
@@ -559,6 +565,7 @@ export class Meteorites {
 
         if (
             METEORITES_PER_NIGHT > 0 &&
+            !this.game.net?.isClient &&
             this.game.settings.get('meteorites') &&
             state.night > 0.7 &&
             Math.random() < METEORITES_PER_NIGHT / DARK_NIGHT_SECONDS * realDt
@@ -898,7 +905,7 @@ export class Meteorites {
 
         const { x, y, z } = meteor.landing;
 
-        const bottom = this.explode(x, y, z);
+        const bottom = this.explode(x, y, z, { carve: !meteor.remote });
 
 
         const player = this.game.player.pos;
@@ -924,7 +931,7 @@ export class Meteorites {
     //               zaczynają się dalej, a nie na jego oczach).
     // Zwraca y dna krateru.
 
-    explode(x, y, z, { scale = 1, meteorite = true, clear = 0 } = {}) {
+    explode(x, y, z, { scale = 1, meteorite = true, clear = 0, carve = true } = {}) {
 
         const world = this.game.world;
 
@@ -936,14 +943,14 @@ export class Meteorites {
         const debrisColors = this.sampleCraterColors(x, y, z);
 
 
-        this.carveCrater(x, y, z, scale);
+        if (carve) this.carveCrater(x, y, z, scale);
 
 
         // Na dnie zostaje rozżarzony meteoryt, czasem z odłamkami obok.
 
         const bottom = world.getGroundY(x, z);
 
-        if (meteorite) {
+        if (meteorite && carve) {
 
             world.setBlock(x, bottom, z, 'meteorite');
 

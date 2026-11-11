@@ -155,6 +155,8 @@ export class Rafts {
         const visible=new Set();
         for(const b of active) {
             if(!b.loaded())continue;
+            // Gra wieloosobowa: tratwą płynie ktoś inny - położenie przychodzi z sieci.
+            if(b.remote && b!==this.mounted){this.updateView(b);visible.add(b.id);continue;}
             b.update(dt,b===this.mounted?input:null,b===this.mounted?p:null);this.lastSteps+=b.steps;
             this.updateView(b);visible.add(b.id);
         }

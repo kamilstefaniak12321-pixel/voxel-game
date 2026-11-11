@@ -83,6 +83,11 @@ export const SETTINGS_DEFAULTS = {
     volumeWorld: 100,                              // otoczenie: woda, meteoryty
     volumeUi: 80,                                  // menu i ekwipunek
 
+    // Gra wieloosobowa (0.92.0, src/net/)
+    playerName: '',                                // imię widoczne dla innych graczy
+    playerId: '',                                  // stały identyfikator tej gry (gospodarz pamięta po nim ekwipunek gościa)
+    netServer: '',                                 // własny serwer połączeń PeerJS (pusto - publiczny 0.peerjs.com)
+
     // Inne
     theme: UI_THEME,                               // motyw menu
     menuMotion: 'auto',                            // ruch kamery menu: ustawienie systemu / pełny / nieruchome kadry
@@ -390,6 +395,20 @@ export class Settings {
             const stepped = Math.round((number - min) / step) * step + min;
 
             return Math.min(max, Math.max(min, stepped));
+
+        }
+
+
+        if (key === 'playerName' || key === 'netServer') {
+
+            return typeof value === 'string' ? value.replace(/[\u0000-\u001f]/g, '').trim().slice(0, key === 'playerName' ? 16 : 200) : fallback;
+
+        }
+
+
+        if (key === 'playerId') {
+
+            return typeof value === 'string' && /^[0-9a-f]{16}$/.test(value) ? value : fallback;
 
         }
 

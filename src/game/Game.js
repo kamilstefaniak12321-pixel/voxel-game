@@ -159,14 +159,17 @@ export class Game {
 
     // Wczytuje zapisane chunki świata i uruchamia grę.
 
-    static async start(renderer, input, storage, worldInfo, settings) {
+    // options.savedChunks - chunki z innego źródła (gość w grze
+    // wieloosobowej - src/net/RemoteChunkStore.js).
 
-        const savedChunks =
-            storage
+    static async start(renderer, input, storage, worldInfo, settings, options = {}) {
+
+        const savedChunks = options.savedChunks ??
+            (storage
                 ? await (storage.loadSavedChunks
                     ? storage.loadSavedChunks(worldInfo.id, { summarize: summarizeSavedChunk })
                     : storage.loadChunks(worldInfo.id))
-                : new Map();
+                : new Map());
 
         const game = new Game(
             renderer,
@@ -299,6 +302,11 @@ export class Game {
             worldInfo.terrain,
             { bushyGrass: settings.get('bushyGrass') }
         );
+
+        // Gra wieloosobowa (src/net/NetHost.js albo NetClient.js) - null,
+        // gdy gramy sami.
+
+        this.net = null;
 
 
         // Rosnące rośliny (krzaki owocowe).
@@ -590,6 +598,8 @@ export class Game {
         if (!playerColumn) {
             profile?.endStage('player');
             this.updateWhileTerrainLoads(dt, input);
+            // Gość czeka na chunk od gospodarza - sieć musi działać dalej.
+            this.net?.update(dt);
             return;
         }
 
@@ -955,6 +965,8 @@ export class Game {
         this.water.update(dt);
 
         this.updateFovBoost(dt);
+
+        this.net?.update(dt);
 
     }
 
@@ -2773,6 +2785,12 @@ export class Game {
         // snapshot so leaving the world cannot save a half-built specimen.
         await waitForTreeShowcase(this.world);
 
+        // Gość: ostatni zapis ekwipunku u gospodarza; gospodarz: koniec
+        // gry dla znajomych (przed zapisem - ich ekwipunki już są w świecie).
+
+        if (this.net?.isClient) { this.net.leave(); this.net.dispose(); }
+        else if (this.net?.isHost) this.net.close();
+
         if (save && !(await this.saver.flush())) {
             return false;
         }
@@ -2938,7 +2956,7 @@ export class Game {
         const html =
 
             `Świat: ${this.worldInfo.name} | Seed: ${this.worldInfo.seed}` +
-            `${this.storage ? '' : ' | ZAPIS NIEDOSTĘPNY'}<br>` +
+            `${this.net ? ` | ${this.net.describe()}` : this.storage ? '' : ' | ZAPIS NIEDOSTĘPNY'}<br>` +
 
             `Pozycja: ${player.pos.x.toFixed(1)}, ` +
             `${player.pos.y.toFixed(1)}, ` +

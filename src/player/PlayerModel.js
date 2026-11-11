@@ -682,7 +682,12 @@ export function buildBlockGeometry(type) {
 
 export class PlayerModel {
 
-    constructor() {
+    // texture - skórka (inni gracze w grze wieloosobowej mają swoją).
+
+    // lighting - własne światło modelu (jak skrzynie); bez niego światło
+    // w miejscu gracza (modelLight).
+
+    constructor({ texture = skinTexture, lighting = null } = {}) {
 
         // Całość: ustawiana w miejscu stóp gracza i obracana jak jego ciało.
 
@@ -723,8 +728,8 @@ export class PlayerModel {
 
 
         this.materials = [
-            createModelMaterial({ map: skinTexture }),
-            createModelMaterial({ map: skinTexture, alphaTest: 0.5 })
+            createModelMaterial({ map: texture, lighting }),
+            createModelMaterial({ map: texture, alphaTest: 0.5, lighting })
         ];
 
         this.style = 'smooth';
@@ -742,10 +747,10 @@ export class PlayerModel {
         this.heldTorch = null;
         this.lowDetail = false;
 
-        this.heldMaterial = createModelMaterial({ map: blockAtlasTexture });
+        this.heldMaterial = createModelMaterial({ map: blockAtlasTexture, lighting });
 
         // Rośliny mają przezroczyste tło tekstury.
-        this.heldPlantMaterial = createModelMaterial({ map: blockAtlasTexture, alphaTest: 0.5, vertexColors: true });
+        this.heldPlantMaterial = createModelMaterial({ map: blockAtlasTexture, alphaTest: 0.5, vertexColors: true, lighting });
 
         this.held = new THREE.Mesh(new THREE.BufferGeometry(), this.heldMaterial);
 

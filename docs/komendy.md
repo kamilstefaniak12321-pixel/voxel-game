@@ -170,6 +170,7 @@ Nazwy ustawień w `/ustaw`: `ziemniak`, `zasieg`, `daleki-teren`, `szczegoly-ter
 `odwroc-mysz`, `motyw`, `interfejs`, `debug`, `licznik-fps`, `meteoryty`,
 `warstwa-skorki`, `reka` (ręka w widoku z oczu), `kolysanie` (kołysanie widoku przy chodzeniu),
 `zgiecia` (`gladkie` / `klocki`), `kamera` (odległość kamery z F5, 2-8),
+`imie` (imię widoczne dla innych graczy), `serwer` (własny serwer połączeń gry ze znajomymi, np. `https://moj-serwer.pl/peer`; `-` - publiczny),
 `modele-roslin`, `model-lisci`, `wiatr` (rośliny kołyszą się na wietrze), `animacje-roslin`,
 `spadajace-liscie` (liście i owoce spadające z drzew), `smugi-wiatru` (zakładka *Modele*),
 `glosnosc`, `glosnosc-bloki`, `glosnosc-otoczenie` (też `glosnosc-zjawiska`), `glosnosc-menu` (0-100).

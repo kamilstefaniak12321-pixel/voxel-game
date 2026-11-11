@@ -42,6 +42,7 @@ Te pliki nie są objęte PolyForm - zostają na licencjach swoich autorów
 | pliki | co to | licencja |
 |---|---|---|
 | `lib/three/` | three.js - silnik grafiki 3D | MIT (`lib/three/LICENSE`) |
+| `lib/peerjs/` | PeerJS 1.5.5 - połączenie z innymi graczami (gra ze znajomymi, WebRTC) | MIT (`lib/peerjs/LICENSE`) |
 | `assets/fonts/pixelify-sans/` | czcionka Pixelify Sans | SIL Open Font License 1.1 (`OFL.txt`) |
 | `assets/models/torch/` | tekstury i źródłowe modele pochodni z Reactive Torch, Copyright (c) 2026 ktulman8; przekazane przez Kamila | MIT (`assets/models/torch/LICENSE`) |
 | `android/gradlew`, `android/gradlew.bat`, `android/gradle/wrapper/` | Gradle Wrapper (budowanie aplikacji na Androida) | Apache License 2.0 |

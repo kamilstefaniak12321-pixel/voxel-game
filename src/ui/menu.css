@@ -643,3 +643,14 @@ body:not([data-screen="game"]) #crosshair {
 .diagnostics-report[hidden] { display: none; }
 @media (max-width: 640px) { .diagnostics-metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 480px) { .diagnostics-actions { flex-direction: column; } .diagnostics-actions .menu-button { width: 100%; flex: none; } }
+
+/* Gra ze znajomymi (0.92.0): kod zaproszenia w pauzie */
+.menu-invite-code {
+    margin: 0.2em 0 0;
+    font-size: 1.7em;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-align: center;
+    user-select: text;
+    font-variant-numeric: tabular-nums;
+}

@@ -11,6 +11,40 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 0.92.0 - Gra ze znajomymi
+
+Prośba Kamila — PR #131 (po 0.91.0):
+
+- **Gra wieloosobowa przez internet**, na komputerze:
+  - Gospodarz w pauzie wpisuje imię i klika **Otwórz dla znajomych**.
+    Dostaje kod zaproszenia (np. `VOXEL-K7M2-9QXA`, przycisk **Kopiuj
+    kod**).
+  - Gość w menu głównym: **Gra ze znajomymi**, imię i kod.
+  - W jednym świecie może grać do 8 osób. Nie trzeba kont ani własnego
+    serwera.
+- **Wspólne:**
+  - bloki (z dźwiękiem i odłamkami), także drzwi, klapy i furtki,
+  - skrzynie, deski na stołach stolarskich, ogniska,
+  - tratwy (płynie ten, kto siedzi na tratwie), meteoryty, pora dnia
+    i czat (`<Imię> tekst`).
+  - Rośliny rosną u gracza, który jest najbliżej. Woda płynie u każdego
+    sama, z tych samych bloków.
+- **Inni gracze w świecie:** model ze skórką, imię nad głową, animacje
+  ruchu, machnięcia i przedmiot w ręce.
+- **Zapis u gospodarza:**
+  - Świat i ekwipunek oraz miejsce każdego gościa
+    (`worldInfo.guests`). Gość po powrocie ma swoje rzeczy.
+  - W pauzie gospodarza świat żyje dalej.
+- **Połączenie:**
+  - WebRTC przez bibliotekę PeerJS 1.5.5 (`lib/peerjs/`, MIT) i jej
+    publiczny serwer połączeń.
+  - Własny serwer: `/ustaw serwer <adres>`. Imię: `/ustaw imie`.
+  - Gospodarz nie wpuści gościa z inną wersją gry i pokaże powód.
+- Na razie bez przycisków w aplikacji na telefon.
+- Testy: `sprawdz_multiplayer.mjs` (78 sprawdzeń) i
+  `sprawdz_multiplayer_webgl.mjs` (prawdziwa gra w dwóch kartach Chrome,
+  także w CI). Opis: `docs/multiplayer.md`.
+
 ## 0.91.0 - Drzwi, klapy i podwójny warsztat
 
 Prośba Kamila — PR #130 (po 0.90.0):

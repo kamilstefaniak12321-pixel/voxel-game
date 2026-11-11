@@ -40,6 +40,13 @@ skinTexture.generateMipmaps = false;
 skinTexture.colorSpace = THREE.SRGBColorSpace;
 
 
+// Skórka jako obrazek PNG (data URL) - dla innych graczy (gra wieloosobowa).
+
+export function skinDataURL() {
+    return canvas.toDataURL('image/png');
+}
+
+
 // Czy gracz ma własną skórkę (zapisaną w przeglądarce).
 
 export function hasCustomSkin() {

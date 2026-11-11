@@ -2,9 +2,14 @@
 
 Wszystkie źródłowe grafiki PNG gry leżą w **`assets/textures/`**.
 Zamiast 243 rozproszonych plików jest dziewięć arkuszy tematycznych.
-Przeniesienie zachowuje wygląd: 363 nazwane tekstury świata mają te same
-piksele oraz współrzędne UV co w 0.79.0. Grafiki w dokumentacji i eksportowane
+Przeniesienie w 0.80.0 zachowało piksele i układ 363 tekstur świata
+z 0.79.0. Kolejne wersje dopisują nowe regiony. Grafiki w dokumentacji i eksportowane
 paczki dla graczy są wynikami pracy narzędzi, a nie drugim źródłem tekstur.
+
+Od 0.85.0 atlas GPU ma 256 × 576 pikseli (36 wierszy). Dodatkowy
+wiersz mieści nowe drzewa bez naruszania kafelków ani ochronnych
+odstępów wcześniejszych modeli. To 16 KiB więcej pamięci RGBA;
+znormalizowane UV obliczane są z aktualnych wymiarów atlasu.
 
 | Plik | Zawartość |
 |---|---|

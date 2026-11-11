@@ -1,0 +1,2799 @@
+{
+  "sourceCommit": "9b33efebfd190d9f4ec4af421c9fdc2c79336709",
+  "version": "0.84.0",
+  "tileSize": 16,
+  "columns": 16,
+  "rows": 35,
+  "tiles": {
+    "grass_top": {
+      "x": 0,
+      "y": 0,
+      "region": "grass_top",
+      "rgbaSha256": "527671e2c0b45dc8bbec3be4f8c87b6c17fd42a2881eed2fcc436266125e260d"
+    },
+    "grass_side": {
+      "x": 1,
+      "y": 0,
+      "region": "grass_side",
+      "rgbaSha256": "3d72e40c539b0a867b0ade6cea010f64dc2d20286edb5c83af91371f305d4f3d"
+    },
+    "dirt": {
+      "x": 2,
+      "y": 0,
+      "region": "dirt",
+      "rgbaSha256": "ac4eb6b051d37875b1f29d8dc6e7dfd28968d4629bf5039b974e0ebd7a7cc5a4"
+    },
+    "stone": {
+      "x": 3,
+      "y": 0,
+      "region": "stone",
+      "rgbaSha256": "55635dcef28bbcf5155bb7ffe05afc10fb92cc80d68796d60ec3532eb20d4fea"
+    },
+    "lamp": {
+      "x": 4,
+      "y": 0,
+      "region": "lamp",
+      "rgbaSha256": "a377730115a4c94070b63f70e5799746ac232a55869185d0f9a188edaf3e9eeb"
+    },
+    "lepidolite": {
+      "x": 5,
+      "y": 0,
+      "region": "lepidolite",
+      "rgbaSha256": "ef4f6e1017990997ada3a714187e7dc253c662dd21f78541e361fd06fd061646"
+    },
+    "lamp_red": {
+      "x": 6,
+      "y": 0,
+      "region": "lamp_red",
+      "rgbaSha256": "7b44a289fcace15617349247a11d15845310a6a3a1f9cfbdb1b4b22cde6e0265"
+    },
+    "lamp_green": {
+      "x": 7,
+      "y": 0,
+      "region": "lamp_green",
+      "rgbaSha256": "8217bc3d4d27527bbeb10d1d0d130cfadb76d281779276e7acfd7bc31fbf6e65"
+    },
+    "lamp_blue": {
+      "x": 8,
+      "y": 0,
+      "region": "lamp_blue",
+      "rgbaSha256": "c24b035db7483e388e958023c9a2beefd7591a9ab6a22a3ffc37d10be8be7cc4"
+    },
+    "lamp_purple": {
+      "x": 9,
+      "y": 0,
+      "region": "lamp_purple",
+      "rgbaSha256": "f5a924a30daf7c80c1ab3a82f43a14aff0251f46fa6bb546d36b72e7fa09da17"
+    },
+    "meteorite": {
+      "x": 10,
+      "y": 0,
+      "region": "meteorite",
+      "rgbaSha256": "af06f236dad93da2be03aa0c40d2169a24505b60e52fd0c1d031d5702e367cd1"
+    },
+    "sand": {
+      "x": 11,
+      "y": 0,
+      "region": "sand",
+      "rgbaSha256": "9e9707a3c58200e914473e1ae0ff3e24e5f42cba192a3908b1a31b610e943cc1"
+    },
+    "water": {
+      "x": 12,
+      "y": 0,
+      "region": "water",
+      "rgbaSha256": "b474cb2c2a93f2ed5fb74f58cfa82cda885c07d45cfbe8b20ed2c9270bc70814"
+    },
+    "granite": {
+      "x": 13,
+      "y": 0,
+      "region": "granite",
+      "rgbaSha256": "6fd184338812772f8a7821ff4bcd2ba816d5cb78dfd02ca68038d437ea091c28"
+    },
+    "limestone": {
+      "x": 14,
+      "y": 0,
+      "region": "limestone",
+      "rgbaSha256": "3ba3ca221b2fa6df9dca90899b39a8ecacf2daecab29628f45247eec52f719eb"
+    },
+    "sandstone_side": {
+      "x": 15,
+      "y": 0,
+      "region": "sandstone_side",
+      "rgbaSha256": "5885a349589eafdfa0c6bc3e1c563433a7f724004c3fc17effd45e2c699304ac"
+    },
+    "sandstone_top": {
+      "x": 0,
+      "y": 1,
+      "region": "sandstone_top",
+      "rgbaSha256": "fe9ab01fab1056dcf2d3a27029df91a53b4580c5d2b597c2622a943f4330e7eb"
+    },
+    "slate_side": {
+      "x": 1,
+      "y": 1,
+      "region": "slate_side",
+      "rgbaSha256": "549b81955d3c8e1c77c6c8b9fe4fa461cd8984595b67cc1cd297ec8421bfe475"
+    },
+    "slate_top": {
+      "x": 2,
+      "y": 1,
+      "region": "slate_top",
+      "rgbaSha256": "6367c6418f3fe90b2950598bce0672853aa254f26ea0d970a0b4af69abf647c2"
+    },
+    "basalt_side": {
+      "x": 3,
+      "y": 1,
+      "region": "basalt_side",
+      "rgbaSha256": "435eb95ae4d75167595c85472b4b42e7b404dcd9cec7f45659d4226179e02f5f"
+    },
+    "basalt_top": {
+      "x": 4,
+      "y": 1,
+      "region": "basalt_top",
+      "rgbaSha256": "b72ebee507f8675a25acabfcd77bfa3c70d99bc624f46385038ff119e19efe51"
+    },
+    "humus": {
+      "x": 5,
+      "y": 1,
+      "region": "humus",
+      "rgbaSha256": "a9e4faf2184722f9fefe0563d519f8e0c604dc5bd552ed89c9916799e5e936c7"
+    },
+    "coarse_dirt": {
+      "x": 6,
+      "y": 1,
+      "region": "coarse_dirt",
+      "rgbaSha256": "e2f7d27ac7ffa6557c4c60d55576bc581ef008e1d25672d7881d3f8ce8c95b4d"
+    },
+    "forest_floor_top": {
+      "x": 7,
+      "y": 1,
+      "region": "forest_floor_top",
+      "rgbaSha256": "88c84697b7653e5e71fb5498ada6b49a652903753722aa674bf8e1c10565c373"
+    },
+    "forest_floor_side": {
+      "x": 8,
+      "y": 1,
+      "region": "forest_floor_side",
+      "rgbaSha256": "77c8448e82a7ede605c8146a77fe92ec48737bf072f3cdbdf23a4c085d33baf2"
+    },
+    "mud": {
+      "x": 9,
+      "y": 1,
+      "region": "mud",
+      "rgbaSha256": "c426479f2fffde85b32307164d5bd38bf88b5e7f3eb8c3b4192565d93a48db76"
+    },
+    "clay": {
+      "x": 10,
+      "y": 1,
+      "region": "clay",
+      "rgbaSha256": "8a112925cd4b0340e8af49b405552ffb1ecf13df50216cc2c7ad3738417a9019"
+    },
+    "gravel": {
+      "x": 11,
+      "y": 1,
+      "region": "gravel",
+      "rgbaSha256": "35aaf43f47efd97ce580ceba441bc6e3aca3fd7c7bd708764397c84458e66369"
+    },
+    "lime_plaster": {
+      "x": 12,
+      "y": 1,
+      "region": "lime_plaster",
+      "rgbaSha256": "e080a49bc996ca308806bf1ac45accd6479debeeccfc375cefe534b3b788dd88"
+    },
+    "ochre_plaster": {
+      "x": 13,
+      "y": 1,
+      "region": "ochre_plaster",
+      "rgbaSha256": "95380386c79764a543f4c3882711014d97f1096efb8461d94329322cdcd208cc"
+    },
+    "terracotta": {
+      "x": 14,
+      "y": 1,
+      "region": "terracotta",
+      "rgbaSha256": "5d72040461a9803410585cc3680cb140a5ca163dcf58c707894f2fb1c10a286a"
+    },
+    "polished_stone": {
+      "x": 15,
+      "y": 1,
+      "region": "polished_stone",
+      "rgbaSha256": "9f5ae7e888af17d78569b8a46085a09997d4cd84b9419506ecb19bb95d35cb34"
+    },
+    "short_grass": {
+      "x": 0,
+      "y": 2,
+      "region": "short_grass",
+      "rgbaSha256": "02c3051f5f8f5ad49d300da57546d50abd32d9e6e075ef544f926a5e8b8e9290"
+    },
+    "tall_grass": {
+      "x": 1,
+      "y": 2,
+      "region": "tall_grass",
+      "rgbaSha256": "e47f57a3268d575b2ee0e562a376ddbe4f9f7d991658da871f88838a804c7bd3"
+    },
+    "fern": {
+      "x": 2,
+      "y": 2,
+      "region": "fern",
+      "rgbaSha256": "5498498e28bf53a440616c57f2c59ca5dc6785d73297d30139d9e4c66899bb05"
+    },
+    "clover": {
+      "x": 3,
+      "y": 2,
+      "region": "clover",
+      "rgbaSha256": "b2c3af5450a9d463622763d5ab4c016a80cb4476d788664e8d045d4878c1bedf"
+    },
+    "nettle": {
+      "x": 4,
+      "y": 2,
+      "region": "nettle",
+      "rgbaSha256": "53dee1847f001698e90d4adaa29c47699bf1439af80695ee4b5859b6bc749e49"
+    },
+    "plantain": {
+      "x": 5,
+      "y": 2,
+      "region": "plantain",
+      "rgbaSha256": "4c4fd73fe77c4a03c85ec9750db7a2e4ef5c4f76a955242cf89ebc54256f76d4"
+    },
+    "poppy": {
+      "x": 6,
+      "y": 2,
+      "region": "poppy",
+      "rgbaSha256": "f67144d88c2aa72810b6c7e36fcc5e736a21a47238d61a43ca4a5f93dd822158"
+    },
+    "cornflower": {
+      "x": 7,
+      "y": 2,
+      "region": "cornflower",
+      "rgbaSha256": "43c9df4d444a60d2b45601afb61b79da2f4a78e0c33f2a93a869e58265756f5a"
+    },
+    "chamomile": {
+      "x": 8,
+      "y": 2,
+      "region": "chamomile",
+      "rgbaSha256": "6603494163c361cd3969a5ee85d4f378571733313a7dc98a2a6782437be50d4d"
+    },
+    "dandelion": {
+      "x": 9,
+      "y": 2,
+      "region": "dandelion",
+      "rgbaSha256": "78a3545c9648735a54717fca48d8e4d7275959facdf1d7e968cc59e9bcaafa0f"
+    },
+    "reed": {
+      "x": 10,
+      "y": 2,
+      "region": "reed",
+      "rgbaSha256": "b33f0995d60803c533afa351b1160ca5bfecaa0f0b3c477d082006502979e835"
+    },
+    "heather": {
+      "x": 11,
+      "y": 2,
+      "region": "heather",
+      "rgbaSha256": "2fca65c63c1b4ffc3a1a16f312a54eb06432f64a45561333b20cadba7ac06ace"
+    },
+    "crocus": {
+      "x": 12,
+      "y": 2,
+      "region": "crocus",
+      "rgbaSha256": "178fb4888f5e5dda6d678d0f971230f3cd1e0097d3c9f29bb97632d2a8e2d202"
+    },
+    "dune_grass": {
+      "x": 13,
+      "y": 2,
+      "region": "dune_grass",
+      "rgbaSha256": "b5a9c14dd0e879de3287053e85904cf19607b68440db4cf66e819d221d287146"
+    },
+    "bush_sapling": {
+      "x": 0,
+      "y": 3,
+      "region": "bush_sapling",
+      "rgbaSha256": "ee7c495c938a3c38a786697d63f55fce094ac1725f04f8d9d684c04ae4583140"
+    },
+    "bush_leaves": {
+      "x": 1,
+      "y": 3,
+      "region": "bush_leaves",
+      "rgbaSha256": "4777e387029c51ff91a8f4f537dda45123b5a76f4cc9bbf028813ae0685d8f53"
+    },
+    "strawberry_bush_few": {
+      "x": 2,
+      "y": 3,
+      "region": "strawberry_bush_few",
+      "rgbaSha256": "886402df0ac59ba42a4ff50ab86b42a13588a919fb60cb4e78befb52927c99a3"
+    },
+    "strawberry_bush_full": {
+      "x": 3,
+      "y": 3,
+      "region": "strawberry_bush_full",
+      "rgbaSha256": "1962727fc874204a6a5b80e1ca99bf75e6adb901af9f49a7c3c0d9814036e474"
+    },
+    "blackberry_bush_few": {
+      "x": 4,
+      "y": 3,
+      "region": "blackberry_bush_few",
+      "rgbaSha256": "eb6c25d9969ebb3662920dcd79b777299b92c0a0b24083d113206e89f617bc5d"
+    },
+    "blackberry_bush_full": {
+      "x": 5,
+      "y": 3,
+      "region": "blackberry_bush_full",
+      "rgbaSha256": "78658c70c0702287e7bcd64c64c325d8e6e96d5212319d2a8f0e09a2f49ac5ae"
+    },
+    "chili_bush_few": {
+      "x": 6,
+      "y": 3,
+      "region": "chili_bush_few",
+      "rgbaSha256": "98358da7d592d7c38ed17b5f08b101748eb25939753017640a734ca2f48088a8"
+    },
+    "chili_bush_full": {
+      "x": 7,
+      "y": 3,
+      "region": "chili_bush_full",
+      "rgbaSha256": "d3633f0559a3e75452d89670aca95e16ab4e9d40cb84dbeeb12d99fbd5d2e565"
+    },
+    "hazel_bush_few": {
+      "x": 8,
+      "y": 3,
+      "region": "hazel_bush_few",
+      "rgbaSha256": "d603c4e3c6e32c5b50650f06ea130f4320514784679c5647f27730f1488dba87"
+    },
+    "hazel_bush_full": {
+      "x": 9,
+      "y": 3,
+      "region": "hazel_bush_full",
+      "rgbaSha256": "9387022906e2ce3bf3139870d3a8853fb507a144d3147417c9b6cff1419f103b"
+    },
+    "blueberry_bush_few": {
+      "x": 10,
+      "y": 3,
+      "region": "blueberry_bush_few",
+      "rgbaSha256": "7cb2fcb62b8c923c217b93fff0012d7c463bc87bdb6f99b494e947476a46f0c5"
+    },
+    "blueberry_bush_full": {
+      "x": 11,
+      "y": 3,
+      "region": "blueberry_bush_full",
+      "rgbaSha256": "0392dc371ab3ee6790cd7b4a30dcaa41de68f2a21dacd47c8aa5f0c8ed048b3c"
+    },
+    "blueberry_bush": {
+      "x": 12,
+      "y": 3,
+      "region": "blueberry_bush",
+      "rgbaSha256": "3d0e45f08ae8b707a138d996915aa912b0def63d54a2133372b4c291b683b091"
+    },
+    "strawberry": {
+      "x": 0,
+      "y": 4,
+      "region": "strawberry",
+      "rgbaSha256": "cde37064a39d4025981d1bec863598560ceff0a3878fc930acb72db09eadbd5c"
+    },
+    "blackberry": {
+      "x": 1,
+      "y": 4,
+      "region": "blackberry",
+      "rgbaSha256": "460e2bd046a5781fcccdf3a93ffb817782b223dc1b820909a1864e860adcfad9"
+    },
+    "chili_pepper": {
+      "x": 2,
+      "y": 4,
+      "region": "chili_pepper",
+      "rgbaSha256": "295881838ef1e0ede062a19c4680420d2378e5d4e84ed1185f3fd7425b5fc2f4"
+    },
+    "hazelnut": {
+      "x": 3,
+      "y": 4,
+      "region": "hazelnut",
+      "rgbaSha256": "25908d6ece682cd6c708d8f3a69a3c37668c222f5bc1dd70a7882b9e41c46450"
+    },
+    "blueberry": {
+      "x": 4,
+      "y": 4,
+      "region": "blueberry",
+      "rgbaSha256": "4d2ace4d86def1950d684e84be73b850b84449fb3d27b23f9ab57d6684396330"
+    },
+    "spruce_log_side": {
+      "x": 0,
+      "y": 5,
+      "region": "spruce_log_side",
+      "rgbaSha256": "a9034790316348b050ec71db1987cd3ec3217f71ee801138e5e73e54d231228b"
+    },
+    "spruce_log_top": {
+      "x": 1,
+      "y": 5,
+      "region": "spruce_log_top",
+      "rgbaSha256": "0c842fb27092710c861e41878357a371eb63905fbc92600ac4f944f2ca6e9ac5"
+    },
+    "pine_log_side": {
+      "x": 2,
+      "y": 5,
+      "region": "pine_log_side",
+      "rgbaSha256": "27152c86132834f3171bcb8b1a3936f78218b27a4bab44e326eddf9852bd0f05"
+    },
+    "pine_log_top": {
+      "x": 3,
+      "y": 5,
+      "region": "pine_log_top",
+      "rgbaSha256": "184fb26f97734ae2a3357998a3f655fe486f69b99afffbab2bd6ac1b547e39aa"
+    },
+    "beech_log_side": {
+      "x": 4,
+      "y": 5,
+      "region": "beech_log_side",
+      "rgbaSha256": "18bebb9c6308ee1b38c3476e9f4f4db8a89a6139415cbd378b6ce0e46a183b78"
+    },
+    "beech_log_top": {
+      "x": 5,
+      "y": 5,
+      "region": "beech_log_top",
+      "rgbaSha256": "099aa16d51c2b352c88e10670fb42683fed94ff71cd4d57da2dcfa26224eca8f"
+    },
+    "linden_log_side": {
+      "x": 6,
+      "y": 5,
+      "region": "linden_log_side",
+      "rgbaSha256": "b04903224174600ffaa7806a4f86837e9665b939e23c339c65b60ed39cd087d8"
+    },
+    "linden_log_top": {
+      "x": 7,
+      "y": 5,
+      "region": "linden_log_top",
+      "rgbaSha256": "b05c3d2bfe39db79566b0bd625ddcec9d21f5db01c0c7d373d4b6a5fb870cd1a"
+    },
+    "oak_log_side": {
+      "x": 8,
+      "y": 5,
+      "region": "oak_log_side",
+      "rgbaSha256": "746ff46cb8dde7cd52392bea3cb254071282a6b8d7188674afc2bea440260f63"
+    },
+    "oak_log_top": {
+      "x": 9,
+      "y": 5,
+      "region": "oak_log_top",
+      "rgbaSha256": "537db3fe1bf2e60689ce6347b09be4eb0b314d169a62405b5651daa62ffc57b1"
+    },
+    "birch_log_side": {
+      "x": 10,
+      "y": 5,
+      "region": "birch_log_side",
+      "rgbaSha256": "6492dcb7fe4198bed4e063b3bd314553f2a96d81e17af855d21fa6cd29ba4d32"
+    },
+    "birch_log_top": {
+      "x": 11,
+      "y": 5,
+      "region": "birch_log_top",
+      "rgbaSha256": "ab9734a30ad7744c80af31be725f1f285d0a116479f14d7dfa5e6c2a01844b58"
+    },
+    "pine_log_upper_side": {
+      "x": 12,
+      "y": 5,
+      "region": "pine_log_upper_side",
+      "rgbaSha256": "151a402bb06873d1c9b1181e73e8559199e73af3b33a16308abec7addd70d939"
+    },
+    "pine_log_resin_side": {
+      "x": 13,
+      "y": 5,
+      "region": "pine_log_resin_side",
+      "rgbaSha256": "1d7a3ff747d85a1983575f0fa53b155c7feefc942f5d28ca3838381fc7cd9eb0"
+    },
+    "pine_bark_overlay_dense": {
+      "x": 14,
+      "y": 5,
+      "region": "pine_bark_overlay_dense",
+      "rgbaSha256": "5f25091ece280ecfdf71f9fa796e010c6b0ddfab5bd710cbdbe9d86e4105ff50"
+    },
+    "pine_bark_overlay_medium": {
+      "x": 15,
+      "y": 5,
+      "region": "pine_bark_overlay_medium",
+      "rgbaSha256": "1832437f3c54b01655965c42209f879863f4ea54393478409b0d93689bad2fe5"
+    },
+    "pine_bark_overlay_sparse": {
+      "x": 15,
+      "y": 6,
+      "region": "pine_bark_overlay_sparse",
+      "rgbaSha256": "a18807630f1ac55c135abda2d1f47a7d495245a10076408389d9595729ef4e27"
+    },
+    "spruce_stripped_side": {
+      "x": 0,
+      "y": 6,
+      "region": "spruce_stripped_side",
+      "rgbaSha256": "519be667fc487bead9a8a30c126ab8ada912fa5a45e0cee2bc57af89d4e87c95"
+    },
+    "spruce_stripped_top": {
+      "x": 1,
+      "y": 6,
+      "region": "spruce_stripped_top",
+      "rgbaSha256": "0cba8a0c0531b8c14f5e4c04b04bd9fb0da699b917259e58cffdb32bd8479156"
+    },
+    "pine_stripped_side": {
+      "x": 2,
+      "y": 6,
+      "region": "pine_stripped_side",
+      "rgbaSha256": "6eec2e018554268425ca7df01eccedd9a2f006c0af449be6f818fcccfc5957d8"
+    },
+    "pine_stripped_top": {
+      "x": 3,
+      "y": 6,
+      "region": "pine_stripped_top",
+      "rgbaSha256": "de4074f1853cd444e35043200e906b945927b8ac49e37b971adf62b3572b43c9"
+    },
+    "beech_stripped_side": {
+      "x": 4,
+      "y": 6,
+      "region": "beech_stripped_side",
+      "rgbaSha256": "8beeb349792ed21d468c755100621901c4da7fb8fdc8e5d93ca3bf2a1a6a3c32"
+    },
+    "beech_stripped_top": {
+      "x": 5,
+      "y": 6,
+      "region": "beech_stripped_top",
+      "rgbaSha256": "3790c307864b33fa98e8d7885eaf0210e2260f382cf7e03a255f60ab4b8414a4"
+    },
+    "linden_stripped_side": {
+      "x": 6,
+      "y": 6,
+      "region": "linden_stripped_side",
+      "rgbaSha256": "be281d495c81ca3704dd8734b7025556e133529ca24ff9c9853f0899b3c3f028"
+    },
+    "linden_stripped_top": {
+      "x": 7,
+      "y": 6,
+      "region": "linden_stripped_top",
+      "rgbaSha256": "813ac4ff2754c959b973cfca19d0716e58062b4e952b085dbd884271566e1235"
+    },
+    "oak_stripped_side": {
+      "x": 8,
+      "y": 6,
+      "region": "oak_stripped_side",
+      "rgbaSha256": "26e03de0fa8a0ce5b6a340463bb897f6b31621e419ae831369e848833c696703"
+    },
+    "oak_stripped_top": {
+      "x": 9,
+      "y": 6,
+      "region": "oak_stripped_top",
+      "rgbaSha256": "beca460ef7be19d69759b61505c1d10e92fb80721839b18f7c3eb465cb86f113"
+    },
+    "birch_stripped_side": {
+      "x": 10,
+      "y": 6,
+      "region": "birch_stripped_side",
+      "rgbaSha256": "59391bf1f5acb6e203f37a970491bf9e8a18211cc14e3ef78b60b54d75981d72"
+    },
+    "birch_stripped_top": {
+      "x": 11,
+      "y": 6,
+      "region": "birch_stripped_top",
+      "rgbaSha256": "a32214841856f851f4237855c453280fd18b8260c5fd6bc94134183c323255f3"
+    },
+    "spruce_planks": {
+      "x": 0,
+      "y": 7,
+      "region": "spruce_planks",
+      "rgbaSha256": "48b51261aad93b761f1ce4f4379e4f9d0dfd5bc80d3742d9dcbefe30c05fe6af"
+    },
+    "pine_planks": {
+      "x": 1,
+      "y": 7,
+      "region": "pine_planks",
+      "rgbaSha256": "c588b7f4ed28772feda700775de897f89a1a2cfef0651faa17a9c78c2d6d17b3"
+    },
+    "beech_planks": {
+      "x": 2,
+      "y": 7,
+      "region": "beech_planks",
+      "rgbaSha256": "84e80bdbf14aae42a3295ba87cf3feba9467872f0bd46ec1e10aa6f3728cec6f"
+    },
+    "linden_planks": {
+      "x": 3,
+      "y": 7,
+      "region": "linden_planks",
+      "rgbaSha256": "96cb100fe261fe4040add0a33f9f79d3e3f3bf84247be8e501eca883dfa1055f"
+    },
+    "oak_planks": {
+      "x": 4,
+      "y": 7,
+      "region": "oak_planks",
+      "rgbaSha256": "0ea1f9a36b49347f0dfe70e2e42cfd7139da1df5a01409eaa2e09066f12c1b82"
+    },
+    "birch_planks": {
+      "x": 5,
+      "y": 7,
+      "region": "birch_planks",
+      "rgbaSha256": "3a2d953fd978f005fe4f89ca70f0d5558caab0e63d0f6f1f26e0b71f82a6347d"
+    },
+    "spruce_leaves": {
+      "x": 6,
+      "y": 7,
+      "region": "spruce_leaves",
+      "rgbaSha256": "4d40022ff781a612f3fec1f8deb7cabde45c06614248b8f21cea096e18e03918"
+    },
+    "pine_leaves": {
+      "x": 7,
+      "y": 7,
+      "region": "pine_leaves",
+      "rgbaSha256": "6775bdf2c0c01653850ebc5e80414045a1ad66c94fab981ec7c0f6a18b76ff6c"
+    },
+    "beech_leaves": {
+      "x": 8,
+      "y": 7,
+      "region": "beech_leaves",
+      "rgbaSha256": "80a671668bcdcdf32ff0984713322221a6a2f463d5b0b2e72aec4fbffb72fb7b"
+    },
+    "linden_leaves": {
+      "x": 9,
+      "y": 7,
+      "region": "linden_leaves",
+      "rgbaSha256": "f5bb260b161892e4beec82e3fd34ff26f046521ce9d94bb86c45351c1bf6ea97"
+    },
+    "oak_leaves": {
+      "x": 10,
+      "y": 7,
+      "region": "oak_leaves",
+      "rgbaSha256": "eb2c885163ff8ce7f5366bbf4206e2faf8ece101aa26fa642c01572dd8cfbabc"
+    },
+    "birch_leaves": {
+      "x": 11,
+      "y": 7,
+      "region": "birch_leaves",
+      "rgbaSha256": "7788d6662ec4338bd99752aa273242fb4ca178ecf0cb0fd6745af0d6a6fce476"
+    },
+    "linden_leaves_flowering": {
+      "x": 12,
+      "y": 7,
+      "region": "linden_leaves_flowering",
+      "rgbaSha256": "7bf9d05c7c117e436b638b952c7106a4fa7c764084b01821d244235f5499972b"
+    },
+    "beech_leaf_litter": {
+      "x": 13,
+      "y": 7,
+      "region": "beech_leaf_litter",
+      "rgbaSha256": "b1dd53ae36cab4387b7d70667296159ffabf7426d44e43b6eb0a0a94607a5cd3"
+    },
+    "oak_leaf_litter": {
+      "x": 14,
+      "y": 7,
+      "region": "oak_leaf_litter",
+      "rgbaSha256": "91313d71f9914c89cb32caa1df5f91d70a34f86b7666ebbfdb140ecd55e80503"
+    },
+    "spruce_wreath": {
+      "x": 15,
+      "y": 7,
+      "region": "spruce_wreath",
+      "rgbaSha256": "495913b98d3b3552d876a90535152e964b98b4c3294a21c1b1fdec2e52bb5287"
+    },
+    "spruce_sapling": {
+      "x": 0,
+      "y": 8,
+      "region": "spruce_sapling",
+      "rgbaSha256": "08862f9d5b9068dc888095defbfbe4b8a819a168e8117ac5beb4cfa8b675523c"
+    },
+    "pine_sapling": {
+      "x": 1,
+      "y": 8,
+      "region": "pine_sapling",
+      "rgbaSha256": "9c2cc8fb181b6b32f7c4d3423bd809c49a73e53c8ef0b81fd9c69e33f177ab27"
+    },
+    "beech_sapling": {
+      "x": 2,
+      "y": 8,
+      "region": "beech_sapling",
+      "rgbaSha256": "cad5f45a63981671584633d99a5bb77a6632c1273be4e51365b9e6b88695364d"
+    },
+    "linden_sapling": {
+      "x": 3,
+      "y": 8,
+      "region": "linden_sapling",
+      "rgbaSha256": "88332642934e16a4328327629251dc55f8a8f99acd7cf2691d8e2693720913bf"
+    },
+    "oak_sapling": {
+      "x": 4,
+      "y": 8,
+      "region": "oak_sapling",
+      "rgbaSha256": "c370e85acecc67b0629d6b87af7dc07ee8eedd18b7460b33b1e4ebce40cfc26e"
+    },
+    "birch_sapling": {
+      "x": 5,
+      "y": 8,
+      "region": "birch_sapling",
+      "rgbaSha256": "0f1bf6a6457a5812edfe8a625549c2e26c33228e1a27f549e842a246fb25ddc9"
+    },
+    "spruce_cone": {
+      "x": 6,
+      "y": 8,
+      "region": "spruce_cone",
+      "rgbaSha256": "dd1a9e14cbaad7ffa56bbfb7c8ef729f0fe6a94f19a05dd079aff6100c1ae85b"
+    },
+    "pine_cone": {
+      "x": 7,
+      "y": 8,
+      "region": "pine_cone",
+      "rgbaSha256": "bd72d0406db0ddce0318a64677037b77a1cb6630a296c89ae2a7a295828ecc92"
+    },
+    "resin": {
+      "x": 8,
+      "y": 8,
+      "region": "resin",
+      "rgbaSha256": "5e60b4f35289790fdc150ad2cf6d84b89a2ceb88ff7c7a3b8f5b8170cae1efcf"
+    },
+    "beechnuts": {
+      "x": 9,
+      "y": 8,
+      "region": "beechnuts",
+      "rgbaSha256": "046d0c20ed33d42c26edf4c22af94c987775fa42dd52685e48f888e1fa95707d"
+    },
+    "linden_flower": {
+      "x": 10,
+      "y": 8,
+      "region": "linden_flower",
+      "rgbaSha256": "7f68698bd1ecc8ae96e99a4b6db0af439c9cb79bce29874d358182d90be29f82"
+    },
+    "acorn": {
+      "x": 11,
+      "y": 8,
+      "region": "acorn",
+      "rgbaSha256": "bc263e4a345fd476107363c7869885385cf3f4c7714f8d718775fa8748744ba2"
+    },
+    "birch_bark": {
+      "x": 12,
+      "y": 8,
+      "region": "birch_bark",
+      "rgbaSha256": "662a882bfe199fe103044bd9f1c4bfad5301c7a30dd171856b4010355f950d19"
+    },
+    "axe": {
+      "x": 13,
+      "y": 8,
+      "region": "axe",
+      "rgbaSha256": "bccd64c95b54f31c756034423d6e1ffd79ec431baaa5959c2f22e5f6d734c8f0"
+    },
+    "stick": {
+      "x": 0,
+      "y": 9,
+      "region": "stick",
+      "rgbaSha256": "89822f4471d1745d6e07f46f8e8e57e26bdb2be98584f3d437461cc3864788f4"
+    },
+    "pickaxe": {
+      "x": 1,
+      "y": 9,
+      "region": "pickaxe",
+      "rgbaSha256": "ae93815ecc0a6dd7331c89c04c8ad4094857475933ac98e75c1c6e9ef4a328a0"
+    },
+    "shovel": {
+      "x": 2,
+      "y": 9,
+      "region": "shovel",
+      "rgbaSha256": "d3b0917b3b3c4f61631f5b106d0a12d0833d963ff2bfad101d506c22cc3ec5c7"
+    },
+    "dark_planks": {
+      "x": 3,
+      "y": 9,
+      "region": "dark_planks",
+      "rgbaSha256": "c7ccfd7804a1a9461c6290c792439d28a6df47313912ce24584c840035b9ea66"
+    },
+    "snow": {
+      "x": 4,
+      "y": 9,
+      "region": "snow",
+      "rgbaSha256": "75c96338321a617e183e0c7ab70043c639ce843c893c43ce976bc5b05770b147"
+    },
+    "moss_top": {
+      "x": 5,
+      "y": 9,
+      "region": "moss_top",
+      "rgbaSha256": "6721309e0f6c2a0f79cbc4f4240e181cb9a352ee849afb5430cbea97df19a453"
+    },
+    "moss_side": {
+      "x": 6,
+      "y": 9,
+      "region": "moss_side",
+      "rgbaSha256": "50a5808f5f4b2e73f7f96545dd7c92a1659a5999501ccaaf1ceb8e816a469e87"
+    },
+    "moss_carpet": {
+      "x": 7,
+      "y": 9,
+      "region": "moss_carpet",
+      "rgbaSha256": "2de40fe0ef70e3bd262cdbd6873bad0ce2deef79bce51eac6b2b00861ff329ce"
+    },
+    "moss_carpet_2": {
+      "x": 8,
+      "y": 9,
+      "region": "moss_carpet_2",
+      "rgbaSha256": "1c4014854a5628522a837b54dd407765f35208db1ba297b3e98f39a5c54e992a"
+    },
+    "moss_carpet_3": {
+      "x": 9,
+      "y": 9,
+      "region": "moss_carpet_3",
+      "rgbaSha256": "24893714fb9721ceb8234409facd80c8e1b371829fa5744dfb32a83f5f32fc42"
+    },
+    "tool_handle_source": {
+      "x": 0,
+      "y": 10,
+      "region": "tool_handle_source",
+      "rgbaSha256": "93f4e2f35491ed6a5d8af3dfedd632eae6a1cc175c070b62d90d6974187d40e1"
+    },
+    "jablon/pien_bok.png": {
+      "x": 0,
+      "y": 11,
+      "region": "jablon/pien_bok.png",
+      "rgbaSha256": "657c76325dab3657b013e847abe75f4973fadcbded57326bca6fce6696918dce"
+    },
+    "jablon/pien_gora.png": {
+      "x": 1,
+      "y": 11,
+      "region": "jablon/pien_gora.png",
+      "rgbaSha256": "c8d1d7d9cb29b2e513a23dc20789d9b56b5c1acd8efd9e8cd2bca140c4675d1e"
+    },
+    "jablon/okorowany_bok.png": {
+      "x": 2,
+      "y": 11,
+      "region": "jablon/okorowany_bok.png",
+      "rgbaSha256": "4baa9d4c0ed34874fd18a281c50bf296e32adac6f820e834906a780370b2bb06"
+    },
+    "jablon/okorowany_gora.png": {
+      "x": 3,
+      "y": 11,
+      "region": "jablon/okorowany_gora.png",
+      "rgbaSha256": "703e21a3bcc1fa073f1829bff3221cf09df78fd64e7b297738ec8a4eb5e03164"
+    },
+    "jablon/deski.png": {
+      "x": 4,
+      "y": 11,
+      "region": "jablon/deski.png",
+      "rgbaSha256": "87fb6be73a2d177f409a37aed0268dc450eda0ce25773cee63dca640ddc0dbc6"
+    },
+    "jablon/liscie.png": {
+      "x": 5,
+      "y": 11,
+      "region": "jablon/liscie.png",
+      "rgbaSha256": "affa82844dd86d3ddce4365e5c754769a76080df25ec8bf533140ab3b0470de7"
+    },
+    "jablon/sadzonka.png": {
+      "x": 6,
+      "y": 11,
+      "region": "jablon/sadzonka.png",
+      "rgbaSha256": "2d1ea0c3fd5ea210b7913f028d377dc1f6347d505c21b1fd02a51eb07deb65a6"
+    },
+    "jablon/opadle_liscie.png": {
+      "x": 7,
+      "y": 11,
+      "region": "jablon/opadle_liscie.png",
+      "rgbaSha256": "d0548f71fdbe750aa290c2bd1ce0144ed4849ac299663279d86d775d625eba10"
+    },
+    "jablon/jablko.png": {
+      "x": 8,
+      "y": 11,
+      "region": "jablon/jablko.png",
+      "rgbaSha256": "2e1f4c14d0c1ed4ab85f5b812b50f6fd446468dfce9d023553fb7828aab87c87"
+    },
+    "jablon/liscie_jablka.png": {
+      "x": 9,
+      "y": 11,
+      "region": "jablon/liscie_jablka.png",
+      "rgbaSha256": "84458d9ebb38a17df4858d121a53bbb462a95a7ec2c3913d844c062568d24621"
+    },
+    "olcha/pien_bok.png": {
+      "x": 10,
+      "y": 11,
+      "region": "olcha/pien_bok.png",
+      "rgbaSha256": "3363c245e999b5ce577390c117beae6cd17528890d1b7668b627cbc5a182aeee"
+    },
+    "olcha/pien_gora.png": {
+      "x": 11,
+      "y": 11,
+      "region": "olcha/pien_gora.png",
+      "rgbaSha256": "f87e3e1d783a28e1bb4eda2c854e4e8ee36ce72a6ab58ac3272cbe8967049801"
+    },
+    "olcha/okorowany_bok.png": {
+      "x": 12,
+      "y": 11,
+      "region": "olcha/okorowany_bok.png",
+      "rgbaSha256": "e5dc5143cb4a8d91f7f98f547a84fcb23d3fb6fb06c4d583ff446b56b019e423"
+    },
+    "olcha/okorowany_gora.png": {
+      "x": 13,
+      "y": 11,
+      "region": "olcha/okorowany_gora.png",
+      "rgbaSha256": "ebadff43e57a5822f4fbbb180423909a36a6e01505968fbab9cd4488680c9720"
+    },
+    "olcha/deski.png": {
+      "x": 14,
+      "y": 11,
+      "region": "olcha/deski.png",
+      "rgbaSha256": "a06422f71c3f4832b0c56497674e74933e92c7f839bcdc98b151a2819ecf744e"
+    },
+    "olcha/liscie.png": {
+      "x": 15,
+      "y": 11,
+      "region": "olcha/liscie.png",
+      "rgbaSha256": "b19f1256966abb6640131315bae396763ea40b6e8ca5f6c2cb750c04b68270e9"
+    },
+    "olcha/sadzonka.png": {
+      "x": 0,
+      "y": 12,
+      "region": "olcha/sadzonka.png",
+      "rgbaSha256": "c3e9fb049d81bb02069536a55afdb805419368222e380056227ac680ca82f199"
+    },
+    "olcha/opadle_liscie.png": {
+      "x": 1,
+      "y": 12,
+      "region": "olcha/opadle_liscie.png",
+      "rgbaSha256": "a8dfd6cebc31d8e8cef9fbf4821f65fedc9eb0984114ffdd38044761f1f63554"
+    },
+    "olcha/szyszki.png": {
+      "x": 2,
+      "y": 12,
+      "region": "olcha/szyszki.png",
+      "rgbaSha256": "b76d25681c98c8d8a1776399e9fdf9b972e9cb0b4766bb1a667a23d144258436"
+    },
+    "wierzba/pien_bok.png": {
+      "x": 3,
+      "y": 12,
+      "region": "wierzba/pien_bok.png",
+      "rgbaSha256": "06475abf8bf626a68095ce71d317c6339a66da54a75dea04e4ddc111b0e4bb79"
+    },
+    "wierzba/pien_gora.png": {
+      "x": 4,
+      "y": 12,
+      "region": "wierzba/pien_gora.png",
+      "rgbaSha256": "d7a987ddff8949bf95ccfd206ffd2a0041083b17423cbdc53ee82831ed850150"
+    },
+    "wierzba/okorowany_bok.png": {
+      "x": 5,
+      "y": 12,
+      "region": "wierzba/okorowany_bok.png",
+      "rgbaSha256": "405b35cb0450565b42d6d4e96024389df79cbb3182c87785f3e40516a303a12a"
+    },
+    "wierzba/okorowany_gora.png": {
+      "x": 6,
+      "y": 12,
+      "region": "wierzba/okorowany_gora.png",
+      "rgbaSha256": "7881c4286952ff52e08e663d16046c2dac33353579e24106d9bc68df6f708973"
+    },
+    "wierzba/deski.png": {
+      "x": 7,
+      "y": 12,
+      "region": "wierzba/deski.png",
+      "rgbaSha256": "ad945078f11c700b6aebd29ec652173adfe5ba926d5650ee3531ae585c7db293"
+    },
+    "wierzba/liscie.png": {
+      "x": 8,
+      "y": 12,
+      "region": "wierzba/liscie.png",
+      "rgbaSha256": "c5016573e17827a94b37113f7831a61effd7fe6ec4f649122f4c2399d447e31d"
+    },
+    "wierzba/sadzonka.png": {
+      "x": 9,
+      "y": 12,
+      "region": "wierzba/sadzonka.png",
+      "rgbaSha256": "3c183dbaec5d97199634e5eba2c7784e57b9fa69ff8a9bf8e5beb8803db05cae"
+    },
+    "wierzba/opadle_liscie.png": {
+      "x": 10,
+      "y": 12,
+      "region": "wierzba/opadle_liscie.png",
+      "rgbaSha256": "e2dabb73b432e17e85b621d23295cb74fbe8d8d3e191a02f5e1f4d29989e43a3"
+    },
+    "wierzba/bazie.png": {
+      "x": 11,
+      "y": 12,
+      "region": "wierzba/bazie.png",
+      "rgbaSha256": "e229443f426585389be54bb5eb25621ce8cffdc50526b74781d0455944d800f1"
+    },
+    "acacia/log_side.png": {
+      "x": 12,
+      "y": 12,
+      "region": "acacia/log_side.png",
+      "rgbaSha256": "239358840d8b62e9f04341f62b296bead2b5afe42450817ded5e784c9b07f41c"
+    },
+    "acacia/log_top.png": {
+      "x": 13,
+      "y": 12,
+      "region": "acacia/log_top.png",
+      "rgbaSha256": "81998abb38e18ab1a11bcb8f2ce44a42ba23d53ab2b58c16a1c33b710c7edd9b"
+    },
+    "acacia/stripped_side.png": {
+      "x": 14,
+      "y": 12,
+      "region": "acacia/stripped_side.png",
+      "rgbaSha256": "1e6e752ff126152101614ef64a8434f9229470595e9914857ba56222a2221177"
+    },
+    "acacia/stripped_top.png": {
+      "x": 15,
+      "y": 12,
+      "region": "acacia/stripped_top.png",
+      "rgbaSha256": "db0848564beba6e42f8f14dbadcc0a9d548eefbebc2ed9ef9646bd3bc36a31af"
+    },
+    "acacia/planks.png": {
+      "x": 0,
+      "y": 13,
+      "region": "acacia/planks.png",
+      "rgbaSha256": "e65eeb48664d686089cb94365b362abab687d83ce1f5c1c53e7a5cac32529da4"
+    },
+    "acacia/leaves.png": {
+      "x": 1,
+      "y": 13,
+      "region": "acacia/leaves.png",
+      "rgbaSha256": "618316b747666f10bb4cd0869d7da02e1f24083751f7bef62cab0bfec2908daf"
+    },
+    "acacia/sapling.png": {
+      "x": 2,
+      "y": 13,
+      "region": "acacia/sapling.png",
+      "rgbaSha256": "f5ad8df3d7419fe066123a9b07f197a95d8e91f34a1b1459df69c59144aa6624"
+    },
+    "acacia/leaves_variant.png": {
+      "x": 3,
+      "y": 13,
+      "region": "acacia/leaves_variant.png",
+      "rgbaSha256": "34c0497b4bfcb4dada9e086bd1dc898a6d8e2b4ac4cca2f6d8c6f9cd45f94631"
+    },
+    "bald_cypress/log_side.png": {
+      "x": 4,
+      "y": 13,
+      "region": "bald_cypress/log_side.png",
+      "rgbaSha256": "b9462a10d68315ba2ed45292d892c60dacf4efc86ab81dd7eb316526f18d8eaa"
+    },
+    "bald_cypress/log_top.png": {
+      "x": 5,
+      "y": 13,
+      "region": "bald_cypress/log_top.png",
+      "rgbaSha256": "b0f366e0e38e1956abacae0c6c15b834bf9f2881beb87c8290fc226c696329b6"
+    },
+    "bald_cypress/stripped_side.png": {
+      "x": 6,
+      "y": 13,
+      "region": "bald_cypress/stripped_side.png",
+      "rgbaSha256": "ef6b77d7891c488805bbd771a937cea203e4977c54273f1c74cf584007646a05"
+    },
+    "bald_cypress/stripped_top.png": {
+      "x": 7,
+      "y": 13,
+      "region": "bald_cypress/stripped_top.png",
+      "rgbaSha256": "d6896e9fd21b883895b61a83cad581a6e8ce6701d65cf95045a91ab69be51180"
+    },
+    "bald_cypress/planks.png": {
+      "x": 8,
+      "y": 13,
+      "region": "bald_cypress/planks.png",
+      "rgbaSha256": "c28569795aa28887d1e534d76de9dcd8ec049034250acd02dd56d65d05deec6f"
+    },
+    "bald_cypress/leaves.png": {
+      "x": 9,
+      "y": 13,
+      "region": "bald_cypress/leaves.png",
+      "rgbaSha256": "5fcb0fb05f8fba583a64fb16011fb329c84c861025908f1df51e79d7803efed5"
+    },
+    "bald_cypress/sapling.png": {
+      "x": 10,
+      "y": 13,
+      "region": "bald_cypress/sapling.png",
+      "rgbaSha256": "e879ba5ad28253fe7308a15c0d5aa6ddd03b07f2f4fdf1ed635e114d0e884d8f"
+    },
+    "bald_cypress/leaves_variant.png": {
+      "x": 11,
+      "y": 13,
+      "region": "bald_cypress/leaves_variant.png",
+      "rgbaSha256": "a36e6588843ab614b93b5164c35862c9ff2443ad8a9a381ead18f8cf56d2a3b4"
+    },
+    "cherry/log_side.png": {
+      "x": 12,
+      "y": 13,
+      "region": "cherry/log_side.png",
+      "rgbaSha256": "11793d80930069071e5cfe6996cca02d1f4398bc11f95c1c10358910e30d9e20"
+    },
+    "cherry/log_top.png": {
+      "x": 13,
+      "y": 13,
+      "region": "cherry/log_top.png",
+      "rgbaSha256": "905cccb5d42def8331fe8bc7c1b22171fb57b3b7e51b3cf143baf21066710e5f"
+    },
+    "cherry/stripped_side.png": {
+      "x": 14,
+      "y": 13,
+      "region": "cherry/stripped_side.png",
+      "rgbaSha256": "47ecf89deacd536e1cea5e11f4c6707053931096d1714d8a4facb5ef50255a31"
+    },
+    "cherry/stripped_top.png": {
+      "x": 15,
+      "y": 13,
+      "region": "cherry/stripped_top.png",
+      "rgbaSha256": "593105aa9415eca6d2454a37d23cdbcf52d718058632a7456c42360b36359075"
+    },
+    "cherry/planks.png": {
+      "x": 0,
+      "y": 14,
+      "region": "cherry/planks.png",
+      "rgbaSha256": "e17825c8788cc6a5a9518a3f06a35da01d5c17db0ddf05a998cd784b82e9d73f"
+    },
+    "cherry/leaves.png": {
+      "x": 1,
+      "y": 14,
+      "region": "cherry/leaves.png",
+      "rgbaSha256": "5775506971ce6a98ad6e55ec9238af61855e8b1c96e9e02ccf0d813fdb1cfe34"
+    },
+    "cherry/sapling.png": {
+      "x": 2,
+      "y": 14,
+      "region": "cherry/sapling.png",
+      "rgbaSha256": "faf67c53c1ed1987d4718a68284b3b3423eebddf0d03ecbaa2a3436398eb0929"
+    },
+    "cherry/leaves_variant.png": {
+      "x": 3,
+      "y": 14,
+      "region": "cherry/leaves_variant.png",
+      "rgbaSha256": "5e97eaf6604a7b1e2c89eba1b873ab5cdcb0e9ecacbf5758d6cdbe33bdf05322"
+    },
+    "rosliny/amarantus/etap1.png": {
+      "x": 0,
+      "y": 15,
+      "w": 2,
+      "h": 2,
+      "pw": 17,
+      "ph": 21,
+      "region": "rosliny/amarantus/etap1.png",
+      "rgbaSha256": "400a97a0615a096f1dd6f72c61a4af46c039e252f01527a48456620679b29cbe"
+    },
+    "rosliny/amarantus/etap2.png": {
+      "x": 2,
+      "y": 15,
+      "w": 2,
+      "h": 2,
+      "pw": 20,
+      "ph": 27,
+      "region": "rosliny/amarantus/etap2.png",
+      "rgbaSha256": "0fce27e9f2ec813bd5b4aa409a4daff00a9ca13611b55a475ea7604e5cab0885"
+    },
+    "rosliny/amarantus/etap3.png": {
+      "x": 4,
+      "y": 15,
+      "w": 2,
+      "h": 2,
+      "pw": 26,
+      "ph": 32,
+      "region": "rosliny/amarantus/etap3.png",
+      "rgbaSha256": "1ffb6c967f3e4abf824d3a69f33fd58a32810f893d511b9c2f040864876fd030"
+    },
+    "rosliny/amarantus/wiecha.png": {
+      "x": 6,
+      "y": 15,
+      "w": 1,
+      "h": 1,
+      "pw": 16,
+      "ph": 16,
+      "region": "rosliny/amarantus/wiecha.png",
+      "rgbaSha256": "3f95e5d38b5952150cd3dc77f7042d5ec17136bb55703c0280ee1d49633335f7"
+    },
+    "rosliny/kocanka/bukiet.png": {
+      "x": 7,
+      "y": 15,
+      "w": 1,
+      "h": 1,
+      "pw": 16,
+      "ph": 16,
+      "region": "rosliny/kocanka/bukiet.png",
+      "rgbaSha256": "096c359f7d633745f5cf2bac705221adb4cc09d525d66494c224e8556e24c677"
+    },
+    "rosliny/lawenda/bukiet.png": {
+      "x": 8,
+      "y": 15,
+      "w": 1,
+      "h": 1,
+      "pw": 16,
+      "ph": 16,
+      "region": "rosliny/lawenda/bukiet.png",
+      "rgbaSha256": "c3f933b106a9cd68170e389690080dd686c309a4a2d81833b6cfe857c19a8650"
+    },
+    "rosliny/piwonia/kwiat.png": {
+      "x": 9,
+      "y": 15,
+      "w": 1,
+      "h": 1,
+      "pw": 16,
+      "ph": 16,
+      "region": "rosliny/piwonia/kwiat.png",
+      "rgbaSha256": "eb46e67bf66188d4d41b7656a87244a64232c9825fdd78e064747be2c1a778e9"
+    },
+    "rosliny/zawilec/kwiat.png": {
+      "x": 10,
+      "y": 15,
+      "w": 1,
+      "h": 1,
+      "pw": 16,
+      "ph": 16,
+      "region": "rosliny/zawilec/kwiat.png",
+      "rgbaSha256": "02c200c28a562525e3f5ab55dd0e49773ca7aa96f075d4f802bc534ae8c90529"
+    },
+    "rosliny/dzwonek/kwiat.png": {
+      "x": 11,
+      "y": 15,
+      "w": 1,
+      "h": 1,
+      "pw": 16,
+      "ph": 16,
+      "region": "rosliny/dzwonek/kwiat.png",
+      "rgbaSha256": "8a58bb6c65c53a6c4313cc80b6fe01a4bc2200e648e5a5606893e964f4a36829"
+    },
+    "rosliny/szalwia/lisc.png": {
+      "x": 12,
+      "y": 15,
+      "w": 1,
+      "h": 1,
+      "pw": 16,
+      "ph": 16,
+      "region": "rosliny/szalwia/lisc.png",
+      "rgbaSha256": "bb40bb536042ef766f5aef02f75c3b3060aec6e42c4b7cb7cc9014968ca366d3"
+    },
+    "rosliny/nagietek/kwiat.png": {
+      "x": 13,
+      "y": 15,
+      "w": 1,
+      "h": 1,
+      "pw": 16,
+      "ph": 16,
+      "region": "rosliny/nagietek/kwiat.png",
+      "rgbaSha256": "7e53c3048270fa3666c25ad03ae3485ed00c1b36d35d933694b9232a21f116c0"
+    },
+    "rosliny/cynia/kwiat.png": {
+      "x": 14,
+      "y": 15,
+      "w": 1,
+      "h": 1,
+      "pw": 16,
+      "ph": 16,
+      "region": "rosliny/cynia/kwiat.png",
+      "rgbaSha256": "46d7ca98e1e0b59159b0115f97d3f8884b6841377d3aa8574c9dcc8a0d94343f"
+    },
+    "rosliny/mikolajek/kwiat.png": {
+      "x": 15,
+      "y": 15,
+      "w": 1,
+      "h": 1,
+      "pw": 16,
+      "ph": 16,
+      "region": "rosliny/mikolajek/kwiat.png",
+      "rgbaSha256": "4ac917f35832ef92e57005fd3d0ebeb0621d359f8d8ecc8ec4d95f01f3e8f50c"
+    },
+    "rosliny/barwinek/kwiat.png": {
+      "x": 0,
+      "y": 17,
+      "w": 1,
+      "h": 1,
+      "pw": 16,
+      "ph": 16,
+      "region": "rosliny/barwinek/kwiat.png",
+      "rgbaSha256": "d1d4d823ade95fab46b270dc03e5009ea55a22ca55fa43f5a626c26dfc1874c7"
+    },
+    "rosliny/len/wiazka.png": {
+      "x": 1,
+      "y": 17,
+      "w": 1,
+      "h": 1,
+      "pw": 16,
+      "ph": 16,
+      "region": "rosliny/len/wiazka.png",
+      "rgbaSha256": "2ab3d42855941f0fb22e1619917fd380e2ba8c480aeb3e98946af54936474e60"
+    },
+    "rosliny/gorczyca/nasiona.png": {
+      "x": 2,
+      "y": 17,
+      "w": 1,
+      "h": 1,
+      "pw": 16,
+      "ph": 16,
+      "region": "rosliny/gorczyca/nasiona.png",
+      "rgbaSha256": "8b7783d8e73be7c46977037ee7843bb2a3f69a35dd81b6ff91d730a3917bacb6"
+    },
+    "rosliny/porostoliwkowy/plecha.png": {
+      "x": 3,
+      "y": 17,
+      "w": 1,
+      "h": 1,
+      "pw": 16,
+      "ph": 16,
+      "region": "rosliny/porostoliwkowy/plecha.png",
+      "rgbaSha256": "eba0e791c7e041f5576fd7e0dab6901e509072eac55670ab6301553f69d6a8c3"
+    },
+    "rosliny/porostiglasty/galazki.png": {
+      "x": 4,
+      "y": 17,
+      "w": 1,
+      "h": 1,
+      "pw": 16,
+      "ph": 16,
+      "region": "rosliny/porostiglasty/galazki.png",
+      "rgbaSha256": "b4779acec7224ab1ef6954983cc8e9b8c11659ba4a7a9d8437bb95e41e9bd2ff"
+    },
+    "rosliny/ochra/grudka.png": {
+      "x": 5,
+      "y": 17,
+      "w": 1,
+      "h": 1,
+      "pw": 16,
+      "ph": 16,
+      "region": "rosliny/ochra/grudka.png",
+      "rgbaSha256": "4d04e1fcaac80b116b9eb85a85269f889f65465a3b06fafd433c7766f7000fe0"
+    },
+    "rosliny/huba/huba.png": {
+      "x": 6,
+      "y": 17,
+      "w": 1,
+      "h": 1,
+      "pw": 16,
+      "ph": 16,
+      "region": "rosliny/huba/huba.png",
+      "rgbaSha256": "ddf5cf3fb7ada19aebbc9096c8fc6d234c0bf94819e0517de90e92f729dcf608"
+    },
+    "rosliny/indygowiec/liscie.png": {
+      "x": 7,
+      "y": 17,
+      "w": 1,
+      "h": 1,
+      "pw": 16,
+      "ph": 16,
+      "region": "rosliny/indygowiec/liscie.png",
+      "rgbaSha256": "c465a0a0b457abd5226efc2b0ede74f80a8b702f52f6d067b3329236fd338837"
+    },
+    "rosliny/marzanna/korzen.png": {
+      "x": 8,
+      "y": 17,
+      "w": 1,
+      "h": 1,
+      "pw": 16,
+      "ph": 16,
+      "region": "rosliny/marzanna/korzen.png",
+      "rgbaSha256": "a7bf278cb88eea0a0e18aa26fc20c7f349023c5d173a73f69fe1c2ef08514b2a"
+    },
+    "models/blueberry/atlas": {
+      "x": 0,
+      "y": 18,
+      "w": 4,
+      "h": 4,
+      "pw": 64,
+      "ph": 64,
+      "region": "models/blueberry/atlas",
+      "rgbaSha256": "9e0beeb85749441c621fb3b092a98bdc03ff9b01ed59fb7211b7a07bde78db03"
+    },
+    "campfire_oak": {
+      "x": 0,
+      "y": 22,
+      "w": 2,
+      "h": 2,
+      "pw": 32,
+      "ph": 32,
+      "region": "campfire_oak",
+      "rgbaSha256": "bb5f97044b7e35a27bc9993578894eeafdddad0c7035981e514cb4cbb7c43c5e"
+    },
+    "campfire_birch": {
+      "x": 2,
+      "y": 22,
+      "w": 2,
+      "h": 2,
+      "pw": 32,
+      "ph": 32,
+      "region": "campfire_birch",
+      "rgbaSha256": "c57226295b4c8247f8710f4967ce6ec2aaaf1cc5850a9b204f0e3852151d26b4"
+    },
+    "campfire_spruce": {
+      "x": 4,
+      "y": 22,
+      "w": 2,
+      "h": 2,
+      "pw": 32,
+      "ph": 32,
+      "region": "campfire_spruce",
+      "rgbaSha256": "12d92e2735304532ec9952bfc5f460d7f76a8d36b33adec456de62f7d848d91e"
+    },
+    "campfire_pine": {
+      "x": 6,
+      "y": 22,
+      "w": 2,
+      "h": 2,
+      "pw": 32,
+      "ph": 32,
+      "region": "campfire_pine",
+      "rgbaSha256": "d76f191bb20d3fbd11196ed4c4460f2745ab145ed9a19312aa9de9a8040bcdb1"
+    },
+    "campfire_beech": {
+      "x": 8,
+      "y": 22,
+      "w": 2,
+      "h": 2,
+      "pw": 32,
+      "ph": 32,
+      "region": "campfire_beech",
+      "rgbaSha256": "ba29e3a3d06661cb422a58b413ccfd383a154faa0d146e90d9e422404bb9548b"
+    },
+    "campfire_linden": {
+      "x": 10,
+      "y": 22,
+      "w": 2,
+      "h": 2,
+      "pw": 32,
+      "ph": 32,
+      "region": "campfire_linden",
+      "rgbaSha256": "75477fbe0c5c0f01431cb00d0ad29acec0d5ddbf2b869b87a8ddc5da78b93d52"
+    },
+    "campfire_olcha": {
+      "x": 12,
+      "y": 22,
+      "w": 2,
+      "h": 2,
+      "pw": 32,
+      "ph": 32,
+      "region": "campfire_olcha",
+      "rgbaSha256": "54fa545b76ef6232f39a7e17c1e2c7dae2f925c3e4b4d7743423250d92958916"
+    },
+    "campfire_wierzba": {
+      "x": 14,
+      "y": 22,
+      "w": 2,
+      "h": 2,
+      "pw": 32,
+      "ph": 32,
+      "region": "campfire_wierzba",
+      "rgbaSha256": "194effec68a81d4da4fb331a069d7cf10e7d6f1bb0b683e1c5cc6704ddfae4e8"
+    },
+    "campfire_jablon": {
+      "x": 0,
+      "y": 24,
+      "w": 2,
+      "h": 2,
+      "pw": 32,
+      "ph": 32,
+      "region": "campfire_jablon",
+      "rgbaSha256": "57f896855235cba2b2a899c4403cf6c9249c7c97e2099c43d6c74f5693e76629"
+    },
+    "campfire_acacia": {
+      "x": 2,
+      "y": 24,
+      "w": 2,
+      "h": 2,
+      "pw": 32,
+      "ph": 32,
+      "region": "campfire_acacia",
+      "rgbaSha256": "d33536d152e3da071bd9cc6475db7db95e4d1cd3089e237f947136775003d9a9"
+    },
+    "campfire_bald_cypress": {
+      "x": 4,
+      "y": 24,
+      "w": 2,
+      "h": 2,
+      "pw": 32,
+      "ph": 32,
+      "region": "campfire_bald_cypress",
+      "rgbaSha256": "79298038068f4f08a1984a8a06fb518160e164d948df787cf3d501dc9a958249"
+    },
+    "campfire_cherry": {
+      "x": 6,
+      "y": 24,
+      "w": 2,
+      "h": 2,
+      "pw": 32,
+      "ph": 32,
+      "region": "campfire_cherry",
+      "rgbaSha256": "5abc48dbe526202ff2245f825b1c09884634aa3b081b42e7a99d6418ed932ab3"
+    },
+    "torch": {
+      "x": 0,
+      "y": 26,
+      "region": "torch",
+      "rgbaSha256": "25e332502e2708db5f64a078cbe59e6403b97bd4301a4a4ebdda6a631f2b4db1"
+    },
+    "torch_white": {
+      "x": 1,
+      "y": 26,
+      "region": "torch_white",
+      "rgbaSha256": "88fcfe2da9c266e9b976c181f44b11b4fac11b92275af0f4bea7c8afd546c390"
+    },
+    "torch_orange": {
+      "x": 2,
+      "y": 26,
+      "region": "torch_orange",
+      "rgbaSha256": "465f40ce52361cc5286133f3e649438c2647e7fef4067ad8d37d09b9c2fb3e91"
+    },
+    "torch_magenta": {
+      "x": 3,
+      "y": 26,
+      "region": "torch_magenta",
+      "rgbaSha256": "8db433733f66a26b26e83d963b5801ba695516248f5346754637f31b19bd5cdc"
+    },
+    "torch_light_blue": {
+      "x": 4,
+      "y": 26,
+      "region": "torch_light_blue",
+      "rgbaSha256": "9d356c81e4ed5242d5099f3f580a50524baa500a0b61934163b0e964f827a0c7"
+    },
+    "torch_yellow": {
+      "x": 5,
+      "y": 26,
+      "region": "torch_yellow",
+      "rgbaSha256": "9a294964288b679af4c8e6827939828bba6a44be9ce062dc2b3a12ef35db65e3"
+    },
+    "torch_lime": {
+      "x": 6,
+      "y": 26,
+      "region": "torch_lime",
+      "rgbaSha256": "082f93ddb8bce3424d9393ca2be5e095fd0ec4b2a3ac785d231c7971b370873d"
+    },
+    "torch_pink": {
+      "x": 7,
+      "y": 26,
+      "region": "torch_pink",
+      "rgbaSha256": "47e24969af84fb5bf5bca11fcde5462a17b5ffbd2bc5db477abfd9c076917d79"
+    },
+    "torch_gray": {
+      "x": 8,
+      "y": 26,
+      "region": "torch_gray",
+      "rgbaSha256": "d536c35229bf361e13bf4c9c0d8cd78195a0245cbebdd4b109c3219fc34d6a76"
+    },
+    "torch_light_gray": {
+      "x": 9,
+      "y": 26,
+      "region": "torch_light_gray",
+      "rgbaSha256": "7111fc29161aef07d1e6816aec234867f2824f9fe047b7d69151a3b81256eb86"
+    },
+    "torch_cyan": {
+      "x": 10,
+      "y": 26,
+      "region": "torch_cyan",
+      "rgbaSha256": "b224692e1603a4162d1837d880197c0beecb7e005a176f74153ba8652f1608a4"
+    },
+    "torch_purple": {
+      "x": 11,
+      "y": 26,
+      "region": "torch_purple",
+      "rgbaSha256": "2b1c29cc7b0bd94bc0c10cb7b8f4c7f60da7e1941a02e1013dd1c737741af5ff"
+    },
+    "torch_blue": {
+      "x": 12,
+      "y": 26,
+      "region": "torch_blue",
+      "rgbaSha256": "1d4f9e3bd3561905f26efeea241dbde0e758f4386ea10dccf795e9bdbc891b72"
+    },
+    "torch_brown": {
+      "x": 13,
+      "y": 26,
+      "region": "torch_brown",
+      "rgbaSha256": "bbc361e14dd92e68ac5739caf037fb0b9fab602cd5b009486ff0281fd0bf909a"
+    },
+    "torch_green": {
+      "x": 14,
+      "y": 26,
+      "region": "torch_green",
+      "rgbaSha256": "9368b3da8cef47f0c35165b0c2d95a947f4b499a3bd73787659e5c9b6355ebe5"
+    },
+    "torch_red": {
+      "x": 15,
+      "y": 26,
+      "region": "torch_red",
+      "rgbaSha256": "9b33cecfc25528e2744ddbce231b20240cef9001a0a730c572b2297e87f44022"
+    },
+    "torch_black": {
+      "x": 0,
+      "y": 27,
+      "region": "torch_black",
+      "rgbaSha256": "eeccb082c18bea638f18a6528eda869c8f50c9b3abeca0a08f313f43f6d3e419"
+    },
+    "dye_white": {
+      "x": 1,
+      "y": 27,
+      "region": "dye_white",
+      "rgbaSha256": "54d0af96e50b86a1c9416c2940c931a88c256655407f3535b3709ccfc0e6a653"
+    },
+    "dye_orange": {
+      "x": 2,
+      "y": 27,
+      "region": "dye_orange",
+      "rgbaSha256": "2ee29e1eb0d3d1f88368a3648d068c350c09fcbedb2efc5145edc0b55c25af25"
+    },
+    "dye_magenta": {
+      "x": 3,
+      "y": 27,
+      "region": "dye_magenta",
+      "rgbaSha256": "c5799739fddc3bca3b227862c09e8fa26feb947fae66f81e8811365659e0fbe0"
+    },
+    "dye_light_blue": {
+      "x": 4,
+      "y": 27,
+      "region": "dye_light_blue",
+      "rgbaSha256": "5f30cec6de05e5938987de3fc84d3aeb24e8124d2daa91d5c1ab8cc03b73fceb"
+    },
+    "dye_yellow": {
+      "x": 5,
+      "y": 27,
+      "region": "dye_yellow",
+      "rgbaSha256": "b6cc64ecb22b433cd7335b6584d356add990ee658057c45d4fdca920b308c6fb"
+    },
+    "dye_lime": {
+      "x": 6,
+      "y": 27,
+      "region": "dye_lime",
+      "rgbaSha256": "087784b0255b126f6b9804547cc6b87f4ea1219cfbcbfd88e5f68741d4bc0cf0"
+    },
+    "dye_pink": {
+      "x": 7,
+      "y": 27,
+      "region": "dye_pink",
+      "rgbaSha256": "59f2d4e84854a2c9a8ce452973a6110e02f338d2688ced78e2a01a12c9f47f38"
+    },
+    "dye_gray": {
+      "x": 8,
+      "y": 27,
+      "region": "dye_gray",
+      "rgbaSha256": "8cb15d3c3db850927a7b90fa5724491706307434dd510c0ce732f52f2c4aaa84"
+    },
+    "dye_light_gray": {
+      "x": 9,
+      "y": 27,
+      "region": "dye_light_gray",
+      "rgbaSha256": "0fa8d6d37c5c3eb60526fa5061af0c2f4de4cc5121630d7e565419902f863920"
+    },
+    "dye_cyan": {
+      "x": 10,
+      "y": 27,
+      "region": "dye_cyan",
+      "rgbaSha256": "e62fff4474afc80b82f8062d2aeecfb75822f8b0d6a5eaf1a0d99ada0461dedf"
+    },
+    "dye_purple": {
+      "x": 11,
+      "y": 27,
+      "region": "dye_purple",
+      "rgbaSha256": "f7c6b1eadfb82bf49ba95871aa65b2e8248a4c1714c37f5d29bdc891db190e0a"
+    },
+    "dye_blue": {
+      "x": 12,
+      "y": 27,
+      "region": "dye_blue",
+      "rgbaSha256": "29eedec83672f7613b3a600f26b40ad667d0b1e79836ea08bfcef3bc82d20305"
+    },
+    "dye_brown": {
+      "x": 13,
+      "y": 27,
+      "region": "dye_brown",
+      "rgbaSha256": "be8583d7c1d2f4c383f0b252e81504967994e213dc57a32d174a2cc8f5d6ecaf"
+    },
+    "dye_green": {
+      "x": 14,
+      "y": 27,
+      "region": "dye_green",
+      "rgbaSha256": "16a7abb214f501284ecab149af1eb7d8ed703e2927fcce2b58dddcddc104c5cf"
+    },
+    "dye_red": {
+      "x": 15,
+      "y": 27,
+      "region": "dye_red",
+      "rgbaSha256": "79b90bc272797c8ff9613f2e2e6b0fb967a5da1beb5d9d85f69b9adc16a87c71"
+    },
+    "dye_black": {
+      "x": 0,
+      "y": 28,
+      "region": "dye_black",
+      "rgbaSha256": "64b1f02ee03a3cd64dafa3707c199cda4a29270835007872b31a67347708d6a3"
+    },
+    "models/bushy-grass/texture": {
+      "x": 1,
+      "y": 28,
+      "region": "models/bushy-grass/texture",
+      "rgbaSha256": "7f845ffd5361640422462e85321b5fed716d9620487017b18bcb94b055803081"
+    },
+    "models/rosliny/mak/polrealistyczny": {
+      "x": 2,
+      "y": 28,
+      "region": "models/rosliny/mak/polrealistyczny",
+      "rgbaSha256": "9f9087c93eafb688f3f098b4ea8743cc71baaf1f8aa62d2f53d8398f2ed1e104"
+    },
+    "models/rosliny/chaber/polrealistyczny": {
+      "x": 3,
+      "y": 28,
+      "region": "models/rosliny/chaber/polrealistyczny",
+      "rgbaSha256": "cb9db0e2285d8607c9a813a8163051ab2cb1040d3db0ae180dc67721266bce39"
+    },
+    "models/rosliny/mniszek/polrealistyczny": {
+      "x": 4,
+      "y": 28,
+      "region": "models/rosliny/mniszek/polrealistyczny",
+      "rgbaSha256": "3757d526eeb316090f7478b879a164cbd37d60dc1d3774266f2ffe6103f72adf"
+    },
+    "models/rosliny/rumianek/polrealistyczny": {
+      "x": 5,
+      "y": 28,
+      "region": "models/rosliny/rumianek/polrealistyczny",
+      "rgbaSha256": "7fdc76d01a8baf65888a8fc500d2cd363d97822169a002add5298371188630fd"
+    },
+    "models/rosliny/lawenda/prosty-1": {
+      "x": 6,
+      "y": 28,
+      "region": "models/rosliny/lawenda/prosty-1",
+      "rgbaSha256": "eb305ce47811f56788c4e87f4e528f536bef0554d3b4a94466d8ec324eaf07e1"
+    },
+    "models/rosliny/lawenda/polrealistyczny": {
+      "x": 7,
+      "y": 28,
+      "region": "models/rosliny/lawenda/polrealistyczny",
+      "rgbaSha256": "fcf6a4c3db2d2f8e070aeacd3e169391ac6c131239e8913837dfe74d1126ed40"
+    },
+    "models/rosliny/lawenda/prosty-2": {
+      "x": 8,
+      "y": 28,
+      "region": "models/rosliny/lawenda/prosty-2",
+      "rgbaSha256": "51348071cea26348f57e2b309c05948a352db1a7216489b16c4a0721073bbf43"
+    },
+    "models/rosliny/lawenda/prosty-3": {
+      "x": 9,
+      "y": 28,
+      "region": "models/rosliny/lawenda/prosty-3",
+      "rgbaSha256": "bc7a4e49544ad877d50029f610d8f238727a1dade306e0a6287bbb4a7f19e97e"
+    },
+    "models/rosliny/krotka-trawa/polrealistyczny": {
+      "x": 10,
+      "y": 28,
+      "region": "models/rosliny/krotka-trawa/polrealistyczny",
+      "rgbaSha256": "2806d44e35c615919484d7348d264e7368be7f80b7415bc2a2ebb84447bf0ec8"
+    },
+    "models/rosliny/wysoka-trawa/polrealistyczny": {
+      "x": 11,
+      "y": 28,
+      "region": "models/rosliny/wysoka-trawa/polrealistyczny",
+      "rgbaSha256": "f1a2b4cf0a25cdcc2f647f2ec8da5a975f494f3b3bd8b4d1d42e7843f10969cb"
+    },
+    "models/rosliny/paproc/polrealistyczny": {
+      "x": 12,
+      "y": 28,
+      "region": "models/rosliny/paproc/polrealistyczny",
+      "rgbaSha256": "74d73ebd30e738477ff08b7bc775fa2cc94d35aaa8a65ac146c7991388fa0696"
+    },
+    "models/rosliny/koniczyna/polrealistyczny": {
+      "x": 13,
+      "y": 28,
+      "region": "models/rosliny/koniczyna/polrealistyczny",
+      "rgbaSha256": "03178781d2d4fbe32510dda3123f5cde01523afc56c6d9fcea92cdacdc3aa3aa"
+    },
+    "models/rosliny/pokrzywa/polrealistyczny": {
+      "x": 14,
+      "y": 28,
+      "region": "models/rosliny/pokrzywa/polrealistyczny",
+      "rgbaSha256": "808a968366e87b16868d427f27dfcd4277181ae8151da66ca4c7b850eed10159"
+    },
+    "models/rosliny/babka/polrealistyczny": {
+      "x": 15,
+      "y": 28,
+      "region": "models/rosliny/babka/polrealistyczny",
+      "rgbaSha256": "ec6f0426ccced8073242d48116da735430b8b2a27215e6625d6dceb61a09eda3"
+    },
+    "models/rosliny/trzcina/polrealistyczny": {
+      "x": 0,
+      "y": 29,
+      "region": "models/rosliny/trzcina/polrealistyczny",
+      "rgbaSha256": "cd56dfb4b3368b662b37933a9566705ae062d0d7bc52e7a843b2a9d51b2e73d5"
+    },
+    "models/rosliny/wrzos/polrealistyczny": {
+      "x": 1,
+      "y": 29,
+      "region": "models/rosliny/wrzos/polrealistyczny",
+      "rgbaSha256": "3ecf2393a502ba14076c5a39134206fd65fa79a79f9b899ad7f7fabdb00e3be3"
+    },
+    "models/rosliny/krokus/polrealistyczny": {
+      "x": 2,
+      "y": 29,
+      "region": "models/rosliny/krokus/polrealistyczny",
+      "rgbaSha256": "75b3ce216e82a2aed59452311fc12fb87f82f42fa3a3aca0b60939fc47b49a19"
+    },
+    "models/rosliny/trawa-wydmowa/polrealistyczny": {
+      "x": 3,
+      "y": 29,
+      "region": "models/rosliny/trawa-wydmowa/polrealistyczny",
+      "rgbaSha256": "109e0f21b401f08e023d0b3cb1a669e336718debc812f46896cc617d7f94d9b4"
+    },
+    "models/rosliny/sadzonka-swierk/polrealistyczny": {
+      "x": 4,
+      "y": 29,
+      "region": "models/rosliny/sadzonka-swierk/polrealistyczny",
+      "rgbaSha256": "8c5b7dc0a780b46df0c81bf861a3352fcd2b860cf4f28b5b913178a15201fa29"
+    },
+    "models/rosliny/sadzonka-sosna/polrealistyczny": {
+      "x": 5,
+      "y": 29,
+      "region": "models/rosliny/sadzonka-sosna/polrealistyczny",
+      "rgbaSha256": "c14bcab85aca8ad4bf14eae1f1de678ef44eab0af6002d76f0cc545e80532c18"
+    },
+    "models/rosliny/sadzonka-buk/polrealistyczny": {
+      "x": 6,
+      "y": 29,
+      "region": "models/rosliny/sadzonka-buk/polrealistyczny",
+      "rgbaSha256": "02387b8c72726d3a8ebed168d313a2ea7c027fe9a8857d234ec109692cbb3c0a"
+    },
+    "models/rosliny/sadzonka-lipa/polrealistyczny": {
+      "x": 7,
+      "y": 29,
+      "region": "models/rosliny/sadzonka-lipa/polrealistyczny",
+      "rgbaSha256": "7b59b3be70e9312db772c1f6e83870d25b9ee6d656d07327eea9277152d866a3"
+    },
+    "models/rosliny/sadzonka-dab/polrealistyczny": {
+      "x": 8,
+      "y": 29,
+      "region": "models/rosliny/sadzonka-dab/polrealistyczny",
+      "rgbaSha256": "77860c88e7e29650321664e008235fc67c7c0bef2d186f9930e8f9485ffcb131"
+    },
+    "models/rosliny/sadzonka-brzoza/polrealistyczny": {
+      "x": 9,
+      "y": 29,
+      "region": "models/rosliny/sadzonka-brzoza/polrealistyczny",
+      "rgbaSha256": "6cda6cf281107665dd4b7b87486a0c2be766ab9016a007c7525a2a29d5eb73f5"
+    },
+    "models/rosliny/sadzonka-jablon/polrealistyczny": {
+      "x": 10,
+      "y": 29,
+      "region": "models/rosliny/sadzonka-jablon/polrealistyczny",
+      "rgbaSha256": "cb3337ed6d89cfcf4126e44728de3375db3cf6ddacdf9effa7cd25ee11f1ab7b"
+    },
+    "models/rosliny/sadzonka-olcha/polrealistyczny": {
+      "x": 11,
+      "y": 29,
+      "region": "models/rosliny/sadzonka-olcha/polrealistyczny",
+      "rgbaSha256": "535c01c4be20ab4840e0615bed0f8ab76b04c7e7965a90aa6c34256393f1cf8f"
+    },
+    "models/rosliny/sadzonka-wierzba/polrealistyczny": {
+      "x": 12,
+      "y": 29,
+      "region": "models/rosliny/sadzonka-wierzba/polrealistyczny",
+      "rgbaSha256": "47d4d55b8b4e9d08d20dbff072f8e215e333211acb5d0e7aaf68ad89a6481e8e"
+    },
+    "models/rosliny/truskawka/polrealistyczny": {
+      "x": 13,
+      "y": 29,
+      "region": "models/rosliny/truskawka/polrealistyczny",
+      "rgbaSha256": "c33d96ae9dcd1d104b146c84a689d756c1cf3daf69337ce0267eefa8a497bd7a"
+    },
+    "models/rosliny/jezyna/polrealistyczny": {
+      "x": 14,
+      "y": 29,
+      "region": "models/rosliny/jezyna/polrealistyczny",
+      "rgbaSha256": "f962d811353b624596518fbcec923b053870ac3ebf5be4d80b9ad2f5dca37b6a"
+    },
+    "models/rosliny/chili/polrealistyczny": {
+      "x": 15,
+      "y": 29,
+      "region": "models/rosliny/chili/polrealistyczny",
+      "rgbaSha256": "2c9afe49609afad2184e50ff2bafe452546302c98bdbb4668975cd4fb667f2a8"
+    },
+    "models/rosliny/leszczyna/polrealistyczny": {
+      "x": 0,
+      "y": 30,
+      "region": "models/rosliny/leszczyna/polrealistyczny",
+      "rgbaSha256": "23713c61bd432fd785c407284b684eecf3d45553980c39258601675bf25ce8f8"
+    },
+    "models/rosliny/borowka/polrealistyczny": {
+      "x": 1,
+      "y": 30,
+      "region": "models/rosliny/borowka/polrealistyczny",
+      "rgbaSha256": "0b6dbe6be351bdc9a9ce51d92259c47b795cd7cb1a124fcbb1897a27026878f3"
+    },
+    "models/rosliny/turzyca/prosty-1": {
+      "x": 2,
+      "y": 30,
+      "region": "models/rosliny/turzyca/prosty-1",
+      "rgbaSha256": "1cf465159dcf71ce3d64cb18aa6dc6fa43cd676b90dc0cedfca664c18a42a521"
+    },
+    "models/rosliny/turzyca/polrealistyczny": {
+      "x": 3,
+      "y": 30,
+      "region": "models/rosliny/turzyca/polrealistyczny",
+      "rgbaSha256": "b3e88945a52f3024f0389c62b0d1d3492e6959c60e6e6f96e066a90bb5ad9539"
+    },
+    "models/rosliny/palka/prosty-1": {
+      "x": 4,
+      "y": 30,
+      "region": "models/rosliny/palka/prosty-1",
+      "rgbaSha256": "f14d7dda119966c43c5dab7083f422b71ef2e51d838392fcd71a34053a4c632c"
+    },
+    "models/rosliny/palka/polrealistyczny": {
+      "x": 5,
+      "y": 30,
+      "region": "models/rosliny/palka/polrealistyczny",
+      "rgbaSha256": "0e970f57fffeeefbbe55df15d2a2d7e62f17e7e9bff2afdc55d7dd1bf2671e5d"
+    },
+    "models/rosliny/krwawnica/prosty-1": {
+      "x": 6,
+      "y": 30,
+      "region": "models/rosliny/krwawnica/prosty-1",
+      "rgbaSha256": "8f5c5a0f200a77c110fb43ef27bda04d2eccc69f85fa677f7bb9bbddcde7ed3a"
+    },
+    "models/rosliny/krwawnica/polrealistyczny": {
+      "x": 7,
+      "y": 30,
+      "region": "models/rosliny/krwawnica/polrealistyczny",
+      "rgbaSha256": "7bfd64d9c818f9e8c665113abc992f594c568f4321533e9f83e89cd745cb35d4"
+    },
+    "models/rosliny/amarantus/polrealistyczny": {
+      "x": 8,
+      "y": 30,
+      "region": "models/rosliny/amarantus/polrealistyczny",
+      "rgbaSha256": "38d6bacb382e7e04d831cfc59887b43fef18ca2d927d1832470d7cad476d88df"
+    },
+    "models/rosliny/kocanka/prosty-1": {
+      "x": 9,
+      "y": 30,
+      "region": "models/rosliny/kocanka/prosty-1",
+      "rgbaSha256": "d1c1ef23b0681d2a77fa8dbd8f86c2a42604b381a786eec7ca6cf2c3ff11f284"
+    },
+    "models/rosliny/kocanka/polrealistyczny": {
+      "x": 10,
+      "y": 30,
+      "region": "models/rosliny/kocanka/polrealistyczny",
+      "rgbaSha256": "a6cbe101398a8631319fb13e809b9602a7151e44fb33ef2d01859f63412e9f79"
+    },
+    "models/rosliny/kocanka/prosty-2": {
+      "x": 11,
+      "y": 30,
+      "region": "models/rosliny/kocanka/prosty-2",
+      "rgbaSha256": "af9e5681af4732f61eba6ebf21cfa333d7f59eb9a320469dcd5b7e2f19d0135c"
+    },
+    "models/rosliny/kocanka/prosty-3": {
+      "x": 12,
+      "y": 30,
+      "region": "models/rosliny/kocanka/prosty-3",
+      "rgbaSha256": "b57ca3b58092d92e6cb65716920665335a9f8b33918528be80aefedb70a9f4b2"
+    },
+    "models/rosliny/piwonia/prosty-1": {
+      "x": 13,
+      "y": 30,
+      "region": "models/rosliny/piwonia/prosty-1",
+      "rgbaSha256": "0f8e330d73b98f08a3a5c407574a512bfc67c4b3ad569557e5c34f9bc9647660"
+    },
+    "models/rosliny/piwonia/polrealistyczny": {
+      "x": 14,
+      "y": 30,
+      "region": "models/rosliny/piwonia/polrealistyczny",
+      "rgbaSha256": "e2875031e735c5493d4d896bb46c3ee6e615ea986094818b16160a5f9841ae66"
+    },
+    "models/rosliny/piwonia/prosty-2": {
+      "x": 15,
+      "y": 30,
+      "region": "models/rosliny/piwonia/prosty-2",
+      "rgbaSha256": "c25b44bd3a60b0b5512eda5b6afd6aa9a1ffb9c65987b9de4e1df963bf09089d"
+    },
+    "models/rosliny/piwonia/prosty-3": {
+      "x": 0,
+      "y": 31,
+      "region": "models/rosliny/piwonia/prosty-3",
+      "rgbaSha256": "4d3ccc7c766bb700884277f15a304c8aa0ce8b93b6b7b971ba2f47bd4a218eb9"
+    },
+    "models/rosliny/zawilec/prosty-1": {
+      "x": 1,
+      "y": 31,
+      "region": "models/rosliny/zawilec/prosty-1",
+      "rgbaSha256": "796ecb6c7d5c006b3ec1484c2d550af1ccebfe65021b954dd77e36365d07f265"
+    },
+    "models/rosliny/zawilec/polrealistyczny": {
+      "x": 2,
+      "y": 31,
+      "region": "models/rosliny/zawilec/polrealistyczny",
+      "rgbaSha256": "e947d805a426d8850aadd38b9f16f4c52819c7c7312a098df621b80ce6943420"
+    },
+    "models/rosliny/zawilec/prosty-2": {
+      "x": 3,
+      "y": 31,
+      "region": "models/rosliny/zawilec/prosty-2",
+      "rgbaSha256": "4e47ccd7c8824c93d7c4bab958d2c9672147954c1c9244c198f48c1073ceee7c"
+    },
+    "models/rosliny/zawilec/prosty-3": {
+      "x": 4,
+      "y": 31,
+      "region": "models/rosliny/zawilec/prosty-3",
+      "rgbaSha256": "361249309bc9638f56dbb26d82d6ccd9912def70e17305172a73073893cc8ec8"
+    },
+    "models/rosliny/dzwonek/prosty-1": {
+      "x": 5,
+      "y": 31,
+      "region": "models/rosliny/dzwonek/prosty-1",
+      "rgbaSha256": "a3982f60aa7e268b1f03a1adfa1d039eee69513fb2eb71aeb363331bc38fecaa"
+    },
+    "models/rosliny/dzwonek/polrealistyczny": {
+      "x": 6,
+      "y": 31,
+      "region": "models/rosliny/dzwonek/polrealistyczny",
+      "rgbaSha256": "c3e8298f8b6c14798f2a9d48160d04195b4ea4e0628b8b8f61dbb65028e4bdaa"
+    },
+    "models/rosliny/dzwonek/prosty-2": {
+      "x": 7,
+      "y": 31,
+      "region": "models/rosliny/dzwonek/prosty-2",
+      "rgbaSha256": "ac2346fafc931b32299c453991e2054317174206da9d9395194f972fae1de87b"
+    },
+    "models/rosliny/dzwonek/prosty-3": {
+      "x": 8,
+      "y": 31,
+      "region": "models/rosliny/dzwonek/prosty-3",
+      "rgbaSha256": "d9ef1c4fcbcef53419479a8bb002447cd16247c828def5f2080d9351ee1a75b8"
+    },
+    "models/rosliny/szalwia/prosty-1": {
+      "x": 9,
+      "y": 31,
+      "region": "models/rosliny/szalwia/prosty-1",
+      "rgbaSha256": "b65e5c4a2b636971ffaf8d04728aaadd8c533297055d8669ccce129b8f8a91d9"
+    },
+    "models/rosliny/szalwia/polrealistyczny": {
+      "x": 10,
+      "y": 31,
+      "region": "models/rosliny/szalwia/polrealistyczny",
+      "rgbaSha256": "cfbfea34e1c9341c1ee1cda908b63a44775238c7ba7e6ceca645ed4588847ee1"
+    },
+    "models/rosliny/szalwia/prosty-2": {
+      "x": 11,
+      "y": 31,
+      "region": "models/rosliny/szalwia/prosty-2",
+      "rgbaSha256": "2d798655c374bdd7a303642ef0faaa2df8ea4eb536a78e409adff4532cb51634"
+    },
+    "models/rosliny/szalwia/prosty-3": {
+      "x": 12,
+      "y": 31,
+      "region": "models/rosliny/szalwia/prosty-3",
+      "rgbaSha256": "f5e5d380adb6da1bf34ffafbbb06bcf9bfa236aef2e6b16ca9d2a2183afd0f0b"
+    },
+    "models/rosliny/nagietek/prosty-1": {
+      "x": 13,
+      "y": 31,
+      "region": "models/rosliny/nagietek/prosty-1",
+      "rgbaSha256": "e466404643412c1acd8f9aeb8a27e425e8f232b4a75a2208fba35edac2b58e35"
+    },
+    "models/rosliny/nagietek/polrealistyczny": {
+      "x": 14,
+      "y": 31,
+      "region": "models/rosliny/nagietek/polrealistyczny",
+      "rgbaSha256": "a64f2e1d72b96bbdd521e10f86278d3945be534b56a76b68cb09be7c69064b79"
+    },
+    "models/rosliny/nagietek/prosty-2": {
+      "x": 15,
+      "y": 31,
+      "region": "models/rosliny/nagietek/prosty-2",
+      "rgbaSha256": "19f25d093dbf7e1dcac235b4aedbc8c793d8322e89e55111d3f17d916ea1ec46"
+    },
+    "models/rosliny/nagietek/prosty-3": {
+      "x": 0,
+      "y": 32,
+      "region": "models/rosliny/nagietek/prosty-3",
+      "rgbaSha256": "3fbf748e3768f61d096750470fdea2c8e22a83bd5a0a9d21e78ea94d32968b51"
+    },
+    "models/rosliny/cynia/prosty-1": {
+      "x": 1,
+      "y": 32,
+      "region": "models/rosliny/cynia/prosty-1",
+      "rgbaSha256": "c88a96960968913cd17497027fa947252ff37b95798637876954b7bd3462a6c7"
+    },
+    "models/rosliny/cynia/polrealistyczny": {
+      "x": 2,
+      "y": 32,
+      "region": "models/rosliny/cynia/polrealistyczny",
+      "rgbaSha256": "d845318454232e48c092a803701f1a4131b8d0b48956af87838e5103bc876ca7"
+    },
+    "models/rosliny/cynia/prosty-2": {
+      "x": 3,
+      "y": 32,
+      "region": "models/rosliny/cynia/prosty-2",
+      "rgbaSha256": "61551a4ea491048c70919eb65ab46ccf0b94429100ebe69e646e512cf9b9a441"
+    },
+    "models/rosliny/cynia/prosty-3": {
+      "x": 4,
+      "y": 32,
+      "region": "models/rosliny/cynia/prosty-3",
+      "rgbaSha256": "d3e28082ef50722e97050cc1a36896ae0204bdfdef8f62a5b04a201449e6b9cc"
+    },
+    "models/rosliny/mikolajek/prosty-1": {
+      "x": 5,
+      "y": 32,
+      "region": "models/rosliny/mikolajek/prosty-1",
+      "rgbaSha256": "866c48841a6c80eefbd18462c217e40be9e2e955d18b5d4d2f69147cf6e3f352"
+    },
+    "models/rosliny/mikolajek/polrealistyczny": {
+      "x": 6,
+      "y": 32,
+      "region": "models/rosliny/mikolajek/polrealistyczny",
+      "rgbaSha256": "18371592750de827af90b60c34645c810a9389a43c26ab532b0d15ab6aa0348e"
+    },
+    "models/rosliny/mikolajek/prosty-2": {
+      "x": 7,
+      "y": 32,
+      "region": "models/rosliny/mikolajek/prosty-2",
+      "rgbaSha256": "44162f51a445446ca1963b2892d7cd997899031a46736c30a3eccdb06782e8c9"
+    },
+    "models/rosliny/mikolajek/prosty-3": {
+      "x": 8,
+      "y": 32,
+      "region": "models/rosliny/mikolajek/prosty-3",
+      "rgbaSha256": "b314203a2c62f0771d391aa81f70838dc8876fd4027d396d36119c120047e71a"
+    },
+    "models/rosliny/len/prosty-1": {
+      "x": 9,
+      "y": 32,
+      "region": "models/rosliny/len/prosty-1",
+      "rgbaSha256": "508670e6a9e40dbfbae09ec1dbf295e5eb4b844433a81d932753e274aa6a06a0"
+    },
+    "models/rosliny/len/polrealistyczny": {
+      "x": 10,
+      "y": 32,
+      "region": "models/rosliny/len/polrealistyczny",
+      "rgbaSha256": "19d0db9a45832c9c30223ee22a1f39bde4dd714c73a8c181721959807ca909b5"
+    },
+    "models/rosliny/len/prosty-2": {
+      "x": 11,
+      "y": 32,
+      "region": "models/rosliny/len/prosty-2",
+      "rgbaSha256": "c5c97da04fe04855f484168c349501d231d902bd7ba8bb8da1a8824c4957c00c"
+    },
+    "models/rosliny/len/prosty-3": {
+      "x": 12,
+      "y": 32,
+      "region": "models/rosliny/len/prosty-3",
+      "rgbaSha256": "1f5bb8534dc4feaf52b3b6005a647b0717efa2fc75e61ccd0906798c9ccfec75"
+    },
+    "models/rosliny/gorczyca/prosty-1": {
+      "x": 13,
+      "y": 32,
+      "region": "models/rosliny/gorczyca/prosty-1",
+      "rgbaSha256": "662b3135a1676cf3d2c4428e20526848d46a0190f17cc7164b64375cb2a806a9"
+    },
+    "models/rosliny/gorczyca/polrealistyczny": {
+      "x": 14,
+      "y": 32,
+      "region": "models/rosliny/gorczyca/polrealistyczny",
+      "rgbaSha256": "dc16bf5cd0b6bd37b0a8c8b0bb7026624aeb0d808a9eeb02f5a82ccdd464d58d"
+    },
+    "models/rosliny/gorczyca/prosty-2": {
+      "x": 15,
+      "y": 32,
+      "region": "models/rosliny/gorczyca/prosty-2",
+      "rgbaSha256": "30fa74a76467b8e2eb6d626102e2c23995c889f2d9266aabb8e5a8d81313a8de"
+    },
+    "models/rosliny/gorczyca/prosty-3": {
+      "x": 0,
+      "y": 33,
+      "region": "models/rosliny/gorczyca/prosty-3",
+      "rgbaSha256": "f952937e7a43a657953fd58afdeb48babb1479c81068da34985c1b08a59d0140"
+    },
+    "models/rosliny/indygowiec/prosty-1": {
+      "x": 1,
+      "y": 33,
+      "region": "models/rosliny/indygowiec/prosty-1",
+      "rgbaSha256": "09e7811ba35c2fa46dcca98ae34622d55d63f48cd69c7f6408fc6af6550f1b23"
+    },
+    "models/rosliny/indygowiec/polrealistyczny": {
+      "x": 2,
+      "y": 33,
+      "region": "models/rosliny/indygowiec/polrealistyczny",
+      "rgbaSha256": "817e2b3e2ac97fb97288a8bb45be5cdd0777c527d38a453cfeeba0abb8462b20"
+    },
+    "models/rosliny/indygowiec/prosty-2": {
+      "x": 3,
+      "y": 33,
+      "region": "models/rosliny/indygowiec/prosty-2",
+      "rgbaSha256": "df6530084c5e8e7995f8f04823638acf6b1c384258a25d4e34c3669e5e2104ef"
+    },
+    "models/rosliny/indygowiec/prosty-3": {
+      "x": 4,
+      "y": 33,
+      "region": "models/rosliny/indygowiec/prosty-3",
+      "rgbaSha256": "5769d16ab28713d5956cad10b094ad6d926eb63843fcf91c313820cb004b8a69"
+    },
+    "models/rosliny/marzanna/prosty-1": {
+      "x": 5,
+      "y": 33,
+      "region": "models/rosliny/marzanna/prosty-1",
+      "rgbaSha256": "4cfa418a4c26c4b9c88d31fa4adf44dc590e392483f1176635a8b2137d4c57d7"
+    },
+    "models/rosliny/marzanna/polrealistyczny": {
+      "x": 6,
+      "y": 33,
+      "region": "models/rosliny/marzanna/polrealistyczny",
+      "rgbaSha256": "6fbc811d0b5b173b416b2ff1df5f0c3f93f4b917d6c76d080aa55b69a23a8b9f"
+    },
+    "models/rosliny/marzanna/prosty-2": {
+      "x": 7,
+      "y": 33,
+      "region": "models/rosliny/marzanna/prosty-2",
+      "rgbaSha256": "c5a7a159b50823e67b55c7378c2ef1e078a2ffda624ba70ea9d5667ca40c74d6"
+    },
+    "models/rosliny/marzanna/prosty-3": {
+      "x": 8,
+      "y": 33,
+      "region": "models/rosliny/marzanna/prosty-3",
+      "rgbaSha256": "b2474cf3171087fa8fd353367fa6864f377cc9afcdd09fc5f0fba6ff95f7d111"
+    },
+    "models/rosliny/sadzonka-akacja/polrealistyczny": {
+      "x": 9,
+      "y": 33,
+      "region": "models/rosliny/sadzonka-akacja/polrealistyczny",
+      "rgbaSha256": "03ba384a4009e9e137b0a168ae43aa3ef27b1e489b32c97479e7d9c3e7af1605"
+    },
+    "models/rosliny/sadzonka-cyprysnik/polrealistyczny": {
+      "x": 10,
+      "y": 33,
+      "region": "models/rosliny/sadzonka-cyprysnik/polrealistyczny",
+      "rgbaSha256": "35e55564df3a80277d5c6c95b081b377044eb31e0ffe569510ae9127d10b8895"
+    },
+    "models/rosliny/sadzonka-wisnia/polrealistyczny": {
+      "x": 11,
+      "y": 33,
+      "region": "models/rosliny/sadzonka-wisnia/polrealistyczny",
+      "rgbaSha256": "8f7cd25aff15e0d9d4d6c7ed0bc5c761ee916ea90b3f2c2436df3815d81469c3"
+    },
+    "pine_log_transition_1": {
+      "x": 12,
+      "y": 33,
+      "region": "pine_log_transition_1",
+      "rgbaSha256": "67ee53450f84d9c8a09aadf41482b9f52f23ec8356dcc5b06716ad420d45a27e"
+    },
+    "pine_log_transition_2": {
+      "x": 13,
+      "y": 33,
+      "region": "pine_log_transition_2",
+      "rgbaSha256": "90e05ea4d17d9ca5ac996211a36a666b546644b40cd440fb2fb331d6e8e4c909"
+    },
+    "pine_log_transition_3": {
+      "x": 14,
+      "y": 33,
+      "region": "pine_log_transition_3",
+      "rgbaSha256": "7f503befaccae54dbab2a74816df88fb1a798c480996d1a050920ba595315094"
+    },
+    "axe_granite": {
+      "x": 15,
+      "y": 33,
+      "region": "axe_granite",
+      "rgbaSha256": "ea6f14cba10e3e160949ca093b1d6af7dc1b5c51a7ec67ef693447bbed436db9"
+    },
+    "axe_limestone": {
+      "x": 0,
+      "y": 34,
+      "region": "axe_limestone",
+      "rgbaSha256": "96fce47c4e778ee285e54e0c7a75361d66902ff0a9106e638bb0ae7b9d5811a9"
+    },
+    "axe_sandstone": {
+      "x": 1,
+      "y": 34,
+      "region": "axe_sandstone",
+      "rgbaSha256": "95aeffd6a4504b557cfc78a0392886a966c63bdc1dbeecf6f75c677700e91abc"
+    },
+    "axe_slate": {
+      "x": 2,
+      "y": 34,
+      "region": "axe_slate",
+      "rgbaSha256": "706c0550740e8f7672b1a149adb2a1060c091c856d495e3c943e4c3af7ca3602"
+    },
+    "axe_basalt": {
+      "x": 3,
+      "y": 34,
+      "region": "axe_basalt",
+      "rgbaSha256": "dd5a3406f0a51677ad46c97929af3512b833989bb5ae297112d2f46554b079bd"
+    },
+    "pickaxe_granite": {
+      "x": 4,
+      "y": 34,
+      "region": "pickaxe_granite",
+      "rgbaSha256": "da8b787c6059af5792a6427220080ca5e5edd66b9d408ca2eac91fc5be3a0b31"
+    },
+    "pickaxe_limestone": {
+      "x": 5,
+      "y": 34,
+      "region": "pickaxe_limestone",
+      "rgbaSha256": "b7c11b2d6cd7ef3719ea137ee05f880c28371da11550ea16d639c70067fa3fb1"
+    },
+    "pickaxe_sandstone": {
+      "x": 6,
+      "y": 34,
+      "region": "pickaxe_sandstone",
+      "rgbaSha256": "999a05130a5ceac7932ed6e0c3bea2027b4b6053bee7326c79b6c7e8eb4d5a46"
+    },
+    "pickaxe_slate": {
+      "x": 7,
+      "y": 34,
+      "region": "pickaxe_slate",
+      "rgbaSha256": "51dc1e8e3a361fb608c513af19c2158f55e9858b92acc5d7cca39b4cb0c3537c"
+    },
+    "pickaxe_basalt": {
+      "x": 8,
+      "y": 34,
+      "region": "pickaxe_basalt",
+      "rgbaSha256": "cd99b3a4b8c2bf7c0ca8d973fa5dfe317711c11e39c9166dcfe53a487e8cf31f"
+    },
+    "shovel_granite": {
+      "x": 9,
+      "y": 34,
+      "region": "shovel_granite",
+      "rgbaSha256": "7f29401308a9e98169ce0824d8b1d6c76f0d335a4f6f998431871c9e2955608a"
+    },
+    "shovel_limestone": {
+      "x": 10,
+      "y": 34,
+      "region": "shovel_limestone",
+      "rgbaSha256": "bf48c1cdeda8c1d4d7b39a380e85ec931608f49d47bd9fcbcd23c21de1007b4f"
+    },
+    "shovel_sandstone": {
+      "x": 11,
+      "y": 34,
+      "region": "shovel_sandstone",
+      "rgbaSha256": "5a4b0b6e7926de09248f044473872b785d863a2f9877e3529d8d2ba47f9fbcf0"
+    },
+    "shovel_slate": {
+      "x": 12,
+      "y": 34,
+      "region": "shovel_slate",
+      "rgbaSha256": "c8ee4802ccfbef93b55a216db599914acfd0d5cd6c16c98fb37de44af762629c"
+    },
+    "shovel_basalt": {
+      "x": 13,
+      "y": 34,
+      "region": "shovel_basalt",
+      "rgbaSha256": "540b1b9acc739f89128aa6ca76be172031d5b9b22af3f246ab92a4828886ff8f"
+    },
+    "chest": {
+      "x": 8,
+      "y": 24,
+      "w": 2,
+      "h": 2,
+      "pw": 32,
+      "ph": 32,
+      "region": "chest",
+      "rgbaSha256": "e3b6160bfbe93c5af37f623bf55a8c0952e8505e51a2dabe70939ededa1ea4cb"
+    },
+    "maple/log_side.png": {
+      "x": 14,
+      "y": 2,
+      "region": "maple/log_side.png",
+      "rgbaSha256": "e1376e7dbb331ee135a4cc49880f5a893f2026cd985b1f16daf50a860b4747d2"
+    },
+    "maple/log_top.png": {
+      "x": 15,
+      "y": 2,
+      "region": "maple/log_top.png",
+      "rgbaSha256": "67d0a1208bda8be1c0692fce703af4de93cf9ab7b438ee28b51e7556b3cd638b"
+    },
+    "maple/stripped_side.png": {
+      "x": 13,
+      "y": 3,
+      "region": "maple/stripped_side.png",
+      "rgbaSha256": "45cfad8dfca0cf65880d8a6947290490ae84f52eac87f8a50be911355b1720f7"
+    },
+    "maple/stripped_top.png": {
+      "x": 14,
+      "y": 3,
+      "region": "maple/stripped_top.png",
+      "rgbaSha256": "090dc92cef65cf1ce7b5ac78454a9c3b509d8546076c55aa0aa9fb0982cd824c"
+    },
+    "maple/planks.png": {
+      "x": 15,
+      "y": 3,
+      "region": "maple/planks.png",
+      "rgbaSha256": "3ed841948c1975a0fb60e5b365a80ac01ff8d87b96e5dbc7d0bf8d453f3863b5"
+    },
+    "maple/leaves.png": {
+      "x": 5,
+      "y": 4,
+      "region": "maple/leaves.png",
+      "rgbaSha256": "c74fa62ed78a033b926a6d40c428d52b3dbcbc634a5a139b3a927665e11147df"
+    },
+    "maple/sapling.png": {
+      "x": 6,
+      "y": 4,
+      "region": "maple/sapling.png",
+      "rgbaSha256": "fdf1cf1ffb99d3252db2d96c3a366ae381ac7e61bdf892713eee7db62cd2fb7d"
+    },
+    "maple/leaves_variant.png": {
+      "x": 7,
+      "y": 4,
+      "region": "maple/leaves_variant.png",
+      "rgbaSha256": "2de1f875587ec1539d45dafce7e408e57998a37fe84efc87e37f21c1e8fec28f"
+    },
+    "maple/leaf_litter.png": {
+      "x": 8,
+      "y": 4,
+      "region": "maple/leaf_litter.png",
+      "rgbaSha256": "7bdc2cbefce437f40adcd87d75908cbda9ee7aa396a10ac559b209e029a58e4c"
+    },
+    "models/rosliny/sadzonka-klon/polrealistyczny": {
+      "x": 9,
+      "y": 4,
+      "region": "models/rosliny/sadzonka-klon/polrealistyczny",
+      "rgbaSha256": "f93e7f173c5f19cc55d55afd7ca4f1e24e80d35dd6989548351ee25df8008be5"
+    },
+    "campfire_maple": {
+      "x": 14,
+      "y": 8,
+      "w": 2,
+      "h": 2,
+      "pw": 32,
+      "ph": 32,
+      "region": "campfire_maple",
+      "rgbaSha256": "39c1b9b2d374a88b9c1c536e0c76afb7770e733726c8afd8217e8e981a56af88"
+    },
+    "mugo/log_side.png": {
+      "x": 10,
+      "y": 4,
+      "region": "mugo/log_side.png",
+      "rgbaSha256": "63396cbd07f05012b80be9d6d74704e6745c1cd0260fbc2427513d0e2038257e"
+    },
+    "mugo/log_top.png": {
+      "x": 11,
+      "y": 4,
+      "region": "mugo/log_top.png",
+      "rgbaSha256": "66099b2bbdcea95bd61d409a722c756dce72c73632036c4b7d4249050967c1e3"
+    },
+    "mugo/stripped_side.png": {
+      "x": 12,
+      "y": 4,
+      "region": "mugo/stripped_side.png",
+      "rgbaSha256": "ab37f327ab3e64eab77280e4d48d49bde73f813c924d3797ae32c653c18b5b4d"
+    },
+    "mugo/stripped_top.png": {
+      "x": 13,
+      "y": 4,
+      "region": "mugo/stripped_top.png",
+      "rgbaSha256": "075a098038dd7f50f7347d803bbb3b9aae7dfbcdfb1383e6f2721cf75efca376"
+    },
+    "mugo/planks.png": {
+      "x": 14,
+      "y": 4,
+      "region": "mugo/planks.png",
+      "rgbaSha256": "a28db7ff12a8e8df672fc8851ce7c93d4b9c7fa09fda7aa59038da6fcc377423"
+    },
+    "mugo/leaves.png": {
+      "x": 15,
+      "y": 4,
+      "region": "mugo/leaves.png",
+      "rgbaSha256": "70b84a6ab401371bc774eb7b6d8d3513da6a3301df34347b805a737853870782"
+    },
+    "mugo/sapling.png": {
+      "x": 12,
+      "y": 6,
+      "region": "mugo/sapling.png",
+      "rgbaSha256": "d8d899d0182eff4310db15593f44fce83391d5f10970184bc32a76af2527e1cb"
+    },
+    "mugo/leaves_variant.png": {
+      "x": 13,
+      "y": 6,
+      "region": "mugo/leaves_variant.png",
+      "rgbaSha256": "f387fa2dd3417721e369d5520c8244a737e1dc5bd5b73239d1115798352fe8b3"
+    },
+    "mugo/cone.png": {
+      "x": 14,
+      "y": 6,
+      "region": "mugo/cone.png",
+      "rgbaSha256": "45f640600e4bdcefef87a93f95cee16642a26a0e62ea3fb4c1b2faee4f1ac50b"
+    },
+    "models/rosliny/sadzonka-kosodrzewina/polrealistyczny": {
+      "x": 10,
+      "y": 9,
+      "region": "models/rosliny/sadzonka-kosodrzewina/polrealistyczny",
+      "rgbaSha256": "a7893b51a72f2e746c916e348a8dcfcc07aba0aba00f62a61a76a8a9869aeefa"
+    },
+    "campfire_mugo": {
+      "x": 10,
+      "y": 16,
+      "w": 2,
+      "h": 2,
+      "pw": 32,
+      "ph": 32,
+      "region": "campfire_mugo",
+      "rgbaSha256": "7147c0052871d3747722be9532555cb6f7dbe181fb900f7802e0ea8316c826e5"
+    },
+    "olive/log_side.png": {
+      "x": 11,
+      "y": 9,
+      "region": "olive/log_side.png",
+      "rgbaSha256": "574229cbcf8e2921e2bf4b8d2654e995e6a05ddfdf76f95f0557f4900905a210"
+    },
+    "olive/log_top.png": {
+      "x": 12,
+      "y": 9,
+      "region": "olive/log_top.png",
+      "rgbaSha256": "28e938850ef79052e4361c292985439840e230050bd56aa9182edc261767a8ce"
+    },
+    "olive/stripped_side.png": {
+      "x": 13,
+      "y": 9,
+      "region": "olive/stripped_side.png",
+      "rgbaSha256": "6325201a17da7cbf46c34f3cb3ffa84a0996cbf14fc6eef224423bf6df854887"
+    },
+    "olive/stripped_top.png": {
+      "x": 1,
+      "y": 10,
+      "region": "olive/stripped_top.png",
+      "rgbaSha256": "5c1ecf860e9964fae306e411ca1b0b4c8844ae8e4ede600e1c2918aa07166fe9"
+    },
+    "olive/planks.png": {
+      "x": 6,
+      "y": 10,
+      "region": "olive/planks.png",
+      "rgbaSha256": "d16c1bdea1bfe6ff413eb2fa885b5f56e94547cabeaebd9d6c88d9c49edba626"
+    },
+    "olive/leaves.png": {
+      "x": 7,
+      "y": 10,
+      "region": "olive/leaves.png",
+      "rgbaSha256": "d9fe41486c4d49893dc793d666183f2aec622d854430d1143877059dc5c6c480"
+    },
+    "olive/sapling.png": {
+      "x": 8,
+      "y": 10,
+      "region": "olive/sapling.png",
+      "rgbaSha256": "aeb1a7989a117e106abd7d84a6a835e2fafb0f5140dea12a750bb8dc3c28e359"
+    },
+    "olive/leaves_variant.png": {
+      "x": 9,
+      "y": 10,
+      "region": "olive/leaves_variant.png",
+      "rgbaSha256": "b09c9084a71e70a71cec95b279a75e95334bef4d662c78ff7dfd086c917726b6"
+    },
+    "olive/olives.png": {
+      "x": 10,
+      "y": 10,
+      "region": "olive/olives.png",
+      "rgbaSha256": "9523564f2de0a108215dc5fe3eab61f957ec2771609c13194c646b3e90643e3c"
+    },
+    "models/rosliny/sadzonka-oliwka/polrealistyczny": {
+      "x": 11,
+      "y": 10,
+      "region": "models/rosliny/sadzonka-oliwka/polrealistyczny",
+      "rgbaSha256": "95ef4fe642882260de3ffc51b6e01791b82419106ecaee9c36faacda46520389"
+    },
+    "campfire_olive": {
+      "x": 12,
+      "y": 16,
+      "w": 2,
+      "h": 2,
+      "pw": 32,
+      "ph": 32,
+      "region": "campfire_olive",
+      "rgbaSha256": "e272d2cfd3b2f2701c8da9f0fc3dc3ac3f5100073c84fed749c80495dae79ef6"
+    },
+    "rainbow_eucalyptus/log_side.png": {
+      "x": 12,
+      "y": 10,
+      "region": "rainbow_eucalyptus/log_side.png",
+      "rgbaSha256": "3d4f9fa9d8f925a59a355eda84f599940125f30937063c157e6f0da76910af0f"
+    },
+    "rainbow_eucalyptus/log_top.png": {
+      "x": 4,
+      "y": 14,
+      "region": "rainbow_eucalyptus/log_top.png",
+      "rgbaSha256": "d1d8fc5e171f69ce0f365edac59f8fd1b1f762debacb2a533a9c81ea45008ec4"
+    },
+    "rainbow_eucalyptus/stripped_side.png": {
+      "x": 5,
+      "y": 14,
+      "region": "rainbow_eucalyptus/stripped_side.png",
+      "rgbaSha256": "03923b5b334fb3ced34a85472e1aa2c649a2a4c2dbc8a5ace83a5b5e929ca561"
+    },
+    "rainbow_eucalyptus/stripped_top.png": {
+      "x": 6,
+      "y": 14,
+      "region": "rainbow_eucalyptus/stripped_top.png",
+      "rgbaSha256": "6d4f093cac79b405044f87eac5b46d944374d0982f74a4c1d521044fde9cd73f"
+    },
+    "rainbow_eucalyptus/planks.png": {
+      "x": 10,
+      "y": 14,
+      "region": "rainbow_eucalyptus/planks.png",
+      "rgbaSha256": "5eb8af492c3d13421a69916019649bc490c537e92e3d33159a0912e6b50d04ee"
+    },
+    "rainbow_eucalyptus/leaves.png": {
+      "x": 11,
+      "y": 14,
+      "region": "rainbow_eucalyptus/leaves.png",
+      "rgbaSha256": "f62c14155a73768e9cde05c7e7e718c4156393697e21c7d85e9f6f5cff10ad2a"
+    },
+    "rainbow_eucalyptus/sapling.png": {
+      "x": 12,
+      "y": 14,
+      "region": "rainbow_eucalyptus/sapling.png",
+      "rgbaSha256": "b8e2e824e1d15d18ceb0eb60eeb7ed9d2a335c57b9cba9b191bd39626f0d1d98"
+    },
+    "models/rosliny/sadzonka-eukaliptus/polrealistyczny": {
+      "x": 13,
+      "y": 14,
+      "region": "models/rosliny/sadzonka-eukaliptus/polrealistyczny",
+      "rgbaSha256": "6aaf35aac9c1ff7266b5351eec32d08f79be23a8cdbf035d0f4580d5eb509bd0"
+    },
+    "campfire_rainbow_eucalyptus": {
+      "x": 14,
+      "y": 16,
+      "w": 2,
+      "h": 2,
+      "pw": 32,
+      "ph": 32,
+      "region": "campfire_rainbow_eucalyptus",
+      "rgbaSha256": "4593c2f0fd12a0c9d68ad5e13d0fe9a05a95b3e0f5e6e54811486c48ff491661"
+    },
+    "sequoia/log_side.png": {
+      "x": 14,
+      "y": 14,
+      "region": "sequoia/log_side.png",
+      "rgbaSha256": "6b4591cbe7fdfb561c6e41a8964129f4b9873bded0fc3d76f7085b1fd9a2cf87"
+    },
+    "sequoia/log_top.png": {
+      "x": 15,
+      "y": 14,
+      "region": "sequoia/log_top.png",
+      "rgbaSha256": "8053d574631fb414e78c44bf3242a33d0e26f55779b5673dd8f426fac880bfdc"
+    },
+    "sequoia/stripped_side.png": {
+      "x": 6,
+      "y": 16,
+      "region": "sequoia/stripped_side.png",
+      "rgbaSha256": "206f51ce5d820cb54afbb5bbdf24c6504b1487a5adf0c9293be0e29f60210b72"
+    },
+    "sequoia/stripped_top.png": {
+      "x": 7,
+      "y": 16,
+      "region": "sequoia/stripped_top.png",
+      "rgbaSha256": "304d0982fa17453fd09d04363f24d09bef6fe2ebbed500f27f2b16ab9504de48"
+    },
+    "sequoia/planks.png": {
+      "x": 8,
+      "y": 16,
+      "region": "sequoia/planks.png",
+      "rgbaSha256": "f0e337e60ce0e86bf47572ee2669c4dd68242a7f5e240d369194500eeed3f103"
+    },
+    "sequoia/leaves.png": {
+      "x": 9,
+      "y": 16,
+      "region": "sequoia/leaves.png",
+      "rgbaSha256": "a38dda14c71b5f73561df55ee6f32b6d98ec270db8b96102a3a62203bb5dd302"
+    },
+    "sequoia/sapling.png": {
+      "x": 9,
+      "y": 17,
+      "region": "sequoia/sapling.png",
+      "rgbaSha256": "1b66209ba0fb3f1fe37f4b699de17fdbc5acb4d4dd90c6a9bcce16d22de4cf85"
+    },
+    "sequoia/leaves_variant.png": {
+      "x": 4,
+      "y": 18,
+      "region": "sequoia/leaves_variant.png",
+      "rgbaSha256": "4be90be90e3dec710391670ef9a7fe5582f1ff80428425140258bf7550369de2"
+    },
+    "sequoia/cone.png": {
+      "x": 5,
+      "y": 18,
+      "region": "sequoia/cone.png",
+      "rgbaSha256": "67c7861d54e0ac34a29370d8553beef0c7914ff9bf1b84936d8a50e0b030c589"
+    },
+    "models/rosliny/sadzonka-sekwoja/polrealistyczny": {
+      "x": 6,
+      "y": 18,
+      "region": "models/rosliny/sadzonka-sekwoja/polrealistyczny",
+      "rgbaSha256": "db23e7afbab8a03b56c65b7b40c4b154314d3161053ea6be2ace004dac7a1aa1"
+    },
+    "campfire_sequoia": {
+      "x": 8,
+      "y": 18,
+      "w": 2,
+      "h": 2,
+      "pw": 32,
+      "ph": 32,
+      "region": "campfire_sequoia",
+      "rgbaSha256": "c6aecaeef5cc0e9d8cae26dbe134020fc8bc14c9856289607e97b942b82e928a"
+    }
+  },
+  "species": [
+    "spruce",
+    "pine",
+    "beech",
+    "linden",
+    "oak",
+    "birch",
+    "jablon",
+    "olcha",
+    "wierzba",
+    "acacia",
+    "bald_cypress",
+    "cherry",
+    "maple",
+    "mugo",
+    "olive",
+    "rainbow_eucalyptus",
+    "sequoia"
+  ],
+  "textureNames": [
+    "jablon/pien_bok.png",
+    "jablon/pien_gora.png",
+    "jablon/okorowany_bok.png",
+    "jablon/okorowany_gora.png",
+    "jablon/deski.png",
+    "jablon/liscie.png",
+    "jablon/sadzonka.png",
+    "jablon/opadle_liscie.png",
+    "jablon/jablko.png",
+    "jablon/liscie_jablka.png",
+    "olcha/pien_bok.png",
+    "olcha/pien_gora.png",
+    "olcha/okorowany_bok.png",
+    "olcha/okorowany_gora.png",
+    "olcha/deski.png",
+    "olcha/liscie.png",
+    "olcha/sadzonka.png",
+    "olcha/opadle_liscie.png",
+    "olcha/szyszki.png",
+    "wierzba/pien_bok.png",
+    "wierzba/pien_gora.png",
+    "wierzba/okorowany_bok.png",
+    "wierzba/okorowany_gora.png",
+    "wierzba/deski.png",
+    "wierzba/liscie.png",
+    "wierzba/sadzonka.png",
+    "wierzba/opadle_liscie.png",
+    "wierzba/bazie.png",
+    "acacia/log_side.png",
+    "acacia/log_top.png",
+    "acacia/stripped_side.png",
+    "acacia/stripped_top.png",
+    "acacia/planks.png",
+    "acacia/leaves.png",
+    "acacia/sapling.png",
+    "acacia/leaves_variant.png",
+    "bald_cypress/log_side.png",
+    "bald_cypress/log_top.png",
+    "bald_cypress/stripped_side.png",
+    "bald_cypress/stripped_top.png",
+    "bald_cypress/planks.png",
+    "bald_cypress/leaves.png",
+    "bald_cypress/sapling.png",
+    "bald_cypress/leaves_variant.png",
+    "cherry/log_side.png",
+    "cherry/log_top.png",
+    "cherry/stripped_side.png",
+    "cherry/stripped_top.png",
+    "cherry/planks.png",
+    "cherry/leaves.png",
+    "cherry/sapling.png",
+    "cherry/leaves_variant.png",
+    "maple/log_side.png",
+    "maple/log_top.png",
+    "maple/stripped_side.png",
+    "maple/stripped_top.png",
+    "maple/planks.png",
+    "maple/leaves.png",
+    "maple/sapling.png",
+    "maple/leaves_variant.png",
+    "maple/leaf_litter.png",
+    "mugo/log_side.png",
+    "mugo/log_top.png",
+    "mugo/stripped_side.png",
+    "mugo/stripped_top.png",
+    "mugo/planks.png",
+    "mugo/leaves.png",
+    "mugo/sapling.png",
+    "mugo/leaves_variant.png",
+    "mugo/cone.png",
+    "olive/log_side.png",
+    "olive/log_top.png",
+    "olive/stripped_side.png",
+    "olive/stripped_top.png",
+    "olive/planks.png",
+    "olive/leaves.png",
+    "olive/sapling.png",
+    "olive/leaves_variant.png",
+    "olive/olives.png",
+    "rainbow_eucalyptus/log_side.png",
+    "rainbow_eucalyptus/log_top.png",
+    "rainbow_eucalyptus/stripped_side.png",
+    "rainbow_eucalyptus/stripped_top.png",
+    "rainbow_eucalyptus/planks.png",
+    "rainbow_eucalyptus/leaves.png",
+    "rainbow_eucalyptus/sapling.png",
+    "sequoia/log_side.png",
+    "sequoia/log_top.png",
+    "sequoia/stripped_side.png",
+    "sequoia/stripped_top.png",
+    "sequoia/planks.png",
+    "sequoia/leaves.png",
+    "sequoia/sapling.png",
+    "sequoia/leaves_variant.png",
+    "sequoia/cone.png"
+  ],
+  "blocksSha256": "ee215a98c794935d26128d8039ad8b868fdec19f87b27d9a94ab78bb96e7665f",
+  "shapeSha256": {
+    "maple": "85d7c8131a60fd74704cb798005e223eeac53ab94b757e6ff61ff68da6b3a104",
+    "mugo": "f5fea95035aecb94ece9026cd0cef436c687f608b06aaaebb4741c8a3f7ac1d4",
+    "olive": "f7e828e67fc56a2abc28c931d557c397bb56a93eef95293759d62a6801e5dcf3",
+    "rainbow_eucalyptus": "be0f65a1d45d2c7e66ccb77e2dde0572617366893663f10e6d46a0af69c9a204",
+    "sequoia": "bbe137bef5452d17c29c97967e34544d27b06b1e050c4b493b4a9f64ecbc2658"
+  }
+}

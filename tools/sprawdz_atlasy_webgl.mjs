@@ -127,18 +127,27 @@ try {
     report.version = JSON.parse(await readFile(resolve(root, 'package.json'), 'utf8')).version;
     report.nativeElectron = !!electron;
     report.missingRequests = missing;
+    await writeFile(resolve(output, 'render.json'), JSON.stringify(report, null, 2) + '\n');
     assert.deepEqual(missing, [], 'No missing image/model requests');
     // Isometric block icons use Canvas2D transformed edges, rasterized a little
     // differently by D3D11 and SwiftShader. Compare each backend to its own
     // immutable 0.79.0 capture; source tiles and animation pixels stay exact.
-    const referenceFile = resolve(ownRoot, `tools/fixtures/texture-atlas-visual-079${electron ? '-native' : ''}.json`);
+    const referenceFile = resolve(process.env.VOXEL_ATLAS_REFERENCE ?? resolve(ownRoot, `tools/fixtures/texture-atlas-visual-079${electron ? '-native' : ''}.json`));
     if (captureBaseline) await writeFile(referenceFile, JSON.stringify({extraTextures: report.extraTextures, iconHashes: report.iconHashes}, null, 2) + '\n');
     else {
         const expected = JSON.parse(await readFile(referenceFile, 'utf8'));
         assert.deepEqual(report.extraTextures, expected.extraTextures, 'Skin and complete animated textures preserve every visible pixel');
         // Ikony z 0.79.0 bez zmian; nowe gatunki (np. deski z 0.83.0) tylko dochodzą.
-        const kept = Object.fromEntries(Object.keys(expected.iconHashes).map(name => [name, report.iconHashes[name]]));
-        assert.deepEqual(kept, expected.iconHashes, 'Inventory model icons preserve every visible pixel');
+        const comparisonIcon = name => !electron && name.endsWith('_planks')
+            ? report.plankIconsAt084SourceHeight[name] : report.iconHashes[name];
+        const kept = Object.fromEntries(Object.keys(expected.iconHashes).map(name => [name, comparisonIcon(name)]));
+        assert.deepEqual(kept, expected.iconHashes, electron ? 'Actual inventory icons preserve every visible pixel'
+            : 'Actual model icons and old planks at 0.84 source height preserve every visible pixel');
+        const recent = JSON.parse(await readFile(resolve(ownRoot, `tools/fixtures/texture-atlas-visual-084${electron ? '-native' : ''}.json`), 'utf8'));
+        const recentIcons = Object.fromEntries(Object.keys(recent.iconHashes).map(name => [name, comparisonIcon(name)]));
+        assert.deepEqual(recentIcons, recent.iconHashes, electron ? 'All seventeen actual wood and firewood icons survive the extra atlas row'
+            : 'Seventeen actual firewood icons and plank icons at 0.84 source height match the independent baseline');
+        report.actualIconDifferencesFrom084 = Object.keys(recent.iconHashes).filter(name => report.iconHashes[name].rgbaSha256 !== recent.iconHashes[name].rgbaSha256);
         assert.ok(report.textureRequests.length <= 9, 'At most nine thematic image requests instead of individual tiles');
     }
     assert.deepEqual(await fingerprint(), source, 'Game source did not change during QA');

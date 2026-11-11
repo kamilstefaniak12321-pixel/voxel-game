@@ -1,0 +1,316 @@
+{
+  "extraTextures": {
+    "skin": {
+      "width": 64,
+      "height": 64,
+      "rgbaSha256": "651a98e99afe66ae125d43c7341a59899c5722a495117fd2db751f8864eab45c"
+    },
+    "campfire": {
+      "width": 256,
+      "height": 20,
+      "rgbaSha256": "fbeea9110bc492de2ac6914c2b49aa223a871be5d0e2e6c74c82386babb07962"
+    },
+    "torch": {
+      "width": 16,
+      "height": 320,
+      "rgbaSha256": "3068a5e1424b3e9b4a7d9edf099beb44a090920f8dacc1f35d62dbb07b607916"
+    },
+    "torch_white": {
+      "width": 16,
+      "height": 320,
+      "rgbaSha256": "31a3e60250e9fa41e3155d31497a61f3c90a38d99a9649be618940fec2634493"
+    },
+    "torch_orange": {
+      "width": 16,
+      "height": 320,
+      "rgbaSha256": "ebfbbfb5277a4b85990749f7eed02c0ce590676bce0c4501803a46b89d66217a"
+    },
+    "torch_magenta": {
+      "width": 16,
+      "height": 320,
+      "rgbaSha256": "b45d34e7d5e07660b096e140288f7731d4b4f14a8284e64ebfc5e68ed8fd9107"
+    },
+    "torch_light_blue": {
+      "width": 16,
+      "height": 320,
+      "rgbaSha256": "0a5f3470eec8252da08324d00f362bddf4b14fad94f5395c77a3b00fb2ac7800"
+    },
+    "torch_yellow": {
+      "width": 16,
+      "height": 320,
+      "rgbaSha256": "b07323d40ea56a8ba7d499cda21adbc52bd06abbc51e908d8fc24144fa08d149"
+    },
+    "torch_lime": {
+      "width": 16,
+      "height": 320,
+      "rgbaSha256": "723ad9c00a6ca27a075df2d729acfae3b0ccdd994e96c1a9a0c0cdfd5c6a536e"
+    },
+    "torch_pink": {
+      "width": 16,
+      "height": 320,
+      "rgbaSha256": "b6308f98f2e816130963a46eea95cd3e5913e113872f29ec49e51aff47399182"
+    },
+    "torch_gray": {
+      "width": 16,
+      "height": 320,
+      "rgbaSha256": "3d16ef1590eb67af98fc1b6f17334dc8ecb7d4c356e9aac44eba2b5aacd30946"
+    },
+    "torch_light_gray": {
+      "width": 16,
+      "height": 320,
+      "rgbaSha256": "53ee7da1f0f1213b3533066f673eb806d1d328169faff49cadf41c08242ed327"
+    },
+    "torch_cyan": {
+      "width": 16,
+      "height": 320,
+      "rgbaSha256": "f7adb48fb6747d530df6cb8807a1bca2963e2a53530950d49b59db3f6345ef91"
+    },
+    "torch_purple": {
+      "width": 16,
+      "height": 320,
+      "rgbaSha256": "7316ff01a27bbe6c36f0107020b53a333fcb54897ffd76a364cdd47e5d726cc0"
+    },
+    "torch_blue": {
+      "width": 16,
+      "height": 320,
+      "rgbaSha256": "206e5ddde86c8369ef73aa98966ccd801fb05b60f23132db9c97fe60601e6b7c"
+    },
+    "torch_brown": {
+      "width": 16,
+      "height": 320,
+      "rgbaSha256": "a10c93ddae25bf8839231c709733389b4a8eba367327b48597920bdd7bbb8ff5"
+    },
+    "torch_green": {
+      "width": 16,
+      "height": 320,
+      "rgbaSha256": "825fdaebc5db8e5c2bfe76099b7260a740eb14a6dbafe6649a4a7c265fbd5c6e"
+    },
+    "torch_red": {
+      "width": 16,
+      "height": 320,
+      "rgbaSha256": "482c00dd50122c8a50561aba8b9044b371b133ea3477daedbe92eda7e201146e"
+    },
+    "torch_black": {
+      "width": 16,
+      "height": 320,
+      "rgbaSha256": "0db95e429354cf595e6a171538b4c2f21b3bd6963d0043af0d3e3ae7ced7c7fd"
+    }
+  },
+  "iconHashes": {
+    "blueberry": {
+      "width": 64,
+      "height": 64,
+      "rgbaSha256": "7584f88e43fc1425b6cf4003c0208fdf800bb73f39f41f0b4af12c2ba9280ce2"
+    },
+    "strawberry": {
+      "width": 64,
+      "height": 64,
+      "rgbaSha256": "83829b3ab9f47a78be9c6c2f05ff2d1f0e8d160867806296d140c26a3eb07e60"
+    },
+    "blackberry": {
+      "width": 64,
+      "height": 64,
+      "rgbaSha256": "62f37ca566118d7599476d99d8c93c1b3b4b5d0bc3a2b69c0f522098ca097213"
+    },
+    "chili_pepper": {
+      "width": 64,
+      "height": 64,
+      "rgbaSha256": "f2a212aa53d7aaaa31f06fd67f65618947b02d539c5d0a6ef1bb7e01f9c0adb5"
+    },
+    "hazelnut": {
+      "width": 64,
+      "height": 64,
+      "rgbaSha256": "cade9f0ac79cf965c726287c0c195c28271b7f70afd9488db3b97ac7b7d20ddd"
+    },
+    "oak_firewood": {
+      "width": 64,
+      "height": 64,
+      "rgbaSha256": "282df9508fd1888b9d8369c9c1a35fed764fc6046fff6f6972f516b554f84726"
+    },
+    "bald_cypress_firewood": {
+      "width": 64,
+      "height": 64,
+      "rgbaSha256": "4e1a8388796e4c21a9733c4f6ecad8496485f4471128b0a9035c56a854389392"
+    },
+    "cherry_firewood": {
+      "width": 64,
+      "height": 64,
+      "rgbaSha256": "1d91b861d4d58a5e9461d5b4528ceed1a2731954bdb5cfde82a93f26c242be0d"
+    },
+    "axe": {
+      "width": 64,
+      "height": 64,
+      "rgbaSha256": "a0780922390a3233dcd2575d584344e0e667cc5a3cd0ce131a10b2e4edeb37bd"
+    },
+    "pickaxe": {
+      "width": 64,
+      "height": 64,
+      "rgbaSha256": "3c1be94c7720af4df504f09dcacbd3856dbdd94311db6f79e692e2a2530101ee"
+    },
+    "shovel": {
+      "width": 64,
+      "height": 64,
+      "rgbaSha256": "4a54b82833165ea51b7f9d69858cd24e7d6591e8f225c5ce4dbe95b7b1184eb5"
+    },
+    "stick": {
+      "width": 64,
+      "height": 64,
+      "rgbaSha256": "be4035a286cb35c69cd923fee6016707e3e2663cfa1f527722fe14b769d670f1"
+    },
+    "spruce_planks": {
+      "width": 64,
+      "height": 64,
+      "rgbaSha256": "0e559ce67476af3ce317892de0175141426d03802785b5a33e3e06ca4265e63c"
+    },
+    "spruce_firewood": {
+      "width": 64,
+      "height": 64,
+      "rgbaSha256": "e031eedf2375ab5191019903abfcc04f97605c376cdabff819b35488ac02dfa6"
+    },
+    "pine_planks": {
+      "width": 64,
+      "height": 64,
+      "rgbaSha256": "d94e51ad498456d3a82cb9332480f47215d6e0ed860d65d802a06046e06f077f"
+    },
+    "pine_firewood": {
+      "width": 64,
+      "height": 64,
+      "rgbaSha256": "32f4ec1696f0d48d30631565afef6eed4816db01a18e5d6778f93a6923c4693a"
+    },
+    "beech_planks": {
+      "width": 64,
+      "height": 64,
+      "rgbaSha256": "b4c8f580fe2496d17c87728eab7470511532018aa2ba34dbe5f66523aded9e71"
+    },
+    "beech_firewood": {
+      "width": 64,
+      "height": 64,
+      "rgbaSha256": "424dca9f41caa82825dec5d8cdf6e3fe94d1ddfb051133815c06a64c616a76dc"
+    },
+    "linden_planks": {
+      "width": 64,
+      "height": 64,
+      "rgbaSha256": "522f331b8fb6dbc72eebaed9206d8fec79485f252bf531eaa6a70697260e7c47"
+    },
+    "linden_firewood": {
+      "width": 64,
+      "height": 64,
+      "rgbaSha256": "9a0f8176752caab495ee978feabd2b1fca60a5dbff64c34246f2d1fd3b231592"
+    },
+    "oak_planks": {
+      "width": 64,
+      "height": 64,
+      "rgbaSha256": "e955b970605da189ef4742c0bd75994cb6e8d8b58d2b432bd269e0876ecc80c7"
+    },
+    "birch_planks": {
+      "width": 64,
+      "height": 64,
+      "rgbaSha256": "10d16ce70fa1ed1364058ac54001e7d5403650034256c084a08d6b42e3dc5aa1"
+    },
+    "birch_firewood": {
+      "width": 64,
+      "height": 64,
+      "rgbaSha256": "70d81ffd175dd896a5402be063cc4618f5797e36c76c2ce96b28a301c95785f7"
+    },
+    "jablon_planks": {
+      "width": 64,
+      "height": 64,
+      "rgbaSha256": "0883ff27675c154809840f040f97794d58eb35f58b00fce8e876dc7efc331d1a"
+    },
+    "jablon_firewood": {
+      "width": 64,
+      "height": 64,
+      "rgbaSha256": "3df2c4bc2416308fff5c87d6cac6966f28d55b44216eabc0447ddcaea0f574c2"
+    },
+    "olcha_planks": {
+      "width": 64,
+      "height": 64,
+      "rgbaSha256": "0e0f2e88328764da63997812a05549f49917fff3b825bf89f8b75ef0506432d8"
+    },
+    "olcha_firewood": {
+      "width": 64,
+      "height": 64,
+      "rgbaSha256": "52aec932778c1a67912ed784dc6bfda240a08c2d7c249d1051ac4bdf007cd7fc"
+    },
+    "wierzba_planks": {
+      "width": 64,
+      "height": 64,
+      "rgbaSha256": "5d930d51f82431e931bea2c0383e9314bdf95c64630161c02fb54cd2d7a595fd"
+    },
+    "wierzba_firewood": {
+      "width": 64,
+      "height": 64,
+      "rgbaSha256": "930a11b3b6b72f9ea426e55841a7c5718b7ca6a0a0c1c10f1057f73ce02b3c60"
+    },
+    "acacia_planks": {
+      "width": 64,
+      "height": 64,
+      "rgbaSha256": "83707e9acd737365be0c06b4fb1ec21b8f408333b1df72b7571d34ef086c0b06"
+    },
+    "acacia_firewood": {
+      "width": 64,
+      "height": 64,
+      "rgbaSha256": "a34b98832062aee4b551f3e2aba24baf74980ba8ed94b622bb5a55ef875b9de9"
+    },
+    "bald_cypress_planks": {
+      "width": 64,
+      "height": 64,
+      "rgbaSha256": "c946fd82b984dad0d9c280a6a12ac1d748831a9b88ecff2e838affd61721c20b"
+    },
+    "cherry_planks": {
+      "width": 64,
+      "height": 64,
+      "rgbaSha256": "26c7b08dfa09d899401f3de740c587ed730071bd510954831e265fce62e79088"
+    },
+    "maple_planks": {
+      "width": 64,
+      "height": 64,
+      "rgbaSha256": "b7ca13a9a4db70d6c93f334c84b7c2eb80a111ad8a3cd10c9157a35b09be885c"
+    },
+    "maple_firewood": {
+      "width": 64,
+      "height": 64,
+      "rgbaSha256": "555106bb36477ac6873ce2265ee7b151a5f21edf43ba77cdb27b4e620f0a3952"
+    },
+    "mugo_planks": {
+      "width": 64,
+      "height": 64,
+      "rgbaSha256": "49f8a0ddadc5e44415c55f8aae98e4acfddac5768e9c027e87e9fbc2a558e0b2"
+    },
+    "mugo_firewood": {
+      "width": 64,
+      "height": 64,
+      "rgbaSha256": "acb37fc36239584c98ebd421773afc6ff2342c328d86e7dbc26cb08764e53d4a"
+    },
+    "olive_planks": {
+      "width": 64,
+      "height": 64,
+      "rgbaSha256": "8eed5f59f452ce51ac681984df9b7d01879b76120897f26a5f84cc0f223260f2"
+    },
+    "olive_firewood": {
+      "width": 64,
+      "height": 64,
+      "rgbaSha256": "4eb0c40f7311689ce6ca4cd70634daacf6636b90767eea96e89f2b37664dae3a"
+    },
+    "rainbow_eucalyptus_planks": {
+      "width": 64,
+      "height": 64,
+      "rgbaSha256": "7e9f1f4ee04b6b5acfe878833ec43ea059eb0463bb44297e952d3b41115c6e01"
+    },
+    "rainbow_eucalyptus_firewood": {
+      "width": 64,
+      "height": 64,
+      "rgbaSha256": "6888deae8d15307dace54411f342d080d74b7391ad509864b3b93bd5faf956b1"
+    },
+    "sequoia_planks": {
+      "width": 64,
+      "height": 64,
+      "rgbaSha256": "255e2fe1232c09af9449c70bb573d03bd9cbba50400ffca55204ee0cf95892fd"
+    },
+    "sequoia_firewood": {
+      "width": 64,
+      "height": 64,
+      "rgbaSha256": "0cea604a64563774a817a8513327395df6c0910bee587080e48dc7df8f822695"
+    }
+  }
+}

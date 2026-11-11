@@ -1,0 +1,63 @@
+{
+    "nazwa": "Sadzonka miłorzębu",
+    "bloki": [
+        "ginkgo_sapling"
+    ],
+    "kolory": {
+        "lisc": "#f0d030",
+        "liscJasny": "#ffe040",
+        "liscCiemny": "#bfa830",
+        "lodyga": "#8a7a68"
+    },
+    "etapy": [
+        {
+            "prosty": null,
+            "polrealistyczny": {
+                "liscie": {
+                    "uklad": "kopula",
+                    "ile": 9,
+                    "dlugosc": 5,
+                    "promien": 3,
+                    "kopula": 10,
+                    "nachylenie": 35,
+                    "pien": true
+                }
+            },
+            "szczegolowy": {
+                "rodzaj": "kepka",
+                "liscie": {
+                    "uklad": "krzak",
+                    "ile": [
+                        4,
+                        6
+                    ],
+                    "dlugosc": [
+                        2,
+                        3
+                    ],
+                    "promien": 2
+                },
+                "lodygi": {
+                    "ile": [
+                        1,
+                        1
+                    ],
+                    "wysokosc": [
+                        8,
+                        11
+                    ],
+                    "promien": 0,
+                    "liscie": {
+                        "co": 2,
+                        "dlugosc": [
+                            3,
+                            4
+                        ],
+                        "naprzeciw": true,
+                        "luk": false
+                    }
+                }
+            }
+        }
+    ]
+}

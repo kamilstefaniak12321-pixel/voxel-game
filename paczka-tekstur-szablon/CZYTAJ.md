@@ -1,4 +1,4 @@
-# Paczka tekstur - szablon (Voxel Game 0.80.0)
+# Paczka tekstur - szablon (Voxel Game 0.85.0)
 
 Oryginalne tekstury gry, każda w osobnym pliku. Zrób z nich własną paczkę:
 
@@ -126,6 +126,14 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/fern.png` | Paproć, Wywłócznik |
 | `bloki/forest_floor_side.png` | Ściółka leśna |
 | `bloki/forest_floor_top.png` | Ściółka leśna |
+| `bloki/ginkgo/leaves.png` | Liście miłorzębu |
+| `bloki/ginkgo/leaves_variant.png` | Liście miłorzębu — jasne złoto |
+| `bloki/ginkgo/log_side.png` | Pień miłorzębu |
+| `bloki/ginkgo/log_top.png` | Pień miłorzębu |
+| `bloki/ginkgo/planks.png` | Deski miłorzębowe |
+| `bloki/ginkgo/sapling.png` | Sadzonka miłorzębu |
+| `bloki/ginkgo/stripped_side.png` | Okorowany pień miłorzębu |
+| `bloki/ginkgo/stripped_top.png` | Okorowany pień miłorzębu |
 | `bloki/granite.png` | Granit |
 | `bloki/grass_side.png` | Blok trawy |
 | `bloki/grass_top.png` | Blok trawy |
@@ -145,6 +153,14 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/jablon/pien_bok.png` | Pień jabłoni |
 | `bloki/jablon/pien_gora.png` | Pień jabłoni |
 | `bloki/jablon/sadzonka.png` | Sadzonka jabłoni |
+| `bloki/jacaranda/leaves.png` | Liście jakarandy |
+| `bloki/jacaranda/leaves_variant.png` | Liście jakarandy — jasne kwiaty |
+| `bloki/jacaranda/log_side.png` | Pień jakarandy |
+| `bloki/jacaranda/log_top.png` | Pień jakarandy |
+| `bloki/jacaranda/planks.png` | Deski jakarandowe |
+| `bloki/jacaranda/sapling.png` | Sadzonka jakarandy |
+| `bloki/jacaranda/stripped_side.png` | Okorowany pień jakarandy |
+| `bloki/jacaranda/stripped_top.png` | Okorowany pień jakarandy |
 | `bloki/lamp.png` | Lampa |
 | `bloki/lamp_blue.png` | Niebieska lampa |
 | `bloki/lamp_green.png` | Zielona lampa |
@@ -162,6 +178,15 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/linden_sapling.png` | Sadzonka lipy |
 | `bloki/linden_stripped_side.png` | Okorowany pień lipy |
 | `bloki/linden_stripped_top.png` | Okorowany pień lipy |
+| `bloki/maple/leaf_litter.png` | Opadłe liście klonu |
+| `bloki/maple/leaves.png` | Liście klonu |
+| `bloki/maple/leaves_variant.png` | Złote liście klonu |
+| `bloki/maple/log_side.png` | Pień klonu |
+| `bloki/maple/log_top.png` | Pień klonu |
+| `bloki/maple/planks.png` | Deski klonowe |
+| `bloki/maple/sapling.png` | Sadzonka klonu |
+| `bloki/maple/stripped_side.png` | Okorowany pień klonu |
+| `bloki/maple/stripped_top.png` | Okorowany pień klonu |
 | `bloki/meteorite.png` | Meteoryt |
 | `bloki/models/bushy-grass/texture.png` | - |
 | `bloki/models/rosliny/amarantus/polrealistyczny.png` | - |
@@ -232,9 +257,16 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/models/rosliny/sadzonka-buk/polrealistyczny.png` | - |
 | `bloki/models/rosliny/sadzonka-cyprysnik/polrealistyczny.png` | - |
 | `bloki/models/rosliny/sadzonka-dab/polrealistyczny.png` | - |
+| `bloki/models/rosliny/sadzonka-eukaliptus/polrealistyczny.png` | - |
 | `bloki/models/rosliny/sadzonka-jablon/polrealistyczny.png` | - |
+| `bloki/models/rosliny/sadzonka-jakaranda/polrealistyczny.png` | - |
+| `bloki/models/rosliny/sadzonka-klon/polrealistyczny.png` | - |
+| `bloki/models/rosliny/sadzonka-kosodrzewina/polrealistyczny.png` | - |
 | `bloki/models/rosliny/sadzonka-lipa/polrealistyczny.png` | - |
+| `bloki/models/rosliny/sadzonka-milorzab/polrealistyczny.png` | - |
 | `bloki/models/rosliny/sadzonka-olcha/polrealistyczny.png` | - |
+| `bloki/models/rosliny/sadzonka-oliwka/polrealistyczny.png` | - |
+| `bloki/models/rosliny/sadzonka-sekwoja/polrealistyczny.png` | - |
 | `bloki/models/rosliny/sadzonka-sosna/polrealistyczny.png` | - |
 | `bloki/models/rosliny/sadzonka-swierk/polrealistyczny.png` | - |
 | `bloki/models/rosliny/sadzonka-wierzba/polrealistyczny.png` | - |
@@ -260,6 +292,15 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/moss_side.png` | Mech |
 | `bloki/moss_top.png` | Mech |
 | `bloki/mud.png` | Błoto |
+| `bloki/mugo/cone.png` | Szyszka kosodrzewiny |
+| `bloki/mugo/leaves.png` | Igliwie kosodrzewiny |
+| `bloki/mugo/leaves_variant.png` | Igliwie kosodrzewiny z młodymi pędami |
+| `bloki/mugo/log_side.png` | Pień kosodrzewiny |
+| `bloki/mugo/log_top.png` | Pień kosodrzewiny |
+| `bloki/mugo/planks.png` | Deski z kosodrzewiny |
+| `bloki/mugo/sapling.png` | Sadzonka kosodrzewiny |
+| `bloki/mugo/stripped_side.png` | Okorowany pień kosodrzewiny |
+| `bloki/mugo/stripped_top.png` | Okorowany pień kosodrzewiny |
 | `bloki/nettle.png` | Pokrzywa |
 | `bloki/oak_leaf_litter.png` | Opadłe liście dębu |
 | `bloki/oak_leaves.png` | Liście dębu |
@@ -279,6 +320,15 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/olcha/pien_gora.png` | Pień olchy |
 | `bloki/olcha/sadzonka.png` | Sadzonka olchy |
 | `bloki/olcha/szyszki.png` | Szyszeczki olchy |
+| `bloki/olive/leaves.png` | Liście oliwki, Liście oliwki (oliwki odrastają) |
+| `bloki/olive/leaves_variant.png` | Liście oliwki z oliwkami |
+| `bloki/olive/log_side.png` | Pień oliwki |
+| `bloki/olive/log_top.png` | Pień oliwki |
+| `bloki/olive/olives.png` | Oliwki |
+| `bloki/olive/planks.png` | Deski oliwkowe |
+| `bloki/olive/sapling.png` | Sadzonka oliwki |
+| `bloki/olive/stripped_side.png` | Okorowany pień oliwki |
+| `bloki/olive/stripped_top.png` | Okorowany pień oliwki |
 | `bloki/pickaxe.png` | Kilof |
 | `bloki/pickaxe_basalt.png` | Kilof bazaltowy |
 | `bloki/pickaxe_granite.png` | Kilof granitowy |
@@ -304,6 +354,13 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/plantain.png` | Babka zwyczajna |
 | `bloki/polished_stone.png` | Polerowany kamień |
 | `bloki/poppy.png` | Mak |
+| `bloki/rainbow_eucalyptus/leaves.png` | Liście eukaliptusa |
+| `bloki/rainbow_eucalyptus/log_side.png` | Pień eukaliptusa |
+| `bloki/rainbow_eucalyptus/log_top.png` | Pień eukaliptusa |
+| `bloki/rainbow_eucalyptus/planks.png` | Deski eukaliptusowe |
+| `bloki/rainbow_eucalyptus/sapling.png` | Sadzonka eukaliptusa |
+| `bloki/rainbow_eucalyptus/stripped_side.png` | Okorowany pień eukaliptusa |
+| `bloki/rainbow_eucalyptus/stripped_top.png` | Okorowany pień eukaliptusa |
 | `bloki/reed.png` | Trzcina, Turzyca rzeczna, Pałka wodna, Pałka wodna (w wodzie) |
 | `bloki/resin.png` | Żywica |
 | `bloki/rosliny/amarantus/wiecha.png` | Wiecha amarantusa |
@@ -328,6 +385,15 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/sand.png` | Piasek |
 | `bloki/sandstone_side.png` | Piaskowiec |
 | `bloki/sandstone_top.png` | Piaskowiec |
+| `bloki/sequoia/cone.png` | Szyszka sekwoi |
+| `bloki/sequoia/leaves.png` | Igliwie sekwoi, Igliwie sekwoi (szyszki odrastają) |
+| `bloki/sequoia/leaves_variant.png` | Igliwie sekwoi z szyszkami |
+| `bloki/sequoia/log_side.png` | Pień sekwoi |
+| `bloki/sequoia/log_top.png` | Pień sekwoi |
+| `bloki/sequoia/planks.png` | Deski sekwojowe |
+| `bloki/sequoia/sapling.png` | Sadzonka sekwoi |
+| `bloki/sequoia/stripped_side.png` | Okorowany pień sekwoi |
+| `bloki/sequoia/stripped_top.png` | Okorowany pień sekwoi |
 | `bloki/short_grass.png` | Krótka trawa |
 | `bloki/shovel.png` | Łopata |
 | `bloki/shovel_basalt.png` | Łopata bazaltowa |

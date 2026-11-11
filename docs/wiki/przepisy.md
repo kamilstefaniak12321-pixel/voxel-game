@@ -2,7 +2,7 @@
 
 > Ta strona jest generowana z kodu gry (`python tools/wiki.py`) - nie zmieniaj jej ręcznie, zmiany przepadną przy następnym generowaniu.
 
-Wersja gry **0.84.0** - 116 przepisów. Wytwarza się w ekwipunku (**E**): siatka 2 x 2 obok miejsc ekwipunku, wynik po prawej (klik - weź, Shift + klik - ile się da). Przycisk 📖 *Przepisy* otwiera księgę - klik na przepisie sam układa składniki. Przepisy *z kształtem* można przesuwać po siatce i odbijać w poziomie; przepisy *bez kształtu* - obojętne, gdzie leżą składniki. Z czatu: `/przepisy`, `/wytworz <przepis>`.
+Wersja gry **0.85.0** - 120 przepisów. Wytwarza się w ekwipunku (**E**): siatka 2 x 2 obok miejsc ekwipunku, wynik po prawej (klik - weź, Shift + klik - ile się da). Przycisk 📖 *Przepisy* otwiera księgę - klik na przepisie sam układa składniki. Przepisy *z kształtem* można przesuwać po siatce i odbijać w poziomie; przepisy *bez kształtu* - obojętne, gdzie leżą składniki. Z czatu: `/przepisy`, `/wytworz <przepis>`.
 
 
 ## Ziemia
@@ -163,6 +163,18 @@ Wersja gry **0.84.0** - 116 przepisów. Wytwarza się w ekwipunku (**E**): siatk
 
 1 x pień sekwoi (też okorowany) + 1 x siekiera (dowolny kamień) (bez kształtu). Nazwa przepisu: `sequoia_firewood`. Siekiera zostaje. Opał: PPM na ziemię, potem dokładaj do 6 polan.
 
+### Opał — miłorząb x4
+
+<img src="przepisy/ginkgo_firewood.png" alt="Opał — miłorząb x4: 1 x pień miłorzębu (też okorowany) + 1 x siekiera (dowolny kamień) (zostaje) (obojętne gdzie)">
+
+1 x pień miłorzębu (też okorowany) + 1 x siekiera (dowolny kamień) (bez kształtu). Nazwa przepisu: `ginkgo_firewood`. Siekiera zostaje. Opał: PPM na ziemię, potem dokładaj do 6 polan.
+
+### Opał — jakaranda x4
+
+<img src="przepisy/jacaranda_firewood.png" alt="Opał — jakaranda x4: 1 x pień jakarandy (też okorowany) + 1 x siekiera (dowolny kamień) (zostaje) (obojętne gdzie)">
+
+1 x pień jakarandy (też okorowany) + 1 x siekiera (dowolny kamień) (bez kształtu). Nazwa przepisu: `jacaranda_firewood`. Siekiera zostaje. Opał: PPM na ziemię, potem dokładaj do 6 polan.
+
 ### Deski świerkowe x4
 
 <img src="przepisy/spruce_planks.png" alt="Deski świerkowe x4: 1 x pień świerka (też okorowany) (obojętne gdzie)">
@@ -264,6 +276,18 @@ Wersja gry **0.84.0** - 116 przepisów. Wytwarza się w ekwipunku (**E**): siatk
 <img src="przepisy/sequoia_planks.png" alt="Deski sekwojowe x4: 1 x pień sekwoi (też okorowany) (obojętne gdzie)">
 
 1 x pień sekwoi (też okorowany) (bez kształtu). Nazwa przepisu: `sequoia_planks`.
+
+### Deski miłorzębowe x4
+
+<img src="przepisy/ginkgo_planks.png" alt="Deski miłorzębowe x4: 1 x pień miłorzębu (też okorowany) (obojętne gdzie)">
+
+1 x pień miłorzębu (też okorowany) (bez kształtu). Nazwa przepisu: `ginkgo_planks`.
+
+### Deski jakarandowe x4
+
+<img src="przepisy/jacaranda_planks.png" alt="Deski jakarandowe x4: 1 x pień jakarandy (też okorowany) (obojętne gdzie)">
+
+1 x pień jakarandy (też okorowany) (bez kształtu). Nazwa przepisu: `jacaranda_planks`.
 
 
 ## Budulec
@@ -731,7 +755,7 @@ Składnik z grupy to dowolna rzecz z listy (np. patyki z desek różnych drzew).
 
 - **siekiera (dowolny kamień)**: Siekiera, Siekiera granitowa, Siekiera wapienna, Siekiera piaskowcowa, Siekiera łupkowa, Siekiera bazaltowa
 - **pochodnia (dowolny kolor)**: Pochodnia, Pochodnia biała, Pochodnia pomarańczowa, Pochodnia purpurowa, Pochodnia jasnoniebieska, Pochodnia żółta, Pochodnia limonkowa, Pochodnia różowa, Pochodnia szara, Pochodnia jasnoszara, Pochodnia turkusowa, Pochodnia fioletowa, Pochodnia niebieska, Pochodnia brązowa, Pochodnia zielona, Pochodnia czerwona, Pochodnia czarna
-- **deski (dowolne)**: Deski świerkowe, Deski sosnowe, Deski bukowe, Deski lipowe, Deski dębowe, Deski brzozowe, Deski jabłoniowe, Deski olchowe, Deski wierzbowe, Deski akacji, Deski cypryśnika, Deski wiśni, Deski klonowe, Deski z kosodrzewiny, Deski oliwkowe, Deski eukaliptusowe, Deski sekwojowe
+- **deski (dowolne)**: Deski świerkowe, Deski sosnowe, Deski bukowe, Deski lipowe, Deski dębowe, Deski brzozowe, Deski jabłoniowe, Deski olchowe, Deski wierzbowe, Deski akacji, Deski cypryśnika, Deski wiśni, Deski klonowe, Deski z kosodrzewiny, Deski oliwkowe, Deski eukaliptusowe, Deski sekwojowe, Deski miłorzębowe, Deski jakarandowe
 - **skała (kamień, granit, wapień, piaskowiec, łupek, bazalt)**: Kamień, Granit, Wapień, Piaskowiec, Łupek, Bazalt
 - **szyszka (świerka albo sosny)**: Szyszka świerka, Szyszka sosny
 - **igliwie (świerka albo sosny)**: Igliwie świerka, Igliwie sosny

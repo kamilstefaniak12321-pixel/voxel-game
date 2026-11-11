@@ -82,7 +82,10 @@ export function takeFromCell(chest, cell, count = Infinity) {
     const layer = topLayer(chest, cell);
     if (layer < 0) return null;
     const item = chest.layers[layer][cell];
-    const taken = Math.min(item.count, Math.max(1, Math.floor(count)));
+    const taken = Math.min(item.count, Math.floor(count));
+    // A full destination accepts zero items. Never remove anything for a
+    // zero/negative amount (or an invalid count such as NaN).
+    if (!(taken > 0)) return null;
     if (taken >= item.count) chest.layers[layer][cell] = null;
     else item.count -= taken;
     return { type: item.type, count: taken };

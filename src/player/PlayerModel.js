@@ -866,7 +866,9 @@ export class PlayerModel {
             this.held.geometry = new THREE.BufferGeometry();
             this.held.visible = false;
             this.heldTorch = createTorchModel(torch.colorKey, 'down');
-            this.heldTorch.position.copy(this.held.position);
+            // Tools change held.position for their grip; a torch has its own
+            // anchor, independent of the previously selected item.
+            this.heldTorch.position.set(0, -6.5 * MODEL_PIXEL, -2.2 * MODEL_PIXEL);
             this.heldTorch.rotation.set(-0.3, Math.PI / 4, 0);
             this.heldTorch.scale.setScalar(0.72);
             this.bones.elbowR.add(this.heldTorch);

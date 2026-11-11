@@ -1,0 +1,686 @@
+{
+  "checks": [
+    "All built-in tree definitions (twelve from 0.79.0 and later species) are available",
+    "Plant quality models load without errors",
+    "Registered species: ginkgo",
+    "Registered species: jacaranda",
+    "Actual player model is 1.8 blocks tall",
+    "Actual Game uses WebGL2",
+    "ginkgo: adult tree fits on real ground",
+    "ginkgo: every generated block is present across chunk borders",
+    "jacaranda: adult tree fits on real ground",
+    "jacaranda: every generated block is present across chunk borders",
+    "Mature ginkgo is substantially taller than jacaranda",
+    "No WebGL error after rendering",
+    "All active shaders compiled",
+    "No game or console errors",
+    "No WebGL error after rendering",
+    "All active shaders compiled",
+    "No game or console errors",
+    "No WebGL error after rendering",
+    "All active shaders compiled",
+    "No game or console errors",
+    "No WebGL error after rendering",
+    "All active shaders compiled",
+    "No game or console errors",
+    "No WebGL error after rendering",
+    "All active shaders compiled",
+    "No game or console errors",
+    "/drzewa lista: accepted by real command parser (Gatunki drzew (19):\nswierk — Świerk pospolity\nsosna — Sosna zwyczajna\nbuk — Buk zwyczajny\nlipa — Lipa drobnolistna\ndab — Dąb szypułkowy\nbrzoza — Brzoza brodawkowata\njablon — Jabłoń domowa\nolcha — Olcha czarna\nwierzba — Wierzba biała\nakacja — Akacja parasolowata\ncyprysnik — Cypryśnik błotny\nwisnia — Wiśnia japońska\nklon — Klon cukrowy\nkosodrzewina — Sosna kosodrzewina\noliwka — Oliwka europejska\neukaliptus — Eukaliptus tęczowy\nsekwoja — Sekwoja olbrzymia\nmilorzab — Miłorząb dwuklapowy\njakaranda — Jakaranda mimozolistna\nLosowy las: /drzewa las sosna 16. Warianty: /drzewa warianty sosna. Wszystkie gatunki: /drzewa porownanie.\nNa końcu możesz podać seed, np. /drzewa las sosna 16 12345. Te same parametry odtwarzają ten sam zestaw.\nWarianty pokazują dostępne szablony, rozmiary i stany specjalne. Kształty proceduralne mają wiele losowych odmian.)",
+    "ginkgo: listed by command",
+    "jacaranda: listed by command",
+    "/drzewa warianty ginkgo 12345: accepted by real command parser (Przygotowuję warianty drzewa przed tobą (seed 12345). Wynik pojawi się na czacie.)",
+    "/drzewa warianty ginkgo 12345: background operation reports completion",
+    "/drzewa warianty ginkgo 12345: Pokaz drzew gotowy: 10 drzew, seed 12345.\n1. miłorząb: zwykłe, 0% — -1000 17 -12\n2. miłorząb: zwykłe, 25% — -980 17 -12\n3. miłorząb: zwykłe, 50% — -960 17 -12\n4. miłorząb: zwykłe, 75% — -940 17 -12\n5. miłorząb: zwykłe, 100% — -920 17 -12\n6. miłorząb: Liście miłorzębu — jasne złoto, 0% — -1000 17 -32\n7. miłorząb: Liście miłorzębu — jasne złoto, 25% — -980 17 -32\n8. miłorząb: Liście miłorzębu — jasne złoto, 50% — -960 17 -32\n9. miłorząb: Liście miłorzębu — jasne złoto, 75% — -940 17 -32\n10. miłorząb: Liście miłorzębu — jasne złoto, 100% — -920 17 -32\nPozycje: /drzewa ostatnie. Cofnięcie ostatniego pokazu w tej sesji: /drzewa cofnij.",
+    "ginkgo: all size and texture variant specimens placed",
+    "miłorząb: zwykłe, 0%: full generated geometry present",
+    "miłorząb: zwykłe, 25%: full generated geometry present",
+    "miłorząb: zwykłe, 50%: full generated geometry present",
+    "miłorząb: zwykłe, 75%: full generated geometry present",
+    "miłorząb: zwykłe, 100%: full generated geometry present",
+    "miłorząb: Liście miłorzębu — jasne złoto, 0%: full generated geometry present",
+    "miłorząb: Liście miłorzębu — jasne złoto, 25%: full generated geometry present",
+    "miłorząb: Liście miłorzębu — jasne złoto, 50%: full generated geometry present",
+    "miłorząb: Liście miłorzębu — jasne złoto, 75%: full generated geometry present",
+    "miłorząb: Liście miłorzębu — jasne złoto, 100%: full generated geometry present",
+    "/drzewa cofnij: accepted by real command parser (Cofanie ostatniego pokazu drzew…)",
+    "/drzewa cofnij: background operation reports completion",
+    "/drzewa cofnij: Cofnięto pokaz drzew: 6176 bloków.",
+    "ginkgo: undo restores original blocks",
+    "/drzewa warianty jacaranda 12345: accepted by real command parser (Przygotowuję warianty drzewa przed tobą (seed 12345). Wynik pojawi się na czacie.)",
+    "/drzewa warianty jacaranda 12345: background operation reports completion",
+    "/drzewa warianty jacaranda 12345: Pokaz drzew gotowy: 10 drzew, seed 12345.\n1. jakaranda: zwykłe, 0% — -1008 17 -12\n2. jakaranda: zwykłe, 25% — -984 17 -12\n3. jakaranda: zwykłe, 50% — -960 17 -12\n4. jakaranda: zwykłe, 75% — -936 17 -12\n5. jakaranda: zwykłe, 100% — -912 17 -12\n6. jakaranda: Liście jakarandy — jasne kwiaty, 0% — -1008 17 -36\n7. jakaranda: Liście jakarandy — jasne kwiaty, 25% — -984 17 -36\n8. jakaranda: Liście jakarandy — jasne kwiaty, 50% — -960 17 -36\n9. jakaranda: Liście jakarandy — jasne kwiaty, 75% — -936 17 -36\n10. jakaranda: Liście jakarandy — jasne kwiaty, 100% — -912 17 -36\nPozycje: /drzewa ostatnie. Cofnięcie ostatniego pokazu w tej sesji: /drzewa cofnij.",
+    "jacaranda: all size and texture variant specimens placed",
+    "jakaranda: zwykłe, 0%: full generated geometry present",
+    "jakaranda: zwykłe, 25%: full generated geometry present",
+    "jakaranda: zwykłe, 50%: full generated geometry present",
+    "jakaranda: zwykłe, 75%: full generated geometry present",
+    "jakaranda: zwykłe, 100%: full generated geometry present",
+    "jakaranda: Liście jakarandy — jasne kwiaty, 0%: full generated geometry present",
+    "jakaranda: Liście jakarandy — jasne kwiaty, 25%: full generated geometry present",
+    "jakaranda: Liście jakarandy — jasne kwiaty, 50%: full generated geometry present",
+    "jakaranda: Liście jakarandy — jasne kwiaty, 75%: full generated geometry present",
+    "jakaranda: Liście jakarandy — jasne kwiaty, 100%: full generated geometry present",
+    "/drzewa cofnij: accepted by real command parser (Cofanie ostatniego pokazu drzew…)",
+    "/drzewa cofnij: background operation reports completion",
+    "/drzewa cofnij: Cofnięto pokaz drzew: 4094 bloków.",
+    "jacaranda: undo restores original blocks",
+    "/drzewa porownanie 12345: accepted by real command parser (Przygotowuję porównanie gatunków przed tobą (seed 12345). Wynik pojawi się na czacie.)",
+    "/drzewa porownanie 12345: background operation reports completion",
+    "/drzewa porownanie 12345: Pokaz drzew gotowy: 19 drzew, seed 12345.\n1. Świerk pospolity — -1134 17 -12\n2. Sosna zwyczajna — -1116 17 -12\n3. Buk zwyczajny — -1098 17 -12\n4. Lipa drobnolistna — -1080 17 -12\n5. Dąb szypułkowy — -1062 17 -12\n6. Brzoza brodawkowata — -1044 17 -12\n7. Jabłoń domowa — -1026 17 -12\n8. Olcha czarna — -1008 17 -12\n9. Wierzba biała — -990 17 -12\n10. Akacja parasolowata — -970 17 -12\n11. Cypryśnik błotny — -950 17 -12\n12. Wiśnia japońska — -932 17 -12\n13. Klon cukrowy — -913 17 -12\n14. Sosna kosodrzewina — -894 17 -12\n15. Oliwka europejska — -876 17 -12\n16. Eukaliptus tęczowy — -852 17 -12\n17. Sekwoja olbrzymia — -828 17 -12\n18. Miłorząb dwuklapowy — -808 17 -12\n19. Jakaranda mimozolistna — -786 17 -12\nPozycje: /drzewa ostatnie. Cofnięcie ostatniego pokazu w tej sesji: /drzewa cofnij.",
+    "Comparison includes every old and new tree species",
+    "/drzewa cofnij: accepted by real command parser (Cofanie ostatniego pokazu drzew…)",
+    "/drzewa cofnij: background operation reports completion",
+    "/drzewa cofnij: Cofnięto pokaz drzew: 8965 bloków.",
+    "ginkgo_sapling: has dedicated plant quality model",
+    "ginkgo_sapling: uses requested simple quality",
+    "ginkgo_sapling: active renderer data for simple",
+    "jacaranda_sapling: has dedicated plant quality model",
+    "jacaranda_sapling: uses requested simple quality",
+    "jacaranda_sapling: active renderer data for simple",
+    "No WebGL error after rendering",
+    "All active shaders compiled",
+    "No game or console errors",
+    "simple: actual scene generates sapling mesh vertices",
+    "ginkgo_sapling: has dedicated plant quality model",
+    "ginkgo_sapling: uses requested semi quality",
+    "ginkgo_sapling: active renderer data for semi",
+    "jacaranda_sapling: has dedicated plant quality model",
+    "jacaranda_sapling: uses requested semi quality",
+    "jacaranda_sapling: active renderer data for semi",
+    "No WebGL error after rendering",
+    "All active shaders compiled",
+    "No game or console errors",
+    "semi: actual scene generates sapling mesh vertices",
+    "ginkgo_sapling: has dedicated plant quality model",
+    "ginkgo_sapling: uses requested detailed quality",
+    "ginkgo_sapling: active renderer data for detailed",
+    "jacaranda_sapling: has dedicated plant quality model",
+    "jacaranda_sapling: uses requested detailed quality",
+    "jacaranda_sapling: active renderer data for detailed",
+    "No WebGL error after rendering",
+    "All active shaders compiled",
+    "No game or console errors",
+    "detailed: actual scene generates sapling mesh vertices",
+    "Quality changes real sapling geometry",
+    "Five Shift-clicks with full inventory preserve all five chest items",
+    "Failed transfer does not mark chest dirty",
+    "Failed transfer does not manufacture or move items",
+    "Partial transfer moves only the two available spaces",
+    "Remaining three items transfer without loss",
+    "Torch anchor is identical after axe, stone and empty hand",
+    "No WebGL error after rendering",
+    "All active shaders compiled",
+    "No game or console errors",
+    "ginkgo: correct species-specific falling shape",
+    "ginkgo: palette comes from loaded tree texture",
+    "ginkgo: golden/purple falling pixels",
+    "ginkgo: actual particle emitter accepts twenty leaves",
+    "jacaranda: correct species-specific falling shape",
+    "jacaranda: palette comes from loaded tree texture",
+    "jacaranda: golden/purple falling pixels",
+    "jacaranda: actual particle emitter accepts twenty leaves",
+    "Both species share one instanced particle mesh",
+    "No WebGL error after rendering",
+    "All active shaders compiled",
+    "No game or console errors",
+    "Falling leaves affect the actual framebuffer",
+    "Actual falling ginkgo pixels render golden, not black",
+    "Actual falling jacaranda pixels render purple, not black",
+    "Rendered falling leaves have valid non-black lighting",
+    "ginkgo: natural source descriptor in actual Game",
+    "ginkgo: trunk present in naturally generated Game world",
+    "No WebGL error after rendering",
+    "All active shaders compiled",
+    "No game or console errors",
+    "ginkgo: characteristic crown color visible in the natural biome view",
+    "jacaranda: natural source descriptor in actual Game",
+    "jacaranda: trunk present in naturally generated Game world",
+    "No WebGL error after rendering",
+    "All active shaders compiled",
+    "No game or console errors",
+    "jacaranda: characteristic crown color visible in the natural biome view"
+  ],
+  "errors": [],
+  "captures": [
+    {
+      "name": "comparison",
+      "eye": [
+        -182,
+        34,
+        25
+      ],
+      "target": [
+        -182,
+        29,
+        -32
+      ],
+      "eyeHeightAboveGround": null,
+      "fov": 70,
+      "actualPlayerModelHeight": 1.8,
+      "specimen": null,
+      "triangles": 64593,
+      "drawCalls": 122
+    },
+    {
+      "name": "ginkgo-whole",
+      "eye": [
+        -190.064,
+        26.12,
+        1.1199999999999974
+      ],
+      "target": [
+        -200,
+        27.8,
+        -32
+      ],
+      "eyeHeightAboveGround": null,
+      "fov": 70,
+      "actualPlayerModelHeight": 1.8,
+      "specimen": {
+        "species": "ginkgo",
+        "x": -200,
+        "y": 17,
+        "z": -32,
+        "height": 24,
+        "crown": {
+          "x": 13,
+          "z": 13
+        },
+        "blocks": 783,
+        "label": "Miłorząb dwuklapowy"
+      },
+      "triangles": 52913,
+      "drawCalls": 99
+    },
+    {
+      "name": "ginkgo-ground",
+      "eye": [
+        -197,
+        18.6,
+        -21
+      ],
+      "target": [
+        -200,
+        30.44,
+        -32
+      ],
+      "eyeHeightAboveGround": 1.6,
+      "fov": 70,
+      "actualPlayerModelHeight": 1.8,
+      "specimen": {
+        "species": "ginkgo",
+        "x": -200,
+        "y": 17,
+        "z": -32,
+        "height": 24,
+        "crown": {
+          "x": 13,
+          "z": 13
+        },
+        "blocks": 783,
+        "label": "Miłorząb dwuklapowy"
+      },
+      "triangles": 10293,
+      "drawCalls": 18
+    },
+    {
+      "name": "jacaranda-whole",
+      "eye": [
+        -155.585,
+        21.94,
+        -3.950000000000003
+      ],
+      "target": [
+        -164,
+        22.85,
+        -32
+      ],
+      "eyeHeightAboveGround": null,
+      "fov": 70,
+      "actualPlayerModelHeight": 1.8,
+      "specimen": {
+        "species": "jacaranda",
+        "x": -164,
+        "y": 17,
+        "z": -32,
+        "height": 13,
+        "crown": {
+          "x": 17,
+          "z": 15
+        },
+        "blocks": 468,
+        "label": "Jakaranda mimozolistna"
+      },
+      "triangles": 75345,
+      "drawCalls": 143
+    },
+    {
+      "name": "jacaranda-ground",
+      "eye": [
+        -161,
+        18.6,
+        -23
+      ],
+      "target": [
+        -164,
+        24.28,
+        -32
+      ],
+      "eyeHeightAboveGround": 1.6,
+      "fov": 70,
+      "actualPlayerModelHeight": 1.8,
+      "specimen": {
+        "species": "jacaranda",
+        "x": -164,
+        "y": 17,
+        "z": -32,
+        "height": 13,
+        "crown": {
+          "x": 17,
+          "z": 15
+        },
+        "blocks": 468,
+        "label": "Jakaranda mimozolistna"
+      },
+      "triangles": 66129,
+      "drawCalls": 125
+    },
+    {
+      "name": "saplings-detailed",
+      "eye": [
+        -480,
+        18.6,
+        -2
+      ],
+      "target": [
+        -480,
+        17.6,
+        -8
+      ],
+      "actualPlayerModelHeight": 1.8,
+      "eyeHeightAboveGround": 1.6,
+      "fov": 70
+    },
+    {
+      "name": "fixed-torch-grip",
+      "fixes": [
+        {
+          "case": "full-inventory",
+          "attempted": 5,
+          "chestCount": 5,
+          "moved": 0,
+          "dirty": false
+        },
+        {
+          "case": "partial-then-empty-slot",
+          "inventoryCount": 67,
+          "chestCount": 0
+        },
+        {
+          "case": "torch-after-axe-stone-empty",
+          "positions": [
+            [
+              0,
+              -0.36562500000000003,
+              -0.12375000000000001
+            ],
+            [
+              0,
+              -0.36562500000000003,
+              -0.12375000000000001
+            ],
+            [
+              0,
+              -0.36562500000000003,
+              -0.12375000000000001
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "name": "falling-leaves",
+      "samples": [
+        {
+          "species": "ginkgo",
+          "sprites": [
+            "wachlarz"
+          ],
+          "averageLinearRGB": [
+            1.9230188984838665,
+            1.4076102807089452,
+            0.07779228689391321
+          ],
+          "particles": 20,
+          "explicitCloseupEmission": true
+        },
+        {
+          "species": "jacaranda",
+          "sprites": [
+            "platek",
+            "waski"
+          ],
+          "averageLinearRGB": [
+            0.49467847338139426,
+            0.15196446310432543,
+            1.0413152529886123
+          ],
+          "particles": 20,
+          "explicitCloseupEmission": true
+        }
+      ],
+      "renderedPixels": {
+        "changed": 11802,
+        "golden": 5637,
+        "purple": 5918,
+        "black": 0
+      }
+    },
+    {
+      "name": "ginkgo-natural",
+      "eye": [
+        4780,
+        91,
+        -4730
+      ],
+      "target": [
+        4762,
+        68.6,
+        -4750
+      ]
+    },
+    {
+      "name": "jacaranda-natural",
+      "eye": [
+        1228,
+        77,
+        -3227
+      ],
+      "target": [
+        1210,
+        58.8,
+        -3247
+      ]
+    }
+  ],
+  "commands": [
+    {
+      "line": "/drzewa lista",
+      "milliseconds": 0.5,
+      "text": "Gatunki drzew (19):\nswierk — Świerk pospolity\nsosna — Sosna zwyczajna\nbuk — Buk zwyczajny\nlipa — Lipa drobnolistna\ndab — Dąb szypułkowy\nbrzoza — Brzoza brodawkowata\njablon — Jabłoń domowa\nolcha — Olcha czarna\nwierzba — Wierzba biała\nakacja — Akacja parasolowata\ncyprysnik — Cypryśnik błotny\nwisnia — Wiśnia japońska\nklon — Klon cukrowy\nkosodrzewina — Sosna kosodrzewina\noliwka — Oliwka europejska\neukaliptus — Eukaliptus tęczowy\nsekwoja — Sekwoja olbrzymia\nmilorzab — Miłorząb dwuklapowy\njakaranda — Jakaranda mimozolistna\nLosowy las: /drzewa las sosna 16. Warianty: /drzewa warianty sosna. Wszystkie gatunki: /drzewa porownanie.\nNa końcu możesz podać seed, np. /drzewa las sosna 16 12345. Te same parametry odtwarzają ten sam zestaw.\nWarianty pokazują dostępne szablony, rozmiary i stany specjalne. Kształty proceduralne mają wiele losowych odmian."
+    },
+    {
+      "line": "/drzewa warianty ginkgo 12345",
+      "milliseconds": 145.7,
+      "text": "Przygotowuję warianty drzewa przed tobą (seed 12345). Wynik pojawi się na czacie."
+    },
+    {
+      "line": "/drzewa cofnij",
+      "milliseconds": 80.9,
+      "text": "Cofanie ostatniego pokazu drzew…"
+    },
+    {
+      "line": "/drzewa warianty jacaranda 12345",
+      "milliseconds": 101.5,
+      "text": "Przygotowuję warianty drzewa przed tobą (seed 12345). Wynik pojawi się na czacie."
+    },
+    {
+      "line": "/drzewa cofnij",
+      "milliseconds": 56.5,
+      "text": "Cofanie ostatniego pokazu drzew…"
+    },
+    {
+      "line": "/drzewa porownanie 12345",
+      "milliseconds": 214.5,
+      "text": "Przygotowuję porównanie gatunków przed tobą (seed 12345). Wynik pojawi się na czacie."
+    },
+    {
+      "line": "/drzewa cofnij",
+      "milliseconds": 138.3,
+      "text": "Cofanie ostatniego pokazu drzew…"
+    }
+  ],
+  "specimens": [
+    {
+      "species": "ginkgo",
+      "x": -200,
+      "y": 17,
+      "z": -32,
+      "height": 24,
+      "crown": {
+        "x": 13,
+        "z": 13
+      },
+      "blocks": 783,
+      "label": "Miłorząb dwuklapowy"
+    },
+    {
+      "species": "jacaranda",
+      "x": -164,
+      "y": 17,
+      "z": -32,
+      "height": 13,
+      "crown": {
+        "x": 17,
+        "z": 15
+      },
+      "blocks": 468,
+      "label": "Jakaranda mimozolistna"
+    }
+  ],
+  "saplingSamples": [
+    {
+      "level": "simple",
+      "vertices": 32,
+      "positions": [
+        {
+          "species": "ginkgo",
+          "x": -482,
+          "z": -8,
+          "y": 17
+        },
+        {
+          "species": "jacaranda",
+          "x": -480,
+          "z": -8,
+          "y": 17
+        }
+      ],
+      "drawCalls": 34,
+      "triangles": 12351
+    },
+    {
+      "level": "semi",
+      "vertices": 192,
+      "positions": [
+        {
+          "species": "ginkgo",
+          "x": -482,
+          "z": -8,
+          "y": 17
+        },
+        {
+          "species": "jacaranda",
+          "x": -480,
+          "z": -8,
+          "y": 17
+        }
+      ],
+      "drawCalls": 43,
+      "triangles": 17039
+    },
+    {
+      "level": "detailed",
+      "vertices": 1360,
+      "positions": [
+        {
+          "species": "ginkgo",
+          "x": -482,
+          "z": -8,
+          "y": 17
+        },
+        {
+          "species": "jacaranda",
+          "x": -480,
+          "z": -8,
+          "y": 17
+        }
+      ],
+      "drawCalls": 43,
+      "triangles": 17623
+    }
+  ],
+  "performanceSamples": [],
+  "fixSamples": [
+    {
+      "case": "full-inventory",
+      "attempted": 5,
+      "chestCount": 5,
+      "moved": 0,
+      "dirty": false
+    },
+    {
+      "case": "partial-then-empty-slot",
+      "inventoryCount": 67,
+      "chestCount": 0
+    },
+    {
+      "case": "torch-after-axe-stone-empty",
+      "positions": [
+        [
+          0,
+          -0.36562500000000003,
+          -0.12375000000000001
+        ],
+        [
+          0,
+          -0.36562500000000003,
+          -0.12375000000000001
+        ],
+        [
+          0,
+          -0.36562500000000003,
+          -0.12375000000000001
+        ]
+      ]
+    }
+  ],
+  "particleSamples": [
+    {
+      "species": "ginkgo",
+      "sprites": [
+        "wachlarz"
+      ],
+      "averageLinearRGB": [
+        1.9230188984838665,
+        1.4076102807089452,
+        0.07779228689391321
+      ],
+      "particles": 20,
+      "explicitCloseupEmission": true
+    },
+    {
+      "species": "jacaranda",
+      "sprites": [
+        "platek",
+        "waski"
+      ],
+      "averageLinearRGB": [
+        0.49467847338139426,
+        0.15196446310432543,
+        1.0413152529886123
+      ],
+      "particles": 20,
+      "explicitCloseupEmission": true
+    }
+  ],
+  "particleRenderedPixels": {
+    "changed": 11802,
+    "golden": 5637,
+    "purple": 5918,
+    "black": 0
+  },
+  "naturalSamples": [
+    {
+      "species": "ginkgo",
+      "seed": 42,
+      "position": [
+        4762,
+        53,
+        -4750
+      ],
+      "height": 24,
+      "eye": [
+        4780,
+        91,
+        -4730
+      ],
+      "target": [
+        4762,
+        68.6,
+        -4750
+      ],
+      "speciesColorPixels": 163957
+    },
+    {
+      "species": "jacaranda",
+      "seed": 42,
+      "position": [
+        1210,
+        51,
+        -3247
+      ],
+      "height": 12,
+      "eye": [
+        1228,
+        77,
+        -3227
+      ],
+      "target": [
+        1210,
+        58.8,
+        -3247
+      ],
+      "speciesColorPixels": 56306
+    }
+  ],
+  "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+  "resolution": [
+    1280,
+    800
+  ],
+  "quality": {
+    "viewDistance": 160,
+    "farTerrain": 0,
+    "loadBudget": 8,
+    "meteorites": false,
+    "lightShafts": false,
+    "bounceLight": false,
+    "showHand": false,
+    "shadows": 1,
+    "cloudCover": 0,
+    "lightingModel": "world",
+    "lightingLook": "natural",
+    "viewBobbing": false,
+    "volumeMusic": 0,
+    "leafModel": "parts",
+    "fancyLeaves": true,
+    "plantWind": false,
+    "plantModels": "semi",
+    "fov": 70,
+    "renderScale": 100,
+    "fallingLeaves": false,
+    "windStreaks": false
+  },
+  "syntheticWorld": true,
+  "originalPlayerModel": true,
+  "actualPlayerHeight": 1.8,
+  "eyeHeight": 1.6,
+  "source": {
+    "sha256": "a33bb072d6ed4ec8becb9a7a10b25b5edb03473adad589644acf98e519e35aa7",
+    "files": 303
+  },
+  "version": "0.85.0",
+  "nativeElectron": false
+}

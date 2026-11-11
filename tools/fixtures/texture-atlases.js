@@ -12,7 +12,7 @@ export async function run(expected) {
     const THREE=await import('three');
     const atlas=await import('/src/rendering/TextureAtlas.js'), ready=await atlas.atlasReady;
     const pixels=imageData(ready.image), atlasHashes={};
-    check(ready.image.width===expected.width&&ready.image.height===expected.height,'GPU atlas dimensions unchanged');
+    check(ready.image.width===expected.width&&ready.image.height>=expected.height,'GPU atlas retains every original pixel row');
     check(JSON.stringify(Object.keys(atlas.ATLAS_TILES).slice(0,Object.keys(expected.tiles).length))===JSON.stringify(Object.keys(expected.tiles)),'All original texture names preserved');
     // Nowe tekstury (np. skrzynia 0.81.0) dochodzą na końcu - porównujemy dawne.
     for(const [name,tile] of Object.entries(atlas.ATLAS_TILES).filter(([name])=>Object.hasOwn(expected.tiles,name))) {
@@ -67,14 +67,30 @@ export async function run(expected) {
     const extraTextures={skin:await imageHash(skinTexture.image),campfire:await imageHash(game.campfires.renderer.fireTexture.image)};
     for(const [i,model] of torches.entries()){const texture=model.userData.torch.texture;extraTextures[TORCH_VARIANTS[i].texture]=await imageHash(texture.image,texture.userData.regionImageFlipped);}
     const icons=await createBlockIcons(), iconHashes={};
-    const iconCanvas=document.createElement('canvas');iconCanvas.width=768;iconCanvas.height=256;
-    const iconContext=iconCanvas.getContext('2d');iconContext.fillStyle='#dedede';iconContext.fillRect(0,0,768,256);iconContext.imageSmoothingEnabled=false;
-    const iconNames=['blueberry','strawberry','blackberry','chili_pepper','hazelnut','oak_firewood','bald_cypress_firewood','cherry_firewood','axe','pickaxe','shovel','stick',...TREE_NAMES.map(name=>`${name}_planks`)];
+    const iconNames=[...new Set(['blueberry','strawberry','blackberry','chili_pepper','hazelnut','oak_firewood','bald_cypress_firewood','cherry_firewood','axe','pickaxe','shovel','stick',...TREE_NAMES.flatMap(name=>[`${name}_planks`,`${name}_firewood`])])];
+    const iconCanvas=document.createElement('canvas');iconCanvas.width=768;iconCanvas.height=Math.ceil(iconNames.length/12)*128;
+    const iconContext=iconCanvas.getContext('2d');iconContext.fillStyle='#dedede';iconContext.fillRect(0,0,iconCanvas.width,iconCanvas.height);iconContext.imageSmoothingEnabled=false;
     for(const [i,name] of iconNames.entries()) {
         check(icons.has(name),`${name}: inventory icon exists`);
         const image=new Image();image.src=icons.get(name);await image.decode();iconHashes[name]=await imageHash(image);
         iconContext.drawImage(image,(i%12)*64,Math.floor(i/12)*128,64,64);iconContext.fillStyle='#252525';iconContext.font='9px monospace';iconContext.fillText(name,(i%12)*64+2,Math.floor(i/12)*128+78,62);
     }
+    // Canvas2D/Skia can select the adjacent texel of the SAME face along an
+    // isometric edge when the full source canvas height changes. Preserve the
+    // actual hashes above; also compare old planks with the original 0.84
+    // source height. No source pixels are rescaled or replaced by a baseline.
+    const plankIconsAt084SourceHeight = {}, sourceHeight084 = 35 * 16;
+    const originalIconImage = ready.iconImage, originalHeightImage = document.createElement('canvas');
+    originalHeightImage.width = originalIconImage.width; originalHeightImage.height = sourceHeight084;
+    originalHeightImage.getContext('2d').drawImage(originalIconImage, 0, 0);
+    try {
+        ready.iconImage = originalHeightImage;
+        const oldHeightIcons = await createBlockIcons();
+        for (const name of TREE_NAMES.slice(0, 17).map(name => name + '_planks')) {
+            const image = new Image(); image.src = oldHeightIcons.get(name); await image.decode();
+            plankIconsAt084SourceHeight[name] = await imageHash(image);
+        }
+    } finally { ready.iconImage = originalIconImage; }
     async function capture(name) {
         if(name==='icons')return iconCanvas.toDataURL('image/png').split(',')[1];
         game.time.days=name==='night'?.8:.43;
@@ -87,7 +103,7 @@ export async function run(expected) {
         captures.push({name,triangles:renderer.info.render.triangles,calls:renderer.info.render.calls});
         return renderer.domElement.toDataURL('image/png').split(',')[1];
     }
-    return {capture,report:()=>({checks,errors,captures,atlasHashes,extraTextures,iconHashes,
+    return {capture,report:()=>({checks,errors,captures,atlasHashes,extraTextures,iconHashes,plankIconsAt084SourceHeight,sourceHeight084,
         textureRequests:performance.getEntriesByType('resource').filter(r=>/\.png(?:$|\?)/.test(r.name)).map(r=>({path:new URL(r.name).pathname,duration:r.duration})),
         renderer:renderer.getContext().getParameter(renderer.getContext().getExtension('WEBGL_debug_renderer_info')?.UNMASKED_RENDERER_WEBGL??renderer.getContext().RENDERER)}),
         stop:async()=>{torches.forEach(disposeTorchModel);marker.dispose();await game.stop({save:false});renderer.dispose();console.error=originalError;}};

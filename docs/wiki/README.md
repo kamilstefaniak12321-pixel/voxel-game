@@ -2,7 +2,7 @@
 
 Klockowa gra w przeglądarce, na komputerze (Windows) i na telefonie
 (Android). Nieskończony świat z prawdziwymi formami terenu i skałami,
-lasy dwunastu gatunków drzew, krzaki owocowe, woda, dzień i noc
+lasy dziewiętnastu gatunków drzew, krzaki owocowe, woda, dzień i noc
 z fazami księżyca, meteoryty, kopanie, wytwarzanie - i jeden sekret
 wysoko nad chmurami.
 

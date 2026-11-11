@@ -12,7 +12,8 @@ export const FIRE_WOODS = {
     olcha: ['olcha', 'olcha'], wierzba: ['wierzba', 'wierzba'], jablon: ['jabłoń', 'jablon'],
     acacia: ['akacja', 'akacja'], bald_cypress: ['cypryśnik', 'cyprysnik'], cherry: ['wiśnia', 'wisnia'],
     maple: ['klon', 'klon'], mugo: ['kosodrzewina', 'kosodrzewina'], olive: ['oliwka', 'oliwka'],
-    rainbow_eucalyptus: ['eukaliptus', 'eukaliptus'], sequoia: ['sekwoja', 'sekwoja']
+    rainbow_eucalyptus: ['eukaliptus', 'eukaliptus'], sequoia: ['sekwoja', 'sekwoja'],
+    ginkgo: ['miłorząb', 'milorzab'], jacaranda: ['jakaranda', 'jakaranda']
 };
 export const fuelType = wood => `${wood}_firewood`;
 export const fuelWood = type => Object.keys(FIRE_WOODS).find(wood => fuelType(wood) === type) ?? null;

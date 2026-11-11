@@ -1,0 +1,87 @@
+{
+  "sourceArchive": "ginkgo.zip",
+  "sourceArchiveSha256": "8af0acbad08d7a65134218bccca8718d3a9c61bf96ce8be877b538bfdd8cfd3a",
+  "suppliedBy": "Kamil",
+  "importDate": "2026-11-11",
+  "note": "Original PNG RGBA pixels are copied into drzewa.png without resampling or recolouring. The archive contains a reference preview and dimensions, but no geometry. Procedural trees use approximately one metre per block.",
+  "scientificReference": "Ginkgo biloba",
+  "botanicalSource": "https://trees.umn.edu/nursery-tour/species/gi",
+  "referenceDimensionsMetres": {
+    "height": 25.0,
+    "crown": 13.0
+  },
+  "originalFiles": {
+    "log_side.png": {
+      "sha256": "0103ead87c48ac48de9a69ff612b98a05c472ab7587126baa6b91ee6fac76713",
+      "bytes": 368,
+      "rgbaSha256": "852e86fb023d84e03de3584c4cbb2b4ce5d31f16cdd040724868678974b7a917",
+      "width": 16,
+      "height": 16
+    },
+    "log_top.png": {
+      "sha256": "4cd0c6f1479d057f31ea0e8df7d9ef06d7a2d1c009d5729114e1f22592458e42",
+      "bytes": 368,
+      "rgbaSha256": "4754063bee5e18fe94b1556ded9400cdc22d6cd075bbef36cffc65416499650e",
+      "width": 16,
+      "height": 16
+    },
+    "planks.png": {
+      "sha256": "ef5cfa5b583e6147bc4ce93efcbc5112da89a3309030b8e6fa8fb4d1bcfbcf59",
+      "bytes": 248,
+      "rgbaSha256": "c7207994b0776523ea4b6e283f89c9587a292f4f5f130d3f3e74ce8d4e6e523b",
+      "width": 16,
+      "height": 16
+    },
+    "leaves.png": {
+      "sha256": "b990cf673510e689aeb51c22bb8ecc580a635d24044736e3054f42965411f881",
+      "bytes": 339,
+      "rgbaSha256": "4bfb7c871f031abe778050a1016ca0fdfaaf8b2b4b37d1c33099150273decfc2",
+      "width": 16,
+      "height": 16
+    },
+    "leaves_variant.png": {
+      "sha256": "31a431995518a171239332de49a80c7af11c8aae1fced7e2abb893e2199937e4",
+      "bytes": 355,
+      "rgbaSha256": "e7e3ea1845ec35bc0254ad44575dfb1c562485170b89750d052ac3d297cf57e6",
+      "width": 16,
+      "height": 16
+    },
+    "render_info.json": {
+      "sha256": "153379a1f3e461444bcd2916ebc70683c0b5c0e15d6fa0b450a8e099f2162a88",
+      "bytes": 198
+    }
+  },
+  "referencePreview": {
+    "archivePath": "ginkgo/preview.png",
+    "sha256": "6c3553b181225dcd1cdc67a82316b6c0bb77343a8f5e7b7ae53dc0a305464626",
+    "bytes": 742200
+  },
+  "generator": "tools/tekstury_drzew_085.py; tools/modele_roslin.py",
+  "derivedRegions": {
+    "ginkgo/stripped_side.png": {
+      "rgbaSha256": "000d9189411b26680dbd48a0394caa834e42c4ae0edc9226cb253499fe086b90",
+      "width": 16,
+      "height": 16
+    },
+    "ginkgo/stripped_top.png": {
+      "rgbaSha256": "403ddf5e36286c981e6e5547aecacfcf004ee73e8f7042a4bda733b75f3a842e",
+      "width": 16,
+      "height": 16
+    },
+    "ginkgo/sapling.png": {
+      "rgbaSha256": "d1fb0b7138b095ecec214962e3d9da8190d4fd7c001d86e3408097d798924c28",
+      "width": 16,
+      "height": 16
+    },
+    "campfire_ginkgo": {
+      "rgbaSha256": "fe0aa2fd83d2d2edfa19ec23a00cd948d590c24bd3d9ffe398a2f070476269d8",
+      "width": 32,
+      "height": 32
+    },
+    "models/rosliny/sadzonka-milorzab/polrealistyczny": {
+      "rgbaSha256": "828cef8588708003209ff074039d7eed06450d7943ed8f5c43d069e39e70fa7b",
+      "width": 16,
+      "height": 16
+    }
+  }
+}

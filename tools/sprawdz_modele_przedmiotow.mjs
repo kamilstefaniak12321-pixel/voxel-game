@@ -141,4 +141,18 @@ check(top.y > bottom.y, 'Obrazek nie odwrócony do góry nogami');
 const sideNormal = new THREE.Vector3(0, 0, 1).transformDirection(held.matrixWorld);
 check(Math.abs(sideNormal.x) > 0.9, 'Obrazek bokiem do kamery z boku (przód w bok postaci)');
 
+// A torch has a fixed anchor in the character's hand regardless of the
+// previous extruded grip. Check complete selection transitions on PlayerModel.
+const torchAnchor = new THREE.Vector3(0, -6.5 * 1.8 / 32, -2.2 * 1.8 / 32);
+for (const previous of ['axe', 'stick', 'pickaxe', 'stone', null]) {
+    model.setHeldBlock(previous);
+    model.setHeldBlock('torch');
+    check(model.heldTorch.position.distanceTo(torchAnchor) < 1e-12, `Pochodnia po ${previous}: stałe miejsce w dłoni`);
+    check(!model.held.visible && model.heldTorch.parent === model.bones.elbowR, 'Pochodnia jest jedynym widocznym przedmiotem przy dłoni');
+    check(Math.abs(model.heldTorch.rotation.x + .3) < 1e-12 && model.heldTorch.scale.x === .72, 'Orientacja i skala pochodni zachowane');
+}
+model.setHeldBlock('axe');
+check(model.heldTorch === null && model.held.visible && model.held.geometry.userData.extruded, 'Powrót z pochodni do siekiery przywraca jej chwyt');
+model.dispose();
+
 console.log(`OK: przedmioty w dłoni - ${checks} sprawdzeń (grubość 1 px, ścianki brzegów, chwyt za trzonek, siekiera głowicą do przodu).`);

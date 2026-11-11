@@ -1,0 +1,63 @@
+{
+    "nazwa": "Sadzonka jakarandy",
+    "bloki": [
+        "jacaranda_sapling"
+    ],
+    "kolory": {
+        "lisc": "#8048b8",
+        "liscJasny": "#c8a8f0",
+        "liscCiemny": "#421e6c",
+        "lodyga": "#594e3e"
+    },
+    "etapy": [
+        {
+            "prosty": null,
+            "polrealistyczny": {
+                "liscie": {
+                    "uklad": "kopula",
+                    "ile": 11,
+                    "dlugosc": 5,
+                    "promien": 4,
+                    "kopula": 7,
+                    "nachylenie": 50,
+                    "pien": true
+                }
+            },
+            "szczegolowy": {
+                "rodzaj": "kepka",
+                "liscie": {
+                    "uklad": "krzak",
+                    "ile": [
+                        6,
+                        8
+                    ],
+                    "dlugosc": [
+                        2,
+                        3
+                    ],
+                    "promien": 3
+                },
+                "lodygi": {
+                    "ile": [
+                        2,
+                        3
+                    ],
+                    "wysokosc": [
+                        5,
+                        7
+                    ],
+                    "promien": 1,
+                    "liscie": {
+                        "co": 2,
+                        "dlugosc": [
+                            3,
+                            5
+                        ],
+                        "naprzeciw": true,
+                        "luk": true
+                    }
+                }
+            }
+        }
+    ]
+}

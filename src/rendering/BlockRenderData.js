@@ -8,6 +8,7 @@ import { getSurfaceFaceTexture } from './SurfaceMaterials.js';
 import { blockSurfaceProfile } from './SurfaceProfiles.js';
 import { installSurfaceProfiles } from './LeafLighting.js';
 import { CANOPY_LIGHTING_GLSL } from './CanopyLighting.js';
+import { shapeInfo } from '../blocks/woodShapes.js';
 import { WATERFALL_PIXEL_GLSL, WATERFALL_AVERAGE_GLSL, waterfallColorUniforms } from './WaterfallPixels.js';
 import { PINE_TRANSITION_TEXTURES, MOSS_CARPET_TEXTURES } from './SurfaceTextureVariants.js';
 
@@ -1228,6 +1229,10 @@ for (
             : null,
 
         leaves: definition.model === 'leaves',
+
+        // Schody, półbloki, płoty, furtki, stół stolarski (0.90.0):
+        // pudełka z ShapeBoxes.js (ChunkMesher.addShape).
+        shape: definition.model === 'shape' ? { kind: shapeInfo(definition.id)?.kind } : null,
 
         flat: definition.model === 'flat'
             ? FLAT_FACES[getAttach(definition.id)]

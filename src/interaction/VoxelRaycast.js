@@ -5,6 +5,8 @@ import { spritePlantBounds, SPRITE_PLANT_REACH } from './PlantBounds.js';
 import { getTorchInfo } from '../blocks/torches.js';
 import { getTorchBounds } from '../rendering/TorchGeometry.js';
 import { waterSurfaceHeight } from '../world/WaterSurface.js';
+import { shapeInfo } from '../blocks/woodShapes.js';
+import { shapeBoxes, connectMask } from '../world/ShapeBoxes.js';
 
 function intersectBounds(origin, direction, x, y, z, bounds, start, end) {
     let near = -Infinity, far = Infinity;
@@ -259,6 +261,24 @@ export class VoxelRaycast {
             // zebrać. Taflę wskazujemy osobno tylko podczas sadzenia.
             const id = this.world.getBlockId(x, y, z);
 
+            // Schody, półbloki, płoty, furtki, stół (0.90.0): celownik trafia
+            // tylko w ich pudełka - obok (np. nad półblokiem) leci dalej.
+            const shape = shapeInfo(id);
+            if (shape) {
+                const boxes = shapeBoxes(id, 'outline', shape.kind === 'fence'
+                    ? connectMask((a, b, c) => this.world.getBlockId(a, b, c), x, y, z) : 0) ?? [];
+                let best = null;
+                for (const box of boxes) {
+                    const hit = intersectBounds(origin, dir, x, y, z, { min: [box[0], box[1], box[2]], max: [box[3], box[4], box[5]] }, distance, this.maxDistance);
+                    if (hit && (!best || hit.distance < best.distance)) best = hit;
+                }
+                if (best) {
+                    const point = { x: origin.x + dir.x * best.distance, y: origin.y + dir.y * best.distance, z: origin.z + dir.z * best.distance };
+                    return { hit: true, block: { x, y, z, type: getBlockTypeById(id) }, normal: best.normal, distance: best.distance, point };
+                }
+                continue;
+            }
+
             if (getBlockTypeById(id) === 'campfire') {
                 const intersection = intersectBounds(origin, dir, x, y, z, { min: [0, 0, 0], max: [1, .5, 1] }, distance, this.maxDistance);
                 if (intersection) return { hit: true, block: { x, y, z, type: 'campfire' }, ...intersection };
@@ -284,7 +304,11 @@ export class VoxelRaycast {
                         z: normalZ
                     },
 
-                    distance
+                    distance,
+
+                    // Punkt trafienia (0.90.0: górna/dolna połowa ściany -
+                    // schody do góry nogami, górny półblok).
+                    point: { x: origin.x + dir.x * distance, y: origin.y + dir.y * distance, z: origin.z + dir.z * distance }
 
                 };
 

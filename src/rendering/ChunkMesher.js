@@ -23,6 +23,8 @@ import { getPlantMeshTemplate, lightPlantMeshTemplate } from './PlantMeshTemplat
 import { createPlantDetailLookup } from './PlantDistanceModels.js';
 import { PINE_UPPER_ID, pineBarkTransitionStage, mossCarpetVariant } from './SurfaceTextureVariants.js';
 import { createCanopySampler } from './CanopyLighting.js';
+import { shapeInfo } from '../blocks/woodShapes.js';
+import { shapeBoxes, SIDE_BITS } from '../world/ShapeBoxes.js';
 const plantFaceUvCache = new Map();
 const plantFaceUV = texture => {
     if (!plantFaceUvCache.has(texture)) plantFaceUvCache.set(texture, getAtlasUV(texture));
@@ -41,6 +43,7 @@ import {
     WATER_FALL_MAX,
     WATER_SOURCE_ID,
     isLeavesId,
+    isSolidId,
     getLightEmission
 } from '../blocks/BlockRegistry.js';
 
@@ -134,6 +137,19 @@ blockRenderData.forEach((data, id) => {
     CARPET_OF[id] = data?.riverPlant?.carpet ?? 0;
 });
 
+// Wyroby stolarskie (0.90.0): z czym łączy się płot. 1 - płot, 2 - furtka
+// wzdłuż x (łączy na wschód i zachód), 3 - furtka wzdłuż z, 4 - pełny blok.
+// Ta sama zasada co connectsTo w ShapeBoxes.js.
+let padConnect = new Uint8Array(P_LAYER * (H + 2));
+const CONNECT_OF = new Uint8Array(blockRenderData.length);
+
+blockRenderData.forEach((data, id) => {
+    const info = shapeInfo(id);
+    CONNECT_OF[id] = info?.kind === 'fence' ? 1
+        : info?.kind === 'gate' ? (info.facing === 'north' || info.facing === 'south' ? 2 : 3)
+        : info ? 0 : isOpaqueId(id) && isSolidId(id) ? 4 : 0;
+});
+
 
 // Najwyższa warstwa skopiowana dla obecnego chunka - wyżej w kopii
 // zostały dane poprzedniego chunka.
@@ -215,6 +231,7 @@ function* fillPaddingSteps(chunk, world, height, first) {
                             padLiquid[p] = 0;
                             padWaterHeight[p] = 0;
                             padCarpet[p] = 0;
+                            padConnect[p] = 0;
                             padSky[p] = MAX_LIGHT;
                             padR[p] = padG[p] = padB[p] = 0;
 
@@ -232,6 +249,7 @@ function* fillPaddingSteps(chunk, world, height, first) {
                         padLiquid[p] = getLiquidKindId(blockId);
                         padWaterHeight[p] = padLiquid[p] === WATER_SOURCE_ID ? getWaterBaseHeight(blockId) * 128 : 0;
                         padCarpet[p] = CARPET_OF[blockId];
+                        padConnect[p] = CONNECT_OF[blockId];
                         padSky[p] = source.skyLight[i];
                         padR[p] = source.lightR[i];
                         padG[p] = source.lightG[i];
@@ -1499,6 +1517,160 @@ function cornerLight(block, faceIndex, i, front, depthShade) {
 }
 
 
+// ------------------------------------------------------------
+// WYROBY STOLARSKIE (0.90.0): pudełka z ShapeBoxes.js z teksturą desek.
+// UV jak na pełnej ścianie sześcianu (te same rogi, część kafelka), więc
+// słoje biegną tak samo jak na deskach. Ściana na brzegu komórki - jak
+// ściana sześcianu (znika przy zasłaniającym sąsiedzie, światło i cienie
+// w rogach z komórki przed nią), ściana w środku - światło własnej komórki.
+// ------------------------------------------------------------
+
+const SHAPE_SIDES = ['north', 'east', 'south', 'west'];
+const SHAPE_STEP = [-P, 1, P, -1];
+
+function fenceMask(block) {
+
+    let mask = 0;
+
+    for (let side = 0; side < 4; side++) {
+        const code = padConnect[block + SHAPE_STEP[side]];
+        const name = SHAPE_SIDES[side];
+        if (code === 1 || code === 4 || (code === 2 && (side === 1 || side === 3)) || (code === 3 && (side === 0 || side === 2))) {
+            mask |= SIDE_BITS[name];
+        }
+    }
+
+    return mask;
+
+}
+
+function addShape(id, renderData, lx, y, lz, faceCount, baseX, baseZ) {
+
+    const block = padIndex(lx, y, lz);
+    const info = renderData.shape;
+    const boxes = shapeBoxes(id, 'render', info.kind === 'fence' ? fenceMask(block) : 0);
+
+    if (!boxes) return faceCount;
+
+    const emission = getLightEmission(id) / MAX_LIGHT * 255;
+
+    for (const box of boxes) {
+
+        for (let faceIndex = 0; faceIndex < BLOCK_FACES.length; faceIndex++) {
+
+            const face = BLOCK_FACES[faceIndex];
+            const normal = face.normal;
+            const axis = normal[0] !== 0 ? 0 : normal[1] !== 0 ? 1 : 2;
+            const positive = normal[axis] > 0;
+            const plane = positive ? box[axis + 3] : box[axis];
+            const edge = positive ? plane >= 1 : plane <= 0;
+
+            // Na brzegu komórki - jak ściana sześcianu.
+            const front = edge ? block + FACE_FRONT[faceIndex] : block;
+
+            if (edge && padOpaque[front]) continue;
+
+            const fullUv = renderData.uv[faceIndex][0];
+
+            ensureCapacity(faceCount + 1);
+
+            const p = faceCount * 12;
+            const t = faceCount * 8;
+            const c = faceCount * 16;
+            const a1 = (axis + 1) % 3, a2 = (axis + 2) % 3;
+
+            let brightness0 = 0, brightness1 = 0, brightness2 = 0, brightness3 = 0;
+
+            for (let i = 0; i < 4; i++) {
+
+                const corner = face.corners[i];
+                const local = [0, 0, 0];
+
+                for (let k = 0; k < 3; k++) local[k] = corner[k] ? box[k + 3] : box[k];
+
+                positionBuffer[p + i * 3] = lx + local[0];
+                positionBuffer[p + i * 3 + 1] = y + local[1];
+                positionBuffer[p + i * 3 + 2] = lz + local[2];
+
+                normalBuffer[p + i * 3] = normal[0];
+                normalBuffer[p + i * 3 + 1] = normal[1];
+                normalBuffer[p + i * 3 + 2] = normal[2];
+
+                // UV: punkt ściany pudełka w pełnej ścianie (dwuliniowo
+                // z jej czterech rogów).
+                let u = 0, v = 0;
+
+                for (let j = 0; j < 4; j++) {
+                    const other = face.corners[j];
+                    const w = (other[a1] ? local[a1] : 1 - local[a1]) * (other[a2] ? local[a2] : 1 - local[a2]);
+                    u += w * fullUv[j * 2];
+                    v += w * fullUv[j * 2 + 1];
+                }
+
+                uvBuffer[t + i * 2] = u;
+                uvBuffer[t + i * 2 + 1] = v;
+                plantMotionBuffer[t + i * 2] = 0;
+                plantMotionBuffer[t + i * 2 + 1] = 0;
+
+                let r, g, b, al, ar, ag, ab, aa, brightness, occlusion;
+
+                if (edge) {
+                    const light = cornerLight(block, faceIndex, i, front, 1);
+                    r = light.r; g = light.g; b = light.b; al = light.a;
+                    ar = light.atmosphereR; ag = light.atmosphereG; ab = light.atmosphereB; aa = light.atmosphereA;
+                    brightness = light.brightness; occlusion = light.occlusion;
+                }
+                else {
+                    const red = padR[block], green = padG[block], blue = padB[block];
+                    const strongest = Math.max(red, green, blue);
+                    const sky = BRIGHTNESS[padSky[block] * LEVEL_STEPS];
+                    const lamp = BRIGHTNESS[Math.round(COLOR_LEVEL[strongest] * LEVEL_STEPS)] * LAMP_FACE_SHADE[faceIndex] * 255;
+                    r = strongest > 0 ? lamp * red / strongest : lamp;
+                    g = strongest > 0 ? lamp * green / strongest : lamp;
+                    b = strongest > 0 ? lamp * blue / strongest : lamp;
+                    al = sky * 255;
+                    const atmosphereLamp = ATMOSPHERE_BRIGHTNESS[Math.round(COLOR_LEVEL[strongest] * LEVEL_STEPS)] * LAMP_FACE_SHADE[faceIndex] * 255;
+                    const scale = lamp > 0 ? atmosphereLamp / lamp : 0;
+                    ar = r * scale; ag = g * scale; ab = b * scale;
+                    aa = ATMOSPHERE_BRIGHTNESS[padSky[block] * LEVEL_STEPS] * 255;
+                    brightness = Math.max(sky, lamp / 255);
+                    occlusion = 1;
+                }
+
+                colorBuffer[c + i * 4] = r + 0.5;
+                colorBuffer[c + i * 4 + 1] = g + 0.5;
+                colorBuffer[c + i * 4 + 2] = b + 0.5;
+                colorBuffer[c + i * 4 + 3] = al + 0.5;
+
+                atmosphereLightBuffer[c + i * 4] = ar + 0.5;
+                atmosphereLightBuffer[c + i * 4 + 1] = ag + 0.5;
+                atmosphereLightBuffer[c + i * 4 + 2] = ab + 0.5;
+                atmosphereLightBuffer[c + i * 4 + 3] = aa + 0.5;
+                surfaceOcclusionBuffer[faceCount * 4 + i] = occlusion * 255 + 0.5;
+                surfaceEmissionBuffer[faceCount * 4 + i] = emission + 0.5;
+                surfaceProfileBuffer[t + i * 2] = renderData.surfaceProfiles[faceIndex][0];
+                surfaceProfileBuffer[t + i * 2 + 1] = renderData.surfaceProfiles[faceIndex][1];
+                clearTint(c + i * 4);
+
+                if (i === 0) brightness0 = brightness;
+                else if (i === 1) brightness1 = brightness;
+                else if (i === 2) brightness2 = brightness;
+                else brightness3 = brightness;
+
+            }
+
+            splitBuffer[faceCount] = brightness0 + brightness3 > brightness1 + brightness2 ? 1 : 0;
+
+            faceCount++;
+
+        }
+
+    }
+
+    return faceCount;
+
+}
+
 function addCubeFaces(id, renderData, lx, y, lz, faceCount, baseX, baseZ, textureVariant = 0) {
 
     const block = padIndex(lx, y, lz);
@@ -1797,7 +1969,7 @@ export function prepareChunkPlantGeometry(chunk, world, deadline) {
 const meshScratchPool = [];
 
 function captureMeshScratch() {
-    return { padOpaque, padShade, padLiquid, padWaterHeight, padSky, padR, padG, padB, padCarpet,
+    return { padOpaque, padShade, padLiquid, padWaterHeight, padSky, padR, padG, padB, padCarpet, padConnect,
         padTop, padBottom, faceCapacity, positionBuffer, normalBuffer, uvBuffer,
         colorBuffer, atmosphereLightBuffer, surfaceOcclusionBuffer, surfaceEmissionBuffer,
         surfaceProfileBuffer, tintBuffer, plantMotionBuffer, splitBuffer,
@@ -1805,7 +1977,7 @@ function captureMeshScratch() {
 }
 
 function activateMeshScratch(state) {
-    ({ padOpaque, padShade, padLiquid, padWaterHeight, padSky, padR, padG, padB, padCarpet,
+    ({ padOpaque, padShade, padLiquid, padWaterHeight, padSky, padR, padG, padB, padCarpet, padConnect,
         padTop, padBottom, faceCapacity, positionBuffer, normalBuffer, uvBuffer,
         colorBuffer, atmosphereLightBuffer, surfaceOcclusionBuffer, surfaceEmissionBuffer,
         surfaceProfileBuffer, tintBuffer, plantMotionBuffer, splitBuffer,
@@ -1820,6 +1992,7 @@ function acquireMeshScratch() {
         padWaterHeight: new Uint8Array(P_LAYER * (H + 2)),
         padR: new Uint8Array(P_LAYER * (H + 2)), padG: new Uint8Array(P_LAYER * (H + 2)),
         padB: new Uint8Array(P_LAYER * (H + 2)), padCarpet: new Uint8Array(P_LAYER * (H + 2)),
+        padConnect: new Uint8Array(P_LAYER * (H + 2)),
         faceCapacity: 0, positionBuffer: null, normalBuffer: null, uvBuffer: null,
         colorBuffer: null, atmosphereLightBuffer: null, surfaceOcclusionBuffer: null,
         surfaceEmissionBuffer: null, surfaceProfileBuffer: null, tintBuffer: null,
@@ -2042,6 +2215,17 @@ function* buildChunkGeometrySteps(chunk, world, { terrain, plants: includePlants
                 if (renderData.flat) {
 
                     flats.push(lx, y, lz, id);
+
+                    continue;
+
+                }
+
+
+                // Schody, półbloki, płoty, furtki, stół (0.90.0).
+
+                if (renderData.shape) {
+
+                    faceCount = addShape(id, renderData, lx, y, lz, faceCount, baseX, baseZ);
 
                     continue;
 

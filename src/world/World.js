@@ -1,4 +1,7 @@
 import * as THREE from 'three';
+import { shapeInfo } from '../blocks/woodShapes.js';
+import { shapeBoxes, connectMask } from './ShapeBoxes.js';
+
 import { normalizeWorldExperiments, grassDetailAtDistance } from './WorldExperiments.js';
 import { ChunkGeneration } from './ChunkGeneration.js';
 import { WaterSimulation } from './WaterSimulation.js';
@@ -71,6 +74,9 @@ import {
     EDGE_SOUTH,
     EDGE_SELF
 } from './Light.js';
+
+// Pełny blok - jedno pudełko kolizji (collisionBoxes).
+const FULL_COLLISION = Object.freeze([Object.freeze([0, 0, 0, 1, 1, 1])]);
 // ------------------------------------------------------------
 // Świat = mapa chunków.
 //
@@ -503,6 +509,27 @@ export class World {
         return isSolidId(
             this.getBlockId(x, y, z)
         );
+
+    }
+
+
+    // Pudełka kolizji bloku [x0, y0, z0, x1, y1, z1] (0-1 w komórce, płot
+    // do 1,5) albo null - bez kolizji. Pełny blok - jedno pudełko.
+
+    collisionBoxes(x, y, z) {
+
+        const id = this.getBlockId(x, y, z);
+
+        if (!isSolidId(id)) return null;
+
+        const info = shapeInfo(id);
+
+        if (!info) return FULL_COLLISION;
+
+        const boxes = shapeBoxes(id, 'collision',
+            info.kind === 'fence' ? connectMask((a, b, c) => this.getBlockId(a, b, c), x, y, z) : 0);
+
+        return boxes?.length ? boxes : null;
 
     }
 

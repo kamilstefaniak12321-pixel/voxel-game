@@ -505,6 +505,15 @@ export const ACHIEVEMENTS = [
         on: 'crafted'
     },
     {
+        id: 'carpenter',
+        tier: 'common',
+        title: 'Stolarz',
+        task: 'Zrób coś na stole stolarskim (deski na lewą część blatu, PPM w wyrób).',
+        comment: 'Schody do nieba to na razie schody do szopy. Ale zawsze.',
+        icon: 'oak_stairs',
+        on: 'carpentry'
+    },
+    {
         id: 'colored_lamp',
         tier: 'common',
         title: 'Kolorowe światła',

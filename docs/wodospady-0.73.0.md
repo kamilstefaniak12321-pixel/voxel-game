@@ -21,7 +21,9 @@ spadkiem i usuwa nieaktualne.
 ## Wygląd
 
 - **Bok spadającej wody** niesie spadek w UV (zamiast nurtu; znacznik
-  `WATER_FALL_MARK`). Shader wody (`waterMaterial`) przewija teksturę
+  `WATER_FALL_MARK`). *Od 0.87.0 wygląd boku i piany na tafli opisuje
+  [wodospady-0.87.0.md](wodospady-0.87.0.md); poniżej - wersja 0.73.0.*
+  Shader wody (`waterMaterial`) przewijał teksturę
   `1 + 0,3 × spadek` razy szybciej, w dłuższych smugach
   (`WATER_FALL_STRETCH`), bielszą i mniej przezroczystą (piana). Górne
   40% bloku przechodzi w prędkość bloku nad nim, więc między blokami

@@ -70,6 +70,9 @@ jobs:
       - name: Wodospady, zapętlone kręgi i koszt efektów w WebGL2
         timeout-minutes: 3
         run: node tools/sprawdz_fale_wodospadow_webgl.mjs
+      - name: Pikselowe wodospady i piana na tafli w WebGL2
+        timeout-minutes: 3
+        run: node tools/sprawdz_wodospady_pikselowe_webgl.mjs
       - name: Rozlewanie wody, zapis i koszt zalewania w WebGL2
         timeout-minutes: 3
         run: node tools/sprawdz_wode_webgl.mjs
@@ -107,6 +110,7 @@ jobs:
             test-results/trees-085/
             test-results/new-trees/
             test-results/trees-083/
+            test-results/waterfall-pixels/
             test-results/tree-showcase/
             test-results/rafts/
             test-results/river-swimming/

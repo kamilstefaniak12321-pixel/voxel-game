@@ -49,6 +49,29 @@ export function boxFaces(boxes, texture, offset = [0, 0, 0]) {
     return faces;
 }
 
+// Drzwi (0.91.0, model Kamila drzwi.bbmodel): płyta 16 x 32 x 2 px przy
+// północnym brzegu dolnej komórki (y 0-2). Przód i tył - cały obrazek
+// 16 x 32 tak samo (klamka po stronie przeciwnej do zawiasu), boki -
+// ramka. Zawias prawy - obrazek odbity.
+export const DOOR_BOX = [0, 0, 0, 1, 2, 2 / 16];
+
+export function doorFaces(texture, hinge = 'left') {
+    const [x0, y0, z0, x1, y1, z1] = DOOR_BOX;
+    const u = (x) => (hinge === 'right' ? 1 - x : x);
+    const v = (y) => 1 - y / 2;
+    const faces = [];
+    for (const [name, { normal, corners }] of Object.entries(FACE_CORNERS)) {
+        const points = corners([x0, y0, z0], [x1, y1, z1]);
+        const uv = points.map(([x, y, z]) => {
+            if (name === 'north' || name === 'south') return [u(x), v(y)];
+            if (name === 'east' || name === 'west') return [u(name === 'east' ? 1 - z * 0.5 : z * 0.5), v(y)];
+            return [u(x), z * 0.5];
+        });
+        faces.push({ texture, color: [255, 255, 255], normal, vertices: points, uv: uv.map((pair) => pair.map(wrap)) });
+    }
+    return faces;
+}
+
 // Model wyrobu w ekwipunku: schody i furtka przodem do patrzącego (+z),
 // płot ze szczeblami w obie strony, stół - obie części.
 export function itemShapeFaces(type) {
@@ -56,6 +79,12 @@ export function itemShapeFaces(type) {
     if (!item) return null;
     const { wood, kind } = item;
     const texture = WOOD_SHAPE_BLOCKS[type].textures.all;
+    if (kind === 'door') {
+        // Przodem do patrzącego (+z): odbijamy płytę z północnego brzegu.
+        return doorFaces(texture).map((face) => ({ ...face, normal: [-face.normal[0], face.normal[1], -face.normal[2]],
+            vertices: face.vertices.map(([x, y, z]) => [1 - x, y, 1 - z]) }));
+    }
+    if (kind === 'trapdoor') return boxFaces(shapeBoxes(shapeId(wood, 'trapdoor')), texture);
     if (kind === 'table') {
         // Przód na +z (south): część B po prawej patrzącego od przodu (+x).
         return [

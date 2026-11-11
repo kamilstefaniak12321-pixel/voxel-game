@@ -556,7 +556,7 @@ export function buildBlockGeometry(type) {
 
     // Schody, półbloki, płoty, furtki, stół (0.90.0): ten sam model co
     // ikonka, wyśrodkowany (stół - zmniejszony, bo ma dwa bloki).
-    const shapeFaces = !item && definition.model === 'shape' ? itemShapeFaces(definition.pick) : null;
+    const shapeFaces = !item && (definition.model === 'shape' || definition.model === 'door') ? itemShapeFaces(definition.pick) : null;
     if (shapeFaces) {
         const geometry = buildFacesGeometry(shapeFaces);
         geometry.center();

@@ -107,7 +107,7 @@ export class BlockHighlight {
         if (definition?.model === 'structure' && !torch) { size[1] = .5; center[1] = .25; }
 
         // Schody, półbloki, płot (słupek), furtka, stół - obrys pudełek.
-        const shape = definition?.model === 'shape' ? boundsOf(shapeBoxes(definition.id, 'outline', 0)) : null;
+        const shape = definition?.model === 'shape' || definition?.model === 'door' ? boundsOf(shapeBoxes(definition.id, 'outline', 0)) : null;
         if (shape) {
             for (let axis = 0; axis < 3; axis++) {
                 size[axis] = Math.max(0.01, shape[axis + 3] - shape[axis]);

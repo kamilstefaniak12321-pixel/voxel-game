@@ -8,7 +8,7 @@ import { setPotatoDefine } from './BlockRenderData.js';
 import { boxFaces, buildFacesGeometry, itemShapeFaces } from './ShapeGeometry.js';
 import { shapeBaseType } from '../blocks/woodShapes.js';
 import { woodOfPlanks } from '../blocks/woods.js';
-import { TABLE_PRODUCTS, TABLE_CAPACITY } from '../game/CarpenterTables.js';
+import { TABLE_PRODUCTS, TABLE_CAPACITY, BENCH_PRODUCTS } from '../game/CarpenterTables.js';
 
 // ------------------------------------------------------------
 // STÓŁ STOLARSKI - CO LEŻY NA BLACIE (0.90.0)
@@ -18,6 +18,9 @@ import { TABLE_PRODUCTS, TABLE_CAPACITY } from '../game/CarpenterTables.js';
 // półblok z przodu, płot, furtka z tyłu), tylko te, na które starczy
 // desek. Klik w ćwiartkę - CarpenterTables.takeProduct. Model stołu
 // rysuje ChunkMesher (pudełka z ShapeBoxes.js), tu - tylko blat.
+//
+// 0.91.0 - podwójny warsztat: na prawej części pustego stołu obok stołu
+// z deskami - drzwi (leżą na blacie) i klapa z tych desek (BENCH_PRODUCTS).
 // ------------------------------------------------------------
 
 const SYNC_SECONDS = 0.2;
@@ -65,13 +68,16 @@ export class CarpenterTableRenderer {
         });
     }
 
-    miniGeometry(type) {
-        return this.geometry(`mini:${type}`, () => {
+    miniGeometry(type, flat = false) {
+        return this.geometry(`mini:${type}:${flat}`, () => {
             const geometry = buildFacesGeometry(itemShapeFaces(type));
+            // Drzwi leżą na blacie (wzdłuż głębokości ćwiartki).
+            if (flat) geometry.rotateX(-Math.PI / 2);
             geometry.computeBoundingBox();
             const box = geometry.boundingBox;
             geometry.translate(-(box.min.x + box.max.x) / 2, -box.min.y, -(box.min.z + box.max.z) / 2);
-            geometry.scale(MINI_SCALE, MINI_SCALE, MINI_SCALE);
+            const scale = flat ? MINI_SCALE * 0.6 : MINI_SCALE;
+            geometry.scale(scale, scale, scale);
             // Schody stopniami do gracza (przód stołu).
             geometry.rotateY(Math.PI);
             return geometry;
@@ -105,21 +111,25 @@ export class CarpenterTableRenderer {
     }
 
     // Zawartość blatu po zmianie (deski, ich liczba, kierunek stołu).
-    rebuild(view, a) {
+    // bench - rysujemy dodatkowe wyroby na drugim stole (a - jego część A).
+    rebuild(view, a, bench = false) {
         const { table } = view;
         const wood = woodOfPlanks(table.planks);
-        const signature = `${table.planks}:${table.count}:${a.facing}`;
+        const signature = `${table.planks}:${table.count}:${a.x},${a.z}:${a.facing}`;
         if (signature === view.signature) return;
         view.signature = signature;
         view.group.clear();
         view.group.position.set(a.x + .5, a.y + 1, a.z + .5);
         view.group.rotation.y = TABLE_ROTATION[a.facing] ?? 0;
         if (!wood || table.count <= 0) return;
-        const boards = Math.max(1, Math.min(24, Math.ceil(table.count / TABLE_CAPACITY * 24)));
-        view.group.add(new THREE.Mesh(this.pileGeometry(wood.texture, boards), view.material));
-        TABLE_PRODUCTS.forEach((product, index) => {
+        if (!bench) {
+            const boards = Math.max(1, Math.min(24, Math.ceil(table.count / TABLE_CAPACITY * 24)));
+            view.group.add(new THREE.Mesh(this.pileGeometry(wood.texture, boards), view.material));
+        }
+        (bench ? BENCH_PRODUCTS : TABLE_PRODUCTS).forEach((product, index) => {
             if (table.count < product.planks) return;
-            const mesh = new THREE.Mesh(this.miniGeometry(shapeBaseType(wood.wood, product.kind)), view.material);
+            const flat = product.kind === 'door';
+            const mesh = new THREE.Mesh(this.miniGeometry(shapeBaseType(wood.wood, product.kind), flat), view.material);
             const spot = productSpot(index);
             mesh.position.set(spot.x, 0, spot.z);
             view.group.add(mesh);
@@ -156,6 +166,16 @@ export class CarpenterTableRenderer {
             view.table = table;
             this.rebuild(view, a);
             this.updateLight(view, a);
+            // Podwójny warsztat: drzwi i klapa na drugim (pustym) stole.
+            const partner = this.tables.partnerOf?.(a);
+            if (partner && this.tables.supplierOf(partner)) {
+                const benchKey = `bench:${key}`;
+                keep.add(benchKey);
+                const bench = this.views.get(benchKey) ?? this.createView(benchKey, table);
+                bench.table = table;
+                this.rebuild(bench, partner, true);
+                this.updateLight(bench, partner);
+            }
         }
         for (const key of [...this.views.keys()]) if (!keep.has(key)) this.removeView(key);
     }

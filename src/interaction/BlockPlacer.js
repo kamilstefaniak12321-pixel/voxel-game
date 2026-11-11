@@ -16,7 +16,7 @@ import {
 } from '../blocks/BlockRegistry.js';
 import { getTorchInfo, torchType } from '../blocks/torches.js';
 import { chestFacingForYaw } from '../blocks/chest.js';
-import { shapeItem, shapeId, shapeInfo, lookFacing } from '../blocks/woodShapes.js';
+import { shapeItem, shapeId, shapeInfo, lookFacing, oppositeFacing } from '../blocks/woodShapes.js';
 
 // ------------------------------------------------------------
 // STAWIANIE BLOKÓW
@@ -88,6 +88,7 @@ export class BlockPlacer {
 
         // Schody, półbloki, płoty, furtki (0.90.0) - kierunek i połowa.
         const item = shapeItem(blockType);
+        if (item?.kind === 'door') return false; // drzwi - CarpenterTables.placeDoor (dwa bloki)
         if (item && item.kind !== 'table') {
             const shaped = this.shapeVariant(hit, item);
             if (!shaped) return false;
@@ -266,6 +267,13 @@ export class BlockPlacer {
 
         if (kind === 'gate') {
             return { type: getBlockTypeById(shapeId(wood, 'gate', { facing: look })) };
+        }
+
+        if (kind === 'trapdoor') {
+            // Zawias przy klikniętej ścianie; na podłodze i suficie - od
+            // strony gracza.
+            const wall = normal.x > 0 ? 'west' : normal.x < 0 ? 'east' : normal.z > 0 ? 'north' : normal.z < 0 ? 'south' : null;
+            return { type: getBlockTypeById(shapeId(wood, 'trapdoor', { facing: wall ?? oppositeFacing(look), half: upper ? 'top' : 'bottom' })) };
         }
 
         return { type: getBlockTypeById(shapeId(wood, kind)) };

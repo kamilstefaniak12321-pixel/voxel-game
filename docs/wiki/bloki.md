@@ -2,7 +2,7 @@
 
 > Ta strona jest generowana z kodu gry (`python tools/wiki.py`) - nie zmieniaj jej ręcznie, zmiany przepadną przy następnym generowaniu.
 
-Wersja gry **0.90.0** - 381 bloków (do tego 619 odmian, których nie ma w ekwipunku, np. wieniec zawieszony na boku bloku). Czas kopania dotyczy trybu przygody; w kreatywnym bloki znikają od razu.
+Wersja gry **0.91.0** - 421 bloków (do tego 1539 odmian, których nie ma w ekwipunku, np. wieniec zawieszony na boku bloku). Czas kopania dotyczy trybu przygody; w kreatywnym bloki znikają od razu.
 
 [Ziemia](#ziemia) · [Skały](#skały) · [Drewno](#drewno) · [Budulec](#budulec) · [Rośliny](#rośliny) · [Światło](#światło) · [Ozdoby](#ozdoby)
 
@@ -66,101 +66,141 @@ Wersja gry **0.90.0** - 381 bloków (do tego 619 odmian, których nie ma w ekwip
 | <img src="ikony/spruce_fence.png" width="32" height="32" alt=""> | **Płot świerkowy** | `spruce_fence` | **Kopanie:** 1,2 s (siekierą 0,4 s) |
 | <img src="ikony/spruce_fence_gate.png" width="32" height="32" alt=""> | **Furtka świerkowa** | `spruce_fence_gate` | **Kopanie:** 1,2 s (siekierą 0,4 s)<br>**Skąd:** zniszczony blok: Furtka świerkowa |
 | <img src="ikony/spruce_carpenter_table.png" width="32" height="32" alt=""> | **Stół stolarski świerkowy** | `spruce_carpenter_table` | **Kopanie:** 1,2 s (siekierą 0,4 s)<br>**Skąd:** zniszczony blok: Stół stolarski świerkowy<br>**Przepis:** Stół stolarski świerkowy |
+| <img src="ikony/spruce_door.png" width="32" height="32" alt=""> | **Drzwi świerkowe** | `spruce_door` | **Kopanie:** 1,2 s (siekierą 0,4 s)<br>**Skąd:** zniszczony blok: Drzwi świerkowe |
+| <img src="ikony/spruce_trapdoor.png" width="32" height="32" alt=""> | **Klapa świerkowa** | `spruce_trapdoor` | **Kopanie:** 1,2 s (siekierą 0,4 s)<br>**Skąd:** zniszczony blok: Klapa świerkowa |
 | <img src="ikony/pine_stairs.png" width="32" height="32" alt=""> | **Schody sosnowe** | `pine_stairs` | **Kopanie:** 1,2 s (siekierą 0,4 s)<br>**Skąd:** zniszczony blok: Schody sosnowe |
 | <img src="ikony/pine_slab.png" width="32" height="32" alt=""> | **Półblok sosnowy** | `pine_slab` | **Kopanie:** 1,2 s (siekierą 0,4 s)<br>**Skąd:** zniszczony blok: Półblok sosnowy |
 | <img src="ikony/pine_fence.png" width="32" height="32" alt=""> | **Płot sosnowy** | `pine_fence` | **Kopanie:** 1,2 s (siekierą 0,4 s) |
 | <img src="ikony/pine_fence_gate.png" width="32" height="32" alt=""> | **Furtka sosnowa** | `pine_fence_gate` | **Kopanie:** 1,2 s (siekierą 0,4 s)<br>**Skąd:** zniszczony blok: Furtka sosnowa |
 | <img src="ikony/pine_carpenter_table.png" width="32" height="32" alt=""> | **Stół stolarski sosnowy** | `pine_carpenter_table` | **Kopanie:** 1,2 s (siekierą 0,4 s)<br>**Skąd:** zniszczony blok: Stół stolarski sosnowy<br>**Przepis:** Stół stolarski sosnowy |
+| <img src="ikony/pine_door.png" width="32" height="32" alt=""> | **Drzwi sosnowe** | `pine_door` | **Kopanie:** 1,2 s (siekierą 0,4 s)<br>**Skąd:** zniszczony blok: Drzwi sosnowe |
+| <img src="ikony/pine_trapdoor.png" width="32" height="32" alt=""> | **Klapa sosnowa** | `pine_trapdoor` | **Kopanie:** 1,2 s (siekierą 0,4 s)<br>**Skąd:** zniszczony blok: Klapa sosnowa |
 | <img src="ikony/beech_stairs.png" width="32" height="32" alt=""> | **Schody bukowe** | `beech_stairs` | **Kopanie:** 1,2 s (siekierą 0,4 s)<br>**Skąd:** zniszczony blok: Schody bukowe |
 | <img src="ikony/beech_slab.png" width="32" height="32" alt=""> | **Półblok bukowy** | `beech_slab` | **Kopanie:** 1,2 s (siekierą 0,4 s)<br>**Skąd:** zniszczony blok: Półblok bukowy |
 | <img src="ikony/beech_fence.png" width="32" height="32" alt=""> | **Płot bukowy** | `beech_fence` | **Kopanie:** 1,2 s (siekierą 0,4 s) |
 | <img src="ikony/beech_fence_gate.png" width="32" height="32" alt=""> | **Furtka bukowa** | `beech_fence_gate` | **Kopanie:** 1,2 s (siekierą 0,4 s)<br>**Skąd:** zniszczony blok: Furtka bukowa |
 | <img src="ikony/beech_carpenter_table.png" width="32" height="32" alt=""> | **Stół stolarski bukowy** | `beech_carpenter_table` | **Kopanie:** 1,2 s (siekierą 0,4 s)<br>**Skąd:** zniszczony blok: Stół stolarski bukowy<br>**Przepis:** Stół stolarski bukowy |
+| <img src="ikony/beech_door.png" width="32" height="32" alt=""> | **Drzwi bukowe** | `beech_door` | **Kopanie:** 1,2 s (siekierą 0,4 s)<br>**Skąd:** zniszczony blok: Drzwi bukowe |
+| <img src="ikony/beech_trapdoor.png" width="32" height="32" alt=""> | **Klapa bukowa** | `beech_trapdoor` | **Kopanie:** 1,2 s (siekierą 0,4 s)<br>**Skąd:** zniszczony blok: Klapa bukowa |
 | <img src="ikony/linden_stairs.png" width="32" height="32" alt=""> | **Schody lipowe** | `linden_stairs` | **Kopanie:** 1,2 s (siekierą 0,4 s)<br>**Skąd:** zniszczony blok: Schody lipowe |
 | <img src="ikony/linden_slab.png" width="32" height="32" alt=""> | **Półblok lipowy** | `linden_slab` | **Kopanie:** 1,2 s (siekierą 0,4 s)<br>**Skąd:** zniszczony blok: Półblok lipowy |
 | <img src="ikony/linden_fence.png" width="32" height="32" alt=""> | **Płot lipowy** | `linden_fence` | **Kopanie:** 1,2 s (siekierą 0,4 s) |
 | <img src="ikony/linden_fence_gate.png" width="32" height="32" alt=""> | **Furtka lipowa** | `linden_fence_gate` | **Kopanie:** 1,2 s (siekierą 0,4 s)<br>**Skąd:** zniszczony blok: Furtka lipowa |
 | <img src="ikony/linden_carpenter_table.png" width="32" height="32" alt=""> | **Stół stolarski lipowy** | `linden_carpenter_table` | **Kopanie:** 1,2 s (siekierą 0,4 s)<br>**Skąd:** zniszczony blok: Stół stolarski lipowy<br>**Przepis:** Stół stolarski lipowy |
+| <img src="ikony/linden_door.png" width="32" height="32" alt=""> | **Drzwi lipowe** | `linden_door` | **Kopanie:** 1,2 s (siekierą 0,4 s)<br>**Skąd:** zniszczony blok: Drzwi lipowe |
+| <img src="ikony/linden_trapdoor.png" width="32" height="32" alt=""> | **Klapa lipowa** | `linden_trapdoor` | **Kopanie:** 1,2 s (siekierą 0,4 s)<br>**Skąd:** zniszczony blok: Klapa lipowa |
 | <img src="ikony/oak_stairs.png" width="32" height="32" alt=""> | **Schody dębowe** | `oak_stairs` | **Kopanie:** 1,2 s (siekierą 0,4 s)<br>**Skąd:** zniszczony blok: Schody dębowe |
 | <img src="ikony/oak_slab.png" width="32" height="32" alt=""> | **Półblok dębowy** | `oak_slab` | **Kopanie:** 1,2 s (siekierą 0,4 s)<br>**Skąd:** zniszczony blok: Półblok dębowy |
 | <img src="ikony/oak_fence.png" width="32" height="32" alt=""> | **Płot dębowy** | `oak_fence` | **Kopanie:** 1,2 s (siekierą 0,4 s) |
 | <img src="ikony/oak_fence_gate.png" width="32" height="32" alt=""> | **Furtka dębowa** | `oak_fence_gate` | **Kopanie:** 1,2 s (siekierą 0,4 s)<br>**Skąd:** zniszczony blok: Furtka dębowa |
 | <img src="ikony/oak_carpenter_table.png" width="32" height="32" alt=""> | **Stół stolarski dębowy** | `oak_carpenter_table` | **Kopanie:** 1,2 s (siekierą 0,4 s)<br>**Skąd:** zniszczony blok: Stół stolarski dębowy<br>**Przepis:** Stół stolarski dębowy |
+| <img src="ikony/oak_door.png" width="32" height="32" alt=""> | **Drzwi dębowe** | `oak_door` | **Kopanie:** 1,2 s (siekierą 0,4 s)<br>**Skąd:** zniszczony blok: Drzwi dębowe |
+| <img src="ikony/oak_trapdoor.png" width="32" height="32" alt=""> | **Klapa dębowa** | `oak_trapdoor` | **Kopanie:** 1,2 s (siekierą 0,4 s)<br>**Skąd:** zniszczony blok: Klapa dębowa |
 | <img src="ikony/birch_stairs.png" width="32" height="32" alt=""> | **Schody brzozowe** | `birch_stairs` | **Kopanie:** 1,2 s (siekierą 0,4 s)<br>**Skąd:** zniszczony blok: Schody brzozowe |
 | <img src="ikony/birch_slab.png" width="32" height="32" alt=""> | **Półblok brzozowy** | `birch_slab` | **Kopanie:** 1,2 s (siekierą 0,4 s)<br>**Skąd:** zniszczony blok: Półblok brzozowy |
 | <img src="ikony/birch_fence.png" width="32" height="32" alt=""> | **Płot brzozowy** | `birch_fence` | **Kopanie:** 1,2 s (siekierą 0,4 s) |
 | <img src="ikony/birch_fence_gate.png" width="32" height="32" alt=""> | **Furtka brzozowa** | `birch_fence_gate` | **Kopanie:** 1,2 s (siekierą 0,4 s)<br>**Skąd:** zniszczony blok: Furtka brzozowa |
 | <img src="ikony/birch_carpenter_table.png" width="32" height="32" alt=""> | **Stół stolarski brzozowy** | `birch_carpenter_table` | **Kopanie:** 1,2 s (siekierą 0,4 s)<br>**Skąd:** zniszczony blok: Stół stolarski brzozowy<br>**Przepis:** Stół stolarski brzozowy |
+| <img src="ikony/birch_door.png" width="32" height="32" alt=""> | **Drzwi brzozowe** | `birch_door` | **Kopanie:** 1,2 s (siekierą 0,4 s)<br>**Skąd:** zniszczony blok: Drzwi brzozowe |
+| <img src="ikony/birch_trapdoor.png" width="32" height="32" alt=""> | **Klapa brzozowa** | `birch_trapdoor` | **Kopanie:** 1,2 s (siekierą 0,4 s)<br>**Skąd:** zniszczony blok: Klapa brzozowa |
 | <img src="ikony/dark_stairs.png" width="32" height="32" alt=""> | **Schody z ciemnego drewna** | `dark_stairs` | **Kopanie:** 1,2 s (siekierą 0,4 s)<br>**Skąd:** zniszczony blok: Schody z ciemnego drewna |
 | <img src="ikony/dark_slab.png" width="32" height="32" alt=""> | **Półblok z ciemnego drewna** | `dark_slab` | **Kopanie:** 1,2 s (siekierą 0,4 s)<br>**Skąd:** zniszczony blok: Półblok z ciemnego drewna |
 | <img src="ikony/dark_fence.png" width="32" height="32" alt=""> | **Płot z ciemnego drewna** | `dark_fence` | **Kopanie:** 1,2 s (siekierą 0,4 s) |
 | <img src="ikony/dark_fence_gate.png" width="32" height="32" alt=""> | **Furtka z ciemnego drewna** | `dark_fence_gate` | **Kopanie:** 1,2 s (siekierą 0,4 s)<br>**Skąd:** zniszczony blok: Furtka z ciemnego drewna |
 | <img src="ikony/dark_carpenter_table.png" width="32" height="32" alt=""> | **Stół stolarski z ciemnego drewna** | `dark_carpenter_table` | **Kopanie:** 1,2 s (siekierą 0,4 s)<br>**Skąd:** zniszczony blok: Stół stolarski z ciemnego drewna<br>**Przepis:** Stół stolarski z ciemnego drewna |
+| <img src="ikony/dark_door.png" width="32" height="32" alt=""> | **Drzwi z ciemnego drewna** | `dark_door` | **Kopanie:** 1,2 s (siekierą 0,4 s)<br>**Skąd:** zniszczony blok: Drzwi z ciemnego drewna |
+| <img src="ikony/dark_trapdoor.png" width="32" height="32" alt=""> | **Klapa z ciemnego drewna** | `dark_trapdoor` | **Kopanie:** 1,2 s (siekierą 0,4 s)<br>**Skąd:** zniszczony blok: Klapa z ciemnego drewna |
 | <img src="ikony/jablon_stairs.png" width="32" height="32" alt=""> | **Schody jabłoniowe** | `jablon_stairs` | **Kopanie:** 1,2 s (siekierą 0,4 s)<br>**Skąd:** zniszczony blok: Schody jabłoniowe |
 | <img src="ikony/jablon_slab.png" width="32" height="32" alt=""> | **Półblok jabłoniowy** | `jablon_slab` | **Kopanie:** 1,2 s (siekierą 0,4 s)<br>**Skąd:** zniszczony blok: Półblok jabłoniowy |
 | <img src="ikony/jablon_fence.png" width="32" height="32" alt=""> | **Płot jabłoniowy** | `jablon_fence` | **Kopanie:** 1,2 s (siekierą 0,4 s) |
 | <img src="ikony/jablon_fence_gate.png" width="32" height="32" alt=""> | **Furtka jabłoniowa** | `jablon_fence_gate` | **Kopanie:** 1,2 s (siekierą 0,4 s)<br>**Skąd:** zniszczony blok: Furtka jabłoniowa |
 | <img src="ikony/jablon_carpenter_table.png" width="32" height="32" alt=""> | **Stół stolarski jabłoniowy** | `jablon_carpenter_table` | **Kopanie:** 1,2 s (siekierą 0,4 s)<br>**Skąd:** zniszczony blok: Stół stolarski jabłoniowy<br>**Przepis:** Stół stolarski jabłoniowy |
+| <img src="ikony/jablon_door.png" width="32" height="32" alt=""> | **Drzwi jabłoniowe** | `jablon_door` | **Kopanie:** 1,2 s (siekierą 0,4 s)<br>**Skąd:** zniszczony blok: Drzwi jabłoniowe |
+| <img src="ikony/jablon_trapdoor.png" width="32" height="32" alt=""> | **Klapa jabłoniowa** | `jablon_trapdoor` | **Kopanie:** 1,2 s (siekierą 0,4 s)<br>**Skąd:** zniszczony blok: Klapa jabłoniowa |
 | <img src="ikony/olcha_stairs.png" width="32" height="32" alt=""> | **Schody olchowe** | `olcha_stairs` | **Kopanie:** 1,2 s (siekierą 0,4 s)<br>**Skąd:** zniszczony blok: Schody olchowe |
 | <img src="ikony/olcha_slab.png" width="32" height="32" alt=""> | **Półblok olchowy** | `olcha_slab` | **Kopanie:** 1,2 s (siekierą 0,4 s)<br>**Skąd:** zniszczony blok: Półblok olchowy |
 | <img src="ikony/olcha_fence.png" width="32" height="32" alt=""> | **Płot olchowy** | `olcha_fence` | **Kopanie:** 1,2 s (siekierą 0,4 s) |
 | <img src="ikony/olcha_fence_gate.png" width="32" height="32" alt=""> | **Furtka olchowa** | `olcha_fence_gate` | **Kopanie:** 1,2 s (siekierą 0,4 s)<br>**Skąd:** zniszczony blok: Furtka olchowa |
 | <img src="ikony/olcha_carpenter_table.png" width="32" height="32" alt=""> | **Stół stolarski olchowy** | `olcha_carpenter_table` | **Kopanie:** 1,2 s (siekierą 0,4 s)<br>**Skąd:** zniszczony blok: Stół stolarski olchowy<br>**Przepis:** Stół stolarski olchowy |
+| <img src="ikony/olcha_door.png" width="32" height="32" alt=""> | **Drzwi olchowe** | `olcha_door` | **Kopanie:** 1,2 s (siekierą 0,4 s)<br>**Skąd:** zniszczony blok: Drzwi olchowe |
+| <img src="ikony/olcha_trapdoor.png" width="32" height="32" alt=""> | **Klapa olchowa** | `olcha_trapdoor` | **Kopanie:** 1,2 s (siekierą 0,4 s)<br>**Skąd:** zniszczony blok: Klapa olchowa |
 | <img src="ikony/wierzba_stairs.png" width="32" height="32" alt=""> | **Schody wierzbowe** | `wierzba_stairs` | **Kopanie:** 1,2 s (siekierą 0,4 s)<br>**Skąd:** zniszczony blok: Schody wierzbowe |
 | <img src="ikony/wierzba_slab.png" width="32" height="32" alt=""> | **Półblok wierzbowy** | `wierzba_slab` | **Kopanie:** 1,2 s (siekierą 0,4 s)<br>**Skąd:** zniszczony blok: Półblok wierzbowy |
 | <img src="ikony/wierzba_fence.png" width="32" height="32" alt=""> | **Płot wierzbowy** | `wierzba_fence` | **Kopanie:** 1,2 s (siekierą 0,4 s) |
 | <img src="ikony/wierzba_fence_gate.png" width="32" height="32" alt=""> | **Furtka wierzbowa** | `wierzba_fence_gate` | **Kopanie:** 1,2 s (siekierą 0,4 s)<br>**Skąd:** zniszczony blok: Furtka wierzbowa |
 | <img src="ikony/wierzba_carpenter_table.png" width="32" height="32" alt=""> | **Stół stolarski wierzbowy** | `wierzba_carpenter_table` | **Kopanie:** 1,2 s (siekierą 0,4 s)<br>**Skąd:** zniszczony blok: Stół stolarski wierzbowy<br>**Przepis:** Stół stolarski wierzbowy |
+| <img src="ikony/wierzba_door.png" width="32" height="32" alt=""> | **Drzwi wierzbowe** | `wierzba_door` | **Kopanie:** 1,2 s (siekierą 0,4 s)<br>**Skąd:** zniszczony blok: Drzwi wierzbowe |
+| <img src="ikony/wierzba_trapdoor.png" width="32" height="32" alt=""> | **Klapa wierzbowa** | `wierzba_trapdoor` | **Kopanie:** 1,2 s (siekierą 0,4 s)<br>**Skąd:** zniszczony blok: Klapa wierzbowa |
 | <img src="ikony/acacia_stairs.png" width="32" height="32" alt=""> | **Schody z akacji** | `acacia_stairs` | **Kopanie:** 1,2 s (siekierą 0,4 s)<br>**Skąd:** zniszczony blok: Schody z akacji |
 | <img src="ikony/acacia_slab.png" width="32" height="32" alt=""> | **Półblok z akacji** | `acacia_slab` | **Kopanie:** 1,2 s (siekierą 0,4 s)<br>**Skąd:** zniszczony blok: Półblok z akacji |
 | <img src="ikony/acacia_fence.png" width="32" height="32" alt=""> | **Płot z akacji** | `acacia_fence` | **Kopanie:** 1,2 s (siekierą 0,4 s) |
 | <img src="ikony/acacia_fence_gate.png" width="32" height="32" alt=""> | **Furtka z akacji** | `acacia_fence_gate` | **Kopanie:** 1,2 s (siekierą 0,4 s)<br>**Skąd:** zniszczony blok: Furtka z akacji |
 | <img src="ikony/acacia_carpenter_table.png" width="32" height="32" alt=""> | **Stół stolarski z akacji** | `acacia_carpenter_table` | **Kopanie:** 1,2 s (siekierą 0,4 s)<br>**Skąd:** zniszczony blok: Stół stolarski z akacji<br>**Przepis:** Stół stolarski z akacji |
+| <img src="ikony/acacia_door.png" width="32" height="32" alt=""> | **Drzwi z akacji** | `acacia_door` | **Kopanie:** 1,2 s (siekierą 0,4 s)<br>**Skąd:** zniszczony blok: Drzwi z akacji |
+| <img src="ikony/acacia_trapdoor.png" width="32" height="32" alt=""> | **Klapa z akacji** | `acacia_trapdoor` | **Kopanie:** 1,2 s (siekierą 0,4 s)<br>**Skąd:** zniszczony blok: Klapa z akacji |
 | <img src="ikony/bald_cypress_stairs.png" width="32" height="32" alt=""> | **Schody z cypryśnika** | `bald_cypress_stairs` | **Kopanie:** 1,2 s (siekierą 0,4 s)<br>**Skąd:** zniszczony blok: Schody z cypryśnika |
 | <img src="ikony/bald_cypress_slab.png" width="32" height="32" alt=""> | **Półblok z cypryśnika** | `bald_cypress_slab` | **Kopanie:** 1,2 s (siekierą 0,4 s)<br>**Skąd:** zniszczony blok: Półblok z cypryśnika |
 | <img src="ikony/bald_cypress_fence.png" width="32" height="32" alt=""> | **Płot z cypryśnika** | `bald_cypress_fence` | **Kopanie:** 1,2 s (siekierą 0,4 s) |
 | <img src="ikony/bald_cypress_fence_gate.png" width="32" height="32" alt=""> | **Furtka z cypryśnika** | `bald_cypress_fence_gate` | **Kopanie:** 1,2 s (siekierą 0,4 s)<br>**Skąd:** zniszczony blok: Furtka z cypryśnika |
 | <img src="ikony/bald_cypress_carpenter_table.png" width="32" height="32" alt=""> | **Stół stolarski z cypryśnika** | `bald_cypress_carpenter_table` | **Kopanie:** 1,2 s (siekierą 0,4 s)<br>**Skąd:** zniszczony blok: Stół stolarski z cypryśnika<br>**Przepis:** Stół stolarski z cypryśnika |
+| <img src="ikony/bald_cypress_door.png" width="32" height="32" alt=""> | **Drzwi z cypryśnika** | `bald_cypress_door` | **Kopanie:** 1,2 s (siekierą 0,4 s)<br>**Skąd:** zniszczony blok: Drzwi z cypryśnika |
+| <img src="ikony/bald_cypress_trapdoor.png" width="32" height="32" alt=""> | **Klapa z cypryśnika** | `bald_cypress_trapdoor` | **Kopanie:** 1,2 s (siekierą 0,4 s)<br>**Skąd:** zniszczony blok: Klapa z cypryśnika |
 | <img src="ikony/cherry_stairs.png" width="32" height="32" alt=""> | **Schody wiśniowe** | `cherry_stairs` | **Kopanie:** 1,2 s (siekierą 0,4 s)<br>**Skąd:** zniszczony blok: Schody wiśniowe |
 | <img src="ikony/cherry_slab.png" width="32" height="32" alt=""> | **Półblok wiśniowy** | `cherry_slab` | **Kopanie:** 1,2 s (siekierą 0,4 s)<br>**Skąd:** zniszczony blok: Półblok wiśniowy |
 | <img src="ikony/cherry_fence.png" width="32" height="32" alt=""> | **Płot wiśniowy** | `cherry_fence` | **Kopanie:** 1,2 s (siekierą 0,4 s) |
 | <img src="ikony/cherry_fence_gate.png" width="32" height="32" alt=""> | **Furtka wiśniowa** | `cherry_fence_gate` | **Kopanie:** 1,2 s (siekierą 0,4 s)<br>**Skąd:** zniszczony blok: Furtka wiśniowa |
 | <img src="ikony/cherry_carpenter_table.png" width="32" height="32" alt=""> | **Stół stolarski wiśniowy** | `cherry_carpenter_table` | **Kopanie:** 1,2 s (siekierą 0,4 s)<br>**Skąd:** zniszczony blok: Stół stolarski wiśniowy<br>**Przepis:** Stół stolarski wiśniowy |
+| <img src="ikony/cherry_door.png" width="32" height="32" alt=""> | **Drzwi wiśniowe** | `cherry_door` | **Kopanie:** 1,2 s (siekierą 0,4 s)<br>**Skąd:** zniszczony blok: Drzwi wiśniowe |
+| <img src="ikony/cherry_trapdoor.png" width="32" height="32" alt=""> | **Klapa wiśniowa** | `cherry_trapdoor` | **Kopanie:** 1,2 s (siekierą 0,4 s)<br>**Skąd:** zniszczony blok: Klapa wiśniowa |
 | <img src="ikony/maple_stairs.png" width="32" height="32" alt=""> | **Schody klonowe** | `maple_stairs` | **Kopanie:** 1,2 s (siekierą 0,4 s)<br>**Skąd:** zniszczony blok: Schody klonowe |
 | <img src="ikony/maple_slab.png" width="32" height="32" alt=""> | **Półblok klonowy** | `maple_slab` | **Kopanie:** 1,2 s (siekierą 0,4 s)<br>**Skąd:** zniszczony blok: Półblok klonowy |
 | <img src="ikony/maple_fence.png" width="32" height="32" alt=""> | **Płot klonowy** | `maple_fence` | **Kopanie:** 1,2 s (siekierą 0,4 s) |
 | <img src="ikony/maple_fence_gate.png" width="32" height="32" alt=""> | **Furtka klonowa** | `maple_fence_gate` | **Kopanie:** 1,2 s (siekierą 0,4 s)<br>**Skąd:** zniszczony blok: Furtka klonowa |
 | <img src="ikony/maple_carpenter_table.png" width="32" height="32" alt=""> | **Stół stolarski klonowy** | `maple_carpenter_table` | **Kopanie:** 1,2 s (siekierą 0,4 s)<br>**Skąd:** zniszczony blok: Stół stolarski klonowy<br>**Przepis:** Stół stolarski klonowy |
+| <img src="ikony/maple_door.png" width="32" height="32" alt=""> | **Drzwi klonowe** | `maple_door` | **Kopanie:** 1,2 s (siekierą 0,4 s)<br>**Skąd:** zniszczony blok: Drzwi klonowe |
+| <img src="ikony/maple_trapdoor.png" width="32" height="32" alt=""> | **Klapa klonowa** | `maple_trapdoor` | **Kopanie:** 1,2 s (siekierą 0,4 s)<br>**Skąd:** zniszczony blok: Klapa klonowa |
 | <img src="ikony/mugo_stairs.png" width="32" height="32" alt=""> | **Schody z kosodrzewiny** | `mugo_stairs` | **Kopanie:** 1,2 s (siekierą 0,4 s)<br>**Skąd:** zniszczony blok: Schody z kosodrzewiny |
 | <img src="ikony/mugo_slab.png" width="32" height="32" alt=""> | **Półblok z kosodrzewiny** | `mugo_slab` | **Kopanie:** 1,2 s (siekierą 0,4 s)<br>**Skąd:** zniszczony blok: Półblok z kosodrzewiny |
 | <img src="ikony/mugo_fence.png" width="32" height="32" alt=""> | **Płot z kosodrzewiny** | `mugo_fence` | **Kopanie:** 1,2 s (siekierą 0,4 s) |
 | <img src="ikony/mugo_fence_gate.png" width="32" height="32" alt=""> | **Furtka z kosodrzewiny** | `mugo_fence_gate` | **Kopanie:** 1,2 s (siekierą 0,4 s)<br>**Skąd:** zniszczony blok: Furtka z kosodrzewiny |
 | <img src="ikony/mugo_carpenter_table.png" width="32" height="32" alt=""> | **Stół stolarski z kosodrzewiny** | `mugo_carpenter_table` | **Kopanie:** 1,2 s (siekierą 0,4 s)<br>**Skąd:** zniszczony blok: Stół stolarski z kosodrzewiny<br>**Przepis:** Stół stolarski z kosodrzewiny |
+| <img src="ikony/mugo_door.png" width="32" height="32" alt=""> | **Drzwi z kosodrzewiny** | `mugo_door` | **Kopanie:** 1,2 s (siekierą 0,4 s)<br>**Skąd:** zniszczony blok: Drzwi z kosodrzewiny |
+| <img src="ikony/mugo_trapdoor.png" width="32" height="32" alt=""> | **Klapa z kosodrzewiny** | `mugo_trapdoor` | **Kopanie:** 1,2 s (siekierą 0,4 s)<br>**Skąd:** zniszczony blok: Klapa z kosodrzewiny |
 | <img src="ikony/olive_stairs.png" width="32" height="32" alt=""> | **Schody oliwkowe** | `olive_stairs` | **Kopanie:** 1,2 s (siekierą 0,4 s)<br>**Skąd:** zniszczony blok: Schody oliwkowe |
 | <img src="ikony/olive_slab.png" width="32" height="32" alt=""> | **Półblok oliwkowy** | `olive_slab` | **Kopanie:** 1,2 s (siekierą 0,4 s)<br>**Skąd:** zniszczony blok: Półblok oliwkowy |
 | <img src="ikony/olive_fence.png" width="32" height="32" alt=""> | **Płot oliwkowy** | `olive_fence` | **Kopanie:** 1,2 s (siekierą 0,4 s) |
 | <img src="ikony/olive_fence_gate.png" width="32" height="32" alt=""> | **Furtka oliwkowa** | `olive_fence_gate` | **Kopanie:** 1,2 s (siekierą 0,4 s)<br>**Skąd:** zniszczony blok: Furtka oliwkowa |
 | <img src="ikony/olive_carpenter_table.png" width="32" height="32" alt=""> | **Stół stolarski oliwkowy** | `olive_carpenter_table` | **Kopanie:** 1,2 s (siekierą 0,4 s)<br>**Skąd:** zniszczony blok: Stół stolarski oliwkowy<br>**Przepis:** Stół stolarski oliwkowy |
+| <img src="ikony/olive_door.png" width="32" height="32" alt=""> | **Drzwi oliwkowe** | `olive_door` | **Kopanie:** 1,2 s (siekierą 0,4 s)<br>**Skąd:** zniszczony blok: Drzwi oliwkowe |
+| <img src="ikony/olive_trapdoor.png" width="32" height="32" alt=""> | **Klapa oliwkowa** | `olive_trapdoor` | **Kopanie:** 1,2 s (siekierą 0,4 s)<br>**Skąd:** zniszczony blok: Klapa oliwkowa |
 | <img src="ikony/rainbow_eucalyptus_stairs.png" width="32" height="32" alt=""> | **Schody eukaliptusowe** | `rainbow_eucalyptus_stairs` | **Kopanie:** 1,2 s (siekierą 0,4 s)<br>**Skąd:** zniszczony blok: Schody eukaliptusowe |
 | <img src="ikony/rainbow_eucalyptus_slab.png" width="32" height="32" alt=""> | **Półblok eukaliptusowy** | `rainbow_eucalyptus_slab` | **Kopanie:** 1,2 s (siekierą 0,4 s)<br>**Skąd:** zniszczony blok: Półblok eukaliptusowy |
 | <img src="ikony/rainbow_eucalyptus_fence.png" width="32" height="32" alt=""> | **Płot eukaliptusowy** | `rainbow_eucalyptus_fence` | **Kopanie:** 1,2 s (siekierą 0,4 s) |
 | <img src="ikony/rainbow_eucalyptus_fence_gate.png" width="32" height="32" alt=""> | **Furtka eukaliptusowa** | `rainbow_eucalyptus_fence_gate` | **Kopanie:** 1,2 s (siekierą 0,4 s)<br>**Skąd:** zniszczony blok: Furtka eukaliptusowa |
 | <img src="ikony/rainbow_eucalyptus_carpenter_table.png" width="32" height="32" alt=""> | **Stół stolarski eukaliptusowy** | `rainbow_eucalyptus_carpenter_table` | **Kopanie:** 1,2 s (siekierą 0,4 s)<br>**Skąd:** zniszczony blok: Stół stolarski eukaliptusowy<br>**Przepis:** Stół stolarski eukaliptusowy |
+| <img src="ikony/rainbow_eucalyptus_door.png" width="32" height="32" alt=""> | **Drzwi eukaliptusowe** | `rainbow_eucalyptus_door` | **Kopanie:** 1,2 s (siekierą 0,4 s)<br>**Skąd:** zniszczony blok: Drzwi eukaliptusowe |
+| <img src="ikony/rainbow_eucalyptus_trapdoor.png" width="32" height="32" alt=""> | **Klapa eukaliptusowa** | `rainbow_eucalyptus_trapdoor` | **Kopanie:** 1,2 s (siekierą 0,4 s)<br>**Skąd:** zniszczony blok: Klapa eukaliptusowa |
 | <img src="ikony/sequoia_stairs.png" width="32" height="32" alt=""> | **Schody sekwojowe** | `sequoia_stairs` | **Kopanie:** 1,2 s (siekierą 0,4 s)<br>**Skąd:** zniszczony blok: Schody sekwojowe |
 | <img src="ikony/sequoia_slab.png" width="32" height="32" alt=""> | **Półblok sekwojowy** | `sequoia_slab` | **Kopanie:** 1,2 s (siekierą 0,4 s)<br>**Skąd:** zniszczony blok: Półblok sekwojowy |
 | <img src="ikony/sequoia_fence.png" width="32" height="32" alt=""> | **Płot sekwojowy** | `sequoia_fence` | **Kopanie:** 1,2 s (siekierą 0,4 s) |
 | <img src="ikony/sequoia_fence_gate.png" width="32" height="32" alt=""> | **Furtka sekwojowa** | `sequoia_fence_gate` | **Kopanie:** 1,2 s (siekierą 0,4 s)<br>**Skąd:** zniszczony blok: Furtka sekwojowa |
 | <img src="ikony/sequoia_carpenter_table.png" width="32" height="32" alt=""> | **Stół stolarski sekwojowy** | `sequoia_carpenter_table` | **Kopanie:** 1,2 s (siekierą 0,4 s)<br>**Skąd:** zniszczony blok: Stół stolarski sekwojowy<br>**Przepis:** Stół stolarski sekwojowy |
+| <img src="ikony/sequoia_door.png" width="32" height="32" alt=""> | **Drzwi sekwojowe** | `sequoia_door` | **Kopanie:** 1,2 s (siekierą 0,4 s)<br>**Skąd:** zniszczony blok: Drzwi sekwojowe |
+| <img src="ikony/sequoia_trapdoor.png" width="32" height="32" alt=""> | **Klapa sekwojowa** | `sequoia_trapdoor` | **Kopanie:** 1,2 s (siekierą 0,4 s)<br>**Skąd:** zniszczony blok: Klapa sekwojowa |
 | <img src="ikony/ginkgo_stairs.png" width="32" height="32" alt=""> | **Schody miłorzębowe** | `ginkgo_stairs` | **Kopanie:** 1,2 s (siekierą 0,4 s)<br>**Skąd:** zniszczony blok: Schody miłorzębowe |
 | <img src="ikony/ginkgo_slab.png" width="32" height="32" alt=""> | **Półblok miłorzębowy** | `ginkgo_slab` | **Kopanie:** 1,2 s (siekierą 0,4 s)<br>**Skąd:** zniszczony blok: Półblok miłorzębowy |
 | <img src="ikony/ginkgo_fence.png" width="32" height="32" alt=""> | **Płot miłorzębowy** | `ginkgo_fence` | **Kopanie:** 1,2 s (siekierą 0,4 s) |
 | <img src="ikony/ginkgo_fence_gate.png" width="32" height="32" alt=""> | **Furtka miłorzębowa** | `ginkgo_fence_gate` | **Kopanie:** 1,2 s (siekierą 0,4 s)<br>**Skąd:** zniszczony blok: Furtka miłorzębowa |
 | <img src="ikony/ginkgo_carpenter_table.png" width="32" height="32" alt=""> | **Stół stolarski miłorzębowy** | `ginkgo_carpenter_table` | **Kopanie:** 1,2 s (siekierą 0,4 s)<br>**Skąd:** zniszczony blok: Stół stolarski miłorzębowy<br>**Przepis:** Stół stolarski miłorzębowy |
+| <img src="ikony/ginkgo_door.png" width="32" height="32" alt=""> | **Drzwi miłorzębowe** | `ginkgo_door` | **Kopanie:** 1,2 s (siekierą 0,4 s)<br>**Skąd:** zniszczony blok: Drzwi miłorzębowe |
+| <img src="ikony/ginkgo_trapdoor.png" width="32" height="32" alt=""> | **Klapa miłorzębowa** | `ginkgo_trapdoor` | **Kopanie:** 1,2 s (siekierą 0,4 s)<br>**Skąd:** zniszczony blok: Klapa miłorzębowa |
 | <img src="ikony/jacaranda_stairs.png" width="32" height="32" alt=""> | **Schody jakarandowe** | `jacaranda_stairs` | **Kopanie:** 1,2 s (siekierą 0,4 s)<br>**Skąd:** zniszczony blok: Schody jakarandowe |
 | <img src="ikony/jacaranda_slab.png" width="32" height="32" alt=""> | **Półblok jakarandowy** | `jacaranda_slab` | **Kopanie:** 1,2 s (siekierą 0,4 s)<br>**Skąd:** zniszczony blok: Półblok jakarandowy |
 | <img src="ikony/jacaranda_fence.png" width="32" height="32" alt=""> | **Płot jakarandowy** | `jacaranda_fence` | **Kopanie:** 1,2 s (siekierą 0,4 s) |
 | <img src="ikony/jacaranda_fence_gate.png" width="32" height="32" alt=""> | **Furtka jakarandowa** | `jacaranda_fence_gate` | **Kopanie:** 1,2 s (siekierą 0,4 s)<br>**Skąd:** zniszczony blok: Furtka jakarandowa |
 | <img src="ikony/jacaranda_carpenter_table.png" width="32" height="32" alt=""> | **Stół stolarski jakarandowy** | `jacaranda_carpenter_table` | **Kopanie:** 1,2 s (siekierą 0,4 s)<br>**Skąd:** zniszczony blok: Stół stolarski jakarandowy<br>**Przepis:** Stół stolarski jakarandowy |
+| <img src="ikony/jacaranda_door.png" width="32" height="32" alt=""> | **Drzwi jakarandowe** | `jacaranda_door` | **Kopanie:** 1,2 s (siekierą 0,4 s)<br>**Skąd:** zniszczony blok: Drzwi jakarandowe |
+| <img src="ikony/jacaranda_trapdoor.png" width="32" height="32" alt=""> | **Klapa jakarandowa** | `jacaranda_trapdoor` | **Kopanie:** 1,2 s (siekierą 0,4 s)<br>**Skąd:** zniszczony blok: Klapa jakarandowa |
 | <img src="ikony/spruce_log.png" width="32" height="32" alt=""> | **Pień świerka** | `spruce_log` | **Kopanie:** 2 s (siekierą 0,67 s)<br>**Siekierą (PPM):** Okorowany pień świerka<br>**Przydaje się do:** Opał — świerk, Deski świerkowe |
 | <img src="ikony/spruce_log_stripped.png" width="32" height="32" alt=""> | **Okorowany pień świerka** | `spruce_log_stripped` | **Kopanie:** 2 s (siekierą 0,67 s)<br>**Skąd:** siekierą (PPM) z bloku: Pień świerka<br>**Przydaje się do:** Opał — świerk, Deski świerkowe |
 | <img src="ikony/spruce_planks.png" width="32" height="32" alt=""> | **Deski świerkowe** | `spruce_planks` | **Kopanie:** 2 s (siekierą 0,67 s)<br>**Przepis:** Deski świerkowe x4<br>**Przydaje się do:** Skrzynia świerkowa, Stół stolarski świerkowy, Ciemne deski, Tratwa, Patyk |

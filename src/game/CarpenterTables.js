@@ -17,6 +17,12 @@ import { CarpenterTableRenderer } from '../rendering/CarpenterTableRenderer.js';
 // - stół z deskami na blacie najpierw trzeba opróżnić, żeby go rozbić.
 // Deski na stołach zapisują się ze światem (worldInfo.carpenterTables).
 // Furtka: PPM otwiera i zamyka (od gracza).
+//
+// 0.91.0 - podwójny warsztat: dwa stoły jeden za drugim (razem 2 x 2
+// bloki - 4 x 4 miejsca na blacie). Gdy na jednym leżą deski, a drugi jest
+// pusty, na prawej części drugiego pojawiają się dodatkowe wyroby z tych
+// desek: drzwi i klapa (BENCH_PRODUCTS). Drzwi (dwa bloki) i klapy -
+// PPM otwiera i zamyka; drzwi z animacją (DoorRenderer.js).
 // ------------------------------------------------------------
 
 export const TABLE_CAPACITY = 64;
@@ -27,6 +33,13 @@ export const TABLE_PRODUCTS = [
     { kind: 'slab', planks: 1, count: 2 },
     { kind: 'fence', planks: 3, count: 2 },
     { kind: 'gate', planks: 4, count: 1 }
+];
+
+// Dodatkowe wyroby podwójnego warsztatu (na drugim stole, w tych samych
+// ćwiartkach co zwykłe: przód lewa, przód prawa, ...).
+export const BENCH_PRODUCTS = [
+    { kind: 'door', planks: 6, count: 3 },
+    { kind: 'trapdoor', planks: 3, count: 1 }
 ];
 
 // Ćwiartki części B (w układzie stołu przodem na północ, -z): numer
@@ -115,6 +128,69 @@ export class CarpenterTables {
         return id === AIR_ID || isReplaceableId(id);
     }
 
+    // Drugi stół podwójnego warsztatu (część A) albo null: stół, którego
+    // obie części leżą tuż przed albo tuż za obiema częściami tego stołu.
+    partnerOf(a) {
+        const b = this.partB(a);
+        const [fx, fz] = FACING_VECTOR[a.facing];
+        for (const sign of [1, -1]) {
+            const one = this.tableAt({ x: a.x + fx * sign, y: a.y, z: a.z + fz * sign });
+            const two = this.tableAt({ x: b.x + fx * sign, y: b.y, z: b.z + fz * sign });
+            if (one && two && one.x === two.x && one.z === two.z) return one;
+        }
+        return null;
+    }
+
+    // Stół z deskami, który podaje dodatkowe wyroby na stół "a" (pusty).
+    supplierOf(a) {
+        if (this.state(a)?.count > 0) return null;
+        const partner = this.partnerOf(a);
+        return partner && this.state(partner)?.count > 0 ? partner : null;
+    }
+
+    // --- Drzwi -----------------------------------------------------------
+
+    // Stawianie drzwi: dolna i górna część, na czymś stałym. Zawias po
+    // lewej patrzącego, a gdy po lewej stoją już drzwi z lewym zawiasem
+    // (w tę samą stronę) - po prawej (drzwi dwuskrzydłowe).
+    placeDoor(target, wood, yaw, player) {
+        const facing = lookFacing(yaw);
+        const up = { x: target.x, y: target.y + 1, z: target.z };
+        if (!this.cellFree(target) || !this.cellFree(up)) return false;
+        if (!this.world.isSolid(target.x, target.y - 1, target.z)) return false;
+        if (player?.intersectsBlock(target.x, target.y, target.z) || player?.intersectsBlock(up.x, up.y, up.z)) return false;
+        const [lx, lz] = FACING_VECTOR[oppositeFacing(rightOf(facing))];
+        const left = shapeInfo(this.world.getBlockId(target.x + lx, target.y, target.z + lz));
+        const hinge = left?.kind === 'door' && left.facing === facing && left.hinge === 'left' ? 'right' : 'left';
+        const lower = getBlockTypeById(shapeId(wood, 'door', { facing, part: 'lower', hinge }));
+        const upper = getBlockTypeById(shapeId(wood, 'door', { facing, part: 'upper', hinge }));
+        if (!this.world.setBlock(target.x, target.y, target.z, lower)) return false;
+        if (!this.world.setBlock(up.x, up.y, up.z, upper)) {
+            this.world.setBlock(target.x, target.y, target.z, null);
+            return false;
+        }
+        return lower;
+    }
+
+    toggleDoor({ x, y, z }, info) {
+        const lowerY = info.part === 'lower' ? y : y - 1;
+        const open = !info.open;
+        for (const part of ['lower', 'upper']) {
+            const cy = part === 'lower' ? lowerY : lowerY + 1;
+            const here = shapeInfo(this.world.getBlockId(x, cy, z));
+            if (here?.kind !== 'door') continue;
+            this.world.setBlock(x, cy, z, getBlockTypeById(shapeId(info.wood, 'door', { facing: here.facing, part, hinge: here.hinge, open })));
+        }
+        this.game.playBlockSound?.(open ? 'place' : 'step', info.planks, { x, y: lowerY, z });
+        return true;
+    }
+
+    toggleTrapdoor({ x, y, z }, info) {
+        this.world.setBlock(x, y, z, getBlockTypeById(shapeId(info.wood, 'trapdoor', { facing: info.facing, half: info.half, open: !info.open })));
+        this.game.playBlockSound?.(info.open ? 'step' : 'place', info.planks, { x, y, z });
+        return true;
+    }
+
     canBreak(position) {
         const a = this.tableAt(position);
         return !a || !(this.state(a)?.count > 0);
@@ -122,6 +198,13 @@ export class CarpenterTables {
 
     // Po rozbiciu jednej części - znika druga (stół daje się raz).
     broken(position, info) {
+        if (info?.kind === 'door') {
+            // Druga część drzwi znika (drzwi dają się raz).
+            const y = info.part === 'lower' ? position.y + 1 : position.y - 1;
+            const other = shapeInfo(this.world.getBlockId(position.x, y, position.z));
+            if (other?.kind === 'door' && other.part !== info.part) this.world.setBlock(position.x, y, position.z, null);
+            return;
+        }
         if (info?.kind !== 'table') return;
         const [dx, dz] = FACING_VECTOR[rightOf(oppositeFacing(info.facing))];
         const sign = info.part === 'a' ? 1 : -1;
@@ -139,6 +222,8 @@ export class CarpenterTables {
         const id = this.world.getBlockId(x, y, z);
         const info = shapeInfo(id);
         if (info?.kind === 'gate') return this.toggleGate(hit.block, info);
+        if (info?.kind === 'door') return this.toggleDoor(hit.block, info);
+        if (info?.kind === 'trapdoor') return this.toggleTrapdoor(hit.block, info);
         if (info?.kind !== 'table') return false;
         const a = this.tableAt(hit.block);
         if (info.part === 'a') return this.usePlanks(a, selected);
@@ -228,15 +313,17 @@ export class CarpenterTables {
     }
 
     takeProduct(a, hit, sneaking) {
-        const table = this.state(a);
+        // Pusty stół podwójnego warsztatu - dodatkowe wyroby z desek drugiego.
+        const supplier = this.supplierOf(a);
+        const table = supplier ? this.state(supplier) : this.state(a);
         if (!table?.count) {
             this.game.onNotice?.('Połóż deski na lewej części stołu (PPM deskami)');
             return true;
         }
         const index = this.productUnder(a, hit);
-        const product = TABLE_PRODUCTS[index];
+        const product = (supplier ? BENCH_PRODUCTS : TABLE_PRODUCTS)[index];
         if (!product) {
-            this.game.onNotice?.('Kliknij wyrób na blacie (schody, półblok, płot, furtka)');
+            this.game.onNotice?.(supplier ? 'Kliknij drzwi albo klapę na blacie' : 'Kliknij wyrób na blacie (schody, półblok, płot, furtka)');
             return true;
         }
         const wood = woodOfPlanks(table.planks).wood;

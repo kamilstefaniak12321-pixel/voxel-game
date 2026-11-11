@@ -4,6 +4,7 @@ import { fullTerrainDistance, FULL_TERRAIN_DISTANCE, TERRAIN_TRANSITION_START } 
 import { Campfires } from './Campfires.js';
 import { dyeTorch } from './TorchInteraction.js';
 import { TorchRenderer } from '../rendering/TorchRenderer.js';
+import { DoorRenderer } from '../rendering/DoorRenderer.js';
 import { Chests } from './Chests.js';
 import { CarpenterTables } from './CarpenterTables.js';
 import { shapeItem, shapeInfo } from '../blocks/woodShapes.js';
@@ -540,6 +541,8 @@ export class Game {
         this.onOpenChest = null;
         this.torches = new TorchRenderer(this);
         this.torches.setLowDetail(this.settings.get('potato'));
+        // Drzwi (0.91.0) - modele z animacją otwierania.
+        this.doors = new DoorRenderer(this);
 
         // Autozapis.
 
@@ -707,7 +710,7 @@ export class Game {
         // Z Shiftem i blokiem w ręce przy furtce - stawia się blok obok.
         const hitShape = this.currentHit?.hit ? shapeInfo(this.world.getBlockId(this.currentHit.block.x, this.currentHit.block.y, this.currentHit.block.z)) : null;
         const shapeInteraction = placing && !breakHeld && placePressed && hitShape &&
-            (hitShape.kind === 'table' || (hitShape.kind === 'gate' && !(this.player.crouching && this.selectedBlock))) &&
+            (hitShape.kind === 'table' || (['gate', 'door', 'trapdoor'].includes(hitShape.kind) && !(this.player.crouching && this.selectedBlock))) &&
             this.carpenterTables.interact(this.currentHit, this.selectedBlock, this.player.crouching);
         if (shapeInteraction) this.currentHit = this.raycast.castFromCamera(this.camera);
         const chestInteraction = !shapeInteraction && placing && !breakHeld && placePressed &&
@@ -760,11 +763,15 @@ export class Game {
                     : this.currentHit;
                 const target = this.placer.targetOf(placeHit, block);
 
-                // Stół stolarski - dwa bloki naraz (CarpenterTables.place).
-                const table = shapeItem(block)?.kind === 'table' ? shapeItem(block) : null;
+                // Stół stolarski i drzwi - dwa bloki naraz (CarpenterTables).
+                const item = shapeItem(block);
+                const table = item?.kind === 'table' ? item : null;
+                const door = item?.kind === 'door' ? item : null;
 
                 const placed = table
                     ? (target ? this.carpenterTables.place(target, table.wood, this.player.yaw, this.player) : false)
+                    : door
+                    ? (target ? this.carpenterTables.placeDoor(target, door.wood, this.player.yaw, this.player) : false)
                     : this.placer.placeBlock(
                         placeHit,
                         block
@@ -853,6 +860,7 @@ export class Game {
         this.chests.update(dt);
         this.carpenterTables.update(dt);
         this.torches.update(dt);
+        this.doors.update(dt);
         profile?.endStage('effects');
 
         // Autozapis co jakiś czas.
@@ -1961,6 +1969,7 @@ export class Game {
         }
 
         this.torches?.setLowDetail(potato);
+        this.doors?.setLowDetail(potato);
         this.chests?.renderer.setLowDetail(potato);
 
 
@@ -2792,6 +2801,7 @@ export class Game {
         this.chests.dispose();
         this.carpenterTables.dispose();
         this.torches.dispose();
+        this.doors.dispose();
 
         this.farTerrain.dispose();
 

@@ -43,7 +43,8 @@ export const AIR_ID = 0;
 //   10200-10299             skrzynie z desek (0.89.0, po 4 na drewno - chest.js),
 //   10300-10859             wyroby stolarskie (0.90.0, po 28 na drewno -
 //                           woodShapes.js: schody, półbloki, płot, furtka, stół),
-//   10860-65279             wolne na przyszłość.
+//   10860-11819             drzwi i klapy (0.91.0, po 48 na drewno - woodShapes.js),
+//   11820-65279             wolne na przyszłość.
 
 export const MAX_BLOCK_ID = 65279;
 

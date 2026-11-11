@@ -79,6 +79,23 @@ const TABLE_PART = {
 };
 const FULL = [[0, 0, 0, 1, 1, 1]];
 
+// --- Drzwi i klapy (0.91.0) ------------------------------------------------
+// Drzwi z modelu Kamila (drzwi.bbmodel): płyta 16 x 32 x 2 px przy
+// północnym brzegu, zawias po zachodniej stronie (lewa patrzącego na
+// północ), otwierają się o 90 stopni do środka bloku. Zawias prawy - lustro.
+export const DOOR_THICKNESS = 2;
+const DOOR = {
+    closed: px(0, 0, 0, 16, 16, DOOR_THICKNESS),
+    left: px(0, 0, 0, DOOR_THICKNESS, 16, 16),
+    right: px(16 - DOOR_THICKNESS, 0, 0, 16, 16, 16)
+};
+// Klapa 3 px; otwarta stoi przy brzegu "facing" (tam, gdzie zawias).
+const TRAPDOOR = {
+    bottom: px(0, 0, 0, 16, 3, 16),
+    top: px(0, 13, 0, 16, 16, 16),
+    open: px(0, 0, 0, 16, 16, 3)
+};
+
 // Wysokość blatu (przedmioty na stole leżą na niej).
 export const TABLE_TOP = 1;
 
@@ -132,6 +149,14 @@ export function shapeBoxes(id, purpose = 'render', mask = 0) {
             if (purpose === 'collision') return info.open ? [] : GATE_COLLISION.map((box) => rotateBox(box, info.facing));
             const source = purpose === 'outline' && !info.open ? GATE_OUTLINE_CLOSED : info.open ? GATE_OPEN : GATE_CLOSED;
             return source.map((box) => rotateBox(box, info.facing));
+        }
+        case 'door': {
+            const box = info.open ? DOOR[info.hinge] : DOOR.closed;
+            return [rotateBox(box, info.facing)];
+        }
+        case 'trapdoor': {
+            const box = info.open ? TRAPDOOR.open : TRAPDOOR[info.half];
+            return [rotateBox(box, info.facing)];
         }
         case 'table':
             if (purpose === 'collision' || purpose === 'outline') return FULL;

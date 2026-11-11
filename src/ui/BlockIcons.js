@@ -314,7 +314,7 @@ export async function createBlockIcons() {
         }
 
         // Schody, półbloki, płoty, furtki, stół (0.90.0) - prawdziwy model.
-        if (definition.model === 'shape') {
+        if (definition.model === 'shape' || definition.model === 'door') {
             const faces = itemShapeFaces(definition.pick);
             if (faces) {
                 icons.set(type, modelIcon(faces, definition.textures.all));

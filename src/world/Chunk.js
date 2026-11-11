@@ -10,7 +10,12 @@ import {
     isGrowingId,
     TRUNCATED_PLANT_IDS
 } from '../blocks/BlockRegistry.js';
-import { isTorchId } from '../blocks/torches.js';
+import { isTorchId as isTorchBlockId } from '../blocks/torches.js';
+import { isDoorId } from '../blocks/woodShapes.js';
+
+// Komórki z własnym modelem (pochodnie, od 0.91.0 też drzwi) - renderery
+// odwiedzają tylko je (indeks torches, nazwa historyczna).
+const isTorchId = (id) => isTorchBlockId(id) || isDoorId(id);
 
 // ------------------------------------------------------------
 // Chunk = kolumna CHUNK_SIZE x CHUNK_HEIGHT x CHUNK_SIZE bloków.
@@ -147,8 +152,8 @@ export class Chunk {
 
         this.growing = new Set();
 
-        // Indeks pochodni: renderer odwiedza tylko te komórki, nie całą
-        // tablicę terenu. Zmiana klatki płomienia nie dotyka tego indeksu.
+        // Indeks pochodni (i drzwi, 0.91.0): renderery odwiedzają tylko te
+        // komórki, nie całą tablicę terenu. Zmiana klatki płomienia nie dotyka tego indeksu.
         this.torches = new Set();
         this.torchRevision = 0;
 

@@ -11,6 +11,27 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 0.91.0 - Drzwi, klapy i podwójny warsztat
+
+Prośba Kamila — PR #130 (po 0.90.0):
+
+- **Podwójny warsztat:** dwa stoły stolarskie jeden za drugim (blaty
+  2 × 2 bloki, 4 × 4 miejsca). Gdy na jednym leżą deski, na drugim
+  (pustym) pojawiają się dodatkowe wyroby z tych desek: **drzwi** (6 desek
+  → 3) i **klapa** (3 → 1). PPM w wyrób - partia, Shift - ile się da.
+- **Drzwi z każdego z 20 rodzajów desek:**
+  - Model i animacja z pliku Kamila (`drzwi.bbmodel`): płyta 16 × 32 × 2 px
+    na zawiasie, otwieranie 90° z lekkim odbiciem do 95°.
+  - Tekstura z desek danego drewna: rama, pionowe deski, płyciny, żelazna
+    klamka.
+  - Dwa bloki wysokości, zawias po lewej; drugie drzwi obok - zawias po
+    prawej (dwuskrzydłowe, klamki na środku).
+  - PPM otwiera i zamyka obie części; zamknięte zatrzymują, przez
+    otwarte się przechodzi. Rozbicie jednej części zabiera całe drzwi.
+- **Klapy** z każdego rodzaju desek: na ścianie zawias przy ścianie, na
+  podłodze od strony gracza, u góry albo na dole bloku; PPM otwiera.
+- Ikonki i model w dłoni pokazują drzwi i klapy.
+
 ## 0.90.0 - Stół stolarski: schody, półbloki, płoty i furtki
 
 Prośba Kamila — PR #129 (po 0.89.0):

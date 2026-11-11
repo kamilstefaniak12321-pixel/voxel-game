@@ -30,8 +30,20 @@ export const SHAPE_KINDS = {
     slab: { suffix: 'slab', noun: 'Półblok', gender: 'm' },
     fence: { suffix: 'fence', noun: 'Płot', gender: 'm' },
     gate: { suffix: 'fence_gate', noun: 'Furtka', gender: 'f' },
-    table: { suffix: 'carpenter_table', noun: 'Stół stolarski', gender: 'm' }
+    table: { suffix: 'carpenter_table', noun: 'Stół stolarski', gender: 'm' },
+    door: { suffix: 'door', noun: 'Drzwi', gender: 'n' },
+    trapdoor: { suffix: 'trapdoor', noun: 'Klapa', gender: 'f' }
 };
+
+// Drzwi i klapy (0.91.0): numery 10860-11819, po 48 na drewno:
+//   0-31   drzwi: kierunek (4) x część (dolna, górna) x zawias (lewy,
+//          prawy) x (zamknięte, otwarte),
+//   32-47  klapy: kierunek (4) x (dolna, górna) x (zamknięta, otwarta).
+// Drzwi rysuje DoorRenderer.js (animacja otwierania z modelu Kamila),
+// klapy - ChunkMesher (pudełka). Tekstury: door_<drewno> (16 x 32)
+// i trapdoor_<drewno> (tools/drzwi_tekstury.py).
+export const DOOR_FIRST_ID = 10860;
+export const DOORS_PER_WOOD = 48;
 
 export const shapeBaseType = (wood, kind) => `${wood}_${SHAPE_KINDS[kind].suffix}`;
 
@@ -94,6 +106,24 @@ function variants(entry, index) {
             ...(type === table ? {} : hidden) }, { kind: 'table', facing, part });
     }));
 
+    // Drzwi i klapy (drugi zakres numerów).
+    const doorFirst = DOOR_FIRST_ID + index * DOORS_PER_WOOD;
+    const doorTexture = `door_${wood}`, trapTexture = `trapdoor_${wood}`;
+    const door = shapeBaseType(wood, 'door');
+    SHAPE_FACINGS.forEach((facing, f) => ['lower', 'upper'].forEach((part, h) => ['left', 'right'].forEach((hinge, g) => [false, true].forEach((open, o) => {
+        const base = f === 0 && h === 0 && g === 0 && !open;
+        const type = base ? door : `${door}_${facing}_${part}_${hinge}${open ? '_open' : ''}`;
+        add(type, doorFirst + f * 8 + h * 4 + g * 2 + o, { ...common('door'), textures: { all: doorTexture }, solid: true, opaque: false,
+            model: 'door', ...(base ? {} : hidden) }, { kind: 'door', facing, part, hinge, open, texture: doorTexture });
+    }))));
+    const trapdoor = shapeBaseType(wood, 'trapdoor');
+    SHAPE_FACINGS.forEach((facing, f) => ['bottom', 'top'].forEach((half, h) => [false, true].forEach((open, o) => {
+        const base = f === 0 && h === 0 && !open;
+        const type = base ? trapdoor : `${trapdoor}_${facing}_${half}${open ? '_open' : ''}`;
+        add(type, doorFirst + 32 + f * 4 + h * 2 + o, { ...common('trapdoor'), textures: { all: trapTexture }, solid: true, opaque: false,
+            model: 'shape', ...(base ? {} : hidden) }, { kind: 'trapdoor', facing, half, open, texture: trapTexture });
+    })));
+
     return out;
 }
 
@@ -104,15 +134,22 @@ export function shapeInfo(id) {
 }
 
 export function isShapeId(id) {
-    return id >= SHAPE_FIRST_ID && id < SHAPE_FIRST_ID + WOODS.length * SHAPES_PER_WOOD && infoById.has(id);
+    return infoById.has(id);
+}
+
+export function isDoorId(id) {
+    return id >= DOOR_FIRST_ID && id < DOOR_FIRST_ID + WOODS.length * DOORS_PER_WOOD && infoById.get(id)?.kind === 'door';
 }
 
 // Numer bloku wyrobu danego drewna w danym stanie.
-export function shapeId(wood, kind, { facing = 'north', half = 'bottom', open = false, part = 'a' } = {}) {
+export function shapeId(wood, kind, { facing = 'north', half = 'bottom', open = false, part = 'a', hinge = 'left' } = {}) {
     const index = WOODS.findIndex((entry) => entry.wood === wood);
     if (index < 0) return 0;
     const first = SHAPE_FIRST_ID + index * SHAPES_PER_WOOD;
     const f = FACING_INDEX[facing] ?? 0;
+    const doorFirst = DOOR_FIRST_ID + index * DOORS_PER_WOOD;
+    if (kind === 'door') return doorFirst + f * 8 + (part === 'upper' ? 4 : 0) + (hinge === 'right' ? 2 : 0) + (open ? 1 : 0);
+    if (kind === 'trapdoor') return doorFirst + 32 + f * 4 + (half === 'top' ? 2 : 0) + (open ? 1 : 0);
     if (kind === 'stairs') return first + f * 2 + (half === 'top' ? 1 : 0);
     if (kind === 'slab') return first + 8 + (half === 'top' ? 1 : half === 'double' ? 2 : 0);
     if (kind === 'fence') return first + 11;

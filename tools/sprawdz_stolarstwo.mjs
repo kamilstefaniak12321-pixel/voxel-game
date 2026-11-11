@@ -12,7 +12,12 @@
 //   w jeden pełny,
 // - stół stolarski: dwa bloki, deski na blat, wyroby (partia i Shift),
 //   zabieranie desek, blokada rozbicia z deskami, druga część znika,
-//   zapis i odczyt, przepis na stół.
+//   zapis i odczyt, przepis na stół,
+// - drzwi i klapy (0.91.0): numery 10860-11819, kształty i kolizje
+//   (zamknięte zatrzymują, otwarte - przejście), stawianie (dwa bloki,
+//   zawias po lewej, obok drugich - po prawej), otwieranie obu części,
+//   rozbicie jednej - znika druga, klapa przy ścianie, animacja z modelu
+//   Kamila, podwójny warsztat (dwa stoły: drzwi i klapa na drugim stole).
 //
 // Uruchomienie: node tools/sprawdz_stolarstwo.mjs
 // ------------------------------------------------------------
@@ -34,7 +39,7 @@ registerHooks({
             ` };
         }
         if (url.endsWith('/src/rendering/CarpenterTableRenderer.js')) {
-            return { format: 'module', shortCircuit: true, source: 'export class CarpenterTableRenderer {}' };
+            return { format: 'module', shortCircuit: true, source: 'export class CarpenterTableRenderer {}; export const TABLE_ROTATION = {};' };
         }
         return next(url, url.endsWith('.js') && /\/(src|assets|lib)\//.test(url) ? { ...context, format: 'module' } : context);
     }
@@ -48,7 +53,8 @@ const { getBlockId, getBlockTypeById, getBlockDefinition, isSolidId, isOpaqueId,
 const { World } = await import('../src/world/World.js');
 const { Player } = await import('../src/player/Player.js');
 const { BlockPlacer } = await import('../src/interaction/BlockPlacer.js');
-const { CarpenterTables, TABLE_PRODUCTS, TABLE_CAPACITY, restoreTable } = await import('../src/game/CarpenterTables.js');
+const { CarpenterTables, TABLE_PRODUCTS, TABLE_CAPACITY, BENCH_PRODUCTS, restoreTable } = await import('../src/game/CarpenterTables.js');
+const { doorOpening, DOOR_ANIMATION_SECONDS } = await import('../src/rendering/DoorRenderer.js');
 const { Inventory } = await import('../src/game/Inventory.js');
 const { findRecipe } = await import('../src/crafting/Crafting.js');
 const { itemShapeFaces } = await import('../src/rendering/ShapeGeometry.js');
@@ -304,4 +310,159 @@ check(TABLE_PRODUCTS.map((p) => p.kind).join() === 'stairs,slab,fence,gate', 'Cz
     }
 }
 
-console.log(`OK: stolarstwo - ${checks} sprawdzeń (bloki, kształty, kolizje, stawianie, stół stolarski).`);
+
+
+// --- Drzwi i klapy (0.91.0) -----------------------------------------------------
+
+{
+    const doorIds = [];
+    WOODS.forEach((entry, index) => {
+        for (let i = 0; i < W.DOORS_PER_WOOD; i++) doorIds.push(W.DOOR_FIRST_ID + index * W.DOORS_PER_WOOD + i);
+    });
+    check(doorIds.every((id) => getBlockTypeById(id) && W.shapeInfo(id)), 'Każdy numer 10860-11819 to drzwi albo klapa');
+    check(new Set(doorIds).size === 960 && Math.max(...doorIds) === 11819, '960 numerów drzwi i klap');
+    check(doorIds.filter((id) => W.isDoorId(id)).length === 640 && !W.isDoorId(W.shapeId('oak', 'trapdoor')), 'Drzwi: 32 stany na drewno');
+    for (const { wood } of WOODS) {
+        for (const options of [{ facing: 'east', part: 'upper', hinge: 'right', open: true }, { facing: 'south', part: 'lower', hinge: 'left' }]) {
+            const info = W.shapeInfo(W.shapeId(wood, 'door', options));
+            check(info.kind === 'door' && info.facing === options.facing && info.part === options.part && info.hinge === options.hinge
+                && info.open === Boolean(options.open) && info.texture === `door_${wood}`, `${wood}: drzwi ${JSON.stringify(options)}`);
+        }
+        const trap = W.shapeInfo(W.shapeId(wood, 'trapdoor', { facing: 'west', half: 'top', open: true }));
+        check(trap.kind === 'trapdoor' && trap.facing === 'west' && trap.half === 'top' && trap.open && trap.texture === `trapdoor_${wood}`, `${wood}: klapa`);
+        check(getDropType(getBlockTypeById(W.shapeId(wood, 'door', { facing: 'west', part: 'upper', open: true }))) === `${wood}_door`, `${wood}: górna część drzwi daje drzwi`);
+    }
+    check(getBlockDefinition('oak_door').label === 'Drzwi dębowe' && getBlockDefinition('acacia_trapdoor').label === 'Klapa z akacji', 'Nazwy drzwi i klap');
+    check(getBlockDefinition('oak_door').model === 'door' && getBlockDefinition('oak_trapdoor').model === 'shape', 'Drzwi - osobny model, klapa - pudełko');
+
+    // Kształty: zamknięte przy brzegu "facing", otwarte - przy zawiasie.
+    const door = (options) => shapeBoxes(W.shapeId('oak', 'door', options))[0];
+    check(door({ facing: 'north' }).join() === [0, 0, 0, 1, 1, 2 / 16].join(), 'Drzwi north - przy północnym brzegu, 2 px');
+    check(door({ facing: 'south' })[2] === 14 / 16 && door({ facing: 'east' })[0] === 14 / 16 && door({ facing: 'west' })[3] === 2 / 16, 'Drzwi w każdym kierunku przy swoim brzegu');
+    check(door({ facing: 'north', open: true })[3] === 2 / 16 && door({ facing: 'north', open: true, hinge: 'right' })[0] === 14 / 16, 'Otwarte - przy zawiasie (lewy / prawy)');
+    const trap = (options) => shapeBoxes(W.shapeId('oak', 'trapdoor', options))[0];
+    check(trap({}).join() === [0, 0, 0, 1, 3 / 16, 1].join() && trap({ half: 'top' })[1] === 13 / 16, 'Klapa: 3 px na dole albo u góry');
+    check(trap({ facing: 'south', open: true })[2] === 13 / 16 && trap({ facing: 'south', open: true })[4] === 1, 'Otwarta klapa stoi przy zawiasie');
+
+    // Kolizje: zamknięte zatrzymują, otwarte przepuszczają (zawias z boku).
+    const world = makeWorld();
+    for (const y of [0, 1]) {
+        world.set(-1, y, 3, 'stone'); world.set(1, y, 3, 'stone');
+        world.set(0, y, 3, W.shapeId('oak', 'door', { facing: 'south', part: y ? 'upper' : 'lower' }));
+    }
+    const blocked = walk(world, [0.5, 0, 1.5], [0, 0, 4], 1);
+    check(blocked.pos.z + 0.3 <= 3 + 14 / 16 + 1e-3 && blocked.pos.z > 3, `Zamknięte drzwi zatrzymują (z ${blocked.pos.z.toFixed(2)})`);
+    for (const y of [0, 1]) world.set(0, y, 3, W.shapeId('oak', 'door', { facing: 'south', part: y ? 'upper' : 'lower', open: true }));
+    const through = walk(world, [0.5, 0, 1.5], [0, 0, 4], 1);
+    check(through.pos.z > 4.5, `Przez otwarte drzwi się przechodzi (z ${through.pos.z.toFixed(2)})`);
+    const floor = makeWorld();
+    floor.set(0, 0, 3, W.shapeId('oak', 'trapdoor'));
+    const step = walk(floor, [0.5, 0, 1.5], [0, 0, 4], 0.5);
+    check(step.pos.z > 3.5 && step.pos.y > 0.15, 'Na zamkniętą klapę się wchodzi');
+
+    // Animacja z drzwi.bbmodel: 90 stopni w 0,25 s, odbicie do 95, spokój na 90.
+    near(doorOpening(0), 0, 'Animacja: start');
+    near(doorOpening(0.125), 0.5, 'Animacja: połowa drogi');
+    near(doorOpening(0.25), 1, 'Animacja: 90 stopni w 0,25 s');
+    near(doorOpening(0.29167), 95 / 90, 'Animacja: odbicie do 95 stopni');
+    near(doorOpening(0.375), 87.5 / 90, 'Animacja: 87,5 stopnia');
+    near(doorOpening(DOOR_ANIMATION_SECONDS), 1, 'Animacja: koniec na 90 stopniach');
+    near(doorOpening(5), 1, 'Animacja: potem otwarte');
+}
+{
+    // Stawianie drzwi: dwa bloki, zawias po lewej, drugie obok - po prawej.
+    const game = tableGame();
+    const { tables, world } = game;
+    const free = { intersectsBlock: () => false };
+    // Patrzy na +z (yaw PI): drzwi south, lewa gracza to wschód (+x).
+    const placed = tables.placeDoor({ x: 0, y: 0, z: 0 }, 'oak', Math.PI, free);
+    const lower = W.shapeInfo(world.getBlockId(0, 0, 0)), upper = W.shapeInfo(world.getBlockId(0, 1, 0));
+    check(placed && lower?.part === 'lower' && upper?.part === 'upper' && lower.facing === 'south' && lower.hinge === 'left' && upper.hinge === 'left', 'Drzwi: dwie części, przodem od gracza, zawias po lewej');
+    tables.placeDoor({ x: -1, y: 0, z: 0 }, 'oak', Math.PI, free);
+    check(W.shapeInfo(world.getBlockId(-1, 0, 0))?.hinge === 'right', 'Drugie drzwi obok (po prawej) - zawias po prawej (dwuskrzydłowe)');
+    check(tables.placeDoor({ x: 3, y: 5, z: 0 }, 'oak', Math.PI, free) === false, 'Drzwi w powietrzu - nie');
+    world.set(5, 1, 0, 'stone');
+    check(tables.placeDoor({ x: 5, y: 0, z: 0 }, 'oak', Math.PI, free) === false && world.getBlockId(5, 0, 0) === AIR_ID, 'Brak miejsca na górną część - nic');
+
+    // PPM w górną część - otwierają się obie.
+    const hitUpper = { hit: true, block: { x: 0, y: 1, z: 0 }, normal: { x: 0, y: 0, z: -1 }, point: { x: .5, y: 1.5, z: 0 } };
+    check(tables.interact(hitUpper, null) && W.shapeInfo(world.getBlockId(0, 0, 0)).open && W.shapeInfo(world.getBlockId(0, 1, 0)).open, 'PPM - otwierają się obie części');
+    tables.interact({ ...hitUpper, block: { x: 0, y: 0, z: 0 } }, null);
+    check(!W.shapeInfo(world.getBlockId(0, 0, 0)).open && !W.shapeInfo(world.getBlockId(0, 1, 0)).open, 'PPM w dolną - zamykają się obie');
+    check(W.shapeInfo(world.getBlockId(0, 0, 0)).hinge === 'left' && W.shapeInfo(world.getBlockId(0, 0, 0)).facing === 'south', 'Otwieranie nie zmienia kierunku i zawiasu');
+
+    // Rozbicie jednej części - znika druga.
+    const info = W.shapeInfo(world.getBlockId(0, 1, 0));
+    world.set(0, 1, 0, AIR_ID);
+    tables.broken({ x: 0, y: 1, z: 0 }, info);
+    check(world.getBlockId(0, 0, 0) === AIR_ID, 'Rozbite drzwi - znika druga część');
+
+    // Klapa: PPM otwiera i zamyka.
+    world.set(2, 0, 2, W.shapeId('oak', 'trapdoor', { facing: 'north', half: 'top' }));
+    const hitTrap = { hit: true, block: { x: 2, y: 0, z: 2 }, normal: { x: 0, y: -1, z: 0 }, point: { x: 2.5, y: 13 / 16, z: 2.5 } };
+    tables.interact(hitTrap, null);
+    const opened = W.shapeInfo(world.getBlockId(2, 0, 2));
+    check(opened.open && opened.half === 'top' && opened.facing === 'north', 'Klapa - PPM otwiera');
+    tables.interact(hitTrap, null);
+    check(!W.shapeInfo(world.getBlockId(2, 0, 2)).open, 'Klapa - PPM zamyka');
+}
+{
+    // Klapa: zawias przy klikniętej ścianie, na podłodze - od strony gracza.
+    const world = makeWorld();
+    world.setBlock = (x, y, z, type) => { world.set(x, y, z, type); return true; };
+    world.getBlock = (x, y, z) => getBlockTypeById(world.getBlockId(x, y, z)) ?? null;
+    world.attachedPlantSupported = () => true;
+    world.set(0, 0, 0, 'stone');
+    const placer = new BlockPlacer(world, { yaw: Math.PI, intersectsBlock: () => false });
+    const onFloor = { hit: true, block: { x: 0, y: 0, z: 0, type: 'stone' }, normal: { x: 0, y: 1, z: 0 }, point: { x: .5, y: 1, z: .5 } };
+    check(placer.placeBlock(onFloor, 'oak_trapdoor') === getBlockTypeById(W.shapeId('oak', 'trapdoor', { facing: 'north' })), 'Klapa na podłodze - zawias od strony gracza');
+    const onWall = { hit: true, block: { x: 0, y: 0, z: 0, type: 'stone' }, normal: { x: 1, y: 0, z: 0 }, point: { x: 1, y: .8, z: .5 } };
+    check(placer.placeBlock(onWall, 'oak_trapdoor') === getBlockTypeById(W.shapeId('oak', 'trapdoor', { facing: 'west', half: 'top' })), 'Klapa na ścianie - zawias przy ścianie, górna');
+    check(placer.placeBlock(onWall, 'oak_door') === false, 'Drzwi nie stawia BlockPlacer (dwa bloki - CarpenterTables)');
+}
+{
+    // Podwójny warsztat: dwa stoły jeden za drugim (2 x 2 bloki).
+    const game = tableGame();
+    const { tables, inventory } = game;
+    const free = { intersectsBlock: () => false };
+    tables.place({ x: 0, y: 0, z: 0 }, 'oak', Math.PI, free);           // przód na północ, B na x -1
+    check(tables.partnerOf({ x: 0, y: 0, z: 0, facing: 'north' }) === null, 'Jeden stół - bez drugiego');
+    tables.place({ x: 0, y: 0, z: 1 }, 'birch', Math.PI, free);         // tuż za nim (z +1)
+    const a = tables.tableAt({ x: 0, y: 0, z: 0 }), partner = tables.partnerOf(a);
+    check(partner?.x === 0 && partner.z === 1, 'Dwa stoły obok siebie - podwójny warsztat');
+    check(tables.partnerOf(partner)?.z === 0, 'Działa w obie strony');
+    {
+        // Odwrócony (tyłem do tyłu) też się liczy, przesunięty o blok - nie.
+        const other = tableGame();
+        other.tables.place({ x: 0, y: 0, z: 0 }, 'oak', Math.PI, free);
+        other.tables.place({ x: -1, y: 0, z: 1 }, 'oak', 0, free);       // przód na południe, B na +x
+        check(other.tables.partnerOf(other.tables.tableAt({ x: 0, y: 0, z: 0 }))?.x === -1, 'Stoły tyłem do siebie - też warsztat');
+        const shifted = tableGame();
+        shifted.tables.place({ x: 0, y: 0, z: 0 }, 'oak', Math.PI, free);
+        shifted.tables.place({ x: 1, y: 0, z: 1 }, 'oak', Math.PI, free);
+        check(shifted.tables.partnerOf(shifted.tables.tableAt({ x: 0, y: 0, z: 0 })) === null, 'Przesunięty o blok - nie');
+    }
+    inventory.set(0, { type: 'cherry_planks', count: 13 });
+    inventory.selected = 0;
+    tables.interact({ hit: true, block: { x: 0, y: 0, z: 0 }, normal: { x: 0, y: 1, z: 0 }, point: { x: .5, y: 1, z: .5 } }, 'cherry_planks');
+    check(tables.supplierOf(partner)?.z === 0 && tables.supplierOf(a) === null, 'Deski na pierwszym - drugi podaje drzwi i klapę');
+    check(BENCH_PRODUCTS.map((p) => `${p.kind}:${p.planks}:${p.count}`).join() === 'door:6:3,trapdoor:3:1', 'Drzwi 6 desek -> 3, klapa 3 -> 1');
+    // Część B drugiego stołu (x -1, z 1): przód lewa - drzwi, przód prawa - klapa.
+    const hitB2 = (fx, fz) => ({ hit: true, block: { x: -1, y: 0, z: 1 }, normal: { x: 0, y: 1, z: 0 }, point: { x: -1 + fx, y: 1, z: 1 + fz } });
+    tables.interact(hitB2(.75, .25), null);
+    check(inventory.count('cherry_door') === 3 && tables.state(a).count === 7, 'Drzwi z desek pierwszego stołu (13 -> 7)');
+    tables.interact(hitB2(.25, .25), null);
+    check(inventory.count('cherry_trapdoor') === 1 && tables.state(a).count === 4, 'Klapa (7 -> 4)');
+    tables.interact(hitB2(.75, .25), null);
+    check(inventory.count('cherry_door') === 3 && /potrzeba 6/.test(game.notices.at(-1)), 'Za mało desek na drzwi');
+    tables.interact(hitB2(.25, .25), null, true);
+    check(inventory.count('cherry_trapdoor') === 2 && tables.state(a).count === 1, 'Shift - klapy, ile się da');
+    tables.interact(hitB2(.25, .75), null);
+    check(/drzwi albo klapę/.test(game.notices.at(-1)), 'Tylna ćwiartka drugiego stołu - pusta');
+    // Zwykłe wyroby pierwszego stołu dalej działają.
+    const hitB1 = { hit: true, block: { x: -1, y: 0, z: 0 }, normal: { x: 0, y: 1, z: 0 }, point: { x: -.75, y: 1, z: .25 } };
+    tables.interact(hitB1, null);
+    check(inventory.count('cherry_slab') === 2 && tables.state(a).count === 0, 'Pierwszy stół - zwykłe wyroby (półblok)');
+}
+
+console.log(`OK: stolarstwo - ${checks} sprawdzeń (bloki, kształty, kolizje, stawianie, stół stolarski, drzwi i klapy, podwójny warsztat).`);

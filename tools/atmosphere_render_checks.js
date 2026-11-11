@@ -66,6 +66,7 @@ export async function checkAtmosphereRendering({ renderer, yieldBrowser }) {
     const blocks = [blockMaterial, plantMaterial, leafMaterial, waterMaterial].map((source, i) => {
         const material = own(source.clone());
         material.onBeforeCompile = source.onBeforeCompile;
+        material.defaultAttributeValues = structuredClone(source.defaultAttributeValues);
         material.defines = { ...source.defines }; material.map = white; material.color.setRGB(.25, .25, .25);
         add(['near', 'plant', 'leaf', 'water'][i], material); return material;
     });

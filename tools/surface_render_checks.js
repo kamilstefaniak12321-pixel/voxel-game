@@ -75,8 +75,10 @@ export async function checkSurfaceRendering({ game, settings, renderer, yieldBro
     };
     const blockMaterials = [blockMaterial, plantMaterial, leafMaterial, waterMaterial].map((source, i) => {
         const material = own(source.clone());
-        // Three.clone nie kopiuje onBeforeCompile: zachowujemy prawdziwy adapter.
+        // Three.clone nie kopiuje adaptera ani domyślnych atrybutów gry.
+        // Świeży kontekst GL bez nich podałby canopyTint=(0,0,0).
         material.onBeforeCompile = source.onBeforeCompile;
+        material.defaultAttributeValues = structuredClone(source.defaultAttributeValues);
         material.defines = { ...source.defines }; material.map = white;
         material.color.setRGB(.25, .25, .25);
         add(['near', 'plant', 'leaf', 'water'][i], material);
@@ -94,6 +96,7 @@ export async function checkSurfaceRendering({ game, settings, renderer, yieldBro
     ]), 2, true));
     const riverMaterial = own(plantMaterial.clone());
     riverMaterial.onBeforeCompile = plantMaterial.onBeforeCompile;
+    riverMaterial.defaultAttributeValues = structuredClone(plantMaterial.defaultAttributeValues);
     riverMaterial.defines = { ...plantMaterial.defines }; riverMaterial.map = white;
     riverMaterial.color.setRGB(.25, .25, .25);
     blockMaterials.push(riverMaterial);
@@ -194,6 +197,13 @@ export async function checkSurfaceRendering({ game, settings, renderer, yieldBro
             sun.intensity = 0;
             samples.openAmbient = sample();
             check(samples.openAmbient.every(v => v > 8), 'WebGL1: brak dodatniej próby kontrolnej otoczenia');
+            check(!plane.hasAttribute('canopyTint'), 'WebGL1: próba domyślnego tintu musi nie mieć atrybutu');
+            fill(plane, 'canopyTint', [1, 1, 1]);
+            samples.explicitNeutralCanopy = sample();
+            close(samples.openAmbient, samples.explicitNeutralCanopy, 'WebGL1: brak canopyTint musi być neutralny jak jawne RGB1');
+            plane.deleteAttribute('canopyTint');
+            samples.restoredDefaultCanopy = sample();
+            close(samples.restoredDefaultCanopy, samples.explicitNeutralCanopy, 'WebGL1: usunięcie atrybutu przywraca neutralny domyślny tint');
             fill(plane, 'surfaceOcclusion', [0]); samples.occludedAmbient = sample();
             close(samples.occludedAmbient, [0, 0, 0], 'WebGL1: AO musi tłumić światło otoczenia');
             ambient.intensity = 0; sun.intensity = Math.PI * .4;

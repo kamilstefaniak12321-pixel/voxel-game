@@ -40,6 +40,7 @@ export async function checkPlantShadowRendering({ renderer, yieldBrowser = async
     const motion = new Float32Array(8);
     geometry.setAttribute('plantMotion', new THREE.BufferAttribute(motion, 2));
     const material = own(plantMaterial.clone());
+    material.defaultAttributeValues = structuredClone(plantMaterial.defaultAttributeValues);
     material.map = texture; material.fog = false; material.toneMapped = false; material.defines = {};
     material.onBeforeCompile = (shader, context) => {
         plantMaterial.onBeforeCompile(shader, context);

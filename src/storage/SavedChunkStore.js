@@ -91,6 +91,8 @@ export class SavedChunkStore {
 
     get size() { return this.records.size; }
     has(key) { return this.records.has(key); }
+    // Klucze zapisanych chunków (gra wieloosobowa: lista dla gościa).
+    keys() { return this.records.keys(); }
     revision(key) { return this.records.get(key)?.revision; }
 
     set(key, blocks) {

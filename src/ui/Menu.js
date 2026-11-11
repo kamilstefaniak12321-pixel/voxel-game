@@ -91,6 +91,7 @@ const MENU_SCENE_VIEWS = {
     worlds: 'river',
     create: 'river',
     confirm: 'river',
+    join: 'river',
     achievements: 'mountains',
     settings: 'forest',
     diagnostics: 'forest',
@@ -244,6 +245,7 @@ export class Menu {
 
         screen.querySelector('.menu-buttons').append(
             button(TEXTS.play, () => this.handlers.openWorldList()),
+            ...(this.handlers.joinGame ? [button(TEXTS.multiplayer, () => this.showJoin())] : []),
             button(TEXTS.achievements, () => this.showAchievements('title')),
             button(TEXTS.settings, () => this.showSettings('title'))
         );
@@ -642,6 +644,59 @@ export class Menu {
     }
 
     // --------------------------------------------------------
+    // Gra ze znajomymi: dołączanie po kodzie (0.92.0)
+    // --------------------------------------------------------
+
+    showJoin(error = '', code = '') {
+
+        const screen = this.newScreen('join');
+
+        this.onEscape = () => this.showTitle();
+
+        const form = el('form', 'menu-form');
+        form.noValidate = true;
+
+        const nameInput = el('input', 'menu-input');
+        nameInput.maxLength = 16;
+        nameInput.value = this.settings.get('playerName') || '';
+        nameInput.placeholder = 'Gracz';
+        nameInput.autocomplete = 'nickname';
+
+        const codeInput = el('input', 'menu-input');
+        codeInput.maxLength = 24;
+        codeInput.placeholder = TEXTS.invitePlaceholder;
+        codeInput.value = code;
+        codeInput.autocapitalize = 'characters';
+        codeInput.spellcheck = false;
+
+        const nameLabel = el('label', 'menu-label', TEXTS.playerNameLabel);
+        const codeLabel = el('label', 'menu-label', TEXTS.inviteCode);
+        nameLabel.append(nameInput);
+        codeLabel.append(codeInput);
+
+        const note = el('p', 'menu-note', TEXTS.joinNote);
+        const problem = el('p', 'menu-note menu-danger', error);
+        problem.hidden = !error;
+
+        const buttons = el('div', 'menu-row');
+        const joinButton = button(TEXTS.join, () => {});
+        joinButton.type = 'submit';
+        buttons.append(joinButton, button(TEXTS.back, () => this.showTitle(), '', true));
+
+        form.append(nameLabel, codeLabel, note, problem, buttons);
+
+        form.addEventListener('submit', (event) => {
+            event.preventDefault();
+            this.handlers.joinGame?.(codeInput.value, nameInput.value);
+        });
+
+        screen.append(el('h2', 'menu-heading', TEXTS.joinHeading), form);
+
+        (nameInput.value ? codeInput : nameInput).focus();
+
+    }
+
+    // --------------------------------------------------------
     // Potwierdzenie usunięcia
     // --------------------------------------------------------
 
@@ -720,12 +775,42 @@ export class Menu {
             buttons.append(button(TEXTS.scenes, () => this.showScenes()));
         }
 
-        buttons.append(button(TEXTS.saveAndQuit, () => this.handlers.quitToMenu()));
+        // Gra ze znajomymi: otwarcie świata, kod zaproszenia, rozłączenie.
+
+        const net = this.handlers.netState?.() ?? null;
+        const netInfo = [];
+
+        if (!net && this.handlers.openToFriends) {
+            // Imię widoczne dla znajomych - przed otwarciem świata.
+            const nameInput = el('input', 'menu-input');
+            nameInput.maxLength = 16;
+            nameInput.placeholder = 'Gracz';
+            nameInput.value = this.settings.get('playerName') || '';
+            const nameLabel = el('label', 'menu-label', TEXTS.playerNameLabel);
+            nameLabel.append(nameInput);
+            netInfo.push(nameLabel);
+            buttons.append(button(TEXTS.openToFriends, () => this.handlers.openToFriends(nameInput.value)));
+        }
+        else if (net.role === 'host') {
+            const code = el('p', 'menu-invite-code', net.code);
+            const copy = button(TEXTS.copyCode, () => {
+                this.handlers.copyText?.(net.code);
+                copy.textContent = TEXTS.codeCopied;
+            });
+            netInfo.push(code, el('p', 'menu-note', TEXTS.hostingNote(net.players)));
+            buttons.append(copy, button(TEXTS.closeToFriends, () => this.handlers.closeToFriends?.()));
+        }
+        else {
+            netInfo.push(el('p', 'menu-note', TEXTS.guestNote(net.host, net.players)));
+        }
+
+        buttons.append(button(net?.role === 'client' ? TEXTS.leaveGame : TEXTS.saveAndQuit, () => this.handlers.quitToMenu()));
         if (this.handlers.diagnostics) buttons.append(button('Diagnostyka i logi', () => this.showDiagnostics('pause')));
 
 
         screen.append(
             el('h2', 'menu-heading', TEXTS.paused),
+            ...netInfo,
             buttons
         );
 

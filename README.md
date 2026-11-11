@@ -1261,6 +1261,29 @@ wyłączyć latanie i spadać jak meteoryt, w powłoce ognia, aż do
 uderzenia, które robi krater. Wszystko o tym (i ukryta komenda
 `/kosmos`) - `docs/kosmos.md`.
 
+## Gra ze znajomymi
+
+Od 0.92.0 można grać razem przez internet, na komputerze (aplikacja na
+Windows albo przeglądarka).
+
+- **Gospodarz:** w swoim świecie otwiera pauzę, wpisuje imię i klika
+  **Otwórz dla znajomych**. Dostaje kod zaproszenia, np.
+  `VOXEL-K7M2-9QXA`.
+- **Gość:** w menu głównym klika **Gra ze znajomymi**, wpisuje imię
+  i kod.
+
+Bez kont i bez własnego serwera. Komputery łączą się bezpośrednio
+(WebRTC, PeerJS), a publiczny serwer połączeń pomaga im się tylko
+odnaleźć. Wspólne jest wszystko w świecie:
+
+- bloki, także drzwi i furtki,
+- skrzynie, stoły stolarskie i ogniska,
+- tratwy, meteoryty, pora dnia i czat.
+
+Każdy widzi pozostałych graczy z ich skórkami i imionami. Świat
+i ekwipunki gości zapisuje gospodarz, a w jednym świecie może grać do
+8 osób. [Szczegóły](docs/multiplayer.md).
+
 ## Zapis świata
 
 Świat zapisuje się sam w przeglądarce (IndexedDB): zmienione bloki
@@ -1311,6 +1334,7 @@ desktop/                    aplikacja na komputer (okno, aktualizacje, ikonka)
 android/                    aplikacja na telefon (Android, Capacitor): pełny ekran, ikonki
 capacitor.config.json       aplikacja na telefon: nazwa, identyfikator
 lib/three/                  three.js 0.160.0 (biblioteka 3D)
+lib/peerjs/                 PeerJS 1.5.5 (połączenie z innymi graczami - gra ze znajomymi)
 .github/workflows/          testy gry oraz automatyczne budowanie instalatora i wydań
 assets/textures/            dziewięć arkuszy tematycznych PNG i atlas.json (docs/tekstury-atlasy.md)
 assets/ui/themes/           opisy motywów menu (kolory, czcionka; grafiki w interfejs.png)
@@ -1348,6 +1372,7 @@ src/
   commands/                 komendy czatu (do testowania)
   app/                      aplikacja na telefon: aktualizacje (AndroidUpdates.js)
   interaction/              raycast, niszczenie, stawianie, podświetlenie
+  net/                      gra ze znajomymi: połączenie, gospodarz i gość, inni gracze (docs/multiplayer.md)
 ```
 
 ## Dodawanie nowego bloku

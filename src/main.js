@@ -20,6 +20,10 @@ import { diagnostics } from './diagnostics/Diagnostics.js';
 import { PerfDiagnostics } from './diagnostics/PerfDiagnostics.js';
 import { TerrainMap } from './ui/TerrainMap.js';
 import { InventoryScreen } from './ui/InventoryScreen.js';
+import { NetHost } from './net/NetHost.js';
+import { NetClient } from './net/NetClient.js';
+import { normalizeInviteCode, newPlayerId, cleanName } from './net/protocol.js';
+import { skinDataURL } from './player/skin.js';
 import { SoundManager } from './audio/SoundManager.js';
 import { MusicManager } from './audio/MusicManager.js';
 import { setUiSounds, playUi } from './audio/ui.js';
@@ -41,7 +45,8 @@ import {
     POTATO_RENDER_SCALE,
     HOTBAR_SIZE,
     TOUCH_SETTINGS,
-    TOUCH_MAX_PIXEL_RATIO
+    TOUCH_MAX_PIXEL_RATIO,
+    START_LOAD_RADIUS
 } from './config.js';
 
 // ------------------------------------------------------------
@@ -353,6 +358,12 @@ const menu = new Menu(
         quitToMenu,
         quitWithoutSaving,
         reloadGame,
+        // Gra ze znajomymi (0.92.0) - na razie tylko na komputerze.
+        joinGame: nativeApp === 'android' ? null : joinGame,
+        openToFriends: nativeApp === 'android' ? null : openToFriends,
+        closeToFriends,
+        netState,
+        copyText,
         diagnostics,
         markProblem,
         onSceneView: (view) => {
@@ -510,7 +521,7 @@ async function deleteWorld(worldInfo) {
 }
 
 
-async function playWorld(worldInfo) {
+async function playWorld(worldInfo, { client = null } = {}) {
 
     if (state !== 'menu') {
         return;
@@ -526,7 +537,14 @@ async function playWorld(worldInfo) {
 
     try {
 
-        game = await Game.start(renderer, input, storage, worldInfo, settings);
+        // Gość w grze wieloosobowej: świat od gospodarza, bez zapisu u siebie.
+        game = client
+            ? await Game.start(renderer, input, null, worldInfo, settings, { savedChunks: client.store })
+            : await Game.start(renderer, input, storage, worldInfo, settings);
+        if (client) {
+            client.attach(game);
+            wireNet(client);
+        }
         game.perfDiagnostics = frameDiagnostics;
         game.world.perfDiagnostics = frameDiagnostics;
         game.saver.onDiagnostic = (level, kind, message, data) => diagnostics.record(level, kind, message, data);
@@ -583,6 +601,7 @@ async function playWorld(worldInfo) {
 
         diagnostics.error('world.load.failed', error, { seed: worldInfo.seed, terrain: worldInfo.terrain });
 
+        client?.leave();
         game = null;
         state = 'menu';
 
@@ -1003,6 +1022,13 @@ function submitChat(text) {
         }
 
     }
+    else if (text && game?.net) {
+
+        // Gra ze znajomymi: wiadomość do wszystkich (wraca przez onChat).
+
+        game.net.chatLine(text);
+
+    }
     else if (text) {
 
         chat.print(text, 'player');
@@ -1285,6 +1311,127 @@ async function quitWithoutSaving() {
 }
 
 
+// ------------------------------------------------------------
+// GRA ZE ZNAJOMYMI (0.92.0, src/net/)
+// ------------------------------------------------------------
+
+// Wejście bez sterowania (pauza, ukryte okno) - pusta klawiatura i mysz.
+
+const IDLE_INPUT = new Proxy({}, {
+    get: (_, name) => name === 'consumeMouseDelta' ? () => ({ x: 0, y: 0 }) : () => 0
+});
+
+function updateWithoutInput(dt) {
+    const real = game.input;
+    game.input = IDLE_INPUT;
+    try { game.update(dt); }
+    finally { game.input = real; }
+}
+
+// Okno w tle (zminimalizowane) - klatki nie przychodzą, a gospodarz
+// i goście muszą dalej wymieniać świat.
+
+let lastAnimateAt = 0;
+
+setInterval(() => {
+    if (!game?.net || performance.now() - lastAnimateAt < 250 || state === 'loading') return;
+    try { updateWithoutInput(0.05); } catch (error) { console.warn(error); }
+}, 100);
+
+function playerIdentity() {
+    let id = settings.get('playerId');
+    if (!id) {
+        id = newPlayerId();
+        settings.set('playerId', id);
+    }
+    return { id, name: cleanName(settings.get('playerName')) };
+}
+
+function wireNet(net) {
+    net.onChat = (name, text) => chat.print(`<${name}> ${text}`, 'player');
+    net.onSystem = (text) => {
+        chat.print(text, 'hint');
+        // Pauza pokazuje liczbę graczy - odświeżamy ją.
+        if (state === 'paused' && game?.net) menu.showPause();
+    };
+    net.onDisconnect = (reason) => { void disconnected(reason); };
+}
+
+async function disconnected(reason) {
+    if (!game || state === 'loading') return;
+    state = 'loading';
+    if (document.pointerLockElement) document.exitPointerLock();
+    await game.stop({ save: false });
+    closeWorld();
+    menu.showJoin(`${TEXTS.disconnected}: ${reason}`);
+}
+
+async function joinGame(codeText, nameText) {
+    if (state !== 'menu') return;
+    const code = normalizeInviteCode(codeText);
+    if (!code) {
+        menu.showJoin(TEXTS.badInviteCode, String(codeText ?? ''));
+        return;
+    }
+    settings.set('playerName', cleanName(nameText));
+    const identity = playerIdentity();
+    state = 'loading';
+    menu.showLoading(TEXTS.connecting);
+    let client = null;
+    try {
+        client = await NetClient.connect(code, {
+            name: identity.name, id: identity.id, skin: skinDataURL(), server: settings.get('netServer')
+        });
+        menu.showLoading(TEXTS.downloadingWorld);
+        const worldInfo = client.worldInfo();
+        const start = worldInfo.player ?? { x: 0, z: 0 };
+        await client.prefetch(start.x, start.z, START_LOAD_RADIUS + 1);
+        diagnostics.breadcrumb('net.joined', 'Dołączono do gry znajomego.');
+        state = 'menu';
+        await playWorld(worldInfo, { client });
+    } catch (error) {
+        client?.lost?.('');
+        diagnostics.record('warn', 'net.join.failed', 'Nie udało się dołączyć do gry.', { message: error?.message });
+        state = 'menu';
+        menu.showJoin(`${TEXTS.joinFailed}: ${error?.message ?? error}`, code);
+    }
+}
+
+async function openToFriends(nameText) {
+    if (!game || game.net) return;
+    if (nameText !== undefined) settings.set('playerName', cleanName(nameText));
+    const identity = playerIdentity();
+    menu.showLoading(TEXTS.openingToFriends);
+    const host = new NetHost({ name: identity.name, id: identity.id, server: settings.get('netServer') });
+    wireNet(host);
+    try {
+        const code = await host.open(game);
+        chat.print(TEXTS.hostOpened(code), 'success');
+        diagnostics.breadcrumb('net.hosting', 'Świat otwarty dla znajomych.');
+    } catch (error) {
+        chat.print(TEXTS.hostFailed(error?.message ?? error), 'error');
+    }
+    if (game && state === 'paused') menu.showPause();
+}
+
+function closeToFriends() {
+    if (!game?.net?.isHost) return;
+    game.net.close();
+    if (state === 'paused') menu.showPause();
+}
+
+function netState() {
+    const net = game?.net;
+    if (!net) return null;
+    const players = net.players.players.size + 1;
+    return net.isHost ? { role: 'host', code: net.code, players } : { role: 'client', host: net.hostName, players };
+}
+
+function copyText(text) {
+    navigator.clipboard?.writeText(text).catch(() => {});
+}
+
+
 function closeWorld() {
 
     diagnostics.breadcrumb('world.closed', 'Zakończono rozgrywkę w świecie.');
@@ -1331,6 +1478,8 @@ let diagnosticState = null;
 function animate(now) {
 
     requestAnimationFrame(animate);
+
+    lastAnimateAt = performance.now();
 
 
     if (!game && document.hidden) {
@@ -1433,6 +1582,14 @@ function animate(now) {
         perf.endUpdate();
 
         game.updateHud(infoElement);
+
+    }
+    else if (game.net && state !== 'loading') {
+
+        // Gra ze znajomymi: w pauzie świat żyje dalej (inni grają),
+        // tylko bez naszego sterowania.
+
+        updateWithoutInput(dt);
 
     }
 

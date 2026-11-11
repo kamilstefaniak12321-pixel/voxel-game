@@ -1601,6 +1601,8 @@ const MATERIAL_WORDS = {
 
 export const SETTING_WORDS = {
     ziemniak: 'potato',
+    imie: 'playerName',
+    serwer: 'netServer',
     zasieg: 'viewDistance',
     'daleki-teren': 'farTerrain',
     'szczegoly-terenu': 'farDetail',
@@ -1700,6 +1702,18 @@ function parseSettingValue(key, text) {
     }
 
     const word = simplify(text);
+
+
+    // Gra wieloosobowa: imię i adres serwera połączeń jak wpisane
+    // ("-" - domyślne).
+
+    if (key === 'playerName' || key === 'netServer') {
+        return text === '-' ? '' : text;
+    }
+
+    if (key === 'playerId') {
+        throw new CommandError('Identyfikator gracza ustawia gra.');
+    }
 
 
     if (key === 'theme') {

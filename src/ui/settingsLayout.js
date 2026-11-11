@@ -89,4 +89,6 @@ export const ADVANCED_VIDEO = [
 // wczytywanie chunków, napisy F3 (klawisz F3), rozdzielczość tekstur
 // (w zakładce Wygląd - razem z paczką tekstur).
 export const COMMAND_ONLY_SETTINGS = ['loadBudget', 'showDebug', 'textureResolution', 'cloudCover',
-    'bounceStrength', 'bounceSaturation', 'materialSpecular'];
+    'bounceStrength', 'bounceSaturation', 'materialSpecular',
+    // Gra wieloosobowa: imię - w oknie dołączania i w pauzie, serwer - /ustaw serwer.
+    'playerName', 'netServer', 'playerId'];

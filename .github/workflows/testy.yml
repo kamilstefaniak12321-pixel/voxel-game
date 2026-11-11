@@ -46,6 +46,9 @@ jobs:
         with:
           node-version: 24
       - run: npm test
+      - name: Gra wieloosobowa — gospodarz i gość w dwóch kartach
+        timeout-minutes: 4
+        run: node tools/sprawdz_multiplayer_webgl.mjs
       - name: Atlasy tekstur — zgodność pikseli, modeli i ikon w grze
         timeout-minutes: 3
         run: node tools/sprawdz_atlasy_webgl.mjs
@@ -123,4 +126,5 @@ jobs:
             test-results/sceny/
             test-results/grey-wood/
             test-results/torches/
+            test-results/multiplayer/
           retention-days: 7

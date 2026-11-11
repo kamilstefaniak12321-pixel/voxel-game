@@ -222,6 +222,19 @@ export class World {
 
         this.loadQueue = [];
 
+        // Gra wieloosobowa (0.92.0, src/net/): onBlockSet(x, y, z, id,
+        // previousId, fluidUpdate) po każdej zmianie bloku; chunkGate(cx,
+        // cz) - false, gdy chunk zmieniony u gospodarza jeszcze nie przyszedł
+        // (gość czeka z jego wczytaniem); onChunkReady(chunk) - po wczytaniu.
+
+        this.onBlockSet = null;
+        this.chunkGate = null;
+        this.onChunkReady = null;
+
+    }
+
+    chunkAllowed(cx, cz) {
+        return !this.chunkGate || this.chunkGate(cx, cz);
     }
 
     // --------------------------------------------------------
@@ -665,6 +678,8 @@ export class World {
         this.unsavedChunks.add(chunk);
 
         this.version++;
+
+        this.onBlockSet?.(x, y, z, id, previousId, fluidUpdate);
 
 
         // Światło wokół zmienionego bloku liczy się od nowa.
@@ -1352,6 +1367,7 @@ export class World {
         this.applyLightChanges();
         this.fluids?.chunkLoaded(chunk);
         this.generation.applied(performance.now() - started);
+        this.onChunkReady?.(chunk);
         return chunk;
     }
 
@@ -1366,6 +1382,7 @@ export class World {
         if (!this.chunkInsideBorder(cx, cz)) return true;
         const existing = this.getChunk(cx, cz);
         if (existing) return existing;
+        if (!this.chunkAllowed(cx, cz)) return null;
         if (!this.generation?.checkHealth()) return this.generateChunk(cx, cz);
         const data = this.takeGeneratedChunk(cx, cz);
         if (data) return this.applyGeneratedChunk(data);
@@ -1388,6 +1405,7 @@ export class World {
 
     requestGeneratedChunk(cx, cz) {
         if (this.generation.find?.(cx, cz)) return true;
+        if (!this.chunkAllowed(cx, cz)) return false;
         const key = this.chunkKey(cx, cz);
         const saved = this.savedChunks.get(key);
         const accepted = this.generation.request(cx, cz, saved,
@@ -1420,9 +1438,13 @@ export class World {
         }
         // Nie usuwamy oczekujących wpisów: completeRadius nie może
         // pokazać pustego pierścienia między chunkami i dalekim terenem.
-        for (let n = this.loadQueue.length - 1; n >= 0 && n >= this.loadQueue.length - 2; n--) {
+        // Chunk czekający na dane od gospodarza (gra wieloosobowa) nie
+        // blokuje kolejki - prosimy o dwa najbliższe dostępne.
+        for (let n = this.loadQueue.length - 1, asked = 0; n >= 0 && asked < 2; n--) {
             const [cx, cz] = this.loadQueue[n];
+            if (!this.chunkAllowed(cx, cz)) continue;
             this.requestGeneratedChunk(cx, cz);
+            asked++;
         }
     }
 
@@ -1440,7 +1462,7 @@ export class World {
         }
 
 
-        if (!this.chunkInsideBorder(cx, cz)) {
+        if (!this.chunkInsideBorder(cx, cz) || !this.chunkAllowed(cx, cz)) {
             return null;
         }
 
@@ -1508,6 +1530,7 @@ export class World {
 
         this.generation?.retain((qx, qz) => qx !== cx || qz !== cz);
         this.fluids?.chunkLoaded(chunk);
+        this.onChunkReady?.(chunk);
 
         return chunk;
 

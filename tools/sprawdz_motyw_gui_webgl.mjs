@@ -36,7 +36,7 @@ async function setupUi(iconNames) {
     });
     document.documentElement.dataset.invStyle = settings.get('inventoryStyle');
     const icons = new Map(iconNames.map(name => [name, `/docs/wiki/ikony/${name}.png`]));
-    const game = { mode: 'adventure', inventory: Inventory.load({}, 'adventure'), model: new PlayerModel(), touchMode: false };
+    const game = { mode: 'adventure', inventory: Inventory.load({}, 'adventure'), model: new PlayerModel(), touchMode: false, settings };
     for (const [index, type, count] of [[0,'pickaxe',1],[1,'axe',1],[2,'shovel',1],[9,'stone',32],[10,'oak_planks',16],[11,'blueberry',8],[18,'grass',24],[19,'stick',12]]) game.inventory.slots[index] = { type, count };
     const screen = new InventoryScreen(icons, { close() { screen.close(); } });
     const hotbar = new Hotbar(document.querySelector('#hotbar'), icons);
@@ -77,6 +77,15 @@ async function setupUi(iconNames) {
         check(getComputedStyle(panel).borderImageOutset === '0', 'Rama wystaje poza panel');
         const slots = [...document.querySelectorAll('.inv-hotbar .inv-slot')];
         check(slots.length === 9, 'Nie ma dziewięciu miejsc paska');
+        const frame = document.querySelector('.inv-window').getBoundingClientRect();
+        check(frame.top >= -1 && frame.bottom <= innerHeight + 1, 'Całe okno z nagłówkiem mieści się na wysokość');
+        if (innerWidth < 480) {
+            const scroll = document.querySelector('.inv-storage-scroll'), before = scroll.scrollLeft;
+            scroll.scrollLeft = scroll.scrollWidth;
+            const last = slots.at(-1).getBoundingClientRect(), area = scroll.getBoundingClientRect();
+            check(last.right <= area.right + 1 && last.left >= area.left - 1, 'Ostatnia kolumna jest dostępna po przewinięciu telefonu');
+            scroll.scrollLeft = before;
+        }
         return { width: innerWidth, height: innerHeight, panel: { x: rect.x, y: rect.y, width: rect.width, height: rect.height }, slots: slots.length };
     };
     const titlePresentation = () => {
@@ -192,6 +201,68 @@ async function setupUi(iconNames) {
             await theme('grey-wood'); tests.push('Wybór motywu w menu');
             check(errors.length === 0, errors.join('\n')); return tests;
         },
+        async verifyScale() {
+            const dimensions = () => {
+                const frame = screen.root.querySelector('.inv-window').getBoundingClientRect();
+                const slot = screen.root.querySelector('.inv-hotbar .inv-slot').getBoundingClientRect();
+                const close = screen.root.querySelector('.inv-close').getBoundingClientRect();
+                check(frame.left >= 0 && frame.right <= innerWidth && frame.top >= 0 && frame.bottom <= innerHeight,
+                    'Całe powiększone okno mieści się na ekranie');
+                check(Math.abs(slot.width - slot.height) < 1, 'Powiększone sloty nadal są kwadratowe');
+                check(document.elementFromPoint(close.x + close.width / 2, close.y + close.height / 2)?.closest('.inv-close'),
+                    'Powiększone zamknięcie jest widoczne i trafialne');
+                return { width: frame.width, height: frame.height, slot: slot.width };
+            };
+            const actualClick = element => {
+                const r = element.getBoundingClientRect(), x = r.x + r.width / 2, y = r.y + r.height / 2;
+                const hit = document.elementFromPoint(x, y);
+                check(hit === element || element.contains(hit), 'Współrzędne ekranowe trafiają w widoczny slot');
+                hit.dispatchEvent(new MouseEvent('mousemove', { bubbles: true, clientX: x, clientY: y }));
+                hit.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, button: 0, clientX: x, clientY: y }));
+                return { x, y };
+            };
+            const measurements = [];
+            await theme('default');
+            for (const style of ['light', 'wood']) {
+                settings.set('inventoryStyle', style); settings.set('inventoryScale', 100); await inventory();
+                const base = dimensions(), hud = document.querySelector('.hotbar-slot').getBoundingClientRect().width;
+                settings.set('inventoryScale', 175); await tick(); const large = dimensions();
+                check(large.width > base.width * 1.45 && large.height > innerHeight * .78, 'Domyślne okno jest wyraźnie większe na1080p');
+                check(large.height <= innerHeight * .89, 'Domyślne okno zachowuje margines ekranu');
+                check(document.querySelector('.hotbar-slot').getBoundingClientRect().width === hud, 'Rozmiar ekwipunku nie powiększa HUD');
+                game.inventory.set(18, { type: 'stone', count: 13 }); game.inventory.set(20, null); screen.refresh();
+                actualClick(screen.root.querySelector('[data-kind="slot"][data-index="18"]'));
+                check(screen.cursor?.count === 13 && !game.inventory.get(18), 'Powiększony slot oddaje prawidłowy stos');
+                check(Math.abs(screen.cursorElement.getBoundingClientRect().width - large.slot) < 1, 'Przedmiot pod kursorem odpowiada powiększonemu slotowi');
+                actualClick(screen.root.querySelector('[data-kind="slot"][data-index="20"]'));
+                check(!screen.cursor && game.inventory.get(20)?.count === 13, 'Kliknięcie ekranowe odkłada stos po powiększeniu');
+                settings.set('inventoryScale', 75); await tick(); const small = dimensions();
+                check(small.width < base.width * .8 && small.width < large.width * .6, 'Suwak realnie zmniejsza okno');
+                settings.set('inventoryScale', 200); await tick(); dimensions();
+                measurements.push({ style, base, large, small });
+            }
+            settings.set('inventoryStyle', 'light');
+            await this.show('chest');
+            const chest = screen.chest;
+            for (let cell = 0; cell < 12; cell++) {
+                const p = screen.chestView.cellClientPoint(cell);
+                check(screen.chestView.cellAtEvent({clientX:p.x,clientY:p.y}) === cell, 'Skrzynia: trafienie w przegródkę przy dużej skali');
+            }
+            const p = screen.chestView.cellClientPoint(0), hit = document.elementFromPoint(p.x,p.y);
+            check(hit === screen.chestView.canvas, 'Punkt skrzyni trafia w jej rzeczywisty canvas');
+            hit.dispatchEvent(new MouseEvent('mousedown', {bubbles:true,clientX:p.x,clientY:p.y}));
+            check(screen.cursor?.type === 'oak_planks' && !chest.layers[1][0], 'Powiększona skrzynia oddaje wierzchni stos');
+            hit.dispatchEvent(new MouseEvent('mousedown', {bubbles:true,clientX:p.x,clientY:p.y}));
+            check(!screen.cursor && chest.layers[1][0]?.type === 'oak_planks', 'Powiększona skrzynia przyjmuje stos z powrotem');
+            screen.close(); menu.showSettings('title','look'); await tick();
+            const range = document.querySelector('.settings-inventory-scale input[type="range"]');
+            check(range && range.min === '75' && range.max === '200', 'Osobny suwak skali dostępny w Wyglądzie');
+            range.value = '125'; range.dispatchEvent(new Event('input', {bubbles:true}));
+            check(new Settings().get('inventoryScale') === 125, 'Zmiana suwakiem przechodzi trwały zapis');
+            settings.set('inventoryScale',175); settings.set('inventoryStyle','light'); await inventory();
+            tests.push('Rozmiar ekwipunku:175% domyślnie,75–200%, trwały suwak, dopasowanie, rzeczywiste trafienia slotów i12 przegródek skrzyni, niezależnyHUD');
+            return measurements;
+        },
         async show(view) {
             if (view === 'menu') { screen.close(); menu.showTitle(); }
             else if (view === 'settings') { screen.close(); menu.showSettings('title', 'look'); }
@@ -257,8 +328,11 @@ try {
     let ready;const until=Date.now()+30000;
     while(Date.now()<until){ready=await evaluate('({qa:document.body?.dataset.qa,error:document.body?.dataset.error})');if(ready?.qa==='failed')throw Error(ready.error);if(ready?.qa==='ready')break;await pause(100);}
     assert.equal(ready?.qa,'ready','Nie uruchomiono komponentów GUI');
-    const tests=await evaluate('uiQA.verify()');const layouts=[];
-    for(const [name,width,height,view] of [['menu',1100,800,'menu'],['ekwipunek',1100,900,'inventory'],['opis-przedmiotu',1100,900,'tooltip'],['ksiega',1366,900,'book'],['kreatywny',1100,900,'creative'],['skrzynia',1100,900,'chest'],['telefon',390,844,'inventory'],['telefon-ksiega',390,844,'book'],['telefon-kreatywny',390,844,'creative'],['niski-ekran',844,390,'book'],['ustawienia',1100,900,'settings'],['pasek',390,844,'hud']]){
+    await evaluate('uiQA.verify()');const layouts=[];
+    await call('Emulation.setDeviceMetricsOverride',{width:1920,height:1080,deviceScaleFactor:1,mobile:false});
+    const scaleMeasurements = await evaluate('uiQA.verifyScale()');
+    for(const [name,width,height,view] of [['duzy-1080p',1920,1080,'inventory'],['duzy-ksiega-1080p',1920,1080,'book'],['laptop-1366',1366,768,'inventory'],['menu',1100,800,'menu'],['ekwipunek',1100,900,'inventory'],['opis-przedmiotu',1100,900,'tooltip'],['ksiega',1366,900,'book'],['kreatywny',1100,900,'creative'],['skrzynia',1100,900,'chest'],['telefon',390,844,'inventory'],['telefon-ksiega',390,844,'book'],['telefon-kreatywny',390,844,'creative'],['niski-ekran',844,390,'book'],['ustawienia',1100,900,'settings'],['pasek',390,844,'hud']]){
+        if(name==='menu') await evaluate("uiQA.settings.set('theme','grey-wood');window.themeReady");
         await call('Emulation.setDeviceMetricsOverride',{width,height,deviceScaleFactor:1,mobile:false});
         layouts.push({name,...await evaluate(`uiQA.show(${JSON.stringify(view)})`)});
         const shot=await call('Page.captureScreenshot',{format:'png'});await writeFile(resolve(output,`${name}.png`),Buffer.from(shot.data,'base64'));
@@ -274,7 +348,8 @@ try {
         }
     }
     const errors=await evaluate('uiQA.errors');assert.deepEqual(errors,[]);
-    const result={status:'passed',tests,layouts};await writeFile(resolve(output,'result.json'),JSON.stringify(result,null,2));console.log('OK: motyw GUI, rzeczywiste komponenty menu/ekwipunku/księgi/HUD, przełączanie, zapis, przenoszenie stosów, wytwarzanie, skrzynia i 12 ujęć desktop/telefon.');console.log(JSON.stringify(result));
+    const tests=await evaluate('uiQA.tests');
+    const result={status:'passed',tests,layouts,scaleMeasurements};await writeFile(resolve(output,'result.json'),JSON.stringify(result,null,2));console.log('OK: motyw GUI i regulacja rozmiaru; rzeczywiste trafienia slotów/skrzyni, zapis,15 ujęć desktop/telefon.');console.log(JSON.stringify(result));
 } finally {
     await writeFile(resolve(output,'chrome.log'),logs);socket?.close();
     if(chrome?.pid&&chrome.exitCode===null&&!chrome.signalCode){const ended=once(chrome,'exit');chrome.kill('SIGKILL');await ended;}

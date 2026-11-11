@@ -42,7 +42,7 @@ class Element {
     addEventListener() {}
 }
 
-globalThis.document = { createElement: () => new Element(), body: new Element() };
+globalThis.document = { createElement: () => new Element(), getElementById: () => null, body: new Element() };
 globalThis.window = { addEventListener() {} };
 globalThis.localStorage = { getItem: () => null };
 

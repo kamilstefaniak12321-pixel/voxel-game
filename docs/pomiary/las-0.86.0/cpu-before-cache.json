@@ -1,0 +1,54 @@
+{
+  "baseline": false,
+  "reference": true,
+  "node": "v24.22.0",
+  "skySourceBytesPerChunk": 32768,
+  "scenarios": [
+    {
+      "leafLayers": 0,
+      "initPerChunk": {
+        "medianMs": 2.0670888888888865,
+        "p95Ms": 2.110000000000001
+      },
+      "singleRoofEdit": {
+        "medianMs": 0.009174999999999045,
+        "p95Ms": 0.010669999999998936
+      },
+      "meshPerChunk": {
+        "medianMs": 1.4107000000000198,
+        "p95Ms": 1.6229999999999905
+      },
+      "vertices": 2048,
+      "canopyBytes": 0,
+      "geometrySha256": "6c9321d0c1a8cb3ec9722a443c312d7276b832184736a6a434c6e58c2cf6c06a"
+    },
+    {
+      "leafLayers": 6,
+      "initPerChunk": {
+        "medianMs": 2.722822222222223,
+        "p95Ms": 2.915877777777799
+      },
+      "singleRoofEdit": {
+        "medianMs": 0.008990000000000008,
+        "p95Ms": 0.009967499999999064
+      },
+      "meshPerChunk": {
+        "medianMs": 15.82269999999994,
+        "p95Ms": 17.92070000000001
+      },
+      "vertices": 29184,
+      "canopyBytes": 87552,
+      "geometrySha256": "71b9e7f25d3fd5f593a258877aac2b8af7355310ea9102659b6081adc361ea93"
+    }
+  ],
+  "farTile": {
+    "vertices": 9764,
+    "boxes": 339,
+    "append": {
+      "medianMs": 7.095900000000029,
+      "p95Ms": 7.585599999999886
+    },
+    "additionalGpuBytes": 0,
+    "geometrySha256": "9fd6df697818957011cf27e7c706dc7c262a7cf20317f276a442914eab098c0a"
+  }
+}

@@ -27,6 +27,7 @@ import { playUi } from '../audio/ui.js';
 import { ChestView, CHEST_VIEW_WIDTH, CHEST_VIEW_HEIGHT } from './ChestView.js';
 import { coveredItem, insertIntoChest, putIntoCell, takeFromCell, visibleItem } from '../game/ChestState.js';
 import { skyUniforms } from '../sky/skyShader.js';
+import { SETTINGS_DEFAULTS } from '../settings/Settings.js';
 
 // ------------------------------------------------------------
 // EKWIPUNEK (klawisz E)
@@ -235,7 +236,10 @@ export class InventoryScreen {
         };
 
         this.root.addEventListener('scroll', clearHover, true);
-        window.addEventListener('resize', clearHover);
+        window.addEventListener('resize', () => { clearHover(); this.queueLayout(); });
+        document.fonts?.ready.then(() => this.queueLayout());
+        document.fonts?.addEventListener('loadingdone', () => this.queueLayout());
+        document.getElementById('theme-css')?.addEventListener('load', () => this.queueLayout());
 
         window.addEventListener('keydown', (event) => this.onKeyDown(event));
 
@@ -273,7 +277,11 @@ export class InventoryScreen {
 
     open(game, chest = null) {
 
+        this.unwatchSettings?.();
         this.game = game;
+        this.unwatchSettings = game.settings?.onChange?.(key => {
+            if (['inventoryScale', 'inventoryStyle', 'theme'].includes(key)) this.queueLayout();
+        });
 
         this.ghost = null;
 
@@ -324,6 +332,9 @@ export class InventoryScreen {
         this.root.hidden = true;
         this.cursorElement.hidden = true;
         this.tooltip.hidden = true;
+
+        this.unwatchSettings?.();
+        this.unwatchSettings = null;
 
         playUi('ui_close');
 
@@ -492,7 +503,57 @@ export class InventoryScreen {
         this.root.replaceChildren(frame);
 
         this.refresh();
+        this.fitLayout();
+        this.queueLayout();
 
+    }
+
+    // CSS zoom changes the layout as well as the pixels: native hit testing,
+    // scrolling and ChestView's getBoundingClientRect stay in screen space.
+    // Measure only on open/rebuild, resize, font or setting changes, not per frame.
+    queueLayout() {
+        if (!this.isOpen || this.layoutQueued) return;
+        this.layoutQueued = true;
+        requestAnimationFrame(() => {
+            this.layoutQueued = false;
+            if (this.isOpen) this.fitLayout();
+        });
+    }
+
+    fitLayout() {
+        const frame = this.root.querySelector('.inv-window');
+        const panel = frame?.querySelector('.inv-panel');
+        if (!frame || !panel) return;
+        const style = getComputedStyle(this.root);
+        const availableWidth = this.root.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight);
+        const availableHeight = this.root.clientHeight - parseFloat(style.paddingTop) - parseFloat(style.paddingBottom);
+        const compact = this.game?.touchMode || innerWidth <= 820 || innerHeight <= 520;
+        const preference = this.game?.settings?.get('inventoryScale') ?? SETTINGS_DEFAULTS.inventoryScale;
+        const requested = Math.max(.75, Math.min(2, preference / 100));
+
+        frame.style.zoom = '1';
+        frame.style.maxWidth = `${availableWidth}px`;
+        frame.style.maxHeight = 'none';
+        panel.style.maxHeight = 'none';
+        const natural = frame.getBoundingClientRect();
+        const roomHeight = compact ? availableHeight : Math.min(availableHeight, innerHeight * .88);
+        // Small/touch screens retain the original full-size controls and
+        // internal scrolling. A deliberately smaller preference still works.
+        const scale = compact ? Math.min(1, requested) : Math.max(.75, Math.min(requested,
+            availableWidth / Math.max(1, natural.width), roomHeight / Math.max(1, natural.height)));
+        frame.style.zoom = String(scale);
+        frame.style.maxWidth = `${availableWidth / scale}px`;
+        frame.style.maxHeight = `${roomHeight / scale}px`;
+        panel.style.maxHeight = '';
+        this.root.dataset.scale = String(scale);
+
+        // These two elements live outside the zoomed dialog. Keep their
+        // positions in client pixels while matching the held item's size.
+        const slot = frame.querySelector('.inv-hotbar .inv-slot')?.getBoundingClientRect();
+        if (slot) this.cursorElement.style.setProperty('--inv-pointer-size', `${slot.width}px`);
+        this.tooltip.style.fontSize = `${14 * Math.max(1, Math.min(scale, 1.4))}px`;
+        this.tooltip.hidden = true;
+        this.hover = null;
     }
 
 

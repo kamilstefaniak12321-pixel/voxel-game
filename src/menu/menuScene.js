@@ -1,15 +1,19 @@
 // Scenografia menu: prawdziwy generator i zasoby aktualnej wersji gry.
 // Kolejne duże wydania mogą wymienić ten opis, zachowując nawigację UI.
 export const MENU_SCENE = {
-    id: 'river-valley-0.56',
-    seed: 2138286349,
+    id: 'autumn-cascades-0.86',
+    seed: 86,
     terrain: 'realistic',
-    time: 10.5 / 24,
+    time: 10.7 / 24,
+    // Naturalne kaskady tego seeda: 80 -> 73 -> 62. Nie przebudowujemy
+    // generatora ani świata gracza dla scenografii menu.
+    waterfalls: [{ x: -768, z: 192, top: 80, bottom: 73 },
+        { x: -752, z: 208, top: 73, bottom: 62 }],
     views: {
-        home: { position: [-480, 100, 384], target: [-520, 88, 450] },
-        river: { position: [-477, 79, 375], target: [-510, 78, 420] },
-        forest: { position: [-474, 78, 388], target: [-481, 74.5, 349] },
-        mountains: { position: [-476, 106, 426], target: [-530, 103, 580] }
+        home: { position: [-779, 77, 257], target: [-731, 70, 242], atmosphere: 'warm' },
+        river: { position: [-752, 76, 236], target: [-776, 72, 199], atmosphere: 'waterfall' },
+        forest: { position: [-775, 80, 266], target: [-741, 67, 300], atmosphere: 'neutral' },
+        mountains: { position: [-773, 82, 244], target: [-725, 73, 229], atmosphere: 'warm' }
     }
 };
 

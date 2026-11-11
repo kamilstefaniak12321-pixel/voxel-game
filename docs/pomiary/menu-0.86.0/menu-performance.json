@@ -1,0 +1,1215 @@
+{
+  "checks": [
+    "Complete real menu world finishes loading",
+    "Natural waterfall 80 to 73 exists at advertised coordinates",
+    "Natural waterfall 73 to 62 exists at advertised coordinates",
+    "home: actual menu navigation selects camera",
+    "home: transition reuses preloaded terrain",
+    "home: smooth camera reaches intended position",
+    "home: no WebGL error",
+    "home: effects shaders compile",
+    "river: actual menu navigation selects camera",
+    "river: transition reuses preloaded terrain",
+    "river: smooth camera reaches intended position",
+    "river: no WebGL error",
+    "river: effects shaders compile",
+    "Waterfall is inside the river camera view",
+    "World selection panel leaves the waterfall visible",
+    "forest: actual menu navigation selects camera",
+    "forest: transition reuses preloaded terrain",
+    "forest: smooth camera reaches intended position",
+    "forest: no WebGL error",
+    "forest: effects shaders compile",
+    "mountains: actual menu navigation selects camera",
+    "mountains: transition reuses preloaded terrain",
+    "mountains: smooth camera reaches intended position",
+    "mountains: no WebGL error",
+    "mountains: effects shaders compile",
+    "Back returns to original warm forest without a camera jump",
+    "Real natural leaf emission runs in menu",
+    "Real wind streaks run in menu",
+    "Real simulated waterfall produces visible effects",
+    "Menu respects disabled leaf and wind effects without retaining particles",
+    "Leaf effects resume after changing settings",
+    "Leaving menu disposes particles, waterfalls and wet rocks",
+    "No menu world coexists with gameplay"
+  ],
+  "captures": [
+    {
+      "name": "home",
+      "position": [
+        -779,
+        77.03203510568869,
+        257
+      ],
+      "target": [
+        -731,
+        70,
+        242
+      ],
+      "triangles": 2045897,
+      "calls": 1193,
+      "effects": {
+        "leaves": 18,
+        "fruits": 0,
+        "wind": 7,
+        "waterfalls": {
+          "drops": 2,
+          "landingRevision": 12,
+          "ripples": {
+            "cells": 6,
+            "emitters": 1,
+            "queued": 0,
+            "lastProcessed": 0,
+            "lastMs": 0,
+            "caps": {
+              "emitters": 12,
+              "cellsPerEmitter": 169,
+              "cellsPerUpdate": 48,
+              "msPerUpdate": 0.35
+            },
+            "tiles": 6,
+            "triangles": 12,
+            "draws": 1,
+            "surfaceRevision": 1,
+            "geometryRevision": 1,
+            "maxTiles": 2028,
+            "textureBytes": 512
+          },
+          "foam": {
+            "enabled": true,
+            "tiles": 6,
+            "cachedTiles": 6,
+            "draws": 1,
+            "triangles": 12,
+            "maxTiles": 2028,
+            "geometryRevision": 1,
+            "sourceRevision": 1,
+            "textureBytes": 16384,
+            "lastMs": 0,
+            "time": 4.000000000000005
+          },
+          "mist": {
+            "enabled": true,
+            "instances": 0,
+            "maxInstances": 32,
+            "triangles": 0,
+            "draws": 0,
+            "bufferRevision": 0,
+            "textureBytes": 4096,
+            "lastMs": 0,
+            "time": 4.000000000000005
+          }
+        },
+        "wetRocks": {
+          "fields": 1,
+          "faces": 0,
+          "triangles": 0,
+          "draws": 0,
+          "queued": 0,
+          "amount": 1,
+          "lastProcessed": 0,
+          "lastBlockReads": 0,
+          "lastMs": 0,
+          "geometryRevision": 0,
+          "caps": {
+            "fields": 4,
+            "potatoFields": 2,
+            "candidates": 64,
+            "faces": 256,
+            "facesPerField": 64,
+            "cellsPerField": 343,
+            "cellsPerUpdate": 32,
+            "msPerUpdate": 0.2
+          }
+        }
+      }
+    },
+    {
+      "name": "river",
+      "position": [
+        -752.0045042801842,
+        75.92008298508213,
+        236.00350332903201
+      ],
+      "target": [
+        -776,
+        72,
+        199
+      ],
+      "triangles": 1181805,
+      "calls": 1050,
+      "effects": {
+        "leaves": 59,
+        "fruits": 0,
+        "wind": 5,
+        "waterfalls": {
+          "drops": 32,
+          "landingRevision": 24,
+          "ripples": {
+            "cells": 112,
+            "emitters": 4,
+            "queued": 0,
+            "lastProcessed": 0,
+            "lastMs": 0,
+            "caps": {
+              "emitters": 12,
+              "cellsPerEmitter": 169,
+              "cellsPerUpdate": 48,
+              "msPerUpdate": 0.35
+            },
+            "tiles": 112,
+            "triangles": 224,
+            "draws": 1,
+            "surfaceRevision": 4,
+            "geometryRevision": 3,
+            "maxTiles": 2028,
+            "textureBytes": 512
+          },
+          "foam": {
+            "enabled": true,
+            "tiles": 112,
+            "cachedTiles": 112,
+            "draws": 1,
+            "triangles": 224,
+            "maxTiles": 2028,
+            "geometryRevision": 4,
+            "sourceRevision": 4,
+            "textureBytes": 16384,
+            "lastMs": 0,
+            "time": 7.999999999999991
+          },
+          "mist": {
+            "enabled": true,
+            "instances": 10,
+            "maxInstances": 32,
+            "triangles": 20,
+            "draws": 1,
+            "bufferRevision": 1,
+            "textureBytes": 4096,
+            "lastMs": 0,
+            "time": 7.999999999999991
+          }
+        },
+        "wetRocks": {
+          "fields": 4,
+          "faces": 8,
+          "triangles": 16,
+          "draws": 1,
+          "queued": 0,
+          "amount": 1,
+          "lastProcessed": 0,
+          "lastBlockReads": 0,
+          "lastMs": 0,
+          "geometryRevision": 1,
+          "caps": {
+            "fields": 4,
+            "potatoFields": 2,
+            "candidates": 64,
+            "faces": 256,
+            "facesPerField": 64,
+            "cellsPerField": 343,
+            "cellsPerUpdate": 32,
+            "msPerUpdate": 0.2
+          }
+        }
+      }
+    },
+    {
+      "name": "forest",
+      "position": [
+        -774.9961631387204,
+        79.83882778106434,
+        265.99499533612374
+      ],
+      "target": [
+        -741,
+        67,
+        300
+      ],
+      "triangles": 1693671,
+      "calls": 906,
+      "effects": {
+        "leaves": 89,
+        "fruits": 0,
+        "wind": 5,
+        "waterfalls": {
+          "drops": 2,
+          "landingRevision": 36,
+          "ripples": {
+            "cells": 6,
+            "emitters": 1,
+            "queued": 0,
+            "lastProcessed": 0,
+            "lastMs": 0,
+            "caps": {
+              "emitters": 12,
+              "cellsPerEmitter": 169,
+              "cellsPerUpdate": 48,
+              "msPerUpdate": 0.35
+            },
+            "tiles": 6,
+            "triangles": 12,
+            "draws": 1,
+            "surfaceRevision": 7,
+            "geometryRevision": 4,
+            "maxTiles": 2028,
+            "textureBytes": 512
+          },
+          "foam": {
+            "enabled": true,
+            "tiles": 6,
+            "cachedTiles": 6,
+            "draws": 1,
+            "triangles": 12,
+            "maxTiles": 2028,
+            "geometryRevision": 5,
+            "sourceRevision": 7,
+            "textureBytes": 16384,
+            "lastMs": 0,
+            "time": 11.999999999999977
+          },
+          "mist": {
+            "enabled": true,
+            "instances": 0,
+            "maxInstances": 32,
+            "triangles": 0,
+            "draws": 0,
+            "bufferRevision": 2,
+            "textureBytes": 4096,
+            "lastMs": 0,
+            "time": 11.999999999999977
+          }
+        },
+        "wetRocks": {
+          "fields": 1,
+          "faces": 0,
+          "triangles": 0,
+          "draws": 0,
+          "queued": 0,
+          "amount": 1,
+          "lastProcessed": 0,
+          "lastBlockReads": 0,
+          "lastMs": 0,
+          "geometryRevision": 2,
+          "caps": {
+            "fields": 4,
+            "potatoFields": 2,
+            "candidates": 64,
+            "faces": 256,
+            "facesPerField": 64,
+            "cellsPerField": 343,
+            "cellsPerUpdate": 32,
+            "msPerUpdate": 0.2
+          }
+        }
+      }
+    },
+    {
+      "name": "mountains",
+      "position": [
+        -773.0003335497519,
+        81.82226953724155,
+        244.00367002296332
+      ],
+      "target": [
+        -725,
+        73,
+        229
+      ],
+      "triangles": 1936249,
+      "calls": 1145,
+      "effects": {
+        "leaves": 81,
+        "fruits": 0,
+        "wind": 8,
+        "waterfalls": {
+          "drops": 23,
+          "landingRevision": 48,
+          "ripples": {
+            "cells": 112,
+            "emitters": 4,
+            "queued": 0,
+            "lastProcessed": 0,
+            "lastMs": 0,
+            "caps": {
+              "emitters": 12,
+              "cellsPerEmitter": 169,
+              "cellsPerUpdate": 48,
+              "msPerUpdate": 0.35
+            },
+            "tiles": 112,
+            "triangles": 224,
+            "draws": 1,
+            "surfaceRevision": 10,
+            "geometryRevision": 7,
+            "maxTiles": 2028,
+            "textureBytes": 512
+          },
+          "foam": {
+            "enabled": true,
+            "tiles": 112,
+            "cachedTiles": 112,
+            "draws": 1,
+            "triangles": 224,
+            "maxTiles": 2028,
+            "geometryRevision": 9,
+            "sourceRevision": 10,
+            "textureBytes": 16384,
+            "lastMs": 0,
+            "time": 15.999999999999963
+          },
+          "mist": {
+            "enabled": true,
+            "instances": 10,
+            "maxInstances": 32,
+            "triangles": 20,
+            "draws": 1,
+            "bufferRevision": 4,
+            "textureBytes": 4096,
+            "lastMs": 0,
+            "time": 15.999999999999963
+          }
+        },
+        "wetRocks": {
+          "fields": 4,
+          "faces": 8,
+          "triangles": 16,
+          "draws": 1,
+          "queued": 0,
+          "amount": 1,
+          "lastProcessed": 0,
+          "lastBlockReads": 0,
+          "lastMs": 0,
+          "geometryRevision": 4,
+          "caps": {
+            "fields": 4,
+            "potatoFields": 2,
+            "candidates": 64,
+            "faces": 256,
+            "facesPerField": 64,
+            "cellsPerField": 343,
+            "cellsPerUpdate": 32,
+            "msPerUpdate": 0.2
+          }
+        }
+      }
+    }
+  ],
+  "errors": [],
+  "warmupMs": 19321.5,
+  "sceneId": "autumn-cascades-0.86",
+  "seed": 86,
+  "naturalFalls": [
+    {
+      "x": -768,
+      "z": 192,
+      "dirX": 0.7071067811865475,
+      "dirZ": 0.7071067811865475,
+      "top": 80,
+      "bottom": 73,
+      "width": 1.6
+    },
+    {
+      "x": -752,
+      "z": 208,
+      "dirX": 0.7071067811865475,
+      "dirZ": 0.7071067811865475,
+      "top": 73,
+      "bottom": 62,
+      "width": 1.6
+    }
+  ],
+  "endpoints": {
+    "home": {
+      "ready": true,
+      "warmed": true,
+      "chunks": 1257,
+      "loadQueue": 0,
+      "completeRadius": 268.61270764889497,
+      "meshes": 1478,
+      "far": {
+        "active": true,
+        "shown": 1210,
+        "wanted": 1210,
+        "missing": 0,
+        "cached": 1210,
+        "triangles": 1702452,
+        "vegetationBySpacing": {},
+        "transitioningTiles": 0,
+        "shadowRevision": 1699,
+        "profile": "scenery",
+        "detailDistance": 1024,
+        "detailTiers": [
+          {
+            "distance": 512,
+            "spacing": 1
+          },
+          {
+            "distance": 800,
+            "spacing": 2
+          },
+          {
+            "distance": 1024,
+            "spacing": 4
+          }
+        ],
+        "maxDistance": 1024,
+        "targetSpacing": 4,
+        "lodWithinTarget": {
+          "1": 770,
+          "2": 360,
+          "4": 80
+        },
+        "workers": 3
+      },
+      "bounce": {
+        "enabled": true,
+        "ready": false,
+        "pending": {
+          "geometry": 32551,
+          "sources": 0,
+          "probes": 1,
+          "invalidation": false
+        },
+        "cache": {
+          "surfaces": 0,
+          "hitCapacity": 642096
+        },
+        "lastFrame": {
+          "milliseconds": 0.6000000238418579,
+          "work": 38
+        },
+        "markChunk": {
+          "calls": 634,
+          "milliseconds": 3.399999976158142,
+          "maxMilliseconds": 0.20000004768371582
+        },
+        "updates": 163,
+        "invalidations": 99,
+        "typedArrayBytes": 3990168,
+        "estimatedCacheBytes": 1041664,
+        "memoryBytes": 5031832,
+        "radius": 6,
+        "sourceReach": 96,
+        "rays": 14,
+        "budgetMs": 0.6
+      },
+      "effects": {
+        "leaves": 18,
+        "fruits": 0,
+        "wind": 7,
+        "waterfalls": {
+          "drops": 2,
+          "landingRevision": 12,
+          "ripples": {
+            "cells": 6,
+            "emitters": 1,
+            "queued": 0,
+            "lastProcessed": 0,
+            "lastMs": 0,
+            "caps": {
+              "emitters": 12,
+              "cellsPerEmitter": 169,
+              "cellsPerUpdate": 48,
+              "msPerUpdate": 0.35
+            },
+            "tiles": 6,
+            "triangles": 12,
+            "draws": 1,
+            "surfaceRevision": 1,
+            "geometryRevision": 1,
+            "maxTiles": 2028,
+            "textureBytes": 512
+          },
+          "foam": {
+            "enabled": true,
+            "tiles": 6,
+            "cachedTiles": 6,
+            "draws": 1,
+            "triangles": 12,
+            "maxTiles": 2028,
+            "geometryRevision": 1,
+            "sourceRevision": 1,
+            "textureBytes": 16384,
+            "lastMs": 0,
+            "time": 4.000000000000005
+          },
+          "mist": {
+            "enabled": true,
+            "instances": 0,
+            "maxInstances": 32,
+            "triangles": 0,
+            "draws": 0,
+            "bufferRevision": 0,
+            "textureBytes": 4096,
+            "lastMs": 0,
+            "time": 4.000000000000005
+          }
+        },
+        "wetRocks": {
+          "fields": 1,
+          "faces": 0,
+          "triangles": 0,
+          "draws": 0,
+          "queued": 0,
+          "amount": 1,
+          "lastProcessed": 0,
+          "lastBlockReads": 0,
+          "lastMs": 0,
+          "geometryRevision": 0,
+          "caps": {
+            "fields": 4,
+            "potatoFields": 2,
+            "candidates": 64,
+            "faces": 256,
+            "facesPerField": 64,
+            "cellsPerField": 343,
+            "cellsPerUpdate": 32,
+            "msPerUpdate": 0.2
+          }
+        }
+      },
+      "water": {
+        "pending": 0,
+        "scans": 104,
+        "lastProcessed": 0,
+        "lastChanges": 0,
+        "lastScanCells": 224,
+        "lastMs": 0.30000001192092896,
+        "processed": 12527,
+        "changes": 2452,
+        "maxUpdates": 64,
+        "maxChanges": 24,
+        "maxScanCells": 1024,
+        "budgetMs": 0.6,
+        "stepSeconds": 0.12
+      },
+      "error": null
+    },
+    "river": {
+      "ready": true,
+      "warmed": true,
+      "chunks": 1257,
+      "loadQueue": 0,
+      "completeRadius": 268.61270764889497,
+      "meshes": 1478,
+      "far": {
+        "active": true,
+        "shown": 1210,
+        "wanted": 1210,
+        "missing": 0,
+        "cached": 1210,
+        "triangles": 1702452,
+        "vegetationBySpacing": {},
+        "transitioningTiles": 0,
+        "shadowRevision": 1699,
+        "profile": "scenery",
+        "detailDistance": 1024,
+        "detailTiers": [
+          {
+            "distance": 512,
+            "spacing": 1
+          },
+          {
+            "distance": 800,
+            "spacing": 2
+          },
+          {
+            "distance": 1024,
+            "spacing": 4
+          }
+        ],
+        "maxDistance": 1024,
+        "targetSpacing": 4,
+        "lodWithinTarget": {
+          "1": 770,
+          "2": 360,
+          "4": 80
+        },
+        "workers": 3
+      },
+      "bounce": {
+        "enabled": true,
+        "ready": false,
+        "pending": {
+          "geometry": 37447,
+          "sources": 0,
+          "probes": 1,
+          "invalidation": false
+        },
+        "cache": {
+          "surfaces": 0,
+          "hitCapacity": 642096
+        },
+        "lastFrame": {
+          "milliseconds": 0.699999988079071,
+          "work": 50
+        },
+        "markChunk": {
+          "calls": 634,
+          "milliseconds": 3.399999976158142,
+          "maxMilliseconds": 0.20000004768371582
+        },
+        "updates": 174,
+        "invalidations": 102,
+        "typedArrayBytes": 3990168,
+        "estimatedCacheBytes": 1198336,
+        "memoryBytes": 5188504,
+        "radius": 6,
+        "sourceReach": 96,
+        "rays": 14,
+        "budgetMs": 0.6
+      },
+      "effects": {
+        "leaves": 59,
+        "fruits": 0,
+        "wind": 5,
+        "waterfalls": {
+          "drops": 32,
+          "landingRevision": 24,
+          "ripples": {
+            "cells": 112,
+            "emitters": 4,
+            "queued": 0,
+            "lastProcessed": 0,
+            "lastMs": 0,
+            "caps": {
+              "emitters": 12,
+              "cellsPerEmitter": 169,
+              "cellsPerUpdate": 48,
+              "msPerUpdate": 0.35
+            },
+            "tiles": 112,
+            "triangles": 224,
+            "draws": 1,
+            "surfaceRevision": 4,
+            "geometryRevision": 3,
+            "maxTiles": 2028,
+            "textureBytes": 512
+          },
+          "foam": {
+            "enabled": true,
+            "tiles": 112,
+            "cachedTiles": 112,
+            "draws": 1,
+            "triangles": 224,
+            "maxTiles": 2028,
+            "geometryRevision": 4,
+            "sourceRevision": 4,
+            "textureBytes": 16384,
+            "lastMs": 0,
+            "time": 7.999999999999991
+          },
+          "mist": {
+            "enabled": true,
+            "instances": 10,
+            "maxInstances": 32,
+            "triangles": 20,
+            "draws": 1,
+            "bufferRevision": 1,
+            "textureBytes": 4096,
+            "lastMs": 0,
+            "time": 7.999999999999991
+          }
+        },
+        "wetRocks": {
+          "fields": 4,
+          "faces": 8,
+          "triangles": 16,
+          "draws": 1,
+          "queued": 0,
+          "amount": 1,
+          "lastProcessed": 0,
+          "lastBlockReads": 0,
+          "lastMs": 0,
+          "geometryRevision": 1,
+          "caps": {
+            "fields": 4,
+            "potatoFields": 2,
+            "candidates": 64,
+            "faces": 256,
+            "facesPerField": 64,
+            "cellsPerField": 343,
+            "cellsPerUpdate": 32,
+            "msPerUpdate": 0.2
+          }
+        }
+      },
+      "water": {
+        "pending": 0,
+        "scans": 92,
+        "lastProcessed": 0,
+        "lastChanges": 0,
+        "lastScanCells": 188,
+        "lastMs": 0.30000001192092896,
+        "processed": 12527,
+        "changes": 2452,
+        "maxUpdates": 64,
+        "maxChanges": 24,
+        "maxScanCells": 1024,
+        "budgetMs": 0.6,
+        "stepSeconds": 0.12
+      },
+      "error": null
+    },
+    "forest": {
+      "ready": true,
+      "warmed": true,
+      "chunks": 1257,
+      "loadQueue": 0,
+      "completeRadius": 268.61270764889497,
+      "meshes": 1478,
+      "far": {
+        "active": true,
+        "shown": 1210,
+        "wanted": 1210,
+        "missing": 0,
+        "cached": 1210,
+        "triangles": 1702452,
+        "vegetationBySpacing": {},
+        "transitioningTiles": 0,
+        "shadowRevision": 1699,
+        "profile": "scenery",
+        "detailDistance": 1024,
+        "detailTiers": [
+          {
+            "distance": 512,
+            "spacing": 1
+          },
+          {
+            "distance": 800,
+            "spacing": 2
+          },
+          {
+            "distance": 1024,
+            "spacing": 4
+          }
+        ],
+        "maxDistance": 1024,
+        "targetSpacing": 4,
+        "lodWithinTarget": {
+          "1": 770,
+          "2": 360,
+          "4": 80
+        },
+        "workers": 3
+      },
+      "bounce": {
+        "enabled": true,
+        "ready": false,
+        "pending": {
+          "geometry": 37410,
+          "sources": 0,
+          "probes": 1,
+          "invalidation": false
+        },
+        "cache": {
+          "surfaces": 1,
+          "hitCapacity": 642096
+        },
+        "lastFrame": {
+          "milliseconds": 0.6000000238418579,
+          "work": 66
+        },
+        "markChunk": {
+          "calls": 634,
+          "milliseconds": 3.399999976158142,
+          "maxMilliseconds": 0.20000004768371582
+        },
+        "updates": 183,
+        "invalidations": 105,
+        "typedArrayBytes": 3990168,
+        "estimatedCacheBytes": 1197312,
+        "memoryBytes": 5187480,
+        "radius": 6,
+        "sourceReach": 96,
+        "rays": 14,
+        "budgetMs": 0.6
+      },
+      "effects": {
+        "leaves": 89,
+        "fruits": 0,
+        "wind": 5,
+        "waterfalls": {
+          "drops": 2,
+          "landingRevision": 36,
+          "ripples": {
+            "cells": 6,
+            "emitters": 1,
+            "queued": 0,
+            "lastProcessed": 0,
+            "lastMs": 0,
+            "caps": {
+              "emitters": 12,
+              "cellsPerEmitter": 169,
+              "cellsPerUpdate": 48,
+              "msPerUpdate": 0.35
+            },
+            "tiles": 6,
+            "triangles": 12,
+            "draws": 1,
+            "surfaceRevision": 7,
+            "geometryRevision": 4,
+            "maxTiles": 2028,
+            "textureBytes": 512
+          },
+          "foam": {
+            "enabled": true,
+            "tiles": 6,
+            "cachedTiles": 6,
+            "draws": 1,
+            "triangles": 12,
+            "maxTiles": 2028,
+            "geometryRevision": 5,
+            "sourceRevision": 7,
+            "textureBytes": 16384,
+            "lastMs": 0,
+            "time": 11.999999999999977
+          },
+          "mist": {
+            "enabled": true,
+            "instances": 0,
+            "maxInstances": 32,
+            "triangles": 0,
+            "draws": 0,
+            "bufferRevision": 2,
+            "textureBytes": 4096,
+            "lastMs": 0,
+            "time": 11.999999999999977
+          }
+        },
+        "wetRocks": {
+          "fields": 1,
+          "faces": 0,
+          "triangles": 0,
+          "draws": 0,
+          "queued": 0,
+          "amount": 1,
+          "lastProcessed": 0,
+          "lastBlockReads": 0,
+          "lastMs": 0,
+          "geometryRevision": 2,
+          "caps": {
+            "fields": 4,
+            "potatoFields": 2,
+            "candidates": 64,
+            "faces": 256,
+            "facesPerField": 64,
+            "cellsPerField": 343,
+            "cellsPerUpdate": 32,
+            "msPerUpdate": 0.2
+          }
+        }
+      },
+      "water": {
+        "pending": 0,
+        "scans": 68,
+        "lastProcessed": 0,
+        "lastChanges": 0,
+        "lastScanCells": 615,
+        "lastMs": 0.30000001192092896,
+        "processed": 12527,
+        "changes": 2452,
+        "maxUpdates": 64,
+        "maxChanges": 24,
+        "maxScanCells": 1024,
+        "budgetMs": 0.6,
+        "stepSeconds": 0.12
+      },
+      "error": null
+    },
+    "mountains": {
+      "ready": true,
+      "warmed": true,
+      "chunks": 1257,
+      "loadQueue": 0,
+      "completeRadius": 268.61270764889497,
+      "meshes": 1478,
+      "far": {
+        "active": true,
+        "shown": 1210,
+        "wanted": 1210,
+        "missing": 0,
+        "cached": 1210,
+        "triangles": 1702452,
+        "vegetationBySpacing": {},
+        "transitioningTiles": 0,
+        "shadowRevision": 1699,
+        "profile": "scenery",
+        "detailDistance": 1024,
+        "detailTiers": [
+          {
+            "distance": 512,
+            "spacing": 1
+          },
+          {
+            "distance": 800,
+            "spacing": 2
+          },
+          {
+            "distance": 1024,
+            "spacing": 4
+          }
+        ],
+        "maxDistance": 1024,
+        "targetSpacing": 4,
+        "lodWithinTarget": {
+          "1": 770,
+          "2": 360,
+          "4": 80
+        },
+        "workers": 3
+      },
+      "bounce": {
+        "enabled": true,
+        "ready": false,
+        "pending": {
+          "geometry": 37401,
+          "sources": 0,
+          "probes": 1,
+          "invalidation": false
+        },
+        "cache": {
+          "surfaces": 0,
+          "hitCapacity": 642096
+        },
+        "lastFrame": {
+          "milliseconds": 0.6000000238418579,
+          "work": 20
+        },
+        "markChunk": {
+          "calls": 634,
+          "milliseconds": 3.399999976158142,
+          "maxMilliseconds": 0.20000004768371582
+        },
+        "updates": 192,
+        "invalidations": 107,
+        "typedArrayBytes": 3990168,
+        "estimatedCacheBytes": 1196864,
+        "memoryBytes": 5187032,
+        "radius": 6,
+        "sourceReach": 96,
+        "rays": 14,
+        "budgetMs": 0.6
+      },
+      "effects": {
+        "leaves": 81,
+        "fruits": 0,
+        "wind": 8,
+        "waterfalls": {
+          "drops": 23,
+          "landingRevision": 48,
+          "ripples": {
+            "cells": 112,
+            "emitters": 4,
+            "queued": 0,
+            "lastProcessed": 0,
+            "lastMs": 0,
+            "caps": {
+              "emitters": 12,
+              "cellsPerEmitter": 169,
+              "cellsPerUpdate": 48,
+              "msPerUpdate": 0.35
+            },
+            "tiles": 112,
+            "triangles": 224,
+            "draws": 1,
+            "surfaceRevision": 10,
+            "geometryRevision": 7,
+            "maxTiles": 2028,
+            "textureBytes": 512
+          },
+          "foam": {
+            "enabled": true,
+            "tiles": 112,
+            "cachedTiles": 112,
+            "draws": 1,
+            "triangles": 224,
+            "maxTiles": 2028,
+            "geometryRevision": 9,
+            "sourceRevision": 10,
+            "textureBytes": 16384,
+            "lastMs": 0,
+            "time": 15.999999999999963
+          },
+          "mist": {
+            "enabled": true,
+            "instances": 10,
+            "maxInstances": 32,
+            "triangles": 20,
+            "draws": 1,
+            "bufferRevision": 4,
+            "textureBytes": 4096,
+            "lastMs": 0,
+            "time": 15.999999999999963
+          }
+        },
+        "wetRocks": {
+          "fields": 4,
+          "faces": 8,
+          "triangles": 16,
+          "draws": 1,
+          "queued": 0,
+          "amount": 1,
+          "lastProcessed": 0,
+          "lastBlockReads": 0,
+          "lastMs": 0,
+          "geometryRevision": 4,
+          "caps": {
+            "fields": 4,
+            "potatoFields": 2,
+            "candidates": 64,
+            "faces": 256,
+            "facesPerField": 64,
+            "cellsPerField": 343,
+            "cellsPerUpdate": 32,
+            "msPerUpdate": 0.2
+          }
+        }
+      },
+      "water": {
+        "pending": 0,
+        "scans": 46,
+        "lastProcessed": 0,
+        "lastChanges": 0,
+        "lastScanCells": 160,
+        "lastMs": 0.20000004768371582,
+        "processed": 12527,
+        "changes": 2452,
+        "maxUpdates": 64,
+        "maxChanges": 24,
+        "maxScanCells": 1024,
+        "budgetMs": 0.6,
+        "stepSeconds": 0.12
+      },
+      "error": null
+    }
+  },
+  "performanceSamples": {
+    "home": {
+      "method": "completed frames with gl.finish; no presentation/RAF timing",
+      "completed": {
+        "samples": 180,
+        "medianMs": 11.600000023841858,
+        "p95Ms": 16.19999998807907,
+        "p99Ms": 17.30000001192093,
+        "maxMs": 17.600000023841858
+      },
+      "submitted": {
+        "samples": 180,
+        "medianMs": 11.600000023841858,
+        "p95Ms": 16.099999964237213,
+        "p99Ms": 17.30000001192093,
+        "maxMs": 17.600000023841858
+      },
+      "gpu": {
+        "samples": 180,
+        "medianMs": 7.38816,
+        "p95Ms": 10.262432,
+        "p99Ms": 11.113472,
+        "maxMs": 12.22144
+      },
+      "over16_67Ms": 5,
+      "triangles": 2043017,
+      "calls": 1197
+    },
+    "river": {
+      "method": "completed frames with gl.finish; no presentation/RAF timing",
+      "completed": {
+        "samples": 180,
+        "medianMs": 11.199999988079071,
+        "p95Ms": 15.799999952316284,
+        "p99Ms": 16.80000001192093,
+        "maxMs": 18.100000023841858
+      },
+      "submitted": {
+        "samples": 180,
+        "medianMs": 11.199999988079071,
+        "p95Ms": 15.799999952316284,
+        "p99Ms": 16.80000001192093,
+        "maxMs": 18.100000023841858
+      },
+      "gpu": {
+        "samples": 180,
+        "medianMs": 6.556544,
+        "p95Ms": 9.35424,
+        "p99Ms": 9.926656,
+        "maxMs": 10.626048
+      },
+      "over16_67Ms": 5,
+      "triangles": 1142215,
+      "calls": 1043
+    },
+    "forest": {
+      "method": "completed frames with gl.finish; no presentation/RAF timing",
+      "completed": {
+        "samples": 180,
+        "medianMs": 9.600000023841858,
+        "p95Ms": 12.300000011920929,
+        "p99Ms": 14.300000011920929,
+        "maxMs": 19.19999998807907
+      },
+      "submitted": {
+        "samples": 180,
+        "medianMs": 9.600000023841858,
+        "p95Ms": 12.300000011920929,
+        "p99Ms": 14.300000011920929,
+        "maxMs": 19.100000023841858
+      },
+      "gpu": {
+        "samples": 180,
+        "medianMs": 7.436288,
+        "p95Ms": 9.613312,
+        "p99Ms": 10.031104,
+        "maxMs": 14.810976
+      },
+      "over16_67Ms": 2,
+      "triangles": 1663351,
+      "calls": 898
+    },
+    "mountains": {
+      "method": "completed frames with gl.finish; no presentation/RAF timing",
+      "completed": {
+        "samples": 180,
+        "medianMs": 13.899999976158142,
+        "p95Ms": 16.900000035762787,
+        "p99Ms": 19.600000023841858,
+        "maxMs": 20
+      },
+      "submitted": {
+        "samples": 180,
+        "medianMs": 13.899999976158142,
+        "p95Ms": 16.900000035762787,
+        "p99Ms": 19.600000023841858,
+        "maxMs": 20
+      },
+      "gpu": {
+        "samples": 180,
+        "medianMs": 8.433664,
+        "p95Ms": 10.7488,
+        "p99Ms": 11.702176,
+        "maxMs": 13.14896
+      },
+      "over16_67Ms": 16,
+      "triangles": 1904769,
+      "calls": 1137
+    }
+  },
+  "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 3050 Laptop GPU (0x000025A2) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+  "source": {
+    "sha256": "ec34faabff7bc0642e172666e8df5606b6c56f0929bf4176e12274f5f419ab7a",
+    "files": 307
+  },
+  "version": "0.86.0",
+  "nativeElectron": true,
+  "viewport": {
+    "width": 1920,
+    "height": 1080
+  },
+  "uiCapture": "Not captured",
+  "sourceAfter": {
+    "sha256": "ec34faabff7bc0642e172666e8df5606b6c56f0929bf4176e12274f5f419ab7a",
+    "files": 307
+  }
+}

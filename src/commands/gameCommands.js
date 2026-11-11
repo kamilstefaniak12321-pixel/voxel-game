@@ -5568,13 +5568,13 @@ export const GAME_COMMANDS = [
             }
 
 
-            // Bloki i światło chunków (6 bajtów na komórkę: 2 numer bloku,
-            // 4 światło) - tego nie ma w "pamięci JS" przeglądarki.
+            // Bloki, światło i pionowe źródła światła nieba chunków —
+            // buforów TypedArray nie obejmuje zwykła "pamięć JS".
 
             let chunkBytes = 0;
 
             for (const chunk of world.chunks.values()) {
-                chunkBytes += chunk.blocks.byteLength + chunk.blocks.length * 4;
+                chunkBytes += chunk.blocks.byteLength + chunk.blocks.length * 4 + (chunk.skySources?.byteLength ?? 0);
             }
 
             const savedMemory = world.savedChunks.stats?.();

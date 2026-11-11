@@ -7,6 +7,7 @@ import { WATER_WAVE_GLSL } from './WaterWave.js';
 import { getSurfaceFaceTexture } from './SurfaceMaterials.js';
 import { blockSurfaceProfile } from './SurfaceProfiles.js';
 import { installSurfaceProfiles } from './LeafLighting.js';
+import { CANOPY_LIGHTING_GLSL } from './CanopyLighting.js';
 import { PINE_TRANSITION_TEXTURES, MOSS_CARPET_TEXTURES } from './SurfaceTextureVariants.js';
 
 
@@ -113,7 +114,7 @@ export const blockMaterial =
 // Działa tylko w WebGL2 (czyli w każdej współczesnej przeglądarce).
 // ------------------------------------------------------------
 
-blockMaterial.defaultAttributeValues = { ...blockMaterial.defaultAttributeValues, surfaceProfile: [0, 0] };
+blockMaterial.defaultAttributeValues = { ...blockMaterial.defaultAttributeValues, surfaceProfile: [0, 0], canopyTint: [1, 1, 1] };
 blockMaterial.onBeforeCompile = (shader, renderer) => {
     installSurfaceProfiles(shader);
     // Only terrain materials use this path. Hands and inventory have their
@@ -253,6 +254,8 @@ blockMaterial.onBeforeCompile = (shader, renderer) => {
                 varying vec3 vSkyDirection;
                 attribute vec4 tint;
                 attribute vec4 atmosphereLight;
+                attribute vec3 canopyTint;
+                varying vec3 vCanopyTint;
                 attribute float surfaceOcclusion;
                 attribute float surfaceEmission;
                 uniform float uAtmosphericLight;
@@ -275,6 +278,7 @@ blockMaterial.onBeforeCompile = (shader, renderer) => {
                     vColor = mix(vColor, atmosphereLight, uAtmosphericLight);
                 #endif
                 vSurfaceOcclusion = surfaceOcclusion;
+                vCanopyTint = canopyTint;
                 vSurfaceEmission = surfaceEmission;`
             )
             .replace(
@@ -300,6 +304,7 @@ blockMaterial.onBeforeCompile = (shader, renderer) => {
                 `#include <common>
                 varying vec3 vSkyDirection;
                 varying vec4 vTint;
+                varying vec3 vCanopyTint;
                 varying float vSurfaceOcclusion;
                 varying float vSurfaceEmission;
                 uniform float uFogBrightness;
@@ -310,6 +315,7 @@ blockMaterial.onBeforeCompile = (shader, renderer) => {
                 ${AERIAL_SKY_GLSL}
                 ${VIEW_GLSL}
                 ${SURFACE_LIGHTING_GLSL}
+                ${CANOPY_LIGHTING_GLSL}
 
                 #ifdef POTATO
                     varying vec3 vFogSky;
@@ -345,6 +351,14 @@ blockMaterial.onBeforeCompile = (shader, renderer) => {
                 #endif`
             );
 
+
+    // Only diffuse skylight receives the overhead foliage filter. Sun/moon
+    // shadow visibility, local colored lamps and emission retain their colors.
+    shader.fragmentShader = shader.fragmentShader.replace('#include <lights_fragment_end>', `
+        #if defined(RE_IndirectDiffuse)
+            irradiance *= canopySkyTint(vCanopyTint);
+        #endif
+        #include <lights_fragment_end>`);
 
     if (!renderer.capabilities.isWebGL2) {
         // Bez map cieni dostęp do nieba nadal tłumi światło naturalne.
@@ -461,7 +475,7 @@ export const plantMaterial =
 
 
 // Held items or small previews without animation data remain stationary.
-plantMaterial.defaultAttributeValues = { color: [1, 1, 1], uv: [0, 0], uv1: [0, 0], plantMotion: [0, 0], surfaceProfile: [0, 0] };
+plantMaterial.defaultAttributeValues = { color: [1, 1, 1], uv: [0, 0], uv1: [0, 0], plantMotion: [0, 0], surfaceProfile: [0, 0], canopyTint: [1, 1, 1] };
 
 plantMaterial.onBeforeCompile = (shader, renderer) => {
 
@@ -519,7 +533,7 @@ export const leafMaterial =
     });
 
 
-leafMaterial.defaultAttributeValues = { ...leafMaterial.defaultAttributeValues, surfaceProfile: [0, 0], plantMotion: [0, 0] };
+leafMaterial.defaultAttributeValues = { ...leafMaterial.defaultAttributeValues, surfaceProfile: [0, 0], plantMotion: [0, 0], canopyTint: [1, 1, 1] };
 leafMaterial.onBeforeCompile = (shader, renderer) => {
 
     // Szybkie liście (define FAST_LEAVES, bez alphaTest): prześwity
@@ -694,7 +708,7 @@ export const waterMaterial =
 // The existing chunk attribute doubles as water wave/face metadata. Defaults
 // also allow the empty prewarm geometry to compile this exact shader variant.
 waterMaterial.defaultAttributeValues = {
-    ...waterMaterial.defaultAttributeValues, plantMotion: [0, 1], surfaceProfile: [0, 0]
+    ...waterMaterial.defaultAttributeValues, plantMotion: [0, 1], surfaceProfile: [0, 0], canopyTint: [1, 1, 1]
 };
 
 waterMaterial.onBeforeCompile = (shader, renderer) => {

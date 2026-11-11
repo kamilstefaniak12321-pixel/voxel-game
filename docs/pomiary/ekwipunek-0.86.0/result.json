@@ -1,0 +1,217 @@
+{
+  "status": "passed",
+  "tests": [
+    "Trzy tekstury poprawnie zdekodowane",
+    "A/B i zapis: wood",
+    "A/B i zapis: light",
+    "Przeniesienie stosu, opis przedmiotu, wytwarzanie, księga, nowy układ ekwipunku",
+    "Kreatywny: 9 zakładek, 5 rzędów, pasek nad ramą",
+    "Wyszukiwanie kreatywne i przejście przez Lepidolit",
+    "Skrzynia: okno w strefie, wierzch i spód, Shift + klik",
+    "Menu główne: jasny tytuł, deski, rama i przycisk Gra po zakończeniu animacji",
+    "Wybór motywu w menu",
+    "Rozmiar ekwipunku:175% domyślnie,75–200%, trwały suwak, dopasowanie, rzeczywiste trafienia slotów i12 przegródek skrzyni, niezależnyHUD"
+  ],
+  "layouts": [
+    {
+      "name": "duzy-1080p",
+      "width": 1920,
+      "height": 1080,
+      "panel": {
+        "x": 471.75,
+        "y": 159.734375,
+        "width": 976.5,
+        "height": 767.25
+      },
+      "slots": 9
+    },
+    {
+      "name": "duzy-ksiega-1080p",
+      "width": 1920,
+      "height": 1080,
+      "panel": {
+        "x": 314.796875,
+        "y": 139.8125,
+        "width": 1290.40625,
+        "height": 829.1875
+      },
+      "slots": 9
+    },
+    {
+      "name": "laptop-1366",
+      "width": 1366,
+      "height": 768,
+      "panel": {
+        "x": 337.53125,
+        "y": 114.96875,
+        "width": 690.9375,
+        "height": 542.59375
+      },
+      "slots": 9
+    },
+    {
+      "name": "menu",
+      "view": "menu",
+      "title": "rgb(238, 232, 220)",
+      "panel": "grey-wood/planks",
+      "frame": "grey-wood/frame",
+      "opacity": "1",
+      "play": "grey-wood/board",
+      "playText": "rgb(38, 36, 32)"
+    },
+    {
+      "name": "ekwipunek",
+      "width": 1100,
+      "height": 900,
+      "panel": {
+        "x": 152.125,
+        "y": 130.078125,
+        "width": 795.75,
+        "height": 644.453125
+      },
+      "slots": 9
+    },
+    {
+      "name": "opis-przedmiotu",
+      "width": 1100,
+      "height": 900,
+      "panel": {
+        "x": 152.125,
+        "y": 130.078125,
+        "width": 795.75,
+        "height": 644.453125
+      },
+      "slots": 9
+    },
+    {
+      "name": "ksiega",
+      "width": 1366,
+      "height": 900,
+      "panel": {
+        "x": 187.90625,
+        "y": 113.734375,
+        "width": 990.171875,
+        "height": 677.359375
+      },
+      "slots": 9
+    },
+    {
+      "name": "kreatywny",
+      "width": 1100,
+      "height": 900,
+      "panel": {
+        "x": 134.171875,
+        "y": 133.203125,
+        "width": 831.65625,
+        "height": 641.0625
+      },
+      "slots": 9
+    },
+    {
+      "name": "skrzynia",
+      "width": 1100,
+      "height": 900,
+      "panel": {
+        "x": 152.125,
+        "y": 130.078125,
+        "width": 795.75,
+        "height": 644.453125
+      },
+      "slots": 9
+    },
+    {
+      "name": "telefon",
+      "width": 390,
+      "height": 844,
+      "panel": {
+        "x": 8,
+        "y": 212.671875,
+        "width": 374,
+        "height": 407
+      },
+      "slots": 9
+    },
+    {
+      "name": "telefon-ksiega",
+      "width": 390,
+      "height": 844,
+      "panel": {
+        "x": 8,
+        "y": 60.75,
+        "width": 374,
+        "height": 710.859375
+      },
+      "slots": 9
+    },
+    {
+      "name": "telefon-kreatywny",
+      "width": 390,
+      "height": 844,
+      "panel": {
+        "x": 8,
+        "y": 228.28125,
+        "width": 374,
+        "height": 394.59375
+      },
+      "slots": 9
+    },
+    {
+      "name": "niski-ekran",
+      "width": 844,
+      "height": 390,
+      "panel": {
+        "x": 18.5,
+        "y": 54.75,
+        "width": 807,
+        "height": 327.25
+      },
+      "slots": 9
+    },
+    {
+      "name": "ustawienia",
+      "view": "settings"
+    },
+    {
+      "name": "pasek",
+      "view": "hud"
+    }
+  ],
+  "scaleMeasurements": [
+    {
+      "style": "light",
+      "base": {
+        "width": 558,
+        "height": 538.59375,
+        "slot": 52
+      },
+      "large": {
+        "width": 976.5,
+        "height": 940.53125,
+        "slot": 91
+      },
+      "small": {
+        "width": 418.5,
+        "height": 401.9375,
+        "slot": 39
+      }
+    },
+    {
+      "style": "wood",
+      "base": {
+        "width": 606,
+        "height": 623.34375,
+        "slot": 52
+      },
+      "large": {
+        "width": 923.953125,
+        "height": 945.5,
+        "slot": 79.28125
+      },
+      "small": {
+        "width": 454.5,
+        "height": 465,
+        "slot": 39
+      }
+    }
+  ]
+}

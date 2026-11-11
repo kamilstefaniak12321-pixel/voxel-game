@@ -37,6 +37,7 @@ export async function checkDistantShadowRendering({ renderer, yieldBrowser }) {
     attribute(geometry, 'surfaceOcclusion', [1]); attribute(geometry, 'surfaceEmission', [0]);
     attribute(geometry, 'tint', [1, 1, 1, 1]);
     const nearMaterial = own(blockMaterial.clone()); nearMaterial.onBeforeCompile = blockMaterial.onBeforeCompile;
+    nearMaterial.defaultAttributeValues = structuredClone(blockMaterial.defaultAttributeValues);
     nearMaterial.map = white; nearMaterial.color.setRGB(.25, .25, .25); nearMaterial.defines = {};
     setShadowDefine([nearMaterial], true, true);
     const modelMaterial = own(createModelMaterial({ map: white })); modelMaterial.color.setRGB(.25, .25, .25);

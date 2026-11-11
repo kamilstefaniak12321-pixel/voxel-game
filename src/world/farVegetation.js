@@ -2,6 +2,7 @@ import { TREE_SPECIES } from '../blocks/trees.js';
 import { surfaceMaterialId } from '../rendering/SurfaceMaterials.js';
 import { seededRandom, treeShapeLimits, treeVisualDimensions } from './trees/TreeShapes.js';
 import { kindIndex, KINDS } from './farSamples.js';
+import { bakeFarCanopy } from './FarCanopy.js';
 
 // Fixed world positions, not camera-facing cards. The same tree seed/species
 // becomes a trunk and a small stepped crown; each successive tile spacing
@@ -335,6 +336,7 @@ export function appendFarVegetation(base, data, x0, z0, palette, albedoPalette, 
             }
         }
     }
-    return { positions, normals, colors, surfaceAlbedo, indices, shadowIndices,
+    bakeFarCanopy(positions, normals, surfaceAlbedo, data, boxes, x0, z0, albedoPalette);
+    return { positions, normals, colors, surfaceAlbedo, indices, shadowIndices, canopyPacked: true,
         vegetationStats: { trees, plants, boxes: boxes.length, triangles: faceCount * 2 } };
 }

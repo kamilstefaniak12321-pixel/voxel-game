@@ -53,7 +53,7 @@ ustawienia na telefonie i co jeszcze nie działa: `docs/telefon.md`.
 
 ## Testy poprawności
 
-`npm test` uruchamia po kolei 94 sprawdzenia z `tools/sprawdz_*.mjs` -
+`npm test` uruchamia po kolei 96 sprawdzeń z `tools/sprawdz_*.mjs` -
 od przedmiotów pod kursorem, łupów i przepisów, przez numery bloków,
 zapis świata, atlasy tekstur, drzewa, rośliny, wodę, wodospady
 i rzeki, po ekwipunek, skrzynię, cząsteczki drzew, diagnostykę

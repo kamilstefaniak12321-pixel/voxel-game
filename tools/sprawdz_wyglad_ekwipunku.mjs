@@ -37,6 +37,15 @@ const { Settings, SETTINGS_DEFAULTS, SETTINGS_CHOICES } = await import('../src/s
 assert.equal(SETTINGS_DEFAULTS.inventoryStyle, 'wood', 'domyślny wygląd ekwipunku to drewniany');
 assert.deepEqual(SETTINGS_CHOICES.inventoryStyle, ['wood', 'light']);
 assert.equal(new Settings().get('inventoryStyle'), 'wood');
+assert.equal(new Settings().get('inventoryScale'), 175, 'większy ekwipunek jest domyślny');
+withSaved({ revision: 2, hudScale: 130 });
+const oldSettings = new Settings();
+assert.equal(oldSettings.get('inventoryScale'), 175, 'stary zapis dostaje większy ekwipunek');
+assert.equal(oldSettings.get('hudScale'), 130, 'rozmiar HUD pozostaje niezależny');
+for (const [saved, expected] of [[75, 75], [100, 100], [200, 200], [500, 200], [-10, 75], ['bad', 175]]) {
+    withSaved({ revision: 2, inventoryScale: saved });
+    assert.equal(new Settings().get('inventoryScale'), expected, 'zapis i walidacja rozmiaru ekwipunku');
+}
 
 for (const [value, expected] of [['light', 'light'], ['wood', 'wood'], ['plastik', 'wood'], [3, 'wood'], [null, 'wood']]) {
     withSaved({ revision: 2, inventoryStyle: value });

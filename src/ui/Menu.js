@@ -1179,6 +1179,13 @@ export class Menu {
             return wrapper;
         }
 
+        if (key === 'inventoryScale') {
+            const wrapper = el('div', 'settings-inventory-scale');
+            wrapper.append(control, el('p', 'menu-note',
+                '100% to podstawowy rozmiar. Okno dopasowuje się do ekranu. Rozmiar paska ustawisz osobno.'));
+            return wrapper;
+        }
+
         if (ADVANCED_VIDEO.includes(key)) {
             control.dataset.setting = key;
         }

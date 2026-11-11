@@ -2,6 +2,10 @@
 // Beyond the overlap, FarTerrain keeps land, trees and vegetation in batches.
 export const FULL_TERRAIN_DISTANCE = 192;
 export const TERRAIN_TRANSITION_START = 144;
+// The coarse surface must already cover the background before detailed
+// geometry dissolves. Their silhouettes/positions differ, especially from
+// above tall trees; complementary masks alone can expose the sky.
+export const TERRAIN_UNDERLAY_BLEND = 32;
 export const DISTANCE_PLANT_VIEW = 192;
 export const DISTANCE_PLANT_PREFETCH = 224;
 export const DISTANCE_PLANT_RETAIN = 240;

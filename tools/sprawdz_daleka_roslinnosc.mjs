@@ -84,7 +84,10 @@ const palette=Uint8Array.from({length:KINDS.length*9},(_,i)=>(i*7+31)%256);
 const albedo=Uint8Array.from({length:SURFACE_MATERIAL_COUNT*18},(_,i)=>(i*11+19)%256);
 const base=meshFarTile(heights,kinds,cells,spacing,palette,createMeshScratch(cells),materialIds,albedo);
 const mesh=appendFarVegetation(base,raw,x0,z0,palette,albedo);
-equal(mesh.positions.subarray(0,base.positions.length),base.positions,'Ground vertices untouched');
+equal(mesh.positions.subarray(0,base.positions.length),base.positions,'Ground XYZ and shadow base untouched');
+equal(mesh.colors.subarray(0,base.colors.length),base.colors,'All ground color/curtain/water flags untouched');
+for(const attribute of ['normals','surfaceAlbedo'])equal(mesh[attribute].subarray(0,base[attribute].length).filter((_,i)=>i%4!==3),base[attribute].filter((_,i)=>i%4!==3),'Ground '+attribute+' XYZ/RGB bytes untouched');
+check(mesh.canopyPacked,'Canopy reuses normal padding and unused albedo alpha without another allocation');
 check(mesh.vegetationStats.trees>0&&mesh.indices.length>base.indices.length,'Tree proxies are in same terrain batch');
 equal(mesh.indices.length-base.indices.length,mesh.shadowIndices.length-base.shadowIndices.length,'All proxy surfaces have matching shadow geometry');
 check(mesh.indices.every(index=>index<mesh.positions.length/4),'All indices stay in range');
@@ -107,6 +110,25 @@ equal(packet.message.vegetation,raw,'Real worker uses the same deterministic veg
 equal(packet.message.mesh,mesh,'Real worker and fallback publish identical merged buffers');
 check(packet.transfer.includes(packet.message.vegetation.buffer),'Vegetation source transferred without cloning');
 delete globalThis.self;
+
+// The visible and shadow paths share their original position/shadowBase.
+// Canopy RGB555 must share the normal allocation, never replace position.w.
+const assembly=Object.assign(Object.create(FarTerrain.prototype),{modifiedChunksIn:()=>new Map(),shown:new Set(),shadowRevision:0});
+const assembled={x0,z0,cells,spacing,size:cells*spacing,workerMesh:structuredClone(mesh)};
+assembly.buildMesh(assembled);
+const attributes=assembled.mesh.geometry.attributes,shadowAttributes=assembled.geometryBundle.shadowGeometry.attributes;
+check(attributes.normal.isInterleavedBufferAttribute,'Far normal is an interleaved view');
+check(attributes.normal.data===attributes.canopyLow.data,'Canopy shares the normal GPU allocation');
+equal(attributes.normal.data.array,mesh.normals,'Interleaved upload preserves all packed normal/light bytes');
+equal(attributes.position.array,mesh.positions,'Position XYZ and shadowBase upload unchanged');
+check(shadowAttributes.shadowPosition===attributes.position&&shadowAttributes.shadowPosition.itemSize===4,'Shadow shader still receives all four original position components');
+check(shadowAttributes.normal===attributes.normal,'Shadow normal uses the same xyz view');
+const shader={uniforms:{},vertexShader:THREE.ShaderLib.lambert.vertexShader,fragmentShader:THREE.ShaderLib.lambert.fragmentShader};
+assembled.material.onBeforeCompile(shader);
+check(shader.vertexShader.includes('canopyLow + 128.0'),'Signed byte is explicitly restored during RGB555 decode');
+check(shader.vertexShader.includes('surfaceAlbedo.a > 0.5'),'Geometry without canopy keeps neutral alpha sentinel');
+check(shader.fragmentShader.includes('canopySkyTint(canopyHue)'),'Decoded canopy affects only indirect sky irradiance');
+assembled.mesh.geometry.dispose();assembled.geometryBundle.shadowGeometry.dispose();assembled.material.dispose();
 
 // Readiness is a geometry contract, never a distance-only guess.
 const world={chunks:new Map([['0,0',{cx:0,cz:0,mesh:{}}],['1,0',{cx:1,cz:0,mesh:{}}]]),meshVersion:1};

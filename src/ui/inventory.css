@@ -445,12 +445,16 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    width: var(--inv-slot-size);
-    height: var(--inv-slot-size);
+    width: var(--inv-pointer-size, var(--inv-slot-size));
+    height: var(--inv-pointer-size, var(--inv-slot-size));
     transform: translate(-50%, -50%);
     font-family: var(--ui-font, monospace);
     color: var(--inv-text);
     pointer-events: none;
+}
+
+.inv-cursor .inv-count {
+    font-size: max(15px, calc(var(--inv-pointer-size, var(--inv-slot-size)) * 0.34));
 }
 
 .inv-tooltip {

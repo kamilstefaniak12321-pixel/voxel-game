@@ -16,6 +16,7 @@ export function unpackCanopy(packed) {
 // Queries are shared on a 4 x 4 x 2 grid; no world-generator or voxel scans.
 export function createFarCanopySampler(data, boxes, palette) {
     const grid = 4, buckets = new Map(), cache = new Map(), seen = new Set();
+    const white = [1, 1, 1];
     for (const at of boxes) {
         const material = data[at + 6];
         if (!isLeavesId(material)) continue;
@@ -27,7 +28,7 @@ export function createFarCanopySampler(data, boxes, palette) {
             for (let gx = Math.floor(data[at] / grid); gx < Math.ceil(data[at + 3] / grid); gx++) {
                 const overlapX = Math.max(0, Math.min(data[at + 3], (gx + 1) * grid) - Math.max(data[at], gx * grid));
                 const overlapZ = Math.max(0, Math.min(data[at + 5], (gz + 1) * grid) - Math.max(data[at + 2], gz * grid));
-                const key = `${gx},${gz}`;
+                const key = (gx + 8192) + (gz + 8192) * 16384;
                 if (!buckets.has(key)) buckets.set(key, []);
                 buckets.get(key).push({ low: data[at + 1], high: data[at + 4], color,
                     coverage: overlapX * overlapZ / (grid * grid) });
@@ -35,10 +36,12 @@ export function createFarCanopySampler(data, boxes, palette) {
         }
     }
     function column(gx, gy, gz) {
-        const entries = buckets.get(`${gx},${gz}`);
-        if (!entries) return [1, 1, 1];
-        const key = `${gx},${gy},${gz}`;
-        if (cache.has(key)) return cache.get(key);
+        const columnKey = (gx + 8192) + (gz + 8192) * 16384;
+        const key = columnKey + gy * 268435456;
+        const cached = cache.get(key);
+        if (cached !== undefined) return cached;
+        const entries = buckets.get(columnKey);
+        if (!entries) { cache.set(key, white); return white; }
         const y = gy * 2, heights = [y];
         for (const entry of entries) if (entry.high > y) heights.push(Math.max(y, entry.low), entry.high);
         heights.sort((a, b) => a - b);
@@ -86,8 +89,17 @@ export function createFarCanopySampler(data, boxes, palette) {
 
 export function bakeFarCanopy(positions, normals, albedo, data, boxes, x0, z0, palette) {
     const sampler = createFarCanopySampler(data, boxes, palette);
+    const points = new Map();
     for (let p = 0; p < positions.length; p += 4) {
-        const packed = packCanopy(sampler.sample(x0 + positions[p], positions[p + 1], z0 + positions[p + 2]));
+        // All face corners are integer XYZ. Sampling already quantizes height
+        // to two blocks, so adjacent faces share exactly the same RGB555 result.
+        const x = x0 + positions[p], y = positions[p + 1], z = z0 + positions[p + 2];
+        const key = (x + 32768) + (z + 32768) * 65536 + Math.ceil(y / 2) * 4294967296;
+        let packed = points.get(key);
+        if (packed === undefined) {
+            packed = packCanopy(sampler.sample(x, y, z));
+            points.set(key, packed);
+        }
         normals[p + 3] = (packed % 256) - 128;
         albedo[p + 3] = Math.floor(packed / 256);
     }

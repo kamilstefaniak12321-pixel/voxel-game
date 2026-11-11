@@ -2,10 +2,16 @@
 // Light/Chunk from main 0.85.0; all fixtures and timing boundaries are identical.
 import { registerHooks } from 'node:module';
 import { execFileSync } from 'node:child_process';
+import { readFileSync } from 'node:fs';
+import { createHash } from 'node:crypto';
 const baseline = process.env.VOXEL_FOREST_BASELINE === '1';
+const reference = process.env.VOXEL_FOREST_REFERENCE === '1';
 registerHooks({
     resolve(s, c, next) { return next(s === 'three' ? new URL('../lib/three/three.module.js', import.meta.url).href : s, c); },
     load(url, c, next) {
+        const referenceName = ['CanopyLighting', 'FarCanopy'].find(name => url.endsWith(`/${name}.js`));
+        if (reference && referenceName) return { format: 'module', shortCircuit: true,
+            source: readFileSync(new URL(`../test-results/canopy-reference/${referenceName}.js`, import.meta.url), 'utf8') };
         const file = ['Light', 'Chunk', 'farVegetation'].find(name => url.endsWith(`/src/world/${name}.js`));
         if (baseline && file) return { format: 'module', shortCircuit: true,
             source: execFileSync('git', ['show', `6828676:src/world/${file}.js`], { encoding: 'utf8' }) };
@@ -29,10 +35,15 @@ const stats = values => {
     values.sort((a, b) => a - b);
     return { medianMs: values[Math.floor(values.length / 2)], p95Ms: values[Math.floor(values.length * .95)] };
 };
+const digest = arrays => {
+    const hash = createHash('sha256');
+    for (const [name, array] of arrays) hash.update(name).update(new Uint8Array(array.buffer, array.byteOffset, array.byteLength));
+    return hash.digest('hex');
+};
 const scenarios = [];
 for (const leafLayers of [0, 6]) {
     const init = [], edit = [], meshing = [];
-    let vertices = 0, canopyBytes = 0;
+    let vertices = 0, canopyBytes = 0, geometrySha256;
     for (let run = 0; run < 14; run++) {
         const chunks = new Map();
         const world = { getChunk: (x, z) => chunks.get(`${x},${z}`), experiments: {}, getGrassDetail: () => 0 };
@@ -60,10 +71,11 @@ for (const leafLayers of [0, 6]) {
         const meshMs = performance.now() - meshStart;
         vertices = geometry.getAttribute('position').count;
         canopyBytes = geometry.getAttribute('canopyTint')?.array.byteLength ?? 0;
+        if (run === 13) geometrySha256 = digest([...Object.entries(geometry.attributes).map(([name, value]) => [name, value.array]), ['index', geometry.index.array]]);
         geometry.dispose();
         if (run >= 4) { init.push(initMs); edit.push(editMs); meshing.push(meshMs); }
     }
-    scenarios.push({ leafLayers, initPerChunk: stats(init), singleRoofEdit: stats(edit), meshPerChunk: stats(meshing), vertices, canopyBytes });
+    scenarios.push({ leafLayers, initPerChunk: stats(init), singleRoofEdit: stats(edit), meshPerChunk: stats(meshing), vertices, canopyBytes, geometrySha256 });
 }
 const { RealisticGenerator } = await import('../src/world/terrain/RealisticGenerator.js');
 const { createFarVegetationJob, appendFarVegetation } = await import('../src/world/farVegetation.js');
@@ -75,11 +87,12 @@ sampleFarTile(generator, x0, z0, spacing, cells, heights, kinds, 0, width, mater
 const vegetation = createFarVegetationJob(generator, x0, z0, cells * spacing, spacing, heights, kinds, cells).step().data;
 const palette = new Uint8Array(KINDS.length * 9).fill(160), albedo = new Uint8Array(SURFACE_MATERIAL_COUNT * 18).fill(160);
 const base = meshFarTile(heights, kinds, cells, spacing, palette, createMeshScratch(cells), materials, albedo), append = [];
-let farVertices = 0;
+let farVertices = 0, farGeometrySha256;
 for (let run = 0; run < 14; run++) {
     const start = performance.now(), mesh = appendFarVegetation(base, vegetation, x0, z0, palette, albedo);
     if (run >= 4) append.push(performance.now() - start);
     farVertices = mesh.positions.length / 4;
+    if (run === 13) farGeometrySha256 = digest(Object.entries(mesh).filter(([, value]) => ArrayBuffer.isView(value)));
 }
-console.log(JSON.stringify({ baseline, node: process.version, skySourceBytesPerChunk: baseline ? 0 : 32768, scenarios,
-    farTile: { vertices: farVertices, boxes: vegetation.length / 12, append: stats(append), additionalGpuBytes: 0 } }, null, 2));
+console.log(JSON.stringify({ baseline, reference, node: process.version, skySourceBytesPerChunk: baseline ? 0 : 32768, scenarios,
+    farTile: { vertices: farVertices, boxes: vegetation.length / 12, append: stats(append), additionalGpuBytes: 0, geometrySha256: farGeometrySha256 } }, null, 2));

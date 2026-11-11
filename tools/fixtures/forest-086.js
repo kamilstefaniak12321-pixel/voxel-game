@@ -81,21 +81,27 @@ export async function run() {
     async function benchmark() {
         const gl = renderer.getContext();
         renderer.setSize(1920, 1080); game.resize(1920, 1080);
-        const values = [];
-        for (let frame = 0; frame < 360; frame++) {
-            const start = performance.now();
-            game.update(1 / 60); game.camera.position.set(...eye); game.camera.lookAt(...target);
-            game.render(); gl.finish();
-            if (frame >= 60) values.push(performance.now() - start);
-            await pause();
+        for (const effects of [false, true]) {
+            const effectSettings = { lightShafts: effects, bounceLight: effects, plantWind: effects,
+                fallingLeaves: effects, windStreaks: effects };
+            for (const [key, value] of Object.entries(effectSettings)) settings.set(key, value);
+            const values = [];
+            for (let frame = 0; frame < 360; frame++) {
+                const start = performance.now();
+                game.update(1 / 60); game.camera.position.set(...eye); game.camera.lookAt(...target);
+                game.render(); gl.finish();
+                if (frame >= 60) values.push(performance.now() - start);
+                await pause();
+            }
+            const sorted = [...values].sort((a, b) => a - b);
+            performanceSamples.push({ effects, frames: values.length, resolution: [1920, 1080],
+                frameWorkMs: { mean: values.reduce((a, b) => a + b, 0) / values.length,
+                    median: sorted[Math.floor(sorted.length * .5)], p95: sorted[Math.floor(sorted.length * .95)], max: sorted.at(-1) },
+                method: 'Unpaced Game.update + render + gl.finish; loaded natural world, hidden native window',
+                presentedFpsMeasured: false, quality: { ...quality, ...effectSettings }, eye, target,
+                chunks: game.world.chunks.size, far: game.farTerrain.stats(),
+                triangles: renderer.info.render.triangles, calls: renderer.info.render.calls });
         }
-        const sorted = [...values].sort((a, b) => a - b);
-        performanceSamples.push({ frames: values.length, resolution: [1920, 1080],
-            frameWorkMs: { mean: values.reduce((a, b) => a + b, 0) / values.length,
-                median: sorted[Math.floor(sorted.length * .5)], p95: sorted[Math.floor(sorted.length * .95)], max: sorted.at(-1) },
-            method: 'Unpaced Game.update + render + gl.finish; loaded natural world, hidden native window',
-            presentedFpsMeasured: false, quality, eye, target, chunks: game.world.chunks.size,
-            far: game.farTerrain.stats(), triangles: renderer.info.render.triangles, calls: renderer.info.render.calls });
         check(gl.getError() === gl.NO_ERROR, '1080p benchmark: no WebGL error');
         renderer.setSize(width, height); game.resize(width, height);
     }

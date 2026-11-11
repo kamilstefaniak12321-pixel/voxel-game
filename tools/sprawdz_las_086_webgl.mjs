@@ -6,7 +6,7 @@ import { readFile, readdir, mkdir, mkdtemp, rm, writeFile } from 'node:fs/promis
 import { resolve, extname, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { tmpdir } from 'node:os';
-import { spawn } from 'node:child_process';
+import { spawn, execFileSync } from 'node:child_process';
 import { once } from 'node:events';
 import { createHash } from 'node:crypto';
 
@@ -57,6 +57,10 @@ const server = createServer(async (req, res) => {
         if (pathname === '/tools/fixtures/forest-086.js') {
             res.setHeader('Content-Type', 'text/javascript');
             res.end(await readFile(resolve(ownRoot, 'tools/fixtures', fixture))); return;
+        }
+        if (pathname === '/src/world/BaselineLight.js' && fixture === 'forest-light-086.js') {
+            res.setHeader('Content-Type', 'text/javascript');
+            res.end(execFileSync('git', ['show', '6828676:src/world/Light.js'], { cwd: ownRoot, encoding: 'utf8' })); return;
         }
         const path = resolve(root, '.' + pathname);
         if (!path.startsWith(root.endsWith(sep) ? root : root + sep)) { res.writeHead(403).end(); return; }

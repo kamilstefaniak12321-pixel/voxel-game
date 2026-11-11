@@ -1,0 +1,593 @@
+{
+  "checks": [
+    "Actual forest chunks loaded",
+    "Far terrain has visible geometry",
+    "Far terrain finished loading",
+    "high-overview: no WebGL error",
+    "high-overview: shaders compiled",
+    "high-mask: no WebGL error",
+    "high-mask: shaders compiled",
+    "high-side: no WebGL error",
+    "high-side: shaders compiled",
+    "high-mask-side: no WebGL error",
+    "high-mask-side: shaders compiled",
+    "1080p benchmark: no WebGL error"
+  ],
+  "errors": [],
+  "captures": [
+    {
+      "name": "high-overview",
+      "eye": [
+        4762,
+        132,
+        -4750
+      ],
+      "target": [
+        4810,
+        47,
+        -4945
+      ],
+      "uncoveredSkyPixels": null,
+      "triangles": 1445383,
+      "calls": 700,
+      "lod": 1,
+      "far": {
+        "active": true,
+        "shown": 542,
+        "wanted": 542,
+        "missing": 0,
+        "cached": 564,
+        "triangles": 1820834,
+        "vegetationBySpacing": {
+          "1": {
+            "trees": 2721,
+            "plants": 2355,
+            "boxes": 13478,
+            "triangles": 153208
+          },
+          "2": {
+            "trees": 6810,
+            "plants": 6959,
+            "boxes": 34700,
+            "triangles": 391192
+          },
+          "4": {
+            "trees": 13503,
+            "plants": 4274,
+            "boxes": 45957,
+            "triangles": 536108
+          },
+          "8": {
+            "trees": 11850,
+            "plants": 805,
+            "boxes": 24998,
+            "triangles": 297036
+          }
+        },
+        "transitioningTiles": 0,
+        "shadowRevision": 1075,
+        "profile": "game",
+        "detailDistance": 800,
+        "detailTiers": [
+          {
+            "distance": 256,
+            "spacing": 1
+          },
+          {
+            "distance": 448,
+            "spacing": 2
+          },
+          {
+            "distance": 800,
+            "spacing": 4
+          }
+        ],
+        "maxDistance": null,
+        "targetSpacing": 4,
+        "lodWithinTarget": {
+          "1": 242,
+          "2": 150,
+          "4": 97
+        },
+        "workers": 3
+      }
+    },
+    {
+      "name": "high-mask",
+      "eye": [
+        4762,
+        132,
+        -4750
+      ],
+      "target": [
+        4810,
+        47,
+        -4945
+      ],
+      "uncoveredSkyPixels": 0,
+      "triangles": 1443173,
+      "calls": 698,
+      "lod": 1,
+      "far": {
+        "active": true,
+        "shown": 542,
+        "wanted": 542,
+        "missing": 0,
+        "cached": 564,
+        "triangles": 1820834,
+        "vegetationBySpacing": {
+          "1": {
+            "trees": 2721,
+            "plants": 2355,
+            "boxes": 13478,
+            "triangles": 153208
+          },
+          "2": {
+            "trees": 6810,
+            "plants": 6959,
+            "boxes": 34700,
+            "triangles": 391192
+          },
+          "4": {
+            "trees": 13503,
+            "plants": 4274,
+            "boxes": 45957,
+            "triangles": 536108
+          },
+          "8": {
+            "trees": 11850,
+            "plants": 805,
+            "boxes": 24998,
+            "triangles": 297036
+          }
+        },
+        "transitioningTiles": 0,
+        "shadowRevision": 1075,
+        "profile": "game",
+        "detailDistance": 800,
+        "detailTiers": [
+          {
+            "distance": 256,
+            "spacing": 1
+          },
+          {
+            "distance": 448,
+            "spacing": 2
+          },
+          {
+            "distance": 800,
+            "spacing": 4
+          }
+        ],
+        "maxDistance": null,
+        "targetSpacing": 4,
+        "lodWithinTarget": {
+          "1": 242,
+          "2": 150,
+          "4": 97
+        },
+        "workers": 3
+      }
+    },
+    {
+      "name": "high-side",
+      "eye": [
+        4762,
+        148,
+        -4750
+      ],
+      "target": [
+        4930,
+        48,
+        -4790
+      ],
+      "uncoveredSkyPixels": null,
+      "triangles": 1399335,
+      "calls": 770,
+      "lod": 1,
+      "far": {
+        "active": true,
+        "shown": 542,
+        "wanted": 542,
+        "missing": 0,
+        "cached": 564,
+        "triangles": 1820834,
+        "vegetationBySpacing": {
+          "1": {
+            "trees": 2721,
+            "plants": 2355,
+            "boxes": 13478,
+            "triangles": 153208
+          },
+          "2": {
+            "trees": 6810,
+            "plants": 6959,
+            "boxes": 34700,
+            "triangles": 391192
+          },
+          "4": {
+            "trees": 13503,
+            "plants": 4274,
+            "boxes": 45957,
+            "triangles": 536108
+          },
+          "8": {
+            "trees": 11850,
+            "plants": 805,
+            "boxes": 24998,
+            "triangles": 297036
+          }
+        },
+        "transitioningTiles": 0,
+        "shadowRevision": 1075,
+        "profile": "game",
+        "detailDistance": 800,
+        "detailTiers": [
+          {
+            "distance": 256,
+            "spacing": 1
+          },
+          {
+            "distance": 448,
+            "spacing": 2
+          },
+          {
+            "distance": 800,
+            "spacing": 4
+          }
+        ],
+        "maxDistance": null,
+        "targetSpacing": 4,
+        "lodWithinTarget": {
+          "1": 242,
+          "2": 150,
+          "4": 97
+        },
+        "workers": 3
+      }
+    },
+    {
+      "name": "high-mask-side",
+      "eye": [
+        4762,
+        148,
+        -4750
+      ],
+      "target": [
+        4930,
+        48,
+        -4790
+      ],
+      "uncoveredSkyPixels": 0,
+      "triangles": 1397125,
+      "calls": 768,
+      "lod": 1,
+      "far": {
+        "active": true,
+        "shown": 542,
+        "wanted": 542,
+        "missing": 0,
+        "cached": 564,
+        "triangles": 1820834,
+        "vegetationBySpacing": {
+          "1": {
+            "trees": 2721,
+            "plants": 2355,
+            "boxes": 13478,
+            "triangles": 153208
+          },
+          "2": {
+            "trees": 6810,
+            "plants": 6959,
+            "boxes": 34700,
+            "triangles": 391192
+          },
+          "4": {
+            "trees": 13503,
+            "plants": 4274,
+            "boxes": 45957,
+            "triangles": 536108
+          },
+          "8": {
+            "trees": 11850,
+            "plants": 805,
+            "boxes": 24998,
+            "triangles": 297036
+          }
+        },
+        "transitioningTiles": 0,
+        "shadowRevision": 1075,
+        "profile": "game",
+        "detailDistance": 800,
+        "detailTiers": [
+          {
+            "distance": 256,
+            "spacing": 1
+          },
+          {
+            "distance": 448,
+            "spacing": 2
+          },
+          {
+            "distance": 800,
+            "spacing": 4
+          }
+        ],
+        "maxDistance": null,
+        "targetSpacing": 4,
+        "lodWithinTarget": {
+          "1": 242,
+          "2": 150,
+          "4": 97
+        },
+        "workers": 3
+      }
+    }
+  ],
+  "performanceSamples": [
+    {
+      "effects": false,
+      "frames": 300,
+      "resolution": [
+        1920,
+        1080
+      ],
+      "frameWorkMs": {
+        "mean": 6.154999998609225,
+        "median": 5.800000011920929,
+        "p95": 8.099999964237213,
+        "max": 9.899999976158142
+      },
+      "method": "Unpaced Game.update + render + gl.finish; loaded natural world, hidden native window",
+      "presentedFpsMeasured": false,
+      "quality": {
+        "viewDistance": 800,
+        "farTerrain": 1024,
+        "farDetail": 2,
+        "loadBudget": 10,
+        "meteorites": false,
+        "lightShafts": false,
+        "bounceLight": false,
+        "showHand": false,
+        "shadows": 3,
+        "cloudCover": 0,
+        "lightingModel": "world",
+        "lightingLook": "natural",
+        "viewBobbing": false,
+        "volumeMusic": 0,
+        "leafModel": "parts",
+        "fancyLeaves": true,
+        "plantWind": false,
+        "plantModels": "semi",
+        "fov": 70,
+        "renderScale": 100,
+        "fallingLeaves": false,
+        "windStreaks": false,
+        "performanceLogs": false
+      },
+      "eye": [
+        4762,
+        132,
+        -4750
+      ],
+      "target": [
+        4810,
+        47,
+        -4945
+      ],
+      "chunks": 613,
+      "far": {
+        "active": true,
+        "shown": 542,
+        "wanted": 542,
+        "missing": 0,
+        "cached": 564,
+        "triangles": 1820834,
+        "vegetationBySpacing": {
+          "1": {
+            "trees": 2721,
+            "plants": 2355,
+            "boxes": 13478,
+            "triangles": 153208
+          },
+          "2": {
+            "trees": 6810,
+            "plants": 6959,
+            "boxes": 34700,
+            "triangles": 391192
+          },
+          "4": {
+            "trees": 13503,
+            "plants": 4274,
+            "boxes": 45957,
+            "triangles": 536108
+          },
+          "8": {
+            "trees": 11850,
+            "plants": 805,
+            "boxes": 24998,
+            "triangles": 297036
+          }
+        },
+        "transitioningTiles": 0,
+        "shadowRevision": 1075,
+        "profile": "game",
+        "detailDistance": 800,
+        "detailTiers": [
+          {
+            "distance": 256,
+            "spacing": 1
+          },
+          {
+            "distance": 448,
+            "spacing": 2
+          },
+          {
+            "distance": 800,
+            "spacing": 4
+          }
+        ],
+        "maxDistance": null,
+        "targetSpacing": 4,
+        "lodWithinTarget": {
+          "1": 242,
+          "2": 150,
+          "4": 97
+        },
+        "workers": 3
+      },
+      "triangles": 1477617,
+      "calls": 720
+    },
+    {
+      "effects": true,
+      "frames": 300,
+      "resolution": [
+        1920,
+        1080
+      ],
+      "frameWorkMs": {
+        "mean": 7.9560000006357825,
+        "median": 8.100000023841858,
+        "p95": 9.800000011920929,
+        "max": 14
+      },
+      "method": "Unpaced Game.update + render + gl.finish; loaded natural world, hidden native window",
+      "presentedFpsMeasured": false,
+      "quality": {
+        "viewDistance": 800,
+        "farTerrain": 1024,
+        "farDetail": 2,
+        "loadBudget": 10,
+        "meteorites": false,
+        "lightShafts": true,
+        "bounceLight": true,
+        "showHand": false,
+        "shadows": 3,
+        "cloudCover": 0,
+        "lightingModel": "world",
+        "lightingLook": "natural",
+        "viewBobbing": false,
+        "volumeMusic": 0,
+        "leafModel": "parts",
+        "fancyLeaves": true,
+        "plantWind": true,
+        "plantModels": "semi",
+        "fov": 70,
+        "renderScale": 100,
+        "fallingLeaves": true,
+        "windStreaks": true,
+        "performanceLogs": false
+      },
+      "eye": [
+        4762,
+        132,
+        -4750
+      ],
+      "target": [
+        4810,
+        47,
+        -4945
+      ],
+      "chunks": 613,
+      "far": {
+        "active": true,
+        "shown": 542,
+        "wanted": 542,
+        "missing": 0,
+        "cached": 564,
+        "triangles": 1820834,
+        "vegetationBySpacing": {
+          "1": {
+            "trees": 2721,
+            "plants": 2355,
+            "boxes": 13478,
+            "triangles": 153208
+          },
+          "2": {
+            "trees": 6810,
+            "plants": 6959,
+            "boxes": 34700,
+            "triangles": 391192
+          },
+          "4": {
+            "trees": 13503,
+            "plants": 4274,
+            "boxes": 45957,
+            "triangles": 536108
+          },
+          "8": {
+            "trees": 11850,
+            "plants": 805,
+            "boxes": 24998,
+            "triangles": 297036
+          }
+        },
+        "transitioningTiles": 0,
+        "shadowRevision": 1075,
+        "profile": "game",
+        "detailDistance": 800,
+        "detailTiers": [
+          {
+            "distance": 256,
+            "spacing": 1
+          },
+          {
+            "distance": 448,
+            "spacing": 2
+          },
+          {
+            "distance": 800,
+            "spacing": 4
+          }
+        ],
+        "maxDistance": null,
+        "targetSpacing": 4,
+        "lodWithinTarget": {
+          "1": 242,
+          "2": 150,
+          "4": 97
+        },
+        "workers": 3
+      },
+      "triangles": 1477795,
+      "calls": 726
+    }
+  ],
+  "resolution": [
+    1280,
+    800
+  ],
+  "quality": {
+    "viewDistance": 800,
+    "farTerrain": 1024,
+    "farDetail": 2,
+    "loadBudget": 10,
+    "meteorites": false,
+    "lightShafts": false,
+    "bounceLight": false,
+    "showHand": false,
+    "shadows": 3,
+    "cloudCover": 0,
+    "lightingModel": "world",
+    "lightingLook": "natural",
+    "viewBobbing": false,
+    "volumeMusic": 0,
+    "leafModel": "parts",
+    "fancyLeaves": true,
+    "plantWind": false,
+    "plantModels": "semi",
+    "fov": 70,
+    "renderScale": 100,
+    "fallingLeaves": false,
+    "windStreaks": false,
+    "performanceLogs": false
+  },
+  "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 3050 Laptop GPU (0x000025A2) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+  "source": {
+    "sha256": "6142655460dcff8678615ef94f9cc3a74cadd659a7c5767f3dc7372781bfa9c5",
+    "files": 307
+  },
+  "version": "0.86.0",
+  "nativeElectron": true
+}

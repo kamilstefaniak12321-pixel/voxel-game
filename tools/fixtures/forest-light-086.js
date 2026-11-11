@@ -10,7 +10,9 @@ export async function run() {
     const { Game } = await import('/src/game/Game.js');
     const { Settings } = await import('/src/settings/Settings.js');
     const { createWorldInfo } = await import('/src/storage/WorldStorage.js');
-    const { getBlockId, isLeavesId, isOpaqueId } = await import('/src/blocks/BlockRegistry.js');
+    const { isLeavesId, isOpaqueId } = await import('/src/blocks/BlockRegistry.js');
+    const { Chunk } = await import('/src/world/Chunk.js');
+    const { LightEngine: BaselineLight } = await import('/src/world/BaselineLight.js');
     const { lightingUniforms } = await import('/src/rendering/LightingDiagnostics.js');
     const width = 1280, height = 800;
     const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
@@ -29,6 +31,23 @@ export async function run() {
     const pause = () => new Promise(resolve => setTimeout(resolve, 0));
     game.player.pos.set(4762, 60, -4750);
     for (let frame = 0; frame < 500; frame++) { game.update(0); if (frame % 30 === 0) game.render(); await pause(); }
+    // Choose the same natural location in A/B using the real 0.85 transport.
+    // A dense overhead crown alone is insufficient: a nearby clearing can
+    // already supply enough lateral light, masking the original defect.
+    const priorChunks = new Map();
+    const priorWorld = { getChunk: (x, z) => priorChunks.get(`${x},${z}`) };
+    for (let cz = -301; cz <= -293; cz++) for (let cx = 293; cx <= 301; cx++) {
+        const original = game.world.getChunk(cx, cz);
+        if (!original) continue;
+        const chunk = new Chunk(cx, cz); chunk.blocks = original.blocks; chunk.maxY = original.maxY;
+        priorChunks.set(`${cx},${cz}`, chunk);
+    }
+    for (const chunk of priorChunks.values()) {
+        chunk.west = priorWorld.getChunk(chunk.cx - 1, chunk.cz) ?? null; chunk.east = priorWorld.getChunk(chunk.cx + 1, chunk.cz) ?? null;
+        chunk.north = priorWorld.getChunk(chunk.cx, chunk.cz - 1) ?? null; chunk.south = priorWorld.getChunk(chunk.cx, chunk.cz + 1) ?? null;
+    }
+    const priorLight = new BaselineLight(priorWorld);
+    for (const chunk of priorChunks.values()) priorLight.initChunk(chunk);
     let candidate = null;
     for (let z = -4780; z <= -4720; z++) for (let x = 4732; x <= 4792; x++) {
         let layers = 0, lowestLeaf = 128;
@@ -36,12 +55,17 @@ export async function run() {
             const id = game.world.getBlockId(x, y, z);
             if (isLeavesId(id)) { layers++; lowestLeaf = y; }
             else if (isOpaqueId(id)) {
-                if (layers >= 3 && lowestLeaf > y + 8 && !game.world.getBlockId(x, y + 1, z) &&
-                    (!candidate || layers > candidate.layers)) candidate = { x, y, z, layers, lowestLeaf };
+                if (layers >= 3 && lowestLeaf > y + 8 && y < 65 && !game.world.getBlockId(x, y + 1, z)) {
+                    const baselineSky = priorLight.getLight(x, y + 2, z).sky;
+                    const predictedSky = Math.round(15 * (.72 * .9 ** (layers - 1)) ** (1 / 2.64));
+                    const score = predictedSky - baselineSky + (lowestLeaf - y) * .001;
+                    if (!candidate || score > candidate.score) candidate = { x, y, z, layers, lowestLeaf, baselineSky, predictedSky, score };
+                }
                 break;
             }
         }
     }
+    priorChunks.clear();
     check(candidate, 'Found genuine generated forest with tall multi-layer crown');
     const eye = [candidate.x + .5, candidate.y + 2.6, candidate.z + .5];
     const target = [eye[0] + 12, eye[1] - .8, eye[2] - 20];

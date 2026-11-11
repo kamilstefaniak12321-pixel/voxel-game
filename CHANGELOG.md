@@ -13,7 +13,7 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ## 0.86.0 - Światło lasu, nowe żywe menu i większy ekwipunek
 
-Cztery poprawki według zrzutów Kamila — PR do uzupełnienia.
+Cztery poprawki według zrzutów Kamila — PR #125.
 
 - Światło nieba przechodzi przez korony z tłumieniem zależnym od liczby
   warstw liści. Powietrze między wysoką koroną a ziemią nie wygasza go

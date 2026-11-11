@@ -1,0 +1,80 @@
+{
+  "checks": [
+    "Found genuine generated forest with tall multi-layer crown",
+    "day-tint-on: under-canopy SKY is filtered (baseline may be zero)",
+    "day-tint-on: no WebGL error",
+    "day-tint-on: shaders compiled"
+  ],
+  "errors": [],
+  "captures": [
+    {
+      "name": "day-tint-on",
+      "eye": [
+        4743.5,
+        55.6,
+        -4763.5
+      ],
+      "target": [
+        4755.5,
+        54.800000000000004,
+        -4783.5
+      ],
+      "candidate": {
+        "x": 4743,
+        "y": 53,
+        "z": -4764,
+        "layers": 9,
+        "lowestLeaf": 62,
+        "baselineSky": 0,
+        "predictedSky": 10,
+        "score": 10.009
+      },
+      "light": {
+        "sky": 0,
+        "red": 0,
+        "green": 0,
+        "blue": 0
+      },
+      "lowerCenterRgb": [
+        0.028984375,
+        0.10065625,
+        0.0061640625
+      ],
+      "triangles": 1133503,
+      "calls": 459
+    }
+  ],
+  "resolution": [
+    1280,
+    800
+  ],
+  "quality": {
+    "viewDistance": 128,
+    "farTerrain": 1024,
+    "farDetail": 2,
+    "loadBudget": 12,
+    "meteorites": false,
+    "lightShafts": false,
+    "bounceLight": false,
+    "showHand": false,
+    "shadows": 3,
+    "cloudCover": 0,
+    "lightingModel": "world",
+    "lightingLook": "natural",
+    "viewBobbing": false,
+    "volumeMusic": 0,
+    "leafModel": "parts",
+    "fancyLeaves": true,
+    "plantWind": false,
+    "fallingLeaves": false,
+    "windStreaks": false,
+    "performanceLogs": false
+  },
+  "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 3050 Laptop GPU (0x000025A2) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+  "source": {
+    "sha256": "a33bb072d6ed4ec8becb9a7a10b25b5edb03473adad589644acf98e519e35aa7",
+    "files": 303
+  },
+  "version": "0.85.0",
+  "nativeElectron": true
+}

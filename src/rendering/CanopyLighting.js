@@ -17,42 +17,50 @@ export function leafCanopyColor(id, climate = [1, 1, 1]) {
             tinted: definition?.tint === true };
         if (average) materials.set(id, material);
     }
-    return material.color.map((value, channel) => value * (material.tinted ? climate[channel] : 1));
+    return material.tinted ? material.color.map((value, channel) => value * climate[channel]) : material.color;
 }
 
 // Transient column cache: used by one geometry job, then discarded. No scans
 // occur in the render loop and no retained per-world color volume is needed.
-export function createCanopySampler(world, colorOfLeaf = leafCanopyColor) {
+export function createCanopySampler(world, colorOfLeaf = leafCanopyColor, center = null) {
     const columns = new Map();
+    const width = S + 16, minX = (center?.cx ?? 0) * S - 8, minZ = (center?.cz ?? 0) * S - 8;
+    const local = center ? new Array(width * width) : null;
     function column(x, z) {
-        const key = `${x},${z}`;
-        if (columns.has(key)) return columns.get(key);
+        // World coordinates stay within +/-30000. This exact integer key also
+        // covers the mesher's border columns, without allocating strings.
+        const key = (x + 32768) + (z + 32768) * 65536;
+        const ox = x - minX, oz = z - minZ;
+        const localIndex = local && ox >= 0 && ox < width && oz >= 0 && oz < width ? oz * width + ox : -1;
+        const cached = localIndex >= 0 ? local[localIndex] : columns.get(key);
+        if (cached !== undefined) return cached;
         const cx = Math.floor(x / S), cz = Math.floor(z / S);
         const chunk = world.getChunk(cx, cz);
-        if (!chunk) { columns.set(key, null); return null; }
+        if (!chunk) { if (localIndex >= 0) local[localIndex] = null; else columns.set(key, null); return null; }
         const lx = x - cx * S, lz = z - cz * S, at = lz * S + lx;
         const climate = [1, 1, 1], grid = chunk.tint;
         if (grid) for (let c = 0; c < 3; c++) {
             const p = (lz * (S + 1) + lx) * 3 + c;
             climate[c] = (grid[p] + grid[p + 3] + grid[p + (S + 1) * 3] + grid[p + (S + 2) * 3]) / (4 * 128);
         }
-        let result = null, layers = 0;
+        let result = null, layers = 0, filter = null;
         const sum = [0, 0, 0];
         for (let y = Math.min(H, chunk.maxY) - 1; y >= 0; y--) {
             const id = chunk.blocks[y * LAYER + at];
             if (isOpaqueId(id)) break;
             if (layers) {
-                const filter = canopyTint(sum);
-                for (let c = 0; c < 3; c++) result[y * 3 + c] = Math.round(filter[c] * 255);
+                for (let c = 0; c < 3; c++) result[y * 3 + c] = filter[c];
             }
             if (isLeavesId(id)) {
                 if (!result) result = new Uint8Array(H * 3).fill(255);
                 const color = colorOfLeaf(id, climate);
                 for (let c = 0; c < 3; c++) sum[c] += color[c];
+                filter = canopyTint(sum).map(value => Math.round(value * 255));
                 layers++;
             }
         }
-        columns.set(key, result);
+        if (localIndex >= 0) local[localIndex] = result;
+        else columns.set(key, result);
         return result;
     }
     const result = new Float32Array(3);
@@ -72,7 +80,7 @@ export function createCanopySampler(world, colorOfLeaf = leafCanopyColor) {
             }
             return result;
         },
-        get columns() { return columns.size; }
+        get columns() { return columns.size + (local?.filter(value => value !== undefined).length ?? 0); }
     };
 }
 

@@ -1,0 +1,239 @@
+{
+  "checks": [
+    "Found genuine generated forest with tall multi-layer crown",
+    "day-tint-on: under-canopy SKY is filtered (baseline may be zero)",
+    "day-tint-on: no WebGL error",
+    "day-tint-on: shaders compiled",
+    "day-tint-off: under-canopy SKY is filtered (baseline may be zero)",
+    "day-tint-off: no WebGL error",
+    "day-tint-off: shaders compiled",
+    "night: under-canopy SKY is filtered (baseline may be zero)",
+    "night: no WebGL error",
+    "night: shaders compiled",
+    "night: no daylight emission from foliage filter",
+    "sources-off: under-canopy SKY is filtered (baseline may be zero)",
+    "sources-off: no WebGL error",
+    "sources-off: shaders compiled",
+    "sources-off: no daylight emission from foliage filter",
+    "Enclosed cave blocks filtered skylight",
+    "cave: no WebGL error",
+    "cave: shaders compiled",
+    "cave: no daylight emission from foliage filter"
+  ],
+  "errors": [],
+  "captures": [
+    {
+      "name": "day-tint-on",
+      "eye": [
+        4743.5,
+        55.6,
+        -4763.5
+      ],
+      "target": [
+        4755.5,
+        54.800000000000004,
+        -4783.5
+      ],
+      "candidate": {
+        "x": 4743,
+        "y": 53,
+        "z": -4764,
+        "layers": 9,
+        "lowestLeaf": 62,
+        "baselineSky": 0,
+        "predictedSky": 10,
+        "score": 10.009
+      },
+      "light": {
+        "sky": 10,
+        "red": 0,
+        "green": 0,
+        "blue": 0
+      },
+      "lowerCenterRgb": [
+        8.1127578125,
+        7.3038125,
+        1.7924140625
+      ],
+      "triangles": 1134267,
+      "calls": 459
+    },
+    {
+      "name": "day-tint-off",
+      "eye": [
+        4743.5,
+        55.6,
+        -4763.5
+      ],
+      "target": [
+        4755.5,
+        54.800000000000004,
+        -4783.5
+      ],
+      "candidate": {
+        "x": 4743,
+        "y": 53,
+        "z": -4764,
+        "layers": 9,
+        "lowestLeaf": 62,
+        "baselineSky": 0,
+        "predictedSky": 10,
+        "score": 10.009
+      },
+      "light": {
+        "sky": 10,
+        "red": 0,
+        "green": 0,
+        "blue": 0
+      },
+      "lowerCenterRgb": [
+        8.1127578125,
+        8.1220703125,
+        2.064515625
+      ],
+      "triangles": 1133503,
+      "calls": 459
+    },
+    {
+      "name": "night",
+      "eye": [
+        4743.5,
+        55.6,
+        -4763.5
+      ],
+      "target": [
+        4755.5,
+        54.800000000000004,
+        -4783.5
+      ],
+      "candidate": {
+        "x": 4743,
+        "y": 53,
+        "z": -4764,
+        "layers": 9,
+        "lowestLeaf": 62,
+        "baselineSky": 0,
+        "predictedSky": 10,
+        "score": 10.009
+      },
+      "light": {
+        "sky": 10,
+        "red": 0,
+        "green": 0,
+        "blue": 0
+      },
+      "lowerCenterRgb": [
+        0.6377109375,
+        0.5624921875,
+        0.0924375
+      ],
+      "triangles": 1187337,
+      "calls": 492
+    },
+    {
+      "name": "sources-off",
+      "eye": [
+        4743.5,
+        55.6,
+        -4763.5
+      ],
+      "target": [
+        4755.5,
+        54.800000000000004,
+        -4783.5
+      ],
+      "candidate": {
+        "x": 4743,
+        "y": 53,
+        "z": -4764,
+        "layers": 9,
+        "lowestLeaf": 62,
+        "baselineSky": 0,
+        "predictedSky": 10,
+        "score": 10.009
+      },
+      "light": {
+        "sky": 10,
+        "red": 0,
+        "green": 0,
+        "blue": 0
+      },
+      "lowerCenterRgb": [
+        0,
+        0,
+        0
+      ],
+      "triangles": 1177653,
+      "calls": 488
+    },
+    {
+      "name": "cave",
+      "eye": [
+        4743.5,
+        55.6,
+        -4763.5
+      ],
+      "target": [
+        4755.5,
+        54.800000000000004,
+        -4783.5
+      ],
+      "candidate": {
+        "x": 4743,
+        "y": 53,
+        "z": -4764,
+        "layers": 9,
+        "lowestLeaf": 62,
+        "baselineSky": 0,
+        "predictedSky": 10,
+        "score": 10.009
+      },
+      "light": {
+        "sky": 0,
+        "red": 0,
+        "green": 0,
+        "blue": 0
+      },
+      "lowerCenterRgb": [
+        0,
+        0,
+        0
+      ],
+      "triangles": 1242293,
+      "calls": 515
+    }
+  ],
+  "resolution": [
+    1280,
+    800
+  ],
+  "quality": {
+    "viewDistance": 128,
+    "farTerrain": 1024,
+    "farDetail": 2,
+    "loadBudget": 12,
+    "meteorites": false,
+    "lightShafts": false,
+    "bounceLight": false,
+    "showHand": false,
+    "shadows": 3,
+    "cloudCover": 0,
+    "lightingModel": "world",
+    "lightingLook": "natural",
+    "viewBobbing": false,
+    "volumeMusic": 0,
+    "leafModel": "parts",
+    "fancyLeaves": true,
+    "plantWind": false,
+    "fallingLeaves": false,
+    "windStreaks": false,
+    "performanceLogs": false
+  },
+  "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 3050 Laptop GPU (0x000025A2) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+  "source": {
+    "sha256": "6142655460dcff8678615ef94f9cc3a74cadd659a7c5767f3dc7372781bfa9c5",
+    "files": 307
+  },
+  "version": "0.86.0",
+  "nativeElectron": true
+}

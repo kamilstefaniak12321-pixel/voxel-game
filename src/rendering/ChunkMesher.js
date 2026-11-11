@@ -2180,7 +2180,7 @@ function* buildChunkGeometrySteps(chunk, world, { terrain, plants: includePlants
         // Color of diffuse sky transmitted through the actual overhead leaves.
         // Three bytes per vertex, only for geometry touching a canopy. Bounded
         // slices preserve the existing meshing deadline and job cancellation.
-        const canopy = createCanopySampler(world);
+        const canopy = createCanopySampler(world, undefined, chunk);
         let canopyColors = null;
         for (let vertex = 0; vertex < vertexCount; vertex++) {
             const offset = vertex * 3;

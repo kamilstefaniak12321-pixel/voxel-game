@@ -43,7 +43,9 @@ const canonical = value => Array.isArray(value) ? value.map(canonical) : value &
     ? Object.fromEntries(Object.keys(value).sort().map(key => [key, canonical(value[key])])) : value;
 
 equal(TREE_NAMES, [...baseline.species, 'ginkgo', 'jacaranda'], 'Nineteen species, append-only stable catalogue');
-equal([manifest.tileSize, manifest.columns, manifest.rows], [baseline.tileSize, baseline.columns, baseline.rows + 1], 'One extra GPU row preserves all old texture neighbours');
+equal([manifest.tileSize, manifest.columns], [baseline.tileSize, baseline.columns], 'Same tile size and columns');
+// 0.85.0 added one GPU row; later versions append rows below (0.89.0 chests).
+check(manifest.rows >= baseline.rows + 1, 'Extra GPU rows only appended - old texture neighbours preserved');
 for (const [key, previous] of Object.entries(baseline.tiles)) {
     const { rgbaSha256, ...layout } = previous;
     equal(manifest.tiles[key], layout, `${key}: old GPU UV and region remain identical`);

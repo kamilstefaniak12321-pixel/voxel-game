@@ -59,6 +59,7 @@ export class ChestView {
         const { group, lid } = createChestModel(this.material);
         this.model = group;
         this.lid = lid;
+        this.chestTexture = 'chest';
         this.scene.add(group);
 
         // Przedmioty: po karcie na przegródkę i warstwę.
@@ -120,7 +121,17 @@ export class ChestView {
 
     // Nowa skrzynia: wieko od zera.
 
-    show(chest) {
+    // texture - kafelek skrzyni (z jakiego drewna, 0.89.0).
+    show(chest, texture = 'chest') {
+
+        if (texture !== this.chestTexture) {
+            const { group, lid } = createChestModel(this.material, texture);
+            this.scene.remove(this.model);
+            this.scene.add(group);
+            this.model = group;
+            this.lid = lid;
+            this.chestTexture = texture;
+        }
 
         this.chest = chest;
         this.openedAt = performance.now();

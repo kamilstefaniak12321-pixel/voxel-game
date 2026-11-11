@@ -29,12 +29,13 @@ export function chestLidAngle(progress) {
     return CHEST_OPEN_ANGLE * ease + Math.sin(t * Math.PI) * 0.06 * t;
 }
 
-let shared = null;
+const shared = new Map();
 
-// Geometria w atlasie: korpus i wieko (wieko względem zawiasu).
-export function chestGeometries() {
-    if (shared) return shared;
-    const uv = getAtlasUV(CHEST_TEXTURE, 0);
+// Geometria w atlasie: korpus i wieko (wieko względem zawiasu) - jedna
+// na teksturę (skrzynie z różnych desek, 0.89.0).
+export function chestGeometries(texture = CHEST_TEXTURE) {
+    if (shared.has(texture)) return shared.get(texture);
+    const uv = getAtlasUV(texture, 0);
     const build = (part, offset) => {
         const positions = [], normals = [], uvs = [], indices = [];
         for (const face of CHEST_FACES.filter((candidate) => candidate.part === part)) {
@@ -54,13 +55,14 @@ export function chestGeometries() {
         geometry.computeBoundingSphere();
         return geometry;
     };
-    shared = { body: build('body', { y: 0, z: 0 }), lid: build('lid', CHEST_HINGE) };
-    return shared;
+    const geometries = { body: build('body', { y: 0, z: 0 }), lid: build('lid', CHEST_HINGE) };
+    shared.set(texture, geometries);
+    return geometries;
 }
 
 // Model skrzyni: { group, lid } - lid obraca się wokół zawiasu (x).
-export function createChestModel(material) {
-    const { body, lid } = chestGeometries();
+export function createChestModel(material, texture = CHEST_TEXTURE) {
+    const { body, lid } = chestGeometries(texture);
     const group = new THREE.Group();
     group.add(new THREE.Mesh(body, material));
     const pivot = new THREE.Group();
@@ -91,11 +93,12 @@ export class ChestRenderer {
         };
         const material = createModelMaterial({ map: blockAtlasTexture, lighting });
         setPotatoDefine([material], this.lowDetail);
-        const { group, lid } = createChestModel(material);
+        const texture = this.chests.textureOf(chest);
+        const { group, lid } = createChestModel(material, texture);
         group.position.set(chest.x + 0.5, chest.y, chest.z + 0.5);
         group.rotation.y = CHEST_ROTATION[this.chests.facingOf(chest)] ?? 0;
         this.game.scene.add(group);
-        const view = { key, chest, group, lid, material, lighting, open: 0 };
+        const view = { key, chest, group, lid, material, lighting, open: 0, texture };
         this.views.set(key, view);
         this.updateLight(view);
         return view;
@@ -139,6 +142,8 @@ export class ChestRenderer {
             for (const [key, chest] of this.chests.chests) {
                 if (!world.getChunk(world.toChunkCoord(chest.x), world.toChunkCoord(chest.z))) continue;
                 keep.add(key);
+                // Inna skrzynia (drewno) w tym samym miejscu - nowy model.
+                if (this.views.get(key)?.texture !== undefined && this.views.get(key).texture !== this.chests.textureOf(chest)) this.removeView(key);
                 const view = this.views.get(key) ?? this.createView(key, chest);
                 view.chest = chest;
                 view.group.rotation.y = CHEST_ROTATION[this.chests.facingOf(chest)] ?? 0;

@@ -7,9 +7,22 @@ wrażenie, że naprawdę wkłada rzeczy do skrzyni.
 
 ![Otwarta skrzynia w strefie rzemieślniczej ekwipunku](skrzynia.png)
 
+**Od 0.89.0 skrzynia z każdego rodzaju desek.** 4 deski jednego drzewa
+dają skrzynię z tego drewna. Jest 20 rodzajów: dębowa (dawna
+„Skrzynia”, te same numery w zapisach), świerkowa, sosnowa, bukowa,
+lipowa, brzozowa, ciemna, jabłoniowa, olchowa, wierzbowa, z akacji,
+z cypryśnika, wiśniowa, klonowa, z kosodrzewiny, oliwkowa,
+eukaliptusowa, sekwojowa, miłorzębowa i jakarandowa. Model, przegródki
+i zasady są wspólne, a różnią się tylko tekstury. Deski i rama mają
+kolory tego drewna, a żelazny zamek jest ten sam. Z mieszanych desek
+nie da się już zrobić skrzyni, bo nie wiadomo, z jakiego byłaby
+drewna. Wcześniej z dowolnych desek wychodziła dębowa.
+
+![Ikonki 20 skrzyń](skrzynie-z-desek.jpg)
+
 ## W grze
 
-- **Przepis:** 4 deski (dowolne drzewo, siatka 2 × 2) → skrzynia.
+- **Przepis:** 4 deski jednego drzewa (siatka 2 × 2) → skrzynia z tego drewna.
   Stawia się przodem do gracza (cztery kierunki).
 - **PPM na skrzyni** otwiera ekwipunek. W świecie i w oknie unosi się
   wieko. Z Shiftem i blokiem w ręce stawia się blok obok, jak zwykle.
@@ -31,13 +44,13 @@ wrażenie, że naprawdę wkłada rzeczy do skrzyni.
 
 | Plik | Co robi |
 | --- | --- |
-| `src/blocks/chest.js` | bloki (ID 10095-10098, przód N/E/S/W), kierunek przy stawianiu |
+| `src/blocks/chest.js` | bloki (dębowa: ID 10095-10098; z innych desek: 10200-10275, po 4 na drewno - `WOOD_CHESTS`, tylko dopisywać), przód N/E/S/W, kierunek przy stawianiu, tekstura i deski (`chestTexture`, `chestPlanks`) |
 | `src/game/ChestState.js` | zawartość i zasady warstw (bez rysowania) |
 | `src/game/Chests.js` | skrzynie świata: zapis, PPM, blokada rozbicia |
 | `src/rendering/ChestGeometry.js` | model (ścianki, dno, wieko, zamek) i przegródki |
 | `src/rendering/ChestRenderer.js` | skrzynie w świecie, wieko na zawiasie |
 | `src/ui/ChestView.js` | okno skrzyni w ekwipunku: kamera, karty przedmiotów, klik |
-| obszar `chest` w `assets/textures/drzewa.png` | tekstura 32 × 32 (`tools/skrzynia_tekstura.py`, `tools/atlasy.py export chest`) |
+| obszary `chest` i `chest_<drewno>` w `assets/textures/drzewa.png` | tekstury 32 × 32 z desek danego drewna (`tools/skrzynia_tekstura.py`, `tools/atlasy.py export chest_spruce`); kafelki 2 × 2 w osobnych wierszach atlasu na dole |
 
 Okno skrzyni rysuje ten sam renderer co podgląd postaci, czyli jeden
 kontekst WebGL na całe okno ekwipunku. Scena trafia do fragmentu płótna

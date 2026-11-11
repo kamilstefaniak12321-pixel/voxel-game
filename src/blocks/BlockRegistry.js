@@ -38,7 +38,9 @@ export const AIR_ID = 0;
 //                           skrzynia 10095-10098),
 //   10100-10107             wewnętrzne poziomy i spadanie wody,
 //   10108-10122             spadanie wody 2-16 bloków (0.73.0),
-//   10123-65279             wolne na przyszłość.
+//   10123-10199             wolne,
+//   10200-10299             skrzynie z desek (0.89.0, po 4 na drewno - chest.js),
+//   10300-65279             wolne na przyszłość.
 
 export const MAX_BLOCK_ID = 65279;
 

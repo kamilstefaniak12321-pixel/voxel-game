@@ -1,5 +1,5 @@
 import { getBlockTypeById } from '../blocks/BlockRegistry.js';
-import { chestFacing, isChestType } from '../blocks/chest.js';
+import { chestFacing, chestPlanks, chestTexture, isChestType } from '../blocks/chest.js';
 import { newChest, restoreChest, chestState, isChestEmpty } from './ChestState.js';
 import { ChestRenderer } from '../rendering/ChestRenderer.js';
 
@@ -51,6 +51,11 @@ export class Chests {
         return chestFacing(this.blockType(chest)) ?? 'north';
     }
 
+    // Tekstura modelu (skrzynie z różnych desek, 0.89.0).
+    textureOf(chest) {
+        return chestTexture(this.blockType(chest));
+    }
+
     // Wszystkie skrzynie, także puste (bez wpisu model by nie powstał).
     getState() { return [...this.chests.values()].map(chestState); }
 
@@ -76,7 +81,7 @@ export class Chests {
         if (this.open === chest) return;
         const position = chest ?? this.open;
         this.open = chest;
-        if (position) this.game.playBlockSound?.(chest ? 'place' : 'step', 'oak_planks', position);
+        if (position) this.game.playBlockSound?.(chest ? 'place' : 'step', chestPlanks(this.blockType(position)), position);
     }
 
     update(dt) {

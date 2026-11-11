@@ -85,6 +85,8 @@ function faceUv(face, region, corner) {
 }
 
 // Prostopadłościan w pikselach; faces: { ściana: obszar tekstury }.
+// Wszystkie skrzynie (z każdego drewna) mają ten sam układ tekstury,
+// więc ściany są wspólne, a tekstura - podmieniana (chestFaces).
 function box(part, from, to, faces) {
     return Object.entries(faces).map(([face, region]) => {
         const corners = FACE_CORNERS[face].corners(from, to);
@@ -119,9 +121,10 @@ export const CHEST_BOUNDS = { min: [P, 0, P], max: [1 - P, L * P, 1 - P] };
 
 // Model zamkniętej skrzyni do ikonki i dłoni: (x, z) od 0 do 1,
 // przodem do patrzącego na ikonkę (+z).
-export function getChestFaces() {
+export function getChestFaces(texture = CHEST_TEXTURE) {
     return CHEST_FACES.map((face) => ({
         ...face,
+        texture,
         normal: [-face.normal[0], face.normal[1], -face.normal[2]],
         vertices: face.vertices.map(([x, y, z]) => [0.5 - x, y, 0.5 - z])
     }));

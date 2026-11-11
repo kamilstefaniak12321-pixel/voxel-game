@@ -2,7 +2,7 @@
 
 > Ta strona jest generowana z kodu gry (`python tools/wiki.py`) - nie zmieniaj jej ręcznie, zmiany przepadną przy następnym generowaniu.
 
-Wersja gry **0.88.0** - 120 przepisów. Wytwarza się w ekwipunku (**E**): siatka 2 x 2 obok miejsc ekwipunku, wynik po prawej (klik - weź, Shift + klik - ile się da). Przycisk 📖 *Przepisy* otwiera księgę - klik na przepisie sam układa składniki. Przepisy *z kształtem* można przesuwać po siatce i odbijać w poziomie; przepisy *bez kształtu* - obojętne, gdzie leżą składniki. Z czatu: `/przepisy`, `/wytworz <przepis>`.
+Wersja gry **0.89.0** - 139 przepisów. Wytwarza się w ekwipunku (**E**): siatka 2 x 2 obok miejsc ekwipunku, wynik po prawej (klik - weź, Shift + klik - ile się da). Przycisk 📖 *Przepisy* otwiera księgę - klik na przepisie sam układa składniki. Przepisy *z kształtem* można przesuwać po siatce i odbijać w poziomie; przepisy *bez kształtu* - obojętne, gdzie leżą składniki. Z czatu: `/przepisy`, `/wytworz <przepis>`.
 
 
 ## Ziemia
@@ -55,11 +55,125 @@ Wersja gry **0.88.0** - 120 przepisów. Wytwarza się w ekwipunku (**E**): siatk
 
 ## Drewno
 
-### Skrzynia
+### Skrzynia dębowa
 
-<img src="przepisy/chest.png" alt="Skrzynia: 4 x deski (dowolne) (ułożenie: PP / PP; P = deski (dowolne))">
+<img src="przepisy/chest.png" alt="Skrzynia dębowa: 4 x Deski dębowe (ułożenie: PP / PP; P = Deski dębowe)">
 
-4 x deski (dowolne) (z kształtem). Nazwa przepisu: `chest`. Cztery deski (dowolne drzewo). PPM na skrzyni: otwórz - 4 x 3 przegródki, w każdej dwie warstwy (najpierw zdejmij wierzch).
+4 x Deski dębowe (z kształtem). Nazwa przepisu: `chest`. Cztery deski jednego drzewa - skrzynia z tego drewna. PPM na skrzyni: otwórz - 4 x 3 przegródki, w każdej dwie warstwy (najpierw zdejmij wierzch).
+
+### Skrzynia świerkowa
+
+<img src="przepisy/spruce_chest.png" alt="Skrzynia świerkowa: 4 x Deski świerkowe (ułożenie: PP / PP; P = Deski świerkowe)">
+
+4 x Deski świerkowe (z kształtem). Nazwa przepisu: `spruce_chest`. Cztery deski jednego drzewa - skrzynia z tego drewna. PPM na skrzyni: otwórz - 4 x 3 przegródki, w każdej dwie warstwy (najpierw zdejmij wierzch).
+
+### Skrzynia sosnowa
+
+<img src="przepisy/pine_chest.png" alt="Skrzynia sosnowa: 4 x Deski sosnowe (ułożenie: PP / PP; P = Deski sosnowe)">
+
+4 x Deski sosnowe (z kształtem). Nazwa przepisu: `pine_chest`. Cztery deski jednego drzewa - skrzynia z tego drewna. PPM na skrzyni: otwórz - 4 x 3 przegródki, w każdej dwie warstwy (najpierw zdejmij wierzch).
+
+### Skrzynia bukowa
+
+<img src="przepisy/beech_chest.png" alt="Skrzynia bukowa: 4 x Deski bukowe (ułożenie: PP / PP; P = Deski bukowe)">
+
+4 x Deski bukowe (z kształtem). Nazwa przepisu: `beech_chest`. Cztery deski jednego drzewa - skrzynia z tego drewna. PPM na skrzyni: otwórz - 4 x 3 przegródki, w każdej dwie warstwy (najpierw zdejmij wierzch).
+
+### Skrzynia lipowa
+
+<img src="przepisy/linden_chest.png" alt="Skrzynia lipowa: 4 x Deski lipowe (ułożenie: PP / PP; P = Deski lipowe)">
+
+4 x Deski lipowe (z kształtem). Nazwa przepisu: `linden_chest`. Cztery deski jednego drzewa - skrzynia z tego drewna. PPM na skrzyni: otwórz - 4 x 3 przegródki, w każdej dwie warstwy (najpierw zdejmij wierzch).
+
+### Skrzynia brzozowa
+
+<img src="przepisy/birch_chest.png" alt="Skrzynia brzozowa: 4 x Deski brzozowe (ułożenie: PP / PP; P = Deski brzozowe)">
+
+4 x Deski brzozowe (z kształtem). Nazwa przepisu: `birch_chest`. Cztery deski jednego drzewa - skrzynia z tego drewna. PPM na skrzyni: otwórz - 4 x 3 przegródki, w każdej dwie warstwy (najpierw zdejmij wierzch).
+
+### Ciemna skrzynia
+
+<img src="przepisy/dark_chest.png" alt="Ciemna skrzynia: 4 x Ciemne deski (ułożenie: PP / PP; P = Ciemne deski)">
+
+4 x Ciemne deski (z kształtem). Nazwa przepisu: `dark_chest`. Cztery deski jednego drzewa - skrzynia z tego drewna. PPM na skrzyni: otwórz - 4 x 3 przegródki, w każdej dwie warstwy (najpierw zdejmij wierzch).
+
+### Skrzynia jabłoniowa
+
+<img src="przepisy/jablon_chest.png" alt="Skrzynia jabłoniowa: 4 x Deski jabłoniowe (ułożenie: PP / PP; P = Deski jabłoniowe)">
+
+4 x Deski jabłoniowe (z kształtem). Nazwa przepisu: `jablon_chest`. Cztery deski jednego drzewa - skrzynia z tego drewna. PPM na skrzyni: otwórz - 4 x 3 przegródki, w każdej dwie warstwy (najpierw zdejmij wierzch).
+
+### Skrzynia olchowa
+
+<img src="przepisy/olcha_chest.png" alt="Skrzynia olchowa: 4 x Deski olchowe (ułożenie: PP / PP; P = Deski olchowe)">
+
+4 x Deski olchowe (z kształtem). Nazwa przepisu: `olcha_chest`. Cztery deski jednego drzewa - skrzynia z tego drewna. PPM na skrzyni: otwórz - 4 x 3 przegródki, w każdej dwie warstwy (najpierw zdejmij wierzch).
+
+### Skrzynia wierzbowa
+
+<img src="przepisy/wierzba_chest.png" alt="Skrzynia wierzbowa: 4 x Deski wierzbowe (ułożenie: PP / PP; P = Deski wierzbowe)">
+
+4 x Deski wierzbowe (z kształtem). Nazwa przepisu: `wierzba_chest`. Cztery deski jednego drzewa - skrzynia z tego drewna. PPM na skrzyni: otwórz - 4 x 3 przegródki, w każdej dwie warstwy (najpierw zdejmij wierzch).
+
+### Skrzynia z akacji
+
+<img src="przepisy/acacia_chest.png" alt="Skrzynia z akacji: 4 x Deski akacji (ułożenie: PP / PP; P = Deski akacji)">
+
+4 x Deski akacji (z kształtem). Nazwa przepisu: `acacia_chest`. Cztery deski jednego drzewa - skrzynia z tego drewna. PPM na skrzyni: otwórz - 4 x 3 przegródki, w każdej dwie warstwy (najpierw zdejmij wierzch).
+
+### Skrzynia z cypryśnika
+
+<img src="przepisy/bald_cypress_chest.png" alt="Skrzynia z cypryśnika: 4 x Deski cypryśnika (ułożenie: PP / PP; P = Deski cypryśnika)">
+
+4 x Deski cypryśnika (z kształtem). Nazwa przepisu: `bald_cypress_chest`. Cztery deski jednego drzewa - skrzynia z tego drewna. PPM na skrzyni: otwórz - 4 x 3 przegródki, w każdej dwie warstwy (najpierw zdejmij wierzch).
+
+### Skrzynia wiśniowa
+
+<img src="przepisy/cherry_chest.png" alt="Skrzynia wiśniowa: 4 x Deski wiśni (ułożenie: PP / PP; P = Deski wiśni)">
+
+4 x Deski wiśni (z kształtem). Nazwa przepisu: `cherry_chest`. Cztery deski jednego drzewa - skrzynia z tego drewna. PPM na skrzyni: otwórz - 4 x 3 przegródki, w każdej dwie warstwy (najpierw zdejmij wierzch).
+
+### Skrzynia klonowa
+
+<img src="przepisy/maple_chest.png" alt="Skrzynia klonowa: 4 x Deski klonowe (ułożenie: PP / PP; P = Deski klonowe)">
+
+4 x Deski klonowe (z kształtem). Nazwa przepisu: `maple_chest`. Cztery deski jednego drzewa - skrzynia z tego drewna. PPM na skrzyni: otwórz - 4 x 3 przegródki, w każdej dwie warstwy (najpierw zdejmij wierzch).
+
+### Skrzynia z kosodrzewiny
+
+<img src="przepisy/mugo_chest.png" alt="Skrzynia z kosodrzewiny: 4 x Deski z kosodrzewiny (ułożenie: PP / PP; P = Deski z kosodrzewiny)">
+
+4 x Deski z kosodrzewiny (z kształtem). Nazwa przepisu: `mugo_chest`. Cztery deski jednego drzewa - skrzynia z tego drewna. PPM na skrzyni: otwórz - 4 x 3 przegródki, w każdej dwie warstwy (najpierw zdejmij wierzch).
+
+### Skrzynia oliwkowa
+
+<img src="przepisy/olive_chest.png" alt="Skrzynia oliwkowa: 4 x Deski oliwkowe (ułożenie: PP / PP; P = Deski oliwkowe)">
+
+4 x Deski oliwkowe (z kształtem). Nazwa przepisu: `olive_chest`. Cztery deski jednego drzewa - skrzynia z tego drewna. PPM na skrzyni: otwórz - 4 x 3 przegródki, w każdej dwie warstwy (najpierw zdejmij wierzch).
+
+### Skrzynia eukaliptusowa
+
+<img src="przepisy/rainbow_eucalyptus_chest.png" alt="Skrzynia eukaliptusowa: 4 x Deski eukaliptusowe (ułożenie: PP / PP; P = Deski eukaliptusowe)">
+
+4 x Deski eukaliptusowe (z kształtem). Nazwa przepisu: `rainbow_eucalyptus_chest`. Cztery deski jednego drzewa - skrzynia z tego drewna. PPM na skrzyni: otwórz - 4 x 3 przegródki, w każdej dwie warstwy (najpierw zdejmij wierzch).
+
+### Skrzynia sekwojowa
+
+<img src="przepisy/sequoia_chest.png" alt="Skrzynia sekwojowa: 4 x Deski sekwojowe (ułożenie: PP / PP; P = Deski sekwojowe)">
+
+4 x Deski sekwojowe (z kształtem). Nazwa przepisu: `sequoia_chest`. Cztery deski jednego drzewa - skrzynia z tego drewna. PPM na skrzyni: otwórz - 4 x 3 przegródki, w każdej dwie warstwy (najpierw zdejmij wierzch).
+
+### Skrzynia miłorzębowa
+
+<img src="przepisy/ginkgo_chest.png" alt="Skrzynia miłorzębowa: 4 x Deski miłorzębowe (ułożenie: PP / PP; P = Deski miłorzębowe)">
+
+4 x Deski miłorzębowe (z kształtem). Nazwa przepisu: `ginkgo_chest`. Cztery deski jednego drzewa - skrzynia z tego drewna. PPM na skrzyni: otwórz - 4 x 3 przegródki, w każdej dwie warstwy (najpierw zdejmij wierzch).
+
+### Skrzynia jakarandowa
+
+<img src="przepisy/jacaranda_chest.png" alt="Skrzynia jakarandowa: 4 x Deski jakarandowe (ułożenie: PP / PP; P = Deski jakarandowe)">
+
+4 x Deski jakarandowe (z kształtem). Nazwa przepisu: `jacaranda_chest`. Cztery deski jednego drzewa - skrzynia z tego drewna. PPM na skrzyni: otwórz - 4 x 3 przegródki, w każdej dwie warstwy (najpierw zdejmij wierzch).
 
 ### Opał — dąb x4
 

@@ -255,7 +255,10 @@ function tableGame(mode = 'adventure') {
     inventory.set(0, { type: 'spruce_planks', count: 20 });
     inventory.selected = 0;
     const hitA = { hit: true, block: { x: 0, y: 0, z: 0 }, normal: { x: 0, y: 1, z: 0 }, point: { x: .5, y: 1, z: .5 } };
-    check(tables.interact(hitA, 'spruce_planks') && tables.state({ x: 0, y: 0, z: 0 }).count === 20 && !inventory.get(0), 'Deski z ręki na blat');
+    check(tables.interact(hitA, 'spruce_planks') && tables.state({ x: 0, y: 0, z: 0 }).count === 1 && inventory.get(0).count === 19, 'PPM deskami - jedna deska na blat');
+    tables.interact(hitA, 'spruce_planks');
+    check(tables.state({ x: 0, y: 0, z: 0 }).count === 2 && inventory.get(0).count === 18, 'Kolejny klik - kolejna deska');
+    check(tables.interact(hitA, 'spruce_planks', true) && tables.state({ x: 0, y: 0, z: 0 }).count === 20 && !inventory.get(0), 'Z kucaniem - cały stos z ręki');
     check(!tables.canBreak({ x: -1, y: 0, z: 0 }) && !tables.canBreak({ x: 0, y: 0, z: 0 }), 'Z deskami na blacie stołu nie da się rozbić');
 
     // Część B (x -1): w układzie stołu przodem na północ lewa kolumna to większe x.
@@ -273,7 +276,7 @@ function tableGame(mode = 'adventure') {
 
     inventory.set(1, { type: 'birch_planks', count: 2 });
     inventory.selected = 1;
-    tables.interact(hitA, 'birch_planks');
+    tables.interact(hitA, 'birch_planks', true);
     tables.interact(hitB(.25, .75), null);
     check(inventory.count('birch_fence_gate') === 0 && /potrzeba 4/.test(game.notices.at(-1)), 'Za mało desek - nic, napis ile trzeba');
     inventory.set(2, { type: 'spruce_planks', count: 5 });
@@ -444,25 +447,54 @@ check(TABLE_PRODUCTS.map((p) => p.kind).join() === 'stairs,slab,fence,gate', 'Cz
     }
     inventory.set(0, { type: 'cherry_planks', count: 13 });
     inventory.selected = 0;
-    tables.interact({ hit: true, block: { x: 0, y: 0, z: 0 }, normal: { x: 0, y: 1, z: 0 }, point: { x: .5, y: 1, z: .5 } }, 'cherry_planks');
-    check(tables.supplierOf(partner)?.z === 0 && tables.supplierOf(a) === null, 'Deski na pierwszym - drugi podaje drzwi i klapę');
-    check(BENCH_PRODUCTS.map((p) => `${p.kind}:${p.planks}:${p.count}`).join() === 'door:6:3,trapdoor:3:1', 'Drzwi 6 desek -> 3, klapa 3 -> 1');
-    // Część B drugiego stołu (x -1, z 1): przód lewa - drzwi, przód prawa - klapa.
-    const hitB2 = (fx, fz) => ({ hit: true, block: { x: -1, y: 0, z: 1 }, normal: { x: 0, y: 1, z: 0 }, point: { x: -1 + fx, y: 1, z: 1 + fz } });
-    tables.interact(hitB2(.75, .25), null);
-    check(inventory.count('cherry_door') === 3 && tables.state(a).count === 7, 'Drzwi z desek pierwszego stołu (13 -> 7)');
-    tables.interact(hitB2(.25, .25), null);
+    const top = (x, z) => ({ hit: true, block: { x, y: 0, z }, normal: { x: 0, y: 1, z: 0 }, point: { x: x + .5, y: 1, z: z + .5 } });
+    check(tables.bench(a) === null, 'Oba stoły puste - jeszcze bez układu warsztatu');
+    tables.interact(top(0, 0), 'cherry_planks', true);
+    // Stoły: A (0,0) B (-1,0) i A (0,1) B (-1,1). Deski na (0,0).
+    const bench = tables.bench(a);
+    check(bench && tables.bench(partner)?.primary.z === 0, 'Deski na jednym stole - układ warsztatu (z obu stołów ten sam)');
+    check(bench.planks.x === 0 && bench.planks.z === 0, 'Blok z deskami zostaje');
+    check(bench.trapdoor.x === 0 && bench.trapdoor.z === 1, 'Klapa na drugim stole, obok desek');
+    check(bench.door.map((cell) => `${cell.x},${cell.z}`).join(' ') === '-1,0 -1,1', 'Drzwi na dwóch pozostałych blokach');
+    check(BENCH_PRODUCTS.door.planks === 6 && BENCH_PRODUCTS.door.count === 3 && BENCH_PRODUCTS.trapdoor.planks === 3 && BENCH_PRODUCTS.trapdoor.count === 1, 'Drzwi 6 desek -> 3, klapa 3 -> 1');
+    // Zwykłych wyrobów nie ma: klik w część B pierwszego stołu to drzwi.
+    tables.interact(top(-1, 0), null);
+    check(inventory.count('cherry_door') === 3 && inventory.count('cherry_stairs') === 0 && tables.state(a).count === 7, 'Drzwi z pierwszego bloku drzwi (13 -> 7), bez schodów');
+    tables.interact(top(0, 1), null);
     check(inventory.count('cherry_trapdoor') === 1 && tables.state(a).count === 4, 'Klapa (7 -> 4)');
-    tables.interact(hitB2(.75, .25), null);
-    check(inventory.count('cherry_door') === 3 && /potrzeba 6/.test(game.notices.at(-1)), 'Za mało desek na drzwi');
-    tables.interact(hitB2(.25, .25), null, true);
-    check(inventory.count('cherry_trapdoor') === 2 && tables.state(a).count === 1, 'Shift - klapy, ile się da');
-    tables.interact(hitB2(.25, .75), null);
-    check(/drzwi albo klapę/.test(game.notices.at(-1)), 'Tylna ćwiartka drugiego stołu - pusta');
-    // Zwykłe wyroby pierwszego stołu dalej działają.
-    const hitB1 = { hit: true, block: { x: -1, y: 0, z: 0 }, normal: { x: 0, y: 1, z: 0 }, point: { x: -.75, y: 1, z: .25 } };
-    tables.interact(hitB1, null);
-    check(inventory.count('cherry_slab') === 2 && tables.state(a).count === 0, 'Pierwszy stół - zwykłe wyroby (półblok)');
+    tables.interact(top(-1, 1), null);
+    check(inventory.count('cherry_door') === 3 && /potrzeba 6/.test(game.notices.at(-1)), 'Drugi blok drzwi - za mało desek');
+    // Deski w ręce nad klapą - dalej klapa, deski nie idą na drugi stół.
+    inventory.set(8, { type: 'cherry_planks', count: 9 });
+    inventory.selected = 8;
+    tables.interact(top(0, 1), 'cherry_planks');
+    check(inventory.count('cherry_trapdoor') === 2 && tables.state(partner) === null && tables.state(a).count === 1, 'Klik deskami w klapę - klapa, drugi stół bez desek');
+    tables.interact(top(0, 0), 'cherry_planks');
+    check(tables.state(a).count === 2 && inventory.get(8).count === 8, 'Deski dokłada się po jednej');
+    tables.interact(top(0, 0), 'cherry_planks', true);
+    check(tables.state(a).count === 10 && !inventory.get(8), 'Z kucaniem - wszystkie z ręki');
+    tables.interact(top(-1, 1), null, true);
+    check(inventory.count('cherry_door') === 6 && tables.state(a).count === 4, 'Kucanie - drzwi, ile się da');
+    tables.interact(top(0, 0), null);
+    check(tables.state(a).count === 0 && tables.bench(a) === null, 'Deski zabrane - warsztat pusty');
+    {
+        // Stoły tyłem do siebie: klapa dalej obok desek, drzwi na pozostałych.
+        const other = tableGame();
+        other.tables.place({ x: 0, y: 0, z: 0 }, 'oak', Math.PI, free);     // A (0,0), B (-1,0)
+        other.tables.place({ x: -1, y: 0, z: 1 }, 'oak', 0, free);          // A (-1,1), B (0,1)
+        other.inventory.set(0, { type: 'oak_planks', count: 6 });
+        other.inventory.selected = 0;
+        other.tables.interact(top(-1, 1), 'oak_planks', true);              // deski na drugim stole
+        const layout = other.tables.bench(other.tables.tableAt({ x: 0, y: 0, z: 0 }));
+        check(layout.planks.x === -1 && layout.planks.z === 1 && layout.trapdoor.x === -1 && layout.trapdoor.z === 0
+            && layout.door.map((cell) => `${cell.x},${cell.z}`).join(' ') === '0,1 0,0', 'Stoły tyłem do siebie - ten sam układ');
+        // Deski na obu stołach - każdy stół osobno (zwykłe wyroby).
+        other.inventory.set(1, { type: 'oak_planks', count: 3 });
+        other.inventory.selected = 1;
+        other.tables.state({ x: 0, y: 0, z: 0 }, true).planks = 'oak_planks';
+        other.tables.state({ x: 0, y: 0, z: 0 }).count = 3;
+        check(other.tables.bench(other.tables.tableAt({ x: 0, y: 0, z: 0 })) === null, 'Deski na obu stołach - bez układu warsztatu');
+    }
 }
 
 console.log(`OK: stolarstwo - ${checks} sprawdzeń (bloki, kształty, kolizje, stawianie, stół stolarski, drzwi i klapy, podwójny warsztat).`);

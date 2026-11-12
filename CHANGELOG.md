@@ -11,6 +11,22 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 0.93.0 - Podwójny warsztat tylko na drzwi i klapy
+
+Prośba Kamila — PR #132 (po 0.92.0):
+
+- **Podwójny warsztat** (dwa stoły stolarskie obok siebie) pokazuje już
+  tylko drzwi i klapę, bez schodów, półbloków, płotów i furtek:
+  - **drzwi** leżą w prawdziwym rozmiarze na dwóch blokach blatu,
+  - **klapa** w prawdziwym rozmiarze zajmuje jeden blok, obok desek,
+  - czwarty blok zostaje na **deski**,
+  - drzwi i klapa są lekko przekręcone i uniesione z jednej strony,
+    żeby nie zlewały się z blatem.
+- **Deski na stół po jednej:** PPM deskami kładzie jedną deskę,
+  z kucaniem cały stos z ręki (na każdym stole stolarskim).
+- Gdy deski leżą na obu stołach naraz, każdy działa osobno jak zwykły
+  stół.
+
 ## 0.92.0 - Gra ze znajomymi
 
 Prośba Kamila — PR #131 (po 0.91.0):

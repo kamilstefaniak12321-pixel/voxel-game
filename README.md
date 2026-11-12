@@ -188,10 +188,11 @@ na dwa bloki, z każdego drewna. PPM deskami w lewą część blatu kładzie
 deski na stół, a na prawej części pojawiają się wyroby z tego drewna:
 **schody, półbloki, płoty i furtki**. PPM w wyrób - do ekwipunku (Shift -
 ile się da). Na schody i półbloki wchodzi się bez skakania, płotu nie da
-się przeskoczyć, furtka otwiera się PPM. Od 0.91.0 **dwa stoły obok
-siebie** tworzą podwójny warsztat (4 × 4 na blacie): na drugim stole
-pojawiają się **drzwi** (z animacją otwierania, dwuskrzydłowe, gdy stoją
-obok siebie) i **klapy** z desek leżących na pierwszym.
+się przeskoczyć, furtka otwiera się PPM. **Dwa stoły obok
+siebie** tworzą podwójny warsztat (2 × 2 bloki): obok desek leżą
+w prawdziwym rozmiarze **drzwi** (z animacją otwierania, dwuskrzydłowe,
+gdy stoją obok siebie) i **klapa**, a zwykłych wyrobów wtedy nie ma.
+Deski kładzie się na stół po jednej, z kucaniem cały stos.
 [Szczegóły](docs/stolarstwo.md).
 
 W trybie kreatywnym zakładka *Bloki* ma **9 łukowatych zakładek

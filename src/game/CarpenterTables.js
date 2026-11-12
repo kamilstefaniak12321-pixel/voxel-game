@@ -8,8 +8,8 @@ import { CarpenterTableRenderer } from '../rendering/CarpenterTableRenderer.js';
 // STÓŁ STOLARSKI (0.90.0)
 //
 // Długi na dwa bloki. Praca na blacie, w świecie (bez okna):
-// - PPM deskami w lewą część stołu (A) - deski kładą się na blat (cały
-//   stos z ręki, do 64; jeden rodzaj naraz),
+// - PPM deskami w lewą część stołu (A) - na blat kładzie się jedna deska,
+//   a z kucaniem cały stos z ręki (0.93.0; do 64, jeden rodzaj naraz),
 // - na prawej części (B) pojawiają się wyroby z tego drewna: schody,
 //   półblok, płot i furtka (te, na które starczy desek). PPM w wyrób -
 //   zabiera partię do ekwipunku (Shift - tyle, ile się da),
@@ -18,11 +18,14 @@ import { CarpenterTableRenderer } from '../rendering/CarpenterTableRenderer.js';
 // Deski na stołach zapisują się ze światem (worldInfo.carpenterTables).
 // Furtka: PPM otwiera i zamyka (od gracza).
 //
-// 0.91.0 - podwójny warsztat: dwa stoły jeden za drugim (razem 2 x 2
-// bloki - 4 x 4 miejsca na blacie). Gdy na jednym leżą deski, a drugi jest
-// pusty, na prawej części drugiego pojawiają się dodatkowe wyroby z tych
-// desek: drzwi i klapa (BENCH_PRODUCTS). Drzwi (dwa bloki) i klapy -
-// PPM otwiera i zamyka; drzwi z animacją (DoorRenderer.js).
+// Podwójny warsztat (0.91.0, układ z 0.93.0): dwa stoły jeden za drugim
+// (razem 2 x 2 bloki). Gdy na jednym leżą deski, a drugi jest pusty,
+// cały blat służy drzwiom i klapom (zwykłych wyrobów wtedy nie ma):
+// - blok z deskami zostaje (część A stołu z deskami),
+// - obok niego, na drugim stole - klapa w prawdziwym rozmiarze (1 blok),
+// - dwa pozostałe bloki - drzwi w prawdziwym rozmiarze (leżą, 1 x 2).
+// PPM w drzwi albo klapę zabiera partię (bench()). Drzwi (dwa bloki)
+// i klapy w świecie - PPM otwiera i zamyka; drzwi z animacją (DoorRenderer.js).
 // ------------------------------------------------------------
 
 export const TABLE_CAPACITY = 64;
@@ -35,12 +38,11 @@ export const TABLE_PRODUCTS = [
     { kind: 'gate', planks: 4, count: 1 }
 ];
 
-// Dodatkowe wyroby podwójnego warsztatu (na drugim stole, w tych samych
-// ćwiartkach co zwykłe: przód lewa, przód prawa, ...).
-export const BENCH_PRODUCTS = [
-    { kind: 'door', planks: 6, count: 3 },
-    { kind: 'trapdoor', planks: 3, count: 1 }
-];
+// Wyroby podwójnego warsztatu (zamiast zwykłych).
+export const BENCH_PRODUCTS = {
+    door: { kind: 'door', planks: 6, count: 3 },
+    trapdoor: { kind: 'trapdoor', planks: 3, count: 1 }
+};
 
 // Ćwiartki części B (w układzie stołu przodem na północ, -z): numer
 // wyrobu po (kolumna od lewej patrzącego, rząd: 0 - przód, 1 - tył).
@@ -141,11 +143,22 @@ export class CarpenterTables {
         return null;
     }
 
-    // Stół z deskami, który podaje dodatkowe wyroby na stół "a" (pusty).
-    supplierOf(a) {
-        if (this.state(a)?.count > 0) return null;
+    // Układ podwójnego warsztatu, do którego należy stół "a", albo null
+    // (stół sam, oba puste albo na obu leżą deski - wtedy każdy osobno):
+    // { primary - stół z deskami, planks - blok z deskami, trapdoor - blok
+    // klapy (drugi stół, obok desek), door - dwa bloki drzwi }.
+    bench(a) {
         const partner = this.partnerOf(a);
-        return partner && this.state(partner)?.count > 0 ? partner : null;
+        if (!partner) return null;
+        const mine = this.state(a)?.count > 0, theirs = this.state(partner)?.count > 0;
+        if (mine === theirs) return null;
+        const primary = mine ? a : partner, other = mine ? partner : a;
+        const planks = { x: primary.x, y: primary.y, z: primary.z };
+        const cells = [{ x: other.x, y: other.y, z: other.z }, this.partB(other)];
+        const beside = (cell) => Math.abs(cell.x - planks.x) + Math.abs(cell.z - planks.z) === 1;
+        const trapdoor = cells.find(beside), far = cells.find((cell) => !beside(cell));
+        if (!trapdoor || !far) return null;
+        return { primary, other, planks, trapdoor, door: [this.partB(primary), far] };
     }
 
     // --- Drzwi -----------------------------------------------------------
@@ -226,7 +239,14 @@ export class CarpenterTables {
         if (info?.kind === 'trapdoor') return this.toggleTrapdoor(hit.block, info);
         if (info?.kind !== 'table') return false;
         const a = this.tableAt(hit.block);
-        if (info.part === 'a') return this.usePlanks(a, selected);
+        // Podwójny warsztat: deski, klapa albo drzwi - według bloku blatu.
+        const bench = this.bench(a);
+        if (bench) {
+            const at = (cell) => cell.x === x && cell.z === z;
+            if (at(bench.planks)) return this.usePlanks(bench.primary, selected, sneaking);
+            return this.make(this.state(bench.primary), BENCH_PRODUCTS[at(bench.trapdoor) ? 'trapdoor' : 'door'], sneaking, hit.block);
+        }
+        if (info.part === 'a') return this.usePlanks(a, selected, sneaking);
         return this.takeProduct(a, hit, sneaking);
     }
 
@@ -241,8 +261,9 @@ export class CarpenterTables {
         return true;
     }
 
-    // Deski na blat albo z powrotem do ekwipunku.
-    usePlanks(a, selected) {
+    // Deski na blat (jedna; z kucaniem - cały stos z ręki) albo z powrotem
+    // do ekwipunku.
+    usePlanks(a, selected, sneaking = false) {
         const inventory = this.game.inventory;
         const table = this.state(a, true);
         const wood = woodOfPlanks(selected);
@@ -254,7 +275,8 @@ export class CarpenterTables {
             const room = TABLE_CAPACITY - table.count;
             const slot = inventory.selected;
             const held = inventory.get(slot)?.count ?? 0;
-            const moved = this.game.mode === 'adventure' ? Math.min(room, held) : room;
+            const stack = this.game.mode === 'adventure' ? held : Math.max(held, 1);
+            const moved = Math.min(room, sneaking ? stack : 1);
             if (moved <= 0) {
                 this.game.onNotice?.('Stół jest pełny (64 deski)');
                 return true;
@@ -313,19 +335,21 @@ export class CarpenterTables {
     }
 
     takeProduct(a, hit, sneaking) {
-        // Pusty stół podwójnego warsztatu - dodatkowe wyroby z desek drugiego.
-        const supplier = this.supplierOf(a);
-        const table = supplier ? this.state(supplier) : this.state(a);
+        const table = this.state(a);
         if (!table?.count) {
             this.game.onNotice?.('Połóż deski na lewej części stołu (PPM deskami)');
             return true;
         }
-        const index = this.productUnder(a, hit);
-        const product = (supplier ? BENCH_PRODUCTS : TABLE_PRODUCTS)[index];
+        const product = TABLE_PRODUCTS[this.productUnder(a, hit)];
         if (!product) {
-            this.game.onNotice?.(supplier ? 'Kliknij drzwi albo klapę na blacie' : 'Kliknij wyrób na blacie (schody, półblok, płot, furtka)');
+            this.game.onNotice?.('Kliknij wyrób na blacie (schody, półblok, płot, furtka)');
             return true;
         }
+        return this.make(table, product, sneaking, this.partB(a));
+    }
+
+    // Partia wyrobu z desek stołu do ekwipunku (kucanie - ile się da).
+    make(table, product, sneaking, at) {
         const wood = woodOfPlanks(table.planks).wood;
         const type = shapeBaseType(wood, product.kind);
         if (table.count < product.planks) {
@@ -347,7 +371,7 @@ export class CarpenterTables {
         }
         if (table.count === 0) table.planks = null;
         this.version++;
-        this.game.playBlockSound?.('place', table.planks ?? 'oak_planks', this.partB(a));
+        this.game.playBlockSound?.('place', table.planks ?? 'oak_planks', at);
         this.game.achieve?.('carpentry', { type, count: made, kind: product.kind });
         this.game.onNotice?.(`${getItemLabel(type)} × ${made}`);
         return true;

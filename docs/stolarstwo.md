@@ -19,9 +19,10 @@ z każdego z 20 rodzajów desek:
     po prawej. Potrzebne jest wolne miejsce na oba.
   - Rozbicie jednej części zabiera cały stół (wypada jeden).
 - **Praca przy stole.**
-  - **PPM deskami w lewą część** kładzie deski na blat: cały stos z ręki,
-    do 64. Na stole leży naraz jeden rodzaj desek, a im więcej desek, tym
-    wyższy stos.
+  - **PPM deskami w lewą część** kładzie na blat jedną deskę. Z kucaniem
+    (Shift) idzie cały stos z ręki (od 0.93.0). Na stole mieści się 64,
+    naraz jeden rodzaj desek, a im więcej desek, tym wyższy stos.
+  - PPM pustą ręką w deski zabiera je z powrotem.
   - Na **prawej części** pojawiają się małe modele wyrobów z drewna
     leżącego na stole. Widać tylko te, na które starczy desek.
   - **PPM w wyrób** zabiera jedną partię do ekwipunku. **Shift + PPM**
@@ -79,17 +80,23 @@ Kamil przygotował w Blockbench (`drzwi.bbmodel`).
 - **Podwójny warsztat.**
   - Dwa stoły jeden za drugim, tak żeby ich blaty tworzyły kwadrat
     2 × 2 bloki (drugi stół może stać przodem albo tyłem do pierwszego).
-  - Gdy na jednym stole leżą deski, a drugi jest pusty, na prawej części
-    drugiego pojawiają się dodatkowe wyroby z tych desek:
+  - Gdy na jednym stole leżą deski, a drugi jest pusty, cały blat służy
+    drzwiom i klapom. Zwykłych wyrobów (schody, półbloki, płoty, furtki)
+    wtedy nie ma (układ od 0.93.0):
 
-    | Miejsce na blacie drugiego stołu (od przodu) | Wyrób | Deski → sztuki |
+    ![Podwójny warsztat: drzwi na dwóch blokach, klapa, deski](stolarstwo-093.jpg)
+
+    | Blok blatu | Co na nim leży | Deski → sztuki |
     | --- | --- | --- |
-    | przód, lewa | drzwi | 6 → 3 |
-    | przód, prawa | klapa | 3 → 1 |
+    | lewa część stołu z deskami | stos desek | – |
+    | blok drugiego stołu obok desek | klapa w prawdziwym rozmiarze (1 blok) | 3 → 1 |
+    | dwa pozostałe bloki | drzwi w prawdziwym rozmiarze (leżą, 1 × 2 bloki) | 6 → 3 |
 
-  - PPM w wyrób zabiera partię (Shift - ile się da), deski schodzą
-    z pierwszego stołu. Zwykłe wyroby (schody, półbloki, płoty, furtki)
-    zostają na pierwszym stole.
+  - Drzwi i klapa leżą lekko przekręcone i uniesione z jednej strony,
+    żeby nie zlewały się z blatem. Widać je, gdy starczy na nie desek.
+  - PPM w drzwi albo klapę zabiera partię (Shift - ile się da).
+  - Gdy deski leżą na obu stołach naraz, każdy stół działa osobno, ze
+    zwykłymi wyrobami.
 - **Drzwi.**
   - Z każdego z 20 rodzajów desek, np. *Drzwi dębowe*, *Drzwi z akacji*.
     Tekstura: rama, pionowe deski i dwie płyciny w kolorach desek,
@@ -133,14 +140,14 @@ Drzwi i klapy mają numery 10860-11819 (po 48 na drewno: drzwi -
 kierunek × część × zawias × otwarte, klapy - kierunek × góra/dół ×
 otwarta). Klapy rysuje ChunkMesher (pudełka), drzwi - `DoorRenderer`
 (chunk indeksuje je razem z pochodniami, mesher ich nie rysuje).
-Podwójny warsztat to `CarpenterTables.partnerOf` i `supplierOf`.
+Podwójny warsztat to `CarpenterTables.partnerOf` i `bench` (układ blatu).
 
 Wyroby nie zasłaniają światła (jak liście), ale woda przez nie nie
 przepływa.
 
 ## Sprawdzanie
 
-`node tools/sprawdz_stolarstwo.mjs` (w `npm test`, 619 sprawdzeń)
+`node tools/sprawdz_stolarstwo.mjs` (w `npm test`, 629 sprawdzeń)
 sprawdza:
 
 - numery i nazwy bloków oraz przepisy na stół;

@@ -11,8 +11,8 @@ import { Settings } from './settings/Settings.js';
 import { Hotbar } from './ui/Hotbar.js';
 import { createBlockIcons } from './ui/BlockIcons.js';
 import { installUiTextureSheets } from './ui/UiTextureSheets.js';
-import { Chat } from './ui/Chat.js';
-import { CommandRegistry } from './commands/CommandRegistry.js';
+import { createChatControl } from './app/ChatControl.js';
+import { installGameKeys } from './app/keys.js';
 import { GAME_COMMANDS, setSceneTime } from './commands/gameCommands.js';
 import { PLANT_PACK_ERRORS } from './blocks/plantPacks.js';
 import { PerfMonitor } from './game/PerfMonitor.js';
@@ -897,35 +897,19 @@ document.addEventListener('pointerlockchange', () => {
 // wysłaniu (Enter) gra wraca do przechwyconej myszy.
 // ------------------------------------------------------------
 
-const commands = new CommandRegistry();
+// Czat, rejestr komend i przejścia gra <-> czat: src/app/ChatControl.js.
 
-for (const command of GAME_COMMANDS) {
-    commands.register(command);
-}
-
-
-const chat = new Chat(document.getElementById('chat'), {
-
-    submit: submitChat,
-
-    // ESC: przeglądarka nie pozwala po nim od razu przechwycić
-    // myszy, więc zamiast tego pokazujemy menu pauzy.
-    cancel: () => closeChat(false),
-
-    complete: (text) => (game ? commands.complete(text, commandContext()) : []),
-
-    // Opis komendy z wpisanego tekstu (do podpowiedzi nad polem).
-
-    describe: (text) => {
-
-        const command = commands.find(text.trim().split(/\s+/)[0] ?? '');
-
-        return command
-            ? { usage: `Użycie: ${command.usage}`, description: command.description }
-            : null;
-
-    }
-
+const { chat, commands, openChat, closeChat } = createChatControl({
+    element: document.getElementById('chat'),
+    gameCommands: GAME_COMMANDS,
+    input,
+    getGame: () => game,
+    getState: () => state,
+    setState: (next) => { state = next; },
+    context: commandContext,
+    resume: () => resume(),
+    showPause: () => menu.showPause(),
+    playError: () => playUi('ui_error')
 });
 
 
@@ -965,85 +949,6 @@ function commandContext() {
             reload: reloadWithTouch
         }
     };
-
-}
-
-
-function openChat(prefix) {
-
-    if (!game || state !== 'playing') {
-        return;
-    }
-
-
-    state = 'chat';
-
-    input.reset();
-
-    chat.open(prefix);
-
-    document.exitPointerLock();
-
-}
-
-
-// relock = true: wracamy od razu do gry (przechwytujemy mysz),
-// false: pokazujemy menu pauzy.
-
-function closeChat(relock = true) {
-
-    if (state !== 'chat') {
-        return;
-    }
-
-
-    chat.close();
-
-    state = 'paused';
-
-
-    if (relock) {
-        resume();
-    }
-    else {
-        menu.showPause();
-    }
-
-}
-
-
-function submitChat(text) {
-
-    if (text.startsWith('/')) {
-
-        chat.print(text, 'command');
-
-        const result = commands.execute(text.slice(1), commandContext());
-
-        if (result.text) {
-            chat.print(result.text, result.ok ? 'success' : 'error');
-        }
-
-        if (!result.ok) {
-            playUi('ui_error');
-        }
-
-    }
-    else if (text && game?.net) {
-
-        // Gra ze znajomymi: wiadomość do wszystkich (wraca przez onChat).
-
-        game.net.chatLine(text);
-
-    }
-    else if (text) {
-
-        chat.print(text, 'player');
-
-    }
-
-
-    closeChat();
 
 }
 
@@ -1117,87 +1022,22 @@ function closeInventory(relock = true) {
 }
 
 
-window.addEventListener('keydown', (event) => {
+// Klawisze w grze (E, L, C, M, T, /, F3, F5, F8): src/app/keys.js.
+// Musi być przed ekranem ekwipunku - on też nasłuchuje klawisza E.
 
-    // E - ekwipunek.
-
-    if (state === 'playing' && !event.repeat && event.code === 'KeyE') {
-
-        event.preventDefault();
-
-        // To samo wciśnięcie nie może od razu zamknąć ekwipunku
-        // (ekran ekwipunku też nasłuchuje klawisza E).
-
-        event.stopImmediatePropagation();
-
-        openInventory();
-
-        return;
-
+installGameKeys({
+    getState: () => state,
+    getGame: () => game,
+    isTouch: () => touchMode,
+    actions: {
+        inventory: () => openInventory(),
+        achievements: () => openAchievements(),
+        status: () => statusPanel.toggle(),
+        map: () => toggleMap(),
+        pause: () => pauseGame(),
+        chat: (prefix) => openChat(prefix),
+        markProblem: () => markProblem()
     }
-
-
-    // L - księga osiągnięć (gra staje jak w pauzie, "Gotowe" - pauza).
-
-    if (state === 'playing' && !event.repeat && event.code === 'KeyL') {
-
-        event.preventDefault();
-
-        openAchievements();
-
-        return;
-
-    }
-
-
-    // C - okno statusu (samopoczucie; gra działa dalej).
-
-    if (state === 'playing' && !event.repeat && event.code === 'KeyC') {
-
-        statusPanel.toggle();
-
-        return;
-
-    }
-
-
-    // M - mapa terenu (otwiera / zamyka).
-
-    if (state === 'playing' && !event.repeat && event.code === 'KeyM') {
-
-        toggleMap();
-
-        return;
-
-    }
-
-
-    // Telefon z klawiaturą (np. na Bluetooth): ESC - pauza (bez
-    // przechwyconej myszy nie zrobi jej przeglądarka).
-
-    if (touchMode && state === 'playing' && event.code === 'Escape') {
-
-        pauseGame();
-
-        return;
-
-    }
-
-
-    if (
-        state === 'playing' &&
-        !event.repeat &&
-        ['KeyT', 'Slash', 'NumpadDivide'].includes(event.code)
-    ) {
-
-        // Bez tego litera "t" trafiłaby do pola czatu.
-
-        event.preventDefault();
-
-        openChat(event.code === 'KeyT' ? '' : '/');
-
-    }
-
 });
 
 // ------------------------------------------------------------
@@ -1656,27 +1496,6 @@ function animate(now) {
     }
 
 }
-
-
-// F3 w przeglądarce otwiera wyszukiwanie - w grze go blokujemy.
-// F5 w grze zmienia widok kamery (zamiast odświeżać stronę).
-
-window.addEventListener('keydown', (event) => {
-
-    if ((event.code === 'F8' || event.key === 'F8') && !event.repeat && game) {
-        event.preventDefault();
-        markProblem();
-    }
-
-    if (event.code === 'F3') {
-        event.preventDefault();
-    }
-
-    if (event.code === 'F5' && state === 'playing') {
-        event.preventDefault();
-    }
-
-});
 
 
 window.addEventListener('resize', () => {

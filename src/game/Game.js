@@ -1729,8 +1729,6 @@ export class Game extends GameInteraction {
 
         const viewDistance = this.viewDistance;
 
-        const farTerrain = settings.get('farTerrain');
-
         this.camera.fov = settings.get('fov') * (this.fovBoost ?? 1);
 
         this.cameraFarBase = viewDistance + 3 * CHUNK_SIZE + 64;

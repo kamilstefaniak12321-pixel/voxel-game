@@ -127,7 +127,7 @@ wszystko się zgadza, a im dalej, tym niżej leży teren.
   światło na terenie (`meteorLight.js` i dynamiczne), wstrząs, pole
   widzenia, dźwięki, krater (`Meteorites.explode` z wolnym od cząsteczek
   środkiem - gracz stoi w środku wybuchu) i plusk.
-- **Dźwięki** (`assets/sounds/space/`, nagrania - README, *Dźwięki*):
+- **Dźwięki** (`assets/sounds/space/`, nagrania - `docs/opis-gry.md`, *Dźwięki*):
   `space_ambient` (pomruk kosmosu), `skyfall_wind` (pęd powietrza),
   `skyfall_ignite` (zapłon), a ryk ognia to `meteor_flight`.
 

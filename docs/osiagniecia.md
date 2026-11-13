@@ -146,7 +146,7 @@ gdzie coś się dzieje (w klasach, które znają grę: `this.game.achieve?.(...)
 - powiadomienie i księga - `src/ui/achievements.css` (kolory rang też
   tam: `--tier-...`), napisy - `src/ui/texts.js` (`achievement...`),
 - melodyjki - `achievement_common` ... `achievement_legendary`
-  w `assets/sounds/ui/` (nagrania - README, *Dźwięki*),
+  w `assets/sounds/ui/` (nagrania - `docs/opis-gry.md`, *Dźwięki*),
   głośność - suwak *Menu, ekwipunek, osiągnięcia*.
 - kod: `src/achievements/AchievementBook.js` (zapis, zdarzenia,
   powiadomienia), księga w menu - `Menu.showAchievements`.

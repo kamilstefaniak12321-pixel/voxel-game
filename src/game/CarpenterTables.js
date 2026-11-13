@@ -1,4 +1,4 @@
-import { getBlockTypeById, getBlockId, isReplaceableId, AIR_ID } from '../blocks/BlockRegistry.js';
+import { getBlockTypeById, isReplaceableId, AIR_ID } from '../blocks/BlockRegistry.js';
 import { shapeInfo, shapeId, shapeBaseType, FACING_VECTOR, oppositeFacing, lookFacing, rightOf } from '../blocks/woodShapes.js';
 import { woodOfPlanks } from '../blocks/woods.js';
 import { getItemLabel } from '../items/ItemRegistry.js';

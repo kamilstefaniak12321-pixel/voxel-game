@@ -38,7 +38,6 @@ import {
 
 
 import {
-    WATER_WAVE_HEIGHT,
     RIVER_TEXTURE,
     WATER_OPACITY,
     WATER_OPACITY_GRAZING

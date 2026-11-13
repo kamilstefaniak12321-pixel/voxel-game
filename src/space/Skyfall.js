@@ -66,12 +66,6 @@ function random(min, max) {
 
 }
 
-function pick(list) {
-
-    return list[Math.floor(Math.random() * list.length)];
-
-}
-
 
 export class Skyfall {
 

@@ -24,7 +24,7 @@
 #
 # Potrzebny Python z numpy i scipy oraz ffmpeg. Wyjście można potem
 # skopiować do assets/sounds/ i dopisać pliki do assets/sounds/nagrania.json
-# (tools/dzwieki.py ich nie nadpisuje). Opis: README, część "Dźwięki".
+# (tools/dzwieki.py ich nie nadpisuje). Opis: docs/opis-gry.md, część "Dźwięki".
 # ------------------------------------------------------------
 
 import glob, json, os, subprocess, sys, tempfile

@@ -55,11 +55,11 @@ export class StatusPanel {
 
     // onEat - przycisk "Zjedz" (telefon).
     constructor({ onEat } = {}) {
-        this.chip = document.getElementById('wellbeing');
-        this.heart = new HeartIcon(this.chip);
+        this.heartRoot = document.getElementById('wellbeing');
+        this.heart = new HeartIcon(this.heartRoot);
         // Telefon: stuknięcie w serce otwiera okno (na komputerze mysz
         // jest w grze "złapana" - tam klawisz C).
-        this.chip.addEventListener('click', () => this.toggle());
+        this.heartRoot.addEventListener('click', () => this.toggle());
         this.panel = document.getElementById('status');
         this.weary = document.getElementById('weary');
         this.onEat = onEat;
@@ -87,19 +87,19 @@ export class StatusPanel {
     // Co klatkę (DOM zmienia się tylko, gdy zmieniły się dane).
     update(dt, game) {
         if (!game) {
-            this.chip.hidden = true;
+            this.heartRoot.hidden = true;
             document.body.classList.remove('has-heart');
             this.weary.style.opacity = '0';
             return;
         }
         const wellbeing = game.wellbeing;
         const state = wellbeing.active ? wellbeing.state : null;
-        this.chip.hidden = !state;
+        this.heartRoot.hidden = !state;
         document.body.classList.toggle('has-heart', Boolean(state));
         if (state) {
             this.heart.set(state);
             this.heart.update(dt);
-            this.chip.title = STATES[state].label;
+            this.heartRoot.title = STATES[state].label;
         }
         this.weary.style.opacity = String(wellbeing.effects.dim);
 

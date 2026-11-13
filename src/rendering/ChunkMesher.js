@@ -13,7 +13,6 @@ import {
 import { WATER_FLOW_UV, WATER_FALL_MARK } from './BlockRenderData.js';
 import { getWaterCornerHeight } from '../world/WaterSurface.js';
 import { atmosphericLightToBrightness } from './LightPolicy.js';
-import { SURFACE_PROFILES } from './SurfaceProfiles.js';
 import { getRiverPlantFaces, plantRandom, plantTransform, riverPlantTransform } from './RiverPlantGeometry.js';
 import { getBushyGrassFaces } from './BushyGrassGeometry.js';
 import { LEAF_PARTS } from '../../assets/models/leaves/model-data.js';

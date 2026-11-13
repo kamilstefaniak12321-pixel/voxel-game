@@ -11,6 +11,27 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 0.96.0 - Porządki w kodzie
+
+PR #135 (po 0.95.0). Dla gracza nic się nie zmienia - gra działa tak
+samo. Zmiany są w układzie kodu, żeby łatwiej było dodawać kolejne
+rzeczy (zwierzęta, noc, narzędzia):
+
+- **Komendy** (dotąd jeden plik, 6426 linii) leżą w ośmiu plikach
+  według tematu w `src/commands/` (niebo, gracz, świat, światło, teren,
+  ustawienia, osiągnięcia, ogólne) plus wspólne czytanie argumentów
+  (`commandHelpers.js`). `gameCommands.js` tylko składa listę.
+- **Celowanie i kliknięcia** (kopanie, stawianie, zbiór, jedzenie,
+  rozgrzebywanie, „weź blok") wyszły z `Game.js` (3207 → 2363 linie)
+  do `src/game/GameInteraction.js`.
+- **Czat i klawisze** wyszły z `main.js` (1959 → 1778 linii) do
+  `src/app/ChatControl.js` i `src/app/keys.js`.
+- **README** jest krótkim wstępem (1457 → 253 linie): uruchamianie,
+  sterowanie, spis części gry z linkami, struktura projektu. Cały
+  dotychczasowy opis gry jest bez skrótów w `docs/opis-gry.md`.
+- Usunięte nieużywane importy i martwy kod (pięć miejsc), testy komend
+  korzystają ze wspólnych atrap (`tools/fixtures/command-stubs.mjs`).
+
 ## 0.95.0 - Rozgrzebana ziemia i serce
 
 Pomysły Kamila — PR #134 (po 0.94.0):

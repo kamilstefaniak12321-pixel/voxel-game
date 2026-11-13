@@ -318,16 +318,10 @@ const commandUrl = new URL('../src/commands/gameCommands.js', import.meta.url).h
 const allowed = new Set(['./CommandRegistry.js', '../blocks/BlockRegistry.js', '../items/ItemRegistry.js',
     '../blocks/trees.js', '../blocks/treeCatalog.js', '../config.js', '../world/trees/TreeShowcase.js',
     '../audio/sounds.js', '../world/terrain/rocks.js']);
-const stubs = new Map();
-for (const [, bindings, specifier] of readFileSync(new URL(commandUrl), 'utf8').matchAll(/^import\s+([\s\S]*?)\s+from\s+['"]([^'"]+)['"];$/gm)) {
-    if (allowed.has(specifier)) continue;
-    const names = bindings.trim().startsWith('{')
-        ? bindings.slice(bindings.indexOf('{') + 1, bindings.lastIndexOf('}')).split(',').map(name => name.trim().split(/\s+as\s+/)[0]).filter(Boolean)
-        : [];
-    stubs.set(specifier, `data:text/javascript,${encodeURIComponent(names.map(name => `export const ${name}=undefined;`).join('\n'))}`);
-}
+const { commandStubs } = await import('./fixtures/command-stubs.mjs');
+const stubs = commandStubs(allowed);
 registerHooks({ resolve(specifier, context, next) {
-    const stub = context.parentURL === commandUrl ? stubs.get(specifier) : null;
+    const stub = stubs.get(`${context.parentURL}|${specifier}`);
     return stub ? { url: stub, shortCircuit: true } : next(specifier, context);
 } });
 const { GAME_COMMANDS } = await import(commandUrl);

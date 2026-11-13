@@ -75,7 +75,7 @@ const equal = (a, b, text) => { checks++; assert.deepEqual(a, b, text); };
         ok(R.canGrowOn(R.getBlockId(item.plants), fieldId), `${name}: rośnie na polu`);
     }
     // Kod gry: sadzenie tylko na polu, inaczej jedzenie albo podpowiedź.
-    const game = readFileSync(new URL('../src/game/Game.js', import.meta.url), 'utf8');
+    const game = readFileSync(new URL('../src/game/GameInteraction.js', import.meta.url), 'utf8');
     ok(game.includes('!this.canPlantAt(this.currentHit, block)'), 'owoc sprawdza, czy stoi na polu');
     ok(game.includes('=== FIELD_BLOCK'), 'pole to rozgrzebana ziemia');
     ok(game.includes("'Najpierw rozgrzeb ziemię łopatą'"), 'podpowiedź dla nasion');

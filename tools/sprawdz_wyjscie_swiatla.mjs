@@ -8,7 +8,8 @@ const gameUrl = localUrl('src/game/Game.js'), commandUrl = localUrl('src/command
 // Use actual Game.render and commands; their unrelated world/audio/UI
 // dependencies are not constructed by these narrow lifecycle regressions.
 const allowedImports = new Map([
-    [gameUrl, new Set(['three', '../rendering/WorldOutput.js', '../rendering/LightingDiagnostics.js', '../config.js'])]
+    [gameUrl, new Set(['three', './GameInteraction.js', '../rendering/WorldOutput.js', '../rendering/LightingDiagnostics.js', '../config.js'])],
+    [localUrl('src/game/GameInteraction.js'), new Set(['three', '../config.js'])]
 ]);
 const commandImports = new Set(['./CommandRegistry.js', '../rendering/LightingDiagnostics.js', '../settings/Settings.js',
     '../ui/texts.js', '../blocks/BlockRegistry.js', '../items/ItemRegistry.js', '../blocks/trees.js',

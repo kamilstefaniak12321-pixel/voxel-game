@@ -18,8 +18,13 @@ const worldUrl = url('src/world/World.js');
 
 // Importujemy całe klasy, bez wycinania ani kopiowania badanych metod.
 // Pozostałe zależności Game/World dotyczą grafiki i nie są tu wywoływane.
+// Od 0.96.0 badane metody (breakTarget, harvestTarget...) są w GameInteraction.js,
+// po której Game dziedziczy.
+const interactionUrl = url('src/game/GameInteraction.js');
+const gameImports = ['./GameInteraction.js', '../world/World.js', '../world/Light.js', '../blocks/BlockRegistry.js', '../items/ItemRegistry.js', './Inventory.js', '../config.js', '../blocks/woodShapes.js'];
 const realImports = new Map([
-    [gameUrl, new Set(['../world/World.js', '../world/Light.js', '../blocks/BlockRegistry.js', '../items/ItemRegistry.js', './Inventory.js', '../config.js', '../blocks/woodShapes.js'])],
+    [gameUrl, new Set(gameImports)],
+    [interactionUrl, new Set(gameImports)],
     [worldUrl, new Set(['../blocks/BlockRegistry.js', '../config.js', './Chunk.js', './Light.js', '../blocks/woodShapes.js', './ShapeBoxes.js'])]
 ]);
 const stubs = new Map();
@@ -38,7 +43,7 @@ registerHooks({
     resolve(specifier, context, nextResolve) {
         const stub = stubs.get(`${context.parentURL}|${specifier}`);
         if (stub) return { url: stub, shortCircuit: true };
-        if (context.parentURL === gameUrl && realImports.get(gameUrl).has(specifier)) {
+        if ((context.parentURL === gameUrl || context.parentURL === interactionUrl) && realImports.get(gameUrl).has(specifier)) {
             return nextResolve(new URL(specifier, url('src/game/Game.js')).href, context);
         }
         return nextResolve(specifier, context);

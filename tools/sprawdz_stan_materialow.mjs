@@ -68,10 +68,11 @@ globalThis.materialSettingsFixture = {
     setAmbientOcclusion() {}, setFastLeaves() {}, setLeafMaterialFast() {},
     updateAerialPerspective() {} // Osobny kontrakt stanu atmosfery: sprawdz_atmosfere.mjs.
 };
-const retained = new Set(['three', '../config.js', '../world/DistanceLod.js', '../rendering/MaterialLighting.js',
+const interactionUrl = new URL('../src/game/GameInteraction.js', import.meta.url).href;
+const retained = new Set(['three', './GameInteraction.js', '../config.js', '../world/DistanceLod.js', '../rendering/MaterialLighting.js',
     '../rendering/LightingDiagnostics.js', '../sky/SolarAtmosphere.js']);
 const stubNames = new Map();
-for (const parent of [gameUrl, fireUrl]) {
+for (const parent of [gameUrl, interactionUrl, fireUrl]) {
     for (const [, bindings, specifier] of readFileSync(new URL(parent), 'utf8')
         .matchAll(/^import\s+([\s\S]*?)\s+from\s+['"]([^'"]+)['"];$/gm)) {
         if (retained.has(specifier)) continue;

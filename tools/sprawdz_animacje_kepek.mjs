@@ -155,7 +155,7 @@ for (const kind of ['place', 'grow', 'harvest', 'reject', 'break']) {
 // W świecie: posadzenie, wzrost, zbiór, pełny ekwipunek, zniszczenie.
 // ------------------------------------------------------------
 
-const gameSource = await readFile(new URL('../src/game/Game.js', import.meta.url), 'utf8');
+const gameSource = await readFile(new URL('../src/game/GameInteraction.js', import.meta.url), 'utf8');
 const harvestBody = gameSource.split('    harvestTarget(hit) {')[1].split('\n    // --------------------------------------------------------')[0];
 const harvestTarget = new Function('getHarvest', 'THREE', `return function(hit) {${harvestBody.trim().slice(0, -1)}}`)(getHarvest, { Vector3 });
 

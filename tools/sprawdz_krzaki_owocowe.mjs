@@ -186,7 +186,7 @@ assert.ok(opaque.some((n,i)=>i%4===0&&n>0),'Opaque foreground really occludes th
 
 // Real world pipeline: negative chunk coordinates, saves, growth, harvest and
 // animation interruption. Animations must not change the underlying inventory.
-const gameSource=(await readFile(new URL('../src/game/Game.js',import.meta.url),'utf8')).replace(/\r\n/g,'\n');
+const gameSource=(await readFile(new URL('../src/game/GameInteraction.js',import.meta.url),'utf8')).replace(/\r\n/g,'\n');
 function method(signature){
     const body=gameSource.split(`    ${signature} {`)[1].split('\n    }\n')[0];
     return new Function('getHarvest','THREE',`return function ${signature} {${body}\n}`)(getHarvest,{Vector3});

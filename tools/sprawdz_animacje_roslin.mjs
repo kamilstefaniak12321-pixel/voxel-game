@@ -29,7 +29,7 @@ const { PlantGrowth } = await import('../src/game/PlantGrowth.js');
 const { Inventory } = await import('../src/game/Inventory.js');
 const { getGrowth, getBlockId, getHarvest } = await import('../src/blocks/BlockRegistry.js');
 const { Scene, Vector3 } = await import('three');
-const gameSource = await readFile(new URL('../src/game/Game.js', import.meta.url), 'utf8');
+const gameSource = await readFile(new URL('../src/game/GameInteraction.js', import.meta.url), 'utf8');
 const harvestBody = gameSource.split('    harvestTarget(hit) {')[1].split('\n    // --------------------------------------------------------')[0];
 const harvestTarget = new Function('getHarvest', 'THREE', `return function(hit) {${harvestBody.trim().slice(0,-1)}}`)(getHarvest, {Vector3});
 const near = (a,b,eps=1e-6) => assert.ok(Math.abs(a-b)<=eps, `${a} != ${b}`);

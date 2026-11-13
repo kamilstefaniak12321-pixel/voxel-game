@@ -9,7 +9,9 @@
 //                migocze. Na telefonie stuknięcie otwiera okno,
 //   #status    - okno (klawisz C albo stuknięcie w serce); gra
 //                działa dalej,
-//   #weary     - przyciemnienie brzegów obrazu u wyczerpanego.
+//   #weary     - przyciemnienie brzegów obrazu u wyczerpanego,
+//   #breath    - bąbelki oddechu pod sercem (widać je pod wodą - 0.97.0),
+//   #blackout  - czarny ekran przy utracie przytomności (Blackout.js).
 //
 // W trybie kreatywnym energia jest wyłączona - serca nie widać,
 // a okno mówi, że nie trzeba jeść.
@@ -19,6 +21,9 @@ import { STATES, MEALS_PER_DAY } from '../game/Wellbeing.js';
 import { getFood, KIND_LABELS } from '../items/foods.js';
 import { getItemLabel } from '../items/ItemRegistry.js';
 import { HeartIcon, drawHeart } from './HeartIcon.js';
+
+// Ile bąbelków oddechu pod sercem.
+const BUBBLES = 5;
 
 function element(tag, className, text = '') {
     const node = document.createElement(tag);
@@ -44,7 +49,8 @@ export function statusView(game) {
             ['Energia', info.energy],
             ['Kondycja', info.condition],
             ['Posiłki dzisiaj', `${Math.min(info.mealsToday, MEALS_PER_DAY)} z ${MEALS_PER_DAY}`],
-            ['Żołądek', info.full ? 'najedzony' : 'pusty']
+            ['Żołądek', info.full ? 'najedzony' : 'pusty'],
+            ...(info.limp ? [['Noga', `${info.limp} (utykasz)`]] : [])
         ],
         history: info.history,
         held: food ? { type: held, label: getItemLabel(held), kind: KIND_LABELS[food.kind], can: wellbeing.canEat(held) } : null
@@ -62,6 +68,14 @@ export class StatusPanel {
         this.heartRoot.addEventListener('click', () => this.toggle());
         this.panel = document.getElementById('status');
         this.weary = document.getElementById('weary');
+        this.breath = document.getElementById('breath');
+        this.blackout = document.getElementById('blackout');
+        this.bubbles = Array.from({ length: BUBBLES }, () => {
+            const bubble = document.createElement('span');
+            this.breath.append(bubble);
+            return bubble;
+        });
+        this.shownBubbles = null;
         this.onEat = onEat;
         this.signature = null;
         this.wait = 0;
@@ -76,7 +90,9 @@ export class StatusPanel {
 
     // Zdarzenie z gry (Game.onWellbeing): serce reaguje.
     signal(event) {
-        if (event.type === 'rumble') this.heart.play('rumble', 0.7);
+        if (event.type === 'hurt') this.heart.play('down', 1.2);
+        else if (event.type === 'healed') { this.heart.play('up', 1.2); this.heart.sparkle(); }
+        else if (event.type === 'rumble') this.heart.play('rumble', 0.7);
         else if (event.type === 'meal') this.heart.play('meal', 0.6);
         else if (event.type === 'day' && event.change !== 0) {
             this.heart.play(event.change > 0 ? 'up' : 'down', 1.2);
@@ -89,6 +105,8 @@ export class StatusPanel {
         if (!game) {
             this.heartRoot.hidden = true;
             document.body.classList.remove('has-heart');
+            this.breath.hidden = true;
+            this.blackout.classList.remove('on');
             this.weary.style.opacity = '0';
             return;
         }
@@ -102,6 +120,17 @@ export class StatusPanel {
             this.heartRoot.title = STATES[state].label;
         }
         this.weary.style.opacity = String(wellbeing.effects.dim);
+        this.heartRoot.classList.toggle('heart-limp', wellbeing.limping);
+        this.blackout.classList.toggle('on', game.blackout?.phase === 'out');
+
+        // Oddech: bąbelki znikają po kolei; pełne płuca - nie pokazujemy.
+        const bubbles = state && wellbeing.breath < 1 ? Math.ceil(wellbeing.breath * BUBBLES) : null;
+        if (bubbles !== this.shownBubbles) {
+            this.shownBubbles = bubbles;
+            this.breath.hidden = bubbles === null;
+            this.bubbles.forEach((bubble, index) => bubble.classList.toggle('gone', bubbles !== null && index >= bubbles));
+            this.breath.classList.toggle('low', bubbles !== null && bubbles <= 1);
+        }
 
         if (!this.isOpen) return;
         this.wait -= dt;

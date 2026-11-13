@@ -21,6 +21,16 @@
 // MEAL_GAP od poprzedniego - objadanie się daje energię, ale nie
 // poprawia kondycji.
 //
+// Od 0.97.0 dochodzą dwa skutki nieuwagi (zamiast obrażeń i śmierci):
+//
+//   upadek   - twarde lądowanie (fall) tłucze nogę: gracz przez jakiś
+//              czas utyka - chodzi wolniej i nie biega. Im wyższy
+//              upadek, tym dłużej; odpoczynek i pełny żołądek skracają.
+//   tonięcie - pod wodą ubywa oddechu (breath). Gdy się skończy,
+//              update zgłasza 'drown': gra gasi obraz i budzi gracza
+//              na brzegu (Game.startBlackout), a blackout() zostawia
+//              mu resztkę energii.
+//
 // Sama logika, bez grafiki i dźwięku (testy: tools/sprawdz_energie.mjs).
 // Stan trafia do zapisu świata (worldInfo.wellbeing).
 // ------------------------------------------------------------
@@ -53,6 +63,23 @@ export const MEALS_PER_DAY = 3;
 
 // Zmiana kondycji po dobie z daną liczbą posiłków (0, 1, 2, 3 i więcej).
 const CONDITION_CHANGE = [-5, -2, 1, 4];
+
+// Upadek: od tej prędkości lądowania (bloki/s; ok. 7 bloków wysokości)
+// noga jest stłuczona. Czas utykania rośnie z wysokością upadku.
+export const LIMP_SPEED = 20.5;
+const LIMP_SECONDS = 45;
+const LIMP_PER_BLOCK = 12;
+export const LIMP_MAX = 300;
+const LIMP_WALK = 0.6;
+const LIMP_REST_HEAL = 2;      // stojąc, noga goi się 2 razy szybciej
+const LIMP_FULL_HEAL = 1.25;   // najedzonemu też szybciej
+const FALL_GRAVITY = 30;       // jak GRAVITY w config.js
+
+// Oddech pod wodą: na ile sekund starcza i jak szybko wraca na powietrzu.
+export const BREATH_SECONDS = 25;
+const BREATH_RECOVER_SECONDS = 4;
+// Po utonięciu zostaje tyle zapasu energii (część kondycji) - wyczerpanie.
+const BLACKOUT_ENERGY = 0.05;
 
 // Burczenie w brzuchu: co ile sekund (losowo z przedziału).
 const RUMBLE_EVERY = [40, 80];
@@ -89,6 +116,9 @@ export class Wellbeing {
         this.active = true;
         this.rumbleIn = this.nextRumble();
         this.lastState = this.state;
+        // Oddech (1 - pełny). Nie zapisuje się: po wejściu do świata pełny.
+        this.breath = 1;
+        this.drowned = false;
         if (!Number.isFinite(data.day) || data.day > Math.floor(days)) data.day = Math.floor(days);
     }
 
@@ -107,6 +137,7 @@ export class Wellbeing {
             mealsToday: clamp(Math.floor(number(source.mealsToday, 0)), 0, 99),
             lastMealAt: Number.isFinite(source.lastMealAt) ? source.lastMealAt : null,
             lastFood: typeof source.lastFood === 'string' ? source.lastFood : null,
+            limp: clamp(number(source.limp, 0), 0, LIMP_MAX),
             meal,
             history: Array.isArray(source.history)
                 ? source.history.filter(Number.isFinite).slice(-3).map((n) => clamp(Math.floor(n), 0, 99)) : []
@@ -131,16 +162,44 @@ export class Wellbeing {
 
     // Skutki stanu (wyłączone - tryb kreatywny - jak "dobrze").
     get effects() {
-        return STATES[this.active ? this.state : 'good'];
+        const state = STATES[this.active ? this.state : 'good'];
+        if (!this.limping) return state;
+        // Stłuczona noga: wolniejszy chód i żadnego biegu, w każdym stanie.
+        return { ...state, walk: state.walk * LIMP_WALK, sprint: 0, canSprint: false };
+    }
+
+    get limping() { return this.active && this.data.limp > 0; }
+
+    // Twarde lądowanie z prędkością speed (bloki/s). Zwraca liczbę sekund
+    // utykania, które doszły (0 - nic się nie stało).
+    fall(speed) {
+        if (!this.active || !(speed >= LIMP_SPEED)) return 0;
+        const height = speed * speed / (2 * FALL_GRAVITY);
+        const limit = LIMP_SPEED * LIMP_SPEED / (2 * FALL_GRAVITY);
+        const seconds = Math.min(LIMP_MAX, LIMP_SECONDS + (height - limit) * LIMP_PER_BLOCK);
+        const before = this.data.limp;
+        this.data.limp = Math.min(LIMP_MAX, Math.max(before, seconds));
+        return this.data.limp - before;
+    }
+
+    // Utrata przytomności pod wodą: zostaje resztka energii, pusty
+    // żołądek i pełne płuca (gracz budzi się już na brzegu).
+    blackout() {
+        const data = this.data;
+        data.energy = Math.min(data.energy, this.capacity * BLACKOUT_ENERGY);
+        data.fullness = 0;
+        this.breath = 1;
+        this.drowned = false;
     }
 
     nextRumble() {
         return RUMBLE_EVERY[0] + this.random() * (RUMBLE_EVERY[1] - RUMBLE_EVERY[0]);
     }
 
-    // Jedna klatka. activity: { moving, sprinting, swimming, mining, jumps }.
-    // Zwraca listę zdarzeń: { type: 'rumble' }, { type: 'state', from, to },
-    // { type: 'day', meals, change }.
+    // Jedna klatka. activity: { moving, sprinting, swimming, mining, jumps,
+    // underwater }. Zwraca listę zdarzeń: { type: 'rumble' },
+    // { type: 'state', from, to }, { type: 'day', meals, change },
+    // { type: 'healed' } (noga zdrowa), { type: 'drown' } (brak oddechu).
     update(dt, activity = {}, days = this.data.day) {
         const events = [];
         if (!this.active || !(dt > 0)) return events;
@@ -155,6 +214,22 @@ export class Wellbeing {
         if (this.state === 'great') rate *= GREAT_DRAIN;
         data.energy = clamp(data.energy - rate * dt - (activity.jumps ?? 0) * JUMP_COST, 0, this.capacity);
         data.fullness = Math.max(0, data.fullness - dt);
+
+        if (data.limp > 0) {
+            const heal = (activity.moving || activity.swimming ? 1 : LIMP_REST_HEAL) * (this.full ? LIMP_FULL_HEAL : 1);
+            data.limp = Math.max(0, data.limp - dt * heal);
+            if (data.limp === 0) events.push({ type: 'healed' });
+        }
+
+        if (activity.underwater) {
+            this.breath = Math.max(0, this.breath - dt / BREATH_SECONDS);
+            if (this.breath === 0 && !this.drowned) {
+                this.drowned = true;
+                events.push({ type: 'drown' });
+            }
+        } else if (!this.drowned) {
+            this.breath = Math.min(1, this.breath + dt / BREATH_RECOVER_SECONDS);
+        }
 
         this.rollDay(days, events);
 
@@ -246,7 +321,8 @@ export class Wellbeing {
         const c = data.condition;
         const condition = c >= 120 ? 'znakomita' : c >= GREAT_CONDITION ? 'bardzo dobra' : c >= 95 ? 'dobra'
             : c >= 80 ? 'osłabiona' : 'słaba';
+        const limp = !this.limping ? null : data.limp > 150 ? 'mocno stłuczona' : data.limp > 45 ? 'stłuczona' : 'prawie zdrowa';
         return { state: this.state, energy, condition, full: this.full, mealsToday: data.mealsToday,
-            history: data.history, lastFood: data.lastFood };
+            history: data.history, lastFood: data.lastFood, limp };
     }
 }

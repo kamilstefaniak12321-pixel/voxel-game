@@ -3,6 +3,7 @@ import { fullTerrainDistance, FULL_TERRAIN_DISTANCE, TERRAIN_TRANSITION_START } 
 
 import { Campfires } from './Campfires.js';
 import { GameInteraction } from './GameInteraction.js';
+import { Blackout, NO_INPUT } from './Blackout.js';
 import { TorchRenderer } from '../rendering/TorchRenderer.js';
 import { DoorRenderer } from '../rendering/DoorRenderer.js';
 import { Chests } from './Chests.js';
@@ -510,6 +511,10 @@ export class Game extends GameInteraction {
 
         this.seenJumps = 0;
 
+        // Utrata przytomności pod wodą i pobudka na brzegu.
+
+        this.blackout = new Blackout(this);
+
 
         // Dawny "pasek" (komendy, testy): nazwy bloków i wybrane miejsce.
 
@@ -581,7 +586,8 @@ export class Game extends GameInteraction {
 
     update(dt) {
 
-        const input = this.input;
+        // Nieprzytomny gracz (Blackout.js) nie steruje.
+        const input = this.blackout.update(dt) ? NO_INPUT : this.input;
         const profile = this.perfDiagnostics;
         profile?.beginStage('player');
 

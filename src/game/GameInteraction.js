@@ -444,17 +444,39 @@ export class GameInteraction {
             return;
         }
 
+        // Twarde lądowanie tłucze nogę (nie w wodzie i nie po locie
+        // z kosmosu - tam rządzi Skyfall).
+
+        const skyfall = player.skyfall || this.wasSkyfall;
+        this.wasSkyfall = player.skyfall;
+
+        if (player.landed > 0 && !skyfall && player.submerged < 0.3 && wellbeing.fall(player.landed) > 0) {
+            this.sounds?.play('hurt');
+            this.onNotice?.('Stłukłeś nogę - przez jakiś czas utykasz');
+            this.onWellbeing?.({ type: 'hurt' });
+            this.achieve('hurt', { speed: player.landed });
+        }
+
         const events = wellbeing.update(dt, {
             moving: Math.hypot(player.vel.x, player.vel.z) > 0.5,
             sprinting: player.sprinting,
             swimming: player.swimming,
             mining: Boolean(this.mining),
-            jumps
+            jumps,
+            // Głowa pod wodą: zanurzone ponad 93% wysokości ciała.
+            underwater: player.submerged >= 0.93 && !this.blackout?.active
         }, this.time.days);
 
         for (const event of events) {
 
-            if (event.type === 'rumble') {
+            if (event.type === 'drown') {
+                this.blackout.start();
+            }
+            else if (event.type === 'healed') {
+                this.onNotice?.('Noga już nie boli');
+                this.onWellbeing?.(event);
+            }
+            else if (event.type === 'rumble') {
                 this.sounds?.play('stomach');
                 this.onNotice?.('Burczy ci w brzuchu');
                 this.onWellbeing?.(event);

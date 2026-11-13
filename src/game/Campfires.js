@@ -2,6 +2,11 @@ import { newCampfire, restoreCampfire, updateCampfire, addFirewood, addTinder,
     fuelWood, isTinder, campfireDrops } from './CampfireState.js';
 import { getBlockId, isLiquidId, isSolidId } from '../blocks/BlockRegistry.js';
 import { CampfireRenderer } from '../rendering/CampfireRenderer.js';
+import { getRoast, ROAST_SECONDS } from '../items/foods.js';
+import { getItemLabel } from '../items/ItemRegistry.js';
+
+// Ognisko, nad którym da się piec: płonie albo żarzy się.
+const canRoastOn = (fire) => fire.phase === 'burning' || fire.phase === 'collapsing';
 
 const keyOf = ({x, y, z}) => `${x},${y},${z}`;
 
@@ -12,6 +17,8 @@ export class Campfires {
         this.version = 0;
         this.clock = 0;
         this.noticeAt = -10;
+        // Pieczenie (trzymany PPM z surowym jedzeniem): { key, type, time }.
+        this.roast = null;
         for (const value of Array.isArray(saved) ? saved : []) {
             const fire = restoreCampfire(value);
             if (fire) this.fires.set(keyOf(fire), fire);
@@ -43,6 +50,9 @@ export class Campfires {
             } else if (isTinder(type)) {
                 if (addTinder(fire, type)) { this.consume(); game.playBlockSound('place', type, fire); }
                 else this.notice(fire.logs.length < 6 ? `Najpierw opał: ${fire.logs.length}/6` : 'Podpałka jest już gotowa lub ognisko płonie.');
+            } else if (getRoast(type)) {
+                // Samo pieczenie liczy update (trzeba trzymać PPM).
+                if (!canRoastOn(fire)) this.notice('Żeby coś upiec, ognisko musi płonąć.');
             } else if (type === 'fire_starter') {
                 if (fire.phase === 'unlit' && (fire.logs.length < 6 || !fire.tinder)) this.notice(`Potrzeba 6 polan i trawy (${fire.logs.length}/6).`);
             } else this.notice(this.description(fire));
@@ -94,7 +104,42 @@ export class Campfires {
                 if (Math.floor(this.clock * 5) !== Math.floor((this.clock - dt) * 5)) game.swingArm();
             }
         }
+        this.updateRoast(dt, holding, hit);
         this.renderer.update(dt, this.fires, this.clock);
+    }
+
+    // Pieczenie: trzymany PPM z surowym jedzeniem na płonącym ognisku.
+    // Po ROAST_SECONDS jedna sztuka zamienia się w pieczoną.
+    updateRoast(dt, holding, hit) {
+        const game = this.game, type = game.selectedBlock, roasted = getRoast(type);
+        const fire = holding && roasted && hit?.hit && hit.block.type === 'campfire' ? this.get(hit.block) : null;
+        if (!fire || !canRoastOn(fire)) { this.roast = null; return; }
+        const key = keyOf(fire);
+        if (!this.roast || this.roast.key !== key || this.roast.type !== type) {
+            this.roast = { key, type, time: 0 };
+            game.sounds?.play('sizzle');
+        }
+        const before = this.roast.time;
+        this.roast.time += dt;
+        if (Math.floor(this.roast.time * 2.5) !== Math.floor(before * 2.5)) game.swingArm();
+        if (Math.floor(this.roast.time / 0.9) !== Math.floor(before / 0.9)) game.sounds?.play('sizzle');
+        if (this.roast.time < ROAST_SECONDS) {
+            this.notice(`Pieczenie: ${Math.round(this.roast.time / ROAST_SECONDS * 100)}% — trzymaj PPM`);
+            return;
+        }
+        this.roast = null;
+        const inventory = game.inventory;
+        if (game.mode === 'adventure') inventory.take(inventory.selected, 1);
+        this.noticeAt = -10;
+        if (inventory.canAdd(roasted)) {
+            inventory.add(roasted);
+            this.notice(`Gotowe: ${getItemLabel(roasted)}`);
+            game.achieve('roasted', { type, into: roasted });
+        } else {
+            // Nie ma miejsca: surowe wraca do ręki.
+            if (game.mode === 'adventure') inventory.add(type);
+            this.notice('Ekwipunek pełny');
+        }
     }
 
     dispose() { this.renderer.dispose(); this.fires.clear(); }

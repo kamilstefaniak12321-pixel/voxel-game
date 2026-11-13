@@ -42,6 +42,12 @@ samopoczucie, przy zmianie migocze), a szczegóły **okno statusu**
 (tylko chód, ciemnieją brzegi obrazu). Liczby, lista jedzenia i komenda
 `/energia`: [docs/energia.md](energia.md).
 
+Od 0.97.0 nieuwaga ma skutki: upadek z ok. 7 bloków tłucze nogę
+(utykanie, bez biegu), a pod wodą ubywa oddechu - gdy się skończy,
+gracz traci przytomność i budzi się wyczerpany na brzegu. Jabłka,
+orzechy i żołędzie można upiec nad płonącym ogniskiem (trzymany PPM) -
+pieczone to porządny posiłek. Szczegóły: [docs/skutki.md](skutki.md).
+
 ## Tryby gry i ekwipunek
 
 Tryb wybiera się przy tworzeniu świata (przycisk *Tryb gry*, domyślnie

@@ -459,6 +459,66 @@ body:not([data-screen="game"]) #status {
     display: none;
 }
 
+/* Stłuczona noga: serce jest przechylone. */
+
+#wellbeing.heart-limp { rotate: -14deg; }
+
+/* Oddech pod wodą: pięć bąbelków pod sercem, znikają po kolei. */
+
+#breath {
+    position: fixed;
+    top: calc(10px + 46px * var(--hud-scale, 1));
+    left: 10px;
+    z-index: 5;
+    display: flex;
+    gap: 3px;
+    pointer-events: none;
+    transform: scale(var(--hud-scale, 1));
+    transform-origin: top left;
+}
+
+#breath[hidden] { display: none; }
+
+#breath span {
+    width: 6px;
+    height: 6px;
+    border: 2px solid #d9f3ff;
+    background: rgba(120, 200, 255, 0.55);
+    box-shadow: 1px 1px 0 rgba(0, 0, 0, 0.35);
+    transition: opacity 0.2s steps(2), transform 0.2s steps(2);
+}
+
+#breath span.gone { opacity: 0.15; transform: scale(0.5); }
+#breath.low span:not(.gone) { animation: breath-low 0.5s steps(2) infinite; }
+
+@keyframes breath-low {
+    50% { border-color: #ff8a7a; background: rgba(255, 120, 100, 0.6); }
+}
+
+body.touch #breath {
+    top: calc(10px + var(--touch-top) + 4px);
+    left: calc(var(--touch-left) + (var(--touch-top) + 8px) * 3 + (var(--touch-top) - 45px) / 2);
+}
+
+/* Utrata przytomności: obraz gaśnie i wraca (Blackout.js). */
+
+#blackout {
+    position: fixed;
+    inset: 0;
+    z-index: 7;
+    background: #000000;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 1.4s ease-in;
+}
+
+#blackout.on { opacity: 1; }
+
+body:not([data-screen="game"]) #breath,
+body:not([data-screen="game"]) #blackout {
+    display: none;
+}
+
 /* Napisy informacyjne ustępują sercu miejsca. */
 
 body.has-heart #info {

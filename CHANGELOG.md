@@ -11,6 +11,27 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 0.97.0 - Skutki zamiast śmierci: upadek, tonięcie, pieczenie
+
+Pomysł Kamila — PR #136 (po 0.96.0). Druga część systemu z 0.94.0
+([opis](docs/skutki.md)):
+
+- **Upadek z wysokości:** od około 7 bloków tłucze nogę. Gracz utyka -
+  chodzi wolniej i nie biega - od 45 sekund do 5 minut, zależnie od
+  wysokości. Odpoczynek i pełny żołądek przyspieszają gojenie. Serce
+  jest wtedy przechylone, a okno statusu pokazuje stan nogi.
+- **Tonięcie:** pod wodą ubywa oddechu (25 sekund, bąbelki pod sercem).
+  Gdy się skończy, obraz gaśnie, a gracz budzi się na brzegu kawałek
+  dalej - wyczerpany, ale z całym ekwipunkiem.
+- **Pieczenie nad ogniskiem:** trzymany PPM z jabłkiem, orzechami
+  laskowymi, orzeszkami bukowymi albo żołędziem na płonącym ognisku
+  piecze je w 4 sekundy. Pieczone to pierwszy porządny posiłek: jedna
+  sztuka daje ok. 20 energii i zalicza posiłek.
+- Cztery nowe przedmioty (pieczone jabłko, prażone orzechy, orzeszki
+  i żołądź), dźwięki uderzenia i skwierczenia.
+- Komendy do testów: `/energia noga <sekundy>`, `/energia utoniecie`.
+- W trybie kreatywnym utykania i tonięcia nie ma.
+
 ## 0.96.0 - Porządki w kodzie
 
 PR #135 (po 0.95.0). Dla gracza nic się nie zmienia - gra działa tak

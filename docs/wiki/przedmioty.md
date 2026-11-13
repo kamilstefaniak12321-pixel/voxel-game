@@ -2,7 +2,7 @@
 
 > Ta strona jest generowana z kodu gry (`python tools/wiki.py`) - nie zmieniaj jej ręcznie, zmiany przepadną przy następnym generowaniu.
 
-Wersja gry **0.96.0** - 93 przedmiotów. Przedmiotu nie da się postawić jak bloku; owoce i nasiona posadzone na ziemi (PPM) wyrastają w krzak albo drzewo, narzędzia przyspieszają kopanie.
+Wersja gry **0.97.0** - 97 przedmiotów. Przedmiotu nie da się postawić jak bloku; owoce i nasiona posadzone na ziemi (PPM) wyrastają w krzak albo drzewo, narzędzia przyspieszają kopanie.
 
 
 ## Drewno
@@ -51,6 +51,10 @@ Wersja gry **0.96.0** - 93 przedmiotów. Przedmiotu nie da się postawić jak bl
 | <img src="ikony/beechnuts.png" width="32" height="32" alt=""> | **Orzeszki bukowe** | `beechnuts` | **Posadzony (PPM na ziemi):** Sadzonka buka<br>**Skąd:** czasem z bloku: Liście buka (8%) |
 | <img src="ikony/linden_flower.png" width="32" height="32" alt=""> | **Kwiat lipy** | `linden_flower` | **Posadzony (PPM na ziemi):** Sadzonka lipy<br>**Skąd:** zbiór (PPM): Kwitnące liście lipy |
 | <img src="ikony/acorn.png" width="32" height="32" alt=""> | **Żołądź** | `acorn` | **Posadzony (PPM na ziemi):** Sadzonka dębu<br>**Skąd:** czasem z bloku: Liście dębu (10%)<br>**Przydaje się do:** Barwnik brązowy |
+| <img src="ikony/roasted_apple.png" width="32" height="32" alt=""> | **Pieczone jabłko** | `roasted_apple` | - |
+| <img src="ikony/roasted_hazelnut.png" width="32" height="32" alt=""> | **Prażone orzechy laskowe** | `roasted_hazelnut` | - |
+| <img src="ikony/roasted_beechnuts.png" width="32" height="32" alt=""> | **Prażone orzeszki bukowe** | `roasted_beechnuts` | - |
+| <img src="ikony/roasted_acorn.png" width="32" height="32" alt=""> | **Prażony żołądź** | `roasted_acorn` | - |
 | <img src="ikony/jablon_jablko.png" width="32" height="32" alt=""> | **Jabłko** | `jablon_jablko` | **Posadzony (PPM na ziemi):** Sadzonka jabłoni<br>**Skąd:** czasem z bloku: Liście jabłoni (5%); czasem z bloku: Liście jabłoni z jabłkami (5%); zbiór (PPM): Liście jabłoni z jabłkami; czasem z bloku: Liście jabłoni (jabłka odrastają) (5%)<br>**Przydaje się do:** Czerwona lampa |
 | <img src="ikony/olcha_szyszki.png" width="32" height="32" alt=""> | **Szyszeczki olchy** | `olcha_szyszki` | **Posadzony (PPM na ziemi):** Sadzonka olchy<br>**Skąd:** czasem z bloku: Liście olchy (6%) |
 | <img src="ikony/wierzba_bazie.png" width="32" height="32" alt=""> | **Bazie** | `wierzba_bazie` | **Posadzony (PPM na ziemi):** Sadzonka wierzby<br>**Skąd:** czasem z bloku: Liście wierzby (6%)<br>**Przydaje się do:** Lampa |

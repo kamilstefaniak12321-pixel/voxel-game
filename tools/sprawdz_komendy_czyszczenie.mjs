@@ -3,18 +3,19 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { registerHooks } from 'node:module';
+import { commandStubs } from './fixtures/command-stubs.mjs';
 
 const url = path => new URL(`../${path}`, import.meta.url).href;
 const commandUrl = url('src/commands/gameCommands.js');
 const worldUrl = url('src/world/World.js');
 const meteorUrl = url('src/game/Meteorites.js');
+const commandImports = new Set(['./CommandRegistry.js', '../blocks/BlockRegistry.js', '../items/ItemRegistry.js',
+    '../blocks/trees.js', '../blocks/treeCatalog.js', '../audio/sounds.js', '../world/terrain/rocks.js', '../config.js']);
 const realImports = new Map([
-    [commandUrl, new Set(['./CommandRegistry.js', '../blocks/BlockRegistry.js', '../items/ItemRegistry.js',
-        '../blocks/trees.js', '../blocks/treeCatalog.js', '../audio/sounds.js', '../world/terrain/rocks.js', '../config.js'])],
     [worldUrl, new Set(['../blocks/BlockRegistry.js', '../config.js', './Chunk.js', './Light.js'])],
     [meteorUrl, new Set(['three', '../blocks/BlockRegistry.js', '../config.js'])]
 ]);
-const stubs = new Map();
+const stubs = commandStubs(commandImports);
 for (const [parent, allowed] of realImports) {
     for (const [, bindings, specifier] of readFileSync(new URL(parent), 'utf8').matchAll(/^import\s+([\s\S]*?)\s+from\s+['"]([^'"]+)['"];$/gm)) {
         if (allowed.has(specifier)) continue;

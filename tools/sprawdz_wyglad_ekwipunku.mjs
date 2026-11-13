@@ -64,7 +64,7 @@ assert.ok(SETTINGS_TABS.look.includes('inventoryStyle'), 'ustawienie na zakładc
 assert.equal(Object.values(SETTINGS_TABS).flat().filter(key => key === 'inventoryStyle').length, 1,
     'wygląd ekwipunku występuje w ustawieniach dokładnie raz');
 assert.match(read('src/main.js'), /dataset\.invStyle = settings\.get\('inventoryStyle'\)/);
-assert.match(read('src/commands/gameCommands.js'), /settings\.set\('inventoryStyle', value\)/, 'komenda /ekwipunek wyglad');
+assert.match(read('src/commands/playerCommands.js'), /settings\.set\('inventoryStyle', value\)/, 'komenda /ekwipunek wyglad');
 
 const html = read('index.html');
 const layout = html.indexOf('src/ui/inventory.css');

@@ -1,17 +1,18 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { registerHooks } from 'node:module';
+import { commandStubs } from './fixtures/command-stubs.mjs';
 
 const localUrl = path => new URL(`../${path}`, import.meta.url).href;
 const gameUrl = localUrl('src/game/Game.js'), commandUrl = localUrl('src/commands/gameCommands.js');
 // Use actual Game.render and commands; their unrelated world/audio/UI
 // dependencies are not constructed by these narrow lifecycle regressions.
 const allowedImports = new Map([
-    [gameUrl, new Set(['three', '../rendering/WorldOutput.js', '../rendering/LightingDiagnostics.js', '../config.js'])],
-    [commandUrl, new Set(['./CommandRegistry.js', '../rendering/LightingDiagnostics.js', '../settings/Settings.js',
-        '../ui/texts.js', '../blocks/BlockRegistry.js', '../items/ItemRegistry.js', '../blocks/trees.js',
-        '../blocks/treeCatalog.js', '../audio/sounds.js', '../world/terrain/rocks.js', '../config.js'])]
+    [gameUrl, new Set(['three', '../rendering/WorldOutput.js', '../rendering/LightingDiagnostics.js', '../config.js'])]
 ]);
+const commandImports = new Set(['./CommandRegistry.js', '../rendering/LightingDiagnostics.js', '../settings/Settings.js',
+    '../ui/texts.js', '../blocks/BlockRegistry.js', '../items/ItemRegistry.js', '../blocks/trees.js',
+    '../blocks/treeCatalog.js', '../audio/sounds.js', '../world/terrain/rocks.js', '../config.js']);
 const stubNames = new Map();
 for (const [parent, allowed] of allowedImports) {
     for (const [, bindings, specifier] of readFileSync(new URL(parent), 'utf8').matchAll(/^import\s+([\s\S]*?)\s+from\s+['"]([^'"]+)['"];$/gm)) {
@@ -26,6 +27,7 @@ for (const [parent, allowed] of allowedImports) {
 }
 const stubs = new Map([...stubNames].map(([key, names]) => [key,
     `data:text/javascript,${encodeURIComponent([...names].map(name => `export const ${name}=undefined;`).join('\n'))}`]));
+for (const [key, stub] of commandStubs(commandImports)) stubs.set(key, stub);
 
 registerHooks({
     resolve(specifier, context, next) {

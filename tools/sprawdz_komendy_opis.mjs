@@ -15,23 +15,16 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { registerHooks } from 'node:module';
+import { commandStubs } from './fixtures/command-stubs.mjs';
 
 const url = path => new URL(`../${path}`, import.meta.url).href;
 const commandUrl = url('src/commands/gameCommands.js');
 const allowed = new Set(['./CommandRegistry.js', '../blocks/BlockRegistry.js', '../items/ItemRegistry.js',
     '../blocks/trees.js', '../blocks/treeCatalog.js', '../audio/sounds.js', '../world/terrain/rocks.js', '../config.js']);
-const stubs = new Map();
-for (const [, bindings, specifier] of readFileSync(new URL(commandUrl), 'utf8').matchAll(/^import\s+([\s\S]*?)\s+from\s+['"]([^'"]+)['"];$/gm)) {
-    if (allowed.has(specifier)) continue;
-    const names = bindings.trim().startsWith('{')
-        ? bindings.slice(bindings.indexOf('{') + 1, bindings.lastIndexOf('}')).split(',').map(name => name.trim().split(/\s+as\s+/)[0]).filter(Boolean)
-        : [];
-    // Atrapy: moduły niepotrzebne do listy komend (jak w sprawdz_komendy_czyszczenie.mjs).
-    stubs.set(specifier, `data:text/javascript,${encodeURIComponent(names.map(name => `export const ${name}=undefined;`).join('\n'))}`);
-}
+const stubs = commandStubs(allowed);
 registerHooks({
     resolve(specifier, context, next) {
-        const stub = context.parentURL === commandUrl ? stubs.get(specifier) : null;
+        const stub = stubs.get(`${context.parentURL}|${specifier}`);
         return stub ? { url: stub, shortCircuit: true } : next(specifier === 'three' ? url('lib/three/three.module.js') : specifier, context);
     },
     load(path, context, next) {

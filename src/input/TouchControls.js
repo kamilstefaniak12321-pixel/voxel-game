@@ -54,7 +54,6 @@ const ICONS = {
     camera: '<circle cx="12" cy="12" r="3" /><path d="M2 12 C5 6 19 6 22 12 C19 18 5 18 2 12 Z" />',
     map: '<path d="M3 6 L9 4 L15 6 L21 4 V18 L15 20 L9 18 L3 20 Z M9 4 V18 M15 6 V20" />',
     fullscreen: '<path d="M4 9 V4 H9 M15 4 H20 V9 M20 15 V20 H15 M9 20 H4 V15" />',
-    status: '<path d="M12 20 C5 15 3 11 3 8 a4.5 4.5 0 0 1 9 -1 a4.5 4.5 0 0 1 9 1 c0 3 -2 7 -9 12 Z" />',
     close: '<path d="M6 6 L18 18 M18 6 L6 18" />'
 };
 
@@ -99,7 +98,7 @@ export class TouchControls {
 
     // input    - InputManager (do niego trafiają "klawisze" i "mysz")
     // handlers - funkcje z main.js: pause, inventory, chat, achievements,
-    //            status, map, fullscreen, close (zamyka czat / ekwipunek)
+    //            map, fullscreen, close (zamyka czat / ekwipunek)
     // hotbar   - element paska bloków (#hotbar)
 
     constructor(input, handlers, hotbar) {
@@ -146,7 +145,6 @@ export class TouchControls {
         this.button(top, 'pause', 'Pauza', { action: () => handlers.pause?.() });
         this.button(top, 'inventory', 'Ekwipunek', { action: () => handlers.inventory?.() });
         this.button(top, 'chat', 'Czat', { action: () => handlers.chat?.() });
-        this.button(top, 'status', 'Samopoczucie', { action: () => handlers.status?.() });
         this.button(top, 'book', 'Osiągnięcia', { action: () => handlers.achievements?.() });
         this.button(top, 'camera', 'Widok', { press: 'F5' });
         this.button(top, 'map', 'Mapa', { action: () => handlers.map?.() });

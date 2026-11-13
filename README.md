@@ -76,12 +76,12 @@ logi...) uruchamia workflow *Testy gry* w GitHub Actions
 | F5 | widok: z oczu / zza pleców / z przodu |
 | Mysz | rozglądanie się |
 | LPM | zniszcz blok (w trybie przygody trzymaj - kopanie trwa chwilę, blok pęka; w kreatywnym trzymany LPM niszczy blok za blokiem) |
-| PPM | postaw blok / zbierz owoce z krzaka (żywicę, kwiaty lipy) / posadź owoc, szyszkę, żołądź / siekierą - okoruj pień |
+| PPM | postaw blok / zbierz owoce z krzaka (żywicę, kwiaty lipy) / zjedz owoc / łopatą - rozgrzeb ziemię / posadź owoc, szyszkę, żołądź na rozgrzebanej ziemi / siekierą - okoruj pień |
 | 1-9 / kółko myszy | wybór miejsca na pasku bloków |
 | Środkowy przycisk myszy | weź blok, na który patrzysz, na pasek |
 | E | ekwipunek (w trybie kreatywnym też wszystkie bloki gry i owoce) |
-| F | zjedz to, co trzymasz (owoce, orzechy - tryb przygody) |
-| C | okno statusu: samopoczucie, energia, kondycja, posiłki |
+| F | zjedz to, co trzymasz (owoce, orzechy - tryb przygody; to samo robi PPM poza polem) |
+| C | okno statusu: samopoczucie, energia, kondycja, posiłki (skrót stanu: serce w lewym górnym rogu) |
 | ESC | pauza (wróć do gry, ustawienia, zapisz i wyjdź do menu) |
 | F3 | informacje debugowania w lewym górnym rogu |
 | [ / ] (z F3) | cofnij / przesuń czas o godzinę |
@@ -99,7 +99,7 @@ logi...) uruchamia workflow *Testy gry* w GitHub Actions
 | ▲ / ▼ (prawy dół) | skok (2× - latanie) / kucanie, w locie w dół |
 | kilof, kostka | kop / postaw tam, gdzie celownik |
 | pasek bloków | stuknięcie - wybór miejsca |
-| przyciski u góry | pauza, ekwipunek, czat, samopoczucie (serce - okno statusu z przyciskiem *Zjedz*), osiągnięcia, widok (F5), mapa, pełny ekran |
+| przyciski u góry | pauza, ekwipunek, czat, serce (samopoczucie; stuknięcie - okno statusu z przyciskiem *Zjedz*), osiągnięcia, widok (F5), mapa, pełny ekran |
 | "wstecz" w telefonie | pauza (nie wychodzi z gry) |
 
 **Tratwa (0.76.0):** dwie dowolne deski obok siebie w siatce dają jedną
@@ -133,7 +133,8 @@ i skokach) i wraca tylko z **jedzenia**: weź owoce albo orzechy do ręki
 i naciśnij **F**. **Kondycja** (ile energii się mieści) rośnie, gdy jesz
 trzy posiłki dziennie w odstępach, i powoli spada, gdy jesz za mało.
 
-Stan widać słowami u góry ekranu, a szczegóły w **oknie statusu**
+Stan pokazuje pixel-artowe **serce** w lewym górnym rogu (kolor to
+samopoczucie, przy zmianie migocze), a szczegóły **okno statusu**
 (klawisz **C**): *świetnie* (szybszy bieg i praca), *dobrze*, *głodny*
 (burczy w brzuchu), *zmęczony* (wolniejszy bieg i kopanie), *wyczerpany*
 (tylko chód, ciemnieją brzegi obrazu). Liczby, lista jedzenia i komenda
@@ -388,8 +389,11 @@ i świerczyn). Każdy rośnie w czterech etapach:
   (kilka owoców: 1-2, pełen: 2-4, orzechy 2-3), a krzak wraca do etapu
   bez owoców i owocuje od nowa. Z **Shiftem** i blokiem w ręce PPM
   zwyczajnie stawia blok obok. Działa w obu trybach.
-- **Sadzenie:** owoc w ręce + PPM na ziemi = sadzonka tego gatunku
-  (w przygodzie zużywa jeden owoc). Orzech daje leszczynę.
+- **Sadzenie** (od 0.95.0): najpierw **łopata + PPM** na ziemi albo
+  trawie - powstaje **rozgrzebana ziemia**. Owoc w ręce + PPM na niej =
+  sadzonka tego gatunku (w przygodzie zużywa jeden owoc). Orzech daje
+  leszczynę. Poza polem PPM zjada owoc. Puste pole po jakimś czasie
+  zarasta. [Opis](docs/uprawa.md).
 - **Niszczenie:** zniszczony krzak (przygoda) daje sadzonkę - można go
   przesadzić - i owoce, które na nim były.
 - **W świecie:** w terenie realistycznym rosną dzikie zarośla (zwykle
@@ -613,7 +617,7 @@ las eukaliptusowy i las sekwojowy z drzewami do 72 bloków
   wielkości i pasują na granicach chunków. Liście mają prześwity, a pod
   koroną jest cień. Z daleka las widać jako korony drzew.
 - **Sadzonki** (i szyszki, orzeszki, żołędzie, kwiat lipy posadzone na
-  ziemi) wyrastają w całe drzewo średnio po 5 minutach
+  rozgrzebanej ziemi - `docs/uprawa.md`) wyrastają w całe drzewo średnio po 5 minutach
   (`TREE_GROWTH_SECONDS`), jeśli mają nad sobą miejsce.
 - **Przygoda:** z liści czasem wypada sadzonka i nasiono gatunku.
 - **Test:** `/drzewa aleja` (wszystkie gatunki przed tobą), `/drzewa

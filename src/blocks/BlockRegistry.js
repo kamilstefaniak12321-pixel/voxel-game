@@ -385,6 +385,7 @@ export const BLOCK_TYPES = {
 
         soil: true,
         drops: 'dirt',
+        tills: 'tilled_dirt',
 
         solid: true,
 
@@ -413,12 +414,43 @@ export const BLOCK_TYPES = {
         sound: 'dirt',
 
         soil: true,
+        tills: 'tilled_dirt',
 
         solid: true,
 
         textures: {
             all: 'dirt'
         }
+
+    },
+
+
+    // Rozgrzebana ziemia (0.95.0): prymitywne pole. Powstaje z ziemi
+    // albo trawy po PPM łopatą (game/Game.js - tillTarget) i tylko na
+    // niej da się sadzić owoce i nasiona. Pusta (nic na niej nie rośnie)
+    // po jakimś czasie zarasta z powrotem w zwykłą ziemię (grows.empty).
+
+    tilled_dirt: {
+
+        id: 256,
+        name: 'Tilled Dirt',
+
+        label: 'Rozgrzebana ziemia',
+
+        sound: 'dirt',
+
+        soil: true,
+        drops: 'dirt',
+
+        solid: true,
+
+        textures: {
+            top: 'tilled_dirt',
+            side: 'dirt',
+            bottom: 'dirt'
+        },
+
+        grows: { into: 'dirt', seconds: 900, empty: true }
 
     },
 
@@ -1613,6 +1645,20 @@ export function getLoot(type) {
 
 // Siekiera: na co zamienia się blok (albo null) i co z niego zostaje
 // w ręce (kora brzozowa).
+
+// Rozgrzebywanie łopatą (PPM): nazwa bloku, który powstaje, albo null.
+
+export function getTill(type) {
+
+    return getBlockDefinition(type)?.tills ?? null;
+
+}
+
+
+// Pole uprawne - tylko na nim da się sadzić owoce i nasiona z ręki.
+
+export const FIELD_BLOCK = 'tilled_dirt';
+
 
 export function getStrip(type) {
 

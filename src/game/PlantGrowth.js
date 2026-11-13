@@ -139,6 +139,14 @@ export class PlantGrowth {
         }
 
 
+        // Rozgrzebana ziemia (grows.empty) zarasta tylko, gdy nic na
+        // niej nie rośnie ani nie stoi.
+
+        if (growth.empty && this.world.getBlockId(x, y + 1, z) !== 0) {
+            return false;
+        }
+
+
         // Roślina wyższa niż blok (paczki roślin - grows.room) rośnie
         // dalej tylko, gdy nad nią jest wolne miejsce; jeśli nie, czeka.
 
@@ -181,6 +189,12 @@ export class PlantGrowth {
                     const cell = cellPosition(chunk, index);
 
                     if (Math.hypot(cell.x + 0.5 - x, cell.z + 0.5 - z) > radius) {
+                        continue;
+                    }
+
+                    // /krzaki rosnij przyspiesza rośliny, nie zarastanie pól.
+
+                    if (getGrowth(getBlockTypeById(chunk.blocks[index]))?.empty) {
                         continue;
                     }
 

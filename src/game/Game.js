@@ -27,6 +27,10 @@ import {
     getHarvest,
     getLoot,
     getStrip,
+    getTill,
+    FIELD_BLOCK,
+    isReplaceableId,
+    isLiquidId,
     getBreakTime,
     isPlantId,
     canPlantStay,
@@ -36,7 +40,7 @@ import {
     getAttach,
     ATTACH_OFFSETS
 } from '../blocks/BlockRegistry.js';
-import { getItemLabel, getPlacedBlock, getTool, itemExists } from '../items/ItemRegistry.js';
+import { getItemLabel, getPlacedBlock, getTool, isItemType, itemExists } from '../items/ItemRegistry.js';
 import { Inventory } from './Inventory.js';
 import { PlantGrowth } from './PlantGrowth.js';
 import { PlantAnimations } from '../rendering/PlantAnimations.js';
@@ -703,6 +707,15 @@ export class Game {
             getStrip(this.currentHit.block.type) !== null;
 
 
+        // PPM łopatą na ziemi albo trawie - rozgrzebana ziemia (pole).
+
+        const tilling =
+            placePressed &&
+            getTool(this.selectedBlock) === 'shovel' &&
+            this.currentHit?.hit &&
+            getTill(this.currentHit.block.type) !== null;
+
+
         // PPM na krzaku z owocami zbiera owoce (z Shiftem i czymś
         // w ręce - zwyczajnie stawia obok). Tak samo żywica z pnia
         // sosny i kwiaty z kwitnącej lipy.
@@ -764,6 +777,15 @@ export class Game {
 
         }
 
+        else if (placing && tilling) {
+
+            this.tillTarget(this.currentHit);
+
+            this.currentHit =
+                this.raycast.castFromCamera(this.camera);
+
+        }
+
         else if (placing && harvesting) {
 
             this.harvestTarget(this.currentHit);
@@ -775,14 +797,27 @@ export class Game {
 
         else if (placing && placePressed) {
 
-            // Puste miejsce na pasku - nie ma czego postawić. Owoc
-            // stawia sadzonkę (getPlacedBlock), inny przedmiot - nic.
+            // Puste miejsce na pasku - nie ma czego postawić. Owoc albo
+            // nasiono sadzi się tylko na rozgrzebanej ziemi (useSeed),
+            // inny przedmiot - nic.
 
             const type = this.selectedBlock;
 
             const block = type ? getPlacedBlock(type) : null;
 
-            if (block) {
+            if (block && isItemType(type) && !this.canPlantAt(this.currentHit, block)) {
+
+                // Nie na polu: jedzenie się zjada, nasiono podpowiada.
+
+                if (getFood(type) && this.wellbeing.active) {
+                    this.eat();
+                }
+                else {
+                    this.onNotice?.('Najpierw rozgrzeb ziemię łopatą');
+                }
+
+            }
+            else if (block) {
 
                 const river = getRiverPlant(getBlockId(block));
                 const surfacePlant = river && river.kind !== 'milfoil' &&
@@ -2305,11 +2340,13 @@ export class Game {
             if (event.type === 'rumble') {
                 this.sounds?.play('stomach');
                 this.onNotice?.('Burczy ci w brzuchu');
+                this.onWellbeing?.(event);
             }
             else if (event.type === 'state' && event.to !== 'hungry') {
                 this.onNotice?.(`Samopoczucie: ${STATES[event.to].label.toLowerCase()}`);
             }
             else if (event.type === 'day' && event.change !== 0) {
+                this.onWellbeing?.(event);
                 this.onMessage?.(event.change > 0
                     ? 'Nowy dzień. Jadłeś regularnie - kondycja rośnie.'
                     : 'Nowy dzień. Jadłeś za mało - kondycja spada.');
@@ -2353,6 +2390,7 @@ export class Game {
 
         if (result.meal) {
             this.onNotice?.('Posiłek zaliczony');
+            this.onWellbeing?.({ type: 'meal' });
         }
 
         return true;
@@ -2534,6 +2572,58 @@ export class Game {
 
     // Okorowanie siekierą (PPM na pniu): pień zamienia się w okorowany,
     // z brzozy zostaje jeszcze kora (do ekwipunku - w obu trybach).
+
+    // PPM łopatą: ziemia albo trawa -> rozgrzebana ziemia. Nad blokiem
+    // musi być wolno (trawa i kwiaty na nim znikają).
+
+    tillTarget(hit) {
+
+        if (!hit || !hit.hit) {
+            return false;
+        }
+
+        const { x, y, z, type } = hit.block;
+
+        const into = getTill(type);
+
+        if (!into) {
+            return false;
+        }
+
+        const aboveId = this.world.getBlockId(x, y + 1, z);
+
+        if (aboveId !== 0 && (!isReplaceableId(aboveId) || isLiquidId(aboveId))) {
+            return false;
+        }
+
+        if (!this.world.setBlock(x, y, z, into)) {
+            return false;
+        }
+
+        if (aboveId !== 0) {
+            this.world.setBlock(x, y + 1, z, null);
+        }
+
+        this.playBlockSound('break', into, hit.block);
+
+        this.achieve('tilled', { type, into });
+
+        return true;
+
+    }
+
+
+    // Czy owoc albo nasiono da się tu posadzić: sadzonka stanie na
+    // rozgrzebanej ziemi (kliknięta z góry albo roślina na niej).
+
+    canPlantAt(hit, block) {
+
+        const target = this.placer.targetOf(hit, block);
+
+        return Boolean(target) && this.world.getBlock(target.x, target.y - 1, target.z) === FIELD_BLOCK;
+
+    }
+
 
     stripTarget(hit) {
 

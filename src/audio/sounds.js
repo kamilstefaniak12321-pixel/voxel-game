@@ -74,6 +74,26 @@ SOUNDS.harvest = {
 };
 
 
+// Ciało gracza (0.94.0, game/Game.js - updateWellbeing, eat): burczenie
+// w brzuchu u głodnego i jedzenie. Syntetyczne (tools/dzwieki.py, grupa
+// "cialo") - można podmienić nagraniami. Bez miejsca w świecie: słychać
+// je "w głowie".
+
+SOUNDS.stomach = {
+    files: ['body/stomach_1.ogg', 'body/stomach_2.ogg', 'body/stomach_3.ogg'],
+    volume: 0.8,
+    pitch: [0.92, 1.08],
+    category: 'blocks'
+};
+
+SOUNDS.eat = {
+    files: ['body/eat_1.ogg', 'body/eat_2.ogg', 'body/eat_3.ogg'],
+    volume: 0.7,
+    pitch: [0.92, 1.1],
+    category: 'blocks'
+};
+
+
 // Woda (game/Game.js - updateWaterSounds): plusk przy wpadnięciu,
 // ruchy w wodzie, kroki w płytkiej wodzie, krople przy wychodzeniu.
 

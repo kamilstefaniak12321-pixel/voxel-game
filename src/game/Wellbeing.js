@@ -1,0 +1,252 @@
+// ------------------------------------------------------------
+// ENERGIA I SAMOPOCZUCIE (0.94.0)
+//
+// W grze nie ma śmierci - są skutki. Ten plik liczy dwie rzeczy:
+//
+//   energia  - paliwo. Ubywa cały czas, szybciej przy wysiłku (bieg,
+//              pływanie, kopanie, skoki). Wraca tylko z jedzenia
+//              (src/items/foods.js). Mieści się jej tyle, ile wynosi
+//              kondycja.
+//   kondycja - "codzienna energia": ile zapasu ciało potrafi zmieścić
+//              (60-130, na początku 100). Zmienia się raz na dobę gry:
+//              rośnie, gdy gracz je regularnie (trzy posiłki w odstępach),
+//              powoli spada, gdy je za mało.
+//
+// Z ilości energii wynika stan (STATES): świetnie, dobrze, głodny,
+// zmęczony, wyczerpany - a z niego skutki (effects): szybkość biegu
+// i pracy, przyciemnienie obrazu. Głodnemu burczy w brzuchu.
+//
+// Posiłek to wszystko, co gracz zje w krótkim czasie (MEAL_WINDOW).
+// Liczy się, gdy da razem co najmniej MEAL_ENERGY energii i minęło
+// MEAL_GAP od poprzedniego - objadanie się daje energię, ale nie
+// poprawia kondycji.
+//
+// Sama logika, bez grafiki i dźwięku (testy: tools/sprawdz_energie.mjs).
+// Stan trafia do zapisu świata (worldInfo.wellbeing).
+// ------------------------------------------------------------
+
+import { getFood } from '../items/foods.js';
+
+export const CONDITION_MIN = 60;
+export const CONDITION_MAX = 130;
+export const CONDITION_START = 100;
+const ENERGY_START = 75;
+
+// Zużycie energii na sekundę w spoczynku (doba gry to 1200 s, więc
+// samo siedzenie zjada ok. 30 energii na dobę) i mnożniki wysiłku.
+const REST_DRAIN = 0.025;
+const DRAIN = { walk: 1.5, sprint: 3.2, swim: 3.2 };
+const MINING_DRAIN = 0.05;
+const JUMP_COST = 0.2;
+const FULL_DRAIN = 0.8;       // najedzony zużywa mniej
+const GREAT_DRAIN = 0.9;      // w świetnej formie też
+const FULLNESS_MAX = 600;
+// Od tylu sekund sytości żołądek jest pełny - nie da się jeść dalej
+// (nadmiar energii ponad kondycję przepada).
+export const FULLNESS_LIMIT = 420;
+
+// Posiłki (czas w dobach gry).
+export const MEAL_ENERGY = 18;
+export const MEAL_WINDOW = 0.04;
+export const MEAL_GAP = 0.12;
+export const MEALS_PER_DAY = 3;
+
+// Zmiana kondycji po dobie z daną liczbą posiłków (0, 1, 2, 3 i więcej).
+const CONDITION_CHANGE = [-5, -2, 1, 4];
+
+// Burczenie w brzuchu: co ile sekund (losowo z przedziału).
+const RUMBLE_EVERY = [40, 80];
+
+// Stany od najlepszego. from - od jakiej części zapasu (energia /
+// kondycja); "świetnie" wymaga też dobrej kondycji (GREAT_CONDITION).
+export const GREAT_CONDITION = 108;
+
+export const STATES = {
+    great: { label: 'Świetnie', from: 0.7, sprint: 1.25, work: 1.15, walk: 1, canSprint: true, dim: 0,
+        text: 'Jesz regularnie i masz zapas sił. Biegasz szybciej, pracujesz sprawniej i wolniej się męczysz.' },
+    good: { label: 'Dobrze', from: 0.4, sprint: 1, work: 1, walk: 1, canSprint: true, dim: 0,
+        text: 'Wszystko w porządku.' },
+    hungry: { label: 'Głodny', from: 0.22, sprint: 1, work: 1, walk: 1, canSprint: true, dim: 0,
+        text: 'Burczy ci w brzuchu. Zjedz coś, zanim zabraknie sił.' },
+    tired: { label: 'Zmęczony', from: 0.08, sprint: 0.5, work: 0.8, walk: 1, canSprint: true, dim: 0,
+        text: 'Brakuje ci energii. Biegasz wolniej i wolniej kopiesz.' },
+    exhausted: { label: 'Wyczerpany', from: 0, sprint: 0, work: 0.6, walk: 0.85, canSprint: false, dim: 0.7,
+        text: 'Nie masz już sił. Możesz tylko iść, a praca idzie bardzo wolno. Zjedz cokolwiek.' }
+};
+
+const STATE_ORDER = ['great', 'good', 'hungry', 'tired', 'exhausted'];
+
+const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
+const number = (value, fallback) => Number.isFinite(value) ? value : fallback;
+
+
+export class Wellbeing {
+
+    // data - obiekt z zapisu (zmieniany w miejscu), days - czas gry w dobach.
+    constructor(data, days = 0, random = Math.random) {
+        this.data = data;
+        this.random = random;
+        this.active = true;
+        this.rumbleIn = this.nextRumble();
+        this.lastState = this.state;
+        if (!Number.isFinite(data.day) || data.day > Math.floor(days)) data.day = Math.floor(days);
+    }
+
+    // Z zapisu świata (albo nowy stan). Naprawia uszkodzone pola.
+    static load(saved, days = 0, random = Math.random) {
+        const source = saved && typeof saved === 'object' ? saved : {};
+        const condition = clamp(number(source.condition, CONDITION_START), CONDITION_MIN, CONDITION_MAX);
+        const meal = source.meal && typeof source.meal === 'object' && Number.isFinite(source.meal.last)
+            ? { last: source.meal.last, energy: Math.max(0, number(source.meal.energy, 0)), counted: Boolean(source.meal.counted) }
+            : null;
+        const data = {
+            energy: clamp(number(source.energy, Math.min(ENERGY_START, condition)), 0, condition),
+            condition,
+            fullness: clamp(number(source.fullness, 0), 0, FULLNESS_MAX),
+            day: Number.isFinite(source.day) ? Math.floor(source.day) : Math.floor(days),
+            mealsToday: clamp(Math.floor(number(source.mealsToday, 0)), 0, 99),
+            lastMealAt: Number.isFinite(source.lastMealAt) ? source.lastMealAt : null,
+            lastFood: typeof source.lastFood === 'string' ? source.lastFood : null,
+            meal,
+            history: Array.isArray(source.history)
+                ? source.history.filter(Number.isFinite).slice(-3).map((n) => clamp(Math.floor(n), 0, 99)) : []
+        };
+        return new Wellbeing(data, days, random);
+    }
+
+    get energy() { return this.data.energy; }
+    get condition() { return this.data.condition; }
+    get capacity() { return this.data.condition; }
+    get full() { return this.data.fullness > 0; }
+
+    get state() {
+        const part = this.data.energy / this.capacity;
+        for (const name of STATE_ORDER) {
+            if (part < STATES[name].from) continue;
+            if (name === 'great' && this.data.condition < GREAT_CONDITION) continue;
+            return name;
+        }
+        return 'exhausted';
+    }
+
+    // Skutki stanu (wyłączone - tryb kreatywny - jak "dobrze").
+    get effects() {
+        return STATES[this.active ? this.state : 'good'];
+    }
+
+    nextRumble() {
+        return RUMBLE_EVERY[0] + this.random() * (RUMBLE_EVERY[1] - RUMBLE_EVERY[0]);
+    }
+
+    // Jedna klatka. activity: { moving, sprinting, swimming, mining, jumps }.
+    // Zwraca listę zdarzeń: { type: 'rumble' }, { type: 'state', from, to },
+    // { type: 'day', meals, change }.
+    update(dt, activity = {}, days = this.data.day) {
+        const events = [];
+        if (!this.active || !(dt > 0)) return events;
+        const data = this.data;
+
+        let rate = REST_DRAIN;
+        if (activity.swimming) rate *= DRAIN.swim;
+        else if (activity.sprinting) rate *= DRAIN.sprint;
+        else if (activity.moving) rate *= DRAIN.walk;
+        if (activity.mining) rate += MINING_DRAIN;
+        if (this.full) rate *= FULL_DRAIN;
+        if (this.state === 'great') rate *= GREAT_DRAIN;
+        data.energy = clamp(data.energy - rate * dt - (activity.jumps ?? 0) * JUMP_COST, 0, this.capacity);
+        data.fullness = Math.max(0, data.fullness - dt);
+
+        this.rollDay(days, events);
+
+        const state = this.state;
+        if (state !== this.lastState) {
+            events.push({ type: 'state', from: this.lastState, to: state });
+            // Pierwsze burczenie zaraz po tym, jak gracz zgłodnieje.
+            if (state === 'hungry' && this.lastState !== 'tired' && this.lastState !== 'exhausted') this.rumbleIn = 2;
+            this.lastState = state;
+        }
+
+        if (STATE_ORDER.indexOf(state) >= STATE_ORDER.indexOf('hungry') && !this.full) {
+            this.rumbleIn -= dt;
+            if (this.rumbleIn <= 0) {
+                this.rumbleIn = this.nextRumble();
+                events.push({ type: 'rumble' });
+            }
+        }
+        return events;
+    }
+
+    // Nowa doba gry: rozliczenie posiłków z poprzedniej.
+    rollDay(days, events = []) {
+        const data = this.data;
+        const today = Math.floor(days);
+        if (today < data.day) {
+            // Czas cofnięty komendą - zaczynamy dobę od nowa.
+            data.day = today;
+            data.lastMealAt = null;
+            data.meal = null;
+            return;
+        }
+        if (today === data.day) return;
+        const meals = data.mealsToday;
+        const change = CONDITION_CHANGE[Math.min(meals, CONDITION_CHANGE.length - 1)];
+        const before = data.condition;
+        data.condition = clamp(before + change, CONDITION_MIN, CONDITION_MAX);
+        data.energy = Math.min(data.energy, data.condition);
+        data.history = [...data.history, meals].slice(-3);
+        data.mealsToday = 0;
+        data.day = today;
+        events.push({ type: 'day', meals, change: data.condition - before });
+    }
+
+    // Czy da się teraz zjeść ten przedmiot: { ok, reason }.
+    canEat(type) {
+        if (!getFood(type)) return { ok: false, reason: 'Tego nie da się zjeść' };
+        if (!this.active) return { ok: false, reason: 'W tym trybie nie trzeba jeść' };
+        if (this.data.fullness >= FULLNESS_LIMIT) return { ok: false, reason: 'Nie zmieścisz już więcej' };
+        return { ok: true, reason: null };
+    }
+
+    // Zjedzenie jednej sztuki. Zwraca { ok, reason, meal } - meal: true,
+    // gdy właśnie zaliczył się posiłek.
+    eat(type, days = this.data.day) {
+        const check = this.canEat(type);
+        if (!check.ok) return { ...check, meal: false };
+        const food = getFood(type), data = this.data;
+        this.rollDay(days);
+        data.energy = Math.min(this.capacity, data.energy + food.energy);
+        data.fullness = Math.min(FULLNESS_MAX, data.fullness + food.fullness);
+        data.lastFood = type;
+
+        if (!data.meal || days - data.meal.last > MEAL_WINDOW || days < data.meal.last) {
+            data.meal = { last: days, energy: 0, counted: false };
+        }
+        data.meal.last = days;
+        data.meal.energy += food.energy;
+
+        let meal = false;
+        if (!data.meal.counted && data.meal.energy >= MEAL_ENERGY) {
+            data.meal.counted = true;
+            if (data.lastMealAt === null || days - data.lastMealAt >= MEAL_GAP || days < data.lastMealAt) {
+                data.mealsToday++;
+                data.lastMealAt = days;
+                meal = true;
+            }
+        }
+        this.rumbleIn = this.nextRumble();
+        return { ok: true, reason: null, meal };
+    }
+
+    // Opis słowami (okno statusu - src/ui/StatusPanel.js).
+    describe() {
+        const data = this.data;
+        const part = data.energy / this.capacity;
+        const energy = part >= 0.9 ? 'pełny zapas' : part >= 0.65 ? 'sporo' : part >= 0.4 ? 'około połowy'
+            : part >= 0.22 ? 'niewiele' : part >= 0.08 ? 'bardzo mało' : 'resztki';
+        const c = data.condition;
+        const condition = c >= 120 ? 'znakomita' : c >= GREAT_CONDITION ? 'bardzo dobra' : c >= 95 ? 'dobra'
+            : c >= 80 ? 'osłabiona' : 'słaba';
+        return { state: this.state, energy, condition, full: this.full, mealsToday: data.mealsToday,
+            history: data.history, lastFood: data.lastFood };
+    }
+}

@@ -419,6 +419,139 @@ body.underwater #underwater {
 }
 
 
+/* ------------------------------------------------------------
+   SAMOPOCZUCIE (src/ui/StatusPanel.js, klawisz C)
+   ------------------------------------------------------------ */
+
+#weary {
+    position: fixed;
+    inset: 0;
+    z-index: 2;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 2s;
+    background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.3) 25%, rgba(0, 0, 0, 0.95) 85%);
+}
+
+body:not([data-screen="game"]) #weary,
+body:not([data-screen="game"]) #wellbeing,
+body:not([data-screen="game"]) #status {
+    display: none;
+}
+
+#wellbeing {
+    position: fixed;
+    top: 10px;
+    left: 50%;
+    z-index: 5;
+    padding: 2px 10px;
+    font-family: var(--ui-font, monospace);
+    font-size: 15px;
+    color: #ffffff;
+    background: rgba(0, 0, 0, 0.45);
+    border-left: 4px solid #8fd16a;
+    text-shadow: 1px 1px 0 var(--text-shadow, #3f3f3f);
+    pointer-events: none;
+    user-select: none;
+    transform: translateX(-50%) scale(var(--hud-scale, 1));
+    transform-origin: top center;
+}
+
+#wellbeing[hidden],
+#status[hidden] {
+    display: none;
+}
+
+#wellbeing[data-state="great"], .status-state[data-state="great"] { border-color: #6fd8e8; }
+#wellbeing[data-state="good"], .status-state[data-state="good"] { border-color: #8fd16a; }
+#wellbeing[data-state="hungry"], .status-state[data-state="hungry"] { border-color: #e8c84a; }
+#wellbeing[data-state="tired"], .status-state[data-state="tired"] { border-color: #e8903a; }
+#wellbeing[data-state="exhausted"], .status-state[data-state="exhausted"] { border-color: #d9523f; }
+
+#status {
+    position: fixed;
+    top: 50%;
+    left: 12px;
+    z-index: 9;
+    box-sizing: border-box;
+    width: min(340px, calc(100vw - 24px));
+    padding: 12px 14px;
+    background: rgba(0, 0, 0, 0.78);
+    border: 2px solid var(--chat-input-border, #a0a0a0);
+    color: #ffffff;
+    font-family: var(--ui-font, monospace);
+    font-size: 14px;
+    line-height: 1.4;
+    transform: translateY(-50%) scale(var(--hud-scale, 1));
+    transform-origin: left center;
+    user-select: none;
+}
+
+.status-title {
+    font-size: 16px;
+    margin-bottom: 8px;
+    opacity: 0.75;
+}
+
+.status-state {
+    display: inline-block;
+    padding: 1px 10px;
+    font-size: 20px;
+    border-left: 5px solid #8fd16a;
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.status-text {
+    margin: 8px 0 10px;
+}
+
+.status-rows {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 3px 14px;
+    margin: 0 0 10px;
+}
+
+.status-rows dt { opacity: 0.75; }
+.status-rows dd { margin: 0; }
+
+.status-note,
+.status-key,
+.status-close {
+    opacity: 0.7;
+    font-size: 13px;
+}
+
+.status-note { margin: 0 0 8px; }
+
+.status-held {
+    padding-top: 8px;
+    border-top: 1px solid rgba(255, 255, 255, 0.25);
+}
+
+.status-eat {
+    display: none;
+    margin-top: 8px;
+    padding: 8px 22px;
+    font: inherit;
+    font-size: 16px;
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.16);
+    border: 2px solid rgba(255, 255, 255, 0.6);
+    border-radius: 8px;
+}
+
+.status-close { margin-top: 10px; }
+
+/* Telefon: przycisk zamiast klawiszy. */
+
+body.touch .status-eat { display: inline-block; }
+body.touch .status-key,
+body.touch .status-close { display: none; }
+body.touch #wellbeing { top: calc(var(--touch-top) + 18px); }
+body.touch #status { top: calc(var(--touch-top) + 22px); transform: scale(var(--hud-scale, 1)); transform-origin: left top; }
+
+
 /* Spadanie z kosmosu jak meteoryt: płomienie na brzegach ekranu
    (src/space/Skyfall.js ustawia przezroczystość - im większy ogień,
    tym mocniej). */

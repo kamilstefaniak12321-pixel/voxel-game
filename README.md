@@ -80,6 +80,8 @@ logi...) uruchamia workflow *Testy gry* w GitHub Actions
 | 1-9 / kółko myszy | wybór miejsca na pasku bloków |
 | Środkowy przycisk myszy | weź blok, na który patrzysz, na pasek |
 | E | ekwipunek (w trybie kreatywnym też wszystkie bloki gry i owoce) |
+| F | zjedz to, co trzymasz (owoce, orzechy - tryb przygody) |
+| C | okno statusu: samopoczucie, energia, kondycja, posiłki |
 | ESC | pauza (wróć do gry, ustawienia, zapisz i wyjdź do menu) |
 | F3 | informacje debugowania w lewym górnym rogu |
 | [ / ] (z F3) | cofnij / przesuń czas o godzinę |
@@ -97,7 +99,7 @@ logi...) uruchamia workflow *Testy gry* w GitHub Actions
 | ▲ / ▼ (prawy dół) | skok (2× - latanie) / kucanie, w locie w dół |
 | kilof, kostka | kop / postaw tam, gdzie celownik |
 | pasek bloków | stuknięcie - wybór miejsca |
-| przyciski u góry | pauza, ekwipunek, czat, osiągnięcia, widok (F5), mapa, pełny ekran |
+| przyciski u góry | pauza, ekwipunek, czat, samopoczucie (serce - okno statusu z przyciskiem *Zjedz*), osiągnięcia, widok (F5), mapa, pełny ekran |
 | "wstecz" w telefonie | pauza (nie wychodzi z gry) |
 
 **Tratwa (0.76.0):** dwie dowolne deski obok siebie w siatce dają jedną
@@ -122,6 +124,20 @@ legendarne *Problem spadł z nieba*). Nowa rzecz w grze = nowe
 osiągnięcie - jak je dopisać, zdarzenia z gry i pełna lista (spoilery):
 `docs/osiagniecia.md`. Test: `/osiagniecia` (lista), `/osiagniecia pokaz
 legendarne` (samo powiadomienie), `/osiagniecia daj <id>`.
+
+## Energia i samopoczucie
+
+Od 0.94.0, w trybie przygody. W grze nie ma śmierci - są skutki.
+**Energia** ubywa cały czas (szybciej przy biegu, pływaniu, kopaniu
+i skokach) i wraca tylko z **jedzenia**: weź owoce albo orzechy do ręki
+i naciśnij **F**. **Kondycja** (ile energii się mieści) rośnie, gdy jesz
+trzy posiłki dziennie w odstępach, i powoli spada, gdy jesz za mało.
+
+Stan widać słowami u góry ekranu, a szczegóły w **oknie statusu**
+(klawisz **C**): *świetnie* (szybszy bieg i praca), *dobrze*, *głodny*
+(burczy w brzuchu), *zmęczony* (wolniejszy bieg i kopanie), *wyczerpany*
+(tylko chód, ciemnieją brzegi obrazu). Liczby, lista jedzenia i komenda
+`/energia`: [docs/energia.md](docs/energia.md).
 
 ## Tryby gry i ekwipunek
 
@@ -1340,7 +1356,7 @@ lib/peerjs/                 PeerJS 1.5.5 (połączenie z innymi graczami - gra z
 assets/textures/            dziewięć arkuszy tematycznych PNG i atlas.json (docs/tekstury-atlasy.md)
 assets/ui/themes/           opisy motywów menu (kolory, czcionka; grafiki w interfejs.png)
 assets/fonts/               czcionki
-assets/sounds/              dźwięki (.ogg): bloki, kroki, zbieranie, meteoryt, menu (ui/), woda, kosmos
+assets/sounds/              dźwięki (.ogg): bloki, kroki, zbieranie, meteoryt, menu (ui/), woda, kosmos, ciało (body/)
 assets/rosliny/             opisy roślin i etapów (roslina.json), lista.json; obrazy w rosliny.png
 tools/                      narzędzia atlasów, generatory tekstur, testy, dźwięki, wiki i pliki aplikacji na Androida
 docs/                       opisy, jak działają większe części gry

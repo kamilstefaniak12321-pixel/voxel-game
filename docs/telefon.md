@@ -205,6 +205,7 @@ komputera), tak samo księga osiągnięć i ustawienia.
 | pasek bloków | stuknięcie w miejsce - wybór |
 | ☰ (lewy górny róg) | pauza (ustawienia, zapisz i wyjdź) |
 | skrzynka, dymek | ekwipunek, czat (pisanie klawiaturą telefonu, Enter - wyślij) |
+| serce | okno statusu (samopoczucie, energia, kondycja); z jedzeniem w ręce jest w nim przycisk **Zjedz** |
 | księga, oko, mapa, ramka | osiągnięcia, widok (jak F5), mapa terenu, pełny ekran |
 | ✕ | zamyka ekwipunek albo czat |
 | przycisk "wstecz" telefonu | pauza (albo zamyka czat / ekwipunek) - nie wychodzi z gry |

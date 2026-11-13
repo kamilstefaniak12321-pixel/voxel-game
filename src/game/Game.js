@@ -81,6 +81,8 @@ import { WaterImpactRipples } from '../rendering/WaterImpactRipples.js';
 import { RainEffects } from '../rendering/RainEffects.js';
 import { BlockCracks } from '../interaction/BlockCracks.js';
 import { COLOR_LEVEL } from '../world/Light.js';
+import { Wellbeing, STATES } from './Wellbeing.js';
+import { getFood } from '../items/foods.js';
 
 import {
     PLAYER_REACH,
@@ -512,6 +514,19 @@ export class Game {
         delete worldInfo.hotbar;
 
 
+        // Energia i samopoczucie (tylko tryb przygody) - Wellbeing.js.
+
+        this.wellbeing = Wellbeing.load(worldInfo.wellbeing, this.time.days);
+
+        this.wellbeing.active = !isCreative(this.mode);
+
+        worldInfo.wellbeing = this.wellbeing.data;
+
+        this.eatDelay = 0;
+
+        this.seenJumps = 0;
+
+
         // Dawny "pasek" (komendy, testy): nazwy bloków i wybrane miejsce.
 
         const inventory = this.inventory;
@@ -604,6 +619,8 @@ export class Game {
         }
 
 
+        this.player.stamina = this.wellbeing.effects;
+
         if (!this.rafts?.update(dt, input)) this.player.update(dt, input);
 
         this.updateFootsteps();
@@ -620,6 +637,8 @@ export class Game {
         // przestawiają zegar o godzinę (do oglądania nieba).
 
         this.time.update(dt);
+
+        this.updateWellbeing(dt, input);
 
         const earlier = input.consumeKeyPress('BracketLeft');
         const later = input.consumeKeyPress('BracketRight');
@@ -2071,6 +2090,8 @@ export class Game {
 
         this.player.canFly = isCreative(mode);
 
+        this.wellbeing.active = !isCreative(mode);
+
         if (!isCreative(mode)) {
             this.player.flying = false;
         }
@@ -2207,7 +2228,9 @@ export class Game {
         }
 
 
-        const time = getBreakTime(type, getTool(this.selectedBlock));
+        // Zmęczony kopie wolniej, w świetnej formie szybciej.
+
+        const time = getBreakTime(type, getTool(this.selectedBlock)) / this.wellbeing.effects.work;
 
         mining.progress = time <= 0 ? 1 : mining.progress + dt / time;
 
@@ -2248,6 +2271,91 @@ export class Game {
         this.cracks.update(mining, mining.progress);
 
         return false;
+
+    }
+
+
+    // Energia: zużycie przy wysiłku, burczenie w brzuchu, jedzenie (F).
+
+    updateWellbeing(dt, input) {
+
+        const player = this.player, wellbeing = this.wellbeing;
+        const jumps = player.jumpCount - this.seenJumps;
+        this.seenJumps = player.jumpCount;
+        this.eatDelay = Math.max(0, this.eatDelay - dt);
+
+        if (input.consumeKeyPress('KeyF')) {
+            this.eat();
+        }
+
+        if (!wellbeing.active || player.flying) {
+            return;
+        }
+
+        const events = wellbeing.update(dt, {
+            moving: Math.hypot(player.vel.x, player.vel.z) > 0.5,
+            sprinting: player.sprinting,
+            swimming: player.swimming,
+            mining: Boolean(this.mining),
+            jumps
+        }, this.time.days);
+
+        for (const event of events) {
+
+            if (event.type === 'rumble') {
+                this.sounds?.play('stomach');
+                this.onNotice?.('Burczy ci w brzuchu');
+            }
+            else if (event.type === 'state' && event.to !== 'hungry') {
+                this.onNotice?.(`Samopoczucie: ${STATES[event.to].label.toLowerCase()}`);
+            }
+            else if (event.type === 'day' && event.change !== 0) {
+                this.onMessage?.(event.change > 0
+                    ? 'Nowy dzień. Jadłeś regularnie - kondycja rośnie.'
+                    : 'Nowy dzień. Jadłeś za mało - kondycja spada.');
+            }
+
+        }
+
+    }
+
+
+    // Zjedzenie jednej sztuki tego, co gracz trzyma (klawisz F, przycisk
+    // w oknie statusu). Zwraca true, gdy coś zjadł.
+
+    eat() {
+
+        const inventory = this.inventory;
+        const item = inventory.selectedItem;
+
+        if (this.eatDelay > 0 || !item || !getFood(item.type)) {
+            return false;
+        }
+
+        const result = this.wellbeing.eat(item.type, this.time.days);
+
+        if (!result.ok) {
+            this.onNotice?.(result.reason);
+            return false;
+        }
+
+        const type = item.type;
+
+        inventory.take(inventory.selected, 1);
+
+        this.eatDelay = 0.45;
+
+        this.sounds?.play('eat');
+
+        this.swingArm(0.3);
+
+        this.achieve('ate', { type, meal: result.meal });
+
+        if (result.meal) {
+            this.onNotice?.('Posiłek zaliczony');
+        }
+
+        return true;
 
     }
 

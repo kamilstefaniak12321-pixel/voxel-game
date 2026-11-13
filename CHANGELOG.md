@@ -11,6 +11,36 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 0.94.0 - Energia i samopoczucie
+
+Pomysł Kamila — PR #133 (po 0.93.0). Pierwsza część systemu „skutki
+zamiast śmierci" ([opis](docs/energia.md)):
+
+- **Energia** (tryb przygody): ubywa cały czas, szybciej przy biegu,
+  pływaniu, kopaniu i skokach. Wraca tylko z jedzenia. Gracz zaczyna
+  z zapasem.
+- **Jedzenie:** klawisz **F** zjada to, co gracz trzyma - truskawki,
+  jeżyny, borówki, jabłka, oliwki, orzechy laskowe, orzeszki bukowe,
+  żołędzie, papryczki chili. PPM dalej je sadzi. Każde jedzenie ma swoją
+  energię, sytość i miejsce na przyszłe efekty.
+- **Kondycja:** ile energii się mieści. Trzy posiłki dziennie
+  w odstępach - rośnie; za mało jedzenia - powoli spada. Objadanie się
+  daje energię, ale nie kondycję.
+- **Stany słowami**, bez pasków: świetnie (szybszy bieg i praca),
+  dobrze, głodny (**burczy w brzuchu**), zmęczony (wolniejszy bieg
+  i kopanie), wyczerpany (tylko chód, ciemnieją brzegi obrazu). Z głodu
+  nie da się umrzeć ani zemdleć.
+- **Okno statusu** (klawisz **C**, na telefonie przycisk z sercem
+  i przycisk *Zjedz*): samopoczucie, energia, kondycja, posiłki.
+  U góry ekranu mała etykieta ze stanem.
+- W trybie kreatywnym i programisty energia jest wyłączona.
+- Gra ze znajomymi: każdy ma własną energię, stan gościa zapisuje się
+  u gospodarza.
+- Komenda `/energia` (podgląd i ustawianie do testów), dwa nowe dźwięki
+  (burczenie, jedzenie - syntetyczne, do podmiany).
+- Na później: upadki, tonięcie, cechy rosnące od używania, pieczenie
+  na ognisku.
+
 ## 0.93.0 - Podwójny warsztat tylko na drzwi i klapy
 
 Prośba Kamila — PR #132 (po 0.92.0):

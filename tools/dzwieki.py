@@ -13,7 +13,8 @@
 #     python tools/dzwieki.py assets/sounds woda   tylko jedna grupa:
 #                                  bloki, meteoryt, owoce, menu, woda, kosmos,
 #                                  osiagniecia, wytwarzanie, snieg (same
-#                                  dźwięki śniegu - nowy materiał)
+#                                  dźwięki śniegu - nowy materiał), cialo
+#                                  (burczenie w brzuchu, jedzenie)
 #
 # (pliki .ogg za każdym razem wychodzą trochę inne w bajtach, więc
 # lepiej przeliczać tylko grupę, która się zmieniła)
@@ -454,6 +455,48 @@ def harvest(s):
         pop = sweep(freq * 1.5, freq, 0.06, 0.012) + band(s.noise(0.06), 1200, 4000) * envelope(samples(0.06), 0.0005, 0.004) * 0.4
         place(out, pop * s.uniform(0.8, 1.3), at)
         at += s.uniform(0.06, 0.11)
+    return out
+
+
+# ------------------------------------------------------------
+# Ciało (0.94.0): burczenie w brzuchu i jedzenie
+# ------------------------------------------------------------
+
+def stomach(s):
+    """Burczenie: kilka niskich, bulgoczących fal jedna po drugiej."""
+    length = s.uniform(1.2, 1.6)
+    out = np.zeros(samples(length))
+    at = 0.03
+    while at < length - 0.35:
+        seconds = s.uniform(0.22, 0.4)
+        n = samples(seconds)
+        f0 = s.uniform(70, 110)
+        t = time_axis(n)
+        # Wysokość "pływa" (bulgot), głośność drży w tempie ok. 20-30 Hz.
+        freq = f0 * (1 + 0.35 * np.sin(2 * np.pi * s.uniform(2.5, 5) * t + s.uniform(0, 6)))
+        tone = np.sin(2 * np.pi * np.cumsum(freq) / SR)
+        tone += 0.4 * np.sin(4 * np.pi * np.cumsum(freq) / SR)
+        flutter = 0.55 + 0.45 * np.sin(2 * np.pi * s.uniform(18, 30) * t)
+        growl = band(s.brown(seconds), 50, 260)[:n] * 1.6
+        wave = (tone * flutter + growl) * soft_env(n, seconds * 0.3, seconds * 0.35)
+        place(out, wave * s.uniform(0.5, 1.0), at)
+        at += seconds * s.uniform(0.7, 1.1)
+    return lowpass(out, 420)
+
+
+def eat(s):
+    """Dwa-trzy chrupiące kęsy."""
+    length = 0.62
+    out = np.zeros(samples(length))
+    at = 0.01
+    for _ in range(int(s.uniform(2, 4))):
+        seconds = s.uniform(0.07, 0.11)
+        n = samples(seconds)
+        crunch = band(s.noise(seconds), 700, 5200)[:n] * envelope(n, 0.002, seconds * 0.3)
+        crunch += grains(s, seconds, 14, 1500, 6000)[:n] * 0.8
+        thud = damped_sine(s.uniform(140, 190), seconds, 0.02)[:n] * 0.5
+        place(out, (crunch + thud) * s.uniform(0.7, 1.0), at)
+        at += s.uniform(0.15, 0.2)
     return out
 
 
@@ -964,7 +1007,7 @@ def save(path, data):
         )
 
 
-GROUPS = ['bloki', 'meteoryt', 'owoce', 'menu', 'woda', 'kosmos', 'osiagniecia', 'wytwarzanie', 'snieg', 'strumien']
+GROUPS = ['bloki', 'meteoryt', 'owoce', 'menu', 'woda', 'kosmos', 'osiagniecia', 'wytwarzanie', 'snieg', 'strumien', 'cialo']
 
 
 def generate(root=ROOT, only=None):
@@ -1027,6 +1070,15 @@ def generate(root=ROOT, only=None):
     # Strumień (0.48.0) - własne ziarno, inne dźwięki bez zmian.
     if want('strumien'):
         save(os.path.join(root, 'water', 'water_stream.ogg'), water_stream(Synth(48_000)))
+
+
+    # Burczenie w brzuchu i jedzenie (0.94.0) - własne ziarna.
+    if want('cialo'):
+        for v in range(1, 4):
+            sound = fade(loudness(stomach(Synth(94_000 + v)), -17), 0.01, 0.12)
+            save(os.path.join(root, 'body', f'stomach_{v}.ogg'), sound)
+            sound = fade(loudness(eat(Synth(94_100 + v)), -16), 0.001, 0.04)
+            save(os.path.join(root, 'body', f'eat_{v}.ogg'), sound)
 
 
 if __name__ == '__main__':

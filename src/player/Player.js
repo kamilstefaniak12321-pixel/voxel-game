@@ -112,6 +112,14 @@ export class Player {
         this.crouching = false;
         this.sprinting = false;
 
+        // Siły gracza (game/Wellbeing.js ustawia co klatkę): sprint -
+        // jaka część przyspieszenia biegu zostaje, walk - mnożnik
+        // zwykłej prędkości, canSprint - czy w ogóle da się biec.
+        this.stamina = { sprint: 1, walk: 1, canSprint: true };
+
+        // Licznik skoków (zużywają energię).
+        this.jumpCount = 0;
+
         // Bieg włączony dwuklikiem W trwa, dopóki W jest wciśnięte.
         this.sprintLatched = false;
         this.lastForwardPress = -Infinity;
@@ -429,7 +437,8 @@ updateMovement(dt, input) {
         this.speedMultiplier *
         (this.flying ? FLY_SPEED_FACTOR : 1) *
         (this.crouching ? CROUCH_SPEED_FACTOR : 1) *
-        (this.sprinting ? SPRINT_SPEED_FACTOR : 1) *
+        (this.sprinting ? 1 + (SPRINT_SPEED_FACTOR - 1) * this.stamina.sprint : 1) *
+        (this.flying ? 1 : this.stamina.walk) *
         (1 + (WATER_SPEED_FACTOR - 1) * wade);
 
     this.moveSpeed = speed;
@@ -540,6 +549,7 @@ updateMovement(dt, input) {
     ) {
 
         this.vel.y = JUMP_SPEED;
+        this.jumpCount++;
 
         this.onGround = false;
 
@@ -576,6 +586,7 @@ updateSwimming(dt, water, space, input) {
     if (space && this.onGround && water < 0.6) {
 
         this.vel.y = JUMP_SPEED;
+        this.jumpCount++;
 
         this.onGround = false;
 
@@ -754,6 +765,7 @@ updateStance(input) {
         forward &&
         !this.crouching &&
         this.sprintPause <= 0 &&
+        (this.flying || this.stamina.canSprint) &&
         (this.sprintLatched || input.isKeyDown('KeyR'));
 
 }

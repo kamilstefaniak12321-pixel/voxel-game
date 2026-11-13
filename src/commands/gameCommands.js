@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { STATES, CONDITION_MIN, CONDITION_MAX } from '../game/Wellbeing.js';
 import { LIGHTING_VIEWS, setLightingView, setLightingComponent, resetLightingDiagnostics } from '../rendering/LightingDiagnostics.js';
 
 import {
@@ -3016,6 +3017,57 @@ export const GAME_COMMANDS = [
 
             return `Prędkość: x${speed}`;
 
+        }
+    },
+
+    // ========================================================
+    // ENERGIA I SAMOPOCZUCIE (docs/energia.md)
+    // ========================================================
+
+    {
+        name: 'energia',
+        aliases: ['energy', 'samopoczucie'],
+        usage: '/energia | /energia <0 - 130> | /energia kondycja <60 - 130>',
+        description: 'Energia i kondycja gracza (tryb przygody): podgląd w liczbach albo ustawienie - do testów.',
+
+        run(args, { game }) {
+
+            const wellbeing = game.wellbeing, data = wellbeing.data;
+
+            if (args[0] === 'kondycja') {
+
+                const value = parseNumber(args[1], 'kondycja');
+
+                if (value < CONDITION_MIN || value > CONDITION_MAX) {
+                    throw new CommandError(`Kondycja: od ${CONDITION_MIN} do ${CONDITION_MAX}`);
+                }
+
+                data.condition = value;
+                data.energy = Math.min(data.energy, value);
+
+            }
+            else if (args[0]) {
+
+                const value = parseNumber(args[0], 'energia');
+
+                if (value < 0 || value > CONDITION_MAX) {
+                    throw new CommandError(`Energia: od 0 do ${CONDITION_MAX}`);
+                }
+
+                data.energy = Math.min(value, data.condition);
+                data.fullness = 0;
+
+            }
+
+            const text = `Energia: ${data.energy.toFixed(1)} z ${data.condition}, stan: ` +
+                `${STATES[wellbeing.state].label.toLowerCase()}, posiłki dzisiaj: ${data.mealsToday}`;
+
+            return wellbeing.active ? text : `${text}. W tym trybie gry energia jest wyłączona.`;
+
+        },
+
+        complete(args) {
+            return args.length <= 1 ? ['kondycja'] : [];
         }
     },
 

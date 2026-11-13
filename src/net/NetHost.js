@@ -166,7 +166,7 @@ export class NetHost extends NetSession {
                 name: info.name, seed: info.seed, terrain: info.terrain, gameMode: game.mode,
                 experiments: game.world.experiments, time: game.time.getState(), speed: game.time.speed
             },
-            you: { player: start, inventory: saved?.inventory ?? null },
+            you: { player: start, inventory: saved?.inventory ?? null, wellbeing: saved?.wellbeing ?? null },
             modified: this.modifiedKeys(),
             state: { chests: this.state.snapshot('chests'), tables: this.state.snapshot('tables'), fires: this.state.snapshot('fires') },
             rafts: this.raftList(),
@@ -272,6 +272,8 @@ export class NetHost extends NetSession {
             name: guest.name,
             player: message.player && typeof message.player === 'object' ? message.player : previous.player,
             inventory: message.inventory && typeof message.inventory === 'object' ? message.inventory : previous.inventory,
+            // Energia i samopoczucie gościa (Wellbeing.load naprawia zły kształt).
+            wellbeing: message.wellbeing && typeof message.wellbeing === 'object' ? message.wellbeing : previous.wellbeing,
             lastSeen: Date.now()
         };
     }

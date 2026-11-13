@@ -18,6 +18,7 @@ import { PLANT_PACK_ERRORS } from './blocks/plantPacks.js';
 import { PerfMonitor } from './game/PerfMonitor.js';
 import { diagnostics } from './diagnostics/Diagnostics.js';
 import { PerfDiagnostics } from './diagnostics/PerfDiagnostics.js';
+import { StatusPanel } from './ui/StatusPanel.js';
 import { TerrainMap } from './ui/TerrainMap.js';
 import { InventoryScreen } from './ui/InventoryScreen.js';
 import { NetHost } from './net/NetHost.js';
@@ -216,6 +217,9 @@ renderer.domElement.addEventListener('webglcontextrestored', () => {
 // Mapa terenu z góry (/mapa, klawisz M).
 
 const terrainMap = new TerrainMap();
+
+// Okno statusu (samopoczucie) - klawisz C.
+const statusPanel = new StatusPanel({ onEat: () => game?.eat() });
 
 
 // Dźwięk (kroki, bloki, meteoryty, menu). Przeglądarka pozwala go
@@ -1143,6 +1147,17 @@ window.addEventListener('keydown', (event) => {
     }
 
 
+    // C - okno statusu (samopoczucie; gra działa dalej).
+
+    if (state === 'playing' && !event.repeat && event.code === 'KeyC') {
+
+        statusPanel.toggle();
+
+        return;
+
+    }
+
+
     // M - mapa terenu (otwiera / zamyka).
 
     if (state === 'playing' && !event.repeat && event.code === 'KeyM') {
@@ -1559,6 +1574,8 @@ function animate(now) {
 
     hotbar.update(game.inventory.slots.slice(0, HOTBAR_SIZE), game.inventory.selected);
 
+    statusPanel.update(dt, game);
+
 
     // Gra działa także przy otwartym czacie i ekwipunku.
 
@@ -1718,6 +1735,7 @@ function createTouchControls() {
             inventory: openInventory,
             chat: () => openChat(''),
             achievements: openAchievements,
+            status: () => statusPanel.toggle(),
             map: toggleMap,
             // W aplikacji na telefon gra i tak jest na pełnym ekranie.
             fullscreen: nativeApp ? null : toggleFullscreen,

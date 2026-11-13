@@ -206,6 +206,7 @@ body.touch textarea {
 .touch-pause { left: var(--touch-left); }
 .touch-inventory { left: calc(var(--touch-left) + (var(--touch-top) + 8px)); }
 .touch-chat { left: calc(var(--touch-left) + (var(--touch-top) + 8px) * 2); }
+.touch-status { left: calc(var(--touch-left) + (var(--touch-top) + 8px) * 3); }
 
 .touch-fullscreen { right: var(--touch-right); }
 .touch-map { right: calc(var(--touch-right) + (var(--touch-top) + 8px)); }

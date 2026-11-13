@@ -87,6 +87,7 @@ export class NetClient extends NetSession {
             experiments: world.experiments,
             player: you?.player ?? null,
             inventory: you?.inventory ?? undefined,
+            wellbeing: you?.wellbeing ?? undefined,
             remote: true
         };
     }
@@ -315,7 +316,8 @@ export class NetClient extends NetSession {
     saveNow() {
         const game = this.game;
         if (!game || this.closed) return;
-        this.connection.send({ t: MSG.SAVE, player: game.player.getState(), inventory: game.inventory.data });
+        this.connection.send({ t: MSG.SAVE, player: game.player.getState(), inventory: game.inventory.data,
+            wellbeing: game.wellbeing.data });
     }
 
     update(dt) {

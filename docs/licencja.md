@@ -109,7 +109,7 @@ w katalogu muzyki.
 
 ## Źródło efektów dźwiękowych
 
-Wszystkie 159 plików dźwięków w `assets/sounds/` (kroki, bloki,
+159 plików dźwięków w `assets/sounds/` (kroki, bloki,
 zbieranie owoców, woda, meteoryt, kosmos, menu, ekwipunek,
 osiągnięcia) Kamil wygenerował w ElevenLabs Sound Effects
 (elevenlabs.io) z listy opisów przygotowanej do gry i dostarczył
@@ -125,6 +125,11 @@ użycia efektów zależą od planu ElevenLabs, w którym powstały (plan
 darmowy - tylko użytek niekomercyjny i podpis "elevenlabs.io"; plany
 płatne - także komercyjny). Ten zapis dokumentuje przekazane pliki
 i ich źródło: **Efekty dźwiękowe: ElevenLabs (elevenlabs.io).**
+
+Pozostałe 6 plików (`assets/sounds/body/`, od 0.94.0: burczenie
+w brzuchu i jedzenie) to dźwięki syntetyczne, policzone w projekcie
+skryptem `tools/dzwieki.py` (grupa `cialo`) - bez nagrań i bez
+zewnętrznych źródeł.
 
 ## Tekstury motywu Szare drewno
 

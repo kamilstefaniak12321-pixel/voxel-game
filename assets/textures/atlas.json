@@ -3823,6 +3823,13 @@
       "y": 720,
       "width": 16,
       "height": 16
+    },
+    "tilled_dirt": {
+      "sheet": "teren",
+      "x": 144,
+      "y": 32,
+      "width": 16,
+      "height": 16
     }
   },
   "aliases": {
@@ -6884,6 +6891,11 @@
       "x": 11,
       "y": 47,
       "region": "trapdoor_jacaranda"
+    },
+    "tilled_dirt": {
+      "x": 9,
+      "y": 20,
+      "region": "tilled_dirt"
     }
   }
 }

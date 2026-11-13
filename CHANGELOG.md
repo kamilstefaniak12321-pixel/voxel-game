@@ -11,6 +11,26 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 0.95.0 - Rozgrzebana ziemia i serce
+
+Pomysły Kamila — PR #134 (po 0.94.0):
+
+- **Owoce są do jedzenia.** PPM z owocem w ręce zjada go (jak klawisz F)
+  i nie sadzi już krzaka gdziekolwiek.
+- **Rozgrzebana ziemia** ([opis](docs/uprawa.md)): łopata + PPM na ziemi
+  albo trawie robi prymitywne pole z bruzdami. Owoce, orzechy, szyszki,
+  żołędzie, bazie i kwiat lipy sadzi się tylko na nim. Puste pole po
+  jakimś czasie zarasta, wykopane daje zwykłą ziemię. Gotowe sadzonki
+  stawia się jak dotąd.
+- **Serce zamiast napisu:** pixel-artowe serce w lewym górnym rogu
+  pokazuje samopoczucie kolorem (turkusowe, czerwone, żółte,
+  pomarańczowe, szare i pęknięte). Przy zmianie migocze - na lepsze
+  z błyskiem i iskierkami, na gorsze z drżeniem. Reaguje na zaliczony
+  posiłek i burczenie w brzuchu, spokojnie bije.
+- Okno statusu (klawisz C) ma to samo serce. Na telefonie serce stoi
+  w rzędzie górnych przycisków i otwiera okno po stuknięciu.
+- Nowy blok: rozgrzebana ziemia (numer 256).
+
 ## 0.94.0 - Energia i samopoczucie
 
 Pomysł Kamila — PR #133 (po 0.93.0). Pierwsza część systemu „skutki

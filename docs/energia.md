@@ -33,9 +33,21 @@ na początku 100). Zmienia się raz na dobę gry, o świcie nowego dnia:
 
 ## Stany
 
-Gra nie pokazuje pasków, tylko słowa. Etykieta ze stanem jest u góry
-ekranu, a szczegóły w **oknie statusu** (klawisz **C**, na telefonie
-przycisk z sercem).
+Gra nie pokazuje pasków. Stan widać po **sercu** w lewym górnym rogu
+ekranu (od 0.95.0, pixel art): jego kolor to samopoczucie, a przy
+zmianie serce migocze - na lepsze z błyskiem i iskierkami, na gorsze
+z drżeniem i przygaśnięciem. Zaliczony posiłek to krótkie „puknięcie",
+burczenie w brzuchu - zadrżenie. Serce spokojnie bije; u zmęczonego
+szybciej, u wyczerpanego nierówno. Szczegóły słowami są w **oknie
+statusu** (klawisz **C**, na telefonie stuknięcie w serce).
+
+| Serce | Stan |
+|---|---|
+| turkusowe | świetnie |
+| czerwone | dobrze |
+| żółte | głodny |
+| pomarańczowe | zmęczony |
+| szare, pęknięte | wyczerpany |
 
 | Stan | Kiedy | Skutki |
 |---|---|---|
@@ -50,8 +62,10 @@ chodzi i może jeść.
 
 ## Jedzenie
 
-Weź jedzenie do ręki i naciśnij **F** (na telefonie: przycisk *Zjedz*
-w oknie statusu). PPM dalej sadzi owoce i nasiona, jak dotąd.
+Weź jedzenie do ręki i naciśnij **F** albo **PPM** (na telefonie:
+stuknięcie albo przycisk *Zjedz* w oknie statusu). Od 0.95.0 owoce sadzi
+się tylko na rozgrzebanej ziemi ([docs/uprawa.md](uprawa.md)) - tam PPM
+sadzi, wszędzie indziej zjada.
 
 | Jedzenie | Energia | Syci na |
 |---|---|---|
@@ -77,7 +91,7 @@ truskawki) i od poprzedniego posiłku minęły prawie trzy godziny gry
 ## Tryby gry
 
 Energia działa w trybie **przygody**. W trybie kreatywnym i programisty
-jest wyłączona: nie ubywa, nie trzeba jeść, etykiety nie widać. W locie
+jest wyłączona: nie ubywa, nie trzeba jeść, serca nie widać. W locie
 (komenda `/latanie`) też nie ubywa.
 
 W **grze ze znajomymi** każdy ma własną energię. Stan gościa zapisuje
@@ -97,7 +111,9 @@ się u gospodarza razem z jego ekwipunkiem.
 - `src/items/foods.js` - lista jedzenia. Każda pozycja ma `energy`,
   `fullness`, `kind` i pustą na razie listę `effects` - miejsce na
   przyszłe działanie potraw (ulubione dania, lepszy wzrok, siła).
-- `src/ui/StatusPanel.js` - etykieta, okno statusu, przyciemnienie.
+- `src/ui/StatusPanel.js` - okno statusu, przyciemnienie;
+  `src/ui/HeartIcon.js` - serce (rysunek, migotanie, iskierki),
+  animacje w `src/ui/hud.css`.
 - `src/game/Game.js` - `updateWellbeing` (zużycie, burczenie) i `eat`.
 - `src/player/Player.js` - `stamina` (bieg i chód według stanu).
 - Dźwięki: `assets/sounds/body/` (syntetyczne, `tools/dzwieki.py`,

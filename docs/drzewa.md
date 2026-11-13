@@ -318,7 +318,8 @@ ziemi (nie na koronie). Meteoryt zmiata drzewa nad kraterem.
   przez niego. Drzewo rośnie tylko wtedy, gdy pień ma miejsce (blok
   nad sadzonką - czeka dalej); liście omijają to, co zajęte. Każde
   wyrośnięte drzewo jest trochę inne (losowy rozmiar).
-- **Sadzenie:** sadzonka na ziemi albo nasiono w ręce + PPM na ziemi:
+- **Sadzenie:** sadzonka na ziemi albo nasiono w ręce + PPM na rozgrzebanej
+  ziemi (od 0.95.0: łopata + PPM robi pole - `docs/uprawa.md`):
   szyszka świerka i sosny, orzeszki bukowe, kwiat lipy, żołądź (brzoza -
   tylko sadzonka).
 - **Siekiera** (`/daj axe`): PPM na pniu - okorowany pień; z brzozy

@@ -591,6 +591,9 @@ async function playWorld(worldInfo, { client = null } = {}) {
         // Krótkie komunikaty (np. "Ekwipunek pełny") - nad paskiem bloków.
 
         game.onNotice = (text) => hotbar.showName(text);
+
+        // Serce (samopoczucie) reaguje na burczenie, posiłki i nową dobę.
+        game.onWellbeing = (event) => statusPanel.signal(event);
         game.onOpenChest = (chest) => openInventory(chest);
 
         // Pomiar wydajności (komenda /wydajnosc).
@@ -1735,7 +1738,6 @@ function createTouchControls() {
             inventory: openInventory,
             chat: () => openChat(''),
             achievements: openAchievements,
-            status: () => statusPanel.toggle(),
             map: toggleMap,
             // W aplikacji na telefon gra i tak jest na pełnym ekranie.
             fullscreen: nativeApp ? null : toggleFullscreen,

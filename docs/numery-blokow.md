@@ -11,7 +11,7 @@ więcej niż dotąd - bez kolejnej zmiany zapisu.
 | numery | dla czego |
 |---|---|
 | 1-99, 240-255 | bloki gry (dotychczasowe) |
-| 256-999 | nowe bloki gry |
+| 256-999 | nowe bloki gry: rozgrzebana ziemia 256 (0.95.0) |
 | 100-239 | dawny wspólny zakres: jabłoń, olcha i wierzba od dołu (100, 110...), rośliny od góry (amarantus 237-239) |
 | 1000-4999 | dodatkowe drzewa w `treeCatalog.js`, po 10 zarezerwowanych numerów; akacja 1000-1009, cypryśnik 1010-1019, wiśnia 1020-1029, klon 1030-1039, kosodrzewina 1040-1049, oliwka 1050-1059, eukaliptus tęczowy 1060-1069, sekwoja 1070-1079, miłorząb 1080-1089, jakaranda 1090-1099 |
 | 5000-9999 | paczki roślin (etapy po kolei, `docs/rosliny.md`; kocanka 5000-5002, lawenda 5003-5005, piwonia 5006-5008, zawilec 5009-5011, dzwonek 5012-5014, szałwia 5015-5017, nagietek 5018-5020, cynia 5021-5023, mikołajek 5024-5026, barwinek 5027-5029, len 5030-5032, gorczyca 5033-5035, porosty 5036-5044, huba 5045-5047) |

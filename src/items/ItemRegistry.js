@@ -91,8 +91,8 @@ export const ITEM_TYPES = {
 
 
     // Dodatki drzew (src/blocks/trees.js). Szyszki, orzeszki, żołędzie
-    // i kwiat lipy (z nasionkami na przysadce) posadzone na ziemi
-    // dają sadzonkę. Wypadają z liści w przygodzie.
+    // i kwiat lipy (z nasionkami na przysadce) posadzone na rozgrzebanej
+    // ziemi (od 0.95.0 - docs/uprawa.md) dają sadzonkę. Wypadają z liści w przygodzie.
 
     spruce_cone: {
         name: 'Spruce Cone',
@@ -315,7 +315,8 @@ export function getItemLabel(type) {
 
 
 // Jaki blok staje po kliknięciu PPM z tym w ręce: blok - on sam,
-// owoc - sadzonka, inny przedmiot - nic (null).
+// owoc - sadzonka (tylko na rozgrzebanej ziemi - Game.canPlantAt),
+// inny przedmiot - nic (null).
 
 export function getPlacedBlock(type) {
 

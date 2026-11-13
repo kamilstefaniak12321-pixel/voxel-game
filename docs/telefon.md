@@ -197,7 +197,7 @@ komputera), tak samo księga osiągnięć i ustawienia.
 |---|---|
 | lewa część ekranu - przesuń palec | **joystick** (pojawia się pod palcem): chodzenie; do samego brzegu w przód - bieg |
 | reszta ekranu - przesuń palec | rozglądanie się (czułość: *Ustawienia → Gracz → Czułość myszy*) |
-| reszta ekranu - krótkie stuknięcie | postaw blok / zbierz owoce / posadź owoc (jak PPM) |
+| reszta ekranu - krótkie stuknięcie | postaw blok / zbierz owoce / zjedz owoc / łopatą rozgrzeb ziemię / posadź owoc na rozgrzebanej ziemi (jak PPM) |
 | reszta ekranu - przytrzymaj palec | kop (jak trzymany LPM): w trybie przygody blok pęka i znika po czasie kopania, w kreatywnym - kolejne bloki co chwilę; przesunięcie palca (rozglądanie) przerywa kopanie |
 | ▲ (duży, prawy dół) | skok; **2× szybko** - latanie (tryb kreatywny); trzymany w locie - w górę, w wodzie - płyń w górę |
 | ▼ | trzymany: kucanie; w locie - w dół; w wodzie - nurkuj |
@@ -205,7 +205,7 @@ komputera), tak samo księga osiągnięć i ustawienia.
 | pasek bloków | stuknięcie w miejsce - wybór |
 | ☰ (lewy górny róg) | pauza (ustawienia, zapisz i wyjdź) |
 | skrzynka, dymek | ekwipunek, czat (pisanie klawiaturą telefonu, Enter - wyślij) |
-| serce | okno statusu (samopoczucie, energia, kondycja); z jedzeniem w ręce jest w nim przycisk **Zjedz** |
+| serce (czwarte od lewej, tryb przygody) | pokazuje samopoczucie kolorem; stuknięcie otwiera okno statusu (energia, kondycja), z jedzeniem w ręce jest w nim przycisk **Zjedz** |
 | księga, oko, mapa, ramka | osiągnięcia, widok (jak F5), mapa terenu, pełny ekran |
 | ✕ | zamyka ekwipunek albo czat |
 | przycisk "wstecz" telefonu | pauza (albo zamyka czat / ekwipunek) - nie wychodzi z gry |

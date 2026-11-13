@@ -4,18 +4,21 @@
 // Samopoczucie gracza słowami (bez pasków): stan, zapas energii,
 // kondycja, posiłki. Dane liczy src/game/Wellbeing.js.
 //
-//   #wellbeing - mała etykieta u góry ekranu (zawsze w trybie przygody),
-//   #status    - okno (klawisz C albo przycisk na telefonie); gra
+//   #wellbeing - pixel-artowe serce w lewym górnym rogu (HeartIcon.js;
+//                zawsze w trybie przygody): kolor to stan, przy zmianie
+//                migocze. Na telefonie stuknięcie otwiera okno,
+//   #status    - okno (klawisz C albo stuknięcie w serce); gra
 //                działa dalej,
 //   #weary     - przyciemnienie brzegów obrazu u wyczerpanego.
 //
-// W trybie kreatywnym energia jest wyłączona - etykiety nie widać,
+// W trybie kreatywnym energia jest wyłączona - serca nie widać,
 // a okno mówi, że nie trzeba jeść.
 // ------------------------------------------------------------
 
 import { STATES, MEALS_PER_DAY } from '../game/Wellbeing.js';
 import { getFood, KIND_LABELS } from '../items/foods.js';
 import { getItemLabel } from '../items/ItemRegistry.js';
+import { HeartIcon, drawHeart } from './HeartIcon.js';
 
 function element(tag, className, text = '') {
     const node = document.createElement(tag);
@@ -53,6 +56,10 @@ export class StatusPanel {
     // onEat - przycisk "Zjedz" (telefon).
     constructor({ onEat } = {}) {
         this.chip = document.getElementById('wellbeing');
+        this.heart = new HeartIcon(this.chip);
+        // Telefon: stuknięcie w serce otwiera okno (na komputerze mysz
+        // jest w grze "złapana" - tam klawisz C).
+        this.chip.addEventListener('click', () => this.toggle());
         this.panel = document.getElementById('status');
         this.weary = document.getElementById('weary');
         this.onEat = onEat;
@@ -67,19 +74,32 @@ export class StatusPanel {
     close() { this.panel.hidden = true; }
     toggle() { if (this.isOpen) this.close(); else this.open(); }
 
+    // Zdarzenie z gry (Game.onWellbeing): serce reaguje.
+    signal(event) {
+        if (event.type === 'rumble') this.heart.play('rumble', 0.7);
+        else if (event.type === 'meal') this.heart.play('meal', 0.6);
+        else if (event.type === 'day' && event.change !== 0) {
+            this.heart.play(event.change > 0 ? 'up' : 'down', 1.2);
+            if (event.change > 0) this.heart.sparkle();
+        }
+    }
+
     // Co klatkę (DOM zmienia się tylko, gdy zmieniły się dane).
     update(dt, game) {
         if (!game) {
             this.chip.hidden = true;
+            document.body.classList.remove('has-heart');
             this.weary.style.opacity = '0';
             return;
         }
         const wellbeing = game.wellbeing;
         const state = wellbeing.active ? wellbeing.state : null;
         this.chip.hidden = !state;
-        if (state && this.chip.dataset.state !== state) {
-            this.chip.dataset.state = state;
-            this.chip.textContent = STATES[state].label;
+        document.body.classList.toggle('has-heart', Boolean(state));
+        if (state) {
+            this.heart.set(state);
+            this.heart.update(dt);
+            this.chip.title = STATES[state].label;
         }
         this.weary.style.opacity = String(wellbeing.effects.dim);
 
@@ -100,8 +120,11 @@ export class StatusPanel {
         if (!view.active) {
             panel.append(element('p', 'status-text', 'W tym trybie gry energia nie ubywa i nie trzeba jeść.'));
         } else {
-            const state = element('div', 'status-state', view.label);
-            state.dataset.state = view.state;
+            const state = element('div', 'status-state');
+            const icon = document.createElement('canvas');
+            icon.className = 'heart-pixels';
+            drawHeart(icon, view.state);
+            state.append(icon, element('span', '', view.label));
             panel.append(state, element('p', 'status-text', view.text));
             const list = element('dl', 'status-rows');
             for (const [name, value] of view.rows) list.append(element('dt', '', name), element('dd', '', value));

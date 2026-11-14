@@ -46,6 +46,14 @@ function logsOf(species) {
 }
 
 
+// Szyszki i oliwki drzew z katalogu (przedmioty <gatunek>_<klucz>) -
+// tylko gatunków, które są w grze.
+
+const inCatalog = (type) => TREE_DEFINITIONS.some((pack) => type.startsWith(`${pack.id}_`));
+const CONES = ['olcha_szyszki', 'mugo_cone', 'sequoia_cone'].filter(inCatalog);
+const OLIVES = ['olive_oliwki'].filter(inCatalog);
+
+
 // Opadłe liście drzew z paczek.
 
 const TREE_LITTER = TREE_DEFINITIONS
@@ -83,15 +91,22 @@ export const GROUPS = {
     },
 
     cone: {
-        label: 'szyszka (świerka albo sosny)',
+        label: 'szyszka (dowolna)',
         icon: 'spruce_cone',
-        types: ['spruce_cone', 'pine_cone']
+        types: ['spruce_cone', 'pine_cone', ...CONES]
     },
 
     grass: {
-        label: 'trawa (krótka albo wysoka)',
+        label: 'trawa (krótka, wysoka, wydmowa) albo trzcina',
         icon: 'tall_grass',
-        types: ['short_grass', 'tall_grass']
+        types: ['short_grass', 'tall_grass', 'dune_grass', 'reed']
+    },
+
+    // Do pochodni i lamp: to, co się pali.
+    oil: {
+        label: 'żywica albo oliwki',
+        icon: 'resin',
+        types: ['resin', ...OLIVES]
     },
 
     needles: {
@@ -130,6 +145,63 @@ export const GROUPS = {
         types: ['blackberry', 'heather', 'crocus']
     },
 
+    // Pozostałe kolory barwników (0.98.1): każdy kwiat i plon daje barwnik.
+    yellow: {
+        label: 'coś żółtego (mniszek)',
+        icon: 'dandelion',
+        types: ['dandelion']
+    },
+
+    white: {
+        label: 'coś białego (rumianek)',
+        icon: 'chamomile',
+        types: ['chamomile']
+    },
+
+    brown: {
+        label: 'coś brązowego (żołądź)',
+        icon: 'acorn',
+        types: ['acorn']
+    },
+
+    orange: {
+        label: 'coś pomarańczowego ()',
+        icon: 'dye_orange',
+        types: []
+    },
+
+    pink: {
+        label: 'coś różowego ()',
+        icon: 'dye_pink',
+        types: []
+    },
+
+    // Kwiaty do wianka: polne (bloki) i zebrane z roślin (plony).
+    flowers: {
+        label: 'kwiat (mak, chaber, rumianek, mniszek, krokus, wrzos)',
+        icon: 'poppy',
+        types: ['poppy', 'cornflower', 'chamomile', 'dandelion', 'crocus', 'heather']
+    },
+
+    // Zioła do naparów (docs/ziola.md): kubek + dwa zioła z jednej grupy.
+    herbs_calm: {
+        label: 'zioło na sen (kwiat lipy)',
+        icon: 'linden_flower',
+        types: ['linden_flower']
+    },
+
+    herbs_heal: {
+        label: 'zioło lecznicze (rumianek, babka)',
+        icon: 'chamomile',
+        types: ['chamomile', 'plantain']
+    },
+
+    herbs_vigor: {
+        label: 'zioło wzmacniające (pokrzywa)',
+        icon: 'nettle',
+        types: ['nettle']
+    },
+
     // Pnie każdego gatunku: "#oak_logs" itd.
     ...Object.fromEntries(TREE_NAMES.map((species) => [`${species}_logs`, {
         label: `pień ${TREE_SPECIES[species].species[1]} (też okorowany)`,
@@ -140,8 +212,11 @@ export const GROUPS = {
 };
 
 
-// Przedmioty z paczek roślin w grupach składników ("grupy" w roslina.json),
-// np. wiecha amarantusa - coś czerwonego (czerwona lampa).
+// Plony roślin w grupach składników ("grupy" w roslina.json), np. wiecha
+// amarantusa - coś czerwonego (barwnik, czerwona lampa) i kwiat do wianka.
+// Nazwa grupy wymienia najwyżej GROUP_LABEL_NAMES rzeczy, potem "i inne".
+
+const GROUP_LABEL_NAMES = 5;
 
 for (const pack of PLANT_PACKS) {
 
@@ -151,7 +226,12 @@ for (const pack of PLANT_PACKS) {
 
         group.types.push(pack.item.type);
 
-        group.label = group.label.replace(/\)$/, `, ${pack.item.label.toLowerCase()})`);
+        if (group.types.length <= GROUP_LABEL_NAMES) {
+            group.label = group.label.replace(/\)$/, `, ${pack.item.label.toLowerCase()})`).replace('(, ', '(');
+        }
+        else if (!group.label.endsWith('i inne)')) {
+            group.label = group.label.replace(/\)$/, ' i inne)');
+        }
 
     }
 
@@ -161,6 +241,8 @@ for (const pack of PLANT_PACKS) {
 import { FIRE_WOODS, fuelType } from '../game/CampfireState.js';
 import { CHEST_KINDS } from '../blocks/chest.js';
 import { WOODS } from '../blocks/woods.js';
+import { TEAS, CUP } from '../items/foods.js';
+import { EFFECTS } from '../items/effects.js';
 
 export const RECIPES = [
     // Skrzynie (0.89.0): z każdego rodzaju desek - skrzynia tego drewna.
@@ -187,17 +269,32 @@ export const RECIPES = [
     { id: 'linen_bedding', result: ['linen_bedding', 1], pattern: ['LL', 'LL'], key: { L: 'len_wiazka' },
         note: 'Wygodniejsza od słomianej. PPM na ziemi: posłanie. PPM na stelażu łóżka: ścieli łóżko.' },
 
+    // Napary (0.98.1, docs/ziola.md): kubek z gliny, do niego dwa zioła
+    // z jednej grupy; kubek ziół podgrzany nad płonącym ogniskiem
+    // (trzymany PPM) to napar. Wypity napar oddaje kubek.
+    { id: CUP, result: [CUP, 2], ingredients: ['clay', 'clay'],
+        note: 'Naczynie na napary. Po wypiciu naparu kubek wraca do ekwipunku.' },
+    ...Object.entries(TEAS).map(([effect, { brew, herbs }]) => ({
+        id: brew, result: [brew, 1], ingredients: [CUP, `#${herbs}`, `#${herbs}`],
+        note: `Przytrzymaj PPM na płonącym ognisku - powstanie napar. ${EFFECTS[effect].text}.`
+    })),
+    // Wianek z kwiatów: ozdoba na ścianę (blocks/decorations.js).
+    { id: 'flower_wreath', result: ['flower_wreath', 1], pattern: ['FF', 'FF'], key: { F: '#flowers' },
+        note: 'Cztery dowolne kwiaty. Wiesza się na ścianie jak wieniec świerkowy.' },
+
     { id: 'fire_starter', result: ['fire_starter', 1], ingredients: ['stick', 'stick'],
         note: '6 polan + trawa; przytrzymaj PPM starterem przez 5 sekund.' },
 
     // Barwniki z roślin: paczki kwiatów/owoców przypisane do istniejących
     // grup kolorów także stają się źródłem pigmentu.
-    ...[
-        ['red', '#red'], ['yellow', 'dandelion'], ['white', 'chamomile'],
-        ['green', '#green'], ['blue', '#blue'], ['purple', '#purple'], ['brown', 'acorn']
-    ].map(([color, source]) => ({
-        id: `dye_${color}`, result: [`dye_${color}`, 1], ingredients: [source],
+    ...['red', 'yellow', 'white', 'green', 'blue', 'purple', 'brown'].map((color) => ({
+        id: `dye_${color}`, result: [`dye_${color}`, 1], ingredients: [`#${color}`],
         note: 'Barwnikiem kliknij PPM postawioną pochodnię albo połącz go z pochodnią w tej siatce.'
+    })),
+    // Pomarańczowy i różowy także prosto z kwiatów (obok mieszania).
+    ...['orange', 'pink'].map((color) => ({
+        id: `dye_${color}_plant`, result: [`dye_${color}`, 1], ingredients: [`#${color}`],
+        note: 'Prosto z kwiatów - bez mieszania barwników.'
     })),
     ...[
         ['orange', 'red', 'yellow'], ['magenta', 'purple', 'pink'],
@@ -210,8 +307,8 @@ export const RECIPES = [
         ingredients: ingredients.map(key => `dye_${key}`),
         note: 'Mieszanie barwników.'
     })),
-    { id: 'torch', result: ['torch', 4], ingredients: ['stick', 'resin'],
-        note: 'Żywicę zbierz PPM z pnia sosny. Pochodnię postaw na podłożu albo na ścianie.' },
+    { id: 'torch', result: ['torch', 4], ingredients: ['stick', '#oil'],
+        note: 'Żywicę zbierz PPM z pnia sosny, oliwki - z liści oliwki. Pochodnię postaw na podłożu albo na ścianie.' },
     ...TORCH_VARIANTS.filter(variant => variant.key !== 'plain').map(variant => ({
         id: variant.type, result: [variant.type, 1], ingredients: ['#torches', `dye_${variant.key}`],
         note: 'Zmienia końcówki płomienia i odcień światła. Postawioną pochodnię można też zabarwić PPM.'
@@ -268,8 +365,8 @@ export const RECIPES = [
     {
         id: 'lamp',
         result: ['lamp', 2],
-        ingredients: ['lepidolite', 'resin', 'birch_bark'],
-        note: 'Lepidolit z gór, żywica z sosny, kora z brzozy (siekierą).'
+        ingredients: ['lepidolite', '#oil', 'birch_bark'],
+        note: 'Lepidolit z gór, żywica z sosny (albo oliwki), kora z brzozy (siekierą).'
     },
     {
         id: 'lamp_red',
@@ -326,6 +423,12 @@ export const RECIPES = [
         result: ['ochre_plaster', 4],
         ingredients: ['lime_plaster', 'lime_plaster', 'lime_plaster', 'clay'],
         note: 'Ciepły, żółty - zabarwia odbite światło.'
+    },
+    {
+        id: 'ochre_plaster_ochre',
+        result: ['ochre_plaster', 4],
+        ingredients: ['lime_plaster', 'lime_plaster', 'lime_plaster', 'ochra_grudka'],
+        note: 'Z grudką żółtej ochry zamiast gliny.'
     },
     {
         id: 'terracotta',

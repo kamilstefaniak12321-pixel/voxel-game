@@ -42,6 +42,7 @@
 // ------------------------------------------------------------
 
 import { getFood } from '../items/foods.js';
+import { EFFECTS, getEffect } from '../items/effects.js';
 
 export const CONDITION_MIN = 60;
 export const CONDITION_MAX = 130;
@@ -172,6 +173,8 @@ export class Wellbeing {
         this.rumbleIn = this.nextRumble();
         this.lastState = this.state;
         this.lastRest = this.restState;
+        // Czas gry z ostatniego update - do sprawdzania, czy efekt jeszcze działa.
+        this.now = days;
         // Oddech (1 - pełny). Nie zapisuje się: po wejściu do świata pełny.
         this.breath = 1;
         this.drowned = false;
@@ -197,6 +200,9 @@ export class Wellbeing {
             rest: clamp(number(source.rest, REST_START), 0, 100),
             comfort: Object.hasOwn(COMFORT, source.comfort) ? Number(source.comfort) : 0,
             comfortUntil: Number.isFinite(source.comfortUntil) ? source.comfortUntil : 0,
+            // Efekty z naparów: nazwa -> do kiedy działa (czas gry w dobach).
+            effects: Object.fromEntries(Object.entries(source.effects && typeof source.effects === 'object' ? source.effects : {})
+                .filter(([type, until]) => getEffect(type) && Number.isFinite(until))),
             meal,
             history: Array.isArray(source.history)
                 ? source.history.filter(Number.isFinite).slice(-3).map((n) => clamp(Math.floor(n), 0, 99)) : []
@@ -224,8 +230,9 @@ export class Wellbeing {
         const state = STATES[this.active ? this.state : 'good'];
         const rest = this.active ? REST_STATES[this.restState] : REST_STATES.rested;
         const comfort = this.active ? COMFORT[this.data.comfort] : null;
-        if (!this.limping && rest.work === 1 && rest.dim === 0 && !comfort) return state;
-        const effects = { ...state, sprint: state.sprint * rest.sprint, work: state.work * rest.work * (comfort?.work ?? 1),
+        const boost = this.active ? this.effectFactor('work') : 1;
+        if (!this.limping && rest.work === 1 && rest.dim === 0 && !comfort && boost === 1) return state;
+        const effects = { ...state, sprint: state.sprint * rest.sprint, work: state.work * rest.work * (comfort?.work ?? 1) * boost,
             dim: Math.max(state.dim, rest.dim) };
         // Stłuczona noga: wolniejszy chód i żadnego biegu, w każdym stanie.
         if (this.limping) Object.assign(effects, { walk: state.walk * LIMP_WALK, sprint: 0, canSprint: false });
@@ -245,7 +252,19 @@ export class Wellbeing {
     sleep(hours, place = 'ground', comfort = 0, days = this.data.day) {
         const data = this.data, spot = SLEEP_PLACES[place] ?? SLEEP_PLACES.ground;
         if (!this.active || !(hours > 0)) return { rest: data.rest, state: this.restState, comfort: 0 };
-        data.rest = Math.max(data.rest, Math.min(spot.cap, data.rest + hours * REST_PER_HOUR * spot.rate));
+        // Efekty snu (napar na sen): szybciej i wyżej. Liczy się efekt, który
+        // działał przy zasypianiu; kończy się po porządnym śnie.
+        const asleepAt = days - hours / 24;
+        let rate = spot.rate, cap = spot.cap;
+        for (const type of Object.keys(data.effects)) {
+            const sleep = getEffect(type)?.sleep;
+            if (!sleep || data.effects[type] <= asleepAt) continue;
+            rate *= sleep.rate ?? 1;
+            cap = Math.min(100, cap + (sleep.cap ?? 0));
+            if (hours >= 1) delete data.effects[type];
+        }
+        this.now = days;
+        data.rest = Math.max(data.rest, Math.min(cap, data.rest + hours * REST_PER_HOUR * rate));
         data.energy = Math.max(0, data.energy - hours * SLEEP_ENERGY_PER_HOUR);
         data.fullness = Math.max(0, data.fullness - hours * 50);
         const earned = place === 'bed' && hours >= COMFORT_MIN_HOURS && Object.hasOwn(COMFORT, comfort) ? Number(comfort) : 0;
@@ -256,6 +275,33 @@ export class Wellbeing {
     }
 
     get limping() { return this.active && this.data.limp > 0; }
+
+    // --- Efekty (items/effects.js) ---------------------------------------
+
+    // Włącza efekt na jego zwykły czas (od "days"); ponowne użycie odnawia.
+    addEffect(type, days = this.now) {
+        const effect = getEffect(type);
+        if (!effect || !this.active) return false;
+        this.data.effects[type] = days + effect.hours / 24;
+        this.now = Math.max(this.now, days);
+        return true;
+    }
+
+    // Nazwy efektów, które teraz działają.
+    activeEffects() {
+        return Object.keys(this.data.effects).filter((type) => getEffect(type) && this.data.effects[type] > this.now);
+    }
+
+    hasEffect(type) {
+        return this.activeEffects().includes(type);
+    }
+
+    // Iloczyn mnożników "field" (drain, work, heal) działających efektów.
+    effectFactor(field) {
+        let factor = 1;
+        for (const type of this.activeEffects()) factor *= EFFECTS[type][field] ?? 1;
+        return factor;
+    }
 
     // Twarde lądowanie z prędkością speed (bloki/s). Zwraca liczbę sekund
     // utykania, które doszły (0 - nic się nie stało).
@@ -292,8 +338,17 @@ export class Wellbeing {
         const events = [];
         if (!this.active || !(dt > 0)) return events;
         const data = this.data;
+        this.now = days;
+        // Efekty, których czas minął.
+        for (const type of Object.keys(data.effects)) {
+            // Efekt snu nie mija w trakcie snu - rozlicza go sleep().
+            if (data.effects[type] <= days && !(activity.sleeping && getEffect(type)?.sleep)) {
+                delete data.effects[type];
+                events.push({ type: 'effectEnded', effect: type });
+            }
+        }
 
-        let rate = REST_DRAIN;
+        let rate = REST_DRAIN * this.effectFactor('drain');
         if (activity.swimming) rate *= DRAIN.swim;
         else if (activity.sprinting) rate *= DRAIN.sprint;
         else if (activity.moving) rate *= DRAIN.walk;
@@ -318,7 +373,8 @@ export class Wellbeing {
         data.fullness = Math.max(0, data.fullness - dt);
 
         if (data.limp > 0) {
-            const heal = (activity.moving || activity.swimming ? 1 : LIMP_REST_HEAL) * (this.full ? LIMP_FULL_HEAL : 1);
+            const heal = (activity.moving || activity.swimming ? 1 : LIMP_REST_HEAL) * (this.full ? LIMP_FULL_HEAL : 1) *
+                this.effectFactor('heal');
             data.limp = Math.max(0, data.limp - dt * heal);
             if (data.limp === 0) events.push({ type: 'healed' });
         }
@@ -380,7 +436,8 @@ export class Wellbeing {
     canEat(type) {
         if (!getFood(type)) return { ok: false, reason: 'Tego nie da się zjeść' };
         if (!this.active) return { ok: false, reason: 'W tym trybie nie trzeba jeść' };
-        if (this.data.fullness >= FULLNESS_LIMIT) return { ok: false, reason: 'Nie zmieścisz już więcej' };
+        // Napój da się wypić także z pełnym żołądkiem.
+        if (this.data.fullness >= FULLNESS_LIMIT && getFood(type).kind !== 'drink') return { ok: false, reason: 'Nie zmieścisz już więcej' };
         return { ok: true, reason: null };
     }
 
@@ -411,7 +468,8 @@ export class Wellbeing {
             }
         }
         this.rumbleIn = this.nextRumble();
-        return { ok: true, reason: null, meal };
+        const effects = (food.effects ?? []).filter((type) => this.addEffect(type, days));
+        return { ok: true, reason: null, meal, effects, mealsToday: data.mealsToday };
     }
 
     // Opis słowami (okno statusu - src/ui/StatusPanel.js).
@@ -426,6 +484,9 @@ export class Wellbeing {
         const limp = !this.limping ? null : data.limp > 150 ? 'mocno stłuczona' : data.limp > 45 ? 'stłuczona' : 'prawie zdrowa';
         return { state: this.state, energy, condition, full: this.full, mealsToday: data.mealsToday,
             history: data.history, lastFood: data.lastFood, limp,
-            rest: REST_STATES[this.restState].label, comfort: COMFORT[data.comfort]?.label ?? null };
+            rest: REST_STATES[this.restState].label, comfort: COMFORT[data.comfort]?.label ?? null,
+            // Działające efekty: nazwa i ile godzin gry zostało.
+            effects: this.activeEffects().map((type) => ({ type, label: EFFECTS[type].label,
+                hours: Math.max(0, (data.effects[type] - this.now) * 24) })) };
     }
 }

@@ -43,7 +43,7 @@
         "plik": "lisc.png",
         "nazwa": "Liście szałwii",
         "nazwaAngielska": "Sage Leaves",
-        "kategoria": "ozdoby"
+        "grupy": ["green", "herbs_heal"]
     },
     "zbior": { "ile": [1, 3], "wraca": 2 },
     "gdzieRosnie": { "biomy": { "skaly": 1, "laka": 0.25, "gaj": 1 }, "plamy": 0.025, "gestosc": 0.35, "etapy": [0.2, 0.25, 0.55] },

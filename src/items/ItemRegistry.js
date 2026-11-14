@@ -149,6 +149,16 @@ export const ITEM_TYPES = {
     // (crafting/recipes.js, blocks/bedding.js).
     straw: { name: 'Straw', label: 'Słoma', icon: 'straw', category: 'narzedzia' },
 
+    // Napary (0.98.1, items/foods.js - TEAS, docs/ziola.md): gliniany
+    // kubek, kubek ziół (do podgrzania nad ogniskiem) i gotowy napar.
+    clay_cup: { name: 'Clay Cup', label: 'Gliniany kubek', icon: 'clay_cup', category: 'narzedzia' },
+    brew_calm: { name: 'Cup of Calming Herbs', label: 'Kubek ziół na sen', icon: 'brew_calm', category: 'owoce' },
+    brew_heal: { name: 'Cup of Healing Herbs', label: 'Kubek ziół leczniczych', icon: 'brew_heal', category: 'owoce' },
+    brew_vigor: { name: 'Cup of Invigorating Herbs', label: 'Kubek ziół wzmacniających', icon: 'brew_vigor', category: 'owoce' },
+    tea_calm: { name: 'Calming Infusion', label: 'Napar na sen', icon: 'tea_calm' },
+    tea_heal: { name: 'Healing Infusion', label: 'Napar leczniczy', icon: 'tea_heal' },
+    tea_vigor: { name: 'Invigorating Infusion', label: 'Napar wzmacniający', icon: 'tea_vigor' },
+
     // Zwój kory z okorowanej siekierą brzozy.
     birch_bark: {
         name: 'Birch Bark',

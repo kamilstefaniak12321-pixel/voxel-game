@@ -117,8 +117,8 @@ jest w [`docs/opis-gry.md`](docs/opis-gry.md). Skrót:
 
 | Część gry | Co obejmuje | Pełny opis | Osobna strona |
 |---|---|---|---|
-| Osiągnięcia | 55 osiągnięć w księdze (klawisz L), powiadomienia, rangi | [opis](docs/opis-gry.md#osiągnięcia) | [osiagniecia.md](docs/osiagniecia.md) |
-| Energia i samopoczucie | energia z jedzenia, kondycja, serce i okno statusu; utykanie po upadku, pobudka na brzegu po utonięciu, pieczenie nad ogniskiem ([skutki.md](docs/skutki.md)); wyspanie, noc i sen - łóżka ze stelaża i pościeli, posłania ([sen.md](docs/sen.md)) | [opis](docs/opis-gry.md#energia-i-samopoczucie) | [energia.md](docs/energia.md) |
+| Osiągnięcia | 66 osiągnięć w księdze (klawisz L), powiadomienia, rangi | [opis](docs/opis-gry.md#osiągnięcia) | [osiagniecia.md](docs/osiagniecia.md) |
+| Energia i samopoczucie | energia z jedzenia, kondycja, serce i okno statusu; utykanie po upadku, pobudka na brzegu po utonięciu, pieczenie nad ogniskiem ([skutki.md](docs/skutki.md)); wyspanie, noc i sen - łóżka ze stelaża i pościeli, posłania ([sen.md](docs/sen.md)); napary z ziół i zastosowania plonów ([ziola.md](docs/ziola.md)) | [opis](docs/opis-gry.md#energia-i-samopoczucie) | [energia.md](docs/energia.md) |
 | Tryby gry i ekwipunek | przygoda, kreatywny, programista; ekwipunek, skrzynie, wytwarzanie | [opis](docs/opis-gry.md#tryby-gry-i-ekwipunek) | [tryb-programisty.md](docs/tryb-programisty.md) |
 | Bloki naturalne i rośliny | skały, krzaki owocowe, rośliny z paczek, drzewa i lasy, uprawa | [opis](docs/opis-gry.md#bloki-naturalne-i-rośliny) | [drzewa.md](docs/drzewa.md) |
 | Woda | rzeki, rozlewanie, wodospady, pływanie, tratwa | [opis](docs/opis-gry.md#woda) | [tratwa.md](docs/tratwa.md) |

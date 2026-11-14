@@ -203,7 +203,7 @@ Osiągnięcie *Spływ* - daj się ponieść nurtowi rzeki przez 100 bloków.
 Przyczyny napraw, porównanie obrazu i pomiary RTX 3050:
 [sprawdzenie wersji 0.25.1](rzeki-0.25.1.md).
 
-Poprawki koryt i ujść dotyczą terenu **Realistycznego (w budowie)**.
+Poprawki koryt i ujść dotyczą terenu **Realistycznego**.
 Po ponownym wejściu do świata nietknięte obszary powstają z bieżącego
 generatora, także jeśli gracz już je wcześniej odwiedził. Samo oglądanie
 terenu nie zapisuje jego bloków na stałe.

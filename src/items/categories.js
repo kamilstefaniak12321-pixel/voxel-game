@@ -1,5 +1,6 @@
 import { BLOCK_TYPES, getBlockDefinition, getBlockSound } from '../blocks/BlockRegistry.js';
 import { ITEM_TYPES, isItemType } from './ItemRegistry.js';
+import { getFood } from './foods.js';
 
 // ------------------------------------------------------------
 // KATEGORIE BLOKÓW I PRZEDMIOTÓW
@@ -10,6 +11,26 @@ import { ITEM_TYPES, isItemType } from './ItemRegistry.js';
 //
 // Kategoria dobiera się sama z pól bloku / przedmiotu (categoryOf
 // niżej), a blok albo przedmiot może ją podać wprost: pole `category`.
+//
+// Zakładek jest dziewięć - po jednej na kolumnę siatki ekwipunku
+// (ui/InventoryScreen.js), więc nowa rzecz trafia do jednej z nich.
+// Co gdzie leży (od 0.98.1 - jedna zasada na rodzaj rzeczy, bez
+// wyjątków zależnych od tego, w którym pliku rzecz jest opisana):
+//
+//   teren     - ziemia, piasek, śnieg, woda,
+//   skaly     - skały,
+//   drewno    - surowe drewno: pnie, okorowane pnie, deski, opał,
+//   budowa    - to, z czego się buduje: tynki, płytki, a z desek
+//               schody, półbloki, płoty, furtki, drzwi i klapy,
+//   rosliny   - wszystko, co rośnie: trawy, kwiaty, zioła, krzaki,
+//               liście, sadzonki, rośliny wodne, porosty, huby,
+//   owoce     - to, co się je, pije albo sadzi: owoce, orzechy,
+//               szyszki, pieczone jedzenie, napary,
+//   swiatlo   - pochodnie i lampy,
+//   ozdoby    - wyposażenie domu: skrzynie, stoły stolarskie, łóżka,
+//               pościel, wieńce, opadłe liście,
+//   narzedzia - narzędzia i to, z czego się wytwarza: patyki, żywica,
+//               słoma, barwniki, plony roślin (kwiaty, liście, korzenie).
 // ------------------------------------------------------------
 
 export const CATEGORIES = {
@@ -18,9 +39,9 @@ export const CATEGORIES = {
     drewno: { label: 'Drewno', icon: 'oak_log' },
     budowa: { label: 'Budulec', icon: 'lime_plaster' },
     rosliny: { label: 'Rośliny', icon: 'poppy' },
-    owoce: { label: 'Owoce i nasiona', icon: 'strawberry' },
+    owoce: { label: 'Jedzenie i nasiona', icon: 'strawberry' },
     swiatlo: { label: 'Światło', icon: 'lamp' },
-    ozdoby: { label: 'Ozdoby', icon: 'spruce_wreath' },
+    ozdoby: { label: 'Meble i ozdoby', icon: 'spruce_wreath' },
     narzedzia: { label: 'Narzędzia i surowce', icon: 'pickaxe' }
 };
 
@@ -37,10 +58,11 @@ function categoryOf(type) {
             return item.category;
         }
 
-        // Do posadzenia (owoce, orzechy, szyszki) - owoce i nasiona,
-        // reszta (narzędzia, patyk, żywica, kora) - surowce.
+        // Do zjedzenia albo posadzenia (owoce, orzechy, szyszki, napary)
+        // - jedzenie i nasiona, reszta (narzędzia, patyk, żywica, kora,
+        // plony roślin) - narzędzia i surowce.
 
-        return item.plants ? 'owoce' : 'narzedzia';
+        return item.plants || getFood(type) ? 'owoce' : 'narzedzia';
 
     }
 

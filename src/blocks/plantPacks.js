@@ -47,10 +47,19 @@ export const PLANT_PIXELS = 16;
 export const PLANT_MAX_SIZE = 64;
 
 // Grupy składników przepisów (GROUPS w src/crafting/recipes.js), do
-// których może należeć przedmiot rośliny.
-export const PLANT_GROUPS = ['red', 'green', 'blue', 'purple'];
+// których może należeć przedmiot rośliny - to przez nie plon dostaje
+// zastosowania (docs/ziola.md):
+//   kolory  - barwnik w tym kolorze (i kolorowa lampa),
+//   flowers - kwiat do wianka,
+//   herbs_* - zioła do naparu: na sen, leczniczego, wzmacniającego.
+// Każdy plon ma należeć przynajmniej do jednej grupy albo mieć inne
+// zastosowanie - pilnuje tego tools/sprawdz_zastosowania.mjs.
+export const PLANT_COLOR_GROUPS = ['red', 'orange', 'yellow', 'green', 'blue', 'purple', 'pink', 'white', 'brown'];
+export const PLANT_GROUPS = [...PLANT_COLOR_GROUPS, 'flowers', 'herbs_calm', 'herbs_heal', 'herbs_vigor'];
 
-const ITEM_CATEGORIES = ['owoce', 'rosliny', 'ozdoby'];
+// Kategoria plonu (src/items/categories.js): zwykle surowiec; jadalny
+// albo do sadzenia - 'owoce'.
+const ITEM_CATEGORIES = ['narzedzia', 'owoce'];
 
 export const PLANT_PACK_ERRORS = [];
 
@@ -521,7 +530,7 @@ async function validatePack(folder) {
             fail('"przedmiot.klucz": małe litery (bez polskich) i cyfry, np. wiecha');
         }
 
-        const category = item.kategoria ?? 'rosliny';
+        const category = item.kategoria ?? 'narzedzia';
 
         if (!ITEM_CATEGORIES.includes(category)) {
             fail(`"przedmiot.kategoria": jedna z ${ITEM_CATEGORIES.join(', ')}`);
@@ -533,13 +542,23 @@ async function validatePack(folder) {
             fail(`"przedmiot.grupy": lista grup składników (${PLANT_GROUPS.join(', ')}), np. ["red"]`);
         }
 
+        // Podpałka do ogniska: ile razy szybciej od trawy się rozpala
+        // (game/CampfireState.js) - opcjonalne.
+
+        const tinder = item.podpalka;
+
+        if (tinder !== undefined && !(Number.isFinite(tinder) && tinder >= 0.5 && tinder <= 4)) {
+            fail('"przedmiot.podpalka": liczba od 0.5 do 4 (1 - jak trawa, 2 - dwa razy szybciej)');
+        }
+
         pack.item = {
             type: `${folder}_${item.klucz}`,
             file: png(item.plik, 'przedmiot.plik'),
             label: text(item.nazwa, 'przedmiot.nazwa'),
             name: typeof item.nazwaAngielska === 'string' && item.nazwaAngielska.trim() ? item.nazwaAngielska.trim() : text(item.nazwa, 'przedmiot.nazwa'),
             category,
-            groups
+            groups,
+            tinder: tinder ?? null
         };
 
     }

@@ -48,7 +48,7 @@
         "plik": "kwiat.png",
         "nazwa": "Kwiat cynii",
         "nazwaAngielska": "Zinnia Flower",
-        "kategoria": "ozdoby"
+        "grupy": ["orange", "flowers"]
     },
     "zbior": { "ile": [1, 2], "wraca": 2 },
     "gdzieRosnie": { "biomy": { "brzezina": 1, "laka": 0.25 }, "plamy": 0.02, "gestosc": 0.35, "etapy": [0.2, 0.25, 0.55] },

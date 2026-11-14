@@ -69,7 +69,8 @@
         "plik": "huba.png",
         "nazwa": "Huba",
         "nazwaAngielska": "Bracket Fungus",
-        "kategoria": "ozdoby"
+        "grupy": ["brown"],
+        "podpalka": 2
     },
     "zbior": {
         "ile": [

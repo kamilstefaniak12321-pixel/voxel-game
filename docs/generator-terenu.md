@@ -22,7 +22,7 @@ na RTX 3050 Laptop na zasilaczu oraz spójny daleki widok.
 - **Wyższy świat** - `CHUNK_HEIGHT` 128 zamiast 64 (miejsce na morze,
   niziny, wyżyny i góry). Stare zapisy są automatycznie powiększane.
 - **Typy terenu** - każdy świat pamięta swój typ (`worldInfo.terrain`):
-  *Realistyczny (w budowie)* albo *Klasyczny* (dawny generator, który
+  *Realistyczny* albo *Klasyczny* (dawny generator, który
   już się nie zmieni). Wybiera się go przy tworzeniu świata. Światy
   sprzed tej zmiany są klasyczne.
 - **Wspólny interfejs generatorów** (`src/world/terrain/generators.js`)

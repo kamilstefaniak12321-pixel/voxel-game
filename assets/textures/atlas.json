@@ -22,7 +22,7 @@
     "przedmioty": {
       "file": "przedmioty.png",
       "width": 256,
-      "height": 48
+      "height": 64
     },
     "efekty": {
       "file": "efekty.png",
@@ -3879,6 +3879,62 @@
       "y": 32,
       "width": 16,
       "height": 16
+    },
+    "clay_cup": {
+      "sheet": "przedmioty",
+      "x": 208,
+      "y": 32,
+      "width": 16,
+      "height": 16
+    },
+    "brew_calm": {
+      "sheet": "przedmioty",
+      "x": 224,
+      "y": 32,
+      "width": 16,
+      "height": 16
+    },
+    "brew_heal": {
+      "sheet": "przedmioty",
+      "x": 240,
+      "y": 32,
+      "width": 16,
+      "height": 16
+    },
+    "brew_vigor": {
+      "sheet": "przedmioty",
+      "x": 0,
+      "y": 48,
+      "width": 16,
+      "height": 16
+    },
+    "tea_calm": {
+      "sheet": "przedmioty",
+      "x": 16,
+      "y": 48,
+      "width": 16,
+      "height": 16
+    },
+    "tea_heal": {
+      "sheet": "przedmioty",
+      "x": 32,
+      "y": 48,
+      "width": 16,
+      "height": 16
+    },
+    "tea_vigor": {
+      "sheet": "przedmioty",
+      "x": 48,
+      "y": 48,
+      "width": 16,
+      "height": 16
+    },
+    "flower_wreath": {
+      "sheet": "teren",
+      "x": 192,
+      "y": 32,
+      "width": 16,
+      "height": 16
     }
   },
   "aliases": {
@@ -6980,6 +7036,46 @@
       "x": 12,
       "y": 18,
       "region": "straw"
+    },
+    "clay_cup": {
+      "x": 10,
+      "y": 21,
+      "region": "clay_cup"
+    },
+    "brew_calm": {
+      "x": 11,
+      "y": 21,
+      "region": "brew_calm"
+    },
+    "brew_heal": {
+      "x": 12,
+      "y": 21,
+      "region": "brew_heal"
+    },
+    "brew_vigor": {
+      "x": 13,
+      "y": 21,
+      "region": "brew_vigor"
+    },
+    "tea_calm": {
+      "x": 14,
+      "y": 21,
+      "region": "tea_calm"
+    },
+    "tea_heal": {
+      "x": 15,
+      "y": 21,
+      "region": "tea_heal"
+    },
+    "tea_vigor": {
+      "x": 13,
+      "y": 18,
+      "region": "tea_vigor"
+    },
+    "flower_wreath": {
+      "x": 14,
+      "y": 18,
+      "region": "flower_wreath"
     }
   }
 }

@@ -71,6 +71,10 @@ Ta sama pościel położona **na ziemi** (PPM w ziemię) to **posłanie** -
 dwa bloki długości, bez stelaża. Rodzaj pościeli nie ma wtedy znaczenia:
 posłanie nie daje premii za wygodę.
 
+**Napar na sen** (od 0.98.1, [ziola.md](ziola.md)) wypity przed
+położeniem się sprawia, że sen jest głębszy: na posłaniu wysypiasz się
+do pełna, a nawet na gołej ziemi budzisz się wypoczęty.
+
 Rozbite łóżko oddaje **stelaż i pościel osobno**, posłanie - pościel.
 Na łóżko wchodzi się bez skoku, posłanie nie przeszkadza w chodzeniu.
 

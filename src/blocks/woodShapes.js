@@ -80,7 +80,8 @@ function variants(entry, index) {
     const common = (kind) => ({
         label: woodName(entry, SHAPE_KINDS[kind].noun, SHAPE_KINDS[kind].gender),
         name: `${wood} ${SHAPE_KINDS[kind].suffix}`,
-        category: 'drewno',
+        // Stół i łóżko to wyposażenie, reszta - budulec (items/categories.js).
+        category: kind === 'table' || kind === 'bed' ? 'ozdoby' : 'budowa',
         sound: 'wood',
         hardness: 1.2,
         textures: { all: texture },

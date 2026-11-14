@@ -28,7 +28,7 @@ import { RiverVegetation } from './RiverVegetation.js';
 import { Biomes, BIOMES, BIOME_KEYS, BIOME_INDEX, grassTint } from './Biomes.js';
 
 // ------------------------------------------------------------
-// GENERATOR TERENU "REALISTYCZNY" (w budowie)
+// GENERATOR TERENU "REALISTYCZNY"
 //
 // Każda kolumna (x, z) dostaje wysokość z kilku warstw:
 //

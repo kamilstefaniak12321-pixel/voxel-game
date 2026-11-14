@@ -33,6 +33,7 @@ import { getBlockDefinition, isOpaqueId } from '../blocks/BlockRegistry.js';
 
 import { BASE_TREE_NAMES } from '../blocks/trees.js';
 import { getTool } from '../items/ItemRegistry.js';
+import { TEAS, isDrink } from '../items/foods.js';
 
 import { TREE_DEFINITIONS } from '../blocks/treeCatalog.js';
 
@@ -63,6 +64,11 @@ const BUILDING_BLOCKS = ['lime_plaster', 'ochre_plaster', 'terracotta', 'polishe
 // Owoce z krzaków - do "Pełnych koszy".
 
 const FRUITS = ['strawberry', 'blackberry', 'chili_pepper', 'hazelnut', 'blueberry'];
+
+
+// Ile jest rodzajów naparów - do "Zielarza".
+
+const TEA_KINDS = Object.keys(TEAS).length;
 
 
 // Biom, w którym stoi gracz (teren realistyczny; klasyczny - null).
@@ -583,6 +589,76 @@ export const ACHIEVEMENTS = [
         on: 'texturePack'
     },
 
+    // Życie w dziczy (0.98.1): jedzenie, uprawa, ognisko, sen, napary -
+    // zdarzenia z game/GameInteraction.js, Campfires.js, Beds.js, Sleep.js.
+    {
+        id: 'first_meal',
+        tier: 'common',
+        title: 'Smacznego',
+        task: 'Zjedz tyle, żeby zaliczyć posiłek.',
+        comment: 'Brzuch przestał burczeć. Na jakieś pięć minut.',
+        icon: 'jablon_jablko',
+        on: 'ate',
+        when: (data) => data.meal === true
+    },
+    {
+        id: 'first_field',
+        tier: 'common',
+        title: 'Rolnik z przypadku',
+        task: 'Rozgrzeb ziemię łopatą (PPM) - powstanie pole.',
+        comment: 'Dziura w ziemi, ale twoja. I coś na niej wyrośnie.',
+        icon: 'tilled_dirt',
+        on: 'tilled'
+    },
+    {
+        id: 'first_roast',
+        tier: 'common',
+        title: 'Kolacja przy ognisku',
+        task: 'Upiecz coś nad płonącym ogniskiem (trzymaj PPM z jedzeniem).',
+        comment: 'Lekko przypalone. Czyli idealne.',
+        icon: 'roasted_apple',
+        on: 'roasted',
+        when: (data) => !isDrink(data.into)
+    },
+    {
+        id: 'bruised_leg',
+        tier: 'common',
+        title: 'Grawitacja działa',
+        task: 'Stłucz nogę, spadając z wysokości.',
+        comment: 'Ziemia była bliżej, niż się wydawało. A potem nagle bardzo blisko.',
+        icon: 'stone',
+        on: 'hurt'
+    },
+    {
+        id: 'bed_made',
+        tier: 'common',
+        title: 'Pościelone',
+        task: 'Pościel stelaż łóżka (PPM pościelą na stelażu).',
+        comment: 'Mama mówiła, żeby ścielić łóżko. Nie mówiła, że najpierw trzeba je zbudować.',
+        icon: 'oak_bed',
+        on: 'bedMade'
+    },
+    {
+        id: 'under_stars',
+        tier: 'common',
+        title: 'Pod gołym niebem',
+        task: 'Prześpij noc na gołej ziemi.',
+        comment: 'Gwiazdy piękne, kamień pod łopatką - mniej.',
+        icon: 'short_grass',
+        on: 'slept',
+        when: (data) => data.place === 'ground' && data.hours >= 4
+    },
+    {
+        id: 'first_tea',
+        tier: 'common',
+        title: 'Coś na rozgrzewkę',
+        task: 'Wypij napar z ziół (kubek ziół podgrzany nad ogniskiem).',
+        comment: 'Smakuje jak łąka. W dobrym sensie.',
+        icon: 'tea_calm',
+        on: 'ate',
+        when: (data) => data.kind === 'drink'
+    },
+
     // --------------------------------------------------------
     // RZADKIE
     // --------------------------------------------------------
@@ -744,6 +820,47 @@ export const ACHIEVEMENTS = [
         comment: 'Jak kot na parapecie. Brakuje tylko mruczenia.',
         icon: 'oak_planks',
         check: (game) => inSunbeam(game)
+    },
+
+    {
+        id: 'three_meals',
+        tier: 'rare',
+        title: 'Śniadanie, obiad, kolacja',
+        task: 'Zalicz trzy posiłki jednego dnia.',
+        comment: 'Trzy posiłki dziennie. Organizm jest w szoku, ale wdzięczny.',
+        icon: 'roasted_hazelnut',
+        on: 'ate',
+        when: (data) => data.meal === true && data.mealsToday >= 3
+    },
+    {
+        id: 'good_night',
+        tier: 'rare',
+        title: 'Jak w puchu',
+        task: 'Prześpij noc w pościelonym łóżku.',
+        comment: 'Własne łóżko. Od teraz każda ziemianka to już dom.',
+        icon: 'linen_bedding',
+        on: 'slept',
+        when: (data) => data.place === 'bed' && data.hours >= 4
+    },
+    {
+        id: 'herbalist',
+        tier: 'rare',
+        title: 'Zielarz',
+        task: 'Wypij wszystkie trzy rodzaje naparów: na sen, leczniczy i wzmacniający.',
+        comment: 'Na wszystko jest zioło. Trzeba tylko wiedzieć, które.',
+        icon: 'tea_heal',
+        on: 'ate',
+        when: (data, book) => data.kind === 'drink' && book.collect('teas', data.type) >= TEA_KINDS
+    },
+    {
+        id: 'blackout',
+        tier: 'rare',
+        title: 'Nie polecam',
+        task: 'Strać przytomność pod wodą i obudź się na brzegu.',
+        comment: 'Ryby patrzyły. Żadna nie pomogła.',
+        icon: 'water',
+        secret: true,
+        on: 'blackout'
     },
 
     // --------------------------------------------------------

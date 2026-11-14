@@ -11,6 +11,23 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 1.1.1 - Celowanie w bloki, szybszy start
+
+Na prośbę Kamila — PR #143 (po 1.1.0). Opis i pomiary:
+[`docs/celowanie-i-ladowanie.md`](docs/celowanie-i-ladowanie.md).
+
+- **Celownik trafia w blok tylko tam, gdzie go widać.** Płaski mech,
+  śnieg, opadłe liście i wieńce nie zasłaniają już bloków za sobą;
+  kępki trawy, kwiaty i sadzonki mają kształt kępki, a nie całej kratki;
+  skrzynia ma swój rozmiar. Biała ramka pokazuje dokładnie to, w co
+  celownik trafia (wspólny kształt: `src/interaction/BlockBounds.js`).
+- **Szybszy start gry:** ikonki odmian jednego bloku (obrócone schody,
+  otwarte drzwi, pochodnie na ścianach, skrzynie) rysują się raz
+  zamiast ok. 2100 razy - rysowanie ikonek trwa trzy razy krócej,
+  a wszystkie ikonki są takie same jak wcześniej.
+- Przegląd ładowania terenu, dźwięków, programów cieniujących i zapisu:
+  bez zbędnej pracy (wyniki w opisie).
+
 ## 1.1.0 - Glina na powierzchni, suszenie, cegły
 
 Na prośbę Kamila — PR #142 (po 1.0.0). Opis:

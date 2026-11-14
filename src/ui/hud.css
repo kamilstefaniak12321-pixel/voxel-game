@@ -514,6 +514,44 @@ body.touch #breath {
 
 #blackout.on { opacity: 1; }
 
+/* Sen (Sleep.js): napis na czarnym ekranie. */
+
+#blackout-text {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    font-family: var(--ui-font, monospace);
+    font-size: 26px;
+    color: #cfd6e6;
+    text-align: center;
+    opacity: 0;
+    transition: opacity 0.6s;
+}
+
+#blackout-text span {
+    display: block;
+    margin-top: 10px;
+    font-size: 14px;
+    opacity: 0.6;
+}
+
+#blackout.sleep #blackout-text { opacity: 1; }
+
+/* Senny albo niewyspany: przy sercu mały księżyc. */
+
+#wellbeing.heart-sleepy::after {
+    content: '';
+    position: absolute;
+    right: -10px;
+    top: -4px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    box-shadow: inset -4px 2px 0 0 #d9e3ff;
+    filter: drop-shadow(1px 1px 0 rgba(0, 0, 0, 0.4));
+}
+
 body:not([data-screen="game"]) #breath,
 body:not([data-screen="game"]) #blackout {
     display: none;

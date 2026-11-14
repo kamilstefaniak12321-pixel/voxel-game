@@ -11,7 +11,8 @@
 //                działa dalej,
 //   #weary     - przyciemnienie brzegów obrazu u wyczerpanego,
 //   #breath    - bąbelki oddechu pod sercem (widać je pod wodą - 0.97.0),
-//   #blackout  - czarny ekran przy utracie przytomności (Blackout.js).
+//   #blackout  - czarny ekran przy utracie przytomności (Blackout.js)
+//                i we śnie (Sleep.js; wtedy z napisem).
 //
 // W trybie kreatywnym energia jest wyłączona - serca nie widać,
 // a okno mówi, że nie trzeba jeść.
@@ -50,6 +51,7 @@ export function statusView(game) {
             ['Kondycja', info.condition],
             ['Posiłki dzisiaj', `${Math.min(info.mealsToday, MEALS_PER_DAY)} z ${MEALS_PER_DAY}`],
             ['Żołądek', info.full ? 'najedzony' : 'pusty'],
+            ['Sen', info.comfort ? `${info.rest} (${info.comfort})` : info.rest],
             ...(info.limp ? [['Noga', `${info.limp} (utykasz)`]] : [])
         ],
         history: info.history,
@@ -70,6 +72,7 @@ export class StatusPanel {
         this.weary = document.getElementById('weary');
         this.breath = document.getElementById('breath');
         this.blackout = document.getElementById('blackout');
+        this.sleepHint = this.blackout?.querySelector('#blackout-text span') ?? null;
         this.bubbles = Array.from({ length: BUBBLES }, () => {
             const bubble = document.createElement('span');
             this.breath.append(bubble);
@@ -91,6 +94,8 @@ export class StatusPanel {
     // Zdarzenie z gry (Game.onWellbeing): serce reaguje.
     signal(event) {
         if (event.type === 'hurt') this.heart.play('down', 1.2);
+        else if (event.type === 'rest') this.heart.play(['sleepy', 'worn'].includes(event.to) ? 'down' : 'up', 1.2);
+        else if (event.type === 'woke') { this.heart.play('up', 1.2); if (event.state === 'rested') this.heart.sparkle(); }
         else if (event.type === 'healed') { this.heart.play('up', 1.2); this.heart.sparkle(); }
         else if (event.type === 'rumble') this.heart.play('rumble', 0.7);
         else if (event.type === 'meal') this.heart.play('meal', 0.6);
@@ -121,7 +126,15 @@ export class StatusPanel {
         }
         this.weary.style.opacity = String(wellbeing.effects.dim);
         this.heartRoot.classList.toggle('heart-limp', wellbeing.limping);
-        this.blackout.classList.toggle('on', game.blackout?.phase === 'out');
+        // Czarny ekran: utrata przytomności albo sen (z napisem).
+        const sleeping = Boolean(game.sleep?.lying);
+        this.blackout.classList.toggle('on', game.blackout?.phase === 'out' || sleeping);
+        this.blackout.classList.toggle('sleep', Boolean(game.sleep?.asleep));
+        // W grze ze znajomymi noc mija dopiero, gdy śpią wszyscy.
+        const hint = game.sleep?.waiting ? 'Noc minie, gdy zasną wszyscy gracze. Rusz się albo kliknij, żeby wstać'
+            : 'Rusz się albo kliknij, żeby wstać';
+        if (this.sleepHint && this.sleepHint.textContent !== hint) this.sleepHint.textContent = hint;
+        this.heartRoot.classList.toggle('heart-sleepy', state !== null && ['sleepy', 'worn'].includes(wellbeing.restState));
 
         // Oddech: bąbelki znikają po kolei; pełne płuca - nie pokazujemy.
         const bubbles = state && wellbeing.breath < 1 ? Math.ceil(wellbeing.breath * BUBBLES) : null;

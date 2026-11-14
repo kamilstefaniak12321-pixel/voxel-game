@@ -10,6 +10,7 @@
 // ------------------------------------------------------------
 
 import { readFileSync } from 'node:fs';
+import { registerHooks } from 'node:module';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 import { modelIconData } from './model_icon.mjs';
@@ -17,6 +18,21 @@ import { getChestFaces } from '../src/rendering/ChestGeometry.js';
 import { STONE_TOOL_TEXTURES } from '../src/rendering/StoneToolTextures.js';
 
 const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
+
+// Modele wyrobów stolarskich (rendering/ShapeGeometry.js) ciągną three.js
+// i atlas z przeglądarki - tu wystarczy sama geometria, więc three bierzemy
+// z lib/, a atlas zastępujemy pustym.
+registerHooks({
+    resolve(specifier, context, next) {
+        return next(specifier === 'three' ? new URL('../lib/three/three.module.js', import.meta.url).href : specifier, context);
+    },
+    load(url, context, next) {
+        if (url.endsWith('/src/rendering/TextureAtlas.js')) {
+            return { format: 'module', shortCircuit: true, source: 'export const getAtlasUV = () => ({ uMin: 0, uMax: 1, vMin: 0, vMax: 1 });' };
+        }
+        return next(url, context);
+    }
+});
 
 const src = (file) => new URL(`../src/${file}`, import.meta.url).href;
 
@@ -33,6 +49,10 @@ const { PLANT_TEXTURES } = await import(src('blocks/plantPacks.js'));
 const { getRiverPlantFaces } = await import(src('rendering/RiverPlantGeometry.js'));
 const { pixelPlantIconPixels } = await import(src('ui/PixelPlantIcon.js'));
 const { getItemModel: getFruitItemModel } = await import(src('rendering/ItemGeometry.js'));
+const { WOODS } = await import(src('blocks/woods.js'));
+const { shapeInfo, shapeBaseType } = await import(src('blocks/woodShapes.js'));
+const { TABLE_PRODUCTS, BENCH_PRODUCTS, WORKSHOP_LABELS } = await import(src('crafting/carpentry.js'));
+const { itemShapeFaces } = await import(src('rendering/ShapeGeometry.js'));
 
 function fruitIcon(type) {
     const fruit = getFruitItemModel(type);
@@ -104,7 +124,10 @@ for (const type of blockTypes) {
     }
 
     for (const [item, chance] of definition.loot ?? []) {
-        addSource(item, `czasem z bloku: ${label} (${Math.round(chance * 100)}%)`);
+        // Pościel z rozbitego łóżka: jeden wpis zamiast dwudziestu (po drewnie).
+        if (shapeInfo(definition.id)?.kind === 'bed') addSource(item, 'rozbite pościelone łóżko (pościel wypada osobno)');
+        else if (chance >= 1) addSource(item, `z bloku: ${label}`);
+        else addSource(item, `czasem z bloku: ${label} (${Math.round(chance * 100)}%)`);
     }
 
     if (definition.harvest) {
@@ -121,6 +144,17 @@ for (const type of blockTypes) {
 
     if (definition.grows?.into) {
         addSource(definition.grows.into, `wyrasta z: ${label}`);
+    }
+
+}
+
+// Wyroby stolarskie: z desek na stole (crafting/carpentry.js).
+
+for (const { wood, planks } of WOODS) {
+
+    for (const product of [...TABLE_PRODUCTS.map((entry) => ({ ...entry, tables: 1 })), ...Object.values(BENCH_PRODUCTS)]) {
+        addSource(shapeBaseType(wood, product.kind),
+            `${WORKSHOP_LABELS[product.tables]}: ${R.getBlockLabel(planks)} (${product.planks} → ${product.count} szt.)`);
     }
 
 }
@@ -164,6 +198,9 @@ const blocks = blockTypes.map((type) => {
         model,
         creative: definition.creative !== false,
         icon: model === 'chest' ? modelIconData(getChestFaces(), 'chest')
+            // Wyroby stolarskie, łóżka, posłania: ten sam model co w ekwipunku.
+            // (Tylko przedmioty z ekwipunku - ukryte odmiany wiki pomija.)
+            : (model === 'shape' || model === 'door') && definition.inventory !== false && itemShapeFaces(type) ? modelIconData(itemShapeFaces(type), faceTexture(textures, 'front'))
             : definition.riverPlant && (definition.bush || definition.riverPlant.kind.startsWith('fruitBush:'))
             ? modelIconData(getRiverPlantFaces(definition.riverPlant.kind, 0), definition.riverPlant.texture)
             : definition.modelIcon ? { kind: 'file', file: definition.modelIcon } : definition.riverPlant?.tuft

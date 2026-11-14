@@ -2,7 +2,8 @@
 // KSZTAŁTY WYROBÓW STOLARSKICH (0.90.0)
 //
 // Pudełka [x0, y0, z0, x1, y1, z1] w blokach (0-1 w komórce) dla schodów,
-// półbloków, płotów, furtek i stołu stolarskiego (woodShapes.js):
+// półbloków, płotów, furtek, stołu stolarskiego, łóżek i posłań
+// (woodShapes.js, bedding.js):
 // - render: co rysuje ChunkMesher (i ikonka, i model w dłoni),
 // - collision: kolizje gracza (płot i zamknięta furtka - 1,5 bloku, nie
 //   da się ich przeskoczyć; otwarta furtka - bez kolizji),
@@ -21,7 +22,7 @@ const P = 1 / 16;
 const px = (...values) => values.map((value) => value * P);
 
 // Obrót pudełka z układu "north" do kierunku facing (wokół środka komórki).
-export function rotateBox([x0, y0, z0, x1, y1, z1], facing) {
+export function rotateBox([x0, y0, z0, x1, y1, z1, slot], facing) {
     const map = {
         north: (x, z) => [x, z],
         east: (x, z) => [1 - z, x],
@@ -29,7 +30,11 @@ export function rotateBox([x0, y0, z0, x1, y1, z1], facing) {
         west: (x, z) => [z, 1 - x]
     }[facing] ?? ((x, z) => [x, z]);
     const [ax, az] = map(x0, z0), [bx, bz] = map(x1, z1);
-    return [Math.min(ax, bx), y0, Math.min(az, bz), Math.max(ax, bx), y1, Math.max(az, bz)];
+    const rotated = [Math.min(ax, bx), y0, Math.min(az, bz), Math.max(ax, bx), y1, Math.max(az, bz)];
+    // Siódma liczba - numer tekstury pudełka (0 - tekstura bloku, 1... -
+    // shapeTextures bloku, np. pościel na łóżku).
+    if (slot) rotated.push(slot);
+    return rotated;
 }
 
 const flipY = ([x0, y0, z0, x1, y1, z1]) => [x0, 1 - y1, z0, x1, 1 - y0, z1];
@@ -96,6 +101,51 @@ const TRAPDOOR = {
     open: px(0, 0, 0, 16, 16, 3)
 };
 
+// --- Łóżko i posłanie (0.98.0) -----------------------------------------
+// Dwa bloki długości. Układ "north": wezgłowie na północ (-z), więc
+// w bloku wezgłowia szczyt łóżka jest przy z = 0, a w bloku nóg - przy
+// z = 16. Stelaż: narożne słupki, szczyt z płyciną (wyższy u wezgłowia),
+// boki i dno. Pościel (materac i poduszka) to osobne pudełka z własną
+// teksturą (miejsce 1) - są tylko na pościelonym łóżku.
+const slot1 = (box) => [...box, 1];
+const BED_FRAME = {
+    head: [
+        px(0, 0, 0, 2, 15, 2), px(14, 0, 0, 16, 15, 2),          // słupki wezgłowia
+        px(2, 12, 0, 14, 14, 2), px(2, 4, 0, 14, 6, 2),          // górna i dolna listwa szczytu
+        px(2, 6, 0.5, 14, 12, 1.5),                              // płycina (cofnięta)
+        px(0, 4, 2, 2, 8, 16), px(14, 4, 2, 16, 8, 16),          // boki
+        px(2, 5, 2, 14, 6, 16)                                   // dno
+    ],
+    foot: [
+        px(0, 0, 14, 2, 12, 16), px(14, 0, 14, 16, 12, 16),      // słupki w nogach
+        px(2, 9, 14, 14, 11, 16), px(2, 4, 14, 14, 6, 16),       // listwy szczytu
+        px(2, 6, 14.5, 14, 9, 15.5),                             // płycina
+        px(0, 4, 0, 2, 8, 14), px(14, 4, 0, 16, 8, 14),          // boki
+        px(2, 5, 0, 14, 6, 14)                                   // dno
+    ]
+};
+const BED_BEDDING = {
+    head: [px(2, 6, 2, 14, 10, 16), px(3, 10, 3, 13, 12, 8)].map(slot1),   // materac i poduszka
+    foot: [px(2, 6, 0, 14, 10, 14)].map(slot1)
+};
+// Kolizja do połowy bloku: na łóżko wchodzi się bez skoku (materac się ugina).
+const BED_COLLISION = { frame: [px(0, 0, 0, 16, 8, 16)], made: [px(0, 0, 0, 16, 8, 16)] };
+// Celowanie (promień wzroku i obrys): pełne bryły bez szpar pod stelażem,
+// żeby łatwo było trafić w łóżko - skrzynia stelaża i szczyt.
+const BED_OUTLINE = {
+    head: [px(0, 0, 0, 16, 8, 16), px(0, 0, 0, 16, 15, 2)],
+    foot: [px(0, 0, 0, 16, 8, 16), px(0, 0, 14, 16, 12, 16)]
+};
+// Posłanie na ziemi: gruby na 2 px materac z poduszką, bez kolizji.
+const MAT = {
+    head: [px(1, 0, 1, 15, 2, 16), px(3, 2, 3, 13, 4, 8)],
+    foot: [px(1, 0, 0, 15, 2, 15)]
+};
+
+// Wysokość, na której leży śpiący (w blokach nad spodem bloku).
+export const BED_TOP = 10 / 16;
+export const MAT_TOP = 2 / 16;
+
 // Wysokość blatu (przedmioty na stole leżą na niej).
 export const TABLE_TOP = 1;
 
@@ -158,6 +208,15 @@ export function shapeBoxes(id, purpose = 'render', mask = 0) {
             const box = info.open ? TRAPDOOR.open : TRAPDOOR[info.half];
             return [rotateBox(box, info.facing)];
         }
+        case 'bed': {
+            if (purpose === 'collision') return info.bedding ? BED_COLLISION.made : BED_COLLISION.frame;
+            const boxes = purpose === 'outline' ? [...BED_OUTLINE[info.part], ...(info.bedding ? BED_BEDDING[info.part] : [])]
+                : info.bedding ? [...BED_FRAME[info.part], ...BED_BEDDING[info.part]] : BED_FRAME[info.part];
+            return boxes.map((box) => rotateBox(box, info.facing));
+        }
+        case 'mat':
+            if (purpose === 'collision') return [];
+            return MAT[info.part].map((box) => rotateBox(box, info.facing));
         case 'table':
             if (purpose === 'collision' || purpose === 'outline') return FULL;
             return [...TABLE_COMMON, ...TABLE_PART[info.part]].map((box) => rotateBox(box, info.facing));

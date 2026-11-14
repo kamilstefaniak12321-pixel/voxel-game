@@ -31,6 +31,12 @@
 //              na brzegu (Game.startBlackout), a blackout() zostawia
 //              mu resztkę energii.
 //
+// Od 0.98.0 jest też wyspanie (rest, 0-100): ubywa, gdy gracz nie śpi
+// (nocą szybciej), wraca we śnie (sleep) - tym lepiej, im wygodniej:
+// na gołej ziemi słabo, na posłaniu dobrze, w pościelonym łóżku do
+// pełna i z premią za wygodę na następny dzień (comfort). Niewyspany
+// pracuje i biega wolniej. Zasypianie i noc: game/Sleep.js.
+//
 // Sama logika, bez grafiki i dźwięku (testy: tools/sprawdz_energie.mjs).
 // Stan trafia do zapisu świata (worldInfo.wellbeing).
 // ------------------------------------------------------------
@@ -81,6 +87,55 @@ const BREATH_RECOVER_SECONDS = 4;
 // Po utonięciu zostaje tyle zapasu energii (część kondycji) - wyczerpanie.
 const BLACKOUT_ENERGY = 0.05;
 
+// Wyspanie: ile ubywa na sekundę, gdy gracz nie śpi (godzina gry to
+// 50 s; cały dzień na nogach, 16 godzin, zjada ok. 60), i ile razy
+// szybciej nocą.
+export const REST_START = 80;
+const REST_DRAIN_AWAKE = 60 / (16 * 50);
+const REST_NIGHT_FACTOR = 1.6;
+// Ile wyspania daje godzina snu w najlepszych warunkach.
+const REST_PER_HOUR = 14;
+// Sen jest oszczędny: tyle energii na godzinę snu (czuwanie: 1,25).
+const SLEEP_ENERGY_PER_HOUR = 0.6;
+const SLEEP_ENERGY_FACTOR = 0.5;
+// Premia za wygodę działa tyle dób od pobudki i wymaga tylu godzin snu.
+const COMFORT_DAYS = 0.6;
+const COMFORT_MIN_HOURS = 4;
+
+// Noc (do zasypiania i szybszego zmęczenia): od 19:00 do 5:00.
+export const NIGHT_FROM = 19;
+export const NIGHT_UNTIL = 5;
+
+export function isNight(days) {
+    const hour = (days - Math.floor(days)) * 24;
+    return hour >= NIGHT_FROM || hour < NIGHT_UNTIL;
+}
+
+// Stany wyspania od najlepszego (from - od ilu punktów). Skutki mnożą
+// się ze skutkami stanu energii.
+export const REST_STATES = {
+    rested: { label: 'wypoczęty', from: 70, sprint: 1, work: 1, dim: 0 },
+    ok: { label: 'w normie', from: 35, sprint: 1, work: 1, dim: 0 },
+    sleepy: { label: 'senny', from: 12, sprint: 0.85, work: 0.9, dim: 0 },
+    worn: { label: 'niewyspany', from: 0, sprint: 0.6, work: 0.75, dim: 0.25 }
+};
+const REST_ORDER = ['rested', 'ok', 'sleepy', 'worn'];
+
+// Gdzie gracz śpi: cap - do ilu punktów da się tam wyspać, rate - jak
+// szybko (część REST_PER_HOUR). Łóżko liczy się dopiero pościelone.
+export const SLEEP_PLACES = {
+    ground: { label: 'na gołej ziemi', cap: 60, rate: 0.5 },
+    mat: { label: 'na posłaniu', cap: 90, rate: 0.85 },
+    bed: { label: 'w łóżku', cap: 100, rate: 1 }
+};
+
+// Premia za wygodę po nocy w łóżku (poziom = comfort pościeli -
+// blocks/bedding.js): szybsza praca i wolniejsze zużycie energii.
+export const COMFORT = {
+    1: { label: 'wygodny sen', work: 1.05, drain: 0.9 },
+    2: { label: 'bardzo wygodny sen', work: 1.1, drain: 0.8 }
+};
+
 // Burczenie w brzuchu: co ile sekund (losowo z przedziału).
 const RUMBLE_EVERY = [40, 80];
 
@@ -116,6 +171,7 @@ export class Wellbeing {
         this.active = true;
         this.rumbleIn = this.nextRumble();
         this.lastState = this.state;
+        this.lastRest = this.restState;
         // Oddech (1 - pełny). Nie zapisuje się: po wejściu do świata pełny.
         this.breath = 1;
         this.drowned = false;
@@ -138,6 +194,9 @@ export class Wellbeing {
             lastMealAt: Number.isFinite(source.lastMealAt) ? source.lastMealAt : null,
             lastFood: typeof source.lastFood === 'string' ? source.lastFood : null,
             limp: clamp(number(source.limp, 0), 0, LIMP_MAX),
+            rest: clamp(number(source.rest, REST_START), 0, 100),
+            comfort: Object.hasOwn(COMFORT, source.comfort) ? Number(source.comfort) : 0,
+            comfortUntil: Number.isFinite(source.comfortUntil) ? source.comfortUntil : 0,
             meal,
             history: Array.isArray(source.history)
                 ? source.history.filter(Number.isFinite).slice(-3).map((n) => clamp(Math.floor(n), 0, 99)) : []
@@ -163,9 +222,37 @@ export class Wellbeing {
     // Skutki stanu (wyłączone - tryb kreatywny - jak "dobrze").
     get effects() {
         const state = STATES[this.active ? this.state : 'good'];
-        if (!this.limping) return state;
+        const rest = this.active ? REST_STATES[this.restState] : REST_STATES.rested;
+        const comfort = this.active ? COMFORT[this.data.comfort] : null;
+        if (!this.limping && rest.work === 1 && rest.dim === 0 && !comfort) return state;
+        const effects = { ...state, sprint: state.sprint * rest.sprint, work: state.work * rest.work * (comfort?.work ?? 1),
+            dim: Math.max(state.dim, rest.dim) };
         // Stłuczona noga: wolniejszy chód i żadnego biegu, w każdym stanie.
-        return { ...state, walk: state.walk * LIMP_WALK, sprint: 0, canSprint: false };
+        if (this.limping) Object.assign(effects, { walk: state.walk * LIMP_WALK, sprint: 0, canSprint: false });
+        return effects;
+    }
+
+    get rest() { return this.data.rest; }
+
+    get restState() {
+        for (const name of REST_ORDER) if (this.data.rest >= REST_STATES[name].from) return name;
+        return 'worn';
+    }
+
+    // Sen: hours godzin w miejscu place (klucz SLEEP_PLACES), comfort -
+    // wygoda pościeli (tylko łóżko), days - czas gry przy pobudce.
+    // Zwraca { rest, state, comfort } po śnie.
+    sleep(hours, place = 'ground', comfort = 0, days = this.data.day) {
+        const data = this.data, spot = SLEEP_PLACES[place] ?? SLEEP_PLACES.ground;
+        if (!this.active || !(hours > 0)) return { rest: data.rest, state: this.restState, comfort: 0 };
+        data.rest = Math.max(data.rest, Math.min(spot.cap, data.rest + hours * REST_PER_HOUR * spot.rate));
+        data.energy = Math.max(0, data.energy - hours * SLEEP_ENERGY_PER_HOUR);
+        data.fullness = Math.max(0, data.fullness - hours * 50);
+        const earned = place === 'bed' && hours >= COMFORT_MIN_HOURS && Object.hasOwn(COMFORT, comfort) ? Number(comfort) : 0;
+        data.comfort = earned;
+        data.comfortUntil = earned ? days + COMFORT_DAYS : 0;
+        this.lastRest = this.restState;
+        return { rest: data.rest, state: this.restState, comfort: earned };
     }
 
     get limping() { return this.active && this.data.limp > 0; }
@@ -197,9 +284,10 @@ export class Wellbeing {
     }
 
     // Jedna klatka. activity: { moving, sprinting, swimming, mining, jumps,
-    // underwater }. Zwraca listę zdarzeń: { type: 'rumble' },
+    // underwater, sleeping }. Zwraca listę zdarzeń: { type: 'rumble' },
     // { type: 'state', from, to }, { type: 'day', meals, change },
-    // { type: 'healed' } (noga zdrowa), { type: 'drown' } (brak oddechu).
+    // { type: 'healed' } (noga zdrowa), { type: 'drown' } (brak oddechu),
+    // { type: 'rest', from, to } (zmiana wyspania).
     update(dt, activity = {}, days = this.data.day) {
         const events = [];
         if (!this.active || !(dt > 0)) return events;
@@ -212,6 +300,20 @@ export class Wellbeing {
         if (activity.mining) rate += MINING_DRAIN;
         if (this.full) rate *= FULL_DRAIN;
         if (this.state === 'great') rate *= GREAT_DRAIN;
+        if (activity.sleeping) rate *= SLEEP_ENERGY_FACTOR;
+        if (data.comfort) {
+            if (days >= data.comfortUntil) { data.comfort = 0; data.comfortUntil = 0; }
+            else rate *= COMFORT[data.comfort].drain;
+        }
+        // Wyspanie ubywa tylko na jawie (sen dolicza je przy pobudce).
+        if (!activity.sleeping) {
+            data.rest = Math.max(0, data.rest - REST_DRAIN_AWAKE * (isNight(days) ? REST_NIGHT_FACTOR : 1) * dt);
+        }
+        const rest = this.restState;
+        if (rest !== this.lastRest) {
+            events.push({ type: 'rest', from: this.lastRest, to: rest });
+            this.lastRest = rest;
+        }
         data.energy = clamp(data.energy - rate * dt - (activity.jumps ?? 0) * JUMP_COST, 0, this.capacity);
         data.fullness = Math.max(0, data.fullness - dt);
 
@@ -323,6 +425,7 @@ export class Wellbeing {
             : c >= 80 ? 'osłabiona' : 'słaba';
         const limp = !this.limping ? null : data.limp > 150 ? 'mocno stłuczona' : data.limp > 45 ? 'stłuczona' : 'prawie zdrowa';
         return { state: this.state, energy, condition, full: this.full, mealsToday: data.mealsToday,
-            history: data.history, lastFood: data.lastFood, limp };
+            history: data.history, lastFood: data.lastFood, limp,
+            rest: REST_STATES[this.restState].label, comfort: COMFORT[data.comfort]?.label ?? null };
     }
 }

@@ -7,6 +7,9 @@ i okno statusu.
 
 ![Okno statusu: świetne samopoczucie i wyczerpanie](energia-094.jpg)
 
+Dalsze części: [skutki.md](skutki.md) (upadek, tonięcie, pieczenie)
+i [sen.md](sen.md) (wyspanie, noc, łóżka).
+
 ## Jak to działa
 
 **Energia** to paliwo. Ubywa cały czas, szybciej przy wysiłku:

@@ -11,6 +11,38 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 0.98.0 - Noc i sen: łóżka, pościel, wyspanie
+
+Pomysł Kamila — PR #137 (po 0.97.0). Trzecia część systemu z 0.94.0
+([opis](docs/sen.md)):
+
+- **Wyspanie:** ubywa, gdy gracz nie śpi (nocą szybciej). Senny gracz
+  biega i kopie trochę wolniej, niewyspany - dużo wolniej i ciemnieją
+  mu brzegi obrazu. Przy sercu pojawia się wtedy mały księżyc, a okno
+  statusu ma wiersz *Sen*.
+- **Sen nocą (19:00-5:00):** obraz gaśnie, a noc przeskakuje do 6:00.
+  Ruch albo kliknięcie budzi wcześniej. Trzy sposoby, coraz lepsze:
+  - **goła ziemia** (kucnięcie + PPM pustą ręką) - słabe wyspanie,
+  - **posłanie** z pościeli położonej na ziemi - dobre,
+  - **pościelone łóżko** - pełne, z premią za wygodę na następny dzień
+    (szybsza praca, wolniej ubywa energii; lniana pościel daje więcej
+    niż słomiana).
+- **Łóżko z dwóch części:** drewniany **stelaż** (wezgłowie z płyciną,
+  niższy szczyt w nogach - według wzoru od Kamila, w kolorze desek,
+  20 rodzajów) i osobno **pościel** - materac z poduszką pojawia się
+  w stelażu dopiero po kliknięciu PPM pościelą. Rozbite łóżko oddaje
+  obie części osobno.
+- **Potrójny warsztat:** trzy stoły stolarskie w rzędzie - na trzecim
+  leży stelaż łóżka w prawdziwym rozmiarze (8 desek).
+- **Nowe przedmioty i przepisy:** słoma (2 trawy), słomiana pościel
+  (4 wiązki słomy), lniana pościel (4 wiązki lnu - len wreszcie się do
+  czegoś przydaje).
+- **Gra ze znajomymi:** noc przeskakuje, gdy śpią wszyscy; śpiącego
+  widać, jak leży w łóżku.
+- Kładąc się, gracz widzi świat z poduszki, zanim obraz zgaśnie.
+- Komenda do testów: `/energia sen <0-100>`.
+- W trybie kreatywnym wyspania nie ma, ale łóżko przesuwa noc do rana.
+
 ## 0.97.0 - Skutki zamiast śmierci: upadek, tonięcie, pieczenie
 
 Pomysł Kamila — PR #136 (po 0.96.0). Druga część systemu z 0.94.0

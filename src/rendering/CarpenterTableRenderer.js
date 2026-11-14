@@ -8,7 +8,7 @@ import { setPotatoDefine } from './BlockRenderData.js';
 import { boxFaces, buildFacesGeometry, itemShapeFaces } from './ShapeGeometry.js';
 import { shapeBaseType } from '../blocks/woodShapes.js';
 import { woodOfPlanks } from '../blocks/woods.js';
-import { TABLE_PRODUCTS, TABLE_CAPACITY, BENCH_PRODUCTS } from '../game/CarpenterTables.js';
+import { TABLE_PRODUCTS, TABLE_CAPACITY, BENCH_PRODUCTS } from '../crafting/carpentry.js';
 
 // ------------------------------------------------------------
 // STÓŁ STOLARSKI - CO LEŻY NA BLACIE (0.90.0)
@@ -22,7 +22,8 @@ import { TABLE_PRODUCTS, TABLE_CAPACITY, BENCH_PRODUCTS } from '../game/Carpente
 // Podwójny warsztat (układ z 0.93.0, CarpenterTables.bench): zamiast
 // zwykłych wyrobów - drzwi i klapa w prawdziwym rozmiarze. Drzwi leżą na
 // dwóch blokach blatu, klapa na jednym; obie lekko przekręcone, żeby nie
-// zlewały się z blatem.
+// zlewały się z blatem. Potrójny warsztat (0.98.0) dokłada stelaż łóżka
+// na dwóch blokach trzeciego stołu.
 // ------------------------------------------------------------
 
 const SYNC_SECONDS = 0.2;
@@ -39,7 +40,7 @@ export function productSpot(index) {
 const MINI_SCALE = 0.36;
 
 // Przekręcenie drzwi i klapy na blacie (radiany) i uniesienie jednego końca.
-const DOOR_SKEW = 0.07, TRAPDOOR_SKEW = 0.09, LEAN = 0.035;
+const DOOR_SKEW = 0.07, TRAPDOOR_SKEW = 0.09, LEAN = 0.035, BED_SKEW = 0.05;
 
 export class CarpenterTableRenderer {
 
@@ -129,8 +130,9 @@ export class CarpenterTableRenderer {
     rebuildBench(view, bench) {
         const { table } = view;
         const wood = woodOfPlanks(table.planks);
-        const { planks, trapdoor, door } = bench;
-        const signature = `bench:${table.planks}:${table.count >= BENCH_PRODUCTS.door.planks}:${table.count >= BENCH_PRODUCTS.trapdoor.planks}:${planks.x},${planks.z}:${trapdoor.x},${trapdoor.z}:${door[1].x},${door[1].z}`;
+        const { planks, trapdoor, door, bed } = bench;
+        const signature = `bench:${table.planks}:${table.count >= BENCH_PRODUCTS.door.planks}:${table.count >= BENCH_PRODUCTS.trapdoor.planks}:${planks.x},${planks.z}:${trapdoor.x},${trapdoor.z}:${door[1].x},${door[1].z}` +
+            (bed ? `:bed:${table.count >= BENCH_PRODUCTS.bed.planks}:${bed[0].x},${bed[0].z}:${bed[1].x},${bed[1].z}` : '');
         if (signature === view.signature) return;
         view.signature = signature;
         view.group.clear();
@@ -144,6 +146,14 @@ export class CarpenterTableRenderer {
             mesh.rotation.order = 'YXZ';
             mesh.rotation.y = (door[0].x !== door[1].x ? Math.PI / 2 : 0) + DOOR_SKEW;
             mesh.rotation.x = LEAN;
+            view.group.add(mesh);
+        }
+        // Potrójny warsztat: stelaż łóżka w prawdziwym rozmiarze na trzecim stole.
+        if (bed && table.count >= BENCH_PRODUCTS.bed.planks) {
+            const mesh = new THREE.Mesh(this.realGeometry(shapeBaseType(wood.wood, 'bed'), false), view.material);
+            mesh.position.set((bed[0].x + bed[1].x) / 2 - planks.x, 0, (bed[0].z + bed[1].z) / 2 - planks.z);
+            // Model łóżka jest długi wzdłuż z - obracamy, gdy bloki leżą wzdłuż x.
+            mesh.rotation.y = (bed[0].x !== bed[1].x ? Math.PI / 2 : 0) + BED_SKEW;
             view.group.add(mesh);
         }
         if (table.count >= BENCH_PRODUCTS.trapdoor.planks) {

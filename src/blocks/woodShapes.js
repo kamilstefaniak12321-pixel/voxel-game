@@ -4,6 +4,7 @@
 // Z każdego z 20 rodzajów desek (woods.js): schody, półblok, płot,
 // furtka i stół stolarski (długi na dwa bloki). Robi się je na stole
 // stolarskim (CarpenterTables.js), sam stół - w siatce rzemiosła.
+// Dalej w tym pliku: drzwi i klapy (0.91.0) oraz łóżka (0.98.0).
 //
 // Numery 10300-10859: po 28 na drewno (WOODS - tylko dopisywać):
 //   0-7    schody: kierunek (N, E, S, W) x (dolne, górne - do góry nogami),
@@ -32,7 +33,8 @@ export const SHAPE_KINDS = {
     gate: { suffix: 'fence_gate', noun: 'Furtka', gender: 'f' },
     table: { suffix: 'carpenter_table', noun: 'Stół stolarski', gender: 'm' },
     door: { suffix: 'door', noun: 'Drzwi', gender: 'n' },
-    trapdoor: { suffix: 'trapdoor', noun: 'Klapa', gender: 'f' }
+    trapdoor: { suffix: 'trapdoor', noun: 'Klapa', gender: 'f' },
+    bed: { suffix: 'bed', noun: 'Łóżko', gender: 'n' }
 };
 
 // Drzwi i klapy (0.91.0): numery 10860-11819, po 48 na drewno:
@@ -44,6 +46,25 @@ export const SHAPE_KINDS = {
 // i trapdoor_<drewno> (tools/drzwi_tekstury.py).
 export const DOOR_FIRST_ID = 10860;
 export const DOORS_PER_WOOD = 48;
+
+// Łóżka (0.98.0): numery 11820-12459, po 32 na drewno:
+//   kierunek (4) x część (nogi, wezgłowie) x pościel (4 miejsca).
+// Kierunek = strona, w którą leży wezgłowie. Pościel - BED_BEDDINGS:
+// miejsce 0 to sam stelaż (taki wychodzi ze stołów i taki jest
+// przedmiotem), kolejne - stelaż pościelony (bedding.js); jedno miejsce
+// wolne na przyszłą pościel. Kolejność = numery w zapisie: tylko dopisywać.
+// Posłania na ziemi (bez stelaża) mają własny zakres - bedding.js.
+export const BED_FIRST_ID = 11820;
+export const BEDS_PER_WOOD = 32;
+export const BED_BEDDINGS = [null, 'straw', 'linen'];
+export const BED_BEDDING_SLOTS = 4;
+export const BED_PARTS = ['foot', 'head'];
+
+// Numer odmiany łóżka albo posłania w swoim zakresie.
+export function bedVariant(facing, part, bedding) {
+    const slot = Math.max(0, BED_BEDDINGS.indexOf(bedding ?? null));
+    return (FACING_INDEX[facing] ?? 0) * BED_PARTS.length * BED_BEDDING_SLOTS + (part === 'head' ? 1 : 0) * BED_BEDDING_SLOTS + slot;
+}
 
 export const shapeBaseType = (wood, kind) => `${wood}_${SHAPE_KINDS[kind].suffix}`;
 
@@ -124,7 +145,31 @@ function variants(entry, index) {
             model: 'shape', ...(base ? {} : hidden) }, { kind: 'trapdoor', facing, half, open, texture: trapTexture });
     })));
 
+    // Łóżko (trzeci zakres numerów): stelaż i stelaż pościelony.
+    const bedFirst = BED_FIRST_ID + index * BEDS_PER_WOOD;
+    const bed = shapeBaseType(wood, 'bed');
+    const bedLabel = common('bed').label;
+    SHAPE_FACINGS.forEach((facing) => BED_PARTS.forEach((part) => BED_BEDDINGS.forEach((bedding) => {
+        const base = facing === 'north' && part === 'foot' && !bedding;
+        const type = base ? bed : `${bed}_${facing}_${part}${bedding ? `_${bedding}` : ''}`;
+        add(type, bedFirst + bedVariant(facing, part, bedding), {
+            ...common('bed'),
+            label: bedding ? `${bedLabel} (pościelone)` : `${bedLabel} (stelaż)`,
+            solid: true, opaque: false, model: 'shape',
+            // Pościel ma własną teksturę (miejsce 1 w pudełkach - ShapeBoxes.js)
+            // i wypada osobno, razem ze stelażem. Rozbita część daje łup,
+            // druga znika bez niego (Beds.broken) - jak drzwi.
+            ...(bedding ? { shapeTextures: [`bedding_${bedding}`], loot: [[`${bedding}_bedding`, 1]] } : {}),
+            ...(base ? {} : hidden)
+        }, { kind: 'bed', facing, part, bedding });
+    })));
+
     return out;
+}
+
+// Dopisuje kształt spoza listy drewna (posłania - bedding.js).
+export function registerShape(id, info) {
+    infoById.set(id, info);
 }
 
 export const WOOD_SHAPE_BLOCKS = Object.fromEntries(WOODS.flatMap(variants));
@@ -142,7 +187,7 @@ export function isDoorId(id) {
 }
 
 // Numer bloku wyrobu danego drewna w danym stanie.
-export function shapeId(wood, kind, { facing = 'north', half = 'bottom', open = false, part = 'a', hinge = 'left' } = {}) {
+export function shapeId(wood, kind, { facing = 'north', half = 'bottom', open = false, part = 'a', hinge = 'left', bedding = null } = {}) {
     const index = WOODS.findIndex((entry) => entry.wood === wood);
     if (index < 0) return 0;
     const first = SHAPE_FIRST_ID + index * SHAPES_PER_WOOD;
@@ -155,6 +200,7 @@ export function shapeId(wood, kind, { facing = 'north', half = 'bottom', open = 
     if (kind === 'fence') return first + 11;
     if (kind === 'gate') return first + 12 + f * 2 + (open ? 1 : 0);
     if (kind === 'table') return first + 20 + f * 2 + (part === 'b' ? 1 : 0);
+    if (kind === 'bed') return BED_FIRST_ID + index * BEDS_PER_WOOD + bedVariant(facing, part === 'head' ? 'head' : 'foot', bedding);
     return 0;
 }
 

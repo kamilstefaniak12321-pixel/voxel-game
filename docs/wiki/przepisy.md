@@ -2,7 +2,7 @@
 
 > Ta strona jest generowana z kodu gry (`python tools/wiki.py`) - nie zmieniaj jej ręcznie, zmiany przepadną przy następnym generowaniu.
 
-Wersja gry **0.97.0** - 159 przepisów. Wytwarza się w ekwipunku (**E**): siatka 2 x 2 obok miejsc ekwipunku, wynik po prawej (klik - weź, Shift + klik - ile się da). Przycisk 📖 *Przepisy* otwiera księgę - klik na przepisie sam układa składniki. Przepisy *z kształtem* można przesuwać po siatce i odbijać w poziomie; przepisy *bez kształtu* - obojętne, gdzie leżą składniki. Z czatu: `/przepisy`, `/wytworz <przepis>`.
+Wersja gry **0.98.0** - 162 przepisów. Wytwarza się w ekwipunku (**E**): siatka 2 x 2 obok miejsc ekwipunku, wynik po prawej (klik - weź, Shift + klik - ile się da). Przycisk 📖 *Przepisy* otwiera księgę - klik na przepisie sam układa składniki. Przepisy *z kształtem* można przesuwać po siatce i odbijać w poziomie; przepisy *bez kształtu* - obojętne, gdzie leżą składniki. Z czatu: `/przepisy`, `/wytworz <przepis>`.
 
 
 ## Ziemia
@@ -715,6 +715,18 @@ Wersja gry **0.97.0** - 159 przepisów. Wytwarza się w ekwipunku (**E**): siatk
 
 ## Ozdoby
 
+### Słomiana pościel
+
+<img src="przepisy/straw_bedding.png" alt="Słomiana pościel: 4 x Słoma (ułożenie: SS / SS; S = Słoma)">
+
+4 x Słoma (z kształtem). Nazwa przepisu: `straw_bedding`. PPM na ziemi: posłanie do spania. PPM na stelażu łóżka: ścieli łóżko.
+
+### Lniana pościel
+
+<img src="przepisy/linen_bedding.png" alt="Lniana pościel: 4 x Wiązka lnu (ułożenie: LL / LL; L = Wiązka lnu)">
+
+4 x Wiązka lnu (z kształtem). Nazwa przepisu: `linen_bedding`. Wygodniejsza od słomianej. PPM na ziemi: posłanie. PPM na stelażu łóżka: ścieli łóżko.
+
 ### Wieniec świerkowy
 
 <img src="przepisy/spruce_wreath.png" alt="Wieniec świerkowy: 3 x Igliwie świerka + 1 x szyszka (świerka albo sosny) (ułożenie: NN / NC; N = Igliwie świerka, C = szyszka (świerka albo sosny))">
@@ -765,6 +777,12 @@ Wersja gry **0.97.0** - 159 przepisów. Wytwarza się w ekwipunku (**E**): siatk
 <img src="przepisy/raft.png" alt="Tratwa: 2 x deski (dowolne) (ułożenie: PP; P = deski (dowolne))">
 
 2 x deski (dowolne) (z kształtem). Nazwa przepisu: `raft`. Dwie deski obok siebie. PPM na wodzie: postaw; PPM na tratwie: wsiądź. WASD: płyń, Shift: wysiądź, LPM: zabierz.
+
+### Słoma
+
+<img src="przepisy/straw.png" alt="Słoma: 2 x trawa (krótka albo wysoka) (obojętne gdzie)">
+
+2 x trawa (krótka albo wysoka) (bez kształtu). Nazwa przepisu: `straw`. Wysuszona trawa. Cztery sztuki dają słomianą pościel.
 
 ### Starter ognia
 
@@ -992,6 +1010,7 @@ Składnik z grupy to dowolna rzecz z listy (np. patyki z desek różnych drzew).
 - **deski (dowolne)**: Deski świerkowe, Deski sosnowe, Deski bukowe, Deski lipowe, Deski dębowe, Deski brzozowe, Deski jabłoniowe, Deski olchowe, Deski wierzbowe, Deski akacji, Deski cypryśnika, Deski wiśni, Deski klonowe, Deski z kosodrzewiny, Deski oliwkowe, Deski eukaliptusowe, Deski sekwojowe, Deski miłorzębowe, Deski jakarandowe
 - **skała (kamień, granit, wapień, piaskowiec, łupek, bazalt)**: Kamień, Granit, Wapień, Piaskowiec, Łupek, Bazalt
 - **szyszka (świerka albo sosny)**: Szyszka świerka, Szyszka sosny
+- **trawa (krótka albo wysoka)**: Krótka trawa, Wysoka trawa
 - **igliwie (świerka albo sosny)**: Igliwie świerka, Igliwie sosny
 - **opadłe liście (dowolne)**: Opadłe liście buka, Opadłe liście dębu, Opadłe liście jabłoni, Opadłe liście olchy, Opadłe liście wierzby, Opadłe liście klonu
 - **coś czerwonego (mak, truskawki, papryczki chili, wiecha amarantusa, korzeń marzanny)**: Mak, Truskawki, Papryczki chili, Wiecha amarantusa, Korzeń marzanny

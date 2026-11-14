@@ -1569,7 +1569,7 @@ function addShape(id, renderData, lx, y, lz, faceCount, baseX, baseZ) {
 
             if (edge && padOpaque[front]) continue;
 
-            const fullUv = renderData.uv[faceIndex][0];
+            const fullUv = (box[6] ? renderData.shapeUv[box[6] - 1] : renderData.uv)[faceIndex][0];
 
             ensureCapacity(faceCount + 1);
 

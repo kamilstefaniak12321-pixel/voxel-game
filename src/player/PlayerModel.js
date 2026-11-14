@@ -41,6 +41,9 @@ import { skinTexture } from './skin.js';
 
 export const MODEL_PIXEL = 1.8 / 32;
 
+// Leżąca postać: o tyle nad powierzchnią jest oś ciała (plecy na materacu).
+const LYING_LIFT = 2.2 * MODEL_PIXEL;
+
 const SKIN_SIZE = 64;
 
 
@@ -986,13 +989,16 @@ export class PlayerModel {
     // Położenie: stopy w (x, y, z), ciało obrócone o yaw; lift -
     // dodatkowo w górę (podgląd skoku).
 
-    place(position, yaw, lift = 0) {
+    // lying - postać leży na plecach: stopy w "position", głowa w stronę
+    // przeciwną do patrzenia (sen - game/Sleep.js).
+
+    place(position, yaw, lift = 0, lying = false) {
 
         this.object.position.copy(position);
 
-        this.object.position.y += lift;
+        this.object.position.y += lift + (lying ? LYING_LIFT : 0);
 
-        this.object.rotation.set(0, yaw, 0);
+        this.object.rotation.set(lying ? Math.PI / 2 : 0, yaw, 0, 'YXZ');
 
     }
 

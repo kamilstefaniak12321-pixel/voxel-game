@@ -48,6 +48,16 @@ gracz traci przytomność i budzi się wyczerpany na brzegu. Jabłka,
 orzechy i żołędzie można upiec nad płonącym ogniskiem (trzymany PPM) -
 pieczone to porządny posiłek. Szczegóły: [docs/skutki.md](skutki.md).
 
+Od 0.98.0 jest też **wyspanie**: ubywa go na jawie (nocą szybciej),
+a senny i niewyspany gracz jest wolniejszy. Nocą (19:00-5:00) można się
+położyć: na **gołej ziemi** (kucnięcie + PPM pustą ręką; słabe
+wyspanie), na **posłaniu** ze słomianej albo lnianej pościeli położonej
+na ziemi (dobre) albo w **łóżku** (pełne, z premią za wygodę na następny
+dzień). Łóżko to drewniany **stelaż** z potrójnego warsztatu (trzy stoły
+stolarskie, 8 desek) i osobno **pościel**, którą kładzie się na
+postawiony stelaż. Sen przesuwa noc do 6:00 (w grze ze znajomymi - gdy
+śpią wszyscy). Szczegóły: [docs/sen.md](sen.md).
+
 ## Tryby gry i ekwipunek
 
 Tryb wybiera się przy tworzeniu świata (przycisk *Tryb gry*, domyślnie
@@ -117,6 +127,8 @@ się przeskoczyć, furtka otwiera się PPM. **Dwa stoły obok
 siebie** tworzą podwójny warsztat (2 × 2 bloki): obok desek leżą
 w prawdziwym rozmiarze **drzwi** (z animacją otwierania, dwuskrzydłowe,
 gdy stoją obok siebie) i **klapa**, a zwykłych wyrobów wtedy nie ma.
+**Trzy stoły** w rzędzie (od 0.98.0) dodają na trzecim **stelaż łóżka**
+(8 desek, [sen.md](sen.md)).
 Deski kładzie się na stół po jednej, z kucaniem cały stos.
 [Szczegóły](stolarstwo.md).
 

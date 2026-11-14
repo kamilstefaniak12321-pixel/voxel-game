@@ -324,6 +324,12 @@ export class NetHost extends NetSession {
         rafts.version++;
     }
 
+    // Czas zmienił się skokiem (wszyscy przespali noc) - goście dostają
+    // go od razu, nie przy następnym zwykłym wysłaniu.
+    timeChanged() {
+        this.timeWait = 0;
+    }
+
     // --- Co klatkę ---------------------------------------------------------------
 
     update(dt) {

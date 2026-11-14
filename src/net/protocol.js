@@ -95,6 +95,8 @@ export function unpackPlayer(s) {
     const state = { x: s[0], y: s[1], z: s[2], vx: s[3], vy: s[4], vz: s[5], yaw: s[6], pitch: s[7],
         held: typeof s[9] === 'string' ? s[9] : null, swings: Number.isFinite(s[10]) ? s[10] : 0 };
     FLAGS.forEach((key, bit) => { state[key] = Boolean(s[8] & (1 << bit)); });
+    // Śpi (0.98.0 - game/Sleep.js): leżąca postać i przeskok nocy.
+    state.sleeping = Boolean(s[8] & (1 << FLAGS.length));
     return state;
 }
 

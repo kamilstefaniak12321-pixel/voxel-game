@@ -142,12 +142,24 @@ otwarta). Klapy rysuje ChunkMesher (pudełka), drzwi - `DoorRenderer`
 (chunk indeksuje je razem z pochodniami, mesher ich nie rysuje).
 Podwójny warsztat to `CarpenterTables.partnerOf` i `bench` (układ blatu).
 
+## Potrójny warsztat i stelaż łóżka (0.98.0)
+
+Trzy stoły jeden za drugim (blat 2 × 3 bloki), deski na jednym z nich.
+Stół obok desek działa jak w podwójnym warsztacie (drzwi i klapa),
+a na **trzecim** leży w prawdziwym rozmiarze **stelaż łóżka** - PPM
+zabiera go za **8 desek** (Shift - ile się da). Gdy deski leżą na
+środkowym stole, drzwi i klapa są po jednej stronie, a stelaż po
+drugiej. Łóżka mają numery 11820-12459 (po 32 na drewno: kierunek ×
+część × pościel). Układ liczą `CarpenterTables.row`, `triple` i `bench`
+(pole `bed`); sen, pościel i posłania opisuje [sen.md](sen.md),
+a sprawdza `node tools/sprawdz_sen.mjs`.
+
 Wyroby nie zasłaniają światła (jak liście), ale woda przez nie nie
 przepływa.
 
 ## Sprawdzanie
 
-`node tools/sprawdz_stolarstwo.mjs` (w `npm test`, 629 sprawdzeń)
+`node tools/sprawdz_stolarstwo.mjs` (w `npm test`, 689 sprawdzeń)
 sprawdza:
 
 - numery i nazwy bloków oraz przepisy na stół;

@@ -91,6 +91,8 @@ export class Blackout {
         this.phase = 'out';
         this.left = FADE_SECONDS;
         this.game.stopMining?.();
+        // Utrata przytomności przerywa sen (bez wyspania).
+        this.game.sleep?.cancel();
     }
 
     // Co klatkę. Zwraca true, dopóki gracz jest nieprzytomny.

@@ -2,7 +2,7 @@
 
 > Ta strona jest generowana z kodu gry (`python tools/wiki.py`) - nie zmieniaj jej ręcznie, zmiany przepadną przy następnym generowaniu.
 
-Wersja gry **0.97.0** - 97 przedmiotów. Przedmiotu nie da się postawić jak bloku; owoce i nasiona posadzone na ziemi (PPM) wyrastają w krzak albo drzewo, narzędzia przyspieszają kopanie.
+Wersja gry **0.98.0** - 98 przedmiotów. Przedmiotu nie da się postawić jak bloku; owoce i nasiona posadzone na ziemi (PPM) wyrastają w krzak albo drzewo, narzędzia przyspieszają kopanie.
 
 
 ## Drewno
@@ -76,7 +76,7 @@ Wersja gry **0.97.0** - 97 przedmiotów. Przedmiotu nie da się postawić jak bl
 | <img src="ikony/cynia_kwiat.png" width="32" height="32" alt=""> | **Kwiat cynii** | `cynia_kwiat` | **Skąd:** zbiór (PPM): Cynia (kwitnie) |
 | <img src="ikony/mikolajek_kwiat.png" width="32" height="32" alt=""> | **Kwiat mikołajka** | `mikolajek_kwiat` | **Skąd:** zbiór (PPM): Mikołajek (kwitnie) |
 | <img src="ikony/barwinek_kwiat.png" width="32" height="32" alt=""> | **Kwiat barwinka** | `barwinek_kwiat` | **Skąd:** zbiór (PPM): Barwinek (kwitnie) |
-| <img src="ikony/len_wiazka.png" width="32" height="32" alt=""> | **Wiązka lnu** | `len_wiazka` | **Skąd:** zbiór (PPM): Len (dojrzały, suchy) |
+| <img src="ikony/len_wiazka.png" width="32" height="32" alt=""> | **Wiązka lnu** | `len_wiazka` | **Skąd:** zbiór (PPM): Len (dojrzały, suchy)<br>**Przydaje się do:** Lniana pościel |
 | <img src="ikony/gorczyca_nasiona.png" width="32" height="32" alt=""> | **Nasiona gorczycy** | `gorczyca_nasiona` | **Skąd:** zbiór (PPM): Gorczyca (strąki) |
 | <img src="ikony/porostoliwkowy_plecha.png" width="32" height="32" alt=""> | **Plecha porostu oliwkowego** | `porostoliwkowy_plecha` | **Skąd:** zbiór (PPM): Porost oliwkowy (duża plecha) |
 | <img src="ikony/porostiglasty_galazki.png" width="32" height="32" alt=""> | **Gałązki porostu iglastego** | `porostiglasty_galazki` | **Skąd:** zbiór (PPM): Porost iglasty (gęsty) |
@@ -121,6 +121,7 @@ Wersja gry **0.97.0** - 97 przedmiotów. Przedmiotu nie da się postawić jak bl
 | <img src="ikony/shovel_basalt.png" width="32" height="32" alt=""> | **Łopata bazaltowa** | `shovel_basalt` | **Narzędzie:** kopie 3 razy szybciej: trawa, ziemia, piasek, żwir, błoto, snow<br>**Przepis:** Łopata bazaltowa |
 | <img src="ikony/fire_starter.png" width="32" height="32" alt=""> | **Starter ognia** | `fire_starter` | **Przepis:** Starter ognia |
 | <img src="ikony/resin.png" width="32" height="32" alt=""> | **Żywica** | `resin` | **Skąd:** zbiór (PPM): Pień sosny z żywicą<br>**Przydaje się do:** Pochodnia, Lampa |
+| <img src="ikony/straw.png" width="32" height="32" alt=""> | **Słoma** | `straw` | **Przepis:** Słoma<br>**Przydaje się do:** Słomiana pościel |
 | <img src="ikony/birch_bark.png" width="32" height="32" alt=""> | **Kora brzozowa** | `birch_bark` | **Skąd:** okorowanie siekierą: Pień brzozy<br>**Przydaje się do:** Lampa |
 | <img src="ikony/axe.png" width="32" height="32" alt=""> | **Siekiera** | `axe` | **Narzędzie:** kopie 3 razy szybciej: drewno<br>**Przepis:** Siekiera<br>**Przydaje się do:** Opał — dąb, Opał — brzoza, Opał — świerk, Opał — sosna, Opał — buk, Opał — lipa, Opał — olcha, Opał — wierzba, Opał — jabłoń, Opał — akacja, Opał — cypryśnik, Opał — wiśnia, Opał — klon, Opał — kosodrzewina, Opał — oliwka, Opał — eukaliptus, Opał — sekwoja, Opał — miłorząb, Opał — jakaranda |
 | <img src="ikony/pickaxe.png" width="32" height="32" alt=""> | **Kilof** | `pickaxe` | **Narzędzie:** kopie 3 razy szybciej: kamień<br>**Przepis:** Kilof |

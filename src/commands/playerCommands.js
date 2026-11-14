@@ -5,7 +5,7 @@
 // komendy jest w CommandRegistry.js, lista dla gracza w docs/komendy.md.
 // ------------------------------------------------------------
 
-import { CONDITION_MIN, CONDITION_MAX, LIMP_MAX, STATES } from '../game/Wellbeing.js';
+import { CONDITION_MIN, CONDITION_MAX, LIMP_MAX, STATES, REST_STATES } from '../game/Wellbeing.js';
 import { simplify, CommandError } from './CommandRegistry.js';
 import {
     isLiquidId,
@@ -573,7 +573,7 @@ export const PLAYER_COMMANDS = [
     {
         name: 'energia',
         aliases: ['energy', 'samopoczucie'],
-        usage: '/energia | /energia <0 - 130> | /energia kondycja <60 - 130> | /energia noga <sekundy> | /energia utoniecie',
+        usage: '/energia | /energia <0 - 130> | /energia kondycja <60 - 130> | /energia sen <0 - 100> | /energia noga <sekundy> | /energia utoniecie',
         description: 'Energia i kondycja gracza (tryb przygody): podgląd w liczbach albo ustawienie - do testów.',
 
         run(args, { game }) {
@@ -610,7 +610,20 @@ export const PLAYER_COMMANDS = [
 
             }
 
-            if (args[0] === 'kondycja') {
+            if (args[0] === 'sen') {
+
+                // Wyspanie (0 - niewyspany, 100 - wypoczęty) - do testów.
+
+                const value = parseNumber(args[1], 'wyspanie');
+
+                if (value < 0 || value > 100) {
+                    throw new CommandError('Wyspanie: od 0 do 100');
+                }
+
+                data.rest = value;
+
+            }
+            else if (args[0] === 'kondycja') {
 
                 const value = parseNumber(args[1], 'kondycja');
 
@@ -636,14 +649,15 @@ export const PLAYER_COMMANDS = [
             }
 
             const text = `Energia: ${data.energy.toFixed(1)} z ${data.condition}, stan: ` +
-                `${STATES[wellbeing.state].label.toLowerCase()}, posiłki dzisiaj: ${data.mealsToday}`;
+                `${STATES[wellbeing.state].label.toLowerCase()}, posiłki dzisiaj: ${data.mealsToday}, ` +
+                `wyspanie: ${data.rest.toFixed(1)} (${REST_STATES[wellbeing.restState].label})`;
 
             return wellbeing.active ? text : `${text}. W tym trybie gry energia jest wyłączona.`;
 
         },
 
         complete(args) {
-            return args.length <= 1 ? ['kondycja', 'noga', 'utoniecie'] : [];
+            return args.length <= 1 ? ['kondycja', 'sen', 'noga', 'utoniecie'] : [];
         }
     },
 

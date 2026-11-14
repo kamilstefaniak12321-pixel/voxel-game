@@ -15,6 +15,7 @@ import { PLANT_PACKS, PLANT_PIXELS, plantStageType, plantTile } from './plantPac
 import { TORCH_BLOCKS } from './torches.js';
 import { CHEST_BLOCKS } from './chest.js';
 import { WOOD_SHAPE_BLOCKS } from './woodShapes.js';
+import { BEDDING_BLOCKS } from './bedding.js';
 import { FLOWING_WATER_BLOCKS, WATER_SOURCE_ID, WATER_FALLING_LAST_ID, plainWaterLevel, waterHeightForLevel } from './water.js';
 export { WATER_SOURCE_ID, WATER_FALLING_ID, WATER_FALL_MAX, waterIdForLevel, isFallingWaterId, waterFallDistance, fallingWaterId } from './water.js';
 
@@ -44,7 +45,9 @@ export const AIR_ID = 0;
 //   10300-10859             wyroby stolarskie (0.90.0, po 28 na drewno -
 //                           woodShapes.js: schody, półbloki, płot, furtka, stół),
 //   10860-11819             drzwi i klapy (0.91.0, po 48 na drewno - woodShapes.js),
-//   11820-65279             wolne na przyszłość.
+//   11820-12459             łóżka (0.98.0, po 32 na drewno - woodShapes.js),
+//   12460-12491             posłania na ziemi (0.98.0, po 8 na pościel - bedding.js),
+//   12492-65279             wolne na przyszłość.
 
 export const MAX_BLOCK_ID = 65279;
 
@@ -370,6 +373,9 @@ export const BLOCK_TYPES = {
     ...TORCH_BLOCKS,
     ...CHEST_BLOCKS,
     ...WOOD_SHAPE_BLOCKS,
+
+    // Posłania na ziemi (0.98.0) - bedding.js.
+    ...BEDDING_BLOCKS,
     campfire: { id: 10000, name: 'Campfire', label: 'Ognisko', solid: false, opaque: false,
         model: 'structure', flat: { attach: 'down' }, inventory: false, creative: false,
         drops: null, sound: 'wood', pick: 'oak_firewood', textures: { all: 'oak_log_side' } },

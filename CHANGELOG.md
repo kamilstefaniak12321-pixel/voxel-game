@@ -11,6 +11,23 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 1.1.4 - Płynność, krok 3: pamięć startu
+
+Na prośbę Kamila — PR #146 (po 1.1.3). Trzeci krok planu płynności:
+[`docs/plynnosc.md`](docs/plynnosc.md).
+
+- **Gra startuje wyraźnie szybciej od drugiego uruchomienia.** Ikonki
+  bloków i przedmiotów (około 600 obrazków) rysowały się przy każdym
+  starcie od zera. Teraz pierwsze uruchomienie po aktualizacji je
+  zapisuje, a następne biorą gotowe. W prawdziwej aplikacji na komputer:
+  3,92 s → 2,32 s do menu (od 1.1.2 łącznie o połowę krócej).
+- **Opisy roślin i modeli w jednym pliku** zamiast 76 osobnych - także
+  dla wątków w tle.
+- Zapamiętane ikonki są identyczne z rysowanymi; aktualizacja gry,
+  zmiana tekstur albo uszkodzony wpis = rysowanie od nowa. Z paczką
+  tekstur gracza ikonki rysują się zawsze.
+- Dla gracza nic poza czasem startu się nie zmienia.
+
 ## 1.1.3 - Płynność, krok 2: paczka plików gry
 
 Na prośbę Kamila — PR #145 (po 1.1.2). Drugi krok planu płynności:

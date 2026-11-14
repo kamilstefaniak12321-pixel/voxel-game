@@ -1,5 +1,6 @@
 import { PLANT_PACKS, plantStageType, parseTuftModel } from './plantPacks.js';
 import { PLANE_FLOWERS, PLANE_LEAF_LAYOUTS } from '../rendering/PlaneModelGeometry.js';
+import { bundledText } from './dataFiles.js';
 
 // ------------------------------------------------------------
 // POZIOMY MODELI ROŚLIN (Ustawienia -> Modele -> Modele roślin)
@@ -36,6 +37,13 @@ async function readText(relative) {
     if (NODE) {
         const fs = await import('node:fs/promises');
         return fs.readFile(url, 'utf8');
+    }
+
+    // W zbudowanej aplikacji: z pliku zbiorczego (dataFiles.js).
+    const bundled = await bundledText(`assets/models/rosliny/${relative}`);
+
+    if (bundled !== null) {
+        return bundled;
     }
 
     const response = await fetch(url.href, { cache: 'no-cache' });

@@ -24,6 +24,7 @@ import { loadTextureRegionURL } from '../rendering/TextureSheets.js';
 import { installUiTextureSheets } from './UiTextureSheets.js';
 import { getChestFaces } from '../rendering/ChestGeometry.js';
 import { itemShapeFaces } from '../rendering/ShapeGeometry.js';
+import { BUILD_ID, readStartCache, writeStartCache } from '../storage/StartCache.js';
 
 // ------------------------------------------------------------
 // IKONKI BLOKÓW
@@ -227,11 +228,115 @@ function riverPlantIcon(kind) {
 }
 
 
+// PAMIĘĆ IKONEK MIĘDZY URUCHOMIENIAMI (1.1.4, storage/StartCache.js).
+// Ikonki zależą od kodu gry, plików modeli i roślin (odcisk gry) oraz od
+// obrazka tekstur (jego skrót w kluczu). Z paczką tekstur gracza ikonek
+// nie zapamiętujemy - paczka zmienia też inne obrazki niż atlas.
+
+async function iconCacheKey() {
+
+    if (!BUILD_ID || typeof crypto === 'undefined' || !crypto.subtle) {
+        return null;
+    }
+
+    try {
+
+        const atlas = await atlasReady;
+
+        if (atlas.pack) {
+            return null;
+        }
+
+        const image = atlas.iconImage;
+        const canvas = document.createElement('canvas');
+        canvas.width = image.width;
+        canvas.height = image.height;
+        const context = canvas.getContext('2d', { willReadFrequently: true });
+        context.drawImage(image, 0, 0);
+        const pixels = context.getImageData(0, 0, canvas.width, canvas.height).data;
+        const digest = new Uint8Array(await crypto.subtle.digest('SHA-256', pixels));
+        const hash = [...digest.slice(0, 12)].map((byte) => byte.toString(16).padStart(2, '0')).join('');
+
+        return `ikonki-1|${ICON_SIZE}|${atlas.iconTileSize}|${image.width}x${image.height}|${hash}`;
+
+    }
+    catch {
+        return null;
+    }
+
+}
+
+// Ile ikonek ma być (każdy blok i każdy przedmiot ma swoją).
+function expectedIconNames() {
+    return new Set([...Object.keys(BLOCK_TYPES), ...Object.keys(ITEM_TYPES)]);
+}
+
+// Zapis: lista różnych obrazków i dla każdej nazwy numer obrazka
+// (odmiany bloku dzielą jeden obrazek).
+function packIcons(icons) {
+    const urls = [], numbers = new Map(), names = [], index = [];
+    for (const [name, url] of icons) {
+        if (!numbers.has(url)) { numbers.set(url, urls.length); urls.push(url); }
+        names.push(name);
+        index.push(numbers.get(url));
+    }
+    return { urls, names, index };
+}
+
+// Odczyt; null, gdy wpis nie pasuje do tej gry (inna lista nazw, zły obrazek).
+function unpackIcons(entry) {
+    if (!entry || !Array.isArray(entry.urls) || !Array.isArray(entry.names) || !Array.isArray(entry.index) ||
+        entry.names.length !== entry.index.length) {
+        return null;
+    }
+    const expected = expectedIconNames();
+    if (entry.names.length !== expected.size) return null;
+    const icons = new Map();
+    for (let i = 0; i < entry.names.length; i++) {
+        const url = entry.urls[entry.index[i]];
+        if (!expected.has(entry.names[i]) || typeof url !== 'string' || !url.startsWith('data:image/')) return null;
+        icons.set(entry.names[i], url);
+    }
+    return icons.size === expected.size ? icons : null;
+}
+
+// Skąd wzięły się ikonki przy tym starcie: 'pamiec' albo 'rysowanie'
+// (raport diagnostyczny, testy).
+export let blockIconsSource = null;
+
+
 // Zwraca Map: nazwa bloku albo przedmiotu -> data URL ikonki.
 
 export async function createBlockIcons() {
 
     await installUiTextureSheets();
+
+    const key = await iconCacheKey();
+
+    if (key) {
+        const cached = unpackIcons(await readStartCache('ikonki', key));
+        if (cached) {
+            blockIconsSource = 'pamiec';
+            return cached;
+        }
+    }
+
+    const icons = await drawBlockIcons();
+
+    blockIconsSource = 'rysowanie';
+
+    // Zapis w tle - nie wstrzymuje startu. Niepełnego zestawu (błąd
+    // tekstur) nie zapamiętujemy.
+    if (key && icons.size === expectedIconNames().size) {
+        void writeStartCache('ikonki', key, packIcons(icons));
+    }
+
+    return icons;
+
+}
+
+
+async function drawBlockIcons() {
 
     const icons = new Map();
 

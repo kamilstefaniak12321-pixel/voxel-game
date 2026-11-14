@@ -33,9 +33,17 @@ const mainAccessors = `
 // Tylko w teście: dostęp do prawdziwych obiektów aplikacji.
 menuBackdrop.stop();
 menuBackdrop.start = async () => {};
+import { blockIconsSource as __iconsSource } from './ui/BlockIcons.js';
 window.pakietQA = {
  diagnostics,
  get game() { return game; },
+ // Ikonki: skąd są (pamięć startu albo rysowanie) i skrót wszystkich.
+ get iconsSource() { return __iconsSource; },
+ async iconsDigest() {
+  const text = JSON.stringify([...blockIcons].sort(([a], [b]) => a < b ? -1 : 1));
+  const digest = new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text)));
+  return blockIcons.size + ':' + [...digest].map(b => b.toString(16).padStart(2, '0')).join('');
+ },
  // Bez przechwyconej myszy gra stoi na pauzie - test wznawia ją sam.
  play() { state = 'playing'; menu.hide(); return true; },
  async start() {
@@ -50,6 +58,8 @@ await cp(resolve(root, 'src'), resolve(stage, 'src'), { recursive: true });
 await cp(resolve(root, 'lib'), resolve(stage, 'lib'), { recursive: true });
 // Dane modeli to też kod (assets/models/**/model-data.js) - wchodzą do paczki.
 await cp(resolve(root, 'assets/models'), resolve(stage, 'assets/models'), { recursive: true });
+// Opisy roślin trafiają do pliku zbiorczego (pakiet/dane.json); tekstury - do odcisku gry.
+for (const name of ['assets/rosliny', 'assets/textures', 'assets/ui']) await cp(resolve(root, name), resolve(stage, name), { recursive: true });
 await cp(resolve(root, 'package.json'), resolve(stage, 'package.json'));
 await writeFile(resolve(stage, 'src/main.js'), (await readFile(resolve(root, 'src/main.js'), 'utf8')) + mainAccessors);
 const built = await buildBundle(stage);
@@ -177,13 +187,51 @@ try {
     check(fromSource.join() === '/src/bootstrap.js', `Także w świecie nic poza bootstrap.js nie pochodzi z src/ (jest: ${fromSource.join(', ')})`);
     check(await evaluate(`window.pakietQA.game.renderer.info.render.frame > 2`), 'Świat się rysuje');
     check(exceptions.length === 0, `Bez błędów w paczce (${exceptions.slice(0, 2).join(' | ')})`);
+
+    // Dane roślin i modeli: jeden plik zamiast kilkudziesięciu - także w wątkach.
+    const dataRequests = served.filter(path => path === '/pakiet/dane.json').length;
+    const looseData = served.filter(path => /^\/assets\/(rosliny|models\/rosliny)\/.*\.json$/.test(path));
+    check(dataRequests >= 1 && dataRequests <= 4, `Dane roślin z jednego pliku na stronę i wątek (pobrań: ${dataRequests})`);
+    check(looseData.length === 0, `Żaden opis rośliny nie jest pobierany osobno (jest ${looseData.length}: ${looseData.slice(0, 3).join(', ')})`);
+    check(await evaluate(`window.pakietQA.game.world.generation.getStats().failures === 0`), 'Wątek terenu wczytał rośliny bez błędów');
+
+    // Pamięć startu: pierwszy start rysuje ikonki, drugi bierze gotowe - identyczne.
+    check(await evaluate('window.pakietQA.iconsSource') === 'rysowanie', 'Pierwszy start: ikonki narysowane');
+    const drawn = await evaluate('window.pakietQA.iconsDigest()');
+    check(/^\d{4}:/.test(drawn), `Komplet ikonek (${drawn.split(':')[0]})`);
+    await pause(2500);
     const shot = await call('Page.captureScreenshot', { format: 'png' });
     await writeFile(resolve(output, 'swiat-z-paczki.png'), Buffer.from(shot.data, 'base64'));
     const bundleScripts = scripts().length;
 
+    // --- 1b. Drugi start z paczki: ikonki z pamięci -------------------------------------
+    await open('/?pakiet');
+    check(await evaluate('window.pakietQA.iconsSource') === 'pamiec', 'Drugi start: ikonki z pamięci startu');
+    check(await evaluate('window.pakietQA.iconsDigest()') === drawn, 'Zapamiętane ikonki są identyczne z narysowanymi');
+    check(exceptions.length === 0, `Bez błędów przy starcie z pamięci (${exceptions.slice(0, 2).join(' | ')})`);
+    // Wpis od innej wersji gry jest pomijany: ikonki rysują się od nowa.
+    await evaluate(`new Promise((resolve, reject) => { const open = indexedDB.open('voxel-game-start-cache');
+        open.onerror = () => reject(open.error);
+        open.onsuccess = () => { const tx = open.result.transaction('wpisy', 'readwrite'); const store = tx.objectStore('wpisy'); const get = store.get('ikonki');
+            get.onsuccess = () => { const entry = get.result; entry.key = 'inna-wersja|' + entry.key; entry.value.urls[0] = 'data:image/png;base64,ZLE'; store.put(entry, 'ikonki'); };
+            tx.oncomplete = () => { open.result.close(); resolve(true); }; tx.onerror = () => reject(tx.error); }; })`);
+    await open('/?pakiet');
+    check(await evaluate('window.pakietQA.iconsSource') === 'rysowanie' && await evaluate('window.pakietQA.iconsDigest()') === drawn, 'Wpis z innej wersji gry: ikonki narysowane od nowa, poprawne');
+    await pause(2500);
+    // Uszkodzony wpis z dobrym kluczem (obcięta lista): też od nowa.
+    await evaluate(`new Promise((resolve, reject) => { const open = indexedDB.open('voxel-game-start-cache');
+        open.onerror = () => reject(open.error);
+        open.onsuccess = () => { const tx = open.result.transaction('wpisy', 'readwrite'); const store = tx.objectStore('wpisy'); const get = store.get('ikonki');
+            get.onsuccess = () => { const entry = get.result; entry.value.names.length = 100; entry.value.index.length = 100; store.put(entry, 'ikonki'); };
+            tx.oncomplete = () => { open.result.close(); resolve(true); }; tx.onerror = () => reject(tx.error); }; })`);
+    await open('/?pakiet');
+    check(await evaluate('window.pakietQA.iconsSource') === 'rysowanie' && await evaluate('window.pakietQA.iconsDigest()') === drawn, 'Uszkodzony wpis: ikonki narysowane od nowa, poprawne');
+
     // --- 2. Bez prośby o paczkę: zwykłe pliki ------------------------------------------
     await open('/');
     check(await evaluate('window.__pakiet') === false, 'Bez ?pakiet gra rusza z src/');
+    check(await evaluate('window.pakietQA.iconsSource') === 'rysowanie' && await evaluate('window.pakietQA.iconsDigest()') === drawn, 'Bez paczki ikonki zawsze się rysują (i są takie same)');
+    check(!served.includes('/pakiet/dane.json') && served.some(path => /^\/assets\/rosliny\/.*\.json$/.test(path)), 'Bez paczki opisy roślin czytane ze zwykłych plików');
     check(!scripts().some(path => path.startsWith('/pakiet/')), 'I nie sięga do paczki');
     check(scripts().includes('/src/start.js') && scripts().includes('/src/main.js'), 'Start przez src/start.js i src/main.js');
     const sourceScripts = scripts().length;

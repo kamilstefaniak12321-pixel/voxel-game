@@ -41,6 +41,7 @@ export const AIR_ID = 0;
 //                           skrzynia 10095-10098),
 //   10100-10107             wewnętrzne poziomy i spadanie wody,
 //   10108-10122             spadanie wody 2-16 bloków (0.73.0),
+//   10123-10127             czerwona i biała glina, trzy rodzaje cegieł (1.1.0),
 //   10123-10199             wolne,
 //   10200-10299             skrzynie z desek (0.89.0, po 4 na drewno - chest.js),
 //   10300-10859             wyroby stolarskie (0.90.0, po 28 na drewno -
@@ -882,6 +883,28 @@ export const BLOCK_TYPES = {
         textures: { all: 'clay' }
     },
 
+    // Gliny z 1.1.0 (items/clay.js): czerwona w ciepłych, suchych
+    // biomach, biała w skalistych górach.
+    red_clay: {
+        id: 10123,
+        name: 'Red Clay',
+        label: 'Czerwona glina',
+        sound: 'mud',
+        solid: true,
+        soil: true,
+        textures: { all: 'red_clay' }
+    },
+
+    white_clay: {
+        id: 10124,
+        name: 'White Clay',
+        label: 'Biała glina',
+        sound: 'mud',
+        solid: true,
+        soil: true,
+        textures: { all: 'white_clay' }
+    },
+
     gravel: {
         id: 23,
         name: 'Gravel',
@@ -1168,6 +1191,37 @@ export const BLOCK_TYPES = {
         solid: true,
         category: 'budowa',
         textures: { all: 'terracotta' }
+    },
+
+    // Cegły z suszonych cegieł (1.1.0 - items/clay.js).
+    clay_bricks: {
+        id: 10125,
+        name: 'Clay Bricks',
+        label: 'Cegły',
+        sound: 'stone',
+        solid: true,
+        category: 'budowa',
+        textures: { all: 'clay_bricks' }
+    },
+
+    red_clay_bricks: {
+        id: 10126,
+        name: 'Red Clay Bricks',
+        label: 'Czerwone cegły',
+        sound: 'stone',
+        solid: true,
+        category: 'budowa',
+        textures: { all: 'red_clay_bricks' }
+    },
+
+    white_clay_bricks: {
+        id: 10127,
+        name: 'White Clay Bricks',
+        label: 'Białe cegły',
+        sound: 'stone',
+        solid: true,
+        category: 'budowa',
+        textures: { all: 'white_clay_bricks' }
     },
 
     polished_stone: {

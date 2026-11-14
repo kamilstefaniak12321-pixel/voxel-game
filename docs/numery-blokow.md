@@ -18,7 +18,8 @@ więcej niż dotąd - bez kolejnej zmiany zapisu.
 | 10000-10099 | konstrukcje: ognisko 10000, pochodnie 10010-10094 (17 kolorów × 5 ustawień), skrzynia 10095-10098 (4 kierunki, 0.81.0) |
 | 10100-10107 | woda płynąca (poziomy rozlewania) i pierwszy blok spadającej wody (10107) |
 | 10108-10122 | spadająca woda, która spada już 2-16 bloków (0.73.0, `src/blocks/water.js`) |
-| 10123-10199 | wolne |
+| 10123-10127 | czerwona i biała glina, cegły z trzech glin (1.1.0, `src/items/clay.js`) |
+| 10128-10199 | wolne |
 | 10200-10299 | skrzynie z desek (0.89.0, po 4 na drewno) |
 | 10300-10859 | wyroby stolarskie: schody, półbloki, płoty, furtki, stoły (0.90.0, po 28 na drewno) |
 | 10860-11819 | drzwi i klapy (0.91.0, po 48 na drewno) |

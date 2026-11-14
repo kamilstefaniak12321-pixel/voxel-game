@@ -53,6 +53,7 @@ const { shapeInfo } = await import('../src/blocks/woodShapes.js');
 const { WALL_DECORATIONS } = await import('../src/blocks/decorations.js');
 const { ACHIEVEMENTS } = await import('../src/achievements/list.js');
 const { itemUses, craftsFrom } = await import('../src/items/uses.js');
+const { driesInto } = await import('../src/items/clay.js');
 
 let checks = 0;
 const check = (condition, message) => { assert.ok(condition, message); checks++; };
@@ -120,6 +121,7 @@ function usesOf(type) {
     if (getRoast(type)) uses.push('ognisko');
     if (isTinder(type)) uses.push('podpałka');
     if (fuelWood(type)) uses.push('opał');
+    if (driesInto(type)) uses.push('suszenie');
     if (getTool(type)) uses.push('narzędzie');
     if (ITEM_TYPES[type]?.plants) uses.push('sadzenie');
     if (OWN_USE[type]) uses.push(OWN_USE[type]);
@@ -227,7 +229,8 @@ function usesOf(type) {
 // --- Napary ------------------------------------------------------------------------------
 
 {
-    check(findRecipe(['clay', 'clay'])?.result.join() === `${CUP},2`, 'Dwie gliny - dwa kubki');
+    // Od 1.1.0 kubek jest najpierw mokry i schnie na słońcu (items/clay.js).
+    check(findRecipe(['clay', 'clay'])?.result.join() === 'wet_clay_cup,2' && driesInto('wet_clay_cup') === CUP, 'Dwie gliny - dwa mokre kubki, które schną w kubek');
     check(Object.keys(TEAS).length === 3 && Object.keys(TEAS).every((effect) => getEffect(effect)), 'Trzy napary, każdy ze swoim efektem');
     for (const [effect, { brew, tea, herbs }] of Object.entries(TEAS)) {
         check(itemExists(brew) && itemExists(tea) && GROUPS[herbs].types.length >= 2, `${effect}: przedmioty i co najmniej dwa zioła`);

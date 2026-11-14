@@ -11,6 +11,31 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 1.1.0 - Glina na powierzchni, suszenie, cegły
+
+Na prośbę Kamila — PR #142 (po 1.0.0). Opis:
+[`docs/glina.md`](docs/glina.md).
+
+- **Glina leży na powierzchni** tam, gdzie w naturze: płatami na
+  brzegach rzek i jezior na nizinach (do 5 bloków od wody) i na
+  mokradłach. Dotąd była tylko na dnie rzek i pod błotem - praktycznie
+  nie do znalezienia.
+- **Dwie nowe gliny:** czerwona (gaje oliwne, lasy eukaliptusowe)
+  i biała (skaliste góry, hale, kosodrzewina). Każda ma swój blok,
+  kolor na mapie terenu i swoje wyroby.
+- **Suszenie na słońcu:** z gliny powstają teraz *mokre* kubki
+  (2 gliny → 2) i *mokre* cegły (1 glina → 2). Wyrzucone (Q) w dzień
+  pod gołym niebem schną 2 minuty i zamieniają się w suche. W nocy,
+  pod dachem i w wodzie nie schną.
+- **Kubki w trzech kolorach** - w każdym suchym da się zaparzyć napar.
+- **Cegły:** 4 suche cegły → blok cegieł; trzy kolory (cegły, czerwone
+  cegły, białe cegły).
+- Poradnik ma rozdział *Glina i cegły*.
+- Uwaga: przepis „2 gliny → 2 gotowe kubki" zniknął - kubek trzeba
+  teraz wysuszyć. Kubki zrobione wcześniej zostają.
+- Znane ograniczenie: po wypiciu naparu wraca zwykły gliniany kubek,
+  także gdy napar był w czerwonym albo białym.
+
 ## 1.0.0 - Various Roots
 
 Na prośbę Kamila — PR #141 (po 0.100.0). Gra dostaje swoją nazwę

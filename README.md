@@ -127,7 +127,7 @@ jest w [`docs/opis-gry.md`](docs/opis-gry.md). Skrót:
 | Wyrzucanie, nóż, kora, ognisko etapami | przedmiot da się wyrzucić (Q) - leży w świecie jako mały model; nóż z każdej skały ścina trawę, kwiaty i zioła; kora z każdego drzewa jako podpałka; polana spalają się po kolei i można je dokładać; jedzenie trwa; sen przesuwa cały świat | [opis](docs/przedmioty-i-noz.md) | [przedmioty-i-noz.md](docs/przedmioty-i-noz.md) |
 | Glina, suszenie, cegły | glina na powierzchni: zwykła na brzegach rzek i jezior, czerwona w gajach oliwnych i lasach eukaliptusowych, biała w górach; mokre kubki i cegły schną na słońcu; bloki cegieł w trzech kolorach | [opis](docs/glina.md) | [glina.md](docs/glina.md) |
 | Celowanie w bloki | celownik trafia w prawdziwy kształt bloku (płaski mech, trawa, skrzynia); ramka pokazuje to samo | [opis](docs/celowanie-i-ladowanie.md) | [celowanie-i-ladowanie.md](docs/celowanie-i-ladowanie.md) |
-| Płynność | programy graficzne przygotowane pod ekranem wczytywania - bez przycięć przy pierwszej pochodni, ognisku, deszczu; plan ośmiu kroków na kolejne wersje | [opis](docs/plynnosc.md) | [plynnosc.md](docs/plynnosc.md) |
+| Płynność | plan ośmiu kroków: programy graficzne przygotowane pod ekranem wczytywania (1.1.2), pliki gry połączone w paczkę - szybszy start aplikacji (1.1.3) | [opis](docs/plynnosc.md) | [plynnosc.md](docs/plynnosc.md) |
 | Klawisze do ustawienia | każdą czynność można przypisać do innego klawisza albo przycisku myszy (*Ustawienia → Gracz → Klawisze*); zajęty klawisz zamienia się miejscami; podpowiedzi pokazują klawisze gracza | [opis](docs/klawisze.md) | [klawisze.md](docs/klawisze.md) |
 | Samouczek i poradnik | samouczek w pierwszych minutach nowego świata (10 kroków, sam się odhacza, można pominąć i powtórzyć), poradnik w *Ustawienia → Poradnik*, strojenie liczb testem | [opis](docs/samouczek.md) | [samouczek.md](docs/samouczek.md) |
 | Osiągnięcia | 67 osiągnięć w księdze (klawisz L), powiadomienia, rangi | [opis](docs/opis-gry.md#osiągnięcia) | [osiagniecia.md](docs/osiagniecia.md) |
@@ -177,7 +177,8 @@ docs/                       opisy, jak działają większe części gry (całoś
 docs/wiki/                  wiki gry dla graczy (strony generuje tools/wiki.py)
 CHANGELOG.md                historia zmian - wszystkie wersje gry
 src/
-  bootstrap.js              start: diagnostyka przed grą, komunikat o nieudanym starcie
+  bootstrap.js              wejście: wybiera paczkę plików gry (pakiet/js) albo src/start.js
+  start.js                  start: diagnostyka przed grą, komunikat o nieudanym starcie
   main.js                   start aplikacji, menu, pauza, pętla
   config.js                 ustawienia: chunki, teren, światło, dzień i noc, gracz, menu
   game/                     jeden uruchomiony świat (Game; kliknięcia, kopanie i jedzenie - GameInteraction), energia (Wellbeing), ekwipunek, skrzynie, ogniska, tratwy, meteoryty, wzrost roślin, woda (obraz i dźwięk)

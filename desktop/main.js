@@ -439,6 +439,12 @@ ipcMain.on('desktop:info', (event) => {
     event.returnValue = {
         version: app.getVersion(),
         packaged: app.isPackaged,
+        // Paczka plików gry (tools/pakiet.mjs) - tylko w zbudowanej
+        // aplikacji; przy "npm start" gra działa z src/, żeby zmiany
+        // w kodzie było widać od razu (src/bootstrap.js). VOXEL_QA_BUNDLE=1
+        // włącza ją także tam - do sprawdzania paczki w prawdziwej aplikacji.
+        bundle: (app.isPackaged || process.env.VOXEL_QA_BUNDLE === '1') &&
+            fs.existsSync(path.join(GAME_ROOT, 'pakiet', 'js', 'start.js')),
         update: updateStatus
     };
 

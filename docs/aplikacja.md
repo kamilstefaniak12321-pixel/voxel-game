@@ -187,7 +187,8 @@ Potrzebny [Node.js](https://nodejs.org/) (22 albo nowszy). W folderze gry:
 ```
 npm install        biblioteki (Electron, electron-builder, electron-updater)
 npm start          gra w oknie aplikacji, prosto z plików w folderze
-npm run dist       instalator do folderu dist/ (bez wydania)
+npm run pakiet     paczka plików gry w pakiet/js (tools/pakiet.mjs; opis: docs/plynnosc.md)
+npm run dist       paczka plików gry + instalator do folderu dist/ (bez wydania)
 ```
 
 Uruchomiona ze źródeł gra nie sprawdza aktualizacji. Korzysta z tych

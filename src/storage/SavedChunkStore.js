@@ -154,7 +154,6 @@ export class SavedChunkStore {
         return true;
     }
 
-    keys() { return this.records.keys(); }
 
     // Bounds are inclusive chunk coordinates, matching FarTerrain padding.
     // Summaries are read-only to callers. This never populates the decoded LRU.

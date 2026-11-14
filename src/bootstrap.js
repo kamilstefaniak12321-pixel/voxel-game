@@ -1,40 +1,65 @@
-import { diagnostics } from './diagnostics/Diagnostics.js';
+// ------------------------------------------------------------
+// WEJŚCIE DO GRY (index.html wczytuje ten plik)
+//
+// Gra to kilkaset plików w src/. W wydanej aplikacji są one połączone
+// w kilka paczek w pakiet/js/ (tools/pakiet.mjs) - start jest szybszy,
+// bo aplikacja otwiera kilka plików zamiast kilkuset. Ten plik wybiera:
+//
+//   - aplikacja na komputer i na telefon z gotową paczką -> pakiet/js/start.js
+//   - przeglądarka przy pracy nad grą, testy                -> src/start.js
+//   - paczki nie da się wczytać (brak pliku, uszkodzona)    -> src/start.js
+//
+// Pliki src/ są w aplikacji zawsze - to zapas, gdyby paczka zawiodła.
+// Ten plik niczego nie importuje na stałe: diagnostyka i gra muszą
+// pochodzić z JEDNEGO miejsca (inaczej byłyby dwie kopie).
+//
+// Czy paczka jest:
+//   komputer - desktop.bundle (desktop/main.js sprawdza plik),
+//   telefon  - pole "pakiet" w wersja.json (tools/android-www.mjs),
+//   przeglądarka - tylko na życzenie: adres z ?pakiet (do sprawdzania).
+// ------------------------------------------------------------
 
-// Diagnostyka musi działać przed importem świata, tekstur i samej gry.
-// Dzięki temu raport obejmuje także błąd modułu albo nieudany start WebGL.
-void diagnostics.initialize({ version: window.desktop?.version ?? 'nieznana' });
-if (!window.desktop?.version) {
-    const file = window.Capacitor?.isNativePlatform?.() ? '../wersja.json' : '../package.json';
-    fetch(new URL(file, import.meta.url)).then(response => response.ok ? response.json() : null)
-        .then(info => { if (typeof info?.version === 'string') diagnostics.setVersion(info.version); })
-        .catch(() => {});
+const BUNDLE = '../pakiet/js/start.js';
+
+async function bundled() {
+
+    if (window.desktop) {
+        return window.desktop.bundle === true;
+    }
+
+    if (window.Capacitor?.isNativePlatform?.()) {
+        try {
+            const response = await fetch(new URL('wersja.json', document.baseURI));
+            return response.ok && (await response.json()).pakiet === true;
+        }
+        catch {
+            return false;
+        }
+    }
+
+    return new URLSearchParams(location.search).has('pakiet');
+
 }
 
-try {
-    await import('./main.js');
-} catch (error) {
-    diagnostics.error('startup.failed', error);
-    void diagnostics.flush();
-    const root = document.getElementById('menu');
-    const panel = document.createElement('div');
-    panel.className = 'menu-screen overlay';
-    const title = document.createElement('h2');
-    title.className = 'menu-heading';
-    title.textContent = 'Nie udało się uruchomić gry';
-    const note = document.createElement('p');
-    note.className = 'menu-note';
-    note.textContent = 'Zapisz raport diagnostyczny — zawiera błąd i informacje o uruchomieniu.';
-    const save = document.createElement('button');
-    save.className = 'menu-button';
-    save.textContent = 'Zapisz raport';
-    save.onclick = async () => {
-        try {
-            const { exportDiagnostics } = await import('./ui/DiagnosticsPanel.js');
-            const result = await exportDiagnostics(diagnostics);
-            note.textContent = result.cancelled ? 'Anulowano zapis.' : result.ok ? 'Raport zapisany.' : result.error;
-        } catch { note.textContent = 'Nie udało się wyeksportować raportu. Logi pozostają w pamięci aplikacji.'; }
-    };
-    panel.append(title, note, save);
-    root.replaceChildren(panel);
-    root.hidden = false;
+let loaded = false;
+
+if (await bundled()) {
+
+    try {
+        await import(BUNDLE);
+        loaded = true;
+    }
+    catch (error) {
+        // Paczka nie wczytała się w ogóle (żaden jej plik się nie wykonał) -
+        // gra rusza ze zwykłych plików. Ślad trafia do raportu diagnostycznego.
+        console.warn('Paczka gry (pakiet/js) nie wczytała się - start z plików src/.', error);
+        window.__pakietBlad = String(error?.message ?? error);
+    }
+
+}
+
+window.__pakiet = loaded;
+
+if (!loaded) {
+    await import('./start.js');
 }

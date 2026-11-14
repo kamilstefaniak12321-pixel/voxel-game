@@ -7,7 +7,7 @@ kroków, po kolei. Każdy krok to osobna wersja z pomiarem przed i po.
 | Nr | Krok | Stan |
 |---|---|---|
 | 1 | Programy cieniujące przygotowane pod ekranem wczytywania | **zrobione - 1.1.2** (niżej) |
-| 2 | Połączenie ok. 400 plików gry w kilka paczek (szybszy start) | do zrobienia |
+| 2 | Połączenie plików gry w paczkę (szybszy start aplikacji) | **zrobione - 1.1.3** (niżej) |
 | 3 | Zapamiętywanie gotowych rzeczy między uruchomieniami (ikonki, kolory tekstur) | do zrobienia |
 | 4 | Dopasowanie pracy do sprzętu w locie (ile terenu na klatkę, zasięg efektów) | do zrobienia |
 | 5 | Więcej wątków do liczenia terenu | do zrobienia |
@@ -72,6 +72,44 @@ kilkudziesięciu do kilkuset milisekund, na telefonie więcej.
 cieniujące: N, z tego skompilowane w trakcie gry: M*. Jeśli po dłuższej
 grze M rośnie powyżej 2, to znaczy, że jakaś rzecz nie ma jeszcze wzoru.
 
+## Krok 2: paczka plików gry (1.1.3)
+
+**Skąd strata.** Gra to 274 pliki kodu i biblioteka grafiki. Przy
+każdym starcie aplikacja otwierała je pojedynczo - a potem każdy
+z trzech wątków w tle (teren, daleki teren, zapis) otwierał swoje pliki
+jeszcze raz.
+
+**Co się zmieniło.** Przy budowaniu aplikacji pliki są łączone w paczkę
+(`pakiet/js/`, 14 plików). Aplikacja na komputer i na telefon startuje
+z paczki; wątki w tle też.
+
+| | Było | Jest |
+|---|---|---|
+| pliki kodu otwierane do pojawienia się menu (gra w przeglądarce) | 278 | 13 |
+| czas od otwarcia okna do menu (prawdziwa aplikacja na komputer, średnia z 8 uruchomień) | 4,56 s | 3,92 s |
+
+Czyli około 0,6 s (14%) krócej do menu. Pomiar jest z aplikacji
+uruchomionej z folderu, na maszynie bez karty graficznej. W
+zainstalowanej aplikacji i na telefonie nie mierzyłem.
+
+**Bezpieczniki:**
+
+- pliki `src/` dalej są w aplikacji. Gdyby paczka się nie wczytała
+  (brak pliku, uszkodzona), gra rusza ze zwykłych plików;
+- przy pracy nad grą (`npm start`, przeglądarka) i w testach paczki nie
+  ma - gra działa z `src/`, więc zmiana w kodzie jest widoczna od razu;
+- nazwy funkcji w paczce zostają czytelne - raport diagnostyczny dalej
+  pokazuje, gdzie wystąpił błąd;
+- wydanie nie zbuduje się bez paczki (pilnuje tego workflow), a *Testy
+  gry* uruchamiają prawdziwą grę z paczki: menu, świat, trzy wątki,
+  zapis, start bez paczki i start z uszkodzoną paczką.
+
+**Co zostało na później:** około 130 małych plików z danymi roślin
+i modeli oraz dźwięki dalej ładują się pojedynczo (krok 3).
+
+Przy okazji łączenie znalazło powtórzoną metodę w zapisie świata
+(`SavedChunkStore.keys` zdefiniowana dwa razy, identycznie) - usunięta.
+
 ## Dla programisty
 
 - `src/rendering/ShaderWarmup.js` - `warmupObject` (ukryty wzór),
@@ -87,3 +125,21 @@ grze M rośnie powyżej 2, to znaczy, że jakaś rzecz nie ma jeszcze wzoru.
 - Program zależy też od celu rysowania i świateł sceny - dlatego wzory
   kompilują się z tym samym celem i ze sceną, do której trafią.
 - Test: `node tools/sprawdz_shadery.mjs`.
+
+Paczka plików gry (krok 2):
+
+- `tools/pakiet.mjs` (esbuild) - `npm run pakiet`; `npm run dist`
+  i `npm run android:www` budują ją same. Folder `pakiet/` nie trafia
+  do gita.
+- `src/bootstrap.js` wybiera paczkę albo `src/start.js`: komputer -
+  `desktop.bundle`, telefon - pole `pakiet` w `wersja.json`,
+  przeglądarka - tylko z `?pakiet` w adresie (po `npm run pakiet`).
+- Pliki paczki leżą dwa foldery pod stroną gry, tak jak `src/<folder>/`,
+  więc adresy `new URL('../../assets/...', import.meta.url)` działają
+  bez zmian. Adres innej postaci licz od strony (`document.baseURI`).
+- **Nowy wątek** (`new Worker(new URL('./X.js', import.meta.url))`):
+  dopisz plik do `WORKERS` w `tools/pakiet.mjs`.
+- Testy: `node tools/sprawdz_pakiet.mjs` (zasady i budowanie),
+  `node tools/sprawdz_pakiet_webgl.mjs` (prawdziwa gra z paczki).
+- Sprawdzenie w aplikacji na komputer bez instalatora:
+  `npm run pakiet`, potem `VOXEL_QA_BUNDLE=1 npm start`.

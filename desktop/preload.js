@@ -5,6 +5,7 @@
 // go nie ma, więc tam nic się nie zmienia):
 //
 //   desktop.version            - wersja aplikacji (package.json)
+//   desktop.bundle             - czy jest paczka plików gry (pakiet/js)
 //   desktop.onBeforeClose(fn)  - fn (może być async) wywoływana przed
 //                                zamknięciem okna - np. zapis świata
 //   desktop.onUpdate(fn)       - fn({ state, version, percent }) od razu
@@ -67,6 +68,9 @@ ipcRenderer.on('desktop:update', (event, status) => {
 contextBridge.exposeInMainWorld('desktop', {
 
     version: info.version,
+
+    // Czy aplikacja ma paczkę plików gry (pakiet/js) - src/bootstrap.js.
+    bundle: info.bundle === true,
 
     onBeforeClose(callback) {
         beforeClose = callback;

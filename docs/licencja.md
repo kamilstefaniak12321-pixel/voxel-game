@@ -46,7 +46,7 @@ Te pliki nie są objęte PolyForm - zostają na licencjach swoich autorów
 | `assets/fonts/pixelify-sans/` | czcionka Pixelify Sans | SIL Open Font License 1.1 (`OFL.txt`) |
 | `assets/models/torch/` | tekstury i źródłowe modele pochodni z Reactive Torch, Copyright (c) 2026 ktulman8; przekazane przez Kamila | MIT (`assets/models/torch/LICENSE`) |
 | `android/gradlew`, `android/gradlew.bat`, `android/gradle/wrapper/` | Gradle Wrapper (budowanie aplikacji na Androida) | Apache License 2.0 |
-| zależności z `package.json` (Electron, Capacitor, electron-builder...) | pobierane przez `npm`, nie leżą w repozytorium | każda swoja (w `node_modules/`) |
+| zależności z `package.json` (Electron, Capacitor, electron-builder, esbuild - do łączenia plików gry w paczkę...) | pobierane przez `npm`, nie leżą w repozytorium | każda swoja (w `node_modules/`) |
 
 `android/app/klucz-testowy.keystore` to **celowo publiczny** klucz do
 wersji testowej "Various Roots (test)" (hasło `android`, `docs/telefon.md`).

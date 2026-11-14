@@ -47,14 +47,19 @@ import { EFFECTS, getEffect } from '../items/effects.js';
 export const CONDITION_MIN = 60;
 export const CONDITION_MAX = 130;
 export const CONDITION_START = 100;
-const ENERGY_START = 75;
+// Zapas na start świata. Strojenie 0.99.0 (tools/sprawdz_balans.mjs):
+// gracz, który nic nie je, ma usłyszeć burczenie po 7-11 minutach,
+// a zmęczyć się nie wcześniej niż po kwadransie.
+const ENERGY_START = 80;
 
 // Zużycie energii na sekundę w spoczynku (doba gry to 1200 s, więc
 // samo siedzenie zjada ok. 30 energii na dobę) i mnożniki wysiłku.
 const REST_DRAIN = 0.025;
 const DRAIN = { walk: 1.5, sprint: 3.2, swim: 3.2 };
 const MINING_DRAIN = 0.05;
-const JUMP_COST = 0.2;
+// Skok kosztuje tyle, co ok. sekunda biegu (0.99.0: było 0.2 - samo
+// chodzenie po pagórkach zjadało prawie połowę energii).
+const JUMP_COST = 0.1;
 const FULL_DRAIN = 0.8;       // najedzony zużywa mniej
 const GREAT_DRAIN = 0.9;      // w świetnej formie też
 const FULLNESS_MAX = 600;
@@ -125,7 +130,9 @@ const REST_ORDER = ['rested', 'ok', 'sleepy', 'worn'];
 // Gdzie gracz śpi: cap - do ilu punktów da się tam wyspać, rate - jak
 // szybko (część REST_PER_HOUR). Łóżko liczy się dopiero pościelone.
 export const SLEEP_PLACES = {
-    ground: { label: 'na gołej ziemi', cap: 60, rate: 0.5 },
+    // (cap 66: po nocy na ziemi gracz jest senny od popołudnia, ale
+    // "niewyspany" robi się dopiero po zmroku - 0.99.0, było 60.)
+    ground: { label: 'na gołej ziemi', cap: 66, rate: 0.5 },
     mat: { label: 'na posłaniu', cap: 90, rate: 0.85 },
     bed: { label: 'w łóżku', cap: 100, rate: 1 }
 };
@@ -193,6 +200,9 @@ export class Wellbeing {
             condition,
             fullness: clamp(number(source.fullness, 0), 0, FULLNESS_MAX),
             day: Number.isFinite(source.day) ? Math.floor(source.day) : Math.floor(days),
+            // Doba, w której świat powstał (bez kary za za mało posiłków);
+            // null - stary zapis albo ta doba już minęła.
+            graceDay: Number.isFinite(source.graceDay) ? Math.floor(source.graceDay) : saved && typeof saved === 'object' ? null : Math.floor(days),
             mealsToday: clamp(Math.floor(number(source.mealsToday, 0)), 0, 99),
             lastMealAt: Number.isFinite(source.lastMealAt) ? source.lastMealAt : null,
             lastFood: typeof source.lastFood === 'string' ? source.lastFood : null,
@@ -422,7 +432,10 @@ export class Wellbeing {
         }
         if (today === data.day) return;
         const meals = data.mealsToday;
-        const change = CONDITION_CHANGE[Math.min(meals, CONDITION_CHANGE.length - 1)];
+        // Pierwsza doba w świecie nie obniża kondycji (0.99.0): gracz dopiero
+        // się uczy, a zaczyna rano, więc na trzy posiłki ma mniej czasu.
+        const change = Math.max(data.day === data.graceDay ? 0 : -Infinity,
+            CONDITION_CHANGE[Math.min(meals, CONDITION_CHANGE.length - 1)]);
         const before = data.condition;
         data.condition = clamp(before + change, CONDITION_MIN, CONDITION_MAX);
         data.energy = Math.min(data.energy, data.condition);

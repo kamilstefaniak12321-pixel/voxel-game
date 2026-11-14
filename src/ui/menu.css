@@ -654,3 +654,95 @@ body:not([data-screen="game"]) #crosshair {
     user-select: text;
     font-variant-numeric: tabular-nums;
 }
+
+
+/* ------------------------------------------------------------
+   Poradnik i samouczek (0.99.0) - Ustawienia → Poradnik
+   (src/ui/guide.js, Menu.guideNote) oraz pytanie o samouczek.
+   ------------------------------------------------------------ */
+
+.settings-tutorial-restart {
+    flex: 0 0 auto;
+    width: var(--list-width);
+    max-width: 100%;
+}
+
+.menu-tutorial-offer {
+    max-width: 520px;
+    color: var(--text-color);
+    line-height: 1.5;
+}
+
+.menu-tutorial-note {
+    color: #e8c468;
+}
+
+.guide {
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    width: var(--list-width);
+    max-width: 100%;
+    text-align: left;
+}
+
+.guide-chapter {
+    background: rgba(0, 0, 0, 0.35);
+    border: 2px solid rgba(255, 255, 255, 0.22);
+}
+
+.guide-chapter[open] {
+    border-color: #e8c468;
+}
+
+.guide-title {
+    padding: 9px 12px;
+    cursor: pointer;
+    font-size: 1.05em;
+    color: var(--text-color);
+    user-select: none;
+}
+
+.guide-title:hover {
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.guide-intro {
+    margin: 0;
+    padding: 0 12px 6px;
+    color: var(--text-muted);
+}
+
+.guide-lines {
+    margin: 0;
+    padding: 0 12px 10px 30px;
+    color: var(--text-color);
+    line-height: 1.45;
+}
+
+.guide-lines li + li {
+    margin-top: 4px;
+}
+
+/* Punkt z klawiszem: klawisz w ramce, obok opis. */
+
+.guide-lines li.guide-key-line {
+    display: flex;
+    gap: 10px;
+    align-items: baseline;
+    margin-left: -18px;
+    list-style: none;
+}
+
+.guide-keys {
+    flex: 0 0 auto;
+    min-width: 92px;
+    padding: 1px 6px;
+    box-sizing: border-box;
+    border: 1px solid rgba(255, 255, 255, 0.45);
+    background: rgba(255, 255, 255, 0.08);
+    text-align: center;
+    white-space: nowrap;
+    font-size: 0.92em;
+}

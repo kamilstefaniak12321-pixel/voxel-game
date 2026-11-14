@@ -589,6 +589,16 @@ export const ACHIEVEMENTS = [
         on: 'texturePack'
     },
 
+    // Samouczek (0.99.0, game/Tutorial.js): wszystkie kroki, bez wyłączania.
+    {
+        id: 'tutorial_done',
+        tier: 'common',
+        title: 'Już wiem, co i jak',
+        task: 'Ukończ samouczek.',
+        comment: 'Drewno, ogień, kolacja, sen. Reszta to już tylko szczegóły.',
+        icon: 'fire_starter',
+        on: 'tutorialDone'
+    },
     // Życie w dziczy (0.98.1): jedzenie, uprawa, ognisko, sen, napary -
     // zdarzenia z game/GameInteraction.js, Campfires.js, Beds.js, Sleep.js.
     {

@@ -64,7 +64,13 @@ export const SETTINGS_TABS = {
         'windStreaks'
     ],
 
-    experiments: EXPERIMENTS
+    experiments: EXPERIMENTS,
+
+    // Poradnik: samouczek (powtórka, pytanie w nowych światach) i notatka
+    // "jak grać" (src/ui/guide.js).
+    guide: [
+        'tutorial'
+    ]
 
 };
 

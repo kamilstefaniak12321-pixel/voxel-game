@@ -62,11 +62,14 @@ function run(w, seconds, activity = {}, clock = { days: 0 }, dt = 0.5) {
     equal(getFood('toString'), null, 'nazwy z prototypu to nie jedzenie');
 }
 
+// Zapas energii w nowym świecie (strojenie: tools/sprawdz_balans.mjs).
+const START = 80;
+
 // --- Początek ----------------------------------------------------------------
 {
     const w = fresh(undefined, 3.4);
     equal(w.condition, 100, 'kondycja na start');
-    equal(w.energy, 75, 'zapas energii na start');
+    equal(w.energy, START, 'zapas energii na start');
     equal(w.state, 'good', 'na start: dobrze');
     equal(w.data.day, 3, 'doba z czasu gry');
     equal(w.effects, STATES.good, 'skutki stanu');
@@ -74,13 +77,13 @@ function run(w, seconds, activity = {}, clock = { days: 0 }, dt = 0.5) {
 
 // --- Zużycie -------------------------------------------------------------------
 {
-    const used = (activity) => { const w = fresh(); run(w, 100, activity); return 75 - w.energy; };
+    const used = (activity) => { const w = fresh(); run(w, 100, activity); return START - w.energy; };
     const rest = used({}), walk = used({ moving: true }), sprint = used({ moving: true, sprinting: true }),
         swim = used({ swimming: true }), mine = used({ mining: true });
     ok(rest > 0, 'energia ubywa także w spoczynku');
     ok(walk > rest && sprint > walk * 1.8 && swim > walk * 1.8 && mine > rest * 2, 'wysiłek kosztuje więcej');
     const w = fresh(); w.update(0.1, { jumps: 5 }, 0);
-    ok(75 - w.energy > 0.9, 'skoki kosztują');
+    ok(START - w.energy > 0.4 && START - w.energy < 0.8, 'skoki kosztują (pięć skoków - ok. pół punktu)');
     // Doba spokojnego chodzenia nie zjada całego zapasu, doba biegu - tak.
     const calm = fresh(); run(calm, DAY, { moving: true });
     ok(calm.energy > 20, `po dobie chodzenia coś zostaje (${calm.energy.toFixed(1)})`);

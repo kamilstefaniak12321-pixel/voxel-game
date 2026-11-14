@@ -6,6 +6,7 @@ import { GameInteraction } from './GameInteraction.js';
 import { Blackout, NO_INPUT } from './Blackout.js';
 import { Beds } from './Beds.js';
 import { Sleep } from './Sleep.js';
+import { Tutorial } from './Tutorial.js';
 import { TorchRenderer } from '../rendering/TorchRenderer.js';
 import { DoorRenderer } from '../rendering/DoorRenderer.js';
 import { Chests } from './Chests.js';
@@ -509,6 +510,11 @@ export class Game extends GameInteraction {
 
         worldInfo.wellbeing = this.wellbeing.data;
 
+        // Samouczek (pierwsze minuty w trybie przygody) - Tutorial.js.
+        // Czy go zacząć, pyta main.js (menu.showTutorialOffer).
+
+        this.tutorial = new Tutorial(this, worldInfo.tutorial ?? null);
+
         this.eatDelay = 0;
 
         this.seenJumps = 0;
@@ -786,6 +792,8 @@ export class Game extends GameInteraction {
         // Osiągnięcia sprawdzane co chwilę (wysokość, nurkowanie...).
 
         this.achievements?.update(dt);
+
+        this.tutorial.update(dt);
 
         profile?.beginStage('plants');
         this.plantGrowth.update(dt);
@@ -1939,6 +1947,10 @@ export class Game extends GameInteraction {
     achieve(name, data = {}) {
 
         this.achievements?.event(name, data);
+
+        // Samouczek zalicza kroki po tych samych zdarzeniach.
+
+        this.tutorial?.event(name, data);
 
     }
 

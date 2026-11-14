@@ -72,6 +72,7 @@ export const SETTING_WORDS = {
     debug: 'showDebug',
     'licznik-fps': 'showFps',
     meteoryty: 'meteorites',
+    samouczek: 'tutorial',
     glosnosc: 'volumeMaster',
     'glosnosc-bloki': 'volumeBlocks',
     'glosnosc-zjawiska': 'volumeWorld',

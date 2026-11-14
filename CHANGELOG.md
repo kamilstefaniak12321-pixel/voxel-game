@@ -11,6 +11,41 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 0.99.0 - Pierwsze dziesięć minut: samouczek, poradnik, strojenie liczb
+
+Na prośbę Kamila — PR #139 (po 0.98.1). Ostatnia wersja z nowościami
+przed 1.0 ([opis](docs/samouczek.md)):
+
+- **Samouczek** w pierwszych minutach nowego świata (tryb przygody).
+  Dziesięć kroków na karcie w rogu ekranu: rozejrzyj się, zdobądź drewno,
+  zrób deski, patyki i siekierę, zjedz coś, sprawdź samopoczucie, ułóż
+  i rozpal ognisko, prześpij noc. Gra się normalnie - **krok sam się
+  odhacza**, gdy gracz zrobi to, o co prosi; rzeczy zrobione wcześniej
+  zaliczają się od razu.
+- **Można go pominąć:** świat zaczyna się pytaniem (*Zacznij
+  z samouczkiem* / *Pomiń - znam grę* / *Nie pytaj w nowych światach*),
+  a w pauzie są przyciski *pomiń krok* i *wyłącz*.
+- **Można go powtórzyć:** *Ustawienia → Poradnik → Powtórz samouczek* -
+  także w starym świecie.
+- **Poradnik** - nowa zakładka w ustawieniach: ściąga w dziesięciu
+  rozdziałach (sterowanie, pierwszy dzień, wytwarzanie, jedzenie,
+  ognisko, sen, napary, uprawa, upadki i woda, reszta).
+- Na telefonie samouczek i poradnik mówią o dotyku zamiast o klawiszach,
+  a karta ma przyciski wprost na sobie.
+- **Strojenie liczb** - zamiast „na oko" symulacja trzech typów graczy
+  i zapisane cele (`tools/sprawdz_balans.mjs`). Zmieniły się cztery
+  liczby:
+  - skok kosztuje połowę tego, co dotąd (chodzenie po pagórkach zjadało
+    prawie połowę energii),
+  - na start jest 80 energii zamiast 75 - bez jedzenia burczy w brzuchu
+    po ok. 9 minutach, a pierwsza kara przychodzi po 13 (było 9),
+  - noc na gołej ziemi daje trochę więcej wyspania - „niewyspany" robi
+    się dopiero po zmroku następnego dnia, nie przed nim,
+  - pierwsza doba w nowym świecie nie obniża kondycji za mało posiłków.
+- Nowe osiągnięcie *Już wiem, co i jak* za ukończenie samouczka (razem
+  67).
+- Ustawienie: `/ustaw samouczek wl | wyl`.
+
 ## 0.98.1 - Porządki: zastosowania plonów, napary, kategorie
 
 Wersja poprawkowa na prośbę Kamila — PR #138 (po 0.98.0). Porządkuje to,

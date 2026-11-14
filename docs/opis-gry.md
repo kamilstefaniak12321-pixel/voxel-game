@@ -10,6 +10,17 @@ Dla graczy jest [wiki](wiki/README.md), a historia wersji w
 
 **Spis treści:** [Osiągnięcia](#osiągnięcia) · [Energia i samopoczucie](#energia-i-samopoczucie) · [Tryby gry i ekwipunek](#tryby-gry-i-ekwipunek) · [Bloki naturalne i rośliny](#bloki-naturalne-i-rośliny) · [Woda](#woda) · [Ustawienia](#ustawienia) · [Tekstury](#tekstury) · [Dźwięki](#dźwięki) · [Gracz](#gracz) · [Tryb ziemniaka](#tryb-ziemniaka) · [Wydajność](#wydajność) · [Świat](#świat) · [Oświetlenie](#oświetlenie) · [Czat i komendy](#czat-i-komendy) · [Dzień i noc](#dzień-i-noc) · [Sekret: kosmos](#sekret-kosmos) · [Gra ze znajomymi](#gra-ze-znajomymi) · [Zapis świata](#zapis-świata) · [Menu i motywy](#menu-i-motywy)
 
+## Samouczek i poradnik
+
+Nowy świat w trybie przygody zaczyna się pytaniem o **samouczek**:
+dziesięć krótkich kroków (ruch, drewno, deski, patyki, siekiera,
+jedzenie, okno statusu, ognisko, rozpalenie, sen) na karcie w rogu
+ekranu. Kroki odhaczają się same podczas zwykłej gry; krok albo cały
+samouczek można pominąć w pauzie, a powtórzyć w *Ustawienia →
+Poradnik*. W tej samej zakładce jest **poradnik** - ściąga w dziesięciu
+rozdziałach. Szczegóły i strojenie liczb pierwszych minut:
+[docs/samouczek.md](samouczek.md).
+
 ## Osiągnięcia
 
 Za ciekawe rzeczy w grze dostajesz **osiągnięcia** w czterech rangach:
@@ -21,7 +32,7 @@ w pauzie i na ekranie tytułowym) - z datą i nazwą świata. Księga jest
 wspólna dla wszystkich światów. Niektóre osiągnięcia są sekretne -
 przed zdobyciem widać tylko znak zapytania.
 
-Jest 37 osiągnięć (od pierwszego zniszczonego bloku po
+Jest 67 osiągnięć (od pierwszego zniszczonego bloku po
 legendarne *Problem spadł z nieba*). Nowa rzecz w grze = nowe
 osiągnięcie - jak je dopisać, zdarzenia z gry i pełna lista (spoilery):
 `docs/osiagniecia.md`. Test: `/osiagniecia` (lista), `/osiagniecia pokaz

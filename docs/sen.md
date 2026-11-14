@@ -29,7 +29,7 @@ Spać można **nocą, od 19:00 do 5:00**. Są trzy sposoby:
 
 | Gdzie | Jak się położyć | Wyspanie | Premia |
 |---|---|---|---|
-| **Goła ziemia** | kucnij i kliknij PPM pustą ręką w ziemię | słabe - najwyżej „w normie", i to powoli | - |
+| **Goła ziemia** | kucnij i kliknij PPM pustą ręką w ziemię | słabe - najwyżej „w normie", i to powoli; następnego dnia senność przychodzi już po południu | - |
 | **Posłanie** | PPM na posłaniu | dobre - „wypoczęty" | - |
 | **Pościelone łóżko** | PPM na łóżku | pełne | wygoda na następny dzień |
 

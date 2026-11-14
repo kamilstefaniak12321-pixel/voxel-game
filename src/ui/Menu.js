@@ -5,6 +5,7 @@ import { TERRAIN_TYPES, terrainName } from '../world/terrain/generators.js';
 import { DEFAULT_TERRAIN, DEFAULT_GAME_MODE } from '../config.js';
 import { SETTINGS_RANGES, SETTINGS_CHOICES, graphicsPreset, nextGraphicsPreset } from '../settings/Settings.js';
 import { SETTINGS_TABS, ADVANCED_VIDEO } from './settingsLayout.js';
+import { GUIDE } from './guide.js';
 import { SCENES, SCENE_TIMES } from '../dev/scenes.js';
 import { hasCustomSkin, chooseSkinFile, resetSkin } from '../player/skin.js';
 import {
@@ -753,6 +754,118 @@ export class Menu {
     }
 
     // --------------------------------------------------------
+    // Samouczek i poradnik (0.99.0)
+    //
+    // showTutorialOffer - pytanie na początku nowego świata w trybie
+    // przygody: zacząć samouczek, pominąć, nie pytać więcej.
+    // tutorialControls  - przycisk "Powtórz samouczek" w Ustawienia →
+    // Poradnik; guideNote - notatka "jak grać" (src/ui/guide.js).
+    // --------------------------------------------------------
+
+    showTutorialOffer() {
+
+        const screen = this.newScreen('tutorial-offer', false);
+
+        const choose = (choice) => this.handlers.tutorialChoice?.(choice);
+
+        // Esc = "Pomiń" (tak samo jak drugi przycisk).
+
+        this.onEscape = () => choose('skip');
+
+        const buttons = el('div', 'menu-buttons');
+
+        buttons.append(
+            button(TEXTS.tutorialOfferStart, () => choose('start'), '', true),
+            button(TEXTS.tutorialOfferSkip, () => choose('skip')),
+            button(TEXTS.tutorialOfferNever, () => choose('never'))
+        );
+
+        screen.append(
+            el('h2', 'menu-heading', TEXTS.tutorialOfferTitle),
+            el('p', 'menu-note menu-tutorial-offer', TEXTS.tutorialOfferText),
+            buttons,
+            el('p', 'menu-note', TEXTS.tutorialOfferNote)
+        );
+
+    }
+
+
+    tutorialControls(fromPause) {
+
+        const tutorial = fromPause ? this.handlers.tutorial?.() ?? null : null;
+
+        const restart = button(TEXTS.tutorialRestart, () => {
+            if (tutorial?.start()) this.handlers.resume();
+        }, 'settings-tutorial-restart');
+
+        restart.disabled = !tutorial?.allowed;
+
+        const note = el('p', 'menu-note', !fromPause ? TEXTS.tutorialRestartMenu
+            : tutorial?.allowed ? TEXTS.tutorialRestartNote : TEXTS.tutorialRestartMode);
+
+        return [restart, note];
+
+    }
+
+
+    guideNote() {
+
+        const touch = Boolean(this.handlers.touchMode?.());
+
+        const note = el('div', 'guide');
+
+        note.append(el('p', 'menu-note settings-intro', TEXTS.guideIntro));
+
+        for (const chapter of GUIDE) {
+
+            const details = el('details', 'guide-chapter');
+
+            details.dataset.chapter = chapter.id;
+
+            // Otwarty rozdział pamiętamy do końca sesji (pierwszy raz: sterowanie).
+
+            details.open = (this.guideOpen ?? GUIDE[0].id) === chapter.id;
+
+            details.addEventListener('toggle', () => {
+                if (details.open) {
+                    this.guideOpen = chapter.id;
+                    for (const other of note.querySelectorAll('details')) if (other !== details) other.open = false;
+                }
+            });
+
+            details.append(el('summary', 'guide-title', chapter.title));
+
+            if (chapter.intro) details.append(el('p', 'guide-intro', chapter.intro));
+
+            const list = el('ul', 'guide-lines');
+
+            for (const line of (touch && chapter.touch) || chapter.lines) {
+
+                const item = el('li');
+
+                if (typeof line === 'string') {
+                    item.textContent = line;
+                }
+                else {
+                    item.classList.add('guide-key-line');
+                    item.append(el('span', 'guide-keys', line.keys), el('span', '', line.text));
+                }
+
+                list.append(item);
+
+            }
+
+            details.append(list);
+
+            note.append(details);
+
+        }
+
+        return note;
+
+    }
+
+    // --------------------------------------------------------
     // Pauza (na tle zatrzymanej gry)
     // --------------------------------------------------------
 
@@ -802,6 +915,20 @@ export class Menu {
         }
         else {
             netInfo.push(el('p', 'menu-note', TEXTS.guestNote(net.host, net.players)));
+        }
+
+        // Samouczek w toku: który krok oraz "pomiń krok" i "wyłącz"
+        // (w grze mysz jest zajęta rozglądaniem - stąd przyciski tutaj).
+
+        const tutorial = this.handlers.tutorial?.() ?? null;
+        const step = tutorial?.view() ?? null;
+
+        if (step) {
+            netInfo.push(el('p', 'menu-note menu-tutorial-note', TEXTS.tutorialPauseNote(step.index, step.total, step.title)));
+            buttons.append(
+                button(TEXTS.tutorialSkipStep, () => { tutorial.skipStep(); this.showPause(hint); }),
+                button(TEXTS.tutorialStop, () => { tutorial.stop(); this.showPause(hint); })
+            );
         }
 
         buttons.append(button(net?.role === 'client' ? TEXTS.leaveGame : TEXTS.saveAndQuit, () => this.handlers.quitToMenu()));
@@ -1192,6 +1319,11 @@ export class Menu {
 
         if (tab === 'look') {
             parts.push(el('p', 'menu-note', TEXTS.menuMotionNote));
+        }
+
+        if (tab === 'guide') {
+            parts.unshift(...this.tutorialControls(fromPause));
+            parts.push(this.guideNote());
         }
 
 

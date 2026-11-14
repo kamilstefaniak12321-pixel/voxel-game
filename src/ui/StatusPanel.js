@@ -69,7 +69,9 @@ function hoursText(hours) {
 export class StatusPanel {
 
     // onEat - przycisk "Zjedz" (telefon).
-    constructor({ onEat } = {}) {
+    // onEat - przycisk Zjedz; onOpen - okno właśnie otwarte (samouczek).
+    constructor({ onEat, onOpen } = {}) {
+        this.onOpen = onOpen ?? null;
         this.heartRoot = document.getElementById('wellbeing');
         this.heart = new HeartIcon(this.heartRoot);
         // Telefon: stuknięcie w serce otwiera okno (na komputerze mysz
@@ -94,7 +96,7 @@ export class StatusPanel {
 
     get isOpen() { return !this.panel.hidden; }
 
-    open() { this.panel.hidden = false; this.signature = null; this.wait = 0; }
+    open() { this.panel.hidden = false; this.signature = null; this.wait = 0; this.onOpen?.(); }
     close() { this.panel.hidden = true; }
     toggle() { if (this.isOpen) this.close(); else this.open(); }
 

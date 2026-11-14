@@ -19,6 +19,7 @@ import { PerfMonitor } from './game/PerfMonitor.js';
 import { diagnostics } from './diagnostics/Diagnostics.js';
 import { PerfDiagnostics } from './diagnostics/PerfDiagnostics.js';
 import { StatusPanel } from './ui/StatusPanel.js';
+import { TutorialPanel } from './ui/TutorialPanel.js';
 import { TerrainMap } from './ui/TerrainMap.js';
 import { InventoryScreen } from './ui/InventoryScreen.js';
 import { NetHost } from './net/NetHost.js';
@@ -219,7 +220,13 @@ renderer.domElement.addEventListener('webglcontextrestored', () => {
 const terrainMap = new TerrainMap();
 
 // Okno statusu (samopoczucie) - klawisz C.
-const statusPanel = new StatusPanel({ onEat: () => game?.eat() });
+const statusPanel = new StatusPanel({ onEat: () => game?.eat(), onOpen: () => game?.tutorial.event('statusOpened') });
+
+// Karta samouczka w rogu ekranu (kroki: src/game/Tutorial.js).
+const tutorialPanel = new TutorialPanel({
+    onSkipStep: () => game?.tutorial.skipStep(),
+    onStop: () => game?.tutorial.stop()
+});
 
 
 // Dźwięk (kroki, bloki, meteoryty, menu). Przeglądarka pozwala go
@@ -374,6 +381,17 @@ const menu = new Menu(
             if (game || state !== 'menu') return;
             menuBackdrop.setView(view);
             void menuBackdrop.start();
+        },
+        // Samouczek (0.99.0): stan dla pauzy i ustawień, odpowiedź na
+        // pytanie z początku świata (Menu.showTutorialOffer).
+        tutorial: () => game?.tutorial ?? null,
+        touchMode: () => touchMode,
+        tutorialChoice: (choice) => {
+            if (!game) return;
+            if (choice === 'start') game.tutorial.start();
+            else game.tutorial.stop();
+            if (choice === 'never') settings.set('tutorial', false);
+            resume();
         },
         // Tryb programisty: sceny testowe i pora dnia (Menu.showScenes).
         gameMode: () => game?.mode ?? null,
@@ -535,6 +553,9 @@ async function playWorld(worldInfo, { client = null } = {}) {
     state = 'loading';
     diagnostics.breadcrumb('world.loading', 'Rozpoczęto wczytywanie świata.', { seed: worldInfo.seed, terrain: worldInfo.terrain });
 
+    // Świat, w którym gracz jeszcze nie był (pytanie o samouczek).
+    const newWorld = !worldInfo.player && !client;
+
     menu.showLoading(TEXTS.loadingWorld);
     menuBackdrop.stop();
 
@@ -619,11 +640,17 @@ async function playWorld(worldInfo, { client = null } = {}) {
     }
 
 
-    // Świat gotowy - przechwytujemy mysz i gramy.
+    // Świat gotowy - przechwytujemy mysz i gramy. Nowy świat w trybie
+    // przygody zaczyna się pytaniem o samouczek (odpowiedź wznawia grę).
 
     state = 'paused';
 
-    resume();
+    if (game.tutorial.shouldOffer(settings.get('tutorial'), newWorld)) {
+        menu.showTutorialOffer();
+    }
+    else {
+        resume();
+    }
 
     chat.print(touchMode ? TEXTS.touchHint : TEXTS.chatHint, 'hint');
 
@@ -1304,6 +1331,8 @@ function closeWorld() {
 
     hotbar.reset();
 
+    tutorialPanel.hide();
+
     terrainMap.close();
 
     chat.clear();
@@ -1418,6 +1447,8 @@ function animate(now) {
     hotbar.update(game.inventory.slots.slice(0, HOTBAR_SIZE), game.inventory.selected);
 
     statusPanel.update(dt, game);
+
+    tutorialPanel.update(game);
 
 
     // Gra działa także przy otwartym czacie i ekwipunku.

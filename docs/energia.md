@@ -23,7 +23,8 @@ i ich efekty).
 | kopiesz | dodatkowo, jak przy biegu |
 | skaczesz | trochę za każdy skok |
 
-Energia wraca **tylko z jedzenia**. Na początku gracz ma zapas 75.
+Energia wraca **tylko z jedzenia**. Na początku gracz ma zapas 80
+(strojenie liczb: [samouczek.md](samouczek.md#strojenie-liczb)).
 
 **Kondycja** mówi, ile energii ciało potrafi zmieścić (od 60 do 130,
 na początku 100). Zmienia się raz na dobę gry, o świcie nowego dnia:
@@ -34,6 +35,9 @@ na początku 100). Zmienia się raz na dobę gry, o świcie nowego dnia:
 | 2 | lekko rośnie (+1) |
 | 1 | powoli spada (-2) |
 | 0 | spada (-5) |
+
+Pierwsza doba w nowym świecie nie obniża kondycji (od 0.99.0) - gracz
+dopiero się uczy, a zaczyna rano.
 
 ## Stany
 

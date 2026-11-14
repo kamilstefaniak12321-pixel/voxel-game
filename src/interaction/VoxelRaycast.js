@@ -5,8 +5,8 @@ import { spritePlantBounds, SPRITE_PLANT_REACH } from './PlantBounds.js';
 import { getTorchInfo } from '../blocks/torches.js';
 import { getTorchBounds } from '../rendering/TorchGeometry.js';
 import { waterSurfaceHeight } from '../world/WaterSurface.js';
-import { shapeInfo } from '../blocks/woodShapes.js';
-import { shapeBoxes, connectMask } from '../world/ShapeBoxes.js';
+import { boundsOf } from '../world/ShapeBoxes.js';
+import { cellBoxes, FULL_CELL } from './BlockBounds.js';
 
 function intersectBounds(origin, direction, x, y, z, bounds, start, end) {
     let near = -Infinity, far = Infinity;
@@ -198,11 +198,53 @@ export class VoxelRaycast {
             return intersection ? { hit: true, block: { x, y, z, type: getBlockTypeById(id) }, ...intersection } : null;
         };
 
+        // Blok w bieżącej komórce: trafiamy tylko w jego prawdziwy kształt
+        // (interaction/BlockBounds.js) - obok płaskiego mchu, kępki trawy
+        // czy półbloku promień leci dalej.
+        const blockHit = (id, start, normal) => {
+            const boxes = cellBoxes(this.world, id, x, y, z);
+            if (!boxes.length) return null;
+            let best = null;
+            if (boxes === FULL_CELL) {
+                // Pełny blok: ściana, przez którą promień wszedł do komórki.
+                best = { distance: start, normal };
+            }
+            else {
+                for (const box of boxes) {
+                    const hit = intersectBounds(origin, dir, x, y, z,
+                        { min: [box[0], box[1], box[2]], max: [box[3], box[4], box[5]] }, start, this.maxDistance);
+                    if (hit && (!best || hit.distance < best.distance)) best = hit;
+                }
+                if (!best) return null;
+            }
+            return {
+                hit: true, block: { x, y, z, type: getBlockTypeById(id) }, normal: best.normal, distance: best.distance,
+                // Zasięg trafionego kształtu w komórce - dla ramki.
+                bounds: boxes === FULL_CELL ? null : boundsOf(boxes)
+            };
+        };
+
+        // Najbliższe z: blok komórki, roślina wystająca z sąsiedniej
+        // komórki, tafla wody. Punkt trafienia - m.in. górna/dolna połowa
+        // ściany przy stawianiu schodów i półbloków (0.90.0).
+        const nearest = (...hits) => {
+            let best = null;
+            for (const hit of hits) if (hit && (!best || hit.distance < best.distance)) best = hit;
+            if (best) best.point = { x: origin.x + dir.x * best.distance, y: origin.y + dir.y * best.distance, z: origin.z + dir.z * best.distance };
+            return best;
+        };
+
+        // Komórka, w której jest oko: pełnego bloku tu nie trafiamy
+        // (kamera w bloku), ale mniejszy kształt - tak.
         const initialEnd = Math.min(tMaxX, tMaxY, tMaxZ, this.maxDistance);
-        const initialPlant = plantHit(0, initialEnd);
-        const initialWater = waterHit(0, initialEnd, { x: 0, y: 1, z: 0 });
-        if (initialPlant && (!initialWater || initialPlant.distance <= initialWater.distance)) return initialPlant;
-        if (initialWater) return initialWater;
+        const initialId = this.world.getBlockId(x, y, z);
+        const inside = cellBoxes(this.world, initialId, x, y, z) === FULL_CELL ? null : blockHit(initialId, 0, { x: 0, y: 1, z: 0 });
+        const initial = nearest(
+            // Oko w samym kształcie (np. w kępce trawy): nie zasłania celu.
+            inside && inside.distance > 1e-6 ? inside : null,
+            plantHit(0, initialEnd),
+            waterHit(0, initialEnd, { x: 0, y: 1, z: 0 }));
+        if (initial) return initial;
 
 
         while (distance <= this.maxDistance) {
@@ -260,65 +302,11 @@ export class VoxelRaycast {
             // Zwykła woda przepuszcza celownik, wodną roślinę można
             // zebrać. Taflę wskazujemy osobno tylko podczas sadzenia.
             const id = this.world.getBlockId(x, y, z);
-
-            // Schody, półbloki, płoty, furtki, stół (0.90.0): celownik trafia
-            // tylko w ich pudełka - obok (np. nad półblokiem) leci dalej.
-            const shape = shapeInfo(id);
-            if (shape) {
-                const boxes = shapeBoxes(id, 'outline', shape.kind === 'fence'
-                    ? connectMask((a, b, c) => this.world.getBlockId(a, b, c), x, y, z) : 0) ?? [];
-                let best = null;
-                for (const box of boxes) {
-                    const hit = intersectBounds(origin, dir, x, y, z, { min: [box[0], box[1], box[2]], max: [box[3], box[4], box[5]] }, distance, this.maxDistance);
-                    if (hit && (!best || hit.distance < best.distance)) best = hit;
-                }
-                if (best) {
-                    const point = { x: origin.x + dir.x * best.distance, y: origin.y + dir.y * best.distance, z: origin.z + dir.z * best.distance };
-                    return { hit: true, block: { x, y, z, type: getBlockTypeById(id) }, normal: best.normal, distance: best.distance, point };
-                }
-                continue;
-            }
-
-            if (getBlockTypeById(id) === 'campfire') {
-                const intersection = intersectBounds(origin, dir, x, y, z, { min: [0, 0, 0], max: [1, .5, 1] }, distance, this.maxDistance);
-                if (intersection) return { hit: true, block: { x, y, z, type: 'campfire' }, ...intersection };
-                continue;
-            }
-
-            if (id && !getTorchInfo(id) && !getRiverPlant(id) && !isLiquidId(id)) {
-
-                return {
-
-                    hit: true,
-
-                    block: {
-                        x,
-                        y,
-                        z,
-                        type: getBlockTypeById(id)
-                    },
-
-                    normal: {
-                        x: normalX,
-                        y: normalY,
-                        z: normalZ
-                    },
-
-                    distance,
-
-                    // Punkt trafienia (0.90.0: górna/dolna połowa ściany -
-                    // schody do góry nogami, górny półblok).
-                    point: { x: origin.x + dir.x * distance, y: origin.y + dir.y * distance, z: origin.z + dir.z * distance }
-
-                };
-
-            }
-
+            const normal = { x: normalX, y: normalY, z: normalZ };
             const end = Math.min(tMaxX, tMaxY, tMaxZ, this.maxDistance);
-            const plant = plantHit(distance, end);
-            const water = waterHit(distance, end, { x: normalX, y: normalY, z: normalZ });
-            if (plant && (!water || plant.distance <= water.distance)) return plant;
-            if (water) return water;
+
+            const found = nearest(blockHit(id, distance, normal), plantHit(distance, end), waterHit(distance, end, normal));
+            if (found) return found;
 
         }
 

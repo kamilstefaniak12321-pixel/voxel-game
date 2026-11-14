@@ -4,21 +4,6 @@ import { getBlockDefinition } from '../blocks/BlockRegistry.js';
 import { riverPlantBounds } from './RiverPlantBounds.js';
 import { spritePlantBounds } from './PlantBounds.js';
 import { getTorchBounds } from '../rendering/TorchGeometry.js';
-import { shapeBoxes, boundsOf } from '../world/ShapeBoxes.js';
-
-
-// Ramka płaskiej dekoracji (model 'flat'): wzdłuż której osi cienka
-// i czy przy dalszej ścianie komórki.
-
-const FLAT_THICKNESS = 0.08;
-
-const FLAT_BOXES = {
-    down: { axis: 1, far: false },
-    north: { axis: 2, far: false },
-    south: { axis: 2, far: true },
-    east: { axis: 0, far: true },
-    west: { axis: 0, far: false }
-};
 
 
 export class BlockHighlight {
@@ -74,58 +59,35 @@ export class BlockHighlight {
         this.mesh.visible = true;
 
 
-        // Roślina: węższa (i zwykle niższa) ramka niż pełny blok.
-        // Płaska dekoracja: cienka ramka przy jej oparciu.
+        // Ramka pokazuje dokładnie to, w co trafia celownik: kształt
+        // z interaction/BlockBounds.js (hit.bounds - cienki mech, kępka
+        // trawy, półblok, skrzynia) albo model rośliny czy pochodni.
+        // Bez żadnego z nich - pełny blok.
 
         const definition = getBlockDefinition(hit.block.type);
 
-        const plant = definition?.plant;
+        const size = [1, 1, 1];
 
-        const height = plant ? Math.min(1, plant.height) : 1;
-
-        const width = plant ? 0.8 : 1;
-
-        const size = [width, height, width];
-
-        const center = [0.5, height / 2, 0.5];
+        const center = [0.5, 0.5, 0.5];
 
         const river = definition?.riverPlant;
         const torch = definition?.torch;
         const sprite = definition?.plant?.sprite
             ? spritePlantBounds(definition.id, hit.block.x, hit.block.y, hit.block.z)
             : null;
-        if (torch || river || sprite) {
+
+        let box = hit.bounds ?? null;
+
+        if (!box && (torch || river || sprite)) {
             const bounds = torch ? getTorchBounds(torch.attach) : sprite ?? riverPlantBounds(river, hit.block.x, hit.block.y, hit.block.z);
+            box = [...bounds.min, ...bounds.max];
+        }
+
+        if (box) {
             for (let axis = 0; axis < 3; axis++) {
-                size[axis] = Math.max(0.01, bounds.max[axis] - bounds.min[axis]);
-                center[axis] = (bounds.min[axis] + bounds.max[axis]) / 2;
+                size[axis] = Math.max(0.01, box[axis + 3] - box[axis]);
+                center[axis] = (box[axis] + box[axis + 3]) / 2;
             }
-        }
-
-        const flat = FLAT_BOXES[definition?.flat?.attach];
-
-        if (definition?.model === 'structure' && !torch) { size[1] = .5; center[1] = .25; }
-
-        // Schody, półbloki, płot (słupek), furtka, stół - obrys pudełek.
-        const shape = definition?.model === 'shape' || definition?.model === 'door' ? boundsOf(shapeBoxes(definition.id, 'outline', 0)) : null;
-        if (shape) {
-            for (let axis = 0; axis < 3; axis++) {
-                size[axis] = Math.max(0.01, shape[axis + 3] - shape[axis]);
-                center[axis] = (shape[axis] + shape[axis + 3]) / 2;
-            }
-        }
-
-        // Skrzynia: 14 x 14 pikseli, 14 wysokości.
-        if (definition?.model === 'chest') {
-            size[0] = size[2] = 14 / 16; size[1] = 14 / 16; center[1] = 7 / 16;
-        }
-
-        if (flat && definition?.model !== 'structure') {
-
-            size[flat.axis] = FLAT_THICKNESS;
-
-            center[flat.axis] = flat.far ? 1 - FLAT_THICKNESS / 2 : FLAT_THICKNESS / 2;
-
         }
 
         this.mesh.scale.set(...size);

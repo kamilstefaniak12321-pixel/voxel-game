@@ -287,6 +287,16 @@ export async function createBlockIcons() {
         return canvas.toDataURL();
     };
 
+    // Odmiany jednego bloku (obrócone schody, otwarte drzwi, pochodnia
+    // na ścianie, skrzynia w cztery strony) mają tę samą ikonkę - rysujemy
+    // ją raz. Przed 1.1.1 każda z ok. 2100 odmian liczyła własną, co
+    // było większością czasu startu gry.
+    const sharedIcons = new Map();
+    const sharedIcon = (key, make) => {
+        if (!sharedIcons.has(key)) sharedIcons.set(key, make());
+        return sharedIcons.get(key);
+    };
+
     // Jednostka: ile pikseli ikonki przypada na piksel tekstury
     // wzdłuż krawędzi ściany.
 
@@ -295,35 +305,30 @@ export async function createBlockIcons() {
 
     for (const [type, definition] of Object.entries(BLOCK_TYPES)) {
 
-        const canvas = document.createElement('canvas');
-
-        canvas.width = W;
-        canvas.height = W;
-
-        const ctx = canvas.getContext('2d');
-
-        ctx.imageSmoothingEnabled = smooth;
-
-
         const textures = definition.textures;
 
         const torch = getTorchInfo(type);
         if (torch) {
-            icons.set(type, modelIcon(getTorchFaces(torch.colorKey, 'down'), torch.variant.texture));
+            icons.set(type, sharedIcon(`torch:${torch.colorKey}:${torch.variant.texture}`,
+                () => modelIcon(getTorchFaces(torch.colorKey, 'down'), torch.variant.texture)));
             continue;
         }
 
         // Schody, półbloki, płoty, furtki, stół (0.90.0) - prawdziwy model.
         if (definition.model === 'shape' || definition.model === 'door') {
-            const faces = itemShapeFaces(definition.pick);
-            if (faces) {
-                icons.set(type, modelIcon(faces, definition.textures.all));
+            const icon = sharedIcon(`shape:${definition.pick}:${definition.textures.all}`, () => {
+                const faces = itemShapeFaces(definition.pick);
+                return faces ? modelIcon(faces, definition.textures.all) : null;
+            });
+            if (icon) {
+                icons.set(type, icon);
                 continue;
             }
         }
 
         if (definition.model === 'chest') {
-            icons.set(type, modelIcon(getChestFaces(definition.chest.texture), definition.chest.texture));
+            icons.set(type, sharedIcon(`chest:${definition.chest.texture}`,
+                () => modelIcon(getChestFaces(definition.chest.texture), definition.chest.texture)));
             continue;
         }
 
@@ -352,6 +357,16 @@ export async function createBlockIcons() {
             continue;
 
         }
+
+
+        const canvas = document.createElement('canvas');
+
+        canvas.width = W;
+        canvas.height = W;
+
+        const ctx = canvas.getContext('2d');
+
+        ctx.imageSmoothingEnabled = smooth;
 
 
         // Góra: romb od (W/2, 0) przez (W, W/4) i (0, W/4) do (W/2, W/2).

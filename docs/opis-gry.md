@@ -42,6 +42,13 @@ niebem na 2 minuty). Z suchego kubka da się pić napary, z czterech
 suchych cegieł powstaje blok cegieł w kolorze gliny. Szczegóły:
 [docs/glina.md](glina.md).
 
+## Celowanie w bloki
+
+Od 1.1.1 celownik trafia w blok tylko tam, gdzie go widać: nad płaskim
+mchem, śniegiem i liśćmi celuje się w bloki za nimi, a kępka trawy nie
+zasłania ziemi pod sobą. Ramka pokazuje dokładnie trafiany kształt.
+Szczegóły: [docs/celowanie-i-ladowanie.md](celowanie-i-ladowanie.md).
+
 ## Klawisze
 
 Każdą czynność (ruch, kopanie, stawianie, jedzenie, okna, miejsca na

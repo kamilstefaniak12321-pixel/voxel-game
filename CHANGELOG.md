@@ -45,6 +45,19 @@ przed 1.0 ([opis](docs/samouczek.md)):
 - Nowe osiągnięcie *Już wiem, co i jak* za ukończenie samouczka (razem
   67).
 - Ustawienie: `/ustaw samouczek wl | wyl`.
+- **Klawisze do ustawienia** ([opis](docs/klawisze.md)): *Ustawienia →
+  Gracz → Klawisze*. Każdą czynność (ruch, kopanie, stawianie, jedzenie,
+  okna, miejsca na pasku - razem 28) można przypisać do innego klawisza
+  albo przycisku myszy, także bocznego. Zajęty klawisz zamienia się
+  miejscami z poprzednią czynnością; ↺ przywraca jeden klawisz,
+  *Domyślne klawisze* - wszystkie. Samouczek, poradnik, okno statusu
+  i podpowiedzi pokazują klawisze gracza.
+- **Napisy debugowania (F3) są na początku wyłączone** - także u tych,
+  którzy grali wcześniej (raz, przy aktualizacji; F3 włącza je
+  z powrotem). Godzinę i numer dnia pokazuje teraz okno statusu (C),
+  a samouczek mówi, ile zostało do wieczora.
+- Poradnik w menu głównym jest czytelny (na jasnym panelu miał szare tło
+  z ciemnym tekstem).
 
 ## 0.98.1 - Porządki: zastosowania plonów, napary, kategorie
 

@@ -67,6 +67,9 @@ logi...) uruchamia workflow *Testy gry* w GitHub Actions
 
 ## Sterowanie
 
+Klawisze poniżej są domyślne - każdy można zmienić w *Ustawienia →
+Gracz → Klawisze* ([opis](docs/klawisze.md)).
+
 | Klawisz | Akcja |
 |---|---|
 | WASD | ruch |
@@ -83,9 +86,9 @@ logi...) uruchamia workflow *Testy gry* w GitHub Actions
 | Środkowy przycisk myszy | weź blok, na który patrzysz, na pasek |
 | E | ekwipunek (w trybie kreatywnym też wszystkie bloki gry i owoce) |
 | F | zjedz to, co trzymasz (owoce, orzechy - tryb przygody; to samo robi PPM poza polem) |
-| C | okno statusu: samopoczucie, energia, kondycja, posiłki (skrót stanu: serce w lewym górnym rogu) |
+| C | okno statusu: pora dnia, samopoczucie, energia, kondycja, posiłki (skrót stanu: serce w lewym górnym rogu) |
 | ESC | pauza (wróć do gry, ustawienia, zapisz i wyjdź do menu) |
-| F3 | informacje debugowania w lewym górnym rogu |
+| F3 | informacje debugowania w lewym górnym rogu (od 0.99.0 na początku wyłączone) |
 | [ / ] (z F3) | cofnij / przesuń czas o godzinę |
 | T, / | czat i komendy (`/pomoc`) |
 | M | mapa terenu z góry (to samo co `/mapa`) |
@@ -117,6 +120,7 @@ jest w [`docs/opis-gry.md`](docs/opis-gry.md). Skrót:
 
 | Część gry | Co obejmuje | Pełny opis | Osobna strona |
 |---|---|---|---|
+| Klawisze do ustawienia | każdą czynność można przypisać do innego klawisza albo przycisku myszy (*Ustawienia → Gracz → Klawisze*); zajęty klawisz zamienia się miejscami; podpowiedzi pokazują klawisze gracza | [opis](docs/klawisze.md) | [klawisze.md](docs/klawisze.md) |
 | Samouczek i poradnik | samouczek w pierwszych minutach nowego świata (10 kroków, sam się odhacza, można pominąć i powtórzyć), poradnik w *Ustawienia → Poradnik*, strojenie liczb testem | [opis](docs/samouczek.md) | [samouczek.md](docs/samouczek.md) |
 | Osiągnięcia | 67 osiągnięć w księdze (klawisz L), powiadomienia, rangi | [opis](docs/opis-gry.md#osiągnięcia) | [osiagniecia.md](docs/osiagniecia.md) |
 | Energia i samopoczucie | energia z jedzenia, kondycja, serce i okno statusu; utykanie po upadku, pobudka na brzegu po utonięciu, pieczenie nad ogniskiem ([skutki.md](docs/skutki.md)); wyspanie, noc i sen - łóżka ze stelaża i pościeli, posłania ([sen.md](docs/sen.md)); napary z ziół i zastosowania plonów ([ziola.md](docs/ziola.md)) | [opis](docs/opis-gry.md#energia-i-samopoczucie) | [energia.md](docs/energia.md) |

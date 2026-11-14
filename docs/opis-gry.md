@@ -8,7 +8,7 @@ tematy mają też własne strony w `docs/` - linki są w tekście.
 Dla graczy jest [wiki](wiki/README.md), a historia wersji w
 [CHANGELOG.md](../CHANGELOG.md).
 
-**Spis treści:** [Osiągnięcia](#osiągnięcia) · [Energia i samopoczucie](#energia-i-samopoczucie) · [Tryby gry i ekwipunek](#tryby-gry-i-ekwipunek) · [Bloki naturalne i rośliny](#bloki-naturalne-i-rośliny) · [Woda](#woda) · [Ustawienia](#ustawienia) · [Tekstury](#tekstury) · [Dźwięki](#dźwięki) · [Gracz](#gracz) · [Tryb ziemniaka](#tryb-ziemniaka) · [Wydajność](#wydajność) · [Świat](#świat) · [Oświetlenie](#oświetlenie) · [Czat i komendy](#czat-i-komendy) · [Dzień i noc](#dzień-i-noc) · [Sekret: kosmos](#sekret-kosmos) · [Gra ze znajomymi](#gra-ze-znajomymi) · [Zapis świata](#zapis-świata) · [Menu i motywy](#menu-i-motywy)
+**Spis treści:** [Samouczek i poradnik](#samouczek-i-poradnik) · [Klawisze](#klawisze) · [Osiągnięcia](#osiągnięcia) · [Energia i samopoczucie](#energia-i-samopoczucie) · [Tryby gry i ekwipunek](#tryby-gry-i-ekwipunek) · [Bloki naturalne i rośliny](#bloki-naturalne-i-rośliny) · [Woda](#woda) · [Ustawienia](#ustawienia) · [Tekstury](#tekstury) · [Dźwięki](#dźwięki) · [Gracz](#gracz) · [Tryb ziemniaka](#tryb-ziemniaka) · [Wydajność](#wydajność) · [Świat](#świat) · [Oświetlenie](#oświetlenie) · [Czat i komendy](#czat-i-komendy) · [Dzień i noc](#dzień-i-noc) · [Sekret: kosmos](#sekret-kosmos) · [Gra ze znajomymi](#gra-ze-znajomymi) · [Zapis świata](#zapis-świata) · [Menu i motywy](#menu-i-motywy)
 
 ## Samouczek i poradnik
 
@@ -20,6 +20,14 @@ samouczek można pominąć w pauzie, a powtórzyć w *Ustawienia →
 Poradnik*. W tej samej zakładce jest **poradnik** - ściąga w dziesięciu
 rozdziałach. Szczegóły i strojenie liczb pierwszych minut:
 [docs/samouczek.md](samouczek.md).
+
+## Klawisze
+
+Każdą czynność (ruch, kopanie, stawianie, jedzenie, okna, miejsca na
+pasku) można przypisać do innego klawisza albo przycisku myszy:
+*Ustawienia → Gracz → Klawisze*. Zajęty klawisz zamienia się miejscami
+z poprzednią czynnością, a samouczek, poradnik i podpowiedzi pokazują
+klawisze gracza. Szczegóły: [docs/klawisze.md](klawisze.md).
 
 ## Osiągnięcia
 
@@ -737,7 +745,8 @@ Nowa niepewna funkcja trafia najpierw tutaj: klucz w `EXPERIMENTS`
 
 Bez miejsca w menu (tylko z czatu): czas na wczytywanie chunków
 (`/ustaw wczytywanie 8`, 1-16 ms na klatkę) i napisy debugowania
-(klawisz F3 albo `/ustaw debug wyl`).
+(klawisz F3 albo `/ustaw debug wl`; od 0.99.0 na początku wyłączone -
+godzinę i numer dnia pokazuje okno statusu).
 
 Zmiany działają od razu, także w grze pod pauzą, i zapisują się
 w przeglądarce. Wartości domyślne są w `src/config.js`, lista ustawień

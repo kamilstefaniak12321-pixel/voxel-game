@@ -746,3 +746,90 @@ body:not([data-screen="game"]) #crosshair {
     white-space: nowrap;
     font-size: 0.92em;
 }
+
+
+/* ------------------------------------------------------------
+   Klawisze (0.99.0) - Ustawienia → Gracz → Klawisze
+   (Menu.showKeys, input/bindings.js)
+   ------------------------------------------------------------ */
+
+.keys-status {
+    flex: 0 0 auto;
+    min-height: 1.4em;
+    max-width: var(--list-width);
+    color: #e8c468;
+}
+
+.keys-list {
+    flex: 0 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 6px 22px;
+    width: var(--list-width);
+    max-width: 100%;
+    text-align: left;
+}
+
+.keys-group {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.keys-group > .keys-row {
+    flex: 0 0 auto;
+}
+
+details.keys-group > summary {
+    cursor: pointer;
+}
+
+details.keys-group[open] > summary {
+    margin-bottom: 6px;
+}
+
+details.keys-group > .keys-row + .keys-row {
+    margin-top: 4px;
+}
+
+.keys-group-title {
+    margin: 6px 0 2px;
+    font-size: 1em;
+    font-weight: 400;
+    color: var(--text-muted);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.22);
+}
+
+.keys-row {
+    display: grid;
+    grid-template-columns: 1fr 150px 34px;
+    gap: 6px;
+    align-items: center;
+}
+
+.keys-label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.keys-row .menu-button {
+    height: 30px;
+    padding: 0 6px;
+}
+
+.keys-row.changed .keys-key {
+    color: #e8c468;
+    border-color: #e8c468;
+}
+
+.keys-key.capturing {
+    color: var(--button-text-hover);
+    background: var(--button-background-hover);
+    border-color: var(--button-outline-hover);
+}
+
+.keys-note {
+    flex: 0 0 auto;
+    max-width: var(--list-width);
+}

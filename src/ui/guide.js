@@ -10,9 +10,16 @@
 //   id     - nazwa (do testów i zapamiętania, który jest otwarty),
 //   title  - nagłówek,
 //   intro  - zdanie pod nagłówkiem (opcjonalnie),
-//   lines  - punkty; { keys: 'E', text: '...' } - punkt z klawiszem
-//            na początku; sam napis - zwykły punkt,
+//   lines  - punkty; sam napis - zwykły punkt;
+//            { keys: '[inventory]', text: '...' } - punkt z klawiszem
+//            na początku; { text, touch } - punkt z innym tekstem na
+//            telefonie,
 //   touch  - punkty pokazywane zamiast lines na telefonie (opcjonalnie).
+//
+// Klawisze pisz nazwą czynności z input/bindings.js w nawiasach
+// kwadratowych: [eat] -> 'F', [use] -> 'PPM'. Gracz może je przypisać
+// inaczej (Ustawienia → Gracz → Klawisze) - poradnik pokazuje wtedy jego
+// klawisze. Na telefonie nawiasów nie ma: tam jest touch.
 //
 // Liczby w tekście muszą zgadzać się z grą - pilnuje tego
 // tools/sprawdz_samouczek.mjs (sekcja "Poradnik").
@@ -23,21 +30,23 @@ export const GUIDE = [
         id: 'controls',
         title: 'Sterowanie',
         lines: [
-            { keys: 'W A S D', text: 'chodzenie; dwa razy W albo R - bieg' },
+            { keys: '[forward] [left] [back] [right]', text: 'chodzenie; dwa razy [forward] albo [sprint] - bieg' },
             { keys: 'Mysz', text: 'rozglądanie się' },
-            { keys: 'Spacja', text: 'skok; w wodzie - płyń w górę' },
-            { keys: 'Shift', text: 'kucanie (nie spadasz z krawędzi); w wodzie - nurkuj' },
-            { keys: 'LPM', text: 'przytrzymaj - kopanie, aż blok pęknie' },
-            { keys: 'PPM', text: 'postaw blok, zbierz owoce, użyj tego, co trzymasz' },
+            { keys: '[jump]', text: 'skok; w wodzie - płyń w górę' },
+            { keys: '[crouch]', text: 'kucanie (nie spadasz z krawędzi); w wodzie - nurkuj' },
+            { keys: '[break]', text: 'przytrzymaj - kopanie, aż blok pęknie' },
+            { keys: '[use]', text: 'postaw blok, zbierz owoce, użyj tego, co trzymasz' },
             { keys: '1-9, kółko', text: 'wybór miejsca na pasku' },
-            { keys: 'E', text: 'ekwipunek i wytwarzanie' },
-            { keys: 'F', text: 'zjedz albo wypij to, co trzymasz' },
-            { keys: 'C', text: 'okno statusu (samopoczucie)' },
-            { keys: 'M', text: 'mapa terenu' },
-            { keys: 'L', text: 'księga osiągnięć' },
-            { keys: 'F5', text: 'widok z oczu, zza pleców, z przodu' },
-            { keys: 'T', text: 'czat; /pomoc - lista komend' },
-            { keys: 'Esc', text: 'pauza, ustawienia, zapis i wyjście' }
+            { keys: '[inventory]', text: 'ekwipunek i wytwarzanie' },
+            { keys: '[eat]', text: 'zjedz albo wypij to, co trzymasz' },
+            { keys: '[status]', text: 'okno statusu: samopoczucie i pora dnia' },
+            { keys: '[map]', text: 'mapa terenu' },
+            { keys: '[achievements]', text: 'księga osiągnięć' },
+            { keys: '[view]', text: 'widok z oczu, zza pleców, z przodu' },
+            { keys: '[chat]', text: 'czat; /pomoc - lista komend' },
+            { keys: '[debug]', text: 'napisy debugowania: współrzędne, godzina, na co patrzysz' },
+            { keys: 'Esc', text: 'pauza, ustawienia, zapis i wyjście' },
+            'Każdy klawisz i przycisk myszy możesz zmienić: Ustawienia → Gracz → Klawisze.'
         ],
         touch: [
             { keys: 'Lewa strona', text: 'joystick - chodzenie; do samego brzegu w przód - bieg' },
@@ -94,8 +103,10 @@ export const GUIDE = [
             'Opał: pień i siekiera w siatce wytwarzania dają 4 polana (siekiera zostaje).',
             'Opałem kliknij ziemię i dokładaj, aż będzie 6 polan. Potem dołóż podpałkę.',
             'Podpałka: trawa, słoma, kora brzozowa albo huba. Huba rozpala dwa razy szybciej niż trawa.',
-            'Starter ognia to 2 patyki. Wyceluj w ognisko i trzymaj prawy przycisk przez 5 sekund.',
-            'Pieczenie: trzymaj jabłko, orzechy albo żołędzie nad płomieniem przez 4 sekundy.',
+            { text: 'Starter ognia to 2 patyki. Wyceluj w ognisko i trzymaj [use] przez 5 sekund.',
+                touch: 'Starter ognia to 2 patyki. Wyceluj w ognisko i trzymaj przycisk z kostką przez 5 sekund.' },
+            { text: 'Pieczenie: jabłkiem, orzechami albo żołędziami wyceluj w płomień i trzymaj [use] przez 4 sekundy.',
+                touch: 'Pieczenie: jabłkiem, orzechami albo żołędziami wyceluj w płomień i trzymaj przycisk z kostką przez 4 sekundy.' },
             'Ognisko świeci i grzeje przez 8 minut, potem się dopala - zostaje popiół.'
         ]
     },
@@ -105,7 +116,8 @@ export const GUIDE = [
         lines: [
             'Spać można od 19:00 do 5:00. Sen przesuwa noc do 6:00 rano.',
             'Bez snu robisz się senny, a potem niewyspany: wolniejszy bieg i kopanie.',
-            'Goła ziemia (kucnij i kliknij ją pustą ręką) - słabe wyspanie.',
+            { text: 'Goła ziemia (kucnij - [crouch] - i kliknij ją pustą ręką: [use]) - słabe wyspanie.',
+                touch: 'Goła ziemia (trzymaj ▼ i stuknij ją pustą ręką) - słabe wyspanie.' },
             'Posłanie: 2 trawy → słoma, 4 słomy → pościel; połóż pościel na ziemi. Dobre wyspanie.',
             'Łóżko: stelaż z trzech stołów stolarskich (8 desek), postaw go i kliknij pościelą. Pełne wyspanie i premia na następny dzień.',
             'Lniana pościel (4 wiązki lnu) daje większą premię niż słomiana.'
@@ -127,8 +139,10 @@ export const GUIDE = [
         id: 'farming',
         title: 'Uprawa',
         lines: [
-            'Łopatą kliknij ziemię albo trawę prawym przyciskiem - powstaje rozgrzebana ziemia.',
-            'Na rozgrzebanej ziemi posadzisz owoc, orzech, żołądź albo szyszkę. Gdzie indziej prawy przycisk zjada owoc.',
+            { text: 'Łopatą kliknij ziemię albo trawę ([use]) - powstaje rozgrzebana ziemia.',
+                touch: 'Łopatą stuknij ziemię albo trawę - powstaje rozgrzebana ziemia.' },
+            { text: 'Na rozgrzebanej ziemi posadzisz owoc, orzech, żołądź albo szyszkę. Gdzie indziej [use] zjada owoc.',
+                touch: 'Na rozgrzebanej ziemi posadzisz owoc, orzech, żołądź albo szyszkę. Gdzie indziej stuknięcie zjada owoc.' },
             'Krzak rośnie etapami i owocuje; zebrane owoce odrastają. Drzewo wyrasta po kilku minutach.',
             'Puste pole po pewnym czasie zarasta z powrotem.'
         ]
@@ -147,8 +161,10 @@ export const GUIDE = [
         title: 'Co jeszcze warto wiedzieć',
         lines: [
             'Pochodnia: patyk i żywica (z pnia sosny) albo oliwki → 4 pochodnie. Barwnikiem zmienisz kolor płomienia.',
-            'Tratwa: 2 deski obok siebie. Postaw ją na wodzie i wsiądź prawym przyciskiem.',
-            'Mapa (M) pokazuje teren z góry. Księga osiągnięć (L) podpowiada, co jeszcze można zrobić.',
+            { text: 'Tratwa: 2 deski obok siebie. Postaw ją na wodzie i wsiądź ([use]).',
+                touch: 'Tratwa: 2 deski obok siebie. Postaw ją na wodzie i wsiądź stuknięciem.' },
+            { text: 'Mapa ([map]) pokazuje teren z góry. Księga osiągnięć ([achievements]) podpowiada, co jeszcze można zrobić.',
+                touch: 'Mapa (komenda /mapa) pokazuje teren z góry. Księga osiągnięć podpowiada, co jeszcze można zrobić.' },
             'W pauzie możesz otworzyć świat dla znajomych - dostaniesz kod zaproszenia.',
             'Samouczek można powtórzyć przyciskiem na górze tej zakładki.'
         ]

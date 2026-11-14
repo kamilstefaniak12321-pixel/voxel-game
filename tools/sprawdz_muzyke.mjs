@@ -108,7 +108,8 @@ equal([oldSettings.get('volumeMaster'), oldSettings.get('volumeUi'), oldSettings
     [35, 20, 80], 'dodanie muzyki zachowuje ustawienia gracza');
 oldSettings.set('volumeMusic', 0);
 equal(new Settings().get('volumeMusic'), 0, 'wyłączenie muzyki zostaje po ponownym wczytaniu');
-equal(JSON.parse(saved).revision, 2, 'nowy klucz nie wymusza resetu revision');
+// (Numer 3 - od 0.99.0: napisy F3 domyślnie wyłączone; muzyka go nie zmieniała.)
+equal(JSON.parse(saved).revision, 3, 'zapis dostaje bieżący numer wersji ustawień');
 oldSettings.set('volumeMusic', 103); equal(oldSettings.get('volumeMusic'), 100, 'górny limit muzyki');
 oldSettings.set('volumeMusic', -4); equal(oldSettings.get('volumeMusic'), 0, 'dolny limit muzyki');
 oldSettings.set('volumeMusic', 63); equal(oldSettings.get('volumeMusic'), 65, 'krok suwaka 5');

@@ -21,7 +21,7 @@ export const TEXTS = {
     achievementUnlockedAt: (date, world) => `Zdobyte ${date}${world ? ` · świat „${world}”` : ''}`,
     achievementByCommand: ' · przyznane komendą',
     achievementProgress: (now, goal) => `Postęp: ${now} z ${goal}`,
-    achievementsHint: 'W grze: klawisz L',
+    achievementsHint: 'W grze: klawisz [achievements]',
     achievementsHintTouch: 'W grze: przycisk z książką u góry ekranu',
 
     // Lista światów
@@ -138,7 +138,9 @@ export const TEXTS = {
     updateReadyInGameApk: (version) => `Pobrano nową aplikację (${version}) - zainstaluj ją: ekran tytułowy - Zainstaluj.`,
 
     // Czat (pokazywane po wejściu do świata)
-    chatHint: 'E - ekwipunek, T - czat, /pomoc - lista komend do testowania gry, F5 - widok z trzeciej osoby',
+    // Klawisze nazwą czynności ([inventory]) - main.js wstawia te, które
+    // gracz ma przypisane (input/bindings.js).
+    chatHint: '[inventory] - ekwipunek, [status] - samopoczucie i godzina, [chat] - czat, [view] - widok z trzeciej osoby, /pomoc - lista komend do testowania gry',
 
     // To samo na telefonie (sterowanie dotykowe - src/input/TouchControls.js).
     touchHint: 'Lewa strona ekranu - chodzenie (do samego brzegu w przód - bieg), prawa - rozglądanie. ' +
@@ -241,6 +243,24 @@ export const TEXTS = {
     inventoryScale: (value) => `Rozmiar ekwipunku: ${value}%`,
     hudScale: (value) => `Interfejs w grze: ${value}%`,
     showDebug: (on) => `Debug (F3): ${on ? 'Wł.' : 'Wył.'}`,
+
+    // Klawisze (Ustawienia → Gracz → Klawisze; input/bindings.js)
+    keys: (changed) => {
+        const count = Object.keys(changed ?? {}).length;
+        return count ? `Klawisze: zmienione (${count})` : 'Klawisze: domyślne';
+    },
+    keysTitle: 'Klawisze',
+    keysIntro: 'Kliknij klawisz obok czynności, a potem naciśnij nowy - może to być też przycisk myszy.',
+    keysPress: 'Naciśnij...',
+    keysCapture: (action) => `${action}: naciśnij klawisz albo przycisk myszy. Esc - bez zmian.`,
+    keysSwapped: (action, key) => `Zamiana klawiszy: czynność „${action}” ma teraz ${key}.`,
+    keysHotbar: 'Pasek bloków: klawisze 1-9 (kliknij, żeby rozwinąć)',
+    keysChangeTitle: 'Kliknij, żeby zmienić',
+    keysRestoreTitle: (key) => `Przywróć domyślny: ${key}`,
+    keysReset: 'Domyślne klawisze',
+    keysResetDone: 'Przywrócono domyślne klawisze.',
+    keysNote: 'Esc zawsze otwiera pauzę. Samouczek, poradnik i podpowiedzi pokazują klawisze, które tu ustawisz. ' +
+        'W przeglądarce Ctrl i Alt razem z innymi klawiszami mogą uruchamiać jej skróty (np. Ctrl+W zamyka kartę) - w aplikacji tego nie ma.',
     showFps: (on) => `Licznik FPS: ${on ? 'Wł.' : 'Wył.'}`,
     dynamicLight: (on) => `Dynamiczne światło: ${on ? 'Wł.' : 'Wył.'}`,
     loadBudget: (value) => `Wczytywanie: ${value} ms/klatkę`,

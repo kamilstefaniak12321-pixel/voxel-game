@@ -28,6 +28,7 @@ import { ChestView, CHEST_VIEW_WIDTH, CHEST_VIEW_HEIGHT } from './ChestView.js';
 import { coveredItem, insertIntoChest, putIntoCell, takeFromCell, visibleItem } from '../game/ChestState.js';
 import { skyUniforms } from '../sky/skyShader.js';
 import { SETTINGS_DEFAULTS } from '../settings/Settings.js';
+import { bindings, formatKeys, mouseCode } from '../input/bindings.js';
 
 // ------------------------------------------------------------
 // EKWIPUNEK (klawisz E)
@@ -73,8 +74,8 @@ const TABS = {
 export const EQUIPMENT_SLOTS = ['Ubranie', 'Plecak', 'Pas na narzędzia'];
 
 const HELP = {
-    blocks: 'Klik - weź stos | PPM - jedna sztuka | Shift + klik - na pasek | 1-9 - na to miejsce paska | kosz - usuń | E - zamknij',
-    inventory: 'Klik - weź / połóż | PPM - połowa / jedna sztuka | Shift + klik - pasek ↔ ekwipunek | wynik: klik - weź, Shift + klik - ile się da | 1-9 - zamiana z paskiem | E - zamknij'
+    blocks: 'Klik - weź stos | PPM - jedna sztuka | Shift + klik - na pasek | 1-9 - na to miejsce paska | kosz - usuń | [inventory] - zamknij',
+    inventory: 'Klik - weź / połóż | PPM - połowa / jedna sztuka | Shift + klik - pasek ↔ ekwipunek | wynik: klik - weź, Shift + klik - ile się da | 1-9 - zamiana z paskiem | [inventory] - zamknij'
 };
 
 // Na telefonie (stuknięcia zamiast myszy i klawiszy).
@@ -498,7 +499,7 @@ export class InventoryScreen {
         workspace.append(main);
         panel.append(workspace);
 
-        frame.append(this.barElement(creative), panel, el('p', 'inv-help inv-footer', (game.touchMode ? HELP_TOUCH : HELP)[this.tab]));
+        frame.append(this.barElement(creative), panel, el('p', 'inv-help inv-footer', game.touchMode ? HELP_TOUCH[this.tab] : formatKeys(HELP[this.tab])));
 
         this.root.replaceChildren(frame);
 
@@ -1136,6 +1137,20 @@ export class InventoryScreen {
     // --------------------------------------------------------
 
     onMouseDown(event) {
+
+        // Ekwipunek przypisany do środkowego albo bocznego przycisku myszy
+        // (input/bindings.js) zamyka się tym samym przyciskiem. Lewy
+        // i prawy zostają do przenoszenia rzeczy.
+
+        if (event.button !== 0 && event.button !== 2 && bindings.logical(mouseCode(event.button)) === 'KeyE') {
+
+            event.preventDefault();
+
+            this.handlers.close(true);
+
+            return;
+
+        }
 
         const tab = event.target.closest('.inv-tab');
 
@@ -1924,7 +1939,11 @@ export class InventoryScreen {
         // Przytrzymany E (powtarzanie klawisza) nie zamyka okna -
         // dopiero kolejne wciśnięcie.
 
-        if (event.code === 'KeyE') {
+        // (Klawisze według przypisań gracza - input/bindings.js.)
+
+        const code = bindings.logical(event.code);
+
+        if (code === 'KeyE') {
 
             event.preventDefault();
 
@@ -1939,7 +1958,7 @@ export class InventoryScreen {
 
         // 1-9 nad miejscem / blokiem: zamiana z tym miejscem paska.
 
-        const digit = /^Digit([1-9])$/.exec(event.code);
+        const digit = /^Digit([1-9])$/.exec(code ?? '');
 
         if (!digit) {
             return;

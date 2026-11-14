@@ -18,7 +18,9 @@
 //   id     - nazwa (do testów),
 //   title  - nagłówek,
 //   text   - co zrobić: komputer; touch - to samo na telefonie
-//            (bez touch - ten sam tekst),
+//            (bez touch - ten sam tekst). Klawisze pisz nazwą
+//            czynności z input/bindings.js: [eat] -> 'F', {break} ->
+//            'lewy przycisk myszy' - gracz mógł je przypisać inaczej,
 //   hint   - dodatkowa rada małym drukiem (opcjonalnie),
 //   done   - (tutorial) => czy krok zaliczony; do dyspozycji:
 //            tutorial.saw(nazwa)  - czy zaszło zdarzenie,
@@ -32,6 +34,7 @@ import { BLOCK_TYPES } from '../blocks/BlockRegistry.js';
 import { getTool } from '../items/ItemRegistry.js';
 import { SLOT_COUNT } from './Inventory.js';
 import { isNight } from './Wellbeing.js';
+import { formatKeys } from '../input/bindings.js';
 
 // Ile sekund na ekranie zostaje "Zrobione!", zanim pojawi się następny krok.
 export const TUTORIAL_DONE_SECONDS = 2.2;
@@ -45,20 +48,22 @@ export const TUTORIAL_WALK_BLOCKS = 8;
 const isLog = (type) => ['log', 'stripped'].includes(BLOCK_TYPES[type]?.part);
 const isPlanks = (type) => BLOCK_TYPES[type]?.part === 'planks' || type === 'dark_planks';
 const isAxe = (type) => getTool(type) === 'axe';
+// Pełna godzina w świecie gry: 'Jest po 14:00 - ' (bez zegara - nic).
+const hourText = (time) => (time?.formatClock ? `Jest po ${Number(time.formatClock().split(':')[0])}:00 - poczekaj` : 'Poczekaj');
 const anyFire = (game, test) => [...(game.campfires?.fires?.values() ?? [])].some(test);
 
 export const TUTORIAL_STEPS = [
     {
         id: 'move',
         title: 'Rozejrzyj się',
-        text: 'Ruszaj myszą, żeby się rozglądać. Chodzisz klawiszami W, A, S, D, skaczesz spacją. Przejdź kilka kroków.',
+        text: 'Ruszaj myszą, żeby się rozglądać. Chodzisz klawiszami [forward], [left], [back], [right], skok to [jump]. Przejdź kilka kroków.',
         touch: 'Przesuwaj palcem po prawej stronie ekranu, żeby się rozglądać. Lewa strona to joystick - przejdź kilka kroków. Przycisk ▲ to skok.',
         done: (t) => t.walked >= TUTORIAL_WALK_BLOCKS
     },
     {
         id: 'wood',
         title: 'Zdobądź drewno',
-        text: 'Podejdź do drzewa, wyceluj w pień i przytrzymaj lewy przycisk myszy, aż pień pęknie. Trafi do paska na dole ekranu.',
+        text: 'Podejdź do drzewa, wyceluj w pień i przytrzymaj {break}, aż pień pęknie. Trafi do paska na dole ekranu.',
         touch: 'Podejdź do drzewa, wyceluj w pień i przytrzymaj na nim palec, aż pęknie. Trafi do paska na dole ekranu.',
         hint: 'Gołą ręką idzie to powoli - za chwilę zrobisz siekierę.',
         done: (t) => t.saw('log') || t.has(isLog) || t.has(isPlanks)
@@ -66,7 +71,7 @@ export const TUTORIAL_STEPS = [
     {
         id: 'planks',
         title: 'Zrób deski',
-        text: 'Otwórz ekwipunek klawiszem E. Po prawej jest siatka wytwarzania 2 × 2: połóż w niej pień i zabierz deski z pola wyniku.',
+        text: 'Otwórz ekwipunek ([inventory]). Po prawej jest siatka wytwarzania 2 × 2: połóż w niej pień i zabierz deski z pola wyniku.',
         touch: 'Otwórz ekwipunek (skrzynka u góry ekranu). Jest w nim siatka wytwarzania 2 × 2: połóż w niej pień i zabierz deski z pola wyniku.',
         hint: 'Przycisk Przepisy w ekwipunku pokazuje wszystko, co da się zrobić - kliknięcie przepisu samo układa składniki.',
         done: (t) => t.saw('crafted:planks') || t.has(isPlanks) || t.has((type) => type === 'stick') || t.has(isAxe)
@@ -87,7 +92,7 @@ export const TUTORIAL_STEPS = [
     {
         id: 'eat',
         title: 'Zjedz coś',
-        text: 'Poszukaj jedzenia: owoce z krzaków i jabłka z jabłoni zbierasz prawym przyciskiem myszy, a z rozbitych liści dębu i buka wypadają żołędzie i orzeszki. Weź jedzenie do ręki i naciśnij F.',
+        text: 'Poszukaj jedzenia: owoce z krzaków i jabłka z jabłoni zbierasz kliknięciem ([use]), a z rozbitych liści dębu i buka wypadają żołędzie i orzeszki. Weź jedzenie do ręki i naciśnij [eat].',
         touch: 'Poszukaj jedzenia: owoce z krzaków i jabłka z jabłoni zbierasz stuknięciem, a z rozbitych liści dębu i buka wypadają żołędzie i orzeszki. Weź jedzenie do ręki i stuknij serce u góry ekranu - w oknie jest przycisk Zjedz.',
         hint: 'Bez jedzenia ubywa energii: wolniej biegasz i kopiesz.',
         done: (t) => t.saw('ate')
@@ -95,7 +100,7 @@ export const TUTORIAL_STEPS = [
     {
         id: 'status',
         title: 'Sprawdź samopoczucie',
-        text: 'Serce w rogu ekranu pokazuje, jak się czujesz. Naciśnij C, żeby zobaczyć szczegóły: energię, żołądek, kondycję i sen.',
+        text: 'Serce w rogu ekranu pokazuje, jak się czujesz. Naciśnij [status], żeby zobaczyć szczegóły: energię, żołądek, kondycję i sen.',
         touch: 'Serce u góry ekranu pokazuje, jak się czujesz. Stuknij je, żeby zobaczyć szczegóły: energię, żołądek, kondycję i sen.',
         hint: 'Trzy porządne posiłki dziennie poprawiają kondycję na kolejne dni.',
         done: (t) => t.saw('statusOpened')
@@ -103,7 +108,7 @@ export const TUTORIAL_STEPS = [
     {
         id: 'campfire',
         title: 'Ułóż ognisko',
-        text: 'Zrób opał: w siatce wytwarzania połóż pień obok siekiery (siekiera zostaje). Z opałem w ręce kliknij prawym przyciskiem ziemię i dokładaj, aż będzie 6 polan.',
+        text: 'Zrób opał: w siatce wytwarzania połóż pień obok siekiery (siekiera zostaje). Z opałem w ręce kliknij ziemię ([use]) i dokładaj, aż będzie 6 polan.',
         touch: 'Zrób opał: w siatce wytwarzania połóż pień obok siekiery (siekiera zostaje). Z opałem w ręce stuknij ziemię i dokładaj, aż będzie 6 polan.',
         hint: 'Z jednego pnia wychodzą 4 polana - potrzebujesz dwóch pni.',
         done: (t) => t.saw('fireLit') || anyFire(t.game, (fire) => fire.logs.length >= 6)
@@ -111,7 +116,7 @@ export const TUTORIAL_STEPS = [
     {
         id: 'fire',
         title: 'Rozpal ognisko',
-        text: 'Dołóż do ogniska podpałkę - trawę (prawy przycisk myszy). Z dwóch patyków zrób starter ognia, wyceluj nim w ognisko i przytrzymaj prawy przycisk przez 5 sekund.',
+        text: 'Dołóż do ogniska podpałkę - trawę ([use]). Z dwóch patyków zrób starter ognia, wyceluj nim w ognisko i przytrzymaj [use] przez 5 sekund.',
         touch: 'Dołóż do ogniska podpałkę - trawę (stuknij ognisko). Z dwóch patyków zrób starter ognia, wyceluj nim w ognisko i przytrzymaj przycisk z kostką przez 5 sekund.',
         hint: 'Nad ogniem upieczesz jabłka, orzechy i żołędzie: trzymaj je nad płomieniem. Pieczone to porządny posiłek.',
         done: (t) => t.saw('fireLit')
@@ -119,11 +124,13 @@ export const TUTORIAL_STEPS = [
     {
         id: 'sleep',
         title: 'Prześpij noc',
-        text: 'Po 19:00 można spać. Na początek wystarczy ziemia: kucnij (Shift) i kliknij prawym przyciskiem ziemię pustą ręką. Rano budzisz się sam.',
+        text: 'Po 19:00 można spać. Na początek wystarczy ziemia: kucnij ([crouch]) i kliknij ziemię pustą ręką ([use]). Rano budzisz się sam.',
         touch: 'Po 19:00 można spać. Na początek wystarczy ziemia: trzymaj ▼ i stuknij ziemię pustą ręką. Rano budzisz się sam.',
         hint: 'Lepiej się wyśpisz na posłaniu (2 trawy → słoma, 4 słomy → pościel), a najlepiej w łóżku.',
-        // Do wieczora krok czeka - widać, ile zostało do nocy.
-        wait: (t) => (isNight(t.game.time?.days ?? 0) ? null : 'Poczekaj do wieczora - możesz w tym czasie zbierać jedzenie i trawę.'),
+        // Do wieczora krok czeka - widać, która jest godzina (pełna:
+        // karta nie przerysowuje się co chwilę).
+        wait: (t) => (isNight(t.game.time?.days ?? 0) ? null
+            : `${hourText(t.game.time)} do wieczora. Możesz w tym czasie zbierać jedzenie i trawę.`),
         done: (t) => t.saw('slept')
     }
 ];
@@ -302,7 +309,8 @@ export class Tutorial {
             index: this.state.step + 1,
             total: TUTORIAL_STEPS.length,
             title: step.title,
-            text: touch && step.touch ? step.touch : step.text,
+            // Telefon: własny tekst kroku (klawiszy tam nie ma).
+            text: touch && step.touch ? step.touch : formatKeys(step.text),
             hint: step.hint ?? null,
             wait: this.celebrate > 0 ? null : step.wait?.(this) ?? null,
             completed: this.celebrate > 0

@@ -73,6 +73,7 @@ export const SETTING_WORDS = {
     'licznik-fps': 'showFps',
     meteoryty: 'meteorites',
     samouczek: 'tutorial',
+    klawisze: 'keys',
     glosnosc: 'volumeMaster',
     'glosnosc-bloki': 'volumeBlocks',
     'glosnosc-zjawiska': 'volumeWorld',
@@ -128,6 +129,20 @@ function parseSettingValue(key, text) {
     }
 
     const word = simplify(text);
+
+
+    // Klawisze zmienia się na ich ekranie; komendą - tylko powrót do
+    // domyślnych.
+
+    if (key === 'keys') {
+
+        if (['domyslne', 'reset'].includes(word)) {
+            return {};
+        }
+
+        throw new CommandError('Klawisze zmienisz w Ustawienia → Gracz → Klawisze. /ustaw klawisze domyslne przywraca domyślne.');
+
+    }
 
 
     // Gra wieloosobowa: imię i adres serwera połączeń jak wpisane

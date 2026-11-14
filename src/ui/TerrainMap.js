@@ -1,4 +1,5 @@
 import { CHUNK_HEIGHT } from '../config.js';
+import { bindings } from '../input/bindings.js';
 import { getBlockTypeById } from '../blocks/BlockRegistry.js';
 import { LANDFORMS, RELIEFS } from '../world/terrain/landforms.js';
 import { ROCK_INFO, SOIL_INFO, blockNamePl } from '../world/terrain/rocks.js';
@@ -258,9 +259,9 @@ export class TerrainMap {
 
         this.title.textContent = this.isSection
             ? `Mapa: ${MAP_LAYERS[layer]} | ${size} bloków w poziomie (1 punkt = ${scale} ${unit}), ` +
-              `wysokość 0-${CHUNK_HEIGHT - 1} | ← za tobą, przed tobą → | M albo /mapa - zamknij`
+              `wysokość 0-${CHUNK_HEIGHT - 1} | ← za tobą, przed tobą → | ${bindings.label('map')} albo /mapa - zamknij`
             : `Mapa: ${MAP_LAYERS[layer]} | ${size} x ${size} bloków (1 punkt = ${scale} ${unit}) | ` +
-              `środek ${this.center.x}, ${this.center.z} | M albo /mapa - zamknij`;
+              `środek ${this.center.x}, ${this.center.z} | ${bindings.label('map')} albo /mapa - zamknij`;
 
 
         // Liczenie od nowa: najpierw wysokości (z ramką na nachylenie),

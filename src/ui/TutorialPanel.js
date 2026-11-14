@@ -30,7 +30,7 @@ export class TutorialPanel {
         if (!this.root) return;
         const view = game?.tutorial?.view() ?? null;
         const touch = Boolean(game?.touchMode);
-        const signature = view ? `${view.id}|${view.completed}|${view.wait ?? ''}|${touch}` : '';
+        const signature = view ? `${view.id}|${view.completed}|${view.wait ?? ''}|${touch}|${view.text}` : '';
         if (signature === this.signature) return;
         this.signature = signature;
         this.root.hidden = !view;

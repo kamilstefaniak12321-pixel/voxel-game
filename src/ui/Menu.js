@@ -6,6 +6,7 @@ import { DEFAULT_TERRAIN, DEFAULT_GAME_MODE } from '../config.js';
 import { SETTINGS_RANGES, SETTINGS_CHOICES, graphicsPreset, nextGraphicsPreset } from '../settings/Settings.js';
 import { SETTINGS_TABS, ADVANCED_VIDEO } from './settingsLayout.js';
 import { GUIDE } from './guide.js';
+import { ACTIONS, ACTION_GROUPS, Bindings, formatKeys, keyLabel, mouseCode } from '../input/bindings.js';
 import { SCENES, SCENE_TIMES } from '../dev/scenes.js';
 import { hasCustomSkin, chooseSkinFile, resetSkin } from '../player/skin.js';
 import {
@@ -95,6 +96,7 @@ const MENU_SCENE_VIEWS = {
     join: 'river',
     achievements: 'mountains',
     settings: 'forest',
+    keys: 'forest',
     diagnostics: 'forest',
     error: 'home'
 };
@@ -839,16 +841,22 @@ export class Menu {
 
             const list = el('ul', 'guide-lines');
 
+            // Klawisze w tekście ([eat]) - te, które gracz ma przypisane.
+
             for (const line of (touch && chapter.touch) || chapter.lines) {
 
                 const item = el('li');
 
                 if (typeof line === 'string') {
-                    item.textContent = line;
+                    item.textContent = touch ? line : formatKeys(line);
+                }
+                else if (line.keys === undefined) {
+                    item.textContent = touch ? line.touch ?? line.text : formatKeys(line.text);
                 }
                 else {
                     item.classList.add('guide-key-line');
-                    item.append(el('span', 'guide-keys', line.keys), el('span', '', line.text));
+                    item.append(el('span', 'guide-keys', touch ? line.keys : formatKeys(line.keys)),
+                        el('span', '', touch ? line.text : formatKeys(line.text)));
                 }
 
                 list.append(item);
@@ -1083,7 +1091,7 @@ export class Menu {
 
         const hint = document.body.classList.contains('touch')
             ? TEXTS.achievementsHintTouch
-            : TEXTS.achievementsHint;
+            : formatKeys(TEXTS.achievementsHint);
 
         screen.append(buttons, el('p', 'menu-note', hint));
 
@@ -1182,6 +1190,10 @@ export class Menu {
 
         const screen = this.newScreen('settings', !fromPause);
 
+        // Dokąd wracają ekrany otwierane z ustawień (Klawisze).
+
+        this.settingsReturn = returnTo;
+
         const settings = this.settings;
 
 
@@ -1234,6 +1246,12 @@ export class Menu {
         for (const key of keys) {
 
             if (APP_ONLY_SETTINGS.has(key) && !this.appInfo) {
+                continue;
+            }
+
+            // Klawisze - tylko z klawiaturą i myszą.
+
+            if (key === 'keys' && this.handlers.touchMode?.()) {
                 continue;
             }
 
@@ -1367,6 +1385,217 @@ export class Menu {
     }
 
 
+    // --------------------------------------------------------
+    // Klawisze (Ustawienia → Gracz → Klawisze)
+    //
+    // Lista czynności (ACTIONS z input/bindings.js) z przyciskiem
+    // klawisza. Kliknięcie przycisku czeka na następny klawisz albo
+    // przycisk myszy i przypisuje go czynności; zajęty klawisz zamienia
+    // się miejscami z poprzednim właścicielem. Zapis: ustawienie 'keys'.
+    // --------------------------------------------------------
+
+    showKeys(returnTo = 'title', notice = '') {
+
+        const fromPause = returnTo === 'pause';
+
+        const screen = this.newScreen('keys', !fromPause);
+
+        const settings = this.settings;
+
+        const current = new Bindings(settings.get('keys'));
+
+        const back = () => this.showSettings(returnTo, 'player');
+
+        this.onEscape = back;
+
+
+        const status = el('p', 'menu-note keys-status', notice || TEXTS.keysIntro);
+
+        // Czekanie na klawisz: funkcja, która je kończy (albo null).
+
+        let stopCapture = null;
+
+        const capture = (action, keyButton) => {
+
+            stopCapture?.();
+
+            keyButton.textContent = TEXTS.keysPress;
+            keyButton.classList.add('capturing');
+            status.textContent = TEXTS.keysCapture(action.label);
+
+            const finish = (code) => {
+
+                stopCapture?.();
+
+                // Esc - bez zmian.
+
+                if (code === null) {
+                    this.showKeys(returnTo);
+                    return;
+                }
+
+                const result = current.assign(action.id, code);
+
+                if (!result.ok) {
+                    this.showKeys(returnTo, `${result.reason}.`);
+                    return;
+                }
+
+                settings.set('keys', { ...current.custom });
+
+                this.showKeys(returnTo, result.swapped
+                    ? TEXTS.keysSwapped(result.swapped.label, keyLabel(current.codeOf(result.swapped.id)))
+                    : '');
+
+            };
+
+            // Faza przechwytywania: klawisz nie trafia do menu (Esc nie
+            // zamyka ekranu) ani do przycisków pod kursorem.
+
+            const onKey = (event) => {
+
+                event.preventDefault();
+                event.stopImmediatePropagation();
+
+                if (!event.repeat) {
+                    finish(event.code === 'Escape' ? null : event.code);
+                }
+
+            };
+
+            const onMouse = (event) => {
+
+                event.preventDefault();
+                event.stopImmediatePropagation();
+
+                // Kliknięcie, które przyjdzie po tym wciśnięciu, nie może
+                // już nic nacisnąć.
+
+                const swallow = (click) => {
+                    click.preventDefault();
+                    click.stopImmediatePropagation();
+                };
+
+                for (const type of ['click', 'auxclick', 'contextmenu']) {
+                    window.addEventListener(type, swallow, { capture: true, once: true });
+                    setTimeout(() => window.removeEventListener(type, swallow, true), 400);
+                }
+
+                finish(mouseCode(event.button));
+
+            };
+
+            window.addEventListener('keydown', onKey, true);
+            window.addEventListener('mousedown', onMouse, true);
+
+            stopCapture = () => {
+                window.removeEventListener('keydown', onKey, true);
+                window.removeEventListener('mousedown', onMouse, true);
+                stopCapture = null;
+            };
+
+        };
+
+        // Boczne przyciski myszy cofają stronę w przeglądarce - nie tutaj.
+
+        const noNavigation = (event) => {
+            if (event.button >= 3) event.preventDefault();
+        };
+
+        window.addEventListener('mouseup', noNavigation, true);
+
+        this.screenCleanup = () => {
+            stopCapture?.();
+            window.removeEventListener('mouseup', noNavigation, true);
+        };
+
+
+        const list = el('div', 'keys-list');
+
+        for (const [group, title] of Object.entries(ACTION_GROUPS)) {
+
+            // Pasek bloków (dziewięć cyfr) jest zwinięty, dopóki gracz
+            // niczego w nim nie zmienił - lista jest wtedy o połowę krótsza.
+
+            const folded = group === 'hotbar';
+
+            const section = el(folded ? 'details' : 'div', 'keys-group');
+
+            section.dataset.group = group;
+
+            if (folded) {
+                section.open = Boolean(this.keysHotbarOpen) || ACTIONS.some((entry) => entry.group === group && current.codeOf(entry.id) !== entry.code);
+                section.addEventListener('toggle', () => { this.keysHotbarOpen = section.open; });
+                section.append(el('summary', 'keys-group-title', TEXTS.keysHotbar));
+            }
+            else {
+                section.append(el('h3', 'keys-group-title', title));
+            }
+
+            for (const action of ACTIONS.filter((entry) => entry.group === group)) {
+
+                const code = current.codeOf(action.id);
+                const changed = code !== action.code;
+
+                const row = el('div', `keys-row${changed ? ' changed' : ''}`);
+
+                row.dataset.action = action.id;
+
+                const keyButton = button(keyLabel(code), () => capture(action, keyButton), 'keys-key');
+
+                keyButton.title = TEXTS.keysChangeTitle;
+
+                // ↺ - ta jedna czynność z powrotem na domyślny klawisz.
+
+                const restore = button('↺', () => {
+
+                    const result = current.restore(action.id);
+
+                    settings.set('keys', { ...current.custom });
+
+                    this.showKeys(returnTo, result.swapped
+                        ? TEXTS.keysSwapped(result.swapped.label, keyLabel(current.codeOf(result.swapped.id)))
+                        : '');
+
+                }, 'keys-restore', true);
+
+                restore.title = TEXTS.keysRestoreTitle(keyLabel(action.code));
+                restore.setAttribute('aria-label', restore.title);
+                restore.disabled = !changed;
+
+                row.append(el('span', 'keys-label', action.label), keyButton, restore);
+
+                section.append(row);
+
+            }
+
+            list.append(section);
+
+        }
+
+
+        const buttons = el('div', 'menu-row settings-buttons');
+
+        const resetAll = button(TEXTS.keysReset, () => {
+            settings.set('keys', {});
+            this.showKeys(returnTo, TEXTS.keysResetDone);
+        });
+
+        resetAll.disabled = !current.changed;
+
+        buttons.append(resetAll, button(TEXTS.done, back, '', true));
+
+        screen.append(
+            el('h2', 'menu-heading', TEXTS.keysTitle),
+            status,
+            list,
+            el('p', 'menu-note keys-note', TEXTS.keysNote),
+            buttons
+        );
+
+    }
+
+
     showDiagnostics(returnTo = 'title') {
         if (!this.handlers.diagnostics) return;
         const screen = this.newScreen('diagnostics', returnTo !== 'pause');
@@ -1425,6 +1654,14 @@ export class Menu {
 
         if (key === 'plantModels') {
             return this.plantModelPicker();
+        }
+
+        if (key === 'keys') {
+
+            // Osobny ekran z listą czynności (showKeys).
+
+            return button(label(settings.get('keys')), () => this.showKeys(this.settingsReturn ?? 'title'), 'settings-keys');
+
         }
 
         if (key === 'graphicsPreset') {

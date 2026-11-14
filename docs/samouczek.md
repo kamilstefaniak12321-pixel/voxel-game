@@ -108,6 +108,9 @@ w celach bez zmian. Pełne liczby pokazuje
 - Ustawienie `tutorial` (`src/settings/Settings.js`), zakładka `guide`
   (`src/ui/settingsLayout.js`).
 - Stan w zapisie świata: `worldInfo.tutorial = { step, done, skipped }`.
+- Klawisze w tekstach kroków i poradnika pisze się nazwą czynności
+  (`[eat]`, `{break}`) - gracz mógł je przypisać inaczej
+  ([klawisze.md](klawisze.md)); telefon ma własne teksty (`touch`).
 - Testy: `node tools/sprawdz_samouczek.mjs` (kroki, przebieg, liczby
   w tekstach zgodne z grą), `node tools/sprawdz_balans.mjs` (cele
   strojenia).

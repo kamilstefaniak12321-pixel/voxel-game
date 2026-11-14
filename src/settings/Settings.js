@@ -9,6 +9,7 @@ import {
     CHUNK_LOAD_BUDGET_MS,
     THIRD_PERSON_DISTANCE
 } from '../config.js';
+import { cleanBindings } from '../input/bindings.js';
 
 // ------------------------------------------------------------
 // USTAWIENIA GRACZA
@@ -29,10 +30,11 @@ const STORAGE_KEY = 'voxel-game-settings';
 // i chce, żeby dostali ją wszyscy (także ci, którzy mają ją zapisaną),
 // zwiększamy wersję i dopisujemy klucze do RESET_AT_REVISION - zapis
 // starszy niż ta wersja wraca dla nich do wartości domyślnej (raz).
-const SETTINGS_REVISION = 2;
+export const SETTINGS_REVISION = 3;
 
 const RESET_AT_REVISION = {
-    2: ['bounceLight', 'farTerrain']   // 0.17.0: światło odbite eksperymentalne, dalszy daleki teren
+    2: ['bounceLight', 'farTerrain'],  // 0.17.0: światło odbite eksperymentalne, dalszy daleki teren
+    3: ['showDebug']                   // 0.99.0: napisy debugowania (F3) domyślnie wyłączone
 };
 
 
@@ -94,11 +96,12 @@ export const SETTINGS_DEFAULTS = {
     inventoryStyle: 'wood',                        // wygląd ekwipunku: wood - drewniany, light - jasny
     inventoryScale: 175,                           // rozmiar całego okna ekwipunku; dopasowany do ekranu
     hudScale: 100,                                 // rozmiar paska, czatu i napisów w grze (procent)
-    showDebug: true,                               // informacje F3
+    showDebug: false,                              // informacje F3 (od 0.99.0 domyślnie wyłączone)
     showFps: false,                                // licznik klatek w rogu ekranu
     meteorites: true,                              // meteoryty spadające na ziemię
     autoUpdates: true,                             // aplikacje: nowa wersja pobiera się sama (Wył. - po kliknięciu Pobierz)
     tutorial: true,                                // pytanie o samouczek w nowych światach (tryb przygody)
+    keys: {},                                      // klawisze zmienione przez gracza: { czynność: kod } (input/bindings.js)
 
     // Tekstury (paczka tekstur - src/rendering/TexturePacks.js)
     textureResolution: 0,                          // piksele na blok w grze (0 = automatyczna, z paczki)
@@ -355,7 +358,14 @@ export class Settings {
     reset() {
 
         for (const [key, value] of Object.entries(this.defaults)) {
-            this.set(key, value);
+
+            // Klawisze mają własne "Przywróć domyślne" na swoim ekranie -
+            // zmiana grafiki nie powinna ich kasować.
+
+            if (key !== 'keys') {
+                this.set(key, value);
+            }
+
         }
 
     }
@@ -403,6 +413,13 @@ export class Settings {
         if (key === 'playerName' || key === 'netServer') {
 
             return typeof value === 'string' ? value.replace(/[\u0000-\u001f]/g, '').trim().slice(0, key === 'playerName' ? 16 : 200) : fallback;
+
+        }
+
+
+        if (key === 'keys') {
+
+            return cleanBindings(value);
 
         }
 

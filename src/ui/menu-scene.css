@@ -391,3 +391,56 @@ body[data-menu-backdrop="ready"] #menu .scene-menu::before {
     }
 }
 #menu .screen-diagnostics .menu-scene-panel { width: min(900px, 100%); }
+
+/* Poradnik i klawisze (0.99.0) na jasnym panelu żywego menu: te same
+   elementy co w pauzie (menu.css), tylko w kolorach panelu. */
+
+#menu .scene-menu .guide-chapter {
+    background: rgba(255, 255, 255, 0.5);
+    border: 1px solid #c0ccc3;
+    border-radius: 3px;
+}
+
+#menu .scene-menu .guide-chapter[open] {
+    background: rgba(255, 255, 255, 0.78);
+    border-color: #486d57;
+}
+
+#menu .scene-menu .guide-title:hover {
+    background: rgba(72, 109, 87, 0.1);
+}
+
+#menu .scene-menu .guide-lines,
+#menu .scene-menu .guide-intro {
+    font-size: 16px;
+}
+
+#menu .scene-menu .guide-keys {
+    border-color: #9fb0a5;
+    background: #ffffff;
+}
+
+#menu .scene-menu .keys-status {
+    color: #6f5210;
+}
+
+#menu .scene-menu .keys-label,
+#menu .scene-menu .keys-group-title {
+    font-size: 16px;
+}
+
+#menu .scene-menu .keys-group-title {
+    border-bottom-color: #c0ccc3;
+}
+
+#menu .scene-menu .keys-row .menu-button {
+    min-height: 32px;
+    height: 32px;
+    font-size: 16px;
+}
+
+#menu .scene-menu .keys-row.changed .keys-key {
+    color: #152d22;
+    border-color: #b98a1c;
+    box-shadow: inset 0 -3px 0 #dba92a;
+}

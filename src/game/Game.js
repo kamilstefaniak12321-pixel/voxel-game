@@ -72,6 +72,7 @@ import { RainEffects } from '../rendering/RainEffects.js';
 import { BlockCracks } from '../interaction/BlockCracks.js';
 import { COLOR_LEVEL } from '../world/Light.js';
 import { Wellbeing } from './Wellbeing.js';
+import { formatKeys } from '../input/bindings.js';
 
 import {
     PLAYER_REACH,
@@ -2373,14 +2374,15 @@ export class Game extends GameInteraction {
 
             `${targetInfo}<br><br>` +
 
-            `1-9 / kółko - wybór bloku | środkowy przycisk - weź blok | E - ekwipunek<br>` +
+            // Klawisze z przypisań gracza (input/bindings.js).
+            formatKeys(`1-9 / kółko - wybór bloku | [pick] - weź blok | [inventory] - ekwipunek<br>` +
 
-            `LPM - zniszcz | PPM - postaw / zbierz owoce<br>` +
+            `[break] - zniszcz | [use] - postaw / zbierz owoce<br>` +
 
-            `WASD - ruch | Spacja - skok | Shift - kucanie | 2× W albo R - bieg<br>` +
-            `Mysz - kamera | F5 - widok | ESC - pauza | F3 - debug | [ ] - czas ±1 h<br>` +
+            `[forward] [left] [back] [right] - ruch | [jump] - skok | [crouch] - kucanie | 2× [forward] albo [sprint] - bieg<br>` +
+            `Mysz - kamera | [view] - widok | ESC - pauza | [debug] - debug | `) + `[ ] - czas ±1 h<br>` +
 
-            `T - czat | /pomoc - komendy` +
+            formatKeys(`[chat] - czat | /pomoc - komendy`) +
 
             `<br><br>${status}`;
 

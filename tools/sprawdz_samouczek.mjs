@@ -38,6 +38,7 @@ registerHooks({
 
 const { Tutorial, TUTORIAL_STEPS, TUTORIAL_DONE_SECONDS, TUTORIAL_QUICK_SECONDS, TUTORIAL_WALK_BLOCKS } = await import('../src/game/Tutorial.js');
 const { GUIDE } = await import('../src/ui/guide.js');
+const { ACTIONS, Bindings, formatKeys } = await import('../src/input/bindings.js');
 const { Inventory } = await import('../src/game/Inventory.js');
 const { findRecipe } = await import('../src/crafting/Crafting.js');
 const { SETTINGS_DEFAULTS } = await import('../src/settings/Settings.js');
@@ -68,12 +69,30 @@ const check = (condition, message) => { assert.ok(condition, message); checks++;
         }
         check(typeof step.done === 'function', `${step.id}: warunek zaliczenia`);
         // Tekst na komputer mówi o klawiszach albo myszy - telefon potrzebuje własnego.
-        if (/klawisz|myszy|Shift|naciśnij|Naciśnij/.test(step.text)) check(Boolean(step.touch) && !/klawisz|myszy|Shift/.test(step.touch), `${step.id}: osobny tekst na telefon`);
+        if (/klawisz|myszy|Shift|naciśnij|Naciśnij|[[{][a-z0-9]+[\]}]/.test(step.text)) check(Boolean(step.touch) && !/klawisz|myszy|Shift|[[{][a-z0-9]+[\]}]/.test(step.touch), `${step.id}: osobny tekst na telefon`);
+        // Klawisze nazwą czynności ([eat], {break}) - każda nazwa istnieje,
+        // a gotowy tekst nie ma już nawiasów.
+        for (const [, id] of step.text.matchAll(/[[{]([a-z0-9]+)[\]}]/g)) check(ACTIONS.some((action) => action.id === id), `${step.id}: czynność ${id}`);
+        check(!/[[\]{}]/.test(formatKeys(step.text)) && formatKeys(step.text).length <= 280, `${step.id}: tekst z klawiszami`);
+        // Litery klawiszy na sztywno (naciśnij F) nie poszłyby za zmianą klawiszy.
+        check(!/(naciśnij|Naciśnij|klawiszem|klawisz) [A-Z]\b|\(Shift\)|przycisk(iem)? myszy/.test(step.text), `${step.id}: klawisze tylko nazwą czynności`);
     }
     const text = (id) => TUTORIAL_STEPS.find((step) => step.id === id);
     check(text('fire').text.includes(`${CAMPFIRE_IGNITE_SECONDS} sekund`) && text('campfire').text.includes(`${CAMPFIRE_CAPACITY} polan`), 'Ognisko: liczby jak w grze');
     check(text('sleep').text.includes(`${NIGHT_FROM}:00`), 'Sen: godzina nocy jak w grze');
     check(TINDERS.short_grass === 1, 'Trawa jest podpałką (krok o rozpalaniu)');
+    // Domyślne klawisze w tekstach - jak dotąd.
+    check(/klawiszami W, A, S, D, skok to Spacja/.test(formatKeys(text('move').text)), 'Ruch: W, A, S, D i Spacja');
+    check(/przytrzymaj lewy przycisk myszy, aż/.test(formatKeys(text('wood').text)), 'Drewno: lewy przycisk myszy');
+    check(/ekwipunek \(E\)/.test(formatKeys(text('planks').text)) && /naciśnij F\./.test(formatKeys(text('eat').text)) && /Naciśnij C,/.test(formatKeys(text('status').text)), 'Ekwipunek E, jedzenie F, status C');
+    check(/kucnij \(Shift\)/.test(formatKeys(text('sleep').text)) && /przytrzymaj PPM przez 5 sekund/.test(formatKeys(text('fire').text)), 'Kucanie Shift, rozpalanie PPM');
+    // Po zmianie klawiszy teksty idą za nimi.
+    {
+        const custom = new Bindings({ eat: 'KeyG', break: 'KeyK', use: 'Mouse3', crouch: 'ControlLeft', forward: 'ArrowUp' });
+        check(/naciśnij G\./.test(custom.format(text('eat').text)) && /zbierasz kliknięciem \(Mysz 4\)/.test(custom.format(text('eat').text)), 'Zmienione: jedzenie pod G, zbieranie bocznym przyciskiem');
+        check(/przytrzymaj klawisz K, aż/.test(custom.format(text('wood').text)), 'Zmienione: kopanie klawiszem K');
+        check(/kucnij \(Lewy Ctrl\)/.test(custom.format(text('sleep').text)) && /klawiszami ↑, A, S, D/.test(custom.format(text('move').text)), 'Zmienione: kucanie i ruch');
+    }
     // Przepisy, o których mówi samouczek.
     check(findRecipe(['oak_log'])?.result.join() === 'oak_planks,4', 'Pień -> 4 deski');
     check(findRecipe(['oak_planks', null, 'birch_planks', null])?.result.join() === 'stick,4', 'Dwie deski jedna nad drugą -> 4 patyki');
@@ -136,7 +155,7 @@ const settle = (game) => run(game, TUTORIAL_DONE_SECONDS + 0.6);
     check(tutorial.start() && tutorial.active && current(game) === 'move', 'Start: pierwszy krok');
     check(game.worldInfo.tutorial.step === 0 && game.worldInfo.tutorial.done === false && changes === 1, 'Stan trafia do zapisu świata');
     const view = tutorial.view();
-    check(view.index === 1 && view.total === TUTORIAL_STEPS.length && view.title === TUTORIAL_STEPS[0].title && view.text === TUTORIAL_STEPS[0].text && !view.completed, 'Karta: numer kroku, nagłówek, tekst');
+    check(view.index === 1 && view.total === TUTORIAL_STEPS.length && view.title === TUTORIAL_STEPS[0].title && view.text === formatKeys(TUTORIAL_STEPS[0].text) && /W, A, S, D/.test(view.text) && !view.completed, 'Karta: numer kroku, nagłówek, tekst');
 
     // 1. Ruch: trzeba naprawdę przejść kawałek; teleport się nie liczy.
     run(game, 1, 2);
@@ -202,6 +221,11 @@ const settle = (game) => run(game, TUTORIAL_DONE_SECONDS + 0.6);
 
     // 10. Sen: w dzień krok czeka i mówi dlaczego.
     check(/wieczora/.test(tutorial.view().wait ?? ''), 'W dzień: "poczekaj do wieczora"');
+    // Z zegarem świata karta mówi, która jest godzina (pełna - bez ciągłego przerysowywania).
+    game.time.formatClock = () => '14:37';
+    check(/^Jest po 14:00 - poczekaj do wieczora\./.test(tutorial.view().wait), 'W dzień: godzina na karcie');
+    game.time.formatClock = () => '07:05';
+    check(/^Jest po 7:00 /.test(tutorial.view().wait), 'Godzina bez zera na początku');
     game.time.days = 0.85;
     run(game, 0.3);
     check(tutorial.view().wait === null, 'Nocą podpowiedź o czekaniu znika');
@@ -274,7 +298,7 @@ const settle = (game) => run(game, TUTORIAL_DONE_SECONDS + 0.6);
     check(phone.tutorial.view().text === TUTORIAL_STEPS[0].touch && /joystick/.test(phone.tutorial.view().text), 'Telefon: tekst o dotyku');
     const noTouchText = TUTORIAL_STEPS.findIndex((step) => !step.touch);
     for (let index = 0; index < noTouchText; index++) phone.tutorial.skipStep();
-    check(phone.tutorial.view().text === TUTORIAL_STEPS[noTouchText].text, 'Krok bez wersji na telefon pokazuje zwykły tekst');
+    check(phone.tutorial.view().text === TUTORIAL_STEPS[noTouchText].text && !/[[\]{}]/.test(TUTORIAL_STEPS[noTouchText].text), 'Krok bez wersji na telefon pokazuje zwykły tekst (bez klawiszy)');
 
     // Zmiana trybu gry na kreatywny chowa samouczek, powrót go przywraca.
     const switched = makeGame();
@@ -311,14 +335,25 @@ const settle = (game) => run(game, TUTORIAL_DONE_SECONDS + 0.6);
 {
     check(GUIDE.length >= 8 && new Set(GUIDE.map((chapter) => chapter.id)).size === GUIDE.length, `Poradnik: ${GUIDE.length} rozdziałów, nazwy bez powtórzeń`);
     for (const chapter of GUIDE) {
-        check(chapter.title.length >= 4 && chapter.lines.length >= 3 && chapter.lines.length <= 16, `${chapter.id}: nagłówek i kilka punktów`);
+        check(chapter.title.length >= 4 && chapter.lines.length >= 3 && chapter.lines.length <= 18, `${chapter.id}: nagłówek i kilka punktów`);
         for (const line of [...chapter.lines, ...(chapter.touch ?? [])]) {
             const text = typeof line === 'string' ? line : line.text;
             check(text.length >= 8 && text.length <= 190, `${chapter.id}: krótki punkt (${text.length} znaków)`);
-            if (typeof line !== 'string') check(line.keys.length > 0 && line.keys.length <= 14, `${chapter.id}: klawisz "${line.keys}"`);
+            if (typeof line !== 'string' && line.keys !== undefined) check(formatKeys(line.keys).length > 0 && formatKeys(line.keys).length <= 14, `${chapter.id}: klawisz "${line.keys}"`);
+            if (typeof line !== 'string' && line.keys === undefined) check(typeof line.touch === 'string' && !/[[\]]/.test(line.touch) && line.touch.length <= 190, `${chapter.id}: wersja punktu na telefon`);
+            for (const part of [text, typeof line === 'string' ? '' : line.keys ?? '']) {
+                for (const [, id] of part.matchAll(/\[([a-z0-9]+)\]/g)) check(ACTIONS.some((action) => action.id === id), `${chapter.id}: czynność ${id}`);
+                check(!/[[\]]/.test(formatKeys(part)), `${chapter.id}: klawisze podstawione`);
+            }
         }
     }
-    const chapter = (id) => GUIDE.find((entry) => entry.id === id).lines.map((line) => (typeof line === 'string' ? line : `${line.keys} ${line.text}`)).join('\n');
+    const chapter = (id) => GUIDE.find((entry) => entry.id === id).lines.map((line) => formatKeys(typeof line === 'string' ? line : `${line.keys ?? ''} ${line.text}`)).join('\n');
+    // Sterowanie: każda czynność, którą da się przypisać (poza paskiem), jest w poradniku.
+    const controls = GUIDE[0].lines.map((line) => (typeof line === 'string' ? line : `${line.keys} ${line.text}`)).join('\n');
+    for (const action of ACTIONS.filter((entry) => entry.group !== 'hotbar' && !['pick', 'command'].includes(entry.id))) {
+        check(controls.includes(`[${action.id}]`), `Sterowanie: ${action.label}`);
+    }
+    check(/W A S D/.test(chapter('controls')) && /Ustawienia → Gracz → Klawisze/.test(chapter('controls')), 'Sterowanie: domyślne klawisze i droga do ich zmiany');
     check(GUIDE[0].id === 'controls' && GUIDE[0].touch?.length >= 6, 'Pierwszy rozdział: sterowanie, z wersją na telefon');
     // Liczby w poradniku zgodne z grą.
     check(chapter('fire').includes(`${CAMPFIRE_CAPACITY} polan`) && chapter('fire').includes(`${CAMPFIRE_IGNITE_SECONDS} sekund`) && chapter('fire').includes(`${ROAST_SECONDS} sekundy`), 'Ognisko: polana, rozpalanie, pieczenie');

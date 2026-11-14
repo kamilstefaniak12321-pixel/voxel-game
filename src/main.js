@@ -13,6 +13,7 @@ import { createBlockIcons } from './ui/BlockIcons.js';
 import { installUiTextureSheets } from './ui/UiTextureSheets.js';
 import { createChatControl } from './app/ChatControl.js';
 import { installGameKeys } from './app/keys.js';
+import { bindings, formatKeys, plainKeys } from './input/bindings.js';
 import { GAME_COMMANDS, setSceneTime } from './commands/gameCommands.js';
 import { PLANT_PACK_ERRORS } from './blocks/plantPacks.js';
 import { PerfMonitor } from './game/PerfMonitor.js';
@@ -115,6 +116,10 @@ let touchMode = touchParameter !== null
 // telefonie inne wartości na start (TOUCH_SETTINGS w config.js).
 
 const settings = new Settings(touchMode ? TOUCH_SETTINGS : {});
+
+// Klawisze przypisane przez gracza (Ustawienia → Gracz → Klawisze).
+
+bindings.load(settings.get('keys'));
 
 
 // Tryb ziemniaka można włączyć też adresem gry: ...index.html?ziemniak
@@ -489,6 +494,8 @@ applyPlantSettings();
 
 settings.onChange((key) => {
 
+    if (key === 'keys' || key === null) bindings.load(settings.get('keys'));
+
     if (key === 'performanceLogs') frameDiagnostics.setEnabled(settings.get('performanceLogs'));
     if (key !== 'skin' && key !== 'texturePack') diagnostics.breadcrumb('settings.changed', 'Zmieniono ustawienie gry.', { key, value: settings.get(key) });
 
@@ -607,11 +614,13 @@ async function playWorld(worldInfo, { client = null } = {}) {
 
         // Komunikaty gry (np. gdzie spadł meteoryt) trafiają na czat.
 
-        game.onMessage = (text) => chat.print(text, 'hint');
+        game.onMessage = (text) => chat.print(plainKeys(text), 'hint');
 
         // Krótkie komunikaty (np. "Ekwipunek pełny") - nad paskiem bloków.
 
-        game.onNotice = (text) => hotbar.showName(text);
+        // (Napisy gry mówią "LPM" / "PPM" - po zmianie klawiszy wstawiamy
+        // te, które gracz przypisał: input/bindings.js.)
+        game.onNotice = (text) => hotbar.showName(plainKeys(text));
 
         // Serce (samopoczucie) reaguje na burczenie, posiłki i nową dobę.
         game.onWellbeing = (event) => statusPanel.signal(event);
@@ -652,7 +661,7 @@ async function playWorld(worldInfo, { client = null } = {}) {
         resume();
     }
 
-    chat.print(touchMode ? TEXTS.touchHint : TEXTS.chatHint, 'hint');
+    chat.print(touchMode ? TEXTS.touchHint : formatKeys(TEXTS.chatHint), 'hint');
 
     if (game.mode === 'developer') {
         chat.print(TEXTS.developerHint, 'hint');
@@ -1056,6 +1065,7 @@ installGameKeys({
     getState: () => state,
     getGame: () => game,
     isTouch: () => touchMode,
+    input,
     actions: {
         inventory: () => openInventory(),
         achievements: () => openAchievements(),

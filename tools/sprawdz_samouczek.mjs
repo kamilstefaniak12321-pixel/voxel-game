@@ -52,6 +52,7 @@ const { NIGHT_FROM, NIGHT_UNTIL } = await import('../src/game/Wellbeing.js');
 const { WAKE_HOUR } = await import('../src/game/Sleep.js');
 const { BENCH_PRODUCTS } = await import('../src/crafting/carpentry.js');
 const { TOOL_SPEED } = await import('../src/config.js');
+const { DRY_SECONDS } = await import('../src/items/clay.js');
 
 let checks = 0;
 const check = (condition, message) => { assert.ok(condition, message); checks++; };
@@ -364,7 +365,8 @@ const settle = (game) => run(game, TUTORIAL_DONE_SECONDS + 0.6);
     check(findRecipe(['oak_planks', 'oak_planks', 'oak_planks', 'oak_planks'])?.result[0] === 'chest' && findRecipe(['oak_planks', 'oak_planks', 'stick', 'stick'])?.result[0] === 'oak_carpenter_table', 'Skrzynia i stół stolarski jak w poradniku');
     check(findRecipe(['stone', 'stone', null, 'stick'])?.result[0] === 'pickaxe' && findRecipe(['stone', null, 'stick', null])?.result[0] === 'shovel', 'Kilof i łopata jak w poradniku');
     check(findRecipe(['stick', 'resin'])?.result.join() === 'torch,4' && findRecipe(['oak_planks', 'oak_planks'])?.result[0] === 'raft', 'Pochodnia i tratwa jak w poradniku');
-    check(findRecipe(['clay', 'clay'])?.result.join() === 'clay_cup,2', 'Kubek jak w poradniku');
+    check(findRecipe(['clay', 'clay'])?.result.join() === 'wet_clay_cup,2' && findRecipe(['clay'])?.result.join() === 'wet_clay_brick,2' && /2 mokre kubki/.test(chapter('herbs')), 'Mokry kubek i cegły jak w poradniku');
+    check(chapter('clay').includes(`${DRY_SECONDS / 60} minutach`) && findRecipe(['clay_brick', 'clay_brick', 'clay_brick', 'clay_brick'])?.result[0] === 'clay_bricks', 'Suszenie i cegły jak w poradniku');
 }
 
 console.log(`OK: samouczek i poradnik - ${checks} sprawdzeń (${TUTORIAL_STEPS.length} kroków, pytanie, pomijanie, powtórka, zapis, ${GUIDE.length} rozdziałów poradnika).`);

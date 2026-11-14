@@ -2,7 +2,7 @@
 
 > Ta strona jest generowana z kodu gry (`python tools/wiki.py`) - nie zmieniaj jej ręcznie, zmiany przepadną przy następnym generowaniu.
 
-Wersja gry **1.0.0** - 176 przepisów. Wytwarza się w ekwipunku (**E**): siatka 2 x 2 obok miejsc ekwipunku, wynik po prawej (klik - weź, Shift + klik - ile się da). Przycisk 📖 *Przepisy* otwiera księgę - klik na przepisie sam układa składniki. Przepisy *z kształtem* można przesuwać po siatce i odbijać w poziomie; przepisy *bez kształtu* - obojętne, gdzie leżą składniki. Z czatu: `/przepisy`, `/wytworz <przepis>`.
+Wersja gry **1.1.0** - 184 przepisów. Wytwarza się w ekwipunku (**E**): siatka 2 x 2 obok miejsc ekwipunku, wynik po prawej (klik - weź, Shift + klik - ile się da). Przycisk 📖 *Przepisy* otwiera księgę - klik na przepisie sam układa składniki. Przepisy *z kształtem* można przesuwać po siatce i odbijać w poziomie; przepisy *bez kształtu* - obojętne, gdzie leżą składniki. Z czatu: `/przepisy`, `/wytworz <przepis>`.
 
 
 ## Ziemia
@@ -286,6 +286,24 @@ Wersja gry **1.0.0** - 176 przepisów. Wytwarza się w ekwipunku (**E**): siatka
 
 ## Budulec
 
+### Cegły
+
+<img src="przepisy/clay_bricks.png" alt="Cegły: 4 x Cegła (ułożenie: BB / BB; B = Cegła)">
+
+4 x Cegła (z kształtem). Nazwa przepisu: `clay_bricks`. Cztery suche cegły. Mocny blok do budowania.
+
+### Czerwone cegły
+
+<img src="przepisy/red_clay_bricks.png" alt="Czerwone cegły: 4 x Czerwona cegła (ułożenie: BB / BB; B = Czerwona cegła)">
+
+4 x Czerwona cegła (z kształtem). Nazwa przepisu: `red_clay_bricks`. Cztery suche cegły. Mocny blok do budowania.
+
+### Białe cegły
+
+<img src="przepisy/white_clay_bricks.png" alt="Białe cegły: 4 x Biała cegła (ułożenie: BB / BB; B = Biała cegła)">
+
+4 x Biała cegła (z kształtem). Nazwa przepisu: `white_clay_bricks`. Cztery suche cegły. Mocny blok do budowania.
+
 ### Tynk wapienny x4
 
 <img src="przepisy/lime_plaster.png" alt="Tynk wapienny x4: 2 x Wapień + 2 x Piasek (obojętne gdzie)">
@@ -336,21 +354,21 @@ Wersja gry **1.0.0** - 176 przepisów. Wytwarza się w ekwipunku (**E**): siatka
 
 ### Kubek ziół na sen
 
-<img src="przepisy/brew_calm.png" alt="Kubek ziół na sen: 1 x Gliniany kubek + 2 x zioło na sen (kwiat lipy, bukiet lawendy) (obojętne gdzie)">
+<img src="przepisy/brew_calm.png" alt="Kubek ziół na sen: 1 x gliniany kubek (z dowolnej gliny, suchy) + 2 x zioło na sen (kwiat lipy, bukiet lawendy) (obojętne gdzie)">
 
-1 x Gliniany kubek + 2 x zioło na sen (kwiat lipy, bukiet lawendy) (bez kształtu). Nazwa przepisu: `brew_calm`. Przytrzymaj PPM na płonącym ognisku - powstanie napar. Najbliższy sen będzie głębszy.
+1 x gliniany kubek (z dowolnej gliny, suchy) + 2 x zioło na sen (kwiat lipy, bukiet lawendy) (bez kształtu). Nazwa przepisu: `brew_calm`. Przytrzymaj PPM na płonącym ognisku - powstanie napar. Najbliższy sen będzie głębszy.
 
 ### Kubek ziół leczniczych
 
-<img src="przepisy/brew_heal.png" alt="Kubek ziół leczniczych: 1 x Gliniany kubek + 2 x zioło lecznicze (rumianek, babka, liście szałwii, kwiat nagietka) (obojętne gdzie)">
+<img src="przepisy/brew_heal.png" alt="Kubek ziół leczniczych: 1 x gliniany kubek (z dowolnej gliny, suchy) + 2 x zioło lecznicze (rumianek, babka, liście szałwii, kwiat nagietka) (obojętne gdzie)">
 
-1 x Gliniany kubek + 2 x zioło lecznicze (rumianek, babka, liście szałwii, kwiat nagietka) (bez kształtu). Nazwa przepisu: `brew_heal`. Przytrzymaj PPM na płonącym ognisku - powstanie napar. Stłuczona noga goi się szybciej.
+1 x gliniany kubek (z dowolnej gliny, suchy) + 2 x zioło lecznicze (rumianek, babka, liście szałwii, kwiat nagietka) (bez kształtu). Nazwa przepisu: `brew_heal`. Przytrzymaj PPM na płonącym ognisku - powstanie napar. Stłuczona noga goi się szybciej.
 
 ### Kubek ziół wzmacniających
 
-<img src="przepisy/brew_vigor.png" alt="Kubek ziół wzmacniających: 1 x Gliniany kubek + 2 x zioło wzmacniające (pokrzywa, nasiona gorczycy) (obojętne gdzie)">
+<img src="przepisy/brew_vigor.png" alt="Kubek ziół wzmacniających: 1 x gliniany kubek (z dowolnej gliny, suchy) + 2 x zioło wzmacniające (pokrzywa, nasiona gorczycy) (obojętne gdzie)">
 
-1 x Gliniany kubek + 2 x zioło wzmacniające (pokrzywa, nasiona gorczycy) (bez kształtu). Nazwa przepisu: `brew_vigor`. Przytrzymaj PPM na płonącym ognisku - powstanie napar. Mniej się męczysz i sprawniej pracujesz.
+1 x gliniany kubek (z dowolnej gliny, suchy) + 2 x zioło wzmacniające (pokrzywa, nasiona gorczycy) (bez kształtu). Nazwa przepisu: `brew_vigor`. Przytrzymaj PPM na płonącym ognisku - powstanie napar. Mniej się męczysz i sprawniej pracujesz.
 
 
 ## Światło
@@ -817,11 +835,41 @@ Wersja gry **1.0.0** - 176 przepisów. Wytwarza się w ekwipunku (**E**): siatka
 
 2 x trawa (krótka, wysoka, wydmowa) albo trzcina (bez kształtu). Nazwa przepisu: `straw`. Wysuszona trawa. Cztery sztuki dają słomianą pościel.
 
-### Gliniany kubek x2
+### Mokry kubek z gliny x2
 
-<img src="przepisy/clay_cup.png" alt="Gliniany kubek x2: 2 x Glina (obojętne gdzie)">
+<img src="przepisy/wet_clay_cup.png" alt="Mokry kubek z gliny x2: 2 x Glina (obojętne gdzie)">
 
-2 x Glina (bez kształtu). Nazwa przepisu: `clay_cup`. Naczynie na napary. Po wypiciu naparu kubek wraca do ekwipunku.
+2 x Glina (bez kształtu). Nazwa przepisu: `wet_clay_cup`. Mokry kubek trzeba wysuszyć: wyrzuć go (klawisz wyrzucania, domyślnie Q) na słońce - po ok. 2 minutach dnia zamieni się w kubek, z którego da się pić.
+
+### Mokry kubek z czerwonej gliny x2
+
+<img src="przepisy/wet_red_clay_cup.png" alt="Mokry kubek z czerwonej gliny x2: 2 x Czerwona glina (obojętne gdzie)">
+
+2 x Czerwona glina (bez kształtu). Nazwa przepisu: `wet_red_clay_cup`. Mokry kubek trzeba wysuszyć: wyrzuć go (klawisz wyrzucania, domyślnie Q) na słońce - po ok. 2 minutach dnia zamieni się w kubek, z którego da się pić.
+
+### Mokry kubek z białej gliny x2
+
+<img src="przepisy/wet_white_clay_cup.png" alt="Mokry kubek z białej gliny x2: 2 x Biała glina (obojętne gdzie)">
+
+2 x Biała glina (bez kształtu). Nazwa przepisu: `wet_white_clay_cup`. Mokry kubek trzeba wysuszyć: wyrzuć go (klawisz wyrzucania, domyślnie Q) na słońce - po ok. 2 minutach dnia zamieni się w kubek, z którego da się pić.
+
+### Mokra cegła z gliny x2
+
+<img src="przepisy/wet_clay_brick.png" alt="Mokra cegła z gliny x2: 1 x Glina (obojętne gdzie)">
+
+1 x Glina (bez kształtu). Nazwa przepisu: `wet_clay_brick`. Mokrą cegłę trzeba wysuszyć: wyrzuć ją (klawisz wyrzucania, domyślnie Q) na słońce - po ok. 2 minutach dnia wyschnie.
+
+### Mokra cegła z czerwonej gliny x2
+
+<img src="przepisy/wet_red_clay_brick.png" alt="Mokra cegła z czerwonej gliny x2: 1 x Czerwona glina (obojętne gdzie)">
+
+1 x Czerwona glina (bez kształtu). Nazwa przepisu: `wet_red_clay_brick`. Mokrą cegłę trzeba wysuszyć: wyrzuć ją (klawisz wyrzucania, domyślnie Q) na słońce - po ok. 2 minutach dnia wyschnie.
+
+### Mokra cegła z białej gliny x2
+
+<img src="przepisy/wet_white_clay_brick.png" alt="Mokra cegła z białej gliny x2: 1 x Biała glina (obojętne gdzie)">
+
+1 x Biała glina (bez kształtu). Nazwa przepisu: `wet_white_clay_brick`. Mokrą cegłę trzeba wysuszyć: wyrzuć ją (klawisz wyrzucania, domyślnie Q) na słońce - po ok. 2 minutach dnia wyschnie.
 
 ### Starter ognia
 
@@ -1097,6 +1145,7 @@ Składnik z grupy to dowolna rzecz z listy (np. patyki z desek różnych drzew).
 - **deski (dowolne)**: Deski świerkowe, Deski sosnowe, Deski bukowe, Deski lipowe, Deski dębowe, Deski brzozowe, Deski jabłoniowe, Deski olchowe, Deski wierzbowe, Deski akacji, Deski cypryśnika, Deski wiśni, Deski klonowe, Deski z kosodrzewiny, Deski oliwkowe, Deski eukaliptusowe, Deski sekwojowe, Deski miłorzębowe, Deski jakarandowe
 - **skała (kamień, granit, wapień, piaskowiec, łupek, bazalt)**: Kamień, Granit, Wapień, Piaskowiec, Łupek, Bazalt
 - **szyszka (dowolna)**: Szyszka świerka, Szyszka sosny, Szyszeczki olchy, Szyszka kosodrzewiny, Szyszka sekwoi
+- **gliniany kubek (z dowolnej gliny, suchy)**: Gliniany kubek, Czerwony gliniany kubek, Biały gliniany kubek
 - **trawa (krótka, wysoka, wydmowa) albo trzcina**: Krótka trawa, Wysoka trawa, Piaskownica (trawa wydmowa), Trzcina
 - **żywica albo oliwki**: Żywica, Oliwki
 - **igliwie (świerka albo sosny)**: Igliwie świerka, Igliwie sosny

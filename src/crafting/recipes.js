@@ -96,6 +96,12 @@ export const GROUPS = {
         types: ['spruce_cone', 'pine_cone', ...CONES]
     },
 
+    cup: {
+        label: 'gliniany kubek (z dowolnej gliny, suchy)',
+        icon: 'clay_cup',
+        types: CUPS
+    },
+
     grass: {
         label: 'trawa (krótka, wysoka, wydmowa) albo trzcina',
         icon: 'tall_grass',
@@ -241,7 +247,8 @@ for (const pack of PLANT_PACKS) {
 import { FIRE_WOODS, fuelType } from '../game/CampfireState.js';
 import { CHEST_KINDS } from '../blocks/chest.js';
 import { WOODS } from '../blocks/woods.js';
-import { TEAS, CUP } from '../items/foods.js';
+import { TEAS } from '../items/foods.js';
+import { CLAY_TYPES, CUPS, DRY_SECONDS, wetCup, wetBrick, dryBrick, brickBlock } from '../items/clay.js';
 import { EFFECTS } from '../items/effects.js';
 
 export const RECIPES = [
@@ -272,10 +279,25 @@ export const RECIPES = [
     // Napary (0.98.1, docs/ziola.md): kubek z gliny, do niego dwa zioła
     // z jednej grupy; kubek ziół podgrzany nad płonącym ogniskiem
     // (trzymany PPM) to napar. Wypity napar oddaje kubek.
-    { id: CUP, result: [CUP, 2], ingredients: ['clay', 'clay'],
-        note: 'Naczynie na napary. Po wypiciu naparu kubek wraca do ekwipunku.' },
+    // Od 1.1.0 (items/clay.js): z gliny lepi się MOKRY kubek, który musi
+    // wyschnąć na słońcu (wyrzucony pod gołym niebem, w dzień). Z suchego
+    // da się pić - z każdej z trzech glin.
+    ...CLAY_TYPES.map((clay) => ({
+        id: wetCup(clay), result: [wetCup(clay), 2], ingredients: [clay, clay],
+        note: `Mokry kubek trzeba wysuszyć: wyrzuć go (klawisz wyrzucania, domyślnie Q) na słońce - po ok. ${DRY_SECONDS / 60} minutach dnia zamieni się w kubek, z którego da się pić.`
+    })),
+    // Cegły: jedna glina - dwie mokre cegły; po wyschnięciu cztery cegły
+    // dają blok.
+    ...CLAY_TYPES.map((clay) => ({
+        id: wetBrick(clay), result: [wetBrick(clay), 2], ingredients: [clay],
+        note: `Mokrą cegłę trzeba wysuszyć: wyrzuć ją (klawisz wyrzucania, domyślnie Q) na słońce - po ok. ${DRY_SECONDS / 60} minutach dnia wyschnie.`
+    })),
+    ...CLAY_TYPES.map((clay) => ({
+        id: brickBlock(clay), result: [brickBlock(clay), 1], pattern: ['BB', 'BB'], key: { B: dryBrick(clay) },
+        note: 'Cztery suche cegły. Mocny blok do budowania.'
+    })),
     ...Object.entries(TEAS).map(([effect, { brew, herbs }]) => ({
-        id: brew, result: [brew, 1], ingredients: [CUP, `#${herbs}`, `#${herbs}`],
+        id: brew, result: [brew, 1], ingredients: ['#cup', `#${herbs}`, `#${herbs}`],
         note: `Przytrzymaj PPM na płonącym ognisku - powstanie napar. ${EFFECTS[effect].text}.`
     })),
     // Wianek z kwiatów: ozdoba na ścianę (blocks/decorations.js).

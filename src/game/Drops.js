@@ -14,7 +14,9 @@
 // Jeden wpis: { id, type, count, x, y, z, vx, vy, vz, rest, age, wait }.
 //   rest - leży (nie liczymy mu fizyki),
 //   wait - ile sekund jeszcze nie da się go podnieść (żeby wyrzucony
-//          przedmiot nie wrócił od razu do ręki).
+//          przedmiot nie wrócił od razu do ręki),
+//   dry  - ile sekund mokra gliniana rzecz schła już na słońcu (1.1.0 -
+//          items/clay.js): po DRY_SECONDS zamienia się w suchą.
 //
 // Przedmiot nie znika z czasem - leży, dopóki ktoś go nie podniesie.
 // Gdy jest ich za dużo (DROP_LIMIT), znikają najstarsze.
@@ -27,6 +29,7 @@ import { CHUNK_HEIGHT, WORLD_BORDER } from '../config.js';
 import { itemExists, currentType } from '../items/ItemRegistry.js';
 import { isLiquidId } from '../blocks/BlockRegistry.js';
 import { STACK_SIZE } from './Inventory.js';
+import { driesInto, sunDries, DRY_SECONDS, DRY_SKY_LIGHT } from '../items/clay.js';
 
 // Z jakiej odległości (bloki) gracz podnosi przedmiot.
 export const DROP_PICKUP_RADIUS = 1.4;
@@ -71,7 +74,8 @@ export function restoreDrop(value) {
     return {
         id, type, count: Math.min(count, STACK_SIZE * 4), x, y, z,
         vx: finite(value.vx), vy: finite(value.vy), vz: finite(value.vz),
-        rest: value.rest === true, age: 0, wait: DROP_WAIT
+        rest: value.rest === true, age: 0, wait: DROP_WAIT,
+        dry: Math.max(0, Math.min(DRY_SECONDS, finite(value.dry)))
     };
 }
 
@@ -81,7 +85,8 @@ export function dropState(drop) {
     return {
         id: drop.id, type: drop.type, count: drop.count,
         x: round(drop.x), y: round(drop.y), z: round(drop.z),
-        vx: round(drop.vx), vy: round(drop.vy), vz: round(drop.vz), rest: drop.rest
+        vx: round(drop.vx), vy: round(drop.vy), vz: round(drop.vz), rest: drop.rest,
+        ...(drop.dry > 0 ? { dry: Math.round(drop.dry) } : {})
     };
 }
 
@@ -114,7 +119,7 @@ export class Drops {
             id: newId(), type, count: Math.floor(count),
             x: position.x, y: position.y, z: position.z,
             vx: velocity?.x ?? 0, vy: velocity?.y ?? 0, vz: velocity?.z ?? 0,
-            rest: false, age: 0, wait
+            rest: false, age: 0, wait, dry: 0
         };
         this.drops.set(drop.id, drop);
         // Za dużo przedmiotów: znikają najstarsze (Map trzyma kolejność).
@@ -208,6 +213,25 @@ export class Drops {
         if (drop.y < -4) { drop.y = 0; drop.vy = 0; drop.rest = true; this.version++; }
     }
 
+    // SUSZENIE GLINY (1.1.0). Mokry kubek albo cegła schnie, gdy leży
+    // w dzień pod gołym niebem i nie w wodzie; po DRY_SECONDS zamienia
+    // się w suchą rzecz (cały stos naraz).
+    updateDrying(drop, dt) {
+        const into = driesInto(drop.type);
+        if (!into || !drop.rest) return;
+        const game = this.game, world = game.world;
+        if (!sunDries(game.time?.days ?? 0.5)) return;
+        const x = Math.floor(drop.x), y = Math.floor(drop.y + 0.1), z = Math.floor(drop.z);
+        if (isLiquidId(world.getBlockId(x, y, z))) return;
+        if ((world.getLight?.(x, y, z)?.sky ?? 15) < DRY_SKY_LIGHT) return;
+        drop.dry = (drop.dry ?? 0) + dt;
+        if (drop.dry < DRY_SECONDS) return;
+        drop.type = into;
+        drop.dry = 0;
+        this.version++;
+        game.achieve?.('dried', { type: into, count: drop.count });
+    }
+
     // Czy leżący przedmiot dalej ma na czym leżeć (ktoś wykopał blok).
     supported(drop) {
         return this.solid(drop.x, drop.y - 0.05, drop.z);
@@ -225,6 +249,8 @@ export class Drops {
 
             if (!drop.rest) this.move(drop, Math.min(dt, 0.1));
             else if (Math.abs(drop.x - px) < 24 && Math.abs(drop.z - pz) < 24 && !this.supported(drop)) drop.rest = false;
+
+            this.updateDrying(drop, dt);
 
             // Podnoszenie: tyle, ile się zmieści; reszta zostaje.
             if (!canPick || drop.wait > 0) continue;
@@ -261,6 +287,8 @@ export class Drops {
                 if (Math.hypot(a.x - b.x, a.y - b.y, a.z - b.z) > DROP_MERGE_RADIUS) continue;
                 a.count += b.count;
                 a.wait = Math.max(a.wait, b.wait);
+                // Połączony stos jest tak suchy, jak jego wilgotniejsza część.
+                a.dry = Math.min(a.dry ?? 0, b.dry ?? 0);
                 this.drops.delete(b.id);
                 this.version++;
             }

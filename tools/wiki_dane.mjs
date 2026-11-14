@@ -55,6 +55,7 @@ const { TABLE_PRODUCTS, BENCH_PRODUCTS, WORKSHOP_LABELS } = await import(src('cr
 const { itemShapeFaces } = await import(src('rendering/ShapeGeometry.js'));
 const { itemUses } = await import(src('items/uses.js'));
 const { ROASTS } = await import(src('items/foods.js'));
+const { DRYING } = await import(src('items/clay.js'));
 
 function fruitIcon(type) {
     const fruit = getFruitItemModel(type);
@@ -154,6 +155,12 @@ for (const type of blockTypes) {
 
 for (const [raw, done] of Object.entries(ROASTS)) {
     addSource(done, `nad płonącym ogniskiem (trzymany PPM): ${I.getItemLabel(raw)}`);
+}
+
+// Suszenie gliny na słońcu (items/clay.js - DRYING).
+
+for (const [wet, dry] of Object.entries(DRYING)) {
+    addSource(dry, `wysuszenie na słońcu (wyrzucony w dzień pod gołym niebem): ${I.getItemLabel(wet)}`);
 }
 
 

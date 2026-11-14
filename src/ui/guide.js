@@ -134,12 +134,25 @@ export const GUIDE = [
         lines: [
             { text: 'Kwiaty i zioła ścina się nożem ([use] na kwitnącej roślinie): bierzesz kwiat, łodyga zostaje i kwitnie od nowa.',
                 touch: 'Kwiaty i zioła ścina się nożem (stuknij nim kwitnącą roślinę): bierzesz kwiat, łodyga zostaje i kwitnie od nowa.' },
-            'Gliniany kubek: 2 gliny → 2 kubki. Kubek + dwa zioła z jednej grupy = kubek ziół.',
+            'Gliniany kubek: 2 gliny → 2 mokre kubki. Wysusz je na słońcu (niżej: Glina i cegły). Suchy kubek + dwa zioła z jednej grupy = kubek ziół.',
             'Kubek ziół trzymaj nad płonącym ogniskiem - powstaje napar. Po wypiciu kubek wraca.',
             'Napar na sen (kwiat lipy, lawenda): następny sen jest głębszy.',
             'Napar leczniczy (rumianek, babka, szałwia, nagietek): stłuczona noga goi się 3 razy szybciej.',
             'Napar wzmacniający (pokrzywa, gorczyca): energii ubywa wolniej.',
             'Każdy kwiat daje też barwnik, a cztery dowolne kwiaty - wianek na ścianę.'
+        ]
+    },
+    {
+        id: 'clay',
+        title: 'Glina i cegły',
+        lines: [
+            'Zwykła glina leży płatami na brzegach rzek i jezior, najwięcej na mokradłach. Kopie się ją jak ziemię (łopatą szybciej).',
+            'Czerwona glina: gaje oliwne i lasy eukaliptusowe. Biała: skaliste góry, hale i kosodrzewina.',
+            '2 gliny → 2 mokre kubki. 1 glina → 2 mokre cegły.',
+            { text: 'Mokre rzeczy muszą wyschnąć: wyrzuć je ([drop]) w dzień pod gołym niebem. Po 2 minutach leżenia na słońcu są suche - podnieś je.',
+                touch: 'Mokre rzeczy muszą wyschnąć: w ekwipunku weź je i stuknij obok okna - w dzień, pod gołym niebem. Po 2 minutach na słońcu są suche.' },
+            'Nocą, pod dachem i w wodzie glina nie schnie.',
+            'Z suchego kubka da się pić napary. 4 suche cegły w kwadracie → blok cegieł w kolorze swojej gliny.'
         ]
     },
     {

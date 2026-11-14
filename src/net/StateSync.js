@@ -51,6 +51,7 @@ export function stateSystems(game) {
             key: (drop) => drop.id,
             save: dropState,
             restore: restoreDrop,
+            // (Typ zmienia się też, gdy mokra glina wyschnie.)
             sign: (drop) => `${drop.type}:${drop.count}`,
             changed: () => game.drops.changed()
         }

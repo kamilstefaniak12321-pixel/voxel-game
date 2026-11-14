@@ -17,6 +17,7 @@ import { ITEM_TYPES, getItemLabel, getTool } from './ItemRegistry.js';
 import { getFood, getRoast, isDrink } from './foods.js';
 import { EFFECTS } from './effects.js';
 import { TINDERS, fuelWood } from '../game/CampfireState.js';
+import { driesInto } from './clay.js';
 
 // Przedmioty, które działają same (nie są składnikiem ani jedzeniem).
 const OWN_USES = {
@@ -56,6 +57,8 @@ export function itemUses(type) {
         uses.push(times > 1 ? `podpałka (${String(times).replace('.', ',')} ${Number.isInteger(times) ? 'razy' : 'raza'} szybsza od trawy)` : 'podpałka');
     }
     if (fuelWood(type)) uses.push('opał do ogniska');
+    // Mokra glina (items/clay.js): schnie na słońcu.
+    if (driesInto(type)) uses.push(`suszenie na słońcu: ${getItemLabel(driesInto(type))}`);
     if (getTool(type)) uses.push('narzędzie');
     if (ITEM_TYPES[type]?.plants) uses.push('sadzenie na rozgrzebanej ziemi');
     if (OWN_USES[type]) uses.push(OWN_USES[type]);

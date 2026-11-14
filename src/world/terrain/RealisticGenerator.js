@@ -187,6 +187,23 @@ function farCanopy(species) {
 
 // Biomy leśne (w gęstym lesie więcej ściółki).
 
+// Glina na powierzchni (clayAt): w którym biomie jaka i jak często.
+// bank - próg szumu przy wodzie (do CLAY_BANK_BLOCKS bloków od brzegu),
+// open - próg z dala od wody (bez pola - tylko przy wodzie). Niższy
+// próg = więcej gliny (szum ma zakres -1..1).
+const CLAY_BANK_BLOCKS = 5;
+const LOWLAND_CLAY = { id: 'clay', bank: -0.1 };
+const CLAY_GROUND = {
+    meadow: LOWLAND_CLAY, deciduous: LOWLAND_CLAY, beech: LOWLAND_CLAY, birch: LOWLAND_CLAY,
+    pine: LOWLAND_CLAY, spruce: LOWLAND_CLAY, maple_forest: LOWLAND_CLAY, sequoia_forest: LOWLAND_CLAY,
+    wetland: { id: 'clay', bank: -0.15, open: 0.42 },
+    olive_grove: { id: 'redClay', bank: 0, open: 0.4 },
+    eucalyptus_forest: { id: 'redClay', bank: 0, open: 0.45 },
+    rocky: { id: 'whiteClay', bank: 0, open: 0.42 },
+    alpine: { id: 'whiteClay', bank: 0, open: 0.48 },
+    mugo_scrub: { id: 'whiteClay', bank: 0, open: 0.45 }
+};
+
 const FOREST_BIOMES = new Set(['deciduous', 'beech', 'birch', 'pine', 'spruce', 'maple_forest', 'sequoia_forest', 'eucalyptus_forest']);
 
 
@@ -343,7 +360,8 @@ export class RealisticGenerator {
             dunePatch: noise(25),
             ground: noise(26),
             groundB: noise(27),
-            patches: noise(28)
+            patches: noise(28),
+            clay: noise(29)
         };
 
         this.plantSeed = Math.imul(base, 0x2545f491) >>> 0;
@@ -371,6 +389,8 @@ export class RealisticGenerator {
             snowLayer: getBlockId('snow_layer'),
             mud: getBlockId('mud'),
             clay: getBlockId('clay'),
+            redClay: getBlockId('red_clay'),
+            whiteClay: getBlockId('white_clay'),
             reed: getBlockId('reed'),
             duneGrass: getBlockId('dune_grass')
         };
@@ -1062,7 +1082,10 @@ export class RealisticGenerator {
             let id;
 
             if (kind === 'grass' && depth <= TERRAIN_DIRT_DEPTH) {
-                id = depth === 0 ? ground : ground === ids.mud && depth === 1 ? ids.mud : ids.dirt;
+                // (Błoto i glina mają dwa bloki grubości.)
+                id = depth === 0 ? ground
+                    : depth === 1 && (ground === ids.mud || ground === ids.clay || ground === ids.redClay || ground === ids.whiteClay) ? ground
+                    : ids.dirt;
             }
             else if ((kind === 'sand' || kind === 'seabed') && depth <= 2) {
                 id = ids.sand;
@@ -1152,6 +1175,38 @@ export class RealisticGenerator {
     // mech, błoto, żwir... - ground w BIOMES), śnieg na szczytach,
     // błoto tuż przy wodzie na mokradłach.
 
+    // GLINA NA POWIERZCHNI (1.1.0, items/clay.js). Płaty gliny tam, gdzie
+    // leży w naturze - zwraca numer bloku albo 0:
+    //   zwykła  - osad przy wodzie: brzegi rzek i jezior na nizinach,
+    //             a na mokradłach także dalej od wody,
+    //   czerwona - zwietrzałe, bogate w żelazo gleby ciepłych, suchych
+    //             biomów (gaj oliwny, las eukaliptusowy), wszędzie,
+    //   biała   - kaolin ze zwietrzałego granitu: skaliste góry, hale
+    //             i kosodrzewina, wszędzie.
+    // Płaty wyznacza osobny szum (ok. 10 bloków), więc glina leży
+    // kawałkami, a nie pasem wzdłuż całego brzegu.
+
+    clayAt(x, z, sample, key) {
+
+        const rule = CLAY_GROUND[key];
+
+        if (!rule) {
+            return 0;
+        }
+
+        const gap = Math.min(sample.riverGap ?? Infinity, sample.lakeGap ?? Infinity);
+
+        const level = gap < CLAY_BANK_BLOCKS ? rule.bank : rule.open;
+
+        if (level === undefined || this.field(this.noise.clay, x, z, 10, 2) <= level) {
+            return 0;
+        }
+
+        return this.ids[rule.id];
+
+    }
+
+
     groundAt(x, z, sample, biome) {
 
         const ids = this.ids;
@@ -1164,6 +1219,12 @@ export class RealisticGenerator {
 
         if (key === 'wetland' && Math.min(sample.riverGap ?? Infinity, sample.lakeGap ?? Infinity) < 2) {
             return ids.mud;
+        }
+
+        const clay = this.clayAt(x, z, sample, key);
+
+        if (clay) {
+            return clay;
         }
 
         const ground = this.biomeData[biome].ground;

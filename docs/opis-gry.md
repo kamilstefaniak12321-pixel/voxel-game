@@ -32,6 +32,16 @@ daje **korę każdego drzewa** (podpałka). Polana w ognisku spalają się
 przesuwa cały świat. Szczegóły:
 [docs/przedmioty-i-noz.md](przedmioty-i-noz.md).
 
+## Glina, suszenie i cegły
+
+Od 1.1.0: glina leży **na powierzchni** - zwykła na brzegach rzek
+i jezior, **czerwona** w gajach oliwnych i lasach eukaliptusowych,
+**biała** w skalistych górach. Z gliny lepi się mokre kubki i mokre
+cegły, które trzeba **wysuszyć na słońcu** (wyrzucić w dzień pod gołym
+niebem na 2 minuty). Z suchego kubka da się pić napary, z czterech
+suchych cegieł powstaje blok cegieł w kolorze gliny. Szczegóły:
+[docs/glina.md](glina.md).
+
 ## Klawisze
 
 Każdą czynność (ruch, kopanie, stawianie, jedzenie, okna, miejsca na

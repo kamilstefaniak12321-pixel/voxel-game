@@ -11,12 +11,14 @@ nie przepuści nowego przedmiotu bez zastosowania.
 
 Nowy sposób na poprawę samopoczucia - obok jedzenia i snu.
 
-1. **Gliniany kubek:** 2 gliny → 2 kubki.
+1. **Gliniany kubek:** 2 gliny → 2 mokre kubki, które trzeba wysuszyć
+   na słońcu (od 1.1.0 - [glina.md](glina.md)). Nadaje się kubek
+   z każdej gliny.
 2. **Kubek ziół:** kubek + **dwa zioła z jednej grupy** (mogą być różne).
 3. **Parzenie:** weź kubek ziół do ręki i **trzymaj PPM na płonącym
    ognisku** przez 4 sekundy (tak jak przy pieczeniu).
 4. **Picie:** F albo PPM. Napar da się wypić nawet z pełnym żołądkiem,
-   a **kubek wraca** do ekwipunku.
+   a **kubek wraca** do ekwipunku (zawsze zwykły gliniany).
 
 | Napar | Zioła | Co daje | Jak długo |
 |---|---|---|---|

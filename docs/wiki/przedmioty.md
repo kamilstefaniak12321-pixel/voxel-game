@@ -2,7 +2,7 @@
 
 > Ta strona jest generowana z kodu gry (`python tools/wiki.py`) - nie zmieniaj jej ręcznie, zmiany przepadną przy następnym generowaniu.
 
-Wersja gry **1.0.0** - 129 przedmiotów. Przedmiotu nie da się postawić jak bloku; owoce i nasiona posadzone na ziemi (PPM) wyrastają w krzak albo drzewo, narzędzia przyspieszają kopanie.
+Wersja gry **1.1.0** - 140 przedmiotów. Przedmiotu nie da się postawić jak bloku; owoce i nasiona posadzone na ziemi (PPM) wyrastają w krzak albo drzewo, narzędzia przyspieszają kopanie.
 
 
 ## Drewno
@@ -120,10 +120,21 @@ Wersja gry **1.0.0** - 129 przedmiotów. Przedmiotu nie da się postawić jak bl
 | <img src="ikony/knife_sandstone.png" width="32" height="32" alt=""> | **Nóż piaskowcowy** | `knife_sandstone` | **Narzędzie:** kopie 3 razy szybciej: <br>**Przepis:** Nóż piaskowcowy |
 | <img src="ikony/knife_slate.png" width="32" height="32" alt=""> | **Nóż łupkowy** | `knife_slate` | **Narzędzie:** kopie 3 razy szybciej: <br>**Przepis:** Nóż łupkowy |
 | <img src="ikony/knife_basalt.png" width="32" height="32" alt=""> | **Nóż bazaltowy** | `knife_basalt` | **Narzędzie:** kopie 3 razy szybciej: <br>**Przepis:** Nóż bazaltowy |
+| <img src="ikony/wet_clay_cup.png" width="32" height="32" alt=""> | **Mokry kubek z gliny** | `wet_clay_cup` | **Przepis:** Mokry kubek z gliny x2<br>**Służy też jako:** suszenie na słońcu: Gliniany kubek |
+| <img src="ikony/wet_clay_brick.png" width="32" height="32" alt=""> | **Mokra cegła z gliny** | `wet_clay_brick` | **Przepis:** Mokra cegła z gliny x2<br>**Służy też jako:** suszenie na słońcu: Cegła |
+| <img src="ikony/clay_brick.png" width="32" height="32" alt=""> | **Cegła** | `clay_brick` | **Skąd:** wysuszenie na słońcu (wyrzucony w dzień pod gołym niebem): Mokra cegła z gliny<br>**Przydaje się do:** Cegły |
+| <img src="ikony/wet_red_clay_cup.png" width="32" height="32" alt=""> | **Mokry kubek z czerwonej gliny** | `wet_red_clay_cup` | **Przepis:** Mokry kubek z czerwonej gliny x2<br>**Służy też jako:** suszenie na słońcu: Czerwony gliniany kubek |
+| <img src="ikony/wet_red_clay_brick.png" width="32" height="32" alt=""> | **Mokra cegła z czerwonej gliny** | `wet_red_clay_brick` | **Przepis:** Mokra cegła z czerwonej gliny x2<br>**Służy też jako:** suszenie na słońcu: Czerwona cegła |
+| <img src="ikony/red_clay_brick.png" width="32" height="32" alt=""> | **Czerwona cegła** | `red_clay_brick` | **Skąd:** wysuszenie na słońcu (wyrzucony w dzień pod gołym niebem): Mokra cegła z czerwonej gliny<br>**Przydaje się do:** Czerwone cegły |
+| <img src="ikony/red_clay_cup.png" width="32" height="32" alt=""> | **Czerwony gliniany kubek** | `red_clay_cup` | **Skąd:** wysuszenie na słońcu (wyrzucony w dzień pod gołym niebem): Mokry kubek z czerwonej gliny<br>**Przydaje się do:** Kubek ziół na sen, Kubek ziół leczniczych, Kubek ziół wzmacniających |
+| <img src="ikony/wet_white_clay_cup.png" width="32" height="32" alt=""> | **Mokry kubek z białej gliny** | `wet_white_clay_cup` | **Przepis:** Mokry kubek z białej gliny x2<br>**Służy też jako:** suszenie na słońcu: Biały gliniany kubek |
+| <img src="ikony/wet_white_clay_brick.png" width="32" height="32" alt=""> | **Mokra cegła z białej gliny** | `wet_white_clay_brick` | **Przepis:** Mokra cegła z białej gliny x2<br>**Służy też jako:** suszenie na słońcu: Biała cegła |
+| <img src="ikony/white_clay_brick.png" width="32" height="32" alt=""> | **Biała cegła** | `white_clay_brick` | **Skąd:** wysuszenie na słońcu (wyrzucony w dzień pod gołym niebem): Mokra cegła z białej gliny<br>**Przydaje się do:** Białe cegły |
+| <img src="ikony/white_clay_cup.png" width="32" height="32" alt=""> | **Biały gliniany kubek** | `white_clay_cup` | **Skąd:** wysuszenie na słońcu (wyrzucony w dzień pod gołym niebem): Mokry kubek z białej gliny<br>**Przydaje się do:** Kubek ziół na sen, Kubek ziół leczniczych, Kubek ziół wzmacniających |
 | <img src="ikony/fire_starter.png" width="32" height="32" alt=""> | **Starter ognia** | `fire_starter` | **Przepis:** Starter ognia<br>**Służy też jako:** rozpalanie ogniska |
 | <img src="ikony/resin.png" width="32" height="32" alt=""> | **Żywica** | `resin` | **Skąd:** zbiór (PPM): Pień sosny z żywicą<br>**Przydaje się do:** Pochodnia, Lampa |
 | <img src="ikony/straw.png" width="32" height="32" alt=""> | **Słoma** | `straw` | **Przepis:** Słoma<br>**Przydaje się do:** Słomiana pościel<br>**Służy też jako:** podpałka (1,25 raza szybsza od trawy) |
-| <img src="ikony/clay_cup.png" width="32" height="32" alt=""> | **Gliniany kubek** | `clay_cup` | **Przepis:** Gliniany kubek x2<br>**Przydaje się do:** Kubek ziół na sen, Kubek ziół leczniczych, Kubek ziół wzmacniających |
+| <img src="ikony/clay_cup.png" width="32" height="32" alt=""> | **Gliniany kubek** | `clay_cup` | **Skąd:** wysuszenie na słońcu (wyrzucony w dzień pod gołym niebem): Mokry kubek z gliny<br>**Przydaje się do:** Kubek ziół na sen, Kubek ziół leczniczych, Kubek ziół wzmacniających |
 | <img src="ikony/axe.png" width="32" height="32" alt=""> | **Siekiera** | `axe` | **Narzędzie:** kopie 3 razy szybciej: drewno<br>**Przepis:** Siekiera<br>**Przydaje się do:** Opał — dąb, Opał — brzoza, Opał — świerk, Opał — sosna, Opał — buk, Opał — lipa, Opał — olcha, Opał — wierzba, Opał — jabłoń, Opał — akacja, Opał — cypryśnik, Opał — wiśnia, Opał — klon, Opał — kosodrzewina, Opał — oliwka, Opał — eukaliptus, Opał — sekwoja, Opał — miłorząb, Opał — jakaranda |
 | <img src="ikony/pickaxe.png" width="32" height="32" alt=""> | **Kilof** | `pickaxe` | **Narzędzie:** kopie 3 razy szybciej: kamień<br>**Przepis:** Kilof |
 | <img src="ikony/shovel.png" width="32" height="32" alt=""> | **Łopata** | `shovel` | **Narzędzie:** kopie 3 razy szybciej: trawa, ziemia, piasek, żwir, błoto, snow<br>**Przepis:** Łopata |

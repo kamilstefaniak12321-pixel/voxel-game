@@ -27,6 +27,9 @@ export const SOIL_INFO = {
     moss: { name: 'mech', word: 'mech', color: '#56803a' },
     mud: { name: 'błoto', word: 'bloto', color: '#5a3d28' },
     clay: { name: 'glina', word: 'glina', color: '#ac8e68' },
+    // Gliny z 1.1.0 (items/clay.js): czerwona w ciepłych biomach, biała w górach.
+    red_clay: { name: 'czerwona glina', word: 'czerwona_glina', color: '#b0553a' },
+    white_clay: { name: 'biała glina', word: 'biala_glina', color: '#e2ddd0' },
     gravel: { name: 'żwir', word: 'zwir', color: '#7a726a' },
     coarse_dirt: { name: 'ziemia kamienista', word: 'kamienista', color: '#aa8d6a' },
     snow: { name: 'śnieg', word: 'snieg', color: '#eef3fa' },

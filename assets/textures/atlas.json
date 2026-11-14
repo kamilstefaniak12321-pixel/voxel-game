@@ -2,7 +2,7 @@
   "version": 1,
   "tileSize": 16,
   "columns": 16,
-  "rows": 48,
+  "rows": 50,
   "sheets": {
     "drzewa": {
       "file": "drzewa.png",
@@ -12,7 +12,7 @@
     "teren": {
       "file": "teren.png",
       "width": 256,
-      "height": 48
+      "height": 64
     },
     "rosliny": {
       "file": "rosliny.png",
@@ -22,7 +22,7 @@
     "przedmioty": {
       "file": "przedmioty.png",
       "width": 256,
-      "height": 64
+      "height": 80
     },
     "efekty": {
       "file": "efekty.png",
@@ -4103,6 +4103,118 @@
       "y": 176,
       "width": 16,
       "height": 16
+    },
+    "red_clay": {
+      "sheet": "teren",
+      "x": 208,
+      "y": 32,
+      "width": 16,
+      "height": 16
+    },
+    "white_clay": {
+      "sheet": "teren",
+      "x": 224,
+      "y": 32,
+      "width": 16,
+      "height": 16
+    },
+    "clay_bricks": {
+      "sheet": "teren",
+      "x": 240,
+      "y": 32,
+      "width": 16,
+      "height": 16
+    },
+    "wet_clay_cup": {
+      "sheet": "przedmioty",
+      "x": 160,
+      "y": 48,
+      "width": 16,
+      "height": 16
+    },
+    "wet_clay_brick": {
+      "sheet": "przedmioty",
+      "x": 176,
+      "y": 48,
+      "width": 16,
+      "height": 16
+    },
+    "clay_brick": {
+      "sheet": "przedmioty",
+      "x": 192,
+      "y": 48,
+      "width": 16,
+      "height": 16
+    },
+    "red_clay_bricks": {
+      "sheet": "teren",
+      "x": 0,
+      "y": 48,
+      "width": 16,
+      "height": 16
+    },
+    "wet_red_clay_cup": {
+      "sheet": "przedmioty",
+      "x": 208,
+      "y": 48,
+      "width": 16,
+      "height": 16
+    },
+    "red_clay_cup": {
+      "sheet": "przedmioty",
+      "x": 224,
+      "y": 48,
+      "width": 16,
+      "height": 16
+    },
+    "wet_red_clay_brick": {
+      "sheet": "przedmioty",
+      "x": 240,
+      "y": 48,
+      "width": 16,
+      "height": 16
+    },
+    "red_clay_brick": {
+      "sheet": "przedmioty",
+      "x": 0,
+      "y": 64,
+      "width": 16,
+      "height": 16
+    },
+    "white_clay_bricks": {
+      "sheet": "teren",
+      "x": 16,
+      "y": 48,
+      "width": 16,
+      "height": 16
+    },
+    "wet_white_clay_cup": {
+      "sheet": "przedmioty",
+      "x": 16,
+      "y": 64,
+      "width": 16,
+      "height": 16
+    },
+    "white_clay_cup": {
+      "sheet": "przedmioty",
+      "x": 32,
+      "y": 64,
+      "width": 16,
+      "height": 16
+    },
+    "wet_white_clay_brick": {
+      "sheet": "przedmioty",
+      "x": 48,
+      "y": 64,
+      "width": 16,
+      "height": 16
+    },
+    "white_clay_brick": {
+      "sheet": "przedmioty",
+      "x": 64,
+      "y": 64,
+      "width": 16,
+      "height": 16
     }
   },
   "aliases": {
@@ -7369,6 +7481,86 @@
       "x": 9,
       "y": 14,
       "region": "jacaranda_bark"
+    },
+    "red_clay": {
+      "x": 0,
+      "y": 48,
+      "region": "red_clay"
+    },
+    "white_clay": {
+      "x": 1,
+      "y": 48,
+      "region": "white_clay"
+    },
+    "clay_bricks": {
+      "x": 2,
+      "y": 48,
+      "region": "clay_bricks"
+    },
+    "wet_clay_cup": {
+      "x": 3,
+      "y": 48,
+      "region": "wet_clay_cup"
+    },
+    "wet_clay_brick": {
+      "x": 4,
+      "y": 48,
+      "region": "wet_clay_brick"
+    },
+    "clay_brick": {
+      "x": 5,
+      "y": 48,
+      "region": "clay_brick"
+    },
+    "red_clay_bricks": {
+      "x": 6,
+      "y": 48,
+      "region": "red_clay_bricks"
+    },
+    "wet_red_clay_cup": {
+      "x": 7,
+      "y": 48,
+      "region": "wet_red_clay_cup"
+    },
+    "red_clay_cup": {
+      "x": 8,
+      "y": 48,
+      "region": "red_clay_cup"
+    },
+    "wet_red_clay_brick": {
+      "x": 9,
+      "y": 48,
+      "region": "wet_red_clay_brick"
+    },
+    "red_clay_brick": {
+      "x": 10,
+      "y": 48,
+      "region": "red_clay_brick"
+    },
+    "white_clay_bricks": {
+      "x": 11,
+      "y": 48,
+      "region": "white_clay_bricks"
+    },
+    "wet_white_clay_cup": {
+      "x": 12,
+      "y": 48,
+      "region": "wet_white_clay_cup"
+    },
+    "white_clay_cup": {
+      "x": 13,
+      "y": 48,
+      "region": "white_clay_cup"
+    },
+    "wet_white_clay_brick": {
+      "x": 14,
+      "y": 48,
+      "region": "wet_white_clay_brick"
+    },
+    "white_clay_brick": {
+      "x": 15,
+      "y": 48,
+      "region": "white_clay_brick"
     }
   }
 }

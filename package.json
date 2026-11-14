@@ -1,7 +1,7 @@
 {
     "name": "voxel-game",
-    "productName": "Voxel Game",
-    "version": "0.100.0",
+    "productName": "Various Roots",
+    "version": "1.0.0",
     "description": "Gra voxelowa - aplikacja na komputer (Windows)",
     "author": "Kamil",
     "license": "PolyForm-Noncommercial-1.0.0",
@@ -26,7 +26,7 @@
     },
     "build": {
         "appId": "pl.kamil.voxelgame",
-        "productName": "Voxel Game",
+        "productName": "Various Roots",
         "directories": {
             "output": "dist"
         },
@@ -48,8 +48,8 @@
             "perMachine": false,
             "allowToChangeInstallationDirectory": true,
             "createDesktopShortcut": true,
-            "shortcutName": "Voxel Game",
-            "artifactName": "Voxel-Game-${version}-instalator.${ext}",
+            "shortcutName": "Various Roots",
+            "artifactName": "Various-Roots-${version}-instalator.${ext}",
             "installerLanguages": [
                 "pl_PL"
             ],

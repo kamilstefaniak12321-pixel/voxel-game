@@ -14,7 +14,7 @@ function contextLines(context, prefix = '') {
 }
 
 export function diagnosticsReportText(report) {
-    const lines = ['VOXEL GAME — RAPORT DIAGNOSTYCZNY',
+    const lines = ['VARIOUS ROOTS — RAPORT DIAGNOSTYCZNY',
         `Wersja: ${report.session?.version || 'nieznana'}`,
         `Sesja: ${report.session?.id || 'nieznana'}`,
         `Początek: ${report.session?.startedAt || '?'}`,

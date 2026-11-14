@@ -5,7 +5,8 @@
 // są wczytywane przez własny adres gra://voxel-game/ - dla gry to
 // zwykła strona, więc działa tak samo jak w przeglądarce (moduły,
 // zapis światów w IndexedDB, ustawienia w localStorage). Zapisy
-// leżą w folderze aplikacji (Windows: %APPDATA%\Voxel Game) i
+// leżą w folderze aplikacji (Windows: %APPDATA%\Voxel Game - nazwa
+// sprzed 1.0.0, zostaje celowo) i
 // zostają po aktualizacjach.
 //
 // Aktualizacje: przy starcie aplikacja sprawdza wydania na GitHubie
@@ -31,6 +32,16 @@ const { installDiagnosticsIpc } = require('./diagnostics-ipc.cjs');
 // Folder z plikami gry (w zbudowanej aplikacji - wnętrze app.asar).
 
 const GAME_ROOT = path.join(__dirname, '..');
+
+// NAZWA GRY I ZAPISY (1.0.0). Gra nazywa się Various Roots, ale do
+// 0.100.0 nazywała się Voxel Game i tak nazywa się jej folder z zapisami
+// (Electron bierze go z nazwy programu). Zostawiamy stary folder - inaczej
+// po aktualizacji zniknęłyby światy i ustawienia. Musi być ustawione
+// przed wszystkim, co czyta ten folder (blokada drugiego okna, logi).
+// Adres gra://voxel-game/ też zostaje: od niego zależy, gdzie
+// przeglądarka w aplikacji trzyma zapisy.
+
+app.setPath('userData', path.join(app.getPath('appData'), 'Voxel Game'));
 
 const SCHEME = 'gra';
 const START_URL = `${SCHEME}://voxel-game/index.html`;
@@ -171,7 +182,7 @@ function createWindow() {
         minWidth: 800,
         minHeight: 500,
         backgroundColor: '#000000',
-        title: 'Voxel Game',
+        title: 'Various Roots',
         icon: path.join(__dirname, 'icon.png'),
         show: false,
         webPreferences: {

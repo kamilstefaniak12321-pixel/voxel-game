@@ -1,9 +1,12 @@
-# Voxel Game
+# Various Roots
 
 Gra voxelowa w przeglądarce, jako aplikacja na komputer (Windows) i na
 telefon (Android), napisana w JavaScripcie z użyciem three.js.
 
-> Nazwa robocza - do zmiany, gdy gra dostanie prawdziwą nazwę.
+> Do wersji 0.100.0 gra nosiła roboczą nazwę **Voxel Game**. Została
+> po niej nazwa repozytoriów (`voxel-game`, `voxel-game-wydania`),
+> wewnętrzny identyfikator aplikacji i folder z zapisami na Windowsie -
+> celowo, żeby aktualizacja nie gubiła światów.
 
 **Wiki gry** (dla graczy - jak grać, wszystkie bloki, przedmioty,
 przepisy i osiągnięcia z ikonkami): [`docs/wiki/`](docs/wiki/README.md),
@@ -17,7 +20,7 @@ tych, którzy ją rozwijają; pełny opis gry od środka:
 
 **Aplikacja na komputer (Windows):** instalator z wydań -
 <https://github.com/kamilstefaniak12321-pixel/voxel-game-wydania/releases/latest>
-(plik `Voxel-Game-...-instalator.exe`). Gra sama sprawdza aktualizacje
+(plik `Various-Roots-...-instalator.exe`). Gra sama sprawdza aktualizacje
 przy starcie, pobiera je w tle i instaluje po zamknięciu (albo od razu
 - *Zainstaluj teraz* na ekranie tytułowym). Wszystko o aplikacji -
 instalacja, zapisy, wydawanie nowych wersji: `docs/aplikacja.md`.
@@ -33,7 +36,7 @@ Internet nie jest potrzebny - three.js jest w `lib/three/`. Światy
 z przeglądarki i z aplikacji są zapisywane osobno.
 
 **Aplikacja na telefon (Android):** na telefonie z wydań (link wyżej)
-pobierz `Voxel-Game-...-android.apk` i otwórz - Android zapyta, czy
+pobierz `Various-Roots-...-android.apk` i otwórz - Android zapyta, czy
 zezwolić na instalację z przeglądarki (zezwól). Gra ma ikonkę na
 ekranie, działa bez internetu, zawsze poziomo i na cały ekran. Od
 wersji 0.19.0 **aktualizuje się sama** (nowa wersja gry pobiera się
@@ -250,7 +253,7 @@ z numpy, Pillow i markdown) - przerysuje ikonki i strony w
 
 ## Licencja
 
-Voxel Game jest na licencji **PolyForm Noncommercial 1.0.0**
+Various Roots jest na licencji **PolyForm Noncommercial 1.0.0**
 ([`LICENSE.md`](LICENSE.md)): grę można oglądać, zmieniać (mody, paczki
 tekstur, roślin i drzew) i udostępniać za darmo - **niekomercyjnie**,
 z informacją o autorze (linia `Required Notice:` z `LICENSE.md`).

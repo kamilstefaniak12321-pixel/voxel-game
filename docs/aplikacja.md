@@ -11,7 +11,7 @@ Chromium).
 
 **Instalacja:** z wydań
 <https://github.com/kamilstefaniak12321-pixel/voxel-game-wydania/releases/latest>
-pobierz `Voxel-Game-<wersja>-instalator.exe` i uruchom. Instalator
+pobierz `Various-Roots-<wersja>-instalator.exe` i uruchom. Instalator
 (po polsku) pyta, dla kogo zainstalować grę - wybierz **tylko dla
 mnie** (wtedy nie trzeba uprawnień administratora, a aktualizacje
 instalują się bez pytania) - i gdzie, a na koniec robi skrót na
@@ -34,7 +34,9 @@ sprawdza wydania i pokazuje nową wersję z przyciskiem **Pobierz**
 sprawdza wydania, zanim gra wystartuje).
 
 **Zapisy:** światy i ustawienia są w folderze
-`%APPDATA%\Voxel Game` (wpisz to w pasek adresu Eksploratora). Zostają
+`%APPDATA%\Voxel Game` (wpisz to w pasek adresu Eksploratora; folder
+ma nazwę sprzed 1.0.0 - gra nazywa się już Various Roots, ale zapisy
+zostały tam, gdzie były). Zostają
 po aktualizacji i po odinstalowaniu gry. Są osobne od światów z gry
 w przeglądarce. Przy zamykaniu okna gra najpierw zapisuje świat.
 
@@ -64,7 +66,7 @@ są zapisane w [`AGENTS.md`](../AGENTS.md).
    wersji jeszcze nie ma w repozytorium z wydaniami, buduje instalator
    na Windowsie (electron-builder) i publikuje wydanie `v0.2.0` w
    `kamilstefaniak12321-pixel/voxel-game-wydania` (GitHub CLI) - z trzema
-   plikami: `Voxel-Game-0.2.0-instalator.exe`, `...exe.blockmap`
+   plikami: `Various-Roots-0.2.0-instalator.exe`, `...exe.blockmap`
    i `latest.yml` (5-10 minut - widać to w zakładce **Actions**).
 4. Na koniec przebieg sam sprawdza wydanie z zewnątrz: listę plików
    i czy instalator da się pobrać bez logowania. Wynik jest w adnotacji
@@ -72,7 +74,7 @@ są zapisane w [`AGENTS.md`](../AGENTS.md).
    działa).
 5. Zainstalowane gry same pobierają nową wersję przy następnym starcie.
 6. Potem (job *android*, z kluczem do podpisu) do tego samego wydania
-   trafia aplikacja na telefon: `Voxel-Game-0.2.0-android.apk`, paczka
+   trafia aplikacja na telefon: `Various-Roots-0.2.0-android.apk`, paczka
    plików gry `...-android-www.zip` i `android-latest.json` - z niego
    zainstalowane aplikacje na telefonie wiedzą o nowej wersji
    (`docs/telefon.md`, *Aktualizacje*).

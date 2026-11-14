@@ -44,8 +44,8 @@ function installDiagnosticsIpc({ ipcMain, getWindow, log, dialog, shell, io = fs
             await log.flush();
             const stamp = new Date().toISOString().replace(/[:.]/g, '-');
             const selection = await dialog.showSaveDialog(getWindow(), {
-                title: 'Zapisz raport diagnostyczny Voxel Game',
-                defaultPath: `Voxel-Game-raport-${stamp}.json`,
+                title: 'Zapisz raport diagnostyczny Various Roots',
+                defaultPath: `Various-Roots-raport-${stamp}.json`,
                 filters: [{ name: 'Raport JSON z podsumowaniem', extensions: ['json'] },
                     { name: 'Czytelne podsumowanie tekstowe', extensions: ['txt'] }]
             });

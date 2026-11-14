@@ -1,4 +1,4 @@
-# Pierwsza muzyka Voxel Game
+# Pierwsza muzyka Various Roots
 
 Pliki dostarczone przez Kamila do włączenia do gry 2026-11-02.
 Nazwy plików uproszczono na potrzeby ścieżek w grze; zawartość MP3 jest

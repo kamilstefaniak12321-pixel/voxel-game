@@ -13,7 +13,7 @@ telefonu).
 Folder **`paczka-tekstur-szablon/`** w repozytorium - oryginalne
 tekstury gry, każda w osobnym pliku, z opisem (`CZYTAJ.md` - tabela:
 który plik to który blok). Spakowany jest też w każdym wydaniu gry:
-`Voxel-Game-paczka-tekstur.zip` (w grze: Ustawienia → Wygląd →
+`Various-Roots-paczka-tekstur.zip` (w grze: Ustawienia → Wygląd →
 *Szablon paczki*, albo `/tekstury szablon`).
 
 Szablon eksportuje `python tools/paczka_tekstur.py` ze wspólnych arkuszy

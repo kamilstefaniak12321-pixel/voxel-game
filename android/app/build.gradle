@@ -11,7 +11,7 @@ apply plugin: 'com.android.application'
 //   - release (wydanie): podpisana kluczem z sekretów GitHuba
 //     (ANDROID_KEYSTORE...) - tylko taka trafia do wydań; kolejne
 //     wersje instalują się na poprzednich (światy zostają),
-//   - debug (test): osobna aplikacja "Voxel Game (test)" z własnymi
+//   - debug (test): osobna aplikacja "Various Roots (test)" z własnymi
 //     światami - instaluje się obok wydania i nigdy z nim nie kłóci.
 // Budowanie: GitHub Actions (.github/workflows/aplikacja.yml),
 // opis: docs/telefon.md.
@@ -32,8 +32,8 @@ android {
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode versionParts[0] * 10000 + versionParts[1] * 100 + versionParts[2]
         versionName gamePackage.version
-        resValue "string", "app_name", "Voxel Game"
-        resValue "string", "title_activity_main", "Voxel Game"
+        resValue "string", "app_name", "Various Roots"
+        resValue "string", "title_activity_main", "Various Roots"
         aaptOptions {
              // Files and dirs to omit from the packaged assets dir, modified to accommodate modern web apps.
              // Default: https://android.googlesource.com/platform/frameworks/base/+/282e181b58cf72b6ca770dc7ca5f91f135444502/tools/aapt/AaptAssets.cpp#61
@@ -73,8 +73,8 @@ android {
             signingConfig signingConfigs.test
             applicationIdSuffix ".test"
             versionNameSuffix "-test"
-            resValue "string", "app_name", "Voxel Game (test)"
-            resValue "string", "title_activity_main", "Voxel Game (test)"
+            resValue "string", "app_name", "Various Roots (test)"
+            resValue "string", "title_activity_main", "Various Roots (test)"
         }
     }
     lint {

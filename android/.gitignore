@@ -100,13 +100,13 @@ app/src/main/assets/capacitor.config.json
 app/src/main/assets/capacitor.plugins.json
 app/src/main/res/xml/config.xml
 
-# Voxel Game: klucz do podpisu wydań jest TYLKO w sekretach GitHuba
+# Various Roots: klucz do podpisu wydań jest TYLKO w sekretach GitHuba
 # (ANDROID_KEYSTORE) i w kopii zapasowej u Kamila - nigdy w gicie.
 *.keystore
 *.jks
 *.p12
 
-# Wyjątek: klucz WERSJI TESTOWEJ ("Voxel Game (test)", osobna aplikacja
+# Wyjątek: klucz WERSJI TESTOWEJ ("Various Roots (test)", osobna aplikacja
 # pl.kamil.voxelgame.test) - celowo w gicie, z jawnym hasłem, żeby każda
 # testowa wersja instalowała się na poprzedniej. Prawdziwej aplikacji
 # nim nie podpiszesz (inna nazwa pakietu).

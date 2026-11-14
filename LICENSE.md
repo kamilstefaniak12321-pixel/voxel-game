@@ -1,4 +1,4 @@
-Required Notice: Copyright (c) 2026 Kamil (kamilstefaniak12321-pixel) - Voxel Game (https://github.com/kamilstefaniak12321-pixel/voxel-game)
+Required Notice: Copyright (c) 2026 Kamil (kamilstefaniak12321-pixel) - Various Roots (https://github.com/kamilstefaniak12321-pixel/voxel-game)
 
 # PolyForm Noncommercial License 1.0.0
 

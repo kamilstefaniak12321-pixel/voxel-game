@@ -55,7 +55,7 @@
         "nazwaAngielska": "Indigo Leaves",
         "grupy": ["blue"]
     },
-    "zbior": { "ile": [2, 4], "wraca": 2 },
+    "zbior": { "ile": [2, 4], "wraca": 2, "narzedzie": "noz" },
     "gdzieRosnie": { "biomy": { "brzezina": 1, "laka": 0.35, "buczyna": 0.3 }, "plamy": 0.03, "gestosc": 0.45, "etapy": [0.25, 0.35, 0.4] },
     "zrodlo": {
         "atlas": "Atlas tekstur indygowca_ wzrost i zbiór.png",

@@ -46,6 +46,10 @@ razu **przeskakuje do 6:00**. Wcześniej można wstać ruchem albo
 kliknięciem - wtedy liczy się tylko czas, który faktycznie minął.
 Sen prawie nie zużywa energii, ale rano żołądek jest pusty.
 
+**Świat nie czeka** (od 0.100.0): przespana noc przesuwa wszystko, co
+trwa - ogniska się dopalają, rośliny rosną, pola zarastają
+([opis](przedmioty-i-noz.md#sen-przesuwa-cały-świat)).
+
 ## Łóżko: stelaż i pościel osobno
 
 Łóżko to dwie osobne rzeczy - drewniany **stelaż** i **pościel**:

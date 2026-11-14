@@ -173,7 +173,8 @@ function stateGame() {
     const game = {
         chests: { chests: new Map(), version: 0, changed() { this.version++; } },
         carpenterTables: { tables: new Map(), version: 0 },
-        campfires: { fires: new Map(), version: 0 }
+        campfires: { fires: new Map(), version: 0 },
+        drops: { drops: new Map(), version: 0, changed() { this.version++; } }
     };
     return game;
 }

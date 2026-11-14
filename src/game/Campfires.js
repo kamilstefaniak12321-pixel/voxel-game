@@ -1,5 +1,5 @@
 import { newCampfire, restoreCampfire, updateCampfire, addFirewood, addTinder,
-    fuelWood, isTinder, campfireDrops, TINDERS } from './CampfireState.js';
+    fuelWood, isTinder, campfireDrops, burnSecondsLeft, TINDERS } from './CampfireState.js';
 import { getBlockId, isLiquidId, isSolidId, blockExists } from '../blocks/BlockRegistry.js';
 import { CampfireRenderer } from '../rendering/CampfireRenderer.js';
 import { getRoast, isDrink, ROAST_SECONDS } from '../items/foods.js';
@@ -11,7 +11,7 @@ const canRoastOn = (fire) => fire.phase === 'burning' || fire.phase === 'collaps
 const keyOf = ({x, y, z}) => `${x},${y},${z}`;
 
 // Podpowiedź, czym rozpalić (lista: TINDERS w CampfireState.js).
-const TINDER_HINT = 'Dodaj podpałkę: trawę, słomę, korę brzozową albo hubę';
+const TINDER_HINT = 'Dodaj podpałkę: korę, trawę, słomę albo hubę';
 
 export class Campfires {
     constructor(game, saved = []) {
@@ -48,8 +48,13 @@ export class Campfires {
             // Recover a harmless empty structure if an old/modded save has no metadata.
             if (!fire) { fire = newCampfire(hit.block.x, hit.block.y, hit.block.z); this.fires.set(keyOf(fire), fire); }
             if (wood) {
-                if (addFirewood(fire, wood)) { this.consume(); game.playBlockSound('place', 'oak_log', fire); }
-                else this.notice(fire.phase === 'unlit' ? `Jest już 6 polan. ${TINDER_HINT}.` : 'Poczekaj, aż polana opadną w żar.');
+                if (addFirewood(fire, wood)) {
+                    this.consume(); game.playBlockSound('place', 'oak_log', fire);
+                    // Dołożone do płonącego ogniska - pali się dłużej.
+                    if (fire.phase === 'burning') { this.noticeAt = -10; this.notice(`Dołożono opał: ${fire.logs.length}/6`); }
+                }
+                else this.notice(fire.phase === 'unlit' ? `Jest już 6 polan. ${TINDER_HINT}.`
+                    : fire.phase === 'burning' ? 'Ognisko jest pełne - dołóż, gdy polano się wypali.' : 'Poczekaj, aż polana opadną w żar.');
             } else if (isTinder(type)) {
                 if (addTinder(fire, type)) {
                     this.consume(); game.playBlockSound('place', blockExists(type) ? type : 'short_grass', fire);
@@ -81,7 +86,11 @@ export class Campfires {
     }
 
     description(fire) {
-        if (fire.phase === 'burning') return 'Ognisko płonie';
+        // Płonie: ile polan zostało i na jak długo (minuty prawdziwego czasu).
+        if (fire.phase === 'burning') {
+            const minutes = burnSecondsLeft(fire) / 60;
+            return `Ognisko płonie - opał ${fire.logs.length}/6, ${minutes >= 1 ? `jeszcze ok. ${Math.round(minutes)} min` : 'zaraz zgaśnie'}`;
+        }
         if (fire.phase === 'collapsing') return 'Polana opadają w żar';
         if (fire.ignition > 0) return `Rozpalanie: ${Math.round(fire.ignition * 100)}% — trzymaj PPM`;
         if (fire.logs.length < 6) return `Opał ${fire.logs.length}/6 — dokładaj PPM`;
@@ -97,8 +106,10 @@ export class Campfires {
                 this.fires.delete(key); this.version++; continue;
             }
             const active = holding && hit?.hit && keyOf(hit.block) === key && game.selectedBlock === 'fire_starter';
-            const phase = fire.phase;
+            const phase = fire.phase, logs = fire.logs.length;
             updateCampfire(fire, dt, active);
+            // Wypalone polano: stos jest niższy (zapis, gra ze znajomymi).
+            if (logs !== fire.logs.length) this.version++;
             if (phase !== fire.phase) {
                 this.version++;
                 if (active && fire.phase === 'burning') {
@@ -147,6 +158,13 @@ export class Campfires {
             if (game.mode === 'adventure') inventory.add(type);
             this.notice('Ekwipunek pełny');
         }
+    }
+
+    // Świat nadrabia przespany czas (sen, utrata przytomności -
+    // Game.advanceWorld): ogniska palą się tak, jakby minęło tyle sekund.
+    advance(seconds) {
+        for (const fire of this.fires.values()) updateCampfire(fire, seconds);
+        this.version++;
     }
 
     dispose() { this.renderer.dispose(); this.fires.clear(); }

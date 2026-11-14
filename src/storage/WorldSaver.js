@@ -57,6 +57,10 @@ export class WorldSaver {
         this.savedChestVersion = -1;
         this.savedFireVersion = -1;
 
+        // Wyrzucone przedmioty (game/Drops.js) - ustawia Game po utworzeniu.
+        this.drops = null;
+        this.savedDropVersion = -1;
+
 
         // Czas od ostatniego zapisu i od pierwszej niezapisanej zmiany.
 
@@ -192,6 +196,8 @@ export class WorldSaver {
         if (this.rafts) this.worldInfo.rafts = this.rafts.getState();
         const fireVersion = this.campfires?.version ?? 0;
         if (this.campfires) this.worldInfo.campfires = this.campfires.getState();
+        const dropVersion = this.drops?.version ?? 0;
+        if (this.drops) this.worldInfo.drops = this.drops.getState();
         const chestVersion = this.chests?.version ?? 0;
         if (this.chests) this.worldInfo.chests = this.chests.getState();
         const tableVersion = this.tables?.version ?? 0;
@@ -214,6 +220,7 @@ export class WorldSaver {
 
 
             this.savedFireVersion = fireVersion;
+            this.savedDropVersion = dropVersion;
             this.savedRaftVersion = raftVersion;
             this.savedChestVersion = chestVersion;
             this.savedTableVersion = tableVersion;
@@ -262,7 +269,7 @@ export class WorldSaver {
         this.timeSinceSave += dt;
 
 
-        if (this.world.hasUnsavedChanges() || (this.campfires && this.savedFireVersion !== this.campfires.version) || (this.rafts && this.savedRaftVersion !== this.rafts.version) || (this.chests && this.savedChestVersion !== this.chests.version) || (this.tables && this.savedTableVersion !== this.tables.version)) {
+        if (this.world.hasUnsavedChanges() || (this.campfires && this.savedFireVersion !== this.campfires.version) || (this.drops && this.savedDropVersion !== this.drops.version) || (this.rafts && this.savedRaftVersion !== this.rafts.version) || (this.chests && this.savedChestVersion !== this.chests.version) || (this.tables && this.savedTableVersion !== this.tables.version)) {
 
             this.timeSinceChange += dt;
 

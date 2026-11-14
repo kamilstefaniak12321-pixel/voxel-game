@@ -157,7 +157,8 @@ for (const kind of ['place', 'grow', 'harvest', 'reject', 'break']) {
 
 const gameSource = await readFile(new URL('../src/game/GameInteraction.js', import.meta.url), 'utf8');
 const harvestBody = gameSource.split('    harvestTarget(hit) {')[1].split('\n    // --------------------------------------------------------')[0];
-const harvestTarget = new Function('getHarvest', 'THREE', `return function(hit) {${harvestBody.trim().slice(0, -1)}}`)(getHarvest, { Vector3 });
+// (getTool: zbiór nożem od 0.100.0 - indygowiec ścina się nożem, więc gracz trzyma nóż.)
+const harvestTarget = new Function('getHarvest', 'THREE', 'getTool', `return function(hit) {${harvestBody.trim().slice(0, -1)}}`)(getHarvest, { Vector3 }, () => 'knife');
 
 const world = new World(new Scene(), 123, new Map(), 'classic');
 const chunk = new Chunk(-1, 0); chunk.skyLight.fill(15); world.chunks.set('-1,0', chunk);

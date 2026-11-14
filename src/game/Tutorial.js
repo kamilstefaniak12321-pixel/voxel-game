@@ -86,7 +86,7 @@ export const TUTORIAL_STEPS = [
         id: 'axe',
         title: 'Zrób siekierę',
         text: 'Potrzebujesz trzech skał i patyka. Skałę wykopiesz spod ziemi albo znajdziesz na zboczach i brzegach. W siatce ułóż: u góry dwie skały, pod nimi skała i patyk.',
-        hint: 'Siekiera ścina drzewa trzy razy szybciej. Kilof (2 skały + patyk) tak samo przyspiesza kopanie skał, łopata (skała + patyk) - ziemi.',
+        hint: 'Siekiera ścina drzewa trzy razy szybciej. Kilof (2 skały + patyk) tak samo przyspiesza kopanie skał, łopata (skała nad patykiem) - ziemi. Nóż (skała i patyk na ukos) ścina trawę i kwiaty.',
         done: (t) => t.saw('crafted:axe') || t.has(isAxe)
     },
     {
@@ -116,9 +116,9 @@ export const TUTORIAL_STEPS = [
     {
         id: 'fire',
         title: 'Rozpal ognisko',
-        text: 'Dołóż do ogniska podpałkę - trawę ([use]). Z dwóch patyków zrób starter ognia, wyceluj nim w ognisko i przytrzymaj [use] przez 5 sekund.',
-        touch: 'Dołóż do ogniska podpałkę - trawę (stuknij ognisko). Z dwóch patyków zrób starter ognia, wyceluj nim w ognisko i przytrzymaj przycisk z kostką przez 5 sekund.',
-        hint: 'Nad ogniem upieczesz jabłka, orzechy i żołędzie: trzymaj je nad płomieniem. Pieczone to porządny posiłek.',
+        text: 'Podpałką jest kora: kliknij pień siekierą ([use]) i dołóż korę do ogniska. Z dwóch patyków zrób starter ognia, wyceluj nim w ognisko i przytrzymaj [use] przez 5 sekund.',
+        touch: 'Podpałką jest kora: stuknij pień siekierą i dołóż korę do ogniska. Z dwóch patyków zrób starter ognia, wyceluj nim w ognisko i przytrzymaj przycisk z kostką przez 5 sekund.',
+        hint: 'Nad ogniem upieczesz jabłka, orzechy i żołędzie. Polana spalają się po kolei - do płonącego ogniska możesz je dokładać.',
         done: (t) => t.saw('fireLit')
     },
     {
@@ -126,7 +126,7 @@ export const TUTORIAL_STEPS = [
         title: 'Prześpij noc',
         text: 'Po 19:00 można spać. Na początek wystarczy ziemia: kucnij ([crouch]) i kliknij ziemię pustą ręką ([use]). Rano budzisz się sam.',
         touch: 'Po 19:00 można spać. Na początek wystarczy ziemia: trzymaj ▼ i stuknij ziemię pustą ręką. Rano budzisz się sam.',
-        hint: 'Lepiej się wyśpisz na posłaniu (2 trawy → słoma, 4 słomy → pościel), a najlepiej w łóżku.',
+        hint: 'Lepiej się wyśpisz na posłaniu (2 trawy ścięte nożem → słoma, 4 słomy → pościel), a najlepiej w łóżku.',
         // Do wieczora krok czeka - widać, która jest godzina (pełna:
         // karta nie przerysowuje się co chwilę).
         wait: (t) => (isNight(t.game.time?.days ?? 0) ? null

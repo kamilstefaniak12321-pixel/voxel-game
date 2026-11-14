@@ -149,7 +149,7 @@ export class RemotePlayers {
             const pose = entry.animator.update(dt, lying ? { vx: 0, vy: 0, vz: 0, onGround: true, yaw: entry.yaw, pitch: 0, landed: 0 } : {
                 vx: state.vx, vy: state.vy, vz: state.vz, onGround: state.onGround, crouching: state.crouching,
                 sprinting: state.sprinting, flying: state.flying, swimming: state.swimming,
-                yaw: entry.yaw, pitch: entry.pitch, landed: entry.landed
+                yaw: entry.yaw, pitch: entry.pitch, landed: entry.landed, eating: state.eating
             });
             entry.landed = 0;
             entry.model.setPose(pose);

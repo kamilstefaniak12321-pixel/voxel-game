@@ -12,6 +12,7 @@ import { TREE_DEFINITIONS } from '../blocks/treeCatalog.js';
 import { PLANT_PACKS, plantTile } from '../blocks/plantPacks.js';
 import { DYE_ITEMS } from './dyes.js';
 import { STONE_TOOL_ITEMS } from './stoneTools.js';
+import { barkType } from './bark.js';
 
 // ------------------------------------------------------------
 // PRZEDMIOTY
@@ -27,7 +28,8 @@ import { STONE_TOOL_ITEMS } from './stoneTools.js';
 //   plants - jaki blok (roślina) staje po posadzeniu - opcjonalne
 //   tool   - narzędzie: 'axe' (siekiera - drewno kopie szybciej, PPM
 //            na pniu okorowuje go), 'pickaxe' (kilof - skały szybciej),
-//            'shovel' (łopata - ziemia, piasek, żwir, błoto szybciej);
+//            'shovel' (łopata - ziemia, piasek, żwir, błoto szybciej),
+//            'knife' (nóż - ścina trawę, kwiaty i zioła);
 //            jakie materiały - TOOL_MATERIALS w src/config.js
 //   category - kategoria w ekwipunku, księdze przepisów i wiki
 //            (src/items/categories.js) - opcjonalne, zwykle sama się
@@ -159,11 +161,13 @@ export const ITEM_TYPES = {
     tea_heal: { name: 'Healing Infusion', label: 'Napar leczniczy', icon: 'tea_heal' },
     tea_vigor: { name: 'Invigorating Infusion', label: 'Napar wzmacniający', icon: 'tea_vigor' },
 
-    // Zwój kory z okorowanej siekierą brzozy.
+    // Zwój kory z okorowanej siekierą brzozy. Kora pozostałych drzew
+    // dopisuje się niżej sama (od 0.100.0 - items/bark.js).
     birch_bark: {
         name: 'Birch Bark',
         label: 'Kora brzozowa',
-        icon: 'birch_bark'
+        icon: 'birch_bark',
+        category: 'drewno'
     },
 
     // NARZĘDZIA I SUROWCE (wiersz 9 atlasu - tools/tekstury_narzedzi.py).
@@ -191,6 +195,15 @@ export const ITEM_TYPES = {
         tool: 'shovel'
     },
 
+    // Nóż (0.100.0): ścina trawę, kwiaty i zioła - bez niego nic z nich
+    // nie zostaje (BlockRegistry.js: pole cut; zbiór: harvest.tool).
+    knife: {
+        name: 'Knife',
+        label: 'Nóż',
+        icon: 'knife',
+        tool: 'knife'
+    },
+
     stick: {
         name: 'Stick',
         label: 'Patyk',
@@ -198,6 +211,28 @@ export const ITEM_TYPES = {
     }
 
 };
+
+
+// Kora każdego drzewa, którego pień da się okorować (items/bark.js):
+// "Pień dębu" -> "Kora dębu".
+
+for (const definition of Object.values(BLOCK_TYPES)) {
+
+    if (definition.part !== 'log' || !definition.strip || definition.bark) {
+        continue;
+    }
+
+    const type = barkType(definition.tree);
+
+    ITEM_TYPES[type] ??= {
+        name: `${definition.tree} bark`,
+        label: definition.label.replace(/^Pień/, 'Kora').replace(/ \(.*\)$| z żywicą$/, ''),
+        icon: type,
+        category: 'drewno',
+        tree: definition.tree
+    };
+
+}
 
 
 // Przedmioty drzew ze wspólnego katalogu.

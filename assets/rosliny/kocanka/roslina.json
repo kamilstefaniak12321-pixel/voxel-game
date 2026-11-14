@@ -45,7 +45,7 @@
         "nazwaAngielska": "Everlast Bouquet",
         "grupy": ["yellow", "flowers"]
     },
-    "zbior": { "ile": [1, 2], "wraca": 2 },
+    "zbior": { "ile": [1, 2], "wraca": 2, "narzedzie": "noz" },
     "podloze": ["sand"],
     "gdzieRosnie": { "biomy": { "bor": 1, "plaza": 1, "gaj": 0.5 }, "plamy": 0.035, "gestosc": 0.3, "etapy": [0.2, 0.25, 0.55] },
     "zrodlo": {

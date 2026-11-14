@@ -50,7 +50,7 @@
         "nazwaAngielska": "Zinnia Flower",
         "grupy": ["orange", "flowers"]
     },
-    "zbior": { "ile": [1, 2], "wraca": 2 },
+    "zbior": { "ile": [1, 2], "wraca": 2, "narzedzie": "noz" },
     "gdzieRosnie": { "biomy": { "brzezina": 1, "laka": 0.25 }, "plamy": 0.02, "gestosc": 0.35, "etapy": [0.2, 0.25, 0.55] },
     "zrodlo": {
         "atlas": "Atlas tekstur cynii koralowej.png",

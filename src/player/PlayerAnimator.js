@@ -277,6 +277,11 @@ export class PlayerAnimator {
         this.landTime += dt;
         this.swingTime += dt;
 
+        // Jedzenie (state.eating): ręka płynnie idzie do ust i wraca.
+
+        this.eatBlend = (this.eatBlend ?? 0) + ((state.eating ? 1 : 0) - (this.eatBlend ?? 0)) * Math.min(1, dt * 10);
+        this.eatClock = (this.eatClock ?? 0) + dt;
+
 
         // --- Krok -----------------------------------------------
 
@@ -515,6 +520,20 @@ export class PlayerAnimator {
             armL += L.armForward * envelope;
             elbowR += L.elbow * envelope;
             elbowL += L.elbow * envelope;
+
+        }
+
+
+        // --- Jedzenie: prawa ręka przy ustach, drobne ruchy kęsów ---
+
+        if (this.eatBlend > 0.001) {
+
+            const E = A.eat, e = this.eatBlend;
+            const chew = Math.sin(this.eatClock * E.chewSpeed) * E.chew;
+
+            armR += (E.arm + chew - armR) * e;
+            spreadR += (E.spread - spreadR) * e;
+            elbowR += (E.elbow + chew - elbowR) * e;
 
         }
 

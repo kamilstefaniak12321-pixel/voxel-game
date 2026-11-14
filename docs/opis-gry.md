@@ -8,7 +8,7 @@ tematy mają też własne strony w `docs/` - linki są w tekście.
 Dla graczy jest [wiki](wiki/README.md), a historia wersji w
 [CHANGELOG.md](../CHANGELOG.md).
 
-**Spis treści:** [Samouczek i poradnik](#samouczek-i-poradnik) · [Klawisze](#klawisze) · [Osiągnięcia](#osiągnięcia) · [Energia i samopoczucie](#energia-i-samopoczucie) · [Tryby gry i ekwipunek](#tryby-gry-i-ekwipunek) · [Bloki naturalne i rośliny](#bloki-naturalne-i-rośliny) · [Woda](#woda) · [Ustawienia](#ustawienia) · [Tekstury](#tekstury) · [Dźwięki](#dźwięki) · [Gracz](#gracz) · [Tryb ziemniaka](#tryb-ziemniaka) · [Wydajność](#wydajność) · [Świat](#świat) · [Oświetlenie](#oświetlenie) · [Czat i komendy](#czat-i-komendy) · [Dzień i noc](#dzień-i-noc) · [Sekret: kosmos](#sekret-kosmos) · [Gra ze znajomymi](#gra-ze-znajomymi) · [Zapis świata](#zapis-świata) · [Menu i motywy](#menu-i-motywy)
+**Spis treści:** [Samouczek i poradnik](#samouczek-i-poradnik) · [Wyrzucanie, nóż, kora, ognisko etapami](#wyrzucanie-nóż-kora-ognisko-etapami) · [Klawisze](#klawisze) · [Osiągnięcia](#osiągnięcia) · [Energia i samopoczucie](#energia-i-samopoczucie) · [Tryby gry i ekwipunek](#tryby-gry-i-ekwipunek) · [Bloki naturalne i rośliny](#bloki-naturalne-i-rośliny) · [Woda](#woda) · [Ustawienia](#ustawienia) · [Tekstury](#tekstury) · [Dźwięki](#dźwięki) · [Gracz](#gracz) · [Tryb ziemniaka](#tryb-ziemniaka) · [Wydajność](#wydajność) · [Świat](#świat) · [Oświetlenie](#oświetlenie) · [Czat i komendy](#czat-i-komendy) · [Dzień i noc](#dzień-i-noc) · [Sekret: kosmos](#sekret-kosmos) · [Gra ze znajomymi](#gra-ze-znajomymi) · [Zapis świata](#zapis-świata) · [Menu i motywy](#menu-i-motywy)
 
 ## Samouczek i poradnik
 
@@ -20,6 +20,17 @@ samouczek można pominąć w pauzie, a powtórzyć w *Ustawienia →
 Poradnik*. W tej samej zakładce jest **poradnik** - ściąga w dziesięciu
 rozdziałach. Szczegóły i strojenie liczb pierwszych minut:
 [docs/samouczek.md](samouczek.md).
+
+## Wyrzucanie, nóż, kora, ognisko etapami
+
+Od 0.100.0: przedmiot z ręki da się **wyrzucić** (Q) - leży w świecie
+jako mały model i wraca do ekwipunku, gdy się na niego wejdzie. **Nóż**
+(z każdej skały) ścina trawę, kwiaty i zioła - gołą ręką nic z nich nie
+zostaje, a kwitnąca roślina po ścięciu kwiatów rośnie dalej. Okorowanie
+daje **korę każdego drzewa** (podpałka). Polana w ognisku spalają się
+**po kolei** i można je dokładać, **jedzenie trwa chwilę**, a sen
+przesuwa cały świat. Szczegóły:
+[docs/przedmioty-i-noz.md](przedmioty-i-noz.md).
 
 ## Klawisze
 

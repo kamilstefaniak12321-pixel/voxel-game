@@ -282,7 +282,8 @@ check(id(56, 17, -93) === getBlockId('blueberry_bush_full') && id(56, 17, -102) 
 check(id(20, 25, 13) === 0 && id(16, 19, 5) === getBlockId('lamp_red'), 'Paleta: stare laboratorium pozostaje nienaruszone');
 const referenceFire = game.campfires.fires.get(reference.campfire.join(','));
 check(id(...reference.campfire) === getBlockId('campfire') && referenceFire.phase === 'burning' &&
-    referenceFire.logs.length === 6 && referenceFire.logs.every(log => log.burn === 24 / 480),
+    // (Od 0.100.0 pali się polano z wierzchu: po 24 s jest w 24/80, reszta nietknięta.)
+    referenceFire.logs.length === 6 && referenceFire.logs.at(-1).burn === 24 / 80 && referenceFire.logs.slice(0, 5).every(log => log.burn === 0),
     'Paleta: ognisko ma kompletny, powtarzalny stan zwykłego spalania');
 const referenceBlocks = new Map([...world.chunks].map(([key, chunk]) => [key, chunk.blocks.slice()]));
 buildScene(findScene('paleta'), ctx, run);

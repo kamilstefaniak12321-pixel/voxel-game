@@ -587,7 +587,13 @@ async function validatePack(folder) {
             fail(`"zbior.wraca": numer etapu od 1 do ${pack.stages.length - 1}, do którego roślina wraca po zbiorze`);
         }
 
-        pack.harvest = { count, back: back - 1 };
+        // "narzedzie": "noz" - zbiór tylko z nożem w ręce (kwiaty, zioła).
+
+        if (harvest.narzedzie !== undefined && harvest.narzedzie !== 'noz') {
+            fail('"zbior.narzedzie": na razie tylko "noz" (zbiór nożem) albo bez tego pola');
+        }
+
+        pack.harvest = { count, back: back - 1, tool: harvest.narzedzie === 'noz' ? 'knife' : null };
 
     }
 

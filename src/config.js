@@ -460,8 +460,17 @@ export const TOOL_SPEED = 3;
 export const TOOL_MATERIALS = {
     axe: ['wood'],
     pickaxe: ['stone'],
-    shovel: ['grass', 'dirt', 'sand', 'gravel', 'mud', 'snow']
+    shovel: ['grass', 'dirt', 'sand', 'gravel', 'mud', 'snow'],
+    // Nóż niczego nie kopie szybciej (rośliny i tak znikają od razu) -
+    // za to tylko nim da się ściąć trawę, kwiaty i zioła (pole cut bloku).
+    knife: []
 };
+
+// JEDZENIE (od 0.100.0 trwa chwilę - game/GameInteraction.js: eat,
+// updateEating): ile sekund je się przekąskę, porządny posiłek i pije
+// napar; co ile sekund słychać kęs.
+export const EAT_SECONDS = { snack: 1.4, meal: 2.2, drink: 1.8 };
+export const EAT_BITE_SECONDS = 0.4;
 
 // Przy kopaniu co tyle sekund: machnięcie ręką, stuknięcie (dźwięk)
 // i kilka odłamków. Po zniszczeniu bloku chwila przerwy, zanim zacznie

@@ -12,6 +12,7 @@ import * as THREE from 'three';
 import { CHUNK_SIZE } from '../config.js';
 import { RaftBody } from '../game/RaftPhysics.js';
 import { NetSession, validBlockChange } from './NetSession.js';
+import { entryKey } from './StateSync.js';
 import { connectTo, describeError } from './PeerTransport.js';
 import { RemoteChunkStore } from './RemoteChunkStore.js';
 import { MSG, PROTOCOL_VERSION, peerIdOf, cleanName, unpackPlayer, registryFingerprint, decodeBlocks } from './protocol.js';
@@ -136,7 +137,9 @@ export class NetClient extends NetSession {
             const map = this.state.systems[sys]?.map();
             if (!map) continue;
             map.clear();
-            for (const value of Array.isArray(list) ? list : []) this.state.apply(sys, `${value.x},${value.y},${value.z}`, value);
+            for (const value of Array.isArray(list) ? list : []) {
+                if (value && typeof value === 'object') this.state.apply(sys, entryKey(this.state.systems[sys], value), value);
+            }
         }
         this.state.remember();
         // Tratwy gościa mają numery z osobnego zakresu.

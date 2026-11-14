@@ -75,13 +75,13 @@ export const EQUIPMENT_SLOTS = ['Ubranie', 'Plecak', 'Pas na narzędzia'];
 
 const HELP = {
     blocks: 'Klik - weź stos | PPM - jedna sztuka | Shift + klik - na pasek | 1-9 - na to miejsce paska | kosz - usuń | [inventory] - zamknij',
-    inventory: 'Klik - weź / połóż | PPM - połowa / jedna sztuka | Shift + klik - pasek ↔ ekwipunek | wynik: klik - weź, Shift + klik - ile się da | 1-9 - zamiana z paskiem | [inventory] - zamknij'
+    inventory: 'Klik - weź / połóż | PPM - połowa / jedna sztuka | Shift + klik - pasek ↔ ekwipunek | wynik: klik - weź, Shift + klik - ile się da | 1-9 - zamiana z paskiem | [drop] albo klik obok okna - wyrzuć | [inventory] - zamknij'
 };
 
 // Na telefonie (stuknięcia zamiast myszy i klawiszy).
 const HELP_TOUCH = {
     blocks: 'Stuknięcie w blok - weź stos, potem stuknięcie w miejsce paska - połóż | kosz - usuń',
-    inventory: 'Stuknięcie - weź / połóż stos | wynik - wyrób prosto do ekwipunku | 📖 Przepisy - stuknięcie układa składniki w siatce'
+    inventory: 'Stuknięcie - weź / połóż stos | stuknięcie obok okna - wyrzuć | wynik - wyrób prosto do ekwipunku | 📖 Przepisy - stuknięcie układa składniki w siatce'
 };
 
 // Księga przepisów otwarta / zamknięta - pamiętane w przeglądarce.
@@ -1207,18 +1207,20 @@ export class InventoryScreen {
         if (!slot) {
 
             // Klik obok okna z blokiem pod kursorem: w kreatywnym blok
-            // znika, w przygodzie wraca do ekwipunku.
+            // znika, w przygodzie leci na ziemię (od 0.100.0 - game/Drops.js;
+            // prawy przycisk - jedna sztuka).
 
             if (!event.target.closest('.inv-panel, .inv-book, .inv-bar') && this.cursor) {
 
                 if (!isCreative(this.game.mode)) {
-                    this.returnCursor();
+                    // (Bez świata, np. w testach okna - stos wraca do ekwipunku.)
+                    if (!this.throwCursor(right ? 1 : this.cursor.count)) this.returnCursor();
                 }
                 else {
                     this.cursor = null;
                 }
 
-                playUi(isCreative(this.game.mode) ? 'item_trash' : 'item_place');
+                playUi(isCreative(this.game.mode) ? 'item_trash' : 'item_place', isCreative(this.game.mode) ? {} : { pitch: 0.8 });
 
                 this.refresh();
 
@@ -1458,6 +1460,76 @@ export class InventoryScreen {
 
     // Miejsca: ekwipunek (kind 'slot': 0-8 pasek, 9-35 reszta) albo
     // siatka wytwarzania ('craft': 0-3).
+
+    // Wyrzucenie na ziemię tego, co jest pod kursorem (count sztuk).
+
+    throwCursor(count) {
+
+        const item = this.cursor;
+
+        if (!item || !this.game.drops) {
+            return false;
+        }
+
+        const thrown = Math.min(count, item.count);
+
+        if (!this.game.drops.throwFromPlayer(item.type, thrown)) {
+            return false;
+        }
+
+        this.cursor = item.count > thrown ? { type: item.type, count: item.count - thrown } : null;
+
+        return true;
+
+    }
+
+
+    // Klawisz wyrzucania nad miejscem ekwipunku (albo z kursora).
+
+    dropHovered(all) {
+
+        if (this.cursor) {
+
+            if (this.throwCursor(all ? this.cursor.count : 1)) {
+                playUi('item_place', { pitch: 0.8 });
+                this.refresh();
+            }
+
+            return;
+
+        }
+
+        this.updateTooltip({
+            target: document.elementFromPoint(this.mouse.x, this.mouse.y) ?? this.root,
+            clientX: this.mouse.x,
+            clientY: this.mouse.y
+        });
+
+        if (!this.hover || !['slot', 'craft'].includes(this.hover.kind) || !this.game.drops) {
+            return;
+        }
+
+        const slots = this.container(this.hover.kind);
+        const item = slots.get(this.hover.index);
+
+        if (!item) {
+            return;
+        }
+
+        const count = all ? item.count : 1;
+
+        if (!this.game.drops.throwFromPlayer(item.type, count)) {
+            return;
+        }
+
+        slots.set(this.hover.index, item.count > count ? { type: item.type, count: item.count - count } : null);
+
+        playUi('item_place', { pitch: 0.8 });
+
+        this.refresh();
+
+    }
+
 
     container(kind) {
 
@@ -1949,6 +2021,22 @@ export class InventoryScreen {
 
             if (!event.repeat) {
                 this.handlers.close(true);
+            }
+
+            return;
+
+        }
+
+
+        // Klawisz wyrzucania (Q) nad miejscem: jedna sztuka na ziemię,
+        // z Shiftem - cały stos; z przedmiotem pod kursorem - z kursora.
+
+        if (code === 'KeyQ') {
+
+            event.preventDefault();
+
+            if (!event.repeat) {
+                this.dropHovered(event.shiftKey);
             }
 
             return;

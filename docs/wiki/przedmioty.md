@@ -2,7 +2,7 @@
 
 > Ta strona jest generowana z kodu gry (`python tools/wiki.py`) - nie zmieniaj jej ręcznie, zmiany przepadną przy następnym generowaniu.
 
-Wersja gry **0.99.0** - 105 przedmiotów. Przedmiotu nie da się postawić jak bloku; owoce i nasiona posadzone na ziemi (PPM) wyrastają w krzak albo drzewo, narzędzia przyspieszają kopanie.
+Wersja gry **0.100.0** - 129 przedmiotów. Przedmiotu nie da się postawić jak bloku; owoce i nasiona posadzone na ziemi (PPM) wyrastają w krzak albo drzewo, narzędzia przyspieszają kopanie.
 
 
 ## Drewno
@@ -28,6 +28,25 @@ Wersja gry **0.99.0** - 105 przedmiotów. Przedmiotu nie da się postawić jak b
 | <img src="ikony/sequoia_firewood.png" width="32" height="32" alt=""> | **Opał — sekwoja** | `sequoia_firewood` | **Przepis:** Opał — sekwoja x4<br>**Służy też jako:** opał do ogniska |
 | <img src="ikony/ginkgo_firewood.png" width="32" height="32" alt=""> | **Opał — miłorząb** | `ginkgo_firewood` | **Przepis:** Opał — miłorząb x4<br>**Służy też jako:** opał do ogniska |
 | <img src="ikony/jacaranda_firewood.png" width="32" height="32" alt=""> | **Opał — jakaranda** | `jacaranda_firewood` | **Przepis:** Opał — jakaranda x4<br>**Służy też jako:** opał do ogniska |
+| <img src="ikony/birch_bark.png" width="32" height="32" alt=""> | **Kora brzozowa** | `birch_bark` | **Skąd:** okorowanie siekierą: Pień brzozy<br>**Przydaje się do:** Lampa<br>**Służy też jako:** podpałka (1,5 raza szybsza od trawy) |
+| <img src="ikony/spruce_bark.png" width="32" height="32" alt=""> | **Kora świerka** | `spruce_bark` | **Służy też jako:** podpałka (1,25 raza szybsza od trawy) |
+| <img src="ikony/pine_bark.png" width="32" height="32" alt=""> | **Kora sosny** | `pine_bark` | **Służy też jako:** podpałka (1,25 raza szybsza od trawy) |
+| <img src="ikony/beech_bark.png" width="32" height="32" alt=""> | **Kora buka** | `beech_bark` | **Służy też jako:** podpałka |
+| <img src="ikony/linden_bark.png" width="32" height="32" alt=""> | **Kora lipy** | `linden_bark` | **Służy też jako:** podpałka |
+| <img src="ikony/oak_bark.png" width="32" height="32" alt=""> | **Kora dębu** | `oak_bark` | **Służy też jako:** podpałka |
+| <img src="ikony/jablon_bark.png" width="32" height="32" alt=""> | **Kora jabłoni** | `jablon_bark` | **Służy też jako:** podpałka |
+| <img src="ikony/olcha_bark.png" width="32" height="32" alt=""> | **Kora olchy** | `olcha_bark` | **Służy też jako:** podpałka |
+| <img src="ikony/wierzba_bark.png" width="32" height="32" alt=""> | **Kora wierzby** | `wierzba_bark` | **Służy też jako:** podpałka |
+| <img src="ikony/acacia_bark.png" width="32" height="32" alt=""> | **Kora akacji** | `acacia_bark` | **Służy też jako:** podpałka |
+| <img src="ikony/bald_cypress_bark.png" width="32" height="32" alt=""> | **Kora cypryśnika** | `bald_cypress_bark` | **Służy też jako:** podpałka |
+| <img src="ikony/cherry_bark.png" width="32" height="32" alt=""> | **Kora wiśni** | `cherry_bark` | **Służy też jako:** podpałka |
+| <img src="ikony/maple_bark.png" width="32" height="32" alt=""> | **Kora klonu** | `maple_bark` | **Służy też jako:** podpałka |
+| <img src="ikony/mugo_bark.png" width="32" height="32" alt=""> | **Kora kosodrzewiny** | `mugo_bark` | **Służy też jako:** podpałka (1,25 raza szybsza od trawy) |
+| <img src="ikony/olive_bark.png" width="32" height="32" alt=""> | **Kora oliwki** | `olive_bark` | **Służy też jako:** podpałka |
+| <img src="ikony/rainbow_eucalyptus_bark.png" width="32" height="32" alt=""> | **Kora eukaliptusa** | `rainbow_eucalyptus_bark` | **Służy też jako:** podpałka (1,25 raza szybsza od trawy) |
+| <img src="ikony/sequoia_bark.png" width="32" height="32" alt=""> | **Kora sekwoi** | `sequoia_bark` | **Służy też jako:** podpałka |
+| <img src="ikony/ginkgo_bark.png" width="32" height="32" alt=""> | **Kora miłorzębu** | `ginkgo_bark` | **Służy też jako:** podpałka |
+| <img src="ikony/jacaranda_bark.png" width="32" height="32" alt=""> | **Kora jakarandy** | `jacaranda_bark` | **Służy też jako:** podpałka |
 
 ## Jedzenie i nasiona
 
@@ -96,15 +115,20 @@ Wersja gry **0.99.0** - 105 przedmiotów. Przedmiotu nie da się postawić jak b
 | <img src="ikony/shovel_sandstone.png" width="32" height="32" alt=""> | **Łopata piaskowcowa** | `shovel_sandstone` | **Narzędzie:** kopie 3 razy szybciej: trawa, ziemia, piasek, żwir, błoto, snow<br>**Przepis:** Łopata piaskowcowa |
 | <img src="ikony/shovel_slate.png" width="32" height="32" alt=""> | **Łopata łupkowa** | `shovel_slate` | **Narzędzie:** kopie 3 razy szybciej: trawa, ziemia, piasek, żwir, błoto, snow<br>**Przepis:** Łopata łupkowa |
 | <img src="ikony/shovel_basalt.png" width="32" height="32" alt=""> | **Łopata bazaltowa** | `shovel_basalt` | **Narzędzie:** kopie 3 razy szybciej: trawa, ziemia, piasek, żwir, błoto, snow<br>**Przepis:** Łopata bazaltowa |
+| <img src="ikony/knife_granite.png" width="32" height="32" alt=""> | **Nóż granitowy** | `knife_granite` | **Narzędzie:** kopie 3 razy szybciej: <br>**Przepis:** Nóż granitowy |
+| <img src="ikony/knife_limestone.png" width="32" height="32" alt=""> | **Nóż wapienny** | `knife_limestone` | **Narzędzie:** kopie 3 razy szybciej: <br>**Przepis:** Nóż wapienny |
+| <img src="ikony/knife_sandstone.png" width="32" height="32" alt=""> | **Nóż piaskowcowy** | `knife_sandstone` | **Narzędzie:** kopie 3 razy szybciej: <br>**Przepis:** Nóż piaskowcowy |
+| <img src="ikony/knife_slate.png" width="32" height="32" alt=""> | **Nóż łupkowy** | `knife_slate` | **Narzędzie:** kopie 3 razy szybciej: <br>**Przepis:** Nóż łupkowy |
+| <img src="ikony/knife_basalt.png" width="32" height="32" alt=""> | **Nóż bazaltowy** | `knife_basalt` | **Narzędzie:** kopie 3 razy szybciej: <br>**Przepis:** Nóż bazaltowy |
 | <img src="ikony/fire_starter.png" width="32" height="32" alt=""> | **Starter ognia** | `fire_starter` | **Przepis:** Starter ognia<br>**Służy też jako:** rozpalanie ogniska |
 | <img src="ikony/resin.png" width="32" height="32" alt=""> | **Żywica** | `resin` | **Skąd:** zbiór (PPM): Pień sosny z żywicą<br>**Przydaje się do:** Pochodnia, Lampa |
 | <img src="ikony/straw.png" width="32" height="32" alt=""> | **Słoma** | `straw` | **Przepis:** Słoma<br>**Przydaje się do:** Słomiana pościel<br>**Służy też jako:** podpałka (1,25 raza szybsza od trawy) |
 | <img src="ikony/clay_cup.png" width="32" height="32" alt=""> | **Gliniany kubek** | `clay_cup` | **Przepis:** Gliniany kubek x2<br>**Przydaje się do:** Kubek ziół na sen, Kubek ziół leczniczych, Kubek ziół wzmacniających |
-| <img src="ikony/birch_bark.png" width="32" height="32" alt=""> | **Kora brzozowa** | `birch_bark` | **Skąd:** okorowanie siekierą: Pień brzozy<br>**Przydaje się do:** Lampa<br>**Służy też jako:** podpałka (1,5 raza szybsza od trawy) |
 | <img src="ikony/axe.png" width="32" height="32" alt=""> | **Siekiera** | `axe` | **Narzędzie:** kopie 3 razy szybciej: drewno<br>**Przepis:** Siekiera<br>**Przydaje się do:** Opał — dąb, Opał — brzoza, Opał — świerk, Opał — sosna, Opał — buk, Opał — lipa, Opał — olcha, Opał — wierzba, Opał — jabłoń, Opał — akacja, Opał — cypryśnik, Opał — wiśnia, Opał — klon, Opał — kosodrzewina, Opał — oliwka, Opał — eukaliptus, Opał — sekwoja, Opał — miłorząb, Opał — jakaranda |
 | <img src="ikony/pickaxe.png" width="32" height="32" alt=""> | **Kilof** | `pickaxe` | **Narzędzie:** kopie 3 razy szybciej: kamień<br>**Przepis:** Kilof |
 | <img src="ikony/shovel.png" width="32" height="32" alt=""> | **Łopata** | `shovel` | **Narzędzie:** kopie 3 razy szybciej: trawa, ziemia, piasek, żwir, błoto, snow<br>**Przepis:** Łopata |
-| <img src="ikony/stick.png" width="32" height="32" alt=""> | **Patyk** | `stick` | **Przepis:** Patyk x4<br>**Przydaje się do:** Pochodnia, Stół stolarski świerkowy, Stół stolarski sosnowy, Stół stolarski bukowy, Stół stolarski lipowy, Stół stolarski dębowy, Stół stolarski brzozowy, Stół stolarski z ciemnego drewna, Stół stolarski jabłoniowy, Stół stolarski olchowy, Stół stolarski wierzbowy, Stół stolarski z akacji, Stół stolarski z cypryśnika, Stół stolarski wiśniowy, Stół stolarski klonowy, Stół stolarski z kosodrzewiny, Stół stolarski oliwkowy, Stół stolarski eukaliptusowy, Stół stolarski sekwojowy, Stół stolarski miłorzębowy, Stół stolarski jakarandowy, Starter ognia, Siekiera, Kilof, Łopata |
+| <img src="ikony/knife.png" width="32" height="32" alt=""> | **Nóż** | `knife` | **Narzędzie:** kopie 3 razy szybciej: <br>**Przepis:** Nóż |
+| <img src="ikony/stick.png" width="32" height="32" alt=""> | **Patyk** | `stick` | **Przepis:** Patyk x4<br>**Przydaje się do:** Pochodnia, Stół stolarski świerkowy, Stół stolarski sosnowy, Stół stolarski bukowy, Stół stolarski lipowy, Stół stolarski dębowy, Stół stolarski brzozowy, Stół stolarski z ciemnego drewna, Stół stolarski jabłoniowy, Stół stolarski olchowy, Stół stolarski wierzbowy, Stół stolarski z akacji, Stół stolarski z cypryśnika, Stół stolarski wiśniowy, Stół stolarski klonowy, Stół stolarski z kosodrzewiny, Stół stolarski oliwkowy, Stół stolarski eukaliptusowy, Stół stolarski sekwojowy, Stół stolarski miłorzębowy, Stół stolarski jakarandowy, Starter ognia, Siekiera, Kilof, Łopata, Nóż |
 | <img src="ikony/amarantus_wiecha.png" width="32" height="32" alt=""> | **Wiecha amarantusa** | `amarantus_wiecha` | **Skąd:** zbiór (PPM): Amarantus (dojrzałe wiechy)<br>**Przydaje się do:** Czerwona lampa, Wianek z kwiatów, Barwnik czerwony |
 | <img src="ikony/kocanka_bukiet.png" width="32" height="32" alt=""> | **Bukiet kocanki** | `kocanka_bukiet` | **Skąd:** zbiór (PPM): Kocanka (kwitnie)<br>**Przydaje się do:** Wianek z kwiatów, Barwnik żółty |
 | <img src="ikony/lawenda_bukiet.png" width="32" height="32" alt=""> | **Bukiet lawendy** | `lawenda_bukiet` | **Skąd:** zbiór (PPM): Lawenda (kwitnie)<br>**Przydaje się do:** Kubek ziół na sen, Fioletowa lampa, Wianek z kwiatów, Barwnik fioletowy |

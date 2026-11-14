@@ -136,7 +136,7 @@ piksele rysunku i wynik (powiększone).
 | `etapy` | 1-4 etapy wzrostu: obrazek (do 64 x 64), nazwa, `plaszczyzny` (2-4, domyślnie 2) - albo zamiast obrazka `model` (mała roślina z pikseli, niżej) |
 | `czasWzrostu` | średnio sekund na etap (domyślnie jak krzaki, 150) |
 | `przedmiot` | przedmiot ze zbioru, obrazek 16 x 16. **Zastosowania** (od 0.98.1 każdy plon musi jakieś mieć - `tools/sprawdz_zastosowania.mjs`): `grupy` - grupy składników: kolory `red`, `orange`, `yellow`, `green`, `blue`, `purple`, `pink`, `white`, `brown` (barwnik, kolorowa lampa), `flowers` (wianek z kwiatów), `herbs_calm`, `herbs_heal`, `herbs_vigor` (napary); `podpalka` - ile razy szybciej od trawy rozpala ognisko (np. `2`). Kategoria dobiera się sama (surowiec); `"kategoria": "owoce"` tylko dla plonu jadalnego. Opis: [ziola.md](ziola.md) |
-| `zbior` | PPM na ostatnim etapie: `ile` [od, do], `wraca` - do którego etapu wraca roślina |
+| `zbior` | PPM na ostatnim etapie: `ile` [od, do], `wraca` - do którego etapu wraca roślina, `narzedzie` - `"noz"`, gdy plon ścina się nożem (kwiaty, zioła - od 0.100.0, [opis](przedmioty-i-noz.md#nóż)); bez tego pola zbiera się ręką |
 | `podloze` | na czym rośnie oprócz ziemi, np. `["sand"]` |
 | `gdzieRosnie.na` | gdzie rośnie: `ziemia` (domyślnie, trawa; piasek z `podloze`), `kamien` (wierzch skał - porosty), `pnie` (boki pni drzew, do 6 bloków nad ziemią - porosty, huby) |
 | `gdzieRosnie` | teren realistyczny: `biomy` - lista albo `{ "biom": waga }` (1 - główny biom rośliny, mniej - rośnie tam rzadziej, np. `{ "hala": 1, "laka": 0.3 }`), `plamy` (jaka część głównego biomu w plamach), `gestosc` (jak gęsto w plamie), `etapy` (jak często który etap) |

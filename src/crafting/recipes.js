@@ -357,6 +357,14 @@ export const RECIPES = [
         key: { R: '#rock', S: 'stick' },
         note: 'Ziemię, piasek, żwir i błoto kopie się 3 razy szybciej. Wygląd głowicy zależy od użytej skały.'
     },
+    {
+        id: 'knife',
+        result: ['knife', 1],
+        stoneTool: 'knife',
+        pattern: ['.R', 'S.'],
+        key: { R: '#rock', S: 'stick' },
+        note: 'Ścina trawę, kwiaty i zioła - gołą ręką nic z nich nie zostaje. PPM na kwitnącej roślinie: bierzesz kwiaty, łodyga zostaje i kwitnie od nowa. Wygląd ostrza zależy od użytej skały.'
+    },
 
 
     // ŚWIATŁO: lepidolit świeci po rozpaleniu żywicą od kory brzozowej.

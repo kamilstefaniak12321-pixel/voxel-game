@@ -110,11 +110,16 @@ export const MAX_BLOCK_ID = 65279;
 //   harvest        - PPM zbiera z rośliny przedmioty: { item, count:
 //                    [najmniej, najwięcej], becomes: blok po zbiorze };
 //                    zniszczenie rośliny w przygodzie też je daje
+//                    (harvest.tool: 'knife' - tylko z nożem w ręce)
+//   cut            - true = roślina do ścinania (trawa, kwiat, zioło):
+//                    zniszczona daje siebie tylko wtedy, gdy gracz
+//                    trzyma nóż (needsKnife) - gołą ręką nic nie zostaje
 //   loot           - w przygodzie po zniszczeniu czasem wypada coś
 //                    jeszcze: [[co, szansa 0-1], ...] (liście: sadzonki,
 //                    szyszki, żołędzie...)
 //   strip          - siekiera (PPM) zamienia blok w ten (okorowany pień)
-//   bark           - przedmiot z okorowania siekierą (kora brzozowa)
+//   bark           - przedmiot z okorowania siekierą (bez pola: kora
+//                    gatunku drzewa, <gatunek>_bark - items/bark.js)
 //   tree, part     - gatunek drzewa i część ('log', 'leaves'...) -
 //                    src/blocks/trees.js
 //   hardness       - ile sekund kopie się blok w trybie przygody
@@ -354,8 +359,10 @@ function plantPackBlocks() {
                     ? undefined
                     : { into: types[index + 1], seconds: pack.growthSeconds ?? BUSH_GROWTH_SECONDS, room: Math.ceil(next.height / PLANT_PIXELS) },
 
+                // (tool: 'knife' - kwiaty i zioła ścina się nożem.)
                 harvest: last && pack.harvest
-                    ? { item: pack.item.type, count: pack.harvest.count, becomes: types[pack.harvest.back] }
+                    ? { item: pack.item.type, count: pack.harvest.count, becomes: types[pack.harvest.back],
+                        ...(pack.harvest.tool ? { tool: pack.harvest.tool } : {}) }
                     : undefined
 
             };
@@ -894,6 +901,7 @@ export const BLOCK_TYPES = {
 
     short_grass: {
         id: 24,
+        cut: true,
         name: 'Short Grass',
         label: 'Krótka trawa',
         solid: false,
@@ -906,6 +914,7 @@ export const BLOCK_TYPES = {
 
     tall_grass: {
         id: 25,
+        cut: true,
         name: 'Tall Grass',
         label: 'Wysoka trawa',
         solid: false,
@@ -918,6 +927,7 @@ export const BLOCK_TYPES = {
 
     fern: {
         id: 26,
+        cut: true,
         name: 'Fern',
         label: 'Paproć',
         solid: false,
@@ -930,6 +940,7 @@ export const BLOCK_TYPES = {
 
     clover: {
         id: 27,
+        cut: true,
         name: 'Clover',
         label: 'Koniczyna',
         solid: false,
@@ -941,6 +952,7 @@ export const BLOCK_TYPES = {
 
     nettle: {
         id: 28,
+        cut: true,
         name: 'Nettle',
         label: 'Pokrzywa',
         solid: false,
@@ -951,6 +963,7 @@ export const BLOCK_TYPES = {
 
     plantain: {
         id: 29,
+        cut: true,
         name: 'Plantain',
         label: 'Babka zwyczajna',
         solid: false,
@@ -961,6 +974,7 @@ export const BLOCK_TYPES = {
 
     poppy: {
         id: 30,
+        cut: true,
         name: 'Poppy',
         label: 'Mak',
         solid: false,
@@ -971,6 +985,7 @@ export const BLOCK_TYPES = {
 
     cornflower: {
         id: 31,
+        cut: true,
         name: 'Cornflower',
         label: 'Chaber',
         solid: false,
@@ -981,6 +996,7 @@ export const BLOCK_TYPES = {
 
     chamomile: {
         id: 32,
+        cut: true,
         name: 'Chamomile',
         label: 'Rumianek',
         solid: false,
@@ -991,6 +1007,7 @@ export const BLOCK_TYPES = {
 
     dandelion: {
         id: 33,
+        cut: true,
         name: 'Dandelion',
         label: 'Mniszek',
         solid: false,
@@ -1065,6 +1082,7 @@ export const BLOCK_TYPES = {
 
     reed: {
         id: 242,
+        cut: true,
         name: 'Reed',
         label: 'Trzcina',
         solid: false,
@@ -1076,6 +1094,7 @@ export const BLOCK_TYPES = {
 
     heather: {
         id: 243,
+        cut: true,
         name: 'Heather',
         label: 'Wrzos',
         solid: false,
@@ -1087,6 +1106,7 @@ export const BLOCK_TYPES = {
 
     crocus: {
         id: 244,
+        cut: true,
         name: 'Crocus',
         label: 'Krokus',
         solid: false,
@@ -1097,6 +1117,7 @@ export const BLOCK_TYPES = {
 
     dune_grass: {
         id: 245,
+        cut: true,
         name: 'Dune Grass',
         label: 'Piaskownica (trawa wydmowa)',
         solid: false,
@@ -1618,6 +1639,16 @@ export function getHarvest(type) {
 }
 
 
+// Czy roślinę trzeba ściąć nożem, żeby coś z niej zostało (trawa,
+// kwiaty, zioła - pole cut). Zbiór z roślin etapowych: getHarvest(...).tool.
+
+export function needsKnife(type) {
+
+    return getBlockDefinition(type)?.cut === true;
+
+}
+
+
 // Co trafia do ekwipunku po zniszczeniu bloku (tryb przygody).
 
 export function getDropType(type) {
@@ -1672,7 +1703,9 @@ export function getStrip(type) {
 
     const definition = getBlockDefinition(type);
 
-    return definition?.strip ? { into: definition.strip, item: definition.bark ?? null } : null;
+    // Kora: własna (pole bark) albo kora gatunku drzewa (items/bark.js).
+
+    return definition?.strip ? { into: definition.strip, item: definition.bark ?? (definition.tree ? `${definition.tree}_bark` : null) } : null;
 
 }
 

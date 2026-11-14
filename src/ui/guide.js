@@ -38,7 +38,8 @@ export const GUIDE = [
             { keys: '[use]', text: 'postaw blok, zbierz owoce, użyj tego, co trzymasz' },
             { keys: '1-9, kółko', text: 'wybór miejsca na pasku' },
             { keys: '[inventory]', text: 'ekwipunek i wytwarzanie' },
-            { keys: '[eat]', text: 'zjedz albo wypij to, co trzymasz' },
+            { keys: '[eat]', text: 'zjedz albo wypij to, co trzymasz (trwa chwilę)' },
+            { keys: '[drop]', text: 'wyrzuć to, co trzymasz; z kucaniem - cały stos' },
             { keys: '[status]', text: 'okno statusu: samopoczucie i pora dnia' },
             { keys: '[map]', text: 'mapa terenu' },
             { keys: '[achievements]', text: 'księga osiągnięć' },
@@ -66,6 +67,7 @@ export const GUIDE = [
         lines: [
             'Zetnij drzewo gołą ręką i zrób z pnia deski (1 pień → 4 deski), a z desek patyki (2 deski → 4 patyki).',
             'Wykop trzy skały i zrób siekierę - drewno pójdzie trzy razy szybciej.',
+            'Zrób też nóż (skała i patyk na ukos): tylko nim zetniesz trawę, kwiaty i zioła.',
             'Zbieraj jedzenie po drodze: owoce z krzaków, jabłka, orzechy, żołędzie.',
             'Przed wieczorem ułóż ognisko: upieczesz przy nim jedzenie i będziesz widzieć w nocy.',
             'O 19:00 zaczyna się noc. Prześpij ją - choćby na ziemi, lepiej na posłaniu ze słomy.'
@@ -77,8 +79,9 @@ export const GUIDE = [
         lines: [
             'W ekwipunku jest siatka 2 × 2. Połóż w niej składniki i zabierz wynik.',
             'Przycisk Przepisy pokazuje wszystko, co da się zrobić. Kliknięcie przepisu samo układa składniki; szary przepis - czegoś brakuje.',
-            'Siekiera: 3 skały i patyk. Kilof: 2 skały i patyk. Łopata: skała i patyk.',
+            'Siekiera: 3 skały i patyk. Kilof: 2 skały i patyk. Łopata: skała nad patykiem. Nóż: skała i patyk na ukos.',
             'Narzędzie przyspiesza kopanie trzy razy: siekiera - drewno, kilof - skały, łopata - ziemię i piasek.',
+            'Nóż ścina trawę, kwiaty i zioła - zerwane gołą ręką przepadają.',
             'Skrzynia: 4 deski z jednego drzewa w kwadracie. Trzyma rzeczy, których nie nosisz przy sobie.',
             'Stół stolarski: 2 deski z jednego drzewa nad 2 patykami. Deski położone na blacie zamieniasz na schody, półbloki, płoty i furtki.',
             'Dwa stoły obok siebie robią drzwi i klapy, trzy w rzędzie - stelaż łóżka.'
@@ -93,7 +96,8 @@ export const GUIDE = [
             'Zmęczony gracz biega i kopie wolniej. Wyczerpany ledwo chodzi, ale nie umiera - wystarczy coś zjeść.',
             'Owoce i orzechy to przekąski. Pieczone jedzenie to porządny posiłek - syci dużo dłużej.',
             'Trzy posiłki dziennie podnoszą kondycję: następnego dnia masz więcej energii. Głodowanie ją obniża.',
-            'Z pełnym żołądkiem energii ubywa wolniej.'
+            'Z pełnym żołądkiem energii ubywa wolniej.',
+            'Jedzenie trwa chwilę. Przerywa je kopanie i zmiana miejsca na pasku - wtedy nic nie ubywa.'
         ]
     },
     {
@@ -102,23 +106,24 @@ export const GUIDE = [
         lines: [
             'Opał: pień i siekiera w siatce wytwarzania dają 4 polana (siekiera zostaje).',
             'Opałem kliknij ziemię i dokładaj, aż będzie 6 polan. Potem dołóż podpałkę.',
-            'Podpałka: trawa, słoma, kora brzozowa albo huba. Huba rozpala dwa razy szybciej niż trawa.',
+            { text: 'Podpałka: kora (kliknij pień siekierą: [use]), trawa, słoma albo huba. Huba rozpala dwa razy szybciej niż trawa, kora brzozowa - półtora raza.',
+                touch: 'Podpałka: kora (stuknij pień siekierą), trawa, słoma albo huba. Huba rozpala dwa razy szybciej niż trawa, kora brzozowa - półtora raza.' },
             { text: 'Starter ognia to 2 patyki. Wyceluj w ognisko i trzymaj [use] przez 5 sekund.',
                 touch: 'Starter ognia to 2 patyki. Wyceluj w ognisko i trzymaj przycisk z kostką przez 5 sekund.' },
             { text: 'Pieczenie: jabłkiem, orzechami albo żołędziami wyceluj w płomień i trzymaj [use] przez 4 sekundy.',
                 touch: 'Pieczenie: jabłkiem, orzechami albo żołędziami wyceluj w płomień i trzymaj przycisk z kostką przez 4 sekundy.' },
-            'Ognisko świeci i grzeje przez 8 minut, potem się dopala - zostaje popiół.'
+            'Pełny stos pali się 8 minut. Polana spalają się po kolei, a ogień przygasa - do płonącego ogniska możesz dokładać opał.'
         ]
     },
     {
         id: 'sleep',
         title: 'Noc i sen',
         lines: [
-            'Spać można od 19:00 do 5:00. Sen przesuwa noc do 6:00 rano.',
+            'Spać można od 19:00 do 5:00. Sen przesuwa noc do 6:00 rano - świat nie czeka: ogniska się dopalają, rośliny rosną.',
             'Bez snu robisz się senny, a potem niewyspany: wolniejszy bieg i kopanie.',
             { text: 'Goła ziemia (kucnij - [crouch] - i kliknij ją pustą ręką: [use]) - słabe wyspanie.',
                 touch: 'Goła ziemia (trzymaj ▼ i stuknij ją pustą ręką) - słabe wyspanie.' },
-            'Posłanie: 2 trawy → słoma, 4 słomy → pościel; połóż pościel na ziemi. Dobre wyspanie.',
+            'Posłanie: 2 trawy (ścięte nożem) → słoma, 4 słomy → pościel; połóż pościel na ziemi. Dobre wyspanie.',
             'Łóżko: stelaż z trzech stołów stolarskich (8 desek), postaw go i kliknij pościelą. Pełne wyspanie i premia na następny dzień.',
             'Lniana pościel (4 wiązki lnu) daje większą premię niż słomiana.'
         ]
@@ -127,6 +132,8 @@ export const GUIDE = [
         id: 'herbs',
         title: 'Zioła i napary',
         lines: [
+            { text: 'Kwiaty i zioła ścina się nożem ([use] na kwitnącej roślinie): bierzesz kwiat, łodyga zostaje i kwitnie od nowa.',
+                touch: 'Kwiaty i zioła ścina się nożem (stuknij nim kwitnącą roślinę): bierzesz kwiat, łodyga zostaje i kwitnie od nowa.' },
             'Gliniany kubek: 2 gliny → 2 kubki. Kubek + dwa zioła z jednej grupy = kubek ziół.',
             'Kubek ziół trzymaj nad płonącym ogniskiem - powstaje napar. Po wypiciu kubek wraca.',
             'Napar na sen (kwiat lipy, lawenda): następny sen jest głębszy.',
@@ -165,6 +172,8 @@ export const GUIDE = [
                 touch: 'Tratwa: 2 deski obok siebie. Postaw ją na wodzie i wsiądź stuknięciem.' },
             { text: 'Mapa ([map]) pokazuje teren z góry. Księga osiągnięć ([achievements]) podpowiada, co jeszcze można zrobić.',
                 touch: 'Mapa (komenda /mapa) pokazuje teren z góry. Księga osiągnięć podpowiada, co jeszcze można zrobić.' },
+            { text: 'Niepotrzebną rzecz wyrzuć ([drop]) - leży na ziemi, dopóki ktoś jej nie podniesie.',
+                touch: 'Niepotrzebną rzecz wyrzuć: w ekwipunku weź ją i stuknij obok okna. Leży na ziemi, dopóki ktoś jej nie podniesie.' },
             'W pauzie możesz otworzyć świat dla znajomych - dostaniesz kod zaproszenia.',
             'Samouczek można powtórzyć przyciskiem na górze tej zakładki.'
         ]

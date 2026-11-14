@@ -80,12 +80,12 @@ const check = (condition, message) => { assert.ok(condition, message); checks++;
     const text = (id) => TUTORIAL_STEPS.find((step) => step.id === id);
     check(text('fire').text.includes(`${CAMPFIRE_IGNITE_SECONDS} sekund`) && text('campfire').text.includes(`${CAMPFIRE_CAPACITY} polan`), 'Ognisko: liczby jak w grze');
     check(text('sleep').text.includes(`${NIGHT_FROM}:00`), 'Sen: godzina nocy jak w grze');
-    check(TINDERS.short_grass === 1, 'Trawa jest podpałką (krok o rozpalaniu)');
+    check(TINDERS.oak_bark === 1 && TINDERS.birch_bark === 1.5 && /korę/.test(text('fire').text), 'Kora jest podpałką (krok o rozpalaniu)');
     // Domyślne klawisze w tekstach - jak dotąd.
     check(/klawiszami W, A, S, D, skok to Spacja/.test(formatKeys(text('move').text)), 'Ruch: W, A, S, D i Spacja');
     check(/przytrzymaj lewy przycisk myszy, aż/.test(formatKeys(text('wood').text)), 'Drewno: lewy przycisk myszy');
     check(/ekwipunek \(E\)/.test(formatKeys(text('planks').text)) && /naciśnij F\./.test(formatKeys(text('eat').text)) && /Naciśnij C,/.test(formatKeys(text('status').text)), 'Ekwipunek E, jedzenie F, status C');
-    check(/kucnij \(Shift\)/.test(formatKeys(text('sleep').text)) && /przytrzymaj PPM przez 5 sekund/.test(formatKeys(text('fire').text)), 'Kucanie Shift, rozpalanie PPM');
+    check(/kucnij \(Shift\)/.test(formatKeys(text('sleep').text)) && /przytrzymaj PPM przez 5 sekund/.test(formatKeys(text('fire').text)) && /pień siekierą \(PPM\)/.test(formatKeys(text('fire').text)), 'Kucanie Shift, rozpalanie PPM');
     // Po zmianie klawiszy teksty idą za nimi.
     {
         const custom = new Bindings({ eat: 'KeyG', break: 'KeyK', use: 'Mouse3', crouch: 'ControlLeft', forward: 'ArrowUp' });
@@ -335,7 +335,7 @@ const settle = (game) => run(game, TUTORIAL_DONE_SECONDS + 0.6);
 {
     check(GUIDE.length >= 8 && new Set(GUIDE.map((chapter) => chapter.id)).size === GUIDE.length, `Poradnik: ${GUIDE.length} rozdziałów, nazwy bez powtórzeń`);
     for (const chapter of GUIDE) {
-        check(chapter.title.length >= 4 && chapter.lines.length >= 3 && chapter.lines.length <= 18, `${chapter.id}: nagłówek i kilka punktów`);
+        check(chapter.title.length >= 4 && chapter.lines.length >= 3 && chapter.lines.length <= 19, `${chapter.id}: nagłówek i kilka punktów`);
         for (const line of [...chapter.lines, ...(chapter.touch ?? [])]) {
             const text = typeof line === 'string' ? line : line.text;
             check(text.length >= 8 && text.length <= 190, `${chapter.id}: krótki punkt (${text.length} znaków)`);

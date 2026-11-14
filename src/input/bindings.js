@@ -49,6 +49,7 @@ export const ACTIONS = [
     { id: 'use', label: 'Stawianie, użycie, zbieranie', code: 'Mouse2', group: 'hands' },
     { id: 'pick', label: 'Weź blok na pasek', code: 'Mouse1', group: 'hands' },
     { id: 'eat', label: 'Zjedz, wypij', code: 'KeyF', group: 'hands' },
+    { id: 'drop', label: 'Wyrzuć przedmiot', code: 'KeyQ', group: 'hands' },
 
     { id: 'inventory', label: 'Ekwipunek', code: 'KeyE', group: 'windows' },
     { id: 'status', label: 'Okno statusu', code: 'KeyC', group: 'windows' },

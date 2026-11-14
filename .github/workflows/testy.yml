@@ -45,6 +45,10 @@ jobs:
       - uses: actions/setup-node@v5
         with:
           node-version: 24
+      # Narzędzie do paczki plików gry (esbuild - tools/pakiet.mjs) dla
+      # testów paczki. Bez skryptów instalacyjnych: Electron nie pobiera
+      # tu swojego programu (testy go nie używają).
+      - run: npm ci --ignore-scripts
       - run: npm test
       - name: Gra wieloosobowa — gospodarz i gość w dwóch kartach
         timeout-minutes: 4
@@ -98,6 +102,9 @@ jobs:
           UI_SCREENSHOTS_IN_LOG: '1'
       - name: Gra i shadery w WebGL2
         run: node tools/sprawdz_swiatlo_webgl.mjs
+      - name: Paczka plików gry - prawdziwa gra z paczki
+        timeout-minutes: 4
+        run: node tools/sprawdz_pakiet_webgl.mjs
       - name: Animowane pochodnie i barwniki w WebGL2
         timeout-minutes: 2
         run: node tools/sprawdz_pochodnie_webgl.mjs
@@ -123,6 +130,7 @@ jobs:
             test-results/depth-reuse/
             test-results/wood-textures/
             test-results/diagnostics/
+            test-results/pakiet/
             test-results/sceny/
             test-results/grey-wood/
             test-results/torches/

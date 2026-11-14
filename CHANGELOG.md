@@ -11,6 +11,22 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 1.1.3 - Płynność, krok 2: paczka plików gry
+
+Na prośbę Kamila — PR #145 (po 1.1.2). Drugi krok planu płynności:
+[`docs/plynnosc.md`](docs/plynnosc.md).
+
+- **Szybszy start aplikacji.** Pliki gry (274 pliki kodu i biblioteka
+  grafiki) są przy budowaniu łączone w paczkę 14 plików. Aplikacja na
+  komputer i na telefon otwiera przy starcie 13 plików kodu zamiast 278;
+  w prawdziwej aplikacji na komputer menu pojawia się około 0,6 s
+  (14%) wcześniej.
+- **Szybciej ruszają wątki w tle** (teren, daleki teren, zapis) - każdy
+  otwierał wcześniej swoje pliki od nowa.
+- **Zapas:** zwykłe pliki zostają w aplikacji. Gdyby paczka się nie
+  wczytała, gra rusza z nich.
+- Dla gracza nic poza czasem startu się nie zmienia.
+
 ## 1.1.2 - Płynność, krok 1: programy cieniujące przed grą
 
 Na prośbę Kamila — PR #144 (po 1.1.1). Pierwszy z ośmiu kroków planu

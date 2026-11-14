@@ -15,13 +15,16 @@
 //             samych plików gry (bez instalowania .apk) jest możliwa
 //             tylko między wersjami o tym samym odcisku
 //             (AktualizacjePlugin.java, src/app/AndroidUpdates.js),
-//   repo    - repozytorium z wydaniami (package.json -> build.publish).
+//   repo    - repozytorium z wydaniami (package.json -> build.publish),
+//   pakiet  - true: w www/pakiet/js jest paczka plików gry (tools/pakiet.mjs);
+//             src/bootstrap.js startuje wtedy z niej.
 // node tools/android-www.mjs --odcisk - tylko wypisuje odcisk.
 // ------------------------------------------------------------
 
 import { cpSync, rmSync, mkdirSync, existsSync, readFileSync, readdirSync, statSync, writeFileSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import { join } from 'node:path';
+import { buildBundle } from './pakiet.mjs';
 
 // LICENSE.md - licencja gry (PolyForm Noncommercial, docs/licencja.md).
 const FILES = ['index.html', 'src', 'assets', 'lib', 'LICENSE.md'];
@@ -109,12 +112,18 @@ for (const name of FILES) {
 
 const pkg = JSON.parse(readFileSync('package.json', 'utf8'));
 
+// Paczka plików gry (tools/pakiet.mjs): kilka plików zamiast kilkuset -
+// szybszy start. Pliki src/ zostają jako zapas (src/bootstrap.js).
+const bundle = await buildBundle('www', { version: pkg.version });
+
 const info = {
     version: pkg.version,
     native: nativeFingerprint(),
-    repo: `${pkg.build.publish.owner}/${pkg.build.publish.repo}`
+    repo: `${pkg.build.publish.owner}/${pkg.build.publish.repo}`,
+    pakiet: true
 };
 
 writeFileSync('www/wersja.json', JSON.stringify(info, null, 4) + '\n');
 
 console.log(`Pliki gry skopiowane do www/: ${FILES.join(', ')} + wersja.json (${info.version}, odcisk ${info.native})`);
+console.log(`Paczka gry: ${bundle.inputs} plików -> ${bundle.files.length} w www/pakiet/js (${(bundle.bytes / 1048576).toFixed(1)} MB)`);

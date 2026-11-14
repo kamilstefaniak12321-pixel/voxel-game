@@ -239,6 +239,17 @@ jobs:
 
       - run: npm ci
 
+      # Paczka plików gry: kilka plików zamiast kilkuset - szybszy start
+      # (tools/pakiet.mjs, docs/plynnosc.md). Bez paczki aplikacja też
+      # działa (z src/), ale wydanie ma ją mieć - brak zatrzymuje budowanie.
+      - name: Paczka plików gry
+        run: |
+          node tools/pakiet.mjs
+          if [ ! -f pakiet/js/start.js ]; then
+            echo "::error title=Paczka plików gry::Nie powstał pakiet/js/start.js."
+            exit 1
+          fi
+
       # Samo budowanie (bez wysyłania). Przy błędzie ostatnie linie
       # wyniku trafiają do adnotacji.
       - name: Zbuduj instalator
@@ -436,6 +447,12 @@ jobs:
         run: |
           if [ ! -f "$PUBLIC/wersja.json" ]; then
             echo "::error title=Paczka aktualizacji::Brak $PUBLIC/wersja.json (tools/android-www.mjs)."
+            exit 1
+          fi
+
+          # Paczka plików gry (tools/pakiet.mjs) musi być w aplikacji.
+          if [ ! -f "$PUBLIC/pakiet/js/start.js" ] || ! grep -q '"pakiet": true' "$PUBLIC/wersja.json"; then
+            echo "::error title=Paczka plików gry::Brak $PUBLIC/pakiet/js/start.js albo znacznika w wersja.json."
             exit 1
           fi
 

@@ -26,5 +26,8 @@ test-results/
 # (npm run android:www) - powstają od nowa przy każdym budowaniu
 www/
 
+# Paczka plików gry (tools/pakiet.mjs) - powstaje przy budowaniu aplikacji
+pakiet/
+
 # Python (skrypty w tools/)
 __pycache__/

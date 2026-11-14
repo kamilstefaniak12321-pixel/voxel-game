@@ -26,6 +26,7 @@ import { blockAtlasTexture, getAtlasUV, getAtlasAverage } from '../rendering/Tex
 import { getFaceTexture } from '../rendering/BlockRenderData.js';
 
 import { skyUniforms } from '../sky/skyShader.js';
+import { warmupObject } from '../rendering/ShaderWarmup.js';
 
 // ------------------------------------------------------------
 // METEORYTY SPADAJĄCE NA ZIEMIĘ
@@ -213,6 +214,19 @@ function createMeteorBody() {
 // po ziemi (tekstura rysowana raz).
 
 let ringTexture = null;
+
+// Smuga za meteorytem (świecące punkty).
+function createTrailMaterial() {
+    return new THREE.PointsMaterial({
+        map: getGlowTexture(),
+        size: 7,
+        vertexColors: true,
+        blending: THREE.AdditiveBlending,
+        depthWrite: false,
+        transparent: true,
+        fog: false
+    });
+}
 
 function createShockwave() {
 
@@ -422,18 +436,7 @@ export class Meteorites {
         trailGeometry.setAttribute('position', new THREE.BufferAttribute(new Float32Array(TRAIL_POINTS * 3), 3));
         trailGeometry.setAttribute('color', new THREE.BufferAttribute(new Float32Array(TRAIL_POINTS * 3), 3));
 
-        const trail = new THREE.Points(
-            trailGeometry,
-            new THREE.PointsMaterial({
-                map: getGlowTexture(),
-                size: 7,
-                vertexColors: true,
-                blending: THREE.AdditiveBlending,
-                depthWrite: false,
-                transparent: true,
-                fog: false
-            })
-        );
+        const trail = new THREE.Points(trailGeometry, createTrailMaterial());
 
         trail.frustumCulled = false;
 
@@ -1736,7 +1739,20 @@ export class Meteorites {
     }
 
 
+    // Wzory dla programów cieniujących (rendering/ShaderWarmup.js): smuga,
+    // kula ognia i fala uderzeniowa - pierwszy meteoryt nie zatrzymuje gry.
+    shaderPrototypes() {
+        if (!this.prototypes) {
+            const blast = createGlowSprite(new THREE.Color('#ff8a30'), 4), shockwave = createShockwave();
+            blast.visible = shockwave.visible = false;
+            this.prototypes = [warmupObject(createTrailMaterial(), { position: 3, color: 3 }, 'points'), blast, shockwave];
+        }
+        return this.prototypes;
+    }
+
     dispose() {
+        for (const object of this.prototypes ?? []) { object.geometry?.dispose?.(); object.material?.dispose?.(); }
+        this.prototypes = null;
 
         for (const meteor of this.flying) {
             this.removeObjects(meteor);

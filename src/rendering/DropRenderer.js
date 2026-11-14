@@ -8,6 +8,7 @@ import { setPotatoDefine } from './BlockRenderData.js';
 import { getBlockDefinition } from '../blocks/BlockRegistry.js';
 import { isItemType } from '../items/ItemRegistry.js';
 import { buildBlockGeometry } from '../player/PlayerModel.js';
+import { warmupObject, COLORED_MODEL_ATTRIBUTES } from './ShaderWarmup.js';
 
 // ------------------------------------------------------------
 // WYRZUCONE PRZEDMIOTY - RYSOWANIE (0.100.0)
@@ -47,6 +48,7 @@ export class DropRenderer {
     setLowDetail(on) {
         this.lowDetail = Boolean(on);
         for (const view of this.views.values()) setPotatoDefine([view.material], this.lowDetail);
+        if (this.prototypes) setPotatoDefine(this.prototypes.map((object) => object.material), this.lowDetail);
     }
 
     // Model przedmiotu: wyśrodkowany, dołem na wysokości 0.
@@ -153,7 +155,30 @@ export class DropRenderer {
         for (const id of [...this.views.keys()]) if (!keep.has(id)) this.removeView(id);
     }
 
+    // Wzory dla programów cieniujących (rendering/ShaderWarmup.js): blok
+    // i przedmiot. Każdy wyrzucony przedmiot ma własny materiał, a Three
+    // kasuje program, gdy zniknie ostatni - bez wzorów pierwszy przedmiot
+    // po przerwie kompilowałby go od nowa.
+    shaderPrototypes() {
+        if (!this.prototypes) {
+            const lighting = () => ({
+                uModelSky: { value: 1 }, uModelBlock: { value: new THREE.Vector3() }, uModelSun: { value: 1 },
+                uModelAmbient: { value: 1 }, uModelDistantShadows: { value: 1 }, uModelBounce: { value: new THREE.Vector3() }
+            });
+            const materials = [
+                createModelMaterial({ map: blockAtlasTexture, lighting: lighting() }),
+                createModelMaterial({ map: blockAtlasTexture, alphaTest: 0.5, vertexColors: true, lighting: lighting() })
+            ];
+            for (const material of materials) material.side = THREE.DoubleSide;
+            setPotatoDefine(materials, this.lowDetail);
+            this.prototypes = materials.map((material) => warmupObject(material, COLORED_MODEL_ATTRIBUTES));
+        }
+        return this.prototypes;
+    }
+
     dispose() {
+        for (const object of this.prototypes ?? []) { object.geometry.dispose(); object.material.dispose(); }
+        this.prototypes = null;
         for (const id of [...this.views.keys()]) this.removeView(id);
         for (const geometry of this.geometries.values()) geometry.dispose();
         this.geometries.clear();

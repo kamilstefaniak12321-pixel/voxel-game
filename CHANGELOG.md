@@ -11,6 +11,25 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 1.1.2 - Płynność, krok 1: programy cieniujące przed grą
+
+Na prośbę Kamila — PR #144 (po 1.1.1). Pierwszy z ośmiu kroków planu
+płynności: [`docs/plynnosc.md`](docs/plynnosc.md).
+
+- **Mniej przycięć w grze.** Programy cieniujące powstają teraz pod
+  ekranem wczytywania świata, a nie przy pierwszym użyciu rzeczy.
+  Wcześniej gra stawała na chwilę przy pierwszej pochodni, pierwszym
+  ognisku, pierwszym wyrzuconym przedmiocie, pierwszym deszczu,
+  meteorycie czy przejściu na widok zza pleców.
+- **Przycięcie nie wraca.** Gra kasowała program, gdy znikała ostatnia
+  pochodnia albo ostatni leżący przedmiot, i kompilowała go od nowa
+  przy następnym. Teraz programy zostają do końca gry.
+- **Pierwsza klatka świata** nie kompiluje już niczego (było 25
+  programów naraz).
+- W tym samym scenariuszu gry: 18 programów kompilowanych w trakcie
+  gry → 2 (małe programy cieni).
+- `/wydajnosc` pokazuje, ile programów skompilowało się w trakcie gry.
+
 ## 1.1.1 - Celowanie w bloki, szybszy start
 
 Na prośbę Kamila — PR #143 (po 1.1.0). Opis i pomiary:

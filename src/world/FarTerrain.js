@@ -58,6 +58,7 @@ import { SURFACE_LIGHTING_GLSL } from '../rendering/SurfaceLighting.js';
 import { CANOPY_LIGHTING_GLSL } from '../rendering/CanopyLighting.js';
 import { OPEN_CANOPY_PACKED } from './FarCanopy.js';
 import { installLightingDiagnostics } from '../rendering/LightingDiagnostics.js';
+import { warmupObject } from '../rendering/ShaderWarmup.js';
 import { createFarVegetationJob, appendFarVegetation, FAR_VEGETATION_MAX_SPACING } from './farVegetation.js';
 
 import {
@@ -2139,7 +2140,18 @@ export class FarTerrain {
     }
 
 
+    // Wzory dla programów cieniujących (rendering/ShaderWarmup.js): po
+    // jednym na poziom szczegółów. Kafelki dalekiego terenu powstają dopiero
+    // w trakcie gry - bez wzoru pierwszy z nich kompilowałby program.
+    shaderPrototypes() {
+        this.prototypes ??= farMaterials.map((material) => warmupObject(material,
+            { position: 4, normal: [3, true], canopyLow: 1, color: [4, true], surfaceAlbedo: [4, true] }));
+        return this.prototypes;
+    }
+
     dispose() {
+        for (const object of this.prototypes ?? []) object.geometry.dispose();
+        this.prototypes = null;
 
         for (const snapshot of [...this.shadowSnapshots]) snapshot.dispose();
         for (const resources of this.shadowResourcePool) {

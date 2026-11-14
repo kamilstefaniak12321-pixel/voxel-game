@@ -155,6 +155,7 @@ export class TorchRenderer {
     setLowDetail(on) {
         this.lowDetail = Boolean(on);
         for (const view of this.views.values()) setPotatoDefine(modelMaterials(view.group), this.lowDetail);
+        if (this.prototype) setPotatoDefine(modelMaterials(this.prototype), this.lowDetail);
     }
 
     createParticles() {
@@ -266,9 +267,26 @@ export class TorchRenderer {
         if (active > 0) for (const attribute of Object.values(this.particleGeometry.attributes)) attribute.needsUpdate = true;
     }
 
+    // Wzór dla programów cieniujących (rendering/ShaderWarmup.js): ukryta
+    // pochodnia z prawdziwymi materiałami. Trzyma też programy przy życiu,
+    // gdy w świecie nie ma akurat żadnej pochodni.
+    shaderPrototypes() {
+        if (!this.prototype) {
+            const lighting = {
+                uModelSky: { value: 1 }, uModelBlock: { value: new THREE.Vector3() }, uModelSun: { value: 1 },
+                uModelAmbient: { value: 1 }, uModelDistantShadows: { value: 1 }, uModelBounce: { value: new THREE.Vector3() }
+            };
+            this.prototype = createTorchModel('plain', 'down', { lighting });
+            setPotatoDefine(modelMaterials(this.prototype), this.lowDetail);
+            this.prototype.visible = false;
+        }
+        return [this.prototype];
+    }
+
     dispose() {
         if (this.disposed) return;
         this.disposed = true;
+        if (this.prototype) { disposeTorchModel(this.prototype); this.prototype = null; }
         for (const key of [...this.views.keys()]) this.removeView(key);
         this.chunks.clear(); this.emitters.length = 0;
         this.points.removeFromParent();

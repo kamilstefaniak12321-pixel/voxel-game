@@ -28,6 +28,7 @@ import { getPackInfo } from '../rendering/TexturePacks.js';
 import { LOD_LEGEND } from '../world/FarTerrain.js';
 import { POTATO_RENDER_SCALE, POTATO_VIEW_DISTANCE, POTATO_STAR_SHARE, UI_THEMES } from '../config.js';
 import { usageError, parseNumber, ON_WORDS, OFF_WORDS, SHADOW_WORDS } from './commandHelpers.js';
+import { lateShaderPrograms } from '../rendering/ShaderWarmup.js';
 
 // /aktualizacja.
 const UPDATE_WORDS = ['sprawdz', 'pobierz', 'instaluj', 'wroc'];
@@ -933,6 +934,9 @@ export const SETTINGS_COMMANDS = [
                 : 'Brak pomiaru klatek.\n') +
                 `Rysowanie: ${info.render.calls} wywołań, ${Math.round(info.render.triangles / 1000)} tys. trójkątów | ` +
                 `na karcie: ${info.memory.geometries} geometrii, ${info.memory.textures} tekstur\n` +
+                // Program skompilowany w trakcie gry = krótkie przycięcie
+                // i brakujący wzór w rendering/ShaderWarmup.js.
+                `Programy cieniujące: ${info.programs?.length ?? 0}, z tego skompilowane w trakcie gry: ${lateShaderPrograms(game.renderer)}\n` +
                 `Chunki: ${world.chunks.size} wczytanych, ${meshed} z meshem, ${world.loadQueue.length} w kolejce, ` +
                 `${world.dirtyChunks.size} do przebudowy | ` +
                 `daleki teren: ${far.active ? `${far.shown} kafelków, ${Math.round(far.triangles / 1000)} tys. trójkątów` : 'wył.'}\n` +

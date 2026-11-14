@@ -7,6 +7,7 @@ import { fireIntensity } from '../game/CampfireState.js';
 import { atmosphericLightToBrightness } from './LightPolicy.js';
 import { FLAME_FRAMES, FLAME_FPS, makeFlameAtlas } from './CampfireFlame.js';
 import { installEmissionDiagnostics, lightingUniforms } from './LightingDiagnostics.js';
+import { warmupObject } from './ShaderWarmup.js';
 import { loadTextureRegion } from './TextureSheets.js';
 
 const VIEW_RANGE = 72, MAX_VISIBLE = 32, PARTICLES = 96;
@@ -278,7 +279,22 @@ export class CampfireRenderer {
     removeView(key,view) { view.group.removeFromParent(); view.logs.forEach(log=>log.mesh.material.dispose());
         view.coalMaterial.dispose(); view.ash.material.dispose(); view.tinder.material.dispose(); this.views.delete(key); }
     renderShadows() { this.light.render(this.game.world,this.time); }
+    // Wzory dla programów cieniujących (rendering/ShaderWarmup.js): płomień
+    // i polano. Dzięki nim pierwsze ognisko nie zatrzymuje gry.
+    shaderPrototypes() {
+        if (!this.prototypes) {
+            const lighting = {uModelSky:{value:1},uModelBlock:{value:new THREE.Vector3()},uModelSun:{value:1},
+                uModelDistantShadows:{value:1},uModelBounce:{value:new THREE.Vector3()}};
+            this.prototypes = [
+                warmupObject(this.flameMaterial, { position: 3, normal: 3, uv: 2 }),
+                warmupObject(charMaterial('oak', lighting), { position: 3, normal: 3, uv: 2 })
+            ];
+        }
+        return this.prototypes;
+    }
+
     dispose() {
+        if (this.prototypes) { this.prototypes[1].material.dispose(); for (const object of this.prototypes) object.geometry.dispose(); this.prototypes = null; }
         for(const [key,view] of this.views) this.removeView(key,view);
         this.geometry.forEach(g=>g.dispose()); this.light.dispose(); this.points.removeFromParent();
         for(const resource of [this.fireTexture,this.flameGeometry,this.flameMaterial,this.ashGeometry,

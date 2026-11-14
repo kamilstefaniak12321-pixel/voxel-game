@@ -43,6 +43,8 @@ import { LightShafts } from '../rendering/LightShafts.js';
 import { WorldOutput } from '../rendering/WorldOutput.js';
 import { lightingUniforms, resetLightingDiagnostics } from '../rendering/LightingDiagnostics.js';
 import { prewarmWaterMaterial, waterShaderVariantKey } from '../rendering/WaterMaterialWarmup.js';
+import { prewarmScenes, warmupObject, markShadersReady, COLORED_MODEL_ATTRIBUTES, MODEL_ATTRIBUTES } from '../rendering/ShaderWarmup.js';
+import { createTorchModel, disposeTorchModel } from '../rendering/TorchMaterial.js';
 import { BounceLight } from '../world/BounceLight.js';
 import { applyMaterialLightingSettings, createBounceLightingState, updateBounceLightingState } from '../rendering/MaterialLighting.js';
 import { Meteorites } from './Meteorites.js';
@@ -175,6 +177,23 @@ export class Game extends GameInteraction {
         try {
             waterTarget = game.sky.lightingLook === 'natural' ? game.worldOutput.prepareTarget() : null;
             await prewarmWaterMaterial(renderer, game.scene, game.camera, true, waterTarget);
+            // Wszystkie pozostałe programy cieniujące - też teraz, pod
+            // ekranem wczytywania, a nie w pierwszej klatce i przy pierwszej
+            // pochodni czy deszczu (rendering/ShaderWarmup.js).
+            game.prewarmedPrograms = await game.prewarmShaders(waterTarget);
+            // Jedna próbna klatka: cienie, promienie światła i końcowe
+            // złożenie obrazu mają własne przebiegi rysowania - ich programy
+            // powstają tutaj, a nie w pierwszej klatce po zniknięciu ekranu
+            // wczytywania. Błąd próbnej klatki nie zatrzymuje wejścia do świata.
+            try {
+                game.player.updateCamera();
+                game.updateView();
+                game.shadows.update(0, game.sky, game.camera.position);
+                game.render();
+                markShadersReady(renderer);
+            } catch (error) {
+                console.warn('Próbna klatka (programy cieniujące) nie powiodła się.', error);
+            }
         } catch (error) {
             await game.stop({ save: false });
             throw error;
@@ -184,6 +203,61 @@ export class Game extends GameInteraction {
 
     }
 
+
+    // PROGRAMY CIENIUJĄCE POD EKRANEM WCZYTYWANIA (rendering/ShaderWarmup.js).
+    // Sceny w kolejności rysowania (render()); do każdej dochodzą ukryte
+    // wzory rzeczy, które powstają dopiero w grze. Wzory żyją do końca gry
+    // (shaderWarmup) - trzymają programy, gdy np. zgaśnie ostatnia pochodnia.
+    async prewarmShaders(renderTarget) {
+
+        if (!this.shaderWarmup) {
+
+            const world = new THREE.Scene(), far = new THREE.Scene(), hand = new THREE.Scene();
+
+            const collect = (scene, objects) => { for (const object of objects ?? []) scene.add(object); };
+
+            collect(world, this.torches?.shaderPrototypes?.());
+            collect(world, this.drops?.renderer?.shaderPrototypes?.());
+            collect(world, this.campfires?.renderer?.shaderPrototypes?.());
+            collect(world, this.meteorites?.shaderPrototypes?.());
+            collect(far, this.farTerrain?.shaderPrototypes?.());
+
+            // Przedmiot w dłoni modelu gracza (widok zza pleców) i w ręce
+            // z oczu: blok albo przedmiot z przezroczystym tłem.
+            if (this.model) {
+                collect(world, [warmupObject(this.model.heldMaterial, MODEL_ATTRIBUTES),
+                    warmupObject(this.model.heldPlantMaterial, COLORED_MODEL_ATTRIBUTES)]);
+            }
+
+            let handTorch = null;
+            if (this.hand) {
+                handTorch = createTorchModel('plain', 'down');
+                handTorch.visible = false;
+                collect(hand, [warmupObject(this.hand.heldMaterial, MODEL_ATTRIBUTES),
+                    warmupObject(this.hand.heldCutoutMaterial, COLORED_MODEL_ATTRIBUTES), handTorch]);
+            }
+
+            this.shaderWarmup = { world, far, hand, handTorch };
+
+        }
+
+        const { world, far, hand } = this.shaderWarmup;
+
+        const count = await prewarmScenes(this.renderer, [
+            { scene: this.sky?.scene, camera: this.camera },
+            { scene: this.farTerrain?.scene, camera: this.camera },
+            { scene: far, camera: this.camera, targetScene: this.farTerrain?.scene },
+            { scene: this.scene, camera: this.camera },
+            { scene: world, camera: this.camera, targetScene: this.scene },
+            { scene: this.hand?.scene, camera: this.hand?.camera },
+            { scene: hand, camera: this.hand?.camera, targetScene: this.hand?.scene }
+        ], renderTarget);
+
+        markShadersReady(this.renderer);
+
+        return count;
+
+    }
 
     constructor(renderer, input, storage, worldInfo, settings, savedChunks) {
 
@@ -2228,6 +2302,9 @@ export class Game extends GameInteraction {
 
 
         this.saver.stop();
+
+        if (this.shaderWarmup?.handTorch) disposeTorchModel(this.shaderWarmup.handTorch);
+        this.shaderWarmup = null;
 
         this.plantAnimations.dispose();
         this.world.dispose();

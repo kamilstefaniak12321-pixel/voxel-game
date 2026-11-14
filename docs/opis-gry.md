@@ -49,6 +49,13 @@ mchem, śniegiem i liśćmi celuje się w bloki za nimi, a kępka trawy nie
 zasłania ziemi pod sobą. Ramka pokazuje dokładnie trafiany kształt.
 Szczegóły: [docs/celowanie-i-ladowanie.md](celowanie-i-ladowanie.md).
 
+## Płynność
+
+Od 1.1.2 gra przygotowuje programy graficzne pod ekranem wczytywania
+świata, więc nie staje na chwilę przy pierwszej pochodni, ognisku,
+deszczu czy wyrzuconym przedmiocie. To pierwszy krok planu płynności
+na kolejne wersje: [docs/plynnosc.md](plynnosc.md).
+
 ## Klawisze
 
 Każdą czynność (ruch, kopanie, stawianie, jedzenie, okna, miejsca na

@@ -30,6 +30,7 @@
 import { build } from 'esbuild';
 import { rmSync, existsSync, readdirSync, statSync, writeFileSync, readFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 // Wejścia: start gry i wątki w tle.
 export const ENTRY = 'src/start.js';
@@ -89,7 +90,8 @@ export async function buildBundle(root = '.', { version = null } = {}) {
 
 }
 
-if (process.argv[1] && resolve(process.argv[1]) === resolve(new URL(import.meta.url).pathname.replace(/^\/([A-Za-z]:)/, '$1'))) {
+// Uruchomione wprost (nie zaimportowane przez inne narzędzie).
+if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
     const at = process.argv.indexOf('--root');
     const root = at >= 0 ? process.argv[at + 1] : '.';
     const { files, bytes, inputs } = await buildBundle(root);

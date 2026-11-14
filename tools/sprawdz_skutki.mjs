@@ -187,8 +187,10 @@ function lake({ radius = 20, shore = true, size = 96 } = {}) {
 
 // --- Pieczenie: lista ------------------------------------------------------------------
 {
-    equal(Object.keys(ROASTS).length, 4, 'cztery rzeczy do pieczenia');
-    for (const [raw, roasted] of Object.entries(ROASTS)) {
+    // Pieczone jedzenie; napary (kubek ziół -> napar) sprawdza sprawdz_zastosowania.mjs.
+    const roasts = Object.entries(ROASTS).filter(([, roasted]) => FOODS[roasted].kind !== 'drink');
+    equal(roasts.length, 4, 'cztery rzeczy do pieczenia');
+    for (const [raw, roasted] of roasts) {
         ok(itemExists(raw) && itemExists(roasted) && getItemLabel(roasted), `${raw} -> ${roasted}: przedmioty istnieją`);
         ok(getFood(raw) && getFood(roasted), `${raw}: surowe i pieczone da się zjeść`);
         ok(FOODS[roasted].energy > FOODS[raw].energy * 1.5, `${roasted}: daje wyraźnie więcej niż surowe`);

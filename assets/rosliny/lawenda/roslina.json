@@ -44,7 +44,7 @@
         "plik": "bukiet.png",
         "nazwa": "Bukiet lawendy",
         "nazwaAngielska": "Lavender Bouquet",
-        "kategoria": "ozdoby"
+        "grupy": ["purple", "flowers", "herbs_calm"]
     },
     "zbior": { "ile": [1, 2], "wraca": 2 },
     "gdzieRosnie": { "biomy": { "hala": 1, "laka": 0.3, "gaj": 1 }, "plamy": 0.03, "gestosc": 0.35, "etapy": [0.2, 0.25, 0.55] },

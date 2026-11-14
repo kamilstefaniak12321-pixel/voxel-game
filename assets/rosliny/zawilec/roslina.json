@@ -48,7 +48,7 @@
         "plik": "kwiat.png",
         "nazwa": "Kwiat zawilca",
         "nazwaAngielska": "Anemone Flower",
-        "kategoria": "ozdoby"
+        "grupy": ["pink", "flowers"]
     },
     "zbior": { "ile": [1, 2], "wraca": 2 },
     "gdzieRosnie": { "biomy": { "buczyna": 1, "las": 0.5, "klonowy": 0.8 }, "plamy": 0.03, "gestosc": 0.4, "etapy": [0.2, 0.25, 0.55] },

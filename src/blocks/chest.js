@@ -62,7 +62,7 @@ function kindBlocks({ base, firstId, planks, planksTexture, texture, label, name
         chest: { facing, texture, planks, kind: base },
         facings,
         ...(facing === 'north' ? {} : { inventory: false, creative: false }),
-        category: 'drewno',
+        category: 'ozdoby',
         sound: 'wood',
         hardness: 1.2,
         pick: base,

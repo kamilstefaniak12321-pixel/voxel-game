@@ -16,6 +16,7 @@ import { TORCH_BLOCKS } from './torches.js';
 import { CHEST_BLOCKS } from './chest.js';
 import { WOOD_SHAPE_BLOCKS } from './woodShapes.js';
 import { BEDDING_BLOCKS } from './bedding.js';
+import { DECORATION_BLOCKS } from './decorations.js';
 import { FLOWING_WATER_BLOCKS, WATER_SOURCE_ID, WATER_FALLING_LAST_ID, plainWaterLevel, waterHeightForLevel } from './water.js';
 export { WATER_SOURCE_ID, WATER_FALLING_ID, WATER_FALL_MAX, waterIdForLevel, isFallingWaterId, waterFallDistance, fallingWaterId } from './water.js';
 
@@ -376,6 +377,7 @@ export const BLOCK_TYPES = {
 
     // Posłania na ziemi (0.98.0) - bedding.js.
     ...BEDDING_BLOCKS,
+    ...DECORATION_BLOCKS,
     campfire: { id: 10000, name: 'Campfire', label: 'Ognisko', solid: false, opaque: false,
         model: 'structure', flat: { attach: 'down' }, inventory: false, creative: false,
         drops: null, sound: 'wood', pick: 'oak_firewood', textures: { all: 'oak_log_side' } },

@@ -298,7 +298,7 @@ export const SCENES = [
     {
         id: 'rosliny',
         name: 'Rośliny',
-        description: 'Ogródek ze wszystkimi roślinami z paczek, każda we wszystkich etapach wzrostu.',
+        description: 'Ogródek z kwiatami, ziołami, porostami i hubami - każda roślina we wszystkich etapach wzrostu.',
         command: ['rosliny', 'ogrod'],
         slot: { x: 40, z: 100 }
     },
@@ -314,7 +314,7 @@ export const SCENES = [
     {
         id: 'drzewa',
         name: 'Drzewa',
-        description: 'Aleja ze wszystkimi gatunkami drzew (także z paczek drzew).',
+        description: 'Aleja ze wszystkimi gatunkami drzew.',
         command: ['drzewa', 'aleja'],
         slot: { x: 200, z: 100 }
     },

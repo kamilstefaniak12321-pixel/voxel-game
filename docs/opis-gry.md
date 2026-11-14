@@ -58,6 +58,12 @@ stolarskie, 8 desek) i osobno **pościel**, którą kładzie się na
 postawiony stelaż. Sen przesuwa noc do 6:00 (w grze ze znajomymi - gdy
 śpią wszyscy). Szczegóły: [docs/sen.md](sen.md).
 
+Od 0.98.1 są **napary**: gliniany kubek z dwoma ziołami, podgrzany nad
+płonącym ogniskiem, daje napar na sen (głębszy najbliższy sen), leczniczy
+(stłuczona noga goi się 3 razy szybciej) albo wzmacniający (wolniej
+ubywa energii). Działający napar widać w oknie statusu. Szczegóły
+i wszystkie zastosowania plonów: [docs/ziola.md](ziola.md).
+
 ## Tryby gry i ekwipunek
 
 Tryb wybiera się przy tworzeniu świata (przycisk *Tryb gry*, domyślnie
@@ -133,8 +139,9 @@ Deski kładzie się na stół po jednej, z kucaniem cały stos.
 [Szczegóły](stolarstwo.md).
 
 W trybie kreatywnym zakładka *Bloki* ma **9 łukowatych zakładek
-kategorii** (Ziemia, Skały, Drewno, Budulec, Rośliny, Owoce i nasiona,
-Światło, Ozdoby, Narzędzia i surowce - ponowne kliknięcie pokazuje
+kategorii** (Ziemia, Skały, Drewno, Budulec, Rośliny, Jedzenie
+i nasiona, Światło, Meble i ozdoby, Narzędzia i surowce - co gdzie leży:
+[ziola.md](ziola.md#kategorie-w-ekwipunku); ponowne kliknięcie pokazuje
 wszystko), pod nimi 5 przewijanych rzędów bloków i pasek. Wyszukiwanie
 (w pasku nad ramą) szuka we wszystkich kategoriach, po polsku i po
 nazwie bloku, np. „ziem” albo „humus”. Na wąskim ekranie siatka
@@ -333,7 +340,13 @@ i świerczyn). Każdy rośnie w czterech etapach:
   `/krzaki znajdz` (najbliższy dziki krzak z owocami), `/krzaki tempo 60`
   (rosną 60 razy szybciej), `/krzaki rosnij 3`, `/daj truskawki 10`.
 
-### Rośliny z paczek (duże i małe rośliny)
+### Kwiaty, zioła, porosty i huby (duże i małe rośliny)
+
+Dla gracza to zwykłe rośliny - rosną etapami, dają plon po PPM i każdy
+plon ma zastosowanie (barwniki, napary, podpałka, wianek:
+[ziola.md](ziola.md)). Od strony plików różnią się tylko tym, że są
+opisane danymi, bez kodu - stąd w opisach dla programisty nazwa „paczki
+roślin".
 
 Opisy roślin pozostają w folderach `assets/rosliny/` jako `roslina.json`,
 a obrazy etapów wzrostu są regionami wspólnego arkusza
@@ -912,7 +925,7 @@ bez zmian, wyżej jest po prostu powietrze).
 
 **Typ terenu** wybiera się przy tworzeniu świata (przycisk *Teren*):
 
-- **Realistyczny (w budowie)** - morza i wybrzeża z plażami, niziny,
+- **Realistyczny** (domyślny) - morza i wybrzeża z plażami, niziny,
   wyżyny i góry z płynnymi przejściami, a w nich formy terenu: grzbiety,
   turnie, wzgórza, pagórki, doliny, kotliny, wąwozy, żleby, depresje,
   równiny, płaskowyże. Poziom morza to `SEA_LEVEL` (48).

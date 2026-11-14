@@ -53,6 +53,8 @@ const { WOODS } = await import(src('blocks/woods.js'));
 const { shapeInfo, shapeBaseType } = await import(src('blocks/woodShapes.js'));
 const { TABLE_PRODUCTS, BENCH_PRODUCTS, WORKSHOP_LABELS } = await import(src('crafting/carpentry.js'));
 const { itemShapeFaces } = await import(src('rendering/ShapeGeometry.js'));
+const { itemUses } = await import(src('items/uses.js'));
+const { ROASTS } = await import(src('items/foods.js'));
 
 function fruitIcon(type) {
     const fruit = getFruitItemModel(type);
@@ -148,6 +150,13 @@ for (const type of blockTypes) {
 
 }
 
+// Pieczenie i parzenie nad ogniskiem (items/foods.js - ROASTS).
+
+for (const [raw, done] of Object.entries(ROASTS)) {
+    addSource(done, `nad płonącym ogniskiem (trzymany PPM): ${I.getItemLabel(raw)}`);
+}
+
+
 // Wyroby stolarskie: z desek na stole (crafting/carpentry.js).
 
 for (const { wood, planks } of WOODS) {
@@ -172,7 +181,10 @@ function recipeRefs(type) {
 
     return {
         madeBy: K.recipesFor(type).map((recipe) => recipe.id),
-        usedIn: K.recipesUsing(type).map((recipe) => recipe.id)
+        usedIn: K.recipesUsing(type).map((recipe) => recipe.id),
+        // Zastosowania poza przepisami: jedzenie, napar, pieczenie, podpałka, opał
+        // (sadzenie i narzędzia mają w wiki własne wiersze).
+        otherUses: itemUses(type).filter((use) => !/^(przepisy:|sadzenie|narzędzie)/.test(use))
     };
 
 }

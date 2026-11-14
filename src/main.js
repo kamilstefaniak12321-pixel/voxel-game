@@ -655,7 +655,7 @@ function showPlantPackErrors() {
         const plants = PLANT_PACK_ERRORS.slice(0, 4);
 
         chat.print(
-            `Paczki roślin - błędy do poprawienia (roślinę z błędem gra pomija):\n${plants.map((error) => `- ${error}`).join('\n')}` +
+            `Pliki roślin (assets/rosliny) - błędy do poprawienia (roślinę z błędem gra pomija):\n${plants.map((error) => `- ${error}`).join('\n')}` +
             (PLANT_PACK_ERRORS.length > plants.length ? `\n... i ${PLANT_PACK_ERRORS.length - plants.length} więcej` : '') +
             '\nWszystkie: /rosliny bledy, instrukcja: docs/rosliny.md',
             'error'

@@ -64,6 +64,7 @@ Współrzędne można podawać względem gracza: `~` (tu, gdzie stoję),
 | `/energia noga <sekundy>` | stłuczona noga na tyle sekund (0 - zdrowa, najwyżej 300): utykanie bez skakania z wysokości - do testów |
 | `/energia utoniecie` | utrata przytomności i pobudka na brzegu, jak po utonięciu - do testów |
 | `/energia sen <0-100>` | ustawia wyspanie - do testów (np. `/energia sen 20` - senny, `/energia sen 5` - niewyspany; `docs/sen.md`) |
+| `/energia efekt <calm, heal, vigor, brak>` | włącza efekt naparu bez picia (spokój, gojenie, wigor) albo wyłącza wszystkie - do testów (`docs/ziola.md`) |
 | `/energia kondycja <60-130>` | ustawia kondycję - do testów (od 108 przy pełnej energii: świetne samopoczucie) |
 | `/daj <blok albo przedmiot> [ilość]` | blok albo przedmiot (owoc) do ekwipunku: z ilością - tyle sztuk (do 2304, pierwsze wolne miejsca, najpierw pasek); bez ilości w trybie kreatywnym - jedna sztuka do wybranego miejsca paska, w przygodzie - stos 64. Nazwy też po polsku, bez ogonków: `granit`, `trawa`, `ziemia`, `mak`, `chaber`, `paproc`, `czarnoziem`, `krotka_trawa`, `truskawki` (`truskawka`), `jezyny`, `chili` (`papryczki`), `orzech`, `sadzonka_truskawki`, `leszczyna`... |
 | `/bloki` | lista bloków i przedmiotów (nazwa do komend i polska nazwa) |

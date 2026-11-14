@@ -275,6 +275,8 @@ class Wiki:
             out.append(('Przepis', ', '.join(self.recipes[r]['text'].split(':')[0] for r in entry['madeBy'])))
         if entry['usedIn']:
             out.append(('Przydaje się do', ', '.join(self.recipes[r]['result']['label'] for r in entry['usedIn'])))
+        if entry.get('otherUses'):
+            out.append(('Służy też jako', '; '.join(entry['otherUses'])))
         return out
 
     # --------------------------------------------------------

@@ -52,11 +52,18 @@ export function statusView(game) {
             ['Posiłki dzisiaj', `${Math.min(info.mealsToday, MEALS_PER_DAY)} z ${MEALS_PER_DAY}`],
             ['Żołądek', info.full ? 'najedzony' : 'pusty'],
             ['Sen', info.comfort ? `${info.rest} (${info.comfort})` : info.rest],
-            ...(info.limp ? [['Noga', `${info.limp} (utykasz)`]] : [])
+            ...(info.limp ? [['Noga', `${info.limp} (utykasz)`]] : []),
+            // Działające napary: nazwa efektu i ile jeszcze godzin gry.
+            ...(info.effects.length ? [['Działa', info.effects.map((effect) => `${effect.label} (${hoursText(effect.hours)})`).join(', ')]] : [])
         ],
         history: info.history,
-        held: food ? { type: held, label: getItemLabel(held), kind: KIND_LABELS[food.kind], can: wellbeing.canEat(held) } : null
+        held: food ? { type: held, label: getItemLabel(held), kind: KIND_LABELS[food.kind], drink: food.kind === 'drink', can: wellbeing.canEat(held) } : null
     };
+}
+
+// Czas działania efektu słowami: godziny gry (godzina to 50 sekund).
+function hoursText(hours) {
+    return hours >= 1 ? `jeszcze ${Math.round(hours)} godz.` : 'kończy się';
 }
 
 export class StatusPanel {
@@ -97,6 +104,7 @@ export class StatusPanel {
         else if (event.type === 'rest') this.heart.play(['sleepy', 'worn'].includes(event.to) ? 'down' : 'up', 1.2);
         else if (event.type === 'woke') { this.heart.play('up', 1.2); if (event.state === 'rested') this.heart.sparkle(); }
         else if (event.type === 'healed') { this.heart.play('up', 1.2); this.heart.sparkle(); }
+        else if (event.type === 'effect') { this.heart.play('up', 1.2); this.heart.sparkle(); }
         else if (event.type === 'rumble') this.heart.play('rumble', 0.7);
         else if (event.type === 'meal') this.heart.play('meal', 0.6);
         else if (event.type === 'day' && event.change !== 0) {
@@ -178,10 +186,11 @@ export class StatusPanel {
             if (view.held) {
                 held.append(element('div', '', `W ręce: ${view.held.label} (${view.held.kind})`));
                 if (view.held.can.ok) {
-                    const button = element('button', 'status-eat', 'Zjedz');
+                    const drink = view.held.drink;
+                    const button = element('button', 'status-eat', drink ? 'Wypij' : 'Zjedz');
                     button.type = 'button';
                     button.addEventListener('click', () => { this.onEat?.(); this.wait = 0; });
-                    held.append(element('div', 'status-key', 'F - zjedz'), button);
+                    held.append(element('div', 'status-key', drink ? 'F - wypij' : 'F - zjedz'), button);
                 } else held.append(element('div', 'status-note', view.held.can.reason));
             } else held.append(element('div', 'status-note', 'Weź do ręki coś do jedzenia (owoce, orzechy) i naciśnij F.'));
             panel.append(held);

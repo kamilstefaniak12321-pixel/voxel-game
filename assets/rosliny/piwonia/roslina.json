@@ -48,7 +48,7 @@
         "plik": "kwiat.png",
         "nazwa": "Kwiat piwonii",
         "nazwaAngielska": "Peony Bloom",
-        "kategoria": "ozdoby"
+        "grupy": ["pink", "flowers"]
     },
     "zbior": { "ile": [1, 2], "wraca": 2 },
     "gdzieRosnie": { "biomy": { "las": 1, "brzezina": 0.4 }, "plamy": 0.02, "gestosc": 0.3, "etapy": [0.2, 0.25, 0.55] },

@@ -94,6 +94,23 @@ SOUNDS.eat = {
 };
 
 
+// 0.97.0: twarde lądowanie (stłuczona noga) i pieczenie nad ogniskiem.
+
+SOUNDS.hurt = {
+    files: ['body/hurt_1.ogg', 'body/hurt_2.ogg'],
+    volume: 0.9,
+    pitch: [0.92, 1.06],
+    category: 'blocks'
+};
+
+SOUNDS.sizzle = {
+    files: ['body/sizzle_1.ogg', 'body/sizzle_2.ogg'],
+    volume: 0.55,
+    pitch: [0.95, 1.08],
+    category: 'blocks'
+};
+
+
 // Woda (game/Game.js - updateWaterSounds): plusk przy wpadnięciu,
 // ruchy w wodzie, kroki w płytkiej wodzie, krople przy wychodzeniu.
 

@@ -500,6 +500,30 @@ def eat(s):
     return out
 
 
+def hurt(s):
+    """Twarde lądowanie: głuche uderzenie i krótki trzask."""
+    length = 0.42
+    out = np.zeros(samples(length))
+    thud = damped_sine(s.uniform(58, 72), 0.34, 0.07) * 1.2
+    thud += lowpass(s.noise(0.34), 220) * envelope(samples(0.34), 0.002, 0.09) * 0.9
+    place(out, thud, 0.0)
+    snap = band(s.noise(0.05), 900, 3200) * envelope(samples(0.05), 0.001, 0.012)
+    place(out, snap * 0.45, s.uniform(0.012, 0.03))
+    return out
+
+
+def sizzle(s):
+    """Skwierczenie jedzenia nad ogniem."""
+    length = 0.9
+    n = samples(length)
+    hiss = band(s.noise(length), 3200, 9500)[:n]
+    t = time_axis(n)
+    wobble = 0.6 + 0.4 * np.sin(2 * np.pi * s.uniform(9, 14) * t + s.uniform(0, 6))
+    out = hiss * wobble * soft_env(n, 0.05, 0.3) * 0.7
+    out += grains(s, length, 26, 2500, 8000)[:n] * 0.9
+    return out
+
+
 # ------------------------------------------------------------
 # Menu i ekwipunek - krótkie, miękkie, ciche dźwięki
 # ------------------------------------------------------------
@@ -1079,6 +1103,12 @@ def generate(root=ROOT, only=None):
             save(os.path.join(root, 'body', f'stomach_{v}.ogg'), sound)
             sound = fade(loudness(eat(Synth(94_100 + v)), -16), 0.001, 0.04)
             save(os.path.join(root, 'body', f'eat_{v}.ogg'), sound)
+        # 0.97.0: twarde lądowanie i pieczenie nad ogniskiem.
+        for v in range(1, 3):
+            sound = fade(loudness(hurt(Synth(97_000 + v)), -14), 0.001, 0.08)
+            save(os.path.join(root, 'body', f'hurt_{v}.ogg'), sound)
+            sound = fade(loudness(sizzle(Synth(97_100 + v)), -19), 0.02, 0.2)
+            save(os.path.join(root, 'body', f'sizzle_{v}.ogg'), sound)
 
 
 if __name__ == '__main__':

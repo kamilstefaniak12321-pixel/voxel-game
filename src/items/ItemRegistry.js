@@ -137,6 +137,14 @@ export const ITEM_TYPES = {
         plants: 'oak_sapling'
     },
 
+    // Pieczone nad ogniskiem (0.97.0 - trzymany PPM z surowym w ręce na
+    // płonącym ognisku, game/Campfires.js). Porządny posiłek: jedna
+    // sztuka syci jak kilka surowych. Nie da się ich posadzić.
+    roasted_apple: { name: 'Roasted Apple', label: 'Pieczone jabłko', icon: 'roasted_apple', category: 'owoce' },
+    roasted_hazelnut: { name: 'Roasted Hazelnuts', label: 'Prażone orzechy laskowe', icon: 'roasted_hazelnut', category: 'owoce' },
+    roasted_beechnuts: { name: 'Roasted Beechnuts', label: 'Prażone orzeszki bukowe', icon: 'roasted_beechnuts', category: 'owoce' },
+    roasted_acorn: { name: 'Roasted Acorn', label: 'Prażony żołądź', icon: 'roasted_acorn', category: 'owoce' },
+
     // Zwój kory z okorowanej siekierą brzozy.
     birch_bark: {
         name: 'Birch Bark',

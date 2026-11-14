@@ -78,7 +78,9 @@ sadzi, wszędzie indziej zjada.
 | Żołądź | 4 | 60 s |
 | Papryczka chili | 3 | 20 s |
 
-Wszystko to na razie **lekkie przekąski**. Najedzony gracz zużywa mniej
+Od 0.97.0 jabłka, orzechy i żołędzie da się **upiec nad ogniskiem** -
+pieczone to porządny posiłek ([skutki.md](skutki.md)). Surowe owoce
+i orzechy to **lekkie przekąski**. Najedzony gracz zużywa mniej
 energii i nie burczy mu w brzuchu. Gdy żołądek jest pełny (kilka jabłek
 pod rząd), trzeba chwilę odczekać.
 
@@ -123,7 +125,6 @@ się u gospodarza razem z jego ekwipunkiem.
 
 ## Co dalej
 
-Plan Kamila na kolejne wersje: upadki z wysokości (utykanie zamiast
-obrażeń), tonięcie (utrata przytomności i pobudka na brzegu),
-cechy rosnące od używania i dobrego jedzenia, pieczenie na ognisku
-jako pierwszy porządny posiłek.
+Upadki (utykanie), tonięcie (pobudka na brzegu) i pieczenie nad
+ogniskiem doszły w 0.97.0 - [skutki.md](skutki.md). Plan Kamila na
+później: cechy rosnące od używania i dobrego jedzenia.

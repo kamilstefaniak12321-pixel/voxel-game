@@ -3830,6 +3830,34 @@
       "y": 32,
       "width": 16,
       "height": 16
+    },
+    "roasted_apple": {
+      "sheet": "przedmioty",
+      "x": 128,
+      "y": 32,
+      "width": 16,
+      "height": 16
+    },
+    "roasted_hazelnut": {
+      "sheet": "przedmioty",
+      "x": 144,
+      "y": 32,
+      "width": 16,
+      "height": 16
+    },
+    "roasted_beechnuts": {
+      "sheet": "przedmioty",
+      "x": 160,
+      "y": 32,
+      "width": 16,
+      "height": 16
+    },
+    "roasted_acorn": {
+      "sheet": "przedmioty",
+      "x": 176,
+      "y": 32,
+      "width": 16,
+      "height": 16
     }
   },
   "aliases": {
@@ -6896,6 +6924,26 @@
       "x": 9,
       "y": 20,
       "region": "tilled_dirt"
+    },
+    "roasted_apple": {
+      "x": 8,
+      "y": 20,
+      "region": "roasted_apple"
+    },
+    "roasted_hazelnut": {
+      "x": 10,
+      "y": 20,
+      "region": "roasted_hazelnut"
+    },
+    "roasted_beechnuts": {
+      "x": 8,
+      "y": 21,
+      "region": "roasted_beechnuts"
+    },
+    "roasted_acorn": {
+      "x": 9,
+      "y": 21,
+      "region": "roasted_acorn"
     }
   }
 }

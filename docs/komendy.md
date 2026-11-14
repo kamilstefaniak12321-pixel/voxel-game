@@ -61,6 +61,8 @@ Współrzędne można podawać względem gracza: `~` (tu, gdzie stoję),
 | `/predkosc <0.1-20>` | prędkość ruchu (1 = normalnie) |
 | `/energia` | energia, kondycja i samopoczucie w liczbach (tryb przygody, `docs/energia.md`). Też `/samopoczucie` |
 | `/energia <0-130>` | ustawia energię - do testów (np. `/energia 15` - zmęczony, `/energia 2` - wyczerpany) |
+| `/energia noga <sekundy>` | stłuczona noga na tyle sekund (0 - zdrowa, najwyżej 300): utykanie bez skakania z wysokości - do testów |
+| `/energia utoniecie` | utrata przytomności i pobudka na brzegu, jak po utonięciu - do testów |
 | `/energia kondycja <60-130>` | ustawia kondycję - do testów (od 108 przy pełnej energii: świetne samopoczucie) |
 | `/daj <blok albo przedmiot> [ilość]` | blok albo przedmiot (owoc) do ekwipunku: z ilością - tyle sztuk (do 2304, pierwsze wolne miejsca, najpierw pasek); bez ilości w trybie kreatywnym - jedna sztuka do wybranego miejsca paska, w przygodzie - stos 64. Nazwy też po polsku, bez ogonków: `granit`, `trawa`, `ziemia`, `mak`, `chaber`, `paproc`, `czarnoziem`, `krotka_trawa`, `truskawki` (`truskawka`), `jezyny`, `chili` (`papryczki`), `orzech`, `sadzonka_truskawki`, `leszczyna`... |
 | `/bloki` | lista bloków i przedmiotów (nazwa do komend i polska nazwa) |

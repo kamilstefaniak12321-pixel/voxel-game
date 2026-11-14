@@ -5,7 +5,7 @@
 // komendy jest w CommandRegistry.js, lista dla gracza w docs/komendy.md.
 // ------------------------------------------------------------
 
-import { CONDITION_MIN, CONDITION_MAX, STATES } from '../game/Wellbeing.js';
+import { CONDITION_MIN, CONDITION_MAX, LIMP_MAX, STATES } from '../game/Wellbeing.js';
 import { simplify, CommandError } from './CommandRegistry.js';
 import {
     isLiquidId,
@@ -573,12 +573,42 @@ export const PLAYER_COMMANDS = [
     {
         name: 'energia',
         aliases: ['energy', 'samopoczucie'],
-        usage: '/energia | /energia <0 - 130> | /energia kondycja <60 - 130>',
+        usage: '/energia | /energia <0 - 130> | /energia kondycja <60 - 130> | /energia noga <sekundy> | /energia utoniecie',
         description: 'Energia i kondycja gracza (tryb przygody): podgląd w liczbach albo ustawienie - do testów.',
 
         run(args, { game }) {
 
             const wellbeing = game.wellbeing, data = wellbeing.data;
+
+            if (args[0] === 'noga') {
+
+                // Stłuczona noga na tyle sekund (0 - zdrowa) - do testów.
+
+                const value = parseNumber(args[1], 'sekundy');
+
+                if (value < 0 || value > LIMP_MAX) {
+                    throw new CommandError(`Noga: od 0 do ${LIMP_MAX} sekund`);
+                }
+
+                data.limp = value;
+
+                return value > 0 ? `Noga stłuczona na ${value} s - utykasz.` : 'Noga zdrowa.';
+
+            }
+
+            if (args[0] === 'utoniecie') {
+
+                // Utrata przytomności i pobudka na brzegu - do testów.
+
+                if (!wellbeing.active) {
+                    throw new CommandError('W tym trybie gry nie da się utonąć.');
+                }
+
+                game.blackout.start();
+
+                return 'Tracisz przytomność...';
+
+            }
 
             if (args[0] === 'kondycja') {
 
@@ -613,7 +643,7 @@ export const PLAYER_COMMANDS = [
         },
 
         complete(args) {
-            return args.length <= 1 ? ['kondycja'] : [];
+            return args.length <= 1 ? ['kondycja', 'noga', 'utoniecie'] : [];
         }
     },
 

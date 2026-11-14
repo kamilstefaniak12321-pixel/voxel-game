@@ -126,8 +126,8 @@ darmowy - tylko użytek niekomercyjny i podpis "elevenlabs.io"; plany
 płatne - także komercyjny). Ten zapis dokumentuje przekazane pliki
 i ich źródło: **Efekty dźwiękowe: ElevenLabs (elevenlabs.io).**
 
-Pozostałe 6 plików (`assets/sounds/body/`, od 0.94.0: burczenie
-w brzuchu i jedzenie) to dźwięki syntetyczne, policzone w projekcie
+Pozostałe 10 plików (`assets/sounds/body/`, od 0.94.0: burczenie
+w brzuchu i jedzenie, od 0.97.0: twarde lądowanie i skwierczenie) to dźwięki syntetyczne, policzone w projekcie
 skryptem `tools/dzwieki.py` (grupa `cialo`) - bez nagrań i bez
 zewnętrznych źródeł.
 

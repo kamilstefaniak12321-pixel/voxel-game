@@ -45,6 +45,10 @@ jobs:
       - uses: actions/setup-node@v5
         with:
           node-version: 24
+      # Narzędzie do paczki plików gry (esbuild - tools/pakiet.mjs) dla
+      # testów paczki. Bez skryptów instalacyjnych: Electron nie pobiera
+      # tu swojego programu (testy go nie używają).
+      - run: npm ci --ignore-scripts
       - run: npm test
       - name: Gra wieloosobowa — gospodarz i gość w dwóch kartach
         timeout-minutes: 4

@@ -7,7 +7,8 @@ import { EXPERIMENTS } from '../settings/Settings.js';
 // Obraz: na górze najważniejsze, reszta pod "Zaawansowane" (ADVANCED_VIDEO).
 // 'graphicsPreset' - przycisk jakości grafiki (kilka ustawień naraz).
 // Ustawienia, których nie ma w menu (np. loadBudget, showDebug - F3),
-// zostają w /ustaw.
+// zostają w /ustaw. 'keys' - przycisk otwierający ekran klawiszy
+// (Menu.showKeys, input/bindings.js).
 
 export const SETTINGS_TABS = {
 
@@ -32,6 +33,7 @@ export const SETTINGS_TABS = {
         'skin',
         'mouseSensitivity',
         'invertMouse',
+        'keys',
         'cameraDistance',
         'showHand',
         'viewBobbing',
@@ -64,7 +66,13 @@ export const SETTINGS_TABS = {
         'windStreaks'
     ],
 
-    experiments: EXPERIMENTS
+    experiments: EXPERIMENTS,
+
+    // Poradnik: samouczek (powtórka, pytanie w nowych światach) i notatka
+    // "jak grać" (src/ui/guide.js).
+    guide: [
+        'tutorial'
+    ]
 
 };
 

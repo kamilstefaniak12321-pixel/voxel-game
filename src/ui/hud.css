@@ -788,3 +788,154 @@ body.touch #status { z-index: 9; top: calc(var(--touch-top) + 22px); transform: 
     from { opacity: 0.65; transform: scaleY(0.96); }
     to { opacity: 1; transform: scaleY(1.06); }
 }
+
+
+/* ============================================================
+   SAMOUCZEK (0.99.0) - karta w prawym górnym rogu
+   (src/ui/TutorialPanel.js, kroki: src/game/Tutorial.js).
+   ============================================================ */
+
+#tutorial {
+    position: fixed;
+    top: 40px;
+    right: 10px;
+    z-index: 6;
+    box-sizing: border-box;
+    width: min(360px, calc(100vw - 20px));
+    padding: 10px 12px 9px;
+    background: rgba(12, 16, 22, 0.80);
+    border: 2px solid #e8c468;
+    color: #ffffff;
+    font-family: var(--ui-font, monospace);
+    font-size: 14px;
+    line-height: 1.35;
+    pointer-events: none;
+    user-select: none;
+    transform: scale(var(--hud-scale, 1));
+    transform-origin: top right;
+    animation: tutorial-in 0.35s ease-out;
+}
+
+#tutorial[hidden],
+body:not([data-screen="game"]) #tutorial {
+    display: none;
+}
+
+#tutorial.done {
+    border-color: #86d67a;
+    animation: tutorial-done 0.5s ease-out;
+}
+
+.tutorial-head {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #e8c468;
+}
+
+#tutorial.done .tutorial-head { color: #86d67a; }
+
+.tutorial-bar {
+    height: 3px;
+    margin: 5px 0 7px;
+    background: rgba(255, 255, 255, 0.18);
+}
+
+.tutorial-bar-fill {
+    height: 100%;
+    background: #e8c468;
+    transition: width 0.4s ease-out;
+}
+
+#tutorial.done .tutorial-bar-fill { background: #86d67a; }
+
+.tutorial-title {
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 4px;
+}
+
+.tutorial-text { color: #f1f1f1; }
+
+.tutorial-wait {
+    margin-top: 6px;
+    color: #9fd0ff;
+}
+
+.tutorial-hint {
+    margin-top: 6px;
+    padding-top: 6px;
+    border-top: 1px solid rgba(255, 255, 255, 0.18);
+    font-size: 12px;
+    color: #c9c9c9;
+}
+
+.tutorial-foot {
+    margin-top: 7px;
+    font-size: 11px;
+    color: #9a9a9a;
+}
+
+.tutorial-buttons {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+    pointer-events: auto;
+}
+
+.tutorial-buttons button {
+    flex: 1;
+    padding: 7px 4px;
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    color: #ffffff;
+    font: inherit;
+    font-size: 12px;
+}
+
+/* Telefon: karta na środku u góry, między przyciskami z lewej i prawej
+   (prawy brzeg zajmują przyciski kopania i skoku). Bez dodatkowej rady -
+   na małym ekranie liczy się miejsce. */
+
+body.touch #tutorial {
+    top: 6px;
+    left: 50%;
+    right: auto;
+    width: min(380px, calc(100vw - 460px));
+    padding: 7px 10px 8px;
+    font-size: 12px;
+    transform: translateX(-50%) scale(var(--hud-scale, 1));
+    transform-origin: top center;
+}
+
+body.touch #tutorial .tutorial-hint { display: none; }
+
+body.touch #tutorial .tutorial-title { font-size: 13px; margin-bottom: 2px; }
+
+body.touch #tutorial .tutorial-bar { margin: 3px 0 5px; }
+
+/* Wąski ekran (telefon pionowo): pod górnym rzędem przycisków. */
+
+@media (max-width: 700px) {
+    body.touch #tutorial {
+        top: calc(var(--touch-top) + 22px);
+        width: min(340px, calc(100vw - 20px));
+    }
+}
+
+@keyframes tutorial-in {
+    from { opacity: 0; translate: 16px 0; }
+    to { opacity: 1; translate: 0 0; }
+}
+
+@keyframes tutorial-done {
+    0% { scale: 1; }
+    40% { scale: 1.04; }
+    100% { scale: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    #tutorial, #tutorial.done { animation: none; }
+}

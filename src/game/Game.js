@@ -6,6 +6,7 @@ import { GameInteraction } from './GameInteraction.js';
 import { Blackout, NO_INPUT } from './Blackout.js';
 import { Beds } from './Beds.js';
 import { Sleep } from './Sleep.js';
+import { Tutorial } from './Tutorial.js';
 import { TorchRenderer } from '../rendering/TorchRenderer.js';
 import { DoorRenderer } from '../rendering/DoorRenderer.js';
 import { Chests } from './Chests.js';
@@ -71,6 +72,7 @@ import { RainEffects } from '../rendering/RainEffects.js';
 import { BlockCracks } from '../interaction/BlockCracks.js';
 import { COLOR_LEVEL } from '../world/Light.js';
 import { Wellbeing } from './Wellbeing.js';
+import { formatKeys } from '../input/bindings.js';
 
 import {
     PLAYER_REACH,
@@ -509,6 +511,11 @@ export class Game extends GameInteraction {
 
         worldInfo.wellbeing = this.wellbeing.data;
 
+        // Samouczek (pierwsze minuty w trybie przygody) - Tutorial.js.
+        // Czy go zacząć, pyta main.js (menu.showTutorialOffer).
+
+        this.tutorial = new Tutorial(this, worldInfo.tutorial ?? null);
+
         this.eatDelay = 0;
 
         this.seenJumps = 0;
@@ -786,6 +793,8 @@ export class Game extends GameInteraction {
         // Osiągnięcia sprawdzane co chwilę (wysokość, nurkowanie...).
 
         this.achievements?.update(dt);
+
+        this.tutorial.update(dt);
 
         profile?.beginStage('plants');
         this.plantGrowth.update(dt);
@@ -1940,6 +1949,10 @@ export class Game extends GameInteraction {
 
         this.achievements?.event(name, data);
 
+        // Samouczek zalicza kroki po tych samych zdarzeniach.
+
+        this.tutorial?.event(name, data);
+
     }
 
 
@@ -2361,14 +2374,15 @@ export class Game extends GameInteraction {
 
             `${targetInfo}<br><br>` +
 
-            `1-9 / kółko - wybór bloku | środkowy przycisk - weź blok | E - ekwipunek<br>` +
+            // Klawisze z przypisań gracza (input/bindings.js).
+            formatKeys(`1-9 / kółko - wybór bloku | [pick] - weź blok | [inventory] - ekwipunek<br>` +
 
-            `LPM - zniszcz | PPM - postaw / zbierz owoce<br>` +
+            `[break] - zniszcz | [use] - postaw / zbierz owoce<br>` +
 
-            `WASD - ruch | Spacja - skok | Shift - kucanie | 2× W albo R - bieg<br>` +
-            `Mysz - kamera | F5 - widok | ESC - pauza | F3 - debug | [ ] - czas ±1 h<br>` +
+            `[forward] [left] [back] [right] - ruch | [jump] - skok | [crouch] - kucanie | 2× [forward] albo [sprint] - bieg<br>` +
+            `Mysz - kamera | [view] - widok | ESC - pauza | [debug] - debug | `) + `[ ] - czas ±1 h<br>` +
 
-            `T - czat | /pomoc - komendy` +
+            formatKeys(`[chat] - czat | /pomoc - komendy`) +
 
             `<br><br>${status}`;
 

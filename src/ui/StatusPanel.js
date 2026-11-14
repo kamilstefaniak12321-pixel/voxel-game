@@ -22,6 +22,7 @@ import { STATES, MEALS_PER_DAY } from '../game/Wellbeing.js';
 import { getFood, KIND_LABELS } from '../items/foods.js';
 import { getItemLabel } from '../items/ItemRegistry.js';
 import { HeartIcon, drawHeart } from './HeartIcon.js';
+import { formatKeys } from '../input/bindings.js';
 
 // Ile bąbelków oddechu pod sercem.
 const BUBBLES = 5;
@@ -47,6 +48,9 @@ export function statusView(game) {
         label: state.label,
         text: state.text,
         rows: [
+            // Pora dnia (zegar jest też w napisach F3) - co 10 minut gry,
+            // żeby okno nie przerysowywało się co sekundę.
+            ...(game.time?.formatClock ? [['Pora', `${game.time.formatClock().slice(0, 4)}0, dzień ${game.time.dayNumber}`]] : []),
             ['Energia', info.energy],
             ['Kondycja', info.condition],
             ['Posiłki dzisiaj', `${Math.min(info.mealsToday, MEALS_PER_DAY)} z ${MEALS_PER_DAY}`],
@@ -69,7 +73,9 @@ function hoursText(hours) {
 export class StatusPanel {
 
     // onEat - przycisk "Zjedz" (telefon).
-    constructor({ onEat } = {}) {
+    // onEat - przycisk Zjedz; onOpen - okno właśnie otwarte (samouczek).
+    constructor({ onEat, onOpen } = {}) {
+        this.onOpen = onOpen ?? null;
         this.heartRoot = document.getElementById('wellbeing');
         this.heart = new HeartIcon(this.heartRoot);
         // Telefon: stuknięcie w serce otwiera okno (na komputerze mysz
@@ -94,7 +100,7 @@ export class StatusPanel {
 
     get isOpen() { return !this.panel.hidden; }
 
-    open() { this.panel.hidden = false; this.signature = null; this.wait = 0; }
+    open() { this.panel.hidden = false; this.signature = null; this.wait = 0; this.onOpen?.(); }
     close() { this.panel.hidden = true; }
     toggle() { if (this.isOpen) this.close(); else this.open(); }
 
@@ -190,11 +196,11 @@ export class StatusPanel {
                     const button = element('button', 'status-eat', drink ? 'Wypij' : 'Zjedz');
                     button.type = 'button';
                     button.addEventListener('click', () => { this.onEat?.(); this.wait = 0; });
-                    held.append(element('div', 'status-key', drink ? 'F - wypij' : 'F - zjedz'), button);
+                    held.append(element('div', 'status-key', formatKeys(drink ? '[eat] - wypij' : '[eat] - zjedz')), button);
                 } else held.append(element('div', 'status-note', view.held.can.reason));
-            } else held.append(element('div', 'status-note', 'Weź do ręki coś do jedzenia (owoce, orzechy) i naciśnij F.'));
+            } else held.append(element('div', 'status-note', formatKeys('Weź do ręki coś do jedzenia (owoce, orzechy) i naciśnij [eat].')));
             panel.append(held);
         }
-        panel.append(element('div', 'status-close', 'C - zamknij'));
+        panel.append(element('div', 'status-close', formatKeys('[status] - zamknij')));
     }
 }

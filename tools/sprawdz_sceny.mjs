@@ -86,7 +86,8 @@ const special = new Set(['graphicsPreset', 'skin', 'texturePack']);
 
 check(new Set(shown).size === shown.length, 'Ustawienie na dwóch zakładkach');
 check(Object.keys(SETTINGS_TABS).every((tab) => typeof TEXTS.settingsTabs[tab] === 'string'), 'Zakładka bez nazwy');
-check(Object.keys(SETTINGS_TABS).length <= 7, 'Za dużo zakładek');
+// Osiem zakładek (od 0.99.0 z Poradnikiem) mieści się w dwóch rzędach.
+check(Object.keys(SETTINGS_TABS).length <= 8, 'Za dużo zakładek');
 
 for (const key of Object.keys(SETTINGS_DEFAULTS)) {
     check(shown.includes(key) || COMMAND_ONLY_SETTINGS.includes(key), `Ustawienia ${key} nie ma w menu`);
@@ -169,6 +170,17 @@ const distanceCommand = GAME_COMMANDS.find(command => command.name === 'ustaw');
 const distanceResult = distanceCommand.run(['zasieg', '800'], { game: { settings } });
 check(settings.get('viewDistance') === 800 && distanceResult.includes('800'), 'Komenda /ustaw zasieg 800 działa tak samo jak suwak');
 check(distanceCommand.complete(['zasieg', '']).includes('800'), 'Podpowiedź komendy zawiera nowy maksymalny zasięg');
+// Klawisze (0.99.0): komendą tylko podgląd i powrót do domyślnych.
+settings.set('keys', { eat: 'KeyG', sprint: 'KeyX' });
+check(/zmienione \(2\)/.test(distanceCommand.run(['klawisze'], { game: { settings } })), '/ustaw klawisze mówi, ile zmieniono');
+let keysRefused = false;
+try { distanceCommand.run(['klawisze', 'KeyZ'], { game: { settings } }); } catch (error) { keysRefused = /Ustawienia → Gracz → Klawisze/.test(error.message); }
+check(keysRefused, '/ustaw klawisze <coś> odsyła do ekranu klawiszy');
+settings.reset();
+check(Object.keys(settings.get('keys')).length === 2, 'Przywrócenie ustawień nie kasuje klawiszy');
+check(/domyślne/.test(distanceCommand.run(['klawisze', 'domyslne'], { game: { settings } })) && Object.keys(settings.get('keys')).length === 0, '/ustaw klawisze domyslne');
+check(distanceCommand.run([], { game: { settings } }).includes('klawisze: Klawisze: domyślne'), 'Lista /ustaw pokazuje klawisze');
+settings.set('viewDistance', 800);
 settings.reset();
 check(settings.get('viewDistance') === SETTINGS_DEFAULTS.viewDistance, 'Reset przywraca wcześniejszy domyślny zasięg');
 

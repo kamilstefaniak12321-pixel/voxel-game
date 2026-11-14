@@ -21,7 +21,7 @@ export const TEXTS = {
     achievementUnlockedAt: (date, world) => `Zdobyte ${date}${world ? ` · świat „${world}”` : ''}`,
     achievementByCommand: ' · przyznane komendą',
     achievementProgress: (now, goal) => `Postęp: ${now} z ${goal}`,
-    achievementsHint: 'W grze: klawisz L',
+    achievementsHint: 'W grze: klawisz [achievements]',
     achievementsHintTouch: 'W grze: przycisk z książką u góry ekranu',
 
     // Lista światów
@@ -138,7 +138,9 @@ export const TEXTS = {
     updateReadyInGameApk: (version) => `Pobrano nową aplikację (${version}) - zainstaluj ją: ekran tytułowy - Zainstaluj.`,
 
     // Czat (pokazywane po wejściu do świata)
-    chatHint: 'E - ekwipunek, T - czat, /pomoc - lista komend do testowania gry, F5 - widok z trzeciej osoby',
+    // Klawisze nazwą czynności ([inventory]) - main.js wstawia te, które
+    // gracz ma przypisane (input/bindings.js).
+    chatHint: '[inventory] - ekwipunek, [status] - samopoczucie i godzina, [chat] - czat, [view] - widok z trzeciej osoby, /pomoc - lista komend do testowania gry',
 
     // To samo na telefonie (sterowanie dotykowe - src/input/TouchControls.js).
     touchHint: 'Lewa strona ekranu - chodzenie (do samego brzegu w przód - bieg), prawa - rozglądanie. ' +
@@ -154,8 +156,24 @@ export const TEXTS = {
         look: 'Wygląd',
         game: 'Gra',
         models: 'Modele',
-        experiments: 'Eksperymenty'
+        experiments: 'Eksperymenty',
+        guide: 'Poradnik'
     },
+    // Poradnik i samouczek (src/ui/guide.js, src/game/Tutorial.js)
+    guideIntro: 'Krótka ściąga do trybu przygody. Kliknij nagłówek, żeby rozwinąć rozdział.',
+    tutorialRestart: 'Powtórz samouczek',
+    tutorialRestartNote: 'Samouczek zacznie się od pierwszego kroku w tym świecie.',
+    tutorialRestartMenu: 'Samouczek powtórzysz z pauzy w grze: Ustawienia → Poradnik (tylko tryb przygody).',
+    tutorialRestartMode: 'Samouczek działa tylko w trybie przygody, we własnym świecie.',
+    tutorialOfferTitle: 'Witaj w nowym świecie',
+    tutorialOfferText: 'Pokazać ci podstawy? Samouczek to kilka krótkich kroków: ruch, drewno, narzędzia, jedzenie, ognisko i sen. Grasz normalnie - podpowiedź czeka w rogu ekranu i sama się odhacza.',
+    tutorialOfferStart: 'Zacznij z samouczkiem',
+    tutorialOfferSkip: 'Pomiń - znam grę',
+    tutorialOfferNever: 'Nie pytaj w nowych światach',
+    tutorialOfferNote: 'Samouczek można wyłączyć albo powtórzyć w każdej chwili: Ustawienia → Poradnik.',
+    tutorialSkipStep: 'Samouczek: pomiń krok',
+    tutorialStop: 'Samouczek: wyłącz',
+    tutorialPauseNote: (index, total, title) => `Samouczek - krok ${index} z ${total}: ${title}`,
     // Modele (src/blocks/plantModels.js)
     modelsIntro: 'Wygląd wszystkich roślin i ich ruch. Zmienia tylko obraz - świat i zapisy zostają takie same. Rośliny leżące jedną warstwą (lilie wodne, rzęsa, porosty, huby, barwinek) wyglądają tak samo w każdej wersji.',
     plantModelsTitle: 'Modele roślin',
@@ -225,10 +243,29 @@ export const TEXTS = {
     inventoryScale: (value) => `Rozmiar ekwipunku: ${value}%`,
     hudScale: (value) => `Interfejs w grze: ${value}%`,
     showDebug: (on) => `Debug (F3): ${on ? 'Wł.' : 'Wył.'}`,
+
+    // Klawisze (Ustawienia → Gracz → Klawisze; input/bindings.js)
+    keys: (changed) => {
+        const count = Object.keys(changed ?? {}).length;
+        return count ? `Klawisze: zmienione (${count})` : 'Klawisze: domyślne';
+    },
+    keysTitle: 'Klawisze',
+    keysIntro: 'Kliknij klawisz obok czynności, a potem naciśnij nowy - może to być też przycisk myszy.',
+    keysPress: 'Naciśnij...',
+    keysCapture: (action) => `${action}: naciśnij klawisz albo przycisk myszy. Esc - bez zmian.`,
+    keysSwapped: (action, key) => `Zamiana klawiszy: czynność „${action}” ma teraz ${key}.`,
+    keysHotbar: 'Pasek bloków: klawisze 1-9 (kliknij, żeby rozwinąć)',
+    keysChangeTitle: 'Kliknij, żeby zmienić',
+    keysRestoreTitle: (key) => `Przywróć domyślny: ${key}`,
+    keysReset: 'Domyślne klawisze',
+    keysResetDone: 'Przywrócono domyślne klawisze.',
+    keysNote: 'Esc zawsze otwiera pauzę. Samouczek, poradnik i podpowiedzi pokazują klawisze, które tu ustawisz. ' +
+        'W przeglądarce Ctrl i Alt razem z innymi klawiszami mogą uruchamiać jej skróty (np. Ctrl+W zamyka kartę) - w aplikacji tego nie ma.',
     showFps: (on) => `Licznik FPS: ${on ? 'Wł.' : 'Wył.'}`,
     dynamicLight: (on) => `Dynamiczne światło: ${on ? 'Wł.' : 'Wył.'}`,
     loadBudget: (value) => `Wczytywanie: ${value} ms/klatkę`,
     meteorites: (on) => `Spadające meteoryty: ${on ? 'Wł.' : 'Wył.'}`,
+    tutorial: (on) => `Pytaj o samouczek w nowych światach: ${on ? 'Tak' : 'Nie'}`,
     autoUpdates: (on) => `Aktualizacje automatyczne: ${on ? 'Wł.' : 'Wył. (po kliknięciu Pobierz)'}`,
     volumeMaster: (value) => `Głośność: ${value > 0 ? `${value}%` : 'Wył.'}`,
     volumeMusic: (value) => `Muzyka: ${value > 0 ? `${value}%` : 'Wył.'}`,

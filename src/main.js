@@ -13,12 +13,14 @@ import { createBlockIcons } from './ui/BlockIcons.js';
 import { installUiTextureSheets } from './ui/UiTextureSheets.js';
 import { createChatControl } from './app/ChatControl.js';
 import { installGameKeys } from './app/keys.js';
+import { bindings, formatKeys, plainKeys } from './input/bindings.js';
 import { GAME_COMMANDS, setSceneTime } from './commands/gameCommands.js';
 import { PLANT_PACK_ERRORS } from './blocks/plantPacks.js';
 import { PerfMonitor } from './game/PerfMonitor.js';
 import { diagnostics } from './diagnostics/Diagnostics.js';
 import { PerfDiagnostics } from './diagnostics/PerfDiagnostics.js';
 import { StatusPanel } from './ui/StatusPanel.js';
+import { TutorialPanel } from './ui/TutorialPanel.js';
 import { TerrainMap } from './ui/TerrainMap.js';
 import { InventoryScreen } from './ui/InventoryScreen.js';
 import { NetHost } from './net/NetHost.js';
@@ -114,6 +116,10 @@ let touchMode = touchParameter !== null
 // telefonie inne wartości na start (TOUCH_SETTINGS w config.js).
 
 const settings = new Settings(touchMode ? TOUCH_SETTINGS : {});
+
+// Klawisze przypisane przez gracza (Ustawienia → Gracz → Klawisze).
+
+bindings.load(settings.get('keys'));
 
 
 // Tryb ziemniaka można włączyć też adresem gry: ...index.html?ziemniak
@@ -219,7 +225,13 @@ renderer.domElement.addEventListener('webglcontextrestored', () => {
 const terrainMap = new TerrainMap();
 
 // Okno statusu (samopoczucie) - klawisz C.
-const statusPanel = new StatusPanel({ onEat: () => game?.eat() });
+const statusPanel = new StatusPanel({ onEat: () => game?.eat(), onOpen: () => game?.tutorial.event('statusOpened') });
+
+// Karta samouczka w rogu ekranu (kroki: src/game/Tutorial.js).
+const tutorialPanel = new TutorialPanel({
+    onSkipStep: () => game?.tutorial.skipStep(),
+    onStop: () => game?.tutorial.stop()
+});
 
 
 // Dźwięk (kroki, bloki, meteoryty, menu). Przeglądarka pozwala go
@@ -375,6 +387,17 @@ const menu = new Menu(
             menuBackdrop.setView(view);
             void menuBackdrop.start();
         },
+        // Samouczek (0.99.0): stan dla pauzy i ustawień, odpowiedź na
+        // pytanie z początku świata (Menu.showTutorialOffer).
+        tutorial: () => game?.tutorial ?? null,
+        touchMode: () => touchMode,
+        tutorialChoice: (choice) => {
+            if (!game) return;
+            if (choice === 'start') game.tutorial.start();
+            else game.tutorial.stop();
+            if (choice === 'never') settings.set('tutorial', false);
+            resume();
+        },
         // Tryb programisty: sceny testowe i pora dnia (Menu.showScenes).
         gameMode: () => game?.mode ?? null,
         buildScene: (id) => {
@@ -471,6 +494,8 @@ applyPlantSettings();
 
 settings.onChange((key) => {
 
+    if (key === 'keys' || key === null) bindings.load(settings.get('keys'));
+
     if (key === 'performanceLogs') frameDiagnostics.setEnabled(settings.get('performanceLogs'));
     if (key !== 'skin' && key !== 'texturePack') diagnostics.breadcrumb('settings.changed', 'Zmieniono ustawienie gry.', { key, value: settings.get(key) });
 
@@ -535,6 +560,9 @@ async function playWorld(worldInfo, { client = null } = {}) {
     state = 'loading';
     diagnostics.breadcrumb('world.loading', 'Rozpoczęto wczytywanie świata.', { seed: worldInfo.seed, terrain: worldInfo.terrain });
 
+    // Świat, w którym gracz jeszcze nie był (pytanie o samouczek).
+    const newWorld = !worldInfo.player && !client;
+
     menu.showLoading(TEXTS.loadingWorld);
     menuBackdrop.stop();
 
@@ -586,11 +614,13 @@ async function playWorld(worldInfo, { client = null } = {}) {
 
         // Komunikaty gry (np. gdzie spadł meteoryt) trafiają na czat.
 
-        game.onMessage = (text) => chat.print(text, 'hint');
+        game.onMessage = (text) => chat.print(plainKeys(text), 'hint');
 
         // Krótkie komunikaty (np. "Ekwipunek pełny") - nad paskiem bloków.
 
-        game.onNotice = (text) => hotbar.showName(text);
+        // (Napisy gry mówią "LPM" / "PPM" - po zmianie klawiszy wstawiamy
+        // te, które gracz przypisał: input/bindings.js.)
+        game.onNotice = (text) => hotbar.showName(plainKeys(text));
 
         // Serce (samopoczucie) reaguje na burczenie, posiłki i nową dobę.
         game.onWellbeing = (event) => statusPanel.signal(event);
@@ -619,13 +649,19 @@ async function playWorld(worldInfo, { client = null } = {}) {
     }
 
 
-    // Świat gotowy - przechwytujemy mysz i gramy.
+    // Świat gotowy - przechwytujemy mysz i gramy. Nowy świat w trybie
+    // przygody zaczyna się pytaniem o samouczek (odpowiedź wznawia grę).
 
     state = 'paused';
 
-    resume();
+    if (game.tutorial.shouldOffer(settings.get('tutorial'), newWorld)) {
+        menu.showTutorialOffer();
+    }
+    else {
+        resume();
+    }
 
-    chat.print(touchMode ? TEXTS.touchHint : TEXTS.chatHint, 'hint');
+    chat.print(touchMode ? TEXTS.touchHint : formatKeys(TEXTS.chatHint), 'hint');
 
     if (game.mode === 'developer') {
         chat.print(TEXTS.developerHint, 'hint');
@@ -1029,6 +1065,7 @@ installGameKeys({
     getState: () => state,
     getGame: () => game,
     isTouch: () => touchMode,
+    input,
     actions: {
         inventory: () => openInventory(),
         achievements: () => openAchievements(),
@@ -1304,6 +1341,8 @@ function closeWorld() {
 
     hotbar.reset();
 
+    tutorialPanel.hide();
+
     terrainMap.close();
 
     chat.clear();
@@ -1418,6 +1457,8 @@ function animate(now) {
     hotbar.update(game.inventory.slots.slice(0, HOTBAR_SIZE), game.inventory.selected);
 
     statusPanel.update(dt, game);
+
+    tutorialPanel.update(game);
 
 
     // Gra działa także przy otwartym czacie i ekwipunku.

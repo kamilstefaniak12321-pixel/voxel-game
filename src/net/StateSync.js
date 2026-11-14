@@ -1,5 +1,6 @@
 // ------------------------------------------------------------
-// GRA WIELOOSOBOWA - SKRZYNIE, STOŁY STOLARSKIE I OGNISKA (0.92.0)
+// GRA WIELOOSOBOWA - SKRZYNIE, STOŁY STOLARSKIE, OGNISKA (0.92.0)
+// I WYRZUCONE PRZEDMIOTY (0.100.0)
 //
 // Każdy z tych systemów trzyma wpisy po pozycji bloku ("x,y,z"). Co
 // chwilę porównujemy podpis każdego wpisu z ostatnio wysłanym i wysyłamy
@@ -14,6 +15,7 @@
 import { restoreChest, chestState } from '../game/ChestState.js';
 import { restoreCampfire } from '../game/CampfireState.js';
 import { restoreTable } from '../game/CarpenterTables.js';
+import { restoreDrop, dropState } from '../game/Drops.js';
 
 const LEASE = 1.2;
 
@@ -41,8 +43,23 @@ export function stateSystems(game) {
             sign: (fire) => JSON.stringify([fire.logs.map((log) => log.wood), fire.tinder, fire.phase, fire.ash,
                 Math.round(fire.ignition * 8), fire.embers > 0]),
             changed: () => game.campfires.version++
+        },
+        // Wyrzucone przedmioty (0.100.0): wpis po nazwie (id), nie po
+        // pozycji. Lot liczy każdy u siebie - podpis to tylko "co i ile".
+        drops: {
+            map: () => game.drops.drops,
+            key: (drop) => drop.id,
+            save: dropState,
+            restore: restoreDrop,
+            sign: (drop) => `${drop.type}:${drop.count}`,
+            changed: () => game.drops.changed()
         }
     };
+}
+
+// Nazwa wpisu: własna (system.key) albo pozycja bloku.
+export function entryKey(system, entry) {
+    return system.key ? system.key(entry) : `${entry.x},${entry.y},${entry.z}`;
 }
 
 export class StateSync {
@@ -116,7 +133,7 @@ export class StateSync {
             return true;
         }
         const restored = system.restore(value);
-        if (!restored || `${restored.x},${restored.y},${restored.z}` !== key) return false;
+        if (!restored || entryKey(system, restored) !== key) return false;
         const existing = map.get(key);
         if (existing) {
             for (const field of Object.keys(existing)) delete existing[field];

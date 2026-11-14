@@ -9,7 +9,8 @@
 //   updateMining      - kopanie (przygoda: trzymany LPM, pęknięcia;
 //                       kreatywny: od razu),
 //   breakTarget, breakDrops - zniszczenie bloku i to, co z niego wypada,
-//   harvestTarget, addHarvest - zbiór owoców, żywicy, kwiatów (PPM),
+//   harvestTarget, addHarvest - zbiór owoców, żywicy, kwiatów (PPM;
+//                       kwiaty i zioła - nożem),
 //   stripTarget       - okorowanie pnia siekierą,
 //   tillTarget, canPlantAt - rozgrzebana ziemia i sadzenie na niej,
 //   updateWellbeing, eat - energia i jedzenie (Wellbeing.js),
@@ -43,6 +44,7 @@ import {
     getAttach,
     getDropCount,
     getLoot,
+    needsKnife,
     isReplaceableId,
     isLiquidId,
     FIELD_BLOCK
@@ -53,6 +55,8 @@ import { getFood } from '../items/foods.js';
 import { EFFECTS } from '../items/effects.js';
 import {
     CREATIVE_REPEAT_SECONDS,
+    EAT_SECONDS,
+    EAT_BITE_SECONDS,
     MINING_HIT_SECONDS,
     MINING_DELAY_SECONDS,
     HOTBAR_SIZE,
@@ -379,7 +383,9 @@ export class GameInteraction {
 
             // Pełny ekwipunek - nie ma sensu kopać (blok i tak by został).
 
-            const drop = getDropType(type);
+            // (Trawa i kwiaty bez noża nic nie dają - nie ma na co czekać.)
+
+            const drop = needsKnife(type) && getTool(this.selectedBlock) !== 'knife' ? null : getDropType(type);
 
             if (drop && !this.inventory.canAdd(drop)) {
 
@@ -458,6 +464,8 @@ export class GameInteraction {
             this.eat();
         }
 
+        this.updateEating(dt, input.isMouseDown(0));
+
         if (!wellbeing.active || player.flying) {
             return;
         }
@@ -524,15 +532,103 @@ export class GameInteraction {
     }
 
 
-    // Zjedzenie jednej sztuki tego, co gracz trzyma (klawisz F, przycisk
-    // w oknie statusu). Zwraca true, gdy coś zjadł.
+    // JEDZENIE (klawisz F, PPM z jedzeniem poza polem, przycisk w oknie
+    // statusu). Od 0.100.0 trwa chwilę: eat() zaczyna jeść to, co gracz
+    // trzyma, a po EAT_SECONDS sztuka jest zjedzona (finishEating).
+    // W tym czasie ręka podnosi jedzenie do ust (FirstPersonHand,
+    // PlayerAnimator), słychać kęsy. Przerywa je zmiana miejsca na pasku,
+    // kopanie, sen i utrata przytomności - wtedy nic nie ubywa.
+    // Zwraca true, gdy gracz zaczął jeść.
 
     eat() {
 
         const inventory = this.inventory;
         const item = inventory.selectedItem;
 
-        if (this.eatDelay > 0 || !item || !getFood(item.type)) {
+        if (this.eating || this.eatDelay > 0 || !item || !getFood(item.type)) {
+            return false;
+        }
+
+        const food = getFood(item.type);
+
+        // To, co zostaje po wypiciu (kubek), musi się gdzieś zmieścić:
+        // w zwolnionym miejscu w ręce albo obok.
+
+        if (food.returns && item.count > 1 && !inventory.canAdd(food.returns)) {
+            this.onNotice?.(`Brak miejsca w ekwipunku na: ${getItemLabel(food.returns)}`);
+            return false;
+        }
+
+        const check = this.wellbeing.canEat(item.type);
+
+        if (!check.ok) {
+            this.onNotice?.(check.reason);
+            return false;
+        }
+
+        this.eating = {
+            type: item.type,
+            slot: inventory.selected,
+            time: 0,
+            seconds: EAT_SECONDS[food.kind] ?? EAT_SECONDS.snack,
+            bite: 0
+        };
+
+        return true;
+
+    }
+
+
+    // Co klatkę: postęp jedzenia. interrupted - gracz właśnie kopie.
+
+    updateEating(dt, interrupted = false) {
+
+        const eating = this.eating;
+
+        if (!eating) {
+            return;
+        }
+
+        const item = this.inventory.selectedItem;
+
+        if (
+            interrupted ||
+            this.inventory.selected !== eating.slot ||
+            item?.type !== eating.type ||
+            this.sleep?.active ||
+            this.blackout?.active
+        ) {
+            this.eating = null;
+            return;
+        }
+
+        eating.time += dt;
+        eating.bite -= dt;
+
+        // Kęsy (ostatni dźwięk daje finishEating).
+
+        if (eating.bite <= 0 && eating.time < eating.seconds - 0.2) {
+            eating.bite = EAT_BITE_SECONDS;
+            this.sounds?.play('eat', { volume: 0.5, pitch: 0.9 + Math.random() * 0.25 });
+        }
+
+        if (eating.time >= eating.seconds) {
+            this.eating = null;
+            this.finishEating();
+        }
+
+    }
+
+
+    // Koniec jedzenia: jedna sztuka znika, energia i żołądek rosną.
+    // Zwraca true, gdy coś zostało zjedzone.
+
+    finishEating() {
+
+        const inventory = this.inventory;
+        const item = inventory.selectedItem;
+
+        if (!item || !getFood(item.type)) {
             return false;
         }
 
@@ -561,11 +657,9 @@ export class GameInteraction {
             inventory.add(food.returns);
         }
 
-        this.eatDelay = 0.45;
+        this.eatDelay = 0.25;
 
         this.sounds?.play('eat');
-
-        this.swingArm(0.3);
 
         this.achieve('ate', { type, meal: result.meal, mealsToday: result.mealsToday, kind: food.kind, effects: result.effects });
 
@@ -646,7 +740,9 @@ export class GameInteraction {
 
         const { x, y, z, type } = hit.block;
 
-        const drops = this.breakDrops(type, hit.block);
+        const tool = getTool(this.selectedBlock);
+
+        const drops = this.breakDrops(type, hit.block, tool);
 
         // Te same sąsiednie bloki, które usuwa World.setBlock:
         // roślina nad podłożem i dekoracje przylegające do podpory.
@@ -660,7 +756,7 @@ export class GameInteraction {
                 supported.set(key, {
                     x: sx, y: sy, z: sz,
                     type: this.world.getBlock(sx, sy, sz),
-                    drops: this.breakDrops(this.world.getBlock(sx, sy, sz), {x:sx,y:sy,z:sz})
+                    drops: this.breakDrops(this.world.getBlock(sx, sy, sz), {x:sx,y:sy,z:sz}, tool)
                 });
             }
         };
@@ -684,7 +780,6 @@ export class GameInteraction {
         // Losujemy raz, przed usunięciem bloku. Osobne canAdd dla każdego
         // łupu nie wystarczyłyby: dwa rodzaje mogłyby liczyć to samo miejsce.
         const supportedDrops = [...supported.values()].flatMap((block) => block.drops);
-        const tool = getTool(this.selectedBlock);
 
         if (!this.inventory.canAddAll([...drops, ...supportedDrops])) {
 
@@ -719,6 +814,14 @@ export class GameInteraction {
 
         this.achieve('blockBroken', { type, mode: this.mode, tool });
 
+        // Ścięta gołą ręką trawa albo kwiat: nic nie zostało - podpowiedź
+        // (nie częściej niż co pół minuty).
+
+        if (needsKnife(type) && tool !== 'knife' && performance.now() - (this.knifeHintAt ?? -Infinity) > 30000) {
+            this.knifeHintAt = performance.now();
+            this.onNotice?.('Trawę i kwiaty ścina się nożem - gołą ręką nic z nich nie zostaje');
+        }
+
         return true;
 
     }
@@ -726,21 +829,23 @@ export class GameInteraction {
 
     // Cała paczka ze zniszczonego bloku, bez zmieniania ekwipunku.
     // Ten sam wynik służy do sprawdzenia miejsca i przyznania łupów.
+    // tool - narzędzie w ręce: trawa, kwiaty i zioła (pole cut) zostają
+    // tylko po ścięciu nożem; tak samo plon rośliny zbieranej nożem.
 
-    breakDrops(type, position = null) {
+    breakDrops(type, position = null, tool = null) {
 
         if (type === 'campfire') return this.campfires.drops(position);
 
         const drops = [];
         const drop = getDropType(type);
 
-        if (drop) {
+        if (drop && !(needsKnife(type) && tool !== 'knife')) {
             drops.push({ type: drop, count: getDropCount(type) });
         }
 
         const harvest = getHarvest(type);
 
-        if (harvest) {
+        if (harvest && (!harvest.tool || harvest.tool === tool)) {
 
             const [min, max] = harvest.count;
             const count = min + Math.floor(Math.random() * (max - min + 1));
@@ -892,6 +997,18 @@ export class GameInteraction {
 
         if (!harvest) {
             return false;
+        }
+
+        // Kwiaty i zioła ścina się nożem: bierzesz kwiat, łodyga zostaje
+        // i kwitnie od nowa.
+
+        if (harvest.tool && getTool(this.selectedBlock) !== harvest.tool) {
+
+            this.onNotice?.('Kwiaty i zioła ścina się nożem');
+            this.plantAnimations?.reject(x, y, z);
+
+            return false;
+
         }
 
         if (!this.inventory.canAdd(harvest.item, harvest.count[1])) {

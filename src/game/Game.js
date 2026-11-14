@@ -72,6 +72,8 @@ import { RainEffects } from '../rendering/RainEffects.js';
 import { BlockCracks } from '../interaction/BlockCracks.js';
 import { COLOR_LEVEL } from '../world/Light.js';
 import { Wellbeing } from './Wellbeing.js';
+import { Drops } from './Drops.js';
+import { DropRenderer } from '../rendering/DropRenderer.js';
 import { formatKeys } from '../input/bindings.js';
 
 import {
@@ -518,6 +520,10 @@ export class Game extends GameInteraction {
 
         this.eatDelay = 0;
 
+        // Trwające jedzenie: { type, slot, time, seconds, bite } albo null
+        // (GameInteraction.js - eat, updateEating).
+        this.eating = null;
+
         this.seenJumps = 0;
 
         // Utrata przytomności pod wodą i pobudka na brzegu.
@@ -560,6 +566,10 @@ export class Game extends GameInteraction {
 
         this.campfires = new Campfires(this, worldInfo.campfires);
 
+        // Wyrzucone przedmioty leżące w świecie (0.100.0 - Drops.js).
+        this.drops = new Drops(this, worldInfo.drops);
+        this.drops.renderer = new DropRenderer(this);
+
         // Skrzynie: zawartość i modele (Chests.js); PPM otwiera ekwipunek
         // ze skrzynią (onOpenChest - main.js).
         this.chests = new Chests(this, worldInfo.chests);
@@ -586,6 +596,8 @@ export class Game extends GameInteraction {
             this.chests,
             this.carpenterTables
         );
+
+        this.saver.drops = this.drops;
 
         this.saver.saveOnExit();
 
@@ -723,6 +735,16 @@ export class Game extends GameInteraction {
 
         profile?.beginStage('effects');
         this.campfires.update(dt, input.isMouseDown(2) && !breakHeld && !breakPressed);
+
+        // Wyrzucanie (Q - jedna sztuka, z kucaniem - cały stos), leżące
+        // przedmioty i podnoszenie.
+
+        if (input.consumeKeyPress('KeyQ') && !this.sleep.active) {
+            this.eating = null;
+            this.drops.throwSelected(this.player.crouching);
+        }
+
+        this.drops.update(dt);
 
         this.chests.update(dt);
         this.carpenterTables.update(dt);
@@ -927,7 +949,8 @@ export class Game extends GameInteraction {
             swimming: player.swimming,
             yaw: player.yaw,
             pitch: player.pitch,
-            landed: player.landed
+            landed: player.landed,
+            eating: Boolean(this.eating)
         });
 
         this.model.setPose(pose);
@@ -942,6 +965,8 @@ export class Game extends GameInteraction {
         // Ręka w widoku z oczu i kamera w dół po upadku.
 
         this.hand.setHeld(this.sleep.lying ? null : this.selectedBlock);
+
+        this.hand.setEating(Boolean(this.eating));
 
         this.hand.update(dt, player);
 
@@ -1835,6 +1860,7 @@ export class Game extends GameInteraction {
         if (this.hand) {
 
             this.hand.setLowDetail(potato);
+            this.drops?.renderer?.setLowDetail(potato);
 
             this.hand.setOverlay(settings.get('skinOverlay'));
 
@@ -1959,6 +1985,25 @@ export class Game extends GameInteraction {
     // Machnięcie ręką: model gracza (z trzeciej osoby) i ręka w widoku
     // z oczu. seconds - ile trwa machnięcie ręki (przy kopaniu tyle, co
     // jedno uderzenie - kolejne machnięcia łączą się w płynny ruch).
+
+    // ŚWIAT NADRABIA CZAS (0.100.0). Sen i utrata przytomności
+    // przesuwają zegar - a razem z nim wszystko, co w świecie trwa:
+    // ogniska się dopalają, rośliny rosną, pola zarastają. seconds - ile
+    // sekund prawdziwego czasu "minęło" (godzina gry to 50 sekund).
+    // Nowy system zależny od czasu dopisz tutaj.
+
+    advanceWorld(seconds) {
+
+        if (!(seconds > 0)) {
+            return;
+        }
+
+        this.campfires.advance(seconds);
+
+        this.plantGrowth.advance(seconds);
+
+    }
+
 
     swingArm(seconds) {
 
@@ -2201,6 +2246,7 @@ export class Game extends GameInteraction {
 
         this.dynamicLight.dispose();
         this.campfires.dispose();
+        this.drops.dispose();
 
         this.chests.dispose();
         this.carpenterTables.dispose();
@@ -2377,7 +2423,7 @@ export class Game extends GameInteraction {
             // Klawisze z przypisań gracza (input/bindings.js).
             formatKeys(`1-9 / kółko - wybór bloku | [pick] - weź blok | [inventory] - ekwipunek<br>` +
 
-            `[break] - zniszcz | [use] - postaw / zbierz owoce<br>` +
+            `[break] - zniszcz | [use] - postaw / zbierz owoce | [eat] - zjedz | [drop] - wyrzuć<br>` +
 
             `[forward] [left] [back] [right] - ruch | [jump] - skok | [crouch] - kucanie | 2× [forward] albo [sprint] - bieg<br>` +
             `Mysz - kamera | [view] - widok | ESC - pauza | [debug] - debug | `) + `[ ] - czas ±1 h<br>` +

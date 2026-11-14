@@ -85,7 +85,7 @@ equal(achievement.when({ type: 'pickaxe_limestone' }, book), false, 'second tool
 equal(achievement.when({ type: 'shovel_sandstone' }, book), true, 'three material tool classes unlock achievement');
 equal([...collected], ['axe', 'pickaxe', 'shovel'], 'achievement remains compatible with existing progress');
 
-equal(STONE_TOOL_TEXTURES.length, 15, 'fifteen additional texture variants');
+equal(STONE_TOOL_TEXTURES.length, 20, 'twenty additional texture variants (axe, pickaxe, shovel, knife)');
 for (const spec of STONE_TOOL_TEXTURES) equal(ITEM_TYPES[spec.name]?.icon, spec.name, 'registry uses generated texture');
 
 // Independent texture contract: all alpha and every wooden/coloured pixel
@@ -110,7 +110,7 @@ for (const size of [16, 32]) {
         putImageData: (_image, x, y) => { check(![...excluded].some(name => tiles[name].x * size === x && tiles[name].y * size === y), 'explicit variant override preserved'); writes++; }
     };
     drawStoneToolTextures(context, tiles, size, excluded);
-    equal(writes, 13, 'only variants without explicit override generated');
+    equal(writes, 18, 'only variants without explicit override generated');
 }
 
 console.log(`OK: kamienne narzędzia — ${checks} kontroli materiału, zapisu, craftingu, katalizatorów, osiągnięć i tekstur.`);

@@ -21,6 +21,7 @@
 // ------------------------------------------------------------
 
 import { isNight, NIGHT_FROM, NIGHT_UNTIL, SLEEP_PLACES, COMFORT } from './Wellbeing.js';
+import { DAY_LENGTH_MINUTES } from '../config.js';
 
 export const SLEEP_FADE_SECONDS = 1.4;
 // Godzina pobudki, gdy noc przeskakuje.
@@ -103,6 +104,8 @@ export class Sleep {
         this.asleepFor = 0;
         this.released = new Set();
         game.stopMining?.();
+        // Kładąc się, gracz przestaje jeść (nic nie ubywa).
+        game.eating = null;
         game.onNotice?.(`Kładziesz się spać ${SLEEP_PLACES[spot.place].label}`);
         return true;
     }
@@ -136,7 +139,11 @@ export class Sleep {
             } else if (this.asleepFor >= SETTLE_SECONDS) {
                 if (woken) this.wake(true);
                 else if (this.canSkip()) {
-                    game.time.days = nextWake(game.time.days);
+                    // Noc mija w jednej chwili - a świat razem z nią
+                    // (ogniska, rośliny: Game.advanceWorld).
+                    const before = game.time.days;
+                    game.time.days = nextWake(before);
+                    game.advanceWorld?.((game.time.days - before) * DAY_LENGTH_MINUTES * 60);
                     game.net?.timeChanged?.();
                     this.wake();
                 }

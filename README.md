@@ -85,7 +85,8 @@ Gracz → Klawisze* ([opis](docs/klawisze.md)).
 | 1-9 / kółko myszy | wybór miejsca na pasku bloków |
 | Środkowy przycisk myszy | weź blok, na który patrzysz, na pasek |
 | E | ekwipunek (w trybie kreatywnym też wszystkie bloki gry i owoce) |
-| F | zjedz to, co trzymasz (owoce, orzechy - tryb przygody; to samo robi PPM poza polem) |
+| F | zjedz to, co trzymasz (owoce, orzechy - tryb przygody; to samo robi PPM poza polem); jedzenie trwa chwilę |
+| Q | wyrzuć jedną sztukę tego, co trzymasz (z kucaniem - cały stos); leżący przedmiot podnosisz, wchodząc na niego |
 | C | okno statusu: pora dnia, samopoczucie, energia, kondycja, posiłki (skrót stanu: serce w lewym górnym rogu) |
 | ESC | pauza (wróć do gry, ustawienia, zapisz i wyjdź do menu) |
 | F3 | informacje debugowania w lewym górnym rogu (od 0.99.0 na początku wyłączone) |
@@ -120,6 +121,7 @@ jest w [`docs/opis-gry.md`](docs/opis-gry.md). Skrót:
 
 | Część gry | Co obejmuje | Pełny opis | Osobna strona |
 |---|---|---|---|
+| Wyrzucanie, nóż, kora, ognisko etapami | przedmiot da się wyrzucić (Q) - leży w świecie jako mały model; nóż z każdej skały ścina trawę, kwiaty i zioła; kora z każdego drzewa jako podpałka; polana spalają się po kolei i można je dokładać; jedzenie trwa; sen przesuwa cały świat | [opis](docs/przedmioty-i-noz.md) | [przedmioty-i-noz.md](docs/przedmioty-i-noz.md) |
 | Klawisze do ustawienia | każdą czynność można przypisać do innego klawisza albo przycisku myszy (*Ustawienia → Gracz → Klawisze*); zajęty klawisz zamienia się miejscami; podpowiedzi pokazują klawisze gracza | [opis](docs/klawisze.md) | [klawisze.md](docs/klawisze.md) |
 | Samouczek i poradnik | samouczek w pierwszych minutach nowego świata (10 kroków, sam się odhacza, można pominąć i powtórzyć), poradnik w *Ustawienia → Poradnik*, strojenie liczb testem | [opis](docs/samouczek.md) | [samouczek.md](docs/samouczek.md) |
 | Osiągnięcia | 67 osiągnięć w księdze (klawisz L), powiadomienia, rangi | [opis](docs/opis-gry.md#osiągnięcia) | [osiagniecia.md](docs/osiagniecia.md) |

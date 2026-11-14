@@ -45,7 +45,7 @@
         "nazwaAngielska": "Sea Holly Flower",
         "grupy": ["blue", "flowers"]
     },
-    "zbior": { "ile": [1, 2], "wraca": 2 },
+    "zbior": { "ile": [1, 2], "wraca": 2, "narzedzie": "noz" },
     "podloze": ["sand"],
     "gdzieRosnie": { "biomy": { "plaza": 1, "skaly": 0.3 }, "plamy": 0.02, "gestosc": 0.3, "etapy": [0.2, 0.25, 0.55] },
     "zrodlo": {

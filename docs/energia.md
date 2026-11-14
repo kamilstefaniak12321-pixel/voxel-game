@@ -70,6 +70,11 @@ chodzi i może jeść.
 
 ## Jedzenie
 
+**Jedzenie trwa** (od 0.100.0): przekąska 1,4 s, posiłek 2,2 s, napar
+1,8 s - ręka podnosi jedzenie do ust, a sztuka znika dopiero na końcu.
+Kopanie i zmiana miejsca na pasku przerywają jedzenie
+([opis](przedmioty-i-noz.md#jedzenie-trwa)).
+
 Weź jedzenie do ręki i naciśnij **F** albo **PPM** (na telefonie:
 stuknięcie albo przycisk *Zjedz* w oknie statusu). Od 0.95.0 owoce sadzi
 się tylko na rozgrzebanej ziemi ([docs/uprawa.md](uprawa.md)) - tam PPM

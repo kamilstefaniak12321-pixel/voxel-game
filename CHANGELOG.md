@@ -11,6 +11,37 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 0.100.0 - Wyrzucanie, nóż, kora, ognisko etapami, jedzenie
+
+Na prośbę Kamila — PR #140 (po 0.99.0). Sześć rzeczy zauważonych
+w trakcie gry, ostatnie zmiany zasad przed 1.0
+([opis](docs/przedmioty-i-noz.md)):
+
+- **Wyrzucanie przedmiotów.** Q wyrzuca jedną sztukę z ręki (z kucaniem
+  - cały stos); w ekwipunku Q nad miejscem albo klik obok okna.
+  Przedmiot leży w świecie jako pomniejszony model, nie znika
+  i zapisuje się ze światem. Podnosi się go, wchodząc na niego. Widzą go
+  wszyscy gracze. Klawisz można zmienić.
+- **Nóż** - czwarte narzędzie, z każdej z sześciu skał (skała i patyk na
+  ukos). Trawę, kwiaty i zioła ścina się nożem: zerwane gołą ręką nic
+  nie dają. PPM nożem na kwitnącej roślinie zabiera same kwiaty -
+  łodyga zostaje i kwitnie od nowa.
+- **Kora każdego drzewa** z okorowania siekierą (19 rodzajów). Każda
+  jest podpałką; brzozowa rozpala 1,5 raza szybciej, a sosny, świerka,
+  kosodrzewiny i eukaliptusa - 1,25 raza.
+- **Ognisko przygasa etapami.** Polana spalają się po kolei, płomień
+  i światło maleją z opałem. Do płonącego ogniska można dokładać polana.
+  Pełny stos pali się 8 minut jak dotąd.
+- **Jedzenie trwa** (1,4-2,2 s) i ma animację: ręka podnosi jedzenie do
+  ust, słychać kęsy. Kopanie albo zmiana miejsca na pasku je przerywa.
+- **Sen i utrata przytomności przesuwają cały świat:** ogniska się
+  dopalają, rośliny rosną, pola zarastają.
+- Samouczek uczy rozpalać ognisko korą (trawa wymaga teraz noża);
+  poradnik i podpowiedzi uzupełnione.
+- 14 osiągnięć za zbiór kwiatów i ziół mówi teraz „zetnij nożem".
+- Pomysły na później (pory roku kwiatów, kłujące rośliny, dywany
+  kwiatów w generatorze) zapisane w opisie.
+
 ## 0.99.0 - Pierwsze dziesięć minut: samouczek, poradnik, strojenie liczb
 
 Na prośbę Kamila — PR #139 (po 0.98.1). Ostatnia wersja z nowościami

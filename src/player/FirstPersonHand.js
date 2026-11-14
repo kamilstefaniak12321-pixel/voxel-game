@@ -84,6 +84,10 @@ export const POSES = {
 // "na cios" (narzędzie uderza głowicą).
 const SWING = { move: [-0.36, 0.16, -0.24], turn: [-1.25, 0.5, -0.4] };
 
+// Jedzenie: przesunięcie (do środka, w górę, do siebie) i obrót tego, co
+// gracz trzyma; chew - jak mocno rusza się przy kęsach.
+const EAT = { move: [-0.3, 0.1, 0.06], turn: [0.35, 0.5, 0.2], chew: 0.022, chewSpeed: 15 };
+
 const WIDE_ASPECT = 16 / 9;
 
 
@@ -296,6 +300,15 @@ export class FirstPersonHand {
     // Machnięcie (kopanie, stawianie). seconds - ile trwa (kopanie:
     // tyle co jedno uderzenie).
 
+    // Jedzenie (0.100.0): to, co gracz trzyma, podjeżdża do ust i lekko
+    // się porusza przy kęsach, dopóki on = true.
+    setEating(on) {
+
+        this.eating = Boolean(on);
+
+    }
+
+
     swing(seconds = SWING_SECONDS) {
 
         this.swingTime = 0;
@@ -335,6 +348,9 @@ export class FirstPersonHand {
 
 
         this.swingTime += dt;
+
+        this.eatBlend = (this.eatBlend ?? 0) + ((this.eating ? 1 : 0) - (this.eatBlend ?? 0)) * Math.min(1, dt * 9);
+        this.eatClock = (this.eatClock ?? 0) + dt;
 
 
         // Kroki: kołysanie tylko przy chodzeniu po ziemi.
@@ -447,6 +463,23 @@ export class FirstPersonHand {
             rx += turn[0] * Math.sin(s * Math.PI);
             ry += turn[1] * Math.sin(t * t * Math.PI);
             rz += turn[2] * Math.sin(s * Math.PI);
+
+        }
+
+
+        // Jedzenie: do środka ekranu, pod brodę, przechylone do ust.
+
+        if (this.eatBlend > 0.001) {
+
+            const e = this.eatBlend, chew = Math.sin(this.eatClock * EAT.chewSpeed);
+
+            x += EAT.move[0] * e;
+            y += (EAT.move[1] + EAT.chew * chew) * e;
+            z += EAT.move[2] * e;
+
+            rx += EAT.turn[0] * e;
+            ry += EAT.turn[1] * e;
+            rz += (EAT.turn[2] + 0.05 * chew) * e;
 
         }
 

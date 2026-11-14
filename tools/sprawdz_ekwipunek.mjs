@@ -196,6 +196,42 @@ test('klik poza oknem w przygodzie odkłada stos, a w kreatywnym go usuwa', () =
     assert.equal(total(inventory, 'oak_log'), 0);
 });
 
+test('klik poza oknem w świecie wyrzuca stos na ziemię (prawy przycisk - jedną sztukę), klawisz wyrzucania - z miejsca pod myszą', () => {
+    const inventory = empty();
+    inventory.cursor = { type: 'oak_log', count: 9 };
+    const ui = screen(inventory);
+    const thrown = [];
+    ui.game.drops = { throwFromPlayer: (type, count) => { thrown.push([type, count]); return {}; } };
+    ui.onMouseDown({ target: { closest: () => null }, preventDefault() {}, button: 2 });
+    assert.deepEqual(thrown, [['oak_log', 1]]);
+    assert.deepEqual(inventory.cursor, { type: 'oak_log', count: 8 });
+    clickOutside(ui);
+    assert.deepEqual(thrown.at(-1), ['oak_log', 8]);
+    assert.equal(inventory.cursor, null);
+    assert.equal(total(inventory, 'oak_log'), 0);
+    // Klawisz wyrzucania: z kursora, a bez niego - z miejsca pod myszą.
+    inventory.set(3, { type: 'stone', count: 5 });
+    inventory.cursor = { type: 'stick', count: 2 };
+    ui.dropHovered(false);
+    assert.deepEqual(thrown.at(-1), ['stick', 1]);
+    ui.dropHovered(true);
+    assert.equal(inventory.cursor, null);
+    ui.updateTooltip = () => { ui.hover = { kind: 'slot', index: 3 }; };
+    globalThis.document ??= {};
+    const before = document.elementFromPoint;
+    document.elementFromPoint = () => null;
+    ui.dropHovered(false);
+    assert.deepEqual(thrown.at(-1), ['stone', 1]);
+    assert.equal(inventory.get(3).count, 4);
+    ui.dropHovered(true);
+    assert.deepEqual(thrown.at(-1), ['stone', 4]);
+    assert.equal(inventory.get(3), null);
+    ui.hover = null; ui.updateTooltip = () => {};
+    ui.dropHovered(false);
+    assert.equal(thrown.length, 6);
+    document.elementFromPoint = before;
+});
+
 test('wczytanie wykorzystuje wolne miejsce i zachowuje resztę kursora', () => {
     const inventory = full();
     inventory.set(0, { type: 'oak_log', count: 60 });

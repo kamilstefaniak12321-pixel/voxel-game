@@ -3935,6 +3935,174 @@
       "y": 32,
       "width": 16,
       "height": 16
+    },
+    "knife": {
+      "sheet": "przedmioty",
+      "x": 64,
+      "y": 48,
+      "width": 16,
+      "height": 16
+    },
+    "knife_granite": {
+      "sheet": "przedmioty",
+      "x": 80,
+      "y": 48,
+      "width": 16,
+      "height": 16
+    },
+    "knife_limestone": {
+      "sheet": "przedmioty",
+      "x": 96,
+      "y": 48,
+      "width": 16,
+      "height": 16
+    },
+    "knife_sandstone": {
+      "sheet": "przedmioty",
+      "x": 112,
+      "y": 48,
+      "width": 16,
+      "height": 16
+    },
+    "knife_slate": {
+      "sheet": "przedmioty",
+      "x": 128,
+      "y": 48,
+      "width": 16,
+      "height": 16
+    },
+    "knife_basalt": {
+      "sheet": "przedmioty",
+      "x": 144,
+      "y": 48,
+      "width": 16,
+      "height": 16
+    },
+    "spruce_bark": {
+      "sheet": "drzewa",
+      "x": 240,
+      "y": 96,
+      "width": 16,
+      "height": 16
+    },
+    "pine_bark": {
+      "sheet": "drzewa",
+      "x": 0,
+      "y": 112,
+      "width": 16,
+      "height": 16
+    },
+    "beech_bark": {
+      "sheet": "drzewa",
+      "x": 16,
+      "y": 112,
+      "width": 16,
+      "height": 16
+    },
+    "linden_bark": {
+      "sheet": "drzewa",
+      "x": 32,
+      "y": 112,
+      "width": 16,
+      "height": 16
+    },
+    "oak_bark": {
+      "sheet": "drzewa",
+      "x": 48,
+      "y": 112,
+      "width": 16,
+      "height": 16
+    },
+    "jablon_bark": {
+      "sheet": "drzewa",
+      "x": 64,
+      "y": 112,
+      "width": 16,
+      "height": 16
+    },
+    "olcha_bark": {
+      "sheet": "drzewa",
+      "x": 80,
+      "y": 112,
+      "width": 16,
+      "height": 16
+    },
+    "wierzba_bark": {
+      "sheet": "drzewa",
+      "x": 96,
+      "y": 112,
+      "width": 16,
+      "height": 16
+    },
+    "acacia_bark": {
+      "sheet": "drzewa",
+      "x": 112,
+      "y": 112,
+      "width": 16,
+      "height": 16
+    },
+    "bald_cypress_bark": {
+      "sheet": "drzewa",
+      "x": 128,
+      "y": 112,
+      "width": 16,
+      "height": 16
+    },
+    "cherry_bark": {
+      "sheet": "drzewa",
+      "x": 144,
+      "y": 112,
+      "width": 16,
+      "height": 16
+    },
+    "maple_bark": {
+      "sheet": "drzewa",
+      "x": 160,
+      "y": 112,
+      "width": 16,
+      "height": 16
+    },
+    "mugo_bark": {
+      "sheet": "drzewa",
+      "x": 176,
+      "y": 112,
+      "width": 16,
+      "height": 16
+    },
+    "olive_bark": {
+      "sheet": "drzewa",
+      "x": 192,
+      "y": 112,
+      "width": 16,
+      "height": 16
+    },
+    "rainbow_eucalyptus_bark": {
+      "sheet": "drzewa",
+      "x": 240,
+      "y": 112,
+      "width": 16,
+      "height": 16
+    },
+    "sequoia_bark": {
+      "sheet": "drzewa",
+      "x": 96,
+      "y": 176,
+      "width": 16,
+      "height": 16
+    },
+    "ginkgo_bark": {
+      "sheet": "drzewa",
+      "x": 112,
+      "y": 176,
+      "width": 16,
+      "height": 16
+    },
+    "jacaranda_bark": {
+      "sheet": "drzewa",
+      "x": 128,
+      "y": 176,
+      "width": 16,
+      "height": 16
     }
   },
   "aliases": {
@@ -4186,7 +4354,12 @@
     "assets/models/rosliny/sadzonka-eukaliptus/polrealistyczny.png": "models/rosliny/sadzonka-eukaliptus/polrealistyczny",
     "assets/models/rosliny/sadzonka-sekwoja/polrealistyczny.png": "models/rosliny/sadzonka-sekwoja/polrealistyczny",
     "assets/models/rosliny/sadzonka-milorzab/polrealistyczny.png": "models/rosliny/sadzonka-milorzab/polrealistyczny",
-    "assets/models/rosliny/sadzonka-jakaranda/polrealistyczny.png": "models/rosliny/sadzonka-jakaranda/polrealistyczny"
+    "assets/models/rosliny/sadzonka-jakaranda/polrealistyczny.png": "models/rosliny/sadzonka-jakaranda/polrealistyczny",
+    "assets/textures/derived/knife_granite.png": "knife_granite",
+    "assets/textures/derived/knife_limestone.png": "knife_limestone",
+    "assets/textures/derived/knife_sandstone.png": "knife_sandstone",
+    "assets/textures/derived/knife_slate.png": "knife_slate",
+    "assets/textures/derived/knife_basalt.png": "knife_basalt"
   },
   "tiles": {
     "grass_top": {
@@ -7076,6 +7249,126 @@
       "x": 14,
       "y": 18,
       "region": "flower_wreath"
+    },
+    "knife": {
+      "x": 2,
+      "y": 35,
+      "region": "knife"
+    },
+    "knife_granite": {
+      "x": 3,
+      "y": 35,
+      "region": "knife_granite"
+    },
+    "knife_limestone": {
+      "x": 4,
+      "y": 35,
+      "region": "knife_limestone"
+    },
+    "knife_sandstone": {
+      "x": 5,
+      "y": 35,
+      "region": "knife_sandstone"
+    },
+    "knife_slate": {
+      "x": 6,
+      "y": 35,
+      "region": "knife_slate"
+    },
+    "knife_basalt": {
+      "x": 7,
+      "y": 35,
+      "region": "knife_basalt"
+    },
+    "spruce_bark": {
+      "x": 8,
+      "y": 35,
+      "region": "spruce_bark"
+    },
+    "pine_bark": {
+      "x": 9,
+      "y": 35,
+      "region": "pine_bark"
+    },
+    "beech_bark": {
+      "x": 10,
+      "y": 35,
+      "region": "beech_bark"
+    },
+    "linden_bark": {
+      "x": 11,
+      "y": 35,
+      "region": "linden_bark"
+    },
+    "oak_bark": {
+      "x": 12,
+      "y": 35,
+      "region": "oak_bark"
+    },
+    "jablon_bark": {
+      "x": 13,
+      "y": 35,
+      "region": "jablon_bark"
+    },
+    "olcha_bark": {
+      "x": 14,
+      "y": 35,
+      "region": "olcha_bark"
+    },
+    "wierzba_bark": {
+      "x": 15,
+      "y": 35,
+      "region": "wierzba_bark"
+    },
+    "acacia_bark": {
+      "x": 2,
+      "y": 10,
+      "region": "acacia_bark"
+    },
+    "bald_cypress_bark": {
+      "x": 3,
+      "y": 10,
+      "region": "bald_cypress_bark"
+    },
+    "cherry_bark": {
+      "x": 4,
+      "y": 10,
+      "region": "cherry_bark"
+    },
+    "maple_bark": {
+      "x": 5,
+      "y": 10,
+      "region": "maple_bark"
+    },
+    "mugo_bark": {
+      "x": 13,
+      "y": 10,
+      "region": "mugo_bark"
+    },
+    "olive_bark": {
+      "x": 14,
+      "y": 10,
+      "region": "olive_bark"
+    },
+    "rainbow_eucalyptus_bark": {
+      "x": 15,
+      "y": 10,
+      "region": "rainbow_eucalyptus_bark"
+    },
+    "sequoia_bark": {
+      "x": 7,
+      "y": 14,
+      "region": "sequoia_bark"
+    },
+    "ginkgo_bark": {
+      "x": 8,
+      "y": 14,
+      "region": "ginkgo_bark"
+    },
+    "jacaranda_bark": {
+      "x": 9,
+      "y": 14,
+      "region": "jacaranda_bark"
     }
   }
 }

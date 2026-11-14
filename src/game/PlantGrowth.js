@@ -36,6 +36,10 @@ const TICK = 1;
 // Najwięcej kroków naraz (po długiej przerwie, np. karta w tle).
 const MAX_STEPS = 5;
 
+// Najwięcej kroków przy nadrabianiu przespanego czasu (advance) - doba
+// gry to 1200 sekund.
+const MAX_ADVANCE_STEPS = 2400;
+
 
 export class PlantGrowth {
 
@@ -72,11 +76,38 @@ export class PlantGrowth {
     }
 
 
+    // Świat nadrabia przespany czas (sen, utrata przytomności -
+    // Game.advanceWorld): rośliny rosną tak, jakby minęło tyle sekund.
+    // Te same losowania co zwykle, tylko wiele naraz i tylko w chunkach,
+    // w których coś rośnie.
+
+    advance(seconds) {
+
+        const steps = Math.min(MAX_ADVANCE_STEPS, Math.floor(seconds * this.speed / TICK));
+
+        for (let step = 0; step < steps; step++) {
+
+            const chunks = [...this.world.chunks.values()].filter((chunk) => chunk.growing.size > 0 && chunk.modified);
+
+            if (chunks.length === 0) {
+                return;
+            }
+
+            // (W grze ze znajomymi noc przesuwa gospodarz - za wszystkich,
+            // więc bez pytania, kto jest najbliżej chunka.)
+
+            this.tick(chunks, true);
+
+        }
+
+    }
+
+
     // Jeden krok: każda rosnąca roślina losuje, czy urośnie.
 
-    tick() {
+    tick(chunks = [...this.world.chunks.values()], everyChunk = false) {
 
-        for (const chunk of [...this.world.chunks.values()]) {
+        for (const chunk of chunks) {
 
             if (chunk.growing.size === 0 || !chunk.modified) {
                 continue;
@@ -85,7 +116,7 @@ export class PlantGrowth {
             // Gra wieloosobowa: chunk rośnie u gracza, który jest najbliżej
             // (src/net/) - każdy wzrost tylko raz.
 
-            if (this.shouldTick && !this.shouldTick(chunk)) {
+            if (!everyChunk && this.shouldTick && !this.shouldTick(chunk)) {
                 continue;
             }
 

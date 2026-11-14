@@ -9,8 +9,11 @@ export const STONE_TOOL_MATERIALS = Object.freeze([
     { stone: 'basalt', label: 'bazalt', texture: 'basalt_side', adjective: ['bazaltowa', 'bazaltowy'] }
 ]);
 
-export const STONE_TOOL_KINDS = Object.freeze(['axe', 'pickaxe', 'shovel']);
-const TOOL_LABELS = { axe: 'Siekiera', pickaxe: 'Kilof', shovel: 'Łopata' };
+// (Nóż - od 0.100.0: ścina trawę, kwiaty i zioła.)
+export const STONE_TOOL_KINDS = Object.freeze(['axe', 'pickaxe', 'shovel', 'knife']);
+const TOOL_LABELS = { axe: 'Siekiera', pickaxe: 'Kilof', shovel: 'Łopata', knife: 'Nóż' };
+// Rodzaj męski nazwy (kilof granitowy, nóż granitowy).
+const MASCULINE = ['pickaxe', 'knife'];
 const ROCKS = new Set(STONE_TOOL_MATERIALS.map(material => material.stone));
 
 export function stoneToolType(tool, stone = 'stone') {
@@ -21,7 +24,7 @@ export const STONE_TOOL_ITEMS = Object.freeze(Object.fromEntries(
     STONE_TOOL_KINDS.flatMap(tool => STONE_TOOL_MATERIALS.slice(1).map(material => {
         const type = stoneToolType(tool, material.stone);
         return [type, { name: `${material.stone} ${tool}`,
-            label: `${TOOL_LABELS[tool]} ${material.adjective[tool === 'pickaxe' ? 1 : 0]}`,
+            label: `${TOOL_LABELS[tool]} ${material.adjective[MASCULINE.includes(tool) ? 1 : 0]}`,
             icon: type, tool, stone: material.stone, category: 'narzedzia' }];
     }))
 ));

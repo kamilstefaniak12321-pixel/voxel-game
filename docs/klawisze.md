@@ -13,7 +13,7 @@ wszystkie czynności w czterech grupach:
 | Grupa | Czynności (domyślny klawisz) |
 |---|---|
 | **Ruch** | do przodu (W), do tyłu (S), w lewo (A), w prawo (D), skok (Spacja), kucanie (Shift), bieg (R) |
-| **Ręce** | kopanie (LPM), stawianie i użycie (PPM), weź blok na pasek (środkowy przycisk myszy), zjedz / wypij (F) |
+| **Ręce** | kopanie (LPM), stawianie i użycie (PPM), weź blok na pasek (środkowy przycisk myszy), zjedz / wypij (F), wyrzuć przedmiot (Q - od 0.100.0) |
 | **Okna** | ekwipunek (E), okno statusu (C), mapa (M), księga osiągnięć (L), czat (T), komenda (/), widok (F5), napisy debugowania (F3) |
 | **Pasek bloków** | miejsca 1-9 (lista zwinięta - rozwija się kliknięciem) |
 

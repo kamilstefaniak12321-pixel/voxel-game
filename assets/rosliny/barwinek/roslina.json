@@ -44,7 +44,7 @@
         "nazwaAngielska": "Periwinkle Flower",
         "grupy": ["blue", "flowers"]
     },
-    "zbior": { "ile": [1, 2], "wraca": 2 },
+    "zbior": { "ile": [1, 2], "wraca": 2, "narzedzie": "noz" },
     "gdzieRosnie": { "biomy": { "las": 1, "buczyna": 0.7, "laka": 0.4, "klonowy": 0.6 }, "plamy": 0.02, "gestosc": 0.85, "etapy": [0.15, 0.25, 0.6] },
     "zrodlo": {
         "atlas": "Pixelowy atlas barwinka do Minecrafta.png",

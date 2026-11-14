@@ -17,6 +17,7 @@
 // ------------------------------------------------------------
 
 import { isLiquidId, isSolidId } from '../blocks/BlockRegistry.js';
+import { DAY_LENGTH_MINUTES } from '../config.js';
 
 export const FADE_SECONDS = 1.6;
 const HOURS_LOST = 2;
@@ -126,7 +127,11 @@ export class Blackout {
         game.wellbeing.blackout();
         // Czas mija tylko w grze dla jednego gracza (u gościa zegar
         // należy do gospodarza, a gospodarz nie zabiera czasu innym).
-        if (!game.net) game.time.addHours(HOURS_LOST);
+        if (!game.net) {
+            game.time.addHours(HOURS_LOST);
+            // Świat nie czekał (ogniska, rośliny - Game.advanceWorld).
+            game.advanceWorld?.(HOURS_LOST / 24 * DAY_LENGTH_MINUTES * 60);
+        }
         game.achieve('blackout', { shore: Boolean(shore) });
         game.onMessage?.(shore
             ? 'Straciłeś przytomność pod wodą. Budzisz się na brzegu, wyczerpany.'

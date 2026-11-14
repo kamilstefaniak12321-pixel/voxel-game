@@ -109,6 +109,15 @@ export const ANIMATIONS = {
         chestTwist: 14         // klatka skręca się za ręką
     },
 
+    // Jedzenie i picie (0.100.0): ręka zgięta przy ustach, kęsy.
+    eat: {
+        arm: 46,               // ramię do przodu
+        spread: -16,           // do środka, przed twarz
+        elbow: 118,            // mocno zgięty łokieć
+        chew: 5,               // o ile stopni rusza się przy kęsie
+        chewSpeed: 15
+    },
+
     // Latanie (/latanie): nogi luźno, lekko do tyłu.
     fly: {
         legSwing: -6,

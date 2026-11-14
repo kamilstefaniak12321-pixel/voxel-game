@@ -4,12 +4,14 @@ Od wersji 0.51.0 ognisko buduje się w świecie, bez przedmiotu „ognisko”.
 
 1. W craftingu połącz pień (także okorowany) z siekierą: dostaniesz **4 opały**, a siekiera zostanie w siatce.
 2. Opałem kliknij PPM suche, stałe podłoże. Kolejne kliknięcia dokładają polana, aż będzie ich **6**.
-3. Dodaj podpałkę: trawę, słomę, korę brzozową, gałązki porostu albo hubę. Lepsza podpałka skraca rozpalanie (huba - o połowę; tabela: [ziola.md](ziola.md#podpałka-do-ogniska)).
+3. Dodaj podpałkę: korę (okoruj pień siekierą - od 0.100.0 każde drzewo daje korę), trawę, słomę, gałązki porostu albo hubę. Lepsza podpałka skraca rozpalanie (huba - o połowę; tabela: [ziola.md](ziola.md#podpałka-do-ogniska)).
 4. Z dwóch patyków zrób **starter ognia**. Skieruj celownik na ognisko i trzymaj PPM przez **5 sekund** (z lepszą podpałką krócej). Na telefonie przytrzymaj „Postaw”. Starter pozostaje w ekwipunku.
 
 Można mieszać dziewięć gatunków drewna: dąb, brzozę, świerk, sosnę, buk, lipę, olchę, wierzbę i jabłoń. Każde polano zachowuje swój model i teksturę. Na tym etapie wszystkie gatunki palą się tyle samo: **około 8 minut aktywnej gry**. Różnice w czasie spalania, cieple i dymieniu poszczególnych gatunków pozostają na następny etap.
 
-W czasie spalania drewno stopniowo czernieje i pokazuje żarzące szczeliny. Po wypaleniu wszystkie polana osiadają w ciągu 2,4 sekundy, zostawiając popiół i żar, który przygasa przez 90 sekund. Na żar i popiół można znów dokładać opał. Ponowne rozpalenie wymaga kompletu sześciu polan, nowej podpałki i startera. Do płonącego, pełnego stosu nie dokłada się siódmego polana.
+**Od 0.100.0 polana spalają się po kolei** (od wierzchu stosu, 80 sekund każde): wypalone znika, a ognisko przygasa sześcioma etapami - płomień i światło maleją razem z opałem. Do płonącego ogniska można dokładać polana (do sześciu); opis: [przedmioty-i-noz.md](przedmioty-i-noz.md#ognisko-etapami). Sen i utrata przytomności dopalają ogniska o przespany czas.
+
+Palące się drewno czernieje i pokazuje żarzące szczeliny. Po wypaleniu ostatnie polano osiada w ciągu 2,4 sekundy, zostawiając popiół i żar, który przygasa przez 90 sekund. Na żar i popiół można znów dokładać opał. Ponowne rozpalenie wymaga kompletu sześciu polan, nowej podpałki i startera. Do pełnego stosu nie dokłada się siódmego polana.
 
 Niedokończone, niepalące się ognisko można rozebrać: odzyskuje się świeży opał i niewykorzystaną podpałkę. Zwęglonego drewna nie da się zamienić z powrotem w świeży opał. Przy pełnym ekwipunku rozbiórka, także przez usunięcie podłoża, zostaje zablokowana zamiast gubić przedmioty.
 

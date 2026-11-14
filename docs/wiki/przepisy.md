@@ -2,7 +2,7 @@
 
 > Ta strona jest generowana z kodu gry (`python tools/wiki.py`) - nie zmieniaj jej ręcznie, zmiany przepadną przy następnym generowaniu.
 
-Wersja gry **0.99.0** - 170 przepisów. Wytwarza się w ekwipunku (**E**): siatka 2 x 2 obok miejsc ekwipunku, wynik po prawej (klik - weź, Shift + klik - ile się da). Przycisk 📖 *Przepisy* otwiera księgę - klik na przepisie sam układa składniki. Przepisy *z kształtem* można przesuwać po siatce i odbijać w poziomie; przepisy *bez kształtu* - obojętne, gdzie leżą składniki. Z czatu: `/przepisy`, `/wytworz <przepis>`.
+Wersja gry **0.100.0** - 176 przepisów. Wytwarza się w ekwipunku (**E**): siatka 2 x 2 obok miejsc ekwipunku, wynik po prawej (klik - weź, Shift + klik - ile się da). Przycisk 📖 *Przepisy* otwiera księgę - klik na przepisie sam układa składniki. Przepisy *z kształtem* można przesuwać po siatce i odbijać w poziomie; przepisy *bez kształtu* - obojętne, gdzie leżą składniki. Z czatu: `/przepisy`, `/wytworz <przepis>`.
 
 
 ## Ziemia
@@ -961,6 +961,12 @@ Wersja gry **0.99.0** - 170 przepisów. Wytwarza się w ekwipunku (**E**): siatk
 
 1 x skała (kamień, granit, wapień, piaskowiec, łupek, bazalt) + 1 x Patyk (z kształtem). Nazwa przepisu: `shovel`. Ziemię, piasek, żwir i błoto kopie się 3 razy szybciej. Wygląd głowicy zależy od użytej skały.
 
+### Nóż
+
+<img src="przepisy/knife.png" alt="Nóż: 1 x skała (kamień, granit, wapień, piaskowiec, łupek, bazalt) + 1 x Patyk (ułożenie: _R / S_; R = skała (kamień, granit, wapień, piaskowiec, łupek, bazalt), S = Patyk)">
+
+1 x skała (kamień, granit, wapień, piaskowiec, łupek, bazalt) + 1 x Patyk (z kształtem). Nazwa przepisu: `knife`. Ścina trawę, kwiaty i zioła - gołą ręką nic z nich nie zostaje. PPM na kwitnącej roślinie: bierzesz kwiaty, łodyga zostaje i kwitnie od nowa. Wygląd ostrza zależy od użytej skały.
+
 ### Siekiera granitowa
 
 <img src="przepisy/axe_granite.png" alt="Siekiera granitowa: 3 x Granit + 1 x Patyk (ułożenie: RR / RS; R = Granit, S = Patyk)">
@@ -1050,6 +1056,36 @@ Wersja gry **0.99.0** - 170 przepisów. Wytwarza się w ekwipunku (**E**): siatk
 <img src="przepisy/shovel_basalt.png" alt="Łopata bazaltowa: 1 x Bazalt + 1 x Patyk (ułożenie: R / S; R = Bazalt, S = Patyk)">
 
 1 x Bazalt + 1 x Patyk (z kształtem). Nazwa przepisu: `shovel_basalt`. Ziemię, piasek, żwir i błoto kopie się 3 razy szybciej. Wygląd głowicy zależy od użytej skały.
+
+### Nóż granitowy
+
+<img src="przepisy/knife_granite.png" alt="Nóż granitowy: 1 x Granit + 1 x Patyk (ułożenie: _R / S_; R = Granit, S = Patyk)">
+
+1 x Granit + 1 x Patyk (z kształtem). Nazwa przepisu: `knife_granite`. Ścina trawę, kwiaty i zioła - gołą ręką nic z nich nie zostaje. PPM na kwitnącej roślinie: bierzesz kwiaty, łodyga zostaje i kwitnie od nowa. Wygląd ostrza zależy od użytej skały.
+
+### Nóż wapienny
+
+<img src="przepisy/knife_limestone.png" alt="Nóż wapienny: 1 x Wapień + 1 x Patyk (ułożenie: _R / S_; R = Wapień, S = Patyk)">
+
+1 x Wapień + 1 x Patyk (z kształtem). Nazwa przepisu: `knife_limestone`. Ścina trawę, kwiaty i zioła - gołą ręką nic z nich nie zostaje. PPM na kwitnącej roślinie: bierzesz kwiaty, łodyga zostaje i kwitnie od nowa. Wygląd ostrza zależy od użytej skały.
+
+### Nóż piaskowcowy
+
+<img src="przepisy/knife_sandstone.png" alt="Nóż piaskowcowy: 1 x Piaskowiec + 1 x Patyk (ułożenie: _R / S_; R = Piaskowiec, S = Patyk)">
+
+1 x Piaskowiec + 1 x Patyk (z kształtem). Nazwa przepisu: `knife_sandstone`. Ścina trawę, kwiaty i zioła - gołą ręką nic z nich nie zostaje. PPM na kwitnącej roślinie: bierzesz kwiaty, łodyga zostaje i kwitnie od nowa. Wygląd ostrza zależy od użytej skały.
+
+### Nóż łupkowy
+
+<img src="przepisy/knife_slate.png" alt="Nóż łupkowy: 1 x Łupek + 1 x Patyk (ułożenie: _R / S_; R = Łupek, S = Patyk)">
+
+1 x Łupek + 1 x Patyk (z kształtem). Nazwa przepisu: `knife_slate`. Ścina trawę, kwiaty i zioła - gołą ręką nic z nich nie zostaje. PPM na kwitnącej roślinie: bierzesz kwiaty, łodyga zostaje i kwitnie od nowa. Wygląd ostrza zależy od użytej skały.
+
+### Nóż bazaltowy
+
+<img src="przepisy/knife_basalt.png" alt="Nóż bazaltowy: 1 x Bazalt + 1 x Patyk (ułożenie: _R / S_; R = Bazalt, S = Patyk)">
+
+1 x Bazalt + 1 x Patyk (z kształtem). Nazwa przepisu: `knife_basalt`. Ścina trawę, kwiaty i zioła - gołą ręką nic z nich nie zostaje. PPM na kwitnącej roślinie: bierzesz kwiaty, łodyga zostaje i kwitnie od nowa. Wygląd ostrza zależy od użytej skały.
 
 
 ## Grupy składników

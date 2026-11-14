@@ -2,7 +2,7 @@
 
 > Ta strona jest generowana z kodu gry (`python tools/wiki.py`) - nie zmieniaj jej ręcznie, zmiany przepadną przy następnym generowaniu.
 
-Wersja gry **0.99.0** - 445 bloków (do tego 2016 odmian, których nie ma w ekwipunku, np. wieniec zawieszony na boku bloku). Czas kopania dotyczy trybu przygody; w kreatywnym bloki znikają od razu.
+Wersja gry **0.100.0** - 445 bloków (do tego 2016 odmian, których nie ma w ekwipunku, np. wieniec zawieszony na boku bloku). Czas kopania dotyczy trybu przygody; w kreatywnym bloki znikają od razu.
 
 [Ziemia](#ziemia) · [Skały](#skały) · [Drewno](#drewno) · [Budulec](#budulec) · [Rośliny](#rośliny) · [Światło](#światło) · [Meble i ozdoby](#meble-i-ozdoby)
 
@@ -29,14 +29,14 @@ Wersja gry **0.99.0** - 445 bloków (do tego 2016 odmian, których nie ma w ekwi
 
 | | Nazwa | W komendach | Najważniejsze |
 |---|---|---|---|
-| <img src="ikony/stone.png" width="32" height="32" alt=""> | **Kamień** | `stone` | **Kopanie:** 2,2 s (kilofem 0,73 s)<br>**Przydaje się do:** Polerowany kamień, Siekiera, Kilof, Łopata |
+| <img src="ikony/stone.png" width="32" height="32" alt=""> | **Kamień** | `stone` | **Kopanie:** 2,2 s (kilofem 0,73 s)<br>**Przydaje się do:** Polerowany kamień, Siekiera, Kilof, Łopata, Nóż |
 | <img src="ikony/lepidolite.png" width="32" height="32" alt=""> | **Lepidolit** | `lepidolite` | **Kopanie:** 2,5 s (kilofem 0,83 s)<br>**Przydaje się do:** Lampa |
 | <img src="ikony/meteorite.png" width="32" height="32" alt=""> | **Meteoryt** | `meteorite` | **Kopanie:** 4,5 s (kilofem 1,5 s)<br>**Świeci:** 7 / 15 |
-| <img src="ikony/granite.png" width="32" height="32" alt=""> | **Granit** | `granite` | **Kopanie:** 2,8 s (kilofem 0,93 s)<br>**Przydaje się do:** Siekiera, Kilof, Łopata |
-| <img src="ikony/limestone.png" width="32" height="32" alt=""> | **Wapień** | `limestone` | **Kopanie:** 1,8 s (kilofem 0,6 s)<br>**Przydaje się do:** Tynk wapienny, Siekiera, Kilof, Łopata |
-| <img src="ikony/sandstone.png" width="32" height="32" alt=""> | **Piaskowiec** | `sandstone` | **Kopanie:** 1,8 s (kilofem 0,6 s)<br>**Przepis:** Piaskowiec<br>**Przydaje się do:** Siekiera, Kilof, Łopata |
-| <img src="ikony/slate.png" width="32" height="32" alt=""> | **Łupek** | `slate` | **Kopanie:** 2,2 s (kilofem 0,73 s)<br>**Przydaje się do:** Siekiera, Kilof, Łopata |
-| <img src="ikony/basalt.png" width="32" height="32" alt=""> | **Bazalt** | `basalt` | **Kopanie:** 2,8 s (kilofem 0,93 s)<br>**Przydaje się do:** Ciemne deski, Siekiera, Kilof, Łopata |
+| <img src="ikony/granite.png" width="32" height="32" alt=""> | **Granit** | `granite` | **Kopanie:** 2,8 s (kilofem 0,93 s)<br>**Przydaje się do:** Siekiera, Kilof, Łopata, Nóż |
+| <img src="ikony/limestone.png" width="32" height="32" alt=""> | **Wapień** | `limestone` | **Kopanie:** 1,8 s (kilofem 0,6 s)<br>**Przydaje się do:** Tynk wapienny, Siekiera, Kilof, Łopata, Nóż |
+| <img src="ikony/sandstone.png" width="32" height="32" alt=""> | **Piaskowiec** | `sandstone` | **Kopanie:** 1,8 s (kilofem 0,6 s)<br>**Przepis:** Piaskowiec<br>**Przydaje się do:** Siekiera, Kilof, Łopata, Nóż |
+| <img src="ikony/slate.png" width="32" height="32" alt=""> | **Łupek** | `slate` | **Kopanie:** 2,2 s (kilofem 0,73 s)<br>**Przydaje się do:** Siekiera, Kilof, Łopata, Nóż |
+| <img src="ikony/basalt.png" width="32" height="32" alt=""> | **Bazalt** | `basalt` | **Kopanie:** 2,8 s (kilofem 0,93 s)<br>**Przydaje się do:** Ciemne deski, Siekiera, Kilof, Łopata, Nóż |
 
 ## Drewno
 

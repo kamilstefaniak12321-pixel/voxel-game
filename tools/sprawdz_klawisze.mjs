@@ -178,14 +178,14 @@ const source = (path) => readFileSync(new URL(`../${path}`, import.meta.url), 'u
     check(mouseCode(2) === 'Mouse2' && mouseButton('Mouse4') === 4 && mouseButton('KeyW') === null && mouseButton(null) === null, 'Kody przycisków myszy');
     for (const action of ACTIONS) check(keyLabel(action.code).length > 0 && keyLabel(action.code).length <= 18, `${action.id}: krótka nazwa klawisza`);
 
-    const custom = new Bindings({ eat: 'KeyG', use: 'KeyQ' });
+    const custom = new Bindings({ eat: 'KeyG', use: 'KeyZ' });
     check(new Bindings().format('Naciśnij [eat], przytrzymaj {break}, kucnij ([crouch]).') === 'Naciśnij F, przytrzymaj lewy przycisk myszy, kucnij (Shift).', 'Podpowiedź z domyślnymi klawiszami');
-    check(custom.format('Naciśnij [eat], użyj: {use}.') === 'Naciśnij G, użyj: klawisz Q.', 'Podpowiedź ze zmienionymi klawiszami');
+    check(custom.format('Naciśnij [eat], użyj: {use}.') === 'Naciśnij G, użyj: klawisz Z.', 'Podpowiedź ze zmienionymi klawiszami');
     check(custom.format('[nic] {nic} [ ] - czas') === '[nic] {nic} [ ] - czas', 'Nieznane nazwy w nawiasach zostają');
     check(new Bindings({ crouch: 'KeyZ' }).format('[crouch]') === 'Z', 'Zmienione kucanie pokazuje swój klawisz');
     // Gotowe napisy gry z "LPM" / "PPM".
     check(new Bindings().plain('Dokładaj polana PPM. LPM: zabierz.') === 'Dokładaj polana PPM. LPM: zabierz.', 'Domyślnie napisy bez zmian');
-    check(custom.plain('Dokładaj polana PPM. LPM: zabierz.') === 'Dokładaj polana Q. LPM: zabierz.', 'Zmienione użycie: PPM -> klawisz gracza');
+    check(custom.plain('Dokładaj polana PPM. LPM: zabierz.') === 'Dokładaj polana Z. LPM: zabierz.', 'Zmienione użycie: PPM -> klawisz gracza');
     check(new Bindings({ break: 'KeyK' }).plain('trzymaj LPM (nie XLPM ani LPMY)') === 'trzymaj K (nie XLPM ani LPMY)', 'Podmiana tylko całych skrótów');
 }
 

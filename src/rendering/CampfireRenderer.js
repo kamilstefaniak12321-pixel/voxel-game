@@ -210,7 +210,8 @@ export class CampfireRenderer {
             mesh.position.set(data.position[0]*(1+c*.12),data.position[1]*(1-c*.82)+drop*.12,data.position[2]*(1+c*.12));
             mesh.rotation.set(c*(i%2 ? .12:-.12),data.rotation+c*(i-2.5)*.025,0);
             mesh.scale.set(1,1-c*.75,1);
-            mesh.material.userData.char.uChar.value=smooth(Math.min(1,log.burn*1.2));
+            // Pali się polano z wierzchu; te pod nim są osmalone, dopóki ognisko płonie.
+            mesh.material.userData.char.uChar.value=smooth(Math.min(1,Math.max(log.burn*1.2,fire.phase==='unlit'?0:.3)));
             mesh.material.userData.char.uHeat.value=fireIntensity(fire)*1.4+(fire.phase==='collapsing'?.45:0);
             mesh.material.userData.char.uCoalTime.value=clock;
         });

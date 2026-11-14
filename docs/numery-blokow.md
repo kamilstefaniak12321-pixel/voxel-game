@@ -18,7 +18,13 @@ więcej niż dotąd - bez kolejnej zmiany zapisu.
 | 10000-10099 | konstrukcje: ognisko 10000, pochodnie 10010-10094 (17 kolorów × 5 ustawień), skrzynia 10095-10098 (4 kierunki, 0.81.0) |
 | 10100-10107 | woda płynąca (poziomy rozlewania) i pierwszy blok spadającej wody (10107) |
 | 10108-10122 | spadająca woda, która spada już 2-16 bloków (0.73.0, `src/blocks/water.js`) |
-| 10123-65279 | wolne na przyszłość |
+| 10123-10199 | wolne |
+| 10200-10299 | skrzynie z desek (0.89.0, po 4 na drewno) |
+| 10300-10859 | wyroby stolarskie: schody, półbloki, płoty, furtki, stoły (0.90.0, po 28 na drewno) |
+| 10860-11819 | drzwi i klapy (0.91.0, po 48 na drewno) |
+| 11820-12459 | łóżka (0.98.0, po 32 na drewno: kierunek × część × pościel) |
+| 12460-12491 | posłania na ziemi (0.98.0, po 8 na pościel; słomiane 12460-12467, lniane 12468-12475) |
+| 12492-65279 | wolne na przyszłość |
 | 65280-65535 | zarezerwowane dla gry, nigdy w zapisie (np. odcienie trawy dalekiego terenu) |
 
 Stałe: `MAX_BLOCK_ID` w `src/blocks/BlockRegistry.js` (tam też ta lista),

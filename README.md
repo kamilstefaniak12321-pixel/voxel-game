@@ -77,7 +77,8 @@ logi...) uruchamia workflow *Testy gry* w GitHub Actions
 | F5 | widok: z oczu / zza pleców / z przodu |
 | Mysz | rozglądanie się |
 | LPM | zniszcz blok (w trybie przygody trzymaj - kopanie trwa chwilę, blok pęka; w kreatywnym trzymany LPM niszczy blok za blokiem) |
-| PPM | postaw blok / zbierz owoce z krzaka (żywicę, kwiaty lipy) / zjedz owoc / łopatą - rozgrzeb ziemię / posadź owoc, szyszkę, żołądź na rozgrzebanej ziemi / siekierą - okoruj pień |
+| PPM | postaw blok / zbierz owoce z krzaka (żywicę, kwiaty lipy) / zjedz owoc / łopatą - rozgrzeb ziemię / posadź owoc, szyszkę, żołądź na rozgrzebanej ziemi / siekierą - okoruj pień / pościelą - pościel stelaż łóżka / nocą na łóżku albo posłaniu - sen |
+| Shift + PPM pustą ręką w ziemię | nocą: sen na gołej ziemi (ruch albo kliknięcie budzi) |
 | 1-9 / kółko myszy | wybór miejsca na pasku bloków |
 | Środkowy przycisk myszy | weź blok, na który patrzysz, na pasek |
 | E | ekwipunek (w trybie kreatywnym też wszystkie bloki gry i owoce) |
@@ -97,7 +98,7 @@ logi...) uruchamia workflow *Testy gry* w GitHub Actions
 | lewa część ekranu | joystick - chodzenie (do samego brzegu w przód - bieg) |
 | reszta ekranu - przesuń palec | rozglądanie się |
 | stuknięcie / przytrzymanie palca | postaw blok (zbierz owoce) / kop |
-| ▲ / ▼ (prawy dół) | skok (2× - latanie) / kucanie, w locie w dół |
+| ▲ / ▼ (prawy dół) | skok (2× - latanie) / kucanie, w locie w dół; nocą ▼ + stuknięcie pustą ręką w ziemię - sen |
 | kilof, kostka | kop / postaw tam, gdzie celownik |
 | pasek bloków | stuknięcie - wybór miejsca |
 | przyciski u góry | pauza, ekwipunek, czat, serce (samopoczucie; stuknięcie - okno statusu z przyciskiem *Zjedz*), osiągnięcia, widok (F5), mapa, pełny ekran |
@@ -117,7 +118,7 @@ jest w [`docs/opis-gry.md`](docs/opis-gry.md). Skrót:
 | Część gry | Co obejmuje | Pełny opis | Osobna strona |
 |---|---|---|---|
 | Osiągnięcia | 55 osiągnięć w księdze (klawisz L), powiadomienia, rangi | [opis](docs/opis-gry.md#osiągnięcia) | [osiagniecia.md](docs/osiagniecia.md) |
-| Energia i samopoczucie | energia z jedzenia, kondycja, serce i okno statusu; utykanie po upadku, pobudka na brzegu po utonięciu, pieczenie nad ogniskiem ([skutki.md](docs/skutki.md)) | [opis](docs/opis-gry.md#energia-i-samopoczucie) | [energia.md](docs/energia.md) |
+| Energia i samopoczucie | energia z jedzenia, kondycja, serce i okno statusu; utykanie po upadku, pobudka na brzegu po utonięciu, pieczenie nad ogniskiem ([skutki.md](docs/skutki.md)); wyspanie, noc i sen - łóżka ze stelaża i pościeli, posłania ([sen.md](docs/sen.md)) | [opis](docs/opis-gry.md#energia-i-samopoczucie) | [energia.md](docs/energia.md) |
 | Tryby gry i ekwipunek | przygoda, kreatywny, programista; ekwipunek, skrzynie, wytwarzanie | [opis](docs/opis-gry.md#tryby-gry-i-ekwipunek) | [tryb-programisty.md](docs/tryb-programisty.md) |
 | Bloki naturalne i rośliny | skały, krzaki owocowe, rośliny z paczek, drzewa i lasy, uprawa | [opis](docs/opis-gry.md#bloki-naturalne-i-rośliny) | [drzewa.md](docs/drzewa.md) |
 | Woda | rzeki, rozlewanie, wodospady, pływanie, tratwa | [opis](docs/opis-gry.md#woda) | [tratwa.md](docs/tratwa.md) |

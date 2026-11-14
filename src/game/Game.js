@@ -4,6 +4,8 @@ import { fullTerrainDistance, FULL_TERRAIN_DISTANCE, TERRAIN_TRANSITION_START } 
 import { Campfires } from './Campfires.js';
 import { GameInteraction } from './GameInteraction.js';
 import { Blackout, NO_INPUT } from './Blackout.js';
+import { Beds } from './Beds.js';
+import { Sleep } from './Sleep.js';
 import { TorchRenderer } from '../rendering/TorchRenderer.js';
 import { DoorRenderer } from '../rendering/DoorRenderer.js';
 import { Chests } from './Chests.js';
@@ -515,6 +517,12 @@ export class Game extends GameInteraction {
 
         this.blackout = new Blackout(this);
 
+        // Łóżka, posłania i sen (0.98.0).
+
+        this.beds = new Beds(this);
+
+        this.sleep = new Sleep(this);
+
 
         // Dawny "pasek" (komendy, testy): nazwy bloków i wybrane miejsce.
 
@@ -587,7 +595,9 @@ export class Game extends GameInteraction {
     update(dt) {
 
         // Nieprzytomny gracz (Blackout.js) nie steruje.
-        const input = this.blackout.update(dt) ? NO_INPUT : this.input;
+        const frozen = this.blackout.update(dt);
+        const asleep = this.sleep.update(dt, this.input);
+        const input = frozen || asleep ? NO_INPUT : this.input;
         const profile = this.perfDiagnostics;
         profile?.beginStage('player');
 
@@ -913,14 +923,16 @@ export class Game extends GameInteraction {
 
         this.model.setPose(pose);
 
-        this.model.place(player.pos, this.animator.bodyYaw, this.animator.previewLift);
+        // Śpiący leży (stopy w miejscu gracza, głowa w stronę wezgłowia).
+        this.model.place(player.pos, this.sleep.lying ? player.yaw : this.animator.bodyYaw, this.animator.previewLift, this.sleep.lying);
 
-        this.model.setHeldBlock(this.selectedBlock);
+        // Śpiący nie trzyma niczego w ręce.
+        this.model.setHeldBlock(this.sleep.lying ? null : this.selectedBlock);
 
 
         // Ręka w widoku z oczu i kamera w dół po upadku.
 
-        this.hand.setHeld(this.selectedBlock);
+        this.hand.setHeld(this.sleep.lying ? null : this.selectedBlock);
 
         this.hand.update(dt, player);
 
@@ -1264,8 +1276,9 @@ export class Game extends GameInteraction {
 
 
         // Ręka w widoku z oczu - na wierzchu (nigdy nie wchodzi w ścianę).
+        // Leżący (śpiący) gracz ma ręce wzdłuż ciała - nie widać ich.
 
-        if (!this.view && this.settings.get('showHand')) {
+        if (!this.view && this.settings.get('showHand') && !this.sleep.lying) {
             const distanceLod = viewUniforms.uDistanceLodEnabled.value;
             viewUniforms.uDistanceLodEnabled.value = 0;
             try { this.hand.render(renderer, camera); }

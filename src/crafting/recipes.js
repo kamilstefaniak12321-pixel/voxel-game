@@ -88,6 +88,12 @@ export const GROUPS = {
         types: ['spruce_cone', 'pine_cone']
     },
 
+    grass: {
+        label: 'trawa (krótka albo wysoka)',
+        icon: 'tall_grass',
+        types: ['short_grass', 'tall_grass']
+    },
+
     needles: {
         label: 'igliwie (świerka albo sosny)',
         icon: 'spruce_leaves',
@@ -171,6 +177,16 @@ export const RECIPES = [
     ...Object.keys(FIRE_WOODS).map(wood => ({ id: fuelType(wood), result: [fuelType(wood), 4],
         ingredients: [`#${wood}_logs`, '#axes'], keep: ['#axes'],
         note: 'Siekiera zostaje. Opał: PPM na ziemię, potem dokładaj do 6 polan.' })),
+    // Sen (0.98.0): słoma z trawy, z niej słomiana pościel; lniana
+    // pościel z wiązek lnu. Pościel: PPM na ziemi - posłanie, PPM na
+    // stelażu łóżka (z trzech stołów stolarskich) - pościelone łóżko.
+    { id: 'straw', result: ['straw', 1], ingredients: ['#grass', '#grass'],
+        note: 'Wysuszona trawa. Cztery sztuki dają słomianą pościel.' },
+    { id: 'straw_bedding', result: ['straw_bedding', 1], pattern: ['SS', 'SS'], key: { S: 'straw' },
+        note: 'PPM na ziemi: posłanie do spania. PPM na stelażu łóżka: ścieli łóżko.' },
+    { id: 'linen_bedding', result: ['linen_bedding', 1], pattern: ['LL', 'LL'], key: { L: 'len_wiazka' },
+        note: 'Wygodniejsza od słomianej. PPM na ziemi: posłanie. PPM na stelażu łóżka: ścieli łóżko.' },
+
     { id: 'fire_starter', result: ['fire_starter', 1], ingredients: ['stick', 'stick'],
         note: '6 polan + trawa; przytrzymaj PPM starterem przez 5 sekund.' },
 

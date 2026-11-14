@@ -1233,6 +1233,10 @@ for (
         // pudełka z ShapeBoxes.js (ChunkMesher.addShape).
         shape: definition.model === 'shape' ? { kind: shapeInfo(definition.id)?.kind } : null,
 
+        // Dodatkowe tekstury pudełek kształtu (np. pościel na łóżku):
+        // pudełko z numerem tekstury n bierze shapeUv[n - 1].
+        shapeUv: (definition.shapeTextures ?? []).map(texture => FACE_NAMES.map(() => createRotatedUVs(texture))),
+
         flat: definition.model === 'flat'
             ? FLAT_FACES[getAttach(definition.id)]
             : null,

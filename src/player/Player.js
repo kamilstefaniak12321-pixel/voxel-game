@@ -60,6 +60,11 @@ const FLY_SPEED_FACTOR = 2;
 
 const STAND_HEIGHT = 1.8;
 const STAND_EYE_HEIGHT = 1.6;
+// Oczy leżącego (śpiącego) gracza: wysokość nad miejscem, gdzie leży,
+// odległość głowy od stóp i uniesienie wzroku (radiany).
+const LYING_EYE_HEIGHT = 0.45;
+const LYING_HEAD_OFFSET = 1.3;
+const LYING_LOOK_UP = 0.3;
 
 
 function clamp01(value) {
@@ -110,6 +115,9 @@ export class Player {
         // Kucanie (Shift) i bieg (dwa razy W albo R).
 
         this.crouching = false;
+        // Leży (śpi) - ustawia game/Sleep.js; oczy zjeżdżają nad posłanie.
+        this.lying = false;
+        this.lyingBlend = 0;
         this.sprinting = false;
 
         // Siły gracza (game/Wellbeing.js ustawia co klatkę): sprint -
@@ -1098,17 +1106,23 @@ checkRespawn() {
 
 updateCamera() {
 
+    // Leżący gracz (sen): pozycja to stopy, a oczy są tam, gdzie głowa -
+    // z tyłu, nad poduszką - i patrzą lekko w górę. lyingBlend płynnie
+    // przechodzi między staniem (0) a leżeniem (1).
+
+    const back = LYING_HEAD_OFFSET * this.lyingBlend;
+
     this.camera.position.set(
-        this.pos.x,
+        this.pos.x + Math.sin(this.yaw) * back,
         this.pos.y + this.eyeHeight,
-        this.pos.z
+        this.pos.z + Math.cos(this.yaw) * back
     );
 
 
     this.camera.rotation.order = 'YXZ';
 
     this.camera.rotation.y = this.yaw;
-    this.camera.rotation.x = this.pitch;
+    this.camera.rotation.x = this.pitch + LYING_LOOK_UP * this.lyingBlend;
 
 }
 
@@ -1206,9 +1220,15 @@ update(dt, input) {
 
     // Oczy płynnie zjeżdżają w dół przy kucaniu i wracają przy wstawaniu.
 
-    const eyeTarget = this.crouching ? CROUCH_EYE_HEIGHT : STAND_EYE_HEIGHT;
+    // Kładąc się spać (game/Sleep.js), wolniej - aż nad samo posłanie.
 
-    this.eyeHeight += (eyeTarget - this.eyeHeight) * Math.min(1, dt * 14);
+    const eyeTarget = this.lying ? LYING_EYE_HEIGHT : this.crouching ? CROUCH_EYE_HEIGHT : STAND_EYE_HEIGHT;
+
+    this.eyeHeight += (eyeTarget - this.eyeHeight) * Math.min(1, dt * (this.lying ? 3 : 14));
+
+    this.lyingBlend += ((this.lying ? 1 : 0) - this.lyingBlend) * Math.min(1, dt * 3);
+
+    if (!this.lying && this.lyingBlend < 0.002) this.lyingBlend = 0;
 
     this.updateCamera();
 

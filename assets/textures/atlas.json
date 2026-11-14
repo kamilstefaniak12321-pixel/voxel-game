@@ -3858,6 +3858,27 @@
       "y": 32,
       "width": 16,
       "height": 16
+    },
+    "bedding_straw": {
+      "sheet": "teren",
+      "x": 160,
+      "y": 32,
+      "width": 16,
+      "height": 16
+    },
+    "bedding_linen": {
+      "sheet": "teren",
+      "x": 176,
+      "y": 32,
+      "width": 16,
+      "height": 16
+    },
+    "straw": {
+      "sheet": "przedmioty",
+      "x": 192,
+      "y": 32,
+      "width": 16,
+      "height": 16
     }
   },
   "aliases": {
@@ -6944,6 +6965,21 @@
       "x": 9,
       "y": 21,
       "region": "roasted_acorn"
+    },
+    "bedding_straw": {
+      "x": 10,
+      "y": 18,
+      "region": "bedding_straw"
+    },
+    "bedding_linen": {
+      "x": 11,
+      "y": 18,
+      "region": "bedding_linen"
+    },
+    "straw": {
+      "x": 12,
+      "y": 18,
+      "region": "straw"
     }
   }
 }

@@ -123,7 +123,7 @@ export class RemotePlayers {
         if (state.onGround && !entry.wasGround && (entry.state?.vy ?? 0) < -6) entry.landed = -(entry.state.vy);
         entry.wasGround = state.onGround;
         entry.state = state;
-        entry.model.setHeldBlock(heldAllowed(state.held));
+        entry.model.setHeldBlock(state.sleeping ? null : heldAllowed(state.held));
         entry.model.object.visible = true;
     }
 
@@ -143,15 +143,19 @@ export class RemotePlayers {
             turn -= Math.round(turn / (Math.PI * 2)) * Math.PI * 2;
             entry.yaw += turn * rate;
             entry.pitch += (state.pitch - entry.pitch) * rate;
-            const pose = entry.animator.update(dt, {
+            // Śpiący leży nieruchomo, tam gdzie się położył.
+            const lying = Boolean(state.sleeping);
+            if (lying) { entry.pos.set(state.x, state.y, state.z); entry.yaw = state.yaw; }
+            const pose = entry.animator.update(dt, lying ? { vx: 0, vy: 0, vz: 0, onGround: true, yaw: entry.yaw, pitch: 0, landed: 0 } : {
                 vx: state.vx, vy: state.vy, vz: state.vz, onGround: state.onGround, crouching: state.crouching,
                 sprinting: state.sprinting, flying: state.flying, swimming: state.swimming,
                 yaw: entry.yaw, pitch: entry.pitch, landed: entry.landed
             });
             entry.landed = 0;
             entry.model.setPose(pose);
-            entry.model.place(entry.pos, entry.animator.bodyYaw, 0);
-            entry.label.position.y = state.crouching ? 1.95 : 2.15;
+            entry.model.place(entry.pos, lying ? entry.yaw : entry.animator.bodyYaw, 0, lying);
+            // Leżący model jest obrócony: jego -z to góra świata.
+            entry.label.position.set(0, lying ? 0.9 : state.crouching ? 1.95 : 2.15, lying ? -0.7 : 0);
             if (relight) this.updateLight(entry);
         }
     }

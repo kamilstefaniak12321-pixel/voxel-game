@@ -91,7 +91,7 @@ export class NetSession {
 
     playerMessage() {
         const game = this.game;
-        return packPlayer(game.player, game.selectedBlock, this.swings);
+        return packPlayer(game.player, game.selectedBlock, this.swings, Boolean(game.sleep?.lying));
     }
 
     chatLine(text) {

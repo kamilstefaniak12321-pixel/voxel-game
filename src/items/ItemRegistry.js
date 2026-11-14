@@ -145,6 +145,10 @@ export const ITEM_TYPES = {
     roasted_beechnuts: { name: 'Roasted Beechnuts', label: 'Prażone orzeszki bukowe', icon: 'roasted_beechnuts', category: 'owoce' },
     roasted_acorn: { name: 'Roasted Acorn', label: 'Prażony żołądź', icon: 'roasted_acorn', category: 'owoce' },
 
+    // Słoma (0.98.0): z dwóch kęp trawy; cztery dają słomianą pościel
+    // (crafting/recipes.js, blocks/bedding.js).
+    straw: { name: 'Straw', label: 'Słoma', icon: 'straw', category: 'narzedzia' },
+
     // Zwój kory z okorowanej siekierą brzozy.
     birch_bark: {
         name: 'Birch Bark',

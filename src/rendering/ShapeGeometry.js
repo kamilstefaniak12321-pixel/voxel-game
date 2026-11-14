@@ -10,7 +10,8 @@
 
 import * as THREE from 'three';
 import { shapeBoxes, SIDE_BITS } from '../world/ShapeBoxes.js';
-import { shapeId, shapeItem, WOOD_SHAPE_BLOCKS } from '../blocks/woodShapes.js';
+import { shapeId, shapeItem, shapeBaseType, WOOD_SHAPE_BLOCKS } from '../blocks/woodShapes.js';
+import { BEDDINGS, beddingOf, matId } from '../blocks/bedding.js';
 import { getAtlasUV } from './TextureAtlas.js';
 
 const FACE_CORNERS = {
@@ -31,14 +32,16 @@ const FACE_CORNERS = {
 // UV z pozycji w komórce (jak w świecie: słoje desek tak samo).
 const wrap = (value) => Math.min(1, Math.max(0, value));
 
-export function boxFaces(boxes, texture, offset = [0, 0, 0]) {
+// extra - dodatkowe tekstury pudełek (box[6] = numer, od 1).
+export function boxFaces(boxes, texture, offset = [0, 0, 0], extra = []) {
     const faces = [];
     for (const box of boxes) {
+        const boxTexture = box[6] ? extra[box[6] - 1] ?? texture : texture;
         const a = [box[0], box[1], box[2]], b = [box[3], box[4], box[5]];
         for (const { normal, corners, uv } of Object.values(FACE_CORNERS)) {
             const points = corners(a, b);
             faces.push({
-                texture,
+                texture: boxTexture,
                 color: [255, 255, 255],
                 normal,
                 vertices: points.map(([x, y, z]) => [x + offset[0], y + offset[1], z + offset[2]]),
@@ -72,9 +75,31 @@ export function doorFaces(texture, hinge = 'left') {
     return faces;
 }
 
+// Całe łóżko (obie części) z pościelą albo bez: wezgłowie na -z, środek
+// łóżka w środku komórki (wystaje pół bloku w obie strony).
+export function bedFaces(wood, bedding = null) {
+    const texture = WOOD_SHAPE_BLOCKS[shapeBaseType(wood, 'bed')].textures.all;
+    const extra = bedding ? [BEDDINGS[bedding].texture] : [];
+    return [
+        ...boxFaces(shapeBoxes(shapeId(wood, 'bed', { part: 'head', bedding })), texture, [0, 0, -0.5], extra),
+        ...boxFaces(shapeBoxes(shapeId(wood, 'bed', { part: 'foot', bedding })), texture, [0, 0, 0.5], extra)
+    ];
+}
+
+// Posłanie (obie części), jak bedFaces.
+export function matFaces(bedding) {
+    const texture = BEDDINGS[bedding].texture;
+    return [
+        ...boxFaces(shapeBoxes(matId(bedding, 'north', 'head')), texture, [0, 0, -0.5]),
+        ...boxFaces(shapeBoxes(matId(bedding, 'north', 'foot')), texture, [0, 0, 0.5])
+    ];
+}
+
 // Model wyrobu w ekwipunku: schody i furtka przodem do patrzącego (+z),
 // płot ze szczeblami w obie strony, stół - obie części.
 export function itemShapeFaces(type) {
+    const bedding = beddingOf(type);
+    if (bedding) return matFaces(bedding);
     const item = shapeItem(type);
     if (!item) return null;
     const { wood, kind } = item;
@@ -85,6 +110,7 @@ export function itemShapeFaces(type) {
             vertices: face.vertices.map(([x, y, z]) => [1 - x, y, 1 - z]) }));
     }
     if (kind === 'trapdoor') return boxFaces(shapeBoxes(shapeId(wood, 'trapdoor')), texture);
+    if (kind === 'bed') return bedFaces(wood, null);
     if (kind === 'table') {
         // Przód na +z (south): część B po prawej patrzącego od przodu (+x).
         return [

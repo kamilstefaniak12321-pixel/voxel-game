@@ -3,6 +3,7 @@ import { shapeInfo, shapeId, shapeBaseType, FACING_VECTOR, oppositeFacing, lookF
 import { woodOfPlanks } from '../blocks/woods.js';
 import { getItemLabel } from '../items/ItemRegistry.js';
 import { CarpenterTableRenderer } from '../rendering/CarpenterTableRenderer.js';
+import { TABLE_CAPACITY, TABLE_PRODUCTS, BENCH_PRODUCTS } from '../crafting/carpentry.js';
 
 // ------------------------------------------------------------
 // STÓŁ STOLARSKI (0.90.0)
@@ -26,23 +27,15 @@ import { CarpenterTableRenderer } from '../rendering/CarpenterTableRenderer.js';
 // - dwa pozostałe bloki - drzwi w prawdziwym rozmiarze (leżą, 1 x 2).
 // PPM w drzwi albo klapę zabiera partię (bench()). Drzwi (dwa bloki)
 // i klapy w świecie - PPM otwiera i zamyka; drzwi z animacją (DoorRenderer.js).
+//
+// Potrójny warsztat (0.98.0): trzy stoły jeden za drugim (2 x 3 bloki),
+// deski tylko na jednym. Działa jak podwójny (drzwi i klapa na stole obok
+// desek), a trzeci stół w całości zajmuje stelaż łóżka w prawdziwym
+// rozmiarze (8 desek; game/Beds.js).
 // ------------------------------------------------------------
 
-export const TABLE_CAPACITY = 64;
-
-// Wyroby: ile desek idzie na partię i ile sztuk z niej wychodzi.
-export const TABLE_PRODUCTS = [
-    { kind: 'stairs', planks: 3, count: 2 },
-    { kind: 'slab', planks: 1, count: 2 },
-    { kind: 'fence', planks: 3, count: 2 },
-    { kind: 'gate', planks: 4, count: 1 }
-];
-
-// Wyroby podwójnego warsztatu (zamiast zwykłych).
-export const BENCH_PRODUCTS = {
-    door: { kind: 'door', planks: 6, count: 3 },
-    trapdoor: { kind: 'trapdoor', planks: 3, count: 1 }
-};
+// Lista wyrobów (deski -> sztuki) jest w crafting/carpentry.js.
+export { TABLE_CAPACITY, TABLE_PRODUCTS, BENCH_PRODUCTS };
 
 // Ćwiartki części B (w układzie stołu przodem na północ, -z): numer
 // wyrobu po (kolumna od lewej patrzącego, rząd: 0 - przód, 1 - tył).
@@ -130,15 +123,51 @@ export class CarpenterTables {
         return id === AIR_ID || isReplaceableId(id);
     }
 
+    // Stół (część A), którego obie części leżą o (dx, dz) od obu części
+    // stołu "a" - czyli tuż przed nim albo tuż za nim. null - nie ma.
+    neighborAlong(a, dx, dz) {
+        const b = this.partB(a);
+        const one = this.tableAt({ x: a.x + dx, y: a.y, z: a.z + dz });
+        const two = this.tableAt({ x: b.x + dx, y: b.y, z: b.z + dz });
+        return one && two && one.x === two.x && one.z === two.z ? one : null;
+    }
+
     // Drugi stół podwójnego warsztatu (część A) albo null: stół, którego
     // obie części leżą tuż przed albo tuż za obiema częściami tego stołu.
     partnerOf(a) {
-        const b = this.partB(a);
         const [fx, fz] = FACING_VECTOR[a.facing];
+        return this.neighborAlong(a, fx, fz) ?? this.neighborAlong(a, -fx, -fz);
+    }
+
+    // Stoły ustawione jeden za drugim razem z "a" (najwyżej dwa z każdej
+    // strony), po kolei wzdłuż rzędu.
+    row(a) {
+        const [fx, fz] = FACING_VECTOR[a.facing];
+        const row = [a];
         for (const sign of [1, -1]) {
-            const one = this.tableAt({ x: a.x + fx * sign, y: a.y, z: a.z + fz * sign });
-            const two = this.tableAt({ x: b.x + fx * sign, y: b.y, z: b.z + fz * sign });
-            if (one && two && one.x === two.x && one.z === two.z) return one;
+            let table = a;
+            for (let step = 0; step < 2; step++) {
+                table = this.neighborAlong(table, fx * sign, fz * sign);
+                if (!table) break;
+                if (sign === 1) row.push(table); else row.unshift(table);
+            }
+        }
+        return row;
+    }
+
+    // Potrójny warsztat ze stołem "a": trzy kolejne stoły, z których
+    // dokładnie jeden ma deski. Zwraca { primary, door, bed } - stół
+    // z deskami, stół na drzwi i klapę (obok desek), stół na łóżko - albo null.
+    triple(a) {
+        const row = this.row(a);
+        const index = row.indexOf(a);
+        for (let start = Math.max(0, index - 2); start <= index && start + 3 <= row.length; start++) {
+            const three = row.slice(start, start + 3);
+            const withPlanks = three.filter((table) => this.state(table)?.count > 0);
+            if (withPlanks.length !== 1) continue;
+            const at = three.indexOf(withPlanks[0]);
+            const door = three[at === 1 ? 0 : 1];
+            return { primary: withPlanks[0], door, bed: three.find((table) => table !== withPlanks[0] && table !== door) };
         }
         return null;
     }
@@ -147,18 +176,28 @@ export class CarpenterTables {
     // (stół sam, oba puste albo na obu leżą deski - wtedy każdy osobno):
     // { primary - stół z deskami, planks - blok z deskami, trapdoor - blok
     // klapy (drugi stół, obok desek), door - dwa bloki drzwi }.
+    // Potrójny warsztat (triple) dodaje: bed - dwa bloki stelaża łóżka.
     bench(a) {
-        const partner = this.partnerOf(a);
-        if (!partner) return null;
-        const mine = this.state(a)?.count > 0, theirs = this.state(partner)?.count > 0;
-        if (mine === theirs) return null;
-        const primary = mine ? a : partner, other = mine ? partner : a;
+        const triple = this.triple(a);
+        let primary, other;
+        if (triple) {
+            primary = triple.primary;
+            other = triple.door;
+        } else {
+            const partner = this.partnerOf(a);
+            if (!partner) return null;
+            const mine = this.state(a)?.count > 0, theirs = this.state(partner)?.count > 0;
+            if (mine === theirs) return null;
+            primary = mine ? a : partner;
+            other = mine ? partner : a;
+        }
         const planks = { x: primary.x, y: primary.y, z: primary.z };
         const cells = [{ x: other.x, y: other.y, z: other.z }, this.partB(other)];
         const beside = (cell) => Math.abs(cell.x - planks.x) + Math.abs(cell.z - planks.z) === 1;
         const trapdoor = cells.find(beside), far = cells.find((cell) => !beside(cell));
         if (!trapdoor || !far) return null;
-        return { primary, other, planks, trapdoor, door: [this.partB(primary), far] };
+        const bed = triple ? [{ x: triple.bed.x, y: triple.bed.y, z: triple.bed.z }, this.partB(triple.bed)] : null;
+        return { primary, other, planks, trapdoor, door: [this.partB(primary), far], bed };
     }
 
     // --- Drzwi -----------------------------------------------------------
@@ -244,6 +283,7 @@ export class CarpenterTables {
         if (bench) {
             const at = (cell) => cell.x === x && cell.z === z;
             if (at(bench.planks)) return this.usePlanks(bench.primary, selected, sneaking);
+            if (bench.bed?.some(at)) return this.make(this.state(bench.primary), BENCH_PRODUCTS.bed, sneaking, hit.block);
             return this.make(this.state(bench.primary), BENCH_PRODUCTS[at(bench.trapdoor) ? 'trapdoor' : 'door'], sneaking, hit.block);
         }
         if (info.part === 'a') return this.usePlanks(a, selected, sneaking);

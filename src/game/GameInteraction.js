@@ -24,6 +24,7 @@
 import * as THREE from 'three';
 import { dyeTorch } from './TorchInteraction.js';
 import { shapeInfo, shapeItem } from '../blocks/woodShapes.js';
+import { beddingOf } from '../blocks/bedding.js';
 import { isChestType } from '../blocks/chest.js';
 import {
     getStrip,
@@ -47,7 +48,7 @@ import {
     FIELD_BLOCK
 } from '../blocks/BlockRegistry.js';
 import { getTool, getPlacedBlock, isItemType } from '../items/ItemRegistry.js';
-import { STATES } from './Wellbeing.js';
+import { STATES, isNight } from './Wellbeing.js';
 import { getFood } from '../items/foods.js';
 import {
     CREATIVE_REPEAT_SECONDS,
@@ -138,9 +139,13 @@ export class GameInteraction {
         // Stół stolarski (deski na blat, wyroby) i furtka (otwórz/zamknij).
         // Z Shiftem i blokiem w ręce przy furtce - stawia się blok obok.
         const hitShape = this.currentHit?.hit ? shapeInfo(this.world.getBlockId(this.currentHit.block.x, this.currentHit.block.y, this.currentHit.block.z)) : null;
-        const shapeInteraction = placing && !breakHeld && placePressed && hitShape &&
-            (hitShape.kind === 'table' || (['gate', 'door', 'trapdoor'].includes(hitShape.kind) && !(this.player.crouching && this.selectedBlock))) &&
-            this.carpenterTables.interact(this.currentHit, this.selectedBlock, this.player.crouching);
+        // Łóżko i posłanie (0.98.0): pościelenie stelaża albo sen. Z Shiftem
+        // i blokiem w ręce - stawia się blok obok.
+        const bedHit = hitShape?.kind === 'bed' || hitShape?.kind === 'mat';
+        const shapeInteraction = placing && !breakHeld && placePressed && hitShape && (bedHit
+            ? !(this.player.crouching && this.selectedBlock) && this.beds.interact(this.currentHit, this.selectedBlock)
+            : (hitShape.kind === 'table' || (['gate', 'door', 'trapdoor'].includes(hitShape.kind) && !(this.player.crouching && this.selectedBlock))) &&
+                this.carpenterTables.interact(this.currentHit, this.selectedBlock, this.player.crouching));
         if (shapeInteraction) this.currentHit = this.raycast.castFromCamera(this.camera);
         const chestInteraction = !shapeInteraction && placing && !breakHeld && placePressed &&
             this.chests.interact(this.currentHit);
@@ -149,7 +154,12 @@ export class GameInteraction {
         const torchInteraction = !fireInteraction && placing && !breakHeld && placePressed &&
             dyeTorch(this, this.currentHit, this.selectedBlock);
 
-        if (chestInteraction || shapeInteraction) {
+        // Sen na gołej ziemi: kucnięcie + PPM pustą ręką w ziemię pod nogami.
+        const groundSleep = !shapeInteraction && !chestInteraction && !fireInteraction && placing && !breakHeld && placePressed &&
+            this.player.crouching && !this.selectedBlock && this.player.onGround && this.currentHit?.hit &&
+            this.currentHit.normal?.y === 1 && isNight(this.time.days) && this.sleep.startOnGround();
+
+        if (chestInteraction || shapeInteraction || groundSleep) {
             // Ekwipunek ze skrzynią już się otwiera / stół i furtka obsłużone.
         }
         else if (fireInteraction || torchInteraction) {
@@ -218,11 +228,18 @@ export class GameInteraction {
                 const item = shapeItem(block);
                 const table = item?.kind === 'table' ? item : null;
                 const door = item?.kind === 'door' ? item : null;
+                // Stelaż łóżka i posłanie - też dwa bloki (Beds).
+                const bed = item?.kind === 'bed' ? item : null;
+                const mat = beddingOf(block);
 
                 const placed = table
                     ? (target ? this.carpenterTables.place(target, table.wood, this.player.yaw, this.player) : false)
                     : door
                     ? (target ? this.carpenterTables.placeDoor(target, door.wood, this.player.yaw, this.player) : false)
+                    : bed
+                    ? (target ? this.beds.placeBed(target, bed.wood, this.player.yaw, this.player) : false)
+                    : mat
+                    ? (target ? this.beds.placeMat(target, mat, this.player.yaw, this.player) : false)
                     : this.placer.placeBlock(
                         placeHit,
                         block
@@ -464,13 +481,20 @@ export class GameInteraction {
             mining: Boolean(this.mining),
             jumps,
             // Głowa pod wodą: zanurzone ponad 93% wysokości ciała.
-            underwater: player.submerged >= 0.93 && !this.blackout?.active
+            underwater: player.submerged >= 0.93 && !this.blackout?.active,
+            sleeping: Boolean(this.sleep?.lying)
         }, this.time.days);
 
         for (const event of events) {
 
             if (event.type === 'drown') {
                 this.blackout.start();
+            }
+            else if (event.type === 'rest') {
+                // Wyspanie zmieniło stan (pobudkę opisuje Sleep.wake).
+                if (event.to === 'sleepy') this.onNotice?.('Robisz się senny');
+                else if (event.to === 'worn') this.onNotice?.('Jesteś niewyspany - prześpij się');
+                this.onWellbeing?.(event);
             }
             else if (event.type === 'healed') {
                 this.onNotice?.('Noga już nie boli');
@@ -580,6 +604,8 @@ export class GameInteraction {
 
                 this.carpenterTables?.broken(hit.block, brokenShape);
 
+                this.beds?.broken(hit.block, brokenShape);
+
                 this.playBlockSound('break', hit.block.type, hit.block);
 
                 this.debris.burst(hit.block.type, hit.block.x, hit.block.y, hit.block.z);
@@ -649,6 +675,8 @@ export class GameInteraction {
         }
 
         this.carpenterTables?.broken(hit.block, brokenShape);
+
+        this.beds?.broken(hit.block, brokenShape);
 
         for (const block of supported.values()) {
             if (this.world.getBlock(block.x, block.y, block.z) !== block.type) {

@@ -328,7 +328,7 @@ export class AndroidUpdates {
 
         }
 
-        const result = await this.call('zainstalujApk', { file: this.latest?.apk?.file ?? `Voxel-Game-${status.version}-android.apk` });
+        const result = await this.call('zainstalujApk', { file: this.latest?.apk?.file ?? `Various-Roots-${status.version}-android.apk` });
 
         if (!result.zgoda) {
             this.setStatus({ ...status, message: 'permission' });

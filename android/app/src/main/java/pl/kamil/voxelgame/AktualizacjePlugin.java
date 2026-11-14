@@ -68,7 +68,7 @@ import java.util.zip.ZipInputStream;
 // dwa uruchomienia z rzędu się nie udadzą, przedStartem wraca do
 // plików wbudowanych, a ta wersja nie będzie już pobierana.
 //
-// Wersja testowa ("Voxel Game (test)", pakiet .test) się nie
+// Wersja testowa ("Various Roots (test)", pakiet .test) się nie
 // aktualizuje - nowe testowe .apk są w Actions. Opis: docs/telefon.md.
 // ------------------------------------------------------------
 

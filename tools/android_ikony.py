@@ -165,7 +165,7 @@ def splash(size):
     y = round(height * 0.5 - item_size * 0.72)
     with_shadow(canvas, item, x, y, max(2, round(short * 0.015)))
 
-    text = 'Voxel Game'
+    text = 'Various Roots'
     face = font(round(short * 0.09))
     draw = ImageDraw.Draw(canvas)
     box = draw.textbbox((0, 0), text, font=face)

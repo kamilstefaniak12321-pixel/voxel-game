@@ -775,7 +775,7 @@ rozdzielczości w grze: automatycznie (jak paczka) albo wybranej,
 najwyżej 512 x 512 na komputerze i 256 x 256 na telefonie. Czego
 w paczce nie ma, zostaje oryginalne. **Szablon** z oryginalnymi
 teksturami (każda w osobnym pliku, z opisem): folder
-`paczka-tekstur-szablon/` albo `Voxel-Game-paczka-tekstur.zip`
+`paczka-tekstur-szablon/` albo `Various-Roots-paczka-tekstur.zip`
 w wydaniach (w grze: *Szablon paczki*). Komenda `/tekstury`. Opis:
 `docs/paczki-tekstur.md`.
 

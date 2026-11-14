@@ -8,7 +8,7 @@ obrazki (dowolna rozdzielczość, np. 512 x 512 albo 1254 x 1254), spakuj
 zawartość folderu do .zip i wczytaj w grze: Ustawienia -> Tekstury.
 
 GitHub Actions dokłada spakowany szablon do każdego wydania gry
-(Voxel-Game-paczka-tekstur.zip). Opis: docs/paczki-tekstur.md.
+(Various-Roots-paczka-tekstur.zip). Opis: docs/paczki-tekstur.md.
 
 Uruchom w folderze gry (po zmianie tekstur albo nowym bloku):
     python tools/paczka_tekstur.py
@@ -76,14 +76,14 @@ def main():
     with open(os.path.join(OUT, 'paczka.json'), 'w', encoding='utf-8') as file:
         json.dump({
             'nazwa': 'Oryginalne tekstury (szablon)',
-            'autor': 'Voxel Game',
+            'autor': 'Various Roots',
             'opis': f'Szablon paczki tekstur - oryginalne tekstury gry {data["version"]}.'
         }, file, ensure_ascii=False, indent=4)
         file.write('\n')
 
     table = '\n'.join(f'| `{path}` | {labels} |' for path, labels in sorted(rows))
 
-    readme = f"""# Paczka tekstur - szablon (Voxel Game {data["version"]})
+    readme = f"""# Paczka tekstur - szablon (Various Roots {data["version"]})
 
 Oryginalne tekstury gry, każda w osobnym pliku. Zrób z nich własną paczkę:
 

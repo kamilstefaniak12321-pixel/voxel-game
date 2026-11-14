@@ -39,7 +39,7 @@ export async function exportDiagnostics(diagnostics) {
     const url = URL.createObjectURL(blob);
     const link = node('a');
     link.href = url;
-    link.download = `Voxel-Game-raport-${new Date().toISOString().replace(/[:.]/g, '-')}.json`;
+    link.download = `Various-Roots-raport-${new Date().toISOString().replace(/[:.]/g, '-')}.json`;
     document.body.append(link);
     link.click();
     link.remove();

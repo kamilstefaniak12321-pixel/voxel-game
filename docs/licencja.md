@@ -1,6 +1,6 @@
 # Licencja gry
 
-Voxel Game - kod, tekstury, modele, dźwięki, paczki roślin i drzew,
+Various Roots - kod, tekstury, modele, dźwięki, paczki roślin i drzew,
 dokumentacja - jest udostępniona na licencji **PolyForm Noncommercial
 License 1.0.0**. Wiążący jest oficjalny tekst po angielsku w
 [`LICENSE.md`](../LICENSE.md) (bez zmian, z
@@ -49,7 +49,7 @@ Te pliki nie są objęte PolyForm - zostają na licencjach swoich autorów
 | zależności z `package.json` (Electron, Capacitor, electron-builder...) | pobierane przez `npm`, nie leżą w repozytorium | każda swoja (w `node_modules/`) |
 
 `android/app/klucz-testowy.keystore` to **celowo publiczny** klucz do
-wersji testowej "Voxel Game (test)" (hasło `android`, `docs/telefon.md`).
+wersji testowej "Various Roots (test)" (hasło `android`, `docs/telefon.md`).
 Prawdziwy klucz wydań jest tylko w sekretach GitHuba i u autora - nigdy
 w repozytorium.
 

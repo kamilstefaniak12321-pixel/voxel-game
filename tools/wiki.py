@@ -900,12 +900,12 @@ class Page:
         body = f"""
 <div class="layout">
 <nav class="nav" aria-label="Strony wiki">
-<a class="brand" href="#start"><img class="px" src="{self.uri('grass')}" alt=""><span><b>Voxel Game</b><small>wiki · wersja {esc(d['version'])}</small></span></a>
+<a class="brand" href="#start"><img class="px" src="{self.uri('grass')}" alt=""><span><b>Various Roots</b><small>wiki · wersja {esc(d['version'])}</small></span></a>
 <ul>{nav}</ul>
 <p class="hint">Wiki generuje <code>python tools/wiki.py</code> z kodu gry.</p>
 </nav>
 <main>
-<section data-page id="start" aria-labelledby="h-start"><header><h1 id="h-start">Voxel Game</h1><p>Wiki gry w wersji {esc(d['version'])}: jak grać, wszystkie bloki, przedmioty, przepisy, osiągnięcia i historia zmian.</p></header>
+<section data-page id="start" aria-labelledby="h-start"><header><h1 id="h-start">Various Roots</h1><p>Wiki gry w wersji {esc(d['version'])}: jak grać, wszystkie bloki, przedmioty, przepisy, osiągnięcia i historia zmian.</p></header>
 {stats}<div class="prose">{start}</div></section>
 <section data-page id="zmiany" aria-labelledby="h-zmiany" hidden><header><h1 id="h-zmiany">Historia zmian</h1><p>Wszystkie wersje gry - najnowsze na górze.</p></header><div class="prose changelog">{changes}</div></section>
 {self.list_page('bloki', 'Bloki', 'Wszystkie bloki z ekwipunku kreatywnego według kategorii. Czas kopania dotyczy trybu przygody (w nawiasie - pasującym narzędziem); w kreatywnym bloki znikają od razu.', blocks, True, 'Szukaj bloku (po polsku albo nazwie z komend)...')}
@@ -920,7 +920,7 @@ class Page:
         body = body.replace('<section data-page id="przedmioty"', '<section data-page id="przedmioty" hidden', 1)
         body = body.replace('<section data-page id="przepisy"', '<section data-page id="przepisy" hidden', 1)
         body = body.replace('<section data-page id="osiagniecia"', '<section data-page id="osiagniecia" hidden', 1)
-        head = ('<title>Voxel Game Wiki</title>\n<meta name="claude:viewport-fit-sides" content="cover">\n'
+        head = ('<title>Various Roots Wiki</title>\n<meta name="claude:viewport-fit-sides" content="cover">\n'
                 '<link rel="preconnect" href="https://fonts.googleapis.com">\n'
                 '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>\n'
                 '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600'

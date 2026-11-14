@@ -11,6 +11,22 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 1.0.0 - Various Roots
+
+Na prośbę Kamila — PR #141 (po 0.100.0). Gra dostaje swoją nazwę
+i wychodzi z wersji roboczych.
+
+- **Gra nazywa się Various Roots** (dotąd robocze „Voxel Game"): tytuł
+  w menu i na karcie przeglądarki, okno i skrót na komputerze, ikonka
+  i ekran startowy na telefonie, raport diagnostyczny, wiki.
+- Pliki do pobrania nazywają się teraz `Various-Roots-<wersja>-...`
+  (instalator, aplikacja na telefon, szablon paczki tekstur).
+- **Światy, ustawienia, osiągnięcia i skórka zostają.** Wewnętrzny
+  identyfikator aplikacji i miejsce zapisów się nie zmieniły, więc
+  zainstalowana gra aktualizuje się jak zawsze (na Windowsie folder
+  zapisów dalej nazywa się `%APPDATA%\Voxel Game`).
+- Zasady gry bez zmian względem 0.100.0.
+
 ## 0.100.0 - Wyrzucanie, nóż, kora, ognisko etapami, jedzenie
 
 Na prośbę Kamila — PR #140 (po 0.99.0). Sześć rzeczy zauważonych

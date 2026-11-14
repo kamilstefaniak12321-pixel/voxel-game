@@ -392,7 +392,7 @@ export const HOTBAR_DEFAULT = [
 // ------------------------------------------------------------
 
 // Nazwa gry: na ekranie tytułowym i na karcie przeglądarki.
-export const GAME_TITLE = 'Voxel Game';
+export const GAME_TITLE = 'Various Roots';
 
 // Motywy menu do wyboru w ustawieniach:
 //   nazwa folderu w assets/ui/themes/  ->  nazwa widoczna w grze.
@@ -540,4 +540,4 @@ export const TOUCH_MAX_PIXEL_RATIO = 1.5;
 // i szablon paczki tekstur w najnowszym wydaniu (Ustawienia -> Tekstury,
 // docs/paczki-tekstur.md).
 export const RELEASES_REPO = 'kamilstefaniak12321-pixel/voxel-game-wydania';
-export const TEXTURE_PACK_TEMPLATE_URL = `https://github.com/${RELEASES_REPO}/releases/latest/download/Voxel-Game-paczka-tekstur.zip`;
+export const TEXTURE_PACK_TEMPLATE_URL = `https://github.com/${RELEASES_REPO}/releases/latest/download/Various-Roots-paczka-tekstur.zip`;

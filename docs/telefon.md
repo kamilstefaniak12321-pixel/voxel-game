@@ -15,14 +15,14 @@ sposoby:
 
 1. Na telefonie otwórz wydania:
    <https://github.com/kamilstefaniak12321-pixel/voxel-game-wydania/releases/latest>
-   i pobierz **`Voxel-Game-<wersja>-android.apk`**.
+   i pobierz **`Various-Roots-<wersja>-android.apk`**.
 2. Otwórz pobrany plik (z powiadomienia albo z folderu *Pobrane*).
 3. Android zapyta, czy przeglądarka może instalować aplikacje -
    **zezwól** (*Ustawienia → Zezwalaj z tego źródła*), wróć i stuknij
    **Zainstaluj**.
 4. Google Play Protect może ostrzec o *nieznanej aplikacji* (gra nie jest
    w sklepie Google Play) - **Więcej szczegółów → Zainstaluj mimo to**.
-5. Na ekranie telefonu pojawia się ikonka **Voxel Game** (blok trawy).
+5. Na ekranie telefonu pojawia się ikonka **Various Roots** (blok trawy).
 
 Aplikacja uruchamia się zawsze poziomo, na cały ekran (pasek stanu
 i przyciski nawigacji wysuwają się po przeciągnięciu palcem od
@@ -51,7 +51,7 @@ Są dwa rodzaje:
   w `android/`, Capacitor): przez Wi-Fi pobiera się sama, na danych
   komórkowych - po stuknięciu *Pobierz* (ok. 6 MB). Potem *Zainstaluj* -
   Android zapyta o zgodę (po cichu instalować nie pozwala). Za pierwszym
-  razem otworzą się ustawienia: **zezwól Voxel Game na instalowanie
+  razem otworzą się ustawienia: **zezwól Various Roots na instalowanie
   aplikacji**, wróć i stuknij *Zainstaluj* jeszcze raz. Światy zostają.
 
 Gdy nowa wersja gry się nie uruchomi (np. błąd w niej), po dwóch
@@ -63,7 +63,7 @@ gra tylko sprawdza wydania i pokazuje, że jest nowa wersja - pobiera ją
 po stuknięciu *Pobierz*.
 
 Bez internetu gra działa normalnie - sprawdzi wydania następnym razem.
-Wersja testowa (*Voxel Game (test)*) się nie aktualizuje - nowe testowe
+Wersja testowa (*Various Roots (test)*) się nie aktualizuje - nowe testowe
 `.apk` są w Actions.
 
 Komenda **`/aktualizacja`** - wersja i stan; `sprawdz` (sprawdź wydania
@@ -76,9 +76,9 @@ telefonu i od komputera). Odinstalowanie aplikacji je usuwa.
 ### Wersja testowa
 
 Każdy pull request, który zmienia aplikację, buduje ją na próbę:
-**Actions** → przebieg → *Artifacts* → `Voxel-Game-<wersja>-android...`
+**Actions** → przebieg → *Artifacts* → `Various-Roots-<wersja>-android...`
 (plik zip z `.apk` w środku - na telefonie trzeba być zalogowanym na
-GitHubie; plik jest tam przez 2 dni, `docs/aplikacja.md`). Bez klucza do podpisu (niżej) powstaje **Voxel Game (test)** -
+GitHubie; plik jest tam przez 2 dni, `docs/aplikacja.md`). Bez klucza do podpisu (niżej) powstaje **Various Roots (test)** -
 osobna aplikacja z własnymi światami, którą można mieć obok prawdziwej.
 Wersja testowa ma swój stały klucz w gicie (`android/app/klucz-testowy.keystore`,
 celowo jawny - prawdziwej aplikacji nim się nie podpisze), więc kolejne
@@ -152,8 +152,8 @@ potem base64 (PowerShell: `[Convert]::ToBase64String([IO.File]::ReadAllBytes("vo
     podmienić tylko między wersjami o tym samym odcisku - inaczej
     potrzebna jest nowa aplikacja (gra sama to rozpoznaje).
     `node tools/android-www.mjs --odcisk` - odcisk teraz.
-  - W wydaniu (GitHub Actions, job *android*): `Voxel-Game-<wersja>-android.apk`,
-    `Voxel-Game-<wersja>-android-www.zip` (pliki gry z aplikacji)
+  - W wydaniu (GitHub Actions, job *android*): `Various-Roots-<wersja>-android.apk`,
+    `Various-Roots-<wersja>-android-www.zip` (pliki gry z aplikacji)
     i `android-latest.json` (wersja, odcisk, nazwy, rozmiary, SHA-256 -
     jak `latest.yml` dla komputera).
   - Uprawnienia w manifeście: stan sieci (czy Wi-Fi) i instalowanie

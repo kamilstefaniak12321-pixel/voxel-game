@@ -8,7 +8,7 @@ kroków, po kolei. Każdy krok to osobna wersja z pomiarem przed i po.
 |---|---|---|
 | 1 | Programy cieniujące przygotowane pod ekranem wczytywania | **zrobione - 1.1.2** (niżej) |
 | 2 | Połączenie plików gry w paczkę (szybszy start aplikacji) | **zrobione - 1.1.3** (niżej) |
-| 3 | Zapamiętywanie gotowych rzeczy między uruchomieniami (ikonki, kolory tekstur) | do zrobienia |
+| 3 | Zapamiętywanie gotowych rzeczy między uruchomieniami (ikonki) i dane roślin w jednym pliku | **zrobione - 1.1.4** (niżej) |
 | 4 | Dopasowanie pracy do sprzętu w locie (ile terenu na klatkę, zasięg efektów) | do zrobienia |
 | 5 | Więcej wątków do liczenia terenu | do zrobienia |
 | 6 | Rysowanie wielu takich samych rzeczy jednym poleceniem | do zrobienia |
@@ -110,6 +110,55 @@ i modeli oraz dźwięki dalej ładują się pojedynczo (krok 3).
 Przy okazji łączenie znalazło powtórzoną metodę w zapisie świata
 (`SavedChunkStore.keys` zdefiniowana dwa razy, identycznie) - usunięta.
 
+## Krok 3: pamięć startu (1.1.4)
+
+**Skąd strata.** Po kroku 2 największą częścią startu było rysowanie
+ikonek bloków i przedmiotów: około 600 różnych obrazków, przy każdym
+uruchomieniu od zera, choć wynik zmienia się tylko z wersją gry. Do tego
+około 80 małych plików z opisami roślin i ich modeli było pobieranych
+pojedynczo - przez grę i osobno przez wątki w tle.
+
+**Co się zmieniło.**
+
+- **Ikonki są zapamiętywane.** Pierwsze uruchomienie po aktualizacji
+  rysuje je jak dotąd i zapisuje; każde następne bierze gotowe.
+- **Opisy roślin i modeli są w jednym pliku** (76 plików w jednym) -
+  jedno pobranie zamiast kilkudziesięciu, także w wątkach.
+
+Prawdziwa aplikacja na komputer, czas od otwarcia okna do menu:
+
+| | Czas | Względem 1.1.2 |
+|---|---|---|
+| 1.1.2 (przed paczką) | 4,56 s | - |
+| 1.1.3 (paczka plików) | 3,92 s | -14% |
+| 1.1.4, pierwsze uruchomienie po aktualizacji | 3,77 s | -17% |
+| 1.1.4, każde następne | 2,32 s | **-49%** |
+
+(Średnie: 1.1.2 i 1.1.3 z 8 uruchomień, 1.1.4 z 12; aplikacja z folderu,
+maszyna bez karty graficznej. Zainstalowanej aplikacji i telefonu nie
+mierzyłem.)
+
+**Skąd pewność, że zapamiętane ikonki są dobre:**
+
+- wpis jest ważny tylko dla tego samego **odcisku gry** - wersji i skrótu
+  wszystkich plików gry (kod, modele, rośliny, tekstury). Każda
+  aktualizacja go unieważnia;
+- klucz zawiera też skrót obrazka tekstur, z którego ikonki powstają;
+- z **paczką tekstur gracza** ikonek się nie zapamiętuje (rysują się
+  zawsze);
+- wpis niepełny albo uszkodzony jest pomijany - ikonki rysują się od
+  nowa;
+- test w prawdziwej przeglądarce porównuje zapamiętane ikonki
+  z narysowanymi: wszystkie 2606 identyczne;
+- przy pracy nad grą i w testach pamięć startu jest wyłączona.
+
+Pamięć startu to osobna, mała baza. Nie dotyka światów,
+ustawień ani paczek tekstur i można ją skasować bez żadnej straty.
+
+**Co zostało:** dźwięki (169 plików) dalej ładują się pojedynczo, ale
+w tle - nie wstrzymują menu. Reszta startu to głównie tło menu (mały
+świat za ekranem tytułowym) i przygotowanie tekstur.
+
 ## Dla programisty
 
 - `src/rendering/ShaderWarmup.js` - `warmupObject` (ukryty wzór),
@@ -143,3 +192,17 @@ Paczka plików gry (krok 2):
   `node tools/sprawdz_pakiet_webgl.mjs` (prawdziwa gra z paczki).
 - Sprawdzenie w aplikacji na komputer bez instalatora:
   `npm run pakiet`, potem `VOXEL_QA_BUNDLE=1 npm start`.
+
+Pamięć startu (krok 3):
+
+- `src/storage/StartCache.js` - `readStartCache(nazwa, klucz)`,
+  `writeStartCache(nazwa, klucz, wynik)`, `BUILD_ID` (odcisk gry,
+  wstawiany przez `tools/pakiet.mjs` na początku plików paczki; przy
+  pracy nad grą `null` - wtedy pamięć jest wyłączona).
+- Nowa rzecz do zapamiętania: klucz musi obejmować wszystko, od czego
+  zależy wynik, a odczyt musi sprawdzić wpis (jak `unpackIcons` w
+  `src/ui/BlockIcons.js`).
+- `src/blocks/dataFiles.js` - `bundledText(ścieżka)`: tekst z
+  `pakiet/dane.json` albo `null` (wtedy zwykły plik). Foldery zbierane
+  do pliku: `DATA_FOLDERS` w `tools/pakiet.mjs`; pliki, od których
+  zależy odcisk gry: `FINGERPRINT`.

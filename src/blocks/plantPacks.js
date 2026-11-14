@@ -28,6 +28,7 @@ import { TREE_ID_RESERVATIONS } from './treeCatalog.js';
 import { TREE_ID_SLOTS, idsInRanges, rangesText } from './blockIdRanges.js';
 import { regionInfo } from '../rendering/TextureSheets.js';
 import { BIOMES, LAND_BIOMES, biomeByWord } from '../world/terrain/Biomes.js';
+import { bundledText } from './dataFiles.js';
 
 // Numery bloków: etapy zajmują kolejne numery od "pierwszeId". Zakresy
 // (wszystkie: src/blocks/BlockRegistry.js):
@@ -76,6 +77,13 @@ async function readFile(relative, binary = false) {
     if (NODE) {
         const fs = await import('node:fs/promises');
         return binary ? new Uint8Array(await fs.readFile(url)) : fs.readFile(url, 'utf8');
+    }
+
+    // W zbudowanej aplikacji: opisy roślin z pliku zbiorczego (dataFiles.js).
+    const bundled = binary ? null : await bundledText(`assets/rosliny/${relative}`);
+
+    if (bundled !== null) {
+        return bundled;
     }
 
     const response = await fetch(url.href, { cache: 'no-cache' });

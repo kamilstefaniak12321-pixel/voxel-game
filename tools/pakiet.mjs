@@ -28,7 +28,8 @@
 // tools/sprawdz_pakiet.mjs).
 // ------------------------------------------------------------
 import { build } from 'esbuild';
-import { rmSync, existsSync, readdirSync, statSync, writeFileSync, readFileSync } from 'node:fs';
+import { rmSync, existsSync, readdirSync, statSync, writeFileSync, readFileSync, mkdirSync } from 'node:fs';
+import { createHash } from 'node:crypto';
 import { join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -42,6 +43,23 @@ export const WORKERS = [
 
 export const BUNDLE_DIR = 'pakiet/js';
 
+// Dane roślin i modeli w jednym pliku (src/blocks/dataFiles.js).
+export const DATA_FILE = 'pakiet/dane.json';
+export const DATA_FOLDERS = ['assets/rosliny', 'assets/models/rosliny'];
+
+// Od tych plików zależy odcisk gry (pamięć startu).
+export const FINGERPRINT = ['src', 'lib/three', 'assets/models', 'assets/rosliny', 'assets/textures', 'assets/ui'];
+
+// Pliki folderu (ścieżki z ukośnikami, w stałej kolejności); brak folderu = nic.
+function listFiles(base, folder) {
+    const path = join(base, folder);
+    if (!existsSync(path)) return [];
+    return readdirSync(path).sort().flatMap((name) => {
+        const relative = `${folder}/${name}`;
+        return statSync(join(base, relative)).isDirectory() ? listFiles(base, relative) : [relative];
+    });
+}
+
 // version - wersja gry do spisu (domyślnie z package.json w root).
 export async function buildBundle(root = '.', { version = null } = {}) {
 
@@ -53,6 +71,31 @@ export async function buildBundle(root = '.', { version = null } = {}) {
     }
 
     rmSync(join(base, 'pakiet'), { recursive: true, force: true });
+
+    version ??= existsSync(join(base, 'package.json')) ? JSON.parse(readFileSync(join(base, 'package.json'), 'utf8')).version : null;
+
+    // ODCISK GRY: wersja + skrót wszystkich plików, od których zależy to,
+    // co gra liczy przy starcie (kod, biblioteka, modele, rośliny,
+    // tekstury). Pamięć startu (src/storage/StartCache.js) jest ważna
+    // tylko dla tego samego odcisku - każda zmiana pliku ją unieważnia.
+    const hash = createHash('sha256');
+    for (const folder of FINGERPRINT) {
+        for (const file of listFiles(base, folder)) {
+            hash.update(file + '\n');
+            hash.update(readFileSync(join(base, file)));
+        }
+    }
+    const buildId = `${version ?? 'bez-wersji'}+${hash.digest('hex').slice(0, 16)}`;
+
+    // DANE ROŚLIN I MODELI: ok. 80 małych plików .json w jednym pliku.
+    // Gra (i każdy wątek) pobiera jeden plik zamiast kilkudziesięciu
+    // (src/blocks/dataFiles.js). Te same teksty, bajt w bajt.
+    const data = {};
+    for (const folder of DATA_FOLDERS) {
+        for (const file of listFiles(base, folder)) {
+            if (file.endsWith('.json')) data[file] = readFileSync(join(base, file), 'utf8');
+        }
+    }
 
     const result = await build({
         absWorkingDir: base,
@@ -75,18 +118,22 @@ export async function buildBundle(root = '.', { version = null } = {}) {
         legalComments: 'inline',
         charset: 'utf8',
         logLevel: 'warning',
+        // Odcisk na początku każdego pliku paczki (także wątków).
+        banner: { js: `globalThis.__VR_BUILD ??= ${JSON.stringify(buildId)};` },
         metafile: true
     });
+
+    mkdirSync(join(base, 'pakiet'), { recursive: true });
+    writeFileSync(join(base, DATA_FILE), JSON.stringify({ build: buildId, files: data }));
 
     const files = readdirSync(outdir).sort();
     const bytes = files.reduce((sum, name) => sum + statSync(join(outdir, name)).size, 0);
     const inputs = Object.keys(result.metafile.inputs).length;
 
     // Spis: z czego powstała paczka (do sprawdzeń i raportów).
-    version ??= existsSync(join(base, 'package.json')) ? JSON.parse(readFileSync(join(base, 'package.json'), 'utf8')).version : null;
-    writeFileSync(join(base, 'pakiet', 'spis.json'), JSON.stringify({ version, inputs, files, bytes }, null, 4) + '\n');
+    writeFileSync(join(base, 'pakiet', 'spis.json'), JSON.stringify({ version, build: buildId, inputs, files, bytes, data: Object.keys(data).length }, null, 4) + '\n');
 
-    return { outdir, files, bytes, inputs, warnings: result.warnings.length };
+    return { outdir, files, bytes, inputs, warnings: result.warnings.length, buildId, dataFiles: Object.keys(data).length };
 
 }
 
@@ -94,6 +141,6 @@ export async function buildBundle(root = '.', { version = null } = {}) {
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
     const at = process.argv.indexOf('--root');
     const root = at >= 0 ? process.argv[at + 1] : '.';
-    const { files, bytes, inputs } = await buildBundle(root);
-    console.log(`Paczka gry: ${inputs} plików -> ${files.length} w ${join(root, BUNDLE_DIR)} (${(bytes / 1048576).toFixed(1)} MB)`);
+    const { files, bytes, inputs, buildId, dataFiles } = await buildBundle(root);
+    console.log(`Paczka gry: ${inputs} plików -> ${files.length} w ${join(root, BUNDLE_DIR)} (${(bytes / 1048576).toFixed(1)} MB), dane: ${dataFiles} plików w jednym, odcisk ${buildId}`);
 }

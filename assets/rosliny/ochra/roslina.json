@@ -49,7 +49,7 @@
         "plik": "grudka.png",
         "nazwa": "Grudka żółtej ochry",
         "nazwaAngielska": "Yellow Ochre Crust",
-        "kategoria": "ozdoby"
+        "grupy": ["yellow"]
     },
     "zbior": {
         "ile": [

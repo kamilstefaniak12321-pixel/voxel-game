@@ -1,4 +1,5 @@
 import { CHUNK_HEIGHT, WORLD_BORDER } from '../config.js';
+import { PLANT_PACKS } from '../blocks/plantPacks.js';
 
 // Gameplay state is independent of meshes, distance, FPS and wall-clock time.
 export const CAMPFIRE_CAPACITY = 6;
@@ -17,7 +18,14 @@ export const FIRE_WOODS = {
 };
 export const fuelType = wood => `${wood}_firewood`;
 export const fuelWood = type => Object.keys(FIRE_WOODS).find(wood => fuelType(wood) === type) ?? null;
-export const isTinder = type => type === 'tall_grass' || type === 'short_grass';
+// Podpałka: czym da się rozpalić ognisko i ile razy szybciej niż trawą
+// (1 - 5 sekund trzymania startera, 2 - dwa i pół). Plony roślin dopisują
+// się same polem "podpalka" w roslina.json (huba, porost iglasty).
+export const TINDERS = {
+    short_grass: 1, tall_grass: 1, dune_grass: 1, reed: 1, straw: 1.25, birch_bark: 1.5,
+    ...Object.fromEntries(PLANT_PACKS.filter(pack => pack.item?.tinder).map(pack => [pack.item.type, pack.item.tinder]))
+};
+export const isTinder = type => Object.hasOwn(TINDERS, type);
 const clamp = (value, max = 1) => Math.max(0, Math.min(max, Number.isFinite(value) ? value : 0));
 
 export function newCampfire(x, y, z) {
@@ -59,7 +67,7 @@ export function updateCampfire(fire, dt, holdingStarter = false) {
     fire.embers = Math.max(0, fire.embers - dt);
     if (fire.phase === 'unlit') {
         const ready = fire.logs.length === 6 && fire.tinder;
-        fire.ignition = ready && holdingStarter ? Math.min(1, fire.ignition + dt / CAMPFIRE_IGNITE_SECONDS)
+        fire.ignition = ready && holdingStarter ? Math.min(1, fire.ignition + dt * (TINDERS[fire.tinder] ?? 1) / CAMPFIRE_IGNITE_SECONDS)
             : Math.max(0, fire.ignition - dt * .7);
         if (fire.ignition >= 1) {
             fire.phase = 'burning'; fire.tinder = null;

@@ -49,7 +49,7 @@
         "plik": "plecha.png",
         "nazwa": "Plecha porostu oliwkowego",
         "nazwaAngielska": "Olive Lichen Thallus",
-        "kategoria": "ozdoby"
+        "grupy": ["green"]
     },
     "zbior": {
         "ile": [

@@ -52,7 +52,7 @@
         "plik": "nasiona.png",
         "nazwa": "Nasiona gorczycy",
         "nazwaAngielska": "Mustard Seeds",
-        "kategoria": "ozdoby"
+        "grupy": ["yellow", "herbs_vigor"]
     },
     "zbior": { "ile": [1, 3], "wraca": 1 },
     "gdzieRosnie": { "biomy": { "brzezina": 1, "laka": 0.3 }, "plamy": 0.025, "gestosc": 0.4, "etapy": [0.2, 0.45, 0.35] },

@@ -7,8 +7,9 @@ i okno statusu.
 
 ![Okno statusu: świetne samopoczucie i wyczerpanie](energia-094.jpg)
 
-Dalsze części: [skutki.md](skutki.md) (upadek, tonięcie, pieczenie)
-i [sen.md](sen.md) (wyspanie, noc, łóżka).
+Dalsze części: [skutki.md](skutki.md) (upadek, tonięcie, pieczenie),
+[sen.md](sen.md) (wyspanie, noc, łóżka) i [ziola.md](ziola.md) (napary
+i ich efekty).
 
 ## Jak to działa
 
@@ -114,8 +115,8 @@ się u gospodarza razem z jego ekwipunkiem.
 - `src/game/Wellbeing.js` - cała logika i liczby (zużycie, progi stanów,
   posiłki, kondycja). Bez grafiki i dźwięku.
 - `src/items/foods.js` - lista jedzenia. Każda pozycja ma `energy`,
-  `fullness`, `kind` i pustą na razie listę `effects` - miejsce na
-  przyszłe działanie potraw (ulubione dania, lepszy wzrok, siła).
+  `fullness`, `kind` i listę `effects` - dodatkowe działanie (od 0.98.1
+  mają je napary; efekty opisuje `src/items/effects.js`, [ziola.md](ziola.md)).
 - `src/ui/StatusPanel.js` - okno statusu, przyciemnienie;
   `src/ui/HeartIcon.js` - serce (rysunek, migotanie, iskierki),
   animacje w `src/ui/hud.css`.

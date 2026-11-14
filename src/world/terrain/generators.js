@@ -36,7 +36,7 @@ import { TestSiteGenerator } from './TestSiteGenerator.js';
 export const TERRAIN_TYPES = {
 
     realistic: {
-        name: 'Realistyczny (w budowie)',
+        name: 'Realistyczny',
         create: (seed) => new RealisticGenerator(seed)
     },
 

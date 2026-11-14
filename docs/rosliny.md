@@ -135,7 +135,7 @@ piksele rysunku i wynik (powiększone).
 | `pierwszeId` | numer bloku pierwszego etapu; etapy biorą kolejne numery. Nowe rośliny: **5000-9999** (od 0.30.0, tylko rośliny); dawny zakres 100-239 jest wspólny z paczkami drzew (rośliny od góry - amarantus 237-239). Raz użytego numeru nie wolno zmieniać (zapisuje się w świecie) |
 | `etapy` | 1-4 etapy wzrostu: obrazek (do 64 x 64), nazwa, `plaszczyzny` (2-4, domyślnie 2) - albo zamiast obrazka `model` (mała roślina z pikseli, niżej) |
 | `czasWzrostu` | średnio sekund na etap (domyślnie jak krzaki, 150) |
-| `przedmiot` | przedmiot ze zbioru, obrazek 16 x 16; `grupy` - w których grupach składników jest (`red`, `green`, `blue`, `purple` - kolorowe lampy) |
+| `przedmiot` | przedmiot ze zbioru, obrazek 16 x 16. **Zastosowania** (od 0.98.1 każdy plon musi jakieś mieć - `tools/sprawdz_zastosowania.mjs`): `grupy` - grupy składników: kolory `red`, `orange`, `yellow`, `green`, `blue`, `purple`, `pink`, `white`, `brown` (barwnik, kolorowa lampa), `flowers` (wianek z kwiatów), `herbs_calm`, `herbs_heal`, `herbs_vigor` (napary); `podpalka` - ile razy szybciej od trawy rozpala ognisko (np. `2`). Kategoria dobiera się sama (surowiec); `"kategoria": "owoce"` tylko dla plonu jadalnego. Opis: [ziola.md](ziola.md) |
 | `zbior` | PPM na ostatnim etapie: `ile` [od, do], `wraca` - do którego etapu wraca roślina |
 | `podloze` | na czym rośnie oprócz ziemi, np. `["sand"]` |
 | `gdzieRosnie.na` | gdzie rośnie: `ziemia` (domyślnie, trawa; piasek z `podloze`), `kamien` (wierzch skał - porosty), `pnie` (boki pni drzew, do 6 bloków nad ziemią - porosty, huby) |

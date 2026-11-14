@@ -49,7 +49,8 @@
         "plik": "galazki.png",
         "nazwa": "Gałązki porostu iglastego",
         "nazwaAngielska": "Needle Lichen Sprigs",
-        "kategoria": "ozdoby"
+        "grupy": ["green"],
+        "podpalka": 1.5
     },
     "zbior": {
         "ile": [

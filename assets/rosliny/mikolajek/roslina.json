@@ -43,7 +43,7 @@
         "plik": "kwiat.png",
         "nazwa": "Kwiat mikołajka",
         "nazwaAngielska": "Sea Holly Flower",
-        "kategoria": "ozdoby"
+        "grupy": ["blue", "flowers"]
     },
     "zbior": { "ile": [1, 2], "wraca": 2 },
     "podloze": ["sand"],

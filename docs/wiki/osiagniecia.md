@@ -2,7 +2,7 @@
 
 > Ta strona jest generowana z kodu gry (`python tools/wiki.py`) - nie zmieniaj jej ręcznie, zmiany przepadną przy następnym generowaniu.
 
-Wersja gry **0.98.0** - 55 osiągnięć. Księga osiągnięć: klawisz **L**. Uwaga, spoilery: sekretne osiągnięcia są tu opisane (w grze widać tylko „???”).
+Wersja gry **0.98.1** - 66 osiągnięć. Księga osiągnięć: klawisz **L**. Uwaga, spoilery: sekretne osiągnięcia są tu opisane (w grze widać tylko „???”).
 
 
 ## Zwykłe (10 pkt)
@@ -43,6 +43,13 @@ Wersja gry **0.98.0** - 55 osiągnięć. Księga osiągnięć: klawisz **L**. Uw
 | <img src="ikony/dandelion.png" width="32" height="32" alt=""> | **Złota godzina** | Popatrz prosto na zachodzące (albo wschodzące) słońce. | „Fotografowie nazywają to złotą godziną. Ty nazywasz to: jeszcze jeden blok i kończę.” |
 | <img src="ikony/blueberry.png" width="32" height="32" alt=""> | **Borówkowy język** | Zbierz borówki z krzaka (rosną w borach i świerczynach). | „Język fioletowy, palce fioletowe, koszulka też. Było warto.” |
 | <img src="ikony/grass.png" width="32" height="32" alt=""> | **Nowe szaty** | Zagraj z własną paczką tekstur (Ustawienia → Tekstury). | „Ten sam kamień, tylko w wyższej rozdzielczości. Dalej twardy.” |
+| <img src="ikony/jablon_jablko.png" width="32" height="32" alt=""> | **Smacznego** | Zjedz tyle, żeby zaliczyć posiłek. | „Brzuch przestał burczeć. Na jakieś pięć minut.” |
+| <img src="ikony/tilled_dirt.png" width="32" height="32" alt=""> | **Rolnik z przypadku** | Rozgrzeb ziemię łopatą (PPM) - powstanie pole. | „Dziura w ziemi, ale twoja. I coś na niej wyrośnie.” |
+| <img src="ikony/roasted_apple.png" width="32" height="32" alt=""> | **Kolacja przy ognisku** | Upiecz coś nad płonącym ogniskiem (trzymaj PPM z jedzeniem). | „Lekko przypalone. Czyli idealne.” |
+| <img src="ikony/stone.png" width="32" height="32" alt=""> | **Grawitacja działa** | Stłucz nogę, spadając z wysokości. | „Ziemia była bliżej, niż się wydawało. A potem nagle bardzo blisko.” |
+| <img src="ikony/oak_bed.png" width="32" height="32" alt=""> | **Pościelone** | Pościel stelaż łóżka (PPM pościelą na stelażu). | „Mama mówiła, żeby ścielić łóżko. Nie mówiła, że najpierw trzeba je zbudować.” |
+| <img src="ikony/short_grass.png" width="32" height="32" alt=""> | **Pod gołym niebem** | Prześpij noc na gołej ziemi. | „Gwiazdy piękne, kamień pod łopatką - mniej.” |
+| <img src="ikony/tea_calm.png" width="32" height="32" alt=""> | **Coś na rozgrzewkę** | Wypij napar z ziół (kubek ziół podgrzany nad ogniskiem). | „Smakuje jak łąka. W dobrym sensie.” |
 
 ## Rzadkie (25 pkt)
 
@@ -63,6 +70,10 @@ Wersja gry **0.98.0** - 55 osiągnięć. Księga osiągnięć: klawisz **L**. Uw
 | <img src="ikony/tall_grass.png" width="32" height="32" alt=""> | **Turysta** | Odwiedź każdy z 16 biomów lądowych: łąkę, lasy, góry, mokradła, wydmy... (/biom lista). | „Łąka, bór, bagno, szczyt. Pocztówki wyślesz później.” |
 | <img src="ikony/snow.png" width="32" height="32" alt=""> | **Dach świata** | Stań na śniegu na ośnieżonym szczycie. | „Widok jak z pocztówki, wiatr jak z zamrażarki.” |
 | <img src="ikony/oak_planks.png" width="32" height="32" alt=""> | **Promyk słońca** | Stań w plamie słońca pod dachem (słońce wpada przez okno albo dziurę w ścianie). | „Jak kot na parapecie. Brakuje tylko mruczenia.” |
+| <img src="ikony/roasted_hazelnut.png" width="32" height="32" alt=""> | **Śniadanie, obiad, kolacja** | Zalicz trzy posiłki jednego dnia. | „Trzy posiłki dziennie. Organizm jest w szoku, ale wdzięczny.” |
+| <img src="ikony/linen_bedding.png" width="32" height="32" alt=""> | **Jak w puchu** | Prześpij noc w pościelonym łóżku. | „Własne łóżko. Od teraz każda ziemianka to już dom.” |
+| <img src="ikony/tea_heal.png" width="32" height="32" alt=""> | **Zielarz** | Wypij wszystkie trzy rodzaje naparów: na sen, leczniczy i wzmacniający. | „Na wszystko jest zioło. Trzeba tylko wiedzieć, które.” |
+| <img src="ikony/water.png" width="32" height="32" alt=""> | **Nie polecam** *(sekret)* | Strać przytomność pod wodą i obudź się na brzegu. | „Ryby patrzyły. Żadna nie pomogła.” |
 
 ## Bardzo rzadkie (50 pkt)
 

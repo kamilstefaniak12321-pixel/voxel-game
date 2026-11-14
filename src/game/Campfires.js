@@ -1,14 +1,17 @@
 import { newCampfire, restoreCampfire, updateCampfire, addFirewood, addTinder,
-    fuelWood, isTinder, campfireDrops } from './CampfireState.js';
-import { getBlockId, isLiquidId, isSolidId } from '../blocks/BlockRegistry.js';
+    fuelWood, isTinder, campfireDrops, TINDERS } from './CampfireState.js';
+import { getBlockId, isLiquidId, isSolidId, blockExists } from '../blocks/BlockRegistry.js';
 import { CampfireRenderer } from '../rendering/CampfireRenderer.js';
-import { getRoast, ROAST_SECONDS } from '../items/foods.js';
+import { getRoast, isDrink, ROAST_SECONDS } from '../items/foods.js';
 import { getItemLabel } from '../items/ItemRegistry.js';
 
 // Ognisko, nad którym da się piec: płonie albo żarzy się.
 const canRoastOn = (fire) => fire.phase === 'burning' || fire.phase === 'collapsing';
 
 const keyOf = ({x, y, z}) => `${x},${y},${z}`;
+
+// Podpowiedź, czym rozpalić (lista: TINDERS w CampfireState.js).
+const TINDER_HINT = 'Dodaj podpałkę: trawę, słomę, korę brzozową albo hubę';
 
 export class Campfires {
     constructor(game, saved = []) {
@@ -46,15 +49,19 @@ export class Campfires {
             if (!fire) { fire = newCampfire(hit.block.x, hit.block.y, hit.block.z); this.fires.set(keyOf(fire), fire); }
             if (wood) {
                 if (addFirewood(fire, wood)) { this.consume(); game.playBlockSound('place', 'oak_log', fire); }
-                else this.notice(fire.phase === 'unlit' ? 'Jest już 6 polan. Dodaj trawę na podpałkę.' : 'Poczekaj, aż polana opadną w żar.');
+                else this.notice(fire.phase === 'unlit' ? `Jest już 6 polan. ${TINDER_HINT}.` : 'Poczekaj, aż polana opadną w żar.');
             } else if (isTinder(type)) {
-                if (addTinder(fire, type)) { this.consume(); game.playBlockSound('place', type, fire); }
+                if (addTinder(fire, type)) {
+                    this.consume(); game.playBlockSound('place', blockExists(type) ? type : 'short_grass', fire);
+                    // Lepsza podpałka - krótsze rozpalanie.
+                    if (TINDERS[type] > 1) this.notice('Dobra podpałka - ognisko rozpali się szybciej');
+                }
                 else this.notice(fire.logs.length < 6 ? `Najpierw opał: ${fire.logs.length}/6` : 'Podpałka jest już gotowa lub ognisko płonie.');
             } else if (getRoast(type)) {
                 // Samo pieczenie liczy update (trzeba trzymać PPM).
-                if (!canRoastOn(fire)) this.notice('Żeby coś upiec, ognisko musi płonąć.');
+                if (!canRoastOn(fire)) this.notice(isDrink(getRoast(type)) ? 'Żeby zaparzyć zioła, ognisko musi płonąć.' : 'Żeby coś upiec, ognisko musi płonąć.');
             } else if (type === 'fire_starter') {
-                if (fire.phase === 'unlit' && (fire.logs.length < 6 || !fire.tinder)) this.notice(`Potrzeba 6 polan i trawy (${fire.logs.length}/6).`);
+                if (fire.phase === 'unlit' && (fire.logs.length < 6 || !fire.tinder)) this.notice(`Potrzeba 6 polan i podpałki (${fire.logs.length}/6).`);
             } else this.notice(this.description(fire));
             return true;
         }
@@ -78,7 +85,7 @@ export class Campfires {
         if (fire.phase === 'collapsing') return 'Polana opadają w żar';
         if (fire.ignition > 0) return `Rozpalanie: ${Math.round(fire.ignition * 100)}% — trzymaj PPM`;
         if (fire.logs.length < 6) return `Opał ${fire.logs.length}/6 — dokładaj PPM`;
-        return fire.tinder ? 'Przytrzymaj PPM starterem ognia' : 'Dodaj trawę na podpałkę';
+        return fire.tinder ? 'Przytrzymaj PPM starterem ognia' : TINDER_HINT;
     }
 
     update(dt, holding) {
@@ -124,7 +131,7 @@ export class Campfires {
         if (Math.floor(this.roast.time * 2.5) !== Math.floor(before * 2.5)) game.swingArm();
         if (Math.floor(this.roast.time / 0.9) !== Math.floor(before / 0.9)) game.sounds?.play('sizzle');
         if (this.roast.time < ROAST_SECONDS) {
-            this.notice(`Pieczenie: ${Math.round(this.roast.time / ROAST_SECONDS * 100)}% — trzymaj PPM`);
+            this.notice(`${isDrink(roasted) ? 'Parzenie' : 'Pieczenie'}: ${Math.round(this.roast.time / ROAST_SECONDS * 100)}% — trzymaj PPM`);
             return;
         }
         this.roast = null;

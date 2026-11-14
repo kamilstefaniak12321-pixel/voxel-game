@@ -11,6 +11,50 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 0.98.1 - Porządki: zastosowania plonów, napary, kategorie
+
+Wersja poprawkowa na prośbę Kamila — PR #138 (po 0.98.0). Porządkuje to,
+co po przeglądzie gry było niespójne ([opis](docs/ziola.md)):
+
+- **Każdy plon do czegoś służy.** Do tej pory 15 z 19 plonów roślin
+  (kwiaty, liście, porosty, huba) oraz kwiat lipy leżały w ekwipunku bez
+  użytku. Teraz:
+  - **barwniki** z każdego kwiatu - nowe źródła żółtego, zielonego,
+    niebieskiego, fioletowego i brązowego, a pomarańczowy i różowy także
+    prosto z kwiatów,
+  - **podpałka:** huba, porost iglasty, kora brzozowa i słoma rozpalają
+    ognisko szybciej niż trawa (huba dwa razy),
+  - **wianek z kwiatów** - nowa ozdoba na ścianę z czterech dowolnych
+    kwiatów,
+  - **oliwki** zamiast żywicy w pochodniach i lampach, **grudka ochry**
+    zamiast gliny w żółtym tynku, każda szyszka do wieńca, słoma także
+    z trawy wydmowej i trzciny.
+- **Napary (nowość):** gliniany kubek + dwa zioła, podgrzane nad płonącym
+  ogniskiem. Trzy rodzaje: **na sen** (lipa, lawenda - głębszy najbliższy
+  sen), **leczniczy** (rumianek, babka, szałwia, nagietek - stłuczona
+  noga goi się 3 razy szybciej), **wzmacniający** (pokrzywa, gorczyca -
+  wolniej ubywa energii). Kubek wraca po wypiciu, działający napar widać
+  w oknie statusu. Dzięki temu działają wreszcie „efekty jedzenia", które
+  od 0.94.0 były pustym polem.
+- **Kategorie z jedną zasadą.** Zakładek dalej jest dziewięć, ale: schody,
+  półbloki, płoty, furtki, drzwi i klapy są w *Budulcu* (nie w *Drewnie*
+  z pniami); skrzynie, stoły stolarskie, łóżka i pościel w *Meblach
+  i ozdobach*; wszystkie plony roślin w *Narzędziach i surowcach* (były
+  rozrzucone po dwóch zakładkach); *Owoce i nasiona* nazywają się
+  *Jedzenie i nasiona*.
+- **Rośliny bez podziału** na „zwykłe" i „z paczek": w komendach
+  i opisach to po prostu kwiaty, zioła, porosty i huby, a `/rosliny
+  <roślina>` pokazuje, do czego służy plon.
+- **11 nowych osiągnięć** za mechaniki z ostatnich wersji: posiłek, trzy
+  posiłki dziennie, pole, pieczenie, stłuczona noga, utonięcie (sekretne),
+  pościelone łóżko, noc w łóżku, noc pod gołym niebem, pierwszy napar,
+  wszystkie napary. Razem jest ich 66.
+- Generator *Realistyczny* nie ma już dopisku „w budowie" (jest domyślny
+  od dawna).
+- **Test-strażnik** `tools/sprawdz_zastosowania.mjs`: nowy przedmiot bez
+  zastosowania albo rzecz w złej kategorii zatrzymuje testy.
+- Komenda do testów: `/energia efekt <calm | heal | vigor | brak>`.
+
 ## 0.98.0 - Noc i sen: łóżka, pościel, wyspanie
 
 Pomysł Kamila — PR #137 (po 0.97.0). Trzecia część systemu z 0.94.0

@@ -31,7 +31,7 @@ i odczycie z pamięci, aby progi jezior nie zależały od kolejności wizyt.
 
 ## Powtarzalne miejsca do sprawdzenia
 
-Utwórz osobny świat **Realistyczny (w budowie)** w trybie kreatywnym.
+Utwórz osobny świat **Realistyczny** w trybie kreatywnym.
 Wpisanie samych cyfr w polu seeda tworzy seed liczbowy; w testach kodu
 `2138286349` również musi być liczbą, nie tekstem.
 

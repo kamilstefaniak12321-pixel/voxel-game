@@ -6,6 +6,7 @@
 // ------------------------------------------------------------
 
 import { CONDITION_MIN, CONDITION_MAX, LIMP_MAX, STATES, REST_STATES } from '../game/Wellbeing.js';
+import { EFFECTS } from '../items/effects.js';
 import { simplify, CommandError } from './CommandRegistry.js';
 import {
     isLiquidId,
@@ -573,7 +574,7 @@ export const PLAYER_COMMANDS = [
     {
         name: 'energia',
         aliases: ['energy', 'samopoczucie'],
-        usage: '/energia | /energia <0 - 130> | /energia kondycja <60 - 130> | /energia sen <0 - 100> | /energia noga <sekundy> | /energia utoniecie',
+        usage: '/energia | /energia <0 - 130> | /energia kondycja <60 - 130> | /energia sen <0 - 100> | /energia noga <sekundy> | /energia efekt <nazwa | brak> | /energia utoniecie',
         description: 'Energia i kondycja gracza (tryb przygody): podgląd w liczbach albo ustawienie - do testów.',
 
         run(args, { game }) {
@@ -607,6 +608,33 @@ export const PLAYER_COMMANDS = [
                 game.blackout.start();
 
                 return 'Tracisz przytomność...';
+
+            }
+
+            if (args[0] === 'efekt') {
+
+                // Efekt naparu bez picia (items/effects.js) - do testów.
+
+                if (!wellbeing.active) {
+                    throw new CommandError('W tym trybie gry efekty nie działają.');
+                }
+
+                const name = simplify(args[1] ?? '');
+
+                if (['brak', 'zadne', 'none'].includes(name)) {
+                    data.effects = {};
+                    return 'Efekty wyłączone.';
+                }
+
+                const effect = Object.keys(EFFECTS).find((type) => type === name || simplify(EFFECTS[type].label) === name);
+
+                if (!effect) {
+                    throw new CommandError(`Efekty: ${Object.entries(EFFECTS).map(([type, entry]) => `${type} (${entry.label})`).join(', ')} albo brak`);
+                }
+
+                wellbeing.addEffect(effect, game.time.days);
+
+                return `Działa: ${EFFECTS[effect].label} (${EFFECTS[effect].hours} godz. gry). ${EFFECTS[effect].text}.`;
 
             }
 
@@ -650,14 +678,16 @@ export const PLAYER_COMMANDS = [
 
             const text = `Energia: ${data.energy.toFixed(1)} z ${data.condition}, stan: ` +
                 `${STATES[wellbeing.state].label.toLowerCase()}, posiłki dzisiaj: ${data.mealsToday}, ` +
-                `wyspanie: ${data.rest.toFixed(1)} (${REST_STATES[wellbeing.restState].label})`;
+                `wyspanie: ${data.rest.toFixed(1)} (${REST_STATES[wellbeing.restState].label})` +
+                (wellbeing.activeEffects().length ? `, działa: ${wellbeing.activeEffects().map((type) => EFFECTS[type].label).join(', ')}` : '');
 
             return wellbeing.active ? text : `${text}. W tym trybie gry energia jest wyłączona.`;
 
         },
 
         complete(args) {
-            return args.length <= 1 ? ['kondycja', 'sen', 'noga', 'utoniecie'] : [];
+            return args.length <= 1 ? ['kondycja', 'sen', 'noga', 'efekt', 'utoniecie']
+                : args.length === 2 && args[0] === 'efekt' ? [...Object.keys(EFFECTS), 'brak'] : [];
         }
     },
 

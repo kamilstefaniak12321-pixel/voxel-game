@@ -16,6 +16,7 @@ import {
 } from '../blocks/BlockRegistry.js';
 import { waterUniforms } from '../rendering/BlockRenderData.js';
 import { getItemLabel, ITEM_TYPES } from '../items/ItemRegistry.js';
+import { itemUses } from '../items/uses.js';
 import { STACK_SIZE } from '../game/Inventory.js';
 import { BIOMES } from '../world/terrain/Biomes.js';
 import { TREE_SPECIES, TREE_NAMES } from '../blocks/trees.js';
@@ -1171,7 +1172,7 @@ export const WORLD_COMMANDS = [
         name: 'rosliny',
         aliases: ['roslina', 'plants'],
         usage: '/rosliny | /rosliny <roslina> | /rosliny ogrod [roslina] | /rosliny znajdz <roslina> | /rosliny bledy',
-        description: 'Rośliny z paczek roślin (assets/rosliny/): lista z rozmiarami, opis rośliny, ogródek ze wszystkimi etapami przed tobą, najbliższa roślina we wczytanym terenie, błędy paczek.',
+        description: 'Kwiaty, zioła, porosty i huby (rosną etapami, dają plony): lista z rozmiarami, opis rośliny z zastosowaniem plonu, ogródek ze wszystkimi etapami przed tobą, najbliższa roślina we wczytanym terenie, błędy w plikach roślin (assets/rosliny/).',
 
         run(args, { player, world }) {
 
@@ -1181,8 +1182,8 @@ export const WORLD_COMMANDS = [
             if (['bledy', 'errors'].includes(word)) {
 
                 return PLANT_PACK_ERRORS.length === 0
-                    ? `Paczki roślin bez błędów (${PLANT_PACKS.length}).`
-                    : `Błędy paczek roślin:\n${PLANT_PACK_ERRORS.map((error) => `- ${error}`).join('\n')}`;
+                    ? `Pliki roślin bez błędów (${PLANT_PACKS.length}).`
+                    : `Błędy w plikach roślin:\n${PLANT_PACK_ERRORS.map((error) => `- ${error}`).join('\n')}`;
 
             }
 
@@ -1196,7 +1197,7 @@ export const WORLD_COMMANDS = [
                 }
 
                 if (PLANT_PACKS.length === 0) {
-                    throw new CommandError('Nie ma paczek roślin (assets/rosliny/lista.json).');
+                    throw new CommandError('Nie ma roślin (assets/rosliny/lista.json).');
                 }
 
                 return plantPackGarden(player, world, pack ? [pack] : PLANT_PACKS);
@@ -1237,11 +1238,12 @@ export const WORLD_COMMANDS = [
                 const stages = pack.stages.map((stage, index) =>
                     `${index + 1}. ${stage.label} - ${blocksSize(stage.width)} x ${blocksSize(stage.height)} bloku (${stage.width} x ${stage.height} px${stage.tuft ? ', kępka z pikseli' : ''}, /daj ${plantStageType(pack, index)})`);
 
-                return `${pack.label} (${pack.folder}): ${pack.about || 'roślina z paczki roślin'}.\n` +
+                return `${pack.label} (${pack.folder}): ${pack.about || 'roślina'}.\n` +
                     stages.join('\n') +
                     `\nRośnie: etap średnio co ${pack.growthSeconds ?? BUSH_GROWTH_SECONDS} s (wyższy etap tylko z wolnym miejscem nad sobą).` +
                     (pack.item ? `\nPrzedmiot: ${pack.item.label} (/daj ${pack.item.type})` +
-                        (pack.harvest ? ` - PPM na ostatnim etapie: ${pack.harvest.count[0]}-${pack.harvest.count[1]} szt., roślina wraca do etapu ${pack.harvest.back + 1}` : '') : '') +
+                        (pack.harvest ? ` - PPM na ostatnim etapie: ${pack.harvest.count[0]}-${pack.harvest.count[1]} szt., roślina wraca do etapu ${pack.harvest.back + 1}` : '') +
+                        `\nDo czego: ${itemUses(pack.item.type).join('; ') || 'na razie do niczego'}` : '') +
                     (pack.where ? `\nGdzie rośnie: ${plantBiomesText(pack)} (/rosliny znajdz ${pack.id})` : '') +
                     `\nNumery bloków: ${pack.firstId}-${pack.firstId + pack.stages.length - 1}.`;
 
@@ -1249,16 +1251,16 @@ export const WORLD_COMMANDS = [
 
 
             if (PLANT_PACKS.length === 0) {
-                return 'Nie ma paczek roślin (assets/rosliny/lista.json, instrukcja: docs/rosliny.md).';
+                return 'Nie ma roślin (assets/rosliny/lista.json, instrukcja: docs/rosliny.md).';
             }
 
-            return `Rośliny z paczek (${PLANT_PACKS.length}): ` +
+            return `Kwiaty, zioła, porosty i huby (${PLANT_PACKS.length}): ` +
                 PLANT_PACKS.map((pack) => {
                     const top = pack.stages[pack.stages.length - 1];
                     return `${pack.label} (${pack.id}, do ${blocksSize(top.height)} bloku wysokości)`;
                 }).join(', ') +
                 '. Opis: /rosliny <roslina>, ogródek: /rosliny ogrod' +
-                (PLANT_PACK_ERRORS.length > 0 ? `. Błędy paczek: ${PLANT_PACK_ERRORS.length} (/rosliny bledy).` : '.');
+                (PLANT_PACK_ERRORS.length > 0 ? `. Błędy w plikach roślin: ${PLANT_PACK_ERRORS.length} (/rosliny bledy).` : '.');
 
         },
 

@@ -47,9 +47,10 @@ import {
     isLiquidId,
     FIELD_BLOCK
 } from '../blocks/BlockRegistry.js';
-import { getTool, getPlacedBlock, isItemType } from '../items/ItemRegistry.js';
+import { getTool, getPlacedBlock, isItemType, getItemLabel } from '../items/ItemRegistry.js';
 import { STATES, isNight } from './Wellbeing.js';
 import { getFood } from '../items/foods.js';
+import { EFFECTS } from '../items/effects.js';
 import {
     CREATIVE_REPEAT_SECONDS,
     MINING_HIT_SECONDS,
@@ -500,6 +501,9 @@ export class GameInteraction {
                 this.onNotice?.('Noga już nie boli');
                 this.onWellbeing?.(event);
             }
+            else if (event.type === 'effectEnded') {
+                this.onNotice?.(`Napar przestał działać (${EFFECTS[event.effect]?.label ?? event.effect})`);
+            }
             else if (event.type === 'rumble') {
                 this.sounds?.play('stomach');
                 this.onNotice?.('Burczy ci w brzuchu');
@@ -532,6 +536,16 @@ export class GameInteraction {
             return false;
         }
 
+        // To, co zostaje po wypiciu (kubek), musi się gdzieś zmieścić:
+        // w zwolnionym miejscu w ręce albo obok.
+
+        const food = getFood(item.type);
+
+        if (food.returns && item.count > 1 && !inventory.canAdd(food.returns)) {
+            this.onNotice?.(`Brak miejsca w ekwipunku na: ${getItemLabel(food.returns)}`);
+            return false;
+        }
+
         const result = this.wellbeing.eat(item.type, this.time.days);
 
         if (!result.ok) {
@@ -543,17 +557,28 @@ export class GameInteraction {
 
         inventory.take(inventory.selected, 1);
 
+        if (food.returns) {
+            inventory.add(food.returns);
+        }
+
         this.eatDelay = 0.45;
 
         this.sounds?.play('eat');
 
         this.swingArm(0.3);
 
-        this.achieve('ate', { type, meal: result.meal });
+        this.achieve('ate', { type, meal: result.meal, mealsToday: result.mealsToday, kind: food.kind, effects: result.effects });
 
         if (result.meal) {
             this.onNotice?.('Posiłek zaliczony');
             this.onWellbeing?.({ type: 'meal' });
+        }
+
+        // Napar: co daje (items/effects.js).
+
+        for (const effect of result.effects) {
+            this.onNotice?.(`${EFFECTS[effect].text} (${EFFECTS[effect].label})`);
+            this.onWellbeing?.({ type: 'effect', effect });
         }
 
         return true;

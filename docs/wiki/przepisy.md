@@ -2,7 +2,7 @@
 
 > Ta strona jest generowana z kodu gry (`python tools/wiki.py`) - nie zmieniaj jej ręcznie, zmiany przepadną przy następnym generowaniu.
 
-Wersja gry **0.98.0** - 162 przepisów. Wytwarza się w ekwipunku (**E**): siatka 2 x 2 obok miejsc ekwipunku, wynik po prawej (klik - weź, Shift + klik - ile się da). Przycisk 📖 *Przepisy* otwiera księgę - klik na przepisie sam układa składniki. Przepisy *z kształtem* można przesuwać po siatce i odbijać w poziomie; przepisy *bez kształtu* - obojętne, gdzie leżą składniki. Z czatu: `/przepisy`, `/wytworz <przepis>`.
+Wersja gry **0.98.1** - 170 przepisów. Wytwarza się w ekwipunku (**E**): siatka 2 x 2 obok miejsc ekwipunku, wynik po prawej (klik - weź, Shift + klik - ile się da). Przycisk 📖 *Przepisy* otwiera księgę - klik na przepisie sam układa składniki. Przepisy *z kształtem* można przesuwać po siatce i odbijać w poziomie; przepisy *bez kształtu* - obojętne, gdzie leżą składniki. Z czatu: `/przepisy`, `/wytworz <przepis>`.
 
 
 ## Ziemia
@@ -54,246 +54,6 @@ Wersja gry **0.98.0** - 162 przepisów. Wytwarza się w ekwipunku (**E**): siatk
 
 
 ## Drewno
-
-### Skrzynia dębowa
-
-<img src="przepisy/chest.png" alt="Skrzynia dębowa: 4 x Deski dębowe (ułożenie: PP / PP; P = Deski dębowe)">
-
-4 x Deski dębowe (z kształtem). Nazwa przepisu: `chest`. Cztery deski jednego drzewa - skrzynia z tego drewna. PPM na skrzyni: otwórz - 4 x 3 przegródki, w każdej dwie warstwy (najpierw zdejmij wierzch).
-
-### Skrzynia świerkowa
-
-<img src="przepisy/spruce_chest.png" alt="Skrzynia świerkowa: 4 x Deski świerkowe (ułożenie: PP / PP; P = Deski świerkowe)">
-
-4 x Deski świerkowe (z kształtem). Nazwa przepisu: `spruce_chest`. Cztery deski jednego drzewa - skrzynia z tego drewna. PPM na skrzyni: otwórz - 4 x 3 przegródki, w każdej dwie warstwy (najpierw zdejmij wierzch).
-
-### Skrzynia sosnowa
-
-<img src="przepisy/pine_chest.png" alt="Skrzynia sosnowa: 4 x Deski sosnowe (ułożenie: PP / PP; P = Deski sosnowe)">
-
-4 x Deski sosnowe (z kształtem). Nazwa przepisu: `pine_chest`. Cztery deski jednego drzewa - skrzynia z tego drewna. PPM na skrzyni: otwórz - 4 x 3 przegródki, w każdej dwie warstwy (najpierw zdejmij wierzch).
-
-### Skrzynia bukowa
-
-<img src="przepisy/beech_chest.png" alt="Skrzynia bukowa: 4 x Deski bukowe (ułożenie: PP / PP; P = Deski bukowe)">
-
-4 x Deski bukowe (z kształtem). Nazwa przepisu: `beech_chest`. Cztery deski jednego drzewa - skrzynia z tego drewna. PPM na skrzyni: otwórz - 4 x 3 przegródki, w każdej dwie warstwy (najpierw zdejmij wierzch).
-
-### Skrzynia lipowa
-
-<img src="przepisy/linden_chest.png" alt="Skrzynia lipowa: 4 x Deski lipowe (ułożenie: PP / PP; P = Deski lipowe)">
-
-4 x Deski lipowe (z kształtem). Nazwa przepisu: `linden_chest`. Cztery deski jednego drzewa - skrzynia z tego drewna. PPM na skrzyni: otwórz - 4 x 3 przegródki, w każdej dwie warstwy (najpierw zdejmij wierzch).
-
-### Skrzynia brzozowa
-
-<img src="przepisy/birch_chest.png" alt="Skrzynia brzozowa: 4 x Deski brzozowe (ułożenie: PP / PP; P = Deski brzozowe)">
-
-4 x Deski brzozowe (z kształtem). Nazwa przepisu: `birch_chest`. Cztery deski jednego drzewa - skrzynia z tego drewna. PPM na skrzyni: otwórz - 4 x 3 przegródki, w każdej dwie warstwy (najpierw zdejmij wierzch).
-
-### Ciemna skrzynia
-
-<img src="przepisy/dark_chest.png" alt="Ciemna skrzynia: 4 x Ciemne deski (ułożenie: PP / PP; P = Ciemne deski)">
-
-4 x Ciemne deski (z kształtem). Nazwa przepisu: `dark_chest`. Cztery deski jednego drzewa - skrzynia z tego drewna. PPM na skrzyni: otwórz - 4 x 3 przegródki, w każdej dwie warstwy (najpierw zdejmij wierzch).
-
-### Skrzynia jabłoniowa
-
-<img src="przepisy/jablon_chest.png" alt="Skrzynia jabłoniowa: 4 x Deski jabłoniowe (ułożenie: PP / PP; P = Deski jabłoniowe)">
-
-4 x Deski jabłoniowe (z kształtem). Nazwa przepisu: `jablon_chest`. Cztery deski jednego drzewa - skrzynia z tego drewna. PPM na skrzyni: otwórz - 4 x 3 przegródki, w każdej dwie warstwy (najpierw zdejmij wierzch).
-
-### Skrzynia olchowa
-
-<img src="przepisy/olcha_chest.png" alt="Skrzynia olchowa: 4 x Deski olchowe (ułożenie: PP / PP; P = Deski olchowe)">
-
-4 x Deski olchowe (z kształtem). Nazwa przepisu: `olcha_chest`. Cztery deski jednego drzewa - skrzynia z tego drewna. PPM na skrzyni: otwórz - 4 x 3 przegródki, w każdej dwie warstwy (najpierw zdejmij wierzch).
-
-### Skrzynia wierzbowa
-
-<img src="przepisy/wierzba_chest.png" alt="Skrzynia wierzbowa: 4 x Deski wierzbowe (ułożenie: PP / PP; P = Deski wierzbowe)">
-
-4 x Deski wierzbowe (z kształtem). Nazwa przepisu: `wierzba_chest`. Cztery deski jednego drzewa - skrzynia z tego drewna. PPM na skrzyni: otwórz - 4 x 3 przegródki, w każdej dwie warstwy (najpierw zdejmij wierzch).
-
-### Skrzynia z akacji
-
-<img src="przepisy/acacia_chest.png" alt="Skrzynia z akacji: 4 x Deski akacji (ułożenie: PP / PP; P = Deski akacji)">
-
-4 x Deski akacji (z kształtem). Nazwa przepisu: `acacia_chest`. Cztery deski jednego drzewa - skrzynia z tego drewna. PPM na skrzyni: otwórz - 4 x 3 przegródki, w każdej dwie warstwy (najpierw zdejmij wierzch).
-
-### Skrzynia z cypryśnika
-
-<img src="przepisy/bald_cypress_chest.png" alt="Skrzynia z cypryśnika: 4 x Deski cypryśnika (ułożenie: PP / PP; P = Deski cypryśnika)">
-
-4 x Deski cypryśnika (z kształtem). Nazwa przepisu: `bald_cypress_chest`. Cztery deski jednego drzewa - skrzynia z tego drewna. PPM na skrzyni: otwórz - 4 x 3 przegródki, w każdej dwie warstwy (najpierw zdejmij wierzch).
-
-### Skrzynia wiśniowa
-
-<img src="przepisy/cherry_chest.png" alt="Skrzynia wiśniowa: 4 x Deski wiśni (ułożenie: PP / PP; P = Deski wiśni)">
-
-4 x Deski wiśni (z kształtem). Nazwa przepisu: `cherry_chest`. Cztery deski jednego drzewa - skrzynia z tego drewna. PPM na skrzyni: otwórz - 4 x 3 przegródki, w każdej dwie warstwy (najpierw zdejmij wierzch).
-
-### Skrzynia klonowa
-
-<img src="przepisy/maple_chest.png" alt="Skrzynia klonowa: 4 x Deski klonowe (ułożenie: PP / PP; P = Deski klonowe)">
-
-4 x Deski klonowe (z kształtem). Nazwa przepisu: `maple_chest`. Cztery deski jednego drzewa - skrzynia z tego drewna. PPM na skrzyni: otwórz - 4 x 3 przegródki, w każdej dwie warstwy (najpierw zdejmij wierzch).
-
-### Skrzynia z kosodrzewiny
-
-<img src="przepisy/mugo_chest.png" alt="Skrzynia z kosodrzewiny: 4 x Deski z kosodrzewiny (ułożenie: PP / PP; P = Deski z kosodrzewiny)">
-
-4 x Deski z kosodrzewiny (z kształtem). Nazwa przepisu: `mugo_chest`. Cztery deski jednego drzewa - skrzynia z tego drewna. PPM na skrzyni: otwórz - 4 x 3 przegródki, w każdej dwie warstwy (najpierw zdejmij wierzch).
-
-### Skrzynia oliwkowa
-
-<img src="przepisy/olive_chest.png" alt="Skrzynia oliwkowa: 4 x Deski oliwkowe (ułożenie: PP / PP; P = Deski oliwkowe)">
-
-4 x Deski oliwkowe (z kształtem). Nazwa przepisu: `olive_chest`. Cztery deski jednego drzewa - skrzynia z tego drewna. PPM na skrzyni: otwórz - 4 x 3 przegródki, w każdej dwie warstwy (najpierw zdejmij wierzch).
-
-### Skrzynia eukaliptusowa
-
-<img src="przepisy/rainbow_eucalyptus_chest.png" alt="Skrzynia eukaliptusowa: 4 x Deski eukaliptusowe (ułożenie: PP / PP; P = Deski eukaliptusowe)">
-
-4 x Deski eukaliptusowe (z kształtem). Nazwa przepisu: `rainbow_eucalyptus_chest`. Cztery deski jednego drzewa - skrzynia z tego drewna. PPM na skrzyni: otwórz - 4 x 3 przegródki, w każdej dwie warstwy (najpierw zdejmij wierzch).
-
-### Skrzynia sekwojowa
-
-<img src="przepisy/sequoia_chest.png" alt="Skrzynia sekwojowa: 4 x Deski sekwojowe (ułożenie: PP / PP; P = Deski sekwojowe)">
-
-4 x Deski sekwojowe (z kształtem). Nazwa przepisu: `sequoia_chest`. Cztery deski jednego drzewa - skrzynia z tego drewna. PPM na skrzyni: otwórz - 4 x 3 przegródki, w każdej dwie warstwy (najpierw zdejmij wierzch).
-
-### Skrzynia miłorzębowa
-
-<img src="przepisy/ginkgo_chest.png" alt="Skrzynia miłorzębowa: 4 x Deski miłorzębowe (ułożenie: PP / PP; P = Deski miłorzębowe)">
-
-4 x Deski miłorzębowe (z kształtem). Nazwa przepisu: `ginkgo_chest`. Cztery deski jednego drzewa - skrzynia z tego drewna. PPM na skrzyni: otwórz - 4 x 3 przegródki, w każdej dwie warstwy (najpierw zdejmij wierzch).
-
-### Skrzynia jakarandowa
-
-<img src="przepisy/jacaranda_chest.png" alt="Skrzynia jakarandowa: 4 x Deski jakarandowe (ułożenie: PP / PP; P = Deski jakarandowe)">
-
-4 x Deski jakarandowe (z kształtem). Nazwa przepisu: `jacaranda_chest`. Cztery deski jednego drzewa - skrzynia z tego drewna. PPM na skrzyni: otwórz - 4 x 3 przegródki, w każdej dwie warstwy (najpierw zdejmij wierzch).
-
-### Stół stolarski świerkowy
-
-<img src="przepisy/spruce_carpenter_table.png" alt="Stół stolarski świerkowy: 2 x Deski świerkowe + 2 x Patyk (ułożenie: PP / SS; P = Deski świerkowe, S = Patyk)">
-
-2 x Deski świerkowe + 2 x Patyk (z kształtem). Nazwa przepisu: `spruce_carpenter_table`. Długi na dwa bloki. PPM deskami w lewą część blatu - deski na stół; PPM w wyrób na prawej części - schody, półbloki, płoty, furtki (Shift - ile się da).
-
-### Stół stolarski sosnowy
-
-<img src="przepisy/pine_carpenter_table.png" alt="Stół stolarski sosnowy: 2 x Deski sosnowe + 2 x Patyk (ułożenie: PP / SS; P = Deski sosnowe, S = Patyk)">
-
-2 x Deski sosnowe + 2 x Patyk (z kształtem). Nazwa przepisu: `pine_carpenter_table`. Długi na dwa bloki. PPM deskami w lewą część blatu - deski na stół; PPM w wyrób na prawej części - schody, półbloki, płoty, furtki (Shift - ile się da).
-
-### Stół stolarski bukowy
-
-<img src="przepisy/beech_carpenter_table.png" alt="Stół stolarski bukowy: 2 x Deski bukowe + 2 x Patyk (ułożenie: PP / SS; P = Deski bukowe, S = Patyk)">
-
-2 x Deski bukowe + 2 x Patyk (z kształtem). Nazwa przepisu: `beech_carpenter_table`. Długi na dwa bloki. PPM deskami w lewą część blatu - deski na stół; PPM w wyrób na prawej części - schody, półbloki, płoty, furtki (Shift - ile się da).
-
-### Stół stolarski lipowy
-
-<img src="przepisy/linden_carpenter_table.png" alt="Stół stolarski lipowy: 2 x Deski lipowe + 2 x Patyk (ułożenie: PP / SS; P = Deski lipowe, S = Patyk)">
-
-2 x Deski lipowe + 2 x Patyk (z kształtem). Nazwa przepisu: `linden_carpenter_table`. Długi na dwa bloki. PPM deskami w lewą część blatu - deski na stół; PPM w wyrób na prawej części - schody, półbloki, płoty, furtki (Shift - ile się da).
-
-### Stół stolarski dębowy
-
-<img src="przepisy/oak_carpenter_table.png" alt="Stół stolarski dębowy: 2 x Deski dębowe + 2 x Patyk (ułożenie: PP / SS; P = Deski dębowe, S = Patyk)">
-
-2 x Deski dębowe + 2 x Patyk (z kształtem). Nazwa przepisu: `oak_carpenter_table`. Długi na dwa bloki. PPM deskami w lewą część blatu - deski na stół; PPM w wyrób na prawej części - schody, półbloki, płoty, furtki (Shift - ile się da).
-
-### Stół stolarski brzozowy
-
-<img src="przepisy/birch_carpenter_table.png" alt="Stół stolarski brzozowy: 2 x Deski brzozowe + 2 x Patyk (ułożenie: PP / SS; P = Deski brzozowe, S = Patyk)">
-
-2 x Deski brzozowe + 2 x Patyk (z kształtem). Nazwa przepisu: `birch_carpenter_table`. Długi na dwa bloki. PPM deskami w lewą część blatu - deski na stół; PPM w wyrób na prawej części - schody, półbloki, płoty, furtki (Shift - ile się da).
-
-### Stół stolarski z ciemnego drewna
-
-<img src="przepisy/dark_carpenter_table.png" alt="Stół stolarski z ciemnego drewna: 2 x Ciemne deski + 2 x Patyk (ułożenie: PP / SS; P = Ciemne deski, S = Patyk)">
-
-2 x Ciemne deski + 2 x Patyk (z kształtem). Nazwa przepisu: `dark_carpenter_table`. Długi na dwa bloki. PPM deskami w lewą część blatu - deski na stół; PPM w wyrób na prawej części - schody, półbloki, płoty, furtki (Shift - ile się da).
-
-### Stół stolarski jabłoniowy
-
-<img src="przepisy/jablon_carpenter_table.png" alt="Stół stolarski jabłoniowy: 2 x Deski jabłoniowe + 2 x Patyk (ułożenie: PP / SS; P = Deski jabłoniowe, S = Patyk)">
-
-2 x Deski jabłoniowe + 2 x Patyk (z kształtem). Nazwa przepisu: `jablon_carpenter_table`. Długi na dwa bloki. PPM deskami w lewą część blatu - deski na stół; PPM w wyrób na prawej części - schody, półbloki, płoty, furtki (Shift - ile się da).
-
-### Stół stolarski olchowy
-
-<img src="przepisy/olcha_carpenter_table.png" alt="Stół stolarski olchowy: 2 x Deski olchowe + 2 x Patyk (ułożenie: PP / SS; P = Deski olchowe, S = Patyk)">
-
-2 x Deski olchowe + 2 x Patyk (z kształtem). Nazwa przepisu: `olcha_carpenter_table`. Długi na dwa bloki. PPM deskami w lewą część blatu - deski na stół; PPM w wyrób na prawej części - schody, półbloki, płoty, furtki (Shift - ile się da).
-
-### Stół stolarski wierzbowy
-
-<img src="przepisy/wierzba_carpenter_table.png" alt="Stół stolarski wierzbowy: 2 x Deski wierzbowe + 2 x Patyk (ułożenie: PP / SS; P = Deski wierzbowe, S = Patyk)">
-
-2 x Deski wierzbowe + 2 x Patyk (z kształtem). Nazwa przepisu: `wierzba_carpenter_table`. Długi na dwa bloki. PPM deskami w lewą część blatu - deski na stół; PPM w wyrób na prawej części - schody, półbloki, płoty, furtki (Shift - ile się da).
-
-### Stół stolarski z akacji
-
-<img src="przepisy/acacia_carpenter_table.png" alt="Stół stolarski z akacji: 2 x Deski akacji + 2 x Patyk (ułożenie: PP / SS; P = Deski akacji, S = Patyk)">
-
-2 x Deski akacji + 2 x Patyk (z kształtem). Nazwa przepisu: `acacia_carpenter_table`. Długi na dwa bloki. PPM deskami w lewą część blatu - deski na stół; PPM w wyrób na prawej części - schody, półbloki, płoty, furtki (Shift - ile się da).
-
-### Stół stolarski z cypryśnika
-
-<img src="przepisy/bald_cypress_carpenter_table.png" alt="Stół stolarski z cypryśnika: 2 x Deski cypryśnika + 2 x Patyk (ułożenie: PP / SS; P = Deski cypryśnika, S = Patyk)">
-
-2 x Deski cypryśnika + 2 x Patyk (z kształtem). Nazwa przepisu: `bald_cypress_carpenter_table`. Długi na dwa bloki. PPM deskami w lewą część blatu - deski na stół; PPM w wyrób na prawej części - schody, półbloki, płoty, furtki (Shift - ile się da).
-
-### Stół stolarski wiśniowy
-
-<img src="przepisy/cherry_carpenter_table.png" alt="Stół stolarski wiśniowy: 2 x Deski wiśni + 2 x Patyk (ułożenie: PP / SS; P = Deski wiśni, S = Patyk)">
-
-2 x Deski wiśni + 2 x Patyk (z kształtem). Nazwa przepisu: `cherry_carpenter_table`. Długi na dwa bloki. PPM deskami w lewą część blatu - deski na stół; PPM w wyrób na prawej części - schody, półbloki, płoty, furtki (Shift - ile się da).
-
-### Stół stolarski klonowy
-
-<img src="przepisy/maple_carpenter_table.png" alt="Stół stolarski klonowy: 2 x Deski klonowe + 2 x Patyk (ułożenie: PP / SS; P = Deski klonowe, S = Patyk)">
-
-2 x Deski klonowe + 2 x Patyk (z kształtem). Nazwa przepisu: `maple_carpenter_table`. Długi na dwa bloki. PPM deskami w lewą część blatu - deski na stół; PPM w wyrób na prawej części - schody, półbloki, płoty, furtki (Shift - ile się da).
-
-### Stół stolarski z kosodrzewiny
-
-<img src="przepisy/mugo_carpenter_table.png" alt="Stół stolarski z kosodrzewiny: 2 x Deski z kosodrzewiny + 2 x Patyk (ułożenie: PP / SS; P = Deski z kosodrzewiny, S = Patyk)">
-
-2 x Deski z kosodrzewiny + 2 x Patyk (z kształtem). Nazwa przepisu: `mugo_carpenter_table`. Długi na dwa bloki. PPM deskami w lewą część blatu - deski na stół; PPM w wyrób na prawej części - schody, półbloki, płoty, furtki (Shift - ile się da).
-
-### Stół stolarski oliwkowy
-
-<img src="przepisy/olive_carpenter_table.png" alt="Stół stolarski oliwkowy: 2 x Deski oliwkowe + 2 x Patyk (ułożenie: PP / SS; P = Deski oliwkowe, S = Patyk)">
-
-2 x Deski oliwkowe + 2 x Patyk (z kształtem). Nazwa przepisu: `olive_carpenter_table`. Długi na dwa bloki. PPM deskami w lewą część blatu - deski na stół; PPM w wyrób na prawej części - schody, półbloki, płoty, furtki (Shift - ile się da).
-
-### Stół stolarski eukaliptusowy
-
-<img src="przepisy/rainbow_eucalyptus_carpenter_table.png" alt="Stół stolarski eukaliptusowy: 2 x Deski eukaliptusowe + 2 x Patyk (ułożenie: PP / SS; P = Deski eukaliptusowe, S = Patyk)">
-
-2 x Deski eukaliptusowe + 2 x Patyk (z kształtem). Nazwa przepisu: `rainbow_eucalyptus_carpenter_table`. Długi na dwa bloki. PPM deskami w lewą część blatu - deski na stół; PPM w wyrób na prawej części - schody, półbloki, płoty, furtki (Shift - ile się da).
-
-### Stół stolarski sekwojowy
-
-<img src="przepisy/sequoia_carpenter_table.png" alt="Stół stolarski sekwojowy: 2 x Deski sekwojowe + 2 x Patyk (ułożenie: PP / SS; P = Deski sekwojowe, S = Patyk)">
-
-2 x Deski sekwojowe + 2 x Patyk (z kształtem). Nazwa przepisu: `sequoia_carpenter_table`. Długi na dwa bloki. PPM deskami w lewą część blatu - deski na stół; PPM w wyrób na prawej części - schody, półbloki, płoty, furtki (Shift - ile się da).
-
-### Stół stolarski miłorzębowy
-
-<img src="przepisy/ginkgo_carpenter_table.png" alt="Stół stolarski miłorzębowy: 2 x Deski miłorzębowe + 2 x Patyk (ułożenie: PP / SS; P = Deski miłorzębowe, S = Patyk)">
-
-2 x Deski miłorzębowe + 2 x Patyk (z kształtem). Nazwa przepisu: `ginkgo_carpenter_table`. Długi na dwa bloki. PPM deskami w lewą część blatu - deski na stół; PPM w wyrób na prawej części - schody, półbloki, płoty, furtki (Shift - ile się da).
-
-### Stół stolarski jakarandowy
-
-<img src="przepisy/jacaranda_carpenter_table.png" alt="Stół stolarski jakarandowy: 2 x Deski jakarandowe + 2 x Patyk (ułożenie: PP / SS; P = Deski jakarandowe, S = Patyk)">
-
-2 x Deski jakarandowe + 2 x Patyk (z kształtem). Nazwa przepisu: `jacaranda_carpenter_table`. Długi na dwa bloki. PPM deskami w lewą część blatu - deski na stół; PPM w wyrób na prawej części - schody, półbloki, płoty, furtki (Shift - ile się da).
 
 ### Opał — dąb x4
 
@@ -538,6 +298,12 @@ Wersja gry **0.98.0** - 162 przepisów. Wytwarza się w ekwipunku (**E**): siatk
 
 3 x Tynk wapienny + 1 x Glina (bez kształtu). Nazwa przepisu: `ochre_plaster`. Ciepły, żółty - zabarwia odbite światło.
 
+### Tynk ochrowy x4
+
+<img src="przepisy/ochre_plaster_ochre.png" alt="Tynk ochrowy x4: 3 x Tynk wapienny + 1 x Grudka żółtej ochry (obojętne gdzie)">
+
+3 x Tynk wapienny + 1 x Grudka żółtej ochry (bez kształtu). Nazwa przepisu: `ochre_plaster_ochre`. Z grudką żółtej ochry zamiast gliny.
+
 ### Terakota x4
 
 <img src="przepisy/terracotta.png" alt="Terakota x4: 4 x Glina (ułożenie: CC / CC; C = Glina)">
@@ -566,13 +332,34 @@ Wersja gry **0.98.0** - 162 przepisów. Wytwarza się w ekwipunku (**E**): siatk
 1 x Mech (bez kształtu). Nazwa przepisu: `moss_carpet`.
 
 
+## Jedzenie i nasiona
+
+### Kubek ziół na sen
+
+<img src="przepisy/brew_calm.png" alt="Kubek ziół na sen: 1 x Gliniany kubek + 2 x zioło na sen (kwiat lipy, bukiet lawendy) (obojętne gdzie)">
+
+1 x Gliniany kubek + 2 x zioło na sen (kwiat lipy, bukiet lawendy) (bez kształtu). Nazwa przepisu: `brew_calm`. Przytrzymaj PPM na płonącym ognisku - powstanie napar. Najbliższy sen będzie głębszy.
+
+### Kubek ziół leczniczych
+
+<img src="przepisy/brew_heal.png" alt="Kubek ziół leczniczych: 1 x Gliniany kubek + 2 x zioło lecznicze (rumianek, babka, liście szałwii, kwiat nagietka) (obojętne gdzie)">
+
+1 x Gliniany kubek + 2 x zioło lecznicze (rumianek, babka, liście szałwii, kwiat nagietka) (bez kształtu). Nazwa przepisu: `brew_heal`. Przytrzymaj PPM na płonącym ognisku - powstanie napar. Stłuczona noga goi się szybciej.
+
+### Kubek ziół wzmacniających
+
+<img src="przepisy/brew_vigor.png" alt="Kubek ziół wzmacniających: 1 x Gliniany kubek + 2 x zioło wzmacniające (pokrzywa, nasiona gorczycy) (obojętne gdzie)">
+
+1 x Gliniany kubek + 2 x zioło wzmacniające (pokrzywa, nasiona gorczycy) (bez kształtu). Nazwa przepisu: `brew_vigor`. Przytrzymaj PPM na płonącym ognisku - powstanie napar. Mniej się męczysz i sprawniej pracujesz.
+
+
 ## Światło
 
 ### Pochodnia x4
 
-<img src="przepisy/torch.png" alt="Pochodnia x4: 1 x Patyk + 1 x Żywica (obojętne gdzie)">
+<img src="przepisy/torch.png" alt="Pochodnia x4: 1 x Patyk + 1 x żywica albo oliwki (obojętne gdzie)">
 
-1 x Patyk + 1 x Żywica (bez kształtu). Nazwa przepisu: `torch`. Żywicę zbierz PPM z pnia sosny. Pochodnię postaw na podłożu albo na ścianie.
+1 x Patyk + 1 x żywica albo oliwki (bez kształtu). Nazwa przepisu: `torch`. Żywicę zbierz PPM z pnia sosny, oliwki - z liści oliwki. Pochodnię postaw na podłożu albo na ścianie.
 
 ### Pochodnia biała
 
@@ -672,9 +459,9 @@ Wersja gry **0.98.0** - 162 przepisów. Wytwarza się w ekwipunku (**E**): siatk
 
 ### Lampa x2
 
-<img src="przepisy/lamp.png" alt="Lampa x2: 1 x Lepidolit + 1 x Żywica + 1 x Kora brzozowa (obojętne gdzie)">
+<img src="przepisy/lamp.png" alt="Lampa x2: 1 x Lepidolit + 1 x żywica albo oliwki + 1 x Kora brzozowa (obojętne gdzie)">
 
-1 x Lepidolit + 1 x Żywica + 1 x Kora brzozowa (bez kształtu). Nazwa przepisu: `lamp`. Lepidolit z gór, żywica z sosny, kora z brzozy (siekierą).
+1 x Lepidolit + 1 x żywica albo oliwki + 1 x Kora brzozowa (bez kształtu). Nazwa przepisu: `lamp`. Lepidolit z gór, żywica z sosny (albo oliwki), kora z brzozy (siekierą).
 
 ### Czerwona lampa
 
@@ -684,21 +471,21 @@ Wersja gry **0.98.0** - 162 przepisów. Wytwarza się w ekwipunku (**E**): siatk
 
 ### Zielona lampa
 
-<img src="przepisy/lamp_green.png" alt="Zielona lampa: 1 x Lampa + 1 x coś zielonego (koniczyna, pokrzywa, paproć) (obojętne gdzie)">
+<img src="przepisy/lamp_green.png" alt="Zielona lampa: 1 x Lampa + 1 x coś zielonego (koniczyna, pokrzywa, paproć, liście szałwii, plecha porostu oliwkowego i inne) (obojętne gdzie)">
 
-1 x Lampa + 1 x coś zielonego (koniczyna, pokrzywa, paproć) (bez kształtu). Nazwa przepisu: `lamp_green`.
+1 x Lampa + 1 x coś zielonego (koniczyna, pokrzywa, paproć, liście szałwii, plecha porostu oliwkowego i inne) (bez kształtu). Nazwa przepisu: `lamp_green`.
 
 ### Niebieska lampa
 
-<img src="przepisy/lamp_blue.png" alt="Niebieska lampa: 1 x Lampa + 1 x coś niebieskiego (chaber, borówki, liście indygowca) (obojętne gdzie)">
+<img src="przepisy/lamp_blue.png" alt="Niebieska lampa: 1 x Lampa + 1 x coś niebieskiego (chaber, borówki, kwiat mikołajka, kwiat barwinka, liście indygowca) (obojętne gdzie)">
 
-1 x Lampa + 1 x coś niebieskiego (chaber, borówki, liście indygowca) (bez kształtu). Nazwa przepisu: `lamp_blue`.
+1 x Lampa + 1 x coś niebieskiego (chaber, borówki, kwiat mikołajka, kwiat barwinka, liście indygowca) (bez kształtu). Nazwa przepisu: `lamp_blue`.
 
 ### Fioletowa lampa
 
-<img src="przepisy/lamp_purple.png" alt="Fioletowa lampa: 1 x Lampa + 1 x coś fioletowego (jeżyny, wrzos, krokus) (obojętne gdzie)">
+<img src="przepisy/lamp_purple.png" alt="Fioletowa lampa: 1 x Lampa + 1 x coś fioletowego (jeżyny, wrzos, krokus, bukiet lawendy, kwiat dzwonka) (obojętne gdzie)">
 
-1 x Lampa + 1 x coś fioletowego (jeżyny, wrzos, krokus) (bez kształtu). Nazwa przepisu: `lamp_purple`.
+1 x Lampa + 1 x coś fioletowego (jeżyny, wrzos, krokus, bukiet lawendy, kwiat dzwonka) (bez kształtu). Nazwa przepisu: `lamp_purple`.
 
 ### Czerwona lampa
 
@@ -713,7 +500,247 @@ Wersja gry **0.98.0** - 162 przepisów. Wytwarza się w ekwipunku (**E**): siatk
 1 x Niebieska lampa + 1 x Bazie (bez kształtu). Nazwa przepisu: `wierzba_srebrna_lampa`. Bazie zdejmują z lampy niebieski kolor.
 
 
-## Ozdoby
+## Meble i ozdoby
+
+### Skrzynia dębowa
+
+<img src="przepisy/chest.png" alt="Skrzynia dębowa: 4 x Deski dębowe (ułożenie: PP / PP; P = Deski dębowe)">
+
+4 x Deski dębowe (z kształtem). Nazwa przepisu: `chest`. Cztery deski jednego drzewa - skrzynia z tego drewna. PPM na skrzyni: otwórz - 4 x 3 przegródki, w każdej dwie warstwy (najpierw zdejmij wierzch).
+
+### Skrzynia świerkowa
+
+<img src="przepisy/spruce_chest.png" alt="Skrzynia świerkowa: 4 x Deski świerkowe (ułożenie: PP / PP; P = Deski świerkowe)">
+
+4 x Deski świerkowe (z kształtem). Nazwa przepisu: `spruce_chest`. Cztery deski jednego drzewa - skrzynia z tego drewna. PPM na skrzyni: otwórz - 4 x 3 przegródki, w każdej dwie warstwy (najpierw zdejmij wierzch).
+
+### Skrzynia sosnowa
+
+<img src="przepisy/pine_chest.png" alt="Skrzynia sosnowa: 4 x Deski sosnowe (ułożenie: PP / PP; P = Deski sosnowe)">
+
+4 x Deski sosnowe (z kształtem). Nazwa przepisu: `pine_chest`. Cztery deski jednego drzewa - skrzynia z tego drewna. PPM na skrzyni: otwórz - 4 x 3 przegródki, w każdej dwie warstwy (najpierw zdejmij wierzch).
+
+### Skrzynia bukowa
+
+<img src="przepisy/beech_chest.png" alt="Skrzynia bukowa: 4 x Deski bukowe (ułożenie: PP / PP; P = Deski bukowe)">
+
+4 x Deski bukowe (z kształtem). Nazwa przepisu: `beech_chest`. Cztery deski jednego drzewa - skrzynia z tego drewna. PPM na skrzyni: otwórz - 4 x 3 przegródki, w każdej dwie warstwy (najpierw zdejmij wierzch).
+
+### Skrzynia lipowa
+
+<img src="przepisy/linden_chest.png" alt="Skrzynia lipowa: 4 x Deski lipowe (ułożenie: PP / PP; P = Deski lipowe)">
+
+4 x Deski lipowe (z kształtem). Nazwa przepisu: `linden_chest`. Cztery deski jednego drzewa - skrzynia z tego drewna. PPM na skrzyni: otwórz - 4 x 3 przegródki, w każdej dwie warstwy (najpierw zdejmij wierzch).
+
+### Skrzynia brzozowa
+
+<img src="przepisy/birch_chest.png" alt="Skrzynia brzozowa: 4 x Deski brzozowe (ułożenie: PP / PP; P = Deski brzozowe)">
+
+4 x Deski brzozowe (z kształtem). Nazwa przepisu: `birch_chest`. Cztery deski jednego drzewa - skrzynia z tego drewna. PPM na skrzyni: otwórz - 4 x 3 przegródki, w każdej dwie warstwy (najpierw zdejmij wierzch).
+
+### Ciemna skrzynia
+
+<img src="przepisy/dark_chest.png" alt="Ciemna skrzynia: 4 x Ciemne deski (ułożenie: PP / PP; P = Ciemne deski)">
+
+4 x Ciemne deski (z kształtem). Nazwa przepisu: `dark_chest`. Cztery deski jednego drzewa - skrzynia z tego drewna. PPM na skrzyni: otwórz - 4 x 3 przegródki, w każdej dwie warstwy (najpierw zdejmij wierzch).
+
+### Skrzynia jabłoniowa
+
+<img src="przepisy/jablon_chest.png" alt="Skrzynia jabłoniowa: 4 x Deski jabłoniowe (ułożenie: PP / PP; P = Deski jabłoniowe)">
+
+4 x Deski jabłoniowe (z kształtem). Nazwa przepisu: `jablon_chest`. Cztery deski jednego drzewa - skrzynia z tego drewna. PPM na skrzyni: otwórz - 4 x 3 przegródki, w każdej dwie warstwy (najpierw zdejmij wierzch).
+
+### Skrzynia olchowa
+
+<img src="przepisy/olcha_chest.png" alt="Skrzynia olchowa: 4 x Deski olchowe (ułożenie: PP / PP; P = Deski olchowe)">
+
+4 x Deski olchowe (z kształtem). Nazwa przepisu: `olcha_chest`. Cztery deski jednego drzewa - skrzynia z tego drewna. PPM na skrzyni: otwórz - 4 x 3 przegródki, w każdej dwie warstwy (najpierw zdejmij wierzch).
+
+### Skrzynia wierzbowa
+
+<img src="przepisy/wierzba_chest.png" alt="Skrzynia wierzbowa: 4 x Deski wierzbowe (ułożenie: PP / PP; P = Deski wierzbowe)">
+
+4 x Deski wierzbowe (z kształtem). Nazwa przepisu: `wierzba_chest`. Cztery deski jednego drzewa - skrzynia z tego drewna. PPM na skrzyni: otwórz - 4 x 3 przegródki, w każdej dwie warstwy (najpierw zdejmij wierzch).
+
+### Skrzynia z akacji
+
+<img src="przepisy/acacia_chest.png" alt="Skrzynia z akacji: 4 x Deski akacji (ułożenie: PP / PP; P = Deski akacji)">
+
+4 x Deski akacji (z kształtem). Nazwa przepisu: `acacia_chest`. Cztery deski jednego drzewa - skrzynia z tego drewna. PPM na skrzyni: otwórz - 4 x 3 przegródki, w każdej dwie warstwy (najpierw zdejmij wierzch).
+
+### Skrzynia z cypryśnika
+
+<img src="przepisy/bald_cypress_chest.png" alt="Skrzynia z cypryśnika: 4 x Deski cypryśnika (ułożenie: PP / PP; P = Deski cypryśnika)">
+
+4 x Deski cypryśnika (z kształtem). Nazwa przepisu: `bald_cypress_chest`. Cztery deski jednego drzewa - skrzynia z tego drewna. PPM na skrzyni: otwórz - 4 x 3 przegródki, w każdej dwie warstwy (najpierw zdejmij wierzch).
+
+### Skrzynia wiśniowa
+
+<img src="przepisy/cherry_chest.png" alt="Skrzynia wiśniowa: 4 x Deski wiśni (ułożenie: PP / PP; P = Deski wiśni)">
+
+4 x Deski wiśni (z kształtem). Nazwa przepisu: `cherry_chest`. Cztery deski jednego drzewa - skrzynia z tego drewna. PPM na skrzyni: otwórz - 4 x 3 przegródki, w każdej dwie warstwy (najpierw zdejmij wierzch).
+
+### Skrzynia klonowa
+
+<img src="przepisy/maple_chest.png" alt="Skrzynia klonowa: 4 x Deski klonowe (ułożenie: PP / PP; P = Deski klonowe)">
+
+4 x Deski klonowe (z kształtem). Nazwa przepisu: `maple_chest`. Cztery deski jednego drzewa - skrzynia z tego drewna. PPM na skrzyni: otwórz - 4 x 3 przegródki, w każdej dwie warstwy (najpierw zdejmij wierzch).
+
+### Skrzynia z kosodrzewiny
+
+<img src="przepisy/mugo_chest.png" alt="Skrzynia z kosodrzewiny: 4 x Deski z kosodrzewiny (ułożenie: PP / PP; P = Deski z kosodrzewiny)">
+
+4 x Deski z kosodrzewiny (z kształtem). Nazwa przepisu: `mugo_chest`. Cztery deski jednego drzewa - skrzynia z tego drewna. PPM na skrzyni: otwórz - 4 x 3 przegródki, w każdej dwie warstwy (najpierw zdejmij wierzch).
+
+### Skrzynia oliwkowa
+
+<img src="przepisy/olive_chest.png" alt="Skrzynia oliwkowa: 4 x Deski oliwkowe (ułożenie: PP / PP; P = Deski oliwkowe)">
+
+4 x Deski oliwkowe (z kształtem). Nazwa przepisu: `olive_chest`. Cztery deski jednego drzewa - skrzynia z tego drewna. PPM na skrzyni: otwórz - 4 x 3 przegródki, w każdej dwie warstwy (najpierw zdejmij wierzch).
+
+### Skrzynia eukaliptusowa
+
+<img src="przepisy/rainbow_eucalyptus_chest.png" alt="Skrzynia eukaliptusowa: 4 x Deski eukaliptusowe (ułożenie: PP / PP; P = Deski eukaliptusowe)">
+
+4 x Deski eukaliptusowe (z kształtem). Nazwa przepisu: `rainbow_eucalyptus_chest`. Cztery deski jednego drzewa - skrzynia z tego drewna. PPM na skrzyni: otwórz - 4 x 3 przegródki, w każdej dwie warstwy (najpierw zdejmij wierzch).
+
+### Skrzynia sekwojowa
+
+<img src="przepisy/sequoia_chest.png" alt="Skrzynia sekwojowa: 4 x Deski sekwojowe (ułożenie: PP / PP; P = Deski sekwojowe)">
+
+4 x Deski sekwojowe (z kształtem). Nazwa przepisu: `sequoia_chest`. Cztery deski jednego drzewa - skrzynia z tego drewna. PPM na skrzyni: otwórz - 4 x 3 przegródki, w każdej dwie warstwy (najpierw zdejmij wierzch).
+
+### Skrzynia miłorzębowa
+
+<img src="przepisy/ginkgo_chest.png" alt="Skrzynia miłorzębowa: 4 x Deski miłorzębowe (ułożenie: PP / PP; P = Deski miłorzębowe)">
+
+4 x Deski miłorzębowe (z kształtem). Nazwa przepisu: `ginkgo_chest`. Cztery deski jednego drzewa - skrzynia z tego drewna. PPM na skrzyni: otwórz - 4 x 3 przegródki, w każdej dwie warstwy (najpierw zdejmij wierzch).
+
+### Skrzynia jakarandowa
+
+<img src="przepisy/jacaranda_chest.png" alt="Skrzynia jakarandowa: 4 x Deski jakarandowe (ułożenie: PP / PP; P = Deski jakarandowe)">
+
+4 x Deski jakarandowe (z kształtem). Nazwa przepisu: `jacaranda_chest`. Cztery deski jednego drzewa - skrzynia z tego drewna. PPM na skrzyni: otwórz - 4 x 3 przegródki, w każdej dwie warstwy (najpierw zdejmij wierzch).
+
+### Stół stolarski świerkowy
+
+<img src="przepisy/spruce_carpenter_table.png" alt="Stół stolarski świerkowy: 2 x Deski świerkowe + 2 x Patyk (ułożenie: PP / SS; P = Deski świerkowe, S = Patyk)">
+
+2 x Deski świerkowe + 2 x Patyk (z kształtem). Nazwa przepisu: `spruce_carpenter_table`. Długi na dwa bloki. PPM deskami w lewą część blatu - deski na stół; PPM w wyrób na prawej części - schody, półbloki, płoty, furtki (Shift - ile się da).
+
+### Stół stolarski sosnowy
+
+<img src="przepisy/pine_carpenter_table.png" alt="Stół stolarski sosnowy: 2 x Deski sosnowe + 2 x Patyk (ułożenie: PP / SS; P = Deski sosnowe, S = Patyk)">
+
+2 x Deski sosnowe + 2 x Patyk (z kształtem). Nazwa przepisu: `pine_carpenter_table`. Długi na dwa bloki. PPM deskami w lewą część blatu - deski na stół; PPM w wyrób na prawej części - schody, półbloki, płoty, furtki (Shift - ile się da).
+
+### Stół stolarski bukowy
+
+<img src="przepisy/beech_carpenter_table.png" alt="Stół stolarski bukowy: 2 x Deski bukowe + 2 x Patyk (ułożenie: PP / SS; P = Deski bukowe, S = Patyk)">
+
+2 x Deski bukowe + 2 x Patyk (z kształtem). Nazwa przepisu: `beech_carpenter_table`. Długi na dwa bloki. PPM deskami w lewą część blatu - deski na stół; PPM w wyrób na prawej części - schody, półbloki, płoty, furtki (Shift - ile się da).
+
+### Stół stolarski lipowy
+
+<img src="przepisy/linden_carpenter_table.png" alt="Stół stolarski lipowy: 2 x Deski lipowe + 2 x Patyk (ułożenie: PP / SS; P = Deski lipowe, S = Patyk)">
+
+2 x Deski lipowe + 2 x Patyk (z kształtem). Nazwa przepisu: `linden_carpenter_table`. Długi na dwa bloki. PPM deskami w lewą część blatu - deski na stół; PPM w wyrób na prawej części - schody, półbloki, płoty, furtki (Shift - ile się da).
+
+### Stół stolarski dębowy
+
+<img src="przepisy/oak_carpenter_table.png" alt="Stół stolarski dębowy: 2 x Deski dębowe + 2 x Patyk (ułożenie: PP / SS; P = Deski dębowe, S = Patyk)">
+
+2 x Deski dębowe + 2 x Patyk (z kształtem). Nazwa przepisu: `oak_carpenter_table`. Długi na dwa bloki. PPM deskami w lewą część blatu - deski na stół; PPM w wyrób na prawej części - schody, półbloki, płoty, furtki (Shift - ile się da).
+
+### Stół stolarski brzozowy
+
+<img src="przepisy/birch_carpenter_table.png" alt="Stół stolarski brzozowy: 2 x Deski brzozowe + 2 x Patyk (ułożenie: PP / SS; P = Deski brzozowe, S = Patyk)">
+
+2 x Deski brzozowe + 2 x Patyk (z kształtem). Nazwa przepisu: `birch_carpenter_table`. Długi na dwa bloki. PPM deskami w lewą część blatu - deski na stół; PPM w wyrób na prawej części - schody, półbloki, płoty, furtki (Shift - ile się da).
+
+### Stół stolarski z ciemnego drewna
+
+<img src="przepisy/dark_carpenter_table.png" alt="Stół stolarski z ciemnego drewna: 2 x Ciemne deski + 2 x Patyk (ułożenie: PP / SS; P = Ciemne deski, S = Patyk)">
+
+2 x Ciemne deski + 2 x Patyk (z kształtem). Nazwa przepisu: `dark_carpenter_table`. Długi na dwa bloki. PPM deskami w lewą część blatu - deski na stół; PPM w wyrób na prawej części - schody, półbloki, płoty, furtki (Shift - ile się da).
+
+### Stół stolarski jabłoniowy
+
+<img src="przepisy/jablon_carpenter_table.png" alt="Stół stolarski jabłoniowy: 2 x Deski jabłoniowe + 2 x Patyk (ułożenie: PP / SS; P = Deski jabłoniowe, S = Patyk)">
+
+2 x Deski jabłoniowe + 2 x Patyk (z kształtem). Nazwa przepisu: `jablon_carpenter_table`. Długi na dwa bloki. PPM deskami w lewą część blatu - deski na stół; PPM w wyrób na prawej części - schody, półbloki, płoty, furtki (Shift - ile się da).
+
+### Stół stolarski olchowy
+
+<img src="przepisy/olcha_carpenter_table.png" alt="Stół stolarski olchowy: 2 x Deski olchowe + 2 x Patyk (ułożenie: PP / SS; P = Deski olchowe, S = Patyk)">
+
+2 x Deski olchowe + 2 x Patyk (z kształtem). Nazwa przepisu: `olcha_carpenter_table`. Długi na dwa bloki. PPM deskami w lewą część blatu - deski na stół; PPM w wyrób na prawej części - schody, półbloki, płoty, furtki (Shift - ile się da).
+
+### Stół stolarski wierzbowy
+
+<img src="przepisy/wierzba_carpenter_table.png" alt="Stół stolarski wierzbowy: 2 x Deski wierzbowe + 2 x Patyk (ułożenie: PP / SS; P = Deski wierzbowe, S = Patyk)">
+
+2 x Deski wierzbowe + 2 x Patyk (z kształtem). Nazwa przepisu: `wierzba_carpenter_table`. Długi na dwa bloki. PPM deskami w lewą część blatu - deski na stół; PPM w wyrób na prawej części - schody, półbloki, płoty, furtki (Shift - ile się da).
+
+### Stół stolarski z akacji
+
+<img src="przepisy/acacia_carpenter_table.png" alt="Stół stolarski z akacji: 2 x Deski akacji + 2 x Patyk (ułożenie: PP / SS; P = Deski akacji, S = Patyk)">
+
+2 x Deski akacji + 2 x Patyk (z kształtem). Nazwa przepisu: `acacia_carpenter_table`. Długi na dwa bloki. PPM deskami w lewą część blatu - deski na stół; PPM w wyrób na prawej części - schody, półbloki, płoty, furtki (Shift - ile się da).
+
+### Stół stolarski z cypryśnika
+
+<img src="przepisy/bald_cypress_carpenter_table.png" alt="Stół stolarski z cypryśnika: 2 x Deski cypryśnika + 2 x Patyk (ułożenie: PP / SS; P = Deski cypryśnika, S = Patyk)">
+
+2 x Deski cypryśnika + 2 x Patyk (z kształtem). Nazwa przepisu: `bald_cypress_carpenter_table`. Długi na dwa bloki. PPM deskami w lewą część blatu - deski na stół; PPM w wyrób na prawej części - schody, półbloki, płoty, furtki (Shift - ile się da).
+
+### Stół stolarski wiśniowy
+
+<img src="przepisy/cherry_carpenter_table.png" alt="Stół stolarski wiśniowy: 2 x Deski wiśni + 2 x Patyk (ułożenie: PP / SS; P = Deski wiśni, S = Patyk)">
+
+2 x Deski wiśni + 2 x Patyk (z kształtem). Nazwa przepisu: `cherry_carpenter_table`. Długi na dwa bloki. PPM deskami w lewą część blatu - deski na stół; PPM w wyrób na prawej części - schody, półbloki, płoty, furtki (Shift - ile się da).
+
+### Stół stolarski klonowy
+
+<img src="przepisy/maple_carpenter_table.png" alt="Stół stolarski klonowy: 2 x Deski klonowe + 2 x Patyk (ułożenie: PP / SS; P = Deski klonowe, S = Patyk)">
+
+2 x Deski klonowe + 2 x Patyk (z kształtem). Nazwa przepisu: `maple_carpenter_table`. Długi na dwa bloki. PPM deskami w lewą część blatu - deski na stół; PPM w wyrób na prawej części - schody, półbloki, płoty, furtki (Shift - ile się da).
+
+### Stół stolarski z kosodrzewiny
+
+<img src="przepisy/mugo_carpenter_table.png" alt="Stół stolarski z kosodrzewiny: 2 x Deski z kosodrzewiny + 2 x Patyk (ułożenie: PP / SS; P = Deski z kosodrzewiny, S = Patyk)">
+
+2 x Deski z kosodrzewiny + 2 x Patyk (z kształtem). Nazwa przepisu: `mugo_carpenter_table`. Długi na dwa bloki. PPM deskami w lewą część blatu - deski na stół; PPM w wyrób na prawej części - schody, półbloki, płoty, furtki (Shift - ile się da).
+
+### Stół stolarski oliwkowy
+
+<img src="przepisy/olive_carpenter_table.png" alt="Stół stolarski oliwkowy: 2 x Deski oliwkowe + 2 x Patyk (ułożenie: PP / SS; P = Deski oliwkowe, S = Patyk)">
+
+2 x Deski oliwkowe + 2 x Patyk (z kształtem). Nazwa przepisu: `olive_carpenter_table`. Długi na dwa bloki. PPM deskami w lewą część blatu - deski na stół; PPM w wyrób na prawej części - schody, półbloki, płoty, furtki (Shift - ile się da).
+
+### Stół stolarski eukaliptusowy
+
+<img src="przepisy/rainbow_eucalyptus_carpenter_table.png" alt="Stół stolarski eukaliptusowy: 2 x Deski eukaliptusowe + 2 x Patyk (ułożenie: PP / SS; P = Deski eukaliptusowe, S = Patyk)">
+
+2 x Deski eukaliptusowe + 2 x Patyk (z kształtem). Nazwa przepisu: `rainbow_eucalyptus_carpenter_table`. Długi na dwa bloki. PPM deskami w lewą część blatu - deski na stół; PPM w wyrób na prawej części - schody, półbloki, płoty, furtki (Shift - ile się da).
+
+### Stół stolarski sekwojowy
+
+<img src="przepisy/sequoia_carpenter_table.png" alt="Stół stolarski sekwojowy: 2 x Deski sekwojowe + 2 x Patyk (ułożenie: PP / SS; P = Deski sekwojowe, S = Patyk)">
+
+2 x Deski sekwojowe + 2 x Patyk (z kształtem). Nazwa przepisu: `sequoia_carpenter_table`. Długi na dwa bloki. PPM deskami w lewą część blatu - deski na stół; PPM w wyrób na prawej części - schody, półbloki, płoty, furtki (Shift - ile się da).
+
+### Stół stolarski miłorzębowy
+
+<img src="przepisy/ginkgo_carpenter_table.png" alt="Stół stolarski miłorzębowy: 2 x Deski miłorzębowe + 2 x Patyk (ułożenie: PP / SS; P = Deski miłorzębowe, S = Patyk)">
+
+2 x Deski miłorzębowe + 2 x Patyk (z kształtem). Nazwa przepisu: `ginkgo_carpenter_table`. Długi na dwa bloki. PPM deskami w lewą część blatu - deski na stół; PPM w wyrób na prawej części - schody, półbloki, płoty, furtki (Shift - ile się da).
+
+### Stół stolarski jakarandowy
+
+<img src="przepisy/jacaranda_carpenter_table.png" alt="Stół stolarski jakarandowy: 2 x Deski jakarandowe + 2 x Patyk (ułożenie: PP / SS; P = Deski jakarandowe, S = Patyk)">
+
+2 x Deski jakarandowe + 2 x Patyk (z kształtem). Nazwa przepisu: `jacaranda_carpenter_table`. Długi na dwa bloki. PPM deskami w lewą część blatu - deski na stół; PPM w wyrób na prawej części - schody, półbloki, płoty, furtki (Shift - ile się da).
 
 ### Słomiana pościel
 
@@ -727,11 +754,17 @@ Wersja gry **0.98.0** - 162 przepisów. Wytwarza się w ekwipunku (**E**): siatk
 
 4 x Wiązka lnu (z kształtem). Nazwa przepisu: `linen_bedding`. Wygodniejsza od słomianej. PPM na ziemi: posłanie. PPM na stelażu łóżka: ścieli łóżko.
 
+### Wianek z kwiatów
+
+<img src="przepisy/flower_wreath.png" alt="Wianek z kwiatów: 4 x kwiat (mak, chaber, rumianek, mniszek, krokus, wrzos i inne) (ułożenie: FF / FF; F = kwiat (mak, chaber, rumianek, mniszek, krokus, wrzos i inne))">
+
+4 x kwiat (mak, chaber, rumianek, mniszek, krokus, wrzos i inne) (z kształtem). Nazwa przepisu: `flower_wreath`. Cztery dowolne kwiaty. Wiesza się na ścianie jak wieniec świerkowy.
+
 ### Wieniec świerkowy
 
-<img src="przepisy/spruce_wreath.png" alt="Wieniec świerkowy: 3 x Igliwie świerka + 1 x szyszka (świerka albo sosny) (ułożenie: NN / NC; N = Igliwie świerka, C = szyszka (świerka albo sosny))">
+<img src="przepisy/spruce_wreath.png" alt="Wieniec świerkowy: 3 x Igliwie świerka + 1 x szyszka (dowolna) (ułożenie: NN / NC; N = Igliwie świerka, C = szyszka (dowolna))">
 
-3 x Igliwie świerka + 1 x szyszka (świerka albo sosny) (z kształtem). Nazwa przepisu: `spruce_wreath`.
+3 x Igliwie świerka + 1 x szyszka (dowolna) (z kształtem). Nazwa przepisu: `spruce_wreath`.
 
 ### Opadłe liście buka x2
 
@@ -780,9 +813,15 @@ Wersja gry **0.98.0** - 162 przepisów. Wytwarza się w ekwipunku (**E**): siatk
 
 ### Słoma
 
-<img src="przepisy/straw.png" alt="Słoma: 2 x trawa (krótka albo wysoka) (obojętne gdzie)">
+<img src="przepisy/straw.png" alt="Słoma: 2 x trawa (krótka, wysoka, wydmowa) albo trzcina (obojętne gdzie)">
 
-2 x trawa (krótka albo wysoka) (bez kształtu). Nazwa przepisu: `straw`. Wysuszona trawa. Cztery sztuki dają słomianą pościel.
+2 x trawa (krótka, wysoka, wydmowa) albo trzcina (bez kształtu). Nazwa przepisu: `straw`. Wysuszona trawa. Cztery sztuki dają słomianą pościel.
+
+### Gliniany kubek x2
+
+<img src="przepisy/clay_cup.png" alt="Gliniany kubek x2: 2 x Glina (obojętne gdzie)">
+
+2 x Glina (bez kształtu). Nazwa przepisu: `clay_cup`. Naczynie na napary. Po wypiciu naparu kubek wraca do ekwipunku.
 
 ### Starter ognia
 
@@ -798,39 +837,51 @@ Wersja gry **0.98.0** - 162 przepisów. Wytwarza się w ekwipunku (**E**): siatk
 
 ### Barwnik żółty
 
-<img src="przepisy/dye_yellow.png" alt="Barwnik żółty: 1 x Mniszek (obojętne gdzie)">
+<img src="przepisy/dye_yellow.png" alt="Barwnik żółty: 1 x coś żółtego (mniszek, bukiet kocanki, nasiona gorczycy, grudka żółtej ochry) (obojętne gdzie)">
 
-1 x Mniszek (bez kształtu). Nazwa przepisu: `dye_yellow`. Barwnikiem kliknij PPM postawioną pochodnię albo połącz go z pochodnią w tej siatce.
+1 x coś żółtego (mniszek, bukiet kocanki, nasiona gorczycy, grudka żółtej ochry) (bez kształtu). Nazwa przepisu: `dye_yellow`. Barwnikiem kliknij PPM postawioną pochodnię albo połącz go z pochodnią w tej siatce.
 
 ### Barwnik biały
 
-<img src="przepisy/dye_white.png" alt="Barwnik biały: 1 x Rumianek (obojętne gdzie)">
+<img src="przepisy/dye_white.png" alt="Barwnik biały: 1 x coś białego (rumianek) (obojętne gdzie)">
 
-1 x Rumianek (bez kształtu). Nazwa przepisu: `dye_white`. Barwnikiem kliknij PPM postawioną pochodnię albo połącz go z pochodnią w tej siatce.
+1 x coś białego (rumianek) (bez kształtu). Nazwa przepisu: `dye_white`. Barwnikiem kliknij PPM postawioną pochodnię albo połącz go z pochodnią w tej siatce.
 
 ### Barwnik zielony
 
-<img src="przepisy/dye_green.png" alt="Barwnik zielony: 1 x coś zielonego (koniczyna, pokrzywa, paproć) (obojętne gdzie)">
+<img src="przepisy/dye_green.png" alt="Barwnik zielony: 1 x coś zielonego (koniczyna, pokrzywa, paproć, liście szałwii, plecha porostu oliwkowego i inne) (obojętne gdzie)">
 
-1 x coś zielonego (koniczyna, pokrzywa, paproć) (bez kształtu). Nazwa przepisu: `dye_green`. Barwnikiem kliknij PPM postawioną pochodnię albo połącz go z pochodnią w tej siatce.
+1 x coś zielonego (koniczyna, pokrzywa, paproć, liście szałwii, plecha porostu oliwkowego i inne) (bez kształtu). Nazwa przepisu: `dye_green`. Barwnikiem kliknij PPM postawioną pochodnię albo połącz go z pochodnią w tej siatce.
 
 ### Barwnik niebieski
 
-<img src="przepisy/dye_blue.png" alt="Barwnik niebieski: 1 x coś niebieskiego (chaber, borówki, liście indygowca) (obojętne gdzie)">
+<img src="przepisy/dye_blue.png" alt="Barwnik niebieski: 1 x coś niebieskiego (chaber, borówki, kwiat mikołajka, kwiat barwinka, liście indygowca) (obojętne gdzie)">
 
-1 x coś niebieskiego (chaber, borówki, liście indygowca) (bez kształtu). Nazwa przepisu: `dye_blue`. Barwnikiem kliknij PPM postawioną pochodnię albo połącz go z pochodnią w tej siatce.
+1 x coś niebieskiego (chaber, borówki, kwiat mikołajka, kwiat barwinka, liście indygowca) (bez kształtu). Nazwa przepisu: `dye_blue`. Barwnikiem kliknij PPM postawioną pochodnię albo połącz go z pochodnią w tej siatce.
 
 ### Barwnik fioletowy
 
-<img src="przepisy/dye_purple.png" alt="Barwnik fioletowy: 1 x coś fioletowego (jeżyny, wrzos, krokus) (obojętne gdzie)">
+<img src="przepisy/dye_purple.png" alt="Barwnik fioletowy: 1 x coś fioletowego (jeżyny, wrzos, krokus, bukiet lawendy, kwiat dzwonka) (obojętne gdzie)">
 
-1 x coś fioletowego (jeżyny, wrzos, krokus) (bez kształtu). Nazwa przepisu: `dye_purple`. Barwnikiem kliknij PPM postawioną pochodnię albo połącz go z pochodnią w tej siatce.
+1 x coś fioletowego (jeżyny, wrzos, krokus, bukiet lawendy, kwiat dzwonka) (bez kształtu). Nazwa przepisu: `dye_purple`. Barwnikiem kliknij PPM postawioną pochodnię albo połącz go z pochodnią w tej siatce.
 
 ### Barwnik brązowy
 
-<img src="przepisy/dye_brown.png" alt="Barwnik brązowy: 1 x Żołądź (obojętne gdzie)">
+<img src="przepisy/dye_brown.png" alt="Barwnik brązowy: 1 x coś brązowego (żołądź, huba) (obojętne gdzie)">
 
-1 x Żołądź (bez kształtu). Nazwa przepisu: `dye_brown`. Barwnikiem kliknij PPM postawioną pochodnię albo połącz go z pochodnią w tej siatce.
+1 x coś brązowego (żołądź, huba) (bez kształtu). Nazwa przepisu: `dye_brown`. Barwnikiem kliknij PPM postawioną pochodnię albo połącz go z pochodnią w tej siatce.
+
+### Barwnik pomarańczowy
+
+<img src="przepisy/dye_orange_plant.png" alt="Barwnik pomarańczowy: 1 x coś pomarańczowego (kwiat nagietka, kwiat cynii) (obojętne gdzie)">
+
+1 x coś pomarańczowego (kwiat nagietka, kwiat cynii) (bez kształtu). Nazwa przepisu: `dye_orange_plant`. Prosto z kwiatów - bez mieszania barwników.
+
+### Barwnik różowy
+
+<img src="przepisy/dye_pink_plant.png" alt="Barwnik różowy: 1 x coś różowego (kwiat piwonii, kwiat zawilca) (obojętne gdzie)">
+
+1 x coś różowego (kwiat piwonii, kwiat zawilca) (bez kształtu). Nazwa przepisu: `dye_pink_plant`. Prosto z kwiatów - bez mieszania barwników.
 
 ### Barwnik pomarańczowy x2
 
@@ -1009,12 +1060,22 @@ Składnik z grupy to dowolna rzecz z listy (np. patyki z desek różnych drzew).
 - **pochodnia (dowolny kolor)**: Pochodnia, Pochodnia biała, Pochodnia pomarańczowa, Pochodnia purpurowa, Pochodnia jasnoniebieska, Pochodnia żółta, Pochodnia limonkowa, Pochodnia różowa, Pochodnia szara, Pochodnia jasnoszara, Pochodnia turkusowa, Pochodnia fioletowa, Pochodnia niebieska, Pochodnia brązowa, Pochodnia zielona, Pochodnia czerwona, Pochodnia czarna
 - **deski (dowolne)**: Deski świerkowe, Deski sosnowe, Deski bukowe, Deski lipowe, Deski dębowe, Deski brzozowe, Deski jabłoniowe, Deski olchowe, Deski wierzbowe, Deski akacji, Deski cypryśnika, Deski wiśni, Deski klonowe, Deski z kosodrzewiny, Deski oliwkowe, Deski eukaliptusowe, Deski sekwojowe, Deski miłorzębowe, Deski jakarandowe
 - **skała (kamień, granit, wapień, piaskowiec, łupek, bazalt)**: Kamień, Granit, Wapień, Piaskowiec, Łupek, Bazalt
-- **szyszka (świerka albo sosny)**: Szyszka świerka, Szyszka sosny
-- **trawa (krótka albo wysoka)**: Krótka trawa, Wysoka trawa
+- **szyszka (dowolna)**: Szyszka świerka, Szyszka sosny, Szyszeczki olchy, Szyszka kosodrzewiny, Szyszka sekwoi
+- **trawa (krótka, wysoka, wydmowa) albo trzcina**: Krótka trawa, Wysoka trawa, Piaskownica (trawa wydmowa), Trzcina
+- **żywica albo oliwki**: Żywica, Oliwki
 - **igliwie (świerka albo sosny)**: Igliwie świerka, Igliwie sosny
 - **opadłe liście (dowolne)**: Opadłe liście buka, Opadłe liście dębu, Opadłe liście jabłoni, Opadłe liście olchy, Opadłe liście wierzby, Opadłe liście klonu
 - **coś czerwonego (mak, truskawki, papryczki chili, wiecha amarantusa, korzeń marzanny)**: Mak, Truskawki, Papryczki chili, Wiecha amarantusa, Korzeń marzanny
-- **coś zielonego (koniczyna, pokrzywa, paproć)**: Koniczyna, Pokrzywa, Paproć
-- **coś niebieskiego (chaber, borówki, liście indygowca)**: Chaber, Borówki, Liście indygowca
-- **coś fioletowego (jeżyny, wrzos, krokus)**: Jeżyny, Wrzos, Krokus
+- **coś zielonego (koniczyna, pokrzywa, paproć, liście szałwii, plecha porostu oliwkowego i inne)**: Koniczyna, Pokrzywa, Paproć, Liście szałwii, Plecha porostu oliwkowego, Gałązki porostu iglastego
+- **coś niebieskiego (chaber, borówki, kwiat mikołajka, kwiat barwinka, liście indygowca)**: Chaber, Borówki, Kwiat mikołajka, Kwiat barwinka, Liście indygowca
+- **coś fioletowego (jeżyny, wrzos, krokus, bukiet lawendy, kwiat dzwonka)**: Jeżyny, Wrzos, Krokus, Bukiet lawendy, Kwiat dzwonka
+- **coś żółtego (mniszek, bukiet kocanki, nasiona gorczycy, grudka żółtej ochry)**: Mniszek, Bukiet kocanki, Nasiona gorczycy, Grudka żółtej ochry
+- **coś białego (rumianek)**: Rumianek
+- **coś brązowego (żołądź, huba)**: Żołądź, Huba
+- **coś pomarańczowego (kwiat nagietka, kwiat cynii)**: Kwiat nagietka, Kwiat cynii
+- **coś różowego (kwiat piwonii, kwiat zawilca)**: Kwiat piwonii, Kwiat zawilca
+- **kwiat (mak, chaber, rumianek, mniszek, krokus, wrzos i inne)**: Mak, Chaber, Rumianek, Mniszek, Krokus, Wrzos, Wiecha amarantusa, Bukiet kocanki, Bukiet lawendy, Kwiat piwonii, Kwiat zawilca, Kwiat dzwonka, Kwiat nagietka, Kwiat cynii, Kwiat mikołajka, Kwiat barwinka
+- **zioło na sen (kwiat lipy, bukiet lawendy)**: Kwiat lipy, Bukiet lawendy
+- **zioło lecznicze (rumianek, babka, liście szałwii, kwiat nagietka)**: Rumianek, Babka zwyczajna, Liście szałwii, Kwiat nagietka
+- **zioło wzmacniające (pokrzywa, nasiona gorczycy)**: Pokrzywa, Nasiona gorczycy
 - **pień (gatunek)**: zwykły, okorowany, a u sosny także górny i z żywicą

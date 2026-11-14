@@ -43,7 +43,7 @@
         "plik": "bukiet.png",
         "nazwa": "Bukiet kocanki",
         "nazwaAngielska": "Everlast Bouquet",
-        "kategoria": "ozdoby"
+        "grupy": ["yellow", "flowers"]
     },
     "zbior": { "ile": [1, 2], "wraca": 2 },
     "podloze": ["sand"],

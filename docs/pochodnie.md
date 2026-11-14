@@ -7,7 +7,7 @@ Animacja działa w świecie oraz na pochodni trzymanej w ręce.
 
 ## Wytwarzanie i używanie
 
-- **Patyk + żywica → 4 pochodnie.** Żywicę zbiera się PPM z żywicznego
+- **Patyk + żywica (albo oliwki) → 4 pochodnie.** Żywicę zbiera się PPM z żywicznego
   pnia sosny. Przepis działa w siatce 2 × 2, bez ustalonego układu.
 - Pochodnia może stać na pełnym bloku albo wisieć na jego bocznej ścianie.
   Nie zajmuje miejsca w wodzie. Po usunięciu podpory zostaje usunięta;

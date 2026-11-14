@@ -134,7 +134,8 @@ for (const pack of P.PLANT_PACKS) {
 
         for (const group of pack.item.groups) {
             assert.ok(GROUPS[group].types.includes(pack.item.type), `${pack.item.type} w grupie #${group}`);
-            assert.match(GROUPS[group].label, new RegExp(pack.item.label.toLowerCase()), `grupa #${group} wymienia ${pack.item.label}`);
+            // Długa grupa wymienia kilka pierwszych rzeczy i kończy się "i inne".
+            assert.match(GROUPS[group].label, new RegExp(`${pack.item.label.toLowerCase()}|i inne\\)$`), `grupa #${group} wymienia ${pack.item.label}`);
         }
 
     }

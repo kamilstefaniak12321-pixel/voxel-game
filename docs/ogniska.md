@@ -4,8 +4,8 @@ Od wersji 0.51.0 ognisko buduje się w świecie, bez przedmiotu „ognisko”.
 
 1. W craftingu połącz pień (także okorowany) z siekierą: dostaniesz **4 opały**, a siekiera zostanie w siatce.
 2. Opałem kliknij PPM suche, stałe podłoże. Kolejne kliknięcia dokładają polana, aż będzie ich **6**.
-3. Dodaj jedną krótką lub wysoką trawę jako tymczasową podpałkę.
-4. Z dwóch patyków zrób **starter ognia**. Skieruj celownik na ognisko i trzymaj PPM przez **5 sekund**. Na telefonie przytrzymaj „Postaw”. Starter pozostaje w ekwipunku.
+3. Dodaj podpałkę: trawę, słomę, korę brzozową, gałązki porostu albo hubę. Lepsza podpałka skraca rozpalanie (huba - o połowę; tabela: [ziola.md](ziola.md#podpałka-do-ogniska)).
+4. Z dwóch patyków zrób **starter ognia**. Skieruj celownik na ognisko i trzymaj PPM przez **5 sekund** (z lepszą podpałką krócej). Na telefonie przytrzymaj „Postaw”. Starter pozostaje w ekwipunku.
 
 Można mieszać dziewięć gatunków drewna: dąb, brzozę, świerk, sosnę, buk, lipę, olchę, wierzbę i jabłoń. Każde polano zachowuje swój model i teksturę. Na tym etapie wszystkie gatunki palą się tyle samo: **około 8 minut aktywnej gry**. Różnice w czasie spalania, cieple i dymieniu poszczególnych gatunków pozostają na następny etap.
 

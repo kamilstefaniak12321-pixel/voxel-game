@@ -51,8 +51,7 @@
         "klucz": "wiazka",
         "plik": "wiazka.png",
         "nazwa": "Wiązka lnu",
-        "nazwaAngielska": "Flax Bundle",
-        "kategoria": "ozdoby"
+        "nazwaAngielska": "Flax Bundle"
     },
     "zbior": { "ile": [1, 2], "wraca": 1 },
     "gdzieRosnie": { "biomy": { "hala": 1, "laka": 0.4 }, "plamy": 0.025, "gestosc": 0.45, "etapy": [0.2, 0.45, 0.35] },

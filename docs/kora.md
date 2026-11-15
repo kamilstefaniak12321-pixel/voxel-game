@@ -1,6 +1,7 @@
-# Arkusze kory
+# Arkusze kory i okorowanych pni
 
-Od wersji 1.7.0 (pomysł Kamila). Na razie: **dąb**.
+Od wersji 1.7.0 (pomysł Kamila). Seria 1.7.x dodaje arkusze kolejnym
+drzewom; na razie: **dąb** (pień i okorowany pień).
 
 Bok pnia nie jest już jednym obrazkiem 16 × 16 powtarzanym na każdym
 bloku. Pień ma **arkusz 128 × 128 pikseli** - 64 kafelki kory (8 × 8) -
@@ -32,6 +33,28 @@ a gra dla każdego boku każdego bloku wybiera jeden z nich.
   w dłoni pokazują zwykły kafelek.
 - Dziupla jest rysunkiem na płaskiej ścianie (bez wgłębienia).
 
+## Okorowany pień
+
+Okorowany pień dębu ma własny arkusz 128 × 128 - drewno **kafelek po
+kafelku pod arkuszem kory** i to samo losowanie. Dzięki temu po
+okorowaniu pnia dodatek zostaje na swoim miejscu:
+
+![Kora i to, co pod nią](kora-pary-170.jpg)
+
+| Na korze | W drewnie pod spodem |
+|---|---|
+| zwykła kora | zwykłe słoje (48 odmian) |
+| porosty | szarawe przebarwienie |
+| pęknięcie kory | pęknięcie drewna w tym samym miejscu |
+| guzek | mały sęczek |
+| sęk, blizna | sęk w drewnie |
+| okorowany płat | chodniki korników |
+| dziupla | dziupla (ten sam kształt) |
+
+Zasada krawędzi arkusza drewna: **górny i dolny wiersz pikseli każdego
+kafelka są takie same** (ten sam układ tonów słojów), więc słoje
+dowolnego kafelka przechodzą w słoje dowolnego innego.
+
 ## Zasada rysowania arkusza
 
 Żeby dowolny kafelek pasował nad i pod dowolnym innym:
@@ -55,9 +78,9 @@ w `src/rendering/BarkSheets.js`.
   ścianie.
 - Budowanie chunka: wybór kafelka to jedno mieszanie liczb i jeden odczyt
   z tablicy - ok. 10 ns na bok pnia.
-- Pamięć: arkusz to 64 kratki atlasu (8 wierszy). Dla wszystkich 19
-  gatunków drzew byłoby to ok. 150 wierszy - dlatego mniejsze gatunki
-  mogą dostać mniejszy arkusz.
+- Pamięć: jeden arkusz to 64 kratki atlasu (8 wierszy); dąb ma dwa (kora
+  i drewno). Atlas rośnie z każdym drzewem serii 1.7.x - pilnuję jego
+  rozmiaru przy kolejnych gatunkach.
 
 ## Nowe drzewo z arkuszem
 
@@ -66,7 +89,8 @@ w `src/rendering/BarkSheets.js`.
 2. Wpis w `SHEETS` i `ATLAS_ROW` w `tools/tekstury_kory.py`, uruchomić
    `python3 tools/tekstury_kory.py`.
 3. Wpis w `BARK_SHEETS` w `src/rendering/BarkSheets.js` (blok pnia,
-   nazwa arkusza, rodzaje 64 kafelków).
+   nazwa arkusza, rodzaje 64 kafelków). Arkusz okorowanego pnia dostaje
+   `like: '<blok pnia>'` i rodzaje według `UNDER_BARK`.
 4. `node tools/sprawdz_kore.mjs`.
 
 ## Znane ograniczenia
@@ -74,7 +98,9 @@ w `src/rendering/BarkSheets.js`.
 - Paczka tekstur gracza, która podmienia zwykły bok pnia dębu
   (`oak_log_side`), nie zmienia arkusza - na pniach dalej widać arkusz
   gry.
-- Pozostałe drzewa mają jeszcze jeden obrazek kory.
+- Pozostałe drzewa mają jeszcze jeden obrazek kory i drewna (kolejne
+  wersje 1.7.x).
+- Deski, schody i inne bloki z drewna dębu bez zmian.
 
 ## Dla programisty
 

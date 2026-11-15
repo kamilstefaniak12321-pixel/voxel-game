@@ -11,23 +11,27 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
-## 1.7.0 - Kora dębu z arkusza
+## 1.7.0 - Dąb: kora i okorowany pień z arkuszy
 
-Pomysł Kamila — PR #153 (po 1.6.0). Opis: [`docs/kora.md`](docs/kora.md).
+Pomysł Kamila — PR #153 (po 1.6.0). Pierwsza wersja serii 1.7.x, która
+da takie arkusze wszystkim drzewom. Opis: [`docs/kora.md`](docs/kora.md).
 
 - **Pień dębu nie powtarza jednego obrazka.** Kora ma arkusz 128 × 128
   pikseli (64 kafelki); gra wybiera kafelek osobno dla każdej z czterech
   stron każdego bloku pnia - losowo, z wagami. Kafelki pasują do siebie
   (bruzdy kory schodzą się na krawędziach).
-- **Rzadkie dodatki:** porosty, pęknięcia i guzki, sęki po dawnych
-  gałęziach, zabliźniona rana, okorowany płat z jasnym drewnem i dziupla.
-  Zwykła kora to ok. 94% boków.
-- To dalej ten sam blok (przedmiot, zapis, zasady); kłoda postawiona
-  przez gracza też dostaje kafelek ze swojego miejsca. Ikonka i kłoda
+- **Rzadkie dodatki na korze:** porosty, pęknięcia i guzki, sęki po
+  dawnych gałęziach, zabliźniona rana, okorowany płat z jasnym drewnem
+  i dziupla. Zwykła kora to ok. 94% boków.
+- **Okorowany pień dębu też ma arkusz** - drewno kafelek po kafelku pod
+  korą. Po okorowaniu dodatek zostaje na miejscu: pod sękiem jest sęk
+  w drewnie, pod dziuplą dziupla, pod pęknięciem kory pęknięcie drewna,
+  a pod okorowanym płatem chodniki korników.
+- To dalej te same bloki (przedmiot, zapis, zasady); kłoda postawiona
+  przez gracza też dostaje kafelek ze swojego miejsca. Ikonki i kłoda
   w dłoni bez zmian.
 - **Płynność:** bez zmian w rysowaniu; wybór kafelka to ok. 10 ns na bok
   pnia przy budowaniu chunka.
-- Na razie dąb; pozostałe drzewa w kolejnych wersjach.
 
 ## 1.6.0 - Tryb przesady
 

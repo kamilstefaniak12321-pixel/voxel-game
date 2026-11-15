@@ -438,22 +438,26 @@ numer pull requesta (#), w którym weszła.</p>
 <p>Pełny opis gry - bloki, przedmioty, przepisy, osiągnięcia - jest
 w wiki: <a href="#start"><code>docs/wiki/</code></a>.</p>
 <hr />
-<h2>1.7.0 - Kora dębu z arkusza</h2>
-<p>Pomysł Kamila — PR #153 (po 1.6.0). Opis: <a href="https://github.com/kamilstefaniak12321-pixel/voxel-game/blob/main/docs/kora.md"><code>docs/kora.md</code></a>.</p>
+<h2>1.7.0 - Dąb: kora i okorowany pień z arkuszy</h2>
+<p>Pomysł Kamila — PR #153 (po 1.6.0). Pierwsza wersja serii 1.7.x, która
+da takie arkusze wszystkim drzewom. Opis: <a href="https://github.com/kamilstefaniak12321-pixel/voxel-game/blob/main/docs/kora.md"><code>docs/kora.md</code></a>.</p>
 <ul>
 <li><strong>Pień dębu nie powtarza jednego obrazka.</strong> Kora ma arkusz 128 × 128
   pikseli (64 kafelki); gra wybiera kafelek osobno dla każdej z czterech
   stron każdego bloku pnia - losowo, z wagami. Kafelki pasują do siebie
   (bruzdy kory schodzą się na krawędziach).</li>
-<li><strong>Rzadkie dodatki:</strong> porosty, pęknięcia i guzki, sęki po dawnych
-  gałęziach, zabliźniona rana, okorowany płat z jasnym drewnem i dziupla.
-  Zwykła kora to ok. 94% boków.</li>
-<li>To dalej ten sam blok (przedmiot, zapis, zasady); kłoda postawiona
-  przez gracza też dostaje kafelek ze swojego miejsca. Ikonka i kłoda
+<li><strong>Rzadkie dodatki na korze:</strong> porosty, pęknięcia i guzki, sęki po
+  dawnych gałęziach, zabliźniona rana, okorowany płat z jasnym drewnem
+  i dziupla. Zwykła kora to ok. 94% boków.</li>
+<li><strong>Okorowany pień dębu też ma arkusz</strong> - drewno kafelek po kafelku pod
+  korą. Po okorowaniu dodatek zostaje na miejscu: pod sękiem jest sęk
+  w drewnie, pod dziuplą dziupla, pod pęknięciem kory pęknięcie drewna,
+  a pod okorowanym płatem chodniki korników.</li>
+<li>To dalej te same bloki (przedmiot, zapis, zasady); kłoda postawiona
+  przez gracza też dostaje kafelek ze swojego miejsca. Ikonki i kłoda
   w dłoni bez zmian.</li>
 <li><strong>Płynność:</strong> bez zmian w rysowaniu; wybór kafelka to ok. 10 ns na bok
   pnia przy budowaniu chunka.</li>
-<li>Na razie dąb; pozostałe drzewa w kolejnych wersjach.</li>
 </ul>
 <h2>1.6.0 - Tryb przesady</h2>
 <p>Pomysł Kamila — PR #152 (po 1.5.0). Opis: <a href="https://github.com/kamilstefaniak12321-pixel/voxel-game/blob/main/docs/przesada.md"><code>docs/przesada.md</code></a>.</p>

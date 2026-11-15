@@ -2,12 +2,12 @@
   "version": 1,
   "tileSize": 16,
   "columns": 16,
-  "rows": 67,
+  "rows": 75,
   "sheets": {
     "drzewa": {
       "file": "drzewa.png",
       "width": 256,
-      "height": 864
+      "height": 992
     },
     "teren": {
       "file": "teren.png",
@@ -5090,6 +5090,13 @@
       "y": 736,
       "width": 128,
       "height": 128
+    },
+    "oak_stripped_sheet": {
+      "sheet": "drzewa",
+      "x": 0,
+      "y": 864,
+      "width": 128,
+      "height": 128
     }
   },
   "aliases": {
@@ -9147,6 +9154,15 @@
       "pw": 128,
       "ph": 128,
       "region": "oak_log_bark"
+    },
+    "oak_stripped_sheet": {
+      "x": 0,
+      "y": 67,
+      "w": 8,
+      "h": 8,
+      "pw": 128,
+      "ph": 128,
+      "region": "oak_stripped_sheet"
     }
   }
 }

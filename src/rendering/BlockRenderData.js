@@ -101,7 +101,7 @@ function barkSheet(name) {
         return rotatedUVs(full.uMin + column * du + insetU, full.uMin + (column + 1) * du - insetU,
             full.vMax - (row + 1) * dv + insetV, full.vMax - row * dv - insetV);
     });
-    return { uv, lookup: barkLookup(sheet.tiles) };
+    return { uv, lookup: barkLookup(BARK_SHEETS[sheet.like ?? name].tiles) };
 }
 
 function grassTopVariants(definition) {

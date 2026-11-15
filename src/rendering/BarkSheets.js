@@ -3,7 +3,7 @@
 //
 // Pień drzewa z arkuszem kory nie ma jednego obrazka na boku, tylko
 // arkusz 128 x 128 pikseli: 8 x 8 kafelków 16 x 16. Dla każdego boku
-// każdego bloku pnia gra wybiera jeden kafelek - losowo z miejsca bloku
+// każdego bloku pnia (także okorowanego) gra wybiera jeden kafelek - losowo z miejsca bloku
 // i strony świata, z wagami: zwykła kora często, sęk, okorowany płat
 // albo dziupla rzadko. To dalej ten sam blok, te same ściany i ten sam
 // materiał - zmienia się tylko, który kawałek atlasu jest na ścianie.
@@ -30,7 +30,8 @@ export const BARK_WEIGHTS = {
 const PLAIN_ROW = Array(BARK_GRID).fill('zwykla');
 
 // Blok pnia -> arkusz: texture - kafelek atlasu 8 x 8 kratek,
-// tiles - rodzaj każdego kafelka, wierszami od góry.
+// tiles - rodzaj każdego kafelka, wierszami od góry; like - blok, którego
+// losowanie (wagi) arkusz powtarza.
 export const BARK_SHEETS = {
     oak_log: {
         texture: 'oak_log_bark',
@@ -39,7 +40,27 @@ export const BARK_SHEETS = {
             'porosty', 'porosty', 'porosty', 'pekniecie', 'pekniecie', 'guzek', 'guzek', 'guzek',
             'sek', 'sek', 'sek', 'blizna', 'okorowany', 'okorowany', 'dziupla', 'dziupla'
         ]
+    },
+
+    // Okorowany pień: arkusz drewna kafelek po kafelku pod arkuszem kory
+    // i to samo losowanie (like), więc po okorowaniu dodatek zostaje na
+    // swoim miejscu - pod sękiem sęk, pod dziuplą dziupla, pod pęknięciem
+    // kory pęknięcie drewna, pod okorowanym płatem chodniki korników.
+    oak_log_stripped: {
+        texture: 'oak_stripped_sheet',
+        like: 'oak_log',
+        tiles: [
+            ...Array(48).fill('zwykle'),
+            'przebarwienie', 'przebarwienie', 'przebarwienie', 'pekniecie', 'pekniecie', 'seczek', 'seczek', 'seczek',
+            'sek', 'sek', 'sek', 'sek', 'kornik', 'kornik', 'dziupla', 'dziupla'
+        ]
     }
+};
+
+// Co jest w drewnie pod danym rodzajem kafelka kory (arkusze "like").
+export const UNDER_BARK = {
+    zwykla: 'zwykle', porosty: 'przebarwienie', pekniecie: 'pekniecie', guzek: 'seczek',
+    sek: 'sek', blizna: 'sek', okorowany: 'kornik', dziupla: 'dziupla'
 };
 
 // Tabela losowania: SLOTS pól, każdy kafelek zajmuje tyle, ile wynosi

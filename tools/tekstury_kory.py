@@ -294,10 +294,187 @@ def oak_tiles():
     return [(name, to_image(tone, c)) for name, tone in tiles]
 
 
-SHEETS = {'oak_log_bark': oak_tiles}
+# ============================================================
+# OKOROWANY PIEŃ - arkusz drewna pod korą.
+#
+# Te same 64 miejsca co w arkuszu kory i to samo losowanie
+# (BarkSheets.js: "like"), więc po okorowaniu pnia dodatek zostaje na
+# swoim miejscu: pod sękiem jest sęk w drewnie, pod dziuplą - dziupla,
+# pod pęknięciem kory - pęknięcie drewna, a pod okorowanym płatem widać
+# chodniki korników.
+#
+# Zasada krawędzi: górny i dolny wiersz KAŻDEGO kafelka mają ten sam
+# układ tonów (EDGE_ROW) - słoje dowolnego kafelka przechodzą w słoje
+# dowolnego innego. Dodatki trzymają się środka.
+# ============================================================
+
+OAK_WOOD = {
+    # 1-3: tony dotychczasowej tekstury oak_stripped_side; 0 - ciemna
+    # linia słoja, 4 - światło.
+    'tones': [(150, 109, 66), (165, 122, 74), (177, 131, 79), (188, 139, 84), (198, 150, 94)],
+    'knot': [(92, 64, 38), (118, 84, 50), (138, 100, 60)],
+    'hole': [(34, 24, 18), (48, 34, 24), (66, 46, 30)],
+    'stain': [(146, 116, 82), (158, 126, 88)],
+}
+
+# Tony pikseli górnej i dolnej krawędzi kafelka (ciemne linie słojów
+# w kolumnach 4 i 11).
+EDGE_ROW = [2, 3, 2, 1, 0, 2, 2, 3, 2, 1, 2, 0, 2, 3, 2, 1]
+
+
+def wood(seed, calm=False):
+    """Zwykły kafelek okorowanego drewna: mapa tonów 16 x 16 (0-4)."""
+    rng = random.Random(seed)
+    tone = [[2] * N for _ in range(N)]
+    for x in range(N):
+        y = 1
+        while y < N - 1:
+            run = rng.randint(3, 8)
+            value = rng.choice((1, 1, 2, 2, 2, 3))
+            for k in range(y, min(N - 1, y + run)):
+                tone[k][x] = value
+            y += run
+    # Linie słojów: od krawędzi do krawędzi, w środku lekko się wiją.
+    for anchor in (4, 11):
+        a = rng.uniform(-1.6, 1.6) * (0.4 if calm else 1)
+        b = rng.uniform(-0.8, 0.8) * (0.4 if calm else 1)
+        gap = rng.randint(4, 10) if rng.random() < 0.5 else -9
+        for y in range(1, N - 1):
+            x = anchor + round(a * math.sin(math.pi * y / (N - 1)) + b * math.sin(2 * math.pi * y / (N - 1)))
+            if gap <= y < gap + 2:
+                continue
+            tone[y][x] = 0
+            if rng.random() < 0.5:
+                tone[y][x + 1] = 3
+    # Krótkie kreski słojów.
+    for _ in range(rng.randint(1, 3)):
+        x, y0 = rng.choice((1, 2, 6, 7, 8, 13, 14)), rng.randint(2, 9)
+        for y in range(y0, min(N - 2, y0 + rng.randint(2, 5))):
+            tone[y][x] = 0 if rng.random() < 0.5 else 1
+    for _ in range(rng.randint(1, 3)):
+        x, y = rng.randint(1, N - 2), rng.randint(2, N - 3)
+        if tone[y][x] == 3:
+            tone[y][x] = 4
+    tone[0] = list(EDGE_ROW)
+    tone[N - 1] = list(EDGE_ROW)
+    return tone
+
+
+def wood_knot(tone, colors, rng, cx, cy, rx, ry):
+    """Sęk w drewnie: ciemne oko, słoje opływają je łukiem."""
+    for y in range(1, N - 1):
+        for x in range(1, N - 1):
+            d = ellipse(cx, cy, rx, ry, x, y)
+            if d <= 0.4:
+                tone[y][x] = colors['knot'][0]
+            elif d <= 0.75:
+                tone[y][x] = colors['knot'][1] if (x + y) % 2 == 0 else colors['knot'][2]
+            elif d <= 1.05:
+                tone[y][x] = colors['knot'][2] if (x - cx) + (y - cy) > 0 else 0
+            elif d <= 1.5 and abs(y - cy) < ry * 1.2:
+                tone[y][x] = 0 if rng.random() < 0.55 else 3    # słoje wokół sęka
+
+
+def wood_crack(tone, colors, rng, x0, y0, length):
+    """Pęknięcie z wysychania: wąska, ciemna szczelina wzdłuż słojów."""
+    x = x0
+    for k in range(length):
+        y = y0 + k
+        if rng.random() < 0.18:
+            x += rng.choice((-1, 1))
+        x = max(2, min(N - 3, x))
+        tone[y][x] = colors['knot'][0] if 1 < k < length - 2 else colors['knot'][1]
+        tone[y][x + 1] = 4 if rng.random() < 0.5 else 3
+
+
+def wood_stain(tone, colors, rng, count):
+    """Przebarwienie: szarawe, zwietrzałe plamy."""
+    for _ in range(count):
+        cx, cy = rng.randint(3, N - 4), rng.randint(3, N - 4)
+        rx, ry = rng.uniform(1.4, 2.4), rng.uniform(2.0, 3.6)
+        for y in range(1, N - 1):
+            for x in range(1, N - 1):
+                if ellipse(cx, cy, rx, ry, x, y) <= 1 and tone[y][x] != 0 and rng.random() < 0.85:
+                    tone[y][x] = colors['stain'][0 if isinstance(tone[y][x], int) and tone[y][x] <= 1 else 1]
+
+
+def wood_galleries(tone, colors, rng, cx, cy):
+    """Chodniki korników: pionowy korytarz z bocznymi odnogami."""
+    top, bottom = cy - rng.randint(3, 5), cy + rng.randint(3, 5)
+    for y in range(max(2, top), min(N - 2, bottom + 1)):
+        tone[y][cx] = colors['knot'][0]
+        tone[y][cx + 1] = 4 if rng.random() < 0.4 else tone[y][cx + 1]
+    for y in range(max(2, top) + 1, min(N - 2, bottom), 2):
+        for side in (-1, 1):
+            if rng.random() < 0.2:
+                continue
+            reach = rng.randint(2, 4)
+            for k in range(1, reach + 1):
+                x = cx + side * k
+                yy = y + (k // 2) * rng.choice((0, 1))
+                if 1 < x < N - 2 and 1 < yy < N - 2:
+                    tone[yy][x] = colors['knot'][1] if k < reach else colors['knot'][2]
+
+
+def wood_hollow(tone, colors, rng, cx, cy, rx, ry):
+    """Dziupla w okorowanym pniu: otwór w głąb drewna, brzeg zaokrąglony."""
+    for y in range(1, N - 1):
+        for x in range(1, N - 1):
+            d = ellipse(cx, cy, rx, ry, x, y)
+            lit = (x - cx) * 0.8 + (y - cy) < 0
+            if d <= 1:
+                depth = (y - cy) / ry
+                tone[y][x] = colors['hole'][0 if depth < 0.15 else 1 if depth < 0.62 else 2]
+                if d > 0.82 and depth < -0.2:
+                    tone[y][x] = colors['hole'][0]
+            elif d <= 1.36:
+                tone[y][x] = 4 if lit else colors['knot'][2]
+            elif d <= 1.7:
+                tone[y][x] = 0 if lit else colors['knot'][1]
+
+
+# Arkusz okorowanego dębu - kafelek po kafelku pod arkuszem kory.
+def oak_wood_tiles():
+    c = OAK_WOOD
+    tiles = []
+    for index in range(48):
+        tiles.append(('zwykle', wood(17000 + index * 13, calm=index % 8 == 7)))
+    def special(index, name, draw):
+        rng = random.Random(19000 + index * 17)
+        tone = wood(18000 + index * 29, calm=True)
+        draw(tone, rng)
+        tone[0] = list(EDGE_ROW)
+        tone[N - 1] = list(EDGE_ROW)
+        tiles.append((name, tone))
+    # pod porostami: przebarwienia
+    special(0, 'przebarwienie', lambda t, r: wood_stain(t, c, r, 2))
+    special(1, 'przebarwienie', lambda t, r: wood_stain(t, c, r, 3))
+    special(2, 'przebarwienie', lambda t, r: wood_stain(t, c, r, 1))
+    # pod pęknięciami kory: pęknięcia drewna (w tych samych miejscach)
+    special(3, 'pekniecie', lambda t, r: wood_crack(t, c, r, 6, 2, 11))
+    special(4, 'pekniecie', lambda t, r: wood_crack(t, c, r, 10, 3, 9))
+    # pod guzkami: małe sęczki
+    special(5, 'seczek', lambda t, r: (wood_knot(t, c, r, 5.5, 5.5, 1.5, 1.4), wood_knot(t, c, r, 10.5, 10.5, 1.5, 1.4)))
+    special(6, 'seczek', lambda t, r: wood_knot(t, c, r, 7.5, 8.5, 1.6, 1.5))
+    special(7, 'seczek', lambda t, r: wood_knot(t, c, r, 10.5, 4.5, 1.6, 1.4))
+    # pod sękami i blizną: sęki
+    special(8, 'sek', lambda t, r: wood_knot(t, c, r, 7.5, 7.5, 3.2, 2.8))
+    special(9, 'sek', lambda t, r: wood_knot(t, c, r, 6.5, 8.5, 2.6, 2.4))
+    special(10, 'sek', lambda t, r: (wood_knot(t, c, r, 9.5, 5.0, 2.4, 2.1), wood_knot(t, c, r, 5.0, 11.0, 1.9, 1.7)))
+    special(11, 'sek', lambda t, r: wood_knot(t, c, r, 8.0, 8.0, 3.8, 2.0))
+    # pod okorowanymi płatami: chodniki korników
+    special(12, 'kornik', lambda t, r: wood_galleries(t, c, r, 8, 8))
+    special(13, 'kornik', lambda t, r: wood_galleries(t, c, r, 7, 7))
+    # pod dziuplami: dziuple (te same kształty)
+    special(14, 'dziupla', lambda t, r: wood_hollow(t, c, r, 7.5, 7.5, 2.9, 3.7))
+    special(15, 'dziupla', lambda t, r: wood_hollow(t, c, r, 8.0, 8.0, 1.9, 4.6))
+    return [(name, to_image(tone, c)) for name, tone in tiles]
+
+
+SHEETS = {'oak_log_bark': oak_tiles, 'oak_stripped_sheet': oak_wood_tiles}
 
 # Miejsce w atlasie świata: kafelek 8 x 8 kratek od tego wiersza.
-ATLAS_ROW = {'oak_log_bark': 59}
+ATLAS_ROW = {'oak_log_bark': 59, 'oak_stripped_sheet': 67}
 
 
 def register(name):

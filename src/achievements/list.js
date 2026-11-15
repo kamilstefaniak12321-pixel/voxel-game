@@ -843,6 +843,26 @@ export const ACHIEVEMENTS = [
         when: (data) => data.meal === true && data.mealsToday >= 3
     },
     {
+        id: 'season_turns',
+        tier: 'common',
+        title: 'Coś wisi w powietrzu',
+        task: 'Doczekaj zmiany pory roku.',
+        comment: 'Wczoraj jedno kwitło, dziś drugie. Kalendarz nie pyta o zgodę.',
+        icon: 'zawilec_etap3',
+        on: 'season',
+        when: (data) => data.changed === true
+    },
+    {
+        id: 'four_seasons',
+        tier: 'epic',
+        title: 'Cztery pory roku',
+        task: 'Bądź w świecie wiosną, latem, jesienią i zimą.',
+        comment: 'Pełny obrót. Vivaldi napisał o tym koncert, ty po prostu przetrwałeś.',
+        icon: 'nagietek_etap3',
+        on: 'season',
+        when: (data, book) => book.collect('seasons', data.key) >= 4
+    },
+    {
         id: 'good_night',
         tier: 'rare',
         title: 'Jak w puchu',

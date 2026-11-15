@@ -186,6 +186,17 @@ export const SUN_PATH_TILT = 35;
 // więc raz świeci w nocy, a raz w dzień.
 export const MOON_CYCLE_DAYS = 8;
 
+// W którym miejscu cyklu księżyca zaczyna się nowy świat (0 = nów,
+// 0.5 = pełnia): świat startuje tuż przed pełnią.
+export const MOON_START_PHASE = 0.44;
+
+// PORY ROKU (src/sky/Seasons.js, docs/pory-roku.md): pora roku trwa
+// tyle pełnych cykli księżyca - zaczyna się w nowiu, w środku ma pełnię.
+// Rok to cztery pory: wiosna, lato, jesień, zima. Nowy świat startuje
+// wiosną (FIRST_SEASON: 0 wiosna, 1 lato, 2 jesień, 3 zima).
+export const SEASON_MOONS = 1;
+export const FIRST_SEASON = 0;
+
 // Średnica tarczy słońca i księżyca na niebie w stopniach (prawdziwe
 // mają ~0.5°, w grze są większe). Księżyc musi być choć trochę większy
 // od słońca, żeby mogło być pełne zaćmienie - im większa różnica,

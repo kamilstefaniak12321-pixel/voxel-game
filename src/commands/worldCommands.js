@@ -5,6 +5,7 @@
 // komendy jest w CommandRegistry.js, lista dla gracza w docs/komendy.md.
 // ------------------------------------------------------------
 
+import { SEASONS, SEASON_NAMES } from '../sky/Seasons.js';
 import { CommandError, simplify } from './CommandRegistry.js';
 import {
     BLOCK_TYPES,
@@ -1241,6 +1242,7 @@ export const WORLD_COMMANDS = [
                 return `${pack.label} (${pack.folder}): ${pack.about || 'roślina'}.\n` +
                     stages.join('\n') +
                     `\nRośnie: etap średnio co ${pack.growthSeconds ?? BUSH_GROWTH_SECONDS} s (wyższy etap tylko z wolnym miejscem nad sobą).` +
+                    (pack.seasons ? `\nPora roku: pąki i kwiaty widać w porach: ${pack.seasons.map((index) => SEASON_NAMES[SEASONS[index]]).join(', ')} (wtedy rośnie ${pack.seasonBoost} x szybciej); poza nimi same liście i odpoczynek (/pora).` : '\nPora roku: wygląda i rośnie tak samo cały rok.') +
                     (pack.item ? `\nPrzedmiot: ${pack.item.label} (/daj ${pack.item.type})` +
                         (pack.harvest ? ` - PPM na ostatnim etapie: ${pack.harvest.count[0]}-${pack.harvest.count[1]} szt., roślina wraca do etapu ${pack.harvest.back + 1}` : '') +
                         `\nDo czego: ${itemUses(pack.item.type).join('; ') || 'na razie do niczego'}` : '') +

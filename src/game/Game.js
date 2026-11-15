@@ -61,6 +61,7 @@ import { usesSolarAtmosphere } from '../sky/SolarAtmosphere.js';
 import { skyUniforms } from '../sky/skyShader.js';
 import { PlayerModel } from '../player/PlayerModel.js';
 import { PlayerAnimator } from '../player/PlayerAnimator.js';
+import { seasonAt } from '../sky/Seasons.js';
 import { FirstPersonHand } from '../player/FirstPersonHand.js';
 import { modelLight } from '../rendering/ModelMaterial.js';
 import { BlockDebris } from '../rendering/BlockDebris.js';
@@ -893,6 +894,7 @@ export class Game extends GameInteraction {
         this.tutorial.update(dt);
 
         profile?.beginStage('plants');
+        this.updateSeason();
         this.plantGrowth.update(dt);
         this.plantAnimations.update(dt);
         profile?.endStage('plants');
@@ -2070,6 +2072,37 @@ export class Game extends GameInteraction {
     // sekund prawdziwego czasu "minęło" (godzina gry to 50 sekund).
     // Nowy system zależny od czasu dopisz tutaj.
 
+    // PORY ROKU (src/sky/Seasons.js, docs/pory-roku.md): podaje czas gry
+    // światu i wzrostowi roślin, a przy zmianie pory mówi o tym graczowi.
+    // Nowy system zależny od pory roku dopisz tutaj (albo pytaj
+    // seasonAt(this.time.days) tam, gdzie go potrzebujesz).
+
+    updateSeason() {
+
+        const days = this.time.days;
+
+        this.world.updateSeasons(days);
+        this.plantGrowth.days = days;
+
+        const season = seasonAt(days);
+
+        if (this.seasonIndex === season.index) {
+            return;
+        }
+
+        const changed = this.seasonIndex !== undefined;
+
+        this.seasonIndex = season.index;
+
+        if (changed) {
+            this.onNotice?.(season.key === 'lato' ? 'Nadeszło lato' : `Nadeszła ${season.name}`);
+        }
+
+        this.achieve('season', { key: season.key, changed });
+
+    }
+
+
     advanceWorld(seconds) {
 
         if (!(seconds > 0)) {
@@ -2482,6 +2515,8 @@ export class Game extends GameInteraction {
 
             `Czas: ${this.time.formatClock()}, dzień ${this.time.dayNumber} | ` +
             `Księżyc: ${this.sky.celestial.moonPhaseName}${eclipseInfo}<br>` +
+
+            `Pora roku: ${seasonAt(this.time.days).name}, dzień ${seasonAt(this.time.days).day} z ${seasonAt(this.time.days).days}<br>` +
 
             `${performanceInfo}<br>` +
 

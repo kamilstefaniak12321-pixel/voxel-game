@@ -39,6 +39,7 @@
         "srodek": "#7a2a0e"
     },
     "czasWzrostu": 240,
+    "pory": ["lato", "jesien"],
     "przedmiot": {
         "klucz": "kwiat",
         "plik": "kwiat.png",

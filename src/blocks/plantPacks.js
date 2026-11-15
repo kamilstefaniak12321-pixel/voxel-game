@@ -29,6 +29,7 @@ import { TREE_ID_SLOTS, idsInRanges, rangesText } from './blockIdRanges.js';
 import { regionInfo } from '../rendering/TextureSheets.js';
 import { BIOMES, LAND_BIOMES, biomeByWord } from '../world/terrain/Biomes.js';
 import { bundledText } from './dataFiles.js';
+import { SEASONS, seasonIndex } from '../sky/Seasons.js';
 
 // Numery bloków: etapy zajmują kolejne numery od "pierwszeId". Zakresy
 // (wszystkie: src/blocks/BlockRegistry.js):
@@ -466,6 +467,8 @@ async function validatePack(folder) {
         harvest: null,
         ground: null,
         where: null,
+        seasons: null,
+        seasonBoost: 1,
         files: []
     };
 
@@ -603,6 +606,32 @@ async function validatePack(folder) {
 
         pack.harvest = { count, back: back - 1, tool: harvest.narzedzie === 'noz' ? 'knife' : null };
 
+    }
+
+
+    // Pory roku (1.4.0 - src/blocks/plantSeasons.js): "pory" - w których
+    // porach roślina pokazuje pąki i kwiaty (poza nimi widać sam pierwszy
+    // etap - liście); "wzrostWPorze" - ile razy szybciej wtedy rośnie.
+    // Bez "pory" roślina wygląda i rośnie tak samo cały rok.
+
+    if (json.pory !== undefined) {
+
+        const seasons = Array.isArray(json.pory) ? json.pory.map((word) => seasonIndex(word)) : [];
+
+        if (seasons.length === 0 || seasons.length > 3 || seasons.includes(-1) || new Set(seasons).size !== seasons.length) {
+            fail(`"pory": lista od 1 do 3 pór roku bez powtórek (${SEASONS.join(', ')})`);
+        }
+
+        if (pack.stages.length < 2) {
+            fail('"pory": roślina potrzebuje co najmniej dwóch etapów (pierwszy to wygląd poza porą)');
+        }
+
+        pack.seasons = seasons.sort((a, b) => a - b);
+        pack.seasonBoost = json.wzrostWPorze === undefined ? 3 : number(json.wzrostWPorze, 'wzrostWPorze', 1, 20);
+
+    }
+    else if (json.wzrostWPorze !== undefined) {
+        fail('"wzrostWPorze" działa tylko razem z "pory"');
     }
 
 

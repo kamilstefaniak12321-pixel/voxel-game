@@ -47,6 +47,7 @@
         "srodek": "#f2c82a"
     },
     "czasWzrostu": 300,
+    "pory": ["wiosna", "lato"],
     "przedmiot": {
         "klucz": "nasiona",
         "plik": "nasiona.png",

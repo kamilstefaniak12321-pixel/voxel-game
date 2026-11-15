@@ -6,6 +6,7 @@ import {
 } from '../blocks/BlockRegistry.js';
 
 import { plantTree } from '../world/trees/plantTree.js';
+import { plantGrowthFactor } from '../blocks/plantSeasons.js';
 
 // ------------------------------------------------------------
 // WZROST ROŚLIN
@@ -57,6 +58,10 @@ export class PlantGrowth {
 
         // Wywoływane, gdy z sadzonki wyrosło drzewo: (gatunek, x, y, z).
         this.onTreeGrown = null;
+
+        // Czas gry w dobach do pór roku (Game podaje co klatkę; null -
+        // bez pór roku).
+        this.days = null;
 
     }
 
@@ -132,7 +137,11 @@ export class PlantGrowth {
 
                 }
 
-                if (Math.random() < TICK / growth.seconds) {
+                // Kwiaty z porami roku: w swojej porze rosną szybciej,
+                // poza nią odpoczywają (src/blocks/plantSeasons.js).
+                const season = this.days === null ? 1 : plantGrowthFactor(chunk.blocks[index], this.days);
+
+                if (season > 0 && Math.random() < TICK / growth.seconds * season) {
                     this.grow(chunk, index, growth);
                 }
 

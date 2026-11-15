@@ -135,6 +135,8 @@ piksele rysunku i wynik (powiększone).
 | `pierwszeId` | numer bloku pierwszego etapu; etapy biorą kolejne numery. Nowe rośliny: **5000-9999** (od 0.30.0, tylko rośliny); dawny zakres 100-239 jest wspólny z paczkami drzew (rośliny od góry - amarantus 237-239). Raz użytego numeru nie wolno zmieniać (zapisuje się w świecie) |
 | `etapy` | 1-4 etapy wzrostu: obrazek (do 64 x 64), nazwa, `plaszczyzny` (2-4, domyślnie 2) - albo zamiast obrazka `model` (mała roślina z pikseli, niżej) |
 | `czasWzrostu` | średnio sekund na etap (domyślnie jak krzaki, 150) |
+| `pory` | pory roku, w których widać pąki i kwiaty: lista od 1 do 3 z `wiosna`, `lato`, `jesien`, `zima`; poza nimi roślina wygląda jak pierwszy etap (liście) i nie rośnie. Bez pola - cały rok tak samo ([`pory-roku.md`](pory-roku.md)) |
+| `wzrostWPorze` | ile razy szybciej roślina rośnie w swojej porze (domyślnie 3; tylko razem z `pory`) |
 | `przedmiot` | przedmiot ze zbioru, obrazek 16 x 16. **Zastosowania** (od 0.98.1 każdy plon musi jakieś mieć - `tools/sprawdz_zastosowania.mjs`): `grupy` - grupy składników: kolory `red`, `orange`, `yellow`, `green`, `blue`, `purple`, `pink`, `white`, `brown` (barwnik, kolorowa lampa), `flowers` (wianek z kwiatów), `herbs_calm`, `herbs_heal`, `herbs_vigor` (napary); `podpalka` - ile razy szybciej od trawy rozpala ognisko (np. `2`). Kategoria dobiera się sama (surowiec); `"kategoria": "owoce"` tylko dla plonu jadalnego. Opis: [ziola.md](ziola.md) |
 | `zbior` | PPM na ostatnim etapie: `ile` [od, do], `wraca` - do którego etapu wraca roślina, `narzedzie` - `"noz"`, gdy plon ścina się nożem (kwiaty, zioła - od 0.100.0, [opis](przedmioty-i-noz.md#nóż)); bez tego pola zbiera się ręką |
 | `podloze` | na czym rośnie oprócz ziemi, np. `["sand"]` |

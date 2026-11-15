@@ -78,6 +78,13 @@ export class VoxelRaycast {
     }
 
 
+    // Numer bloku, który gracz widzi: kwiat poza swoją porą roku to
+    // niższy etap (World.shownBlockId - src/blocks/plantSeasons.js).
+    idAt(x, y, z) {
+        const world = this.world;
+        return world.shownBlockId ? world.shownBlockId(x, y, z) : world.getBlockId(x, y, z);
+    }
+
     castFromCamera(camera, includeWater = false) {
 
         camera.getWorldPosition(this.origin);
@@ -170,7 +177,7 @@ export class VoxelRaycast {
             for (let px = x - 1; px <= x + 1; px++) {
                 for (let pz = z - 1; pz <= z + 1; pz++) {
                     for (let py = y - SPRITE_PLANT_REACH; py <= y; py++) {
-                        const id = this.world.getBlockId(px, py, pz);
+                        const id = this.idAt(px, py, pz);
                         if (!id) continue;
                         const river = getRiverPlant(id);
                         const torch = getTorchInfo(id);
@@ -192,7 +199,7 @@ export class VoxelRaycast {
 
         const waterHit = (start, end, normal) => {
             if (!includeWater) return null;
-            const id = this.world.getBlockId(x, y, z);
+            const id = this.idAt(x, y, z);
             if (!isLiquidId(id)) return null;
             const intersection = intersectWater(this.world, origin, dir, x, y, z, start, end, normal);
             return intersection ? { hit: true, block: { x, y, z, type: getBlockTypeById(id) }, ...intersection } : null;
@@ -237,7 +244,7 @@ export class VoxelRaycast {
         // Komórka, w której jest oko: pełnego bloku tu nie trafiamy
         // (kamera w bloku), ale mniejszy kształt - tak.
         const initialEnd = Math.min(tMaxX, tMaxY, tMaxZ, this.maxDistance);
-        const initialId = this.world.getBlockId(x, y, z);
+        const initialId = this.idAt(x, y, z);
         const inside = cellBoxes(this.world, initialId, x, y, z) === FULL_CELL ? null : blockHit(initialId, 0, { x: 0, y: 1, z: 0 });
         const initial = nearest(
             // Oko w samym kształcie (np. w kępce trawy): nie zasłania celu.
@@ -301,7 +308,7 @@ export class VoxelRaycast {
 
             // Zwykła woda przepuszcza celownik, wodną roślinę można
             // zebrać. Taflę wskazujemy osobno tylko podczas sadzenia.
-            const id = this.world.getBlockId(x, y, z);
+            const id = this.idAt(x, y, z);
             const normal = { x: normalX, y: normalY, z: normalZ };
             const end = Math.min(tMaxX, tMaxY, tMaxZ, this.maxDistance);
 

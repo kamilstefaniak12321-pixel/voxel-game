@@ -7,7 +7,9 @@ drzewom:
 |---|---|
 | 1.7.0 | dąb |
 | 1.7.1 | świerk, sosna (dolna, ciemna kora), buk, lipa, brzoza |
-| później | sosna (górna, pomarańczowa kora) i 13 drzew z paczek |
+| 1.7.2 | sosna (górna, pomarańczowa kora), jabłoń, olcha, wierzba, akacja, cyprysik, wiśnia, klon, kosodrzewina, oliwka, eukaliptus tęczowy, sekwoja, miłorząb, jakaranda |
+
+Od 1.7.2 arkusze mają **wszystkie 19 drzew**.
 
 Bok pnia nie jest już jednym obrazkiem 16 × 16 powtarzanym na każdym
 bloku. Pień ma **arkusz 128 × 128 pikseli** - 64 kafelki kory (8 × 8) -
@@ -81,6 +83,19 @@ tymi samymi pikselami i kolorami:
 Dąb (1.7.0) ma arkusz narysowany od zera - z bruzdami w stałych
 kolumnach.
 
+W 1.7.2 tak samo powstały arkusze 13 drzew z paczek i górnej kory sosny:
+
+![Drzewa z paczek](kora-172.jpg)
+
+- **Sosna** ma dwa arkusze kory (dolna ciemna, górna pomarańczowa) i jeden
+  okorowanego pnia. Blok tuż nad ciemną korą (trzy bloki płynnego
+  przejścia) zostaje przy swoim obrazku przejścia; pień z żywicą - przy
+  swoim.
+- **Sęczek z paczek.** Obrazki okorowanych pni z paczek mają mały, ciemny
+  sęczek. Powtórzony na każdym kafelku dawałby kropkę na każdym bloku,
+  więc zostaje na co czwartym zwykłym kafelku (i na osobnych kafelkach
+  z sękami).
+
 ## Zasada rysowania arkusza
 
 Żeby dowolny kafelek pasował nad i pod dowolnym innym:
@@ -107,8 +122,7 @@ w `src/rendering/BarkSheets.js`.
 - Pamięć: jeden arkusz to 64 kratki atlasu. Od 1.7.1 arkusze leżą **na
   prawo** od zwykłych kafelków, po sześć obok siebie: atlas ma 64 × 59
   kratek (1024 × 944 piksele, ok. 3,9 MB na karcie graficznej zamiast
-  1,2 MB) i ma miejsce na arkusze wszystkich 19 drzew bez dalszego
-  rośnięcia. Wysoki, wąski atlas (363 wiersze przy wszystkich drzewach)
+  1,2 MB). Mieści 42 arkusze; wszystkie drzewa zajmują 39. Wysoki, wąski atlas (363 wiersze przy wszystkich drzewach)
   nie zmieściłby się na starszych kartach graficznych.
 - Paczki tekstur w wysokiej rozdzielczości: atlas jest 4 razy szerszy,
   więc przy tej samej rozdzielczości zajmuje więcej pamięci; najwyższa
@@ -131,9 +145,8 @@ w `src/rendering/BarkSheets.js`.
 - Paczka tekstur gracza, która podmienia zwykły bok pnia dębu
   (`oak_log_side`), nie zmienia arkusza - na pniach dalej widać arkusz
   gry.
-- Górna, pomarańczowa część pnia sosny (z płynnym przejściem kory)
-  i drzewa z paczek mają jeszcze jeden obrazek kory i drewna (kolejne
-  wersje 1.7.x).
+- Pień sosny z żywicą i bloki przejścia kory sosny mają po jednym
+  obrazku.
 - Deski, schody i inne bloki z drewna dębu bez zmian.
 
 ## Dla programisty

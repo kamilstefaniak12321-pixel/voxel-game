@@ -1708,7 +1708,9 @@ function addCubeFaces(id, renderData, lx, y, lz, faceCount, baseX, baseZ, textur
     const leaves = renderData.leaves;
     const surfaceUV = renderData.worldTextureVariants?.[textureVariant] ?? renderData.uv;
     // Pień z arkuszem kory: każdy bok dostaje własny kafelek (BarkSheets.js).
-    const bark = renderData.bark ?? null;
+    // (Sosna: blok z przejściem kory - textureVariant > 0 - zostaje przy
+    // swoim obrazku przejścia.)
+    const bark = textureVariant === 0 ? renderData.bark ?? null : null;
 
     // W klasycznym modelu świecący blok jest jasny cały, bez cieni.
     // Atmosfera otrzymuje osobną emisję, niezależną od światła otoczenia.

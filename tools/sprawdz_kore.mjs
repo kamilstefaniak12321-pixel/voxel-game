@@ -176,15 +176,16 @@ function trunk(type) {
     return buildChunkGeometry(chunk, worldFor(chunk), { terrain: true, plants: true });
 }
 
-// (birch - tu: drzewo jeszcze bez arkusza, do porównania.)
-const oak = trunk('oak_log'), birch = trunk('maple_log'), strippedOak = trunk('oak_log_stripped'), strippedBirch = trunk('maple_log_stripped');
+// (birch, strippedBirch - tu: bloki bez arkusza, do porównania: pień sosny
+// z żywicą i deski.)
+const oak = trunk('oak_log'), birch = trunk('pine_log_resin'), strippedOak = trunk('oak_log_stripped'), strippedBirch = trunk('oak_planks');
 // Ile różnych obrazków jest na ścianach (każda ściana = 4 rogi UV).
 const us = (geometry) => { const uv = geometry.attributes.uv.array, seen = new Set(); for (let face = 0; face < uv.length / 8; face++) { let u = Infinity, v = Infinity; for (let i = 0; i < 4; i++) { u = Math.min(u, uv[face * 8 + i * 2]); v = Math.min(v, uv[face * 8 + i * 2 + 1]); } seen.add(`${u.toFixed(6)},${v.toFixed(6)}`); } return seen; };
 
-check(blockRenderData[getBlockId('oak_log')].bark?.uv.length === 64 && blockRenderData[getBlockId('maple_log')].bark === null, 'Arkusz ma pień dębu, klon jeszcze nie');
+check(blockRenderData[getBlockId('oak_log')].bark?.uv.length === 64 && blockRenderData[getBlockId('pine_log_resin')].bark === null && blockRenderData[getBlockId('oak_planks')].bark === null, 'Arkusz ma pień dębu; pień z żywicą i deski - nie');
 check(oak.attributes.position.count === birch.attributes.position.count && oak.index.count === birch.index.count && oak.groups.length === birch.groups.length,
     'Pień dębu: tyle samo ścian i grup co pień bez arkusza');
-check(us(birch).size === 2 && us(oak).size >= 20, `Boki pnia dębu z wielu kafelków (${us(oak).size} obrazków wobec ${us(birch).size} u klonu)`);
+check(us(birch).size === 2 && us(oak).size >= 20, `Boki pnia dębu z wielu kafelków (${us(oak).size} obrazków wobec ${us(birch).size} bez arkusza)`);
 
 // Każda ściana boczna mieści się w jednym kafelku arkusza, a wierzch i spód
 // to dalej zwykły obrazek przekroju pnia.
@@ -207,7 +208,7 @@ check(us(birch).size === 2 && us(oak).size >= 20, `Boki pnia dębu z wielu kafel
 
 // Okorowany pień: też z arkusza, a kafelek na każdym boku ma ten sam numer
 // co kora, która tam była.
-check(us(strippedBirch).size === 2 && us(strippedOak).size >= 20, `Boki okorowanego pnia dębu z wielu kafelków (${us(strippedOak).size})`);
+check(us(strippedBirch).size <= 2 && us(strippedOak).size >= 20, `Boki okorowanego pnia dębu z wielu kafelków (${us(strippedOak).size})`);
 {
     const bark = blockRenderData[getBlockId('oak_log')].bark, wood = blockRenderData[getBlockId('oak_log_stripped')].bark;
     check(wood.uv.length === 64 && wood.lookup.length === bark.lookup.length && wood.lookup.every((tile, slot) => tile === bark.lookup[slot]), 'Okorowany pień losuje tak samo jak kora');
@@ -220,8 +221,36 @@ check(us(strippedBirch).size === 2 && us(strippedOak).size >= 20, `Boki okorowan
 for (const block of Object.keys(B.BARK_SHEETS)) {
     check(getBlockId(block) > 0 && us(trunk(block)).size >= 20, `${block}: boki z wielu kafelków`);
 }
-check(['oak', 'spruce', 'pine', 'beech', 'linden', 'birch'].every((species) => B.BARK_SHEETS[`${species}_log`] && B.BARK_SHEETS[`${species}_log_stripped`]?.like === `${species}_log`),
-    'Arkusze kory i okorowanego pnia: dąb, świerk, sosna, buk, lipa, brzoza');
+{
+    const { TREE_NAMES } = await import('../src/blocks/trees.js');
+    check(TREE_NAMES.length === 19 && TREE_NAMES.every((species) => B.BARK_SHEETS[`${species}_log`] && B.BARK_SHEETS[`${species}_log_stripped`]?.like === `${species}_log`),
+        'Arkusze kory i okorowanego pnia mają wszystkie 19 drzew');
+}
+
+// Sosna: górna kora też z arkusza i z tym samym losowaniem co dolna, ale
+// blok tuż nad ciemną korą zostaje przy obrazku płynnego przejścia.
+{
+    const upper = blockRenderData[getBlockId('pine_log_upper')].bark, lower = blockRenderData[getBlockId('pine_log')].bark;
+    check(upper?.uv.length === 64 && upper.lookup.every((tile, slot) => tile === lower.lookup[slot]), 'Górna kora sosny: arkusz i to samo losowanie co dolna');
+    const chunk = new Chunk(0, 0);
+    for (let y = 4; y < 8; y++) chunk.setId(8, y, 8, getBlockId('pine_log'));
+    for (let y = 8; y < 20; y++) chunk.setId(8, y, 8, getBlockId('pine_log_upper'));
+    chunk.skyLight.fill(15);
+    const geometry = buildChunkGeometry(chunk, worldFor(chunk), { terrain: true, plants: true });
+    const uv = geometry.attributes.uv.array, position = geometry.attributes.position.array, normal = geometry.attributes.normal.array;
+    const perLevel = new Map();
+    for (let face = 0; face < uv.length / 8; face++) {
+        if (normal[face * 12 + 1] !== 0) continue;
+        const y = Math.floor(Math.min(position[face * 12 + 1], position[face * 12 + 4], position[face * 12 + 7], position[face * 12 + 10]));
+        let u = Infinity, v = Infinity;
+        for (let i = 0; i < 4; i++) { u = Math.min(u, uv[face * 8 + i * 2]); v = Math.min(v, uv[face * 8 + i * 2 + 1]); }
+        if (!perLevel.has(y)) perLevel.set(y, new Set());
+        perLevel.get(y).add(`${u.toFixed(6)},${v.toFixed(6)}`);
+    }
+    check([8, 9, 10].every((y) => perLevel.get(y).size === 1), 'Trzy bloki przejścia kory sosny: jeden obrazek przejścia na wszystkich bokach');
+    const above = new Set([...Array(9).keys()].flatMap((k) => [...perLevel.get(11 + k)]));
+    check(above.size >= 12, `Wyżej górna kora sosny z wielu kafelków (${above.size})`);
+}
 
 // Arkusze leżą w atlasie obok zwykłych kafelków i nie nachodzą na nic.
 {

@@ -11,6 +11,23 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 1.7.2 - Arkusze kory: wszystkie drzewa
+
+Seria 1.7.x — PR #155 (po 1.7.1). Opis: [`docs/kora.md`](docs/kora.md).
+
+- **Wszystkie 19 drzew ma arkusze kory i okorowanego pnia.** Doszły:
+  jabłoń, olcha, wierzba, akacja, cyprysik, wiśnia, klon, kosodrzewina,
+  oliwka, eukaliptus tęczowy, sekwoja, miłorząb i jakaranda oraz górna,
+  pomarańczowa kora sosny.
+- Arkusze powstały z dotychczasowych obrazków tych drzew (ten sam
+  charakter i kolory), z tymi samymi rzadkimi dodatkami; po okorowaniu
+  dodatek zostaje na miejscu.
+- Sosna: bloki płynnego przejścia między ciemną a pomarańczową korą
+  i pień z żywicą zostają przy swoich obrazkach.
+- Mały, ciemny sęczek z obrazków okorowanych pni z paczek jest teraz na
+  co czwartym kafelku zamiast na każdym bloku.
+- Atlas tekstur bez zmian w rozmiarze (miejsce przygotowane w 1.7.1).
+
 ## 1.7.1 - Arkusze kory: świerk, sosna, buk, lipa, brzoza
 
 Seria 1.7.x — PR #154 (po 1.7.0). Opis: [`docs/kora.md`](docs/kora.md).

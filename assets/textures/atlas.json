@@ -7,7 +7,7 @@
     "drzewa": {
       "file": "drzewa.png",
       "width": 256,
-      "height": 1504
+      "height": 3280
     },
     "teren": {
       "file": "teren.png",
@@ -5167,6 +5167,195 @@
       "y": 1376,
       "width": 128,
       "height": 128
+    },
+    "pine_log_upper_bark": {
+      "sheet": "drzewa",
+      "x": 128,
+      "y": 1488,
+      "width": 128,
+      "height": 128
+    },
+    "jablon_log_bark": {
+      "sheet": "drzewa",
+      "x": 0,
+      "y": 1504,
+      "width": 128,
+      "height": 128
+    },
+    "jablon_stripped_sheet": {
+      "sheet": "drzewa",
+      "x": 128,
+      "y": 1616,
+      "width": 128,
+      "height": 128
+    },
+    "olcha_log_bark": {
+      "sheet": "drzewa",
+      "x": 0,
+      "y": 1632,
+      "width": 128,
+      "height": 128
+    },
+    "olcha_stripped_sheet": {
+      "sheet": "drzewa",
+      "x": 128,
+      "y": 1744,
+      "width": 128,
+      "height": 128
+    },
+    "wierzba_log_bark": {
+      "sheet": "drzewa",
+      "x": 0,
+      "y": 1760,
+      "width": 128,
+      "height": 128
+    },
+    "wierzba_stripped_sheet": {
+      "sheet": "drzewa",
+      "x": 128,
+      "y": 1872,
+      "width": 128,
+      "height": 128
+    },
+    "acacia_log_bark": {
+      "sheet": "drzewa",
+      "x": 0,
+      "y": 1888,
+      "width": 128,
+      "height": 128
+    },
+    "acacia_stripped_sheet": {
+      "sheet": "drzewa",
+      "x": 128,
+      "y": 2000,
+      "width": 128,
+      "height": 128
+    },
+    "bald_cypress_log_bark": {
+      "sheet": "drzewa",
+      "x": 0,
+      "y": 2016,
+      "width": 128,
+      "height": 128
+    },
+    "bald_cypress_stripped_sheet": {
+      "sheet": "drzewa",
+      "x": 128,
+      "y": 2128,
+      "width": 128,
+      "height": 128
+    },
+    "cherry_log_bark": {
+      "sheet": "drzewa",
+      "x": 0,
+      "y": 2144,
+      "width": 128,
+      "height": 128
+    },
+    "cherry_stripped_sheet": {
+      "sheet": "drzewa",
+      "x": 128,
+      "y": 2256,
+      "width": 128,
+      "height": 128
+    },
+    "maple_log_bark": {
+      "sheet": "drzewa",
+      "x": 0,
+      "y": 2272,
+      "width": 128,
+      "height": 128
+    },
+    "maple_stripped_sheet": {
+      "sheet": "drzewa",
+      "x": 128,
+      "y": 2384,
+      "width": 128,
+      "height": 128
+    },
+    "mugo_log_bark": {
+      "sheet": "drzewa",
+      "x": 0,
+      "y": 2400,
+      "width": 128,
+      "height": 128
+    },
+    "mugo_stripped_sheet": {
+      "sheet": "drzewa",
+      "x": 128,
+      "y": 2512,
+      "width": 128,
+      "height": 128
+    },
+    "olive_log_bark": {
+      "sheet": "drzewa",
+      "x": 0,
+      "y": 2528,
+      "width": 128,
+      "height": 128
+    },
+    "olive_stripped_sheet": {
+      "sheet": "drzewa",
+      "x": 128,
+      "y": 2640,
+      "width": 128,
+      "height": 128
+    },
+    "rainbow_eucalyptus_log_bark": {
+      "sheet": "drzewa",
+      "x": 0,
+      "y": 2656,
+      "width": 128,
+      "height": 128
+    },
+    "rainbow_eucalyptus_stripped_sheet": {
+      "sheet": "drzewa",
+      "x": 128,
+      "y": 2768,
+      "width": 128,
+      "height": 128
+    },
+    "sequoia_log_bark": {
+      "sheet": "drzewa",
+      "x": 0,
+      "y": 2784,
+      "width": 128,
+      "height": 128
+    },
+    "sequoia_stripped_sheet": {
+      "sheet": "drzewa",
+      "x": 128,
+      "y": 2896,
+      "width": 128,
+      "height": 128
+    },
+    "ginkgo_log_bark": {
+      "sheet": "drzewa",
+      "x": 0,
+      "y": 2912,
+      "width": 128,
+      "height": 128
+    },
+    "ginkgo_stripped_sheet": {
+      "sheet": "drzewa",
+      "x": 128,
+      "y": 3024,
+      "width": 128,
+      "height": 128
+    },
+    "jacaranda_log_bark": {
+      "sheet": "drzewa",
+      "x": 0,
+      "y": 3040,
+      "width": 128,
+      "height": 128
+    },
+    "jacaranda_stripped_sheet": {
+      "sheet": "drzewa",
+      "x": 128,
+      "y": 3152,
+      "width": 128,
+      "height": 128
     }
   },
   "aliases": {
@@ -9323,6 +9512,249 @@
       "pw": 128,
       "ph": 128,
       "region": "birch_stripped_sheet"
+    },
+    "pine_log_upper_bark": {
+      "x": 16,
+      "y": 16,
+      "w": 8,
+      "h": 8,
+      "pw": 128,
+      "ph": 128,
+      "region": "pine_log_upper_bark"
+    },
+    "jablon_log_bark": {
+      "x": 24,
+      "y": 16,
+      "w": 8,
+      "h": 8,
+      "pw": 128,
+      "ph": 128,
+      "region": "jablon_log_bark"
+    },
+    "jablon_stripped_sheet": {
+      "x": 32,
+      "y": 16,
+      "w": 8,
+      "h": 8,
+      "pw": 128,
+      "ph": 128,
+      "region": "jablon_stripped_sheet"
+    },
+    "olcha_log_bark": {
+      "x": 40,
+      "y": 16,
+      "w": 8,
+      "h": 8,
+      "pw": 128,
+      "ph": 128,
+      "region": "olcha_log_bark"
+    },
+    "olcha_stripped_sheet": {
+      "x": 48,
+      "y": 16,
+      "w": 8,
+      "h": 8,
+      "pw": 128,
+      "ph": 128,
+      "region": "olcha_stripped_sheet"
+    },
+    "wierzba_log_bark": {
+      "x": 56,
+      "y": 16,
+      "w": 8,
+      "h": 8,
+      "pw": 128,
+      "ph": 128,
+      "region": "wierzba_log_bark"
+    },
+    "wierzba_stripped_sheet": {
+      "x": 16,
+      "y": 24,
+      "w": 8,
+      "h": 8,
+      "pw": 128,
+      "ph": 128,
+      "region": "wierzba_stripped_sheet"
+    },
+    "acacia_log_bark": {
+      "x": 24,
+      "y": 24,
+      "w": 8,
+      "h": 8,
+      "pw": 128,
+      "ph": 128,
+      "region": "acacia_log_bark"
+    },
+    "acacia_stripped_sheet": {
+      "x": 32,
+      "y": 24,
+      "w": 8,
+      "h": 8,
+      "pw": 128,
+      "ph": 128,
+      "region": "acacia_stripped_sheet"
+    },
+    "bald_cypress_log_bark": {
+      "x": 40,
+      "y": 24,
+      "w": 8,
+      "h": 8,
+      "pw": 128,
+      "ph": 128,
+      "region": "bald_cypress_log_bark"
+    },
+    "bald_cypress_stripped_sheet": {
+      "x": 48,
+      "y": 24,
+      "w": 8,
+      "h": 8,
+      "pw": 128,
+      "ph": 128,
+      "region": "bald_cypress_stripped_sheet"
+    },
+    "cherry_log_bark": {
+      "x": 56,
+      "y": 24,
+      "w": 8,
+      "h": 8,
+      "pw": 128,
+      "ph": 128,
+      "region": "cherry_log_bark"
+    },
+    "cherry_stripped_sheet": {
+      "x": 16,
+      "y": 32,
+      "w": 8,
+      "h": 8,
+      "pw": 128,
+      "ph": 128,
+      "region": "cherry_stripped_sheet"
+    },
+    "maple_log_bark": {
+      "x": 24,
+      "y": 32,
+      "w": 8,
+      "h": 8,
+      "pw": 128,
+      "ph": 128,
+      "region": "maple_log_bark"
+    },
+    "maple_stripped_sheet": {
+      "x": 32,
+      "y": 32,
+      "w": 8,
+      "h": 8,
+      "pw": 128,
+      "ph": 128,
+      "region": "maple_stripped_sheet"
+    },
+    "mugo_log_bark": {
+      "x": 40,
+      "y": 32,
+      "w": 8,
+      "h": 8,
+      "pw": 128,
+      "ph": 128,
+      "region": "mugo_log_bark"
+    },
+    "mugo_stripped_sheet": {
+      "x": 48,
+      "y": 32,
+      "w": 8,
+      "h": 8,
+      "pw": 128,
+      "ph": 128,
+      "region": "mugo_stripped_sheet"
+    },
+    "olive_log_bark": {
+      "x": 56,
+      "y": 32,
+      "w": 8,
+      "h": 8,
+      "pw": 128,
+      "ph": 128,
+      "region": "olive_log_bark"
+    },
+    "olive_stripped_sheet": {
+      "x": 16,
+      "y": 40,
+      "w": 8,
+      "h": 8,
+      "pw": 128,
+      "ph": 128,
+      "region": "olive_stripped_sheet"
+    },
+    "rainbow_eucalyptus_log_bark": {
+      "x": 24,
+      "y": 40,
+      "w": 8,
+      "h": 8,
+      "pw": 128,
+      "ph": 128,
+      "region": "rainbow_eucalyptus_log_bark"
+    },
+    "rainbow_eucalyptus_stripped_sheet": {
+      "x": 32,
+      "y": 40,
+      "w": 8,
+      "h": 8,
+      "pw": 128,
+      "ph": 128,
+      "region": "rainbow_eucalyptus_stripped_sheet"
+    },
+    "sequoia_log_bark": {
+      "x": 40,
+      "y": 40,
+      "w": 8,
+      "h": 8,
+      "pw": 128,
+      "ph": 128,
+      "region": "sequoia_log_bark"
+    },
+    "sequoia_stripped_sheet": {
+      "x": 48,
+      "y": 40,
+      "w": 8,
+      "h": 8,
+      "pw": 128,
+      "ph": 128,
+      "region": "sequoia_stripped_sheet"
+    },
+    "ginkgo_log_bark": {
+      "x": 56,
+      "y": 40,
+      "w": 8,
+      "h": 8,
+      "pw": 128,
+      "ph": 128,
+      "region": "ginkgo_log_bark"
+    },
+    "ginkgo_stripped_sheet": {
+      "x": 16,
+      "y": 48,
+      "w": 8,
+      "h": 8,
+      "pw": 128,
+      "ph": 128,
+      "region": "ginkgo_stripped_sheet"
+    },
+    "jacaranda_log_bark": {
+      "x": 24,
+      "y": 48,
+      "w": 8,
+      "h": 8,
+      "pw": 128,
+      "ph": 128,
+      "region": "jacaranda_log_bark"
+    },
+    "jacaranda_stripped_sheet": {
+      "x": 32,
+      "y": 48,
+      "w": 8,
+      "h": 8,
+      "pw": 128,
+      "ph": 128,
+      "region": "jacaranda_stripped_sheet"
     }
   }
 }

@@ -626,12 +626,36 @@ def derived_bark(bark_name, wood_name, seed):
     return make
 
 
+def without_specks(tile, base):
+    """Kafelek bez ciemnych plamek (sęczków) - zamalowanych sąsiednim drewnem."""
+    flat = sorted(luminance(p) for row in base for p in row)
+    limit = flat[len(flat) // 2] - 26
+    out = [row[:] for row in tile]
+    for y in range(1, N - 1):
+        for x in range(N):
+            if luminance(out[y][x]) >= limit:
+                continue
+            for step in range(1, N):
+                for yy in (y - step, y + step):
+                    if 0 <= yy < N and luminance(tile[yy][x]) >= limit:
+                        out[y][x] = tile[yy][x]
+                        break
+                else:
+                    continue
+                break
+    return out
+
+
 def derived_wood(wood_name, seed):
     """Arkusz okorowanego pnia z obrazka `wood_name` - pod arkuszem kory."""
     def make():
         base = pixels_of(wood_name)
         c = wood_palette_of(base)
         variants = plain_variants(base, 48 + 16, seed)
+        # Obrazki okorowanych pni z paczek mają mały, ciemny sęczek. Na
+        # każdym kafelku dawałby kropki na każdym bloku - zostaje na co
+        # czwartym zwykłym kafelku (i na osobnych kafelkach z sękami).
+        variants = [tile if index % 4 == 0 and index < 48 else without_specks(tile, base) for index, tile in enumerate(variants)]
         tiles = [('zwykle', tile) for tile in variants[:48]]
         def special(index, name, draw):
             rng = random.Random(seed + 500 + index * 17)
@@ -674,6 +698,34 @@ SHEETS = {
     'linden_stripped_sheet': derived_wood('linden_stripped_side', 28000),
     'birch_log_bark': derived_bark('birch_log_side', 'birch_stripped_side', 29000),
     'birch_stripped_sheet': derived_wood('birch_stripped_side', 30000),
+    # 1.7.2: górna kora sosny i drzewa z paczek.
+    'pine_log_upper_bark': derived_bark('pine_log_upper_side', 'pine_stripped_side', 31000),
+    'jablon_log_bark': derived_bark('jablon/pien_bok.png', 'jablon/okorowany_bok.png', 32000),
+    'jablon_stripped_sheet': derived_wood('jablon/okorowany_bok.png', 33000),
+    'olcha_log_bark': derived_bark('olcha/pien_bok.png', 'olcha/okorowany_bok.png', 34000),
+    'olcha_stripped_sheet': derived_wood('olcha/okorowany_bok.png', 35000),
+    'wierzba_log_bark': derived_bark('wierzba/pien_bok.png', 'wierzba/okorowany_bok.png', 36000),
+    'wierzba_stripped_sheet': derived_wood('wierzba/okorowany_bok.png', 37000),
+    'acacia_log_bark': derived_bark('acacia/log_side.png', 'acacia/stripped_side.png', 38000),
+    'acacia_stripped_sheet': derived_wood('acacia/stripped_side.png', 39000),
+    'bald_cypress_log_bark': derived_bark('bald_cypress/log_side.png', 'bald_cypress/stripped_side.png', 40000),
+    'bald_cypress_stripped_sheet': derived_wood('bald_cypress/stripped_side.png', 41000),
+    'cherry_log_bark': derived_bark('cherry/log_side.png', 'cherry/stripped_side.png', 42000),
+    'cherry_stripped_sheet': derived_wood('cherry/stripped_side.png', 43000),
+    'maple_log_bark': derived_bark('maple/log_side.png', 'maple/stripped_side.png', 44000),
+    'maple_stripped_sheet': derived_wood('maple/stripped_side.png', 45000),
+    'mugo_log_bark': derived_bark('mugo/log_side.png', 'mugo/stripped_side.png', 46000),
+    'mugo_stripped_sheet': derived_wood('mugo/stripped_side.png', 47000),
+    'olive_log_bark': derived_bark('olive/log_side.png', 'olive/stripped_side.png', 48000),
+    'olive_stripped_sheet': derived_wood('olive/stripped_side.png', 49000),
+    'rainbow_eucalyptus_log_bark': derived_bark('rainbow_eucalyptus/log_side.png', 'rainbow_eucalyptus/stripped_side.png', 50000),
+    'rainbow_eucalyptus_stripped_sheet': derived_wood('rainbow_eucalyptus/stripped_side.png', 51000),
+    'sequoia_log_bark': derived_bark('sequoia/log_side.png', 'sequoia/stripped_side.png', 52000),
+    'sequoia_stripped_sheet': derived_wood('sequoia/stripped_side.png', 53000),
+    'ginkgo_log_bark': derived_bark('ginkgo/log_side.png', 'ginkgo/stripped_side.png', 54000),
+    'ginkgo_stripped_sheet': derived_wood('ginkgo/stripped_side.png', 55000),
+    'jacaranda_log_bark': derived_bark('jacaranda/log_side.png', 'jacaranda/stripped_side.png', 56000),
+    'jacaranda_stripped_sheet': derived_wood('jacaranda/stripped_side.png', 57000),
 }
 
 # Miejsce w atlasie świata: arkusze leżą na prawo od zwykłych kafelków

@@ -2,7 +2,7 @@
   "version": 1,
   "tileSize": 16,
   "columns": 16,
-  "rows": 53,
+  "rows": 59,
   "sheets": {
     "drzewa": {
       "file": "drzewa.png",
@@ -17,7 +17,7 @@
     "rosliny": {
       "file": "rosliny.png",
       "width": 256,
-      "height": 224
+      "height": 240
     },
     "przedmioty": {
       "file": "przedmioty.png",
@@ -4509,6 +4509,580 @@
       "y": 80,
       "width": 16,
       "height": 16
+    },
+    "models/rosliny/krotka-trawa/wariant-stokrotki": {
+      "sheet": "rosliny",
+      "x": 240,
+      "y": 16,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/krotka-trawa/wariant-stokrotki-prosty": {
+      "sheet": "rosliny",
+      "x": 0,
+      "y": 32,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/krotka-trawa/wariant-jaskry": {
+      "sheet": "rosliny",
+      "x": 16,
+      "y": 32,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/krotka-trawa/wariant-jaskry-prosty": {
+      "sheet": "rosliny",
+      "x": 32,
+      "y": 32,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/krotka-trawa/wariant-koniczynka": {
+      "sheet": "rosliny",
+      "x": 48,
+      "y": 32,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/krotka-trawa/wariant-koniczynka-prosty": {
+      "sheet": "rosliny",
+      "x": 64,
+      "y": 32,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/krotka-trawa/wariant-klosy": {
+      "sheet": "rosliny",
+      "x": 80,
+      "y": 32,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/krotka-trawa/wariant-klosy-prosty": {
+      "sheet": "rosliny",
+      "x": 96,
+      "y": 32,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/krotka-trawa/wariant-sitowie": {
+      "sheet": "rosliny",
+      "x": 112,
+      "y": 32,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/krotka-trawa/wariant-sitowie-prosty": {
+      "sheet": "rosliny",
+      "x": 128,
+      "y": 32,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/krotka-trawa/wariant-kaczence": {
+      "sheet": "rosliny",
+      "x": 144,
+      "y": 32,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/krotka-trawa/wariant-kaczence-prosty": {
+      "sheet": "rosliny",
+      "x": 160,
+      "y": 32,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/krotka-trawa/wariant-niezapominajki": {
+      "sheet": "rosliny",
+      "x": 240,
+      "y": 32,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/krotka-trawa/wariant-niezapominajki-prosty": {
+      "sheet": "rosliny",
+      "x": 32,
+      "y": 64,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/krotka-trawa/wariant-turzyca": {
+      "sheet": "rosliny",
+      "x": 48,
+      "y": 64,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/krotka-trawa/wariant-turzyca-prosty": {
+      "sheet": "rosliny",
+      "x": 64,
+      "y": 64,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/krotka-trawa/wariant-lesna": {
+      "sheet": "rosliny",
+      "x": 80,
+      "y": 64,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/krotka-trawa/wariant-lesna-prosty": {
+      "sheet": "rosliny",
+      "x": 96,
+      "y": 64,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/krotka-trawa/wariant-zawilce": {
+      "sheet": "rosliny",
+      "x": 112,
+      "y": 64,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/krotka-trawa/wariant-zawilce-prosty": {
+      "sheet": "rosliny",
+      "x": 128,
+      "y": 64,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/krotka-trawa/wariant-fiolki": {
+      "sheet": "rosliny",
+      "x": 144,
+      "y": 64,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/krotka-trawa/wariant-fiolki-prosty": {
+      "sheet": "rosliny",
+      "x": 160,
+      "y": 64,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/krotka-trawa/wariant-paprotka": {
+      "sheet": "rosliny",
+      "x": 176,
+      "y": 64,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/krotka-trawa/wariant-paprotka-prosty": {
+      "sheet": "rosliny",
+      "x": 192,
+      "y": 64,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/krotka-trawa/wariant-borowa": {
+      "sheet": "rosliny",
+      "x": 208,
+      "y": 64,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/krotka-trawa/wariant-borowa-prosty": {
+      "sheet": "rosliny",
+      "x": 224,
+      "y": 64,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/krotka-trawa/wariant-sucha-kepka": {
+      "sheet": "rosliny",
+      "x": 240,
+      "y": 64,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/krotka-trawa/wariant-sucha-kepka-prosty": {
+      "sheet": "rosliny",
+      "x": 0,
+      "y": 96,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/krotka-trawa/wariant-wrzosiec": {
+      "sheet": "rosliny",
+      "x": 16,
+      "y": 96,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/krotka-trawa/wariant-wrzosiec-prosty": {
+      "sheet": "rosliny",
+      "x": 32,
+      "y": 96,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/krotka-trawa/wariant-ostnica": {
+      "sheet": "rosliny",
+      "x": 48,
+      "y": 96,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/krotka-trawa/wariant-ostnica-prosty": {
+      "sheet": "rosliny",
+      "x": 64,
+      "y": 96,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/krotka-trawa/wariant-klosy-zlote": {
+      "sheet": "rosliny",
+      "x": 144,
+      "y": 96,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/krotka-trawa/wariant-klosy-zlote-prosty": {
+      "sheet": "rosliny",
+      "x": 160,
+      "y": 96,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/krotka-trawa/wariant-macierzanka": {
+      "sheet": "rosliny",
+      "x": 176,
+      "y": 96,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/krotka-trawa/wariant-macierzanka-prosty": {
+      "sheet": "rosliny",
+      "x": 192,
+      "y": 96,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/krotka-trawa/wariant-murawa": {
+      "sheet": "rosliny",
+      "x": 208,
+      "y": 96,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/krotka-trawa/wariant-murawa-prosty": {
+      "sheet": "rosliny",
+      "x": 224,
+      "y": 96,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/krotka-trawa/wariant-goryczka": {
+      "sheet": "rosliny",
+      "x": 240,
+      "y": 96,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/krotka-trawa/wariant-goryczka-prosty": {
+      "sheet": "rosliny",
+      "x": 0,
+      "y": 112,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/krotka-trawa/wariant-szarotka": {
+      "sheet": "rosliny",
+      "x": 16,
+      "y": 112,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/krotka-trawa/wariant-szarotka-prosty": {
+      "sheet": "rosliny",
+      "x": 32,
+      "y": 112,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/wysoka-trawa/wariant-klosy": {
+      "sheet": "rosliny",
+      "x": 48,
+      "y": 112,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/wysoka-trawa/wariant-klosy-prosty": {
+      "sheet": "rosliny",
+      "x": 64,
+      "y": 112,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/wysoka-trawa/wariant-szczaw": {
+      "sheet": "rosliny",
+      "x": 144,
+      "y": 112,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/wysoka-trawa/wariant-szczaw-prosty": {
+      "sheet": "rosliny",
+      "x": 160,
+      "y": 112,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/wysoka-trawa/wariant-dzwonki": {
+      "sheet": "rosliny",
+      "x": 176,
+      "y": 112,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/wysoka-trawa/wariant-dzwonki-prosty": {
+      "sheet": "rosliny",
+      "x": 192,
+      "y": 112,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/wysoka-trawa/wariant-margerytki": {
+      "sheet": "rosliny",
+      "x": 208,
+      "y": 112,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/wysoka-trawa/wariant-margerytki-prosty": {
+      "sheet": "rosliny",
+      "x": 224,
+      "y": 112,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/wysoka-trawa/wariant-szuwar": {
+      "sheet": "rosliny",
+      "x": 240,
+      "y": 112,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/wysoka-trawa/wariant-szuwar-prosty": {
+      "sheet": "rosliny",
+      "x": 0,
+      "y": 128,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/wysoka-trawa/wariant-palki": {
+      "sheet": "rosliny",
+      "x": 16,
+      "y": 128,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/wysoka-trawa/wariant-palki-prosty": {
+      "sheet": "rosliny",
+      "x": 32,
+      "y": 128,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/wysoka-trawa/wariant-kosacce": {
+      "sheet": "rosliny",
+      "x": 48,
+      "y": 128,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/wysoka-trawa/wariant-kosacce-prosty": {
+      "sheet": "rosliny",
+      "x": 64,
+      "y": 128,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/wysoka-trawa/wariant-krwawnica": {
+      "sheet": "rosliny",
+      "x": 144,
+      "y": 128,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/wysoka-trawa/wariant-krwawnica-prosty": {
+      "sheet": "rosliny",
+      "x": 160,
+      "y": 128,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/wysoka-trawa/wariant-lesna": {
+      "sheet": "rosliny",
+      "x": 176,
+      "y": 128,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/wysoka-trawa/wariant-lesna-prosty": {
+      "sheet": "rosliny",
+      "x": 192,
+      "y": 128,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/wysoka-trawa/wariant-orlica": {
+      "sheet": "rosliny",
+      "x": 208,
+      "y": 128,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/wysoka-trawa/wariant-orlica-prosty": {
+      "sheet": "rosliny",
+      "x": 224,
+      "y": 128,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/wysoka-trawa/wariant-naparstnica": {
+      "sheet": "rosliny",
+      "x": 240,
+      "y": 128,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/wysoka-trawa/wariant-naparstnica-prosty": {
+      "sheet": "rosliny",
+      "x": 128,
+      "y": 208,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/wysoka-trawa/wariant-trzcinnik": {
+      "sheet": "rosliny",
+      "x": 144,
+      "y": 208,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/wysoka-trawa/wariant-trzcinnik-prosty": {
+      "sheet": "rosliny",
+      "x": 160,
+      "y": 208,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/wysoka-trawa/wariant-wiechy": {
+      "sheet": "rosliny",
+      "x": 176,
+      "y": 208,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/wysoka-trawa/wariant-wiechy-prosty": {
+      "sheet": "rosliny",
+      "x": 192,
+      "y": 208,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/wysoka-trawa/wariant-wrzos": {
+      "sheet": "rosliny",
+      "x": 208,
+      "y": 208,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/wysoka-trawa/wariant-wrzos-prosty": {
+      "sheet": "rosliny",
+      "x": 224,
+      "y": 208,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/wysoka-trawa/wariant-ostnica": {
+      "sheet": "rosliny",
+      "x": 240,
+      "y": 208,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/wysoka-trawa/wariant-ostnica-prosty": {
+      "sheet": "rosliny",
+      "x": 0,
+      "y": 224,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/wysoka-trawa/wariant-piorka": {
+      "sheet": "rosliny",
+      "x": 16,
+      "y": 224,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/wysoka-trawa/wariant-piorka-prosty": {
+      "sheet": "rosliny",
+      "x": 32,
+      "y": 224,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/wysoka-trawa/wariant-oset": {
+      "sheet": "rosliny",
+      "x": 48,
+      "y": 224,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/wysoka-trawa/wariant-oset-prosty": {
+      "sheet": "rosliny",
+      "x": 64,
+      "y": 224,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/wysoka-trawa/wariant-kosmatka": {
+      "sheet": "rosliny",
+      "x": 80,
+      "y": 224,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/wysoka-trawa/wariant-kosmatka-prosty": {
+      "sheet": "rosliny",
+      "x": 96,
+      "y": 224,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/wysoka-trawa/wariant-welnianka": {
+      "sheet": "rosliny",
+      "x": 112,
+      "y": 224,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/wysoka-trawa/wariant-welnianka-prosty": {
+      "sheet": "rosliny",
+      "x": 128,
+      "y": 224,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/wysoka-trawa/wariant-goryczka": {
+      "sheet": "rosliny",
+      "x": 144,
+      "y": 224,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/wysoka-trawa/wariant-goryczka-prosty": {
+      "sheet": "rosliny",
+      "x": 160,
+      "y": 224,
+      "width": 16,
+      "height": 16
     }
   },
   "aliases": {
@@ -4765,7 +5339,89 @@
     "assets/textures/derived/knife_limestone.png": "knife_limestone",
     "assets/textures/derived/knife_sandstone.png": "knife_sandstone",
     "assets/textures/derived/knife_slate.png": "knife_slate",
-    "assets/textures/derived/knife_basalt.png": "knife_basalt"
+    "assets/textures/derived/knife_basalt.png": "knife_basalt",
+    "assets/models/rosliny/krotka-trawa/wariant-stokrotki.png": "models/rosliny/krotka-trawa/wariant-stokrotki",
+    "assets/models/rosliny/krotka-trawa/wariant-stokrotki-prosty.png": "models/rosliny/krotka-trawa/wariant-stokrotki-prosty",
+    "assets/models/rosliny/krotka-trawa/wariant-jaskry.png": "models/rosliny/krotka-trawa/wariant-jaskry",
+    "assets/models/rosliny/krotka-trawa/wariant-jaskry-prosty.png": "models/rosliny/krotka-trawa/wariant-jaskry-prosty",
+    "assets/models/rosliny/krotka-trawa/wariant-koniczynka.png": "models/rosliny/krotka-trawa/wariant-koniczynka",
+    "assets/models/rosliny/krotka-trawa/wariant-koniczynka-prosty.png": "models/rosliny/krotka-trawa/wariant-koniczynka-prosty",
+    "assets/models/rosliny/krotka-trawa/wariant-klosy.png": "models/rosliny/krotka-trawa/wariant-klosy",
+    "assets/models/rosliny/krotka-trawa/wariant-klosy-prosty.png": "models/rosliny/krotka-trawa/wariant-klosy-prosty",
+    "assets/models/rosliny/krotka-trawa/wariant-sitowie.png": "models/rosliny/krotka-trawa/wariant-sitowie",
+    "assets/models/rosliny/krotka-trawa/wariant-sitowie-prosty.png": "models/rosliny/krotka-trawa/wariant-sitowie-prosty",
+    "assets/models/rosliny/krotka-trawa/wariant-kaczence.png": "models/rosliny/krotka-trawa/wariant-kaczence",
+    "assets/models/rosliny/krotka-trawa/wariant-kaczence-prosty.png": "models/rosliny/krotka-trawa/wariant-kaczence-prosty",
+    "assets/models/rosliny/krotka-trawa/wariant-niezapominajki.png": "models/rosliny/krotka-trawa/wariant-niezapominajki",
+    "assets/models/rosliny/krotka-trawa/wariant-niezapominajki-prosty.png": "models/rosliny/krotka-trawa/wariant-niezapominajki-prosty",
+    "assets/models/rosliny/krotka-trawa/wariant-turzyca.png": "models/rosliny/krotka-trawa/wariant-turzyca",
+    "assets/models/rosliny/krotka-trawa/wariant-turzyca-prosty.png": "models/rosliny/krotka-trawa/wariant-turzyca-prosty",
+    "assets/models/rosliny/krotka-trawa/wariant-lesna.png": "models/rosliny/krotka-trawa/wariant-lesna",
+    "assets/models/rosliny/krotka-trawa/wariant-lesna-prosty.png": "models/rosliny/krotka-trawa/wariant-lesna-prosty",
+    "assets/models/rosliny/krotka-trawa/wariant-zawilce.png": "models/rosliny/krotka-trawa/wariant-zawilce",
+    "assets/models/rosliny/krotka-trawa/wariant-zawilce-prosty.png": "models/rosliny/krotka-trawa/wariant-zawilce-prosty",
+    "assets/models/rosliny/krotka-trawa/wariant-fiolki.png": "models/rosliny/krotka-trawa/wariant-fiolki",
+    "assets/models/rosliny/krotka-trawa/wariant-fiolki-prosty.png": "models/rosliny/krotka-trawa/wariant-fiolki-prosty",
+    "assets/models/rosliny/krotka-trawa/wariant-paprotka.png": "models/rosliny/krotka-trawa/wariant-paprotka",
+    "assets/models/rosliny/krotka-trawa/wariant-paprotka-prosty.png": "models/rosliny/krotka-trawa/wariant-paprotka-prosty",
+    "assets/models/rosliny/krotka-trawa/wariant-borowa.png": "models/rosliny/krotka-trawa/wariant-borowa",
+    "assets/models/rosliny/krotka-trawa/wariant-borowa-prosty.png": "models/rosliny/krotka-trawa/wariant-borowa-prosty",
+    "assets/models/rosliny/krotka-trawa/wariant-sucha-kepka.png": "models/rosliny/krotka-trawa/wariant-sucha-kepka",
+    "assets/models/rosliny/krotka-trawa/wariant-sucha-kepka-prosty.png": "models/rosliny/krotka-trawa/wariant-sucha-kepka-prosty",
+    "assets/models/rosliny/krotka-trawa/wariant-wrzosiec.png": "models/rosliny/krotka-trawa/wariant-wrzosiec",
+    "assets/models/rosliny/krotka-trawa/wariant-wrzosiec-prosty.png": "models/rosliny/krotka-trawa/wariant-wrzosiec-prosty",
+    "assets/models/rosliny/krotka-trawa/wariant-ostnica.png": "models/rosliny/krotka-trawa/wariant-ostnica",
+    "assets/models/rosliny/krotka-trawa/wariant-ostnica-prosty.png": "models/rosliny/krotka-trawa/wariant-ostnica-prosty",
+    "assets/models/rosliny/krotka-trawa/wariant-klosy-zlote.png": "models/rosliny/krotka-trawa/wariant-klosy-zlote",
+    "assets/models/rosliny/krotka-trawa/wariant-klosy-zlote-prosty.png": "models/rosliny/krotka-trawa/wariant-klosy-zlote-prosty",
+    "assets/models/rosliny/krotka-trawa/wariant-macierzanka.png": "models/rosliny/krotka-trawa/wariant-macierzanka",
+    "assets/models/rosliny/krotka-trawa/wariant-macierzanka-prosty.png": "models/rosliny/krotka-trawa/wariant-macierzanka-prosty",
+    "assets/models/rosliny/krotka-trawa/wariant-murawa.png": "models/rosliny/krotka-trawa/wariant-murawa",
+    "assets/models/rosliny/krotka-trawa/wariant-murawa-prosty.png": "models/rosliny/krotka-trawa/wariant-murawa-prosty",
+    "assets/models/rosliny/krotka-trawa/wariant-goryczka.png": "models/rosliny/krotka-trawa/wariant-goryczka",
+    "assets/models/rosliny/krotka-trawa/wariant-goryczka-prosty.png": "models/rosliny/krotka-trawa/wariant-goryczka-prosty",
+    "assets/models/rosliny/krotka-trawa/wariant-szarotka.png": "models/rosliny/krotka-trawa/wariant-szarotka",
+    "assets/models/rosliny/krotka-trawa/wariant-szarotka-prosty.png": "models/rosliny/krotka-trawa/wariant-szarotka-prosty",
+    "assets/models/rosliny/wysoka-trawa/wariant-klosy.png": "models/rosliny/wysoka-trawa/wariant-klosy",
+    "assets/models/rosliny/wysoka-trawa/wariant-klosy-prosty.png": "models/rosliny/wysoka-trawa/wariant-klosy-prosty",
+    "assets/models/rosliny/wysoka-trawa/wariant-szczaw.png": "models/rosliny/wysoka-trawa/wariant-szczaw",
+    "assets/models/rosliny/wysoka-trawa/wariant-szczaw-prosty.png": "models/rosliny/wysoka-trawa/wariant-szczaw-prosty",
+    "assets/models/rosliny/wysoka-trawa/wariant-dzwonki.png": "models/rosliny/wysoka-trawa/wariant-dzwonki",
+    "assets/models/rosliny/wysoka-trawa/wariant-dzwonki-prosty.png": "models/rosliny/wysoka-trawa/wariant-dzwonki-prosty",
+    "assets/models/rosliny/wysoka-trawa/wariant-margerytki.png": "models/rosliny/wysoka-trawa/wariant-margerytki",
+    "assets/models/rosliny/wysoka-trawa/wariant-margerytki-prosty.png": "models/rosliny/wysoka-trawa/wariant-margerytki-prosty",
+    "assets/models/rosliny/wysoka-trawa/wariant-szuwar.png": "models/rosliny/wysoka-trawa/wariant-szuwar",
+    "assets/models/rosliny/wysoka-trawa/wariant-szuwar-prosty.png": "models/rosliny/wysoka-trawa/wariant-szuwar-prosty",
+    "assets/models/rosliny/wysoka-trawa/wariant-palki.png": "models/rosliny/wysoka-trawa/wariant-palki",
+    "assets/models/rosliny/wysoka-trawa/wariant-palki-prosty.png": "models/rosliny/wysoka-trawa/wariant-palki-prosty",
+    "assets/models/rosliny/wysoka-trawa/wariant-kosacce.png": "models/rosliny/wysoka-trawa/wariant-kosacce",
+    "assets/models/rosliny/wysoka-trawa/wariant-kosacce-prosty.png": "models/rosliny/wysoka-trawa/wariant-kosacce-prosty",
+    "assets/models/rosliny/wysoka-trawa/wariant-krwawnica.png": "models/rosliny/wysoka-trawa/wariant-krwawnica",
+    "assets/models/rosliny/wysoka-trawa/wariant-krwawnica-prosty.png": "models/rosliny/wysoka-trawa/wariant-krwawnica-prosty",
+    "assets/models/rosliny/wysoka-trawa/wariant-lesna.png": "models/rosliny/wysoka-trawa/wariant-lesna",
+    "assets/models/rosliny/wysoka-trawa/wariant-lesna-prosty.png": "models/rosliny/wysoka-trawa/wariant-lesna-prosty",
+    "assets/models/rosliny/wysoka-trawa/wariant-orlica.png": "models/rosliny/wysoka-trawa/wariant-orlica",
+    "assets/models/rosliny/wysoka-trawa/wariant-orlica-prosty.png": "models/rosliny/wysoka-trawa/wariant-orlica-prosty",
+    "assets/models/rosliny/wysoka-trawa/wariant-naparstnica.png": "models/rosliny/wysoka-trawa/wariant-naparstnica",
+    "assets/models/rosliny/wysoka-trawa/wariant-naparstnica-prosty.png": "models/rosliny/wysoka-trawa/wariant-naparstnica-prosty",
+    "assets/models/rosliny/wysoka-trawa/wariant-trzcinnik.png": "models/rosliny/wysoka-trawa/wariant-trzcinnik",
+    "assets/models/rosliny/wysoka-trawa/wariant-trzcinnik-prosty.png": "models/rosliny/wysoka-trawa/wariant-trzcinnik-prosty",
+    "assets/models/rosliny/wysoka-trawa/wariant-wiechy.png": "models/rosliny/wysoka-trawa/wariant-wiechy",
+    "assets/models/rosliny/wysoka-trawa/wariant-wiechy-prosty.png": "models/rosliny/wysoka-trawa/wariant-wiechy-prosty",
+    "assets/models/rosliny/wysoka-trawa/wariant-wrzos.png": "models/rosliny/wysoka-trawa/wariant-wrzos",
+    "assets/models/rosliny/wysoka-trawa/wariant-wrzos-prosty.png": "models/rosliny/wysoka-trawa/wariant-wrzos-prosty",
+    "assets/models/rosliny/wysoka-trawa/wariant-ostnica.png": "models/rosliny/wysoka-trawa/wariant-ostnica",
+    "assets/models/rosliny/wysoka-trawa/wariant-ostnica-prosty.png": "models/rosliny/wysoka-trawa/wariant-ostnica-prosty",
+    "assets/models/rosliny/wysoka-trawa/wariant-piorka.png": "models/rosliny/wysoka-trawa/wariant-piorka",
+    "assets/models/rosliny/wysoka-trawa/wariant-piorka-prosty.png": "models/rosliny/wysoka-trawa/wariant-piorka-prosty",
+    "assets/models/rosliny/wysoka-trawa/wariant-oset.png": "models/rosliny/wysoka-trawa/wariant-oset",
+    "assets/models/rosliny/wysoka-trawa/wariant-oset-prosty.png": "models/rosliny/wysoka-trawa/wariant-oset-prosty",
+    "assets/models/rosliny/wysoka-trawa/wariant-kosmatka.png": "models/rosliny/wysoka-trawa/wariant-kosmatka",
+    "assets/models/rosliny/wysoka-trawa/wariant-kosmatka-prosty.png": "models/rosliny/wysoka-trawa/wariant-kosmatka-prosty",
+    "assets/models/rosliny/wysoka-trawa/wariant-welnianka.png": "models/rosliny/wysoka-trawa/wariant-welnianka",
+    "assets/models/rosliny/wysoka-trawa/wariant-welnianka-prosty.png": "models/rosliny/wysoka-trawa/wariant-welnianka-prosty",
+    "assets/models/rosliny/wysoka-trawa/wariant-goryczka.png": "models/rosliny/wysoka-trawa/wariant-goryczka",
+    "assets/models/rosliny/wysoka-trawa/wariant-goryczka-prosty.png": "models/rosliny/wysoka-trawa/wariant-goryczka-prosty"
   },
   "tiles": {
     "grass_top": {
@@ -8065,6 +8721,416 @@
       "x": 9,
       "y": 52,
       "region": "grass_top_koniczyna_mlecz"
+    },
+    "models/rosliny/krotka-trawa/wariant-stokrotki": {
+      "x": 0,
+      "y": 53,
+      "region": "models/rosliny/krotka-trawa/wariant-stokrotki"
+    },
+    "models/rosliny/krotka-trawa/wariant-stokrotki-prosty": {
+      "x": 1,
+      "y": 53,
+      "region": "models/rosliny/krotka-trawa/wariant-stokrotki-prosty"
+    },
+    "models/rosliny/krotka-trawa/wariant-jaskry": {
+      "x": 2,
+      "y": 53,
+      "region": "models/rosliny/krotka-trawa/wariant-jaskry"
+    },
+    "models/rosliny/krotka-trawa/wariant-jaskry-prosty": {
+      "x": 3,
+      "y": 53,
+      "region": "models/rosliny/krotka-trawa/wariant-jaskry-prosty"
+    },
+    "models/rosliny/krotka-trawa/wariant-koniczynka": {
+      "x": 4,
+      "y": 53,
+      "region": "models/rosliny/krotka-trawa/wariant-koniczynka"
+    },
+    "models/rosliny/krotka-trawa/wariant-koniczynka-prosty": {
+      "x": 5,
+      "y": 53,
+      "region": "models/rosliny/krotka-trawa/wariant-koniczynka-prosty"
+    },
+    "models/rosliny/krotka-trawa/wariant-klosy": {
+      "x": 6,
+      "y": 53,
+      "region": "models/rosliny/krotka-trawa/wariant-klosy"
+    },
+    "models/rosliny/krotka-trawa/wariant-klosy-prosty": {
+      "x": 7,
+      "y": 53,
+      "region": "models/rosliny/krotka-trawa/wariant-klosy-prosty"
+    },
+    "models/rosliny/krotka-trawa/wariant-sitowie": {
+      "x": 8,
+      "y": 53,
+      "region": "models/rosliny/krotka-trawa/wariant-sitowie"
+    },
+    "models/rosliny/krotka-trawa/wariant-sitowie-prosty": {
+      "x": 9,
+      "y": 53,
+      "region": "models/rosliny/krotka-trawa/wariant-sitowie-prosty"
+    },
+    "models/rosliny/krotka-trawa/wariant-kaczence": {
+      "x": 10,
+      "y": 53,
+      "region": "models/rosliny/krotka-trawa/wariant-kaczence"
+    },
+    "models/rosliny/krotka-trawa/wariant-kaczence-prosty": {
+      "x": 11,
+      "y": 53,
+      "region": "models/rosliny/krotka-trawa/wariant-kaczence-prosty"
+    },
+    "models/rosliny/krotka-trawa/wariant-niezapominajki": {
+      "x": 12,
+      "y": 53,
+      "region": "models/rosliny/krotka-trawa/wariant-niezapominajki"
+    },
+    "models/rosliny/krotka-trawa/wariant-niezapominajki-prosty": {
+      "x": 13,
+      "y": 53,
+      "region": "models/rosliny/krotka-trawa/wariant-niezapominajki-prosty"
+    },
+    "models/rosliny/krotka-trawa/wariant-turzyca": {
+      "x": 14,
+      "y": 53,
+      "region": "models/rosliny/krotka-trawa/wariant-turzyca"
+    },
+    "models/rosliny/krotka-trawa/wariant-turzyca-prosty": {
+      "x": 15,
+      "y": 53,
+      "region": "models/rosliny/krotka-trawa/wariant-turzyca-prosty"
+    },
+    "models/rosliny/krotka-trawa/wariant-lesna": {
+      "x": 0,
+      "y": 54,
+      "region": "models/rosliny/krotka-trawa/wariant-lesna"
+    },
+    "models/rosliny/krotka-trawa/wariant-lesna-prosty": {
+      "x": 1,
+      "y": 54,
+      "region": "models/rosliny/krotka-trawa/wariant-lesna-prosty"
+    },
+    "models/rosliny/krotka-trawa/wariant-zawilce": {
+      "x": 2,
+      "y": 54,
+      "region": "models/rosliny/krotka-trawa/wariant-zawilce"
+    },
+    "models/rosliny/krotka-trawa/wariant-zawilce-prosty": {
+      "x": 3,
+      "y": 54,
+      "region": "models/rosliny/krotka-trawa/wariant-zawilce-prosty"
+    },
+    "models/rosliny/krotka-trawa/wariant-fiolki": {
+      "x": 4,
+      "y": 54,
+      "region": "models/rosliny/krotka-trawa/wariant-fiolki"
+    },
+    "models/rosliny/krotka-trawa/wariant-fiolki-prosty": {
+      "x": 5,
+      "y": 54,
+      "region": "models/rosliny/krotka-trawa/wariant-fiolki-prosty"
+    },
+    "models/rosliny/krotka-trawa/wariant-paprotka": {
+      "x": 6,
+      "y": 54,
+      "region": "models/rosliny/krotka-trawa/wariant-paprotka"
+    },
+    "models/rosliny/krotka-trawa/wariant-paprotka-prosty": {
+      "x": 7,
+      "y": 54,
+      "region": "models/rosliny/krotka-trawa/wariant-paprotka-prosty"
+    },
+    "models/rosliny/krotka-trawa/wariant-borowa": {
+      "x": 8,
+      "y": 54,
+      "region": "models/rosliny/krotka-trawa/wariant-borowa"
+    },
+    "models/rosliny/krotka-trawa/wariant-borowa-prosty": {
+      "x": 9,
+      "y": 54,
+      "region": "models/rosliny/krotka-trawa/wariant-borowa-prosty"
+    },
+    "models/rosliny/krotka-trawa/wariant-sucha-kepka": {
+      "x": 10,
+      "y": 54,
+      "region": "models/rosliny/krotka-trawa/wariant-sucha-kepka"
+    },
+    "models/rosliny/krotka-trawa/wariant-sucha-kepka-prosty": {
+      "x": 11,
+      "y": 54,
+      "region": "models/rosliny/krotka-trawa/wariant-sucha-kepka-prosty"
+    },
+    "models/rosliny/krotka-trawa/wariant-wrzosiec": {
+      "x": 12,
+      "y": 54,
+      "region": "models/rosliny/krotka-trawa/wariant-wrzosiec"
+    },
+    "models/rosliny/krotka-trawa/wariant-wrzosiec-prosty": {
+      "x": 13,
+      "y": 54,
+      "region": "models/rosliny/krotka-trawa/wariant-wrzosiec-prosty"
+    },
+    "models/rosliny/krotka-trawa/wariant-ostnica": {
+      "x": 14,
+      "y": 54,
+      "region": "models/rosliny/krotka-trawa/wariant-ostnica"
+    },
+    "models/rosliny/krotka-trawa/wariant-ostnica-prosty": {
+      "x": 15,
+      "y": 54,
+      "region": "models/rosliny/krotka-trawa/wariant-ostnica-prosty"
+    },
+    "models/rosliny/krotka-trawa/wariant-klosy-zlote": {
+      "x": 0,
+      "y": 55,
+      "region": "models/rosliny/krotka-trawa/wariant-klosy-zlote"
+    },
+    "models/rosliny/krotka-trawa/wariant-klosy-zlote-prosty": {
+      "x": 1,
+      "y": 55,
+      "region": "models/rosliny/krotka-trawa/wariant-klosy-zlote-prosty"
+    },
+    "models/rosliny/krotka-trawa/wariant-macierzanka": {
+      "x": 2,
+      "y": 55,
+      "region": "models/rosliny/krotka-trawa/wariant-macierzanka"
+    },
+    "models/rosliny/krotka-trawa/wariant-macierzanka-prosty": {
+      "x": 3,
+      "y": 55,
+      "region": "models/rosliny/krotka-trawa/wariant-macierzanka-prosty"
+    },
+    "models/rosliny/krotka-trawa/wariant-murawa": {
+      "x": 4,
+      "y": 55,
+      "region": "models/rosliny/krotka-trawa/wariant-murawa"
+    },
+    "models/rosliny/krotka-trawa/wariant-murawa-prosty": {
+      "x": 5,
+      "y": 55,
+      "region": "models/rosliny/krotka-trawa/wariant-murawa-prosty"
+    },
+    "models/rosliny/krotka-trawa/wariant-goryczka": {
+      "x": 6,
+      "y": 55,
+      "region": "models/rosliny/krotka-trawa/wariant-goryczka"
+    },
+    "models/rosliny/krotka-trawa/wariant-goryczka-prosty": {
+      "x": 7,
+      "y": 55,
+      "region": "models/rosliny/krotka-trawa/wariant-goryczka-prosty"
+    },
+    "models/rosliny/krotka-trawa/wariant-szarotka": {
+      "x": 8,
+      "y": 55,
+      "region": "models/rosliny/krotka-trawa/wariant-szarotka"
+    },
+    "models/rosliny/krotka-trawa/wariant-szarotka-prosty": {
+      "x": 9,
+      "y": 55,
+      "region": "models/rosliny/krotka-trawa/wariant-szarotka-prosty"
+    },
+    "models/rosliny/wysoka-trawa/wariant-klosy": {
+      "x": 10,
+      "y": 55,
+      "region": "models/rosliny/wysoka-trawa/wariant-klosy"
+    },
+    "models/rosliny/wysoka-trawa/wariant-klosy-prosty": {
+      "x": 11,
+      "y": 55,
+      "region": "models/rosliny/wysoka-trawa/wariant-klosy-prosty"
+    },
+    "models/rosliny/wysoka-trawa/wariant-szczaw": {
+      "x": 12,
+      "y": 55,
+      "region": "models/rosliny/wysoka-trawa/wariant-szczaw"
+    },
+    "models/rosliny/wysoka-trawa/wariant-szczaw-prosty": {
+      "x": 13,
+      "y": 55,
+      "region": "models/rosliny/wysoka-trawa/wariant-szczaw-prosty"
+    },
+    "models/rosliny/wysoka-trawa/wariant-dzwonki": {
+      "x": 14,
+      "y": 55,
+      "region": "models/rosliny/wysoka-trawa/wariant-dzwonki"
+    },
+    "models/rosliny/wysoka-trawa/wariant-dzwonki-prosty": {
+      "x": 15,
+      "y": 55,
+      "region": "models/rosliny/wysoka-trawa/wariant-dzwonki-prosty"
+    },
+    "models/rosliny/wysoka-trawa/wariant-margerytki": {
+      "x": 0,
+      "y": 56,
+      "region": "models/rosliny/wysoka-trawa/wariant-margerytki"
+    },
+    "models/rosliny/wysoka-trawa/wariant-margerytki-prosty": {
+      "x": 1,
+      "y": 56,
+      "region": "models/rosliny/wysoka-trawa/wariant-margerytki-prosty"
+    },
+    "models/rosliny/wysoka-trawa/wariant-szuwar": {
+      "x": 2,
+      "y": 56,
+      "region": "models/rosliny/wysoka-trawa/wariant-szuwar"
+    },
+    "models/rosliny/wysoka-trawa/wariant-szuwar-prosty": {
+      "x": 3,
+      "y": 56,
+      "region": "models/rosliny/wysoka-trawa/wariant-szuwar-prosty"
+    },
+    "models/rosliny/wysoka-trawa/wariant-palki": {
+      "x": 4,
+      "y": 56,
+      "region": "models/rosliny/wysoka-trawa/wariant-palki"
+    },
+    "models/rosliny/wysoka-trawa/wariant-palki-prosty": {
+      "x": 5,
+      "y": 56,
+      "region": "models/rosliny/wysoka-trawa/wariant-palki-prosty"
+    },
+    "models/rosliny/wysoka-trawa/wariant-kosacce": {
+      "x": 6,
+      "y": 56,
+      "region": "models/rosliny/wysoka-trawa/wariant-kosacce"
+    },
+    "models/rosliny/wysoka-trawa/wariant-kosacce-prosty": {
+      "x": 7,
+      "y": 56,
+      "region": "models/rosliny/wysoka-trawa/wariant-kosacce-prosty"
+    },
+    "models/rosliny/wysoka-trawa/wariant-krwawnica": {
+      "x": 8,
+      "y": 56,
+      "region": "models/rosliny/wysoka-trawa/wariant-krwawnica"
+    },
+    "models/rosliny/wysoka-trawa/wariant-krwawnica-prosty": {
+      "x": 9,
+      "y": 56,
+      "region": "models/rosliny/wysoka-trawa/wariant-krwawnica-prosty"
+    },
+    "models/rosliny/wysoka-trawa/wariant-lesna": {
+      "x": 10,
+      "y": 56,
+      "region": "models/rosliny/wysoka-trawa/wariant-lesna"
+    },
+    "models/rosliny/wysoka-trawa/wariant-lesna-prosty": {
+      "x": 11,
+      "y": 56,
+      "region": "models/rosliny/wysoka-trawa/wariant-lesna-prosty"
+    },
+    "models/rosliny/wysoka-trawa/wariant-orlica": {
+      "x": 12,
+      "y": 56,
+      "region": "models/rosliny/wysoka-trawa/wariant-orlica"
+    },
+    "models/rosliny/wysoka-trawa/wariant-orlica-prosty": {
+      "x": 13,
+      "y": 56,
+      "region": "models/rosliny/wysoka-trawa/wariant-orlica-prosty"
+    },
+    "models/rosliny/wysoka-trawa/wariant-naparstnica": {
+      "x": 14,
+      "y": 56,
+      "region": "models/rosliny/wysoka-trawa/wariant-naparstnica"
+    },
+    "models/rosliny/wysoka-trawa/wariant-naparstnica-prosty": {
+      "x": 15,
+      "y": 56,
+      "region": "models/rosliny/wysoka-trawa/wariant-naparstnica-prosty"
+    },
+    "models/rosliny/wysoka-trawa/wariant-trzcinnik": {
+      "x": 0,
+      "y": 57,
+      "region": "models/rosliny/wysoka-trawa/wariant-trzcinnik"
+    },
+    "models/rosliny/wysoka-trawa/wariant-trzcinnik-prosty": {
+      "x": 1,
+      "y": 57,
+      "region": "models/rosliny/wysoka-trawa/wariant-trzcinnik-prosty"
+    },
+    "models/rosliny/wysoka-trawa/wariant-wiechy": {
+      "x": 2,
+      "y": 57,
+      "region": "models/rosliny/wysoka-trawa/wariant-wiechy"
+    },
+    "models/rosliny/wysoka-trawa/wariant-wiechy-prosty": {
+      "x": 3,
+      "y": 57,
+      "region": "models/rosliny/wysoka-trawa/wariant-wiechy-prosty"
+    },
+    "models/rosliny/wysoka-trawa/wariant-wrzos": {
+      "x": 4,
+      "y": 57,
+      "region": "models/rosliny/wysoka-trawa/wariant-wrzos"
+    },
+    "models/rosliny/wysoka-trawa/wariant-wrzos-prosty": {
+      "x": 5,
+      "y": 57,
+      "region": "models/rosliny/wysoka-trawa/wariant-wrzos-prosty"
+    },
+    "models/rosliny/wysoka-trawa/wariant-ostnica": {
+      "x": 6,
+      "y": 57,
+      "region": "models/rosliny/wysoka-trawa/wariant-ostnica"
+    },
+    "models/rosliny/wysoka-trawa/wariant-ostnica-prosty": {
+      "x": 7,
+      "y": 57,
+      "region": "models/rosliny/wysoka-trawa/wariant-ostnica-prosty"
+    },
+    "models/rosliny/wysoka-trawa/wariant-piorka": {
+      "x": 8,
+      "y": 57,
+      "region": "models/rosliny/wysoka-trawa/wariant-piorka"
+    },
+    "models/rosliny/wysoka-trawa/wariant-piorka-prosty": {
+      "x": 9,
+      "y": 57,
+      "region": "models/rosliny/wysoka-trawa/wariant-piorka-prosty"
+    },
+    "models/rosliny/wysoka-trawa/wariant-oset": {
+      "x": 10,
+      "y": 57,
+      "region": "models/rosliny/wysoka-trawa/wariant-oset"
+    },
+    "models/rosliny/wysoka-trawa/wariant-oset-prosty": {
+      "x": 11,
+      "y": 57,
+      "region": "models/rosliny/wysoka-trawa/wariant-oset-prosty"
+    },
+    "models/rosliny/wysoka-trawa/wariant-kosmatka": {
+      "x": 12,
+      "y": 57,
+      "region": "models/rosliny/wysoka-trawa/wariant-kosmatka"
+    },
+    "models/rosliny/wysoka-trawa/wariant-kosmatka-prosty": {
+      "x": 13,
+      "y": 57,
+      "region": "models/rosliny/wysoka-trawa/wariant-kosmatka-prosty"
+    },
+    "models/rosliny/wysoka-trawa/wariant-welnianka": {
+      "x": 14,
+      "y": 57,
+      "region": "models/rosliny/wysoka-trawa/wariant-welnianka"
+    },
+    "models/rosliny/wysoka-trawa/wariant-welnianka-prosty": {
+      "x": 15,
+      "y": 57,
+      "region": "models/rosliny/wysoka-trawa/wariant-welnianka-prosty"
+    },
+    "models/rosliny/wysoka-trawa/wariant-goryczka": {
+      "x": 0,
+      "y": 58,
+      "region": "models/rosliny/wysoka-trawa/wariant-goryczka"
+    },
+    "models/rosliny/wysoka-trawa/wariant-goryczka-prosty": {
+      "x": 1,
+      "y": 58,
+      "region": "models/rosliny/wysoka-trawa/wariant-goryczka-prosty"
     }
   }
 }

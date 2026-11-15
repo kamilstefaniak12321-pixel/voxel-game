@@ -55,5 +55,694 @@
                 }
             }
         }
-    ]
+    ],
+    "siedliska": {
+        "laka": {
+            "zwykla": 14,
+            "klosy": 2.5,
+            "margerytki": 1.5,
+            "dzwonki": 1.5,
+            "szczaw": 1.5
+        },
+        "brzeg": {
+            "szuwar": 9,
+            "zwykla": 3,
+            "palki": 4,
+            "krwawnica": 2,
+            "kosacce": 2
+        },
+        "las": {
+            "lesna": 9,
+            "zwykla": 4,
+            "orlica": 4,
+            "naparstnica": 2
+        },
+        "bor": {
+            "trzcinnik": 9,
+            "zwykla": 3,
+            "wiechy": 4,
+            "wrzos": 3
+        },
+        "sucha": {
+            "ostnica": 10,
+            "zwykla": 2,
+            "piorka": 5,
+            "oset": 2
+        },
+        "gory": {
+            "kosmatka": 11,
+            "zwykla": 3,
+            "welnianka": 3,
+            "goryczka": 2
+        }
+    },
+    "warianty": {
+        "klosy": {
+            "nazwa": "z kłosami",
+            "arkusz": {
+                "lisc": "zdzblo",
+                "kwiat": "klos"
+            },
+            "kolory": {
+                "kwiat": "#d8c888",
+                "kwiatJasny": "#ece0a8",
+                "kwiatCiemny": "#a89858"
+            },
+            "polrealistyczny": {
+                "liscie": {
+                    "uklad": "pion",
+                    "ile": 4,
+                    "dlugosc": 14,
+                    "promien": 4,
+                    "nachylenie": 12
+                },
+                "lodygi": {
+                    "ile": 2,
+                    "wysokosc": 16,
+                    "promien": 3,
+                    "pochylenie": 8,
+                    "cienkie": true
+                },
+                "kwiat": {
+                    "rodzaj": "klos",
+                    "rozmiar": 3
+                }
+            }
+        },
+        "szczaw": {
+            "nazwa": "ze szczawiem",
+            "arkusz": {
+                "lisc": "zdzblo",
+                "kwiat": "grono"
+            },
+            "kolory": {
+                "kwiat": "#a8503a",
+                "kwiatJasny": "#c8745a",
+                "kwiatCiemny": "#7a3426"
+            },
+            "polrealistyczny": {
+                "liscie": {
+                    "uklad": "pion",
+                    "ile": 4,
+                    "dlugosc": 13,
+                    "promien": 4,
+                    "nachylenie": 12
+                },
+                "lodygi": {
+                    "ile": 2,
+                    "wysokosc": 16,
+                    "promien": 2,
+                    "pochylenie": 8,
+                    "cienkie": true
+                },
+                "kwiat": {
+                    "rodzaj": "klos",
+                    "rozmiar": 4
+                }
+            }
+        },
+        "dzwonki": {
+            "nazwa": "z dzwonkami",
+            "arkusz": {
+                "lisc": "zdzblo",
+                "kwiat": "dzwonek"
+            },
+            "kolory": {
+                "kwiat": "#9a6ad0",
+                "kwiatJasny": "#bc96e8",
+                "kwiatCiemny": "#6a42a0",
+                "srodek": "#f0c030"
+            },
+            "polrealistyczny": {
+                "liscie": {
+                    "uklad": "pion",
+                    "ile": 4,
+                    "dlugosc": 13,
+                    "promien": 4,
+                    "nachylenie": 12
+                },
+                "lodygi": {
+                    "ile": 2,
+                    "wysokosc": 14,
+                    "promien": 3,
+                    "pochylenie": 14,
+                    "cienkie": true
+                },
+                "kwiat": {
+                    "rodzaj": "dzwonek",
+                    "rozmiar": 4
+                }
+            }
+        },
+        "margerytki": {
+            "nazwa": "z margerytkami",
+            "arkusz": {
+                "lisc": "zdzblo",
+                "kwiat": "koszyczek"
+            },
+            "kolory": {
+                "kwiat": "#ecece2",
+                "kwiatJasny": "#ffffff",
+                "kwiatCiemny": "#c4c4b8",
+                "srodek": "#f0c030"
+            },
+            "polrealistyczny": {
+                "liscie": {
+                    "uklad": "pion",
+                    "ile": 4,
+                    "dlugosc": 13,
+                    "promien": 4,
+                    "nachylenie": 12
+                },
+                "lodygi": {
+                    "ile": 2,
+                    "wysokosc": 15,
+                    "promien": 3,
+                    "pochylenie": 8,
+                    "cienkie": true
+                },
+                "kwiat": {
+                    "rodzaj": "koszyczek",
+                    "rozmiar": 6
+                }
+            }
+        },
+        "szuwar": {
+            "nazwa": "szuwar",
+            "arkusz": {
+                "lisc": "zdzblo",
+                "kwiat": "klos"
+            },
+            "kolory": {
+                "lisc": "#3f8a2c",
+                "liscJasny": "#5cab3c",
+                "liscCiemny": "#2a6420",
+                "lodyga": "#3a7a28",
+                "kwiat": "#765037",
+                "kwiatJasny": "#9b7951",
+                "kwiatCiemny": "#4e3424"
+            },
+            "polrealistyczny": {
+                "liscie": {
+                    "uklad": "pion",
+                    "ile": 7,
+                    "dlugosc": 17,
+                    "promien": 3,
+                    "nachylenie": 7
+                }
+            }
+        },
+        "palki": {
+            "nazwa": "z brązowymi kłosami",
+            "arkusz": {
+                "lisc": "zdzblo",
+                "kwiat": "klos"
+            },
+            "kolory": {
+                "lisc": "#3f8a2c",
+                "liscJasny": "#5cab3c",
+                "liscCiemny": "#2a6420",
+                "lodyga": "#3a7a28",
+                "kwiat": "#765037",
+                "kwiatJasny": "#9b7951",
+                "kwiatCiemny": "#4e3424"
+            },
+            "polrealistyczny": {
+                "liscie": {
+                    "uklad": "pion",
+                    "ile": 5,
+                    "dlugosc": 16,
+                    "promien": 3,
+                    "nachylenie": 8
+                },
+                "lodygi": {
+                    "ile": 2,
+                    "wysokosc": 16,
+                    "promien": 2,
+                    "pochylenie": 5,
+                    "cienkie": true
+                },
+                "kwiat": {
+                    "rodzaj": "klos",
+                    "rozmiar": 4
+                }
+            }
+        },
+        "kosacce": {
+            "nazwa": "z kosaćcem",
+            "arkusz": {
+                "lisc": "waski",
+                "kwiat": "kielich"
+            },
+            "kolory": {
+                "lisc": "#3f8a2c",
+                "liscJasny": "#5cab3c",
+                "liscCiemny": "#2a6420",
+                "lodyga": "#3a7a28",
+                "kwiat": "#f2cc20",
+                "kwiatJasny": "#ffe454",
+                "kwiatCiemny": "#c89818",
+                "srodek": "#e89a1c"
+            },
+            "polrealistyczny": {
+                "liscie": {
+                    "uklad": "pion",
+                    "ile": 4,
+                    "dlugosc": 15,
+                    "promien": 3,
+                    "nachylenie": 10
+                },
+                "lodygi": {
+                    "ile": 1,
+                    "wysokosc": 14,
+                    "promien": 3,
+                    "pochylenie": 8,
+                    "cienkie": true
+                },
+                "kwiat": {
+                    "rodzaj": "kielich",
+                    "rozmiar": 5
+                }
+            }
+        },
+        "krwawnica": {
+            "nazwa": "z krwawnicą",
+            "arkusz": {
+                "lisc": "zdzblo",
+                "kwiat": "grono"
+            },
+            "kolory": {
+                "lisc": "#3f8a2c",
+                "liscJasny": "#5cab3c",
+                "liscCiemny": "#2a6420",
+                "lodyga": "#3a7a28",
+                "kwiat": "#ad659b",
+                "kwiatJasny": "#cb85ad",
+                "kwiatCiemny": "#7e4470",
+                "srodek": "#cb85ad"
+            },
+            "polrealistyczny": {
+                "liscie": {
+                    "uklad": "pion",
+                    "ile": 4,
+                    "dlugosc": 14,
+                    "promien": 3,
+                    "nachylenie": 9
+                },
+                "lodygi": {
+                    "ile": 2,
+                    "wysokosc": 16,
+                    "promien": 2,
+                    "pochylenie": 6,
+                    "cienkie": true
+                },
+                "kwiat": {
+                    "rodzaj": "klos",
+                    "rozmiar": 4
+                }
+            }
+        },
+        "lesna": {
+            "nazwa": "leśna",
+            "arkusz": {
+                "lisc": "lancetowaty",
+                "kwiat": "klos"
+            },
+            "kolory": {
+                "lisc": "#4a8a30",
+                "liscJasny": "#68a844",
+                "liscCiemny": "#2e6422",
+                "lodyga": "#44782a",
+                "kwiat": "#d8c888",
+                "kwiatJasny": "#ece0a8",
+                "kwiatCiemny": "#a89858"
+            },
+            "polrealistyczny": {
+                "liscie": {
+                    "uklad": "wokol",
+                    "ile": 6,
+                    "dlugosc": 13,
+                    "nachylenie": 34,
+                    "wysokosc": 1
+                }
+            }
+        },
+        "orlica": {
+            "nazwa": "z liśćmi paproci",
+            "arkusz": {
+                "lisc": "paproc",
+                "kwiat": "klos"
+            },
+            "kolory": {
+                "lisc": "#4a8a30",
+                "liscJasny": "#68a844",
+                "liscCiemny": "#2e6422",
+                "lodyga": "#44782a",
+                "kwiat": "#d8c888",
+                "kwiatJasny": "#ece0a8",
+                "kwiatCiemny": "#a89858"
+            },
+            "polrealistyczny": {
+                "liscie": {
+                    "uklad": "wokol",
+                    "ile": 6,
+                    "dlugosc": 14,
+                    "nachylenie": 48,
+                    "wysokosc": 0
+                }
+            }
+        },
+        "naparstnica": {
+            "nazwa": "z naparstnicą",
+            "arkusz": {
+                "lisc": "lancetowaty",
+                "kwiat": "grono"
+            },
+            "kolory": {
+                "lisc": "#4a8a30",
+                "liscJasny": "#68a844",
+                "liscCiemny": "#2e6422",
+                "lodyga": "#44782a",
+                "kwiat": "#e8a2c4",
+                "kwiatJasny": "#f8cce0",
+                "kwiatCiemny": "#b86a94",
+                "srodek": "#f0b8d2"
+            },
+            "polrealistyczny": {
+                "liscie": {
+                    "uklad": "wokol",
+                    "ile": 4,
+                    "dlugosc": 9,
+                    "nachylenie": 50,
+                    "wysokosc": 0
+                },
+                "lodygi": {
+                    "ile": 1,
+                    "wysokosc": 15,
+                    "promien": 0,
+                    "pochylenie": 4,
+                    "cienkie": true
+                },
+                "kwiat": {
+                    "rodzaj": "klos",
+                    "rozmiar": 5
+                }
+            }
+        },
+        "trzcinnik": {
+            "nazwa": "borowa",
+            "arkusz": {
+                "lisc": "waski",
+                "kwiat": "klos"
+            },
+            "kolory": {
+                "lisc": "#62903c",
+                "liscJasny": "#80aa50",
+                "liscCiemny": "#446c2a",
+                "lodyga": "#587e34",
+                "kwiat": "#d8c888",
+                "kwiatJasny": "#ece0a8",
+                "kwiatCiemny": "#a89858"
+            },
+            "polrealistyczny": {
+                "liscie": {
+                    "uklad": "pion",
+                    "ile": 6,
+                    "dlugosc": 14,
+                    "promien": 4,
+                    "nachylenie": 16
+                }
+            }
+        },
+        "wiechy": {
+            "nazwa": "z wiechami",
+            "arkusz": {
+                "lisc": "waski",
+                "kwiat": "klos"
+            },
+            "kolory": {
+                "lisc": "#62903c",
+                "liscJasny": "#80aa50",
+                "liscCiemny": "#446c2a",
+                "lodyga": "#587e34",
+                "kwiat": "#d8c888",
+                "kwiatJasny": "#ece0a8",
+                "kwiatCiemny": "#a89858"
+            },
+            "polrealistyczny": {
+                "liscie": {
+                    "uklad": "pion",
+                    "ile": 4,
+                    "dlugosc": 13,
+                    "promien": 4,
+                    "nachylenie": 16
+                },
+                "lodygi": {
+                    "ile": 2,
+                    "wysokosc": 16,
+                    "promien": 3,
+                    "pochylenie": 8,
+                    "cienkie": true
+                },
+                "kwiat": {
+                    "rodzaj": "klos",
+                    "rozmiar": 3
+                }
+            }
+        },
+        "wrzos": {
+            "nazwa": "z wrzosem",
+            "arkusz": {
+                "lisc": "igly",
+                "kwiat": "grono"
+            },
+            "kolory": {
+                "lisc": "#62903c",
+                "liscJasny": "#80aa50",
+                "liscCiemny": "#446c2a",
+                "lodyga": "#587e34",
+                "kwiat": "#c46aa8",
+                "kwiatJasny": "#e090c8",
+                "kwiatCiemny": "#8e4478"
+            },
+            "polrealistyczny": {
+                "liscie": {
+                    "uklad": "wokol",
+                    "ile": 4,
+                    "dlugosc": 8,
+                    "nachylenie": 30,
+                    "wysokosc": 0
+                },
+                "lodygi": {
+                    "ile": 2,
+                    "wysokosc": 11,
+                    "promien": 3,
+                    "pochylenie": 10,
+                    "cienkie": true
+                },
+                "kwiat": {
+                    "rodzaj": "klos",
+                    "rozmiar": 4
+                }
+            }
+        },
+        "ostnica": {
+            "nazwa": "sucha",
+            "arkusz": {
+                "lisc": "zdzblo-suche",
+                "kwiat": "klos"
+            },
+            "kolory": {
+                "lisc": "#8aa23a",
+                "liscJasny": "#a8bc50",
+                "liscCiemny": "#66802c",
+                "lodyga": "#86963a",
+                "kwiat": "#e0b450",
+                "kwiatJasny": "#f4d67c",
+                "kwiatCiemny": "#b08630"
+            },
+            "polrealistyczny": {
+                "liscie": {
+                    "uklad": "pion",
+                    "ile": 6,
+                    "dlugosc": 14,
+                    "promien": 4,
+                    "nachylenie": 18
+                }
+            }
+        },
+        "piorka": {
+            "nazwa": "z piórkami ostnicy",
+            "arkusz": {
+                "lisc": "zdzblo-suche",
+                "kwiat": "klos"
+            },
+            "kolory": {
+                "lisc": "#8aa23a",
+                "liscJasny": "#a8bc50",
+                "liscCiemny": "#66802c",
+                "lodyga": "#86963a",
+                "kwiat": "#eeeee6",
+                "kwiatJasny": "#ffffff",
+                "kwiatCiemny": "#c8c8bc",
+                "srodek": "#f6f6f0"
+            },
+            "polrealistyczny": {
+                "liscie": {
+                    "uklad": "pion",
+                    "ile": 4,
+                    "dlugosc": 13,
+                    "promien": 4,
+                    "nachylenie": 18
+                },
+                "lodygi": {
+                    "ile": 2,
+                    "wysokosc": 16,
+                    "promien": 3,
+                    "pochylenie": 16,
+                    "cienkie": true
+                },
+                "kwiat": {
+                    "rodzaj": "klos",
+                    "rozmiar": 4
+                }
+            }
+        },
+        "oset": {
+            "nazwa": "z ostem",
+            "arkusz": {
+                "lisc": "zabkowany",
+                "kwiat": "pompon"
+            },
+            "kolory": {
+                "lisc": "#8aa23a",
+                "liscJasny": "#a8bc50",
+                "liscCiemny": "#66802c",
+                "lodyga": "#86963a",
+                "kwiat": "#ad659b",
+                "kwiatJasny": "#cb85ad",
+                "kwiatCiemny": "#7e4470",
+                "srodek": "#cb85ad"
+            },
+            "polrealistyczny": {
+                "liscie": {
+                    "uklad": "wokol",
+                    "ile": 4,
+                    "dlugosc": 7,
+                    "nachylenie": 55,
+                    "wysokosc": 0
+                },
+                "lodygi": {
+                    "ile": 1,
+                    "wysokosc": 13,
+                    "promien": 0,
+                    "pochylenie": 4,
+                    "cienkie": true
+                },
+                "kwiat": {
+                    "rodzaj": "pompon",
+                    "rozmiar": 4
+                }
+            }
+        },
+        "kosmatka": {
+            "nazwa": "górska",
+            "arkusz": {
+                "lisc": "zdzblo",
+                "kwiat": "klos"
+            },
+            "kolory": {
+                "lisc": "#5c9c54",
+                "liscJasny": "#7cb870",
+                "liscCiemny": "#3e7640",
+                "lodyga": "#4e8a48",
+                "kwiat": "#d8c888",
+                "kwiatJasny": "#ece0a8",
+                "kwiatCiemny": "#a89858"
+            },
+            "polrealistyczny": {
+                "liscie": {
+                    "uklad": "pion",
+                    "ile": 6,
+                    "dlugosc": 10,
+                    "promien": 4,
+                    "nachylenie": 20
+                }
+            }
+        },
+        "welnianka": {
+            "nazwa": "z wełnianką",
+            "arkusz": {
+                "lisc": "zdzblo",
+                "kwiat": "pompon"
+            },
+            "kolory": {
+                "lisc": "#5c9c54",
+                "liscJasny": "#7cb870",
+                "liscCiemny": "#3e7640",
+                "lodyga": "#4e8a48",
+                "kwiat": "#eeeee6",
+                "kwiatJasny": "#ffffff",
+                "kwiatCiemny": "#c8c8bc",
+                "srodek": "#f6f6f0"
+            },
+            "polrealistyczny": {
+                "liscie": {
+                    "uklad": "pion",
+                    "ile": 4,
+                    "dlugosc": 10,
+                    "promien": 4,
+                    "nachylenie": 18
+                },
+                "lodygi": {
+                    "ile": 2,
+                    "wysokosc": 12,
+                    "promien": 3,
+                    "pochylenie": 10,
+                    "cienkie": true
+                },
+                "kwiat": {
+                    "rodzaj": "koszyczek",
+                    "rozmiar": 4
+                }
+            }
+        },
+        "goryczka": {
+            "nazwa": "z goryczką",
+            "arkusz": {
+                "lisc": "lancetowaty",
+                "kwiat": "dzwonek"
+            },
+            "kolory": {
+                "lisc": "#5c9c54",
+                "liscJasny": "#7cb870",
+                "liscCiemny": "#3e7640",
+                "lodyga": "#4e8a48",
+                "kwiat": "#4a70de",
+                "kwiatJasny": "#80a0f0",
+                "kwiatCiemny": "#3656c2",
+                "srodek": "#f4e070"
+            },
+            "polrealistyczny": {
+                "liscie": {
+                    "uklad": "wokol",
+                    "ile": 4,
+                    "dlugosc": 7,
+                    "nachylenie": 50,
+                    "wysokosc": 0
+                },
+                "lodygi": {
+                    "ile": 2,
+                    "wysokosc": 11,
+                    "promien": 2,
+                    "pochylenie": 12,
+                    "cienkie": true
+                },
+                "kwiat": {
+                    "rodzaj": "dzwonek",
+                    "rozmiar": 4
+                }
+            }
+        }
+    }
 }

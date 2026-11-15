@@ -11,6 +11,33 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 1.3.0 - Kępki trawy zależne od miejsca
+
+Pomysł Kamila — PR #149 (po 1.2.0). Opis: [`docs/trawa.md`](docs/trawa.md).
+
+- **Krótka i wysoka trawa wyglądają inaczej zależnie od miejsca.**
+  Sześć siedlisk, każde z własnym zestawem kępek: łąka (stokrotki,
+  jaskry, koniczyna, kłosy, margerytki, dzwonki, szczaw), brzeg wody
+  i mokradła (sitowie, szuwar, brązowe kłosy, kaczeńce, niezapominajki,
+  kosaciec, krwawnica), las liściasty (szerokie liście, paprotki,
+  zawilce, fiołki, naparstnica), bór (wąska, przeschnięta trawa, wrzos,
+  wiechy), suche miejsca (słomiane końce, złote kłosy, ostnica,
+  macierzanka, oset) i góry (niska murawa, szarotka, goryczka,
+  wełnianka). Razem 41 nowych wyglądów.
+- **Brzeg ma postrzępioną granicę:** do 3 bloków od rzeki albo jeziora
+  rośnie trawa nadbrzeżna, dalej (do 7 bloków) coraz rzadziej.
+- To dalej te same bloki - ten sam przedmiot, zbiór i zapis. Działa
+  w istniejących światach. Klimat barwi zieleń, kwiaty i kłosy zostają
+  w swoim kolorze.
+- `/biom` pokazuje też siedlisko trawy pod graczem.
+- Poziomy modeli roślin: warianty w *Prostych* i *Półrealistycznych*;
+  *Szczegółowe* rysują zwykłą trawę.
+- **Płynność:** ani jednego polecenia rysowania więcej. Kępki
+  z kwiatami mają łodygi i główki, więc sama trawa ma więcej trójkątów
+  (na łące o ok. 22%); budowanie roślin chunka pełnego trawy trwa
+  ok. 1,3-1,5 ms zamiast 1,1 ms (raz, przy budowaniu chunka). Pamięć podręczna modeli roślin urosła do
+  2048 wpisów, żeby siedliska nie wypychały się nawzajem.
+
 ## 1.2.0 - Trawa z kwiatkami i wyraźne kolory biomów
 
 Pomysł Kamila — PR #148 (po 1.1.5). Opis: [`docs/trawa.md`](docs/trawa.md).

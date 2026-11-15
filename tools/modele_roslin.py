@@ -398,6 +398,18 @@ LEAVES = {
         '.nGgGgn.',
         '..ngGn..',
     ],
+    # Przeschnięte źdźbła: końce w kolorze słomy (kolory kwiatu - nie
+    # barwi ich klimat).
+    'zdzblo-suche': [
+        '...H..F.',
+        '...F..g.',
+        '..gG.gH.',
+        '..gl.gF.',
+        '.ngG.Gg.',
+        '.gGlgGn.',
+        '.nGgGgn.',
+        '..ngGn..',
+    ],
     'owalny': [
         '...ll...',
         '..gGlg..',
@@ -682,6 +694,158 @@ for name, (leaf, flower) in PACKS.items():
     SHEETS[name] = (templated(leaf, flower), palette(pack_colors(name)))
 
 
+# ============================================================
+# WARIANTY WEDŁUG SIEDLISKA (1.3.0 - trawy; src/blocks/plantHabitats.js)
+#
+# model.json rośliny: "warianty": { nazwa: { "arkusz": { "lisc", "kwiat" },
+# "kolory", "polrealistyczny" } }. Dla każdego wariantu dwie tekstury:
+#   wariant-<nazwa>.png         arkusz części (liść i kwiat z szablonów
+#                               wyżej, kolory rośliny + kolory wariantu),
+#   wariant-<nazwa>-prosty.png  obrazek 16 x 16 dla poziomu prostego
+#                               i dla dalekich chunków - narysowany z tego
+#                               samego opisu kształtu (źdźbła, łodygi,
+#                               główki kwiatów).
+# Zieleń zostaje "zieleńsza niż czerwień i błękit" - barwi ją klimat jak
+# zwykłą trawę; kwiaty, kłosy i słoma zostają w swoim kolorze.
+# ============================================================
+
+VARIANT_ROWS = 59
+VARIANT_TILES = [(x, y) for y in range(53, VARIANT_ROWS) for x in range(16)]
+
+
+def variant_models():
+    import json
+    for folder in sorted(os.listdir(ROOT)):
+        path = os.path.join(ROOT, folder, 'model.json')
+        if not os.path.isfile(path):
+            continue
+        with open(path, encoding='utf-8') as f:
+            data = json.load(f)
+        if data.get('warianty'):
+            yield folder, data
+
+
+def register_variant(folder, file):
+    """Region w rosliny.png + kafelek atlasu + nazwa pliku (gdy ich nie ma)."""
+    import json
+    from atlasy import MANIFEST
+    name = f'models/rosliny/{folder}/{file[:-4]}'
+    data = json.loads(MANIFEST.read_text(encoding='utf-8'))
+    data['rows'] = max(data.get('rows', 0), VARIANT_ROWS)
+    if name not in data['regions']:
+        spec = data['sheets']['rosliny']
+        used = {(r['x'] // 16 + dx, r['y'] // 16 + dy) for r in data['regions'].values() if r['sheet'] == 'rosliny'
+                for dx in range((r['width'] + 15) // 16) for dy in range((r['height'] + 15) // 16)}
+        free = [(x, y) for y in range(spec['height'] // 16) for x in range(spec['width'] // 16) if (x, y) not in used]
+        if not free:
+            path = Path(__file__).resolve().parent.parent / 'assets/textures' / spec['file']
+            old = Image.open(path).convert('RGBA')
+            grown = Image.new('RGBA', (spec['width'], spec['height'] + 16), (0, 0, 0, 0))
+            grown.paste(old, (0, 0))
+            grown.save(path, optimize=True)
+            free = [(0, spec['height'] // 16)]
+            spec['height'] += 16
+        data['regions'][name] = {'sheet': 'rosliny', 'x': free[0][0] * 16, 'y': free[0][1] * 16, 'width': 16, 'height': 16}
+    if name not in data['tiles']:
+        used = {(t['x'] + dx, t['y'] + dy) for t in data['tiles'].values() for dx in range(t.get('w', 1)) for dy in range(t.get('h', 1))}
+        cell = next(c for c in VARIANT_TILES if c not in used)
+        data['tiles'][name] = {'x': cell[0], 'y': cell[1], 'region': name}
+    data['aliases'][f'assets/models/rosliny/{folder}/{file}'] = name
+    MANIFEST.write_text(json.dumps(data, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+
+
+def variant_sprite(spec, sheet_names, colors, seed):
+    """Obrazek prostego poziomu z opisu kształtu (widok z boku)."""
+    import math
+    import random
+    rng = random.Random(seed)
+    image = Image.new('RGBA', (16, 16), (0, 0, 0, 0))
+
+    def put(x, y, char):
+        x, y = int(round(x)), int(round(y))
+        if 0 <= x < 16 and 0 <= y < 16:
+            image.putpixel((x, y), (*colors[char], 255))
+
+    leaves = spec.get('liscie') or {}
+    count, length = leaves.get('ile', 0), leaves.get('dlugosc', 6)
+    dry = sheet_names['lisc'] == 'zdzblo-suche'
+    feathery = sheet_names['lisc'] in ('paproc', 'pierzasty', 'igly')
+    if leaves.get('uklad') == 'pion':
+        radius = leaves.get('promien', 3) + 2
+        blades = count + 3
+        for i in range(blades):
+            x0 = 8 + (i + 0.5 - blades / 2) * (2 * radius / blades) + rng.uniform(-0.6, 0.6)
+            h = max(3, min(15, round(length * rng.uniform(0.75, 1.1))))
+            lean = rng.uniform(-1, 1) * leaves.get('nachylenie', 12) / 9
+            for t in range(h):
+                f = t / max(1, h - 1)
+                char = 'n' if f < 0.25 else 'g' if f < 0.55 else 'G' if f < 0.85 else 'l'
+                if dry and f > 0.72:
+                    char = 'F' if f < 0.9 else 'H'
+                put(x0 + lean * f * f * h * 0.3, 15 - t, char)
+    else:
+        for i in range(count + 1):
+            side = -1 if i % 2 == 0 else 1
+            angle = math.radians(leaves.get('nachylenie', 50) * rng.uniform(0.35, 1.05)) * side
+            reach = min(length, 9) * rng.uniform(0.85, 1.1)
+            steps = int(reach * 2)
+            for k in range(steps + 1):
+                t = k / 2
+                f = t / max(1, reach)
+                x = 8 + side * 0.5 + math.sin(angle) * t
+                y = 15 - leaves.get('wysokosc', 0) - math.cos(angle) * t
+                char = 'n' if f < 0.2 else 'g' if f < 0.5 else 'G' if f < 0.85 else 'l'
+                put(x, y, char)
+                if f > 0.25 and (not feathery or k % 2 == 0):
+                    put(x, y - 1, 'G' if f < 0.8 else 'l')
+                    if feathery:
+                        put(x - side, y, 'g')
+
+    stems = spec.get('lodygi') or {}
+    head = sheet_names['kwiat']
+    for i in range(stems.get('ile', 0)):
+        n = stems['ile']
+        x0 = 8 + (0 if n == 1 else (i - (n - 1) / 2) * max(2.5, stems.get('promien', 2) * 1.4)) + rng.uniform(-0.5, 0.5)
+        h = min(stems.get('wysokosc', 8), 12) * rng.uniform(0.88, 1)
+        lean = (rng.uniform(-1, 1) if n == 1 else (i - (n - 1) / 2)) * stems.get('pochylenie', 6) / 14
+        x = x0
+        for t in range(int(h)):
+            x = x0 + lean * (t / max(1, h)) ** 2 * 2
+            put(x, 15 - t, 's')
+        top = 15 - int(h)
+        if head in ('klos', 'grono'):
+            for k, char in enumerate('FHFH'[:3 if stems.get('wysokosc', 8) < 10 else 4]):
+                put(x, top - k, char)
+                if head == 'grono' and k % 2 == 0:
+                    put(x - 1, top - k, 'F')
+                    put(x + 1, top - k, 'D')
+        elif head in ('koszyczek', 'gwiazda'):
+            for dx, dy, char in ((0, 0, 'C'), (-1, 0, 'H'), (1, 0, 'H'), (0, -1, 'H'), (0, 1, 'F')):
+                put(x + dx, top + dy, char)
+        elif head == 'pompon':
+            for dx, dy, char in ((0, 0, 'H'), (-1, 0, 'F'), (1, 0, 'F'), (0, -1, 'H'), (0, 1, 'D'), (-1, -1, 'F'), (1, -1, 'F')):
+                put(x + dx, top + dy, char)
+        elif head == 'dzwonek':
+            side = 1 if lean >= 0 else -1
+            for dx, dy, char in ((side, 0, 's'), (side, 1, 'H'), (side * 2, 1, 'F'), (side, 2, 'F'), (side * 2, 2, 'D')):
+                put(x + dx, top + dy, char)
+        else:  # kielich
+            for dx, dy, char in ((-1, -1, 'H'), (0, -1, 'F'), (1, -1, 'H'), (-1, 0, 'F'), (0, 0, 'C'), (1, 0, 'F'), (0, 1, 'D')):
+                put(x + dx, top + dy, char)
+    return image
+
+
+def variant_outputs():
+    for folder, data in variant_models():
+        for index, (name, variant) in enumerate(data['warianty'].items()):
+            names = variant['arkusz']
+            colors = palette({**(data.get('kolory') or {}), **(variant.get('kolory') or {})})
+            full = {**GREEN, **colors}
+            yield folder, f'wariant-{name}.png', sheet(templated(names['lisc'], names['kwiat']), colors)
+            seed = sum(ord(c) for c in folder + name) * 31 + index
+            yield folder, f'wariant-{name}-prosty.png', variant_sprite(variant['polrealistyczny'], names, full, seed)
+
+
 def main():
     root = Path(sys.argv[1] if len(sys.argv) > 1 else ROOT).resolve()
     in_assets = root.is_relative_to(Path(__file__).resolve().parent.parent / 'assets')
@@ -690,6 +854,11 @@ def main():
         outputs.append((root / name / 'polrealistyczny.png', sheet(rows, palette)))
     for index, rows in enumerate(LAVENDER_SIMPLE, 1):
         outputs.append((root / 'lawenda' / f'prosty-{index}.png', sheet(rows, LAVENDER)))
+    variants = list(variant_outputs())
+    for folder, file, image in variants:
+        if in_assets:
+            register_variant(folder, file)
+        outputs.append((root / folder / file, image))
     # Validate every existing region before changing any of the shared sheets.
     if in_assets:
         for path, image in outputs:
@@ -702,7 +871,11 @@ def main():
         else:
             path.parent.mkdir(parents=True, exist_ok=True)
             image.save(path)
-    print(f'Arkusze: {len(SHEETS)}')
+    if in_assets:
+        from atlasy import check, sync
+        check()
+        sync()
+    print(f'Arkusze: {len(SHEETS)}, tekstury wariantów: {len(variants)}')
     print('Gotowe:', 'assets/textures/rosliny.png' if in_assets else root)
 
 

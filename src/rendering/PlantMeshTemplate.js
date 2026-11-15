@@ -4,7 +4,10 @@ import { SURFACE_PROFILES } from './SurfaceProfiles.js';
 // chunk/material batch. No instancing shader or visual simplification: face and
 // vertex order also stay intact for PlantAnimations' vertex ranges.
 const LIMIT = 12 * 1024 * 1024;
-const MAX_ENTRIES = 512;
+// 1.3.0: trawa ma warianty według siedliska (kilkadziesiąt modeli więcej) -
+// przy 512 wpisach szablony kilku siedlisk naraz wypychały się nawzajem.
+// Pamięć dalej ogranicza LIMIT.
+const MAX_ENTRIES = 2048;
 const entries = new Map();
 let bytes = 0;
 const faceIds = new WeakMap();

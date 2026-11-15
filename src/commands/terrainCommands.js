@@ -12,6 +12,7 @@ import { terrainName } from '../world/terrain/generators.js';
 import { MAP_LAYERS, MAP_SCALES } from '../ui/TerrainMap.js';
 import { ROCK_INFO, blockNamePl, blockFromWord } from '../world/terrain/rocks.js';
 import { BIOMES, LAND_BIOMES, BIOME_KEYS, biomeByWord } from '../world/terrain/Biomes.js';
+import { PLANT_HABITATS, PLANT_HABITAT_NAMES } from '../blocks/plantHabitats.js';
 import { CHUNK_HEIGHT } from '../config.js';
 import {
     usageError,
@@ -406,6 +407,7 @@ export const TERRAIN_COMMANDS = [
 
                 return `Biom: ${biome.name} (${x}, ${z}) - ${biome.about}. ` +
                     `Temperatura ${info.temperature.toFixed(2)}, wilgotność ${info.humidity.toFixed(2)}, wysokość ${info.above >= 0 ? '+' : ''}${info.above} nad morzem. ` +
+                    `Trawa: ${PLANT_HABITAT_NAMES[PLANT_HABITATS[game?.world?.habitatAt?.(x, z) ?? 0]]}. ` +
                     `Odwiedzone: ${LAND_BIOMES.filter((k) => visited.has(k)).length} z ${LAND_BIOMES.length} (/biom lista, /mapa biomy).`;
 
             }

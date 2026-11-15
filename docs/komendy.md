@@ -137,7 +137,7 @@ Współrzędne można podawać względem gracza: `~` (tu, gdzie stoję),
 | `/horyzont lod` | koloruje kafelki dalekiego terenu według wielkości kratki (czerwone - 1 blok, pomarańczowe - 2, żółte - 4...) |
 | `/horyzont odswiez` | buduje daleki teren od nowa |
 | `/teren` | teren pod graczem: wysokość, pas (morze, nizina, wyżyna, góry), forma terenu, powierzchnia, biom, nachylenie i pola generatora |
-| `/biom` | biom pod graczem (teren realistyczny): co tam rośnie, temperatura, wilgotność, ile biomów odwiedzone (`docs/biomy.md`) |
+| `/biom` | biom pod graczem (teren realistyczny): co tam rośnie, temperatura, wilgotność, siedlisko trawy (`docs/trawa.md`), ile biomów odwiedzone (`docs/biomy.md`) |
 | `/biom lista` | wszystkie biomy (✔ - odwiedzone) i słowa do szukania |
 | `/biom znajdz <biom> [promien] [tp]` | najbliższy biom, np. `hala`, `mokradla`, `bor`, `snieg`, `plaza`; `tp` - od razu teleport |
 | `/teren <x> <z>` | to samo dla dowolnego miejsca (`~` = względem gracza) |

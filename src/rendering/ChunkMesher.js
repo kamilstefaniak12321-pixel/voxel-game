@@ -14,6 +14,7 @@ import { WATER_FLOW_UV, WATER_FALL_MARK } from './BlockRenderData.js';
 import { getWaterCornerHeight } from '../world/WaterSurface.js';
 import { atmosphericLightToBrightness } from './LightPolicy.js';
 import { getRiverPlantFaces, plantRandom, plantTransform, riverPlantTransform } from './RiverPlantGeometry.js';
+import { pickRegionalPlant } from './PlantRegionalVariants.js';
 import { getBushyGrassFaces } from './BushyGrassGeometry.js';
 import { LEAF_PARTS } from '../../assets/models/leaves/model-data.js';
 import { BUSHY_GRASS_TEXTURE } from '../blocks/bushyGrass.js';
@@ -779,6 +780,18 @@ function ensureCapacity(faces) {
 
 let meshTint = null;
 
+// SIEDLISKA: chunk.habitats (generator) - numer siedliska każdej kolumny
+// (16 x 16, src/blocks/plantHabitats.js); bez siatki - wszędzie 0 (łąka).
+// Od siedliska zależy wygląd trawy (PlantRegionalVariants.js).
+
+let meshHabitats = null;
+
+const REGIONAL_SALT = 57;
+
+function habitatOfColumn(lx, lz) {
+    return meshHabitats ? meshHabitats[lz * S + lx] : 0;
+}
+
 const TINT_SIDE = S + 1;
 
 // Kolor rogu (ix, iz - 0..16) do tintBuffer[at].
@@ -848,11 +861,14 @@ function addPlants(plants, faceCount, baseX, baseZ, first = 0, end = plants.leng
         const id = plants[k + 3];
         const emission = getLightEmission(id) / MAX_LIGHT * 255;
 
-        const { cross, tint, surfaceProfiles } = plantData ? plantData(id) : blockRenderData[id];
+        const { cross: plain, tint, surfaceProfiles } = plantData ? plantData(id) : blockRenderData[id];
         const profile = surfaceProfiles[4];
 
         const wx = baseX + lx;
         const wz = baseZ + lz;
+
+        // Trawa: obrazek zależny od siedliska (PlantRegionalVariants.js).
+        const cross = plain.regional ? pickRegionalPlant(plain, habitatOfColumn(lx, lz), plantRandom(wx, y, wz, REGIONAL_SALT)) : plain;
 
         const plantTint = tint && meshTint ? tintOfColumn(lx, lz) : null;
 
@@ -1057,9 +1073,11 @@ function addRiverPlants(plants, faceCount, baseX, baseZ, grassDetail = null, ove
         const event = overrides?.get(y * LAYER + lz * S + lx);
         // An active clip owns the original topology, even if its chunk crosses
         // a detail boundary. Never bind full-model vertices to simplified cards.
-        const data = grass ? { kind: 'grass', uv: grassUv }
+        const plain = grass ? { kind: 'grass', uv: grassUv }
             : (plantData && !event ? plantData(plants[k + 3]) : blockRenderData[plants[k + 3]]).riverPlant;
         const wx = baseX + lx, wz = baseZ + lz;
+        // Trawa: model zależny od siedliska (PlantRegionalVariants.js).
+        const data = plain.regional ? pickRegionalPlant(plain, habitatOfColumn(lx, lz), plantRandom(wx, y, wz, REGIONAL_SALT)) : plain;
         const transform = grass ? riverPlantTransform(wx, y, wz) : plantTransform(wx, y, wz, data.tuft);
         const cell = padIndex(lx, y, lz);
         const mask = grass ? 0
@@ -1939,9 +1957,12 @@ export function prepareChunkPlantGeometry(chunk, world, deadline) {
     for (; cursor < end; cursor++) {
         const id = overrides?.get(cursor)?.renderId ?? chunk.blocks[cursor];
         const grass = grassDetail !== null && (id === SHORT_GRASS_ID || id === TALL_GRASS_ID);
-        const data = blockRenderData[id]?.riverPlant;
-        if (!grass && !data) continue;
+        const plain = blockRenderData[id]?.riverPlant;
+        if (!grass && !plain) continue;
         const lx = cursor % S, lz = Math.floor(cursor / S) % S, y = Math.floor(cursor / LAYER);
+        const data = plain?.regional
+            ? pickRegionalPlant(plain, chunk.habitats ? chunk.habitats[lz * S + lx] : 0, plantRandom(baseX + lx, y, baseZ + lz, REGIONAL_SALT))
+            : plain;
         const transform = grass ? riverPlantTransform(baseX + lx, y, baseZ + lz)
             : plantTransform(baseX + lx, y, baseZ + lz, data.tuft);
         const cell = padIndex(lx, y, lz);
@@ -1972,7 +1993,7 @@ function captureMeshScratch() {
         padTop, padBottom, faceCapacity, positionBuffer, normalBuffer, uvBuffer,
         colorBuffer, atmosphereLightBuffer, surfaceOcclusionBuffer, surfaceEmissionBuffer,
         surfaceProfileBuffer, tintBuffer, plantMotionBuffer, splitBuffer,
-        meshTint, meshFlow, fastLeaves, leafParts, shade: SHADE.slice() };
+        meshTint, meshHabitats, meshFlow, fastLeaves, leafParts, shade: SHADE.slice() };
 }
 
 function activateMeshScratch(state) {
@@ -1980,7 +2001,7 @@ function activateMeshScratch(state) {
         padTop, padBottom, faceCapacity, positionBuffer, normalBuffer, uvBuffer,
         colorBuffer, atmosphereLightBuffer, surfaceOcclusionBuffer, surfaceEmissionBuffer,
         surfaceProfileBuffer, tintBuffer, plantMotionBuffer, splitBuffer,
-        meshTint, meshFlow, fastLeaves, leafParts } = state);
+        meshTint, meshHabitats, meshFlow, fastLeaves, leafParts } = state);
     for (let i = 0; i < SHADE.length; i++) SHADE[i] = state.shade[i];
 }
 
@@ -1997,13 +2018,13 @@ function acquireMeshScratch() {
         surfaceEmissionBuffer: null, surfaceProfileBuffer: null, tintBuffer: null,
         plantMotionBuffer: null, splitBuffer: null
     };
-    Object.assign(state, { padTop: 0, padBottom: 0, meshTint: null, meshFlow: null,
+    Object.assign(state, { padTop: 0, padBottom: 0, meshTint: null, meshHabitats: null, meshFlow: null,
         fastLeaves, leafParts, shade: SHADE.slice() });
     return state;
 }
 
 function releaseMeshScratch(state) {
-    state.meshTint = state.meshFlow = null;
+    state.meshTint = state.meshHabitats = state.meshFlow = null;
     // Do not retain an exceptional giant plant/chunk allocation indefinitely.
     if (meshScratchPool.length < 2 && state.faceCapacity <= 65536) meshScratchPool.push(state);
 }
@@ -2104,6 +2125,7 @@ function* buildChunkGeometrySteps(chunk, world, { terrain, plants: includePlants
     meshFlow = chunk.flow;
 
     meshTint = chunk.tint ?? null;
+    meshHabitats = chunk.habitats ?? null;
 
 
     // Lity kamień głęboko pod terenem nie ma żadnej widocznej

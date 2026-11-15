@@ -15,7 +15,7 @@ export class ChunkGenerationData extends TerrainGenerationCache {
             chunk.updateSolidBelow();
         }
         return {
-            cx, cz, blocks: chunk.blocks, flow: chunk.flow, tint: chunk.tint, biomes: chunk.biomes,
+            cx, cz, blocks: chunk.blocks, flow: chunk.flow, tint: chunk.tint, biomes: chunk.biomes, habitats: chunk.habitats,
             flowBounds: chunk.flowBounds,
             waterBounds: chunk.waterBounds,
             blockCount: chunk.blockCount, maxY: chunk.maxY,
@@ -28,5 +28,5 @@ export class ChunkGenerationData extends TerrainGenerationCache {
 }
 
 export function generationTransfers(data) {
-    return [data.blocks, data.flow, data.flowBounds, data.tint, data.biomes, data.waterBounds].filter(Boolean).map(array => array.buffer);
+    return [data.blocks, data.flow, data.flowBounds, data.tint, data.biomes, data.habitats, data.waterBounds].filter(Boolean).map(array => array.buffer);
 }

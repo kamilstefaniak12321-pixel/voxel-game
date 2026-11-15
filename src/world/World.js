@@ -272,6 +272,16 @@ export class World {
         return BIOME_KEYS[chunk.biomes[(z - cz * CHUNK_SIZE) * CHUNK_SIZE + x - cx * CHUNK_SIZE]] ?? null;
     }
 
+    // Siedlisko roślin w kolumnie (numer z PLANT_HABITATS -
+    // src/blocks/plantHabitats.js); chunk bez siatki - 0 (łąka).
+    habitatAt(x, z) {
+        x = Math.floor(x);
+        z = Math.floor(z);
+        const cx = this.toChunkCoord(x), cz = this.toChunkCoord(z);
+        const chunk = this.getChunk(cx, cz);
+        return chunk?.habitats ? chunk.habitats[(z - cz * CHUNK_SIZE) * CHUNK_SIZE + x - cx * CHUNK_SIZE] : 0;
+    }
+
 
     createChunk(cx, cz) {
 
@@ -1374,6 +1384,7 @@ export class World {
         chunk.flowBounds = data.flowBounds;
         chunk.tint = data.tint;
         chunk.biomes = data.biomes;
+        chunk.habitats = data.habitats ?? null;
         chunk.waterBounds = data.waterBounds;
         chunk.blockCount = data.blockCount;
         chunk.maxY = data.maxY;

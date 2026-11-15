@@ -2,7 +2,7 @@
 
 > Ta strona jest generowana z kodu gry (`python tools/wiki.py`) - nie zmieniaj jej ręcznie, zmiany przepadną przy następnym generowaniu.
 
-Wersja gry **1.3.0** - 67 osiągnięć. Księga osiągnięć: klawisz **L**. Uwaga, spoilery: sekretne osiągnięcia są tu opisane (w grze widać tylko „???”).
+Wersja gry **1.4.0** - 69 osiągnięć. Księga osiągnięć: klawisz **L**. Uwaga, spoilery: sekretne osiągnięcia są tu opisane (w grze widać tylko „???”).
 
 
 ## Zwykłe (10 pkt)
@@ -51,6 +51,7 @@ Wersja gry **1.3.0** - 67 osiągnięć. Księga osiągnięć: klawisz **L**. Uwa
 | <img src="ikony/oak_bed.png" width="32" height="32" alt=""> | **Pościelone** | Pościel stelaż łóżka (PPM pościelą na stelażu). | „Mama mówiła, żeby ścielić łóżko. Nie mówiła, że najpierw trzeba je zbudować.” |
 | <img src="ikony/short_grass.png" width="32" height="32" alt=""> | **Pod gołym niebem** | Prześpij noc na gołej ziemi. | „Gwiazdy piękne, kamień pod łopatką - mniej.” |
 | <img src="ikony/tea_calm.png" width="32" height="32" alt=""> | **Coś na rozgrzewkę** | Wypij napar z ziół (kubek ziół podgrzany nad ogniskiem). | „Smakuje jak łąka. W dobrym sensie.” |
+| <img src="ikony/zawilec_etap3.png" width="32" height="32" alt=""> | **Coś wisi w powietrzu** | Doczekaj zmiany pory roku. | „Wczoraj jedno kwitło, dziś drugie. Kalendarz nie pyta o zgodę.” |
 
 ## Rzadkie (25 pkt)
 
@@ -80,6 +81,7 @@ Wersja gry **1.3.0** - 67 osiągnięć. Księga osiągnięć: klawisz **L**. Uwa
 
 | | Tytuł | Jak zdobyć | Komentarz |
 |---|---|---|---|
+| <img src="ikony/nagietek_etap3.png" width="32" height="32" alt=""> | **Cztery pory roku** | Bądź w świecie wiosną, latem, jesienią i zimą. | „Pełny obrót. Vivaldi napisał o tym koncert, ty po prostu przetrwałeś.” |
 | <img src="ikony/lamp_purple.png" width="32" height="32" alt=""> | **Dzień jak noc** | Zobacz pełne zaćmienie słońca. | „Słońce na chwilę zrobiło sobie przerwę. Ty jak zwykle nie.” |
 | <img src="ikony/meteorite.png" width="32" height="32" alt=""> | **Kosmiczny złom** | Wykop blok meteorytu. | „Kawałek nieba w kieszeni. Jeszcze ciepły.” |
 | <img src="ikony/lamp_blue.png" width="32" height="32" alt=""> | **Houston, mamy widok** *(sekret)* | Wyleć w kosmos. | „Mały krok dla gracza, wielki skok dla... a nie, to też tylko gracz.” |

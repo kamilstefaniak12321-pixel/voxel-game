@@ -18,6 +18,8 @@ import {
     sunCoverage
 } from '../sky/Celestial.js';
 import { DAY_LENGTH_MINUTES } from '../config.js';
+import { SEASONS, SEASON_NAMES, seasonAt, seasonIndex, nextSeasonStart } from '../sky/Seasons.js';
+import { PLANT_PACKS } from '../blocks/plantPacks.js';
 import {
     usageError,
     parseNumber,
@@ -201,6 +203,74 @@ export const SKY_COMMANDS = [
     // ========================================================
     // CZAS, NIEBO, KSIĘŻYC
     // ========================================================
+
+    // Pory roku (src/sky/Seasons.js, docs/pory-roku.md).
+    {
+        name: 'pora',
+        aliases: ['season', 'poraroku'],
+        usage: '/pora | /pora ustaw <wiosna | lato | jesien | zima> | /pora kwiaty',
+        description: 'Pokazuje porę roku, przenosi czas na początek wybranej pory, wypisuje, co kiedy kwitnie.',
+
+        run(args, { time, sky }) {
+
+            const [action, value] = args;
+
+            const summary = () => {
+                const season = seasonAt(time.days);
+                const blooming = PLANT_PACKS.filter((pack) => pack.seasons?.includes(season.index)).map((pack) => pack.label.toLowerCase());
+                return `Pora roku: ${season.name}, dzień ${season.day} z ${season.days} (rok ${season.year}) | księżyc: ${sky.celestial.moonPhaseName}` +
+                    ` | pora trwa jeden cykl księżyca, od nowiu do nowiu` +
+                    `\nKwitną: ${blooming.length ? blooming.join(', ') : 'nic (rośliny z porami odpoczywają)'}.`;
+            };
+
+            if (!action) {
+                return summary();
+            }
+
+            switch (simplify(action)) {
+
+                case 'ustaw':
+                case 'set': {
+
+                    const index = seasonIndex(simplify(value ?? ''));
+
+                    if (index < 0) {
+                        throw new CommandError(`Pora roku: ${SEASONS.join(', ')}`);
+                    }
+
+                    // Zawsze do przodu (rośliny i reszta świata nie cofają się
+                    // w czasie), o tej samej godzinie co teraz.
+                    const start = nextSeasonStart(index, time.days);
+                    const clock = time.days - Math.floor(time.days);
+
+                    time.days = Math.floor(start) + 1 + clock;
+
+                    if (seasonAt(time.days).index !== index) time.days = start + 0.01;
+
+                    return summary();
+
+                }
+
+                case 'kwiaty':
+                case 'lista': {
+
+                    const lines = SEASONS.map((key, index) => {
+                        const names = PLANT_PACKS.filter((pack) => pack.seasons?.includes(index)).map((pack) => pack.label.toLowerCase());
+                        return `${SEASON_NAMES[key]}: ${names.join(', ') || '-'}`;
+                    });
+                    const always = PLANT_PACKS.filter((pack) => !pack.seasons).map((pack) => pack.label.toLowerCase());
+
+                    return `${lines.join('\n')}\ncały rok: ${always.join(', ')} i rośliny spoza paczek (mak, chaber, mniszek...)`;
+
+                }
+
+                default:
+                    throw new CommandError('Użycie: /pora | /pora ustaw <wiosna | lato | jesien | zima> | /pora kwiaty');
+
+            }
+
+        }
+    },
 
     {
         name: 'czas',

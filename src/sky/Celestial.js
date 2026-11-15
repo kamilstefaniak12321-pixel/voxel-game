@@ -3,6 +3,7 @@ import * as THREE from 'three';
 import {
     SUN_PATH_TILT,
     MOON_CYCLE_DAYS,
+    MOON_START_PHASE,
     SUN_DIAMETER,
     MOON_DIAMETER,
     ECLIPSE_CHANCE,
@@ -66,7 +67,7 @@ const MISS_SPREAD = 8;
 // Przesunięcie cyklu księżyca: nowy świat zaczyna się tak, że
 // pierwszej nocy księżyc jest blisko pełni.
 
-const MOON_PHASE_OFFSET_DAYS = MOON_CYCLE_DAYS * 0.44;
+const MOON_PHASE_OFFSET_DAYS = MOON_CYCLE_DAYS * MOON_START_PHASE;
 
 
 const STAR_DRIFT_DAYS = 40;

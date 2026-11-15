@@ -11,6 +11,29 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 1.4.0 - Pory roku i kwiaty
+
+Pomysł Kamila — PR #150 (po 1.3.0). Opis i zasady: [`docs/pory-roku.md`](docs/pory-roku.md).
+
+- **Pory roku.** Rok to wiosna, lato, jesień i zima. Pora trwa jeden cykl
+  księżyca (8 dób): zaczyna się w nowiu, pełnia wypada w środku. Nowy
+  świat zaczyna się w środku wiosny. Istniejące światy mają porę od razu
+  (liczy się z czasu gry).
+- **Kwiaty kwitną w swojej porze.** Rosną cały rok, ale pąki i kwiaty
+  widać tylko w ich porze - poza nią stoją same liście. Wiosna: zawilec,
+  barwinek, piwonia, gorczyca. Lato: gorczyca, dzwonek, len, lawenda,
+  szałwia, mikołajek, indygowiec, marzanna, nagietek, cynia. Jesień:
+  nagietek, cynia, amarantus, kocanka. Zima: kocanka.
+- Kwiaty nie zmieniają się wszystkie naraz - każda roślina budzi się
+  i zasypia we własnym terminie.
+- **Wzrost:** w porze rośliny rosną 3 × szybciej (zawilec 4 ×), poza porą
+  odpoczywają. Kwiat da się ściąć tylko wtedy, gdy go widać.
+- Komunikat przy zmianie pory, pora na ekranie F3, komendy `/pora`,
+  `/pora ustaw <pora>`, `/pora kwiaty`; `/roslina` podaje porę rośliny.
+- Osiągnięcia: *Coś wisi w powietrzu* i *Cztery pory roku*.
+- **Płynność:** zmiana pory nie przebudowuje świata naraz - chunk
+  przebudowuje rośliny dopiero w chwili, gdy zmienia się jego kwiat.
+
 ## 1.3.0 - Kępki trawy zależne od miejsca
 
 Pomysł Kamila — PR #149 (po 1.2.0). Opis: [`docs/trawa.md`](docs/trawa.md).

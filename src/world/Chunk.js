@@ -71,6 +71,10 @@ export class Chunk {
         // Siedliska roślin w kolumnach (16 x 16 - plantHabitats.js) albo null.
         this.habitats = null;
 
+        // Czas gry (doby), w którym jakiś kwiat w chunku zmieni wygląd z porą
+        // roku (ChunkMesher.js; Infinity - żaden, undefined - jeszcze nie liczone).
+        this.seasonNext = undefined;
+
         // Dokładny biom każdej kolumny. Worker oblicza go wraz z terenem;
         // osiągnięcia nie muszą ponownie przygotowywać rzek w klatce gry.
         this.biomes = null;

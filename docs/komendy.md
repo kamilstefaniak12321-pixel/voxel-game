@@ -22,6 +22,9 @@ Współrzędne można podawać względem gracza: `~` (tu, gdzie stoję),
 | `/pomoc [komenda]` | lista komend albo opis jednej |
 | `/wyczysc` | czyści czat |
 | `/czas` | dzień, godzina, prędkość czasu, faza księżyca |
+| `/pora` | pora roku, dzień pory, rok i co teraz kwitnie (`docs/pory-roku.md`) |
+| `/pora ustaw <wiosna \| lato \| jesien \| zima>` | przenosi czas do przodu, na początek wybranej pory (o tej samej godzinie) |
+| `/pora kwiaty` | które rośliny kwitną w której porze, które cały rok |
 | `/czas ustaw <18:30 \| rano \| poludnie \| popoludnie \| zachod \| wieczor \| noc \| polnoc \| wschod>` | ustawia godzinę (ten sam dzień) |
 | `/czas dodaj <godziny \| 30m>` | przesuwa czas (może być ujemnie) |
 | `/czas predkosc <x>` | prędkość czasu: 0 = stoi, 1 = normalnie, 60 = minuta na sekundę |

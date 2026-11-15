@@ -47,6 +47,7 @@
         "srodek": "#ece2b8"
     },
     "czasWzrostu": 300,
+    "pory": ["lato"],
     "przedmiot": {
         "klucz": "wiazka",
         "plik": "wiazka.png",

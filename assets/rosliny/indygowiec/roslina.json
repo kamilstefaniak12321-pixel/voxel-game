@@ -48,6 +48,7 @@
         "srodek": "#6e5ad6"
     },
     "czasWzrostu": 360,
+    "pory": ["lato"],
     "przedmiot": {
         "klucz": "liscie",
         "plik": "liscie.png",

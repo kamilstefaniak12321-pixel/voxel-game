@@ -48,6 +48,7 @@
         "korzenJasny": "#c4523a"
     },
     "czasWzrostu": 330,
+    "pory": ["lato"],
     "przedmiot": {
         "klucz": "korzen",
         "plik": "korzen.png",

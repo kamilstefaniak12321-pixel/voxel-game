@@ -38,6 +38,7 @@
         "pak": "#806e97"
     },
     "czasWzrostu": 300,
+    "pory": ["lato"],
     "przedmiot": {
         "klucz": "lisc",
         "plik": "lisc.png",

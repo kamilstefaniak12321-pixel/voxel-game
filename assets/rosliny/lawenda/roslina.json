@@ -39,6 +39,7 @@
         "pak": "#5e398a"
     },
     "czasWzrostu": 300,
+    "pory": ["lato"],
     "przedmiot": {
         "klucz": "bukiet",
         "plik": "bukiet.png",

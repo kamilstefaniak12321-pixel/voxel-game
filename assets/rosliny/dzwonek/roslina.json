@@ -40,6 +40,7 @@
         "srodek": "#e8dcc8"
     },
     "czasWzrostu": 300,
+    "pory": ["lato"],
     "przedmiot": {
         "klucz": "kwiat",
         "plik": "kwiat.png",

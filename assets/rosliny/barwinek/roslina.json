@@ -37,6 +37,7 @@
         "srodek": "#f0ece0"
     },
     "czasWzrostu": 240,
+    "pory": ["wiosna"],
     "przedmiot": {
         "klucz": "kwiat",
         "plik": "kwiat.png",

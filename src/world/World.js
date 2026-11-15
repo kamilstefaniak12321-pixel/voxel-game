@@ -1,3 +1,4 @@
+import { isSeasonalPlant, shownPlantId } from '../blocks/plantSeasons.js';
 import * as THREE from 'three';
 import { shapeInfo } from '../blocks/woodShapes.js';
 import { shapeBoxes, connectMask } from './ShapeBoxes.js';
@@ -126,6 +127,10 @@ function currentCellHeight(fluids, id, x, y, z) {
 export const PLANT_PREFETCH_DISTANCE = PLANT_VIEW_DISTANCE + 48;
 export const PLANT_RETAIN_DISTANCE = PLANT_VIEW_DISTANCE + 64;
 
+// Co jaki czas gry (doby) sprawdzamy, czy jakiś kwiat zmienia wygląd z porą
+// roku: 0.005 doby = 6 sekund.
+const SEASON_SCAN_DAYS = 0.005;
+
 export class World {
 
     // seed        - seed tego świata (liczba albo tekst).
@@ -147,6 +152,13 @@ export class World {
         // Klucz "cx,cz" -> Chunk.
 
         this.chunks = new Map();
+
+
+        // Pory roku: czas gry w dobach (null - bez pór: podglądy, testy).
+
+        this.seasonDays = null;
+
+        this.seasonScanAt = 0;
 
         // Chunki, których mesh trzeba przebudować.
 
@@ -490,6 +502,37 @@ export class World {
 
     // Szybki odczyt: zwraca ID bloku (AIR_ID = powietrze).
     // Poza światem i w nieistniejących chunkach jest powietrze.
+
+    // PORY ROKU (src/blocks/plantSeasons.js): numer bloku, który widać
+    // w (x, y, z) - kwiat poza swoją porą to niższy etap tej samej
+    // rośliny. Blok w świecie i w zapisie zostaje bez zmian.
+    shownBlockId(x, y, z) {
+        const id = this.getBlockId(x, y, z);
+        return this.seasonDays !== null && isSeasonalPlant(id) ? shownPlantId(id, x, y, z, this.seasonDays) : id;
+    }
+
+    shownIdOf(id, x, y, z) {
+        return this.seasonDays !== null && isSeasonalPlant(id) ? shownPlantId(id, x, y, z, this.seasonDays) : id;
+    }
+
+    // Czas gry (doby) do pór roku - Game podaje co klatkę. Chunk, w którym
+    // jakiś kwiat właśnie zmienia wygląd (chunk.seasonNext - ChunkMesher),
+    // przebudowuje rośliny; po skoku czasu wstecz - wszystkie z kwiatami.
+    updateSeasons(days) {
+        const before = this.seasonDays;
+        this.seasonDays = days;
+        if (before !== null && days >= before && days < this.seasonScanAt) return;
+        this.seasonScanAt = days + SEASON_SCAN_DAYS;
+        const back = before === null || days < before;
+        for (const chunk of this.chunks.values()) {
+            const next = chunk.seasonNext;
+            if (next === undefined) continue;
+            if (back ? next !== Infinity : next <= days) {
+                chunk.seasonNext = undefined;
+                this.markPlantsDirty(chunk);
+            }
+        }
+    }
 
     getBlockId(x, y, z) {
 

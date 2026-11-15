@@ -38,6 +38,7 @@
         "pak": "#5878a8"
     },
     "czasWzrostu": 330,
+    "pory": ["lato"],
     "przedmiot": {
         "klucz": "kwiat",
         "plik": "kwiat.png",

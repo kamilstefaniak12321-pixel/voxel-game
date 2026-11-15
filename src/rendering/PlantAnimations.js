@@ -144,8 +144,18 @@ export class PlantAnimations {
         else this.world.markDirty(chunk);
     }
 
+    // Kwiat poza swoją porą roku rysuje się jako niższy etap
+    // (World.shownIdOf) - animacja ma pokazywać to samo co świat.
+    shown(chunk, index, id) {
+        if (!this.world.shownIdOf || !id) return id;
+        const lx = index % CHUNK_SIZE, lz = Math.floor(index / CHUNK_SIZE) % CHUNK_SIZE;
+        return this.world.shownIdOf(id, chunk.cx * CHUNK_SIZE + lx, Math.floor(index / (CHUNK_SIZE * CHUNK_SIZE)), chunk.cz * CHUNK_SIZE + lz);
+    }
+
     blockChanged(chunk, index, before, after) {
         if (!this.enabled) return;
+        before = this.shown(chunk, index, before);
+        after = this.shown(chunk, index, after);
         const family = familyOf(after) ?? familyOf(before);
         if (!family && !this.chunks.get(chunk)?.has(index)) return;
         const kind = family?.kind(before, after);
@@ -158,7 +168,7 @@ export class PlantAnimations {
         const chunk = this.world.getChunk(Math.floor(x / CHUNK_SIZE), Math.floor(z / CHUNK_SIZE));
         if (!chunk) return false;
         const index = chunk.index(x - chunk.cx * CHUNK_SIZE, y, z - chunk.cz * CHUNK_SIZE);
-        const id = chunk.blocks[index];
+        const id = this.shown(chunk, index, chunk.blocks[index]);
         const family = familyOf(id);
         return family !== null && this.start(chunk, index, id, id, 'reject', family);
     }

@@ -15,6 +15,7 @@ import { getWaterCornerHeight } from '../world/WaterSurface.js';
 import { atmosphericLightToBrightness } from './LightPolicy.js';
 import { getRiverPlantFaces, plantRandom, plantTransform, riverPlantTransform } from './RiverPlantGeometry.js';
 import { pickRegionalPlant } from './PlantRegionalVariants.js';
+import { SEASONAL, shownPlantId, nextPlantChange } from '../blocks/plantSeasons.js';
 import { getBushyGrassFaces } from './BushyGrassGeometry.js';
 import { LEAF_PARTS } from '../../assets/models/leaves/model-data.js';
 import { BUSHY_GRASS_TEXTURE } from '../blocks/bushyGrass.js';
@@ -190,6 +191,7 @@ function* fillPaddingSteps(chunk, world, height, first) {
     padTop = last;
     padBottom = first;
     let columns = 0;
+    const seasonDays = world.seasonDays ?? null;
 
     for (let dz = -1; dz <= 1; dz++) {
 
@@ -242,7 +244,12 @@ function* fillPaddingSteps(chunk, world, height, first) {
 
                         const i = y * LAYER + column;
 
-                        const blockId = source.blocks[i];
+                        let blockId = source.blocks[i];
+
+                        // Dywan z kwiatów poza porą roku łączy się jak młody.
+                        if (seasonDays !== null && blockId < SEASONAL.length && SEASONAL[blockId] === 1) {
+                            blockId = shownPlantId(blockId, source.cx * S + x - dx * S, y, source.cz * S + z - dz * S, seasonDays);
+                        }
 
                         padOpaque[p] = isOpaqueId(blockId) ? 1 : 0;
                         padShade[p] = padOpaque[p] | (isLeavesId(blockId) ? 1 : 0);
@@ -785,6 +792,11 @@ let meshTint = null;
 // Od siedliska zależy wygląd trawy (PlantRegionalVariants.js).
 
 let meshHabitats = null;
+
+// PORY ROKU: czas gry (doby) z world.seasonDays - od niego zależy, który
+// etap kwiatu widać (src/blocks/plantSeasons.js); null - bez pór roku
+// (podglądy, testy): każdy blok wygląda jak jest.
+let meshDays = null;
 
 const REGIONAL_SALT = 57;
 
@@ -1955,7 +1967,10 @@ export function prepareChunkPlantGeometry(chunk, world, deadline) {
     let cursor = Math.max(start * LAYER, plantPreparation.get(chunk) ?? 0);
     const end = height * LAYER;
     for (; cursor < end; cursor++) {
-        const id = overrides?.get(cursor)?.renderId ?? chunk.blocks[cursor];
+        let id = overrides?.get(cursor)?.renderId ?? chunk.blocks[cursor];
+        if (id < SEASONAL.length && SEASONAL[id] === 1 && (world.seasonDays ?? null) !== null && !overrides?.has(cursor)) {
+            id = shownPlantId(id, baseX + cursor % S, Math.floor(cursor / LAYER), baseZ + Math.floor(cursor / S) % S, world.seasonDays);
+        }
         const grass = grassDetail !== null && (id === SHORT_GRASS_ID || id === TALL_GRASS_ID);
         const plain = blockRenderData[id]?.riverPlant;
         if (!grass && !plain) continue;
@@ -1993,7 +2008,7 @@ function captureMeshScratch() {
         padTop, padBottom, faceCapacity, positionBuffer, normalBuffer, uvBuffer,
         colorBuffer, atmosphereLightBuffer, surfaceOcclusionBuffer, surfaceEmissionBuffer,
         surfaceProfileBuffer, tintBuffer, plantMotionBuffer, splitBuffer,
-        meshTint, meshHabitats, meshFlow, fastLeaves, leafParts, shade: SHADE.slice() };
+        meshTint, meshHabitats, meshDays, meshFlow, fastLeaves, leafParts, shade: SHADE.slice() };
 }
 
 function activateMeshScratch(state) {
@@ -2001,7 +2016,7 @@ function activateMeshScratch(state) {
         padTop, padBottom, faceCapacity, positionBuffer, normalBuffer, uvBuffer,
         colorBuffer, atmosphereLightBuffer, surfaceOcclusionBuffer, surfaceEmissionBuffer,
         surfaceProfileBuffer, tintBuffer, plantMotionBuffer, splitBuffer,
-        meshTint, meshHabitats, meshFlow, fastLeaves, leafParts } = state);
+        meshTint, meshHabitats, meshDays, meshFlow, fastLeaves, leafParts } = state);
     for (let i = 0; i < SHADE.length; i++) SHADE[i] = state.shade[i];
 }
 
@@ -2018,7 +2033,7 @@ function acquireMeshScratch() {
         surfaceEmissionBuffer: null, surfaceProfileBuffer: null, tintBuffer: null,
         plantMotionBuffer: null, splitBuffer: null
     };
-    Object.assign(state, { padTop: 0, padBottom: 0, meshTint: null, meshHabitats: null, meshFlow: null,
+    Object.assign(state, { padTop: 0, padBottom: 0, meshTint: null, meshHabitats: null, meshDays: null, meshFlow: null,
         fastLeaves, leafParts, shade: SHADE.slice() });
     return state;
 }
@@ -2126,6 +2141,8 @@ function* buildChunkGeometrySteps(chunk, world, { terrain, plants: includePlants
 
     meshTint = chunk.tint ?? null;
     meshHabitats = chunk.habitats ?? null;
+    meshDays = world.seasonDays ?? null;
+    if (includePlants) chunk.seasonNext = Infinity;
 
 
     // Lity kamień głęboko pod terenem nie ma żadnej widocznej
@@ -2173,10 +2190,19 @@ function* buildChunkGeometrySteps(chunk, world, { terrain, plants: includePlants
             for (let lx = 0; lx < S; lx++) {
 
                 const index = y * LAYER + lz * S + lx;
-                const id = overrides?.get(index)?.renderId ?? blocks[index];
+                let id = overrides?.get(index)?.renderId ?? blocks[index];
 
                 if (id === AIR_ID) {
                     continue;
+                }
+
+                // Kwiat poza swoją porą roku: widać niższy etap (liście).
+                if (meshDays !== null && id < SEASONAL.length && SEASONAL[id] === 1 && !overrides?.has(index)) {
+                    if (includePlants) {
+                        const change = nextPlantChange(id, baseX + lx, y, baseZ + lz, meshDays);
+                        if (change < chunk.seasonNext) chunk.seasonNext = change;
+                    }
+                    id = shownPlantId(id, baseX + lx, y, baseZ + lz, meshDays);
                 }
 
 

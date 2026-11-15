@@ -38,6 +38,7 @@
         "pak": "#cfc58a"
     },
     "czasWzrostu": 240,
+    "pory": ["jesien", "zima"],
     "przedmiot": {
         "klucz": "bukiet",
         "plik": "bukiet.png",

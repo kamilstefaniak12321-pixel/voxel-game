@@ -43,6 +43,7 @@
         "srodek": "#edbe73"
     },
     "czasWzrostu": 360,
+    "pory": ["wiosna"],
     "przedmiot": {
         "klucz": "kwiat",
         "plik": "kwiat.png",

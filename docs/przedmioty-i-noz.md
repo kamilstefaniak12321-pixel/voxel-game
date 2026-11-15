@@ -103,9 +103,8 @@ wczytany świat.
 
 Zapisane na prośbę Kamila:
 
-- **Pory roku dla kwiatów.** Roślina rośnie cały rok, ale jej widoczne
-  stany (pąki, kwiaty) pojawiają się w swojej porze; np. zawilec rośnie
-  wtedy dużo szybciej.
+- ~~**Pory roku dla kwiatów.**~~ Zrobione w 1.4.0 -
+  [`pory-roku.md`](pory-roku.md).
 - **Kwiaty reagujące na porę dnia** - nagietek zamyka koronę na noc
   i otwiera ją rano.
 - **Kłujące rośliny** - mikołajek kłuje przy zbiorze albo wejściu

@@ -9,6 +9,7 @@
         { "plik": "etap3.png", "nazwa": "Amarantus (dojrzałe wiechy)" }
     ],
     "czasWzrostu": 300,
+    "pory": ["jesien"],
     "przedmiot": {
         "klucz": "wiecha",
         "plik": "wiecha.png",

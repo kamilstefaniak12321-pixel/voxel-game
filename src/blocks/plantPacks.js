@@ -735,7 +735,11 @@ async function validatePack(folder) {
             on,
             cover: where.plamy === undefined ? 0.04 : number(where.plamy, 'gdzieRosnie.plamy', 0.001, 0.9),
             density: where.gestosc === undefined ? 0.12 : number(where.gestosc, 'gdzieRosnie.gestosc', 0, 1),
-            stages: stages.map((n) => n / sum)
+            stages: stages.map((n) => n / sum),
+            // Tryb przesady (1.6.0 - src/world/terrain/PlantExcess.js): waga,
+            // z jaką roślina bywa tą, która rzadko opanowuje całą okolicę
+            // (0 albo brak - nigdy).
+            excess: where.przesada === undefined ? 0 : number(where.przesada, 'gdzieRosnie.przesada', 0, 10)
         };
 
     }

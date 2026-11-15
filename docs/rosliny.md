@@ -143,7 +143,7 @@ piksele rysunku i wynik (powiększone).
 | `zbior` | PPM na ostatnim etapie: `ile` [od, do], `wraca` - do którego etapu wraca roślina, `narzedzie` - `"noz"`, gdy plon ścina się nożem (kwiaty, zioła - od 0.100.0, [opis](przedmioty-i-noz.md#nóż)); bez tego pola zbiera się ręką |
 | `podloze` | na czym rośnie oprócz ziemi, np. `["sand"]` |
 | `gdzieRosnie.na` | gdzie rośnie: `ziemia` (domyślnie, trawa; piasek z `podloze`), `kamien` (wierzch skał - porosty), `pnie` (boki pni drzew, do 6 bloków nad ziemią - porosty, huby) |
-| `gdzieRosnie` | teren realistyczny: `biomy` - lista albo `{ "biom": waga }` (1 - główny biom rośliny, mniej - rośnie tam rzadziej, np. `{ "hala": 1, "laka": 0.3 }`), `plamy` (jaka część głównego biomu w plamach), `gestosc` (jak gęsto w plamie), `etapy` (jak często który etap) |
+| `gdzieRosnie` | teren realistyczny: `biomy` - lista albo `{ "biom": waga }` (1 - główny biom rośliny, mniej - rośnie tam rzadziej, np. `{ "hala": 1, "laka": 0.3 }`), `plamy` (jaka część głównego biomu w plamach), `gestosc` (jak gęsto w plamie), `etapy` (jak często który etap); `przesada` - waga, z jaką roślina bywa tą, która rzadko opanowuje całą okolicę ([`przesada.md`](przesada.md); bez pola - nigdy) |
 | `zrodlo` | skąd są obrazki (dla porządku - gra tego nie czyta) |
 
 Zniszczona roślina daje młodą (pierwszy etap) - można ją posadzić.

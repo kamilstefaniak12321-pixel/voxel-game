@@ -53,7 +53,7 @@
         "grupy": ["pink", "flowers"]
     },
     "zbior": { "ile": [1, 2], "wraca": 2, "narzedzie": "noz" },
-    "gdzieRosnie": { "biomy": { "buczyna": 1, "las": 0.5, "klonowy": 0.8 }, "plamy": 0.03, "gestosc": 0.4, "etapy": [0.2, 0.25, 0.55] },
+    "gdzieRosnie": { "przesada": 2, "biomy": { "buczyna": 1, "las": 0.5, "klonowy": 0.8 }, "plamy": 0.03, "gestosc": 0.4, "etapy": [0.2, 0.25, 0.55] },
     "zrodlo": {
         "atlas": "Atlas tekstur zawilca brzoskwiniowego.png",
         "przedmiot": "kwiat: --wysokosc 16 --nazwy etap1,etap2,etap3,kwiat; etapy - model z pikseli (kępka: liście, okółki, kwiaty-talerzyki) w kolorach atlasu"

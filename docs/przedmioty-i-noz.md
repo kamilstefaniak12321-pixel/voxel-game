@@ -107,8 +107,8 @@ Zapisane na prośbę Kamila:
   [`pory-roku.md`](pory-roku.md).
 - ~~**Kwiaty reagujące na porę dnia**~~ i ~~**kłujące rośliny**~~ -
   zrobione w 1.5.0 ([`pory-roku.md`](pory-roku.md)).
-- **Rzadki tryb przesady w generatorze** - w wybranych miejscach 80%
-  podłoża biomu zamienia się w dywan jednej rośliny (np. barwinka).
+- ~~**Rzadki tryb przesady w generatorze**~~ - zrobione w 1.6.0
+  ([`przesada.md`](przesada.md)).
 
 ## Do testów
 

@@ -843,6 +843,19 @@ export const ACHIEVEMENTS = [
         when: (data) => data.meal === true && data.mealsToday >= 3
     },
     {
+        id: 'flower_sea',
+        tier: 'rare',
+        title: 'Morze kwiatów',
+        task: 'Stań w środku miejsca, które opanowała jedna roślina.',
+        comment: 'Ktoś tu przesadził. Dosłownie.',
+        icon: 'barwinek_etap3',
+        check: (game) => {
+            const excess = game.world.generator.excess;
+            const found = excess?.zoneAt(Math.floor(game.player.pos.x), Math.floor(game.player.pos.z));
+            return Boolean(found) && found.depth > 0.5;
+        }
+    },
+    {
         id: 'pricked',
         tier: 'common',
         title: 'Nie dotykać',

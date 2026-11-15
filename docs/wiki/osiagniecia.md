@@ -2,7 +2,7 @@
 
 > Ta strona jest generowana z kodu gry (`python tools/wiki.py`) - nie zmieniaj jej ręcznie, zmiany przepadną przy następnym generowaniu.
 
-Wersja gry **1.5.0** - 70 osiągnięć. Księga osiągnięć: klawisz **L**. Uwaga, spoilery: sekretne osiągnięcia są tu opisane (w grze widać tylko „???”).
+Wersja gry **1.6.0** - 71 osiągnięć. Księga osiągnięć: klawisz **L**. Uwaga, spoilery: sekretne osiągnięcia są tu opisane (w grze widać tylko „???”).
 
 
 ## Zwykłe (10 pkt)
@@ -74,6 +74,7 @@ Wersja gry **1.5.0** - 70 osiągnięć. Księga osiągnięć: klawisz **L**. Uwa
 | <img src="ikony/snow.png" width="32" height="32" alt=""> | **Dach świata** | Stań na śniegu na ośnieżonym szczycie. | „Widok jak z pocztówki, wiatr jak z zamrażarki.” |
 | <img src="ikony/oak_planks.png" width="32" height="32" alt=""> | **Promyk słońca** | Stań w plamie słońca pod dachem (słońce wpada przez okno albo dziurę w ścianie). | „Jak kot na parapecie. Brakuje tylko mruczenia.” |
 | <img src="ikony/roasted_hazelnut.png" width="32" height="32" alt=""> | **Śniadanie, obiad, kolacja** | Zalicz trzy posiłki jednego dnia. | „Trzy posiłki dziennie. Organizm jest w szoku, ale wdzięczny.” |
+| <img src="ikony/barwinek_etap3.png" width="32" height="32" alt=""> | **Morze kwiatów** | Stań w środku miejsca, które opanowała jedna roślina. | „Ktoś tu przesadził. Dosłownie.” |
 | <img src="ikony/linen_bedding.png" width="32" height="32" alt=""> | **Jak w puchu** | Prześpij noc w pościelonym łóżku. | „Własne łóżko. Od teraz każda ziemianka to już dom.” |
 | <img src="ikony/tea_heal.png" width="32" height="32" alt=""> | **Zielarz** | Wypij wszystkie trzy rodzaje naparów: na sen, leczniczy i wzmacniający. | „Na wszystko jest zioło. Trzeba tylko wiedzieć, które.” |
 | <img src="ikony/water.png" width="32" height="32" alt=""> | **Nie polecam** *(sekret)* | Strać przytomność pod wodą i obudź się na brzegu. | „Ryby patrzyły. Żadna nie pomogła.” |

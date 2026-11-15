@@ -55,7 +55,7 @@
         "nazwaAngielska": "Flax Bundle"
     },
     "zbior": { "ile": [1, 2], "wraca": 1, "narzedzie": "noz" },
-    "gdzieRosnie": { "biomy": { "hala": 1, "laka": 0.4 }, "plamy": 0.025, "gestosc": 0.45, "etapy": [0.2, 0.45, 0.35] },
+    "gdzieRosnie": { "przesada": 1.5, "biomy": { "hala": 1, "laka": 0.4 }, "plamy": 0.025, "gestosc": 0.45, "etapy": [0.2, 0.45, 0.35] },
     "zrodlo": {
         "atlas": "Atlas lnu_ trzy etapy i wiązka.png",
         "przedmiot": "wiazka: --wysokosc 16 --nazwy etap1,etap2,etap3,wiazka; etapy - model z pikseli (kępka: smukłe łodygi, błękitne talerzyki, suche torebki) w kolorach atlasu"

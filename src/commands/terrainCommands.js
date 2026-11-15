@@ -375,6 +375,51 @@ export const TERRAIN_COMMANDS = [
     },
 
 
+    // Tryb przesady (src/world/terrain/PlantExcess.js, docs/przesada.md).
+    {
+        name: 'przesada',
+        aliases: ['excess', 'dywan'],
+        usage: '/przesada | /przesada tp',
+        description: 'Najbliższe miejsce, w którym jedna roślina opanowała całą okolicę (tryb przesady generatora); tp - przenosi na jego środek.',
+
+        run(args, { world, player }) {
+
+            const excess = world.generator.excess;
+
+            if (!excess) {
+                throw new CommandError('Teren klasyczny nie ma trybu przesady - jest w terenie realistycznym.');
+            }
+
+            const x = Math.floor(player.pos.x), z = Math.floor(player.pos.z);
+            const here = excess.zoneAt(x, z);
+            const found = excess.nearest(x, z);
+
+            if (!found) {
+                return 'W promieniu 3000 bloków nie ma takiego miejsca.';
+            }
+
+            const { zone, distance } = found;
+            const text = `${zone.pack.label} opanował(a) okolicę na ${zone.x}, ${zone.z} (promień ok. ${Math.round(zone.radius)} bloków, biom: ${BIOMES[zone.biome].name.toLowerCase()})`;
+
+            if (simplify(args[0] ?? '') === 'tp') {
+
+                world.ensureColumnLoaded(zone.x, zone.z);
+
+                player.pos.set(zone.x + 0.5, world.getSurfaceY(zone.x, zone.z), zone.z + 0.5);
+                player.vel.set(0, 0, 0);
+                player.updateCamera();
+
+                return `Przeniesiono: ${text}.`;
+
+            }
+
+            return here
+                ? `Jesteś w miejscu przesady: ${text}.`
+                : `Najbliżej: ${text} - ${Math.round(distance)} bloków stąd (/przesada tp).`;
+
+        }
+    },
+
     {
         name: 'biom',
         aliases: ['biome', 'biomy'],

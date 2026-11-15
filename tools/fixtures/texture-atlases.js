@@ -12,7 +12,9 @@ export async function run(expected) {
     const THREE=await import('three');
     const atlas=await import('/src/rendering/TextureAtlas.js'), ready=await atlas.atlasReady;
     const pixels=imageData(ready.image), atlasHashes={};
-    check(ready.image.width===expected.width&&ready.image.height>=expected.height,'GPU atlas retains every original pixel row');
+    // 1.7.1: bark sheets sit to the right of the original 16 columns, so the atlas may be wider;
+    // every original tile keeps its rectangle and pixels (checked below).
+    check(ready.image.width>=expected.width&&ready.image.width<=1024&&ready.image.height>=expected.height,'GPU atlas retains every original pixel row and column');
     check(JSON.stringify(Object.keys(atlas.ATLAS_TILES).slice(0,Object.keys(expected.tiles).length))===JSON.stringify(Object.keys(expected.tiles)),'All original texture names preserved');
     // Nowe tekstury (np. skrzynia 0.81.0) dochodzą na końcu - porównujemy dawne.
     for(const [name,tile] of Object.entries(atlas.ATLAS_TILES).filter(([name])=>Object.hasOwn(expected.tiles,name))) {
@@ -81,7 +83,8 @@ export async function run(expected) {
     // source height. No source pixels are rescaled or replaced by a baseline.
     const plankIconsAt084SourceHeight = {}, sourceHeight084 = 35 * 16;
     const originalIconImage = ready.iconImage, originalHeightImage = document.createElement('canvas');
-    originalHeightImage.width = originalIconImage.width; originalHeightImage.height = sourceHeight084;
+    // (1.7.1: also the original 16-column width - the atlas grew to the right.)
+    originalHeightImage.width = Math.min(originalIconImage.width, 16 * 16 * (originalIconImage.width / ready.image.width)); originalHeightImage.height = sourceHeight084;
     originalHeightImage.getContext('2d').drawImage(originalIconImage, 0, 0);
     try {
         ready.iconImage = originalHeightImage;

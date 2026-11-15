@@ -27,6 +27,7 @@ import { RiverVegetation } from './RiverVegetation.js';
 
 import { Biomes, BIOMES, BIOME_KEYS, BIOME_INDEX, grassTint } from './Biomes.js';
 import { plantHabitat } from '../../blocks/plantHabitats.js';
+import { PlantExcess } from './PlantExcess.js';
 
 // ------------------------------------------------------------
 // GENERATOR TERENU "REALISTYCZNY"
@@ -368,6 +369,10 @@ export class RealisticGenerator {
         this.plantSeed = Math.imul(base, 0x2545f491) >>> 0;
 
         this.riverVegetation = new RiverVegetation(this.plantSeed);
+
+        // Tryb przesady: rzadkie miejsca opanowane przez jedną roślinę.
+        this.excess = new PlantExcess(this.plantSeed, (x, z) => this.biomeAt(x, z),
+            (x, z) => this.field(this.noise.patches, x + 4111, z - 2777, 22, 2));
 
 
         this.ids = {
@@ -1394,6 +1399,15 @@ export class RealisticGenerator {
 
         if (!data) {
             return 0;
+        }
+
+        // Tryb przesady: w rzadkich miejscach jedna roślina zajmuje ok. 80%
+        // trawy (PlantExcess.js); na reszcie rośnie to, co zwykle.
+
+        const excess = this.excess.plantAt(x, z, BIOME_KEYS[biome]);
+
+        if (excess) {
+            return excess;
         }
 
         const P = SHAPE.PLANTS;

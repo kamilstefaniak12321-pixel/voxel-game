@@ -56,7 +56,7 @@
         "grupy": ["yellow", "herbs_vigor"]
     },
     "zbior": { "ile": [1, 3], "wraca": 1, "narzedzie": "noz" },
-    "gdzieRosnie": { "biomy": { "brzezina": 1, "laka": 0.3 }, "plamy": 0.025, "gestosc": 0.4, "etapy": [0.2, 0.45, 0.35] },
+    "gdzieRosnie": { "przesada": 1.5, "biomy": { "brzezina": 1, "laka": 0.3 }, "plamy": 0.025, "gestosc": 0.4, "etapy": [0.2, 0.45, 0.35] },
     "zrodlo": {
         "atlas": "Atlas pikselowej gorczycy.png",
         "przedmiot": "nasiona: --wysokosc 16 --nazwy etap1,etap2,etap3,nasiona; etapy - model z pikseli (kępka: krzak, łodygi, grona kwiatów, strąki) w kolorach atlasu"

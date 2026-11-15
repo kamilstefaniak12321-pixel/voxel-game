@@ -11,6 +11,23 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 1.6.0 - Tryb przesady
+
+Pomysł Kamila — PR #152 (po 1.5.0). Opis: [`docs/przesada.md`](docs/przesada.md).
+
+- **Miejsca opanowane przez jedną roślinę.** Rzadko (mniej więcej w co
+  dziesiątym kwadracie 320 × 320 bloków) trafia się koło o promieniu
+  36-84 bloków, w którym jedna roślina zajmuje ok. 80% trawy: dywan
+  barwinka pod lasem, łan lawendy, polana zawilców. Przy brzegu rzednie.
+- Roślina pasuje do biomu i rośnie tylko tam, gdzie zwykle; drzewa
+  i pozostałe 20% podłoża bez zmian. Biorą udział: barwinek, zawilec,
+  lawenda, dzwonek, len, gorczyca, nagietek, szałwia, piwonia, cynia.
+- Działają pory roku: łan kwitnie w swojej porze.
+- `/przesada` i `/przesada tp` - najbliższe takie miejsce. Osiągnięcie
+  *Morze kwiatów*.
+- W istniejących światach miejsca pojawią się w chunkach niezmienionych
+  przez gracza.
+
 ## 1.5.0 - Nagietek śpi w nocy, mikołajek kłuje
 
 Pomysł Kamila — PR #151 (po 1.4.0). Opis: [`docs/pory-roku.md`](docs/pory-roku.md).

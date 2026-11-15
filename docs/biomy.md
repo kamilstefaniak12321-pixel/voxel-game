@@ -37,6 +37,8 @@ Pogrubione - nowe bloki (niżej).
 
 ![Nowe biomy 0.83.0: klonowy las jesienny, kosodrzewina, gaj oliwny, las eukaliptusowy, las sekwojowy](drzewa-biomy-083.jpg)
 
+![Biomy 1.8.0: sawanna i półpustynia](biomy-180.jpg)
+
 ## Jak powstają
 
 Biom wynika z tego, co już jest w terenie (`src/world/terrain/Biomes.js`,

@@ -11,6 +11,10 @@ import { buildTree, seededRandom, treeShapeLimits } from './TreeShapes.js';
 // and silhouettes so differences can be compared directly.
 export const TREE_SHOWCASE_MAX_COUNT = 36;
 const SPACING = 18;
+// Porównanie gatunków: ile drzew w rzędzie i odstęp rzędów (najszersze
+// korony sięgają 14 bloków od pnia).
+const COMPARISON_ROW = 19;
+const COMPARISON_ROW_SPACING = 36;
 const SLICE_MS = 4;
 const sessions = new WeakMap();
 const disposed = new WeakSet();
@@ -108,13 +112,20 @@ export function createTreeShowcasePlan({ mode, species, count = 16, seed = 0 } =
             (index - (TREE_NAMES.length - 1) / 2) * SPACING, 0, null, TREE_SPECIES[name].species[0]));
         // Wider species need more room, while the existing trees retain their
         // 18-block spacing. Centre the complete row in front of the player.
-        let offset = 0;
-        specimens.forEach((tree, index) => {
-            if (index) offset += Math.max(SPACING,
-                treeShapeLimits(specimens[index - 1].species).reach + treeShapeLimits(tree.species).reach + 4);
-            tree.dx = offset;
-        });
-        for (const tree of specimens) tree.dx -= Math.round(offset / 2);
+        // 1.8.0: 32 gatunki w jednym rzędzie miałyby ponad 700 bloków. Dawne
+        // dziewiętnaście stoi w pierwszym rzędzie jak dotąd, kolejne - w
+        // następnych rzędach za nim.
+        for (let start = 0, row = 0; start < specimens.length; start += COMPARISON_ROW, row++) {
+            const line = specimens.slice(start, start + COMPARISON_ROW);
+            let offset = 0;
+            line.forEach((tree, index) => {
+                if (index) offset += Math.max(SPACING,
+                    treeShapeLimits(line[index - 1].species).reach + treeShapeLimits(tree.species).reach + 4);
+                tree.dx = offset;
+                tree.dz = row * COMPARISON_ROW_SPACING;
+            });
+            for (const tree of line) tree.dx -= Math.round(offset / 2);
+        }
     } else {
         const spacing = Math.max(SPACING, treeShapeLimits(species).reach * 2 + 4);
         const templates = TREE_SPECIES[species].shape?.templates;

@@ -85,7 +85,7 @@ Współrzędne można podawać względem gracza: `~` (tu, gdzie stoję),
 | `/drzewa lista` | katalog wszystkich gatunków (od 1.8.0 trzydzieści dwa) i przykłady pokazów |
 | `/drzewa las <gatunek> [liczba 1-36] [seed]` | losowy las jednego gatunku przed graczem, domyślnie 16 drzew; omija przeszkody i podaje wynik |
 | `/drzewa warianty <gatunek> [seed]` | galeria dostępnych szablonów, rozmiarów i stanów specjalnych (np. kwitnąca lipa, owocująca jabłoń) |
-| `/drzewa porownanie [seed]` | wszystkie gatunki obok siebie; razem z galerią wymaga wolnej ziemi na komplet drzew, najlepiej na trawie obok centralnego placu świata programisty |
+| `/drzewa porownanie [seed]` | wszystkie gatunki obok siebie (od 1.8.0 w dwóch rzędach: dawne dziewiętnaście z przodu, trzynaście nowych za nimi); razem z galerią wymaga wolnej ziemi na komplet drzew, najlepiej na trawie obok centralnego placu świata programisty |
 | `/drzewa ostatnie` | powtarza nazwy, współrzędne i seed ostatniego pokazu |
 | `/drzewa cofnij` | cofa ostatni nowy pokaz w tej sesji; zachowuje późniejsze zmiany bloków. Pamięć cofnięcia znika po wyjściu ze świata |
 | `/drzewa posadz <gatunek> [0-100]` | drzewo 5 bloków przed tobą (gatunki: `swierk`, `sosna`, `buk`, `lipa`, `dab`, `brzoza`, `jablon`, `olcha`, `wierzba`, `akacja`, `cyprysnik`, `wisnia`, `klon`, `kosodrzewina`, `oliwka`, `eukaliptus`, `sekwoja`; rozmiar 0 - małe, 100 - duże, bez - losowy); krócej: `/drzewa dab` |

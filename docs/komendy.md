@@ -173,7 +173,7 @@ Nazwy ustawień w `/ustaw`: `ziemniak`, `zasieg`, `daleki-teren`, `szczegoly-ter
 `rozdzielczosc`, `fps` (limit), `cienie` (cienie w kątach, 0-100), `cienie-slonca` (`wyl` / `zwykle` / `dokladne` / `dalekie`), `promienie` (promienie światła: `wl` / `wyl`),
 `swiatlo-odbite` (też `odbicia`: `wl` / `wyl`),
 `model-swiatla`, `swiatlo-materialow`, `atmosfera`, `przeswiecanie-lisci`, `sila-odbicia`, `nasycenie-odbicia`,
-`liscie` (ładne liście z prześwitami: `wl` / `wyl`), `trawa-kepiasta`, `dynamiczne-swiatlo`, `wczytywanie`, `czulosc`,
+`liscie` (ładne liście z prześwitami: `wl` / `wyl`), `trawa-kepiasta`, `dynamiczne-swiatlo`, `wczytywanie`, `laczenie-terenu` (sklejanie sąsiednich chunków w jedno polecenie rysowania: `wl` / `wyl` - do porównań wydajności), `czulosc`,
 `odwroc-mysz`, `motyw`, `interfejs`, `debug` (napisy F3 - od 0.99.0 domyślnie wyłączone), `licznik-fps`, `meteoryty`, `samouczek` (pytanie o samouczek w nowych światach),
 `klawisze` (ile zmieniono; `/ustaw klawisze domyslne` przywraca domyślne - zmienia się je w Ustawienia → Gracz → Klawisze),
 `warstwa-skorki`, `reka` (ręka w widoku z oczu), `kolysanie` (kołysanie widoku przy chodzeniu),

@@ -9,9 +9,9 @@ kroków, po kolei. Każdy krok to osobna wersja z pomiarem przed i po.
 | 1 | Programy cieniujące przygotowane pod ekranem wczytywania | **zrobione - 1.1.2** (niżej) |
 | 2 | Połączenie plików gry w paczkę (szybszy start aplikacji) | **zrobione - 1.1.3** (niżej) |
 | 3 | Zapamiętywanie gotowych rzeczy między uruchomieniami (ikonki) i dane roślin w jednym pliku | **zrobione - 1.1.4** (niżej) |
-| 4 | Dopasowanie pracy do sprzętu w locie (ile terenu na klatkę, zasięg efektów) | do zrobienia |
+| 4 | Dopasowanie pracy do sprzętu w locie (ile terenu na klatkę, zasięg efektów) | odłożone - pomiar Kamila pokazał, że to nie jest wąskie gardło |
 | 5 | Więcej wątków do liczenia terenu | do zrobienia |
-| 6 | Rysowanie wielu takich samych rzeczy jednym poleceniem | do zrobienia |
+| 6 | Mniej poleceń rysowania | **teren: zrobione - 1.1.5** (niżej); rośliny i daleki teren - następne |
 | 7 | Pomijanie tego, co zasłonięte (np. jaskinie pod ziemią) | do zrobienia |
 | 8 | Rzadsze odświeżanie dalekich rzeczy | do zrobienia |
 
@@ -159,6 +159,88 @@ ustawień ani paczek tekstur i można ją skasować bez żadnej straty.
 w tle - nie wstrzymują menu. Reszta startu to głównie tło menu (mały
 świat za ekranem tytułowym) i przygotowanie tekstur.
 
+## Pomiar na laptopie Kamila (po 1.1.4)
+
+RTX 3050 Laptop, 16 wątków, obraz 1920x1057, zasięg 800, cienie 3,
+promienie światła. Raport diagnostyczny z trzech minut gry i cztery
+próby w gęstym lesie:
+
+| Próba (ten sam kadr w lesie) | Klatki/s | Poleceń rysowania |
+|---|---|---|
+| bez cieni | 88 | 1041 |
+| bez promieni światła | 79 | 1079 |
+| skala obrazu 75% | 78 | 1084 |
+| zasięg 400 zamiast 800 | 77 | 1088 |
+
+Wnioski:
+
+- **karta graficzna ma zapas** - mniej pikseli (skala 75%) nie dało nic;
+- **ogranicza procesor wysyłający polecenia rysowania**: około 1000
+  poleceń na klatkę, rysowanie to 11 ms z 13 ms klatki; logika gry
+  zajmuje 0,6-0,9 ms;
+- w raporcie z 270 zapisanych wolnych klatek w 233 dominowało wysyłanie
+  świata do karty; klatki spadały ze 142 (otwarty teren) do 48 (gęsty
+  las) razem z liczbą poleceń;
+- zasięg widzenia nie zmienia liczby poleceń (prawdziwe chunki są tylko
+  w promieniu 14 chunków; dalej jest daleki teren).
+
+Dlatego kolejność planu się zmieniła: najpierw krok 6 (mniej poleceń
+rysowania), potem 7; kroki 4 i 5 dotyczą doczytywania terenu, które
+u Kamila nie jest problemem.
+
+Z czego składa się około 900 poleceń w takiej scenie (pomiar w grze):
+daleki teren - ok. 260, bloki - ok. 110, liście - ok. 100, woda - 30-100,
+rośliny - ok. 110, cienie (gdy mapa się odświeża) - 90-180.
+
+## Krok 6, część 1: łączenie terenu (1.1.5)
+
+**Co się zmieniło.** Sąsiednie chunki (2 x 2) są sklejane w jedną
+geometrię. Bloki, liście i woda czterech chunków to teraz 3 polecenia
+rysowania zamiast 12.
+
+**Zasada: sklejanie nigdy nie opóźnia tego, co widać.**
+
+- chunk, który właśnie powstał albo się zmienił (kopanie, stawianie,
+  doczytany sąsiad), rysuje się sam, od razu, dokładnie jak dawniej;
+  ze sklejonej geometrii znika w tej samej klatce;
+- gdy okolica jest spokojna przez 0,6 s, region skleja się od nowa -
+  jeden region na klatkę, najbliższe najpierw;
+- przy szybkim locie teren ciągle się zmienia, więc gra rysuje jak
+  dawniej; gdy gracz stoi albo idzie, okolica skleja się w kilka sekund.
+
+**Pomiar** (ten sam kadr, ta sama klatka, las z raportu Kamila; świat
+wczytany w części - maszyna testowa jest wolna):
+
+| | Bez łączenia | Z łączeniem |
+|---|---|---|
+| polecenia rysowania terenu | 322 | 139 (-57%) |
+| wszystkie polecenia w klatce | 734 | 544 (-26%) |
+| obraz świata (5 kadrów, czas zatrzymany) | - | identyczny piksel w piksel |
+
+Czego ten pomiar nie mówi: ile klatek zyska laptop Kamila. Maszyna
+testowa nie ma karty graficznej. Szacunek z jego liczb (ok. 10
+mikrosekund na polecenie): około 3 ms krótsza klatka w gęstym lesie,
+czyli z około 75 do około 95 klatek na sekundę - do sprawdzenia u niego
+(`/ustaw laczenie-terenu wyl` i `wl`, potem `/wydajnosc test`).
+
+**Koszty:**
+
+- karta dostaje więcej trójkątów spoza kadru (region 2 x 2 jest
+  pomijany w całości albo wcale): w pomiarze teren 343 → 600 tys.
+  trójkątów. Karta Kamila ma zapas; gdyby gdzieś go nie było,
+  łączenie da się wyłączyć;
+- geometria terenu jest na karcie dwa razy (osobna dla cieni i do
+  ponownego sklejania): około 0,45 MB na chunk, czyli około 300 MB przy
+  700 chunkach;
+- sklejenie regionu trwa zwykle 0,3-1,6 ms, najwyżej jedno na klatkę;
+  pierwsze sklejenia po wejściu do świata bywały na wolnej maszynie
+  testowej dużo dłuższe (do 46 ms) - na laptopie Kamila do sprawdzenia
+  (`/wydajnosc` pokazuje stan łączenia).
+
+**Co zostało w kroku 6:** rośliny (osobna geometria z animacjami
+i własnym zasięgiem) i daleki teren (każdy kafelek to osobne polecenie
+z własnym materiałem - ok. 260 poleceń).
+
 ## Dla programisty
 
 - `src/rendering/ShaderWarmup.js` - `warmupObject` (ukryty wzór),
@@ -192,6 +274,22 @@ Paczka plików gry (krok 2):
   `node tools/sprawdz_pakiet_webgl.mjs` (prawdziwa gra z paczki).
 - Sprawdzenie w aplikacji na komputer bez instalatora:
   `npm run pakiet`, potem `VOXEL_QA_BUNDLE=1 npm start`.
+
+Łączenie terenu (krok 6):
+
+- `src/rendering/RegionBatches.js` - regiony `REGION_SIZE` x
+  `REGION_SIZE` chunków; `changed(chunk)` przy każdej zmianie mesha
+  terenu (cztery miejsca w `World.js`), `update()` co klatkę skleja
+  spokojne regiony.
+- Chunk w regionie ma `mesh.visible = false`; jego geometria zostaje
+  (cienie - `World.shadowScene` - i następne sklejenie).
+- Ustawienie `terrainBatching` (tylko komenda: `/ustaw laczenie-terenu
+  wl | wyl`), stan w `/wydajnosc`.
+- Żywe tło menu i narzędzia testowe rysują po staremu
+  (`World.setRegionBatching` woła tylko `Game`).
+- Test: `node tools/sprawdz_laczenie_terenu.mjs` - sklejone regiony dają
+  dokładnie te same trójkąty co chunki osobno, także zaraz po zmianie
+  i usunięciu chunka.
 
 Pamięć startu (krok 3):
 

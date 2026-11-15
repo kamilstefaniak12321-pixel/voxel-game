@@ -74,6 +74,7 @@ import {
     EDGE_SOUTH,
     EDGE_SELF
 } from './Light.js';
+import { RegionBatches } from '../rendering/RegionBatches.js';
 
 // Pełny blok - jedno pudełko kolizji (collisionBoxes).
 const FULL_COLLISION = Object.freeze([Object.freeze([0, 0, 0, 1, 1, 1])]);
@@ -1099,6 +1100,8 @@ export class World {
 
             chunk.shadowMesh.geometry = geometry;
 
+            this.regionBatches?.changed(chunk);
+
             this.updatePlantVisibility(chunk);
 
             this.onMeshChanged?.(chunk);
@@ -1153,6 +1156,8 @@ export class World {
 
         chunk.shadowMesh = shadowMesh;
 
+        this.regionBatches?.changed(chunk);
+
 
         this.updatePlantVisibility(chunk);
 
@@ -1198,6 +1203,9 @@ export class World {
             chunk[shadowKey] = shadow;
             if (!plants) this.meshVersion = (this.meshVersion ?? 0) + 1;
         }
+        // Teren chunka się zmienił: rysuje się sam, region sklei się później
+        // (rendering/RegionBatches.js).
+        if (!plants) this.regionBatches?.changed(chunk);
         if (plants) {
             geometry.userData.plantGroups = geometry.groups;
             const ranges = geometry.userData.plantAnimationRanges;
@@ -1230,6 +1238,8 @@ export class World {
         this.scene.remove(chunk.mesh);
 
         chunk.mesh = null;
+
+        this.regionBatches?.changed(chunk);
 
         this.meshVersion = (this.meshVersion ?? 0) + 1;
 
@@ -1291,10 +1301,24 @@ export class World {
 
     }
 
+    // ŁĄCZENIE TERENU (rendering/RegionBatches.js): sąsiednie chunki
+    // rysowane jednym poleceniem. Włącza je gra (Game.js); żywe tło menu
+    // i narzędzia testowe rysują po staremu.
+    setRegionBatching(enabled) {
+        if (enabled && !this.regionBatches) {
+            this.regionBatches = new RegionBatches(this.scene, [blockMaterial, plantMaterial, waterMaterial, leafMaterial]);
+            for (const chunk of this.chunks.values()) if (chunk.mesh) this.regionBatches.changed(chunk);
+        }
+        this.regionBatches?.setEnabled(enabled);
+    }
+
     // Usuwa meshe wszystkich chunków ze sceny i zwalnia ich
     // pamięć na karcie graficznej (przy wyjściu ze świata).
 
     dispose() {
+
+        this.regionBatches?.dispose();
+        this.regionBatches = null;
 
         disposeTreeShowcase(this);
 
@@ -1583,6 +1607,7 @@ export class World {
             this.perfDiagnostics?.endStage('generation');
             this.perfDiagnostics?.beginStage('mesh');
             this.updateMeshes(deadline);
+            this.regionBatches?.update(dt, this.centerCx, this.centerCz);
             this.perfDiagnostics?.endStage('mesh');
             return;
         }
@@ -1596,6 +1621,7 @@ export class World {
         this.perfDiagnostics?.endStage('generation');
         this.perfDiagnostics?.beginStage('mesh');
         this.updateMeshes(deadline);
+        this.regionBatches?.update(dt, this.centerCx, this.centerCz);
         this.perfDiagnostics?.endStage('mesh');
         this.perfDiagnostics?.beginStage('generation');
         while (this.loadQueue.length > 0 && performance.now() < deadline) {

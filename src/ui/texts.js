@@ -264,6 +264,7 @@ export const TEXTS = {
     showFps: (on) => `Licznik FPS: ${on ? 'Wł.' : 'Wył.'}`,
     dynamicLight: (on) => `Dynamiczne światło: ${on ? 'Wł.' : 'Wył.'}`,
     loadBudget: (value) => `Wczytywanie: ${value} ms/klatkę`,
+    terrainBatching: (on) => `Łączenie terenu: ${on ? 'Wł.' : 'Wył.'}`,
     meteorites: (on) => `Spadające meteoryty: ${on ? 'Wł.' : 'Wył.'}`,
     tutorial: (on) => `Pytaj o samouczek w nowych światach: ${on ? 'Tak' : 'Nie'}`,
     autoUpdates: (on) => `Aktualizacje automatyczne: ${on ? 'Wł.' : 'Wył. (po kliknięciu Pobierz)'}`,

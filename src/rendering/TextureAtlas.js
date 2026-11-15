@@ -7,7 +7,6 @@ import { drawWorldTextureAtlas } from './TextureSheets.js';
 import { getPackInfo, loadPackTiles, gameResolution, safeResolution, startSucceeded } from './TexturePacks.js';
 
 
-export const ATLAS_COLUMNS = 16;
 export const ATLAS_TILE_SIZE = 16;
 
 // Rozmiar kafelka w atlasie w grze (po wczytaniu - atlasReady).
@@ -35,6 +34,11 @@ export const ATLAS_UV_INSET = 1 / 16;
 export const ATLAS_TILES = Object.fromEntries(Object.entries(WORLD_ATLAS_TILES)
     .map(([name, { region, ...tile }]) => [name, tile]));
 export const ATLAS_ROWS = Math.max(...Object.values(ATLAS_TILES).map(tile => tile.y + (tile.h ?? 1)));
+// Szerokość atlasu w kratkach: zwykłe kafelki zajmują 16 kolumn, arkusze
+// kory (1.7.x - BarkSheets.js) leżą na prawo od nich. Atlas rośnie wszerz,
+// nie wzwyż - bardzo wysoka tekstura nie zmieściłaby się na starszych
+// kartach graficznych.
+export const ATLAS_COLUMNS = Math.max(16, ...Object.values(ATLAS_TILES).map(tile => tile.x + (tile.w ?? 1)));
 export const PLANT_ATLAS_ROW = 2;
 
 // Tekstura atlasu - obrazek dostaje po wczytaniu (atlasImage niżej).

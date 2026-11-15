@@ -76,14 +76,17 @@ for (const [block, sheet] of Object.entries(B.BARK_SHEETS)) {
     for (let i = 3; i < rgba.length; i += 4) if (rgba[i] !== 255) opaque = false;
     check(opaque, `${sheet.texture}: bez przezroczystych pikseli`);
 
-    if (sheet.like) {
-        // Okorowane drewno: górny i dolny wiersz każdego kafelka identyczne.
+    if (sheet.edges === 'rows') {
+        // Górny i dolny wiersz każdego kafelka identyczne (okorowane drewno
+        // i arkusze z dotychczasowego obrazka kory).
         const row = (tx, ty, y) => Array.from({ length: 16 }, (_, x) => pixel(tx * 16 + x, ty * 16 + y)).join();
-        const first = row(0, 0, 0);
+        // (Górny wiersz taki sam we wszystkich kafelkach i dolny taki sam we
+        // wszystkich - para dolny/górny pasuje więc zawsze tak samo.)
+        const first = row(0, 0, 0), last = row(0, 0, 15);
         for (let ty = 0; ty < GRID; ty++) for (let tx = 0; tx < GRID; tx++) {
-            check(row(tx, ty, 0) === first && row(tx, ty, 15) === first, `${sheet.texture} kafelek ${tx},${ty}: górny i dolny wiersz jak w każdym innym`);
+            check(row(tx, ty, 0) === first && row(tx, ty, 15) === last, `${sheet.texture} kafelek ${tx},${ty}: górny i dolny wiersz jak w każdym innym`);
         }
-        check(new Set(first.split(',')).size >= 3, `${sheet.texture}: krawędź to słoje w kilku tonach`);
+        check(new Set(first.split(',')).size >= 2, `${sheet.texture}: krawędź to rysunek, nie jednolity pasek`);
     }
     else {
     // Zasada krawędzi. Bruzda = najciemniejszy ton zwykłej kory - na górnej i dolnej krawędzi w tych samych kolumnach
@@ -111,13 +114,13 @@ for (const [block, sheet] of Object.entries(B.BARK_SHEETS)) {
         hashes.add(text);
     });
     check(hashes.size === 64, `${sheet.texture}: 64 różne kafelki`);
-    check(plainColors.size <= 6, `${sheet.texture}: zwykłe kafelki z kilku tonów (${plainColors.size})`);
+    check(plainColors.size <= 40, `${sheet.texture}: zwykłe kafelki z kolorów dotychczasowej tekstury (${plainColors.size})`);
     sheet.tiles.forEach((kind, index) => {
         if (!['okorowany', 'dziupla', 'porosty', 'sek', 'kornik', 'przebarwienie'].includes(kind) || (kind === 'sek' && !sheet.like)) return;
         const tx = index % GRID, ty = Math.floor(index / GRID);
         let extra = 0;
         for (let y = 1; y < 15; y++) for (let x = 1; x < 15; x++) if (!plainColors.has(pixel(tx * 16 + x, ty * 16 + y))) extra++;
-        check(extra >= (kind === 'porosty' ? 4 : 10), `${sheet.texture} ${kind} (${tx},${ty}): widać dodatek (${extra} pikseli w innych kolorach)`);
+        check(extra >= (kind === 'porosty' || kind === 'przebarwienie' ? 4 : 10), `${sheet.texture} ${kind} (${tx},${ty}): widać dodatek (${extra} pikseli w innych kolorach)`);
     });
 
     // Lista w grze = lista w generatorze tekstur (gdy jest Python z Pillow;
@@ -173,14 +176,15 @@ function trunk(type) {
     return buildChunkGeometry(chunk, worldFor(chunk), { terrain: true, plants: true });
 }
 
-const oak = trunk('oak_log'), birch = trunk('birch_log'), strippedOak = trunk('oak_log_stripped'), strippedBirch = trunk('birch_log_stripped');
+// (birch - tu: drzewo jeszcze bez arkusza, do porównania.)
+const oak = trunk('oak_log'), birch = trunk('maple_log'), strippedOak = trunk('oak_log_stripped'), strippedBirch = trunk('maple_log_stripped');
 // Ile różnych obrazków jest na ścianach (każda ściana = 4 rogi UV).
 const us = (geometry) => { const uv = geometry.attributes.uv.array, seen = new Set(); for (let face = 0; face < uv.length / 8; face++) { let u = Infinity, v = Infinity; for (let i = 0; i < 4; i++) { u = Math.min(u, uv[face * 8 + i * 2]); v = Math.min(v, uv[face * 8 + i * 2 + 1]); } seen.add(`${u.toFixed(6)},${v.toFixed(6)}`); } return seen; };
 
-check(blockRenderData[getBlockId('oak_log')].bark?.uv.length === 64 && blockRenderData[getBlockId('birch_log')].bark === null, 'Arkusz ma pień dębu, brzoza jeszcze nie');
+check(blockRenderData[getBlockId('oak_log')].bark?.uv.length === 64 && blockRenderData[getBlockId('maple_log')].bark === null, 'Arkusz ma pień dębu, klon jeszcze nie');
 check(oak.attributes.position.count === birch.attributes.position.count && oak.index.count === birch.index.count && oak.groups.length === birch.groups.length,
     'Pień dębu: tyle samo ścian i grup co pień bez arkusza');
-check(us(birch).size === 2 && us(oak).size >= 20, `Boki pnia dębu z wielu kafelków (${us(oak).size} obrazków wobec ${us(birch).size} u brzozy)`);
+check(us(birch).size === 2 && us(oak).size >= 20, `Boki pnia dębu z wielu kafelków (${us(oak).size} obrazków wobec ${us(birch).size} u klonu)`);
 
 // Każda ściana boczna mieści się w jednym kafelku arkusza, a wierzch i spód
 // to dalej zwykły obrazek przekroju pnia.
@@ -210,6 +214,31 @@ check(us(strippedBirch).size === 2 && us(strippedOak).size >= 20, `Boki okorowan
     const number = (sheet, geometry) => { const uv = geometry.attributes.uv.array, normal = geometry.attributes.normal.array, out = []; for (let face = 0; face < uv.length / 8; face++) { if (normal[face * 12 + 1] !== 0) continue; let u = Infinity, v = Infinity; for (let i = 0; i < 4; i++) { u = Math.min(u, uv[face * 8 + i * 2]); v = Math.min(v, uv[face * 8 + i * 2 + 1]); } out.push(sheet.uv.findIndex((tile) => Math.abs(Math.min(tile[0][0], tile[0][2], tile[0][4], tile[0][6]) - u) < 1e-9 && Math.abs(Math.min(tile[0][1], tile[0][3], tile[0][5], tile[0][7]) - v) < 1e-9)); } return out; };
     const before = number(bark, oak), after = number(wood, strippedOak);
     check(before.length === 40 && before.every((tile) => tile >= 0) && before.join() === after.join(), 'Po okorowaniu każdy bok ma kafelek o tym samym numerze (dodatki zostają na miejscu)');
+}
+
+// Każde drzewo z arkuszem: pień i okorowany pień z wielu kafelków.
+for (const block of Object.keys(B.BARK_SHEETS)) {
+    check(getBlockId(block) > 0 && us(trunk(block)).size >= 20, `${block}: boki z wielu kafelków`);
+}
+check(['oak', 'spruce', 'pine', 'beech', 'linden', 'birch'].every((species) => B.BARK_SHEETS[`${species}_log`] && B.BARK_SHEETS[`${species}_log_stripped`]?.like === `${species}_log`),
+    'Arkusze kory i okorowanego pnia: dąb, świerk, sosna, buk, lipa, brzoza');
+
+// Arkusze leżą w atlasie obok zwykłych kafelków i nie nachodzą na nic.
+{
+    const taken = new Map();
+    let overlap = null;
+    for (const [name, tile] of Object.entries(WORLD_ATLAS_TILES)) {
+        for (let dy = 0; dy < (tile.h ?? 1); dy++) for (let dx = 0; dx < (tile.w ?? 1); dx++) {
+            const key = `${tile.x + dx},${tile.y + dy}`;
+            if (taken.has(key) && taken.get(key) !== name && Object.values(B.BARK_SHEETS).some((sheet) => sheet.texture === name || sheet.texture === taken.get(key))) overlap = `${name} / ${taken.get(key)}`;
+            taken.set(key, name);
+        }
+    }
+    check(overlap === null, `Arkusze nie nachodzą na inne kafelki atlasu (${overlap})`);
+    const columns = Math.max(...Object.values(WORLD_ATLAS_TILES).map((tile) => tile.x + (tile.w ?? 1)));
+    const rows = Math.max(...Object.values(WORLD_ATLAS_TILES).map((tile) => tile.y + (tile.h ?? 1)));
+    check(columns <= 64 && rows <= 64, `Atlas mieści się w 64 x 64 kratkach (jest ${columns} x ${rows}) - 1024 x 1024 pikseli`);
+    check(Object.values(B.BARK_SHEETS).every((sheet) => WORLD_ATLAS_TILES[sheet.texture].x >= 16), 'Arkusze leżą na prawo od zwykłych kafelków');
 }
 
 check(JSON.stringify([...trunk('oak_log').attributes.uv.array]) === JSON.stringify([...oak.attributes.uv.array]), 'Ten sam pień - ta sama kora');

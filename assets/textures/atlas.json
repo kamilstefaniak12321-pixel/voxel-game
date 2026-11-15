@@ -1,13 +1,13 @@
 {
   "version": 1,
   "tileSize": 16,
-  "columns": 16,
-  "rows": 75,
+  "columns": 64,
+  "rows": 59,
   "sheets": {
     "drzewa": {
       "file": "drzewa.png",
       "width": 256,
-      "height": 992
+      "height": 1504
     },
     "teren": {
       "file": "teren.png",
@@ -5097,6 +5097,76 @@
       "y": 864,
       "width": 128,
       "height": 128
+    },
+    "spruce_log_bark": {
+      "sheet": "drzewa",
+      "x": 128,
+      "y": 720,
+      "width": 128,
+      "height": 128
+    },
+    "spruce_stripped_sheet": {
+      "sheet": "drzewa",
+      "x": 128,
+      "y": 848,
+      "width": 128,
+      "height": 128
+    },
+    "pine_log_bark": {
+      "sheet": "drzewa",
+      "x": 128,
+      "y": 976,
+      "width": 128,
+      "height": 128
+    },
+    "pine_stripped_sheet": {
+      "sheet": "drzewa",
+      "x": 0,
+      "y": 992,
+      "width": 128,
+      "height": 128
+    },
+    "beech_log_bark": {
+      "sheet": "drzewa",
+      "x": 128,
+      "y": 1104,
+      "width": 128,
+      "height": 128
+    },
+    "beech_stripped_sheet": {
+      "sheet": "drzewa",
+      "x": 0,
+      "y": 1120,
+      "width": 128,
+      "height": 128
+    },
+    "linden_log_bark": {
+      "sheet": "drzewa",
+      "x": 128,
+      "y": 1232,
+      "width": 128,
+      "height": 128
+    },
+    "linden_stripped_sheet": {
+      "sheet": "drzewa",
+      "x": 0,
+      "y": 1248,
+      "width": 128,
+      "height": 128
+    },
+    "birch_log_bark": {
+      "sheet": "drzewa",
+      "x": 128,
+      "y": 1360,
+      "width": 128,
+      "height": 128
+    },
+    "birch_stripped_sheet": {
+      "sheet": "drzewa",
+      "x": 0,
+      "y": 1376,
+      "width": 128,
+      "height": 128
     }
   },
   "aliases": {
@@ -9147,8 +9217,8 @@
       "region": "models/rosliny/wysoka-trawa/wariant-goryczka-prosty"
     },
     "oak_log_bark": {
-      "x": 0,
-      "y": 59,
+      "x": 16,
+      "y": 0,
       "w": 8,
       "h": 8,
       "pw": 128,
@@ -9156,13 +9226,103 @@
       "region": "oak_log_bark"
     },
     "oak_stripped_sheet": {
-      "x": 0,
-      "y": 67,
+      "x": 24,
+      "y": 0,
       "w": 8,
       "h": 8,
       "pw": 128,
       "ph": 128,
       "region": "oak_stripped_sheet"
+    },
+    "spruce_log_bark": {
+      "x": 32,
+      "y": 0,
+      "w": 8,
+      "h": 8,
+      "pw": 128,
+      "ph": 128,
+      "region": "spruce_log_bark"
+    },
+    "spruce_stripped_sheet": {
+      "x": 40,
+      "y": 0,
+      "w": 8,
+      "h": 8,
+      "pw": 128,
+      "ph": 128,
+      "region": "spruce_stripped_sheet"
+    },
+    "pine_log_bark": {
+      "x": 48,
+      "y": 0,
+      "w": 8,
+      "h": 8,
+      "pw": 128,
+      "ph": 128,
+      "region": "pine_log_bark"
+    },
+    "pine_stripped_sheet": {
+      "x": 56,
+      "y": 0,
+      "w": 8,
+      "h": 8,
+      "pw": 128,
+      "ph": 128,
+      "region": "pine_stripped_sheet"
+    },
+    "beech_log_bark": {
+      "x": 16,
+      "y": 8,
+      "w": 8,
+      "h": 8,
+      "pw": 128,
+      "ph": 128,
+      "region": "beech_log_bark"
+    },
+    "beech_stripped_sheet": {
+      "x": 24,
+      "y": 8,
+      "w": 8,
+      "h": 8,
+      "pw": 128,
+      "ph": 128,
+      "region": "beech_stripped_sheet"
+    },
+    "linden_log_bark": {
+      "x": 32,
+      "y": 8,
+      "w": 8,
+      "h": 8,
+      "pw": 128,
+      "ph": 128,
+      "region": "linden_log_bark"
+    },
+    "linden_stripped_sheet": {
+      "x": 40,
+      "y": 8,
+      "w": 8,
+      "h": 8,
+      "pw": 128,
+      "ph": 128,
+      "region": "linden_stripped_sheet"
+    },
+    "birch_log_bark": {
+      "x": 48,
+      "y": 8,
+      "w": 8,
+      "h": 8,
+      "pw": 128,
+      "ph": 128,
+      "region": "birch_log_bark"
+    },
+    "birch_stripped_sheet": {
+      "x": 56,
+      "y": 8,
+      "w": 8,
+      "h": 8,
+      "pw": 128,
+      "ph": 128,
+      "region": "birch_stripped_sheet"
     }
   }
 }

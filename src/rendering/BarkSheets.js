@@ -27,35 +27,39 @@ export const BARK_WEIGHTS = {
     dziupla: 1
 };
 
-const PLAIN_ROW = Array(BARK_GRID).fill('zwykla');
+// Rodzaje 64 kafelków arkusza kory, wierszami od góry: 6 wierszy zwykłej
+// kory, wiersz drobnych dodatków, wiersz rzadkich.
+const BARK_TILES = [
+    ...Array(48).fill('zwykla'),
+    'porosty', 'porosty', 'porosty', 'pekniecie', 'pekniecie', 'guzek', 'guzek', 'guzek',
+    'sek', 'sek', 'sek', 'blizna', 'okorowany', 'okorowany', 'dziupla', 'dziupla'
+];
+
+// ...i arkusza okorowanego pnia - kafelek po kafelku pod korą.
+const WOOD_TILES = [
+    ...Array(48).fill('zwykle'),
+    'przebarwienie', 'przebarwienie', 'przebarwienie', 'pekniecie', 'pekniecie', 'seczek', 'seczek', 'seczek',
+    'sek', 'sek', 'sek', 'sek', 'kornik', 'kornik', 'dziupla', 'dziupla'
+];
+
+// Drzewa z arkuszami (seria 1.7.x). edges - zasada krawędzi kafelków:
+// 'furrows' - bruzdy kory w stałych kolumnach (arkusz narysowany od zera),
+// 'rows' - górny i dolny wiersz każdego kafelka takie same (arkusz
+// z dotychczasowego obrazka kory).
+const SPECIES = { oak: 'furrows', spruce: 'rows', pine: 'rows', beech: 'rows', linden: 'rows', birch: 'rows' };
 
 // Blok pnia -> arkusz: texture - kafelek atlasu 8 x 8 kratek,
 // tiles - rodzaj każdego kafelka, wierszami od góry; like - blok, którego
 // losowanie (wagi) arkusz powtarza.
-export const BARK_SHEETS = {
-    oak_log: {
-        texture: 'oak_log_bark',
-        tiles: [
-            ...PLAIN_ROW, ...PLAIN_ROW, ...PLAIN_ROW, ...PLAIN_ROW, ...PLAIN_ROW, ...PLAIN_ROW,
-            'porosty', 'porosty', 'porosty', 'pekniecie', 'pekniecie', 'guzek', 'guzek', 'guzek',
-            'sek', 'sek', 'sek', 'blizna', 'okorowany', 'okorowany', 'dziupla', 'dziupla'
-        ]
-    },
-
-    // Okorowany pień: arkusz drewna kafelek po kafelku pod arkuszem kory
-    // i to samo losowanie (like), więc po okorowaniu dodatek zostaje na
-    // swoim miejscu - pod sękiem sęk, pod dziuplą dziupla, pod pęknięciem
-    // kory pęknięcie drewna, pod okorowanym płatem chodniki korników.
-    oak_log_stripped: {
-        texture: 'oak_stripped_sheet',
-        like: 'oak_log',
-        tiles: [
-            ...Array(48).fill('zwykle'),
-            'przebarwienie', 'przebarwienie', 'przebarwienie', 'pekniecie', 'pekniecie', 'seczek', 'seczek', 'seczek',
-            'sek', 'sek', 'sek', 'sek', 'kornik', 'kornik', 'dziupla', 'dziupla'
-        ]
-    }
-};
+//
+// Okorowany pień: arkusz drewna kafelek po kafelku pod arkuszem kory
+// i to samo losowanie (like), więc po okorowaniu dodatek zostaje na
+// swoim miejscu - pod sękiem sęk, pod dziuplą dziupla, pod pęknięciem
+// kory pęknięcie drewna, pod okorowanym płatem chodniki korników.
+export const BARK_SHEETS = Object.fromEntries(Object.entries(SPECIES).flatMap(([species, edges]) => [
+    [`${species}_log`, { texture: `${species}_log_bark`, tiles: BARK_TILES, edges }],
+    [`${species}_log_stripped`, { texture: `${species}_stripped_sheet`, like: `${species}_log`, tiles: WOOD_TILES, edges: 'rows' }]
+]));
 
 // Co jest w drewnie pod danym rodzajem kafelka kory (arkusze "like").
 export const UNDER_BARK = {

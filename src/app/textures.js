@@ -11,9 +11,14 @@
 import {
     ATLAS_TILES,
     ATLAS_ROWS,
+    ATLAS_COLUMNS,
     atlasReady,
     atlasTileSize
 } from '../rendering/TextureAtlas.js';
+
+// Dłuższy bok atlasu w kratkach - od niego zależy, jak duże tekstury
+// paczki zmieszczą się w jednej teksturze karty graficznej.
+const ATLAS_CELLS = Math.max(ATLAS_ROWS, ATLAS_COLUMNS);
 
 import {
     RESOLUTIONS,
@@ -36,7 +41,7 @@ const RELOAD_DELAY_MS = 1500;
 
 export function resolutionChoices() {
 
-    const max = maxResolution(ATLAS_ROWS);
+    const max = maxResolution(ATLAS_CELLS);
 
     return [0, ...RESOLUTIONS.filter((size) => size <= max)];
 
@@ -86,7 +91,7 @@ export async function loadTexturePackFile(file, settings, onStatus, reload) {
             onStatus(`Wczytuję paczkę ${file.name}... ${done} / ${total} plików`);
         });
 
-        const size = gameResolution(pack.source, settings.get('textureResolution'), ATLAS_ROWS);
+        const size = gameResolution(pack.source, settings.get('textureResolution'), ATLAS_CELLS);
 
         await loadPackTiles(size, (done, total) => {
             onStatus(`Skaluję tekstury do ${size} x ${size}... ${done} / ${total}`);
@@ -132,7 +137,7 @@ export async function setTextureResolution(settings, value, onStatus, reload) {
 
     }
 
-    const size = gameResolution(info.source, value, ATLAS_ROWS);
+    const size = gameResolution(info.source, value, ATLAS_CELLS);
 
     if (size === atlasTileSize && !reduced) {
 
@@ -225,7 +230,7 @@ export async function describeTextures(settings) {
     const inGame = atlas?.tileSize ?? 16;
 
     if (!info) {
-        return `Tekstury oryginalne (16 x 16). Rozdzielczość dla paczek: ${resolutionName(setting)}, najwyżej ${maxResolution(ATLAS_ROWS)} x ${maxResolution(ATLAS_ROWS)} na tym urządzeniu.`;
+        return `Tekstury oryginalne (16 x 16). Rozdzielczość dla paczek: ${resolutionName(setting)}, najwyżej ${maxResolution(ATLAS_CELLS)} x ${maxResolution(ATLAS_CELLS)} na tym urządzeniu.`;
     }
 
     const author = info.author ? ` (${info.author})` : '';

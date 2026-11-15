@@ -14,7 +14,9 @@ let checks=0;
 const equal=(actual,expected,message)=>{assert.deepEqual(actual,expected,message);checks++;};
 const check=(condition,message)=>{assert.ok(condition,message);checks++;};
 equal(data.tileSize,baseline.tileSize,'Texture pixel scale is unchanged');
-equal(data.columns,baseline.columns,'GPU atlas width is unchanged');
+// 1.7.1: arkusze kory leżą na prawo od zwykłych kafelków - atlas jest szerszy,
+// zwykłe kafelki zostają w pierwszych kolumnach (sprawdzane niżej po kluczach i miejscach).
+check(data.columns>=baseline.columns&&data.columns<=64,'GPU atlas keeps the original columns; bark sheets extend it to the right');
 check(data.rows>=baseline.rows,'GPU atlas retains every original row');
 // Nowe tekstury (np. skrzynia 0.81.0) dochodzą na końcu, w wolnych miejscach.
 equal(Object.keys(data.tiles).slice(0,Object.keys(baseline.tiles).length),Object.keys(baseline.tiles),'All existing texture keys and ordering survive');

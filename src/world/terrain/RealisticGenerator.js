@@ -26,6 +26,7 @@ import { Rivers } from './Rivers.js';
 import { RiverVegetation } from './RiverVegetation.js';
 
 import { Biomes, BIOMES, BIOME_KEYS, BIOME_INDEX, grassTint } from './Biomes.js';
+import { plantHabitat } from '../../blocks/plantHabitats.js';
 
 // ------------------------------------------------------------
 // GENERATOR TERENU "REALISTYCZNY"
@@ -805,6 +806,8 @@ export class RealisticGenerator {
 
         const size = CHUNK_SIZE;
         chunk.biomes = new Uint8Array(size * size);
+        // Siedliska roślin (wygląd trawy - src/blocks/plantHabitats.js).
+        chunk.habitats = new Uint8Array(size * size);
         const baseX = chunk.cx * size;
         const baseZ = chunk.cz * size;
 
@@ -883,8 +886,10 @@ export class RealisticGenerator {
 
                 const kind = this.surfaceKind(x, z, sample, slope);
 
-                const biome = BIOME_INDEX[this.biomes.classify(x, z, sample)];
+                const biomeKey = this.biomes.classify(x, z, sample);
+                const biome = BIOME_INDEX[biomeKey];
                 chunk.biomes[k] = biome;
+                chunk.habitats[k] = plantHabitat(biomeKey, Math.min(sample.riverGap ?? Infinity, sample.lakeGap ?? Infinity), x, z);
 
                 const top = this.fillColumn(x, z, sample, kind, this.chunkColumns[k], buffer, lx, lz, biome);
 
@@ -996,13 +1001,14 @@ export class RealisticGenerator {
     }
 
 
-    // Nurt rzek i kolor trawy w chunku wczytanym z zapisu (zapis ma
-    // tylko bloki).
+    // Nurt rzek, kolor trawy i siedliska roślin w chunku wczytanym
+    // z zapisu (zapis ma tylko bloki).
 
     fillFlow(chunk) {
 
         const sample = {};
         chunk.biomes = new Uint8Array(CHUNK_SIZE * CHUNK_SIZE);
+        chunk.habitats = new Uint8Array(CHUNK_SIZE * CHUNK_SIZE);
 
         const W = CHUNK_SIZE + 2;
 
@@ -1021,8 +1027,10 @@ export class RealisticGenerator {
 
                 if (i > 0 && j > 0 && i <= CHUNK_SIZE && j <= CHUNK_SIZE) {
                     setFlow(chunk, i - 1, j - 1, sample);
-                    chunk.biomes[(j - 1) * CHUNK_SIZE + i - 1] =
-                        BIOME_INDEX[this.biomes.classify(baseX + i - 1, baseZ + j - 1, sample)];
+                    const biomeKey = this.biomes.classify(baseX + i - 1, baseZ + j - 1, sample);
+                    const k = (j - 1) * CHUNK_SIZE + i - 1;
+                    chunk.biomes[k] = BIOME_INDEX[biomeKey];
+                    chunk.habitats[k] = plantHabitat(biomeKey, Math.min(sample.riverGap ?? Infinity, sample.lakeGap ?? Infinity), baseX + i - 1, baseZ + j - 1);
                 }
 
             }

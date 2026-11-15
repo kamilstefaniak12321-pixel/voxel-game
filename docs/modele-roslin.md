@@ -35,6 +35,19 @@ Z czatu: `/ustaw modele-roslin proste | polrealistyczne | szczegolowe`,
 `/ustaw wiatr wl | wyl`, `/ustaw animacje-roslin wl | wyl`. Porównanie:
 tryb programisty, `/scena modele` (wszystkie rośliny z listy w rzędach).
 
+## Trawa zależna od miejsca (1.3.0)
+
+Krótka i wysoka trawa mają w `model.json` dodatkowo `"warianty"`
+i `"siedliska"`: na łące, nad wodą, w lesie, w borze, w suchych
+miejscach i w górach rośnie inny zestaw kępek (41 wyglądów). Warianty
+działają w poziomach **Proste** i **Półrealistyczne**; **Szczegółowe**
+rysuje wszędzie zwykłą trawę. Opis, tabela siedlisk i koszt:
+[`trawa.md`](trawa.md). Test: `node tools/sprawdz_warianty_kepek.mjs`.
+
+W opisie `"polrealistyczny"` doszło `"lodygi": { "cienkie": true }` -
+łodyga z jednej karty na całą wysokość (mniej ścian; do cienkich łodyg
+kwiatów i kłosów w kępkach trawy).
+
 ## Liście z 8 części (0.66.0)
 
 *Ustawienia → Modele → Model liści*: **Z 8 części** (domyślne na

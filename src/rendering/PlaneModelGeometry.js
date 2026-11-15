@@ -20,7 +20,8 @@ import { SURFACE_PROFILES } from './SurfaceProfiles.js';
 //   +---------+-+-------+
 //
 // Opis kształtu (model.json, "polrealistyczny"):
-//   lodygi:  { ile, wysokosc, promien, pochylenie }  (piksele, stopnie)
+//   lodygi:  { ile, wysokosc, promien, pochylenie, cienkie }  (piksele,
+//            stopnie; cienkie - łodyga z jednej karty)
 //   liscie:  { ile, dlugosc, wysokosc, nachylenie }  (wysokosc - gdzie
 //            liść odchodzi od łodygi; nachylenie - od pionu)
 //   kwiat:   { rodzaj, rozmiar }  rodzaj: kielich | gwiazda | pompon |
@@ -336,11 +337,12 @@ export function makePlaneModel(spec, texture, variant, seed = 0) {
         const up = scale(direction(yaw, lean), length);
 
         // Łodyga: odcinki po 8 pikseli (cała wysokość obszaru tekstury).
-        const segments = Math.max(1, Math.ceil(length / (8 * PX)));
+        // (stems.cienkie - jedna karta na całą wysokość: mniej ścian.)
+        const segments = stems.cienkie ? 1 : Math.max(1, Math.ceil(length / (8 * PX)));
         for (let k = 0; k < segments; k++) {
             const from = add(base, scale(up, k / segments));
             const part = scale(up, 1 / segments);
-            for (let j = 0; j < 2; j++) {
+            for (let j = 0; j < (stems.cienkie ? 1 : 2); j++) {
                 const angle = yaw + j * Math.PI / 2;
                 card(faces, texture, PLANE_REGIONS.stem, from, part, [Math.cos(angle) * PX, 0, -Math.sin(angle) * PX], height, j === 1);
             }

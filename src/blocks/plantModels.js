@@ -1,6 +1,7 @@
 import { PLANT_PACKS, plantStageType, parseTuftModel } from './plantPacks.js';
 import { PLANE_FLOWERS, PLANE_LEAF_LAYOUTS } from '../rendering/PlaneModelGeometry.js';
 import { bundledText } from './dataFiles.js';
+import { PLANT_HABITATS } from './plantHabitats.js';
 
 // ------------------------------------------------------------
 // POZIOMY MODELI ROŚLIN (Ustawienia -> Modele -> Modele roślin)
@@ -106,7 +107,9 @@ function parseSemi(spec, what) {
             ile: pixels(stems.ile ?? 1, `${what}.lodygi.ile`, 1, 12),
             wysokosc: pixels(stems.wysokosc ?? 8, `${what}.lodygi.wysokosc`, 2, 32),
             promien: pixels(stems.promien ?? 2, `${what}.lodygi.promien`, 0, 8),
-            pochylenie: pixels(stems.pochylenie ?? 6, `${what}.lodygi.pochylenie`, 0, 45)
+            pochylenie: pixels(stems.pochylenie ?? 6, `${what}.lodygi.pochylenie`, 0, 45),
+            // Cienka łodyga: jedna karta na całą wysokość (mniej ścian).
+            cienkie: stems.cienkie === true
         },
         liscie: leaves && {
             uklad: leaves.uklad ?? 'wokol',
@@ -160,6 +163,105 @@ function png(file, what) {
     }
 
     return file;
+
+}
+
+
+// WARIANTY WEDŁUG SIEDLISKA (1.3.0, trawy): ta sama roślina rysowana
+// inaczej zależnie od miejsca (src/blocks/plantHabitats.js). W model.json
+// rośliny z jednym etapem:
+//   "warianty":  { "<nazwa>": { "nazwa", "arkusz": { "lisc", "kwiat" },
+//                  "kolory", "polrealistyczny": { ... } } }
+//                arkusz i kolory - z czego tools/modele_roslin.py rysuje
+//                tekstury wariant-<nazwa>.png (części) i
+//                wariant-<nazwa>-prosty.png (obrazek),
+//   "siedliska": { "<siedlisko>": { "<nazwa>": waga, "zwykla": waga } }
+//                "zwykla" - zwykły wygląd rośliny.
+// Wynik: model.variants = [{ id, name, semi: { spec, texture },
+// simple: { texture } }], model.habitats[numer siedliska] =
+// [{ variant (numer albo -1: zwykły), share (część od 0 do 1) }] albo null.
+// Poziom szczegółowy rysuje wszędzie zwykły wygląd.
+
+export const BASE_VARIANT = 'zwykla';
+
+function parseVariants(id, json, stageCount) {
+
+    if (json.warianty === undefined && json.siedliska === undefined) {
+        return { variants: [], habitats: null };
+    }
+
+    if (stageCount !== 1) {
+        fail('"warianty": tylko roślina z jednym etapem');
+    }
+
+    if (json.warianty === null || typeof json.warianty !== 'object' || json.siedliska === null || typeof json.siedliska !== 'object') {
+        fail('"warianty" i "siedliska": oba naraz, obiekty');
+    }
+
+    const names = Object.keys(json.warianty);
+
+    const variants = names.map((name) => {
+
+        const what = `warianty.${name}`;
+
+        if (!/^[a-z0-9-]+$/.test(name) || name === BASE_VARIANT) {
+            fail(`"${what}": nazwa z małych liter, cyfr i - (inna niż "${BASE_VARIANT}")`);
+        }
+
+        const value = json.warianty[name];
+
+        if (value === null || typeof value !== 'object' || !value.polrealistyczny) {
+            fail(`"${what}": { "nazwa", "arkusz", "kolory", "polrealistyczny" }`);
+        }
+
+        return {
+            id: name,
+            name: typeof value.nazwa === 'string' ? value.nazwa : name,
+            semi: { spec: parseSemi(value.polrealistyczny, `${what}.polrealistyczny`), texture: textureName(id, `wariant-${name}.png`), file: `wariant-${name}.png` },
+            simple: { texture: textureName(id, `wariant-${name}-prosty.png`), file: `wariant-${name}-prosty.png`, size: 16 }
+        };
+
+    });
+
+    for (const key of Object.keys(json.siedliska)) {
+        if (!PLANT_HABITATS.includes(key)) {
+            fail(`"siedliska.${key}": nie ma takiego siedliska (${PLANT_HABITATS.join(', ')})`);
+        }
+    }
+
+    const habitats = PLANT_HABITATS.map((key) => {
+
+        const weights = json.siedliska[key];
+
+        if (weights === undefined) return null;
+
+        const entries = Object.entries(weights ?? {});
+
+        let total = 0;
+
+        for (const [name, weight] of entries) {
+
+            if (name !== BASE_VARIANT && !names.includes(name)) {
+                fail(`"siedliska.${key}.${name}": nie ma takiego wariantu`);
+            }
+
+            if (typeof weight !== 'number' || !(weight > 0)) {
+                fail(`"siedliska.${key}.${name}": waga większa od 0`);
+            }
+
+            total += weight;
+
+        }
+
+        if (entries.length === 0) {
+            fail(`"siedliska.${key}": przynajmniej jeden wariant`);
+        }
+
+        return entries.map(([name, weight]) => ({ variant: names.indexOf(name), share: weight / total }));
+
+    });
+
+    return { variants, habitats };
 
 }
 
@@ -219,7 +321,7 @@ async function loadModel(id) {
 
     });
 
-    return { id, name, folder: id, stages };
+    return { id, name, folder: id, stages, ...parseVariants(id, json, stages.length) };
 
 }
 
@@ -271,6 +373,12 @@ for (const model of PLANT_MODELS) {
             }
         }
 
+    }
+
+    for (const variant of model.variants) {
+        for (const level of [variant.simple, variant.semi]) {
+            PLANT_MODEL_TEXTURES[level.texture] = `assets/models/rosliny/${model.folder}/${level.file}`;
+        }
     }
 
 }

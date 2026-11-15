@@ -2,6 +2,7 @@ import { blockRenderData } from './BlockRenderData.js';
 import { getAtlasUV } from './TextureAtlas.js';
 import { registerPlaneModel } from './PlaneModelGeometry.js';
 import { clearTuftInfo } from './TuftAnimation.js';
+import { withRegionalPlanes, withRegionalSprites } from './PlantRegionalVariants.js';
 import { getBlockId, getBlockDefinition } from '../blocks/BlockRegistry.js';
 import { PLANT_MODELS, PLANT_MODEL_LEVELS, resolvePlantModel } from '../blocks/plantModels.js';
 
@@ -21,6 +22,8 @@ import { PLANT_MODELS, PLANT_MODEL_LEVELS, resolvePlantModel } from '../blocks/p
 //   detailed -> riverPlant z kępką (TuftGeometry.js) albo dotychczasowy
 //               model bloku (paczki, krzaki owocowe, rośliny nad wodą).
 // Trawa i inne rośliny z kolorem klimatu (tint) - także w modelach.
+// Trawy: w prostym i półrealistycznym poziomie także warianty według
+// siedliska (PlantRegionalVariants.js).
 // ------------------------------------------------------------
 
 const ORIGINAL = new Map();
@@ -85,9 +88,9 @@ export function applyPlantModelLevel(level) {
                 else {
 
                     data.riverPlant = null;
-                    data.cross = stage.simple
+                    data.cross = withRegionalSprites(model, stage.simple
                         ? { uv: getAtlasUV(stage.simple.texture), planes: 2, height: size, width: 0.45 * size, sprite: null }
-                        : original.cross;
+                        : original.cross);
 
                 }
 
@@ -100,7 +103,7 @@ export function applyPlantModelLevel(level) {
                 registerPlaneModel(kind, stage.semi.spec, stage.semi.texture, index * 31 + model.id.length);
 
                 data.cross = null;
-                data.riverPlant = { kind, waterlogged, tint, uv: getAtlasUV(stage.semi.texture) };
+                data.riverPlant = withRegionalPlanes(model, { kind, waterlogged, tint, uv: getAtlasUV(stage.semi.texture) });
 
             }
 

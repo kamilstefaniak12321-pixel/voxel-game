@@ -2,6 +2,7 @@ import { blockRenderData } from './BlockRenderData.js';
 import { getAtlasUV } from './TextureAtlas.js';
 import { registerPlaneModel } from './PlaneModelGeometry.js';
 import { originalPlantRenderData, plantModelLevel } from './PlantModelLevels.js';
+import { withRegionalPlanes, withRegionalSprites } from './PlantRegionalVariants.js';
 import { getBlockId, getBlockDefinition } from '../blocks/BlockRegistry.js';
 import { PLANT_MODELS, PLANT_MODEL_LEVELS, resolvePlantModel } from '../blocks/plantModels.js';
 
@@ -42,16 +43,16 @@ export function createPlantDetailLookup(detail) {
             if (chosen === 'semi') {
                 const kind = `plane:distance:${model.id}:${index}:semi`;
                 registerPlaneModel(kind, stage.semi.spec, stage.semi.texture, index * 31 + model.id.length);
-                variant = { cross: null, riverPlant: { kind, waterlogged, tint, uv: getAtlasUV(stage.semi.texture) } };
+                variant = { cross: null, riverPlant: withRegionalPlanes(model, { kind, waterlogged, tint, uv: getAtlasUV(stage.semi.texture) }) };
             } else if (original.riverPlant) {
                 const kind = `plane:distance:${model.id}:${index}:simple`;
                 registerPlaneModel(kind, { krzyz: { rozmiar: stage.simple.size ?? 16 } }, stage.simple.texture, index);
                 variant = { cross: null, riverPlant: { kind, waterlogged, tint, uv: getAtlasUV(stage.simple.texture) } };
             } else {
                 const size = (stage.simple?.size ?? 16) / 16;
-                variant = { riverPlant: null, cross: stage.simple
+                variant = { riverPlant: null, cross: withRegionalSprites(model, stage.simple
                     ? { uv: getAtlasUV(stage.simple.texture), planes: 2, height: size, width: .45 * size, sprite: null }
-                    : original.cross };
+                    : original.cross) };
             }
             variants.set(key, variant);
         }

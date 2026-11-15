@@ -15,6 +15,7 @@ import { getWaterCornerHeight } from '../world/WaterSurface.js';
 import { atmosphericLightToBrightness } from './LightPolicy.js';
 import { getRiverPlantFaces, plantRandom, plantTransform, riverPlantTransform } from './RiverPlantGeometry.js';
 import { pickRegionalPlant } from './PlantRegionalVariants.js';
+import { barkTile } from './BarkSheets.js';
 import { SEASONAL, shownPlantId, nextPlantChange } from '../blocks/plantSeasons.js';
 import { getBushyGrassFaces } from './BushyGrassGeometry.js';
 import { LEAF_PARTS } from '../../assets/models/leaves/model-data.js';
@@ -1706,6 +1707,8 @@ function addCubeFaces(id, renderData, lx, y, lz, faceCount, baseX, baseZ, textur
 
     const leaves = renderData.leaves;
     const surfaceUV = renderData.worldTextureVariants?.[textureVariant] ?? renderData.uv;
+    // Pień z arkuszem kory: każdy bok dostaje własny kafelek (BarkSheets.js).
+    const bark = renderData.bark ?? null;
 
     // W klasycznym modelu świecący blok jest jasny cały, bez cieni.
     // Atmosfera otrzymuje osobną emisję, niezależną od światła otoczenia.
@@ -1775,7 +1778,9 @@ function addCubeFaces(id, renderData, lx, y, lz, faceCount, baseX, baseZ, textur
             ? (water && fall > 0 && face.normal[1] === 0
                 ? fallingWaterUv(surfaceUV[faceIndex][rotation], fall)
                 : waterUv(surfaceUV[faceIndex][rotation], lx, lz, water))
-            : surfaceUV[faceIndex][rotation];
+            : bark !== null && face.normal[1] === 0
+                ? bark.uv[barkTile(bark.lookup, baseX + lx, y, baseZ + lz, faceIndex)][rotation]
+                : surfaceUV[faceIndex][rotation];
 
         // Ściana pod wodą (np. dno morza) ciemnieje z głębokością.
 

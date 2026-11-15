@@ -11,6 +11,24 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 1.7.1 - Arkusze kory: świerk, sosna, buk, lipa, brzoza
+
+Seria 1.7.x — PR #154 (po 1.7.0). Opis: [`docs/kora.md`](docs/kora.md).
+
+- **Pięć kolejnych drzew ma arkusze kory i okorowanego pnia** (po 64
+  kafelki, losowane dla każdego boku): świerk, sosna (dolna, ciemna
+  kora), buk, lipa i brzoza. Razem z dębem to wszystkie sześć
+  podstawowych drzew.
+- Arkusze powstały z dotychczasowych obrazków tych drzew - ten sam
+  charakter i kolory kory, tylko bez powtarzania jednego kafelka.
+- Te same rzadkie dodatki co u dębu (porosty, pęknięcia, guzki, sęki,
+  okorowany płat, dziupla), w kolorach każdego drzewa; po okorowaniu
+  dodatek zostaje na miejscu.
+- Atlas tekstur rośnie teraz wszerz (arkusze leżą obok zwykłych
+  kafelków) i ma już miejsce na wszystkie 19 drzew.
+- Górna, pomarańczowa kora sosny i drzewa z paczek - w kolejnych
+  wersjach serii.
+
 ## 1.7.0 - Dąb: kora i okorowany pień z arkuszy
 
 Pomysł Kamila — PR #153 (po 1.6.0). Pierwsza wersja serii 1.7.x, która

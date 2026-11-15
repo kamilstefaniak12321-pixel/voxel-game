@@ -28,7 +28,7 @@ from pathlib import Path
 from PIL import Image
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from atlasy import ROOT, MANIFEST, write_texture, check, sync  # noqa: E402
+from atlasy import ROOT, MANIFEST, read_texture, write_texture, check, sync  # noqa: E402
 
 N = 16
 GRID = 8
@@ -471,42 +471,270 @@ def oak_wood_tiles():
     return [(name, to_image(tone, c)) for name, tone in tiles]
 
 
-SHEETS = {'oak_log_bark': oak_tiles, 'oak_stripped_sheet': oak_wood_tiles}
+# ============================================================
+# ARKUSZ Z ISTNIEJĄCEJ TEKSTURY (1.7.1) - pozostałe drzewa.
+#
+# Każde drzewo ma już swój obrazek kory 16 x 16 (własny charakter: łuski
+# świerka, gładki buk, biała brzoza...). Arkusz powstaje z niego, tymi
+# samymi pikselami i kolorami:
+#   - górny i dolny wiersz każdego kafelka to wiersze oryginału (oryginał
+#     pasuje sam do siebie, więc każdy kafelek pasuje do każdego),
+#   - środek kafelka to ten sam obrazek przesunięty (jak na walcu) o inny
+#     wektor - wybieramy przesunięcia, przy których szew między brzegiem
+#     a środkiem najmniej widać, i prowadzimy go nierówno,
+#   - dodatki (sęk, dziupla...) malujemy kolorami wziętymi z obrazka
+#     kory i z obrazka okorowanego drewna tego samego drzewa.
+# ============================================================
 
-# Miejsce w atlasie świata: kafelek 8 x 8 kratek od tego wiersza.
-ATLAS_ROW = {'oak_log_bark': 59, 'oak_stripped_sheet': 67}
+def pixels_of(name):
+    image = read_texture(name).convert('RGB')
+    return [[image.getpixel((x, y)) for x in range(N)] for y in range(N)]
 
 
-def register(name):
+def difference(a, b):
+    return abs(a[0] - b[0]) + abs(a[1] - b[1]) + abs(a[2] - b[2])
+
+
+def remix(base, dx, dy, seed):
+    """Kafelek: brzegowe wiersze z oryginału, środek z oryginału przesuniętego o (dx, dy)."""
+    rng = random.Random(seed)
+    shifted = [[base[(y + dy) % N][(x + dx) % N] for x in range(N)] for y in range(N)]
+    tile = [row[:] for row in shifted]
+    for x in range(N):
+        # Szew u góry i u dołu: w każdej kolumnie tam, gdzie oryginał
+        # i przesunięty obrazek różnią się najmniej (wiersze 1-3 i 12-14).
+        top = min((1, 2, 3), key=lambda y: difference(base[y][x], shifted[y][x]) + rng.random() * 12)
+        bottom = min((12, 13, 14), key=lambda y: difference(base[y][x], shifted[y][x]) + rng.random() * 12)
+        for y in range(0, top):
+            tile[y][x] = base[y][x]
+        for y in range(bottom + 1, N):
+            tile[y][x] = base[y][x]
+    return tile
+
+
+def seam_cost(base, dx, dy):
+    cost = 0
+    for x in range(N):
+        for rows in ((1, 2, 3), (12, 13, 14)):
+            cost += min(difference(base[y][x], base[(y + dy) % N][(x + dx) % N]) for y in rows)
+    return cost
+
+
+def plain_variants(base, count, seed):
+    """`count` zwykłych kafelków: oryginał i najlepiej pasujące przesunięcia."""
+    offsets = [(dx, dy) for dx in range(N) for dy in range(N) if (dx, dy) != (0, 0)]
+    offsets.sort(key=lambda o: seam_cost(base, *o))
+    # Z najlepszej połowy bierzemy możliwie różne przesunięcia.
+    pool = offsets[:len(offsets) // 2]
+    chosen = []
+    for offset in pool:
+        if all(max(min(abs(offset[0] - o[0]), N - abs(offset[0] - o[0])), min(abs(offset[1] - o[1]), N - abs(offset[1] - o[1]))) >= 2 for o in chosen):
+            chosen.append(offset)
+        if len(chosen) == count - 1:
+            break
+    for offset in pool:
+        if len(chosen) == count - 1:
+            break
+        if offset not in chosen:
+            chosen.append(offset)
+    return [[row[:] for row in base]] + [remix(base, dx, dy, seed + i) for i, (dx, dy) in enumerate(chosen)]
+
+
+def luminance(c):
+    return 0.3 * c[0] + 0.59 * c[1] + 0.11 * c[2]
+
+
+def scale(c, factor):
+    return tuple(max(0, min(255, round(v * factor))) for v in c)
+
+
+def tones_of(base, count=5):
+    """`count` tonów obrazka od najciemniejszego do najjaśniejszego."""
+    flat = sorted((p for row in base for p in row), key=luminance)
+    return [flat[min(len(flat) - 1, round((i + 0.5) * len(flat) / count))] for i in range(count)]
+
+
+def palette_of(bark, wood):
+    # Tony z przeważającej części obrazka (np. biel brzozy bez czarnych
+    # kresek) - nimi malujemy obwódki i światła dodatków.
+    flat = sorted((p for row in bark for p in row), key=luminance)
+    median = luminance(flat[len(flat) // 2])
+    main = [p for p in flat if abs(luminance(p) - median) <= 45] or flat
+    tones = [main[min(len(main) - 1, round((i + 0.5) * len(main) / 5))] for i in range(5)]
+    wood_tones = tones_of(wood, 4)
+    darkest = flat[len(flat) // 50]
+    # Kora z wyraźnie ciemniejszym rysunkiem (kreski brzozy): cień dodatków
+    # w kolorze tego rysunku; inaczej - przyciemniony najciemniejszy ton.
+    contrast = luminance(darkest) < 0.6 * luminance(tones[0])
+    deep = darkest if contrast else scale(tones[0], 0.78)
+    pale = median > 150
+    return {
+        'tones': tones, 'deep': deep, 'glint': scale(tones[4], 1.1 if not pale else 1.03),
+        'hole': [scale(deep, 0.5), scale(deep, 0.68), scale(deep, 0.86)] if luminance(deep) < 110 else [(30, 24, 20), (42, 33, 27), (56, 44, 35)],
+        'wood': [scale(wood_tones[0], 0.74), wood_tones[0], wood_tones[1], wood_tones[3]],
+        # Porosty: szarozielone, ale zawsze odcinające się od kory.
+        'lichen': [(96, 108, 78), (118, 130, 94), (138, 150, 110)] if pale else [(104, 112, 86), (126, 136, 104), (148, 158, 124)],
+    }
+
+
+def wood_palette_of(wood):
+    tones = tones_of(wood)
+    base = tones[1]
+    return {
+        'tones': [scale(tones[0], 0.92), tones[0], tones[2], tones[3], scale(tones[4], 1.05)],
+        'knot': [scale(base, 0.56), scale(base, 0.72), scale(base, 0.84)],
+        'hole': [scale(base, 0.2), scale(base, 0.29), scale(base, 0.4)],
+        'stain': [scale((base[0] * 0.9, base[1] * 0.95, base[2] * 1.1), 0.9), scale((base[0] * 0.93, base[1] * 0.97, base[2] * 1.08), 0.96)],
+    }
+
+
+def restore_edges(tile, base):
+    tile[0] = base[0][:]
+    tile[N - 1] = base[N - 1][:]
+
+
+def derived_bark(bark_name, wood_name, seed):
+    """Arkusz kory z obrazka `bark_name` (dodatki także z kolorów `wood_name`)."""
+    def make():
+        base = pixels_of(bark_name)
+        c = palette_of(base, pixels_of(wood_name))
+        variants = plain_variants(base, 48 + 16, seed)
+        tiles = [('zwykla', tile) for tile in variants[:48]]
+        def special(index, name, draw):
+            rng = random.Random(seed + 500 + index * 17)
+            tile = [row[:] for row in variants[48 + index]]
+            draw(tile, rng)
+            restore_edges(tile, base)
+            tiles.append((name, tile))
+        special(0, 'porosty', lambda t, r: lichen(t, c, r, 3))
+        special(1, 'porosty', lambda t, r: lichen(t, c, r, 5))
+        special(2, 'porosty', lambda t, r: lichen(t, c, r, 2))
+        special(3, 'pekniecie', lambda t, r: crack(t, c, r, 6, 2, 11))
+        special(4, 'pekniecie', lambda t, r: crack(t, c, r, 10, 3, 9))
+        special(5, 'guzek', lambda t, r: (burl(t, c, r, 5, 5), burl(t, c, r, 10, 10)))
+        special(6, 'guzek', lambda t, r: burl(t, c, r, 7, 8))
+        special(7, 'guzek', lambda t, r: (burl(t, c, r, 10, 4), lichen(t, c, r, 2)))
+        special(8, 'sek', lambda t, r: knot(t, c, r, 7.5, 7.5, 4.2, 3.6))
+        special(9, 'sek', lambda t, r: knot(t, c, r, 6.5, 8.5, 3.3, 3.0))
+        special(10, 'sek', lambda t, r: (knot(t, c, r, 9.5, 5.0, 3.0, 2.6), knot(t, c, r, 5.0, 11.0, 2.4, 2.1)))
+        special(11, 'blizna', lambda t, r: scar(t, c, r, 8, 8, 5))
+        special(12, 'okorowany', lambda t, r: stripped(t, c, r, 8, 3, (1, 2, 2, 3, 3, 3, 3, 2, 2, 1)))
+        special(13, 'okorowany', lambda t, r: stripped(t, c, r, 7, 4, (2, 3, 4, 4, 3, 4, 3, 2)))
+        special(14, 'dziupla', lambda t, r: hollow(t, c, r, 7.5, 7.5, 2.9, 3.7))
+        special(15, 'dziupla', lambda t, r: hollow(t, c, r, 8.0, 8.0, 1.9, 4.6))
+        return [(name, to_image(tile, c)) for name, tile in tiles]
+    return make
+
+
+def derived_wood(wood_name, seed):
+    """Arkusz okorowanego pnia z obrazka `wood_name` - pod arkuszem kory."""
+    def make():
+        base = pixels_of(wood_name)
+        c = wood_palette_of(base)
+        variants = plain_variants(base, 48 + 16, seed)
+        tiles = [('zwykle', tile) for tile in variants[:48]]
+        def special(index, name, draw):
+            rng = random.Random(seed + 500 + index * 17)
+            tile = [row[:] for row in variants[48 + index]]
+            draw(tile, rng)
+            restore_edges(tile, base)
+            tiles.append((name, tile))
+        special(0, 'przebarwienie', lambda t, r: wood_stain(t, c, r, 2))
+        special(1, 'przebarwienie', lambda t, r: wood_stain(t, c, r, 3))
+        special(2, 'przebarwienie', lambda t, r: wood_stain(t, c, r, 1))
+        special(3, 'pekniecie', lambda t, r: wood_crack(t, c, r, 6, 2, 11))
+        special(4, 'pekniecie', lambda t, r: wood_crack(t, c, r, 10, 3, 9))
+        special(5, 'seczek', lambda t, r: (wood_knot(t, c, r, 5.5, 5.5, 1.5, 1.4), wood_knot(t, c, r, 10.5, 10.5, 1.5, 1.4)))
+        special(6, 'seczek', lambda t, r: wood_knot(t, c, r, 7.5, 8.5, 1.6, 1.5))
+        special(7, 'seczek', lambda t, r: wood_knot(t, c, r, 10.5, 4.5, 1.6, 1.4))
+        special(8, 'sek', lambda t, r: wood_knot(t, c, r, 7.5, 7.5, 3.2, 2.8))
+        special(9, 'sek', lambda t, r: wood_knot(t, c, r, 6.5, 8.5, 2.6, 2.4))
+        special(10, 'sek', lambda t, r: (wood_knot(t, c, r, 9.5, 5.0, 2.4, 2.1), wood_knot(t, c, r, 5.0, 11.0, 1.9, 1.7)))
+        special(11, 'sek', lambda t, r: wood_knot(t, c, r, 8.0, 8.0, 3.8, 2.0))
+        special(12, 'kornik', lambda t, r: wood_galleries(t, c, r, 8, 8))
+        special(13, 'kornik', lambda t, r: wood_galleries(t, c, r, 7, 7))
+        special(14, 'dziupla', lambda t, r: wood_hollow(t, c, r, 7.5, 7.5, 2.9, 3.7))
+        special(15, 'dziupla', lambda t, r: wood_hollow(t, c, r, 8.0, 8.0, 1.9, 4.6))
+        return [(name, to_image(tile, c)) for name, tile in tiles]
+    return make
+
+
+# Arkusze: nazwa -> funkcja rysująca 64 kafelki. Kolejność = miejsce
+# w atlasie (SLOTS_PER_ROW arkuszy obok siebie, na prawo od kolumny
+# ATLAS_BASE_COLUMNS) - nowe arkusze dopisuj NA KOŃCU.
+SHEETS = {
+    'oak_log_bark': oak_tiles, 'oak_stripped_sheet': oak_wood_tiles,
+    'spruce_log_bark': derived_bark('spruce_log_side', 'spruce_stripped_side', 21000),
+    'spruce_stripped_sheet': derived_wood('spruce_stripped_side', 22000),
+    'pine_log_bark': derived_bark('pine_log_side', 'pine_stripped_side', 23000),
+    'pine_stripped_sheet': derived_wood('pine_stripped_side', 24000),
+    'beech_log_bark': derived_bark('beech_log_side', 'beech_stripped_side', 25000),
+    'beech_stripped_sheet': derived_wood('beech_stripped_side', 26000),
+    'linden_log_bark': derived_bark('linden_log_side', 'linden_stripped_side', 27000),
+    'linden_stripped_sheet': derived_wood('linden_stripped_side', 28000),
+    'birch_log_bark': derived_bark('birch_log_side', 'birch_stripped_side', 29000),
+    'birch_stripped_sheet': derived_wood('birch_stripped_side', 30000),
+}
+
+# Miejsce w atlasie świata: arkusze leżą na prawo od zwykłych kafelków
+# (od kolumny ATLAS_BASE_COLUMNS), po SLOTS_PER_ROW obok siebie - atlas
+# robi się szerszy, a nie wyższy (wysoki, wąski atlas przekroczyłby
+# najwyższą teksturę starszych kart graficznych).
+ATLAS_BASE_COLUMNS = 16
+SLOTS_PER_ROW = 6
+ATLAS_COLUMNS = ATLAS_BASE_COLUMNS + SLOTS_PER_ROW * GRID
+
+
+def register(name, slot):
     data = json.loads(MANIFEST.read_text(encoding='utf-8'))
+    data['columns'] = max(data.get('columns', 0), ATLAS_COLUMNS)
     if name not in data['regions']:
         spec = data['sheets']['drzewa']
         path = ROOT / 'assets/textures' / spec['file']
-        old = Image.open(path).convert('RGBA')
-        grown = Image.new('RGBA', (spec['width'], spec['height'] + N * GRID), (0, 0, 0, 0))
-        grown.paste(old, (0, 0))
-        grown.save(path, optimize=True)
-        data['regions'][name] = {'sheet': 'drzewa', 'x': 0, 'y': spec['height'], 'width': N * GRID, 'height': N * GRID}
-        spec['height'] += N * GRID
-    if name not in data['tiles']:
-        row = ATLAS_ROW[name]
-        data['tiles'][name] = {'x': 0, 'y': row, 'w': GRID, 'h': GRID, 'pw': N * GRID, 'ph': N * GRID, 'region': name}
-        data['rows'] = max(data.get('rows', 0), row + GRID)
+        used = [(r['x'], r['y'], r['width'], r['height']) for r in data['regions'].values() if r['sheet'] == 'drzewa']
+        # Pierwsze wolne miejsce 128 x 128 w arkuszu drzew (dwa obok siebie),
+        # w razie potrzeby arkusz rośnie w dół.
+        spot = None
+        y = 0
+        while spot is None:
+            for x in (0, N * GRID):
+                box = (x, y, N * GRID, N * GRID)
+                if all(box[0] >= u[0] + u[2] or u[0] >= box[0] + box[2] or box[1] >= u[1] + u[3] or u[1] >= box[1] + box[3] for u in used):
+                    spot = (x, y)
+                    break
+            y += N
+        if spot[1] + N * GRID > spec['height']:
+            old = Image.open(path).convert('RGBA')
+            grown = Image.new('RGBA', (spec['width'], spot[1] + N * GRID), (0, 0, 0, 0))
+            grown.paste(old, (0, 0))
+            grown.save(path, optimize=True)
+            spec['height'] = spot[1] + N * GRID
+        data['regions'][name] = {'sheet': 'drzewa', 'x': spot[0], 'y': spot[1], 'width': N * GRID, 'height': N * GRID}
+    data['tiles'][name] = {'x': ATLAS_BASE_COLUMNS + (slot % SLOTS_PER_ROW) * GRID, 'y': (slot // SLOTS_PER_ROW) * GRID,
+                           'w': GRID, 'h': GRID, 'pw': N * GRID, 'ph': N * GRID, 'region': name}
+    # Wysokość atlasu: tyle, ile zajmują kafelki (arkusze kory z 1.7.0
+    # leżały pod spodem i zostawiły puste wiersze).
+    data['rows'] = max(tile['y'] + tile.get('h', 1) for tile in data['tiles'].values())
     MANIFEST.write_text(json.dumps(data, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
 
 
 def main():
-    for name, make in SHEETS.items():
+    preview = []
+    for slot, (name, make) in enumerate(SHEETS.items()):
         tiles = make()
         assert len(tiles) == GRID * GRID, len(tiles)
         sheet = Image.new('RGBA', (N * GRID, N * GRID))
         for index, (_, image) in enumerate(tiles):
             sheet.paste(image, ((index % GRID) * N, (index // GRID) * N))
-        register(name)
+        register(name, slot)
         write_texture(name, sheet)
-        if len(sys.argv) > 1:
-            sheet.save(sys.argv[1])
-        print(name, json.dumps([tile_name for tile_name, _ in tiles]))
+        preview.append(sheet)
+        print(name, len(tiles))
+    if len(sys.argv) > 1:
+        board = Image.new('RGBA', (len(preview) * (N * GRID + 4), N * GRID), (40, 42, 46, 255))
+        for index, sheet in enumerate(preview):
+            board.paste(sheet, (index * (N * GRID + 4), 0))
+        board.save(sys.argv[1])
     check()
     sync()
 

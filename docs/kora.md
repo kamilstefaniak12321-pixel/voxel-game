@@ -1,7 +1,13 @@
 # Arkusze kory i okorowanych pni
 
 Od wersji 1.7.0 (pomysł Kamila). Seria 1.7.x dodaje arkusze kolejnym
-drzewom; na razie: **dąb** (pień i okorowany pień).
+drzewom:
+
+| Wersja | Drzewa (pień i okorowany pień) |
+|---|---|
+| 1.7.0 | dąb |
+| 1.7.1 | świerk, sosna (dolna, ciemna kora), buk, lipa, brzoza |
+| później | sosna (górna, pomarańczowa kora) i 13 drzew z paczek |
 
 Bok pnia nie jest już jednym obrazkiem 16 × 16 powtarzanym na każdym
 bloku. Pień ma **arkusz 128 × 128 pikseli** - 64 kafelki kory (8 × 8) -
@@ -55,6 +61,26 @@ Zasada krawędzi arkusza drewna: **górny i dolny wiersz pikseli każdego
 kafelka są takie same** (ten sam układ tonów słojów), więc słoje
 dowolnego kafelka przechodzą w słoje dowolnego innego.
 
+## Arkusze z dotychczasowych obrazków (1.7.1)
+
+Każde drzewo ma swój charakter kory - łuski świerka, gładki szary buk,
+biała brzoza z kreskami. Żeby go nie zgubić, arkusze świerka, sosny,
+buka, lipy i brzozy powstają **z ich dotychczasowych obrazków 16 × 16**,
+tymi samymi pikselami i kolorami:
+
+![Pnie i okorowane pnie pięciu drzew](kora-171.jpg)
+
+- górny i dolny wiersz każdego kafelka to wiersze oryginału (oryginał
+  pasuje sam do siebie, więc każdy kafelek pasuje do każdego),
+- środek kafelka to ten sam obrazek przesunięty o inny wektor (jak na
+  walcu); skrypt wybiera przesunięcia, przy których szew najmniej widać,
+  i prowadzi go nierówno,
+- dodatki (sęk, dziupla, okorowany płat...) są malowane kolorami wziętymi
+  z kory i z okorowanego drewna tego samego drzewa.
+
+Dąb (1.7.0) ma arkusz narysowany od zera - z bruzdami w stałych
+kolumnach.
+
 ## Zasada rysowania arkusza
 
 Żeby dowolny kafelek pasował nad i pod dowolnym innym:
@@ -78,19 +104,26 @@ w `src/rendering/BarkSheets.js`.
   ścianie.
 - Budowanie chunka: wybór kafelka to jedno mieszanie liczb i jeden odczyt
   z tablicy - ok. 10 ns na bok pnia.
-- Pamięć: jeden arkusz to 64 kratki atlasu (8 wierszy); dąb ma dwa (kora
-  i drewno). Atlas rośnie z każdym drzewem serii 1.7.x - pilnuję jego
-  rozmiaru przy kolejnych gatunkach.
+- Pamięć: jeden arkusz to 64 kratki atlasu. Od 1.7.1 arkusze leżą **na
+  prawo** od zwykłych kafelków, po sześć obok siebie: atlas ma 64 × 59
+  kratek (1024 × 944 piksele, ok. 3,9 MB na karcie graficznej zamiast
+  1,2 MB) i ma miejsce na arkusze wszystkich 19 drzew bez dalszego
+  rośnięcia. Wysoki, wąski atlas (363 wiersze przy wszystkich drzewach)
+  nie zmieściłby się na starszych kartach graficznych.
+- Paczki tekstur w wysokiej rozdzielczości: atlas jest 4 razy szerszy,
+  więc przy tej samej rozdzielczości zajmuje więcej pamięci; najwyższa
+  dostępna rozdzielczość liczy się teraz z dłuższego boku atlasu.
 
 ## Nowe drzewo z arkuszem
 
-1. Arkusz 128 × 128 według zasady wyżej (ręcznie albo funkcją
-   w `tools/tekstury_kory.py`).
-2. Wpis w `SHEETS` i `ATLAS_ROW` w `tools/tekstury_kory.py`, uruchomić
-   `python3 tools/tekstury_kory.py`.
-3. Wpis w `BARK_SHEETS` w `src/rendering/BarkSheets.js` (blok pnia,
-   nazwa arkusza, rodzaje 64 kafelków). Arkusz okorowanego pnia dostaje
-   `like: '<blok pnia>'` i rodzaje według `UNDER_BARK`.
+1. Arkusz 128 × 128 według zasady wyżej: ręcznie, własną funkcją albo
+   `derived_bark` / `derived_wood` w `tools/tekstury_kory.py` (z
+   dotychczasowego obrazka).
+2. Wpis **na końcu** `SHEETS` w `tools/tekstury_kory.py` (kolejność to
+   miejsce w atlasie), uruchomić `python3 tools/tekstury_kory.py`.
+3. Gatunek w `SPECIES` w `src/rendering/BarkSheets.js` (`'rows'` -
+   arkusz z dotychczasowego obrazka, `'furrows'` - z bruzdami w stałych
+   kolumnach).
 4. `node tools/sprawdz_kore.mjs`.
 
 ## Znane ograniczenia
@@ -98,7 +131,8 @@ w `src/rendering/BarkSheets.js`.
 - Paczka tekstur gracza, która podmienia zwykły bok pnia dębu
   (`oak_log_side`), nie zmienia arkusza - na pniach dalej widać arkusz
   gry.
-- Pozostałe drzewa mają jeszcze jeden obrazek kory i drewna (kolejne
+- Górna, pomarańczowa część pnia sosny (z płynnym przejściem kory)
+  i drzewa z paczek mają jeszcze jeden obrazek kory i drewna (kolejne
   wersje 1.7.x).
 - Deski, schody i inne bloki z drewna dębu bez zmian.
 

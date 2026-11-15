@@ -37,7 +37,7 @@ registerHooks({
     }
 });
 
-import { execFileSync } from 'node:child_process';
+import { readTextureRegion } from './texture_regions.mjs';
 const V = await import('../src/rendering/SurfaceTextureVariants.js');
 const B = await import('../src/world/terrain/Biomes.js');
 const { WORLD_ATLAS_TILES, TEXTURE_REGIONS } = await import('../src/rendering/TextureSheetData.js');
@@ -45,7 +45,6 @@ const { WORLD_ATLAS_TILES, TEXTURE_REGIONS } = await import('../src/rendering/Te
 let checks = 0;
 const check = (condition, message) => { assert.ok(condition, message); checks++; };
 const source = (path) => readFileSync(new URL(`../${path}`, import.meta.url), 'utf8');
-const root = new URL('../', import.meta.url).pathname;
 
 
 // --- Lista wariantów ---------------------------------------------------------------------
@@ -99,14 +98,12 @@ check(!names.some((name) => /grzyb|muchomor|kamyk|ziemia|patyk|lisc|las|jagod|na
 // --- Tekstury ------------------------------------------------------------------------------
 
 {
-    const dump = execFileSync('python3', ['-c', `
-import json, sys
-sys.path.insert(0, 'tools')
-from atlasy import read_texture
-names = json.loads(sys.argv[1])
-print(json.dumps({n: [list(p) for p in read_texture(n).convert('RGBA').getdata()] for n in names}))
-`, JSON.stringify(V.GRASS_TOP_TEXTURES)], { cwd: root, maxBuffer: 1 << 26 }).toString();
-    const pixels = JSON.parse(dump);
+    // Piksele kafelków prosto z arkuszy tekstur (tools/texture_regions.mjs).
+    const pixels = Object.fromEntries(V.GRASS_TOP_TEXTURES.map((name) => {
+        const { width, height, rgba } = readTextureRegion(name);
+        assert.equal(width * height, 256, `${name}: 16 x 16`);
+        return [name, Array.from({ length: 256 }, (_, i) => [rgba[i * 4], rgba[i * 4 + 1], rgba[i * 4 + 2], rgba[i * 4 + 3]])];
+    }));
     const key = (p) => p.slice(0, 3).join();
     const grass = new Set(pixels.grass_top.map(key));
     check(grass.size >= 4 && grass.size <= 8 && pixels.grass_top.length === 256, 'Zwykły wierzch: 16 x 16, kilka odcieni zieleni');

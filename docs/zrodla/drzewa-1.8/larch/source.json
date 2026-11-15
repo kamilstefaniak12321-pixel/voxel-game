@@ -1,0 +1,78 @@
+{
+  "sourceArchive": "DOC-20261115-WA0023.zip (drzewa_od_jodly)",
+  "sourceFolder": "04_larch",
+  "suppliedBy": "Kamil",
+  "importDate": "2026-11-15",
+  "note": "Oryginalne piksele RGBA skopiowane do drzewa.png bez skalowania i zmian kolorów. Paczka zawiera podglądy sylwetek, bez geometrii; drzewa w grze powstają proceduralnie w skali 1 blok = 1 metr.",
+  "scientificReference": "Larix decidua",
+  "originalFiles": {
+    "log_side.png": {
+      "sha256": "a54ad3eef3cfd590716316daa8d4ce14797fd6ffebd8ec65cff23f8b286bb9f0",
+      "bytes": 407,
+      "rgbaSha256": "8dc43078b01a199455a51135e36d89cfc7d641a3d66d6831e3940b6ae9f2c6fe",
+      "width": 16,
+      "height": 16
+    },
+    "log_top.png": {
+      "sha256": "cb5719087d06b74fe4d1caf4924347ec7a43d6964870090ce11d26cf006c8405",
+      "bytes": 363,
+      "rgbaSha256": "e671c78966ca5add8b2e06482ec8f971aa0bf90bb924fe86228ac87107fba28c",
+      "width": 16,
+      "height": 16
+    },
+    "planks.png": {
+      "sha256": "a9bccba65e46c91b5cff1bfaca0393e40e67317d4f4e64b38f0d92f90fab6286",
+      "bytes": 283,
+      "rgbaSha256": "3c9197a2fbdd17f77f2ab112dc55291fd3ec2f863820379d0c094f8f6f95b034",
+      "width": 16,
+      "height": 16
+    },
+    "leaves.png": {
+      "sha256": "2fb9cadd4e2bee6d96aaf87a423bcccdf09dc5e928731afd3ce3a68abde02354",
+      "bytes": 416,
+      "rgbaSha256": "533de7985203003b0c9eb46492c21aa26ff54efdd251ff7c0f9027f674305d2a",
+      "width": 16,
+      "height": 16
+    },
+    "leaves_variant.png": {
+      "sha256": "fa0e0b01da8ce46ecc49fee96dfc884f327b9fe7ab5ad0c1f58e669ffcb7456a",
+      "bytes": 415,
+      "rgbaSha256": "fb4470907792972328ceae5870f581a2095a9aa07a34c7ec44ee0f1fae004408",
+      "width": 16,
+      "height": 16
+    }
+  },
+  "generator": "tools/tekstury_drzew_180.py; tools/modele_roslin.py; tools/tekstury_kory.py",
+  "derivedRegions": {
+    "larch/stripped_side.png": {
+      "rgbaSha256": "1073bfc187d979a0a68725a814895c070dc7ca676f17d93c433c27ccb60bd18c",
+      "width": 16,
+      "height": 16
+    },
+    "larch/stripped_top.png": {
+      "rgbaSha256": "c1d97db486df68df480284a021d93dcebd3cf5251c82756f2d403d2edb207870",
+      "width": 16,
+      "height": 16
+    },
+    "larch/sapling.png": {
+      "rgbaSha256": "fb38ac4c4bbcd020c02ac6d1a7caa984d5249caab3d729e067febdc75d98e9d7",
+      "width": 16,
+      "height": 16
+    },
+    "campfire_larch": {
+      "rgbaSha256": "4b3cc3ea0a6291baf7a6d07dd60150ba065df755a32e86d0daa2d8b0d6da3167",
+      "width": 32,
+      "height": 32
+    },
+    "models/rosliny/sadzonka-modrzew/polrealistyczny": {
+      "rgbaSha256": "14259eb7e433c61b37ef332893b80ed0e7087160cb491c582b3b5f635953bce8",
+      "width": 16,
+      "height": 16
+    },
+    "larch_bark": {
+      "rgbaSha256": "f82cd5911f483469acdec199268ad02a08dee32978aac341d01d4a52778491f3",
+      "width": 16,
+      "height": 16
+    }
+  }
+}

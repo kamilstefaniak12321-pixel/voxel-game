@@ -66,6 +66,7 @@ tylko jako *Sekretne osiągnięcie* ze znakiem zapytania.
 | rzadkie | Naoczny świadek | bądź do 60 bloków od uderzenia meteorytu |
 | rzadkie | Pełne kosze | zbierz owoce z każdego rodzaju krzaka (pięć - z borówkami) |
 | rzadkie | Leśniczy | zetnij pień każdego z sześciu gatunków drzew (postęp w księdze) |
+| epickie | Drzewa świata | zetnij pień każdego z trzynastu drzew z 1.8.0: jodły, baobabu, palmy kokosowej, modrzewia, namorzynu, puchowca, jukki, osiki, araukarii, figowca, draceny, cedru i sosny ościstej (postęp w księdze) |
 | rzadkie | Z małego ziarenka | wyhoduj drzewo z sadzonki (`docs/drzewa.md`) |
 | rzadkie | Komplet narzędzi | zrób siekierę, kilof i łopatę (postęp w księdze) |
 | rzadkie | Kopalnia w kieszeni | zagraj na telefonie / tablecie i zniszcz blok palcem (`docs/telefon.md`) |

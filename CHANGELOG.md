@@ -11,6 +11,44 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 1.8.0 - Trzynaście nowych drzew i cztery biomy
+
+PR #156. Opis: [`docs/drzewa.md`](docs/drzewa.md#trzynaście-drzew-z-paczki-drzewa-od-jodły-i-cztery-biomy--180),
+[`docs/biomy.md`](docs/biomy.md), [`docs/kora.md`](docs/kora.md).
+
+- **Trzynaście drzew z paczki Kamila** w skali 1 blok ≈ 1 m, z sylwetkami
+  jak w naturze: jodła (28–44 bloki), baobab (pień 5–7 bloków średnicy),
+  palma kokosowa, modrzew, namorzyn, puchowiec/kapok (do 58 bloków,
+  przypory korzeni), jukka - drzewo Jozuego, osika, araukaria, figowiec -
+  banian (słupy korzeni, korona do 26 bloków), dracena - smocze drzewo,
+  cedr libański i sosna oścista. Każde ma pień, okorowany pień, deski,
+  liście z odmianą, sadzonkę, korę i opał.
+- **Cztery nowe biomy:** sawanna (akacje i baobaby), półpustynia (jukki
+  i draceny na piasku), las deszczowy (sklepienie z figowców, ponad nim
+  puchowce) i namorzyny (gorące mokradła). `/biom znajdz sawanna`,
+  `pustynia`, `deszczowy`, `namorzyny`.
+- **Drzewa poza zwykłym lasem:** palmy kokosowe na piasku ciepłych plaż,
+  namorzyny w płytkiej wodzie przy brzegu (pień i korzenie stoją w wodzie),
+  sosny ościste na gołej skale wysoko w górach. Jodła, modrzew, osika,
+  araukaria i cedr rosną w dotychczasowych biomach (góry, brzeziny, łąki).
+- **Nowe bloki:** ażurowe korzenie namorzynu i figowca, kosmata kora
+  jukki, ciemna kora osiki przy ziemi, martwe drewno sosny ościstej,
+  liście palmy z kokosami (PPM zbiera kokosy, odrastają; z kokosa
+  wyrasta palma).
+- **Arkusze kory i okorowanego pnia** (jak w 1.7.x) dla wszystkich
+  trzynastu drzew i ich drugiej kory - arkusze mają teraz 32 drzewa.
+- Osiągnięcie **Drzewa świata** (epickie): zetnij pień każdego
+  z trzynastu nowych drzew.
+- Nowe drzewa i biomy pojawiają się w terenie generowanym od tej wersji;
+  zapisane chunki zostają bez zmian. Gaje oliwne, lasy eukaliptusowe
+  i mokradła w najgorętszym klimacie częściowo ustępują nowym biomom.
+- Atlas tekstur urósł do 1024 × 1536 pikseli. Paczki tekstur w wysokiej
+  rozdzielczości: największy rozmiar kafelka na danej karcie graficznej
+  jest o połowę mniejszy niż dotąd (np. 32 zamiast 64 przy limicie 4096).
+- Wyroby stolarskie (schody, płoty, drzwi, łóżka, skrzynie) z desek
+  nowych drzew - w kolejnej wersji; same deski, patyki i wspólne
+  przepisy z desek już działają.
+
 ## 1.7.2 - Arkusze kory: wszystkie drzewa
 
 Seria 1.7.x — PR #155 (po 1.7.1). Opis: [`docs/kora.md`](docs/kora.md).

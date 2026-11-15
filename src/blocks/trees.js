@@ -287,6 +287,20 @@ export function treeVariantType(species, key) {
 }
 
 
+export function treeLogType(species, key) {
+
+    return `${species}_log_${key}`;
+
+}
+
+
+export function treeRootsType(species) {
+
+    return `${species}_roots`;
+
+}
+
+
 function treeExtras(definition) {
 
     const species = definition.id;
@@ -312,6 +326,50 @@ function treeExtras(definition) {
             flat: { attach: 'down' },
             textures: { all: definition.textures.leafLitter },
             randomRotation: ['top']
+        };
+
+    }
+
+
+    // 1.8.0: druga kora tego samego pnia (kosmata pod koroną jukki, ciemna
+    // przy ziemi u osiki, martwe drewno sosny ościstej) - okorowana daje
+    // zwykły okorowany pień gatunku.
+
+    for (const extra of definition.extraLogs ?? []) {
+
+        blocks[treeLogType(species, extra.key)] = {
+            id: definition.firstId + extra.slot,
+            name: `${definition.name} Log (${extra.key})`,
+            label: extra.label,
+            tree: species,
+            part: 'log',
+            sound: 'wood',
+            solid: true,
+            textures: { top: definition.textures.logTop, side: extra.texture, bottom: definition.textures.logTop },
+            randomRotation: ['top', 'bottom'],
+            strip: parts.stripped
+        };
+
+    }
+
+
+    // Korzenie podporowe i powietrzne (namorzyn, figowiec): ażurowy blok
+    // jak liście - przepuszcza światło, szybko się go usuwa, pień go
+    // zastępuje. Nie daje sadzonek.
+
+    if (definition.roots) {
+
+        blocks[treeRootsType(species)] = {
+            id: definition.firstId + definition.roots.slot,
+            name: `${definition.name} Roots`,
+            label: definition.roots.label,
+            tree: species,
+            part: 'roots',
+            sound: 'wood',
+            solid: true,
+            opaque: false,
+            model: 'leaves',
+            textures: { all: definition.roots.texture }
         };
 
     }
@@ -374,7 +432,7 @@ function treeExtras(definition) {
 }
 
 
-const PART_ORDER = ['log', 'stripped', 'planks', 'leaves', 'sapling', 'litter', 'wreath'];
+const PART_ORDER = ['log', 'stripped', 'planks', 'leaves', 'roots', 'sapling', 'litter', 'wreath'];
 
 
 // Wszystkie bloki drzew (do BLOCK_TYPES w BlockRegistry.js).

@@ -9,7 +9,16 @@ drzewom:
 | 1.7.1 | świerk, sosna (dolna, ciemna kora), buk, lipa, brzoza |
 | 1.7.2 | sosna (górna, pomarańczowa kora), jabłoń, olcha, wierzba, akacja, cyprysik, wiśnia, klon, kosodrzewina, oliwka, eukaliptus tęczowy, sekwoja, miłorząb, jakaranda |
 
-Od 1.7.2 arkusze mają **wszystkie 19 drzew**.
+| 1.8.0 | trzynaście drzew z paczki „drzewa od jodły" (jodła, baobab, palma kokosowa, modrzew, namorzyn, puchowiec, jukka, osika, araukaria, figowiec, dracena, cedr, sosna oścista) oraz druga kora jukki (kosmata), osiki (ciemna przy ziemi) i sosny ościstej (martwe drewno) |
+
+Arkusze mają **wszystkie 32 drzewa** (68 arkuszy).
+
+Od 1.8.0 atlas tekstur ma 64 × 96 kratek (1024 × 1536 pikseli): pierwsze
+42 arkusze leżą obok zwykłych kafelków, kolejne - pod wierszem 64, po
+osiem w pasie (`slot_cell` w `tools/tekstury_kory.py`). Skutek dla paczek
+tekstur w wysokiej rozdzielczości: największy kafelek, jaki zmieści się
+w jednej teksturze karty graficznej, jest o połowę mniejszy niż przy
+atlasie 64 × 64 (np. 32 zamiast 64 pikseli przy limicie 4096).
 
 Bok pnia nie jest już jednym obrazkiem 16 × 16 powtarzanym na każdym
 bloku. Pień ma **arkusz 128 × 128 pikseli** - 64 kafelki kory (8 × 8) -

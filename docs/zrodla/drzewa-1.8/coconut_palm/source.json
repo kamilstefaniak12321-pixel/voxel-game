@@ -1,0 +1,83 @@
+{
+  "sourceArchive": "DOC-20261115-WA0023.zip (drzewa_od_jodly)",
+  "sourceFolder": "03_coconut_palm",
+  "suppliedBy": "Kamil",
+  "importDate": "2026-11-15",
+  "note": "Oryginalne piksele RGBA skopiowane do drzewa.png bez skalowania i zmian kolorów. Paczka zawiera podglądy sylwetek, bez geometrii; drzewa w grze powstają proceduralnie w skali 1 blok = 1 metr.",
+  "scientificReference": "Cocos nucifera",
+  "originalFiles": {
+    "log_side.png": {
+      "sha256": "82703854f5919be97604b6991913b50ef2265e568dc8986a02d9351bd0936b47",
+      "bytes": 287,
+      "rgbaSha256": "2dfe528b4c1ba421cac125bb211242d1fb500af0296592a4a7bd41b330ed0241",
+      "width": 16,
+      "height": 16
+    },
+    "log_top.png": {
+      "sha256": "e99bc4963ff3cb226a1893f18ec1148e0f05b20337e53382245e9d8979020a08",
+      "bytes": 451,
+      "rgbaSha256": "b93cb0ed2b562bf5a4fa649ce2363b5605d36d13a441685a6ba3c20d217bebe5",
+      "width": 16,
+      "height": 16
+    },
+    "planks.png": {
+      "sha256": "ff5aab8c058455a5cc751b162d141158448c84a54ff7176608e1167972f9ee5c",
+      "bytes": 271,
+      "rgbaSha256": "c45dcdaf3cad783f7bdce56c612bcba420306751d1573ff3a9cac9e031c55524",
+      "width": 16,
+      "height": 16
+    },
+    "leaves.png": {
+      "sha256": "c73d590059aae1050b90b09a5a441fd81376399676df1a57e2a8a83b9b99e2d2",
+      "bytes": 308,
+      "rgbaSha256": "31822b7a00519d7809485d7b56c3b5887fc22497f2942e8434890920ecb3bf0d",
+      "width": 16,
+      "height": 16
+    },
+    "leaves_variant.png": {
+      "sha256": "f686957f8b7e275f4509b132e4e350b57135ac13391c3d77f8170501d8c241a3",
+      "bytes": 284,
+      "rgbaSha256": "7c757d4f20b75ab48c6cc03daf1a9b4ceefb8e2e51add7a20ed0a1b0cdda3bbe",
+      "width": 16,
+      "height": 16
+    }
+  },
+  "generator": "tools/tekstury_drzew_180.py; tools/modele_roslin.py; tools/tekstury_kory.py",
+  "derivedRegions": {
+    "coconut_palm/stripped_side.png": {
+      "rgbaSha256": "cc05a7d23fefc942a4752c3cfec0d89c46eb6cf4aa3d7cd3a38318718c802def",
+      "width": 16,
+      "height": 16
+    },
+    "coconut_palm/stripped_top.png": {
+      "rgbaSha256": "828a5700a909b8ba6d11834264c41edf422f9187400358227337be4027cc8ea3",
+      "width": 16,
+      "height": 16
+    },
+    "coconut_palm/sapling.png": {
+      "rgbaSha256": "be7ee9ce0ccd2105f46457814db05449a315580a985814c50c812faae0bda75b",
+      "width": 16,
+      "height": 16
+    },
+    "campfire_coconut_palm": {
+      "rgbaSha256": "8fb4349f8b58d8ef4032c4475ed0a4c2a902359f7dbc533bbffaf9590648cee9",
+      "width": 32,
+      "height": 32
+    },
+    "models/rosliny/sadzonka-palma/polrealistyczny": {
+      "rgbaSha256": "166d4a154e2dc4de1794434d40a56523a233ff9720cc6e9c74db7653939ca018",
+      "width": 16,
+      "height": 16
+    },
+    "coconut_palm_bark": {
+      "rgbaSha256": "ee7d13d42b7e1de23487f8de5289686e4be1ea9ecc17bc4a98c1205f2d86edb1",
+      "width": 16,
+      "height": 16
+    },
+    "coconut_palm/coconut.png": {
+      "rgbaSha256": "ac632b9deae0f783900f8c4f8003dec33ee37e31d12ba23de12d3f68e752b61e",
+      "width": 16,
+      "height": 16
+    }
+  }
+}

@@ -1,0 +1,78 @@
+{
+  "sourceArchive": "DOC-20261115-WA0023.zip (drzewa_od_jodly)",
+  "sourceFolder": "02_baobab",
+  "suppliedBy": "Kamil",
+  "importDate": "2026-11-15",
+  "note": "Oryginalne piksele RGBA skopiowane do drzewa.png bez skalowania i zmian kolorów. Paczka zawiera podglądy sylwetek, bez geometrii; drzewa w grze powstają proceduralnie w skali 1 blok = 1 metr.",
+  "scientificReference": "Adansonia digitata",
+  "originalFiles": {
+    "log_side.png": {
+      "sha256": "2cbfb9d6036c6464618e277cf2137420ffe1b76ee541518a929d831c4f34c957",
+      "bytes": 330,
+      "rgbaSha256": "2e009753df10727db9e53fbb07c5d9a6dcc006eafb6f9c9d24e397a8afff3843",
+      "width": 16,
+      "height": 16
+    },
+    "log_top.png": {
+      "sha256": "998d879d9cf4cc992913ee8c1b65e6423e76cb5f8e38c467110f73a4a063439f",
+      "bytes": 374,
+      "rgbaSha256": "68f1fd10e54169cf5361ec3cce67cbe075915362a457661afaf9bff31018496e",
+      "width": 16,
+      "height": 16
+    },
+    "planks.png": {
+      "sha256": "b3dd6205060eab6cc9948a0b8a66f70889c32cb9e6a368dd9fc39a75454b0054",
+      "bytes": 271,
+      "rgbaSha256": "9be9caad0694dab00c152fa43f4cd772eaf511c73b54f7de514b16929619fc86",
+      "width": 16,
+      "height": 16
+    },
+    "leaves.png": {
+      "sha256": "33b4229ba1c48136f5f0830df03ccbb1ba57028400510e7d2b387b6fdedeca4e",
+      "bytes": 341,
+      "rgbaSha256": "2cc3aab1d3f21879bbde7028b1f3e5174d906553881ea582551bc186c48c1dd5",
+      "width": 16,
+      "height": 16
+    },
+    "leaves_variant.png": {
+      "sha256": "f6ad04c4b24ac47185b92dbc171015d5efbc645a761e0900b9587272ef4e9de5",
+      "bytes": 399,
+      "rgbaSha256": "1f5c7e0a38dcc9c6add9de6533a820474eb12a82b03aa18b1bbc5b84ad152d7d",
+      "width": 16,
+      "height": 16
+    }
+  },
+  "generator": "tools/tekstury_drzew_180.py; tools/modele_roslin.py; tools/tekstury_kory.py",
+  "derivedRegions": {
+    "baobab/stripped_side.png": {
+      "rgbaSha256": "aab60a9161865b638dd16466bc1b85224d4fd609d011293e676e0467f3ea9a3c",
+      "width": 16,
+      "height": 16
+    },
+    "baobab/stripped_top.png": {
+      "rgbaSha256": "4305637e33410b6f0df344f88cff3abce68eac9e8cd01692bf8f1001945afc73",
+      "width": 16,
+      "height": 16
+    },
+    "baobab/sapling.png": {
+      "rgbaSha256": "6969dd3d68b6a132b9b3f333f932eff51b6245149015f77ac62f190238189be3",
+      "width": 16,
+      "height": 16
+    },
+    "campfire_baobab": {
+      "rgbaSha256": "ac23fcdb10d584e81714940c431b46778493011935e0453f1486e2958f0727cd",
+      "width": 32,
+      "height": 32
+    },
+    "models/rosliny/sadzonka-baobab/polrealistyczny": {
+      "rgbaSha256": "913fdeb84ca69a1d4d3409e1a3aefde097d1217b5d8a37a9b2a2775ab008b6e9",
+      "width": 16,
+      "height": 16
+    },
+    "baobab_bark": {
+      "rgbaSha256": "2af39d8470f67d499ad0d17af24f772aeb327a3b7442ec46a348e04a6645238e",
+      "width": 16,
+      "height": 16
+    }
+  }
+}

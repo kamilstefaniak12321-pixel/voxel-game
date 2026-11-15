@@ -1,0 +1,78 @@
+{
+  "sourceArchive": "DOC-20261115-WA0023.zip (drzewa_od_jodly)",
+  "sourceFolder": "12_cedar_of_lebanon",
+  "suppliedBy": "Kamil",
+  "importDate": "2026-11-15",
+  "note": "Oryginalne piksele RGBA skopiowane do drzewa.png bez skalowania i zmian kolorów. Paczka zawiera podglądy sylwetek, bez geometrii; drzewa w grze powstają proceduralnie w skali 1 blok = 1 metr.",
+  "scientificReference": "Cedrus libani",
+  "originalFiles": {
+    "log_side.png": {
+      "sha256": "ccec8190ab595278233c9271b0ad312316b5ba3f674a18b185b83881701fcf32",
+      "bytes": 295,
+      "rgbaSha256": "61d2bdab9738fe95f609415b7c0c3449b458369e49129e6d1b009dcdcefc1802",
+      "width": 16,
+      "height": 16
+    },
+    "log_top.png": {
+      "sha256": "85cf22d048858a2860c1a76586b0086de79432a1a934c1634d29fb48f05dc4c0",
+      "bytes": 367,
+      "rgbaSha256": "7d40831914fbc882a39693ed0059dd154b49e3cdacc3c4e4252b2dcbf72616d5",
+      "width": 16,
+      "height": 16
+    },
+    "planks.png": {
+      "sha256": "c838146b177d5922edc874d0ba6d655c19bd2488f3fa80f0ef8bf8d5beb5c60b",
+      "bytes": 270,
+      "rgbaSha256": "23f075bd1be337658637744118361d8a7f68f07c5a73b7cfa9f5c08b20b54831",
+      "width": 16,
+      "height": 16
+    },
+    "leaves.png": {
+      "sha256": "2a1d2191134e74920d5f6eefb29a4ffa4b3e83cf664bb16535869d15cdd03698",
+      "bytes": 471,
+      "rgbaSha256": "acd6c142b89c585d151a318fd1fe5d74b2be6a10db5e9314106402c928962904",
+      "width": 16,
+      "height": 16
+    },
+    "leaves_variant.png": {
+      "sha256": "a9d7430d39b70c93d58f946e34ca2d5dd06fca756529512a5eb20a260acbc65b",
+      "bytes": 508,
+      "rgbaSha256": "5b7b670ddcf818e0e703744950133ffe2108cb3b036435a9476648287c58cb99",
+      "width": 16,
+      "height": 16
+    }
+  },
+  "generator": "tools/tekstury_drzew_180.py; tools/modele_roslin.py; tools/tekstury_kory.py",
+  "derivedRegions": {
+    "cedar/stripped_side.png": {
+      "rgbaSha256": "fd74a803ac8dce9334a7d67174d1163bd43d9a0c37a2279203abf2d95f143c7d",
+      "width": 16,
+      "height": 16
+    },
+    "cedar/stripped_top.png": {
+      "rgbaSha256": "8e9612bfcb5a1f1ca9068475ba3686f0b4d38596d5ae048559436d50c58eff4e",
+      "width": 16,
+      "height": 16
+    },
+    "cedar/sapling.png": {
+      "rgbaSha256": "8d3c8e1cd91022ce17c6c2279b0150d52cc075c436ca3391f740e393bfce17da",
+      "width": 16,
+      "height": 16
+    },
+    "campfire_cedar": {
+      "rgbaSha256": "30015653a637c1b7764e65859763124161d3691f981e22241da00dac160c6679",
+      "width": 32,
+      "height": 32
+    },
+    "models/rosliny/sadzonka-cedr/polrealistyczny": {
+      "rgbaSha256": "b2c0c8609ccc8d7dcfed6e9d75ec4e892b4075918a4374fd4b8b726b48f647ac",
+      "width": 16,
+      "height": 16
+    },
+    "cedar_bark": {
+      "rgbaSha256": "c914966f57bc1a3b3dd3347109f9c2da763605487fffe4dc7f2e9d4d4e72c8e7",
+      "width": 16,
+      "height": 16
+    }
+  }
+}

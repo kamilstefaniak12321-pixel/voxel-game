@@ -115,13 +115,24 @@ const WILD_SPECIES = TREE_DEFINITIONS
     .map((definition) => ({ id: definition.id, climate: definition.climate, salt: nameSalt(definition.id) }));
 
 
+// 1.8.0: gatunki z własnym miejscem poza zwykłym lasem ("open" w katalogu):
+// palma kokosowa na piasku plaży, sosna oścista na gołej skale, namorzyn
+// w płytkiej wodzie i gęsto w swoim biomie. Każda reguła losuje szansę
+// osobno i nie zależy od gęstości lasu; kratek spoza jej klimatu nie
+// liczymy wcale (szybkie odrzucenie po samym klimacie, bez terenu).
+
+const OPEN_RULES = TREE_DEFINITIONS.flatMap((definition) => (definition.open ?? []).map((rule, index) => ({
+    id: definition.id, ...rule, salt: nameSalt(`${definition.id}:open:${index}`)
+})));
+
+
 // Najmniejsza gęstość (pojedyncze drzewa) w którymkolwiek biomie - do
 // szybkiego odrzucania kratek bez drzewa: w lasach (FOREST_LONE) i poza
 // nimi (OPEN_LONE). Biom lasu jest tylko tam, gdzie pole lasów jest
 // wyższe niż FOREST_FIELD (z zapasem na poszarpane granice).
 
 const FOREST_TYPES = ['deciduous', 'beech', 'birch', 'pine', 'spruce',
-    'maple_forest', 'sequoia_forest', 'eucalyptus_forest', 'olive_grove', 'mugo_scrub'];
+    'maple_forest', 'sequoia_forest', 'eucalyptus_forest', 'olive_grove', 'mugo_scrub', 'rainforest'];
 
 const FOREST_LONE = Math.max(...FOREST_TYPES.map((key) => BIOMES[key].lone ?? 0));
 
@@ -426,7 +437,11 @@ export class Forests {
 
         const upper = FORESTS.lone + (FORESTS.dense - FORESTS.lone) * smoothstep(FORESTS.from, FORESTS.full, forest);
 
-        if (roll >= Math.max(upper, forest > FOREST_FIELD ? FOREST_LONE : OPEN_LONE) * FORESTS.wet) {
+        const usual = roll < Math.max(upper, forest > FOREST_FIELD ? FOREST_LONE : OPEN_LONE) * FORESTS.wet;
+
+        const open = this.openRule(gx, gz, x, z);
+
+        if (!usual && !open) {
             return null;
         }
 
@@ -436,6 +451,16 @@ export class Forests {
         const sample = generator.compute(x, z, 0, this.sample);
 
         const height = sample.height;
+
+        if (open) {
+
+            const tree = this.openTree(gx, gz, x, z, sample, open, withShape);
+
+            if (tree || !usual) {
+                return tree;
+            }
+
+        }
 
         // Nie w wodzie i nie na samym brzegu rzeki.
 
@@ -485,10 +510,27 @@ export class Forests {
         // grube pnie i szerokie korony wchodziłyby jedne w drugie. W
         // pozostałych kratkach rośnie podszyt gatunku (under) albo nic.
 
-        const spacing = TREE_SPECIES[species]?.shape?.spacing;
+        // 1.8.0: podszyt też może mieć swój odstęp (figowce pod puchowcami)
+        // i przesunięcie siatki (offset), żeby nie stał w kratkach olbrzyma.
 
-        if (spacing && (((gx % spacing) + spacing) % spacing || ((gz % spacing) + spacing) % spacing)) {
-            species = TREE_SPECIES[species].shape.under ?? null;
+        for (let step = 0; species && step < 3; step++) {
+
+            const shape = TREE_SPECIES[species]?.shape;
+
+            const spacing = shape?.spacing;
+
+            if (!spacing) {
+                break;
+            }
+
+            const offset = shape.offset ?? 0;
+
+            if (!((((gx - offset) % spacing) + spacing) % spacing || (((gz - offset) % spacing) + spacing) % spacing)) {
+                break;
+            }
+
+            species = shape.under ?? null;
+
         }
 
         if (!species) {
@@ -523,6 +565,117 @@ export class Forests {
         }
 
         return { x, y: height + 1, z, species, seed: treeSeed, size, shape: withShape ? shape : null };
+
+    }
+
+
+    // Reguła "open" (OPEN_RULES), która może dać drzewo w kratce (gx, gz),
+    // albo null. Tylko losowanie i klimat bez wysokości - teren liczymy
+    // dopiero dla nielicznych kratek, które tu przejdą.
+
+    openRule(gx, gz, x, z) {
+
+        let temperature = null;
+        let humidity = 0;
+
+        for (const rule of OPEN_RULES) {
+
+            if (random01(this.seed, gx, gz, rule.salt) >= rule.chance) {
+                continue;
+            }
+
+            if (temperature === null) {
+
+                const N = this.generator.noise;
+
+                temperature = this.generator.field(N.temperature, x, z, SCALES.temperature, 2);
+                humidity = this.generator.field(N.humidity, x, z, SCALES.humidity, 2);
+
+            }
+
+            // Wysokość tylko ochładza - poniżej dolnej granicy na pewno nic.
+
+            if (temperature >= rule.temperature[0] && humidity >= rule.humidity[0] && humidity <= rule.humidity[1]) {
+                return rule;
+            }
+
+        }
+
+        return null;
+
+    }
+
+
+    // Drzewo z reguły "open" w kratce (gx, gz) albo null: sprawdza
+    // powierzchnię (piasek, skała, płytka stojąca woda albo trawa w biomie
+    // gatunku), nachylenie i pełny klimat.
+
+    openTree(gx, gz, x, z, sample, rule, withShape) {
+
+        const generator = this.generator;
+
+        const seed = this.seed;
+
+        const height = sample.height;
+
+        if (height + 1 + 6 >= CHUNK_HEIGHT) {
+            return null;
+        }
+
+        const water = sample.water > height;
+
+        if (rule.surface === 'water') {
+
+            // Tylko płytka, stojąca woda (morze i jeziora), nie rzeki.
+
+            if (!water || sample.water - height > rule.depth || !(sample.ocean || sample.lake) || sample.riverGap < 2) {
+                return null;
+            }
+
+        }
+        else if (water || sample.riverGap < 2) {
+            return null;
+        }
+
+        const climate = this.climate(x, z, height);
+
+        if (
+            climate.temperature < rule.temperature[0] || climate.temperature > rule.temperature[1] ||
+            climate.humidity < rule.humidity[0] || climate.humidity > rule.humidity[1] ||
+            climate.above < rule.height[0] || climate.above > rule.height[1]
+        ) {
+            return null;
+        }
+
+        let slope = 0;
+
+        for (const [dx, dz] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+
+            slope = Math.max(slope, Math.abs(height - generator.compute(x + dx, z + dz, 0, this.neighbor).height));
+
+            if (slope > FORESTS.maxSlope) {
+                return null;
+            }
+
+        }
+
+        if (rule.surface !== 'water' && generator.surfaceKind(x, z, sample, slope) !== rule.surface) {
+            return null;
+        }
+
+        if (rule.biome && generator.biomes.classify(x, z, sample) !== rule.biome) {
+            return null;
+        }
+
+        const treeSeed = hash01(seed, gx, gz, 4);
+
+        const size = 0.15 + 0.85 * random01(seed, gx, gz, 5);
+
+        const shape = withShape ? buildTree(rule.id, treeSeed, size) : null;
+
+        // wade - pień i korzenie stoją w wodzie (placeTree).
+
+        return { x, y: height + 1, z, species: rule.id, seed: treeSeed, size, shape, wade: rule.surface === 'water' };
 
     }
 
@@ -623,6 +776,13 @@ export function placeTree(chunk, baseX, baseZ, tree, idOf) {
 
     const S = CHUNK_SIZE;
 
+    // Drzewo stojące w wodzie (namorzyn): pień i korzenie wypierają wodę.
+
+    const wade = tree.wade === true;
+
+    const wadeLog = wade ? idOf(`${tree.species}_log`) : AIR_ID;
+    const wadeRoots = wade ? idOf(`${tree.species}_roots`) : AIR_ID;
+
 
     for (const [dx, dy, dz, type] of shape.blocks) {
 
@@ -641,7 +801,25 @@ export function placeTree(chunk, baseX, baseZ, tree, idOf) {
 
         const id = idOf(type);
 
-        if (canReplace(chunk.getId(lx, y, lz), !isLeavesId(id))) {
+        const old = chunk.getId(lx, y, lz);
+
+        if (wade && isLiquidId(old)) {
+
+            // W wodzie zostaje tylko drewno: pień i korzenie podporowe
+            // (jako pień - ażurowy blok zostawiłby w wodzie dziurę).
+
+            if (!isLeavesId(id)) {
+                chunk.setId(lx, y, lz, id);
+            }
+            else if (id === wadeRoots) {
+                chunk.setId(lx, y, lz, wadeLog);
+            }
+
+            continue;
+
+        }
+
+        if (canReplace(old, !isLeavesId(id))) {
             setTreeBlock(chunk, lx, y, lz, id);
         }
 
@@ -661,13 +839,22 @@ export function placeTree(chunk, baseX, baseZ, tree, idOf) {
 
         const log = idOf(type);
 
-        if (chunk.getId(lx, tree.y, lz) !== log) {
+        const base = chunk.getId(lx, tree.y, lz);
+
+        if (base !== log && !(wade && base === wadeLog)) {
             continue;
         }
 
         for (let y = tree.y - 1, depth = 0; y >= 0 && depth < 4; y--, depth++) {
 
-            if (!canReplace(chunk.getId(lx, y, lz), true)) {
+            const below = chunk.getId(lx, y, lz);
+
+            if (wade && isLiquidId(below)) {
+                chunk.setId(lx, y, lz, isLeavesId(log) ? wadeLog : log);
+                continue;
+            }
+
+            if (!canReplace(below, true)) {
                 break;
             }
 

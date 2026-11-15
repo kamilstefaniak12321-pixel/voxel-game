@@ -726,6 +726,36 @@ SHEETS = {
     'ginkgo_stripped_sheet': derived_wood('ginkgo/stripped_side.png', 55000),
     'jacaranda_log_bark': derived_bark('jacaranda/log_side.png', 'jacaranda/stripped_side.png', 56000),
     'jacaranda_stripped_sheet': derived_wood('jacaranda/stripped_side.png', 57000),
+    # 1.8.0 - trzynaście drzew z paczki "drzewa_od_jodly" i ich druga kora.
+    'fir_log_bark': derived_bark('fir/log_side.png', 'fir/stripped_side.png', 58000),
+    'fir_stripped_sheet': derived_wood('fir/stripped_side.png', 59000),
+    'baobab_log_bark': derived_bark('baobab/log_side.png', 'baobab/stripped_side.png', 60000),
+    'baobab_stripped_sheet': derived_wood('baobab/stripped_side.png', 61000),
+    'coconut_palm_log_bark': derived_bark('coconut_palm/log_side.png', 'coconut_palm/stripped_side.png', 62000),
+    'coconut_palm_stripped_sheet': derived_wood('coconut_palm/stripped_side.png', 63000),
+    'larch_log_bark': derived_bark('larch/log_side.png', 'larch/stripped_side.png', 64000),
+    'larch_stripped_sheet': derived_wood('larch/stripped_side.png', 65000),
+    'mangrove_log_bark': derived_bark('mangrove/log_side.png', 'mangrove/stripped_side.png', 66000),
+    'mangrove_stripped_sheet': derived_wood('mangrove/stripped_side.png', 67000),
+    'kapok_log_bark': derived_bark('kapok/log_side.png', 'kapok/stripped_side.png', 68000),
+    'kapok_stripped_sheet': derived_wood('kapok/stripped_side.png', 69000),
+    'joshua_tree_log_bark': derived_bark('joshua_tree/log_side.png', 'joshua_tree/stripped_side.png', 70000),
+    'joshua_tree_stripped_sheet': derived_wood('joshua_tree/stripped_side.png', 71000),
+    'aspen_log_bark': derived_bark('aspen/log_side.png', 'aspen/stripped_side.png', 72000),
+    'aspen_stripped_sheet': derived_wood('aspen/stripped_side.png', 73000),
+    'araucaria_log_bark': derived_bark('araucaria/log_side.png', 'araucaria/stripped_side.png', 74000),
+    'araucaria_stripped_sheet': derived_wood('araucaria/stripped_side.png', 75000),
+    'banyan_log_bark': derived_bark('banyan/log_side.png', 'banyan/stripped_side.png', 76000),
+    'banyan_stripped_sheet': derived_wood('banyan/stripped_side.png', 77000),
+    'dragon_tree_log_bark': derived_bark('dragon_tree/log_side.png', 'dragon_tree/stripped_side.png', 78000),
+    'dragon_tree_stripped_sheet': derived_wood('dragon_tree/stripped_side.png', 79000),
+    'cedar_log_bark': derived_bark('cedar/log_side.png', 'cedar/stripped_side.png', 80000),
+    'cedar_stripped_sheet': derived_wood('cedar/stripped_side.png', 81000),
+    'bristlecone_log_bark': derived_bark('bristlecone/log_side.png', 'bristlecone/stripped_side.png', 82000),
+    'bristlecone_stripped_sheet': derived_wood('bristlecone/stripped_side.png', 83000),
+    'joshua_tree_log_shaggy_bark': derived_bark('joshua_tree/log_side_shaggy.png', 'joshua_tree/stripped_side.png', 84000),
+    'aspen_log_base_bark': derived_bark('aspen/log_side_base.png', 'aspen/stripped_side.png', 85000),
+    'bristlecone_log_dead_bark': derived_bark('bristlecone/log_side_dead.png', 'bristlecone/stripped_side.png', 86000),
 }
 
 # Miejsce w atlasie świata: arkusze leżą na prawo od zwykłych kafelków
@@ -735,6 +765,19 @@ SHEETS = {
 ATLAS_BASE_COLUMNS = 16
 SLOTS_PER_ROW = 6
 ATLAS_COLUMNS = ATLAS_BASE_COLUMNS + SLOTS_PER_ROW * GRID
+# 1.8.0: pierwsze 42 miejsca (7 pasów po 6) leżą obok zwykłych kafelków;
+# kolejne - pod wierszem 64, na całą szerokość atlasu (po 8 w pasie).
+# Wiersze 56-63 zajmują zwykłe kafelki drzew z 1.8.0.
+SIDE_SLOTS = 42
+WIDE_FIRST_ROW = 64
+WIDE_SLOTS_PER_ROW = ATLAS_COLUMNS // GRID
+
+
+def slot_cell(slot):
+    if slot < SIDE_SLOTS:
+        return ATLAS_BASE_COLUMNS + (slot % SLOTS_PER_ROW) * GRID, (slot // SLOTS_PER_ROW) * GRID
+    wide = slot - SIDE_SLOTS
+    return (wide % WIDE_SLOTS_PER_ROW) * GRID, WIDE_FIRST_ROW + (wide // WIDE_SLOTS_PER_ROW) * GRID
 
 
 def register(name, slot):
@@ -762,8 +805,8 @@ def register(name, slot):
             grown.save(path, optimize=True)
             spec['height'] = spot[1] + N * GRID
         data['regions'][name] = {'sheet': 'drzewa', 'x': spot[0], 'y': spot[1], 'width': N * GRID, 'height': N * GRID}
-    data['tiles'][name] = {'x': ATLAS_BASE_COLUMNS + (slot % SLOTS_PER_ROW) * GRID, 'y': (slot // SLOTS_PER_ROW) * GRID,
-                           'w': GRID, 'h': GRID, 'pw': N * GRID, 'ph': N * GRID, 'region': name}
+    x, y = slot_cell(slot)
+    data['tiles'][name] = {'x': x, 'y': y, 'w': GRID, 'h': GRID, 'pw': N * GRID, 'ph': N * GRID, 'region': name}
     # Wysokość atlasu: tyle, ile zajmują kafelki (arkusze kory z 1.7.0
     # leżały pod spodem i zostawiły puste wiersze).
     data['rows'] = max(tile['y'] + tile.get('h', 1) for tile in data['tiles'].values())

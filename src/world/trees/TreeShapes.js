@@ -1,4 +1,4 @@
-import { TREE_SPECIES, TREE_NAMES, treeParts, treeVariantType } from '../../blocks/trees.js';
+import { TREE_SPECIES, TREE_NAMES, treeParts, treeVariantType, treeLogType, treeRootsType } from '../../blocks/trees.js';
 import { ORIGINAL_TREE_LIMITS, SPECIES_SHAPE_LIMITS } from '../../blocks/treeCatalog.js';
 
 // ------------------------------------------------------------
@@ -85,8 +85,29 @@ export function treeVisualDimensions(species, size = 0.5) {
         height, radius, trunkWidth: 1,
         crownBase: Math.max(2, Math.round(height * 0.25))
     };
+    // 1.8.0 (paczka "drzewa_od_jodly").
+    const made = NEW_DIMENSIONS[shape.kind]?.(height, amount);
+    if (made) return { height, radius, ...made };
     return { height, radius, trunkWidth: 1, crownBase: Math.max(2, Math.round(height * 0.35)) };
 }
+
+// Szerokość pnia i początek korony trzynastu drzew z 1.8.0 (wysokość
+// w blokach, amount 0-1 - od małego do dużego drzewa).
+const NEW_DIMENSIONS = {
+    fir: (height, amount) => ({ trunkWidth: amount >= 0.55 ? 2 : 1, crownBase: Math.round(height * 0.3) }),
+    baobab: (height, amount) => ({ trunkWidth: amount >= 0.5 ? 7 : 5, crownBase: Math.round(height * 0.55) }),
+    coconut_palm: (height) => ({ trunkWidth: 1, crownBase: height - 4 }),
+    larch: (height, amount) => ({ trunkWidth: amount >= 0.75 ? 2 : 1, crownBase: Math.round(height * 0.22) }),
+    mangrove: (height, amount) => ({ trunkWidth: 1, crownBase: 3 + Math.round(amount * 2) }),
+    kapok: (height, amount) => ({ trunkWidth: amount >= 0.5 ? 3 : 2, crownBase: height - Math.max(9, Math.round(height * 0.25)) }),
+    joshua_tree: (height) => ({ trunkWidth: 1, crownBase: Math.max(2, Math.round(height * 0.35)) }),
+    aspen: (height) => ({ trunkWidth: 1, crownBase: Math.round(height * 0.4) }),
+    araucaria: (height, amount) => ({ trunkWidth: amount >= 0.6 ? 2 : 1, crownBase: Math.round(height * 0.55) }),
+    banyan: (height, amount) => ({ trunkWidth: amount >= 0.5 ? 3 : 2, crownBase: Math.max(4, Math.round(height * 0.33)) }),
+    dragon_tree: (height, amount) => ({ trunkWidth: amount >= 0.55 ? 2 : 1, crownBase: Math.max(2, Math.round(height * 0.4)) }),
+    cedar: (height, amount) => ({ trunkWidth: amount >= 0.35 ? 2 : 1, crownBase: Math.round(height * 0.28) }),
+    bristlecone: (height, amount) => ({ trunkWidth: amount >= 0.4 ? 2 : 1, crownBase: Math.max(2, Math.round(height * 0.4)) })
+};
 
 
 // Generator liczb 0-1 z seeda (mulberry32).
@@ -857,6 +878,81 @@ function sizes(tree, size, shape) {
 }
 
 
+// Pień o okrągłym przekroju wokół (0, 0): radiusAt(y) - promień na
+// wysokości y. Każda kolumna przy ziemi schodzi do gruntu jak zwykły pień.
+
+function roundTrunk(tree, radiusAt, top) {
+
+    for (let y = 0; y <= top; y++) {
+
+        const r = radiusAt(y);
+        const reach = Math.ceil(r);
+
+        for (let z = -reach; z <= reach; z++) {
+
+            for (let x = -reach; x <= reach; x++) {
+
+                if (Math.hypot(x, z) > r) {
+                    continue;
+                }
+
+                tree.log(x, y, z);
+
+                if (y === 0) {
+                    tree.roots.push([x, z, tree.parts.log]);
+                }
+
+            }
+
+        }
+
+    }
+
+}
+
+
+// Korzenie powietrzne: `count` sznurów zwisających spod korony (od
+// najniższego liścia w kolumnie) w pierścieniu od `near` do `far` bloków
+// od pnia, najwyżej `length` bloków, nie niżej niż `floor` (miejsce na
+// przejście pod drzewem).
+
+function hangingRoots(tree, type, count, near, far, from, top, length, floor) {
+
+    const random = tree.random;
+
+    for (let i = 0; i < count; i++) {
+
+        const angle = random() * Math.PI * 2;
+        const distance = near + random() * (far - near);
+        const x = Math.round(Math.cos(angle) * distance), z = Math.round(Math.sin(angle) * distance);
+
+        let y = Math.max(1, from);
+
+        while (y <= top && !tree.has(x, y, z)) {
+            y++;
+        }
+
+        const hang = 1 + Math.floor(random() * length);
+
+        if (y > top) {
+            continue;
+        }
+
+        for (let k = 1; k <= hang && y - k >= floor; k++) {
+
+            if (tree.has(x, y - k, z)) {
+                break;
+            }
+
+            tree.leaf(x, y - k, z, type);
+
+        }
+
+    }
+
+}
+
+
 const CATALOG_SHAPES = {
 
     // An umbrella made from separate flattened crowns on spreading limbs.
@@ -1194,6 +1290,486 @@ const CATALOG_SHAPES = {
         }
         tree.blob(0, crownY + 0.25, 0, radius * 0.46, 1.4, radius * 0.46, 0.63, shape.density);
         tree.leaf(0, top, 0);
+
+    },
+
+    // ---- 1.8.0: trzynaście drzew z paczki Kamila "drzewa_od_jodly".
+    // Rozmiary dojrzałych drzew jak w naturze (1 blok = 1 m), sylwetki
+    // według podglądów z paczki.
+
+    // Jodła: wysoki, prosty pień (dół goły, z suchymi sękami), wąski stożek
+    // z gęstych pięter, czubek spłaszczony w "bocianie gniazdo".
+    fir(tree, size) {
+
+        const { height, radius, trunkWidth, crownBase } = treeVisualDimensions(tree.species, size);
+        const random = tree.random, top = height - 1, c = trunkWidth === 2 ? 0.5 : 0;
+        tree.trunk(0, 0, 0, top - 1);
+        if (trunkWidth === 2) {
+            for (const [x, z] of [[1, 0], [0, 1], [1, 1]]) tree.trunk(x, z, 0, Math.round(height * 0.55));
+        }
+        for (let y = Math.round(crownBase * 0.45); y < crownBase - 1; y += 2 + Math.floor(random() * 3)) {
+            const [dx, dz] = [[1, 0], [-1, 0], [0, 1], [0, -1]][Math.floor(random() * 4)];
+            tree.log(dx > 0 ? trunkWidth : dx, y, dz > 0 ? trunkWidth : dz);
+        }
+        const span = Math.max(1, top - 2 - crownBase);
+        for (let y = crownBase; y <= top - 2; y++) {
+            const t = (y - crownBase) / span;
+            const wide = (y - crownBase) % 2 === 0;
+            const profile = t < 0.12 ? 0.7 + t * 2.5 : 1 - (t - 0.12) * 0.82;
+            tree.disk(c, y, c, Math.max(1.2, radius * profile * (wide ? 1 : 0.62)), wide ? 0.3 : 0.45);
+        }
+        tree.disk(c, top - 1, c, Math.max(1.6, radius * 0.3), 0.2);
+        tree.disk(c, top, c, 0.8, 0);
+        tree.leaf(0, top, 0);
+
+    },
+
+    // Baobab: bardzo gruby, butelkowaty pień (5-7 bloków średnicy) i płaska,
+    // szeroka korona z krótkich, grubych konarów na samej górze.
+    baobab(tree, size, shape) {
+
+        const { height, radius, trunkWidth, crownBase } = treeVisualDimensions(tree.species, size);
+        const random = tree.random, top = height - 1, base = trunkWidth / 2;
+        roundTrunk(tree, (y) => {
+            const t = y / crownBase;
+            return base * (1 + 0.1 * Math.sin(Math.PI * t)) * (1 - 0.2 * t) + (y === 0 ? 0.4 : 0);
+        }, crownBase);
+        const limbs = 6 + Math.floor(random() * 3);
+        const phase = random() * Math.PI * 2;
+        const crownY = top - 1.6;
+        for (let i = 0; i < limbs; i++) {
+            const angle = phase + i * Math.PI * 2 / limbs + (random() - 0.5) * 0.3;
+            const reach = radius * (0.55 + random() * 0.12);
+            const cos = Math.cos(angle), sin = Math.sin(angle);
+            const x = cos * reach, z = sin * reach, y = crownY - (i % 2 ? 0.8 : 0);
+            tree.branch(cos * base * 0.6, crownBase, sin * base * 0.6, x * 0.6, y - 1.5, z * 0.6);
+            tree.branch(cos * base * 0.6, crownBase + 1, sin * base * 0.6, x * 0.6, y - 0.5, z * 0.6);
+            tree.branch(x * 0.6, y - 1, z * 0.6, x, y - 0.3, z);
+            tree.blob(x, y, z, radius * 0.4, 1.5, radius * 0.4, 0.62, shape.density);
+            tree.blob(x * 0.55, y + 0.4, z * 0.55, radius * 0.36, 1.4, radius * 0.36, 0.62, shape.density);
+        }
+        tree.blob(0, crownY + 0.3, 0, radius * 0.45, 1.5, radius * 0.45, 0.62, shape.density);
+        tree.leaf(0, top, 0);
+
+    },
+
+    // Palma kokosowa: smukły, łukowato wygięty pień i pióropusz długich,
+    // opadających liści; pod liśćmi przy pniu kiście kokosów.
+    coconut_palm(tree, size) {
+
+        const { height, radius } = treeVisualDimensions(tree.species, size);
+        const random = tree.random, top = height - 1, trunkTop = top - 2;
+        const lean = random() * Math.PI * 2;
+        const bend = 0.5 + size * 1.5 + random() * 1.5;
+        tree.trunk(0, 0, 0, 0);
+        let px = 0, pz = 0;
+        for (let y = 1; y <= trunkTop; y++) {
+            const t = y / trunkTop;
+            const x = Math.cos(lean) * bend * t * t, z = Math.sin(lean) * bend * t * t;
+            tree.branch(px, y - 1, pz, x, y, z);
+            // Przy przesunięciu w bok pień styka się ścianą, nie samym rogiem.
+            if (Math.round(x) !== Math.round(px) || Math.round(z) !== Math.round(pz)) tree.log(x, y - 1, z);
+            px = x;
+            pz = z;
+        }
+        const fx = Math.round(px), fz = Math.round(pz);
+        const fronds = 7 + Math.floor(random() * 3);
+        const phase = random() * Math.PI * 2;
+        for (let i = 0; i < fronds; i++) {
+            const angle = phase + i * Math.PI * 2 / fronds + (random() - 0.5) * 0.3;
+            const cos = Math.cos(angle), sin = Math.sin(angle);
+            const length = radius * (0.85 + random() * 0.2);
+            const steps = Math.ceil(length * 1.4);
+            let y = trunkTop + 1;
+            for (let s = 1; s <= steps; s++) {
+                const u = s / steps, d = length * u;
+                y = trunkTop + 1 + 1.6 * u - 3.6 * u * u;
+                tree.leaf(fx + cos * d, y, fz + sin * d);
+                if (s % 2 && u > 0.3 && u < 0.85) {
+                    const side = s % 4 === 1 ? 1 : -1;
+                    tree.leaf(fx + cos * d - sin * side, y - (u > 0.6 ? 1 : 0), fz + sin * d + cos * side);
+                }
+            }
+            tree.leaf(fx + cos * length, y - 1, fz + sin * length);
+        }
+        tree.leaf(fx, trunkTop + 1, fz);
+        tree.leaf(fx, top, fz);
+        const coconuts = treeVariantType(tree.species, 'kokosy');
+        const spots = [[1, 0], [-1, 0], [0, 1], [0, -1]];
+        const first = Math.floor(random() * 4), count = 1 + Math.floor(random() * 2 + size);
+        for (let i = 0; i < count; i++) {
+            const [dx, dz] = spots[(first + i) % 4];
+            tree.leaf(fx + dx, trunkTop, fz + dz, coconuts);
+        }
+
+    },
+
+    // Modrzew: prosty pień, luźny, ażurowy stożek z pięter cienkich
+    // konarów, których końce opadają.
+    larch(tree, size, shape) {
+
+        const { height, radius, trunkWidth, crownBase } = treeVisualDimensions(tree.species, size);
+        const random = tree.random, top = height - 1;
+        tree.trunk(0, 0, 0, top - 1);
+        if (trunkWidth === 2) {
+            for (const [x, z] of [[1, 0], [0, 1], [1, 1]]) tree.trunk(x, z, 0, Math.round(height * 0.4));
+        }
+        const phase = random() * Math.PI * 2;
+        const span = Math.max(1, top - 2 - crownBase);
+        for (let y = crownBase, tier = 0; y <= top - 2; y += 2, tier++) {
+            const t = (y - crownBase) / span;
+            const r = Math.max(1.3, radius * (1 - 0.8 * t));
+            const limbs = r > 3 ? 5 : 4;
+            tree.disk(0, y, 0, Math.max(1, r * 0.34), 0.4);
+            for (let i = 0; i < limbs; i++) {
+                const angle = phase + tier * 0.9 + i * Math.PI * 2 / limbs + (random() - 0.5) * 0.4;
+                const length = r * (0.75 + random() * 0.25);
+                const x = Math.cos(angle) * length, z = Math.sin(angle) * length;
+                if (r > 3) tree.branch(0, y, 0, x * 0.45, y, z * 0.45);
+                tree.blob(x * 0.55, y + 0.2, z * 0.55, 1.1 + r * 0.12, 0.9, 1.1 + r * 0.12, 0.45, shape.density);
+                tree.blob(x, y - 0.6, z, 1 + r * 0.08, 0.9, 1 + r * 0.08, 0.4, shape.density);
+            }
+        }
+        tree.disk(0, top - 1, 0, 1, 0.3);
+        tree.leaf(0, top, 0);
+
+    },
+
+    // Namorzyn: pień stoi na łukach korzeni podporowych (w wodzie albo
+    // w błocie), nad nimi gęsta, zaokrąglona korona, spod której zwisają
+    // korzenie powietrzne.
+    mangrove(tree, size, shape) {
+
+        const { height, radius, crownBase } = treeVisualDimensions(tree.species, size);
+        const random = tree.random, top = height - 1;
+        const roots = treeRootsType(tree.species);
+        tree.trunk(0, 0, 0, crownBase + 1);
+        const arcs = 5 + Math.floor(random() * 3) + Math.round(size * 2);
+        const phase = random() * Math.PI * 2;
+        for (let i = 0; i < arcs; i++) {
+            const angle = phase + i * Math.PI * 2 / arcs + (random() - 0.5) * 0.5;
+            const reach = 1.6 + random() * 1.6 + size;
+            const from = crownBase - 2 + (random() < 0.5 ? 1 : 0);
+            const steps = Math.ceil(Math.max(reach, from)) * 2;
+            let ex = 0, ez = 0;
+            for (let s = 1; s <= steps; s++) {
+                const u = s / steps;
+                const x = Math.round(Math.cos(angle) * reach * u), z = Math.round(Math.sin(angle) * reach * u);
+                if (x === 0 && z === 0) continue;
+                tree.leaf(x, from * (1 - u * u), z, roots);
+                ex = x;
+                ez = z;
+            }
+            // Koniec łuku stoi na ziemi i schodzi do gruntu jak pień.
+            if (ex || ez) tree.roots.push([ex, ez, roots]);
+        }
+        const tall = top - crownBase, cy = crownBase + tall * 0.5;
+        tree.blob(0, cy, 0, radius * 0.78, tall * 0.5, radius * 0.78, 0.66, shape.density);
+        const lobes = 4 + Math.floor(random() * 2);
+        for (let i = 0; i < lobes; i++) {
+            const angle = phase + 0.4 + i * Math.PI * 2 / lobes + (random() - 0.5) * 0.4;
+            const x = Math.cos(angle) * radius * 0.42, z = Math.sin(angle) * radius * 0.42;
+            const y = cy - tall * 0.1 + (random() - 0.5);
+            tree.branch(0, crownBase, 0, x * 0.6, y - 0.5, z * 0.6);
+            tree.blob(x, y, z, radius * 0.56, tall * 0.36, radius * 0.56, 0.66, shape.density);
+        }
+        tree.leaf(0, top, 0);
+        hangingRoots(tree, roots, 3 + Math.round(size * 4), radius * 0.35, radius * 0.8, crownBase - 1, top, 3, 1);
+
+    },
+
+    // Puchowiec (kapok): olbrzym lasu deszczowego - prosty, gruby pień
+    // z wysokimi przyporami korzeni i parasol z poziomych pięter konarów
+    // dopiero na samej górze, ponad innymi drzewami.
+    kapok(tree, size, shape) {
+
+        const { height, radius, trunkWidth, crownBase } = treeVisualDimensions(tree.species, size);
+        const random = tree.random, top = height - 1;
+        const low = trunkWidth === 3 ? -1 : 0, high = low + trunkWidth - 1, centre = (low + high) / 2;
+        for (let x = low; x <= high; x++) for (let z = low; z <= high; z++) {
+            const corner = trunkWidth === 3 && x !== 0 && z !== 0;
+            tree.trunk(x, z, 0, corner ? Math.round(height * 0.45) : crownBase + 2);
+        }
+        const finHeight = Math.round(lerp(4, 8, size));
+        const sides = [[1, 0], [-1, 0], [0, 1], [0, -1], ...(size > 0.45 ? [[1, 1], [-1, -1], [1, -1], [-1, 1]] : [])];
+        for (const [dx, dz] of sides) {
+            const diagonal = dx !== 0 && dz !== 0;
+            const length = (diagonal ? 1 : 2) + Math.floor(random() * 2) + (size > 0.5 ? 1 : 0);
+            for (let d = 1; d <= length; d++) {
+                const x = (dx > 0 ? high : dx < 0 ? low : Math.round(centre)) + dx * d;
+                const z = (dz > 0 ? high : dz < 0 ? low : Math.round(centre)) + dz * d;
+                tree.trunk(x, z, 0, Math.max(0, Math.round(finHeight * (diagonal ? 0.6 : 1) * (1 - d / (length + 1)) ** 1.3)));
+            }
+        }
+        const phase = random() * Math.PI * 2;
+        const levels = [[crownBase + 1, 0.9], [crownBase + (top - crownBase) * 0.5, 1], [top - 2.5, 0.6]];
+        for (const [index, [y, part]] of levels.entries()) {
+            const r = radius * part;
+            const limbs = 5 + Math.floor(random() * 2) - (index === 2 ? 1 : 0);
+            for (let i = 0; i < limbs; i++) {
+                const angle = phase + index * 0.7 + i * Math.PI * 2 / limbs + (random() - 0.5) * 0.3;
+                const reach = r * (0.55 + random() * 0.1);
+                const x = centre + Math.cos(angle) * reach, z = centre + Math.sin(angle) * reach;
+                const mx = centre + Math.cos(angle) * reach * 0.55, mz = centre + Math.sin(angle) * reach * 0.55;
+                tree.branch(centre, y - 2, centre, mx, y - 0.5, mz);
+                tree.branch(mx, y - 0.5, mz, x, y, z);
+                tree.blob(x, y + 0.6, z, r * 0.42, 1.6, r * 0.42, 0.62, shape.density);
+            }
+        }
+        tree.blob(centre, top - 1.6, centre, radius * 0.42, 1.6, radius * 0.42, 0.62, shape.density);
+        tree.leaf(Math.round(centre), top, Math.round(centre));
+
+    },
+
+    // Drzewo Jozuego (jukka): niski pień rozwidla się kilka razy, każda
+    // gałąź kończy się kolczastą rozetą liści; pod rozetami pień okrywają
+    // suche liście (kosmata kora).
+    joshua_tree(tree, size, shape) {
+
+        const { height, radius, crownBase } = treeVisualDimensions(tree.species, size);
+        const random = tree.random, top = height - 1;
+        const shaggy = treeLogType(tree.species, 'shaggy');
+        tree.trunk(0, 0, 0, crownBase);
+        const tips = [];
+        const grow = (x, y, z, angle, depth) => {
+            const out = 1.4 + random() * 1.4;
+            let nx = x + Math.cos(angle) * out, nz = z + Math.sin(angle) * out;
+            const ny = Math.min(top - 2, y + 2 + Math.floor(random() * 2));
+            const far = Math.hypot(nx, nz), limit = Math.max(1, radius - 1.4);
+            if (far > limit) {
+                nx *= limit / far;
+                nz *= limit / far;
+            }
+            tree.branch(x, y, z, nx, ny, nz, shaggy);
+            if (depth <= 0 || ny >= top - 2 || random() < 0.2) {
+                tips.push([nx, ny, nz]);
+                return;
+            }
+            const forks = random() < 0.35 ? 3 : 2;
+            const turn = random() * Math.PI * 2;
+            for (let k = 0; k < forks; k++) grow(nx, ny, nz, turn + k * Math.PI * 2 / forks + (random() - 0.5) * 0.6, depth - 1);
+        };
+        const arms = 2 + Math.floor(random() * 2) + (size > 0.6 ? 1 : 0);
+        const phase = random() * Math.PI * 2;
+        for (let i = 0; i < arms; i++) {
+            grow(0, crownBase, 0, phase + i * Math.PI * 2 / arms + (random() - 0.5) * 0.5, 1 + Math.round(size * 1.4));
+        }
+        // Najwyższa gałąź sięga pełnej wysokości drzewa.
+        const highest = tips.reduce((best, tip) => tip[1] > best[1] ? tip : best, tips[0]);
+        if (highest[1] < top - 2) {
+            tree.branch(highest[0], highest[1], highest[2], highest[0], top - 2, highest[2], shaggy);
+            highest[1] = top - 2;
+        }
+        for (const [x, y, z] of tips) tree.blob(x, y + 1, z, 1.5, 1.4, 1.5, 0.7, shape.density);
+        tree.leaf(highest[0], top, highest[2]);
+
+    },
+
+    // Osika: smukły, jasny pień (u starych drzew przy ziemi ciemna,
+    // spękana kora), wysoko osadzona, wąska i ażurowa korona.
+    aspen(tree, size, shape) {
+
+        const { height, radius, crownBase } = treeVisualDimensions(tree.species, size);
+        const random = tree.random, top = height - 1;
+        const baseHeight = size > 0.35 ? 1 + Math.round(size * 2) : 0;
+        if (baseHeight > 0) tree.trunk(0, 0, 0, baseHeight - 1, treeLogType(tree.species, 'base'));
+        for (let y = baseHeight; y <= top - 2; y++) tree.log(0, y, 0);
+        if (baseHeight === 0) tree.roots.push([0, 0, tree.parts.log]);
+        const tall = top - crownBase, middle = crownBase + tall * 0.5;
+        tree.blob(0, middle, 0, radius * 0.92, tall * 0.52, radius * 0.92, 0.55, shape.density);
+        const lobes = 5 + Math.floor(random() * 3);
+        const phase = random() * Math.PI * 2;
+        for (let i = 0; i < lobes; i++) {
+            const angle = phase + i * Math.PI * 2 / lobes + (random() - 0.5) * 0.5;
+            const x = Math.cos(angle) * radius * 0.45, z = Math.sin(angle) * radius * 0.45;
+            const y = crownBase + tall * (0.2 + 0.6 * (i + random()) / lobes);
+            tree.branch(0, y - 1, 0, x * 0.7, y, z * 0.7);
+            tree.blob(x, y, z, radius * 0.6, Math.max(1.6, tall * 0.24), radius * 0.6, 0.5, shape.density);
+        }
+        tree.blob(0, top - 1.5, 0, Math.max(1.3, radius * 0.45), 1.6, Math.max(1.3, radius * 0.45), 0.55, shape.density);
+        tree.leaf(0, top, 0);
+
+    },
+
+    // Araukaria chilijska: prosty jak słup pień, długo goły; na górze
+    // parasol z okółków długich konarów - od spodu gołych, na końcach
+    // zadartych do góry i okrytych łuskowatym igliwiem jak liny.
+    araucaria(tree, size, shape) {
+
+        const { height, radius, trunkWidth, crownBase } = treeVisualDimensions(tree.species, size);
+        const random = tree.random, top = height - 1, c = trunkWidth === 2 ? 0.5 : 0;
+        tree.trunk(0, 0, 0, top - 1);
+        if (trunkWidth === 2) {
+            for (const [x, z] of [[1, 0], [0, 1], [1, 1]]) tree.trunk(x, z, 0, Math.round(height * 0.6));
+        }
+        const tiers = Math.max(4, Math.round((top - crownBase) / 2.5));
+        const phase = random() * Math.PI * 2;
+        for (let tier = 0; tier < tiers; tier++) {
+            const t = tier / (tiers - 1);
+            const y = Math.round(lerp(crownBase, top - 2, t));
+            const r = radius * (t < 0.3 ? 0.8 + t * 0.67 : 1 - (t - 0.3));
+            const limbs = 5 + (r > 5 ? 1 : 0);
+            for (let i = 0; i < limbs; i++) {
+                const angle = phase + tier * 0.63 + i * Math.PI * 2 / limbs + (random() - 0.5) * 0.2;
+                const length = Math.max(1.5, r * (0.85 + random() * 0.15));
+                const steps = Math.ceil(length);
+                for (let s = 1; s <= steps; s++) {
+                    const u = s / steps, d = length * u;
+                    const x = c + Math.cos(angle) * d, z = c + Math.sin(angle) * d;
+                    const rise = u > 0.6 ? Math.round((u - 0.6) * 4) : 0;
+                    if (u <= 0.5) {
+                        tree.log(x, y, z);
+                        if (random() < shape.density) tree.leaf(x, y + 1, z);
+                    }
+                    else {
+                        tree.leaf(x, Math.min(top, y + rise), z);
+                        if (s === steps) tree.leaf(x, Math.min(top, y + rise + 1), z);
+                    }
+                }
+            }
+        }
+        tree.blob(c, top - 1, c, 1.6, 1.4, 1.6, 0.7, shape.density);
+        tree.leaf(0, top, 0);
+
+    },
+
+    // Figowiec bengalski (banian): pień zrośnięty z kilku, długie poziome
+    // konary podparte słupami korzeni, które urosły aż do ziemi, i bardzo
+    // szeroka, niska kopuła liści z zasłoną wiszących korzeni powietrznych.
+    banyan(tree, size, shape) {
+
+        const { height, radius, trunkWidth, crownBase } = treeVisualDimensions(tree.species, size);
+        const random = tree.random, top = height - 1;
+        const roots = treeRootsType(tree.species);
+        const low = -1, high = trunkWidth === 3 ? 1 : 0;
+        for (let x = low; x <= high; x++) for (let z = low; z <= high; z++) {
+            const corner = (x === low || x === high) && (z === low || z === high) && !(x === 0 && z === 0);
+            tree.trunk(x, z, 0, corner && random() < 0.4 ? Math.max(1, crownBase - 2) : crownBase + 1);
+        }
+        const limbs = 6 + Math.floor(random() * 3);
+        const phase = random() * Math.PI * 2;
+        const tall = top - crownBase, cy = crownBase + tall * 0.5;
+        for (let i = 0; i < limbs; i++) {
+            const angle = phase + i * Math.PI * 2 / limbs + (random() - 0.5) * 0.3;
+            const reach = radius * (0.55 + random() * 0.1);
+            const x = Math.cos(angle) * reach, z = Math.sin(angle) * reach;
+            const y = crownBase + 1 + Math.floor(random() * 2);
+            tree.branch(0, crownBase, 0, x * 0.5, y, z * 0.5);
+            tree.branch(0, crownBase + 1, 0, x * 0.4, y + 1, z * 0.4);
+            tree.branch(x * 0.5, y, z * 0.5, x, y + 1, z);
+            tree.blob(x, cy, z, radius * 0.38, tall * 0.4, radius * 0.38, 0.64, shape.density);
+            tree.blob(x * 0.55, cy + 0.4, z * 0.55, radius * 0.36, tall * 0.42, radius * 0.36, 0.64, shape.density);
+            if (random() < 0.75) {
+                const u = 0.55 + random() * 0.35;
+                const px = Math.round(x * u), pz = Math.round(z * u);
+                tree.trunk(px, pz, 0, Math.round(y + (u - 0.5) * 2));
+                if (random() < 0.4) tree.trunk(px + (random() < 0.5 ? 1 : -1), pz, 0, 1 + Math.floor(random() * 3));
+            }
+        }
+        tree.blob(0, cy + tall * 0.08, 0, radius * 0.5, tall * 0.42, radius * 0.5, 0.64, shape.density);
+        tree.leaf(0, top, 0);
+        hangingRoots(tree, roots, Math.round(10 + size * 14), radius * 0.2, radius * 0.9, crownBase - 1, top, 5, 2);
+
+    },
+
+    // Dracena cynobrowa (smocze drzewo): gładki, gruby pień, z którego jak
+    // szprychy rozchodzi się gęsta sieć gałęzi, a na nich płaski od góry
+    // i gęsty parasol - odwrócona miska.
+    dragon_tree(tree, size) {
+
+        const { height, radius, trunkWidth, crownBase } = treeVisualDimensions(tree.species, size);
+        const random = tree.random, top = height - 1, c = trunkWidth === 2 ? 0.5 : 0;
+        tree.trunk(0, 0, 0, crownBase);
+        if (trunkWidth === 2) {
+            for (const [x, z] of [[1, 0], [0, 1], [1, 1]]) tree.trunk(x, z, 0, crownBase - 1);
+        }
+        const cap = top - 2;
+        const limbs = 8 + Math.floor(random() * 4);
+        const phase = random() * Math.PI * 2;
+        for (let i = 0; i < limbs; i++) {
+            const angle = phase + i * Math.PI * 2 / limbs + (random() - 0.5) * 0.3;
+            const reach = radius * (0.5 + random() * 0.3);
+            tree.branch(c, crownBase, c, c + Math.cos(angle) * reach, cap, c + Math.sin(angle) * reach);
+        }
+        tree.disk(c, cap, c, radius, 0.25);
+        tree.disk(c, cap + 1, c, radius * 0.92, 0.12);
+        tree.disk(c, top, c, radius * 0.62, 0.2);
+        tree.leaf(0, top, 0);
+
+    },
+
+    // Cedr libański: gruby pień i potężne poziome konary, na których leżą
+    // szerokie, płaskie talerze igliwia - piętra z prześwitami, czubek
+    // płaski jak stół.
+    cedar(tree, size, shape) {
+
+        const { height, radius, trunkWidth, crownBase } = treeVisualDimensions(tree.species, size);
+        const random = tree.random, top = height - 1, c = trunkWidth === 2 ? 0.5 : 0;
+        tree.trunk(0, 0, 0, top - 2);
+        if (trunkWidth === 2) {
+            for (const [x, z] of [[1, 0], [0, 1], [1, 1]]) tree.trunk(x, z, 0, Math.round(height * 0.7));
+        }
+        const tiers = Math.max(3, Math.round((top - crownBase) / 5));
+        const phase = random() * Math.PI * 2;
+        for (let tier = 0; tier < tiers; tier++) {
+            const t = tier / (tiers - 1);
+            const y = Math.round(lerp(crownBase, top - 4, t));
+            const r = radius * (1 - 0.45 * t ** 1.3);
+            const limbs = 3 + (tier % 2);
+            tree.blob(c, y + 0.6, c, Math.max(1.6, r * 0.3), 0.9, Math.max(1.6, r * 0.3), 0.7, shape.density);
+            for (let i = 0; i < limbs; i++) {
+                const angle = phase + tier * 1.3 + i * Math.PI * 2 / limbs + (random() - 0.5) * 0.4;
+                const reach = r * (0.6 + random() * 0.1);
+                const x = Math.cos(angle) * reach, z = Math.sin(angle) * reach;
+                tree.branch(c, y - 1, c, c + x * 0.5, y, c + z * 0.5);
+                tree.branch(c + x * 0.5, y, c + z * 0.5, c + x, y, c + z);
+                tree.blob(c + x, y + 0.7, c + z, r * 0.42, 0.9, r * 0.42, 0.7, shape.density);
+                tree.blob(c + x * 0.5, y + 0.7, c + z * 0.5, r * 0.34, 0.9, r * 0.34, 0.7, shape.density);
+            }
+        }
+        tree.disk(c, top - 1, c, Math.max(2.5, radius * 0.5), 0.3);
+        tree.disk(c, top, c, Math.max(2, radius * 0.42), 0.3);
+        tree.leaf(0, top, 0);
+
+    },
+
+    // Sosna oścista (długowieczna): niska, pokręcona, w większej części
+    // martwa - wybielone, gołe drewno z jednym pasem żywej kory, sterczące
+    // suche konary i kilka kęp igliwia po zawietrznej stronie.
+    bristlecone(tree, size, shape) {
+
+        const { height, radius, trunkWidth, crownBase } = treeVisualDimensions(tree.species, size);
+        const random = tree.random, top = height - 1;
+        const dead = treeLogType(tree.species, 'dead');
+        const lean = random() * Math.PI * 2, lx = Math.cos(lean), lz = Math.sin(lean);
+        const side = Math.abs(lx) > Math.abs(lz) ? [Math.sign(lx), 0] : [0, Math.sign(lz)];
+        tree.trunk(0, 0, 0, crownBase);
+        tree.trunk(-side[0], -side[1], 0, Math.max(1, crownBase - 1), dead);
+        if (trunkWidth === 2) {
+            tree.trunk(side[1], side[0], 0, Math.max(1, crownBase - 2), dead);
+            tree.trunk(side[1] - side[0], side[0] - side[1], 0, 1, dead);
+        }
+        // Martwy wierzchołek i suche konary.
+        tree.branch(-side[0], crownBase - 1, -side[1], -lx * 1.6, top, -lz * 1.6, dead);
+        const snags = 1 + Math.floor(random() * 2);
+        for (let i = 0; i < snags; i++) {
+            const angle = lean + Math.PI + (i ? 1.3 : -1.1) + (random() - 0.5) * 0.6;
+            const length = radius * (0.45 + random() * 0.3);
+            tree.branch(0, crownBase - i, 0, Math.cos(angle) * length, Math.min(top - 1, crownBase + 1 + Math.floor(random() * 3)), Math.sin(angle) * length, dead);
+        }
+        // Żywe gałęzie z kępami igliwia.
+        const live = 2 + Math.floor(random() * 2);
+        for (let i = 0; i < live; i++) {
+            const angle = lean + (i - (live - 1) / 2) * 0.9 + (random() - 0.5) * 0.3;
+            const reach = radius * (0.5 + random() * 0.25);
+            const x = Math.cos(angle) * reach, z = Math.sin(angle) * reach;
+            const y = Math.min(top - 2, crownBase + (i % 2) + Math.floor(random() * 2));
+            tree.branch(0, crownBase - 1, 0, x * 0.6, y, z * 0.6);
+            tree.branch(x * 0.6, y, z * 0.6, x, y, z);
+            tree.blob(x, y + 0.8, z, radius * 0.42, 1.3, radius * 0.42, 0.6, shape.density);
+            tree.blob(x * 0.55, y + 1, z * 0.55, radius * 0.36, 1.2, radius * 0.36, 0.6, shape.density);
+        }
+        tree.blob(lx, Math.min(top - 1.5, crownBase + 1.5), lz, Math.max(1.4, radius * 0.38), 1.4, Math.max(1.4, radius * 0.38), 0.6, shape.density);
 
     },
 

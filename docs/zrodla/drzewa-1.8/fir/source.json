@@ -1,0 +1,78 @@
+{
+  "sourceArchive": "DOC-20261115-WA0023.zip (drzewa_od_jodly)",
+  "sourceFolder": "01_fir",
+  "suppliedBy": "Kamil",
+  "importDate": "2026-11-15",
+  "note": "Oryginalne piksele RGBA skopiowane do drzewa.png bez skalowania i zmian kolorów. Paczka zawiera podglądy sylwetek, bez geometrii; drzewa w grze powstają proceduralnie w skali 1 blok = 1 metr.",
+  "scientificReference": "Abies alba",
+  "originalFiles": {
+    "log_side.png": {
+      "sha256": "5d8318a21d55be94298a36a02685f06e92570d70d018713cfdf5844844b84411",
+      "bytes": 383,
+      "rgbaSha256": "dd8a2a966f0c5251a5e3d6813b0029985402b085511978f7bd601c8eaf06b4fd",
+      "width": 16,
+      "height": 16
+    },
+    "log_top.png": {
+      "sha256": "ba79f989ec7fbd50fd8cd8e5072c7047e926d31c5339ef6fada3a14dc11df39d",
+      "bytes": 370,
+      "rgbaSha256": "0f839ecbfe015d8cdd3593403c45cf70d0b7e9e629f4f9c3aa65c25e63547262",
+      "width": 16,
+      "height": 16
+    },
+    "planks.png": {
+      "sha256": "66bccbf44eb609761f13f665116ab5c1177b71c8b62a29aceeb2439628fba748",
+      "bytes": 239,
+      "rgbaSha256": "5caee34db247b29a969a8b12a6e25ace031b5c0dc4e6e11c4c4a2716a8d7c6a8",
+      "width": 16,
+      "height": 16
+    },
+    "leaves.png": {
+      "sha256": "b9b983526c61e67655648e31f59e6f0828f9425746fb0a9c0b658982ccb36a10",
+      "bytes": 348,
+      "rgbaSha256": "7cfa5ab9574b9794007a9db9d78edb8a7de656c9f453d89faf1b73a015ea76a4",
+      "width": 16,
+      "height": 16
+    },
+    "leaves_variant.png": {
+      "sha256": "32d3ffead61371332025cbdd2d4914cfbd12b4c4a3e1072a8b691a0371533c1b",
+      "bytes": 439,
+      "rgbaSha256": "08c7232052bb258c9ba0ab00d0c0180240da1af5990b49f8f0867b00e3685dbd",
+      "width": 16,
+      "height": 16
+    }
+  },
+  "generator": "tools/tekstury_drzew_180.py; tools/modele_roslin.py; tools/tekstury_kory.py",
+  "derivedRegions": {
+    "fir/stripped_side.png": {
+      "rgbaSha256": "3c22d7d171effe062914845c0ea43651a3fc5892a181df84dc4c865a8df02c54",
+      "width": 16,
+      "height": 16
+    },
+    "fir/stripped_top.png": {
+      "rgbaSha256": "5484cb0011d9521e317d2c323d20ccf8afaadf8c01c31ae783271584313fd416",
+      "width": 16,
+      "height": 16
+    },
+    "fir/sapling.png": {
+      "rgbaSha256": "746bcc3c0d4c79439430d2eccbb6fb9e6a67e1b7e04b0599cf1cd3e31513a3ab",
+      "width": 16,
+      "height": 16
+    },
+    "campfire_fir": {
+      "rgbaSha256": "8f42eef0851d56270dec9336c84020396d9d20fe2786548514f1b67163a5b79d",
+      "width": 32,
+      "height": 32
+    },
+    "models/rosliny/sadzonka-jodla/polrealistyczny": {
+      "rgbaSha256": "0d7571a8023022e2856188a9e8c2608c684291c01b3ae289bf6d0fce766e2b2b",
+      "width": 16,
+      "height": 16
+    },
+    "fir_bark": {
+      "rgbaSha256": "2660eeaad1003ee5ff0a1d3abc13cacc4fb59b3975d30b1799776d8c922c3b5f",
+      "width": 16,
+      "height": 16
+    }
+  }
+}

@@ -142,7 +142,8 @@ for (const [index, name] of species.entries()) {
 // merely calling catalogSpecies with an invented climate would miss conflicts.
 const natural = new RealisticGenerator(42);
 for (const [name, gx, gz, x, y, z] of [
-    ['acacia', 215, 137, 862, 51, 550],
+    // 1.8.0: dawne miejsce akacji (215, 137) leży teraz w półpustyni.
+    ['acacia', 224, 125, 896, 53, 500],
     ['bald_cypress', 311, -70, 1247, 58, -280],
     ['cherry', 344, -400, 1379, 58, -1597]
 ]) {

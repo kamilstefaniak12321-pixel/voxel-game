@@ -1,0 +1,78 @@
+{
+  "sourceArchive": "DOC-20261115-WA0023.zip (drzewa_od_jodly)",
+  "sourceFolder": "09_araucaria",
+  "suppliedBy": "Kamil",
+  "importDate": "2026-11-15",
+  "note": "Oryginalne piksele RGBA skopiowane do drzewa.png bez skalowania i zmian kolorów. Paczka zawiera podglądy sylwetek, bez geometrii; drzewa w grze powstają proceduralnie w skali 1 blok = 1 metr.",
+  "scientificReference": "Araucaria araucana",
+  "originalFiles": {
+    "log_side.png": {
+      "sha256": "bb2e894f9de6ac5c6afe766409448f4772b57e1e84f993c434c01961f60c8360",
+      "bytes": 316,
+      "rgbaSha256": "f138673d7e68073cf943019a89bd16dcbc9f90add6df5b3ee6f22f2e70919e73",
+      "width": 16,
+      "height": 16
+    },
+    "log_top.png": {
+      "sha256": "dd4ee54cc331114be59cb5ba0febf98371e4cd059e14b016b1ab0d2833dded32",
+      "bytes": 359,
+      "rgbaSha256": "f2dda52f4057aa4497c1ffa948a295869d5dcae7f58b4f2bf08054ee7dc30a9a",
+      "width": 16,
+      "height": 16
+    },
+    "planks.png": {
+      "sha256": "966711ecbe7ca567dc1c3611e8ffcad46b35c064eb94b3fd1dd91bed02657974",
+      "bytes": 268,
+      "rgbaSha256": "bc6d3da01dfb94e02a883ca7a251613d2bfbc3fc08a5541b2872605477778b1c",
+      "width": 16,
+      "height": 16
+    },
+    "leaves.png": {
+      "sha256": "39829ed6c9b5dee937ec5d30f61ecc4ebd7fec1e7f715053059f03a5ac039452",
+      "bytes": 239,
+      "rgbaSha256": "d4024b665d7a659f2035f498e0bd001ba09f96873d1f12d6d703b3d069e458e9",
+      "width": 16,
+      "height": 16
+    },
+    "leaves_variant.png": {
+      "sha256": "42b6aafec635af082647f9ad2e5bb9c93fde0f178cbd3cf6ce99f443f38493ed",
+      "bytes": 354,
+      "rgbaSha256": "35d8b0d52ed7566bc6a56912d0efa43ca5c44799e68aa7bb65b251b9e3e62785",
+      "width": 16,
+      "height": 16
+    }
+  },
+  "generator": "tools/tekstury_drzew_180.py; tools/modele_roslin.py; tools/tekstury_kory.py",
+  "derivedRegions": {
+    "araucaria/stripped_side.png": {
+      "rgbaSha256": "9ca1f750947dbb261286a5089bb7b48ee568266f2f926991aa297f5109491ea3",
+      "width": 16,
+      "height": 16
+    },
+    "araucaria/stripped_top.png": {
+      "rgbaSha256": "3c9f3fa57028ba7f7e30c69fef7c111bdce5108aec3f04474d0d4efaffadae32",
+      "width": 16,
+      "height": 16
+    },
+    "araucaria/sapling.png": {
+      "rgbaSha256": "796adbf4c151c732ea1e8b654487e673d4004973228649686869b81041b297b8",
+      "width": 16,
+      "height": 16
+    },
+    "campfire_araucaria": {
+      "rgbaSha256": "857703febc7930cc380e4fb8f26e2ffbf6ce6ff32491f3a095c26ccedb18087e",
+      "width": 32,
+      "height": 32
+    },
+    "models/rosliny/sadzonka-araukaria/polrealistyczny": {
+      "rgbaSha256": "31d79c60a5f1017c16fd3df97847c856a92361d67d09ed085254838b8d146f1d",
+      "width": 16,
+      "height": 16
+    },
+    "araucaria_bark": {
+      "rgbaSha256": "774ff5e1ca8eeff15e8741c153a78b45e046ce72888902f1b806095747834571",
+      "width": 16,
+      "height": 16
+    }
+  }
+}

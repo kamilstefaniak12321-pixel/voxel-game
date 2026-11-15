@@ -223,8 +223,8 @@ for (const block of Object.keys(B.BARK_SHEETS)) {
 }
 {
     const { TREE_NAMES } = await import('../src/blocks/trees.js');
-    check(TREE_NAMES.length === 19 && TREE_NAMES.every((species) => B.BARK_SHEETS[`${species}_log`] && B.BARK_SHEETS[`${species}_log_stripped`]?.like === `${species}_log`),
-        'Arkusze kory i okorowanego pnia mają wszystkie 19 drzew');
+    check(TREE_NAMES.length === 32 && TREE_NAMES.every((species) => B.BARK_SHEETS[`${species}_log`] && B.BARK_SHEETS[`${species}_log_stripped`]?.like === `${species}_log`),
+        'Arkusze kory i okorowanego pnia mają wszystkie 32 drzewa');
 }
 
 // Sosna: górna kora też z arkusza i z tym samym losowaniem co dolna, ale
@@ -266,8 +266,12 @@ for (const block of Object.keys(B.BARK_SHEETS)) {
     check(overlap === null, `Arkusze nie nachodzą na inne kafelki atlasu (${overlap})`);
     const columns = Math.max(...Object.values(WORLD_ATLAS_TILES).map((tile) => tile.x + (tile.w ?? 1)));
     const rows = Math.max(...Object.values(WORLD_ATLAS_TILES).map((tile) => tile.y + (tile.h ?? 1)));
-    check(columns <= 64 && rows <= 64, `Atlas mieści się w 64 x 64 kratkach (jest ${columns} x ${rows}) - 1024 x 1024 pikseli`);
-    check(Object.values(B.BARK_SHEETS).every((sheet) => WORLD_ATLAS_TILES[sheet.texture].x >= 16), 'Arkusze leżą na prawo od zwykłych kafelków');
+    // 1.8.0: arkusze 13 kolejnych drzew nie mieszczą się już obok zwykłych
+    // kafelków - atlas urósł w dół (1024 x 1536 pikseli; każda karta z WebGL 2
+    // przyjmuje co najmniej 4096).
+    check(columns <= 64 && rows <= 128, `Atlas mieści się w 64 x 128 kratkach (jest ${columns} x ${rows}) - najwyżej 1024 x 2048 pikseli`);
+    check(Object.values(B.BARK_SHEETS).every((sheet) => WORLD_ATLAS_TILES[sheet.texture].x >= 16 || WORLD_ATLAS_TILES[sheet.texture].y >= 64),
+        'Arkusze leżą na prawo od zwykłych kafelków albo pod nimi');
 }
 
 check(JSON.stringify([...trunk('oak_log').attributes.uv.array]) === JSON.stringify([...oak.attributes.uv.array]), 'Ten sam pień - ta sama kora');

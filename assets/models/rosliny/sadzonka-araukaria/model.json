@@ -1,0 +1,53 @@
+{
+    "nazwa": "Sadzonka araukarii",
+    "bloki": [
+        "araucaria_sapling"
+    ],
+    "kolory": {
+        "lisc": "#2e5e1e",
+        "liscJasny": "#467a2a",
+        "liscCiemny": "#1c4014",
+        "lodyga": "#5e5a50"
+    },
+    "etapy": [
+        {
+            "prosty": null,
+            "polrealistyczny": {
+                "liscie": {
+                    "uklad": "kopula",
+                    "ile": 12,
+                    "dlugosc": 5,
+                    "promien": 3,
+                    "kopula": 12,
+                    "nachylenie": 70,
+                    "pien": true
+                }
+            },
+            "szczegolowy": {
+                "rodzaj": "kepka",
+                "liscie": {
+                    "uklad": "brak"
+                },
+                "lodygi": {
+                    "ile": [
+                        1,
+                        1
+                    ],
+                    "wysokosc": [
+                        11,
+                        13
+                    ],
+                    "promien": 0,
+                    "liscie": {
+                        "okolek": 4,
+                        "co": 1,
+                        "dlugosc": [
+                            2,
+                            4
+                        ]
+                    }
+                }
+            }
+        }
+    ]
+}

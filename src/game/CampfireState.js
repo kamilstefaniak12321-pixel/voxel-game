@@ -23,7 +23,13 @@ export const FIRE_WOODS = {
     acacia: ['akacja', 'akacja'], bald_cypress: ['cypryśnik', 'cyprysnik'], cherry: ['wiśnia', 'wisnia'],
     maple: ['klon', 'klon'], mugo: ['kosodrzewina', 'kosodrzewina'], olive: ['oliwka', 'oliwka'],
     rainbow_eucalyptus: ['eukaliptus', 'eukaliptus'], sequoia: ['sekwoja', 'sekwoja'],
-    ginkgo: ['miłorząb', 'milorzab'], jacaranda: ['jakaranda', 'jakaranda']
+    ginkgo: ['miłorząb', 'milorzab'], jacaranda: ['jakaranda', 'jakaranda'],
+    // 1.8.0
+    fir: ['jodła', 'jodla'], baobab: ['baobab', 'baobab'], coconut_palm: ['palma kokosowa', 'palma'],
+    larch: ['modrzew', 'modrzew'], mangrove: ['namorzyn', 'namorzyn'], kapok: ['puchowiec', 'puchowiec'],
+    joshua_tree: ['jukka', 'jukka'], aspen: ['osika', 'osika'], araucaria: ['araukaria', 'araukaria'],
+    banyan: ['figowiec', 'figowiec'], dragon_tree: ['dracena', 'dracena'], cedar: ['cedr', 'cedr'],
+    bristlecone: ['sosna oścista', 'oscista']
 };
 export const fuelType = wood => `${wood}_firewood`;
 export const fuelWood = type => Object.keys(FIRE_WOODS).find(wood => fuelType(wood) === type) ?? null;

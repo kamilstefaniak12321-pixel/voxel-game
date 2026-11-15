@@ -26,6 +26,19 @@ import { atmosphericLightToBrightness } from './LightPolicy.js';
 // sekundę. Wszystko w jednym rysowaniu (CubeParticles).
 // ------------------------------------------------------------
 
+// Korzenie namorzynu i figowca to ażurowe bloki jak liście, ale liści
+// nie gubią (1.8.0).
+const rootsCache = new Map();
+
+function isRootsId(id) {
+    let roots = rootsCache.get(id);
+    if (roots === undefined) {
+        roots = getBlockDefinition(getBlockTypeById(id))?.part === 'roots';
+        rootsCache.set(id, roots);
+    }
+    return roots;
+}
+
 export const TREE_PARTICLE_RADIUS = 28;
 export const LEAF_SECONDS = 40;
 export const FRUIT_SECONDS = 75;
@@ -118,6 +131,10 @@ const SPECIES_SPRITES = {
     mugo: ['igly', 'galazka'], sequoia: ['galazka', 'igly'],
     maple: ['klon'], cherry: ['platek', 'okragly'],
     ginkgo: ['wachlarz'], jacaranda: ['platek', 'waski'],
+    // 1.8.0
+    fir: ['igly', 'galazka'], larch: ['igly'], araucaria: ['galazka'], cedar: ['igly', 'galazka'], bristlecone: ['igly'],
+    coconut_palm: ['waski'], joshua_tree: ['waski'], dragon_tree: ['waski'], kapok: ['waski', 'owalny'],
+    mangrove: ['owalny'], banyan: ['owalny'], baobab: ['owalny', 'okragly'], aspen: ['okragly'],
     olive: ['waski'], wierzba: ['waski'], rainbow_eucalyptus: ['waski', 'owalny'], acacia: ['waski', 'okragly'],
     birch: ['okragly', 'owalny'], linden: ['okragly', 'owalny']
 };
@@ -254,7 +271,7 @@ export class TreeParticles {
 
                 const id = blocks[layer + i];
 
-                if (!id || !isLeavesId(id)) continue;
+                if (!id || !isLeavesId(id) || isRootsId(id)) continue;
 
                 const below = blocks[layer - LAYER + i];
 

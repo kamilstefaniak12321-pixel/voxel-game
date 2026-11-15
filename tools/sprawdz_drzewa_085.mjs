@@ -42,7 +42,8 @@ const check = (condition, message) => { assert.ok(condition, message); checks++;
 const canonical = value => Array.isArray(value) ? value.map(canonical) : value && typeof value === 'object'
     ? Object.fromEntries(Object.keys(value).sort().map(key => [key, canonical(value[key])])) : value;
 
-equal(TREE_NAMES, [...baseline.species, 'ginkgo', 'jacaranda'], 'Nineteen species, append-only stable catalogue');
+// 1.8.0 appended thirteen more species after these nineteen.
+equal(TREE_NAMES.slice(0, 19), [...baseline.species, 'ginkgo', 'jacaranda'], 'First nineteen species, append-only stable catalogue');
 equal(manifest.tileSize, baseline.tileSize, 'Same tile size');
 // 1.7.1: bark sheets sit to the right of the original 16 columns.
 check(manifest.columns >= baseline.columns && manifest.columns <= 64, 'Original columns kept; atlas only grows to the right');

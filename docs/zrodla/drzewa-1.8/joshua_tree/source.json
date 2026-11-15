@@ -1,0 +1,85 @@
+{
+  "sourceArchive": "DOC-20261115-WA0023.zip (drzewa_od_jodly)",
+  "sourceFolder": "07_joshua_tree",
+  "suppliedBy": "Kamil",
+  "importDate": "2026-11-15",
+  "note": "Oryginalne piksele RGBA skopiowane do drzewa.png bez skalowania i zmian kolorów. Paczka zawiera podglądy sylwetek, bez geometrii; drzewa w grze powstają proceduralnie w skali 1 blok = 1 metr.",
+  "scientificReference": "Yucca brevifolia",
+  "originalFiles": {
+    "log_side.png": {
+      "sha256": "2f80035eacc9fd1c11df2e988687418abd51acfbf1caa4fcb54c6b77327b9b7a",
+      "bytes": 385,
+      "rgbaSha256": "b4a958ae40c47b67ec113c94fde641774d9f2e1ca29f6909c4718c9b216b21e1",
+      "width": 16,
+      "height": 16
+    },
+    "log_top.png": {
+      "sha256": "d20f0dfdbae0fedb33d317fa071e4fe6d988622b60e884094c062039a376cfcf",
+      "bytes": 432,
+      "rgbaSha256": "f8a29a7779ac0dca3e1b783cb1b56f56145bfc358a7e8e7159558eec1c14f2c3",
+      "width": 16,
+      "height": 16
+    },
+    "planks.png": {
+      "sha256": "de4d137f9936f07fecdce12f24baf91f77a34fa273da20100d083f5ba14cc14f",
+      "bytes": 271,
+      "rgbaSha256": "d01bc7be797b1e5e7ae277745e75fcded1365af09b41be3b6bdcbfe82aeb3253",
+      "width": 16,
+      "height": 16
+    },
+    "leaves.png": {
+      "sha256": "8ad72c74f068d0a4fce243de2098e9311c1a6c32da4a1cbeb1d5d0a74261742d",
+      "bytes": 339,
+      "rgbaSha256": "d79b0f9594b1002bea5966e3bf82b252e7f7b217b66c451b706d452eb6816f59",
+      "width": 16,
+      "height": 16
+    },
+    "leaves_variant.png": {
+      "sha256": "bd8b9cae5f5eb511d77564c2ae837eefc9d502da72d4c612e8336c21a1961603",
+      "bytes": 363,
+      "rgbaSha256": "67b94f6ec566f5ac90eb0cd6268d47d08367cc59050f1a0be6b16017ddb2c2eb",
+      "width": 16,
+      "height": 16
+    },
+    "log_side_shaggy.png": {
+      "sha256": "3fe40044b8cb4c0a78d4895a50baaa3d694b7f8056df61c631072f68d635e9ad",
+      "bytes": 280,
+      "rgbaSha256": "288b12aef2680a963bb5d3f2178ded9a597e42c0be3ca0ba9fc8ee003f6cff7d",
+      "width": 16,
+      "height": 16
+    }
+  },
+  "generator": "tools/tekstury_drzew_180.py; tools/modele_roslin.py; tools/tekstury_kory.py",
+  "derivedRegions": {
+    "joshua_tree/stripped_side.png": {
+      "rgbaSha256": "886ec208a85cd880c04085d5e8770f91a347531ce2949391400e9ee58ddec3d6",
+      "width": 16,
+      "height": 16
+    },
+    "joshua_tree/stripped_top.png": {
+      "rgbaSha256": "47f637df78a309a036a226b37c70c770f41e0f27302f2c756a249ec4498ef398",
+      "width": 16,
+      "height": 16
+    },
+    "joshua_tree/sapling.png": {
+      "rgbaSha256": "60ff772992436a706a350becee976760fd8028eadba2b3d84ee8a882b27d6f03",
+      "width": 16,
+      "height": 16
+    },
+    "campfire_joshua_tree": {
+      "rgbaSha256": "81582366f54e01b57db4e15e01aa185e6553546186ff4321d9a8c04b8916c70a",
+      "width": 32,
+      "height": 32
+    },
+    "models/rosliny/sadzonka-jukka/polrealistyczny": {
+      "rgbaSha256": "37d93de71daaec82ecfb1ad2527130d0841e544cc97a6e16eb39c3c5e098b087",
+      "width": 16,
+      "height": 16
+    },
+    "joshua_tree_bark": {
+      "rgbaSha256": "31e67ebd88cd2002a73af2efddd7051d072fe6437601ec37b0a3b6ed96b35ff1",
+      "width": 16,
+      "height": 16
+    }
+  }
+}

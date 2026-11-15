@@ -281,7 +281,7 @@ Przykładowe przepisy (pełna, aktualna lista z obrazkami:
 
 | Wyrób | Z czego |
 |---|---|
-| deski x4 (19 gatunków) | pień tego drzewa (też okorowany) |
+| deski x4 (32 gatunki) | pień tego drzewa (też okorowany) |
 | patyki x4 | 2 deski jedna nad drugą |
 | siekiera / kilof / łopata | skała (kamień, granit, wapień, piaskowiec, łupek, bazalt) i patyk |
 | lampa x2 | lepidolit + żywica + kora brzozowa |
@@ -591,7 +591,11 @@ eukaliptus tęczowy i sekwoja**. Własne sylwetki, rozmiary
 i występowanie opisuje `docs/drzewa.md`. Pięć ostatnich (0.83.0) ma
 własne biomy: klonowy las jesienny, kosodrzewinę w górach, gaj oliwny,
 las eukaliptusowy i las sekwojowy z drzewami do 72 bloków
-([biomy](biomy.md)).
+([biomy](biomy.md)). Od 0.85.0 także **miłorząb i jakaranda**, a od
+1.8.0 trzynaście drzew z dalekich stron: **jodła, baobab, palma
+kokosowa, modrzew, namorzyn, puchowiec, drzewo Jozuego, osika,
+araukaria, banian, smocze drzewo, cedr i sosna oścista** - razem 32
+gatunki - oraz biomy: sawanna, półpustynia, las deszczowy i namorzyny.
 
 - **Bloki** każdego gatunku: pień (`oak_log`), okorowany pień
   (`oak_log_stripped`), deski (`oak_planks`), liście albo igliwie

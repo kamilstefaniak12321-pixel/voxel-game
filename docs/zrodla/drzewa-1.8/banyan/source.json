@@ -1,0 +1,85 @@
+{
+  "sourceArchive": "DOC-20261115-WA0023.zip (drzewa_od_jodly)",
+  "sourceFolder": "10_banyan",
+  "suppliedBy": "Kamil",
+  "importDate": "2026-11-15",
+  "note": "Oryginalne piksele RGBA skopiowane do drzewa.png bez skalowania i zmian kolorów. Paczka zawiera podglądy sylwetek, bez geometrii; drzewa w grze powstają proceduralnie w skali 1 blok = 1 metr.",
+  "scientificReference": "Ficus benghalensis",
+  "originalFiles": {
+    "log_side.png": {
+      "sha256": "2f9395a1e43784723038e4cccd0f34c9767041bd4b063c68c99327b292a8916e",
+      "bytes": 250,
+      "rgbaSha256": "8aafb2faabde707b7302d76214923bf5866dd965110da7391897388b481be767",
+      "width": 16,
+      "height": 16
+    },
+    "log_top.png": {
+      "sha256": "c2a5a4cceced9a9d50a4e6f64c3ab40cd2548f8604deb4db30d52207c3777e27",
+      "bytes": 358,
+      "rgbaSha256": "9bc15350e2f3e6e0b6665099fa7fea52c93d39c69ce1607e722524e1b779d9fd",
+      "width": 16,
+      "height": 16
+    },
+    "planks.png": {
+      "sha256": "a645f1a7375ed10bfd5485654f433eb95fc02e6b3fb71a64a90a2f265d2adabf",
+      "bytes": 278,
+      "rgbaSha256": "672327f433f23d90d923effecb339960c118addc366d43296980de368f11bd49",
+      "width": 16,
+      "height": 16
+    },
+    "leaves.png": {
+      "sha256": "ba80b639c964a0dd44c5b43c9316db4ffee73f9c7e3b1e95090db7a277304947",
+      "bytes": 379,
+      "rgbaSha256": "d62c9bca45b7fb910aecd1e7a2ad29f74e6735baf9f6afaf1c33afc5c8bf8c25",
+      "width": 16,
+      "height": 16
+    },
+    "leaves_variant.png": {
+      "sha256": "3af3f30c08eaa4affe562def480703e947801e5c3b7d7d1048952497dd4de0a4",
+      "bytes": 429,
+      "rgbaSha256": "a84b7cdcd212021be7741497e0762c40ff27a0d35db0775046d60bb05efee8e5",
+      "width": 16,
+      "height": 16
+    },
+    "roots.png": {
+      "sha256": "38407e908ce8f2f5998745d97d35f278d1b285eb5df42fc3b7570585f8d4da06",
+      "bytes": 142,
+      "rgbaSha256": "4dad902948b7a5a1f8532dac11b78ddac7957ea89e0afedc5c323dd2df36642c",
+      "width": 16,
+      "height": 16
+    }
+  },
+  "generator": "tools/tekstury_drzew_180.py; tools/modele_roslin.py; tools/tekstury_kory.py",
+  "derivedRegions": {
+    "banyan/stripped_side.png": {
+      "rgbaSha256": "61498a1d364ccacbebff5b1370dfc62169c149fc41f9739dbc22b4d7d024e27f",
+      "width": 16,
+      "height": 16
+    },
+    "banyan/stripped_top.png": {
+      "rgbaSha256": "2d0457f73727aae86e9dc963e2125831527ac53c598b032f4c2f33c6eb443023",
+      "width": 16,
+      "height": 16
+    },
+    "banyan/sapling.png": {
+      "rgbaSha256": "724697e930bb66f2181565cb9ac31e241bf8895a8e340b075502e957de948473",
+      "width": 16,
+      "height": 16
+    },
+    "campfire_banyan": {
+      "rgbaSha256": "5cc8d54557e14f14c2cf21408379b1eba972b50e6a857f530d9acc7fee3d7702",
+      "width": 32,
+      "height": 32
+    },
+    "models/rosliny/sadzonka-banian/polrealistyczny": {
+      "rgbaSha256": "6226256076039ecf5282dbc4d10eae50407f4f027dcb7de5a3e50fec2a6bdf32",
+      "width": 16,
+      "height": 16
+    },
+    "banyan_bark": {
+      "rgbaSha256": "8d265bb0df6fa28b59603c08629178cb7151e430798cdad9d6f78c57a7212557",
+      "width": 16,
+      "height": 16
+    }
+  }
+}

@@ -1,0 +1,78 @@
+{
+  "sourceArchive": "DOC-20261115-WA0023.zip (drzewa_od_jodly)",
+  "sourceFolder": "06_kapok",
+  "suppliedBy": "Kamil",
+  "importDate": "2026-11-15",
+  "note": "Oryginalne piksele RGBA skopiowane do drzewa.png bez skalowania i zmian kolorów. Paczka zawiera podglądy sylwetek, bez geometrii; drzewa w grze powstają proceduralnie w skali 1 blok = 1 metr.",
+  "scientificReference": "Ceiba pentandra",
+  "originalFiles": {
+    "log_side.png": {
+      "sha256": "6327fad7b2722fdfd82abe86bc534794359ddcc05bb19f0fdc96f31197e7d622",
+      "bytes": 291,
+      "rgbaSha256": "9a92f7341993c81850550e53c1a4d7f0d43b00360e7b41ed0ff042a4a80019fd",
+      "width": 16,
+      "height": 16
+    },
+    "log_top.png": {
+      "sha256": "48bcda4ae4692b0fc298feb95b9d1ab005b280fbff119126891589fa7ff07997",
+      "bytes": 344,
+      "rgbaSha256": "d2b816bc5b186b0bd7354658ab6e7280f56d50ab27c3d1377cd70afd102a076e",
+      "width": 16,
+      "height": 16
+    },
+    "planks.png": {
+      "sha256": "31c9de46ec8823e60da7dede96a729443b6acec4232e9cc1bfd4db9b517c298e",
+      "bytes": 266,
+      "rgbaSha256": "00b123b6b0a905e3887fa77e0766fe6bd395cc75bcc5216027632fe1f03d435c",
+      "width": 16,
+      "height": 16
+    },
+    "leaves.png": {
+      "sha256": "d0edc50dd60c1a88f51a11f66a10b5fbe6d05a7d704ac27f3a5d0f115dc0f3f9",
+      "bytes": 386,
+      "rgbaSha256": "514aa5c707969c327219c1b1b2f261b765ea2e0dd4323c55e197f96f038c3af8",
+      "width": 16,
+      "height": 16
+    },
+    "leaves_variant.png": {
+      "sha256": "28538b0cbac4027d571758777bf7dad9f08b490f058a41ab095dfcaabddd7038",
+      "bytes": 476,
+      "rgbaSha256": "42e53c6e491175c9858787556fea99e1915c3d465f08b0dea5e29f47ab4e7dfd",
+      "width": 16,
+      "height": 16
+    }
+  },
+  "generator": "tools/tekstury_drzew_180.py; tools/modele_roslin.py; tools/tekstury_kory.py",
+  "derivedRegions": {
+    "kapok/stripped_side.png": {
+      "rgbaSha256": "43c212155b05e733cc984f59e3acc2f6b973f7d0927f32a7e253325a03920adc",
+      "width": 16,
+      "height": 16
+    },
+    "kapok/stripped_top.png": {
+      "rgbaSha256": "13080ada811a06b6f87d1744484cd2484b79e6c57604ce38a0db1abd96dfbc14",
+      "width": 16,
+      "height": 16
+    },
+    "kapok/sapling.png": {
+      "rgbaSha256": "51b68cbb18f483388b7ca828080021c6de26aa59a7f31f75846f2b22798d7620",
+      "width": 16,
+      "height": 16
+    },
+    "campfire_kapok": {
+      "rgbaSha256": "6cc52ddc2fc26810eb43a0ebace629b52e5335b013e1902e0a77f693030aa6ec",
+      "width": 32,
+      "height": 32
+    },
+    "models/rosliny/sadzonka-puchowiec/polrealistyczny": {
+      "rgbaSha256": "89e04c784523b7a282a7cf2c5b98b91bae0ed23ee0bd2681580582241952060a",
+      "width": 16,
+      "height": 16
+    },
+    "kapok_bark": {
+      "rgbaSha256": "990a770ca3a1aec30d4992fab77aabd9117b3db0a05e37789527920dfbd4f317",
+      "width": 16,
+      "height": 16
+    }
+  }
+}

@@ -11,7 +11,8 @@
 //   świat przebudowuje tylko chunki, w których coś się zmienia,
 // - celownik i zbiór widzą to samo co oko; wzrost: w porze szybciej,
 //   poza porą odpoczynek,
-// - bez czasu pór roku (podglądy, stare testy) wszystko jak dawniej.
+// - bez czasu pór roku (podglądy, stare testy) wszystko jak dawniej,
+// - 1.5.0: nagietek zamyka kwiaty na noc; mikołajek kłuje (lekko, krótko).
 //
 // Uruchomienie: node tools/sprawdz_pory_roku.mjs
 // ------------------------------------------------------------
@@ -260,6 +261,74 @@ check(equal(justBefore, inSpring) && !equal(justAfter, inSpring), 'Obraz zmienia
     const base = run(null), boosted = run(springMid), resting = run(at(1));
     check(resting === 0, 'Latem zawilec odpoczywa (nie rośnie)');
     check(boosted > base * 3 && boosted < base * 5.5, `Wiosną zawilec rośnie ok. 4 x szybciej (${base} -> ${boosted})`);
+}
+
+
+// --- Nagietek zamyka się na noc (1.5.0) -----------------------------------------------------
+
+{
+    check(pack('nagietek').closesAtNight === true && PLANT_PACKS.filter((item) => item.closesAtNight).length === 1, 'Na noc zamyka się nagietek (i tylko on)');
+    const open = nagietek.firstId + 2, buds = nagietek.firstId + 1, leaves = nagietek.firstId;
+    const summer = Math.floor(at(1)) ;   // doba w środku lata
+    const hour = (h) => summer + h / 24;
+    const look = (h, base = summer) => { const n = { [open]: 0, [buds]: 0, [leaves]: 0 }; for (let x = 0; x < 30; x++) for (let z = 0; z < 30; z++) n[P.shownPlantId(open, x, 70, z, base + h / 24)]++; return n; };
+    check(look(12)[open] === 900, 'W południe wszystkie nagietki otwarte');
+    check(look(23)[buds] === 900 && look(2)[buds] === 900, 'W nocy wszystkie zamknięte (pąki)');
+    const dusk = look(P.CLOSE_HOUR + P.NIGHT_SPREAD_HOURS / 2), dawn = look(P.OPEN_HOUR + P.NIGHT_SPREAD_HOURS / 2);
+    check(dusk[open] > 250 && dusk[buds] > 250, `O zmierzchu zamykają się po kolei (${dusk[open]} otwartych, ${dusk[buds]} zamkniętych)`);
+    check(dawn[open] > 250 && dawn[buds] > 250, 'O świcie otwierają się po kolei');
+    check(P.shownPlantId(buds, 3, 70, 3, hour(23)) === buds && P.shownPlantId(leaves, 3, 70, 3, hour(23)) === leaves, 'Pąki i młode rośliny nocą bez zmian');
+    const winterNight = Math.floor(at(3)) + 23 / 24;
+    check(P.shownPlantId(open, 3, 70, 3, winterNight) === leaves, 'Zimą nagietek to liście - także w nocy');
+    check(P.shownPlantId(bloom, 3, 70, 3, Math.floor(springMid) + 23 / 24) === bloom, 'Zawilec nie zamyka się na noc');
+
+    // Terminy: dwie zmiany na dobę, dokładnie w podanej chwili; zimą żadnych nocnych.
+    let days = hour(12), changes = 0;
+    while (days < hour(12) + 2) {
+        const next = P.nextPlantChange(open, 4, 70, 9, days);
+        check(P.shownPlantId(open, 4, 70, 9, next - 1e-6) !== P.shownPlantId(open, 4, 70, 9, next + 1e-6), 'Nagietek: w chwili zmiany wygląd się zmienia');
+        if (next < hour(12) + 2) changes++;
+        days = next;
+    }
+    check(changes === 4, `Dwie doby - cztery zmiany (zamknięcie i otwarcie; jest ${changes})`);
+    check(P.nextPlantChange(open, 4, 70, 9, Math.floor(at(3)) + 0.5) - at(3) > 1, 'Zimą chunk z nagietkiem nie przebudowuje się co noc');
+
+    // Zbiór: nocą nie ma otwartego kwiatu do ścięcia.
+    check(getHarvest(getBlockTypeById(P.shownPlantId(open, 3, 70, 3, hour(23)))) === null && getHarvest(getBlockTypeById(P.shownPlantId(open, 3, 70, 3, hour(12)))) !== null,
+        'Nagietek ścina się za dnia');
+}
+
+
+// --- Mikołajek kłuje (1.5.0) ----------------------------------------------------------------
+
+{
+    const { Wellbeing, PRICK_SECONDS, PRICK_COOLDOWN } = await import('../src/game/Wellbeing.js');
+    const mikolajek = pack('mikolajek');
+    check(mikolajek.pricks === true && PLANT_PACKS.filter((item) => item.pricks).length === 1, 'Kłuje mikołajek (i tylko on)');
+    check([0, 1, 2].every((stage) => P.pricklyStage(mikolajek.firstId + stage) === stage) && P.pricklyStage(zawilec.firstId + 2) === -1 && P.pricklyStage(0) === -1, 'Etap kłującej rośliny');
+
+    const wellbeing = Wellbeing.load(undefined, 0.5);
+    wellbeing.active = true;
+    const calm = { ...wellbeing.effects };
+    check(wellbeing.prick() === true, 'Pierwsze ukłucie działa');
+    check(wellbeing.effects.walk < calm.walk && wellbeing.effects.sprint < calm.sprint && wellbeing.effects.walk > calm.walk * 0.6, 'Po ukłuciu chwilę wolniej - lekko');
+    check(wellbeing.describe().pricked === true, 'Ukłucie widać w oknie stanu');
+    check(wellbeing.prick() === false, 'Nie kłuje raz za razem');
+    wellbeing.update(PRICK_SECONDS + 0.01, {}, 0.5);
+    check(wellbeing.effects.walk === calm.walk && wellbeing.describe().pricked === false, `Mija po ${PRICK_SECONDS} s`);
+    check(wellbeing.prick() === false, 'Przerwa między ukłuciami jeszcze trwa');
+    wellbeing.update(PRICK_COOLDOWN, {}, 0.5);
+    check(wellbeing.prick() === true, 'Po przerwie kłuje znowu');
+    check(!('pricked' in JSON.parse(JSON.stringify(wellbeing.data))), 'Ukłucie nie trafia do zapisu');
+    wellbeing.active = false;
+    wellbeing.prickWait = 0;
+    check(wellbeing.prick() === false, 'Tryb kreatywny: bez ukłuć');
+
+    // W grze: wejście w mikołajka z pąkami kłuje, w młodego i poza porą nie.
+    const { updatePrick } = (await import('../src/game/GameInteraction.js')).Game?.prototype ?? {};
+    const source = (await import('node:fs')).readFileSync(new URL('../src/game/GameInteraction.js', import.meta.url), 'utf8');
+    check(/updatePrick\(\) \{[\s\S]*pricklyStage\(id\) < 1[\s\S]*shownBlockId/.test(source.replace(/\n/g, ' ')) || /shownBlockId[\s\S]*pricklyStage\(id\) < 1/.test(source), 'Ukłucie liczy widoczny etap (pąki albo kwiaty)');
+    void updatePrick;
 }
 
 console.log(`OK: pory roku i kwiaty - ${checks} sprawdzeń; pora ${S.SEASON_DAYS} dób, rok ${S.YEAR_DAYS} dób, rośliny z porami: ${seasonal.length}.`);

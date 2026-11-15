@@ -843,6 +843,15 @@ export const ACHIEVEMENTS = [
         when: (data) => data.meal === true && data.mealsToday >= 3
     },
     {
+        id: 'pricked',
+        tier: 'common',
+        title: 'Nie dotykać',
+        task: 'Wejdź w kłującą roślinę.',
+        comment: 'Mikołajek nie przynosi prezentów. Mikołajek kłuje.',
+        icon: 'mikolajek_etap3',
+        on: 'pricked'
+    },
+    {
         id: 'season_turns',
         tier: 'common',
         title: 'Coś wisi w powietrzu',

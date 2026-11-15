@@ -1,6 +1,7 @@
 # Pory roku
 
-Od wersji 1.4.0 (pomysł Kamila). Na razie od pory roku zależą **kwiaty**;
+Od wersji 1.4.0 (pomysł Kamila); od 1.5.0 także kwiaty zamykane na noc
+i kłujące. Na razie od pory roku zależą **kwiaty**;
 ten opis jest też instrukcją, jak podpiąć pod pory kolejne rzeczy (kolory
 liści, śnieg, pogodę).
 
@@ -79,6 +80,31 @@ Jak to działa:
   Roślina na dwie pory (nagietek) kwitnie bez przerwy.
 - **Poziomy modeli, dalekie chunki, animacje** - wszędzie ten sam
   widoczny etap.
+
+## Kwiaty zamykane na noc i kłujące (1.5.0)
+
+**Nagietek zamyka koronę na noc.** Kwitnący nagietek o zmierzchu wraca
+do pąków, a rano znów się otwiera. Każda roślina we własnej chwili:
+zamyka się między 18:00 a 19:00, otwiera między 5:30 a 6:30.
+
+![Nagietki i mikołajki w dzień i w nocy](nagietek-noc-150.jpg)
+
+- Działa ten sam mechanizm co pory roku: blok się nie zmienia, gra
+  pokazuje etap z pąkami; chunk przebudowuje rośliny tylko o zmierzchu
+  i o świcie (a poza porą roku nagietka - wcale).
+- Zamkniętego kwiatu nie da się ściąć - nagietki zbiera się za dnia.
+- W `roslina.json`: `"zamykaNaNoc": true` (etap 2 rośliny to pąki).
+
+**Mikołajek kłuje.** Wejście w mikołajka z pąkami albo kwiatami daje
+lekkie ukłucie: komunikat, cichy dźwięk, drgnięcie serca i przez 2,5
+sekundy chód i bieg wolniejsze o ok. 30%. Kolejne ukłucie najwcześniej
+po 4 sekundach.
+
+- Młody mikołajek i mikołajek poza swoją porą (same liście) nie kłują.
+- Stojąc w miejscu, gracz się nie kłuje; w trybie kreatywnym też nie.
+- Nic się nie zapisuje - ukłucie mija samo. W oknie stanu: „Ukłucie”.
+- Osiągnięcie: *Nie dotykać*.
+- W `roslina.json`: `"kluje": true`.
 
 ### Nowa roślina z porą
 
@@ -160,4 +186,6 @@ Zasady, których warto się trzymać:
   celownik i animacje na widocznym etapie.
 - `src/game/PlantGrowth.js` - tempo wzrostu; `src/game/Game.js` -
   `updateSeason`.
+- `src/game/Wellbeing.js` (`prick`), `src/game/GameInteraction.js`
+  (`updatePrick`) - ukłucie.
 - Test: `node tools/sprawdz_pory_roku.mjs`.

@@ -40,6 +40,7 @@
     },
     "czasWzrostu": 240,
     "pory": ["lato", "jesien"],
+    "zamykaNaNoc": true,
     "przedmiot": {
         "klucz": "kwiat",
         "plik": "kwiat.png",

@@ -83,6 +83,13 @@ const LIMP_SECONDS = 45;
 const LIMP_PER_BLOCK = 12;
 export const LIMP_MAX = 300;
 const LIMP_WALK = 0.6;
+
+// Ukłucie (kłująca roślina - mikołajek, 1.5.0): przez PRICK_SECONDS chód
+// i bieg są trochę wolniejsze; kolejne ukłucie najwcześniej po
+// PRICK_COOLDOWN sekundach. Nie zapisuje się (mija od razu).
+export const PRICK_SECONDS = 2.5;
+export const PRICK_COOLDOWN = 4;
+const PRICK_SPEED = 0.72;
 const LIMP_REST_HEAL = 2;      // stojąc, noga goi się 2 razy szybciej
 const LIMP_FULL_HEAL = 1.25;   // najedzonemu też szybciej
 const FALL_GRAVITY = 30;       // jak GRAVITY w config.js
@@ -185,6 +192,9 @@ export class Wellbeing {
         // Oddech (1 - pełny). Nie zapisuje się: po wejściu do świata pełny.
         this.breath = 1;
         this.drowned = false;
+        // Ukłucie: ile sekund jeszcze trwa i ile do następnego możliwego.
+        this.pricked = 0;
+        this.prickWait = 0;
         if (!Number.isFinite(data.day) || data.day > Math.floor(days)) data.day = Math.floor(days);
     }
 
@@ -241,11 +251,13 @@ export class Wellbeing {
         const rest = this.active ? REST_STATES[this.restState] : REST_STATES.rested;
         const comfort = this.active ? COMFORT[this.data.comfort] : null;
         const boost = this.active ? this.effectFactor('work') : 1;
-        if (!this.limping && rest.work === 1 && rest.dim === 0 && !comfort && boost === 1) return state;
+        if (!this.limping && rest.work === 1 && rest.dim === 0 && !comfort && boost === 1 && !(this.pricked > 0)) return state;
         const effects = { ...state, sprint: state.sprint * rest.sprint, work: state.work * rest.work * (comfort?.work ?? 1) * boost,
             dim: Math.max(state.dim, rest.dim) };
         // Stłuczona noga: wolniejszy chód i żadnego biegu, w każdym stanie.
         if (this.limping) Object.assign(effects, { walk: state.walk * LIMP_WALK, sprint: 0, canSprint: false });
+        // Ukłucie: przez chwilę wolniej (chód i bieg).
+        if (this.pricked > 0) { effects.walk *= PRICK_SPEED; effects.sprint *= PRICK_SPEED; }
         return effects;
     }
 
@@ -285,6 +297,15 @@ export class Wellbeing {
     }
 
     get limping() { return this.active && this.data.limp > 0; }
+
+    // Kłująca roślina: lekki, krótki dyskomfort. Zwraca true, gdy ukłuło
+    // (false - jeszcze boli po poprzednim albo tryb bez samopoczucia).
+    prick() {
+        if (!this.active || this.prickWait > 0) return false;
+        this.pricked = PRICK_SECONDS;
+        this.prickWait = PRICK_COOLDOWN;
+        return true;
+    }
 
     // --- Efekty (items/effects.js) ---------------------------------------
 
@@ -349,6 +370,8 @@ export class Wellbeing {
         if (!this.active || !(dt > 0)) return events;
         const data = this.data;
         this.now = days;
+        this.pricked = Math.max(0, this.pricked - dt);
+        this.prickWait = Math.max(0, this.prickWait - dt);
         // Efekty, których czas minął.
         for (const type of Object.keys(data.effects)) {
             // Efekt snu nie mija w trakcie snu - rozlicza go sleep().
@@ -496,7 +519,7 @@ export class Wellbeing {
             : c >= 80 ? 'osłabiona' : 'słaba';
         const limp = !this.limping ? null : data.limp > 150 ? 'mocno stłuczona' : data.limp > 45 ? 'stłuczona' : 'prawie zdrowa';
         return { state: this.state, energy, condition, full: this.full, mealsToday: data.mealsToday,
-            history: data.history, lastFood: data.lastFood, limp,
+            history: data.history, lastFood: data.lastFood, limp, pricked: this.pricked > 0,
             rest: REST_STATES[this.restState].label, comfort: COMFORT[data.comfort]?.label ?? null,
             // Działające efekty: nazwa i ile godzin gry zostało.
             effects: this.activeEffects().map((type) => ({ type, label: EFFECTS[type].label,

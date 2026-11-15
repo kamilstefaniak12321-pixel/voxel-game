@@ -105,10 +105,8 @@ Zapisane na prośbę Kamila:
 
 - ~~**Pory roku dla kwiatów.**~~ Zrobione w 1.4.0 -
   [`pory-roku.md`](pory-roku.md).
-- **Kwiaty reagujące na porę dnia** - nagietek zamyka koronę na noc
-  i otwiera ją rano.
-- **Kłujące rośliny** - mikołajek kłuje przy zbiorze albo wejściu
-  i daje lekki, krótki dyskomfort.
+- ~~**Kwiaty reagujące na porę dnia**~~ i ~~**kłujące rośliny**~~ -
+  zrobione w 1.5.0 ([`pory-roku.md`](pory-roku.md)).
 - **Rzadki tryb przesady w generatorze** - w wybranych miejscach 80%
   podłoża biomu zamienia się w dywan jednej rośliny (np. barwinka).
 

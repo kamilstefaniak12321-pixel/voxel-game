@@ -469,6 +469,8 @@ async function validatePack(folder) {
         where: null,
         seasons: null,
         seasonBoost: 1,
+        closesAtNight: false,
+        pricks: false,
         files: []
     };
 
@@ -632,6 +634,27 @@ async function validatePack(folder) {
     }
     else if (json.wzrostWPorze !== undefined) {
         fail('"wzrostWPorze" działa tylko razem z "pory"');
+    }
+
+    // "zamykaNaNoc": true - kwitnąca roślina zamyka kwiaty o zmierzchu
+    // (widać etap z pąkami) i otwiera je rano (1.5.0 - plantSeasons.js).
+    // "kluje": true - roślina z pąkami albo kwiatami kłuje gracza, który
+    // w nią wchodzi (lekki, krótki dyskomfort - Wellbeing.prick).
+
+    for (const [field, key] of [['zamykaNaNoc', 'closesAtNight'], ['kluje', 'pricks']]) {
+
+        if (json[field] === undefined) continue;
+
+        if (typeof json[field] !== 'boolean') {
+            fail(`"${field}": true albo false`);
+        }
+
+        if (json[field] && pack.stages.length < 2) {
+            fail(`"${field}": roślina potrzebuje co najmniej dwóch etapów`);
+        }
+
+        pack[key] = json[field];
+
     }
 
 

@@ -49,6 +49,13 @@ mchem, śniegiem i liśćmi celuje się w bloki za nimi, a kępka trawy nie
 zasłania ziemi pod sobą. Ramka pokazuje dokładnie trafiany kształt.
 Szczegóły: [docs/celowanie-i-ladowanie.md](celowanie-i-ladowanie.md).
 
+## Trawa
+
+Od 1.2.0 co dziewiąty blok trawy ma na wierzchu płaski dodatek -
+koniczynę, mech, stokrotki, mlecze, maki (42 warianty) - a kolor trawy
+wyraźnie zależy od biomu: jasna na łące, ciemna w lesie, żółtozielona
+w cieple, sinawa w chłodzie. Szczegóły: [docs/trawa.md](trawa.md).
+
 ## Płynność
 
 Od 1.1.2 gra przygotowuje programy graficzne pod ekranem wczytywania

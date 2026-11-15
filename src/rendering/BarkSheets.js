@@ -46,7 +46,12 @@ const WOOD_TILES = [
 // 'furrows' - bruzdy kory w stałych kolumnach (arkusz narysowany od zera),
 // 'rows' - górny i dolny wiersz każdego kafelka takie same (arkusz
 // z dotychczasowego obrazka kory).
-const SPECIES = { oak: 'furrows', spruce: 'rows', pine: 'rows', beech: 'rows', linden: 'rows', birch: 'rows' };
+const SPECIES = {
+    oak: 'furrows', spruce: 'rows', pine: 'rows', beech: 'rows', linden: 'rows', birch: 'rows',
+    // 1.7.2 - drzewa z paczek.
+    jablon: 'rows', olcha: 'rows', wierzba: 'rows', acacia: 'rows', bald_cypress: 'rows', cherry: 'rows', maple: 'rows',
+    mugo: 'rows', olive: 'rows', rainbow_eucalyptus: 'rows', sequoia: 'rows', ginkgo: 'rows', jacaranda: 'rows'
+};
 
 // Blok pnia -> arkusz: texture - kafelek atlasu 8 x 8 kratek,
 // tiles - rodzaj każdego kafelka, wierszami od góry; like - blok, którego
@@ -60,6 +65,11 @@ export const BARK_SHEETS = Object.fromEntries(Object.entries(SPECIES).flatMap(([
     [`${species}_log`, { texture: `${species}_log_bark`, tiles: BARK_TILES, edges }],
     [`${species}_log_stripped`, { texture: `${species}_stripped_sheet`, like: `${species}_log`, tiles: WOOD_TILES, edges: 'rows' }]
 ]));
+
+// Górna, pomarańczowa kora sosny: własny arkusz, to samo losowanie co dolna
+// (po okorowaniu - ten sam okorowany pień sosny). Blok tuż nad ciemną korą
+// rysuje płynne przejście (SurfaceTextureVariants.js) zamiast arkusza.
+BARK_SHEETS.pine_log_upper = { texture: 'pine_log_upper_bark', tiles: BARK_TILES, edges: 'rows' };
 
 // Co jest w drewnie pod danym rodzajem kafelka kory (arkusze "like").
 export const UNDER_BARK = {

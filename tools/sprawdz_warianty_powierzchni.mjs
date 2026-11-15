@@ -56,6 +56,14 @@ function hasTile(uv, name, label) {
     const tile = getAtlasUV(name);
     check(uv.every((v, i) => i % 2 ? v === tile.vMin || v === tile.vMax : v === tile.uMin || v === tile.uMax), label);
 }
+// 1.7.2: the plain upper bark comes from the 8 x 8 bark sheet (one cell per
+// side, BarkSheets.js); the three transition blocks keep their own tiles.
+function inSheet(uv, name, label) {
+    const tile = getAtlasUV(name), cell = (tile.uMax - tile.uMin) / 8;
+    const us = uv.filter((_, i) => i % 2 === 0), vs = uv.filter((_, i) => i % 2 === 1);
+    check(us.every(u => u >= tile.uMin - 1e-9 && u <= tile.uMax + 1e-9) && vs.every(v => v >= tile.vMin - 1e-9 && v <= tile.vMax + 1e-9)
+        && Math.max(...us) - Math.min(...us) <= cell + 1e-9, label);
+}
 function sameGeometry(a, b, label) {
     equal(a.groups, b.groups, `${label}: groups`);
     equal(a.index.array, b.index.array, `${label}: indices`);
@@ -78,7 +86,10 @@ for (const lower of ['pine_log', 'pine_log_resin']) {
             for (const [center, normal] of [
                 [[x + 1, y + .5, z + .5], [1, 0, 0]], [[x, y + .5, z + .5], [-1, 0, 0]],
                 [[x + .5, y + .5, z + 1], [0, 0, 1]], [[x + .5, y + .5, z], [0, 0, -1]]
-            ]) hasTile(faceUV(geometry, center, normal), texture, 'Every side uses the same vertical bark stage');
+            ]) {
+                if (stage) hasTile(faceUV(geometry, center, normal), texture, 'Every side uses the same vertical bark stage');
+                else inSheet(faceUV(geometry, center, normal), 'pine_log_upper_bark', 'Plain upper bark is one cell of the upper bark sheet');
+            }
         }
         hasTile(faceUV(geometry, [x + .5, 9, z + .5], [0, 1, 0]), 'pine_log_top', 'Top end-grain stays unchanged');
         equal(chunk.blocks, before, 'Meshing leaves save-compatible IDs unchanged');
@@ -86,8 +97,8 @@ for (const lower of ['pine_log', 'pine_log_resin']) {
         for (const replacement of ['pine_log_stripped', 'oak_log', 'air']) {
             chunk.setId(x, 4, z, ids(replacement));
             const after = buildChunkGeometry(chunk, world);
-            for (let y = 5; y <= 7; y++) hasTile(faceUV(after, [x + 1, y + .5, z + .5], [1, 0, 0]),
-                'pine_log_upper_side', 'Removing or stripping the connection refreshes all affected upper logs');
+            for (let y = 5; y <= 7; y++) inSheet(faceUV(after, [x + 1, y + .5, z + .5], [1, 0, 0]),
+                'pine_log_upper_bark', 'Removing or stripping the connection refreshes all affected upper logs');
             after.dispose();
         }
         // No negative-index read at the bottom of the world.

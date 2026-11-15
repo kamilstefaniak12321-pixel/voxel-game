@@ -11,6 +11,22 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 1.5.0 - Nagietek śpi w nocy, mikołajek kłuje
+
+Pomysł Kamila — PR #151 (po 1.4.0). Opis: [`docs/pory-roku.md`](docs/pory-roku.md).
+
+- **Nagietek zamyka koronę na noc.** O zmierzchu (18:00-19:00) kwitnące
+  nagietki po kolei wracają do pąków, o świcie (5:30-6:30) znów się
+  otwierają. Zamkniętego kwiatu nie da się ściąć - nagietki zbiera się
+  za dnia.
+- **Mikołajek kłuje.** Wejście w mikołajka z pąkami albo kwiatami daje
+  lekkie ukłucie: przez 2,5 sekundy idziesz i biegniesz wolniej. Młody
+  mikołajek i mikołajek poza swoją porą nie kłują. Nie w trybie
+  kreatywnym.
+- Osiągnięcie *Nie dotykać*; `/roslina` podaje, czy roślina zamyka się
+  na noc i czy kłuje.
+- Nowe pola paczek roślin: `"zamykaNaNoc"` i `"kluje"`.
+
 ## 1.4.0 - Pory roku i kwiaty
 
 Pomysł Kamila — PR #150 (po 1.3.0). Opis i zasady: [`docs/pory-roku.md`](docs/pory-roku.md).

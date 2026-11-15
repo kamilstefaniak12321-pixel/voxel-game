@@ -137,6 +137,8 @@ piksele rysunku i wynik (powiększone).
 | `czasWzrostu` | średnio sekund na etap (domyślnie jak krzaki, 150) |
 | `pory` | pory roku, w których widać pąki i kwiaty: lista od 1 do 3 z `wiosna`, `lato`, `jesien`, `zima`; poza nimi roślina wygląda jak pierwszy etap (liście) i nie rośnie. Bez pola - cały rok tak samo ([`pory-roku.md`](pory-roku.md)) |
 | `wzrostWPorze` | ile razy szybciej roślina rośnie w swojej porze (domyślnie 3; tylko razem z `pory`) |
+| `zamykaNaNoc` | `true` - kwitnąca roślina zamyka kwiaty o zmierzchu (widać etap 2 - pąki) i otwiera je rano; zamkniętej nie da się zebrać (nagietek) |
+| `kluje` | `true` - roślina z pąkami albo kwiatami kłuje gracza, który w nią wchodzi: krótkie spowolnienie (mikołajek) |
 | `przedmiot` | przedmiot ze zbioru, obrazek 16 x 16. **Zastosowania** (od 0.98.1 każdy plon musi jakieś mieć - `tools/sprawdz_zastosowania.mjs`): `grupy` - grupy składników: kolory `red`, `orange`, `yellow`, `green`, `blue`, `purple`, `pink`, `white`, `brown` (barwnik, kolorowa lampa), `flowers` (wianek z kwiatów), `herbs_calm`, `herbs_heal`, `herbs_vigor` (napary); `podpalka` - ile razy szybciej od trawy rozpala ognisko (np. `2`). Kategoria dobiera się sama (surowiec); `"kategoria": "owoce"` tylko dla plonu jadalnego. Opis: [ziola.md](ziola.md) |
 | `zbior` | PPM na ostatnim etapie: `ile` [od, do], `wraca` - do którego etapu wraca roślina, `narzedzie` - `"noz"`, gdy plon ścina się nożem (kwiaty, zioła - od 0.100.0, [opis](przedmioty-i-noz.md#nóż)); bez tego pola zbiera się ręką |
 | `podloze` | na czym rośnie oprócz ziemi, np. `["sand"]` |

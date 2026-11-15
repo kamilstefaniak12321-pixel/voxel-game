@@ -22,6 +22,7 @@
 // dopisz tutaj, nie w Game.js.
 // ------------------------------------------------------------
 
+import { pricklyStage } from '../blocks/plantSeasons.js';
 import * as THREE from 'three';
 import { dyeTorch } from './TorchInteraction.js';
 import { shapeInfo, shapeItem } from '../blocks/woodShapes.js';
@@ -34,6 +35,7 @@ import {
     getRiverPlant,
     getBlockId,
     getBlockDefinition,
+    getBlockTypeById,
     getDropType,
     getBreakTime,
     isWaterloggedPlantId,
@@ -453,6 +455,47 @@ export class GameInteraction {
 
     // Energia: zużycie przy wysiłku, burczenie w brzuchu, jedzenie (F).
 
+    // Kłujące rośliny (pole "kluje" w roslina.json - mikołajek): gracz, który
+    // wchodzi w roślinę z pąkami albo kwiatami, dostaje lekkie ukłucie -
+    // chwilę idzie wolniej (Wellbeing.prick). Liczy się widoczny etap
+    // (poza porą roku mikołajek to same liście i nie kłuje).
+
+    updatePrick() {
+
+        const player = this.player, world = this.world;
+
+        if (Math.hypot(player.vel.x, player.vel.z) < 0.5 || this.wellbeing.prickWait > 0) {
+            return;
+        }
+
+        const half = player.width / 2;
+        const y = Math.floor(player.pos.y + 0.05);
+
+        for (const dx of [-half, half]) {
+
+            for (const dz of [-half, half]) {
+
+                const x = Math.floor(player.pos.x + dx), z = Math.floor(player.pos.z + dz);
+                const id = world.shownBlockId ? world.shownBlockId(x, y, z) : world.getBlockId(x, y, z);
+
+                if (pricklyStage(id) < 1 || !this.wellbeing.prick()) {
+                    continue;
+                }
+
+                this.sounds?.play('hurt', { volume: 0.45, pitch: 1.25 });
+                this.onNotice?.(`Au! ${getBlockDefinition(getBlockTypeById(id))?.label?.split(' (')[0] ?? 'Roślina'} kłuje`);
+                this.onWellbeing?.({ type: 'prick' });
+                this.achieve('pricked', { type: getBlockTypeById(id) });
+
+                return;
+
+            }
+
+        }
+
+    }
+
+
     updateWellbeing(dt, input) {
 
         const player = this.player, wellbeing = this.wellbeing;
@@ -482,6 +525,8 @@ export class GameInteraction {
             this.onWellbeing?.({ type: 'hurt' });
             this.achieve('hurt', { speed: player.landed });
         }
+
+        this.updatePrick();
 
         const events = wellbeing.update(dt, {
             moving: Math.hypot(player.vel.x, player.vel.z) > 0.5,

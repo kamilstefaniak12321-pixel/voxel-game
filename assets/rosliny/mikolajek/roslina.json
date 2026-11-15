@@ -39,6 +39,7 @@
     },
     "czasWzrostu": 330,
     "pory": ["lato"],
+    "kluje": true,
     "przedmiot": {
         "klucz": "kwiat",
         "plik": "kwiat.png",

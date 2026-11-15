@@ -58,18 +58,28 @@ const INFO = new Map();
 
 let maxId = 0;
 
+// Rośliny, które kłują (pole "kluje"): id bloku -> etap.
+const PRICKLY = new Map();
+
 for (const pack of PLANT_PACKS) {
 
-    if (!pack.seasons) continue;
+    if (pack.pricks) pack.stages.forEach((_, stage) => PRICKLY.set(pack.firstId + stage, stage));
 
-    const runs = runsOf(pack.seasons);
+    if (!pack.seasons && !pack.closesAtNight) continue;
+
+    // runs: null - bez pór roku (kwitnie cały rok, tylko zamyka się na noc).
+    const runs = pack.seasons ? runsOf(pack.seasons) : null;
 
     pack.stages.forEach((_, stage) => {
-        INFO.set(pack.firstId + stage, { pack: pack.id, firstId: pack.firstId, stage, last: pack.stages.length - 1, runs, boost: pack.seasonBoost, seasons: pack.seasons });
+        INFO.set(pack.firstId + stage, { pack: pack.id, firstId: pack.firstId, stage, last: pack.stages.length - 1, runs,
+            boost: pack.seasonBoost, seasons: pack.seasons, nightly: pack.closesAtNight });
         maxId = Math.max(maxId, pack.firstId + stage);
     });
 
 }
+
+// Etap kłującej rośliny (0, 1, 2...) albo -1, gdy blok nie kłuje.
+export const pricklyStage = (id) => PRICKLY.get(id) ?? -1;
 
 export const SEASONAL = new Uint8Array(maxId + 1);
 
@@ -102,10 +112,36 @@ function terms(run, x, y, z, out) {
 const scratch = [0, 0, 0];
 
 
+// KWIATY ZAMYKANE NA NOC (1.5.0, pole "zamykaNaNoc" - nagietek): o zmierzchu
+// kwitnąca roślina wraca do etapu z pąkami, rano znów się otwiera. Każda
+// we własnej chwili: zamyka się między CLOSE_HOUR a CLOSE_HOUR + SPREAD,
+// otwiera między OPEN_HOUR a OPEN_HOUR + SPREAD (godziny gry).
+
+export const CLOSE_HOUR = 18;
+export const OPEN_HOUR = 5.5;
+export const NIGHT_SPREAD_HOURS = 1;
+
+const openAt = (x, y, z) => (OPEN_HOUR + place(x, y, z, 3) * NIGHT_SPREAD_HOURS) / 24;
+const closeAt = (x, y, z) => (CLOSE_HOUR + place(x, y, z, 4) * NIGHT_SPREAD_HOURS) / 24;
+
+function closedForNight(x, y, z, days) {
+    const clock = days - Math.floor(days);
+    return clock < openAt(x, y, z) || clock >= closeAt(x, y, z);
+}
+
+
 // Najwyższy etap, jaki roślina teraz pokazuje: 0 - same liście,
 // 1 - pąki (tuż po pobudce), info.last - wszystko.
 
 export function plantSeasonLevel(info, x, y, z, days) {
+
+    const level = info.runs ? yearLevel(info, x, y, z, days) : info.last;
+
+    return info.nightly && level > 1 && closedForNight(x, y, z, days) ? 1 : level;
+
+}
+
+function yearLevel(info, x, y, z, days) {
 
     const position = yearPosition(days);
 
@@ -157,7 +193,15 @@ export function nextPlantChange(id, x, y, z, days) {
 
     let next = Infinity;
 
-    for (const run of info.runs) {
+    if (info.nightly) {
+        const day = Math.floor(days);
+        for (const time of [day + openAt(x, y, z), day + closeAt(x, y, z), day + 1 + openAt(x, y, z)]) {
+            // (Poza porą roku kwiatów nie widać - nie ma czego zamykać.)
+            if (time > days + 1e-9 && time < next && (!info.runs || yearLevel(info, x, y, z, time) > 1)) next = time;
+        }
+    }
+
+    for (const run of info.runs ?? []) {
 
         const begin = days - mod(position - run.start, YEAR_DAYS);
         const [wake, buds, sleep] = terms(run, x, y, z, scratch);
@@ -183,7 +227,7 @@ export function plantGrowthFactor(id, days) {
 
     const info = INFO.get(id);
 
-    if (!info) return 1;
+    if (!info || !info.seasons) return 1;
 
     return info.seasons.includes(seasonAt(days).index) ? info.boost : 0;
 

@@ -57,6 +57,7 @@ export function statusView(game) {
             ['Żołądek', info.full ? 'najedzony' : 'pusty'],
             ['Sen', info.comfort ? `${info.rest} (${info.comfort})` : info.rest],
             ...(info.limp ? [['Noga', `${info.limp} (utykasz)`]] : []),
+            ...(info.pricked ? [['Ukłucie', 'piecze - zaraz przejdzie']] : []),
             // Działające napary: nazwa efektu i ile jeszcze godzin gry.
             ...(info.effects.length ? [['Działa', info.effects.map((effect) => `${effect.label} (${hoursText(effect.hours)})`).join(', ')]] : [])
         ],
@@ -107,6 +108,7 @@ export class StatusPanel {
     // Zdarzenie z gry (Game.onWellbeing): serce reaguje.
     signal(event) {
         if (event.type === 'hurt') this.heart.play('down', 1.2);
+        else if (event.type === 'prick') this.heart.play('down', 0.5);
         else if (event.type === 'rest') this.heart.play(['sleepy', 'worn'].includes(event.to) ? 'down' : 'up', 1.2);
         else if (event.type === 'woke') { this.heart.play('up', 1.2); if (event.state === 'rested') this.heart.sparkle(); }
         else if (event.type === 'healed') { this.heart.play('up', 1.2); this.heart.sparkle(); }

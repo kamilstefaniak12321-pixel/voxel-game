@@ -1687,11 +1687,13 @@ export class RealisticGenerator {
             return 'grass_high';
         }
 
-        if (tint[0] - tint[2] > 0.1) {
+        // Progi w tych samych miejscach klimatu co przed 1.2.0 (kolor
+        // trawy jest od tej wersji ok. 2,2 razy mocniejszy - Biomes.js).
+        if (tint[0] - tint[2] > 0.22) {
             return 'grass_warm';
         }
 
-        if (tint[2] - tint[0] > 0.07) {
+        if (tint[2] - tint[0] > 0.15) {
             return 'grass_cool';
         }
 

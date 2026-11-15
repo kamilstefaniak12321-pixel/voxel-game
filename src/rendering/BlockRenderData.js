@@ -10,7 +10,7 @@ import { installSurfaceProfiles } from './LeafLighting.js';
 import { CANOPY_LIGHTING_GLSL } from './CanopyLighting.js';
 import { shapeInfo } from '../blocks/woodShapes.js';
 import { WATERFALL_PIXEL_GLSL, WATERFALL_AVERAGE_GLSL, waterfallColorUniforms } from './WaterfallPixels.js';
-import { PINE_TRANSITION_TEXTURES, MOSS_CARPET_TEXTURES } from './SurfaceTextureVariants.js';
+import { PINE_TRANSITION_TEXTURES, MOSS_CARPET_TEXTURES, GRASS_TOP_TEXTURES } from './SurfaceTextureVariants.js';
 
 
 import {
@@ -82,6 +82,15 @@ import {
     bounceUniforms,
     BOUNCE_GLSL
 } from '../world/BounceLight.js';
+
+// Zestawy UV bloku trawy: jeden na każdy wierzch z GRASS_TOP_TEXTURES.
+// Boki i spód liczone raz i wspólne dla wszystkich zestawów.
+function grassTopVariants(definition) {
+    const shared = FACE_NAMES.map(faceName => createRotatedUVs(getFaceTexture(definition.textures, faceName)));
+    return GRASS_TOP_TEXTURES.map(texture => FACE_NAMES.map((faceName, index) =>
+        faceName === 'top' ? createRotatedUVs(texture) : shared[index]));
+}
+
 
 // ------------------------------------------------------------
 // Jeden wspólny materiał dla wszystkich bloków (atlas tekstur).
@@ -1207,7 +1216,11 @@ for (
                     ? getFaceTexture(definition.textures, faceName) : texture)))
             : name === 'moss_carpet'
                 ? MOSS_CARPET_TEXTURES.map(texture => FACE_NAMES.map(() => createRotatedUVs(texture)))
-                : null,
+                // Blok trawy: warianty różnią się tylko wierzchem (kwiatki,
+                // koniczyna...); boki i spód są wspólne.
+                : name === 'grass'
+                    ? grassTopVariants(definition)
+                    : null,
 
         // Roślina: płaszczyzny z jedną teksturą (ChunkMesher.addPlants).
 

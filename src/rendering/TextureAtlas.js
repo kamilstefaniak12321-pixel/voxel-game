@@ -209,7 +209,11 @@ async function buildPackAtlas(base, pack) {
             continue;
         }
 
-        const blob = pack.tiles.get(name);
+        // Warianty wierzchu trawy (grass_top_*, 1.2.0): paczka, która ma
+        // własną trawę, ale nie ma wariantów, dostaje na ich miejscu swoją
+        // zwykłą trawę - bez plam obcej zieleni na co dziewiątym bloku.
+        const blob = pack.tiles.get(name)
+            ?? (name.startsWith('grass_top_') ? pack.tiles.get('grass_top') : undefined);
 
         let tile = null;
 

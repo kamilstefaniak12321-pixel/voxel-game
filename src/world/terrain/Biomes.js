@@ -409,32 +409,62 @@ export const BIOMES = {
 // (-1..1), w górach (od high[0] do high[1] bloków nad morzem) kolor
 // zmierza do highColor (w części highAmount). Shader zmienia tylko
 // zielone piksele (BlockRenderData.js), więc ziemia i kwiaty zostają.
+//
+// Od 1.2.0 (prośba Kamila) różnice są wyraźne - wchodząc do innego
+// biomu, widać inną trawę:
+//   - klimat: w cieple i suchu żółtozielona, w chłodzie i wilgoci sinawa
+//     (mnożniki ponad dwa razy mocniejsze niż wcześniej i liczone od
+//     węższego zakresu klimatu - warmSpan, wetSpan - bo typowe biomy
+//     różnią się klimatem mniej niż skrajności),
+//   - las: w lesie trawa jest ciemniejsza i głębiej zielona, na otwartej
+//     łące jasna i świeża (pole lasów z Biomes - to samo, które decyduje,
+//     gdzie jest las; przejście na skraju lasu jest płynne),
+//   - góry: blada, żółtawa.
+// Wszystko z gładkich pól klimatu (fieldsAt), więc bez dodatkowego
+// liczenia terenu - koszt generowania chunka się nie zmienia.
 export const GRASS_TINT = {
-    warm: [0.09, 0.02, -0.12],
-    wet: [-0.05, -0.01, 0.05],
+    warm: [0.20, 0.03, -0.26],
+    wet: [-0.15, -0.06, 0.12],
+    // Od jakiej temperatury liczy się "ciepło" i ile to "w pełni ciepło";
+    // ile wilgotności to "w pełni wilgotno".
+    warmFrom: -0.2,
+    warmSpan: 0.55,
+    wetSpan: 0.5,
+    // Las: pole lasów od forest[0] (otwarta łąka) do forest[1] (gęsty las).
+    forest: [-0.25, 0.3],
+    open: [1.06, 1.05, 0.92],
+    shade: [0.80, 0.87, 0.84],
     high: [28, 50],
-    highColor: [1.04, 1.0, 0.9],
-    highAmount: 0.6
+    highColor: [1.10, 1.02, 0.80],
+    highAmount: 0.7,
+    // Granice mnożnika (atrybut tint mieści do 2.0).
+    min: 0.5,
+    max: 1.5
 };
 
 
 // Kolor trawy (mnożniki r, g, b do out) w klimacie: temperatura (już
-// z wysokością), wilgotność, wysokość nad morzem.
+// z wysokością), wilgotność, wysokość nad morzem i pole lasów (bez niego -
+// kolor samego klimatu, np. dla dalekiego terenu).
 
-export function grassTint(temperature, humidity, above, out) {
+export function grassTint(temperature, humidity, above, out, forest = null) {
 
     const T = GRASS_TINT;
 
-    const warm = clamp((temperature + 0.25) / 0.7, -1, 1);
-    const wet = clamp(humidity / 0.7, -1, 1);
+    const warm = clamp((temperature - T.warmFrom) / T.warmSpan, -1, 1);
+    const wet = clamp(humidity / T.wetSpan, -1, 1);
 
     const high = smoothstep(T.high[0], T.high[1], above) * T.highAmount;
 
+    const shade = forest === null ? -1 : smoothstep(T.forest[0], T.forest[1], forest);
+
     for (let k = 0; k < 3; k++) {
 
-        const value = 1 + T.warm[k] * warm + T.wet[k] * wet;
+        let value = 1 + T.warm[k] * warm + T.wet[k] * wet;
 
-        out[k] = clamp(value + (T.highColor[k] - value) * high, 0.7, 1.3);
+        if (shade >= 0) value *= T.open[k] + (T.shade[k] - T.open[k]) * shade;
+
+        out[k] = clamp(value + (T.highColor[k] - value) * high, T.min, T.max);
 
     }
 
@@ -637,7 +667,7 @@ export class Biomes {
 
                 const above = heightAt(i, j) - SEA_LEVEL;
 
-                grassTint(fields[0] - Math.max(0, above) / 60, fields[1], above, color);
+                grassTint(fields[0] - Math.max(0, above) / 60, fields[1], above, color, fields[2]);
 
                 const n = (j * side + i) * 3;
 

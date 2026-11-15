@@ -11,6 +11,23 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 1.2.0 - Trawa z kwiatkami i wyraźne kolory biomów
+
+Pomysł Kamila — PR #148 (po 1.1.5). Opis: [`docs/trawa.md`](docs/trawa.md).
+
+- **Wierzch bloku trawy z dodatkami.** Co dziewiąty blok trawy ma na
+  wierzchu płaski dodatek: kępki, koniczynę, rozety liści, mech,
+  stokrotki, mlecze, maki, chabry, fiołki, niezapominajki, krokusy...
+  42 warianty, losowo. To dalej zwykły blok trawy - zmienia się tylko
+  obrazek.
+- **Kolor klimatu nie zmienia płatków** - barwią się tylko zielone
+  części (trawa, liście, mech).
+- **Trawa wyraźnie różni się między biomami:** żółtozielona w cieple
+  i suchu, sinawa w chłodzie i wilgoci, ciemna w lesie, jasna na łące,
+  blada w górach. Widać to też w istniejących światach.
+- **Bez kosztu dla płynności:** te same trójkąty i polecenia rysowania;
+  wybór wariantu to ok. 30 ns na blok trawy przy budowaniu chunka.
+
 ## 1.1.5 - Płynność, krok 6 (część 1): łączenie terenu
 
 Na prośbę Kamila — PR #147 (po 1.1.4). Na podstawie jego raportu

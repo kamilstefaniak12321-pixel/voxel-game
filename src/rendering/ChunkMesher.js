@@ -20,7 +20,7 @@ import { BUSHY_GRASS_TEXTURE } from '../blocks/bushyGrass.js';
 import { getAtlasUV } from './TextureAtlas.js';
 import { getPlantMeshTemplate, lightPlantMeshTemplate } from './PlantMeshTemplate.js';
 import { createPlantDetailLookup } from './PlantDistanceModels.js';
-import { PINE_UPPER_ID, pineBarkTransitionStage, mossCarpetVariant } from './SurfaceTextureVariants.js';
+import { PINE_UPPER_ID, pineBarkTransitionStage, mossCarpetVariant, GRASS_ID, grassTopVariant } from './SurfaceTextureVariants.js';
 import { createCanopySampler } from './CanopyLighting.js';
 import { shapeInfo } from '../blocks/woodShapes.js';
 import { shapeBoxes, SIDE_BITS } from '../world/ShapeBoxes.js';
@@ -2242,8 +2242,12 @@ function* buildChunkGeometrySteps(chunk, world, { terrain, plants: includePlants
                 }
 
 
-                const textureVariant = id === PINE_UPPER_ID
-                    ? pineBarkTransitionStage(blocks, index, y, LAYER) : 0;
+                // Wierzch trawy z dodatkiem (co dziewiąty blok) - sam obrazek,
+                // bez dodatkowej geometrii (SurfaceTextureVariants.js).
+                const textureVariant = id === GRASS_ID
+                    ? grassTopVariant(baseX + lx, y, baseZ + lz)
+                    : id === PINE_UPPER_ID
+                        ? pineBarkTransitionStage(blocks, index, y, LAYER) : 0;
                 faceCount = addCubeFaces(id, renderData, lx, y, lz, faceCount, baseX, baseZ, textureVariant);
 
             }

@@ -11,6 +11,24 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 1.7.0 - Kora dębu z arkusza
+
+Pomysł Kamila — PR #153 (po 1.6.0). Opis: [`docs/kora.md`](docs/kora.md).
+
+- **Pień dębu nie powtarza jednego obrazka.** Kora ma arkusz 128 × 128
+  pikseli (64 kafelki); gra wybiera kafelek osobno dla każdej z czterech
+  stron każdego bloku pnia - losowo, z wagami. Kafelki pasują do siebie
+  (bruzdy kory schodzą się na krawędziach).
+- **Rzadkie dodatki:** porosty, pęknięcia i guzki, sęki po dawnych
+  gałęziach, zabliźniona rana, okorowany płat z jasnym drewnem i dziupla.
+  Zwykła kora to ok. 94% boków.
+- To dalej ten sam blok (przedmiot, zapis, zasady); kłoda postawiona
+  przez gracza też dostaje kafelek ze swojego miejsca. Ikonka i kłoda
+  w dłoni bez zmian.
+- **Płynność:** bez zmian w rysowaniu; wybór kafelka to ok. 10 ns na bok
+  pnia przy budowaniu chunka.
+- Na razie dąb; pozostałe drzewa w kolejnych wersjach.
+
 ## 1.6.0 - Tryb przesady
 
 Pomysł Kamila — PR #152 (po 1.5.0). Opis: [`docs/przesada.md`](docs/przesada.md).

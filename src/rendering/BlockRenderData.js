@@ -1,3 +1,4 @@
+import { BARK_SHEETS, BARK_GRID, barkLookup } from './BarkSheets.js';
 import * as THREE from 'three';
 import { campfireLightUniforms, CAMPFIRE_LIGHT_GLSL } from './CampfireLight.js';
 import { SURFACE_LIGHTING_GLSL } from './SurfaceLighting.js';
@@ -85,6 +86,24 @@ import {
 
 // Zestawy UV bloku trawy: jeden na każdy wierzch z GRASS_TOP_TEXTURES.
 // Boki i spód liczone raz i wspólne dla wszystkich zestawów.
+// Bok pnia z arkuszem kory (BarkSheets.js): UV każdego z 64 kafelków
+// arkusza i tabela losowania. Wierzch i spód pnia zostają bez zmian.
+function barkSheet(name) {
+    const sheet = BARK_SHEETS[name];
+    if (!sheet) return null;
+    // Cały arkusz bez odsunięcia i z nim - z różnicy wychodzi odsunięcie
+    // od krawędzi jednego kafelka.
+    const full = getAtlasUV(sheet.texture, 0), inner = getAtlasUV(sheet.texture);
+    const insetU = inner.uMin - full.uMin, insetV = inner.vMin - full.vMin;
+    const du = (full.uMax - full.uMin) / BARK_GRID, dv = (full.vMax - full.vMin) / BARK_GRID;
+    const uv = sheet.tiles.map((_, tile) => {
+        const column = tile % BARK_GRID, row = Math.floor(tile / BARK_GRID);
+        return rotatedUVs(full.uMin + column * du + insetU, full.uMin + (column + 1) * du - insetU,
+            full.vMax - (row + 1) * dv + insetV, full.vMax - row * dv - insetV);
+    });
+    return { uv, lookup: barkLookup(sheet.tiles) };
+}
+
 function grassTopVariants(definition) {
     const shared = FACE_NAMES.map(faceName => createRotatedUVs(getFaceTexture(definition.textures, faceName)));
     return GRASS_TOP_TEXTURES.map(texture => FACE_NAMES.map((faceName, index) =>
@@ -1107,6 +1126,13 @@ function createRotatedUVs(textureName) {
         textureName
     );
 
+    return rotatedUVs(uMin, uMax, vMin, vMax);
+
+}
+
+// Cztery obroty prostokąta UV (kafelek albo jego część).
+function rotatedUVs(uMin, uMax, vMin, vMax) {
+
 
     // Rogi kafelka w tej samej kolejności "po okręgu".
 
@@ -1210,6 +1236,9 @@ for (
 
         // Composed once while loading the atlas; variants reuse the same
         // opaque/cutout face and material instead of adding overlay geometry.
+        // Pień z arkuszem kory: boki losowane z 64 kafelków.
+        bark: barkSheet(name),
+
         worldTextureVariants: name === 'pine_log_upper'
             ? [definition.textures.side, ...PINE_TRANSITION_TEXTURES].map(texture => FACE_NAMES.map(faceName =>
                 createRotatedUVs(['top', 'bottom'].includes(faceName)

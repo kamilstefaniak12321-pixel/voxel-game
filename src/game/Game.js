@@ -1843,6 +1843,10 @@ export class Game extends GameInteraction {
         // Eksperyment: trawa kępiasta (tylko wygląd - bloki bez zmian).
 
         this.world.setExperiments({ bushyGrass: settings.get('bushyGrass') });
+
+        // Łączenie sąsiednich chunków w jedno polecenie rysowania
+        // (rendering/RegionBatches.js; /ustaw laczenie-terenu wyl - do porównań).
+        this.world.setRegionBatching?.(settings.get('terrainBatching'));
         this.world.setDistanceLod(true);
 
         // Modele -> Animacje roślin (poziom modeli i wiatr - main.js,

@@ -66,6 +66,7 @@ export const SETTINGS_DEFAULTS = {
     fancyLeaves: true,                             // liście z prześwitami (false = szybkie, pełne)
     dynamicLight: true,                            // lampa w ręce, meteoryty...
     loadBudget: CHUNK_LOAD_BUDGET_MS,              // ms na klatkę na wczytywanie chunków
+    terrainBatching: true,                         // łączenie sąsiednich chunków w jedno polecenie rysowania (rendering/RegionBatches.js)
 
     // Sterowanie
     mouseSensitivity: DEFAULT_MOUSE_SENSITIVITY,   // procent

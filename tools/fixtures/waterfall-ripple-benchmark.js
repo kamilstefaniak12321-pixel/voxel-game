@@ -195,7 +195,9 @@ export async function createWaterfallRippleQA() {
         const projected = point.clone().project(game.camera);
         const ray = new THREE.Raycaster();
         ray.setFromCamera(new THREE.Vector2(projected.x, projected.y), game.camera);
-        const meshes = [...world.chunks.values()].map(chunk => chunk.mesh).filter(mesh => mesh?.visible);
+        // Geometry of every chunk, including chunks drawn through a merged
+        // region (RegionBatches hides their own mesh but keeps its geometry).
+        const meshes = [...world.chunks.values()].map(chunk => chunk.mesh).filter(Boolean);
         const hit = ray.intersectObjects(meshes, false)[0];
         check(Math.abs(projected.x) < .9 && Math.abs(projected.y) < .9 && projected.z > -1 && projected.z < 1 &&
             hit?.face?.materialIndex === 2 && hit.point.distanceTo(point) < .01,

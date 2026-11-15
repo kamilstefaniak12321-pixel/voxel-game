@@ -11,6 +11,25 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 1.1.5 - Płynność, krok 6 (część 1): łączenie terenu
+
+Na prośbę Kamila — PR #147 (po 1.1.4). Na podstawie jego raportu
+diagnostycznego i pomiarów: [`docs/plynnosc.md`](docs/plynnosc.md).
+
+- **Mniej poleceń rysowania.** Pomiar na laptopie Kamila pokazał, że
+  klatki ogranicza procesor wysyłający około 1000 poleceń rysowania,
+  a karta graficzna ma zapas. Sąsiednie chunki (2 x 2) są teraz
+  sklejane: bloki, liście i woda czterech chunków to 3 polecenia
+  zamiast 12. W tym samym kadrze: 322 → 139 poleceń dla terenu.
+- **Nic się nie opóźnia.** Chunk, który właśnie powstał albo się
+  zmienił (kopanie, stawianie), rysuje się od razu sam, jak dawniej;
+  okolica skleja się w tle, gdy jest spokojna.
+- Obraz świata bez zmian (pięć kadrów porównanych piksel w piksel).
+- Do porównań: `/ustaw laczenie-terenu wyl` i `wl`; stan łączenia
+  w `/wydajnosc`.
+- Plan płynności: kroki 6 i 7 przed 4 i 5 (doczytywanie terenu nie
+  jest wąskim gardłem).
+
 ## 1.1.4 - Płynność, krok 3: pamięć startu
 
 Na prośbę Kamila — PR #146 (po 1.1.3). Trzeci krok planu płynności:

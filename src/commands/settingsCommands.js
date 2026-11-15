@@ -66,6 +66,7 @@ export const SETTING_WORDS = {
     liscie: 'fancyLeaves',
     'dynamiczne-swiatlo': 'dynamicLight',
     wczytywanie: 'loadBudget',
+    'laczenie-terenu': 'terrainBatching',
     czulosc: 'mouseSensitivity',
     'odwroc-mysz': 'invertMouse',
     motyw: 'theme',
@@ -889,6 +890,8 @@ export const SETTINGS_COMMANDS = [
 
             const far = game.farTerrain.stats();
 
+            const batches = world.regionBatches?.getStats();
+
 
             let meshed = 0;
 
@@ -937,6 +940,8 @@ export const SETTINGS_COMMANDS = [
                 // Program skompilowany w trakcie gry = krótkie przycięcie
                 // i brakujący wzór w rendering/ShaderWarmup.js.
                 `Programy cieniujące: ${info.programs?.length ?? 0}, z tego skompilowane w trakcie gry: ${lateShaderPrograms(game.renderer)}\n` +
+                // Łączenie terenu (rendering/RegionBatches.js): ile chunków rysuje się razem.
+                (batches ? `Łączenie terenu: ${batches.enabled ? `${batches.members} chunków w ${batches.merged} regionach, ${batches.solo} osobno, ${batches.waiting} regionów czeka` : 'wył.'}\n` : '') +
                 `Chunki: ${world.chunks.size} wczytanych, ${meshed} z meshem, ${world.loadQueue.length} w kolejce, ` +
                 `${world.dirtyChunks.size} do przebudowy | ` +
                 `daleki teren: ${far.active ? `${far.shown} kafelków, ${Math.round(far.triangles / 1000)} tys. trójkątów` : 'wył.'}\n` +

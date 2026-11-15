@@ -2,7 +2,7 @@
 
 > Ta strona jest generowana z kodu gry (`python tools/wiki.py`) - nie zmieniaj jej ręcznie, zmiany przepadną przy następnym generowaniu.
 
-Wersja gry **1.7.2** - 71 osiągnięć. Księga osiągnięć: klawisz **L**. Uwaga, spoilery: sekretne osiągnięcia są tu opisane (w grze widać tylko „???”).
+Wersja gry **1.8.0** - 72 osiągnięć. Księga osiągnięć: klawisz **L**. Uwaga, spoilery: sekretne osiągnięcia są tu opisane (w grze widać tylko „???”).
 
 
 ## Zwykłe (10 pkt)
@@ -70,7 +70,7 @@ Wersja gry **1.7.2** - 71 osiągnięć. Księga osiągnięć: klawisz **L**. Uwa
 | <img src="ikony/grass.png" width="32" height="32" alt=""> | **Lokator z ikonką** | Zagraj w aplikacji na telefon (zainstalowanej, z ikonką na ekranie). | „Gra zamieszkała na twoim telefonie. Czynszu nie płaci.” |
 | <img src="ikony/water.png" width="32" height="32" alt=""> | **Spływ** | Daj się ponieść nurtowi rzeki przez 100 bloków. | „Wiosło? Jakie wiosło? Rzeka wie, dokąd płynie.” |
 | <img src="ikony/lime_plaster.png" width="32" height="32" alt=""> | **Projektant wnętrz** | Postaw każdy z pięciu budulców: tynk wapienny, tynk ochrowy, terakotę, polerowany kamień i ciemne deski. | „Biel optycznie powiększa wnętrze. Ciemne deski - optycznie zmniejszają rachunki za prąd.” |
-| <img src="ikony/tall_grass.png" width="32" height="32" alt=""> | **Turysta** | Odwiedź każdy z 16 biomów lądowych: łąkę, lasy, góry, mokradła, wydmy... (/biom lista). | „Łąka, bór, bagno, szczyt. Pocztówki wyślesz później.” |
+| <img src="ikony/tall_grass.png" width="32" height="32" alt=""> | **Turysta** | Odwiedź każdy z 20 biomów lądowych: łąkę, lasy, góry, mokradła, wydmy... (/biom lista). | „Łąka, bór, bagno, szczyt. Pocztówki wyślesz później.” |
 | <img src="ikony/snow.png" width="32" height="32" alt=""> | **Dach świata** | Stań na śniegu na ośnieżonym szczycie. | „Widok jak z pocztówki, wiatr jak z zamrażarki.” |
 | <img src="ikony/oak_planks.png" width="32" height="32" alt=""> | **Promyk słońca** | Stań w plamie słońca pod dachem (słońce wpada przez okno albo dziurę w ścianie). | „Jak kot na parapecie. Brakuje tylko mruczenia.” |
 | <img src="ikony/roasted_hazelnut.png" width="32" height="32" alt=""> | **Śniadanie, obiad, kolacja** | Zalicz trzy posiłki jednego dnia. | „Trzy posiłki dziennie. Organizm jest w szoku, ale wdzięczny.” |
@@ -83,6 +83,7 @@ Wersja gry **1.7.2** - 71 osiągnięć. Księga osiągnięć: klawisz **L**. Uwa
 
 | | Tytuł | Jak zdobyć | Komentarz |
 |---|---|---|---|
+| <img src="ikony/baobab_log.png" width="32" height="32" alt=""> | **Drzewa świata** | Zetnij pień każdego z trzynastu drzew z dalekich stron: jodły, baobabu, palmy kokosowej, modrzewia, namorzynu, puchowca, jukki, osiki, araukarii, figowca, draceny, cedru i sosny ościstej (/biom znajdz sawanna, pustynia, deszczowy, namorzyny). | „Od namorzynów po granicę śniegu. Paszport pełen słojów.” |
 | <img src="ikony/nagietek_etap3.png" width="32" height="32" alt=""> | **Cztery pory roku** | Bądź w świecie wiosną, latem, jesienią i zimą. | „Pełny obrót. Vivaldi napisał o tym koncert, ty po prostu przetrwałeś.” |
 | <img src="ikony/lamp_purple.png" width="32" height="32" alt=""> | **Dzień jak noc** | Zobacz pełne zaćmienie słońca. | „Słońce na chwilę zrobiło sobie przerwę. Ty jak zwykle nie.” |
 | <img src="ikony/meteorite.png" width="32" height="32" alt=""> | **Kosmiczny złom** | Wykop blok meteorytu. | „Kawałek nieba w kieszeni. Jeszcze ciepły.” |

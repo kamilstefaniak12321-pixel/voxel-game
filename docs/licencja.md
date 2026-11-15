@@ -84,6 +84,19 @@ w `docs/zrodla/drzewa-0.85/`. Proceduralne sylwetki, sadzonki, okorowane
 drewno i opał przygotowano w repozytorium; źródła botaniczne posłużyły
 wyłącznie do porównania skali, bez kopiowania ich ilustracji.
 
+Paczkę `DOC-20261115-WA0023.zip` („drzewa od jodły": jodła, baobab, palma
+kokosowa, modrzew, namorzyn, puchowiec, drzewo Jozuego, osika, araukaria,
+banian, smocze drzewo, cedr libański, sosna oścista) Kamil przekazał
+15 listopada 2026 r. do włączenia do gry (1.8.0), z pozwoleniem na
+poprawianie tekstur. Oryginalne kafelki 16 × 16 każdego drzewa (w tym
+korzenie, kosmata kora, kora przy ziemi i martwe drewno) są w
+`assets/textures/drzewa.png` piksel w piksel; sumy kontrolne i metadane
+w `docs/zrodla/drzewa-1.8/`, sprawdza je `tools/sprawdz_drzewa_180.mjs`.
+Paczka zawierała tekstury i podglądy sylwetek, bez geometrii i bez
+osobnego dokumentu licencyjnego. Sylwetki, okorowane drewno, sadzonki,
+opał, kora, kokos i arkusze kory powstały w repozytorium
+(`tools/tekstury_drzew_180.py`, `tools/tekstury_kory.py`).
+
 ## Źródło muzyki
 
 

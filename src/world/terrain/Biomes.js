@@ -397,6 +397,86 @@ export const BIOMES = {
             patches: [['crocus', 0.4, 0.15]],
             bushes: { species: ['blueberry'], density: 1 }
         }
+    },
+
+    // ---- 1.8.0: biomy drzew z paczki "drzewa_od_jodly" ----
+
+    savanna: {
+        name: 'Sawanna',
+        about: 'gorąca, sucha równina: wysoka, żółknąca trawa, rozrzucone akacje i olbrzymie baobaby',
+        words: ['sawanna', 'baobab'],
+        color: '#c9b458',
+        ground: [['coarse_dirt', 0.2]],
+        trees: { acacia: 0.8, baobab: 0.2 },
+        density: 0.5,
+        lone: 0.03,
+        plants: {
+            grass: [0.3, 0.7],
+            tall: [0.4, 0.75],
+            flowers: null,
+            fern: 0,
+            herbs: [['plantain', 0.006]],
+            bushes: null
+        }
+    },
+
+    desert: {
+        name: 'Półpustynia',
+        about: 'piasek i sucha, twarda ziemia: drzewa Jozuego i parasole smoczych drzew, tu i tam kępa suchej trawy',
+        words: ['polpustynia', 'półpustynia', 'pustynia'],
+        color: '#dcc58a',
+        ground: [['sand', 0.8], ['coarse_dirt', 0.7]],
+        trees: { joshua_tree: 0.6, dragon_tree: 0.4 },
+        density: 0.08,
+        lone: 0.02,
+        plants: {
+            grass: [0.01, 0.07],
+            tall: [0, 0.1],
+            flowers: null,
+            fern: 0,
+            herbs: [],
+            bushes: null
+        }
+    },
+
+    rainforest: {
+        name: 'Las deszczowy',
+        about: 'gorąco i mokro: sklepienie z figowców z zasłonami korzeni powietrznych, ponad nim olbrzymie puchowce na przyporach; paprocie, mech i wysoka trawa',
+        words: ['deszczowy', 'dzungla', 'dżungla', 'puchowiec'],
+        color: '#1f7a3a',
+        ground: [['forest_floor', 0.45], ['moss', 0.25]],
+        trees: { kapok: 0.3, banyan: 0.7 },
+        density: 1,
+        lone: 0.3,
+        plants: {
+            grass: [0.2, 0.5],
+            tall: [0.4, 0.8],
+            flowers: null,
+            fern: 0.4,
+            herbs: [['nettle', 0.01]],
+            patches: [['moss_carpet', 0.5, 0.2]],
+            bushes: { species: ['chili', 'blackberry'], density: 0.6 }
+        }
+    },
+
+    mangrove: {
+        name: 'Namorzyny',
+        about: 'gorące, błotniste brzegi: namorzyny na łukach korzeni stoją w błocie i w płytkiej wodzie',
+        words: ['namorzyny', 'namorzyn', 'mangrowe'],
+        color: '#4f8a6a',
+        ground: [['mud', 0.55], ['moss', 0.15]],
+        trees: { mangrove: 1 },
+        density: 0.45,
+        lone: 0.03,
+        plants: {
+            grass: [0.2, 0.5],
+            tall: [0.5, 0.85],
+            flowers: null,
+            fern: 0.12,
+            herbs: [],
+            patches: [['reed', 0.6, 0.2]],
+            bushes: null
+        }
     }
 
 };
@@ -506,7 +586,7 @@ export function biomeByWord(word) {
 // Kolumny biomu w kolejności rodzajów lasu (scores).
 
 const FOREST_TYPES = ['spruce', 'pine', 'beech', 'birch', 'deciduous',
-    'maple_forest', 'sequoia_forest', 'eucalyptus_forest', 'olive_grove'];
+    'maple_forest', 'sequoia_forest', 'eucalyptus_forest', 'olive_grove', 'rainforest'];
 
 // Pole lasów, od którego w lesie (nie na łące) liczy się gęstość lasów
 // w Forests.js - kosodrzewina i gaj oliwny tylko powyżej (z zapasem),
@@ -865,10 +945,20 @@ export class Biomes {
                 sample.depression > B.wetlandDepression ||
                 (humidity > B.wetlandHumidity && patch > B.wetlandPatch && sample.flatness > 0.3)
             ) {
-                info.biome = 'wetland';
+                // 1.8.0: w gorącym klimacie mokradła to namorzyny.
+                info.biome = temperature > B.mangroveWarm ? 'mangrove' : 'wetland';
                 return info.biome;
             }
 
+        }
+
+
+        // 1.8.0: półpustynia - bardzo gorąco i bardzo sucho (tu nie ma lasu).
+
+        if (!mountain && temperature > 0.2 && humidity < -0.3 &&
+            smoothstep(0.2, 0.45, temperature) * smoothstep(-0.3, -0.55, humidity) * smoothstep(30, 16, above) + 0.15 * fields[5 + 1] > B.desert) {
+            info.biome = 'desert';
+            return info.biome;
         }
 
 
@@ -877,6 +967,15 @@ export class Biomes {
         if (forest < B.forestFrom - B.forestHumid * humidity) {
 
             // Na ciepłych, suchych łąkach - gaj oliwny (rzadkie drzewa).
+
+            // 1.8.0: na gorących, suchych równinach - sawanna (jeszcze
+            // cieplej niż w gaju oliwnym).
+
+            if (!mountain && temperature > 0.3 && humidity < -0.05 &&
+                smoothstep(0.3, 0.5, temperature) * smoothstep(-0.05, -0.3, humidity) * smoothstep(30, 16, above) + 0.2 * fields[5 + 8] > B.savanna) {
+                info.biome = 'savanna';
+                return info.biome;
+            }
 
             info.biome = !mountain && forest > GROVE_FOREST && this.oliveScore(temperature, humidity, above) + B.forestMix * fields[5 + 8] > B.oliveMeadow
                 ? 'olive_grove' : 'meadow';
@@ -915,6 +1014,8 @@ export class Biomes {
         s[6] = F.sequoia[0] + F.sequoia[1] * smoothstep(0.15, 0.45, h) * smoothstep(-0.95, -0.6, t) * (1 - smoothstep(-0.1, 0.2, t)) * smoothstep(26, 14, above);
         s[7] = F.eucalyptus[0] + F.eucalyptus[1] * smoothstep(0.05, 0.35, t) * smoothstep(-0.05, 0.25, h) * smoothstep(22, 10, above);
         s[8] = this.oliveScore(t, h, above);
+        // 1.8.0: las deszczowy - najgoręcej i najwilgotniej, nisko.
+        s[9] = F.rainforest[0] + F.rainforest[1] * smoothstep(0.2, 0.42, t) * smoothstep(0.1, 0.32, h) * smoothstep(22, 10, above);
 
         let best = 0;
 

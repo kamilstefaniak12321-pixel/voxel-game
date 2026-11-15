@@ -28,11 +28,11 @@ const INDEX = Object.fromEntries(PLANT_HABITATS.map((name, index) => [name, inde
 // Biom (klucz z BIOMES - src/world/terrain/Biomes.js) -> siedlisko.
 // Biomu spoza listy (nowy biom) - łąka.
 export const BIOME_HABITATS = {
-    sea: 'brzeg', lake: 'brzeg', river: 'brzeg', wetland: 'brzeg',
-    beach: 'sucha', olive_grove: 'sucha',
+    sea: 'brzeg', lake: 'brzeg', river: 'brzeg', wetland: 'brzeg', mangrove: 'brzeg',
+    beach: 'sucha', olive_grove: 'sucha', savanna: 'sucha', desert: 'sucha',
     meadow: 'laka',
     deciduous: 'las', beech: 'las', birch: 'las', maple_forest: 'las',
-    eucalyptus_forest: 'las', sequoia_forest: 'las',
+    eucalyptus_forest: 'las', sequoia_forest: 'las', rainforest: 'las',
     pine: 'bor', spruce: 'bor',
     alpine: 'gory', rocky: 'gory', snowy: 'gory', mugo_scrub: 'gory'
 };

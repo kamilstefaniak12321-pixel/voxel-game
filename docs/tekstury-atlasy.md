@@ -11,6 +11,10 @@ wiersz mieści nowe drzewa bez naruszania kafelków ani ochronnych
 odstępów wcześniejszych modeli. To 16 KiB więcej pamięci RGBA;
 znormalizowane UV obliczane są z aktualnych wymiarów atlasu.
 
+Od 1.8.0 atlas GPU ma 1024 × 1536 pikseli (64 × 96 kratek): kafelki
+trzynastu nowych drzew leżą w wierszach 56-63 (kolumny 16-63), a ich
+arkusze kory pod wierszem 64 ([kora.md](kora.md)).
+
 | Plik | Zawartość |
 |---|---|
 | `drzewa.png` | Wszystkie gatunki: kora, słoje, deski, liście, sadzonki i ich modele, owoce/dodatki drzew, opał |

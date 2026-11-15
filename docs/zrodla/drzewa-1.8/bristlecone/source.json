@@ -1,0 +1,85 @@
+{
+  "sourceArchive": "DOC-20261115-WA0023.zip (drzewa_od_jodly)",
+  "sourceFolder": "13_bristlecone_pine",
+  "suppliedBy": "Kamil",
+  "importDate": "2026-11-15",
+  "note": "Oryginalne piksele RGBA skopiowane do drzewa.png bez skalowania i zmian kolorów. Paczka zawiera podglądy sylwetek, bez geometrii; drzewa w grze powstają proceduralnie w skali 1 blok = 1 metr.",
+  "scientificReference": "Pinus longaeva",
+  "originalFiles": {
+    "log_side.png": {
+      "sha256": "12602290f70eadddba026e389fcc29fb829b0a38fa48ee40a2ecbdf56b55c0b4",
+      "bytes": 342,
+      "rgbaSha256": "ec82995f5d4dc59a0a3cbb2fb5e288f8e272c2af8502966083981a66f88145bc",
+      "width": 16,
+      "height": 16
+    },
+    "log_top.png": {
+      "sha256": "a96793e60a17b99df42a888f70f0b09fbb1d1aa05da6fc5634b0d48c626fa0b8",
+      "bytes": 405,
+      "rgbaSha256": "899457c70e22db1a35f1b1895762a5e95a5c1f475291d01b42a44794f0b62383",
+      "width": 16,
+      "height": 16
+    },
+    "planks.png": {
+      "sha256": "05ea67908bb4ad6e8930e958c6f66c0dcdeae4cab6937c84e03466a0639bff1d",
+      "bytes": 269,
+      "rgbaSha256": "a75c5cc503822fcc49030c33e814fe744e8de422d7bd396c960def26d9dadfa6",
+      "width": 16,
+      "height": 16
+    },
+    "leaves.png": {
+      "sha256": "4b12a740bfa277101438f9af709d9becce39558fb00db63ba1f9b075a8f60185",
+      "bytes": 459,
+      "rgbaSha256": "3c771c521c7e763ff34f7334776b125eb1700a0ffe8343c61896eb2c9fb67752",
+      "width": 16,
+      "height": 16
+    },
+    "leaves_variant.png": {
+      "sha256": "22bf78d3669980e21571358c100a53404bc9c6a378eda16c081dd094476bedb9",
+      "bytes": 517,
+      "rgbaSha256": "fd71f007b9d2d1c0ca3a2456d58727e29079cf5da160afc5fdcf44f155f80ef8",
+      "width": 16,
+      "height": 16
+    },
+    "log_side_dead.png": {
+      "sha256": "14139a94b58a21ce0faf094d44294b68c9be6b4075ba65f74b299a982881747a",
+      "bytes": 310,
+      "rgbaSha256": "750f3b1f4e412706f9b1c11d44aa70024b075b43cea51fd1deee3239b3539e76",
+      "width": 16,
+      "height": 16
+    }
+  },
+  "generator": "tools/tekstury_drzew_180.py; tools/modele_roslin.py; tools/tekstury_kory.py",
+  "derivedRegions": {
+    "bristlecone/stripped_side.png": {
+      "rgbaSha256": "a3fce7fbd682cf6bc4d26c5a5c384dd3c6d28332808decc4236c3518daba92c7",
+      "width": 16,
+      "height": 16
+    },
+    "bristlecone/stripped_top.png": {
+      "rgbaSha256": "77a506d54afe418353be073be93e193297e54d5656dc3fe90beb73d22410187a",
+      "width": 16,
+      "height": 16
+    },
+    "bristlecone/sapling.png": {
+      "rgbaSha256": "d1fea7e65b4fdb68a5992ed719abacf5136876818b5d3fc903bab8f4a3cd6901",
+      "width": 16,
+      "height": 16
+    },
+    "campfire_bristlecone": {
+      "rgbaSha256": "8486b408a790df718c5b981510cb50c61c1a4b2a6a431b9cfcd39fbcae046432",
+      "width": 32,
+      "height": 32
+    },
+    "models/rosliny/sadzonka-oscista/polrealistyczny": {
+      "rgbaSha256": "c622eedc9edb5f21bdaee6afe1479a6fd188e2dab3cdae583d58799dce1ec7fd",
+      "width": 16,
+      "height": 16
+    },
+    "bristlecone_bark": {
+      "rgbaSha256": "9adc3b4b1c226b8c3ee73d528397fbf7b7e53511482f0735ed2618e9a68c56ba",
+      "width": 16,
+      "height": 16
+    }
+  }
+}

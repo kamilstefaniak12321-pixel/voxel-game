@@ -325,8 +325,13 @@ export const BIOME_SHAPE = {
     mugoBand: [3, 7],
     mugoPatch: -0.25,
     mugoScale: 70,
-    newForests: { maple: [0.05, 0.85], sequoia: [-0.35, 1.4], eucalyptus: [-0.05, 1.4], olive: [-0.1, 1.4] },
-    oliveMeadow: 0.55
+    newForests: { maple: [0.05, 0.85], sequoia: [-0.35, 1.4], eucalyptus: [-0.05, 1.4], olive: [-0.1, 1.4], rainforest: [-0.1, 1.62] },
+    oliveMeadow: 0.55,
+    // 1.8.0: namorzyny - mokradła od tej temperatury; półpustynia i sawanna -
+    // od tej oceny (gorąco x sucho, z plamami szumu na granicach).
+    mangroveWarm: 0.22,
+    desert: 0.62,
+    savanna: 0.4
 };
 
 

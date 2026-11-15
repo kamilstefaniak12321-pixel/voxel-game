@@ -35,6 +35,10 @@ TREES = {
     'maple': 'maple/log_side.png', 'mugo': 'mugo/log_side.png', 'olive': 'olive/log_side.png',
     'rainbow_eucalyptus': 'rainbow_eucalyptus/log_side.png', 'sequoia': 'sequoia/log_side.png',
     'ginkgo': 'ginkgo/log_side.png', 'jacaranda': 'jacaranda/log_side.png',
+    # 1.8.0: miejsca w atlasie przydziela tools/tekstury_drzew_180.py.
+    **{tree: f'{tree}/log_side.png' for tree in (
+        'fir', 'baobab', 'coconut_palm', 'larch', 'mangrove', 'kapok', 'joshua_tree',
+        'aspen', 'araucaria', 'banyan', 'dragon_tree', 'cedar', 'bristlecone')},
 }
 
 # Wolne kafelki wspólnego atlasu (kolumna, wiersz) - same pojedyncze,

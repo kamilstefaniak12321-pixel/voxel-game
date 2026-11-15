@@ -2,12 +2,12 @@
   "version": 1,
   "tileSize": 16,
   "columns": 64,
-  "rows": 59,
+  "rows": 96,
   "sheets": {
     "drzewa": {
       "file": "drzewa.png",
       "width": 256,
-      "height": 3280
+      "height": 5616
     },
     "teren": {
       "file": "teren.png",
@@ -5356,6 +5356,1252 @@
       "y": 3152,
       "width": 128,
       "height": 128
+    },
+    "fir/log_side.png": {
+      "sheet": "drzewa",
+      "x": 0,
+      "y": 3280,
+      "width": 16,
+      "height": 16
+    },
+    "fir/log_top.png": {
+      "sheet": "drzewa",
+      "x": 16,
+      "y": 3280,
+      "width": 16,
+      "height": 16
+    },
+    "fir/stripped_side.png": {
+      "sheet": "drzewa",
+      "x": 32,
+      "y": 3280,
+      "width": 16,
+      "height": 16
+    },
+    "fir/stripped_top.png": {
+      "sheet": "drzewa",
+      "x": 48,
+      "y": 3280,
+      "width": 16,
+      "height": 16
+    },
+    "fir/planks.png": {
+      "sheet": "drzewa",
+      "x": 64,
+      "y": 3280,
+      "width": 16,
+      "height": 16
+    },
+    "fir/leaves.png": {
+      "sheet": "drzewa",
+      "x": 80,
+      "y": 3280,
+      "width": 16,
+      "height": 16
+    },
+    "fir/sapling.png": {
+      "sheet": "drzewa",
+      "x": 96,
+      "y": 3280,
+      "width": 16,
+      "height": 16
+    },
+    "fir/leaves_variant.png": {
+      "sheet": "drzewa",
+      "x": 112,
+      "y": 3280,
+      "width": 16,
+      "height": 16
+    },
+    "campfire_fir": {
+      "sheet": "drzewa",
+      "x": 128,
+      "y": 3280,
+      "width": 32,
+      "height": 32
+    },
+    "models/rosliny/sadzonka-jodla/polrealistyczny": {
+      "sheet": "drzewa",
+      "x": 0,
+      "y": 3296,
+      "width": 16,
+      "height": 16
+    },
+    "fir_bark": {
+      "sheet": "drzewa",
+      "x": 16,
+      "y": 3296,
+      "width": 16,
+      "height": 16
+    },
+    "baobab/log_side.png": {
+      "sheet": "drzewa",
+      "x": 0,
+      "y": 3312,
+      "width": 16,
+      "height": 16
+    },
+    "baobab/log_top.png": {
+      "sheet": "drzewa",
+      "x": 16,
+      "y": 3312,
+      "width": 16,
+      "height": 16
+    },
+    "baobab/stripped_side.png": {
+      "sheet": "drzewa",
+      "x": 32,
+      "y": 3312,
+      "width": 16,
+      "height": 16
+    },
+    "baobab/stripped_top.png": {
+      "sheet": "drzewa",
+      "x": 48,
+      "y": 3312,
+      "width": 16,
+      "height": 16
+    },
+    "baobab/planks.png": {
+      "sheet": "drzewa",
+      "x": 64,
+      "y": 3312,
+      "width": 16,
+      "height": 16
+    },
+    "baobab/leaves.png": {
+      "sheet": "drzewa",
+      "x": 80,
+      "y": 3312,
+      "width": 16,
+      "height": 16
+    },
+    "baobab/sapling.png": {
+      "sheet": "drzewa",
+      "x": 96,
+      "y": 3312,
+      "width": 16,
+      "height": 16
+    },
+    "baobab/leaves_variant.png": {
+      "sheet": "drzewa",
+      "x": 112,
+      "y": 3312,
+      "width": 16,
+      "height": 16
+    },
+    "campfire_baobab": {
+      "sheet": "drzewa",
+      "x": 128,
+      "y": 3312,
+      "width": 32,
+      "height": 32
+    },
+    "models/rosliny/sadzonka-baobab/polrealistyczny": {
+      "sheet": "drzewa",
+      "x": 0,
+      "y": 3328,
+      "width": 16,
+      "height": 16
+    },
+    "baobab_bark": {
+      "sheet": "drzewa",
+      "x": 16,
+      "y": 3328,
+      "width": 16,
+      "height": 16
+    },
+    "coconut_palm/log_side.png": {
+      "sheet": "drzewa",
+      "x": 0,
+      "y": 3344,
+      "width": 16,
+      "height": 16
+    },
+    "coconut_palm/log_top.png": {
+      "sheet": "drzewa",
+      "x": 16,
+      "y": 3344,
+      "width": 16,
+      "height": 16
+    },
+    "coconut_palm/stripped_side.png": {
+      "sheet": "drzewa",
+      "x": 32,
+      "y": 3344,
+      "width": 16,
+      "height": 16
+    },
+    "coconut_palm/stripped_top.png": {
+      "sheet": "drzewa",
+      "x": 48,
+      "y": 3344,
+      "width": 16,
+      "height": 16
+    },
+    "coconut_palm/planks.png": {
+      "sheet": "drzewa",
+      "x": 64,
+      "y": 3344,
+      "width": 16,
+      "height": 16
+    },
+    "coconut_palm/leaves.png": {
+      "sheet": "drzewa",
+      "x": 80,
+      "y": 3344,
+      "width": 16,
+      "height": 16
+    },
+    "coconut_palm/sapling.png": {
+      "sheet": "drzewa",
+      "x": 96,
+      "y": 3344,
+      "width": 16,
+      "height": 16
+    },
+    "coconut_palm/leaves_variant.png": {
+      "sheet": "drzewa",
+      "x": 112,
+      "y": 3344,
+      "width": 16,
+      "height": 16
+    },
+    "campfire_coconut_palm": {
+      "sheet": "drzewa",
+      "x": 128,
+      "y": 3344,
+      "width": 32,
+      "height": 32
+    },
+    "models/rosliny/sadzonka-palma/polrealistyczny": {
+      "sheet": "drzewa",
+      "x": 0,
+      "y": 3360,
+      "width": 16,
+      "height": 16
+    },
+    "coconut_palm_bark": {
+      "sheet": "drzewa",
+      "x": 16,
+      "y": 3360,
+      "width": 16,
+      "height": 16
+    },
+    "coconut_palm/coconut.png": {
+      "sheet": "drzewa",
+      "x": 32,
+      "y": 3360,
+      "width": 16,
+      "height": 16
+    },
+    "larch/log_side.png": {
+      "sheet": "drzewa",
+      "x": 0,
+      "y": 3376,
+      "width": 16,
+      "height": 16
+    },
+    "larch/log_top.png": {
+      "sheet": "drzewa",
+      "x": 16,
+      "y": 3376,
+      "width": 16,
+      "height": 16
+    },
+    "larch/stripped_side.png": {
+      "sheet": "drzewa",
+      "x": 32,
+      "y": 3376,
+      "width": 16,
+      "height": 16
+    },
+    "larch/stripped_top.png": {
+      "sheet": "drzewa",
+      "x": 48,
+      "y": 3376,
+      "width": 16,
+      "height": 16
+    },
+    "larch/planks.png": {
+      "sheet": "drzewa",
+      "x": 64,
+      "y": 3376,
+      "width": 16,
+      "height": 16
+    },
+    "larch/leaves.png": {
+      "sheet": "drzewa",
+      "x": 80,
+      "y": 3376,
+      "width": 16,
+      "height": 16
+    },
+    "larch/sapling.png": {
+      "sheet": "drzewa",
+      "x": 96,
+      "y": 3376,
+      "width": 16,
+      "height": 16
+    },
+    "larch/leaves_variant.png": {
+      "sheet": "drzewa",
+      "x": 112,
+      "y": 3376,
+      "width": 16,
+      "height": 16
+    },
+    "campfire_larch": {
+      "sheet": "drzewa",
+      "x": 128,
+      "y": 3376,
+      "width": 32,
+      "height": 32
+    },
+    "models/rosliny/sadzonka-modrzew/polrealistyczny": {
+      "sheet": "drzewa",
+      "x": 0,
+      "y": 3392,
+      "width": 16,
+      "height": 16
+    },
+    "larch_bark": {
+      "sheet": "drzewa",
+      "x": 16,
+      "y": 3392,
+      "width": 16,
+      "height": 16
+    },
+    "mangrove/log_side.png": {
+      "sheet": "drzewa",
+      "x": 0,
+      "y": 3408,
+      "width": 16,
+      "height": 16
+    },
+    "mangrove/log_top.png": {
+      "sheet": "drzewa",
+      "x": 16,
+      "y": 3408,
+      "width": 16,
+      "height": 16
+    },
+    "mangrove/stripped_side.png": {
+      "sheet": "drzewa",
+      "x": 32,
+      "y": 3408,
+      "width": 16,
+      "height": 16
+    },
+    "mangrove/stripped_top.png": {
+      "sheet": "drzewa",
+      "x": 48,
+      "y": 3408,
+      "width": 16,
+      "height": 16
+    },
+    "mangrove/planks.png": {
+      "sheet": "drzewa",
+      "x": 64,
+      "y": 3408,
+      "width": 16,
+      "height": 16
+    },
+    "mangrove/leaves.png": {
+      "sheet": "drzewa",
+      "x": 80,
+      "y": 3408,
+      "width": 16,
+      "height": 16
+    },
+    "mangrove/sapling.png": {
+      "sheet": "drzewa",
+      "x": 96,
+      "y": 3408,
+      "width": 16,
+      "height": 16
+    },
+    "mangrove/leaves_variant.png": {
+      "sheet": "drzewa",
+      "x": 112,
+      "y": 3408,
+      "width": 16,
+      "height": 16
+    },
+    "campfire_mangrove": {
+      "sheet": "drzewa",
+      "x": 128,
+      "y": 3408,
+      "width": 32,
+      "height": 32
+    },
+    "models/rosliny/sadzonka-namorzyn/polrealistyczny": {
+      "sheet": "drzewa",
+      "x": 0,
+      "y": 3424,
+      "width": 16,
+      "height": 16
+    },
+    "mangrove_bark": {
+      "sheet": "drzewa",
+      "x": 16,
+      "y": 3424,
+      "width": 16,
+      "height": 16
+    },
+    "mangrove/roots.png": {
+      "sheet": "drzewa",
+      "x": 32,
+      "y": 3424,
+      "width": 16,
+      "height": 16
+    },
+    "kapok/log_side.png": {
+      "sheet": "drzewa",
+      "x": 0,
+      "y": 3440,
+      "width": 16,
+      "height": 16
+    },
+    "kapok/log_top.png": {
+      "sheet": "drzewa",
+      "x": 16,
+      "y": 3440,
+      "width": 16,
+      "height": 16
+    },
+    "kapok/stripped_side.png": {
+      "sheet": "drzewa",
+      "x": 32,
+      "y": 3440,
+      "width": 16,
+      "height": 16
+    },
+    "kapok/stripped_top.png": {
+      "sheet": "drzewa",
+      "x": 48,
+      "y": 3440,
+      "width": 16,
+      "height": 16
+    },
+    "kapok/planks.png": {
+      "sheet": "drzewa",
+      "x": 64,
+      "y": 3440,
+      "width": 16,
+      "height": 16
+    },
+    "kapok/leaves.png": {
+      "sheet": "drzewa",
+      "x": 80,
+      "y": 3440,
+      "width": 16,
+      "height": 16
+    },
+    "kapok/sapling.png": {
+      "sheet": "drzewa",
+      "x": 96,
+      "y": 3440,
+      "width": 16,
+      "height": 16
+    },
+    "kapok/leaves_variant.png": {
+      "sheet": "drzewa",
+      "x": 112,
+      "y": 3440,
+      "width": 16,
+      "height": 16
+    },
+    "campfire_kapok": {
+      "sheet": "drzewa",
+      "x": 128,
+      "y": 3440,
+      "width": 32,
+      "height": 32
+    },
+    "models/rosliny/sadzonka-puchowiec/polrealistyczny": {
+      "sheet": "drzewa",
+      "x": 0,
+      "y": 3456,
+      "width": 16,
+      "height": 16
+    },
+    "kapok_bark": {
+      "sheet": "drzewa",
+      "x": 16,
+      "y": 3456,
+      "width": 16,
+      "height": 16
+    },
+    "joshua_tree/log_side.png": {
+      "sheet": "drzewa",
+      "x": 0,
+      "y": 3472,
+      "width": 16,
+      "height": 16
+    },
+    "joshua_tree/log_top.png": {
+      "sheet": "drzewa",
+      "x": 16,
+      "y": 3472,
+      "width": 16,
+      "height": 16
+    },
+    "joshua_tree/stripped_side.png": {
+      "sheet": "drzewa",
+      "x": 32,
+      "y": 3472,
+      "width": 16,
+      "height": 16
+    },
+    "joshua_tree/stripped_top.png": {
+      "sheet": "drzewa",
+      "x": 48,
+      "y": 3472,
+      "width": 16,
+      "height": 16
+    },
+    "joshua_tree/planks.png": {
+      "sheet": "drzewa",
+      "x": 64,
+      "y": 3472,
+      "width": 16,
+      "height": 16
+    },
+    "joshua_tree/leaves.png": {
+      "sheet": "drzewa",
+      "x": 80,
+      "y": 3472,
+      "width": 16,
+      "height": 16
+    },
+    "joshua_tree/sapling.png": {
+      "sheet": "drzewa",
+      "x": 96,
+      "y": 3472,
+      "width": 16,
+      "height": 16
+    },
+    "joshua_tree/leaves_variant.png": {
+      "sheet": "drzewa",
+      "x": 112,
+      "y": 3472,
+      "width": 16,
+      "height": 16
+    },
+    "campfire_joshua_tree": {
+      "sheet": "drzewa",
+      "x": 128,
+      "y": 3472,
+      "width": 32,
+      "height": 32
+    },
+    "models/rosliny/sadzonka-jukka/polrealistyczny": {
+      "sheet": "drzewa",
+      "x": 0,
+      "y": 3488,
+      "width": 16,
+      "height": 16
+    },
+    "joshua_tree_bark": {
+      "sheet": "drzewa",
+      "x": 16,
+      "y": 3488,
+      "width": 16,
+      "height": 16
+    },
+    "joshua_tree/log_side_shaggy.png": {
+      "sheet": "drzewa",
+      "x": 32,
+      "y": 3488,
+      "width": 16,
+      "height": 16
+    },
+    "aspen/log_side.png": {
+      "sheet": "drzewa",
+      "x": 0,
+      "y": 3504,
+      "width": 16,
+      "height": 16
+    },
+    "aspen/log_top.png": {
+      "sheet": "drzewa",
+      "x": 16,
+      "y": 3504,
+      "width": 16,
+      "height": 16
+    },
+    "aspen/stripped_side.png": {
+      "sheet": "drzewa",
+      "x": 32,
+      "y": 3504,
+      "width": 16,
+      "height": 16
+    },
+    "aspen/stripped_top.png": {
+      "sheet": "drzewa",
+      "x": 48,
+      "y": 3504,
+      "width": 16,
+      "height": 16
+    },
+    "aspen/planks.png": {
+      "sheet": "drzewa",
+      "x": 64,
+      "y": 3504,
+      "width": 16,
+      "height": 16
+    },
+    "aspen/leaves.png": {
+      "sheet": "drzewa",
+      "x": 80,
+      "y": 3504,
+      "width": 16,
+      "height": 16
+    },
+    "aspen/sapling.png": {
+      "sheet": "drzewa",
+      "x": 96,
+      "y": 3504,
+      "width": 16,
+      "height": 16
+    },
+    "aspen/leaves_variant.png": {
+      "sheet": "drzewa",
+      "x": 112,
+      "y": 3504,
+      "width": 16,
+      "height": 16
+    },
+    "campfire_aspen": {
+      "sheet": "drzewa",
+      "x": 128,
+      "y": 3504,
+      "width": 32,
+      "height": 32
+    },
+    "models/rosliny/sadzonka-osika/polrealistyczny": {
+      "sheet": "drzewa",
+      "x": 0,
+      "y": 3520,
+      "width": 16,
+      "height": 16
+    },
+    "aspen_bark": {
+      "sheet": "drzewa",
+      "x": 16,
+      "y": 3520,
+      "width": 16,
+      "height": 16
+    },
+    "aspen/log_side_base.png": {
+      "sheet": "drzewa",
+      "x": 32,
+      "y": 3520,
+      "width": 16,
+      "height": 16
+    },
+    "araucaria/log_side.png": {
+      "sheet": "drzewa",
+      "x": 0,
+      "y": 3536,
+      "width": 16,
+      "height": 16
+    },
+    "araucaria/log_top.png": {
+      "sheet": "drzewa",
+      "x": 16,
+      "y": 3536,
+      "width": 16,
+      "height": 16
+    },
+    "araucaria/stripped_side.png": {
+      "sheet": "drzewa",
+      "x": 32,
+      "y": 3536,
+      "width": 16,
+      "height": 16
+    },
+    "araucaria/stripped_top.png": {
+      "sheet": "drzewa",
+      "x": 48,
+      "y": 3536,
+      "width": 16,
+      "height": 16
+    },
+    "araucaria/planks.png": {
+      "sheet": "drzewa",
+      "x": 64,
+      "y": 3536,
+      "width": 16,
+      "height": 16
+    },
+    "araucaria/leaves.png": {
+      "sheet": "drzewa",
+      "x": 80,
+      "y": 3536,
+      "width": 16,
+      "height": 16
+    },
+    "araucaria/sapling.png": {
+      "sheet": "drzewa",
+      "x": 96,
+      "y": 3536,
+      "width": 16,
+      "height": 16
+    },
+    "araucaria/leaves_variant.png": {
+      "sheet": "drzewa",
+      "x": 112,
+      "y": 3536,
+      "width": 16,
+      "height": 16
+    },
+    "campfire_araucaria": {
+      "sheet": "drzewa",
+      "x": 128,
+      "y": 3536,
+      "width": 32,
+      "height": 32
+    },
+    "models/rosliny/sadzonka-araukaria/polrealistyczny": {
+      "sheet": "drzewa",
+      "x": 0,
+      "y": 3552,
+      "width": 16,
+      "height": 16
+    },
+    "araucaria_bark": {
+      "sheet": "drzewa",
+      "x": 16,
+      "y": 3552,
+      "width": 16,
+      "height": 16
+    },
+    "banyan/log_side.png": {
+      "sheet": "drzewa",
+      "x": 0,
+      "y": 3568,
+      "width": 16,
+      "height": 16
+    },
+    "banyan/log_top.png": {
+      "sheet": "drzewa",
+      "x": 16,
+      "y": 3568,
+      "width": 16,
+      "height": 16
+    },
+    "banyan/stripped_side.png": {
+      "sheet": "drzewa",
+      "x": 32,
+      "y": 3568,
+      "width": 16,
+      "height": 16
+    },
+    "banyan/stripped_top.png": {
+      "sheet": "drzewa",
+      "x": 48,
+      "y": 3568,
+      "width": 16,
+      "height": 16
+    },
+    "banyan/planks.png": {
+      "sheet": "drzewa",
+      "x": 64,
+      "y": 3568,
+      "width": 16,
+      "height": 16
+    },
+    "banyan/leaves.png": {
+      "sheet": "drzewa",
+      "x": 80,
+      "y": 3568,
+      "width": 16,
+      "height": 16
+    },
+    "banyan/sapling.png": {
+      "sheet": "drzewa",
+      "x": 96,
+      "y": 3568,
+      "width": 16,
+      "height": 16
+    },
+    "banyan/leaves_variant.png": {
+      "sheet": "drzewa",
+      "x": 112,
+      "y": 3568,
+      "width": 16,
+      "height": 16
+    },
+    "campfire_banyan": {
+      "sheet": "drzewa",
+      "x": 128,
+      "y": 3568,
+      "width": 32,
+      "height": 32
+    },
+    "models/rosliny/sadzonka-banian/polrealistyczny": {
+      "sheet": "drzewa",
+      "x": 0,
+      "y": 3584,
+      "width": 16,
+      "height": 16
+    },
+    "banyan_bark": {
+      "sheet": "drzewa",
+      "x": 16,
+      "y": 3584,
+      "width": 16,
+      "height": 16
+    },
+    "banyan/roots.png": {
+      "sheet": "drzewa",
+      "x": 32,
+      "y": 3584,
+      "width": 16,
+      "height": 16
+    },
+    "dragon_tree/log_side.png": {
+      "sheet": "drzewa",
+      "x": 0,
+      "y": 3600,
+      "width": 16,
+      "height": 16
+    },
+    "dragon_tree/log_top.png": {
+      "sheet": "drzewa",
+      "x": 16,
+      "y": 3600,
+      "width": 16,
+      "height": 16
+    },
+    "dragon_tree/stripped_side.png": {
+      "sheet": "drzewa",
+      "x": 32,
+      "y": 3600,
+      "width": 16,
+      "height": 16
+    },
+    "dragon_tree/stripped_top.png": {
+      "sheet": "drzewa",
+      "x": 48,
+      "y": 3600,
+      "width": 16,
+      "height": 16
+    },
+    "dragon_tree/planks.png": {
+      "sheet": "drzewa",
+      "x": 64,
+      "y": 3600,
+      "width": 16,
+      "height": 16
+    },
+    "dragon_tree/leaves.png": {
+      "sheet": "drzewa",
+      "x": 80,
+      "y": 3600,
+      "width": 16,
+      "height": 16
+    },
+    "dragon_tree/sapling.png": {
+      "sheet": "drzewa",
+      "x": 96,
+      "y": 3600,
+      "width": 16,
+      "height": 16
+    },
+    "dragon_tree/leaves_variant.png": {
+      "sheet": "drzewa",
+      "x": 112,
+      "y": 3600,
+      "width": 16,
+      "height": 16
+    },
+    "campfire_dragon_tree": {
+      "sheet": "drzewa",
+      "x": 128,
+      "y": 3600,
+      "width": 32,
+      "height": 32
+    },
+    "models/rosliny/sadzonka-dracena/polrealistyczny": {
+      "sheet": "drzewa",
+      "x": 0,
+      "y": 3616,
+      "width": 16,
+      "height": 16
+    },
+    "dragon_tree_bark": {
+      "sheet": "drzewa",
+      "x": 16,
+      "y": 3616,
+      "width": 16,
+      "height": 16
+    },
+    "cedar/log_side.png": {
+      "sheet": "drzewa",
+      "x": 0,
+      "y": 3632,
+      "width": 16,
+      "height": 16
+    },
+    "cedar/log_top.png": {
+      "sheet": "drzewa",
+      "x": 16,
+      "y": 3632,
+      "width": 16,
+      "height": 16
+    },
+    "cedar/stripped_side.png": {
+      "sheet": "drzewa",
+      "x": 32,
+      "y": 3632,
+      "width": 16,
+      "height": 16
+    },
+    "cedar/stripped_top.png": {
+      "sheet": "drzewa",
+      "x": 48,
+      "y": 3632,
+      "width": 16,
+      "height": 16
+    },
+    "cedar/planks.png": {
+      "sheet": "drzewa",
+      "x": 64,
+      "y": 3632,
+      "width": 16,
+      "height": 16
+    },
+    "cedar/leaves.png": {
+      "sheet": "drzewa",
+      "x": 80,
+      "y": 3632,
+      "width": 16,
+      "height": 16
+    },
+    "cedar/sapling.png": {
+      "sheet": "drzewa",
+      "x": 96,
+      "y": 3632,
+      "width": 16,
+      "height": 16
+    },
+    "cedar/leaves_variant.png": {
+      "sheet": "drzewa",
+      "x": 112,
+      "y": 3632,
+      "width": 16,
+      "height": 16
+    },
+    "campfire_cedar": {
+      "sheet": "drzewa",
+      "x": 128,
+      "y": 3632,
+      "width": 32,
+      "height": 32
+    },
+    "models/rosliny/sadzonka-cedr/polrealistyczny": {
+      "sheet": "drzewa",
+      "x": 0,
+      "y": 3648,
+      "width": 16,
+      "height": 16
+    },
+    "cedar_bark": {
+      "sheet": "drzewa",
+      "x": 16,
+      "y": 3648,
+      "width": 16,
+      "height": 16
+    },
+    "bristlecone/log_side.png": {
+      "sheet": "drzewa",
+      "x": 0,
+      "y": 3664,
+      "width": 16,
+      "height": 16
+    },
+    "bristlecone/log_top.png": {
+      "sheet": "drzewa",
+      "x": 16,
+      "y": 3664,
+      "width": 16,
+      "height": 16
+    },
+    "bristlecone/stripped_side.png": {
+      "sheet": "drzewa",
+      "x": 32,
+      "y": 3664,
+      "width": 16,
+      "height": 16
+    },
+    "bristlecone/stripped_top.png": {
+      "sheet": "drzewa",
+      "x": 48,
+      "y": 3664,
+      "width": 16,
+      "height": 16
+    },
+    "bristlecone/planks.png": {
+      "sheet": "drzewa",
+      "x": 64,
+      "y": 3664,
+      "width": 16,
+      "height": 16
+    },
+    "bristlecone/leaves.png": {
+      "sheet": "drzewa",
+      "x": 80,
+      "y": 3664,
+      "width": 16,
+      "height": 16
+    },
+    "bristlecone/sapling.png": {
+      "sheet": "drzewa",
+      "x": 96,
+      "y": 3664,
+      "width": 16,
+      "height": 16
+    },
+    "bristlecone/leaves_variant.png": {
+      "sheet": "drzewa",
+      "x": 112,
+      "y": 3664,
+      "width": 16,
+      "height": 16
+    },
+    "campfire_bristlecone": {
+      "sheet": "drzewa",
+      "x": 128,
+      "y": 3664,
+      "width": 32,
+      "height": 32
+    },
+    "models/rosliny/sadzonka-oscista/polrealistyczny": {
+      "sheet": "drzewa",
+      "x": 0,
+      "y": 3680,
+      "width": 16,
+      "height": 16
+    },
+    "bristlecone_bark": {
+      "sheet": "drzewa",
+      "x": 16,
+      "y": 3680,
+      "width": 16,
+      "height": 16
+    },
+    "bristlecone/log_side_dead.png": {
+      "sheet": "drzewa",
+      "x": 32,
+      "y": 3680,
+      "width": 16,
+      "height": 16
+    },
+    "fir_log_bark": {
+      "sheet": "drzewa",
+      "x": 0,
+      "y": 3696,
+      "width": 128,
+      "height": 128
+    },
+    "fir_stripped_sheet": {
+      "sheet": "drzewa",
+      "x": 128,
+      "y": 3696,
+      "width": 128,
+      "height": 128
+    },
+    "baobab_log_bark": {
+      "sheet": "drzewa",
+      "x": 0,
+      "y": 3824,
+      "width": 128,
+      "height": 128
+    },
+    "baobab_stripped_sheet": {
+      "sheet": "drzewa",
+      "x": 128,
+      "y": 3824,
+      "width": 128,
+      "height": 128
+    },
+    "coconut_palm_log_bark": {
+      "sheet": "drzewa",
+      "x": 0,
+      "y": 3952,
+      "width": 128,
+      "height": 128
+    },
+    "coconut_palm_stripped_sheet": {
+      "sheet": "drzewa",
+      "x": 128,
+      "y": 3952,
+      "width": 128,
+      "height": 128
+    },
+    "larch_log_bark": {
+      "sheet": "drzewa",
+      "x": 0,
+      "y": 4080,
+      "width": 128,
+      "height": 128
+    },
+    "larch_stripped_sheet": {
+      "sheet": "drzewa",
+      "x": 128,
+      "y": 4080,
+      "width": 128,
+      "height": 128
+    },
+    "mangrove_log_bark": {
+      "sheet": "drzewa",
+      "x": 0,
+      "y": 4208,
+      "width": 128,
+      "height": 128
+    },
+    "mangrove_stripped_sheet": {
+      "sheet": "drzewa",
+      "x": 128,
+      "y": 4208,
+      "width": 128,
+      "height": 128
+    },
+    "kapok_log_bark": {
+      "sheet": "drzewa",
+      "x": 0,
+      "y": 4336,
+      "width": 128,
+      "height": 128
+    },
+    "kapok_stripped_sheet": {
+      "sheet": "drzewa",
+      "x": 128,
+      "y": 4336,
+      "width": 128,
+      "height": 128
+    },
+    "joshua_tree_log_bark": {
+      "sheet": "drzewa",
+      "x": 0,
+      "y": 4464,
+      "width": 128,
+      "height": 128
+    },
+    "joshua_tree_stripped_sheet": {
+      "sheet": "drzewa",
+      "x": 128,
+      "y": 4464,
+      "width": 128,
+      "height": 128
+    },
+    "aspen_log_bark": {
+      "sheet": "drzewa",
+      "x": 0,
+      "y": 4592,
+      "width": 128,
+      "height": 128
+    },
+    "aspen_stripped_sheet": {
+      "sheet": "drzewa",
+      "x": 128,
+      "y": 4592,
+      "width": 128,
+      "height": 128
+    },
+    "araucaria_log_bark": {
+      "sheet": "drzewa",
+      "x": 0,
+      "y": 4720,
+      "width": 128,
+      "height": 128
+    },
+    "araucaria_stripped_sheet": {
+      "sheet": "drzewa",
+      "x": 128,
+      "y": 4720,
+      "width": 128,
+      "height": 128
+    },
+    "banyan_log_bark": {
+      "sheet": "drzewa",
+      "x": 0,
+      "y": 4848,
+      "width": 128,
+      "height": 128
+    },
+    "banyan_stripped_sheet": {
+      "sheet": "drzewa",
+      "x": 128,
+      "y": 4848,
+      "width": 128,
+      "height": 128
+    },
+    "dragon_tree_log_bark": {
+      "sheet": "drzewa",
+      "x": 0,
+      "y": 4976,
+      "width": 128,
+      "height": 128
+    },
+    "dragon_tree_stripped_sheet": {
+      "sheet": "drzewa",
+      "x": 128,
+      "y": 4976,
+      "width": 128,
+      "height": 128
+    },
+    "cedar_log_bark": {
+      "sheet": "drzewa",
+      "x": 0,
+      "y": 5104,
+      "width": 128,
+      "height": 128
+    },
+    "cedar_stripped_sheet": {
+      "sheet": "drzewa",
+      "x": 128,
+      "y": 5104,
+      "width": 128,
+      "height": 128
+    },
+    "bristlecone_log_bark": {
+      "sheet": "drzewa",
+      "x": 0,
+      "y": 5232,
+      "width": 128,
+      "height": 128
+    },
+    "bristlecone_stripped_sheet": {
+      "sheet": "drzewa",
+      "x": 128,
+      "y": 5232,
+      "width": 128,
+      "height": 128
+    },
+    "joshua_tree_log_shaggy_bark": {
+      "sheet": "drzewa",
+      "x": 0,
+      "y": 5360,
+      "width": 128,
+      "height": 128
+    },
+    "aspen_log_base_bark": {
+      "sheet": "drzewa",
+      "x": 128,
+      "y": 5360,
+      "width": 128,
+      "height": 128
+    },
+    "bristlecone_log_dead_bark": {
+      "sheet": "drzewa",
+      "x": 0,
+      "y": 5488,
+      "width": 128,
+      "height": 128
     }
   },
   "aliases": {
@@ -5694,7 +6940,20 @@
     "assets/models/rosliny/wysoka-trawa/wariant-welnianka.png": "models/rosliny/wysoka-trawa/wariant-welnianka",
     "assets/models/rosliny/wysoka-trawa/wariant-welnianka-prosty.png": "models/rosliny/wysoka-trawa/wariant-welnianka-prosty",
     "assets/models/rosliny/wysoka-trawa/wariant-goryczka.png": "models/rosliny/wysoka-trawa/wariant-goryczka",
-    "assets/models/rosliny/wysoka-trawa/wariant-goryczka-prosty.png": "models/rosliny/wysoka-trawa/wariant-goryczka-prosty"
+    "assets/models/rosliny/wysoka-trawa/wariant-goryczka-prosty.png": "models/rosliny/wysoka-trawa/wariant-goryczka-prosty",
+    "assets/models/rosliny/sadzonka-jodla/polrealistyczny.png": "models/rosliny/sadzonka-jodla/polrealistyczny",
+    "assets/models/rosliny/sadzonka-baobab/polrealistyczny.png": "models/rosliny/sadzonka-baobab/polrealistyczny",
+    "assets/models/rosliny/sadzonka-palma/polrealistyczny.png": "models/rosliny/sadzonka-palma/polrealistyczny",
+    "assets/models/rosliny/sadzonka-modrzew/polrealistyczny.png": "models/rosliny/sadzonka-modrzew/polrealistyczny",
+    "assets/models/rosliny/sadzonka-namorzyn/polrealistyczny.png": "models/rosliny/sadzonka-namorzyn/polrealistyczny",
+    "assets/models/rosliny/sadzonka-puchowiec/polrealistyczny.png": "models/rosliny/sadzonka-puchowiec/polrealistyczny",
+    "assets/models/rosliny/sadzonka-jukka/polrealistyczny.png": "models/rosliny/sadzonka-jukka/polrealistyczny",
+    "assets/models/rosliny/sadzonka-osika/polrealistyczny.png": "models/rosliny/sadzonka-osika/polrealistyczny",
+    "assets/models/rosliny/sadzonka-araukaria/polrealistyczny.png": "models/rosliny/sadzonka-araukaria/polrealistyczny",
+    "assets/models/rosliny/sadzonka-banian/polrealistyczny.png": "models/rosliny/sadzonka-banian/polrealistyczny",
+    "assets/models/rosliny/sadzonka-dracena/polrealistyczny.png": "models/rosliny/sadzonka-dracena/polrealistyczny",
+    "assets/models/rosliny/sadzonka-cedr/polrealistyczny.png": "models/rosliny/sadzonka-cedr/polrealistyczny",
+    "assets/models/rosliny/sadzonka-oscista/polrealistyczny.png": "models/rosliny/sadzonka-oscista/polrealistyczny"
   },
   "tiles": {
     "grass_top": {
@@ -9755,6 +11014,1064 @@
       "pw": 128,
       "ph": 128,
       "region": "jacaranda_stripped_sheet"
+    },
+    "campfire_fir": {
+      "x": 16,
+      "y": 56,
+      "region": "campfire_fir",
+      "w": 2,
+      "h": 2,
+      "pw": 32,
+      "ph": 32
+    },
+    "campfire_baobab": {
+      "x": 18,
+      "y": 56,
+      "region": "campfire_baobab",
+      "w": 2,
+      "h": 2,
+      "pw": 32,
+      "ph": 32
+    },
+    "campfire_coconut_palm": {
+      "x": 20,
+      "y": 56,
+      "region": "campfire_coconut_palm",
+      "w": 2,
+      "h": 2,
+      "pw": 32,
+      "ph": 32
+    },
+    "campfire_larch": {
+      "x": 22,
+      "y": 56,
+      "region": "campfire_larch",
+      "w": 2,
+      "h": 2,
+      "pw": 32,
+      "ph": 32
+    },
+    "campfire_mangrove": {
+      "x": 24,
+      "y": 56,
+      "region": "campfire_mangrove",
+      "w": 2,
+      "h": 2,
+      "pw": 32,
+      "ph": 32
+    },
+    "campfire_kapok": {
+      "x": 26,
+      "y": 56,
+      "region": "campfire_kapok",
+      "w": 2,
+      "h": 2,
+      "pw": 32,
+      "ph": 32
+    },
+    "campfire_joshua_tree": {
+      "x": 28,
+      "y": 56,
+      "region": "campfire_joshua_tree",
+      "w": 2,
+      "h": 2,
+      "pw": 32,
+      "ph": 32
+    },
+    "campfire_aspen": {
+      "x": 30,
+      "y": 56,
+      "region": "campfire_aspen",
+      "w": 2,
+      "h": 2,
+      "pw": 32,
+      "ph": 32
+    },
+    "campfire_araucaria": {
+      "x": 32,
+      "y": 56,
+      "region": "campfire_araucaria",
+      "w": 2,
+      "h": 2,
+      "pw": 32,
+      "ph": 32
+    },
+    "campfire_banyan": {
+      "x": 34,
+      "y": 56,
+      "region": "campfire_banyan",
+      "w": 2,
+      "h": 2,
+      "pw": 32,
+      "ph": 32
+    },
+    "campfire_dragon_tree": {
+      "x": 36,
+      "y": 56,
+      "region": "campfire_dragon_tree",
+      "w": 2,
+      "h": 2,
+      "pw": 32,
+      "ph": 32
+    },
+    "campfire_cedar": {
+      "x": 38,
+      "y": 56,
+      "region": "campfire_cedar",
+      "w": 2,
+      "h": 2,
+      "pw": 32,
+      "ph": 32
+    },
+    "campfire_bristlecone": {
+      "x": 40,
+      "y": 56,
+      "region": "campfire_bristlecone",
+      "w": 2,
+      "h": 2,
+      "pw": 32,
+      "ph": 32
+    },
+    "fir/log_side.png": {
+      "x": 42,
+      "y": 56,
+      "region": "fir/log_side.png"
+    },
+    "fir/log_top.png": {
+      "x": 43,
+      "y": 56,
+      "region": "fir/log_top.png"
+    },
+    "fir/stripped_side.png": {
+      "x": 44,
+      "y": 56,
+      "region": "fir/stripped_side.png"
+    },
+    "fir/stripped_top.png": {
+      "x": 45,
+      "y": 56,
+      "region": "fir/stripped_top.png"
+    },
+    "fir/planks.png": {
+      "x": 46,
+      "y": 56,
+      "region": "fir/planks.png"
+    },
+    "fir/leaves.png": {
+      "x": 47,
+      "y": 56,
+      "region": "fir/leaves.png"
+    },
+    "fir/sapling.png": {
+      "x": 48,
+      "y": 56,
+      "region": "fir/sapling.png"
+    },
+    "fir/leaves_variant.png": {
+      "x": 49,
+      "y": 56,
+      "region": "fir/leaves_variant.png"
+    },
+    "models/rosliny/sadzonka-jodla/polrealistyczny": {
+      "x": 50,
+      "y": 56,
+      "region": "models/rosliny/sadzonka-jodla/polrealistyczny"
+    },
+    "fir_bark": {
+      "x": 51,
+      "y": 56,
+      "region": "fir_bark"
+    },
+    "baobab/log_side.png": {
+      "x": 52,
+      "y": 56,
+      "region": "baobab/log_side.png"
+    },
+    "baobab/log_top.png": {
+      "x": 53,
+      "y": 56,
+      "region": "baobab/log_top.png"
+    },
+    "baobab/stripped_side.png": {
+      "x": 54,
+      "y": 56,
+      "region": "baobab/stripped_side.png"
+    },
+    "baobab/stripped_top.png": {
+      "x": 55,
+      "y": 56,
+      "region": "baobab/stripped_top.png"
+    },
+    "baobab/planks.png": {
+      "x": 56,
+      "y": 56,
+      "region": "baobab/planks.png"
+    },
+    "baobab/leaves.png": {
+      "x": 57,
+      "y": 56,
+      "region": "baobab/leaves.png"
+    },
+    "baobab/sapling.png": {
+      "x": 58,
+      "y": 56,
+      "region": "baobab/sapling.png"
+    },
+    "baobab/leaves_variant.png": {
+      "x": 59,
+      "y": 56,
+      "region": "baobab/leaves_variant.png"
+    },
+    "models/rosliny/sadzonka-baobab/polrealistyczny": {
+      "x": 60,
+      "y": 56,
+      "region": "models/rosliny/sadzonka-baobab/polrealistyczny"
+    },
+    "baobab_bark": {
+      "x": 61,
+      "y": 56,
+      "region": "baobab_bark"
+    },
+    "coconut_palm/log_side.png": {
+      "x": 62,
+      "y": 56,
+      "region": "coconut_palm/log_side.png"
+    },
+    "coconut_palm/log_top.png": {
+      "x": 63,
+      "y": 56,
+      "region": "coconut_palm/log_top.png"
+    },
+    "coconut_palm/stripped_side.png": {
+      "x": 42,
+      "y": 57,
+      "region": "coconut_palm/stripped_side.png"
+    },
+    "coconut_palm/stripped_top.png": {
+      "x": 43,
+      "y": 57,
+      "region": "coconut_palm/stripped_top.png"
+    },
+    "coconut_palm/planks.png": {
+      "x": 44,
+      "y": 57,
+      "region": "coconut_palm/planks.png"
+    },
+    "coconut_palm/leaves.png": {
+      "x": 45,
+      "y": 57,
+      "region": "coconut_palm/leaves.png"
+    },
+    "coconut_palm/sapling.png": {
+      "x": 46,
+      "y": 57,
+      "region": "coconut_palm/sapling.png"
+    },
+    "coconut_palm/leaves_variant.png": {
+      "x": 47,
+      "y": 57,
+      "region": "coconut_palm/leaves_variant.png"
+    },
+    "models/rosliny/sadzonka-palma/polrealistyczny": {
+      "x": 48,
+      "y": 57,
+      "region": "models/rosliny/sadzonka-palma/polrealistyczny"
+    },
+    "coconut_palm_bark": {
+      "x": 49,
+      "y": 57,
+      "region": "coconut_palm_bark"
+    },
+    "coconut_palm/coconut.png": {
+      "x": 50,
+      "y": 57,
+      "region": "coconut_palm/coconut.png"
+    },
+    "larch/log_side.png": {
+      "x": 51,
+      "y": 57,
+      "region": "larch/log_side.png"
+    },
+    "larch/log_top.png": {
+      "x": 52,
+      "y": 57,
+      "region": "larch/log_top.png"
+    },
+    "larch/stripped_side.png": {
+      "x": 53,
+      "y": 57,
+      "region": "larch/stripped_side.png"
+    },
+    "larch/stripped_top.png": {
+      "x": 54,
+      "y": 57,
+      "region": "larch/stripped_top.png"
+    },
+    "larch/planks.png": {
+      "x": 55,
+      "y": 57,
+      "region": "larch/planks.png"
+    },
+    "larch/leaves.png": {
+      "x": 56,
+      "y": 57,
+      "region": "larch/leaves.png"
+    },
+    "larch/sapling.png": {
+      "x": 57,
+      "y": 57,
+      "region": "larch/sapling.png"
+    },
+    "larch/leaves_variant.png": {
+      "x": 58,
+      "y": 57,
+      "region": "larch/leaves_variant.png"
+    },
+    "models/rosliny/sadzonka-modrzew/polrealistyczny": {
+      "x": 59,
+      "y": 57,
+      "region": "models/rosliny/sadzonka-modrzew/polrealistyczny"
+    },
+    "larch_bark": {
+      "x": 60,
+      "y": 57,
+      "region": "larch_bark"
+    },
+    "mangrove/log_side.png": {
+      "x": 61,
+      "y": 57,
+      "region": "mangrove/log_side.png"
+    },
+    "mangrove/log_top.png": {
+      "x": 62,
+      "y": 57,
+      "region": "mangrove/log_top.png"
+    },
+    "mangrove/stripped_side.png": {
+      "x": 63,
+      "y": 57,
+      "region": "mangrove/stripped_side.png"
+    },
+    "mangrove/stripped_top.png": {
+      "x": 16,
+      "y": 58,
+      "region": "mangrove/stripped_top.png"
+    },
+    "mangrove/planks.png": {
+      "x": 17,
+      "y": 58,
+      "region": "mangrove/planks.png"
+    },
+    "mangrove/leaves.png": {
+      "x": 18,
+      "y": 58,
+      "region": "mangrove/leaves.png"
+    },
+    "mangrove/sapling.png": {
+      "x": 19,
+      "y": 58,
+      "region": "mangrove/sapling.png"
+    },
+    "mangrove/leaves_variant.png": {
+      "x": 20,
+      "y": 58,
+      "region": "mangrove/leaves_variant.png"
+    },
+    "models/rosliny/sadzonka-namorzyn/polrealistyczny": {
+      "x": 21,
+      "y": 58,
+      "region": "models/rosliny/sadzonka-namorzyn/polrealistyczny"
+    },
+    "mangrove_bark": {
+      "x": 22,
+      "y": 58,
+      "region": "mangrove_bark"
+    },
+    "mangrove/roots.png": {
+      "x": 23,
+      "y": 58,
+      "region": "mangrove/roots.png"
+    },
+    "kapok/log_side.png": {
+      "x": 24,
+      "y": 58,
+      "region": "kapok/log_side.png"
+    },
+    "kapok/log_top.png": {
+      "x": 25,
+      "y": 58,
+      "region": "kapok/log_top.png"
+    },
+    "kapok/stripped_side.png": {
+      "x": 26,
+      "y": 58,
+      "region": "kapok/stripped_side.png"
+    },
+    "kapok/stripped_top.png": {
+      "x": 27,
+      "y": 58,
+      "region": "kapok/stripped_top.png"
+    },
+    "kapok/planks.png": {
+      "x": 28,
+      "y": 58,
+      "region": "kapok/planks.png"
+    },
+    "kapok/leaves.png": {
+      "x": 29,
+      "y": 58,
+      "region": "kapok/leaves.png"
+    },
+    "kapok/sapling.png": {
+      "x": 30,
+      "y": 58,
+      "region": "kapok/sapling.png"
+    },
+    "kapok/leaves_variant.png": {
+      "x": 31,
+      "y": 58,
+      "region": "kapok/leaves_variant.png"
+    },
+    "models/rosliny/sadzonka-puchowiec/polrealistyczny": {
+      "x": 32,
+      "y": 58,
+      "region": "models/rosliny/sadzonka-puchowiec/polrealistyczny"
+    },
+    "kapok_bark": {
+      "x": 33,
+      "y": 58,
+      "region": "kapok_bark"
+    },
+    "joshua_tree/log_side.png": {
+      "x": 34,
+      "y": 58,
+      "region": "joshua_tree/log_side.png"
+    },
+    "joshua_tree/log_top.png": {
+      "x": 35,
+      "y": 58,
+      "region": "joshua_tree/log_top.png"
+    },
+    "joshua_tree/stripped_side.png": {
+      "x": 36,
+      "y": 58,
+      "region": "joshua_tree/stripped_side.png"
+    },
+    "joshua_tree/stripped_top.png": {
+      "x": 37,
+      "y": 58,
+      "region": "joshua_tree/stripped_top.png"
+    },
+    "joshua_tree/planks.png": {
+      "x": 38,
+      "y": 58,
+      "region": "joshua_tree/planks.png"
+    },
+    "joshua_tree/leaves.png": {
+      "x": 39,
+      "y": 58,
+      "region": "joshua_tree/leaves.png"
+    },
+    "joshua_tree/sapling.png": {
+      "x": 40,
+      "y": 58,
+      "region": "joshua_tree/sapling.png"
+    },
+    "joshua_tree/leaves_variant.png": {
+      "x": 41,
+      "y": 58,
+      "region": "joshua_tree/leaves_variant.png"
+    },
+    "models/rosliny/sadzonka-jukka/polrealistyczny": {
+      "x": 42,
+      "y": 58,
+      "region": "models/rosliny/sadzonka-jukka/polrealistyczny"
+    },
+    "joshua_tree_bark": {
+      "x": 43,
+      "y": 58,
+      "region": "joshua_tree_bark"
+    },
+    "joshua_tree/log_side_shaggy.png": {
+      "x": 44,
+      "y": 58,
+      "region": "joshua_tree/log_side_shaggy.png"
+    },
+    "aspen/log_side.png": {
+      "x": 45,
+      "y": 58,
+      "region": "aspen/log_side.png"
+    },
+    "aspen/log_top.png": {
+      "x": 46,
+      "y": 58,
+      "region": "aspen/log_top.png"
+    },
+    "aspen/stripped_side.png": {
+      "x": 47,
+      "y": 58,
+      "region": "aspen/stripped_side.png"
+    },
+    "aspen/stripped_top.png": {
+      "x": 48,
+      "y": 58,
+      "region": "aspen/stripped_top.png"
+    },
+    "aspen/planks.png": {
+      "x": 49,
+      "y": 58,
+      "region": "aspen/planks.png"
+    },
+    "aspen/leaves.png": {
+      "x": 50,
+      "y": 58,
+      "region": "aspen/leaves.png"
+    },
+    "aspen/sapling.png": {
+      "x": 51,
+      "y": 58,
+      "region": "aspen/sapling.png"
+    },
+    "aspen/leaves_variant.png": {
+      "x": 52,
+      "y": 58,
+      "region": "aspen/leaves_variant.png"
+    },
+    "models/rosliny/sadzonka-osika/polrealistyczny": {
+      "x": 53,
+      "y": 58,
+      "region": "models/rosliny/sadzonka-osika/polrealistyczny"
+    },
+    "aspen_bark": {
+      "x": 54,
+      "y": 58,
+      "region": "aspen_bark"
+    },
+    "aspen/log_side_base.png": {
+      "x": 55,
+      "y": 58,
+      "region": "aspen/log_side_base.png"
+    },
+    "araucaria/log_side.png": {
+      "x": 56,
+      "y": 58,
+      "region": "araucaria/log_side.png"
+    },
+    "araucaria/log_top.png": {
+      "x": 57,
+      "y": 58,
+      "region": "araucaria/log_top.png"
+    },
+    "araucaria/stripped_side.png": {
+      "x": 58,
+      "y": 58,
+      "region": "araucaria/stripped_side.png"
+    },
+    "araucaria/stripped_top.png": {
+      "x": 59,
+      "y": 58,
+      "region": "araucaria/stripped_top.png"
+    },
+    "araucaria/planks.png": {
+      "x": 60,
+      "y": 58,
+      "region": "araucaria/planks.png"
+    },
+    "araucaria/leaves.png": {
+      "x": 61,
+      "y": 58,
+      "region": "araucaria/leaves.png"
+    },
+    "araucaria/sapling.png": {
+      "x": 62,
+      "y": 58,
+      "region": "araucaria/sapling.png"
+    },
+    "araucaria/leaves_variant.png": {
+      "x": 63,
+      "y": 58,
+      "region": "araucaria/leaves_variant.png"
+    },
+    "models/rosliny/sadzonka-araukaria/polrealistyczny": {
+      "x": 16,
+      "y": 59,
+      "region": "models/rosliny/sadzonka-araukaria/polrealistyczny"
+    },
+    "araucaria_bark": {
+      "x": 17,
+      "y": 59,
+      "region": "araucaria_bark"
+    },
+    "banyan/log_side.png": {
+      "x": 18,
+      "y": 59,
+      "region": "banyan/log_side.png"
+    },
+    "banyan/log_top.png": {
+      "x": 19,
+      "y": 59,
+      "region": "banyan/log_top.png"
+    },
+    "banyan/stripped_side.png": {
+      "x": 20,
+      "y": 59,
+      "region": "banyan/stripped_side.png"
+    },
+    "banyan/stripped_top.png": {
+      "x": 21,
+      "y": 59,
+      "region": "banyan/stripped_top.png"
+    },
+    "banyan/planks.png": {
+      "x": 22,
+      "y": 59,
+      "region": "banyan/planks.png"
+    },
+    "banyan/leaves.png": {
+      "x": 23,
+      "y": 59,
+      "region": "banyan/leaves.png"
+    },
+    "banyan/sapling.png": {
+      "x": 24,
+      "y": 59,
+      "region": "banyan/sapling.png"
+    },
+    "banyan/leaves_variant.png": {
+      "x": 25,
+      "y": 59,
+      "region": "banyan/leaves_variant.png"
+    },
+    "models/rosliny/sadzonka-banian/polrealistyczny": {
+      "x": 26,
+      "y": 59,
+      "region": "models/rosliny/sadzonka-banian/polrealistyczny"
+    },
+    "banyan_bark": {
+      "x": 27,
+      "y": 59,
+      "region": "banyan_bark"
+    },
+    "banyan/roots.png": {
+      "x": 28,
+      "y": 59,
+      "region": "banyan/roots.png"
+    },
+    "dragon_tree/log_side.png": {
+      "x": 29,
+      "y": 59,
+      "region": "dragon_tree/log_side.png"
+    },
+    "dragon_tree/log_top.png": {
+      "x": 30,
+      "y": 59,
+      "region": "dragon_tree/log_top.png"
+    },
+    "dragon_tree/stripped_side.png": {
+      "x": 31,
+      "y": 59,
+      "region": "dragon_tree/stripped_side.png"
+    },
+    "dragon_tree/stripped_top.png": {
+      "x": 32,
+      "y": 59,
+      "region": "dragon_tree/stripped_top.png"
+    },
+    "dragon_tree/planks.png": {
+      "x": 33,
+      "y": 59,
+      "region": "dragon_tree/planks.png"
+    },
+    "dragon_tree/leaves.png": {
+      "x": 34,
+      "y": 59,
+      "region": "dragon_tree/leaves.png"
+    },
+    "dragon_tree/sapling.png": {
+      "x": 35,
+      "y": 59,
+      "region": "dragon_tree/sapling.png"
+    },
+    "dragon_tree/leaves_variant.png": {
+      "x": 36,
+      "y": 59,
+      "region": "dragon_tree/leaves_variant.png"
+    },
+    "models/rosliny/sadzonka-dracena/polrealistyczny": {
+      "x": 37,
+      "y": 59,
+      "region": "models/rosliny/sadzonka-dracena/polrealistyczny"
+    },
+    "dragon_tree_bark": {
+      "x": 38,
+      "y": 59,
+      "region": "dragon_tree_bark"
+    },
+    "cedar/log_side.png": {
+      "x": 39,
+      "y": 59,
+      "region": "cedar/log_side.png"
+    },
+    "cedar/log_top.png": {
+      "x": 40,
+      "y": 59,
+      "region": "cedar/log_top.png"
+    },
+    "cedar/stripped_side.png": {
+      "x": 41,
+      "y": 59,
+      "region": "cedar/stripped_side.png"
+    },
+    "cedar/stripped_top.png": {
+      "x": 42,
+      "y": 59,
+      "region": "cedar/stripped_top.png"
+    },
+    "cedar/planks.png": {
+      "x": 43,
+      "y": 59,
+      "region": "cedar/planks.png"
+    },
+    "cedar/leaves.png": {
+      "x": 44,
+      "y": 59,
+      "region": "cedar/leaves.png"
+    },
+    "cedar/sapling.png": {
+      "x": 45,
+      "y": 59,
+      "region": "cedar/sapling.png"
+    },
+    "cedar/leaves_variant.png": {
+      "x": 46,
+      "y": 59,
+      "region": "cedar/leaves_variant.png"
+    },
+    "models/rosliny/sadzonka-cedr/polrealistyczny": {
+      "x": 47,
+      "y": 59,
+      "region": "models/rosliny/sadzonka-cedr/polrealistyczny"
+    },
+    "cedar_bark": {
+      "x": 48,
+      "y": 59,
+      "region": "cedar_bark"
+    },
+    "bristlecone/log_side.png": {
+      "x": 49,
+      "y": 59,
+      "region": "bristlecone/log_side.png"
+    },
+    "bristlecone/log_top.png": {
+      "x": 50,
+      "y": 59,
+      "region": "bristlecone/log_top.png"
+    },
+    "bristlecone/stripped_side.png": {
+      "x": 51,
+      "y": 59,
+      "region": "bristlecone/stripped_side.png"
+    },
+    "bristlecone/stripped_top.png": {
+      "x": 52,
+      "y": 59,
+      "region": "bristlecone/stripped_top.png"
+    },
+    "bristlecone/planks.png": {
+      "x": 53,
+      "y": 59,
+      "region": "bristlecone/planks.png"
+    },
+    "bristlecone/leaves.png": {
+      "x": 54,
+      "y": 59,
+      "region": "bristlecone/leaves.png"
+    },
+    "bristlecone/sapling.png": {
+      "x": 55,
+      "y": 59,
+      "region": "bristlecone/sapling.png"
+    },
+    "bristlecone/leaves_variant.png": {
+      "x": 56,
+      "y": 59,
+      "region": "bristlecone/leaves_variant.png"
+    },
+    "models/rosliny/sadzonka-oscista/polrealistyczny": {
+      "x": 57,
+      "y": 59,
+      "region": "models/rosliny/sadzonka-oscista/polrealistyczny"
+    },
+    "bristlecone_bark": {
+      "x": 58,
+      "y": 59,
+      "region": "bristlecone_bark"
+    },
+    "bristlecone/log_side_dead.png": {
+      "x": 59,
+      "y": 59,
+      "region": "bristlecone/log_side_dead.png"
+    },
+    "fir_log_bark": {
+      "x": 40,
+      "y": 48,
+      "w": 8,
+      "h": 8,
+      "pw": 128,
+      "ph": 128,
+      "region": "fir_log_bark"
+    },
+    "fir_stripped_sheet": {
+      "x": 48,
+      "y": 48,
+      "w": 8,
+      "h": 8,
+      "pw": 128,
+      "ph": 128,
+      "region": "fir_stripped_sheet"
+    },
+    "baobab_log_bark": {
+      "x": 56,
+      "y": 48,
+      "w": 8,
+      "h": 8,
+      "pw": 128,
+      "ph": 128,
+      "region": "baobab_log_bark"
+    },
+    "baobab_stripped_sheet": {
+      "x": 0,
+      "y": 64,
+      "w": 8,
+      "h": 8,
+      "pw": 128,
+      "ph": 128,
+      "region": "baobab_stripped_sheet"
+    },
+    "coconut_palm_log_bark": {
+      "x": 8,
+      "y": 64,
+      "w": 8,
+      "h": 8,
+      "pw": 128,
+      "ph": 128,
+      "region": "coconut_palm_log_bark"
+    },
+    "coconut_palm_stripped_sheet": {
+      "x": 16,
+      "y": 64,
+      "w": 8,
+      "h": 8,
+      "pw": 128,
+      "ph": 128,
+      "region": "coconut_palm_stripped_sheet"
+    },
+    "larch_log_bark": {
+      "x": 24,
+      "y": 64,
+      "w": 8,
+      "h": 8,
+      "pw": 128,
+      "ph": 128,
+      "region": "larch_log_bark"
+    },
+    "larch_stripped_sheet": {
+      "x": 32,
+      "y": 64,
+      "w": 8,
+      "h": 8,
+      "pw": 128,
+      "ph": 128,
+      "region": "larch_stripped_sheet"
+    },
+    "mangrove_log_bark": {
+      "x": 40,
+      "y": 64,
+      "w": 8,
+      "h": 8,
+      "pw": 128,
+      "ph": 128,
+      "region": "mangrove_log_bark"
+    },
+    "mangrove_stripped_sheet": {
+      "x": 48,
+      "y": 64,
+      "w": 8,
+      "h": 8,
+      "pw": 128,
+      "ph": 128,
+      "region": "mangrove_stripped_sheet"
+    },
+    "kapok_log_bark": {
+      "x": 56,
+      "y": 64,
+      "w": 8,
+      "h": 8,
+      "pw": 128,
+      "ph": 128,
+      "region": "kapok_log_bark"
+    },
+    "kapok_stripped_sheet": {
+      "x": 0,
+      "y": 72,
+      "w": 8,
+      "h": 8,
+      "pw": 128,
+      "ph": 128,
+      "region": "kapok_stripped_sheet"
+    },
+    "joshua_tree_log_bark": {
+      "x": 8,
+      "y": 72,
+      "w": 8,
+      "h": 8,
+      "pw": 128,
+      "ph": 128,
+      "region": "joshua_tree_log_bark"
+    },
+    "joshua_tree_stripped_sheet": {
+      "x": 16,
+      "y": 72,
+      "w": 8,
+      "h": 8,
+      "pw": 128,
+      "ph": 128,
+      "region": "joshua_tree_stripped_sheet"
+    },
+    "aspen_log_bark": {
+      "x": 24,
+      "y": 72,
+      "w": 8,
+      "h": 8,
+      "pw": 128,
+      "ph": 128,
+      "region": "aspen_log_bark"
+    },
+    "aspen_stripped_sheet": {
+      "x": 32,
+      "y": 72,
+      "w": 8,
+      "h": 8,
+      "pw": 128,
+      "ph": 128,
+      "region": "aspen_stripped_sheet"
+    },
+    "araucaria_log_bark": {
+      "x": 40,
+      "y": 72,
+      "w": 8,
+      "h": 8,
+      "pw": 128,
+      "ph": 128,
+      "region": "araucaria_log_bark"
+    },
+    "araucaria_stripped_sheet": {
+      "x": 48,
+      "y": 72,
+      "w": 8,
+      "h": 8,
+      "pw": 128,
+      "ph": 128,
+      "region": "araucaria_stripped_sheet"
+    },
+    "banyan_log_bark": {
+      "x": 56,
+      "y": 72,
+      "w": 8,
+      "h": 8,
+      "pw": 128,
+      "ph": 128,
+      "region": "banyan_log_bark"
+    },
+    "banyan_stripped_sheet": {
+      "x": 0,
+      "y": 80,
+      "w": 8,
+      "h": 8,
+      "pw": 128,
+      "ph": 128,
+      "region": "banyan_stripped_sheet"
+    },
+    "dragon_tree_log_bark": {
+      "x": 8,
+      "y": 80,
+      "w": 8,
+      "h": 8,
+      "pw": 128,
+      "ph": 128,
+      "region": "dragon_tree_log_bark"
+    },
+    "dragon_tree_stripped_sheet": {
+      "x": 16,
+      "y": 80,
+      "w": 8,
+      "h": 8,
+      "pw": 128,
+      "ph": 128,
+      "region": "dragon_tree_stripped_sheet"
+    },
+    "cedar_log_bark": {
+      "x": 24,
+      "y": 80,
+      "w": 8,
+      "h": 8,
+      "pw": 128,
+      "ph": 128,
+      "region": "cedar_log_bark"
+    },
+    "cedar_stripped_sheet": {
+      "x": 32,
+      "y": 80,
+      "w": 8,
+      "h": 8,
+      "pw": 128,
+      "ph": 128,
+      "region": "cedar_stripped_sheet"
+    },
+    "bristlecone_log_bark": {
+      "x": 40,
+      "y": 80,
+      "w": 8,
+      "h": 8,
+      "pw": 128,
+      "ph": 128,
+      "region": "bristlecone_log_bark"
+    },
+    "bristlecone_stripped_sheet": {
+      "x": 48,
+      "y": 80,
+      "w": 8,
+      "h": 8,
+      "pw": 128,
+      "ph": 128,
+      "region": "bristlecone_stripped_sheet"
+    },
+    "joshua_tree_log_shaggy_bark": {
+      "x": 56,
+      "y": 80,
+      "w": 8,
+      "h": 8,
+      "pw": 128,
+      "ph": 128,
+      "region": "joshua_tree_log_shaggy_bark"
+    },
+    "aspen_log_base_bark": {
+      "x": 0,
+      "y": 88,
+      "w": 8,
+      "h": 8,
+      "pw": 128,
+      "ph": 128,
+      "region": "aspen_log_base_bark"
+    },
+    "bristlecone_log_dead_bark": {
+      "x": 8,
+      "y": 88,
+      "w": 8,
+      "h": 8,
+      "pw": 128,
+      "ph": 128,
+      "region": "bristlecone_log_dead_bark"
     }
   }
 }

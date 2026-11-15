@@ -1,6 +1,6 @@
 # Drzewa
 
-Gra ma **dziewiętnaście gatunków drzew**, zapisanych we wspólnym katalogu
+Gra ma **trzydzieści dwa gatunki drzew**, zapisanych we wspólnym katalogu
 `src/blocks/treeCatalog.js`. Każdy ma własne bloki, wygląd i zasady
 występowania. Tekstury wszystkich gatunków są w `assets/textures/drzewa.png`.
 
@@ -25,6 +25,19 @@ występowania. Tekstury wszystkich gatunków są w `assets/textures/drzewa.png`.
 | Sekwoja olbrzymia | `sekwoja` (także `sequoia`) |
 | Miłorząb dwuklapowy | `milorzab` (także `ginkgo`) |
 | Jakaranda mimozolistna | `jakaranda` (także `jacaranda`) |
+| Jodła pospolita | `jodla` (także `fir`) |
+| Baobab afrykański | `baobab` |
+| Palma kokosowa | `palma` (także `coconut_palm`) |
+| Modrzew europejski | `modrzew` (także `larch`) |
+| Namorzyn czerwony | `namorzyn` (także `mangrove`) |
+| Puchowiec pięciopręcikowy (kapok) | `puchowiec` (także `kapok`) |
+| Jukka krótkolistna (drzewo Jozuego) | `jukka` (także `joshua_tree`) |
+| Topola osika | `osika` (także `aspen`) |
+| Araukaria chilijska | `araukaria` (także `araucaria`) |
+| Figowiec bengalski (banian) | `banian` (także `banyan`) |
+| Dracena cynobrowa (smocze drzewo) | `dracena` (także `dragon_tree`) |
+| Cedr libański | `cedr` (także `cedar`) |
+| Sosna oścista | `oscista` (także `bristlecone`) |
 
 Polskie znaki też działają (`dąb`, `jabłoń`, `świerk`). Leszczyna
 jest obecnie krzewem owocowym, opisanym w osobnym systemie krzaków.
@@ -192,6 +205,81 @@ Opadające liście miłorzębu mają wachlarzowaty kształt; jakaranda gubi
 drobne fioletowe płatki i wąskie liście.
 
 
+## Trzynaście drzew z paczki „drzewa od jodły" i cztery biomy — 1.8.0
+
+Paczka Kamila z 15 listopada 2026 r.: tekstury 16 × 16 (pień, słoje,
+deski, liście, odmiana liści i dodatki) oraz podglądy sylwetek. Tekstury
+są w `drzewa.png` piksel w piksel; sylwetki powstają proceduralnie
+(`src/world/trees/TreeShapes.js`) w skali **1 blok ≈ 1 m**.
+
+![Trzynaście nowych drzew](drzewa-180.jpg)
+
+| Gatunek | W naturze | W grze (wysokość / średnica korony) | Sylwetka | Gdzie rośnie |
+|---|---|---|---|---|
+| Jodła pospolita (*Abies alba*) | 30–50 m | 28–44 / 7–11 | prosty pień, dół goły z sękami, wąski stożek gęstych pięter, czubek spłaszczony („bocianie gniazdo") | świerczyna, buczyna, las sekwojowy (8–32 bloki nad morzem) |
+| Baobab afrykański (*Adansonia digitata*) | 18–25 m, pień 7–11 m | 15–22 / 16–22, pień **5–7 bloków** | butelkowaty pień, płaska korona z krótkich, grubych konarów | **sawanna** |
+| Palma kokosowa (*Cocos nucifera*) | 15–25 m | 12–22 / 8–11 | wygięty, smukły pień, pióropusz opadających liści, pod nim **kokosy** | piasek plaż w ciepłym klimacie |
+| Modrzew europejski (*Larix decidua*) | 25–45 m | 22–38 / 8–13 | luźny, ażurowy stożek, końce konarów opadają; część igliwia złota | góry: świerczyna, hala, kosodrzewina, bór (od 20 bloków nad morzem) |
+| Namorzyn czerwony (*Rhizophora mangle*) | 8–15 m | 7–13 / 9–14 | pień na łukach **korzeni podporowych**, gęsta kopuła, wiszące korzenie | **namorzyny** i płytka woda gorących wybrzeży |
+| Puchowiec, kapok (*Ceiba pentandra*) | 50–70 m | 40–58 / 16–24, pień 2–3 bloki | prosty pień na wysokich **przyporach**, parasol pięter konarów na samej górze | **las deszczowy** (co trzecia kratka - olbrzym ponad sklepieniem) |
+| Jukka krótkolistna, drzewo Jozuego (*Yucca brevifolia*) | 5–12 m | 5–10 / 6–10 | pień rozwidla się kilka razy, każda gałąź z kolczastą rozetą; gałęzie w **kosmatej korze** z suchych liści | **półpustynia** |
+| Topola osika (*Populus tremula*) | 20–30 m | 16–26 / 6–9 | smukły, jasny pień (u starych **ciemna kora przy ziemi**), wąska, wysoka, ażurowa korona | brzezina, chłodne łąki, bory, mokradła |
+| Araukaria chilijska (*Araucaria araucana*) | 30–50 m | 26–42 / 10–16 | pień jak słup, parasol okółków długich, zadartych konarów | wilgotne góry: buczyna, hala, świerczyna (14–40 bloków) |
+| Figowiec bengalski, banian (*Ficus benghalensis*) | 20–30 m, korona dużo szersza | 14–22 / 18–26 | zrośnięty pień, konary podparte **słupami korzeni**, niska szeroka kopuła, zasłony **korzeni powietrznych** | **las deszczowy** (sklepienie) |
+| Dracena cynobrowa, smocze drzewo (*Dracaena cinnabari*) | 6–10 m | 6–10 / 9–14 | gładki pień, szprychy gałęzi, płaski gęsty parasol | **półpustynia** |
+| Cedr libański (*Cedrus libani*) | 30–40 m | 22–36 / 16–24 | gruby pień, poziome konary z płaskimi talerzami igliwia, czubek jak stół | ciepłe, suche góry (16–40 bloków), gaj oliwny na wyżynie |
+| Sosna oścista (*Pinus longaeva*) | 5–15 m | 5–11 / 7–11 | pokręcona, w większości **martwe, wybielone drewno**, suchy wierzchołek, kilka kęp igliwia | suche, zimne góry: hala, kosodrzewina i **goła skała** (od 26 bloków) |
+
+Każde drzewo ma pień, okorowany pień, deski, liście z jedną odmianą
+(szyszki, kwiaty, figi, złote igliwie...), sadzonkę w trzech jakościach
+modeli, korę (podpałka) i opał do ogniska. Dodatkowe bloki:
+
+| Blok | Numer | Co to |
+|---|---|---|
+| `mangrove_roots`, `banyan_roots` | pierwszy numer gatunku + 9 | ażurowe korzenie (jak liście: przepuszczają światło, szybko się je usuwa, pień je zastępuje) |
+| `joshua_tree_log_shaggy`, `aspen_log_base`, `bristlecone_log_dead` | pierwszy numer + 8 | druga kora tego samego pnia; okorowanie daje zwykły okorowany pień i korę gatunku |
+| `coconut_palm_leaves_kokosy` | 1126 (odrastające 1127) | liście z kokosami: PPM zbiera 1–2 kokosy (`coconut_palm_kokos`), odrastają; z kokosa wyrasta palma |
+
+### Biomy (opis: [biomy.md](biomy.md))
+
+- **Sawanna** (`/biom znajdz sawanna`) - gorąco i sucho, otwarta równina:
+  akacje i z rzadka baobaby.
+- **Półpustynia** (`pustynia`) - bardzo gorąco i bardzo sucho: piasek,
+  jukki i draceny (każda w swoich plamach).
+- **Las deszczowy** (`deszczowy`) - najgoręcej i najwilgotniej: sklepienie
+  z figowców co 12 bloków, ponad nim puchowce.
+- **Namorzyny** (`namorzyny`) - mokradła w gorącym klimacie; namorzyny
+  stoją gęsto w błocie i w wodzie do 2 bloków głębokości przy brzegu
+  morza i jezior (pień i korzenie wypierają wodę).
+
+Jodła, modrzew, osika, araukaria, cedr i sosna oścista rosną w
+dotychczasowych biomach (kolumna „Gdzie rośnie"). Nowe drzewa i biomy
+pojawiają się tylko w terenie generowanym od 1.8.0 - zapisane chunki się
+nie zmieniają.
+
+### Zasady w generatorze
+
+- `shape.spacing` / `under` / `offset` (katalog): olbrzymy stoją w co
+  n-tej kratce siatki drzew; podszyt (`under`) może mieć własny odstęp
+  i przesunięcie (figowce nie stoją w kratkach puchowców).
+- `open` (katalog): reguły miejsc poza zwykłym lasem - `surface`: `sand`
+  (palma), `rock` (sosna oścista), `water` z `depth` (namorzyn w wodzie),
+  `grass` z `biome` (gęste namorzyny w swoim biomie). Reguła losuje własną
+  szansę, niezależnie od gęstości lasu; kratki spoza jej klimatu odpadają
+  po dwóch odczytach szumu, bez liczenia terenu (`Forests.openRule`).
+- Drzewo z `wade` (namorzyn w wodzie): pień i korzenie zastępują wodę,
+  ażurowe korzenie pod wodą stają się pniem, liście do wody nie wchodzą.
+
+```text
+/drzewa las baobab 4 12345
+/drzewa warianty banian 12345
+/drzewa znajdz palma tp
+/biom znajdz namorzyny
+```
+
+Metadane i sumy źródeł: `docs/zrodla/drzewa-1.8/`. Sprawdzenie:
+`node tools/sprawdz_drzewa_180.mjs`. Import: `tools/tekstury_drzew_180.py`.
+
 ## Bloki
 
 Każdy gatunek ma pięć bloków (`src/blocks/trees.js`):
@@ -336,7 +424,8 @@ ziemi (nie na koronie). Meteoryt zmiata drzewa nad kraterem.
 ## Osiągnięcia
 
 *Drwal* (zetnij pień), *Brzozowy papirus* (kora brzozowa siekierą),
-*Leśniczy* (pień każdego z sześciu gatunków), *Z małego ziarenka*
+*Leśniczy* (pień każdego z sześciu gatunków), *Drzewa świata* (pień każdego
+z trzynastu drzew z 1.8.0), *Z małego ziarenka*
 (wyhoduj drzewo z sadzonki). Lista: `docs/osiagniecia.md`.
 
 ## Komendy

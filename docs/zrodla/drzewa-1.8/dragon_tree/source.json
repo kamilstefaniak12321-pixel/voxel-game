@@ -1,0 +1,78 @@
+{
+  "sourceArchive": "DOC-20261115-WA0023.zip (drzewa_od_jodly)",
+  "sourceFolder": "11_dragon_blood_tree",
+  "suppliedBy": "Kamil",
+  "importDate": "2026-11-15",
+  "note": "Oryginalne piksele RGBA skopiowane do drzewa.png bez skalowania i zmian kolorów. Paczka zawiera podglądy sylwetek, bez geometrii; drzewa w grze powstają proceduralnie w skali 1 blok = 1 metr.",
+  "scientificReference": "Dracaena cinnabari",
+  "originalFiles": {
+    "log_side.png": {
+      "sha256": "72f4e79a844bca4d3b11038efa1ba1475be8eca9f53584043409aeb0f03d43bc",
+      "bytes": 264,
+      "rgbaSha256": "9a26b4b9ec5c272ca50a1731c483a87625e7a7a295b7cbe729d621f346189329",
+      "width": 16,
+      "height": 16
+    },
+    "log_top.png": {
+      "sha256": "f83ac2c390eaae6a6f475e825a783dd872396377fd214856141cd32bf28784ec",
+      "bytes": 482,
+      "rgbaSha256": "d4293283b5f6e053390cbc17d36d5bc2f925ee81e3263e3e1055cb5d14358012",
+      "width": 16,
+      "height": 16
+    },
+    "planks.png": {
+      "sha256": "35bb50c1c7ad7e913956b34a9002fc44f44a9bbfdb5e130622678426ed6a8c36",
+      "bytes": 278,
+      "rgbaSha256": "3152da9135b0668c32e3f1533a88cc5e229c445ed15760dedbed51e6917e5463",
+      "width": 16,
+      "height": 16
+    },
+    "leaves.png": {
+      "sha256": "bd896a0981f579c232e6e13738ab86d72bac16ef59c246c9c75089177dcecafc",
+      "bytes": 448,
+      "rgbaSha256": "79317ca91a232cd80b4dd7edffde93cd0cca0199ca4de06f3cfa6e39b9544b18",
+      "width": 16,
+      "height": 16
+    },
+    "leaves_variant.png": {
+      "sha256": "3e9f0c4fe534987c0b8cdfd0787b0354cb7a6cf6e8638049c771066d0be1dffc",
+      "bytes": 504,
+      "rgbaSha256": "07352f482b3ab945525c12130c2386e7716b9326e0740517900937238dd5df82",
+      "width": 16,
+      "height": 16
+    }
+  },
+  "generator": "tools/tekstury_drzew_180.py; tools/modele_roslin.py; tools/tekstury_kory.py",
+  "derivedRegions": {
+    "dragon_tree/stripped_side.png": {
+      "rgbaSha256": "0505303fbdca6ade2dd5f57ebed037108d8c37f8501d344f574babefb587f5c1",
+      "width": 16,
+      "height": 16
+    },
+    "dragon_tree/stripped_top.png": {
+      "rgbaSha256": "27e2c5b6f5e64ab9dcc6f69f2fea0390ca7f2176fa375f7ca4074f19017121b8",
+      "width": 16,
+      "height": 16
+    },
+    "dragon_tree/sapling.png": {
+      "rgbaSha256": "9ce6a911db4066550c883c9d1161500b55e3f172a974bd7c45c4fe82f1fe48d6",
+      "width": 16,
+      "height": 16
+    },
+    "campfire_dragon_tree": {
+      "rgbaSha256": "cec31744fc25f3aed347e012f5de15bfea5c9a63476849015451d9099a354a18",
+      "width": 32,
+      "height": 32
+    },
+    "models/rosliny/sadzonka-dracena/polrealistyczny": {
+      "rgbaSha256": "edaa2cc05b8aac132cb4ccd1f73ffc4793852f1fbfdd364febc0df49b03b2790",
+      "width": 16,
+      "height": 16
+    },
+    "dragon_tree_bark": {
+      "rgbaSha256": "810ecb62271c14f71ffda0fc4a3f525ef3874a5c310a1f87809657360c1f58b6",
+      "width": 16,
+      "height": 16
+    }
+  }
+}

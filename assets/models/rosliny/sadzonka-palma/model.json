@@ -1,0 +1,54 @@
+{
+    "nazwa": "Sadzonka palmy kokosowej",
+    "bloki": [
+        "coconut_palm_sapling"
+    ],
+    "kolory": {
+        "lisc": "#5a8a2e",
+        "liscJasny": "#86a83e",
+        "liscCiemny": "#3e6a22",
+        "lodyga": "#857c72"
+    },
+    "etapy": [
+        {
+            "prosty": null,
+            "polrealistyczny": {
+                "liscie": {
+                    "uklad": "kopula",
+                    "ile": 9,
+                    "dlugosc": 5,
+                    "promien": 4,
+                    "kopula": 9,
+                    "nachylenie": 25,
+                    "pien": true
+                }
+            },
+            "szczegolowy": {
+                "rodzaj": "kepka",
+                "liscie": {
+                    "uklad": "brak"
+                },
+                "lodygi": {
+                    "ile": [
+                        2,
+                        3
+                    ],
+                    "wysokosc": [
+                        7,
+                        9
+                    ],
+                    "promien": 1,
+                    "liscie": {
+                        "co": 2,
+                        "dlugosc": [
+                            3,
+                            5
+                        ],
+                        "naprzeciw": true,
+                        "luk": true
+                    }
+                }
+            }
+        }
+    ]
+}

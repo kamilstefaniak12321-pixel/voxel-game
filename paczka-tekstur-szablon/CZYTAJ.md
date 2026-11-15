@@ -1,4 +1,4 @@
-# Paczka tekstur - szablon (Various Roots 0.85.0)
+# Paczka tekstur - szablon (Various Roots 1.8.0)
 
 Oryginalne tekstury gry, każda w osobnym pliku. Zrób z nich własną paczkę:
 
@@ -39,11 +39,31 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/acacia/leaves_variant.png` | Kwitnące liście akacji |
 | `bloki/acacia/log_side.png` | Pień akacji |
 | `bloki/acacia/log_top.png` | Pień akacji |
-| `bloki/acacia/planks.png` | Deski akacji |
+| `bloki/acacia/planks.png` | Schody z akacji, Półblok z akacji, Furtka z akacji, Stół stolarski z akacji, Łóżko z akacji (pościelone), Łóżko z akacji (stelaż), Deski akacji |
 | `bloki/acacia/sapling.png` | Sadzonka akacji |
 | `bloki/acacia/stripped_side.png` | Okorowany pień akacji |
 | `bloki/acacia/stripped_top.png` | Okorowany pień akacji |
+| `bloki/acacia_bark.png` | Kora akacji |
 | `bloki/acorn.png` | Żołądź |
+| `bloki/araucaria/leaves.png` | Igliwie araukarii |
+| `bloki/araucaria/leaves_variant.png` | Igliwie araukarii z szyszkami |
+| `bloki/araucaria/log_side.png` | Pień araukarii |
+| `bloki/araucaria/log_top.png` | Pień araukarii |
+| `bloki/araucaria/planks.png` | Deski araukariowe |
+| `bloki/araucaria/sapling.png` | Sadzonka araukarii |
+| `bloki/araucaria/stripped_side.png` | Okorowany pień araukarii |
+| `bloki/araucaria/stripped_top.png` | Okorowany pień araukarii |
+| `bloki/araucaria_bark.png` | Kora araukarii |
+| `bloki/aspen/leaves.png` | Liście osiki |
+| `bloki/aspen/leaves_variant.png` | Złote liście osiki |
+| `bloki/aspen/log_side.png` | Pień osiki |
+| `bloki/aspen/log_side_base.png` | Pień osiki (przy ziemi) |
+| `bloki/aspen/log_top.png` | Pień osiki, Pień osiki (przy ziemi) |
+| `bloki/aspen/planks.png` | Deski osikowe |
+| `bloki/aspen/sapling.png` | Sadzonka osiki |
+| `bloki/aspen/stripped_side.png` | Okorowany pień osiki |
+| `bloki/aspen/stripped_top.png` | Okorowany pień osiki |
+| `bloki/aspen_bark.png` | Kora osiki |
 | `bloki/axe.png` | Siekiera |
 | `bloki/axe_basalt.png` | Siekiera bazaltowa |
 | `bloki/axe_granite.png` | Siekiera granitowa |
@@ -54,17 +74,40 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/bald_cypress/leaves_variant.png` | Jesienne igliwie cypryśnika |
 | `bloki/bald_cypress/log_side.png` | Pień cypryśnika |
 | `bloki/bald_cypress/log_top.png` | Pień cypryśnika |
-| `bloki/bald_cypress/planks.png` | Deski cypryśnika |
+| `bloki/bald_cypress/planks.png` | Schody z cypryśnika, Półblok z cypryśnika, Furtka z cypryśnika, Stół stolarski z cypryśnika, Łóżko z cypryśnika (pościelone), Łóżko z cypryśnika (stelaż), Deski cypryśnika |
 | `bloki/bald_cypress/sapling.png` | Sadzonka cypryśnika |
 | `bloki/bald_cypress/stripped_side.png` | Okorowany pień cypryśnika |
 | `bloki/bald_cypress/stripped_top.png` | Okorowany pień cypryśnika |
+| `bloki/bald_cypress_bark.png` | Kora cypryśnika |
+| `bloki/banyan/leaves.png` | Liście figowca |
+| `bloki/banyan/leaves_variant.png` | Liście figowca z figami |
+| `bloki/banyan/log_side.png` | Pień figowca |
+| `bloki/banyan/log_top.png` | Pień figowca |
+| `bloki/banyan/planks.png` | Deski figowcowe |
+| `bloki/banyan/roots.png` | Korzenie powietrzne figowca |
+| `bloki/banyan/sapling.png` | Sadzonka figowca |
+| `bloki/banyan/stripped_side.png` | Okorowany pień figowca |
+| `bloki/banyan/stripped_top.png` | Okorowany pień figowca |
+| `bloki/banyan_bark.png` | Kora figowca |
+| `bloki/baobab/leaves.png` | Liście baobabu |
+| `bloki/baobab/leaves_variant.png` | Liście baobabu z kwiatami |
+| `bloki/baobab/log_side.png` | Pień baobabu |
+| `bloki/baobab/log_top.png` | Pień baobabu |
+| `bloki/baobab/planks.png` | Deski baobabowe |
+| `bloki/baobab/sapling.png` | Sadzonka baobabu |
+| `bloki/baobab/stripped_side.png` | Okorowany pień baobabu |
+| `bloki/baobab/stripped_top.png` | Okorowany pień baobabu |
+| `bloki/baobab_bark.png` | Kora baobabu |
 | `bloki/basalt_side.png` | Bazalt |
 | `bloki/basalt_top.png` | Bazalt |
+| `bloki/bedding_linen.png` | Lniana pościel |
+| `bloki/bedding_straw.png` | Słomiana pościel |
+| `bloki/beech_bark.png` | Kora buka |
 | `bloki/beech_leaf_litter.png` | Opadłe liście buka |
 | `bloki/beech_leaves.png` | Liście buka |
 | `bloki/beech_log_side.png` | Pień buka |
 | `bloki/beech_log_top.png` | Pień buka |
-| `bloki/beech_planks.png` | Deski bukowe |
+| `bloki/beech_planks.png` | Schody bukowe, Półblok bukowy, Furtka bukowa, Stół stolarski bukowy, Łóżko bukowe (pościelone), Łóżko bukowe (stelaż), Deski bukowe |
 | `bloki/beech_sapling.png` | Sadzonka buka |
 | `bloki/beech_stripped_side.png` | Okorowany pień buka |
 | `bloki/beech_stripped_top.png` | Okorowany pień buka |
@@ -73,7 +116,7 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/birch_leaves.png` | Liście brzozy |
 | `bloki/birch_log_side.png` | Pień brzozy |
 | `bloki/birch_log_top.png` | Pień brzozy |
-| `bloki/birch_planks.png` | Deski brzozowe |
+| `bloki/birch_planks.png` | Schody brzozowe, Półblok brzozowy, Furtka brzozowa, Stół stolarski brzozowy, Łóżko brzozowe (pościelone), Łóżko brzozowe (stelaż), Deski brzozowe |
 | `bloki/birch_sapling.png` | Sadzonka brzozy |
 | `bloki/birch_stripped_side.png` | Okorowany pień brzozy |
 | `bloki/birch_stripped_top.png` | Okorowany pień brzozy |
@@ -84,28 +127,73 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/blueberry_bush.png` | - |
 | `bloki/blueberry_bush_few.png` | - |
 | `bloki/blueberry_bush_full.png` | - |
+| `bloki/brew_calm.png` | Kubek ziół na sen |
+| `bloki/brew_heal.png` | Kubek ziół leczniczych |
+| `bloki/brew_vigor.png` | Kubek ziół wzmacniających |
+| `bloki/bristlecone/leaves.png` | Igliwie sosny ościstej |
+| `bloki/bristlecone/leaves_variant.png` | Igliwie sosny ościstej z szyszkami |
+| `bloki/bristlecone/log_side.png` | Pień sosny ościstej |
+| `bloki/bristlecone/log_side_dead.png` | Pień sosny ościstej (martwe drewno) |
+| `bloki/bristlecone/log_top.png` | Pień sosny ościstej, Pień sosny ościstej (martwe drewno) |
+| `bloki/bristlecone/planks.png` | Deski z sosny ościstej |
+| `bloki/bristlecone/sapling.png` | Sadzonka sosny ościstej |
+| `bloki/bristlecone/stripped_side.png` | Okorowany pień sosny ościstej |
+| `bloki/bristlecone/stripped_top.png` | Okorowany pień sosny ościstej |
+| `bloki/bristlecone_bark.png` | Kora sosny ościstej |
 | `bloki/bush_leaves.png` | - |
 | `bloki/bush_sapling.png` | - |
+| `bloki/cedar/leaves.png` | Igliwie cedru |
+| `bloki/cedar/leaves_variant.png` | Igliwie cedru z szyszkami |
+| `bloki/cedar/log_side.png` | Pień cedru |
+| `bloki/cedar/log_top.png` | Pień cedru |
+| `bloki/cedar/planks.png` | Deski cedrowe |
+| `bloki/cedar/sapling.png` | Sadzonka cedru |
+| `bloki/cedar/stripped_side.png` | Okorowany pień cedru |
+| `bloki/cedar/stripped_top.png` | Okorowany pień cedru |
+| `bloki/cedar_bark.png` | Kora cedru |
 | `bloki/chamomile.png` | Rumianek |
 | `bloki/cherry/leaves.png` | Liście wiśni |
 | `bloki/cherry/leaves_variant.png` | Liście wiśni — rzadsze kwiaty |
 | `bloki/cherry/log_side.png` | Pień wiśni |
 | `bloki/cherry/log_top.png` | Pień wiśni |
-| `bloki/cherry/planks.png` | Deski wiśni |
+| `bloki/cherry/planks.png` | Schody wiśniowe, Półblok wiśniowy, Furtka wiśniowa, Stół stolarski wiśniowy, Łóżko wiśniowe (pościelone), Łóżko wiśniowe (stelaż), Deski wiśni |
 | `bloki/cherry/sapling.png` | Sadzonka wiśni |
 | `bloki/cherry/stripped_side.png` | Okorowany pień wiśni |
 | `bloki/cherry/stripped_top.png` | Okorowany pień wiśni |
+| `bloki/cherry_bark.png` | Kora wiśni |
 | `bloki/chili_bush_few.png` | - |
 | `bloki/chili_bush_full.png` | - |
 | `bloki/chili_pepper.png` | - |
 | `bloki/clay.png` | Glina |
+| `bloki/clay_brick.png` | Cegła |
+| `bloki/clay_bricks.png` | Cegły |
+| `bloki/clay_cup.png` | Gliniany kubek |
 | `bloki/clover.png` | Koniczyna, Grzybień biały, Rzęsa wodna |
 | `bloki/coarse_dirt.png` | Ziemia kamienista |
+| `bloki/coconut_palm/coconut.png` | Kokos |
+| `bloki/coconut_palm/leaves.png` | Liście palmy kokosowej, Liście palmy (kokosy odrastają) |
+| `bloki/coconut_palm/leaves_variant.png` | Liście palmy z kokosami |
+| `bloki/coconut_palm/log_side.png` | Pień palmy kokosowej |
+| `bloki/coconut_palm/log_top.png` | Pień palmy kokosowej |
+| `bloki/coconut_palm/planks.png` | Deski palmowe |
+| `bloki/coconut_palm/sapling.png` | Sadzonka palmy kokosowej |
+| `bloki/coconut_palm/stripped_side.png` | Okorowany pień palmy kokosowej |
+| `bloki/coconut_palm/stripped_top.png` | Okorowany pień palmy kokosowej |
+| `bloki/coconut_palm_bark.png` | Kora palmy kokosowej |
 | `bloki/cornflower.png` | Chaber, Krwawnica pospolita |
 | `bloki/crocus.png` | Krokus |
 | `bloki/dandelion.png` | Mniszek |
-| `bloki/dark_planks.png` | Ciemne deski |
-| `bloki/dirt.png` | Ziemia |
+| `bloki/dark_planks.png` | Schody z ciemnego drewna, Półblok z ciemnego drewna, Furtka z ciemnego drewna, Stół stolarski z ciemnego drewna, Łóżko z ciemnego drewna (pościelone), Łóżko z ciemnego drewna (stelaż), Ciemne deski |
+| `bloki/dirt.png` | Ziemia, Rozgrzebana ziemia |
+| `bloki/dragon_tree/leaves.png` | Liście draceny |
+| `bloki/dragon_tree/leaves_variant.png` | Liście draceny z jagodami |
+| `bloki/dragon_tree/log_side.png` | Pień draceny |
+| `bloki/dragon_tree/log_top.png` | Pień draceny |
+| `bloki/dragon_tree/planks.png` | Deski z draceny |
+| `bloki/dragon_tree/sapling.png` | Sadzonka draceny |
+| `bloki/dragon_tree/stripped_side.png` | Okorowany pień draceny |
+| `bloki/dragon_tree/stripped_top.png` | Okorowany pień draceny |
+| `bloki/dragon_tree_bark.png` | Kora draceny |
 | `bloki/dune_grass.png` | Piaskownica (trawa wydmowa) |
 | `bloki/dye_black.png` | Barwnik czarny |
 | `bloki/dye_blue.png` | Barwnik niebieski |
@@ -124,26 +212,79 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/dye_white.png` | Barwnik biały |
 | `bloki/dye_yellow.png` | Barwnik żółty |
 | `bloki/fern.png` | Paproć, Wywłócznik |
+| `bloki/fir/leaves.png` | Igliwie jodły |
+| `bloki/fir/leaves_variant.png` | Igliwie jodły z szyszkami |
+| `bloki/fir/log_side.png` | Pień jodły |
+| `bloki/fir/log_top.png` | Pień jodły |
+| `bloki/fir/planks.png` | Deski jodłowe |
+| `bloki/fir/sapling.png` | Sadzonka jodły |
+| `bloki/fir/stripped_side.png` | Okorowany pień jodły |
+| `bloki/fir/stripped_top.png` | Okorowany pień jodły |
+| `bloki/fir_bark.png` | Kora jodły |
+| `bloki/flower_wreath.png` | Wianek z kwiatów |
 | `bloki/forest_floor_side.png` | Ściółka leśna |
 | `bloki/forest_floor_top.png` | Ściółka leśna |
 | `bloki/ginkgo/leaves.png` | Liście miłorzębu |
 | `bloki/ginkgo/leaves_variant.png` | Liście miłorzębu — jasne złoto |
 | `bloki/ginkgo/log_side.png` | Pień miłorzębu |
 | `bloki/ginkgo/log_top.png` | Pień miłorzębu |
-| `bloki/ginkgo/planks.png` | Deski miłorzębowe |
+| `bloki/ginkgo/planks.png` | Schody miłorzębowe, Półblok miłorzębowy, Furtka miłorzębowa, Stół stolarski miłorzębowy, Łóżko miłorzębowe (pościelone), Łóżko miłorzębowe (stelaż), Deski miłorzębowe |
 | `bloki/ginkgo/sapling.png` | Sadzonka miłorzębu |
 | `bloki/ginkgo/stripped_side.png` | Okorowany pień miłorzębu |
 | `bloki/ginkgo/stripped_top.png` | Okorowany pień miłorzębu |
+| `bloki/ginkgo_bark.png` | Kora miłorzębu |
 | `bloki/granite.png` | Granit |
 | `bloki/grass_side.png` | Blok trawy |
 | `bloki/grass_top.png` | Blok trawy |
+| `bloki/grass_top_babka.png` | - |
+| `bloki/grass_top_chaber.png` | - |
+| `bloki/grass_top_chabry.png` | - |
+| `bloki/grass_top_dmuchawce.png` | - |
+| `bloki/grass_top_fiolki.png` | - |
+| `bloki/grass_top_fiolki_duzo.png` | - |
+| `bloki/grass_top_jaskry.png` | - |
+| `bloki/grass_top_koniczyna.png` | - |
+| `bloki/grass_top_koniczyna2.png` | - |
+| `bloki/grass_top_koniczyna_biala.png` | - |
+| `bloki/grass_top_koniczyna_mlecz.png` | - |
+| `bloki/grass_top_koniczyna_rozowa.png` | - |
+| `bloki/grass_top_krokusy.png` | - |
+| `bloki/grass_top_laka_czerwona.png` | - |
+| `bloki/grass_top_laka_drobna.png` | - |
+| `bloki/grass_top_laka_fiolet.png` | - |
+| `bloki/grass_top_laka_pelna.png` | - |
+| `bloki/grass_top_laka_zolta.png` | - |
+| `bloki/grass_top_mak.png` | - |
+| `bloki/grass_top_maki.png` | - |
+| `bloki/grass_top_mech.png` | - |
+| `bloki/grass_top_mech2.png` | - |
+| `bloki/grass_top_mech_duzy.png` | - |
+| `bloki/grass_top_mlecz.png` | - |
+| `bloki/grass_top_mlecz_duzy.png` | - |
+| `bloki/grass_top_mlecze.png` | - |
+| `bloki/grass_top_niezapominajki.png` | - |
+| `bloki/grass_top_paprotka.png` | - |
+| `bloki/grass_top_platki.png` | - |
+| `bloki/grass_top_poziomki.png` | - |
+| `bloki/grass_top_rozeta.png` | - |
+| `bloki/grass_top_rozeta_kwiat.png` | - |
+| `bloki/grass_top_rozety2.png` | - |
+| `bloki/grass_top_stokrotka.png` | - |
+| `bloki/grass_top_stokrotki.png` | - |
+| `bloki/grass_top_stokrotki_duzo.png` | - |
+| `bloki/grass_top_trawa_ciemna.png` | - |
+| `bloki/grass_top_trawa_kepki.png` | - |
+| `bloki/grass_top_trawa_sucha.png` | - |
+| `bloki/grass_top_trawa_sucha2.png` | - |
+| `bloki/grass_top_trawa_zdzbla.png` | - |
+| `bloki/grass_top_wrzos.png` | - |
 | `bloki/gravel.png` | Żwir |
 | `bloki/hazel_bush_few.png` | - |
 | `bloki/hazel_bush_full.png` | - |
 | `bloki/hazelnut.png` | - |
 | `bloki/heather.png` | Wrzos |
 | `bloki/humus.png` | Czarnoziem |
-| `bloki/jablon/deski.png` | Deski jabłoniowe |
+| `bloki/jablon/deski.png` | Schody jabłoniowe, Półblok jabłoniowy, Furtka jabłoniowa, Stół stolarski jabłoniowy, Łóżko jabłoniowe (pościelone), Łóżko jabłoniowe (stelaż), Deski jabłoniowe |
 | `bloki/jablon/jablko.png` | Jabłko |
 | `bloki/jablon/liscie.png` | Liście jabłoni, Liście jabłoni (jabłka odrastają) |
 | `bloki/jablon/liscie_jablka.png` | Liście jabłoni z jabłkami |
@@ -153,40 +294,88 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/jablon/pien_bok.png` | Pień jabłoni |
 | `bloki/jablon/pien_gora.png` | Pień jabłoni |
 | `bloki/jablon/sadzonka.png` | Sadzonka jabłoni |
+| `bloki/jablon_bark.png` | Kora jabłoni |
 | `bloki/jacaranda/leaves.png` | Liście jakarandy |
 | `bloki/jacaranda/leaves_variant.png` | Liście jakarandy — jasne kwiaty |
 | `bloki/jacaranda/log_side.png` | Pień jakarandy |
 | `bloki/jacaranda/log_top.png` | Pień jakarandy |
-| `bloki/jacaranda/planks.png` | Deski jakarandowe |
+| `bloki/jacaranda/planks.png` | Schody jakarandowe, Półblok jakarandowy, Furtka jakarandowa, Stół stolarski jakarandowy, Łóżko jakarandowe (pościelone), Łóżko jakarandowe (stelaż), Deski jakarandowe |
 | `bloki/jacaranda/sapling.png` | Sadzonka jakarandy |
 | `bloki/jacaranda/stripped_side.png` | Okorowany pień jakarandy |
 | `bloki/jacaranda/stripped_top.png` | Okorowany pień jakarandy |
+| `bloki/jacaranda_bark.png` | Kora jakarandy |
+| `bloki/joshua_tree/leaves.png` | Liście jukki |
+| `bloki/joshua_tree/leaves_variant.png` | Liście jukki z kwiatami |
+| `bloki/joshua_tree/log_side.png` | Pień jukki |
+| `bloki/joshua_tree/log_side_shaggy.png` | Pień jukki (z suchymi liśćmi) |
+| `bloki/joshua_tree/log_top.png` | Pień jukki, Pień jukki (z suchymi liśćmi) |
+| `bloki/joshua_tree/planks.png` | Deski z jukki |
+| `bloki/joshua_tree/sapling.png` | Sadzonka jukki |
+| `bloki/joshua_tree/stripped_side.png` | Okorowany pień jukki |
+| `bloki/joshua_tree/stripped_top.png` | Okorowany pień jukki |
+| `bloki/joshua_tree_bark.png` | Kora jukki |
+| `bloki/kapok/leaves.png` | Liście puchowca |
+| `bloki/kapok/leaves_variant.png` | Liście puchowca z puchem |
+| `bloki/kapok/log_side.png` | Pień puchowca |
+| `bloki/kapok/log_top.png` | Pień puchowca |
+| `bloki/kapok/planks.png` | Deski z puchowca |
+| `bloki/kapok/sapling.png` | Sadzonka puchowca |
+| `bloki/kapok/stripped_side.png` | Okorowany pień puchowca |
+| `bloki/kapok/stripped_top.png` | Okorowany pień puchowca |
+| `bloki/kapok_bark.png` | Kora puchowca |
+| `bloki/knife.png` | Nóż |
+| `bloki/knife_basalt.png` | Nóż bazaltowy |
+| `bloki/knife_granite.png` | Nóż granitowy |
+| `bloki/knife_limestone.png` | Nóż wapienny |
+| `bloki/knife_sandstone.png` | Nóż piaskowcowy |
+| `bloki/knife_slate.png` | Nóż łupkowy |
 | `bloki/lamp.png` | Lampa |
 | `bloki/lamp_blue.png` | Niebieska lampa |
 | `bloki/lamp_green.png` | Zielona lampa |
 | `bloki/lamp_purple.png` | Fioletowa lampa |
 | `bloki/lamp_red.png` | Czerwona lampa |
+| `bloki/larch/leaves.png` | Igliwie modrzewia |
+| `bloki/larch/leaves_variant.png` | Złote igliwie modrzewia |
+| `bloki/larch/log_side.png` | Pień modrzewia |
+| `bloki/larch/log_top.png` | Pień modrzewia |
+| `bloki/larch/planks.png` | Deski modrzewiowe |
+| `bloki/larch/sapling.png` | Sadzonka modrzewia |
+| `bloki/larch/stripped_side.png` | Okorowany pień modrzewia |
+| `bloki/larch/stripped_top.png` | Okorowany pień modrzewia |
+| `bloki/larch_bark.png` | Kora modrzewia |
 | `bloki/lepidolite.png` | Lepidolit |
 | `bloki/lime_plaster.png` | Tynk wapienny |
 | `bloki/limestone.png` | Wapień |
+| `bloki/linden_bark.png` | Kora lipy |
 | `bloki/linden_flower.png` | Kwiat lipy |
 | `bloki/linden_leaves.png` | Liście lipy |
 | `bloki/linden_leaves_flowering.png` | Kwitnące liście lipy |
 | `bloki/linden_log_side.png` | Pień lipy |
 | `bloki/linden_log_top.png` | Pień lipy |
-| `bloki/linden_planks.png` | Deski lipowe |
+| `bloki/linden_planks.png` | Schody lipowe, Półblok lipowy, Furtka lipowa, Stół stolarski lipowy, Łóżko lipowe (pościelone), Łóżko lipowe (stelaż), Deski lipowe |
 | `bloki/linden_sapling.png` | Sadzonka lipy |
 | `bloki/linden_stripped_side.png` | Okorowany pień lipy |
 | `bloki/linden_stripped_top.png` | Okorowany pień lipy |
+| `bloki/mangrove/leaves.png` | Liście namorzynu |
+| `bloki/mangrove/leaves_variant.png` | Liście namorzynu z siewkami |
+| `bloki/mangrove/log_side.png` | Pień namorzynu |
+| `bloki/mangrove/log_top.png` | Pień namorzynu |
+| `bloki/mangrove/planks.png` | Deski namorzynowe |
+| `bloki/mangrove/roots.png` | Korzenie namorzynu |
+| `bloki/mangrove/sapling.png` | Sadzonka namorzynu |
+| `bloki/mangrove/stripped_side.png` | Okorowany pień namorzynu |
+| `bloki/mangrove/stripped_top.png` | Okorowany pień namorzynu |
+| `bloki/mangrove_bark.png` | Kora namorzynu |
 | `bloki/maple/leaf_litter.png` | Opadłe liście klonu |
 | `bloki/maple/leaves.png` | Liście klonu |
 | `bloki/maple/leaves_variant.png` | Złote liście klonu |
 | `bloki/maple/log_side.png` | Pień klonu |
 | `bloki/maple/log_top.png` | Pień klonu |
-| `bloki/maple/planks.png` | Deski klonowe |
+| `bloki/maple/planks.png` | Schody klonowe, Półblok klonowy, Furtka klonowa, Stół stolarski klonowy, Łóżko klonowe (pościelone), Łóżko klonowe (stelaż), Deski klonowe |
 | `bloki/maple/sapling.png` | Sadzonka klonu |
 | `bloki/maple/stripped_side.png` | Okorowany pień klonu |
 | `bloki/maple/stripped_top.png` | Okorowany pień klonu |
+| `bloki/maple_bark.png` | Kora klonu |
 | `bloki/meteorite.png` | Meteoryt |
 | `bloki/models/bushy-grass/texture.png` | - |
 | `bloki/models/rosliny/amarantus/polrealistyczny.png` | - |
@@ -218,6 +407,48 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/models/rosliny/koniczyna/polrealistyczny.png` | - |
 | `bloki/models/rosliny/krokus/polrealistyczny.png` | - |
 | `bloki/models/rosliny/krotka-trawa/polrealistyczny.png` | - |
+| `bloki/models/rosliny/krotka-trawa/wariant-borowa-prosty.png` | - |
+| `bloki/models/rosliny/krotka-trawa/wariant-borowa.png` | - |
+| `bloki/models/rosliny/krotka-trawa/wariant-fiolki-prosty.png` | - |
+| `bloki/models/rosliny/krotka-trawa/wariant-fiolki.png` | - |
+| `bloki/models/rosliny/krotka-trawa/wariant-goryczka-prosty.png` | - |
+| `bloki/models/rosliny/krotka-trawa/wariant-goryczka.png` | - |
+| `bloki/models/rosliny/krotka-trawa/wariant-jaskry-prosty.png` | - |
+| `bloki/models/rosliny/krotka-trawa/wariant-jaskry.png` | - |
+| `bloki/models/rosliny/krotka-trawa/wariant-kaczence-prosty.png` | - |
+| `bloki/models/rosliny/krotka-trawa/wariant-kaczence.png` | - |
+| `bloki/models/rosliny/krotka-trawa/wariant-klosy-prosty.png` | - |
+| `bloki/models/rosliny/krotka-trawa/wariant-klosy-zlote-prosty.png` | - |
+| `bloki/models/rosliny/krotka-trawa/wariant-klosy-zlote.png` | - |
+| `bloki/models/rosliny/krotka-trawa/wariant-klosy.png` | - |
+| `bloki/models/rosliny/krotka-trawa/wariant-koniczynka-prosty.png` | - |
+| `bloki/models/rosliny/krotka-trawa/wariant-koniczynka.png` | - |
+| `bloki/models/rosliny/krotka-trawa/wariant-lesna-prosty.png` | - |
+| `bloki/models/rosliny/krotka-trawa/wariant-lesna.png` | - |
+| `bloki/models/rosliny/krotka-trawa/wariant-macierzanka-prosty.png` | - |
+| `bloki/models/rosliny/krotka-trawa/wariant-macierzanka.png` | - |
+| `bloki/models/rosliny/krotka-trawa/wariant-murawa-prosty.png` | - |
+| `bloki/models/rosliny/krotka-trawa/wariant-murawa.png` | - |
+| `bloki/models/rosliny/krotka-trawa/wariant-niezapominajki-prosty.png` | - |
+| `bloki/models/rosliny/krotka-trawa/wariant-niezapominajki.png` | - |
+| `bloki/models/rosliny/krotka-trawa/wariant-ostnica-prosty.png` | - |
+| `bloki/models/rosliny/krotka-trawa/wariant-ostnica.png` | - |
+| `bloki/models/rosliny/krotka-trawa/wariant-paprotka-prosty.png` | - |
+| `bloki/models/rosliny/krotka-trawa/wariant-paprotka.png` | - |
+| `bloki/models/rosliny/krotka-trawa/wariant-sitowie-prosty.png` | - |
+| `bloki/models/rosliny/krotka-trawa/wariant-sitowie.png` | - |
+| `bloki/models/rosliny/krotka-trawa/wariant-stokrotki-prosty.png` | - |
+| `bloki/models/rosliny/krotka-trawa/wariant-stokrotki.png` | - |
+| `bloki/models/rosliny/krotka-trawa/wariant-sucha-kepka-prosty.png` | - |
+| `bloki/models/rosliny/krotka-trawa/wariant-sucha-kepka.png` | - |
+| `bloki/models/rosliny/krotka-trawa/wariant-szarotka-prosty.png` | - |
+| `bloki/models/rosliny/krotka-trawa/wariant-szarotka.png` | - |
+| `bloki/models/rosliny/krotka-trawa/wariant-turzyca-prosty.png` | - |
+| `bloki/models/rosliny/krotka-trawa/wariant-turzyca.png` | - |
+| `bloki/models/rosliny/krotka-trawa/wariant-wrzosiec-prosty.png` | - |
+| `bloki/models/rosliny/krotka-trawa/wariant-wrzosiec.png` | - |
+| `bloki/models/rosliny/krotka-trawa/wariant-zawilce-prosty.png` | - |
+| `bloki/models/rosliny/krotka-trawa/wariant-zawilce.png` | - |
 | `bloki/models/rosliny/krwawnica/polrealistyczny.png` | - |
 | `bloki/models/rosliny/krwawnica/prosty-1.png` | - |
 | `bloki/models/rosliny/lawenda/polrealistyczny.png` | - |
@@ -253,19 +484,32 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/models/rosliny/pokrzywa/polrealistyczny.png` | - |
 | `bloki/models/rosliny/rumianek/polrealistyczny.png` | - |
 | `bloki/models/rosliny/sadzonka-akacja/polrealistyczny.png` | - |
+| `bloki/models/rosliny/sadzonka-araukaria/polrealistyczny.png` | - |
+| `bloki/models/rosliny/sadzonka-banian/polrealistyczny.png` | - |
+| `bloki/models/rosliny/sadzonka-baobab/polrealistyczny.png` | - |
 | `bloki/models/rosliny/sadzonka-brzoza/polrealistyczny.png` | - |
 | `bloki/models/rosliny/sadzonka-buk/polrealistyczny.png` | - |
+| `bloki/models/rosliny/sadzonka-cedr/polrealistyczny.png` | - |
 | `bloki/models/rosliny/sadzonka-cyprysnik/polrealistyczny.png` | - |
 | `bloki/models/rosliny/sadzonka-dab/polrealistyczny.png` | - |
+| `bloki/models/rosliny/sadzonka-dracena/polrealistyczny.png` | - |
 | `bloki/models/rosliny/sadzonka-eukaliptus/polrealistyczny.png` | - |
 | `bloki/models/rosliny/sadzonka-jablon/polrealistyczny.png` | - |
 | `bloki/models/rosliny/sadzonka-jakaranda/polrealistyczny.png` | - |
+| `bloki/models/rosliny/sadzonka-jodla/polrealistyczny.png` | - |
+| `bloki/models/rosliny/sadzonka-jukka/polrealistyczny.png` | - |
 | `bloki/models/rosliny/sadzonka-klon/polrealistyczny.png` | - |
 | `bloki/models/rosliny/sadzonka-kosodrzewina/polrealistyczny.png` | - |
 | `bloki/models/rosliny/sadzonka-lipa/polrealistyczny.png` | - |
 | `bloki/models/rosliny/sadzonka-milorzab/polrealistyczny.png` | - |
+| `bloki/models/rosliny/sadzonka-modrzew/polrealistyczny.png` | - |
+| `bloki/models/rosliny/sadzonka-namorzyn/polrealistyczny.png` | - |
 | `bloki/models/rosliny/sadzonka-olcha/polrealistyczny.png` | - |
 | `bloki/models/rosliny/sadzonka-oliwka/polrealistyczny.png` | - |
+| `bloki/models/rosliny/sadzonka-oscista/polrealistyczny.png` | - |
+| `bloki/models/rosliny/sadzonka-osika/polrealistyczny.png` | - |
+| `bloki/models/rosliny/sadzonka-palma/polrealistyczny.png` | - |
+| `bloki/models/rosliny/sadzonka-puchowiec/polrealistyczny.png` | - |
 | `bloki/models/rosliny/sadzonka-sekwoja/polrealistyczny.png` | - |
 | `bloki/models/rosliny/sadzonka-sosna/polrealistyczny.png` | - |
 | `bloki/models/rosliny/sadzonka-swierk/polrealistyczny.png` | - |
@@ -282,6 +526,46 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/models/rosliny/turzyca/prosty-1.png` | - |
 | `bloki/models/rosliny/wrzos/polrealistyczny.png` | - |
 | `bloki/models/rosliny/wysoka-trawa/polrealistyczny.png` | - |
+| `bloki/models/rosliny/wysoka-trawa/wariant-dzwonki-prosty.png` | - |
+| `bloki/models/rosliny/wysoka-trawa/wariant-dzwonki.png` | - |
+| `bloki/models/rosliny/wysoka-trawa/wariant-goryczka-prosty.png` | - |
+| `bloki/models/rosliny/wysoka-trawa/wariant-goryczka.png` | - |
+| `bloki/models/rosliny/wysoka-trawa/wariant-klosy-prosty.png` | - |
+| `bloki/models/rosliny/wysoka-trawa/wariant-klosy.png` | - |
+| `bloki/models/rosliny/wysoka-trawa/wariant-kosacce-prosty.png` | - |
+| `bloki/models/rosliny/wysoka-trawa/wariant-kosacce.png` | - |
+| `bloki/models/rosliny/wysoka-trawa/wariant-kosmatka-prosty.png` | - |
+| `bloki/models/rosliny/wysoka-trawa/wariant-kosmatka.png` | - |
+| `bloki/models/rosliny/wysoka-trawa/wariant-krwawnica-prosty.png` | - |
+| `bloki/models/rosliny/wysoka-trawa/wariant-krwawnica.png` | - |
+| `bloki/models/rosliny/wysoka-trawa/wariant-lesna-prosty.png` | - |
+| `bloki/models/rosliny/wysoka-trawa/wariant-lesna.png` | - |
+| `bloki/models/rosliny/wysoka-trawa/wariant-margerytki-prosty.png` | - |
+| `bloki/models/rosliny/wysoka-trawa/wariant-margerytki.png` | - |
+| `bloki/models/rosliny/wysoka-trawa/wariant-naparstnica-prosty.png` | - |
+| `bloki/models/rosliny/wysoka-trawa/wariant-naparstnica.png` | - |
+| `bloki/models/rosliny/wysoka-trawa/wariant-orlica-prosty.png` | - |
+| `bloki/models/rosliny/wysoka-trawa/wariant-orlica.png` | - |
+| `bloki/models/rosliny/wysoka-trawa/wariant-oset-prosty.png` | - |
+| `bloki/models/rosliny/wysoka-trawa/wariant-oset.png` | - |
+| `bloki/models/rosliny/wysoka-trawa/wariant-ostnica-prosty.png` | - |
+| `bloki/models/rosliny/wysoka-trawa/wariant-ostnica.png` | - |
+| `bloki/models/rosliny/wysoka-trawa/wariant-palki-prosty.png` | - |
+| `bloki/models/rosliny/wysoka-trawa/wariant-palki.png` | - |
+| `bloki/models/rosliny/wysoka-trawa/wariant-piorka-prosty.png` | - |
+| `bloki/models/rosliny/wysoka-trawa/wariant-piorka.png` | - |
+| `bloki/models/rosliny/wysoka-trawa/wariant-szczaw-prosty.png` | - |
+| `bloki/models/rosliny/wysoka-trawa/wariant-szczaw.png` | - |
+| `bloki/models/rosliny/wysoka-trawa/wariant-szuwar-prosty.png` | - |
+| `bloki/models/rosliny/wysoka-trawa/wariant-szuwar.png` | - |
+| `bloki/models/rosliny/wysoka-trawa/wariant-trzcinnik-prosty.png` | - |
+| `bloki/models/rosliny/wysoka-trawa/wariant-trzcinnik.png` | - |
+| `bloki/models/rosliny/wysoka-trawa/wariant-welnianka-prosty.png` | - |
+| `bloki/models/rosliny/wysoka-trawa/wariant-welnianka.png` | - |
+| `bloki/models/rosliny/wysoka-trawa/wariant-wiechy-prosty.png` | - |
+| `bloki/models/rosliny/wysoka-trawa/wariant-wiechy.png` | - |
+| `bloki/models/rosliny/wysoka-trawa/wariant-wrzos-prosty.png` | - |
+| `bloki/models/rosliny/wysoka-trawa/wariant-wrzos.png` | - |
 | `bloki/models/rosliny/zawilec/polrealistyczny.png` | - |
 | `bloki/models/rosliny/zawilec/prosty-1.png` | - |
 | `bloki/models/rosliny/zawilec/prosty-2.png` | - |
@@ -297,21 +581,23 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/mugo/leaves_variant.png` | Igliwie kosodrzewiny z młodymi pędami |
 | `bloki/mugo/log_side.png` | Pień kosodrzewiny |
 | `bloki/mugo/log_top.png` | Pień kosodrzewiny |
-| `bloki/mugo/planks.png` | Deski z kosodrzewiny |
+| `bloki/mugo/planks.png` | Schody z kosodrzewiny, Półblok z kosodrzewiny, Furtka z kosodrzewiny, Stół stolarski z kosodrzewiny, Łóżko z kosodrzewiny (pościelone), Łóżko z kosodrzewiny (stelaż), Deski z kosodrzewiny |
 | `bloki/mugo/sapling.png` | Sadzonka kosodrzewiny |
 | `bloki/mugo/stripped_side.png` | Okorowany pień kosodrzewiny |
 | `bloki/mugo/stripped_top.png` | Okorowany pień kosodrzewiny |
+| `bloki/mugo_bark.png` | Kora kosodrzewiny |
 | `bloki/nettle.png` | Pokrzywa |
+| `bloki/oak_bark.png` | Kora dębu |
 | `bloki/oak_leaf_litter.png` | Opadłe liście dębu |
 | `bloki/oak_leaves.png` | Liście dębu |
 | `bloki/oak_log_side.png` | Ognisko, Pień dębu |
 | `bloki/oak_log_top.png` | Pień dębu |
-| `bloki/oak_planks.png` | Deski dębowe |
+| `bloki/oak_planks.png` | Schody dębowe, Półblok dębowy, Furtka dębowa, Stół stolarski dębowy, Łóżko dębowe (pościelone), Łóżko dębowe (stelaż), Deski dębowe |
 | `bloki/oak_sapling.png` | Sadzonka dębu |
 | `bloki/oak_stripped_side.png` | Okorowany pień dębu |
 | `bloki/oak_stripped_top.png` | Okorowany pień dębu |
 | `bloki/ochre_plaster.png` | Tynk ochrowy |
-| `bloki/olcha/deski.png` | Deski olchowe |
+| `bloki/olcha/deski.png` | Schody olchowe, Półblok olchowy, Furtka olchowa, Stół stolarski olchowy, Łóżko olchowe (pościelone), Łóżko olchowe (stelaż), Deski olchowe |
 | `bloki/olcha/liscie.png` | Liście olchy |
 | `bloki/olcha/okorowany_bok.png` | Okorowany pień olchy |
 | `bloki/olcha/okorowany_gora.png` | Okorowany pień olchy |
@@ -320,21 +606,24 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/olcha/pien_gora.png` | Pień olchy |
 | `bloki/olcha/sadzonka.png` | Sadzonka olchy |
 | `bloki/olcha/szyszki.png` | Szyszeczki olchy |
+| `bloki/olcha_bark.png` | Kora olchy |
 | `bloki/olive/leaves.png` | Liście oliwki, Liście oliwki (oliwki odrastają) |
 | `bloki/olive/leaves_variant.png` | Liście oliwki z oliwkami |
 | `bloki/olive/log_side.png` | Pień oliwki |
 | `bloki/olive/log_top.png` | Pień oliwki |
 | `bloki/olive/olives.png` | Oliwki |
-| `bloki/olive/planks.png` | Deski oliwkowe |
+| `bloki/olive/planks.png` | Schody oliwkowe, Półblok oliwkowy, Furtka oliwkowa, Stół stolarski oliwkowy, Łóżko oliwkowe (pościelone), Łóżko oliwkowe (stelaż), Deski oliwkowe |
 | `bloki/olive/sapling.png` | Sadzonka oliwki |
 | `bloki/olive/stripped_side.png` | Okorowany pień oliwki |
 | `bloki/olive/stripped_top.png` | Okorowany pień oliwki |
+| `bloki/olive_bark.png` | Kora oliwki |
 | `bloki/pickaxe.png` | Kilof |
 | `bloki/pickaxe_basalt.png` | Kilof bazaltowy |
 | `bloki/pickaxe_granite.png` | Kilof granitowy |
 | `bloki/pickaxe_limestone.png` | Kilof wapienny |
 | `bloki/pickaxe_sandstone.png` | Kilof piaskowcowy |
 | `bloki/pickaxe_slate.png` | Kilof łupkowy |
+| `bloki/pine_bark.png` | Kora sosny |
 | `bloki/pine_bark_overlay_dense.png` | - |
 | `bloki/pine_bark_overlay_medium.png` | - |
 | `bloki/pine_bark_overlay_sparse.png` | - |
@@ -347,7 +636,7 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/pine_log_transition_2.png` | - |
 | `bloki/pine_log_transition_3.png` | - |
 | `bloki/pine_log_upper_side.png` | Pień sosny (górny) |
-| `bloki/pine_planks.png` | Deski sosnowe |
+| `bloki/pine_planks.png` | Schody sosnowe, Półblok sosnowy, Furtka sosnowa, Stół stolarski sosnowy, Łóżko sosnowe (pościelone), Łóżko sosnowe (stelaż), Deski sosnowe |
 | `bloki/pine_sapling.png` | Sadzonka sosny |
 | `bloki/pine_stripped_side.png` | Okorowany pień sosny |
 | `bloki/pine_stripped_top.png` | Okorowany pień sosny |
@@ -357,12 +646,21 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/rainbow_eucalyptus/leaves.png` | Liście eukaliptusa |
 | `bloki/rainbow_eucalyptus/log_side.png` | Pień eukaliptusa |
 | `bloki/rainbow_eucalyptus/log_top.png` | Pień eukaliptusa |
-| `bloki/rainbow_eucalyptus/planks.png` | Deski eukaliptusowe |
+| `bloki/rainbow_eucalyptus/planks.png` | Schody eukaliptusowe, Półblok eukaliptusowy, Furtka eukaliptusowa, Stół stolarski eukaliptusowy, Łóżko eukaliptusowe (pościelone), Łóżko eukaliptusowe (stelaż), Deski eukaliptusowe |
 | `bloki/rainbow_eucalyptus/sapling.png` | Sadzonka eukaliptusa |
 | `bloki/rainbow_eucalyptus/stripped_side.png` | Okorowany pień eukaliptusa |
 | `bloki/rainbow_eucalyptus/stripped_top.png` | Okorowany pień eukaliptusa |
+| `bloki/rainbow_eucalyptus_bark.png` | Kora eukaliptusa |
+| `bloki/red_clay.png` | Czerwona glina |
+| `bloki/red_clay_brick.png` | Czerwona cegła |
+| `bloki/red_clay_bricks.png` | Czerwone cegły |
+| `bloki/red_clay_cup.png` | Czerwony gliniany kubek |
 | `bloki/reed.png` | Trzcina, Turzyca rzeczna, Pałka wodna, Pałka wodna (w wodzie) |
 | `bloki/resin.png` | Żywica |
+| `bloki/roasted_acorn.png` | Prażony żołądź |
+| `bloki/roasted_apple.png` | Pieczone jabłko |
+| `bloki/roasted_beechnuts.png` | Prażone orzeszki bukowe |
+| `bloki/roasted_hazelnut.png` | Prażone orzechy laskowe |
 | `bloki/rosliny/amarantus/wiecha.png` | Wiecha amarantusa |
 | `bloki/rosliny/barwinek/kwiat.png` | Kwiat barwinka |
 | `bloki/rosliny/cynia/kwiat.png` | Kwiat cynii |
@@ -390,10 +688,11 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/sequoia/leaves_variant.png` | Igliwie sekwoi z szyszkami |
 | `bloki/sequoia/log_side.png` | Pień sekwoi |
 | `bloki/sequoia/log_top.png` | Pień sekwoi |
-| `bloki/sequoia/planks.png` | Deski sekwojowe |
+| `bloki/sequoia/planks.png` | Schody sekwojowe, Półblok sekwojowy, Furtka sekwojowa, Stół stolarski sekwojowy, Łóżko sekwojowe (pościelone), Łóżko sekwojowe (stelaż), Deski sekwojowe |
 | `bloki/sequoia/sapling.png` | Sadzonka sekwoi |
 | `bloki/sequoia/stripped_side.png` | Okorowany pień sekwoi |
 | `bloki/sequoia/stripped_top.png` | Okorowany pień sekwoi |
+| `bloki/sequoia_bark.png` | Kora sekwoi |
 | `bloki/short_grass.png` | Krótka trawa |
 | `bloki/shovel.png` | Łopata |
 | `bloki/shovel_basalt.png` | Łopata bazaltowa |
@@ -404,22 +703,28 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/slate_side.png` | Łupek |
 | `bloki/slate_top.png` | Łupek |
 | `bloki/snow.png` | Śnieg, Warstwa śniegu |
+| `bloki/spruce_bark.png` | Kora świerka |
 | `bloki/spruce_cone.png` | Szyszka świerka |
 | `bloki/spruce_leaves.png` | Igliwie świerka |
 | `bloki/spruce_log_side.png` | Pień świerka |
 | `bloki/spruce_log_top.png` | Pień świerka |
-| `bloki/spruce_planks.png` | Deski świerkowe |
+| `bloki/spruce_planks.png` | Schody świerkowe, Półblok świerkowy, Furtka świerkowa, Stół stolarski świerkowy, Łóżko świerkowe (pościelone), Łóżko świerkowe (stelaż), Deski świerkowe |
 | `bloki/spruce_sapling.png` | Sadzonka świerka |
 | `bloki/spruce_stripped_side.png` | Okorowany pień świerka |
 | `bloki/spruce_stripped_top.png` | Okorowany pień świerka |
 | `bloki/spruce_wreath.png` | Wieniec świerkowy |
 | `bloki/stick.png` | Patyk |
 | `bloki/stone.png` | Kamień |
+| `bloki/straw.png` | Słoma |
 | `bloki/strawberry.png` | - |
 | `bloki/strawberry_bush_few.png` | - |
 | `bloki/strawberry_bush_full.png` | - |
 | `bloki/tall_grass.png` | Wysoka trawa |
+| `bloki/tea_calm.png` | Napar na sen |
+| `bloki/tea_heal.png` | Napar leczniczy |
+| `bloki/tea_vigor.png` | Napar wzmacniający |
 | `bloki/terracotta.png` | Terakota |
+| `bloki/tilled_dirt.png` | Rozgrzebana ziemia |
 | `bloki/tool_handle_source.png` | - |
 | `bloki/torch.png` | Pochodnia |
 | `bloki/torch_black.png` | Pochodnia czarna |
@@ -438,9 +743,39 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/torch_red.png` | Pochodnia czerwona |
 | `bloki/torch_white.png` | Pochodnia biała |
 | `bloki/torch_yellow.png` | Pochodnia żółta |
+| `bloki/trapdoor_acacia.png` | Klapa z akacji |
+| `bloki/trapdoor_bald_cypress.png` | Klapa z cypryśnika |
+| `bloki/trapdoor_beech.png` | Klapa bukowa |
+| `bloki/trapdoor_birch.png` | Klapa brzozowa |
+| `bloki/trapdoor_cherry.png` | Klapa wiśniowa |
+| `bloki/trapdoor_dark.png` | Klapa z ciemnego drewna |
+| `bloki/trapdoor_ginkgo.png` | Klapa miłorzębowa |
+| `bloki/trapdoor_jablon.png` | Klapa jabłoniowa |
+| `bloki/trapdoor_jacaranda.png` | Klapa jakarandowa |
+| `bloki/trapdoor_linden.png` | Klapa lipowa |
+| `bloki/trapdoor_maple.png` | Klapa klonowa |
+| `bloki/trapdoor_mugo.png` | Klapa z kosodrzewiny |
+| `bloki/trapdoor_oak.png` | Klapa dębowa |
+| `bloki/trapdoor_olcha.png` | Klapa olchowa |
+| `bloki/trapdoor_olive.png` | Klapa oliwkowa |
+| `bloki/trapdoor_pine.png` | Klapa sosnowa |
+| `bloki/trapdoor_rainbow_eucalyptus.png` | Klapa eukaliptusowa |
+| `bloki/trapdoor_sequoia.png` | Klapa sekwojowa |
+| `bloki/trapdoor_spruce.png` | Klapa świerkowa |
+| `bloki/trapdoor_wierzba.png` | Klapa wierzbowa |
 | `bloki/water.png` | Woda, Płynąca woda |
+| `bloki/wet_clay_brick.png` | Mokra cegła z gliny |
+| `bloki/wet_clay_cup.png` | Mokry kubek z gliny |
+| `bloki/wet_red_clay_brick.png` | Mokra cegła z czerwonej gliny |
+| `bloki/wet_red_clay_cup.png` | Mokry kubek z czerwonej gliny |
+| `bloki/wet_white_clay_brick.png` | Mokra cegła z białej gliny |
+| `bloki/wet_white_clay_cup.png` | Mokry kubek z białej gliny |
+| `bloki/white_clay.png` | Biała glina |
+| `bloki/white_clay_brick.png` | Biała cegła |
+| `bloki/white_clay_bricks.png` | Białe cegły |
+| `bloki/white_clay_cup.png` | Biały gliniany kubek |
 | `bloki/wierzba/bazie.png` | Bazie |
-| `bloki/wierzba/deski.png` | Deski wierzbowe |
+| `bloki/wierzba/deski.png` | Schody wierzbowe, Półblok wierzbowy, Furtka wierzbowa, Stół stolarski wierzbowy, Łóżko wierzbowe (pościelone), Łóżko wierzbowe (stelaż), Deski wierzbowe |
 | `bloki/wierzba/liscie.png` | Liście wierzby |
 | `bloki/wierzba/okorowany_bok.png` | Okorowany pień wierzby |
 | `bloki/wierzba/okorowany_gora.png` | Okorowany pień wierzby |
@@ -448,3 +783,4 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/wierzba/pien_bok.png` | Pień wierzby |
 | `bloki/wierzba/pien_gora.png` | Pień wierzby |
 | `bloki/wierzba/sadzonka.png` | Sadzonka wierzby |
+| `bloki/wierzba_bark.png` | Kora wierzby |

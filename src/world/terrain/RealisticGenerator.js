@@ -203,10 +203,15 @@ const CLAY_GROUND = {
     eucalyptus_forest: { id: 'redClay', bank: 0, open: 0.45 },
     rocky: { id: 'whiteClay', bank: 0, open: 0.42 },
     alpine: { id: 'whiteClay', bank: 0, open: 0.48 },
-    mugo_scrub: { id: 'whiteClay', bank: 0, open: 0.45 }
+    mugo_scrub: { id: 'whiteClay', bank: 0, open: 0.45 },
+    // 1.8.0
+    savanna: { id: 'redClay', bank: 0, open: 0.62 },
+    desert: { id: 'redClay', bank: 0, open: 0.62 },
+    rainforest: { id: 'redClay', bank: 0, open: 0.62 },
+    mangrove: { id: 'clay', bank: -0.15, open: 0.42 }
 };
 
-const FOREST_BIOMES = new Set(['deciduous', 'beech', 'birch', 'pine', 'spruce', 'maple_forest', 'sequoia_forest', 'eucalyptus_forest']);
+const FOREST_BIOMES = new Set(['deciduous', 'beech', 'birch', 'pine', 'spruce', 'maple_forest', 'sequoia_forest', 'eucalyptus_forest', 'rainforest']);
 
 
 // Dokładność liczenia: pełna (chunki), średnia i zgrubna (daleki teren -

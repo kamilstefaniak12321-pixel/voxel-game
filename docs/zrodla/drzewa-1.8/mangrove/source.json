@@ -1,0 +1,85 @@
+{
+  "sourceArchive": "DOC-20261115-WA0023.zip (drzewa_od_jodly)",
+  "sourceFolder": "05_mangrove",
+  "suppliedBy": "Kamil",
+  "importDate": "2026-11-15",
+  "note": "Oryginalne piksele RGBA skopiowane do drzewa.png bez skalowania i zmian kolorów. Paczka zawiera podglądy sylwetek, bez geometrii; drzewa w grze powstają proceduralnie w skali 1 blok = 1 metr.",
+  "scientificReference": "Rhizophora mangle",
+  "originalFiles": {
+    "log_side.png": {
+      "sha256": "b6092b7c137963fff1cc48c38f5542e0deede7ec6586a22560b889e1a76a58b7",
+      "bytes": 249,
+      "rgbaSha256": "e7862a328e9874eb91bee26d48caff06fbcfbd358092d32f795c2f0b71b81637",
+      "width": 16,
+      "height": 16
+    },
+    "log_top.png": {
+      "sha256": "f1be6cf320c29b92fc9ec1717e9898c81b075dcbec6bb8d0e0e9c3441822223f",
+      "bytes": 371,
+      "rgbaSha256": "4f0adee1c1e58665448fd427e71515a20f5a1f65bd39ded48c88f9506a36d812",
+      "width": 16,
+      "height": 16
+    },
+    "planks.png": {
+      "sha256": "1c275dc4f23de75e1ef37a7636f788dfe7afe6efce4cb54fbd96ad0bca2c8db2",
+      "bytes": 275,
+      "rgbaSha256": "f8b733d09628a65e5e53e95eac6f0ae49e7643b64ed04dbdbc24ada28549c036",
+      "width": 16,
+      "height": 16
+    },
+    "leaves.png": {
+      "sha256": "c7b1cd81efdc8a11e18f022e4b4574d9c05f6f12d3d69989ca02c2350481451a",
+      "bytes": 371,
+      "rgbaSha256": "b41d05d1ea34d66cf0b1423fe3c5124e22588242ac5ee078f49a1a3257225c64",
+      "width": 16,
+      "height": 16
+    },
+    "leaves_variant.png": {
+      "sha256": "292d1f8d783eadb62bcfbcb764093707ec354c2b87c301c0eff53ff538afd844",
+      "bytes": 438,
+      "rgbaSha256": "7570ca220561c12538397aa1ecadf00d6e68900411997159ef821f43115b167b",
+      "width": 16,
+      "height": 16
+    },
+    "roots.png": {
+      "sha256": "0367a41e9005bfb3b1c0a0c16f56855d13f15577fa60d6ca37d384a52e5e4ccf",
+      "bytes": 276,
+      "rgbaSha256": "71f73253db17c6844b9d43ad710b49c7c79f5b07d31d37172d6c5729e42bce45",
+      "width": 16,
+      "height": 16
+    }
+  },
+  "generator": "tools/tekstury_drzew_180.py; tools/modele_roslin.py; tools/tekstury_kory.py",
+  "derivedRegions": {
+    "mangrove/stripped_side.png": {
+      "rgbaSha256": "c281ab61aadb63a1c42266a5ceee5e7989c51e9892eedbb5e66754f94d844e86",
+      "width": 16,
+      "height": 16
+    },
+    "mangrove/stripped_top.png": {
+      "rgbaSha256": "bdcf2ac7df2acd6c3395ed2f8ce305cf8a9dd2bb2b6dc251b832927558bd1a23",
+      "width": 16,
+      "height": 16
+    },
+    "mangrove/sapling.png": {
+      "rgbaSha256": "0ca078404b62f7b0643b6f04af8a0b21edcd9097168ffd420196954513d4bba2",
+      "width": 16,
+      "height": 16
+    },
+    "campfire_mangrove": {
+      "rgbaSha256": "33d15661c339b971b99637224950a156a7428e69a29851283a71e74756f0bc76",
+      "width": 32,
+      "height": 32
+    },
+    "models/rosliny/sadzonka-namorzyn/polrealistyczny": {
+      "rgbaSha256": "30127e8c86d26b8f46aebf9c6eebe337218e0e9ad01873f2a8b013e3643685c4",
+      "width": 16,
+      "height": 16
+    },
+    "mangrove_bark": {
+      "rgbaSha256": "badb8599032aa91ce5a4991267e5176bddab6450a9c43d697a50c1a7751d4795",
+      "width": 16,
+      "height": 16
+    }
+  }
+}

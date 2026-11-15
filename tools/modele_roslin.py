@@ -633,6 +633,20 @@ VANILLA = {
     # 0.85.0 - złoty miłorząb i kwitnąca fioletowa jakaranda z paczek Kamila.
     'sadzonka-milorzab': ('wachlarz', 'klos', {'lisc': '#f0d030', 'liscJasny': '#ffe040', 'liscCiemny': '#bfa830', 'lodyga': '#8a7a68'}),
     'sadzonka-jakaranda': ('pierzasty', 'klos', {'lisc': '#8048b8', 'liscJasny': '#c8a8f0', 'liscCiemny': '#421e6c', 'lodyga': '#594e3e'}),
+    # 1.8.0 - trzynaście drzew z paczki "drzewa_od_jodly" (kolory z liści paczki).
+    'sadzonka-jodla': ('igly', 'klos', {'lisc': '#2a5a2c', 'liscJasny': '#3c7438', 'liscCiemny': '#18401e', 'lodyga': '#8a8680'}),
+    'sadzonka-baobab': ('drzewny', 'klos', {'lisc': '#4c8a2e', 'liscJasny': '#6aa83e', 'liscCiemny': '#346a22', 'lodyga': '#8c8078'}),
+    'sadzonka-palma': ('pierzasty', 'klos', {'lisc': '#5a8a2e', 'liscJasny': '#86a83e', 'liscCiemny': '#3e6a22', 'lodyga': '#857c72'}),
+    'sadzonka-modrzew': ('igly', 'klos', {'lisc': '#62a030', 'liscJasny': '#86c040', 'liscCiemny': '#3e7a24', 'lodyga': '#7a4a38'}),
+    'sadzonka-namorzyn': ('lancetowaty', 'klos', {'lisc': '#3a7a2c', 'liscJasny': '#52963a', 'liscCiemny': '#265a20', 'lodyga': '#7a6258'}),
+    'sadzonka-puchowiec': ('drzewny', 'klos', {'lisc': '#3e7c2a', 'liscJasny': '#58983a', 'liscCiemny': '#285c1e', 'lodyga': '#7c8a70'}),
+    'sadzonka-jukka': ('waski', 'klos', {'lisc': '#7aa890', 'liscJasny': '#a0c8ac', 'liscCiemny': '#4e7a66', 'lodyga': '#6a5a48'}),
+    'sadzonka-osika': ('drzewny', 'klos', {'lisc': '#5c962e', 'liscJasny': '#80b83e', 'liscCiemny': '#3c7222', 'lodyga': '#d8dcc8'}),
+    'sadzonka-araukaria': ('igly', 'klos', {'lisc': '#2e5e1e', 'liscJasny': '#467a2a', 'liscCiemny': '#1c4014', 'lodyga': '#5e5a50'}),
+    'sadzonka-banian': ('drzewny', 'klos', {'lisc': '#3a6a2a', 'liscJasny': '#568a3a', 'liscCiemny': '#264a1e', 'lodyga': '#a8a49c'}),
+    'sadzonka-dracena': ('waski', 'klos', {'lisc': '#4e6a40', 'liscJasny': '#6e8a58', 'liscCiemny': '#34482c', 'lodyga': '#a8acb4'}),
+    'sadzonka-cedr': ('igly', 'klos', {'lisc': '#3e7068', 'liscJasny': '#5a8e84', 'liscCiemny': '#284e4a', 'lodyga': '#5a5450'}),
+    'sadzonka-oscista': ('igly', 'klos', {'lisc': '#2e5a36', 'liscJasny': '#467648', 'liscCiemny': '#1c3e24', 'lodyga': '#8a6a48'}),
     # Rośliny nad wodą
     'turzyca': ('zdzblo', 'klos', {'lisc': '#668943', 'liscJasny': '#83a452', 'liscCiemny': '#456c37', 'lodyga': '#6a8142', 'kwiat': '#80914c'}),
     'palka': ('zdzblo', 'klos', {'lisc': '#668943', 'liscJasny': '#83a452', 'liscCiemny': '#456c37', 'lodyga': '#6a8142', 'kwiat': '#765037', 'kwiatJasny': '#9b7951', 'kwiatCiemny': '#4e3424'}),

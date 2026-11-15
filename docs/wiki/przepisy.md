@@ -2,7 +2,7 @@
 
 > Ta strona jest generowana z kodu gry (`python tools/wiki.py`) - nie zmieniaj jej ręcznie, zmiany przepadną przy następnym generowaniu.
 
-Wersja gry **1.7.2** - 184 przepisów. Wytwarza się w ekwipunku (**E**): siatka 2 x 2 obok miejsc ekwipunku, wynik po prawej (klik - weź, Shift + klik - ile się da). Przycisk 📖 *Przepisy* otwiera księgę - klik na przepisie sam układa składniki. Przepisy *z kształtem* można przesuwać po siatce i odbijać w poziomie; przepisy *bez kształtu* - obojętne, gdzie leżą składniki. Z czatu: `/przepisy`, `/wytworz <przepis>`.
+Wersja gry **1.8.0** - 210 przepisów. Wytwarza się w ekwipunku (**E**): siatka 2 x 2 obok miejsc ekwipunku, wynik po prawej (klik - weź, Shift + klik - ile się da). Przycisk 📖 *Przepisy* otwiera księgę - klik na przepisie sam układa składniki. Przepisy *z kształtem* można przesuwać po siatce i odbijać w poziomie; przepisy *bez kształtu* - obojętne, gdzie leżą składniki. Z czatu: `/przepisy`, `/wytworz <przepis>`.
 
 
 ## Ziemia
@@ -169,6 +169,84 @@ Wersja gry **1.7.2** - 184 przepisów. Wytwarza się w ekwipunku (**E**): siatka
 
 1 x pień jakarandy (też okorowany) + 1 x siekiera (dowolny kamień) (bez kształtu). Nazwa przepisu: `jacaranda_firewood`. Siekiera zostaje. Opał: PPM na ziemię, potem dokładaj do 6 polan.
 
+### Opał — jodła x4
+
+<img src="przepisy/fir_firewood.png" alt="Opał — jodła x4: 1 x pień jodły (też okorowany) + 1 x siekiera (dowolny kamień) (zostaje) (obojętne gdzie)">
+
+1 x pień jodły (też okorowany) + 1 x siekiera (dowolny kamień) (bez kształtu). Nazwa przepisu: `fir_firewood`. Siekiera zostaje. Opał: PPM na ziemię, potem dokładaj do 6 polan.
+
+### Opał — baobab x4
+
+<img src="przepisy/baobab_firewood.png" alt="Opał — baobab x4: 1 x pień baobabu (też okorowany) + 1 x siekiera (dowolny kamień) (zostaje) (obojętne gdzie)">
+
+1 x pień baobabu (też okorowany) + 1 x siekiera (dowolny kamień) (bez kształtu). Nazwa przepisu: `baobab_firewood`. Siekiera zostaje. Opał: PPM na ziemię, potem dokładaj do 6 polan.
+
+### Opał — palma kokosowa x4
+
+<img src="przepisy/coconut_palm_firewood.png" alt="Opał — palma kokosowa x4: 1 x pień palmy kokosowej (też okorowany) + 1 x siekiera (dowolny kamień) (zostaje) (obojętne gdzie)">
+
+1 x pień palmy kokosowej (też okorowany) + 1 x siekiera (dowolny kamień) (bez kształtu). Nazwa przepisu: `coconut_palm_firewood`. Siekiera zostaje. Opał: PPM na ziemię, potem dokładaj do 6 polan.
+
+### Opał — modrzew x4
+
+<img src="przepisy/larch_firewood.png" alt="Opał — modrzew x4: 1 x pień modrzewia (też okorowany) + 1 x siekiera (dowolny kamień) (zostaje) (obojętne gdzie)">
+
+1 x pień modrzewia (też okorowany) + 1 x siekiera (dowolny kamień) (bez kształtu). Nazwa przepisu: `larch_firewood`. Siekiera zostaje. Opał: PPM na ziemię, potem dokładaj do 6 polan.
+
+### Opał — namorzyn x4
+
+<img src="przepisy/mangrove_firewood.png" alt="Opał — namorzyn x4: 1 x pień namorzynu (też okorowany) + 1 x siekiera (dowolny kamień) (zostaje) (obojętne gdzie)">
+
+1 x pień namorzynu (też okorowany) + 1 x siekiera (dowolny kamień) (bez kształtu). Nazwa przepisu: `mangrove_firewood`. Siekiera zostaje. Opał: PPM na ziemię, potem dokładaj do 6 polan.
+
+### Opał — puchowiec x4
+
+<img src="przepisy/kapok_firewood.png" alt="Opał — puchowiec x4: 1 x pień puchowca (też okorowany) + 1 x siekiera (dowolny kamień) (zostaje) (obojętne gdzie)">
+
+1 x pień puchowca (też okorowany) + 1 x siekiera (dowolny kamień) (bez kształtu). Nazwa przepisu: `kapok_firewood`. Siekiera zostaje. Opał: PPM na ziemię, potem dokładaj do 6 polan.
+
+### Opał — jukka x4
+
+<img src="przepisy/joshua_tree_firewood.png" alt="Opał — jukka x4: 1 x pień jukki (też okorowany) + 1 x siekiera (dowolny kamień) (zostaje) (obojętne gdzie)">
+
+1 x pień jukki (też okorowany) + 1 x siekiera (dowolny kamień) (bez kształtu). Nazwa przepisu: `joshua_tree_firewood`. Siekiera zostaje. Opał: PPM na ziemię, potem dokładaj do 6 polan.
+
+### Opał — osika x4
+
+<img src="przepisy/aspen_firewood.png" alt="Opał — osika x4: 1 x pień osiki (też okorowany) + 1 x siekiera (dowolny kamień) (zostaje) (obojętne gdzie)">
+
+1 x pień osiki (też okorowany) + 1 x siekiera (dowolny kamień) (bez kształtu). Nazwa przepisu: `aspen_firewood`. Siekiera zostaje. Opał: PPM na ziemię, potem dokładaj do 6 polan.
+
+### Opał — araukaria x4
+
+<img src="przepisy/araucaria_firewood.png" alt="Opał — araukaria x4: 1 x pień araukarii (też okorowany) + 1 x siekiera (dowolny kamień) (zostaje) (obojętne gdzie)">
+
+1 x pień araukarii (też okorowany) + 1 x siekiera (dowolny kamień) (bez kształtu). Nazwa przepisu: `araucaria_firewood`. Siekiera zostaje. Opał: PPM na ziemię, potem dokładaj do 6 polan.
+
+### Opał — figowiec x4
+
+<img src="przepisy/banyan_firewood.png" alt="Opał — figowiec x4: 1 x pień figowca (też okorowany) + 1 x siekiera (dowolny kamień) (zostaje) (obojętne gdzie)">
+
+1 x pień figowca (też okorowany) + 1 x siekiera (dowolny kamień) (bez kształtu). Nazwa przepisu: `banyan_firewood`. Siekiera zostaje. Opał: PPM na ziemię, potem dokładaj do 6 polan.
+
+### Opał — dracena x4
+
+<img src="przepisy/dragon_tree_firewood.png" alt="Opał — dracena x4: 1 x pień draceny (też okorowany) + 1 x siekiera (dowolny kamień) (zostaje) (obojętne gdzie)">
+
+1 x pień draceny (też okorowany) + 1 x siekiera (dowolny kamień) (bez kształtu). Nazwa przepisu: `dragon_tree_firewood`. Siekiera zostaje. Opał: PPM na ziemię, potem dokładaj do 6 polan.
+
+### Opał — cedr x4
+
+<img src="przepisy/cedar_firewood.png" alt="Opał — cedr x4: 1 x pień cedru (też okorowany) + 1 x siekiera (dowolny kamień) (zostaje) (obojętne gdzie)">
+
+1 x pień cedru (też okorowany) + 1 x siekiera (dowolny kamień) (bez kształtu). Nazwa przepisu: `cedar_firewood`. Siekiera zostaje. Opał: PPM na ziemię, potem dokładaj do 6 polan.
+
+### Opał — sosna oścista x4
+
+<img src="przepisy/bristlecone_firewood.png" alt="Opał — sosna oścista x4: 1 x pień sosny ościstej (też okorowany) + 1 x siekiera (dowolny kamień) (zostaje) (obojętne gdzie)">
+
+1 x pień sosny ościstej (też okorowany) + 1 x siekiera (dowolny kamień) (bez kształtu). Nazwa przepisu: `bristlecone_firewood`. Siekiera zostaje. Opał: PPM na ziemię, potem dokładaj do 6 polan.
+
 ### Deski świerkowe x4
 
 <img src="przepisy/spruce_planks.png" alt="Deski świerkowe x4: 1 x pień świerka (też okorowany) (obojętne gdzie)">
@@ -282,6 +360,84 @@ Wersja gry **1.7.2** - 184 przepisów. Wytwarza się w ekwipunku (**E**): siatka
 <img src="przepisy/jacaranda_planks.png" alt="Deski jakarandowe x4: 1 x pień jakarandy (też okorowany) (obojętne gdzie)">
 
 1 x pień jakarandy (też okorowany) (bez kształtu). Nazwa przepisu: `jacaranda_planks`.
+
+### Deski jodłowe x4
+
+<img src="przepisy/fir_planks.png" alt="Deski jodłowe x4: 1 x pień jodły (też okorowany) (obojętne gdzie)">
+
+1 x pień jodły (też okorowany) (bez kształtu). Nazwa przepisu: `fir_planks`.
+
+### Deski baobabowe x4
+
+<img src="przepisy/baobab_planks.png" alt="Deski baobabowe x4: 1 x pień baobabu (też okorowany) (obojętne gdzie)">
+
+1 x pień baobabu (też okorowany) (bez kształtu). Nazwa przepisu: `baobab_planks`.
+
+### Deski palmowe x4
+
+<img src="przepisy/coconut_palm_planks.png" alt="Deski palmowe x4: 1 x pień palmy kokosowej (też okorowany) (obojętne gdzie)">
+
+1 x pień palmy kokosowej (też okorowany) (bez kształtu). Nazwa przepisu: `coconut_palm_planks`.
+
+### Deski modrzewiowe x4
+
+<img src="przepisy/larch_planks.png" alt="Deski modrzewiowe x4: 1 x pień modrzewia (też okorowany) (obojętne gdzie)">
+
+1 x pień modrzewia (też okorowany) (bez kształtu). Nazwa przepisu: `larch_planks`.
+
+### Deski namorzynowe x4
+
+<img src="przepisy/mangrove_planks.png" alt="Deski namorzynowe x4: 1 x pień namorzynu (też okorowany) (obojętne gdzie)">
+
+1 x pień namorzynu (też okorowany) (bez kształtu). Nazwa przepisu: `mangrove_planks`.
+
+### Deski z puchowca x4
+
+<img src="przepisy/kapok_planks.png" alt="Deski z puchowca x4: 1 x pień puchowca (też okorowany) (obojętne gdzie)">
+
+1 x pień puchowca (też okorowany) (bez kształtu). Nazwa przepisu: `kapok_planks`.
+
+### Deski z jukki x4
+
+<img src="przepisy/joshua_tree_planks.png" alt="Deski z jukki x4: 1 x pień jukki (też okorowany) (obojętne gdzie)">
+
+1 x pień jukki (też okorowany) (bez kształtu). Nazwa przepisu: `joshua_tree_planks`.
+
+### Deski osikowe x4
+
+<img src="przepisy/aspen_planks.png" alt="Deski osikowe x4: 1 x pień osiki (też okorowany) (obojętne gdzie)">
+
+1 x pień osiki (też okorowany) (bez kształtu). Nazwa przepisu: `aspen_planks`.
+
+### Deski araukariowe x4
+
+<img src="przepisy/araucaria_planks.png" alt="Deski araukariowe x4: 1 x pień araukarii (też okorowany) (obojętne gdzie)">
+
+1 x pień araukarii (też okorowany) (bez kształtu). Nazwa przepisu: `araucaria_planks`.
+
+### Deski figowcowe x4
+
+<img src="przepisy/banyan_planks.png" alt="Deski figowcowe x4: 1 x pień figowca (też okorowany) (obojętne gdzie)">
+
+1 x pień figowca (też okorowany) (bez kształtu). Nazwa przepisu: `banyan_planks`.
+
+### Deski z draceny x4
+
+<img src="przepisy/dragon_tree_planks.png" alt="Deski z draceny x4: 1 x pień draceny (też okorowany) (obojętne gdzie)">
+
+1 x pień draceny (też okorowany) (bez kształtu). Nazwa przepisu: `dragon_tree_planks`.
+
+### Deski cedrowe x4
+
+<img src="przepisy/cedar_planks.png" alt="Deski cedrowe x4: 1 x pień cedru (też okorowany) (obojętne gdzie)">
+
+1 x pień cedru (też okorowany) (bez kształtu). Nazwa przepisu: `cedar_planks`.
+
+### Deski z sosny ościstej x4
+
+<img src="przepisy/bristlecone_planks.png" alt="Deski z sosny ościstej x4: 1 x pień sosny ościstej (też okorowany) (obojętne gdzie)">
+
+1 x pień sosny ościstej (też okorowany) (bez kształtu). Nazwa przepisu: `bristlecone_planks`.
 
 
 ## Budulec
@@ -1142,7 +1298,7 @@ Składnik z grupy to dowolna rzecz z listy (np. patyki z desek różnych drzew).
 
 - **siekiera (dowolny kamień)**: Siekiera, Siekiera granitowa, Siekiera wapienna, Siekiera piaskowcowa, Siekiera łupkowa, Siekiera bazaltowa
 - **pochodnia (dowolny kolor)**: Pochodnia, Pochodnia biała, Pochodnia pomarańczowa, Pochodnia purpurowa, Pochodnia jasnoniebieska, Pochodnia żółta, Pochodnia limonkowa, Pochodnia różowa, Pochodnia szara, Pochodnia jasnoszara, Pochodnia turkusowa, Pochodnia fioletowa, Pochodnia niebieska, Pochodnia brązowa, Pochodnia zielona, Pochodnia czerwona, Pochodnia czarna
-- **deski (dowolne)**: Deski świerkowe, Deski sosnowe, Deski bukowe, Deski lipowe, Deski dębowe, Deski brzozowe, Deski jabłoniowe, Deski olchowe, Deski wierzbowe, Deski akacji, Deski cypryśnika, Deski wiśni, Deski klonowe, Deski z kosodrzewiny, Deski oliwkowe, Deski eukaliptusowe, Deski sekwojowe, Deski miłorzębowe, Deski jakarandowe
+- **deski (dowolne)**: Deski świerkowe, Deski sosnowe, Deski bukowe, Deski lipowe, Deski dębowe, Deski brzozowe, Deski jabłoniowe, Deski olchowe, Deski wierzbowe, Deski akacji, Deski cypryśnika, Deski wiśni, Deski klonowe, Deski z kosodrzewiny, Deski oliwkowe, Deski eukaliptusowe, Deski sekwojowe, Deski miłorzębowe, Deski jakarandowe, Deski jodłowe, Deski baobabowe, Deski palmowe, Deski modrzewiowe, Deski namorzynowe, Deski z puchowca, Deski z jukki, Deski osikowe, Deski araukariowe, Deski figowcowe, Deski z draceny, Deski cedrowe, Deski z sosny ościstej
 - **skała (kamień, granit, wapień, piaskowiec, łupek, bazalt)**: Kamień, Granit, Wapień, Piaskowiec, Łupek, Bazalt
 - **szyszka (dowolna)**: Szyszka świerka, Szyszka sosny, Szyszeczki olchy, Szyszka kosodrzewiny, Szyszka sekwoi
 - **gliniany kubek (z dowolnej gliny, suchy)**: Gliniany kubek, Czerwony gliniany kubek, Biały gliniany kubek

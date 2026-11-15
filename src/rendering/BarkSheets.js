@@ -50,7 +50,10 @@ const SPECIES = {
     oak: 'furrows', spruce: 'rows', pine: 'rows', beech: 'rows', linden: 'rows', birch: 'rows',
     // 1.7.2 - drzewa z paczek.
     jablon: 'rows', olcha: 'rows', wierzba: 'rows', acacia: 'rows', bald_cypress: 'rows', cherry: 'rows', maple: 'rows',
-    mugo: 'rows', olive: 'rows', rainbow_eucalyptus: 'rows', sequoia: 'rows', ginkgo: 'rows', jacaranda: 'rows'
+    mugo: 'rows', olive: 'rows', rainbow_eucalyptus: 'rows', sequoia: 'rows', ginkgo: 'rows', jacaranda: 'rows',
+    // 1.8.0 - paczka "drzewa_od_jodly".
+    fir: 'rows', baobab: 'rows', coconut_palm: 'rows', larch: 'rows', mangrove: 'rows', kapok: 'rows', joshua_tree: 'rows',
+    aspen: 'rows', araucaria: 'rows', banyan: 'rows', dragon_tree: 'rows', cedar: 'rows', bristlecone: 'rows'
 };
 
 // Blok pnia -> arkusz: texture - kafelek atlasu 8 x 8 kratek,
@@ -70,6 +73,12 @@ export const BARK_SHEETS = Object.fromEntries(Object.entries(SPECIES).flatMap(([
 // (po okorowaniu - ten sam okorowany pień sosny). Blok tuż nad ciemną korą
 // rysuje płynne przejście (SurfaceTextureVariants.js) zamiast arkusza.
 BARK_SHEETS.pine_log_upper = { texture: 'pine_log_upper_bark', tiles: BARK_TILES, edges: 'rows' };
+
+// 1.8.0: druga kora tego samego pnia - kosmata jukki, ciemna przy ziemi
+// u osiki, martwe drewno sosny ościstej (losowanie jak zwykła kora gatunku).
+for (const block of ['joshua_tree_log_shaggy', 'aspen_log_base', 'bristlecone_log_dead']) {
+    BARK_SHEETS[block] = { texture: `${block}_bark`, tiles: BARK_TILES, edges: 'rows' };
+}
 
 // Co jest w drewnie pod danym rodzajem kafelka kory (arkusze "like").
 export const UNDER_BARK = {

@@ -26,12 +26,18 @@ nie ma (już się nie zmienia).
 | **Las eukaliptusowy** (0.83.0) | `eukaliptusowy` | ciepło i wilgotno, nisko | wysokie **eukaliptusy tęczowe**, gęsta wysoka trawa, paprocie, papryczki, jeżyny |
 | **Gaj oliwny** (0.83.0) | `gaj` | ciepło i sucho, nisko (zamiast części łąk i lasów) | rozrzucone **oliwki**, trochę sosen i akacji, ziemia kamienista, maki, rumianek, lawenda, szałwia |
 | **Kosodrzewina** (0.83.0) | `kosodrzewina` | góry: pas tuż nad granicą lasu, w plamach (wilgotniej - szerszy) | gęste łany **kosodrzewiny**, krokusy, borówki, mech |
-| **Plaża i wydmy** | `plaza` | wybrzeża | piasek, na niektórych płaskich wybrzeżach **wydmy** porośnięte **piaskownicą**, za wydmami pojedyncze sosny |
+| **Sawanna** (1.8.0) | `sawanna` | gorąco i sucho, nisko, poza lasami | wysoka, żółknąca trawa, rozrzucone **akacje** i z rzadka olbrzymie **baobaby** |
+| **Półpustynia** (1.8.0) | `pustynia` | bardzo gorąco i bardzo sucho, nisko (tu nie ma lasu) | piasek i ziemia kamienista, **drzewa Jozuego** (jukki) i **smocze drzewa** (draceny), kępki suchej trawy |
+| **Las deszczowy** (1.8.0) | `deszczowy` | najgoręcej i najwilgotniej, nisko | sklepienie z **figowców** z korzeniami powietrznymi, ponad nim **puchowce** (do 58 bloków), paprocie, mech, wysoka trawa |
+| **Namorzyny** (1.8.0) | `namorzyny` | mokradła w gorącym klimacie | błoto, trzcina, **namorzyny** na korzeniach podporowych - także w płytkiej wodzie przy brzegu |
+| **Plaża i wydmy** | `plaza` | wybrzeża | piasek, na niektórych płaskich wybrzeżach **wydmy** porośnięte **piaskownicą**, za wydmami pojedyncze sosny; w ciepłym klimacie **palmy kokosowe** (1.8.0) |
 | Morze, Jezioro, Rzeka | `morze`, `jezioro`, `rzeka` | woda | (biomy wodne) |
 
 Pogrubione - nowe bloki (niżej).
 
 ![Nowe biomy 0.83.0: klonowy las jesienny, kosodrzewina, gaj oliwny, las eukaliptusowy, las sekwojowy](drzewa-biomy-083.jpg)
+
+![Biomy 1.8.0: sawanna i półpustynia](biomy-180.jpg)
 
 ## Jak powstają
 
@@ -48,15 +54,26 @@ po kolei, pierwszy pasujący wygrywa:
    polanach, w plamach tuż nad granicą lasu **kosodrzewina**, niżej
    **świerczyna** (w ciepłym klimacie też buczyna),
 6. **mokradła** - na nizinach blisko rzeki i jeziora (im wilgotniej, tym
-   szerszy pas), w depresjach i w wilgotnych plamach,
+   szerszy pas), w depresjach i w wilgotnych plamach; od 1.8.0 w gorącym
+   klimacie (temperatura ponad `mangroveWarm`) to **namorzyny**,
+   potem (1.8.0) **półpustynia** - bardzo gorąco i bardzo sucho, nisko;
+   tam nie ma ani lasu, ani łąki,
 7. **las** tam, gdzie pole lasów (plamy ~190 bloków) jest wysokie - w
    wilgotnym klimacie las łatwiej; rodzaj lasu z klimatu: świerczyna
    (zimno, wysoko), bór (sucho), buczyna (wyżyny), brzezina (chłodno
    i wilgotno), las liściasty (ciepło), a od 0.83.0 klonowy las
    jesienny (umiarkowanie), las sekwojowy (chłodno, bardzo wilgotno,
    nisko), las eukaliptusowy (ciepło i wilgotno) i gaj oliwny (ciepło
-   i sucho); rodzaje lasu przeplatają się w dużych plamach,
-8. **łąka** - wszystko inne (na ciepłych, suchych łąkach - gaj oliwny).
+   i sucho), od 1.8.0 **las deszczowy** (najgoręcej i najwilgotniej);
+   rodzaje lasu przeplatają się w dużych plamach,
+8. **łąka** - wszystko inne (na gorących, suchych równinach - od 1.8.0
+   **sawanna**, na ciepłych, suchych łąkach - gaj oliwny).
+
+Udział nowych biomów w świecie (trzy ziarna, 16 × 16 km): półpustynia
+ok. 0,75%, namorzyny 0,67%, sawanna 0,55%, las deszczowy 0,51% - tyle co
+inne rzadkie krainy (las sekwojowy 0,77%). Gaj oliwny (0,76%), las
+eukaliptusowy (0,70%) i mokradła (1,69%) oddały im część najgorętszych
+miejsc.
 
 Klimat (temperatura - wyżej chłodniej - i wilgotność) zmienia się
 wolno (plamy kilku tysięcy bloków), więc biomy to duże krainy.

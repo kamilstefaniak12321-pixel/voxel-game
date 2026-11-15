@@ -32,6 +32,7 @@ import { WORLD_BORDER } from '../config.js';
 import { getBlockDefinition, isOpaqueId } from '../blocks/BlockRegistry.js';
 
 import { BASE_TREE_NAMES } from '../blocks/trees.js';
+import { WORLD_TREE_NAMES } from '../blocks/treeCatalog.js';
 import { getTool } from '../items/ItemRegistry.js';
 import { TEAS, isDrink } from '../items/foods.js';
 
@@ -736,6 +737,20 @@ export const ACHIEVEMENTS = [
             return BASE_TREE_NAMES.includes(species) && book.collect('trees', species) >= BASE_TREE_NAMES.length;
         },
         goal: { key: 'trees', count: BASE_TREE_NAMES.length }
+    },
+    {
+        id: 'world_trees',
+        tier: 'epic',
+        title: 'Drzewa świata',
+        task: 'Zetnij pień każdego z trzynastu drzew z dalekich stron: jodły, baobabu, palmy kokosowej, modrzewia, namorzynu, puchowca, jukki, osiki, araukarii, figowca, draceny, cedru i sosny ościstej (/biom znajdz sawanna, pustynia, deszczowy, namorzyny).',
+        comment: 'Od namorzynów po granicę śniegu. Paszport pełen słojów.',
+        icon: 'baobab_log',
+        on: 'blockBroken',
+        when: (data, book) => {
+            const species = logSpecies(data.type);
+            return WORLD_TREE_NAMES.includes(species) && book.collect('world_trees', species) >= WORLD_TREE_NAMES.length;
+        },
+        goal: { key: 'world_trees', count: WORLD_TREE_NAMES.length }
     },
     {
         id: 'tool_set',

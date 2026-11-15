@@ -159,7 +159,7 @@ function tileFree(name) {
         check(tileFree(ITEM_TYPES[strip.item].icon), `${strip.item}: ikona w atlasie`);
         barks.add(strip.item);
     }
-    check(barks.size === Object.keys(FIRE_WOODS).length && barks.size === 19, `Kora każdego gatunku (${barks.size})`);
+    check(barks.size === Object.keys(FIRE_WOODS).length && barks.size === 32, `Kora każdego gatunku (${barks.size})`);
     check(getItemLabel('oak_bark') === 'Kora dębu' && getItemLabel('pine_bark') === 'Kora sosny' && getItemLabel('birch_bark') === 'Kora brzozowa', 'Nazwy kory');
     check(R.getStrip('pine_log_resin').item === 'pine_bark' && R.getStrip('pine_log_upper').item === 'pine_bark', 'Każdy pień sosny daje korę sosny');
     check(R.getStrip('oak_log_stripped') === null && R.getStrip('stone') === null, 'Okorowany pień i kamień - nic');

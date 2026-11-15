@@ -84,6 +84,12 @@ export function treeSilhouette(tree, spacing) {
     return boxes;
 }
 
+const NEW_PROFILES = {
+    fir: 'cone', larch: 'cone', cedar: 'tiers',
+    baobab: 'umbrella', kapok: 'umbrella', araucaria: 'umbrella', dragon_tree: 'umbrella', coconut_palm: 'umbrella',
+    joshua_tree: 'umbrella', bristlecone: 'snag'
+};
+
 // Mature species keep their actual height and crown diameter at each LOD.
 // Shared scale values cost a few arithmetic operations; distant tiles never
 // construct the thousands of individual blocks in a full tree.
@@ -108,6 +114,41 @@ function matureTreeSilhouette(tree, spacing, definition, { height, radius, trunk
             const width = radius * (t < .3 ? .75 + t : 1.05 - (t - .3) * .95);
             const r = trunkWidth / 2 + width * 1.1;
             append(centre - r, crownBase + i * tall / layers, centre - r, centre + r, crownBase + (i + 1) * tall / layers, centre + r, leaf, leafKind, .92 + t * .06);
+        }
+        return result;
+    }
+    const profile = NEW_PROFILES[kind];
+    if (profile) {
+        // 1.8.0: stożki (jodła, modrzew), parasole na wysokim pniu (baobab,
+        // puchowiec, araukaria, palma, smocze drzewo) i piętra cedru - te
+        // same wymiary co w TreeShapes, bez budowania tysięcy bloków.
+        const low = kind === 'baobab' || trunkWidth === 3 ? -Math.floor(trunkWidth / 2) : 0;
+        const centre = low + (trunkWidth - 1) / 2;
+        // Bryła cieńsza niż blok (małe drzewo) znika - nie zostawia pustej.
+        const slab = (r, y0, y1, shade) => Math.round(y1) > Math.round(y0) && append(centre - r, y0, centre - r, centre + r + 1, y1, centre + r + 1, leaf, leafKind, shade);
+        append(low, 0, low, low + trunkWidth, kind === 'baobab' ? crownBase + 1 : profile === 'snag' ? height : height - 2, low + trunkWidth, log, kindIndex('rock'));
+        if (profile === 'cone') {
+            const layers = spacing <= 2 ? 5 : spacing <= 4 ? 3 : 2, tall = height - crownBase;
+            for (let i = 0; i < layers; i++) {
+                const t = (i + .5) / layers;
+                slab(Math.max(1, radius * (1 - .75 * t)), crownBase + i * tall / layers, crownBase + (i + 1) * tall / layers, .92 + t * .06);
+            }
+        } else if (profile === 'snag') {
+            // Sosna oścista: martwy wierzchołek sterczy ponad małą kępę igliwia.
+            slab(radius * .55, crownBase, height - 2);
+        } else if (profile === 'tiers') {
+            const layers = spacing <= 2 ? 4 : spacing <= 4 ? 3 : 2;
+            for (let i = 0; i < layers; i++) {
+                const t = i / (layers - 1), y0 = crownBase + t * (height - 3 - crownBase);
+                slab(radius * .95 * (1 - .45 * t), y0, i === layers - 1 ? height : y0 + 2, .92 + t * .06);
+            }
+        } else {
+            const bottom = { baobab: height - 5, kapok: crownBase, araucaria: crownBase, dragon_tree: height - 3, coconut_palm: height - 4, joshua_tree: crownBase + 1 }[kind];
+            if (spacing > 4) slab(radius * .9, bottom, height);
+            else {
+                slab(radius * .6, bottom, height);
+                slab(radius, bottom + (height - bottom) * .3, height - 1, .93);
+            }
         }
         return result;
     }

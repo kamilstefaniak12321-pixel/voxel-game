@@ -1,0 +1,85 @@
+{
+  "sourceArchive": "DOC-20261115-WA0023.zip (drzewa_od_jodly)",
+  "sourceFolder": "08_aspen",
+  "suppliedBy": "Kamil",
+  "importDate": "2026-11-15",
+  "note": "Oryginalne piksele RGBA skopiowane do drzewa.png bez skalowania i zmian kolorów. Paczka zawiera podglądy sylwetek, bez geometrii; drzewa w grze powstają proceduralnie w skali 1 blok = 1 metr.",
+  "scientificReference": "Populus tremula",
+  "originalFiles": {
+    "log_side.png": {
+      "sha256": "7876812a7d651602a3e34289d99b9aedd56c445db0154ebddeb07a99ca1e17e8",
+      "bytes": 223,
+      "rgbaSha256": "e184f21427079b3a562df1d5940090f7e2ab155859348fdc49569fa02227ed48",
+      "width": 16,
+      "height": 16
+    },
+    "log_top.png": {
+      "sha256": "6e13d4a7db1c641575b4135938217e392b8c3cdbbeb36767e720ae2104922732",
+      "bytes": 360,
+      "rgbaSha256": "3e81a290d8afe46d59089e745dbecb84340d5a78b86770faa78cb6ac3d4dfe96",
+      "width": 16,
+      "height": 16
+    },
+    "planks.png": {
+      "sha256": "4ad00f8cda3a15fcde1144c9ae98f1f06983df14a5ee8343a84f5175fad9cbcc",
+      "bytes": 267,
+      "rgbaSha256": "44eba1d2cba2f2a06b4861336f204235b976ecff036b885ce0cac37ee12be093",
+      "width": 16,
+      "height": 16
+    },
+    "leaves.png": {
+      "sha256": "d23cfbb5fb9a668e6a8c5db285f8b20a4473ff45ff437666eb397d0c0567c4be",
+      "bytes": 323,
+      "rgbaSha256": "0f47f61d00aa109372cf20cd3c7614b9daee52bbfc4c7338330f5ed490382c47",
+      "width": 16,
+      "height": 16
+    },
+    "leaves_variant.png": {
+      "sha256": "61ca7e7fdcc0b654805fde4f3f0f45cb848badc0187a7be7c4a7f51e62aca72a",
+      "bytes": 328,
+      "rgbaSha256": "4a792de3fa01b5ba69b05999ee70e7f40f11d45de8d54c21f197f359facb8c9a",
+      "width": 16,
+      "height": 16
+    },
+    "log_side_base.png": {
+      "sha256": "30221f6d2c6a571b84bb951dbd109e2b067dc62647fa873cb0644425cf5218dd",
+      "bytes": 295,
+      "rgbaSha256": "3fe2acbdc6750d2d475e02bd3025200aaae31e516747fb2ce921f49747c71397",
+      "width": 16,
+      "height": 16
+    }
+  },
+  "generator": "tools/tekstury_drzew_180.py; tools/modele_roslin.py; tools/tekstury_kory.py",
+  "derivedRegions": {
+    "aspen/stripped_side.png": {
+      "rgbaSha256": "7ba61207ba567d025c7e1faa369d5af7323bd015036e2c647320df65582c28a1",
+      "width": 16,
+      "height": 16
+    },
+    "aspen/stripped_top.png": {
+      "rgbaSha256": "0d5d89dbe8284a0032bff02ec7db679b43e1abc752f5995a64da4249848b019f",
+      "width": 16,
+      "height": 16
+    },
+    "aspen/sapling.png": {
+      "rgbaSha256": "fef1d99a62d0da90a4e238229dc2038b20003a6b22e6b90384840cb1e90ec83e",
+      "width": 16,
+      "height": 16
+    },
+    "campfire_aspen": {
+      "rgbaSha256": "ae43ae70389e06897a13dedb6364cda51f4ccef592e16a2691c2bd85e2cae219",
+      "width": 32,
+      "height": 32
+    },
+    "models/rosliny/sadzonka-osika/polrealistyczny": {
+      "rgbaSha256": "b95b9b5e5c83086897321f20a2d49aa6230f5904964e241ec4cdffaa3f98c1b0",
+      "width": 16,
+      "height": 16
+    },
+    "aspen_bark": {
+      "rgbaSha256": "818092003057281df178b8d9ac6fcaec269f5e2e8aeb06a98c596b91ec3350a3",
+      "width": 16,
+      "height": 16
+    }
+  }
+}

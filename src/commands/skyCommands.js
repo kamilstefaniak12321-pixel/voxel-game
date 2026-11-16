@@ -208,12 +208,12 @@ export const SKY_COMMANDS = [
     {
         name: 'pora',
         aliases: ['season', 'poraroku'],
-        usage: '/pora | /pora ustaw <wiosna | lato | jesien | zima> | /pora kwiaty',
-        description: 'Pokazuje porę roku, przenosi czas na początek wybranej pory, wypisuje, co kiedy kwitnie.',
+        usage: '/pora | /pora ustaw <wiosna | lato | jesien | zima> [dzień 1-8] | /pora kwiaty',
+        description: 'Pokazuje porę roku, przenosi czas na początek (albo na wybrany dzień) wybranej pory, wypisuje, co kiedy kwitnie.',
 
         run(args, { time, sky }) {
 
-            const [action, value] = args;
+            const [action, value, dayText] = args;
 
             const summary = () => {
                 const season = seasonAt(time.days);
@@ -246,6 +246,21 @@ export const SKY_COMMANDS = [
                     time.days = Math.floor(start) + 1 + clock;
 
                     if (seasonAt(time.days).index !== index) time.days = start + 0.01;
+
+                    // Wybrany dzień pory (1.10.0): np. "/pora ustaw jesien 5" -
+                    // środek jesieni, żeby obejrzeć kolory liści.
+                    if (dayText !== undefined) {
+
+                        const day = Number(dayText);
+                        const days = seasonAt(time.days).days;
+
+                        if (!Number.isInteger(day) || day < 1 || day > days) {
+                            throw new CommandError(`Dzień pory: liczba od 1 do ${days}`);
+                        }
+
+                        time.days += day - seasonAt(time.days).day;
+
+                    }
 
                     return summary();
 

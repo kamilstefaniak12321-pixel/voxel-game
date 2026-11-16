@@ -250,7 +250,10 @@ for (const pack of TREE_DEFINITIONS) {
             icon: item.texture,
             plants: item.plants ? `${pack.id}_sapling` : undefined,
             category: item.category,
-            tree: pack.id
+            tree: pack.id,
+            // false - nie spada z drzewa jako cząsteczka (szyszki jodły,
+            // kwiaty, puch): TreeParticles.fruitOf.
+            falls: item.falls !== false
         };
 
     }

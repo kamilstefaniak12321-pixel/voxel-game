@@ -80,10 +80,10 @@ const NEW = {
     larch: { first: 1130, height: [22, 38] },
     mangrove: { first: 1140, height: [7, 13] },
     kapok: { first: 1150, height: [40, 58] },
-    joshua_tree: { first: 1160, height: [5, 10] },
+    joshua_tree: { first: 1160, height: [5, 11] },
     aspen: { first: 1170, height: [16, 26] },
     araucaria: { first: 1180, height: [26, 42] },
-    banyan: { first: 1190, height: [14, 22] },
+    banyan: { first: 1190, height: [13, 20] },
     dragon_tree: { first: 1200, height: [6, 10] },
     cedar: { first: 1210, height: [22, 36] },
     bristlecone: { first: 1220, height: [5, 11] }
@@ -113,7 +113,8 @@ for (const [name, info] of Object.entries(NEW)) {
     check(BARK_SHEETS[`${name}_log`] && BARK_SHEETS[`${name}_log_stripped`]?.like === `${name}_log`, `${name}: arkusze kory i okorowanego pnia`);
     check(WORLD_ATLAS_TILES[`${name}_log_bark`]?.w === 8 && WORLD_ATLAS_TILES[`${name}_stripped_sheet`]?.w === 8, `${name}: arkusze w atlasie`);
     check(leafSprites(name).every((index) => index >= 0), `${name}: kształt opadającego liścia`);
-    equal(tree.variants.length, 1, `${name}: jedna odmiana liści`);
+    // Od 1.10.0 modrzew i baobab mają drugą odmianę (szyszki, owoce).
+    equal(tree.variants.length, ['larch', 'baobab'].includes(name) ? 2 : 1, `${name}: odmiany liści`);
     equal(getBlockId(treeVariantType(name, tree.variants[0].key)), info.first + 6, `${name}: numer odmiany liści`);
 }
 
@@ -166,7 +167,7 @@ for (const name of names) {
 
 // --- Kształty ------------------------------------------------------------------
 
-check(TREE_REACH === 14 && TREE_MAX_HEIGHT === 73, `Zasięg drzew w generatorze: ${TREE_REACH} bloków, wysokość do ${TREE_MAX_HEIGHT}`);
+check(TREE_REACH === 17 && TREE_MAX_HEIGHT === 73, `Zasięg drzew w generatorze: ${TREE_REACH} bloków, wysokość do ${TREE_MAX_HEIGHT}`);
 
 for (const [name, info] of Object.entries(NEW)) {
     const limits = treeShapeLimits(name);
@@ -203,7 +204,26 @@ const at = (shape, test) => shape.blocks.filter(test);
     const banyan = buildTree('banyan', 3, 1);
     check(at(banyan, ([x, y, z, type]) => y === 0 && type === 'banyan_log' && Math.hypot(x, z) > 4).length >= 3, 'Figowiec: słupy korzeni daleko od pnia');
     check(at(banyan, ([, , , type]) => type === 'banyan_roots').length >= 10, 'Figowiec: wiszące korzenie powietrzne');
-    check(at(banyan, ([, y, , type]) => type === 'banyan_roots' && y < 2).length === 0, 'Figowiec: pod korzeniami da się przejść');
+    // 1.10.0: figowiec-namiot - szeroka, pusta w środku kopuła, pod brzegiem
+    // zasłona korzeni do ziemi z bramami, w środku wolno nad głową.
+    for (let seed = 0; seed < 12; seed++) for (const size of [0, 0.5, 1]) {
+        const tent = buildTree('banyan', seed, size), { radius, height } = treeVisualDimensions('banyan', size);
+        const soft = at(tent, ([, , , type]) => type !== 'banyan_log');
+        const leaves = at(tent, ([, , , type]) => type.startsWith('banyan_leaves'));
+        check(Math.max(...leaves.map((b) => b[0])) - Math.min(...leaves.map((b) => b[0])) >= radius * 1.6, `Figowiec ${seed}/${size}: kopuła szeroka na prawie dwa promienie`);
+        check(soft.every(([x, y, z]) => y >= 3 || Math.hypot(x, z) > radius * 0.5), `Figowiec ${seed}/${size}: w środku namiotu wolno nad głową`);
+        check(Math.min(...leaves.map((b) => b[1])) <= 4, `Figowiec ${seed}/${size}: brzeg kopuły opada nisko`);
+        const curtain = at(tent, ([, y, , type]) => type === 'banyan_roots' && y <= 1);
+        check(curtain.length >= radius * 1.5, `Figowiec ${seed}/${size}: zasłona korzeni sięga ziemi (${curtain.length})`);
+        const angles = curtain.map(([x, , z]) => Math.atan2(z, x)).sort((a, b) => a - b);
+        const gaps = angles.map((angle, i) => (i ? angle - angles[i - 1] : angle + Math.PI * 2 - angles.at(-1)) * radius);
+        check(gaps.filter((gap) => gap >= 3).length >= 2, `Figowiec ${seed}/${size}: bramy w zasłonie korzeni`);
+        // Pusto pod dachem: w połowie promienia, między konarami a sklepieniem.
+        const columns = new Map();
+        for (const [x, y, z] of leaves) if (Math.abs(Math.hypot(x, z) - radius * 0.45) < 1.5) columns.set(`${x},${z}`, Math.min(columns.get(`${x},${z}`) ?? 99, y));
+        const low = [...columns.values()].sort((a, b) => a - b)[Math.floor(columns.size / 2)];
+        check(low >= height * 0.55, `Figowiec ${seed}/${size}: sklepienie wysoko nad ziemią (${low} z ${height})`);
+    }
     const mangrove = buildTree('mangrove', 3, 1);
     check(at(mangrove, ([, y, , type]) => type === 'mangrove_roots' && y === 0).length >= 4, 'Namorzyn: korzenie podporowe stoją na ziemi');
     check(mangrove.roots.some(([, , type]) => type === 'mangrove_roots'), 'Namorzyn: korzenie schodzą do gruntu jak pień');

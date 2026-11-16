@@ -1,3 +1,4 @@
+import { leafPhase, seasonLeafColor } from './LeafSeasons.js';
 import * as THREE from 'three';
 
 import { CHUNK_SIZE, CHUNK_HEIGHT } from '../config.js';
@@ -149,7 +150,18 @@ export function leafSprites(species) {
 
 export function fruitOf(definition) {
     const item = definition?.part === 'leaves' ? definition.harvest?.item : null;
-    return item && ITEM_TYPES[item]?.tree ? item : null;
+    return item && ITEM_TYPES[item]?.tree && ITEM_TYPES[item].falls !== false ? item : null;
+}
+
+
+// Ile liści spada w danej fazie roku (1 = jak latem): jesienią do 3,5 raza
+// więcej (najwięcej w środku jesieni), zimą i wczesną wiosną mało.
+
+export function leafFallRate(phase) {
+    const p = ((phase % 4) + 4) % 4;
+    if (p >= 2 && p < 3) return 1 + 2.5 * Math.sin(Math.PI * (p - 2));
+    if (p >= 3) return 0.35;
+    return p < 0.5 ? 0.35 + 1.3 * p : 1;
 }
 
 
@@ -158,6 +170,10 @@ export class TreeParticles {
     constructor(scene, world) {
 
         this.world = world;
+
+        // Pory roku: faza roku (null - świat bez pór) i tempo opadania.
+        this.phase = null;
+        this.fall = 1;
 
         // Liście - obrazki 6 x 6 (liść, gałązka igieł, płatek), owoce - sześciany.
         this.leaves = new CubeParticles(scene, { capacity: 700, surfaceLighting: true, flat: 0.05, water: leafWater,
@@ -227,6 +243,16 @@ export class TreeParticles {
         // Pusta paleta, dopóki atlas się nie wczytał - spróbujemy później.
         if (result) this.palettes.set(key, result);
         return result;
+
+    }
+
+
+    // Pora roku (doby gry albo null): kolor spadających liści i ich liczba.
+
+    setSeason(days) {
+
+        this.phase = days === null || days === undefined ? null : leafPhase(days);
+        this.fall = this.phase === null ? 1 : leafFallRate(this.phase);
 
     }
 
@@ -379,7 +405,9 @@ export class TreeParticles {
             size: random(0.2, 0.26),
             sprite: sprites[Math.floor(Math.random() * sprites.length)],
             fade: 0.12,
-            colors: [pick(), pick(), pick()],
+            // Kolor pory roku jak na drzewie (każdy liść z własnym terminem).
+            colors: [pick(), pick(), pick()].map((color) => this.phase === null ? color
+                : seasonLeafColor(color, definition?.tree, this.phase + random(-0.15, 0.15), undefined, false, false, definition?.autumnLeaves === true)),
             lighting: this.lightingAt(cell.x, cell.y - 1, cell.z),
             gravity: 0.9,
             drag: 2.2,
@@ -439,7 +467,7 @@ export class TreeParticles {
             // Średnio raz na LEAF_SECONDS z każdego dołu korony; w porywie
             // wiatru trochę częściej.
             const gust = wind ? 0.7 + 0.6 * wind.gust : 1;
-            this.leafBudget += Math.min(MAX_RATE, this.count('leaves') / LEAF_SECONDS * gust) * this.amount * step;
+            this.leafBudget += Math.min(MAX_RATE * this.fall, this.count('leaves') / LEAF_SECONDS * gust * this.fall) * this.amount * step;
             this.fruitBudget += Math.min(2, this.count('fruits') / FRUIT_SECONDS) * this.amount * step;
 
             for (; this.leafBudget >= 1; this.leafBudget--) {

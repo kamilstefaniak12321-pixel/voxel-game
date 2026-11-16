@@ -107,6 +107,9 @@ function speciesBlocks(species, tree) {
             textures: { all: textures.sapling },
             // Sadzonki drzew plaż i pustyń rosną też na piasku (1.9.0).
             ...(tree.saplingGround ? { ground: tree.saplingGround } : {}),
+            // Sadzonka, którą da się posadzić w płytkiej wodzie (namorzyn,
+            // 1.10.0): w wodzie staje jej wodna postać (BlockPlacer.js).
+            ...(tree.waterSapling ? { wades: treeWaterSaplingType(species) } : {}),
             grows: { tree: species, seconds: tree.growthSeconds ?? TREE_GROWTH_SECONDS }
         }
 
@@ -303,6 +306,15 @@ export function treeRootsType(species) {
 }
 
 
+// Wodna postać sadzonki (drzewa z polem waterSapling w katalogu).
+
+export function treeWaterSaplingType(species) {
+
+    return `${species}_sapling_water`;
+
+}
+
+
 function treeExtras(definition) {
 
     const species = definition.id;
@@ -347,7 +359,11 @@ function treeExtras(definition) {
             part: 'log',
             sound: 'wood',
             solid: true,
-            textures: { top: definition.textures.logTop, side: extra.texture, bottom: definition.textures.logTop },
+            // wrapped - kora także na górze i spodzie (kosmate ramiona jukki
+            // biegną poziomo; słoje na ich wierzchu wyglądały jak deski).
+            textures: extra.wrapped
+                ? { all: extra.texture }
+                : { top: definition.textures.logTop, side: extra.texture, bottom: definition.textures.logTop },
             randomRotation: ['top', 'bottom'],
             strip: parts.stripped
         };
@@ -377,6 +393,36 @@ function treeExtras(definition) {
     }
 
 
+    // Sadzonka w wodzie (namorzyn, 1.10.0): roślina wodna jak pałka -
+    // zajmuje komórkę wody, nie wypiera jej. Rośnie tak samo jak sucha;
+    // zebrana daje zwykłą sadzonkę.
+
+    if (definition.waterSapling) {
+
+        blocks[treeWaterSaplingType(species)] = {
+            id: definition.firstId + definition.waterSapling.slot,
+            name: `${definition.name} Sapling (in water)`,
+            label: `${definition.labels[4]} (w wodzie)`,
+            tree: species,
+            part: 'sapling',
+            model: 'riverPlant',
+            riverPlant: { kind: 'propagule', waterlogged: true },
+            liquid: true,
+            solid: false,
+            opaque: false,
+            sound: 'plant',
+            category: 'rosliny',
+            creative: false,
+            drops: parts.sapling,
+            pick: parts.sapling,
+            ground: definition.waterSapling.ground,
+            textures: { all: definition.textures.sapling },
+            grows: { tree: species, seconds: definition.growthSeconds ?? TREE_GROWTH_SECONDS }
+        };
+
+    }
+
+
     definition.variants.forEach((variant, i) => {
 
         const type = treeVariantType(species, variant.key);
@@ -397,6 +443,9 @@ function treeExtras(definition) {
             model: 'leaves',
             textures: { all: variant.texture },
             randomRotation: LEAF_ROTATION,
+            // Stale jesienna tekstura (złote igliwie modrzewia, złote liście
+            // osiki): latem zielona, jesienią ona sama (LeafSeasons.js).
+            ...(variant.autumn ? { autumnLeaves: true } : {}),
             drops: parts.leaves,
             loot: definition.loot,
             harvest: variant.harvest

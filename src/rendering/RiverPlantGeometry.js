@@ -63,7 +63,7 @@ function makeTemplate(kind, variant, waterlogged) {
     const pick = n => Math.floor(random() * n);
     const floating = kind === 'lily' || kind === 'duckweed';
     const movement = floating ? 255 : kind === 'milfoil' ? 128 : 0;
-    const height = kind === 'cattail' ? 1.9 : kind === 'loosestrife' ? 1.25 : 1;
+    const height = kind === 'cattail' ? 1.9 : kind === 'loosestrife' ? 1.25 : kind === 'propagule' ? 1.6 : 1;
     const model = createPixelPlant(COLORS, floating, movement, height,
         { light: 'leaf', dark: 'leaf', reed: 'leaf', submerged: 'leaf', pad: 'leaf', padLight: 'leaf', stemDark: 'branch' });
     const { sheet, box } = model;
@@ -91,6 +91,18 @@ function makeTemplate(kind, variant, waterlogged) {
             });
             sheet(0, x, ({ leaf }) => leaf(z + (i ? -2 : 1), 0, i ? -3 : 3, 12 + pick(4), 'leaf'));
         }
+    } else if (kind === 'propagule') {
+        // Siewka namorzynu w wodzie (1.10.0): cienki pęd od dna ponad
+        // taflę płytkiej wody, na szczycie dwie pary liści.
+        const top = 19 + pick(4);
+        box(0, 0, 0, 1, top, 1, 'brown', 'brownTop');
+        box(-1, 0, 0, 3, 1, 1, 'brown');
+        box(0, 0, -1, 1, 1, 3, 'brown');
+        for (const axis of [2, 0]) sheet(axis, 0, ({ rect }) => {
+            rect(-3, top - 2, 3, 1, 'leaf'); rect(1, top - 2, 3, 1, 'light');
+            rect(-2, top - 5, 2, 1, 'light'); rect(1, top - 5, 2, 1, 'leaf');
+            rect(0, top, 1, 2, 'light');
+        });
     } else if (kind === 'loosestrife') {
         for (let i=0; i<2; i++) {
             const x = i ? 2 : -3, z = i ? 1 : -1, top = 18 + pick(3) - i*2;

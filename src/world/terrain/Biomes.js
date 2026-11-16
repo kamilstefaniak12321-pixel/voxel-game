@@ -552,6 +552,10 @@ export const GRASS_TINT = {
 // z wysokością), wilgotność, wysokość nad morzem i pole lasów (bez niego -
 // kolor samego klimatu, np. dla dalekiego terenu).
 
+// Śnieg na liściach zimą: od tej temperatury w dół leży w pełni, powyżej
+// górnej - wcale (sawanna, półpustynia, las deszczowy).
+const SNOW_COLD = -0.05, SNOW_WARM = 0.3;
+
 export function grassTint(temperature, humidity, above, out, forest = null, dryBiome = 0, wetBiome = 0) {
 
     const T = GRASS_TINT;
@@ -790,7 +794,10 @@ export class Biomes {
 
         const side = 17;
 
-        const tint = new Uint8Array(side * side * 3);
+        // Za kolorami: po bajcie chłodu każdego rogu (śnieg na liściach zimą -
+        // LeafSeasons.js; 255 - mroźno, 0 - za ciepło na śnieg).
+        const tint = new Uint8Array(side * side * 4);
+        const coldAt = side * side * 3;
 
         const color = this.tintColor;
 
@@ -837,6 +844,7 @@ export class Biomes {
                 tint[n] = Math.round(color[0] * GRASS_TINT_UNIT);
                 tint[n + 1] = Math.round(color[1] * GRASS_TINT_UNIT);
                 tint[n + 2] = Math.round(color[2] * GRASS_TINT_UNIT);
+                tint[coldAt + j * side + i] = Math.round(255 * smoothstep(SNOW_WARM, SNOW_COLD, fields[0] - Math.max(0, above) / 60));
 
             }
 

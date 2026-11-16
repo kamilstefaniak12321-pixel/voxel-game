@@ -103,7 +103,7 @@ const NEW_DIMENSIONS = {
     joshua_tree: (height) => ({ trunkWidth: 1, crownBase: Math.max(2, Math.round(height * 0.35)) }),
     aspen: (height) => ({ trunkWidth: 1, crownBase: Math.round(height * 0.4) }),
     araucaria: (height, amount) => ({ trunkWidth: amount >= 0.6 ? 2 : 1, crownBase: Math.round(height * 0.55) }),
-    banyan: (height, amount) => ({ trunkWidth: amount >= 0.5 ? 3 : 2, crownBase: Math.max(4, Math.round(height * 0.33)) }),
+    banyan: (height, amount) => ({ trunkWidth: amount >= 0.55 ? 5 : 3, crownBase: Math.max(5, Math.round(height * 0.36)) }),
     dragon_tree: (height, amount) => ({ trunkWidth: amount >= 0.55 ? 2 : 1, crownBase: Math.max(2, Math.round(height * 0.4)) }),
     cedar: (height, amount) => ({ trunkWidth: amount >= 0.35 ? 2 : 1, crownBase: Math.round(height * 0.28) }),
     bristlecone: (height, amount) => ({ trunkWidth: amount >= 0.4 ? 2 : 1, crownBase: Math.max(2, Math.round(height * 0.4)) })
@@ -1521,47 +1521,71 @@ const CATALOG_SHAPES = {
 
     },
 
-    // Drzewo Jozuego (jukka): niski pień rozwidla się kilka razy, każda
-    // gałąź kończy się kolczastą rozetą liści; pod rozetami pień okrywają
-    // suche liście (kosmata kora).
+    // Drzewo Jozuego (jukka krótkolistna; kształt od 1.10.0): goły pień,
+    // wyżej kanciaste, kosmate ramiona - każde najpierw odchodzi w bok,
+    // potem łokciem skręca w górę i rozwidla się - a na końcu każdego
+    // osobna, zwarta kula sztyletowatych liści.
     joshua_tree(tree, size, shape) {
 
         const { height, radius, crownBase } = treeVisualDimensions(tree.species, size);
         const random = tree.random, top = height - 1;
         const shaggy = treeLogType(tree.species, 'shaggy');
-        tree.trunk(0, 0, 0, crownBase);
+        const limit = Math.max(1.5, radius - 1.7);
+        const cap = top - 2;
+        tree.trunk(0, 0, 0, Math.max(1, crownBase - 1));
+        tree.log(0, crownBase, 0, shaggy);
         const tips = [];
-        const grow = (x, y, z, angle, depth) => {
-            const out = 1.4 + random() * 1.4;
+        const arm = (x, y, z, angle, depth) => {
+            // W bok (2-3 bloki, czasem blok w górę), potem pionowo.
+            const out = 1.8 + random() * 1.3;
             let nx = x + Math.cos(angle) * out, nz = z + Math.sin(angle) * out;
-            const ny = Math.min(top - 2, y + 2 + Math.floor(random() * 2));
-            const far = Math.hypot(nx, nz), limit = Math.max(1, radius - 1.4);
+            const far = Math.hypot(nx, nz);
             if (far > limit) {
                 nx *= limit / far;
                 nz *= limit / far;
             }
-            tree.branch(x, y, z, nx, ny, nz, shaggy);
-            if (depth <= 0 || ny >= top - 2 || random() < 0.2) {
+            nx = Math.round(nx);
+            nz = Math.round(nz);
+            const elbow = Math.min(cap, y + (random() < 0.5 ? 1 : 0));
+            tree.branch(x, y, z, nx, elbow, nz, shaggy);
+            const ny = Math.min(cap, elbow + 1 + Math.floor(random() * 2) + (depth > 0 ? 1 : 0));
+            tree.branch(nx, elbow, nz, nx, ny, nz, shaggy);
+            if (depth <= 0 || ny >= cap - 1 || random() < 0.2) {
                 tips.push([nx, ny, nz]);
                 return;
             }
-            const forks = random() < 0.35 ? 3 : 2;
-            const turn = random() * Math.PI * 2;
-            for (let k = 0; k < forks; k++) grow(nx, ny, nz, turn + k * Math.PI * 2 / forks + (random() - 0.5) * 0.6, depth - 1);
+            // Rozwidlenie: dwa ramiona w przeciwne strony.
+            const turn = angle + (random() < 0.5 ? 1 : -1) * Math.PI * (0.3 + random() * 0.25);
+            arm(nx, ny, nz, turn, depth - 1);
+            arm(nx, ny, nz, turn + Math.PI * (0.8 + random() * 0.4), depth - 1);
         };
-        const arms = 2 + Math.floor(random() * 2) + (size > 0.6 ? 1 : 0);
+        const arms = 2 + (random() < 0.25 + size * 0.5 ? 1 : 0);
         const phase = random() * Math.PI * 2;
+        const depth = size < 0.4 ? 0 : size < 0.8 ? 1 : 2;
         for (let i = 0; i < arms; i++) {
-            grow(0, crownBase, 0, phase + i * Math.PI * 2 / arms + (random() - 0.5) * 0.5, 1 + Math.round(size * 1.4));
+            arm(0, crownBase, 0, phase + i * Math.PI * 2 / arms + (random() - 0.5) * 0.5, i === 0 ? depth : Math.max(0, depth - (random() < 0.5 ? 1 : 0)));
         }
-        // Najwyższa gałąź sięga pełnej wysokości drzewa.
+        // Najwyższe ramię sięga pełnej wysokości drzewa.
         const highest = tips.reduce((best, tip) => tip[1] > best[1] ? tip : best, tips[0]);
-        if (highest[1] < top - 2) {
-            tree.branch(highest[0], highest[1], highest[2], highest[0], top - 2, highest[2], shaggy);
-            highest[1] = top - 2;
+        if (highest[1] < cap) {
+            tree.branch(highest[0], highest[1], highest[2], highest[0], cap, highest[2], shaggy);
+            highest[1] = cap;
         }
-        for (const [x, y, z] of tips) tree.blob(x, y + 1, z, 1.5, 1.4, 1.5, 0.7, shape.density);
-        tree.leaf(highest[0], top, highest[2]);
+        // Kula liści na końcu ramienia: krzyż nad czubkiem i szpic; kule
+        // stojące ciasno obok siebie są mniejsze, żeby się nie zlały.
+        tips.forEach(([x, y, z], index) => {
+            const crowded = tips.some(([ox, oy, oz], other) => other < index && Math.abs(ox - x) <= 2 && Math.abs(oz - z) <= 2 && Math.abs(oy - y) <= 1);
+            tree.leaf(x, y + 1, z);
+            tree.leaf(x, y + 2, z);
+            if (crowded) return;
+            for (const [dx, dz] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+                tree.leaf(x + dx, y + 1, z + dz);
+                if (random() < shape.density * 0.6) tree.leaf(x + dx, y, z + dz);
+            }
+            for (const [dx, dz] of [[1, 1], [-1, 1], [1, -1], [-1, -1]]) {
+                if (random() < 0.3) tree.leaf(x + dx, y + 1, z + dz);
+            }
+        });
 
     },
 
@@ -1633,42 +1657,126 @@ const CATALOG_SHAPES = {
 
     },
 
-    // Figowiec bengalski (banian): pień zrośnięty z kilku, długie poziome
-    // konary podparte słupami korzeni, które urosły aż do ziemi, i bardzo
-    // szeroka, niska kopuła liści z zasłoną wiszących korzeni powietrznych.
+    // Figowiec bengalski (banian; od 1.10.0 "namiot"): pień zrośnięty
+    // z wielu, długie poziome konary podparte słupami korzeni, które
+    // urosły aż do ziemi, a nad nimi ogromna, pusta w środku kopuła liści.
+    // Jej brzeg opada jak ściana namiotu prawie do ziemi, niżej wisi
+    // zasłona korzeni powietrznych - z kilkoma bramami. Pod spodem jest
+    // wysoko i sucho: schronienie.
     banyan(tree, size, shape) {
 
         const { height, radius, trunkWidth, crownBase } = treeVisualDimensions(tree.species, size);
         const random = tree.random, top = height - 1;
         const roots = treeRootsType(tree.species);
-        const low = -1, high = trunkWidth === 3 ? 1 : 0;
-        for (let x = low; x <= high; x++) for (let z = low; z <= high; z++) {
-            const corner = (x === low || x === high) && (z === low || z === high) && !(x === 0 && z === 0);
-            tree.trunk(x, z, 0, corner && random() < 0.4 ? Math.max(1, crownBase - 2) : crownBase + 1);
+        const half = (trunkWidth - 1) / 2;
+
+        // Pień: zrośnięte słupy, na rogach niższe.
+        for (let x = -half; x <= half; x++) for (let z = -half; z <= half; z++) {
+            const corner = Math.abs(x) === half && Math.abs(z) === half;
+            if (corner && half > 1 && random() < 0.5) continue;
+            tree.trunk(x, z, 0, corner ? crownBase - 1 - Math.floor(random() * 2) : crownBase + (x === 0 && z === 0 ? 2 : 1));
         }
-        const limbs = 6 + Math.floor(random() * 3);
+        for (const [x, z] of [[half + 1, 0], [-half - 1, 0], [0, half + 1], [0, -half - 1]]) {
+            if (random() < 0.7) tree.trunk(x, z, 0, Math.floor(random() * 3));
+        }
+
+        // Brzeg korony: kilka płatów zamiast równego koła.
+        const lobes = 5 + Math.floor(random() * 3), lobePhase = random() * Math.PI * 2;
+        const edge = (angle) => radius * (0.89 + 0.11 * Math.cos(angle * lobes + lobePhase));
+        // Dach namiotu: płaski u góry, przy brzegu stromo w dół do rimY.
+        const rimY = 3 + Math.round(size);
+        const roof = (d, limit) => rimY + 1 + (top - rimY - 1) * Math.sqrt(Math.max(0, 1 - Math.min(1, d / limit) ** 2.4));
+
+        // Konary: od pnia prawie poziomo pod dach, na końcach lekko w dół.
+        const limbs = 7 + Math.floor(random() * 2) + Math.round(size * 3);
         const phase = random() * Math.PI * 2;
-        const tall = top - crownBase, cy = crownBase + tall * 0.5;
+        const limb = (angle, from, reach, y0) => {
+            const cos = Math.cos(angle), sin = Math.sin(angle);
+            const at = (u) => {
+                const d = from + (reach - from) * u;
+                const y = Math.min(roof(d, edge(angle)) - 2, y0 + 2.2 * Math.sin(Math.min(1, u * 1.25) * Math.PI * 0.5) - (u > 0.8 ? (u - 0.8) * 5 : 0));
+                return [cos * d, Math.max(rimY + 1, y), sin * d];
+            };
+            const steps = Math.ceil(reach - from);
+            let last = at(0);
+            for (let i = 1; i <= steps; i++) {
+                const next = at(i / steps);
+                tree.branch(last[0], last[1], last[2], next[0], next[1], next[2]);
+                // Gruby u nasady.
+                if (i / steps < 0.4) tree.log(next[0], next[1] + 1, next[2]);
+                last = next;
+            }
+            return at;
+        };
+        const pillar = (point) => {
+            const px = Math.round(point[0]), pz = Math.round(point[2]);
+            if (Math.hypot(px, pz) < half + 2.5) return;
+            tree.trunk(px, pz, 0, Math.round(point[1]));
+            if (random() < 0.35) tree.trunk(px + (random() < 0.5 ? 1 : -1), pz, 0, 1 + Math.floor(random() * 3));
+        };
         for (let i = 0; i < limbs; i++) {
-            const angle = phase + i * Math.PI * 2 / limbs + (random() - 0.5) * 0.3;
-            const reach = radius * (0.55 + random() * 0.1);
-            const x = Math.cos(angle) * reach, z = Math.sin(angle) * reach;
-            const y = crownBase + 1 + Math.floor(random() * 2);
-            tree.branch(0, crownBase, 0, x * 0.5, y, z * 0.5);
-            tree.branch(0, crownBase + 1, 0, x * 0.4, y + 1, z * 0.4);
-            tree.branch(x * 0.5, y, z * 0.5, x, y + 1, z);
-            tree.blob(x, cy, z, radius * 0.38, tall * 0.4, radius * 0.38, 0.64, shape.density);
-            tree.blob(x * 0.55, cy + 0.4, z * 0.55, radius * 0.36, tall * 0.42, radius * 0.36, 0.64, shape.density);
-            if (random() < 0.75) {
-                const u = 0.55 + random() * 0.35;
-                const px = Math.round(x * u), pz = Math.round(z * u);
-                tree.trunk(px, pz, 0, Math.round(y + (u - 0.5) * 2));
-                if (random() < 0.4) tree.trunk(px + (random() < 0.5 ? 1 : -1), pz, 0, 1 + Math.floor(random() * 3));
+            const angle = phase + i * Math.PI * 2 / limbs + (random() - 0.5) * 0.25;
+            const reach = edge(angle) * (0.74 + random() * 0.12);
+            const at = limb(angle, half, reach, crownBase + Math.floor(random() * 2));
+            // Słupy korzeni: w połowie konaru i przy jego końcu.
+            if (random() < 0.85) pillar(at(0.42 + random() * 0.14));
+            if (random() < 0.8) pillar(at(0.82 + random() * 0.12));
+            // Boczny konar wypełnia miejsce między sąsiadami.
+            if (radius > 12 && random() < 0.7) {
+                const start = at(0.45);
+                const side = angle + (random() < 0.5 ? 1 : -1) * Math.PI / limbs;
+                const far = edge(side) * (0.6 + random() * 0.15);
+                const end = [Math.cos(side) * far, Math.min(roof(far, edge(side)) - 2, start[1] + 1), Math.sin(side) * far];
+                tree.branch(start[0], start[1], start[2], end[0], end[1], end[2]);
+                if (random() < 0.6) pillar(end);
             }
         }
-        tree.blob(0, cy + tall * 0.08, 0, radius * 0.5, tall * 0.42, radius * 0.5, 0.64, shape.density);
+
+        // Kopuła: powłoka liści gruba na 2-3 bloki, przy brzegu ściana
+        // aż do rimY. Rzadkie dziury wpuszczają snopy światła.
+        const span = Math.ceil(radius);
+        for (let z = -span; z <= span; z++) for (let x = -span; x <= span; x++) {
+            const d = Math.hypot(x, z), limit = edge(Math.atan2(z, x));
+            if (d > limit) continue;
+            if (d > 3 && d < limit - 2.5 && random() > shape.density + 0.1) continue;
+            const high = Math.round(roof(d, limit));
+            const low = Math.min(high - 1, Math.round(roof(d + 1.3, limit)) - 1);
+            for (let y = Math.max(rimY, low); y <= high; y++) {
+                // Postrzępiony dolny brzeg ściany.
+                if (y === rimY && random() < 0.35) continue;
+                tree.leaf(x, y, z);
+            }
+        }
+        // Garby na dachu.
+        const bumps = 5 + Math.round(size * 5);
+        for (let i = 0; i < bumps; i++) {
+            const angle = random() * Math.PI * 2, d = radius * (0.15 + random() * 0.55);
+            const r = 2.2 + random() * 1.6;
+            const y = Math.min(top - 1.9, roof(d, edge(angle)) + 0.3);
+            tree.blob(Math.cos(angle) * d, y, Math.sin(angle) * d, r, 1.7, r, 0.6, shape.density);
+        }
         tree.leaf(0, top, 0);
-        hangingRoots(tree, roots, Math.round(10 + size * 14), radius * 0.2, radius * 0.9, crownBase - 1, top, 5, 2);
+
+        // Zasłona korzeni powietrznych pod brzegiem - z bramami.
+        const doors = 3 + (random() < 0.5 ? 1 : 0), doorPhase = random() * Math.PI * 2;
+        const doorHalf = 2.4 / radius;
+        for (let z = -span; z <= span; z++) for (let x = -span; x <= span; x++) {
+            const angle = Math.atan2(z, x), d = Math.hypot(x, z), limit = edge(angle);
+            if (d > limit - 0.3 || d < limit - 2.4) continue;
+            let gate = false;
+            for (let k = 0; k < doors; k++) {
+                const turn = Math.abs(((angle - doorPhase - k * Math.PI * 2 / doors) % (Math.PI * 2) + Math.PI * 3) % (Math.PI * 2) - Math.PI);
+                if (turn < doorHalf) gate = true;
+            }
+            if (gate || random() > 0.55) continue;
+            let y = rimY;
+            while (y <= top && !tree.has(x, y, z)) y++;
+            if (y > top) continue;
+            const floor = random() < 0.6 ? 0 : 1 + Math.floor(random() * 2);
+            for (let yy = y - 1; yy >= floor; yy--) tree.leaf(x, yy, z, roots);
+        }
+        // Krótkie korzenie pod sklepieniem - nad głową zostaje wolne.
+        hangingRoots(tree, roots, Math.round(14 + size * 26), radius * 0.2, radius * 0.78, crownBase + 1, top, 3, 4);
 
     },
 

@@ -67,6 +67,10 @@ tylko jako *Sekretne osiągnięcie* ze znakiem zapytania.
 | rzadkie | Pełne kosze | zbierz owoce z każdego rodzaju krzaka (pięć - z borówkami) |
 | rzadkie | Leśniczy | zetnij pień każdego z sześciu gatunków drzew (postęp w księdze) |
 | epickie | Drzewa świata | zetnij pień każdego z trzynastu drzew z 1.8.0: jodły, baobabu, palmy kokosowej, modrzewia, namorzynu, puchowca, jukki, osiki, araukarii, figowca, draceny, cedru i sosny ościstej (postęp w księdze) |
+| rzadkie | Smaki dalekich stron | zjedz figę, owoc baobabu, jagody draceny, kwiaty jukki, orzeszki araukarii i kokos (postęp w księdze; od 1.10.0) |
+| rzadkie | Ogrodnik przypływów | posadź namorzyn w płytkiej wodzie - sadzonka albo siewka kliknięta w dno (od 1.10.0) |
+| zwykłe | Złota jesień | doczekaj jesieni - liście zmieniają kolory (`docs/pory-roku.md`, od 1.10.0) |
+| zwykłe | Pierwszy szron | doczekaj zimy - liście szarzeją i bieleją od śniegu (od 1.10.0) |
 | rzadkie | Z małego ziarenka | wyhoduj drzewo z sadzonki (`docs/drzewa.md`) |
 | rzadkie | Komplet narzędzi | zrób siekierę, kilof i łopatę (postęp w księdze) |
 | rzadkie | Kopalnia w kieszeni | zagraj na telefonie / tablecie i zniszcz blok palcem (`docs/telefon.md`) |

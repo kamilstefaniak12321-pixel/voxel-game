@@ -2,7 +2,7 @@
 
 > Ta strona jest generowana z kodu gry (`python tools/wiki.py`) - nie zmieniaj jej ręcznie, zmiany przepadną przy następnym generowaniu.
 
-Wersja gry **1.9.0** - 236 przepisów. Wytwarza się w ekwipunku (**E**): siatka 2 x 2 obok miejsc ekwipunku, wynik po prawej (klik - weź, Shift + klik - ile się da). Przycisk 📖 *Przepisy* otwiera księgę - klik na przepisie sam układa składniki. Przepisy *z kształtem* można przesuwać po siatce i odbijać w poziomie; przepisy *bez kształtu* - obojętne, gdzie leżą składniki. Z czatu: `/przepisy`, `/wytworz <przepis>`.
+Wersja gry **1.10.0** - 241 przepisów. Wytwarza się w ekwipunku (**E**): siatka 2 x 2 obok miejsc ekwipunku, wynik po prawej (klik - weź, Shift + klik - ile się da). Przycisk 📖 *Przepisy* otwiera księgę - klik na przepisie sam układa składniki. Przepisy *z kształtem* można przesuwać po siatce i odbijać w poziomie; przepisy *bez kształtu* - obojętne, gdzie leżą składniki. Z czatu: `/przepisy`, `/wytworz <przepis>`.
 
 
 ## Ziemia
@@ -1132,6 +1132,36 @@ Wersja gry **1.9.0** - 236 przepisów. Wytwarza się w ekwipunku (**E**): siatka
 
 1 x Liście klonu (bez kształtu). Nazwa przepisu: `maple_leaf_litter`.
 
+### Opadłe liście baobabu x2
+
+<img src="przepisy/baobab_leaf_litter.png" alt="Opadłe liście baobabu x2: 1 x Liście baobabu (obojętne gdzie)">
+
+1 x Liście baobabu (bez kształtu). Nazwa przepisu: `baobab_leaf_litter`.
+
+### Opadłe igliwie modrzewia x2
+
+<img src="przepisy/larch_leaf_litter.png" alt="Opadłe igliwie modrzewia x2: 1 x Igliwie modrzewia (obojętne gdzie)">
+
+1 x Igliwie modrzewia (bez kształtu). Nazwa przepisu: `larch_leaf_litter`.
+
+### Opadłe liście puchowca x2
+
+<img src="przepisy/kapok_leaf_litter.png" alt="Opadłe liście puchowca x2: 1 x Liście puchowca (obojętne gdzie)">
+
+1 x Liście puchowca (bez kształtu). Nazwa przepisu: `kapok_leaf_litter`.
+
+### Opadłe liście osiki x2
+
+<img src="przepisy/aspen_leaf_litter.png" alt="Opadłe liście osiki x2: 1 x Liście osiki (obojętne gdzie)">
+
+1 x Liście osiki (bez kształtu). Nazwa przepisu: `aspen_leaf_litter`.
+
+### Opadłe liście figowca x2
+
+<img src="przepisy/banyan_leaf_litter.png" alt="Opadłe liście figowca x2: 1 x Liście figowca (obojętne gdzie)">
+
+1 x Liście figowca (bez kształtu). Nazwa przepisu: `banyan_leaf_litter`.
+
 
 ## Narzędzia i surowce
 
@@ -1461,7 +1491,7 @@ Składnik z grupy to dowolna rzecz z listy (np. patyki z desek różnych drzew).
 - **trawa (krótka, wysoka, wydmowa) albo trzcina**: Krótka trawa, Wysoka trawa, Piaskownica (trawa wydmowa), Trzcina
 - **żywica albo oliwki**: Żywica, Oliwki
 - **igliwie (świerka albo sosny)**: Igliwie świerka, Igliwie sosny
-- **opadłe liście (dowolne)**: Opadłe liście buka, Opadłe liście dębu, Opadłe liście jabłoni, Opadłe liście olchy, Opadłe liście wierzby, Opadłe liście klonu
+- **opadłe liście (dowolne)**: Opadłe liście buka, Opadłe liście dębu, Opadłe liście jabłoni, Opadłe liście olchy, Opadłe liście wierzby, Opadłe liście klonu, Opadłe liście baobabu, Opadłe igliwie modrzewia, Opadłe liście puchowca, Opadłe liście osiki, Opadłe liście figowca
 - **coś czerwonego (mak, truskawki, papryczki chili, wiecha amarantusa, korzeń marzanny)**: Mak, Truskawki, Papryczki chili, Wiecha amarantusa, Korzeń marzanny
 - **coś zielonego (koniczyna, pokrzywa, paproć, liście szałwii, plecha porostu oliwkowego i inne)**: Koniczyna, Pokrzywa, Paproć, Liście szałwii, Plecha porostu oliwkowego, Gałązki porostu iglastego
 - **coś niebieskiego (chaber, borówki, kwiat mikołajka, kwiat barwinka, liście indygowca)**: Chaber, Borówki, Kwiat mikołajka, Kwiat barwinka, Liście indygowca

@@ -66,6 +66,9 @@ const BUILDING_BLOCKS = ['lime_plaster', 'ochre_plaster', 'terracotta', 'polishe
 
 const FRUITS = ['strawberry', 'blackberry', 'chili_pepper', 'hazelnut', 'blueberry'];
 
+// Jadalne plony drzew z dalekich stron (1.10.0) - osiągnięcie "Smaki dalekich stron".
+const WORLD_FRUITS = ['banyan_fig', 'baobab_fruit', 'dragon_tree_berries', 'joshua_tree_flowers', 'araucaria_nuts', 'coconut_palm_kokos'];
+
 
 // Ile jest rodzajów naparów - do "Zielarza".
 
@@ -751,6 +754,48 @@ export const ACHIEVEMENTS = [
             return WORLD_TREE_NAMES.includes(species) && book.collect('world_trees', species) >= WORLD_TREE_NAMES.length;
         },
         goal: { key: 'world_trees', count: WORLD_TREE_NAMES.length }
+    },
+    // 1.10.0: owoce drzew z dalekich stron, namorzyn w wodzie, liście w porach roku.
+    {
+        id: 'world_fruits',
+        tier: 'rare',
+        title: 'Smaki dalekich stron',
+        task: 'Zjedz figę, owoc baobabu, jagody draceny, kwiaty jukki, orzeszki araukarii i kokos (zbiera się je PPM z liści, na których rosną).',
+        comment: 'Sześć smaków, sześć stref klimatycznych. Żołądek prosi o przewodnik.',
+        icon: 'banyan_fig',
+        on: 'ate',
+        when: (data, book) => WORLD_FRUITS.includes(data.type) && book.collect('world_fruits', data.type) >= WORLD_FRUITS.length,
+        goal: { key: 'world_fruits', count: WORLD_FRUITS.length }
+    },
+    {
+        id: 'water_gardener',
+        tier: 'rare',
+        title: 'Ogrodnik przypływów',
+        task: 'Posadź namorzyn w płytkiej wodzie (sadzonka albo siewka kliknięta w piaszczyste lub błotniste dno).',
+        comment: 'Inni sadzą w ziemi. Ty postanowiłeś zaufać morzu.',
+        icon: 'mangrove_propagule',
+        on: 'blockPlaced',
+        when: (data) => data.placed === 'mangrove_sapling_water'
+    },
+    {
+        id: 'autumn_colors',
+        tier: 'common',
+        title: 'Złota jesień',
+        task: 'Doczekaj jesieni: liście klonów czerwienieją, brzóz żółkną, dębów brązowieją - im dalej w jesień, tym mocniej.',
+        comment: 'Drzewa zmieniają garderobę. Tobie zostaje ta sama koszula.',
+        icon: 'maple_leaf_litter',
+        on: 'season',
+        when: (data) => data.key === 'jesien'
+    },
+    {
+        id: 'first_frost',
+        tier: 'common',
+        title: 'Pierwszy szron',
+        task: 'Doczekaj zimy: liście szarzeją, a w chłodnych stronach bieli je cienki śnieg.',
+        comment: 'Cicho, biało i zimno w palce. Pogoda dopiero się rozkręca.',
+        icon: 'spruce_leaves',
+        on: 'season',
+        when: (data) => data.key === 'zima'
     },
     {
         id: 'tool_set',

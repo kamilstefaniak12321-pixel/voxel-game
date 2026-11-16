@@ -1,5 +1,6 @@
 import { CHUNK_HEIGHT, WORLD_BORDER } from '../config.js';
 import { PLANT_PACKS } from '../blocks/plantPacks.js';
+import { TREE_DEFINITIONS } from '../blocks/treeCatalog.js';
 import { BARK_TINDER, barkType } from '../items/bark.js';
 
 // Gameplay state is independent of meshes, distance, FPS and wall-clock time.
@@ -40,7 +41,10 @@ export const TINDERS = {
     short_grass: 1, tall_grass: 1, dune_grass: 1, reed: 1, straw: 1.25,
     // Kora każdego drzewa (items/bark.js): brzozowa i żywiczne palą się lepiej.
     ...Object.fromEntries(Object.keys(FIRE_WOODS).map(wood => [barkType(wood), BARK_TINDER[wood] ?? 1])),
-    ...Object.fromEntries(PLANT_PACKS.filter(pack => pack.item?.tinder).map(pack => [pack.item.type, pack.item.tinder]))
+    ...Object.fromEntries(PLANT_PACKS.filter(pack => pack.item?.tinder).map(pack => [pack.item.type, pack.item.tinder])),
+    // Plony drzew z polem "tinder" (1.10.0): szyszki i puch puchowca.
+    ...Object.fromEntries(TREE_DEFINITIONS.flatMap(tree => Object.values(tree.items))
+        .filter(item => item.tinder).map(item => [item.type, item.tinder]))
 };
 export const isTinder = type => Object.hasOwn(TINDERS, type);
 const clamp = (value, max = 1) => Math.max(0, Math.min(max, Number.isFinite(value) ? value : 0));

@@ -1,3 +1,4 @@
+import { leafSeasonStep, seasonLeafColor } from '../rendering/LeafSeasons.js';
 import * as THREE from 'three';
 import { modifiedChunksInBounds } from './ModifiedChunks.js';
 import { TERRAIN_UNDERLAY_BLEND } from './DistanceLod.js';
@@ -897,6 +898,9 @@ export class FarTerrain {
 
         this.colorsReady = false;
 
+        // Faza roku, w której policzono kolory koron (null - bez pór roku).
+        this.leafPhase = null;
+
         atlasAveragesReady.then(() => this.prepareColors());
 
 
@@ -1096,10 +1100,16 @@ export class FarTerrain {
 
         // Korony drzew: średni kolor liści gatunku, trochę ciemniej.
 
+        // Od 1.10.0 w kolorze pory roku (LeafSeasons.js): jesienią kolor
+        // gatunku, zimą szarość - skokami (setLeafSeason).
+
+        const seasonal = (color, species, autumn = false) => (this.leafPhase ?? null) === null
+            ? color : seasonLeafColor(color, species, this.leafPhase, new THREE.Color(), false, true, autumn);
+
         for (const leaves of LEAF_KINDS) {
 
-            colors[leaves] =
-                (getAtlasAverage(leaves) ?? FALLBACK_COLORS.grass_top).clone().multiplyScalar(FAR_LEAVES_SHADE);
+            colors[leaves] = seasonal((getAtlasAverage(leaves) ?? FALLBACK_COLORS.grass_top).clone(), leaves.replace(/_leaves$/, ''))
+                .multiplyScalar(FAR_LEAVES_SHADE);
 
             top.set(leaves, colors[leaves]);
             side.set(leaves, colors[leaves].clone().multiplyScalar(FAR_LEAVES_SIDE_SHADE));
@@ -1143,6 +1153,7 @@ export class FarTerrain {
                 const texture = definition ? getSurfaceFaceTexture(definition.textures, name) : 'stone';
                 const average = (getAtlasAverage(texture) ?? colors.stone).clone();
                 if (tint && name === 'top') average.multiply(new THREE.Color(...tint));
+                if (definition?.tree && definition.part === 'leaves') average.copy(seasonal(average.clone(), definition.tree, definition.autumnLeaves === true));
                 for (const [channel, value] of average.toArray().entries()) {
                     this.surfaceAlbedoPalette[id * 18 + face * 3 + channel] = colorByte(value);
                 }
@@ -1159,6 +1170,30 @@ export class FarTerrain {
         this.sendPalette();
 
         this.rebuildAll(false);
+
+    }
+
+
+    // Pora roku dla koron drzew (Game.updateSeason, co klatkę): gdy liście
+    // zmienią kolor o kolejny krok, nowa paleta idzie do workerów,
+    // a kafelki przebudowują siatki po kolei (stare zostają do podmiany).
+    // days === null - świat bez pór roku.
+
+    setLeafSeason(days) {
+
+        const phase = days === null || days === undefined ? null : leafSeasonStep(days);
+
+        if (phase === (this.leafPhase ?? null)) {
+            return false;
+        }
+
+        this.leafPhase = phase;
+
+        if (this.colorsReady) {
+            this.prepareColors();
+        }
+
+        return true;
 
     }
 

@@ -1,3 +1,4 @@
+import { setLeafSeason } from '../rendering/LeafSeasons.js';
 import * as THREE from 'three';
 import { fullTerrainDistance, FULL_TERRAIN_DISTANCE, TERRAIN_TRANSITION_START } from '../world/DistanceLod.js';
 
@@ -2083,6 +2084,11 @@ export class Game extends GameInteraction {
 
         this.world.updateSeasons(days);
         this.plantGrowth.days = days;
+
+        // Kolor liści, opadłych liści i zimowy śnieg (LeafSeasons.js).
+        setLeafSeason(days);
+        this.treeParticles?.setSeason(days);
+        this.farTerrain?.setLeafSeason(days);
 
         const season = seasonAt(days);
 

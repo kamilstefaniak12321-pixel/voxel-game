@@ -7,6 +7,7 @@ import { normalizeWorldExperiments, grassDetailAtDistance } from './WorldExperim
 import { ChunkGeneration } from './ChunkGeneration.js';
 import { WaterSimulation } from './WaterSimulation.js';
 import { MeshWorkQueue } from './MeshWorkQueue.js';
+import { TerrainSectors } from '../rendering/TerrainSectors.js';
 import { detailAtDistance, DISTANCE_PLANT_PREFETCH, DISTANCE_PLANT_RETAIN } from './DistanceLod.js';
 import { BIOME_KEYS } from './terrain/Biomes.js';
 import { disposeTreeShowcase } from './trees/TreeShowcase.js';
@@ -202,6 +203,12 @@ export class World {
         this.shadowScene = new THREE.Scene();
 
         this.shadowScene.matrixWorldAutoUpdate = false;
+
+        // Obiekty terenu w scenie świata: w sektorach, z macierzami
+        // liczonymi raz i odrzucaniem całych sektorów spoza kadru
+        // (rendering/TerrainSectors.js).
+
+        this.sectors = new TerrainSectors(scene);
 
         // Generator terenu dla tego świata (typ zapisany w świecie).
 
@@ -1184,7 +1191,7 @@ export class World {
         );
 
 
-        this.scene.add(mesh);
+        this.sectors.add(mesh, chunk.cx, chunk.cz);
 
         chunk.mesh = mesh;
 
@@ -1245,7 +1252,7 @@ export class World {
         } else {
             const mesh = new THREE.Mesh(geometry, [blockMaterial, plantMaterial, waterMaterial, leafMaterial]);
             mesh.position.set(chunk.cx * CHUNK_SIZE, 0, chunk.cz * CHUNK_SIZE);
-            this.scene.add(mesh);
+            this.sectors.add(mesh, chunk.cx, chunk.cz);
             chunk[meshKey] = mesh;
             const shadow = new THREE.Mesh(geometry, SHADOW_CASTER_MATERIALS);
             shadow.position.copy(mesh.position);
@@ -1273,7 +1280,7 @@ export class World {
 
     removePlantMesh(chunk) {
         if (chunk.plantMesh) {
-            this.scene.remove(chunk.plantMesh);
+            this.sectors.remove(chunk.plantMesh);
             chunk.plantMesh.geometry.dispose();
             chunk.plantMesh = null;
         }
@@ -1288,7 +1295,7 @@ export class World {
 
     removeChunkMesh(chunk) {
 
-        this.scene.remove(chunk.mesh);
+        this.sectors.remove(chunk.mesh);
 
         chunk.mesh = null;
 
@@ -1359,7 +1366,7 @@ export class World {
     // i narzędzia testowe rysują po staremu.
     setRegionBatching(enabled) {
         if (enabled && !this.regionBatches) {
-            this.regionBatches = new RegionBatches(this.scene, [blockMaterial, plantMaterial, waterMaterial, leafMaterial]);
+            this.regionBatches = new RegionBatches(this.scene, [blockMaterial, plantMaterial, waterMaterial, leafMaterial], this.sectors);
             for (const chunk of this.chunks.values()) if (chunk.mesh) this.regionBatches.changed(chunk);
         }
         this.regionBatches?.setEnabled(enabled);
@@ -1393,6 +1400,8 @@ export class World {
 
         }
 
+
+        this.sectors.dispose();
 
         this.chunks.clear();
         this.dirtyChunks.clear();

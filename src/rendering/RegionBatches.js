@@ -57,11 +57,14 @@ const corner = new THREE.Vector3();
 
 export class RegionBatches {
 
-    // scene - scena świata; materials - tablica materiałów mesha chunka.
-    constructor(scene, materials) {
+    // scene - scena świata; materials - tablica materiałów mesha chunka;
+    // sectors - sektory terenu (rendering/TerrainSectors.js): region trafia
+    // do sektora swoich chunków. Bez nich (testy) prosto do sceny.
+    constructor(scene, materials, sectors = null) {
 
         this.scene = scene;
         this.materials = materials;
+        this.sectors = sectors;
 
         // klucz regionu -> { rx, rz, chunks: Set, mesh, members: Map chunk -> ranges,
         //                    dirty, dirtyAt }
@@ -343,8 +346,11 @@ export class RegionBatches {
         mesh.matrixAutoUpdate = false;
         mesh.updateMatrix();
         mesh.name = 'region-terenu';
-        this.scene.add(mesh);
-        mesh.updateMatrixWorld();
+        if (this.sectors) this.sectors.add(mesh, region.rx * REGION_SIZE, region.rz * REGION_SIZE);
+        else {
+            this.scene.add(mesh);
+            mesh.updateMatrixWorld();
+        }
 
         region.mesh = mesh;
         region.layout = layout;
@@ -371,7 +377,8 @@ export class RegionBatches {
             return;
         }
 
-        this.scene.remove(region.mesh);
+        if (this.sectors) this.sectors.remove(region.mesh);
+        else this.scene.remove(region.mesh);
         region.mesh.geometry.dispose();
         region.mesh = null;
         region.layout = [];

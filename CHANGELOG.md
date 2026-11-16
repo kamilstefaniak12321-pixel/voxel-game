@@ -11,6 +11,24 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 1.10.3 - Mniej pracy procesora przy dużym zasięgu widzenia
+
+PR #161. Opis: [`docs/aktualizacja-wydajnosci.md`](docs/aktualizacja-wydajnosci.md#przeglądanie-sceny-1103).
+
+- **Szybsze rysowanie świata przy dużym zasięgu.** Pomiar Kamila
+  (zasięg 800) pokazał, że procesor traci czas nie na logikę gry, tylko
+  na przygotowanie rysowania. Przy takim zasięgu w scenie jest ponad 17
+  tysięcy obiektów terenu i silnik co klatkę przeliczał położenie każdego
+  i sprawdzał każdy, choć teren stoi w miejscu. Teraz teren jest
+  podzielony na sektory 64 × 64 bloki: położenie liczy się raz, a sektory
+  poza kadrem są pomijane w całości. Sam koszt przeglądania sceny spada
+  około pięciokrotnie (w teście: 2-4 ms → 0,4-0,8 ms na klatkę). Obraz
+  się nie zmienia.
+- **`/wydajnosc test` i `lot` mówią więcej:** ile poleceń rysowania
+  przypada na świat, daleki teren i cienie, ile obiektów terenu jest
+  w scenie i ile sektorów w kadrze; daleki teren jest mierzony osobno od
+  nieba.
+
 ## 1.10.2 - Pauza na telefonie i siedem innych poprawek
 
 PR #160. Osiem błędów z przeglądu kodu; sprawdzenie: `tools/sprawdz_poprawki_1102.mjs`.

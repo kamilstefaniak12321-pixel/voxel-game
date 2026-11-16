@@ -47,6 +47,23 @@ function stageLines(stages) {
 }
 
 
+// Skąd biorą się polecenia rysowania i ile terenu silnik w ogóle ogląda
+// (sektory - rendering/TerrainSectors.js).
+
+function sceneLine(result) {
+
+    if (!result.draws || !result.terrain) {
+        return '';
+    }
+
+    const { draws, terrain } = result;
+
+    return `Rysowania: świat ${draws.world}, daleki teren ${draws.far}, cienie ${draws.shadows} | ` +
+        `teren: ${terrain.objects} obiektów w ${terrain.sectors} sektorach, w kadrze średnio ${terrain.visible} sektorów\n`;
+
+}
+
+
 export function benchmarkText(result) {
 
     const flight = result.mode === 'flight';
@@ -60,6 +77,6 @@ export function benchmarkText(result) {
         `${result.calls} rysowań, ${Math.round(result.triangles / 1000)} tys. trójkątów` +
         `${flight ? ` | najdłuższa kolejka terenu: ${result.queue} chunków` : ''} | ` +
         `zasięg ${result.viewDistance}, daleki teren ${result.farTerrain || 'wył.'}` +
-        `${result.potato ? ', tryb ziemniaka' : ''}\n${stageLines(result.stages)}`;
+        `${result.potato ? ', tryb ziemniaka' : ''}\n${sceneLine(result)}${stageLines(result.stages)}`;
 
 }

@@ -253,6 +253,7 @@ export class MenuWorld {
             renderer.clearDepth();
             this.farTerrain.render(renderer, camera);
             renderer.clearDepth();
+            this.world.sectors?.cull(camera);
             renderer.render(this.scene, camera);
             this.renderLightShafts();
         } finally {

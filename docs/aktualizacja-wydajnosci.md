@@ -91,6 +91,40 @@ pracę pakowania. Liczniki w diagnostyce podają osobno bajty migawek,
 podsumowań i rozpakowanego cache; nie obejmują narzutu obiektów JS ani VRAM.
 Metodyka, wyniki i ograniczenia: [pamięć i streaming 0.71.0](pomiary/pamiec-streaming-0.71.0/WYNIKI.md).
 
+## Przeglądanie sceny (1.10.3)
+
+Pomiar Kamila testem `/wydajnosc` (komputer, zasięg 800, daleki teren
+7168, 1.10.2): procesor 13-17 ms z 17 ms budżetu, z tego „wysyłanie
+świata" 4-5 ms i „niebo z horyzontem" 4-5 ms przy zaledwie ~520
+poleceniach rysowania; logika gry 0,4 ms.
+
+Przyczyna po stronie świata: przy zasięgu 800 scena ma ponad 17 tysięcy
+obiektów terenu (mesh chunka, mesh roślin, sklejone regiony), a silnik co
+klatkę przeliczał każdemu macierz położenia (scena wymusza to u wszystkich
+potomków, także z wyłączonym `matrixAutoUpdate`) i odwiedzał każdy przy
+wybieraniu kadru - dwa razy, bo przebieg cienia postaci rysuje tę samą
+scenę.
+
+Od 1.10.3 teren wisi pod jednym korzeniem w sektorach 4 × 4 chunki
+(`rendering/TerrainSectors.js`):
+
+- macierze liczone raz, przy wstawieniu; korzeń nie puszcza dalej
+  przeliczania co klatkę,
+- raz na klatkę `cull(camera)` chowa sektory poza kadrem - silnik do nich
+  nie wchodzi. Obraz bez zmian: odpadają tylko obiekty, których geometria
+  leży poza kadrem,
+- usunięcie mesha szuka go wśród kilkudziesięciu obiektów sektora, nie
+  wśród 17 tysięcy dzieci sceny.
+
+Pomiar w `tools/sprawdz_sektory_terenu.mjs` (17 651 obiektów, 534
+sektory, sam koszt przeglądania sceny, maszyna testowa): około 2-4 ms na
+klatkę przed, 0,4-0,8 ms po; odwiedzin obiektów 35 304 → 11 442.
+
+Co zostaje: sam koszt poleceń rysowania (świat, cienie) i daleki teren.
+Dlatego test wydajności pokazuje teraz rysowania osobno dla świata,
+dalekiego terenu i cieni, liczbę obiektów i sektorów terenu w kadrze,
+a „wysyłanie dalekiego terenu" jest osobnym etapem (dotąd razem z niebem).
+
 ## Odbiór
 
 Procedura i wyniki: [pomiary/wydajnosc-0.60.0/](pomiary/wydajnosc-0.60.0/).

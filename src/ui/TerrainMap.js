@@ -87,14 +87,35 @@ const RELIEF_COLORS = {
 // Lasy: kolor gatunku, który przeważa (im gęstszy las, tym mocniej),
 // łąki jasne.
 
-const FOREST_COLORS = {
+export const FOREST_COLORS = {
     spruce: ['#1d4a2a', 'świerk'],
     pine: ['#7a8f2e', 'sosna'],
     beech: ['#3d9a4a', 'buk'],
     linden: ['#d8c440', 'lipa'],
     oak: ['#b5742f', 'dąb'],
-    birch: ['#ecebe2', 'brzoza']
+    birch: ['#ecebe2', 'brzoza'],
+    // Gatunki nowszych biomów (0.83.0 i 1.8.0). Do 1.10.1 nie miały
+    // koloru i mapa lasów kończyła się na nich wyjątkiem.
+    maple: ['#c8452c', 'klon'],
+    sequoia: ['#7a3b24', 'sekwoja'],
+    rainbow_eucalyptus: ['#3fb6a8', 'eukaliptus tęczowy'],
+    olive: ['#8d9a6b', 'oliwka'],
+    mugo: ['#2f5d50', 'kosodrzewina'],
+    acacia: ['#c9a548', 'akacja'],
+    baobab: ['#a8876a', 'baobab'],
+    joshua_tree: ['#9fb07a', 'jukka'],
+    dragon_tree: ['#5c8f86', 'dracena'],
+    kapok: ['#1f7a3c', 'puchowiec'],
+    banyan: ['#0f5a34', 'figowiec'],
+    mangrove: ['#4d7f5c', 'namorzyn']
 };
+
+// Kolor i nazwa gatunku na mapie lasów; gatunek bez wpisu (nowe drzewo,
+// o którym mapa jeszcze nie wie) dostaje neutralną zieleń i swoją nazwę
+// z kodu - mapa ma się narysować zawsze.
+export function forestColor(species) {
+    return FOREST_COLORS[species] ?? ['#5f8f5a', String(species).replaceAll('_', ' ')];
+}
 
 const MEADOW_COLOR = [176, 206, 132];
 
@@ -633,7 +654,7 @@ export class TerrainMap {
                     this.job.present.add(forest.species);
                 }
 
-                color = mix(MEADOW_COLOR, hexToRgb(FOREST_COLORS[forest.species][0]), cover);
+                color = mix(MEADOW_COLOR, hexToRgb(forestColor(forest.species)[0]), cover);
 
                 return color.map((c) => Math.min(255, c * (0.8 + 0.2 * shade)));
 
@@ -726,8 +747,8 @@ export class TerrainMap {
         }
         else if (this.layer === 'lasy') {
 
-            for (const [species, [color, name]] of Object.entries(FOREST_COLORS)) {
-                if (this.job.present.has(species)) entries.push([color, name]);
+            for (const species of [...Object.keys(FOREST_COLORS), ...[...this.job.present].filter((name) => !(name in FOREST_COLORS))]) {
+                if (this.job.present.has(species)) entries.push(forestColor(species));
             }
 
             entries.push([`rgb(${MEADOW_COLOR.join(',')})`, 'łąki']);
@@ -815,7 +836,7 @@ export class TerrainMap {
             (BIOMES[info.biome] ? ` | biom: ${BIOMES[info.biome].name.toLowerCase()}` : '') +
             (info.rock ? ` | skała: ${blockNamePl(info.rock)}` : '') +
             (info.forest?.species && info.forest.density > 0.03
-                ? ` | las ${Math.round(info.forest.density * 100)}%: ${FOREST_COLORS[info.forest.species][1]}`
+                ? ` | las ${Math.round(info.forest.density * 100)}%: ${forestColor(info.forest.species)[1]}`
                 : '');
 
     }

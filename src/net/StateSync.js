@@ -97,17 +97,20 @@ export class StateSync {
         this.wait = interval;
         for (const [name, system] of Object.entries(this.systems)) {
             const sent = this.sent[name], map = system.map();
+            // W czasie LEASE zmiana czeka: nie oznaczamy jej jako wysłanej,
+            // więc wyjdzie przy pierwszym sprawdzeniu po jego upływie. (Do
+            // 1.10.1 była oznaczana od razu - edycja albo usunięcie wpisu
+            // tuż po cudzej zmianie nigdy nie docierały do innych.)
+            const leased = (key) => this.clock - (this.remoteAt.get(`${name}:${key}`) ?? -Infinity) < LEASE;
             for (const [key, entry] of map) {
                 const sign = system.sign(entry);
-                if (sent.get(key) === sign) continue;
+                if (sent.get(key) === sign || leased(key)) continue;
                 sent.set(key, sign);
-                if (this.clock - (this.remoteAt.get(`${name}:${key}`) ?? -Infinity) < LEASE) continue;
                 this.send(name, key, system.save(entry));
             }
             for (const key of [...sent.keys()]) {
-                if (map.has(key)) continue;
+                if (map.has(key) || leased(key)) continue;
                 sent.delete(key);
-                if (this.clock - (this.remoteAt.get(`${name}:${key}`) ?? -Infinity) < LEASE) continue;
                 this.send(name, key, null);
             }
         }

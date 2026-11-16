@@ -1935,8 +1935,13 @@ export class RealisticGenerator {
                     continue;
                 }
 
+                // compute() zwraca wciąż ten sam obiekt (this.sample) - wysokość
+                // środka trzeba zapamiętać przed pytaniem o sąsiadów. (Do 1.10.1
+                // sąsiad był porównywany sam ze sobą i każde miejsce było "płaskie".)
+                const height = sample.height;
+
                 const flat = [[1, 0], [-1, 0], [0, 1], [0, -1]].every(
-                    ([dx, dz]) => Math.abs(this.compute(x + dx, z + dz).height - sample.height) <= 1
+                    ([dx, dz]) => Math.abs(this.compute(x + dx, z + dz).height - height) <= 1
                 );
 
                 if (flat && !this.treeNear(x, z, 2)) {

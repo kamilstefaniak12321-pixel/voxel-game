@@ -11,6 +11,35 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 1.10.2 - Pauza na telefonie i siedem innych poprawek
+
+PR #160. Osiem błędów z przeglądu kodu; sprawdzenie: `tools/sprawdz_poprawki_1102.mjs`.
+
+- **Telefon: menu pauzy znów działa.** W aplikacji na Androida (gdzie nie
+  ma gry ze znajomymi) ekran pauzy zostawał pusty - samo przyciemnienie,
+  bez przycisków, więc nie dało się wejść w ustawienia ani zapisać
+  i wyjść do menu.
+- **Gra ze znajomymi: zmiany nie giną.** Skrzynia, stół stolarski,
+  ognisko albo wyrzucony przedmiot zmieniony lub zabrany w ciągu około
+  sekundy po zmianie drugiego gracza nie docierał do pozostałych. Teraz
+  taka zmiana czeka i jest wysyłana chwilę później.
+- **Stolarstwo nie zjada desek.** Gdy w ekwipunku było miejsce tylko na
+  jeden półblok, stół zużywał deskę na dwa i jeden przepadał. Teraz
+  robi całą partię albo nic („Ekwipunek pełny").
+- **Mapa lasów (`/mapa lasy`)** ma kolory wszystkich gatunków: klonu,
+  sekwoi, eukaliptusa tęczowego, oliwki, kosodrzewiny i drzew z 1.8.0.
+  Dotąd w ich lasach mapa kończyła się błędem.
+- **Miejsce startu jest naprawdę płaskie.** Sprawdzenie sąsiednich
+  kolumn porównywało wysokość samą ze sobą i nie odrzucało stromych
+  miejsc. W części światów punkt startu (i odrodzenia bez łóżka)
+  przesunie się o kilkadziesiąt bloków na równiejszy teren.
+- **`/ustaw`**: podpowiedzi nie wywracają się przy `imie`, `serwer`
+  i `klawisze`; komenda przyjmuje wszystkie słowne wartości (np.
+  `/ustaw atmosfera baseline`, `/ustaw model-swiatla classic`).
+- **Osiągnięcie „Komplet narzędzi"** wymaga siekiery, kilofa i łopaty,
+  jak w opisie (zaliczał je też nóż). Niedokończony postęp liczy się
+  od nowa.
+
 ## 1.10.1 - Test wydajności z rankingiem etapów, gra wymaga WebGL 2
 
 PR #159. Opis: [`docs/logi.md`](docs/logi.md#test-wydajności-od-1101).

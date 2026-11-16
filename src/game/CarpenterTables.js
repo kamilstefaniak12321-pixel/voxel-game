@@ -399,7 +399,9 @@ export class CarpenterTables {
         const batches = sneaking ? Math.floor(table.count / product.planks) : 1;
         let made = 0;
         for (let i = 0; i < batches; i++) {
-            if (!this.game.inventory.canAdd(type)) break;
+            // Cała partia albo nic: przy miejscu na jeden półblok deska nie
+            // przepada na drugi, który by się nie zmieścił (błąd do 1.10.1).
+            if (!this.game.inventory.canAdd(type, product.count)) break;
             const added = this.give(type, product.count);
             if (added === 0) break;
             table.count -= product.planks;

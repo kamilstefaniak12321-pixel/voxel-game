@@ -111,14 +111,12 @@ for (const material of [blockMaterial, plantMaterial, leafMaterial, modelMateria
 modelMaterial.dispose();
 
 // Independent bounce must remain present when directional maps are off.
-// WebGL1's early material path must not acquire the WebGL2 sampler at all.
-for (const webgl2 of [false, true]) {
+// Od 1.10.1 gra wymaga WebGL 2 - jest jedna ścieżka materiału.
+{
     const shader = { vertexShader: THREE.ShaderLib.lambert.vertexShader,
         fragmentShader: THREE.ShaderLib.lambert.fragmentShader, uniforms: {} };
-    blockMaterial.onBeforeCompile(shader, { capabilities: { isWebGL2: webgl2 } });
-    assert.equal(shader.fragmentShader.includes('uniform highp sampler3D uBounceLight;'), webgl2);
+    blockMaterial.onBeforeCompile(shader, { capabilities: { isWebGL2: true } });
     assert.match(shader.fragmentShader, /#ifdef USE_DYNAMIC_LIGHT\s+\/\/ The bounce solver[\s\S]*?blockBounce = bounceLight/);
-    if (webgl2) assert.match(shader.fragmentShader, /uniform highp sampler3D uBounceLight;[\s\S]*vec3 bounceLight\(/);
-    else assert.ok(!shader.fragmentShader.includes('sampler3D'));
+    assert.match(shader.fragmentShader, /uniform highp sampler3D uBounceLight;[\s\S]*vec3 bounceLight\(/);
 }
 console.log(`OK: ${checks} profili powierzchni — semantyczne liście/gałęzie/owoce, paczki, itemy i niezmienione grupy chunka.`);

@@ -159,7 +159,7 @@ z tego i zwykłego światła. Meshe chunków się nie zmieniają.
 błysk uderzenia i kule z `/demo kula` - zbiera je
 `Game.updateDynamicLight()`. Nowe źródło (płonąca strzała, świecący
 potwór...) = dopisanie go do tej listy. Całość wyłącza ustawienie
-„Dynamiczne światło” (WebGL2; na starszym WebGL1 go nie ma).
+„Dynamiczne światło”.
 
 Ograniczenie: światło liczy się tylko w pudełku wokół gracza, więc
 źródło dalej niż ~16 bloków nie oświetla terenu (samo świecenie

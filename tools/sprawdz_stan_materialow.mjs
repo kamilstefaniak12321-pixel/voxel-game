@@ -43,8 +43,8 @@ assert.equal(options.enabled, false); assert.equal(applyMaterialLightingSettings
 settings.set('lightingMaterials', 'standard'); settings.set('potato', true); update();
 assert.equal(options.enabled, false); assert.equal(applyMaterialLightingSettings(settings), false);
 settings.set('potato', false); settings.set('bounceStrength', 0); update(); assert.equal(options.enabled, false);
-settings.set('bounceStrength', 18); updateBounceLightingState(options, settings, sky, false);
-assert.equal(options.enabled, false, 'Brak sampler3D nie może uruchomić solvera');
+// Od 1.10.1 gra wymaga WebGL 2 - solver nie ma już wyłącznika "brak sampler3D".
+settings.set('bounceStrength', 18);
 settings.set('leafTransmission', false); settings.set('materialSpecular', false);
 assert.equal(applyMaterialLightingSettings(settings), true);
 assert.equal(lightingUniforms.uLeafTransmission.value, 0); assert.equal(lightingUniforms.uMaterialSpecular.value, 0);
@@ -147,7 +147,9 @@ for (const [key, disabled, enabled] of [['surfaceBounce', false, true], ['bounce
     pausedSettings.set(key, enabled); assertSamples();
     assert.ok(sampleHand()[0] > 0 && sampleFire()[0] > 0, `${key}: odtworzenie z cache bez wznowienia gry`);
 }
-game.renderer.capabilities.isWebGL2 = false; game.applySettings(); assertSamples();
+// Od 1.10.1 gra wymaga WebGL 2 - dawny wyłącznik "brak WebGL 2" zniknął;
+// wyłączenie sprawdzamy trybem ziemniaka.
+pausedSettings.set('potato', true); assertSamples();
 assert.deepEqual(sampleHand(), [0, 0, 0]); assert.equal(bounce.enabled, false);
 assert.deepEqual(bounce.data, transferBefore); assert.equal(bounce.initialCursor, cursorBefore);
 assert.equal(bounce.updates, 0); assert.equal(bounce.invalidations, 0);

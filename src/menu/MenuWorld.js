@@ -213,8 +213,7 @@ export class MenuWorld {
         this.scene.fog.color.copy(this.sky.state.horizon).multiplyScalar(skyUniforms.uFogBrightness.value);
         this.shadows.update(elapsed, this.sky, p);
         this.sky.applyShadowContrast(this.shadows.active ? this.shadows.strength : 0);
-        this.bounce.update(this.world, p, updateBounceLightingState(this.bounceLighting,
-            this.settings, this.sky, this.renderer.capabilities.isWebGL2));
+        this.bounce.update(this.world, p, updateBounceLightingState(this.bounceLighting, this.settings, this.sky));
         if (this.firstReady) this.effects.update(elapsed, this.sky.state.daylight ?? 1);
         if (!this.firstReady) {
             const far = this.farTerrain.stats();

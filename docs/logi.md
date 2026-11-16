@@ -58,6 +58,42 @@ wystarczającego wyjaśnienia”. Nie przypisuje bez dowodu przyczyny
 sterownikowi, odśmiecaniu pamięci, temperaturze ani innemu procesowi.
 Liczba rysowań i trójkątów jest kontekstem obciążenia, nie czasem GPU.
 
+## Test wydajności (od 1.10.1)
+
+Gdy chcesz porównać ustawienia, urządzenia albo wersje gry, zamiast
+czekać na przycięcie uruchom test - zawsze robi to samo:
+
+- `/wydajnosc test [sekundy]` - kamera obraca się raz dookoła. Mierzy
+  **rysowanie** tego, co już wczytane.
+- `/wydajnosc lot [sekundy]` - przelot prosto w stronę, w którą patrzysz,
+  24 bloki na sekundę, 30 bloków nad miejscem startu (startuj na otwartym
+  terenie - lot nie omija gór). Mierzy **wczytywanie świata**:
+  generowanie, siatki, daleki teren. Po teście wracasz na miejsce startu.
+
+Wynik pojawia się na czacie i trafia do raportu (zdarzenie
+`performance.benchmark`), więc da się go zapisać przyciskiem **Zapisz
+raport**. Oprócz FPS pokazuje:
+
+- **Procesor** - ile milisekund klatki zajął kod gry na tle budżetu
+  (16,7 ms przy 60 FPS) i ile klatek było wolniejszych niż cel;
+- **Na co** - pięć najdroższych etapów z całego testu (te same etapy co
+  niżej w raporcie), z udziałem w czasie procesora i najgorszą klatką;
+- **Kartę graficzną** - średni czas rysowania na karcie, jeśli sterownik
+  go udostępnia;
+- jedno zdanie, co ogranicza: procesor, karta, czy jest zapas.
+
+Etapy mierzy rejestrator z **Ustawienia → Gra → Logi wydajności**; gdy
+jest wyłączony, test podaje tylko FPS.
+
+## Wymagania
+
+Od 1.10.1 gra wymaga **WebGL 2**. Mają go wszystkie przeglądarki od
+kilku lat i obie aplikacje (Windows, Android). Dawna ścieżka WebGL 1 -
+bez cieni, dynamicznego światła, HDR, wygładzania i pór roku liści -
+została usunięta; na urządzeniu bez WebGL 2 ekran startowy mówi to
+wprost. W shaderach wody i w teksturze pokrycia chunków zostały
+nieszkodliwe ślady zgodności (`#if __VERSION__ >= 300`, format RGBA).
+
 ## Co zapisujemy
 
 - Błędy JavaScript, nieobsłużone odrzucenia Promise, ostrzeżenia i błędy

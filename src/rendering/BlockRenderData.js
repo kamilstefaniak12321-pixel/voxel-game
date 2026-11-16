@@ -143,7 +143,7 @@ export const blockMaterial =
 // sąsiedni kafelek, czyli np. brązowe kropki na trawie.
 //
 // Słowo "centroid" każe liczyć tę pozycję zawsze wewnątrz ściany.
-// Działa tylko w WebGL2 (czyli w każdej współczesnej przeglądarce).
+// Wymaga WebGL 2, jak cała gra (main.js).
 // ------------------------------------------------------------
 
 blockMaterial.defaultAttributeValues = { ...blockMaterial.defaultAttributeValues, surfaceProfile: [0, 0], canopyTint: [1, 1, 1] };
@@ -277,12 +277,6 @@ blockMaterial.onBeforeCompile = (shader, renderer) => {
 
     Object.assign(shader.uniforms, skyUniforms, viewUniforms, leafSeasonUniforms);
 
-    // Pory roku liści tylko w WebGL 2 (dwa dodatkowe varyingi; WebGL 1
-    // gwarantuje ich za mało) - bez nich liście wyglądają jak dawniej.
-    const leafDefine = renderer.capabilities.isWebGL2 ? '#define LEAF_SEASONS\n' : '';
-    shader.vertexShader = leafDefine + shader.vertexShader;
-    shader.fragmentShader = leafDefine + shader.fragmentShader;
-
     // W trybie ziemniaka (define POTATO) kolor nieba dla mgły liczy
     // się tylko w rogach ścian, a nie w każdym pikselu.
 
@@ -404,22 +398,8 @@ blockMaterial.onBeforeCompile = (shader, renderer) => {
         #endif
         #include <lights_fragment_end>`);
 
-    if (!renderer.capabilities.isWebGL2) {
-        // Bez map cieni dostęp do nieba nadal tłumi światło naturalne.
-        // AO działa tylko na otoczenie, tak jak w ścieżce WebGL2.
-        shader.uniforms.uSunShadowLight = shadowUniforms.uSunShadowLight;
-        shader.fragmentShader = shader.fragmentShader
-            .replace('#include <common>', '#include <common>\nuniform int uSunShadowLight;')
-            .replace('#include <lights_fragment_begin>',
-                shadowLightsChunk('blockSky', 'blockSky', 'blockAmbient', 'uAtmosphericLight > 0.5'));
-        installLightingDiagnostics(shader, { albedo: 'blockTexel', sky: 'blockSky',
-            ao: 'surfaceDecodeLight(vSurfaceOcclusion)', visibility: 'blockSky' });
-        return;
-    }
-
-
-    // Dynamiczne światło potrzebuje tekstur 3D (WebGL2), cienie słońca -
-    // tekstury głębi (też WebGL2).
+    // Dynamiczne światło korzysta z tekstur 3D, cienie słońca - z tekstur
+    // głębi (gra wymaga WebGL 2 - main.js).
 
     Object.assign(shader.uniforms, dynamicLightUniforms, meteorLightUniforms, shadowUniforms, bounceUniforms, campfireLightUniforms);
 
@@ -1328,8 +1308,7 @@ for (
 // CIENIE SŁOŃCA
 //
 // Włącza albo wyłącza cienie (define USE_SUN_SHADOWS) i daleką mapę
-// cieni (USE_FAR_SHADOWS) w podanych materiałach. Tylko z WebGL2
-// (Shadows.supported). Zmiana defines = nowy shader, więc tylko gdy
+// cieni (USE_FAR_SHADOWS) w podanych materiałach. Zmiana defines = nowy shader, więc tylko gdy
 // się zmienia.
 // ------------------------------------------------------------
 

@@ -793,11 +793,6 @@ export class SunShadows {
 
         this.renderer = renderer;
 
-        // Cienie potrzebują WebGL2 (tekstury głębi, pozycja w świecie
-        // w shaderze bloków).
-
-        this.supported = renderer.capabilities.isWebGL2;
-
         const gl = renderer.getContext?.();
         const subpixelBits = gl?.getParameter?.(gl.SUBPIXEL_BITS);
         // Bez kontekstu (np. kontroler w teście CPU) używamy siatki 1/16;
@@ -973,7 +968,7 @@ export class SunShadows {
 
     setQuality(quality) {
 
-        const wanted = this.supported && SHADOW_QUALITY[quality] ? quality : 0;
+        const wanted = SHADOW_QUALITY[quality] ? quality : 0;
 
         if (wanted === this.quality) {
             return;

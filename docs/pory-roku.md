@@ -121,8 +121,8 @@ nie przebudowuje żadnego chunka i nic nie trafia do zapisu.
   i przedwiośnie - kilkanaście razy na rok gry): nowa paleta idzie do
   workerów, a kafelki przebudowują siatki od gracza w dal, w zwykłym
   budżecie klatki (stara siatka zostaje do podmiany).
-- Pory roku liści wymagają WebGL 2 (dwa dodatkowe varyingi); w WebGL 1
-  liście wyglądają jak dawniej.
+- Wymaga WebGL 2 (dwa dodatkowe varyingi) - od 1.10.1 wymaga go cała gra
+  (`docs/logi.md`), więc nie ma już osobnego wyłącznika.
 - Świat bez pór roku (`setLeafSeason(null)`): bez zmian.
 
 **Kolor liści z biomu.** Ten sam kolor klimatu, który barwi trawę

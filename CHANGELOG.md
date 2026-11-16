@@ -11,6 +11,25 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 1.10.1 - Test wydajności z rankingiem etapów, gra wymaga WebGL 2
+
+PR #159. Opis: [`docs/logi.md`](docs/logi.md#test-wydajności-od-1101).
+
+- **`/wydajnosc test` pokazuje, na co idzie czas klatki:** ile zajmuje
+  procesor na tle budżetu klatki, pięć najdroższych etapów (siatki,
+  generowanie, daleki teren, światło, wysyłanie świata do karty...),
+  czas karty graficznej i jedno zdanie, co ogranicza płynność.
+- **Nowy test `/wydajnosc lot [sekundy]`:** przelot prosto przed siebie
+  nad terenem - mierzy wczytywanie świata, czego test z obrotem kamery
+  nie pokazywał. Po teście wracasz na miejsce startu.
+- Wynik testu trafia też do raportu diagnostycznego (`/logi`), więc da
+  się go zapisać i porównać przed zmianą i po niej.
+- **Gra wymaga WebGL 2.** Mają go wszystkie przeglądarki od kilku lat
+  i obie aplikacje. Usunięta została dawna, okrojona ścieżka WebGL 1
+  (bez cieni, dynamicznego światła i pór roku liści); urządzenie bez
+  WebGL 2 dostaje na starcie czytelny komunikat. Dla graczy z WebGL 2
+  nic się nie zmienia.
+
 ## 1.10.0 - Liście w porach roku, owoce i szyszki, figowiec-namiot
 
 PR #158. Opis: [`docs/pory-roku.md`](docs/pory-roku.md#liście-drzew-w-porach-roku-1100),

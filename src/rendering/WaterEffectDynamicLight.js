@@ -10,7 +10,7 @@ export const waterEffectLightUniforms = {
 
 // Insert after SURFACE_LIGHTING_GLSL. staticLinear is already decoded by
 // waterfallLightingAt; worldNormal is normalized, occlusion is encoded AO
-// (use 1.0 for effects without AO). WebGL1 keeps static light, as terrain does.
+// (use 1.0 for effects without AO).
 // Three emits GLSL 300 for WebGL2, so no separate material define is needed.
 export const WATER_EFFECT_DYNAMIC_LIGHT_GLSL = /* glsl */ `
     #if __VERSION__ >= 300

@@ -192,7 +192,7 @@ check(Math.abs(L.leafStage(3.999).grey - L.leafStage(0.001).grey) < 0.01, 'Konie
     check(L.LEAF_TIMES.snow <= 0.85, 'Śnieg nigdy nie zakrywa liści w całości (delikatna warstwa)');
     check(U.uLeafAutumn.value.length === L.LEAF_PALETTE_LIMIT && U.uLeafRule.value.length === L.LEAF_PALETTE_LIMIT, 'Tablice palet pełnej długości');
     const render = source('src/rendering/BlockRenderData.js');
-    check(render.includes('LEAF_FRAGMENT_GLSL') && render.includes('LEAF_VERTEX_GLSL') && render.includes('leafSeasonUniforms') && render.includes("'#define LEAF_SEASONS\\n'"), 'Shader bloków ma pory roku liści (tylko WebGL 2)');
+    check(render.includes('LEAF_FRAGMENT_GLSL') && render.includes('LEAF_VERTEX_GLSL') && render.includes('leafSeasonUniforms') && !render.includes('isWebGL2'), 'Shader bloków ma pory roku liści (bez ścieżki WebGL 1 - gra wymaga WebGL 2)');
     check(L.LEAF_FRAGMENT_GLSL.includes('uLeafPhase') && L.LEAF_FRAGMENT_GLSL.includes('uLeafSnow') && L.LEAF_VERTEX_GLSL.includes('tint.a'), 'Kod GLSL czyta fazę roku, śnieg i kod liścia');
     check(source('src/game/Game.js').includes('setLeafSeason(days)'), 'Gra podaje czas liściom co klatkę');
 }

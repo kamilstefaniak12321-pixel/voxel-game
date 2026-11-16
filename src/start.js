@@ -30,7 +30,10 @@ try {
     title.textContent = 'Nie udało się uruchomić gry';
     const note = document.createElement('p');
     note.className = 'menu-note';
-    note.textContent = 'Zapisz raport diagnostyczny — zawiera błąd i informacje o uruchomieniu.';
+    // Błąd z gotowym wyjaśnieniem dla gracza (np. brak WebGL 2 - main.js).
+    note.textContent = typeof error?.userMessage === 'string'
+        ? `${error.userMessage} Raport diagnostyczny zawiera szczegóły.`
+        : 'Zapisz raport diagnostyczny — zawiera błąd i informacje o uruchomieniu.';
     const save = document.createElement('button');
     save.className = 'menu-button';
     save.textContent = 'Zapisz raport';

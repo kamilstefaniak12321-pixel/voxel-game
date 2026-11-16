@@ -17,11 +17,11 @@ export function createBounceLightingState() {
         strength: 0.18, saturation: 0.65, quality: 'standard', budgetMs: 0.6 };
 }
 
-export function updateBounceLightingState(options, settings, sky, webgl2 = true) {
+export function updateBounceLightingState(options, settings, sky) {
     const natural = sky.lightingLook === 'natural';
     options.quality = settings.get('lightingMaterials');
     options.budgetMs = options.quality === 'high' ? 0.9 : 0.6;
-    options.enabled = webgl2 && !settings.get('potato')
+    options.enabled = !settings.get('potato')
         && (natural ? options.quality !== 'basic' && settings.get('surfaceBounce') : settings.get('bounceLight'));
     options.strength = settings.get('bounceStrength') / 100;
     options.saturation = settings.get('bounceSaturation') / 100;

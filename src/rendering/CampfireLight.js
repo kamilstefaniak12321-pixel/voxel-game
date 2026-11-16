@@ -89,7 +89,7 @@ export class CampfireLight {
     }
 
     render(world, clock) {
-        if (!this.renderer.capabilities.isWebGL2 || clock < this.nextDraw) return;
+        if (clock < this.nextDraw) return;
         let index = -1;
         for (let step = 0; step < 4; step++) {
             const i = (this.cursor + step) % 4, slot = this.slots[i];

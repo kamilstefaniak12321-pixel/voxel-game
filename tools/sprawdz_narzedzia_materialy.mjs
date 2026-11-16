@@ -78,12 +78,13 @@ equal(craftAll(full)[1], 0, 'full inventory rejects fuel');
 equal(JSON.stringify(full.data), before, 'full inventory preserves ingredients and catalyst');
 
 const achievement = ACHIEVEMENTS.find(entry => entry.id === 'tool_set');
-const collected = new Set(), book = { collect: (key, type) => { equal(key, 'tools', 'stable achievement key'); collected.add(type); return collected.size; } };
+const collected = new Set(), book = { collect: (key, type) => { equal(key, 'tool_set', 'achievement key (od 1.10.2 nowy: stary zbiór "tools" mógł zawierać nóż)'); collected.add(type); return collected.size; } };
 equal(achievement.when({ type: 'axe_granite' }, book), false, 'first tool class');
 equal(achievement.when({ type: 'axe_basalt' }, book), false, 'another axe does not complete a class');
 equal(achievement.when({ type: 'pickaxe_limestone' }, book), false, 'second tool class');
 equal(achievement.when({ type: 'shovel_sandstone' }, book), true, 'three material tool classes unlock achievement');
-equal([...collected], ['axe', 'pickaxe', 'shovel'], 'achievement remains compatible with existing progress');
+equal([...collected], ['axe', 'pickaxe', 'shovel'], 'achievement counts tool classes, not materials');
+equal(achievement.when({ type: 'knife_granite' }, { collect() { throw new Error('nóż nie należy do kompletu'); } }), false, 'knife is not part of the set');
 
 equal(STONE_TOOL_TEXTURES.length, 20, 'twenty additional texture variants (axe, pickaxe, shovel, knife)');
 for (const spec of STONE_TOOL_TEXTURES) equal(ITEM_TYPES[spec.name]?.icon, spec.name, 'registry uses generated texture');

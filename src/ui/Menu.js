@@ -912,7 +912,7 @@ export class Menu {
             netInfo.push(nameLabel);
             buttons.append(button(TEXTS.openToFriends, () => this.handlers.openToFriends(nameInput.value)));
         }
-        else if (net.role === 'host') {
+        else if (net?.role === 'host') {
             const code = el('p', 'menu-invite-code', net.code);
             const copy = button(TEXTS.copyCode, () => {
                 this.handlers.copyText?.(net.code);
@@ -921,9 +921,12 @@ export class Menu {
             netInfo.push(code, el('p', 'menu-note', TEXTS.hostingNote(net.players)));
             buttons.append(copy, button(TEXTS.closeToFriends, () => this.handlers.closeToFriends?.()));
         }
-        else {
+        else if (net) {
             netInfo.push(el('p', 'menu-note', TEXTS.guestNote(net.host, net.players)));
         }
+        // Bez sesji i bez możliwości jej otwarcia (aplikacja na Androida
+        // nie ma gry ze znajomymi) - nic do pokazania. Do 1.10.1 czytało się
+        // tu net.role z null i ekran pauzy zostawał pusty.
 
         // Samouczek w toku: który krok oraz "pomiń krok" i "wyłącz"
         // (w grze mysz jest zajęta rozglądaniem - stąd przyciski tutaj).

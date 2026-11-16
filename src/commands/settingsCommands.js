@@ -245,6 +245,23 @@ function parseSettingValue(key, text) {
     }
 
 
+    // Wybór spośród słów (np. atmosfera natural | baseline, model-swiatla
+    // world | classic). Do 1.10.1 każdy wybór był czytany jako liczba
+    // i poprawne słowa były odrzucane.
+
+    if (key in SETTINGS_CHOICES && SETTINGS_CHOICES[key].some((choice) => typeof choice === 'string')) {
+
+        const value = SETTINGS_CHOICES[key].find((choice) => simplify(String(choice)) === word);
+
+        if (value === undefined) {
+            throw new CommandError(`Do wyboru: ${SETTINGS_CHOICES[key].join(', ')}`);
+        }
+
+        return value;
+
+    }
+
+
     if (key in SETTINGS_CHOICES) {
 
         const value = ['bez-limitu', 'brak', 'wyl'].includes(word) ? 0 : Number(word);
@@ -844,6 +861,13 @@ export const SETTINGS_COMMANDS = [
                 if (key === 'leafModel') return ['czesci', 'bloki'];
                 if (key in SETTINGS_CHOICES) return SETTINGS_CHOICES[key].map(String);
                 if (key === 'theme') return Object.keys(UI_THEMES);
+
+                if (key === 'keys') return ['domyslne'];
+
+                // Imię, adres serwera i inne ustawienia bez zakresu - nie ma
+                // czego podpowiedzieć (do 1.10.1 kończyło się to wyjątkiem).
+
+                if (!(key in SETTINGS_RANGES)) return [];
 
                 const { min, max } = SETTINGS_RANGES[key];
 

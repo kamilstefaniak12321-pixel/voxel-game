@@ -66,6 +66,9 @@ const BUILDING_BLOCKS = ['lime_plaster', 'ochre_plaster', 'terracotta', 'polishe
 
 const FRUITS = ['strawberry', 'blackberry', 'chili_pepper', 'hazelnut', 'blueberry'];
 
+// Osiągnięcie "Komplet narzędzi": siekiera, kilof i łopata.
+export const TOOL_SET = ['axe', 'pickaxe', 'shovel'];
+
 // Jadalne plony drzew z dalekich stron (1.10.0) - osiągnięcie "Smaki dalekich stron".
 const WORLD_FRUITS = ['banyan_fig', 'baobab_fruit', 'dragon_tree_berries', 'joshua_tree_flowers', 'araucaria_nuts', 'coconut_palm_kokos'];
 
@@ -805,8 +808,11 @@ export const ACHIEVEMENTS = [
         comment: 'Teraz brakuje tylko skrzynki na narzędzia. I garażu. I warsztatu.',
         icon: 'pickaxe',
         on: 'crafted',
-        when: (data, book) => Boolean(getTool(data.type)) && book.collect('tools', getTool(data.type)) >= 3,
-        goal: { key: 'tools', count: 3 }
+        // Tylko trzy narzędzia z opisu. Do 1.10.1 liczyło się dowolne (np.
+        // nóż zamiast łopaty); postęp ma nowy klucz, żeby stary nóż nie
+        // zaliczał kompletu.
+        when: (data, book) => TOOL_SET.includes(getTool(data.type)) && book.collect('tool_set', getTool(data.type)) >= TOOL_SET.length,
+        goal: { key: 'tool_set', count: TOOL_SET.length }
     },
     {
         id: 'tree_grown',

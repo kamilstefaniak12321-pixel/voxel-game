@@ -80,7 +80,10 @@ raport**. Oprócz FPS pokazuje:
   niżej w raporcie), z udziałem w czasie procesora i najgorszą klatką;
 - **Kartę graficzną** - średni czas rysowania na karcie, jeśli sterownik
   go udostępnia;
-- jedno zdanie, co ogranicza: procesor, karta, czy jest zapas.
+- jedno zdanie, co ogranicza: procesor, karta, czy jest zapas;
+- od 1.10.3: **rysowania** osobno dla świata, dalekiego terenu i cieni
+  oraz ile obiektów terenu jest w scenie, w ilu sektorach i ile sektorów
+  średnio było w kadrze (`docs/aktualizacja-wydajnosci.md`).
 
 Etapy mierzy rejestrator z **Ustawienia → Gra → Logi wydajności**; gdy
 jest wyłączony, test podaje tylko FPS.

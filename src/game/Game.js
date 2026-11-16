@@ -1256,10 +1256,20 @@ export class Game extends GameInteraction {
 
         // Mapa cieni słońca (gdy trzeba) i cień gracza - przed światem.
 
+        // Test wydajności liczy polecenia rysowania osobno dla cieni,
+        // dalekiego terenu i świata (updateBenchmark).
+
+        const drawn = this.benchmark?.draws;
+        // (Atrapy renderera w testach nie mają liczników.)
+        const calls = renderer.info?.render ?? { calls: 0 };
+        let callsBefore = calls.calls;
+
         profile?.beginStage('shadows');
         this.shadows.render(this.world, this.camera.position, this.model, this.scene, this.viewDistance, this.farTerrain);
         this.campfires.renderer.renderShadows();
         profile?.endStage('shadows');
+
+        if (drawn) drawn.shadows += calls.calls - callsBefore;
         this.bounce.bind();
 
 
@@ -1365,9 +1375,20 @@ export class Game extends GameInteraction {
             // Z wysoka: kula Ziemi pod dalekim terenem, chmury nad nim.
 
             this.spaceView.renderBehind(renderer, camera);
+            profile?.endStage('sky');
 
+            // Daleki teren osobno od nieba (od 1.10.3) - w pomiarze widać,
+            // który z nich kosztuje.
+
+            callsBefore = calls.calls;
+
+            profile?.beginStage('farDraw');
             this.farTerrain.render(renderer, camera);
+            profile?.endStage('farDraw');
 
+            if (drawn) drawn.far += calls.calls - callsBefore;
+
+            profile?.beginStage('sky');
             this.spaceView.renderFront(renderer, camera);
             profile?.endStage('sky');
 
@@ -1375,9 +1396,19 @@ export class Game extends GameInteraction {
 
         }
 
+        callsBefore = calls.calls;
+
         profile?.beginStage('world');
+
+        // Sektory terenu poza kadrem znikają w całości - silnik nie
+        // przegląda ich obiektów (rendering/TerrainSectors.js).
+
+        this.world?.sectors?.cull(camera);
+
         renderer.render(this.scene, camera);
         profile?.endStage('world');
+
+        if (drawn) drawn.world += calls.calls - callsBefore;
 
 
         // Promienie światła w powietrzu (na świecie, pod ręką).
@@ -1515,7 +1546,11 @@ export class Game extends GameInteraction {
             calls: 0,
             triangles: 0,
             samples: 0,
-            queue: 0
+            queue: 0,
+            // Polecenia rysowania według przebiegu (Game.render) i sektory
+            // terenu w kadrze.
+            draws: { shadows: 0, far: 0, world: 0 },
+            sectorsVisible: 0
         };
 
         this.perf?.reset();
@@ -1567,6 +1602,7 @@ export class Game extends GameInteraction {
         test.calls += info.calls;
         test.triangles += info.triangles;
         test.queue = Math.max(test.queue, this.world.loadQueue.length + this.world.dirtyChunks.size);
+        test.sectorsVisible += this.world.sectors.visible;
         test.samples++;
 
 
@@ -1611,6 +1647,12 @@ export class Game extends GameInteraction {
             viewDistance: this.viewDistance,
             farTerrain: this.settings.get('farTerrain') || 0,
             potato: Boolean(this.settings.get('potato')),
+            draws: {
+                shadows: Math.round(test.draws.shadows / test.samples),
+                far: Math.round(test.draws.far / test.samples),
+                world: Math.round(test.draws.world / test.samples)
+            },
+            terrain: { ...this.world.sectors.stats(), visible: Math.round(test.sectorsVisible / test.samples) },
             stages
         };
 

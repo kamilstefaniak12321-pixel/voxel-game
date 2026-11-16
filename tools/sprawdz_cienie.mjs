@@ -454,10 +454,11 @@ for (const jump of ['teleport', 'sun-angle', 'moon', 'space', 'no-light']) {
     } finally { fire.dispose(); f.dispose(); plantShadowState.natural = false; plantWindUniforms.uTime.value = 0; }
 }
 
-// WebGL1 nie alokuje map głębi nawet po wybraniu jakości 3.
+// Od 1.10.1 gra wymaga WebGL 2 (main.js) - cienie nie mają już wyłącznika "brak WebGL 2".
 {
-    const renderer = new CountingRenderer(); renderer.capabilities.isWebGL2 = false;
-    const shadows = new SunShadows(renderer); shadows.setQuality(3);
-    assert.equal(shadows.enabled, false); assert.ok(shadows.cascades.every(c => !c.target)); shadows.dispose();
+    const { readFileSync } = await import('node:fs');
+    const main = readFileSync(new URL('../src/main.js', import.meta.url), 'utf8');
+    assert.ok(main.includes('if (!renderer.capabilities.isWebGL2)') && main.includes('userMessage'), 'Start bez WebGL 2 kończy się czytelnym komunikatem');
+    assert.equal('supported' in new SunShadows(new CountingRenderer()), false);
 }
 console.log('OK: wspólny budżet kaskad, atomowa publikacja, streaming bez zagłodzenia, zmiany chunków, jakość 0/1/2/3, teleport, dzień/noc, kosmos i frustum przy niskim Słońcu.');

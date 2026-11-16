@@ -701,10 +701,6 @@ export const LIGHT_COMMANDS = [
 
             let text = `${TEXTS.shadows(quality)}, ${TEXTS.lightShafts(settings.get('lightShafts')).replace(/\.$/, '')}.`;
 
-            if (!shadows.supported) {
-                return `${text} Ta przeglądarka nie ma WebGL2 - cienie nie zadziałają.`;
-            }
-
             if (settings.get('potato')) {
                 return `${text} W trybie ziemniaka cieni nie ma (/ziemniak wyl).`;
             }

@@ -6,6 +6,7 @@
 // ------------------------------------------------------------
 
 import { simplify, CommandError } from './CommandRegistry.js';
+import { BENCHMARK_FLIGHT } from '../diagnostics/Benchmark.js';
 import {
     SETTINGS_RANGES,
     SETTINGS_DEFAULTS,
@@ -859,14 +860,17 @@ export const SETTINGS_COMMANDS = [
     {
         name: 'wydajnosc',
         aliases: ['perf', 'fps'],
-        usage: '/wydajnosc | /wydajnosc test [sekundy]',
-        description: 'Klatki na sekundę, czasy klatki, rysowanie, chunki, pamięć; test z obrotem kamery.',
+        usage: '/wydajnosc | /wydajnosc test [sekundy] | /wydajnosc lot [sekundy]',
+        description: 'Klatki na sekundę, czasy klatki, rysowanie, chunki, pamięć; test z obrotem kamery albo przelotem - z rankingiem, na co idzie czas klatki.',
 
         run(args, { game, world }) {
 
             if (args[0] !== undefined) {
 
-                if (!['test', 'benchmark'].includes(simplify(args[0]))) {
+                const mode = ['test', 'benchmark'].includes(simplify(args[0])) ? 'spin'
+                    : ['lot', 'przelot', 'flight'].includes(simplify(args[0])) ? 'flight' : null;
+
+                if (!mode) {
                     throw usageError(this);
                 }
 
@@ -876,10 +880,17 @@ export const SETTINGS_COMMANDS = [
                     throw new CommandError('Czas testu: od 3 do 60 sekund');
                 }
 
-                game.startBenchmark(seconds);
+                if (game.benchmark) {
+                    throw new CommandError('Test wydajności już trwa');
+                }
 
-                return `Test wydajności: ${seconds} s - kamera obróci się raz dookoła, nie ruszaj myszą. ` +
-                    'Wynik pojawi się na czacie.';
+                game.startBenchmark(seconds, mode);
+
+                return mode === 'flight'
+                    ? `Test wydajności: ${seconds} s przelotu prosto przed siebie (${Math.round(BENCHMARK_FLIGHT.speed * seconds)} bloków) - ` +
+                      'nie ruszaj myszą ani klawiszami. Po teście wrócisz na miejsce startu, wynik pojawi się na czacie.'
+                    : `Test wydajności: ${seconds} s - kamera obróci się raz dookoła, nie ruszaj myszą. ` +
+                      'Wynik pojawi się na czacie.';
 
             }
 
@@ -948,12 +959,12 @@ export const SETTINGS_COMMANDS = [
                 `Ekran: ${canvas.width} x ${canvas.height} px | zasięg ${game.viewDistance}, ` +
                 `daleki teren ${game.settings.get('farTerrain') || 'wył.'}` +
                 `${game.settings.get('potato') ? ', TRYB ZIEMNIAKA' : ''}${memory}\n` +
-                'Test: /wydajnosc test';
+                'Test: /wydajnosc test (rysowanie) albo /wydajnosc lot (wczytywanie świata)';
 
         },
 
         complete(args) {
-            return args.length === 1 ? ['test'] : [];
+            return args.length === 1 ? ['test', 'lot'] : [];
         }
     }
 

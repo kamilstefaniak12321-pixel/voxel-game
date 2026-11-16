@@ -39,12 +39,9 @@ export class WorldOutput {
         this.size = new THREE.Vector2();
 
         const extensions = renderer.extensions;
-        this.hdr = renderer.capabilities.isWebGL2
-            ? extensions.has('EXT_color_buffer_float') || extensions.has('EXT_color_buffer_half_float')
-            : extensions.has('EXT_color_buffer_half_float') && extensions.has('OES_texture_half_float')
-                && extensions.has('OES_texture_half_float_linear');
+        this.hdr = extensions.has('EXT_color_buffer_float') || extensions.has('EXT_color_buffer_half_float');
         const antialias = renderer.getContext?.().getContextAttributes?.()?.antialias === true;
-        this.samples = antialias && renderer.capabilities.isWebGL2
+        this.samples = antialias
             ? Math.max(0, Math.min(4, renderer.capabilities.maxSamples ?? 0)) : 0;
 
         // RGBA8 nadal zachowuje jedno liniowe mieszanie i jedno wyjście,
@@ -130,11 +127,9 @@ export class WorldOutput {
             // Reuse the depth already drawn with the world for light shafts.
             // Three resolves multisampled depth with colour at the end of
             // render(); the effect reads it only after switching targets.
-            if (renderer.capabilities.isWebGL2) {
-                this.target.depthTexture = new THREE.DepthTexture(width, height, THREE.UnsignedIntType);
-                this.target.depthTexture.name = 'WorldDepth';
-                this.target.depthTexture.minFilter = this.target.depthTexture.magFilter = THREE.NearestFilter;
-            }
+            this.target.depthTexture = new THREE.DepthTexture(width, height, THREE.UnsignedIntType);
+            this.target.depthTexture.name = 'WorldDepth';
+            this.target.depthTexture.minFilter = this.target.depthTexture.magFilter = THREE.NearestFilter;
         } else if (this.target.width !== width || this.target.height !== height) {
             this.target.setSize(width, height);
         }

@@ -1,4 +1,5 @@
 import { setLeafSeason } from '../rendering/LeafSeasons.js';
+import { BENCHMARK_FLIGHT, benchmarkText } from '../diagnostics/Benchmark.js';
 import * as THREE from 'three';
 import { fullTerrainDistance, FULL_TERRAIN_DISTANCE, TERRAIN_TRANSITION_START } from '../world/DistanceLod.js';
 
@@ -1422,8 +1423,7 @@ export class Game extends GameInteraction {
     updateBounce() {
 
         this.bounce.update(this.world, this.camera.position,
-            updateBounceLightingState(this.bounceLighting, this.settings, this.sky,
-                this.renderer.capabilities.isWebGL2));
+            updateBounceLightingState(this.bounceLighting, this.settings, this.sky));
         this.campfires.renderer.updateBounce();
         this.torches.updateBounce();
 
@@ -1485,23 +1485,41 @@ export class Game extends GameInteraction {
 
 
     // --------------------------------------------------------
-    // TEST WYDAJNOŚCI (/wydajnosc test): kamera obraca się raz
-    // dookoła, a my mierzymy klatki. Wynik trafia na czat.
+    // TEST WYDAJNOŚCI (/wydajnosc test | lot). Wynik trafia na czat
+    // i do raportu diagnostycznego (/logi).
+    //
+    //   test - kamera obraca się raz dookoła: koszt rysowania tego,
+    //          co już wczytane,
+    //   lot  - gracz leci prosto przed siebie nad terenem: koszt
+    //          wczytywania świata (generowanie, siatki, daleki teren).
+    //          Po teście wraca na miejsce startu.
+    //
+    // Oprócz FPS wynik pokazuje, na co szedł czas klatki: ranking
+    // etapów CPU (PerfDiagnostics - te same etapy co w /logi) i czas
+    // karty graficznej, jeśli sterownik go mierzy.
     // --------------------------------------------------------
 
-    startBenchmark(seconds) {
+    startBenchmark(seconds, mode = 'spin') {
+
+        const player = this.player;
 
         this.benchmark = {
             seconds,
+            mode,
             time: 0,
-            startYaw: this.player.yaw,
-            startPitch: this.player.pitch,
+            startYaw: player.yaw,
+            startPitch: player.pitch,
+            startPos: player.pos.clone(),
+            startFlying: player.flying,
+            height: player.pos.y + BENCHMARK_FLIGHT.climb,
             calls: 0,
             triangles: 0,
-            samples: 0
+            samples: 0,
+            queue: 0
         };
 
         this.perf?.reset();
+        this.perfDiagnostics?.startSession();
 
     }
 
@@ -1509,22 +1527,46 @@ export class Game extends GameInteraction {
     updateBenchmark(dt) {
 
         const test = this.benchmark;
+        const player = this.player;
 
         test.time += dt;
 
 
-        // Patrzymy lekko w dół, jak przy zwykłym chodzeniu.
+        if (test.mode === 'flight') {
 
-        this.player.yaw = test.startYaw + 2 * Math.PI * Math.min(1, test.time / test.seconds);
-        this.player.pitch = -0.1;
+            // Prosto w stronę, w którą patrzył gracz, stałą prędkością
+            // i ponad terenem - bez kolizji i bez sterowania.
 
-        this.player.updateCamera();
+            const distance = BENCHMARK_FLIGHT.speed * Math.min(test.time, test.seconds);
+
+            player.flying = true;
+            player.vel.set(0, 0, 0);
+            player.pos.set(
+                test.startPos.x - Math.sin(test.startYaw) * distance,
+                test.height,
+                test.startPos.z - Math.cos(test.startYaw) * distance
+            );
+            player.yaw = test.startYaw;
+            player.pitch = BENCHMARK_FLIGHT.pitch;
+
+        }
+        else {
+
+            // Patrzymy lekko w dół, jak przy zwykłym chodzeniu.
+
+            player.yaw = test.startYaw + 2 * Math.PI * Math.min(1, test.time / test.seconds);
+            player.pitch = -0.1;
+
+        }
+
+        player.updateCamera();
 
 
         const info = this.renderer.info.render;
 
         test.calls += info.calls;
         test.triangles += info.triangles;
+        test.queue = Math.max(test.queue, this.world.loadQueue.length + this.world.dirtyChunks.size);
         test.samples++;
 
 
@@ -1535,29 +1577,45 @@ export class Game extends GameInteraction {
 
         this.benchmark = null;
 
-        this.player.yaw = test.startYaw;
-        this.player.pitch = test.startPitch;
+        if (test.mode === 'flight') {
+            player.pos.copy(test.startPos);
+            player.vel.set(0, 0, 0);
+            player.flying = test.startFlying;
+        }
 
-        this.player.updateCamera();
+        player.yaw = test.startYaw;
+        player.pitch = test.startPitch;
+
+        player.updateCamera();
 
 
         const summary = this.perf?.summary(test.seconds + 1);
+        const stages = this.perfDiagnostics?.endSession() ?? null;
 
         if (!summary) {
             return;
         }
 
-        this.onMessage?.(
-            `Test wydajności (${test.seconds} s, obrót dookoła): ` +
-            `średnio ${summary.fps.toFixed(0)} FPS, ` +
-            `najwolniejsze 1%: ${summary.low1.toFixed(0)} FPS, ` +
-            `najdłuższa klatka ${summary.worstMs.toFixed(1)} ms | ` +
-            `gra ${summary.updateMs.toFixed(1)} ms, rysowanie ${summary.renderMs.toFixed(1)} ms na klatkę | ` +
-            `${Math.round(test.calls / test.samples)} rysowań, ` +
-            `${Math.round(test.triangles / test.samples / 1000)} tys. trójkątów | ` +
-            `zasięg ${this.viewDistance}, daleki teren ${this.settings.get('farTerrain') || 'wył.'}` +
-            `${this.settings.get('potato') ? ', tryb ziemniaka' : ''}`
-        );
+        const result = {
+            mode: test.mode,
+            seconds: test.seconds,
+            fps: summary.fps,
+            low1: summary.low1,
+            worstMs: summary.worstMs,
+            updateMs: summary.updateMs,
+            renderMs: summary.renderMs,
+            calls: Math.round(test.calls / test.samples),
+            triangles: Math.round(test.triangles / test.samples),
+            queue: test.queue,
+            distance: test.mode === 'flight' ? Math.round(BENCHMARK_FLIGHT.speed * test.seconds) : 0,
+            viewDistance: this.viewDistance,
+            farTerrain: this.settings.get('farTerrain') || 0,
+            potato: Boolean(this.settings.get('potato')),
+            stages
+        };
+
+        this.onMessage?.(benchmarkText(result));
+        this.onBenchmark?.(result);
 
     }
 
@@ -1988,8 +2046,7 @@ export class Game extends GameInteraction {
         // Odśwież tylko źródła i bieżące próbki, bez pracy solvera ani
         // przesuwania jego cache. Dłoń i ogniska muszą zgasnąć razem z terenem.
         this.bounce.update(null, null,
-            updateBounceLightingState(this.bounceLighting, settings, this.sky,
-                this.renderer.capabilities.isWebGL2));
+            updateBounceLightingState(this.bounceLighting, settings, this.sky));
         const position = this.player.pos;
         const bounce = this.bounce.sample(position.x, position.y + 1.2, position.z);
         modelLight.uModelBounce.value.set(bounce[0], bounce[1], bounce[2]);
@@ -2493,7 +2550,7 @@ export class Game extends GameInteraction {
               `siła ${Math.round(shadows.strength * 100)}%, mapa ${shadows.size} px (${shadows.radius} bl.), przerysowana ${shadows.draws}×` +
               `${shadows.hasFar ? `, dalsze ${shadows.cascades.map(c => `${c.config.radius} bl. ${c.draws}×`).join(' / ')}` : ''}` +
               `${this.shaftsEnabled ? ' | promienie' : ''} | lokalny dostęp do słońca ${Math.round(this.sunVisibility * 100)}%`
-            : `Cienie: wył.${shadows.supported ? '' : ' (brak WebGL2)'}`;
+            : 'Cienie: wył.';
 
 
         // Zaćmienie słońca (tylko gdy trwa).

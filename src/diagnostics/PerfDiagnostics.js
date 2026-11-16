@@ -91,7 +91,36 @@ export class PerfDiagnostics {
         this.deliveryErrors = 0;
         this.lastGame = null;
         this.lastRenderer = null;
-        this.acceptGpu = sample => { if (this.gpuSamples.length < 256) this.gpuSamples.push(sample); };
+        this.acceptGpu = sample => {
+            if (this.gpuSamples.length < 256) this.gpuSamples.push(sample);
+            if (this.session && this.session.gpu.length < 4096) this.session.gpu.push(sample.ms);
+        };
+        this.session = null;
+    }
+
+    // Sesja pomiaru (test /wydajnosc test i /wydajnosc lot, 1.10.1): sumy
+    // etapów CPU i próbki GPU z całego testu, niezależnie od sekundowych
+    // okien raportu. Przetrwa reset okna (pauza, zmiana limitu FPS).
+    startSession() {
+        // skip: klatka w toku zaczęła się przed sesją - jej odstępu nie liczymy.
+        this.session = { skip: this.previous || this.active, frames: 0, frameMs: 0, cpuMs: 0, worstMs: 0, slow: 0,
+            stages: new Float64Array(STAGES), stageMax: new Float64Array(STAGES), gpu: [] };
+    }
+
+    // null - nie było sesji albo pomiar etapów jest wyłączony (żadnej klatki).
+    endSession() {
+        const session = this.session;
+        this.session = null;
+        if (!session || session.frames === 0) return null;
+        const cpuMs = session.cpuMs / session.frames;
+        const stages = PERF_STAGES.map(([id, label], i) => ({ id, label,
+            meanMs: round(session.stages[i] / session.frames), maxMs: round(session.stageMax[i]),
+            share: cpuMs > 0 ? round(session.stages[i] / session.cpuMs) : 0 }))
+            .filter(stage => stage.maxMs > .001).sort((a, b) => b.meanMs - a.meanMs);
+        return { frames: session.frames, fps: round(1000 * session.frames / session.frameMs),
+            frameMs: round(session.frameMs / session.frames), cpuMs: round(cpuMs), worstMs: round(session.worstMs),
+            slowFrames: session.slow, targetFps: this.targetFps, stages,
+            gpu: { ...this.gpuTimer.info(), ...distribution(session.gpu) } };
     }
 
     setEnabled(enabled) {
@@ -134,6 +163,20 @@ export class PerfDiagnostics {
         if (this.previous) {
             const interval = raf - this.lastRaf;
             if (interval > 0 && interval <= 10000) {
+                const session = this.session;
+                if (session?.skip) session.skip = false;
+                else if (session) {
+                    session.frames++;
+                    session.frameMs += interval;
+                    session.cpuMs += this.previousCpu;
+                    if (interval > session.worstMs) session.worstMs = interval;
+                    if (interval > 1250 / this.targetFps) session.slow++;
+                    for (let j = 0; j < STAGES; j++) {
+                        const ms = this.stagePrevious[j];
+                        session.stages[j] += ms;
+                        if (ms > session.stageMax[j]) session.stageMax[j] = ms;
+                    }
+                }
                 if (this.count < CAPACITY) {
                     const i = this.count++;
                     this.frames[i] = interval;

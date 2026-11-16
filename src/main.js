@@ -139,6 +139,19 @@ const renderer = new THREE.WebGLRenderer({
     antialias: !settings.get('potato')
 });
 
+// Od 1.10.1 gra wymaga WebGL 2 (mają go wszystkie przeglądarki od kilku
+// lat i obie aplikacje). Dawna ścieżka WebGL 1 - bez cieni, dynamicznego
+// światła, HDR i pór roku liści - została usunięta; start.js pokazuje
+// wtedy czytelny komunikat zamiast okrojonej gry.
+
+if (!renderer.capabilities.isWebGL2) {
+    renderer.dispose();
+    throw Object.assign(new Error('WebGL 2 jest niedostępne'), {
+        userMessage: 'To urządzenie albo przeglądarka nie obsługuje WebGL 2, którego gra wymaga. ' +
+            'Zaktualizuj przeglądarkę lub sterowniki karty graficznej albo włącz akcelerację sprzętową.'
+    });
+}
+
 renderer.setSize(window.innerWidth, window.innerHeight);
 
 document.body.appendChild(renderer.domElement);
@@ -277,7 +290,7 @@ const gl = renderer.getContext();
 const debugGpu = gl.getExtension('WEBGL_debug_renderer_info');
 const diagnosticHardware = {
     gpu: debugGpu ? gl.getParameter(debugGpu.UNMASKED_RENDERER_WEBGL) : gl.getParameter(gl.RENDERER),
-    webgl: renderer.capabilities.isWebGL2 ? 2 : 1,
+    webgl: 2,
     logicalProcessors: navigator.hardwareConcurrency ?? null,
     memoryGiB: navigator.deviceMemory ?? null,
     platform: nativeApp ?? (window.desktop ? 'desktop' : 'browser')
@@ -615,6 +628,9 @@ async function playWorld(worldInfo, { client = null } = {}) {
         // Komunikaty gry (np. gdzie spadł meteoryt) trafiają na czat.
 
         game.onMessage = (text) => chat.print(plainKeys(text), 'hint');
+        // Wynik testu wydajności także do raportu diagnostycznego (/logi).
+        game.onBenchmark = (result) => diagnostics.record('info', 'performance.benchmark',
+            `Test wydajności: ${result.fps.toFixed(0)} FPS (${result.mode}, ${result.seconds} s).`, result);
 
         // Krótkie komunikaty (np. "Ekwipunek pełny") - nad paskiem bloków.
 

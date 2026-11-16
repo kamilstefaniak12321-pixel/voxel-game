@@ -221,7 +221,6 @@ export const LEAF_HASH_GLSL = `
     }`;
 
 export const LEAF_VERTEX_PARS_GLSL = `
-    #ifdef LEAF_SEASONS
         varying vec4 vLeaf;
         varying vec4 vLeafColor;
         uniform vec3 uLeafAutumn[${LEAF_PALETTE_LIMIT}];
@@ -234,12 +233,10 @@ export const LEAF_VERTEX_PARS_GLSL = `
             f = f * f * (3.0 - 2.0 * f);
             return (mix(mix(leafHash(i), leafHash(i + vec2(1.0, 0.0)), f.x),
                 mix(leafHash(i + vec2(0.0, 1.0)), leafHash(i + vec2(1.0, 1.0)), f.x), f.y) - 0.5) * ${LEAF_TIMES.shift.toFixed(2)};
-        }
-    #endif`;
+        }`;
 
 // Po obliczeniu vTint; "transformed" i "normal" to dane wierzchołka.
 export const LEAF_VERTEX_GLSL = `
-    #ifdef LEAF_SEASONS
         float leafCode = floor(tint.a * 255.0 + 0.5);
         if (leafCode >= ${LEAF_CODE_FIRST}.0 && leafCode < 127.0) {
             float leafBits = leafCode - ${LEAF_CODE_FIRST}.0;
@@ -256,11 +253,9 @@ export const LEAF_VERTEX_GLSL = `
         else {
             vLeaf = vec4(0.0);
             vLeafColor = vec4(0.0);
-        }
-    #endif`;
+        }`;
 
 export const LEAF_FRAGMENT_PARS_GLSL = `
-    #ifdef LEAF_SEASONS
         varying vec4 vLeaf;
         varying vec4 vLeafColor;
         uniform vec3 uLeafGrey;
@@ -269,12 +264,10 @@ export const LEAF_FRAGMENT_PARS_GLSL = `
         uniform float uLeafPhase;
         uniform float uLeafSeason;
         uniform float uLeafSnow;
-        ${LEAF_HASH_GLSL}
-    #endif`;
+        ${LEAF_HASH_GLSL}`;
 
 // Po zabarwieniu klimatem; tintMask - zielone piksele tekstury.
 export const LEAF_FRAGMENT_GLSL = `
-    #ifdef LEAF_SEASONS
         if (vLeaf.x > 0.5 && uLeafSeason > 0.0) {
             float leafPhase = mod(uLeafPhase + vLeaf.z + 4.0, 4.0);
             // Przedwiośnie: spod szarości wychodzi od razu zieleń (jesień
@@ -307,5 +300,4 @@ export const LEAF_FRAGMENT_GLSL = `
                 float leafFlake = mix(leafHash(floor(leafWorld.xz * 16.0 + 0.01)), leafHash(floor(leafWorld.xz * 4.0 + 0.01) + 7.0), 0.55);
                 diffuseColor.rgb = mix(diffuseColor.rgb, uLeafSnowColor, step(leafFlake, leafSnowCover) * 0.9);
             }
-        }
-    #endif`;
+        }`;

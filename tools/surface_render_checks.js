@@ -150,73 +150,7 @@ export async function checkSurfaceRendering({ game, settings, renderer, yieldBro
         setPotatoDefine([...blockMaterials, model, heldGrass, debris.mesh.material], potato);
         modelLight.uModelShadows.value = quality > 0 ? 1 : 0;
     };
-    const checkWebGL1 = async () => {
-        const canvas = document.createElement('canvas');
-        let context;
-        try {
-            context = canvas.getContext('webgl', { antialias: false, alpha: false });
-        } catch (error) {
-            return { status: 'skipped', reason: `Nie można utworzyć kontekstu WebGL1: ${error.message}` };
-        }
-        if (!context) return { status: 'skipped', reason: 'Przeglądarka nie udostępnia rzeczywistego kontekstu WebGL1.' };
-
-        // Oddzielny prawdziwy kontekst uruchamia fallback onBeforeCompile.
-        // Nie wystarczy zmienić capabilities na atrapie renderera WebGL2.
-        const fallback = new THREE.WebGLRenderer({ canvas, context, antialias: false });
-        const fallbackTarget = new THREE.WebGLRenderTarget(16, 16);
-        fallbackTarget.texture.colorSpace = THREE.LinearSRGBColorSpace;
-        const samples = {}, compiled = [];
-        try {
-            check(!fallback.capabilities.isWebGL2, 'Próba WebGL1 przypadkowo używa WebGL2');
-            fallback.setSize(16, 16, false); fallback.setClearColor(0, 1);
-            fallback.outputColorSpace = THREE.LinearSRGBColorSpace;
-            fallback.toneMapping = THREE.NoToneMapping;
-            const sample = () => {
-                for (const [name, mesh] of meshes) mesh.visible = name === 'near';
-                fallback.setRenderTarget(fallbackTarget); fallback.render(scene, camera);
-                const bytes = new Uint8Array(4);
-                fallback.readRenderTargetPixels(fallbackTarget, 8, 8, 1, 1, bytes);
-                check(context.getError() === context.NO_ERROR, 'Fallback WebGL1: błąd rysowania');
-                const program = fallback.properties.get(blockMaterials[0]).currentProgram;
-                check(program && program.diagnostics?.runnable !== false, 'Fallback WebGL1: shader nie skompilował się');
-                return [...bytes.slice(0, 3)];
-            };
-            fill(plane, 'surfaceEmission', [0]); fill(plane, 'surfaceOcclusion', [1]);
-            fill(plane, 'color', [0, 0, 0, 0]); fill(plane, 'atmosphereLight', [0, 0, 0, 0]);
-            ambient.intensity = Math.PI * .4; sun.intensity = Math.PI * .4;
-            for (const atmosphere of [0, 1]) for (const potato of [false, true]) {
-                flags(0, potato); skyUniforms.uAtmosphericLight.value = atmosphere;
-                const dark = sample();
-                close(dark, [0, 0, 0], `WebGL1: zamknięty pokój, atmosfera ${atmosphere}, potato ${potato}`);
-                compiled.push({ atmosphere, potato, dark });
-                await yieldBrowser();
-            }
-
-            flags(0, false); skyUniforms.uAtmosphericLight.value = 1;
-            fill(plane, 'atmosphereLight', [0, 0, 0, 1]);
-            sun.intensity = 0;
-            samples.openAmbient = sample();
-            check(samples.openAmbient.every(v => v > 8), 'WebGL1: brak dodatniej próby kontrolnej otoczenia');
-            check(!plane.hasAttribute('canopyTint'), 'WebGL1: próba domyślnego tintu musi nie mieć atrybutu');
-            fill(plane, 'canopyTint', [1, 1, 1]);
-            samples.explicitNeutralCanopy = sample();
-            close(samples.openAmbient, samples.explicitNeutralCanopy, 'WebGL1: brak canopyTint musi być neutralny jak jawne RGB1');
-            plane.deleteAttribute('canopyTint');
-            samples.restoredDefaultCanopy = sample();
-            close(samples.restoredDefaultCanopy, samples.explicitNeutralCanopy, 'WebGL1: usunięcie atrybutu przywraca neutralny domyślny tint');
-            fill(plane, 'surfaceOcclusion', [0]); samples.occludedAmbient = sample();
-            close(samples.occludedAmbient, [0, 0, 0], 'WebGL1: AO musi tłumić światło otoczenia');
-            ambient.intensity = 0; sun.intensity = Math.PI * .4;
-            samples.occludedDirect = sample(); fill(plane, 'surfaceOcclusion', [1]);
-            samples.direct = sample();
-            check(samples.direct.every(v => v > 8), 'WebGL1: brak dodatniej próby kontrolnej słońca');
-            close(samples.occludedDirect, samples.direct, 'WebGL1: AO nie może gasić bezpośredniego słońca');
-            await yieldBrowser();
-            return { status: 'passed', version: context.getParameter(context.VERSION), compiled, samples };
-        } finally {
-            fallback.setRenderTarget(null); fallbackTarget.dispose(); fallback.dispose(); fallback.forceContextLoss();
-        }
-    };
+    // Od 1.10.1 gra wymaga WebGL 2 - dawna próba zastępczej ścieżki WebGL 1 usunięta.
     try {
         renderer.autoClear = true; renderer.toneMapping = THREE.NoToneMapping;
         renderer.outputColorSpace = THREE.LinearSRGBColorSpace;
@@ -643,8 +577,7 @@ export async function checkSurfaceRendering({ game, settings, renderer, yieldBro
         check(energyOf('fireSpark') === 0, 'Rozpraszanie dymu należy do lokalnego składnika');
         resetLightingDiagnostics();
         await yieldBrowser();
-        const webgl1 = await checkWebGL1();
-        return { status: 'passed', variants, programs: programs.size, pixels, webgl1,
+        return { status: 'passed', variants, programs: programs.size, pixels,
             scope: 'Prawdziwe materiały; liniowy render target 16x16; kontrolowane źródła i geometria.',
             initialSettings: { lightingModel: settings.get('lightingModel'), shadows: settings.get('shadows') } };
     } finally {

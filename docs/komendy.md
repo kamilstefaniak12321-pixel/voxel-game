@@ -163,7 +163,8 @@ Współrzędne można podawać względem gracza: `~` (tu, gdzie stoję),
 | `/ustaw jakosc <niska \| srednia \| wysoka \| najwyzsza>` | jakość grafiki - kilka ustawień obrazu naraz (jak *Ustawienia → Obraz → Jakość grafiki*); bez słowa - jaka jest teraz |
 | `/ustaw domyslne` | przywraca domyślne ustawienia |
 | `/wydajnosc` | FPS, czasy klatki, rysowanie (wywołania, trójkąty), chunki, daleki teren, pamięć |
-| `/wydajnosc test [sekundy]` | test: kamera obraca się raz dookoła, wynik na czacie (domyślnie 10 s) |
+| `/wydajnosc test [sekundy]` | test rysowania: kamera obraca się raz dookoła (domyślnie 10 s). Wynik na czacie i w raporcie `/logi`: FPS oraz - od 1.10.1 - na co szedł czas klatki (ranking etapów procesora, czas karty graficznej) |
+| `/wydajnosc lot [sekundy]` | test wczytywania świata (od 1.10.1): przelot prosto przed siebie 24 bloki na sekundę, 30 bloków nad miejscem startu; po teście wracasz na start. Ten sam wynik plus najdłuższa kolejka terenu |
 | `/logi [problem]` | raport błędów i wydajności (to samo co *Pauza → Diagnostyka i logi*); `problem` zaznacza bieżący moment (też **F8**). Też `/diagnostyka` |
 | `/osiagniecia` | osiągnięcia: co zdobyte, punkty, id (opis: `docs/osiagniecia.md`) |
 | `/osiagniecia ksiega` | otwiera księgę osiągnięć (to samo co klawisz L) |

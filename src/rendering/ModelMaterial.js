@@ -132,15 +132,14 @@ export function createModelMaterial({ map = null, alphaTest = 0, glow = 0, verte
             );
 
 
-        const dynamic = renderer.capabilities.isWebGL2;
-        const sceneShadows = dynamic && !previewRenderers.has(renderer);
+        const sceneShadows = !previewRenderers.has(renderer);
 
         if (sceneShadows) Object.assign(shader.uniforms, shadowUniforms, campfireLightUniforms);
 
         shader.fragmentShader = shader.fragmentShader
             .replace(
                 '#include <common>',
-                `${dynamic ? '#define USE_DYNAMIC_LIGHT' : ''}
+                `#define USE_DYNAMIC_LIGHT
                 #include <common>
                 varying vec3 vSkyDirection;
                 varying vec3 vWorldPosition;
@@ -283,9 +282,7 @@ export function createModelMaterial({ map = null, alphaTest = 0, glow = 0, verte
             );
 
 
-        if (dynamic) {
-            Object.assign(shader.uniforms, dynamicLightUniforms);
-        }
+        Object.assign(shader.uniforms, dynamicLightUniforms);
 
         installLightingDiagnostics(shader, { albedo: 'modelTexel', normal: 'vWorldNormal',
             sky: 'modelSky', visibility: 'modelSun', preview: previewRenderers.has(renderer) });

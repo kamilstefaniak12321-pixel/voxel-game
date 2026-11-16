@@ -108,8 +108,9 @@ export const LITTER_LUMINANCE = 0.26;
 // Zima: szarobrązowe liście; opadłe liście poza jesienią: zbrązowiałe.
 const GREY = [134, 124, 112], LITTER_BROWN = [128, 92, 56], SNOW = [238, 242, 248];
 // Terminy w fazie roku (pora = 1): jesień narasta od 2,0 do 2,6, szarość
-// od 2,8 do 3,2, wiosną schodzi do 0,35. Największy śnieg: 80% pikseli.
-export const LEAF_TIMES = { turn: [2.0, 2.6], grey: [2.8, 3.2], fade: 0.35, shift: 0.3, snow: 0.8 };
+// od 2,8 do 3,2, wiosną schodzi do 0,35. Największy śnieg: połowa pikseli
+// wierzchu (cienka warstwa - liść spod niej prześwituje).
+export const LEAF_TIMES = { turn: [2.0, 2.6], grey: [2.8, 3.2], fade: 0.35, bud: 0.4, shift: 0.3, snow: 0.5 };
 
 const pad = (list, make) => Array.from({ length: LEAF_PALETTE_LIMIT }, (_, i) => make(list[Math.min(i, list.length - 1)]));
 
@@ -156,10 +157,11 @@ const smooth = (a, b, x) => {
 // co w shaderze.
 export function leafStage(phase) {
     const p = ((phase % 4) + 4) % 4;
-    const fade = 1 - smooth(0, LEAF_TIMES.fade, p);
+    // Przedwiośnie: spod szarości wychodzi od razu zieleń, nie jesień -
+    // kolor jesieni znika pod szarością w pierwszych dniach wiosny.
     return {
-        turn: Math.max(smooth(LEAF_TIMES.turn[0], LEAF_TIMES.turn[1], p), fade),
-        grey: Math.max(smooth(LEAF_TIMES.grey[0], LEAF_TIMES.grey[1], p), fade)
+        turn: Math.max(smooth(LEAF_TIMES.turn[0], LEAF_TIMES.turn[1], p), 1 - smooth(0, LEAF_TIMES.fade * LEAF_TIMES.bud, p)),
+        grey: Math.max(smooth(LEAF_TIMES.grey[0], LEAF_TIMES.grey[1], p), 1 - smooth(0, LEAF_TIMES.fade, p))
     };
 }
 
@@ -275,9 +277,12 @@ export const LEAF_FRAGMENT_GLSL = `
     #ifdef LEAF_SEASONS
         if (vLeaf.x > 0.5 && uLeafSeason > 0.0) {
             float leafPhase = mod(uLeafPhase + vLeaf.z + 4.0, 4.0);
-            float leafFade = 1.0 - smoothstep(0.0, ${LEAF_TIMES.fade.toFixed(2)}, leafPhase);
-            float leafTurn = max(smoothstep(${LEAF_TIMES.turn[0].toFixed(2)}, ${LEAF_TIMES.turn[1].toFixed(2)}, leafPhase), leafFade);
-            float leafGrey = max(smoothstep(${LEAF_TIMES.grey[0].toFixed(2)}, ${LEAF_TIMES.grey[1].toFixed(2)}, leafPhase), leafFade);
+            // Przedwiośnie: spod szarości wychodzi od razu zieleń (jesień
+            // znika pod nią szybciej).
+            float leafTurn = max(smoothstep(${LEAF_TIMES.turn[0].toFixed(2)}, ${LEAF_TIMES.turn[1].toFixed(2)}, leafPhase),
+                1.0 - smoothstep(0.0, ${(LEAF_TIMES.fade * LEAF_TIMES.bud).toFixed(3)}, leafPhase));
+            float leafGrey = max(smoothstep(${LEAF_TIMES.grey[0].toFixed(2)}, ${LEAF_TIMES.grey[1].toFixed(2)}, leafPhase),
+                1.0 - smoothstep(0.0, ${LEAF_TIMES.fade.toFixed(2)}, leafPhase));
             // Jesienna tekstura (klon, miłorząb, złote odmiany): latem zieleń
             // palety, jesienią sama tekstura; zmieniają się wszystkie piksele.
             float leafTexture = step(3.0, vLeaf.x);
@@ -298,8 +303,9 @@ export const LEAF_FRAGMENT_GLSL = `
             float leafSnowCover = uLeafSnow * vLeaf.y * ${LEAF_TIMES.snow.toFixed(2)};
             if (leafSnowCover > 0.0) {
                 vec3 leafWorld = vSkyDirection + cameraPosition;
-                diffuseColor.rgb = mix(diffuseColor.rgb, uLeafSnowColor,
-                    step(leafHash(floor(leafWorld.xz * 16.0 + 0.01)), leafSnowCover));
+                // Płaty po kilka pikseli z postrzępionym brzegiem, nie "sól".
+                float leafFlake = mix(leafHash(floor(leafWorld.xz * 16.0 + 0.01)), leafHash(floor(leafWorld.xz * 4.0 + 0.01) + 7.0), 0.55);
+                diffuseColor.rgb = mix(diffuseColor.rgb, uLeafSnowColor, step(leafFlake, leafSnowCover) * 0.9);
             }
         }
     #endif`;

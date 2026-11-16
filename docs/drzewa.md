@@ -222,10 +222,10 @@ są w `drzewa.png` piksel w piksel; sylwetki powstają proceduralnie
 | Modrzew europejski (*Larix decidua*) | 25–45 m | 22–38 / 8–13 | luźny, ażurowy stożek, końce konarów opadają; część igliwia złota | góry: świerczyna, hala, kosodrzewina, bór (od 20 bloków nad morzem) |
 | Namorzyn czerwony (*Rhizophora mangle*) | 8–15 m | 7–13 / 9–14 | pień na łukach **korzeni podporowych**, gęsta kopuła, wiszące korzenie | **namorzyny** i płytka woda gorących wybrzeży |
 | Puchowiec, kapok (*Ceiba pentandra*) | 50–70 m | 40–58 / 16–24, pień 2–3 bloki | prosty pień na wysokich **przyporach**, parasol pięter konarów na samej górze | **las deszczowy** (co trzecia kratka - olbrzym ponad sklepieniem) |
-| Jukka krótkolistna, drzewo Jozuego (*Yucca brevifolia*) | 5–12 m | 5–10 / 6–10 | pień rozwidla się kilka razy, każda gałąź z kolczastą rozetą; gałęzie w **kosmatej korze** z suchych liści | **półpustynia** |
+| Jukka krótkolistna, drzewo Jozuego (*Yucca brevifolia*) | 5–12 m | 5–11 / 7–11 (od 1.10.0) | kanciaste ramiona (w bok i łokciem w górę) rozwidlają się, na końcu każdego osobna kula kolczastych liści; gałęzie w **kosmatej korze** z suchych liści | **półpustynia** |
 | Topola osika (*Populus tremula*) | 20–30 m | 16–26 / 6–9 | smukły, jasny pień (u starych **ciemna kora przy ziemi**), wąska, wysoka, ażurowa korona | brzezina, chłodne łąki, bory, mokradła |
 | Araukaria chilijska (*Araucaria araucana*) | 30–50 m | 26–42 / 10–16 | pień jak słup, parasol okółków długich, zadartych konarów | wilgotne góry: buczyna, hala, świerczyna (14–40 bloków) |
-| Figowiec bengalski, banian (*Ficus benghalensis*) | 20–30 m, korona dużo szersza | 14–22 / 18–26 | zrośnięty pień, konary podparte **słupami korzeni**, niska szeroka kopuła, zasłony **korzeni powietrznych** | **las deszczowy** (sklepienie) |
+| Figowiec bengalski, banian (*Ficus benghalensis*) | 20–30 m, korona dużo szersza | 13–20 / 22–32 (od 1.10.0) | zrośnięty pień, konary podparte **słupami korzeni**, ogromna, pusta w środku kopuła-namiot z brzegiem opadającym prawie do ziemi, zasłona **korzeni powietrznych** z bramami | **las deszczowy** (sklepienie) |
 | Dracena cynobrowa, smocze drzewo (*Dracaena cinnabari*) | 6–10 m | 6–10 / 9–14 | gładki pień, szprychy gałęzi, płaski gęsty parasol | **półpustynia** |
 | Cedr libański (*Cedrus libani*) | 30–40 m | 22–36 / 16–24 | gruby pień, poziome konary z płaskimi talerzami igliwia, czubek jak stół | ciepłe, suche góry (16–40 bloków), gaj oliwny na wyżynie |
 | Sosna oścista (*Pinus longaeva*) | 5–15 m | 5–11 / 7–11 | pokręcona, w większości **martwe, wybielone drewno**, suchy wierzchołek, kilka kęp igliwia | suche, zimne góry: hala, kosodrzewina i **goła skała** (od 26 bloków) |
@@ -341,6 +341,8 @@ swojego gatunku.
   nasiona sadzi się na rozgrzebanej ziemi.
 
 ### Figowiec-namiot i nowa jukka
+
+![Figowiec-namiot z zewnątrz i od środka, jukka, namorzyn w wodzie](drzewa-1100.jpg)
 
 - **Figowiec** (prośba Kamila: „jak ogromny namiot jako schronienie"):
   korona szeroka na 22-32 bloki (promień 11-16, najszersza w grze), wysoka
@@ -576,7 +578,11 @@ Braki spisane przy sprawdzaniu 1.10.0:
   w teksturze liści zostały całoroczne - kwitnienie w swojej porze to
   osobna praca.
 - **Daleki teren:** korony zmieniają kolor skokami i jednakowo w całym
-  świecie; nie ma tam koloru liści z biomu ani śniegu.
+  świecie; nie ma tam koloru liści z biomu ani śniegu. Po każdym kroku
+  kafelki przebudowują siatki od gracza w dal (w budżecie klatki) - przez
+  chwilę bliższy las ma już nowy kolor, a dalszy jeszcze poprzedni; na
+  słabym urządzeniu ta fala trwa dłużej. Kolor liczony w shaderze dalekiego
+  terenu (bez przebudowy) wymaga znacznika „liść gatunku X" w wierzchołkach.
 - **Owoce bez pór roku.** Plony odrastają cały rok; kwitnienie i owocowanie
   w swojej porze (jak kwiaty z paczek) - do zrobienia.
 - **Puch puchowca** jest tylko podpałką; wypełnienie pościeli (kapok to

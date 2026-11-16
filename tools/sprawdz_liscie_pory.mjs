@@ -114,6 +114,10 @@ check(L.leafStage(2.3).turn > 0.2 && L.leafStage(2.3).turn < 0.8 && L.leafStage(
 check(L.leafStage(2.7).turn === 1 && L.leafStage(2.7).grey === 0, 'Późna jesień: pełne kolory, jeszcze bez szarości');
 equal(L.leafStage(3.5), { turn: 1, grey: 1 }, 'Zima: szaro');
 check(L.leafStage(0.1).grey > 0.3 && L.leafStage(0.1).grey < 1, 'Przedwiośnie: szarość schodzi');
+{
+    const early = at('birch', 0.2);
+    check(L.leafStage(0.2).turn === 0 && early.g > early.r * 0.95 && early.b > at('birch', 2.7).b * 2, 'Przedwiośnie: spod szarości wychodzi zieleń, nie jesień');
+}
 check(Math.abs(L.leafStage(3.999).grey - L.leafStage(0.001).grey) < 0.01, 'Koniec zimy i początek wiosny bez skoku');
 
 {
@@ -198,9 +202,10 @@ check(Math.abs(L.leafStage(3.999).grey - L.leafStage(0.001).grey) < 0.01, 'Konie
 {
     const steps = [];
     for (let phase = 0; phase < 4; phase += 0.002) {
-        const step = L.leafSeasonStep(yearAt(phase)), stage = L.leafStage(phase), shown = L.leafStage(step);
+        const step = L.leafSeasonStep(yearAt(phase));
         if (steps.at(-1) !== step) steps.push(step);
-        check(Math.abs(stage.turn - shown.turn) <= 0.3 && Math.abs(stage.grey - shown.grey) <= 0.3, `Daleki teren nie odstaje od bliskiego (faza ${phase.toFixed(3)}: krok ${step})`);
+        const near = at('birch', phase), far = at('birch', step);
+        check(Math.max(Math.abs(near.r - far.r), Math.abs(near.g - far.g), Math.abs(near.b - far.b)) <= 0.22, `Daleki teren nie odstaje od bliskiego (faza ${phase.toFixed(3)}: krok ${step})`);
     }
     check(steps.length >= 8 && steps.length <= 16, `Daleki teren: ${steps.length} kroków koloru na rok`);
     equal(L.leafSeasonStep(yearAt(1.2)), L.leafSeasonStep(yearAt(1.9)), 'Latem daleki teren się nie przebudowuje');

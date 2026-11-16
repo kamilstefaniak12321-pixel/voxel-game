@@ -1712,15 +1712,15 @@ const CATALOG_SHAPES = {
             const px = Math.round(point[0]), pz = Math.round(point[2]);
             if (Math.hypot(px, pz) < half + 2.5) return;
             tree.trunk(px, pz, 0, Math.round(point[1]));
-            if (random() < 0.35) tree.trunk(px + (random() < 0.5 ? 1 : -1), pz, 0, 1 + Math.floor(random() * 3));
         };
         for (let i = 0; i < limbs; i++) {
             const angle = phase + i * Math.PI * 2 / limbs + (random() - 0.5) * 0.25;
             const reach = edge(angle) * (0.74 + random() * 0.12);
             const at = limb(angle, half, reach, crownBase + Math.floor(random() * 2));
-            // Słupy korzeni: w połowie konaru i przy jego końcu.
-            if (random() < 0.85) pillar(at(0.42 + random() * 0.14));
-            if (random() < 0.8) pillar(at(0.82 + random() * 0.12));
+            // Słupy korzeni: przy końcu konaru (krąg podpór pod brzegiem
+            // namiotu), rzadziej w połowie - środek zostaje przestronny.
+            if (random() < 0.3) pillar(at(0.45 + random() * 0.12));
+            if (random() < 0.8) pillar(at(0.84 + random() * 0.1));
             // Boczny konar wypełnia miejsce między sąsiadami.
             if (radius > 12 && random() < 0.7) {
                 const start = at(0.45);
@@ -1728,7 +1728,7 @@ const CATALOG_SHAPES = {
                 const far = edge(side) * (0.6 + random() * 0.15);
                 const end = [Math.cos(side) * far, Math.min(roof(far, edge(side)) - 2, start[1] + 1), Math.sin(side) * far];
                 tree.branch(start[0], start[1], start[2], end[0], end[1], end[2]);
-                if (random() < 0.6) pillar(end);
+                if (random() < 0.35) pillar(end);
             }
         }
 
@@ -1776,7 +1776,7 @@ const CATALOG_SHAPES = {
             for (let yy = y - 1; yy >= floor; yy--) tree.leaf(x, yy, z, roots);
         }
         // Krótkie korzenie pod sklepieniem - nad głową zostaje wolne.
-        hangingRoots(tree, roots, Math.round(14 + size * 26), radius * 0.2, radius * 0.78, crownBase + 1, top, 3, 4);
+        hangingRoots(tree, roots, Math.round(10 + size * 14), radius * 0.2, radius * 0.78, crownBase + 1, top, 3, 4);
 
     },
 

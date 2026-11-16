@@ -56,6 +56,13 @@ szarawe"; zimą liście „delikatnie zajdą białą warstwą śniegu"
 (przygotowanie pod pogodę). Dotyczy bloków liści, opadłych liści i liści
 spadających z drzew.
 
+![Te same drzewa latem, jesienią, zimą i na przedwiośniu](liscie-pory-1100.jpg)
+
+*Od lewej: klon, brzoza, dąb (za nim lipa), buk, miłorząb, osika, modrzew,
+jabłoń (za nią olcha), świerk.*
+
+![Las liściasty jesienią i zimą](las-pory-1100.jpg)
+
 | pora | liście na drzewie | opadłe liście |
 |---|---|---|
 | wiosna, lato | jak w teksturze, zabarwione klimatem biomu | zbrązowiałe |
@@ -101,17 +108,19 @@ nie przebudowuje żadnego chunka i nic nie trafia do zapisu.
   ±0,15 pory) - las nie zmienia się cały naraz, a korony mienią się.
 - Zmieniają się tylko zielone piksele tekstury: gałązki, owoce i kwiaty
   w liściach zostają. Opadłe liście zmieniają się całe.
-- Śnieg: piksele na ścianach zwróconych do góry, do 80% pokrycia w środku
-  zimy - „cienka warstwa", liść spod niego prześwituje. Tylko tam, gdzie
-  jest chłodno: klimat miejsca zapisany jest w `chunk.tint` (czwarty bajt
-  na róg - `Biomes.tintGrid`); na sawannie, półpustyni i w tropikach
-  śniegu nie ma.
+- Śnieg: drobne płaty pikseli na ścianach zwróconych do góry, najwyżej
+  połowa wierzchu w środku zimy - „cienka warstwa", liść spod niej
+  prześwituje. Tylko tam, gdzie jest chłodno: klimat miejsca zapisany jest
+  w `chunk.tint` (czwarty bajt na róg - `Biomes.tintGrid`); na sawannie,
+  półpustyni i w tropikach śniegu nie ma.
 - Spadające liście (`TreeParticles`) mają kolor pory swojego gatunku,
   a jesienią spada ich do 3,5 raza więcej (zimą i na przedwiośniu -
   jedna trzecia).
 - Daleki teren ma kolory koron zapisane w siatkach; `FarTerrain.
   setLeafSeason` zmienia je skokami (po cztery kroki na jesień, szarzenie
-  i przedwiośnie - kilkanaście przebudów siatek na rok gry, w tle).
+  i przedwiośnie - kilkanaście razy na rok gry): nowa paleta idzie do
+  workerów, a kafelki przebudowują siatki od gracza w dal, w zwykłym
+  budżecie klatki (stara siatka zostaje do podmiany).
 - Pory roku liści wymagają WebGL 2 (dwa dodatkowe varyingi); w WebGL 1
   liście wyglądają jak dawniej.
 - Świat bez pór roku (`setLeafSeason(null)`): bez zmian.

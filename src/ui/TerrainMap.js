@@ -1,3 +1,4 @@
+import { sampleText } from '../weather/weatherText.js';
 import { CHUNK_HEIGHT } from '../config.js';
 import { bindings } from '../input/bindings.js';
 import { getBlockTypeById } from '../blocks/BlockRegistry.js';
@@ -21,6 +22,8 @@ import { BIOMES } from '../world/terrain/Biomes.js';
 //             mocniejszy kolor (src/world/trees/Forests.js),
 //   biomy   - biomy (łąka, las liściasty, hala, mokradła... -
 //             src/world/terrain/Biomes.js) z legendą,
+//   pogoda  - chmury, opady, fronty i wiatr nad terenem - na żywo
+//             (src/weather/WeatherField.js),
 //   przekroj - przekrój pionowy terenu w kierunku patrzenia: wszystkie
 //             skały pod ziemią, żyły lepidolitu, woda,
 //   pola    - pojedyncze pola generatora (kontynent, erozja, grzbiety...).
@@ -45,6 +48,7 @@ export const MAP_LAYERS = {
     skaly: 'skały (na wierzchu i pod glebą)',
     lasy: 'lasy (gatunek drzew, gęstość)',
     biomy: 'biomy (łąki, lasy, góry, mokradła...)',
+    pogoda: 'pogoda (chmury, opady, fronty, wiatr)',
     przekroj: 'przekrój pionowy w kierunku patrzenia',
     kontynent: 'pole: kontynent (morze ↔ ląd)',
     wypietrzenie: 'pole: wypiętrzenie (niziny ↔ góry)',
@@ -56,7 +60,15 @@ export const MAP_LAYERS = {
     wilgotnosc: 'pole: wilgotność (biomy)'
 };
 
-export const MAP_SCALES = [1, 2, 4, 8, 16, 32];
+export const MAP_SCALES = [1, 2, 4, 8, 16, 32, 64];
+
+// Mapa pogody: ile ms na klatkę może zająć jej odświeżanie i kolory.
+const WEATHER_BUDGET_MS = 3;
+const WEATHER_COLORS = {
+    high: [255, 255, 255], mid: [214, 220, 228], low: [246, 247, 250], dark: [70, 76, 90],
+    rain: [44, 104, 232], storm: [206, 62, 224],
+    front_cieply: '#e23b2e', front_chlodny: '#2b5fe0', wind: '#101418'
+};
 
 // Rzeki i jeziora na mapie.
 const RIVER_COLOR = '#3fa9f5';
@@ -243,6 +255,9 @@ export class TerrainMap {
         this.center = null;
         this.job = null;
 
+        // Pogoda (weather/Weather.js) do warstwy 'pogoda' - ustawia main.js.
+        this.weather = null;
+
 
         this.canvas.addEventListener('mousemove', (event) => this.onHover(event));
         this.canvas.addEventListener('mouseleave', () => { this.hover.textContent = ''; });
@@ -276,7 +291,7 @@ export class TerrainMap {
 
         const size = MAP_SIZE * scale;
 
-        const unit = `${scale === 1 ? 'blok' : [2, 4, 32].includes(scale) ? 'bloki' : 'bloków'}`;
+        const unit = `${scale === 1 ? 'blok' : [2, 4, 32, 64].includes(scale) ? 'bloki' : 'bloków'}`;
 
         this.title.textContent = this.isSection
             ? `Mapa: ${MAP_LAYERS[layer]} | ${size} bloków w poziomie (1 punkt = ${scale} ${unit}), ` +
@@ -391,6 +406,10 @@ export class TerrainMap {
 
         const job = this.job;
 
+        if (job && job.row >= MAP_SIZE && this.layer === 'pogoda') {
+            this.updateWeather();
+        }
+
         if (!job || job.row >= MAP_SIZE) {
             return;
         }
@@ -479,6 +498,187 @@ export class TerrainMap {
         if (job.row >= MAP_SIZE) {
             this.showLegend();
         }
+
+    }
+
+
+    // Warstwa pogody: na gotową mapę terenu (przygaszoną) nakłada się
+    // chmury, opady, linie frontów i strzałki wiatru. Odświeża się
+    // w kółko, po kilka wierszy na klatkę - pogoda na mapie płynie.
+
+    updateWeather() {
+
+        const job = this.job;
+        const weather = this.weather;
+
+        if (!weather) {
+            return;
+        }
+
+        if (!job.base) {
+
+            // Teren w tle: szary i ciemniejszy, żeby chmury było widać.
+
+            job.base = new Uint8ClampedArray(this.image.data.length);
+
+            for (let o = 0; o < job.base.length; o += 4) {
+
+                const r = this.image.data[o], g = this.image.data[o + 1], b = this.image.data[o + 2];
+                const grey = 0.3 * r + 0.55 * g + 0.15 * b;
+
+                job.base[o] = (r * 0.55 + grey * 0.45) * 0.72;
+                job.base[o + 1] = (g * 0.55 + grey * 0.45) * 0.72;
+                job.base[o + 2] = (b * 0.55 + grey * 0.45) * 0.72;
+                job.base[o + 3] = 255;
+
+            }
+
+            job.weatherRow = 0;
+            job.weatherSample = {};
+            job.systems = [];
+
+        }
+
+        const field = weather.field;
+        const days = weather.days;
+        const deadline = performance.now() + WEATHER_BUDGET_MS;
+        const sample = job.weatherSample;
+        const data = this.image.data;
+        const C = WEATHER_COLORS;
+
+        while (performance.now() < deadline) {
+
+            if (job.weatherRow === 0) {
+                job.weatherDays = days;
+                field.systemsNear(this.center.x, this.center.z, days, MAP_SIZE * this.scale * 0.5, job.systems);
+            }
+
+            const j = job.weatherRow;
+
+            for (let i = 0; i < MAP_SIZE; i++) {
+
+                const { x, z } = this.blockAt(i, j);
+
+                field.sample(x, z, job.weatherDays, sample, job.systems);
+
+                const o = (j * MAP_SIZE + i) * 4;
+
+                let r = job.base[o], g = job.base[o + 1], b = job.base[o + 2];
+
+                const blend = (color, amount) => {
+                    r += (color[0] - r) * amount;
+                    g += (color[1] - g) * amount;
+                    b += (color[2] - b) * amount;
+                };
+
+                blend(C.high, 0.28 * sample.high);
+                blend(C.mid, 0.42 * sample.mid);
+
+                // Chmury niskie: im bardziej się piętrzą, tym ciemniejsze.
+                r += ((C.low[0] + (C.dark[0] - C.low[0]) * sample.thick) - r) * 0.86 * sample.low;
+                g += ((C.low[1] + (C.dark[1] - C.low[1]) * sample.thick) - g) * 0.86 * sample.low;
+                b += ((C.low[2] + (C.dark[2] - C.low[2]) * sample.thick) - b) * 0.86 * sample.low;
+
+                // Opad kreskowany na ukos, burza gęściej.
+                if (sample.rain > 0.04) blend(C.rain, Math.min(0.85, (0.3 + 0.6 * sample.rain) * ((i + j) % 3 === 0 ? 1 : 0.55)));
+                if (sample.storm > 0.1) blend(C.storm, Math.min(0.8, sample.storm) * ((i - j + MAP_SIZE) % 4 === 0 ? 1 : 0.35));
+
+                data[o] = r;
+                data[o + 1] = g;
+                data[o + 2] = b;
+
+            }
+
+            job.weatherRow++;
+
+            if (job.weatherRow >= MAP_SIZE) {
+
+                job.weatherRow = 0;
+                this.drawWeather(job);
+
+                return;
+
+            }
+
+        }
+
+    }
+
+
+    // Gotowy obraz pogody na ekran, a na nim linie frontów i wiatr.
+
+    drawWeather(job) {
+
+        const context = this.context;
+        const field = this.weather.field;
+        const half = MAP_SIZE / 2;
+        const toMap = (x, z) => [half + (x - this.center.x) / this.scale, half + (z - this.center.z) / this.scale];
+
+        context.putImageData(this.image, 0, 0);
+
+        // Fronty: linia przez środek układu, wygięta jak sam front;
+        // kreski po stronie, w którą front sunie.
+
+        for (const system of job.systems) {
+
+            if ((system.type !== 'front_cieply' && system.type !== 'front_chlodny') || system.strength < 0.25) continue;
+
+            const bend = ((system.type === 'front_cieply' ? 0.25 : 0.3) + 0.3 * system.h) / 6000;
+
+            context.strokeStyle = WEATHER_COLORS[system.type];
+            context.lineWidth = 1.5;
+            context.beginPath();
+
+            for (let c = -4200; c <= 4200; c += 300) {
+
+                const s = -c * c * bend;
+                const [mx, mz] = toMap(
+                    system.x + (system.dx * s - system.dz * c) * system.size,
+                    system.z + (system.dz * s + system.dx * c) * system.size
+                );
+
+                if (c === -4200) context.moveTo(mx, mz); else context.lineTo(mx, mz);
+
+                if (c % 1200 === 0) {
+                    context.lineTo(mx + system.dx * 5, mz + system.dz * 5);
+                    context.moveTo(mx, mz);
+                }
+
+            }
+
+            context.stroke();
+
+        }
+
+        // Wiatr: strzałki co 32 punkty (dłuższa = silniejszy).
+
+        const sample = job.weatherSample;
+
+        context.strokeStyle = WEATHER_COLORS.wind;
+        context.lineWidth = 1;
+        context.beginPath();
+
+        for (let j = 16; j < MAP_SIZE; j += 32) {
+            for (let i = 16; i < MAP_SIZE; i += 32) {
+
+                const { x, z } = this.blockAt(i, j);
+
+                field.sample(x, z, job.weatherDays, sample, job.systems);
+
+                const length = 3 + 1.6 * sample.speed;
+                const dx = Math.cos(sample.angle), dz = Math.sin(sample.angle);
+                const tipX = i + dx * length * 0.5, tipZ = j + dz * length * 0.5;
+
+                context.moveTo(i - dx * length * 0.5, j - dz * length * 0.5);
+                context.lineTo(tipX, tipZ);
+                context.lineTo(tipX - dx * 3 + dz * 2, tipZ - dz * 3 - dx * 2);
+                context.moveTo(tipX, tipZ);
+                context.lineTo(tipX - dx * 3 - dz * 2, tipZ - dz * 3 + dx * 2);
+
+            }
+        }
+
+        context.stroke();
 
     }
 
@@ -606,6 +806,7 @@ export class TerrainMap {
 
         switch (this.layer) {
 
+            case 'pogoda':
             case 'teren':
 
                 // Ląd poniżej poziomu morza (depresja) - ciemna zieleń.
@@ -754,6 +955,13 @@ export class TerrainMap {
             entries.push([`rgb(${MEADOW_COLOR.join(',')})`, 'łąki']);
 
         }
+        else if (this.layer === 'pogoda') {
+
+            entries.push(['#f6f7fa', 'chmury niskie'], ['#464c5a', 'piętrzące się (deszczowe, burzowe)'], ['#aab4c0', 'średnie i wysokie'],
+                ['#2c68e8', 'opad'], ['#ce3ee0', 'burza'], [WEATHER_COLORS.front_cieply, 'front ciepły'], [WEATHER_COLORS.front_chlodny, 'front chłodny'],
+                [WEATHER_COLORS.wind, 'strzałki: wiatr']);
+
+        }
         else if (this.layer === 'teren') {
 
             entries.push(['#1e54aa', 'morze'], ['#dece96', 'brzeg'], ['#347846', 'depresja'], ['#58a048', 'nizina'], ['#decd78', 'wyżyna'], ['#8c6446', 'góry'], ['#fafafa', 'szczyty']);
@@ -829,6 +1037,14 @@ export class TerrainMap {
         }
 
         const { x, z } = this.blockAt(i, j);
+
+        if (this.layer === 'pogoda' && this.weather) {
+
+            this.hover.textContent = `${x}, ${z} | ${sampleText(this.weather.field.sample(x, z, this.weather.days))}`;
+
+            return;
+
+        }
 
         this.hover.textContent =
             `${x}, ${z} | wysokość ${info.height} | ${RELIEFS[info.relief] ?? info.relief} | ` +

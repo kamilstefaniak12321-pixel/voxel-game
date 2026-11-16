@@ -450,11 +450,13 @@ export const FAR_TERRAIN_SHADOW_GLSL = `
 // rzuca cienie, mnożymy przez sunLight, drugie światło kierunkowe - przez
 // światło nieba (skyLight), światło otoczenia - przez ambientLight.
 // Nazwy zmiennych ustawia ten, kto wstawia kod (bloki: blockSun,
-// blockSky, blockAmbient).
+// blockSky, blockAmbient). cloud - opcjonalnie cień chmur (0-1,
+// weather/cloudShader.js): przyciemnia to samo światło co cienie terenu.
 
-export function shadowLightsChunk(sunLight, skyLight, ambientLight, condition = null) {
+export function shadowLightsChunk(sunLight, skyLight, ambientLight, condition = null, cloud = null) {
 
-    const sunFactor = condition ? `(${condition} ? ${sunLight} : 1.0)` : sunLight;
+    const sun = condition ? `(${condition} ? ${sunLight} : 1.0)` : sunLight;
+    const sunFactor = cloud ? `(${sun}) * ${cloud}` : sun;
     const skyFactor = condition ? `(${condition} ? ${skyLight} : 1.0)` : skyLight;
     const ambientFactor = condition ? `(${condition} ? ${ambientLight} : 1.0)` : ambientLight;
 

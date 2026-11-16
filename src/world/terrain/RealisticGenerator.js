@@ -475,6 +475,16 @@ export class RealisticGenerator {
     }
 
 
+    // Wilgotność klimatu w miejscu (x, z), -1..1 - samo pole, bez
+    // liczenia terenu (pogoda: w suchych stronach mniej chmur i deszczu).
+
+    humidityAt(x, z) {
+
+        return this.field(this.noise.humidity, x, z, SHAPE.SCALES.humidity, 2);
+
+    }
+
+
     // Pole "grzbietów": 1 na linii grzbietu, w dół po obu stronach.
 
     ridged(noise, x, z, scale, octaves) {

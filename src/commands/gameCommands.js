@@ -9,7 +9,8 @@
 // składa je w jedną listę (kolejność = kolejność na liście /pomoc):
 //
 //   generalCommands.js     - logi, pomoc, czyszczenie czatu
-//   skyCommands.js         - czas, niebo, księżyc, pogoda
+//   skyCommands.js         - czas, niebo, księżyc, pory roku
+//   weatherCommands.js     - pogoda: stan, prognoza, fronty
 //   playerCommands.js      - gracz, ekwipunek, energia, model i animacje
 //   worldCommands.js       - bloki i świat: rośliny, drzewa, woda
 //   lightCommands.js       - światło i sceny testowe
@@ -23,6 +24,7 @@
 
 import { GENERAL_COMMANDS } from './generalCommands.js';
 import { SKY_COMMANDS } from './skyCommands.js';
+import { WEATHER_COMMANDS } from './weatherCommands.js';
 import { PLAYER_COMMANDS } from './playerCommands.js';
 import { WORLD_COMMANDS } from './worldCommands.js';
 import { LIGHT_COMMANDS } from './lightCommands.js';
@@ -36,6 +38,7 @@ export { setSceneTime } from './lightCommands.js';
 export const GAME_COMMANDS = [
     ...GENERAL_COMMANDS,
     ...SKY_COMMANDS,
+    ...WEATHER_COMMANDS,
     ...PLAYER_COMMANDS,
     ...WORLD_COMMANDS,
     ...LIGHT_COMMANDS,

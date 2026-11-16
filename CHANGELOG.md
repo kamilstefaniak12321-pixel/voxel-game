@@ -11,6 +11,53 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 1.11.0 - Pogoda, część 1: niebo i fronty
+
+PR #162. Opis i plan całej aktualizacji pogodowej: [`docs/pogoda.md`](docs/pogoda.md).
+
+- **Pogoda płynie nad krajobrazem.** Nie włącza się na całym świecie:
+  fronty, wyże, niże i burze suną po mapie z prędkością 5,5 bloku na
+  sekundę, przeważnie z zachodu. Liczą się z czasu gry i ziarna świata -
+  nic nie trafia do zapisu, a w grze ze znajomymi wszyscy widzą ten sam
+  front w tym samym miejscu.
+- **Fronty jak prawdziwe.** Przed frontem ciepłym najpierw przychodzą
+  chmury pierzaste, potem średnie, potem niskie z jednostajnym deszczem.
+  Front chłodny to wąska ściana piętrzących się chmur z ulewą, tuż za nią
+  przejaśnienie i porywisty wiatr z innej strony. Pogodę da się czytać
+  z nieba, zanim przyjdzie.
+- **Chmury na trzech piętrach.** Niskie - kłębiaste i warstwowe, ułożone
+  z klocków, z płaską podstawą, bokami i wierzchem (widać je też z góry,
+  a w środku robi się biało); średnie - kłębki albo szara zasłona;
+  wysokie - falujące pierzaste smugi. Każde piętro płynie z inną
+  prędkością. W dzień białe z szarym spodem, o wschodzie i zachodzie
+  pomarańczowe (wysokie świecą najdłużej), nocą rozjaśnia je księżyc.
+- **Cienie chmur suną po ziemi** - po blokach, roślinach, wodzie i dalekim
+  terenie, dokładnie pod chmurami z nieba.
+- **Pod chmurami robi się szaro.** Zamknięte niebo zmienia światło całego
+  świata, a pod chmurą deszczową i burzową jest jeszcze ciemniej.
+- **Wiatr jest lokalny.** W wyżu prawie cisza, przed frontem chłodnym
+  i przy burzy nawet 8-10 bloków na sekundę w porywach. Rośliny kołyszą
+  się mocniej, liście lecą dalej.
+- **Pory roku:** latem wyże i popołudniowe burze, jesienią i zimą fronty
+  ciepłe i niskie chmury; chmury kłębiaste rosną po południu i znikają
+  nocą. **Klimat:** na pustyni i sawannie chmur i deszczu jest mniej.
+- **Deszcz pada tam, gdzie mówi pogoda** (na razie dawny, skromny deszcz -
+  jego kolej w części 2).
+- **`/pogoda`**: stan nieba i wiatru, `prognoza` na półtorej doby gry,
+  `znajdz <rodzaj> [tp]`, `ustaw <rodzaj> [nadciaga]` do sprawdzania,
+  `auto`. **`/mapa pogoda`**: mapa pogody na żywo (chmury, opady, burze,
+  linie frontów, wiatr), nowa skala mapy 64 bloki na punkt.
+- **Ustawienia** (Obraz → Zaawansowane): *Chmury* - pełne, płaskie
+  (tańsze) albo wyłączone; *Cienie chmur*. Jakość niska i średnia oraz
+  telefon: chmury płaskie; tryb ziemniaka dodatkowo bez cieni chmur.
+- **Osiągnięcia:** *Pierwsze krople*, *Wiatr we włosach*, *Ani jednej
+  chmurki*, *Głowa w chmurach*.
+- Test wydajności (`/wydajnosc`) pokazuje pogodę jako osobny etap.
+- **Sprostowanie do 1.10.3:** zdanie o „ponad 17 tysiącach obiektów terenu
+  przy zasięgu 800" było nietrafione - tyle zakładał test, w grze jest ich
+  wtedy około 1200 (resztę rysuje daleki teren). Opis poprawiony
+  w [`docs/aktualizacja-wydajnosci.md`](docs/aktualizacja-wydajnosci.md#przeglądanie-sceny-1103).
+
 ## 1.10.3 - Mniej pracy procesora przy dużym zasięgu widzenia
 
 PR #161. Opis: [`docs/aktualizacja-wydajnosci.md`](docs/aktualizacja-wydajnosci.md#przeglądanie-sceny-1103).

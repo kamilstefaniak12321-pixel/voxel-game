@@ -1,15 +1,18 @@
 // ------------------------------------------------------------
 // SEKTORY TERENU (1.10.3) - mniej przeglądania sceny co klatkę
 //
-// Przy zasięgu 800 w scenie jest ponad 17 tysięcy obiektów terenu (mesh
-// chunka, mesh roślin, sklejone regiony). Silnik co klatkę robił z każdym
-// dwie rzeczy, choć teren stoi w miejscu:
+// W scenie są tysiące obiektów terenu (mesh chunka, mesh roślin, sklejone
+// regiony). Silnik co klatkę robił z każdym dwie rzeczy, choć teren stoi
+// w miejscu:
 //   - przeliczał mu macierz położenia (scena wymusza to u wszystkich
 //     potomków, także tych z wyłączonym przeliczaniem),
 //   - odwiedzał go przy wybieraniu tego, co jest w kadrze - także
 //     w przebiegu cienia postaci, który rysuje tę samą scenę.
-// Pomiar (tools/sprawdz_sektory_terenu.mjs, 17 651 obiektów): 2,9 ms na
-// klatkę przed, 0,55 ms po.
+// Pomiar (tools/sprawdz_sektory_terenu.mjs, 17 651 obiektów - prawdziwe
+// chunki w całym zasięgu 800): 2,9 ms na klatkę przed, 0,55 ms po.
+// W grze przy zasięgu 800 większość widoku rysuje daleki teren, a
+// obiektów terenu jest około 1200 (pomiar Kamila, 1.10.3) - wtedy zysk
+// jest mały; rośnie z liczbą wczytanych prawdziwych chunków.
 //
 // Teraz obiekty terenu wiszą pod jednym korzeniem, w grupach-sektorach
 // (TERRAIN_SECTOR x TERRAIN_SECTOR chunków):
@@ -25,8 +28,8 @@
 import * as THREE from 'three';
 import { CHUNK_SIZE, CHUNK_HEIGHT } from '../config.js';
 
-// Bok sektora w chunkach. 4 = 64 bloki: przy zasięgu 800 około 530
-// sektorów (530 tanich testów pudełka zamiast 17 tysięcy odwiedzin),
+// Bok sektora w chunkach. 4 = 64 bloki: przy 17 tysiącach obiektów około
+// 530 sektorów (530 tanich testów pudełka zamiast 17 tysięcy odwiedzin),
 // a region sklejonego terenu (2 x 2 chunki) zawsze mieści się w jednym.
 export const TERRAIN_SECTOR = 4;
 

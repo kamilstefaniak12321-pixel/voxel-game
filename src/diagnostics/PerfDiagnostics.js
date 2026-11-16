@@ -8,6 +8,7 @@ export const PERF_STAGES = Object.freeze([
     ['waterfalls', 'Rozbryzgi i kręgi wodospadów'],
     ['light', 'Światło lokalne i odbicia'], ['plants', 'Wzrost i animacje roślin'],
     ['save', 'Przygotowanie zapisu'], ['effects', 'Efekty i ogniska'],
+    ['weather', 'Pogoda (mapa chmur, wiatr)'],
     ['render', 'Przygotowanie renderowania (CPU)'], ['shadows', 'Wysyłanie cieni (CPU)'],
     ['sky', 'Wysyłanie nieba (CPU)'], ['farDraw', 'Wysyłanie dalekiego terenu (CPU)'],
     ['world', 'Wysyłanie świata (CPU)'],

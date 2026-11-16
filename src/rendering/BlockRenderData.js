@@ -78,6 +78,7 @@ import {
     shadowLightsChunk,
     setShadowFastLeaves
 } from './Shadows.js';
+import { cloudUniforms, CLOUD_SHADOW_GLSL } from '../weather/cloudShader.js';
 
 
 import {
@@ -199,7 +200,10 @@ blockMaterial.onBeforeCompile = (shader, renderer) => {
             #elif defined( USE_COLOR_ALPHA )
                 diffuseColor.rgb *= mix(blockSky, 1.0, uAtmosphericLight);
             #endif
-            blockAmbient = mix(blockAmbient, blockSky * surfaceDecodeLight(vSurfaceOcclusion), uAtmosphericLight);`
+            blockAmbient = mix(blockAmbient, blockSky * surfaceDecodeLight(vSurfaceOcclusion), uAtmosphericLight);
+            // Cień chmur (weather/cloudShader.js): przyciemnia światło
+            // słońca; gdy jest wyłączony, funkcja od razu zwraca 1.
+            float blockCloud = cloudShadowAt(vWorldPosition);`
         );
 
 
@@ -401,7 +405,7 @@ blockMaterial.onBeforeCompile = (shader, renderer) => {
     // Dynamiczne światło korzysta z tekstur 3D, cienie słońca - z tekstur
     // głębi (gra wymaga WebGL 2 - main.js).
 
-    Object.assign(shader.uniforms, dynamicLightUniforms, meteorLightUniforms, shadowUniforms, bounceUniforms, campfireLightUniforms);
+    Object.assign(shader.uniforms, dynamicLightUniforms, meteorLightUniforms, shadowUniforms, bounceUniforms, campfireLightUniforms, cloudUniforms);
 
     shader.vertexShader =
         shader.vertexShader
@@ -432,6 +436,7 @@ blockMaterial.onBeforeCompile = (shader, renderer) => {
             ${METEOR_LIGHT_GLSL}
             ${CAMPFIRE_LIGHT_GLSL}
             ${SHADOW_GLSL}
+            ${CLOUD_SHADOW_GLSL}
 
             #ifndef USE_SUN_SHADOWS
                 uniform int uSunShadowLight;
@@ -448,9 +453,9 @@ blockMaterial.onBeforeCompile = (shader, renderer) => {
         shader.fragmentShader.replace(
             '#include <lights_fragment_begin>',
             `#ifdef USE_SUN_SHADOWS
-                ${shadowLightsChunk('blockSun', 'blockSky', 'blockAmbient')}
+                ${shadowLightsChunk('blockSun', 'blockSky', 'blockAmbient', null, 'blockCloud')}
             #else
-                ${shadowLightsChunk('blockSky', 'blockSky', 'blockAmbient', 'uAtmosphericLight > 0.5')}
+                ${shadowLightsChunk('blockSky', 'blockSky', 'blockAmbient', 'uAtmosphericLight > 0.5', 'blockCloud')}
             #endif`
         );
 

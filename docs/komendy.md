@@ -32,7 +32,12 @@ Współrzędne można podawać względem gracza: `~` (tu, gdzie stoję),
 | `/ksiezyc` | faza, oświetlenie, czy jest nad horyzontem, kolor |
 | `/ksiezyc faza <now \| sierp \| kwadra \| garb \| pelnia \| ubywajacy-garb \| ostatnia-kwadra \| ubywajacy-sierp>` | przesuwa czas o pełne doby do tej fazy i mówi, o której księżyc jest najwyżej |
 | `/ksiezyc kolor <kolor \| domyslny>` | kolor księżyca (zabarwia też światło nocą) |
-| `/pogoda [deszcz [0-100] \| sucho]` | stan opadu albo zmiana natężenia deszczu (domyślnie 40%); na czas bieżącej sesji, dach zatrzymuje krople, trafienia w wodę tworzą kręgi |
+| `/pogoda` | pogoda nad tobą: niebo, piętra chmur, wiatr, najbliższy front albo burza i za ile minut tu będzie (`docs/pogoda.md`, od 1.11.0) |
+| `/pogoda prognoza` | zmiany nieba w tym miejscu na najbliższe półtorej doby gry |
+| `/pogoda znajdz <rodzaj> [tp]` | najbliższy układ pogodowy danego rodzaju (`pogodnie`, `pochmurno`, `front-cieply`, `front-chlodny`, `burza`, `przelotne`, `pierzaste`); `tp` przenosi tuż przed niego |
+| `/pogoda ustaw <rodzaj> [nadciaga]` | ustawia pogodę nad tobą (stoi w miejscu) albo - z `nadciaga` - każe jej nadciągnąć z daleka; tylko u ciebie, do `/pogoda auto` |
+| `/pogoda auto` | powrót do pogody liczonej z czasu gry i ziarna świata |
+| `/pogoda deszcz [0-100]`, `/pogoda sucho` | sam deszcz do odwołania (dach zatrzymuje krople, trafienia w wodę tworzą kręgi) |
 | `/niebo` | wysokość słońca, łuna, ile gwiazd widać, Droga Mleczna, spadające gwiazdy na minutę, trwające zaćmienie |
 | `/niebo zachod <kolor \| domyslny>` | kolor łuny wschodu i zachodu (zabarwia też światło) |
 | `/zacmienie` | kiedy następne zaćmienie słońca (dzień, godzina, pełne czy częściowe); jeśli trwa - ile słońca jest zasłonięte |
@@ -147,7 +152,7 @@ Współrzędne można podawać względem gracza: `~` (tu, gdzie stoję),
 | `/teren <x> <z>` | to samo dla dowolnego miejsca (`~` = względem gracza) |
 | `/teren formy` | lista form terenu do szukania |
 | `/teren znajdz <forma> [promien] [tp]` | najbliższa forma terenu (np. `turnia`, `kotlina`, `plaskowyz`, `wyzyna`); `tp` - od razu teleport |
-| `/mapa [warstwa] [skala]` | mapa terenu z góry (klawisz **M**); warstwy: `teren`, `formy`, `pasy`, `skaly` (skała na wierzchu albo pod glebą), `przekroj` (przekrój pionowy w kierunku patrzenia, domyślnie 1 blok na punkt), `lasy` (gatunek drzew, który przeważa, i gęstość lasu), `biomy` (biomy z legendą), `kontynent`, `wypietrzenie`, `erozja`, `grzbiety`, `gory`, `wyzyny`, `temperatura`, `wilgotnosc`; skala = bloki na punkt (1-32) |
+| `/mapa [warstwa] [skala]` | mapa terenu z góry (klawisz **M**); warstwy: `teren`, `formy`, `pasy`, `skaly` (skała na wierzchu albo pod glebą), `przekroj` (przekrój pionowy w kierunku patrzenia, domyślnie 1 blok na punkt), `lasy` (gatunek drzew, który przeważa, i gęstość lasu), `pogoda` (chmury, opady, fronty i wiatr na żywo; domyślnie 64 bloki na punkt), `biomy` (biomy z legendą), `kontynent`, `wypietrzenie`, `erozja`, `grzbiety`, `gory`, `wyzyny`, `temperatura`, `wilgotnosc`; skala = bloki na punkt (1-64) |
 | `/mapa wyl` | zamyka mapę |
 | `/skaly` | skały w kolumnie pod graczem, od góry (np. trawa 1, ziemia 3, piaskowiec 12...) |
 | `/skaly statystyki [promien]` | udział skał w okolicy (domyślnie 128 bloków) i ile lepidolitu wychodzi na wierzch |
@@ -175,7 +180,7 @@ Kolory: `czerwony`, `krwawy`, `pomaranczowy`, `zloty`, `zolty`, `zielony`,
 `turkusowy`, `niebieski`, `fioletowy`, `rozowy`, `bialy` albo `#rrggbb`.
 
 Nazwy ustawień w `/ustaw`: `ziemniak`, `zasieg`, `daleki-teren`, `szczegoly-terenu` (też `daleki-teren-szczegoly`), `pole`, `jasnosc`,
-`rozdzielczosc`, `fps` (limit), `cienie` (cienie w kątach, 0-100), `cienie-slonca` (`wyl` / `zwykle` / `dokladne` / `dalekie`), `promienie` (promienie światła: `wl` / `wyl`),
+`rozdzielczosc`, `fps` (limit), `cienie` (cienie w kątach, 0-100), `cienie-slonca` (`wyl` / `zwykle` / `dokladne` / `dalekie`), `promienie` (promienie światła: `wl` / `wyl`), `chmury` (`pelne` / `plaskie` / `brak`), `cienie-chmur` (cienie chmur na terenie: `wl` / `wyl`),
 `swiatlo-odbite` (też `odbicia`: `wl` / `wyl`),
 `model-swiatla`, `swiatlo-materialow`, `atmosfera`, `przeswiecanie-lisci`, `sila-odbicia`, `nasycenie-odbicia`,
 `liscie` (ładne liście z prześwitami: `wl` / `wyl`), `trawa-kepiasta`, `dynamiczne-swiatlo`, `wczytywanie`, `laczenie-terenu` (sklejanie sąsiednich chunków w jedno polecenie rysowania: `wl` / `wyl` - do porównań wydajności), `czulosc`,

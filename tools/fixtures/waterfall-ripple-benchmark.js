@@ -481,7 +481,9 @@ export async function createWaterfallRippleQA() {
         const oldRandom = rain.random;
         let seed = 0x750d;
         rain.random = () => { seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0; return seed / 4294967296; };
-        rain.setIntensity(0); impacts.setAmount(0); impacts.setAmount(1);
+        // Od 1.11.0 deszczem steruje pogoda; test ustawia go jak komenda
+        // /pogoda deszcz (game.rainOverride), inaczej gra zaraz by go zgasiła.
+        game.rainOverride = 0; rain.setIntensity(0); impacts.setAmount(0); impacts.setAmount(1);
         game.player.pos.set(.5, 38, 8.5); game.player.flying = true; game.player.vel.set(0, 0, 0);
         game.camera.position.set(-11.5, 19, 9.5);
         if (roof) for (let x = -20; x <= -3; x++) for (let z = 1; z <= 18; z++) {
@@ -490,7 +492,7 @@ export async function createWaterfallRippleQA() {
         const waterHits = rain.waterHits, surfaceHits = rain.surfaceHits, emitted = impacts.stats().emitted.rain;
         const clock = game.player.clock;
         let maxDrops = 0, maxReads = 0, maxSharedCells = 0;
-        rain.setIntensity(1);
+        game.rainOverride = 1; rain.setIntensity(1);
         try {
             for (let i = 0; i < 300; i++) {
                 const start = performance.now(); updateEffects(1 / 60); times.push(performance.now() - start);
@@ -512,7 +514,7 @@ export async function createWaterfallRippleQA() {
         } finally {
             rain.random = oldRandom;
             if (roof) {
-                rain.setIntensity(0);
+                game.rainOverride = 0; rain.setIntensity(0);
                 for (const [x, y, z, id] of edits) world.setBlock(x, y, z, id ? getBlockTypeById(id) : null);
             }
         }
@@ -520,7 +522,7 @@ export async function createWaterfallRippleQA() {
 
     async function audioChecks() {
         const first = checks.length, audio = game.water.waterfallAudio, times = [];
-        game.rain.setIntensity(0);
+        game.rainOverride = 0; game.rain.setIntensity(0);
         if (!sounds) { sounds = new SoundManager(settings); await sounds.ready; }
         check(sounds.buffers.get('water_waves')?.length > 0 && sounds.buffers.get('water_stream')?.length > 0,
             'Both actual waterfall recordings decode into Web Audio buffers');
@@ -707,7 +709,7 @@ export async function createWaterfallRippleQA() {
 
     async function effectLimits() {
         const first = checks.length;
-        game.rain.setIntensity(0); game.waterImpacts.setAmount(0); game.waterImpacts.setAmount(1);
+        game.rainOverride = 0; game.rain.setIntensity(0); game.waterImpacts.setAmount(0); game.waterImpacts.setAmount(1);
         for (let i = 0; i < 200; i++) game.waterImpacts.add(-11.75 + (i % 3) * .3, FLOOR,
             9.1 + (i % 4) * .15, i % 4 ? 'rain' : 'player', .5);
         updateEffects(0);

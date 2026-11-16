@@ -542,6 +542,7 @@ export const TOUCH_SETTINGS = {
     fancyLeaves: false,    // szybkie liście (bez prześwitów - dużo mniej ścian)
     shadows: 0,            // bez cieni słońca (mapa cieni to dużo pracy dla karty)
     lightShafts: false,    // bez promieni światła
+    clouds: 'plaskie',     // chmury bez boków i wierzchu (dużo mniej pracy na piksel nieba)
     bounceLight: false,    // bez światła odbitego (liczenie w tle)
     lightingMaterials: 'basic', // zachowaj lekką bazę, dopóki nie zmierzymy telefonu
     leafModel: 'cube',     // liście jako bloki (8 części to więcej ścian)

@@ -52,6 +52,7 @@ import {
     shadowUniforms,
     FAR_TERRAIN_SHADOW_GLSL
 } from '../rendering/Shadows.js';
+import { cloudUniforms, CLOUD_SHADOW_GLSL } from '../weather/cloudShader.js';
 
 import { grassTint } from './terrain/Biomes.js';
 import { SURFACE_FACE_NAMES, SURFACE_MATERIAL_COUNT, getSurfaceFaceTexture, surfaceMaterialId, surfaceMaterialType } from '../rendering/SurfaceMaterials.js';
@@ -290,7 +291,7 @@ export function createFarTerrainMaterial(level = 0, tileFade = { value: new THRE
 
     material.onBeforeCompile = (shader) => {
 
-        Object.assign(shader.uniforms, skyUniforms, viewUniforms, meteorLightUniforms, shadowUniforms, chunkMaskUniforms, {
+        Object.assign(shader.uniforms, skyUniforms, viewUniforms, meteorLightUniforms, shadowUniforms, chunkMaskUniforms, cloudUniforms, {
             uLodTint: { value: lodColor },
             uLodDebug: lodDebug,
             uCellSize: { value: cellSize },
@@ -500,6 +501,11 @@ export function createFarTerrainMaterial(level = 0, tileFade = { value: new THRE
                 ${GLOBE_LIGHT_GLSL}
                 ${METEOR_LIGHT_GLSL}
                 ${FAR_TERRAIN_SHADOW_GLSL}
+                ${CLOUD_SHADOW_GLSL}
+
+                #ifndef USE_FAR_SHADOWS
+                    uniform int uSunShadowLight;
+                #endif
                 ${SURFACE_LIGHTING_GLSL}
                 ${CANOPY_LIGHTING_GLSL}
 
@@ -577,23 +583,26 @@ export function createFarTerrainMaterial(level = 0, tileFade = { value: new THRE
             )
             .replace(
                 '#include <lights_fragment_begin>',
-                `#ifdef USE_FAR_SHADOWS
+                `// Cień chmur (weather/cloudShader.js) sunie po dalekim terenie
+                // tak samo jak po bliskim.
+
+                float farSun = cloudShadowAt(vFarWorld);
+
+                #ifdef USE_FAR_SHADOWS
 
                     // Daleka mapa cieni (src/rendering/Shadows.js): góry
                     // rzucają cień na doliny - słońce świeci tylko tam,
                     // dokąd dochodzą jego promienie.
 
-                    float farSun = farTerrainSun(vFarWorld, inverseTransformDirection(normal, viewMatrix));
+                    farSun *= farTerrainSun(vFarWorld, inverseTransformDirection(normal, viewMatrix));
 
-                    ${THREE.ShaderChunk.lights_fragment_begin.replace(
-                        'getDirectionalLightInfo( directionalLight, directLight );',
-                        `getDirectionalLightInfo( directionalLight, directLight );
-                        directLight.color *= ( UNROLLED_LOOP_INDEX == uSunShadowLight ) ? farSun : 1.0;`
-                    )}
+                #endif
 
-                #else
-                    #include <lights_fragment_begin>
-                #endif`
+                ${THREE.ShaderChunk.lights_fragment_begin.replace(
+                    'getDirectionalLightInfo( directionalLight, directLight );',
+                    `getDirectionalLightInfo( directionalLight, directLight );
+                    directLight.color *= ( UNROLLED_LOOP_INDEX == uSunShadowLight ) ? farSun : 1.0;`
+                )}`
             )
             .replace(
                 '#include <lights_fragment_end>',

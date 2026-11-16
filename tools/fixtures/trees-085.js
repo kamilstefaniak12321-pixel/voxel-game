@@ -88,8 +88,16 @@ export async function run() {
     check(specimens[0].height > specimens[1].height * 1.5, 'Mature ginkgo is substantially taller than jacaranda');
     game.world.loadAround(-182, -32, 9);
     game.player.pos.set(-182, specimens[0].y, 10); game.update(0); game.world.updateMeshes();
+    // Since 1.11.0 the light depends on the weather (seed 42 starts in
+    // frontal rain). The colour thresholds below assume a clear sky, so each
+    // view pins a high over the camera - the same as /pogoda ustaw pogodnie.
+    function clearSky(x, z) {
+        const field = game.weather.field;
+        field.clearForced(); field.force('wyz', x, z, game.time.days, { stay: true }); game.weather.reset();
+    }
     async function draw(eye, target) {
         game.player.pos.set(eye[0], eye[1] - 1.6, eye[2]); game.player.yaw = 0; game.player.pitch = 0;
+        clearSky(eye[0], eye[2]);
         game.update(0); game.world.updateMeshes();
         for (let frame = 0; frame < 4; frame++) {
             game.camera.position.set(...eye); game.camera.lookAt(...target); game.render(); await pause();

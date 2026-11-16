@@ -70,7 +70,8 @@ import { BlockDebris } from '../rendering/BlockDebris.js';
 import { WaterfallEffects } from '../rendering/WaterfallEffects.js';
 import { TreeParticles } from '../rendering/TreeParticles.js';
 import { WindStreaks } from '../rendering/WindStreaks.js';
-import { windAt } from '../world/AmbientWind.js';
+import { Weather } from '../weather/Weather.js';
+import { plantWindUniforms } from '../rendering/PlantWind.js';
 import { WaterfallWetRocks } from '../rendering/WaterfallWetRocks.js';
 import { WaterImpactRipples } from '../rendering/WaterImpactRipples.js';
 import { RainEffects } from '../rendering/RainEffects.js';
@@ -106,6 +107,44 @@ import {
 // chunki pod sobą - wyżej sam daleki teren (i kula Ziemi).
 
 const HIGH_VIEW = 1100;
+
+
+// Wilgotność klimatu dla pogody: (x, z) => -1..1 albo null, gdy
+// generator jej nie ma (płaski świat). Zapamiętywana w oczkach po 256
+// bloków - pogoda pyta o nią tysiące razy na sekundę.
+
+function weatherClimate(generator) {
+
+    if (typeof generator?.humidityAt !== 'function') {
+        return null;
+    }
+
+    const cache = new Map();
+
+    return (x, z) => {
+
+        const cx = Math.floor(x / 256);
+        const cz = Math.floor(z / 256);
+        const key = cx * 65536 + cz;
+
+        let value = cache.get(key);
+
+        if (value === undefined) {
+
+            if (cache.size > 30000) {
+                cache.clear();
+            }
+
+            value = generator.humidityAt((cx + 0.5) * 256, (cz + 0.5) * 256);
+            cache.set(key, value);
+
+        }
+
+        return value;
+
+    };
+
+}
 
 
 function smoothstep(a, b, x) {
@@ -373,6 +412,16 @@ export class Game extends GameInteraction {
             { bushyGrass: settings.get('bushyGrass') }
         );
 
+        // Pogoda (src/weather/): fronty, chmury i wiatr z czasu gry
+        // i ziarna świata. W suchych stronach świata chmur jest mniej.
+
+        this.weather = new Weather(worldInfo.seed, { climate: weatherClimate(this.world.generator) });
+        this.sky.clouds.weather = this.weather;
+
+        // Deszcz ustawiony komendą /pogoda deszcz (0-1) albo null - pada
+        // tam, gdzie mówi pogoda.
+        this.rainOverride = null;
+
         // Gra wieloosobowa (src/net/NetHost.js albo NetClient.js) - null,
         // gdy gramy sami.
 
@@ -545,10 +594,9 @@ export class Game extends GameInteraction {
         this.waterfalls = new WaterfallEffects(this.scene, this.world);
         this.waterfalls.setAmount(this.settings.get('potato') ? 0.35 : 1);
 
-        // Spadające liście i owoce, smugi wiatru (0.82.0) - jeden wiatr
-        // dla obu (AmbientWind.js), liczony z czasu gry.
-        this.windClock = 0;
-        this.wind = windAt(0);
+        // Spadające liście i owoce, smugi wiatru (0.82.0) - niesie je
+        // wiatr z pogody w miejscu gracza (weather/Weather.js).
+        this.wind = this.weather.wind;
         this.treeParticles = new TreeParticles(this.scene, this.world);
         this.windStreaks = new WindStreaks(this.scene, this.world);
         this.applyAmbientParticles();
@@ -849,8 +897,11 @@ export class Game extends GameInteraction {
             this.sky.horizonDip = Math.min(this.sky.horizonDip, this.spaceView.horizonDip);
         }
 
+        this.updateWeather(dt);
+
         profile?.beginStage('light');
         this.sky.update(this.time.days, dt, this.renderer.getPixelRatio());
+        this.weather.setLight(this.sky.clouds.uniforms.uCloudLight.value, this.sky.clouds.active);
 
         this.updateFog(dt);
 
@@ -879,8 +930,7 @@ export class Game extends GameInteraction {
 
         // Wiatr, spadające liście i owoce, smugi wiatru.
 
-        this.windClock += dt;
-        this.wind = windAt(this.windClock);
+        this.wind = this.weather.wind;
         this.treeParticles.update(dt, this.player, this.wind);
         this.windStreaks.update(dt, this.player, this.wind, this.sky.state?.daylight ?? 1);
 
@@ -929,6 +979,28 @@ export class Game extends GameInteraction {
 
     }
 
+    // Pogoda nad graczem (weather/Weather.js): zachmurzenie zmienia
+    // światło całego świata, chmury rzucają cienie, wiatr kołysze
+    // roślinami. Przed niebem - niebo bierze z niej zachmurzenie.
+
+    updateWeather(dt) {
+
+        const profile = this.perfDiagnostics;
+        const active = this.sky.clouds.active;
+
+        profile?.beginStage('weather');
+
+        this.weather.update(this.time.days, dt, this.camera.position.x, this.camera.position.z);
+
+        this.sky.cloudCover = Math.max(this.settings.get('cloudCover') / 100, active ? this.weather.overcast : 0);
+        this.sky.cloudDepth = active ? this.weather.depth : 0;
+
+        plantWindUniforms.uPlantSway.value = this.settings.get('plantWind') ? this.weather.sway : 0;
+
+        profile?.endStage('weather');
+
+    }
+
     waterSurfaceMaterials() {
         return [...(this.waterfalls?.materials ?? (this.waterfalls ? [this.waterfalls.ripples.material] : [])),
             this.wetRocks?.material, this.waterImpacts?.material].filter(Boolean);
@@ -941,6 +1013,12 @@ export class Game extends GameInteraction {
             this.wetRocks.setLandings(this.waterfalls.landings);
         }
         this.wetRocks.update(dt);
+
+        // Pada tam, gdzie mówi pogoda (albo tyle, ile ustawiła komenda).
+        const rain = this.rainOverride ?? (this.weather.local.rain > 0.04 ? this.weather.local.rain : 0);
+        if (Math.abs(rain - this.rain.intensity) > 0.01 || (rain === 0) !== (this.rain.intensity === 0)) {
+            this.rain.setIntensity(rain);
+        }
         this.rain.update(dt, this.camera, this.sky.state);
         // One shared discovery allowance for persistent and short-lived rings.
         this.waterImpacts.update(dt, this.player, Math.max(0, 48 - this.waterfalls.ripples.surface.lastProcessed));
@@ -963,8 +1041,10 @@ export class Game extends GameInteraction {
         this.updateFarRange();
         this.farTerrain.update(this.camera.position);
         profile?.endStage('far');
+        this.updateWeather(dt);
         profile?.beginStage('light');
         this.sky.update(this.time.days, dt, this.renderer.getPixelRatio());
+        this.weather.setLight(this.sky.clouds.uniforms.uCloudLight.value, this.sky.clouds.active);
         this.updateFog(dt);
         this.shadows.update(dt, this.sky, this.camera.position);
         this.sky.applyShadowContrast(this.shadows.active ? this.shadows.strength : 0);
@@ -1409,6 +1489,14 @@ export class Game extends GameInteraction {
         profile?.endStage('world');
 
         if (drawn) drawn.world += calls.calls - callsBefore;
+
+        // Lot ponad chmurami: chmury pod kamerą zasłaniają teren.
+
+        if (!this.water.underwater) {
+            profile?.beginStage('sky');
+            this.sky.renderCloudsBelow?.(renderer, camera);
+            profile?.endStage('sky');
+        }
 
 
         // Promienie światła w powietrzu (na świecie, pod ręką).
@@ -2022,6 +2110,13 @@ export class Game extends GameInteraction {
 
         this.shaftsEnabled = !potato && settings.get('lightShafts');
 
+        // Chmury: w trybie ziemniaka płaskie i bez cieni na terenie.
+
+        const clouds = settings.get('clouds');
+
+        if (this.sky.clouds) this.sky.clouds.quality = potato && clouds === 'pelne' ? 'plaskie' : clouds;
+        if (this.weather) this.weather.shadows = !potato && settings.get('cloudShadows');
+
 
         // Model gracza: wierzchnia warstwa skórki, styl zgięć, tryb ziemniaka.
 
@@ -2493,6 +2588,9 @@ export class Game extends GameInteraction {
         this.wetRocks.dispose();
         this.waterImpacts.dispose();
         this.rain.dispose();
+
+        this.weather.dispose();
+        plantWindUniforms.uPlantSway.value = this.settings.get('plantWind') ? 1 : 0;
 
         this.shadows.dispose();
 

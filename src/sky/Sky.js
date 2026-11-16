@@ -14,6 +14,7 @@ import { Stars } from './layers/Stars.js';
 import { Galaxies } from './layers/Galaxies.js';
 import { ShootingStars } from './layers/ShootingStars.js';
 import { Planets } from './layers/Planets.js';
+import { Clouds } from './layers/Clouds.js';
 
 import { POTATO_STAR_SHARE, SHADOW_SUN_BOOST, SHADOW_AMBIENT } from '../config.js';
 
@@ -77,6 +78,9 @@ export class Sky {
         // bazą porównawczą, także dla dotychczasowych narzędzi i testów.
         this.lightingLook = 'baseline';
         this.cloudCover = 0;
+        // Grube chmury deszczowe i burzowe (0-1, weather/Weather.js):
+        // świat ciemnieje bardziej niż pod zwykłym zachmurzeniem.
+        this.cloudDepth = 0;
         this.atmosphere = null;
         this.sunLightDirection = new THREE.Vector3(0, 1, 0);
 
@@ -140,6 +144,10 @@ export class Sky {
         for (const layer of this.layers) {
             this.scene.add(layer.object);
         }
+
+        // Chmury (własna scena - rysują się nad terenem i pod kamerą).
+
+        this.clouds = new Clouds();
 
 
         // Światło dla bloków. Każda scena, w której coś oświetla niebo
@@ -221,6 +229,23 @@ export class Sky {
         if (this.atmosphere) {
             const state = this.state;
             const sample = this.atmosphere;
+
+            if (natural && this.cloudDepth > 0) {
+
+                // Pod grubą chmurą deszczową jest ciemniej niż pod
+                // zwykłym zachmurzeniem.
+
+                const depth = this.cloudDepth * (1 - this.space);
+                const dim = 1 - 0.45 * depth;
+                const veil = 1 - 0.3 * depth;
+
+                sample.direct = sample.direct.map((c) => c * dim);
+                sample.sky = sample.sky.map((c) => c * dim);
+                sample.ground = sample.ground.map((c) => c * dim);
+                sample.visual.zenith = sample.visual.zenith.map((c) => c * veil);
+                sample.visual.horizon = sample.visual.horizon.map((c) => c * veil);
+
+            }
             const intensity = Math.max(...sample.direct);
             state.sunLightIntensity = intensity;
             state.sunLightColor.setRGB(...sample.direct).multiplyScalar(1 / Math.max(intensity, 1e-8));
@@ -336,6 +361,8 @@ export class Sky {
             layer.update(state, celestial, dt, pixelRatio);
         }
 
+        this.clouds?.update(state, celestial);
+
     }
 
 
@@ -387,6 +414,22 @@ export class Sky {
 
         renderer.render(this.scene, skyCamera);
 
+        // Chmury nad kamerą - na niebie, przed terenem.
+
+        this.clouds?.render(renderer, skyCamera, camera, 0);
+
+    }
+
+
+    // Chmury pod kamerą (lot ponad chmurami) - po narysowaniu świata.
+    // Teren kończy się pod chmurami, więc zasłaniają go w całości.
+
+    renderCloudsBelow(renderer, camera) {
+
+        if (this.clouds && camera.position.y > this.clouds.uniforms.uCloudLevels.value.x) {
+            this.clouds.render(renderer, this.camera, camera, 1);
+        }
+
     }
 
 
@@ -395,6 +438,8 @@ export class Sky {
         for (const layer of this.layers) {
             layer.dispose();
         }
+
+        this.clouds?.dispose();
 
         for (const set of this.lightSets) {
 

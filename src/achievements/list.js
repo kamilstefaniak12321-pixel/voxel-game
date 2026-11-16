@@ -67,6 +67,11 @@ const BUILDING_BLOCKS = ['lime_plaster', 'ochre_plaster', 'terracotta', 'polishe
 const FRUITS = ['strawberry', 'blackberry', 'chili_pepper', 'hazelnut', 'blueberry'];
 
 // Osiągnięcie "Komplet narzędzi": siekiera, kilof i łopata.
+// Pogoda, która przyszła sama (nie z komendy /pogoda).
+function naturalWeather(game) {
+    return Boolean(game.weather?.ready) && game.weather.field.forced.length === 0 && game.rainOverride === null;
+}
+
 export const TOOL_SET = ['axe', 'pickaxe', 'shovel'];
 
 // Jadalne plony drzew z dalekich stron (1.10.0) - osiągnięcie "Smaki dalekich stron".
@@ -799,6 +804,52 @@ export const ACHIEVEMENTS = [
         icon: 'spruce_leaves',
         on: 'season',
         when: (data) => data.key === 'zima'
+    },
+    // Pogoda (1.11.0): tylko ta, która przyszła sama - ustawiona komendą
+    // /pogoda się nie liczy.
+    {
+        id: 'first_rain',
+        tier: 'common',
+        title: 'Pierwsze krople',
+        task: 'Bądź w miejscu, nad które pogoda przyniosła deszcz (front albo przelotny opad).',
+        comment: 'Prognoza mówiła: weź parasol. Ale parasoli jeszcze nie wymyślono.',
+        icon: 'water',
+        check: (game) => naturalWeather(game) && game.weather.local.rain > 0.15
+    },
+    {
+        id: 'strong_wind',
+        tier: 'common',
+        title: 'Wiatr we włosach',
+        task: 'Poczuj naprawdę silny wiatr - taki, jaki niesie front chłodny albo burza.',
+        comment: 'Fryzura do poprawki. Kapelusz - gdybyś go miał - już trzy biomy dalej.',
+        icon: 'dandelion',
+        check: (game) => naturalWeather(game) && game.weather.wind.speed >= 6
+    },
+    {
+        id: 'cloudless',
+        tier: 'common',
+        title: 'Ani jednej chmurki',
+        task: 'Bądź w środku wyżu w biały dzień: nad tobą samo niebieskie niebo.',
+        comment: 'Idealna pogoda na cokolwiek. Szkoda, że cokolwiek to znowu kopanie.',
+        icon: 'lamp',
+        check: (game) => {
+            const local = game.weather?.local;
+            return naturalWeather(game) && local.clear > 0.9 && local.low < 0.03 && local.mid < 0.03 &&
+                local.high < 0.03 && game.sky.state.daylight > 0.9;
+        }
+    },
+    {
+        id: 'head_in_clouds',
+        tier: 'rare',
+        title: 'Głowa w chmurach',
+        task: 'Wleć w niską chmurę (podstawa chmur jest wysoko nad najwyższymi górami).',
+        comment: 'Biało, mokro i nic nie widać. Dokładnie tak, jak mówili.',
+        icon: 'lamp_blue',
+        check: (game) => {
+            const weather = game.weather;
+            const above = game.camera.position.y - (weather?.base ?? Infinity);
+            return Boolean(weather) && weather.local.low > 0.6 && above > 4 && above < 30;
+        }
     },
     {
         id: 'tool_set',

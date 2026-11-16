@@ -85,6 +85,8 @@ export const ADVANCED_VIDEO = [
     'shadows',
     'ambientOcclusion',
     'lightShafts',
+    'clouds',
+    'cloudShadows',
     'fancyLeaves',
     'farDetail',
     'renderScale',

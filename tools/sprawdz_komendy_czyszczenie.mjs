@@ -124,17 +124,21 @@ test('misa krateru usuwa całą wodę, samo spalenie rośliny obok ją zostawia'
     assert.equal(f.world.getBlock(6,50,0),'water');
 });
 
-test('/pogoda steruje rzeczywistym przełącznikiem deszczu i odrzuca błędne natężenie',()=>{
+// Od 1.11.0 deszcz pada tam, gdzie mówi pogoda (src/weather/); komenda
+// ustawia go tylko "do odwołania" (game.rainOverride), a /pogoda auto oddaje
+// go pogodzie. Reszta komendy: tools/sprawdz_pogode.mjs.
+test('/pogoda deszcz ustawia deszcz do odwołania i odrzuca błędne natężenie',()=>{
     const command=GAME_COMMANDS.find(item=>item.name==='pogoda');
-    const rain={intensity:0,setIntensity(value){this.intensity=value;}};
-    const run=args=>command.run(args,{game:{rain}});
-    assert.match(run([]),/Brak deszczu/);assert.equal(rain.intensity,0);
-    run(['deszcz']);assert.equal(rain.intensity,1);
-    run(['deszcz','40']);assert.equal(rain.intensity,.4);
+    const game={rainOverride:null,time:{days:1},weather:{field:{forced:[],clearForced(){this.forced.length=0;}},reset(){}}};
+    const player={pos:{x:0,z:0}};
+    const run=args=>command.run(args,{game,player});
+    run(['deszcz']);assert.equal(game.rainOverride,1);
+    run(['deszcz','40']);assert.equal(game.rainOverride,.4);
     for(const args of [['deszcz','-1'],['deszcz','101'],['deszcz','abc'],['sucho','extra']]){
-        assert.throws(()=>run(args));assert.equal(rain.intensity,.4);
+        assert.throws(()=>run(args));assert.equal(game.rainOverride,.4);
     }
-    run(['sucho']);assert.equal(rain.intensity,0);
+    run(['sucho']);assert.equal(game.rainOverride,0);
+    run(['auto']);assert.equal(game.rainOverride,null);
     assert.throws(()=>command.run(['deszcz'],{}));
 });
 console.log(`Sprawdzonych przypadków komend: ${checked}.`);

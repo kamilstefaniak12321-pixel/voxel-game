@@ -63,6 +63,8 @@ export const SETTINGS_DEFAULTS = {
     ambientOcclusion: Math.round(AMBIENT_OCCLUSION * 100),   // cienie w kątach, procent
     shadows: 3,                                    // cienie słońca: 0 - wył., 1 - zwykłe, 2 - dokładne, 3 - dalekie
     lightShafts: true,                             // promienie światła w powietrzu
+    clouds: 'pelne',                               // chmury: 'pelne' - z bokami i wierzchem, 'plaskie' - tańsze, 'brak'
+    cloudShadows: true,                            // cienie chmur sunące po terenie
     fancyLeaves: true,                             // liście z prześwitami (false = szybkie, pełne)
     dynamicLight: true,                            // lampa w ręce, meteoryty...
     loadBudget: CHUNK_LOAD_BUDGET_MS,              // ms na klatkę na wczytywanie chunków
@@ -163,6 +165,7 @@ export const SETTINGS_CHOICES = {
     leafModel: ['cube', 'parts'],
     lightingLook: ['natural', 'baseline'],
     atmosphereLook: ['natural', 'baseline'],
+    clouds: ['pelne', 'plaskie', 'brak'],
     lightingMaterials: ['basic', 'standard', 'high'],
     farDetail: [1, 2, 3],
     jointStyle: ['smooth', 'blocks'],
@@ -185,10 +188,10 @@ export const EXPERIMENTS = ['bushyGrass', 'bounceLight', 'lightingModel'];
 // ------------------------------------------------------------
 
 export const GRAPHICS_PRESETS = {
-    low: { potato: true, shadows: 0, ambientOcclusion: 0, lightShafts: false, fancyLeaves: false, lightingMaterials: 'basic' },
-    medium: { potato: false, shadows: 0, ambientOcclusion: Math.round(AMBIENT_OCCLUSION * 100), lightShafts: false, fancyLeaves: false, lightingMaterials: 'basic' },
-    high: { potato: false, shadows: 1, ambientOcclusion: Math.round(AMBIENT_OCCLUSION * 100), lightShafts: true, fancyLeaves: true, lightingMaterials: 'standard' },
-    ultra: { potato: false, shadows: 3, ambientOcclusion: Math.round(AMBIENT_OCCLUSION * 100), lightShafts: true, fancyLeaves: true, lightingMaterials: 'standard' }
+    low: { potato: true, shadows: 0, ambientOcclusion: 0, lightShafts: false, fancyLeaves: false, lightingMaterials: 'basic', clouds: 'plaskie' },
+    medium: { potato: false, shadows: 0, ambientOcclusion: Math.round(AMBIENT_OCCLUSION * 100), lightShafts: false, fancyLeaves: false, lightingMaterials: 'basic', clouds: 'plaskie' },
+    high: { potato: false, shadows: 1, ambientOcclusion: Math.round(AMBIENT_OCCLUSION * 100), lightShafts: true, fancyLeaves: true, lightingMaterials: 'standard', clouds: 'pelne' },
+    ultra: { potato: false, shadows: 3, ambientOcclusion: Math.round(AMBIENT_OCCLUSION * 100), lightShafts: true, fancyLeaves: true, lightingMaterials: 'standard', clouds: 'pelne' }
 };
 
 export const GRAPHICS_PRESET_ORDER = Object.keys(GRAPHICS_PRESETS);
@@ -283,6 +286,24 @@ export class Settings {
                 !reset.has(key)
             ) {
                 this.values[key] = this.validate(key, saved[key]);
+            }
+
+        }
+
+        // Chmury (1.11.0): stary zapis ich nie zna. Kto miał jakość niską
+        // albo średnią, dostaje chmury płaskie - jakość zostaje ta sama,
+        // a nie "Własna" z najdroższymi chmurami.
+
+        if (saved && typeof saved === 'object' && !('clouds' in saved)) {
+
+            for (const name of ['low', 'medium']) {
+
+                const preset = GRAPHICS_PRESETS[name];
+
+                if (Object.entries(preset).every(([key, value]) => key === 'clouds' || this.values[key] === value)) {
+                    this.values.clouds = preset.clouds;
+                }
+
             }
 
         }

@@ -2,7 +2,7 @@
 
 > Ta strona jest generowana z kodu gry (`python tools/wiki.py`) - nie zmieniaj jej ręcznie, zmiany przepadną przy następnym generowaniu.
 
-Wersja gry **1.10.0** - 76 osiągnięć. Księga osiągnięć: klawisz **L**. Uwaga, spoilery: sekretne osiągnięcia są tu opisane (w grze widać tylko „???”).
+Wersja gry **1.11.0** - 80 osiągnięć. Księga osiągnięć: klawisz **L**. Uwaga, spoilery: sekretne osiągnięcia są tu opisane (w grze widać tylko „???”).
 
 
 ## Zwykłe (10 pkt)
@@ -53,6 +53,9 @@ Wersja gry **1.10.0** - 76 osiągnięć. Księga osiągnięć: klawisz **L**. Uw
 | <img src="ikony/tea_calm.png" width="32" height="32" alt=""> | **Coś na rozgrzewkę** | Wypij napar z ziół (kubek ziół podgrzany nad ogniskiem). | „Smakuje jak łąka. W dobrym sensie.” |
 | <img src="ikony/maple_leaf_litter.png" width="32" height="32" alt=""> | **Złota jesień** | Doczekaj jesieni: liście klonów czerwienieją, brzóz żółkną, dębów brązowieją - im dalej w jesień, tym mocniej. | „Drzewa zmieniają garderobę. Tobie zostaje ta sama koszula.” |
 | <img src="ikony/spruce_leaves.png" width="32" height="32" alt=""> | **Pierwszy szron** | Doczekaj zimy: liście szarzeją, a w chłodnych stronach bieli je cienki śnieg. | „Cicho, biało i zimno w palce. Pogoda dopiero się rozkręca.” |
+| <img src="ikony/water.png" width="32" height="32" alt=""> | **Pierwsze krople** | Bądź w miejscu, nad które pogoda przyniosła deszcz (front albo przelotny opad). | „Prognoza mówiła: weź parasol. Ale parasoli jeszcze nie wymyślono.” |
+| <img src="ikony/dandelion.png" width="32" height="32" alt=""> | **Wiatr we włosach** | Poczuj naprawdę silny wiatr - taki, jaki niesie front chłodny albo burza. | „Fryzura do poprawki. Kapelusz - gdybyś go miał - już trzy biomy dalej.” |
+| <img src="ikony/lamp.png" width="32" height="32" alt=""> | **Ani jednej chmurki** | Bądź w środku wyżu w biały dzień: nad tobą samo niebieskie niebo. | „Idealna pogoda na cokolwiek. Szkoda, że cokolwiek to znowu kopanie.” |
 | <img src="ikony/mikolajek_etap3.png" width="32" height="32" alt=""> | **Nie dotykać** | Wejdź w kłującą roślinę. | „Mikołajek nie przynosi prezentów. Mikołajek kłuje.” |
 | <img src="ikony/zawilec_etap3.png" width="32" height="32" alt=""> | **Coś wisi w powietrzu** | Doczekaj zmiany pory roku. | „Wczoraj jedno kwitło, dziś drugie. Kalendarz nie pyta o zgodę.” |
 
@@ -68,6 +71,7 @@ Wersja gry **1.10.0** - 76 osiągnięć. Księga osiągnięć: klawisz **L**. Uw
 | <img src="ikony/spruce_log.png" width="32" height="32" alt=""> | **Leśniczy** | Zetnij pień każdego z sześciu gatunków drzew: świerka, sosny, buka, lipy, dębu i brzozy. | „Znasz już las od środka. Las ciebie też - i prosi o chwilę przerwy.” |
 | <img src="ikony/banyan_fig.png" width="32" height="32" alt=""> | **Smaki dalekich stron** | Zjedz figę, owoc baobabu, jagody draceny, kwiaty jukki, orzeszki araukarii i kokos (zbiera się je PPM z liści, na których rosną). | „Sześć smaków, sześć stref klimatycznych. Żołądek prosi o przewodnik.” |
 | <img src="ikony/mangrove_propagule.png" width="32" height="32" alt=""> | **Ogrodnik przypływów** | Posadź namorzyn w płytkiej wodzie (sadzonka albo siewka kliknięta w piaszczyste lub błotniste dno). | „Inni sadzą w ziemi. Ty postanowiłeś zaufać morzu.” |
+| <img src="ikony/lamp_blue.png" width="32" height="32" alt=""> | **Głowa w chmurach** | Wleć w niską chmurę (podstawa chmur jest wysoko nad najwyższymi górami). | „Biało, mokro i nic nie widać. Dokładnie tak, jak mówili.” |
 | <img src="ikony/pickaxe.png" width="32" height="32" alt=""> | **Komplet narzędzi** | Zrób siekierę, kilof i łopatę (postęp liczy się w księdze). | „Teraz brakuje tylko skrzynki na narzędzia. I garażu. I warsztatu.” |
 | <img src="ikony/oak_sapling.png" width="32" height="32" alt=""> | **Z małego ziarenka** | Wyhoduj drzewo z sadzonki. | „Wyrosło! Teraz tylko sto lat i będzie z niego porządny dąb. Albo brzoza.” |
 | <img src="ikony/stone.png" width="32" height="32" alt=""> | **Kopalnia w kieszeni** | Zagraj na telefonie albo tablecie i zniszcz blok palcem. | „Bateria właśnie zaczęła się pocić.” |

@@ -55,6 +55,8 @@ export const SETTING_WORDS = {
     cienie: 'ambientOcclusion',
     'cienie-slonca': 'shadows',
     promienie: 'lightShafts',
+    chmury: 'clouds',
+    'cienie-chmur': 'cloudShadows',
     'swiatlo-odbite': 'bounceLight',
     'model-swiatla': 'lightingModel',
     odbicia: 'surfaceBounce',

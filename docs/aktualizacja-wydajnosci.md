@@ -98,9 +98,9 @@ Pomiar Kamila testem `/wydajnosc` (komputer, zasięg 800, daleki teren
 świata" 4-5 ms i „niebo z horyzontem" 4-5 ms przy zaledwie ~520
 poleceniach rysowania; logika gry 0,4 ms.
 
-Przyczyna po stronie świata: przy zasięgu 800 scena ma ponad 17 tysięcy
-obiektów terenu (mesh chunka, mesh roślin, sklejone regiony), a silnik co
-klatkę przeliczał każdemu macierz położenia (scena wymusza to u wszystkich
+Przyczyna po stronie świata: scena ma tysiące obiektów terenu (mesh
+chunka, mesh roślin, sklejone regiony), a silnik co klatkę przeliczał
+każdemu macierz położenia (scena wymusza to u wszystkich
 potomków, także z wyłączonym `matrixAutoUpdate`) i odwiedzał każdy przy
 wybieraniu kadru - dwa razy, bo przebieg cienia postaci rysuje tę samą
 scenę.
@@ -114,7 +114,17 @@ Od 1.10.3 teren wisi pod jednym korzeniem w sektorach 4 × 4 chunki
   nie wchodzi. Obraz bez zmian: odpadają tylko obiekty, których geometria
   leży poza kadrem,
 - usunięcie mesha szuka go wśród kilkudziesięciu obiektów sektora, nie
-  wśród 17 tysięcy dzieci sceny.
+  wśród wszystkich dzieci sceny.
+
+**Sprostowanie (1.11.0).** W pierwszej wersji tego opisu stało, że przy
+zasięgu 800 w scenie jest ponad 17 tysięcy obiektów terenu. To była
+liczba z testu, który zakłada prawdziwe chunki w całym zasięgu. W grze
+przy zasięgu 800 prawdziwych chunków jest tylko pierścień wokół gracza,
+a resztę rysuje daleki teren: pomiar Kamila w 1.10.3 pokazał około 1200
+obiektów w 42 sektorach. Przy tylu obiektach sektory oszczędzają
+niewiele, więc wzrostu z 71 do 114 klatek w tamtym pomiarze nie da się
+przypisać samym sektorom (różniły się też warunki pomiaru). Sektory
+pomagają tym bardziej, im więcej prawdziwych chunków jest wczytanych.
 
 Pomiar w `tools/sprawdz_sektory_terenu.mjs` (17 651 obiektów, 534
 sektory, sam koszt przeglądania sceny, maszyna testowa): około 2-4 ms na

@@ -354,6 +354,8 @@ strony słońca), `/swiatlo` (ile światła odbitego jest przy głowie),
 - Kształt łuny i poświaty: funkcja `skyColor` w `skyShader.js`.
 - Tarcza słońca: `layers/Sun.js` (rozmiar, kolor, można dać teksturę jak
   księżycowi).
+- Chmury i pogoda (od 1.11.0): `docs/pogoda.md` - chmury mają własną
+  scenę (`layers/Clouds.js`), bo rysują się też pod kamerą.
 - Pomysły: łuna zależna od pogody, promienie słońca (nowa warstwa), pory
   roku - w `Celestial.js` słońce może chodzić wyżej latem i niżej zimą
   (dłuższe i krótsze dni).

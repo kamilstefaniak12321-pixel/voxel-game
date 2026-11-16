@@ -543,7 +543,7 @@ export const LIGHT_COMMANDS = [
                 const value = Number(args[1]);
                 if (args.length !== 2 || !Number.isFinite(value) || value < 0 || value > 100) throw usageError(this);
                 game.settings.set('cloudCover', value);
-                return `${TEXTS.cloudCover(game.settings.get('cloudCover'))}. Profil oświetlenia, bez symulacji pogody.`;
+                return `${TEXTS.cloudCover(game.settings.get('cloudCover'))}. Najmniejsze zachmurzenie światła - pogoda (/pogoda) może dać większe.`;
             }
             if (action === 'reset') {
                 if (args.length !== 1) throw usageError(this);

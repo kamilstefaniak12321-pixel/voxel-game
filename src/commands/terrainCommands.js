@@ -765,8 +765,8 @@ export const TERRAIN_COMMANDS = [
     {
         name: 'mapa',
         aliases: ['map'],
-        usage: '/mapa [warstwa] [skala] | /mapa wyl   (skala = bloki na punkt: 1, 2, 4, 8, 16, 32)',
-        description: 'Mapa terenu z góry: wysokość, formy terenu, niziny/wyżyny/góry, skały, pola generatora; ' +
+        usage: '/mapa [warstwa] [skala] | /mapa wyl   (skala = bloki na punkt: 1, 2, 4, 8, 16, 32, 64)',
+        description: 'Mapa terenu z góry: wysokość, formy terenu, niziny/wyżyny/góry, skały, pogoda na żywo (/mapa pogoda), pola generatora; ' +
             'przekrój pionowy w kierunku patrzenia (/mapa przekroj). Klawisz M.',
 
         run(args, { game, player, map }) {
@@ -818,9 +818,13 @@ export const TERRAIN_COMMANDS = [
 
             if (scale === null) {
 
+                // Pogoda: z daleka (64 bloki na punkt - fronty mają
+                // po kilka tysięcy bloków).
+
                 scale =
                     layer === 'przekroj' ? 1 :
-                    map.layer === 'przekroj' ? 8 :
+                    layer === 'pogoda' ? (map.layer === 'pogoda' ? map.scale : 64) :
+                    map.layer === 'przekroj' || map.layer === 'pogoda' ? 8 :
                     map.scale;
 
             }
@@ -831,7 +835,9 @@ export const TERRAIN_COMMANDS = [
             return `Mapa: ${MAP_LAYERS[layer]}, 1 punkt = ${scale} bl. ` +
                 (layer === 'przekroj'
                     ? 'Przy otwartym czacie wskaż punkt myszą - pokaże wysokość i skałę.'
-                    : 'Przy otwartym czacie wskaż punkt myszą - pokaże współrzędne i formę terenu.');
+                    : layer === 'pogoda'
+                        ? 'Pogoda nakłada się po narysowaniu terenu i płynie na żywo. Przy otwartym czacie wskaż punkt myszą - pokaże pogodę w tym miejscu.'
+                        : 'Przy otwartym czacie wskaż punkt myszą - pokaże współrzędne i formę terenu.');
 
         },
 

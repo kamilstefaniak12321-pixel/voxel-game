@@ -71,6 +71,10 @@ tylko jako *Sekretne osiągnięcie* ze znakiem zapytania.
 | rzadkie | Ogrodnik przypływów | posadź namorzyn w płytkiej wodzie - sadzonka albo siewka kliknięta w dno (od 1.10.0) |
 | zwykłe | Złota jesień | doczekaj jesieni - liście zmieniają kolory (`docs/pory-roku.md`, od 1.10.0) |
 | zwykłe | Pierwszy szron | doczekaj zimy - liście szarzeją i bieleją od śniegu (od 1.10.0) |
+| zwykłe | Pierwsze krople | bądź tam, gdzie pogoda przyniosła deszcz - front albo przelotny opad (`docs/pogoda.md`, od 1.11.0; pogoda z komendy się nie liczy) |
+| zwykłe | Wiatr we włosach | poczuj silny wiatr, od 6 bloków na sekundę - front chłodny albo burza (od 1.11.0) |
+| zwykłe | Ani jednej chmurki | bądź w środku wyżu w biały dzień: nad tobą samo niebo (od 1.11.0) |
+| rzadkie | Głowa w chmurach | wleć w niską chmurę - podstawa chmur jest ok. 210 bloków nad zerem (od 1.11.0) |
 | rzadkie | Z małego ziarenka | wyhoduj drzewo z sadzonki (`docs/drzewa.md`) |
 | rzadkie | Komplet narzędzi | zrób siekierę, kilof i łopatę (postęp w księdze) |
 | rzadkie | Kopalnia w kieszeni | zagraj na telefonie / tablecie i zniszcz blok palcem (`docs/telefon.md`) |

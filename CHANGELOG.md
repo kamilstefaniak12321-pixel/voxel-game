@@ -11,6 +11,30 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 1.9.0 - Wyroby z nowego drewna, sucho i mokro w biomach
+
+PR #157. Opis: [`docs/stolarstwo.md`](docs/stolarstwo.md),
+[`docs/trawa.md`](docs/trawa.md#kolory-trawy-w-biomach), [`docs/biomy.md`](docs/biomy.md).
+
+- **Wyroby z desek trzynastu drzew z 1.8.0:** schody, półbloki, płoty,
+  furtki, stoły stolarskie, drzwi, klapy, łóżka i skrzynie - z jodły,
+  baobabu, palmy, modrzewia, namorzynu, puchowca, jukki, osiki,
+  araukarii, figowca, draceny, cedru i sosny ościstej. Razem 33 rodzaje
+  drewna.
+- **Sawanna i półpustynia są gorące z wyglądu:** trawa, kępki i mech są
+  tam wypalone słońcem - płowozłote na sawannie, ciepło pomarańczowe na
+  półpustyni; między trawą rosną kępy suchej piaskownicy, a półpustynię
+  w większości pokrywa piasek.
+- **Mokre biomy są mokre:** na mokradłach, w namorzynach i w lesie
+  deszczowym trawa jest ciemna i nasycona, jest więcej błota, mchu,
+  paproci i trzciny.
+- Ten sam kolor trawy widać z daleka (daleki teren).
+- Kokos da się zjeść. Sadzonki palmy kokosowej, jukki i draceny rosną
+  także na piasku.
+- Zapisane światy: dawne numery bloków bez zmian; nowe wyroby mają własny
+  zakres numerów (12544-14207). Kolor trawy zmienia się także w już
+  odwiedzonych miejscach, rośliny i ziemia - tylko w nowym terenie.
+
 ## 1.8.0 - Trzynaście nowych drzew i cztery biomy
 
 PR #156. Opis: [`docs/drzewa.md`](docs/drzewa.md#trzynaście-drzew-z-paczki-drzewa-od-jodły-i-cztery-biomy--180),

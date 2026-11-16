@@ -140,7 +140,10 @@ check(CHEST_KINDS.length === 1 + WOOD_CHESTS.length && CHEST_KINDS[0].type === '
 const ids = types.map((type) => getBlockId(type));
 check(new Set(ids).size === ids.length, 'Numery bez powtórzeń');
 check(['chest', 'chest_east', 'chest_south', 'chest_west'].map((type) => getBlockId(type)).join() === '10095,10096,10097,10098', 'Dębowa skrzynia - stare numery (zapisy światów)');
-check(ids.filter((id) => id >= 10200).every((id) => id < 10300) && getBlockId('spruce_chest') === 10200, 'Nowe skrzynie w zakresie 10200-10299');
+// 1.9.0: skrzynie trzynastu nowych rodzajów drewna leżą we wspólnym bloku
+// numerów swojego drewna (od 12544, miejsce 108-111).
+check(ids.filter((id) => id >= 10200 && id < 12544).every((id) => id < 10276) && getBlockId('spruce_chest') === 10200 && getBlockId('jacaranda_chest') === 10272, 'Skrzynie 0.89.0 w zakresie 10200-10299');
+check(getBlockId('fir_chest') === 12544 + 108 && getBlockId('bristlecone_chest_west') === 12544 + 12 * 128 + 111 && ids.filter((id) => id >= 12544).length === 13 * 4, 'Skrzynie 1.9.0 w blokach swojego drewna');
 for (const { type, planks, texture, label } of CHEST_KINDS) {
     const facings = getBlockDefinition(type).facings;
     check(CHEST_FACINGS.every((facing) => facings[facing] && getBlockDefinition(facings[facing]).drops === type && getBlockDefinition(facings[facing]).pick === type), `${type}: każdy kierunek daje tę skrzynię`);
@@ -178,4 +181,4 @@ check(CHEST_FACES.every((face) => face.uv.every(([u, v]) => u >= 0 && u <= 1 && 
 const latch = getChestFaces().filter((face) => face.part === 'lid').flatMap((face) => face.vertices);
 check(Math.max(...latch.map((v) => v[2])) > 15 / 16, 'Ikonka: zamek z przodu (do patrzącego)');
 
-console.log(`OK: skrzynie - ${checks} sprawdzeń (warstwy, wkładanie, zapis, skrzynie z 20 rodzajów desek, przepisy, model).`);
+console.log(`OK: skrzynie - ${checks} sprawdzeń (warstwy, wkładanie, zapis, skrzynie z 33 rodzajów desek, przepisy, model).`);

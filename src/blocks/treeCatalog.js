@@ -2255,6 +2255,7 @@ export const TREE_CATALOG = {
     },
     "coconut_palm": {
         "id": "coconut_palm",
+        "saplingGround": ["sand"],
         "firstId": 1120,
         "name": "Coconut Palm",
         "species": ["Palma kokosowa", "palmy kokosowej"],
@@ -2391,6 +2392,7 @@ export const TREE_CATALOG = {
     },
     "joshua_tree": {
         "id": "joshua_tree",
+        "saplingGround": ["sand"],
         "firstId": 1160,
         "name": "Joshua Tree",
         "species": ["Jukka krótkolistna (drzewo Jozuego)", "jukki"],
@@ -2526,6 +2528,7 @@ export const TREE_CATALOG = {
     },
     "dragon_tree": {
         "id": "dragon_tree",
+        "saplingGround": ["sand"],
         "firstId": 1200,
         "name": "Dragon Blood Tree",
         "species": ["Dracena cynobrowa (smocze drzewo)", "draceny"],

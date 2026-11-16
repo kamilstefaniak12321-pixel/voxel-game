@@ -25,7 +25,7 @@ import { Rivers } from './Rivers.js';
 
 import { RiverVegetation } from './RiverVegetation.js';
 
-import { Biomes, BIOMES, BIOME_KEYS, BIOME_INDEX, grassTint } from './Biomes.js';
+import { Biomes, BIOMES, BIOME_KEYS, BIOME_INDEX, grassTint, biomeDryness, biomeWetness } from './Biomes.js';
 import { plantHabitat } from '../../blocks/plantHabitats.js';
 import { PlantExcess } from './PlantExcess.js';
 
@@ -828,6 +828,11 @@ export class RealisticGenerator {
 
         const heights = new Int16Array(W * W);
 
+        // Numery biomów z tą samą ramką (kolor trawy w rogach kolumn zależy
+        // od biomu czterech kolumn wokół - także tych z sąsiedniego chunka).
+
+        const frameBiomes = new Uint8Array(W * W);
+
         const samples = [];
 
         for (let j = 0; j < W; j++) {
@@ -842,6 +847,9 @@ export class RealisticGenerator {
 
                 if (inside) {
                     samples.push(sample);
+                }
+                else {
+                    frameBiomes[j * W + i] = BIOME_INDEX[this.biomes.classify(baseX + i - 1, baseZ + j - 1, sample)];
                 }
 
             }
@@ -899,6 +907,7 @@ export class RealisticGenerator {
                 const biomeKey = this.biomes.classify(x, z, sample);
                 const biome = BIOME_INDEX[biomeKey];
                 chunk.biomes[k] = biome;
+                frameBiomes[h] = biome;
                 chunk.habitats[k] = plantHabitat(biomeKey, Math.min(sample.riverGap ?? Infinity, sample.lakeGap ?? Infinity), x, z);
 
                 const top = this.fillColumn(x, z, sample, kind, this.chunkColumns[k], buffer, lx, lz, biome);
@@ -929,8 +938,8 @@ export class RealisticGenerator {
         // to średnia czterech kolumn wokół niego.
 
         chunk.tint = this.biomes.tintGrid(baseX, baseZ, (i, j) =>
-            (heights[j * W + i] + heights[j * W + i + 1] + heights[(j + 1) * W + i] + heights[(j + 1) * W + i + 1]) / 4
-        );
+            (heights[j * W + i] + heights[j * W + i + 1] + heights[(j + 1) * W + i] + heights[(j + 1) * W + i + 1]) / 4,
+        (i, j) => frameBiomes[j * W + i]);
 
     }
 
@@ -1023,6 +1032,7 @@ export class RealisticGenerator {
         const W = CHUNK_SIZE + 2;
 
         const heights = new Int16Array(W * W);
+        const frameBiomes = new Uint8Array(W * W);
 
         const baseX = chunk.cx * CHUNK_SIZE;
         const baseZ = chunk.cz * CHUNK_SIZE;
@@ -1035,9 +1045,12 @@ export class RealisticGenerator {
 
                 heights[j * W + i] = sample.height;
 
+                const biomeKey = this.biomes.classify(baseX + i - 1, baseZ + j - 1, sample);
+
+                frameBiomes[j * W + i] = BIOME_INDEX[biomeKey];
+
                 if (i > 0 && j > 0 && i <= CHUNK_SIZE && j <= CHUNK_SIZE) {
                     setFlow(chunk, i - 1, j - 1, sample);
-                    const biomeKey = this.biomes.classify(baseX + i - 1, baseZ + j - 1, sample);
                     const k = (j - 1) * CHUNK_SIZE + i - 1;
                     chunk.biomes[k] = BIOME_INDEX[biomeKey];
                     chunk.habitats[k] = plantHabitat(biomeKey, Math.min(sample.riverGap ?? Infinity, sample.lakeGap ?? Infinity), baseX + i - 1, baseZ + j - 1);
@@ -1048,8 +1061,8 @@ export class RealisticGenerator {
         }
 
         chunk.tint = this.biomes.tintGrid(baseX, baseZ, (i, j) =>
-            (heights[j * W + i] + heights[j * W + i + 1] + heights[(j + 1) * W + i] + heights[(j + 1) * W + i + 1]) / 4
-        );
+            (heights[j * W + i] + heights[j * W + i + 1] + heights[(j + 1) * W + i] + heights[(j + 1) * W + i + 1]) / 4,
+        (i, j) => frameBiomes[j * W + i]);
 
     }
 
@@ -1712,6 +1725,16 @@ export class RealisticGenerator {
 
         if (info.above >= 34) {
             return 'grass_high';
+        }
+
+        // 1.9.0: suche i mokre biomy mają własny kolor trawy (jak z bliska).
+
+        if (biomeDryness(info.biome) >= 0.5) {
+            return 'grass_arid';
+        }
+
+        if (biomeWetness(info.biome) >= 0.5) {
+            return 'grass_lush';
         }
 
         // Progi w tych samych miejscach klimatu co przed 1.2.0 (kolor

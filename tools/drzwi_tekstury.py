@@ -31,7 +31,10 @@ WOODS = [
     ('olcha', 'olcha/deski.png'), ('wierzba', 'wierzba/deski.png'), ('acacia', 'acacia/planks.png'),
     ('bald_cypress', 'bald_cypress/planks.png'), ('cherry', 'cherry/planks.png'), ('maple', 'maple/planks.png'),
     ('mugo', 'mugo/planks.png'), ('olive', 'olive/planks.png'), ('rainbow_eucalyptus', 'rainbow_eucalyptus/planks.png'),
-    ('sequoia', 'sequoia/planks.png'), ('ginkgo', 'ginkgo/planks.png'), ('jacaranda', 'jacaranda/planks.png'),
+    ('sequoia', 'sequoia/planks.png'), ('ginkgo', 'ginkgo/planks.png'), ('jacaranda', 'jacaranda/planks.png'),    # 1.9.0: miejsca w atlasie przydziela tools/tekstury_wyrobow_190.py.
+    *[(wood, f'{wood}/planks.png') for wood in (
+        'fir', 'baobab', 'coconut_palm', 'larch', 'mangrove', 'kapok', 'joshua_tree',
+        'aspen', 'araucaria', 'banyan', 'dragon_tree', 'cedar', 'bristlecone')],
 ]
 
 IRON = [(206, 206, 198, 255), (150, 150, 146, 255), (96, 96, 98, 255), (58, 58, 62, 255)]

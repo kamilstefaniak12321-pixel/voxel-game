@@ -3,7 +3,7 @@ import { MAX_BLOCK_ID, getBlockId, getBlockTypeById } from '../blocks/BlockRegis
 // Wspólna kolejność i wybór tekstur dla bloków oraz ich dalekich powierzchni.
 // Ten moduł nie używa DOM ani Three.js: działa również w workerze.
 export const SURFACE_FACE_NAMES = ['right', 'left', 'top', 'bottom', 'front', 'back'];
-export const SURFACE_TINT_TYPES = ['grass_warm', 'grass_cool', 'grass_high'];
+export const SURFACE_TINT_TYPES = ['grass_warm', 'grass_cool', 'grass_high', 'grass_arid', 'grass_lush'];
 export const SURFACE_MATERIAL_COUNT = MAX_BLOCK_ID + 1 + SURFACE_TINT_TYPES.length;
 
 export function getSurfaceFaceTexture(textures, faceName) {

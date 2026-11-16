@@ -37,6 +37,7 @@ export const FOODS = {
     blueberry: { energy: 6, fullness: 45, kind: 'snack', effects: [] },
     jablon_jablko: { energy: 12, fullness: 90, kind: 'snack', effects: [] },
     olive_oliwki: { energy: 8, fullness: 80, kind: 'snack', effects: [] },
+    coconut_palm_kokos: { energy: 14, fullness: 110, kind: 'snack', effects: [] },
     hazelnut: { energy: 10, fullness: 120, kind: 'snack', effects: [] },
     beechnuts: { energy: 7, fullness: 90, kind: 'snack', effects: [] },
     acorn: { energy: 4, fullness: 60, kind: 'snack', effects: [] },

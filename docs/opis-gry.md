@@ -177,7 +177,7 @@ rzemieślnicza** - wytwarzanie (niżej), a przy otwartej skrzyni (od
 i pasek. Księga przepisów otwiera się z lewej strony ramy.
 
 **Skrzynia** (od 0.81.0; przepis: 4 deski jednego drzewa - od 0.89.0
-z każdego z 20 rodzajów desek wychodzi skrzynia z tego drewna, np.
+z każdego z 33 rodzajów desek wychodzi skrzynia z tego drewna, np.
 świerkowa, wiśniowa, jakarandowa): PPM otwiera ekwipunek,
 a w strefie rzemieślniczej widać samą skrzynię - wieko się otwiera,
 a przedmioty leżą w środku, w **4 × 3 przegródkach z dwiema warstwami**.

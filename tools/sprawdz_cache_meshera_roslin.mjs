@@ -48,7 +48,7 @@ for (const [cos, sin] of [[1, 0], [0, 1], [-1, 0], [0, -1]]) {
                 atmosphereSky * depth * 255 + .5
             ]), 'Natural light bytes, sky independent of AO');
             equal(template.tint.slice(j * 4, j * 4 + 4), Uint8Array.from([
-                ...face.color.map((value, k) => climate ? Math.min(255, Math.round(value * climate[k] / 128)) : value), 128
+                ...face.color.map((value, k) => climate ? Math.min(255, Math.round(value * climate[k] / 63.75)) : value), 128
             ]), 'Biome tint and resetting to neutral');
             equal(template.occlusion[j], Uint8Array.of(shade * 255 + .5)[0], 'Submerged and local occlusion');
         }

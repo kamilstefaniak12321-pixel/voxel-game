@@ -1,3 +1,4 @@
+import { GRASS_TINT_UNIT } from '../config.js';
 import { SURFACE_PROFILES } from './SurfaceProfiles.js';
 
 // Immutable model attributes are compiled once, then copied into the existing
@@ -144,7 +145,7 @@ export function lightPlantMeshTemplate(template, sky, lampR, lampG, lampB, atmos
         if (climate) for (let i = 0; i < template.count; i++) {
             for (let channel = 0; channel < 3; channel++) {
                 const offset = i * 4 + channel;
-                template.tint[offset] = Math.min(255, Math.round(template.baseTint[offset] * climate[channel] / 128));
+                template.tint[offset] = Math.min(255, Math.round(template.baseTint[offset] * climate[channel] / GRASS_TINT_UNIT));
             }
         }
         template.tintKey = tintKey;

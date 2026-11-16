@@ -105,6 +105,8 @@ function speciesBlocks(species, tree) {
             model: 'cross',
             plant: SAPLING_SHAPE,
             textures: { all: textures.sapling },
+            // Sadzonki drzew plaż i pustyń rosną też na piasku (1.9.0).
+            ...(tree.saplingGround ? { ground: tree.saplingGround } : {}),
             grows: { tree: species, seconds: tree.growthSeconds ?? TREE_GROWTH_SECONDS }
         }
 

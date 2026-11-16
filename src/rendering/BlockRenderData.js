@@ -320,7 +320,8 @@ blockMaterial.onBeforeCompile = (shader, renderer) => {
                 // a = 1 (też bez atrybutu - inne siatki) - bez zmiany koloru.
                 // a=0: biome tint on green texels; a=128/255: complete
                 // linear albedo tint for generated plant models; a=1: none.
-                vTint = tint.a < 0.5 ? vec4(tint.rgb * 2.0, 0.0)
+                // 4.0 = 255 / GRASS_TINT_UNIT (config.js).
+                vTint = tint.a < 0.5 ? vec4(tint.rgb * 4.0, 0.0)
                     : tint.a < 0.75 ? vec4(tint.rgb, 1.0) : vec4(1.0, 1.0, 1.0, 0.0);
 
                 #ifdef POTATO

@@ -8,7 +8,8 @@ wrażenie, że naprawdę wkłada rzeczy do skrzyni.
 ![Otwarta skrzynia w strefie rzemieślniczej ekwipunku](skrzynia.png)
 
 **Od 0.89.0 skrzynia z każdego rodzaju desek.** 4 deski jednego drzewa
-dają skrzynię z tego drewna. Jest 20 rodzajów: dębowa (dawna
+dają skrzynię z tego drewna. Są 33 rodzaje (od 1.9.0 także z desek trzynastu
+drzew z 1.8.0 - jodłowa, baobabowa, cedrowa...): dębowa (dawna
 „Skrzynia”, te same numery w zapisach), świerkowa, sosnowa, bukowa,
 lipowa, brzozowa, ciemna, jabłoniowa, olchowa, wierzbowa, z akacji,
 z cypryśnika, wiśniowa, klonowa, z kosodrzewiny, oliwkowa,

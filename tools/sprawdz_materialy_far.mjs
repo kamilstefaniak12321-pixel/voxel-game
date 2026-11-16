@@ -125,7 +125,9 @@ for (const [spacing, expected] of classicHashes) {
     const fixture = buffers(32);
     for (let i = 0; i < fixture.heights.length; i++) {
         fixture.heights[i] = 20 + Math.floor(i / 7) % 5;
-        fixture.kinds[i] = Math.floor(i / 3) % KINDS.length;
+        // Wzorzec z czasów, gdy lista kończyła się na grass_high (1.9.0 dopisało
+        // na końcu grass_arid i grass_lush) - skróty pilnują dawnych rodzajów.
+        fixture.kinds[i] = Math.floor(i / 3) % (KINDS.indexOf('grass_high') + 1);
         fixture.materialIds[i] = surfaceMaterialId(KINDS[fixture.kinds[i]]);
     }
     const result = mesh(fixture, 32, spacing);

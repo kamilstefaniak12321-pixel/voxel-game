@@ -1,4 +1,4 @@
-import { SEA_LEVEL } from '../../config.js';
+import { SEA_LEVEL, GRASS_TINT_UNIT } from '../../config.js';
 
 import { Noise } from '../Noise.js';
 
@@ -33,6 +33,9 @@ import { BIOME_SHAPE } from './TerrainShape.js';
 // ------------------------------------------------------------
 
 // Pola biomu:
+//   dry, wet - 0-1: jak bardzo trawa (i mech, paprocie, kępki) jest w tym
+//             biomie wypalona słońcem albo ciemna i mokra (kolor trawy -
+//             GRASS_TINT niżej; od 1.9.0),
 //   name    - nazwa po polsku (/biom, mapa, osiągnięcia),
 //   about   - co tam jest (opis w /biom),
 //   words   - słowa w komendach (/biom znajdz <słowo>),
@@ -279,7 +282,8 @@ export const BIOMES = {
         about: 'błoto i mech przy wodzie, trzcina, wysoka trawa, olchy, wierzby i brzozy',
         words: ['mokradla', 'mokradła', 'bagno'],
         color: '#5f9e8a',
-        ground: [['moss', 0.22], ['mud', 0.15]],
+        wet: 0.9,
+        ground: [['moss', 0.3], ['mud', 0.28]],
         trees: { birch: 0.85, oak: 0.05, spruce: 0.1 },
         density: 0.45,
         lone: 0.03,
@@ -342,6 +346,7 @@ export const BIOMES = {
         about: 'bardzo wysokie eukaliptusy tęczowe z kolorową korą, gęsta wysoka trawa i paprocie - ciepło i wilgotno',
         words: ['eukaliptusowy', 'eukaliptus', 'tropikalny'],
         color: '#2f9a72',
+        wet: 0.4,
         ground: [['forest_floor', 0.35], ['moss', 0.15]],
         trees: { rainbow_eucalyptus: 0.9, linden: 0.1 },
         density: 1,
@@ -363,6 +368,7 @@ export const BIOMES = {
         about: 'rozrzucone, sękate oliwki na suchej, ciepłej ziemi, trochę sosen i akacji, maki, rumianek, lawenda, papryczki',
         words: ['gaj', 'oliwny', 'oliwki'],
         color: '#b4b06a',
+        dry: 0.2,
         ground: [['coarse_dirt', 0.3]],
         trees: { olive: 0.82, pine: 0.1, acacia: 0.08 },
         density: 0.22,
@@ -406,6 +412,7 @@ export const BIOMES = {
         about: 'gorąca, sucha równina: wysoka, żółknąca trawa, rozrzucone akacje i olbrzymie baobaby',
         words: ['sawanna', 'baobab'],
         color: '#c9b458',
+        dry: 0.55,
         ground: [['coarse_dirt', 0.2]],
         trees: { acacia: 0.8, baobab: 0.2 },
         density: 0.5,
@@ -416,6 +423,8 @@ export const BIOMES = {
             flowers: null,
             fern: 0,
             herbs: [['plantain', 0.006]],
+            // Kępy suchej, płowej trawy (piaskownica) między zwykłą trawą.
+            patches: [['dune_grass', 0.55, 0.4]],
             bushes: null
         }
     },
@@ -425,6 +434,7 @@ export const BIOMES = {
         about: 'piasek i sucha, twarda ziemia: drzewa Jozuego i parasole smoczych drzew, tu i tam kępa suchej trawy',
         words: ['polpustynia', 'półpustynia', 'pustynia'],
         color: '#dcc58a',
+        dry: 1,
         ground: [['sand', 0.8], ['coarse_dirt', 0.7]],
         trees: { joshua_tree: 0.6, dragon_tree: 0.4 },
         density: 0.08,
@@ -435,6 +445,7 @@ export const BIOMES = {
             flowers: null,
             fern: 0,
             herbs: [],
+            patches: [['dune_grass', 0.35, 0.3]],
             bushes: null
         }
     },
@@ -444,7 +455,8 @@ export const BIOMES = {
         about: 'gorąco i mokro: sklepienie z figowców z zasłonami korzeni powietrznych, ponad nim olbrzymie puchowce na przyporach; paprocie, mech i wysoka trawa',
         words: ['deszczowy', 'dzungla', 'dżungla', 'puchowiec'],
         color: '#1f7a3a',
-        ground: [['forest_floor', 0.45], ['moss', 0.25]],
+        wet: 1,
+        ground: [['forest_floor', 0.4], ['mud', 0.14], ['moss', 0.45]],
         trees: { kapok: 0.3, banyan: 0.7 },
         density: 1,
         lone: 0.3,
@@ -452,9 +464,9 @@ export const BIOMES = {
             grass: [0.2, 0.5],
             tall: [0.4, 0.8],
             flowers: null,
-            fern: 0.4,
+            fern: 0.5,
             herbs: [['nettle', 0.01]],
-            patches: [['moss_carpet', 0.5, 0.2]],
+            patches: [['moss_carpet', 0.6, 0.35]],
             bushes: { species: ['chili', 'blackberry'], density: 0.6 }
         }
     },
@@ -464,7 +476,8 @@ export const BIOMES = {
         about: 'gorące, błotniste brzegi: namorzyny na łukach korzeni stoją w błocie i w płytkiej wodzie',
         words: ['namorzyny', 'namorzyn', 'mangrowe'],
         color: '#4f8a6a',
-        ground: [['mud', 0.55], ['moss', 0.15]],
+        wet: 1,
+        ground: [['mud', 0.6], ['moss', 0.25]],
         trees: { mangrove: 1 },
         density: 0.45,
         lone: 0.03,
@@ -472,9 +485,9 @@ export const BIOMES = {
             grass: [0.2, 0.5],
             tall: [0.5, 0.85],
             flowers: null,
-            fern: 0.12,
+            fern: 0.2,
             herbs: [],
-            patches: [['reed', 0.6, 0.2]],
+            patches: [['reed', 0.6, 0.3], ['moss_carpet', 0.5, 0.2]],
             bushes: null
         }
     }
@@ -517,9 +530,21 @@ export const GRASS_TINT = {
     high: [28, 50],
     highColor: [1.10, 1.02, 0.80],
     highAmount: 0.7,
-    // Granice mnożnika (atrybut tint mieści do 2.0).
-    min: 0.5,
-    max: 1.5
+    // 1.9.0 (prośba Kamila): w suchych, gorących biomach trawa jest
+    // wypalona słońcem - płowozłota na sawannie (dry do 0,5), ciepło
+    // pomarańczowa na półpustyni (dry 1); w mokrych (mokradła, namorzyny,
+    // las deszczowy) - ciemna, nasycona zieleń. Docelowe mnożniki koloru
+    // tekstury trawy; dry i wet biomu mówią, jak mocno do nich dojść.
+    // Mnożniki działają na kolor liniowy (tak liczy shader), dlatego są
+    // dalekie od 1: wierzch trawy (102, 188, 42) robi się ok. (191, 168, 66)
+    // na sawannie, (191, 128, 48) na półpustyni i (43, 114, 51) w mokrych
+    // biomach (sprawdza tools/sprawdz_klimat_biomow.mjs).
+    gold: [4.0, 0.78, 2.7],
+    orange: [4.0, 0.43, 1.35],
+    lush: [0.15, 0.33, 1.5],
+    // Granice mnożnika (atrybut tint mieści do 4.0 - GRASS_TINT_UNIT).
+    min: 0.1,
+    max: 4.0
 };
 
 
@@ -527,7 +552,7 @@ export const GRASS_TINT = {
 // z wysokością), wilgotność, wysokość nad morzem i pole lasów (bez niego -
 // kolor samego klimatu, np. dla dalekiego terenu).
 
-export function grassTint(temperature, humidity, above, out, forest = null) {
+export function grassTint(temperature, humidity, above, out, forest = null, dryBiome = 0, wetBiome = 0) {
 
     const T = GRASS_TINT;
 
@@ -544,7 +569,20 @@ export function grassTint(temperature, humidity, above, out, forest = null) {
 
         if (shade >= 0) value *= T.open[k] + (T.shade[k] - T.open[k]) * shade;
 
-        out[k] = clamp(value + (T.highColor[k] - value) * high, T.min, T.max);
+        value += (T.highColor[k] - value) * high;
+
+        // Biom (1.9.0): sucho - złoto, potem pomarańcz; mokro - ciemna zieleń.
+
+        if (dryBiome > 0) {
+            const target = T.gold[k] + (T.orange[k] - T.gold[k]) * clamp(dryBiome * 2 - 1, 0, 1);
+            value += (target - value) * clamp(dryBiome * 2, 0, 1);
+        }
+
+        if (wetBiome > 0) {
+            value += (T.lush[k] - value) * wetBiome;
+        }
+
+        out[k] = clamp(value, T.min, T.max);
 
     }
 
@@ -562,6 +600,23 @@ export const BIOME_INDEX = Object.fromEntries(BIOME_KEYS.map((key, index) => [ke
 // Biomy lądowe (bez wody) - do osiągnięcia "Turysta".
 
 export const LAND_BIOMES = BIOME_KEYS.filter((key) => !BIOMES[key].water);
+
+// Suchość i mokrość biomów po numerze (kolor trawy); woda się nie liczy -
+// brzeg bierze kolor z lądu obok.
+
+const BIOME_DRY = BIOME_KEYS.map((key) => BIOMES[key].dry ?? 0);
+const BIOME_WET = BIOME_KEYS.map((key) => BIOMES[key].wet ?? 0);
+const BIOME_WATER = BIOME_KEYS.map((key) => BIOMES[key].water === true);
+
+// Suchość / mokrość biomu (do koloru trawy na dalekim terenie).
+
+export function biomeDryness(key) {
+    return BIOMES[key]?.dry ?? 0;
+}
+
+export function biomeWetness(key) {
+    return BIOMES[key]?.wet ?? 0;
+}
 
 
 // Słowo z komendy -> klucz biomu (albo null).
@@ -728,10 +783,10 @@ export class Biomes {
 
 
     // Kolor trawy w rogach kolumn chunka (17 x 17 rogów, r g b - bajty,
-    // 128 = 1.0) - do chunk.tint (ChunkMesher.js). heightAt(i, j) -
+    // GRASS_TINT_UNIT = 1.0) - do chunk.tint (ChunkMesher.js). heightAt(i, j) -
     // wysokość terenu w rogu (i, j = 0..16).
 
-    tintGrid(baseX, baseZ, heightAt) {
+    tintGrid(baseX, baseZ, heightAt, biomeAt = null) {
 
         const side = 17;
 
@@ -747,13 +802,41 @@ export class Biomes {
 
                 const above = heightAt(i, j) - SEA_LEVEL;
 
-                grassTint(fields[0] - Math.max(0, above) / 60, fields[1], above, color, fields[2]);
+                // Biom czterech kolumn wokół rogu (biomeAt(i, j) - numer biomu
+                // w ramce 18 x 18 kolumn): średnia suchość i mokrość lądu.
+
+                let dry = 0, wet = 0;
+
+                if (biomeAt) {
+
+                    let land = 0;
+
+                    for (let n = 0; n < 4; n++) {
+
+                        const biome = biomeAt(i + (n & 1), j + (n >> 1));
+
+                        if (BIOME_WATER[biome]) continue;
+
+                        land++;
+                        dry += BIOME_DRY[biome];
+                        wet += BIOME_WET[biome];
+
+                    }
+
+                    if (land > 0) {
+                        dry /= land;
+                        wet /= land;
+                    }
+
+                }
+
+                grassTint(fields[0] - Math.max(0, above) / 60, fields[1], above, color, fields[2], dry, wet);
 
                 const n = (j * side + i) * 3;
 
-                tint[n] = Math.round(color[0] * 127.5);
-                tint[n + 1] = Math.round(color[1] * 127.5);
-                tint[n + 2] = Math.round(color[2] * 127.5);
+                tint[n] = Math.round(color[0] * GRASS_TINT_UNIT);
+                tint[n + 1] = Math.round(color[1] * GRASS_TINT_UNIT);
+                tint[n + 2] = Math.round(color[2] * GRASS_TINT_UNIT);
 
             }
 

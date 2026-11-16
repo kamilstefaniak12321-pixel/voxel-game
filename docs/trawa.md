@@ -45,7 +45,24 @@ Trzy składniki:
   otwartej łące i hali jasna; przejście na skraju lasu jest płynne;
 - **góry** - wysoko trawa blednie i żółknie.
 
-Ten sam kolor dostają kępki trawy i rośliny barwione jak trawa.
+- **biom** (od 1.9.0) - w suchych biomach trawa jest wypalona słońcem:
+  na **sawannie** płowozłota, na **półpustyni** ciepło pomarańczowa
+  (lekko złoci się też w gaju oliwnym); w mokrych - **mokradła,
+  namorzyny, las deszczowy** (słabiej las eukaliptusowy) - ciemna,
+  nasycona zieleń. Pola `dry` i `wet` biomu w `Biomes.js`, docelowe
+  kolory `gold`, `orange`, `lush` w `GRASS_TINT`.
+
+Ten sam kolor dostają kępki trawy i rośliny barwione jak trawa (mech,
+paprocie, koniczyna), więc w suchym biomie żółknie cała niska roślinność,
+a w mokrym ciemnieje. Liście drzew zostają w swoich kolorach.
+
+![Kolor trawy w suchych i mokrych biomach](trawa-klimat-190.jpg)
+
+Kolor z biomu liczy się w rogach kolumn ze średniej czterech kolumn
+wokół (woda się nie liczy - brzeg bierze kolor z lądu), także tych
+z sąsiedniego chunka, więc na granicy chunków nie ma szwu, a granica
+biomu jest miękka na szerokość bloku. Daleki teren ma dwa dodatkowe
+odcienie trawy: `grass_arid` i `grass_lush`.
 
 ## Kępki trawy zależne od miejsca (1.3.0)
 
@@ -143,13 +160,14 @@ Sprawdzone przy składaniu całości (prośba Kamila):
 |---|---|
 | rysowanie | **zero**: ten sam blok, te same trójkąty, ten sam materiał i to samo polecenie rysowania - zmienia się tylko, który kafelek atlasu jest na wierzchu |
 | budowanie chunka | wybór wariantu to kilka mnożeń: ok. 30 ns na blok trawy, czyli ok. 0,01 ms na chunk |
-| generowanie terenu | bez zmian: kolor trawy liczy się z tych samych gładkich pól klimatu co dotąd (pole lasów było już pod ręką) |
+| generowanie terenu | 1.2.0 bez zmian: kolor trawy liczy się z tych samych gładkich pól klimatu co dotąd (pole lasów było już pod ręką). Od 1.9.0 dochodzi biom 68 kolumn ramki chunka (teren ramki był już policzony): ok. 0,05 ms na chunk, czyli ok. 1% |
 | pamięć | atlas tekstur wyższy o 3 wiersze kafelków (800 → 848 pikseli wysokości przed powiększeniem) |
 
 Rozważone i odrzucone jako droższe: osobny blok na każdy wariant (więcej
 rodzajów bloków, zmiana zapisu), nakładana druga warstwa z kwiatkami
 (dodatkowe trójkąty na każdym bloku trawy) i kolor trawy z rodzaju biomu
-(wymagałby liczenia terenu w wielu punktach każdego chunka).
+(wymagałby liczenia terenu w wielu punktach każdego chunka - w 1.9.0
+wszedł w tańszej postaci: biom z kolumn, których teren i tak jest liczony).
 
 ### Wydajność kępek (1.3.0)
 

@@ -58,7 +58,7 @@ trwa - ogniska się dopalają, rośliny rosną, pola zarastają
    jeden za drugim (jak podwójny warsztat, tylko o stół dłuższy). Deski
    kładzie się na jeden stół; na trzecim pojawia się wtedy stelaż
    w prawdziwym rozmiarze. PPM w stelaż zabiera go - **8 desek na jeden
-   stelaż**. Kolor zależy od desek, więc jest 20 rodzajów łóżek.
+   stelaż**. Kolor zależy od desek, więc są 33 rodzaje łóżek (od 1.9.0).
    Drzwi i klapa leżą na stole obok desek jak dotąd.
 2. Stelaż stawia się na ziemi (PPM): zajmuje dwa bloki, nogi przy
    graczu, wezgłowie dalej. Na samym stelażu nie da się spać.

@@ -204,7 +204,10 @@ const FALLBACK_COLORS = {
 const FAR_GRASS_TINTS = {
     grass_warm: grassTint(0.45, -0.35, 8, [1, 1, 1]),
     grass_cool: grassTint(-0.65, 0.5, 8, [1, 1, 1]),
-    grass_high: grassTint(-0.9, 0, 45, [1, 1, 1])
+    grass_high: grassTint(-0.9, 0, 45, [1, 1, 1]),
+    // 1.9.0: suche i mokre biomy (dry / wet w BIOMES).
+    grass_arid: grassTint(0.5, -0.4, 8, [1, 1, 1], null, 0.75, 0),
+    grass_lush: grassTint(0.3, 0.4, 8, [1, 1, 1], null, 0, 0.9)
 };
 
 // Korony z daleka są trochę ciemniejsze niż sama tekstura liści

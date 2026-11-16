@@ -40,10 +40,97 @@ gry dopasuje się sama.
 - Komunikat nad paskiem przy zmianie pory („Nadeszło lato”).
 - Ekran F3: `Pora roku: wiosna, dzień 4 z 8`.
 - `/pora` - pora, dzień, rok, faza księżyca i co teraz kwitnie.
-- `/pora ustaw lato` - przenosi czas do przodu, na początek lata.
+- `/pora ustaw lato` - przenosi czas do przodu, na początek lata;
+  `/pora ustaw jesien 5` - na piąty dzień jesieni (od 1.10.0, do oglądania
+  kolorów liści).
 - `/pora kwiaty` - co kwitnie w której porze.
-- Osiągnięcia: *Coś wisi w powietrzu* (doczekaj zmiany pory) i *Cztery
-  pory roku* (bądź w świecie we wszystkich czterech).
+- Osiągnięcia: *Coś wisi w powietrzu* (doczekaj zmiany pory), *Cztery
+  pory roku* (bądź w świecie we wszystkich czterech), od 1.10.0 *Złota
+  jesień* i *Pierwszy szron* (doczekaj jesieni i zimy).
+- Od 1.10.0 liście drzew zmieniają kolor z porą roku - niżej.
+
+## Liście drzew w porach roku (1.10.0)
+
+Prośba Kamila: „im bardziej jesień, tym bardziej kolorowe, a zimą
+szarawe"; zimą liście „delikatnie zajdą białą warstwą śniegu"
+(przygotowanie pod pogodę). Dotyczy bloków liści, opadłych liści i liści
+spadających z drzew.
+
+![Te same drzewa latem, jesienią, zimą i na przedwiośniu](liscie-pory-1100.jpg)
+
+*Od lewej: klon, brzoza, dąb (za nim lipa), buk, miłorząb, osika, modrzew,
+jabłoń (za nią olcha), świerk.*
+
+![Las liściasty jesienią i zimą](las-pory-1100.jpg)
+
+| pora | liście na drzewie | opadłe liście |
+|---|---|---|
+| wiosna, lato | jak w teksturze, zabarwione klimatem biomu | zbrązowiałe |
+| jesień | zielone piksele przechodzą w kolor gatunku; pełny kolor około 5. dnia | kolor gatunku |
+| zima | szarobrązowe; w chłodnych stronach cienki śnieg na wierzchu | szare |
+| przedwiośnie (pierwsze 3 dni wiosny) | szarość schodzi, wraca zieleń | brązowieją |
+
+Kolory jesieni (`LEAF_PALETTES` w `src/rendering/LeafSeasons.js`):
+
+| paleta | gatunki |
+|---|---|
+| żółty | brzoza, lipa, wierzba, osika |
+| złoty | modrzew |
+| pomarańczowy | jabłoń, wiśnia |
+| własna tekstura (czerwień, złoto) | klon, miłorząb, złote odmiany modrzewia i osiki |
+| miedziany | buk |
+| brązowy | dąb, olcha |
+| rdzawy | cypryśnik błotny |
+| płowy (połowa zmiany, zimą nie szarzeje) | akacja, baobab |
+| iglaste (bez jesieni, zimą lekko przygaszone) | świerk, sosna, kosodrzewina, sekwoja, jodła, araukaria, cedr, sosna oścista |
+| zimozielone (bez zmian) | oliwka, eukaliptus, jakaranda, palma, namorzyn, puchowiec, jukka, figowiec, dracena |
+
+Nowy gatunek dopisuje się w `SPECIES_PALETTE`; gatunek bez wpisu dostaje
+żółty.
+
+**Liście z jesienną teksturą.** Klon i miłorząb z paczek Kamila mają
+tekstury w kolorze jesieni (czerwoną i złotą), tak samo złote odmiany
+igliwia modrzewia i liści osiki. Do 1.9.0 były takie cały rok. Od 1.10.0
+jesienią widać samą teksturę (z jej rysunkiem), a wiosną i latem liść jest
+zielony - paleta z polem `light` trzyma kolor lata i średnią jasność
+tekstury; zmieniają się wtedy wszystkie piksele. Odmianę oznacza pole
+`"autumn": true` w katalogu drzew. Opadłe liście klonu mają zwykłą,
+czerwoną paletę.
+
+**Jak to działa (bez przebudowy świata).** Blok liści się nie zmienia -
+zmienia się tylko kolor, który liczy shader bloków z jednej liczby,
+„fazy roku" (0 = początek wiosny, 1 = lata, 2 = jesieni, 3 = zimy).
+Siatka chunka zapisuje przy liściach tylko *który to gatunek* (kod
+palety w atrybucie `tint`, `ChunkMesher.writeLeafTint`), więc zmiana pory
+nie przebudowuje żadnego chunka i nic nie trafia do zapisu.
+
+- Każde miejsce ma własne przesunięcie terminu (gładki szum po świecie,
+  ±0,15 pory) - las nie zmienia się cały naraz, a korony mienią się.
+- Zmieniają się tylko zielone piksele tekstury: gałązki, owoce i kwiaty
+  w liściach zostają. Opadłe liście zmieniają się całe.
+- Śnieg: drobne płaty pikseli na ścianach zwróconych do góry, najwyżej
+  połowa wierzchu w środku zimy - „cienka warstwa", liść spod niej
+  prześwituje. Tylko tam, gdzie jest chłodno: klimat miejsca zapisany jest
+  w `chunk.tint` (czwarty bajt na róg - `Biomes.tintGrid`); na sawannie,
+  półpustyni i w tropikach śniegu nie ma.
+- Spadające liście (`TreeParticles`) mają kolor pory swojego gatunku,
+  a jesienią spada ich do 3,5 raza więcej (zimą i na przedwiośniu -
+  jedna trzecia).
+- Daleki teren ma kolory koron zapisane w siatkach; `FarTerrain.
+  setLeafSeason` zmienia je skokami (po cztery kroki na jesień, szarzenie
+  i przedwiośnie - kilkanaście razy na rok gry): nowa paleta idzie do
+  workerów, a kafelki przebudowują siatki od gracza w dal, w zwykłym
+  budżecie klatki (stara siatka zostaje do podmiany).
+- Pory roku liści wymagają WebGL 2 (dwa dodatkowe varyingi); w WebGL 1
+  liście wyglądają jak dawniej.
+- Świat bez pór roku (`setLeafSeason(null)`): bez zmian.
+
+**Kolor liści z biomu.** Ten sam kolor klimatu, który barwi trawę
+([trawa.md](trawa.md#kolory-trawy-w-biomach)), barwi też liście - słabiej
+(`LEAF_TINT_SOFTNESS = 0,35`): na sawannie i półpustyni korony płowieją,
+w mokrych biomach ciemnieją. Liść spadający z drzewa ma kolor tekstury.
+
+Sprawdzenie: `node tools/sprawdz_liscie_pory.mjs`.
 
 ## Kwiaty i pory roku
 
@@ -171,8 +258,14 @@ Zasady, których warto się trzymać:
   nie mają jeszcze pór - kwitną cały rok.
 - Zmiana wyglądu z porą nie ma animacji (roślina po prostu się zmienia
   przy przebudowie chunka).
-- Daleka roślinność (plamy koloru daleko od gracza) nie zna pór.
-- Drzewa, trawa, śnieg i pogoda nie reagują jeszcze na pory.
+- Daleka roślinność (plamy koloru daleko od gracza) nie zna pór
+  kwiatów; korony drzew w dalekim terenie zmieniają kolor skokami i bez
+  przesunięcia terminu z miejsca (z bliska przejście jest płynne).
+- Liście nie opadają z drzew (zimą korona jest szara, nie goła), śnieg nie
+  leży na ziemi, trawa nie żółknie - to przyjdzie z pogodą.
+- Kwitnąca jakaranda i wiśnia mają kwiaty w teksturze liści cały rok.
+- Daleki śnieg na koronach i kolor liści z biomu w dalekim terenie -
+  jeszcze nie.
 
 ## Dla programisty
 

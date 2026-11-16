@@ -38,6 +38,12 @@ export const FOODS = {
     jablon_jablko: { energy: 12, fullness: 90, kind: 'snack', effects: [] },
     olive_oliwki: { energy: 8, fullness: 80, kind: 'snack', effects: [] },
     coconut_palm_kokos: { energy: 14, fullness: 110, kind: 'snack', effects: [] },
+    // 1.10.0: owoce drzew z 1.8.0.
+    banyan_fig: { energy: 9, fullness: 70, kind: 'snack', effects: [] },
+    baobab_fruit: { energy: 13, fullness: 100, kind: 'snack', effects: [] },
+    dragon_tree_berries: { energy: 5, fullness: 40, kind: 'snack', effects: [] },
+    joshua_tree_flowers: { energy: 5, fullness: 40, kind: 'snack', effects: [] },
+    araucaria_nuts: { energy: 11, fullness: 120, kind: 'snack', effects: [] },
     hazelnut: { energy: 10, fullness: 120, kind: 'snack', effects: [] },
     beechnuts: { energy: 7, fullness: 90, kind: 'snack', effects: [] },
     acorn: { energy: 4, fullness: 60, kind: 'snack', effects: [] },

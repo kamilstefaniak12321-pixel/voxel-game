@@ -222,10 +222,10 @@ są w `drzewa.png` piksel w piksel; sylwetki powstają proceduralnie
 | Modrzew europejski (*Larix decidua*) | 25–45 m | 22–38 / 8–13 | luźny, ażurowy stożek, końce konarów opadają; część igliwia złota | góry: świerczyna, hala, kosodrzewina, bór (od 20 bloków nad morzem) |
 | Namorzyn czerwony (*Rhizophora mangle*) | 8–15 m | 7–13 / 9–14 | pień na łukach **korzeni podporowych**, gęsta kopuła, wiszące korzenie | **namorzyny** i płytka woda gorących wybrzeży |
 | Puchowiec, kapok (*Ceiba pentandra*) | 50–70 m | 40–58 / 16–24, pień 2–3 bloki | prosty pień na wysokich **przyporach**, parasol pięter konarów na samej górze | **las deszczowy** (co trzecia kratka - olbrzym ponad sklepieniem) |
-| Jukka krótkolistna, drzewo Jozuego (*Yucca brevifolia*) | 5–12 m | 5–10 / 6–10 | pień rozwidla się kilka razy, każda gałąź z kolczastą rozetą; gałęzie w **kosmatej korze** z suchych liści | **półpustynia** |
+| Jukka krótkolistna, drzewo Jozuego (*Yucca brevifolia*) | 5–12 m | 5–11 / 7–11 (od 1.10.0) | kanciaste ramiona (w bok i łokciem w górę) rozwidlają się, na końcu każdego osobna kula kolczastych liści; gałęzie w **kosmatej korze** z suchych liści | **półpustynia** |
 | Topola osika (*Populus tremula*) | 20–30 m | 16–26 / 6–9 | smukły, jasny pień (u starych **ciemna kora przy ziemi**), wąska, wysoka, ażurowa korona | brzezina, chłodne łąki, bory, mokradła |
 | Araukaria chilijska (*Araucaria araucana*) | 30–50 m | 26–42 / 10–16 | pień jak słup, parasol okółków długich, zadartych konarów | wilgotne góry: buczyna, hala, świerczyna (14–40 bloków) |
-| Figowiec bengalski, banian (*Ficus benghalensis*) | 20–30 m, korona dużo szersza | 14–22 / 18–26 | zrośnięty pień, konary podparte **słupami korzeni**, niska szeroka kopuła, zasłony **korzeni powietrznych** | **las deszczowy** (sklepienie) |
+| Figowiec bengalski, banian (*Ficus benghalensis*) | 20–30 m, korona dużo szersza | 13–20 / 22–32 (od 1.10.0) | zrośnięty pień, konary podparte **słupami korzeni**, ogromna, pusta w środku kopuła-namiot z brzegiem opadającym prawie do ziemi, zasłona **korzeni powietrznych** z bramami | **las deszczowy** (sklepienie) |
 | Dracena cynobrowa, smocze drzewo (*Dracaena cinnabari*) | 6–10 m | 6–10 / 9–14 | gładki pień, szprychy gałęzi, płaski gęsty parasol | **półpustynia** |
 | Cedr libański (*Cedrus libani*) | 30–40 m | 22–36 / 16–24 | gruby pień, poziome konary z płaskimi talerzami igliwia, czubek jak stół | ciepłe, suche góry (16–40 bloków), gaj oliwny na wyżynie |
 | Sosna oścista (*Pinus longaeva*) | 5–15 m | 5–11 / 7–11 | pokręcona, w większości **martwe, wybielone drewno**, suchy wierzchołek, kilka kęp igliwia | suche, zimne góry: hala, kosodrzewina i **goła skała** (od 26 bloków) |
@@ -284,6 +284,80 @@ nie zmieniają.
 
 Metadane i sumy źródeł: `docs/zrodla/drzewa-1.8/`. Sprawdzenie:
 `node tools/sprawdz_drzewa_180.mjs`. Import: `tools/tekstury_drzew_180.py`.
+
+## Owoce, szyszki, opadłe liście, namorzyn w wodzie, figowiec-namiot — 1.10.0
+
+Kolory liści w porach roku i kolor liści z biomu opisuje
+[pory-roku.md](pory-roku.md#liście-drzew-w-porach-roku-1100).
+
+### Plony trzynastu drzew z 1.8.0
+
+Zbiór jak dotąd: PPM na liściach z plonem; liście zostają, plon odrasta po
+około 15 minutach. Rzadko (3%) plon wypada też ze zwykłych liści.
+
+| drzewo | liście z plonem | przedmiot | do czego |
+|---|---|---|---|
+| jodła | z szyszkami | szyszka jodły | sadzenie, podpałka |
+| modrzew | z szyszkami (nowa odmiana) | szyszka modrzewia | sadzenie, podpałka |
+| cedr | z szyszkami | szyszka cedru | sadzenie, podpałka |
+| sosna oścista | z szyszkami | szyszka sosny ościstej | sadzenie, podpałka; spada z drzewa |
+| araukaria | z szyszkami | orzeszki araukarii | jedzenie, sadzenie; spadają |
+| baobab | z owocami (nowa odmiana) | owoc baobabu | jedzenie, sadzenie; spada |
+| namorzyn | z siewkami | siewka namorzynu | sadzenie - także w wodzie; spada |
+| puchowiec | z puchem | puch puchowca (kapok) | najlepsza podpałka (2 razy szybsza od trawy) |
+| jukka | z kwiatami | kwiaty jukki | jedzenie |
+| figowiec | z figami | figa | jedzenie, sadzenie; spada |
+| dracena | z jagodami | jagody draceny | jedzenie, sadzenie; spadają |
+| palma kokosowa | z kokosami (1.8.0) | kokos | jedzenie, sadzenie; spada |
+
+„Spada" - dojrzały plon co jakiś czas spada z korony jako cząsteczka, jak
+jabłka (`TreeParticles`). Szyszki jodły, modrzewia i cedru w naturze
+rozpadają się albo zostają na gałęziach, kwiaty i puch nie spadają -
+przedmiot ma w katalogu `"falls": false`. Podpałkę daje pole `"tinder"`.
+
+Nowe odmiany liści zajmują wolne numery w dziesiątce gatunku: modrzew
+z szyszkami 1138 (po zbiorze 1139), baobab z owocami 1118 (1119). Liście
+baobabu z kwiatami i złote igliwie modrzewia zostały.
+
+### Opadłe liście
+
+Osika, baobab, figowiec, puchowiec i modrzew mają opadłe liście (numer
+gatunku + 5): leżą pod drzewami, da się je zrobić z liści i wchodzą do
+grupy „opadłe liście" w przepisach. Od 1.10.0 **wszystkie** opadłe liście
+(także buka, dębu, klonu, jabłoni, olchy i wierzby) mają kolor pory roku
+swojego gatunku.
+
+### Namorzyn w wodzie
+
+- Sadzonka namorzynu (albo siewka) kliknięta w dno płytkiej wody - piasek,
+  żwir, błoto, glina albo ziemia - staje jako **wodna sadzonka** (blok
+  1148): roślina wodna jak pałka, zajmuje komórkę wody i jej nie wypiera.
+  Zebrana daje zwykłą sadzonkę.
+- Rośnie tak samo jak na lądzie. Drzewo wyrasta z wody jak namorzyny
+  z generatora: pień i korzenie podporowe wypierają wodę (korzenie pod
+  wodą stają się pniem - ażurowy blok zostawiłby w wodzie dziurę), liście
+  wody nie ruszają (`plantTree.js`).
+- Na lądzie sadzonka rośnie na ziemi, piasku i błocie; siewkę jak inne
+  nasiona sadzi się na rozgrzebanej ziemi.
+
+### Figowiec-namiot i nowa jukka
+
+![Figowiec-namiot z zewnątrz i od środka, jukka, namorzyn w wodzie](drzewa-1100.jpg)
+
+- **Figowiec** (prośba Kamila: „jak ogromny namiot jako schronienie"):
+  korona szeroka na 22-32 bloki (promień 11-16, najszersza w grze), wysoka
+  na 13-20. Liście są powłoką grubą na 2-3 bloki - w środku jest pusto.
+  Brzeg kopuły opada jak ściana namiotu do 3-4 bloków nad ziemię, niżej
+  wisi zasłona korzeni powietrznych aż do ziemi, z 3-4 bramami szerokimi
+  na około 5 bloków. Pod sklepieniem: gruby pień (3 × 3 albo 5 × 5),
+  poziome konary i słupy korzeni, nad głową co najmniej 3 bloki wolnego.
+  W lesie deszczowym figowce stoją co 24 bloki (dawniej co 12), a rzadki,
+  samotny figowiec trafia się na sawannie.
+- **Jukka** (drzewo Jozuego): kanciaste, kosmate ramiona - w bok, łokciem
+  w górę, rozwidlenie - i osobna, zwarta kula liści na końcu każdego.
+  Wysokość 5-11 bloków.
+
+Sprawdzenia: `tools/sprawdz_liscie_pory.mjs`, `tools/sprawdz_drzewa_180.mjs`.
 
 ## Bloki
 
@@ -431,7 +505,9 @@ ziemi (nie na koronie). Meteoryt zmiata drzewa nad kraterem.
 *Drwal* (zetnij pień), *Brzozowy papirus* (kora brzozowa siekierą),
 *Leśniczy* (pień każdego z sześciu gatunków), *Drzewa świata* (pień każdego
 z trzynastu drzew z 1.8.0), *Z małego ziarenka*
-(wyhoduj drzewo z sadzonki). Lista: `docs/osiagniecia.md`.
+(wyhoduj drzewo z sadzonki); od 1.10.0 *Smaki dalekich stron* (zjedz sześć
+plonów drzew z dalekich stron) i *Ogrodnik przypływów* (posadź namorzyn
+w wodzie). Lista: `docs/osiagniecia.md`.
 
 ## Komendy
 
@@ -473,33 +549,46 @@ szelest liści (`plant`). Pliki: `assets/sounds/blocks/` (nagrania -
 
 ## Do zrobienia później
 
-- liście opadające jesienią, śnieg na świerkach (pory roku).
+- liście opadające z drzew jesienią (zimą korona szarzeje, ale nie jest goła),
+  śnieg leżący na ziemi i gałęziach - z aktualizacją pogody.
 
 Braki spisane przy sprawdzaniu 1.9.0 (trzynaście drzew z 1.8.0):
 
-- **Pory roku nowych drzew.** Paczka miała podglądy jesiennego modrzewia
-  i osiki oraz bezlistnego baobabu i puchowca; w grze złote igliwie i
-  liście są stałą odmianą kilkunastu procent korony, a baobab i puchowiec
-  nie zrzucają liści. Do podpięcia pod kalendarz (`docs/pory-roku.md`).
-- **Owoce i szyszki.** Zbiera się tylko kokosy. Szyszki jodły, modrzewia,
-  cedru, araukarii i sosny ościstej, figi figowca, kwiaty baobabu i jukki,
-  jagody draceny i puch puchowca to na razie sam wygląd liści (bez
-  przedmiotu i zbioru).
-- **Opadłe liście** pod osiką, baobabem i figowcem (inne liściaste drzewa
-  je mają).
-- **Namorzyn z sadzonki rośnie tylko na lądzie** - w wodzie stoją wyłącznie
-  drzewa z generatora.
-- **Liście drzew nie zmieniają koloru z biomem** (trawa, kępki, mech
-  i paprocie - tak). Akacje i baobaby na sawannie mają więc tę samą zieleń
-  co gdzie indziej.
+- ~~Pory roku nowych drzew, owoce i szyszki, opadłe liście, namorzyn
+  z sadzonki w wodzie, kolor liści z biomu~~ - zrobione w 1.10.0.
 - **Powietrze i pogoda biomów.** Ciepło i wilgoć widać po ziemi i
   roślinach; mgła, kolor nieba, częstszy deszcz w mokrych biomach ani
   drżące powietrze nad pustynią nie są zrobione.
-- **Jukka z daleka** przypomina małe zwykłe drzewko - rozety na końcach
-  gałęzi zlewają się w jedną koronę.
+- ~~Jukka z daleka~~ - nowy kształt w 1.10.0 (osobne kule liści).
 - **Las deszczowy i namorzyny** nie mają zrzutów w dokumentacji (z bliska
   sprawdzone w grze tylko w części - renderowanie zdalne jest wolne);
   pilnują ich testy na generatorze.
 - **Paczki tekstur w wysokiej rozdzielczości:** atlas 1024 × 1536 zmniejszył
   największy kafelek o połowę ([kora.md](kora.md)). Powrót do dawnego
   limitu wymagałby drugiej tekstury na arkusze kory.
+
+Braki spisane przy sprawdzaniu 1.10.0:
+
+- **Bezlistne drzewa zimą.** Liście szarzeją i bieleją od śniegu, ale nie
+  opadają - goła korona wymaga osobnego wyglądu bloku liści (albo
+  ukrywania go w shaderze) i przyjdzie z pogodą.
+- **Klon i miłorząb są latem zielone.** Ich tekstury z paczek są jesienne
+  (czerwona, złota) i do 1.9.0 były takie cały rok; teraz widać je jesienią.
+  To samo złote odmiany modrzewia i osiki. Kwiaty jakarandy i wiśni
+  w teksturze liści zostały całoroczne - kwitnienie w swojej porze to
+  osobna praca.
+- **Daleki teren:** korony zmieniają kolor skokami i jednakowo w całym
+  świecie; nie ma tam koloru liści z biomu ani śniegu. Po każdym kroku
+  kafelki przebudowują siatki od gracza w dal (w budżecie klatki) - przez
+  chwilę bliższy las ma już nowy kolor, a dalszy jeszcze poprzedni; na
+  słabym urządzeniu ta fala trwa dłużej. Kolor liczony w shaderze dalekiego
+  terenu (bez przebudowy) wymaga znacznika „liść gatunku X" w wierzchołkach.
+- **Owoce bez pór roku.** Plony odrastają cały rok; kwitnienie i owocowanie
+  w swojej porze (jak kwiaty z paczek) - do zrobienia.
+- **Puch puchowca** jest tylko podpałką; wypełnienie pościeli (kapok to
+  prawdziwy surowiec do poduszek) - do rozważenia.
+- **Figowiec na stoku:** zasłona korzeni kończy się na wysokości podstawy
+  pnia - na pochyłym terenie od niższej strony nie sięga ziemi.
+- **Sadzonka namorzynu w głębszej wodzie** (2-3 bloki) stoi cała pod wodą;
+  rośnie poprawnie, ale jej nie widać nad taflą.
+

@@ -107,7 +107,9 @@ for (let z = -6000; z <= 6000 && Object.keys(found).length < 5; z += 48) for (le
 equal(Object.keys(found).sort(), ['desert', 'mangrove', 'rainforest', 'savanna', 'wetland'], 'Pięć biomów do sprawdzenia w świecie');
 
 const chunkAt = (x, z, fresh = generator) => { const chunk = new Chunk(Math.floor(x / CHUNK_SIZE), Math.floor(z / CHUNK_SIZE)); fresh.generateChunk(chunk); return chunk; };
-const average = (chunk) => { const sum = [0, 0, 0]; for (let i = 0; i < chunk.tint.length; i++) sum[i % 3] += chunk.tint[i]; return sum.map((v) => v / (chunk.tint.length / 3) / GRASS_TINT_UNIT); };
+// chunk.tint: 17 x 17 rogów x 3 kolory, potem bajt "zimna" na róg (1.10.0, śnieg na liściach).
+const CORNERS = 17 * 17;
+const average = (chunk) => { const sum = [0, 0, 0]; for (let i = 0; i < CORNERS * 3; i++) sum[i % 3] += chunk.tint[i]; return sum.map((v) => v / CORNERS / GRASS_TINT_UNIT); };
 const count = (chunk, test) => { let n = 0; for (const id of chunk.blocks) if (id && test(getBlockTypeById(id))) n++; return n; };
 const chunks = Object.fromEntries(Object.entries(found).map(([biome, [x, z]]) => [biome, chunkAt(x, z)]));
 const colors = Object.fromEntries(Object.entries(chunks).map(([biome, chunk]) => [biome, average(chunk)]));

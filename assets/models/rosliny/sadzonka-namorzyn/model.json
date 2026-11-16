@@ -1,7 +1,8 @@
 {
     "nazwa": "Sadzonka namorzynu",
     "bloki": [
-        "mangrove_sapling"
+        "mangrove_sapling",
+        "mangrove_sapling_water"
     ],
     "kolory": {
         "lisc": "#3a7a2c",
@@ -45,6 +46,57 @@
                     "wysokosc": [
                         9,
                         11
+                    ],
+                    "promien": 0,
+                    "liscie": {
+                        "co": 1,
+                        "dlugosc": [
+                            3,
+                            4
+                        ],
+                        "naprzeciw": true
+                    }
+                }
+            }
+        },
+        {
+            "prosty": {
+                "kafelek": "mangrove/sapling.png",
+                "rozmiar": 26
+            },
+            "polrealistyczny": {
+                "liscie": {
+                    "uklad": "kopula",
+                    "ile": 9,
+                    "dlugosc": 5,
+                    "promien": 4,
+                    "kopula": 22,
+                    "nachylenie": 40,
+                    "pien": true
+                }
+            },
+            "szczegolowy": {
+                "rodzaj": "kepka",
+                "liscie": {
+                    "uklad": "krzak",
+                    "ile": [
+                        6,
+                        8
+                    ],
+                    "dlugosc": [
+                        2,
+                        3
+                    ],
+                    "promien": 2
+                },
+                "lodygi": {
+                    "ile": [
+                        1,
+                        1
+                    ],
+                    "wysokosc": [
+                        20,
+                        23
                     ],
                     "promien": 0,
                     "liscie": {

@@ -151,6 +151,14 @@ export class BlockPlacer {
             blockType = 'cattail_water';
         }
 
+        // Sadzonka namorzynu (1.10.0): w płytkiej wodzie staje jej wodna
+        // postać - tak samo zajmuje komórkę wody, nie wypierając jej.
+        const wades = getBlockDefinition(blockType)?.wades;
+
+        if (wades && isLiquidId(id)) {
+            blockType = wades;
+        }
+
         const plantId = getBlockId(blockType);
         const river = getRiverPlant(plantId);
 

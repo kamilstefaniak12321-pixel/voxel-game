@@ -39,6 +39,7 @@ import {
     getDropType,
     getBreakTime,
     isWaterloggedPlantId,
+    isWaterSourceId,
     getLiquidKindId,
     isPlantId,
     canPlantStay,
@@ -261,7 +262,7 @@ export class GameInteraction {
                         this.chests.ensure(target);
                     }
 
-                    this.achieve('blockPlaced', { type: block });
+                    this.achieve('blockPlaced', { type: block, placed });
 
                     // Owoc postawiony jako sadzonka - posadzony.
 
@@ -962,7 +963,21 @@ export class GameInteraction {
 
         const target = this.placer.targetOf(hit, block);
 
-        return Boolean(target) && this.world.getBlock(target.x, target.y - 1, target.z) === FIELD_BLOCK;
+        if (!target) {
+            return false;
+        }
+
+        if (this.world.getBlock(target.x, target.y - 1, target.z) === FIELD_BLOCK) {
+            return true;
+        }
+
+        // Siewka namorzynu (1.10.0): także prosto w dno płytkiej wody.
+        const wades = getBlockDefinition(block)?.wades;
+        const here = this.world.getBlockId(target.x, target.y, target.z);
+
+        return Boolean(wades) && isWaterSourceId(here) && !isWaterloggedPlantId(here) &&
+            canPlantStay(getBlockId(wades), this.world.getBlockId(target.x, target.y - 1, target.z),
+                this.world.getBlockId(target.x, target.y + 1, target.z));
 
     }
 

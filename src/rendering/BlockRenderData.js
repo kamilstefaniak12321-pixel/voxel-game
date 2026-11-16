@@ -1,3 +1,4 @@
+import { leafSeasonUniforms, leafCode, LEAF_VERTEX_PARS_GLSL, LEAF_VERTEX_GLSL, LEAF_FRAGMENT_PARS_GLSL, LEAF_FRAGMENT_GLSL } from './LeafSeasons.js';
 import { BARK_SHEETS, BARK_GRID, barkLookup } from './BarkSheets.js';
 import * as THREE from 'three';
 import { campfireLightUniforms, CAMPFIRE_LIGHT_GLSL } from './CampfireLight.js';
@@ -179,6 +180,8 @@ blockMaterial.onBeforeCompile = (shader, renderer) => {
 
             float tintMask = smoothstep(0.01, 0.07, diffuseColor.g - max(diffuseColor.r, diffuseColor.b));
             diffuseColor.rgb *= mix(vec3(1.0), vTint.rgb, mix(tintMask, 1.0, vTint.a));
+            // Liście: kolor pory roku i zimowy śnieg (LeafSeasons.js).
+            ${LEAF_FRAGMENT_GLSL}
 
             vec3 blockTexel = diffuseColor.rgb;
             float blockSky = surfaceDecodeLight(vColor.a);
@@ -272,7 +275,13 @@ blockMaterial.onBeforeCompile = (shader, renderer) => {
     // dokładnie w kolorze nieba za nim. W tunelu mgła ciemnieje
     // (uFogBrightness).
 
-    Object.assign(shader.uniforms, skyUniforms, viewUniforms);
+    Object.assign(shader.uniforms, skyUniforms, viewUniforms, leafSeasonUniforms);
+
+    // Pory roku liści tylko w WebGL 2 (dwa dodatkowe varyingi; WebGL 1
+    // gwarantuje ich za mało) - bez nich liście wyglądają jak dawniej.
+    const leafDefine = renderer.capabilities.isWebGL2 ? '#define LEAF_SEASONS\n' : '';
+    shader.vertexShader = leafDefine + shader.vertexShader;
+    shader.fragmentShader = leafDefine + shader.fragmentShader;
 
     // W trybie ziemniaka (define POTATO) kolor nieba dla mgły liczy
     // się tylko w rogach ścian, a nie w każdym pikselu.
@@ -293,6 +302,7 @@ blockMaterial.onBeforeCompile = (shader, renderer) => {
                 varying vec4 vTint;
                 varying float vSurfaceOcclusion;
                 varying float vSurfaceEmission;
+                ${LEAF_VERTEX_PARS_GLSL}
 
                 #ifdef POTATO
                     varying vec3 vFogSky;
@@ -323,6 +333,7 @@ blockMaterial.onBeforeCompile = (shader, renderer) => {
                 // 4.0 = 255 / GRASS_TINT_UNIT (config.js).
                 vTint = tint.a < 0.5 ? vec4(tint.rgb * 4.0, 0.0)
                     : tint.a < 0.75 ? vec4(tint.rgb, 1.0) : vec4(1.0, 1.0, 1.0, 0.0);
+                ${LEAF_VERTEX_GLSL}
 
                 #ifdef POTATO
                     vFogSky = atmosphereFogColor(vSkyDirection, uAerialPerspective, uFogBrightness);
@@ -339,6 +350,7 @@ blockMaterial.onBeforeCompile = (shader, renderer) => {
                 varying vec3 vCanopyTint;
                 varying float vSurfaceOcclusion;
                 varying float vSurfaceEmission;
+                ${LEAF_FRAGMENT_PARS_GLSL}
                 uniform float uFogBrightness;
                 uniform float uNightDesaturation;
                 uniform vec3 uNightTint;
@@ -1271,6 +1283,9 @@ for (
             : null,
 
         leaves: definition.model === 'leaves',
+        // Liście i opadłe liście drzew: kod palety pór roku (LeafSeasons.js); 0 - nie liść.
+        leafCode: definition.tree && (definition.part === 'leaves' || definition.part === 'litter')
+            ? leafCode(definition.tree, definition.part === 'litter', definition.autumnLeaves === true) : 0,
 
         // Schody, półbloki, płoty, furtki, stół stolarski (0.90.0):
         // pudełka z ShapeBoxes.js (ChunkMesher.addShape).

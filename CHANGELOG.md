@@ -11,6 +11,52 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 1.10.0 - Liście w porach roku, owoce i szyszki, figowiec-namiot
+
+PR #158. Opis: [`docs/pory-roku.md`](docs/pory-roku.md#liście-drzew-w-porach-roku-1100),
+[`docs/drzewa.md`](docs/drzewa.md#owoce-szyszki-opadłe-liście-namorzyn-w-wodzie-figowiec-namiot--1100).
+
+- **Liście zmieniają kolor z porą roku.** Jesienią z dnia na dzień coraz
+  mocniej: klony czerwienieją, brzozy, lipy i osiki żółkną, modrzewie
+  złocą się, buki miedzieją, dęby brązowieją. Zimą liście są szarawe,
+  a w chłodnych stronach bieli je cienka warstwa śniegu (przygotowanie
+  pod pogodę). Na przedwiośniu wraca zieleń. Iglaki i drzewa tropików
+  zostają zielone. Las nie zmienia się cały naraz - każde miejsce ma
+  trochę inny termin. Klon i miłorząb (dotąd czerwony i złoty cały rok)
+  są teraz wiosną i latem zielone, a swoje barwy pokazują jesienią; tak
+  samo złote odmiany modrzewia i osiki. Daleki las zmienia kolor razem
+  z bliskim.
+- To samo dotyczy **liści spadających z drzew** (jesienią spada ich
+  wyraźnie więcej) i **opadłych liści** - od teraz każde opadłe liście
+  mają kolor pory roku swojego gatunku.
+- **Kolor liści zależy od biomu:** na sawannie i półpustyni korony
+  płowieją, w mokrych biomach ciemnieją (łagodniej niż trawa).
+- **Owoce i szyszki drzew z 1.8.0** (PPM na liściach z plonem, plon
+  odrasta): figa, owoc baobabu, jagody draceny, kwiaty jukki i orzeszki
+  araukarii są jadalne; szyszki jodły, modrzewia, cedru i sosny ościstej
+  oraz puch puchowca to podpałka (puch - najlepsza); z szyszek, orzeszków,
+  fig, jagód, owocu baobabu i siewki namorzynu rosną drzewa. Dojrzałe
+  figi, owoce baobabu, jagody, orzeszki, siewki i szyszki sosny ościstej
+  spadają z koron jak jabłka. Modrzew i baobab dostały liście z szyszkami
+  i z owocami.
+- **Opadłe liście** osiki, baobabu, figowca, puchowca i modrzewia.
+- **Namorzyn rośnie w wodzie:** sadzonkę albo siewkę da się posadzić
+  w dnie płytkiej wody, a drzewo wyrasta z wody na korzeniach podporowych.
+- **Figowiec to teraz ogromny namiot:** korona szeroka na 22-32 bloki,
+  pusta w środku, z brzegiem opadającym prawie do ziemi, zasłoną korzeni
+  powietrznych i bramami - schronienie pod jednym drzewem. Rzadki samotny
+  figowiec rośnie też na sawannie.
+- **Nowa jukka** (drzewo Jozuego): kanciaste ramiona i osobne kule liści.
+- Komenda `/pora ustaw <pora> [dzień]` przenosi na wybrany dzień pory
+  (np. `/pora ustaw jesien 5`). Osiągnięcia: *Złota jesień*, *Pierwszy
+  szron*, *Smaki dalekich stron*, *Ogrodnik przypływów*.
+- Zapisane światy: numery bloków bez zmian, nowe bloki w wolnych numerach
+  swoich gatunków. Kolory liści działają od razu wszędzie (nic nie jest
+  zapisywane); nowy kształt figowca i jukki oraz opadłe liście - tylko
+  w nowym terenie i z nowych sadzonek. W lesie deszczowym figowce stoją
+  rzadziej (co 24 bloki).
+- Pogoda (deszcz, śnieg na ziemi) - w następnej aktualizacji.
+
 ## 1.9.0 - Wyroby z nowego drewna, sucho i mokro w biomach
 
 PR #157. Opis: [`docs/stolarstwo.md`](docs/stolarstwo.md),

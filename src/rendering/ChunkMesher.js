@@ -18,6 +18,8 @@ import { pickRegionalPlant } from './PlantRegionalVariants.js';
 import { barkTile } from './BarkSheets.js';
 import { SEASONAL, shownPlantId, nextPlantChange } from '../blocks/plantSeasons.js';
 import { getBushyGrassFaces } from './BushyGrassGeometry.js';
+import { LEAF_TINT_BYTES } from './LeafSeasons.js';
+import { GRASS_TINT_UNIT } from '../config.js';
 import { LEAF_PARTS } from '../../assets/models/leaves/model-data.js';
 import { BUSHY_GRASS_TEXTURE } from '../blocks/bushyGrass.js';
 import { getAtlasUV } from './TextureAtlas.js';
@@ -540,6 +542,7 @@ function addLeafParts(id, renderData, lx, y, lz, faceCount, baseX, baseZ, faceGr
     const block = padIndex(lx, y, lz);
 
     const tinted = renderData.tint && meshTint !== null;
+    const leafCode = renderData.leafCode;
 
     const wx = baseX + lx, wz = baseZ + lz;
 
@@ -635,7 +638,8 @@ function addLeafParts(id, renderData, lx, y, lz, faceCount, baseX, baseZ, faceGr
                 surfaceProfileBuffer[t + i * 2] = renderData.surfaceProfiles[faceIndex][0];
                 surfaceProfileBuffer[t + i * 2 + 1] = renderData.surfaceProfiles[faceIndex][1];
 
-                if (tinted) writeTint(c + i * 4, lx + corner[0], lz + corner[2]);
+                if (leafCode) writeLeafTint(c + i * 4, lx, lz, leafCode);
+                else if (tinted) writeTint(c + i * 4, lx + corner[0], lz + corner[2]);
                 else clearTint(c + i * 4);
 
                 if (i === 0) b0 = values[8]; else if (i === 1) b1 = values[8]; else if (i === 2) b2 = values[8]; else b3 = values[8];
@@ -817,6 +821,40 @@ function writeTint(at, ix, iz) {
     tintBuffer[at + 1] = meshTint[n + 1];
     tintBuffer[at + 2] = meshTint[n + 2];
     tintBuffer[at + 3] = 0;
+
+}
+
+
+// LIŚCIE (1.10.0): kolor z klimatu biomu (złagodzony kolor trawy) i kod
+// liścia z poziomem śniegu - shader liczy z nich kolor pory roku
+// (LeafSeasons.js). Za rogami koloru chunk.tint ma po bajcie chłodu
+// każdego rogu (Biomes.tintGrid): w ciepłych stronach śnieg nie leży.
+// Chunk bez koloru (plac testowy): liście bez zmiany, śnieg wszędzie.
+
+const TINT_COLD = TINT_SIDE * TINT_SIDE * 3;
+const LEAF_NEUTRAL = Math.round(GRASS_TINT_UNIT);
+
+function writeLeafTint(at, ix, iz, code) {
+
+    if (meshTint === null) {
+
+        tintBuffer[at] = tintBuffer[at + 1] = tintBuffer[at + 2] = LEAF_NEUTRAL;
+        tintBuffer[at + 3] = code + 6;
+
+        return;
+
+    }
+
+    const corner = iz * TINT_SIDE + ix;
+    const n = corner * 3;
+
+    tintBuffer[at] = LEAF_TINT_BYTES[meshTint[n]];
+    tintBuffer[at + 1] = LEAF_TINT_BYTES[meshTint[n + 1]];
+    tintBuffer[at + 2] = LEAF_TINT_BYTES[meshTint[n + 2]];
+
+    const cold = meshTint.length > TINT_COLD ? meshTint[TINT_COLD + corner] : 255;
+
+    tintBuffer[at + 3] = code + ((cold * 3 + 127) / 255 | 0) * 2;
 
 }
 
@@ -1161,7 +1199,7 @@ function addFlats(flats, faceCount, baseX, baseZ, first = 0, end = flats.length)
         const lz = flats[k + 2];
 
         const id = flats[k + 3];
-        const { flat, uv, rotate, tint, surfaceProfiles, worldTextureVariants } = blockRenderData[id];
+        const { flat, uv, rotate, tint, surfaceProfiles, worldTextureVariants, leafCode } = blockRenderData[id];
         const emission = getLightEmission(id) / MAX_LIGHT * 255;
 
         const flatTint = tint && meshTint ? tintOfColumn(lx, lz) : null;
@@ -1241,7 +1279,10 @@ function addFlats(flats, faceCount, baseX, baseZ, first = 0, end = flats.length)
             surfaceProfileBuffer[t + i * 2] = profile[0];
             surfaceProfileBuffer[t + i * 2 + 1] = profile[1];
 
-            if (flatTint) {
+            if (leafCode) {
+                writeLeafTint(c + i * 4, lx, lz, leafCode);
+            }
+            else if (flatTint) {
                 tintBuffer[c + i * 4] = flatTint[0];
                 tintBuffer[c + i * 4 + 1] = flatTint[1];
                 tintBuffer[c + i * 4 + 2] = flatTint[2];
@@ -1869,7 +1910,10 @@ function addCubeFaces(id, renderData, lx, y, lz, faceCount, baseX, baseZ, textur
             surfaceProfileBuffer[t + i * 2] = renderData.surfaceProfiles[faceIndex][0];
             surfaceProfileBuffer[t + i * 2 + 1] = renderData.surfaceProfiles[faceIndex][1];
 
-            if (tinted) {
+            if (renderData.leafCode) {
+                writeLeafTint(c + i * 4, lx, lz, renderData.leafCode);
+            }
+            else if (tinted) {
                 writeTint(c + i * 4, lx + corner[0], lz + corner[2]);
             }
             else {

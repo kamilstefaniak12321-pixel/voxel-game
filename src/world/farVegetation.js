@@ -144,10 +144,13 @@ function matureTreeSilhouette(tree, spacing, definition, { height, radius, trunk
             }
         } else {
             const bottom = { baobab: height - 5, kapok: crownBase, araucaria: crownBase, dragon_tree: height - 3, coconut_palm: height - 4, joshua_tree: crownBase + 1 }[kind];
-            if (spacing > 4) slab(radius * .9, bottom, height);
+            // Jukka (kształt od 1.10.0): kule liści stoją na ramionach
+            // bliżej pnia niż dawna korona.
+            const wide = kind === 'joshua_tree' ? Math.max(1.5, radius - 1.4) : radius;
+            if (spacing > 4) slab(wide * .9, bottom, height);
             else {
-                slab(radius * .6, bottom, height);
-                slab(radius, bottom + (height - bottom) * .3, height - 1, .93);
+                slab(wide * .6, bottom, height);
+                slab(wide, bottom + (height - bottom) * .3, height - 1, .93);
             }
         }
         return result;

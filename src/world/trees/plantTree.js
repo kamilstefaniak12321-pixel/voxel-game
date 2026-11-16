@@ -16,7 +16,21 @@ import { canReplace } from './Forests.js';
 // Drzewo rośnie tylko wtedy, gdy pień ma miejsce: w każdej komórce
 // pnia i gałęzi jest powietrze, roślina albo liście (blok budynku czy
 // skała nad sadzonką - drzewo czeka). Liście omijają zajęte miejsca.
+//
+// Sadzonka w wodzie (namorzyn, 1.10.0): drzewo wyrasta z wody jak
+// w generatorze (Forests.placeTree - wade): pień i korzenie wypierają
+// wodę (korzenie podporowe pod wodą stają się pniem - ażurowy blok
+// zostawiłby w wodzie dziurę), liście wody nie ruszają.
 // ------------------------------------------------------------
+
+// Czy drzewo stanie w wodzie: w komórce podstawy jest woda albo wodna
+// sadzonka.
+
+function wades(world, x, y, z) {
+
+    return isLiquidId(world.getBlockId(x, y, z));
+
+}
 
 // Czy drzewo `shape` zmieści się z podstawą pnia w (x, y, z).
 // Komórka (x, y, z) - tam jest sadzonka - się nie liczy.
@@ -27,13 +41,17 @@ export function treeFits(world, x, y, z, shape) {
         return false;
     }
 
+    const wade = wades(world, x, y, z);
+
     for (const [dx, dy, dz, type] of shape.blocks) {
 
         if (isLeavesId(getBlockId(type)) || (dx === 0 && dy === 0 && dz === 0)) {
             continue;
         }
 
-        if (!canReplace(world.getBlockId(x + dx, y + dy, z + dz), true)) {
+        const id = world.getBlockId(x + dx, y + dy, z + dz);
+
+        if (!canReplace(id, true) && !(wade && isLiquidId(id))) {
             return false;
         }
 
@@ -56,6 +74,11 @@ export function plantTree(world, x, y, z, species, seed, size = 0.5, force = fal
         return null;
     }
 
+    // Przed pierwszym blokiem - potem w podstawie stoi już pień.
+    const wade = wades(world, x, y, z);
+    const wadeLog = `${species}_log`;
+    const wadeRoots = wade ? getBlockId(`${species}_roots`) : AIR_ID;
+
     if (y < 1 || y + shape.top >= CHUNK_HEIGHT) {
         return null;
     }
@@ -71,6 +94,21 @@ export function plantTree(world, x, y, z, species, seed, size = 0.5, force = fal
 
         const isBase = dx === 0 && dy === 0 && dz === 0;
 
+        if (wade && isLiquidId(id)) {
+
+            const typeId = getBlockId(type);
+
+            if (!isLeavesId(typeId)) {
+                world.setBlock(x + dx, y + dy, z + dz, type);
+            }
+            else if (typeId === wadeRoots) {
+                world.setBlock(x + dx, y + dy, z + dz, wadeLog);
+            }
+
+            continue;
+
+        }
+
         if (isBase || canReplace(id, !isLeavesId(getBlockId(type)))) {
             world.setBlock(x + dx, y + dy, z + dz, type);
         }
@@ -82,13 +120,22 @@ export function plantTree(world, x, y, z, species, seed, size = 0.5, force = fal
 
     for (const [dx, dz, type] of shape.roots) {
 
-        if (world.getBlock(x + dx, y, z + dz) !== type) {
+        const base = world.getBlock(x + dx, y, z + dz);
+
+        if (base !== type && !(wade && base === wadeLog)) {
             continue;
         }
 
         for (let yy = y - 1, depth = 0; yy >= 1 && depth < 4; yy--, depth++) {
 
-            if (!canReplace(world.getBlockId(x + dx, yy, z + dz), true)) {
+            const below = world.getBlockId(x + dx, yy, z + dz);
+
+            if (wade && isLiquidId(below)) {
+                world.setBlock(x + dx, yy, z + dz, isLeavesId(getBlockId(type)) ? wadeLog : type);
+                continue;
+            }
+
+            if (!canReplace(below, true)) {
                 break;
             }
 

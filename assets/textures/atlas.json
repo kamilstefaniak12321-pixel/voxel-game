@@ -7,7 +7,7 @@
     "drzewa": {
       "file": "drzewa.png",
       "width": 256,
-      "height": 5728
+      "height": 5760
     },
     "teren": {
       "file": "teren.png",
@@ -6875,6 +6875,132 @@
       "y": 5712,
       "width": 16,
       "height": 16
+    },
+    "fir/cone.png": {
+      "sheet": "drzewa",
+      "x": 0,
+      "y": 5728,
+      "width": 16,
+      "height": 16
+    },
+    "larch/cone.png": {
+      "sheet": "drzewa",
+      "x": 16,
+      "y": 5728,
+      "width": 16,
+      "height": 16
+    },
+    "cedar/cone.png": {
+      "sheet": "drzewa",
+      "x": 32,
+      "y": 5728,
+      "width": 16,
+      "height": 16
+    },
+    "bristlecone/cone.png": {
+      "sheet": "drzewa",
+      "x": 48,
+      "y": 5728,
+      "width": 16,
+      "height": 16
+    },
+    "araucaria/nuts.png": {
+      "sheet": "drzewa",
+      "x": 64,
+      "y": 5728,
+      "width": 16,
+      "height": 16
+    },
+    "baobab/fruit.png": {
+      "sheet": "drzewa",
+      "x": 80,
+      "y": 5728,
+      "width": 16,
+      "height": 16
+    },
+    "mangrove/propagule.png": {
+      "sheet": "drzewa",
+      "x": 96,
+      "y": 5728,
+      "width": 16,
+      "height": 16
+    },
+    "kapok/fluff.png": {
+      "sheet": "drzewa",
+      "x": 112,
+      "y": 5728,
+      "width": 16,
+      "height": 16
+    },
+    "joshua_tree/flowers.png": {
+      "sheet": "drzewa",
+      "x": 128,
+      "y": 5728,
+      "width": 16,
+      "height": 16
+    },
+    "banyan/fig.png": {
+      "sheet": "drzewa",
+      "x": 144,
+      "y": 5728,
+      "width": 16,
+      "height": 16
+    },
+    "dragon_tree/berries.png": {
+      "sheet": "drzewa",
+      "x": 160,
+      "y": 5728,
+      "width": 16,
+      "height": 16
+    },
+    "larch/leaves_cones.png": {
+      "sheet": "drzewa",
+      "x": 176,
+      "y": 5728,
+      "width": 16,
+      "height": 16
+    },
+    "baobab/leaves_fruit.png": {
+      "sheet": "drzewa",
+      "x": 192,
+      "y": 5728,
+      "width": 16,
+      "height": 16
+    },
+    "aspen/leaf_litter.png": {
+      "sheet": "drzewa",
+      "x": 208,
+      "y": 5728,
+      "width": 16,
+      "height": 16
+    },
+    "baobab/leaf_litter.png": {
+      "sheet": "drzewa",
+      "x": 224,
+      "y": 5728,
+      "width": 16,
+      "height": 16
+    },
+    "banyan/leaf_litter.png": {
+      "sheet": "drzewa",
+      "x": 240,
+      "y": 5728,
+      "width": 16,
+      "height": 16
+    },
+    "kapok/leaf_litter.png": {
+      "sheet": "drzewa",
+      "x": 0,
+      "y": 5744,
+      "width": 16,
+      "height": 16
+    },
+    "larch/leaf_litter.png": {
+      "sheet": "drzewa",
+      "x": 16,
+      "y": 5744,
+      "width": 16,
+      "height": 16
     }
   },
   "aliases": {
@@ -12644,6 +12770,96 @@
       "x": 55,
       "y": 61,
       "region": "trapdoor_bristlecone"
+    },
+    "fir/cone.png": {
+      "x": 0,
+      "y": 63,
+      "region": "fir/cone.png"
+    },
+    "larch/cone.png": {
+      "x": 2,
+      "y": 63,
+      "region": "larch/cone.png"
+    },
+    "cedar/cone.png": {
+      "x": 4,
+      "y": 63,
+      "region": "cedar/cone.png"
+    },
+    "bristlecone/cone.png": {
+      "x": 6,
+      "y": 63,
+      "region": "bristlecone/cone.png"
+    },
+    "araucaria/nuts.png": {
+      "x": 8,
+      "y": 63,
+      "region": "araucaria/nuts.png"
+    },
+    "baobab/fruit.png": {
+      "x": 10,
+      "y": 63,
+      "region": "baobab/fruit.png"
+    },
+    "mangrove/propagule.png": {
+      "x": 12,
+      "y": 63,
+      "region": "mangrove/propagule.png"
+    },
+    "kapok/fluff.png": {
+      "x": 14,
+      "y": 63,
+      "region": "kapok/fluff.png"
+    },
+    "joshua_tree/flowers.png": {
+      "x": 16,
+      "y": 63,
+      "region": "joshua_tree/flowers.png"
+    },
+    "banyan/fig.png": {
+      "x": 18,
+      "y": 63,
+      "region": "banyan/fig.png"
+    },
+    "dragon_tree/berries.png": {
+      "x": 20,
+      "y": 63,
+      "region": "dragon_tree/berries.png"
+    },
+    "larch/leaves_cones.png": {
+      "x": 22,
+      "y": 63,
+      "region": "larch/leaves_cones.png"
+    },
+    "baobab/leaves_fruit.png": {
+      "x": 24,
+      "y": 63,
+      "region": "baobab/leaves_fruit.png"
+    },
+    "aspen/leaf_litter.png": {
+      "x": 26,
+      "y": 63,
+      "region": "aspen/leaf_litter.png"
+    },
+    "baobab/leaf_litter.png": {
+      "x": 28,
+      "y": 63,
+      "region": "baobab/leaf_litter.png"
+    },
+    "banyan/leaf_litter.png": {
+      "x": 30,
+      "y": 63,
+      "region": "banyan/leaf_litter.png"
+    },
+    "kapok/leaf_litter.png": {
+      "x": 32,
+      "y": 63,
+      "region": "kapok/leaf_litter.png"
+    },
+    "larch/leaf_litter.png": {
+      "x": 34,
+      "y": 63,
+      "region": "larch/leaf_litter.png"
     }
   }
 }

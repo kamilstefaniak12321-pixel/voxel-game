@@ -30,7 +30,8 @@ export const SPECIES_SHAPE_LIMITS = Object.freeze({
     joshua_tree: Object.freeze({ reach: 6, maxHeight: 11 }),
     aspen: Object.freeze({ reach: 6, maxHeight: 27 }),
     araucaria: Object.freeze({ reach: 9, maxHeight: 43 }),
-    banyan: Object.freeze({ reach: 14, maxHeight: 23 }),
+    // 1.10.0: figowiec-namiot - najszersza korona w grze.
+    banyan: Object.freeze({ reach: 17, maxHeight: 21 }),
     dragon_tree: Object.freeze({ reach: 9, maxHeight: 11 }),
     cedar: Object.freeze({ reach: 14, maxHeight: 37 }),
     bristlecone: Object.freeze({ reach: 7, maxHeight: 12 })
@@ -2194,7 +2195,7 @@ export const TREE_CATALOG = {
         "species": ["Jodła pospolita", "jodły"],
         "short": "jodła",
         "labels": ["Pień jodły", "Okorowany pień jodły", "Deski jodłowe", "Igliwie jodły", "Sadzonka jodły"],
-        "loot": [["fir_sapling", 0.05]],
+        "loot": [["fir_sapling", 0.05], ["fir_cone", 0.03]],
         "growthSeconds": 300,
         "textures": {
             "logTop": "fir/log_top.png",
@@ -2207,10 +2208,12 @@ export const TREE_CATALOG = {
         },
         "variants": [{
             "key": "szyszki", "label": "Igliwie jodły z szyszkami",
-            "afterLabel": null, "texture": "fir/leaves_variant.png",
-            "char": null, "share": 0.07, "harvest": null, "regrow": null
+            "afterLabel": "Igliwie jodły (szyszki odrastają)", "texture": "fir/leaves_variant.png",
+            "char": null, "share": 0.07, "harvest": { "item": "fir_cone", "count": [1, 2] }, "regrow": 900
         }],
-        "items": {},
+        "items": {
+            "szyszka": { "type": "fir_cone", "label": "Szyszka jodły", "texture": "fir/cone.png", "plants": true, "falls": false, "tinder": 1.5 }
+        },
         "shape": {
             "kind": "fir", "litter": 0, "templates": [],
             "height": [28, 44], "radius": [3.5, 5.5], "density": 0.84
@@ -2229,7 +2232,7 @@ export const TREE_CATALOG = {
         "species": ["Baobab afrykański", "baobabu"],
         "short": "baobab",
         "labels": ["Pień baobabu", "Okorowany pień baobabu", "Deski baobabowe", "Liście baobabu", "Sadzonka baobabu"],
-        "loot": [["baobab_sapling", 0.05]],
+        "loot": [["baobab_sapling", 0.05], ["baobab_fruit", 0.03]],
         "growthSeconds": 300,
         "textures": {
             "logTop": "baobab/log_top.png",
@@ -2238,16 +2241,24 @@ export const TREE_CATALOG = {
             "strippedSide": "baobab/stripped_side.png",
             "planks": "baobab/planks.png",
             "leaves": "baobab/leaves.png",
-            "sapling": "baobab/sapling.png"
+            "sapling": "baobab/sapling.png",
+            "leafLitter": "baobab/leaf_litter.png"
         },
+        "litterLabel": "Opadłe liście baobabu",
         "variants": [{
             "key": "kwiaty", "label": "Liście baobabu z kwiatami",
             "afterLabel": null, "texture": "baobab/leaves_variant.png",
             "char": null, "share": 0.08, "harvest": null, "regrow": null
+        }, {
+            "key": "owoce", "label": "Liście baobabu z owocami",
+            "afterLabel": "Liście baobabu (owoce odrastają)", "texture": "baobab/leaves_fruit.png",
+            "char": null, "share": 0.07, "harvest": { "item": "baobab_fruit", "count": [1, 2] }, "regrow": 900
         }],
-        "items": {},
+        "items": {
+            "owoc": { "type": "baobab_fruit", "label": "Owoc baobabu", "texture": "baobab/fruit.png", "plants": true }
+        },
         "shape": {
-            "kind": "baobab", "litter": 0, "templates": [],
+            "kind": "baobab", "litter": 0.06, "templates": [],
             "height": [15, 22], "radius": [8, 11], "density": 0.8
         },
         "climate": null,
@@ -2295,7 +2306,7 @@ export const TREE_CATALOG = {
         "species": ["Modrzew europejski", "modrzewia"],
         "short": "modrzew",
         "labels": ["Pień modrzewia", "Okorowany pień modrzewia", "Deski modrzewiowe", "Igliwie modrzewia", "Sadzonka modrzewia"],
-        "loot": [["larch_sapling", 0.05]],
+        "loot": [["larch_sapling", 0.05], ["larch_cone", 0.03]],
         "growthSeconds": 300,
         "textures": {
             "logTop": "larch/log_top.png",
@@ -2304,16 +2315,24 @@ export const TREE_CATALOG = {
             "strippedSide": "larch/stripped_side.png",
             "planks": "larch/planks.png",
             "leaves": "larch/leaves.png",
-            "sapling": "larch/sapling.png"
+            "sapling": "larch/sapling.png",
+            "leafLitter": "larch/leaf_litter.png"
         },
+        "litterLabel": "Opadłe igliwie modrzewia",
         "variants": [{
-            "key": "zlote", "label": "Złote igliwie modrzewia",
+            "key": "zlote", "autumn": true, "label": "Złote igliwie modrzewia",
             "afterLabel": null, "texture": "larch/leaves_variant.png",
             "char": null, "share": 0.14, "harvest": null, "regrow": null
+        }, {
+            "key": "szyszki", "label": "Igliwie modrzewia z szyszkami",
+            "afterLabel": "Igliwie modrzewia (szyszki odrastają)", "texture": "larch/leaves_cones.png",
+            "char": null, "share": 0.08, "harvest": { "item": "larch_cone", "count": [1, 2] }, "regrow": 900
         }],
-        "items": {},
+        "items": {
+            "szyszka": { "type": "larch_cone", "label": "Szyszka modrzewia", "texture": "larch/cone.png", "plants": true, "falls": false, "tinder": 1.5 }
+        },
         "shape": {
-            "kind": "larch", "litter": 0, "templates": [],
+            "kind": "larch", "litter": 0.1, "templates": [],
             "height": [22, 38], "radius": [4, 6.5], "density": 0.7
         },
         "climate": {
@@ -2330,7 +2349,7 @@ export const TREE_CATALOG = {
         "species": ["Namorzyn czerwony", "namorzynu"],
         "short": "namorzyn",
         "labels": ["Pień namorzynu", "Okorowany pień namorzynu", "Deski namorzynowe", "Liście namorzynu", "Sadzonka namorzynu"],
-        "loot": [["mangrove_sapling", 0.05]],
+        "loot": [["mangrove_sapling", 0.05], ["mangrove_propagule", 0.03]],
         "growthSeconds": 300,
         "textures": {
             "logTop": "mangrove/log_top.png",
@@ -2343,11 +2362,15 @@ export const TREE_CATALOG = {
         },
         "variants": [{
             "key": "siewki", "label": "Liście namorzynu z siewkami",
-            "afterLabel": null, "texture": "mangrove/leaves_variant.png",
-            "char": null, "share": 0.1, "harvest": null, "regrow": null
+            "afterLabel": "Liście namorzynu (siewki odrastają)", "texture": "mangrove/leaves_variant.png",
+            "char": null, "share": 0.1, "harvest": { "item": "mangrove_propagule", "count": [1, 3] }, "regrow": 900
         }],
-        "items": {},
+        "items": {
+            "siewka": { "type": "mangrove_propagule", "label": "Siewka namorzynu", "texture": "mangrove/propagule.png", "plants": true }
+        },
         "roots": { "slot": 9, "label": "Korzenie namorzynu", "texture": "mangrove/roots.png" },
+        "saplingGround": ["sand", "mud"],
+        "waterSapling": { "slot": 8, "ground": ["sand", "gravel", "mud", "clay"] },
         "shape": {
             "kind": "mangrove", "litter": 0, "templates": [],
             "height": [7, 13], "radius": [4.5, 7], "density": 0.86
@@ -2366,7 +2389,7 @@ export const TREE_CATALOG = {
         "species": ["Puchowiec pięciopręcikowy", "puchowca"],
         "short": "puchowiec",
         "labels": ["Pień puchowca", "Okorowany pień puchowca", "Deski z puchowca", "Liście puchowca", "Sadzonka puchowca"],
-        "loot": [["kapok_sapling", 0.05]],
+        "loot": [["kapok_sapling", 0.05], ["kapok_fluff", 0.03]],
         "growthSeconds": 300,
         "textures": {
             "logTop": "kapok/log_top.png",
@@ -2375,16 +2398,20 @@ export const TREE_CATALOG = {
             "strippedSide": "kapok/stripped_side.png",
             "planks": "kapok/planks.png",
             "leaves": "kapok/leaves.png",
-            "sapling": "kapok/sapling.png"
+            "sapling": "kapok/sapling.png",
+            "leafLitter": "kapok/leaf_litter.png"
         },
+        "litterLabel": "Opadłe liście puchowca",
         "variants": [{
             "key": "puch", "label": "Liście puchowca z puchem",
-            "afterLabel": null, "texture": "kapok/leaves_variant.png",
-            "char": null, "share": 0.07, "harvest": null, "regrow": null
+            "afterLabel": "Liście puchowca (puch odrasta)", "texture": "kapok/leaves_variant.png",
+            "char": null, "share": 0.07, "harvest": { "item": "kapok_fluff", "count": [1, 3] }, "regrow": 900
         }],
-        "items": {},
+        "items": {
+            "puch": { "type": "kapok_fluff", "label": "Puch puchowca (kapok)", "texture": "kapok/fluff.png", "plants": false, "falls": false, "tinder": 2 }
+        },
         "shape": {
-            "kind": "kapok", "spacing": 3, "under": "banyan", "litter": 0, "templates": [],
+            "kind": "kapok", "spacing": 3, "under": "banyan", "litter": 0.06, "templates": [],
             "height": [40, 58], "radius": [8, 12], "density": 0.8
         },
         "climate": null,
@@ -2398,7 +2425,7 @@ export const TREE_CATALOG = {
         "species": ["Jukka krótkolistna (drzewo Jozuego)", "jukki"],
         "short": "jukka",
         "labels": ["Pień jukki", "Okorowany pień jukki", "Deski z jukki", "Liście jukki", "Sadzonka jukki"],
-        "loot": [["joshua_tree_sapling", 0.05]],
+        "loot": [["joshua_tree_sapling", 0.05], ["joshua_tree_flowers", 0.03]],
         "growthSeconds": 300,
         "textures": {
             "logTop": "joshua_tree/log_top.png",
@@ -2411,14 +2438,16 @@ export const TREE_CATALOG = {
         },
         "variants": [{
             "key": "kwiaty", "label": "Liście jukki z kwiatami",
-            "afterLabel": null, "texture": "joshua_tree/leaves_variant.png",
-            "char": null, "share": 0.18, "harvest": null, "regrow": null
+            "afterLabel": "Liście jukki (kwiaty odrastają)", "texture": "joshua_tree/leaves_variant.png",
+            "char": null, "share": 0.18, "harvest": { "item": "joshua_tree_flowers", "count": [1, 2] }, "regrow": 900
         }],
-        "items": {},
-        "extraLogs": [{ "key": "shaggy", "slot": 8, "label": "Pień jukki (z suchymi liśćmi)", "texture": "joshua_tree/log_side_shaggy.png" }],
+        "items": {
+            "kwiaty": { "type": "joshua_tree_flowers", "label": "Kwiaty jukki", "texture": "joshua_tree/flowers.png", "plants": false, "falls": false }
+        },
+        "extraLogs": [{ "key": "shaggy", "slot": 8, "label": "Pień jukki (z suchymi liśćmi)", "texture": "joshua_tree/log_side_shaggy.png", "wrapped": true }],
         "shape": {
             "kind": "joshua_tree", "litter": 0, "templates": [],
-            "height": [5, 10], "radius": [3, 5], "density": 0.9
+            "height": [5, 11], "radius": [3.5, 5.5], "density": 0.9
         },
         "climate": null,
         "similar": "pine"
@@ -2439,17 +2468,19 @@ export const TREE_CATALOG = {
             "strippedSide": "aspen/stripped_side.png",
             "planks": "aspen/planks.png",
             "leaves": "aspen/leaves.png",
-            "sapling": "aspen/sapling.png"
+            "sapling": "aspen/sapling.png",
+            "leafLitter": "aspen/leaf_litter.png"
         },
+        "litterLabel": "Opadłe liście osiki",
         "variants": [{
-            "key": "zlote", "label": "Złote liście osiki",
+            "key": "zlote", "autumn": true, "label": "Złote liście osiki",
             "afterLabel": null, "texture": "aspen/leaves_variant.png",
             "char": null, "share": 0.16, "harvest": null, "regrow": null
         }],
         "items": {},
         "extraLogs": [{ "key": "base", "slot": 8, "label": "Pień osiki (przy ziemi)", "texture": "aspen/log_side_base.png" }],
         "shape": {
-            "kind": "aspen", "litter": 0, "templates": [],
+            "kind": "aspen", "litter": 0.12, "templates": [],
             "height": [16, 26], "radius": [3, 4.5], "density": 0.62
         },
         "climate": {
@@ -2466,7 +2497,7 @@ export const TREE_CATALOG = {
         "species": ["Araukaria chilijska", "araukarii"],
         "short": "araukaria",
         "labels": ["Pień araukarii", "Okorowany pień araukarii", "Deski araukariowe", "Igliwie araukarii", "Sadzonka araukarii"],
-        "loot": [["araucaria_sapling", 0.05]],
+        "loot": [["araucaria_sapling", 0.05], ["araucaria_nuts", 0.03]],
         "growthSeconds": 300,
         "textures": {
             "logTop": "araucaria/log_top.png",
@@ -2479,10 +2510,12 @@ export const TREE_CATALOG = {
         },
         "variants": [{
             "key": "szyszki", "label": "Igliwie araukarii z szyszkami",
-            "afterLabel": null, "texture": "araucaria/leaves_variant.png",
-            "char": null, "share": 0.05, "harvest": null, "regrow": null
+            "afterLabel": "Igliwie araukarii (szyszki odrastają)", "texture": "araucaria/leaves_variant.png",
+            "char": null, "share": 0.05, "harvest": { "item": "araucaria_nuts", "count": [2, 4] }, "regrow": 900
         }],
-        "items": {},
+        "items": {
+            "orzeszki": { "type": "araucaria_nuts", "label": "Orzeszki araukarii", "texture": "araucaria/nuts.png", "plants": true }
+        },
         "shape": {
             "kind": "araucaria", "litter": 0, "templates": [],
             "height": [26, 42], "radius": [5, 8], "density": 0.9
@@ -2501,7 +2534,7 @@ export const TREE_CATALOG = {
         "species": ["Figowiec bengalski (banian)", "figowca"],
         "short": "banian",
         "labels": ["Pień figowca", "Okorowany pień figowca", "Deski figowcowe", "Liście figowca", "Sadzonka figowca"],
-        "loot": [["banyan_sapling", 0.05]],
+        "loot": [["banyan_sapling", 0.05], ["banyan_fig", 0.03]],
         "growthSeconds": 300,
         "textures": {
             "logTop": "banyan/log_top.png",
@@ -2510,20 +2543,26 @@ export const TREE_CATALOG = {
             "strippedSide": "banyan/stripped_side.png",
             "planks": "banyan/planks.png",
             "leaves": "banyan/leaves.png",
-            "sapling": "banyan/sapling.png"
+            "sapling": "banyan/sapling.png",
+            "leafLitter": "banyan/leaf_litter.png"
         },
+        "litterLabel": "Opadłe liście figowca",
         "variants": [{
             "key": "figi", "label": "Liście figowca z figami",
-            "afterLabel": null, "texture": "banyan/leaves_variant.png",
-            "char": null, "share": 0.1, "harvest": null, "regrow": null
+            "afterLabel": "Liście figowca (figi odrastają)", "texture": "banyan/leaves_variant.png",
+            "char": null, "share": 0.1, "harvest": { "item": "banyan_fig", "count": [1, 3] }, "regrow": 900
         }],
-        "items": {},
+        "items": {
+            "figa": { "type": "banyan_fig", "label": "Figa", "texture": "banyan/fig.png", "plants": true }
+        },
         "roots": { "slot": 9, "label": "Korzenie powietrzne figowca", "texture": "banyan/roots.png" },
         "shape": {
-            "kind": "banyan", "spacing": 3, "offset": 1, "under": null, "litter": 0, "templates": [],
-            "height": [14, 22], "radius": [9, 13], "density": 0.86
+            "kind": "banyan", "spacing": 6, "offset": 1, "under": null, "litter": 0.1, "templates": [],
+            "height": [13, 20], "radius": [11, 16], "density": 0.86
         },
         "climate": null,
+        // Samotny figowiec-namiot na sawannie (1.10.0): rzadki, widać go z daleka.
+        "open": [{ "surface": "grass", "biome": "savanna", "chance": 0.0008, "temperature": [0.2, 3], "humidity": [-3, 3], "height": [0, 20] }],
         "similar": "oak"
     },
     "dragon_tree": {
@@ -2534,7 +2573,7 @@ export const TREE_CATALOG = {
         "species": ["Dracena cynobrowa (smocze drzewo)", "draceny"],
         "short": "dracena",
         "labels": ["Pień draceny", "Okorowany pień draceny", "Deski z draceny", "Liście draceny", "Sadzonka draceny"],
-        "loot": [["dragon_tree_sapling", 0.05]],
+        "loot": [["dragon_tree_sapling", 0.05], ["dragon_tree_berries", 0.03]],
         "growthSeconds": 300,
         "textures": {
             "logTop": "dragon_tree/log_top.png",
@@ -2547,10 +2586,12 @@ export const TREE_CATALOG = {
         },
         "variants": [{
             "key": "jagody", "label": "Liście draceny z jagodami",
-            "afterLabel": null, "texture": "dragon_tree/leaves_variant.png",
-            "char": null, "share": 0.08, "harvest": null, "regrow": null
+            "afterLabel": "Liście draceny (jagody odrastają)", "texture": "dragon_tree/leaves_variant.png",
+            "char": null, "share": 0.08, "harvest": { "item": "dragon_tree_berries", "count": [1, 3] }, "regrow": 900
         }],
-        "items": {},
+        "items": {
+            "jagody": { "type": "dragon_tree_berries", "label": "Jagody draceny", "texture": "dragon_tree/berries.png", "plants": true }
+        },
         "shape": {
             "kind": "dragon_tree", "litter": 0, "templates": [],
             "height": [6, 10], "radius": [4.5, 7], "density": 0.92
@@ -2565,7 +2606,7 @@ export const TREE_CATALOG = {
         "species": ["Cedr libański", "cedru"],
         "short": "cedr",
         "labels": ["Pień cedru", "Okorowany pień cedru", "Deski cedrowe", "Igliwie cedru", "Sadzonka cedru"],
-        "loot": [["cedar_sapling", 0.05]],
+        "loot": [["cedar_sapling", 0.05], ["cedar_cone", 0.03]],
         "growthSeconds": 300,
         "textures": {
             "logTop": "cedar/log_top.png",
@@ -2578,10 +2619,12 @@ export const TREE_CATALOG = {
         },
         "variants": [{
             "key": "szyszki", "label": "Igliwie cedru z szyszkami",
-            "afterLabel": null, "texture": "cedar/leaves_variant.png",
-            "char": null, "share": 0.06, "harvest": null, "regrow": null
+            "afterLabel": "Igliwie cedru (szyszki odrastają)", "texture": "cedar/leaves_variant.png",
+            "char": null, "share": 0.06, "harvest": { "item": "cedar_cone", "count": [1, 2] }, "regrow": 900
         }],
-        "items": {},
+        "items": {
+            "szyszka": { "type": "cedar_cone", "label": "Szyszka cedru", "texture": "cedar/cone.png", "plants": true, "falls": false, "tinder": 1.5 }
+        },
         "shape": {
             "kind": "cedar", "litter": 0, "templates": [],
             "height": [22, 36], "radius": [8, 12], "density": 0.84
@@ -2600,7 +2643,7 @@ export const TREE_CATALOG = {
         "species": ["Sosna oścista", "sosny ościstej"],
         "short": "oścista",
         "labels": ["Pień sosny ościstej", "Okorowany pień sosny ościstej", "Deski z sosny ościstej", "Igliwie sosny ościstej", "Sadzonka sosny ościstej"],
-        "loot": [["bristlecone_sapling", 0.05]],
+        "loot": [["bristlecone_sapling", 0.05], ["bristlecone_cone", 0.03]],
         "growthSeconds": 300,
         "textures": {
             "logTop": "bristlecone/log_top.png",
@@ -2613,10 +2656,12 @@ export const TREE_CATALOG = {
         },
         "variants": [{
             "key": "szyszki", "label": "Igliwie sosny ościstej z szyszkami",
-            "afterLabel": null, "texture": "bristlecone/leaves_variant.png",
-            "char": null, "share": 0.1, "harvest": null, "regrow": null
+            "afterLabel": "Igliwie sosny ościstej (szyszki odrastają)", "texture": "bristlecone/leaves_variant.png",
+            "char": null, "share": 0.1, "harvest": { "item": "bristlecone_cone", "count": [1, 2] }, "regrow": 900
         }],
-        "items": {},
+        "items": {
+            "szyszka": { "type": "bristlecone_cone", "label": "Szyszka sosny ościstej", "texture": "bristlecone/cone.png", "plants": true, "tinder": 1.5 }
+        },
         "extraLogs": [{ "key": "dead", "slot": 8, "label": "Pień sosny ościstej (martwe drewno)", "texture": "bristlecone/log_side_dead.png" }],
         "shape": {
             "kind": "bristlecone", "litter": 0, "templates": [],
@@ -2860,5 +2905,24 @@ export const TREE_TEXTURE_NAMES = [
     "bristlecone/leaves.png",
     "bristlecone/sapling.png",
     "bristlecone/leaves_variant.png",
-    "bristlecone/log_side_dead.png"
+    "bristlecone/log_side_dead.png",
+    // 1.10.0: owoce, szyszki i opadłe liście drzew z 1.8.0.
+    "fir/cone.png",
+    "larch/cone.png",
+    "cedar/cone.png",
+    "bristlecone/cone.png",
+    "araucaria/nuts.png",
+    "baobab/fruit.png",
+    "mangrove/propagule.png",
+    "kapok/fluff.png",
+    "joshua_tree/flowers.png",
+    "banyan/fig.png",
+    "dragon_tree/berries.png",
+    "larch/leaves_cones.png",
+    "baobab/leaves_fruit.png",
+    "aspen/leaf_litter.png",
+    "baobab/leaf_litter.png",
+    "banyan/leaf_litter.png",
+    "kapok/leaf_litter.png",
+    "larch/leaf_litter.png"
 ];

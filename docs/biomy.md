@@ -39,6 +39,16 @@ Pogrubione - nowe bloki (niżej).
 
 ![Biomy 1.8.0: sawanna i półpustynia](biomy-180.jpg)
 
+## Klimat widać i czuć (1.9.0)
+
+- **Sucho i gorąco:** na sawannie trawa, kępki i mech są płowozłote, na
+  półpustyni ciepło pomarańczowe; między zwykłą trawą rosną kępy suchej,
+  płowej **piaskownicy**. Na półpustyni piasek zajmuje większość ziemi.
+- **Mokro:** na mokradłach, w namorzynach i w lesie deszczowym trawa jest
+  ciemna i nasycona; jest tam więcej **błota**, mchu, kęp mchu, paproci
+  i trzciny.
+- Zasada i liczby: [trawa.md](trawa.md#kolory-trawy-w-biomach).
+
 ## Jak powstają
 
 Biom wynika z tego, co już jest w terenie (`src/world/terrain/Biomes.js`,

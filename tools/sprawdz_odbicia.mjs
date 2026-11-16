@@ -153,9 +153,9 @@ const tintedWorld=fixture((x,y,z)=>x===2&&y>=16&&y<=20&&Math.abs(z)<3?1:y===16?2
 const tinted=full(); flush(tinted,tintedWorld);
 const side=[...tinted.surfaces.values()].find(surface=>surface.x===2&&surface.y===18&&surface.face===1);
 assert.ok(side,'widoczny bok trawy');
-close(side.reflect[0],.4/2+.08/2*(64/127.5));
-close(side.reflect[1],.1/2+.5/2*(128/127.5));
-close(side.reflect[2],.04/2+.04/2*(128/127.5));
+close(side.reflect[0],.4/2+.08/2*(64/63.75));
+close(side.reflect[1],.1/2+.5/2*(128/63.75));
+close(side.reflect[2],.04/2+.04/2*(128/63.75));
 
 // Świat podczas wczytywania jest bezpiecznie ciemny, bez wyjątków.
 const absent = full(); flush(absent, {getChunk:()=>null});

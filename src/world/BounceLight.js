@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { CHUNK_SIZE, CHUNK_HEIGHT, BOUNCE_SIZE, BOUNCE_HEIGHT, LIGHT_CURVE } from '../config.js';
+import { CHUNK_SIZE, CHUNK_HEIGHT, BOUNCE_SIZE, BOUNCE_HEIGHT, LIGHT_CURVE, GRASS_TINT_UNIT } from '../config.js';
 import { BLOCK_TYPES, getBlockTypeById, isOpaqueId, isLeavesId } from '../blocks/BlockRegistry.js';
 import { atlasAveragesReady, getAtlasAverage, getTileColors } from '../rendering/TextureAtlas.js';
 
@@ -361,7 +361,7 @@ export class BounceLight {
                 if (grid) for (let c = 0; c < 3; c++) {
                     const at = ((hit.z - cz * CHUNK_SIZE) * (CHUNK_SIZE + 1) + hit.x - cx * CHUNK_SIZE) * 3 + c;
                     tint[c] = (grid[at] + grid[at + 3] + grid[at + (CHUNK_SIZE + 1) * 3]
-                        + grid[at + (CHUNK_SIZE + 2) * 3]) / (4 * 127.5);
+                        + grid[at + (CHUNK_SIZE + 2) * 3]) / (4 * GRASS_TINT_UNIT);
                 }
                 this.surfaces.set(key, { x: hit.x, y: hit.y, z: hit.z, face: hit.face,
                     reflect: this.reflectance(hit.id, hit.face, tint).map(value => clamp(finite(value, 0), 0, 0.9)), factors: [0, 0, 0, 0] });

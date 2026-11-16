@@ -1,7 +1,7 @@
 // ------------------------------------------------------------
 // WYROBY STOLARSKIE - BLOKI (0.90.0)
 //
-// Z każdego z 20 rodzajów desek (woods.js): schody, półblok, płot,
+// Z każdego z 33 rodzajów desek (woods.js): schody, półblok, płot,
 // furtka i stół stolarski (długi na dwa bloki). Robi się je na stole
 // stolarskim (CarpenterTables.js), sam stół - w siatce rzemiosła.
 // Dalej w tym pliku: drzwi i klapy (0.91.0) oraz łóżka (0.98.0).
@@ -66,6 +66,25 @@ export function bedVariant(facing, part, bedding) {
     return (FACING_INDEX[facing] ?? 0) * BED_PARTS.length * BED_BEDDING_SLOTS + (part === 'head' ? 1 : 0) * BED_BEDDING_SLOTS + slot;
 }
 
+// Drugi zakres numerów (1.9.0). Trzy dawne zakresy mieszczą dokładnie 20
+// rodzajów drewna (WOODS 0-19) i są pełne. Każde kolejne drewno dostaje
+// jeden wspólny blok 128 numerów od 12544:
+//   0-27    schody, półbloki, płot, furtka, stół (jak w zakresie 10300),
+//   28-75   drzwi i klapy (jak w zakresie 10860),
+//   76-107  łóżka (jak w zakresie 11820),
+//   108-111 skrzynia (chest.js), 112-127 wolne.
+export const WOODS_IN_FIRST_RANGES = 20;
+export const WOOD_BLOCK_FIRST_ID = 12544;
+export const WOOD_BLOCK_IDS = 128;
+export const WOOD_BLOCK_CHEST = 108;
+
+const woodBlock = (index) => WOOD_BLOCK_FIRST_ID + (index - WOODS_IN_FIRST_RANGES) * WOOD_BLOCK_IDS;
+
+// Pierwszy numer wyrobów, drzwi i łóżek drewna o numerze `index` w WOODS.
+export const shapeFirstId = (index) => index < WOODS_IN_FIRST_RANGES ? SHAPE_FIRST_ID + index * SHAPES_PER_WOOD : woodBlock(index);
+export const doorFirstId = (index) => index < WOODS_IN_FIRST_RANGES ? DOOR_FIRST_ID + index * DOORS_PER_WOOD : woodBlock(index) + SHAPES_PER_WOOD;
+export const bedFirstId = (index) => index < WOODS_IN_FIRST_RANGES ? BED_FIRST_ID + index * BEDS_PER_WOOD : woodBlock(index) + SHAPES_PER_WOOD + DOORS_PER_WOOD;
+
 export const shapeBaseType = (wood, kind) => `${wood}_${SHAPE_KINDS[kind].suffix}`;
 
 // Informacja o kształcie po numerze bloku (tablica - szybko w mesherze
@@ -74,7 +93,7 @@ const infoById = new Map();
 
 function variants(entry, index) {
 
-    const first = SHAPE_FIRST_ID + index * SHAPES_PER_WOOD;
+    const first = shapeFirstId(index);
     const { wood, texture, planks } = entry;
     const out = [];
     const common = (kind) => ({
@@ -129,7 +148,7 @@ function variants(entry, index) {
     }));
 
     // Drzwi i klapy (drugi zakres numerów).
-    const doorFirst = DOOR_FIRST_ID + index * DOORS_PER_WOOD;
+    const doorFirst = doorFirstId(index);
     const doorTexture = `door_${wood}`, trapTexture = `trapdoor_${wood}`;
     const door = shapeBaseType(wood, 'door');
     SHAPE_FACINGS.forEach((facing, f) => ['lower', 'upper'].forEach((part, h) => ['left', 'right'].forEach((hinge, g) => [false, true].forEach((open, o) => {
@@ -147,7 +166,7 @@ function variants(entry, index) {
     })));
 
     // Łóżko (trzeci zakres numerów): stelaż i stelaż pościelony.
-    const bedFirst = BED_FIRST_ID + index * BEDS_PER_WOOD;
+    const bedFirst = bedFirstId(index);
     const bed = shapeBaseType(wood, 'bed');
     const bedLabel = common('bed').label;
     SHAPE_FACINGS.forEach((facing) => BED_PARTS.forEach((part) => BED_BEDDINGS.forEach((bedding) => {
@@ -183,17 +202,21 @@ export function isShapeId(id) {
     return infoById.has(id);
 }
 
+const DOOR_END_ID = DOOR_FIRST_ID + WOODS_IN_FIRST_RANGES * DOORS_PER_WOOD;
+const WOOD_BLOCK_END_ID = WOOD_BLOCK_FIRST_ID + Math.max(0, WOODS.length - WOODS_IN_FIRST_RANGES) * WOOD_BLOCK_IDS;
+
 export function isDoorId(id) {
-    return id >= DOOR_FIRST_ID && id < DOOR_FIRST_ID + WOODS.length * DOORS_PER_WOOD && infoById.get(id)?.kind === 'door';
+    return ((id >= DOOR_FIRST_ID && id < DOOR_END_ID) || (id >= WOOD_BLOCK_FIRST_ID && id < WOOD_BLOCK_END_ID)) &&
+        infoById.get(id)?.kind === 'door';
 }
 
 // Numer bloku wyrobu danego drewna w danym stanie.
 export function shapeId(wood, kind, { facing = 'north', half = 'bottom', open = false, part = 'a', hinge = 'left', bedding = null } = {}) {
     const index = WOODS.findIndex((entry) => entry.wood === wood);
     if (index < 0) return 0;
-    const first = SHAPE_FIRST_ID + index * SHAPES_PER_WOOD;
+    const first = shapeFirstId(index);
     const f = FACING_INDEX[facing] ?? 0;
-    const doorFirst = DOOR_FIRST_ID + index * DOORS_PER_WOOD;
+    const doorFirst = doorFirstId(index);
     if (kind === 'door') return doorFirst + f * 8 + (part === 'upper' ? 4 : 0) + (hinge === 'right' ? 2 : 0) + (open ? 1 : 0);
     if (kind === 'trapdoor') return doorFirst + 32 + f * 4 + (half === 'top' ? 2 : 0) + (open ? 1 : 0);
     if (kind === 'stairs') return first + f * 2 + (half === 'top' ? 1 : 0);
@@ -201,7 +224,7 @@ export function shapeId(wood, kind, { facing = 'north', half = 'bottom', open = 
     if (kind === 'fence') return first + 11;
     if (kind === 'gate') return first + 12 + f * 2 + (open ? 1 : 0);
     if (kind === 'table') return first + 20 + f * 2 + (part === 'b' ? 1 : 0);
-    if (kind === 'bed') return BED_FIRST_ID + index * BEDS_PER_WOOD + bedVariant(facing, part === 'head' ? 'head' : 'foot', bedding);
+    if (kind === 'bed') return bedFirstId(index) + bedVariant(facing, part === 'head' ? 'head' : 'foot', bedding);
     return 0;
 }
 

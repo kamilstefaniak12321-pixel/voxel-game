@@ -2,7 +2,9 @@
 
 Pomysł Kamila: stół stolarski długi na dwa bloki. Drewniane bloki robi
 się na nim w świecie, prosto na blacie, bez osobnego okna. Wyroby są
-z każdego z 20 rodzajów desek:
+z każdego z 33 rodzajów desek (20 z 0.90.0 i trzynaście drzew z 1.8.0 - od 1.9.0):
+
+![Wyroby z desek baobabu, draceny, cedru i namorzynu (1.9.0)](wyroby-190.jpg)
 
 - **schody**,
 - **półbloki**,
@@ -98,7 +100,7 @@ Kamil przygotował w Blockbench (`drzwi.bbmodel`).
   - Gdy deski leżą na obu stołach naraz, każdy stół działa osobno, ze
     zwykłymi wyrobami.
 - **Drzwi.**
-  - Z każdego z 20 rodzajów desek, np. *Drzwi dębowe*, *Drzwi z akacji*.
+  - Z każdego z 33 rodzajów desek, np. *Drzwi dębowe*, *Drzwi z akacji*, *Drzwi cedrowe*.
     Tekstura: rama, pionowe deski i dwie płyciny w kolorach desek,
     żelazna klamka.
   - Zajmują dwa bloki wysokości. Potrzebne jest wolne miejsce na obie
@@ -123,8 +125,8 @@ Kamil przygotował w Blockbench (`drzwi.bbmodel`).
 
 | Plik | Co robi |
 | --- | --- |
-| `src/blocks/woods.js` | 20 rodzajów desek, polskie nazwy wyrobów (`woodName`) |
-| `src/blocks/woodShapes.js` | bloki 10300-10859 (po 28 na drewno - tylko dopisywać), `shapeInfo`, `shapeId`, kierunki |
+| `src/blocks/woods.js` | 33 rodzaje desek, polskie nazwy wyrobów (`woodName`) |
+| `src/blocks/woodShapes.js` | bloki 10300-10859 (po 28 na drewno, 20 pierwszych rodzajów), od 1.9.0 kolejne rodzaje drewna we wspólnych blokach po 128 numerów od 12544 (`shapeFirstId`, `doorFirstId`, `bedFirstId`); `shapeInfo`, `shapeId`, kierunki |
 | `src/world/ShapeBoxes.js` | pudełka: wygląd, kolizje (płot 1,5), celownik; łączenie płotów (`connectMask`) |
 | `src/rendering/ChunkMesher.js` | `addShape` - pudełka z UV pełnej ściany, cienie w rogach na brzegu komórki, łączenie płotów przez `padConnect` |
 | `src/player/Player.js` | kolizje z pudełkami (`collisionExtent`), wchodzenie na stopień do pół bloku |

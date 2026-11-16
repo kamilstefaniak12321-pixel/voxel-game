@@ -21,11 +21,13 @@ więcej niż dotąd - bez kolejnej zmiany zapisu.
 | 10123-10127 | czerwona i biała glina, cegły z trzech glin (1.1.0, `src/items/clay.js`) |
 | 10128-10199 | wolne |
 | 10200-10299 | skrzynie z desek (0.89.0, po 4 na drewno) |
-| 10300-10859 | wyroby stolarskie: schody, półbloki, płoty, furtki, stoły (0.90.0, po 28 na drewno) |
+| 10300-10859 | wyroby stolarskie: schody, półbloki, płoty, furtki, stoły (0.90.0, po 28 na drewno) - pierwsze 20 rodzajów drewna, zakres pełny |
 | 10860-11819 | drzwi i klapy (0.91.0, po 48 na drewno) |
 | 11820-12459 | łóżka (0.98.0, po 32 na drewno: kierunek × część × pościel) |
 | 12460-12491 | posłania na ziemi (0.98.0, po 8 na pościel; słomiane 12460-12467, lniane 12468-12475) |
-| 12492-65279 | wolne na przyszłość |
+| 12492-12543 | wolne |
+| 12544-14207 | wyroby z trzynastu rodzajów drewna z 1.8.0 (1.9.0): po 128 numerów na drewno, w kolejności `WOODS` od jodły - 0-27 schody, półbloki, płot, furtka, stół; 28-75 drzwi i klapy; 76-107 łóżka; 108-111 skrzynia; 112-127 wolne. Kolejne nowe rodzaje drewna dostają następne bloki po 128 |
+| 14208-65279 | wolne na przyszłość |
 | 65280-65535 | zarezerwowane dla gry, nigdy w zapisie (np. odcienie trawy dalekiego terenu) |
 
 Stałe: `MAX_BLOCK_ID` w `src/blocks/BlockRegistry.js` (tam też ta lista),

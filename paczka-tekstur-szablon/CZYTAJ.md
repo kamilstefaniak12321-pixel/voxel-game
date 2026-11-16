@@ -1,4 +1,4 @@
-# Paczka tekstur - szablon (Various Roots 1.8.0)
+# Paczka tekstur - szablon (Various Roots 1.9.0)
 
 Oryginalne tekstury gry, każda w osobnym pliku. Zrób z nich własną paczkę:
 
@@ -49,7 +49,7 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/araucaria/leaves_variant.png` | Igliwie araukarii z szyszkami |
 | `bloki/araucaria/log_side.png` | Pień araukarii |
 | `bloki/araucaria/log_top.png` | Pień araukarii |
-| `bloki/araucaria/planks.png` | Deski araukariowe |
+| `bloki/araucaria/planks.png` | Schody araukariowe, Półblok araukariowy, Furtka araukariowa, Stół stolarski araukariowy, Łóżko araukariowe (pościelone), Łóżko araukariowe (stelaż), Deski araukariowe |
 | `bloki/araucaria/sapling.png` | Sadzonka araukarii |
 | `bloki/araucaria/stripped_side.png` | Okorowany pień araukarii |
 | `bloki/araucaria/stripped_top.png` | Okorowany pień araukarii |
@@ -59,7 +59,7 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/aspen/log_side.png` | Pień osiki |
 | `bloki/aspen/log_side_base.png` | Pień osiki (przy ziemi) |
 | `bloki/aspen/log_top.png` | Pień osiki, Pień osiki (przy ziemi) |
-| `bloki/aspen/planks.png` | Deski osikowe |
+| `bloki/aspen/planks.png` | Schody osikowe, Półblok osikowy, Furtka osikowa, Stół stolarski osikowy, Łóżko osikowe (pościelone), Łóżko osikowe (stelaż), Deski osikowe |
 | `bloki/aspen/sapling.png` | Sadzonka osiki |
 | `bloki/aspen/stripped_side.png` | Okorowany pień osiki |
 | `bloki/aspen/stripped_top.png` | Okorowany pień osiki |
@@ -83,7 +83,7 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/banyan/leaves_variant.png` | Liście figowca z figami |
 | `bloki/banyan/log_side.png` | Pień figowca |
 | `bloki/banyan/log_top.png` | Pień figowca |
-| `bloki/banyan/planks.png` | Deski figowcowe |
+| `bloki/banyan/planks.png` | Schody figowcowe, Półblok figowcowy, Furtka figowcowa, Stół stolarski figowcowy, Łóżko figowcowe (pościelone), Łóżko figowcowe (stelaż), Deski figowcowe |
 | `bloki/banyan/roots.png` | Korzenie powietrzne figowca |
 | `bloki/banyan/sapling.png` | Sadzonka figowca |
 | `bloki/banyan/stripped_side.png` | Okorowany pień figowca |
@@ -93,7 +93,7 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/baobab/leaves_variant.png` | Liście baobabu z kwiatami |
 | `bloki/baobab/log_side.png` | Pień baobabu |
 | `bloki/baobab/log_top.png` | Pień baobabu |
-| `bloki/baobab/planks.png` | Deski baobabowe |
+| `bloki/baobab/planks.png` | Schody baobabowe, Półblok baobabowy, Furtka baobabowa, Stół stolarski baobabowy, Łóżko baobabowe (pościelone), Łóżko baobabowe (stelaż), Deski baobabowe |
 | `bloki/baobab/sapling.png` | Sadzonka baobabu |
 | `bloki/baobab/stripped_side.png` | Okorowany pień baobabu |
 | `bloki/baobab/stripped_top.png` | Okorowany pień baobabu |
@@ -135,7 +135,7 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/bristlecone/log_side.png` | Pień sosny ościstej |
 | `bloki/bristlecone/log_side_dead.png` | Pień sosny ościstej (martwe drewno) |
 | `bloki/bristlecone/log_top.png` | Pień sosny ościstej, Pień sosny ościstej (martwe drewno) |
-| `bloki/bristlecone/planks.png` | Deski z sosny ościstej |
+| `bloki/bristlecone/planks.png` | Schody z sosny ościstej, Półblok z sosny ościstej, Furtka z sosny ościstej, Stół stolarski z sosny ościstej, Łóżko z sosny ościstej (pościelone), Łóżko z sosny ościstej (stelaż), Deski z sosny ościstej |
 | `bloki/bristlecone/sapling.png` | Sadzonka sosny ościstej |
 | `bloki/bristlecone/stripped_side.png` | Okorowany pień sosny ościstej |
 | `bloki/bristlecone/stripped_top.png` | Okorowany pień sosny ościstej |
@@ -146,7 +146,7 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/cedar/leaves_variant.png` | Igliwie cedru z szyszkami |
 | `bloki/cedar/log_side.png` | Pień cedru |
 | `bloki/cedar/log_top.png` | Pień cedru |
-| `bloki/cedar/planks.png` | Deski cedrowe |
+| `bloki/cedar/planks.png` | Schody cedrowe, Półblok cedrowy, Furtka cedrowa, Stół stolarski cedrowy, Łóżko cedrowe (pościelone), Łóżko cedrowe (stelaż), Deski cedrowe |
 | `bloki/cedar/sapling.png` | Sadzonka cedru |
 | `bloki/cedar/stripped_side.png` | Okorowany pień cedru |
 | `bloki/cedar/stripped_top.png` | Okorowany pień cedru |
@@ -175,7 +175,7 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/coconut_palm/leaves_variant.png` | Liście palmy z kokosami |
 | `bloki/coconut_palm/log_side.png` | Pień palmy kokosowej |
 | `bloki/coconut_palm/log_top.png` | Pień palmy kokosowej |
-| `bloki/coconut_palm/planks.png` | Deski palmowe |
+| `bloki/coconut_palm/planks.png` | Schody palmowe, Półblok palmowy, Furtka palmowa, Stół stolarski palmowy, Łóżko palmowe (pościelone), Łóżko palmowe (stelaż), Deski palmowe |
 | `bloki/coconut_palm/sapling.png` | Sadzonka palmy kokosowej |
 | `bloki/coconut_palm/stripped_side.png` | Okorowany pień palmy kokosowej |
 | `bloki/coconut_palm/stripped_top.png` | Okorowany pień palmy kokosowej |
@@ -189,7 +189,7 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/dragon_tree/leaves_variant.png` | Liście draceny z jagodami |
 | `bloki/dragon_tree/log_side.png` | Pień draceny |
 | `bloki/dragon_tree/log_top.png` | Pień draceny |
-| `bloki/dragon_tree/planks.png` | Deski z draceny |
+| `bloki/dragon_tree/planks.png` | Schody z draceny, Półblok z draceny, Furtka z draceny, Stół stolarski z draceny, Łóżko z draceny (pościelone), Łóżko z draceny (stelaż), Deski z draceny |
 | `bloki/dragon_tree/sapling.png` | Sadzonka draceny |
 | `bloki/dragon_tree/stripped_side.png` | Okorowany pień draceny |
 | `bloki/dragon_tree/stripped_top.png` | Okorowany pień draceny |
@@ -216,7 +216,7 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/fir/leaves_variant.png` | Igliwie jodły z szyszkami |
 | `bloki/fir/log_side.png` | Pień jodły |
 | `bloki/fir/log_top.png` | Pień jodły |
-| `bloki/fir/planks.png` | Deski jodłowe |
+| `bloki/fir/planks.png` | Schody jodłowe, Półblok jodłowy, Furtka jodłowa, Stół stolarski jodłowy, Łóżko jodłowe (pościelone), Łóżko jodłowe (stelaż), Deski jodłowe |
 | `bloki/fir/sapling.png` | Sadzonka jodły |
 | `bloki/fir/stripped_side.png` | Okorowany pień jodły |
 | `bloki/fir/stripped_top.png` | Okorowany pień jodły |
@@ -309,7 +309,7 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/joshua_tree/log_side.png` | Pień jukki |
 | `bloki/joshua_tree/log_side_shaggy.png` | Pień jukki (z suchymi liśćmi) |
 | `bloki/joshua_tree/log_top.png` | Pień jukki, Pień jukki (z suchymi liśćmi) |
-| `bloki/joshua_tree/planks.png` | Deski z jukki |
+| `bloki/joshua_tree/planks.png` | Schody z jukki, Półblok z jukki, Furtka z jukki, Stół stolarski z jukki, Łóżko z jukki (pościelone), Łóżko z jukki (stelaż), Deski z jukki |
 | `bloki/joshua_tree/sapling.png` | Sadzonka jukki |
 | `bloki/joshua_tree/stripped_side.png` | Okorowany pień jukki |
 | `bloki/joshua_tree/stripped_top.png` | Okorowany pień jukki |
@@ -318,7 +318,7 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/kapok/leaves_variant.png` | Liście puchowca z puchem |
 | `bloki/kapok/log_side.png` | Pień puchowca |
 | `bloki/kapok/log_top.png` | Pień puchowca |
-| `bloki/kapok/planks.png` | Deski z puchowca |
+| `bloki/kapok/planks.png` | Schody z puchowca, Półblok z puchowca, Furtka z puchowca, Stół stolarski z puchowca, Łóżko z puchowca (pościelone), Łóżko z puchowca (stelaż), Deski z puchowca |
 | `bloki/kapok/sapling.png` | Sadzonka puchowca |
 | `bloki/kapok/stripped_side.png` | Okorowany pień puchowca |
 | `bloki/kapok/stripped_top.png` | Okorowany pień puchowca |
@@ -338,7 +338,7 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/larch/leaves_variant.png` | Złote igliwie modrzewia |
 | `bloki/larch/log_side.png` | Pień modrzewia |
 | `bloki/larch/log_top.png` | Pień modrzewia |
-| `bloki/larch/planks.png` | Deski modrzewiowe |
+| `bloki/larch/planks.png` | Schody modrzewiowe, Półblok modrzewiowy, Furtka modrzewiowa, Stół stolarski modrzewiowy, Łóżko modrzewiowe (pościelone), Łóżko modrzewiowe (stelaż), Deski modrzewiowe |
 | `bloki/larch/sapling.png` | Sadzonka modrzewia |
 | `bloki/larch/stripped_side.png` | Okorowany pień modrzewia |
 | `bloki/larch/stripped_top.png` | Okorowany pień modrzewia |
@@ -360,7 +360,7 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/mangrove/leaves_variant.png` | Liście namorzynu z siewkami |
 | `bloki/mangrove/log_side.png` | Pień namorzynu |
 | `bloki/mangrove/log_top.png` | Pień namorzynu |
-| `bloki/mangrove/planks.png` | Deski namorzynowe |
+| `bloki/mangrove/planks.png` | Schody namorzynowe, Półblok namorzynowy, Furtka namorzynowa, Stół stolarski namorzynowy, Łóżko namorzynowe (pościelone), Łóżko namorzynowe (stelaż), Deski namorzynowe |
 | `bloki/mangrove/roots.png` | Korzenie namorzynu |
 | `bloki/mangrove/sapling.png` | Sadzonka namorzynu |
 | `bloki/mangrove/stripped_side.png` | Okorowany pień namorzynu |
@@ -744,15 +744,28 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/torch_white.png` | Pochodnia biała |
 | `bloki/torch_yellow.png` | Pochodnia żółta |
 | `bloki/trapdoor_acacia.png` | Klapa z akacji |
+| `bloki/trapdoor_araucaria.png` | Klapa araukariowa |
+| `bloki/trapdoor_aspen.png` | Klapa osikowa |
 | `bloki/trapdoor_bald_cypress.png` | Klapa z cypryśnika |
+| `bloki/trapdoor_banyan.png` | Klapa figowcowa |
+| `bloki/trapdoor_baobab.png` | Klapa baobabowa |
 | `bloki/trapdoor_beech.png` | Klapa bukowa |
 | `bloki/trapdoor_birch.png` | Klapa brzozowa |
+| `bloki/trapdoor_bristlecone.png` | Klapa z sosny ościstej |
+| `bloki/trapdoor_cedar.png` | Klapa cedrowa |
 | `bloki/trapdoor_cherry.png` | Klapa wiśniowa |
+| `bloki/trapdoor_coconut_palm.png` | Klapa palmowa |
 | `bloki/trapdoor_dark.png` | Klapa z ciemnego drewna |
+| `bloki/trapdoor_dragon_tree.png` | Klapa z draceny |
+| `bloki/trapdoor_fir.png` | Klapa jodłowa |
 | `bloki/trapdoor_ginkgo.png` | Klapa miłorzębowa |
 | `bloki/trapdoor_jablon.png` | Klapa jabłoniowa |
 | `bloki/trapdoor_jacaranda.png` | Klapa jakarandowa |
+| `bloki/trapdoor_joshua_tree.png` | Klapa z jukki |
+| `bloki/trapdoor_kapok.png` | Klapa z puchowca |
+| `bloki/trapdoor_larch.png` | Klapa modrzewiowa |
 | `bloki/trapdoor_linden.png` | Klapa lipowa |
+| `bloki/trapdoor_mangrove.png` | Klapa namorzynowa |
 | `bloki/trapdoor_maple.png` | Klapa klonowa |
 | `bloki/trapdoor_mugo.png` | Klapa z kosodrzewiny |
 | `bloki/trapdoor_oak.png` | Klapa dębowa |

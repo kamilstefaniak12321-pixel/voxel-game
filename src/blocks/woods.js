@@ -1,7 +1,7 @@
 // ------------------------------------------------------------
 // RODZAJE DREWNA (DESEK) - 0.90.0
 //
-// Wspólna lista 20 rodzajów desek dla wyrobów stolarskich (schody,
+// Wspólna lista 33 rodzajów desek (20 z 0.90.0, 13 z 1.9.0) dla wyrobów stolarskich (schody,
 // półbloki, płoty, furtki, stół stolarski - woodShapes.js). Kolejność =
 // numery bloków w zapisie świata: tylko dopisywać na końcu.
 //
@@ -29,7 +29,21 @@ export const WOODS = [
     { wood: 'rainbow_eucalyptus', planks: 'rainbow_eucalyptus_planks', texture: 'rainbow_eucalyptus/planks.png', stem: 'eukaliptusow' },
     { wood: 'sequoia', planks: 'sequoia_planks', texture: 'sequoia/planks.png', stem: 'sekwojow' },
     { wood: 'ginkgo', planks: 'ginkgo_planks', texture: 'ginkgo/planks.png', stem: 'miłorzębow' },
-    { wood: 'jacaranda', planks: 'jacaranda_planks', texture: 'jacaranda/planks.png', stem: 'jakarandow' }
+    { wood: 'jacaranda', planks: 'jacaranda_planks', texture: 'jacaranda/planks.png', stem: 'jakarandow' },
+    // 1.9.0 - trzynaście drzew z 1.8.0 (drugi zakres numerów - woodShapes.js).
+    { wood: 'fir', planks: 'fir_planks', texture: 'fir/planks.png', stem: 'jodłow' },
+    { wood: 'baobab', planks: 'baobab_planks', texture: 'baobab/planks.png', stem: 'baobabow' },
+    { wood: 'coconut_palm', planks: 'coconut_palm_planks', texture: 'coconut_palm/planks.png', stem: 'palmow' },
+    { wood: 'larch', planks: 'larch_planks', texture: 'larch/planks.png', stem: 'modrzewiow' },
+    { wood: 'mangrove', planks: 'mangrove_planks', texture: 'mangrove/planks.png', stem: 'namorzynow' },
+    { wood: 'kapok', planks: 'kapok_planks', texture: 'kapok/planks.png', of: 'z puchowca' },
+    { wood: 'joshua_tree', planks: 'joshua_tree_planks', texture: 'joshua_tree/planks.png', of: 'z jukki' },
+    { wood: 'aspen', planks: 'aspen_planks', texture: 'aspen/planks.png', stem: 'osikow' },
+    { wood: 'araucaria', planks: 'araucaria_planks', texture: 'araucaria/planks.png', stem: 'araukariow' },
+    { wood: 'banyan', planks: 'banyan_planks', texture: 'banyan/planks.png', stem: 'figowcow' },
+    { wood: 'dragon_tree', planks: 'dragon_tree_planks', texture: 'dragon_tree/planks.png', of: 'z draceny' },
+    { wood: 'cedar', planks: 'cedar_planks', texture: 'cedar/planks.png', stem: 'cedrow' },
+    { wood: 'bristlecone', planks: 'bristlecone_planks', texture: 'bristlecone/planks.png', of: 'z sosny ościstej' }
 ];
 
 const ENDINGS = { m: 'y', f: 'a', n: 'e' };

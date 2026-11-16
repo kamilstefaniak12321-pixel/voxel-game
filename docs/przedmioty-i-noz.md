@@ -58,7 +58,7 @@ Po pierwszej zerwanej ręką trawie gra podpowiada, że potrzebny jest nóż
 ## Kora
 
 Okorowanie pnia siekierą (PPM) daje teraz **korę każdego drzewa**, nie
-tylko brzozy - 19 rodzajów. Każda jest **podpałką** do ogniska:
+tylko brzozy - 32 rodzaje (każde drzewo ma swoją). Każda jest **podpałką** do ogniska:
 
 | Kora | Rozpalanie |
 |---|---|

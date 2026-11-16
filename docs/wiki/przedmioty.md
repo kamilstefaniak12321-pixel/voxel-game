@@ -2,7 +2,7 @@
 
 > Ta strona jest generowana z kodu gry (`python tools/wiki.py`) - nie zmieniaj jej ręcznie, zmiany przepadną przy następnym generowaniu.
 
-Wersja gry **1.8.0** - 167 przedmiotów. Przedmiotu nie da się postawić jak bloku; owoce i nasiona posadzone na ziemi (PPM) wyrastają w krzak albo drzewo, narzędzia przyspieszają kopanie.
+Wersja gry **1.9.0** - 167 przedmiotów. Przedmiotu nie da się postawić jak bloku; owoce i nasiona posadzone na ziemi (PPM) wyrastają w krzak albo drzewo, narzędzia przyspieszają kopanie.
 
 
 ## Drewno
@@ -104,7 +104,7 @@ Wersja gry **1.8.0** - 167 przedmiotów. Przedmiotu nie da się postawić jak bl
 | <img src="ikony/mugo_cone.png" width="32" height="32" alt=""> | **Szyszka kosodrzewiny** | `mugo_cone` | **Posadzony (PPM na ziemi):** Sadzonka kosodrzewiny<br>**Skąd:** czasem z bloku: Igliwie kosodrzewiny (7%); czasem z bloku: Igliwie kosodrzewiny z młodymi pędami (7%)<br>**Przydaje się do:** Wieniec świerkowy |
 | <img src="ikony/olive_oliwki.png" width="32" height="32" alt=""> | **Oliwki** | `olive_oliwki` | **Posadzony (PPM na ziemi):** Sadzonka oliwki<br>**Skąd:** czasem z bloku: Liście oliwki (5%); czasem z bloku: Liście oliwki z oliwkami (5%); zbiór (PPM): Liście oliwki z oliwkami; czasem z bloku: Liście oliwki (oliwki odrastają) (5%)<br>**Przydaje się do:** Pochodnia, Lampa<br>**Służy też jako:** jedzenie |
 | <img src="ikony/sequoia_cone.png" width="32" height="32" alt=""> | **Szyszka sekwoi** | `sequoia_cone` | **Posadzony (PPM na ziemi):** Sadzonka sekwoi<br>**Skąd:** czasem z bloku: Igliwie sekwoi (6%); czasem z bloku: Igliwie sekwoi z szyszkami (6%); zbiór (PPM): Igliwie sekwoi z szyszkami; czasem z bloku: Igliwie sekwoi (szyszki odrastają) (6%)<br>**Przydaje się do:** Wieniec świerkowy |
-| <img src="ikony/coconut_palm_kokos.png" width="32" height="32" alt=""> | **Kokos** | `coconut_palm_kokos` | **Posadzony (PPM na ziemi):** Sadzonka palmy kokosowej<br>**Skąd:** zbiór (PPM): Liście palmy z kokosami |
+| <img src="ikony/coconut_palm_kokos.png" width="32" height="32" alt=""> | **Kokos** | `coconut_palm_kokos` | **Posadzony (PPM na ziemi):** Sadzonka palmy kokosowej<br>**Skąd:** zbiór (PPM): Liście palmy z kokosami<br>**Służy też jako:** jedzenie |
 
 ## Narzędzia i surowce
 
@@ -166,7 +166,7 @@ Wersja gry **1.8.0** - 167 przedmiotów. Przedmiotu nie da się postawić jak bl
 | <img src="ikony/pickaxe.png" width="32" height="32" alt=""> | **Kilof** | `pickaxe` | **Narzędzie:** kopie 3 razy szybciej: kamień<br>**Przepis:** Kilof |
 | <img src="ikony/shovel.png" width="32" height="32" alt=""> | **Łopata** | `shovel` | **Narzędzie:** kopie 3 razy szybciej: trawa, ziemia, piasek, żwir, błoto, snow<br>**Przepis:** Łopata |
 | <img src="ikony/knife.png" width="32" height="32" alt=""> | **Nóż** | `knife` | **Narzędzie:** kopie 3 razy szybciej: <br>**Przepis:** Nóż |
-| <img src="ikony/stick.png" width="32" height="32" alt=""> | **Patyk** | `stick` | **Przepis:** Patyk x4<br>**Przydaje się do:** Pochodnia, Stół stolarski świerkowy, Stół stolarski sosnowy, Stół stolarski bukowy, Stół stolarski lipowy, Stół stolarski dębowy, Stół stolarski brzozowy, Stół stolarski z ciemnego drewna, Stół stolarski jabłoniowy, Stół stolarski olchowy, Stół stolarski wierzbowy, Stół stolarski z akacji, Stół stolarski z cypryśnika, Stół stolarski wiśniowy, Stół stolarski klonowy, Stół stolarski z kosodrzewiny, Stół stolarski oliwkowy, Stół stolarski eukaliptusowy, Stół stolarski sekwojowy, Stół stolarski miłorzębowy, Stół stolarski jakarandowy, Starter ognia, Siekiera, Kilof, Łopata, Nóż |
+| <img src="ikony/stick.png" width="32" height="32" alt=""> | **Patyk** | `stick` | **Przepis:** Patyk x4<br>**Przydaje się do:** Pochodnia, Stół stolarski świerkowy, Stół stolarski sosnowy, Stół stolarski bukowy, Stół stolarski lipowy, Stół stolarski dębowy, Stół stolarski brzozowy, Stół stolarski z ciemnego drewna, Stół stolarski jabłoniowy, Stół stolarski olchowy, Stół stolarski wierzbowy, Stół stolarski z akacji, Stół stolarski z cypryśnika, Stół stolarski wiśniowy, Stół stolarski klonowy, Stół stolarski z kosodrzewiny, Stół stolarski oliwkowy, Stół stolarski eukaliptusowy, Stół stolarski sekwojowy, Stół stolarski miłorzębowy, Stół stolarski jakarandowy, Stół stolarski jodłowy, Stół stolarski baobabowy, Stół stolarski palmowy, Stół stolarski modrzewiowy, Stół stolarski namorzynowy, Stół stolarski z puchowca, Stół stolarski z jukki, Stół stolarski osikowy, Stół stolarski araukariowy, Stół stolarski figowcowy, Stół stolarski z draceny, Stół stolarski cedrowy, Stół stolarski z sosny ościstej, Starter ognia, Siekiera, Kilof, Łopata, Nóż |
 | <img src="ikony/amarantus_wiecha.png" width="32" height="32" alt=""> | **Wiecha amarantusa** | `amarantus_wiecha` | **Skąd:** zbiór (PPM): Amarantus (dojrzałe wiechy)<br>**Przydaje się do:** Czerwona lampa, Wianek z kwiatów, Barwnik czerwony |
 | <img src="ikony/kocanka_bukiet.png" width="32" height="32" alt=""> | **Bukiet kocanki** | `kocanka_bukiet` | **Skąd:** zbiór (PPM): Kocanka (kwitnie)<br>**Przydaje się do:** Wianek z kwiatów, Barwnik żółty |
 | <img src="ikony/lawenda_bukiet.png" width="32" height="32" alt=""> | **Bukiet lawendy** | `lawenda_bukiet` | **Skąd:** zbiór (PPM): Lawenda (kwitnie)<br>**Przydaje się do:** Kubek ziół na sen, Fioletowa lampa, Wianek z kwiatów, Barwnik fioletowy |

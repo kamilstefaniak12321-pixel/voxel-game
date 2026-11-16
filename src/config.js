@@ -446,6 +446,12 @@ export const BUSH_GROWTH_SECONDS = 150;
 // Gdy nad sadzonką nie ma miejsca na drzewo - czeka dalej.
 export const TREE_GROWTH_SECONDS = 300;
 
+// Kolor trawy z klimatu i biomu (chunk.tint): bajt = mnożnik x ta liczba,
+// więc 64 to "bez zmiany", a bajt mieści mnożnik do 4,0 (do 1.8.0 było
+// 127,5 i najwyżej 2,0 - za mało na wypaloną słońcem trawę sawanny).
+// Shader bloków mnoży bajt przez tę samą skalę (BlockRenderData.js).
+export const GRASS_TINT_UNIT = 63.75;
+
 // KOPANIE (tryb przygody): ile sekund trzeba trzymać LPM, żeby zniszczyć
 // blok - według materiału dźwięków bloku (pole sound w BlockRegistry.js;
 // blok może mieć własny czas: pole hardness). Liście - LEAVES_BREAK_SECONDS.

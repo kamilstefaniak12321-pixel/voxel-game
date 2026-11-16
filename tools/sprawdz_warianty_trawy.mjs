@@ -182,13 +182,13 @@ check(!names.some((name) => /grzyb|muchomor|kamyk|ziemia|patyk|lisc|las|jagod|na
     // Granice atrybutu (0..2) i zdrowy zakres.
     let lowest = 9, highest = 0;
     for (let t = -2; t <= 2; t += 0.25) for (let h = -2; h <= 2; h += 0.25) for (const above of [0, 30, 45, 80]) for (const forest of [null, -1, 0, 1]) for (const value of tint(t, h, above, forest)) { lowest = Math.min(lowest, value); highest = Math.max(highest, value); }
-    check(lowest >= T.min && highest <= T.max && T.min >= 0.4 && T.max <= 1.6 && Math.round(highest * 127.5) <= 255, `Mnożnik zawsze w ${T.min}-${T.max} (mieści się w bajcie)`);
+    check(lowest >= T.min && highest <= T.max && T.min >= 0.1 && T.max <= 4.0 && Math.round(highest * 63.75) <= 255, `Mnożnik zawsze w ${T.min}-${T.max} (mieści się w bajcie)`);
     // Bez pola lasów (daleki teren) - sam klimat, bez przyciemnienia.
     check(distance(tint(-0.2, 0, 8), [1, 1, 1]) < 0.02, 'Bez pola lasów: w umiarkowanym klimacie kolor tekstury');
     // Góry: blado.
     check(tint(-0.9, 0, 60, 0)[2] < tint(-0.9, 0, 10, 0)[2], 'Wysoko w górach trawa blednie');
     const biomes = source('src/world/terrain/Biomes.js');
-    check(/grassTint\(fields\[0\] - Math\.max\(0, above\) \/ 60, fields\[1\], above, color, fields\[2\]\)/.test(biomes), 'Kolor w chunku liczony z tych samych pól co dotąd (plus pole lasów) - bez liczenia terenu');
+    check(/grassTint\(fields\[0\] - Math\.max\(0, above\) \/ 60, fields\[1\], above, color, fields\[2\], dry, wet\)/.test(biomes), 'Kolor w chunku liczony z tych samych pól co dotąd (plus pole lasów) - bez liczenia terenu');
     check((biomes.slice(biomes.indexOf('tintGrid('), biomes.indexOf('fieldsAt(x, z, exact')).match(/this\.fieldsAt\(/g) ?? []).length === 1, 'Jedno odczytanie pól na róg chunka - jak przed zmianą');
 }
 

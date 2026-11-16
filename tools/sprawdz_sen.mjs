@@ -79,7 +79,7 @@ const volume = (boxes) => boxes.reduce((sum, b) => sum + (b[3] - b[0]) * (b[4] -
             const id = W.shapeId(wood, 'bed', { facing, part, bedding });
             const info = W.shapeInfo(id);
             ids.add(id);
-            check(id >= W.BED_FIRST_ID + index * W.BEDS_PER_WOOD && id < W.BED_FIRST_ID + (index + 1) * W.BEDS_PER_WOOD, `${wood}: numer łóżka w swoim zakresie`);
+            check(id >= W.bedFirstId(index) && id < W.bedFirstId(index) + W.BEDS_PER_WOOD, `${wood}: numer łóżka w swoim zakresie`);
             check(info?.kind === 'bed' && info.wood === wood && info.facing === facing && info.part === part && (info.bedding ?? null) === bedding,
                 `${wood} ${facing} ${part} ${bedding}: opis kształtu`);
             const type = getBlockTypeById(id);
@@ -90,7 +90,11 @@ const volume = (boxes) => boxes.reduce((sum, b) => sum + (b[3] - b[0]) * (b[4] -
             check(!isOpaqueId(id) && isSolidId(id), `${type}: nie zasłania, ale zatrzymuje`);
         }
     });
-    check(ids.size === 20 * 4 * 2 * 3 && Math.min(...ids) === 11820 && Math.max(...ids) < 12460, 'Łóżka: 480 numerów w zakresie 11820-12459');
+    // 1.9.0: 20 dawnych rodzajów drewna w zakresie 11820-12459, 13 nowych we
+    // wspólnych blokach numerów od 12544.
+    const oldBeds = [...ids].filter((id) => id < 12460);
+    check(ids.size === 33 * 4 * 2 * 3 && oldBeds.length === 480 && Math.min(...ids) === 11820 && [...ids].every((id) => id < 12460 || (id >= 12544 && id < 12544 + 13 * 128)),
+        'Łóżka: 480 numerów w zakresie 11820-12459 i 312 w blokach nowych rodzajów drewna');
     check(W.BED_BEDDING_SLOTS === 4 && W.BED_BEDDINGS.length <= W.BED_BEDDING_SLOTS, 'Miejsce na czwartą pościel');
     check(getBlockDefinition('oak_bed_north_head_linen').label === 'Łóżko dębowe (pościelone)', 'Nazwa pościelonego łóżka');
 

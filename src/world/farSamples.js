@@ -28,7 +28,10 @@ export const LEAF_KINDS = BASE_TREE_NAMES.map((species) => `${species}_leaves`);
 // Trawa w kolorze klimatu (Biomes.js - kolor trawy): cieplejsza,
 // chłodniejsza i górska (bledsza). Śnieg - ośnieżone szczyty.
 
-export const GRASS_KINDS = ['grass_warm', 'grass_cool', 'grass_high'];
+// Od 1.9.0 także wypalona słońcem (sawanna, półpustynia) i ciemna, mokra
+// (mokradła, namorzyny, las deszczowy).
+
+export const GRASS_KINDS = ['grass_warm', 'grass_cool', 'grass_high', 'grass_arid', 'grass_lush'];
 
 // Rodzaj powierzchni -> numer w kafelku. (Nowe rodzaje tylko na końcu -
 // numery zapisują się w kafelkach liczonych w wątku.)

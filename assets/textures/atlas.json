@@ -7,7 +7,7 @@
     "drzewa": {
       "file": "drzewa.png",
       "width": 256,
-      "height": 5616
+      "height": 5728
     },
     "teren": {
       "file": "teren.png",
@@ -6602,6 +6602,279 @@
       "y": 5488,
       "width": 128,
       "height": 128
+    },
+    "chest_fir": {
+      "sheet": "drzewa",
+      "x": 0,
+      "y": 5616,
+      "width": 32,
+      "height": 32
+    },
+    "door_fir": {
+      "sheet": "drzewa",
+      "x": 0,
+      "y": 5680,
+      "width": 16,
+      "height": 32
+    },
+    "trapdoor_fir": {
+      "sheet": "drzewa",
+      "x": 0,
+      "y": 5712,
+      "width": 16,
+      "height": 16
+    },
+    "chest_baobab": {
+      "sheet": "drzewa",
+      "x": 32,
+      "y": 5616,
+      "width": 32,
+      "height": 32
+    },
+    "door_baobab": {
+      "sheet": "drzewa",
+      "x": 16,
+      "y": 5680,
+      "width": 16,
+      "height": 32
+    },
+    "trapdoor_baobab": {
+      "sheet": "drzewa",
+      "x": 16,
+      "y": 5712,
+      "width": 16,
+      "height": 16
+    },
+    "chest_coconut_palm": {
+      "sheet": "drzewa",
+      "x": 64,
+      "y": 5616,
+      "width": 32,
+      "height": 32
+    },
+    "door_coconut_palm": {
+      "sheet": "drzewa",
+      "x": 32,
+      "y": 5680,
+      "width": 16,
+      "height": 32
+    },
+    "trapdoor_coconut_palm": {
+      "sheet": "drzewa",
+      "x": 32,
+      "y": 5712,
+      "width": 16,
+      "height": 16
+    },
+    "chest_larch": {
+      "sheet": "drzewa",
+      "x": 96,
+      "y": 5616,
+      "width": 32,
+      "height": 32
+    },
+    "door_larch": {
+      "sheet": "drzewa",
+      "x": 48,
+      "y": 5680,
+      "width": 16,
+      "height": 32
+    },
+    "trapdoor_larch": {
+      "sheet": "drzewa",
+      "x": 48,
+      "y": 5712,
+      "width": 16,
+      "height": 16
+    },
+    "chest_mangrove": {
+      "sheet": "drzewa",
+      "x": 128,
+      "y": 5616,
+      "width": 32,
+      "height": 32
+    },
+    "door_mangrove": {
+      "sheet": "drzewa",
+      "x": 64,
+      "y": 5680,
+      "width": 16,
+      "height": 32
+    },
+    "trapdoor_mangrove": {
+      "sheet": "drzewa",
+      "x": 64,
+      "y": 5712,
+      "width": 16,
+      "height": 16
+    },
+    "chest_kapok": {
+      "sheet": "drzewa",
+      "x": 160,
+      "y": 5616,
+      "width": 32,
+      "height": 32
+    },
+    "door_kapok": {
+      "sheet": "drzewa",
+      "x": 80,
+      "y": 5680,
+      "width": 16,
+      "height": 32
+    },
+    "trapdoor_kapok": {
+      "sheet": "drzewa",
+      "x": 80,
+      "y": 5712,
+      "width": 16,
+      "height": 16
+    },
+    "chest_joshua_tree": {
+      "sheet": "drzewa",
+      "x": 192,
+      "y": 5616,
+      "width": 32,
+      "height": 32
+    },
+    "door_joshua_tree": {
+      "sheet": "drzewa",
+      "x": 96,
+      "y": 5680,
+      "width": 16,
+      "height": 32
+    },
+    "trapdoor_joshua_tree": {
+      "sheet": "drzewa",
+      "x": 96,
+      "y": 5712,
+      "width": 16,
+      "height": 16
+    },
+    "chest_aspen": {
+      "sheet": "drzewa",
+      "x": 224,
+      "y": 5616,
+      "width": 32,
+      "height": 32
+    },
+    "door_aspen": {
+      "sheet": "drzewa",
+      "x": 112,
+      "y": 5680,
+      "width": 16,
+      "height": 32
+    },
+    "trapdoor_aspen": {
+      "sheet": "drzewa",
+      "x": 112,
+      "y": 5712,
+      "width": 16,
+      "height": 16
+    },
+    "chest_araucaria": {
+      "sheet": "drzewa",
+      "x": 0,
+      "y": 5648,
+      "width": 32,
+      "height": 32
+    },
+    "door_araucaria": {
+      "sheet": "drzewa",
+      "x": 128,
+      "y": 5680,
+      "width": 16,
+      "height": 32
+    },
+    "trapdoor_araucaria": {
+      "sheet": "drzewa",
+      "x": 128,
+      "y": 5712,
+      "width": 16,
+      "height": 16
+    },
+    "chest_banyan": {
+      "sheet": "drzewa",
+      "x": 32,
+      "y": 5648,
+      "width": 32,
+      "height": 32
+    },
+    "door_banyan": {
+      "sheet": "drzewa",
+      "x": 144,
+      "y": 5680,
+      "width": 16,
+      "height": 32
+    },
+    "trapdoor_banyan": {
+      "sheet": "drzewa",
+      "x": 144,
+      "y": 5712,
+      "width": 16,
+      "height": 16
+    },
+    "chest_dragon_tree": {
+      "sheet": "drzewa",
+      "x": 64,
+      "y": 5648,
+      "width": 32,
+      "height": 32
+    },
+    "door_dragon_tree": {
+      "sheet": "drzewa",
+      "x": 160,
+      "y": 5680,
+      "width": 16,
+      "height": 32
+    },
+    "trapdoor_dragon_tree": {
+      "sheet": "drzewa",
+      "x": 160,
+      "y": 5712,
+      "width": 16,
+      "height": 16
+    },
+    "chest_cedar": {
+      "sheet": "drzewa",
+      "x": 96,
+      "y": 5648,
+      "width": 32,
+      "height": 32
+    },
+    "door_cedar": {
+      "sheet": "drzewa",
+      "x": 176,
+      "y": 5680,
+      "width": 16,
+      "height": 32
+    },
+    "trapdoor_cedar": {
+      "sheet": "drzewa",
+      "x": 176,
+      "y": 5712,
+      "width": 16,
+      "height": 16
+    },
+    "chest_bristlecone": {
+      "sheet": "drzewa",
+      "x": 128,
+      "y": 5648,
+      "width": 32,
+      "height": 32
+    },
+    "door_bristlecone": {
+      "sheet": "drzewa",
+      "x": 192,
+      "y": 5680,
+      "width": 16,
+      "height": 32
+    },
+    "trapdoor_bristlecone": {
+      "sheet": "drzewa",
+      "x": 192,
+      "y": 5712,
+      "width": 16,
+      "height": 16
     }
   },
   "aliases": {
@@ -12072,6 +12345,305 @@
       "pw": 128,
       "ph": 128,
       "region": "bristlecone_log_dead_bark"
+    },
+    "chest_fir": {
+      "x": 0,
+      "y": 61,
+      "region": "chest_fir",
+      "w": 2,
+      "h": 2,
+      "pw": 32,
+      "ph": 32
+    },
+    "door_fir": {
+      "x": 28,
+      "y": 61,
+      "region": "door_fir",
+      "w": 1,
+      "h": 2,
+      "pw": 16,
+      "ph": 32
+    },
+    "trapdoor_fir": {
+      "x": 43,
+      "y": 61,
+      "region": "trapdoor_fir"
+    },
+    "chest_baobab": {
+      "x": 2,
+      "y": 61,
+      "region": "chest_baobab",
+      "w": 2,
+      "h": 2,
+      "pw": 32,
+      "ph": 32
+    },
+    "door_baobab": {
+      "x": 29,
+      "y": 61,
+      "region": "door_baobab",
+      "w": 1,
+      "h": 2,
+      "pw": 16,
+      "ph": 32
+    },
+    "trapdoor_baobab": {
+      "x": 44,
+      "y": 61,
+      "region": "trapdoor_baobab"
+    },
+    "chest_coconut_palm": {
+      "x": 4,
+      "y": 61,
+      "region": "chest_coconut_palm",
+      "w": 2,
+      "h": 2,
+      "pw": 32,
+      "ph": 32
+    },
+    "door_coconut_palm": {
+      "x": 30,
+      "y": 61,
+      "region": "door_coconut_palm",
+      "w": 1,
+      "h": 2,
+      "pw": 16,
+      "ph": 32
+    },
+    "trapdoor_coconut_palm": {
+      "x": 45,
+      "y": 61,
+      "region": "trapdoor_coconut_palm"
+    },
+    "chest_larch": {
+      "x": 6,
+      "y": 61,
+      "region": "chest_larch",
+      "w": 2,
+      "h": 2,
+      "pw": 32,
+      "ph": 32
+    },
+    "door_larch": {
+      "x": 31,
+      "y": 61,
+      "region": "door_larch",
+      "w": 1,
+      "h": 2,
+      "pw": 16,
+      "ph": 32
+    },
+    "trapdoor_larch": {
+      "x": 46,
+      "y": 61,
+      "region": "trapdoor_larch"
+    },
+    "chest_mangrove": {
+      "x": 8,
+      "y": 61,
+      "region": "chest_mangrove",
+      "w": 2,
+      "h": 2,
+      "pw": 32,
+      "ph": 32
+    },
+    "door_mangrove": {
+      "x": 32,
+      "y": 61,
+      "region": "door_mangrove",
+      "w": 1,
+      "h": 2,
+      "pw": 16,
+      "ph": 32
+    },
+    "trapdoor_mangrove": {
+      "x": 47,
+      "y": 61,
+      "region": "trapdoor_mangrove"
+    },
+    "chest_kapok": {
+      "x": 10,
+      "y": 61,
+      "region": "chest_kapok",
+      "w": 2,
+      "h": 2,
+      "pw": 32,
+      "ph": 32
+    },
+    "door_kapok": {
+      "x": 33,
+      "y": 61,
+      "region": "door_kapok",
+      "w": 1,
+      "h": 2,
+      "pw": 16,
+      "ph": 32
+    },
+    "trapdoor_kapok": {
+      "x": 48,
+      "y": 61,
+      "region": "trapdoor_kapok"
+    },
+    "chest_joshua_tree": {
+      "x": 12,
+      "y": 61,
+      "region": "chest_joshua_tree",
+      "w": 2,
+      "h": 2,
+      "pw": 32,
+      "ph": 32
+    },
+    "door_joshua_tree": {
+      "x": 34,
+      "y": 61,
+      "region": "door_joshua_tree",
+      "w": 1,
+      "h": 2,
+      "pw": 16,
+      "ph": 32
+    },
+    "trapdoor_joshua_tree": {
+      "x": 49,
+      "y": 61,
+      "region": "trapdoor_joshua_tree"
+    },
+    "chest_aspen": {
+      "x": 14,
+      "y": 61,
+      "region": "chest_aspen",
+      "w": 2,
+      "h": 2,
+      "pw": 32,
+      "ph": 32
+    },
+    "door_aspen": {
+      "x": 35,
+      "y": 61,
+      "region": "door_aspen",
+      "w": 1,
+      "h": 2,
+      "pw": 16,
+      "ph": 32
+    },
+    "trapdoor_aspen": {
+      "x": 50,
+      "y": 61,
+      "region": "trapdoor_aspen"
+    },
+    "chest_araucaria": {
+      "x": 16,
+      "y": 61,
+      "region": "chest_araucaria",
+      "w": 2,
+      "h": 2,
+      "pw": 32,
+      "ph": 32
+    },
+    "door_araucaria": {
+      "x": 36,
+      "y": 61,
+      "region": "door_araucaria",
+      "w": 1,
+      "h": 2,
+      "pw": 16,
+      "ph": 32
+    },
+    "trapdoor_araucaria": {
+      "x": 51,
+      "y": 61,
+      "region": "trapdoor_araucaria"
+    },
+    "chest_banyan": {
+      "x": 18,
+      "y": 61,
+      "region": "chest_banyan",
+      "w": 2,
+      "h": 2,
+      "pw": 32,
+      "ph": 32
+    },
+    "door_banyan": {
+      "x": 37,
+      "y": 61,
+      "region": "door_banyan",
+      "w": 1,
+      "h": 2,
+      "pw": 16,
+      "ph": 32
+    },
+    "trapdoor_banyan": {
+      "x": 52,
+      "y": 61,
+      "region": "trapdoor_banyan"
+    },
+    "chest_dragon_tree": {
+      "x": 20,
+      "y": 61,
+      "region": "chest_dragon_tree",
+      "w": 2,
+      "h": 2,
+      "pw": 32,
+      "ph": 32
+    },
+    "door_dragon_tree": {
+      "x": 38,
+      "y": 61,
+      "region": "door_dragon_tree",
+      "w": 1,
+      "h": 2,
+      "pw": 16,
+      "ph": 32
+    },
+    "trapdoor_dragon_tree": {
+      "x": 53,
+      "y": 61,
+      "region": "trapdoor_dragon_tree"
+    },
+    "chest_cedar": {
+      "x": 22,
+      "y": 61,
+      "region": "chest_cedar",
+      "w": 2,
+      "h": 2,
+      "pw": 32,
+      "ph": 32
+    },
+    "door_cedar": {
+      "x": 39,
+      "y": 61,
+      "region": "door_cedar",
+      "w": 1,
+      "h": 2,
+      "pw": 16,
+      "ph": 32
+    },
+    "trapdoor_cedar": {
+      "x": 54,
+      "y": 61,
+      "region": "trapdoor_cedar"
+    },
+    "chest_bristlecone": {
+      "x": 24,
+      "y": 61,
+      "region": "chest_bristlecone",
+      "w": 2,
+      "h": 2,
+      "pw": 32,
+      "ph": 32
+    },
+    "door_bristlecone": {
+      "x": 40,
+      "y": 61,
+      "region": "door_bristlecone",
+      "w": 1,
+      "h": 2,
+      "pw": 16,
+      "ph": 32
+    },
+    "trapdoor_bristlecone": {
+      "x": 55,
+      "y": 61,
+      "region": "trapdoor_bristlecone"
     }
   }
 }

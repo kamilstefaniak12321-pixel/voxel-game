@@ -67,7 +67,7 @@ const STONE = getBlockId('stone');
 
 // --- Bloki -----------------------------------------------------------------
 
-check(WOODS.length === 20 && new Set(WOODS.map((w) => w.wood)).size === 20, '20 rodzajów desek');
+check(WOODS.length === 33 && new Set(WOODS.map((w) => w.wood)).size === 33, '33 rodzaje desek');
 check(WOODS.every(({ planks }) => getBlockId(planks) > 0), 'Każde drewno ma swoje deski');
 const ids = [];
 for (const { wood } of WOODS) {
@@ -78,10 +78,16 @@ for (const { wood } of WOODS) {
         check(/^[A-ZĆŁŚŻŹ]/.test(definition.label) && !/undefined/.test(definition.label), `${type}: nazwa "${definition.label}"`);
         check(itemShapeFaces(type)?.length > 0, `${type}: model (ikonka, dłoń)`);
     }
-    for (let i = 0; i < W.SHAPES_PER_WOOD; i++) ids.push(W.SHAPE_FIRST_ID + WOODS.findIndex((w) => w.wood === wood) * W.SHAPES_PER_WOOD + i);
+    for (let i = 0; i < W.SHAPES_PER_WOOD; i++) ids.push(W.shapeFirstId(WOODS.findIndex((w) => w.wood === wood)) + i);
 }
 check(ids.every((id) => getBlockTypeById(id) && W.shapeInfo(id)), 'Każdy numer 10300-10859 to wyrób');
-check(new Set(ids).size === 560 && Math.min(...ids) === 10300 && Math.max(...ids) === 10859, '560 numerów bez powtórzeń');
+// 1.9.0: dawne 20 rodzajów drewna zajmuje 10300-10859 (numery jak dotąd),
+// 13 nowych - początek wspólnych bloków po 128 numerów od 12544.
+const firstRange = ids.filter((id) => id < 12544);
+check(new Set(ids).size === 33 * 28 && firstRange.length === 560 && Math.min(...ids) === 10300 && Math.max(...firstRange) === 10859, '560 dawnych numerów bez zmian i bez powtórzeń');
+check(W.shapeId('jacaranda', 'table', { facing: 'west', part: 'b' }) === 10859 && W.shapeId('fir', 'stairs') === 12544 && W.shapeId('baobab', 'stairs') === 12672 &&
+    W.shapeId('fir', 'door') === 12572 && W.shapeId('fir', 'bed') === 12620 && W.shapeId('bristlecone', 'bed', { facing: 'west', part: 'head', bedding: 'linen' }) < 12544 + 13 * 128,
+    'Nowe rodzaje drewna: wspólny blok numerów (wyroby, drzwi, łóżka)');
 check(woodName('spruce', 'Schody', 'n') === 'Schody świerkowe' && woodName('acacia', 'Furtka', 'f') === 'Furtka z akacji'
     && getBlockDefinition('oak_carpenter_table').label === 'Stół stolarski dębowy', 'Nazwy po polsku');
 check(getDropType('oak_slab_double') === 'oak_slab' && getDropCount('oak_slab_double') === 2, 'Podwójny półblok daje dwa półbloki');
@@ -320,11 +326,11 @@ check(TABLE_PRODUCTS.map((p) => p.kind).join() === 'stairs,slab,fence,gate', 'Cz
 {
     const doorIds = [];
     WOODS.forEach((entry, index) => {
-        for (let i = 0; i < W.DOORS_PER_WOOD; i++) doorIds.push(W.DOOR_FIRST_ID + index * W.DOORS_PER_WOOD + i);
+        for (let i = 0; i < W.DOORS_PER_WOOD; i++) doorIds.push(W.doorFirstId(index) + i);
     });
     check(doorIds.every((id) => getBlockTypeById(id) && W.shapeInfo(id)), 'Każdy numer 10860-11819 to drzwi albo klapa');
-    check(new Set(doorIds).size === 960 && Math.max(...doorIds) === 11819, '960 numerów drzwi i klap');
-    check(doorIds.filter((id) => W.isDoorId(id)).length === 640 && !W.isDoorId(W.shapeId('oak', 'trapdoor')), 'Drzwi: 32 stany na drewno');
+    check(new Set(doorIds).size === 33 * 48 && Math.max(...doorIds.filter((id) => id < 12544)) === 11819 && doorIds.filter((id) => id < 12544).length === 960, '960 dawnych numerów drzwi i klap, nowe w blokach drewna');
+    check(doorIds.filter((id) => W.isDoorId(id)).length === 33 * 32 && !W.isDoorId(W.shapeId('oak', 'trapdoor')), 'Drzwi: 32 stany na drewno');
     for (const { wood } of WOODS) {
         for (const options of [{ facing: 'east', part: 'upper', hinge: 'right', open: true }, { facing: 'south', part: 'lower', hinge: 'left' }]) {
             const info = W.shapeInfo(W.shapeId(wood, 'door', options));

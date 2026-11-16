@@ -238,7 +238,12 @@ modeli, korę (podpałka) i opał do ogniska. Dodatkowe bloki:
 |---|---|---|
 | `mangrove_roots`, `banyan_roots` | pierwszy numer gatunku + 9 | ażurowe korzenie (jak liście: przepuszczają światło, szybko się je usuwa, pień je zastępuje) |
 | `joshua_tree_log_shaggy`, `aspen_log_base`, `bristlecone_log_dead` | pierwszy numer + 8 | druga kora tego samego pnia; okorowanie daje zwykły okorowany pień i korę gatunku |
-| `coconut_palm_leaves_kokosy` | 1126 (odrastające 1127) | liście z kokosami: PPM zbiera 1–2 kokosy (`coconut_palm_kokos`), odrastają; z kokosa wyrasta palma |
+| `coconut_palm_leaves_kokosy` | 1126 (odrastające 1127) | liście z kokosami: PPM zbiera 1–2 kokosy (`coconut_palm_kokos`), odrastają; z kokosa wyrasta palma; od 1.9.0 kokos da się zjeść |
+
+Od 1.9.0 z desek każdego z tych drzew robi się **schody, półbloki, płoty,
+furtki, stoły stolarskie, drzwi, klapy, łóżka i skrzynie**
+([stolarstwo.md](stolarstwo.md)), a sadzonki palmy kokosowej, jukki
+i draceny rosną także na piasku.
 
 ### Biomy (opis: [biomy.md](biomy.md))
 
@@ -468,5 +473,33 @@ szelest liści (`plant`). Pliki: `assets/sounds/blocks/` (nagrania -
 
 ## Do zrobienia później
 
-- liście opadające jesienią, śnieg na świerkach (pory roku),
-- deski i inne bloki z pni (crafting).
+- liście opadające jesienią, śnieg na świerkach (pory roku).
+
+Braki spisane przy sprawdzaniu 1.9.0 (trzynaście drzew z 1.8.0):
+
+- **Pory roku nowych drzew.** Paczka miała podglądy jesiennego modrzewia
+  i osiki oraz bezlistnego baobabu i puchowca; w grze złote igliwie i
+  liście są stałą odmianą kilkunastu procent korony, a baobab i puchowiec
+  nie zrzucają liści. Do podpięcia pod kalendarz (`docs/pory-roku.md`).
+- **Owoce i szyszki.** Zbiera się tylko kokosy. Szyszki jodły, modrzewia,
+  cedru, araukarii i sosny ościstej, figi figowca, kwiaty baobabu i jukki,
+  jagody draceny i puch puchowca to na razie sam wygląd liści (bez
+  przedmiotu i zbioru).
+- **Opadłe liście** pod osiką, baobabem i figowcem (inne liściaste drzewa
+  je mają).
+- **Namorzyn z sadzonki rośnie tylko na lądzie** - w wodzie stoją wyłącznie
+  drzewa z generatora.
+- **Liście drzew nie zmieniają koloru z biomem** (trawa, kępki, mech
+  i paprocie - tak). Akacje i baobaby na sawannie mają więc tę samą zieleń
+  co gdzie indziej.
+- **Powietrze i pogoda biomów.** Ciepło i wilgoć widać po ziemi i
+  roślinach; mgła, kolor nieba, częstszy deszcz w mokrych biomach ani
+  drżące powietrze nad pustynią nie są zrobione.
+- **Jukka z daleka** przypomina małe zwykłe drzewko - rozety na końcach
+  gałęzi zlewają się w jedną koronę.
+- **Las deszczowy i namorzyny** nie mają zrzutów w dokumentacji (z bliska
+  sprawdzone w grze tylko w części - renderowanie zdalne jest wolne);
+  pilnują ich testy na generatorze.
+- **Paczki tekstur w wysokiej rozdzielczości:** atlas 1024 × 1536 zmniejszył
+  największy kafelek o połowę ([kora.md](kora.md)). Powrót do dawnego
+  limitu wymagałby drugiej tekstury na arkusze kory.

@@ -2,7 +2,7 @@
 
 > Ta strona jest generowana z kodu gry (`python tools/wiki.py`) - nie zmieniaj jej ręcznie, zmiany przepadną przy następnym generowaniu.
 
-Wersja gry **1.8.0** - 210 przepisów. Wytwarza się w ekwipunku (**E**): siatka 2 x 2 obok miejsc ekwipunku, wynik po prawej (klik - weź, Shift + klik - ile się da). Przycisk 📖 *Przepisy* otwiera księgę - klik na przepisie sam układa składniki. Przepisy *z kształtem* można przesuwać po siatce i odbijać w poziomie; przepisy *bez kształtu* - obojętne, gdzie leżą składniki. Z czatu: `/przepisy`, `/wytworz <przepis>`.
+Wersja gry **1.9.0** - 236 przepisów. Wytwarza się w ekwipunku (**E**): siatka 2 x 2 obok miejsc ekwipunku, wynik po prawej (klik - weź, Shift + klik - ile się da). Przycisk 📖 *Przepisy* otwiera księgę - klik na przepisie sam układa składniki. Przepisy *z kształtem* można przesuwać po siatce i odbijać w poziomie; przepisy *bez kształtu* - obojętne, gdzie leżą składniki. Z czatu: `/przepisy`, `/wytworz <przepis>`.
 
 
 ## Ziemia
@@ -796,6 +796,84 @@ Wersja gry **1.8.0** - 210 przepisów. Wytwarza się w ekwipunku (**E**): siatka
 
 4 x Deski jakarandowe (z kształtem). Nazwa przepisu: `jacaranda_chest`. Cztery deski jednego drzewa - skrzynia z tego drewna. PPM na skrzyni: otwórz - 4 x 3 przegródki, w każdej dwie warstwy (najpierw zdejmij wierzch).
 
+### Skrzynia jodłowa
+
+<img src="przepisy/fir_chest.png" alt="Skrzynia jodłowa: 4 x Deski jodłowe (ułożenie: PP / PP; P = Deski jodłowe)">
+
+4 x Deski jodłowe (z kształtem). Nazwa przepisu: `fir_chest`. Cztery deski jednego drzewa - skrzynia z tego drewna. PPM na skrzyni: otwórz - 4 x 3 przegródki, w każdej dwie warstwy (najpierw zdejmij wierzch).
+
+### Skrzynia baobabowa
+
+<img src="przepisy/baobab_chest.png" alt="Skrzynia baobabowa: 4 x Deski baobabowe (ułożenie: PP / PP; P = Deski baobabowe)">
+
+4 x Deski baobabowe (z kształtem). Nazwa przepisu: `baobab_chest`. Cztery deski jednego drzewa - skrzynia z tego drewna. PPM na skrzyni: otwórz - 4 x 3 przegródki, w każdej dwie warstwy (najpierw zdejmij wierzch).
+
+### Skrzynia palmowa
+
+<img src="przepisy/coconut_palm_chest.png" alt="Skrzynia palmowa: 4 x Deski palmowe (ułożenie: PP / PP; P = Deski palmowe)">
+
+4 x Deski palmowe (z kształtem). Nazwa przepisu: `coconut_palm_chest`. Cztery deski jednego drzewa - skrzynia z tego drewna. PPM na skrzyni: otwórz - 4 x 3 przegródki, w każdej dwie warstwy (najpierw zdejmij wierzch).
+
+### Skrzynia modrzewiowa
+
+<img src="przepisy/larch_chest.png" alt="Skrzynia modrzewiowa: 4 x Deski modrzewiowe (ułożenie: PP / PP; P = Deski modrzewiowe)">
+
+4 x Deski modrzewiowe (z kształtem). Nazwa przepisu: `larch_chest`. Cztery deski jednego drzewa - skrzynia z tego drewna. PPM na skrzyni: otwórz - 4 x 3 przegródki, w każdej dwie warstwy (najpierw zdejmij wierzch).
+
+### Skrzynia namorzynowa
+
+<img src="przepisy/mangrove_chest.png" alt="Skrzynia namorzynowa: 4 x Deski namorzynowe (ułożenie: PP / PP; P = Deski namorzynowe)">
+
+4 x Deski namorzynowe (z kształtem). Nazwa przepisu: `mangrove_chest`. Cztery deski jednego drzewa - skrzynia z tego drewna. PPM na skrzyni: otwórz - 4 x 3 przegródki, w każdej dwie warstwy (najpierw zdejmij wierzch).
+
+### Skrzynia z puchowca
+
+<img src="przepisy/kapok_chest.png" alt="Skrzynia z puchowca: 4 x Deski z puchowca (ułożenie: PP / PP; P = Deski z puchowca)">
+
+4 x Deski z puchowca (z kształtem). Nazwa przepisu: `kapok_chest`. Cztery deski jednego drzewa - skrzynia z tego drewna. PPM na skrzyni: otwórz - 4 x 3 przegródki, w każdej dwie warstwy (najpierw zdejmij wierzch).
+
+### Skrzynia z jukki
+
+<img src="przepisy/joshua_tree_chest.png" alt="Skrzynia z jukki: 4 x Deski z jukki (ułożenie: PP / PP; P = Deski z jukki)">
+
+4 x Deski z jukki (z kształtem). Nazwa przepisu: `joshua_tree_chest`. Cztery deski jednego drzewa - skrzynia z tego drewna. PPM na skrzyni: otwórz - 4 x 3 przegródki, w każdej dwie warstwy (najpierw zdejmij wierzch).
+
+### Skrzynia osikowa
+
+<img src="przepisy/aspen_chest.png" alt="Skrzynia osikowa: 4 x Deski osikowe (ułożenie: PP / PP; P = Deski osikowe)">
+
+4 x Deski osikowe (z kształtem). Nazwa przepisu: `aspen_chest`. Cztery deski jednego drzewa - skrzynia z tego drewna. PPM na skrzyni: otwórz - 4 x 3 przegródki, w każdej dwie warstwy (najpierw zdejmij wierzch).
+
+### Skrzynia araukariowa
+
+<img src="przepisy/araucaria_chest.png" alt="Skrzynia araukariowa: 4 x Deski araukariowe (ułożenie: PP / PP; P = Deski araukariowe)">
+
+4 x Deski araukariowe (z kształtem). Nazwa przepisu: `araucaria_chest`. Cztery deski jednego drzewa - skrzynia z tego drewna. PPM na skrzyni: otwórz - 4 x 3 przegródki, w każdej dwie warstwy (najpierw zdejmij wierzch).
+
+### Skrzynia figowcowa
+
+<img src="przepisy/banyan_chest.png" alt="Skrzynia figowcowa: 4 x Deski figowcowe (ułożenie: PP / PP; P = Deski figowcowe)">
+
+4 x Deski figowcowe (z kształtem). Nazwa przepisu: `banyan_chest`. Cztery deski jednego drzewa - skrzynia z tego drewna. PPM na skrzyni: otwórz - 4 x 3 przegródki, w każdej dwie warstwy (najpierw zdejmij wierzch).
+
+### Skrzynia z draceny
+
+<img src="przepisy/dragon_tree_chest.png" alt="Skrzynia z draceny: 4 x Deski z draceny (ułożenie: PP / PP; P = Deski z draceny)">
+
+4 x Deski z draceny (z kształtem). Nazwa przepisu: `dragon_tree_chest`. Cztery deski jednego drzewa - skrzynia z tego drewna. PPM na skrzyni: otwórz - 4 x 3 przegródki, w każdej dwie warstwy (najpierw zdejmij wierzch).
+
+### Skrzynia cedrowa
+
+<img src="przepisy/cedar_chest.png" alt="Skrzynia cedrowa: 4 x Deski cedrowe (ułożenie: PP / PP; P = Deski cedrowe)">
+
+4 x Deski cedrowe (z kształtem). Nazwa przepisu: `cedar_chest`. Cztery deski jednego drzewa - skrzynia z tego drewna. PPM na skrzyni: otwórz - 4 x 3 przegródki, w każdej dwie warstwy (najpierw zdejmij wierzch).
+
+### Skrzynia z sosny ościstej
+
+<img src="przepisy/bristlecone_chest.png" alt="Skrzynia z sosny ościstej: 4 x Deski z sosny ościstej (ułożenie: PP / PP; P = Deski z sosny ościstej)">
+
+4 x Deski z sosny ościstej (z kształtem). Nazwa przepisu: `bristlecone_chest`. Cztery deski jednego drzewa - skrzynia z tego drewna. PPM na skrzyni: otwórz - 4 x 3 przegródki, w każdej dwie warstwy (najpierw zdejmij wierzch).
+
 ### Stół stolarski świerkowy
 
 <img src="przepisy/spruce_carpenter_table.png" alt="Stół stolarski świerkowy: 2 x Deski świerkowe + 2 x Patyk (ułożenie: PP / SS; P = Deski świerkowe, S = Patyk)">
@@ -915,6 +993,84 @@ Wersja gry **1.8.0** - 210 przepisów. Wytwarza się w ekwipunku (**E**): siatka
 <img src="przepisy/jacaranda_carpenter_table.png" alt="Stół stolarski jakarandowy: 2 x Deski jakarandowe + 2 x Patyk (ułożenie: PP / SS; P = Deski jakarandowe, S = Patyk)">
 
 2 x Deski jakarandowe + 2 x Patyk (z kształtem). Nazwa przepisu: `jacaranda_carpenter_table`. Długi na dwa bloki. PPM deskami w lewą część blatu - deski na stół; PPM w wyrób na prawej części - schody, półbloki, płoty, furtki (Shift - ile się da).
+
+### Stół stolarski jodłowy
+
+<img src="przepisy/fir_carpenter_table.png" alt="Stół stolarski jodłowy: 2 x Deski jodłowe + 2 x Patyk (ułożenie: PP / SS; P = Deski jodłowe, S = Patyk)">
+
+2 x Deski jodłowe + 2 x Patyk (z kształtem). Nazwa przepisu: `fir_carpenter_table`. Długi na dwa bloki. PPM deskami w lewą część blatu - deski na stół; PPM w wyrób na prawej części - schody, półbloki, płoty, furtki (Shift - ile się da).
+
+### Stół stolarski baobabowy
+
+<img src="przepisy/baobab_carpenter_table.png" alt="Stół stolarski baobabowy: 2 x Deski baobabowe + 2 x Patyk (ułożenie: PP / SS; P = Deski baobabowe, S = Patyk)">
+
+2 x Deski baobabowe + 2 x Patyk (z kształtem). Nazwa przepisu: `baobab_carpenter_table`. Długi na dwa bloki. PPM deskami w lewą część blatu - deski na stół; PPM w wyrób na prawej części - schody, półbloki, płoty, furtki (Shift - ile się da).
+
+### Stół stolarski palmowy
+
+<img src="przepisy/coconut_palm_carpenter_table.png" alt="Stół stolarski palmowy: 2 x Deski palmowe + 2 x Patyk (ułożenie: PP / SS; P = Deski palmowe, S = Patyk)">
+
+2 x Deski palmowe + 2 x Patyk (z kształtem). Nazwa przepisu: `coconut_palm_carpenter_table`. Długi na dwa bloki. PPM deskami w lewą część blatu - deski na stół; PPM w wyrób na prawej części - schody, półbloki, płoty, furtki (Shift - ile się da).
+
+### Stół stolarski modrzewiowy
+
+<img src="przepisy/larch_carpenter_table.png" alt="Stół stolarski modrzewiowy: 2 x Deski modrzewiowe + 2 x Patyk (ułożenie: PP / SS; P = Deski modrzewiowe, S = Patyk)">
+
+2 x Deski modrzewiowe + 2 x Patyk (z kształtem). Nazwa przepisu: `larch_carpenter_table`. Długi na dwa bloki. PPM deskami w lewą część blatu - deski na stół; PPM w wyrób na prawej części - schody, półbloki, płoty, furtki (Shift - ile się da).
+
+### Stół stolarski namorzynowy
+
+<img src="przepisy/mangrove_carpenter_table.png" alt="Stół stolarski namorzynowy: 2 x Deski namorzynowe + 2 x Patyk (ułożenie: PP / SS; P = Deski namorzynowe, S = Patyk)">
+
+2 x Deski namorzynowe + 2 x Patyk (z kształtem). Nazwa przepisu: `mangrove_carpenter_table`. Długi na dwa bloki. PPM deskami w lewą część blatu - deski na stół; PPM w wyrób na prawej części - schody, półbloki, płoty, furtki (Shift - ile się da).
+
+### Stół stolarski z puchowca
+
+<img src="przepisy/kapok_carpenter_table.png" alt="Stół stolarski z puchowca: 2 x Deski z puchowca + 2 x Patyk (ułożenie: PP / SS; P = Deski z puchowca, S = Patyk)">
+
+2 x Deski z puchowca + 2 x Patyk (z kształtem). Nazwa przepisu: `kapok_carpenter_table`. Długi na dwa bloki. PPM deskami w lewą część blatu - deski na stół; PPM w wyrób na prawej części - schody, półbloki, płoty, furtki (Shift - ile się da).
+
+### Stół stolarski z jukki
+
+<img src="przepisy/joshua_tree_carpenter_table.png" alt="Stół stolarski z jukki: 2 x Deski z jukki + 2 x Patyk (ułożenie: PP / SS; P = Deski z jukki, S = Patyk)">
+
+2 x Deski z jukki + 2 x Patyk (z kształtem). Nazwa przepisu: `joshua_tree_carpenter_table`. Długi na dwa bloki. PPM deskami w lewą część blatu - deski na stół; PPM w wyrób na prawej części - schody, półbloki, płoty, furtki (Shift - ile się da).
+
+### Stół stolarski osikowy
+
+<img src="przepisy/aspen_carpenter_table.png" alt="Stół stolarski osikowy: 2 x Deski osikowe + 2 x Patyk (ułożenie: PP / SS; P = Deski osikowe, S = Patyk)">
+
+2 x Deski osikowe + 2 x Patyk (z kształtem). Nazwa przepisu: `aspen_carpenter_table`. Długi na dwa bloki. PPM deskami w lewą część blatu - deski na stół; PPM w wyrób na prawej części - schody, półbloki, płoty, furtki (Shift - ile się da).
+
+### Stół stolarski araukariowy
+
+<img src="przepisy/araucaria_carpenter_table.png" alt="Stół stolarski araukariowy: 2 x Deski araukariowe + 2 x Patyk (ułożenie: PP / SS; P = Deski araukariowe, S = Patyk)">
+
+2 x Deski araukariowe + 2 x Patyk (z kształtem). Nazwa przepisu: `araucaria_carpenter_table`. Długi na dwa bloki. PPM deskami w lewą część blatu - deski na stół; PPM w wyrób na prawej części - schody, półbloki, płoty, furtki (Shift - ile się da).
+
+### Stół stolarski figowcowy
+
+<img src="przepisy/banyan_carpenter_table.png" alt="Stół stolarski figowcowy: 2 x Deski figowcowe + 2 x Patyk (ułożenie: PP / SS; P = Deski figowcowe, S = Patyk)">
+
+2 x Deski figowcowe + 2 x Patyk (z kształtem). Nazwa przepisu: `banyan_carpenter_table`. Długi na dwa bloki. PPM deskami w lewą część blatu - deski na stół; PPM w wyrób na prawej części - schody, półbloki, płoty, furtki (Shift - ile się da).
+
+### Stół stolarski z draceny
+
+<img src="przepisy/dragon_tree_carpenter_table.png" alt="Stół stolarski z draceny: 2 x Deski z draceny + 2 x Patyk (ułożenie: PP / SS; P = Deski z draceny, S = Patyk)">
+
+2 x Deski z draceny + 2 x Patyk (z kształtem). Nazwa przepisu: `dragon_tree_carpenter_table`. Długi na dwa bloki. PPM deskami w lewą część blatu - deski na stół; PPM w wyrób na prawej części - schody, półbloki, płoty, furtki (Shift - ile się da).
+
+### Stół stolarski cedrowy
+
+<img src="przepisy/cedar_carpenter_table.png" alt="Stół stolarski cedrowy: 2 x Deski cedrowe + 2 x Patyk (ułożenie: PP / SS; P = Deski cedrowe, S = Patyk)">
+
+2 x Deski cedrowe + 2 x Patyk (z kształtem). Nazwa przepisu: `cedar_carpenter_table`. Długi na dwa bloki. PPM deskami w lewą część blatu - deski na stół; PPM w wyrób na prawej części - schody, półbloki, płoty, furtki (Shift - ile się da).
+
+### Stół stolarski z sosny ościstej
+
+<img src="przepisy/bristlecone_carpenter_table.png" alt="Stół stolarski z sosny ościstej: 2 x Deski z sosny ościstej + 2 x Patyk (ułożenie: PP / SS; P = Deski z sosny ościstej, S = Patyk)">
+
+2 x Deski z sosny ościstej + 2 x Patyk (z kształtem). Nazwa przepisu: `bristlecone_carpenter_table`. Długi na dwa bloki. PPM deskami w lewą część blatu - deski na stół; PPM w wyrób na prawej części - schody, półbloki, płoty, furtki (Shift - ile się da).
 
 ### Słomiana pościel
 

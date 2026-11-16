@@ -10,6 +10,9 @@
 // Zawartość - ChestState.js / Chests.js.
 // ------------------------------------------------------------
 
+import { WOODS } from './woods.js';
+import { WOODS_IN_FIRST_RANGES, WOOD_BLOCK_FIRST_ID, WOOD_BLOCK_IDS, WOOD_BLOCK_CHEST } from './woodShapes.js';
+
 export const CHEST_FACINGS = ['north', 'east', 'south', 'west'];
 export const CHEST_FIRST_ID = 10095;
 
@@ -36,14 +39,39 @@ export const WOOD_CHESTS = [
     { wood: 'rainbow_eucalyptus', planks: 'rainbow_eucalyptus_planks', planksTexture: 'rainbow_eucalyptus/planks.png', label: 'Skrzynia eukaliptusowa' },
     { wood: 'sequoia', planks: 'sequoia_planks', planksTexture: 'sequoia/planks.png', label: 'Skrzynia sekwojowa' },
     { wood: 'ginkgo', planks: 'ginkgo_planks', planksTexture: 'ginkgo/planks.png', label: 'Skrzynia miłorzębowa' },
-    { wood: 'jacaranda', planks: 'jacaranda_planks', planksTexture: 'jacaranda/planks.png', label: 'Skrzynia jakarandowa' }
+    { wood: 'jacaranda', planks: 'jacaranda_planks', planksTexture: 'jacaranda/planks.png', label: 'Skrzynia jakarandowa' },
+    // 1.9.0 - trzynaście drzew z 1.8.0. Numery: wspólny blok drewna od 12544
+    // (woodShapes.js), miejsce 108-111.
+    { wood: 'fir', planks: 'fir_planks', planksTexture: 'fir/planks.png', label: 'Skrzynia jodłowa' },
+    { wood: 'baobab', planks: 'baobab_planks', planksTexture: 'baobab/planks.png', label: 'Skrzynia baobabowa' },
+    { wood: 'coconut_palm', planks: 'coconut_palm_planks', planksTexture: 'coconut_palm/planks.png', label: 'Skrzynia palmowa' },
+    { wood: 'larch', planks: 'larch_planks', planksTexture: 'larch/planks.png', label: 'Skrzynia modrzewiowa' },
+    { wood: 'mangrove', planks: 'mangrove_planks', planksTexture: 'mangrove/planks.png', label: 'Skrzynia namorzynowa' },
+    { wood: 'kapok', planks: 'kapok_planks', planksTexture: 'kapok/planks.png', label: 'Skrzynia z puchowca' },
+    { wood: 'joshua_tree', planks: 'joshua_tree_planks', planksTexture: 'joshua_tree/planks.png', label: 'Skrzynia z jukki' },
+    { wood: 'aspen', planks: 'aspen_planks', planksTexture: 'aspen/planks.png', label: 'Skrzynia osikowa' },
+    { wood: 'araucaria', planks: 'araucaria_planks', planksTexture: 'araucaria/planks.png', label: 'Skrzynia araukariowa' },
+    { wood: 'banyan', planks: 'banyan_planks', planksTexture: 'banyan/planks.png', label: 'Skrzynia figowcowa' },
+    { wood: 'dragon_tree', planks: 'dragon_tree_planks', planksTexture: 'dragon_tree/planks.png', label: 'Skrzynia z draceny' },
+    { wood: 'cedar', planks: 'cedar_planks', planksTexture: 'cedar/planks.png', label: 'Skrzynia cedrowa' },
+    { wood: 'bristlecone', planks: 'bristlecone_planks', planksTexture: 'bristlecone/planks.png', label: 'Skrzynia z sosny ościstej' }
 ];
+
+// Pierwszy numer skrzyni: dawne 19 rodzajów w zakresie 10200-10299, nowe
+// (1.9.0) - we wspólnym bloku swojego drewna.
+const OLD_WOOD_CHESTS = 19;
+
+function woodChestFirstId(wood, index) {
+    if (index < OLD_WOOD_CHESTS) return WOOD_CHEST_FIRST_ID + index * CHEST_FACINGS.length;
+    const woodIndex = WOODS.findIndex((entry) => entry.wood === wood);
+    return WOOD_BLOCK_FIRST_ID + (woodIndex - WOODS_IN_FIRST_RANGES) * WOOD_BLOCK_IDS + WOOD_BLOCK_CHEST;
+}
 
 // Dębowa skrzynia z 0.81.0 zostaje pod starymi numerami i nazwą "chest".
 const KINDS = [
     { base: 'chest', firstId: CHEST_FIRST_ID, planks: 'oak_planks', planksTexture: 'oak_planks', texture: 'chest', label: 'Skrzynia dębowa', name: 'Oak Chest' },
     ...WOOD_CHESTS.map(({ wood, planks, planksTexture, label }, index) => ({
-        base: `${wood}_chest`, firstId: WOOD_CHEST_FIRST_ID + index * CHEST_FACINGS.length,
+        base: `${wood}_chest`, firstId: woodChestFirstId(wood, index),
         planks, planksTexture, texture: `chest_${wood}`, label, name: `${wood} chest`
     }))
 ];
@@ -76,9 +104,10 @@ export const CHEST_BLOCKS = Object.fromEntries(KINDS.flatMap(kindBlocks));
 // Skrzynie w ekwipunku (przodem na północ): chest, spruce_chest, ...
 export const CHEST_KINDS = KINDS.map(({ base, planks, texture, label }) => ({ type: base, planks, texture, label }));
 
+const CHEST_IDS = new Set(Object.values(CHEST_BLOCKS).map((block) => block.id));
+
 export function isChestId(id) {
-    return (id >= CHEST_FIRST_ID && id < CHEST_FIRST_ID + CHEST_FACINGS.length)
-        || (id >= WOOD_CHEST_FIRST_ID && id < WOOD_CHEST_FIRST_ID + WOOD_CHESTS.length * CHEST_FACINGS.length);
+    return CHEST_IDS.has(id);
 }
 
 export function isChestType(type) {

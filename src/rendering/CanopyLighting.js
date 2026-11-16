@@ -1,4 +1,4 @@
-import { CHUNK_SIZE, CHUNK_HEIGHT } from '../config.js';
+import { CHUNK_SIZE, CHUNK_HEIGHT, GRASS_TINT_UNIT } from '../config.js';
 import { BLOCK_TYPES, getBlockTypeById, isLeavesId, isOpaqueId } from '../blocks/BlockRegistry.js';
 import * as atlas from './TextureAtlas.js';
 import { canopyTint } from '../world/CanopyPolicy.js';
@@ -41,7 +41,7 @@ export function createCanopySampler(world, colorOfLeaf = leafCanopyColor, center
         const climate = [1, 1, 1], grid = chunk.tint;
         if (grid) for (let c = 0; c < 3; c++) {
             const p = (lz * (S + 1) + lx) * 3 + c;
-            climate[c] = (grid[p] + grid[p + 3] + grid[p + (S + 1) * 3] + grid[p + (S + 2) * 3]) / (4 * 128);
+            climate[c] = (grid[p] + grid[p + 3] + grid[p + (S + 1) * 3] + grid[p + (S + 2) * 3]) / (4 * GRASS_TINT_UNIT);
         }
         let result = null, layers = 0, filter = null;
         const sum = [0, 0, 0];

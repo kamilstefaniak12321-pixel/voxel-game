@@ -9,6 +9,7 @@ import { DAY_SECONDS, SYSTEM_NAMES } from './WeatherField.js';
 
 // Rodzaje nieba - od najgroźniejszego (pierwszy pasujący wygrywa).
 export const SKY_NAMES = {
+    grad: 'burza z gradem',
     burza: 'burza',
     ulewa: 'ulewa',
     deszcz: 'deszcz',
@@ -26,6 +27,7 @@ export const SKY_NAMES = {
 
 export function skyKey(sample) {
 
+    if (sample.hail > 0.3) return 'grad';
     if (sample.storm > 0.3) return 'burza';
     if (sample.rain > 0.55) return 'ulewa';
     if (sample.rain > 0.2) return 'deszcz';

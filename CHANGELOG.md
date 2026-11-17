@@ -11,6 +11,49 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 1.13.0 - Pogoda, część 3: burze
+
+PR #164. Opis: [`docs/pogoda.md`](docs/pogoda.md).
+
+- **Burze błyskają.** W komórkach burzowych i na frontach chłodnych co
+  kilka sekund jest wyładowanie: większość rozświetla chmurę od środka,
+  co trzecie bije w ziemię. Gdzie i kiedy - wynika z ziarna świata
+  i czasu gry, więc w grze ze znajomymi wszyscy widzą ten sam piorun.
+  Letnie burze żyją od południa do wieczora, fronty błyskają także nocą.
+- **Pioruny.** Kanciasta łamana od chmury do ziemi z odnogami; bije
+  w najwyższy blok (także w drzewo). Widać ją z kilku kilometrów.
+- **Błysk oświetla krajobraz.** W nocy na ułamek sekundy robi się jasno:
+  teren, rośliny, daleki teren i postacie dostają światło z miejsca
+  wyładowania, chmury świecą wokół niego, niebo i deszcz jaśnieją.
+  W jaskini i w zamkniętym domu zostaje ciemno - błysk wpada tylko
+  przez drzwi i okna.
+- **Grzmot spóźniony o odległość.** Dźwięk leci 343 bloki na sekundę:
+  trzy sekundy od błysku to kilometr. Z bliska ostry trzask i huk,
+  z daleka niski, przetaczający się pomruk; w schronieniu przytłumiony.
+- **Ciemne chmury burzowe.** Chmura ciemnieje i sinieje tam, gdzie jest
+  burza; front chłodny nadciąga z ciemną ławą u dołu.
+- **Grad.** W samym środku najsilniejszych burz przez chwilę lecą białe
+  kulki: odbijają się od ziemi i dachów, stukoczą i zostawiają biały
+  nalot, który topnieje ponad minutę. Pod dachem ich nie ma.
+- **Ustawienie „Błyski burzy"** (Ustawienia → Gra, `/ustaw blyski`):
+  *Pełne*, *Łagodne* (jedno powolne rozjaśnienie, bez migotania) albo
+  *Wył.* (teren i niebo nie błyskają; piorun i grzmot zostają).
+- **Komendy:** `/pogoda piorun [odległość] [chmura]` - wyładowanie na
+  zawołanie, `/pogoda grad [0-100]`. `/pogoda ustaw burza` stawia teraz
+  główną komórkę burzy nad graczem. Na mapie pogody (`/mapa pogoda`)
+  żółte znaczki pokazują wyładowania z ostatniej minuty; `/pogoda`
+  i prognoza mówią „burza z gradem".
+- **Osiągnięcia:** *Raz, dwa, trzy...*, *O włos*, *Kulki lodu*.
+- **Poprawka:** zasłona deszczu nie kończy się już ostrym kręgiem nad
+  głową (zanika łagodnie).
+- **Wydajność:** błysk na terenie korzysta z istniejącego światła
+  meteorytu w shaderach - bez burzy nie kosztuje nic; poświata w chmurach
+  i nalot gradu liczą się tylko wtedy, gdy są. Piorun i grad to po dwa
+  polecenia rysowania na czas zjawiska.
+- **Testy:** nowy `tools/sprawdz_burze.mjs` (ponad 400 tysięcy
+  sprawdzeń). Testy drzew, tekstur i wodospadów wyłączają także burzę
+  (`tools/fixtures/calm-weather.js`).
+
 ## 1.12.0 - Pogoda, część 2: deszcz
 
 PR #163. Opis: [`docs/pogoda.md`](docs/pogoda.md).

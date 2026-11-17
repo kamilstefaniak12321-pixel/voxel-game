@@ -72,6 +72,18 @@ function naturalWeather(game) {
     return Boolean(game.weather?.ready) && game.weather.field.forced.length === 0 && game.rainOverride === null;
 }
 
+// Piorun, który przed chwilą uderzył w ziemię nie dalej niż `reach`
+// bloków od gracza (burza, która przyszła sama).
+function strikeNearby(game, reach) {
+
+    const thunder = game.thunder;
+    const last = thunder?.lastGround;
+
+    return Boolean(last) && last.natural && last.distance <= reach &&
+        thunder.now >= last.time && thunder.now - last.time < 3;
+
+}
+
 export const TOOL_SET = ['axe', 'pickaxe', 'shovel'];
 
 // Jadalne plony drzew z dalekich stron (1.10.0) - osiągnięcie "Smaki dalekich stron".
@@ -864,6 +876,34 @@ export const ACHIEVEMENTS = [
         comment: 'Widoczność: własne buty. I to tylko lewy.',
         icon: 'lamp',
         check: (game) => naturalWeather(game) && game.weather.fogOverride === null && game.weather.local.fog > 0.6
+    },
+    {
+        id: 'lightning_seen',
+        tier: 'common',
+        title: 'Raz, dwa, trzy...',
+        task: 'Bądź nie dalej niż kilometr od pioruna, który bije w ziemię - i policz sekundy do grzmotu (trzy sekundy to kilometr).',
+        comment: 'Fizyka dźwięku w praktyce. Stanie pod drzewem w praktyce: zły pomysł.',
+        icon: 'lamp_purple',
+        check: (game) => naturalWeather(game) && strikeNearby(game, 1000)
+    },
+    {
+        id: 'close_strike',
+        tier: 'rare',
+        title: 'O włos',
+        task: 'Przeżyj uderzenie pioruna bliżej niż 50 bloków od siebie.',
+        comment: 'Włosy stanęły dęba. To nie ze strachu, to elektrostatyka. Na pewno.',
+        icon: 'fire_starter',
+        check: (game) => naturalWeather(game) && strikeNearby(game, 50)
+    },
+    {
+        id: 'hailstorm',
+        tier: 'common',
+        title: 'Kulki lodu',
+        task: 'Wyjdź pod gołe niebo, gdy pada grad (krótko, w samym środku najsilniejszych burz).',
+        comment: 'Darmowy lód do napojów. Dostawa prosto na głowę.',
+        icon: 'snow',
+        check: (game) => naturalWeather(game) && game.weather.hailOverride === null &&
+            game.weather.local.hail > 0.3 && (game.shelterCover ?? 1) < 0.3
     },
     {
         id: 'head_in_clouds',

@@ -223,6 +223,13 @@ blockMaterial.onBeforeCompile = (shader, renderer) => {
                     blockTexel = diffuseColor.rgb;
 
                 }
+
+                // Grad (1.13.0): białe ziarna na płaskich wierzchach pod
+                // gołym niebem, tam gdzie przed chwilą spadł.
+                if (vWorldNormal.y > 0.9 && blockSky > 0.6 && hailAt(vWorldPosition) > 0.5) {
+                    diffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.9, 0.94, 1.0), 0.86);
+                    blockTexel = diffuseColor.rgb;
+                }
             #endif`
         );
 
@@ -283,7 +290,7 @@ blockMaterial.onBeforeCompile = (shader, renderer) => {
                 vec3(vSurfaceEmission * uAtmosphericLight), uNightDesaturation, uNightTint, uAtmosphericLight);
 
             #ifdef USE_DYNAMIC_LIGHT
-                outgoingLight += surfaceLocalRadiance(blockTexel, meteorLight(vWorldPosition, vWorldNormal) + campfireLight(vWorldPosition, vWorldNormal));
+                outgoingLight += surfaceLocalRadiance(blockTexel, meteorLight(vWorldPosition, vWorldNormal) * meteorSky(blockSky) + campfireLight(vWorldPosition, vWorldNormal));
             #endif
 
             // Ustawienie "Jasność" (viewUniforms.js).

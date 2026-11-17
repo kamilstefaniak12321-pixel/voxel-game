@@ -1293,6 +1293,10 @@ export class Menu {
         // Rozwinięcie pamiętamy do końca sesji (this.showAdvanced).
 
         const parts = [grid];
+        if (tab === 'game') {
+            parts.push(el('p', 'menu-note', TEXTS.stormFlashesNote));
+        }
+
         if (tab === 'game' && this.handlers.diagnostics) {
             parts.push(button('Diagnostyka i logi', () => this.showDiagnostics(returnTo)));
         }

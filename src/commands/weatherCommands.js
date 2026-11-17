@@ -4,12 +4,14 @@
 // Pogoda liczy się sama z czasu gry i ziarna świata
 // (src/weather/WeatherField.js). Komenda /pogoda pokazuje ją, podaje
 // prognozę, szuka frontów i - do sprawdzania - ustawia wybraną pogodę
-// nad graczem albo każe jej nadciągnąć.
+// nad graczem albo każe jej nadciągnąć. Od 1.13.0 także piorun na
+// zawołanie i grad.
 // ------------------------------------------------------------
 
 import { CommandError, simplify } from './CommandRegistry.js';
 import { parseNumber, usageError } from './commandHelpers.js';
 import { SYSTEM_NAMES } from '../weather/WeatherField.js';
+import { THUNDER } from '../weather/Thunderstorm.js';
 import { forecastLines, sideName, weatherStatus } from '../weather/weatherText.js';
 
 // Słowo z komendy -> rodzaj układu pogodowego.
@@ -37,7 +39,7 @@ export const WEATHER_COMMANDS = [
     {
         name: 'pogoda',
         aliases: ['weather'],
-        usage: '/pogoda | prognoza | ustaw <rodzaj> [nadciaga] | znajdz <rodzaj> [tp] | auto | deszcz [0-100] | sucho | mgla [0-100] | tecza [wl|wyl]',
+        usage: '/pogoda | prognoza | ustaw <rodzaj> [nadciaga] | znajdz <rodzaj> [tp] | auto | deszcz [0-100] | sucho | mgla [0-100] | tecza [wl|wyl] | piorun [odległość] [chmura] | grad [0-100]',
         description: 'Pogoda nad tobą, prognoza, szukanie frontów i burz; do sprawdzania - ustawienie pogody ' +
             `(rodzaje: ${KIND_WORDS.join(', ')}). Mapa pogody: /mapa pogoda.`,
 
@@ -69,6 +71,7 @@ export const WEATHER_COMMANDS = [
                 weather.reset();
                 weather.fogOverride = null;
                 weather.rainbowOverride = null;
+                weather.hailOverride = null;
                 game.rainOverride = null;
 
                 return 'Pogoda znów liczy się sama.';
@@ -193,18 +196,74 @@ export const WEATHER_COMMANDS = [
 
             }
 
+            if (word === 'piorun' && args.length <= 3) {
+
+                // Wyładowanie przed graczem: domyślnie piorun w ziemię
+                // 150 bloków dalej; "chmura" - błysk w chmurze.
+
+                let distance = 150;
+                let ground = true;
+
+                for (const arg of args.slice(1)) {
+
+                    if (['chmura', 'wchmurze'].includes(simplify(arg).replace(/[-_ ]/g, ''))) {
+                        ground = false;
+                    }
+                    else {
+                        distance = parseNumber(arg, 'odległość pioruna');
+                    }
+
+                }
+
+                if (distance < 0 || distance > 6000) {
+                    throw new CommandError('Odległość pioruna: od 0 do 6000 bloków.');
+                }
+
+                if (!game.thunder) {
+                    throw new CommandError('Burza jest dostępna po wejściu do świata.');
+                }
+
+                const look = game.camera.getWorldDirection(game.camera.position.clone());
+                const flat = Math.hypot(look.x, look.z) || 1;
+
+                game.thunder.force(x + look.x / flat * distance, z + look.z / flat * distance, { ground });
+
+                const seconds = distance / THUNDER.soundSpeed;
+
+                return `${ground ? 'Piorun uderzy w ziemię' : 'Błyśnie w chmurze'} ${Math.round(distance)} bloków przed tobą; ` +
+                    (distance < THUNDER.audible
+                        ? `grzmot dojdzie po ${seconds < 1 ? 'niecałej sekundzie' : `ok. ${Math.round(seconds)} s`}.`
+                        : 'grzmotu z tej odległości nie słychać.');
+
+            }
+
+            if (word === 'grad' && args.length <= 2) {
+
+                const amount = args[1] === undefined ? 100 : parseNumber(args[1], 'natężenie gradu');
+
+                if (amount < 0 || amount > 100) {
+                    throw new CommandError('Natężenie gradu: od 0 do 100.');
+                }
+
+                weather.hailOverride = amount / 100;
+
+                return `Grad: ${amount}% do odwołania (/pogoda auto).`;
+
+            }
+
             throw usageError(this);
 
         },
 
         complete(args) {
 
-            if (args.length === 1) return ['prognoza', 'ustaw', 'znajdz', 'auto', 'deszcz', 'sucho', 'mgla', 'tecza'];
+            if (args.length === 1) return ['prognoza', 'ustaw', 'znajdz', 'auto', 'deszcz', 'sucho', 'mgla', 'tecza', 'piorun', 'grad'];
 
             const word = simplify(args[0]);
 
             if (args.length === 2 && ['ustaw', 'znajdz'].includes(word)) return KIND_WORDS;
             if (args.length === 2 && word === 'tecza') return ['wl', 'wyl'];
+            if (args.length >= 2 && args.length <= 3 && word === 'piorun') return ['chmura'];
             if (args.length === 3) return word === 'ustaw' ? ['nadciaga'] : word === 'znajdz' ? ['tp'] : [];
 
             return [];

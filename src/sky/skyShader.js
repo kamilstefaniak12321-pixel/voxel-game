@@ -61,6 +61,10 @@ export const skyUniforms = {
     uMeteorGlow: { value: new THREE.Color(0, 0, 0) },
     uSkyFlash: { value: new THREE.Color(0, 0, 0) },
 
+    // Błysk burzy (weather/Thunderstorm.js, ustawia Game.updateStorm):
+    // rozjaśnia całe niebo i mgiełkę na ułamek sekundy.
+    uStormFlash: { value: new THREE.Color(0, 0, 0) },
+
     // Kosmos (src/space/): 0 = zwykłe niebo, 1 = kamera wysoko nad
     // ziemią, niebo jest czarne. skyColor() zostaje kolorem powietrza
     // (mgiełka na terenie widzianym z góry), czernieje sama kopuła.
@@ -89,6 +93,7 @@ export const SKY_COLOR_GLSL = /* glsl */ `
     uniform vec3 uMeteorDirection;
     uniform vec3 uMeteorGlow;
     uniform vec3 uSkyFlash;
+    uniform vec3 uStormFlash;
 
     vec3 skyColor(vec3 direction) {
 
@@ -156,7 +161,7 @@ export const SKY_COLOR_GLSL = /* glsl */ `
 
         color += uMeteorGlow * (pow(meteor, 5.0) * 0.06 + pow(meteor, 30.0) * 0.35 + pow(meteor, 400.0) * 1.2);
 
-        color += uSkyFlash;
+        color += uSkyFlash + uStormFlash;
 
 
         return color;

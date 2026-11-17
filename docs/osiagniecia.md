@@ -77,6 +77,9 @@ tylko jako *Sekretne osiągnięcie* ze znakiem zapytania.
 | zwykłe | Niech sobie pada | przeczekaj deszcz pod dachem, w jaskini albo pod gęstą koroną drzewa (od 1.12.0) |
 | rzadkie | Siedem kolorów | zobacz tęczę: niskie słońce za plecami, deszcz przed tobą (od 1.12.0) |
 | zwykłe | Mleko | wejdź w gęstą poranną mgłę - najczęściej jesienią, przy czystym niebie i słabym wietrze (od 1.12.0) |
+| zwykłe | Raz, dwa, trzy... | bądź nie dalej niż kilometr od pioruna, który bije w ziemię (trzy sekundy do grzmotu to kilometr; od 1.13.0, piorun z komendy się nie liczy) |
+| rzadkie | O włos | przeżyj uderzenie pioruna bliżej niż 50 bloków od siebie (od 1.13.0) |
+| zwykłe | Kulki lodu | wyjdź pod gołe niebo, gdy pada grad - krótko, w samym środku najsilniejszych burz (od 1.13.0) |
 | rzadkie | Głowa w chmurach | wleć w niską chmurę - podstawa chmur jest ok. 210 bloków nad zerem (od 1.11.0) |
 | rzadkie | Z małego ziarenka | wyhoduj drzewo z sadzonki (`docs/drzewa.md`) |
 | rzadkie | Komplet narzędzi | zrób siekierę, kilof i łopatę (postęp w księdze) |

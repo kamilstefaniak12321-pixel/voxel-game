@@ -58,6 +58,7 @@ export const SETTING_WORDS = {
     chmury: 'clouds',
     'cienie-chmur': 'cloudShadows',
     'mokra-ziemia': 'wetGround',
+    blyski: 'stormFlashes',
     'swiatlo-odbite': 'bounceLight',
     'model-swiatla': 'lightingModel',
     odbicia: 'surfaceBounce',

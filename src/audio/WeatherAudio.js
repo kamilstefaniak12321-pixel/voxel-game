@@ -10,11 +10,14 @@
 // z rendering/RainStreaks.js - RainShelter). Dźwięk idzie przez głośność
 // "Otoczenie" i kanał gry (SoundManager), więc w pauzie milknie, a pod
 // wodą jest przytłumiony razem z resztą.
+//
+// Od 1.13.0: stukot gradu (krótkie, gęste trzaski z osobnego bufora)
+// i grzmoty (audio/ThunderAudio.js - korzystają z tego samego szumu).
 // ------------------------------------------------------------
 
 export const WEATHER_AUDIO = Object.freeze({
     // Największa głośność deszczu i wiatru (przed suwakami).
-    rain: 0.42, rumble: 0.3, wind: 0.34,
+    rain: 0.42, rumble: 0.3, wind: 0.34, hail: 0.5,
     // Filtr deszczu pod gołym niebem i w schronieniu (Hz).
     open: 9000, sheltered: 850,
     // Od jakiej prędkości wiatr słychać i przy jakiej jest najgłośniejszy.
@@ -29,7 +32,72 @@ const clamp01 = (x) => Math.max(0, Math.min(1, x));
 //   rain 0-1, drizzle 0-1, cover 0-1 (osłonięcie), speed (bloki/s),
 //   gust 0-1 (chwilowy poryw).
 
-export function weatherAudioLevels({ rain = 0, drizzle = 0, cover = 0, speed = 0, gust = 0 } = {}) {
+// Trzy sekundy szumu (zawsze ten sam - prosty generator); jeden bufor
+// na kontekst dźwięku, wspólny dla deszczu, wiatru i grzmotów.
+
+const NOISE = new WeakMap();
+
+export function weatherNoiseBuffer(context) {
+
+    let buffer = NOISE.get(context);
+
+    if (!buffer) {
+
+        buffer = context.createBuffer(1, Math.floor(context.sampleRate * 3), context.sampleRate);
+
+        const data = buffer.getChannelData(0);
+
+        let state = 0x1f123bb5;
+
+        for (let i = 0; i < data.length; i++) {
+            state = (Math.imul(state, 1664525) + 1013904223) | 0;
+            data[i] = (state >>> 0) / 2147483648 - 1;
+        }
+
+        NOISE.set(context, buffer);
+
+    }
+
+    return buffer;
+
+}
+
+
+// Stukot gradu: dwie sekundy gęstych, krótkich trzasków (około stu na
+// sekundę, każdy gaśnie w kilka milisekund).
+
+function hailBuffer(context) {
+
+    const buffer = context.createBuffer(1, Math.floor(context.sampleRate * 2), context.sampleRate);
+    const data = buffer.getChannelData(0);
+    const chance = 100 / context.sampleRate;
+    const fade = Math.exp(-1 / (0.0028 * context.sampleRate));
+
+    let state = 0x5e2d58d9;
+    let level = 0;
+
+    const random = () => {
+        state = (Math.imul(state, 1664525) + 1013904223) | 0;
+        return (state >>> 0) / 4294967296;
+    };
+
+    for (let i = 0; i < data.length; i++) {
+
+        if (random() < chance) {
+            level = Math.max(level, 0.25 + 0.75 * random() ** 2);
+        }
+
+        data[i] = (random() * 2 - 1) * level;
+        level *= fade;
+
+    }
+
+    return buffer;
+
+}
+
+
+export function weatherAudioLevels({ rain = 0, drizzle = 0, cover = 0, speed = 0, gust = 0, hail = 0 } = {}) {
 
     const r = clamp01(rain);
     const mist = clamp01(drizzle);
@@ -46,7 +114,10 @@ export function weatherAudioLevels({ rain = 0, drizzle = 0, cover = 0, speed = 0
         rainLow: 500 + 1700 * mist - 250 * r * (1 - mist),
         rainHigh: WEATHER_AUDIO.open + (WEATHER_AUDIO.sheltered - WEATHER_AUDIO.open) * roof,
         wind: WEATHER_AUDIO.wind * blow * blow * (0.65 + 0.7 * clamp01(gust)) * (1 - 0.65 * roof),
-        windTone: 260 + 520 * blow + 140 * clamp01(gust)
+        windTone: 260 + 520 * blow + 140 * clamp01(gust),
+        // Grad: stukot; pod dachem zostaje (bije w dach), tylko głuchszy.
+        hail: hail > 0.01 ? WEATHER_AUDIO.hail * clamp01(hail) ** 0.7 * (1 - 0.3 * roof) : 0,
+        hailTone: 3400 - 2200 * roof
     };
 
 }
@@ -86,22 +157,13 @@ export class WeatherAudio {
 
         this.release();
 
-        // Trzy sekundy szumu w pętli (zawsze ten sam - prosty generator).
-        const buffer = context.createBuffer(1, Math.floor(context.sampleRate * 3), context.sampleRate);
-        const data = buffer.getChannelData(0);
+        const buffer = weatherNoiseBuffer(context);
 
-        let state = 0x1f123bb5;
-
-        for (let i = 0; i < data.length; i++) {
-            state = (Math.imul(state, 1664525) + 1013904223) | 0;
-            data[i] = (state >>> 0) / 2147483648 - 1;
-        }
-
-        const source = (rate) => {
+        const source = (rate, sound = buffer) => {
 
             const node = context.createBufferSource();
 
-            node.buffer = buffer;
+            node.buffer = sound;
             node.loop = true;
             node.playbackRate.value = rate;
 
@@ -133,15 +195,17 @@ export class WeatherAudio {
 
         const nodes = {
             context,
-            sources: [source(1), source(0.6), source(0.35)],
+            sources: [source(1), source(0.6), source(0.35), source(1, hailBuffer(context))],
             rainLow: filter('highpass', 500), rainHigh: filter('lowpass', WEATHER_AUDIO.open), rain: gain(),
             rumbleBand: filter('bandpass', 240, 0.8), rumble: gain(),
-            windBand: filter('lowpass', 300, 1.4), wind: gain()
+            windBand: filter('lowpass', 300, 1.4), wind: gain(),
+            hailBand: filter('bandpass', 3400, 0.9), hail: gain()
         };
 
         nodes.sources[0].connect(nodes.rainLow).connect(nodes.rainHigh).connect(nodes.rain).connect(output);
         nodes.sources[1].connect(nodes.rumbleBand).connect(nodes.rumble).connect(output);
         nodes.sources[2].connect(nodes.windBand).connect(nodes.wind).connect(output);
+        nodes.sources[3].connect(nodes.hailBand).connect(nodes.hail).connect(output);
 
         for (const node of nodes.sources) {
             node.start();
@@ -175,6 +239,8 @@ export class WeatherAudio {
         nodes.rainHigh.frequency.setTargetAtTime(levels.rainHigh, now, 0.35);
         nodes.wind.gain.setTargetAtTime(levels.wind, now, 0.5);
         nodes.windBand.frequency.setTargetAtTime(levels.windTone, now, 0.5);
+        nodes.hail.gain.setTargetAtTime(levels.hail, now, 0.35);
+        nodes.hailBand.frequency.setTargetAtTime(levels.hailTone, now, 0.35);
 
     }
 
@@ -190,7 +256,7 @@ export class WeatherAudio {
             node.disconnect();
         }
 
-        for (const name of ['rain', 'rumble', 'wind']) {
+        for (const name of ['rain', 'rumble', 'wind', 'hail']) {
             this.nodes[name].disconnect();
         }
 

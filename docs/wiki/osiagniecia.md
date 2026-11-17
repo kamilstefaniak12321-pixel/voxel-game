@@ -2,7 +2,7 @@
 
 > Ta strona jest generowana z kodu gry (`python tools/wiki.py`) - nie zmieniaj jej ręcznie, zmiany przepadną przy następnym generowaniu.
 
-Wersja gry **1.12.0** - 83 osiągnięć. Księga osiągnięć: klawisz **L**. Uwaga, spoilery: sekretne osiągnięcia są tu opisane (w grze widać tylko „???”).
+Wersja gry **1.13.0** - 86 osiągnięć. Księga osiągnięć: klawisz **L**. Uwaga, spoilery: sekretne osiągnięcia są tu opisane (w grze widać tylko „???”).
 
 
 ## Zwykłe (10 pkt)
@@ -58,6 +58,8 @@ Wersja gry **1.12.0** - 83 osiągnięć. Księga osiągnięć: klawisz **L**. Uw
 | <img src="ikony/lamp.png" width="32" height="32" alt=""> | **Ani jednej chmurki** | Bądź w środku wyżu w biały dzień: nad tobą samo niebieskie niebo. | „Idealna pogoda na cokolwiek. Szkoda, że cokolwiek to znowu kopanie.” |
 | <img src="ikony/oak_planks.png" width="32" height="32" alt=""> | **Niech sobie pada** | Przeczekaj deszcz pod dachem, w jaskini albo pod gęstą koroną drzewa - tam krople nie dolatują. | „Dach: wynalazek, który docenia się dopiero w deszczu.” |
 | <img src="ikony/lamp.png" width="32" height="32" alt=""> | **Mleko** | Wejdź w gęstą poranną mgłę (zbiera się przed świtem przy czystym niebie i słabym wietrze, najczęściej jesienią). | „Widoczność: własne buty. I to tylko lewy.” |
+| <img src="ikony/lamp_purple.png" width="32" height="32" alt=""> | **Raz, dwa, trzy...** | Bądź nie dalej niż kilometr od pioruna, który bije w ziemię - i policz sekundy do grzmotu (trzy sekundy to kilometr). | „Fizyka dźwięku w praktyce. Stanie pod drzewem w praktyce: zły pomysł.” |
+| <img src="ikony/snow.png" width="32" height="32" alt=""> | **Kulki lodu** | Wyjdź pod gołe niebo, gdy pada grad (krótko, w samym środku najsilniejszych burz). | „Darmowy lód do napojów. Dostawa prosto na głowę.” |
 | <img src="ikony/mikolajek_etap3.png" width="32" height="32" alt=""> | **Nie dotykać** | Wejdź w kłującą roślinę. | „Mikołajek nie przynosi prezentów. Mikołajek kłuje.” |
 | <img src="ikony/zawilec_etap3.png" width="32" height="32" alt=""> | **Coś wisi w powietrzu** | Doczekaj zmiany pory roku. | „Wczoraj jedno kwitło, dziś drugie. Kalendarz nie pyta o zgodę.” |
 
@@ -74,6 +76,7 @@ Wersja gry **1.12.0** - 83 osiągnięć. Księga osiągnięć: klawisz **L**. Uw
 | <img src="ikony/banyan_fig.png" width="32" height="32" alt=""> | **Smaki dalekich stron** | Zjedz figę, owoc baobabu, jagody draceny, kwiaty jukki, orzeszki araukarii i kokos (zbiera się je PPM z liści, na których rosną). | „Sześć smaków, sześć stref klimatycznych. Żołądek prosi o przewodnik.” |
 | <img src="ikony/mangrove_propagule.png" width="32" height="32" alt=""> | **Ogrodnik przypływów** | Posadź namorzyn w płytkiej wodzie (sadzonka albo siewka kliknięta w piaszczyste lub błotniste dno). | „Inni sadzą w ziemi. Ty postanowiłeś zaufać morzu.” |
 | <img src="ikony/lamp_blue.png" width="32" height="32" alt=""> | **Siedem kolorów** | Zobacz tęczę: niskie słońce za plecami, deszcz przed tobą. | „Garnka złota na końcu nie ma. Sprawdzono. Dwa razy.” |
+| <img src="ikony/fire_starter.png" width="32" height="32" alt=""> | **O włos** | Przeżyj uderzenie pioruna bliżej niż 50 bloków od siebie. | „Włosy stanęły dęba. To nie ze strachu, to elektrostatyka. Na pewno.” |
 | <img src="ikony/lamp_blue.png" width="32" height="32" alt=""> | **Głowa w chmurach** | Wleć w niską chmurę (podstawa chmur jest wysoko nad najwyższymi górami). | „Biało, mokro i nic nie widać. Dokładnie tak, jak mówili.” |
 | <img src="ikony/pickaxe.png" width="32" height="32" alt=""> | **Komplet narzędzi** | Zrób siekierę, kilof i łopatę (postęp liczy się w księdze). | „Teraz brakuje tylko skrzynki na narzędzia. I garażu. I warsztatu.” |
 | <img src="ikony/oak_sapling.png" width="32" height="32" alt=""> | **Z małego ziarenka** | Wyhoduj drzewo z sadzonki. | „Wyrosło! Teraz tylko sto lat i będzie z niego porządny dąb. Albo brzoza.” |

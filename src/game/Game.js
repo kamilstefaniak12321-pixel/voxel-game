@@ -77,6 +77,11 @@ import { WaterImpactRipples } from '../rendering/WaterImpactRipples.js';
 import { RainEffects } from '../rendering/RainEffects.js';
 import { RainStreaks } from '../rendering/RainStreaks.js';
 import { WeatherAudio } from '../audio/WeatherAudio.js';
+import { Thunderstorm } from '../weather/Thunderstorm.js';
+import { LightningBolts } from '../rendering/LightningBolts.js';
+import { Hail } from '../rendering/Hail.js';
+import { ThunderAudio } from '../audio/ThunderAudio.js';
+import { meteorLightUniforms } from '../rendering/meteorLight.js';
 import { BlockCracks } from '../interaction/BlockCracks.js';
 import { COLOR_LEVEL } from '../world/Light.js';
 import { Wellbeing } from './Wellbeing.js';
@@ -110,6 +115,12 @@ import {
 
 const HIGH_VIEW = 1100;
 
+
+const NO_STRIKES = Object.freeze([]);
+
+// Światło błysku burzy (updateStorm): kolor (sinobiały), siła na terenie
+// dla pioruna do ziemi i dla błysku w chmurze, rozjaśnienie nieba.
+const STORM_LIGHT = Object.freeze({ color: [0.74, 0.82, 1.0], ground: 1.3, cloud: 1.1, sky: 0.2 });
 
 // Wilgotność klimatu dla pogody: (x, z) => -1..1 albo null, gdy
 // generator jej nie ma (płaski świat). Zapamiętywana w oczkach po 256
@@ -613,6 +624,16 @@ export class Game extends GameInteraction {
         this.weatherAudio = new WeatherAudio(this);
         this.rainNow = 0;
         this.shelterCover = 0;
+
+        // Burza (1.13.0): wyładowania z czasu gry i ziarna (Thunderstorm),
+        // kanał pioruna (LightningBolts), grzmot spóźniony o odległość
+        // (ThunderAudio) i grad (Hail).
+        this.thunder = new Thunderstorm(this.weather, { groundAt: (x, z) => this.stormGround(x, z) });
+        this.lightning = new LightningBolts(this.scene);
+        this.thunderAudio = new ThunderAudio(this);
+        this.hail = new Hail(this.scene, this.rainStreaks);
+        this.hailNow = 0;
+        this.stormLight = false;
         this.waterLandingRevision = -1;
         for (const effect of [this.wetRocks, this.waterImpacts, this.rain, this.rainStreaks]) {
             effect.setAmount(this.settings.get('potato') ? .35 : 1);
@@ -936,6 +957,11 @@ export class Game extends GameInteraction {
 
         this.meteorites.update(dt);
 
+        // Burza: błyski, pioruny, grzmoty (po meteorytach - światło błysku
+        // na terenie dzieli z nimi jedno miejsce w shaderach).
+
+        this.updateStorm(dt);
+
         // Odłamki niszczonych bloków.
 
         this.debris.update(dt);
@@ -1013,6 +1039,101 @@ export class Game extends GameInteraction {
 
     }
 
+    // Wysokość ziemi w miejscu, w które bije piorun: z wczytanych bloków
+    // (razem z drzewami), dalej - z generatora terenu.
+
+    stormGround(x, z) {
+
+        const ix = Math.floor(x);
+        const iz = Math.floor(z);
+
+        if (this.world.getChunk(Math.floor(ix / CHUNK_SIZE), Math.floor(iz / CHUNK_SIZE))?.blocks) {
+            return this.world.getSurfaceY(ix, iz);
+        }
+
+        return (this.world.generator.getHeight?.(ix, iz) ?? 0) + 1;
+
+    }
+
+
+    // Burza (weather/Thunderstorm.js): które wyładowania właśnie błyskają,
+    // kanały piorunów, grzmoty i światło błysku na terenie i niebie.
+
+    updateStorm(dt) {
+
+        const profile = this.perfDiagnostics;
+        const thunder = this.thunder;
+        const camera = this.camera;
+
+        profile?.beginStage('weather');
+
+        thunder.mode = this.settings.get('stormFlashes');
+        thunder.update(this.time.days, camera.position);
+
+        // Grzmot każdego nowego wyładowania - dojdzie, gdy doleci dźwięk.
+
+        for (const strike of thunder.started) {
+            this.thunderAudio.play(strike, this.shelterCover);
+        }
+
+        this.lightning.update(thunder.order, camera,
+            2 * Math.tan(camera.fov * Math.PI / 360) / Math.max(1, this.renderer.domElement.height));
+
+        // Światło błysku na terenie, modelach i dalekim terenie: to samo
+        // miejsce w shaderach co kula ognia meteorytu (meteorLight.js) -
+        // meteoryt ma pierwszeństwo. Błysk świeci tylko tam, dokąd
+        // dochodzi światło nieba.
+
+        const light = thunder.light;
+        const meteor = meteorLightUniforms.uMeteorColor.value;
+
+        this.stormLight = light.level > 0.002 && meteor.x + meteor.y + meteor.z <= 0;
+
+        if (this.stormLight) {
+
+            const power = light.level * (light.ground ? STORM_LIGHT.ground : STORM_LIGHT.cloud);
+
+            meteorLightUniforms.uMeteorPosition.value.set(light.x, light.y, light.z);
+            meteor.set(STORM_LIGHT.color[0] * power, STORM_LIGHT.color[1] * power, STORM_LIGHT.color[2] * power);
+            meteorLightUniforms.uMeteorRange.value = light.range;
+
+        }
+
+        meteorLightUniforms.uMeteorSky.value = this.stormLight ? 1 : 0;
+
+        // Niebo i mgiełka rozjaśniają się razem z błyskiem.
+
+        const sky = thunder.sky * STORM_LIGHT.sky;
+
+        skyUniforms.uStormFlash.value.setRGB(STORM_LIGHT.color[0] * sky, STORM_LIGHT.color[1] * sky, STORM_LIGHT.color[2] * sky);
+
+        profile?.endStage('weather');
+
+    }
+
+
+    // Gaszenie światła błysku, gdy burza się nie liczy (wczytywanie terenu).
+
+    clearStormLight() {
+
+        if (this.stormLight) {
+            meteorLightUniforms.uMeteorColor.value.set(0, 0, 0);
+            meteorLightUniforms.uMeteorSky.value = 0;
+            this.stormLight = false;
+        }
+
+        skyUniforms.uStormFlash.value.setRGB(0, 0, 0);
+
+        // Kanały piorunów i poświata w chmurach też gasną.
+
+        if (this.lightning?.active) {
+            this.lightning.update(NO_STRIKES, this.camera, 0.003);
+        }
+
+        this.thunder?.clearUniforms();
+
+    }
+
     waterSurfaceMaterials() {
         return [...(this.waterfalls?.materials ?? (this.waterfalls ? [this.waterfalls.ripples.material] : [])),
             this.wetRocks?.material, this.waterImpacts?.material].filter(Boolean);
@@ -1047,11 +1168,16 @@ export class Game extends GameInteraction {
         this.rainNow = rain;
         this.rainStreaks.update(dt, this.camera, rain, drizzle, this.weather.wind, this.sky.state);
 
-        // Szum deszczu i wiatru; pod dachem i w jaskini przytłumiony.
+        // Grad - w środku najsilniejszych burz (albo z komendy).
+        this.hailNow = this.weather.hail;
+        this.hail.update(dt, this.hailNow, this.weather.wind, this.sky.state);
+
+        // Szum deszczu i wiatru, stukot gradu; pod dachem i w jaskini
+        // przytłumione.
         const eye = this.camera.position;
 
         this.shelterCover = this.rainStreaks.shelter.cover(eye.x, eye.y, eye.z);
-        this.weatherAudio.update({ rain, drizzle, cover: this.shelterCover, speed: this.weather.wind.speed, gust: this.weather.wind.gust });
+        this.weatherAudio.update({ rain, drizzle, cover: this.shelterCover, speed: this.weather.wind.speed, gust: this.weather.wind.gust, hail: this.hailNow });
         // One shared discovery allowance for persistent and short-lived rings.
         this.waterImpacts.update(dt, this.player, Math.max(0, 48 - this.waterfalls.ripples.surface.lastProcessed));
     }
@@ -1074,6 +1200,7 @@ export class Game extends GameInteraction {
         this.farTerrain.update(this.camera.position);
         profile?.endStage('far');
         this.updateWeather(dt);
+        this.clearStormLight();
         profile?.beginStage('light');
         this.sky.update(this.time.days, dt, this.renderer.getPixelRatio());
         this.weather.setLight(this.sky.clouds.uniforms.uCloudLight.value, this.sky.clouds.active);
@@ -1496,6 +1623,10 @@ export class Game extends GameInteraction {
 
             profile?.beginStage('farDraw');
             this.farTerrain.render(renderer, camera);
+
+            // Dalekie pioruny: po dalekim terenie (góry je zasłaniają),
+            // przed bliskim światem.
+            this.lightning?.renderFar(renderer, camera, this.farTerrain);
             profile?.endStage('farDraw');
 
             if (drawn) drawn.far += calls.calls - callsBefore;
@@ -2626,8 +2757,14 @@ export class Game extends GameInteraction {
         this.wetRocks.dispose();
         this.waterImpacts.dispose();
         this.rain.dispose();
+        this.hail.dispose();
         this.rainStreaks.dispose();
         this.weatherAudio.dispose();
+        this.thunderAudio.dispose();
+        this.lightning.dispose();
+        this.thunder.dispose();
+        this.stormLight = true;
+        this.clearStormLight();
 
         this.weather.dispose();
         plantWindUniforms.uPlantSway.value = this.settings.get('plantWind') ? 1 : 0;

@@ -66,6 +66,7 @@ export const SETTINGS_DEFAULTS = {
     clouds: 'pelne',                               // chmury: 'pelne' - z bokami i wierzchem, 'plaskie' - tańsze, 'brak'
     cloudShadows: true,                            // cienie chmur sunące po terenie
     wetGround: true,                               // mokra ziemia i kałuże po deszczu
+    stormFlashes: 'pelne',                         // błyski burzy: 'pelne', 'lagodne' (bez migotania), 'brak' (teren i niebo nie błyskają)
     fancyLeaves: true,                             // liście z prześwitami (false = szybkie, pełne)
     dynamicLight: true,                            // lampa w ręce, meteoryty...
     loadBudget: CHUNK_LOAD_BUDGET_MS,              // ms na klatkę na wczytywanie chunków
@@ -167,6 +168,7 @@ export const SETTINGS_CHOICES = {
     lightingLook: ['natural', 'baseline'],
     atmosphereLook: ['natural', 'baseline'],
     clouds: ['pelne', 'plaskie', 'brak'],
+    stormFlashes: ['pelne', 'lagodne', 'brak'],
     lightingMaterials: ['basic', 'standard', 'high'],
     farDetail: [1, 2, 3],
     jointStyle: ['smooth', 'blocks'],

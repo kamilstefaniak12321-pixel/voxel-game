@@ -773,7 +773,7 @@ const random = () => { state = (Math.imul(state, 1664525) + 1013904223) | 0; ret
     assert.throws(() => command.run([], { game: null, player, world }), 'Poza światem /pogoda nie działa');
     checks++;
 
-    equal(command.complete(['']), ['prognoza', 'ustaw', 'znajdz', 'auto', 'deszcz', 'sucho', 'mgla', 'tecza'], 'Podpowiedzi: polecenia');
+    equal(command.complete(['']), ['prognoza', 'ustaw', 'znajdz', 'auto', 'deszcz', 'sucho', 'mgla', 'tecza', 'piorun', 'grad'], 'Podpowiedzi: polecenia');
     check(command.complete(['ustaw', '']).includes('front-chlodny') && command.complete(['znajdz', '']).includes('burza'), 'Podpowiedzi: rodzaje pogody');
     equal(command.complete(['ustaw', 'burza', '']), ['nadciaga'], 'Podpowiedzi: nadciaga');
     equal(command.complete(['znajdz', 'burza', '']), ['tp'], 'Podpowiedzi: tp');

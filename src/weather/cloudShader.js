@@ -70,7 +70,20 @@ export const cloudUniforms = {
     uSkyOptics: { value: new THREE.Vector4(0, 0, 0, 0) },
 
     // Mokra ziemia i kałuże na terenie: 1 - wł., 0 - wył. (ustawienie).
-    uWetness: { value: 0 }
+    uWetness: { value: 0 },
+
+    // Burza (od 1.13.0): x - czy w okolicy jest burza (ciemniejsze chmury),
+    // y - czy coś teraz błyska (0/1).
+    uStorm: { value: new THREE.Vector4(0, 0, 0, 0) },
+
+    // Błyski w chmurach (weather/Thunderstorm.js): xy - miejsce (x, z
+    // świata), z - promień poświaty, w - poziom błysku.
+    uCloudFlash: { value: [new THREE.Vector4(0, 0, 1, 0), new THREE.Vector4(0, 0, 1, 0), new THREE.Vector4(0, 0, 1, 0)] },
+    uCloudFlashColor: { value: new THREE.Color(0.74, 0.82, 1.0) },
+
+    // Grad na ziemi: xy - miejsce, w którym spadł (x, z świata),
+    // z - ile go leży (0-1).
+    uHailGround: { value: new THREE.Vector3(0, 0, 0) }
 
 };
 
@@ -156,6 +169,24 @@ export const CLOUD_SHADOW_GLSL = /* glsl */ `
 
     }
 
+    // Grad na ziemi (od 1.13.0): białe ziarna na płaskich wierzchach
+    // w okolicy miejsca, gdzie spadł - 0 albo 1 dla piksela tekstury.
+    uniform vec3 uHailGround;
+
+    float hailAt(vec3 worldPosition) {
+
+        if (uHailGround.z <= 0.0) {
+            return 0.0;
+        }
+
+        vec2 q = floor(worldPosition.xz * 16.0);
+        float grain = fract(sin(dot(mod(q, 509.0), vec2(12.9898, 78.233))) * 43758.5453);
+        float near = 1.0 - smoothstep(70.0, 150.0, length(worldPosition.xz - uHailGround.xy));
+
+        return step(1.0 - 0.2 * uHailGround.z * near, grain);
+
+    }
+
     // Opad nad danym miejscem (0-1) - daleki teren pod deszczem tonie
     // w szarej zasłonie. Bez deszczu w okolicy nic nie czyta.
     uniform vec4 uRainVeil;
@@ -190,6 +221,9 @@ export const CLOUD_LAYERS_GLSL = /* glsl */ `
     uniform vec4 uRainVeil;         // x czy pada w okolicy, y kierunek wiatru, z pochylenie
     uniform vec3 uRainVeilColor;    // kolor zasłony deszczu
     uniform vec4 uSkyOptics;        // x tęcza, y halo
+    uniform vec4 uStorm;            // x burza w okolicy, y coś błyska
+    uniform vec4 uCloudFlash[3];    // błyski: xy miejsce, z promień, w poziom
+    uniform vec3 uCloudFlashColor;
 
     const float CLOUD_CELL = ${CLOUD_CELL.toFixed(1)};
     const float CLOUD_REACH = ${CLOUD_REACH.toFixed(1)};
@@ -230,6 +264,21 @@ export const CLOUD_LAYERS_GLSL = /* glsl */ `
 
     float cloudHaze(float range) {
         return 1.0 - exp(-range / 7000.0);
+    }
+
+    // Poświata błysków w miejscu p (x, z świata): chmura świeci wokół
+    // wyładowania. Wołane tylko, gdy coś błyska (uStorm.y).
+    float cloudFlash(vec2 p) {
+
+        float glow = 0.0;
+
+        for (int i = 0; i < 3; i++) {
+            vec2 d = p - uCloudFlash[i].xy;
+            glow += uCloudFlash[i].w * exp(-dot(d, d) / (uCloudFlash[i].z * uCloudFlash[i].z));
+        }
+
+        return glow;
+
     }
 
     // Mieszanie "z przodu na tył": front zasłania to, co za nim.
@@ -390,13 +439,26 @@ export const CLOUD_LAYERS_GLSL = /* glsl */ `
         float direct = mix((0.25 + 0.75 * facing) * exp(-blocked / 70.0) * (0.66 + 0.6 * billow), 0.85 * exp(-column / 45.0), bottom);
         float ambient = grain * mix(
             mix(0.7, 1.0, clamp(above / 160.0, 0.0, 1.0)) * (normal.y > 0.5 ? 1.0 : 0.84),
-            mix(0.3, 0.96, exp(-column / 260.0)),
+            mix(0.3, 0.96, exp(-column / 200.0)),
             bottom);
 
         // Spód o wschodzie i zachodzie świeci od dołu.
         vec3 color = uCloudShade * ambient
             + uCloudLit * uCloudLayerLit.x * direct
             + uCloudGlow * (0.3 + 0.7 * bottom) * (0.35 + 0.65 * depth);
+
+        // Chmura burzowa jest ciemna i sina - tym bardziej, im silniejsza
+        // burza w tym miejscu (kanał G drugiej mapy pogody).
+        if (uStorm.x > 0.5) {
+            float storm = textureLod(uWeatherRain, p.xz * uWeatherScale, 0.0).g;
+            color *= mix(vec3(1.0), vec3(0.4, 0.44, 0.55), smoothstep(0.0, 0.7, storm) * mix(0.85, 1.0, bottom));
+        }
+
+        // Błysk: podstawa świeci najmocniej (światło wychodzi dołem),
+        // boki i wierzch słabiej.
+        if (uStorm.y > 0.5) {
+            color += uCloudFlashColor * cloudFlash(p.xz) * mix(0.7, 1.15, bottom);
+        }
 
         float range = t * flat2;
         float alpha = mix(1.0, clamp(0.62 + column / 48.0, 0.0, 1.0), bottom) * cloudFade(range);
@@ -456,6 +518,11 @@ export const CLOUD_LAYERS_GLSL = /* glsl */ `
             + uCloudLit * uCloudLayerLit.y * mix(0.7, 0.22, dense)
             + uCloudGlow * 0.8;
 
+        // Błysk pod chmurami średnimi (kowadło burzy) - słabszy.
+        if (uStorm.y > 0.5) {
+            color += uCloudFlashColor * cloudFlash(point) * 0.4;
+        }
+
         color = mix(color, sky, cloudHaze(range));
 
         return vec4(color, alpha);
@@ -500,6 +567,10 @@ export const CLOUD_LAYERS_GLSL = /* glsl */ `
         float alpha = (0.1 + 0.4 * dense) * cloudFade(range);
         vec3 color = uCloudShade * 0.5 + uCloudLit * uCloudLayerLit.z * 0.9 + uCloudGlow * 0.6;
 
+        if (uStorm.y > 0.5) {
+            color += uCloudFlashColor * cloudFlash(point) * 0.3;
+        }
+
         color = mix(color, sky, cloudHaze(range) * 0.8);
 
         return vec4(color, alpha);
@@ -543,9 +614,17 @@ export const CLOUD_LAYERS_GLSL = /* glsl */ `
             return vec4(0.0);
         }
 
-        float alpha = (1.0 - exp(-depth / 380.0)) * (0.72 + 0.4 * streaks);
+        // Stromo w górę zasłona jest cienka - zanika łagodnie (bez kręgu
+        // nad głową).
+        float alpha = (1.0 - exp(-depth / 380.0)) * (0.72 + 0.4 * streaks) * smoothstep(220.0, 800.0, reach);
+        vec3 color = mix(uRainVeilColor, sky, 0.1);
 
-        return vec4(mix(uRainVeilColor, sky, 0.1), clamp(alpha, 0.0, 0.94));
+        // Deszcz rozprasza błysk: zasłona jaśnieje razem z chmurą.
+        if (uStorm.y > 0.5) {
+            color += uCloudFlashColor * cloudFlash(ro.xz + step2 * min(reach, 1400.0) * 0.6) * 0.5;
+        }
+
+        return vec4(color, clamp(alpha, 0.0, 0.94));
 
     }
 

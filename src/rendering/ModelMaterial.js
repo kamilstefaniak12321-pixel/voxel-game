@@ -238,7 +238,7 @@ export function createModelMaterial({ map = null, alphaTest = 0, glow = 0, verte
 
                 // Kula ognia meteorytu (rendering/meteorLight.js).
 
-                outgoingLight += surfaceLocalRadiance(modelTexel, meteorLight(vWorldPosition, vWorldNormal) + campfireLight(vWorldPosition, vWorldNormal));
+                outgoingLight += surfaceLocalRadiance(modelTexel, meteorLight(vWorldPosition, vWorldNormal) * meteorSky(modelSky) + campfireLight(vWorldPosition, vWorldNormal));
 
                 // Świecący blok w ręce (lampa) jest jasny sam z siebie.
 

@@ -67,7 +67,7 @@ const WEATHER_BUDGET_MS = 3;
 const WEATHER_COLORS = {
     high: [255, 255, 255], mid: [214, 220, 228], low: [246, 247, 250], dark: [70, 76, 90],
     rain: [44, 104, 232], storm: [206, 62, 224], fog: [236, 226, 196],
-    front_cieply: '#e23b2e', front_chlodny: '#2b5fe0', wind: '#101418'
+    front_cieply: '#e23b2e', front_chlodny: '#2b5fe0', wind: '#101418', strike: '#ffe45c'
 };
 
 // Rzeki i jeziora na mapie.
@@ -257,6 +257,10 @@ export class TerrainMap {
 
         // Pogoda (weather/Weather.js) do warstwy 'pogoda' - ustawia main.js.
         this.weather = null;
+
+        // Burza (weather/Thunderstorm.js) - świeże wyładowania na warstwie
+        // 'pogoda'; ustawia main.js.
+        this.thunder = null;
 
 
         this.canvas.addEventListener('mousemove', (event) => this.onHover(event));
@@ -683,6 +687,27 @@ export class TerrainMap {
 
         context.stroke();
 
+        // Wyładowania z ostatniej minuty: żółte znaczki - krzyżyk to
+        // piorun w ziemię, kropka - błysk w chmurze.
+
+        context.fillStyle = WEATHER_COLORS.strike;
+
+        for (const strike of this.thunder?.recent ?? []) {
+
+            const [mx, mz] = toMap(strike.x, strike.z);
+
+            if (mx < 1 || mz < 1 || mx > MAP_SIZE - 2 || mz > MAP_SIZE - 2) continue;
+
+            if (strike.ground) {
+                context.fillRect(Math.round(mx) - 2, Math.round(mz), 5, 1);
+                context.fillRect(Math.round(mx), Math.round(mz) - 2, 1, 5);
+            }
+            else {
+                context.fillRect(Math.round(mx), Math.round(mz), 2, 2);
+            }
+
+        }
+
     }
 
 
@@ -961,7 +986,7 @@ export class TerrainMap {
         else if (this.layer === 'pogoda') {
 
             entries.push(['#f6f7fa', 'chmury niskie'], ['#464c5a', 'piętrzące się (deszczowe, burzowe)'], ['#aab4c0', 'średnie i wysokie'],
-                ['#2c68e8', 'opad'], ['#ce3ee0', 'burza'], ['#ece2c4', 'mgła'], [WEATHER_COLORS.front_cieply, 'front ciepły'], [WEATHER_COLORS.front_chlodny, 'front chłodny'],
+                ['#2c68e8', 'opad'], ['#ce3ee0', 'burza'], [WEATHER_COLORS.strike, 'wyładowania (krzyżyk - piorun w ziemię)'], ['#ece2c4', 'mgła'], [WEATHER_COLORS.front_cieply, 'front ciepły'], [WEATHER_COLORS.front_chlodny, 'front chłodny'],
                 [WEATHER_COLORS.wind, 'strzałki: wiatr']);
 
         }

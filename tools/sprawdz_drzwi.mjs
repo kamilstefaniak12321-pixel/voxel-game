@@ -278,6 +278,29 @@ for (const { wood } of WOODS) {
     check(game.shadows.marked === marked, 'Stojący model nie przerysowuje mapy cieni');
     check(doors.moving(view) === false, 'Po animacji model stoi');
 
+    // Światło płyty: z własnej komórki, a oglądanej zza zasłoniętej ściany -
+    // z komórki po tamtej stronie (drzwi z ciemnego pokoju są ciemne).
+    {
+        const lit = doors.createView('swiatlo', 4, 10, 4, W.shapeInfo(W.shapeId('oak', 'door', { facing: 'south' })));
+        game.world.getBlockId = () => W.shapeId('oak', 'door', { facing: 'south' });
+        game.camera = { position: new THREE.Vector3(4.5, 11, 0) };
+        check(doors.lightCell(lit, [0, 0, 0]).join() === '4,10,4', 'Kamera przed drzwiami: światło z komórki drzwi');
+        game.camera.position.set(4.5, 11, 9);
+        check(doors.lightCell(lit, [0, 0, 0]).join() === '4,10,5', 'Kamera za płytą (południe): światło z komórki za drzwiami');
+        game.world.getBlockId = () => W.shapeId('oak', 'trapdoor', { half: 'top' });
+        game.camera.position.set(4.5, 14, 4.5);
+        check(doors.lightCell(lit, [0, 0, 0]).join() === '4,11,4', 'Górna klapa oglądana z góry: światło znad klapy');
+        game.world.getBlockId = () => W.shapeId('oak', 'trapdoor', { facing: 'west', open: true });
+        game.camera.position.set(-3, 10.5, 4.5);
+        check(doors.lightCell(lit, [0, 0, 0]).join() === '3,10,4', 'Otwarta klapa przy zachodniej ścianie oglądana z zachodu');
+        // Za płytą mur - zostaje własna komórka (otwarte drzwi przy ścianie).
+        const trapId = W.shapeId('oak', 'trapdoor', { facing: 'west', open: true });
+        game.world.getBlockId = (x) => (x === 3 ? getBlockId('stone') : trapId);
+        check(doors.lightCell(lit, [0, 0, 0]).join() === '4,10,4', 'Płyta przy murze oglądana "przez mur": światło z własnej komórki');
+        doors.removeView('swiatlo');
+        delete game.camera;
+    }
+
     // Pęknięcia przypięte do płyty.
     game.doors = doors;
     game.world.getBlockId = () => W.shapeId('oak', 'trapdoor');

@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { CHUNK_SIZE, SHADOW_INDOOR_DARKNESS } from '../config.js';
-import { COLOR_LEVEL, lightToBrightness } from '../world/Light.js';
+import { COLOR_LEVEL, FACE_BLOCK, lightToBrightness } from '../world/Light.js';
 import { atmosphericLightToBrightness } from './LightPolicy.js';
 import { createModelMaterial } from './ModelMaterial.js';
 import { blockAtlasTexture } from './TextureAtlas.js';
@@ -8,6 +8,7 @@ import { setPotatoDefine } from './BlockRenderData.js';
 import { buildFacesGeometry, doorFaces, trapdoorFaces } from './ShapeGeometry.js';
 import { MODEL_CASTER_MATERIAL } from './Shadows.js';
 import { shapeInfo } from '../blocks/woodShapes.js';
+import { isOpaqueId } from '../blocks/BlockRegistry.js';
 import { TABLE_ROTATION } from './CarpenterTableRenderer.js';
 
 // ------------------------------------------------------------
@@ -83,6 +84,7 @@ export class DoorRenderer {
         this.chunks = new Map();
         this.geometries = new Map();
         this.syncWait = 0;
+        this.cell = [0, 0, 0];
         this.time = 0;
         this.lowDetail = Boolean(game.settings?.get('potato'));
     }
@@ -203,8 +205,37 @@ export class DoorRenderer {
         this.game.shadows?.markModel(view.x, view.y, view.z);
     }
 
+    // Komórka, z której płyta bierze światło: własna albo - gdy kamera
+    // patrzy na płytę od strony ściany, którą ta zasłania - sąsiednia za
+    // tą ścianą. Dzięki temu zamknięte drzwi oglądane z ciemnego pokoju
+    // są ciemne, a nie oświetlone słońcem z drugiej strony.
+    lightCell(view, out) {
+        out[0] = view.x; out[1] = view.y; out[2] = view.z;
+        const world = this.game.world, camera = this.game.camera?.position;
+        const mask = world.getBlockId ? FACE_BLOCK[world.getBlockId(view.x, view.y, view.z)] : 0;
+        if (!mask || !camera) return out;
+        for (let k = 0; k < 6; k++) {
+            if (!(mask & (1 << k))) continue;
+            const axis = k >> 1, sign = k & 1 ? 1 : -1;
+            // Kierunki 0-5: zachód, wschód, północ, południe, góra, dół.
+            const index = axis === 0 ? 0 : axis === 1 ? 2 : 1;
+            const direction = axis === 2 ? -sign : sign;
+            const plane = out[index] + (direction > 0 ? 1 : 0);
+            const position = index === 0 ? camera.x : index === 1 ? camera.y : camera.z;
+            if ((position - plane) * direction > 0) {
+                out[index] += direction;
+                // Za płytą jest ściana (np. otwarte drzwi stojące przy
+                // murze) - tam światła nie ma, zostaje własna komórka.
+                if (isOpaqueId(world.getBlockId(out[0], out[1], out[2]))) out[index] -= direction;
+            }
+            break;
+        }
+        return out;
+    }
+
     updateLight(view) {
-        const light = this.game.world.getLight(view.x, view.y, view.z);
+        const [lx, ly, lz] = this.lightCell(view, this.cell);
+        const light = this.game.world.getLight(lx, ly, lz);
         const brightness = this.game.sky?.atmosphere ? atmosphericLightToBrightness : lightToBrightness;
         const sky = brightness(light.sky);
         const strongest = Math.max(light.red, light.green, light.blue);

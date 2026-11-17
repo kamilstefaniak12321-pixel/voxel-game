@@ -138,8 +138,9 @@ export function crackGeometry(boxes, tall = false, offset = [0, 0, 0]) {
 
 const FULL_BOX = [[0, 0, 0, 1, 1, 1]];
 
-// Jak mocno rozjaśniają rysy na ciemnym bloku (1 = dwa razy jaśniej).
-const LIGHTEN = 1.1;
+// Jak mocno rozjaśniają rysy na ciemnym bloku (1 = dwa razy jaśniej;
+// przy 1,1 rysy na próchnicy ginęły w jej własnym wzorze).
+const LIGHTEN = 1.5;
 
 const VERTEX = /* glsl */`
     varying vec2 vUv;

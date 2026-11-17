@@ -174,8 +174,11 @@ Czego jeszcze nie ma (stan na 1.16.0):
   na otwarcie / zamknięcie), a nie płynnie z kątem płyty,
 - płyta nie rzuca cienia w dalekich mapach cieni (ponad 64 bloki od
   gracza), w świetle ogniska ani w smugach światła,
-- sama komórka drzwi jest oświetlona od strony, z której płyta jej nie
-  zasłania - płyta oglądana z drugiej strony ma to samo światło,
+- cała płyta ma jedno światło naraz: z komórki po tej stronie, z której
+  patrzy kamera (zamknięte drzwi z ciemnego pokoju są ciemne, z dworu
+  jasne). Dwóch graczy po dwóch stronach drzwi widzi je więc różnie,
+  a obie strony płyty w jednym kadrze (drzwi w połowie ruchu) mają to
+  samo światło,
 - gość w grze wieloosobowej widzi przełączenie światła od razu (bez
   czekania na koniec zamykania),
 - dźwięków nie dało się odsłuchać w środowisku testowym - są policzone

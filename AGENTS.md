@@ -73,3 +73,8 @@ cztery poziome pasy z przesuniętymi łączeniami, delikatny rysunek drewna
 i spójna paleta gatunku. Nowe deski twórz według tego schematu, a narzędzia
 według nowych sylwetek: materiał zmienia kamienną głowicę, zachowując
 trzonek i wiązanie. Szczegóły i źródła: [docs/styl-tekstur.md](docs/styl-tekstur.md).
+
+Od 1.16.0 wzorcem drzwi i klap są rysunki Kamila w `tools/wzorce/`
+(drzwi i klapa na deskach wiśni). Drzwi i klapy nowego drewna powstają
+z tego wzorca przez `tools/drzwi_tekstury.py`, nie od zera; zmiana
+wyglądu wszystkich to zmiana wzorca.

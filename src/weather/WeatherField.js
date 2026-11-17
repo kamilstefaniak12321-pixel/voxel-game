@@ -37,6 +37,10 @@ import { seedToNumber } from '../world/Noise.js';
 //   hail   0-1  grad (środek najsilniejszych burz),
 //   clear  0-1  wpływ wyżu,
 //   fog    0-1  mgła (poranna, przy czystym niebie i słabym wietrze),
+//   temp        temperatura powietrza na poziomie morza (°C) - z pory
+//               roku, klimatu, pory doby i układów; tempSlow - sama pora
+//               roku i klimat (od niej zależy zimowa pokrywa śnieżna),
+//   frost  0-1  szron (mroźna, pogodna, cicha noc i ranek),
 //   windX, windZ, speed (bloki/s), gust 0-1 (porywistość), angle.
 // ------------------------------------------------------------
 
@@ -94,6 +98,35 @@ const SEASON_STORMS = [0.6, 0.9, 0.35, 0.12];
 
 // Mgła poranna: jak często w danej porze roku (jesienią prawie co rano).
 const SEASON_FOG = [0.5, 0.3, 0.9, 0.6];
+
+// TEMPERATURA (od 1.14.0), w stopniach Celsjusza.
+//   SEASON_TEMP  - średnia na poziomie morza w umiarkowanym klimacie
+//                  (wiosna, lato, jesień, zima),
+//   CLIMATE_TEMP - o tyle cieplej albo chłodniej w gorących i zimnych
+//                  stronach świata (pole temperatury generatora terenu),
+//   DAY_SWING    - o tyle cieplej po południu i chłodniej przed świtem
+//                  przy czystym niebie (pod chmurami dużo mniej),
+//   TEMP_LAPSE   - o tyle chłodniej na każdy blok ponad poziom morza
+//                  (w górach pada śnieg, gdy w dolinie deszcz).
+export const SEASON_TEMP = [9, 20, 8, -5];
+export const CLIMATE_TEMP = 11;
+export const DAY_SWING = 5.5;
+export const TEMP_LAPSE = 0.08;
+
+// Jaka część opadu jest śniegiem w danej temperaturze: powyżej 2 stopni
+// sam deszcz, poniżej zera sam śnieg, pomiędzy - deszcz ze śniegiem.
+export function snowShare(temp) {
+
+    return ramp(2, 0, temp);
+
+}
+
+// Temperatura na wysokości y (bloki) z temperatury na poziomie morza.
+export function tempAtHeight(temp, y, seaLevel) {
+
+    return temp - TEMP_LAPSE * Math.max(0, y - seaLevel);
+
+}
 
 
 export function weatherHash(a, b, c, seed) {
@@ -160,7 +193,8 @@ export function emptySample() {
 
     return {
         low: 0, thick: 0, mid: 0, high: 0, rain: 0, storm: 0, hail: 0, clear: 0, fog: 0,
-        windX: 0, windZ: 0, speed: 0, gust: 0, angle: 0
+        windX: 0, windZ: 0, speed: 0, gust: 0, angle: 0,
+        temp: 10, tempSlow: 10, frost: 0
     };
 
 }
@@ -170,9 +204,11 @@ export class WeatherField {
 
     // seed    - ziarno świata (tekst albo liczba),
     // climate - opcjonalnie (x, z) => wilgotność miejsca -1..1 (biomy):
-    //           w suchych stronach chmur i deszczu jest mniej.
+    //           w suchych stronach chmur i deszczu jest mniej,
+    // warmth  - opcjonalnie (x, z) => ciepło klimatu -1..1 (zimne
+    //           i gorące strony świata).
 
-    constructor(seed, { climate = null } = {}) {
+    constructor(seed, { climate = null, warmth = null } = {}) {
 
         this.seed = (seedToNumber(seed) ^ 0x51ed270b) | 0;
 
@@ -188,13 +224,17 @@ export class WeatherField {
         };
 
         this.climate = climate;
+        this.warmth = warmth;
+
+        // Temperatura ustawiona komendą (/pogoda temperatura) albo null.
+        this.tempOverride = null;
 
         // Układy ustawione komendą /pogoda (do końca sesji albo /pogoda auto).
         this.forced = [];
 
         this.season = [0, 0, 0, 0];
         this.pickSeason = [0, 0, 0, 0];
-        this.acc = { low: 0, lowSum: 0, lowThick: 0, mid: 0, high: 0, rain: 0, storm: 0, clear: 0, gain: 0, turn: 0, gust: 0 };
+        this.acc = { low: 0, lowSum: 0, lowThick: 0, mid: 0, high: 0, rain: 0, storm: 0, clear: 0, gain: 0, turn: 0, gust: 0, temp: 0, cool: 0 };
 
     }
 
@@ -407,7 +447,7 @@ export class WeatherField {
         const acc = this.acc;
 
         acc.low = acc.lowSum = acc.lowThick = acc.mid = acc.high = acc.rain = acc.storm = 0;
-        acc.clear = acc.gain = acc.turn = acc.gust = 0;
+        acc.clear = acc.gain = acc.turn = acc.gust = acc.temp = acc.cool = 0;
 
         // Układ z komendy wypiera naturalną pogodę wokół siebie.
 
@@ -507,6 +547,34 @@ export class WeatherField {
 
         }
 
+        // Temperatura: pora roku i klimat (zmieniają się powoli), do tego
+        // pora doby (najcieplej po południu, najzimniej przed świtem - pod
+        // chmurami różnica jest mała), układy (za frontem chłodnym zimno,
+        // w wycinku ciepłym frontu ciepłego cieplej, wyż latem grzeje,
+        // a zimą mrozi) i sam opad, który chłodzi.
+
+        const overcast = Math.max(out.low, 0.6 * out.mid);
+        const slow = season[0] * SEASON_TEMP[0] + season[1] * SEASON_TEMP[1] + season[2] * SEASON_TEMP[2] + season[3] * SEASON_TEMP[3] +
+            CLIMATE_TEMP * (this.warmth ? this.warmth(x, z) : 0);
+
+        out.tempSlow = slow;
+        out.temp = slow + DAY_SWING * (1 - 0.65 * overcast) * Math.cos((timeOfDay - 0.62) * Math.PI * 2) +
+            acc.temp - acc.cool - 2.5 * out.rain;
+
+        if (this.tempOverride !== null) {
+            out.temp = out.tempSlow = this.tempOverride;
+        }
+
+        // Szron: osiada wieczorem i nocą, gdy jest mroźno, pogodnie i cicho;
+        // rano znika. W suchym klimacie słabszy.
+
+        const night = timeOfDay < 0.5 ? ramp(0.37, 0.28, timeOfDay) : ramp(0.86, 0.99, timeOfDay);
+
+        out.frost = night > 0 && out.rain < 0.02
+            ? clamp01(night * ramp(1.5, -2.5, out.temp) * (1 - 0.85 * overcast) * ramp(4.5, 2, speed) *
+                Math.max(0.2, Math.min(1, 0.75 + 0.5 * humidity)))
+            : 0;
+
         return out;
 
     }
@@ -563,6 +631,8 @@ export class WeatherField {
                 acc.gain += w * 0.9 * ramp(2600, 800, s) * ramp(-2600, -1200, s);
                 acc.turn += w * 0.45 * (1 - 2 * ramp(-400, 400, s)) * ramp(3600, 2000, Math.abs(s));
                 acc.gust += w * 0.2 * ramp(1500, 0, Math.abs(s));
+                // Za frontem wycinek ciepły, przed nim trochę chłodniej.
+                acc.temp += w * (3.5 * ramp(-600, -1800, s) * ramp(-4200, -3000, s) - ramp(0, 1200, s) * ramp(3200, 1800, s));
                 break;
 
             }
@@ -592,6 +662,8 @@ export class WeatherField {
                 acc.gain += w * (1.8 * ramp(1200, 300, s) * ramp(-600, 0, s) + 0.9 * ramp(-4200, -2600, s) * ramp(0, -600, s));
                 acc.turn += w * 0.9 * ramp(200, -400, s) * ramp(-5200, -3600, s);
                 acc.gust += line * 0.8 + post * 0.5;
+                // Przed frontem ciepło i duszno, za nim wyraźnie zimniej.
+                acc.temp += w * (2 * ramp(1800, 600, s) * ramp(-200, 300, s) - 6 * ramp(-200, -900, s) * ramp(-5200, -3800, s));
                 break;
 
             }
@@ -639,6 +711,8 @@ export class WeatherField {
                     acc.storm = Math.max(acc.storm, core);
                     acc.gain += cell * 1.4 * ramp(radius * 1.9, radius, d);
                     acc.gust += cell * 0.9 * ramp(radius * 2.2, radius, d);
+                    // Pod burzą chłodny podmuch.
+                    acc.cool = Math.max(acc.cool, 4 * cell * ramp(radius * 1.6, radius * 0.5, d));
 
                 }
 
@@ -661,6 +735,7 @@ export class WeatherField {
                 acc.rain = Math.max(acc.rain, field * 0.55 * ramp(0.6, 0.78, patch));
                 acc.gain += field * 0.4;
                 acc.gust += field * 0.35;
+                acc.cool = Math.max(acc.cool, 1.5 * field * ramp(0.6, 0.78, patch));
                 break;
 
             }
@@ -679,6 +754,8 @@ export class WeatherField {
                 acc.mid = Math.max(acc.mid, e * 0.5 * ramp(radius * 0.9, radius * 0.4, distance));
                 acc.rain = Math.max(acc.rain, deck * drizzle * 0.22);
                 acc.gain += deck * 0.3;
+                // Niż: zimą łagodny i mokry, latem chłodny.
+                acc.temp += deck * (2.5 * this.season[3] - 2 * this.season[1]);
                 break;
 
             }
@@ -687,7 +764,11 @@ export class WeatherField {
 
                 const radius = 4800 + 1500 * h;
 
-                acc.clear = Math.max(acc.clear, e * ramp(radius, radius * 0.55, distance));
+                const clear = e * ramp(radius, radius * 0.55, distance);
+
+                acc.clear = Math.max(acc.clear, clear);
+                // Wyż: latem upał, zimą mróz.
+                acc.temp += clear * (2.5 * this.season[1] - 3.5 * this.season[3]);
                 break;
 
             }

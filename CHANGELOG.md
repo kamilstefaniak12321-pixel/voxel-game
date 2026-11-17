@@ -11,6 +11,44 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 1.14.0 - Pogoda, część 4: zima
+
+PR #165. Opis: [`docs/pogoda.md`](docs/pogoda.md).
+
+- **Temperatura.** Pogoda ma temperaturę powietrza: zależy od pory roku
+  (zimą mróz, latem ciepło), klimatu (gorące i zimne strony świata), pory
+  doby (najzimniej przed świtem), frontów i wysokości (w górach chłodniej).
+  Widać ją w `/pogoda`, w prognozie i na ekranie F3.
+- **Śnieg.** Gdy jest dość zimno, zamiast deszczu pada śnieg - około zera
+  duże, mokre płaty, na mrozie drobny puch, pomiędzy deszcz ze śniegiem.
+  W górach może padać śnieg, gdy w dolinie leje. Pod dachem nie pada.
+- **Śnieżyca i zamieć.** W silnym wietrze płatki lecą prawie poziomo
+  i ograniczają widoczność, a gdy leży śnieg, wiatr porywa go z ziemi -
+  nisko suną białe smugi. Wichura wyje.
+- **Pokrywa śnieżna.** Zimą ziemia jest biała - w umiarkowanych
+  i chłodnych stronach świata, w górach wcześniej i dłużej. Śnieg kładzie
+  się płatami, gdy pada, i tak samo znika, gdy przyjdzie odwilż. Leży na
+  wierzchach bloków, bieli pasek trawy na ich bokach, rośliny i liście
+  drzew; widać go też na dalekim terenie. Pod dachem i w gęstym lesie go
+  nie ma. To pokrywa wizualna - świat się nie zmienia i nic się nie
+  zapisuje.
+- **Szron.** W mroźne, pogodne i ciche noce trawa i wierzchy bloków
+  srebrzeją; rano szron znika.
+- **Krupa śnieżna** - drobne białe kulki z przelotnych opadów przy
+  temperaturze około zera. **Kroki po śniegu skrzypią.**
+- **Śnieg na liściach** leży teraz wtedy, gdy leży na ziemi (dawniej
+  przez całą zimę).
+- **Komendy:** `/pogoda temperatura <stopnie>`, `/pogoda snieg [0-100]`,
+  `/pogoda pokrywa [0-100]`, `/pogoda szron [0-100]`. Mapa pogody
+  (`/mapa pogoda`) pokazuje zimową pokrywę i opad śniegu.
+- **Ustawienie** *Pokrywa śnieżna i szron* (`/ustaw snieg`).
+- **Osiągnięcia:** *Pierwszy śnieg*, *Zadymka*, *Biało, bielutko*,
+  *Srebrny poranek*.
+- **Wydajność:** gdy w okolicy nigdzie nie może leżeć śnieg (lato, ciepłe
+  strony), shadery nie liczą go wcale; płatki i zamieć to po jednym
+  poleceniu rysowania.
+- **Testy:** nowy `tools/sprawdz_zime.mjs` (ponad 16 tysięcy sprawdzeń).
+
 ## 1.13.0 - Pogoda, część 3: burze
 
 PR #164. Opis: [`docs/pogoda.md`](docs/pogoda.md).

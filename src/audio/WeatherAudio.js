@@ -17,11 +17,13 @@
 
 export const WEATHER_AUDIO = Object.freeze({
     // Największa głośność deszczu i wiatru (przed suwakami).
-    rain: 0.42, rumble: 0.3, wind: 0.34, hail: 0.5,
+    rain: 0.42, rumble: 0.3, wind: 0.34, hail: 0.5, howl: 0.16,
     // Filtr deszczu pod gołym niebem i w schronieniu (Hz).
     open: 9000, sheltered: 850,
     // Od jakiej prędkości wiatr słychać i przy jakiej jest najgłośniejszy.
-    windFrom: 1.6, windFull: 9
+    windFrom: 1.6, windFull: 9,
+    // Od jakiej prędkości wiatr wyje (śnieżyca, wichura).
+    howlFrom: 6.5, howlFull: 10.5
 });
 
 const clamp01 = (x) => Math.max(0, Math.min(1, x));
@@ -115,6 +117,11 @@ export function weatherAudioLevels({ rain = 0, drizzle = 0, cover = 0, speed = 0
         rainHigh: WEATHER_AUDIO.open + (WEATHER_AUDIO.sheltered - WEATHER_AUDIO.open) * roof,
         wind: WEATHER_AUDIO.wind * blow * blow * (0.65 + 0.7 * clamp01(gust)) * (1 - 0.65 * roof),
         windTone: 260 + 520 * blow + 140 * clamp01(gust),
+        // Wycie wichury (od 1.14.0): wysoki, wąski ton, który faluje
+        // z porywami - śnieżyca i sztorm.
+        howl: WEATHER_AUDIO.howl * clamp01((speed - WEATHER_AUDIO.howlFrom) / (WEATHER_AUDIO.howlFull - WEATHER_AUDIO.howlFrom)) ** 2 *
+            (0.5 + 0.5 * clamp01(gust)) * (1 - 0.6 * roof),
+        howlTone: 430 + 240 * clamp01(gust),
         // Grad: stukot; pod dachem zostaje (bije w dach), tylko głuchszy.
         hail: hail > 0.01 ? WEATHER_AUDIO.hail * clamp01(hail) ** 0.7 * (1 - 0.3 * roof) : 0,
         hailTone: 3400 - 2200 * roof
@@ -199,13 +206,15 @@ export class WeatherAudio {
             rainLow: filter('highpass', 500), rainHigh: filter('lowpass', WEATHER_AUDIO.open), rain: gain(),
             rumbleBand: filter('bandpass', 240, 0.8), rumble: gain(),
             windBand: filter('lowpass', 300, 1.4), wind: gain(),
-            hailBand: filter('bandpass', 3400, 0.9), hail: gain()
+            hailBand: filter('bandpass', 3400, 0.9), hail: gain(),
+            howlBand: filter('bandpass', 430, 7), howl: gain()
         };
 
         nodes.sources[0].connect(nodes.rainLow).connect(nodes.rainHigh).connect(nodes.rain).connect(output);
         nodes.sources[1].connect(nodes.rumbleBand).connect(nodes.rumble).connect(output);
         nodes.sources[2].connect(nodes.windBand).connect(nodes.wind).connect(output);
         nodes.sources[3].connect(nodes.hailBand).connect(nodes.hail).connect(output);
+        nodes.sources[2].connect(nodes.howlBand).connect(nodes.howl).connect(output);
 
         for (const node of nodes.sources) {
             node.start();
@@ -241,6 +250,8 @@ export class WeatherAudio {
         nodes.windBand.frequency.setTargetAtTime(levels.windTone, now, 0.5);
         nodes.hail.gain.setTargetAtTime(levels.hail, now, 0.35);
         nodes.hailBand.frequency.setTargetAtTime(levels.hailTone, now, 0.35);
+        nodes.howl.gain.setTargetAtTime(levels.howl, now, 0.6);
+        nodes.howlBand.frequency.setTargetAtTime(levels.howlTone, now, 0.9);
 
     }
 
@@ -256,7 +267,7 @@ export class WeatherAudio {
             node.disconnect();
         }
 
-        for (const name of ['rain', 'rumble', 'wind', 'hail']) {
+        for (const name of ['rain', 'rumble', 'wind', 'hail', 'howl']) {
             this.nodes[name].disconnect();
         }
 

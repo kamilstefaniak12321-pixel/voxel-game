@@ -485,6 +485,16 @@ export class RealisticGenerator {
     }
 
 
+    // Ciepło klimatu w miejscu (x, z), -1..1 - samo pole, bez wysokości
+    // terenu (pogoda: temperatura powietrza, deszcz czy śnieg).
+
+    temperatureAt(x, z) {
+
+        return this.field(this.noise.temperature, x, z, SHAPE.SCALES.temperature, 2);
+
+    }
+
+
     // Pole "grzbietów": 1 na linii grzbietu, w dół po obu stronach.
 
     ridged(noise, x, z, scale, octaves) {

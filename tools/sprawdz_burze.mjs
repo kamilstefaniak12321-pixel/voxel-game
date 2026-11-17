@@ -930,7 +930,7 @@ const slotOf = (days) => Math.floor(days * DAY_SECONDS / THUNDER.slot);
     check(gameSource.includes('meteor.x + meteor.y + meteor.z <= 0') && gameSource.includes('meteorLightUniforms.uMeteorSky.value = this.stormLight ? 1 : 0'), 'Meteoryt ma pierwszeństwo przed błyskiem');
     check(gameSource.includes('this.lightning?.renderFar(renderer, camera, this.farTerrain)') &&
         gameSource.indexOf('this.farTerrain.render(renderer, camera);') < gameSource.indexOf('this.lightning?.renderFar('), 'Dalekie pioruny rysują się po dalekim terenie');
-    check(gameSource.includes('this.hail.update(dt, this.hailNow, this.weather.wind, this.sky.state)') && gameSource.includes('hail: this.hailNow'), 'Grad dostaje natężenie i wiatr, dźwięk - grad');
+    check(gameSource.includes('this.hail.update(dt, Math.max(this.hailNow, graupel), this.weather.wind, this.sky.state, graupel > this.hailNow ? 1 : 0)') && gameSource.includes('hail: Math.max(this.hailNow, 0.4 * graupel)'), 'Grad dostaje natężenie i wiatr, dźwięk - grad');
     check(gameSource.includes('this.clearStormLight();') && gameSource.includes('this.thunder.dispose();') && gameSource.includes('this.lightning.dispose();') &&
         gameSource.includes('this.thunderAudio.dispose();') && gameSource.includes('this.hail.dispose();'), 'Sprzątanie przy wyjściu ze świata i wczytywaniu terenu');
 

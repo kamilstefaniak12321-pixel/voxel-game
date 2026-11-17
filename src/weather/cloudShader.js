@@ -83,7 +83,20 @@ export const cloudUniforms = {
 
     // Grad na ziemi: xy - miejsce, w którym spadł (x, z świata),
     // z - ile go leży (0-1).
-    uHailGround: { value: new THREE.Vector3(0, 0, 0) }
+    uHailGround: { value: new THREE.Vector3(0, 0, 0) },
+
+    // Zima (od 1.14.0). Trzecia mapa pogody: R świeży opad, G temperatura
+    // teraz, B temperatura powolna (obie na poziomie morza, bajt = zakres
+    // od -40 do 40 stopni), A szron.
+    uWeatherSnow: { value: null },
+
+    // x - czy śnieg jest możliwy (0/1), y - o ile stopni chłodniej na blok
+    // wysokości, z - poziom morza, w - pokrywa z komendy (-1: z mapy).
+    uSnow: { value: new THREE.Vector4(0, 0.08, 48, -1) },
+    uSnowColor: { value: new THREE.Color(0.86, 0.9, 0.96) },
+
+    // Szron: -2 wyłączony, -1 z mapy, 0-1 z komendy.
+    uFrost: { value: -2 }
 
 };
 
@@ -184,6 +197,58 @@ export const CLOUD_SHADOW_GLSL = /* glsl */ `
         float near = 1.0 - smoothstep(70.0, 150.0, length(worldPosition.xz - uHailGround.xy));
 
         return step(1.0 - 0.2 * uHailGround.z * near, grain);
+
+    }
+
+    // ŚNIEG (od 1.14.0). Pokrywa śnieżna 0-1 w punkcie świata: zimowa
+    // (średnia temperatura pory roku i klimatu, niższa w górach) albo
+    // świeży śnieg z niedawnego opadu, gdy jest dość zimno. Ten sam
+    // rachunek co w Weather.js (snowCover).
+    uniform sampler2D uWeatherSnow;
+    uniform vec4 uSnow;
+    uniform vec3 uSnowColor;
+    uniform float uFrost;
+
+    float snowCoverAt(vec3 worldPosition) {
+
+        if (uSnow.x <= 0.0) {
+            return 0.0;
+        }
+
+        if (uSnow.w >= 0.0) {
+            return uSnow.w;
+        }
+
+        vec4 snow = texture2D(uWeatherSnow, worldPosition.xz * uWeatherScale);
+        float drop = uSnow.y * max(0.0, worldPosition.y - uSnow.z);
+        float now = snow.g * 80.0 - 40.0 - drop;
+        float slow = snow.b * 80.0 - 40.0 - drop;
+
+        return max(1.0 - smoothstep(-3.0, 1.0, slow), snow.r * (1.0 - smoothstep(-1.0, 1.5, now)));
+
+    }
+
+    // Czy piksel tekstury (1/16 bloku) leży pod śniegiem: płaty rosną
+    // razem z pokrywą - od pojedynczych plam po zwartą biel.
+    float snowPixel(vec3 worldPosition, float cover) {
+
+        vec2 q = (floor(worldPosition.xz * 16.0) + 0.5) / 16.0;
+        float patches = 0.5 * textureLod(uCloudNoise, q / 23.0, 0.0).a
+            + 0.34 * textureLod(uCloudNoise, q / 5.3 + 0.37, 0.0).r
+            + 0.16 * fract(sin(dot(mod(q * 16.0, 509.0), vec2(12.9898, 78.233))) * 43758.5453);
+
+        return step(patches, cover * 1.08 - 0.04);
+
+    }
+
+    // Szron 0-1 w punkcie świata (mroźne, pogodne noce i ranki).
+    float frostAt(vec3 worldPosition) {
+
+        if (uFrost < -1.5) {
+            return 0.0;
+        }
+
+        return uFrost >= 0.0 ? uFrost : texture2D(uWeatherSnow, worldPosition.xz * uWeatherScale).a;
 
     }
 

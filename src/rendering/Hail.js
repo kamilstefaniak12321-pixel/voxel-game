@@ -213,9 +213,11 @@ export class Hail {
 
     // Po rain.update (wspólne pudełko i mapa schronienia są już świeże).
     // dt - czas klatki, intensity - natężenie gradu 0-1, wind - wiatr
-    // { x, z }, sky - stan nieba (jasność kulek).
+    // { x, z }, sky - stan nieba (jasność kulek), small - 0-1: krupa
+    // śnieżna zamiast gradu (od 1.14.0) - drobniejsze kulki, które
+    // spadają wolniej.
 
-    update(dt, intensity, wind, sky = null) {
+    update(dt, intensity, wind, sky = null, small = 0) {
 
         if (this.disposed) return;
 
@@ -227,7 +229,10 @@ export class Hail {
         this.intensity = off ? 0 : clamp01(intensity);
 
         // Grad leci prawie pionowo - wiatr znosi go słabiej niż deszcz.
-        this.velocity.set((wind?.x ?? 0) * 0.45, -HAIL.fall, (wind?.z ?? 0) * 0.45);
+        const graupel = clamp01(small);
+
+        this.velocity.set((wind?.x ?? 0) * 0.45, -HAIL.fall * (1 - 0.55 * graupel), (wind?.z ?? 0) * 0.45);
+        this.uniforms.uHailShape.value.x = HAIL.size * (1 - 0.4 * graupel);
 
         this.offset.x = mod(this.offset.x + this.velocity.x * step, box.x * 20);
         this.offset.y = mod(this.offset.y + this.velocity.y * step, box.y * 20);

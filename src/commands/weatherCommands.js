@@ -5,14 +5,14 @@
 // (src/weather/WeatherField.js). Komenda /pogoda pokazuje ją, podaje
 // prognozę, szuka frontów i - do sprawdzania - ustawia wybraną pogodę
 // nad graczem albo każe jej nadciągnąć. Od 1.13.0 także piorun na
-// zawołanie i grad.
+// zawołanie i grad, od 1.14.0 temperatura, śnieg, pokrywa śnieżna i szron.
 // ------------------------------------------------------------
 
 import { CommandError, simplify } from './CommandRegistry.js';
 import { parseNumber, usageError } from './commandHelpers.js';
 import { SYSTEM_NAMES } from '../weather/WeatherField.js';
 import { THUNDER } from '../weather/Thunderstorm.js';
-import { forecastLines, sideName, weatherStatus } from '../weather/weatherText.js';
+import { forecastLines, sideName, tempText, weatherStatus } from '../weather/weatherText.js';
 
 // Słowo z komendy -> rodzaj układu pogodowego.
 const KINDS = {
@@ -39,7 +39,7 @@ export const WEATHER_COMMANDS = [
     {
         name: 'pogoda',
         aliases: ['weather'],
-        usage: '/pogoda | prognoza | ustaw <rodzaj> [nadciaga] | znajdz <rodzaj> [tp] | auto | deszcz [0-100] | sucho | mgla [0-100] | tecza [wl|wyl] | piorun [odległość] [chmura] | grad [0-100]',
+        usage: '/pogoda | prognoza | ustaw <rodzaj> [nadciaga] | znajdz <rodzaj> [tp] | auto | deszcz [0-100] | sucho | mgla [0-100] | tecza [wl|wyl] | piorun [odległość] [chmura] | grad [0-100] | temperatura <stopnie> | snieg [0-100] | pokrywa [0-100] | szron [0-100]',
         description: 'Pogoda nad tobą, prognoza, szukanie frontów i burz; do sprawdzania - ustawienie pogody ' +
             `(rodzaje: ${KIND_WORDS.join(', ')}). Mapa pogody: /mapa pogoda.`,
 
@@ -57,12 +57,12 @@ export const WEATHER_COMMANDS = [
             const word = simplify(args[0] ?? '');
 
             if (!args.length) {
-                return weatherStatus(weather, x, z, days) +
+                return weatherStatus(weather, x, z, days, player.pos.y) +
                     (weather.field.forced.length ? ' Pogoda ustawiona komendą - powrót: /pogoda auto.' : '');
             }
 
             if (word === 'prognoza' && args.length === 1) {
-                return `Prognoza dla tego miejsca:\n${forecastLines(weather.field, x, z, days).join('\n')}`;
+                return `Prognoza dla tego miejsca:\n${forecastLines(weather.field, x, z, days, 1.5, player.pos.y).join('\n')}`;
             }
 
             if (word === 'auto' && args.length === 1) {
@@ -72,6 +72,9 @@ export const WEATHER_COMMANDS = [
                 weather.fogOverride = null;
                 weather.rainbowOverride = null;
                 weather.hailOverride = null;
+                weather.coverOverride = null;
+                weather.frostOverride = null;
+                weather.field.tempOverride = null;
                 game.rainOverride = null;
 
                 return 'Pogoda znów liczy się sama.';
@@ -237,6 +240,75 @@ export const WEATHER_COMMANDS = [
 
             }
 
+            if (['temperatura', 'temp'].includes(word) && args.length === 2) {
+
+                const degrees = parseNumber(args[1], 'temperatura');
+
+                if (degrees < -40 || degrees > 40) {
+                    throw new CommandError('Temperatura: od -40 do 40 stopni.');
+                }
+
+                // Ta sama temperatura wszędzie (na poziomie morza; w górach
+                // dalej jest chłodniej) - do odwołania.
+                weather.field.tempOverride = degrees;
+                weather.reset();
+
+                return `Temperatura: ${tempText(degrees)} na poziomie morza do odwołania (/pogoda auto). ` +
+                    (degrees < 0 ? 'Opad będzie śniegiem.' : degrees < 2 ? 'Opad będzie deszczem ze śniegiem.' : 'Opad będzie deszczem.');
+
+            }
+
+            if (word === 'snieg' && args.length <= 2) {
+
+                const amount = args[1] === undefined ? 60 : parseNumber(args[1], 'natężenie śniegu');
+
+                if (amount < 0 || amount > 100) {
+                    throw new CommandError('Natężenie śniegu: od 0 do 100.');
+                }
+
+                game.rainOverride = amount / 100;
+
+                // Żeby padał śnieg, a nie deszcz, musi być mróz.
+                let note = '';
+
+                if (weather.temperature > -1 && amount > 0) {
+                    weather.field.tempOverride = -3;
+                    weather.reset();
+                    note = ` Temperatura ustawiona na ${tempText(-3)}.`;
+                }
+
+                return `Śnieg: ${amount}% do odwołania (/pogoda auto).${note} Ziemia bieleje, póki pada.`;
+
+            }
+
+            if (word === 'pokrywa' && args.length <= 2) {
+
+                const amount = args[1] === undefined ? 100 : parseNumber(args[1], 'pokrywa śnieżna');
+
+                if (amount < 0 || amount > 100) {
+                    throw new CommandError('Pokrywa śnieżna: od 0 do 100.');
+                }
+
+                weather.coverOverride = amount / 100;
+
+                return `Pokrywa śnieżna: ${amount}% wszędzie, do odwołania (/pogoda auto).`;
+
+            }
+
+            if (word === 'szron' && args.length <= 2) {
+
+                const amount = args[1] === undefined ? 100 : parseNumber(args[1], 'szron');
+
+                if (amount < 0 || amount > 100) {
+                    throw new CommandError('Szron: od 0 do 100.');
+                }
+
+                weather.frostOverride = amount / 100;
+
+                return `Szron: ${amount}% do odwołania (/pogoda auto). Widać go tam, gdzie nie leży śnieg.`;
+
+            }
+
             if (word === 'grad' && args.length <= 2) {
 
                 const amount = args[1] === undefined ? 100 : parseNumber(args[1], 'natężenie gradu');
@@ -257,7 +329,7 @@ export const WEATHER_COMMANDS = [
 
         complete(args) {
 
-            if (args.length === 1) return ['prognoza', 'ustaw', 'znajdz', 'auto', 'deszcz', 'sucho', 'mgla', 'tecza', 'piorun', 'grad'];
+            if (args.length === 1) return ['prognoza', 'ustaw', 'znajdz', 'auto', 'deszcz', 'sucho', 'mgla', 'tecza', 'piorun', 'grad', 'temperatura', 'snieg', 'pokrywa', 'szron'];
 
             const word = simplify(args[0]);
 

@@ -237,6 +237,7 @@ export const TEXTS = {
     clouds: (value) => `Chmury: ${{ pelne: 'Pełne', plaskie: 'Płaskie', brak: 'Wył.' }[value] ?? 'Pełne'}`,
     cloudShadows: (on) => `Cienie chmur: ${on ? 'Wł.' : 'Wył.'}`,
     wetGround: (on) => `Mokra ziemia i kałuże: ${on ? 'Wł.' : 'Wył.'}`,
+    snowCover: (on) => `Pokrywa śnieżna i szron: ${on ? 'Wł.' : 'Wył.'}`,
     stormFlashes: (value) => `Błyski burzy: ${{ pelne: 'Pełne', lagodne: 'Łagodne', brak: 'Wył.' }[value] ?? 'Pełne'}`,
     stormFlashesNote: 'Błyski burzy: Łagodne rozjaśniają świat powoli, bez migotania. Wył. - teren i niebo nie błyskają wcale (piorun i grzmot zostają).',
     bounceLight: (on) => `Światło odbite: ${on ? 'Wł.' : 'Wył.'}`,

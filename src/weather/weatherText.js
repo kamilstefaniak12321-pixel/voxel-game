@@ -1,4 +1,6 @@
-import { DAY_SECONDS, SYSTEM_NAMES } from './WeatherField.js';
+import { SEA_LEVEL } from '../config.js';
+
+import { DAY_SECONDS, SYSTEM_NAMES, snowShare, tempAtHeight } from './WeatherField.js';
 
 // ------------------------------------------------------------
 // POGODA SŁOWAMI (1.11.0)
@@ -11,6 +13,10 @@ import { DAY_SECONDS, SYSTEM_NAMES } from './WeatherField.js';
 export const SKY_NAMES = {
     grad: 'burza z gradem',
     burza: 'burza',
+    sniezyca: 'śnieżyca',
+    snieg_gesty: 'gęsty śnieg',
+    snieg: 'śnieg',
+    deszcz_snieg: 'deszcz ze śniegiem',
     ulewa: 'ulewa',
     deszcz: 'deszcz',
     mzawka: 'słaby deszcz',
@@ -21,14 +27,27 @@ export const SKY_NAMES = {
     srednie: 'chmury średnie',
     pierzaste: 'chmury pierzaste',
     mgla: 'mgła',
+    szron: 'pogodnie, szron',
     pogodnie: 'pogodnie'
 };
 
 
-export function skyKey(sample) {
+// temp - temperatura w miejscu, o które chodzi (na jego wysokości);
+// bez niej - z próbki, czyli na poziomie morza.
+
+export function skyKey(sample, temp = sample.temp ?? 10) {
 
     if (sample.hail > 0.3) return 'grad';
     if (sample.storm > 0.3) return 'burza';
+
+    // Od 1.14.0: gdy jest dość zimno, pada śnieg.
+    const snow = snowShare(temp);
+
+    if (sample.rain > 0.05 && snow > 0.75) {
+        return sample.rain > 0.4 && sample.speed >= 6 ? 'sniezyca' : sample.rain > 0.3 ? 'snieg_gesty' : 'snieg';
+    }
+
+    if (sample.rain > 0.05 && snow > 0.15) return 'deszcz_snieg';
     if (sample.rain > 0.55) return 'ulewa';
     if (sample.rain > 0.2) return 'deszcz';
     if (sample.rain > 0.05) return 'mzawka';
@@ -38,6 +57,7 @@ export function skyKey(sample) {
     if (sample.low > 0.2) return 'klebiaste';
     if (sample.mid > 0.5) return 'srednie';
     if (sample.high > 0.4) return 'pierzaste';
+    if (sample.frost > 0.35) return 'szron';
 
     return 'pogodnie';
 
@@ -99,11 +119,25 @@ const percent = (value) => `${Math.round(value * 100)}%`;
 const decimal = (value) => value.toFixed(1).replace('.', ',');
 
 
-// Jedno zdanie o próbce: niebo, piętra chmur, wiatr.
+// Temperatura słowami ("-3°C").
 
-export function sampleText(sample) {
+export function tempText(temp) {
 
-    return `${SKY_NAMES[skyKey(sample)]} | chmury: niskie ${percent(sample.low)}, średnie ${percent(sample.mid)}, ` +
+    const rounded = Math.round(temp);
+
+    return `${rounded === 0 ? 0 : rounded}°C`;
+
+}
+
+
+// Jedno zdanie o próbce: niebo, temperatura, piętra chmur, wiatr.
+// y - wysokość miejsca (w górach jest chłodniej); bez niej poziom morza.
+
+export function sampleText(sample, y = SEA_LEVEL) {
+
+    const temp = tempAtHeight(sample.temp ?? 10, y, SEA_LEVEL);
+
+    return `${SKY_NAMES[skyKey(sample, temp)]}, ${tempText(temp)} | chmury: niskie ${percent(sample.low)}, średnie ${percent(sample.mid)}, ` +
         `wysokie ${percent(sample.high)} | ${windName(sample.speed)} ${windFrom(sample.angle)}, ${decimal(sample.speed)} bl./s`;
 
 }
@@ -158,11 +192,11 @@ export function systemText(field, x, z, days) {
 // Stan pogody nad graczem (/pogoda) w chwili `days` - liczony wprost
 // z pola, więc zaraz po /pogoda ustaw pokazuje już nową pogodę.
 
-export function weatherStatus(weather, x, z, days = weather.days) {
+export function weatherStatus(weather, x, z, days = weather.days, y = SEA_LEVEL) {
 
     const system = systemText(weather.field, x, z, days);
 
-    return `Pogoda: ${sampleText(weather.field.sample(x, z, days))}.` + (system ? ` ${system}` : '');
+    return `Pogoda: ${sampleText(weather.field.sample(x, z, days), y)}.` + (system ? ` ${system}` : '');
 
 }
 
@@ -170,7 +204,7 @@ export function weatherStatus(weather, x, z, days = weather.days) {
 // Prognoza w miejscu (x, z): kolejne zmiany nieba od teraz przez `days`
 // dób gry. Zwraca wiersze tekstu.
 
-export function forecastLines(field, x, z, days, span = 1.5) {
+export function forecastLines(field, x, z, days, span = 1.5, y = SEA_LEVEL) {
 
     const steps = field.forecast(x, z, days, span, 1 / 48);
     const lines = [];
@@ -179,7 +213,8 @@ export function forecastLines(field, x, z, days, span = 1.5) {
 
     for (const sample of steps) {
 
-        const key = skyKey(sample);
+        const temp = tempAtHeight(sample.temp ?? 10, y, SEA_LEVEL);
+        const key = skyKey(sample, temp);
 
         if (key === last) continue;
 
@@ -190,7 +225,7 @@ export function forecastLines(field, x, z, days, span = 1.5) {
         const when = ahead < 1e-6 ? 'teraz' : `${day === 0 ? '' : day === 1 ? 'jutro ' : 'pojutrze '}${clockText(sample.time)}`;
         const minutes = Math.round(ahead * DAY_SECONDS / 60);
 
-        lines.push(`${when}${ahead < 1e-6 ? '' : ` (za ${minutes} min)`}: ${SKY_NAMES[key]}, ${windName(sample.speed)} ${windFrom(sample.angle)}`);
+        lines.push(`${when}${ahead < 1e-6 ? '' : ` (za ${minutes} min)`}: ${SKY_NAMES[key]}, ${tempText(temp)}, ${windName(sample.speed)} ${windFrom(sample.angle)}`);
 
         if (lines.length >= 12) break;
 

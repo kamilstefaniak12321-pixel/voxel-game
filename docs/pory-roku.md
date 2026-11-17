@@ -67,7 +67,7 @@ jabłoń (za nią olcha), świerk.*
 |---|---|---|
 | wiosna, lato | jak w teksturze, zabarwione klimatem biomu | zbrązowiałe |
 | jesień | zielone piksele przechodzą w kolor gatunku; pełny kolor około 5. dnia | kolor gatunku |
-| zima | szarobrązowe; w chłodnych stronach cienki śnieg na wierzchu | szare |
+| zima | szarobrązowe; cienki śnieg na wierzchu, gdy śnieg leży na ziemi (od 1.14.0 decyduje pogoda - `docs/pogoda.md`; w ciepłych stronach nie leży) | szare |
 | przedwiośnie (pierwsze 3 dni wiosny) | szarość schodzi, wraca zieleń | brązowieją |
 
 Kolory jesieni (`LEAF_PALETTES` w `src/rendering/LeafSeasons.js`):
@@ -109,8 +109,10 @@ nie przebudowuje żadnego chunka i nic nie trafia do zapisu.
 - Zmieniają się tylko zielone piksele tekstury: gałązki, owoce i kwiaty
   w liściach zostają. Opadłe liście zmieniają się całe.
 - Śnieg: drobne płaty pikseli na ścianach zwróconych do góry, najwyżej
-  połowa wierzchu w środku zimy - „cienka warstwa", liść spod niej
-  prześwituje. Tylko tam, gdzie jest chłodno: klimat miejsca zapisany jest
+  połowa wierzchu - „cienka warstwa", liść spod niej prześwituje. Od
+  1.14.0 leży wtedy, gdy śnieg leży na ziemi pod graczem (pokrywa śnieżna
+  z pogody - `docs/pogoda.md`), a nie przez całą zimę. Tylko tam, gdzie
+  jest chłodno: klimat miejsca zapisany jest
   w `chunk.tint` (czwarty bajt na róg - `Biomes.tintGrid`); na sawannie,
   półpustyni i w tropikach śniegu nie ma.
 - Spadające liście (`TreeParticles`) mają kolor pory swojego gatunku,
@@ -261,11 +263,11 @@ Zasady, których warto się trzymać:
 - Daleka roślinność (plamy koloru daleko od gracza) nie zna pór
   kwiatów; korony drzew w dalekim terenie zmieniają kolor skokami i bez
   przesunięcia terminu z miejsca (z bliska przejście jest płynne).
-- Liście nie opadają z drzew (zimą korona jest szara, nie goła), śnieg nie
-  leży na ziemi, trawa nie żółknie - to przyjdzie z pogodą.
+- Liście nie opadają z drzew (zimą korona jest szara, nie goła), trawa
+  nie żółknie. Śnieg na ziemi jest od 1.14.0 (`docs/pogoda.md`).
 - Kwitnąca jakaranda i wiśnia mają kwiaty w teksturze liści cały rok.
-- Daleki śnieg na koronach i kolor liści z biomu w dalekim terenie -
-  jeszcze nie.
+- Kolor liści z biomu w dalekim terenie - jeszcze nie. Dalekie korony
+  mają od 1.14.0 białe wierzchy, gdy leży śnieg.
 
 ## Dla programisty
 

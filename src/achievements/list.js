@@ -69,7 +69,8 @@ const FRUITS = ['strawberry', 'blackberry', 'chili_pepper', 'hazelnut', 'blueber
 // Osiągnięcie "Komplet narzędzi": siekiera, kilof i łopata.
 // Pogoda, która przyszła sama (nie z komendy /pogoda).
 function naturalWeather(game) {
-    return Boolean(game.weather?.ready) && game.weather.field.forced.length === 0 && game.rainOverride === null;
+    return Boolean(game.weather?.ready) && game.weather.field.forced.length === 0 && game.rainOverride === null &&
+        game.weather.field.tempOverride == null;
 }
 
 // Piorun, który przed chwilą uderzył w ziemię nie dalej niż `reach`
@@ -904,6 +905,43 @@ export const ACHIEVEMENTS = [
         icon: 'snow',
         check: (game) => naturalWeather(game) && game.weather.hailOverride === null &&
             game.weather.local.hail > 0.3 && (game.shelterCover ?? 1) < 0.3
+    },
+    {
+        id: 'first_snow',
+        tier: 'common',
+        title: 'Pierwszy śnieg',
+        task: 'Bądź tam, gdzie pada śnieg - zimą, w chłodnych stronach świata albo wysoko w górach, gdy w dolinie pada deszcz.',
+        comment: 'Złapany na język: smakuje jak chmura. Wiadomo.',
+        icon: 'snow',
+        check: (game) => naturalWeather(game) && (game.snowNow ?? 0) > 0.1
+    },
+    {
+        id: 'blizzard',
+        tier: 'rare',
+        title: 'Zadymka',
+        task: 'Wyjdź w śnieżycę: gęsty śnieg i wiatr od 6 bloków na sekundę.',
+        comment: 'Widoczność: czubek własnego nosa. I to zamarznięty.',
+        icon: 'snow',
+        check: (game) => naturalWeather(game) && (game.snowNow ?? 0) > 0.35 && game.weather.wind.speed >= 6
+    },
+    {
+        id: 'white_world',
+        tier: 'common',
+        title: 'Biało, bielutko',
+        task: 'Stań pod gołym niebem tam, gdzie ziemię przykrył śnieg.',
+        comment: 'Ślady na świeżym śniegu: jedyny dowód, że ktoś tu w ogóle wychodzi z domu.',
+        icon: 'snow',
+        check: (game) => naturalWeather(game) && game.weather.coverOverride === null &&
+            game.weather.snowCover > 0.9 && (game.shelterCover ?? 1) < 0.3
+    },
+    {
+        id: 'hoarfrost',
+        tier: 'common',
+        title: 'Srebrny poranek',
+        task: 'Zobacz szron: osiada w mroźną, pogodną i cichą noc, a rano znika.',
+        comment: 'Trawa chrupie pod butami. Drugie śniadanie też by się przydało.',
+        icon: 'lamp_blue',
+        check: (game) => naturalWeather(game) && game.weather.frostOverride === null && game.weather.frost > 0.6
     },
     {
         id: 'head_in_clouds',

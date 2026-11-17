@@ -1,4 +1,4 @@
-import { setLeafSeason } from '../rendering/LeafSeasons.js';
+import { setLeafSeason, leafSeasonUniforms } from '../rendering/LeafSeasons.js';
 import { BENCHMARK_FLIGHT, benchmarkText } from '../diagnostics/Benchmark.js';
 import * as THREE from 'three';
 import { fullTerrainDistance, FULL_TERRAIN_DISTANCE, TERRAIN_TRANSITION_START } from '../world/DistanceLod.js';
@@ -80,6 +80,8 @@ import { WeatherAudio } from '../audio/WeatherAudio.js';
 import { Thunderstorm } from '../weather/Thunderstorm.js';
 import { LightningBolts } from '../rendering/LightningBolts.js';
 import { Hail } from '../rendering/Hail.js';
+import { SnowFall } from '../rendering/SnowFall.js';
+import { DAY_SECONDS } from '../weather/WeatherField.js';
 import { ThunderAudio } from '../audio/ThunderAudio.js';
 import { meteorLightUniforms } from '../rendering/meteorLight.js';
 import { BlockCracks } from '../interaction/BlockCracks.js';
@@ -117,6 +119,59 @@ const HIGH_VIEW = 1100;
 
 
 const NO_STRIKES = Object.freeze([]);
+
+// Ciepło klimatu dla pogody: (x, z) => -1..1 albo null, gdy generator go
+// nie ma. Od niego zależy temperatura, a więc i granica śniegu - dlatego
+// między węzłami siatki (co 256 bloków, zapamiętywanymi) wartość zmienia
+// się płynnie; schodki byłoby widać na śniegu.
+
+function weatherWarmth(generator) {
+
+    if (typeof generator?.temperatureAt !== 'function') {
+        return null;
+    }
+
+    const cache = new Map();
+
+    const node = (cx, cz) => {
+
+        const key = cx * 65536 + cz;
+
+        let value = cache.get(key);
+
+        if (value === undefined) {
+
+            if (cache.size > 30000) {
+                cache.clear();
+            }
+
+            value = generator.temperatureAt(cx * 256, cz * 256);
+            cache.set(key, value);
+
+        }
+
+        return value;
+
+    };
+
+    return (x, z) => {
+
+        const gx = x / 256;
+        const gz = z / 256;
+        const cx = Math.floor(gx);
+        const cz = Math.floor(gz);
+        const fx = gx - cx;
+        const fz = gz - cz;
+        const a = node(cx, cz);
+        const b = node(cx + 1, cz);
+        const c = node(cx, cz + 1);
+        const d = node(cx + 1, cz + 1);
+
+        return a + (b - a) * fx + (c - a) * fz + (a - b - c + d) * fx * fz;
+
+    };
+
+}
 
 // Światło błysku burzy (updateStorm): kolor (sinobiały), siła na terenie
 // dla pioruna do ziemi i dla błysku w chmurze, rozjaśnienie nieba.
@@ -428,7 +483,10 @@ export class Game extends GameInteraction {
         // Pogoda (src/weather/): fronty, chmury i wiatr z czasu gry
         // i ziarna świata. W suchych stronach świata chmur jest mniej.
 
-        this.weather = new Weather(worldInfo.seed, { climate: weatherClimate(this.world.generator) });
+        this.weather = new Weather(worldInfo.seed, {
+            climate: weatherClimate(this.world.generator),
+            warmth: weatherWarmth(this.world.generator)
+        });
         this.sky.clouds.weather = this.weather;
 
         // Deszcz ustawiony komendą /pogoda deszcz (0-1) albo null - pada
@@ -634,6 +692,12 @@ export class Game extends GameInteraction {
         this.hail = new Hail(this.scene, this.rainStreaks);
         this.hailNow = 0;
         this.stormLight = false;
+
+        // Zima (1.14.0): płatki śniegu i zamieć przy ziemi (SnowFall);
+        // snowNow - ile teraz pada śniegu, graupelNow - krupy śnieżnej.
+        this.snowFall = new SnowFall(this.scene, this.rainStreaks);
+        this.snowNow = 0;
+        this.graupelNow = 0;
         this.waterLandingRevision = -1;
         for (const effect of [this.wetRocks, this.waterImpacts, this.rain, this.rainStreaks]) {
             effect.setAmount(this.settings.get('potato') ? .35 : 1);
@@ -1028,7 +1092,7 @@ export class Game extends GameInteraction {
 
         profile?.beginStage('weather');
 
-        this.weather.update(this.time.days, dt, this.camera.position.x, this.camera.position.z);
+        this.weather.update(this.time.days, dt, this.camera.position.x, this.camera.position.z, this.camera.position.y);
 
         this.sky.cloudCover = Math.max(this.settings.get('cloudCover') / 100, active ? this.weather.overcast : 0);
         this.sky.cloudDepth = active ? this.weather.depth : 0;
@@ -1148,8 +1212,23 @@ export class Game extends GameInteraction {
         this.wetRocks.update(dt);
 
         // Pada tam, gdzie mówi pogoda (albo tyle, ile ustawiła komenda).
+        // O tym, czy to deszcz, czy śnieg, decyduje temperatura tam, gdzie
+        // stoi gracz: około zera pada jedno i drugie.
         const local = this.weather.local;
-        const rain = this.rainOverride ?? (local.rain > 0.04 ? local.rain : 0);
+        const weather = this.weather;
+        const fall = this.rainOverride ?? (local.rain > 0.04 ? local.rain : 0);
+        const cold = weather.temperature;
+        const rain = fall * (1 - weather.snowShare);
+
+        // Krupa śnieżna: drobne kulki z wypiętrzonych chmur przelotnych
+        // opadów, gdy jest około zera.
+        const graupel = fall * smoothstep(0.55, 0.7, local.thick) * smoothstep(-4, -1, cold) * (1 - smoothstep(2.5, 5, cold));
+        const snow = fall * weather.snowShare * (1 - 0.6 * Math.min(1, graupel * 2));
+
+        // Opad z komendy też zasypuje ziemię wokół gracza.
+        if (this.rainOverride !== null && fall > 0.02) {
+            weather.addPrecipitation(this.camera.position.x, this.camera.position.z, fall, dt / DAY_SECONDS);
+        }
         if (Math.abs(rain - this.rain.intensity) > 0.01 || (rain === 0) !== (this.rain.intensity === 0)) {
             this.rain.setIntensity(rain);
         }
@@ -1168,16 +1247,24 @@ export class Game extends GameInteraction {
         this.rainNow = rain;
         this.rainStreaks.update(dt, this.camera, rain, drizzle, this.weather.wind, this.sky.state);
 
-        // Grad - w środku najsilniejszych burz (albo z komendy).
+        // Grad - w środku najsilniejszych burz (albo z komendy); w chłodzie
+        // zamiast niego drobniejsza krupa śnieżna.
         this.hailNow = this.weather.hail;
-        this.hail.update(dt, this.hailNow, this.weather.wind, this.sky.state);
+        this.graupelNow = graupel;
+        this.hail.update(dt, Math.max(this.hailNow, graupel), this.weather.wind, this.sky.state, graupel > this.hailNow ? 1 : 0);
+
+        // Śnieg: około zera mokre płaty, na mrozie suchy puch; gdy leży
+        // i mocno wieje - zamieć przy ziemi.
+        this.snowNow = snow;
+        this.snowFall.update(dt, snow, smoothstep(-7, 0.5, cold), this.weather.wind, weather.snowCover, this.sky.state);
 
         // Szum deszczu i wiatru, stukot gradu; pod dachem i w jaskini
         // przytłumione.
         const eye = this.camera.position;
 
         this.shelterCover = this.rainStreaks.shelter.cover(eye.x, eye.y, eye.z);
-        this.weatherAudio.update({ rain, drizzle, cover: this.shelterCover, speed: this.weather.wind.speed, gust: this.weather.wind.gust, hail: this.hailNow });
+        this.weatherAudio.update({ rain, drizzle, cover: this.shelterCover, speed: this.weather.wind.speed, gust: this.weather.wind.gust,
+            hail: Math.max(this.hailNow, 0.4 * graupel) });
         // One shared discovery allowance for persistent and short-lived rings.
         this.waterImpacts.update(dt, this.player, Math.max(0, 48 - this.waterfalls.ripples.surface.lastProcessed));
     }
@@ -2065,7 +2152,7 @@ export class Game extends GameInteraction {
 
         // Mgła i deszcz zagęszczają powietrze (weather/Weather.js).
         updateAerialPerspective(this.settings, this.sky, fog, this.weather
-            ? { fog: this.weather.fog, rain: this.rainNow ?? 0 }
+            ? { fog: this.weather.fog, rain: (this.rainNow ?? 0) + 2.2 * (this.snowNow ?? 0) + 0.7 * (this.snowFall?.driftLevel ?? 0) }
             : null);
 
         // Kolor mgły dla reszty obiektów (np. ramka wskazanego bloku).
@@ -2285,6 +2372,7 @@ export class Game extends GameInteraction {
         if (this.sky.clouds) this.sky.clouds.quality = potato && clouds === 'pelne' ? 'plaskie' : clouds;
         if (this.weather) this.weather.shadows = !potato && settings.get('cloudShadows');
         if (this.weather) this.weather.wetSurfaces = !potato && settings.get('wetGround');
+        if (this.weather) this.weather.snowSurfaces = settings.get('snowCover');
 
 
         // Model gracza: wierzchnia warstwa skórki, styl zgięć, tryb ziemniaka.
@@ -2450,6 +2538,12 @@ export class Game extends GameInteraction {
 
         // Kolor liści, opadłych liści i zimowy śnieg (LeafSeasons.js).
         setLeafSeason(days);
+
+        // Śnieg na liściach leży wtedy, gdy leży na ziemi (pogoda), a nie
+        // przez całą zimę.
+        if (this.weather) {
+            leafSeasonUniforms.uLeafSnow.value = this.weather.snowSurfaces ? this.weather.snowCover : 0;
+        }
         this.treeParticles?.setSeason(days);
         this.farTerrain?.setLeafSeason(days);
 
@@ -2607,7 +2701,16 @@ export class Game extends GameInteraction {
             this.sounds.play('water_wade', { volume: volume * (0.7 + water) });
         }
 
-        if (type && water < 0.3) {
+        // Po śniegu (pod gołym niebem, gdy leży) - skrzypienie śniegu.
+
+        const feet = this.player.pos;
+        const snowy = water < 0.03 && (this.weather?.snowCover ?? 0) > 0.45 &&
+            this.rainStreaks.shelter.roof(feet.x, feet.z) <= feet.y + 0.6;
+
+        if (snowy) {
+            this.sounds.play('step_snow', { volume });
+        }
+        else if (type && water < 0.3) {
             this.playBlockSound('step', type, null, water > 0.03 ? volume * 0.5 : volume);
         }
 
@@ -2758,6 +2861,7 @@ export class Game extends GameInteraction {
         this.waterImpacts.dispose();
         this.rain.dispose();
         this.hail.dispose();
+        this.snowFall.dispose();
         this.rainStreaks.dispose();
         this.weatherAudio.dispose();
         this.thunderAudio.dispose();
@@ -2896,7 +3000,8 @@ export class Game extends GameInteraction {
             `Czas: ${this.time.formatClock()}, dzień ${this.time.dayNumber} | ` +
             `Księżyc: ${this.sky.celestial.moonPhaseName}${eclipseInfo}<br>` +
 
-            `Pora roku: ${seasonAt(this.time.days).name}, dzień ${seasonAt(this.time.days).day} z ${seasonAt(this.time.days).days}<br>` +
+            `Pora roku: ${seasonAt(this.time.days).name}, dzień ${seasonAt(this.time.days).day} z ${seasonAt(this.time.days).days} | ` +
+            `Temperatura: ${Math.round(this.weather.temperature)}°C<br>` +
 
             `${performanceInfo}<br>` +
 

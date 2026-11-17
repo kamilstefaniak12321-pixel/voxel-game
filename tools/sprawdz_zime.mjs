@@ -43,7 +43,7 @@ globalThis.localStorage = { getItem: () => null, setItem() {}, removeItem() {} }
 
 const THREE = await import('three');
 const FIELD = await import('../src/weather/WeatherField.js');
-const { WeatherField, DAY_SECONDS, SEASON_TEMP, CLIMATE_TEMP, TEMP_LAPSE, emptySample, snowShare, tempAtHeight } = FIELD;
+const { WeatherField, DAY_SECONDS, SEASON_TEMP, CLIMATE_TEMP, CLIMATE_HEAT, TEMP_LAPSE, climateTemp, emptySample, snowShare, tempAtHeight } = FIELD;
 const { Weather, snowCover, SNOW_COVER, TEMP_MIN, TEMP_SPAN, WEATHER_MAP_SIZE, WEATHER_MAP_TEXEL } = await import('../src/weather/Weather.js');
 const { cloudUniforms, CLOUD_SHADOW_GLSL, CLOUD_LAYERS_GLSL } = await import('../src/weather/cloudShader.js');
 const TEXT = await import('../src/weather/weatherText.js');
@@ -150,7 +150,7 @@ const SUMMER = middle(1);
     const cool = new WeatherField('lepidolit', { warmth: () => -1 });
     const t = SUMMER + 0.5;
 
-    near(hot.sample(0, 0, t, emptySample()).tempSlow - field.sample(0, 0, t, emptySample()).tempSlow, CLIMATE_TEMP, 1e-9, 'W gorącym klimacie cieplej');
+    near(hot.sample(0, 0, t, emptySample()).tempSlow - field.sample(0, 0, t, emptySample()).tempSlow, CLIMATE_HEAT, 1e-9, 'W gorącym klimacie cieplej');
     near(field.sample(0, 0, t, emptySample()).tempSlow - cool.sample(0, 0, t, emptySample()).tempSlow, CLIMATE_TEMP, 1e-9, 'W zimnym klimacie chłodniej');
     check(cool.sample(0, 0, WINTER + 0.5, emptySample()).tempSlow < -12 && hot.sample(0, 0, WINTER + 0.5, emptySample()).tempSlow > 3, 'Zimą w gorących stronach nie ma mrozu, w zimnych jest siarczysty');
 
@@ -235,6 +235,28 @@ const SUMMER = middle(1);
 
 
 // --- 3. Mapa pogody: temperatury i świeży opad -------------------------------------
+
+{
+    // Klimat musi dojść do pola pogody także przez klasę używaną w grze
+    // (w 1.14.0 Weather gubiło ciepło klimatu - poprawka 1.14.1).
+    const hot = new Weather('lepidolit', { climate: () => -0.6, warmth: () => 1 });
+    const cold = new Weather('lepidolit', { climate: () => 0.4, warmth: () => -1 });
+
+    for (const weather of [hot, cold]) {
+        weather.field.force('wyz', 0, 0, WINTER + 0.5, { stay: true });
+        weather.update(WINTER + 0.5, 0.016, 0, 0);
+    }
+
+    check(hot.field.warmth?.(0, 0) === 1 && hot.field.climate?.(0, 0) === -0.6, 'Gra przekazuje polu pogody wilgotność i ciepło klimatu');
+    near(hot.local.tempSlow - cold.local.tempSlow, CLIMATE_HEAT + CLIMATE_TEMP, 1e-6, 'Ciepło klimatu zmienia temperaturę w grze');
+
+    // Pustynia zaczyna się przy cieple klimatu ok. 0,3 (Biomes.js): tam
+    // środek zimy jest już na plusie i zimowa pokrywa nie leży.
+    check(SEASON_TEMP[3] + climateTemp(0.3) > 0 && snowCover(0, 0, SEASON_TEMP[3] + climateTemp(0.3)) < 0.15, 'Na skraju pustyni zimą śnieg prawie nie leży');
+    check(snowCover(0, 0, SEASON_TEMP[3] + climateTemp(0.45)) === 0, 'W głębi pustyni zimą nie ma śniegu');
+    equal([climateTemp(-1), climateTemp(0), climateTemp(1)], [-CLIMATE_TEMP, 0, CLIMATE_HEAT], 'Klimat: zimne strony o 11 stopni chłodniejsze, gorące o 18 cieplejsze');
+    check(hot.snowCover === 0 && cold.snowCover === 1, `Zimą w gorących stronach śnieg nie leży, w zimnych leży (${hot.snowCover} i ${cold.snowCover})`);
+}
 
 {
     const weather = new Weather('lepidolit');
@@ -505,7 +527,18 @@ const SUMMER = middle(1);
     for (const material of [snow.flakeMaterial, snow.driftMaterial]) {
         check(material.vertexShader.includes('rainShelter(p.xz)') && material.vertexShader.includes('rainWrap('), 'Płatki znikają pod dachem i wędrują z kamerą');
         check(!material.depthWrite && material.transparent && !material.vertexShader.includes('undefined'), 'Śnieg nie zapisuje głębi');
+
+        // Krycie liczone w wierzchołkach nie może zależeć od tego, który
+        // to róg kwadratu: wygaszenie końców smugi daje w obu końcach zero,
+        // więc zerowałoby całą smugę (zamieć w 1.14.0 była przez to
+        // niewidoczna). Końce gasną w shaderze pikseli.
+        const alpha = material.vertexShader.match(/vAlpha = [^;]*;/g) ?? [];
+
+        check(alpha.length === 1 && !alpha[0].includes('position.'), 'Krycie płatka i smugi nie zależy od rogu kwadratu');
+        check(material.fragmentShader.includes('vAlpha * (1.0 - vStreak.y * abs(vStreak.x * 2.0 - 1.0))'), 'Końce smugi gasną w shaderze pikseli');
     }
+
+    check(snow.flakeMaterial.vertexShader.includes('vStreak = vec2(position.y, 0.0);') && snow.driftMaterial.vertexShader.includes('vStreak = vec2(position.y, 1.0);'), 'Płatki są pełne, smugi zamieci gasną na końcach');
 
     // Krupa śnieżna: drobniejszy, wolniejszy grad.
     rain.setAmount(1);

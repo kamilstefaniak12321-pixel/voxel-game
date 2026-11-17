@@ -11,6 +11,24 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 1.14.1 - Poprawki zimy: klimat i zamieć
+
+PR #166.
+
+- **Naprawione: klimat wpływa na temperaturę.** W 1.14.0 ciepło klimatu
+  (gorące i zimne strony świata) nie docierało w grze do pogody, więc
+  temperatura zależała tylko od pory roku - zimą śnieg leżał tak samo na
+  pustyni jak w tajdze. Teraz w zimnych stronach jest do 11° chłodniej
+  (śnieg leży tam dłużej, a w górach bywa i poza zimą), a w gorących do
+  18° cieplej: na pustyni i sawannie zimowa pokrywa nie leży, a latem
+  jest tam upał.
+- **Naprawione: zamieć przy ziemi jest widoczna.** W 1.14.0 białe smugi
+  śniegu porywanego wiatrem z ziemi były przez błąd w shaderze całkiem
+  przezroczyste - gra je liczyła, ale nic nie rysowała. Teraz, gdy leży
+  śnieg i mocno wieje, nisko nad ziemią suną smugi (także bez opadu).
+
+---
+
 ## 1.14.0 - Pogoda, część 4: zima
 
 PR #165. Opis: [`docs/pogoda.md`](docs/pogoda.md).

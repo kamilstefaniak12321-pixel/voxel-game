@@ -237,8 +237,12 @@ Celsjusza, na poziomie morza). Składa się z:
 
 - **pory roku:** średnio 9° wiosną, 20° latem, 8° jesienią i -5° zimą
   (`SEASON_TEMP`), z płynnym przejściem między porami;
-- **klimatu:** pole temperatury generatora terenu przesuwa ją o do 11°
-  w górę (gorące strony świata) albo w dół (zimne);
+- **klimatu:** pole temperatury generatora terenu przesuwa ją o do 18°
+  w górę (gorące strony świata, `CLIMATE_HEAT` - na pustyni zimą śnieg
+  nie leży, latem jest ponad 30°) albo o do 11° w dół (zimne,
+  `CLIMATE_TEMP`). Do 1.14.0 włącznie klimat nie docierał do pogody
+  w grze (błąd podłączenia) - temperatura zależała tylko od pory roku;
+  poprawione w 1.14.1;
 - **pory doby:** najcieplej po południu, najzimniej przed świtem - przy
   czystym niebie różnica to około 11°, pod zamkniętym niebem 4°;
 - **układów:** za frontem chłodnym o kilka stopni zimniej, w wycinku
@@ -272,6 +276,9 @@ w dolinie leje.
 - **Zamieć przy ziemi:** gdy leży śnieg i wieje od 4,5 bloku/s, wiatr
   porywa go z ziemi - nisko nad nią suną białe smugi (do 1500), także
   wtedy, gdy z nieba nic nie pada.
+  (W 1.14.0 smugi były przez błąd shadera niewidoczne - krycie liczone
+  w wierzchołkach zerowało się na obu końcach smugi; od 1.14.1 końce
+  gasną w shaderze pikseli.)
 - **Krupa śnieżna:** z wypiętrzonych chmur przelotnych opadów przy
   temperaturze około zera lecą drobne, białe kulki - mniejszy i wolniejszy
   grad (`Hail.js`), z cichym stukotem.

@@ -102,14 +102,18 @@ const SEASON_FOG = [0.5, 0.3, 0.9, 0.6];
 // TEMPERATURA (od 1.14.0), w stopniach Celsjusza.
 //   SEASON_TEMP  - średnia na poziomie morza w umiarkowanym klimacie
 //                  (wiosna, lato, jesień, zima),
-//   CLIMATE_TEMP - o tyle cieplej albo chłodniej w gorących i zimnych
-//                  stronach świata (pole temperatury generatora terenu),
+//   CLIMATE_TEMP - o tyle chłodniej w najzimniejszych stronach świata
+//                  (pole temperatury generatora terenu),
+//   CLIMATE_HEAT - o tyle cieplej w najgorętszych: więcej, żeby na
+//                  pustyni (ciepło klimatu od ok. 0,3) zimą nie leżał
+//                  śnieg, a latem był upał,
 //   DAY_SWING    - o tyle cieplej po południu i chłodniej przed świtem
 //                  przy czystym niebie (pod chmurami dużo mniej),
 //   TEMP_LAPSE   - o tyle chłodniej na każdy blok ponad poziom morza
 //                  (w górach pada śnieg, gdy w dolinie deszcz).
 export const SEASON_TEMP = [9, 20, 8, -5];
 export const CLIMATE_TEMP = 11;
+export const CLIMATE_HEAT = 18;
 export const DAY_SWING = 5.5;
 export const TEMP_LAPSE = 0.08;
 
@@ -118,6 +122,13 @@ export const TEMP_LAPSE = 0.08;
 export function snowShare(temp) {
 
     return ramp(2, 0, temp);
+
+}
+
+// O ile stopni klimat miejsca (ciepło -1..1) przesuwa temperaturę.
+export function climateTemp(warmth) {
+
+    return warmth * (warmth > 0 ? CLIMATE_HEAT : CLIMATE_TEMP);
 
 }
 
@@ -555,7 +566,7 @@ export class WeatherField {
 
         const overcast = Math.max(out.low, 0.6 * out.mid);
         const slow = season[0] * SEASON_TEMP[0] + season[1] * SEASON_TEMP[1] + season[2] * SEASON_TEMP[2] + season[3] * SEASON_TEMP[3] +
-            CLIMATE_TEMP * (this.warmth ? this.warmth(x, z) : 0);
+            (this.warmth ? climateTemp(this.warmth(x, z)) : 0);
 
         out.tempSlow = slow;
         out.temp = slow + DAY_SWING * (1 - 0.65 * overcast) * Math.cos((timeOfDay - 0.62) * Math.PI * 2) +

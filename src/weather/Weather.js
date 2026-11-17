@@ -442,11 +442,12 @@ export class WeatherMap {
 export class Weather {
 
     // seed    - ziarno świata,
-    // climate - opcjonalnie (x, z) => wilgotność miejsca -1..1.
+    // climate - opcjonalnie (x, z) => wilgotność miejsca -1..1,
+    // warmth  - opcjonalnie (x, z) => ciepło klimatu -1..1 (temperatura).
 
-    constructor(seed, { climate = null } = {}) {
+    constructor(seed, { climate = null, warmth = null } = {}) {
 
-        this.field = new WeatherField(seed, { climate });
+        this.field = new WeatherField(seed, { climate, warmth });
         this.map = new WeatherMap(this.field);
 
         this.raw = emptySample();

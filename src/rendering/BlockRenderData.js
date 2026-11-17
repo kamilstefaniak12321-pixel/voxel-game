@@ -203,7 +203,27 @@ blockMaterial.onBeforeCompile = (shader, renderer) => {
             blockAmbient = mix(blockAmbient, blockSky * surfaceDecodeLight(vSurfaceOcclusion), uAtmosphericLight);
             // Cień chmur (weather/cloudShader.js): przyciemnia światło
             // słońca; gdy jest wyłączony, funkcja od razu zwraca 1.
-            float blockCloud = cloudShadowAt(vWorldPosition);`
+            float blockCloud = cloudShadowAt(vWorldPosition);
+
+            // Mokra ziemia (1.12.0): pod gołym niebem bloki ciemnieją
+            // w deszczu i powoli schną; na płaskich wierzchach zbierają się
+            // kałuże, w których widać kolor nieba. Rośliny, liście i woda
+            // mają NO_WET_GROUND.
+            #ifndef NO_WET_GROUND
+                float blockWet = groundWetness(vWorldPosition) * smoothstep(0.45, 0.95, blockSky);
+
+                if (blockWet > 0.004) {
+
+                    diffuseColor.rgb *= 1.0 - 0.32 * blockWet;
+
+                    if (vWorldNormal.y > 0.9 && puddleAt(vWorldPosition, blockWet) > 0.5) {
+                        diffuseColor.rgb = diffuseColor.rgb * 0.5 + mix(uSkyHorizon, uSkyZenith, 0.45) * 0.3;
+                    }
+
+                    blockTexel = diffuseColor.rgb;
+
+                }
+            #endif`
         );
 
 
@@ -511,6 +531,9 @@ plantMaterial.onBeforeCompile = (shader, renderer) => {
     blockMaterial.onBeforeCompile(shader, renderer);
     Object.assign(shader.uniforms, plantWindUniforms);
 
+    // Bez mokrej ziemi i kałuż (to nie są płaskie wierzchy bloków).
+    shader.fragmentShader = `#define NO_WET_GROUND\n${shader.fragmentShader}`;
+
     // Roślina kołysze się, a mapa cieni nie - większy zapas, żeby
     // źdźbła nie cieniowały same siebie w paski (Shadows.js).
 
@@ -581,6 +604,9 @@ leafMaterial.onBeforeCompile = (shader, renderer) => {
         );
 
     blockMaterial.onBeforeCompile(shader, renderer);
+
+    // Liście bez kałuż i mokrych plam (mają własne cieniowanie).
+    shader.fragmentShader = `#define NO_WET_GROUND\n${shader.fragmentShader}`;
 
     // Liście z 8 części (ChunkMesher.addLeafParts): każda część kołysze
     // się lekko w całości - plantMotion.x - siła, y - faza (zwykłe liście:
@@ -750,6 +776,9 @@ waterMaterial.onBeforeCompile = (shader, renderer) => {
     blockMaterial.onBeforeCompile(shader, renderer);
 
     Object.assign(shader.uniforms, waterUniforms, chunkMaskUniforms);
+
+    // Woda nie moknie.
+    shader.fragmentShader = `#define NO_WET_GROUND\n${shader.fragmentShader}`;
 
 
     shader.vertexShader = shader.vertexShader

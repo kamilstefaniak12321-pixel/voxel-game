@@ -18,7 +18,7 @@ Każda jest grywalna sama w sobie.
 | nr | część | stan |
 |---|---|---|
 | 1 | **Niebo i fronty** - pole pogody, fronty, lokalny wiatr, chmury na trzech piętrach, cienie chmur, mapa pogody, `/pogoda` | **1.11.0** |
-| 2 | **Deszcz** - od mżawki po ulewę, skośne krople, odległe kurtyny deszczu, mokry świat, schronienie pod dachem, dźwięk, mgła, tęcza | plan |
+| 2 | **Deszcz** - od mżawki po ulewę, skośne krople, odległe kurtyny deszczu, mokry świat i kałuże, schronienie pod dachem, dźwięk deszczu i wiatru, mgła, tęcza i halo | **1.12.0** |
 | 3 | **Burze** - letnie komórki i ciemne fronty, wyładowania w chmurach i w ziemię oświetlające krajobraz, grzmot spóźniony o odległość, grad | plan |
 | 4 | **Zima** - rodzaje śniegu (od krup po mokre płaty), śnieżyca, zamieć przy ziemi, pokrywa śnieżna (wizualna) i topnienie, szron | plan |
 | 5 | **Pustynia i morze** - pyłowa mgiełka, burza piaskowa, haboob, wiry pyłowe, sztorm ze spienionymi falami | plan |
@@ -110,6 +110,83 @@ Teren kończy się na wysokości 128, więc chmury zawsze są nad nim.
   niebie, i przesuwa się z niskim słońcem. Pod zamkniętym niebem cienie
   znikają (światło i tak jest rozproszone).
 
+## Deszcz (1.12.0)
+
+![Deszcz w 1.12.0: ulewa, schronienie pod dachem, kałuże, kurtyna deszczu, tęcza i mgła](pogoda-1120.jpg)
+
+Pada tam, gdzie mówi pole pogody (`sample.rain`). Deszcz ma kilka warstw,
+każda z innego miejsca w kodzie:
+
+- **Krople wokół gracza** (`rendering/RainStreaks.js`) liczy karta
+  graficzna: do 6000 kropel w pudełku 36 × 26 × 36 bloków wokół kamery
+  (tryb ziemniaka: 1600). Każda ma stałe miejsce i spada z prędkością
+  deszczu - w dół i z wiatrem, stąd **ukos**. Procesor przesuwa tylko jedno
+  wspólne przesunięcie, więc deszcz nic go nie kosztuje.
+  - *Mżawka* (słaby opad z niskiej, cienkiej chmury): drobne krople,
+    5 bloków/s, gęsto. Wiatr pochyla ją najmocniej.
+  - *Deszcz* i *ulewa*: smugi do około bloku długości, 11-21 bloków/s, im
+    mocniej pada, tym gęściej.
+- **Rozpryski** na ziemi (do 700) i **kręgi na wodzie** (dawny
+  `RainEffects.js` - jego kreski są teraz ukryte, zostało szukanie, gdzie
+  kropla trafia w wodę).
+- **Schronienie** (`RainShelter`): mapa 64 × 64 kolumn wokół gracza
+  z wysokością pierwszego od góry bloku, który zatrzymuje deszcz (pełny
+  blok, liście, woda). Kropla poniżej tej wysokości znika - pod dachem,
+  w jaskini i pod koroną drzewa nie pada, a przez okno widać deszcz na
+  zewnątrz. Mapa odświeża się w pół sekundy (dwa wiersze na klatkę),
+  więc postawiony dach od razu chroni.
+- **Kurtyny deszczu** (`cloudShader.js`, `rainVeil`): szara, smugowata
+  zasłona między ziemią a podstawą chmur tam, gdzie pada. Na niebie rysuje
+  ją shader chmur (czternaście odczytów mapy pogody wzdłuż promienia),
+  na dalekim terenie - jego własny shader tym samym kolorem, więc kurtyna
+  sięga od chmury do ziemi. Smugi pochylają się z wiatrem. Liczy się
+  tylko wtedy, gdy gdzieś w zasięgu mapy pada.
+- **Mokra ziemia.** Druga tekstura mapy pogody (R opad, G burza, B mokra
+  ziemia, A mgła) pamięta deszcz w każdym punkcie: ziemia moknie w około
+  25 sekund i schnie około 6 minut. Bloki pod gołym niebem ciemnieją
+  (pod dachem i w głębi lasu zostają suche - decyduje światło nieba),
+  a na płaskich wierzchach zbierają się **kałuże** z pikseli wielkości
+  pikseli tekstur, w których widać kolor nieba. Daleki teren też
+  ciemnieje - widać, którędy przeszedł deszcz.
+- **Powietrze.** Deszcz zagęszcza mgiełkę (ulewa około 3,5 raza), więc
+  w ulewie daleki krajobraz znika w szarości.
+
+## Dźwięk (1.12.0)
+
+`audio/WeatherAudio.js` - bez nagrań, z jednego bufora szumu i filtrów:
+
+- **deszcz:** syk kropel, głośniejszy i niższy przy mocnym opadzie
+  (mżawka cicha i wysoka) i niski pomruk ulewy;
+- **wiatr:** słychać go od około 1,6 bloku/s, najgłośniejszy przy 9;
+  faluje z porywami;
+- **schronienie:** `RainShelter.cover()` mówi, jaka część kolumn wokół
+  głowy gracza ma dach - pod dachem deszcz cichnie o ponad połowę i traci
+  wysokie tony (zostaje bębnienie), wiatr też cichnie. W drzwiach jest
+  pośrodku.
+
+Dźwięk idzie przez suwak *Otoczenie*, milknie w pauzie i jest przytłumiony
+pod wodą razem z resztą.
+
+## Mgła, tęcza i halo (1.12.0)
+
+- **Mgła poranna** (`sample.fog`): zbiera się między 2 a 9 rano przy
+  czystym niebie i wietrze poniżej 3 bloków/s. Nie każdego ranka i nie
+  wszędzie - plamy po kilka kilometrów, co rano inne; jesienią mniej
+  więcej co trzeci ranek, wiosną i latem co piąty, zimą co dziesiąty
+  (niebo jest wtedy częściej zamknięte), na pustyni prawie nigdy. Gęsta
+  mgła zdarza się kilka razy rzadziej. Mgła
+  zagęszcza powietrze kilkanaście razy i **leży nisko** (wysokość warstwy
+  spada z 250 do 48 bloków): doliny toną, szczyty wystają. Niebo szarzeje.
+- **Mgiełka po deszczu:** gdy przestaje padać, nad mokrą ziemią przez
+  kilka minut unosi się lekka mgła.
+- **Tęcza:** łuk 42° naprzeciw słońca z siedmiu pasów. Pojawia się, gdy
+  słońce jest nisko (do około 40° nad horyzontem), świeci na gracza, a po
+  przeciwnej stronie nieba pada (z mapy pogody, do 3000 bloków) albo pada
+  tuż przy nim.
+- **Halo:** pierścień 22° wokół słońca albo księżyca, gdy niebo zasnuwa
+  cienka warstwa chmur wysokich bez niższych chmur - tak wygląda niebo
+  kilka minut przed frontem ciepłym.
+
 ## Komendy i mapa
 
 | komenda | działanie |
@@ -120,7 +197,9 @@ Teren kończy się na wysokości 128, więc chmury zawsze są nad nim.
 | `/pogoda ustaw <rodzaj>` | ustawia pogodę nad tobą (stoi w miejscu) |
 | `/pogoda ustaw <rodzaj> nadciaga` | układ zaczyna kilka tysięcy bloków pod wiatr i nadciąga jak prawdziwy |
 | `/pogoda auto` | powrót do pogody liczonej samodzielnie |
-| `/pogoda deszcz [0-100]`, `/pogoda sucho` | sam deszcz, do odwołania |
+| `/pogoda deszcz [0-100]`, `/pogoda sucho` | sam deszcz, do odwołania (do 20% - mżawka) |
+| `/pogoda mgla [0-100]` | mgła nad tobą, do odwołania |
+| `/pogoda tecza [wl\|wyl]` | tęcza, do odwołania (widać ją tyłem do niskiego słońca) |
 | `/mapa pogoda [skala]` | **mapa pogody na żywo**: chmury (im ciemniejsze, tym bardziej się piętrzą), opad (niebieski), burza (fioletowy), linie frontów (czerwona - ciepły, niebieska - chłodny) i strzałki wiatru. Domyślnie 64 bloki na punkt (ponad 12 km). Przy otwartym czacie mysz pokazuje pogodę wskazanego miejsca |
 
 Rodzaje: `pogodnie`, `pochmurno`, `front-cieply`, `front-chlodny`,
@@ -137,6 +216,8 @@ Pogoda ustawiona komendą jest tylko u tego gracza i nie daje osiągnięć.
   zawsze używa płaskich. Stary zapis ustawień zachowuje swoją jakość.
 - **Cienie chmur** (`/ustaw cienie-chmur`): wł. / wył. W trybie ziemniaka
   wyłączone.
+- **Mokra ziemia i kałuże** (`/ustaw mokra-ziemia`, od 1.12.0): wł. / wył.
+  W trybie ziemniaka wyłączone; kropel jest wtedy 1600 zamiast 6000.
 
 ## Wydajność
 
@@ -150,11 +231,20 @@ Pogoda ustawiona komendą jest tylko u tego gracza i nie daje osiągnięć.
   - tutaj gra działa tylko na programowym rysowaniu. Do sprawdzenia
   u Kamila: `/wydajnosc test` z chmurami pełnymi, płaskimi i wyłączonymi.
 
+- **Deszcz (1.12.0):** krople i rozpryski to dwa polecenia rysowania
+  i żadnej pracy procesora na kroplę; mapa schronienia to około 130
+  kolumn na klatkę. Mokra ziemia to jeden odczyt tekstury więcej na piksel
+  terenu, kałuże dwa (tylko na mokrych wierzchach). Kurtyny deszczu liczą
+  się tylko, gdy w zasięgu mapy pada. Kosztu na prawdziwej karcie także
+  tu nie zmierzono.
+
 ## Osiągnięcia
 
 *Pierwsze krople* (deszcz, który przyniosła pogoda), *Wiatr we włosach*
 (wiatr od 6 bloków/s), *Ani jednej chmurki* (środek wyżu w dzień),
-*Głowa w chmurach* (wlot w niską chmurę).
+*Głowa w chmurach* (wlot w niską chmurę). Od 1.12.0: *Niech sobie pada*
+(deszcz przeczekany pod dachem), *Siedem kolorów* (tęcza), *Mleko*
+(gęsta poranna mgła).
 
 ## Sprawdzenia
 
@@ -165,37 +255,62 @@ przesunięciu okna), światło, cienie i wiatr, szum chmur i próg pokrycia,
 kolory chmur o różnych porach, opisy słowne, prognoza, komenda, mapa,
 ustawienia, osiągnięcia i wpięcie w grę.
 
+`tools/sprawdz_deszcz.mjs` (ponad 3800 sprawdzeń, 1.12.0): mgła poranna
+(pora, niebo, wiatr, pory roku, klimat), druga mapa pogody i pamięć
+mokrej ziemi, tęcza i halo, mapa schronienia na prawdziwych chunkach
+(dach, liście, woda, postawiony dach, okno za graczem), krople (mżawka,
+ulewa, ukos, zawijanie, tryb ziemniaka), głośności i filtry dźwięku oraz
+łańcuch Web Audio na atrapie, gęstość powietrza, shadery, komenda,
+ustawienia, osiągnięcia.
+
 Testy przeglądarkowe, które mierzą kolory albo sterują deszczem, same
 ustawiają pogodę: `tools/fixtures/trees-085.js` przypina wyż nad kamerą
 (świat o ziarnie 42 zaczyna się w deszczu frontowym), a
 `tools/fixtures/waterfall-ripple-benchmark.js` włącza deszcz tak jak
-komenda (`game.rainOverride`). Do powtarzalnych porównań światła w grze
-służy `/pogoda ustaw pogodnie`.
+komenda (`game.rainOverride`). Testy materiałów (`tools/*_render_checks.js`)
+wyłączają pogodę w shaderach na swój czas (`tools/render_check_weather.js`),
+bo porównują teren z modelami, a modele nie mokną i nie dostają cienia
+chmur. Do powtarzalnych porównań światła w grze służy
+`/pogoda ustaw pogodnie`.
 
-## Braki (stan na 1.11.0)
+## Braki (stan na 1.12.0)
 
-- **Deszcz jest jeszcze dawny** - kilkadziesiąt kresek wokół gracza. Pada
-  już tam, gdzie mówi pogoda, ale wygląd, dźwięk, kurtyny deszczu i mokry
-  świat to część 2.
 - **Burza nie błyska i nie grzmi** - na razie to ciemna, piętrząca się
   chmura z ulewą i wiatrem (część 3).
+- **Kurtyna deszczu z daleka jest niska.** Podstawa chmur leży około 140
+  bloków nad graczem, więc z 2000 bloków zasłona ma na ekranie tylko
+  kilka stopni wysokości - wyraźna robi się poniżej kilometra.
+- **Mgła jest jedna dla całego widoku** (liczona nad graczem): z góry nie
+  widać osobnej ławicy mgły w dolinie, a stojąc poza mgłą nie widać jej
+  z daleka.
+- **Mokra ziemia nie zna dachów dalej niż światło nieba:** o tym, co
+  suche, decyduje światło nieba na ścianie, więc pod wąskim okapem ściana
+  też ciemnieje. Kałuże nie znikają na stokach (są tylko na płaskich
+  wierzchach bloków, ale także na szczycie wzgórza) i nie mają kręgów
+  od kropel.
+- **Liście zatrzymują cały deszcz** - pod koroną jest sucho, nic z niej
+  nie kapie.
+- **Dźwięk deszczu jest jeden:** nie różni się o liście, wodę i dach
+  (poza przytłumieniem w schronieniu); pojedynczych kropel o dach nie
+  słychać.
+- **Kropli nie zatrzymują modele** (skrzynia, ognisko, tratwa) ani
+  rośliny; deszcz nie gasi jeszcze ogniska (część 6).
+- **Tęcza i halo są tylko na niebie** - nie rysują się na tle terenu
+  (podstawa łuku znika za horyzontem).
 - **Daleka ściana chmur jest mało wyrazista** - z kilku kilometrów
   piętrzące się chmury zlewają się w jasny pas z ciemną podstawą.
 - **Cienia chmur nie dostają** modele (gracz, przedmioty na ziemi,
   skrzynie, ogniska) ani rozbryzgi wodospadów; promienie światła
   w powietrzu też o nim nie wiedzą.
 - **Woda nie odbija chmur** (odbija sam kolor nieba).
-- **Paleta światła „Poprzednia"** (`/swiatlo paleta poprzednia`) nie ciemnieje
-  pod zachmurzeniem - chmury i ich cienie działają, światło nieba nie.
+- **Paleta światła „Poprzednia"** (`/swiatlo paleta poprzednia`) nie
+  ciemnieje pod zachmurzeniem i nie gęstnieje we mgle.
 - **Rośliny przechylają się zawsze w tę samą stronę** - zmienia się siła
-  kołysania, nie kierunek. Wiatr nie ma jeszcze dźwięku.
-- **Tło menu nie ma chmur**, a chmury na kuli Ziemi (widok z kosmosu) nie
-  są tymi z pola pogody.
-- **Góry nie sięgają chmur** (teren do 128, chmury od ok. 210) - mgła na
-  szczytach przyjdzie z mgłą w części 2.
+  kołysania, nie kierunek.
+- **Tło menu nie ma chmur ani deszczu**, a chmury na kuli Ziemi (widok
+  z kosmosu) nie są tymi z pola pogody.
 - **Temperatury jeszcze nie ma w polu pogody** - o tym, czy pada deszcz,
   czy śnieg, zdecyduje część 4.
-- **Przeskok czasu** (sen, `/czas`) przeskakuje też pogodę - po
-  przebudzeniu może już padać. To zamierzone, ale chmury zmieniają się
-  wtedy skokiem.
-- **`/pogoda ustaw` nie jest wysyłane innym graczom.**
+- **Przeskok czasu** (sen, `/czas`) przeskakuje też pogodę; mokra ziemia
+  po cofnięciu czasu liczy się od nowa.
+- **`/pogoda ustaw`, `mgla` i `tecza` nie są wysyłane innym graczom.**

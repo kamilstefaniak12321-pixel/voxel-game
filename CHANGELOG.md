@@ -11,6 +11,40 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 1.12.0 - Pogoda, część 2: deszcz
+
+PR #163. Opis: [`docs/pogoda.md`](docs/pogoda.md).
+
+- **Prawdziwy deszcz.** Tysiące kropel wokół gracza zamiast kilkudziesięciu
+  kresek: od mżawki (drobne, wolne, gęste krople) po ulewę (długie,
+  szybkie smugi). Krople lecą **ukośnie z wiatrem** - im silniej wieje,
+  tym bardziej. Na ziemi zostawiają rozpryski, na wodzie kręgi.
+- **Schronienie.** Pod dachem, w jaskini i pod koroną drzewa nie pada,
+  a przez okno widać deszcz na zewnątrz. Mapa dachów odświeża się
+  w pół sekundy, więc postawiony właśnie dach od razu chroni.
+- **Kurtyny deszczu na horyzoncie.** Pod chmurą, z której pada, wisi
+  szara, smugowata zasłona - z daleka widać, gdzie pada i dokąd zmierza
+  deszcz. Daleki teren pod deszczem tonie w tej zasłonie.
+- **Mokry świat.** Bloki pod gołym niebem ciemnieją w deszczu (w pół
+  minuty) i schną kilka minut po nim. Na płaskich wierzchach zbierają
+  się kałuże, w których widać kolor nieba. Z daleka widać ciemniejszy
+  pas tam, gdzie przeszedł deszcz.
+- **Dźwięk deszczu i wiatru.** Szum deszczu rośnie z natężeniem (mżawka
+  cicha i wysoka, ulewa z niskim pomrukiem), wiatr szumi i faluje
+  z porywami. Pod dachem i w jaskini oba są przytłumione.
+- **Mgła.** Poranna mgła zbiera się przed świtem przy czystym niebie
+  i słabym wietrze - najczęściej jesienią, na pustyni prawie nigdy.
+  Leży nisko: doliny toną, szczyty wystają. Po deszczu nad mokrą ziemią
+  unosi się lekka mgiełka, a sam deszcz zasnuwa krajobraz.
+- **Tęcza i halo.** Tęcza pojawia się, gdy słońce jest nisko za plecami,
+  a przed tobą pada. Halo - pierścień wokół słońca albo księżyca - gdy
+  niebo zasnuwa cienka warstwa chmur wysokich (zapowiedź frontu).
+- **`/pogoda mgla [0-100]`** i **`/pogoda tecza [wl|wyl]`** do sprawdzania;
+  mapa pogody (`/mapa pogoda`) pokazuje mgłę.
+- **Ustawienie** *Mokra ziemia i kałuże* (Obraz → Zaawansowane). Tryb
+  ziemniaka: mniej kropel, bez mokrej ziemi.
+- **Osiągnięcia:** *Niech sobie pada*, *Siedem kolorów*, *Mleko*.
+
 ## 1.11.0 - Pogoda, część 1: niebo i fronty
 
 PR #162. Opis i plan całej aktualizacji pogodowej: [`docs/pogoda.md`](docs/pogoda.md).

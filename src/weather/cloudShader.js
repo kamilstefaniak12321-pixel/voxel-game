@@ -53,7 +53,24 @@ export const cloudUniforms = {
 
     // Cień chmur na terenie: x siła (0 - brak), yz - o ile bloków w bok
     // przesuwa się cień na każdy blok wysokości (kierunek do światła).
-    uCloudShadow: { value: new THREE.Vector3(0, 0, 0) }
+    uCloudShadow: { value: new THREE.Vector3(0, 0, 0) },
+
+    // Druga mapa pogody (od 1.12.0): R opad, G burza, B mokra ziemia, A mgła.
+    uWeatherRain: { value: null },
+
+    // Kurtyny deszczu pod chmurami: x - czy w okolicy pada (0/1),
+    // y - kierunek wiatru (radiany), z - pochylenie smug.
+    uRainVeil: { value: new THREE.Vector4(0, 0, 0, 0) },
+
+    // Kolor zasłony deszczu (z koloru chmur w cieniu - sky/layers/Clouds.js);
+    // ten sam na niebie i na dalekim terenie pod deszczem.
+    uRainVeilColor: { value: new THREE.Color(0.42, 0.45, 0.5) },
+
+    // x - tęcza (0-1), y - halo wokół słońca albo księżyca (0-1).
+    uSkyOptics: { value: new THREE.Vector4(0, 0, 0, 0) },
+
+    // Mokra ziemia i kałuże na terenie: 1 - wł., 0 - wył. (ustawienie).
+    uWetness: { value: 0 }
 
 };
 
@@ -112,6 +129,47 @@ export const CLOUD_SHADOW_GLSL = /* glsl */ `
         return 1.0 - uCloudShadow.x * shade;
 
     }
+
+    // Mokra ziemia (od 1.12.0): 0-1 w danym miejscu - z mapy pogody,
+    // która pamięta niedawny deszcz (moknie w pół minuty, schnie kilka).
+    uniform sampler2D uWeatherRain;
+    uniform float uWetness;
+
+    float groundWetness(vec3 worldPosition) {
+
+        if (uWetness <= 0.0) {
+            return 0.0;
+        }
+
+        return texture2D(uWeatherRain, worldPosition.xz * uWeatherScale).b * uWetness;
+
+    }
+
+    // Kałuża (0 albo 1) na płaskim wierzchu bloku: plamy z szumu, tym
+    // większe, im mokrzej; brzeg z pikseli wielkości pikseli tekstur.
+    float puddleAt(vec3 worldPosition, float wet) {
+
+        vec2 q = (floor(worldPosition.xz * 16.0) + 0.5) / 16.0;
+        float spots = 0.6 * textureLod(uCloudNoise, q / 37.0, 0.0).a + 0.4 * textureLod(uCloudNoise, q / 9.0 + 0.31, 0.0).r;
+
+        return step(1.22 - 0.5 * wet, spots);
+
+    }
+
+    // Opad nad danym miejscem (0-1) - daleki teren pod deszczem tonie
+    // w szarej zasłonie. Bez deszczu w okolicy nic nie czyta.
+    uniform vec4 uRainVeil;
+    uniform vec3 uRainVeilColor;
+
+    float rainAt(vec3 worldPosition) {
+
+        if (uRainVeil.x < 0.5) {
+            return 0.0;
+        }
+
+        return texture2D(uWeatherRain, worldPosition.xz * uWeatherScale).r;
+
+    }
 `;
 
 
@@ -128,6 +186,10 @@ export const CLOUD_LAYERS_GLSL = /* glsl */ `
     uniform vec3 uCloudLayerLit;    // ile światła dostają: niskie, średnie, wysokie
     uniform vec4 uCloudView;        // x przebieg, y jakość, z kąt piksela, w widoczność
     uniform vec2 uCloudFlow;        // kierunek, z którego płyną (smugi pierzastych)
+    uniform sampler2D uWeatherRain; // R opad, G burza, B mokra ziemia, A mgła
+    uniform vec4 uRainVeil;         // x czy pada w okolicy, y kierunek wiatru, z pochylenie
+    uniform vec3 uRainVeilColor;    // kolor zasłony deszczu
+    uniform vec4 uSkyOptics;        // x tęcza, y halo
 
     const float CLOUD_CELL = ${CLOUD_CELL.toFixed(1)};
     const float CLOUD_REACH = ${CLOUD_REACH.toFixed(1)};
@@ -444,6 +506,93 @@ export const CLOUD_LAYERS_GLSL = /* glsl */ `
 
     }
 
+    // Kurtyna deszczu: szara zasłona między ziemią a podstawą chmur tam,
+    // gdzie pada. Z daleka widać ją jako smugi pod chmurą - i po tym,
+    // gdzie stoi, widać, dokąd zmierza deszcz. Blisko gracza deszcz rysują
+    // krople (rendering/RainStreaks.js), więc zasłona zaczyna się dalej.
+    vec4 rainVeil(vec3 ro, vec3 rd, vec3 sky) {
+
+        float flat2 = length(rd.xz);
+        float reach = min((uCloudLevels.x - ro.y) / rd.y * flat2, CLOUD_REACH * 0.85);
+
+        if (reach < 220.0) {
+            return vec4(0.0);
+        }
+
+        // Pionowe smugi, pochylone z wiatrem (patrząc w poprzek wiatru).
+        float azimuth = atan(rd.z, rd.x);
+        float lean = uRainVeil.z * sin(azimuth - uRainVeil.y);
+        vec2 grain = vec2(azimuth * 2.5464790 + rd.y * lean * 2.0, 0.37 + rd.y * 0.2);
+        float streaks = textureLod(uCloudNoise, grain, 0.0).g;
+
+        // Ile deszczu stoi na drodze promienia pod chmurami. Próbki co
+        // kilkaset bloków, przesunięte inaczej w każdym kierunku - wąska
+        // komórka burzowa nie wypada między nimi.
+        vec2 step2 = rd.xz / max(flat2, 1e-4);
+        float shift = textureLod(uCloudNoise, grain * 3.0, 0.0).a;
+        float depth = 0.0;
+
+        for (int i = 0; i < 14; i++) {
+            float d = mix(140.0, reach, (float(i) + shift) / 14.0);
+            depth += textureLod(uWeatherRain, (ro.xz + step2 * d) * uWeatherScale, 0.0).r;
+        }
+
+        depth *= (reach - 140.0) / 14.0;
+
+        if (depth < 3.0) {
+            return vec4(0.0);
+        }
+
+        float alpha = (1.0 - exp(-depth / 380.0)) * (0.72 + 0.4 * streaks);
+
+        return vec4(mix(uRainVeilColor, sky, 0.1), clamp(alpha, 0.0, 0.94));
+
+    }
+
+    // Tęcza (łuk 42 stopnie wokół miejsca naprzeciw słońca, siedem pasów
+    // jak z klocków) i halo (pierścień 22 stopnie wokół światła).
+    vec4 skyOptics(vec3 rd) {
+
+        vec4 result = vec4(0.0);
+
+        if (uSkyOptics.x > 0.01) {
+
+            float angle = acos(clamp(dot(rd, -uSunDirection), -1.0, 1.0));
+            float band = (angle - 0.698) / 0.07;
+
+            if (band > 0.0 && band < 1.0) {
+
+                // Od środka łuku: fiolet, na zewnątrz czerwień.
+                float stripe = floor(band * 7.0);
+                vec3 color = stripe < 0.5 ? vec3(0.56, 0.3, 0.9)
+                    : stripe < 1.5 ? vec3(0.3, 0.34, 0.95)
+                    : stripe < 2.5 ? vec3(0.2, 0.62, 0.95)
+                    : stripe < 3.5 ? vec3(0.25, 0.85, 0.35)
+                    : stripe < 4.5 ? vec3(0.98, 0.92, 0.25)
+                    : stripe < 5.5 ? vec3(1.0, 0.6, 0.15)
+                    : vec3(0.96, 0.22, 0.18);
+
+                cloudOver(result, color, uSkyOptics.x * 0.42 * smoothstep(0.0, 0.05, rd.y) * (0.75 + 0.25 * sin(band * 3.14159)));
+
+            }
+
+        }
+
+        if (uSkyOptics.y > 0.01) {
+
+            float angle = acos(clamp(dot(rd, uCloudLight), -1.0, 1.0));
+            float ring = exp(-pow((angle - 0.384) / 0.022, 2.0));
+
+            cloudOver(result, uCloudLit + vec3(0.25), uSkyOptics.y * 0.3 * ring * smoothstep(0.0, 0.05, rd.y));
+
+        }
+
+        result.rgb /= max(result.a, 1e-4);
+
+        return result;
+
+    }
+
     // Wszystkie warstwy na promieniu z kamery w kierunku rd.
     //   przebieg 0 (uCloudView.x) - chmury nad kamerą, rysowane przed
     //     terenem (teren je zasłania),
@@ -468,6 +617,20 @@ export const CLOUD_LAYERS_GLSL = /* glsl */ `
 
             if (inside > 0.0) {
                 cloudOver(result, uCloudShade * 0.9 + uCloudLit * uCloudLayerLit.x * 0.25, clamp(inside / 20.0, 0.0, 0.94));
+            }
+
+        }
+
+        // Najbliżej kamery: tęcza i halo, potem deszcz pod chmurami.
+        if (!below && ro.y < uCloudLevels.x) {
+
+            vec4 optics = skyOptics(rd);
+
+            cloudOver(result, optics.rgb, optics.a);
+
+            if (uRainVeil.x > 0.5) {
+                vec4 veil = rainVeil(ro, rd, sky);
+                cloudOver(result, veil.rgb, veil.a);
             }
 
         }

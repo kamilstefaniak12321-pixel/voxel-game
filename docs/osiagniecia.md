@@ -74,6 +74,9 @@ tylko jako *Sekretne osiągnięcie* ze znakiem zapytania.
 | zwykłe | Pierwsze krople | bądź tam, gdzie pogoda przyniosła deszcz - front albo przelotny opad (`docs/pogoda.md`, od 1.11.0; pogoda z komendy się nie liczy) |
 | zwykłe | Wiatr we włosach | poczuj silny wiatr, od 6 bloków na sekundę - front chłodny albo burza (od 1.11.0) |
 | zwykłe | Ani jednej chmurki | bądź w środku wyżu w biały dzień: nad tobą samo niebo (od 1.11.0) |
+| zwykłe | Niech sobie pada | przeczekaj deszcz pod dachem, w jaskini albo pod gęstą koroną drzewa (od 1.12.0) |
+| rzadkie | Siedem kolorów | zobacz tęczę: niskie słońce za plecami, deszcz przed tobą (od 1.12.0) |
+| zwykłe | Mleko | wejdź w gęstą poranną mgłę - najczęściej jesienią, przy czystym niebie i słabym wietrze (od 1.12.0) |
 | rzadkie | Głowa w chmurach | wleć w niską chmurę - podstawa chmur jest ok. 210 bloków nad zerem (od 1.11.0) |
 | rzadkie | Z małego ziarenka | wyhoduj drzewo z sadzonki (`docs/drzewa.md`) |
 | rzadkie | Komplet narzędzi | zrób siekierę, kilof i łopatę (postęp w księdze) |

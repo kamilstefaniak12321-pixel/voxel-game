@@ -38,6 +38,8 @@ Współrzędne można podawać względem gracza: `~` (tu, gdzie stoję),
 | `/pogoda ustaw <rodzaj> [nadciaga]` | ustawia pogodę nad tobą (stoi w miejscu) albo - z `nadciaga` - każe jej nadciągnąć z daleka; tylko u ciebie, do `/pogoda auto` |
 | `/pogoda auto` | powrót do pogody liczonej z czasu gry i ziarna świata |
 | `/pogoda deszcz [0-100]`, `/pogoda sucho` | sam deszcz do odwołania (dach zatrzymuje krople, trafienia w wodę tworzą kręgi) |
+| `/pogoda mgla [0-100]` | mgła nad tobą do odwołania (od 1.12.0) |
+| `/pogoda tecza [wl \| wyl]` | włącza albo wyłącza tęczę do odwołania - widać ją tyłem do niskiego słońca (od 1.12.0) |
 | `/niebo` | wysokość słońca, łuna, ile gwiazd widać, Droga Mleczna, spadające gwiazdy na minutę, trwające zaćmienie |
 | `/niebo zachod <kolor \| domyslny>` | kolor łuny wschodu i zachodu (zabarwia też światło) |
 | `/zacmienie` | kiedy następne zaćmienie słońca (dzień, godzina, pełne czy częściowe); jeśli trwa - ile słońca jest zasłonięte |
@@ -180,7 +182,7 @@ Kolory: `czerwony`, `krwawy`, `pomaranczowy`, `zloty`, `zolty`, `zielony`,
 `turkusowy`, `niebieski`, `fioletowy`, `rozowy`, `bialy` albo `#rrggbb`.
 
 Nazwy ustawień w `/ustaw`: `ziemniak`, `zasieg`, `daleki-teren`, `szczegoly-terenu` (też `daleki-teren-szczegoly`), `pole`, `jasnosc`,
-`rozdzielczosc`, `fps` (limit), `cienie` (cienie w kątach, 0-100), `cienie-slonca` (`wyl` / `zwykle` / `dokladne` / `dalekie`), `promienie` (promienie światła: `wl` / `wyl`), `chmury` (`pelne` / `plaskie` / `brak`), `cienie-chmur` (cienie chmur na terenie: `wl` / `wyl`),
+`rozdzielczosc`, `fps` (limit), `cienie` (cienie w kątach, 0-100), `cienie-slonca` (`wyl` / `zwykle` / `dokladne` / `dalekie`), `promienie` (promienie światła: `wl` / `wyl`), `chmury` (`pelne` / `plaskie` / `brak`), `cienie-chmur` (cienie chmur na terenie: `wl` / `wyl`), `mokra-ziemia` (mokra ziemia i kałuże po deszczu: `wl` / `wyl`),
 `swiatlo-odbite` (też `odbicia`: `wl` / `wyl`),
 `model-swiatla`, `swiatlo-materialow`, `atmosfera`, `przeswiecanie-lisci`, `sila-odbicia`, `nasycenie-odbicia`,
 `liscie` (ładne liście z prześwitami: `wl` / `wyl`), `trawa-kepiasta`, `dynamiczne-swiatlo`, `wczytywanie`, `laczenie-terenu` (sklejanie sąsiednich chunków w jedno polecenie rysowania: `wl` / `wyl` - do porównań wydajności), `czulosc`,

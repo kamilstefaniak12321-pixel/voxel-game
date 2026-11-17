@@ -19,6 +19,7 @@ export const SKY_NAMES = {
     klebiaste: 'chmury kłębiaste',
     srednie: 'chmury średnie',
     pierzaste: 'chmury pierzaste',
+    mgla: 'mgła',
     pogodnie: 'pogodnie'
 };
 
@@ -29,6 +30,7 @@ export function skyKey(sample) {
     if (sample.rain > 0.55) return 'ulewa';
     if (sample.rain > 0.2) return 'deszcz';
     if (sample.rain > 0.05) return 'mzawka';
+    if (sample.fog > 0.35) return 'mgla';
     if (sample.low > 0.85) return sample.thick > 0.4 ? 'ciemne' : 'pochmurno';
     if (sample.low > 0.5) return 'duze';
     if (sample.low > 0.2) return 'klebiaste';

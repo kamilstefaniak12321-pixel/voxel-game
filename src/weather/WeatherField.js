@@ -35,6 +35,7 @@ import { seedToNumber } from '../world/Noise.js';
 //   mid    0-1  chmury średnie,   high 0-1  chmury wysokie (pierzaste),
 //   rain   0-1  opad,             storm 0-1 burza,
 //   clear  0-1  wpływ wyżu,
+//   fog    0-1  mgła (poranna, przy czystym niebie i słabym wietrze),
 //   windX, windZ, speed (bloki/s), gust 0-1 (porywistość), angle.
 // ------------------------------------------------------------
 
@@ -89,6 +90,9 @@ const LATTICES = [
 const SEASON_CUMULUS = [0.32, 0.38, 0.27, 0.18];
 const SEASON_WIND = [1.0, 0.85, 1.2, 1.15];
 const SEASON_STORMS = [0.6, 0.9, 0.35, 0.12];
+
+// Mgła poranna: jak często w danej porze roku (jesienią prawie co rano).
+const SEASON_FOG = [0.5, 0.3, 0.9, 0.6];
 
 
 function hash(a, b, c, seed) {
@@ -152,7 +156,7 @@ function afternoon(timeOfDay, floor) {
 export function emptySample() {
 
     return {
-        low: 0, thick: 0, mid: 0, high: 0, rain: 0, storm: 0, clear: 0,
+        low: 0, thick: 0, mid: 0, high: 0, rain: 0, storm: 0, clear: 0, fog: 0,
         windX: 0, windZ: 0, speed: 0, gust: 0, angle: 0
     };
 
@@ -473,6 +477,29 @@ export class WeatherField {
         out.windX = Math.cos(angle) * speed;
         out.windZ = Math.sin(angle) * speed;
         out.gust = clamp01(0.3 + acc.gust - 0.2 * acc.clear);
+
+        // Mgła poranna: zbiera się przed świtem i rozchodzi przed południem,
+        // gdy niebo jest czyste, a wiatr słaby. Nie każdego ranka i nie
+        // wszędzie (plamy po kilka kilometrów, co rano inne); częściej
+        // jesienią i w wilgotnym klimacie, na pustyni prawie nigdy.
+
+        const dawn = ramp(0.09, 0.2, timeOfDay) * ramp(0.38, 0.27, timeOfDay);
+
+        out.fog = 0;
+
+        if (dawn > 0 && natural > 0) {
+
+            const day = Math.floor(t);
+            const fogSeason = season[0] * SEASON_FOG[0] + season[1] * SEASON_FOG[1] +
+                season[2] * SEASON_FOG[2] + season[3] * SEASON_FOG[3];
+            const need = 0.72 - 0.35 * fogSeason - 0.25 * Math.max(0, humidity);
+            const bank = ramp(need, need + 0.15, noise2(x / 7000 + day * 5.37, z / 7000 - day * 3.11, seed + 35));
+            const patches = 0.55 + 0.45 * noise2(x / 900 + 3, z / 900 - 8, seed + 36);
+
+            out.fog = clamp01(natural * dawn * bank * patches * (1 - Math.max(out.low, 0.6 * out.mid)) *
+                ramp(3, 1.2, speed) * Math.max(0.12, Math.min(1, 1 + humidity)));
+
+        }
 
         return out;
 

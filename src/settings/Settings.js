@@ -65,6 +65,7 @@ export const SETTINGS_DEFAULTS = {
     lightShafts: true,                             // promienie światła w powietrzu
     clouds: 'pelne',                               // chmury: 'pelne' - z bokami i wierzchem, 'plaskie' - tańsze, 'brak'
     cloudShadows: true,                            // cienie chmur sunące po terenie
+    wetGround: true,                               // mokra ziemia i kałuże po deszczu
     fancyLeaves: true,                             // liście z prześwitami (false = szybkie, pełne)
     dynamicLight: true,                            // lampa w ręce, meteoryty...
     loadBudget: CHUNK_LOAD_BUDGET_MS,              // ms na klatkę na wczytywanie chunków

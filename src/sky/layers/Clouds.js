@@ -164,6 +164,11 @@ export class Clouds {
             .add(this.color.copy(WHITE).multiplyScalar(0.1 * day))
             .add(this.color.copy(state.moonLightColor).multiplyScalar(0.35 * moon));
 
+        // Zasłona deszczu pod chmurami: ciemniejsza od cienia chmury,
+        // z odrobiną koloru horyzontu.
+
+        cloudUniforms.uRainVeilColor.value.copy(shade).multiplyScalar(0.6).lerp(state.horizon, 0.16);
+
         // Podświetlenie od spodu o wschodzie i zachodzie.
 
         uniforms.uCloudGlow.value.copy(state.sunsetColor).multiplyScalar(0.45 * state.sunset * smoothstep(-0.12, 0.0, sunHeight));

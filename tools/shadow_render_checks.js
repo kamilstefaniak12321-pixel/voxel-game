@@ -2,6 +2,7 @@
 // Świat-fixture zawiera tylko daleką przeszkodę: pusta mapa near nie może
 // skasować jej cienia na bloku ani modelu stojącym przy środku kaskad.
 import * as THREE from 'three';
+import { withoutWeather } from './render_check_weather.js';
 import { SunShadows, shadowUniforms, SHADOW_CASTER_MATERIALS } from '../src/rendering/Shadows.js';
 import { blockMaterial, setShadowDefine } from '../src/rendering/BlockRenderData.js';
 import { createModelMaterial, modelLight, setModelPreviewRenderer } from '../src/rendering/ModelMaterial.js';
@@ -300,6 +301,8 @@ export async function checkDistantShadowRendering({ renderer, yieldBrowser }) {
         } finally {caster.removeFromParent();shadowUniforms.uSunShadowInfo.value.w=0;}
     };
     const samples = [], transitions = [], selfShadow = [], disabled = []; let inventoryPreview;
+    // Pogoda wyłączona na czas testu (render_check_weather.js).
+    const restoreWeather = withoutWeather();
     try {
         renderer.autoClear = false; renderer.setClearColor(0, 1); renderer.setScissorTest(false);
         renderer.toneMapping = THREE.NoToneMapping; renderer.outputColorSpace = THREE.LinearSRGBColorSpace;
@@ -372,6 +375,7 @@ export async function checkDistantShadowRendering({ renderer, yieldBrowser }) {
             rasterSubpixelBits: renderer.getContext().getParameter(renderer.getContext().SUBPIXEL_BITS),
             stats, note: 'W próbie ściany 800 mapa near jest pusta. Osobna próba near-only zawiera dach i mierzy pojedyncze wygaszanie.' };
     } finally {
+        restoreWeather();
         shadows.dispose();
         for (const [u, value] of savedUniforms) {
             if (value?.clone && !value.isTexture && u.value?.copy) u.value.copy(value); else u.value = value;

@@ -169,6 +169,13 @@ export class Clouds {
 
         cloudUniforms.uRainVeilColor.value.copy(shade).multiplyScalar(0.6).lerp(state.horizon, 0.16);
 
+        // Gdy pada śnieg, zasłona jest jasna - biała ściana, nie szara.
+        const snowy = this.weather?.snowShare ?? 0;
+
+        if (snowy > 0.01) {
+            cloudUniforms.uRainVeilColor.value.lerp(this.color.copy(shade).multiplyScalar(1.3), 0.65 * snowy);
+        }
+
         // Podświetlenie od spodu o wschodzie i zachodzie.
 
         uniforms.uCloudGlow.value.copy(state.sunsetColor).multiplyScalar(0.45 * state.sunset * smoothstep(-0.12, 0.0, sunHeight));

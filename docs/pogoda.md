@@ -12,6 +12,8 @@ Kod: `src/weather/`, chmury na niebie: `src/sky/layers/Clouds.js`.
 
 ![Burze w 1.13.0: piorun nocą, daleka burza, front z ciemną podstawą, grad, piorun widziany z domu, wyładowania na mapie pogody](pogoda-1130.jpg)
 
+![Zima w 1.14.0: pokrywa śnieżna, padający śnieg, śnieżyca z zamiecią, topniejące płaty, zima z lotu ptaka, mapa pogody z pokrywą i opadem śniegu](pogoda-1140.jpg)
+
 ## Plan aktualizacji pogodowej
 
 Całość jest za duża na jedno wydanie, więc idzie w sześciu częściach.
@@ -22,7 +24,7 @@ Każda jest grywalna sama w sobie.
 | 1 | **Niebo i fronty** - pole pogody, fronty, lokalny wiatr, chmury na trzech piętrach, cienie chmur, mapa pogody, `/pogoda` | **1.11.0** |
 | 2 | **Deszcz** - od mżawki po ulewę, skośne krople, odległe kurtyny deszczu, mokry świat i kałuże, schronienie pod dachem, dźwięk deszczu i wiatru, mgła, tęcza i halo | **1.12.0** |
 | 3 | **Burze** - letnie komórki i ciemne fronty, wyładowania w chmurach i w ziemię oświetlające krajobraz, grzmot spóźniony o odległość, grad | **1.13.0** |
-| 4 | **Zima** - rodzaje śniegu (od krup po mokre płaty), śnieżyca, zamieć przy ziemi, pokrywa śnieżna (wizualna) i topnienie, szron | plan |
+| 4 | **Zima** - temperatura, rodzaje śniegu (od krup po mokre płaty), śnieżyca, zamieć przy ziemi, pokrywa śnieżna (wizualna) i topnienie, szron | **1.14.0** |
 | 5 | **Pustynia i morze** - pyłowa mgiełka, burza piaskowa, haboob, wiry pyłowe, sztorm ze spienionymi falami | plan |
 | 6 | **Wpływ na rozgrywkę** - deszcz gasi ognisko, rośliny rosną po deszczu, zimno | plan |
 
@@ -226,6 +228,98 @@ Ustawienie **Błyski burzy** (Ustawienia → Gra, `/ustaw blyski`):
 - *Wył.* - teren i niebo nie błyskają wcale; zostaje piorun, łagodna
   poświata w chmurze i grzmot.
 
+## Zima (1.14.0)
+
+### Temperatura
+
+Pole pogody ma teraz **temperaturę powietrza** (`sample.temp`, stopnie
+Celsjusza, na poziomie morza). Składa się z:
+
+- **pory roku:** średnio 9° wiosną, 20° latem, 8° jesienią i -5° zimą
+  (`SEASON_TEMP`), z płynnym przejściem między porami;
+- **klimatu:** pole temperatury generatora terenu przesuwa ją o do 11°
+  w górę (gorące strony świata) albo w dół (zimne);
+- **pory doby:** najcieplej po południu, najzimniej przed świtem - przy
+  czystym niebie różnica to około 11°, pod zamkniętym niebem 4°;
+- **układów:** za frontem chłodnym o kilka stopni zimniej, w wycinku
+  ciepłym frontu ciepłego cieplej, pod burzą chłodny podmuch; wyż latem
+  grzeje, a zimą mrozi (mroźne, pogodne noce); niż zimą jest łagodny;
+- **opadu**, który chłodzi;
+- **wysokości:** 0,08° chłodniej na każdy blok ponad poziom morza
+  (`TEMP_LAPSE`) - na szczytach jest o ponad 6° zimniej niż nad morzem.
+
+Sama pora roku i klimat (`sample.tempSlow`) zmieniają się powoli - od
+nich zależy zimowa pokrywa śnieżna. Temperaturę widać w `/pogoda`,
+w prognozie i na ekranie F3.
+
+### Deszcz czy śnieg
+
+O rodzaju opadu decyduje temperatura **tam, gdzie stoi gracz** (na jego
+wysokości): powyżej 2° deszcz, poniżej zera śnieg, pomiędzy - deszcz ze
+śniegiem (krople i płatki naraz). Dlatego w górach może padać śnieg, gdy
+w dolinie leje.
+
+- **Płatki** (`rendering/SnowFall.js`) liczy karta graficzna jak krople
+  deszczu: do 5200 kwadratowych płatków w pudełku wokół kamery (tryb
+  ziemniaka: 1400), każdy opada powoli, płynie z wiatrem i kołysze się
+  na boki. Rodzaj zależy od temperatury:
+  - *około zera* - duże, mokre płaty, cięższe, lecą prawie prosto,
+  - *kilka stopni mrozu* - zwykły śnieg,
+  - *duży mróz* - drobny, suchy puch, który wiatr niesie w całości.
+- **Śnieżyca:** w silnym wietrze płatki lecą prawie poziomo i rozciągają
+  się w smugi, a widoczność spada (śnieg zagęszcza powietrze ponad dwa
+  razy mocniej niż deszcz).
+- **Zamieć przy ziemi:** gdy leży śnieg i wieje od 4,5 bloku/s, wiatr
+  porywa go z ziemi - nisko nad nią suną białe smugi (do 1500), także
+  wtedy, gdy z nieba nic nie pada.
+- **Krupa śnieżna:** z wypiętrzonych chmur przelotnych opadów przy
+  temperaturze około zera lecą drobne, białe kulki - mniejszy i wolniejszy
+  grad (`Hail.js`), z cichym stukotem.
+- Pod dachem, w jaskini i pod gęstą koroną śnieg nie pada (ta sama mapa
+  schronienia co deszcz). Zasłona opadu na horyzoncie jest wtedy jasna.
+- Śnieg nie moczy ziemi i nie szumi - słychać wiatr, a od 6,5 bloku/s
+  **wycie wichury** (wysoki ton, który faluje z porywami; `WeatherAudio`).
+
+### Pokrywa śnieżna (wizualna)
+
+Śnieg na ziemi to nie bloki, tylko **biała pokrywa rysowana przez shader**
+na tym, co już stoi (ustalenie z Kamilem). Nic się nie zapisuje i nic nie
+zmienia w świecie.
+
+- **Zimowa pokrywa** bierze się z powolnej temperatury (pora roku, klimat,
+  wysokość): leży cała, gdy średnia spada do -3°, i znika przy +1°.
+  W środku zimy cały umiarkowany i chłodny świat jest biały, w gorących
+  stronach śniegu nie ma, a góry bieleją wcześniej i trzymają śnieg
+  dłużej niż doliny - **granicę śniegu widać na stokach**.
+- **Świeży śnieg** pamięta trzecia tekstura mapy pogody (R świeży opad,
+  G temperatura teraz, B temperatura powolna, A szron): przybywa, póki
+  pada (ulewa zasypuje ziemię w około 36 s, słaby opad w kilka minut),
+  na mrozie leży kilka dób, przy plusowej temperaturze **topnieje** tym
+  szybciej, im cieplej (przy 6° w niecałe dwie minuty). Dzięki temu śnieg
+  spada także jesienią i wiosną, gdy przyjdzie mróz - i znika po odwilży.
+- **Jak wygląda.** Na płaskich wierzchach bloków pod gołym niebem: płaty
+  z pikseli wielkości pikseli tekstur, które rosną od pojedynczych plam
+  po zwartą biel i tak samo się kurczą, gdy topnieje. **Zielony pasek
+  trawy na bokach bloków bieleje razem z wierzchem** (tym samym płatem,
+  który leży nad nim). Trawy, kwiaty i krzewy mają część pikseli białą -
+  źdźbła wystają spod śniegu. Liście drzew mają śnieg na wierzchu wtedy,
+  gdy leży on na ziemi (do 1.13.0: przez całą zimę). Pod dachem,
+  w jaskini i w gęstym lesie śniegu nie ma (decyduje światło nieba).
+  Śnieg zakrywa mokrą ziemię i kałuże.
+- **Daleki teren** bieleje tak samo (płatami z grubego szumu; ściany
+  stopni tylko trochę, woda wcale) - z daleka widać białe góry nad
+  zielonymi dolinami i to, dokąd doszła zima.
+- **Kroki** po śniegu skrzypią (dźwięk śniegu zamiast trawy czy kamienia).
+
+### Szron
+
+W mroźną (poniżej 1,5°), pogodną i cichą noc na wierzchach bloków,
+pasku trawy i roślinach osiada **szron**: lekkie zbielenie z gęstszymi
+białymi ziarnami. Pojawia się wieczorem, najmocniejszy jest o świcie,
+znika przed południem; pod chmurami i w suchym klimacie jest słabszy,
+w wietrze i opadzie nie ma go wcale. Tam, gdzie leży śnieg, szronu nie
+widać.
+
 ## Dźwięk (1.12.0)
 
 `audio/WeatherAudio.js` - bez nagrań, z jednego bufora szumu i filtrów:
@@ -277,7 +371,11 @@ pod wodą razem z resztą.
 | `/pogoda tecza [wl\|wyl]` | tęcza, do odwołania (widać ją tyłem do niskiego słońca) |
 | `/pogoda piorun [odległość] [chmura]` | wyładowanie przed tobą (domyślnie piorun w ziemię 150 bloków dalej; `chmura` - błysk w chmurze); komenda podaje, po ilu sekundach dojdzie grzmot |
 | `/pogoda grad [0-100]` | grad nad tobą, do odwołania |
-| `/mapa pogoda [skala]` | **mapa pogody na żywo**: chmury (im ciemniejsze, tym bardziej się piętrzą), opad (niebieski), burza (fioletowy), wyładowania z ostatniej minuty (żółte: krzyżyk - piorun w ziemię, kropka - błysk w chmurze), linie frontów (czerwona - ciepły, niebieska - chłodny) i strzałki wiatru. Domyślnie 64 bloki na punkt (ponad 12 km). Przy otwartym czacie mysz pokazuje pogodę wskazanego miejsca |
+| `/pogoda temperatura <stopnie>` | ta sama temperatura wszędzie (na poziomie morza; w górach dalej chłodniej), do odwołania - poniżej zera opad jest śniegiem i kładzie się zimowa pokrywa |
+| `/pogoda snieg [0-100]` | opad śniegu nad tobą (domyślnie 60%); gdy jest za ciepło, ustawia też -3° - ziemia bieleje, póki pada |
+| `/pogoda pokrywa [0-100]` | pokrywa śnieżna wszędzie, do odwołania (do oglądania topnienia: 100, 60, 30...) |
+| `/pogoda szron [0-100]` | szron, do odwołania |
+| `/mapa pogoda [skala]` | **mapa pogody na żywo**: chmury (im ciemniejsze, tym bardziej się piętrzą), deszcz (niebieski), śnieg (jasnoniebieski), zimowa pokrywa śnieżna (teren bieleje), burza (fioletowy), wyładowania z ostatniej minuty (żółte: krzyżyk - piorun w ziemię, kropka - błysk w chmurze), linie frontów (czerwona - ciepły, niebieska - chłodny) i strzałki wiatru. Domyślnie 64 bloki na punkt (ponad 12 km). Przy otwartym czacie mysz pokazuje pogodę wskazanego miejsca |
 
 Rodzaje: `pogodnie`, `pochmurno`, `front-cieply`, `front-chlodny`,
 `burza`, `przelotne`, `pierzaste`.
@@ -297,6 +395,9 @@ i błyska, ale nie sypie gradem bez przerwy (do gradu jest `/pogoda grad`).
   wyłączone.
 - **Mokra ziemia i kałuże** (`/ustaw mokra-ziemia`, od 1.12.0): wł. / wył.
   W trybie ziemniaka wyłączone; kropel jest wtedy 1600 zamiast 6000.
+- **Pokrywa śnieżna i szron** (`/ustaw snieg`, od 1.14.0): wł. / wył.
+  Działa także w trybie ziemniaka (płatków jest wtedy 1400 zamiast 5200,
+  smug zamieci 400 zamiast 1500).
 - **Błyski burzy** (Ustawienia → Gra, `/ustaw blyski`, od 1.13.0):
   *Pełne* / *Łagodne* / *Wył.* - opis wyżej. W trybie ziemniaka gradu
   jest 400 kulek zamiast 1400 i nie ma białego nalotu.
@@ -330,6 +431,16 @@ i błyska, ale nie sypie gradem bez przerwy (do gradu jest `/pogoda grad`).
   na czas błysku, grad - dwa, gdy pada. Kosztu na prawdziwej karcie
   także tu nie zmierzono.
 
+- **Zima (1.14.0):** temperatura to kilka działań więcej w próbce pola
+  pogody (bez nowych odczytów szumu poza klimatem, który jest
+  zapamiętywany). Płatki i zamieć to po jednym poleceniu rysowania
+  i żadnej pracy procesora na płatek. Pokrywa śnieżna w shaderze bloków:
+  jeden odczyt tekstury na piksel płaskiego wierzchu i dwa odczyty szumu
+  tam, gdzie śnieg leży; na dalekim terenie jeden-dwa odczyty. **Gdy
+  w zasięgu mapy pogody nigdzie nie może leżeć śnieg (lato, ciepłe
+  strony), shadery nie liczą go wcale.** Kosztu na prawdziwej karcie
+  także tu nie zmierzono.
+
 ## Osiągnięcia
 
 *Pierwsze krople* (deszcz, który przyniosła pogoda), *Wiatr we włosach*
@@ -338,7 +449,10 @@ i błyska, ale nie sypie gradem bez przerwy (do gradu jest `/pogoda grad`).
 (deszcz przeczekany pod dachem), *Siedem kolorów* (tęcza), *Mleko*
 (gęsta poranna mgła). Od 1.13.0: *Raz, dwa, trzy...* (piorun w ziemię
 nie dalej niż kilometr), *O włos* (piorun bliżej niż 50 bloków),
-*Kulki lodu* (grad pod gołym niebem).
+*Kulki lodu* (grad pod gołym niebem). Od 1.14.0: *Pierwszy śnieg*
+(opad śniegu), *Zadymka* (śnieżyca: gęsty śnieg i silny wiatr), *Biało,
+bielutko* (pełna pokrywa śnieżna pod gołym niebem), *Srebrny poranek*
+(szron).
 
 ## Sprawdzenia
 
@@ -367,10 +481,20 @@ trzask, pomruk, schronienie, kolejka głosów na atrapie Web Audio), grad
 (kulki, tryb ziemniaka, stukot, nalot), shadery, komendy, ustawienie,
 osiągnięcia.
 
+`tools/sprawdz_zime.mjs` (ponad 16 tysięcy sprawdzeń, 1.14.0):
+temperatura (pory roku, klimat, pora doby pod czystym i zamkniętym
+niebem, układy, wysokość, zakres i gładkość), deszcz czy śnieg, szron,
+trzecia mapa pogody (temperatury w bajtach, świeży opad przybywa, leży
+na mrozie i topnieje w cieple, śnieg nie moczy ziemi), pokrywa śnieżna
+(ten sam rachunek w grze i w shaderze, góry i doliny, ustawienie,
+komendy), płatki, śnieżyca, zamieć przy ziemi i krupa, opisy słowne,
+komendy, wycie wiatru, shadery (także boki bloków trawy), osiągnięcia,
+mapa.
+
 Testy przeglądarkowe, które oglądają drzewa, tekstury i wodospady, mają
 stałe progi kolorów i nie dotyczą pogody, więc ją wyłączają
 (`tools/fixtures/calm-weather.js`: bez chmur, cieni chmur, mokrej ziemi,
-deszczu, mgły, gradu i burzy) - świat testów o ziarnie 42 zaczyna się w deszczu
+deszczu, mgły, gradu, burzy i pokrywy śnieżnej) - świat testów o ziarnie 42 zaczyna się w deszczu
 frontowym, a chmury i deszcz liczone programowo wydłużały te testy
 o jedną czwartą. `tools/fixtures/waterfall-ripple-benchmark.js` włącza
 deszcz tak jak komenda (`game.rainOverride`). Testy materiałów
@@ -382,7 +506,30 @@ się i rysują w testach prawdziwej gry z domyślnymi ustawieniami (światło,
 paczka, gra wieloosobowa, logi). Do powtarzalnych porównań światła w grze
 służy `/pogoda ustaw pogodnie`.
 
-## Braki (stan na 1.13.0)
+## Braki (stan na 1.14.0)
+
+- **Śnieg to tylko obraz** (ustalenie z Kamilem): nie ma grubości, nie
+  zostają w nim ślady, nie da się go zebrać ani ulepić; zimno nie działa
+  jeszcze na gracza, rośliny ani wodę (część 6).
+- **Woda nie zamarza** - zimą rzeki i jeziora zostają wodą wśród bieli.
+- **Śnieg leży tylko na płaskich wierzchach i pasku trawy na bokach:**
+  schody, płoty, modele (skrzynia, ognisko, pochodnia, gracz) i pnie
+  drzew są bez śniegu; nie ma czap śniegu na gałęziach ani zasp pod
+  ścianami. Pod wąskim okapem śnieg leży tak daleko, jak sięga światło
+  nieba.
+- **Świeży śnieg topnieje według temperatury nad morzem:** w górach
+  powinien leżeć dłużej niż w dolinie, a znika razem z nim (zimową
+  pokrywę w górach liczy się już osobno, z wysokością).
+- **Zamieć nie usypuje zasp** i nie zna przeszkód - smugi suną po ziemi
+  także za ścianą, jeśli nie ma nad nimi dachu.
+- **Szron i śnieg są jedne dla wszystkich bloków** - piasek, kamień
+  i deski bieleją tak samo jak trawa; szron nie rysuje się na szybach.
+- **Zimą drzewa liściaste nie gubią liści** (korona jest szara -
+  `docs/pory-roku.md`), a daleki las ma białe tylko wierzchy koron.
+- **Tęcza zimą** nie odróżnia śniegu od deszczu, a mgła nie zamarza
+  w szadź.
+- **`/pogoda temperatura`, `snieg`, `pokrywa` i `szron` działają tylko
+  u gracza, który je wpisał.**
 
 - **Piorun to tylko światło i dźwięk** (ustalenie z Kamilem): nie
   podpala, nie rani i nie zostawia śladu w miejscu uderzenia.
@@ -402,8 +549,8 @@ służy `/pogoda ustaw pogodnie`.
   nic poza obrazem i dźwiękiem; biały nalot jest tylko na blokach
   w okolicy miejsca, w którym gracz stał pod gradem (nie na dalekim
   terenie, liściach i roślinach).
-- **Zimą też bywa burza z deszczem** - o tym, czy to deszcz, czy śnieg,
-  zdecyduje część 4.
+- **Zimą też bywa burza** - od 1.14.0 ze śniegiem i krupą zamiast
+  deszczu, gdy jest mróz; błyska i grzmi tak samo.
 - **Krople deszczu i woda nie błyskają** razem z piorunem; kałuże go nie
   odbijają.
 - **Burza idzie z czasem gry:** gdy czas stoi (`/czas predkosc 0`), nie
@@ -442,8 +589,6 @@ służy `/pogoda ustaw pogodnie`.
   kołysania, nie kierunek.
 - **Tło menu nie ma chmur ani deszczu**, a chmury na kuli Ziemi (widok
   z kosmosu) nie są tymi z pola pogody.
-- **Temperatury jeszcze nie ma w polu pogody** - o tym, czy pada deszcz,
-  czy śnieg, zdecyduje część 4.
 - **Przeskok czasu** (sen, `/czas`) przeskakuje też pogodę; mokra ziemia
   po cofnięciu czasu liczy się od nowa.
 - **`/pogoda ustaw`, `mgla` i `tecza` nie są wysyłane innym graczom.**

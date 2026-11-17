@@ -2,7 +2,9 @@ import * as THREE from 'three';
 
 import { seasonWeights } from '../sky/Seasons.js';
 
-import { WeatherField, DAY_SECONDS, FLOW_SPEED, emptySample } from './WeatherField.js';
+import { CHUNK_HEIGHT, SEA_LEVEL } from '../config.js';
+
+import { WeatherField, DAY_SECONDS, FLOW_SPEED, TEMP_LAPSE, emptySample, snowShare, tempAtHeight } from './WeatherField.js';
 import { cloudNoiseTexture } from './CloudNoise.js';
 import { cloudUniforms, CLOUD_LEVELS, CLOUD_THICKNESS, CLOUD_TILES } from './cloudShader.js';
 
@@ -38,6 +40,41 @@ const SEASON_BASE = [0, 22, -10, -24];
 // a po tylu wyschnie (ok. 6 minut).
 const WETTING_DAYS = 0.02;
 const DRYING_DAYS = 0.3;
+
+// Świeży opad (od 1.14.0 - z niego bierze się świeży śnieg): po tylu
+// dobach gry ulewa zasypie ziemię całkiem (ok. 36 s; słabszy opad
+// dłużej), przy jednym stopniu ciepła topnieje w tyle dób (im cieplej,
+// tym szybciej), a na mrozie leży kilka dób.
+const SNOW_FALL_DAYS = 0.03;
+const SNOW_MELT_DAYS = 0.25;
+const SNOW_COLD_DAYS = 3;
+
+// Temperatury w teksturze: bajt 0-255 to zakres od TEMP_MIN, szeroki na
+// TEMP_SPAN stopni.
+export const TEMP_MIN = -40;
+export const TEMP_SPAN = 80;
+
+// Zimowa pokrywa śnieżna: leży cała, gdy średnia temperatura (pora roku,
+// klimat, wysokość) spada do pierwszej liczby, a znika przy drugiej.
+// Świeży śnieg trzyma się do trzeciej i znika przy czwartej (temperatura
+// chwili).
+export const SNOW_COVER = Object.freeze({ lying: [-3, 1], fresh: [-1, 1.5] });
+
+const tempByte = (temp) => Math.max(0, Math.min(255, Math.round((temp - TEMP_MIN) / TEMP_SPAN * 255)));
+
+
+// Pokrywa śnieżna 0-1 z odczytu mapy - ten sam rachunek co w shaderze
+// (cloudShader.js - snowCoverAt): zimowa pokrywa z powolnej temperatury
+// albo świeży śnieg z niedawnego opadu, gdy jest dość zimno.
+
+export function snowCover(fresh, tempNow, tempSlow) {
+
+    const lying = 1 - ramp(SNOW_COVER.lying[0], SNOW_COVER.lying[1], tempSlow);
+    const recent = fresh * (1 - ramp(SNOW_COVER.fresh[0], SNOW_COVER.fresh[1], tempNow));
+
+    return Math.max(lying, recent);
+
+}
 
 const mod = (value, size) => ((value % size) + size) % size;
 const clamp01 = (x) => Math.max(0, Math.min(1, x));
@@ -81,6 +118,30 @@ export class WeatherMap {
 
         this.wet = new Float32Array(N * N);
         this.wetTime = new Float64Array(N * N).fill(-1);
+
+        // Trzecia tekstura (od 1.14.0): R świeży opad (pamięta go jak
+        // mokra ziemia deszcz), G temperatura teraz, B temperatura powolna
+        // (pora roku i klimat) - obie na poziomie morza - A szron.
+        this.snow = new Uint8Array(N * N * 4);
+        this.snowTexture = new THREE.DataTexture(this.snow, N, N, THREE.RGBAFormat);
+        this.snowTexture.wrapS = this.snowTexture.wrapT = THREE.RepeatWrapping;
+        this.snowTexture.magFilter = this.snowTexture.minFilter = THREE.LinearFilter;
+        this.snowTexture.generateMipmaps = false;
+
+        this.fresh = new Float32Array(N * N);
+        this.temp = new Float32Array(N * N);
+        this.tempSlow = new Float32Array(N * N);
+
+        // Najniższe temperatury i największy szron w oknie (z ostatniego
+        // pełnego obiegu) - czy śnieg i szron są w ogóle możliwe.
+        this.minTemp = 20;
+        this.minSlow = 20;
+        this.maxFrost = 0;
+        this.sweepTemp = 99;
+        this.sweepSlow = 99;
+        this.sweepFrost = 0;
+        this.maxFresh = 0;
+        this.sweepFresh = 0;
 
         // Największy opad i burza w oknie (z ostatniego pełnego obiegu).
         this.maxRain = 0;
@@ -131,12 +192,14 @@ export class WeatherMap {
             }
 
             const cell = k >> 2;
-            const target = Math.min(1, sample.rain * 3);
+            // (Mokro robi się od deszczu, nie od śniegu.)
+            const target = Math.min(1, sample.rain * 3) * (1 - snowShare(sample.temp));
             const elapsed = t - this.wetTime[cell];
+            const remembered = keep && this.wetTime[cell] >= 0 && elapsed >= 0;
 
             let wet = target;
 
-            if (keep && this.wetTime[cell] >= 0 && elapsed >= 0) {
+            if (remembered) {
 
                 const before = this.wet[cell];
 
@@ -153,6 +216,39 @@ export class WeatherMap {
             this.rain[k + 1] = Math.round(sample.storm * 255);
             this.rain[k + 2] = Math.round(wet * 255);
             this.rain[k + 3] = Math.round(sample.fog * 255);
+
+            // Świeży opad: przybywa, póki pada (im mocniej, tym szybciej),
+            // w cieple topnieje, na mrozie leży.
+
+            let fresh = Math.min(1, sample.rain * 2.5);
+
+            if (remembered) {
+
+                const melt = sample.temp > 0
+                    ? (1 + sample.temp / 3) / SNOW_MELT_DAYS
+                    : 1 / SNOW_COLD_DAYS;
+
+                fresh = clamp01(this.fresh[cell] + elapsed * (sample.rain / SNOW_FALL_DAYS - melt));
+
+            }
+
+            this.fresh[cell] = fresh;
+            this.temp[cell] = sample.temp;
+            this.tempSlow[cell] = sample.tempSlow;
+
+            this.snow[k] = Math.round(fresh * 255);
+            this.snow[k + 1] = tempByte(sample.temp);
+            this.snow[k + 2] = tempByte(sample.tempSlow);
+            this.snow[k + 3] = Math.round(sample.frost * 255);
+
+            if (sample.temp < this.sweepTemp) this.sweepTemp = sample.temp;
+            if (sample.tempSlow < this.sweepSlow) this.sweepSlow = sample.tempSlow;
+            if (sample.frost > this.sweepFrost) this.sweepFrost = sample.frost;
+
+            if (fresh > this.sweepFresh) {
+                this.sweepFresh = fresh;
+                if (fresh > this.maxFresh) this.maxFresh = fresh;
+            }
 
             if (sample.rain > this.sweepRain) {
                 this.sweepRain = sample.rain;
@@ -202,6 +298,8 @@ export class WeatherMap {
             this.sweepThick = 0;
             this.sweepRain = 0;
             this.sweepStorm = 0;
+            this.sweepTemp = this.sweepSlow = 99;
+            this.sweepFrost = this.sweepFresh = 0;
 
             // (Po /pogoda ustaw - force - okno stoi w miejscu, więc mokra
             // ziemia zostaje; po dalekim skoku zaczyna od nowa.)
@@ -214,6 +312,10 @@ export class WeatherMap {
             this.maxThick = this.sweepThick;
             this.maxRain = this.sweepRain;
             this.maxStorm = this.sweepStorm;
+            this.minTemp = this.sweepTemp;
+            this.minSlow = this.sweepSlow;
+            this.maxFrost = this.sweepFrost;
+            this.maxFresh = this.sweepFresh;
             this.row = 0;
 
         }
@@ -254,6 +356,8 @@ export class WeatherMap {
                     this.sweepThick = 0;
                     this.sweepRain = 0;
                     this.sweepStorm = 0;
+                    this.sweepTemp = this.sweepSlow = 99;
+                    this.sweepFrost = this.sweepFresh = 0;
                 }
 
                 this.writeRow(originZ + this.row, originX, originX + N, this.sweepTime, true);
@@ -264,6 +368,10 @@ export class WeatherMap {
                     this.maxThick = this.sweepThick;
                     this.maxRain = this.sweepRain;
                     this.maxStorm = this.sweepStorm;
+                    this.minTemp = this.sweepTemp;
+                    this.minSlow = this.sweepSlow;
+                    this.maxFrost = this.sweepFrost;
+                    this.maxFresh = this.sweepFresh;
                 }
 
             }
@@ -274,6 +382,7 @@ export class WeatherMap {
         this.originZ = originZ;
         this.texture.needsUpdate = true;
         this.rainTexture.needsUpdate = true;
+        this.snowTexture.needsUpdate = true;
 
     }
 
@@ -292,10 +401,38 @@ export class WeatherMap {
     }
 
 
+    // Świeży opad zapamiętany w miejscu (x, z), 0-1 (najbliższy punkt).
+
+    freshAt(x, z) {
+
+        const N = WEATHER_MAP_SIZE;
+
+        return this.fresh[mod(Math.floor(z / WEATHER_MAP_TEXEL), N) * N + mod(Math.floor(x / WEATHER_MAP_TEXEL), N)];
+
+    }
+
+
+    // Zasypuje albo czyści świeży opad w całym oknie (komenda).
+
+    fillFresh(value) {
+
+        this.fresh.fill(value);
+        this.maxFresh = this.sweepFresh = value;
+
+        for (let k = 0; k < this.snow.length; k += 4) {
+            this.snow[k] = Math.round(value * 255);
+        }
+
+        this.snowTexture.needsUpdate = true;
+
+    }
+
+
     dispose() {
 
         this.texture.dispose();
         this.rainTexture.dispose();
+        this.snowTexture.dispose();
 
     }
 
@@ -354,6 +491,19 @@ export class Weather {
         this.hailCover = 0;
         this.hailSpot = { x: 0, z: 0 };
 
+        // Zima (od 1.14.0). temperature - temperatura powietrza tam, gdzie
+        // stoi gracz (na jego wysokości), snowShare - jaka część opadu jest
+        // śniegiem (0 deszcz, 1 śnieg), snowCover - ile śniegu leży pod
+        // graczem (0-1), frost - szron (0-1). snowSurfaces - ustawienie
+        // "Pokrywa śnieżna". coverOverride, frostOverride - komendy.
+        this.temperature = 10;
+        this.snowShare = 0;
+        this.snowCover = 0;
+        this.frost = 0;
+        this.snowSurfaces = true;
+        this.coverOverride = null;
+        this.frostOverride = null;
+
         this.thickness = CLOUD_THICKNESS[0];
         this.base = CLOUD_LEVELS.low;
         this.season = [0, 0, 0, 0];
@@ -361,15 +511,17 @@ export class Weather {
 
         cloudUniforms.uWeatherMap.value = this.map.texture;
         cloudUniforms.uWeatherRain.value = this.map.rainTexture;
+        cloudUniforms.uWeatherSnow.value = this.map.snowTexture;
         cloudUniforms.uCloudNoise.value = cloudNoiseTexture();
         cloudUniforms.uWeatherScale.value = 1 / (WEATHER_MAP_SIZE * WEATHER_MAP_TEXEL);
 
     }
 
 
-    // days - czas gry, dt - czas klatki (s), (x, z) - gdzie jest gracz.
+    // days - czas gry, dt - czas klatki (s), (x, z) - gdzie jest gracz,
+    // y - na jakiej wysokości (temperatura spada z wysokością).
 
-    update(days, dt, x, z) {
+    update(days, dt, x, z, y = SEA_LEVEL) {
 
         this.days = days;
         this.clock += dt;
@@ -380,7 +532,7 @@ export class Weather {
         // Wygładzenie w czasie (ok. 1,5 s); pierwsza próbka od razu.
         const k = this.ready ? 1 - Math.exp(-Math.max(0, dt) / 1.5) : 1;
 
-        for (const key of ['low', 'thick', 'mid', 'high', 'rain', 'storm', 'hail', 'clear', 'fog', 'windX', 'windZ', 'gust']) {
+        for (const key of ['low', 'thick', 'mid', 'high', 'rain', 'storm', 'hail', 'clear', 'fog', 'windX', 'windZ', 'gust', 'temp', 'tempSlow', 'frost']) {
             local[key] += (raw[key] - local[key]) * k;
         }
 
@@ -446,6 +598,60 @@ export class Weather {
         }
 
         cloudUniforms.uHailGround.value.set(this.hailSpot.x, this.hailSpot.z, this.wetSurfaces ? this.hailCover : 0);
+
+        // Zima: temperatura na wysokości gracza decyduje, czy pada deszcz,
+        // czy śnieg; pokrywa pod graczem - ten sam rachunek co w shaderze.
+
+        // (Nie wyżej niż najwyższy teren - lot ponad chmury nie robi zimy.)
+        const height = Math.min(y, CHUNK_HEIGHT);
+
+        this.temperature = tempAtHeight(local.temp, height, SEA_LEVEL);
+        this.snowShare = snowShare(this.temperature);
+        this.snowCover = this.coverOverride ?? snowCover(this.map.freshAt(x, z), this.temperature, tempAtHeight(local.tempSlow, height, SEA_LEVEL));
+        this.frost = clamp01(this.frostOverride ?? local.frost) * (1 - this.snowCover);
+
+        // Shadery liczą śnieg tylko wtedy, gdy gdzieś w oknie mapy może
+        // leżeć: w najwyższych górach jest o kilka stopni chłodniej niż
+        // na poziomie morza.
+
+        const peaks = TEMP_LAPSE * (CHUNK_HEIGHT - SEA_LEVEL);
+        const possible = this.coverOverride !== null ||
+            this.map.minSlow - peaks < SNOW_COVER.lying[1] ||
+            (this.map.maxFresh > 0.01 && this.map.minTemp - peaks < SNOW_COVER.fresh[1]);
+
+        cloudUniforms.uSnow.value.set(this.snowSurfaces && possible ? 1 : 0, TEMP_LAPSE, SEA_LEVEL, this.coverOverride ?? -1);
+        cloudUniforms.uFrost.value = this.snowSurfaces && (this.frostOverride ?? this.map.maxFrost) > 0.02 ? (this.frostOverride ?? -1) : -2;
+
+    }
+
+
+    // Opad, którego nie ma w polu pogody (komenda /pogoda deszcz albo
+    // snieg): zasypuje świeżym opadem okolicę punktu (x, z). amount -
+    // natężenie 0-1, days - ile dób gry trwał.
+
+    addPrecipitation(x, z, amount, days) {
+
+        const map = this.map;
+        const N = WEATHER_MAP_SIZE;
+        const gain = Math.max(0, amount * days / SNOW_FALL_DAYS);
+        const cx = Math.floor(x / WEATHER_MAP_TEXEL);
+        const cz = Math.floor(z / WEATHER_MAP_TEXEL);
+
+        for (let dz = -2; dz <= 2; dz++) {
+            for (let dx = -2; dx <= 2; dx++) {
+
+                const cell = mod(cz + dz, N) * N + mod(cx + dx, N);
+                const fresh = Math.min(1, map.fresh[cell] + gain);
+
+                map.fresh[cell] = fresh;
+                map.snow[cell * 4] = Math.round(fresh * 255);
+
+                if (fresh > map.maxFresh) map.maxFresh = fresh;
+
+            }
+        }
+
+        map.snowTexture.needsUpdate = true;
 
     }
 
@@ -610,6 +816,9 @@ export class Weather {
             cloudUniforms.uWetness.value = 0;
             cloudUniforms.uStorm.value.set(0, 0, 0, 0);
             cloudUniforms.uHailGround.value.set(0, 0, 0);
+            cloudUniforms.uWeatherSnow.value = null;
+            cloudUniforms.uSnow.value.set(0, 0, 0, -1);
+            cloudUniforms.uFrost.value = -2;
         }
 
     }

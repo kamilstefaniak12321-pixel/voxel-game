@@ -66,6 +66,7 @@ export const SETTINGS_DEFAULTS = {
     clouds: 'pelne',                               // chmury: 'pelne' - z bokami i wierzchem, 'plaskie' - tańsze, 'brak'
     cloudShadows: true,                            // cienie chmur sunące po terenie
     wetGround: true,                               // mokra ziemia i kałuże po deszczu
+    snowCover: true,                               // pokrywa śnieżna i szron na ziemi, roślinach i liściach
     stormFlashes: 'pelne',                         // błyski burzy: 'pelne', 'lagodne' (bez migotania), 'brak' (teren i niebo nie błyskają)
     fancyLeaves: true,                             // liście z prześwitami (false = szybkie, pełne)
     dynamicLight: true,                            // lampa w ręce, meteoryty...

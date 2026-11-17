@@ -573,6 +573,29 @@ export function createFarTerrainMaterial(level = 0, tileFade = { value: new THRE
                 // którędy przeszedł deszcz.
                 diffuseColor.rgb *= 1.0 - 0.3 * groundWetness(vFarWorld);
 
+                // Śnieg (1.14.0): ta sama pokrywa co na bliskich blokach -
+                // z daleka widać białe góry nad zielonymi dolinami i to,
+                // dokąd doszła zima. Płaty z grubego szumu; strome ściany
+                // bieleją tylko trochę, woda wcale.
+                if (uSnow.x > 0.0) {
+
+                    float farSnow = snowCoverAt(vFarWorld);
+
+                    if (farSnow > 0.01) {
+
+                        float farPatch = textureLod(uCloudNoise, vFarWorld.xz / 173.0, 0.0).a;
+                        float farUp = smoothstep(0.35, 0.75, inverseTransformDirection(normalize(vNormal), viewMatrix).y);
+                        float farWater = step(diffuseColor.r * 2.2 + 0.02, diffuseColor.b);
+
+                        // (Ściany stopni bieleją w jednej czwartej - tyle, ile
+                        // z bliska zajmuje ośnieżony pasek trawy na boku bloku.)
+                        farSnow = smoothstep(farPatch * 0.85, farPatch * 0.85 + 0.2, farSnow * 1.08) * (1.0 - farWater);
+                        diffuseColor.rgb = mix(diffuseColor.rgb, uSnowColor, farSnow * mix(0.25, 0.94, farUp));
+
+                    }
+
+                }
+
                 // Klasyczny widok: każda kratka trochę jaśniejsza albo
                 // ciemniejsza. Atmosfera używa czystego albedo tekstur.
 

@@ -210,7 +210,83 @@ blockMaterial.onBeforeCompile = (shader, renderer) => {
             // kałuże, w których widać kolor nieba. Rośliny, liście i woda
             // mają NO_WET_GROUND.
             #ifndef NO_WET_GROUND
-                float blockWet = groundWetness(vWorldPosition) * smoothstep(0.45, 0.95, blockSky);
+
+                // Śnieg (1.14.0): biała pokrywa na płaskich wierzchach pod
+                // gołym niebem - płatami, które rosną, gdy pada, i kurczą
+                // się, gdy topnieje. Pod dachem i w gęstym lesie nie leży.
+                float blockSnow = 0.0;
+
+                if (uSnow.x > 0.0 && vWorldNormal.y > 0.9) {
+
+                    float snowCover = snowCoverAt(vWorldPosition) * smoothstep(0.45, 0.9, blockSky);
+
+                    if (snowCover > 0.02 && snowPixel(vWorldPosition, snowCover) > 0.5) {
+
+                        // Każdy piksel śniegu odrobinę inny - jak w teksturze.
+                        vec2 snowTexel = floor(vWorldPosition.xz * 16.0);
+                        float snowGrain = fract(sin(dot(mod(snowTexel, 499.0), vec2(41.3, 289.1))) * 9631.7);
+
+                        blockSnow = 1.0;
+                        diffuseColor.rgb = uSnowColor * (0.93 + 0.07 * snowGrain);
+                        blockTexel = diffuseColor.rgb;
+
+                    }
+
+                }
+
+                // Boki bloków trawy: zielony pasek źdźbeł pod wierzchem bieleje
+                // razem z nim - tym samym płatem śniegu, który leży tuż nad
+                // paskiem (uwaga Kamila: biały wierzch i zielone boki).
+                // Tylko bloki, których zieleń barwi klimat (trawa) - nie każdy
+                // zielony blok postawiony przez gracza.
+                float grassFace = step(0.002, abs(vTint.r - 1.0) + abs(vTint.g - 1.0) + abs(vTint.b - 1.0))
+                    * step(abs(vWorldNormal.y), 0.5) * step(0.5, tintMask) * step(0.4, fract(vWorldPosition.y - 0.001));
+
+                if (uSnow.x > 0.0 && grassFace > 0.5) {
+
+                    vec3 snowEdge = vec3(vWorldPosition.x - vWorldNormal.x * 0.03, ceil(vWorldPosition.y - 0.001), vWorldPosition.z - vWorldNormal.z * 0.03);
+                    float sideCover = snowCoverAt(snowEdge) * smoothstep(0.45, 0.9, blockSky);
+
+                    if (sideCover > 0.02 && snowPixel(snowEdge, sideCover) > 0.5) {
+
+                        blockSnow = 1.0;
+                        diffuseColor.rgb = uSnowColor * 0.95;
+                        blockTexel = diffuseColor.rgb;
+
+                    }
+
+                }
+
+                // Szron: mroźnym, pogodnym rankiem wierzchy bieleją lekko,
+                // z gęstszymi białymi ziarnami.
+                if (blockSnow < 0.5 && uFrost > -1.5 && vWorldNormal.y > 0.9) {
+
+                    float frost = frostAt(vWorldPosition) * smoothstep(0.45, 0.9, blockSky);
+
+                    if (frost > 0.02) {
+
+                        vec2 frostTexel = floor(vWorldPosition.xz * 16.0);
+                        float frostGrain = fract(sin(dot(mod(frostTexel, 487.0), vec2(127.1, 311.7))) * 43758.5453);
+
+                        diffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.84, 0.9, 0.97), frost * (0.2 + 0.6 * step(frostGrain, 0.3 * frost)));
+                        blockTexel = diffuseColor.rgb;
+
+                    }
+
+                }
+
+                // (Szron siada też na zielonym pasku trawy na bokach bloków.)
+                if (blockSnow < 0.5 && uFrost > -1.5 && grassFace > 0.5) {
+
+                    float sideFrost = frostAt(vWorldPosition) * smoothstep(0.45, 0.9, blockSky);
+
+                    diffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.84, 0.9, 0.97), 0.5 * sideFrost);
+                    blockTexel = diffuseColor.rgb;
+
+                }
+
+                // (Śnieg zakrywa mokrą ziemię i kałuże.)
+                float blockWet = (1.0 - blockSnow) * groundWetness(vWorldPosition) * smoothstep(0.45, 0.95, blockSky);
 
                 if (blockWet > 0.004) {
 
@@ -229,6 +305,29 @@ blockMaterial.onBeforeCompile = (shader, renderer) => {
                 if (vWorldNormal.y > 0.9 && blockSky > 0.6 && hailAt(vWorldPosition) > 0.5) {
                     diffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.9, 0.94, 1.0), 0.86);
                     blockTexel = diffuseColor.rgb;
+                }
+            #endif
+
+            // Rośliny (trawy, kwiaty, krzewy): pod śniegiem i szronem część
+            // pikseli bieleje - źdźbła wystają spod śniegu.
+            #ifdef SNOW_ON_PLANT
+                if (uSnow.x > 0.0 || uFrost > -1.5) {
+
+                    float plantOpen = smoothstep(0.45, 0.9, blockSky);
+                    float plantSnow = snowCoverAt(vWorldPosition) * plantOpen;
+                    float plantFrost = frostAt(vWorldPosition) * plantOpen * (1.0 - plantSnow);
+
+                    if (plantSnow + plantFrost > 0.02) {
+
+                        vec3 plantTexel = floor(vWorldPosition * 16.0 + 0.01);
+                        float plantGrain = fract(sin(dot(mod(plantTexel, 311.0), vec3(12.9898, 78.233, 37.719))) * 43758.5453);
+
+                        diffuseColor.rgb = mix(diffuseColor.rgb, uSnowColor,
+                            0.82 * step(plantGrain, 0.62 * plantSnow + 0.3 * plantFrost) + 0.14 * plantFrost);
+                        blockTexel = diffuseColor.rgb;
+
+                    }
+
                 }
             #endif`
         );
@@ -538,8 +637,9 @@ plantMaterial.onBeforeCompile = (shader, renderer) => {
     blockMaterial.onBeforeCompile(shader, renderer);
     Object.assign(shader.uniforms, plantWindUniforms);
 
-    // Bez mokrej ziemi i kałuż (to nie są płaskie wierzchy bloków).
-    shader.fragmentShader = `#define NO_WET_GROUND\n${shader.fragmentShader}`;
+    // Bez mokrej ziemi i kałuż (to nie są płaskie wierzchy bloków);
+    // śnieg i szron bielą część pikseli rośliny.
+    shader.fragmentShader = `#define NO_WET_GROUND\n#define SNOW_ON_PLANT\n${shader.fragmentShader}`;
 
     // Roślina kołysze się, a mapa cieni nie - większy zapas, żeby
     // źdźbła nie cieniowały same siebie w paski (Shadows.js).

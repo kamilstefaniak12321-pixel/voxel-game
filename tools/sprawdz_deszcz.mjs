@@ -637,7 +637,7 @@ function worldFixture() {
     check(gameSource.includes('this.rainStreaks.update(dt, this.camera, rain, drizzle, this.weather.wind, this.sky.state)'), 'Krople dostają natężenie, mżawkę i wiatr');
     check(gameSource.includes('this.shelterCover = this.rainStreaks.shelter.cover(eye.x, eye.y, eye.z)') && gameSource.includes('cover: this.shelterCover'), 'Dźwięk wie, czy gracz stoi pod dachem');
     check(gameSource.includes('this.weather.setSky(this.sky.celestial.sunDirection'), 'Tęcza i halo liczone co klatkę');
-    check(gameSource.includes('{ fog: this.weather.fog, rain: this.rainNow ?? 0 }'), 'Mgła i deszcz zagęszczają powietrze');
+    check(gameSource.includes('{ fog: this.weather.fog, rain: (this.rainNow ?? 0) + 2.2 * (this.snowNow ?? 0)'), 'Mgła i deszcz zagęszczają powietrze');
     check(gameSource.includes("this.weather.wetSurfaces = !potato && settings.get('wetGround')") && gameSource.includes('this.rainStreaks?.setAmount(potato ? .35 : 1)'), 'Tryb ziemniaka: bez mokrej ziemi, mniej kropel');
     check(gameSource.includes('this.rainStreaks.dispose();') && gameSource.includes('this.weatherAudio.dispose();'), 'Sprzątanie przy wyjściu ze świata');
 

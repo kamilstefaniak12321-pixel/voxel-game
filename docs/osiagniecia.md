@@ -80,6 +80,10 @@ tylko jako *Sekretne osiągnięcie* ze znakiem zapytania.
 | zwykłe | Raz, dwa, trzy... | bądź nie dalej niż kilometr od pioruna, który bije w ziemię (trzy sekundy do grzmotu to kilometr; od 1.13.0, piorun z komendy się nie liczy) |
 | rzadkie | O włos | przeżyj uderzenie pioruna bliżej niż 50 bloków od siebie (od 1.13.0) |
 | zwykłe | Kulki lodu | wyjdź pod gołe niebo, gdy pada grad - krótko, w samym środku najsilniejszych burz (od 1.13.0) |
+| zwykłe | Pierwszy śnieg | bądź tam, gdzie pada śnieg - zimą, w chłodnych stronach albo wysoko w górach (od 1.14.0; śnieg z komendy się nie liczy) |
+| rzadkie | Zadymka | wyjdź w śnieżycę: gęsty śnieg i wiatr od 6 bloków na sekundę (od 1.14.0) |
+| zwykłe | Biało, bielutko | stań pod gołym niebem tam, gdzie ziemię przykrył śnieg (od 1.14.0) |
+| zwykłe | Srebrny poranek | zobacz szron: mroźna, pogodna i cicha noc albo ranek (od 1.14.0) |
 | rzadkie | Głowa w chmurach | wleć w niską chmurę - podstawa chmur jest ok. 210 bloków nad zerem (od 1.11.0) |
 | rzadkie | Z małego ziarenka | wyhoduj drzewo z sadzonki (`docs/drzewa.md`) |
 | rzadkie | Komplet narzędzi | zrób siekierę, kilof i łopatę (postęp w księdze) |

@@ -1,4 +1,6 @@
 import { sampleText } from '../weather/weatherText.js';
+import { snowShare } from '../weather/WeatherField.js';
+import { snowCover } from '../weather/Weather.js';
 import { CHUNK_HEIGHT } from '../config.js';
 import { bindings } from '../input/bindings.js';
 import { getBlockTypeById } from '../blocks/BlockRegistry.js';
@@ -66,7 +68,7 @@ export const MAP_SCALES = [1, 2, 4, 8, 16, 32, 64];
 const WEATHER_BUDGET_MS = 3;
 const WEATHER_COLORS = {
     high: [255, 255, 255], mid: [214, 220, 228], low: [246, 247, 250], dark: [70, 76, 90],
-    rain: [44, 104, 232], storm: [206, 62, 224], fog: [236, 226, 196],
+    rain: [44, 104, 232], storm: [206, 62, 224], fog: [236, 226, 196], snow: [246, 250, 255], snowfall: [150, 210, 255],
     front_cieply: '#e23b2e', front_chlodny: '#2b5fe0', wind: '#101418', strike: '#ffe45c'
 };
 
@@ -575,6 +577,12 @@ export class TerrainMap {
                     b += (color[2] - b) * amount;
                 };
 
+                // Zimowa pokrywa śnieżna (na poziomie morza - w górach
+                // sięga dalej): teren bieleje.
+                const lying = snowCover(0, sample.temp, sample.tempSlow);
+
+                if (lying > 0.02) blend(C.snow, 0.5 * lying);
+
                 blend(C.high, 0.28 * sample.high);
                 blend(C.mid, 0.42 * sample.mid);
 
@@ -587,7 +595,10 @@ export class TerrainMap {
                 if (sample.fog > 0.08 && (i + j) % 2 === 0) blend(C.fog, Math.min(0.8, 0.25 + 0.6 * sample.fog));
 
                 // Opad kreskowany na ukos, burza gęściej.
-                if (sample.rain > 0.04) blend(C.rain, Math.min(0.85, (0.3 + 0.6 * sample.rain) * ((i + j) % 3 === 0 ? 1 : 0.55)));
+                // (Śnieg - jasnoniebieski, deszcz - niebieski.)
+                if (sample.rain > 0.04) {
+                    blend(snowShare(sample.temp) > 0.5 ? C.snowfall : C.rain, Math.min(0.85, (0.3 + 0.6 * sample.rain) * ((i + j) % 3 === 0 ? 1 : 0.55)));
+                }
                 if (sample.storm > 0.1) blend(C.storm, Math.min(0.8, sample.storm) * ((i - j + MAP_SIZE) % 4 === 0 ? 1 : 0.35));
 
                 data[o] = r;
@@ -986,7 +997,7 @@ export class TerrainMap {
         else if (this.layer === 'pogoda') {
 
             entries.push(['#f6f7fa', 'chmury niskie'], ['#464c5a', 'piętrzące się (deszczowe, burzowe)'], ['#aab4c0', 'średnie i wysokie'],
-                ['#2c68e8', 'opad'], ['#ce3ee0', 'burza'], [WEATHER_COLORS.strike, 'wyładowania (krzyżyk - piorun w ziemię)'], ['#ece2c4', 'mgła'], [WEATHER_COLORS.front_cieply, 'front ciepły'], [WEATHER_COLORS.front_chlodny, 'front chłodny'],
+                ['#2c68e8', 'deszcz'], ['#96d2ff', 'śnieg'], ['#f6faff', 'pokrywa śnieżna'], ['#ce3ee0', 'burza'], [WEATHER_COLORS.strike, 'wyładowania (krzyżyk - piorun w ziemię)'], ['#ece2c4', 'mgła'], [WEATHER_COLORS.front_cieply, 'front ciepły'], [WEATHER_COLORS.front_chlodny, 'front chłodny'],
                 [WEATHER_COLORS.wind, 'strzałki: wiatr']);
 
         }

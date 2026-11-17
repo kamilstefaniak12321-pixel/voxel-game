@@ -130,6 +130,11 @@ drzwi i klapy oraz nowe pęknięcia kopanych bloków.
 
 ![Drzwi i klapy 1.16.0: nowy wygląd, pęknięcia, światło](stolarstwo-1160.jpg)
 
+Na zrzutach (renderer programowy): galeria drzwi i klap, klapy z góry
+z cieniami otwartych płyt, klapy i drzwi w połowie ruchu (cień idzie
+z płytą), pęknięcia drzwi (ostatni i trzeci etap), klapy i kamienia,
+ciemny pokój za zamkniętymi drzwiami i światło wpadające przez otwarte.
+
 - **Wygląd.** Wzorcem są drzwi i klapa narysowane na deskach wiśni
   (`tools/wzorce/drzwi.png`, `zapadnia.png`). `tools/drzwi_tekstury.py`
   przenosi ten sam rysunek na pozostałe 32 rodzaje drewna: bierze cztery

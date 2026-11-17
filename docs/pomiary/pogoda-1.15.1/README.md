@@ -11,6 +11,10 @@ Porównanie z wersją 1.15.0 obejmuje tę samą grę, seed 42, pozycje kamery, p
 
 Próbka zawiera 110 klatek każdej sceny po rozgrzaniu. Mierzony odcinek zaczyna się przed aktualizacją gry i kończy po renderowaniu oraz synchronicznym odczycie jednego piksela, który czeka na GPU. Wynik pokazuje koszt całej klatki w tej próbie. Próg 60 FPS to 16,7 ms.
 
+Podczas zwykłej animacji sztormu kompozytor odbierał średnio **60,0 FPS w 1.15.0** i **60,0 FPS w 1.15.1**. 95. percentyl odstępu pomiędzy przekazaniem klatek wyniósł odpowiednio 19,1 i 19,0 ms. Próba obejmowała 360 wywołań `requestAnimationFrame` z nieruchomą kamerą po 50 klatkach rozgrzewki. Kompozytor Electron z limitem 60 Hz odbierał współdzielone tekstury D3D11 poza ekranem, bez odczytu pikseli do pamięci CPU. Ruch przez nowe obszary świata i prezentacja na fizycznym wyświetlaczu mogą dać inne wyniki.
+
+Sterownik zwrócił `gl.NO_ERROR` podczas porównań pogody. Po zakończeniu dodatkowych prób ze współdzieloną teksturą Chromium w obu wersjach zapisał w dzienniku komunikat `GPU state invalid after WaitForGetOffsetInRange`. Oba przebiegi zdążyły przekazać wszystkie 360 klatek.
+
 W ulewie przy ziemi obie wersje generowały 6000 smug. Nad górną warstwą chmur na wysokości oczu 1201,6 bloku ich liczba spadła z 4745 do zera. W cirrusach widać więcej błękitu pomiędzy krótszymi włóknami. [Porównanie pogody](pogoda-porownanie.jpg)
 
 W naturalnej pogodzie tęcza pojawiła się o 17:00 trzeciego dnia. Po przyspieszeniu czasu w 1.15.0 jej fragment był nadal widoczny około 22:14. W 1.15.1 zniknął, gdy Słońce znalazło się pod horyzontem. W osobnej próbie z wymuszeniem tęczy około 17:54 jej jasność w 1.15.1 spadła do 10%, a o północy do zera. W obu wersjach popołudniowy łuk zachowywał kierunek względem Słońca przy obrocie i powrocie kamery. [Porównanie tęczy](tecza-porownanie.jpg)

@@ -112,6 +112,13 @@ assert.equal((await diagnosticBackend.loadChunks('diagnostic-isolation')).get('3
     'Ponowienie zapisuje najnowszą edycję');
 assert.equal(diagnosticDirty.size, 0);
 assert.deepEqual(diagnosticCalls.map(call => call.kind), ['world.saved', 'world.save.failed', 'world.saved']);
+diagnosticDirty.add(diagnosticChunk);
+const getPlayer = diagnosticSaver.player.getState;
+diagnosticSaver.player.getState = () => { throw new Error('Błąd tworzenia migawki'); };
+assert.equal(await diagnosticSaver.flush(), false);
+assert.equal(diagnosticDirty.size, 1, 'Błąd przed otwarciem transakcji również zachowuje zmiany');
+diagnosticSaver.player.getState = getPlayer;
+assert.equal(await diagnosticSaver.flush(), true);
 
 // Awaria procesu workera: pierwsza operacja odrzucona, następna korzysta
 // ze sprawdzonej ścieżki bezpośredniej, bez pozornego potwierdzenia zapisu.
@@ -177,6 +184,35 @@ releaseFinal();
 assert.equal(await finalWrite, true);
 assert.equal((await concurrentBackend.loadChunks('concurrent')).get('1,-2')[1], 450);
 assert.equal(dirty.size, 0);
+releaseFinal = null;
+const savingGuest = concurrentSaver.flush();
+await nextTick();
+concurrentSaver.worldInfo.guests = { goszczacy: { inventory: { slots: [{ type: 'stone', count: 9 }] } } };
+releaseFinal();
+assert.equal(await savingGuest, true);
+assert.equal((await concurrentBackend.listWorlds())[0].guests.goszczacy.inventory.slots[0].count, 9,
+    'Stan gościa odebrany podczas zapisu trafia do bazy także bez zmiany bloków');
+let continuousEdits = true, writes = 0;
+const busyEvents = [];
+const busySaver = new WorldSaver({
+    async saveWorldAndChunks(...args) {
+        await concurrentBackend.saveWorldAndChunks(...args);
+        writes++;
+        if (continuousEdits) {
+            assert.ok(writes < 20, 'Trwałe edytowanie musi skończyć próbę zapisu');
+            chunks[1].blocks[1]++;
+            dirty.add(chunks[1]);
+        }
+    }
+}, { id: 'continuous-edits' }, world, { getState: () => ({}) });
+busySaver.onDiagnostic = (_, kind) => busyEvents.push(kind);
+dirty.add(chunks[1]);
+assert.equal(await busySaver.flush(), false);
+assert.equal(busyEvents.at(-1), 'world.save.busy');
+assert.equal(dirty.size, 1);
+continuousEdits = false;
+assert.equal(await busySaver.flush(), true);
+assert.equal((await concurrentBackend.loadChunks('continuous-edits')).get('1,-2')[1], chunks[1].blocks[1]);
 
 // Odmowa zapisu blokuje wszystkie trzy operacje natywnej aktualizacji.
 for (const [method, kind, command] of [['install', 'web', 'uruchomTeraz'], ['install', 'apk', 'zainstalujApk'], ['revert', 'web', 'wroc']]) {

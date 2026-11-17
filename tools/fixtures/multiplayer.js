@@ -74,10 +74,10 @@ export async function startHost({ terrain = 'classic', seed = 4242, mode = 'crea
     const errors = trackErrors();
     const { renderer, settings, input } = await boot();
     const { Game } = await import('/src/game/Game.js');
-    const { createWorldInfo } = await import('/src/storage/WorldStorage.js');
+    const { createWorldInfo, WorldStorage } = await import('/src/storage/WorldStorage.js');
     const { NetHost } = await import('/src/net/NetHost.js');
     const info = createWorldInfo('Świat gospodarza', seed, terrain, mode);
-    const game = await Game.start(renderer, input, null, info, settings);
+    const game = await Game.start(renderer, input, await WorldStorage.open(), info, settings);
     game.camera.aspect = width / height; game.camera.updateProjectionMatrix();
     game.time.speed = 0; game.time.days = 0.45;
     game.player.flying = true;

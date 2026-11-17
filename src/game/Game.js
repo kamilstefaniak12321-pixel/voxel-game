@@ -2897,12 +2897,12 @@ export class Game extends GameInteraction {
         // snapshot so leaving the world cannot save a half-built specimen.
         await waitForTreeShowcase(this.world);
 
-        if (save && !(await this.saver.flush())) {
+        if (save && !(await (this.net?.isClient ? this.net.saveBeforeExit() : this.saver.flush()))) {
             return false;
         }
 
         // Po błędzie zapisu gra wraca na pauzę z działającą sesją znajomych.
-        if (this.net?.isClient) { this.net.leave(); this.net.dispose(); }
+        if (this.net?.isClient) { this.net.leave(save); this.net.dispose(); }
         else if (this.net?.isHost) this.net.close();
 
         this.saver.stop();

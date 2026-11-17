@@ -127,7 +127,12 @@ export class NetHost extends NetSession {
             }
             case MSG.RAFT: this.guestRaft(guest, message.v); break;
             case MSG.RAFT_REMOVE: this.removeRaft(message.id); break;
-            case MSG.SAVE: this.remember(guest, message); break;
+            case MSG.SAVE:
+                this.remember(guest, message);
+                if (Number.isSafeInteger(message.request) && message.request > 0) {
+                    void this.confirmGuestSave(guest, message.request);
+                }
+                break;
             case MSG.BYE: this.leave(guest); guest.connection.close(); break;
             default: break;
         }
@@ -163,6 +168,7 @@ export class NetHost extends NetSession {
         guest.connection.send({
             t: MSG.WELCOME,
             protocol: PROTOCOL_VERSION,
+            saveAck: true,
             world: {
                 name: info.name, seed: info.seed, terrain: info.terrain, gameMode: game.mode,
                 experiments: game.world.experiments, time: game.time.getState(), speed: game.time.speed
@@ -278,6 +284,14 @@ export class NetHost extends NetSession {
         };
         // Zapis końcowy rozpoznaje stan odebrany podczas trwającej transakcji.
         info.guests = { ...info.guests, [guest.id]: record };
+    }
+
+    async confirmGuestSave(guest, request) {
+        // Odbiór na uporządkowanym kanale już objął poprzedzające SAVE bloki.
+        let saved = false;
+        try { saved = await this.game.saver.save(); }
+        catch (error) { console.warn('Zapis końcowy gościa', error); }
+        guest.connection.send({ t: MSG.SAVE_RESULT, request, saved: saved === true });
     }
 
     leave(guest) {

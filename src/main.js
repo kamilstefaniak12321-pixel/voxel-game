@@ -1127,11 +1127,7 @@ async function saveBeforeLeaving(retry) {
     state = 'loading';
     try {
         await waitForTreeShowcase(game.world);
-        if (game.net?.isClient) {
-            game.net.flushBlocks();
-            game.net.saveNow();
-        }
-        if (await game.saver.flush()) return true;
+        if (await (game.net?.isClient ? game.net.saveBeforeExit() : game.saver.flush())) return true;
     } catch (error) {
         diagnostics.record('error', 'world.save.failed', 'Błąd zapisu przed wyjściem.', { error });
     } finally {
@@ -1747,7 +1743,7 @@ if (window.desktop) {
         if (!(await saveBeforeLeaving())) return false;
         state = 'loading';
         if (game?.net?.isHost) game.net.close();
-        if (game?.net?.isClient) game.net.leave();
+        if (game?.net?.isClient) game.net.leave(true);
         await diagnostics.dispose().catch(() => {});
         return true;
     });

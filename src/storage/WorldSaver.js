@@ -22,6 +22,7 @@
 const CHANGE_SAVE_DELAY = 2;
 
 const PLAYER_SAVE_INTERVAL = 10;
+const MAX_FLUSH_WRITES = 4;
 
 // Jak długo w HUD widać komunikat o zapisie (milisekundy).
 
@@ -157,10 +158,16 @@ export class WorldSaver {
 
         // Zmiana odebrana od gościa w trakcie ostatniej transakcji też
         // musi trafić do bazy, zanim wolno przeładować stronę.
-        do {
+        for (let write = 0; write < MAX_FLUSH_WRITES; write++) {
             if (!(await this.save())) return false;
-        } while (this.hasUnsavedChanges());
-        return true;
+            if (!this.hasUnsavedChanges()) return true;
+        }
+        // Szybszy dopływ edycji niż zapis dysku: pozostaw otwarty świat
+        // i jego kolejkę do ponowienia zamiast blokować wyjście bez końca.
+        this.diagnostic('warn', 'world.save.busy', 'Świat był zmieniany w trakcie każdej próby zapisu końcowego.',
+            { writes: MAX_FLUSH_WRITES });
+        this.showStatus('Świat nadal się zmienia. Ponów zapis.');
+        return false;
 
     }
 
@@ -194,30 +201,26 @@ export class WorldSaver {
         // Jeśli gracz zmieni coś w trakcie zapisu, ten chunk znowu
         // trafi na listę i zapisze się przy następnej okazji.
 
-        const chunks = this.latestChunks(this.world.takeUnsavedChunks());
-        this.activeBatches.add(chunks);
-
-
-        const raftVersion = this.rafts?.version ?? 0;
-        if (this.rafts) this.worldInfo.rafts = this.rafts.getState();
-        const fireVersion = this.campfires?.version ?? 0;
-        if (this.campfires) this.worldInfo.campfires = this.campfires.getState();
-        const dropVersion = this.drops?.version ?? 0;
-        if (this.drops) this.worldInfo.drops = this.drops.getState();
-        const chestVersion = this.chests?.version ?? 0;
-        if (this.chests) this.worldInfo.chests = this.chests.getState();
-        const tableVersion = this.tables?.version ?? 0;
-        const guests = this.worldInfo.guests;
-        if (this.tables) this.worldInfo.carpenterTables = this.tables.getState();
-        this.worldInfo.player = this.player.getState();
-        this.worldInfo.lastPlayed = Date.now();
-
-        if (this.time) {
-            this.worldInfo.time = this.time.getState();
-        }
-
-
+        let chunks = [];
         try {
+            chunks = this.world.takeUnsavedChunks();
+            chunks = this.latestChunks(chunks);
+            this.activeBatches.add(chunks);
+
+            const raftVersion = this.rafts?.version ?? 0;
+            if (this.rafts) this.worldInfo.rafts = this.rafts.getState();
+            const fireVersion = this.campfires?.version ?? 0;
+            if (this.campfires) this.worldInfo.campfires = this.campfires.getState();
+            const dropVersion = this.drops?.version ?? 0;
+            if (this.drops) this.worldInfo.drops = this.drops.getState();
+            const chestVersion = this.chests?.version ?? 0;
+            if (this.chests) this.worldInfo.chests = this.chests.getState();
+            const tableVersion = this.tables?.version ?? 0;
+            const guests = this.worldInfo.guests;
+            if (this.tables) this.worldInfo.carpenterTables = this.tables.getState();
+            this.worldInfo.player = this.player.getState();
+            this.worldInfo.lastPlayed = Date.now();
+            if (this.time) this.worldInfo.time = this.time.getState();
 
             await this.storage.saveWorldAndChunks(
                 this.worldInfo,
@@ -250,7 +253,8 @@ export class WorldSaver {
 
             // Nie udało się - te chunki spróbujemy zapisać następnym razem.
 
-            this.world.markUnsaved(this.latestChunks(chunks));
+            // Ponowienie wybierze najnowsze wersje chunków przez latestChunks.
+            this.world.markUnsaved(chunks);
 
             if (this.onDiagnostic) this.diagnostic('error', 'world.save.failed', 'Nie udało się zapisać świata.', {
                 error, chunks: chunks.length, immediate, wallMs: performance.now() - diagnosticStart

@@ -11,6 +11,20 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 1.14.1 - Poprawka: klimat a temperatura
+
+PR #166.
+
+- **Naprawione: klimat wpływa na temperaturę.** W 1.14.0 ciepło klimatu
+  (gorące i zimne strony świata) nie docierało w grze do pogody, więc
+  temperatura zależała tylko od pory roku - zimą śnieg leżał tak samo na
+  pustyni jak w tajdze. Teraz w zimnych stronach jest do 11° chłodniej
+  (śnieg leży tam dłużej, a w górach bywa i poza zimą), a w gorących do
+  18° cieplej: na pustyni i sawannie zimowa pokrywa nie leży, a latem
+  jest tam upał.
+
+---
+
 ## 1.14.0 - Pogoda, część 4: zima
 
 PR #165. Opis: [`docs/pogoda.md`](docs/pogoda.md).

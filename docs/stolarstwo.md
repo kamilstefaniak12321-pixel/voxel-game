@@ -101,8 +101,8 @@ Kamil przygotował w Blockbench (`drzwi.bbmodel`).
     zwykłymi wyrobami.
 - **Drzwi.**
   - Z każdego z 33 rodzajów desek, np. *Drzwi dębowe*, *Drzwi z akacji*, *Drzwi cedrowe*.
-    Tekstura: rama, pionowe deski i dwie płyciny w kolorach desek,
-    żelazna klamka.
+    Tekstura (od 1.16.0): poziome deski z ciemną klamką - rysunek Kamila
+    w kolorach desek danego drewna; przód i tył to osobne rysunki.
   - Zajmują dwa bloki wysokości. Potrzebne jest wolne miejsce na obie
     części i coś stałego pod spodem.
   - Stają na dalszym brzegu bloku (patrząc od gracza), zawias po lewej.
@@ -114,12 +114,72 @@ Kamil przygotował w Blockbench (`drzwi.bbmodel`).
     wstecz. Przez otwarte drzwi się przechodzi, zamknięte zatrzymują.
   - Rozbicie jednej części zabiera całe drzwi (wypadają jedne).
 - **Klapy.**
-  - Z każdego rodzaju desek, np. *Klapa wiśniowa*. Płyta 3 px z ramą,
-    ukośną listwą i żelaznymi zawiasami.
+  - Z każdego rodzaju desek, np. *Klapa wiśniowa*. Płyta 2 px (do 1.15
+    3 px) z desek, z ciemnym uchwytem naprzeciw zawiasu.
   - Na ścianie zawias jest przy klikniętej ścianie, na podłodze -
     od strony gracza. Kliknięcie w spód bloku albo w górną połowę ściany
     stawia klapę u góry bloku.
   - PPM otwiera i zamyka. Na zamkniętą klapę wchodzi się jak na stopień.
+  - Od 1.16.0 klapa otwiera się z animacją (jak drzwi): dolna wstaje,
+    górna opada.
+
+## Drzwi i klapy od 1.16.0
+
+Kamil przygotował nowy model (`drzwi i zapadnia.bbmodel`), nowy wygląd
+drzwi i klapy oraz nowe pęknięcia kopanych bloków.
+
+![Drzwi i klapy 1.16.0: nowy wygląd, pęknięcia, światło](stolarstwo-1160.jpg)
+
+- **Wygląd.** Wzorcem są drzwi i klapa narysowane na deskach wiśni
+  (`tools/wzorce/drzwi.png`, `zapadnia.png`). `tools/drzwi_tekstury.py`
+  przenosi ten sam rysunek na pozostałe 32 rodzaje drewna: bierze cztery
+  tony desek gatunku (szpara, cień, deska, połysk), a drugi kolor szpary
+  i dwa kolory klamki liczy z nich w tej samej proporcji co we wzorcu.
+  Wiśnia wychodzi co do piksela jak rysunek Kamila. Każde drewno ma sześć
+  obrazków: `door_<drewno>` (przód), `_back` (tył), `_edge` (krawędzie),
+  `trapdoor_<drewno>` (wierzch), `_bottom` (spód), `_edge`.
+- **Animacja klapy.** Z pliku: 90° w 0,25 s, odbicie do 92,5°, powrót,
+  87,5° i spokój na 90° (drzwi: bez zmian, odbicie do 95°). Plik zapętla
+  animację co 1,33 s - gra odtwarza ją raz, a zamykanie to ta sama krzywa
+  wstecz.
+- **Kolizja od razu.** Po kliknięciu blok od razu zmienia stan: przez
+  otwierane drzwi da się przejść natychmiast, a na zamykaną klapę od razu
+  stanąć. Animacja jest tylko obrazem - dzięki temu postać nie podskakuje
+  na płycie w ruchu.
+- **Światło.** Drzwi i klapa zasłaniają światło swoją płytą, a nie
+  napisem „otwarte / zamknięte”: światło nie przechodzi przez tę ścianę
+  komórki, przy której płyta naprawdę stoi (`lightFaceMask`
+  w `ShapeBoxes.js`, `FACE_BLOCK` w `Light.js`). Zamknięte drzwi
+  w wejściu odcinają pokój od słońca i lamp; otwarte przepuszczają; drzwi
+  wstawione bokiem do korytarza zasłaniają go wtedy, gdy są „otwarte”.
+  Klapa w dachu zasłania niebo. Przy zamykaniu światło bloków przełącza
+  się raz, gdy płyta dojdzie na miejsce (po 0,25 s); przy otwieraniu - od
+  razu.
+- **Cień słońca.** Płyta rzuca cień do bliskiej mapy cieni i cień idzie
+  razem z animacją (`World.modelShadowScene`, `Shadows.markModel`). Do
+  1.15 drzwi nie rzucały cienia wcale.
+- **Pęknięcia.** Drzwi i klapy pękają przy kopaniu; nakładka jest
+  przypięta do płyty, więc porusza się razem z nią. Drzwi mają własny,
+  wysoki rysunek na dwa bloki. Opis nowych pęknięć: [gracz.md](gracz.md).
+- **Dźwięk.** Otwieranie to skrzypnięcie zawiasu i lekki stuk, zamykanie -
+  skrzypnięcie i trzaśnięcie; klapa ma własną, krótszą wersję. Każde
+  drewno brzmi inaczej: im cięższe w naturze, tym niżej, wolniej i trochę
+  głośniej (`src/audio/doorSounds.js`, gęstości w kg/m³ - np. baobab 250,
+  świerk 450, dąb 710, oliwka 950, namorzyn 1000). Dźwięki są syntetyczne
+  (`tools/dzwieki.py`, grupa `drzwi`) i można je podmienić nagraniami.
+
+Czego jeszcze nie ma (stan na 1.16.0):
+
+- światło bloków jest liczone co komórkę, więc przełącza się skokiem (raz
+  na otwarcie / zamknięcie), a nie płynnie z kątem płyty,
+- płyta nie rzuca cienia w dalekich mapach cieni (ponad 64 bloki od
+  gracza), w świetle ogniska ani w smugach światła,
+- sama komórka drzwi jest oświetlona od strony, z której płyta jej nie
+  zasłania - płyta oglądana z drugiej strony ma to samo światło,
+- gość w grze wieloosobowej widzi przełączenie światła od razu (bez
+  czekania na koniec zamykania),
+- dźwięków nie dało się odsłuchać w środowisku testowym - są policzone
+  i sprawdzone tylko liczbowo.
 
 ## Jak to działa
 
@@ -135,12 +195,13 @@ Kamil przygotował w Blockbench (`drzwi.bbmodel`).
 | `src/game/CarpenterTables.js` | stół: stawianie dwóch części, deski na blacie, wyroby, zapis, furtki |
 | `src/rendering/CarpenterTableRenderer.js` | stos desek i miniatury wyrobów na blacie |
 | `src/rendering/ShapeGeometry.js` | modele do ikonek, dłoni i miniatur; płyta drzwi (`doorFaces`) |
-| `src/rendering/DoorRenderer.js` | drzwi w świecie: model na zawiasie i animacja otwierania (`doorOpening`, klatki z `drzwi.bbmodel`) |
-| `tools/drzwi_tekstury.py` | tekstury `door_<drewno>` (16 × 32) i `trapdoor_<drewno>` z desek danego drewna |
+| `src/rendering/DoorRenderer.js` | drzwi i (od 1.16.0) klapy w świecie: model na zawiasie, animacja (`doorOpening`, `trapdoorOpening`), kopia do mapy cieni |
+| `tools/drzwi_tekstury.py` | tekstury drzwi i klap z desek danego drewna według wzorca z `tools/wzorce/` |
+| `src/audio/doorSounds.js` | wysokość i głośność dźwięku drzwi według gęstości drewna |
 
 Drzwi i klapy mają numery 10860-11819 (po 48 na drewno: drzwi -
 kierunek × część × zawias × otwarte, klapy - kierunek × góra/dół ×
-otwarta). Klapy rysuje ChunkMesher (pudełka), drzwi - `DoorRenderer`
+otwarta). Drzwi i (od 1.16.0) klapy rysuje `DoorRenderer`
 (chunk indeksuje je razem z pochodniami, mesher ich nie rysuje).
 Podwójny warsztat to `CarpenterTables.partnerOf` i `bench` (układ blatu).
 

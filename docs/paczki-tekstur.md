@@ -42,7 +42,8 @@ Plik paczki:
 | `paczka.json` | `{ "nazwa": "...", "autor": "...", "opis": "..." }` (niekonieczny) |
 | `bloki/<nazwa>.png` | tekstura kafelka atlasu, np. `bloki/grass_top.png` - nazwy jak w `ATLAS_TILES` (`src/rendering/TextureAtlas.js`) i w szablonie |
 | `bloki/<drzewo>/<plik>.png` | zachowane nazwy tekstur drzew (obecnie regiony `drzewa.png`), np. `bloki/jablon/liscie.png` |
-| `pekniecia.png` | pęknięcia kopanego bloku - 10 etapów obok siebie |
+| `pekniecia.png` | pęknięcia kopanego bloku - od 1.16.0 osiem etapów w siatce 4 × 2 (szare, półprzezroczyste piksele przyciemniają blok); stary pasek 10 etapów (szerokość = 10 × wysokość) nadal działa po staremu |
+| `pekniecia_wysokie.png` | pęknięcia drzwi (dwa bloki wysokości) - osiem etapów 4 × 2, klatka dwa razy wyższa niż szersza |
 | `niebo/ksiezyc.png` | tarcza księżyca |
 
 Inne pliki (np. `CZYTAJ.md`) są pomijane; nieznane obrazki pokazuje

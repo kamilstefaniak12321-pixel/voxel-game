@@ -342,7 +342,7 @@ check(TABLE_PRODUCTS.map((p) => p.kind).join() === 'stairs,slab,fence,gate', 'Cz
         check(getDropType(getBlockTypeById(W.shapeId(wood, 'door', { facing: 'west', part: 'upper', open: true }))) === `${wood}_door`, `${wood}: górna część drzwi daje drzwi`);
     }
     check(getBlockDefinition('oak_door').label === 'Drzwi dębowe' && getBlockDefinition('acacia_trapdoor').label === 'Klapa z akacji', 'Nazwy drzwi i klap');
-    check(getBlockDefinition('oak_door').model === 'door' && getBlockDefinition('oak_trapdoor').model === 'shape', 'Drzwi - osobny model, klapa - pudełko');
+    check(getBlockDefinition('oak_door').model === 'door' && getBlockDefinition('oak_trapdoor').model === 'door', 'Drzwi i (od 1.16.0) klapa - osobny, ruchomy model');
 
     // Kształty: zamknięte przy brzegu "facing", otwarte - przy zawiasie.
     const door = (options) => shapeBoxes(W.shapeId('oak', 'door', options))[0];
@@ -350,8 +350,8 @@ check(TABLE_PRODUCTS.map((p) => p.kind).join() === 'stairs,slab,fence,gate', 'Cz
     check(door({ facing: 'south' })[2] === 14 / 16 && door({ facing: 'east' })[0] === 14 / 16 && door({ facing: 'west' })[3] === 2 / 16, 'Drzwi w każdym kierunku przy swoim brzegu');
     check(door({ facing: 'north', open: true })[3] === 2 / 16 && door({ facing: 'north', open: true, hinge: 'right' })[0] === 14 / 16, 'Otwarte - przy zawiasie (lewy / prawy)');
     const trap = (options) => shapeBoxes(W.shapeId('oak', 'trapdoor', options))[0];
-    check(trap({}).join() === [0, 0, 0, 1, 3 / 16, 1].join() && trap({ half: 'top' })[1] === 13 / 16, 'Klapa: 3 px na dole albo u góry');
-    check(trap({ facing: 'south', open: true })[2] === 13 / 16 && trap({ facing: 'south', open: true })[4] === 1, 'Otwarta klapa stoi przy zawiasie');
+    check(trap({}).join() === [0, 0, 0, 1, 2 / 16, 1].join() && trap({ half: 'top' })[1] === 14 / 16, 'Klapa: 2 px na dole albo u góry (model Kamila, 1.16.0)');
+    check(trap({ facing: 'south', open: true })[2] === 14 / 16 && trap({ facing: 'south', open: true })[4] === 1, 'Otwarta klapa stoi przy zawiasie');
 
     // Kolizje: zamknięte zatrzymują, otwarte przepuszczają (zawias z boku).
     const world = makeWorld();
@@ -367,7 +367,7 @@ check(TABLE_PRODUCTS.map((p) => p.kind).join() === 'stairs,slab,fence,gate', 'Cz
     const floor = makeWorld();
     floor.set(0, 0, 3, W.shapeId('oak', 'trapdoor'));
     const step = walk(floor, [0.5, 0, 1.5], [0, 0, 4], 0.5);
-    check(step.pos.z > 3.5 && step.pos.y > 0.15, 'Na zamkniętą klapę się wchodzi');
+    check(step.pos.z > 3.5 && step.pos.y > 0.1, 'Na zamkniętą klapę się wchodzi');
 
     // Animacja z drzwi.bbmodel: 90 stopni w 0,25 s, odbicie do 95, spokój na 90.
     near(doorOpening(0), 0, 'Animacja: start');

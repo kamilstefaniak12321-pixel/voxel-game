@@ -14,7 +14,8 @@
 #                                  bloki, meteoryt, owoce, menu, woda, kosmos,
 #                                  osiagniecia, wytwarzanie, snieg (same
 #                                  dźwięki śniegu - nowy materiał), cialo
-#                                  (burczenie w brzuchu, jedzenie)
+#                                  (burczenie w brzuchu, jedzenie), drzwi
+#                                  (otwieranie i zamykanie drzwi i klap)
 #
 # (pliki .ogg za każdym razem wychodzą trochę inne w bajtach, więc
 # lepiej przeliczać tylko grupę, która się zmieniła)
@@ -456,6 +457,88 @@ def harvest(s):
         place(out, pop * s.uniform(0.8, 1.3), at)
         at += s.uniform(0.06, 0.11)
     return out
+
+
+# ------------------------------------------------------------
+# Drzwi i klapy (1.16.0)
+#
+# Jeden zestaw dla wszystkich rodzajów drewna - gra odtwarza go wyżej
+# albo niżej (i szybciej albo wolniej) zależnie od ciężaru drewna
+# (src/audio/doorSounds.js). Czasy pasują do animacji z modelu Kamila:
+# płyta dochodzi do końca po 0,25 s i odbija się po 0,29 s.
+# ------------------------------------------------------------
+
+def creak(s, length, f0, f1, amount):
+    """Skrzypnięcie zawiasu: drgający ton (tarcie "łapie i puszcza")
+    o zmieniającej się wysokości, bez ostrych składowych."""
+    n = samples(length)
+    t = time_axis(n)
+    glide = f0 + (f1 - f0) * (t / length) ** s.uniform(0.7, 1.4)
+    wobble = 1 + 0.035 * np.sin(2 * np.pi * s.uniform(9, 15) * t + s.uniform(0, 6.28))
+    phase = 2 * np.pi * np.cumsum(glide * wobble) / SR
+    tone = np.sin(phase) + 0.45 * np.sin(2 * phase + 0.7) + 0.2 * np.sin(3 * phase + 1.9)
+    slip = 0.55 + 0.45 * np.abs(np.sin(2 * np.pi * s.uniform(22, 34) * t + s.uniform(0, 6.28)))
+    grit = band(s.noise(length), 600, 2600) * 0.35
+    swell = np.sin(np.pi * np.clip(t / length, 0, 1)) ** 0.8
+    return band((tone + grit) * slip * swell, 260, 3200) * amount
+
+
+def wood_knock(s, body, length, amount, click=0.5):
+    """Stuk drewna o drewno: krótki trzask i głuche pudło."""
+    n = samples(length)
+    out = band(s.noise(length), 300, 2200) * soft_env(n, 0.0015, 0.012) * click
+    out += damped_sine(body, length, 0.05) * soft_env(n, 0.002, 1)
+    out += damped_sine(body * s.uniform(2.2, 2.7), length, 0.022) * soft_env(n, 0.0015, 1) * 0.3
+    return lowpass(out, 2800) * amount
+
+
+def latch(s, amount):
+    """Ciche szczęknięcie skobla."""
+    length = 0.05
+    n = samples(length)
+    out = band(s.noise(length), 1500, 5200) * soft_env(n, 0.0008, 0.006)
+    out += damped_sine(s.uniform(1500, 2100), length, 0.008) * 0.5
+    return out * amount
+
+
+def door_open(s):
+    out = np.zeros(samples(0.5))
+    place(out, latch(s, 0.5), 0.0)
+    place(out, creak(s, 0.26, s.uniform(330, 390), s.uniform(470, 560), 0.42), 0.02)
+    place(out, wood_knock(s, s.uniform(150, 180), 0.16, 0.5, click=0.3), 0.285)
+    return out
+
+
+def door_close(s):
+    out = np.zeros(samples(0.55))
+    place(out, creak(s, 0.23, s.uniform(480, 560), s.uniform(330, 380), 0.36), 0.0)
+    place(out, wood_knock(s, s.uniform(105, 125), 0.26, 1.0), 0.245)
+    place(out, thump(s, 0.2, 170, 0.004, 0.05, 0.9), 0.245)
+    place(out, latch(s, 0.6), 0.262)
+    return out
+
+
+def trapdoor_open(s):
+    out = np.zeros(samples(0.48))
+    place(out, creak(s, 0.24, s.uniform(400, 460), s.uniform(560, 640), 0.34), 0.01)
+    place(out, wood_knock(s, s.uniform(190, 225), 0.14, 0.6, click=0.4), 0.285)
+    return out
+
+
+def trapdoor_close(s):
+    out = np.zeros(samples(0.55))
+    place(out, creak(s, 0.2, s.uniform(560, 640), s.uniform(400, 450), 0.26), 0.02)
+    place(out, wood_knock(s, s.uniform(125, 150), 0.24, 1.0, click=0.7), 0.245)
+    place(out, thump(s, 0.22, 140, 0.004, 0.06, 1.1), 0.245)
+    return out
+
+
+DOORS = {
+    'door_open': (door_open, -19),
+    'door_close': (door_close, -17),
+    'trapdoor_open': (trapdoor_open, -20),
+    'trapdoor_close': (trapdoor_close, -17.5)
+}
 
 
 # ------------------------------------------------------------
@@ -1031,7 +1114,7 @@ def save(path, data):
         )
 
 
-GROUPS = ['bloki', 'meteoryt', 'owoce', 'menu', 'woda', 'kosmos', 'osiagniecia', 'wytwarzanie', 'snieg', 'strumien', 'cialo']
+GROUPS = ['bloki', 'meteoryt', 'owoce', 'menu', 'woda', 'kosmos', 'osiagniecia', 'wytwarzanie', 'snieg', 'strumien', 'cialo', 'drzwi']
 
 
 def generate(root=ROOT, only=None):
@@ -1109,6 +1192,14 @@ def generate(root=ROOT, only=None):
             save(os.path.join(root, 'body', f'hurt_{v}.ogg'), sound)
             sound = fade(loudness(sizzle(Synth(97_100 + v)), -19), 0.02, 0.2)
             save(os.path.join(root, 'body', f'sizzle_{v}.ogg'), sound)
+
+
+    # Drzwi i klapy (1.16.0) - własne ziarna.
+    if want('drzwi'):
+        for index, (name, (make, level)) in enumerate(DOORS.items()):
+            for v in range(1, 3):
+                sound = fade(loudness(make(Synth(116_000 + index * 10 + v)), level), 0.002, 0.05)
+                save(os.path.join(root, 'doors', f'{name}_{v}.ogg'), sound)
 
 
 if __name__ == '__main__':

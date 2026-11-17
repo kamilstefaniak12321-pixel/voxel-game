@@ -11,6 +11,39 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 1.16.0 - Drzwi i klapy: nowy wygląd, animacja, światło i dźwięk
+
+PR #169.
+
+- **Klapy otwierają się z animacją** z nowego modelu Kamila
+  (`drzwi i zapadnia.bbmodel`): 90° w ćwierć sekundy, lekkie odbicie
+  i spokój - dolna klapa wstaje, górna opada. Płyta klapy ma teraz 2 px
+  grubości (było 3). Kolizja zmienia się od razu po kliknięciu, animacja
+  jest tylko obrazem.
+- **Nowy wygląd drzwi i klap** wszystkich 33 rodzajów drewna: poziome
+  deski z ciemną klamką według rysunku Kamila (wzorzec na deskach wiśni),
+  przeniesionego na kolory desek każdego gatunku. Drzwi mają osobny przód
+  i tył oraz własne krawędzie.
+- **Nowe pęknięcia kopanych bloków** (rysunek Kamila, 8 etapów): szare,
+  półprzezroczyste rysy przyciemniają teksturę bloku zamiast malować
+  czarne piksele; na bardzo ciemnych blokach rozjaśniają, żeby było je
+  widać. Pękają teraz także drzwi (osobny rysunek na dwa bloki), klapy,
+  schody, półbloki, płoty, furtki i stół stolarski.
+- **Drzwi i klapy zasłaniają światło swoją płytą.** Światło słońca i lamp
+  nie przechodzi przez tę ścianę bloku, przy której płyta naprawdę stoi -
+  niezależnie od tego, czy stan nazywa się „otwarte”, czy „zamknięte”.
+  Zamknięte drzwi zaciemniają pokój, klapa w dachu zasłania niebo. Płyta
+  rzuca też cień słońca, który porusza się razem z animacją.
+- **Każde drewno ma własny dźwięk drzwi**: skrzypnięcie i stuk przy
+  otwieraniu, trzaśnięcie przy zamykaniu; im cięższe drewno w naturze
+  (oliwka, namorzyn, dąb), tym niższy i głośniejszy dźwięk, a lekkie
+  (baobab, puchowiec, wierzba) grają wyżej. Klapa ma własną wersję.
+- Paczki tekstur: nowy plik `pekniecia_wysokie.png` (pęknięcia drzwi);
+  stary `pekniecia.png` z 10 etapami w pasku nadal działa.
+- Opis i lista tego, czego jeszcze nie ma: `docs/stolarstwo.md`.
+
+---
+
 ## 1.15.1 - Bezpieczny zapis, wspólne kopanie i poprawki pogody
 
 PR #168.

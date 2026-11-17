@@ -1,4 +1,4 @@
-# Paczka tekstur - szablon (Various Roots 1.10.0)
+# Paczka tekstur - szablon (Various Roots 1.16.0)
 
 Oryginalne tekstury gry, każda w osobnym pliku. Zrób z nich własną paczkę:
 
@@ -25,9 +25,12 @@ Pliki:
 - `paczka.json` - nazwa, autor, opis (niekonieczny),
 - `bloki/<nazwa>.png` - tekstury bloków, roślin i przedmiotów
   (tabela niżej; `bloki/<drzewo>/...` - drzewa z paczek drzew),
-- `pekniecia.png` - pęknięcia kopanego bloku: 10 etapów obok siebie
-  (szerokość = 10 x wysokość), szary 128 nic nie zmienia, ciemniejszy
-  przyciemnia blok, jaśniejszy rozjaśnia,
+- `pekniecia.png` - pęknięcia kopanego bloku: 8 etapów w siatce 4 x 2
+  (pierwszy z lewej u góry); szare, półprzezroczyste piksele
+  przyciemniają blok - im mniej przezroczyste, tym mocniej. Stary pasek
+  10 etapów (szerokość = 10 x wysokość) nadal działa po staremu,
+- `pekniecia_wysokie.png` - to samo dla drzwi (dwa bloki wysokości):
+  klatki dwa razy wyższe niż szersze,
 - `niebo/ksiezyc.png` - tarcza księżyca (poza tarczą przezroczysta).
 
 Więcej: `docs/paczki-tekstur.md` w repozytorium gry, `/tekstury`
@@ -194,6 +197,39 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/dandelion.png` | Mniszek |
 | `bloki/dark_planks.png` | Schody z ciemnego drewna, Półblok z ciemnego drewna, Furtka z ciemnego drewna, Stół stolarski z ciemnego drewna, Łóżko z ciemnego drewna (pościelone), Łóżko z ciemnego drewna (stelaż), Ciemne deski |
 | `bloki/dirt.png` | Ziemia, Rozgrzebana ziemia |
+| `bloki/door_acacia_edge.png` | - |
+| `bloki/door_araucaria_edge.png` | - |
+| `bloki/door_aspen_edge.png` | - |
+| `bloki/door_bald_cypress_edge.png` | - |
+| `bloki/door_banyan_edge.png` | - |
+| `bloki/door_baobab_edge.png` | - |
+| `bloki/door_beech_edge.png` | - |
+| `bloki/door_birch_edge.png` | - |
+| `bloki/door_bristlecone_edge.png` | - |
+| `bloki/door_cedar_edge.png` | - |
+| `bloki/door_cherry_edge.png` | - |
+| `bloki/door_coconut_palm_edge.png` | - |
+| `bloki/door_dark_edge.png` | - |
+| `bloki/door_dragon_tree_edge.png` | - |
+| `bloki/door_fir_edge.png` | - |
+| `bloki/door_ginkgo_edge.png` | - |
+| `bloki/door_jablon_edge.png` | - |
+| `bloki/door_jacaranda_edge.png` | - |
+| `bloki/door_joshua_tree_edge.png` | - |
+| `bloki/door_kapok_edge.png` | - |
+| `bloki/door_larch_edge.png` | - |
+| `bloki/door_linden_edge.png` | - |
+| `bloki/door_mangrove_edge.png` | - |
+| `bloki/door_maple_edge.png` | - |
+| `bloki/door_mugo_edge.png` | - |
+| `bloki/door_oak_edge.png` | - |
+| `bloki/door_olcha_edge.png` | - |
+| `bloki/door_olive_edge.png` | - |
+| `bloki/door_pine_edge.png` | - |
+| `bloki/door_rainbow_eucalyptus_edge.png` | - |
+| `bloki/door_sequoia_edge.png` | - |
+| `bloki/door_spruce_edge.png` | - |
+| `bloki/door_wierzba_edge.png` | - |
 | `bloki/dragon_tree/berries.png` | Jagody draceny |
 | `bloki/dragon_tree/leaves.png` | Liście draceny, Liście draceny (jagody odrastają) |
 | `bloki/dragon_tree/leaves_variant.png` | Liście draceny z jagodami |
@@ -762,38 +798,104 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/torch_white.png` | Pochodnia biała |
 | `bloki/torch_yellow.png` | Pochodnia żółta |
 | `bloki/trapdoor_acacia.png` | Klapa z akacji |
+| `bloki/trapdoor_acacia_bottom.png` | - |
+| `bloki/trapdoor_acacia_edge.png` | - |
 | `bloki/trapdoor_araucaria.png` | Klapa araukariowa |
+| `bloki/trapdoor_araucaria_bottom.png` | - |
+| `bloki/trapdoor_araucaria_edge.png` | - |
 | `bloki/trapdoor_aspen.png` | Klapa osikowa |
+| `bloki/trapdoor_aspen_bottom.png` | - |
+| `bloki/trapdoor_aspen_edge.png` | - |
 | `bloki/trapdoor_bald_cypress.png` | Klapa z cypryśnika |
+| `bloki/trapdoor_bald_cypress_bottom.png` | - |
+| `bloki/trapdoor_bald_cypress_edge.png` | - |
 | `bloki/trapdoor_banyan.png` | Klapa figowcowa |
+| `bloki/trapdoor_banyan_bottom.png` | - |
+| `bloki/trapdoor_banyan_edge.png` | - |
 | `bloki/trapdoor_baobab.png` | Klapa baobabowa |
+| `bloki/trapdoor_baobab_bottom.png` | - |
+| `bloki/trapdoor_baobab_edge.png` | - |
 | `bloki/trapdoor_beech.png` | Klapa bukowa |
+| `bloki/trapdoor_beech_bottom.png` | - |
+| `bloki/trapdoor_beech_edge.png` | - |
 | `bloki/trapdoor_birch.png` | Klapa brzozowa |
+| `bloki/trapdoor_birch_bottom.png` | - |
+| `bloki/trapdoor_birch_edge.png` | - |
 | `bloki/trapdoor_bristlecone.png` | Klapa z sosny ościstej |
+| `bloki/trapdoor_bristlecone_bottom.png` | - |
+| `bloki/trapdoor_bristlecone_edge.png` | - |
 | `bloki/trapdoor_cedar.png` | Klapa cedrowa |
+| `bloki/trapdoor_cedar_bottom.png` | - |
+| `bloki/trapdoor_cedar_edge.png` | - |
 | `bloki/trapdoor_cherry.png` | Klapa wiśniowa |
+| `bloki/trapdoor_cherry_bottom.png` | - |
+| `bloki/trapdoor_cherry_edge.png` | - |
 | `bloki/trapdoor_coconut_palm.png` | Klapa palmowa |
+| `bloki/trapdoor_coconut_palm_bottom.png` | - |
+| `bloki/trapdoor_coconut_palm_edge.png` | - |
 | `bloki/trapdoor_dark.png` | Klapa z ciemnego drewna |
+| `bloki/trapdoor_dark_bottom.png` | - |
+| `bloki/trapdoor_dark_edge.png` | - |
 | `bloki/trapdoor_dragon_tree.png` | Klapa z draceny |
+| `bloki/trapdoor_dragon_tree_bottom.png` | - |
+| `bloki/trapdoor_dragon_tree_edge.png` | - |
 | `bloki/trapdoor_fir.png` | Klapa jodłowa |
+| `bloki/trapdoor_fir_bottom.png` | - |
+| `bloki/trapdoor_fir_edge.png` | - |
 | `bloki/trapdoor_ginkgo.png` | Klapa miłorzębowa |
+| `bloki/trapdoor_ginkgo_bottom.png` | - |
+| `bloki/trapdoor_ginkgo_edge.png` | - |
 | `bloki/trapdoor_jablon.png` | Klapa jabłoniowa |
+| `bloki/trapdoor_jablon_bottom.png` | - |
+| `bloki/trapdoor_jablon_edge.png` | - |
 | `bloki/trapdoor_jacaranda.png` | Klapa jakarandowa |
+| `bloki/trapdoor_jacaranda_bottom.png` | - |
+| `bloki/trapdoor_jacaranda_edge.png` | - |
 | `bloki/trapdoor_joshua_tree.png` | Klapa z jukki |
+| `bloki/trapdoor_joshua_tree_bottom.png` | - |
+| `bloki/trapdoor_joshua_tree_edge.png` | - |
 | `bloki/trapdoor_kapok.png` | Klapa z puchowca |
+| `bloki/trapdoor_kapok_bottom.png` | - |
+| `bloki/trapdoor_kapok_edge.png` | - |
 | `bloki/trapdoor_larch.png` | Klapa modrzewiowa |
+| `bloki/trapdoor_larch_bottom.png` | - |
+| `bloki/trapdoor_larch_edge.png` | - |
 | `bloki/trapdoor_linden.png` | Klapa lipowa |
+| `bloki/trapdoor_linden_bottom.png` | - |
+| `bloki/trapdoor_linden_edge.png` | - |
 | `bloki/trapdoor_mangrove.png` | Klapa namorzynowa |
+| `bloki/trapdoor_mangrove_bottom.png` | - |
+| `bloki/trapdoor_mangrove_edge.png` | - |
 | `bloki/trapdoor_maple.png` | Klapa klonowa |
+| `bloki/trapdoor_maple_bottom.png` | - |
+| `bloki/trapdoor_maple_edge.png` | - |
 | `bloki/trapdoor_mugo.png` | Klapa z kosodrzewiny |
+| `bloki/trapdoor_mugo_bottom.png` | - |
+| `bloki/trapdoor_mugo_edge.png` | - |
 | `bloki/trapdoor_oak.png` | Klapa dębowa |
+| `bloki/trapdoor_oak_bottom.png` | - |
+| `bloki/trapdoor_oak_edge.png` | - |
 | `bloki/trapdoor_olcha.png` | Klapa olchowa |
+| `bloki/trapdoor_olcha_bottom.png` | - |
+| `bloki/trapdoor_olcha_edge.png` | - |
 | `bloki/trapdoor_olive.png` | Klapa oliwkowa |
+| `bloki/trapdoor_olive_bottom.png` | - |
+| `bloki/trapdoor_olive_edge.png` | - |
 | `bloki/trapdoor_pine.png` | Klapa sosnowa |
+| `bloki/trapdoor_pine_bottom.png` | - |
+| `bloki/trapdoor_pine_edge.png` | - |
 | `bloki/trapdoor_rainbow_eucalyptus.png` | Klapa eukaliptusowa |
+| `bloki/trapdoor_rainbow_eucalyptus_bottom.png` | - |
+| `bloki/trapdoor_rainbow_eucalyptus_edge.png` | - |
 | `bloki/trapdoor_sequoia.png` | Klapa sekwojowa |
+| `bloki/trapdoor_sequoia_bottom.png` | - |
+| `bloki/trapdoor_sequoia_edge.png` | - |
 | `bloki/trapdoor_spruce.png` | Klapa świerkowa |
+| `bloki/trapdoor_spruce_bottom.png` | - |
+| `bloki/trapdoor_spruce_edge.png` | - |
 | `bloki/trapdoor_wierzba.png` | Klapa wierzbowa |
+| `bloki/trapdoor_wierzba_bottom.png` | - |
+| `bloki/trapdoor_wierzba_edge.png` | - |
 | `bloki/water.png` | Woda, Płynąca woda |
 | `bloki/wet_clay_brick.png` | Mokra cegła z gliny |
 | `bloki/wet_clay_cup.png` | Mokry kubek z gliny |

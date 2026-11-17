@@ -244,7 +244,7 @@ export async function describeTextures(settings) {
     const loaded = atlas?.pack?.stamp === info.stamp;
 
     return `Paczka "${info.name}"${author}: ${info.tiles} z ${Object.keys(ATLAS_TILES).length} tekstur, ${info.source} x ${info.source}` +
-        `${info.extras.length ? ` + ${info.extras.map((name) => name === 'cracks' ? 'pęknięcia' : 'księżyc').join(', ')}` : ''}. ` +
+        `${info.extras.length ? ` + ${info.extras.map((name) => name === 'cracks' ? 'pęknięcia' : name === 'cracksTall' ? 'pęknięcia drzwi' : 'księżyc').join(', ')}` : ''}. ` +
         (loaded
             ? `W grze ${inGame} x ${inGame} (rozdzielczość: ${resolutionName(setting)}).`
             : reduced && !reduced.used ? 'W grze - oryginalne tekstury.' : 'Zadziała po ponownym uruchomieniu gry.') +

@@ -35,6 +35,10 @@ import { TABLE_CAPACITY, TABLE_PRODUCTS, BENCH_PRODUCTS } from '../crafting/carp
 // ------------------------------------------------------------
 
 // Lista wyrobów (deski -> sztuki) jest w crafting/carpentry.js.
+
+// Po ilu sekundach zamykana płyta drzwi albo klapy dochodzi na miejsce
+// (animacja z DoorRenderer.js: 90 stopni w 0,25 s) - wtedy przełącza się światło.
+export const DOOR_SWING_SECONDS = 0.25;
 export { TABLE_CAPACITY, TABLE_PRODUCTS, BENCH_PRODUCTS };
 
 // Ćwiartki części B (w układzie stołu przodem na północ, -z): numer
@@ -224,6 +228,9 @@ export class CarpenterTables {
         return lower;
     }
 
+    // Kolizja i reguły gry zmieniają się od razu (blok zmienia numer);
+    // animacja (DoorRenderer.js) jest tylko obrazem. Przy zamykaniu światło
+    // przełącza się dopiero, gdy płyta dojdzie na miejsce.
     toggleDoor({ x, y, z }, info) {
         const lowerY = info.part === 'lower' ? y : y - 1;
         const open = !info.open;
@@ -231,16 +238,26 @@ export class CarpenterTables {
             const cy = part === 'lower' ? lowerY : lowerY + 1;
             const here = shapeInfo(this.world.getBlockId(x, cy, z));
             if (here?.kind !== 'door') continue;
+            if (!open) this.world.holdDoorLight?.(x, cy, z, DOOR_SWING_SECONDS);
             this.world.setBlock(x, cy, z, getBlockTypeById(shapeId(info.wood, 'door', { facing: here.facing, part, hinge: here.hinge, open })));
         }
-        this.game.playBlockSound?.(open ? 'place' : 'step', info.planks, { x, y: lowerY, z });
+        this.playHinged('door', open, info, { x, y: lowerY, z });
         return true;
     }
 
     toggleTrapdoor({ x, y, z }, info) {
-        this.world.setBlock(x, y, z, getBlockTypeById(shapeId(info.wood, 'trapdoor', { facing: info.facing, half: info.half, open: !info.open })));
-        this.game.playBlockSound?.(info.open ? 'step' : 'place', info.planks, { x, y, z });
+        const open = !info.open;
+        if (!open) this.world.holdDoorLight?.(x, y, z, DOOR_SWING_SECONDS);
+        this.world.setBlock(x, y, z, getBlockTypeById(shapeId(info.wood, 'trapdoor', { facing: info.facing, half: info.half, open })));
+        this.playHinged('trapdoor', open, info, { x, y, z });
         return true;
+    }
+
+    // Dźwięk drzwi / klapy zależny od drewna (audio/doorSounds.js); bez
+    // niego (np. w testach) - dawne puknięcie desek.
+    playHinged(kind, open, info, block) {
+        if (this.game.playDoorSound) this.game.playDoorSound(kind, open, info.wood, block);
+        else this.game.playBlockSound?.(open ? 'place' : 'step', info.planks, block);
     }
 
     canBreak(position) {

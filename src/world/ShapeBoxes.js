@@ -237,3 +237,36 @@ export function boundsOf(boxes) {
     }
     return out;
 }
+
+// ------------------------------------------------------------
+// PŁYTY ZASŁANIAJĄCE ŚWIATŁO (1.16.0)
+//
+// Drzwi i klapa to cienka płyta przy jednej ścianie swojej komórki.
+// Światło (Light.js) nie przechodzi przez TĘ ścianę komórki - resztą
+// komórki płynie jak przez powietrze. Liczy się miejsce, w którym płyta
+// naprawdę stoi (z pudełka kształtu), a nie napis "otwarte / zamknięte":
+// drzwi otwarte w bok zasłaniają boczną ścianę, klapa w suficie - górną.
+//
+// Maska: bit 0 - zachód (-x), 1 - wschód (+x), 2 - północ (-z),
+// 3 - południe (+z), 4 - góra, 5 - dół (ta sama kolejność co sąsiedzi
+// w Light.js; przeciwna ściana to numer ^ 1).
+// ------------------------------------------------------------
+
+export const FACE_BITS = { west: 1, east: 2, north: 4, south: 8, up: 16, down: 32 };
+
+const THIN = 3 / 16 + 1e-6;
+
+export function lightFaceMask(id) {
+    const info = shapeInfo(id);
+    if (info?.kind !== 'door' && info?.kind !== 'trapdoor') return 0;
+    const box = shapeBoxes(id, 'render')?.[0];
+    if (!box) return 0;
+    const [x0, y0, z0, x1, y1, z1] = box;
+    const near = (value) => value <= 1e-6, far = (value) => value >= 1 - 1e-6;
+    const full = (a0, a1, b0, b1) => near(a0) && far(a1) && near(b0) && far(b1);
+    let mask = 0;
+    if (full(y0, y1, z0, z1)) mask |= near(x0) && x1 <= THIN ? FACE_BITS.west : far(x1) && x0 >= 1 - THIN ? FACE_BITS.east : 0;
+    if (full(x0, x1, y0, y1)) mask |= near(z0) && z1 <= THIN ? FACE_BITS.north : far(z1) && z0 >= 1 - THIN ? FACE_BITS.south : 0;
+    if (full(x0, x1, z0, z1)) mask |= near(y0) && y1 <= THIN ? FACE_BITS.down : far(y1) && y0 >= 1 - THIN ? FACE_BITS.up : 0;
+    return mask;
+}

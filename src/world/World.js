@@ -74,7 +74,8 @@ import {
     EDGE_EAST,
     EDGE_NORTH,
     EDGE_SOUTH,
-    EDGE_SELF
+    EDGE_SELF,
+    FACE_BLOCK
 } from './Light.js';
 import { RegionBatches } from '../rendering/RegionBatches.js';
 
@@ -422,6 +423,74 @@ export class World {
         if (east && north) this.markDirty(this.getChunk(cx + 1, cz - 1));
         if (west && south) this.markDirty(this.getChunk(cx - 1, cz + 1));
         if (east && south) this.markDirty(this.getChunk(cx + 1, cz + 1));
+
+    }
+
+
+    // Światło w komórce (x, y, z) ma jeszcze przez `seconds` sekund liczyć
+    // się tak, jakby płyta drzwi albo klapy stała po staremu (animacja
+    // zamykania) - wołane PRZED zmianą bloku. Potem przełącza się raz.
+
+    holdDoorLight(x, y, z, seconds) {
+
+        const chunk = this.getChunk(Math.floor(x / CHUNK_SIZE), Math.floor(z / CHUNK_SIZE));
+
+        if (!chunk || y < 0 || y >= CHUNK_HEIGHT) {
+            return;
+        }
+
+        const index = chunk.index(x - chunk.cx * CHUNK_SIZE, y, z - chunk.cz * CHUNK_SIZE);
+        const mask = FACE_BLOCK[chunk.blocks[index]];
+
+        if (mask === 0) {
+            return;
+        }
+
+        // (Drugie kliknięcie w trakcie animacji: zostaje pierwsza maska.)
+        if (!chunk.faceHold?.has(index)) this.light.holdFaces(chunk, index, mask);
+
+        const pending = (this.lightHolds ??= []);
+        const known = pending.find((hold) => hold.chunk === chunk && hold.index === index);
+
+        if (known) known.seconds = seconds;
+        else pending.push({ chunk, index, seconds });
+
+    }
+
+
+    // Co klatkę: kończy przytrzymania światła, którym minął czas.
+
+    updateLightHolds(dt) {
+
+        const pending = this.lightHolds;
+
+        if (!pending?.length) {
+            return;
+        }
+
+        let changed = false;
+
+        for (let i = pending.length - 1; i >= 0; i--) {
+
+            const hold = pending[i];
+
+            hold.seconds -= dt;
+
+            if (hold.seconds > 0) {
+                continue;
+            }
+
+            pending.splice(i, 1);
+
+            const loaded = this.getChunk(hold.chunk.cx, hold.chunk.cz) === hold.chunk;
+
+            if (loaded && this.light.releaseFaces(hold.chunk, hold.index)) {
+                changed = true;
+            }
+
+        }
+
+        if (changed) this.applyLightChanges();
 
     }
 

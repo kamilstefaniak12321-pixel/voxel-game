@@ -965,6 +965,24 @@ waterMaterial.onBeforeCompile = (shader, renderer) => {
 
             }
 
+            // Gładki szum (piana sztormu): wartość 0-1 w punkcie p.
+
+            float seaHash(vec2 p) {
+                return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453);
+            }
+
+            float seaNoise(vec2 p) {
+
+                vec2 i = floor(p);
+                vec2 f = fract(p);
+
+                f = f * f * (3.0 - 2.0 * f);
+
+                return mix(mix(seaHash(i), seaHash(i + vec2(1.0, 0.0)), f.x),
+                    mix(seaHash(i + vec2(0.0, 1.0)), seaHash(i + vec2(1.0, 1.0)), f.x), f.y);
+
+            }
+
             ${WATERFALL_PIXEL_GLSL}
             ${WATERFALL_AVERAGE_GLSL}`
         )
@@ -1034,22 +1052,31 @@ waterMaterial.onBeforeCompile = (shader, renderer) => {
 
             }
 
-            // Sztorm (1.15.0): na grzbietach fal morza biała piana - piksele
-            // wielkości pikseli tekstury, niesione wiatrem; im silniejszy
-            // sztorm, tym szersze pasy piany i tym więcej smug między nimi.
+            // Sztorm (1.15.0): na grzbietach fal morza biała piana. Pas
+            // piany idzie z grzbietem fali; jest raz szerszy, raz węższy
+            // i rwie się w nieregularne płaty (szum), a jego brzeg jest
+            // poszarpany co piksel tekstury. W silnym sztormie między
+            // falami zostają długie, wąskie smugi piany ułożone z wiatrem.
+
+            float seaWhite = 0.0;
 
             if (uSeaFoam > 0.01 && vWaterFace > 0.5 && abs(vWaterWorld.y - ${SEA_SURFACE.toFixed(3)}) < 1.0) {
 
-                vec2 seaDrift = uSeaWave.yz * uTime;
-                vec2 seaPixel = floor((vWaterWorld.xz - seaDrift * 1.2) * 8.0);
-                float seaGrain = fract(sin(dot(seaPixel, vec2(127.1, 311.7))) * 43758.5453);
-                // Smugi wzdłuż wiatru (długie, wąskie plamy).
-                vec2 seaLine = vec2(dot(seaPixel, uSeaWave.yz) / 26.0, dot(seaPixel, vec2(-uSeaWave.z, uSeaWave.y)) / 5.0);
-                float seaStreak = fract(sin(dot(floor(seaLine), vec2(269.5, 183.3))) * 43758.5453);
-                float seaTop = smoothstep(0.92 - 0.7 * uSeaFoam, 1.0, seaCrest(vWaterWorld.xz, uTime) * 0.5 + 0.5);
-                float seaWhite = step(seaGrain, uSeaFoam * (0.9 * seaTop + 0.5 * uSeaFoam * step(0.82, seaStreak)));
+                // Środek piksela piany (1/8 bloku) w ramie płynącej z wiatrem.
+                vec2 seaPlace = (floor((vWaterWorld.xz - uSeaWave.yz * uTime * 0.9) * 8.0) + 0.5) / 8.0;
+                float seaBlob = 0.65 * seaNoise(seaPlace / 2.2) + 0.35 * seaNoise(seaPlace / 0.7 + 7.3);
 
-                waterColor.rgb = mix(waterColor.rgb, vec3(1.25, 1.3, 1.34), seaWhite * 0.85);
+                float seaLift = seaCrest(vWaterWorld.xz, uTime);
+
+                // Grzbiety trochę jaśniejsze, doliny ciemniejsze - fale widać
+                // także tam, gdzie tafla jest już płaska (daleko od kamery).
+                waterColor.rgb *= 1.0 + 0.16 * uSeaFoam * seaLift;
+
+                seaWhite = step(1.0 - 0.25 * uSeaFoam, seaLift * 0.5 + 0.5 + 0.45 * (seaBlob - 0.55));
+
+                vec2 seaAlong = vec2(dot(seaPlace, uSeaWave.yz), dot(seaPlace, vec2(-uSeaWave.z, uSeaWave.y)));
+
+                seaWhite = max(seaWhite, step(1.0 - 0.13 * smoothstep(0.5, 1.0, uSeaFoam), seaNoise(vec2(seaAlong.x / 7.0, seaAlong.y / 0.6))));
                 waterFoam = max(waterFoam, seaWhite * 0.55);
 
             }
@@ -1112,7 +1139,11 @@ waterMaterial.onBeforeCompile = (shader, renderer) => {
 
                 }
 
-            }`
+            }
+
+            // Piana sztormu ma własną biel - nie barwi jej kolor wody ani
+            // zabarwienie przy granicy dalekiego terenu.
+            diffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.9, 0.94, 0.97), seaWhite * 0.9);`
         );
 
 };

@@ -561,6 +561,7 @@ export class Weather {
 
         const raw = this.field.sample(x, z, days, this.raw);
         const local = this.local;
+        const fresh = !this.ready;
 
         // Wygładzenie w czasie (ok. 1,5 s); pierwsza próbka od razu.
         const k = this.ready ? 1 - Math.exp(-Math.max(0, dt) / 1.5) : 1;
@@ -615,10 +616,15 @@ export class Weather {
             this.map.maxDust > 0.04 || this.dust > 0.04 ? 1 : 0, DUST_TOP, this.dust,
             mod(days * DAY_SECONDS * 0.0016, 1));
 
-        // Stan morza: wiatr nad otwartym morzem (albo komenda).
+        // Stan morza: wiatr nad otwartym morzem (albo komenda). Liczy się
+        // wiatr bez chwilowych porywów, a fale rosną i opadają powoli
+        // (kilkanaście sekund) - morze nie nadąża za każdym podmuchem.
 
         this.seaMask = this.seaAt ? clamp01(this.seaAt(x, z)) : 0;
-        this.sea = clamp01(this.seaOverride ?? this.seaMask * seaState(this.wind.speed));
+
+        const seaTarget = clamp01(this.seaOverride ?? this.seaMask * seaState(local.speed));
+
+        this.sea += (seaTarget - this.sea) * (fresh || this.seaOverride !== null ? 1 : 1 - Math.exp(-Math.max(0, dt) / 12));
 
         // Kurtyny deszczu na horyzoncie: tylko gdy w okolicy gdzieś pada;
         // smugi pochylają się z wiatrem.

@@ -179,8 +179,10 @@ export class Clouds {
         // Pył (burza piaskowa, haboob): u góry kłęby w barwie piasku
         // (Sky.refresh - dustColor), u podstawy ciemny brąz.
 
-        cloudUniforms.uDustColor.value.copy(state.dustColor).multiplyScalar(1.1);
-        cloudUniforms.uDustShade.value.copy(state.dustColor).multiply(this.color.setRGB(0.6, 0.48, 0.38));
+        if (state.dustColor) {
+            cloudUniforms.uDustColor.value.copy(state.dustColor).multiplyScalar(1.1);
+            cloudUniforms.uDustShade.value.copy(state.dustColor).multiply(this.color.setRGB(0.6, 0.48, 0.38));
+        }
 
         // Podświetlenie od spodu o wschodzie i zachodzie.
 

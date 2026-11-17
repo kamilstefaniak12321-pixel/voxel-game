@@ -25,7 +25,7 @@ Każda jest grywalna sama w sobie.
 | 2 | **Deszcz** - od mżawki po ulewę, skośne krople, odległe kurtyny deszczu, mokry świat i kałuże, schronienie pod dachem, dźwięk deszczu i wiatru, mgła, tęcza i halo | **1.12.0** |
 | 3 | **Burze** - letnie komórki i ciemne fronty, wyładowania w chmurach i w ziemię oświetlające krajobraz, grzmot spóźniony o odległość, grad | **1.13.0** |
 | 4 | **Zima** - temperatura, rodzaje śniegu (od krup po mokre płaty), śnieżyca, zamieć przy ziemi, pokrywa śnieżna (wizualna) i topnienie, szron | **1.14.0** |
-| 5 | **Pustynia i morze** - pyłowa mgiełka, burza piaskowa, haboob, wiry pyłowe, sztorm ze spienionymi falami | plan |
+| 5 | **Pustynia i morze** - pyłowa mgiełka, burza piaskowa, haboob, wiry pyłowe, sztorm ze spienionymi falami | **1.15.0** |
 | 6 | **Wpływ na rozgrywkę** - deszcz gasi ognisko, rośliny rosną po deszczu, zimno | plan |
 
 Ustalenia z Kamilem: pogoda **ma wpływać na rozgrywkę** (część 6),
@@ -327,6 +327,102 @@ znika przed południem; pod chmurami i w suchym klimacie jest słabszy,
 w wietrze i opadzie nie ma go wcale. Tam, gdzie leży śnieg, szronu nie
 widać.
 
+## Pustynia i morze (1.15.0)
+
+### Sucha ziemia i pył
+
+Pył jest tylko tam, gdzie ziemia jest **sucha i goła**: na pustyni
+i - słabiej - na sawannie. O suchości miejsca (`aridity`, 0-1) decydują
+te same pola klimatu co o biomach: wilgotność i ciepło generatora terenu
+(pustynia 1, sawanna 0,4). Tam, gdzie pada, i tam, gdzie ziemia jest
+jeszcze mokra po deszczu, pyłu nie ma.
+
+Próbka pola podaje `dust` (ile pyłu wisi w powietrzu, 0-1), `wall` (ile
+z niego niesie ściana pyłu) i `arid` (suchość miejsca). Pył bierze się
+z trzech rzeczy:
+
+- **pyłowa mgiełka** (do 0,16): w upalne popołudnia (od 18°, pełna od
+  30°) powietrze nad pustynią jest lekko zapylone nawet bez wiatru -
+  horyzont żółknie, nocą pył opada;
+- **wiatr:** od 4,2 bloku/s podnosi pył z ziemi, przy 9,5 jest burza
+  piaskowa;
+- **ściana pyłu (haboob):** przed frontem chłodnym (czoło ponad kilometr
+  przed linią deszczu) i wokół komórki burzowej idzie ostra ściana pyłu.
+  W suchym powietrzu deszcz paruje, zanim spadnie, więc podmuch jest dużo
+  silniejszy: **w ścianie pyłu wieje o 6,5 bloku/s mocniej** niż w tym
+  samym miejscu frontu nad wilgotną ziemią. Za ścianą przychodzi deszcz
+  i zmywa pył.
+
+| pył | nazwa w `/pogoda` | co widać |
+|---|---|---|
+| od 0,08 | pyłowa mgiełka | żółtawy horyzont |
+| od 0,28 | pył w powietrzu | niebo płowieje, widać na około dwieście bloków, przy ziemi suną strugi piasku, w powietrzu lecą ziarna |
+| od 0,6 | burza piaskowa | całe niebo w kolorze piasku, słońce przygasa o ponad połowę, widać na kilkadziesiąt bloków |
+| od 0,6, w ścianie | ściana pyłu (haboob) | to samo, ale przychodzi nagle - czoło widać z kilku kilometrów |
+
+Pył i stan morza podają `/pogoda`, prognoza („za 4 min: ściana pyłu
+(haboob)"), mapa pogody i ekran F3.
+
+### Jak to wygląda
+
+- **Niebo i światło** (`sky/Sky.js` - `dust`): pył ma barwę piasku
+  w świetle tej pory dnia (jedna dla nieba, mgiełki, ściany, ziaren
+  i wirów). Lekki pył żółci tylko horyzont, burza piaskowa zamyka całe
+  niebo; światło słońca słabnie do 38% i żółknie, rozproszone światło
+  nieba ociepla się.
+- **Powietrze:** pył zagęszcza je jak mgła, tylko mocniej (burza piaskowa:
+  31 razy gęstsze niż zwykle - teren znika po kilkudziesięciu blokach)
+  i sięga wysoko.
+- **Ściana pyłu na niebie** (`cloudShader.js` - `dustWall`): shader nieba
+  idzie promieniem przez pył z mapy pogody (12 próbek, gęściej przy
+  kamerze) do wysokości 360 bloków. Lekki pył jest rzadki i niski; od
+  około jednej trzeciej gęstnieje szybko - stąd **ostre czoło**
+  i kłębiasty wierzch. U góry kłęby łapią światło, u podstawy ściana jest
+  ciemna. Pył rysuje się przed tęczą, halo, deszczem i chmurami.
+- **Daleki teren** tonie w pyle tak samo (pył tam, gdzie leży teren,
+  i w połowie drogi do niego).
+- **Piasek niesiony wiatrem** (`rendering/SandStorm.js`): do 4200 ziaren
+  w powietrzu (od pyłu 0,24) i do 1800 strug przy samej ziemi (już przy
+  lekkim pyle, gdy wieje). Pod dachem i w jaskini piasek nie leci; strugi
+  suną po lądzie, nie po wodzie.
+- **Dźwięk:** suchy syk piasku, który faluje z porywami (pod dachem
+  prawie go nie słychać); wicher wyje jak w śnieżycy.
+
+### Wiry pyłowe
+
+W upalne (od 22°, najlepiej od 30°), słoneczne i prawie bezwietrzne
+popołudnia nad suchą ziemią wstają **wiry pyłowe**: wąskie, kręcące się
+słupy pyłu wysokie na 9-26 bloków. Każdy żyje 26-58 sekund, wędruje
+z wiatrem i znika. Nocą, pod chmurami, w deszczu, w ścianie pyłu i przy
+silnym wietrze ich nie ma; na sawannie są rzadsze.
+
+Jak wyładowania burzy wiry **losują się z czasu gry i ziarna świata**
+(`weather/DustDevils.js`: oczko 176 bloków, odcinek 48 s), więc wszyscy
+gracze widzą te same wiry, a gra niczego nie zapisuje. Rysuje się
+najwyżej trzy najbliższe (do 230 bloków) - po 520 drobin, wszystkie
+jednym poleceniem rysowania (`rendering/DustDevilRenderer.js`).
+
+### Sztorm
+
+**Stan morza** (0-1) to wiatr nad otwartym morzem: do 2,5 bloku/s morze
+jest spokojne, front ciepły daje lekką falę, front chłodny wzburza je,
+a burza i najsilniejsze fronty dają sztorm (pełny od 7,5 bloku/s).
+Jezior i rzek to nie dotyczy - generator terenu mówi pogodzie, gdzie jest
+otwarte morze (`seaAt`).
+
+- **Fale:** po tafli morza idą z wiatrem długie fale (15 i 7 bloków, do
+  0,3 bloku wysokości) - dochodzą do zwykłego falowania wody. Tylko woda
+  na poziomie morza i tylko w zasięgu prawdziwych chunków (dalej tafla
+  jest płaska, jak woda dalekiego terenu).
+- **Piana:** na grzbietach fal biała piana, która idzie z falą, rwie się
+  w nieregularne płaty i ma brzeg poszarpany co piksel tekstury;
+  w silnym sztormie między falami zostają smugi piany ułożone z wiatrem.
+  Dalekie morze jest pocętkowane pianą.
+- **Bryzgi:** nisko nad wodą lecą białe smugi (do 900).
+- **Tratwa i liście na wodzie** unoszą się na fali - gra liczy ten sam
+  rachunek co shader (`rendering/WaterWave.js`).
+- **Dźwięk:** niski huk fal, tym niższy, im większe fale.
+
 ## Dźwięk (1.12.0)
 
 `audio/WeatherAudio.js` - bez nagrań, z jednego bufora szumu i filtrów:
@@ -382,7 +478,11 @@ pod wodą razem z resztą.
 | `/pogoda snieg [0-100]` | opad śniegu nad tobą (domyślnie 60%); gdy jest za ciepło, ustawia też -3° - ziemia bieleje, póki pada |
 | `/pogoda pokrywa [0-100]` | pokrywa śnieżna wszędzie, do odwołania (do oglądania topnienia: 100, 60, 30...) |
 | `/pogoda szron [0-100]` | szron, do odwołania |
-| `/mapa pogoda [skala]` | **mapa pogody na żywo**: chmury (im ciemniejsze, tym bardziej się piętrzą), deszcz (niebieski), śnieg (jasnoniebieski), zimowa pokrywa śnieżna (teren bieleje), burza (fioletowy), wyładowania z ostatniej minuty (żółte: krzyżyk - piorun w ziemię, kropka - błysk w chmurze), linie frontów (czerwona - ciepły, niebieska - chłodny) i strzałki wiatru. Domyślnie 64 bloki na punkt (ponad 12 km). Przy otwartym czacie mysz pokazuje pogodę wskazanego miejsca |
+| `/pogoda pyl [0-100]` | pył w powietrzu wokół ciebie, do odwołania: 15 - pyłowa mgiełka, 40 - pył, od 60 burza piaskowa (bez ściany na horyzoncie) |
+| `/pogoda haboob [teraz]` | ściana pyłu: front chłodny nadciąga nad „suchą" ziemię (także poza pustynią) - czoło dochodzi po około czterech minutach, za nim deszcz; `teraz` - od razu jesteś w ścianie |
+| `/pogoda wir [0-100]` | wir pyłowy 14 bloków przed tobą (liczba - wielkość), na niecałą minutę |
+| `/pogoda sztorm [0-100]` | stan morza do odwołania: same fale, piana i bryzgi na wodzie na poziomie morza (wiatr i niebo zostają). Prawdziwy sztorm: `/pogoda ustaw burza` albo `front-chlodny` nad morzem |
+| `/mapa pogoda [skala]` | **mapa pogody na żywo**: chmury (im ciemniejsze, tym bardziej się piętrzą), deszcz (niebieski), śnieg (jasnoniebieski), zimowa pokrywa śnieżna (teren bieleje), burza (fioletowy), pył i burza piaskowa (płowy - ścianę pyłu widać jako ostry brzeg), wyładowania z ostatniej minuty (żółte: krzyżyk - piorun w ziemię, kropka - błysk w chmurze), linie frontów (czerwona - ciepły, niebieska - chłodny) i strzałki wiatru. Domyślnie 64 bloki na punkt (ponad 12 km). Przy otwartym czacie mysz pokazuje pogodę wskazanego miejsca |
 
 Rodzaje: `pogodnie`, `pochmurno`, `front-cieply`, `front-chlodny`,
 `burza`, `przelotne`, `pierzaste`.
@@ -405,6 +505,12 @@ i błyska, ale nie sypie gradem bez przerwy (do gradu jest `/pogoda grad`).
 - **Pokrywa śnieżna i szron** (`/ustaw snieg`, od 1.14.0): wł. / wył.
   Działa także w trybie ziemniaka (płatków jest wtedy 1400 zamiast 5200,
   smug zamieci 400 zamiast 1500).
+- **Fale i piana sztormu** (`/ustaw fale-sztormu`, od 1.15.0): wł. / wył.
+  Wyłącza fale sztormowe, pianę, bryzgi i huk fal (stan morza w `/pogoda`
+  zostaje). W trybie ziemniaka bryzgów jest 250 zamiast 900, ziaren
+  piasku 1100 zamiast 4200, strug 500 zamiast 1800, a drobin wiru 170
+  zamiast 520. Pył, piasek i wiry nie mają osobnego ustawienia: znikają
+  razem z chmurami (*Chmury: Wył.*).
 - **Błyski burzy** (Ustawienia → Gra, `/ustaw blyski`, od 1.13.0):
   *Pełne* / *Łagodne* / *Wył.* - opis wyżej. W trybie ziemniaka gradu
   jest 400 kulek zamiast 1400 i nie ma białego nalotu.
@@ -448,6 +554,17 @@ i błyska, ale nie sypie gradem bez przerwy (do gradu jest `/pogoda grad`).
   strony), shadery nie liczą go wcale.** Kosztu na prawdziwej karcie
   także tu nie zmierzono.
 
+- **Pustynia i morze (1.15.0):** pył to kilkanaście działań więcej
+  w próbce pola pogody i jeden kanał istniejącej tekstury mapy (bez nowej
+  tekstury i bez nowego odczytu w shaderze bloków). Ściana pyłu na niebie
+  to 12 próbek po dwa odczyty na piksel nieba - **tylko gdy w zasięgu
+  mapy pogody jest pył**; na dalekim terenie dwa odczyty. Piasek, strugi
+  i bryzgi to po jednym poleceniu rysowania, wiry - jedno na wszystkie.
+  Losowanie wirów zajmuje setne części milisekundy na klatkę (pogoda
+  oczek jest zapamiętywana). Fale sztormu to kilka sinusów na wierzchołek
+  wody, piana - trzy wartości szumu liczone na piksel tafli morza,
+  tylko w sztormie. Kosztu na prawdziwej karcie także tu nie zmierzono.
+
 ## Osiągnięcia
 
 *Pierwsze krople* (deszcz, który przyniosła pogoda), *Wiatr we włosach*
@@ -459,7 +576,10 @@ nie dalej niż kilometr), *O włos* (piorun bliżej niż 50 bloków),
 *Kulki lodu* (grad pod gołym niebem). Od 1.14.0: *Pierwszy śnieg*
 (opad śniegu), *Zadymka* (śnieżyca: gęsty śnieg i silny wiatr), *Biało,
 bielutko* (pełna pokrywa śnieżna pod gołym niebem), *Srebrny poranek*
-(szron).
+(szron). Od 1.15.0: *Piasek w zębach* (burza piaskowa pod gołym niebem),
+*Ściana* (ściana pyłu, która przyszła sama), *Diabełek* (wejście w wir
+pyłowy), *Wilk morski* (sztorm na otwartym morzu - na tratwie albo
+wpław).
 
 ## Sprawdzenia
 
@@ -498,10 +618,21 @@ komendy), płatki, śnieżyca, zamieć przy ziemi i krupa, opisy słowne,
 komendy, wycie wiatru, shadery (także boki bloków trawy), osiągnięcia,
 mapa.
 
+`tools/sprawdz_pustynie.mjs` (prawie 8 tysięcy sprawdzeń, 1.15.0):
+suchość z klimatu, pył w polu pogody (mgiełka, wiatr, ściana przed
+frontem i wokół burzy, ostre czoło, podmuch, deszcz zmywa pył, poza
+suchą ziemią zero), kanał pyłu na mapie i pył nad graczem (mokra ziemia,
+komendy), niebo i światło w pyle (także powrót do czystego nieba),
+gęstość powietrza, shadery ściany pyłu i dalekiego terenu, piasek,
+strugi i bryzgi (także to, że krycie smugi nie zależy od rogu kwadratu -
+błąd zamieci z 1.14.0), wiry pyłowe (warunki, te same u wszystkich
+graczy, ruch, koszt, rysowanie), fale sztormu (gra i shader liczą to
+samo), opisy słowne i prognoza, komendy, dźwięk, osiągnięcia, ustawienie.
+
 Testy przeglądarkowe, które oglądają drzewa, tekstury i wodospady, mają
 stałe progi kolorów i nie dotyczą pogody, więc ją wyłączają
 (`tools/fixtures/calm-weather.js`: bez chmur, cieni chmur, mokrej ziemi,
-deszczu, mgły, gradu, burzy i pokrywy śnieżnej) - świat testów o ziarnie 42 zaczyna się w deszczu
+deszczu, mgły, gradu, burzy i pokrywy śnieżnej; bez chmur nie ma też pyłu, piasku, wirów ani sztormu) - świat testów o ziarnie 42 zaczyna się w deszczu
 frontowym, a chmury i deszcz liczone programowo wydłużały te testy
 o jedną czwartą. `tools/fixtures/waterfall-ripple-benchmark.js` włącza
 deszcz tak jak komenda (`game.rainOverride`). Testy materiałów
@@ -513,7 +644,37 @@ się i rysują w testach prawdziwej gry z domyślnymi ustawieniami (światło,
 paczka, gra wieloosobowa, logi). Do powtarzalnych porównań światła w grze
 służy `/pogoda ustaw pogodnie`.
 
-## Braki (stan na 1.14.0)
+## Braki (stan na 1.15.0)
+
+- **Pył i sztorm to tylko obraz i dźwięk:** burza piaskowa nie zasypuje
+  niczego piaskiem, nie rani i nie spowalnia; wir pyłowy nie porywa
+  przedmiotów ani gracza; sztorm nie spycha tratwy i nie utrudnia
+  pływania (część 6).
+- **Pył w zamkniętym pomieszczeniu:** piasek pod dach nie wlatuje
+  i daleki widok gaśnie tylko pod gołym niebem, ale barwa nieba za oknem
+  i przygaszone słońce są takie same w środku i na zewnątrz.
+- **Modele nie toną w ścianie pyłu z daleka** inaczej niż teren: skrzynia
+  czy gracz 300 bloków dalej dostają tylko pył z miejsca kamery.
+- **Fale sztormu nie znają brzegu:** przy plaży tafla podnosi się
+  i opada o tyle samo co na pełnym morzu (nie ma przyboju ani fal
+  załamujących się na płyciźnie); woda w jaskini na poziomie morza też
+  faluje. Jeziora leżące dokładnie na poziomie morza falują, gdy gracz
+  jest w sztormie na morzu obok.
+- **Fale są tylko w zasięgu prawdziwych chunków** - dalekie morze jest
+  płaskie i ma samą pianę.
+- **Gracz nie kołysze się na fali** (tratwa i liście tak).
+- **Wiry pyłowe stoją na najwyższym bloku** - także na koronie drzewa;
+  nie omijają przeszkód i nie mają własnego dźwięku.
+- **Suchość to pole klimatu, nie bloki:** pył podnosi się też z plaży,
+  trawy czy skały, jeśli leżą w suchym klimacie, a na piasku poza nim -
+  nie.
+- **Ściana pyłu jest wyższa niż podstawa chmur niskich** i rysuje się
+  przed nimi także wtedy, gdy chmura jest bliżej niż ściana.
+- `/pogoda pyl`, `haboob`, `wir` i `sztorm` działają tylko u gracza,
+  który je wpisał (jak reszta pogody z komendy).
+
+Z wcześniejszych części:
+
 
 - **Śnieg to tylko obraz** (ustalenie z Kamilem): nie ma grubości, nie
   zostają w nim ślady, nie da się go zebrać ani ulepić; zimno nie działa

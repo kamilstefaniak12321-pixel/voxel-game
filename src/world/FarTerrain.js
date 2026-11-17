@@ -601,10 +601,10 @@ export function createFarTerrainMaterial(level = 0, tileFade = { value: new THRE
                 if (uSea.x > 0.01 && abs(vFarWorld.y - ${(SEA_LEVEL + 1).toFixed(1)}) < 2.5) {
 
                     float farSea = step(diffuseColor.r * 2.2 + 0.02, diffuseColor.b);
-                    float farFoam = textureLod(uCloudNoise, (vFarWorld.xz - uSea.yz * uSea.w * 1.6) / 47.0, 0.0).a;
+                    float farFoam = textureLod(uCloudNoise, (vFarWorld.xz - uSea.yz * uSea.w * 1.6) / 96.0, 0.0).a;
 
                     diffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.9, 0.94, 0.97),
-                        farSea * 0.7 * uSea.x * smoothstep(0.86 - 0.3 * uSea.x, 0.96 - 0.2 * uSea.x, farFoam));
+                        farSea * 0.6 * uSea.x * smoothstep(0.93 - 0.08 * uSea.x, 0.99 - 0.05 * uSea.x, farFoam));
 
                 }
 

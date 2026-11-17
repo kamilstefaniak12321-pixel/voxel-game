@@ -2,7 +2,7 @@
 
 > Ta strona jest generowana z kodu gry (`python tools/wiki.py`) - nie zmieniaj jej ręcznie, zmiany przepadną przy następnym generowaniu.
 
-Wersja gry **1.14.1** - 90 osiągnięć. Księga osiągnięć: klawisz **L**. Uwaga, spoilery: sekretne osiągnięcia są tu opisane (w grze widać tylko „???”).
+Wersja gry **1.15.0** - 94 osiągnięć. Księga osiągnięć: klawisz **L**. Uwaga, spoilery: sekretne osiągnięcia są tu opisane (w grze widać tylko „???”).
 
 
 ## Zwykłe (10 pkt)
@@ -63,6 +63,7 @@ Wersja gry **1.14.1** - 90 osiągnięć. Księga osiągnięć: klawisz **L**. Uw
 | <img src="ikony/snow.png" width="32" height="32" alt=""> | **Pierwszy śnieg** | Bądź tam, gdzie pada śnieg - zimą, w chłodnych stronach świata albo wysoko w górach, gdy w dolinie pada deszcz. | „Złapany na język: smakuje jak chmura. Wiadomo.” |
 | <img src="ikony/snow.png" width="32" height="32" alt=""> | **Biało, bielutko** | Stań pod gołym niebem tam, gdzie ziemię przykrył śnieg. | „Ślady na świeżym śniegu: jedyny dowód, że ktoś tu w ogóle wychodzi z domu.” |
 | <img src="ikony/lamp_blue.png" width="32" height="32" alt=""> | **Srebrny poranek** | Zobacz szron: osiada w mroźną, pogodną i cichą noc, a rano znika. | „Trawa chrupie pod butami. Drugie śniadanie też by się przydało.” |
+| <img src="ikony/sand.png" width="32" height="32" alt=""> | **Piasek w zębach** | Znajdź się w burzy piaskowej: na pustyni, gdy mocno wieje (przed frontem chłodnym albo przy burzy). | „Chrupie. Darmowy peeling całego ciała w cenie.” |
 | <img src="ikony/mikolajek_etap3.png" width="32" height="32" alt=""> | **Nie dotykać** | Wejdź w kłującą roślinę. | „Mikołajek nie przynosi prezentów. Mikołajek kłuje.” |
 | <img src="ikony/zawilec_etap3.png" width="32" height="32" alt=""> | **Coś wisi w powietrzu** | Doczekaj zmiany pory roku. | „Wczoraj jedno kwitło, dziś drugie. Kalendarz nie pyta o zgodę.” |
 
@@ -81,6 +82,9 @@ Wersja gry **1.14.1** - 90 osiągnięć. Księga osiągnięć: klawisz **L**. Uw
 | <img src="ikony/lamp_blue.png" width="32" height="32" alt=""> | **Siedem kolorów** | Zobacz tęczę: niskie słońce za plecami, deszcz przed tobą. | „Garnka złota na końcu nie ma. Sprawdzono. Dwa razy.” |
 | <img src="ikony/fire_starter.png" width="32" height="32" alt=""> | **O włos** | Przeżyj uderzenie pioruna bliżej niż 50 bloków od siebie. | „Włosy stanęły dęba. To nie ze strachu, to elektrostatyka. Na pewno.” |
 | <img src="ikony/snow.png" width="32" height="32" alt=""> | **Zadymka** | Wyjdź w śnieżycę: gęsty śnieg i wiatr od 6 bloków na sekundę. | „Widoczność: czubek własnego nosa. I to zamarznięty.” |
+| <img src="ikony/sand.png" width="32" height="32" alt=""> | **Ściana** | Daj się połknąć ścianie pyłu (haboob), która idzie przez pustynię przed frontem chłodnym albo burzą. | „Najpierw horyzont zrobił się brązowy. Potem zniknął. Potem zniknęło wszystko.” |
+| <img src="ikony/dandelion.png" width="32" height="32" alt=""> | **Diabełek** | Wejdź w wir pyłowy - wstają nad pustynią w upalne, słoneczne i bezwietrzne popołudnia. | „Kręci się, szumi, sypie w oczy. Jak młodszy brat, tylko z piasku.” |
+| <img src="ikony/water.png" width="32" height="32" alt=""> | **Wilk morski** | Bądź na otwartym morzu w czasie sztormu - na tratwie albo wpław. | „Fale jak domy. No, jak domki. Dobrze: jak pół bloku. Ale mokre!” |
 | <img src="ikony/lamp_blue.png" width="32" height="32" alt=""> | **Głowa w chmurach** | Wleć w niską chmurę (podstawa chmur jest wysoko nad najwyższymi górami). | „Biało, mokro i nic nie widać. Dokładnie tak, jak mówili.” |
 | <img src="ikony/pickaxe.png" width="32" height="32" alt=""> | **Komplet narzędzi** | Zrób siekierę, kilof i łopatę (postęp liczy się w księdze). | „Teraz brakuje tylko skrzynki na narzędzia. I garażu. I warsztatu.” |
 | <img src="ikony/oak_sapling.png" width="32" height="32" alt=""> | **Z małego ziarenka** | Wyhoduj drzewo z sadzonki. | „Wyrosło! Teraz tylko sto lat i będzie z niego porządny dąb. Albo brzoza.” |

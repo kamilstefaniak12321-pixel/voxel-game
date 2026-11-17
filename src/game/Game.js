@@ -39,7 +39,7 @@ import { FarTerrain, setFarTerrainShadows } from '../world/FarTerrain.js';
 import { setAmbientOcclusion, setFastLeaves } from '../rendering/ChunkMesher.js';
 import { viewUniforms } from '../rendering/viewUniforms.js';
 import { updateAerialPerspective } from '../rendering/AtmosphereState.js';
-import { blockMaterial, plantMaterial, waterMaterial, leafMaterial, setPotatoDefine, setLeafMaterialFast, setShadowDefine } from '../rendering/BlockRenderData.js';
+import { blockMaterial, plantMaterial, waterMaterial, leafMaterial, waterUniforms, setPotatoDefine, setLeafMaterialFast, setShadowDefine } from '../rendering/BlockRenderData.js';
 import { SunShadows } from '../rendering/Shadows.js';
 import { LightShafts } from '../rendering/LightShafts.js';
 import { WorldOutput } from '../rendering/WorldOutput.js';
@@ -85,8 +85,8 @@ import { SandStorm } from '../rendering/SandStorm.js';
 import { DustDevils } from '../weather/DustDevils.js';
 import { DustDevilRenderer } from '../rendering/DustDevilRenderer.js';
 import { seaWave, seaSwell, SEA_WAVE } from '../rendering/WaterWave.js';
-import { waterUniforms } from '../rendering/BlockRenderData.js';
 import { cloudUniforms } from '../weather/cloudShader.js';
+import { seaName } from '../weather/weatherText.js';
 import { DAY_SECONDS } from '../weather/WeatherField.js';
 import { ThunderAudio } from '../audio/ThunderAudio.js';
 import { meteorLightUniforms } from '../rendering/meteorLight.js';
@@ -3096,7 +3096,10 @@ export class Game extends GameInteraction {
             `Księżyc: ${this.sky.celestial.moonPhaseName}${eclipseInfo}<br>` +
 
             `Pora roku: ${seasonAt(this.time.days).name}, dzień ${seasonAt(this.time.days).day} z ${seasonAt(this.time.days).days} | ` +
-            `Temperatura: ${Math.round(this.weather.temperature)}°C<br>` +
+            `Temperatura: ${Math.round(this.weather.temperature)}°C` +
+            // (Od 1.15.0: pył nad pustynią i stan morza - tylko gdy są.)
+            `${this.weather.dust > 0.05 ? ` | Pył: ${Math.round(this.weather.dust * 100)}%` : ''}` +
+            `${this.weather.seaMask > 0.5 || this.weather.seaOverride !== null ? ` | Morze: ${seaName(this.weather.sea)}` : ''}<br>` +
 
             `${performanceInfo}<br>` +
 

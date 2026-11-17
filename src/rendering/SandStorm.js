@@ -27,7 +27,7 @@ export const SAND = Object.freeze({
     // Ile ziaren, strug i bryzgów najwyżej (zwykle / tryb ziemniaka).
     grains: 4200, potatoGrains: 1100,
     streams: 1800, potatoStreams: 500,
-    spray: 1500, potatoSpray: 400,
+    spray: 900, potatoSpray: 250,
     // Od jakiego pyłu (0-1) ziarna lecą w powietrzu i od jakiego suną
     // strugi przy ziemi; od jakiego wiatru (bloki/s) strugi w ogóle ruszają.
     grainsFrom: 0.24, streamsFrom: 0.08, streamWind: [3, 6.5],
@@ -102,12 +102,17 @@ export class SandStorm {
             uniform float uUnderwater;
             varying float vAlpha;
             varying float vShade;
+            // Miejsce wzdłuż smugi (0-1): końce gasną. Liczone tutaj, na
+            // piksel - w wierzchołkach (oba końce) byłoby zerem.
+            varying float vAlong;
 
             void main() {
 
-                if (uUnderwater > 0.5 || vAlpha <= 0.004) discard;
+                float alpha = vAlpha * (1.0 - abs(vAlong * 2.0 - 1.0));
 
-                gl_FragColor = vec4(${color} * vShade, vAlpha);
+                if (uUnderwater > 0.5 || alpha <= 0.004) discard;
+
+                gl_FragColor = vec4(${color} * vShade, alpha);
 
                 #include <tonemapping_fragment>
                 #include <colorspace_fragment>
@@ -149,8 +154,11 @@ export class SandStorm {
             uniform float uRainTime;
             varying float vAlpha;
             varying float vShade;
+            varying float vAlong;
 
             void main() {
+
+                vAlong = position.y;
 
                 // Jedne ziarna ciemniejsze, drugie jaśniejsze od zapylonego
                 // powietrza - inaczej nie byłoby ich na jego tle widać.
@@ -175,9 +183,8 @@ export class SandStorm {
                 float roof = rainShelter(p.xz).r;
                 float edge = 1.0 - smoothstep(uSandShape.z * 0.72, uSandShape.z, length(toCamera.xz));
 
-                // Końce smugi wygaszone; tuż przy kamerze jej nie ma.
-                vAlpha = uSandShape.y * edge * step(roof, p.y) * (1.0 - abs(position.y * 2.0 - 1.0))
-                    * smoothstep(1.2, 3.5, length(toCamera));
+                // Tuż przy kamerze smugi nie ma.
+                vAlpha = uSandShape.y * edge * step(roof, p.y) * smoothstep(1.2, 3.5, length(toCamera));
 
                 gl_Position = vAlpha > 0.004
                     ? projectionMatrix * viewMatrix * vec4(world, 1.0)
@@ -197,9 +204,11 @@ export class SandStorm {
             uniform float uRainTime;
             varying float vAlpha;
             varying float vShade;
+            varying float vAlong;
 
             void main() {
 
+                vAlong = position.y;
                 vShade = ${water ? '1.0' : '0.75 + 0.6 * aSeed.y'};
 
                 float speed = 0.8 + 0.1 * floor(aSeed.w * 5.0);
@@ -222,7 +231,7 @@ export class SandStorm {
                 // daleko nad albo pod graczem; wyżej - rzadziej.
                 vAlpha = ${water ? 'uSandLow.w' : 'uSandLow.y'} * edge * step(0.5, shelter.r) * ${water ? 'step(0.5, shelter.g)' : 'step(shelter.g, 0.5)'}
                     * step(abs(p.y - uRainCamera.y), 20.0) * (1.0 - 0.75 * lift)
-                    * (1.0 - abs(position.y * 2.0 - 1.0)) * smoothstep(1.5, 4.0, length(toCamera));
+                    * smoothstep(1.5, 4.0, length(toCamera));
 
                 gl_Position = vAlpha > 0.004
                     ? projectionMatrix * viewMatrix * vec4(world, 1.0)
@@ -310,7 +319,7 @@ export class SandStorm {
         const flight = Math.hypot(this.velocity.x, this.velocity.z);
 
         this.uniforms.uSandShape.value.set(0.35 + 0.09 * flight, 0.25 + 0.5 * this.level, RAIN_STREAKS.radius, 0.12 + 0.2 * this.level);
-        this.uniforms.uSandLow.value.set(0.5 + 0.11 * flight, 0.18 + 0.5 * this.streamLevel, 0.45 + 0.1 * flight, 0.2 + 0.55 * this.sprayLevel);
+        this.uniforms.uSandLow.value.set(0.5 + 0.11 * flight, 0.18 + 0.5 * this.streamLevel, 0.4 + 0.08 * flight, 0.14 + 0.4 * this.sprayLevel);
 
         // Piasek i bryzgi nie świecą: barwa pyłu z nieba (Sky.refresh),
         // nocą ciemnieją razem z nim.

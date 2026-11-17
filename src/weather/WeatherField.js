@@ -153,8 +153,10 @@ export function aridity(humidity, warmth) {
 
 }
 
-// Stan morza 0-1 z wiatru (bloki/s): od lekkiej fali po sztorm.
-export const SEA_WIND = Object.freeze([4, 10]);
+// Stan morza 0-1 z wiatru (bloki/s): od lekkiej fali po sztorm. Zwykły
+// wiatr (do ok. 2,5) morza nie rusza, front ciepły daje lekką falę, front
+// chłodny wzburzone morze, a burza i najsilniejsze fronty - sztorm.
+export const SEA_WIND = Object.freeze([2.5, 7.5]);
 
 export function seaState(speed) {
 
@@ -566,7 +568,9 @@ export class WeatherField {
         // Sucha ziemia (pustynia, sawanna) i ściana pyłu przed frontem
         // albo wokół burzy: w suchym powietrzu deszcz paruje, zanim
         // spadnie, i chłodny podmuch jest dużo silniejszy.
-        const arid = this.aridOverride ?? (this.climate && this.warmth ? aridity(humidity, this.warmth(x, z)) : 0);
+        // (Ciepło klimatu liczy się raz - potrzebuje go też temperatura.)
+        const warm = this.warmth ? this.warmth(x, z) : 0;
+        const arid = this.aridOverride ?? (this.climate && this.warmth ? aridity(humidity, warm) : 0);
         const dry = arid * ramp(0.15, 0.02, out.rain);
         const wall = clamp01(dry * acc.dust);
 
@@ -609,7 +613,7 @@ export class WeatherField {
 
         const overcast = Math.max(out.low, 0.6 * out.mid);
         const slow = season[0] * SEASON_TEMP[0] + season[1] * SEASON_TEMP[1] + season[2] * SEASON_TEMP[2] + season[3] * SEASON_TEMP[3] +
-            (this.warmth ? climateTemp(this.warmth(x, z)) : 0);
+            climateTemp(warm);
 
         out.tempSlow = slow;
         out.temp = slow + DAY_SWING * (1 - 0.65 * overcast) * Math.cos((timeOfDay - 0.62) * Math.PI * 2) +

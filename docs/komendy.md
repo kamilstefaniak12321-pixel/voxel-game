@@ -46,6 +46,10 @@ Współrzędne można podawać względem gracza: `~` (tu, gdzie stoję),
 | `/pogoda snieg [0-100]` | opad śniegu nad tobą do odwołania; gdy jest za ciepło, ustawia też mróz (od 1.14.0) |
 | `/pogoda pokrywa [0-100]` | pokrywa śnieżna wszędzie do odwołania (od 1.14.0) |
 | `/pogoda szron [0-100]` | szron do odwołania (od 1.14.0) |
+| `/pogoda pyl [0-100]` | pył w powietrzu wokół ciebie do odwołania: 15 - pyłowa mgiełka, od 60 burza piaskowa (od 1.15.0) |
+| `/pogoda haboob [teraz]` | ściana pyłu nadciąga jak przed frontem chłodnym nad pustynią (dochodzi po około czterech minutach, za nią deszcz); `teraz` - od razu jesteś w środku (od 1.15.0) |
+| `/pogoda wir [0-100]` | wir pyłowy 14 bloków przed tobą; liczba to wielkość (od 1.15.0) |
+| `/pogoda sztorm [0-100]` | fale, piana i bryzgi na morzu do odwołania (od 1.15.0) |
 | `/niebo` | wysokość słońca, łuna, ile gwiazd widać, Droga Mleczna, spadające gwiazdy na minutę, trwające zaćmienie |
 | `/niebo zachod <kolor \| domyslny>` | kolor łuny wschodu i zachodu (zabarwia też światło) |
 | `/zacmienie` | kiedy następne zaćmienie słońca (dzień, godzina, pełne czy częściowe); jeśli trwa - ile słońca jest zasłonięte |
@@ -188,7 +192,7 @@ Kolory: `czerwony`, `krwawy`, `pomaranczowy`, `zloty`, `zolty`, `zielony`,
 `turkusowy`, `niebieski`, `fioletowy`, `rozowy`, `bialy` albo `#rrggbb`.
 
 Nazwy ustawień w `/ustaw`: `ziemniak`, `zasieg`, `daleki-teren`, `szczegoly-terenu` (też `daleki-teren-szczegoly`), `pole`, `jasnosc`,
-`rozdzielczosc`, `fps` (limit), `cienie` (cienie w kątach, 0-100), `cienie-slonca` (`wyl` / `zwykle` / `dokladne` / `dalekie`), `promienie` (promienie światła: `wl` / `wyl`), `chmury` (`pelne` / `plaskie` / `brak`), `cienie-chmur` (cienie chmur na terenie: `wl` / `wyl`), `mokra-ziemia` (mokra ziemia i kałuże po deszczu: `wl` / `wyl`), `snieg` (pokrywa śnieżna i szron: `wl` / `wyl`; od 1.14.0), `blyski` (błyski burzy: `pelne` / `lagodne` - bez migotania / `brak` - teren i niebo nie błyskają; od 1.13.0),
+`rozdzielczosc`, `fps` (limit), `cienie` (cienie w kątach, 0-100), `cienie-slonca` (`wyl` / `zwykle` / `dokladne` / `dalekie`), `promienie` (promienie światła: `wl` / `wyl`), `chmury` (`pelne` / `plaskie` / `brak`), `cienie-chmur` (cienie chmur na terenie: `wl` / `wyl`), `mokra-ziemia` (mokra ziemia i kałuże po deszczu: `wl` / `wyl`), `snieg` (pokrywa śnieżna i szron: `wl` / `wyl`; od 1.14.0), `fale-sztormu` (fale, piana i bryzgi sztormu na morzu: `wl` / `wyl`; od 1.15.0), `blyski` (błyski burzy: `pelne` / `lagodne` - bez migotania / `brak` - teren i niebo nie błyskają; od 1.13.0),
 `swiatlo-odbite` (też `odbicia`: `wl` / `wyl`),
 `model-swiatla`, `swiatlo-materialow`, `atmosfera`, `przeswiecanie-lisci`, `sila-odbicia`, `nasycenie-odbicia`,
 `liscie` (ładne liście z prześwitami: `wl` / `wyl`), `trawa-kepiasta`, `dynamiczne-swiatlo`, `wczytywanie`, `laczenie-terenu` (sklejanie sąsiednich chunków w jedno polecenie rysowania: `wl` / `wyl` - do porównań wydajności), `czulosc`,

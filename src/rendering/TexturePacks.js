@@ -14,8 +14,11 @@
 //                           ATLAS_TILES), np. bloki/grass_top.png;
 //                           tekstury drzew z paczek drzew:
 //                           bloki/jablon/liscie.png,
-//   pekniecia.png         - pęknięcia kopanego bloku (10 etapów obok
-//                           siebie),
+//   pekniecia.png         - pęknięcia kopanego bloku (od 1.16.0: 8 etapów
+//                           w siatce 4 x 2; stary pasek 10 etapów też
+//                           działa - BlockCracks.js),
+//   pekniecia_wysokie.png - pęknięcia modeli na dwa bloki (drzwi): 8
+//                           etapów 4 x 2, klatka dwa razy wyższa,
 //   niebo/ksiezyc.png     - tarcza księżyca.
 // Czego w paczce nie ma - zostaje oryginalne.
 //
@@ -55,6 +58,7 @@ export const RESOLUTION_MAX_PHONE = 256;
 // Pliki paczki poza kafelkami atlasu.
 export const PACK_EXTRAS = {
     cracks: 'pekniecia.png',
+    cracksTall: 'pekniecia_wysokie.png',
     moon: 'niebo/ksiezyc.png'
 };
 

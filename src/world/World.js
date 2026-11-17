@@ -204,6 +204,12 @@ export class World {
 
         this.shadowScene.matrixWorldAutoUpdate = false;
 
+        // Ruchome modele rzucające cień (drzwi, klapy - DoorRenderer.js):
+        // rysowane do bliskiej mapy cieni po chunkach.
+        this.modelShadowScene = new THREE.Scene();
+
+        this.modelShadowScene.matrixWorldAutoUpdate = false;
+
         // Obiekty terenu w scenie świata: w sektorach, z macierzami
         // liczonymi raz i odrzucaniem całych sektorów spoza kadru
         // (rendering/TerrainSectors.js).

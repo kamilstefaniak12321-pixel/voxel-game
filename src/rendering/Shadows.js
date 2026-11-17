@@ -625,6 +625,10 @@ const modelDepthMaterial = new THREE.ShaderMaterial({
     side: THREE.DoubleSide
 });
 
+// Ruchome modele świata, które rzucają cień do bliskiej mapy (drzwi
+// i klapy - DoorRenderer.js, scena World.modelShadowScene).
+export const MODEL_CASTER_MATERIAL = modelDepthMaterial;
+
 const MODEL_LAYER = 2;
 
 
@@ -1102,6 +1106,15 @@ export class SunShadows {
 
     }
 
+    // Model w punkcie (x, y, z) właśnie się poruszył (drzwi, klapa): bliska
+    // mapa cieni przerysuje się w tej klatce. Poza jej zasięgiem - nic.
+    markModel(x, y, z) {
+        if (!this.valid || !this.enabled) return;
+        const c = this.center, r = this.radius + 2;
+        if (Math.abs(x - c.x) > r || Math.abs(z - c.z) > r) return;
+        this.modelMoved = true;
+    }
+
     // Tiny moving plants only invalidate the near shadow map. Distant terrain
     // cascades keep their existing update budget and are refreshed at remesh.
     markPlantAnimation(chunk) {
@@ -1187,9 +1200,12 @@ export class SunShadows {
             this.direction.dot(this.drawnDirection) < Math.cos(ANGLE_STEP) ||
             this.light !== this.drawnLight;
 
+        // (Poruszający się model - np. otwierane drzwi - przerysowuje mapę
+        // co klatkę, żeby cień szedł razem z nim.)
         this.needsDraw =
-            !this.valid || moved || turned ||
+            !this.valid || moved || turned || this.modelMoved ||
             (this.changed && this.sinceDraw >= CHUNK_REDRAW_SECONDS);
+        this.modelMoved = false;
 
         if (this.naturalLighting) {
             const plants = this.plants;
@@ -1309,11 +1325,17 @@ export class SunShadows {
                 if (this.naturalLighting) caster.material = staticCasterMaterials(caster);
             }
 
+            const autoClear = renderer.autoClear;
             try {
                 renderer.setRenderTarget(this.target);
                 renderer.clear();
                 renderer.render(world.shadowScene, near.camera);
+                if (world.modelShadowScene?.children.length) {
+                    renderer.autoClear = false;
+                    renderer.render(world.modelShadowScene, near.camera);
+                }
             } finally {
+                renderer.autoClear = autoClear;
                 world.shadowScene.children.forEach((caster, i) => { caster.visible = visibility[i]; });
                 world.shadowScene.children.forEach((caster, i) => { caster.material = materials[i]; });
             }

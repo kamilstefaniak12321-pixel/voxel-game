@@ -94,11 +94,13 @@ const DOOR = {
     left: px(0, 0, 0, DOOR_THICKNESS, 16, 16),
     right: px(16 - DOOR_THICKNESS, 0, 0, 16, 16, 16)
 };
-// Klapa 3 px; otwarta stoi przy brzegu "facing" (tam, gdzie zawias).
+// Klapa 2 px (od 1.16.0, model Kamila; wcześniej 3 px); otwarta stoi przy
+// brzegu "facing" (tam, gdzie zawias).
+export const TRAPDOOR_THICKNESS = 2;
 const TRAPDOOR = {
-    bottom: px(0, 0, 0, 16, 3, 16),
-    top: px(0, 13, 0, 16, 16, 16),
-    open: px(0, 0, 0, 16, 16, 3)
+    bottom: px(0, 0, 0, 16, TRAPDOOR_THICKNESS, 16),
+    top: px(0, 16 - TRAPDOOR_THICKNESS, 0, 16, 16, 16),
+    open: px(0, 0, 0, 16, 16, TRAPDOOR_THICKNESS)
 };
 
 // --- Łóżko i posłanie (0.98.0) -----------------------------------------

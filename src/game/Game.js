@@ -685,7 +685,7 @@ export class Game extends GameInteraction {
         //   miningDelay - przerwa po zniszczonym bloku (przygoda),
         //   breakRepeat - kiedy następny blok przy trzymanym LPM (kreatywny).
 
-        this.cracks = new BlockCracks(this.scene);
+        this.cracks = new BlockCracks(this.scene, this);
 
         this.debris = new BlockDebris(this.scene, this.world);
 

@@ -195,6 +195,20 @@ try {
         })()`);
         await host.evaluate('window.hostRunning = false'); await running;
         check(seen === expected, `${label} (${seen})`);
+        if (target === far) {
+            const cell = far.join(',');
+            const chunk = `h.game.world.getChunk(${Math.floor(far[0] / 16)}, ${Math.floor(far[2] / 16)})`;
+            await host.evaluate(`(() => { const c = ${chunk}; if (c) h.game.world.unloadChunk(c); })()`);
+            check(await host.evaluate(`!${chunk}`), 'Kopany chunk jest poza pamięcią gospodarza');
+            const before = await host.evaluate('h.net.stats.receivedBlocks');
+            await guest.evaluate(`g.set(${cell}, null); g.net.flushBlocks(); true`);
+            for (let i = 0; i < 50 && await host.evaluate('h.net.stats.receivedBlocks') === before; i++) await pause(50);
+            check(await host.evaluate('h.net.stats.receivedBlocks') > before, 'Gospodarz przyjął wykopanie dalekiego bloku');
+            check(await host.evaluate(`(() => {
+                const c = ${chunk}; if (c) h.game.world.unloadChunk(c);
+                h.game.world.ensureColumnLoaded(${far[0]}, ${far[2]}); return h.block(${cell}) === null;
+            })()`), 'Daleki blok pozostaje wykopany po ponownym wczytaniu u gospodarza');
+        }
     }
 
     // --- Drugi gracz w świecie (model, imię) ------------------------------------

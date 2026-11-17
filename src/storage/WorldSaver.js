@@ -44,6 +44,7 @@ export class WorldSaver {
 
         this.storage = storage;
         this.worldInfo = worldInfo;
+        this.savedGuests = worldInfo.guests;
 
         this.world = world;
         this.player = player;
@@ -154,7 +155,12 @@ export class WorldSaver {
 
         await (this.queued ?? this.saving);
 
-        return this.save();
+        // Zmiana odebrana od gościa w trakcie ostatniej transakcji też
+        // musi trafić do bazy, zanim wolno przeładować stronę.
+        do {
+            if (!(await this.save())) return false;
+        } while (this.hasUnsavedChanges());
+        return true;
 
     }
 
@@ -201,6 +207,7 @@ export class WorldSaver {
         const chestVersion = this.chests?.version ?? 0;
         if (this.chests) this.worldInfo.chests = this.chests.getState();
         const tableVersion = this.tables?.version ?? 0;
+        const guests = this.worldInfo.guests;
         if (this.tables) this.worldInfo.carpenterTables = this.tables.getState();
         this.worldInfo.player = this.player.getState();
         this.worldInfo.lastPlayed = Date.now();
@@ -224,6 +231,7 @@ export class WorldSaver {
             this.savedRaftVersion = raftVersion;
             this.savedChestVersion = chestVersion;
             this.savedTableVersion = tableVersion;
+            this.savedGuests = guests;
             this.diagnostic('info', 'world.saved', 'Zakończono zapis świata.', {
                 chunks: chunks.length, immediate, wallMs: performance.now() - diagnosticStart
             });
@@ -262,6 +270,15 @@ export class WorldSaver {
     }
 
 
+    hasUnsavedChanges() {
+        return this.world.hasUnsavedChanges?.() || this.savedGuests !== this.worldInfo.guests ||
+            (this.campfires && this.savedFireVersion !== (this.campfires.version ?? 0)) ||
+            (this.drops && this.savedDropVersion !== (this.drops.version ?? 0)) ||
+            (this.rafts && this.savedRaftVersion !== (this.rafts.version ?? 0)) ||
+            (this.chests && this.savedChestVersion !== (this.chests.version ?? 0)) ||
+            (this.tables && this.savedTableVersion !== (this.tables.version ?? 0));
+    }
+
     // Wywoływane co klatkę z pętli gry.
 
     update(dt) {
@@ -269,7 +286,7 @@ export class WorldSaver {
         this.timeSinceSave += dt;
 
 
-        if (this.world.hasUnsavedChanges() || (this.campfires && this.savedFireVersion !== this.campfires.version) || (this.drops && this.savedDropVersion !== this.drops.version) || (this.rafts && this.savedRaftVersion !== this.rafts.version) || (this.chests && this.savedChestVersion !== this.chests.version) || (this.tables && this.savedTableVersion !== this.tables.version)) {
+        if (this.hasUnsavedChanges()) {
 
             this.timeSinceChange += dt;
 

@@ -30,10 +30,11 @@ let updateStatus = info.update;
 
 // Okno chce się zamknąć: najpierw zapis gry, potem zgoda na zamknięcie.
 
-ipcRenderer.on('desktop:close-request', async () => {
+ipcRenderer.on('desktop:close-request', async (_event, id) => {
 
+    let saved = false;
     try {
-        await beforeClose?.();
+        saved = (await beforeClose?.()) !== false;
     }
     catch (error) {
         console.error('Zapis przed zamknięciem:', error);
@@ -43,7 +44,7 @@ ipcRenderer.on('desktop:close-request', async () => {
     // flushes its journal. Failure here must not block normal shutdown.
     try { await ipcRenderer.invoke('diagnostics:flush'); } catch { /* best effort */ }
 
-    ipcRenderer.send('desktop:close-ready');
+    ipcRenderer.send('desktop:close-ready', id, saved);
 
 });
 

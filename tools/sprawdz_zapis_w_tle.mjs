@@ -1,4 +1,8 @@
 import assert from 'node:assert/strict';
+import { EventEmitter } from 'node:events';
+import { setImmediate as nextTick } from 'node:timers/promises';
+import { protectWindowClose } from '../desktop/close-window.cjs';
+import { AndroidUpdates } from '../src/app/AndroidUpdates.js';
 import { WorldStorage } from '../src/storage/WorldStorage.js';
 import { WorldSaver } from '../src/storage/WorldSaver.js';
 import { StorageWorker } from '../src/storage/StorageWorker.js';
@@ -153,6 +157,99 @@ const queued = serialSaver.save({ immediate: true });
 serialSaver.save();
 release(); await first; await queued;
 assert.deepEqual(modes, [false, true]);
+
+// Gość zmienia chunk już po zrobieniu migawki końcowej. Odczyt bazy
+// musi pokazać późniejszą edycję, nawet jeśli pierwsza transakcja się udała.
+const concurrentBackend = new WorldStorage(memoryDatabase());
+const concurrentSaver = new WorldSaver({
+    async saveWorldAndChunks(...args) {
+        await concurrentBackend.saveWorldAndChunks(...args);
+        if (!releaseFinal) await new Promise(resolve => { releaseFinal = resolve; });
+    }
+}, { id: 'concurrent' }, world, { getState: () => ({}) });
+let releaseFinal;
+dirty.add(chunks[1]);
+const finalWrite = concurrentSaver.flush();
+await nextTick();
+chunks[1].blocks[1] = 450;
+dirty.add(chunks[1]);
+releaseFinal();
+assert.equal(await finalWrite, true);
+assert.equal((await concurrentBackend.loadChunks('concurrent')).get('1,-2')[1], 450);
+assert.equal(dirty.size, 0);
+
+// Odmowa zapisu blokuje wszystkie trzy operacje natywnej aktualizacji.
+for (const [method, kind, command] of [['install', 'web', 'uruchomTeraz'], ['install', 'apk', 'zainstalujApk'], ['revert', 'web', 'wroc']]) {
+    let retry, saved = false;
+    const calls = [];
+    const updater = new AndroidUpdates({ beforeRestart(action) { retry = action; return saved; } });
+    updater.status = { state: 'ready', kind, version: 'test' };
+    updater.call = async name => { calls.push(name); return { zgoda: true }; };
+    assert.equal(await updater[method](), false);
+    assert.deepEqual(calls, []);
+    saved = true;
+    await retry();
+    assert.deepEqual(calls, [command]);
+}
+
+// Protokół rzeczywistego okna Electron z kontrolowanymi odpowiedziami
+// renderera oraz dialogu systemowego. Kolejny X nie omija zapisu.
+function desktopClose(timeoutMs = 5000) {
+    const window = new EventEmitter(), ipcMain = new EventEmitter();
+    const sent = [], finishes = [], prompts = [];
+    let cancels = 0, destroyed = false;
+    window.webContents = { mainFrame: {}, send: (_, id) => sent.push(id) };
+    window.destroy = () => { destroyed = true; window.emit('closed'); };
+    window.isDestroyed = () => destroyed;
+    const dialog = { showMessageBox: (_window, options) => new Promise(resolve => prompts.push({ options, resolve })) };
+    protectWindowClose(window, { ipcMain, dialog, timeoutMs, onCancel: () => cancels++, onFinish: saved => finishes.push(saved) });
+    return {
+        sent, finishes, prompts, get cancels() { return cancels; },
+        close() {
+            let prevented = false;
+            window.emit('close', { preventDefault() { prevented = true; } });
+            assert.ok(prevented, 'Każda próba zamknięcia czeka na wynik');
+        },
+        ready(id, saved) {
+            ipcMain.emit('desktop:close-ready', { sender: window.webContents, senderFrame: window.webContents.mainFrame }, id, saved);
+        }
+    };
+}
+const desktop = desktopClose();
+desktop.close(); desktop.close();
+assert.deepEqual(desktop.sent, [1]);
+desktop.ready(1, false);
+assert.equal(desktop.prompts[0].options.defaultId, 0);
+desktop.prompts[0].resolve({ response: 0 });
+await nextTick();
+assert.equal(desktop.cancels, 1);
+assert.deepEqual(desktop.finishes, []);
+desktop.close();
+desktop.ready(1, true);
+assert.deepEqual(desktop.finishes, [], 'Stara odpowiedź nie kończy nowej próby');
+desktop.ready(2, true);
+assert.deepEqual(desktop.finishes, [true]);
+const slow = desktopClose(0);
+slow.close();
+await new Promise(resolve => setTimeout(resolve, 10));
+assert.equal(slow.prompts[0].options.buttons[0], 'Czekaj na zapis');
+assert.deepEqual(slow.finishes, []);
+slow.prompts[0].resolve({ response: 0 });
+await nextTick();
+slow.close();
+assert.equal(slow.prompts.length, 2);
+slow.prompts[1].resolve({ response: 1 });
+await nextTick();
+assert.deepEqual(slow.finishes, [false], 'Wyjście bez zapisu wymaga wyraźnego wyboru');
+const delayed = desktopClose(0);
+delayed.close();
+await new Promise(resolve => setTimeout(resolve, 10));
+assert.equal(delayed.prompts.length, 1);
+delayed.ready(1, true);
+assert.ok(delayed.prompts[0].options.signal.aborted);
+delayed.prompts[0].resolve({ response: 1 });
+await nextTick();
+assert.deepEqual(delayed.finishes, [true], 'Późny sukces zamyka raz i unieważnia odpowiedź starszego dialogu');
 
 // Wyjście przed odpowiedzią workera: komplet bieżących bloków musi
 // trafić do bezpośredniej transakcji jeszcze w tym samym zadaniu JS.

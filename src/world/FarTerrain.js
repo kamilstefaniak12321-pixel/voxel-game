@@ -53,6 +53,7 @@ import {
     FAR_TERRAIN_SHADOW_GLSL
 } from '../rendering/Shadows.js';
 import { cloudUniforms, CLOUD_SHADOW_GLSL } from '../weather/cloudShader.js';
+import { SEA_CREST_GLSL, SEA_FOAM_GLSL } from '../rendering/WaterWave.js';
 
 import { grassTint } from './terrain/Biomes.js';
 import { SURFACE_FACE_NAMES, SURFACE_MATERIAL_COUNT, getSurfaceFaceTexture, surfaceMaterialId, surfaceMaterialType } from '../rendering/SurfaceMaterials.js';
@@ -309,6 +310,7 @@ export function createFarTerrainMaterial(level = 0, tileFade = { value: new THRE
                 varying vec2 vFarMaskXZ;
                 varying vec2 vFarSide;
                 varying float vFarCurtain;
+                varying float vFarSeaSurface;
                 varying vec3 vFarCell;
                 varying float vFarSunHeight;
                 attribute vec4 surfaceAlbedo;
@@ -377,6 +379,8 @@ export function createFarTerrainMaterial(level = 0, tileFade = { value: new THRE
                 // z wodą daleka woda nie wystaje nad bliską); kurtyna.
 
                 float farFlag = color.a * 255.0;
+                vFarSeaSurface = farFlag < 1.0 && farAxis.y > 0.5 &&
+                    abs(farFlatWorld.y - ${(SEA_LEVEL + 1).toFixed(1)}) < 0.6 ? 1.0 : 0.0;
 
                 float farWaterDrop = farFlag < 75.0 ? ${(1 - WATER_SURFACE + WATER_WAVE_HEIGHT + 0.02).toFixed(4)} : 0.0;
 
@@ -486,9 +490,11 @@ export function createFarTerrainMaterial(level = 0, tileFade = { value: new THRE
                 varying vec2 vFarMaskXZ;
                 varying vec2 vFarSide;
                 varying float vFarCurtain;
+                varying float vFarSeaSurface;
                 varying vec3 vFarCell;
                 varying float vFarSunHeight;
                 uniform float uFogBrightness;
+                uniform float uTime;
                 uniform float uNightDesaturation;
                 uniform vec3 uNightTint;
                 uniform vec3 uLodTint;
@@ -502,6 +508,8 @@ export function createFarTerrainMaterial(level = 0, tileFade = { value: new THRE
                 ${METEOR_LIGHT_GLSL}
                 ${FAR_TERRAIN_SHADOW_GLSL}
                 ${CLOUD_SHADOW_GLSL}
+                ${SEA_CREST_GLSL}
+                ${SEA_FOAM_GLSL}
 
                 #ifndef USE_FAR_SHADOWS
                     uniform int uSunShadowLight;
@@ -596,16 +604,13 @@ export function createFarTerrainMaterial(level = 0, tileFade = { value: new THRE
 
                 }
 
-                // Sztorm (1.15.0): z daleka morze jest pocętkowane pianą,
-                // która płynie z wiatrem.
-                if (uSea.x > 0.01 && abs(vFarWorld.y - ${(SEA_LEVEL + 1).toFixed(1)}) < 2.5) {
-
-                    float farSea = step(diffuseColor.r * 2.2 + 0.02, diffuseColor.b);
-                    float farFoam = textureLod(uCloudNoise, (vFarWorld.xz - uSea.yz * uSea.w * 1.6) / 96.0, 0.0).a;
-
-                    diffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.9, 0.94, 0.97),
-                        farSea * 0.6 * uSea.x * smoothstep(0.93 - 0.08 * uSea.x, 0.99 - 0.05 * uSea.x, farFoam));
-
+                // To samo pole piany w płaskich współrzędnych oceanu,
+                // także tam, gdzie daleki teren zakrzywia się w kulę.
+                if (uSea.x > 0.01 && vFarSeaSurface > 0.5) {
+                    float range = distance(vFarMaskXZ, cameraPosition.xz);
+                    float crest = range < 220.0 ? seaCrest(vFarMaskXZ, uTime, uSea.yz) : 0.0;
+                    float farFoam = seaFoamAt(uCloudNoise, vFarMaskXZ, uSea.yz, uTime, uSea.x, crest, range);
+                    diffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.9, 0.94, 0.97), farFoam * 0.9);
                 }
 
                 // Klasyczny widok: każda kratka trochę jaśniejsza albo

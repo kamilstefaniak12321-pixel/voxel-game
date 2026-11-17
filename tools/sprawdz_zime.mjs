@@ -711,7 +711,7 @@ const SUMMER = middle(1);
     check(gameSource.includes('this.weather.update(this.time.days, dt, this.camera.position.x, this.camera.position.z, this.camera.position.y)'), 'Pogoda zna wysokość gracza');
     check(gameSource.includes('const rain = fall * (1 - weather.snowShare);') && gameSource.includes('this.rainStreaks.update(dt, this.camera, rain, drizzle'), 'Krople deszczu tylko dla ciekłej części opadu');
     check(gameSource.includes('this.snowFall.update(dt, snow, smoothstep(-7, 0.5, cold), this.weather.wind, weather.snowCover, this.sky.state)'), 'Płatki dostają natężenie, rodzaj śniegu, wiatr i pokrywę');
-    check(gameSource.includes('weather.addPrecipitation(this.camera.position.x, this.camera.position.z, fall, dt / DAY_SECONDS)'), 'Opad z komendy zasypuje ziemię');
+    check(gameSource.includes('weather.addPrecipitation(this.camera.position.x, this.camera.position.z, surfaceFall, dt / DAY_SECONDS)'), 'Opad z komendy zasypuje ziemię niezależnie od wysokości kamery');
     check(gameSource.includes('leafSeasonUniforms.uLeafSnow.value = this.weather.snowSurfaces ? this.weather.snowCover : 0'), 'Śnieg na liściach leży wtedy, gdy leży na ziemi');
     check(gameSource.includes("this.sounds.play('step_snow', { volume })") && gameSource.includes('this.rainStreaks.shelter.roof(feet.x, feet.z) <= feet.y + 0.6'), 'Kroki po śniegu skrzypią (pod gołym niebem)');
     check(gameSource.includes("this.weather.snowSurfaces = settings.get('snowCover')"), 'Ustawienie trafia do pogody');

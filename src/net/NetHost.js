@@ -92,6 +92,7 @@ export class NetHost extends NetSession {
     // --- Wiadomości od gości ----------------------------------------------------
 
     receive(guest, message) {
+        if (this.closed) return;
         if (!guest.ready) {
             if (message.t === MSG.HELLO) this.hello(guest, message);
             return;
@@ -223,9 +224,9 @@ export class NetHost extends NetSession {
                 this.stats.receivedBlocks++;
                 // Zmiana gościa to "nasza" zmiana - rozsyłamy ją pozostałym
                 // (onBlockSet), razem z jej skutkami (np. roślina bez podłoża).
-                if (this.game.world.getBlockId(x, y, z) !== id) {
-                    this.game.world.setBlock(x, y, z, id ? getBlockTypeById(id) : null, false);
-                }
+                // setBlock wczytuje chunk (także z zapisu) i sprawdza poprzedni
+                // blok. Przed wczytaniem getBlockId zwracałoby powietrze.
+                this.game.world.setBlock(x, y, z, id ? getBlockTypeById(id) : null, false);
             }
         } finally { this.origin = null; }
     }
@@ -266,9 +267,8 @@ export class NetHost extends NetSession {
     // Ekwipunek i pozycja gościa - w zapisie świata gospodarza.
     remember(guest, message) {
         const info = this.game.worldInfo;
-        info.guests ??= {};
-        const previous = info.guests[guest.id] ?? {};
-        info.guests[guest.id] = {
+        const previous = info.guests?.[guest.id] ?? {};
+        const record = {
             name: guest.name,
             player: message.player && typeof message.player === 'object' ? message.player : previous.player,
             inventory: message.inventory && typeof message.inventory === 'object' ? message.inventory : previous.inventory,
@@ -276,6 +276,8 @@ export class NetHost extends NetSession {
             wellbeing: message.wellbeing && typeof message.wellbeing === 'object' ? message.wellbeing : previous.wellbeing,
             lastSeen: Date.now()
         };
+        // Zapis końcowy rozpoznaje stan odebrany podczas trwającej transakcji.
+        info.guests = { ...info.guests, [guest.id]: record };
     }
 
     leave(guest) {

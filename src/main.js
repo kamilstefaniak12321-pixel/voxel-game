@@ -3,6 +3,7 @@ import * as THREE from 'three';
 import { InputManager } from './input/InputManager.js';
 import { TouchControls } from './input/TouchControls.js';
 import { Game } from './game/Game.js';
+import { waitForTreeShowcase } from './world/trees/TreeShowcase.js';
 import { AchievementBook } from './achievements/AchievementBook.js';
 import { Menu } from './ui/Menu.js';
 import { MenuBackdrop } from './menu/MenuBackdrop.js';
@@ -187,14 +188,7 @@ renderer.domElement.addEventListener('webglcontextlost', () => {
             markTextureFailure(atlas.tileSize);
         }
 
-        try {
-            await Promise.race([game?.saver.flush(), new Promise((resolve) => setTimeout(resolve, 3000))]);
-        }
-        catch {
-            // i tak uruchamiamy od nowa
-        }
-
-        location.reload();
+        await reloadGame();
 
     }, () => {});
 
@@ -884,7 +878,7 @@ window.addEventListener('popstate', () => {
 
 document.addEventListener('pointerlockchange', () => {
 
-    if (!game) {
+    if (!game || state === 'loading') {
         return;
     }
 
@@ -1125,24 +1119,48 @@ function toggleMap() {
 // Ponowne uruchomienie gry (np. nowa paczka tekstur - atlas liczy się
 // przy starcie): zapis świata i wczytanie strony od nowa.
 
-async function reloadGame() {
+async function saveBeforeLeaving(retry) {
+    if (!game) return true;
+    if (state === 'loading') return false;
 
-    if (game) {
-        await game.saver.flush();
+    const previous = state;
+    state = 'loading';
+    try {
+        await waitForTreeShowcase(game.world);
+        if (game.net?.isClient) {
+            game.net.flushBlocks();
+            game.net.saveNow();
+        }
+        if (await game.saver.flush()) return true;
+    } catch (error) {
+        diagnostics.record('error', 'world.save.failed', 'Błąd zapisu przed wyjściem.', { error });
+    } finally {
+        state = previous;
     }
+    if (retry) {
+        if (previous === 'inventory') {
+            inventoryScreen?.close();
+            input.enabled = true;
+        }
+        state = 'paused';
+        input.reset();
+        chat.close();
+        if (terrainMap.isOpen) terrainMap.close();
+        if (document.pointerLockElement) document.exitPointerLock();
+        menu.showSaveError(retry);
+    }
+    return false;
+}
 
+async function reloadGame() {
     diagnostics.breadcrumb('app.reload', 'Ponowne uruchomienie gry.');
     await diagnostics.flush();
-    location.reload();
+    if (await saveBeforeLeaving(reloadGame)) location.reload();
 
 }
 
 
 async function reloadWithTouch(on) {
-
-    if (game) {
-        await game.saver.flush();
-    }
 
     const params = new URLSearchParams(location.search);
 
@@ -1150,7 +1168,7 @@ async function reloadWithTouch(on) {
 
     diagnostics.breadcrumb('app.reload', 'Ponowne uruchomienie ze zmianą sterowania.');
     await diagnostics.flush();
-    location.search = params.toString();
+    if (await saveBeforeLeaving(() => reloadWithTouch(on))) location.search = params.toString();
 
 }
 
@@ -1263,7 +1281,7 @@ function wireNet(net) {
     net.onSystem = (text) => {
         chat.print(text, 'hint');
         // Pauza pokazuje liczbę graczy - odświeżamy ją.
-        if (state === 'paused' && game?.net) menu.showPause();
+        if (state === 'paused' && game?.net && menu.root.querySelector('.screen-pause')) menu.showPause();
     };
     net.onDisconnect = (reason) => { void disconnected(reason); };
 }
@@ -1726,11 +1744,12 @@ function announceUpdate(status) {
 if (window.desktop) {
 
     window.desktop.onBeforeClose(async () => {
-        try {
-            if (game) await game.saver.flush();
-        } finally {
-            await diagnostics.dispose();
-        }
+        if (!(await saveBeforeLeaving())) return false;
+        state = 'loading';
+        if (game?.net?.isHost) game.net.close();
+        if (game?.net?.isClient) game.net.leave();
+        await diagnostics.dispose().catch(() => {});
+        return true;
     });
 
 
@@ -1808,13 +1827,7 @@ else if (nativeApp === 'android' && AndroidUpdates.available()) {
 
         // Przed wczytaniem nowej wersji - zapis świata.
 
-        beforeRestart: async () => {
-
-            if (game) {
-                await game.saver.flush();
-            }
-
-        }
+        beforeRestart: saveBeforeLeaving
 
     });
 

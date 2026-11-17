@@ -321,14 +321,19 @@ export class RainStreaks {
                     vec3 dir = normalize(uRainFall);
                     vec3 toCamera = uRainCamera - p;
                     vec3 side = normalize(cross(dir, toCamera) + vec3(1e-5));
-                    vec3 world = p - dir * (uRainShape.x * speed * position.y) + side * (position.x * uRainShape.y);
+                    float distanceToEye = length(toCamera);
+                    float nearDownpour = (1.0 - smoothstep(3.0, 13.0, distanceToEye))
+                        * smoothstep(0.28, 0.85, uRainShape.x);
+                    float streakLength = uRainShape.x * speed * (1.0 - 0.52 * nearDownpour);
+                    vec3 world = p - dir * (streakLength * position.y) + side * (position.x * uRainShape.y);
 
                     // Pod dachem kropli nie ma; przy brzegu pudełka i tuż
                     // przed twarzą znika łagodnie.
                     float roof = rainShelter(p.xz).r;
                     float edge = 1.0 - smoothstep(uRainShape.w * 0.72, uRainShape.w, length(toCamera.xz));
 
-                    vAlpha = uRainShape.z * edge * step(roof, p.y) * smoothstep(1.2, 4.0, length(toCamera));
+                    vAlpha = uRainShape.z * edge * step(roof, p.y) * smoothstep(1.2, 4.0, distanceToEye)
+                        * (1.0 - 0.32 * nearDownpour);
                     vAlong = position.y;
 
                     gl_Position = vAlpha > 0.002

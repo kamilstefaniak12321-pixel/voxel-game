@@ -25,6 +25,7 @@ const { app, BrowserWindow, Menu, ipcMain, net, protocol, shell, dialog } = requ
 const path = require('node:path');
 const fs = require('node:fs');
 const { serveFile } = require('./serve-file.cjs');
+const { protectWindowClose } = require('./close-window.cjs');
 const { createDiagnosticsLog } = require('./diagnostics-log.cjs');
 const { installDiagnosticsIpc } = require('./diagnostics-ipc.cjs');
 
@@ -261,46 +262,14 @@ function createWindow() {
     });
 
 
-    // Zamykanie: najpierw gra zapisuje świat (preload.js -> main.js gry),
-    // dopiero potem okno znika. Gdyby gra nie odpowiedziała - po
-    // CLOSE_TIMEOUT_MS i tak zamykamy.
-
-    let closing = false;
-
-    mainWindow.on('close', (event) => {
-
-        if (closing) {
-            return;
+    protectWindowClose(mainWindow, {
+        ipcMain, dialog, timeoutMs: CLOSE_TIMEOUT_MS,
+        onCancel() { installOnClose = false; },
+        async onFinish(saved) {
+            if (!saved) void diagnosticsLog.event('warn', 'desktop.close-unsaved',
+                'Gracz potwierdził zamknięcie bez zapisu.');
+            await Promise.race([diagnosticsLog.close(saved), new Promise(resolve => setTimeout(resolve, 500))]);
         }
-
-        event.preventDefault();
-
-        closing = true;
-
-        const window = mainWindow;
-
-        let finishing = false;
-        const finishClose = async (timedOut) => {
-            if (finishing) return;
-            finishing = true;
-            clearTimeout(timer);
-            ipcMain.removeListener('desktop:close-ready', onReady);
-            if (timedOut) void diagnosticsLog.event('warn', 'desktop.close-timeout',
-                'Gra nie potwierdziła zapisu przed zamknięciem w ciągu 8 sekund.');
-            // Never hold game shutdown indefinitely on a slow or full disk.
-            await Promise.race([diagnosticsLog.close(!timedOut), new Promise(resolve => setTimeout(resolve, 500))]);
-            if (!window.isDestroyed()) window.destroy();
-        };
-        const onReady = (event) => {
-            if (event.sender === window.webContents && event.senderFrame === window.webContents.mainFrame) {
-                void finishClose(false);
-            }
-        };
-        const timer = setTimeout(() => { void finishClose(true); }, CLOSE_TIMEOUT_MS);
-        ipcMain.on('desktop:close-ready', onReady);
-
-        window.webContents.send('desktop:close-request');
-
     });
 
 

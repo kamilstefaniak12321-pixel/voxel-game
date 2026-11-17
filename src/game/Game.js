@@ -1033,9 +1033,7 @@ export class Game extends GameInteraction {
 
         profile?.beginStage('light');
         this.sky.update(this.time.days, dt, this.renderer.getPixelRatio());
-        this.weather.setLight(this.sky.clouds.uniforms.uCloudLight.value, this.sky.clouds.active);
-        this.weather.setSky(this.sky.celestial.sunDirection, this.sky.clouds.uniforms.uCloudLight.value,
-            this.sky.state.daylight, dt, this.camera.position.x, this.camera.position.z);
+        this.updateWeatherLighting(dt);
 
         this.updateFog(dt);
 
@@ -1140,6 +1138,13 @@ export class Game extends GameInteraction {
 
         profile?.endStage('weather');
 
+    }
+
+    updateWeatherLighting(dt) {
+        const light = this.sky.clouds.uniforms.uCloudLight.value;
+        this.weather.setLight(light, this.sky.clouds.active);
+        this.weather.setSky(this.sky.celestial.sunDirection, light,
+            this.sky.state.daylight, dt, this.camera.position.x, this.camera.position.z);
     }
 
     // Wysokość ziemi w miejscu, w które bije piorun: z wczytanych bloków
@@ -1268,7 +1273,7 @@ export class Game extends GameInteraction {
         const foam = smoothstep(0.25, 1, sea);
 
         waterUniforms.uSeaFoam.value = foam;
-        cloudUniforms.uSea.value.set(foam, seaWave.dx, seaWave.dz, plantWindUniforms.uTime.value % 4096);
+        cloudUniforms.uSea.value.set(foam, seaWave.dx, seaWave.dz);
 
     }
 
@@ -1290,7 +1295,8 @@ export class Game extends GameInteraction {
         // stoi gracz: około zera pada jedno i drugie.
         const local = this.weather.local;
         const weather = this.weather;
-        const fall = this.rainOverride ?? (local.rain > 0.04 ? local.rain : 0);
+        const surfaceFall = this.rainOverride ?? (local.rain > 0.04 ? local.rain : 0);
+        const fall = surfaceFall * weather.precipitationAtEye;
         const cold = weather.temperature;
         const rain = fall * (1 - weather.snowShare);
 
@@ -1300,8 +1306,8 @@ export class Game extends GameInteraction {
         const snow = fall * weather.snowShare * (1 - 0.6 * Math.min(1, graupel * 2));
 
         // Opad z komendy też zasypuje ziemię wokół gracza.
-        if (this.rainOverride !== null && fall > 0.02) {
-            weather.addPrecipitation(this.camera.position.x, this.camera.position.z, fall, dt / DAY_SECONDS);
+        if (this.rainOverride !== null && surfaceFall > 0.02) {
+            weather.addPrecipitation(this.camera.position.x, this.camera.position.z, surfaceFall, dt / DAY_SECONDS);
         }
         if (Math.abs(rain - this.rain.intensity) > 0.01 || (rain === 0) !== (this.rain.intensity === 0)) {
             this.rain.setIntensity(rain);
@@ -1323,7 +1329,7 @@ export class Game extends GameInteraction {
 
         // Grad - w środku najsilniejszych burz (albo z komendy); w chłodzie
         // zamiast niego drobniejsza krupa śnieżna.
-        this.hailNow = this.weather.hail;
+        this.hailNow = weather.hail * weather.precipitationAtEye;
         this.graupelNow = graupel;
         this.hail.update(dt, Math.max(this.hailNow, graupel), this.weather.wind, this.sky.state, graupel > this.hailNow ? 1 : 0);
 
@@ -1381,7 +1387,7 @@ export class Game extends GameInteraction {
         this.clearStormLight();
         profile?.beginStage('light');
         this.sky.update(this.time.days, dt, this.renderer.getPixelRatio());
-        this.weather.setLight(this.sky.clouds.uniforms.uCloudLight.value, this.sky.clouds.active);
+        this.updateWeatherLighting(dt);
         this.updateFog(dt);
         this.shadows.update(dt, this.sky, this.camera.position);
         this.sky.applyShadowContrast(this.shadows.active ? this.shadows.strength : 0);
@@ -2891,16 +2897,13 @@ export class Game extends GameInteraction {
         // snapshot so leaving the world cannot save a half-built specimen.
         await waitForTreeShowcase(this.world);
 
-        // Gość: ostatni zapis ekwipunku u gospodarza; gospodarz: koniec
-        // gry dla znajomych (przed zapisem - ich ekwipunki już są w świecie).
-
-        if (this.net?.isClient) { this.net.leave(); this.net.dispose(); }
-        else if (this.net?.isHost) this.net.close();
-
         if (save && !(await this.saver.flush())) {
             return false;
         }
 
+        // Po błędzie zapisu gra wraca na pauzę z działającą sesją znajomych.
+        if (this.net?.isClient) { this.net.leave(); this.net.dispose(); }
+        else if (this.net?.isHost) this.net.close();
 
         this.saver.stop();
 

@@ -318,9 +318,9 @@ export class AndroidUpdates {
             return false;
         }
 
-        if (status.kind === 'web') {
+        if (await this.beforeRestart?.(() => this.install()) === false) return false;
 
-            await this.beforeRestart?.();
+        if (status.kind === 'web') {
 
             await this.call('uruchomTeraz');
 
@@ -343,7 +343,7 @@ export class AndroidUpdates {
 
     async revert() {
 
-        await this.beforeRestart?.();
+        if (await this.beforeRestart?.(() => this.revert()) === false) return false;
 
         await this.call('wroc');
 

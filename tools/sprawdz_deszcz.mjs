@@ -517,22 +517,22 @@ function worldFixture() {
     game.sounds = { context: context(), categories: { world: node() } };
     audio.update({ rain: 1, speed: 8, gust: 0.5 });
 
-    check(log.created === 3 && log.started === 3, 'Łańcuch dźwięku: trzy pętle szumu');
+    check(log.created === 4 && log.started === 4, 'Łańcuch dźwięku: trzy pętle szumu i stukot gradu');
     check(audio.nodes.rain.gain.value === audio.levels.rain && audio.nodes.wind.gain.value === audio.levels.wind, 'Głośności ustawione z pogody');
 
     const buffer = game.sounds.context.createBuffer(1, 10);
 
     audio.update({ rain: 0.2 });
-    equal(log.created, 3, 'Łańcuch budowany raz');
-    check(audio.nodes.sources.length === 3 && buffer.data.length === 10, 'Te same pętle szumu grają dalej');
+    equal(log.created, 4, 'Łańcuch budowany raz');
+    check(audio.nodes.sources.length === 4 && buffer.data.length === 10, 'Te same pętle szumu grają dalej');
 
     // Nowy kontekst dźwięku (np. po powrocie do gry) - łańcuch od nowa.
     game.sounds = { context: context(), categories: { world: node() } };
     audio.update({ rain: 0.2 });
-    check(log.created === 6 && log.stopped === 3, 'Po zmianie kontekstu stary łańcuch zatrzymany, nowy zbudowany');
+    check(log.created === 8 && log.stopped === 4, 'Po zmianie kontekstu stary łańcuch zatrzymany, nowy zbudowany');
 
     audio.dispose();
-    check(log.stopped === 6 && audio.nodes === null, 'Sprzątanie zatrzymuje szum');
+    check(log.stopped === 8 && audio.nodes === null, 'Sprzątanie zatrzymuje szum');
     audio.update({ rain: 1 });
     check(audio.nodes === null, 'Po sprzątnięciu nic nie gra');
 }

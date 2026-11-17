@@ -34,6 +34,7 @@ import { seedToNumber } from '../world/Noise.js';
 //   thick  0-1  jak wysoko się piętrzą (0 - cienka warstwa, 1 - burzowe),
 //   mid    0-1  chmury średnie,   high 0-1  chmury wysokie (pierzaste),
 //   rain   0-1  opad,             storm 0-1 burza,
+//   hail   0-1  grad (środek najsilniejszych burz),
 //   clear  0-1  wpływ wyżu,
 //   fog    0-1  mgła (poranna, przy czystym niebie i słabym wietrze),
 //   windX, windZ, speed (bloki/s), gust 0-1 (porywistość), angle.
@@ -95,7 +96,7 @@ const SEASON_STORMS = [0.6, 0.9, 0.35, 0.12];
 const SEASON_FOG = [0.5, 0.3, 0.9, 0.6];
 
 
-function hash(a, b, c, seed) {
+export function weatherHash(a, b, c, seed) {
 
     let h = (seed ^ Math.imul(a, 0x27d4eb2d) ^ Math.imul(b, 0x165667b1) ^ Math.imul(c, 0x9e3779b1)) | 0;
 
@@ -105,6 +106,8 @@ function hash(a, b, c, seed) {
     return ((h ^ (h >>> 16)) >>> 0) / 4294967296;
 
 }
+
+const hash = weatherHash;
 
 
 // Gładki szum 0-1 na siatce o oczku 1.
@@ -156,7 +159,7 @@ function afternoon(timeOfDay, floor) {
 export function emptySample() {
 
     return {
-        low: 0, thick: 0, mid: 0, high: 0, rain: 0, storm: 0, clear: 0, fog: 0,
+        low: 0, thick: 0, mid: 0, high: 0, rain: 0, storm: 0, hail: 0, clear: 0, fog: 0,
         windX: 0, windZ: 0, speed: 0, gust: 0, angle: 0
     };
 
@@ -459,6 +462,9 @@ export class WeatherField {
         out.high = clamp01(1 - (1 - acc.high * (1 - 0.5 * acc.clear)) * (1 - natural * (1 - 0.5 * acc.clear) * 0.5 * clamp01((n3 - 0.46) / 0.45)));
         out.rain = clamp01(acc.rain * Math.min(1, wet));
         out.storm = clamp01(acc.storm * Math.min(1, wet));
+        // Grad pada tylko w samym środku najsilniejszych burz - przez
+        // minutę, dwie, gdy komórka jest w szczycie.
+        out.hail = ramp(0.86, 0.97, out.storm);
         out.clear = clamp01(acc.clear);
 
         // Wiatr: wieje stamtąd, skąd nadciąga pogoda, i powoli się kręci;
@@ -603,12 +609,15 @@ export class WeatherField {
                 for (let m = 0; m < cells; m++) {
 
                     const a = hash(system.key, m, 1, this.seed) * Math.PI * 2;
-                    const far = 1200 * Math.sqrt(hash(system.key, m, 2, this.seed));
+                    // (Burza z komendy ma główną komórkę nad środkiem.)
+                    const far = system.forced && m === 0 ? 0 : 1200 * Math.sqrt(hash(system.key, m, 2, this.seed));
                     const radius = 430 + 330 * hash(system.key, m, 3, this.seed);
 
                     // Komórka burzowa rośnie i zamiera (kilka minut gry).
                     const pulse = Math.sin(Math.PI * frac(t * 3.1 + hash(system.key, m, 4, this.seed))) ** 2;
-                    const cell = power * (0.35 + 0.65 * (m === 0 && system.forced ? 1 : pulse));
+                    // (Główna komórka burzy z komendy trwa: błyska, ale nie
+                    // sypie gradem bez przerwy - do gradu jest /pogoda grad.)
+                    const cell = power * (0.35 + 0.65 * (m === 0 && system.forced ? 0.72 : pulse));
                     const ux = rx * inverse - Math.cos(a) * far;
                     const uz = rz * inverse - Math.sin(a) * far;
                     const d = Math.hypot(ux, uz);

@@ -17,6 +17,11 @@ import * as THREE from 'three';
 // dynamiczne światło, które przez ściany nie przechodzi.
 //
 // Wartości ustawia co klatkę game/Meteorites.js.
+//
+// Od 1.13.0 z tego samego światła korzysta błysk pioruna (Game.updateStorm,
+// weather/Thunderstorm.js) - gdy akurat nie leci meteoryt. Błyskawica
+// świeci z nieba, więc oświetla tylko to, do czego dochodzi światło nieba
+// (uMeteorSky = 1): w jaskini i w głębi domu zostaje ciemno.
 // ------------------------------------------------------------
 
 export const meteorLightUniforms = {
@@ -29,7 +34,11 @@ export const meteorLightUniforms = {
     uMeteorColor: { value: new THREE.Vector3() },
 
     // Zasięg R: w tej odległości światło ma połowę siły.
-    uMeteorRange: { value: 40 }
+    uMeteorRange: { value: 40 },
+
+    // 0 - światło dochodzi wszędzie (meteoryt), 1 - tylko tam, dokąd
+    // dochodzi światło nieba (błysk pioruna).
+    uMeteorSky: { value: 0 }
 
 };
 
@@ -42,6 +51,12 @@ export const METEOR_LIGHT_GLSL = /* glsl */ `
     uniform vec3 uMeteorPosition;
     uniform vec3 uMeteorColor;
     uniform float uMeteorRange;
+    uniform float uMeteorSky;
+
+    // Przez tyle mnoży się światło w miejscu o danym świetle nieba (0-1).
+    float meteorSky(float skyLight) {
+        return mix(1.0, smoothstep(0.08, 0.7, skyLight), uMeteorSky);
+    }
 
     vec3 meteorLight(vec3 worldPosition, vec3 worldNormal) {
 
@@ -59,7 +74,13 @@ export const METEOR_LIGHT_GLSL = /* glsl */ `
 
         float facing = dot(worldNormal, toMeteor * inversesqrt(max(distance2, 0.0001)));
 
-        return uMeteorColor * falloff * clamp(facing * 0.7 + 0.3, 0.0, 1.0);
+        float wrap = clamp(facing * 0.7 + 0.3, 0.0, 1.0);
+
+        // Błysk pioruna odbija się od chmur i świeci zewsząd - ściany
+        // odwrócone od niego nie są czarne.
+        wrap = mix(wrap, 0.42 + 0.58 * wrap, uMeteorSky);
+
+        return uMeteorColor * falloff * wrap;
 
     }
 

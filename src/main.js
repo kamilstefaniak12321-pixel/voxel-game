@@ -1518,6 +1518,7 @@ function animate(now) {
     crosshairElement.style.visibility = game.cameraMode === 'front' ? 'hidden' : '';
 
     terrainMap.weather = game.weather;
+    terrainMap.thunder = game.thunder;
     terrainMap.update(game.player.pos.x, game.player.pos.z, game.player.yaw, game.player.pos.y);
 
 

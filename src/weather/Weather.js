@@ -82,9 +82,11 @@ export class WeatherMap {
         this.wet = new Float32Array(N * N);
         this.wetTime = new Float64Array(N * N).fill(-1);
 
-        // Największy opad w oknie (z ostatniego pełnego obiegu).
+        // Największy opad i burza w oknie (z ostatniego pełnego obiegu).
         this.maxRain = 0;
         this.sweepRain = 0;
+        this.maxStorm = 0;
+        this.sweepStorm = 0;
 
         // Lewy górny róg okna (w punktach mapy) albo null przed pierwszym
         // liczeniem.
@@ -156,6 +158,15 @@ export class WeatherMap {
                 this.sweepRain = sample.rain;
             }
 
+            if (sample.storm > this.sweepStorm) {
+
+                this.sweepStorm = sample.storm;
+
+                // Nadciągająca burza liczy się od razu, nie po obiegu.
+                if (sample.storm > this.maxStorm) this.maxStorm = sample.storm;
+
+            }
+
         }
 
     }
@@ -190,6 +201,7 @@ export class WeatherMap {
             this.gather(x, z, t);
             this.sweepThick = 0;
             this.sweepRain = 0;
+            this.sweepStorm = 0;
 
             // (Po /pogoda ustaw - force - okno stoi w miejscu, więc mokra
             // ziemia zostaje; po dalekim skoku zaczyna od nowa.)
@@ -201,6 +213,7 @@ export class WeatherMap {
 
             this.maxThick = this.sweepThick;
             this.maxRain = this.sweepRain;
+            this.maxStorm = this.sweepStorm;
             this.row = 0;
 
         }
@@ -240,6 +253,7 @@ export class WeatherMap {
                     this.gather(x, z, t);
                     this.sweepThick = 0;
                     this.sweepRain = 0;
+                    this.sweepStorm = 0;
                 }
 
                 this.writeRow(originZ + this.row, originX, originX + N, this.sweepTime, true);
@@ -249,6 +263,7 @@ export class WeatherMap {
                     this.row = 0;
                     this.maxThick = this.sweepThick;
                     this.maxRain = this.sweepRain;
+                    this.maxStorm = this.sweepStorm;
                 }
 
             }
@@ -331,6 +346,14 @@ export class Weather {
         this.halo = 0;
         this.rainbowOverride = null;
 
+        // Grad (od 1.13.0): ile go teraz pada (0-1; hailOverride - komenda
+        // /pogoda grad) i ile leży na ziemi (hailCover) wokół miejsca,
+        // w którym spadł (hailSpot).
+        this.hail = 0;
+        this.hailOverride = null;
+        this.hailCover = 0;
+        this.hailSpot = { x: 0, z: 0 };
+
         this.thickness = CLOUD_THICKNESS[0];
         this.base = CLOUD_LEVELS.low;
         this.season = [0, 0, 0, 0];
@@ -357,7 +380,7 @@ export class Weather {
         // Wygładzenie w czasie (ok. 1,5 s); pierwsza próbka od razu.
         const k = this.ready ? 1 - Math.exp(-Math.max(0, dt) / 1.5) : 1;
 
-        for (const key of ['low', 'thick', 'mid', 'high', 'rain', 'storm', 'clear', 'fog', 'windX', 'windZ', 'gust']) {
+        for (const key of ['low', 'thick', 'mid', 'high', 'rain', 'storm', 'hail', 'clear', 'fog', 'windX', 'windZ', 'gust']) {
             local[key] += (raw[key] - local[key]) * k;
         }
 
@@ -401,6 +424,28 @@ export class Weather {
             this.map.maxRain > 0.03 ? 1 : 0, local.angle, Math.min(1.2, local.speed / 9), 0);
 
         cloudUniforms.uWetness.value = this.wetSurfaces ? 1 : 0;
+
+        // Burza w okolicy: chmury nad nią ciemnieją (shader czyta wtedy
+        // jej siłę z mapy).
+        cloudUniforms.uStorm.value.x = this.map.maxStorm > 0.03 ? 1 : 0;
+
+        // Grad: nalot rośnie, póki pada (kilkanaście sekund do pełnego),
+        // potem topnieje ponad minutę. Leży tam, gdzie spadł.
+
+        this.hail = clamp01(this.hailOverride ?? local.hail);
+
+        const step = Math.max(0, Math.min(0.5, dt));
+
+        if (this.hail > 0.05) {
+            this.hailCover = Math.min(1, this.hailCover + step * this.hail / 14);
+            this.hailSpot.x = x;
+            this.hailSpot.z = z;
+        }
+        else {
+            this.hailCover = Math.max(0, this.hailCover - step / 80);
+        }
+
+        cloudUniforms.uHailGround.value.set(this.hailSpot.x, this.hailSpot.z, this.wetSurfaces ? this.hailCover : 0);
 
     }
 
@@ -563,6 +608,8 @@ export class Weather {
             cloudUniforms.uRainVeil.value.set(0, 0, 0, 0);
             cloudUniforms.uSkyOptics.value.set(0, 0, 0, 0);
             cloudUniforms.uWetness.value = 0;
+            cloudUniforms.uStorm.value.set(0, 0, 0, 0);
+            cloudUniforms.uHailGround.value.set(0, 0, 0);
         }
 
     }

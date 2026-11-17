@@ -216,7 +216,7 @@ export class RainShelter {
 
 // Wspólne dla kropel i rozprysków.
 
-const RAIN_COMMON_GLSL = /* glsl */ `
+export const RAIN_COMMON_GLSL = /* glsl */ `
     attribute vec4 aSeed;
     uniform vec3 uRainCamera;
     uniform vec3 uRainBox;

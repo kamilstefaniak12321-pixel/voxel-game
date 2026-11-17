@@ -10,6 +10,8 @@ Kod: `src/weather/`, chmury na niebie: `src/sky/layers/Clouds.js`.
 
 ![Pogoda w 1.11.0: chmury kłębiaste, komórka burzowa, front chłodny, pierzaste o zachodzie, cień chmury i mapa pogody](pogoda-1110.jpg)
 
+![Burze w 1.13.0: piorun nocą, daleka burza, front z ciemną podstawą, grad, piorun widziany z domu, wyładowania na mapie pogody](pogoda-1130.jpg)
+
 ## Plan aktualizacji pogodowej
 
 Całość jest za duża na jedno wydanie, więc idzie w sześciu częściach.
@@ -19,7 +21,7 @@ Każda jest grywalna sama w sobie.
 |---|---|---|
 | 1 | **Niebo i fronty** - pole pogody, fronty, lokalny wiatr, chmury na trzech piętrach, cienie chmur, mapa pogody, `/pogoda` | **1.11.0** |
 | 2 | **Deszcz** - od mżawki po ulewę, skośne krople, odległe kurtyny deszczu, mokry świat i kałuże, schronienie pod dachem, dźwięk deszczu i wiatru, mgła, tęcza i halo | **1.12.0** |
-| 3 | **Burze** - letnie komórki i ciemne fronty, wyładowania w chmurach i w ziemię oświetlające krajobraz, grzmot spóźniony o odległość, grad | plan |
+| 3 | **Burze** - letnie komórki i ciemne fronty, wyładowania w chmurach i w ziemię oświetlające krajobraz, grzmot spóźniony o odległość, grad | **1.13.0** |
 | 4 | **Zima** - rodzaje śniegu (od krup po mokre płaty), śnieżyca, zamieć przy ziemi, pokrywa śnieżna (wizualna) i topnienie, szron | plan |
 | 5 | **Pustynia i morze** - pyłowa mgiełka, burza piaskowa, haboob, wiry pyłowe, sztorm ze spienionymi falami | plan |
 | 6 | **Wpływ na rozgrywkę** - deszcz gasi ognisko, rośliny rosną po deszczu, zimno | plan |
@@ -151,6 +153,79 @@ każda z innego miejsca w kodzie:
 - **Powietrze.** Deszcz zagęszcza mgiełkę (ulewa około 3,5 raza), więc
   w ulewie daleki krajobraz znika w szarości.
 
+## Burze (1.13.0)
+
+Burza była już w polu pogody (letnie komórki burzowe, burzowa linia
+frontu chłodnego) - od 1.13.0 błyska, grzmi i sypie gradem.
+
+- **Gdzie i kiedy błyska** (`weather/Thunderstorm.js`). Jak cała pogoda -
+  tylko z ziarna świata i czasu gry. Świat jest podzielony na kratki po
+  256 bloków, czas na sekundy; w każdej kratce i sekundzie rzuca się
+  „kostką", a szansa rośnie z siłą burzy w tym miejscu (`sample.storm`,
+  od 0,12; najwięcej od 0,72). W środku komórki burzowej wypada błysk co
+  kilka sekund, w całej burzy - co dwie-trzy. Około jedna trzecia
+  wyładowań bije w ziemię, reszta zostaje w chmurze. W grze ze znajomymi
+  wszyscy widzą ten sam piorun w tym samym miejscu i chwili.
+  - *Letnie komórki* (układ „burze") żyją ze słońca: błyska od południa
+    do wieczora, nocą zamierają.
+  - *Fronty chłodne* niosą burzę o każdej porze doby - stąd nocne
+    burze. Jesienią i zimą błyska kilka razy rzadziej.
+- **Błysk.** Jedno wyładowanie to jeden do trzech błysków w ułamku
+  sekundy (nie częściej niż co 0,11 s): piorun do ziemi - ostre i krótkie,
+  w chmurze - miękkie i dłuższe.
+  - **Chmury** świecą wokół wyładowania (`cloudShader.js`, do trzech
+    błysków naraz) - podstawa najmocniej, boki, chmury średnie i wysokie
+    (kowadło) słabiej, zasłona deszczu też. Z daleka burzę widać nocą
+    jako rozbłyskujący pas nad horyzontem.
+  - **Krajobraz.** Najsilniejszy błysk jest jednym światłem w miejscu
+    wyładowania (dla pioruna - w połowie kanału, dla błysku w chmurze -
+    w chmurze). Oświetla bloki, rośliny, daleki teren, modele i cząstki:
+    w nocy na chwilę robi się jasno jak w dzień, z kolorami. To to samo
+    światło w shaderach, którym świeci kula ognia meteorytu
+    (`rendering/meteorLight.js`) - nic nie kosztuje, gdy nie błyska;
+    meteoryt ma pierwszeństwo. Błysk świeci **tylko tam, dokąd dochodzi
+    światło nieba**: w jaskini i w zamkniętym domu zostaje ciemno, przez
+    drzwi i okno wpada.
+  - **Niebo i mgiełka** jaśnieją razem z błyskiem (`uStormFlash`).
+- **Kanał pioruna** (`rendering/LightningBolts.js`): kanciasta łamana od
+  podstawy chmury do ziemi (do 18 odcinków - prosto w dół albo skosem)
+  z dwiema-czterema odnogami, które gasną w powietrzu. Bije w najwyższy
+  blok kolumny (także w koronę drzewa), nie niżej niż poziom morza.
+  Szerokość jest stała na ekranie, więc piorun widać z kilku kilometrów,
+  a z bliska nie jest grubą rurą. Rysuje się dwoma poleceniami tylko na
+  czas błysku: daleka część po dalekim terenie (góry zasłaniają piorun
+  za nimi), bliska w świecie. Do czterech piorunów naraz.
+- **Grzmot** (`audio/ThunderAudio.js`) - bez nagrań, z szumu deszczu:
+  - **spóźniony o odległość** - dźwięk leci 343 bloki na sekundę (blok
+    to metr): trzy sekundy od błysku to kilometr. Słychać go do 5200
+    bloków;
+  - z bliska ostry **trzask** i krótki huk, z daleka sam niski, długi
+    **pomruk**, który się przetacza (wysokie tony giną po drodze);
+  - w schronieniu przytłumiony; do ośmiu grzmotów naraz.
+- **Ciemne chmury burzowe.** Chmura ciemnieje i sinieje tam, gdzie pole
+  pogody ma burzę (kanał G drugiej mapy pogody), a grube chmury mają
+  ciemniejszą podstawę - front chłodny nadciąga z ciemną ławą u dołu.
+- **Grad** (`rendering/Hail.js`): pada krótko, w samym środku
+  najsilniejszych burz (`sample.hail`, burza powyżej 0,86). Białe kulki
+  lecą szybciej i bardziej pionowo niż deszcz, odbijają się od ziemi
+  i dachów (pod dachem ich nie ma - ta sama mapa schronienia co deszcz),
+  **stukoczą** (osobny dźwięk; pod dachem głuchszy) i zostawiają na
+  płaskich wierzchach **biały nalot**, który rośnie kilkanaście sekund
+  i topnieje ponad minutę. Nalot leży tam, gdzie spadł (do 150 bloków
+  od tego miejsca).
+- **Znaki przed burzą:** wiatr rośnie i robi się porywisty, na horyzoncie
+  widać ciemną ławę chmur i kurtynę deszczu, nocą błyski, a grzmoty są
+  coraz krócej po błyskach.
+
+### Błyski a wygoda
+
+Ustawienie **Błyski burzy** (Ustawienia → Gra, `/ustaw blyski`):
+
+- *Pełne* - ostre błyski (do trzech w wyładowaniu),
+- *Łagodne* - jedno powolne rozjaśnienie o połowę słabsze, bez migotania,
+- *Wył.* - teren i niebo nie błyskają wcale; zostaje piorun, łagodna
+  poświata w chmurze i grzmot.
+
 ## Dźwięk (1.12.0)
 
 `audio/WeatherAudio.js` - bez nagrań, z jednego bufora szumu i filtrów:
@@ -200,12 +275,16 @@ pod wodą razem z resztą.
 | `/pogoda deszcz [0-100]`, `/pogoda sucho` | sam deszcz, do odwołania (do 20% - mżawka) |
 | `/pogoda mgla [0-100]` | mgła nad tobą, do odwołania |
 | `/pogoda tecza [wl\|wyl]` | tęcza, do odwołania (widać ją tyłem do niskiego słońca) |
-| `/mapa pogoda [skala]` | **mapa pogody na żywo**: chmury (im ciemniejsze, tym bardziej się piętrzą), opad (niebieski), burza (fioletowy), linie frontów (czerwona - ciepły, niebieska - chłodny) i strzałki wiatru. Domyślnie 64 bloki na punkt (ponad 12 km). Przy otwartym czacie mysz pokazuje pogodę wskazanego miejsca |
+| `/pogoda piorun [odległość] [chmura]` | wyładowanie przed tobą (domyślnie piorun w ziemię 150 bloków dalej; `chmura` - błysk w chmurze); komenda podaje, po ilu sekundach dojdzie grzmot |
+| `/pogoda grad [0-100]` | grad nad tobą, do odwołania |
+| `/mapa pogoda [skala]` | **mapa pogody na żywo**: chmury (im ciemniejsze, tym bardziej się piętrzą), opad (niebieski), burza (fioletowy), wyładowania z ostatniej minuty (żółte: krzyżyk - piorun w ziemię, kropka - błysk w chmurze), linie frontów (czerwona - ciepły, niebieska - chłodny) i strzałki wiatru. Domyślnie 64 bloki na punkt (ponad 12 km). Przy otwartym czacie mysz pokazuje pogodę wskazanego miejsca |
 
 Rodzaje: `pogodnie`, `pochmurno`, `front-cieply`, `front-chlodny`,
 `burza`, `przelotne`, `pierzaste`.
 
 Pogoda ustawiona komendą jest tylko u tego gracza i nie daje osiągnięć.
+`/pogoda ustaw burza` stawia główną komórkę burzy nad tobą: pada, wieje
+i błyska, ale nie sypie gradem bez przerwy (do gradu jest `/pogoda grad`).
 
 ## Ustawienia
 
@@ -218,6 +297,9 @@ Pogoda ustawiona komendą jest tylko u tego gracza i nie daje osiągnięć.
   wyłączone.
 - **Mokra ziemia i kałuże** (`/ustaw mokra-ziemia`, od 1.12.0): wł. / wył.
   W trybie ziemniaka wyłączone; kropel jest wtedy 1600 zamiast 6000.
+- **Błyski burzy** (Ustawienia → Gra, `/ustaw blyski`, od 1.13.0):
+  *Pełne* / *Łagodne* / *Wył.* - opis wyżej. W trybie ziemniaka gradu
+  jest 400 kulek zamiast 1400 i nie ma białego nalotu.
 
 ## Wydajność
 
@@ -238,13 +320,25 @@ Pogoda ustawiona komendą jest tylko u tego gracza i nie daje osiągnięć.
   się tylko, gdy w zasięgu mapy pada. Kosztu na prawdziwej karcie także
   tu nie zmierzono.
 
+- **Burze (1.13.0):** losowanie wyładowań to jeden przebieg na sekundę
+  gry (2600 kratek, około 0,8 ms) i tylko wtedy, gdy mapa pogody ma
+  w zasięgu burzę. Błysk na terenie korzysta z istniejącego światła
+  meteorytu w shaderach (bez nowej pracy na piksel; doszło jedno
+  mnożenie przez światło nieba). Poświata w chmurach, ciemnienie chmur
+  burzowych i nalot gradu liczą się w shaderach tylko wtedy, gdy coś
+  błyska, jest burza albo leży grad. Piorun to dwa polecenia rysowania
+  na czas błysku, grad - dwa, gdy pada. Kosztu na prawdziwej karcie
+  także tu nie zmierzono.
+
 ## Osiągnięcia
 
 *Pierwsze krople* (deszcz, który przyniosła pogoda), *Wiatr we włosach*
 (wiatr od 6 bloków/s), *Ani jednej chmurki* (środek wyżu w dzień),
 *Głowa w chmurach* (wlot w niską chmurę). Od 1.12.0: *Niech sobie pada*
 (deszcz przeczekany pod dachem), *Siedem kolorów* (tęcza), *Mleko*
-(gęsta poranna mgła).
+(gęsta poranna mgła). Od 1.13.0: *Raz, dwa, trzy...* (piorun w ziemię
+nie dalej niż kilometr), *O włos* (piorun bliżej niż 50 bloków),
+*Kulki lodu* (grad pod gołym niebem).
 
 ## Sprawdzenia
 
@@ -263,24 +357,59 @@ ulewa, ukos, zawijanie, tryb ziemniaka), głośności i filtry dźwięku oraz
 łańcuch Web Audio na atrapie, gęstość powietrza, shadery, komenda,
 ustawienia, osiągnięcia.
 
+`tools/sprawdz_burze.mjs` (ponad 400 tysięcy sprawdzeń, 1.13.0):
+losowanie wyładowań (tylko w burzy, to samo z każdego miejsca, pory
+roku), grad w polu pogody, błysk (liczba i odstępy impulsów, tryb
+łagodny bez migotania), burza w grze klatka po klatce (każde wyładowanie
+raz, światło, poświata w chmurach, przeskok czasu, komenda), kanał
+pioruna (ciągłość, odnogi, bufor, dwa przebiegi), grzmot (opóźnienie,
+trzask, pomruk, schronienie, kolejka głosów na atrapie Web Audio), grad
+(kulki, tryb ziemniaka, stukot, nalot), shadery, komendy, ustawienie,
+osiągnięcia.
+
 Testy przeglądarkowe, które oglądają drzewa, tekstury i wodospady, mają
 stałe progi kolorów i nie dotyczą pogody, więc ją wyłączają
 (`tools/fixtures/calm-weather.js`: bez chmur, cieni chmur, mokrej ziemi,
-deszczu i mgły) - świat testów o ziarnie 42 zaczyna się w deszczu
+deszczu, mgły, gradu i burzy) - świat testów o ziarnie 42 zaczyna się w deszczu
 frontowym, a chmury i deszcz liczone programowo wydłużały te testy
 o jedną czwartą. `tools/fixtures/waterfall-ripple-benchmark.js` włącza
 deszcz tak jak komenda (`game.rainOverride`). Testy materiałów
 (`tools/*_render_checks.js`) wyłączają pogodę w shaderach na swój czas
 (`tools/render_check_weather.js`), bo porównują teren z modelami,
-a modele nie mokną i nie dostają cienia chmur. Shadery pogody kompilują
+a modele nie mokną, nie dostają cienia chmur i mają inne światło nieba
+niż ściana obok (błysk burzy). Shadery pogody kompilują
 się i rysują w testach prawdziwej gry z domyślnymi ustawieniami (światło,
 paczka, gra wieloosobowa, logi). Do powtarzalnych porównań światła w grze
 służy `/pogoda ustaw pogodnie`.
 
-## Braki (stan na 1.12.0)
+## Braki (stan na 1.13.0)
 
-- **Burza nie błyska i nie grzmi** - na razie to ciemna, piętrząca się
-  chmura z ulewą i wiatrem (część 3).
+- **Piorun to tylko światło i dźwięk** (ustalenie z Kamilem): nie
+  podpala, nie rani i nie zostawia śladu w miejscu uderzenia.
+- **Błysk nie rzuca cieni** - światło przechodzi przez góry i drzewa;
+  o tym, co ciemne, decyduje tylko światło nieba na ścianie. Świeci
+  jedno, najsilniejsze wyładowanie naraz, a gdy leci meteoryt - żadne.
+- **Daleki piorun jest nisko nad horyzontem.** Podstawa chmur leży około
+  140 bloków nad graczem, więc z dwóch kilometrów kanał ma na ekranie
+  kilka stopni wysokości i w lesie chowa się za drzewami - z daleka
+  burzę widać głównie po rozbłyskach chmur.
+- **Wyładowanie w chmurze nie ma kształtu** - to okrągła poświata, bez
+  rozgałęzionych błyskawic pełznących po spodzie chmury.
+- **Grzmot nie zna gór ani wody:** nie ma echa w dolinach, pod wodą
+  słychać go jak resztę świata. Głośności i barwy nie dało się tu
+  odsłuchać (do oceny u Kamila).
+- **Grad jest wszędzie taki sam** (jedna wielkość kulek) i nie robi
+  nic poza obrazem i dźwiękiem; biały nalot jest tylko na blokach
+  w okolicy miejsca, w którym gracz stał pod gradem (nie na dalekim
+  terenie, liściach i roślinach).
+- **Zimą też bywa burza z deszczem** - o tym, czy to deszcz, czy śnieg,
+  zdecyduje część 4.
+- **Krople deszczu i woda nie błyskają** razem z piorunem; kałuże go nie
+  odbijają.
+- **Burza idzie z czasem gry:** gdy czas stoi (`/czas predkosc 0`), nie
+  błyska (także `/pogoda piorun` czeka na ruszenie czasu); przy mocno
+  przyspieszonym czasie błyski są krótsze, niż da się zobaczyć.
+- **`/pogoda piorun` i `grad` działają tylko u gracza, który je wpisał.**
 - **Kurtyna deszczu z daleka jest niska.** Podstawa chmur leży około 140
   bloków nad graczem, więc z 2000 bloków zasłona ma na ekranie tylko
   kilka stopni wysokości - wyraźna robi się poniżej kilometra.

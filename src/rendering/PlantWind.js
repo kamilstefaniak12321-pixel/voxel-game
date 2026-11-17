@@ -5,6 +5,10 @@ import { WATER_WAVE_HEIGHT } from '../config.js';
 export const plantWindUniforms = {
     uTime: { value: 0 },
     uWaveHeight: { value: WATER_WAVE_HEIGHT },
+    // Fale sztormowe na morzu (WaterWave.js - seaSwell): x wysokość
+    // (bloki), yz kierunek wiatru, w zasięg od kamery. Ustawia Game.
+    // (Zwykła tablica - ten plik nie zależy od three.js.)
+    uSeaWave: { value: [0, 1, 0, 64] },
     // Kołysanie roślin na wietrze: 1 - wł., 0 - wył. (Ustawienia -> Modele).
     // Liście na wodzie dalej falują razem z wodą.
     uPlantSway: { value: 1 }

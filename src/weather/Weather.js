@@ -4,9 +4,9 @@ import { seasonWeights } from '../sky/Seasons.js';
 
 import { CHUNK_HEIGHT, SEA_LEVEL } from '../config.js';
 
-import { WeatherField, DAY_SECONDS, FLOW_SPEED, TEMP_LAPSE, emptySample, snowShare, tempAtHeight } from './WeatherField.js';
+import { WeatherField, DAY_SECONDS, FLOW_SPEED, TEMP_LAPSE, emptySample, seaState, snowShare, tempAtHeight } from './WeatherField.js';
 import { cloudNoiseTexture } from './CloudNoise.js';
-import { cloudUniforms, CLOUD_LEVELS, CLOUD_THICKNESS, CLOUD_TILES } from './cloudShader.js';
+import { cloudUniforms, CLOUD_LEVELS, CLOUD_THICKNESS, CLOUD_TILES, DUST_TOP } from './cloudShader.js';
 
 // ------------------------------------------------------------
 // POGODA W GRZE (1.11.0)
@@ -107,7 +107,8 @@ export class WeatherMap {
         this.texture.generateMipmaps = false;
 
         // Druga tekstura (od 1.12.0): R opad, G burza, B mokra ziemia,
-        // A mgła. Mokra ziemia pamięta deszcz: moknie w kilkadziesiąt
+        // A pył w powietrzu (od 1.15.0; na mokrej ziemi go nie ma).
+        // Mokra ziemia pamięta deszcz: moknie w kilkadziesiąt
         // sekund, schnie kilka minut - dlatego trzyma własny stan (wet)
         // i czas ostatniego liczenia każdego punktu (wetTime).
         this.rain = new Uint8Array(N * N * 4);
@@ -142,6 +143,11 @@ export class WeatherMap {
         this.sweepFrost = 0;
         this.maxFresh = 0;
         this.sweepFresh = 0;
+
+        // Najwięcej pyłu w oknie (z ostatniego pełnego obiegu; rosnący -
+        // od razu, jak burza).
+        this.maxDust = 0;
+        this.sweepDust = 0;
 
         // Największy opad i burza w oknie (z ostatniego pełnego obiegu).
         this.maxRain = 0;
@@ -215,7 +221,15 @@ export class WeatherMap {
             this.rain[k] = Math.round(sample.rain * 255);
             this.rain[k + 1] = Math.round(sample.storm * 255);
             this.rain[k + 2] = Math.round(wet * 255);
-            this.rain[k + 3] = Math.round(sample.fog * 255);
+            // Pył podnosi się tylko z suchej ziemi.
+            const dust = sample.dust * (1 - wet);
+
+            this.rain[k + 3] = Math.round(dust * 255);
+
+            if (dust > this.sweepDust) {
+                this.sweepDust = dust;
+                if (dust > this.maxDust) this.maxDust = dust;
+            }
 
             // Świeży opad: przybywa, póki pada (im mocniej, tym szybciej),
             // w cieple topnieje, na mrozie leży.
@@ -299,7 +313,7 @@ export class WeatherMap {
             this.sweepRain = 0;
             this.sweepStorm = 0;
             this.sweepTemp = this.sweepSlow = 99;
-            this.sweepFrost = this.sweepFresh = 0;
+            this.sweepFrost = this.sweepFresh = this.sweepDust = 0;
 
             // (Po /pogoda ustaw - force - okno stoi w miejscu, więc mokra
             // ziemia zostaje; po dalekim skoku zaczyna od nowa.)
@@ -316,6 +330,7 @@ export class WeatherMap {
             this.minSlow = this.sweepSlow;
             this.maxFrost = this.sweepFrost;
             this.maxFresh = this.sweepFresh;
+            this.maxDust = this.sweepDust;
             this.row = 0;
 
         }
@@ -357,7 +372,7 @@ export class WeatherMap {
                     this.sweepRain = 0;
                     this.sweepStorm = 0;
                     this.sweepTemp = this.sweepSlow = 99;
-                    this.sweepFrost = this.sweepFresh = 0;
+                    this.sweepFrost = this.sweepFresh = this.sweepDust = 0;
                 }
 
                 this.writeRow(originZ + this.row, originX, originX + N, this.sweepTime, true);
@@ -372,6 +387,7 @@ export class WeatherMap {
                     this.minSlow = this.sweepSlow;
                     this.maxFrost = this.sweepFrost;
                     this.maxFresh = this.sweepFresh;
+                    this.maxDust = this.sweepDust;
                 }
 
             }
@@ -388,7 +404,7 @@ export class WeatherMap {
 
 
     // Odczyt z mapy po stronie gry (najbliższy punkt): kanał drugiej
-    // tekstury w miejscu (x, z): 0 opad, 1 burza, 2 mokra ziemia, 3 mgła.
+    // tekstury w miejscu (x, z): 0 opad, 1 burza, 2 mokra ziemia, 3 pył.
 
     read(x, z, channel) {
 
@@ -443,11 +459,13 @@ export class Weather {
 
     // seed    - ziarno świata,
     // climate - opcjonalnie (x, z) => wilgotność miejsca -1..1,
-    // warmth  - opcjonalnie (x, z) => ciepło klimatu -1..1 (temperatura).
+    // warmth  - opcjonalnie (x, z) => ciepło klimatu -1..1 (temperatura),
+    // sea     - opcjonalnie (x, z) => 0-1: czy to otwarte morze (sztorm).
 
-    constructor(seed, { climate = null, warmth = null } = {}) {
+    constructor(seed, { climate = null, warmth = null, sea = null } = {}) {
 
         this.field = new WeatherField(seed, { climate, warmth });
+        this.seaAt = sea;
         this.map = new WeatherMap(this.field);
 
         this.raw = emptySample();
@@ -505,6 +523,20 @@ export class Weather {
         this.coverOverride = null;
         this.frostOverride = null;
 
+        // Pustynia i morze (od 1.15.0). dust - pył w powietrzu nad graczem
+        // (0-1: mgiełka, pył, burza piaskowa), dustWall - ile z niego
+        // niesie ściana pyłu frontu albo burzy (haboob), arid - suchość
+        // miejsca (1 - pustynia). dustOverride - komenda /pogoda pyl.
+        // sea - stan morza pod graczem (0-1: od fali po sztorm; poza
+        // morzem 0), seaMask - czy to otwarte morze, seaOverride - komenda.
+        this.dust = 0;
+        this.dustWall = 0;
+        this.arid = 0;
+        this.dustOverride = null;
+        this.sea = 0;
+        this.seaMask = 0;
+        this.seaOverride = null;
+
         this.thickness = CLOUD_THICKNESS[0];
         this.base = CLOUD_LEVELS.low;
         this.season = [0, 0, 0, 0];
@@ -533,7 +565,7 @@ export class Weather {
         // Wygładzenie w czasie (ok. 1,5 s); pierwsza próbka od razu.
         const k = this.ready ? 1 - Math.exp(-Math.max(0, dt) / 1.5) : 1;
 
-        for (const key of ['low', 'thick', 'mid', 'high', 'rain', 'storm', 'hail', 'clear', 'fog', 'windX', 'windZ', 'gust', 'temp', 'tempSlow', 'frost']) {
+        for (const key of ['low', 'thick', 'mid', 'high', 'rain', 'storm', 'hail', 'clear', 'fog', 'windX', 'windZ', 'gust', 'temp', 'tempSlow', 'frost', 'arid', 'dust', 'wall']) {
             local[key] += (raw[key] - local[key]) * k;
         }
 
@@ -569,6 +601,24 @@ export class Weather {
 
         this.updateUniforms(days);
         this.updateWind();
+
+        // Pył: tylko nad suchą ziemią (po deszczu go nie ma). Shadery
+        // czytają go z mapy, gdy gdzieś w okolicy jest.
+
+        const dryGround = 1 - this.wetness;
+
+        this.arid = local.arid;
+        this.dust = clamp01(this.dustOverride ?? local.dust * dryGround);
+        this.dustWall = this.dustOverride !== null ? 0 : clamp01(local.wall * dryGround);
+
+        cloudUniforms.uDust.value.set(
+            this.map.maxDust > 0.04 || this.dust > 0.04 ? 1 : 0, DUST_TOP, this.dust,
+            mod(days * DAY_SECONDS * 0.0016, 1));
+
+        // Stan morza: wiatr nad otwartym morzem (albo komenda).
+
+        this.seaMask = this.seaAt ? clamp01(this.seaAt(x, z)) : 0;
+        this.sea = clamp01(this.seaOverride ?? this.seaMask * seaState(this.wind.speed));
 
         // Kurtyny deszczu na horyzoncie: tylko gdy w okolicy gdzieś pada;
         // smugi pochylają się z wiatrem.
@@ -820,6 +870,7 @@ export class Weather {
             cloudUniforms.uWeatherSnow.value = null;
             cloudUniforms.uSnow.value.set(0, 0, 0, -1);
             cloudUniforms.uFrost.value = -2;
+            cloudUniforms.uDust.value.set(0, DUST_TOP, 0, 0);
         }
 
     }

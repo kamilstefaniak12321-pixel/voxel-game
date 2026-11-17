@@ -5,7 +5,7 @@ import { campfireLightUniforms, CAMPFIRE_LIGHT_GLSL } from './CampfireLight.js';
 import { SURFACE_LIGHTING_GLSL } from './SurfaceLighting.js';
 import { installLightingDiagnostics } from './LightingDiagnostics.js';
 import { plantWindUniforms, PLANT_WIND_GLSL } from './PlantWind.js';
-import { WATER_WAVE_GLSL } from './WaterWave.js';
+import { WATER_WAVE_GLSL, SEA_SURFACE } from './WaterWave.js';
 import { getSurfaceFaceTexture } from './SurfaceMaterials.js';
 import { blockSurfaceProfile } from './SurfaceProfiles.js';
 import { installSurfaceProfiles } from './LeafLighting.js';
@@ -820,6 +820,11 @@ export const waterUniforms = {
     // Jak wysoko faluje powierzchnia (bloki; 0 = płaska) - /woda fale.
     uWaveHeight: plantWindUniforms.uWaveHeight,
 
+    // Sztorm na morzu (od 1.15.0): fale z wiatrem (WaterWave.js) i ile
+    // jest piany na grzbietach (0-1). Ustawia Game.
+    uSeaWave: plantWindUniforms.uSeaWave,
+    uSeaFoam: { value: 0 },
+
     uWaterOpacity: { value: WATER_OPACITY },
     uWaterOpacityGrazing: { value: WATER_OPACITY_GRAZING },
 
@@ -912,10 +917,12 @@ waterMaterial.onBeforeCompile = (shader, renderer) => {
 
             if (plantMotion.x > 0.0) {
 
-                float wave = waterWave(waterWorld.xz, uTime);
+                // (W sztormie po tafli morza idą jeszcze długie fale
+                // z wiatrem - WaterWave.js.)
+                float wave = waterWave(waterWorld.xz, uTime) * uWaveHeight + seaSwell(waterWorld, uTime);
 
-                transformed.y += wave * uWaveHeight * plantMotion.x;
-                waterWorld.y += wave * uWaveHeight * plantMotion.x;
+                transformed.y += wave * plantMotion.x;
+                waterWorld.y += wave * plantMotion.x;
 
             }
 
@@ -936,9 +943,11 @@ waterMaterial.onBeforeCompile = (shader, renderer) => {
             uniform float uWaterOpacity;
             uniform float uWaterOpacityGrazing;
             uniform vec3 uWaterAverage;
+            uniform float uSeaFoam;
             varying vec3 vWaterWorld;
             varying vec3 vWaterNormal;
             varying float vWaterFace;
+            ${WATER_WAVE_GLSL}
             ${CHUNK_MASK_GLSL}`
         )
         .replace(
@@ -1022,6 +1031,26 @@ waterMaterial.onBeforeCompile = (shader, renderer) => {
 
                 // Spadająca woda jest gęsta, piana prawie całkiem kryje.
                 waterFoam = 0.62 + 0.1 * fallPixel.a;
+
+            }
+
+            // Sztorm (1.15.0): na grzbietach fal morza biała piana - piksele
+            // wielkości pikseli tekstury, niesione wiatrem; im silniejszy
+            // sztorm, tym szersze pasy piany i tym więcej smug między nimi.
+
+            if (uSeaFoam > 0.01 && vWaterFace > 0.5 && abs(vWaterWorld.y - ${SEA_SURFACE.toFixed(3)}) < 1.0) {
+
+                vec2 seaDrift = uSeaWave.yz * uTime;
+                vec2 seaPixel = floor((vWaterWorld.xz - seaDrift * 1.2) * 8.0);
+                float seaGrain = fract(sin(dot(seaPixel, vec2(127.1, 311.7))) * 43758.5453);
+                // Smugi wzdłuż wiatru (długie, wąskie plamy).
+                vec2 seaLine = vec2(dot(seaPixel, uSeaWave.yz) / 26.0, dot(seaPixel, vec2(-uSeaWave.z, uSeaWave.y)) / 5.0);
+                float seaStreak = fract(sin(dot(floor(seaLine), vec2(269.5, 183.3))) * 43758.5453);
+                float seaTop = smoothstep(0.92 - 0.7 * uSeaFoam, 1.0, seaCrest(vWaterWorld.xz, uTime) * 0.5 + 0.5);
+                float seaWhite = step(seaGrain, uSeaFoam * (0.9 * seaTop + 0.5 * uSeaFoam * step(0.82, seaStreak)));
+
+                waterColor.rgb = mix(waterColor.rgb, vec3(1.25, 1.3, 1.34), seaWhite * 0.85);
+                waterFoam = max(waterFoam, seaWhite * 0.55);
 
             }
 

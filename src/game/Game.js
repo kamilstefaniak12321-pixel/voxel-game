@@ -81,6 +81,12 @@ import { Thunderstorm } from '../weather/Thunderstorm.js';
 import { LightningBolts } from '../rendering/LightningBolts.js';
 import { Hail } from '../rendering/Hail.js';
 import { SnowFall } from '../rendering/SnowFall.js';
+import { SandStorm } from '../rendering/SandStorm.js';
+import { DustDevils } from '../weather/DustDevils.js';
+import { DustDevilRenderer } from '../rendering/DustDevilRenderer.js';
+import { seaWave, seaSwell, SEA_WAVE } from '../rendering/WaterWave.js';
+import { waterUniforms } from '../rendering/BlockRenderData.js';
+import { cloudUniforms } from '../weather/cloudShader.js';
 import { DAY_SECONDS } from '../weather/WeatherField.js';
 import { ThunderAudio } from '../audio/ThunderAudio.js';
 import { meteorLightUniforms } from '../rendering/meteorLight.js';
@@ -131,6 +137,28 @@ function weatherWarmth(generator) {
         return null;
     }
 
+    return nodeField((x, z) => generator.temperatureAt(x, z));
+
+}
+
+// Czy to otwarte morze: (x, z) => 0-1 albo null, gdy generator tego nie
+// wie. Od tego zależy sztorm (weather.sea) - na jeziorze i rzece go nie ma.
+
+function weatherSea(generator) {
+
+    if (typeof generator?.seaAt !== 'function') {
+        return null;
+    }
+
+    return nodeField((x, z) => generator.seaAt(x, z));
+
+}
+
+// Pole generatora wygładzone między węzłami siatki co 256 bloków
+// (zapamiętywanymi): at(x, z) liczy się tylko w węzłach.
+
+function nodeField(at) {
+
     const cache = new Map();
 
     const node = (cx, cz) => {
@@ -145,7 +173,7 @@ function weatherWarmth(generator) {
                 cache.clear();
             }
 
-            value = generator.temperatureAt(cx * 256, cz * 256);
+            value = at(cx * 256, cz * 256);
             cache.set(key, value);
 
         }
@@ -485,7 +513,8 @@ export class Game extends GameInteraction {
 
         this.weather = new Weather(worldInfo.seed, {
             climate: weatherClimate(this.world.generator),
-            warmth: weatherWarmth(this.world.generator)
+            warmth: weatherWarmth(this.world.generator),
+            sea: weatherSea(this.world.generator)
         });
         this.sky.clouds.weather = this.weather;
 
@@ -696,6 +725,14 @@ export class Game extends GameInteraction {
         // Zima (1.14.0): płatki śniegu i zamieć przy ziemi (SnowFall);
         // snowNow - ile teraz pada śniegu, graupelNow - krupy śnieżnej.
         this.snowFall = new SnowFall(this.scene, this.rainStreaks);
+        // Piasek niesiony wiatrem i bryzgi z morza (od 1.15.0).
+        this.sandStorm = new SandStorm(this.scene, this.rainStreaks);
+        // Wiry pyłowe: losowanie z czasu gry i rysowanie.
+        this.dustDevils = new DustDevils(this.weather.field);
+        this.devilRenderer = new DustDevilRenderer(this.scene);
+        this.groundAt = (x, z) => this.stormGround(x, z);
+        // Tratwa unosi się na falach sztormu (game/RaftPhysics.js).
+        this.world.waveOffset = (x, y, z) => seaSwell(x, y, z, plantWindUniforms.uTime.value);
         this.snowNow = 0;
         this.graupelNow = 0;
         this.waterLandingRevision = -1;
@@ -1096,6 +1133,8 @@ export class Game extends GameInteraction {
 
         this.sky.cloudCover = Math.max(this.settings.get('cloudCover') / 100, active ? this.weather.overcast : 0);
         this.sky.cloudDepth = active ? this.weather.depth : 0;
+        // Pył w powietrzu barwi niebo i przygasza słońce.
+        this.sky.dust = active ? this.weather.dust : 0;
 
         plantWindUniforms.uPlantSway.value = this.settings.get('plantWind') ? this.weather.sway : 0;
 
@@ -1198,6 +1237,41 @@ export class Game extends GameInteraction {
 
     }
 
+    // Sztorm: fale z wiatrem na tafli morza (shadery i - ten sam rachunek -
+    // tratwa oraz liście na wodzie), piana na grzbietach, piana na dalekim
+    // morzu. sea - stan morza 0-1 (weather.sea).
+
+    updateSea(sea) {
+
+        const wind = this.weather?.wind;
+        const speed = wind?.speed ?? 0;
+        const wave = plantWindUniforms.uSeaWave.value;
+
+        // Kierunek zmienia się tylko, gdy wieje (w ciszy zostaje dawny).
+        if (speed > 0.2) {
+            seaWave.dx = wind.x / speed;
+            seaWave.dz = wind.z / speed;
+        }
+
+        // Fale tylko tam, gdzie są prawdziwe chunki (dalej płaska woda
+        // dalekiego terenu).
+        seaWave.amp = SEA_WAVE.height * sea;
+        seaWave.radius = Math.max(24, this.viewDistance * 0.9);
+        seaWave.cx = this.camera.position.x;
+        seaWave.cz = this.camera.position.z;
+
+        wave[0] = seaWave.amp;
+        wave[1] = seaWave.dx;
+        wave[2] = seaWave.dz;
+        wave[3] = seaWave.radius;
+
+        const foam = smoothstep(0.25, 1, sea);
+
+        waterUniforms.uSeaFoam.value = foam;
+        cloudUniforms.uSea.value.set(foam, seaWave.dx, seaWave.dz, plantWindUniforms.uTime.value % 4096);
+
+    }
+
     waterSurfaceMaterials() {
         return [...(this.waterfalls?.materials ?? (this.waterfalls ? [this.waterfalls.ripples.material] : [])),
             this.wetRocks?.material, this.waterImpacts?.material].filter(Boolean);
@@ -1258,13 +1332,30 @@ export class Game extends GameInteraction {
         this.snowNow = snow;
         this.snowFall.update(dt, snow, smoothstep(-7, 0.5, cold), this.weather.wind, weather.snowCover, this.sky.state);
 
+        // Pustynia i morze (1.15.0): piasek w burzy piaskowej, bryzgi
+        // i fale w sztormie.
+        const active = this.sky.clouds.active;
+        // (Ustawienie "Fale i piana sztormu" wyłącza sam obraz i huk fal.)
+        const sea = active && this.settings.get('seaWaves') !== false ? weather.sea : 0;
+
+        this.sandStorm.update(dt, active ? weather.dust : 0, sea, this.weather.wind, this.sky.state);
+        this.updateSea(sea);
+
+        // Wiry pyłowe nad rozgrzaną, suchą pustynią (po deszczu ich nie ma).
+        const devils = active && weather.wetness < 0.3
+            ? this.dustDevils.update(this.time.days, this.camera.position.x, this.camera.position.z)
+            : NO_STRIKES;
+
+        this.devilRenderer.update(devils, this.groundAt, this.weather.wind, this.time.days * DAY_SECONDS,
+            this.sky.state, Boolean(this.settings.get('potato')));
+
         // Szum deszczu i wiatru, stukot gradu; pod dachem i w jaskini
         // przytłumione.
         const eye = this.camera.position;
 
         this.shelterCover = this.rainStreaks.shelter.cover(eye.x, eye.y, eye.z);
         this.weatherAudio.update({ rain, drizzle, cover: this.shelterCover, speed: this.weather.wind.speed, gust: this.weather.wind.gust,
-            hail: Math.max(this.hailNow, 0.4 * graupel) });
+            hail: Math.max(this.hailNow, 0.4 * graupel), sand: this.sandStorm.level, sea });
         // One shared discovery allowance for persistent and short-lived rings.
         this.waterImpacts.update(dt, this.player, Math.max(0, 48 - this.waterfalls.ripples.surface.lastProcessed));
     }
@@ -2152,7 +2243,8 @@ export class Game extends GameInteraction {
 
         // Mgła i deszcz zagęszczają powietrze (weather/Weather.js).
         updateAerialPerspective(this.settings, this.sky, fog, this.weather
-            ? { fog: this.weather.fog, rain: (this.rainNow ?? 0) + 2.2 * (this.snowNow ?? 0) + 0.7 * (this.snowFall?.driftLevel ?? 0) }
+            ? { fog: this.weather.fog, rain: (this.rainNow ?? 0) + 2.2 * (this.snowNow ?? 0) + 0.7 * (this.snowFall?.driftLevel ?? 0),
+                dust: this.sky.dust }
             : null);
 
         // Kolor mgły dla reszty obiektów (np. ramka wskazanego bloku).
@@ -2862,6 +2954,9 @@ export class Game extends GameInteraction {
         this.rain.dispose();
         this.hail.dispose();
         this.snowFall.dispose();
+        this.sandStorm.dispose();
+        this.devilRenderer.dispose();
+        this.updateSea(0);
         this.rainStreaks.dispose();
         this.weatherAudio.dispose();
         this.thunderAudio.dispose();

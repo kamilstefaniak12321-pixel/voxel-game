@@ -495,6 +495,18 @@ export class RealisticGenerator {
     }
 
 
+    // Otwarte morze w miejscu (x, z): 0 - ląd, 1 - woda głęboka na kilka
+    // bloków. Sama makrorzeźba, bez jezior i rzek (pogoda: sztorm).
+
+    seaAt(x, z) {
+
+        const sample = this.compute(x, z, DETAIL_MACRO, this.seaSample ??= {});
+
+        return sample.ocean ? clamp((SEA_LEVEL - sample.macro) / 6, 0, 1) : 0;
+
+    }
+
+
     // Pole "grzbietów": 1 na linii grzbietu, w dół po obu stronach.
 
     ridged(noise, x, z, scale, octaves) {

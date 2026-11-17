@@ -64,7 +64,7 @@ function createMaterial(profile) {
                 ${WATER_WAVE_GLSL}`)
             .replace('#include <begin_vertex>', `#include <begin_vertex>
                 vec3 rippleWorld = (modelMatrix * vec4(transformed, 1.0)).xyz;
-                float rippleWave = waterWave(rippleWorld.xz, uTime) * uWaveHeight * rippleMeta.x;
+                float rippleWave = (waterWave(rippleWorld.xz, uTime) * uWaveHeight + seaSwell(rippleWorld, uTime)) * rippleMeta.x;
                 transformed.y += rippleWave;
                 rippleWorld.y += rippleWave;
                 vRippleWorld = rippleWorld.xz;

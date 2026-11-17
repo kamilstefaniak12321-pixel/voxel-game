@@ -258,6 +258,12 @@ export class SkyState {
 
         this.sunDiscColor = new THREE.Color();
 
+        // Pył w powietrzu (Sky.refresh): ile go jest (0-1) i kolor piasku
+        // w świetle tej pory dnia.
+
+        this.dust = 0;
+        this.dustColor = new THREE.Color();
+
         // 1 = jasny dzień, 0 = noc (słońce głęboko pod horyzontem).
 
         this.daylight = 1;

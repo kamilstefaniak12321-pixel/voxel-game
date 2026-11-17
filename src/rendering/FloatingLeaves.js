@@ -16,6 +16,7 @@ import { getWaterLevel } from '../blocks/BlockRegistry.js';
 import { isFallingWaterId } from '../blocks/water.js';
 import { waterSurfaceHeight } from '../world/WaterSurface.js';
 import { plantWindUniforms } from './PlantWind.js';
+import { seaSwell } from './WaterWave.js';
 
 // Jak długo liść pływa (s, losowo z przedziału).
 export const LEAF_FLOAT_SECONDS = [10, 18];
@@ -80,7 +81,8 @@ export const leafWater = {
         out.deeper = false;
         out.underFall = false;
         out.top = by + height + LEAF_ABOVE_WATER
-            + waterWave(x, z, plantWindUniforms.uTime.value) * plantWindUniforms.uWaveHeight.value;
+            + waterWave(x, z, plantWindUniforms.uTime.value) * plantWindUniforms.uWaveHeight.value
+            + seaSwell(x, by + height, z, plantWindUniforms.uTime.value);
         return WATER_SURFACE;
 
     },

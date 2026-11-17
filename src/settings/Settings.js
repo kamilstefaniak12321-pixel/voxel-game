@@ -67,6 +67,7 @@ export const SETTINGS_DEFAULTS = {
     cloudShadows: true,                            // cienie chmur sunące po terenie
     wetGround: true,                               // mokra ziemia i kałuże po deszczu
     snowCover: true,                               // pokrywa śnieżna i szron na ziemi, roślinach i liściach
+    seaWaves: true,                                // fale, piana i bryzgi sztormu na morzu
     stormFlashes: 'pelne',                         // błyski burzy: 'pelne', 'lagodne' (bez migotania), 'brak' (teren i niebo nie błyskają)
     fancyLeaves: true,                             // liście z prześwitami (false = szybkie, pełne)
     dynamicLight: true,                            // lampa w ręce, meteoryty...

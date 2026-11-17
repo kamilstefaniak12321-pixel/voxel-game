@@ -18,6 +18,18 @@ import { Clouds } from './layers/Clouds.js';
 
 import { POTATO_STAR_SHARE, SHADOW_SUN_BOOST, SHADOW_AMBIENT } from '../config.js';
 
+// Pył w powietrzu (od 1.15.0, Sky.dust):
+//   sand - barwa piasku unoszonego wiatrem,
+//   glow - o tyle jaśniejszy od horyzontu jest pył oświetlony z góry,
+//   dim, tint - o ile słabnie światło słońca w burzy piaskowej i jak
+//               żółknie,
+//   soft, air - to samo dla rozproszonego światła nieba.
+export const DUST_LIGHT = Object.freeze({
+    sand: [1.0, 0.72, 0.4], glow: 1.12,
+    dim: 0.62, tint: [1.0, 0.86, 0.66],
+    soft: 0.22, air: [1.06, 0.93, 0.74]
+});
+
 // ------------------------------------------------------------
 // NIEBO
 //
@@ -81,8 +93,12 @@ export class Sky {
         // Grube chmury deszczowe i burzowe (0-1, weather/Weather.js):
         // świat ciemnieje bardziej niż pod zwykłym zachmurzeniem.
         this.cloudDepth = 0;
+        // Pył w powietrzu (0-1, weather/Weather.js): niebo i mgiełka idą
+        // w barwę piasku, słońce przygasa.
+        this.dust = 0;
         this.atmosphere = null;
         this.sunLightDirection = new THREE.Vector3(0, 1, 0);
+        this.dustZenith = new THREE.Color();
 
 
         // WARIANT NIEBA - zmiany wyglądu względem zwykłego nieba.
@@ -246,6 +262,22 @@ export class Sky {
                 sample.visual.horizon = sample.visual.horizon.map((c) => c * veil);
 
             }
+            const dusty = natural ? Math.min(1, Math.max(0, this.dust)) * (1 - this.space) : 0;
+
+            if (dusty > 0) {
+
+                // W pyle światło słońca słabnie i żółknie, a to, co dochodzi,
+                // jest rozproszone (ciepła poświata zewsząd).
+
+                const dim = 1 - DUST_LIGHT.dim * dusty;
+                const soft = 1 - DUST_LIGHT.soft * dusty;
+
+                sample.direct = sample.direct.map((c, i) => c * dim * (1 + (DUST_LIGHT.tint[i] - 1) * dusty));
+                sample.sky = sample.sky.map((c, i) => c * soft * (1 + (DUST_LIGHT.air[i] - 1) * dusty));
+                sample.ground = sample.ground.map((c, i) => c * soft * (1 + (DUST_LIGHT.air[i] - 1) * dusty));
+
+            }
+
             const intensity = Math.max(...sample.direct);
             state.sunLightIntensity = intensity;
             state.sunLightColor.setRGB(...sample.direct).multiplyScalar(1 / Math.max(intensity, 1e-8));
@@ -294,6 +326,32 @@ export class Sky {
             } else if (sample.discVisibility > 0 && this.space === 0) {
                 state.sunDiscColor.setRGB(...sample.transmission).multiplyScalar(1 / sample.transmission[0]);
             }
+        }
+
+        // Pył: kolor piasku w świetle tej pory dnia (z jasności horyzontu
+        // przed zabarwieniem) - ten sam dla nieba, mgiełki, ściany pyłu
+        // i ziaren piasku. Lekki pył żółci tylko horyzont, burza piaskowa
+        // zamyka całe niebo.
+
+        const horizon = this.state.horizon;
+        const glow = Math.max(0.012, 0.2126 * horizon.r + 0.7152 * horizon.g + 0.0722 * horizon.b) * DUST_LIGHT.glow;
+
+        this.state.dustColor.setRGB(DUST_LIGHT.sand[0] * glow, DUST_LIGHT.sand[1] * glow, DUST_LIGHT.sand[2] * glow);
+
+        const dust = Math.min(1, Math.max(0, this.dust)) * (1 - this.space);
+
+        this.state.dust = dust;
+
+        if (dust > 0.001) {
+
+            const state = this.state;
+
+            state.horizon.lerp(state.dustColor, Math.min(1, dust * 1.7));
+            state.zenith.lerp(this.dustZenith.copy(state.dustColor).multiplyScalar(0.8), Math.min(1, 0.45 * dust + 0.75 * dust * dust));
+            state.sunHalo.multiplyScalar(1 - 0.6 * dust);
+            state.starVisibility *= 1 - dust;
+            state.galaxyVisibility *= 1 - dust;
+
         }
 
     }

@@ -70,7 +70,7 @@ const FRUITS = ['strawberry', 'blackberry', 'chili_pepper', 'hazelnut', 'blueber
 // Pogoda, która przyszła sama (nie z komendy /pogoda).
 function naturalWeather(game) {
     return Boolean(game.weather?.ready) && game.weather.field.forced.length === 0 && game.rainOverride === null &&
-        game.weather.field.tempOverride == null;
+        game.weather.field.tempOverride == null && game.weather.field.aridOverride == null;
 }
 
 // Piorun, który przed chwilą uderzył w ziemię nie dalej niż `reach`
@@ -942,6 +942,44 @@ export const ACHIEVEMENTS = [
         comment: 'Trawa chrupie pod butami. Drugie śniadanie też by się przydało.',
         icon: 'lamp_blue',
         check: (game) => naturalWeather(game) && game.weather.frostOverride === null && game.weather.frost > 0.6
+    },
+    {
+        id: 'sandstorm',
+        tier: 'common',
+        title: 'Piasek w zębach',
+        task: 'Znajdź się w burzy piaskowej: na pustyni, gdy mocno wieje (przed frontem chłodnym albo przy burzy).',
+        comment: 'Chrupie. Darmowy peeling całego ciała w cenie.',
+        icon: 'sand',
+        check: (game) => naturalWeather(game) && game.weather.dustOverride == null && game.weather.dust > 0.6 &&
+            (game.shelterCover ?? 1) < 0.5
+    },
+    {
+        id: 'haboob',
+        tier: 'rare',
+        title: 'Ściana',
+        task: 'Daj się połknąć ścianie pyłu (haboob), która idzie przez pustynię przed frontem chłodnym albo burzą.',
+        comment: 'Najpierw horyzont zrobił się brązowy. Potem zniknął. Potem zniknęło wszystko.',
+        icon: 'sand',
+        check: (game) => naturalWeather(game) && game.weather.dustOverride == null && game.weather.dustWall > 0.6
+    },
+    {
+        id: 'dust_devil',
+        tier: 'rare',
+        title: 'Diabełek',
+        task: 'Wejdź w wir pyłowy - wstają nad pustynią w upalne, słoneczne i bezwietrzne popołudnia.',
+        comment: 'Kręci się, szumi, sypie w oczy. Jak młodszy brat, tylko z piasku.',
+        icon: 'dandelion',
+        check: (game) => naturalWeather(game) && game.dustDevils && !game.dustDevils.nearestForced && game.dustDevils.nearest < 2.5
+    },
+    {
+        id: 'sea_storm',
+        tier: 'rare',
+        title: 'Wilk morski',
+        task: 'Bądź na otwartym morzu w czasie sztormu - na tratwie albo wpław.',
+        comment: 'Fale jak domy. No, jak domki. Dobrze: jak pół bloku. Ale mokre!',
+        icon: 'water',
+        check: (game) => naturalWeather(game) && game.weather.seaOverride == null && game.weather.sea > 0.7 &&
+            Boolean(game.rafts?.mounted || game.player?.swimming)
     },
     {
         id: 'head_in_clouds',

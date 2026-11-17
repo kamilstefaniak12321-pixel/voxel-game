@@ -59,6 +59,7 @@ export const SETTING_WORDS = {
     'cienie-chmur': 'cloudShadows',
     'mokra-ziemia': 'wetGround',
     snieg: 'snowCover',
+    'fale-sztormu': 'seaWaves',
     blyski: 'stormFlashes',
     'swiatlo-odbite': 'bounceLight',
     'model-swiatla': 'lightingModel',

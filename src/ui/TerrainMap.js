@@ -69,6 +69,7 @@ const WEATHER_BUDGET_MS = 3;
 const WEATHER_COLORS = {
     high: [255, 255, 255], mid: [214, 220, 228], low: [246, 247, 250], dark: [70, 76, 90],
     rain: [44, 104, 232], storm: [206, 62, 224], fog: [236, 226, 196], snow: [246, 250, 255], snowfall: [150, 210, 255],
+    dust: [214, 150, 72],
     front_cieply: '#e23b2e', front_chlodny: '#2b5fe0', wind: '#101418', strike: '#ffe45c'
 };
 
@@ -594,6 +595,10 @@ export class TerrainMap {
                 // Mgła: jasne, ciepłe kropki (co drugi punkt).
                 if (sample.fog > 0.08 && (i + j) % 2 === 0) blend(C.fog, Math.min(0.8, 0.25 + 0.6 * sample.fog));
 
+                // Pył (1.15.0): płowy, tym gęstszy, im go więcej - ścianę
+                // pyłu widać jako ostry brzeg przed frontem albo wokół burzy.
+                if (sample.dust > 0.06) blend(C.dust, Math.min(0.9, 0.2 + 0.75 * sample.dust) * ((i + j) % 2 === 0 ? 1 : 0.7));
+
                 // Opad kreskowany na ukos, burza gęściej.
                 // (Śnieg - jasnoniebieski, deszcz - niebieski.)
                 if (sample.rain > 0.04) {
@@ -997,7 +1002,7 @@ export class TerrainMap {
         else if (this.layer === 'pogoda') {
 
             entries.push(['#f6f7fa', 'chmury niskie'], ['#464c5a', 'piętrzące się (deszczowe, burzowe)'], ['#aab4c0', 'średnie i wysokie'],
-                ['#2c68e8', 'deszcz'], ['#96d2ff', 'śnieg'], ['#f6faff', 'pokrywa śnieżna'], ['#ce3ee0', 'burza'], [WEATHER_COLORS.strike, 'wyładowania (krzyżyk - piorun w ziemię)'], ['#ece2c4', 'mgła'], [WEATHER_COLORS.front_cieply, 'front ciepły'], [WEATHER_COLORS.front_chlodny, 'front chłodny'],
+                ['#2c68e8', 'deszcz'], ['#96d2ff', 'śnieg'], ['#f6faff', 'pokrywa śnieżna'], ['#ce3ee0', 'burza'], [WEATHER_COLORS.strike, 'wyładowania (krzyżyk - piorun w ziemię)'], ['#ece2c4', 'mgła'], ['#d69648', 'pył, burza piaskowa'], [WEATHER_COLORS.front_cieply, 'front ciepły'], [WEATHER_COLORS.front_chlodny, 'front chłodny'],
                 [WEATHER_COLORS.wind, 'strzałki: wiatr']);
 
         }

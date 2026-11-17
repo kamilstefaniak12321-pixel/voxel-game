@@ -1,6 +1,6 @@
 import { SEA_LEVEL } from '../config.js';
 
-import { DAY_SECONDS, SYSTEM_NAMES, snowShare, tempAtHeight } from './WeatherField.js';
+import { DAY_SECONDS, SYSTEM_NAMES, seaState, snowShare, tempAtHeight } from './WeatherField.js';
 
 // ------------------------------------------------------------
 // POGODA SŁOWAMI (1.11.0)
@@ -20,6 +20,9 @@ export const SKY_NAMES = {
     ulewa: 'ulewa',
     deszcz: 'deszcz',
     mzawka: 'słaby deszcz',
+    haboob: 'ściana pyłu (haboob)',
+    burza_piaskowa: 'burza piaskowa',
+    pyl: 'pył w powietrzu',
     ciemne: 'ciemne chmury deszczowe',
     pochmurno: 'pochmurno (niskie chmury warstwowe)',
     duze: 'duże zachmurzenie',
@@ -27,10 +30,25 @@ export const SKY_NAMES = {
     srednie: 'chmury średnie',
     pierzaste: 'chmury pierzaste',
     mgla: 'mgła',
+    mgielka_pylowa: 'pyłowa mgiełka',
     szron: 'pogodnie, szron',
     pogodnie: 'pogodnie'
 };
 
+
+// Od jakiego pyłu (0-1) jest pyłowa mgiełka, pył i burza piaskowa.
+export const DUST_NAMES = Object.freeze({ haze: 0.08, dust: 0.28, storm: 0.6 });
+
+// Stan morza słowami (0-1).
+export function seaName(state) {
+
+    if (state < 0.12) return 'spokojne';
+    if (state < 0.4) return 'lekka fala';
+    if (state < 0.7) return 'wzburzone';
+
+    return 'sztorm';
+
+}
 
 // temp - temperatura w miejscu, o które chodzi (na jego wysokości);
 // bez niej - z próbki, czyli na poziomie morza.
@@ -51,12 +69,19 @@ export function skyKey(sample, temp = sample.temp ?? 10) {
     if (sample.rain > 0.55) return 'ulewa';
     if (sample.rain > 0.2) return 'deszcz';
     if (sample.rain > 0.05) return 'mzawka';
+
+    // Od 1.15.0: pył nad pustynią - ściana pyłu przed frontem albo burzą,
+    // burza piaskowa w silnym wietrze, słabszy pył.
+    if (sample.dust > DUST_NAMES.storm) return sample.wall > 0.5 ? 'haboob' : 'burza_piaskowa';
+    if (sample.dust > DUST_NAMES.dust) return 'pyl';
+
     if (sample.fog > 0.35) return 'mgla';
     if (sample.low > 0.85) return sample.thick > 0.4 ? 'ciemne' : 'pochmurno';
     if (sample.low > 0.5) return 'duze';
     if (sample.low > 0.2) return 'klebiaste';
     if (sample.mid > 0.5) return 'srednie';
     if (sample.high > 0.4) return 'pierzaste';
+    if (sample.dust > DUST_NAMES.haze) return 'mgielka_pylowa';
     if (sample.frost > 0.35) return 'szron';
 
     return 'pogodnie';
@@ -195,8 +220,14 @@ export function systemText(field, x, z, days) {
 export function weatherStatus(weather, x, z, days = weather.days, y = SEA_LEVEL) {
 
     const system = systemText(weather.field, x, z, days);
+    const sample = weather.field.sample(x, z, days);
 
-    return `Pogoda: ${sampleText(weather.field.sample(x, z, days), y)}.` + (system ? ` ${system}` : '');
+    // Nad otwartym morzem - także stan morza (z wiatru albo z komendy).
+    const open = weather.seaAt ? weather.seaAt(x, z) : 0;
+    const sea = weather.seaOverride ?? open * seaState(sample.speed);
+    const water = open > 0.5 || weather.seaOverride != null ? ` Morze: ${seaName(sea)}.` : '';
+
+    return `Pogoda: ${sampleText(sample, y)}.${water}` + (system ? ` ${system}` : '');
 
 }
 

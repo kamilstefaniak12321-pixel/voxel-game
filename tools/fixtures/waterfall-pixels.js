@@ -10,6 +10,7 @@ export async function run() {
     const THREE = await import('three');
     const { Game } = await import('/src/game/Game.js');
     const { Settings } = await import('/src/settings/Settings.js');
+    const { CALM_WEATHER, calmWeather } = await import('/tools/fixtures/calm-weather.js');
     const { createWorldInfo } = await import('/src/storage/WorldStorage.js');
     const { atlasReady, atlasAveragesReady } = await import('/src/rendering/TextureAtlas.js');
     const { findScene } = await import('/src/dev/scenes.js');
@@ -23,12 +24,13 @@ export async function run() {
     const settings = new Settings();
     for (const [key, value] of Object.entries({ viewDistance: 32, farTerrain: 0, loadBudget: 1, shadows: 0,
         lightShafts: false, bounceLight: false, meteorites: false, showHand: false, viewBobbing: false,
-        volumeMaster: 0, volumeMusic: 0, cloudCover: 0, fov: 60, renderScale: 100, lightingLook: 'baseline' })) settings.set(key, value);
+        volumeMaster: 0, volumeMusic: 0, cloudCover: 0, fov: 60, renderScale: 100, lightingLook: 'baseline', ...CALM_WEATHER })) settings.set(key, value);
     const input = new Proxy({ consumeMouseDelta: () => ({ x: 0, y: 0 }), consumeKeyPress: () => false, isKeyDown: () => false },
         { get: (target, name) => target[name] ?? (() => 0) });
     const info = createWorldInfo('Wodospady 0.87.0', 731, 'flat', 'developer');
     info.player = { x: .5, y: 40, z: -8.5, yaw: Math.PI, pitch: -.2, flying: true };
     const game = await Game.start(renderer, input, null, info, settings);
+    calmWeather(game);
     game.resize(width, height);
     game.time.speed = 0; game.time.days = .5;
     game.update(1 / 60);

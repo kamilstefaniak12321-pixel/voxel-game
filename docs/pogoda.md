@@ -263,15 +263,19 @@ ulewa, ukos, zawijanie, tryb ziemniaka), głośności i filtry dźwięku oraz
 łańcuch Web Audio na atrapie, gęstość powietrza, shadery, komenda,
 ustawienia, osiągnięcia.
 
-Testy przeglądarkowe, które mierzą kolory albo sterują deszczem, same
-ustawiają pogodę: `tools/fixtures/trees-085.js` przypina wyż nad kamerą
-(świat o ziarnie 42 zaczyna się w deszczu frontowym), a
-`tools/fixtures/waterfall-ripple-benchmark.js` włącza deszcz tak jak
-komenda (`game.rainOverride`). Testy materiałów (`tools/*_render_checks.js`)
-wyłączają pogodę w shaderach na swój czas (`tools/render_check_weather.js`),
-bo porównują teren z modelami, a modele nie mokną i nie dostają cienia
-chmur. Do powtarzalnych porównań światła w grze służy
-`/pogoda ustaw pogodnie`.
+Testy przeglądarkowe, które oglądają drzewa, tekstury i wodospady, mają
+stałe progi kolorów i nie dotyczą pogody, więc ją wyłączają
+(`tools/fixtures/calm-weather.js`: bez chmur, cieni chmur, mokrej ziemi,
+deszczu i mgły) - świat testów o ziarnie 42 zaczyna się w deszczu
+frontowym, a chmury i deszcz liczone programowo wydłużały te testy
+o jedną czwartą. `tools/fixtures/waterfall-ripple-benchmark.js` włącza
+deszcz tak jak komenda (`game.rainOverride`). Testy materiałów
+(`tools/*_render_checks.js`) wyłączają pogodę w shaderach na swój czas
+(`tools/render_check_weather.js`), bo porównują teren z modelami,
+a modele nie mokną i nie dostają cienia chmur. Shadery pogody kompilują
+się i rysują w testach prawdziwej gry z domyślnymi ustawieniami (światło,
+paczka, gra wieloosobowa, logi). Do powtarzalnych porównań światła w grze
+służy `/pogoda ustaw pogodnie`.
 
 ## Braki (stan na 1.12.0)
 

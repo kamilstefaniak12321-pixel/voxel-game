@@ -10,6 +10,7 @@ export async function run() {
     const THREE = await import('three');
     const { Game } = await import('/src/game/Game.js');
     const { Settings } = await import('/src/settings/Settings.js');
+    const { CALM_WEATHER, calmWeather } = await import('/tools/fixtures/calm-weather.js');
     const { createWorldInfo } = await import('/src/storage/WorldStorage.js');
     const { atlasReady } = await import('/src/rendering/TextureAtlas.js');
     const { TREE_SPECIES } = await import('/src/blocks/trees.js');
@@ -28,7 +29,7 @@ export async function run() {
     renderer.setSize(width, height); document.body.prepend(renderer.domElement);
     check(renderer.capabilities.isWebGL2, 'WebGL2');
     const settings = new Settings();
-    const quality = { viewDistance: 128, farTerrain: 0, loadBudget: 8, meteorites: false,
+    const quality = { ...CALM_WEATHER, viewDistance: 128, farTerrain: 0, loadBudget: 8, meteorites: false,
         lightShafts: false, bounceLight: false, showHand: false, shadows: 1, cloudCover: 0,
         lightingModel: 'world', lightingLook: 'natural', viewBobbing: false, volumeMusic: 0,
         leafModel: 'parts', fancyLeaves: true, plantWind: false, plantModels: 'detailed', fov: 70, renderScale: 100,
@@ -38,6 +39,7 @@ export async function run() {
     const input = new Proxy({}, { get: (_, name) => name === 'consumeMouseDelta' ? () => ({ x: 0, y: 0 }) : () => 0 });
     const pause = () => new Promise(resolve => setTimeout(resolve, 0));
     let game = await Game.start(renderer, input, null, createWorldInfo('Drzewa 0.83.0', 42, 'flat', 'developer'), settings);
+    calmWeather(game);
     game.resize(width, height);
     game.player.flying = true; game.time.speed = 0; game.time.days = .43;
     game.world.setDistanceLod(false);
@@ -84,6 +86,7 @@ export async function run() {
     async function openRealistic() {
         await game.stop({ save: false });
         game = await Game.start(renderer, input, null, createWorldInfo('Biomy 0.83.0', 42, 'realistic', 'developer'), settings);
+        calmWeather(game);
         game.resize(width, height);
         game.player.flying = true; game.time.speed = 0; game.time.days = .43;
         const generator = game.world.generator;

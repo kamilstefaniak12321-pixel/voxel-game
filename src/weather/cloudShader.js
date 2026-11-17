@@ -1,5 +1,7 @@
 import * as THREE from 'three';
 
+import { SEA_LEVEL } from '../config.js';
+
 // ------------------------------------------------------------
 // WSPÓLNE DANE CHMUR DLA SHADERÓW (1.11.0)
 //
@@ -31,6 +33,12 @@ export const CLOUD_THICKNESS = [18, 420];
 // boku mapy pogody.
 export const CLOUD_REACH = 7600;
 
+// Ściana pyłu (od 1.15.0): wysokość najwyższych kłębów (y świata -
+// ponad dwa razy wyżej niż najwyższe góry, wyżej niż podstawa chmur
+// niskich) i jak daleko ją widać.
+export const DUST_TOP = 360;
+export const DUST_REACH = 4200;
+
 // Powtarzalność wzorów (bloki): po tylu blokach szum się zawija, więc
 // przesunięcia z wiatrem (uCloudDrift) trzyma się w tym zakresie.
 export const CLOUD_TILES = { low: 2048, group: 7168, mid: 3072, high: 3072 };
@@ -55,7 +63,8 @@ export const cloudUniforms = {
     // przesuwa się cień na każdy blok wysokości (kierunek do światła).
     uCloudShadow: { value: new THREE.Vector3(0, 0, 0) },
 
-    // Druga mapa pogody (od 1.12.0): R opad, G burza, B mokra ziemia, A mgła.
+    // Druga mapa pogody (od 1.12.0): R opad, G burza, B mokra ziemia,
+    // A pył w powietrzu (od 1.15.0; wcześniej nieużywana mgła).
     uWeatherRain: { value: null },
 
     // Kurtyny deszczu pod chmurami: x - czy w okolicy pada (0/1),
@@ -96,7 +105,20 @@ export const cloudUniforms = {
     uSnowColor: { value: new THREE.Color(0.86, 0.9, 0.96) },
 
     // Szron: -2 wyłączony, -1 z mapy, 0-1 z komendy.
-    uFrost: { value: -2 }
+    uFrost: { value: -2 },
+
+    // Pył (od 1.15.0; kanał A drugiej mapy pogody): x - czy w okolicy
+    // jest pył (0/1), y - wysokość wierzchu ściany pyłu (y świata),
+    // z - pył przy kamerze (0-1), w - przesunięcie kłębów (płyną).
+    uDust: { value: new THREE.Vector4(0, DUST_TOP, 0, 0) },
+
+    // Kolor pyłu w świetle i w cieniu (sky/layers/Clouds.js).
+    uDustColor: { value: new THREE.Color(0.8, 0.62, 0.4) },
+    uDustShade: { value: new THREE.Color(0.45, 0.33, 0.2) },
+
+    // Sztorm na morzu widziany z daleka: x - ile piany (0-1), yz - kierunek
+    // wiatru, w - czas (s, zawinięty) - piana płynie z wiatrem.
+    uSea: { value: new THREE.Vector4(0, 1, 0, 0) }
 
 };
 
@@ -125,6 +147,12 @@ export const CLOUD_FIELD_GLSL = /* glsl */ `
         float puffs = textureLod(uCloudNoise, (p + uCloudDrift[0].xy) / ${CLOUD_TILES.low.toFixed(1)}, lod).r;
         float groups = textureLod(uCloudNoise, (p + uCloudDrift[0].zw) / ${CLOUD_TILES.group.toFixed(1)}, max(0.0, lod - 1.8)).g;
         return cloudThreshold(cover) - (0.62 * puffs + 0.38 * groups);
+    }
+
+    // Gęstość zasłony z ilości pyłu (0-1): lekki pył jest rzadki, od około
+    // jednej trzeciej gęstnieje szybko - stąd ostre czoło ściany pyłu.
+    float dustDensity(float dust) {
+        return max(dust * dust * 0.6, smoothstep(0.22, 0.7, dust));
     }
 `;
 
@@ -266,6 +294,23 @@ export const CLOUD_SHADOW_GLSL = /* glsl */ `
         return texture2D(uWeatherRain, worldPosition.xz * uWeatherScale).r;
 
     }
+
+    // Pył nad danym miejscem (0-1) - daleki teren w burzy piaskowej tonie
+    // w płowej zasłonie. Bez pyłu w okolicy nic nie czyta.
+    uniform vec4 uDust;
+    uniform vec3 uDustColor;
+    uniform vec3 uDustShade;
+    uniform vec4 uSea;
+
+    float dustAt(vec3 worldPosition) {
+
+        if (uDust.x < 0.5) {
+            return 0.0;
+        }
+
+        return texture2D(uWeatherRain, worldPosition.xz * uWeatherScale).a;
+
+    }
 `;
 
 
@@ -282,13 +327,16 @@ export const CLOUD_LAYERS_GLSL = /* glsl */ `
     uniform vec3 uCloudLayerLit;    // ile światła dostają: niskie, średnie, wysokie
     uniform vec4 uCloudView;        // x przebieg, y jakość, z kąt piksela, w widoczność
     uniform vec2 uCloudFlow;        // kierunek, z którego płyną (smugi pierzastych)
-    uniform sampler2D uWeatherRain; // R opad, G burza, B mokra ziemia, A mgła
+    uniform sampler2D uWeatherRain; // R opad, G burza, B mokra ziemia, A pył
     uniform vec4 uRainVeil;         // x czy pada w okolicy, y kierunek wiatru, z pochylenie
     uniform vec3 uRainVeilColor;    // kolor zasłony deszczu
     uniform vec4 uSkyOptics;        // x tęcza, y halo
     uniform vec4 uStorm;            // x burza w okolicy, y coś błyska
     uniform vec4 uCloudFlash[3];    // błyski: xy miejsce, z promień, w poziom
     uniform vec3 uCloudFlashColor;
+    uniform vec4 uDust;             // x pył w okolicy, y wierzch ściany, z pył przy kamerze, w ruch kłębów
+    uniform vec3 uDustColor;        // pył w świetle
+    uniform vec3 uDustShade;        // pył w cieniu
 
     const float CLOUD_CELL = ${CLOUD_CELL.toFixed(1)};
     const float CLOUD_REACH = ${CLOUD_REACH.toFixed(1)};
@@ -693,6 +741,76 @@ export const CLOUD_LAYERS_GLSL = /* glsl */ `
 
     }
 
+    // Pył w powietrzu: płowa zasłona od ziemi do wysokości kilkuset
+    // bloków tam, gdzie mapa pogody mówi, że jest pył. Lekki pył daje
+    // żółtawą mgiełkę nad horyzontem, burza piaskowa - ŚCIANĘ z kłębiastym
+    // wierzchem, którą widać z daleka, zanim nadejdzie (haboob).
+    vec4 dustWall(vec3 ro, vec3 rd, vec3 sky) {
+
+        float flat2 = max(length(rd.xz), 1e-4);
+        float rise = rd.y / flat2;
+
+        float top = uDust.y;
+
+        // Tak daleko promień jest jeszcze poniżej wierzchu pyłu.
+        float reach = min((top - ro.y) / max(rise, 1e-4), ${DUST_REACH.toFixed(1)});
+
+        if (reach < 40.0) {
+            return vec4(0.0);
+        }
+
+        vec2 step2 = rd.xz / flat2;
+        float shift = textureLod(uCloudNoise, vec2(atan(rd.z, rd.x) * 7.3, rd.y * 3.1), 0.0).a;
+        float clear = 1.0;
+        float lit = 0.0;
+
+        for (int i = 0; i < 12; i++) {
+
+            // Próbki gęściej blisko kamery.
+            float u = (float(i) + shift) / 12.0;
+            float d = mix(25.0, reach, u * (0.35 + 0.65 * u));
+            vec2 p = ro.xz + step2 * d;
+
+            // Blisko kamery liczy się też pył wokół niej (mapa ma punkt co
+            // ponad sto bloków, a pył z komendy jest tylko przy graczu).
+            float dust = max(textureLod(uWeatherRain, p * uWeatherScale, 0.0).a, uDust.z * (1.0 - smoothstep(150.0, 700.0, d)));
+
+            if (dust > 0.02) {
+
+                // Kłęby: wierzch raz wyżej, raz niżej; gęstość nierówna.
+                // Lekki pył trzyma się nisko, burza piaskowa sięga wysoko.
+                vec4 puff = textureLod(uCloudNoise, p / 1536.0 + uDust.w, 0.0);
+                float crown = mix(${SEA_LEVEL.toFixed(1)}, top, (0.45 + 0.55 * puff.r) * (0.25 + 0.75 * smoothstep(0.15, 0.5, dust)));
+                float h = ro.y + rise * d;
+
+                // (Waga próbki = długość jej odcinka promienia.)
+                // (Lekki pył jest rzadki; od ok. 1/3 gęstnieje szybko -
+                // stąd ostre czoło ściany.)
+                float density = dustDensity(dust) * smoothstep(crown, mix(${SEA_LEVEL.toFixed(1)}, crown, 0.9), h) * (0.55 + 0.9 * puff.g)
+                    * (0.35 + 1.3 * u) * (reach - 25.0) / 12.0;
+                float cover = 1.0 - exp(-density / 80.0);
+
+                // Liczy się to, co widać od strony kamery: u góry kłęby
+                // łapią światło, u dołu ściana jest ciemna.
+                lit += clear * cover * smoothstep(0.45, 1.0, (h - ${SEA_LEVEL.toFixed(1)}) / max(crown - ${SEA_LEVEL.toFixed(1)}, 1.0)) * (0.7 + 0.3 * puff.a);
+                clear *= 1.0 - cover;
+
+            }
+
+        }
+
+        float alpha = 1.0 - clear;
+
+        if (alpha < 0.01) {
+            return vec4(0.0);
+        }
+
+        vec3 color = mix(uDustShade, uDustColor, 0.05 + 0.9 * lit / alpha);
+
+        return vec4(mix(color, sky, 0.05), min(alpha, 0.97));
+
+    }
+
     // Tęcza (łuk 42 stopnie wokół miejsca naprzeciw słońca, siedem pasów
     // jak z klocków) i halo (pierścień 22 stopnie wokół światła).
     vec4 skyOptics(vec3 rd) {
@@ -748,7 +866,20 @@ export const CLOUD_LAYERS_GLSL = /* glsl */ `
         bool below = uCloudView.x > 0.5;
 
         if ((rd.y > 0.0) == below || abs(rd.y) < 1e-4) {
+
+            // Pas nieba tuż pod poziomem oczu (z wysoka widać go między
+            // końcem dalekiego terenu a widnokręgiem): ściana pyłu sięga
+            // do samej ziemi, więc rysuje się i tam.
+            if (!below && uDust.x > 0.5 && rd.y > -0.3 && ro.y < uCloudLevels.x) {
+
+                vec4 dust = dustWall(ro, rd, skyColor(normalize(vec3(rd.x, 0.0, rd.z))));
+
+                return vec4(dust.rgb, dust.a * uCloudView.w);
+
+            }
+
             return vec4(0.0);
+
         }
 
         vec3 sky = skyColor(normalize(vec3(rd.x, max(rd.y, 0.0), rd.z)));
@@ -765,8 +896,14 @@ export const CLOUD_LAYERS_GLSL = /* glsl */ `
 
         }
 
-        // Najbliżej kamery: tęcza i halo, potem deszcz pod chmurami.
+        // Najbliżej kamery: pył (zasłania wszystko za sobą), tęcza i halo,
+        // potem deszcz pod chmurami.
         if (!below && ro.y < uCloudLevels.x) {
+
+            if (uDust.x > 0.5) {
+                vec4 dust = dustWall(ro, rd, sky);
+                cloudOver(result, dust.rgb, dust.a);
+            }
 
             vec4 optics = skyOptics(rd);
 

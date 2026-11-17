@@ -90,6 +90,7 @@ export const ADVANCED_VIDEO = [
     'cloudShadows',
     'wetGround',
     'snowCover',
+    'seaWaves',
     'fancyLeaves',
     'farDetail',
     'renderScale',

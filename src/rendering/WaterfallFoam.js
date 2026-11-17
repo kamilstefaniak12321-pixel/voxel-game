@@ -58,7 +58,7 @@ function createMaterial(texture) {
             ${WATER_WAVE_GLSL}`,
         vertexTransform: `
             vec3 foamWorld = (modelMatrix * vec4(transformed, 1.0)).xyz;
-            transformed.y += waterWave(foamWorld.xz, uTime) * uWaveHeight * foamWave;
+            transformed.y += (waterWave(foamWorld.xz, uTime) * uWaveHeight + seaSwell(foamWorld, uTime)) * foamWave;
             vFoamParams = foamParams;
             vFoamFlow = foamFlow;
             vFoamPhase = foamPhase;`,

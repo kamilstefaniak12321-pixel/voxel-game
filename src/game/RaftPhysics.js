@@ -117,7 +117,8 @@ export class RaftBody {
                 const decay=Math.exp(-3*h),fx=w.flow?.[0]??0,fz=w.flow?.[1]??0;
                 this.vel.x=this.vel.x*decay+(ax*3+fx)*(1-decay);
                 this.vel.z=this.vel.z*decay+(az*3+fz)*(1-decay);
-                const target=w.surface+.08;
+                // W sztormie tratwa unosi się na falach (world.waveOffset - Game).
+                const target=w.surface+.08+(this.world.waveOffset?.(this.pos.x,w.surface,this.pos.z)??0);
                 this.vel.y += (38*(target-this.pos.y)-10*this.vel.y)*h;
                 this.vel.y=Math.max(-6,Math.min(4,this.vel.y));
             } else {

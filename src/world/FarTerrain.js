@@ -596,6 +596,18 @@ export function createFarTerrainMaterial(level = 0, tileFade = { value: new THRE
 
                 }
 
+                // Sztorm (1.15.0): z daleka morze jest pocętkowane pianą,
+                // która płynie z wiatrem.
+                if (uSea.x > 0.01 && abs(vFarWorld.y - ${(SEA_LEVEL + 1).toFixed(1)}) < 2.5) {
+
+                    float farSea = step(diffuseColor.r * 2.2 + 0.02, diffuseColor.b);
+                    float farFoam = textureLod(uCloudNoise, (vFarWorld.xz - uSea.yz * uSea.w * 1.6) / 96.0, 0.0).a;
+
+                    diffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.9, 0.94, 0.97),
+                        farSea * 0.6 * uSea.x * smoothstep(0.93 - 0.08 * uSea.x, 0.99 - 0.05 * uSea.x, farFoam));
+
+                }
+
                 // Klasyczny widok: każda kratka trochę jaśniejsza albo
                 // ciemniejsza. Atmosfera używa czystego albedo tekstur.
 
@@ -705,6 +717,20 @@ export function createFarTerrainMaterial(level = 0, tileFade = { value: new THRE
 
                 hazeSky = mix(hazeSky, uRainVeilColor, min(1.0, farRain * 1.6));
                 haze = mix(haze, 1.0, 0.78 * farRain);
+
+                // Pył nad dalekim terenem (od 1.15.0): burza piaskowa
+                // i ściana pyłu zasłaniają go płową zasłoną - dołem ciemną,
+                // jak ściana na niebie nad nim. Liczy się pył tam, gdzie
+                // jest teren, i w połowie drogi do niego.
+                if (uDust.x > 0.5) {
+
+                    float farDust = max(dustAt(vFarWorld), dustAt(vec3(cameraPosition.xz + farDirection.xz * 0.5, 0.0).xzy));
+
+                    farDust = dustDensity(farDust) * smoothstep(120.0, 900.0, length(farDirection.xz));
+                    hazeSky = mix(hazeSky, mix(uDustShade, uDustColor, 0.3), min(1.0, farDust * 1.5));
+                    haze = mix(haze, 1.0, 0.92 * min(1.0, farDust * 1.4));
+
+                }
 
                 // Daleki teren i jego woda używają tej samej absorpcji
                 // pod wodą co bliskie powierzchnie. Baza A/B bez zmian.

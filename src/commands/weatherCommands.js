@@ -5,14 +5,15 @@
 // (src/weather/WeatherField.js). Komenda /pogoda pokazuje ją, podaje
 // prognozę, szuka frontów i - do sprawdzania - ustawia wybraną pogodę
 // nad graczem albo każe jej nadciągnąć. Od 1.13.0 także piorun na
-// zawołanie i grad, od 1.14.0 temperatura, śnieg, pokrywa śnieżna i szron.
+// zawołanie i grad, od 1.14.0 temperatura, śnieg, pokrywa śnieżna i szron,
+// od 1.15.0 pył, ściana pyłu (haboob), wir pyłowy i sztorm.
 // ------------------------------------------------------------
 
 import { CommandError, simplify } from './CommandRegistry.js';
 import { parseNumber, usageError } from './commandHelpers.js';
-import { SYSTEM_NAMES } from '../weather/WeatherField.js';
+import { FLOW_SPEED, SYSTEM_NAMES } from '../weather/WeatherField.js';
 import { THUNDER } from '../weather/Thunderstorm.js';
-import { forecastLines, sideName, tempText, weatherStatus } from '../weather/weatherText.js';
+import { forecastLines, seaName, sideName, tempText, weatherStatus } from '../weather/weatherText.js';
 
 // Słowo z komendy -> rodzaj układu pogodowego.
 const KINDS = {
@@ -31,6 +32,10 @@ const KIND_WORDS = ['pogodnie', 'pochmurno', 'front-cieply', 'front-chlodny', 'b
 // żeby najpierw było widać go na horyzoncie.
 const ARRIVAL = { front_cieply: 4300, front_chlodny: 2600, burze: 2400, niz: 4200, wyz: 5200, przelotne: 3300, pierzaste: 3900 };
 
+// Ściana pyłu z komendy: tyle bloków pod wiatr zaczyna front (czoło pyłu
+// idzie 1500 bloków przed nim).
+const HABOOB_AHEAD = 2700;
+
 const kindOf = (word) => KINDS[simplify(word ?? '').replace(/[-_ ]/g, '')] ?? null;
 
 
@@ -39,7 +44,7 @@ export const WEATHER_COMMANDS = [
     {
         name: 'pogoda',
         aliases: ['weather'],
-        usage: '/pogoda | prognoza | ustaw <rodzaj> [nadciaga] | znajdz <rodzaj> [tp] | auto | deszcz [0-100] | sucho | mgla [0-100] | tecza [wl|wyl] | piorun [odległość] [chmura] | grad [0-100] | temperatura <stopnie> | snieg [0-100] | pokrywa [0-100] | szron [0-100]',
+        usage: '/pogoda | prognoza | ustaw <rodzaj> [nadciaga] | znajdz <rodzaj> [tp] | auto | deszcz [0-100] | sucho | mgla [0-100] | tecza [wl|wyl] | piorun [odległość] [chmura] | grad [0-100] | temperatura <stopnie> | snieg [0-100] | pokrywa [0-100] | szron [0-100] | pyl [0-100] | haboob [teraz] | wir [0-100] | sztorm [0-100]',
         description: 'Pogoda nad tobą, prognoza, szukanie frontów i burz; do sprawdzania - ustawienie pogody ' +
             `(rodzaje: ${KIND_WORDS.join(', ')}). Mapa pogody: /mapa pogoda.`,
 
@@ -75,6 +80,10 @@ export const WEATHER_COMMANDS = [
                 weather.coverOverride = null;
                 weather.frostOverride = null;
                 weather.field.tempOverride = null;
+                weather.field.aridOverride = null;
+                weather.dustOverride = null;
+                weather.seaOverride = null;
+                if (game.dustDevils) game.dustDevils.forced = null;
                 game.rainOverride = null;
 
                 return 'Pogoda znów liczy się sama.';
@@ -309,6 +318,89 @@ export const WEATHER_COMMANDS = [
 
             }
 
+            if (word === 'pyl' && args.length <= 2) {
+
+                const amount = args[1] === undefined ? 100 : parseNumber(args[1], 'pył');
+
+                if (amount < 0 || amount > 100) {
+                    throw new CommandError('Pył: od 0 do 100.');
+                }
+
+                // Pył w powietrzu wokół gracza (nie w polu pogody - bez
+                // ściany na horyzoncie; do niej jest /pogoda haboob).
+                weather.dustOverride = amount / 100;
+
+                return `Pył w powietrzu: ${amount}% do odwołania (/pogoda auto). ` +
+                    (amount >= 60 ? 'To burza piaskowa.' : amount >= 28 ? 'Powyżej 60 jest burza piaskowa.' : 'To pyłowa mgiełka; powyżej 60 jest burza piaskowa.');
+
+            }
+
+            if (word === 'haboob' && args.length <= 2) {
+
+                const now = args[1] !== undefined && simplify(args[1]) === 'teraz';
+
+                if (args[1] !== undefined && !now) {
+                    throw usageError(this);
+                }
+
+                // Front chłodny nadciągający nad suchą ziemię: przed nim
+                // idzie ściana pyłu. Do sprawdzania - ziemia jest "sucha"
+                // wszędzie, także poza pustynią.
+                weather.field.aridOverride = 1;
+                weather.dustOverride = null;
+                weather.field.clearForced();
+                weather.field.force('front_chlodny', x, z, days, { ahead: now ? 1000 : HABOOB_AHEAD });
+                weather.reset();
+                game.rainOverride = null;
+
+                const minutes = Math.max(1, Math.round((HABOOB_AHEAD - 1500) / FLOW_SPEED / 60));
+
+                return now
+                    ? 'Jesteś w ścianie pyłu (haboob); za nią przyjdzie deszcz. Powrót do zwykłej pogody: /pogoda auto.'
+                    : `Nadciąga ściana pyłu (haboob) - patrz na ${sideName(weather.field.flow.angle + Math.PI)}; dojdzie za ok. ${minutes} min, ` +
+                        'za nią deszcz. Powrót do zwykłej pogody: /pogoda auto.';
+
+            }
+
+            if (word === 'wir' && args.length <= 2) {
+
+                const size = args[1] === undefined ? 70 : parseNumber(args[1], 'wielkość wiru');
+
+                if (size < 0 || size > 100) {
+                    throw new CommandError('Wielkość wiru: od 0 do 100.');
+                }
+
+                if (!game.dustDevils) {
+                    throw new CommandError('Wiry pyłowe są dostępne po wejściu do świata.');
+                }
+
+                // Kilkanaście bloków przed graczem.
+                const look = game.camera.getWorldDirection(game.camera.position.clone());
+                const flat = Math.hypot(look.x, look.z) || 1;
+
+                game.dustDevils.force(x + look.x / flat * 14, z + look.z / flat * 14, days, size / 100);
+
+                return 'Wir pyłowy wstaje 14 bloków przed tobą; potrwa niecałą minutę.';
+
+            }
+
+            if (word === 'sztorm' && args.length <= 2) {
+
+                const amount = args[1] === undefined ? 100 : parseNumber(args[1], 'stan morza');
+
+                if (amount < 0 || amount > 100) {
+                    throw new CommandError('Stan morza: od 0 do 100.');
+                }
+
+                // Same fale, piana i bryzgi (wiatr i niebo zostają) - na
+                // każdej wodzie na poziomie morza.
+                weather.seaOverride = amount / 100;
+
+                return `Stan morza: ${amount}% (${seaName(amount / 100)}) do odwołania (/pogoda auto). ` +
+                    'Fale i pianę widać na wodzie na poziomie morza; prawdziwy sztorm: /pogoda ustaw front-chlodny nad morzem.';
+
+            }
+
             if (word === 'grad' && args.length <= 2) {
 
                 const amount = args[1] === undefined ? 100 : parseNumber(args[1], 'natężenie gradu');
@@ -329,12 +421,13 @@ export const WEATHER_COMMANDS = [
 
         complete(args) {
 
-            if (args.length === 1) return ['prognoza', 'ustaw', 'znajdz', 'auto', 'deszcz', 'sucho', 'mgla', 'tecza', 'piorun', 'grad', 'temperatura', 'snieg', 'pokrywa', 'szron'];
+            if (args.length === 1) return ['prognoza', 'ustaw', 'znajdz', 'auto', 'deszcz', 'sucho', 'mgla', 'tecza', 'piorun', 'grad', 'temperatura', 'snieg', 'pokrywa', 'szron', 'pyl', 'haboob', 'wir', 'sztorm'];
 
             const word = simplify(args[0]);
 
             if (args.length === 2 && ['ustaw', 'znajdz'].includes(word)) return KIND_WORDS;
             if (args.length === 2 && word === 'tecza') return ['wl', 'wyl'];
+            if (args.length === 2 && word === 'haboob') return ['teraz'];
             if (args.length >= 2 && args.length <= 3 && word === 'piorun') return ['chmura'];
             if (args.length === 3) return word === 'ustaw' ? ['nadciaga'] : word === 'znajdz' ? ['tp'] : [];
 

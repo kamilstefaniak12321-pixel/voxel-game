@@ -11,6 +11,42 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 1.15.0 - Pogoda, część 5: pustynia i morze
+
+PR #167. Opis: [`docs/pogoda.md`](docs/pogoda.md).
+
+- **Pył.** Na pustyni i (słabiej) na sawannie powietrze bywa zapylone:
+  w upalne popołudnia horyzont żółknie od lekkiej mgiełki, a gdy mocno
+  wieje, wiatr podnosi pył z suchej ziemi. Niebo płowieje, słońce
+  przygasa, widać coraz bliżej. Po deszczu, na mokrej ziemi, pyłu nie ma.
+- **Burza piaskowa.** W silnym wietrze pył zamyka całe niebo: widać na
+  kilkadziesiąt bloków, w powietrzu lecą ziarna piasku, przy ziemi suną
+  strugi, piasek syczy, wicher wyje. Pod dachem piasek nie leci.
+- **Ściana pyłu (haboob).** Przed frontem chłodnym i wokół burzy idzie
+  przez pustynię ostra, kłębiasta ściana pyłu wysoka na kilkaset bloków.
+  Widać ją z kilku kilometrów, zanim nadejdzie; w środku wieje dużo
+  mocniej niż zwykle, a za nią przychodzi deszcz i zmywa pył.
+- **Wiry pyłowe.** W upalne, słoneczne i prawie bezwietrzne popołudnia
+  nad pustynią wstają kręcące się słupy pyłu - żyją niecałą minutę,
+  wędrują z wiatrem i znikają. Wszyscy gracze widzą te same.
+- **Sztorm.** Morze ma stan zależny od wiatru: przy froncie chłodnym jest
+  wzburzone, w burzy przychodzi sztorm. Po tafli idą z wiatrem długie
+  fale, na grzbietach bieleje piana, nisko nad wodą lecą bryzgi, fale
+  huczą. Tratwa i liście na wodzie unoszą się na fali. Jeziora i rzeki
+  zostają spokojne.
+- **Opisy i mapa.** `/pogoda` i prognoza znają pyłową mgiełkę, pył, burzę
+  piaskową i ścianę pyłu, a nad morzem podają jego stan; mapa pogody
+  pokazuje pył.
+- **Komendy:** `/pogoda pyl [0-100]`, `/pogoda haboob [teraz]`,
+  `/pogoda wir [0-100]`, `/pogoda sztorm [0-100]`.
+- **Ustawienie** *Fale i piana sztormu* (`/ustaw fale-sztormu`).
+- **Osiągnięcia:** *Piasek w zębach*, *Ściana*, *Diabełek*, *Wilk morski*.
+- Test „Logi, raport i obsługa błędów" nie zawodzi już losowo: sztuczne
+  przycięcie jest wstrzykiwane do skutku (dotąd raz - i bywało, że nie
+  trafiało do trzech najdłuższych klatek swojej sekundy).
+
+---
+
 ## 1.14.1 - Poprawki zimy: klimat i zamieć
 
 PR #166.

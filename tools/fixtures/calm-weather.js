@@ -4,7 +4,8 @@
 // mają stałe progi kolorów i nie dotyczą pogody, a chmury i deszcz liczone
 // programowo (CI bez karty graficznej) wydłużały je o jedną czwartą.
 //   CALM_WEATHER - ustawienia: bez chmur, ich cieni, mokrej ziemi
-//                  i pokrywy śnieżnej (od 1.14.0),
+//                  i pokrywy śnieżnej (od 1.14.0); bez chmur nie ma też
+//                  pyłu, piasku, wirów pyłowych ani sztormu (od 1.15.0),
 //   calmWeather(game) - po każdym Game.start: bez deszczu, mgły, tęczy,
 //                       gradu i burzy.
 // Pogodę sprawdzają osobno tools/sprawdz_pogode.mjs, sprawdz_deszcz.mjs

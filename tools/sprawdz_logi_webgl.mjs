@@ -171,11 +171,29 @@ try {
     await pause(500);
     await evaluate(`diagnosticsQA.phase('playing');diagnosticsQA.frameDiagnostics.reset('qa-start');true`);
     await waitFor('Boolean(diagnosticsQA.frameDiagnostics.snapshot())');
-    await evaluate(`(() => { const world=diagnosticsQA.game.world, original=world.updateMeshes;
-      world.updateMeshes=function(...args){this.updateMeshes=original;const until=performance.now()+85;while(performance.now()<until){};return original.apply(this,args);};
-      diagnosticsQA.frameDiagnostics.lastIncident=-Infinity;return true;})()`);
-    await waitFor(`diagnosticsQA.diagnostics.snapshot().performance.some(p=>(p.data??p).slowFrames?.some(f=>f.stages.some(s=>s.id==='mesh'&&s.ms>=75)))`);
-    const spike = await evaluate(`diagnosticsQA.diagnostics.snapshot().performance.map(p=>p.data??p).find(p=>p.slowFrames?.some(f=>f.stages.some(s=>s.id==='mesh'&&s.ms>=75)))`);
+    // The recorder keeps the three longest frames of each one-second window.
+    // Under software rendering ordinary frames are long and uneven, so one
+    // injected 85 ms spike is not always among them (it was the cause of
+    // intermittent CI failures). Inject again, a window later, until the
+    // spike is recorded AND reported as an incident; every attempt is an
+    // independent window. The phase is limited to one minute (the CI step allows two).
+    const spikeSample = `diagnosticsQA.diagnostics.snapshot().performance.some(p=>(p.data??p).slowFrames?.some(f=>f.stages.some(s=>s.id==='mesh'&&s.ms>=75)))`;
+    const spikeEvent = `diagnosticsQA.diagnostics.snapshot().events.some(e=>e.kind==='performance.drop'&&e.data?.summary?.suspects?.some(s=>s.evidence?.stage==='mesh'&&s.evidence?.ms>=75))`;
+    const spikeDeadline = Date.now() + 60000;
+    let spikeAttempts = 0;
+    while (!(await evaluate(`${spikeSample}&&${spikeEvent}`))) {
+        if (Date.now() > spikeDeadline) throw new Error(`Condition timed out after ${spikeAttempts} injected spikes: ${spikeSample}`);
+        spikeAttempts++;
+        await evaluate(`(() => { const world=diagnosticsQA.game.world, original=world.__qaMeshes??world.updateMeshes;
+          world.__qaMeshes=original;
+          world.updateMeshes=function(...args){this.updateMeshes=original;const until=performance.now()+85;while(performance.now()<until){};return original.apply(this,args);};
+          diagnosticsQA.frameDiagnostics.lastIncident=-Infinity;return true;})()`);
+        // Two full windows: the spike frame's window must close and publish.
+        const attemptDeadline = Date.now() + 3500;
+        while (Date.now() < attemptDeadline && !(await evaluate(`${spikeSample}&&${spikeEvent}`))) await pause(200);
+    }
+    results.spikeAttempts = spikeAttempts;
+    const spike = await evaluate(`diagnosticsQA.diagnostics.snapshot().performance.map(p=>p.data??p).findLast(p=>p.slowFrames?.some(f=>f.stages.some(s=>s.id==='mesh'&&s.ms>=75)))`);
     check(spike.suspects.some(s => s.kind === 'cpu' && s.evidence.stage === 'mesh'), 'Controlled 85ms meshing spike attributed to measured same-frame CPU');
     results.controlledSpike = spike;
     const markersBefore = await evaluate(`diagnosticsQA.diagnostics.snapshot().events.filter(e=>e.kind==='user.problem').length`);
@@ -210,7 +228,7 @@ try {
     await evaluate(`delete document.hidden;document.dispatchEvent(new Event('visibilitychange'));diagnosticsQA.phase('paused');diagnosticsQA.menu.showPause();true`);
     await click('Diagnostyka i logi');
     const expandedSpike = await evaluate(`(() => {
-        const event=diagnosticsQA.diagnostics.snapshot().events.find(e=>e.kind==='performance.drop'&&e.data?.summary?.suspects?.some(s=>s.evidence?.stage==='mesh'&&s.evidence?.ms>=75));
+        const event=diagnosticsQA.diagnostics.snapshot().events.findLast(e=>e.kind==='performance.drop'&&e.data?.summary?.suspects?.some(s=>s.evidence?.stage==='mesh'&&s.evidence?.ms>=75));
         const detail=[...document.querySelectorAll('.diagnostics-event')].find(node=>node.dataset.eventId===event?.id);
         if(!detail)return null;
         detail.querySelector('summary').click();

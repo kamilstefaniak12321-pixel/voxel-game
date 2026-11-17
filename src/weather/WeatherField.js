@@ -132,6 +132,38 @@ export function climateTemp(warmth) {
 
 }
 
+// PYŁ (od 1.15.0). Wiatr podnosi pył tylko tam, gdzie ziemia jest sucha
+// i goła - na pustyni i (słabiej) na sawannie.
+//   DUST.wind   - od jakiego wiatru (bloki/s) pył się podnosi i przy jakim
+//                 jest burza piaskowa,
+//   DUST.haze   - pyłowa mgiełka gorącego popołudnia (bez wiatru),
+//   DUST.heat   - od ilu stopni się pojawia i przy ilu jest pełna,
+//   DUST.savanna - ile pyłu daje sawanna (pustynia 1),
+//   DUST.gust   - o tyle (bloki/s) silniej wieje w ścianie pyłu.
+export const DUST = Object.freeze({ wind: [4.2, 9.5], haze: 0.16, heat: [18, 30], savanna: 0.4, gust: 6.5 });
+
+// Suchość miejsca 0-1 (1 - pustynia) z wilgotności i ciepła klimatu
+// (-1..1). Te same progi co biomy pustyni i sawanny (terrain/Biomes.js).
+export function aridity(humidity, warmth) {
+
+    const desert = ramp(-0.3, -0.55, humidity) * ramp(0.2, 0.45, warmth);
+    const savanna = ramp(-0.05, -0.3, humidity) * ramp(0.3, 0.5, warmth);
+
+    return Math.max(desert, DUST.savanna * savanna);
+
+}
+
+// Stan morza 0-1 z wiatru (bloki/s): od lekkiej fali po sztorm. Zwykły
+// wiatr (do ok. 2,5) morza nie rusza, front ciepły daje lekką falę, front
+// chłodny wzburzone morze, a burza i najsilniejsze fronty - sztorm.
+export const SEA_WIND = Object.freeze([2.5, 7.5]);
+
+export function seaState(speed) {
+
+    return ramp(SEA_WIND[0], SEA_WIND[1], speed);
+
+}
+
 // Temperatura na wysokości y (bloki) z temperatury na poziomie morza.
 export function tempAtHeight(temp, y, seaLevel) {
 
@@ -205,7 +237,8 @@ export function emptySample() {
     return {
         low: 0, thick: 0, mid: 0, high: 0, rain: 0, storm: 0, hail: 0, clear: 0, fog: 0,
         windX: 0, windZ: 0, speed: 0, gust: 0, angle: 0,
-        temp: 10, tempSlow: 10, frost: 0
+        temp: 10, tempSlow: 10, frost: 0,
+        arid: 0, dust: 0, wall: 0
     };
 
 }
@@ -240,12 +273,16 @@ export class WeatherField {
         // Temperatura ustawiona komendą (/pogoda temperatura) albo null.
         this.tempOverride = null;
 
+        // Suchość ustawiona komendą (/pogoda haboob - pył także poza
+        // pustynią) albo null.
+        this.aridOverride = null;
+
         // Układy ustawione komendą /pogoda (do końca sesji albo /pogoda auto).
         this.forced = [];
 
         this.season = [0, 0, 0, 0];
         this.pickSeason = [0, 0, 0, 0];
-        this.acc = { low: 0, lowSum: 0, lowThick: 0, mid: 0, high: 0, rain: 0, storm: 0, clear: 0, gain: 0, turn: 0, gust: 0, temp: 0, cool: 0 };
+        this.acc = { low: 0, lowSum: 0, lowThick: 0, mid: 0, high: 0, rain: 0, storm: 0, clear: 0, gain: 0, turn: 0, gust: 0, temp: 0, cool: 0, dust: 0 };
 
     }
 
@@ -458,7 +495,7 @@ export class WeatherField {
         const acc = this.acc;
 
         acc.low = acc.lowSum = acc.lowThick = acc.mid = acc.high = acc.rain = acc.storm = 0;
-        acc.clear = acc.gain = acc.turn = acc.gust = acc.temp = acc.cool = 0;
+        acc.clear = acc.gain = acc.turn = acc.gust = acc.temp = acc.cool = acc.dust = 0;
 
         // Układ z komendy wypiera naturalną pogodę wokół siebie.
 
@@ -527,7 +564,17 @@ export class WeatherField {
         const angle = this.flow.angle + acc.turn +
             0.45 * (0.65 * Math.sin(seconds * 0.006 + seed % 7) + 0.35 * Math.sin(seconds * 0.017 + 1.7));
         const base = (1.2 + 1.1 * noise2(t * 2.3, 5, seed + 34)) * windSeason;
-        const speed = Math.min(11, base * (1 + acc.gain) * (1 - 0.55 * acc.clear));
+
+        // Sucha ziemia (pustynia, sawanna) i ściana pyłu przed frontem
+        // albo wokół burzy: w suchym powietrzu deszcz paruje, zanim
+        // spadnie, i chłodny podmuch jest dużo silniejszy.
+        // (Ciepło klimatu liczy się raz - potrzebuje go też temperatura.)
+        const warm = this.warmth ? this.warmth(x, z) : 0;
+        const arid = this.aridOverride ?? (this.climate && this.warmth ? aridity(humidity, warm) : 0);
+        const dry = arid * ramp(0.15, 0.02, out.rain);
+        const wall = clamp01(dry * acc.dust);
+
+        const speed = Math.min(11, base * (1 + acc.gain) * (1 - 0.55 * acc.clear) + DUST.gust * wall);
 
         out.angle = angle;
         out.speed = speed;
@@ -566,7 +613,7 @@ export class WeatherField {
 
         const overcast = Math.max(out.low, 0.6 * out.mid);
         const slow = season[0] * SEASON_TEMP[0] + season[1] * SEASON_TEMP[1] + season[2] * SEASON_TEMP[2] + season[3] * SEASON_TEMP[3] +
-            (this.warmth ? climateTemp(this.warmth(x, z)) : 0);
+            climateTemp(warm);
 
         out.tempSlow = slow;
         out.temp = slow + DAY_SWING * (1 - 0.65 * overcast) * Math.cos((timeOfDay - 0.62) * Math.PI * 2) +
@@ -585,6 +632,25 @@ export class WeatherField {
             ? clamp01(night * ramp(1.5, -2.5, out.temp) * (1 - 0.85 * overcast) * ramp(4.5, 2, speed) *
                 Math.max(0.2, Math.min(1, 0.75 + 0.5 * humidity)))
             : 0;
+
+        // Pył: na pustyni i sawannie wiatr podnosi go z suchej ziemi -
+        // od lekkiej mgiełki po burzę piaskową. Gorącym popołudniem wisi
+        // w powietrzu nawet bez wiatru. Przed frontem chłodnym i wokół
+        // burzy idzie ŚCIANA pyłu (haboob): podmuch podrywa go, zanim
+        // dojdzie deszcz. Deszcz pył zmywa.
+
+        out.arid = arid;
+        out.wall = wall;
+        out.dust = 0;
+
+        if (dry > 0.001) {
+
+            const lift = ramp(DUST.wind[0], DUST.wind[1], speed);
+            const haze = DUST.haze * afternoon(timeOfDay, 0) * ramp(DUST.heat[0], DUST.heat[1], out.temp) * (1 - 0.7 * overcast);
+
+            out.dust = clamp01(dry * Math.max(haze, lift, acc.dust));
+
+        }
 
         return out;
 
@@ -675,6 +741,9 @@ export class WeatherField {
                 acc.gust += line * 0.8 + post * 0.5;
                 // Przed frontem ciepło i duszno, za nim wyraźnie zimniej.
                 acc.temp += w * (2 * ramp(1800, 600, s) * ramp(-200, 300, s) - 6 * ramp(-200, -900, s) * ramp(-5200, -3800, s));
+                // Ściana pyłu: ostre czoło ponad kilometr przed linią
+                // deszczu, dalej pył aż do ulewy.
+                acc.dust = Math.max(acc.dust, w * ramp(1500, 1250, s) * ramp(-500, 200, s));
                 break;
 
             }
@@ -724,6 +793,9 @@ export class WeatherField {
                     acc.gust += cell * 0.9 * ramp(radius * 2.2, radius, d);
                     // Pod burzą chłodny podmuch.
                     acc.cool = Math.max(acc.cool, 4 * cell * ramp(radius * 1.6, radius * 0.5, d));
+                    // Podmuch rozchodzi się spod burzy i pcha przed sobą
+                    // pierścień pyłu z ostrym brzegiem.
+                    acc.dust = Math.max(acc.dust, Math.min(1, cell * 1.3) * ramp(radius * 2.6, radius * 2.25, d) * ramp(radius * 0.6, radius * 1.2, d));
 
                 }
 

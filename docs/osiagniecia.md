@@ -84,6 +84,10 @@ tylko jako *Sekretne osiągnięcie* ze znakiem zapytania.
 | rzadkie | Zadymka | wyjdź w śnieżycę: gęsty śnieg i wiatr od 6 bloków na sekundę (od 1.14.0) |
 | zwykłe | Biało, bielutko | stań pod gołym niebem tam, gdzie ziemię przykrył śnieg (od 1.14.0) |
 | zwykłe | Srebrny poranek | zobacz szron: mroźna, pogodna i cicha noc albo ranek (od 1.14.0) |
+| zwykłe | Piasek w zębach | znajdź się pod gołym niebem w burzy piaskowej - na pustyni, gdy mocno wieje (od 1.15.0; pył z komendy się nie liczy) |
+| rzadkie | Ściana | daj się połknąć ścianie pyłu (haboob), która idzie przez pustynię przed frontem chłodnym albo burzą (od 1.15.0) |
+| rzadkie | Diabełek | wejdź w wir pyłowy - wstają nad pustynią w upalne, słoneczne i bezwietrzne popołudnia (od 1.15.0) |
+| rzadkie | Wilk morski | bądź na otwartym morzu w czasie sztormu - na tratwie albo wpław (od 1.15.0) |
 | rzadkie | Głowa w chmurach | wleć w niską chmurę - podstawa chmur jest ok. 210 bloków nad zerem (od 1.11.0) |
 | rzadkie | Z małego ziarenka | wyhoduj drzewo z sadzonki (`docs/drzewa.md`) |
 | rzadkie | Komplet narzędzi | zrób siekierę, kilof i łopatę (postęp w księdze) |

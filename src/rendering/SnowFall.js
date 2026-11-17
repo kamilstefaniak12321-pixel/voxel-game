@@ -103,12 +103,19 @@ export class SnowFall {
             uniform vec3 uSnowFlakeColor;
             uniform float uUnderwater;
             varying float vAlpha;
+            // x - miejsce wzdłuż smugi (0-1), y - czy końce mają gasnąć
+            // (zamieć: 1, płatki: 0). Wygaszenie liczy się tutaj, na
+            // piksel: w wierzchołkach (oba końce smugi) byłoby zerem
+            // i smugi nie byłoby widać wcale (błąd 1.14.0).
+            varying vec2 vStreak;
 
             void main() {
 
-                if (uUnderwater > 0.5 || vAlpha <= 0.004) discard;
+                float alpha = vAlpha * (1.0 - vStreak.y * abs(vStreak.x * 2.0 - 1.0));
 
-                gl_FragColor = vec4(uSnowFlakeColor, vAlpha);
+                if (uUnderwater > 0.5 || alpha <= 0.004) discard;
+
+                gl_FragColor = vec4(uSnowFlakeColor, alpha);
 
                 #include <tonemapping_fragment>
                 #include <colorspace_fragment>
@@ -130,8 +137,11 @@ export class SnowFall {
                 uniform float uSnowStretch;
                 uniform float uRainTime;
                 varying float vAlpha;
+                varying vec2 vStreak;
 
                 void main() {
+
+                    vStreak = vec2(position.y, 0.0);
 
                     // Pięć prędkości - większe płatki opadają szybciej.
                     float speed = 0.8 + 0.1 * floor(aSeed.w * 5.0);
@@ -186,8 +196,12 @@ export class SnowFall {
                 uniform vec3 uDriftShape;
                 uniform float uRainTime;
                 varying float vAlpha;
+                varying vec2 vStreak;
 
                 void main() {
+
+                    // Końce smugi gasną (liczone w shaderze pikseli).
+                    vStreak = vec2(position.y, 1.0);
 
                     // Smuga sunie z wiatrem tuż nad ziemią (albo dachem).
                     float speed = 0.8 + 0.1 * floor(aSeed.w * 5.0);
@@ -210,7 +224,7 @@ export class SnowFall {
                     // daleko nad albo pod graczem; wyżej - rzadsza.
                     vAlpha = uDriftShape.y * edge * step(0.5, shelter.r) * step(shelter.g, 0.5)
                         * step(abs(p.y - uRainCamera.y), 20.0) * (1.0 - 0.75 * lift)
-                        * (1.0 - abs(position.y * 2.0 - 1.0)) * smoothstep(1.5, 4.0, length(toCamera));
+                        * smoothstep(1.5, 4.0, length(toCamera));
 
                     gl_Position = vAlpha > 0.004
                         ? projectionMatrix * viewMatrix * vec4(world, 1.0)
@@ -312,7 +326,7 @@ export class SnowFall {
         this.driftOffset.x = mod(this.driftOffset.x + this.driftVelocity.x * step, box.x * 10);
         this.driftOffset.z = mod(this.driftOffset.z + this.driftVelocity.z * step, box.z * 10);
 
-        this.uniforms.uDriftShape.value.set(0.5 + 0.12 * speed, 0.2 + 0.5 * this.driftLevel, RAIN_STREAKS.radius);
+        this.uniforms.uDriftShape.value.set(0.4 + 0.07 * speed, 0.16 + 0.4 * this.driftLevel, RAIN_STREAKS.radius);
 
         // Śnieg nie świeci: nocą ciemnieje razem z niebem.
         const light = sky ? 0.3 + 0.7 * (sky.daylight ?? 1) : 1;

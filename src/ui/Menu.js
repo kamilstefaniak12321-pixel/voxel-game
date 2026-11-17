@@ -1155,7 +1155,7 @@ export class Menu {
 
     // Zapis przy wyjściu się nie udał (na tle zatrzymanej gry).
 
-    showSaveError() {
+    showSaveError(retry = null) {
 
         const screen = this.newScreen('save-error', false);
 
@@ -1165,15 +1165,15 @@ export class Menu {
         const buttons = el('div', 'menu-buttons');
 
         buttons.append(
-            button(TEXTS.retrySave, () => this.handlers.quitToMenu()),
-            button(TEXTS.resume, () => this.handlers.resume()),
-            button(TEXTS.quitWithoutSaving, () => this.handlers.quitWithoutSaving(), 'danger')
+            button(TEXTS.retrySave, retry ?? (() => this.handlers.quitToMenu())),
+            button(TEXTS.resume, () => this.handlers.resume())
         );
+        if (!retry) buttons.append(button(TEXTS.quitWithoutSaving, () => this.handlers.quitWithoutSaving(), 'danger'));
 
 
         screen.append(
             el('h2', 'menu-heading menu-danger', TEXTS.saveFailed),
-            el('p', 'menu-note', TEXTS.saveFailedNote),
+            el('p', 'menu-note', retry ? 'Zmiany są nadal w grze. Możesz ponowić zapis albo wrócić do gry.' : TEXTS.saveFailedNote),
             buttons
         );
 

@@ -36,6 +36,8 @@ export class NetClient extends NetSession {
         this.outgoing = [];
         this.requests = new Set();
         this.saveWait = SAVE_INTERVAL;
+        this.saveSequence = 0;
+        this.pendingSave = null;
         this.prefetchWait = 0;
         this.raftWait = 0;
         this.hostId = null;
@@ -180,6 +182,9 @@ export class NetClient extends NetSession {
         const game = this.game;
         switch (message.t) {
             case MSG.BLOCKS: this.remoteBlocks(message.l); break;
+            case MSG.SAVE_RESULT:
+                if (this.pendingSave && this.pendingSave.id === message.request) this.pendingSave.finish(message.saved === true);
+                break;
             case MSG.PLAYER: {
                 const state = unpackPlayer(message.s);
                 if (state && typeof message.id === 'string') this.players.receive(message.id, state);
@@ -303,24 +308,49 @@ export class NetClient extends NetSession {
     localBlock(x, y, z, id) { this.outgoing.push(x, y, z, id); }
 
     flushBlocks() {
-        if (!this.outgoing.length) return;
+        if (!this.outgoing.length) return true;
         // Paczki do 4096 zmian (wiadomość w kanale ma limit wielkości).
-        for (let i = 0; i < this.outgoing.length; i += BLOCKS_PER_MESSAGE * 4) {
-            this.connection.send({ t: MSG.BLOCKS, l: this.outgoing.slice(i, i + BLOCKS_PER_MESSAGE * 4) });
+        let sent = 0;
+        while (sent < this.outgoing.length) {
+            const changes = this.outgoing.slice(sent, sent + BLOCKS_PER_MESSAGE * 4);
+            if (!this.connection.send({ t: MSG.BLOCKS, l: changes })) break;
+            sent += changes.length;
         }
-        this.stats.sentBlocks += this.outgoing.length / 4;
-        this.outgoing.length = 0;
+        this.stats.sentBlocks += sent / 4;
+        if (sent === this.outgoing.length) {
+            this.outgoing.length = 0;
+            return true;
+        }
+        if (sent) this.outgoing.splice(0, sent);
+        return false;
     }
 
     sendPlayer(s) { this.connection.send({ t: MSG.PLAYER, s }); }
     sendState(sys, key, v) { this.connection.send({ t: MSG.STATE, sys, key, v }); }
     sendChat(text) { this.connection.send({ t: MSG.CHAT, text }); }
 
-    saveNow() {
+    saveNow(request) {
         const game = this.game;
-        if (!game || this.closed) return;
-        this.connection.send({ t: MSG.SAVE, player: game.player.getState(), inventory: game.inventory.data,
+        if (!game || this.closed) return false;
+        return this.connection.send({ t: MSG.SAVE, request, player: game.player.getState(), inventory: game.inventory.data,
             wellbeing: game.wellbeing.data });
+    }
+
+    async saveBeforeExit(timeout = 7000) {
+        if (this.closed || this.pendingSave || !this.flushBlocks()) return false;
+        if (!this.welcome?.saveAck) return this.saveNow() && this.connection.waitForDrain(timeout);
+
+        const id = ++this.saveSequence;
+        return new Promise(resolve => {
+            const finish = saved => {
+                clearTimeout(timer);
+                this.pendingSave = null;
+                resolve(saved);
+            };
+            const timer = setTimeout(() => finish(false), timeout);
+            this.pendingSave = { id, finish };
+            if (!this.saveNow(id)) finish(false);
+        });
     }
 
     update(dt) {
@@ -349,15 +379,18 @@ export class NetClient extends NetSession {
     lost(reason) {
         if (this.closed) return;
         this.closed = true;
+        this.pendingSave?.finish(false);
         this.connection?.close();
         this.onDisconnect?.(reason);
     }
 
     // Wyjście z gry (zapis u gospodarza i rozłączenie).
-    leave() {
+    leave(saved = false) {
         if (this.closed) return;
-        this.saveNow();
-        this.flushBlocks();
+        if (!saved) {
+            this.flushBlocks();
+            this.saveNow();
+        }
         this.connection.send({ t: MSG.BYE });
         this.closed = true;
         const connection = this.connection;

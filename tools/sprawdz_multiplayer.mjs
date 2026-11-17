@@ -291,7 +291,7 @@ const hello = (id, extra = {}) => ({ t: P.MSG.HELLO, protocol: P.PROTOCOL_VERSIO
     game.world.savedChunks.set('4,4', new Uint16Array(4));
     ola.onMessage(hello('aaaaaaaaaaaaaaaa'));
     const welcome = ola.take(P.MSG.WELCOME)[0];
-    check(welcome && welcome.world.seed === 7 && welcome.world.gameMode === 'adventure' && welcome.modified.includes('4,4'), 'Powitanie: ziarno, tryb, zmienione chunki');
+    check(welcome && welcome.saveAck === true && welcome.world.seed === 7 && welcome.world.gameMode === 'adventure' && welcome.modified.includes('4,4'), 'Powitanie: ziarno, tryb, zmienione chunki i obsługa potwierdzenia zapisu');
     check(welcome.you.player.x === 1 && welcome.host.name === 'Kamil', 'Nowy gość obok gospodarza');
     ela.onMessage(hello('bbbbbbbbbbbbbbbb', { name: 'Ela' }));
     check(ola.take(P.MSG.PLAYER_JOIN).some((message) => message.name === 'Ela'), 'Inni dowiadują się o nowym graczu');
@@ -323,6 +323,17 @@ const hello = (id, extra = {}) => ({ t: P.MSG.HELLO, protocol: P.PROTOCOL_VERSIO
     check(game.carpenterTables.tables.get('1,1,1')?.count === 4 && ela.take(P.MSG.STATE).length === 1, 'Stół od gościa - u gospodarza i u innych');
     ola.onMessage({ t: P.MSG.SAVE, player: { x: 9, y: 70, z: 9 }, inventory: { slots: [{ type: 'stone', count: 3 }], selected: 0 } });
     check(game.worldInfo.guests.aaaaaaaaaaaaaaaa.inventory.slots[0].count === 3 && game.worldInfo.guests.aaaaaaaaaaaaaaaa.name === 'Ola', 'Ekwipunek gościa w zapisie gospodarza');
+    for (const saved of [false, true]) {
+        let commit;
+        game.saver = { save: () => new Promise(resolve => { commit = resolve; }) };
+        const request = saved ? 2 : 1;
+        ola.onMessage({ t: P.MSG.SAVE, request });
+        check(!ola.take(P.MSG.SAVE_RESULT).some(result => result.request === request), 'Brak potwierdzenia przed zakończeniem zapisu gospodarza');
+        commit(saved);
+        await Promise.resolve();
+        const result = ola.take(P.MSG.SAVE_RESULT).at(-1);
+        check(result.request === request && result.saved === saved, 'Potwierdzenie podaje wynik właściwej transakcji');
+    }
 
     // Tratwa gościa.
     ola.onMessage({ t: P.MSG.RAFT, v: { id: 500001, x: 3, y: 60, z: 4, yaw: 0, vx: 1, vy: 0, vz: 0 } });
@@ -391,10 +402,44 @@ const hello = (id, extra = {}) => ({ t: P.MSG.HELLO, protocol: P.PROTOCOL_VERSIO
     client.receive({ t: P.MSG.PLAYER_JOIN, id: 'e', name: 'Ela', skin: null });
     client.receive({ t: P.MSG.PLAYER, id: 'e', s: P.packPlayer({ pos: { x: 5, y: 64, z: 5 }, vel: { x: 0, y: 0, z: 0 }, yaw: 0, pitch: 0 }, null, 0) });
     check(client.players.players.get('e')?.state?.x === 5, 'Inny gracz w świecie');
+    game.wellbeing = { data: {} };
+    client.welcome.saveAck = true;
+    const transport = client.connection;
+    const send = transport.send.bind(transport);
+    // Pierwsza pełna paczka wychodzi, ostatni blok zostaje na ponowienie.
+    for (let i = 0; i <= 4096; i++) client.localBlock(i, 72, 2, STONE);
+    transport.send = message => message.l?.length === 4 ? false : send(message);
+    check(!await client.saveBeforeExit() && client.outgoing.join() === `4096,72,2,${STONE}`, 'Odmowa transportu zachowuje dokładnie niewysłane bloki');
+    transport.send = message => message.t !== P.MSG.SAVE && send(message);
+    check(!await client.saveBeforeExit() && !client.outgoing.length, 'Po wysłaniu brakującego bloku odmowa wysłania SAVE zatrzymuje wyjście');
+    transport.send = send;
+    check(!await client.saveBeforeExit(5), 'Brak potwierdzenia zatrzymuje wyjście');
+    const oldId = transport.take(P.MSG.SAVE).at(-1).request;
+    const retry = client.saveBeforeExit();
+    client.receive({ t: P.MSG.SAVE_RESULT, request: oldId, saved: true });
+    check(client.pendingSave?.id !== undefined, 'Spóźniona odpowiedź nie kończy nowej próby');
+    client.receive({ t: P.MSG.SAVE_RESULT, request: transport.take(P.MSG.SAVE).at(-1).request, saved: true });
+    check(await retry, 'Właściwa odpowiedź gospodarza zezwala na wyjście');
+    delete client.welcome.saveAck;
+    const { Connection } = await import('../src/net/PeerTransport.js');
+    const peer = { open: true, on() {}, send() {}, dataChannel: { bufferedAmount: 0 }, bufferSize: 1 };
+    client.connection = new Connection(peer);
+    check(!await client.saveBeforeExit(0), 'Starszy gospodarz: zatrzymanie, dopóki PeerJS przechowuje wiadomości');
+    peer.bufferSize = 0;
+    peer.dataChannel.bufferedAmount = 100;
+    check(!await client.saveBeforeExit(0), 'Starszy gospodarz: zatrzymanie, dopóki RTC ma bajty w buforze');
+    peer.dataChannel.bufferedAmount = 0;
+    check(await client.saveBeforeExit(), 'Starszy gospodarz: wyjście po opróżnieniu obu kolejek');
+    peer.dataChannel.readyState = 'closing';
+    check(!await client.saveBeforeExit(), 'Zamykający się kanał RTC odmawia zapisu, nawet zanim PeerJS dostarczy close');
+    client.connection = transport;
+    client.welcome.saveAck = true;
+    const interrupted = client.saveBeforeExit();
     let lost = null;
     client.onDisconnect = (reason) => { lost = reason; };
     client.receive({ t: P.MSG.BYE, reason: 'koniec' });
     check(lost === 'koniec' && client.closed, 'Gospodarz zamknął świat - gość wraca do menu');
+    check(!await interrupted, 'Rozłączenie w trakcie oczekiwania nie zgłasza sukcesu zapisu');
     check(getBlockTypeById(STONE) === 'stone', 'Numery bloków');
 }
 

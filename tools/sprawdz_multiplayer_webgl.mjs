@@ -195,6 +195,20 @@ try {
         })()`);
         await host.evaluate('window.hostRunning = false'); await running;
         check(seen === expected, `${label} (${seen})`);
+        if (target === far) {
+            const cell = far.join(',');
+            const chunk = `h.game.world.getChunk(${Math.floor(far[0] / 16)}, ${Math.floor(far[2] / 16)})`;
+            await host.evaluate(`(() => { const c = ${chunk}; if (c) h.game.world.unloadChunk(c); })()`);
+            check(await host.evaluate(`!${chunk}`), 'Kopany chunk jest poza pamięcią gospodarza');
+            const before = await host.evaluate('h.net.stats.receivedBlocks');
+            await guest.evaluate(`g.set(${cell}, null); g.net.flushBlocks(); true`);
+            for (let i = 0; i < 50 && await host.evaluate('h.net.stats.receivedBlocks') === before; i++) await pause(50);
+            check(await host.evaluate('h.net.stats.receivedBlocks') > before, 'Gospodarz przyjął wykopanie dalekiego bloku');
+            check(await host.evaluate(`(() => {
+                const c = ${chunk}; if (c) h.game.world.unloadChunk(c);
+                h.game.world.ensureColumnLoaded(${far[0]}, ${far[2]}); return h.block(${cell}) === null;
+            })()`), 'Daleki blok pozostaje wykopany po ponownym wczytaniu u gospodarza');
+        }
     }
 
     // --- Drugi gracz w świecie (model, imię) ------------------------------------
@@ -217,9 +231,9 @@ try {
     await savePng('gosc-widzi-gospodarza.png', await guest.evaluate(`(() => { const p = [...g.net.players.players.values()][0].state; return g.frame([p.x + 3, p.y + 2.5, p.z + 4], [p.x, p.y + 1, p.z]); })()`));
 
     // --- Wyjście gościa ------------------------------------------------------------
-    await guest.evaluate("(async () => { g.game.inventory.set(3, { type: 'oak_planks', count: 11 }); await g.game.stop({ save: false }); })()");
+    check(await guest.evaluate("(async () => { g.game.inventory.set(3, { type: 'oak_planks', count: 11 }); return g.game.stop(); })()"), 'Gość otrzymał potwierdzenie zapisu przed wyjściem');
     await hostLoop(1);
-    const saved = await host.evaluate("(() => { const r = h.game.worldInfo.guests?.fedcba9876543210; return { slot: r?.inventory?.slots?.[3], player: Boolean(r?.player), players: h.net.players.players.size, chat: h.net.chat.at(-1) }; })()");
+    const saved = await host.evaluate("(async () => { const world = (await h.game.saver.storage.listWorlds()).find(w => w.id === h.game.worldInfo.id); const r = world?.guests?.fedcba9876543210; return { slot: r?.inventory?.slots?.[3], player: Boolean(r?.player), players: h.net.players.players.size, chat: h.net.chat.at(-1) }; })()");
     check(saved.slot?.count === 11 && saved.player, 'Ekwipunek i miejsce gościa zapisane u gospodarza');
     check(saved.players === 0 && saved.chat === 'Ola opuszcza grę', 'Gość wyszedł - znika z gry');
 

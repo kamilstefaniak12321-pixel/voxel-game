@@ -37,7 +37,8 @@ export const MSG = {
     RAFT: 'rs',              // gość -> gospodarz: stan jego tratwy { v }
     RAFT_REMOVE: 'rr',       // gość -> gospodarz: { id }
     METEOR: 'm',             // gospodarz -> goście: { x, y, z, fx, fz }
-    SAVE: 'sv',              // gość -> gospodarz: ekwipunek, pozycja i samopoczucie do zapisu
+    SAVE: 'sv',              // gość -> gospodarz: stan do zapisu; request tylko przy wyjściu
+    SAVE_RESULT: 'svr',      // gospodarz -> gość: { request, saved } po transakcji
     BYE: 'bye'               // zamknięcie (świadome) - { reason }
 };
 

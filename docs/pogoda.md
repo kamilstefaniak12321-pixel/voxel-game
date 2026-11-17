@@ -85,7 +85,7 @@ Trzy piętra, każde płynie z inną prędkością i w trochę innym kierunku:
 |---|---|---|---|
 | niskie | podstawa ok. 210 (latem wyżej, zimą niżej) | kłębiaste i warstwowe; zbudowane z kolumn-klocków o boku 8 bloków, z płaską podstawą, tarasami i wierzchem - z bliska jak chmury z klocków, mają boki i widać je także z góry | jak przepływ |
 | średnie | 470 | drobne kłębki albo szara zasłona | 1,25 × |
-| wysokie | 760 | pierzaste, falujące smugi ułożone z wiatrem | 1,9 × |
+| wysokie | 760 | grupy pierzastych włókien ułożonych z wiatrem, z prześwitami błękitu | 1,9 × |
 
 Teren kończy się na wysokości 128, więc chmury zawsze są nad nim.
 
@@ -129,7 +129,9 @@ każda z innego miejsca w kodzie:
   - *Mżawka* (słaby opad z niskiej, cienkiej chmury): drobne krople,
     5 bloków/s, gęsto. Wiatr pochyla ją najmocniej.
   - *Deszcz* i *ulewa*: smugi do około bloku długości, 11-21 bloków/s, im
-    mocniej pada, tym gęściej.
+    mocniej pada, tym gęściej. Najbliższe krople mają krótszy, delikatniejszy
+    ślad. Podczas wznoszenia opad wokół gracza stopniowo zanika w dolnej
+    części chmury. Z góry nadal widać kurtyny deszczu padającego na teren.
 - **Rozpryski** na ziemi (do 700) i **kręgi na wodzie** (dawny
   `RainEffects.js` - jego kreski są teraz ukryte, zostało szukanie, gdzie
   kropla trafia w wodę).
@@ -414,10 +416,9 @@ otwarte morze (`seaAt`).
   0,3 bloku wysokości) - dochodzą do zwykłego falowania wody. Tylko woda
   na poziomie morza i tylko w zasięgu prawdziwych chunków (dalej tafla
   jest płaska, jak woda dalekiego terenu).
-- **Piana:** na grzbietach fal biała piana, która idzie z falą, rwie się
-  w nieregularne płaty i ma brzeg poszarpany co piksel tekstury;
-  w silnym sztormie między falami zostają smugi piany ułożone z wiatrem.
-  Dalekie morze jest pocętkowane pianą.
+- **Piana** płynie z grzbietami fal. Z bliska wiatr rozrywa białe krawędzie
+  na krótkie smugi. Z oddaleniem drobne przerwy stopniowo się zlewają,
+  a te same skupiska piany widać też na uproszczonej tafli morza.
 - **Bryzgi:** nisko nad wodą lecą białe smugi (do 900).
 - **Tratwa i liście na wodzie** unoszą się na fali - gra liczy ten sam
   rachunek co shader (`rendering/WaterWave.js`).
@@ -454,7 +455,8 @@ pod wodą razem z resztą.
 - **Tęcza:** łuk 42° naprzeciw słońca z siedmiu pasów. Pojawia się, gdy
   słońce jest nisko (do około 40° nad horyzontem), świeci na gracza, a po
   przeciwnej stronie nieba pada (z mapy pogody, do 3000 bloków) albo pada
-  tuż przy nim.
+  tuż przy nim. Przy zachodzie łuk przygasa wraz ze słońcem. Komenda
+  podglądu pozwala zobaczyć go bez deszczu i także wymaga słońca nad horyzontem.
 - **Halo:** pierścień 22° wokół słońca albo księżyca, gdy niebo zasnuwa
   cienka warstwa chmur wysokich bez niższych chmur - tak wygląda niebo
   kilka minut przed frontem ciepłym.
@@ -562,8 +564,9 @@ i błyska, ale nie sypie gradem bez przerwy (do gradu jest `/pogoda grad`).
   i bryzgi to po jednym poleceniu rysowania, wiry - jedno na wszystkie.
   Losowanie wirów zajmuje setne części milisekundy na klatkę (pogoda
   oczek jest zapamiętywana). Fale sztormu to kilka sinusów na wierzchołek
-  wody, piana - trzy wartości szumu liczone na piksel tafli morza,
-  tylko w sztormie. Kosztu na prawdziwej karcie także tu nie zmierzono.
+  wody. Od 1.15.1 daleka piana korzysta z jednej próbki tekstury szumu,
+  a bliskie grzbiety dostają dodatkową próbkę do rysowania drobnych przerw.
+  [Porównanie pogody na RTX 3050 Laptop w 1080p](pomiary/pogoda-1.15.1/README.md)
 
 ## Osiągnięcia
 

@@ -163,7 +163,7 @@ finally {
     const workflow = read('.github/workflows/aplikacja.yml');
     check(workflow.indexOf('node tools/pakiet.mjs') > 0 && workflow.indexOf('node tools/pakiet.mjs') < workflow.indexOf('npx electron-builder --win'), 'Wydanie: paczka przed instalatorem');
     check(/\$PUBLIC\/pakiet\/js\/start\.js/.test(workflow), 'Wydanie: aplikacja na telefon bez paczki nie przejdzie');
-    check(read('.gitignore').split('\n').includes('pakiet/'), 'Paczka nie trafia do gita');
+    check(read('.gitignore').split(/\r?\n/).includes('pakiet/'), 'Paczka nie trafia do gita');
     check(!existsSync(join(root, 'pakiet')) || !read('.gitignore').includes('!pakiet'), 'Folder pakiet/ jest pomijany');
     check(read('.github/workflows/testy.yml').includes('sprawdz_pakiet_webgl.mjs'), 'Testy gry uruchamiają prawdziwą grę z paczki');
 }

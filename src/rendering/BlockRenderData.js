@@ -5,7 +5,7 @@ import { campfireLightUniforms, CAMPFIRE_LIGHT_GLSL } from './CampfireLight.js';
 import { SURFACE_LIGHTING_GLSL } from './SurfaceLighting.js';
 import { installLightingDiagnostics } from './LightingDiagnostics.js';
 import { plantWindUniforms, PLANT_WIND_GLSL } from './PlantWind.js';
-import { WATER_WAVE_GLSL, SEA_SURFACE } from './WaterWave.js';
+import { WATER_WAVE_GLSL, SEA_FOAM_GLSL, SEA_SURFACE } from './WaterWave.js';
 import { getSurfaceFaceTexture } from './SurfaceMaterials.js';
 import { blockSurfaceProfile } from './SurfaceProfiles.js';
 import { installSurfaceProfiles } from './LeafLighting.js';
@@ -965,23 +965,7 @@ waterMaterial.onBeforeCompile = (shader, renderer) => {
 
             }
 
-            // Gładki szum (piana sztormu): wartość 0-1 w punkcie p.
-
-            float seaHash(vec2 p) {
-                return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453);
-            }
-
-            float seaNoise(vec2 p) {
-
-                vec2 i = floor(p);
-                vec2 f = fract(p);
-
-                f = f * f * (3.0 - 2.0 * f);
-
-                return mix(mix(seaHash(i), seaHash(i + vec2(1.0, 0.0)), f.x),
-                    mix(seaHash(i + vec2(0.0, 1.0)), seaHash(i + vec2(1.0, 1.0)), f.x), f.y);
-
-            }
+            ${SEA_FOAM_GLSL}
 
             ${WATERFALL_PIXEL_GLSL}
             ${WATERFALL_AVERAGE_GLSL}`
@@ -1052,31 +1036,20 @@ waterMaterial.onBeforeCompile = (shader, renderer) => {
 
             }
 
-            // Sztorm (1.15.0): na grzbietach fal morza biała piana. Pas
-            // piany idzie z grzbietem fali; jest raz szerszy, raz węższy
-            // i rwie się w nieregularne płaty (szum), a jego brzeg jest
-            // poszarpany co piksel tekstury. W silnym sztormie między
-            // falami zostają długie, wąskie smugi piany ułożone z wiatrem.
+            // Sztorm: piana pojawia się w krótkich odcinkach na grzbietach.
 
             float seaWhite = 0.0;
 
             if (uSeaFoam > 0.01 && vWaterFace > 0.5 && abs(vWaterWorld.y - ${SEA_SURFACE.toFixed(3)}) < 1.0) {
 
-                // Środek piksela piany (1/8 bloku) w ramie płynącej z wiatrem.
-                vec2 seaPlace = (floor((vWaterWorld.xz - uSeaWave.yz * uTime * 0.9) * 8.0) + 0.5) / 8.0;
-                float seaBlob = 0.65 * seaNoise(seaPlace / 2.2) + 0.35 * seaNoise(seaPlace / 0.7 + 7.3);
-
-                float seaLift = seaCrest(vWaterWorld.xz, uTime);
+                float seaLift = seaCrest(vWaterWorld.xz, uTime, uSeaWave.yz);
 
                 // Grzbiety trochę jaśniejsze, doliny ciemniejsze - fale widać
                 // także tam, gdzie tafla jest już płaska (daleko od kamery).
                 waterColor.rgb *= 1.0 + 0.16 * uSeaFoam * seaLift;
 
-                seaWhite = step(1.0 - 0.25 * uSeaFoam, seaLift * 0.5 + 0.5 + 0.45 * (seaBlob - 0.55));
-
-                vec2 seaAlong = vec2(dot(seaPlace, uSeaWave.yz), dot(seaPlace, vec2(-uSeaWave.z, uSeaWave.y)));
-
-                seaWhite = max(seaWhite, step(1.0 - 0.11 * smoothstep(0.5, 1.0, uSeaFoam), seaNoise(vec2(seaAlong.x / 4.5, seaAlong.y / 0.9))));
+                seaWhite = seaFoamAt(uCloudNoise, vWaterWorld.xz, uSeaWave.yz, uTime, uSeaFoam, seaLift,
+                    distance(vWaterWorld.xz, cameraPosition.xz));
                 waterFoam = max(waterFoam, seaWhite * 0.55);
 
             }

@@ -454,7 +454,7 @@ const desert = (seed = 'lepidolit') => new WeatherField(seed, DESERT);
 
     check(far.includes('max(dustAt(vFarWorld), dustAt(vec3(cameraPosition.xz + farDirection.xz * 0.5, 0.0).xzy))') && far.includes('farDust = dustDensity(farDust)'), 'Daleki teren tonie w pyle (tam, gdzie leży, i w połowie drogi)');
     check(far.includes('if (uDust.x > 0.5) {') && far.includes('mix(uDustShade, uDustColor, 0.3)'), 'Daleki teren: zasłona w kolorze podstawy ściany, tylko gdy jest pył');
-    check(far.includes('if (uSea.x > 0.01 && abs(vFarWorld.y -') && far.includes('uSea.yz * uSea.w'), 'Dalekie morze: piana sztormu płynie z wiatrem');
+    check(far.includes('if (uSea.x > 0.01 && vFarSeaSurface > 0.5)') && far.includes('seaFoamAt(uCloudNoise, vFarMaskXZ, uSea.yz, uTime'), 'Dalekie morze: ta sama faza piany co w bliskich chunkach');
 
     for (const name of ['uDust', 'uDustColor', 'uDustShade', 'uSea']) {
         check(cloudUniforms[name] && CLOUD_SHADOW_GLSL.includes(`${name};`), `Uniform ${name}`);
@@ -803,11 +803,12 @@ const desert = (seed = 'lepidolit') => new WeatherField(seed, DESERT);
 
     check(block.includes('float wave = waterWave(waterWorld.xz, uTime) * uWaveHeight + seaSwell(waterWorld, uTime);'), 'Tafla wody: zwykłe fale i fala sztormowa');
     check(block.includes('uSeaWave: plantWindUniforms.uSeaWave,') && block.includes('uSeaFoam: { value: 0 }'), 'Woda dostaje fale i pianę');
-    check(block.includes('if (uSeaFoam > 0.01 && vWaterFace > 0.5 && abs(vWaterWorld.y -') && block.includes('float seaLift = seaCrest(vWaterWorld.xz, uTime);'), 'Piana na grzbietach fal morza (tylko wierzch wody na poziomie morza)');
+    check(block.includes('if (uSeaFoam > 0.01 && vWaterFace > 0.5 && abs(vWaterWorld.y -') && block.includes('float seaLift = seaCrest(vWaterWorld.xz, uTime, uSeaWave.yz);'), 'Piana na grzbietach fal morza (tylko wierzch wody na poziomie morza)');
     check(block.includes('waterColor.rgb *= 1.0 + 0.16 * uSeaFoam * seaLift;'), 'Grzbiety fal jaśniejsze, doliny ciemniejsze');
     check(block.includes('diffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.9, 0.94, 0.97), seaWhite * 0.9);') && block.indexOf('diffuseColor *= waterColor;') < block.indexOf('seaWhite * 0.9') &&
         block.indexOf('WATER_EDGE_SHADE))}, waterEdge);') < block.indexOf('seaWhite * 0.9'), 'Piana ma własną biel (po kolorze wody i po zabarwieniu przy granicy dalekiego terenu)');
-    check(block.includes('float seaNoise(vec2 p)') && block.includes('seaNoise(seaPlace / 2.2)'), 'Piana rwie się w nieregularne płaty');
+    check(block.includes('seaFoamAt(uCloudNoise, vWaterWorld.xz, uSeaWave.yz, uTime') &&
+        WAVE.SEA_FOAM_GLSL.includes('crestTip * flecks'), 'Piana na bliskim grzbiecie używa tego samego pola nieregularnych płatów co daleki ocean');
     check(source('src/rendering/WaterfallFoam.js').includes('seaSwell(foamWorld, uTime)') && source('src/rendering/WaterfallRipples.js').includes('seaSwell(rippleWorld, uTime)'), 'Piana wodospadów i kręgi na wodzie unoszą się z falą');
     check(source('src/rendering/FloatingLeaves.js').includes('+ seaSwell(x, by + height, z, plantWindUniforms.uTime.value);'), 'Liście na wodzie unoszą się z falą');
     check(source('src/game/RaftPhysics.js').includes('this.world.waveOffset?.(this.pos.x,w.surface,this.pos.z)??0'), 'Tratwa unosi się na fali (bez haka - jak dotąd)');

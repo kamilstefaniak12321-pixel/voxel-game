@@ -539,6 +539,7 @@ export class Weather {
 
         this.thickness = CLOUD_THICKNESS[0];
         this.base = CLOUD_LEVELS.low;
+        this.precipitationAtEye = 1;
         this.season = [0, 0, 0, 0];
         this.refresh = false;
 
@@ -601,6 +602,10 @@ export class Weather {
         this.overcast = Math.max(this.overcast, 0.75 * this.fog);
 
         this.updateUniforms(days);
+        // Opad przy kamerze zanika w dolnej części warstwy, która go zasila.
+        // Wyżej, patrząc w dół, nadal widzimy kurtyny deszczu nad terenem.
+        const layerDepth = CLOUD_THICKNESS[0] + (CLOUD_THICKNESS[1] - CLOUD_THICKNESS[0]) * local.thick;
+        this.precipitationAtEye = 1 - ramp(this.base, this.base + 0.35 * layerDepth, y);
         this.updateWind();
 
         // Pył: tylko nad suchą ziemią (po deszczu go nie ma). Shadery
@@ -828,12 +833,12 @@ export class Weather {
         const local = this.local;
         const flat = Math.hypot(sun.x, sun.z);
 
-        let rainbow = 0;
+        // Komenda dostarcza krople do podglądu. Łuk nadal potrzebuje
+        // niskiego słońca nad horyzontem, także bezpośrednio po /czas i śnie.
+        const sunlight = ramp(0, 0.1, sun.y) * ramp(0.66, 0.5, sun.y) * daylight;
+        let rainbow = (this.rainbowOverride ?? 0) * sunlight;
 
-        if (this.rainbowOverride !== null) {
-            rainbow = this.rainbowOverride;
-        }
-        else if (sun.y > 0.02 && sun.y < 0.66 && flat > 0.01) {
+        if (this.rainbowOverride === null && sunlight > 0 && flat > 0.01) {
 
             // Deszcz po stronie nieba naprzeciw słońca (z mapy pogody).
             let rain = local.rain;
@@ -842,7 +847,7 @@ export class Weather {
                 rain = Math.max(rain, this.map.read(x - sun.x / flat * distance, z - sun.z / flat * distance, 0));
             }
 
-            rainbow = ramp(0.02, 0.1, sun.y) * ramp(0.66, 0.5, sun.y) * (1 - this.overcast) * clamp01(rain * 3) * daylight;
+            rainbow = sunlight * (1 - this.overcast) * clamp01(rain * 3);
 
         }
 
@@ -852,7 +857,7 @@ export class Weather {
 
         const k = 1 - Math.exp(-Math.max(0, dt) / 3);
 
-        this.rainbow += (rainbow - this.rainbow) * (this.rainbowOverride !== null ? 1 : k);
+        this.rainbow = Math.min(sunlight, this.rainbow + (rainbow - this.rainbow) * (this.rainbowOverride !== null ? 1 : k));
         this.halo += (halo - this.halo) * k;
 
         cloudUniforms.uSkyOptics.value.set(this.rainbow, this.halo, 0, 0);

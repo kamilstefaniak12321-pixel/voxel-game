@@ -61,6 +61,10 @@ jest wspólna.
 
 - **Świat zapisuje się tylko u gospodarza.** Gość nic nie zapisuje
   u siebie.
+- Od 1.15.1 przy zapisywaniu i wychodzeniu gość czeka, aż gospodarz
+  potwierdzi zapis ostatnich zmian w swojej bazie. Gdy zapis się nie uda
+  albo odpowiedź się spóźnia, można ponowić próbę. Przy połączeniu ze
+  starszym gospodarzem gra może sprawdzić jedynie opróżnienie kolejki sieciowej.
 - **Ekwipunek i miejsce gościa** gospodarz zapisuje razem ze światem
   (`worldInfo.guests`):
   - zapis idzie co 5 sekund i przy wyjściu gościa,

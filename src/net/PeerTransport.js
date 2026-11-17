@@ -94,16 +94,33 @@ export class Connection {
         });
     }
 
+    get canSend() {
+        const state = this.conn.dataChannel?.readyState;
+        return !this.closed && this.conn.open && (!state || state === 'open');
+    }
+
     send(message) {
-        if (this.closed || !this.conn.open) return false;
+        if (!this.canSend) return false;
         const text = JSON.stringify(message);
-        this.sent += text.length;
         try { this.conn.send(text); } catch { return false; }
+        this.sent += text.length;
         return true;
     }
 
     // Ile bajtów czeka w kolejce kanału (chunki wysyłamy, gdy jest luźno).
     get buffered() { return this.conn.dataChannel?.bufferedAmount ?? 0; }
+
+    // Starszy gospodarz nie potwierdza zapisu. Poczekaj co najmniej na
+    // opróżnienie obu kolejek: PeerJS może jeszcze nie przekazać danych do RTC.
+    async waitForDrain(timeout) {
+        const until = performance.now() + timeout;
+        while (this.canSend) {
+            if (!this.conn.bufferSize && !this.buffered) return true;
+            if (performance.now() >= until) break;
+            await new Promise(resolve => setTimeout(resolve, 25));
+        }
+        return false;
+    }
 
     close() {
         if (this.closed) return;

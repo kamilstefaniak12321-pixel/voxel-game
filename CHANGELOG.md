@@ -11,6 +11,24 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 1.15.1 - Bezpieczny zapis, wspólne kopanie i poprawki pogody
+
+PR #168.
+
+- Gra informuje o błędzie zapisu przed przeładowaniem świata, zamknięciem
+  aplikacji lub ponownym uruchomieniem plików gry przy aktualizacji. Można
+  zachować sesję i ponowić zapis.
+- Bloki wykopane przez gościa daleko od gospodarza znikają również ze
+  świata gospodarza, nawet gdy akurat nie ma on wczytanego tego obszaru.
+- Opad wokół gracza wygasa przy przelocie nad chmurą. Najbliższe smugi
+  ulewy są krótsze i delikatniejsze.
+- W wysokich chmurach pierzastych otwierają się większe prześwity,
+  a piana sztormowa rozpada się na mniejsze fragmenty grzbietów fal.
+- Słoneczna tęcza przygasa o zachodzie, także przy przyspieszonym czasie
+  i po użyciu komendy podglądu. Nocne halo nadal otacza księżyc.
+
+---
+
 ## 1.15.0 - Pogoda, część 5: pustynia i morze
 
 PR #167. Opis: [`docs/pogoda.md`](docs/pogoda.md).

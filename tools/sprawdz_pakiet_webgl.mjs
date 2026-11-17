@@ -11,6 +11,7 @@
 //
 // SwiftShader sprawdza poprawność, nie szybkość.
 // Uruchomienie: node tools/sprawdz_pakiet_webgl.mjs
+// Opcjonalnie na Windows: --d3d11 uruchamia test na GPU.
 // ------------------------------------------------------------
 import assert from 'node:assert/strict';
 import { createServer } from 'node:http';
@@ -23,6 +24,7 @@ import { once } from 'node:events';
 import { buildBundle, WORKERS } from './pakiet.mjs';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
+const d3d11 = process.argv.includes('--d3d11');
 const output = resolve(process.env.VOXEL_TEST_OUTPUT ?? 'test-results/pakiet');
 await mkdir(output, { recursive: true });
 const profile = await mkdtemp(resolve(tmpdir(), 'voxel-pakiet-'));
@@ -36,7 +38,12 @@ menuBackdrop.start = async () => {};
 import { blockIconsSource as __iconsSource } from './ui/BlockIcons.js';
 window.pakietQA = {
  diagnostics,
+ reloadGame,
  get game() { return game; },
+ async hasRetriedEdit() {
+  const chunks = await storage.loadChunks(sessionStorage.getItem('retry-world'));
+  return chunks.get('0,0')?.[(120 * 16 + 8) * 16 + 8] === Number(sessionStorage.getItem('retry-type'));
+ },
  // Ikonki: skąd są (pamięć startu albo rysowanie) i skrót wszystkich.
  get iconsSource() { return __iconsSource; },
  async iconsDigest() {
@@ -94,7 +101,8 @@ const exceptions = [];
 try {
     chrome = spawn(process.env.CHROME_BIN ?? (process.platform === 'win32'
         ? 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe' : 'google-chrome'), [
-        '--headless', '--no-sandbox', '--disable-dev-shm-usage', '--use-angle=swiftshader', '--enable-unsafe-swiftshader',
+        '--headless', '--no-sandbox', '--disable-dev-shm-usage',
+        ...(d3d11 ? ['--use-angle=d3d11', '--high-performance-gpu'] : ['--use-angle=swiftshader', '--enable-unsafe-swiftshader']),
         '--no-first-run', '--disable-background-networking', '--hide-scrollbars', '--window-size=640,400',
         '--remote-debugging-port=0', `--user-data-dir=${profile}`, 'about:blank'
     ], { stdio: ['ignore', 'pipe', 'pipe'] });
@@ -170,6 +178,12 @@ try {
     check(true, `Wersja gry (${version}) odczytana z paczki - adres liczony od strony gry`);
 
     check(await evaluate('window.pakietQA.start()'), 'Świat (teren realistyczny) wczytany z paczki');
+    if (d3d11) {
+        const adapter = await evaluate(`(() => { const gl = window.pakietQA.game.renderer.getContext();
+            return gl.getParameter(gl.getExtension('WEBGL_debug_renderer_info').UNMASKED_RENDERER_WEBGL); })()`);
+        check(/Direct3D11/i.test(adapter) && !/SwiftShader|Basic Render|WARP/i.test(adapter), 'Sprzętowy WebGL2/D3D11');
+        console.log('WebGL2:', adapter);
+    }
     // Wątek terenu rusza przy pierwszym doczytywaniu - przenosimy gracza dalej.
     await evaluate(`(() => { window.pakietQA.play(); const g = window.pakietQA.game; g.player.flying = true; g.player.pos.x += 160; g.player.pos.y = 140; g.player.vel.set(0, 0, 0); return true; })()`);
     await waitFor(`(() => { const g = window.pakietQA.game, s = g?.world.generation?.getStats(); g.player.pos.y = 140; g.player.vel.set(0, 0, 0); return s?.enabled && s.workerReady && s.applied >= 6; })()`);
@@ -191,7 +205,8 @@ try {
     // Dane roślin i modeli: jeden plik zamiast kilkudziesięciu - także w wątkach.
     const dataRequests = served.filter(path => path === '/pakiet/dane.json').length;
     const looseData = served.filter(path => /^\/assets\/(rosliny|models\/rosliny)\/.*\.json$/.test(path));
-    check(dataRequests >= 1 && dataRequests <= 4, `Dane roślin z jednego pliku na stronę i wątek (pobrań: ${dataRequests})`);
+    const terrainContexts = await evaluate('1 + Number(!!window.pakietQA.game.world.generation.worker) + window.pakietQA.game.farTerrain.workers.length');
+    check(dataRequests >= 1 && dataRequests <= terrainContexts, `Dane roślin z jednego pliku na stronę i wątek (pobrań: ${dataRequests})`);
     check(looseData.length === 0, `Żaden opis rośliny nie jest pobierany osobno (jest ${looseData.length}: ${looseData.slice(0, 3).join(', ')})`);
     check(await evaluate(`window.pakietQA.game.world.generation.getStats().failures === 0`), 'Wątek terenu wczytał rośliny bez błędów');
 
@@ -205,7 +220,20 @@ try {
     const bundleScripts = scripts().length;
 
     // --- 1b. Drugi start z paczki: ikonki z pamięci -------------------------------------
-    await open('/?pakiet');
+    await evaluate(`(async () => {
+        const qa = window.pakietQA, g = qa.game, store = g.saver.storage, write = store.saveWorldAndChunks;
+        g.world.setBlock(8, 120, 8, 'oak_planks');
+        sessionStorage.setItem('retry-world', g.worldInfo.id);
+        sessionStorage.setItem('retry-type', g.world.getBlockId(8, 120, 8));
+        store.saveWorldAndChunks = async () => { throw new Error('Test odmowy zapisu IndexedDB'); };
+        try { await qa.reloadGame(); } finally { store.saveWorldAndChunks = write; }
+        return true;
+    })()`);
+    check(await evaluate(`Boolean(document.querySelector('.screen-save-error') && window.pakietQA.game.world.hasUnsavedChanges())`),
+        'Odmowa zapisu zatrzymuje restart, zachowuje edycję i pokazuje opcję ponowienia');
+    await evaluate(`document.querySelector('.screen-save-error button').click(); true`);
+    await waitFor(`Boolean(document.querySelector('.screen-title button') && window.pakietQA && !window.pakietQA.game)`);
+    check(await evaluate('window.pakietQA.hasRetriedEdit()'), 'Ponowienie zapisu z menu zachowuje blok w IndexedDB po restarcie');
     check(await evaluate('window.pakietQA.iconsSource') === 'pamiec', 'Drugi start: ikonki z pamięci startu');
     check(await evaluate('window.pakietQA.iconsDigest()') === drawn, 'Zapamiętane ikonki są identyczne z narysowanymi');
     check(exceptions.length === 0, `Bez błędów przy starcie z pamięci (${exceptions.slice(0, 2).join(' | ')})`);

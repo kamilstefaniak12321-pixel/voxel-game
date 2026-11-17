@@ -41,6 +41,7 @@ const { Drops, restoreDrop, dropState, DROP_PICKUP_RADIUS, DROP_THROW_WAIT, DROP
 const { Inventory, STACK_SIZE, SLOT_COUNT } = await import('../src/game/Inventory.js');
 const { getBlockId } = await import('../src/blocks/BlockRegistry.js');
 const { StateSync, entryKey, stateSystems } = await import('../src/net/StateSync.js');
+const { WorldSaver } = await import('../src/storage/WorldSaver.js');
 const { ACTIONS, Bindings } = await import('../src/input/bindings.js');
 
 let checks = 0;
@@ -253,8 +254,15 @@ const only = (game) => [...game.drops.drops.values()];
     check(fixed.count === STACK_SIZE * 4 && /^[a-z0-9]{4,32}$/.test(fixed.id) && fixed.vx === 0 && fixed.wait === DROP_WAIT, 'Za duży stos, zła nazwa i prędkość - naprawione');
     check(new Drops(makeGame(), 'śmieci').drops.size === 0 && new Drops(makeGame(), [null, { type: 'stone', count: 2, x: 0, y: 11, z: 0 }]).drops.size === 1, 'Uszkodzona lista w zapisie niczego nie psuje');
     check(restoreDrop({ type: 'raspberry', count: 1, x: 0, y: 11, z: 0 })?.type === 'strawberry', 'Stara nazwa przedmiotu z dawnego zapisu');
-    const saver = source('src/storage/WorldSaver.js');
-    check(/this\.worldInfo\.drops = this\.drops\.getState\(\)/.test(saver) && /savedDropVersion !== this\.drops\.version/.test(saver), 'Zapis świata obejmuje wyrzucone przedmioty');
+    let savedDrops;
+    const saver = new WorldSaver({
+        async saveWorldAndChunks(info) { savedDrops = structuredClone(info.drops); }
+    }, {}, { takeUnsavedChunks: () => [] }, { getState: () => ({}) });
+    saver.drops = game.drops;
+    check(await saver.flush() && !saver.hasUnsavedChanges(), 'Zapis świata obejmuje wyrzucone przedmioty');
+    assert.deepEqual(savedDrops, game.drops.getState());
+    game.drops.spawn('stone', 1, { x: 8, y: 12, z: 2 });
+    check(saver.hasUnsavedChanges(), 'Wyrzucenie kolejnego przedmiotu wymaga nowego zapisu');
 }
 
 

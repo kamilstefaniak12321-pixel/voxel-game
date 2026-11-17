@@ -217,6 +217,30 @@ const random = () => { state = (Math.imul(state, 1664525) + 1013904223) | 0; ret
 }
 
 
+// Wznoszenie przez opadową chmurę: krople przy kamerze zanikają płynnie,
+// ale w tej samej kolumnie wciąż pada na ziemię.
+{
+    const weather = new Weather(42);
+    const days = 5.61;
+    weather.field.force('front_chlodny', 0, 0, days, { stay: true });
+    weather.update(days, 1 / 60, 0, 0, 48);
+    const groundRain = weather.local.rain;
+    const base = weather.base;
+    check(groundRain > 0.1 && weather.precipitationAtEye === 1, 'Pełny opad pod frontem przy ziemi');
+    let last = 1;
+    for (const y of [base + 4, base + 12, base + 24]) {
+        weather.update(days, 1 / 60, 0, 0, y);
+        check(weather.precipitationAtEye > 0 && weather.precipitationAtEye < last, 'Łagodne zanikanie opadu wewnątrz chmury');
+        last = weather.precipitationAtEye;
+    }
+    for (const y of [1200, 30000, 48]) {
+        weather.update(days, 1 / 60, 0, 0, y);
+        equal(weather.precipitationAtEye, y === 48 ? 1 : 0, 'Opad znika nad chmurami i powraca po zejściu');
+        near(weather.local.rain, groundRain, 1e-9, 'Wysokość kamery nie zmienia opadu w kolumnie');
+    }
+    weather.dispose();
+}
+
 // --- 3. Pogoda w grze: mgła, tęcza, halo -----------------------------------------
 
 {
@@ -267,9 +291,20 @@ const random = () => { state = (Math.imul(state, 1664525) + 1013904223) | 0; ret
     check(weather.rainbow < 0.02, 'Pod zamkniętym niebem bez tęczy');
 
     weather.rainbowOverride = 1;
+    weather.setSky(lowSun, lowSun, 1, 0.016, 0, 0);
+    check(weather.rainbow === 1 && cloudUniforms.uSkyOptics.value.x === 1, 'Podgląd tęczy pod niskim słońcem');
+    const settingSun = new THREE.Vector3(1, 0.04, 0).normalize();
+    weather.setSky(settingSun, settingSun, 1, 0.016, 0, 0);
+    check(weather.rainbow > 0 && weather.rainbow < 1, 'Podgląd tęczy przygasa o zachodzie');
+    const nightSun = new THREE.Vector3(-0.5, -0.7, 0.1).normalize();
+    weather.setSky(nightSun, lowSun, 0, 0.016, 0, 0);
+    equal(cloudUniforms.uSkyOptics.value.x, 0, 'Księżyc nie podtrzymuje słonecznej tęczy z komendy');
     weather.setSky(highSun, highSun, 1, 0.016, 0, 0);
-    check(weather.rainbow === 1 && cloudUniforms.uSkyOptics.value.x === 1, '/pogoda tecza włącza tęczę od razu');
+    equal(weather.rainbow, 0, 'Słońce za wysoko na łuk nad horyzontem');
+    weather.setSky(lowSun, lowSun, 1, 0.016, 0, 0);
     weather.rainbowOverride = null;
+    weather.setSky(nightSun, lowSun, 0, 0.016, 0, 0);
+    equal(weather.rainbow, 0, 'Po skoku czasu do nocy poprzedni łuk znika w pierwszej klatce');
 
     // Halo: cienkie chmury wysokie przed słońcem.
     set([['pierzaste', { stay: true }]]);

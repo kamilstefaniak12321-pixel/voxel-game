@@ -116,9 +116,8 @@ export const cloudUniforms = {
     uDustColor: { value: new THREE.Color(0.8, 0.62, 0.4) },
     uDustShade: { value: new THREE.Color(0.45, 0.33, 0.2) },
 
-    // Sztorm na morzu widziany z daleka: x - ile piany (0-1), yz - kierunek
-    // wiatru, w - czas (s, zawinięty) - piana płynie z wiatrem.
-    uSea: { value: new THREE.Vector4(0, 1, 0, 0) }
+    // Sztorm na dalekim morzu: x - ile piany (0-1), yz - kierunek wiatru.
+    uSea: { value: new THREE.Vector3(0, 1, 0) }
 
 };
 
@@ -300,7 +299,7 @@ export const CLOUD_SHADOW_GLSL = /* glsl */ `
     uniform vec4 uDust;
     uniform vec3 uDustColor;
     uniform vec3 uDustShade;
-    uniform vec4 uSea;
+    uniform vec3 uSea;
 
     float dustAt(vec3 worldPosition) {
 
@@ -662,22 +661,23 @@ export const CLOUD_LAYERS_GLSL = /* glsl */ `
             return vec4(0.0);
         }
 
-        // Smugi leżą wzdłuż kierunku, z którego płyną chmury.
+        // Każda grupa piór płynie z wysoką warstwą. Ten sam odczyt
+        // wyznacza szerokie prześwity i odchylenie włókien wewnątrz grupy.
         vec2 d = c + uCloudDrift[1].zw;
+        vec4 cluster = textureLod(uCloudNoise, d / 3072.0, max(0.0, lod - 2.0));
+        float envelope = smoothstep(0.18, 0.68, cluster.g + (cover - 0.65) * 0.24);
         vec2 along = vec2(dot(d, uCloudFlow), dot(d, vec2(-uCloudFlow.y, uCloudFlow.x)));
-        // Smugi falują w poprzek - pióra, nie proste kreski.
-        along.y += 46.0 * sin(along.x / 190.0) + 22.0 * sin(along.x / 71.0 + 1.3);
+        along.y += 105.0 * (cluster.r - 0.5) + 28.0 * sin(along.x / 210.0 + cluster.g * 4.0);
 
         float streaks = textureLod(uCloudNoise, along / 768.0, lod).b;
-        float patches = textureLod(uCloudNoise, d / 1536.0, max(0.0, lod - 1.0)).r;
-        float margin = cloudThreshold(cover * 0.72) - (0.5 * streaks + 0.5 * patches);
+        float margin = cloudThreshold(cover * 0.75) - streaks - 0.31 * (1.0 - envelope);
 
         if (margin <= 0.0) {
             return vec4(0.0);
         }
 
         float dense = smoothstep(0.0, 0.36, margin);
-        float alpha = (0.1 + 0.4 * dense) * cloudFade(range);
+        float alpha = smoothstep(0.0, 0.07, margin) * (0.09 + 0.41 * dense) * envelope * cloudFade(range);
         vec3 color = uCloudShade * 0.5 + uCloudLit * uCloudLayerLit.z * 0.9 + uCloudGlow * 0.6;
 
         if (uStorm.y > 0.5) {

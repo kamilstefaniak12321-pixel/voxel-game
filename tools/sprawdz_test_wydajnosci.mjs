@@ -12,6 +12,8 @@
 // ------------------------------------------------------------
 import assert from 'node:assert/strict';
 import { readFileSync, readdirSync, statSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
+import { relative } from 'node:path';
 import { PerfDiagnostics, PERF_STAGES } from '../src/diagnostics/PerfDiagnostics.js';
 import { BENCHMARK_FLIGHT, BENCHMARK_MODES, benchmarkText } from '../src/diagnostics/Benchmark.js';
 
@@ -146,8 +148,9 @@ check(BENCHMARK_FLIGHT.speed >= 16 && BENCHMARK_FLIGHT.speed <= 40 && BENCHMARK_
     // Poza tym jednym miejscem kod nie rozgałęzia się już na WebGL 1.
     const files = [];
     const walk = (dir) => { for (const name of readdirSync(dir)) { const path = `${dir}/${name}`; if (statSync(path).isDirectory()) walk(path); else if (name.endsWith('.js')) files.push(path); } };
-    walk(new URL('../src', import.meta.url).pathname);
-    const users = files.filter((path) => readFileSync(path, 'utf8').includes('isWebGL2')).map((path) => path.split('/src/')[1]);
+    const src = fileURLToPath(new URL('../src', import.meta.url));
+    walk(src);
+    const users = files.filter((path) => readFileSync(path, 'utf8').includes('isWebGL2')).map((path) => relative(src, path));
     equal(users, ['main.js'], 'isWebGL2 sprawdzane tylko przy starcie');
     check(!source('src/rendering/LeafSeasons.js').includes('LEAF_SEASONS'), 'Pory roku liści bez wyłącznika');
     check(!source('src/rendering/Shadows.js').includes('this.supported'), 'Cienie bez wyłącznika');

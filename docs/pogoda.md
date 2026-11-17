@@ -276,6 +276,9 @@ w dolinie leje.
 - **Zamieć przy ziemi:** gdy leży śnieg i wieje od 4,5 bloku/s, wiatr
   porywa go z ziemi - nisko nad nią suną białe smugi (do 1500), także
   wtedy, gdy z nieba nic nie pada.
+  (W 1.14.0 smugi były przez błąd shadera niewidoczne - krycie liczone
+  w wierzchołkach zerowało się na obu końcach smugi; od 1.14.1 końce
+  gasną w shaderze pikseli.)
 - **Krupa śnieżna:** z wypiętrzonych chmur przelotnych opadów przy
   temperaturze około zera lecą drobne, białe kulki - mniejszy i wolniejszy
   grad (`Hail.js`), z cichym stukotem.

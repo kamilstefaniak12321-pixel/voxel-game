@@ -527,7 +527,18 @@ const SUMMER = middle(1);
     for (const material of [snow.flakeMaterial, snow.driftMaterial]) {
         check(material.vertexShader.includes('rainShelter(p.xz)') && material.vertexShader.includes('rainWrap('), 'Płatki znikają pod dachem i wędrują z kamerą');
         check(!material.depthWrite && material.transparent && !material.vertexShader.includes('undefined'), 'Śnieg nie zapisuje głębi');
+
+        // Krycie liczone w wierzchołkach nie może zależeć od tego, który
+        // to róg kwadratu: wygaszenie końców smugi daje w obu końcach zero,
+        // więc zerowałoby całą smugę (zamieć w 1.14.0 była przez to
+        // niewidoczna). Końce gasną w shaderze pikseli.
+        const alpha = material.vertexShader.match(/vAlpha = [^;]*;/g) ?? [];
+
+        check(alpha.length === 1 && !alpha[0].includes('position.'), 'Krycie płatka i smugi nie zależy od rogu kwadratu');
+        check(material.fragmentShader.includes('vAlpha * (1.0 - vStreak.y * abs(vStreak.x * 2.0 - 1.0))'), 'Końce smugi gasną w shaderze pikseli');
     }
+
+    check(snow.flakeMaterial.vertexShader.includes('vStreak = vec2(position.y, 0.0);') && snow.driftMaterial.vertexShader.includes('vStreak = vec2(position.y, 1.0);'), 'Płatki są pełne, smugi zamieci gasną na końcach');
 
     // Krupa śnieżna: drobniejszy, wolniejszy grad.
     rain.setAmount(1);

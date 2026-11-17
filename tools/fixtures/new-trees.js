@@ -10,6 +10,7 @@ export async function run() {
     const THREE = await import('three');
     const { Game } = await import('/src/game/Game.js');
     const { Settings } = await import('/src/settings/Settings.js');
+    const { CALM_WEATHER, calmWeather } = await import('/tools/fixtures/calm-weather.js');
     const { createWorldInfo } = await import('/src/storage/WorldStorage.js');
     const { atlasReady } = await import('/src/rendering/TextureAtlas.js');
     const { GAME_COMMANDS } = await import('/src/commands/gameCommands.js');
@@ -35,7 +36,7 @@ export async function run() {
     renderer.setSize(width, height); document.body.prepend(renderer.domElement);
     check(renderer.capabilities.isWebGL2, 'Actual Game uses WebGL2');
     const settings = new Settings();
-    const quality = { viewDistance: 160, farTerrain: 0, loadBudget: 8, meteorites: false,
+    const quality = { ...CALM_WEATHER, viewDistance: 160, farTerrain: 0, loadBudget: 8, meteorites: false,
         lightShafts: false, bounceLight: false, showHand: false, shadows: 1, cloudCover: 0,
         lightingModel: 'world', lightingLook: 'natural', viewBobbing: false, volumeMusic: 0,
         leafModel: 'parts', fancyLeaves: true, plantWind: false, plantModels: 'semi', fov: 70, renderScale: 100 };
@@ -44,6 +45,7 @@ export async function run() {
     const input = new Proxy({}, { get: (_, name) => name === 'consumeMouseDelta' ? () => ({ x: 0, y: 0 }) : () => 0 });
     const info = createWorldInfo('Skala nowych drzew 0.79.0', 42, 'flat', 'developer');
     const game = await Game.start(renderer, input, null, info, settings);
+    calmWeather(game);
     game.resize(width, height);
     settings.onChange(key => game.applySettings(key));
     game.player.flying = true; game.time.speed = 0; game.time.days = .43;

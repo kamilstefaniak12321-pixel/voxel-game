@@ -39,7 +39,7 @@ jobs:
       || (contains(github.event.pull_request.labels.*.name, 'kompilacja')
           && (github.event.action != 'labeled' || github.event.label.name == 'kompilacja'))
     runs-on: ubuntu-24.04
-    timeout-minutes: 14
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-node@v5

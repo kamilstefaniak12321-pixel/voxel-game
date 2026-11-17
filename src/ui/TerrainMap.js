@@ -66,7 +66,7 @@ export const MAP_SCALES = [1, 2, 4, 8, 16, 32, 64];
 const WEATHER_BUDGET_MS = 3;
 const WEATHER_COLORS = {
     high: [255, 255, 255], mid: [214, 220, 228], low: [246, 247, 250], dark: [70, 76, 90],
-    rain: [44, 104, 232], storm: [206, 62, 224],
+    rain: [44, 104, 232], storm: [206, 62, 224], fog: [236, 226, 196],
     front_cieply: '#e23b2e', front_chlodny: '#2b5fe0', wind: '#101418'
 };
 
@@ -579,6 +579,9 @@ export class TerrainMap {
                 g += ((C.low[1] + (C.dark[1] - C.low[1]) * sample.thick) - g) * 0.86 * sample.low;
                 b += ((C.low[2] + (C.dark[2] - C.low[2]) * sample.thick) - b) * 0.86 * sample.low;
 
+                // Mgła: jasne, ciepłe kropki (co drugi punkt).
+                if (sample.fog > 0.08 && (i + j) % 2 === 0) blend(C.fog, Math.min(0.8, 0.25 + 0.6 * sample.fog));
+
                 // Opad kreskowany na ukos, burza gęściej.
                 if (sample.rain > 0.04) blend(C.rain, Math.min(0.85, (0.3 + 0.6 * sample.rain) * ((i + j) % 3 === 0 ? 1 : 0.55)));
                 if (sample.storm > 0.1) blend(C.storm, Math.min(0.8, sample.storm) * ((i - j + MAP_SIZE) % 4 === 0 ? 1 : 0.35));
@@ -958,7 +961,7 @@ export class TerrainMap {
         else if (this.layer === 'pogoda') {
 
             entries.push(['#f6f7fa', 'chmury niskie'], ['#464c5a', 'piętrzące się (deszczowe, burzowe)'], ['#aab4c0', 'średnie i wysokie'],
-                ['#2c68e8', 'opad'], ['#ce3ee0', 'burza'], [WEATHER_COLORS.front_cieply, 'front ciepły'], [WEATHER_COLORS.front_chlodny, 'front chłodny'],
+                ['#2c68e8', 'opad'], ['#ce3ee0', 'burza'], ['#ece2c4', 'mgła'], [WEATHER_COLORS.front_cieply, 'front ciepły'], [WEATHER_COLORS.front_chlodny, 'front chłodny'],
                 [WEATHER_COLORS.wind, 'strzałki: wiatr']);
 
         }

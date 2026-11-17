@@ -773,7 +773,7 @@ const random = () => { state = (Math.imul(state, 1664525) + 1013904223) | 0; ret
     assert.throws(() => command.run([], { game: null, player, world }), 'Poza światem /pogoda nie działa');
     checks++;
 
-    equal(command.complete(['']), ['prognoza', 'ustaw', 'znajdz', 'auto', 'deszcz', 'sucho'], 'Podpowiedzi: polecenia');
+    equal(command.complete(['']), ['prognoza', 'ustaw', 'znajdz', 'auto', 'deszcz', 'sucho', 'mgla', 'tecza'], 'Podpowiedzi: polecenia');
     check(command.complete(['ustaw', '']).includes('front-chlodny') && command.complete(['znajdz', '']).includes('burza'), 'Podpowiedzi: rodzaje pogody');
     equal(command.complete(['ustaw', 'burza', '']), ['nadciaga'], 'Podpowiedzi: nadciaga');
     equal(command.complete(['znajdz', 'burza', '']), ['tp'], 'Podpowiedzi: tp');
@@ -795,7 +795,7 @@ const random = () => { state = (Math.imul(state, 1664525) + 1013904223) | 0; ret
     check(gameSource.includes('this.sky.renderCloudsBelow?.(renderer, camera)'), 'Chmury pod kamerą rysują się po świecie');
     check(gameSource.includes('this.wind = this.weather.wind;') && !gameSource.includes('windAt('), 'Liście i smugi wiatru niesie wiatr z pogody');
     check(gameSource.includes('plantWindUniforms.uPlantSway.value = this.settings.get(\'plantWind\') ? this.weather.sway : 0'), 'Rośliny kołyszą się z siłą wiatru');
-    check(gameSource.includes('this.rainOverride ?? (this.weather.local.rain'), 'Pada tam, gdzie mówi pogoda');
+    check(gameSource.includes('this.rainOverride ?? (local.rain > 0.04 ? local.rain : 0)'), 'Pada tam, gdzie mówi pogoda');
     check(gameSource.includes('this.weather.dispose();'), 'Pogoda sprzątana przy wyjściu ze świata');
     check(gameSource.includes("profile?.beginStage('weather')") && PERF_STAGES.some(([id]) => id === 'weather'), 'Pogoda ma swój etap w pomiarze wydajności');
 

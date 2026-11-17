@@ -26,6 +26,7 @@ export async function run(expected) {
     }
     const {Game}=await import('/src/game/Game.js');
     const {Settings}=await import('/src/settings/Settings.js');
+    const {CALM_WEATHER,calmWeather}=await import('/tools/fixtures/calm-weather.js');
     const {createWorldInfo}=await import('/src/storage/WorldStorage.js');
     const {TREE_NAMES}=await import('/src/blocks/trees.js');
     const {getBlockId}=await import('/src/blocks/BlockRegistry.js');
@@ -39,10 +40,10 @@ export async function run(expected) {
     const renderer=new THREE.WebGLRenderer({antialias:false,preserveDrawingBuffer:true});
     renderer.info.autoReset=false;renderer.setSize(1280,800);document.body.append(renderer.domElement);
     const settings=new Settings();
-    for(const [key,value] of Object.entries({viewDistance:80,farTerrain:0,shadows:1,meteorites:false,plantWind:false,leafModel:'parts',fancyLeaves:true,lightShafts:false,bounceLight:false,showHand:false,volumeMusic:0,cloudCover:0,renderScale:100}))settings.set(key,value);
+    for(const [key,value] of Object.entries({...CALM_WEATHER,viewDistance:80,farTerrain:0,shadows:1,meteorites:false,plantWind:false,leafModel:'parts',fancyLeaves:true,lightShafts:false,bounceLight:false,showHand:false,volumeMusic:0,cloudCover:0,renderScale:100}))settings.set(key,value);
     const input=new Proxy({}, {get:(_,name)=>name==='consumeMouseDelta'?()=>({x:0,y:0}):()=>0});
     const info=createWorldInfo('Kontrola atlasów',42,'flat','developer');
-    const game=await Game.start(renderer,input,null,info,settings);game.resize(1280,800);
+    const game=await Game.start(renderer,input,null,info,settings);calmWeather(game);game.resize(1280,800);
     game.player.flying=true;game.time.speed=0;game.time.days=.43;game.world.setDistanceLod(false);
     const x0=-192,z0=-32;game.world.loadAround(x0+16,z0,5);const ground=game.world.getGroundY(x0,z0);
     for(const [i,name] of TREE_NAMES.entries()) {

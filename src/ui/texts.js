@@ -236,6 +236,7 @@ export const TEXTS = {
     lightShafts: (on) => `Promienie światła: ${on ? 'Wł.' : 'Wył.'}`,
     clouds: (value) => `Chmury: ${{ pelne: 'Pełne', plaskie: 'Płaskie', brak: 'Wył.' }[value] ?? 'Pełne'}`,
     cloudShadows: (on) => `Cienie chmur: ${on ? 'Wł.' : 'Wył.'}`,
+    wetGround: (on) => `Mokra ziemia i kałuże: ${on ? 'Wł.' : 'Wył.'}`,
     bounceLight: (on) => `Światło odbite: ${on ? 'Wł.' : 'Wył.'}`,
     fancyLeaves: (on) => `Liście drzew: ${on ? 'Ładne' : 'Szybkie'}`,
     theme: (name) => `Motyw: ${name}`,

@@ -75,6 +75,8 @@ import { plantWindUniforms } from '../rendering/PlantWind.js';
 import { WaterfallWetRocks } from '../rendering/WaterfallWetRocks.js';
 import { WaterImpactRipples } from '../rendering/WaterImpactRipples.js';
 import { RainEffects } from '../rendering/RainEffects.js';
+import { RainStreaks } from '../rendering/RainStreaks.js';
+import { WeatherAudio } from '../audio/WeatherAudio.js';
 import { BlockCracks } from '../interaction/BlockCracks.js';
 import { COLOR_LEVEL } from '../world/Light.js';
 import { Wellbeing } from './Wellbeing.js';
@@ -603,8 +605,16 @@ export class Game extends GameInteraction {
         this.wetRocks = new WaterfallWetRocks(this.scene, this.world);
         this.waterImpacts = new WaterImpactRipples(this.scene, this.world);
         this.rain = new RainEffects(this.scene, this.world, this.waterImpacts);
+
+        // Deszcz, który widać i słychać (1.12.0): krople i rozpryski liczy
+        // karta graficzna (RainStreaks), szum deszczu i wiatru - WeatherAudio.
+        // RainEffects zostaje do kręgów na wodzie (jego kreski są ukryte).
+        this.rainStreaks = new RainStreaks(this.scene, this.world);
+        this.weatherAudio = new WeatherAudio(this);
+        this.rainNow = 0;
+        this.shelterCover = 0;
         this.waterLandingRevision = -1;
-        for (const effect of [this.wetRocks, this.waterImpacts, this.rain]) {
+        for (const effect of [this.wetRocks, this.waterImpacts, this.rain, this.rainStreaks]) {
             effect.setAmount(this.settings.get('potato') ? .35 : 1);
         }
         setShadowDefine(this.waterSurfaceMaterials(), this.shadows.enabled, this.shadows.hasFar);
@@ -902,6 +912,8 @@ export class Game extends GameInteraction {
         profile?.beginStage('light');
         this.sky.update(this.time.days, dt, this.renderer.getPixelRatio());
         this.weather.setLight(this.sky.clouds.uniforms.uCloudLight.value, this.sky.clouds.active);
+        this.weather.setSky(this.sky.celestial.sunDirection, this.sky.clouds.uniforms.uCloudLight.value,
+            this.sky.state.daylight, dt, this.camera.position.x, this.camera.position.z);
 
         this.updateFog(dt);
 
@@ -1015,11 +1027,31 @@ export class Game extends GameInteraction {
         this.wetRocks.update(dt);
 
         // Pada tam, gdzie mówi pogoda (albo tyle, ile ustawiła komenda).
-        const rain = this.rainOverride ?? (this.weather.local.rain > 0.04 ? this.weather.local.rain : 0);
+        const local = this.weather.local;
+        const rain = this.rainOverride ?? (local.rain > 0.04 ? local.rain : 0);
         if (Math.abs(rain - this.rain.intensity) > 0.01 || (rain === 0) !== (this.rain.intensity === 0)) {
             this.rain.setIntensity(rain);
         }
         this.rain.update(dt, this.camera, this.sky.state);
+
+        // Kreski dawnego deszczu są ukryte - krople rysuje RainStreaks
+        // (ukośne, gęste, pod dachem ich nie ma); RainEffects dalej szuka,
+        // gdzie krople trafiają w wodę, i robi na niej kręgi.
+        this.rain.mesh.visible = false;
+
+        // Mżawka: słaby opad z niskiej, cienkiej chmury - drobne, wolne krople.
+        // (Przy deszczu z komendy decyduje samo natężenie.)
+        const drizzle = (1 - smoothstep(0.2, 0.35, rain)) *
+            (this.rainOverride === null ? 1 - smoothstep(0.3, 0.5, local.thick) : 1);
+
+        this.rainNow = rain;
+        this.rainStreaks.update(dt, this.camera, rain, drizzle, this.weather.wind, this.sky.state);
+
+        // Szum deszczu i wiatru; pod dachem i w jaskini przytłumiony.
+        const eye = this.camera.position;
+
+        this.shelterCover = this.rainStreaks.shelter.cover(eye.x, eye.y, eye.z);
+        this.weatherAudio.update({ rain, drizzle, cover: this.shelterCover, speed: this.weather.wind.speed, gust: this.weather.wind.gust });
         // One shared discovery allowance for persistent and short-lived rings.
         this.waterImpacts.update(dt, this.player, Math.max(0, 48 - this.waterfalls.ripples.surface.lastProcessed));
     }
@@ -1899,7 +1931,11 @@ export class Game extends GameInteraction {
         const fog = this.fogBrightness ** 2.2;
 
         skyUniforms.uFogBrightness.value = fog;
-        updateAerialPerspective(this.settings, this.sky, fog);
+
+        // Mgła i deszcz zagęszczają powietrze (weather/Weather.js).
+        updateAerialPerspective(this.settings, this.sky, fog, this.weather
+            ? { fog: this.weather.fog, rain: this.rainNow ?? 0 }
+            : null);
 
         // Kolor mgły dla reszty obiektów (np. ramka wskazanego bloku).
 
@@ -2093,6 +2129,7 @@ export class Game extends GameInteraction {
         this.wetRocks?.setAmount(potato ? .35 : 1);
         this.waterImpacts?.setAmount(potato ? .35 : 1);
         this.rain?.setAmount(potato ? .35 : 1);
+        this.rainStreaks?.setAmount(potato ? .35 : 1);
         this.water?.waterfallAudio?.setAmount(potato ? .35 : 1);
 
 
@@ -2116,6 +2153,7 @@ export class Game extends GameInteraction {
 
         if (this.sky.clouds) this.sky.clouds.quality = potato && clouds === 'pelne' ? 'plaskie' : clouds;
         if (this.weather) this.weather.shadows = !potato && settings.get('cloudShadows');
+        if (this.weather) this.weather.wetSurfaces = !potato && settings.get('wetGround');
 
 
         // Model gracza: wierzchnia warstwa skórki, styl zgięć, tryb ziemniaka.
@@ -2588,6 +2626,8 @@ export class Game extends GameInteraction {
         this.wetRocks.dispose();
         this.waterImpacts.dispose();
         this.rain.dispose();
+        this.rainStreaks.dispose();
+        this.weatherAudio.dispose();
 
         this.weather.dispose();
         plantWindUniforms.uPlantSway.value = this.settings.get('plantWind') ? 1 : 0;

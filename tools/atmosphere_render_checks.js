@@ -1,6 +1,7 @@
 // Piksele rzeczywistych adapterów gry, przy kontrolowanej radiancji nieba.
 // Liniowy cel oddziela mgłę od istniejącego, osobno testowanego wyjścia HDR.
 import * as THREE from 'three';
+import { withoutWeather } from './render_check_weather.js';
 import { SEA_LEVEL } from '../src/config.js';
 import { sampleAerialHaze } from '../src/sky/AerialPerspective.js';
 import { blockMaterial, plantMaterial, leafMaterial, waterMaterial, waterUniforms,
@@ -103,6 +104,8 @@ export async function checkAtmosphereRendering({ renderer, yieldBrowser }) {
         const haze = sampleAerialHaze([0, 0, -d], { cameraY, farOuter: 4096 });
         return sky.map(value => Math.round(value * haze * 255));
     };
+    // Pogoda wyłączona na czas testu (render_check_weather.js).
+    const restoreWeather = withoutWeather();
     try {
         renderer.autoClear = true; renderer.toneMapping = THREE.NoToneMapping;
         renderer.outputColorSpace = THREE.LinearSRGBColorSpace;
@@ -184,6 +187,7 @@ export async function checkAtmosphereRendering({ renderer, yieldBrowser }) {
         return { status: 'passed', variants, pixels,
             scope: 'Prawdziwe materiały; liniowy render target 16×16; kamera, endpoint sky access, wysokość i dystans.' };
     } finally {
+        restoreWeather();
         for (const [uniform, value] of savedUniforms) {
             if (value?.clone && !value.isTexture && uniform.value?.copy) uniform.value.copy(value);
             else uniform.value = value;

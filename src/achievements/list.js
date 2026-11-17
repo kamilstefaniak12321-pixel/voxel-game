@@ -839,6 +839,33 @@ export const ACHIEVEMENTS = [
         }
     },
     {
+        id: 'under_a_roof',
+        tier: 'common',
+        title: 'Niech sobie pada',
+        task: 'Przeczekaj deszcz pod dachem, w jaskini albo pod gęstą koroną drzewa - tam krople nie dolatują.',
+        comment: 'Dach: wynalazek, który docenia się dopiero w deszczu.',
+        icon: 'oak_planks',
+        check: (game) => naturalWeather(game) && game.weather.local.rain > 0.2 && (game.shelterCover ?? 0) > 0.85
+    },
+    {
+        id: 'rainbow',
+        tier: 'rare',
+        title: 'Siedem kolorów',
+        task: 'Zobacz tęczę: niskie słońce za plecami, deszcz przed tobą.',
+        comment: 'Garnka złota na końcu nie ma. Sprawdzono. Dwa razy.',
+        icon: 'lamp_blue',
+        check: (game) => naturalWeather(game) && game.weather.rainbowOverride === null && game.weather.rainbow > 0.5
+    },
+    {
+        id: 'morning_fog',
+        tier: 'common',
+        title: 'Mleko',
+        task: 'Wejdź w gęstą poranną mgłę (zbiera się przed świtem przy czystym niebie i słabym wietrze, najczęściej jesienią).',
+        comment: 'Widoczność: własne buty. I to tylko lewy.',
+        icon: 'lamp',
+        check: (game) => naturalWeather(game) && game.weather.fogOverride === null && game.weather.local.fog > 0.6
+    },
+    {
         id: 'head_in_clouds',
         tier: 'rare',
         title: 'Głowa w chmurach',

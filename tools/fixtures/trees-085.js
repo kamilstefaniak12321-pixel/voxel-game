@@ -12,6 +12,7 @@ export async function run() {
     const THREE = await import('three');
     const { Game } = await import('/src/game/Game.js');
     const { Settings } = await import('/src/settings/Settings.js');
+    const { CALM_WEATHER, calmWeather } = await import('/tools/fixtures/calm-weather.js');
     const { createWorldInfo } = await import('/src/storage/WorldStorage.js');
     const { atlasReady } = await import('/src/rendering/TextureAtlas.js');
     const { GAME_COMMANDS } = await import('/src/commands/gameCommands.js');
@@ -37,7 +38,7 @@ export async function run() {
     renderer.setSize(width, height); document.body.prepend(renderer.domElement);
     check(renderer.capabilities.isWebGL2, 'Actual Game uses WebGL2');
     const settings = new Settings();
-    const quality = { viewDistance: 160, farTerrain: 0, loadBudget: 8, meteorites: false,
+    const quality = { ...CALM_WEATHER, viewDistance: 160, farTerrain: 0, loadBudget: 8, meteorites: false,
         lightShafts: false, bounceLight: false, showHand: false, shadows: 1, cloudCover: 0,
         lightingModel: 'world', lightingLook: 'natural', viewBobbing: false, volumeMusic: 0,
         leafModel: 'parts', fancyLeaves: true, plantWind: false, plantModels: 'semi', fov: 70, renderScale: 100, fallingLeaves: false, windStreaks: false };
@@ -46,6 +47,7 @@ export async function run() {
     const input = new Proxy({}, { get: (_, name) => name === 'consumeMouseDelta' ? () => ({ x: 0, y: 0 }) : () => 0 });
     const info = createWorldInfo('Miłorząb i jakaranda 0.85.0', 42, 'flat', 'developer');
     let game = await Game.start(renderer, input, null, info, settings);
+    calmWeather(game);
     game.resize(width, height);
     settings.onChange(key => game.applySettings(key));
     game.player.flying = true; game.time.speed = 0; game.time.days = .43;
@@ -88,16 +90,8 @@ export async function run() {
     check(specimens[0].height > specimens[1].height * 1.5, 'Mature ginkgo is substantially taller than jacaranda');
     game.world.loadAround(-182, -32, 9);
     game.player.pos.set(-182, specimens[0].y, 10); game.update(0); game.world.updateMeshes();
-    // Since 1.11.0 the light depends on the weather (seed 42 starts in
-    // frontal rain). The colour thresholds below assume a clear sky, so each
-    // view pins a high over the camera - the same as /pogoda ustaw pogodnie.
-    function clearSky(x, z) {
-        const field = game.weather.field;
-        field.clearForced(); field.force('wyz', x, z, game.time.days, { stay: true }); game.weather.reset();
-    }
     async function draw(eye, target) {
         game.player.pos.set(eye[0], eye[1] - 1.6, eye[2]); game.player.yaw = 0; game.player.pitch = 0;
-        clearSky(eye[0], eye[2]);
         game.update(0); game.world.updateMeshes();
         for (let frame = 0; frame < 4; frame++) {
             game.camera.position.set(...eye); game.camera.lookAt(...target); game.render(); await pause();
@@ -340,6 +334,7 @@ export async function run() {
         if (!naturalSamples.length) {
             await game.stop({ save: false });
             game = await Game.start(renderer, input, null, createWorldInfo('Naturalne drzewa 0.85.0', 42, 'realistic', 'developer'), settings);
+            calmWeather(game);
             game.resize(width, height); game.player.flying = true; game.time.speed = 0; game.time.days = .43;
         }
         const spot = { ginkgo: [4762, 53, -4750, 1190, -1188], jacaranda: [1210, 51, -3247, 302, -812] }[name];

@@ -568,6 +568,11 @@ export function createFarTerrainMaterial(level = 0, tileFade = { value: new THRE
                 '#include <color_fragment>',
                 `#include <color_fragment>
 
+                // Mokra ziemia (weather/cloudShader.js): tam, gdzie pada
+                // albo niedawno padało, teren ciemnieje - z daleka widać,
+                // którędy przeszedł deszcz.
+                diffuseColor.rgb *= 1.0 - 0.3 * groundWetness(vFarWorld);
+
                 // Klasyczny widok: każda kratka trochę jaśniejsza albo
                 // ciemniejsza. Atmosfera używa czystego albedo tekstur.
 
@@ -668,6 +673,15 @@ export function createFarTerrainMaterial(level = 0, tileFade = { value: new THRE
                 }
 
                 float haze = atmosphereHaze(farDirection, 1.0, farHaze(farDirection));
+
+                // Deszcz nad dalekim terenem zasnuwa go szarą zasłoną -
+                // z daleka widać, gdzie pada (weather/cloudShader.js).
+                // Ten sam szary kolor co zasłona pod chmurą na niebie, więc
+                // kurtyna deszczu sięga od chmury do samej ziemi.
+                float farRain = rainAt(vFarWorld) * smoothstep(250.0, 1300.0, length(farDirection.xz));
+
+                hazeSky = mix(hazeSky, uRainVeilColor, min(1.0, farRain * 1.6));
+                haze = mix(haze, 1.0, 0.78 * farRain);
 
                 // Daleki teren i jego woda używają tej samej absorpcji
                 // pod wodą co bliskie powierzchnie. Baza A/B bez zmian.

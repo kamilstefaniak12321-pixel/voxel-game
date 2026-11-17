@@ -34,6 +34,11 @@ const ROWS_PER_FRAME = 1;
 // (wiosna, lato, jesień, zima).
 const SEASON_BASE = [0, 22, -10, -24];
 
+// Mokra ziemia: po tylu dobach gry deszcz zmoczy ją całkiem (ok. 25 s),
+// a po tylu wyschnie (ok. 6 minut).
+const WETTING_DAYS = 0.02;
+const DRYING_DAYS = 0.3;
+
 const mod = (value, size) => ((value % size) + size) % size;
 const clamp01 = (x) => Math.max(0, Math.min(1, x));
 
@@ -64,6 +69,23 @@ export class WeatherMap {
         this.texture.magFilter = this.texture.minFilter = THREE.LinearFilter;
         this.texture.generateMipmaps = false;
 
+        // Druga tekstura (od 1.12.0): R opad, G burza, B mokra ziemia,
+        // A mgła. Mokra ziemia pamięta deszcz: moknie w kilkadziesiąt
+        // sekund, schnie kilka minut - dlatego trzyma własny stan (wet)
+        // i czas ostatniego liczenia każdego punktu (wetTime).
+        this.rain = new Uint8Array(N * N * 4);
+        this.rainTexture = new THREE.DataTexture(this.rain, N, N, THREE.RGBAFormat);
+        this.rainTexture.wrapS = this.rainTexture.wrapT = THREE.RepeatWrapping;
+        this.rainTexture.magFilter = this.rainTexture.minFilter = THREE.LinearFilter;
+        this.rainTexture.generateMipmaps = false;
+
+        this.wet = new Float32Array(N * N);
+        this.wetTime = new Float64Array(N * N).fill(-1);
+
+        // Największy opad w oknie (z ostatniego pełnego obiegu).
+        this.maxRain = 0;
+        this.sweepRain = 0;
+
         // Lewy górny róg okna (w punktach mapy) albo null przed pierwszym
         // liczeniem.
         this.originX = null;
@@ -81,7 +103,10 @@ export class WeatherMap {
     }
 
 
-    writeRow(iz, x0, x1, t) {
+    // keep - punkt był już w oknie: mokra ziemia pamięta poprzedni stan.
+    // Nowe paski i liczenie od nowa zaczynają od tego, co pada teraz.
+
+    writeRow(iz, x0, x1, t, keep = false) {
 
         const N = WEATHER_MAP_SIZE;
         const sample = this.sample;
@@ -101,6 +126,34 @@ export class WeatherMap {
 
             if (sample.low > 0.03 && sample.thick > this.sweepThick) {
                 this.sweepThick = sample.thick;
+            }
+
+            const cell = k >> 2;
+            const target = Math.min(1, sample.rain * 3);
+            const elapsed = t - this.wetTime[cell];
+
+            let wet = target;
+
+            if (keep && this.wetTime[cell] >= 0 && elapsed >= 0) {
+
+                const before = this.wet[cell];
+
+                wet = target > before
+                    ? Math.min(target, before + elapsed / WETTING_DAYS)
+                    : Math.max(target, before - elapsed / DRYING_DAYS);
+
+            }
+
+            this.wet[cell] = wet;
+            this.wetTime[cell] = t;
+
+            this.rain[k] = Math.round(sample.rain * 255);
+            this.rain[k + 1] = Math.round(sample.storm * 255);
+            this.rain[k + 2] = Math.round(wet * 255);
+            this.rain[k + 3] = Math.round(sample.fog * 255);
+
+            if (sample.rain > this.sweepRain) {
+                this.sweepRain = sample.rain;
             }
 
         }
@@ -136,12 +189,18 @@ export class WeatherMap {
 
             this.gather(x, z, t);
             this.sweepThick = 0;
+            this.sweepRain = 0;
+
+            // (Po /pogoda ustaw - force - okno stoi w miejscu, więc mokra
+            // ziemia zostaje; po dalekim skoku zaczyna od nowa.)
+            const keep = force && Math.abs(shiftX) < N && Math.abs(shiftZ) < N;
 
             for (let iz = originZ; iz < originZ + N; iz++) {
-                this.writeRow(iz, originX, originX + N, t);
+                this.writeRow(iz, originX, originX + N, t, keep);
             }
 
             this.maxThick = this.sweepThick;
+            this.maxRain = this.sweepRain;
             this.row = 0;
 
         }
@@ -180,14 +239,16 @@ export class WeatherMap {
                 if (this.row === 0) {
                     this.gather(x, z, t);
                     this.sweepThick = 0;
+                    this.sweepRain = 0;
                 }
 
-                this.writeRow(originZ + this.row, originX, originX + N, this.sweepTime);
+                this.writeRow(originZ + this.row, originX, originX + N, this.sweepTime, true);
                 this.row++;
 
                 if (this.row >= N) {
                     this.row = 0;
                     this.maxThick = this.sweepThick;
+                    this.maxRain = this.sweepRain;
                 }
 
             }
@@ -197,6 +258,21 @@ export class WeatherMap {
         this.originX = originX;
         this.originZ = originZ;
         this.texture.needsUpdate = true;
+        this.rainTexture.needsUpdate = true;
+
+    }
+
+
+    // Odczyt z mapy po stronie gry (najbliższy punkt): kanał drugiej
+    // tekstury w miejscu (x, z): 0 opad, 1 burza, 2 mokra ziemia, 3 mgła.
+
+    read(x, z, channel) {
+
+        const N = WEATHER_MAP_SIZE;
+        const ix = mod(Math.floor(x / WEATHER_MAP_TEXEL), N);
+        const iz = mod(Math.floor(z / WEATHER_MAP_TEXEL), N);
+
+        return channel === 2 ? this.wet[iz * N + ix] : this.rain[(iz * N + ix) * 4 + channel] / 255;
 
     }
 
@@ -204,6 +280,7 @@ export class WeatherMap {
     dispose() {
 
         this.texture.dispose();
+        this.rainTexture.dispose();
 
     }
 
@@ -238,12 +315,29 @@ export class Weather {
         // Cienie chmur na terenie (ustawienie).
         this.shadows = true;
 
+        // Mokra ziemia i kałuże na terenie (ustawienie).
+        this.wetSurfaces = true;
+
+        // Mokra ziemia pod graczem (0-1, z mapy - pamięta niedawny deszcz).
+        this.wetness = 0;
+
+        // Mgła nad graczem (0-1): poranna z pola pogody, lekka po deszczu
+        // albo ustawiona komendą (fogOverride: 0-1 albo null).
+        this.fog = 0;
+        this.fogOverride = null;
+
+        // Tęcza i halo (0-1) - setSky. rainbowOverride: komenda /pogoda tecza.
+        this.rainbow = 0;
+        this.halo = 0;
+        this.rainbowOverride = null;
+
         this.thickness = CLOUD_THICKNESS[0];
         this.base = CLOUD_LEVELS.low;
         this.season = [0, 0, 0, 0];
         this.refresh = false;
 
         cloudUniforms.uWeatherMap.value = this.map.texture;
+        cloudUniforms.uWeatherRain.value = this.map.rainTexture;
         cloudUniforms.uCloudNoise.value = cloudNoiseTexture();
         cloudUniforms.uWeatherScale.value = 1 / (WEATHER_MAP_SIZE * WEATHER_MAP_TEXEL);
 
@@ -263,7 +357,7 @@ export class Weather {
         // Wygładzenie w czasie (ok. 1,5 s); pierwsza próbka od razu.
         const k = this.ready ? 1 - Math.exp(-Math.max(0, dt) / 1.5) : 1;
 
-        for (const key of ['low', 'thick', 'mid', 'high', 'rain', 'storm', 'clear', 'windX', 'windZ', 'gust']) {
+        for (const key of ['low', 'thick', 'mid', 'high', 'rain', 'storm', 'clear', 'fog', 'windX', 'windZ', 'gust']) {
             local[key] += (raw[key] - local[key]) * k;
         }
 
@@ -288,8 +382,25 @@ export class Weather {
         this.map.update(x, z, days, this.refresh);
         this.refresh = false;
 
+        // Mokra ziemia pod graczem i mgła: po deszczu, gdy przestaje
+        // padać, nad mokrą ziemią unosi się lekka mgiełka.
+
+        this.wetness = this.map.read(x, z, 2);
+        this.fog = clamp01(this.fogOverride ?? Math.max(local.fog, 0.2 * this.wetness * ramp(0.12, 0.02, local.rain)));
+
+        // Mgła zasłania niebo jak chmury.
+        this.overcast = Math.max(this.overcast, 0.75 * this.fog);
+
         this.updateUniforms(days);
         this.updateWind();
+
+        // Kurtyny deszczu na horyzoncie: tylko gdy w okolicy gdzieś pada;
+        // smugi pochylają się z wiatrem.
+
+        cloudUniforms.uRainVeil.value.set(
+            this.map.maxRain > 0.03 ? 1 : 0, local.angle, Math.min(1.2, local.speed / 9), 0);
+
+        cloudUniforms.uWetness.value = this.wetSurfaces ? 1 : 0;
 
     }
 
@@ -397,13 +508,61 @@ export class Weather {
     }
 
 
+    // Tęcza i halo. sun - kierunek do słońca, light - do światła, które
+    // teraz świeci (słońce albo księżyc), daylight 0-1, dt - czas klatki.
+    //   tęcza: słońce nisko (do ok. 40° nad horyzontem) i świeci na gracza,
+    //          a po przeciwnej stronie nieba pada (albo pada tuż przy nim),
+    //   halo:  cienka zasłona chmur wysokich przed słońcem albo księżycem,
+    //          bez niższych chmur - zapowiedź frontu ciepłego.
+
+    setSky(sun, light, daylight, dt, x, z) {
+
+        const local = this.local;
+        const flat = Math.hypot(sun.x, sun.z);
+
+        let rainbow = 0;
+
+        if (this.rainbowOverride !== null) {
+            rainbow = this.rainbowOverride;
+        }
+        else if (sun.y > 0.02 && sun.y < 0.66 && flat > 0.01) {
+
+            // Deszcz po stronie nieba naprzeciw słońca (z mapy pogody).
+            let rain = local.rain;
+
+            for (const distance of [300, 900, 1800, 3000]) {
+                rain = Math.max(rain, this.map.read(x - sun.x / flat * distance, z - sun.z / flat * distance, 0));
+            }
+
+            rainbow = ramp(0.02, 0.1, sun.y) * ramp(0.66, 0.5, sun.y) * (1 - this.overcast) * clamp01(rain * 3) * daylight;
+
+        }
+
+        const halo = light.y > 0.1
+            ? clamp01((local.high - 0.45) * 2.2) * (1 - ramp(0.25, 0.6, local.low)) * (1 - 0.8 * local.mid)
+            : 0;
+
+        const k = 1 - Math.exp(-Math.max(0, dt) / 3);
+
+        this.rainbow += (rainbow - this.rainbow) * (this.rainbowOverride !== null ? 1 : k);
+        this.halo += (halo - this.halo) * k;
+
+        cloudUniforms.uSkyOptics.value.set(this.rainbow, this.halo, 0, 0);
+
+    }
+
+
     dispose() {
 
         this.map.dispose();
 
         if (cloudUniforms.uWeatherMap.value === this.map.texture) {
             cloudUniforms.uWeatherMap.value = null;
+            cloudUniforms.uWeatherRain.value = null;
             cloudUniforms.uCloudShadow.value.set(0, 0, 0);
+            cloudUniforms.uRainVeil.value.set(0, 0, 0, 0);
+            cloudUniforms.uSkyOptics.value.set(0, 0, 0, 0);
+            cloudUniforms.uWetness.value = 0;
         }
 
     }

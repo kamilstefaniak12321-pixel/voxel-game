@@ -17,6 +17,7 @@ import { lightingUniforms, setLightingView, setLightingComponent, resetLightingD
 import { campfireLightUniforms } from '../src/rendering/CampfireLight.js';
 import { newCampfire } from '../src/game/CampfireState.js';
 import { SURFACE_PROFILES } from '../src/rendering/SurfaceProfiles.js';
+import { withoutWeather } from './render_check_weather.js';
 
 export async function checkSurfaceRendering({ game, settings, renderer, yieldBrowser }) {
     const check = (condition, message) => { if (!condition) throw new Error(message); };
@@ -151,6 +152,8 @@ export async function checkSurfaceRendering({ game, settings, renderer, yieldBro
         modelLight.uModelShadows.value = quality > 0 ? 1 : 0;
     };
     // Od 1.10.1 gra wymaga WebGL 2 - dawna próba zastępczej ścieżki WebGL 1 usunięta.
+    // Pogoda wyłączona na czas testu (render_check_weather.js).
+    const restoreWeather = withoutWeather();
     try {
         renderer.autoClear = true; renderer.toneMapping = THREE.NoToneMapping;
         renderer.outputColorSpace = THREE.LinearSRGBColorSpace;
@@ -581,6 +584,7 @@ export async function checkSurfaceRendering({ game, settings, renderer, yieldBro
             scope: 'Prawdziwe materiały; liniowy render target 16x16; kontrolowane źródła i geometria.',
             initialSettings: { lightingModel: settings.get('lightingModel'), shadows: settings.get('shadows') } };
     } finally {
+        restoreWeather();
         for (const [uniform, value] of savedUniforms) {
             if (value?.clone && !value.isTexture && uniform.value?.copy) uniform.value.copy(value);
             else uniform.value = value;

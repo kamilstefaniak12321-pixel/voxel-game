@@ -37,7 +37,7 @@ export const WEATHER_COMMANDS = [
     {
         name: 'pogoda',
         aliases: ['weather'],
-        usage: '/pogoda | prognoza | ustaw <rodzaj> [nadciaga] | znajdz <rodzaj> [tp] | auto | deszcz [0-100] | sucho',
+        usage: '/pogoda | prognoza | ustaw <rodzaj> [nadciaga] | znajdz <rodzaj> [tp] | auto | deszcz [0-100] | sucho | mgla [0-100] | tecza [wl|wyl]',
         description: 'Pogoda nad tobą, prognoza, szukanie frontów i burz; do sprawdzania - ustawienie pogody ' +
             `(rodzaje: ${KIND_WORDS.join(', ')}). Mapa pogody: /mapa pogoda.`,
 
@@ -67,6 +67,8 @@ export const WEATHER_COMMANDS = [
 
                 weather.field.clearForced();
                 weather.reset();
+                weather.fogOverride = null;
+                weather.rainbowOverride = null;
                 game.rainOverride = null;
 
                 return 'Pogoda znów liczy się sama.';
@@ -161,17 +163,48 @@ export const WEATHER_COMMANDS = [
 
             }
 
+            if (word === 'mgla' && args.length <= 2) {
+
+                const amount = args[1] === undefined ? 100 : parseNumber(args[1], 'gęstość mgły');
+
+                if (amount < 0 || amount > 100) {
+                    throw new CommandError('Gęstość mgły: od 0 do 100.');
+                }
+
+                weather.fogOverride = amount / 100;
+
+                return `Mgła: ${amount}% do odwołania (/pogoda auto).`;
+
+            }
+
+            if (word === 'tecza' && args.length <= 2) {
+
+                const off = args[1] !== undefined && ['wyl', 'off', '0'].includes(simplify(args[1]));
+
+                if (args[1] !== undefined && !off && !['wl', 'on', '1'].includes(simplify(args[1]))) {
+                    throw usageError(this);
+                }
+
+                weather.rainbowOverride = off ? 0 : 1;
+
+                return off
+                    ? 'Tęcza wyłączona do odwołania (/pogoda auto).'
+                    : 'Tęcza włączona - stań tyłem do słońca (widać ją, gdy słońce jest nisko). Powrót: /pogoda auto.';
+
+            }
+
             throw usageError(this);
 
         },
 
         complete(args) {
 
-            if (args.length === 1) return ['prognoza', 'ustaw', 'znajdz', 'auto', 'deszcz', 'sucho'];
+            if (args.length === 1) return ['prognoza', 'ustaw', 'znajdz', 'auto', 'deszcz', 'sucho', 'mgla', 'tecza'];
 
             const word = simplify(args[0]);
 
             if (args.length === 2 && ['ustaw', 'znajdz'].includes(word)) return KIND_WORDS;
+            if (args.length === 2 && word === 'tecza') return ['wl', 'wyl'];
             if (args.length === 3) return word === 'ustaw' ? ['nadciaga'] : word === 'znajdz' ? ['tp'] : [];
 
             return [];

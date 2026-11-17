@@ -10,6 +10,7 @@ export async function run() {
     const THREE = await import('three');
     const { Game } = await import('/src/game/Game.js');
     const { Settings } = await import('/src/settings/Settings.js');
+    const { CALM_WEATHER, calmWeather } = await import('/tools/fixtures/calm-weather.js');
     const { createWorldInfo } = await import('/src/storage/WorldStorage.js');
     const { atlasReady, ATLAS_TILES, ATLAS_COLUMNS, ATLAS_ROWS } = await import('/src/rendering/TextureAtlas.js');
     const { PINE_BARK_TEXTURES, drawPineBarkTextures } = await import('/src/rendering/WoodAtlasTextures.js');
@@ -94,10 +95,11 @@ export async function run() {
     const settings = new Settings();
     for (const [key, value] of Object.entries({ viewDistance: 48, farTerrain: 0, loadBudget: 8, meteorites: false,
         lightShafts: false, bounceLight: false, showHand: false, shadows: 0, cloudCover: 0,
-        lightingModel: 'world', lightingLook: 'natural', viewBobbing: false, inventoryStyle: 'light', musicVolume: 0 })) settings.set(key, value);
+        lightingModel: 'world', lightingLook: 'natural', viewBobbing: false, inventoryStyle: 'light', musicVolume: 0, ...CALM_WEATHER })) settings.set(key, value);
     const input = new Proxy({}, { get: (_, name) => name === 'consumeMouseDelta' ? () => ({ x: 0, y: 0 }) : () => 0 });
     const info = createWorldInfo('Próba tekstur 0.70.0', 42, 'flat', 'developer');
     const game = await Game.start(renderer, input, null, info, settings);
+    calmWeather(game);
     game.camera.aspect = width / height; game.camera.updateProjectionMatrix(); game.hand.resize(width / height);
     settings.onChange(key => game.applySettings(key));
     game.player.flying = true; game.time.speed = 0; game.time.days = .5;

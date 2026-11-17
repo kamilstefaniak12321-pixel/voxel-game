@@ -1,6 +1,7 @@
 // Real colour/depth shaders, one cutout sheet and three motion modes. This
 // catches a mismatch in deformation or alpha threshold without a full world.
 import * as THREE from 'three';
+import { withoutWeather } from './render_check_weather.js';
 import { plantMaterial } from '../src/rendering/BlockRenderData.js';
 import { plantDepthMaterial } from '../src/rendering/Shadows.js';
 import { plantWindUniforms } from '../src/rendering/PlantWind.js';
@@ -83,6 +84,8 @@ export async function checkPlantShadowRendering({ renderer, yieldBrowser = async
         return { count, centerX: sumX / count, rootX: rootSum / rootCount };
     };
     const samples = [];
+    // Pogoda wyłączona na czas testu (render_check_weather.js).
+    const restoreWeather = withoutWeather();
     try {
         renderer.autoClear = true; renderer.setClearColor(0, 1); renderer.setScissorTest(false);
         plantDepthMaterial.uniforms.map.value = texture;
@@ -117,6 +120,7 @@ export async function checkPlantShadowRendering({ renderer, yieldBrowser = async
         check(Math.abs(wind[0].rootX - wind[1].rootX) <= 1, 'Wiatr odkleił korzeń od podłoża');
         return { status: 'passed', samples, note: 'Rzeczywisty shader rośliny i caster głębi: zgodne wycięcie, wiatr, rośliny wodne i pływające.' };
     } finally {
+        restoreWeather();
         plantWindUniforms.uTime.value = saved.time;
         plantWindUniforms.uWaveHeight.value = saved.wave;
         plantDepthMaterial.uniforms.uTime.value = saved.depthTime;

@@ -1076,7 +1076,7 @@ waterMaterial.onBeforeCompile = (shader, renderer) => {
 
                 vec2 seaAlong = vec2(dot(seaPlace, uSeaWave.yz), dot(seaPlace, vec2(-uSeaWave.z, uSeaWave.y)));
 
-                seaWhite = max(seaWhite, step(1.0 - 0.13 * smoothstep(0.5, 1.0, uSeaFoam), seaNoise(vec2(seaAlong.x / 7.0, seaAlong.y / 0.6))));
+                seaWhite = max(seaWhite, step(1.0 - 0.11 * smoothstep(0.5, 1.0, uSeaFoam), seaNoise(vec2(seaAlong.x / 4.5, seaAlong.y / 0.9))));
                 waterFoam = max(waterFoam, seaWhite * 0.55);
 
             }

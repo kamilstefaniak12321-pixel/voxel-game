@@ -318,8 +318,9 @@ export class SandStorm {
 
         const flight = Math.hypot(this.velocity.x, this.velocity.z);
 
-        this.uniforms.uSandShape.value.set(0.35 + 0.09 * flight, 0.25 + 0.5 * this.level, RAIN_STREAKS.radius, 0.12 + 0.2 * this.level);
-        this.uniforms.uSandLow.value.set(0.5 + 0.11 * flight, 0.18 + 0.5 * this.streamLevel, 0.4 + 0.08 * flight, 0.14 + 0.4 * this.sprayLevel);
+        // (Smugi krótkie - długie wyglądają jak kreski prędkości z komiksu.)
+        this.uniforms.uSandShape.value.set(0.25 + 0.04 * flight, 0.2 + 0.4 * this.level, RAIN_STREAKS.radius, 0.12 + 0.2 * this.level);
+        this.uniforms.uSandLow.value.set(0.4 + 0.05 * flight, 0.16 + 0.4 * this.streamLevel, 0.35 + 0.05 * flight, 0.14 + 0.4 * this.sprayLevel);
 
         // Piasek i bryzgi nie świecą: barwa pyłu z nieba (Sky.refresh),
         // nocą ciemnieją razem z nim.

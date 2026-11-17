@@ -437,6 +437,7 @@ const desert = (seed = 'lepidolit') => new WeatherField(seed, DESERT);
     check(CLOUD_LAYERS_GLSL.indexOf('vec4 dust = dustWall(ro, rd, sky);') < CLOUD_LAYERS_GLSL.indexOf('vec4 optics = skyOptics(rd);') &&
         CLOUD_LAYERS_GLSL.indexOf('vec4 optics = skyOptics(rd);') < CLOUD_LAYERS_GLSL.indexOf('vec4 veil = rainVeil(ro, rd, sky);'), 'Pył jest najbliżej kamery: zasłania tęczę, halo, deszcz i chmury');
     check(CLOUD_LAYERS_GLSL.includes('if (uDust.x > 0.5) {'), 'Bez pyłu w okolicy niebo go nie liczy');
+    check(CLOUD_LAYERS_GLSL.includes('if (!below && uDust.x > 0.5 && rd.y > -0.3 && ro.y < uCloudLevels.x) {'), 'Ściana pyłu sięga do ziemi także pod poziomem oczu (pas nieba pod widnokręgiem)');
     check(CLOUD_LAYERS_GLSL.includes('textureLod(uWeatherRain, p * uWeatherScale, 0.0).a') && CLOUD_LAYERS_GLSL.includes('uDust.z * (1.0 - smoothstep(150.0, 700.0, d))'), 'Ściana z mapy pogody, blisko kamery także pył wokół niej');
     check(CLOUD_LAYERS_GLSL.includes(`${DUST_REACH.toFixed(1)}`) && CLOUD_LAYERS_GLSL.includes('for (int i = 0; i < 12; i++)'), 'Stała liczba próbek ściany pyłu');
     check(DUST_TOP > CHUNK_HEIGHT * 2 && DUST_TOP > CLOUD_LEVELS.low && DUST_TOP < CLOUD_LEVELS.mid, 'Ściana pyłu sięga ponad góry i podstawę chmur niskich, ale nie do chmur średnich');
@@ -504,7 +505,7 @@ const desert = (seed = 'lepidolit') => new WeatherField(seed, DESERT);
     sand.update(0.016, 1, 0, { x: 9, z: 0, speed: 9 }, sky);
     equal([sand.stats().grains, sand.stats().streams, sand.stats().spray, sand.stats().draws], [SAND.grains, SAND.streams, 0, 2], 'Burza piaskowa: wszystkie ziarna i strugi, dwa polecenia rysowania');
     check(sand.velocity.x > 9 && sand.velocity.y === 0, 'Piasek leci poziomo, szybciej niż wiatr przy ziemi');
-    check(sand.level === 1 && sand.uniforms.uSandShape.value.y > 0.6, 'Gęsty piasek dobrze widać');
+    check(sand.level === 1 && sand.uniforms.uSandShape.value.y > 0.5 && sand.uniforms.uSandShape.value.x < 1, 'Gęsty piasek dobrze widać; smugi krótkie');
     near(sand.uniforms.uSandColor.value.r / sand.uniforms.uSandColor.value.b, 0.7 / 0.3, 1e-6, 'Piasek ma barwę pyłu z nieba');
 
     sand.update(0.016, 0.5, 0, { x: 6, z: 0, speed: 6 }, sky);

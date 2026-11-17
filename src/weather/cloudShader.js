@@ -866,7 +866,20 @@ export const CLOUD_LAYERS_GLSL = /* glsl */ `
         bool below = uCloudView.x > 0.5;
 
         if ((rd.y > 0.0) == below || abs(rd.y) < 1e-4) {
+
+            // Pas nieba tuż pod poziomem oczu (z wysoka widać go między
+            // końcem dalekiego terenu a widnokręgiem): ściana pyłu sięga
+            // do samej ziemi, więc rysuje się i tam.
+            if (!below && uDust.x > 0.5 && rd.y > -0.3 && ro.y < uCloudLevels.x) {
+
+                vec4 dust = dustWall(ro, rd, skyColor(normalize(vec3(rd.x, 0.0, rd.z))));
+
+                return vec4(dust.rgb, dust.a * uCloudView.w);
+
+            }
+
             return vec4(0.0);
+
         }
 
         vec3 sky = skyColor(normalize(vec3(rd.x, max(rd.y, 0.0), rd.z)));

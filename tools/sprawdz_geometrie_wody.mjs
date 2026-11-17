@@ -256,7 +256,10 @@ const shader = { vertexShader: THREE.ShaderLib.lambert.vertexShader,
     fragmentShader: THREE.ShaderLib.lambert.fragmentShader, uniforms: {} };
 waterMaterial.onBeforeCompile(shader, { capabilities: { isWebGL2: true } });
 check(shader.vertexShader.includes('attribute vec2 plantMotion;'), 'Water declares packed wave/face data');
-check(shader.vertexShader.includes('uWaveHeight * plantMotion.x'), 'Shallow water waves use explicit weights');
+// (Od 1.15.0 do zwykłej fali dochodzi fala sztormowa - obie ważone tak samo.)
+check(shader.vertexShader.includes('float wave = waterWave(waterWorld.xz, uTime) * uWaveHeight + seaSwell(waterWorld, uTime);')
+    && shader.vertexShader.includes('transformed.y += wave * plantMotion.x;')
+    && shader.vertexShader.includes('waterWorld.y += wave * plantMotion.x;'), 'Shallow water waves use explicit weights');
 check(!shader.vertexShader.includes('fract(waterWorld.y)'), 'Waves do not depend on a flat .875 height');
 check(shader.fragmentShader.includes('abs(vWaterFace) > 0.5'), 'Slopes keep top UV mapping independently of their normal');
 equal(waterMaterial.defaultAttributeValues.plantMotion, [0, 1], 'Empty warmup geometry has valid water defaults');

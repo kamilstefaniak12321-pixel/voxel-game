@@ -397,7 +397,7 @@ function census(biome, options, span = 700) {
 {
     const byId = Object.fromEntries(ACHIEVEMENTS.map((entry) => [entry.id, entry]));
     for (const id of ['shrub_fruit', 'shrub_flowers', 'shrub_planted', 'shrub_garden']) {
-        check(byId[id] && manifest.tiles[byId[id].icon], `Osiągnięcie ${id} z ikonką`);
+        check(byId[id] && ITEM_TYPES[byId[id].icon], `Osiągnięcie ${id} z ikonką przedmiotu`);
     }
     check(byId.shrub_fruit.when({ type: 'shrub_raspberry_fruit_yellow', item: 'yellow_raspberry' }) && !byId.shrub_fruit.when({ type: 'blueberry_bush_full', item: 'blueberry' })
         && !byId.shrub_fruit.when({ type: 'shrub_dog_rose_flower', item: 'rose_petals' }), 'Prosto z krzewu: tylko owoce krzewów');

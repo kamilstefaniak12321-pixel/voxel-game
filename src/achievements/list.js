@@ -614,7 +614,7 @@ export const ACHIEVEMENTS = [
         title: 'Prosto z krzewu',
         task: 'Zbierz owoce z krzewu jagodowego (np. maliny, porzeczki albo aronię).',
         comment: 'Połowa do koszyka, połowa do buzi. Koszyk nie protestuje.',
-        icon: 'item_raspberry',
+        icon: 'raspberry',
         on: 'harvested',
         when: (data) => String(data.type).startsWith('shrub_') && String(data.type).includes('_fruit')
     },
@@ -624,7 +624,7 @@ export const ACHIEVEMENTS = [
         title: 'Zapach czerwca',
         task: 'Zerwij płatki dzikiej róży albo kwiaty bzu czarnego z kwitnącego krzewu.',
         comment: 'Krzew zakwitnie jeszcze raz. Owoców z tej gałązki już nie będzie - coś za coś.',
-        icon: 'item_elderflower',
+        icon: 'elderflower',
         on: 'harvested',
         when: (data) => data.item === 'rose_petals' || data.item === 'elderflower'
     },
@@ -634,7 +634,7 @@ export const ACHIEVEMENTS = [
         title: 'Własny krzew',
         task: 'Posadź owoc krzewu jagodowego na rozgrzebanej ziemi.',
         comment: 'Teraz tylko poczekać. Krzew się nie spieszy, ty też nie musisz.',
-        icon: 'item_redcurrant',
+        icon: 'redcurrant',
         on: 'planted',
         when: (data) => String(data.type).startsWith('shrub_') && String(data.type).includes('_sapling')
     },
@@ -788,7 +788,7 @@ export const ACHIEVEMENTS = [
         title: 'Jagodowy ogród',
         task: 'Zbierz owoce wszystkich krzewów jagodowych: aronię, porzeczki czerwone i czarne, agrest zielony i czerwony, maliny czerwone i żółte, owoce dzikiej róży, bzu czarnego i rokitnika.',
         comment: 'Dziesięć smaków, od cierpkiej aronii po kwaśny rokitnik. Dżem zrobi się sam - w kieszeni.',
-        icon: 'item_blackcurrant',
+        icon: 'blackcurrant',
         on: 'harvested',
         when: (data, book) => SHRUB_FRUITS.includes(data.item) && book.collect('shrub_fruits', data.item) >= SHRUB_FRUITS.length,
         goal: { key: 'shrub_fruits', count: SHRUB_FRUITS.length }

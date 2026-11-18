@@ -71,6 +71,7 @@ def main():
         rows.append((path, ', '.join(used.get(name, [])) or '-'))
 
     read_texture('assets/textures/blocks/cracks.png').save(os.path.join(OUT, 'pekniecia.png'))
+    read_texture('assets/textures/blocks/cracks_tall.png').save(os.path.join(OUT, 'pekniecia_wysokie.png'))
     read_texture('assets/textures/sky/moon.png').save(os.path.join(OUT, 'niebo', 'ksiezyc.png'))
 
     with open(os.path.join(OUT, 'paczka.json'), 'w', encoding='utf-8') as file:
@@ -110,9 +111,12 @@ Pliki:
 - `paczka.json` - nazwa, autor, opis (niekonieczny),
 - `bloki/<nazwa>.png` - tekstury bloków, roślin i przedmiotów
   (tabela niżej; `bloki/<drzewo>/...` - drzewa z paczek drzew),
-- `pekniecia.png` - pęknięcia kopanego bloku: 10 etapów obok siebie
-  (szerokość = 10 x wysokość), szary 128 nic nie zmienia, ciemniejszy
-  przyciemnia blok, jaśniejszy rozjaśnia,
+- `pekniecia.png` - pęknięcia kopanego bloku: 8 etapów w siatce 4 x 2
+  (pierwszy z lewej u góry); szare, półprzezroczyste piksele
+  przyciemniają blok - im mniej przezroczyste, tym mocniej. Stary pasek
+  10 etapów (szerokość = 10 x wysokość) nadal działa po staremu,
+- `pekniecia_wysokie.png` - to samo dla drzwi (dwa bloki wysokości):
+  klatki dwa razy wyższe niż szersze,
 - `niebo/ksiezyc.png` - tarcza księżyca (poza tarczą przezroczysta).
 
 Więcej: `docs/paczki-tekstur.md` w repozytorium gry, `/tekstury`

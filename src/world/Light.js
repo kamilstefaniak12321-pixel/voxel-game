@@ -13,6 +13,7 @@ import {
     getLightColor
 } from '../blocks/BlockRegistry.js';
 import { CANOPY_SKY_LEVELS } from './CanopyPolicy.js';
+import { lightFaceMask } from './ShapeBoxes.js';
 
 // ------------------------------------------------------------
 // ŚWIATŁO
@@ -38,6 +39,14 @@ import { CANOPY_SKY_LEVELS } from './CanopyPolicy.js';
 // Liście filtrują pionowe światło nieba warstwa po warstwie. Powietrze
 // poniżej korony go nie pochłania; rozchodzenie boczne nadal słabnie
 // o 1 na blok. Dach lub skała kończą pionową drogę do nieba.
+//
+// Drzwi i klapy (od 1.16.0) nie zasłaniają całej komórki, tylko tę jej
+// ścianę, przy której stoi płyta (FACE_BLOCK, maski z ShapeBoxes.js):
+// światło nie przechodzi przez tę ścianę w żadną stronę. Klapa leżąca
+// w dachu kończy też pionową drogę do nieba. Otwarcie albo zamknięcie
+// to zwykła zmiana bloku. Zamykane drzwi mogą na czas animacji
+// "przytrzymać" starą maskę (holdFaces) - światło przełącza się raz,
+// gdy płyta dojdzie na miejsce.
 //
 // Liczenie to "rozlewanie": zaczynamy od źródeł i krok po kroku
 // oddajemy sąsiadom słabsze światło, dopóki coś się zmienia.
@@ -214,6 +223,33 @@ const FILTERS = new Uint8Array(MAX_BLOCK_ID + 1);
 
 for (let id = 1; id <= MAX_BLOCK_ID; id++) {
     FILTERS[id] = isLeavesId(id) ? 1 : 0;
+}
+
+
+// Ściany komórki zasłonięte płytą drzwi albo klapy (maska bitów: numer
+// sąsiada z getNeighbors - 0 zachód, 1 wschód, 2 północ, 3 południe,
+// 4 góra, 5 dół). Zero - zwykły blok.
+
+export const FACE_BLOCK = new Uint8Array(MAX_BLOCK_ID + 1);
+
+for (let id = 1; id <= MAX_BLOCK_ID; id++) {
+    FACE_BLOCK[id] = lightFaceMask(id);
+}
+
+const FACE_UP = 16, FACE_DOWN = 32;
+
+// Maska ścian komórki: przytrzymana (holdFaces) albo z numeru bloku.
+
+function facesAt(chunk, index) {
+
+    const mask = FACE_BLOCK[chunk.blocks[index]];
+
+    if (mask === 0 || !chunk.faceHold) {
+        return mask;
+    }
+
+    return chunk.faceHold.get(index) ?? mask;
+
 }
 
 for (let id = 1; id <= MAX_BLOCK_ID; id++) {
@@ -448,7 +484,11 @@ export class LightEngine {
 
                 const id = blocks[i];
 
-                if (isOpaqueId(id)) {
+                // (Klapa pod sufitem komórki nie wpuszcza nieba do środka,
+                // klapa na dnie - nie wypuszcza go niżej.)
+                const faces = FACE_BLOCK[id];
+
+                if (isOpaqueId(id) || (faces & FACE_UP)) {
                     break;
                 }
 
@@ -459,6 +499,10 @@ export class LightEngine {
                 if (FILTERS[id]) {
                     if (firstFilter < 0) firstFilter = y + 1;
                     layers++;
+                }
+
+                if (faces & FACE_DOWN) {
+                    break;
                 }
 
             }
@@ -630,6 +674,37 @@ export class LightEngine {
     // ZMIANA BLOKU
     // --------------------------------------------------------
 
+    // Przytrzymuje maskę zasłoniętych ścian komórki (np. na czas animacji
+    // zamykania drzwi): do releaseFaces światło liczy się tak, jakby płyta
+    // stała po staremu. mask - maska do przytrzymania (zwykle obecna).
+
+    holdFaces(chunk, index, mask) {
+
+        (chunk.faceHold ??= new Map()).set(index, mask);
+
+    }
+
+
+    // Kończy przytrzymanie i liczy światło wokół komórki od nowa. Zwraca,
+    // czy coś było przytrzymane.
+
+    releaseFaces(chunk, index) {
+
+        if (!chunk.faceHold?.delete(index)) {
+            return false;
+        }
+
+        if (chunk.faceHold.size === 0) {
+            chunk.faceHold = null;
+        }
+
+        this.blockChanged(chunk, index);
+
+        return true;
+
+    }
+
+
     // Wywoływane po zmianie bloku w komórce `index` chunka.
 
     blockChanged(chunk, index) {
@@ -646,7 +721,8 @@ export class LightEngine {
         let layers = 0, blocked = false;
         for (let y = H - 1; y >= 0; y--) {
             const index = y * LAYER + column, id = chunk.blocks[index];
-            blocked ||= isOpaqueId(id);
+            const faces = FACE_BLOCK[id] ? facesAt(chunk, index) : 0;
+            blocked ||= isOpaqueId(id) || (faces & FACE_UP) !== 0;
             const source = blocked ? 0 : CANOPY_SKY_LEVELS[layers];
             const previous = chunk.skySources[index];
             chunk.skySources[index] = source;
@@ -656,6 +732,7 @@ export class LightEngine {
                 this.addToRemove(chunk, index, oldLevel);
             }
             if (FILTERS[id]) layers++;
+            if (faces & FACE_DOWN) blocked = true;
         }
         this.remove(SKY);
         for (let y = 0; y < H; y++) {
@@ -791,6 +868,9 @@ export class LightEngine {
 
             this.getNeighbors(chunk, index);
 
+            // Ściany tej komórki zasłonięte płytą drzwi albo klapy.
+            const faces = facesAt(chunk, index);
+
             for (let k = 0; k < 6; k++) {
 
                 const neighbor = this.neighborChunks[k];
@@ -811,8 +891,18 @@ export class LightEngine {
 
                 const neighborIndex = this.neighborIndices[k];
 
+                const neighborId = neighbor.blocks[neighborIndex];
 
-                if (isOpaqueId(neighbor.blocks[neighborIndex])) {
+                if (isOpaqueId(neighborId)) {
+                    continue;
+                }
+
+                // Płyta po naszej stronie ściany albo po stronie sąsiada.
+                if (faces & (1 << k)) {
+                    continue;
+                }
+
+                if (FACE_BLOCK[neighborId] !== 0 && (facesAt(neighbor, neighborIndex) & (1 << (k ^ 1)))) {
                     continue;
                 }
 

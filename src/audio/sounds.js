@@ -74,6 +74,24 @@ SOUNDS.harvest = {
 };
 
 
+// Drzwi i klapy (1.16.0, CarpenterTables.js): otwieranie (skrzypnięcie
+// i lekki stuk o ogranicznik) i zamykanie (skrzypnięcie i trzaśnięcie).
+// Wysokość i głośność zależą od drewna - doorSounds.js; tu tylko mały
+// losowy rozrzut, żeby dwa otwarcia nie brzmiały identycznie.
+
+for (const name of ['door_open', 'door_close', 'trapdoor_open', 'trapdoor_close']) {
+
+    SOUNDS[name] = {
+        files: [`doors/${name}_1.ogg`, `doors/${name}_2.ogg`],
+        volume: 0.8,
+        pitch: [0.97, 1.03],
+        category: 'blocks',
+        distance: BLOCK_DISTANCE
+    };
+
+}
+
+
 // Ciało gracza (0.94.0, game/Game.js - updateWellbeing, eat): burczenie
 // w brzuchu u głodnego i jedzenie. Syntetyczne (tools/dzwieki.py, grupa
 // "cialo") - można podmienić nagraniami. Bez miejsca w świecie: słychać

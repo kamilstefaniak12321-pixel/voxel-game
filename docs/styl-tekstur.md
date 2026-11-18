@@ -56,6 +56,31 @@ Mech dywanowy ma trzy warianty w `(7, 9)`, `(8, 9)` i `(9, 9)`.
 Wariant wizualny zależy od pozycji, aby nie zmieniał się po ponownym
 wczytaniu świata. Puste piksele pozostają przezroczyste.
 
+## Drzwi i klapy (1.16.0)
+
+Wzorcem wszystkich drzwi i klap są rysunki Kamila na deskach wiśni:
+`tools/wzorce/drzwi.png` i `tools/wzorce/zapadnia.png` (tekstury modelu
+`tools/wzorce/drzwi-i-zapadnia.bbmodel`).
+
+- Poziome deski w pasach po 4 piksele - jak deski bloku: wiersz szpary,
+  dwa wiersze drewna, wiersz cienia. Pionowe łączenia przesunięte.
+- Siedem tonów: dwa na klamkę (najciemniejsze), dwa na szpary, cień,
+  deska, połysk. Bez czarnych obrysów i bez żelaza.
+- Klamka drzwi: ciemny kwadrat 3 × 3 naprzeciw zawiasu, w połowie
+  wysokości. Uchwyt klapy: ciemna wnęka przy brzegu naprzeciw zawiasu.
+- Przód i tył drzwi oraz wierzch i spód klapy to osobne rysunki,
+  krawędzie mają tylko kolory szpar.
+
+Nowe drewno dostaje te same rysunki w swoich kolorach przez
+`tools/drzwi_tekstury.py` (cztery tony z desek gatunku, reszta
+w proporcjach wzorca). Nie rysuj drzwi gatunku od zera - zmiana wyglądu
+wszystkich drzwi to zmiana wzorca i ponowne uruchomienie narzędzia.
+
+Pęknięcia kopanych bloków (`tools/wzorce/pekniecia.png`,
+`pekniecia_wysokie.png`) to szare, półprzezroczyste piksele (kolor 154,
+krycie 184-249 z 255): gra przyciemnia nimi teksturę bloku. Osiem klatek
+w siatce 4 × 2, pierwsza z lewej u góry.
+
 ## Pochodzenie wzorców
 
 Pliki są autorskimi materiałami Kamila, a nie nową paczką zewnętrznego
@@ -66,3 +91,8 @@ zmieniono ręcznego rysunku podczas importu:
 | --- | --- |
 | `terrain (2).png` | `effda1cba123324a372ceffe196475b50f63bde7fdc8b20402be6e2f9eb4e1c8` |
 | `sosna przejście.png` | `1d8e714a07d4f5bd37cd879a1068dce26083470f044ba6dcacdefa0745cf21db` |
+| `drzwi i zapadnia.bbmodel` | `1568d0a96a18aa1a0f5f7a75417e6ae4d11666faa3ef509e0ce97d0163021528` |
+| `drzwi.png` | `cb30178e668b836c7008ed7282c2bf351edcbe30f2f3a010323fd8e77395678c` |
+| `zapadnia.png` | `a75e59a4fb0906cee16fb9b53193c900f4ea9e1334946d04d30aa9e73e6a1580` |
+| `niszczenie_bloku.png` | `f8264b628e79349b4007de1a4fcdbacacd518d9781c873c91900cc0f066671be` |
+| `niszczenie_dwublokowych_moodeli.png` | `a8658a341185f67497383d3914b35bd5550966a50a700bf80b33f6f33d8e805c` |

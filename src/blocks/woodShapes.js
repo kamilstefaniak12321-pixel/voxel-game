@@ -41,9 +41,9 @@ export const SHAPE_KINDS = {
 //   0-31   drzwi: kierunek (4) x część (dolna, górna) x zawias (lewy,
 //          prawy) x (zamknięte, otwarte),
 //   32-47  klapy: kierunek (4) x (dolna, górna) x (zamknięta, otwarta).
-// Drzwi rysuje DoorRenderer.js (animacja otwierania z modelu Kamila),
-// klapy - ChunkMesher (pudełka). Tekstury: door_<drewno> (16 x 32)
-// i trapdoor_<drewno> (tools/drzwi_tekstury.py).
+// Drzwi i (od 1.16.0) klapy rysuje DoorRenderer.js (animacja otwierania
+// z modelu Kamila). Tekstury: door_<drewno> (16 x 32), trapdoor_<drewno>
+// oraz ich _back / _bottom / _edge (tools/drzwi_tekstury.py).
 export const DOOR_FIRST_ID = 10860;
 export const DOORS_PER_WOOD = 48;
 
@@ -162,7 +162,7 @@ function variants(entry, index) {
         const base = f === 0 && h === 0 && !open;
         const type = base ? trapdoor : `${trapdoor}_${facing}_${half}${open ? '_open' : ''}`;
         add(type, doorFirst + 32 + f * 4 + h * 2 + o, { ...common('trapdoor'), textures: { all: trapTexture }, solid: true, opaque: false,
-            model: 'shape', ...(base ? {} : hidden) }, { kind: 'trapdoor', facing, half, open, texture: trapTexture });
+            model: 'door', ...(base ? {} : hidden) }, { kind: 'trapdoor', facing, half, open, texture: trapTexture });
     })));
 
     // Łóżko (trzeci zakres numerów): stelaż i stelaż pościelony.
@@ -208,6 +208,13 @@ const WOOD_BLOCK_END_ID = WOOD_BLOCK_FIRST_ID + Math.max(0, WOODS.length - WOODS
 export function isDoorId(id) {
     return ((id >= DOOR_FIRST_ID && id < DOOR_END_ID) || (id >= WOOD_BLOCK_FIRST_ID && id < WOOD_BLOCK_END_ID)) &&
         infoById.get(id)?.kind === 'door';
+}
+
+// Drzwi albo klapa - bloki na zawiasie z własnym, ruchomym modelem.
+export function isHingedId(id) {
+    if (!((id >= DOOR_FIRST_ID && id < DOOR_END_ID) || (id >= WOOD_BLOCK_FIRST_ID && id < WOOD_BLOCK_END_ID))) return false;
+    const kind = infoById.get(id)?.kind;
+    return kind === 'door' || kind === 'trapdoor';
 }
 
 // Numer bloku wyrobu danego drewna w danym stanie.

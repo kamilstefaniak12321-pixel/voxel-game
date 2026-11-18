@@ -7,7 +7,7 @@
     "drzewa": {
       "file": "drzewa.png",
       "width": 256,
-      "height": 5760
+      "height": 6000
     },
     "teren": {
       "file": "teren.png",
@@ -2616,9 +2616,9 @@
     "assets/textures/blocks/cracks.png": {
       "sheet": "efekty",
       "x": 48,
-      "y": 320,
-      "width": 160,
-      "height": 16
+      "y": 336,
+      "width": 64,
+      "height": 32
     },
     "assets/textures/sky/moon.png": {
       "sheet": "niebo",
@@ -7001,6 +7001,937 @@
       "y": 5744,
       "width": 16,
       "height": 16
+    },
+    "door_spruce_back": {
+      "sheet": "drzewa",
+      "x": 0,
+      "y": 5760,
+      "width": 16,
+      "height": 32
+    },
+    "door_pine_back": {
+      "sheet": "drzewa",
+      "x": 16,
+      "y": 5760,
+      "width": 16,
+      "height": 32
+    },
+    "door_beech_back": {
+      "sheet": "drzewa",
+      "x": 32,
+      "y": 5760,
+      "width": 16,
+      "height": 32
+    },
+    "door_linden_back": {
+      "sheet": "drzewa",
+      "x": 48,
+      "y": 5760,
+      "width": 16,
+      "height": 32
+    },
+    "door_oak_back": {
+      "sheet": "drzewa",
+      "x": 64,
+      "y": 5760,
+      "width": 16,
+      "height": 32
+    },
+    "door_birch_back": {
+      "sheet": "drzewa",
+      "x": 80,
+      "y": 5760,
+      "width": 16,
+      "height": 32
+    },
+    "door_dark_back": {
+      "sheet": "drzewa",
+      "x": 96,
+      "y": 5760,
+      "width": 16,
+      "height": 32
+    },
+    "door_jablon_back": {
+      "sheet": "drzewa",
+      "x": 112,
+      "y": 5760,
+      "width": 16,
+      "height": 32
+    },
+    "door_olcha_back": {
+      "sheet": "drzewa",
+      "x": 128,
+      "y": 5760,
+      "width": 16,
+      "height": 32
+    },
+    "door_wierzba_back": {
+      "sheet": "drzewa",
+      "x": 144,
+      "y": 5760,
+      "width": 16,
+      "height": 32
+    },
+    "door_acacia_back": {
+      "sheet": "drzewa",
+      "x": 160,
+      "y": 5760,
+      "width": 16,
+      "height": 32
+    },
+    "door_bald_cypress_back": {
+      "sheet": "drzewa",
+      "x": 176,
+      "y": 5760,
+      "width": 16,
+      "height": 32
+    },
+    "door_cherry_back": {
+      "sheet": "drzewa",
+      "x": 192,
+      "y": 5760,
+      "width": 16,
+      "height": 32
+    },
+    "door_maple_back": {
+      "sheet": "drzewa",
+      "x": 208,
+      "y": 5760,
+      "width": 16,
+      "height": 32
+    },
+    "door_mugo_back": {
+      "sheet": "drzewa",
+      "x": 224,
+      "y": 5760,
+      "width": 16,
+      "height": 32
+    },
+    "door_olive_back": {
+      "sheet": "drzewa",
+      "x": 240,
+      "y": 5760,
+      "width": 16,
+      "height": 32
+    },
+    "door_rainbow_eucalyptus_back": {
+      "sheet": "drzewa",
+      "x": 0,
+      "y": 5792,
+      "width": 16,
+      "height": 32
+    },
+    "door_sequoia_back": {
+      "sheet": "drzewa",
+      "x": 16,
+      "y": 5792,
+      "width": 16,
+      "height": 32
+    },
+    "door_ginkgo_back": {
+      "sheet": "drzewa",
+      "x": 32,
+      "y": 5792,
+      "width": 16,
+      "height": 32
+    },
+    "door_jacaranda_back": {
+      "sheet": "drzewa",
+      "x": 48,
+      "y": 5792,
+      "width": 16,
+      "height": 32
+    },
+    "door_fir_back": {
+      "sheet": "drzewa",
+      "x": 64,
+      "y": 5792,
+      "width": 16,
+      "height": 32
+    },
+    "door_baobab_back": {
+      "sheet": "drzewa",
+      "x": 80,
+      "y": 5792,
+      "width": 16,
+      "height": 32
+    },
+    "door_coconut_palm_back": {
+      "sheet": "drzewa",
+      "x": 96,
+      "y": 5792,
+      "width": 16,
+      "height": 32
+    },
+    "door_larch_back": {
+      "sheet": "drzewa",
+      "x": 112,
+      "y": 5792,
+      "width": 16,
+      "height": 32
+    },
+    "door_mangrove_back": {
+      "sheet": "drzewa",
+      "x": 128,
+      "y": 5792,
+      "width": 16,
+      "height": 32
+    },
+    "door_kapok_back": {
+      "sheet": "drzewa",
+      "x": 144,
+      "y": 5792,
+      "width": 16,
+      "height": 32
+    },
+    "door_joshua_tree_back": {
+      "sheet": "drzewa",
+      "x": 160,
+      "y": 5792,
+      "width": 16,
+      "height": 32
+    },
+    "door_aspen_back": {
+      "sheet": "drzewa",
+      "x": 176,
+      "y": 5792,
+      "width": 16,
+      "height": 32
+    },
+    "door_araucaria_back": {
+      "sheet": "drzewa",
+      "x": 192,
+      "y": 5792,
+      "width": 16,
+      "height": 32
+    },
+    "door_banyan_back": {
+      "sheet": "drzewa",
+      "x": 208,
+      "y": 5792,
+      "width": 16,
+      "height": 32
+    },
+    "door_dragon_tree_back": {
+      "sheet": "drzewa",
+      "x": 224,
+      "y": 5792,
+      "width": 16,
+      "height": 32
+    },
+    "door_cedar_back": {
+      "sheet": "drzewa",
+      "x": 240,
+      "y": 5792,
+      "width": 16,
+      "height": 32
+    },
+    "door_bristlecone_back": {
+      "sheet": "drzewa",
+      "x": 0,
+      "y": 5824,
+      "width": 16,
+      "height": 32
+    },
+    "trapdoor_spruce_bottom": {
+      "sheet": "drzewa",
+      "x": 0,
+      "y": 5856,
+      "width": 16,
+      "height": 16
+    },
+    "trapdoor_pine_bottom": {
+      "sheet": "drzewa",
+      "x": 16,
+      "y": 5856,
+      "width": 16,
+      "height": 16
+    },
+    "trapdoor_beech_bottom": {
+      "sheet": "drzewa",
+      "x": 32,
+      "y": 5856,
+      "width": 16,
+      "height": 16
+    },
+    "trapdoor_linden_bottom": {
+      "sheet": "drzewa",
+      "x": 48,
+      "y": 5856,
+      "width": 16,
+      "height": 16
+    },
+    "trapdoor_oak_bottom": {
+      "sheet": "drzewa",
+      "x": 64,
+      "y": 5856,
+      "width": 16,
+      "height": 16
+    },
+    "trapdoor_birch_bottom": {
+      "sheet": "drzewa",
+      "x": 80,
+      "y": 5856,
+      "width": 16,
+      "height": 16
+    },
+    "trapdoor_dark_bottom": {
+      "sheet": "drzewa",
+      "x": 96,
+      "y": 5856,
+      "width": 16,
+      "height": 16
+    },
+    "trapdoor_jablon_bottom": {
+      "sheet": "drzewa",
+      "x": 112,
+      "y": 5856,
+      "width": 16,
+      "height": 16
+    },
+    "trapdoor_olcha_bottom": {
+      "sheet": "drzewa",
+      "x": 128,
+      "y": 5856,
+      "width": 16,
+      "height": 16
+    },
+    "trapdoor_wierzba_bottom": {
+      "sheet": "drzewa",
+      "x": 144,
+      "y": 5856,
+      "width": 16,
+      "height": 16
+    },
+    "trapdoor_acacia_bottom": {
+      "sheet": "drzewa",
+      "x": 160,
+      "y": 5856,
+      "width": 16,
+      "height": 16
+    },
+    "trapdoor_bald_cypress_bottom": {
+      "sheet": "drzewa",
+      "x": 176,
+      "y": 5856,
+      "width": 16,
+      "height": 16
+    },
+    "trapdoor_cherry_bottom": {
+      "sheet": "drzewa",
+      "x": 192,
+      "y": 5856,
+      "width": 16,
+      "height": 16
+    },
+    "trapdoor_maple_bottom": {
+      "sheet": "drzewa",
+      "x": 208,
+      "y": 5856,
+      "width": 16,
+      "height": 16
+    },
+    "trapdoor_mugo_bottom": {
+      "sheet": "drzewa",
+      "x": 224,
+      "y": 5856,
+      "width": 16,
+      "height": 16
+    },
+    "trapdoor_olive_bottom": {
+      "sheet": "drzewa",
+      "x": 240,
+      "y": 5856,
+      "width": 16,
+      "height": 16
+    },
+    "trapdoor_rainbow_eucalyptus_bottom": {
+      "sheet": "drzewa",
+      "x": 0,
+      "y": 5872,
+      "width": 16,
+      "height": 16
+    },
+    "trapdoor_sequoia_bottom": {
+      "sheet": "drzewa",
+      "x": 16,
+      "y": 5872,
+      "width": 16,
+      "height": 16
+    },
+    "trapdoor_ginkgo_bottom": {
+      "sheet": "drzewa",
+      "x": 32,
+      "y": 5872,
+      "width": 16,
+      "height": 16
+    },
+    "trapdoor_jacaranda_bottom": {
+      "sheet": "drzewa",
+      "x": 48,
+      "y": 5872,
+      "width": 16,
+      "height": 16
+    },
+    "trapdoor_fir_bottom": {
+      "sheet": "drzewa",
+      "x": 64,
+      "y": 5872,
+      "width": 16,
+      "height": 16
+    },
+    "trapdoor_baobab_bottom": {
+      "sheet": "drzewa",
+      "x": 80,
+      "y": 5872,
+      "width": 16,
+      "height": 16
+    },
+    "trapdoor_coconut_palm_bottom": {
+      "sheet": "drzewa",
+      "x": 96,
+      "y": 5872,
+      "width": 16,
+      "height": 16
+    },
+    "trapdoor_larch_bottom": {
+      "sheet": "drzewa",
+      "x": 112,
+      "y": 5872,
+      "width": 16,
+      "height": 16
+    },
+    "trapdoor_mangrove_bottom": {
+      "sheet": "drzewa",
+      "x": 128,
+      "y": 5872,
+      "width": 16,
+      "height": 16
+    },
+    "trapdoor_kapok_bottom": {
+      "sheet": "drzewa",
+      "x": 144,
+      "y": 5872,
+      "width": 16,
+      "height": 16
+    },
+    "trapdoor_joshua_tree_bottom": {
+      "sheet": "drzewa",
+      "x": 160,
+      "y": 5872,
+      "width": 16,
+      "height": 16
+    },
+    "trapdoor_aspen_bottom": {
+      "sheet": "drzewa",
+      "x": 176,
+      "y": 5872,
+      "width": 16,
+      "height": 16
+    },
+    "trapdoor_araucaria_bottom": {
+      "sheet": "drzewa",
+      "x": 192,
+      "y": 5872,
+      "width": 16,
+      "height": 16
+    },
+    "trapdoor_banyan_bottom": {
+      "sheet": "drzewa",
+      "x": 208,
+      "y": 5872,
+      "width": 16,
+      "height": 16
+    },
+    "trapdoor_dragon_tree_bottom": {
+      "sheet": "drzewa",
+      "x": 224,
+      "y": 5872,
+      "width": 16,
+      "height": 16
+    },
+    "trapdoor_cedar_bottom": {
+      "sheet": "drzewa",
+      "x": 240,
+      "y": 5872,
+      "width": 16,
+      "height": 16
+    },
+    "trapdoor_bristlecone_bottom": {
+      "sheet": "drzewa",
+      "x": 0,
+      "y": 5888,
+      "width": 16,
+      "height": 16
+    },
+    "door_spruce_edge": {
+      "sheet": "drzewa",
+      "x": 0,
+      "y": 5904,
+      "width": 16,
+      "height": 16
+    },
+    "door_pine_edge": {
+      "sheet": "drzewa",
+      "x": 16,
+      "y": 5904,
+      "width": 16,
+      "height": 16
+    },
+    "door_beech_edge": {
+      "sheet": "drzewa",
+      "x": 32,
+      "y": 5904,
+      "width": 16,
+      "height": 16
+    },
+    "door_linden_edge": {
+      "sheet": "drzewa",
+      "x": 48,
+      "y": 5904,
+      "width": 16,
+      "height": 16
+    },
+    "door_oak_edge": {
+      "sheet": "drzewa",
+      "x": 64,
+      "y": 5904,
+      "width": 16,
+      "height": 16
+    },
+    "door_birch_edge": {
+      "sheet": "drzewa",
+      "x": 80,
+      "y": 5904,
+      "width": 16,
+      "height": 16
+    },
+    "door_dark_edge": {
+      "sheet": "drzewa",
+      "x": 96,
+      "y": 5904,
+      "width": 16,
+      "height": 16
+    },
+    "door_jablon_edge": {
+      "sheet": "drzewa",
+      "x": 112,
+      "y": 5904,
+      "width": 16,
+      "height": 16
+    },
+    "door_olcha_edge": {
+      "sheet": "drzewa",
+      "x": 128,
+      "y": 5904,
+      "width": 16,
+      "height": 16
+    },
+    "door_wierzba_edge": {
+      "sheet": "drzewa",
+      "x": 144,
+      "y": 5904,
+      "width": 16,
+      "height": 16
+    },
+    "door_acacia_edge": {
+      "sheet": "drzewa",
+      "x": 160,
+      "y": 5904,
+      "width": 16,
+      "height": 16
+    },
+    "door_bald_cypress_edge": {
+      "sheet": "drzewa",
+      "x": 176,
+      "y": 5904,
+      "width": 16,
+      "height": 16
+    },
+    "door_cherry_edge": {
+      "sheet": "drzewa",
+      "x": 192,
+      "y": 5904,
+      "width": 16,
+      "height": 16
+    },
+    "door_maple_edge": {
+      "sheet": "drzewa",
+      "x": 208,
+      "y": 5904,
+      "width": 16,
+      "height": 16
+    },
+    "door_mugo_edge": {
+      "sheet": "drzewa",
+      "x": 224,
+      "y": 5904,
+      "width": 16,
+      "height": 16
+    },
+    "door_olive_edge": {
+      "sheet": "drzewa",
+      "x": 240,
+      "y": 5904,
+      "width": 16,
+      "height": 16
+    },
+    "door_rainbow_eucalyptus_edge": {
+      "sheet": "drzewa",
+      "x": 0,
+      "y": 5920,
+      "width": 16,
+      "height": 16
+    },
+    "door_sequoia_edge": {
+      "sheet": "drzewa",
+      "x": 16,
+      "y": 5920,
+      "width": 16,
+      "height": 16
+    },
+    "door_ginkgo_edge": {
+      "sheet": "drzewa",
+      "x": 32,
+      "y": 5920,
+      "width": 16,
+      "height": 16
+    },
+    "door_jacaranda_edge": {
+      "sheet": "drzewa",
+      "x": 48,
+      "y": 5920,
+      "width": 16,
+      "height": 16
+    },
+    "door_fir_edge": {
+      "sheet": "drzewa",
+      "x": 64,
+      "y": 5920,
+      "width": 16,
+      "height": 16
+    },
+    "door_baobab_edge": {
+      "sheet": "drzewa",
+      "x": 80,
+      "y": 5920,
+      "width": 16,
+      "height": 16
+    },
+    "door_coconut_palm_edge": {
+      "sheet": "drzewa",
+      "x": 96,
+      "y": 5920,
+      "width": 16,
+      "height": 16
+    },
+    "door_larch_edge": {
+      "sheet": "drzewa",
+      "x": 112,
+      "y": 5920,
+      "width": 16,
+      "height": 16
+    },
+    "door_mangrove_edge": {
+      "sheet": "drzewa",
+      "x": 128,
+      "y": 5920,
+      "width": 16,
+      "height": 16
+    },
+    "door_kapok_edge": {
+      "sheet": "drzewa",
+      "x": 144,
+      "y": 5920,
+      "width": 16,
+      "height": 16
+    },
+    "door_joshua_tree_edge": {
+      "sheet": "drzewa",
+      "x": 160,
+      "y": 5920,
+      "width": 16,
+      "height": 16
+    },
+    "door_aspen_edge": {
+      "sheet": "drzewa",
+      "x": 176,
+      "y": 5920,
+      "width": 16,
+      "height": 16
+    },
+    "door_araucaria_edge": {
+      "sheet": "drzewa",
+      "x": 192,
+      "y": 5920,
+      "width": 16,
+      "height": 16
+    },
+    "door_banyan_edge": {
+      "sheet": "drzewa",
+      "x": 208,
+      "y": 5920,
+      "width": 16,
+      "height": 16
+    },
+    "door_dragon_tree_edge": {
+      "sheet": "drzewa",
+      "x": 224,
+      "y": 5920,
+      "width": 16,
+      "height": 16
+    },
+    "door_cedar_edge": {
+      "sheet": "drzewa",
+      "x": 240,
+      "y": 5920,
+      "width": 16,
+      "height": 16
+    },
+    "door_bristlecone_edge": {
+      "sheet": "drzewa",
+      "x": 0,
+      "y": 5936,
+      "width": 16,
+      "height": 16
+    },
+    "trapdoor_spruce_edge": {
+      "sheet": "drzewa",
+      "x": 0,
+      "y": 5952,
+      "width": 16,
+      "height": 16
+    },
+    "trapdoor_pine_edge": {
+      "sheet": "drzewa",
+      "x": 16,
+      "y": 5952,
+      "width": 16,
+      "height": 16
+    },
+    "trapdoor_beech_edge": {
+      "sheet": "drzewa",
+      "x": 32,
+      "y": 5952,
+      "width": 16,
+      "height": 16
+    },
+    "trapdoor_linden_edge": {
+      "sheet": "drzewa",
+      "x": 48,
+      "y": 5952,
+      "width": 16,
+      "height": 16
+    },
+    "trapdoor_oak_edge": {
+      "sheet": "drzewa",
+      "x": 64,
+      "y": 5952,
+      "width": 16,
+      "height": 16
+    },
+    "trapdoor_birch_edge": {
+      "sheet": "drzewa",
+      "x": 80,
+      "y": 5952,
+      "width": 16,
+      "height": 16
+    },
+    "trapdoor_dark_edge": {
+      "sheet": "drzewa",
+      "x": 96,
+      "y": 5952,
+      "width": 16,
+      "height": 16
+    },
+    "trapdoor_jablon_edge": {
+      "sheet": "drzewa",
+      "x": 112,
+      "y": 5952,
+      "width": 16,
+      "height": 16
+    },
+    "trapdoor_olcha_edge": {
+      "sheet": "drzewa",
+      "x": 128,
+      "y": 5952,
+      "width": 16,
+      "height": 16
+    },
+    "trapdoor_wierzba_edge": {
+      "sheet": "drzewa",
+      "x": 144,
+      "y": 5952,
+      "width": 16,
+      "height": 16
+    },
+    "trapdoor_acacia_edge": {
+      "sheet": "drzewa",
+      "x": 160,
+      "y": 5952,
+      "width": 16,
+      "height": 16
+    },
+    "trapdoor_bald_cypress_edge": {
+      "sheet": "drzewa",
+      "x": 176,
+      "y": 5952,
+      "width": 16,
+      "height": 16
+    },
+    "trapdoor_cherry_edge": {
+      "sheet": "drzewa",
+      "x": 192,
+      "y": 5952,
+      "width": 16,
+      "height": 16
+    },
+    "trapdoor_maple_edge": {
+      "sheet": "drzewa",
+      "x": 208,
+      "y": 5952,
+      "width": 16,
+      "height": 16
+    },
+    "trapdoor_mugo_edge": {
+      "sheet": "drzewa",
+      "x": 224,
+      "y": 5952,
+      "width": 16,
+      "height": 16
+    },
+    "trapdoor_olive_edge": {
+      "sheet": "drzewa",
+      "x": 240,
+      "y": 5952,
+      "width": 16,
+      "height": 16
+    },
+    "trapdoor_rainbow_eucalyptus_edge": {
+      "sheet": "drzewa",
+      "x": 0,
+      "y": 5968,
+      "width": 16,
+      "height": 16
+    },
+    "trapdoor_sequoia_edge": {
+      "sheet": "drzewa",
+      "x": 16,
+      "y": 5968,
+      "width": 16,
+      "height": 16
+    },
+    "trapdoor_ginkgo_edge": {
+      "sheet": "drzewa",
+      "x": 32,
+      "y": 5968,
+      "width": 16,
+      "height": 16
+    },
+    "trapdoor_jacaranda_edge": {
+      "sheet": "drzewa",
+      "x": 48,
+      "y": 5968,
+      "width": 16,
+      "height": 16
+    },
+    "trapdoor_fir_edge": {
+      "sheet": "drzewa",
+      "x": 64,
+      "y": 5968,
+      "width": 16,
+      "height": 16
+    },
+    "trapdoor_baobab_edge": {
+      "sheet": "drzewa",
+      "x": 80,
+      "y": 5968,
+      "width": 16,
+      "height": 16
+    },
+    "trapdoor_coconut_palm_edge": {
+      "sheet": "drzewa",
+      "x": 96,
+      "y": 5968,
+      "width": 16,
+      "height": 16
+    },
+    "trapdoor_larch_edge": {
+      "sheet": "drzewa",
+      "x": 112,
+      "y": 5968,
+      "width": 16,
+      "height": 16
+    },
+    "trapdoor_mangrove_edge": {
+      "sheet": "drzewa",
+      "x": 128,
+      "y": 5968,
+      "width": 16,
+      "height": 16
+    },
+    "trapdoor_kapok_edge": {
+      "sheet": "drzewa",
+      "x": 144,
+      "y": 5968,
+      "width": 16,
+      "height": 16
+    },
+    "trapdoor_joshua_tree_edge": {
+      "sheet": "drzewa",
+      "x": 160,
+      "y": 5968,
+      "width": 16,
+      "height": 16
+    },
+    "trapdoor_aspen_edge": {
+      "sheet": "drzewa",
+      "x": 176,
+      "y": 5968,
+      "width": 16,
+      "height": 16
+    },
+    "trapdoor_araucaria_edge": {
+      "sheet": "drzewa",
+      "x": 192,
+      "y": 5968,
+      "width": 16,
+      "height": 16
+    },
+    "trapdoor_banyan_edge": {
+      "sheet": "drzewa",
+      "x": 208,
+      "y": 5968,
+      "width": 16,
+      "height": 16
+    },
+    "trapdoor_dragon_tree_edge": {
+      "sheet": "drzewa",
+      "x": 224,
+      "y": 5968,
+      "width": 16,
+      "height": 16
+    },
+    "trapdoor_cedar_edge": {
+      "sheet": "drzewa",
+      "x": 240,
+      "y": 5968,
+      "width": 16,
+      "height": 16
+    },
+    "trapdoor_bristlecone_edge": {
+      "sheet": "drzewa",
+      "x": 0,
+      "y": 5984,
+      "width": 16,
+      "height": 16
+    },
+    "assets/textures/blocks/cracks_tall.png": {
+      "sheet": "efekty",
+      "x": 112,
+      "y": 336,
+      "width": 64,
+      "height": 64
     }
   },
   "aliases": {
@@ -12860,6 +13791,798 @@
       "x": 34,
       "y": 63,
       "region": "larch/leaf_litter.png"
+    },
+    "door_spruce_back": {
+      "x": 17,
+      "y": 89,
+      "region": "door_spruce_back",
+      "w": 1,
+      "h": 2,
+      "pw": 16,
+      "ph": 32
+    },
+    "door_pine_back": {
+      "x": 18,
+      "y": 89,
+      "region": "door_pine_back",
+      "w": 1,
+      "h": 2,
+      "pw": 16,
+      "ph": 32
+    },
+    "door_beech_back": {
+      "x": 19,
+      "y": 89,
+      "region": "door_beech_back",
+      "w": 1,
+      "h": 2,
+      "pw": 16,
+      "ph": 32
+    },
+    "door_linden_back": {
+      "x": 20,
+      "y": 89,
+      "region": "door_linden_back",
+      "w": 1,
+      "h": 2,
+      "pw": 16,
+      "ph": 32
+    },
+    "door_oak_back": {
+      "x": 21,
+      "y": 89,
+      "region": "door_oak_back",
+      "w": 1,
+      "h": 2,
+      "pw": 16,
+      "ph": 32
+    },
+    "door_birch_back": {
+      "x": 22,
+      "y": 89,
+      "region": "door_birch_back",
+      "w": 1,
+      "h": 2,
+      "pw": 16,
+      "ph": 32
+    },
+    "door_dark_back": {
+      "x": 23,
+      "y": 89,
+      "region": "door_dark_back",
+      "w": 1,
+      "h": 2,
+      "pw": 16,
+      "ph": 32
+    },
+    "door_jablon_back": {
+      "x": 24,
+      "y": 89,
+      "region": "door_jablon_back",
+      "w": 1,
+      "h": 2,
+      "pw": 16,
+      "ph": 32
+    },
+    "door_olcha_back": {
+      "x": 25,
+      "y": 89,
+      "region": "door_olcha_back",
+      "w": 1,
+      "h": 2,
+      "pw": 16,
+      "ph": 32
+    },
+    "door_wierzba_back": {
+      "x": 26,
+      "y": 89,
+      "region": "door_wierzba_back",
+      "w": 1,
+      "h": 2,
+      "pw": 16,
+      "ph": 32
+    },
+    "door_acacia_back": {
+      "x": 27,
+      "y": 89,
+      "region": "door_acacia_back",
+      "w": 1,
+      "h": 2,
+      "pw": 16,
+      "ph": 32
+    },
+    "door_bald_cypress_back": {
+      "x": 28,
+      "y": 89,
+      "region": "door_bald_cypress_back",
+      "w": 1,
+      "h": 2,
+      "pw": 16,
+      "ph": 32
+    },
+    "door_cherry_back": {
+      "x": 29,
+      "y": 89,
+      "region": "door_cherry_back",
+      "w": 1,
+      "h": 2,
+      "pw": 16,
+      "ph": 32
+    },
+    "door_maple_back": {
+      "x": 30,
+      "y": 89,
+      "region": "door_maple_back",
+      "w": 1,
+      "h": 2,
+      "pw": 16,
+      "ph": 32
+    },
+    "door_mugo_back": {
+      "x": 31,
+      "y": 89,
+      "region": "door_mugo_back",
+      "w": 1,
+      "h": 2,
+      "pw": 16,
+      "ph": 32
+    },
+    "door_olive_back": {
+      "x": 32,
+      "y": 89,
+      "region": "door_olive_back",
+      "w": 1,
+      "h": 2,
+      "pw": 16,
+      "ph": 32
+    },
+    "door_rainbow_eucalyptus_back": {
+      "x": 33,
+      "y": 89,
+      "region": "door_rainbow_eucalyptus_back",
+      "w": 1,
+      "h": 2,
+      "pw": 16,
+      "ph": 32
+    },
+    "door_sequoia_back": {
+      "x": 34,
+      "y": 89,
+      "region": "door_sequoia_back",
+      "w": 1,
+      "h": 2,
+      "pw": 16,
+      "ph": 32
+    },
+    "door_ginkgo_back": {
+      "x": 35,
+      "y": 89,
+      "region": "door_ginkgo_back",
+      "w": 1,
+      "h": 2,
+      "pw": 16,
+      "ph": 32
+    },
+    "door_jacaranda_back": {
+      "x": 36,
+      "y": 89,
+      "region": "door_jacaranda_back",
+      "w": 1,
+      "h": 2,
+      "pw": 16,
+      "ph": 32
+    },
+    "door_fir_back": {
+      "x": 37,
+      "y": 89,
+      "region": "door_fir_back",
+      "w": 1,
+      "h": 2,
+      "pw": 16,
+      "ph": 32
+    },
+    "door_baobab_back": {
+      "x": 38,
+      "y": 89,
+      "region": "door_baobab_back",
+      "w": 1,
+      "h": 2,
+      "pw": 16,
+      "ph": 32
+    },
+    "door_coconut_palm_back": {
+      "x": 39,
+      "y": 89,
+      "region": "door_coconut_palm_back",
+      "w": 1,
+      "h": 2,
+      "pw": 16,
+      "ph": 32
+    },
+    "door_larch_back": {
+      "x": 40,
+      "y": 89,
+      "region": "door_larch_back",
+      "w": 1,
+      "h": 2,
+      "pw": 16,
+      "ph": 32
+    },
+    "door_mangrove_back": {
+      "x": 41,
+      "y": 89,
+      "region": "door_mangrove_back",
+      "w": 1,
+      "h": 2,
+      "pw": 16,
+      "ph": 32
+    },
+    "door_kapok_back": {
+      "x": 42,
+      "y": 89,
+      "region": "door_kapok_back",
+      "w": 1,
+      "h": 2,
+      "pw": 16,
+      "ph": 32
+    },
+    "door_joshua_tree_back": {
+      "x": 43,
+      "y": 89,
+      "region": "door_joshua_tree_back",
+      "w": 1,
+      "h": 2,
+      "pw": 16,
+      "ph": 32
+    },
+    "door_aspen_back": {
+      "x": 44,
+      "y": 89,
+      "region": "door_aspen_back",
+      "w": 1,
+      "h": 2,
+      "pw": 16,
+      "ph": 32
+    },
+    "door_araucaria_back": {
+      "x": 45,
+      "y": 89,
+      "region": "door_araucaria_back",
+      "w": 1,
+      "h": 2,
+      "pw": 16,
+      "ph": 32
+    },
+    "door_banyan_back": {
+      "x": 46,
+      "y": 89,
+      "region": "door_banyan_back",
+      "w": 1,
+      "h": 2,
+      "pw": 16,
+      "ph": 32
+    },
+    "door_dragon_tree_back": {
+      "x": 47,
+      "y": 89,
+      "region": "door_dragon_tree_back",
+      "w": 1,
+      "h": 2,
+      "pw": 16,
+      "ph": 32
+    },
+    "door_cedar_back": {
+      "x": 48,
+      "y": 89,
+      "region": "door_cedar_back",
+      "w": 1,
+      "h": 2,
+      "pw": 16,
+      "ph": 32
+    },
+    "door_bristlecone_back": {
+      "x": 49,
+      "y": 89,
+      "region": "door_bristlecone_back",
+      "w": 1,
+      "h": 2,
+      "pw": 16,
+      "ph": 32
+    },
+    "trapdoor_spruce_bottom": {
+      "x": 17,
+      "y": 91,
+      "region": "trapdoor_spruce_bottom"
+    },
+    "trapdoor_pine_bottom": {
+      "x": 18,
+      "y": 91,
+      "region": "trapdoor_pine_bottom"
+    },
+    "trapdoor_beech_bottom": {
+      "x": 19,
+      "y": 91,
+      "region": "trapdoor_beech_bottom"
+    },
+    "trapdoor_linden_bottom": {
+      "x": 20,
+      "y": 91,
+      "region": "trapdoor_linden_bottom"
+    },
+    "trapdoor_oak_bottom": {
+      "x": 21,
+      "y": 91,
+      "region": "trapdoor_oak_bottom"
+    },
+    "trapdoor_birch_bottom": {
+      "x": 22,
+      "y": 91,
+      "region": "trapdoor_birch_bottom"
+    },
+    "trapdoor_dark_bottom": {
+      "x": 23,
+      "y": 91,
+      "region": "trapdoor_dark_bottom"
+    },
+    "trapdoor_jablon_bottom": {
+      "x": 24,
+      "y": 91,
+      "region": "trapdoor_jablon_bottom"
+    },
+    "trapdoor_olcha_bottom": {
+      "x": 25,
+      "y": 91,
+      "region": "trapdoor_olcha_bottom"
+    },
+    "trapdoor_wierzba_bottom": {
+      "x": 26,
+      "y": 91,
+      "region": "trapdoor_wierzba_bottom"
+    },
+    "trapdoor_acacia_bottom": {
+      "x": 27,
+      "y": 91,
+      "region": "trapdoor_acacia_bottom"
+    },
+    "trapdoor_bald_cypress_bottom": {
+      "x": 28,
+      "y": 91,
+      "region": "trapdoor_bald_cypress_bottom"
+    },
+    "trapdoor_cherry_bottom": {
+      "x": 29,
+      "y": 91,
+      "region": "trapdoor_cherry_bottom"
+    },
+    "trapdoor_maple_bottom": {
+      "x": 30,
+      "y": 91,
+      "region": "trapdoor_maple_bottom"
+    },
+    "trapdoor_mugo_bottom": {
+      "x": 31,
+      "y": 91,
+      "region": "trapdoor_mugo_bottom"
+    },
+    "trapdoor_olive_bottom": {
+      "x": 32,
+      "y": 91,
+      "region": "trapdoor_olive_bottom"
+    },
+    "trapdoor_rainbow_eucalyptus_bottom": {
+      "x": 33,
+      "y": 91,
+      "region": "trapdoor_rainbow_eucalyptus_bottom"
+    },
+    "trapdoor_sequoia_bottom": {
+      "x": 34,
+      "y": 91,
+      "region": "trapdoor_sequoia_bottom"
+    },
+    "trapdoor_ginkgo_bottom": {
+      "x": 35,
+      "y": 91,
+      "region": "trapdoor_ginkgo_bottom"
+    },
+    "trapdoor_jacaranda_bottom": {
+      "x": 36,
+      "y": 91,
+      "region": "trapdoor_jacaranda_bottom"
+    },
+    "trapdoor_fir_bottom": {
+      "x": 37,
+      "y": 91,
+      "region": "trapdoor_fir_bottom"
+    },
+    "trapdoor_baobab_bottom": {
+      "x": 38,
+      "y": 91,
+      "region": "trapdoor_baobab_bottom"
+    },
+    "trapdoor_coconut_palm_bottom": {
+      "x": 39,
+      "y": 91,
+      "region": "trapdoor_coconut_palm_bottom"
+    },
+    "trapdoor_larch_bottom": {
+      "x": 40,
+      "y": 91,
+      "region": "trapdoor_larch_bottom"
+    },
+    "trapdoor_mangrove_bottom": {
+      "x": 41,
+      "y": 91,
+      "region": "trapdoor_mangrove_bottom"
+    },
+    "trapdoor_kapok_bottom": {
+      "x": 42,
+      "y": 91,
+      "region": "trapdoor_kapok_bottom"
+    },
+    "trapdoor_joshua_tree_bottom": {
+      "x": 43,
+      "y": 91,
+      "region": "trapdoor_joshua_tree_bottom"
+    },
+    "trapdoor_aspen_bottom": {
+      "x": 44,
+      "y": 91,
+      "region": "trapdoor_aspen_bottom"
+    },
+    "trapdoor_araucaria_bottom": {
+      "x": 45,
+      "y": 91,
+      "region": "trapdoor_araucaria_bottom"
+    },
+    "trapdoor_banyan_bottom": {
+      "x": 46,
+      "y": 91,
+      "region": "trapdoor_banyan_bottom"
+    },
+    "trapdoor_dragon_tree_bottom": {
+      "x": 47,
+      "y": 91,
+      "region": "trapdoor_dragon_tree_bottom"
+    },
+    "trapdoor_cedar_bottom": {
+      "x": 48,
+      "y": 91,
+      "region": "trapdoor_cedar_bottom"
+    },
+    "trapdoor_bristlecone_bottom": {
+      "x": 49,
+      "y": 91,
+      "region": "trapdoor_bristlecone_bottom"
+    },
+    "door_spruce_edge": {
+      "x": 17,
+      "y": 92,
+      "region": "door_spruce_edge"
+    },
+    "door_pine_edge": {
+      "x": 18,
+      "y": 92,
+      "region": "door_pine_edge"
+    },
+    "door_beech_edge": {
+      "x": 19,
+      "y": 92,
+      "region": "door_beech_edge"
+    },
+    "door_linden_edge": {
+      "x": 20,
+      "y": 92,
+      "region": "door_linden_edge"
+    },
+    "door_oak_edge": {
+      "x": 21,
+      "y": 92,
+      "region": "door_oak_edge"
+    },
+    "door_birch_edge": {
+      "x": 22,
+      "y": 92,
+      "region": "door_birch_edge"
+    },
+    "door_dark_edge": {
+      "x": 23,
+      "y": 92,
+      "region": "door_dark_edge"
+    },
+    "door_jablon_edge": {
+      "x": 24,
+      "y": 92,
+      "region": "door_jablon_edge"
+    },
+    "door_olcha_edge": {
+      "x": 25,
+      "y": 92,
+      "region": "door_olcha_edge"
+    },
+    "door_wierzba_edge": {
+      "x": 26,
+      "y": 92,
+      "region": "door_wierzba_edge"
+    },
+    "door_acacia_edge": {
+      "x": 27,
+      "y": 92,
+      "region": "door_acacia_edge"
+    },
+    "door_bald_cypress_edge": {
+      "x": 28,
+      "y": 92,
+      "region": "door_bald_cypress_edge"
+    },
+    "door_cherry_edge": {
+      "x": 29,
+      "y": 92,
+      "region": "door_cherry_edge"
+    },
+    "door_maple_edge": {
+      "x": 30,
+      "y": 92,
+      "region": "door_maple_edge"
+    },
+    "door_mugo_edge": {
+      "x": 31,
+      "y": 92,
+      "region": "door_mugo_edge"
+    },
+    "door_olive_edge": {
+      "x": 32,
+      "y": 92,
+      "region": "door_olive_edge"
+    },
+    "door_rainbow_eucalyptus_edge": {
+      "x": 33,
+      "y": 92,
+      "region": "door_rainbow_eucalyptus_edge"
+    },
+    "door_sequoia_edge": {
+      "x": 34,
+      "y": 92,
+      "region": "door_sequoia_edge"
+    },
+    "door_ginkgo_edge": {
+      "x": 35,
+      "y": 92,
+      "region": "door_ginkgo_edge"
+    },
+    "door_jacaranda_edge": {
+      "x": 36,
+      "y": 92,
+      "region": "door_jacaranda_edge"
+    },
+    "door_fir_edge": {
+      "x": 37,
+      "y": 92,
+      "region": "door_fir_edge"
+    },
+    "door_baobab_edge": {
+      "x": 38,
+      "y": 92,
+      "region": "door_baobab_edge"
+    },
+    "door_coconut_palm_edge": {
+      "x": 39,
+      "y": 92,
+      "region": "door_coconut_palm_edge"
+    },
+    "door_larch_edge": {
+      "x": 40,
+      "y": 92,
+      "region": "door_larch_edge"
+    },
+    "door_mangrove_edge": {
+      "x": 41,
+      "y": 92,
+      "region": "door_mangrove_edge"
+    },
+    "door_kapok_edge": {
+      "x": 42,
+      "y": 92,
+      "region": "door_kapok_edge"
+    },
+    "door_joshua_tree_edge": {
+      "x": 43,
+      "y": 92,
+      "region": "door_joshua_tree_edge"
+    },
+    "door_aspen_edge": {
+      "x": 44,
+      "y": 92,
+      "region": "door_aspen_edge"
+    },
+    "door_araucaria_edge": {
+      "x": 45,
+      "y": 92,
+      "region": "door_araucaria_edge"
+    },
+    "door_banyan_edge": {
+      "x": 46,
+      "y": 92,
+      "region": "door_banyan_edge"
+    },
+    "door_dragon_tree_edge": {
+      "x": 47,
+      "y": 92,
+      "region": "door_dragon_tree_edge"
+    },
+    "door_cedar_edge": {
+      "x": 48,
+      "y": 92,
+      "region": "door_cedar_edge"
+    },
+    "door_bristlecone_edge": {
+      "x": 49,
+      "y": 92,
+      "region": "door_bristlecone_edge"
+    },
+    "trapdoor_spruce_edge": {
+      "x": 17,
+      "y": 93,
+      "region": "trapdoor_spruce_edge"
+    },
+    "trapdoor_pine_edge": {
+      "x": 18,
+      "y": 93,
+      "region": "trapdoor_pine_edge"
+    },
+    "trapdoor_beech_edge": {
+      "x": 19,
+      "y": 93,
+      "region": "trapdoor_beech_edge"
+    },
+    "trapdoor_linden_edge": {
+      "x": 20,
+      "y": 93,
+      "region": "trapdoor_linden_edge"
+    },
+    "trapdoor_oak_edge": {
+      "x": 21,
+      "y": 93,
+      "region": "trapdoor_oak_edge"
+    },
+    "trapdoor_birch_edge": {
+      "x": 22,
+      "y": 93,
+      "region": "trapdoor_birch_edge"
+    },
+    "trapdoor_dark_edge": {
+      "x": 23,
+      "y": 93,
+      "region": "trapdoor_dark_edge"
+    },
+    "trapdoor_jablon_edge": {
+      "x": 24,
+      "y": 93,
+      "region": "trapdoor_jablon_edge"
+    },
+    "trapdoor_olcha_edge": {
+      "x": 25,
+      "y": 93,
+      "region": "trapdoor_olcha_edge"
+    },
+    "trapdoor_wierzba_edge": {
+      "x": 26,
+      "y": 93,
+      "region": "trapdoor_wierzba_edge"
+    },
+    "trapdoor_acacia_edge": {
+      "x": 27,
+      "y": 93,
+      "region": "trapdoor_acacia_edge"
+    },
+    "trapdoor_bald_cypress_edge": {
+      "x": 28,
+      "y": 93,
+      "region": "trapdoor_bald_cypress_edge"
+    },
+    "trapdoor_cherry_edge": {
+      "x": 29,
+      "y": 93,
+      "region": "trapdoor_cherry_edge"
+    },
+    "trapdoor_maple_edge": {
+      "x": 30,
+      "y": 93,
+      "region": "trapdoor_maple_edge"
+    },
+    "trapdoor_mugo_edge": {
+      "x": 31,
+      "y": 93,
+      "region": "trapdoor_mugo_edge"
+    },
+    "trapdoor_olive_edge": {
+      "x": 32,
+      "y": 93,
+      "region": "trapdoor_olive_edge"
+    },
+    "trapdoor_rainbow_eucalyptus_edge": {
+      "x": 33,
+      "y": 93,
+      "region": "trapdoor_rainbow_eucalyptus_edge"
+    },
+    "trapdoor_sequoia_edge": {
+      "x": 34,
+      "y": 93,
+      "region": "trapdoor_sequoia_edge"
+    },
+    "trapdoor_ginkgo_edge": {
+      "x": 35,
+      "y": 93,
+      "region": "trapdoor_ginkgo_edge"
+    },
+    "trapdoor_jacaranda_edge": {
+      "x": 36,
+      "y": 93,
+      "region": "trapdoor_jacaranda_edge"
+    },
+    "trapdoor_fir_edge": {
+      "x": 37,
+      "y": 93,
+      "region": "trapdoor_fir_edge"
+    },
+    "trapdoor_baobab_edge": {
+      "x": 38,
+      "y": 93,
+      "region": "trapdoor_baobab_edge"
+    },
+    "trapdoor_coconut_palm_edge": {
+      "x": 39,
+      "y": 93,
+      "region": "trapdoor_coconut_palm_edge"
+    },
+    "trapdoor_larch_edge": {
+      "x": 40,
+      "y": 93,
+      "region": "trapdoor_larch_edge"
+    },
+    "trapdoor_mangrove_edge": {
+      "x": 41,
+      "y": 93,
+      "region": "trapdoor_mangrove_edge"
+    },
+    "trapdoor_kapok_edge": {
+      "x": 42,
+      "y": 93,
+      "region": "trapdoor_kapok_edge"
+    },
+    "trapdoor_joshua_tree_edge": {
+      "x": 43,
+      "y": 93,
+      "region": "trapdoor_joshua_tree_edge"
+    },
+    "trapdoor_aspen_edge": {
+      "x": 44,
+      "y": 93,
+      "region": "trapdoor_aspen_edge"
+    },
+    "trapdoor_araucaria_edge": {
+      "x": 45,
+      "y": 93,
+      "region": "trapdoor_araucaria_edge"
+    },
+    "trapdoor_banyan_edge": {
+      "x": 46,
+      "y": 93,
+      "region": "trapdoor_banyan_edge"
+    },
+    "trapdoor_dragon_tree_edge": {
+      "x": 47,
+      "y": 93,
+      "region": "trapdoor_dragon_tree_edge"
+    },
+    "trapdoor_cedar_edge": {
+      "x": 48,
+      "y": 93,
+      "region": "trapdoor_cedar_edge"
+    },
+    "trapdoor_bristlecone_edge": {
+      "x": 49,
+      "y": 93,
+      "region": "trapdoor_bristlecone_edge"
     }
   }
 }

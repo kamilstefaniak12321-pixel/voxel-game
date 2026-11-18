@@ -11,6 +11,7 @@ import { Sleep } from './Sleep.js';
 import { Tutorial } from './Tutorial.js';
 import { TorchRenderer } from '../rendering/TorchRenderer.js';
 import { DoorRenderer } from '../rendering/DoorRenderer.js';
+import { doorSound } from '../audio/doorSounds.js';
 import { Chests } from './Chests.js';
 import { CarpenterTables } from './CarpenterTables.js';
 import { World } from '../world/World.js';
@@ -685,7 +686,7 @@ export class Game extends GameInteraction {
         //   miningDelay - przerwa po zniszczonym bloku (przygoda),
         //   breakRepeat - kiedy następny blok przy trzymanym LPM (kreatywny).
 
-        this.cracks = new BlockCracks(this.scene);
+        this.cracks = new BlockCracks(this.scene, this);
 
         this.debris = new BlockDebris(this.scene, this.world);
 
@@ -1006,6 +1007,7 @@ export class Game extends GameInteraction {
         this.chests.update(dt);
         this.carpenterTables.update(dt);
         this.torches.update(dt);
+        this.world.updateLightHolds(dt);
         this.doors.update(dt);
         profile?.endStage('effects');
 
@@ -2706,6 +2708,25 @@ export class Game extends GameInteraction {
             : null;
 
         this.sounds.play(`${kind}_${material}`, { position, volume });
+
+    }
+
+
+    // Otwieranie / zamykanie drzwi albo klapy z drewna `wood` w bloku
+    // `block` - każde drewno brzmi inaczej (audio/doorSounds.js).
+
+    playDoorSound(kind, open, wood, block) {
+
+        if (!this.sounds) {
+            return;
+        }
+
+        const { name, pitch, volume } = doorSound(wood, kind, open);
+
+        this.sounds.play(name, {
+            position: new THREE.Vector3(block.x + 0.5, block.y + (kind === 'door' ? 1 : 0.5), block.z + 0.5),
+            pitch, volume
+        });
 
     }
 

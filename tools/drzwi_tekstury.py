@@ -1,28 +1,38 @@
-"""Tekstury drzwi i klap z każdego rodzaju desek (0.91.0).
+"""Tekstury drzwi i klap z każdego rodzaju desek (0.91.0, nowy wygląd 1.16.0).
 
-door_<drewno>      16 x 32 - drzwi (model Kamila drzwi.bbmodel: przód
-                   i tył to cały obrazek, boki - skrajne kolumny),
-trapdoor_<drewno>  16 x 16 - klapa (wierzch i spód).
+Od 1.16.0 wzorcem są rysunki Kamila (tools/wzorce/drzwi.png i zapadnia.png
+z modelu "drzwi i zapadnia.bbmodel", narysowane na deskach wiśni): poziome
+deski co 4 px z ciemną klamką. Każde drewno dostaje TEN SAM rysunek
+w kolorach własnych desek:
 
-Deski i kolory z desek danego gatunku (src/blocks/woods.js), rama
-ciemniejsza, dwa płyciny, żelazna klamka po stronie przeciwnej do zawiasu
-(zawias lewy - klamka z prawej; zawias prawy - ten sam obrazek odbity
-w modelu). Klapa: rama, deski w poprzek, ukośna listwa i żelazne zawiasy.
+door_<drewno>            16 x 32 - przód drzwi (strona z klamką),
+door_<drewno>_back       16 x 32 - tył drzwi,
+door_<drewno>_edge       16 x 16 - krawędzie drzwi: wiersze 0-1 góra,
+                         2-3 dół, 4-7 bok przy klamce (górna i dolna
+                         połowa, położone), 8-11 bok przy zawiasie,
+trapdoor_<drewno>        16 x 16 - wierzch klapy,
+trapdoor_<drewno>_bottom 16 x 16 - spód klapy,
+trapdoor_<drewno>_edge   16 x 16 - krawędzie klapy: wiersze 0-1, 2-3
+                         boki, 4-5 przy zawiasie, 6-7 naprzeciw zawiasu.
+
+Kolory: deski każdego drewna mają cztery tony (szpara, cień, deska,
+połysk) - bierzemy je z desek gatunku w tych samych miejscach rozkładu
+jasności co w deskach wiśni; drugi kolor szpary i dwa kolory klamki
+liczą się z nich tak jak we wzorcu (wiśnia wychodzi co do piksela jak
+rysunek Kamila).
 
 Uruchomienie: python3 tools/drzwi_tekstury.py
-Pierwsze uruchomienie dopisuje obszary i kafelki do assets/textures/atlas.json
-(arkusz drzewa.png rośnie w dół, kafelki w nowych wierszach atlasu
-z pustym wierszem odstępu); potem: python3 tools/atlasy.py sync
+Brakujące obszary i kafelki dopisuje do assets/textures/atlas.json
+(arkusz drzewa.png rośnie w dół); potem: python3 tools/atlasy.py sync
 """
 import json
 import sys
 from pathlib import Path
 
-import numpy as np
 from PIL import Image
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from atlasy import ROOT, MANIFEST, read_texture, write_texture  # noqa: E402
+from atlasy import ROOT, MANIFEST, read_texture, write_texture, check, sync  # noqa: E402
 
 # Ta sama kolejność co src/blocks/woods.js.
 WOODS = [
@@ -37,80 +47,111 @@ WOODS = [
         'aspen', 'araucaria', 'banyan', 'dragon_tree', 'cedar', 'bristlecone')],
 ]
 
-IRON = [(206, 206, 198, 255), (150, 150, 146, 255), (96, 96, 98, 255), (58, 58, 62, 255)]
+TEMPLATES = Path(__file__).resolve().parent / 'wzorce'
+
+# Paleta wzorca od najciemniejszego: dwa kolory klamki, dwa kolory szpar,
+# cień deski, deska, połysk.
+TEMPLATE = [(113, 69, 41), (125, 79, 49), (142, 94, 63), (150, 102, 71), (182, 134, 101), (190, 140, 106), (192, 144, 112)]
+
+# W deskach wiśni (256 pikseli od najciemniejszego) tony zajmują miejsca
+# 0-75, 76-143, 144-214, 215-255 - bierzemy środki tych przedziałów.
+RANKS = (38, 110, 179, 235)
 
 
-def shade(color, k):
-    r, g, b = color[:3]
-    return (max(0, min(255, round(r * k))), max(0, min(255, round(g * k))), max(0, min(255, round(b * k))), 255)
+def luminance(color):
+    return 0.299 * color[0] + 0.587 * color[1] + 0.114 * color[2]
 
 
-def base_color(planks):
-    pixels = np.asarray(planks.convert('RGB')).reshape(-1, 3)
-    return tuple(int(v) for v in np.median(pixels, axis=0))
+def palette(planks):
+    """Siedem kolorów wzorca w barwach desek `planks` (obraz 16 x 16)."""
+    pixels = sorted(planks.convert('RGB').get_flattened_data(), key=lambda c: (luminance(c), c))
+    distinct = sorted(set(pixels), key=lambda c: (luminance(c), c))
+    if len(distinct) == 4:
+        # Deski z czterech tonów: wprost, niezależnie od tego, ile ich jest.
+        gap, shade_, board, shine = distinct
+    else:
+        gap, shade_, board, shine = (pixels[rank] for rank in RANKS)
+    base = TEMPLATE[2]
+
+    def like(index):
+        # Ten sam stosunek do koloru szpary co we wzorcu (klamka).
+        return tuple(max(0, min(255, round(gap[k] * TEMPLATE[index][k] / base[k]))) for k in range(3))
+
+    step = [(TEMPLATE[3][k] - TEMPLATE[2][k]) / (TEMPLATE[4][k] - TEMPLATE[2][k]) for k in range(3)]
+    gap2 = tuple(round(gap[k] + (shade_[k] - gap[k]) * step[k]) for k in range(3))
+    return [like(0), like(1), gap, gap2, shade_, board, shine]
 
 
-def vertical_board(planks, x, y, k=1.0):
-    # Deski pionowo: obraz desek obrócony o 90 stopni.
-    return shade(planks.getpixel((y % 16, (15 - x) % 16)), k)
+def recolor(image, colors):
+    out = Image.new('RGBA', image.size)
+    index = {color: i for i, color in enumerate(TEMPLATE)}
+    for y in range(image.height):
+        for x in range(image.width):
+            r, g, b, a = image.getpixel((x, y))
+            if a != 255 or (r, g, b) not in index:
+                raise ValueError(f'Wzorzec: nieznany kolor {(r, g, b, a)} w ({x}, {y})')
+            out.putpixel((x, y), (*colors[index[(r, g, b)]], 255))
+    return out
+
+
+def rows(strips, fill):
+    """Kafelek 16 x 16 z pasków 16 x 2 jeden pod drugim; reszta - kolor fill."""
+    tile = Image.new('RGBA', (16, 16), fill)
+    for i, strip in enumerate(strips):
+        tile.paste(strip, (0, i * 2))
+    return tile
+
+
+def template_parts():
+    with Image.open(TEMPLATES / 'drzwi.png') as source:
+        door = source.convert('RGBA')
+    with Image.open(TEMPLATES / 'zapadnia.png') as source:
+        trap = source.convert('RGBA')
+    fill = (*TEMPLATE[2], 255)
+
+    def side(x):
+        # Pasek 2 x 32 położony: dwie połowy 16 x 2 (góra drzwi z lewej).
+        strip = door.crop((x, 33, x + 2, 65)).transpose(Image.Transpose.ROTATE_90).transpose(Image.Transpose.FLIP_TOP_BOTTOM)
+        return [strip.crop((0, 0, 16, 2)), strip.crop((16, 0, 32, 2))]
+
+    return {
+        'door': door.crop((0, 0, 16, 32)),
+        'door_back': door.crop((17, 0, 33, 32)),
+        'door_edge': rows([door.crop((6, 33, 22, 35)), door.crop((23, 33, 39, 35)), *side(0), *side(3)], fill),
+        'trapdoor': trap.crop((0, 0, 16, 16)),
+        'trapdoor_bottom': trap.crop((0, 17, 16, 33)),
+        'trapdoor_edge': rows([trap.crop((17, y, 33, y + 2)) for y in (0, 3, 6, 9)], fill)
+    }
+
+
+PARTS = None
+
+
+def images(planks):
+    """Wszystkie obrazki drzwi i klapy z desek `planks`: {przyrostek: obraz}."""
+    global PARTS
+    PARTS = PARTS or template_parts()
+    colors = palette(planks)
+    return {name: recolor(part, colors) for name, part in PARTS.items()}
 
 
 def door_image(planks):
-    base = base_color(planks)
-    frame, frame_dark, frame_light = shade(base, 0.66), shade(base, 0.52), shade(base, 0.82)
-    image = Image.new('RGBA', (16, 32))
-    put = image.putpixel
-    for y in range(32):
-        for x in range(16):
-            color = vertical_board(planks, x, y)
-            edge = x in (0, 15) or y in (0, 31)
-            rail = y in (14, 15, 16) or x in (1, 14) or y in (1, 30)
-            if edge:
-                color = frame_dark if (x + y) % 4 == 0 else frame
-            elif rail:
-                color = vertical_board(planks, x + 3, y, 0.82)
-                if y == 14 or x == 1 or y == 1:
-                    color = frame_light
-            else:
-                # Płyciny: lekko zagłębione (cień u góry i z lewej).
-                inner_top = y in (2, 17)
-                inner_left = x == 2
-                if inner_top or inner_left:
-                    color = vertical_board(planks, x, y, 0.72)
-            put((x, y), color)
-    # Klamka (z prawej - zawias lewy) i szyld.
-    for y, row in enumerate(['011', '122', '233', '023']):
-        for x, c in enumerate(row):
-            put((11 + x, 15 + y), IRON[int(c)])
-    put((12, 19), IRON[3])
-    return image
+    return images(planks)['door']
 
 
 def trapdoor_image(planks):
-    base = base_color(planks)
-    frame, frame_dark = shade(base, 0.66), shade(base, 0.52)
-    image = Image.new('RGBA', (16, 16))
-    put = image.putpixel
-    for y in range(16):
-        for x in range(16):
-            color = shade(planks.getpixel((x, (y + 4) % 16)), 1.0)
-            if x in (0, 15) or y in (0, 15):
-                color = frame_dark if (x + y) % 4 == 0 else frame
-            elif x + y in (15, 16):
-                color = shade(planks.getpixel((x, y)), 0.8)   # ukośna listwa
-            put((x, y), color)
-    # Żelazne zawiasy przy górnej krawędzi (strona zawiasu).
-    for x0 in (2, 11):
-        for x in range(x0, x0 + 3):
-            put((x, 1), IRON[1])
-            put((x, 2), IRON[2])
-        put((x0 + 1, 1), IRON[0])
-    return image
+    return images(planks)['trapdoor']
+
+
+def texture_keys(wood):
+    return {'door': f'door_{wood}', 'door_back': f'door_{wood}_back', 'door_edge': f'door_{wood}_edge',
+            'trapdoor': f'trapdoor_{wood}', 'trapdoor_bottom': f'trapdoor_{wood}_bottom', 'trapdoor_edge': f'trapdoor_{wood}_edge'}
 
 
 def add_regions():
+    """Przód drzwi i wierzch klapy dwudziestu dawnych rodzajów drewna (0.91.0)."""
     data = json.loads(MANIFEST.read_text(encoding='utf-8'))
-    if all(f'door_{wood}' in data['regions'] for wood, _ in WOODS):
+    if all(f'door_{wood}' in data['regions'] for wood, _ in WOODS[:20]):
         return
     sheet = data['sheets']['drzewa']
     top = sheet['height']
@@ -141,12 +182,63 @@ def add_regions():
     MANIFEST.write_text(json.dumps(data, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
 
 
+# 1.16.0: tył i krawędzie drzwi, spód i krawędzie klapy - wolne miejsce
+# atlasu pod arkuszami kory (wiersz 88 i kolumna 16 zostają puste, bo
+# ikonki bloków łapią brzeg sąsiedniego kafelka).
+EXTRA_COLUMN, EXTRA_ROW = 17, 89
+
+
+def add_extra_regions():
+    data = json.loads(MANIFEST.read_text(encoding='utf-8'))
+    if all(f'trapdoor_{wood}_edge' in data['regions'] for wood, _ in WOODS):
+        return
+    sheet = data['sheets']['drzewa']
+    top = sheet['height']
+    per_row = sheet['width'] // 16
+    lines = -(-len(WOODS) // per_row)
+    # Arkusz: rzędy tyłów drzwi (32 px), spodów klap, krawędzi drzwi i krawędzi klap.
+    height = lines * (32 + 16 * 3)
+    path = ROOT / 'assets/textures' / sheet['file']
+    grown = Image.new('RGBA', (sheet['width'], top + height))
+    with Image.open(path) as old:
+        grown.paste(old.convert('RGBA'), (0, 0))
+    grown.save(path, optimize=True)
+    sheet['height'] = top + height
+    taken = set()
+    for tile in data['tiles'].values():
+        for dy in range(tile.get('h', 1)):
+            for dx in range(tile.get('w', 1)):
+                taken.add((tile['x'] + dx, tile['y'] + dy))
+    groups = [('door_{}_back', 32, 0), ('trapdoor_{}_bottom', 16, 2), ('door_{}_edge', 16, 3), ('trapdoor_{}_edge', 16, 4)]
+    y_px = top
+    for pattern, size, row in groups:
+        for index, (wood, _) in enumerate(WOODS):
+            key = pattern.format(wood)
+            h = size // 16
+            x, y = EXTRA_COLUMN + index, EXTRA_ROW + row
+            cells = {(x, y + dy) for dy in range(h)}
+            assert not cells & taken, f'{key}: kafelek zajęty'
+            taken |= cells
+            data['regions'][key] = {'sheet': 'drzewa', 'x': (index % per_row) * 16, 'y': y_px + (index // per_row) * size,
+                                    'width': 16, 'height': size}
+            tile = {'x': x, 'y': y, 'region': key}
+            if h > 1:
+                tile.update(w=1, h=h, pw=16, ph=size)
+            data['tiles'][key] = tile
+        y_px += lines * size
+    data['rows'] = max(t['y'] + t.get('h', 1) for t in data['tiles'].values())
+    MANIFEST.write_text(json.dumps(data, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+
+
 def main():
     add_regions()
+    add_extra_regions()
     for wood, planks_key in WOODS:
-        planks = read_texture(planks_key)
-        write_texture(f'door_{wood}', door_image(planks))
-        write_texture(f'trapdoor_{wood}', trapdoor_image(planks))
+        pictures = images(read_texture(planks_key))
+        for name, key in texture_keys(wood).items():
+            write_texture(key, pictures[name])
+    check()
+    sync()
     print(f'{len(WOODS)} drzwi i {len(WOODS)} klap -> drzewa.png')
 
 

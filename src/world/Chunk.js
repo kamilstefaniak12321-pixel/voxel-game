@@ -11,11 +11,11 @@ import {
     TRUNCATED_PLANT_IDS
 } from '../blocks/BlockRegistry.js';
 import { isTorchId as isTorchBlockId } from '../blocks/torches.js';
-import { isDoorId } from '../blocks/woodShapes.js';
+import { isHingedId } from '../blocks/woodShapes.js';
 
-// Komórki z własnym modelem (pochodnie, od 0.91.0 też drzwi) - renderery
-// odwiedzają tylko je (indeks torches, nazwa historyczna).
-const isTorchId = (id) => isTorchBlockId(id) || isDoorId(id);
+// Komórki z własnym modelem (pochodnie, od 0.91.0 też drzwi, od 1.16.0
+// klapy) - renderery odwiedzają tylko je (indeks torches, nazwa historyczna).
+const isTorchId = (id) => isTorchBlockId(id) || isHingedId(id);
 
 // ------------------------------------------------------------
 // Chunk = kolumna CHUNK_SIZE x CHUNK_HEIGHT x CHUNK_SIZE bloków.

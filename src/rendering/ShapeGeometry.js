@@ -52,27 +52,72 @@ export function boxFaces(boxes, texture, offset = [0, 0, 0], extra = []) {
     return faces;
 }
 
-// Drzwi (0.91.0, model Kamila drzwi.bbmodel): płyta 16 x 32 x 2 px przy
-// północnym brzegu dolnej komórki (y 0-2). Przód i tył - cały obrazek
-// 16 x 32 tak samo (klamka po stronie przeciwnej do zawiasu), boki -
-// ramka. Zawias prawy - obrazek odbity.
+// Drzwi i klapa z modelu Kamila ("drzwi i zapadnia.bbmodel", 1.16.0).
+//
+// Drzwi: płyta 16 x 32 x 2 px przy północnym brzegu dolnej komórki
+// (zawias lewy - przy zachodnim brzegu). Przód (od środka komórki,
+// z klamką po stronie przeciwnej do zawiasu) - obrazek `texture`, tył -
+// `texture`_back, krawędzie - paski z `texture`_edge (układ:
+// tools/drzwi_tekstury.py). Zawias prawy - lustrzane odbicie.
 export const DOOR_BOX = [0, 0, 0, 1, 2, 2 / 16];
+
+// Klapa: płyta 16 x 2 x 16 px na dnie komórki, zawias przy północnym
+// brzegu. Wierzch - `texture`, spód - `texture`_bottom, krawędzie -
+// `texture`_edge. Klapa górna (half 'top') - odbicie w pionie.
+export const TRAPDOOR_BOX = [0, 0, 0, 1, 2 / 16, 1];
+
+// Ściana pudełka: uv(point) -> [u, v] w kafelku (piksele 0-16, v od góry).
+function quad(faces, texture, name, a, b, uv) {
+    const { normal, corners } = FACE_CORNERS[name];
+    const points = corners(a, b);
+    faces.push({ texture, color: [255, 255, 255], normal, vertices: points, uv: points.map((point) => uv(point).map((value) => wrap(value / 16))) });
+}
+
+// Lustro wzdłuż osi `axis` (0 - x, 1 - y) wokół środka komórki; rogi
+// zamieniają się miejscami, żeby ściana dalej patrzyła na zewnątrz.
+function mirrorFaces(faces, axis) {
+    return faces.map((face) => {
+        const flip = (list) => axis === 0 ? [list[1], list[0], list[3], list[2]] : [list[2], list[3], list[0], list[1]];
+        return {
+            ...face,
+            normal: face.normal.map((value, i) => (i === axis ? -value : value)),
+            vertices: flip(face.vertices.map((vertex) => vertex.map((value, i) => (i === axis ? 1 - value : value)))),
+            uv: flip(face.uv)
+        };
+    });
+}
 
 export function doorFaces(texture, hinge = 'left') {
     const [x0, y0, z0, x1, y1, z1] = DOOR_BOX;
-    const u = (x) => (hinge === 'right' ? 1 - x : x);
-    const v = (y) => 1 - y / 2;
+    const a = [x0, y0, z0], b = [x1, y1, z1];
+    const back = `${texture}_back`, edge = `${texture}_edge`;
     const faces = [];
-    for (const [name, { normal, corners }] of Object.entries(FACE_CORNERS)) {
-        const points = corners([x0, y0, z0], [x1, y1, z1]);
-        const uv = points.map(([x, y, z]) => {
-            if (name === 'north' || name === 'south') return [u(x), v(y)];
-            if (name === 'east' || name === 'west') return [u(name === 'east' ? 1 - z * 0.5 : z * 0.5), v(y)];
-            return [u(x), z * 0.5];
-        });
-        faces.push({ texture, color: [255, 255, 255], normal, vertices: points, uv: uv.map((pair) => pair.map(wrap)) });
+    const v = (y) => 16 - y * 8;
+    quad(faces, texture, 'south', a, b, ([x, y]) => [x * 16, v(y)]);
+    quad(faces, back, 'north', a, b, ([x, y]) => [16 - x * 16, v(y)]);
+    quad(faces, edge, 'up', a, b, ([x, , z]) => [x * 16, z * 16]);
+    quad(faces, edge, 'down', a, b, ([x, , z]) => [x * 16, 4 - z * 16]);
+    // Boki: pasek 2 x 32 leży w kafelku w dwóch połowach (góra drzwi z lewej).
+    for (const half of [0, 1]) {
+        const low = [x0, 1 - half, z0], high = [x1, 2 - half, z1];
+        quad(faces, edge, 'east', low, high, ([, y, z]) => [(2 - half - y) * 16, 4 + half * 2 + 2 - z * 16]);
+        quad(faces, edge, 'west', low, high, ([, y, z]) => [(2 - half - y) * 16, 8 + half * 2 + z * 16]);
     }
-    return faces;
+    return hinge === 'right' ? mirrorFaces(faces, 0) : faces;
+}
+
+export function trapdoorFaces(texture, half = 'bottom') {
+    const [x0, y0, z0, x1, y1, z1] = TRAPDOOR_BOX;
+    const a = [x0, y0, z0], b = [x1, y1, z1];
+    const bottom = `${texture}_bottom`, edge = `${texture}_edge`;
+    const faces = [];
+    quad(faces, texture, 'up', a, b, ([x, , z]) => [16 - x * 16, 16 - z * 16]);
+    quad(faces, bottom, 'down', a, b, ([x, , z]) => [16 - x * 16, z * 16]);
+    quad(faces, edge, 'west', a, b, ([, y, z]) => [z * 16, 2 - y * 16]);
+    quad(faces, edge, 'east', a, b, ([, y, z]) => [16 - z * 16, 4 - y * 16]);
+    quad(faces, edge, 'north', a, b, ([x, y]) => [16 - x * 16, 6 - y * 16]);
+    quad(faces, edge, 'south', a, b, ([x, y]) => [x * 16, 8 - y * 16]);
+    return half === 'top' ? mirrorFaces(faces, 1) : faces;
 }
 
 // Całe łóżko (obie części) z pościelą albo bez: wezgłowie na -z, środek
@@ -105,11 +150,10 @@ export function itemShapeFaces(type) {
     const { wood, kind } = item;
     const texture = WOOD_SHAPE_BLOCKS[type].textures.all;
     if (kind === 'door') {
-        // Przodem do patrzącego (+z): odbijamy płytę z północnego brzegu.
-        return doorFaces(texture).map((face) => ({ ...face, normal: [-face.normal[0], face.normal[1], -face.normal[2]],
-            vertices: face.vertices.map(([x, y, z]) => [1 - x, y, 1 - z]) }));
+        // Przód (z klamką) patrzy na +z; płyta przesunięta na środek komórki.
+        return doorFaces(texture).map((face) => ({ ...face, vertices: face.vertices.map(([x, y, z]) => [x, y, z + 7 / 16]) }));
     }
-    if (kind === 'trapdoor') return boxFaces(shapeBoxes(shapeId(wood, 'trapdoor')), texture);
+    if (kind === 'trapdoor') return trapdoorFaces(texture);
     if (kind === 'bed') return bedFaces(wood, null);
     if (kind === 'table') {
         // Przód na +z (south): część B po prawej patrzącego od przodu (+x).

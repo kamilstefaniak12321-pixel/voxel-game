@@ -195,8 +195,13 @@ przytrzymać palec albo przycisk z kilofem):
 
 - co 0,25 s ręka uderza: stuk (dźwięk kroku po tym bloku) i kilka
   odłamków z trafionej ściany,
-- blok **pęka** - 10 etapów pęknięć (`src/interaction/BlockCracks.js`,
-  tekstura z `tools/pekniecia.py`),
+- blok **pęka** - od 1.16.0 osiem etapów pęknięć narysowanych przez Kamila
+  (`src/interaction/BlockCracks.js`, wzorce w `tools/wzorce/`). Rysunek
+  jest szary i półprzezroczysty: nie maluje czarnych pikseli, tylko
+  przyciemnia teksturę bloku. Na bardzo ciemnych blokach (np. próchnica)
+  przyciemnienia nie byłoby widać, więc tam rysy rozjaśniają. Pękają też
+  schody, półbloki, płoty, furtki i stół (kopia ich kształtu) oraz drzwi
+  i klapy - drzwi mają osobny rysunek na dwa bloki,
 - po czasie kopania blok znika, a **odłamki** (małe sześciany w kolorach
   pikseli jego tekstury, przyciemnione jak światło w tym miejscu) sypią
   się, odbijają od ziemi i znikają (`src/rendering/BlockDebris.js`),

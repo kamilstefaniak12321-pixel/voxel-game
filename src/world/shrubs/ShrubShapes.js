@@ -142,7 +142,9 @@ export function buildShrub(species, variety = 0, seed = 1, size = 0.5) {
                     : domeHeight(kind, dx, dz, R, H, random);
                 for (let y = 0; y < height; y++) {
                     // Aronia: w środku dojrzałego krzewu dołem widać pędy.
-                    const legs = shape.legs && H >= 2 && y < shape.legs && Math.hypot(dx, dz) <= R * 0.75;
+                    // (Tylko tam, gdzie nad pędami są liście - same pędy
+                    // wyglądały jak stos patyków.)
+                    const legs = shape.legs && height > shape.legs && y < shape.legs && Math.hypot(dx, dz) <= R * 0.75;
                     put(dx, y, dz, legs ? 'S' : 'L');
                 }
             }

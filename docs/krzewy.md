@@ -8,6 +8,12 @@ kiwi, marakuja, fasola i groch) czekają na kolejne wydania.
 
 ![Galeria krzewów jagodowych](krzewy-1170.jpg)
 
+Na zrzutach (renderer programowy, krótki zasięg widzenia): galeria
+`/krzewy galeria` - w każdym rzędzie od prawej jeden blok, mały krzak,
+dojrzały krzew i stara kępa (porzeczki, agrest, maliny, dzika róża, bez,
+rokitnik, leszczyna) - oraz dzikie zarośla jeżyn na stoku w brzezinie.
+Aronii na zrzutach nie ma: jej pędy poprawiałem już po nich.
+
 ## Czym krzew różni się od krzaka
 
 Krzaki owocowe z 0.50.0 (borówka, truskawka, jeżyna, chili, leszczyna) to

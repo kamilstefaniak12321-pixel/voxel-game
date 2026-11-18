@@ -221,6 +221,14 @@ for (const species of SHRUB_NAMES) {
 check(buildShrub('elderberry', 0, 5, 1).rigid && buildShrub('elderberry', 0, 5, 1).top >= 4, 'Stary bez to wysoki krzew z pniem');
 check(!buildShrub('raspberry', 0, 5, 1).rigid && buildShrub('raspberry', 0, 5, 1).top <= 2, 'Malina to niski gąszcz');
 check(buildShrub('aronia', 0, 5, 1).blocks.some(([, dy, , type]) => dy === 0 && type === 'shrub_aronia_stem'), 'Aronia stoi na pędach');
+for (let seed = 0; seed < 60; seed++) for (const size of [0.3, 0.5, 0.7, 0.9, 1]) {
+    const shape = buildShrub('aronia', 0, seed, size);
+    const cells = new Map(shape.blocks.map(([dx, dy, dz, type]) => [`${dx},${dy},${dz}`, type]));
+    for (const [dx, dy, dz, type] of shape.blocks) {
+        if (type === 'shrub_aronia_stem') check(cells.has(`${dx},${dy + 1},${dz}`) && cells.get(`${dx},${dy + 1},${dz}`) !== 'shrub_aronia_stem', 'Aronia: nad każdym pędem są liście');
+    }
+    check(shape.blocks.filter(([, , , type]) => type !== 'shrub_aronia_stem').length >= shape.blocks.length / 2, 'Aronia: więcej liści niż pędów');
+}
 {
     let standards = 0;
     for (let seed = 0; seed < 200; seed++) {

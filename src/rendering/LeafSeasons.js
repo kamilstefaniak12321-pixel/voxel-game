@@ -64,7 +64,11 @@ const SPECIES_PALETTE = {
     birch: 'zolty', linden: 'zolty', wierzba: 'zolty', ginkgo: 'milorzab', aspen: 'zolty',
     larch: 'zloty', olcha: 'brazowy', oak: 'brazowy',
     jablon: 'pomaranczowy', cherry: 'pomaranczowy', maple: 'klon', beech: 'miedziany', bald_cypress: 'rdzawy',
-    acacia: 'plowy', baobab: 'plowy'
+    acacia: 'plowy', baobab: 'plowy',
+    // Krzewy jagodowe (1.17.0, blocks/shrubs.js - pole palette gatunku).
+    shrub_aronia: 'czerwony', shrub_currant: 'zolty', shrub_gooseberry: 'zolty', shrub_raspberry: 'zolty',
+    shrub_dog_rose: 'pomaranczowy', shrub_elderberry: 'zolty', shrub_sea_buckthorn: 'plowy',
+    shrub_highbush_blueberry: 'czerwony', shrub_bramble: 'miedziany', shrub_hazel: 'zolty'
 };
 
 // Opadłe liście gatunków z jesienną teksturą: zwykła paleta jesieni.

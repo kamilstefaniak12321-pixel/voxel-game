@@ -30,6 +30,8 @@ import {
     PLANT_PIXELS
 } from '../blocks/plantPacks.js';
 import { plantTree } from '../world/trees/plantTree.js';
+import { SHRUBS, SHRUB_NAMES, shrubType, SHRUB_STAGE_SECONDS } from '../blocks/shrubs.js';
+import { plantShrub } from '../world/shrubs/Shrubs.js';
 import { getTreeShowcase, undoTreeShowcase, startTreeShowcase } from '../world/trees/TreeShowcase.js';
 import {
     isCreative,
@@ -334,6 +336,75 @@ function plantBushGarden(player, world) {
 
     return `Ogródek: ${species.length} ${species.length >= 5 ? 'rzędów' : 'rzędy'} krzaków (${species.map((name) => getBlockLabel(bushStages(name)[1]).toLowerCase()).join(', ')}), ` +
         'w każdym od lewej: sadzonka, bez owoców, kilka owoców, pełen owoców. PPM na owocach - zbiór.';
+
+}
+
+
+// --- Krzewy jagodowe (/krzewy, 1.17.0) ---------------------------
+
+// Rozmiary z galerii: a) jeden blok, b) mały, c) dojrzały, d) stara kępa.
+const SHRUB_GALLERY_SIZES = [0.1, 0.4, 0.7, 1];
+
+// Krzew po słowie: nazwa z katalogu albo polska nazwa (bez ogonków).
+function shrubByWord(word) {
+
+    const key = simplify(word ?? '');
+
+    return SHRUB_NAMES.find((name) => simplify(name) === key || simplify(SHRUBS[name].label) === key ||
+        simplify(SHRUBS[name].label).split(' ')[0] === key) ?? null;
+
+}
+
+// Kawałek trawy pod krzew i wolne miejsce nad nim.
+function shrubPlot(world, x, y, z, radius) {
+
+    for (let dx = -radius; dx <= radius; dx++) for (let dz = -radius; dz <= radius; dz++) {
+        world.setBlock(x + dx, y - 1, z + dz, 'grass');
+        for (let dy = 0; dy < 8; dy++) world.clearBlock(x + dx, y + dy, z + dz);
+    }
+
+}
+
+// Galeria: każdy gatunek i odmiana w rzędzie, od lewej cztery rozmiary.
+function plantShrubGallery(player, world) {
+
+    const { forwardX, forwardZ, rightX, rightZ } = lookAxes(player);
+    const y = Math.floor(player.pos.y);
+    const startX = Math.floor(player.pos.x) + forwardX * 6;
+    const startZ = Math.floor(player.pos.z) + forwardZ * 6;
+    const SPACING = 9;
+
+    let row = 0;
+
+    for (const species of SHRUB_NAMES) {
+        SHRUBS[species].varieties.forEach((variety, v) => {
+            SHRUB_GALLERY_SIZES.forEach((size, column) => {
+                const x = startX + rightX * (column - 1.5) * SPACING + forwardX * row * SPACING;
+                const z = startZ + rightZ * (column - 1.5) * SPACING + forwardZ * row * SPACING;
+                shrubPlot(world, Math.round(x), y, Math.round(z), 4);
+                plantShrub(world, Math.round(x), y, Math.round(z), species, v, 1000 + row * 7 + column, size);
+            });
+            row++;
+        });
+    }
+
+    return `Galeria krzewów: ${row} rzędów (${SHRUB_NAMES.map((name) => SHRUBS[name].label.toLowerCase()).join(', ')}; odmiany w osobnych rzędach), ` +
+        'w każdym od lewej: jeden blok, mały krzak, dojrzały krzew, stara kępa. PPM na owocach - zbiór.';
+
+}
+
+// Najbliższy dziki krzew z generatora (także w niewczytanym terenie).
+function nearestWildShrub(world, pos, species, radius = 256) {
+
+    let best = null;
+
+    world.generator?.shrubs?.forEachShrub(pos.x - radius, pos.z - radius, pos.x + radius, pos.z + radius, (shrub) => {
+        if (species && shrub.species !== species) return;
+        const distance = Math.hypot(shrub.x + 0.5 - pos.x, shrub.z + 0.5 - pos.z);
+        if (!best || distance < best.distance) best = { ...shrub, distance };
+    });
+
+    return best;
 
 }
 
@@ -1046,6 +1117,88 @@ export const WORLD_COMMANDS = [
         complete(args) {
             return args.length === 1 ? ['basen', 'znajdz', 'fale'] : args.length === 2 && simplify(args[0]) === 'fale' ? ['0', '1', '2'] : [];
         }
+    },
+
+
+    {
+        name: 'krzewy',
+        aliases: ['shrubs'],
+        usage: '/krzewy | /krzewy galeria | /krzewy <gatunek> [rozmiar 0-100] [odmiana] | /krzewy znajdz [gatunek]',
+        description: 'Krzewy jagodowe: lista gatunków, galeria wszystkich rozmiarów, jeden krzew przed tobą albo najbliższy dziki krzew.',
+
+        run(args, { player, world }) {
+
+            const word = simplify(args[0] ?? '');
+
+            if (!word) {
+                return `Krzewy jagodowe (${SHRUB_NAMES.length}): ` + SHRUB_NAMES.map((name) => {
+                    const shrub = SHRUBS[name];
+                    return `${name} - ${shrub.label}${shrub.varieties.length > 1 ? ` (${shrub.varieties.length} odmiany)` : ''}`;
+                }).join(', ') + `. Gałązka po zbiorze kwitnie i owocuje od nowa (etap średnio co ${SHRUB_STAGE_SECONDS} s; szybciej: /krzaki tempo). ` +
+                    'Galeria: /krzewy galeria, najbliższy dziki: /krzewy znajdz.';
+            }
+
+            if (['galeria', 'gallery', 'pokaz', 'ogrod'].includes(word)) {
+                return plantShrubGallery(player, world);
+            }
+
+            if (['znajdz', 'find'].includes(word)) {
+
+                const species = args[1] === undefined ? null : shrubByWord(args[1]);
+
+                if (args[1] !== undefined && !species) {
+                    throw new CommandError(`Nie znam krzewu "${args[1]}". Lista: /krzewy.`);
+                }
+
+                if (!world.generator?.shrubs) {
+                    return 'W tym świecie krzewy nie rosną dziko. Galeria do obejrzenia: /krzewy galeria.';
+                }
+
+                const found = nearestWildShrub(world, player.pos, species);
+
+                if (!found) {
+                    return `W promieniu 256 bloków nie rośnie ${species ? SHRUBS[species].label.toLowerCase() : 'żaden krzew jagodowy'}.`;
+                }
+
+                const variety = SHRUBS[found.species].varieties[found.variety];
+
+                return `Najbliższy krzew: ${getBlockLabel(shrubType(found.species, 'fruit', found.variety)).toLowerCase()} ` +
+                    `(${variety.of}), ${Math.round(found.distance)} bloków stąd. /tp ${found.x} ${found.y + 3} ${found.z}`;
+
+            }
+
+            const species = shrubByWord(args[0]);
+
+            if (!species) {
+                throw new CommandError(`Nie znam krzewu "${args[0]}". Lista: /krzewy.`);
+            }
+
+            const percent = args[1] === undefined ? 70 : parseNumber(args[1], 'rozmiar');
+
+            if (percent < 0 || percent > 100) {
+                throw new CommandError('Rozmiar: od 0 (jeden blok) do 100 (stara kępa).');
+            }
+
+            const variety = args[2] === undefined ? 0 : Math.floor(parseNumber(args[2], 'odmiana')) - 1;
+
+            if (variety < 0 || variety >= SHRUBS[species].varieties.length) {
+                throw new CommandError(`Odmiana: od 1 do ${SHRUBS[species].varieties.length}.`);
+            }
+
+            const { forwardX, forwardZ } = lookAxes(player);
+            const x = Math.floor(player.pos.x) + forwardX * 5, z = Math.floor(player.pos.z) + forwardZ * 5;
+            const y = Math.floor(player.pos.y);
+
+            shrubPlot(world, x, y, z, 4);
+
+            const shape = plantShrub(world, x, y, z, species, variety, (Math.random() * 4294967296) >>> 0, percent / 100);
+
+            return shape
+                ? `${SHRUBS[species].label}: ${shape.blocks.length} bloków, wysokość ${shape.top + 1}, przed tobą.`
+                : 'Nie udało się postawić krzewu.';
+
+        }
+
     },
 
 

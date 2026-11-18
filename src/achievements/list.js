@@ -88,6 +88,10 @@ function strikeNearby(game, reach) {
 export const TOOL_SET = ['axe', 'pickaxe', 'shovel'];
 
 // Jadalne plony drzew z dalekich stron (1.10.0) - osiągnięcie "Smaki dalekich stron".
+// Owoce krzewów jagodowych (1.17.0) - do "Jagodowego ogrodu".
+const SHRUB_FRUITS = ['aronia', 'redcurrant', 'blackcurrant', 'gooseberry', 'red_gooseberry', 'raspberry', 'yellow_raspberry',
+    'rose_hip', 'elderberry', 'sea_buckthorn_berry'];
+
 const WORLD_FRUITS = ['banyan_fig', 'baobab_fruit', 'dragon_tree_berries', 'joshua_tree_flowers', 'araucaria_nuts', 'coconut_palm_kokos'];
 
 
@@ -605,6 +609,36 @@ export const ACHIEVEMENTS = [
         when: (data) => data.item === 'blueberry'
     },
     {
+        id: 'shrub_fruit',
+        tier: 'common',
+        title: 'Prosto z krzewu',
+        task: 'Zbierz owoce z krzewu jagodowego (np. maliny, porzeczki albo aronię).',
+        comment: 'Połowa do koszyka, połowa do buzi. Koszyk nie protestuje.',
+        icon: 'raspberry',
+        on: 'harvested',
+        when: (data) => String(data.type).startsWith('shrub_') && String(data.type).includes('_fruit')
+    },
+    {
+        id: 'shrub_flowers',
+        tier: 'common',
+        title: 'Zapach czerwca',
+        task: 'Zerwij płatki dzikiej róży albo kwiaty bzu czarnego z kwitnącego krzewu.',
+        comment: 'Krzew zakwitnie jeszcze raz. Owoców z tej gałązki już nie będzie - coś za coś.',
+        icon: 'elderflower',
+        on: 'harvested',
+        when: (data) => data.item === 'rose_petals' || data.item === 'elderflower'
+    },
+    {
+        id: 'shrub_planted',
+        tier: 'common',
+        title: 'Własny krzew',
+        task: 'Posadź owoc krzewu jagodowego na rozgrzebanej ziemi.',
+        comment: 'Teraz tylko poczekać. Krzew się nie spieszy, ty też nie musisz.',
+        icon: 'redcurrant',
+        on: 'planted',
+        when: (data) => String(data.type).startsWith('shrub_') && String(data.type).includes('_sapling')
+    },
+    {
         id: 'texture_pack',
         tier: 'common',
         title: 'Nowe szaty',
@@ -747,6 +781,17 @@ export const ACHIEVEMENTS = [
         on: 'harvested',
         when: (data, book) => FRUITS.includes(data.item) && book.collect('fruits', data.item) >= FRUITS.length,
         goal: { key: 'fruits', count: FRUITS.length }
+    },
+    {
+        id: 'shrub_garden',
+        tier: 'rare',
+        title: 'Jagodowy ogród',
+        task: 'Zbierz owoce wszystkich krzewów jagodowych: aronię, porzeczki czerwone i czarne, agrest zielony i czerwony, maliny czerwone i żółte, owoce dzikiej róży, bzu czarnego i rokitnika.',
+        comment: 'Dziesięć smaków, od cierpkiej aronii po kwaśny rokitnik. Dżem zrobi się sam - w kieszeni.',
+        icon: 'blackcurrant',
+        on: 'harvested',
+        when: (data, book) => SHRUB_FRUITS.includes(data.item) && book.collect('shrub_fruits', data.item) >= SHRUB_FRUITS.length,
+        goal: { key: 'shrub_fruits', count: SHRUB_FRUITS.length }
     },
     {
         id: 'forester',

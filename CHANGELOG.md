@@ -11,6 +11,33 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 1.17.0 - Krzewy jagodowe
+
+PR #170.
+
+Pierwsza część roślin jadalnych z paczki Kamila (`food_pack_all`).
+
+- **Dziesięć krzewów z bloków liści**, jak na podglądach z paczki: aronia,
+  porzeczka (czerwona i czarna), agrest (zielony i czerwony), malina
+  (czerwona i żółta), dzika róża, bez czarny, rokitnik, borówka wysoka,
+  zarośla jeżyn i krzew leszczyny. Każdy w czterech rozmiarach - od
+  jednego bloku po starą kępę; bez i leszczyna dorastają do 6 bloków.
+- **Rosną dziko w swoich biomach**, kępami: maliny w borach
+  i świerczynach, rokitnik na plażach, aronia na mokradłach, dzika róża
+  na łąkach. W starych światach pojawią się w nowo odkrywanym terenie.
+- **Zbiór PPM**: gałązka po zbiorze kwitnie i owocuje od nowa. Z kwiatów
+  dzikiej róży i bzu można zerwać płatki i kwiaty (zamiast owoców).
+- **Dwanaście nowych przedmiotów** do jedzenia: aronia, porzeczki, agrest,
+  maliny, owoce dzikiej róży, bzu i rokitnika, płatki róży, kwiat bzu.
+- **Sadzenie**: owoc na rozgrzebanej ziemi daje sadzonkę swojej odmiany,
+  a ta wyrasta w cały krzew.
+- Jesienią liście krzewów zmieniają kolor, zimą leży na nich śnieg.
+- Komenda `/krzewy` (lista, galeria, jeden krzew, najbliższy dziki)
+  i cztery osiągnięcia.
+- Opis i lista tego, czego jeszcze nie ma: `docs/krzewy.md`.
+
+---
+
 ## 1.16.0 - Drzwi i klapy: nowy wygląd, animacja, światło i dźwięk
 
 PR #169.

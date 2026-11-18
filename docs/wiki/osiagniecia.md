@@ -2,7 +2,7 @@
 
 > Ta strona jest generowana z kodu gry (`python tools/wiki.py`) - nie zmieniaj jej ręcznie, zmiany przepadną przy następnym generowaniu.
 
-Wersja gry **1.16.0** - 94 osiągnięć. Księga osiągnięć: klawisz **L**. Uwaga, spoilery: sekretne osiągnięcia są tu opisane (w grze widać tylko „???”).
+Wersja gry **1.17.0** - 98 osiągnięć. Księga osiągnięć: klawisz **L**. Uwaga, spoilery: sekretne osiągnięcia są tu opisane (w grze widać tylko „???”).
 
 
 ## Zwykłe (10 pkt)
@@ -42,6 +42,9 @@ Wersja gry **1.16.0** - 94 osiągnięć. Księga osiągnięć: klawisz **L**. Uw
 | <img src="ikony/lamp.png" width="32" height="32" alt=""> | **Nocny marek** | Bądź w świecie o północy. | „Porządni gracze już dawno śpią. Ty nie jesteś porządnym graczem.” |
 | <img src="ikony/dandelion.png" width="32" height="32" alt=""> | **Złota godzina** | Popatrz prosto na zachodzące (albo wschodzące) słońce. | „Fotografowie nazywają to złotą godziną. Ty nazywasz to: jeszcze jeden blok i kończę.” |
 | <img src="ikony/blueberry.png" width="32" height="32" alt=""> | **Borówkowy język** | Zbierz borówki z krzaka (rosną w borach i świerczynach). | „Język fioletowy, palce fioletowe, koszulka też. Było warto.” |
+| <img src="ikony/raspberry.png" width="32" height="32" alt=""> | **Prosto z krzewu** | Zbierz owoce z krzewu jagodowego (np. maliny, porzeczki albo aronię). | „Połowa do koszyka, połowa do buzi. Koszyk nie protestuje.” |
+| <img src="ikony/elderflower.png" width="32" height="32" alt=""> | **Zapach czerwca** | Zerwij płatki dzikiej róży albo kwiaty bzu czarnego z kwitnącego krzewu. | „Krzew zakwitnie jeszcze raz. Owoców z tej gałązki już nie będzie - coś za coś.” |
+| <img src="ikony/redcurrant.png" width="32" height="32" alt=""> | **Własny krzew** | Posadź owoc krzewu jagodowego na rozgrzebanej ziemi. | „Teraz tylko poczekać. Krzew się nie spieszy, ty też nie musisz.” |
 | <img src="ikony/grass.png" width="32" height="32" alt=""> | **Nowe szaty** | Zagraj z własną paczką tekstur (Ustawienia → Tekstury). | „Ten sam kamień, tylko w wyższej rozdzielczości. Dalej twardy.” |
 | <img src="ikony/fire_starter.png" width="32" height="32" alt=""> | **Już wiem, co i jak** | Ukończ samouczek. | „Drewno, ogień, kolacja, sen. Reszta to już tylko szczegóły.” |
 | <img src="ikony/jablon_jablko.png" width="32" height="32" alt=""> | **Smacznego** | Zjedz tyle, żeby zaliczyć posiłek. | „Brzuch przestał burczeć. Na jakieś pięć minut.” |
@@ -76,6 +79,7 @@ Wersja gry **1.16.0** - 94 osiągnięć. Księga osiągnięć: klawisz **L**. Uw
 | <img src="ikony/lamp_blue.png" width="32" height="32" alt=""> | **Ponad chmurami** | Wzleć na wysokość 1000 bloków. | „Stąd wszystko wygląda tak malutko. Ty też.” |
 | <img src="ikony/basalt.png" width="32" height="32" alt=""> | **Naoczny świadek** | Bądź najwyżej 60 bloków od miejsca, w które uderzy meteoryt. | „Spadło. Ty nie. Tym razem.” |
 | <img src="ikony/blackberry.png" width="32" height="32" alt=""> | **Pełne kosze** | Zbierz owoce z każdego rodzaju krzaka. | „Truskawki, jeżyny, chili i orzechy. Dieta jak marzenie, zwłaszcza to chili.” |
+| <img src="ikony/blackcurrant.png" width="32" height="32" alt=""> | **Jagodowy ogród** | Zbierz owoce wszystkich krzewów jagodowych: aronię, porzeczki czerwone i czarne, agrest zielony i czerwony, maliny czerwone i żółte, owoce dzikiej róży, bzu czarnego i rokitnika. | „Dziesięć smaków, od cierpkiej aronii po kwaśny rokitnik. Dżem zrobi się sam - w kieszeni.” |
 | <img src="ikony/spruce_log.png" width="32" height="32" alt=""> | **Leśniczy** | Zetnij pień każdego z sześciu gatunków drzew: świerka, sosny, buka, lipy, dębu i brzozy. | „Znasz już las od środka. Las ciebie też - i prosi o chwilę przerwy.” |
 | <img src="ikony/banyan_fig.png" width="32" height="32" alt=""> | **Smaki dalekich stron** | Zjedz figę, owoc baobabu, jagody draceny, kwiaty jukki, orzeszki araukarii i kokos (zbiera się je PPM z liści, na których rosną). | „Sześć smaków, sześć stref klimatycznych. Żołądek prosi o przewodnik.” |
 | <img src="ikony/mangrove_propagule.png" width="32" height="32" alt=""> | **Ogrodnik przypływów** | Posadź namorzyn w płytkiej wodzie (sadzonka albo siewka kliknięta w piaszczyste lub błotniste dno). | „Inni sadzą w ziemi. Ty postanowiłeś zaufać morzu.” |

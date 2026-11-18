@@ -18,6 +18,7 @@ import { FORESTS } from './TerrainShape.js';
 import { Geology } from './Geology.js';
 
 import { Forests } from '../trees/Forests.js';
+import { Shrubs } from '../shrubs/Shrubs.js';
 
 import { TREE_SPECIES } from '../../blocks/trees.js';
 
@@ -430,6 +431,7 @@ export class RealisticGenerator {
         // Lasy i drzewa.
 
         this.forests = new Forests(this, base);
+        this.shrubs = new Shrubs(this, base);
 
 
         // Rzeki i jeziora (spływają po makrorzeźbie).
@@ -959,6 +961,12 @@ export class RealisticGenerator {
         // tu sięgają.
 
         this.forests.placeTrees(chunk);
+
+
+        // Krzewy jagodowe (1.17.0) - po drzewach: liście krzewu nie
+        // wchodzą w pnie ani korony.
+
+        this.shrubs.placeShrubs(chunk);
 
 
         // Porosty i huby na pniach (rośliny z "na": ["pnie"]).

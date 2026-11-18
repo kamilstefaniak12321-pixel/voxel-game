@@ -234,6 +234,12 @@ for (const [type, definition] of Object.entries(R.BLOCK_TYPES)) {
         equal(data.leafCode, L.leafCode(definition.tree, true), `${type}: kod opadłych liści`);
         litterBlocks++;
     }
+    // Krzewy jagodowe (1.17.0): liście z własną paletą jesieni; pędy
+    // i sadzonki koloru nie zmieniają.
+    else if (definition.leafSeason) {
+        equal(data.leafCode, L.leafCode(definition.leafSeason), `${type}: kod liścia krzewu`);
+        check(definition.model === 'leaves' && definition.shrub, `${type}: paleta tylko na liściach krzewu`);
+    }
     else check(!data || !data.leafCode, `${type}: nie jest liściem`);
 }
 check(leafBlocks >= 32 + 20 && litterBlocks === 11, `Liście ${leafBlocks} bloków, opadłe liście ${litterBlocks}`);

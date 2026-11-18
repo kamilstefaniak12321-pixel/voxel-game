@@ -6,6 +6,7 @@ import {
 } from '../blocks/BlockRegistry.js';
 
 import { plantTree } from '../world/trees/plantTree.js';
+import { plantShrub } from '../world/shrubs/Shrubs.js';
 import { plantGrowthFactor } from '../blocks/plantSeasons.js';
 
 // ------------------------------------------------------------
@@ -173,6 +174,28 @@ export class PlantGrowth {
             this.grown++;
 
             this.onTreeGrown?.(growth.tree, x, y, z);
+
+            return true;
+
+        }
+
+
+        // Sadzonka krzewu jagodowego (grows.shrub, 1.17.0) wyrasta w cały
+        // krzew swojej odmiany - mały albo dojrzały.
+
+        if (growth.shrub) {
+
+            const seed = (Math.random() * 4294967296) >>> 0;
+
+            const size = 0.25 + Math.random() * 0.6;
+
+            if (!plantShrub(this.world, x, y, z, growth.shrub, growth.variety ?? 0, seed, size)) {
+                return false;
+            }
+
+            this.grown++;
+
+            this.onShrubGrown?.(growth.shrub, x, y, z);
 
             return true;
 

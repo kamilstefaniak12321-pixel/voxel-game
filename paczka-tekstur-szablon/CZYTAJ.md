@@ -1,4 +1,4 @@
-# Paczka tekstur - szablon (Various Roots 1.17.0)
+# Paczka tekstur - szablon (Various Roots 1.18.0)
 
 Oryginalne tekstury gry, każda w osobnym pliku. Zrób z nich własną paczkę:
 
@@ -443,6 +443,10 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/maple/stripped_top.png` | Okorowany pień klonu |
 | `bloki/maple_bark.png` | Kora klonu |
 | `bloki/meteorite.png` | Meteoryt |
+| `bloki/mob_hedgehog_albino.png` | - |
+| `bloki/mob_hedgehog_brown.png` | - |
+| `bloki/mob_hedgehog_dark.png` | - |
+| `bloki/mob_hedgehog_sandy.png` | - |
 | `bloki/models/bushy-grass/texture.png` | - |
 | `bloki/models/rosliny/amarantus/polrealistyczny.png` | - |
 | `bloki/models/rosliny/babka/polrealistyczny.png` | - |

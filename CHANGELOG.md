@@ -11,6 +11,33 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 1.18.0 - Jeżyk
+
+PR #171.
+
+Pierwsze zwierzę w grze - z modelu, tekstury i animacji Kamila.
+
+- **Jeżyk** mieszka w dzikich krzewach jagodowych (mniej więcej w co
+  trzecim). W dzień śpi zwinięty w liściach, o zmierzchu wychodzi na
+  żer: drepcze w pobliżu, przystaje i węszy. Przed świtem wraca do
+  swojego krzewu. Zimę przesypia.
+- **Cztery kolory**: brązowy (rysunek Kamila), ciemny, piaskowy
+  i rzadki albinos z czerwonymi oczami. Ten sam krzew ma zawsze tego
+  samego lokatora.
+- **Boi się biegających**: gdy ktoś podbiegnie, zwija się w kulkę.
+  Do skradającego się tylko odwraca pyszczek.
+- **Je z ręki**: z jagodami, malinami, porzeczkami i innymi owocami
+  w dłoni jeżyk sam podejdzie; PPM - zjada jedną i przez chwilę ufa.
+- **Zwierząt się nie krzywdzi**: uderzony jeżyk zwija się w kulkę i nic
+  mu nie jest. W grze nie ma mięsa - jedzenie jest roślinne.
+- **Przez liście krzewów jagodowych da się przejść** - wolniej, im
+  głębiej w krzewie. Pień bzu i leszczyny zostaje twardy.
+- Trzy osiągnięcia (*Nocny sąsiad*, *Z ręki*, *Biały kruk wśród jeży*), ciche
+  dźwięki węszenia, chrupania i zwijania, komenda `/jez`.
+
+Znane braki: jeżyki nie są zapisywane ani uzgadniane w grze
+wieloosobowej, nie rzucają cienia. Reszta w `docs/zwierzeta.md`.
+
 ## 1.17.0 - Krzewy jagodowe
 
 PR #170.

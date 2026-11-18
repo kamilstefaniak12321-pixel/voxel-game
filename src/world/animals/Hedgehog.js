@@ -49,7 +49,7 @@ export const HEDGEHOG = Object.freeze({
 // Czym da się go nakarmić (jagody i miękkie owoce).
 export const HEDGEHOG_FOODS = new Set([
     'blueberry', 'strawberry', 'blackberry', 'aronia', 'redcurrant', 'blackcurrant', 'gooseberry', 'red_gooseberry',
-    'raspberry', 'yellow_raspberry', 'rose_hip', 'elderberry', 'sea_buckthorn_berry', 'apple'
+    'raspberry', 'yellow_raspberry', 'rose_hip', 'elderberry', 'sea_buckthorn_berry', 'jablon_jablko'
 ]);
 
 // Warianty i jak często się trafiają (albinos - rzadko).

@@ -117,4 +117,4 @@ Co zmieniłem względem paczki (`tools/krzewy_tekstury.py`):
 - krzewy nie są widoczne w dalekim terenie (za małe),
 - płatki róży, kwiat bzu i nowe owoce można tylko zjeść - przepisów
   (soki, konfitury, barwniki) jeszcze nie ma,
-- liści krzewu nie da się przejść (są pełnym blokiem jak liście drzew).
+- (od 1.18.0 przez liście krzewów da się przejść, wolniej - `docs/zwierzeta.md`).

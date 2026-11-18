@@ -98,6 +98,9 @@ Współrzędne można podawać względem gracza: `~` (tu, gdzie stoję),
 | `/krzewy galeria` | przed tobą wszystkie krzewy: gatunek i odmiana w rzędzie, od lewej jeden blok, mały krzak, dojrzały krzew, stara kępa (zmienia świat) |
 | `/krzewy <gatunek> [rozmiar 0-100] [odmiana]` | jeden krzew przed tobą, np. `/krzewy porzeczka 70 2` - dojrzała czarna porzeczka (zmienia świat) |
 | `/krzewy znajdz [gatunek]` | najbliższy dziki krzew do 256 bloków (także w niewczytanym terenie): nazwa, odległość i komenda `/tp` |
+| `/niskie` | rośliny niskie (1.19.0, `docs/rosliny-niskie.md`): lista roślin i biomów, w których rosną |
+| `/niskie galeria` | przed tobą galeria: każda roślina w rzędzie, od lewej kolejne etapy (sadzonka, roślina, kwiaty, owoce), przy dyni młoda i dojrzała dynia, w ostatnim rzędzie torfowce i chrobotek (zmienia świat) |
+| `/niskie znajdz [roślina]` | najbliższa roślina niska we wczytanym terenie (np. `zurawina`, `brusznica`, `poziomka`, `dynia`): odległość i komenda `/tp` |
 | `/rosliny` | rośliny z paczek roślin (`assets/rosliny/`, `docs/rosliny.md`): lista z wysokością |
 | `/rosliny <roslina>` | opis rośliny: etapy z rozmiarem w blokach i pikselach, przedmiot i zbiór, gdzie rośnie, numery bloków (np. `/rosliny amarantus`) |
 | `/rosliny ogrod [roslina]` | przed tobą wszystkie etapy każdej rośliny (roślina w rzędzie, co 3 bloki; zmienia świat) |

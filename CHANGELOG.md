@@ -11,6 +11,37 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 1.19.0 - Rośliny niskie
+
+PR #172.
+
+Druga część roślin jadalnych z paczki Kamila (`food_pack_all`).
+
+- **Sześć roślin przy samej ziemi**: żurawina, borówka brusznica,
+  truskawki, poziomka, pnącze dyni i cukinia. To niskie płyty z rysunkiem
+  na wierzchu i bokach, jak na podglądach z paczki - chodzi się po nich.
+- **Rosną dziko w swoich biomach**: żurawina na mokradłach między
+  torfowcem, brusznica dywanami w borach i świerczynach, poziomki
+  w lasach liściastych, dynie na łąkach i sawannie, cukinia w gajach
+  oliwnych. W starych światach - w nowo odkrywanym terenie.
+- **Zbiór PPM**: roślina po zbiorze kwitnie i owocuje od nowa.
+  Zniszczona daje sadzonkę do przesadzenia.
+- **Dynia rośnie obok pnącza**: kwitnące pnącze zawiązuje młodą dynię
+  w wolnym miejscu obok, ta dorasta do dyni. Dynię można postawić albo
+  pokroić: 4 kawałki, a z kawałka 2 pestki do posadzenia.
+- **Osiem nowych przedmiotów** do jedzenia: żurawina, brusznice,
+  poziomki, kawałek dyni, pestki dyni, cukinia oraz pieczona dynia
+  i pieczona cukinia (nad ogniskiem - porządny posiłek).
+- **Torfowiec** (zielony i czerwony) i **chrobotek** - nowe ozdobne
+  rośliny bagien i borów.
+- Jeżyk je też żurawinę, brusznice i poziomki.
+- Trzy osiągnięcia (*Runo leśne*, *Grządka*, *Dyniowe żniwa*) i komenda
+  `/niskie`.
+
+Znane braki: stary krzak truskawki i nowe truskawki rosną obok siebie;
+płyty nie kołyszą się i nie zmieniają z porami roku. Reszta
+w `docs/rosliny-niskie.md`.
+
 ## 1.18.0 - Jeżyk
 
 PR #171.

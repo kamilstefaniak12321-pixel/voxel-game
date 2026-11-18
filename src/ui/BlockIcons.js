@@ -457,7 +457,8 @@ async function drawBlockIcons() {
 
         if (definition.model === 'cross' || definition.model === 'flat') {
 
-            icons.set(type, flatIcon(atlas, getFaceTexture(textures, 'front')));
+            // (Niska płyta - rośliny niskie - pokazuje wierzch.)
+            icons.set(type, flatIcon(atlas, getFaceTexture(textures, definition.flat?.height ? 'top' : 'front')));
 
             continue;
 

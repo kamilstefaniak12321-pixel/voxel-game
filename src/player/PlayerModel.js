@@ -626,7 +626,8 @@ export function buildBlockGeometry(type) {
 
     // Przedmioty i płaskie dekoracje: gruby obrazek (0.84.0).
     if (item || definition.model === 'flat') {
-        const name = getFaceTexture(definition.textures, 'front');
+        // (Niska płyta - rośliny niskie - pokazuje wierzch.)
+        const name = getFaceTexture(definition.textures, definition.flat?.height ? 'top' : 'front');
         return buildExtrudedItemGeometry(name, blockSurfaceProfile(definition, 'front'));
     }
 

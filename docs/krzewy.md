@@ -2,9 +2,10 @@
 
 Pierwsza część roślin jadalnych z paczki Kamila `food_pack_all`
 (19 roślin, tekstury 16 × 16 - materiały autorskie Kamila). W 1.17.0
-weszły **krzewy jagodowe**; rośliny niskie (żurawina, brusznica,
-truskawka i poziomka, dynia i cukinia) oraz pnącza (winorośl, chmiel,
-kiwi, marakuja, fasola i groch) czekają na kolejne wydania.
+weszły **krzewy jagodowe**, w 1.19.0 - [rośliny niskie](rosliny-niskie.md)
+(żurawina, brusznica, truskawka i poziomka, dynia i cukinia); pnącza
+(winorośl, chmiel, kiwi, marakuja, fasola i groch) czekają na kolejne
+wydanie.
 
 ![Galeria krzewów jagodowych](krzewy-1170.jpg)
 

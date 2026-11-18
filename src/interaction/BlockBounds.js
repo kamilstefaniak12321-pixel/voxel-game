@@ -42,6 +42,17 @@ const FLAT_BOXES = {
     west: [0, 0, 0, FLAT_THICKNESS, 1, 1]
 };
 
+const PLATE_BOXES = new Map();
+
+function plateBox(id, height) {
+    let box = PLATE_BOXES.get(id);
+    if (!box) {
+        box = [[0, 0, 0, 1, height, 1]];
+        PLATE_BOXES.set(id, box);
+    }
+    return box;
+}
+
 // Ognisko: stos polan do połowy bloku. Skrzynia: 14 x 14 x 14 pikseli.
 const CAMPFIRE_BOX = [[0, 0, 0, 1, 0.5, 1]];
 const CHEST_BOX = [[1 / 16, 0, 1 / 16, 15 / 16, 14 / 16, 15 / 16]];
@@ -86,7 +97,11 @@ export function cellBoxes(world, id, x, y, z) {
         case 'full': return FULL_CELL;
         case 'campfire': return CAMPFIRE_BOX;
         case 'chest': return CHEST_BOX;
-        case 'flat': return [FLAT_BOXES[getBlockDefinition(getBlockTypeById(id)).flat.attach]];
+        case 'flat': {
+            // Niska płyta (rośliny niskie - flat.height): pudełko do jej wysokości.
+            const flat = getBlockDefinition(getBlockTypeById(id)).flat;
+            return flat.height ? plateBox(id, flat.height) : [FLAT_BOXES[flat.attach]];
+        }
         case 'cross': return crossBox(getBlockDefinition(getBlockTypeById(id)).plant, x, y, z);
         // Schody, półbloki, płoty (z ramionami do sąsiadów), furtki, drzwi, stół.
         default: {

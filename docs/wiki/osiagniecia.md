@@ -2,7 +2,7 @@
 
 > Ta strona jest generowana z kodu gry (`python tools/wiki.py`) - nie zmieniaj jej ręcznie, zmiany przepadną przy następnym generowaniu.
 
-Wersja gry **1.18.0** - 101 osiągnięć. Księga osiągnięć: klawisz **L**. Uwaga, spoilery: sekretne osiągnięcia są tu opisane (w grze widać tylko „???”).
+Wersja gry **1.19.0** - 104 osiągnięć. Księga osiągnięć: klawisz **L**. Uwaga, spoilery: sekretne osiągnięcia są tu opisane (w grze widać tylko „???”).
 
 
 ## Zwykłe (10 pkt)
@@ -45,6 +45,9 @@ Wersja gry **1.18.0** - 101 osiągnięć. Księga osiągnięć: klawisz **L**. U
 | <img src="ikony/raspberry.png" width="32" height="32" alt=""> | **Prosto z krzewu** | Zbierz owoce z krzewu jagodowego (np. maliny, porzeczki albo aronię). | „Połowa do koszyka, połowa do buzi. Koszyk nie protestuje.” |
 | <img src="ikony/elderflower.png" width="32" height="32" alt=""> | **Zapach czerwca** | Zerwij płatki dzikiej róży albo kwiaty bzu czarnego z kwitnącego krzewu. | „Krzew zakwitnie jeszcze raz. Owoców z tej gałązki już nie będzie - coś za coś.” |
 | <img src="ikony/redcurrant.png" width="32" height="32" alt=""> | **Własny krzew** | Posadź owoc krzewu jagodowego na rozgrzebanej ziemi. | „Teraz tylko poczekać. Krzew się nie spieszy, ty też nie musisz.” |
+| <img src="ikony/lingonberry.png" width="32" height="32" alt=""> | **Runo leśne** | Zbierz żurawinę, borówki brusznice i poziomki (PPM na roślinie z owocami). | „Wszystko rośnie przy samej ziemi. Kolana to zapamiętają.” |
+| <img src="ikony/wild_strawberry.png" width="32" height="32" alt=""> | **Grządka** | Posadź na rozgrzebanej ziemi żurawinę, brusznicę, poziomki, pestki dyni albo cukinię. | „Niskie to to, ale twoje.” |
+| <img src="ikony/pumpkin_slice.png" width="32" height="32" alt=""> | **Dyniowe żniwa** | Pokrój dynię na kawałki (dynia w siatce wytwarzania). | „Cztery kawałki i garść pestek na przyszły rok. Dynia myśli o wszystkim.” |
 | <img src="ikony/raspberry.png" width="32" height="32" alt=""> | **Nocny sąsiad** | Spotkaj jeżyka - podejdź do niego na kilka kroków, gdy żeruje po zmierzchu. | „Mieszka w krzewie obok. Wychodzi, kiedy ty kładziesz się spać.” |
 | <img src="ikony/blueberry.png" width="32" height="32" alt=""> | **Z ręki** | Nakarm jeżyka jagodami z ręki (PPM z owocami w dłoni; podejdź powoli). | „Mlask, mlask. Od teraz jesteś „ten z jagodami".” |
 | <img src="ikony/grass.png" width="32" height="32" alt=""> | **Nowe szaty** | Zagraj z własną paczką tekstur (Ustawienia → Tekstury). | „Ten sam kamień, tylko w wyższej rozdzielczości. Dalej twardy.” |

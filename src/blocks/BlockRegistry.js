@@ -9,6 +9,7 @@ import {
 
 import { treeBlocks } from './trees.js';
 import { shrubBlocks } from './shrubs.js';
+import { lowPlantBlocks } from './lowPlants.js';
 import { RIVER_PLANT_BLOCKS } from './riverPlants.js';
 import { BLUEBERRY_STAGES, BLUEBERRY_TEXTURE, blueberryIcon } from './blueberry.js';
 import { FRUIT_BUSH_PROFILES } from '../rendering/FruitBushGeometry.js';
@@ -53,7 +54,8 @@ export const AIR_ID = 0;
 //   12492-12543             wolne,
 //   12544-14207             wyroby z drewna trzynastu drzew z 1.8.0 (1.9.0),
 //   14300-14999             krzewy jagodowe (1.17.0, po 16 na gatunek - shrubs.js),
-//   15000-65279             wolne na przyszłość.
+//   15000-15199             rośliny niskie (1.19.0, po 8 na roślinę - lowPlants.js),
+//   15200-65279             wolne na przyszłość.
 
 export const MAX_BLOCK_ID = 65279;
 
@@ -1264,6 +1266,10 @@ export const BLOCK_TYPES = {
 
     ...shrubBlocks(),
 
+    // Rośliny niskie (src/blocks/lowPlants.js, 1.19.0) - płyty niższe niż blok.
+
+    ...lowPlantBlocks(),
+
     ...RIVER_PLANT_BLOCKS,
 
     ...FLOWING_WATER_BLOCKS,
@@ -1395,7 +1401,8 @@ for (const [type, definition] of Object.entries(BLOCK_TYPES)) {
 
     liquidById[id] = definition.liquid ? 1 : 0;
 
-    plantById[id] = definition.model === 'cross' || definition.model === 'riverPlant' ? 1 : 0;
+    // (Rośliny niskie - płyty z lowPlants.js - też rosną tylko na ziemi.)
+    plantById[id] = definition.model === 'cross' || definition.model === 'riverPlant' || definition.lowPlant ? 1 : 0;
 
     riverPlantById[id] = definition.riverPlant ?? null;
 

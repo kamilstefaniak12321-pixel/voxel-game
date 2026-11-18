@@ -159,6 +159,18 @@ export const ITEM_TYPES = {
         plants: 'oak_sapling'
     },
 
+    // Rośliny niskie (1.19.0, blocks/lowPlants.js - z paczki Kamila
+    // "food_pack_all"). Posadzone na rozgrzebanej ziemi dają sadzonkę
+    // (truskawkę sadzi się z sadzonki - owoc sadzi krzak z 0.50.0).
+    cranberry: { name: 'Cranberries', label: 'Żurawina', icon: 'item_cranberry', category: 'owoce', plants: 'low_cranberry_young' },
+    lingonberry: { name: 'Lingonberries', label: 'Borówki brusznice', icon: 'item_lingonberry', category: 'owoce', plants: 'low_lingonberry_young' },
+    wild_strawberry: { name: 'Wild Strawberries', label: 'Poziomki', icon: 'item_wild_strawberry', category: 'owoce', plants: 'low_wild_strawberry_young' },
+    pumpkin_slice: { name: 'Pumpkin Slice', label: 'Kawałek dyni', icon: 'item_pumpkin_slice', category: 'owoce' },
+    pumpkin_seeds: { name: 'Pumpkin Seeds', label: 'Pestki dyni', icon: 'item_pumpkin_seeds', category: 'owoce', plants: 'low_pumpkin_young' },
+    zucchini: { name: 'Zucchini', label: 'Cukinia', icon: 'item_zucchini', category: 'owoce', plants: 'low_zucchini_young' },
+    roasted_pumpkin_slice: { name: 'Roasted Pumpkin Slice', label: 'Pieczona dynia', icon: 'roasted_pumpkin_slice', category: 'owoce' },
+    roasted_zucchini: { name: 'Roasted Zucchini', label: 'Pieczona cukinia', icon: 'roasted_zucchini', category: 'owoce' },
+
     // Pieczone nad ogniskiem (0.97.0 - trzymany PPM z surowym w ręce na
     // płonącym ognisku, game/Campfires.js). Porządny posiłek: jedna
     // sztuka syci jak kilka surowych. Nie da się ich posadzić.

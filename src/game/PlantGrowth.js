@@ -2,8 +2,13 @@ import { CHUNK_SIZE } from '../config.js';
 
 import {
     getBlockTypeById,
-    getGrowth
+    getGrowth,
+    isLiquidId,
+    isPassableId,
+    isReplaceableId,
+    isSolidId
 } from '../blocks/BlockRegistry.js';
+import { isPumpkinType } from '../blocks/lowPlants.js';
 
 import { plantTree } from '../world/trees/plantTree.js';
 import { plantShrub } from '../world/shrubs/Shrubs.js';
@@ -222,6 +227,15 @@ export class PlantGrowth {
         }
 
 
+        // Kwitnące pnącze dyni (grows.fruit, 1.19.0) zawiązuje owoc
+        // w wolnej komórce obok siebie; bez miejsca - czeka. Obok już
+        // rosnącej dyni drugiej nie zawiązuje.
+
+        if (growth.fruit && !this.setFruit(x, y, z, growth.fruit)) {
+            return false;
+        }
+
+
         if (this.world.setBlock(x, y, z, growth.into)) {
 
             this.grown++;
@@ -231,6 +245,41 @@ export class PlantGrowth {
         }
 
         return false;
+
+    }
+
+
+    // Stawia owoc `fruit` obok rośliny (x, y, z): w losowej z wolnych
+    // komórek na tym samym poziomie, które mają pod sobą stały grunt.
+    // Zwraca false, gdy nie ma miejsca albo obok już leży dynia.
+
+    setFruit(x, y, z, fruit) {
+
+        const world = this.world;
+        const free = [];
+
+        for (const [dx, dz] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+
+            const here = world.getBlockId(x + dx, y, z + dz);
+
+            if (isPumpkinType(getBlockTypeById(here))) {
+                return false;
+            }
+
+            if ((here === 0 || isReplaceableId(here)) && !isLiquidId(here) &&
+                isSolidId(world.getBlockId(x + dx, y - 1, z + dz)) && !isPassableId(world.getBlockId(x + dx, y - 1, z + dz))) {
+                free.push([dx, dz]);
+            }
+
+        }
+
+        if (free.length === 0) {
+            return false;
+        }
+
+        const [dx, dz] = free[Math.floor(Math.random() * free.length)];
+
+        return Boolean(world.setBlock(x + dx, y, z + dz, fruit));
 
     }
 

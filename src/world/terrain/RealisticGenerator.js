@@ -5,7 +5,8 @@ import {
     TERRAIN_DIRT_DEPTH
 } from '../../config.js';
 
-import { getBlockId, getBlockTypeById, FRUIT_BUSHES, bushStages, BLOCK_TYPES } from '../../blocks/BlockRegistry.js';
+import { getBlockId, getBlockTypeById, FRUIT_BUSHES, bushStages, BLOCK_TYPES, blockExists } from '../../blocks/BlockRegistry.js';
+import { LOW_PLANTS, LOW_PLANT_NAMES, LOW_COVER_HABITAT, lowPlantType } from '../../blocks/lowPlants.js';
 
 import { PLANT_PACKS, plantStageType } from '../../blocks/plantPacks.js';
 
@@ -266,6 +267,34 @@ function resolveBiome(biome, key) {
             };
         });
 
+    // Rośliny niskie (1.19.0, blocks/lowPlants.js): plamy w swoich
+    // biomach, w plamie losowy etap (u dyni także gotowe owoce między
+    // pnączami). Na końcu listy i z własnym numerem losowania - plamy
+    // dotychczasowych roślin zostają tam, gdzie były.
+
+    const lowPatches = [
+        ...LOW_PLANT_NAMES.filter((species) => LOW_PLANTS[species].habitat?.[key]).map((species) => {
+            const plant = LOW_PLANTS[species];
+            const [density, cover] = plant.habitat[key];
+            const stages = Object.entries(plant.wild);
+            let sum = 0;
+            return {
+                id: 0,
+                ids: stages.map(([part]) => getBlockId(blockExists(lowPlantType(species, part)) ? lowPlantType(species, part) : part)),
+                weights: stages.map(([, weight]) => (sum += weight)),
+                density,
+                level: patchLevel(cover),
+                salt: plant.firstId
+            };
+        }),
+        ...Object.entries(LOW_COVER_HABITAT).filter(([, habitat]) => habitat[key]).map(([type, habitat]) => ({
+            id: getBlockId(type),
+            density: habitat[key][0],
+            level: patchLevel(habitat[key][1]),
+            salt: getBlockId(type)
+        }))
+    ];
+
     return {
         key: biome,
         ground: (biome.ground ?? []).map(([type, cover]) => ({ id: getBlockId(type), level: patchLevel(cover) })),
@@ -278,7 +307,8 @@ function resolveBiome(biome, key) {
             herbs: plants.herbs.map(([type, chance]) => [chance, getBlockId(type)]),
             patches: [
                 ...(plants.patches ?? []).map(([type, density, cover]) => ({ id: getBlockId(type), density, level: patchLevel(cover) })),
-                ...packPatches
+                ...packPatches,
+                ...lowPatches
             ],
             bushes: plants.bushes ? {
                 stages: plants.bushes.species.map((species) => bushStages(species).map(getBlockId)),

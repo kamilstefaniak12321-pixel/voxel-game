@@ -71,7 +71,7 @@ const everything = [...inventoryBlocks, ...Object.keys(ITEM_TYPES)];
 
     // Jedna zasada na rodzaj rzeczy.
     const expected = { stairs: 'budowa', slab: 'budowa', fence: 'budowa', gate: 'budowa', door: 'budowa', trapdoor: 'budowa',
-        table: 'ozdoby', bed: 'ozdoby', mat: 'ozdoby' };
+        table: 'ozdoby', bed: 'ozdoby', mat: 'ozdoby', gourd: 'rosliny' };
     for (const type of inventoryBlocks) {
         const definition = R.BLOCK_TYPES[type];
         const kind = shapeInfo(definition.id)?.kind;

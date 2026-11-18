@@ -176,6 +176,9 @@ export function connectMask(getId, x, y, z) {
     return mask;
 }
 
+// Młoda dynia (1.19.0): 10 x 9 x 10 pikseli na środku komórki.
+const GOURD = [[3 / 16, 0, 3 / 16, 13 / 16, 9 / 16, 13 / 16]];
+
 // Pudełka kształtu. purpose: 'render' | 'collision' | 'outline'; mask -
 // połączenia płotu (connectMask).
 export function shapeBoxes(id, purpose = 'render', mask = 0) {
@@ -216,6 +219,8 @@ export function shapeBoxes(id, purpose = 'render', mask = 0) {
                 : info.bedding ? [...BED_FRAME[info.part], ...BED_BEDDING[info.part]] : BED_FRAME[info.part];
             return boxes.map((box) => rotateBox(box, info.facing));
         }
+        case 'gourd':
+            return GOURD;
         case 'mat':
             if (purpose === 'collision') return [];
             return MAT[info.part].map((box) => rotateBox(box, info.facing));

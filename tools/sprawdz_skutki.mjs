@@ -189,7 +189,8 @@ function lake({ radius = 20, shore = true, size = 96 } = {}) {
 {
     // Pieczone jedzenie; napary (kubek ziół -> napar) sprawdza sprawdz_zastosowania.mjs.
     const roasts = Object.entries(ROASTS).filter(([, roasted]) => FOODS[roasted].kind !== 'drink');
-    equal(roasts.length, 4, 'cztery rzeczy do pieczenia');
+    // (1.19.0: doszły kawałek dyni i cukinia.)
+    equal(roasts.length, 6, 'sześć rzeczy do pieczenia');
     for (const [raw, roasted] of roasts) {
         ok(itemExists(raw) && itemExists(roasted) && getItemLabel(roasted), `${raw} -> ${roasted}: przedmioty istnieją`);
         ok(getFood(raw) && getFood(roasted), `${raw}: surowe i pieczone da się zjeść`);

@@ -137,8 +137,13 @@ let padB = new Uint8Array(P_LAYER * (H + 2));
 let padCarpet = new Uint8Array(P_LAYER * (H + 2));
 const CARPET_OF = new Uint8Array(blockRenderData.length);
 
+// Niskie płyty (rośliny niskie, 1.19.0) zapisują tu swoją wysokość:
+// PLATE_CODE + piksele (1-16) - sąsiednia płyta co najmniej tak wysoka
+// zasłania bok (addPlate). Numery dywanów paczek są dużo niższe.
+const PLATE_CODE = 200;
+
 blockRenderData.forEach((data, id) => {
-    CARPET_OF[id] = data?.riverPlant?.carpet ?? 0;
+    CARPET_OF[id] = data?.plate ? PLATE_CODE + Math.round(data.plate * 16) : data?.riverPlant?.carpet ?? 0;
 });
 
 // Wyroby stolarskie (0.90.0): z czym łączy się płot. 1 - płot, 2 - furtka
@@ -1190,6 +1195,112 @@ function addRiverPlants(plants, faceCount, baseX, baseZ, grassDetail = null, ove
 // Jak daleko od ściany sąsiada (żeby nie migotała razem z nią).
 const FLAT_GAP = 0.03;
 
+// ------------------------------------------------------------
+// NISKA PŁYTA (rośliny niskie, 1.19.0): wierzch na wysokości płyty
+// i cztery boki. Bok bierze dolne wiersze rysunku (tyle, ile płyta ma
+// pikseli wysokości) - tak są narysowane boki w paczce. Bok przy pełnym
+// bloku albo przy płycie co najmniej tak wysokiej jest pomijany.
+// Ta sama grupa geometrii co liście (prześwity w rysunku).
+// ------------------------------------------------------------
+
+const PLATE_FACES = [0, 1, 2, 4, 5];
+
+function addPlate(id, lx, y, lz, faceCount) {
+
+    const { plate, uv, surfaceProfiles } = blockRenderData[id];
+    const emission = getLightEmission(id) / MAX_LIGHT * 255;
+    const cell = padIndex(lx, y, lz);
+    const own = PLATE_CODE + Math.round(plate * 16);
+
+    const red = padR[cell], green = padG[cell], blue = padB[cell];
+    const strongest = Math.max(red, green, blue);
+    const sky = BRIGHTNESS[padSky[cell] * LEVEL_STEPS];
+    const atmosphereSky = ATMOSPHERE_BRIGHTNESS[padSky[cell] * LEVEL_STEPS];
+
+    for (const faceIndex of PLATE_FACES) {
+
+        const face = BLOCK_FACES[faceIndex];
+        const normal = face.normal;
+        const axis = normal[0] !== 0 ? 0 : normal[1] !== 0 ? 1 : 2;
+
+        if (axis !== 1) {
+            const front = cell + FACE_FRONT[faceIndex];
+            if (padOpaque[front] || padCarpet[front] >= own) continue;
+        }
+
+        const fullUv = uv[faceIndex][0];
+        const profile = surfaceProfiles[faceIndex];
+        const a1 = (axis + 1) % 3, a2 = (axis + 2) % 3;
+
+        const lamp = BRIGHTNESS[Math.round(COLOR_LEVEL[strongest] * LEVEL_STEPS)] * LAMP_FACE_SHADE[faceIndex] * 255;
+        const r = strongest > 0 ? lamp * red / strongest : lamp;
+        const g = strongest > 0 ? lamp * green / strongest : lamp;
+        const b = strongest > 0 ? lamp * blue / strongest : lamp;
+        const atmosphereLamp = ATMOSPHERE_BRIGHTNESS[Math.round(COLOR_LEVEL[strongest] * LEVEL_STEPS)] * LAMP_FACE_SHADE[faceIndex] * 255;
+        const atmosphereScale = lamp > 0 ? atmosphereLamp / lamp : 0;
+
+        ensureCapacity(faceCount + 1);
+
+        const p = faceCount * 12;
+        const t = faceCount * 8;
+        const c = faceCount * 16;
+
+        for (let i = 0; i < 4; i++) {
+
+            const corner = face.corners[i];
+            const local = [corner[0], corner[1] ? plate : 0, corner[2]];
+
+            positionBuffer[p + i * 3] = lx + local[0];
+            positionBuffer[p + i * 3 + 1] = y + local[1];
+            positionBuffer[p + i * 3 + 2] = lz + local[2];
+
+            normalBuffer[p + i * 3] = normal[0];
+            normalBuffer[p + i * 3 + 1] = normal[1];
+            normalBuffer[p + i * 3 + 2] = normal[2];
+
+            // UV: punkt płyty w pełnej ścianie komórki (dwuliniowo z rogów).
+            let u = 0, v = 0;
+
+            for (let j = 0; j < 4; j++) {
+                const other = face.corners[j];
+                const w = (other[a1] ? local[a1] : 1 - local[a1]) * (other[a2] ? local[a2] : 1 - local[a2]);
+                u += w * fullUv[j * 2];
+                v += w * fullUv[j * 2 + 1];
+            }
+
+            uvBuffer[t + i * 2] = u;
+            uvBuffer[t + i * 2 + 1] = v;
+            plantMotionBuffer[t + i * 2] = 0;
+            plantMotionBuffer[t + i * 2 + 1] = 0;
+
+            colorBuffer[c + i * 4] = r + 0.5;
+            colorBuffer[c + i * 4 + 1] = g + 0.5;
+            colorBuffer[c + i * 4 + 2] = b + 0.5;
+            colorBuffer[c + i * 4 + 3] = sky * 255 + 0.5;
+
+            atmosphereLightBuffer[c + i * 4] = r * atmosphereScale + 0.5;
+            atmosphereLightBuffer[c + i * 4 + 1] = g * atmosphereScale + 0.5;
+            atmosphereLightBuffer[c + i * 4 + 2] = b * atmosphereScale + 0.5;
+            atmosphereLightBuffer[c + i * 4 + 3] = atmosphereSky * 255 + 0.5;
+            surfaceOcclusionBuffer[faceCount * 4 + i] = 255;
+            surfaceEmissionBuffer[faceCount * 4 + i] = emission + 0.5;
+            surfaceProfileBuffer[t + i * 2] = profile[0];
+            surfaceProfileBuffer[t + i * 2 + 1] = profile[1];
+
+            clearTint(c + i * 4);
+
+        }
+
+        splitBuffer[faceCount] = 0;
+
+        faceCount++;
+
+    }
+
+    return faceCount;
+
+}
+
 function addFlats(flats, faceCount, baseX, baseZ, first = 0, end = flats.length) {
 
     for (let k = first; k < end; k += 4) {
@@ -1199,6 +1310,12 @@ function addFlats(flats, faceCount, baseX, baseZ, first = 0, end = flats.length)
         const lz = flats[k + 2];
 
         const id = flats[k + 3];
+
+        if (blockRenderData[id].plate) {
+            faceCount = addPlate(id, lx, y, lz, faceCount);
+            continue;
+        }
+
         const { flat, uv, rotate, tint, surfaceProfiles, worldTextureVariants, leafCode } = blockRenderData[id];
         const emission = getLightEmission(id) / MAX_LIGHT * 255;
 

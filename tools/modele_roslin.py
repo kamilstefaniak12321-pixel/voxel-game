@@ -701,6 +701,19 @@ SHEETS = {
 for name, (leaf, flower, colors) in VANILLA.items():
     SHEETS[name] = (templated(leaf, flower), palette(colors))
 
+# Sadzonki krzewów jagodowych (1.17.0): kształt liścia i kolory zapisuje
+# tools/krzewy_tekstury.py (model.json każdej sadzonki - "kolory").
+def shrub_saplings():
+    import json
+    from krzewy_tekstury import LEAF_LAYOUT, model_id
+    for species, leaf in LEAF_LAYOUT.items():
+        with open(os.path.join(ROOT, model_id(species), 'model.json'), encoding='utf-8') as f:
+            yield model_id(species), leaf, json.load(f)['kolory']
+
+
+for name, leaf, colors in shrub_saplings():
+    SHEETS[name] = (templated(leaf, 'klos'), palette(colors))
+
 for name, (leaf, flower, colors, fruit) in BUSHES.items():
     SHEETS[name] = (templated(leaf, flower), palette(colors, FRUIT[fruit]))
 

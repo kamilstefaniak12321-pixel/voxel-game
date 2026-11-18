@@ -8,6 +8,7 @@ import {
 } from '../config.js';
 
 import { treeBlocks } from './trees.js';
+import { shrubBlocks } from './shrubs.js';
 import { RIVER_PLANT_BLOCKS } from './riverPlants.js';
 import { BLUEBERRY_STAGES, BLUEBERRY_TEXTURE, blueberryIcon } from './blueberry.js';
 import { FRUIT_BUSH_PROFILES } from '../rendering/FruitBushGeometry.js';
@@ -49,7 +50,10 @@ export const AIR_ID = 0;
 //   10860-11819             drzwi i klapy (0.91.0, po 48 na drewno - woodShapes.js),
 //   11820-12459             łóżka (0.98.0, po 32 na drewno - woodShapes.js),
 //   12460-12491             posłania na ziemi (0.98.0, po 8 na pościel - bedding.js),
-//   12492-65279             wolne na przyszłość.
+//   12492-12543             wolne,
+//   12544-14207             wyroby z drewna trzynastu drzew z 1.8.0 (1.9.0),
+//   14300-14999             krzewy jagodowe (1.17.0, po 16 na gatunek - shrubs.js),
+//   15000-65279             wolne na przyszłość.
 
 export const MAX_BLOCK_ID = 65279;
 
@@ -1255,6 +1259,10 @@ export const BLOCK_TYPES = {
     // Drzewa (src/blocks/trees.js) - po 5 bloków na gatunek i dodatki.
 
     ...treeBlocks(),
+
+    // Krzewy jagodowe (src/blocks/shrubs.js, 1.17.0) - po 16 numerów na gatunek.
+
+    ...shrubBlocks(),
 
     ...RIVER_PLANT_BLOCKS,
 

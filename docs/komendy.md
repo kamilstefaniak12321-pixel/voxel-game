@@ -91,6 +91,10 @@ Współrzędne można podawać względem gracza: `~` (tu, gdzie stoję),
 | `/krzaki` | krzaki owocowe do 64 bloków od ciebie: ile w każdym etapie (sadzonki, bez owoców, kilka owoców, pełne), tempo wzrostu |
 | `/krzaki ogrod` | przed tobą ogródek: 4 rzędy (truskawka, jeżyna, papryczka chili, leszczyna), w każdym od lewej sadzonka, krzak bez owoców, kilka owoców, pełen owoców (zmienia świat) |
 | `/krzaki znajdz` | najbliższy dziki krzak z owocami: nazwa, odległość, kierunek i komenda `/tp` |
+| `/krzewy` | krzewy jagodowe (1.17.0, `docs/krzewy.md`): lista gatunków i odmian |
+| `/krzewy galeria` | przed tobą wszystkie krzewy: gatunek i odmiana w rzędzie, od lewej jeden blok, mały krzak, dojrzały krzew, stara kępa (zmienia świat) |
+| `/krzewy <gatunek> [rozmiar 0-100] [odmiana]` | jeden krzew przed tobą, np. `/krzewy porzeczka 70 2` - dojrzała czarna porzeczka (zmienia świat) |
+| `/krzewy znajdz [gatunek]` | najbliższy dziki krzew do 256 bloków (także w niewczytanym terenie): nazwa, odległość i komenda `/tp` |
 | `/rosliny` | rośliny z paczek roślin (`assets/rosliny/`, `docs/rosliny.md`): lista z wysokością |
 | `/rosliny <roslina>` | opis rośliny: etapy z rozmiarem w blokach i pikselach, przedmiot i zbiór, gdzie rośnie, numery bloków (np. `/rosliny amarantus`) |
 | `/rosliny ogrod [roslina]` | przed tobą wszystkie etapy każdej rośliny (roślina w rzędzie, co 3 bloki; zmienia świat) |

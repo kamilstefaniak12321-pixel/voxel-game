@@ -1438,8 +1438,10 @@ for (
 
         leaves: definition.model === 'leaves',
         // Liście i opadłe liście drzew: kod palety pór roku (LeafSeasons.js); 0 - nie liść.
+        // (Liście krzewów jagodowych - pole leafSeason, paleta w LeafSeasons.js.)
         leafCode: definition.tree && (definition.part === 'leaves' || definition.part === 'litter')
-            ? leafCode(definition.tree, definition.part === 'litter', definition.autumnLeaves === true) : 0,
+            ? leafCode(definition.tree, definition.part === 'litter', definition.autumnLeaves === true)
+            : definition.leafSeason ? leafCode(definition.leafSeason) : 0,
 
         // Schody, półbloki, płoty, furtki, stół stolarski (0.90.0):
         // pudełka z ShapeBoxes.js (ChunkMesher.addShape).

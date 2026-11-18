@@ -17,7 +17,7 @@
     "rosliny": {
       "file": "rosliny.png",
       "width": 256,
-      "height": 240
+      "height": 336
     },
     "przedmioty": {
       "file": "przedmioty.png",
@@ -7932,6 +7932,573 @@
       "y": 336,
       "width": 64,
       "height": 64
+    },
+    "shrub_aronia_leaves": {
+      "sheet": "rosliny",
+      "x": 0,
+      "y": 240,
+      "width": 16,
+      "height": 16
+    },
+    "shrub_aronia_flower": {
+      "sheet": "rosliny",
+      "x": 16,
+      "y": 240,
+      "width": 16,
+      "height": 16
+    },
+    "shrub_aronia_fruit": {
+      "sheet": "rosliny",
+      "x": 32,
+      "y": 240,
+      "width": 16,
+      "height": 16
+    },
+    "shrub_aronia_stem": {
+      "sheet": "rosliny",
+      "x": 48,
+      "y": 240,
+      "width": 16,
+      "height": 16
+    },
+    "shrub_aronia_stem_top": {
+      "sheet": "rosliny",
+      "x": 64,
+      "y": 240,
+      "width": 16,
+      "height": 16
+    },
+    "shrub_aronia_sapling": {
+      "sheet": "rosliny",
+      "x": 80,
+      "y": 240,
+      "width": 16,
+      "height": 16
+    },
+    "shrub_currant_leaves": {
+      "sheet": "rosliny",
+      "x": 96,
+      "y": 240,
+      "width": 16,
+      "height": 16
+    },
+    "shrub_currant_flower": {
+      "sheet": "rosliny",
+      "x": 112,
+      "y": 240,
+      "width": 16,
+      "height": 16
+    },
+    "shrub_currant_fruit": {
+      "sheet": "rosliny",
+      "x": 128,
+      "y": 240,
+      "width": 16,
+      "height": 16
+    },
+    "shrub_currant_fruit_black": {
+      "sheet": "rosliny",
+      "x": 144,
+      "y": 240,
+      "width": 16,
+      "height": 16
+    },
+    "shrub_currant_sapling": {
+      "sheet": "rosliny",
+      "x": 160,
+      "y": 240,
+      "width": 16,
+      "height": 16
+    },
+    "shrub_gooseberry_leaves": {
+      "sheet": "rosliny",
+      "x": 176,
+      "y": 240,
+      "width": 16,
+      "height": 16
+    },
+    "shrub_gooseberry_flower": {
+      "sheet": "rosliny",
+      "x": 192,
+      "y": 240,
+      "width": 16,
+      "height": 16
+    },
+    "shrub_gooseberry_fruit": {
+      "sheet": "rosliny",
+      "x": 208,
+      "y": 240,
+      "width": 16,
+      "height": 16
+    },
+    "shrub_gooseberry_fruit_red": {
+      "sheet": "rosliny",
+      "x": 224,
+      "y": 240,
+      "width": 16,
+      "height": 16
+    },
+    "shrub_gooseberry_stem": {
+      "sheet": "rosliny",
+      "x": 240,
+      "y": 240,
+      "width": 16,
+      "height": 16
+    },
+    "shrub_gooseberry_stem_top": {
+      "sheet": "rosliny",
+      "x": 0,
+      "y": 256,
+      "width": 16,
+      "height": 16
+    },
+    "shrub_gooseberry_sapling": {
+      "sheet": "rosliny",
+      "x": 16,
+      "y": 256,
+      "width": 16,
+      "height": 16
+    },
+    "shrub_raspberry_leaves": {
+      "sheet": "rosliny",
+      "x": 32,
+      "y": 256,
+      "width": 16,
+      "height": 16
+    },
+    "shrub_raspberry_flower": {
+      "sheet": "rosliny",
+      "x": 48,
+      "y": 256,
+      "width": 16,
+      "height": 16
+    },
+    "shrub_raspberry_fruit": {
+      "sheet": "rosliny",
+      "x": 64,
+      "y": 256,
+      "width": 16,
+      "height": 16
+    },
+    "shrub_raspberry_fruit_yellow": {
+      "sheet": "rosliny",
+      "x": 80,
+      "y": 256,
+      "width": 16,
+      "height": 16
+    },
+    "shrub_raspberry_sapling": {
+      "sheet": "rosliny",
+      "x": 96,
+      "y": 256,
+      "width": 16,
+      "height": 16
+    },
+    "shrub_dog_rose_leaves": {
+      "sheet": "rosliny",
+      "x": 112,
+      "y": 256,
+      "width": 16,
+      "height": 16
+    },
+    "shrub_dog_rose_flower": {
+      "sheet": "rosliny",
+      "x": 128,
+      "y": 256,
+      "width": 16,
+      "height": 16
+    },
+    "shrub_dog_rose_fruit": {
+      "sheet": "rosliny",
+      "x": 144,
+      "y": 256,
+      "width": 16,
+      "height": 16
+    },
+    "shrub_dog_rose_sapling": {
+      "sheet": "rosliny",
+      "x": 160,
+      "y": 256,
+      "width": 16,
+      "height": 16
+    },
+    "shrub_elderberry_leaves": {
+      "sheet": "rosliny",
+      "x": 176,
+      "y": 256,
+      "width": 16,
+      "height": 16
+    },
+    "shrub_elderberry_flower": {
+      "sheet": "rosliny",
+      "x": 192,
+      "y": 256,
+      "width": 16,
+      "height": 16
+    },
+    "shrub_elderberry_flower_top": {
+      "sheet": "rosliny",
+      "x": 208,
+      "y": 256,
+      "width": 16,
+      "height": 16
+    },
+    "shrub_elderberry_unripe": {
+      "sheet": "rosliny",
+      "x": 224,
+      "y": 256,
+      "width": 16,
+      "height": 16
+    },
+    "shrub_elderberry_unripe_top": {
+      "sheet": "rosliny",
+      "x": 240,
+      "y": 256,
+      "width": 16,
+      "height": 16
+    },
+    "shrub_elderberry_fruit": {
+      "sheet": "rosliny",
+      "x": 0,
+      "y": 272,
+      "width": 16,
+      "height": 16
+    },
+    "shrub_elderberry_fruit_top": {
+      "sheet": "rosliny",
+      "x": 16,
+      "y": 272,
+      "width": 16,
+      "height": 16
+    },
+    "shrub_elderberry_stem": {
+      "sheet": "rosliny",
+      "x": 32,
+      "y": 272,
+      "width": 16,
+      "height": 16
+    },
+    "shrub_elderberry_stem_top": {
+      "sheet": "rosliny",
+      "x": 48,
+      "y": 272,
+      "width": 16,
+      "height": 16
+    },
+    "shrub_elderberry_sapling": {
+      "sheet": "rosliny",
+      "x": 64,
+      "y": 272,
+      "width": 16,
+      "height": 16
+    },
+    "shrub_sea_buckthorn_leaves": {
+      "sheet": "rosliny",
+      "x": 80,
+      "y": 272,
+      "width": 16,
+      "height": 16
+    },
+    "shrub_sea_buckthorn_unripe": {
+      "sheet": "rosliny",
+      "x": 96,
+      "y": 272,
+      "width": 16,
+      "height": 16
+    },
+    "shrub_sea_buckthorn_fruit": {
+      "sheet": "rosliny",
+      "x": 112,
+      "y": 272,
+      "width": 16,
+      "height": 16
+    },
+    "shrub_sea_buckthorn_stem": {
+      "sheet": "rosliny",
+      "x": 128,
+      "y": 272,
+      "width": 16,
+      "height": 16
+    },
+    "shrub_sea_buckthorn_stem_top": {
+      "sheet": "rosliny",
+      "x": 144,
+      "y": 272,
+      "width": 16,
+      "height": 16
+    },
+    "shrub_sea_buckthorn_sapling": {
+      "sheet": "rosliny",
+      "x": 160,
+      "y": 272,
+      "width": 16,
+      "height": 16
+    },
+    "shrub_highbush_blueberry_leaves": {
+      "sheet": "rosliny",
+      "x": 176,
+      "y": 272,
+      "width": 16,
+      "height": 16
+    },
+    "shrub_highbush_blueberry_flower": {
+      "sheet": "rosliny",
+      "x": 192,
+      "y": 272,
+      "width": 16,
+      "height": 16
+    },
+    "shrub_highbush_blueberry_fruit": {
+      "sheet": "rosliny",
+      "x": 208,
+      "y": 272,
+      "width": 16,
+      "height": 16
+    },
+    "shrub_highbush_blueberry_sapling": {
+      "sheet": "rosliny",
+      "x": 224,
+      "y": 272,
+      "width": 16,
+      "height": 16
+    },
+    "shrub_bramble_leaves": {
+      "sheet": "rosliny",
+      "x": 240,
+      "y": 272,
+      "width": 16,
+      "height": 16
+    },
+    "shrub_bramble_flower": {
+      "sheet": "rosliny",
+      "x": 0,
+      "y": 288,
+      "width": 16,
+      "height": 16
+    },
+    "shrub_bramble_fruit": {
+      "sheet": "rosliny",
+      "x": 16,
+      "y": 288,
+      "width": 16,
+      "height": 16
+    },
+    "shrub_bramble_fruit_alt": {
+      "sheet": "rosliny",
+      "x": 32,
+      "y": 288,
+      "width": 16,
+      "height": 16
+    },
+    "shrub_bramble_sapling": {
+      "sheet": "rosliny",
+      "x": 48,
+      "y": 288,
+      "width": 16,
+      "height": 16
+    },
+    "shrub_hazel_leaves": {
+      "sheet": "rosliny",
+      "x": 64,
+      "y": 288,
+      "width": 16,
+      "height": 16
+    },
+    "shrub_hazel_flower": {
+      "sheet": "rosliny",
+      "x": 80,
+      "y": 288,
+      "width": 16,
+      "height": 16
+    },
+    "shrub_hazel_unripe": {
+      "sheet": "rosliny",
+      "x": 96,
+      "y": 288,
+      "width": 16,
+      "height": 16
+    },
+    "shrub_hazel_fruit": {
+      "sheet": "rosliny",
+      "x": 112,
+      "y": 288,
+      "width": 16,
+      "height": 16
+    },
+    "shrub_hazel_stem": {
+      "sheet": "rosliny",
+      "x": 128,
+      "y": 288,
+      "width": 16,
+      "height": 16
+    },
+    "shrub_hazel_stem_top": {
+      "sheet": "rosliny",
+      "x": 144,
+      "y": 288,
+      "width": 16,
+      "height": 16
+    },
+    "shrub_hazel_sapling": {
+      "sheet": "rosliny",
+      "x": 160,
+      "y": 288,
+      "width": 16,
+      "height": 16
+    },
+    "item_aronia": {
+      "sheet": "rosliny",
+      "x": 176,
+      "y": 288,
+      "width": 16,
+      "height": 16
+    },
+    "item_redcurrant": {
+      "sheet": "rosliny",
+      "x": 192,
+      "y": 288,
+      "width": 16,
+      "height": 16
+    },
+    "item_blackcurrant": {
+      "sheet": "rosliny",
+      "x": 208,
+      "y": 288,
+      "width": 16,
+      "height": 16
+    },
+    "item_gooseberry": {
+      "sheet": "rosliny",
+      "x": 224,
+      "y": 288,
+      "width": 16,
+      "height": 16
+    },
+    "item_red_gooseberry": {
+      "sheet": "rosliny",
+      "x": 240,
+      "y": 288,
+      "width": 16,
+      "height": 16
+    },
+    "item_raspberry": {
+      "sheet": "rosliny",
+      "x": 0,
+      "y": 304,
+      "width": 16,
+      "height": 16
+    },
+    "item_yellow_raspberry": {
+      "sheet": "rosliny",
+      "x": 16,
+      "y": 304,
+      "width": 16,
+      "height": 16
+    },
+    "item_rose_hip": {
+      "sheet": "rosliny",
+      "x": 32,
+      "y": 304,
+      "width": 16,
+      "height": 16
+    },
+    "item_rose_petals": {
+      "sheet": "rosliny",
+      "x": 48,
+      "y": 304,
+      "width": 16,
+      "height": 16
+    },
+    "item_elderberry": {
+      "sheet": "rosliny",
+      "x": 64,
+      "y": 304,
+      "width": 16,
+      "height": 16
+    },
+    "item_elderflower": {
+      "sheet": "rosliny",
+      "x": 80,
+      "y": 304,
+      "width": 16,
+      "height": 16
+    },
+    "item_sea_buckthorn": {
+      "sheet": "rosliny",
+      "x": 96,
+      "y": 304,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/sadzonka-krzew-aronia/polrealistyczny": {
+      "sheet": "rosliny",
+      "x": 0,
+      "y": 320,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/sadzonka-krzew-currant/polrealistyczny": {
+      "sheet": "rosliny",
+      "x": 16,
+      "y": 320,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/sadzonka-krzew-gooseberry/polrealistyczny": {
+      "sheet": "rosliny",
+      "x": 32,
+      "y": 320,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/sadzonka-krzew-raspberry/polrealistyczny": {
+      "sheet": "rosliny",
+      "x": 48,
+      "y": 320,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/sadzonka-krzew-dog-rose/polrealistyczny": {
+      "sheet": "rosliny",
+      "x": 64,
+      "y": 320,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/sadzonka-krzew-elderberry/polrealistyczny": {
+      "sheet": "rosliny",
+      "x": 80,
+      "y": 320,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/sadzonka-krzew-sea-buckthorn/polrealistyczny": {
+      "sheet": "rosliny",
+      "x": 96,
+      "y": 320,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/sadzonka-krzew-highbush-blueberry/polrealistyczny": {
+      "sheet": "rosliny",
+      "x": 112,
+      "y": 320,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/sadzonka-krzew-bramble/polrealistyczny": {
+      "sheet": "rosliny",
+      "x": 128,
+      "y": 320,
+      "width": 16,
+      "height": 16
+    },
+    "models/rosliny/sadzonka-krzew-hazel/polrealistyczny": {
+      "sheet": "rosliny",
+      "x": 144,
+      "y": 320,
+      "width": 16,
+      "height": 16
     }
   },
   "aliases": {
@@ -8283,7 +8850,17 @@
     "assets/models/rosliny/sadzonka-banian/polrealistyczny.png": "models/rosliny/sadzonka-banian/polrealistyczny",
     "assets/models/rosliny/sadzonka-dracena/polrealistyczny.png": "models/rosliny/sadzonka-dracena/polrealistyczny",
     "assets/models/rosliny/sadzonka-cedr/polrealistyczny.png": "models/rosliny/sadzonka-cedr/polrealistyczny",
-    "assets/models/rosliny/sadzonka-oscista/polrealistyczny.png": "models/rosliny/sadzonka-oscista/polrealistyczny"
+    "assets/models/rosliny/sadzonka-oscista/polrealistyczny.png": "models/rosliny/sadzonka-oscista/polrealistyczny",
+    "assets/models/rosliny/sadzonka-krzew-aronia/polrealistyczny.png": "models/rosliny/sadzonka-krzew-aronia/polrealistyczny",
+    "assets/models/rosliny/sadzonka-krzew-currant/polrealistyczny.png": "models/rosliny/sadzonka-krzew-currant/polrealistyczny",
+    "assets/models/rosliny/sadzonka-krzew-gooseberry/polrealistyczny.png": "models/rosliny/sadzonka-krzew-gooseberry/polrealistyczny",
+    "assets/models/rosliny/sadzonka-krzew-raspberry/polrealistyczny.png": "models/rosliny/sadzonka-krzew-raspberry/polrealistyczny",
+    "assets/models/rosliny/sadzonka-krzew-dog-rose/polrealistyczny.png": "models/rosliny/sadzonka-krzew-dog-rose/polrealistyczny",
+    "assets/models/rosliny/sadzonka-krzew-elderberry/polrealistyczny.png": "models/rosliny/sadzonka-krzew-elderberry/polrealistyczny",
+    "assets/models/rosliny/sadzonka-krzew-sea-buckthorn/polrealistyczny.png": "models/rosliny/sadzonka-krzew-sea-buckthorn/polrealistyczny",
+    "assets/models/rosliny/sadzonka-krzew-highbush-blueberry/polrealistyczny.png": "models/rosliny/sadzonka-krzew-highbush-blueberry/polrealistyczny",
+    "assets/models/rosliny/sadzonka-krzew-bramble/polrealistyczny.png": "models/rosliny/sadzonka-krzew-bramble/polrealistyczny",
+    "assets/models/rosliny/sadzonka-krzew-hazel/polrealistyczny.png": "models/rosliny/sadzonka-krzew-hazel/polrealistyczny"
   },
   "tiles": {
     "grass_top": {
@@ -14583,6 +15160,411 @@
       "x": 49,
       "y": 93,
       "region": "trapdoor_bristlecone_edge"
+    },
+    "shrub_aronia_leaves": {
+      "x": 17,
+      "y": 94,
+      "region": "shrub_aronia_leaves"
+    },
+    "shrub_aronia_flower": {
+      "x": 18,
+      "y": 94,
+      "region": "shrub_aronia_flower"
+    },
+    "shrub_aronia_fruit": {
+      "x": 19,
+      "y": 94,
+      "region": "shrub_aronia_fruit"
+    },
+    "shrub_aronia_stem": {
+      "x": 20,
+      "y": 94,
+      "region": "shrub_aronia_stem"
+    },
+    "shrub_aronia_stem_top": {
+      "x": 21,
+      "y": 94,
+      "region": "shrub_aronia_stem_top"
+    },
+    "shrub_aronia_sapling": {
+      "x": 22,
+      "y": 94,
+      "region": "shrub_aronia_sapling"
+    },
+    "shrub_currant_leaves": {
+      "x": 23,
+      "y": 94,
+      "region": "shrub_currant_leaves"
+    },
+    "shrub_currant_flower": {
+      "x": 24,
+      "y": 94,
+      "region": "shrub_currant_flower"
+    },
+    "shrub_currant_fruit": {
+      "x": 25,
+      "y": 94,
+      "region": "shrub_currant_fruit"
+    },
+    "shrub_currant_fruit_black": {
+      "x": 26,
+      "y": 94,
+      "region": "shrub_currant_fruit_black"
+    },
+    "shrub_currant_sapling": {
+      "x": 27,
+      "y": 94,
+      "region": "shrub_currant_sapling"
+    },
+    "shrub_gooseberry_leaves": {
+      "x": 28,
+      "y": 94,
+      "region": "shrub_gooseberry_leaves"
+    },
+    "shrub_gooseberry_flower": {
+      "x": 29,
+      "y": 94,
+      "region": "shrub_gooseberry_flower"
+    },
+    "shrub_gooseberry_fruit": {
+      "x": 30,
+      "y": 94,
+      "region": "shrub_gooseberry_fruit"
+    },
+    "shrub_gooseberry_fruit_red": {
+      "x": 31,
+      "y": 94,
+      "region": "shrub_gooseberry_fruit_red"
+    },
+    "shrub_gooseberry_stem": {
+      "x": 32,
+      "y": 94,
+      "region": "shrub_gooseberry_stem"
+    },
+    "shrub_gooseberry_stem_top": {
+      "x": 33,
+      "y": 94,
+      "region": "shrub_gooseberry_stem_top"
+    },
+    "shrub_gooseberry_sapling": {
+      "x": 34,
+      "y": 94,
+      "region": "shrub_gooseberry_sapling"
+    },
+    "shrub_raspberry_leaves": {
+      "x": 35,
+      "y": 94,
+      "region": "shrub_raspberry_leaves"
+    },
+    "shrub_raspberry_flower": {
+      "x": 36,
+      "y": 94,
+      "region": "shrub_raspberry_flower"
+    },
+    "shrub_raspberry_fruit": {
+      "x": 37,
+      "y": 94,
+      "region": "shrub_raspberry_fruit"
+    },
+    "shrub_raspberry_fruit_yellow": {
+      "x": 38,
+      "y": 94,
+      "region": "shrub_raspberry_fruit_yellow"
+    },
+    "shrub_raspberry_sapling": {
+      "x": 39,
+      "y": 94,
+      "region": "shrub_raspberry_sapling"
+    },
+    "shrub_dog_rose_leaves": {
+      "x": 40,
+      "y": 94,
+      "region": "shrub_dog_rose_leaves"
+    },
+    "shrub_dog_rose_flower": {
+      "x": 41,
+      "y": 94,
+      "region": "shrub_dog_rose_flower"
+    },
+    "shrub_dog_rose_fruit": {
+      "x": 42,
+      "y": 94,
+      "region": "shrub_dog_rose_fruit"
+    },
+    "shrub_dog_rose_sapling": {
+      "x": 43,
+      "y": 94,
+      "region": "shrub_dog_rose_sapling"
+    },
+    "shrub_elderberry_leaves": {
+      "x": 44,
+      "y": 94,
+      "region": "shrub_elderberry_leaves"
+    },
+    "shrub_elderberry_flower": {
+      "x": 45,
+      "y": 94,
+      "region": "shrub_elderberry_flower"
+    },
+    "shrub_elderberry_flower_top": {
+      "x": 46,
+      "y": 94,
+      "region": "shrub_elderberry_flower_top"
+    },
+    "shrub_elderberry_unripe": {
+      "x": 47,
+      "y": 94,
+      "region": "shrub_elderberry_unripe"
+    },
+    "shrub_elderberry_unripe_top": {
+      "x": 48,
+      "y": 94,
+      "region": "shrub_elderberry_unripe_top"
+    },
+    "shrub_elderberry_fruit": {
+      "x": 49,
+      "y": 94,
+      "region": "shrub_elderberry_fruit"
+    },
+    "shrub_elderberry_fruit_top": {
+      "x": 50,
+      "y": 94,
+      "region": "shrub_elderberry_fruit_top"
+    },
+    "shrub_elderberry_stem": {
+      "x": 51,
+      "y": 94,
+      "region": "shrub_elderberry_stem"
+    },
+    "shrub_elderberry_stem_top": {
+      "x": 52,
+      "y": 94,
+      "region": "shrub_elderberry_stem_top"
+    },
+    "shrub_elderberry_sapling": {
+      "x": 53,
+      "y": 94,
+      "region": "shrub_elderberry_sapling"
+    },
+    "shrub_sea_buckthorn_leaves": {
+      "x": 54,
+      "y": 94,
+      "region": "shrub_sea_buckthorn_leaves"
+    },
+    "shrub_sea_buckthorn_unripe": {
+      "x": 55,
+      "y": 94,
+      "region": "shrub_sea_buckthorn_unripe"
+    },
+    "shrub_sea_buckthorn_fruit": {
+      "x": 56,
+      "y": 94,
+      "region": "shrub_sea_buckthorn_fruit"
+    },
+    "shrub_sea_buckthorn_stem": {
+      "x": 57,
+      "y": 94,
+      "region": "shrub_sea_buckthorn_stem"
+    },
+    "shrub_sea_buckthorn_stem_top": {
+      "x": 58,
+      "y": 94,
+      "region": "shrub_sea_buckthorn_stem_top"
+    },
+    "shrub_sea_buckthorn_sapling": {
+      "x": 59,
+      "y": 94,
+      "region": "shrub_sea_buckthorn_sapling"
+    },
+    "shrub_highbush_blueberry_leaves": {
+      "x": 60,
+      "y": 94,
+      "region": "shrub_highbush_blueberry_leaves"
+    },
+    "shrub_highbush_blueberry_flower": {
+      "x": 61,
+      "y": 94,
+      "region": "shrub_highbush_blueberry_flower"
+    },
+    "shrub_highbush_blueberry_fruit": {
+      "x": 62,
+      "y": 94,
+      "region": "shrub_highbush_blueberry_fruit"
+    },
+    "shrub_highbush_blueberry_sapling": {
+      "x": 63,
+      "y": 94,
+      "region": "shrub_highbush_blueberry_sapling"
+    },
+    "shrub_bramble_leaves": {
+      "x": 17,
+      "y": 95,
+      "region": "shrub_bramble_leaves"
+    },
+    "shrub_bramble_flower": {
+      "x": 18,
+      "y": 95,
+      "region": "shrub_bramble_flower"
+    },
+    "shrub_bramble_fruit": {
+      "x": 19,
+      "y": 95,
+      "region": "shrub_bramble_fruit"
+    },
+    "shrub_bramble_fruit_alt": {
+      "x": 20,
+      "y": 95,
+      "region": "shrub_bramble_fruit_alt"
+    },
+    "shrub_bramble_sapling": {
+      "x": 21,
+      "y": 95,
+      "region": "shrub_bramble_sapling"
+    },
+    "shrub_hazel_leaves": {
+      "x": 22,
+      "y": 95,
+      "region": "shrub_hazel_leaves"
+    },
+    "shrub_hazel_flower": {
+      "x": 23,
+      "y": 95,
+      "region": "shrub_hazel_flower"
+    },
+    "shrub_hazel_unripe": {
+      "x": 24,
+      "y": 95,
+      "region": "shrub_hazel_unripe"
+    },
+    "shrub_hazel_fruit": {
+      "x": 25,
+      "y": 95,
+      "region": "shrub_hazel_fruit"
+    },
+    "shrub_hazel_stem": {
+      "x": 26,
+      "y": 95,
+      "region": "shrub_hazel_stem"
+    },
+    "shrub_hazel_stem_top": {
+      "x": 27,
+      "y": 95,
+      "region": "shrub_hazel_stem_top"
+    },
+    "shrub_hazel_sapling": {
+      "x": 28,
+      "y": 95,
+      "region": "shrub_hazel_sapling"
+    },
+    "item_aronia": {
+      "x": 29,
+      "y": 95,
+      "region": "item_aronia"
+    },
+    "item_redcurrant": {
+      "x": 30,
+      "y": 95,
+      "region": "item_redcurrant"
+    },
+    "item_blackcurrant": {
+      "x": 31,
+      "y": 95,
+      "region": "item_blackcurrant"
+    },
+    "item_gooseberry": {
+      "x": 32,
+      "y": 95,
+      "region": "item_gooseberry"
+    },
+    "item_red_gooseberry": {
+      "x": 33,
+      "y": 95,
+      "region": "item_red_gooseberry"
+    },
+    "item_raspberry": {
+      "x": 34,
+      "y": 95,
+      "region": "item_raspberry"
+    },
+    "item_yellow_raspberry": {
+      "x": 35,
+      "y": 95,
+      "region": "item_yellow_raspberry"
+    },
+    "item_rose_hip": {
+      "x": 36,
+      "y": 95,
+      "region": "item_rose_hip"
+    },
+    "item_rose_petals": {
+      "x": 37,
+      "y": 95,
+      "region": "item_rose_petals"
+    },
+    "item_elderberry": {
+      "x": 38,
+      "y": 95,
+      "region": "item_elderberry"
+    },
+    "item_elderflower": {
+      "x": 39,
+      "y": 95,
+      "region": "item_elderflower"
+    },
+    "item_sea_buckthorn": {
+      "x": 40,
+      "y": 95,
+      "region": "item_sea_buckthorn"
+    },
+    "models/rosliny/sadzonka-krzew-aronia/polrealistyczny": {
+      "x": 41,
+      "y": 95,
+      "region": "models/rosliny/sadzonka-krzew-aronia/polrealistyczny"
+    },
+    "models/rosliny/sadzonka-krzew-currant/polrealistyczny": {
+      "x": 42,
+      "y": 95,
+      "region": "models/rosliny/sadzonka-krzew-currant/polrealistyczny"
+    },
+    "models/rosliny/sadzonka-krzew-gooseberry/polrealistyczny": {
+      "x": 43,
+      "y": 95,
+      "region": "models/rosliny/sadzonka-krzew-gooseberry/polrealistyczny"
+    },
+    "models/rosliny/sadzonka-krzew-raspberry/polrealistyczny": {
+      "x": 44,
+      "y": 95,
+      "region": "models/rosliny/sadzonka-krzew-raspberry/polrealistyczny"
+    },
+    "models/rosliny/sadzonka-krzew-dog-rose/polrealistyczny": {
+      "x": 45,
+      "y": 95,
+      "region": "models/rosliny/sadzonka-krzew-dog-rose/polrealistyczny"
+    },
+    "models/rosliny/sadzonka-krzew-elderberry/polrealistyczny": {
+      "x": 46,
+      "y": 95,
+      "region": "models/rosliny/sadzonka-krzew-elderberry/polrealistyczny"
+    },
+    "models/rosliny/sadzonka-krzew-sea-buckthorn/polrealistyczny": {
+      "x": 47,
+      "y": 95,
+      "region": "models/rosliny/sadzonka-krzew-sea-buckthorn/polrealistyczny"
+    },
+    "models/rosliny/sadzonka-krzew-highbush-blueberry/polrealistyczny": {
+      "x": 48,
+      "y": 95,
+      "region": "models/rosliny/sadzonka-krzew-highbush-blueberry/polrealistyczny"
+    },
+    "models/rosliny/sadzonka-krzew-bramble/polrealistyczny": {
+      "x": 49,
+      "y": 95,
+      "region": "models/rosliny/sadzonka-krzew-bramble/polrealistyczny"
+    },
+    "models/rosliny/sadzonka-krzew-hazel/polrealistyczny": {
+      "x": 50,
+      "y": 95,
+      "region": "models/rosliny/sadzonka-krzew-hazel/polrealistyczny"
     }
   }
 }

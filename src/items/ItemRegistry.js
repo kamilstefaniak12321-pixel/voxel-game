@@ -94,6 +94,23 @@ export const ITEM_TYPES = {
         plants: 'blueberry_sapling'
     },
 
+    // Owoce krzewów jagodowych (1.17.0, src/blocks/shrubs.js; ikonki
+    // Kamila z paczki "food_pack_all"). Posadzone na rozgrzebanej ziemi
+    // dają sadzonkę krzewu swojej odmiany. Płatki róży i kwiaty bzu
+    // zrywa się z kwitnącego krzewu.
+    aronia: { name: 'Chokeberries', label: 'Aronia', icon: 'item_aronia', category: 'owoce', plants: 'shrub_aronia_sapling' },
+    redcurrant: { name: 'Redcurrants', label: 'Czerwone porzeczki', icon: 'item_redcurrant', category: 'owoce', plants: 'shrub_currant_sapling' },
+    blackcurrant: { name: 'Blackcurrants', label: 'Czarne porzeczki', icon: 'item_blackcurrant', category: 'owoce', plants: 'shrub_currant_sapling_black' },
+    gooseberry: { name: 'Gooseberries', label: 'Agrest', icon: 'item_gooseberry', category: 'owoce', plants: 'shrub_gooseberry_sapling' },
+    red_gooseberry: { name: 'Red Gooseberries', label: 'Czerwony agrest', icon: 'item_red_gooseberry', category: 'owoce', plants: 'shrub_gooseberry_sapling_red' },
+    raspberry: { name: 'Raspberries', label: 'Maliny', icon: 'item_raspberry', category: 'owoce', plants: 'shrub_raspberry_sapling' },
+    yellow_raspberry: { name: 'Yellow Raspberries', label: 'Żółte maliny', icon: 'item_yellow_raspberry', category: 'owoce', plants: 'shrub_raspberry_sapling_yellow' },
+    rose_hip: { name: 'Rose Hips', label: 'Owoce dzikiej róży', icon: 'item_rose_hip', category: 'owoce', plants: 'shrub_dog_rose_sapling' },
+    rose_petals: { name: 'Rose Petals', label: 'Płatki dzikiej róży', icon: 'item_rose_petals', category: 'owoce' },
+    elderberry: { name: 'Elderberries', label: 'Owoce bzu czarnego', icon: 'item_elderberry', category: 'owoce', plants: 'shrub_elderberry_sapling' },
+    elderflower: { name: 'Elderflower', label: 'Kwiat bzu czarnego', icon: 'item_elderflower', category: 'owoce' },
+    sea_buckthorn_berry: { name: 'Sea Buckthorn Berries', label: 'Owoce rokitnika', icon: 'item_sea_buckthorn', category: 'owoce', plants: 'shrub_sea_buckthorn_sapling' },
+
 
     // Dodatki drzew (src/blocks/trees.js). Szyszki, orzeszki, żołędzie
     // i kwiat lipy (z nasionkami na przysadce) posadzone na rozgrzebanej

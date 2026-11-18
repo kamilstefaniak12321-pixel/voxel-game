@@ -1,0 +1,111 @@
+{
+    "nazwa": "Sadzonka agrestu",
+    "bloki": [
+        "shrub_gooseberry_sapling",
+        "shrub_gooseberry_sapling_red"
+    ],
+    "kolory": {
+        "lisc": "#5e7a3f",
+        "liscJasny": "#b3a687",
+        "liscCiemny": "#3d502e",
+        "lodyga": "#684e32"
+    },
+    "etapy": [
+        {
+            "prosty": null,
+            "polrealistyczny": {
+                "liscie": {
+                    "uklad": "kopula",
+                    "ile": 7,
+                    "dlugosc": 5,
+                    "promien": 3,
+                    "kopula": 9,
+                    "nachylenie": 45,
+                    "pien": true
+                }
+            },
+            "szczegolowy": {
+                "rodzaj": "kepka",
+                "liscie": {
+                    "uklad": "krzak",
+                    "ile": [
+                        6,
+                        8
+                    ],
+                    "dlugosc": [
+                        2,
+                        3
+                    ],
+                    "promien": 2
+                },
+                "lodygi": {
+                    "ile": [
+                        1,
+                        2
+                    ],
+                    "wysokosc": [
+                        6,
+                        8
+                    ],
+                    "promien": 0,
+                    "liscie": {
+                        "co": 1,
+                        "dlugosc": [
+                            3,
+                            4
+                        ],
+                        "naprzeciw": true
+                    }
+                }
+            }
+        },
+        {
+            "prosty": null,
+            "polrealistyczny": {
+                "liscie": {
+                    "uklad": "kopula",
+                    "ile": 7,
+                    "dlugosc": 5,
+                    "promien": 3,
+                    "kopula": 9,
+                    "nachylenie": 45,
+                    "pien": true
+                }
+            },
+            "szczegolowy": {
+                "rodzaj": "kepka",
+                "liscie": {
+                    "uklad": "krzak",
+                    "ile": [
+                        6,
+                        8
+                    ],
+                    "dlugosc": [
+                        2,
+                        3
+                    ],
+                    "promien": 2
+                },
+                "lodygi": {
+                    "ile": [
+                        1,
+                        2
+                    ],
+                    "wysokosc": [
+                        6,
+                        8
+                    ],
+                    "promien": 0,
+                    "liscie": {
+                        "co": 1,
+                        "dlugosc": [
+                            3,
+                            4
+                        ],
+                        "naprzeciw": true
+                    }
+                }
+            }
+        }
+    ]
+}

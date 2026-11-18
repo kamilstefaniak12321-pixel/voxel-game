@@ -76,8 +76,8 @@ SHRUB_NAMES.forEach((species, index) => {
 
     if (shrub.stem) {
         const stem = getBlockDefinition(shrubType(species, 'stem'));
-        check(stem.id === shrub.firstId + 1 && stem.solid && stem.drops === 'stick', `${species}: pęd / pień daje patyk`);
-        check((shrub.stem === 'canes') === (stem.model === 'leaves'), `${species}: pędy ażurowe, pień pełny`);
+        check(stem.id === shrub.firstId + 1 && stem.drops === 'stick', `${species}: pęd / pień daje patyk`);
+        check(stem.solid && (shrub.stem === 'canes') === (stem.model === 'leaves'), `${species}: pędy ażurowe, pień pełny`);
     }
     else check(!BLOCK_TYPES[`shrub_${species}_stem`], `${species}: bez bloku pnia`);
 
@@ -138,11 +138,33 @@ check(ITEM_TYPES.blueberry.plants === 'blueberry_sapling' && ITEM_TYPES.blackber
 
 {
     const source = (folder, name) => decodeTexturePng(readFileSync(new URL(`tools/wzorce/krzewy/${folder}/${name}.png`, root)));
-    const same = (key, folder, name) => readTextureRegion(key).rgba.equals(source(folder, name).rgba);
-    check(same('shrub_aronia_leaves', 'aronia', 'bush_leaves') && same('shrub_aronia_stem', 'aronia', 'stems'), 'Aronia: liście i pędy z paczki');
-    check(same('shrub_currant_fruit_black', 'currant', 'bush_leaves_fruit_black') && same('item_blackcurrant', 'currant', 'item_blackcurrants'), 'Porzeczka czarna z paczki');
+    // Zielone piksele liści mogą być rozjaśnione (najwyżej o 25%, tym
+    // samym mnożnikiem w całym gatunku); reszta - piksel w piksel z paczki.
+    const same = (key, folder, name, leafy = true) => {
+        const game = readTextureRegion(key).rgba, pack = source(folder, name).rgba;
+        let gain = null;
+        for (let i = 0; i < pack.length; i += 4) {
+            const [r, g, b, a] = [pack[i], pack[i + 1], pack[i + 2], pack[i + 3]];
+            if (game[i + 3] !== a) return false;
+            const green = leafy && a === 255 && g > r && g > b;
+            if (!green) {
+                if (game[i] !== r || game[i + 1] !== g || game[i + 2] !== b) return false;
+                continue;
+            }
+            const ratio = game[i + 1] / g;
+            if (ratio < 0.999 || ratio > 1.26) return false;
+            gain ??= ratio;
+            if (Math.abs(ratio - gain) > 0.03) return false;
+        }
+        return true;
+    };
+    check(same('shrub_aronia_leaves', 'aronia', 'bush_leaves'), 'Aronia: liście z paczki');
+    check(same('shrub_currant_fruit_black', 'currant', 'bush_leaves_fruit_black') && same('item_blackcurrant', 'currant', 'item_blackcurrants', false), 'Porzeczka czarna z paczki');
     check(same('shrub_elderberry_flower_top', 'elderberry', 'bush_leaves_flower_top') && same('shrub_hazel_flower', 'hazel', 'bush_leaves_catkins'), 'Bez i leszczyna z paczki');
     check(same('shrub_highbush_blueberry_fruit', 'blueberry', 'bush_leaves_fruit') && same('shrub_bramble_fruit', 'blackberry', 'bush_leaves_fruit'), 'Borówka wysoka i jeżyna z paczki');
+    // Jasne gatunki zostają bez zmian, ciemne są jaśniejsze.
+    check(readTextureRegion('shrub_currant_leaves').rgba.equals(source('currant', 'bush_leaves').rgba) && readTextureRegion('shrub_hazel_leaves').rgba.equals(source('hazel', 'bush_leaves').rgba), 'Porzeczka i leszczyna: liście piksel w piksel');
+    check(!readTextureRegion('shrub_bramble_leaves').rgba.equals(source('blackberry', 'bush_leaves').rgba), 'Jeżyna: ciemne liście rozjaśnione');
     // Sadzonka narysowana z kolorów liści gatunku.
     for (const species of SHRUB_NAMES) {
         const sapling = readTextureRegion(`shrub_${species}_sapling`), leaves = readTextureRegion(`shrub_${species}_leaves`);

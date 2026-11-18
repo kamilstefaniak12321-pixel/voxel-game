@@ -27,7 +27,7 @@ SOURCE = Path(__file__).resolve().parent / 'wzorce' / 'krzewy'
 # gatunek w grze -> (folder paczki, {część: plik})
 SHRUBS = {
     'aronia': ('aronia', {'leaves': 'bush_leaves', 'flower': 'bush_leaves_flower', 'fruit': 'bush_leaves_fruit',
-                          'stem': 'stems', 'stem_top': 'stems_top'}),
+                          'stem': 'stems'}),
     'currant': ('currant', {'leaves': 'bush_leaves', 'flower': 'bush_leaves_flower', 'fruit': 'bush_leaves_fruit',
                             'fruit_black': 'bush_leaves_fruit_black'}),
     'gooseberry': ('gooseberry', {'leaves': 'bush_leaves', 'flower': 'bush_leaves_flower', 'fruit': 'bush_leaves_fruit',
@@ -173,13 +173,55 @@ def sapling(leaves):
     return image
 
 
+# Najciemniejsze liście z paczki (jeżyna, aronia, dzika róża, bez) były
+# w grze prawie czarne obok liści drzew. Zielone piksele liści gatunku
+# rozjaśniamy do jasności liści dębu / buka (średnia liniowa LEAF_TARGET),
+# najwyżej o LEAF_GAIN_MAX; owoce, kwiaty i pędy zostają jak w paczce.
+LEAF_TARGET = 0.13
+LEAF_GAIN_MAX = 1.25
+CANES_GAIN = 1.5
+LEAF_PARTS = ('leaves', 'flower', 'flower_top', 'fruit', 'fruit_top', 'fruit_black', 'fruit_red', 'fruit_yellow',
+              'fruit_alt', 'unripe', 'unripe_top')
+
+
+def is_leaf_green(pixel):
+    r, g, b, a = pixel
+    return a == 255 and g > r and g > b
+
+
+def leaf_gain(leaves):
+    pixels = [p for p in leaves.get_flattened_data() if p[3] == 255]
+    linear = lambda v: (v / 255) ** 2.2
+    mean = sum(0.2126 * linear(p[0]) + 0.7152 * linear(p[1]) + 0.0722 * linear(p[2]) for p in pixels) / len(pixels)
+    return max(1.0, min(LEAF_GAIN_MAX, (LEAF_TARGET / mean) ** (1 / 2.2)))
+
+
+def brighten(image, gain):
+    if gain <= 1.0:
+        return image
+    out = image.copy()
+    for y in range(16):
+        for x in range(16):
+            pixel = image.getpixel((x, y))
+            if is_leaf_green(pixel):
+                out.putpixel((x, y), (*(min(255, round(v * gain)) for v in pixel[:3]), 255))
+    return out
+
+
 def textures():
     """Wszystkie obrazki: {nazwa w grze: obraz}."""
     out = {}
     for species, (folder, parts) in SHRUBS.items():
+        gain = leaf_gain(source(folder, parts['leaves']))
         for part, name in parts.items():
-            out[f'shrub_{species}_{part}'] = source(folder, name)
+            image = source(folder, name)
+            out[f'shrub_{species}_{part}'] = brighten(image, gain) if part in LEAF_PARTS else image
         out[f'shrub_{species}_sapling'] = sapling(out[f'shrub_{species}_leaves'])
+    # Pędy aronii w paczce są prawie czarne - w cieniu pod liśćmi zlewały
+    # się w czarną kratę. Wszystkie piksele jaśniejsze o połowę.
+    canes = out['shrub_aronia_stem']
+    out['shrub_aronia_stem'] = Image.merge('RGBA', [*(band.point(lambda v: min(255, round(v * CANES_GAIN))) for band in canes.split()[:3]),
+                                                    canes.split()[3]])
     for key, (folder, name) in ITEMS.items():
         out[key] = source(folder, name)
     return out

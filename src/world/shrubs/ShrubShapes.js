@@ -100,7 +100,8 @@ export function buildShrub(species, variety = 0, seed = 1, size = 0.5) {
 
             // Pień (albo kilka pni z jednej karpy) i korona nad nim.
             rigid = true;
-            const trunk = Math.max(1, H - Math.max(2, Math.round(H * 0.55)));
+            // (Krzew, nie drzewo: pień krótki, korona zaczyna się nisko.)
+            const trunk = Math.max(1, Math.round(H * 0.34));
             const trunks = shape.multi && H >= 4 ? [[0, 0], [random() < 0.5 ? 1 : -1, 0], [0, random() < 0.5 ? 1 : -1]].slice(0, 2 + (random() < 0.5 ? 1 : 0)) : [[0, 0]];
             for (const [tx, tz] of trunks) {
                 const height = trunk + (tx || tz ? -Math.round(random()) : 0);
@@ -115,6 +116,8 @@ export function buildShrub(species, variety = 0, seed = 1, size = 0.5) {
                 const up = Math.max(d <= 0.75 ? 1 : 0, Math.round(thick));
                 const droop = d > 0.6 && random() < 0.4 ? 1 : 0;
                 for (let k = 0; k < up; k++) put(dx, trunk + k - droop, dz, 'L');
+                // Dolne gałęzie wokół pnia - bez nich krzew wyglądał jak grzyb.
+                if (d <= 0.62 && d > 0 && trunk >= 2 && random() < 0.7) put(dx, trunk - 1, dz, 'L');
             }
 
         }

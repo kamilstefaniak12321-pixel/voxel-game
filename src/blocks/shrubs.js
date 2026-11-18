@@ -215,7 +215,7 @@ export function shrubBlocks() {
                 solid: true, opaque: false, model: 'leaves',
                 name: `${shrub.name} Canes`,
                 label: shrub.stemLabel,
-                textures: { top: texture('stem_top'), side: texture('stem'), bottom: texture('stem_top') },
+                textures: { all: texture('stem') },
                 drops: 'stick'
             } : {
                 solid: true,

@@ -14,7 +14,7 @@
 #                                  bloki, meteoryt, owoce, menu, woda, kosmos,
 #                                  osiagniecia, wytwarzanie, snieg (same
 #                                  dźwięki śniegu - nowy materiał), cialo
-#                                  (burczenie w brzuchu, jedzenie), drzwi
+#                                  (burczenie w brzuchu, jedzenie), jez (jeżyk), drzwi
 #                                  (otwieranie i zamykanie drzwi i klap)
 #
 # (pliki .ogg za każdym razem wychodzą trochę inne w bajtach, więc
@@ -538,6 +538,57 @@ DOORS = {
     'door_close': (door_close, -17),
     'trapdoor_open': (trapdoor_open, -20),
     'trapdoor_close': (trapdoor_close, -17.5)
+}
+
+
+# ------------------------------------------------------------
+# Jeżyk (1.18.0): węszenie, chrupanie jagód, zwijanie się w kulkę
+# ------------------------------------------------------------
+
+def puff(s, length, low, high, amount):
+    """Krótki szum oddechu (wdech przez nos)."""
+    n = samples(length)
+    return band(s.noise(length), low, high) * np.sin(np.pi * np.linspace(0, 1, n)) ** 1.5 * amount
+
+
+def hedgehog_sniff(s):
+    """Trzy-cztery szybkie wdechy nosem i ciche fuknięcie."""
+    out = np.zeros(samples(0.9))
+    at = 0.02
+    for _ in range(int(s.uniform(3, 5))):
+        place(out, puff(s, s.uniform(0.05, 0.08), 1400, 5200, s.uniform(0.6, 1.0)), at)
+        at += s.uniform(0.11, 0.16)
+    place(out, puff(s, 0.16, 500, 2200, 0.5), at + 0.05)
+    return out
+
+
+def hedgehog_eat(s):
+    """Drobne chrupanie: kilka mokrych kłapnięć."""
+    out = np.zeros(samples(1.1))
+    at = 0.03
+    for _ in range(int(s.uniform(5, 8))):
+        length = s.uniform(0.03, 0.05)
+        n = samples(length)
+        click = band(s.noise(length), 700, 3600) * soft_env(n, 0.002, 0.012)
+        click += damped_sine(s.uniform(380, 620), length, 0.012) * 0.4
+        place(out, click * s.uniform(0.6, 1.0), at)
+        at += s.uniform(0.11, 0.17)
+    return out
+
+
+def hedgehog_curl(s):
+    """Szelest kolców i krótkie fuknięcie przy zwijaniu."""
+    out = np.zeros(samples(0.6))
+    place(out, puff(s, 0.2, 700, 3000, 1.0), 0.0)
+    for _ in range(6):
+        place(out, puff(s, s.uniform(0.02, 0.05), 2500, 7000, s.uniform(0.2, 0.5)), s.uniform(0.02, 0.35))
+    return out
+
+
+HEDGEHOG = {
+    'hedgehog_sniff': (hedgehog_sniff, -27),
+    'hedgehog_eat': (hedgehog_eat, -25),
+    'hedgehog_curl': (hedgehog_curl, -24)
 }
 
 
@@ -1114,7 +1165,7 @@ def save(path, data):
         )
 
 
-GROUPS = ['bloki', 'meteoryt', 'owoce', 'menu', 'woda', 'kosmos', 'osiagniecia', 'wytwarzanie', 'snieg', 'strumien', 'cialo', 'drzwi']
+GROUPS = ['bloki', 'meteoryt', 'owoce', 'menu', 'woda', 'kosmos', 'osiagniecia', 'wytwarzanie', 'snieg', 'strumien', 'cialo', 'drzwi', 'jez']
 
 
 def generate(root=ROOT, only=None):
@@ -1200,6 +1251,14 @@ def generate(root=ROOT, only=None):
             for v in range(1, 3):
                 sound = fade(loudness(make(Synth(116_000 + index * 10 + v)), level), 0.002, 0.05)
                 save(os.path.join(root, 'doors', f'{name}_{v}.ogg'), sound)
+
+
+    # Jeżyk (1.18.0) - własne ziarna.
+    if want('jez'):
+        for index, (name, (make, level)) in enumerate(HEDGEHOG.items()):
+            for v in range(1, 3):
+                sound = fade(loudness(make(Synth(118_000 + index * 10 + v)), level), 0.002, 0.04)
+                save(os.path.join(root, 'animals', f'{name}_{v}.ogg'), sound)
 
 
 if __name__ == '__main__':

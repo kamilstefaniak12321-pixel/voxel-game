@@ -8499,6 +8499,34 @@
       "y": 336,
       "width": 16,
       "height": 16
+    },
+    "mob_hedgehog_brown": {
+      "sheet": "efekty",
+      "x": 192,
+      "y": 336,
+      "width": 16,
+      "height": 16
+    },
+    "mob_hedgehog_dark": {
+      "sheet": "efekty",
+      "x": 208,
+      "y": 336,
+      "width": 16,
+      "height": 16
+    },
+    "mob_hedgehog_sandy": {
+      "sheet": "efekty",
+      "x": 224,
+      "y": 336,
+      "width": 16,
+      "height": 16
+    },
+    "mob_hedgehog_albino": {
+      "sheet": "efekty",
+      "x": 240,
+      "y": 336,
+      "width": 16,
+      "height": 16
     }
   },
   "aliases": {
@@ -15565,6 +15593,26 @@
       "x": 21,
       "y": 94,
       "region": "shrub_aronia_stem_top"
+    },
+    "mob_hedgehog_brown": {
+      "x": 51,
+      "y": 95,
+      "region": "mob_hedgehog_brown"
+    },
+    "mob_hedgehog_dark": {
+      "x": 52,
+      "y": 95,
+      "region": "mob_hedgehog_dark"
+    },
+    "mob_hedgehog_sandy": {
+      "x": 53,
+      "y": 95,
+      "region": "mob_hedgehog_sandy"
+    },
+    "mob_hedgehog_albino": {
+      "x": 54,
+      "y": 95,
+      "region": "mob_hedgehog_albino"
     }
   }
 }

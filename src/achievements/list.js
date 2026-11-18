@@ -639,6 +639,34 @@ export const ACHIEVEMENTS = [
         when: (data) => String(data.type).startsWith('shrub_') && String(data.type).includes('_sapling')
     },
     {
+        id: 'hedgehog_met',
+        tier: 'common',
+        title: 'Nocny sąsiad',
+        task: 'Spotkaj jeżyka - podejdź do niego na kilka kroków, gdy żeruje po zmierzchu.',
+        comment: 'Mieszka w krzewie obok. Wychodzi, kiedy ty kładziesz się spać.',
+        icon: 'raspberry',
+        on: 'hedgehogMet'
+    },
+    {
+        id: 'hedgehog_fed',
+        tier: 'common',
+        title: 'Z ręki',
+        task: 'Nakarm jeżyka jagodami z ręki (PPM z owocami w dłoni; podejdź powoli).',
+        comment: 'Mlask, mlask. Od teraz jesteś „ten z jagodami".',
+        icon: 'blueberry',
+        on: 'hedgehogFed'
+    },
+    {
+        id: 'hedgehog_albino',
+        tier: 'rare',
+        title: 'Biały kruk wśród jeży',
+        task: 'Spotkaj jeżyka albinosa.',
+        comment: 'Kremowe kolce, czerwone oczka. Trafia się raz na kilkadziesiąt jeży.',
+        icon: 'elderflower',
+        on: 'hedgehogMet',
+        when: (data) => data.variant === 'albino'
+    },
+    {
         id: 'texture_pack',
         tier: 'common',
         title: 'Nowe szaty',

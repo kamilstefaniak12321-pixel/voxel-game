@@ -32,6 +32,8 @@ import {
 import { plantTree } from '../world/trees/plantTree.js';
 import { SHRUBS, SHRUB_NAMES, shrubType, SHRUB_STAGE_SECONDS } from '../blocks/shrubs.js';
 import { plantShrub } from '../world/shrubs/Shrubs.js';
+import { hedgehogHome, findLeafCell } from '../game/Hedgehogs.js';
+import { HEDGEHOG_VARIANT_WEIGHTS } from '../world/animals/Hedgehog.js';
 import { getTreeShowcase, undoTreeShowcase, startTreeShowcase } from '../world/trees/TreeShowcase.js';
 import {
     isCreative,
@@ -1117,6 +1119,96 @@ export const WORLD_COMMANDS = [
         complete(args) {
             return args.length === 1 ? ['basen', 'znajdz', 'fale'] : args.length === 2 && simplify(args[0]) === 'fale' ? ['0', '1', '2'] : [];
         }
+    },
+
+
+    {
+        name: 'jez',
+        aliases: ['jezyk', 'hedgehog'],
+        usage: '/jez | /jez dodaj [brown|dark|sandy|albino] | /jez znajdz',
+        description: 'Jeżyki: ile jest w pobliżu i co robią, nowy jeżyk przed tobą albo najbliższy krzew, w którym mieszka jeżyk.',
+
+        run(args, { game, player, world }) {
+
+            const hedgehogs = game?.hedgehogs;
+
+            if (!hedgehogs) {
+                throw new CommandError('W tym świecie nie ma jeżyków.');
+            }
+
+            const word = simplify(args[0] ?? '');
+            const variants = HEDGEHOG_VARIANT_WEIGHTS.map(([name]) => name);
+
+            if (!word) {
+                const stats = hedgehogs.stats();
+                const states = Object.entries(stats.states).map(([state, count]) => `${state}: ${count}`).join(', ');
+                return `Jeżyki w pobliżu: ${stats.count} (najwyżej ${stats.limit})${states ? ` - ${states}` : ''}. ` +
+                    'W dzień śpią w krzewach jagodowych, żerują od zmierzchu do świtu, zimą śpią. ' +
+                    `Warianty: ${variants.join(', ')}. Nowy: /jez dodaj, najbliższy dom: /jez znajdz, noc: /time night.`;
+            }
+
+            if (['dodaj', 'add', 'nowy'].includes(word)) {
+
+                const variant = args[1] === undefined ? variants[Math.floor(Math.random() * 3)] : simplify(args[1]);
+
+                if (!variants.includes(variant)) {
+                    throw new CommandError(`Warianty: ${variants.join(', ')}.`);
+                }
+
+                const { forwardX, forwardZ } = lookAxes(player);
+                const x = Math.floor(player.pos.x) + forwardX * 3, z = Math.floor(player.pos.z) + forwardZ * 3;
+                const y = Math.floor(player.pos.y);
+
+                // Dom: liście krzewu w pobliżu albo miejsce, w którym stanął.
+                let home = null;
+
+                for (let r = 0; r <= 6 && !home; r++) {
+                    for (let dx = -r; dx <= r && !home; dx++) for (let dz = -r; dz <= r && !home; dz++) {
+                        if (Math.max(Math.abs(dx), Math.abs(dz)) === r) home = findLeafCell(world, x + dx, y, z + dz);
+                    }
+                }
+
+                const hedgehog = hedgehogs.add(home ?? { x, y, z }, { variant, x: x + 0.5, y, z: z + 0.5 });
+
+                // Od razu na nogach (także w dzień - do pierwszego powrotu do domu).
+                hedgehog.enter('idle', 1);
+                hedgehog.curl = 0;
+
+                return `Jeżyk (${variant}) przed tobą. ${home ? 'Zamieszkał w krzewie obok.' : 'Krzewu w pobliżu nie ma - śpi tam, gdzie stanął.'} ` +
+                    'LPM - zwija się w kulkę, PPM z jagodami w ręce - je. W dzień wróci spać; noc: /time night.';
+
+            }
+
+            if (['znajdz', 'find'].includes(word)) {
+
+                const shrubs = world.generator?.shrubs;
+
+                if (!shrubs) {
+                    return 'W tym świecie krzewy nie rosną dziko, więc jeżyki nie mają domów. Spróbuj /jez dodaj.';
+                }
+
+                let best = null;
+
+                shrubs.forEachShrub(player.pos.x - 256, player.pos.z - 256, player.pos.x + 256, player.pos.z + 256, (shrub) => {
+                    const home = hedgehogHome(shrub);
+                    if (!home) return;
+                    const distance = Math.hypot(shrub.x + 0.5 - player.pos.x, shrub.z + 0.5 - player.pos.z);
+                    if (!best || distance < best.distance) best = { shrub, home, distance };
+                });
+
+                if (!best) {
+                    return 'W promieniu 256 bloków żaden krzew nie ma jeżyka.';
+                }
+
+                return `Najbliższy jeżyk (${best.home.variant}) mieszka w krzewie "${SHRUBS[best.shrub.species].label.toLowerCase()}", ` +
+                    `${Math.round(best.distance)} bloków stąd. /tp ${best.shrub.x} ${best.shrub.y + 3} ${best.shrub.z}`;
+
+            }
+
+            throw new CommandError('Użycie: /jez | /jez dodaj [wariant] | /jez znajdz.');
+
+        }
+
     },
 
 

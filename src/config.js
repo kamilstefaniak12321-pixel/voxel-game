@@ -281,6 +281,10 @@ export const WATER_SURFACE = 0.875;
 // szybciej woda hamuje: przy 4 bez wyporności gracz opada najwyżej
 // ~1,5 bloku/s, np. w pionowej spadającej strudze).
 export const WATER_SPEED_FACTOR = 0.5;
+
+// Jak szybko gracz przedziera się przez liście krzewu jagodowego (część
+// zwykłej prędkości, gdy jest w nich cały) - 1.18.0.
+export const BUSH_SPEED_FACTOR = 0.4;
 export const WATER_GRAVITY_FACTOR = 0.2;
 export const WATER_DRAG = 4;
 

@@ -27,6 +27,7 @@ import {
     getBlockId,
     getBlockTypeById,
     isSolidId,
+    isPassableId,
     isOpaqueId,
     isLeavesId,
     getLightEmission,
@@ -669,7 +670,8 @@ export class World {
 
         const id = this.getBlockId(x, y, z);
 
-        if (!isSolidId(id)) return null;
+        // (Liście krzewów jagodowych są "stałe", ale da się przez nie przejść.)
+        if (!isSolidId(id) || isPassableId(id)) return null;
 
         const info = shapeInfo(id);
 

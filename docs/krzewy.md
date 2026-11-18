@@ -83,10 +83,20 @@ wylicza je z ziarna (jak drzewa), więc w **już odwiedzonych chunkach
 starych światów krzewów nie będzie** - pojawią się w nowo odkrywanym
 terenie.
 
-Co zmieniłem względem paczki: tekstury bloków i ikonki przedmiotów są
-bez zmian (piksel w piksel). Jesienne i zimowe tekstury z paczki nie są
-użyte - kolor jesieni i śnieg liczy shader liści, tak jak u drzew.
-Sadzonek w paczce nie było - są dorysowane z kolorów liści gatunku.
+Co zmieniłem względem paczki (`tools/krzewy_tekstury.py`):
+
+- Ikonki przedmiotów, owoce, kwiaty i pnie są bez zmian, piksel w piksel.
+- Najciemniejsze liście (jeżyna, aronia, dzika róża, bez czarny, agrest,
+  borówka) są lekko rozjaśnione - do jasności liści dębu i buka, najwyżej
+  o 25%. Obok drzew z gry wyglądały na prawie czarne. Porzeczka, malina,
+  rokitnik i leszczyna zostały bez zmian.
+- Pędy aronii są jaśniejsze o połowę - w cieniu pod liśćmi zlewały się
+  w czarną kratę.
+- Jesienne i zimowe tekstury z paczki nie są użyte: kolor jesieni
+  i śnieg liczy shader liści, tak jak u drzew.
+- Sadzonek w paczce nie było - są dorysowane z kolorów liści gatunku.
+- Sylwetki układa gra (cztery rozmiary na wzór podglądów), a nie gotowe
+  budowle z paczki.
 
 ## Czego jeszcze nie ma (stan na 1.17.0)
 

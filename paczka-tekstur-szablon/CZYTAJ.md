@@ -1,4 +1,4 @@
-# Paczka tekstur - szablon (Various Roots 1.16.0)
+# Paczka tekstur - szablon (Various Roots 1.17.0)
 
 Oryginalne tekstury gry, każda w osobnym pliku. Zrób z nich własną paczkę:
 
@@ -331,6 +331,18 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/hazelnut.png` | - |
 | `bloki/heather.png` | Wrzos |
 | `bloki/humus.png` | Czarnoziem |
+| `bloki/item_aronia.png` | Aronia |
+| `bloki/item_blackcurrant.png` | Czarne porzeczki |
+| `bloki/item_elderberry.png` | Owoce bzu czarnego |
+| `bloki/item_elderflower.png` | Kwiat bzu czarnego |
+| `bloki/item_gooseberry.png` | Agrest |
+| `bloki/item_raspberry.png` | Maliny |
+| `bloki/item_red_gooseberry.png` | Czerwony agrest |
+| `bloki/item_redcurrant.png` | Czerwone porzeczki |
+| `bloki/item_rose_hip.png` | Owoce dzikiej róży |
+| `bloki/item_rose_petals.png` | Płatki dzikiej róży |
+| `bloki/item_sea_buckthorn.png` | Owoce rokitnika |
+| `bloki/item_yellow_raspberry.png` | Żółte maliny |
 | `bloki/jablon/deski.png` | Schody jabłoniowe, Półblok jabłoniowy, Furtka jabłoniowa, Stół stolarski jabłoniowy, Łóżko jabłoniowe (pościelone), Łóżko jabłoniowe (stelaż), Deski jabłoniowe |
 | `bloki/jablon/jablko.png` | Jabłko |
 | `bloki/jablon/liscie.png` | Liście jabłoni, Liście jabłoni (jabłka odrastają) |
@@ -554,6 +566,16 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/models/rosliny/sadzonka-jukka/polrealistyczny.png` | - |
 | `bloki/models/rosliny/sadzonka-klon/polrealistyczny.png` | - |
 | `bloki/models/rosliny/sadzonka-kosodrzewina/polrealistyczny.png` | - |
+| `bloki/models/rosliny/sadzonka-krzew-aronia/polrealistyczny.png` | - |
+| `bloki/models/rosliny/sadzonka-krzew-bramble/polrealistyczny.png` | - |
+| `bloki/models/rosliny/sadzonka-krzew-currant/polrealistyczny.png` | - |
+| `bloki/models/rosliny/sadzonka-krzew-dog-rose/polrealistyczny.png` | - |
+| `bloki/models/rosliny/sadzonka-krzew-elderberry/polrealistyczny.png` | - |
+| `bloki/models/rosliny/sadzonka-krzew-gooseberry/polrealistyczny.png` | - |
+| `bloki/models/rosliny/sadzonka-krzew-hazel/polrealistyczny.png` | - |
+| `bloki/models/rosliny/sadzonka-krzew-highbush-blueberry/polrealistyczny.png` | - |
+| `bloki/models/rosliny/sadzonka-krzew-raspberry/polrealistyczny.png` | - |
+| `bloki/models/rosliny/sadzonka-krzew-sea-buckthorn/polrealistyczny.png` | - |
 | `bloki/models/rosliny/sadzonka-lipa/polrealistyczny.png` | - |
 | `bloki/models/rosliny/sadzonka-milorzab/polrealistyczny.png` | - |
 | `bloki/models/rosliny/sadzonka-modrzew/polrealistyczny.png` | - |
@@ -754,6 +776,65 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/shovel_limestone.png` | Łopata wapienna |
 | `bloki/shovel_sandstone.png` | Łopata piaskowcowa |
 | `bloki/shovel_slate.png` | Łopata łupkowa |
+| `bloki/shrub_aronia_flower.png` | Kwiaty aronii |
+| `bloki/shrub_aronia_fruit.png` | Owoce aronii |
+| `bloki/shrub_aronia_leaves.png` | Liście aronii, Liście aronii (po zbiorze) |
+| `bloki/shrub_aronia_sapling.png` | Sadzonka aronii |
+| `bloki/shrub_aronia_stem.png` | Pędy aronii |
+| `bloki/shrub_aronia_stem_top.png` | Pędy aronii |
+| `bloki/shrub_bramble_flower.png` | Kwiaty jeżyny |
+| `bloki/shrub_bramble_fruit.png` | Owoce jeżyny |
+| `bloki/shrub_bramble_fruit_alt.png` | - |
+| `bloki/shrub_bramble_leaves.png` | Liście jeżyny, Liście jeżyny (po zbiorze) |
+| `bloki/shrub_bramble_sapling.png` | Sadzonka jeżyny |
+| `bloki/shrub_currant_flower.png` | Kwiaty porzeczki czerwonej, Kwiaty porzeczki czarnej |
+| `bloki/shrub_currant_fruit.png` | Owoce porzeczki czerwonej |
+| `bloki/shrub_currant_fruit_black.png` | Owoce porzeczki czarnej |
+| `bloki/shrub_currant_leaves.png` | Liście porzeczki, Liście porzeczki czerwonej (po zbiorze), Liście porzeczki czarnej (po zbiorze) |
+| `bloki/shrub_currant_sapling.png` | Sadzonka porzeczki czerwonej, Sadzonka porzeczki czarnej |
+| `bloki/shrub_dog_rose_flower.png` | Kwiaty dzikiej róży |
+| `bloki/shrub_dog_rose_fruit.png` | Owoce dzikiej róży |
+| `bloki/shrub_dog_rose_leaves.png` | Liście dzikiej róży, Liście dzikiej róży (po zbiorze) |
+| `bloki/shrub_dog_rose_sapling.png` | Sadzonka dzikiej róży |
+| `bloki/shrub_elderberry_flower.png` | Kwiaty bzu czarnego |
+| `bloki/shrub_elderberry_flower_top.png` | Kwiaty bzu czarnego |
+| `bloki/shrub_elderberry_fruit.png` | Owoce bzu czarnego |
+| `bloki/shrub_elderberry_fruit_top.png` | Owoce bzu czarnego |
+| `bloki/shrub_elderberry_leaves.png` | Liście bzu czarnego, Liście bzu czarnego (po zbiorze) |
+| `bloki/shrub_elderberry_sapling.png` | Sadzonka bzu czarnego |
+| `bloki/shrub_elderberry_stem.png` | Pień bzu czarnego |
+| `bloki/shrub_elderberry_stem_top.png` | Pień bzu czarnego |
+| `bloki/shrub_elderberry_unripe.png` | Niedojrzałe owoce bzu czarnego |
+| `bloki/shrub_elderberry_unripe_top.png` | Niedojrzałe owoce bzu czarnego |
+| `bloki/shrub_gooseberry_flower.png` | Kwiaty agrestu, Kwiaty agrestu czerwonego |
+| `bloki/shrub_gooseberry_fruit.png` | Owoce agrestu |
+| `bloki/shrub_gooseberry_fruit_red.png` | Owoce agrestu czerwonego |
+| `bloki/shrub_gooseberry_leaves.png` | Liście agrestu, Liście agrestu (po zbiorze), Liście agrestu czerwonego (po zbiorze) |
+| `bloki/shrub_gooseberry_sapling.png` | Sadzonka agrestu, Sadzonka agrestu czerwonego |
+| `bloki/shrub_gooseberry_stem.png` | Pień agrestu |
+| `bloki/shrub_gooseberry_stem_top.png` | Pień agrestu |
+| `bloki/shrub_hazel_flower.png` | Kwiaty leszczyny |
+| `bloki/shrub_hazel_fruit.png` | Owoce leszczyny |
+| `bloki/shrub_hazel_leaves.png` | Liście leszczyny, Liście leszczyny (po zbiorze) |
+| `bloki/shrub_hazel_sapling.png` | Sadzonka leszczyny |
+| `bloki/shrub_hazel_stem.png` | Pień leszczyny |
+| `bloki/shrub_hazel_stem_top.png` | Pień leszczyny |
+| `bloki/shrub_hazel_unripe.png` | Niedojrzałe owoce leszczyny |
+| `bloki/shrub_highbush_blueberry_flower.png` | Kwiaty borówki wysokiej |
+| `bloki/shrub_highbush_blueberry_fruit.png` | Owoce borówki wysokiej |
+| `bloki/shrub_highbush_blueberry_leaves.png` | Liście borówki wysokiej, Liście borówki wysokiej (po zbiorze) |
+| `bloki/shrub_highbush_blueberry_sapling.png` | Sadzonka borówki wysokiej |
+| `bloki/shrub_raspberry_flower.png` | Kwiaty maliny, Kwiaty maliny żółtej |
+| `bloki/shrub_raspberry_fruit.png` | Owoce maliny |
+| `bloki/shrub_raspberry_fruit_yellow.png` | Owoce maliny żółtej |
+| `bloki/shrub_raspberry_leaves.png` | Liście maliny, Liście maliny (po zbiorze), Liście maliny żółtej (po zbiorze) |
+| `bloki/shrub_raspberry_sapling.png` | Sadzonka maliny, Sadzonka maliny żółtej |
+| `bloki/shrub_sea_buckthorn_fruit.png` | Owoce rokitnika |
+| `bloki/shrub_sea_buckthorn_leaves.png` | Liście rokitnika, Liście rokitnika (po zbiorze) |
+| `bloki/shrub_sea_buckthorn_sapling.png` | Sadzonka rokitnika |
+| `bloki/shrub_sea_buckthorn_stem.png` | Pień rokitnika |
+| `bloki/shrub_sea_buckthorn_stem_top.png` | Pień rokitnika |
+| `bloki/shrub_sea_buckthorn_unripe.png` | Niedojrzałe owoce rokitnika |
 | `bloki/slate_side.png` | Łupek |
 | `bloki/slate_top.png` | Łupek |
 | `bloki/snow.png` | Śnieg, Warstwa śniegu |

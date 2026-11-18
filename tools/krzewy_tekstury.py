@@ -27,7 +27,7 @@ SOURCE = Path(__file__).resolve().parent / 'wzorce' / 'krzewy'
 # gatunek w grze -> (folder paczki, {część: plik})
 SHRUBS = {
     'aronia': ('aronia', {'leaves': 'bush_leaves', 'flower': 'bush_leaves_flower', 'fruit': 'bush_leaves_fruit',
-                          'stem': 'stems'}),
+                          'stem': 'stems', 'stem_top': 'stems_top'}),
     'currant': ('currant', {'leaves': 'bush_leaves', 'flower': 'bush_leaves_flower', 'fruit': 'bush_leaves_fruit',
                             'fruit_black': 'bush_leaves_fruit_black'}),
     'gooseberry': ('gooseberry', {'leaves': 'bush_leaves', 'flower': 'bush_leaves_flower', 'fruit': 'bush_leaves_fruit',
@@ -219,9 +219,10 @@ def textures():
         out[f'shrub_{species}_sapling'] = sapling(out[f'shrub_{species}_leaves'])
     # Pędy aronii w paczce są prawie czarne - w cieniu pod liśćmi zlewały
     # się w czarną kratę. Wszystkie piksele jaśniejsze o połowę.
-    canes = out['shrub_aronia_stem']
-    out['shrub_aronia_stem'] = Image.merge('RGBA', [*(band.point(lambda v: min(255, round(v * CANES_GAIN))) for band in canes.split()[:3]),
-                                                    canes.split()[3]])
+    for key in ('shrub_aronia_stem', 'shrub_aronia_stem_top'):
+        canes = out[key]
+        out[key] = Image.merge('RGBA', [*(band.point(lambda v: min(255, round(v * CANES_GAIN))) for band in canes.split()[:3]),
+                                        canes.split()[3]])
     for key, (folder, name) in ITEMS.items():
         out[key] = source(folder, name)
     return out

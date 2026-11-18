@@ -211,11 +211,12 @@ export function shrubBlocks() {
 
         if (shrub.stem) {
             add(shrubType(species, 'stem'), 1, 'stem', null, shrub.stem === 'canes' ? {
-                // Ażurowe pędy: jak liście przepuszczają światło.
+                // Ażurowe pędy: jak liście przepuszczają światło. Z góry
+                // i z dołu widać tylko przekroje pędów (kropki).
                 solid: true, opaque: false, model: 'leaves',
                 name: `${shrub.name} Canes`,
                 label: shrub.stemLabel,
-                textures: { all: texture('stem') },
+                textures: { top: texture('stem_top'), side: texture('stem'), bottom: texture('stem_top') },
                 drops: 'stick'
             } : {
                 solid: true,

@@ -17,7 +17,7 @@
     "rosliny": {
       "file": "rosliny.png",
       "width": 256,
-      "height": 336
+      "height": 352
     },
     "przedmioty": {
       "file": "przedmioty.png",
@@ -8492,6 +8492,13 @@
       "y": 320,
       "width": 16,
       "height": 16
+    },
+    "shrub_aronia_stem_top": {
+      "sheet": "rosliny",
+      "x": 0,
+      "y": 336,
+      "width": 16,
+      "height": 16
     }
   },
   "aliases": {
@@ -15553,6 +15560,11 @@
       "x": 50,
       "y": 95,
       "region": "models/rosliny/sadzonka-krzew-hazel/polrealistyczny"
+    },
+    "shrub_aronia_stem_top": {
+      "x": 21,
+      "y": 94,
+      "region": "shrub_aronia_stem_top"
     }
   }
 }

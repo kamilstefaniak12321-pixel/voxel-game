@@ -55,7 +55,8 @@ jeżyka.
 - **Jagody w ręce**: jeżyk czuje je z 7 bloków, podchodzi i czeka przy
   ręce. **PPM** - zjada jedną (w przygodzie znika z ekwipunku). Je:
   jagody, truskawki, jeżyny, aronię, porzeczki, agrest, maliny, owoce
-  dzikiej róży, bzu i rokitnika oraz jabłka.
+  dzikiej róży, bzu i rokitnika, jabłka, a od 1.19.0 żurawinę, brusznice
+  i poziomki.
 - **Zaufanie**: nakarmiony jeżyk przez dwie minuty nie boi się
   biegającego gracza. Trącenie kończy zaufanie.
 

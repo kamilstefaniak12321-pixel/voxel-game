@@ -13,6 +13,7 @@ import {
     FRUIT_BUSHES,
     bushStages,
     getBlockId,
+    getBlockTypeById,
     isLiquidId
 } from '../blocks/BlockRegistry.js';
 import { waterUniforms } from '../rendering/BlockRenderData.js';
@@ -32,6 +33,7 @@ import {
 import { plantTree } from '../world/trees/plantTree.js';
 import { SHRUBS, SHRUB_NAMES, shrubType, SHRUB_STAGE_SECONDS } from '../blocks/shrubs.js';
 import { plantShrub } from '../world/shrubs/Shrubs.js';
+import { LOW_PLANTS, LOW_PLANT_NAMES, SPHAGNUM, lowPlantType, lowPlantInfo, LOW_STAGE_SECONDS, LOW_PLANT_FIRST_ID, LOW_PLANT_END_ID } from '../blocks/lowPlants.js';
 import { hedgehogHome, findLeafCell } from '../game/Hedgehogs.js';
 import { HEDGEHOG_VARIANT_WEIGHTS } from '../world/animals/Hedgehog.js';
 import { getTreeShowcase, undoTreeShowcase, startTreeShowcase } from '../world/trees/TreeShowcase.js';
@@ -405,6 +407,88 @@ function nearestWildShrub(world, pos, species, radius = 256) {
         const distance = Math.hypot(shrub.x + 0.5 - pos.x, shrub.z + 0.5 - pos.z);
         if (!best || distance < best.distance) best = { ...shrub, distance };
     });
+
+    return best;
+
+}
+
+
+// --- Rośliny niskie (/niskie, 1.19.0) ----------------------------
+
+function lowPlantByWord(word) {
+
+    const key = simplify(word ?? '');
+
+    return LOW_PLANT_NAMES.find((name) => simplify(name) === key || simplify(LOW_PLANTS[name].label) === key ||
+        simplify(LOW_PLANTS[name].label).split(' ').some((part) => part === key) || simplify(LOW_PLANTS[name].of) === key) ?? null;
+
+}
+
+// Galeria: każda roślina w rzędzie, od lewej kolejne etapy (kępki 3 x 2);
+// przy dyni młoda i dojrzała dynia, w ostatnim rzędzie torfowce i chrobotek.
+function plantLowGallery(player, world) {
+
+    const { forwardX, forwardZ, rightX, rightZ } = lookAxes(player);
+    const y = Math.floor(player.pos.y);
+    const startX = Math.floor(player.pos.x) + forwardX * 4;
+    const startZ = Math.floor(player.pos.z) + forwardZ * 4;
+
+    const patch = (row, column, type) => {
+        for (let a = 0; a < 3; a++) for (let b = 0; b < 2; b++) {
+            const x = startX + rightX * (column * 4 - 10 + a) + forwardX * (row * 4 + b);
+            const z = startZ + rightZ * (column * 4 - 10 + a) + forwardZ * (row * 4 + b);
+            world.setBlock(x, y - 1, z, 'grass');
+            for (let dy = 0; dy < 3; dy++) world.clearBlock(x, y + dy, z);
+            world.setBlock(x, y, z, type);
+        }
+    };
+
+    let row = 0;
+
+    for (const species of LOW_PLANT_NAMES) {
+        const plant = LOW_PLANTS[species];
+        const types = ['young', ...plant.stages].map((part) => lowPlantType(species, part));
+        if (plant.fruitBlock) types.push('pumpkin_young', 'pumpkin');
+        types.forEach((type, column) => patch(row, column, type));
+        row++;
+    }
+
+    [...SPHAGNUM, 'reindeer_lichen'].forEach((type, column) => patch(row, column, type));
+
+    return `Galeria roślin niskich: ${row + 1} rzędów (${LOW_PLANT_NAMES.map((name) => LOW_PLANTS[name].label.toLowerCase()).join(', ')}; ` +
+        'ostatni: torfowce i chrobotek), w każdym od lewej kolejne etapy - od sadzonki po owoce. PPM na owocach - zbiór.';
+
+}
+
+// Najbliższa roślina niska (we wczytanych chunkach): { x, y, z, type, distance }.
+function nearestLowPlant(world, center, species) {
+
+    const layer = CHUNK_SIZE * CHUNK_SIZE;
+    let best = null;
+
+    for (const chunk of world.chunks.values()) {
+
+        const baseX = chunk.cx * CHUNK_SIZE, baseZ = chunk.cz * CHUNK_SIZE;
+
+        for (let i = chunk.solidBelow * layer; i < chunk.maxY * layer; i++) {
+
+            const id = chunk.blocks[i];
+
+            if (id < LOW_PLANT_FIRST_ID || id >= LOW_PLANT_END_ID) continue;
+
+            const type = getBlockTypeById(id);
+            const info = lowPlantInfo(type);
+
+            if (species ? info?.species !== species : !info) continue;
+
+            const x = baseX + (i % CHUNK_SIZE), z = baseZ + Math.floor((i % layer) / CHUNK_SIZE);
+            const distance = Math.hypot(x + 0.5 - center.x, z + 0.5 - center.z);
+
+            if (!best || distance < best.distance) best = { x, y: Math.floor(i / layer), z, type, distance };
+
+        }
+
+    }
 
     return best;
 
@@ -1211,6 +1295,54 @@ export const WORLD_COMMANDS = [
 
     },
 
+
+    {
+        name: 'niskie',
+        aliases: ['lowplants', 'runo'],
+        usage: '/niskie | /niskie galeria | /niskie znajdz [roślina]',
+        description: 'Rośliny niskie (żurawina, brusznica, truskawki, poziomka, dynia, cukinia): lista, galeria etapów albo najbliższa dzika roślina.',
+
+        run(args, { player, world }) {
+
+            const word = simplify(args[0] ?? '');
+
+            if (!word) {
+                return `Rośliny niskie (${LOW_PLANT_NAMES.length}): ` + LOW_PLANT_NAMES.map((name) => {
+                    const plant = LOW_PLANTS[name];
+                    const biomes = Object.keys(plant.habitat ?? {}).map((key) => BIOMES[key].name.toLowerCase()).join(', ');
+                    return `${name} - ${plant.label} (${biomes})`;
+                }).join('; ') + `. Etap trwa średnio ${LOW_STAGE_SECONDS} s (szybciej: /krzaki tempo). ` +
+                    'Galeria: /niskie galeria, najbliższa dzika: /niskie znajdz.';
+            }
+
+            if (['galeria', 'gallery', 'pokaz', 'ogrod'].includes(word)) {
+                return plantLowGallery(player, world);
+            }
+
+            if (['znajdz', 'find'].includes(word)) {
+
+                const species = args[1] === undefined ? null : lowPlantByWord(args[1]);
+
+                if (args[1] !== undefined && !species) {
+                    throw new CommandError(`Nie znam rośliny "${args[1]}". Lista: /niskie.`);
+                }
+
+                const found = nearestLowPlant(world, player.pos, species);
+
+                if (!found) {
+                    return `We wczytanym terenie nie rośnie ${species ? LOW_PLANTS[species].label.toLowerCase() : 'żadna roślina niska'}` +
+                        `${species ? ` (szukaj w biomach: ${Object.keys(LOW_PLANTS[species].habitat ?? {}).map((key) => BIOMES[key].name.toLowerCase()).join(', ')}; /biom znajdz)` : ''}.`;
+                }
+
+                return `Najbliżej: ${getBlockLabel(found.type).toLowerCase()}, ${Math.round(found.distance)} bloków stąd. ` +
+                    `/tp ${found.x} ${found.y + 2} ${found.z}`;
+
+            }
+
+            throw new CommandError('Użycie: /niskie | /niskie galeria | /niskie znajdz [roślina]');
+
+        }
+    },
 
     {
         name: 'krzewy',

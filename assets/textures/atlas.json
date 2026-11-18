@@ -17,7 +17,7 @@
     "rosliny": {
       "file": "rosliny.png",
       "width": 256,
-      "height": 352
+      "height": 416
     },
     "przedmioty": {
       "file": "przedmioty.png",
@@ -8527,6 +8527,426 @@
       "y": 336,
       "width": 16,
       "height": 16
+    },
+    "low_cranberry_young_top": {
+      "sheet": "rosliny",
+      "x": 0,
+      "y": 352,
+      "width": 16,
+      "height": 16
+    },
+    "low_cranberry_young_side": {
+      "sheet": "rosliny",
+      "x": 16,
+      "y": 352,
+      "width": 16,
+      "height": 16
+    },
+    "low_cranberry_plant_top": {
+      "sheet": "rosliny",
+      "x": 32,
+      "y": 352,
+      "width": 16,
+      "height": 16
+    },
+    "low_cranberry_plant_side": {
+      "sheet": "rosliny",
+      "x": 48,
+      "y": 352,
+      "width": 16,
+      "height": 16
+    },
+    "low_cranberry_flower_top": {
+      "sheet": "rosliny",
+      "x": 64,
+      "y": 352,
+      "width": 16,
+      "height": 16
+    },
+    "low_cranberry_flower_side": {
+      "sheet": "rosliny",
+      "x": 80,
+      "y": 352,
+      "width": 16,
+      "height": 16
+    },
+    "low_cranberry_unripe_top": {
+      "sheet": "rosliny",
+      "x": 96,
+      "y": 352,
+      "width": 16,
+      "height": 16
+    },
+    "low_cranberry_unripe_side": {
+      "sheet": "rosliny",
+      "x": 112,
+      "y": 352,
+      "width": 16,
+      "height": 16
+    },
+    "low_cranberry_fruit_top": {
+      "sheet": "rosliny",
+      "x": 128,
+      "y": 352,
+      "width": 16,
+      "height": 16
+    },
+    "low_cranberry_fruit_side": {
+      "sheet": "rosliny",
+      "x": 144,
+      "y": 352,
+      "width": 16,
+      "height": 16
+    },
+    "sphagnum_green_top": {
+      "sheet": "rosliny",
+      "x": 160,
+      "y": 352,
+      "width": 16,
+      "height": 16
+    },
+    "sphagnum_green_side": {
+      "sheet": "rosliny",
+      "x": 176,
+      "y": 352,
+      "width": 16,
+      "height": 16
+    },
+    "sphagnum_green_tall_top": {
+      "sheet": "rosliny",
+      "x": 192,
+      "y": 352,
+      "width": 16,
+      "height": 16
+    },
+    "sphagnum_green_tall_side": {
+      "sheet": "rosliny",
+      "x": 208,
+      "y": 352,
+      "width": 16,
+      "height": 16
+    },
+    "sphagnum_red_top": {
+      "sheet": "rosliny",
+      "x": 224,
+      "y": 352,
+      "width": 16,
+      "height": 16
+    },
+    "sphagnum_red_side": {
+      "sheet": "rosliny",
+      "x": 240,
+      "y": 352,
+      "width": 16,
+      "height": 16
+    },
+    "sphagnum_red_tall_top": {
+      "sheet": "rosliny",
+      "x": 0,
+      "y": 368,
+      "width": 16,
+      "height": 16
+    },
+    "sphagnum_red_tall_side": {
+      "sheet": "rosliny",
+      "x": 16,
+      "y": 368,
+      "width": 16,
+      "height": 16
+    },
+    "low_lingonberry_plant_top": {
+      "sheet": "rosliny",
+      "x": 32,
+      "y": 368,
+      "width": 16,
+      "height": 16
+    },
+    "low_lingonberry_plant_side": {
+      "sheet": "rosliny",
+      "x": 48,
+      "y": 368,
+      "width": 16,
+      "height": 16
+    },
+    "low_lingonberry_flower_top": {
+      "sheet": "rosliny",
+      "x": 64,
+      "y": 368,
+      "width": 16,
+      "height": 16
+    },
+    "low_lingonberry_flower_side": {
+      "sheet": "rosliny",
+      "x": 80,
+      "y": 368,
+      "width": 16,
+      "height": 16
+    },
+    "low_lingonberry_unripe_top": {
+      "sheet": "rosliny",
+      "x": 96,
+      "y": 368,
+      "width": 16,
+      "height": 16
+    },
+    "low_lingonberry_unripe_side": {
+      "sheet": "rosliny",
+      "x": 112,
+      "y": 368,
+      "width": 16,
+      "height": 16
+    },
+    "low_lingonberry_fruit_top": {
+      "sheet": "rosliny",
+      "x": 128,
+      "y": 368,
+      "width": 16,
+      "height": 16
+    },
+    "low_lingonberry_fruit_side": {
+      "sheet": "rosliny",
+      "x": 144,
+      "y": 368,
+      "width": 16,
+      "height": 16
+    },
+    "reindeer_lichen": {
+      "sheet": "rosliny",
+      "x": 160,
+      "y": 368,
+      "width": 16,
+      "height": 16
+    },
+    "low_strawberry_plant_top": {
+      "sheet": "rosliny",
+      "x": 176,
+      "y": 368,
+      "width": 16,
+      "height": 16
+    },
+    "low_strawberry_plant_side": {
+      "sheet": "rosliny",
+      "x": 192,
+      "y": 368,
+      "width": 16,
+      "height": 16
+    },
+    "low_strawberry_flower_top": {
+      "sheet": "rosliny",
+      "x": 208,
+      "y": 368,
+      "width": 16,
+      "height": 16
+    },
+    "low_strawberry_flower_side": {
+      "sheet": "rosliny",
+      "x": 224,
+      "y": 368,
+      "width": 16,
+      "height": 16
+    },
+    "low_strawberry_fruit_top": {
+      "sheet": "rosliny",
+      "x": 240,
+      "y": 368,
+      "width": 16,
+      "height": 16
+    },
+    "low_strawberry_fruit_side": {
+      "sheet": "rosliny",
+      "x": 0,
+      "y": 384,
+      "width": 16,
+      "height": 16
+    },
+    "low_wild_strawberry_plant_top": {
+      "sheet": "rosliny",
+      "x": 16,
+      "y": 384,
+      "width": 16,
+      "height": 16
+    },
+    "low_wild_strawberry_plant_side": {
+      "sheet": "rosliny",
+      "x": 32,
+      "y": 384,
+      "width": 16,
+      "height": 16
+    },
+    "low_wild_strawberry_flower_top": {
+      "sheet": "rosliny",
+      "x": 48,
+      "y": 384,
+      "width": 16,
+      "height": 16
+    },
+    "low_wild_strawberry_flower_side": {
+      "sheet": "rosliny",
+      "x": 64,
+      "y": 384,
+      "width": 16,
+      "height": 16
+    },
+    "low_wild_strawberry_fruit_top": {
+      "sheet": "rosliny",
+      "x": 80,
+      "y": 384,
+      "width": 16,
+      "height": 16
+    },
+    "low_wild_strawberry_fruit_side": {
+      "sheet": "rosliny",
+      "x": 96,
+      "y": 384,
+      "width": 16,
+      "height": 16
+    },
+    "low_pumpkin_plant_top": {
+      "sheet": "rosliny",
+      "x": 112,
+      "y": 384,
+      "width": 16,
+      "height": 16
+    },
+    "low_pumpkin_plant_side": {
+      "sheet": "rosliny",
+      "x": 128,
+      "y": 384,
+      "width": 16,
+      "height": 16
+    },
+    "low_pumpkin_flower_top": {
+      "sheet": "rosliny",
+      "x": 144,
+      "y": 384,
+      "width": 16,
+      "height": 16
+    },
+    "low_pumpkin_spent_top": {
+      "sheet": "rosliny",
+      "x": 160,
+      "y": 384,
+      "width": 16,
+      "height": 16
+    },
+    "low_pumpkin_spent_side": {
+      "sheet": "rosliny",
+      "x": 176,
+      "y": 384,
+      "width": 16,
+      "height": 16
+    },
+    "pumpkin_side": {
+      "sheet": "rosliny",
+      "x": 192,
+      "y": 384,
+      "width": 16,
+      "height": 16
+    },
+    "pumpkin_top": {
+      "sheet": "rosliny",
+      "x": 208,
+      "y": 384,
+      "width": 16,
+      "height": 16
+    },
+    "pumpkin_young_side": {
+      "sheet": "rosliny",
+      "x": 224,
+      "y": 384,
+      "width": 16,
+      "height": 16
+    },
+    "pumpkin_young_top": {
+      "sheet": "rosliny",
+      "x": 240,
+      "y": 384,
+      "width": 16,
+      "height": 16
+    },
+    "low_zucchini_plant_top": {
+      "sheet": "rosliny",
+      "x": 0,
+      "y": 400,
+      "width": 16,
+      "height": 16
+    },
+    "low_zucchini_flower_top": {
+      "sheet": "rosliny",
+      "x": 16,
+      "y": 400,
+      "width": 16,
+      "height": 16
+    },
+    "low_zucchini_fruit_side": {
+      "sheet": "rosliny",
+      "x": 32,
+      "y": 400,
+      "width": 16,
+      "height": 16
+    },
+    "item_cranberry": {
+      "sheet": "rosliny",
+      "x": 48,
+      "y": 400,
+      "width": 16,
+      "height": 16
+    },
+    "item_lingonberry": {
+      "sheet": "rosliny",
+      "x": 64,
+      "y": 400,
+      "width": 16,
+      "height": 16
+    },
+    "item_wild_strawberry": {
+      "sheet": "rosliny",
+      "x": 80,
+      "y": 400,
+      "width": 16,
+      "height": 16
+    },
+    "item_pumpkin_slice": {
+      "sheet": "rosliny",
+      "x": 96,
+      "y": 400,
+      "width": 16,
+      "height": 16
+    },
+    "item_pumpkin_seeds": {
+      "sheet": "rosliny",
+      "x": 112,
+      "y": 400,
+      "width": 16,
+      "height": 16
+    },
+    "item_zucchini": {
+      "sheet": "rosliny",
+      "x": 128,
+      "y": 400,
+      "width": 16,
+      "height": 16
+    },
+    "low_zucchini_plant_side": {
+      "sheet": "rosliny",
+      "x": 144,
+      "y": 400,
+      "width": 16,
+      "height": 16
+    },
+    "roasted_pumpkin_slice": {
+      "sheet": "rosliny",
+      "x": 160,
+      "y": 400,
+      "width": 16,
+      "height": 16
+    },
+    "roasted_zucchini": {
+      "sheet": "rosliny",
+      "x": 176,
+      "y": 400,
+      "width": 16,
+      "height": 16
     }
   },
   "aliases": {
@@ -15613,6 +16033,306 @@
       "x": 54,
       "y": 95,
       "region": "mob_hedgehog_albino"
+    },
+    "low_cranberry_young_top": {
+      "x": 17,
+      "y": 88,
+      "region": "low_cranberry_young_top"
+    },
+    "low_cranberry_young_side": {
+      "x": 18,
+      "y": 88,
+      "region": "low_cranberry_young_side"
+    },
+    "low_cranberry_plant_top": {
+      "x": 19,
+      "y": 88,
+      "region": "low_cranberry_plant_top"
+    },
+    "low_cranberry_plant_side": {
+      "x": 20,
+      "y": 88,
+      "region": "low_cranberry_plant_side"
+    },
+    "low_cranberry_flower_top": {
+      "x": 21,
+      "y": 88,
+      "region": "low_cranberry_flower_top"
+    },
+    "low_cranberry_flower_side": {
+      "x": 22,
+      "y": 88,
+      "region": "low_cranberry_flower_side"
+    },
+    "low_cranberry_unripe_top": {
+      "x": 23,
+      "y": 88,
+      "region": "low_cranberry_unripe_top"
+    },
+    "low_cranberry_unripe_side": {
+      "x": 24,
+      "y": 88,
+      "region": "low_cranberry_unripe_side"
+    },
+    "low_cranberry_fruit_top": {
+      "x": 25,
+      "y": 88,
+      "region": "low_cranberry_fruit_top"
+    },
+    "low_cranberry_fruit_side": {
+      "x": 26,
+      "y": 88,
+      "region": "low_cranberry_fruit_side"
+    },
+    "sphagnum_green_top": {
+      "x": 27,
+      "y": 88,
+      "region": "sphagnum_green_top"
+    },
+    "sphagnum_green_side": {
+      "x": 28,
+      "y": 88,
+      "region": "sphagnum_green_side"
+    },
+    "sphagnum_green_tall_top": {
+      "x": 29,
+      "y": 88,
+      "region": "sphagnum_green_tall_top"
+    },
+    "sphagnum_green_tall_side": {
+      "x": 30,
+      "y": 88,
+      "region": "sphagnum_green_tall_side"
+    },
+    "sphagnum_red_top": {
+      "x": 31,
+      "y": 88,
+      "region": "sphagnum_red_top"
+    },
+    "sphagnum_red_side": {
+      "x": 32,
+      "y": 88,
+      "region": "sphagnum_red_side"
+    },
+    "sphagnum_red_tall_top": {
+      "x": 33,
+      "y": 88,
+      "region": "sphagnum_red_tall_top"
+    },
+    "sphagnum_red_tall_side": {
+      "x": 34,
+      "y": 88,
+      "region": "sphagnum_red_tall_side"
+    },
+    "low_lingonberry_plant_top": {
+      "x": 35,
+      "y": 88,
+      "region": "low_lingonberry_plant_top"
+    },
+    "low_lingonberry_plant_side": {
+      "x": 36,
+      "y": 88,
+      "region": "low_lingonberry_plant_side"
+    },
+    "low_lingonberry_flower_top": {
+      "x": 37,
+      "y": 88,
+      "region": "low_lingonberry_flower_top"
+    },
+    "low_lingonberry_flower_side": {
+      "x": 38,
+      "y": 88,
+      "region": "low_lingonberry_flower_side"
+    },
+    "low_lingonberry_unripe_top": {
+      "x": 39,
+      "y": 88,
+      "region": "low_lingonberry_unripe_top"
+    },
+    "low_lingonberry_unripe_side": {
+      "x": 40,
+      "y": 88,
+      "region": "low_lingonberry_unripe_side"
+    },
+    "low_lingonberry_fruit_top": {
+      "x": 41,
+      "y": 88,
+      "region": "low_lingonberry_fruit_top"
+    },
+    "low_lingonberry_fruit_side": {
+      "x": 42,
+      "y": 88,
+      "region": "low_lingonberry_fruit_side"
+    },
+    "reindeer_lichen": {
+      "x": 43,
+      "y": 88,
+      "region": "reindeer_lichen"
+    },
+    "low_strawberry_plant_top": {
+      "x": 44,
+      "y": 88,
+      "region": "low_strawberry_plant_top"
+    },
+    "low_strawberry_plant_side": {
+      "x": 45,
+      "y": 88,
+      "region": "low_strawberry_plant_side"
+    },
+    "low_strawberry_flower_top": {
+      "x": 46,
+      "y": 88,
+      "region": "low_strawberry_flower_top"
+    },
+    "low_strawberry_flower_side": {
+      "x": 47,
+      "y": 88,
+      "region": "low_strawberry_flower_side"
+    },
+    "low_strawberry_fruit_top": {
+      "x": 48,
+      "y": 88,
+      "region": "low_strawberry_fruit_top"
+    },
+    "low_strawberry_fruit_side": {
+      "x": 49,
+      "y": 88,
+      "region": "low_strawberry_fruit_side"
+    },
+    "low_wild_strawberry_plant_top": {
+      "x": 50,
+      "y": 88,
+      "region": "low_wild_strawberry_plant_top"
+    },
+    "low_wild_strawberry_plant_side": {
+      "x": 51,
+      "y": 88,
+      "region": "low_wild_strawberry_plant_side"
+    },
+    "low_wild_strawberry_flower_top": {
+      "x": 52,
+      "y": 88,
+      "region": "low_wild_strawberry_flower_top"
+    },
+    "low_wild_strawberry_flower_side": {
+      "x": 53,
+      "y": 88,
+      "region": "low_wild_strawberry_flower_side"
+    },
+    "low_wild_strawberry_fruit_top": {
+      "x": 54,
+      "y": 88,
+      "region": "low_wild_strawberry_fruit_top"
+    },
+    "low_wild_strawberry_fruit_side": {
+      "x": 55,
+      "y": 88,
+      "region": "low_wild_strawberry_fruit_side"
+    },
+    "low_pumpkin_plant_top": {
+      "x": 56,
+      "y": 88,
+      "region": "low_pumpkin_plant_top"
+    },
+    "low_pumpkin_plant_side": {
+      "x": 57,
+      "y": 88,
+      "region": "low_pumpkin_plant_side"
+    },
+    "low_pumpkin_flower_top": {
+      "x": 58,
+      "y": 88,
+      "region": "low_pumpkin_flower_top"
+    },
+    "low_pumpkin_spent_top": {
+      "x": 59,
+      "y": 88,
+      "region": "low_pumpkin_spent_top"
+    },
+    "low_pumpkin_spent_side": {
+      "x": 60,
+      "y": 88,
+      "region": "low_pumpkin_spent_side"
+    },
+    "pumpkin_side": {
+      "x": 61,
+      "y": 88,
+      "region": "pumpkin_side"
+    },
+    "pumpkin_top": {
+      "x": 62,
+      "y": 88,
+      "region": "pumpkin_top"
+    },
+    "pumpkin_young_side": {
+      "x": 63,
+      "y": 88,
+      "region": "pumpkin_young_side"
+    },
+    "pumpkin_young_top": {
+      "x": 51,
+      "y": 89,
+      "region": "pumpkin_young_top"
+    },
+    "low_zucchini_plant_top": {
+      "x": 52,
+      "y": 89,
+      "region": "low_zucchini_plant_top"
+    },
+    "low_zucchini_flower_top": {
+      "x": 53,
+      "y": 89,
+      "region": "low_zucchini_flower_top"
+    },
+    "low_zucchini_fruit_side": {
+      "x": 54,
+      "y": 89,
+      "region": "low_zucchini_fruit_side"
+    },
+    "item_cranberry": {
+      "x": 55,
+      "y": 89,
+      "region": "item_cranberry"
+    },
+    "item_lingonberry": {
+      "x": 56,
+      "y": 89,
+      "region": "item_lingonberry"
+    },
+    "item_wild_strawberry": {
+      "x": 57,
+      "y": 89,
+      "region": "item_wild_strawberry"
+    },
+    "item_pumpkin_slice": {
+      "x": 58,
+      "y": 89,
+      "region": "item_pumpkin_slice"
+    },
+    "item_pumpkin_seeds": {
+      "x": 59,
+      "y": 89,
+      "region": "item_pumpkin_seeds"
+    },
+    "item_zucchini": {
+      "x": 60,
+      "y": 89,
+      "region": "item_zucchini"
+    },
+    "low_zucchini_plant_side": {
+      "x": 61,
+      "y": 89,
+      "region": "low_zucchini_plant_side"
+    },
+    "roasted_pumpkin_slice": {
+      "x": 62,
+      "y": 89,
+      "region": "roasted_pumpkin_slice"
+    },
+    "roasted_zucchini": {
+      "x": 63,
+      "y": 89,
+      "region": "roasted_zucchini"
     }
   }
 }

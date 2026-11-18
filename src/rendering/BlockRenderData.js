@@ -1455,6 +1455,10 @@ for (
             ? FLAT_FACES[getAttach(definition.id)]
             : null,
 
+        // Niska płyta (rośliny niskie, 1.19.0): wysokość w blokach;
+        // 0 - zwykła płaska dekoracja.
+        plate: definition.model === 'flat' ? definition.flat?.height ?? 0 : 0,
+
         // Kolor trawy zależny od klimatu (chunk.tint - ChunkMesher.js):
         // tylko zielone piksele tekstury (shader niżej).
 

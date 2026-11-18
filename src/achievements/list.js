@@ -92,6 +92,9 @@ export const TOOL_SET = ['axe', 'pickaxe', 'shovel'];
 const SHRUB_FRUITS = ['aronia', 'redcurrant', 'blackcurrant', 'gooseberry', 'red_gooseberry', 'raspberry', 'yellow_raspberry',
     'rose_hip', 'elderberry', 'sea_buckthorn_berry'];
 
+// Owoce roślin niskich z lasu i bagna (1.19.0) - do "Runa leśnego".
+const LOW_BERRIES = ['cranberry', 'lingonberry', 'wild_strawberry'];
+
 const WORLD_FRUITS = ['banyan_fig', 'baobab_fruit', 'dragon_tree_berries', 'joshua_tree_flowers', 'araucaria_nuts', 'coconut_palm_kokos'];
 
 
@@ -637,6 +640,37 @@ export const ACHIEVEMENTS = [
         icon: 'redcurrant',
         on: 'planted',
         when: (data) => String(data.type).startsWith('shrub_') && String(data.type).includes('_sapling')
+    },
+    {
+        id: 'low_berries',
+        tier: 'common',
+        title: 'Runo leśne',
+        task: 'Zbierz żurawinę, borówki brusznice i poziomki (PPM na roślinie z owocami).',
+        comment: 'Wszystko rośnie przy samej ziemi. Kolana to zapamiętają.',
+        icon: 'lingonberry',
+        on: 'harvested',
+        when: (data, book) => LOW_BERRIES.includes(data.item) && book.collect('low_berries', data.item) >= LOW_BERRIES.length,
+        goal: { key: 'low_berries', count: LOW_BERRIES.length }
+    },
+    {
+        id: 'low_planted',
+        tier: 'common',
+        title: 'Grządka',
+        task: 'Posadź na rozgrzebanej ziemi żurawinę, brusznicę, poziomki, pestki dyni albo cukinię.',
+        comment: 'Niskie to to, ale twoje.',
+        icon: 'wild_strawberry',
+        on: 'planted',
+        when: (data) => String(data.type).startsWith('low_') && String(data.type).endsWith('_young')
+    },
+    {
+        id: 'pumpkin_slices',
+        tier: 'common',
+        title: 'Dyniowe żniwa',
+        task: 'Pokrój dynię na kawałki (dynia w siatce wytwarzania).',
+        comment: 'Cztery kawałki i garść pestek na przyszły rok. Dynia myśli o wszystkim.',
+        icon: 'pumpkin_slice',
+        on: 'crafted',
+        when: (data) => data.type === 'pumpkin_slice'
     },
     {
         id: 'hedgehog_met',

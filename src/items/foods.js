@@ -61,11 +61,20 @@ export const FOODS = {
     elderberry: { energy: 4, fullness: 35, kind: 'snack', effects: [] },
     elderflower: { energy: 2, fullness: 15, kind: 'snack', effects: [] },
     sea_buckthorn_berry: { energy: 5, fullness: 40, kind: 'snack', effects: [] },
+    // 1.19.0: rośliny niskie (blocks/lowPlants.js).
+    cranberry: { energy: 4, fullness: 35, kind: 'snack', effects: [] },
+    lingonberry: { energy: 5, fullness: 40, kind: 'snack', effects: [] },
+    wild_strawberry: { energy: 6, fullness: 40, kind: 'snack', effects: [] },
+    pumpkin_slice: { energy: 8, fullness: 80, kind: 'snack', effects: [] },
+    pumpkin_seeds: { energy: 6, fullness: 60, kind: 'snack', effects: [] },
+    zucchini: { energy: 6, fullness: 70, kind: 'snack', effects: [] },
 
     roasted_apple: { energy: 22, fullness: 150, kind: 'meal', effects: [] },
     roasted_hazelnut: { energy: 20, fullness: 180, kind: 'meal', effects: [] },
     roasted_beechnuts: { energy: 18, fullness: 160, kind: 'meal', effects: [] },
     roasted_acorn: { energy: 18, fullness: 150, kind: 'meal', effects: [] },
+    roasted_pumpkin_slice: { energy: 20, fullness: 170, kind: 'meal', effects: [] },
+    roasted_zucchini: { energy: 18, fullness: 150, kind: 'meal', effects: [] },
 
     ...Object.fromEntries(Object.entries(TEAS).map(([effect, { tea }]) =>
         [tea, { energy: 3, fullness: 30, kind: 'drink', effects: [effect], returns: CUP }]))
@@ -78,6 +87,8 @@ export const ROASTS = {
     hazelnut: 'roasted_hazelnut',
     beechnuts: 'roasted_beechnuts',
     acorn: 'roasted_acorn',
+    pumpkin_slice: 'roasted_pumpkin_slice',
+    zucchini: 'roasted_zucchini',
     // Kubek ziół -> napar.
     ...Object.fromEntries(Object.values(TEAS).map(({ brew, tea }) => [brew, tea]))
 };

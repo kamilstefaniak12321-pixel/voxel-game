@@ -1,4 +1,4 @@
-# Paczka tekstur - szablon (Various Roots 1.18.0)
+# Paczka tekstur - szablon (Various Roots 1.19.0)
 
 Oryginalne tekstury gry, każda w osobnym pliku. Zrób z nich własną paczkę:
 
@@ -333,16 +333,22 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/humus.png` | Czarnoziem |
 | `bloki/item_aronia.png` | Aronia |
 | `bloki/item_blackcurrant.png` | Czarne porzeczki |
+| `bloki/item_cranberry.png` | Żurawina |
 | `bloki/item_elderberry.png` | Owoce bzu czarnego |
 | `bloki/item_elderflower.png` | Kwiat bzu czarnego |
 | `bloki/item_gooseberry.png` | Agrest |
+| `bloki/item_lingonberry.png` | Borówki brusznice |
+| `bloki/item_pumpkin_seeds.png` | Pestki dyni |
+| `bloki/item_pumpkin_slice.png` | Kawałek dyni |
 | `bloki/item_raspberry.png` | Maliny |
 | `bloki/item_red_gooseberry.png` | Czerwony agrest |
 | `bloki/item_redcurrant.png` | Czerwone porzeczki |
 | `bloki/item_rose_hip.png` | Owoce dzikiej róży |
 | `bloki/item_rose_petals.png` | Płatki dzikiej róży |
 | `bloki/item_sea_buckthorn.png` | Owoce rokitnika |
+| `bloki/item_wild_strawberry.png` | Poziomki |
 | `bloki/item_yellow_raspberry.png` | Żółte maliny |
+| `bloki/item_zucchini.png` | Cukinia |
 | `bloki/jablon/deski.png` | Schody jabłoniowe, Półblok jabłoniowy, Furtka jabłoniowa, Stół stolarski jabłoniowy, Łóżko jabłoniowe (pościelone), Łóżko jabłoniowe (stelaż), Deski jabłoniowe |
 | `bloki/jablon/jablko.png` | Jabłko |
 | `bloki/jablon/liscie.png` | Liście jabłoni, Liście jabłoni (jabłka odrastają) |
@@ -421,6 +427,45 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/linden_sapling.png` | Sadzonka lipy |
 | `bloki/linden_stripped_side.png` | Okorowany pień lipy |
 | `bloki/linden_stripped_top.png` | Okorowany pień lipy |
+| `bloki/low_cranberry_flower_side.png` | Żurawina (kwitnie) |
+| `bloki/low_cranberry_flower_top.png` | - |
+| `bloki/low_cranberry_fruit_side.png` | Żurawina (owoce) |
+| `bloki/low_cranberry_fruit_top.png` | - |
+| `bloki/low_cranberry_plant_side.png` | Żurawina |
+| `bloki/low_cranberry_plant_top.png` | - |
+| `bloki/low_cranberry_unripe_side.png` | Żurawina (niedojrzałe owoce) |
+| `bloki/low_cranberry_unripe_top.png` | - |
+| `bloki/low_cranberry_young_side.png` | Sadzonka żurawiny |
+| `bloki/low_cranberry_young_top.png` | - |
+| `bloki/low_lingonberry_flower_side.png` | Borówka brusznica (kwitnie) |
+| `bloki/low_lingonberry_flower_top.png` | - |
+| `bloki/low_lingonberry_fruit_side.png` | Borówka brusznica (owoce) |
+| `bloki/low_lingonberry_fruit_top.png` | - |
+| `bloki/low_lingonberry_plant_side.png` | Sadzonka brusznicy, Borówka brusznica |
+| `bloki/low_lingonberry_plant_top.png` | - |
+| `bloki/low_lingonberry_unripe_side.png` | Borówka brusznica (niedojrzałe owoce) |
+| `bloki/low_lingonberry_unripe_top.png` | - |
+| `bloki/low_pumpkin_flower_top.png` | - |
+| `bloki/low_pumpkin_plant_side.png` | Siewka dyni, Pnącze dyni, Pnącze dyni (kwitnie) |
+| `bloki/low_pumpkin_plant_top.png` | - |
+| `bloki/low_pumpkin_spent_side.png` | Pnącze dyni (żółknie) |
+| `bloki/low_pumpkin_spent_top.png` | - |
+| `bloki/low_strawberry_flower_side.png` | Truskawki (kwitnie) |
+| `bloki/low_strawberry_flower_top.png` | - |
+| `bloki/low_strawberry_fruit_side.png` | Truskawki (owoce) |
+| `bloki/low_strawberry_fruit_top.png` | - |
+| `bloki/low_strawberry_plant_side.png` | Sadzonka truskawek, Truskawki |
+| `bloki/low_strawberry_plant_top.png` | - |
+| `bloki/low_wild_strawberry_flower_side.png` | Poziomka (kwitnie) |
+| `bloki/low_wild_strawberry_flower_top.png` | - |
+| `bloki/low_wild_strawberry_fruit_side.png` | Poziomka (owoce) |
+| `bloki/low_wild_strawberry_fruit_top.png` | - |
+| `bloki/low_wild_strawberry_plant_side.png` | Sadzonka poziomki, Poziomka |
+| `bloki/low_wild_strawberry_plant_top.png` | - |
+| `bloki/low_zucchini_flower_top.png` | - |
+| `bloki/low_zucchini_fruit_side.png` | Cukinia (owoce) |
+| `bloki/low_zucchini_plant_side.png` | Sadzonka cukinii, Cukinia, Cukinia (kwitnie) |
+| `bloki/low_zucchini_plant_top.png` | - |
 | `bloki/mangrove/leaves.png` | Liście namorzynu, Liście namorzynu (siewki odrastają) |
 | `bloki/mangrove/leaves_variant.png` | Liście namorzynu z siewkami |
 | `bloki/mangrove/log_side.png` | Pień namorzynu |
@@ -723,6 +768,10 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/plantain.png` | Babka zwyczajna |
 | `bloki/polished_stone.png` | Polerowany kamień |
 | `bloki/poppy.png` | Mak |
+| `bloki/pumpkin_side.png` | Dynia |
+| `bloki/pumpkin_top.png` | Dynia |
+| `bloki/pumpkin_young_side.png` | Młoda dynia |
+| `bloki/pumpkin_young_top.png` | Młoda dynia |
 | `bloki/rainbow_eucalyptus/leaves.png` | Liście eukaliptusa |
 | `bloki/rainbow_eucalyptus/log_side.png` | Pień eukaliptusa |
 | `bloki/rainbow_eucalyptus/log_top.png` | Pień eukaliptusa |
@@ -736,11 +785,14 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/red_clay_bricks.png` | Czerwone cegły |
 | `bloki/red_clay_cup.png` | Czerwony gliniany kubek |
 | `bloki/reed.png` | Trzcina, Turzyca rzeczna, Pałka wodna, Pałka wodna (w wodzie) |
+| `bloki/reindeer_lichen.png` | Chrobotek |
 | `bloki/resin.png` | Żywica |
 | `bloki/roasted_acorn.png` | Prażony żołądź |
 | `bloki/roasted_apple.png` | Pieczone jabłko |
 | `bloki/roasted_beechnuts.png` | Prażone orzeszki bukowe |
 | `bloki/roasted_hazelnut.png` | Prażone orzechy laskowe |
+| `bloki/roasted_pumpkin_slice.png` | Pieczona dynia |
+| `bloki/roasted_zucchini.png` | Pieczona cukinia |
 | `bloki/rosliny/amarantus/wiecha.png` | Wiecha amarantusa |
 | `bloki/rosliny/barwinek/kwiat.png` | Kwiat barwinka |
 | `bloki/rosliny/cynia/kwiat.png` | Kwiat cynii |
@@ -842,6 +894,14 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/slate_side.png` | Łupek |
 | `bloki/slate_top.png` | Łupek |
 | `bloki/snow.png` | Śnieg, Warstwa śniegu |
+| `bloki/sphagnum_green_side.png` | Torfowiec zielony |
+| `bloki/sphagnum_green_tall_side.png` | Torfowiec zielony (kępa) |
+| `bloki/sphagnum_green_tall_top.png` | - |
+| `bloki/sphagnum_green_top.png` | - |
+| `bloki/sphagnum_red_side.png` | Torfowiec czerwony |
+| `bloki/sphagnum_red_tall_side.png` | Torfowiec czerwony (kępa) |
+| `bloki/sphagnum_red_tall_top.png` | - |
+| `bloki/sphagnum_red_top.png` | - |
 | `bloki/spruce_bark.png` | Kora świerka |
 | `bloki/spruce_cone.png` | Szyszka świerka |
 | `bloki/spruce_leaves.png` | Igliwie świerka |

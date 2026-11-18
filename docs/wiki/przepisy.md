@@ -2,7 +2,7 @@
 
 > Ta strona jest generowana z kodu gry (`python tools/wiki.py`) - nie zmieniaj jej ręcznie, zmiany przepadną przy następnym generowaniu.
 
-Wersja gry **1.18.0** - 241 przepisów. Wytwarza się w ekwipunku (**E**): siatka 2 x 2 obok miejsc ekwipunku, wynik po prawej (klik - weź, Shift + klik - ile się da). Przycisk 📖 *Przepisy* otwiera księgę - klik na przepisie sam układa składniki. Przepisy *z kształtem* można przesuwać po siatce i odbijać w poziomie; przepisy *bez kształtu* - obojętne, gdzie leżą składniki. Z czatu: `/przepisy`, `/wytworz <przepis>`.
+Wersja gry **1.19.0** - 243 przepisów. Wytwarza się w ekwipunku (**E**): siatka 2 x 2 obok miejsc ekwipunku, wynik po prawej (klik - weź, Shift + klik - ile się da). Przycisk 📖 *Przepisy* otwiera księgę - klik na przepisie sam układa składniki. Przepisy *z kształtem* można przesuwać po siatce i odbijać w poziomie; przepisy *bez kształtu* - obojętne, gdzie leżą składniki. Z czatu: `/przepisy`, `/wytworz <przepis>`.
 
 
 ## Ziemia
@@ -507,6 +507,18 @@ Wersja gry **1.18.0** - 241 przepisów. Wytwarza się w ekwipunku (**E**): siatk
 
 
 ## Jedzenie i nasiona
+
+### Kawałek dyni x4
+
+<img src="przepisy/pumpkin_slice.png" alt="Kawałek dyni x4: 1 x Dynia (obojętne gdzie)">
+
+1 x Dynia (bez kształtu). Nazwa przepisu: `pumpkin_slice`. Jedna dynia - cztery kawałki. Kawałek można upiec nad ogniskiem.
+
+### Pestki dyni x2
+
+<img src="przepisy/pumpkin_seeds.png" alt="Pestki dyni x2: 1 x Kawałek dyni (obojętne gdzie)">
+
+1 x Kawałek dyni (bez kształtu). Nazwa przepisu: `pumpkin_seeds`. Pestki sadzi się na rozgrzebanej ziemi: wyrasta pnącze, a obok niego dynie.
 
 ### Kubek ziół na sen
 

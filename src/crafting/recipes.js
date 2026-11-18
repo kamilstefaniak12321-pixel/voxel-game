@@ -269,6 +269,12 @@ export const RECIPES = [
     // Sen (0.98.0): słoma z trawy, z niej słomiana pościel; lniana
     // pościel z wiązek lnu. Pościel: PPM na ziemi - posłanie, PPM na
     // stelażu łóżka (z trzech stołów stolarskich) - pościelone łóżko.
+    // Dynia (1.19.0, blocks/lowPlants.js): kroi się na kawałki, z kawałka
+    // wydłubuje się pestki - do zjedzenia albo do posadzenia.
+    { id: 'pumpkin_slice', result: ['pumpkin_slice', 4], ingredients: ['pumpkin'],
+        note: 'Jedna dynia - cztery kawałki. Kawałek można upiec nad ogniskiem.' },
+    { id: 'pumpkin_seeds', result: ['pumpkin_seeds', 2], ingredients: ['pumpkin_slice'],
+        note: 'Pestki sadzi się na rozgrzebanej ziemi: wyrasta pnącze, a obok niego dynie.' },
     { id: 'straw', result: ['straw', 1], ingredients: ['#grass', '#grass'],
         note: 'Wysuszona trawa. Cztery sztuki dają słomianą pościel.' },
     { id: 'straw_bedding', result: ['straw_bedding', 1], pattern: ['SS', 'SS'], key: { S: 'straw' },

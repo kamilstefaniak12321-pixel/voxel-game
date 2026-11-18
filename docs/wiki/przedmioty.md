@@ -2,7 +2,7 @@
 
 > Ta strona jest generowana z kodu gry (`python tools/wiki.py`) - nie zmieniaj jej ręcznie, zmiany przepadną przy następnym generowaniu.
 
-Wersja gry **1.18.0** - 190 przedmiotów. Przedmiotu nie da się postawić jak bloku; owoce i nasiona posadzone na ziemi (PPM) wyrastają w krzak albo drzewo, narzędzia przyspieszają kopanie.
+Wersja gry **1.19.0** - 198 przedmiotów. Przedmiotu nie da się postawić jak bloku; owoce i nasiona posadzone na ziemi (PPM) wyrastają w krzak albo drzewo, narzędzia przyspieszają kopanie.
 
 
 ## Drewno
@@ -78,7 +78,7 @@ Wersja gry **1.18.0** - 190 przedmiotów. Przedmiotu nie da się postawić jak b
 
 | | Nazwa | W komendach | Najważniejsze |
 |---|---|---|---|
-| <img src="ikony/strawberry.png" width="32" height="32" alt=""> | **Truskawki** | `strawberry` | **Posadzony (PPM na ziemi):** Sadzonka truskawki<br>**Skąd:** zbiór (PPM): Krzak truskawki (kilka owoców); zbiór (PPM): Krzak truskawki (pełen owoców)<br>**Przydaje się do:** Czerwona lampa, Barwnik czerwony<br>**Służy też jako:** jedzenie |
+| <img src="ikony/strawberry.png" width="32" height="32" alt=""> | **Truskawki** | `strawberry` | **Posadzony (PPM na ziemi):** Sadzonka truskawki<br>**Skąd:** zbiór (PPM): Krzak truskawki (kilka owoców); zbiór (PPM): Krzak truskawki (pełen owoców); zbiór (PPM): Truskawki (owoce)<br>**Przydaje się do:** Czerwona lampa, Barwnik czerwony<br>**Służy też jako:** jedzenie |
 | <img src="ikony/blackberry.png" width="32" height="32" alt=""> | **Jeżyny** | `blackberry` | **Posadzony (PPM na ziemi):** Sadzonka jeżyny<br>**Skąd:** zbiór (PPM): Krzak jeżyny (kilka owoców); zbiór (PPM): Krzak jeżyny (pełen owoców); zbiór (PPM): Owoce jeżyny<br>**Przydaje się do:** Fioletowa lampa, Barwnik fioletowy<br>**Służy też jako:** jedzenie |
 | <img src="ikony/chili_pepper.png" width="32" height="32" alt=""> | **Papryczki chili** | `chili_pepper` | **Posadzony (PPM na ziemi):** Sadzonka papryczki chili<br>**Skąd:** zbiór (PPM): Krzak papryczki chili (kilka papryczek); zbiór (PPM): Krzak papryczki chili (pełen papryczek)<br>**Przydaje się do:** Czerwona lampa, Barwnik czerwony<br>**Służy też jako:** jedzenie |
 | <img src="ikony/hazelnut.png" width="32" height="32" alt=""> | **Orzech laskowy** | `hazelnut` | **Posadzony (PPM na ziemi):** Sadzonka leszczyny<br>**Skąd:** zbiór (PPM): Leszczyna (kilka orzechów); zbiór (PPM): Leszczyna (pełna orzechów); zbiór (PPM): Owoce leszczyny<br>**Służy też jako:** jedzenie; pieczenie nad ogniskiem: Prażone orzechy laskowe |
@@ -100,6 +100,14 @@ Wersja gry **1.18.0** - 190 przedmiotów. Przedmiotu nie da się postawić jak b
 | <img src="ikony/beechnuts.png" width="32" height="32" alt=""> | **Orzeszki bukowe** | `beechnuts` | **Posadzony (PPM na ziemi):** Sadzonka buka<br>**Skąd:** czasem z bloku: Liście buka (8%)<br>**Służy też jako:** jedzenie; pieczenie nad ogniskiem: Prażone orzeszki bukowe |
 | <img src="ikony/linden_flower.png" width="32" height="32" alt=""> | **Kwiat lipy** | `linden_flower` | **Posadzony (PPM na ziemi):** Sadzonka lipy<br>**Skąd:** zbiór (PPM): Kwitnące liście lipy<br>**Przydaje się do:** Kubek ziół na sen |
 | <img src="ikony/acorn.png" width="32" height="32" alt=""> | **Żołądź** | `acorn` | **Posadzony (PPM na ziemi):** Sadzonka dębu<br>**Skąd:** czasem z bloku: Liście dębu (10%)<br>**Przydaje się do:** Barwnik brązowy<br>**Służy też jako:** jedzenie; pieczenie nad ogniskiem: Prażony żołądź |
+| <img src="ikony/cranberry.png" width="32" height="32" alt=""> | **Żurawina** | `cranberry` | **Posadzony (PPM na ziemi):** Sadzonka żurawiny<br>**Skąd:** zbiór (PPM): Żurawina (owoce)<br>**Służy też jako:** jedzenie |
+| <img src="ikony/lingonberry.png" width="32" height="32" alt=""> | **Borówki brusznice** | `lingonberry` | **Posadzony (PPM na ziemi):** Sadzonka brusznicy<br>**Skąd:** zbiór (PPM): Borówka brusznica (owoce)<br>**Służy też jako:** jedzenie |
+| <img src="ikony/wild_strawberry.png" width="32" height="32" alt=""> | **Poziomki** | `wild_strawberry` | **Posadzony (PPM na ziemi):** Sadzonka poziomki<br>**Skąd:** zbiór (PPM): Poziomka (owoce)<br>**Służy też jako:** jedzenie |
+| <img src="ikony/pumpkin_slice.png" width="32" height="32" alt=""> | **Kawałek dyni** | `pumpkin_slice` | **Przepis:** Kawałek dyni x4<br>**Przydaje się do:** Pestki dyni<br>**Służy też jako:** jedzenie; pieczenie nad ogniskiem: Pieczona dynia |
+| <img src="ikony/pumpkin_seeds.png" width="32" height="32" alt=""> | **Pestki dyni** | `pumpkin_seeds` | **Posadzony (PPM na ziemi):** Siewka dyni<br>**Skąd:** zniszczony blok: Młoda dynia<br>**Przepis:** Pestki dyni x2<br>**Służy też jako:** jedzenie |
+| <img src="ikony/zucchini.png" width="32" height="32" alt=""> | **Cukinia** | `zucchini` | **Posadzony (PPM na ziemi):** Sadzonka cukinii<br>**Skąd:** zbiór (PPM): Cukinia (owoce)<br>**Służy też jako:** jedzenie; pieczenie nad ogniskiem: Pieczona cukinia |
+| <img src="ikony/roasted_pumpkin_slice.png" width="32" height="32" alt=""> | **Pieczona dynia** | `roasted_pumpkin_slice` | **Skąd:** nad płonącym ogniskiem (trzymany PPM): Kawałek dyni<br>**Służy też jako:** jedzenie |
+| <img src="ikony/roasted_zucchini.png" width="32" height="32" alt=""> | **Pieczona cukinia** | `roasted_zucchini` | **Skąd:** nad płonącym ogniskiem (trzymany PPM): Cukinia<br>**Służy też jako:** jedzenie |
 | <img src="ikony/roasted_apple.png" width="32" height="32" alt=""> | **Pieczone jabłko** | `roasted_apple` | **Skąd:** nad płonącym ogniskiem (trzymany PPM): Jabłko<br>**Służy też jako:** jedzenie |
 | <img src="ikony/roasted_hazelnut.png" width="32" height="32" alt=""> | **Prażone orzechy laskowe** | `roasted_hazelnut` | **Skąd:** nad płonącym ogniskiem (trzymany PPM): Orzech laskowy<br>**Służy też jako:** jedzenie |
 | <img src="ikony/roasted_beechnuts.png" width="32" height="32" alt=""> | **Prażone orzeszki bukowe** | `roasted_beechnuts` | **Skąd:** nad płonącym ogniskiem (trzymany PPM): Orzeszki bukowe<br>**Służy też jako:** jedzenie |

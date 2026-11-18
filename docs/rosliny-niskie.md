@@ -8,6 +8,12 @@ chmiel, kiwi, marakuja, fasola i groch) czekają na kolejne wydanie.
 
 ![Galeria roślin niskich](niskie-1190.jpg)
 
+Na zrzutach (renderer programowy): galeria `/niskie galeria` - od dołu
+żurawina, brusznica, truskawki, poziomka, pnącze dyni i cukinia, w każdym
+rzędzie kolejne etapy; pnącza dyni z bliska (zielone, kwitnące, żółknące
+i młode dynie); dzika żurawina z torfowcem na mokradłach; brusznica pod
+sosną w borze.
+
 ## Niska płyta
 
 Roślina niska to **blok niższy niż komórka** - płyta z rysunkiem na

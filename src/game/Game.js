@@ -11,6 +11,7 @@ import { Sleep } from './Sleep.js';
 import { Tutorial } from './Tutorial.js';
 import { TorchRenderer } from '../rendering/TorchRenderer.js';
 import { DoorRenderer } from '../rendering/DoorRenderer.js';
+import { Hedgehogs } from './Hedgehogs.js';
 import { doorSound } from '../audio/doorSounds.js';
 import { Chests } from './Chests.js';
 import { CarpenterTables } from './CarpenterTables.js';
@@ -839,6 +840,9 @@ export class Game extends GameInteraction {
         // Drzwi (0.91.0) - modele z animacją otwierania.
         this.doors = new DoorRenderer(this);
 
+        // Jeżyki (1.18.0) - pierwsze zwierzęta; nie zapisują się w świecie.
+        this.hedgehogs = new Hedgehogs(this);
+
         // Autozapis.
 
         this.rafts = new Rafts(this, worldInfo.rafts);
@@ -1009,6 +1013,7 @@ export class Game extends GameInteraction {
         this.torches.update(dt);
         this.world.updateLightHolds(dt);
         this.doors.update(dt);
+        this.hedgehogs.update(dt);
         profile?.endStage('effects');
 
         // Autozapis co jakiś czas.
@@ -2954,6 +2959,7 @@ export class Game extends GameInteraction {
         this.carpenterTables.dispose();
         this.torches.dispose();
         this.doors.dispose();
+        this.hedgehogs.dispose();
 
         this.farTerrain.dispose();
 

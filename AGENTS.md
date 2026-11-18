@@ -66,6 +66,14 @@ przejścia wzrostu i owocowania (`FruitBushAnimation.js`). Model owocu
 w ekwipunku i w dłoni musi pochodzić z tej samej geometrii co owoc na
 roślinie (`FruitBushGeometry.js`), z zachowaniem kształtu i kolorów.
 
+## Zwierzęta
+
+Zwierząt w grze **nie da się skrzywdzić** i w grze **nie ma mięsa** —
+to decyzja Kamila (`docs/zwierzeta.md`). Nowe zwierzę nie dostaje
+zdrowia, śmierci, łupów ani osiągnięć za krzywdę. Zwierzęta są
+towarzyszami i życiem świata albo dają surowce brane bez krzywdy
+(mleko, wełna, pióra, jajka). Jedzenie w grze jest roślinne.
+
 ## Styl tekstur drewna i narzędzi
 
 Od 0.70.0 wzorcem jest atlas dostarczony przez Kamila: deski 16 × 16,

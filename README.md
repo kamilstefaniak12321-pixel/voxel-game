@@ -156,7 +156,7 @@ jest w [`docs/opis-gry.md`](docs/opis-gry.md). Skrót:
 | Zapis świata | co i gdzie się zapisuje | [opis](docs/opis-gry.md#zapis-świata) | - |
 | Menu i motywy | ekrany menu, żywe tło, motywy interfejsu | [opis](docs/opis-gry.md#menu-i-motywy) | [zywe-menu.md](docs/zywe-menu.md) |
 
-Pozostałe strony: [krzewy jagodowe](docs/krzewy.md),
+Pozostałe strony: [zwierzęta](docs/zwierzeta.md), [krzewy jagodowe](docs/krzewy.md),
 [uprawa i rozgrzebana ziemia](docs/uprawa.md),
 [aplikacja na komputer i wydania](docs/aplikacja.md),
 [telefon](docs/telefon.md), [numery bloków](docs/numery-blokow.md),

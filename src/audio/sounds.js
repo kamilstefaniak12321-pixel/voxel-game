@@ -92,6 +92,22 @@ for (const name of ['door_open', 'door_close', 'trapdoor_open', 'trapdoor_close'
 }
 
 
+// Jeżyk (1.18.0, game/Hedgehogs.js): węszenie, chrupanie jagód z ręki,
+// zwijanie się w kulkę. Ciche - słychać je z kilku bloków.
+
+for (const name of ['hedgehog_sniff', 'hedgehog_eat', 'hedgehog_curl']) {
+
+    SOUNDS[name] = {
+        files: [`animals/${name}_1.ogg`, `animals/${name}_2.ogg`],
+        volume: 0.9,
+        pitch: [0.94, 1.08],
+        category: 'blocks',
+        distance: { ref: 2, max: 14, rolloff: 1.2 }
+    };
+
+}
+
+
 // Ciało gracza (0.94.0, game/Game.js - updateWellbeing, eat): burczenie
 // w brzuchu u głodnego i jedzenie. Syntetyczne (tools/dzwieki.py, grupa
 // "cialo") - można podmienić nagraniami. Bez miejsca w świecie: słychać

@@ -197,7 +197,9 @@ export function shrubBlocks() {
             };
             infoByType.set(type, { species, part, variety: variety ?? 0 });
         };
-        const leafBlock = { solid: true, opaque: false, model: 'leaves', leafSeason: `shrub_${species}` };
+        // passable (1.18.0): przez liście krzewu da się przejść - gracz
+        // wolniej, jeżyk normalnie (BlockRegistry.isPassableId).
+        const leafBlock = { solid: true, opaque: false, passable: true, model: 'leaves', leafSeason: `shrub_${species}` };
         const loot = [[shrubType(species, 'sapling', 0), 0.08]];
 
         add(leaves, 0, 'leaves', null, {
@@ -213,7 +215,7 @@ export function shrubBlocks() {
             add(shrubType(species, 'stem'), 1, 'stem', null, shrub.stem === 'canes' ? {
                 // Ażurowe pędy: jak liście przepuszczają światło. Z góry
                 // i z dołu widać tylko przekroje pędów (kropki).
-                solid: true, opaque: false, model: 'leaves',
+                solid: true, opaque: false, passable: true, model: 'leaves',
                 name: `${shrub.name} Canes`,
                 label: shrub.stemLabel,
                 textures: { top: texture('stem_top'), side: texture('stem'), bottom: texture('stem_top') },

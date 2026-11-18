@@ -91,6 +91,9 @@ Współrzędne można podawać względem gracza: `~` (tu, gdzie stoję),
 | `/krzaki` | krzaki owocowe do 64 bloków od ciebie: ile w każdym etapie (sadzonki, bez owoców, kilka owoców, pełne), tempo wzrostu |
 | `/krzaki ogrod` | przed tobą ogródek: 4 rzędy (truskawka, jeżyna, papryczka chili, leszczyna), w każdym od lewej sadzonka, krzak bez owoców, kilka owoców, pełen owoców (zmienia świat) |
 | `/krzaki znajdz` | najbliższy dziki krzak z owocami: nazwa, odległość, kierunek i komenda `/tp` |
+| `/jez` | jeżyki (1.18.0, `docs/zwierzeta.md`): ile jest w pobliżu i co robią |
+| `/jez dodaj [wariant]` | nowy jeżyk przed tobą (`brown`, `dark`, `sandy`, `albino`); zamieszka w krzewie jagodowym obok, jeśli jakiś jest |
+| `/jez znajdz` | najbliższy dziki krzew, w którym mieszka jeżyk (do 256 bloków): kolor, odległość i komenda `/tp` |
 | `/krzewy` | krzewy jagodowe (1.17.0, `docs/krzewy.md`): lista gatunków i odmian |
 | `/krzewy galeria` | przed tobą wszystkie krzewy: gatunek i odmiana w rzędzie, od lewej jeden blok, mały krzak, dojrzały krzew, stara kępa (zmienia świat) |
 | `/krzewy <gatunek> [rozmiar 0-100] [odmiana]` | jeden krzew przed tobą, np. `/krzewy porzeczka 70 2` - dojrzała czarna porzeczka (zmienia świat) |

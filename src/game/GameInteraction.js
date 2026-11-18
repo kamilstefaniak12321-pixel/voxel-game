@@ -88,6 +88,11 @@ export class GameInteraction {
         const raftInteraction = this.rafts?.interact({ breakPressed, placePressed, terrainHit: this.currentHit });
         if (raftInteraction) { breakPressed = false; placePressed = false; this.mining = null; }
 
+        // Jeżyk pod celownikiem (1.18.0): LPM - zwija się, PPM z jagodami - je.
+        if (!raftInteraction && this.hedgehogs?.interact({ breakPressed, placePressed, terrainHit: this.currentHit })) {
+            breakPressed = false; placePressed = false; this.mining = null;
+        }
+
         // Trzymany LPM: w przygodzie kopie (blok pęka i znika po czasie
         // kopania), w kreatywnym niszczy kolejne bloki co chwilę.
 

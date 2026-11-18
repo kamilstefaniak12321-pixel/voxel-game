@@ -1285,6 +1285,7 @@ export const BLOCK_TYPES = {
 const typeById = new Array(MAX_BLOCK_ID + 1).fill(null);
 
 const solidById = new Uint8Array(MAX_BLOCK_ID + 1);
+const passableById = new Uint8Array(MAX_BLOCK_ID + 1);
 const opaqueById = new Uint8Array(MAX_BLOCK_ID + 1);
 const liquidById = new Uint8Array(MAX_BLOCK_ID + 1);
 const riverPlantById = new Array(MAX_BLOCK_ID + 1).fill(null);
@@ -1387,6 +1388,7 @@ for (const [type, definition] of Object.entries(BLOCK_TYPES)) {
     typeById[id] = type;
 
     solidById[id] = definition.solid ? 1 : 0;
+    passableById[id] = definition.passable ? 1 : 0;
 
     opaqueById[id] =
         (definition.opaque ?? definition.solid) ? 1 : 0;
@@ -1508,6 +1510,18 @@ export function getBlockTypeById(id) {
 export function isSolidId(id) {
 
     return solidById[id] === 1;
+
+}
+
+
+// Blok, przez który da się przejść, choć jest "stały" dla reszty gry
+// (liście krzewów jagodowych od 1.18.0): gracz idzie przez niego wolniej,
+// małe zwierzęta - normalnie. Dalej da się go zaznaczyć, zebrać i postawić
+// na nim blok.
+
+export function isPassableId(id) {
+
+    return passableById[id] === 1;
 
 }
 

@@ -14,6 +14,7 @@ import {
     SPRINT_SPEED_FACTOR,
     SPRINT_DOUBLE_TAP,
     WATER_SPEED_FACTOR,
+    BUSH_SPEED_FACTOR,
     RIVER_PUSH,
     WATER_GRAVITY_FACTOR,
     WATER_DRAG,
@@ -33,7 +34,7 @@ import {
     SKYFALL_MAX_SPEED
 } from '../config.js';
 
-import { isLiquidId, isFallingWaterId } from '../blocks/BlockRegistry.js';
+import { isLiquidId, isFallingWaterId, isPassableId } from '../blocks/BlockRegistry.js';
 import { waterSurfaceHeight } from '../world/WaterSurface.js';
 
 // Maksymalna odległość pokonywana w jednym kroku kolizji.
@@ -177,6 +178,8 @@ export class Player {
         //               (0 = nie), dla dźwięku plusku,
         //   leftWater - wyszedł z wody w tej klatce.
         this.submerged = 0;
+        // Jaka część ciała jest w liściach krzewu (0-1; updateBush) - spowalnia.
+        this.inBush = 0;
         // Struga spadająca zwilża ciało, ale sama nie podtrzymuje go
         // przy tafli. Spacja nadal pozwala świadomie płynąć w niej w górę.
         this.buoyantSubmerged = 0;
@@ -264,6 +267,26 @@ updateLook(input) {
         -maxPitch,
         Math.min(maxPitch, this.pitch)
     );
+
+}
+
+// Jaka część ciała stoi w liściach krzewu jagodowego (0-1): komórki od
+// stóp do głowy w kolumnie gracza. Przez krzew da się przejść, ale wolniej.
+
+updateBush() {
+
+    const x = Math.floor(this.pos.x), z = Math.floor(this.pos.z);
+    const top = this.pos.y + this.height;
+    let inside = 0;
+
+    for (let y = Math.floor(this.pos.y); y < top; y++) {
+        if (!isPassableId(this.world.getBlockId(x, y, z))) continue;
+        inside += Math.min(top, y + 1) - Math.max(this.pos.y, y);
+    }
+
+    this.inBush = clamp01(inside / this.height);
+
+    return this.inBush;
 
 }
 
@@ -447,7 +470,8 @@ updateMovement(dt, input) {
         (this.crouching ? CROUCH_SPEED_FACTOR : 1) *
         (this.sprinting ? 1 + (SPRINT_SPEED_FACTOR - 1) * this.stamina.sprint : 1) *
         (this.flying ? 1 : this.stamina.walk) *
-        (1 + (WATER_SPEED_FACTOR - 1) * wade);
+        (1 + (WATER_SPEED_FACTOR - 1) * wade) *
+        (this.flying ? 1 : 1 + (BUSH_SPEED_FACTOR - 1) * this.updateBush());
 
     this.moveSpeed = speed;
 

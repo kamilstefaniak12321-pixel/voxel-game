@@ -29,11 +29,11 @@ export const SHRUB_PATCH = 22;
 export const SHRUB_FIELD = 46;
 
 // Szansa na krzew w kratce przy sumie wag biomu 1, w środku zarośli.
-export const SHRUB_DENSITY = 0.3;
+export const SHRUB_DENSITY = 0.08;
 
 // Od jakiej wartości pola zarośli (0-1) krzewy w ogóle rosną i od jakiej
 // rosną najgęściej.
-export const SHRUB_THICKET = [0.42, 0.78];
+export const SHRUB_THICKET = [0.5, 0.8];
 
 // Największa różnica wysokości sąsiednich kolumn pod środkiem krzewu.
 const MAX_SLOPE = 2;

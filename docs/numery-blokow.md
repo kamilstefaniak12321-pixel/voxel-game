@@ -27,7 +27,9 @@ więcej niż dotąd - bez kolejnej zmiany zapisu.
 | 12460-12491 | posłania na ziemi (0.98.0, po 8 na pościel; słomiane 12460-12467, lniane 12468-12475) |
 | 12492-12543 | wolne |
 | 12544-14207 | wyroby z trzynastu rodzajów drewna z 1.8.0 (1.9.0): po 128 numerów na drewno, w kolejności `WOODS` od jodły - 0-27 schody, półbloki, płot, furtka, stół; 28-75 drzwi i klapy; 76-107 łóżka; 108-111 skrzynia; 112-127 wolne. Kolejne nowe rodzaje drewna dostają następne bloki po 128 |
-| 14208-65279 | wolne na przyszłość |
+| 14208-14299 | wolne |
+| 14300-14999 | krzewy jagodowe (1.17.0, `src/blocks/shrubs.js`): po 16 numerów na gatunek - liście, pęd / pień, potem po 5 na odmianę (sadzonka, owoce, po zbiorze, kwiaty, niedojrzałe); aronia 14300, porzeczka 14316, agrest 14332, malina 14348, dzika róża 14364, bez czarny 14380, rokitnik 14396, borówka wysoka 14412, zarośla jeżyn 14428, krzew leszczyny 14444 |
+| 15000-65279 | wolne na przyszłość |
 | 65280-65535 | zarezerwowane dla gry, nigdy w zapisie (np. odcienie trawy dalekiego terenu) |
 
 Stałe: `MAX_BLOCK_ID` w `src/blocks/BlockRegistry.js` (tam też ta lista),

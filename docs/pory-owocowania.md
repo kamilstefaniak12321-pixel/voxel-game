@@ -57,8 +57,8 @@ gołe niebo, po 2 minutach** cały stos zamienia się w **suszone owoce**
 - Susz nadaje się do garnka (dwie porcje - kompot, także zimą).
 - Nie suszy się warzyw, orzechów, kwiatów ani chili.
 
-Zapasy na zimę: suszone owoce, orzechy, żołędzie, dynie, pestki. Nic
-się w grze nie psuje - leżą w skrzyni bez końca.
+Zapasy na zimę: suszone owoce, orzechy, żołędzie, dynie, pestki - one
+się nie psują (od 1.23.0 świeże jedzenie tak: [psucie.md](psucie.md)).
 
 ## Osiągnięcia i komendy
 
@@ -89,8 +89,8 @@ i w każdej porze. `/pora ustaw <pora> [dzień]` przenosi czas (do testów).
   gdy owocują tylko truskawki i poziomki (oraz tropiki). Są jeszcze
   żołędzie i orzeszki bukowe z liści. Do oceny, czy to nie za trudny
   początek.
-- **Nic się nie psuje** - świeże owoce leżą w skrzyni tak samo długo jak
-  suszone, więc suszenie daje sytość i porządek w plecaku, nie trwałość.
+- (Od 1.23.0 świeże jedzenie się psuje, a suszone owoce nie -
+  [psucie.md](psucie.md).)
 - (Od 1.22.0 owoc niezebrany w porze opada na ziemię - [sad.md](sad.md);
   dotyczy roślin w chunkach zmienionych przez gracza. Dzika roślina
   w nietkniętym terenie za rok znów pokazuje ten sam owoc.)

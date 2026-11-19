@@ -11,6 +11,28 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 1.23.0 - Psucie się jedzenia
+
+PR #176.
+
+- **Świeże jedzenie się psuje** - tym szybciej, im cieplej. Z miękkich
+  owoców w plecaku połowa zostaje po 3 dobach, z jabłek i warzyw po 7,
+  z potraw z garnka po 2. Na mrozie prawie nic się nie psuje.
+- **Skrzynia i piwniczka**: w skrzyni jedzenie psuje się 2 razy wolniej,
+  a w piwniczce (skrzynia pod dachem albo pod ziemią) 4 razy wolniej
+  i latem trzyma chłód.
+- **Nie psują się**: suszone owoce, orzechy, żołędzie, pestki, prażone
+  orzechy i cała dynia - z nich robi się zapasy na zimę.
+- **Kompost**: zepsute jedzenie zamienia się w kompost. Kompostem
+  kliknięta ziemia albo trawa staje się czarnoziemem.
+- W oknie statusu przy jedzeniu w ręce widać, jak szybko się psuje.
+  Komenda `/psucie`, osiągnięcie *Nic się nie marnuje*, nowe punkty
+  w poradniku.
+- Tylko tryb przygody.
+
+Znane braki: nie widać, ile czasu ma jeszcze konkretny stos; zepsute
+jedzenie nie szkodzi. Reszta w `docs/psucie.md`.
+
 ## 1.22.0 - Sad: opadłe owoce i zimowy rozwój
 
 PR #175.

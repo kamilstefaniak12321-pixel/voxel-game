@@ -17,7 +17,7 @@
     "rosliny": {
       "file": "rosliny.png",
       "width": 256,
-      "height": 480
+      "height": 496
     },
     "przedmioty": {
       "file": "przedmioty.png",
@@ -9178,6 +9178,13 @@
       "y": 464,
       "width": 16,
       "height": 16
+    },
+    "compost": {
+      "sheet": "rosliny",
+      "x": 0,
+      "y": 480,
+      "width": 16,
+      "height": 16
     }
   },
   "aliases": {
@@ -16729,6 +16736,11 @@
       "x": 57,
       "y": 92,
       "region": "fallen_olive_oliwki"
+    },
+    "compost": {
+      "x": 58,
+      "y": 92,
+      "region": "compost"
     }
   }
 }

@@ -20,6 +20,7 @@
 
 import { STATES, MEALS_PER_DAY } from '../game/Wellbeing.js';
 import { getFood, KIND_LABELS } from '../items/foods.js';
+import { spoilText } from '../items/spoilage.js';
 import { getItemLabel } from '../items/ItemRegistry.js';
 import { HeartIcon, drawHeart } from './HeartIcon.js';
 import { formatKeys } from '../input/bindings.js';
@@ -62,7 +63,7 @@ export function statusView(game) {
             ...(info.effects.length ? [['Działa', info.effects.map((effect) => `${effect.label} (${hoursText(effect.hours)})`).join(', ')]] : [])
         ],
         history: info.history,
-        held: food ? { type: held, label: getItemLabel(held), kind: KIND_LABELS[food.kind], drink: food.kind === 'drink', can: wellbeing.canEat(held) } : null
+        held: food ? { type: held, label: getItemLabel(held), kind: KIND_LABELS[food.kind], drink: food.kind === 'drink', can: wellbeing.canEat(held), spoils: spoilText(held) } : null
     };
 }
 
@@ -192,7 +193,7 @@ export class StatusPanel {
             }
             const held = element('div', 'status-held');
             if (view.held) {
-                held.append(element('div', '', `W ręce: ${view.held.label} (${view.held.kind})`));
+                held.append(element('div', '', `W ręce: ${view.held.label} (${view.held.kind}${view.held.spoils ? `, ${view.held.spoils}` : ''})`));
                 if (view.held.can.ok) {
                     const drink = view.held.drink;
                     const button = element('button', 'status-eat', drink ? 'Wypij' : 'Zjedz');

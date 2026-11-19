@@ -37,6 +37,7 @@ import { plantShrub } from '../world/shrubs/Shrubs.js';
 import { POT_WATER, BOWL, COOK_SECONDS, DISHES, DISH_NAMES } from '../items/cooking.js';
 import { fruitCalendar } from '../blocks/fruitSeasons.js';
 import { seasonSerial } from '../game/Orchard.js';
+import { spoilChance, spoilText, temperatureFactor, isPerishable } from '../items/spoilage.js';
 import { newPot, cookPot } from '../game/CookingState.js';
 import { newCampfire, addFirewood } from '../game/CampfireState.js';
 import { LOW_PLANTS, LOW_PLANT_NAMES, SPHAGNUM, lowPlantType, lowPlantInfo, LOW_STAGE_SECONDS, LOW_PLANT_FIRST_ID, LOW_PLANT_END_ID } from '../blocks/lowPlants.js';
@@ -1301,6 +1302,51 @@ export const WORLD_COMMANDS = [
 
     },
 
+
+    {
+        name: 'psucie',
+        aliases: ['spoilage', 'psuje'],
+        usage: '/psucie | /psucie tempo <mnożnik> | /psucie dni <ile>',
+        description: 'Psucie się jedzenia (1.23.0): temperatura i tempo tu, gdzie stoisz; "tempo" przyspiesza albo wyłącza psucie (0), "dni" od razu psuje jedzenie tak, jakby minęło tyle dób gry.',
+
+        run(args, { game }) {
+
+            const spoilage = game.spoilage;
+            const word = simplify(args[0] ?? '');
+            const temperature = spoilage.temperature();
+
+            if (!word) {
+                const held = game.selectedBlock;
+                const half = (type, place) => {
+                    const chance = spoilChance(type, 1, temperature, place);
+                    return chance > 0 ? `${(Math.log(0.5) / Math.log(1 - chance)).toFixed(1).replace('.', ',')} doby` : 'nigdy';
+                };
+                return `Psucie: ${spoilage.active ? 'włączone' : 'wyłączone (tylko tryb przygody)'}, tempo ×${spoilage.speed}, ` +
+                    `temperatura ${Math.round(temperature)}°C (mnożnik ×${temperatureFactor(temperature).toFixed(2).replace('.', ',')}). ` +
+                    `Maliny tutaj: połowa po ${half('raspberry', 'pack')} w plecaku, ${half('raspberry', 'chest')} w skrzyni, ${half('raspberry', 'cellar')} w piwniczce. ` +
+                    (held && spoilText(held) ? `W ręce: ${getItemLabel(held)} - ${spoilText(held)}${isPerishable(held) ? ` (połowa po ${half(held, 'pack')})` : ''}. ` : '') +
+                    `Zepsuło się od wejścia do świata: ${spoilage.spoiled}.`;
+            }
+
+            if (word === 'tempo') {
+                const speed = parseNumber(args[1], 'mnożnik');
+                if (speed < 0 || speed > 1000) throw new CommandError('Mnożnik: od 0 (wyłączone) do 1000');
+                spoilage.speed = speed;
+                return `Tempo psucia: ×${speed}${speed === 0 ? ' (jedzenie się nie psuje)' : ''}. Nie zapisuje się ze światem.`;
+            }
+
+            if (word === 'dni') {
+                const days = parseNumber(args[1], 'liczba dób');
+                if (days <= 0 || days > 64) throw new CommandError('Liczba dób: od 0 do 64');
+                const before = spoilage.spoiled;
+                spoilage.step(days);
+                return `Minęło ${days} dób: zepsuło się ${spoilage.spoiled - before} sztuk (plecak i skrzynie).`;
+            }
+
+            throw new CommandError('Użycie: /psucie | /psucie tempo <mnożnik> | /psucie dni <ile>');
+
+        }
+    },
 
     {
         name: 'sad',

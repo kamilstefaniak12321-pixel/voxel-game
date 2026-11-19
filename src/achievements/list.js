@@ -645,6 +645,15 @@ export const ACHIEVEMENTS = [
         when: (data) => String(data.type).startsWith('shrub_') && String(data.type).includes('_sapling')
     },
     {
+        id: 'composted',
+        tier: 'common',
+        title: 'Nic się nie marnuje',
+        task: 'Użyźnij ziemię kompostem z zepsutego jedzenia (PPM na ziemi albo trawie).',
+        comment: 'Wczoraj kolacja, dziś czarnoziem, za rok maliny.',
+        icon: 'compost',
+        on: 'composted'
+    },
+    {
         id: 'orchard_grown',
         tier: 'common',
         title: 'Dobrze przezimowały',

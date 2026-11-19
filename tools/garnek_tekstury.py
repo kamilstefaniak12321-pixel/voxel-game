@@ -146,6 +146,25 @@ def dried_fruit():
     return image
 
 
+def compost():
+    """Kompost (1.23.0): ciemna grudka z resztkami - brąz, czerń i parę
+    jasnych okruchów."""
+    image = Image.new('RGBA', (16, 16), (0, 0, 0, 0))
+    rows = {6: (6, 9), 7: (4, 11), 8: (3, 12), 9: (2, 13), 10: (2, 13), 11: (2, 13), 12: (3, 12), 13: (5, 10)}
+    dark, mid, light = (38, 26, 18), (66, 46, 30), (98, 72, 46)
+    for y, (left, right) in rows.items():
+        for x in range(left, right + 1):
+            t = (x - left) / max(1, right - left)
+            color = light if (t < 0.25 and y < 10) else dark if (t > 0.7 or y > 11) else mid
+            image.putpixel((x, y), (*color, 255))
+    # Resztki: okruch skorupki, pestka, zgniły liść.
+    for (x, y), color in {(5, 8): (176, 160, 130), (9, 7): (120, 60, 44), (10, 10): (70, 84, 40), (6, 11): (150, 120, 70), (11, 9): (30, 20, 14), (7, 9): (30, 20, 14)}.items():
+        image.putpixel((x, y), (*color, 255))
+    for x in range(5, 11):
+        image.putpixel((x, 14), (40, 28, 24, 110))
+    return image
+
+
 def textures():
     out = {
         'clay_pot': pot(),
@@ -155,6 +174,7 @@ def textures():
         'wet_clay_bowl': wet(bowl())
     }
     out['dried_fruit'] = dried_fruit()
+    out['compost'] = compost()
     for name, colors in DISHES.items():
         out[f'dish_{name}'] = bowl(colors)
     return out

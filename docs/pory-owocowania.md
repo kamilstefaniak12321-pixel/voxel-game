@@ -91,8 +91,9 @@ i w każdej porze. `/pora ustaw <pora> [dzień]` przenosi czas (do testów).
   początek.
 - **Nic się nie psuje** - świeże owoce leżą w skrzyni tak samo długo jak
   suszone, więc suszenie daje sytość i porządek w plecaku, nie trwałość.
-- Owoc nie zebrany w porze nie przepada: w następnym roku roślina od
-  początku pory znów go pokazuje.
+- (Od 1.22.0 owoc niezebrany w porze opada na ziemię - [sad.md](sad.md);
+  dotyczy roślin w chunkach zmienionych przez gracza. Dzika roślina
+  w nietkniętym terenie za rok znów pokazuje ten sam owoc.)
 - Sen przez kilka pór: wzrost przespanego czasu liczy się według pory,
   w której gracz się obudził.
 - Drzewa: pory mają tylko jabłoń, oliwka i lipa. Żołędzie, orzeszki

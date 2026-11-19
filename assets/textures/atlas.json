@@ -17,7 +17,7 @@
     "rosliny": {
       "file": "rosliny.png",
       "width": 256,
-      "height": 448
+      "height": 480
     },
     "przedmioty": {
       "file": "przedmioty.png",
@@ -9031,6 +9031,153 @@
       "y": 432,
       "width": 16,
       "height": 16
+    },
+    "fallen_strawberry": {
+      "sheet": "rosliny",
+      "x": 0,
+      "y": 448,
+      "width": 16,
+      "height": 16
+    },
+    "fallen_blackberry": {
+      "sheet": "rosliny",
+      "x": 16,
+      "y": 448,
+      "width": 16,
+      "height": 16
+    },
+    "fallen_chili_pepper": {
+      "sheet": "rosliny",
+      "x": 32,
+      "y": 448,
+      "width": 16,
+      "height": 16
+    },
+    "fallen_hazelnut": {
+      "sheet": "rosliny",
+      "x": 48,
+      "y": 448,
+      "width": 16,
+      "height": 16
+    },
+    "fallen_blueberry": {
+      "sheet": "rosliny",
+      "x": 64,
+      "y": 448,
+      "width": 16,
+      "height": 16
+    },
+    "fallen_aronia": {
+      "sheet": "rosliny",
+      "x": 80,
+      "y": 448,
+      "width": 16,
+      "height": 16
+    },
+    "fallen_redcurrant": {
+      "sheet": "rosliny",
+      "x": 96,
+      "y": 448,
+      "width": 16,
+      "height": 16
+    },
+    "fallen_blackcurrant": {
+      "sheet": "rosliny",
+      "x": 112,
+      "y": 448,
+      "width": 16,
+      "height": 16
+    },
+    "fallen_gooseberry": {
+      "sheet": "rosliny",
+      "x": 128,
+      "y": 448,
+      "width": 16,
+      "height": 16
+    },
+    "fallen_red_gooseberry": {
+      "sheet": "rosliny",
+      "x": 144,
+      "y": 448,
+      "width": 16,
+      "height": 16
+    },
+    "fallen_raspberry": {
+      "sheet": "rosliny",
+      "x": 160,
+      "y": 448,
+      "width": 16,
+      "height": 16
+    },
+    "fallen_yellow_raspberry": {
+      "sheet": "rosliny",
+      "x": 176,
+      "y": 448,
+      "width": 16,
+      "height": 16
+    },
+    "fallen_rose_hip": {
+      "sheet": "rosliny",
+      "x": 192,
+      "y": 448,
+      "width": 16,
+      "height": 16
+    },
+    "fallen_elderberry": {
+      "sheet": "rosliny",
+      "x": 208,
+      "y": 448,
+      "width": 16,
+      "height": 16
+    },
+    "fallen_sea_buckthorn_berry": {
+      "sheet": "rosliny",
+      "x": 224,
+      "y": 448,
+      "width": 16,
+      "height": 16
+    },
+    "fallen_cranberry": {
+      "sheet": "rosliny",
+      "x": 240,
+      "y": 448,
+      "width": 16,
+      "height": 16
+    },
+    "fallen_lingonberry": {
+      "sheet": "rosliny",
+      "x": 0,
+      "y": 464,
+      "width": 16,
+      "height": 16
+    },
+    "fallen_wild_strawberry": {
+      "sheet": "rosliny",
+      "x": 16,
+      "y": 464,
+      "width": 16,
+      "height": 16
+    },
+    "fallen_zucchini": {
+      "sheet": "rosliny",
+      "x": 32,
+      "y": 464,
+      "width": 16,
+      "height": 16
+    },
+    "fallen_jablon_jablko": {
+      "sheet": "rosliny",
+      "x": 48,
+      "y": 464,
+      "width": 16,
+      "height": 16
+    },
+    "fallen_olive_oliwki": {
+      "sheet": "rosliny",
+      "x": 64,
+      "y": 464,
+      "width": 16,
+      "height": 16
     }
   },
   "aliases": {
@@ -16477,6 +16624,111 @@
       "x": 62,
       "y": 90,
       "region": "dried_fruit"
+    },
+    "fallen_strawberry": {
+      "x": 63,
+      "y": 90,
+      "region": "fallen_strawberry"
+    },
+    "fallen_blackberry": {
+      "x": 51,
+      "y": 91,
+      "region": "fallen_blackberry"
+    },
+    "fallen_chili_pepper": {
+      "x": 52,
+      "y": 91,
+      "region": "fallen_chili_pepper"
+    },
+    "fallen_hazelnut": {
+      "x": 53,
+      "y": 91,
+      "region": "fallen_hazelnut"
+    },
+    "fallen_blueberry": {
+      "x": 54,
+      "y": 91,
+      "region": "fallen_blueberry"
+    },
+    "fallen_aronia": {
+      "x": 55,
+      "y": 91,
+      "region": "fallen_aronia"
+    },
+    "fallen_redcurrant": {
+      "x": 56,
+      "y": 91,
+      "region": "fallen_redcurrant"
+    },
+    "fallen_blackcurrant": {
+      "x": 57,
+      "y": 91,
+      "region": "fallen_blackcurrant"
+    },
+    "fallen_gooseberry": {
+      "x": 58,
+      "y": 91,
+      "region": "fallen_gooseberry"
+    },
+    "fallen_red_gooseberry": {
+      "x": 59,
+      "y": 91,
+      "region": "fallen_red_gooseberry"
+    },
+    "fallen_raspberry": {
+      "x": 60,
+      "y": 91,
+      "region": "fallen_raspberry"
+    },
+    "fallen_yellow_raspberry": {
+      "x": 61,
+      "y": 91,
+      "region": "fallen_yellow_raspberry"
+    },
+    "fallen_rose_hip": {
+      "x": 62,
+      "y": 91,
+      "region": "fallen_rose_hip"
+    },
+    "fallen_elderberry": {
+      "x": 63,
+      "y": 91,
+      "region": "fallen_elderberry"
+    },
+    "fallen_sea_buckthorn_berry": {
+      "x": 51,
+      "y": 92,
+      "region": "fallen_sea_buckthorn_berry"
+    },
+    "fallen_cranberry": {
+      "x": 52,
+      "y": 92,
+      "region": "fallen_cranberry"
+    },
+    "fallen_lingonberry": {
+      "x": 53,
+      "y": 92,
+      "region": "fallen_lingonberry"
+    },
+    "fallen_wild_strawberry": {
+      "x": 54,
+      "y": 92,
+      "region": "fallen_wild_strawberry"
+    },
+    "fallen_zucchini": {
+      "x": 55,
+      "y": 92,
+      "region": "fallen_zucchini"
+    },
+    "fallen_jablon_jablko": {
+      "x": 56,
+      "y": 92,
+      "region": "fallen_jablon_jablko"
+    },
+    "fallen_olive_oliwki": {
+      "x": 57,
+      "y": 92,
+      "region": "fallen_olive_oliwki"
     }
   }
 }

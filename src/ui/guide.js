@@ -193,7 +193,10 @@ export const GUIDE = [
             'Palma kokosowa, baobab i figowiec owocują cały rok.',
             { text: 'Owoce da się ususzyć: wyrzuć je ([drop]) w dzień pod gołe niebo. Po 2 minutach na słońcu cały stos to suszone owoce - syte i dobre do garnka.',
                 touch: 'Owoce da się ususzyć: w ekwipunku weź je i stuknij obok okna - w dzień, pod gołym niebem. Po 2 minutach na słońcu cały stos to suszone owoce.' },
-            'Przed zimą zrób zapasy: suszone owoce, orzechy, żołędzie i dynie leżą w skrzyni bez końca.'
+            'Przed zimą zrób zapasy: suszone owoce, orzechy, żołędzie i dynie leżą w skrzyni bez końca.',
+            'Owoce, których nie zbierzesz, po swojej porze spadają na ziemię. Przez zimę gniją: ziemia pod nimi może zamienić się w czarnoziem, a wiosną z części wyrasta sadzonka.',
+            'Po zimie roślina może dawać o jeden owoc więcej przy każdym zbiorze (najwyżej o 3). Pomaga jej to, że w zeszłym roku zbierałeś z niej owoce, i czarnoziem pod spodem.',
+            'Żurawina, brusznica, truskawki i poziomki po zimie rozrastają się na wolne miejsce obok.'
         ]
     },
     {

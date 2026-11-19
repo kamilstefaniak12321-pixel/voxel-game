@@ -96,6 +96,7 @@ import { BlockCracks } from '../interaction/BlockCracks.js';
 import { COLOR_LEVEL } from '../world/Light.js';
 import { Wellbeing } from './Wellbeing.js';
 import { Drops } from './Drops.js';
+import { Orchard } from './Orchard.js';
 import { DropRenderer } from '../rendering/DropRenderer.js';
 import { formatKeys } from '../input/bindings.js';
 
@@ -827,6 +828,8 @@ export class Game extends GameInteraction {
 
         // Wyrzucone przedmioty leżące w świecie (0.100.0 - Drops.js).
         this.drops = new Drops(this, worldInfo.drops);
+        // Opadłe owoce i zimowy rozwój roślin (1.22.0).
+        this.orchard = new Orchard(this, worldInfo.orchard);
         this.drops.renderer = new DropRenderer(this);
 
         // Skrzynie: zawartość i modele (Chests.js); PPM otwiera ekwipunek
@@ -860,6 +863,7 @@ export class Game extends GameInteraction {
         );
 
         this.saver.drops = this.drops;
+        this.saver.orchard = this.orchard;
 
         this.saver.saveOnExit();
 
@@ -1092,6 +1096,7 @@ export class Game extends GameInteraction {
         profile?.beginStage('plants');
         this.updateSeason();
         this.plantGrowth.update(dt);
+        this.orchard.update(dt);
         this.plantAnimations.update(dt);
         profile?.endStage('plants');
 

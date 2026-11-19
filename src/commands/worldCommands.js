@@ -36,6 +36,7 @@ import { SHRUBS, SHRUB_NAMES, shrubType, SHRUB_STAGE_SECONDS } from '../blocks/s
 import { plantShrub } from '../world/shrubs/Shrubs.js';
 import { POT_WATER, BOWL, COOK_SECONDS, DISHES, DISH_NAMES } from '../items/cooking.js';
 import { fruitCalendar } from '../blocks/fruitSeasons.js';
+import { seasonSerial } from '../game/Orchard.js';
 import { newPot, cookPot } from '../game/CookingState.js';
 import { newCampfire, addFirewood } from '../game/CampfireState.js';
 import { LOW_PLANTS, LOW_PLANT_NAMES, SPHAGNUM, lowPlantType, lowPlantInfo, LOW_STAGE_SECONDS, LOW_PLANT_FIRST_ID, LOW_PLANT_END_ID } from '../blocks/lowPlants.js';
@@ -1300,6 +1301,55 @@ export const WORLD_COMMANDS = [
 
     },
 
+
+    {
+        name: 'sad',
+        aliases: ['orchard', 'rozwoj'],
+        usage: '/sad | /sad wiosna | /sad opadnij',
+        description: 'Opadłe owoce i zimowy rozwój roślin (1.22.0): stan pamięci sadu; "wiosna" rozlicza od razu chunki wokół ciebie tak, jakby minęła zima; "opadnij" - jakby minęła pora owocowania.',
+
+        run(args, { game, player, world }) {
+
+            const orchard = game.orchard;
+            const word = simplify(args[0] ?? '');
+
+            if (!word) {
+                const levels = [...orchard.levels.values()];
+                const hit = game.currentHit?.hit ? game.currentHit.block : null;
+                return `Sad: ${levels.length} roślin z większym plonem (najwięcej +${Math.max(0, ...levels)}), zbierano w tym roku z ${orchard.picked.size}, ` +
+                    `rozliczanych chunków: ${orchard.chunks.size}.` +
+                    (hit ? ` Pod celownikiem: +${orchard.level(hit.x, hit.y, hit.z)} owoców przy zbiorze.` : '') +
+                    ' Rozliczenie na próbę: /sad wiosna, /sad opadnij.';
+            }
+
+            if (!['wiosna', 'spring', 'opadnij', 'fall'].includes(word)) {
+                throw new CommandError('Użycie: /sad | /sad wiosna | /sad opadnij');
+            }
+
+            const spring = ['wiosna', 'spring'].includes(word);
+            const serial = seasonSerial(game.time.days);
+            const total = { fallen: 0, humus: 0, saplings: 0, grown: 0, spread: 0 };
+            let chunks = 0;
+
+            for (const chunk of world.chunks.values()) {
+                // (Jak w grze: tylko chunki zmienione przez gracza.)
+                if (!chunk.modified || Math.hypot(chunk.cx * CHUNK_SIZE + 8 - player.pos.x, chunk.cz * CHUNK_SIZE + 8 - player.pos.z) > 40) continue;
+                // "wiosna": od zeszłej zimy do tej wiosny; "opadnij": tak, jakby
+                // była pora, w której nic nie owocuje (zima bez zimujących owoców
+                // liczy się u roślin osobno - Orchard.settle).
+                const result = spring ? orchard.settle(chunk, Math.floor(serial / 4) * 4 - 1, Math.floor(serial / 4) * 4, game.time.days)
+                    : orchard.settle(chunk, serial - 1, serial, game.time.days);
+                for (const name of Object.keys(total)) total[name] += result[name];
+                chunks++;
+            }
+
+            orchard.version++;
+
+            return `Rozliczono ${chunks} zmienionych chunków: opadło ${total.fallen}, czarnoziem ${total.humus}, sadzonki ${total.saplings}, ` +
+                `większy plon ${total.grown}, rozrosło się ${total.spread}.` + (spring ? '' : ' (Spadają tylko owoce roślin, których pora już minęła.)');
+
+        }
+    },
 
     {
         name: 'kalendarz',

@@ -105,6 +105,9 @@ Współrzędne można podawać względem gracza: `~` (tu, gdzie stoję),
 | `/garnek ognisko` | dwa bloki przed tobą staje płonące ognisko z garnkiem wody (zmienia świat) |
 | `/garnek gotuj` | od razu dogotowuje potrawy w garnkach do 16 bloków od ciebie (garnek musi mieć co najmniej dwa składniki) |
 | `/kalendarz` | kalendarz owocowania (1.21.0, `docs/pory-owocowania.md`): pora i dzień, co owocuje teraz i co w każdej porze roku |
+| `/sad` | opadłe owoce i zimowy rozwój roślin (1.22.0, `docs/sad.md`): ile roślin daje większy plon, z ilu zbierano w tym roku; pod celownikiem - o ile owoców więcej daje roślina |
+| `/sad wiosna` | rozlicza od razu zmienione przez gracza chunki do 40 bloków od ciebie tak, jakby minęła zima: opadłe owoce gniją (czarnoziem, sadzonki), rośliny dostają większy plon i się rozrastają (zmienia świat) |
+| `/sad opadnij` | rozlicza koniec pory: owoce roślin, których pora już minęła, spadają na ziemię (zmienia świat) |
 | `/rosliny` | rośliny z paczek roślin (`assets/rosliny/`, `docs/rosliny.md`): lista z wysokością |
 | `/rosliny <roslina>` | opis rośliny: etapy z rozmiarem w blokach i pikselach, przedmiot i zbiór, gdzie rośnie, numery bloków (np. `/rosliny amarantus`) |
 | `/rosliny ogrod [roslina]` | przed tobą wszystkie etapy każdej rośliny (roślina w rzędzie, co 3 bloki; zmienia świat) |

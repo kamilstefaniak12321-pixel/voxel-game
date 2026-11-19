@@ -645,6 +645,26 @@ export const ACHIEVEMENTS = [
         when: (data) => String(data.type).startsWith('shrub_') && String(data.type).includes('_sapling')
     },
     {
+        id: 'orchard_grown',
+        tier: 'common',
+        title: 'Dobrze przezimowały',
+        task: 'Doczekaj wiosny, po której twoja roślina daje więcej owoców.',
+        comment: 'Nic nie robiłeś przez całą zimę. One - wręcz przeciwnie.',
+        icon: 'raspberry',
+        on: 'orchard',
+        when: (data) => data.grown > 0
+    },
+    {
+        id: 'orchard_sapling',
+        tier: 'rare',
+        title: 'Samosiejka',
+        task: 'Zostaw owoce na roślinie: opadną, a wiosną wyrośnie z nich sadzonka.',
+        comment: 'Najlepszy ogrodnik to ten, który wie, kiedy nie zbierać.',
+        icon: 'jablon_jablko',
+        on: 'orchard',
+        when: (data) => data.saplings > 0
+    },
+    {
         id: 'dried_fruit',
         tier: 'common',
         title: 'Na czarną godzinę',

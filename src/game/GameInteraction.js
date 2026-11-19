@@ -1122,7 +1122,9 @@ export class GameInteraction {
 
         }
 
-        if (!this.inventory.canAdd(harvest.item, harvest.count[1])) {
+        const bonus = this.orchard?.level(x, y, z) ?? 0;
+
+        if (!this.inventory.canAdd(harvest.item, harvest.count[1] + bonus)) {
 
             this.onNotice?.('Ekwipunek pełny');
             this.plantAnimations?.reject(x, y, z);
@@ -1136,6 +1138,11 @@ export class GameInteraction {
         }
 
         const count = this.addHarvest(type);
+
+        // Roślina, która dobrze przezimowała, daje więcej (game/Orchard.js).
+        if (bonus > 0) this.inventory.add(harvest.item, bonus);
+
+        this.orchard?.harvested(x, y, z);
 
         this.sounds?.play('harvest', {
             position: new THREE.Vector3(x + 0.5, y + 0.5, z + 0.5)

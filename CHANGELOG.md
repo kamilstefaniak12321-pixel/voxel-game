@@ -15,23 +15,34 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 PR #176.
 
-- **Świeże jedzenie się psuje** - tym szybciej, im cieplej. Z miękkich
-  owoców w plecaku połowa zostaje po 3 dobach, z jabłek i warzyw po 7,
-  z potraw z garnka po 2. Na mrozie prawie nic się nie psuje.
+- **Świeże jedzenie się psuje** - tym szybciej, im cieplej. W plecaku
+  miękkie owoce leżą 5 dób, jabłka i warzywa 12, pieczone 6, potrawy
+  z garnka 3. Na mrozie prawie nic się nie psuje.
+- **Każdy stos ma swoją świeżość** i widać ją w opisie: po najechaniu
+  myszą w ekwipunku i skrzyni („Świeże - zepsuje się za ok. 3 dni")
+  oraz w oknie statusu.
+- **Łączenie stosów**: zbierane i podnoszone jedzenie dokłada się samo
+  tylko do stosu o takiej samej świeżości - inne trafia na puste
+  miejsce. Stos położony ręcznie na stos łączy się zawsze, a świeżość
+  wychodzi ze średniej.
 - **Skrzynia i piwniczka**: w skrzyni jedzenie psuje się 2 razy wolniej,
   a w piwniczce (skrzynia pod dachem albo pod ziemią) 4 razy wolniej
   i latem trzyma chłód.
 - **Nie psują się**: suszone owoce, orzechy, żołędzie, pestki, prażone
   orzechy i cała dynia - z nich robi się zapasy na zimę.
-- **Kompost**: zepsute jedzenie zamienia się w kompost. Kompostem
-  kliknięta ziemia albo trawa staje się czarnoziemem.
-- W oknie statusu przy jedzeniu w ręce widać, jak szybko się psuje.
-  Komenda `/psucie`, osiągnięcie *Nic się nie marnuje*, nowe punkty
-  w poradniku.
+- **Kompost**: zepsuty stos zamienia się w kompost w tym samym miejscu,
+  więc nic nie ginie. Zepsuta potrawa to **kompost w misce** - PPM
+  wysypuje kompost i oddaje miskę.
+- **Pole z kompostem**: kompostem da się posypać rozgrzebaną ziemię.
+  Rośliny rosną na takim polu półtora raza szybciej, a po zimie chętniej
+  dają większy plon. Na zwykłej ziemi i trawie kompost robi czarnoziem.
+- Komenda `/psucie`, osiągnięcia *Nic się nie marnuje* i *Posypane
+  z wierzchu*, nowe punkty w poradniku.
 - Tylko tryb przygody.
 
-Znane braki: nie widać, ile czasu ma jeszcze konkretny stos; zepsute
-jedzenie nie szkodzi. Reszta w `docs/psucie.md`.
+Znane braki: świeżości nie widać na samej ikonce stosu, a na telefonie
+tylko w oknie statusu; zepsute jedzenie nie szkodzi. Reszta
+w `docs/psucie.md`.
 
 ## 1.22.0 - Sad: opadłe owoce i zimowy rozwój
 

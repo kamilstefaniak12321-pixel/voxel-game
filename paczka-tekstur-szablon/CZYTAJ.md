@@ -196,11 +196,12 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/coconut_palm/stripped_top.png` | Okorowany pień palmy kokosowej |
 | `bloki/coconut_palm_bark.png` | Kora palmy kokosowej |
 | `bloki/compost.png` | Kompost |
+| `bloki/compost_bowl.png` | Kompost w misce |
 | `bloki/cornflower.png` | Chaber, Krwawnica pospolita |
 | `bloki/crocus.png` | Krokus |
 | `bloki/dandelion.png` | Mniszek |
 | `bloki/dark_planks.png` | Schody z ciemnego drewna, Półblok z ciemnego drewna, Furtka z ciemnego drewna, Stół stolarski z ciemnego drewna, Łóżko z ciemnego drewna (pościelone), Łóżko z ciemnego drewna (stelaż), Ciemne deski |
-| `bloki/dirt.png` | Ziemia, Rozgrzebana ziemia |
+| `bloki/dirt.png` | Ziemia, Rozgrzebana ziemia, Pole z kompostem |
 | `bloki/dish_compote.png` | Kompot owocowy |
 | `bloki/dish_mixed_stew.png` | Polewka |
 | `bloki/dish_nut_soup.png` | Polewka orzechowa |
@@ -955,6 +956,7 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/tea_heal.png` | Napar leczniczy |
 | `bloki/tea_vigor.png` | Napar wzmacniający |
 | `bloki/terracotta.png` | Terakota |
+| `bloki/tilled_compost.png` | Pole z kompostem |
 | `bloki/tilled_dirt.png` | Rozgrzebana ziemia |
 | `bloki/tool_handle_source.png` | - |
 | `bloki/torch.png` | Pochodnia |

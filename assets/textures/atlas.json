@@ -17,7 +17,7 @@
     "rosliny": {
       "file": "rosliny.png",
       "width": 256,
-      "height": 496
+      "height": 512
     },
     "przedmioty": {
       "file": "przedmioty.png",
@@ -9185,6 +9185,20 @@
       "y": 480,
       "width": 16,
       "height": 16
+    },
+    "compost_bowl": {
+      "sheet": "rosliny",
+      "x": 0,
+      "y": 496,
+      "width": 16,
+      "height": 16
+    },
+    "tilled_compost": {
+      "sheet": "rosliny",
+      "x": 16,
+      "y": 496,
+      "width": 16,
+      "height": 16
     }
   },
   "aliases": {
@@ -16741,6 +16755,16 @@
       "x": 58,
       "y": 92,
       "region": "compost"
+    },
+    "compost_bowl": {
+      "x": 59,
+      "y": 92,
+      "region": "compost_bowl"
+    },
+    "tilled_compost": {
+      "x": 60,
+      "y": 92,
+      "region": "tilled_compost"
     }
   }
 }

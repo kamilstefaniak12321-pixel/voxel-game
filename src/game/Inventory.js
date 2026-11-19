@@ -2,6 +2,8 @@ import { HOTBAR_SIZE, HOTBAR_DEFAULT, isCreative } from '../config.js';
 
 import { itemExists, currentType } from '../items/ItemRegistry.js';
 
+import { makeItem, withCount, sameBatch, blend } from '../items/freshness.js';
+
 // ------------------------------------------------------------
 // EKWIPUNEK
 //
@@ -50,7 +52,9 @@ export function cleanItem(item) {
         return null;
     }
 
-    return { type, count: Math.min(STACK_SIZE, count) };
+    // Świeżość psującego się jedzenia (items/freshness.js); stos ze
+    // starego zapisu jest świeży.
+    return makeItem(type, Math.min(STACK_SIZE, count), Number(item.fresh));
 
 }
 
@@ -126,10 +130,10 @@ export class Inventory {
 
         if (inventory.cursor) {
 
-            const { type, count } = inventory.cursor;
-            const left = inventory.add(type, count);
+            const held = inventory.cursor;
+            const left = inventory.addItem(held);
 
-            inventory.cursor = left > 0 ? { type, count: left } : null;
+            inventory.cursor = left > 0 ? withCount(held, left) : null;
 
         }
 
@@ -226,7 +230,10 @@ export class Inventory {
 
     // Ile sztuk tego bloku zmieści się w ekwipunku.
 
-    room(type) {
+    // (fresh - świeżość dokładanego jedzenia: liczą się tylko stosy
+    // o takiej samej świeżości - items/freshness.js.)
+
+    room(type, fresh) {
 
         let room = 0;
 
@@ -235,7 +242,7 @@ export class Inventory {
             if (!item) {
                 room += STACK_SIZE;
             }
-            else if (item.type === type) {
+            else if (sameBatch(item, type, fresh)) {
                 room += STACK_SIZE - item.count;
             }
 
@@ -246,9 +253,9 @@ export class Inventory {
     }
 
 
-    canAdd(type, count = 1) {
+    canAdd(type, count = 1, fresh) {
 
-        return this.room(type) >= count;
+        return this.room(type, fresh) >= count;
 
     }
 
@@ -262,7 +269,7 @@ export class Inventory {
             slots: this.slots.map((item) => item ? { ...item } : null)
         });
 
-        return items.every(({ type, count }) => preview.add(type, count) === 0);
+        return items.every(({ type, count, fresh }) => preview.add(type, count, 0, SLOT_COUNT, fresh) === 0);
 
     }
 
@@ -271,7 +278,10 @@ export class Inventory {
     // potem do pustych miejsc (też najpierw pasek). Zwraca, ile się nie
     // zmieściło. from, to - tylko te miejsca.
 
-    add(type, count = 1, from = 0, to = SLOT_COUNT) {
+    // fresh - świeżość jedzenia (pominięte: świeże). Jedzenie dokłada się
+    // tylko do stosów o takiej samej świeżości; inne - na puste miejsce.
+
+    add(type, count = 1, from = 0, to = SLOT_COUNT, fresh) {
 
         const slots = this.data.slots;
 
@@ -282,11 +292,11 @@ export class Inventory {
 
             const item = slots[i];
 
-            if (item && item.type === type && item.count < STACK_SIZE) {
+            if (item && item.count < STACK_SIZE && sameBatch(item, type, fresh)) {
 
                 const moved = Math.min(left, STACK_SIZE - item.count);
 
-                item.count += moved;
+                blend(item, moved, fresh);
                 left -= moved;
 
             }
@@ -300,7 +310,7 @@ export class Inventory {
 
                 const moved = Math.min(left, STACK_SIZE);
 
-                slots[i] = { type, count: moved };
+                slots[i] = makeItem(type, moved, fresh);
                 left -= moved;
 
             }
@@ -308,6 +318,16 @@ export class Inventory {
         }
 
         return left;
+
+    }
+
+
+    // Dokłada istniejący stos (z jego świeżością). Zwraca, ile się nie
+    // zmieściło.
+
+    addItem(item, from = 0, to = SLOT_COUNT) {
+
+        return this.add(item.type, item.count, from, to, item.fresh);
 
     }
 
@@ -405,9 +425,9 @@ export class Inventory {
 
         const [from, to] = toHotbar ? [0, HOTBAR_SIZE] : [HOTBAR_SIZE, SLOT_COUNT];
 
-        const left = this.add(item.type, item.count, from, to);
+        const left = this.addItem(item, from, to);
 
-        this.data.slots[index] = left > 0 ? { type: item.type, count: left } : null;
+        this.data.slots[index] = left > 0 ? withCount(item, left) : null;
 
         return left < item.count;
 

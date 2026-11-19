@@ -108,9 +108,10 @@ Współrzędne można podawać względem gracza: `~` (tu, gdzie stoję),
 | `/sad` | opadłe owoce i zimowy rozwój roślin (1.22.0, `docs/sad.md`): ile roślin daje większy plon, z ilu zbierano w tym roku; pod celownikiem - o ile owoców więcej daje roślina |
 | `/sad wiosna` | rozlicza od razu zmienione przez gracza chunki do 40 bloków od ciebie tak, jakby minęła zima: opadłe owoce gniją (czarnoziem, sadzonki), rośliny dostają większy plon i się rozrastają (zmienia świat) |
 | `/sad opadnij` | rozlicza koniec pory: owoce roślin, których pora już minęła, spadają na ziemię (zmienia świat) |
-| `/psucie` | psucie się jedzenia (1.23.0, `docs/psucie.md`): czy działa, temperatura i mnożnik tu, gdzie stoisz, po ilu dobach zostaje połowa malin w plecaku, skrzyni i piwniczce; z jedzeniem w ręce - jak ono się psuje |
+| `/psucie` | psucie się jedzenia (1.23.0, `docs/psucie.md`): czy działa, temperatura i mnożnik tu, gdzie stoisz, ile poleżą świeże maliny w plecaku, skrzyni i piwniczce; z jedzeniem w ręce - jego świeżość i ile jeszcze poleży |
 | `/psucie tempo <mnożnik>` | przyspiesza psucie (np. 50) albo je wyłącza (0); nie zapisuje się |
-| `/psucie dni <ile>` | od razu psuje jedzenie w plecaku i skrzyniach tak, jakby minęło tyle dób gry (zmienia ekwipunek) |
+| `/psucie dni <ile>` | od razu starzeje jedzenie w plecaku, skrzyniach i na ziemi tak, jakby minęło tyle dób gry (zmienia ekwipunek) |
+| `/psucie swiezosc <procent>` | ustawia świeżość stosu jedzenia w ręce (1-100) - do sprawdzania łączenia stosów i opisu |
 | `/rosliny` | rośliny z paczek roślin (`assets/rosliny/`, `docs/rosliny.md`): lista z wysokością |
 | `/rosliny <roslina>` | opis rośliny: etapy z rozmiarem w blokach i pikselach, przedmiot i zbiór, gdzie rośnie, numery bloków (np. `/rosliny amarantus`) |
 | `/rosliny ogrod [roslina]` | przed tobą wszystkie etapy każdej rośliny (roślina w rzędzie, co 3 bloki; zmienia świat) |

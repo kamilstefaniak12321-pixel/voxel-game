@@ -796,6 +796,24 @@
 
 /* --- Stół krawiecki (1.27.0, SewingPanel.js) --------------------------- */
 
+.inv-top.inv-top-sewing {
+    grid-template-columns:
+        calc(var(--inv-slot-size) * 2 + var(--inv-gap))
+        var(--inv-slot-size)
+        minmax(0, 1fr);
+    grid-template-rows: repeat(5, var(--inv-slot-size));
+}
+
+#inventory .inv-top.inv-top-sewing .inv-character,
+#inventory .inv-top.inv-top-sewing .inv-zone,
+.inv-top.inv-top-sewing .inv-equipment {
+    grid-row: 1 / 6;
+}
+
+.inv-top.inv-top-sewing .inv-equipment {
+    grid-template-columns: var(--inv-slot-size);
+}
+
 #inventory .inv-zone.inv-sewing {
     flex-direction: column;
     align-items: stretch;
@@ -811,8 +829,8 @@
 }
 
 .inv-sew-label {
-    width: 52px;
-    font-size: 12px;
+    width: 42px;
+    font-size: 11px;
     color: var(--inv-muted);
 }
 

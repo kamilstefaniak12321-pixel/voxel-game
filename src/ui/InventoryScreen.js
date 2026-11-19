@@ -488,10 +488,14 @@ export class InventoryScreen {
                 (soon ? later : clothes).append(slot);
             });
 
-            equipment.append(clothes, later);
-
-            // Stół krawiecki (1.27.0): zamiast siatki wytwarzania.
+            // Stół krawiecki (1.27.0): zamiast siatki wytwarzania. Stół
+            // potrzebuje miejsca - plecak i pas (na razie puste) chowają się,
+            // a górny rząd ma jeden wiersz więcej.
             this.sewing = this.station === 'sewing' ? (this.sewing ?? new SewingPanel(this)) : null;
+
+            equipment.append(...(this.sewing ? [clothes] : [clothes, later]));
+
+            top.classList.toggle('inv-top-sewing', Boolean(this.sewing));
 
             top.append(preview, equipment, this.chest ? this.chestElement() : this.sewing ? this.sewing.element() : this.craftElement());
 

@@ -2,7 +2,7 @@
 
 > Ta strona jest generowana z kodu gry (`python tools/wiki.py`) - nie zmieniaj jej ręcznie, zmiany przepadną przy następnym generowaniu.
 
-Wersja gry **1.25.0** - 212 przedmiotów. Przedmiotu nie da się postawić jak bloku; owoce i nasiona posadzone na ziemi (PPM) wyrastają w krzak albo drzewo, narzędzia przyspieszają kopanie.
+Wersja gry **1.27.0** - 241 przedmiotów. Przedmiotu nie da się postawić jak bloku; owoce i nasiona posadzone na ziemi (PPM) wyrastają w krzak albo drzewo, narzędzia przyspieszają kopanie.
 
 
 ## Drewno
@@ -45,7 +45,7 @@ Wersja gry **1.25.0** - 212 przedmiotów. Przedmiotu nie da się postawić jak b
 | <img src="ikony/spruce_bark.png" width="32" height="32" alt=""> | **Kora świerka** | `spruce_bark` | **Służy też jako:** podpałka (1,25 raza szybsza od trawy) |
 | <img src="ikony/pine_bark.png" width="32" height="32" alt=""> | **Kora sosny** | `pine_bark` | **Służy też jako:** podpałka (1,25 raza szybsza od trawy) |
 | <img src="ikony/beech_bark.png" width="32" height="32" alt=""> | **Kora buka** | `beech_bark` | **Służy też jako:** podpałka |
-| <img src="ikony/linden_bark.png" width="32" height="32" alt=""> | **Kora lipy** | `linden_bark` | **Służy też jako:** podpałka |
+| <img src="ikony/linden_bark.png" width="32" height="32" alt=""> | **Kora lipy** | `linden_bark` | **Służy też jako:** podpałka; moczenie w wodzie (1,5 min): Łyko |
 | <img src="ikony/oak_bark.png" width="32" height="32" alt=""> | **Kora dębu** | `oak_bark` | **Służy też jako:** podpałka |
 | <img src="ikony/jablon_bark.png" width="32" height="32" alt=""> | **Kora jabłoni** | `jablon_bark` | **Służy też jako:** podpałka |
 | <img src="ikony/olcha_bark.png" width="32" height="32" alt=""> | **Kora olchy** | `olcha_bark` | **Służy też jako:** podpałka |
@@ -148,22 +148,22 @@ Wersja gry **1.25.0** - 212 przedmiotów. Przedmiotu nie da się postawić jak b
 | | Nazwa | W komendach | Najważniejsze |
 |---|---|---|---|
 | <img src="ikony/raft.png" width="32" height="32" alt=""> | **Tratwa** | `raft` | **Przepis:** Tratwa<br>**Służy też jako:** pływanie: PPM na wodzie |
-| <img src="ikony/dye_white.png" width="32" height="32" alt=""> | **Barwnik biały** | `dye_white` | **Przepis:** Barwnik biały<br>**Przydaje się do:** Pochodnia biała, Barwnik jasnoniebieski, Barwnik limonkowy, Barwnik różowy, Barwnik szary, Barwnik jasnoszary |
-| <img src="ikony/dye_orange.png" width="32" height="32" alt=""> | **Barwnik pomarańczowy** | `dye_orange` | **Przepis:** Barwnik pomarańczowy, Barwnik pomarańczowy x2<br>**Przydaje się do:** Pochodnia pomarańczowa |
-| <img src="ikony/dye_magenta.png" width="32" height="32" alt=""> | **Barwnik purpurowy** | `dye_magenta` | **Przepis:** Barwnik purpurowy x2<br>**Przydaje się do:** Pochodnia purpurowa |
-| <img src="ikony/dye_light_blue.png" width="32" height="32" alt=""> | **Barwnik jasnoniebieski** | `dye_light_blue` | **Przepis:** Barwnik jasnoniebieski x2<br>**Przydaje się do:** Pochodnia jasnoniebieska |
-| <img src="ikony/dye_yellow.png" width="32" height="32" alt=""> | **Barwnik żółty** | `dye_yellow` | **Przepis:** Barwnik żółty<br>**Przydaje się do:** Pochodnia żółta, Barwnik pomarańczowy |
-| <img src="ikony/dye_lime.png" width="32" height="32" alt=""> | **Barwnik limonkowy** | `dye_lime` | **Przepis:** Barwnik limonkowy x2<br>**Przydaje się do:** Pochodnia limonkowa |
-| <img src="ikony/dye_pink.png" width="32" height="32" alt=""> | **Barwnik różowy** | `dye_pink` | **Przepis:** Barwnik różowy, Barwnik różowy x2<br>**Przydaje się do:** Pochodnia różowa, Barwnik purpurowy |
-| <img src="ikony/dye_gray.png" width="32" height="32" alt=""> | **Barwnik szary** | `dye_gray` | **Przepis:** Barwnik szary x2<br>**Przydaje się do:** Pochodnia szara, Barwnik jasnoszary |
-| <img src="ikony/dye_light_gray.png" width="32" height="32" alt=""> | **Barwnik jasnoszary** | `dye_light_gray` | **Przepis:** Barwnik jasnoszary x2<br>**Przydaje się do:** Pochodnia jasnoszara |
-| <img src="ikony/dye_cyan.png" width="32" height="32" alt=""> | **Barwnik turkusowy** | `dye_cyan` | **Przepis:** Barwnik turkusowy x2<br>**Przydaje się do:** Pochodnia turkusowa |
-| <img src="ikony/dye_purple.png" width="32" height="32" alt=""> | **Barwnik fioletowy** | `dye_purple` | **Przepis:** Barwnik fioletowy<br>**Przydaje się do:** Pochodnia fioletowa, Barwnik purpurowy |
-| <img src="ikony/dye_blue.png" width="32" height="32" alt=""> | **Barwnik niebieski** | `dye_blue` | **Przepis:** Barwnik niebieski<br>**Przydaje się do:** Pochodnia niebieska, Barwnik jasnoniebieski, Barwnik turkusowy, Barwnik czarny |
-| <img src="ikony/dye_brown.png" width="32" height="32" alt=""> | **Barwnik brązowy** | `dye_brown` | **Przepis:** Barwnik brązowy<br>**Przydaje się do:** Pochodnia brązowa |
-| <img src="ikony/dye_green.png" width="32" height="32" alt=""> | **Barwnik zielony** | `dye_green` | **Przepis:** Barwnik zielony<br>**Przydaje się do:** Pochodnia zielona, Barwnik limonkowy, Barwnik turkusowy, Barwnik czarny |
-| <img src="ikony/dye_red.png" width="32" height="32" alt=""> | **Barwnik czerwony** | `dye_red` | **Przepis:** Barwnik czerwony<br>**Przydaje się do:** Pochodnia czerwona, Barwnik pomarańczowy, Barwnik różowy, Barwnik czarny |
-| <img src="ikony/dye_black.png" width="32" height="32" alt=""> | **Barwnik czarny** | `dye_black` | **Przepis:** Barwnik czarny x3<br>**Przydaje się do:** Pochodnia czarna, Barwnik szary |
+| <img src="ikony/dye_white.png" width="32" height="32" alt=""> | **Barwnik biały** | `dye_white` | **Przepis:** Barwnik biały<br>**Przydaje się do:** Pochodnia biała, Barwnik jasnoniebieski, Barwnik limonkowy, Barwnik różowy, Barwnik szary, Barwnik jasnoszary<br>**Służy też jako:** barwienie ubrań na stole krawieckim |
+| <img src="ikony/dye_orange.png" width="32" height="32" alt=""> | **Barwnik pomarańczowy** | `dye_orange` | **Przepis:** Barwnik pomarańczowy, Barwnik pomarańczowy x2<br>**Przydaje się do:** Pochodnia pomarańczowa<br>**Służy też jako:** barwienie ubrań na stole krawieckim |
+| <img src="ikony/dye_magenta.png" width="32" height="32" alt=""> | **Barwnik purpurowy** | `dye_magenta` | **Przepis:** Barwnik purpurowy x2<br>**Przydaje się do:** Pochodnia purpurowa<br>**Służy też jako:** barwienie ubrań na stole krawieckim |
+| <img src="ikony/dye_light_blue.png" width="32" height="32" alt=""> | **Barwnik jasnoniebieski** | `dye_light_blue` | **Przepis:** Barwnik jasnoniebieski x2<br>**Przydaje się do:** Pochodnia jasnoniebieska<br>**Służy też jako:** barwienie ubrań na stole krawieckim |
+| <img src="ikony/dye_yellow.png" width="32" height="32" alt=""> | **Barwnik żółty** | `dye_yellow` | **Przepis:** Barwnik żółty<br>**Przydaje się do:** Pochodnia żółta, Barwnik pomarańczowy<br>**Służy też jako:** barwienie ubrań na stole krawieckim |
+| <img src="ikony/dye_lime.png" width="32" height="32" alt=""> | **Barwnik limonkowy** | `dye_lime` | **Przepis:** Barwnik limonkowy x2<br>**Przydaje się do:** Pochodnia limonkowa<br>**Służy też jako:** barwienie ubrań na stole krawieckim |
+| <img src="ikony/dye_pink.png" width="32" height="32" alt=""> | **Barwnik różowy** | `dye_pink` | **Przepis:** Barwnik różowy, Barwnik różowy x2<br>**Przydaje się do:** Pochodnia różowa, Barwnik purpurowy<br>**Służy też jako:** barwienie ubrań na stole krawieckim |
+| <img src="ikony/dye_gray.png" width="32" height="32" alt=""> | **Barwnik szary** | `dye_gray` | **Przepis:** Barwnik szary x2<br>**Przydaje się do:** Pochodnia szara, Barwnik jasnoszary<br>**Służy też jako:** barwienie ubrań na stole krawieckim |
+| <img src="ikony/dye_light_gray.png" width="32" height="32" alt=""> | **Barwnik jasnoszary** | `dye_light_gray` | **Przepis:** Barwnik jasnoszary x2<br>**Przydaje się do:** Pochodnia jasnoszara<br>**Służy też jako:** barwienie ubrań na stole krawieckim |
+| <img src="ikony/dye_cyan.png" width="32" height="32" alt=""> | **Barwnik turkusowy** | `dye_cyan` | **Przepis:** Barwnik turkusowy x2<br>**Przydaje się do:** Pochodnia turkusowa<br>**Służy też jako:** barwienie ubrań na stole krawieckim |
+| <img src="ikony/dye_purple.png" width="32" height="32" alt=""> | **Barwnik fioletowy** | `dye_purple` | **Przepis:** Barwnik fioletowy<br>**Przydaje się do:** Pochodnia fioletowa, Barwnik purpurowy<br>**Służy też jako:** barwienie ubrań na stole krawieckim |
+| <img src="ikony/dye_blue.png" width="32" height="32" alt=""> | **Barwnik niebieski** | `dye_blue` | **Przepis:** Barwnik niebieski<br>**Przydaje się do:** Pochodnia niebieska, Barwnik jasnoniebieski, Barwnik turkusowy, Barwnik czarny<br>**Służy też jako:** barwienie ubrań na stole krawieckim |
+| <img src="ikony/dye_brown.png" width="32" height="32" alt=""> | **Barwnik brązowy** | `dye_brown` | **Przepis:** Barwnik brązowy<br>**Przydaje się do:** Pochodnia brązowa<br>**Służy też jako:** barwienie ubrań na stole krawieckim |
+| <img src="ikony/dye_green.png" width="32" height="32" alt=""> | **Barwnik zielony** | `dye_green` | **Przepis:** Barwnik zielony<br>**Przydaje się do:** Pochodnia zielona, Barwnik limonkowy, Barwnik turkusowy, Barwnik czarny<br>**Służy też jako:** barwienie ubrań na stole krawieckim |
+| <img src="ikony/dye_red.png" width="32" height="32" alt=""> | **Barwnik czerwony** | `dye_red` | **Przepis:** Barwnik czerwony<br>**Przydaje się do:** Pochodnia czerwona, Barwnik pomarańczowy, Barwnik różowy, Barwnik czarny<br>**Służy też jako:** barwienie ubrań na stole krawieckim |
+| <img src="ikony/dye_black.png" width="32" height="32" alt=""> | **Barwnik czarny** | `dye_black` | **Przepis:** Barwnik czarny x3<br>**Przydaje się do:** Pochodnia czarna, Barwnik szary<br>**Służy też jako:** barwienie ubrań na stole krawieckim |
 | <img src="ikony/axe_granite.png" width="32" height="32" alt=""> | **Siekiera granitowa** | `axe_granite` | **Narzędzie:** kopie 3 razy szybciej: drewno<br>**Przepis:** Siekiera granitowa<br>**Przydaje się do:** Opał — dąb, Opał — brzoza, Opał — świerk, Opał — sosna, Opał — buk, Opał — lipa, Opał — olcha, Opał — wierzba, Opał — jabłoń, Opał — akacja, Opał — cypryśnik, Opał — wiśnia, Opał — klon, Opał — kosodrzewina, Opał — oliwka, Opał — eukaliptus, Opał — sekwoja, Opał — miłorząb, Opał — jakaranda, Opał — jodła, Opał — baobab, Opał — palma kokosowa, Opał — modrzew, Opał — namorzyn, Opał — puchowiec, Opał — jukka, Opał — osika, Opał — araukaria, Opał — figowiec, Opał — dracena, Opał — cedr, Opał — sosna oścista |
 | <img src="ikony/axe_limestone.png" width="32" height="32" alt=""> | **Siekiera wapienna** | `axe_limestone` | **Narzędzie:** kopie 3 razy szybciej: drewno<br>**Przepis:** Siekiera wapienna<br>**Przydaje się do:** Opał — dąb, Opał — brzoza, Opał — świerk, Opał — sosna, Opał — buk, Opał — lipa, Opał — olcha, Opał — wierzba, Opał — jabłoń, Opał — akacja, Opał — cypryśnik, Opał — wiśnia, Opał — klon, Opał — kosodrzewina, Opał — oliwka, Opał — eukaliptus, Opał — sekwoja, Opał — miłorząb, Opał — jakaranda, Opał — jodła, Opał — baobab, Opał — palma kokosowa, Opał — modrzew, Opał — namorzyn, Opał — puchowiec, Opał — jukka, Opał — osika, Opał — araukaria, Opał — figowiec, Opał — dracena, Opał — cedr, Opał — sosna oścista |
 | <img src="ikony/axe_sandstone.png" width="32" height="32" alt=""> | **Siekiera piaskowcowa** | `axe_sandstone` | **Narzędzie:** kopie 3 razy szybciej: drewno<br>**Przepis:** Siekiera piaskowcowa<br>**Przydaje się do:** Opał — dąb, Opał — brzoza, Opał — świerk, Opał — sosna, Opał — buk, Opał — lipa, Opał — olcha, Opał — wierzba, Opał — jabłoń, Opał — akacja, Opał — cypryśnik, Opał — wiśnia, Opał — klon, Opał — kosodrzewina, Opał — oliwka, Opał — eukaliptus, Opał — sekwoja, Opał — miłorząb, Opał — jakaranda, Opał — jodła, Opał — baobab, Opał — palma kokosowa, Opał — modrzew, Opał — namorzyn, Opał — puchowiec, Opał — jukka, Opał — osika, Opał — araukaria, Opał — figowiec, Opał — dracena, Opał — cedr, Opał — sosna oścista |
@@ -200,6 +200,35 @@ Wersja gry **1.25.0** - 212 przedmiotów. Przedmiotu nie da się postawić jak b
 | <img src="ikony/clay_pot_water.png" width="32" height="32" alt=""> | **Garnek z wodą** | `clay_pot_water` | **Służy też jako:** gotowanie: postaw na ognisku i wrzuć 2-3 składniki |
 | <img src="ikony/wet_clay_bowl.png" width="32" height="32" alt=""> | **Mokra miska z gliny** | `wet_clay_bowl` | **Przepis:** Mokra miska z gliny x2, Mokra miska z gliny x2, Mokra miska z gliny x2<br>**Służy też jako:** suszenie na słońcu: Gliniana miska |
 | <img src="ikony/clay_bowl.png" width="32" height="32" alt=""> | **Gliniana miska** | `clay_bowl` | **Skąd:** wysuszenie na słońcu (wyrzucony w dzień pod gołym niebem): Mokra miska z gliny<br>**Służy też jako:** nabieranie potrawy z garnka |
+| <img src="ikony/flax_retted.png" width="32" height="32" alt=""> | **Moczony len** | `flax_retted` | **Przydaje się do:** Włókno lniane |
+| <img src="ikony/nettle_retted.png" width="32" height="32" alt=""> | **Moczona pokrzywa** | `nettle_retted` | **Przydaje się do:** Włókno pokrzywowe |
+| <img src="ikony/flax_fiber.png" width="32" height="32" alt=""> | **Włókno lniane** | `flax_fiber` | **Przepis:** Włókno lniane x2<br>**Przydaje się do:** Sznur<br>**Służy też jako:** tkanie na stole krawieckim: płótno lniane |
+| <img src="ikony/nettle_fiber.png" width="32" height="32" alt=""> | **Włókno pokrzywowe** | `nettle_fiber` | **Przepis:** Włókno pokrzywowe<br>**Przydaje się do:** Sznur<br>**Służy też jako:** tkanie na stole krawieckim: płótno pokrzywowe |
+| <img src="ikony/bast.png" width="32" height="32" alt=""> | **Łyko** | `bast` | **Przydaje się do:** Sznur<br>**Służy też jako:** tkanie na stole krawieckim: plecionka z łyka |
+| <img src="ikony/rope.png" width="32" height="32" alt=""> | **Sznur** | `rope` | **Przepis:** Sznur<br>**Przydaje się do:** Stół krawiecki |
+| <img src="ikony/linen_cloth.png" width="32" height="32" alt=""> | **Płótno lniane** | `linen_cloth` | **Służy też jako:** szycie ubrań na stole krawieckim |
+| <img src="ikony/nettle_cloth.png" width="32" height="32" alt=""> | **Płótno pokrzywowe** | `nettle_cloth` | **Służy też jako:** szycie ubrań na stole krawieckim |
+| <img src="ikony/bast_weave.png" width="32" height="32" alt=""> | **Plecionka z łyka** | `bast_weave` | **Służy też jako:** szycie ubrań na stole krawieckim |
+| <img src="ikony/cap_linen.png" width="32" height="32" alt=""> | **Czapka lniana** | `cap_linen` | **Służy też jako:** ubranie (głowa) - grzeje o 1,2°C |
+| <img src="ikony/cap_nettle.png" width="32" height="32" alt=""> | **Czapka pokrzywowa** | `cap_nettle` | **Służy też jako:** ubranie (głowa) - grzeje o 1,7°C |
+| <img src="ikony/scarf_linen.png" width="32" height="32" alt=""> | **Chusta lniana** | `scarf_linen` | **Służy też jako:** ubranie (głowa) - grzeje o 0,8°C |
+| <img src="ikony/scarf_nettle.png" width="32" height="32" alt=""> | **Chusta pokrzywowa** | `scarf_nettle` | **Służy też jako:** ubranie (głowa) - grzeje o 1,1°C |
+| <img src="ikony/headband_linen.png" width="32" height="32" alt=""> | **Opaska lniana** | `headband_linen` | **Służy też jako:** ubranie (głowa) - grzeje o 0,4°C |
+| <img src="ikony/headband_nettle.png" width="32" height="32" alt=""> | **Opaska pokrzywowa** | `headband_nettle` | **Służy też jako:** ubranie (głowa) - grzeje o 0,6°C |
+| <img src="ikony/shirt_linen.png" width="32" height="32" alt=""> | **Koszula lniana** | `shirt_linen` | **Służy też jako:** ubranie (tułów) - grzeje o 2,4°C |
+| <img src="ikony/shirt_nettle.png" width="32" height="32" alt=""> | **Koszula pokrzywowa** | `shirt_nettle` | **Służy też jako:** ubranie (tułów) - grzeje o 3,3°C |
+| <img src="ikony/vest_linen.png" width="32" height="32" alt=""> | **Kamizelka lniana** | `vest_linen` | **Służy też jako:** ubranie (tułów) - grzeje o 1,2°C |
+| <img src="ikony/vest_nettle.png" width="32" height="32" alt=""> | **Kamizelka pokrzywowa** | `vest_nettle` | **Służy też jako:** ubranie (tułów) - grzeje o 1,7°C |
+| <img src="ikony/vest_bast.png" width="32" height="32" alt=""> | **Kamizelka z łyka** | `vest_bast` | **Służy też jako:** ubranie (tułów) - grzeje o 1,2°C |
+| <img src="ikony/tunic_linen.png" width="32" height="32" alt=""> | **Tunika lniana** | `tunic_linen` | **Służy też jako:** ubranie (tułów) - grzeje o 3,2°C |
+| <img src="ikony/tunic_nettle.png" width="32" height="32" alt=""> | **Tunika pokrzywowa** | `tunic_nettle` | **Służy też jako:** ubranie (tułów) - grzeje o 4,4°C |
+| <img src="ikony/trousers_linen.png" width="32" height="32" alt=""> | **Spodnie lniane** | `trousers_linen` | **Służy też jako:** ubranie (nogi) - grzeje o 2°C |
+| <img src="ikony/trousers_nettle.png" width="32" height="32" alt=""> | **Spodnie pokrzywowe** | `trousers_nettle` | **Służy też jako:** ubranie (nogi) - grzeje o 2,8°C |
+| <img src="ikony/shorts_linen.png" width="32" height="32" alt=""> | **Krótkie spodnie lniane** | `shorts_linen` | **Służy też jako:** ubranie (nogi) - grzeje o 0,8°C |
+| <img src="ikony/shorts_nettle.png" width="32" height="32" alt=""> | **Krótkie spodnie pokrzywowe** | `shorts_nettle` | **Służy też jako:** ubranie (nogi) - grzeje o 1,1°C |
+| <img src="ikony/boots_linen.png" width="32" height="32" alt=""> | **Buty lniane** | `boots_linen` | **Służy też jako:** ubranie (stopy) - grzeje o 1,2°C |
+| <img src="ikony/boots_nettle.png" width="32" height="32" alt=""> | **Buty pokrzywowe** | `boots_nettle` | **Służy też jako:** ubranie (stopy) - grzeje o 1,7°C |
+| <img src="ikony/lapcie_bast.png" width="32" height="32" alt=""> | **Łapcie z łyka** | `lapcie_bast` | **Służy też jako:** ubranie (stopy) - grzeje o 0,8°C |
 | <img src="ikony/fire_starter.png" width="32" height="32" alt=""> | **Starter ognia** | `fire_starter` | **Przepis:** Starter ognia<br>**Służy też jako:** rozpalanie ogniska |
 | <img src="ikony/resin.png" width="32" height="32" alt=""> | **Żywica** | `resin` | **Skąd:** zbiór (PPM): Pień sosny z żywicą<br>**Przydaje się do:** Pochodnia, Lampa |
 | <img src="ikony/compost.png" width="32" height="32" alt=""> | **Kompost** | `compost` | **Służy też jako:** użyźnianie: PPM na rozgrzebanej ziemi - pole z kompostem (rośliny rosną szybciej); PPM na ziemi albo trawie - czarnoziem |
@@ -223,7 +252,7 @@ Wersja gry **1.25.0** - 212 przedmiotów. Przedmiotu nie da się postawić jak b
 | <img src="ikony/cynia_kwiat.png" width="32" height="32" alt=""> | **Kwiat cynii** | `cynia_kwiat` | **Skąd:** zbiór (PPM): Cynia (kwitnie)<br>**Przydaje się do:** Wianek z kwiatów, Barwnik pomarańczowy |
 | <img src="ikony/mikolajek_kwiat.png" width="32" height="32" alt=""> | **Kwiat mikołajka** | `mikolajek_kwiat` | **Skąd:** zbiór (PPM): Mikołajek (kwitnie)<br>**Przydaje się do:** Niebieska lampa, Wianek z kwiatów, Barwnik niebieski |
 | <img src="ikony/barwinek_kwiat.png" width="32" height="32" alt=""> | **Kwiat barwinka** | `barwinek_kwiat` | **Skąd:** zbiór (PPM): Barwinek (kwitnie)<br>**Przydaje się do:** Niebieska lampa, Wianek z kwiatów, Barwnik niebieski |
-| <img src="ikony/len_wiazka.png" width="32" height="32" alt=""> | **Wiązka lnu** | `len_wiazka` | **Skąd:** zbiór (PPM): Len (dojrzały, suchy)<br>**Przydaje się do:** Lniana pościel |
+| <img src="ikony/len_wiazka.png" width="32" height="32" alt=""> | **Wiązka lnu** | `len_wiazka` | **Skąd:** zbiór (PPM): Len (dojrzały, suchy)<br>**Przydaje się do:** Lniana pościel<br>**Służy też jako:** moczenie w wodzie (1,5 min): Moczony len |
 | <img src="ikony/gorczyca_nasiona.png" width="32" height="32" alt=""> | **Nasiona gorczycy** | `gorczyca_nasiona` | **Skąd:** zbiór (PPM): Gorczyca (strąki)<br>**Przydaje się do:** Kubek ziół wzmacniających, Barwnik żółty |
 | <img src="ikony/porostoliwkowy_plecha.png" width="32" height="32" alt=""> | **Plecha porostu oliwkowego** | `porostoliwkowy_plecha` | **Skąd:** zbiór (PPM): Porost oliwkowy (duża plecha)<br>**Przydaje się do:** Zielona lampa, Barwnik zielony |
 | <img src="ikony/porostiglasty_galazki.png" width="32" height="32" alt=""> | **Gałązki porostu iglastego** | `porostiglasty_galazki` | **Skąd:** zbiór (PPM): Porost iglasty (gęsty)<br>**Przydaje się do:** Zielona lampa, Barwnik zielony<br>**Służy też jako:** podpałka (1,5 raza szybsza od trawy) |

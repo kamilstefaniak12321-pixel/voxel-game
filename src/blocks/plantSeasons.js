@@ -88,7 +88,7 @@ for (const pack of PLANT_PACKS) {
 // kolei, więc wpis niesie `shown` - co widać na niższym poziomie.
 for (const entry of fruitSeasonEntries()) {
     INFO.set(entry.id, { pack: null, firstId: entry.shown[0], stage: entry.stage, last: entry.last, runs: runsOf(entry.seasons),
-        boost: 1, seasons: entry.seasons, nightly: false, shown: entry.shown, fruit: true });
+        boost: 1, seasons: entry.seasons, growth: entry.growth, nightly: false, shown: entry.shown, fruit: true });
     maxId = Math.max(maxId, entry.id);
 }
 
@@ -252,6 +252,7 @@ export function plantGrowthFactor(id, days) {
     // wśród swoich pór.
     if (!info || !info.seasons) return season === WINTER ? 0 : 1;
 
-    return info.seasons.includes(season) ? info.boost : 0;
+    // (Owoce zimujące na roślinie widać zimą, ale nowe wtedy nie rosną.)
+    return (info.growth ?? info.seasons).includes(season) ? info.boost : 0;
 
 }

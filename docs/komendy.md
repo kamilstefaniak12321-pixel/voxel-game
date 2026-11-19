@@ -104,6 +104,7 @@ Współrzędne można podawać względem gracza: `~` (tu, gdzie stoję),
 | `/garnek` | gotowanie (1.20.0, `docs/gotowanie.md`): zestaw do ekwipunku - garnek z wodą, trzy miski, składniki, opał, kora i starter ognia; wypisuje potrawy |
 | `/garnek ognisko` | dwa bloki przed tobą staje płonące ognisko z garnkiem wody (zmienia świat) |
 | `/garnek gotuj` | od razu dogotowuje potrawy w garnkach do 16 bloków od ciebie (garnek musi mieć co najmniej dwa składniki) |
+| `/kalendarz` | kalendarz owocowania (1.21.0, `docs/pory-owocowania.md`): pora i dzień, co owocuje teraz i co w każdej porze roku |
 | `/rosliny` | rośliny z paczek roślin (`assets/rosliny/`, `docs/rosliny.md`): lista z wysokością |
 | `/rosliny <roslina>` | opis rośliny: etapy z rozmiarem w blokach i pikselach, przedmiot i zbiór, gdzie rośnie, numery bloków (np. `/rosliny amarantus`) |
 | `/rosliny ogrod [roslina]` | przed tobą wszystkie etapy każdej rośliny (roślina w rzędzie, co 3 bloki; zmienia świat) |

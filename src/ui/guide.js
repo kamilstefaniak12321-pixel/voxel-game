@@ -184,6 +184,19 @@ export const GUIDE = [
         ]
     },
     {
+        id: 'seasons',
+        title: 'Pory roku i zapasy',
+        lines: [
+            'Rok ma cztery pory po 8 dni. Każda roślina owocuje w swojej: wiosną truskawki i poziomki, latem maliny, porzeczki, agrest i borówki, jesienią aronia, leszczyna, żurawina i oliwki.',
+            'Poza swoją porą roślina wygląda jak bez owoców i nie rośnie. Zimą nie rośnie nic - także sadzonki drzew.',
+            'Na zimę zostają tylko owoce dzikiej róży, rokitnika i żurawiny: da się je zebrać, ale nowe nie urosną do następnej pory.',
+            'Palma kokosowa, baobab i figowiec owocują cały rok.',
+            { text: 'Owoce da się ususzyć: wyrzuć je ([drop]) w dzień pod gołe niebo. Po 2 minutach na słońcu cały stos to suszone owoce - syte i dobre do garnka.',
+                touch: 'Owoce da się ususzyć: w ekwipunku weź je i stuknij obok okna - w dzień, pod gołym niebem. Po 2 minutach na słońcu cały stos to suszone owoce.' },
+            'Przed zimą zrób zapasy: suszone owoce, orzechy, żołędzie i dynie leżą w skrzyni bez końca.'
+        ]
+    },
+    {
         id: 'danger',
         title: 'Upadki i woda',
         lines: [

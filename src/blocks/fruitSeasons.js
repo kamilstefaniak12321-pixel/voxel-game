@@ -18,7 +18,7 @@
 // pory nie dotyczą - owocuje cały rok.
 // ------------------------------------------------------------
 
-import { FRUIT_BUSHES, bushStages, blockExists, getBlockId } from './BlockRegistry.js';
+import { BLOCK_TYPES, bushStages, blockExists, getBlockId } from './BlockRegistry.js';
 import { SHRUBS, SHRUB_NAMES, shrubType } from './shrubs.js';
 import { LOW_PLANTS, LOW_PLANT_NAMES, lowPlantType } from './lowPlants.js';
 
@@ -62,33 +62,42 @@ export const TREE_SEASONS = [
     ['linden_leaves_flowering', 'linden_leaves', [1]]
 ];
 
+// Owoce, które zostają na roślinie przez zimę (jak w naturze: owoce
+// dzikiej róży, rokitnik, żurawina spod śniegu). Zimą da się je zebrać,
+// ale nowe nie urosną - to jedyne świeże owoce zimy.
+export const WINTER_KEEPERS = { shrub: ['dog_rose', 'sea_buckthorn'], low: ['cranberry'] };
+
+const WINTER = 3;
+const withWinter = (seasons, keeps) => (keeps ? [...seasons, WINTER] : seasons);
+
 // Nazwy do kalendarza (/kalendarz, poradnik): [nazwa, pory].
 export function fruitCalendar() {
-    const label = (type) => type;
-    void label;
     return [
-        ...Object.entries(BUSH_SEASONS).map(([species, seasons]) => [FRUIT_BUSHES[species].label, seasons]),
-        ...Object.entries(SHRUB_SEASONS).map(([species, seasons]) => [SHRUBS[species].label, seasons]),
-        ...Object.entries(LOW_SEASONS).map(([species, seasons]) => [LOW_PLANTS[species].label, seasons]),
+        ...Object.entries(BUSH_SEASONS).map(([species, seasons]) => [BLOCK_TYPES[bushStages(species)[1]].label.replace(/ \(.*\)$/, ''), seasons]),
+        ...Object.entries(SHRUB_SEASONS).map(([species, seasons]) => [SHRUBS[species].label, withWinter(seasons, WINTER_KEEPERS.shrub.includes(species))]),
+        ...Object.entries(LOW_SEASONS).map(([species, seasons]) => [LOW_PLANTS[species].label, withWinter(seasons, WINTER_KEEPERS.low.includes(species))]),
         ['Jabłoń', [1, 2]], ['Oliwka', [2]], ['Lipa (kwiaty)', [1]]
     ];
 }
 
-// Wpisy dla plantSeasons.js: { id, stage, last, seasons, shown } -
+// Wpisy dla plantSeasons.js: { id, stage, last, seasons, growth, shown } -
 // stage: 0 roślina bez owoców, 1 kwiaty / pierwsze owoce, 2 owoce;
-// shown[poziom] - numer bloku pokazywany, gdy pora pozwala tylko na
-// niższy poziom.
+// seasons - kiedy owoce widać i da się je zebrać, growth - kiedy roślina
+// rośnie (bez zimy); shown[poziom] - numer bloku pokazywany, gdy pora
+// pozwala tylko na niższy poziom.
 export function fruitSeasonEntries() {
 
     const entries = [];
-    const add = (types, seasons) => {
+    const add = (types, growth, keeps = false) => {
+        const seasons = withWinter(growth, keeps);
         // types: [bez owoców, kwiaty?, ...owoce]
         const [rest, early, ...full] = types;
         if (!blockExists(rest)) return;
         const shown = [getBlockId(rest), getBlockId(early && blockExists(early) ? early : rest)];
-        entries.push({ id: shown[0], stage: 0, last: 2, seasons, shown });
-        if (early && blockExists(early)) entries.push({ id: getBlockId(early), stage: 1, last: 2, seasons, shown });
-        for (const type of full) if (blockExists(type)) entries.push({ id: getBlockId(type), stage: 2, last: 2, seasons, shown });
+        entries.push({ id: shown[0], stage: 0, last: 2, seasons, growth, shown });
+        if (early && blockExists(early)) entries.push({ id: getBlockId(early), stage: 1, last: 2, seasons: growth, growth, shown });
+        // (Zimują tylko dojrzałe owoce - kwiatów i zawiązków zimą nie widać.)
+        for (const type of full) if (blockExists(type)) entries.push({ id: getBlockId(type), stage: 2, last: 2, seasons: type.includes('unripe') ? growth : seasons, growth, shown });
     };
 
     for (const [species, seasons] of Object.entries(BUSH_SEASONS)) {
@@ -103,7 +112,7 @@ export function fruitSeasonEntries() {
             const type = (part) => shrubType(species, part, variety);
             // Bez etapu kwiatów pierwszym znakiem pory są niedojrzałe owoce.
             const early = blockExists(type('flower')) ? type('flower') : type('unripe');
-            add([type('growing'), early, type('unripe'), type('fruit'), type('fruit_alt')].filter((name, index, all) => all.indexOf(name) === index), seasons);
+            add([type('growing'), early, type('unripe'), type('fruit'), type('fruit_alt')].filter((name, index, all) => all.indexOf(name) === index), seasons, WINTER_KEEPERS.shrub.includes(species));
         });
     }
 
@@ -111,9 +120,9 @@ export function fruitSeasonEntries() {
         const seasons = LOW_SEASONS[species];
         if (!seasons) continue;
         const type = (part) => lowPlantType(species, part);
-        add([type('plant'), type('flower'), type('unripe'), type('fruit')], seasons);
+        add([type('plant'), type('flower'), type('unripe'), type('fruit')], seasons, WINTER_KEEPERS.low.includes(species));
         // Pnącze dyni po owocowaniu: poza porą też wygląda jak zielone.
-        if (blockExists(type('spent'))) entries.push({ id: getBlockId(type('spent')), stage: 1, last: 2, seasons, shown: [getBlockId(type('plant')), getBlockId(type('spent'))] });
+        if (blockExists(type('spent'))) entries.push({ id: getBlockId(type('spent')), stage: 1, last: 2, seasons, growth: seasons, shown: [getBlockId(type('plant')), getBlockId(type('spent'))] });
     }
 
     for (const [fruit, rest, seasons] of TREE_SEASONS) add([rest, null, fruit], seasons);

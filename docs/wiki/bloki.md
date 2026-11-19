@@ -2,7 +2,7 @@
 
 > Ta strona jest generowana z kodu gry (`python tools/wiki.py`) - nie zmieniaj jej ręcznie, zmiany przepadną przy następnym generowaniu.
 
-Wersja gry **1.19.0** - 737 bloków (do tego 3286 odmian, których nie ma w ekwipunku, np. wieniec zawieszony na boku bloku). Czas kopania dotyczy trybu przygody; w kreatywnym bloki znikają od razu.
+Wersja gry **1.20.0** - 737 bloków (do tego 3286 odmian, których nie ma w ekwipunku, np. wieniec zawieszony na boku bloku). Czas kopania dotyczy trybu przygody; w kreatywnym bloki znikają od razu.
 
 [Ziemia](#ziemia) · [Skały](#skały) · [Drewno](#drewno) · [Budulec](#budulec) · [Rośliny](#rośliny) · [Światło](#światło) · [Meble i ozdoby](#meble-i-ozdoby)
 
@@ -19,9 +19,9 @@ Wersja gry **1.19.0** - 737 bloków (do tego 3286 odmian, których nie ma w ekwi
 | <img src="ikony/coarse_dirt.png" width="32" height="32" alt=""> | **Ziemia kamienista** | `coarse_dirt` | **Kopanie:** 0,7 s (łopatą 0,23 s)<br>**Przepis:** Ziemia kamienista x4 |
 | <img src="ikony/forest_floor.png" width="32" height="32" alt=""> | **Ściółka leśna** | `forest_floor` | **Kopanie:** 0,6 s (łopatą 0,2 s)<br>**Przepis:** Ściółka leśna |
 | <img src="ikony/mud.png" width="32" height="32" alt=""> | **Błoto** | `mud` | **Kopanie:** 0,6 s (łopatą 0,2 s) |
-| <img src="ikony/clay.png" width="32" height="32" alt=""> | **Glina** | `clay` | **Kopanie:** 0,6 s (łopatą 0,2 s)<br>**Przydaje się do:** Tynk ochrowy, Terakota, Mokry kubek z gliny, Mokra cegła z gliny |
-| <img src="ikony/red_clay.png" width="32" height="32" alt=""> | **Czerwona glina** | `red_clay` | **Kopanie:** 0,6 s (łopatą 0,2 s)<br>**Przydaje się do:** Mokry kubek z czerwonej gliny, Mokra cegła z czerwonej gliny |
-| <img src="ikony/white_clay.png" width="32" height="32" alt=""> | **Biała glina** | `white_clay` | **Kopanie:** 0,6 s (łopatą 0,2 s)<br>**Przydaje się do:** Mokry kubek z białej gliny, Mokra cegła z białej gliny |
+| <img src="ikony/clay.png" width="32" height="32" alt=""> | **Glina** | `clay` | **Kopanie:** 0,6 s (łopatą 0,2 s)<br>**Przydaje się do:** Tynk ochrowy, Terakota, Mokry kubek z gliny, Mokry garnek z gliny, Mokra miska z gliny, Mokra cegła z gliny |
+| <img src="ikony/red_clay.png" width="32" height="32" alt=""> | **Czerwona glina** | `red_clay` | **Kopanie:** 0,6 s (łopatą 0,2 s)<br>**Przydaje się do:** Mokry kubek z czerwonej gliny, Mokry garnek z gliny, Mokra miska z gliny, Mokra cegła z czerwonej gliny |
+| <img src="ikony/white_clay.png" width="32" height="32" alt=""> | **Biała glina** | `white_clay` | **Kopanie:** 0,6 s (łopatą 0,2 s)<br>**Przydaje się do:** Mokry kubek z białej gliny, Mokry garnek z gliny, Mokra miska z gliny, Mokra cegła z białej gliny |
 | <img src="ikony/gravel.png" width="32" height="32" alt=""> | **Żwir** | `gravel` | **Kopanie:** 0,7 s (łopatą 0,23 s)<br>**Przydaje się do:** Ziemia kamienista |
 | <img src="ikony/snow.png" width="32" height="32" alt=""> | **Śnieg** | `snow` | **Kopanie:** 0,4 s (łopatą 0,13 s)<br>**Przepis:** Śnieg<br>**Przydaje się do:** Warstwa śniegu |
 | <img src="ikony/snow_layer.png" width="32" height="32" alt=""> | **Warstwa śniegu** | `snow_layer` | **Kopanie:** 0,4 s (łopatą 0,13 s)<br>**Przepis:** Warstwa śniegu x4<br>**Przydaje się do:** Śnieg |

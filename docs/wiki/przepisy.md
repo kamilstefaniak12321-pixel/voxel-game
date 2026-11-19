@@ -2,7 +2,7 @@
 
 > Ta strona jest generowana z kodu gry (`python tools/wiki.py`) - nie zmieniaj jej ręcznie, zmiany przepadną przy następnym generowaniu.
 
-Wersja gry **1.19.0** - 243 przepisów. Wytwarza się w ekwipunku (**E**): siatka 2 x 2 obok miejsc ekwipunku, wynik po prawej (klik - weź, Shift + klik - ile się da). Przycisk 📖 *Przepisy* otwiera księgę - klik na przepisie sam układa składniki. Przepisy *z kształtem* można przesuwać po siatce i odbijać w poziomie; przepisy *bez kształtu* - obojętne, gdzie leżą składniki. Z czatu: `/przepisy`, `/wytworz <przepis>`.
+Wersja gry **1.20.0** - 249 przepisów. Wytwarza się w ekwipunku (**E**): siatka 2 x 2 obok miejsc ekwipunku, wynik po prawej (klik - weź, Shift + klik - ile się da). Przycisk 📖 *Przepisy* otwiera księgę - klik na przepisie sam układa składniki. Przepisy *z kształtem* można przesuwać po siatce i odbijać w poziomie; przepisy *bez kształtu* - obojętne, gdzie leżą składniki. Z czatu: `/przepisy`, `/wytworz <przepis>`.
 
 
 ## Ziemia
@@ -1206,6 +1206,42 @@ Wersja gry **1.19.0** - 243 przepisów. Wytwarza się w ekwipunku (**E**): siatk
 <img src="przepisy/wet_white_clay_cup.png" alt="Mokry kubek z białej gliny x2: 2 x Biała glina (obojętne gdzie)">
 
 2 x Biała glina (bez kształtu). Nazwa przepisu: `wet_white_clay_cup`. Mokry kubek trzeba wysuszyć: wyrzuć go (klawisz wyrzucania, domyślnie Q) na słońce - po ok. 2 minutach dnia zamieni się w kubek, z którego da się pić.
+
+### Mokry garnek z gliny
+
+<img src="przepisy/wet_clay_pot.png" alt="Mokry garnek z gliny: 3 x Glina + 1 x Patyk (obojętne gdzie)">
+
+3 x Glina + 1 x Patyk (bez kształtu). Nazwa przepisu: `wet_clay_pot`. Mokry garnek trzeba wysuszyć na słońcu (wyrzuć go klawiszem wyrzucania, domyślnie Q - ok. 2 minuty dnia). Suchym nabierz wody (PPM na wodzie) i postaw go na ognisku.
+
+### Mokry garnek z gliny
+
+<img src="przepisy/wet_clay_pot_red_clay.png" alt="Mokry garnek z gliny: 3 x Czerwona glina + 1 x Patyk (obojętne gdzie)">
+
+3 x Czerwona glina + 1 x Patyk (bez kształtu). Nazwa przepisu: `wet_clay_pot_red_clay`. Mokry garnek trzeba wysuszyć na słońcu (wyrzuć go klawiszem wyrzucania, domyślnie Q - ok. 2 minuty dnia). Suchym nabierz wody (PPM na wodzie) i postaw go na ognisku.
+
+### Mokry garnek z gliny
+
+<img src="przepisy/wet_clay_pot_white_clay.png" alt="Mokry garnek z gliny: 3 x Biała glina + 1 x Patyk (obojętne gdzie)">
+
+3 x Biała glina + 1 x Patyk (bez kształtu). Nazwa przepisu: `wet_clay_pot_white_clay`. Mokry garnek trzeba wysuszyć na słońcu (wyrzuć go klawiszem wyrzucania, domyślnie Q - ok. 2 minuty dnia). Suchym nabierz wody (PPM na wodzie) i postaw go na ognisku.
+
+### Mokra miska z gliny x2
+
+<img src="przepisy/wet_clay_bowl.png" alt="Mokra miska z gliny x2: 3 x Glina (obojętne gdzie)">
+
+3 x Glina (bez kształtu). Nazwa przepisu: `wet_clay_bowl`. Mokre miski trzeba wysuszyć na słońcu. Miską nabiera się potrawę z garnka; po zjedzeniu miska zostaje.
+
+### Mokra miska z gliny x2
+
+<img src="przepisy/wet_clay_bowl_red_clay.png" alt="Mokra miska z gliny x2: 3 x Czerwona glina (obojętne gdzie)">
+
+3 x Czerwona glina (bez kształtu). Nazwa przepisu: `wet_clay_bowl_red_clay`. Mokre miski trzeba wysuszyć na słońcu. Miską nabiera się potrawę z garnka; po zjedzeniu miska zostaje.
+
+### Mokra miska z gliny x2
+
+<img src="przepisy/wet_clay_bowl_white_clay.png" alt="Mokra miska z gliny x2: 3 x Biała glina (obojętne gdzie)">
+
+3 x Biała glina (bez kształtu). Nazwa przepisu: `wet_clay_bowl_white_clay`. Mokre miski trzeba wysuszyć na słońcu. Miską nabiera się potrawę z garnka; po zjedzeniu miska zostaje.
 
 ### Mokra cegła z gliny x2
 

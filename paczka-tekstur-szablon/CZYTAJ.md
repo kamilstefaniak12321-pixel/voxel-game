@@ -1,4 +1,4 @@
-# Paczka tekstur - szablon (Various Roots 1.19.0)
+# Paczka tekstur - szablon (Various Roots 1.20.0)
 
 Oryginalne tekstury gry, każda w osobnym pliku. Zrób z nich własną paczkę:
 
@@ -177,9 +177,12 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/chili_bush_full.png` | - |
 | `bloki/chili_pepper.png` | - |
 | `bloki/clay.png` | Glina |
+| `bloki/clay_bowl.png` | Gliniana miska |
 | `bloki/clay_brick.png` | Cegła |
 | `bloki/clay_bricks.png` | Cegły |
 | `bloki/clay_cup.png` | Gliniany kubek |
+| `bloki/clay_pot.png` | Gliniany garnek |
+| `bloki/clay_pot_water.png` | Garnek z wodą |
 | `bloki/clover.png` | Koniczyna, Grzybień biały, Rzęsa wodna |
 | `bloki/coarse_dirt.png` | Ziemia kamienista |
 | `bloki/coconut_palm/coconut.png` | Kokos |
@@ -197,6 +200,12 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/dandelion.png` | Mniszek |
 | `bloki/dark_planks.png` | Schody z ciemnego drewna, Półblok z ciemnego drewna, Furtka z ciemnego drewna, Stół stolarski z ciemnego drewna, Łóżko z ciemnego drewna (pościelone), Łóżko z ciemnego drewna (stelaż), Ciemne deski |
 | `bloki/dirt.png` | Ziemia, Rozgrzebana ziemia |
+| `bloki/dish_compote.png` | Kompot owocowy |
+| `bloki/dish_mixed_stew.png` | Polewka |
+| `bloki/dish_nut_soup.png` | Polewka orzechowa |
+| `bloki/dish_pumpkin_soup.png` | Zupa dyniowa |
+| `bloki/dish_vegetable_stew.png` | Gulasz warzywny |
+| `bloki/dish_zucchini_stew.png` | Duszona cukinia |
 | `bloki/door_acacia_edge.png` | - |
 | `bloki/door_araucaria_edge.png` | - |
 | `bloki/door_aspen_edge.png` | - |
@@ -1042,8 +1051,10 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/trapdoor_wierzba_bottom.png` | - |
 | `bloki/trapdoor_wierzba_edge.png` | - |
 | `bloki/water.png` | Woda, Płynąca woda |
+| `bloki/wet_clay_bowl.png` | Mokra miska z gliny |
 | `bloki/wet_clay_brick.png` | Mokra cegła z gliny |
 | `bloki/wet_clay_cup.png` | Mokry kubek z gliny |
+| `bloki/wet_clay_pot.png` | Mokry garnek z gliny |
 | `bloki/wet_red_clay_brick.png` | Mokra cegła z czerwonej gliny |
 | `bloki/wet_red_clay_cup.png` | Mokry kubek z czerwonej gliny |
 | `bloki/wet_white_clay_brick.png` | Mokra cegła z białej gliny |

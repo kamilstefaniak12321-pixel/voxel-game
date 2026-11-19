@@ -27,6 +27,8 @@ export class Campfires {
         this.noticeAt = -10;
         // Pieczenie (trzymany PPM z surowym jedzeniem): { key, type, time }.
         this.roast = null;
+        // Kiedy następne bulgotanie gotującego się garnka (ognisko -> sekundy).
+        this.bubbles = new WeakMap();
         for (const value of Array.isArray(saved) ? saved : []) {
             const fire = restoreCampfire(value);
             if (fire) this.fires.set(keyOf(fire), fire);
@@ -205,9 +207,10 @@ export class Campfires {
 
     // Bulgotanie gotującego się garnka (co kilka sekund, słychać z bliska).
     bubble(fire, dt) {
-        fire.pot.bubble = (fire.pot.bubble ?? 1) - dt;
-        if (fire.pot.bubble > 0) return;
-        fire.pot.bubble = 1.6 + Math.random() * 1.4;
+        // (Licznik poza stanem ogniska - nie trafia do zapisu.)
+        const left = (this.bubbles.get(fire) ?? 1) - dt;
+        this.bubbles.set(fire, left > 0 ? left : 1.6 + Math.random() * 1.4);
+        if (left > 0) return;
         this.game.sounds?.play('pot_boil', { position: { x: fire.x + .5, y: fire.y + .6, z: fire.z + .5 } });
     }
 

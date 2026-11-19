@@ -2,7 +2,7 @@
 
 > Ta strona jest generowana z kodu gry (`python tools/wiki.py`) - nie zmieniaj jej ręcznie, zmiany przepadną przy następnym generowaniu.
 
-Wersja gry **1.19.0** - 104 osiągnięć. Księga osiągnięć: klawisz **L**. Uwaga, spoilery: sekretne osiągnięcia są tu opisane (w grze widać tylko „???”).
+Wersja gry **1.20.0** - 106 osiągnięć. Księga osiągnięć: klawisz **L**. Uwaga, spoilery: sekretne osiągnięcia są tu opisane (w grze widać tylko „???”).
 
 
 ## Zwykłe (10 pkt)
@@ -45,6 +45,7 @@ Wersja gry **1.19.0** - 104 osiągnięć. Księga osiągnięć: klawisz **L**. U
 | <img src="ikony/raspberry.png" width="32" height="32" alt=""> | **Prosto z krzewu** | Zbierz owoce z krzewu jagodowego (np. maliny, porzeczki albo aronię). | „Połowa do koszyka, połowa do buzi. Koszyk nie protestuje.” |
 | <img src="ikony/elderflower.png" width="32" height="32" alt=""> | **Zapach czerwca** | Zerwij płatki dzikiej róży albo kwiaty bzu czarnego z kwitnącego krzewu. | „Krzew zakwitnie jeszcze raz. Owoców z tej gałązki już nie będzie - coś za coś.” |
 | <img src="ikony/redcurrant.png" width="32" height="32" alt=""> | **Własny krzew** | Posadź owoc krzewu jagodowego na rozgrzebanej ziemi. | „Teraz tylko poczekać. Krzew się nie spieszy, ty też nie musisz.” |
+| <img src="ikony/clay_pot.png" width="32" height="32" alt=""> | **Coś na ciepło** | Ugotuj potrawę w glinianym garnku nad ogniskiem. | „Woda, ogień i trochę cierpliwości. Reszta to już kuchnia.” |
 | <img src="ikony/lingonberry.png" width="32" height="32" alt=""> | **Runo leśne** | Zbierz żurawinę, borówki brusznice i poziomki (PPM na roślinie z owocami). | „Wszystko rośnie przy samej ziemi. Kolana to zapamiętają.” |
 | <img src="ikony/wild_strawberry.png" width="32" height="32" alt=""> | **Grządka** | Posadź na rozgrzebanej ziemi żurawinę, brusznicę, poziomki, pestki dyni albo cukinię. | „Niskie to to, ale twoje.” |
 | <img src="ikony/pumpkin_slice.png" width="32" height="32" alt=""> | **Dyniowe żniwa** | Pokrój dynię na kawałki (dynia w siatce wytwarzania). | „Cztery kawałki i garść pestek na przyszły rok. Dynia myśli o wszystkim.” |
@@ -79,6 +80,7 @@ Wersja gry **1.19.0** - 104 osiągnięć. Księga osiągnięć: klawisz **L**. U
 
 | | Tytuł | Jak zdobyć | Komentarz |
 |---|---|---|---|
+| <img src="ikony/dish_vegetable_stew.png" width="32" height="32" alt=""> | **Kuchmistrz** | Ugotuj każdą z sześciu potraw. | „Garnek ten sam, a za każdym razem pachnie inaczej.” |
 | <img src="ikony/elderflower.png" width="32" height="32" alt=""> | **Biały kruk wśród jeży** | Spotkaj jeżyka albinosa. | „Kremowe kolce, czerwone oczka. Trafia się raz na kilkadziesiąt jeży.” |
 | <img src="ikony/granite.png" width="32" height="32" alt=""> | **Murarz** | Postaw 500 bloków. | „Pięćset bloków. Kręgosłup pamięta każdy z nich.” |
 | <img src="ikony/gravel.png" width="32" height="32" alt=""> | **Głębinowiec** | Zanurkuj 10 bloków pod powierzchnię wody. | „Ryb brak, ale za to jest ciemno, mokro i trochę strasznie.” |

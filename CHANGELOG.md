@@ -11,6 +11,30 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 1.20.0 - Gotowanie w garnku
+
+PR #173.
+
+Pierwsza część „kuchni i spiżarni".
+
+- **Gliniany garnek nad ogniskiem**: z gliny lepi się garnek i miski
+  (schną na słońcu jak kubki). Garnkiem nabiera się wody z rzeki albo
+  jeziora, stawia go na ognisku i wrzuca 2-3 surowe składniki.
+- **Sześć potraw**, zależnie od składników: gulasz warzywny, zupa
+  dyniowa, duszona cukinia, polewka orzechowa, kompot owocowy i polewka
+  z czegokolwiek. Gotują się 45 sekund nad płonącym ogniem - bez
+  trzymania przycisku.
+- **Najlepsze jedzenie w grze**: porcja daje 26-38 energii (pieczone
+  jabłko 22). Porcji jest tyle, ile składników; nabiera się je glinianą
+  miską, a miska po zjedzeniu zostaje.
+- Garnek widać na ognisku: woda, potem kolor potrawy, para i bulgotanie.
+- Woda ma wreszcie zastosowanie, a glina - trzy nowe wyroby.
+- Dwa osiągnięcia (*Coś na ciepło*, *Kuchmistrz*), rozdział w poradniku,
+  komenda `/garnek`.
+
+Znane braki: jeden kolor garnka, przyprawy nie zmieniają potrawy,
+z garnkiem na ogniu nie da się piec. Reszta w `docs/gotowanie.md`.
+
 ## 1.19.0 - Rośliny niskie
 
 PR #172.

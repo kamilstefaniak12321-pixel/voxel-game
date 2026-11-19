@@ -156,6 +156,22 @@ export const GUIDE = [
         ]
     },
     {
+        id: 'cooking',
+        title: 'Gotowanie w garnku',
+        lines: [
+            '3 gliny i patyk → mokry garnek. 3 gliny → 2 mokre miski. Wysusz je na słońcu jak kubki.',
+            { text: 'Nabierz wody: z pustym garnkiem w ręce kliknij [use] na wodę.', touch: 'Nabierz wody: z pustym garnkiem w ręce stuknij wodę.' },
+            { text: 'Garnek z wodą postaw na ognisku ([use]). Potem wrzuć 2 albo 3 surowe składniki - [use] z jedzeniem w ręce.',
+                touch: 'Garnek z wodą postaw na ognisku (stuknij je). Potem wrzuć 2 albo 3 surowe składniki - stuknij ognisko z jedzeniem w ręce.' },
+            'Nad płonącym ogniem potrawa gotuje się 45 sekund - nie trzeba przy niej stać. Dorzucony składnik zaczyna gotowanie od nowa.',
+            'Gotową potrawę nabierz glinianą miską: tyle porcji, ile było składników. Zjedzona potrawa oddaje miskę.',
+            'Dynia i cukinia → gulasz warzywny. Dwie dynie → zupa dyniowa. Dwie cukinie → duszona cukinia. Orzechy, żołędzie, pestki → polewka orzechowa. Same owoce → kompot. Cokolwiek innego → polewka.',
+            'Potrawa z garnka to najlepszy posiłek w grze - dużo lepszy niż to samo upieczone.',
+            { text: 'Pusty garnek zdejmij pustą ręką ([use]) i nabierz wody od nowa. Z garnkiem na ogniu nie da się piec.',
+                touch: 'Pusty garnek zdejmij pustą ręką (stuknij ognisko) i nabierz wody od nowa. Z garnkiem na ogniu nie da się piec.' }
+        ]
+    },
+    {
         id: 'farming',
         title: 'Uprawa',
         lines: [

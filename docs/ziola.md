@@ -22,13 +22,16 @@ Nowy sposób na poprawę samopoczucia - obok jedzenia i snu.
 
 | Napar | Zioła | Co daje | Jak długo |
 |---|---|---|---|
-| **Napar na sen** | kwiat lipy, bukiet lawendy | najbliższy sen jest głębszy: wysypiasz się szybciej i lepiej niż zwykle w danym miejscu (na posłaniu - do pełna, nawet na gołej ziemi - „wypoczęty") | do najbliższej przespanej nocy, najwyżej 14 godzin gry |
-| **Napar leczniczy** | rumianek, babka, liście szałwii, kwiat nagietka | stłuczona noga goi się 3 razy szybciej | 4 godziny gry |
+| **Napar na sen** | kwiat lipy, bukiet lawendy, **płatki róży** (1.25.0) | najbliższy sen jest głębszy: wysypiasz się szybciej i lepiej niż zwykle w danym miejscu (na posłaniu - do pełna, nawet na gołej ziemi - „wypoczęty") | do najbliższej przespanej nocy, najwyżej 14 godzin gry |
+| **Napar leczniczy** | rumianek, babka, liście szałwii, kwiat nagietka, **kwiat czarnego bzu** (1.25.0) | stłuczona noga goi się 3 razy szybciej | 4 godziny gry |
 | **Napar wzmacniający** | pokrzywa, nasiona gorczycy | energii ubywa o 1/5 wolniej, kopanie jest trochę szybsze | 5 godzin gry |
 
 Godzina gry to 50 sekund. Działający napar widać w oknie statusu
 (klawisz **C**, wiersz *Działa*). Wypicie tego samego naparu drugi raz
 odnawia czas, nie wydłuża go.
+
+Od 1.25.0 część owoców działa sama, słabiej niż napar - 
+[ziemia.md](ziemia.md).
 
 ## Barwniki z każdego kwiatu
 

@@ -36,13 +36,27 @@ export function fertilizerOf(item) {
     return Object.hasOwn(FERTILIZER_ITEMS, item ?? '') ? FERTILIZER_ITEMS[item] : null;
 }
 
-// Zwykłe pole i wszystkie użyźnione.
-export const FIELD_BLOCKS = ['tilled_dirt', ...Object.values(FERTILIZERS).map((entry) => entry.field)];
+// Pola bez nawozu (1.25.0): zwykłe i z innej ziemi. Rozgrzebany
+// czarnoziem jest żyzny sam z siebie, ziemia kamienista - jałowa.
+//   growth - mnożnik wzrostu, rich - sad liczy pole jak czarnoziem,
+//   fertilize - czy da się je posypać nawozem.
+export const FIELDS = {
+    tilled_dirt: { growth: 1, rich: false, fertilize: true },
+    tilled_humus: { growth: 1.3, rich: true, fertilize: false },
+    tilled_coarse: { growth: 0.7, rich: false, fertilize: true },
+    ...Object.fromEntries(Object.values(FERTILIZERS).map((entry) => [entry.field, { growth: entry.growth, rich: entry.rich, fertilize: false }]))
+};
 
-export const isFieldBlock = (type) => FIELD_BLOCKS.includes(type);
+// Wszystkie pola: na każdym da się sadzić.
+export const FIELD_BLOCKS = Object.keys(FIELDS);
 
-// Statystyki pola: { growth, rich } (zwykłe pole i nie-pole: 1, false).
+export const isFieldBlock = (type) => Object.hasOwn(FIELDS, type ?? '');
+
+// Czy to pole da się posypać nawozem.
+export const canFertilize = (type) => isFieldBlock(type) && FIELDS[type].fertilize;
+
+// Statystyki pola: { growth, rich } (nie-pole: 1, false).
 export function fieldStats(type) {
-    const entry = Object.values(FERTILIZERS).find((value) => value.field === type);
+    const entry = isFieldBlock(type) ? FIELDS[type] : null;
     return { growth: entry?.growth ?? 1, rich: Boolean(entry?.rich) };
 }

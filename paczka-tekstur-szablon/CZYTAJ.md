@@ -1,4 +1,4 @@
-# Paczka tekstur - szablon (Various Roots 1.23.0)
+# Paczka tekstur - szablon (Various Roots 1.25.0)
 
 Oryginalne tekstury gry, każda w osobnym pliku. Zrób z nich własną paczkę:
 
@@ -184,7 +184,7 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/clay_pot.png` | Gliniany garnek |
 | `bloki/clay_pot_water.png` | Garnek z wodą |
 | `bloki/clover.png` | Koniczyna, Grzybień biały, Rzęsa wodna |
-| `bloki/coarse_dirt.png` | Ziemia kamienista |
+| `bloki/coarse_dirt.png` | Rozgrzebana ziemia kamienista, Ziemia kamienista |
 | `bloki/coconut_palm/coconut.png` | Kokos |
 | `bloki/coconut_palm/leaves.png` | Liście palmy kokosowej, Liście palmy (kokosy odrastają) |
 | `bloki/coconut_palm/leaves_variant.png` | Liście palmy z kokosami |
@@ -363,7 +363,7 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/hazel_bush_full.png` | - |
 | `bloki/hazelnut.png` | - |
 | `bloki/heather.png` | Wrzos |
-| `bloki/humus.png` | Czarnoziem |
+| `bloki/humus.png` | Rozgrzebany czarnoziem, Czarnoziem |
 | `bloki/item_aronia.png` | Aronia |
 | `bloki/item_blackcurrant.png` | Czarne porzeczki |
 | `bloki/item_cranberry.png` | Żurawina |
@@ -956,8 +956,10 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/tea_heal.png` | Napar leczniczy |
 | `bloki/tea_vigor.png` | Napar wzmacniający |
 | `bloki/terracotta.png` | Terakota |
+| `bloki/tilled_coarse.png` | Rozgrzebana ziemia kamienista |
 | `bloki/tilled_compost.png` | Pole z kompostem |
 | `bloki/tilled_dirt.png` | Rozgrzebana ziemia |
+| `bloki/tilled_humus.png` | Rozgrzebany czarnoziem |
 | `bloki/tool_handle_source.png` | - |
 | `bloki/torch.png` | Pochodnia |
 | `bloki/torch_black.png` | Pochodnia czarna |

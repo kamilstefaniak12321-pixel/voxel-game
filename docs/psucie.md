@@ -82,8 +82,8 @@ i żołędzie, napary, cała dynia (blok).
 
 ## Użyźnianie pola (1.24.0)
 
-**PPM kompostem na rozgrzebanej ziemi** (albo na roślinie, która na niej
-rośnie) posypuje jej górną warstwę: powstaje **pole z kompostem**
+**PPM kompostem na rozgrzebanej ziemi** - zwykłej albo kamienistej
+(także na roślinie, która na niej rośnie) posypuje jej górną warstwę: powstaje **pole z kompostem**
 (`tilled_compost`, numer 15400).
 
 | Statystyka pola z kompostem | |

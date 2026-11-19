@@ -108,6 +108,7 @@ Współrzędne można podawać względem gracza: `~` (tu, gdzie stoję),
 | `/sad` | opadłe owoce i zimowy rozwój roślin (1.22.0, `docs/sad.md`): ile roślin daje większy plon, z ilu zbierano w tym roku; pod celownikiem - o ile owoców więcej daje roślina |
 | `/sad wiosna` | rozlicza od razu zmienione przez gracza chunki do 40 bloków od ciebie tak, jakby minęła zima: opadłe owoce gniją (czarnoziem, sadzonki), rośliny dostają większy plon i się rozrastają (zmienia świat) |
 | `/sad opadnij` | rozlicza koniec pory: owoce roślin, których pora już minęła, spadają na ziemię (zmienia świat) |
+| `/ziemia` | ziemia z charakterem (1.25.0, `docs/ziemia.md`): rodzaj ziemi pod celownikiem (albo pod nogami), mnożnik wzrostu roślin, czy w pobliżu jest woda i ile wychodzi razem |
 | `/psucie` | psucie się jedzenia (1.23.0, `docs/psucie.md`): czy działa, temperatura i mnożnik tu, gdzie stoisz, ile poleżą świeże maliny w plecaku, skrzyni i piwniczce; z jedzeniem w ręce - jego świeżość i ile jeszcze poleży |
 | `/psucie tempo <mnożnik>` | przyspiesza psucie (np. 50) albo je wyłącza (0); nie zapisuje się |
 | `/psucie dni <ile>` | od razu starzeje jedzenie w plecaku, skrzyniach i na ziemi tak, jakby minęło tyle dób gry (zmienia ekwipunek) |

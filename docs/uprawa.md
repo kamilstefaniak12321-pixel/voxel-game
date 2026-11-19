@@ -27,6 +27,9 @@ podpowiadają: *Najpierw rozgrzeb ziemię łopatą*.
 
 ## Szczegóły
 
+- **Ziemia z charakterem (1.25.0).** Rozgrzebać da się też czarnoziem
+  (rośliny rosną szybciej) i ziemię kamienistą (wolniej), a woda
+  w pobliżu przyspiesza wzrost ([ziemia.md](ziemia.md)).
 - **Pole z kompostem (1.24.0).** PPM kompostem na rozgrzebanej ziemi
   posypuje ją: rośliny rosną na takim polu półtora raza szybciej
   ([psucie.md](psucie.md)).

@@ -14,7 +14,11 @@
 //              ogniskiem, ROASTS) albo 'drink' (napój: da się wypić
 //              także z pełnym żołądkiem),
 //   effects  - dodatkowe działanie (od 0.98.1): lista nazw efektów
-//              z items/effects.js, np. ['calm']; puste - bez działania,
+//              z items/effects.js, np. ['calm']; puste - bez działania.
+//              Od 1.25.0 mają je też niektóre owoce ("z charakterem"):
+//              dzika róża, żurawina i borówka brusznica - lekkie gojenie,
+//              aronia, rokitnik, czarna porzeczka i czarny bez -
+//              pokrzepienie, chili - rozgrzanie,
 //   returns  - co zostaje w ręce po zjedzeniu albo wypiciu (kubek).
 //
 // Napary (0.98.1, docs/ziola.md): gliniany kubek + dwa zioła z jednej
@@ -49,23 +53,23 @@ export const FOODS = {
     hazelnut: { energy: 10, fullness: 120, kind: 'snack', effects: [] },
     beechnuts: { energy: 7, fullness: 90, kind: 'snack', effects: [] },
     acorn: { energy: 4, fullness: 60, kind: 'snack', effects: [] },
-    chili_pepper: { energy: 3, fullness: 20, kind: 'snack', effects: [] },
+    chili_pepper: { energy: 3, fullness: 20, kind: 'snack', effects: ['warm'] },
     // 1.17.0: owoce krzewów jagodowych (blocks/shrubs.js).
-    aronia: { energy: 5, fullness: 40, kind: 'snack', effects: [] },
+    aronia: { energy: 5, fullness: 40, kind: 'snack', effects: ['tonic'] },
     redcurrant: { energy: 5, fullness: 40, kind: 'snack', effects: [] },
-    blackcurrant: { energy: 6, fullness: 45, kind: 'snack', effects: [] },
+    blackcurrant: { energy: 6, fullness: 45, kind: 'snack', effects: ['tonic'] },
     gooseberry: { energy: 6, fullness: 50, kind: 'snack', effects: [] },
     red_gooseberry: { energy: 6, fullness: 50, kind: 'snack', effects: [] },
     raspberry: { energy: 6, fullness: 45, kind: 'snack', effects: [] },
     yellow_raspberry: { energy: 6, fullness: 45, kind: 'snack', effects: [] },
-    rose_hip: { energy: 5, fullness: 45, kind: 'snack', effects: [] },
+    rose_hip: { energy: 5, fullness: 45, kind: 'snack', effects: ['mend'] },
     rose_petals: { energy: 2, fullness: 15, kind: 'snack', effects: [] },
-    elderberry: { energy: 4, fullness: 35, kind: 'snack', effects: [] },
+    elderberry: { energy: 4, fullness: 35, kind: 'snack', effects: ['tonic'] },
     elderflower: { energy: 2, fullness: 15, kind: 'snack', effects: [] },
-    sea_buckthorn_berry: { energy: 5, fullness: 40, kind: 'snack', effects: [] },
+    sea_buckthorn_berry: { energy: 5, fullness: 40, kind: 'snack', effects: ['tonic'] },
     // 1.19.0: rośliny niskie (blocks/lowPlants.js).
-    cranberry: { energy: 4, fullness: 35, kind: 'snack', effects: [] },
-    lingonberry: { energy: 5, fullness: 40, kind: 'snack', effects: [] },
+    cranberry: { energy: 4, fullness: 35, kind: 'snack', effects: ['mend'] },
+    lingonberry: { energy: 5, fullness: 40, kind: 'snack', effects: ['mend'] },
     wild_strawberry: { energy: 6, fullness: 40, kind: 'snack', effects: [] },
     pumpkin_slice: { energy: 8, fullness: 80, kind: 'snack', effects: [] },
     pumpkin_seeds: { energy: 6, fullness: 60, kind: 'snack', effects: [] },

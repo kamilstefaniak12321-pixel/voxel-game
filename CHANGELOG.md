@@ -11,6 +11,32 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 1.25.0 - Ziemia i owoce z charakterem
+
+PR #178.
+
+- **Ziemia ma znaczenie**: na czarnoziemie rośliny rosną 1,3 raza
+  szybciej, na ziemi kamienistej wolniej (× 0,7). Pole z kompostem
+  dalej jest najlepsze (× 1,5).
+- **Czarnoziem i ziemię kamienistą da się rozgrzebać łopatą** - powstaje
+  pole z tej ziemi. Puste zarasta z powrotem w swoją ziemię, więc
+  czarnoziem się nie marnuje.
+- **Woda w pobliżu**: rośliny do 3 bloków od wody rosną o jedną czwartą
+  szybciej. Grządka przy stawie albo rowie z wodą się opłaca.
+- **Owoce z charakterem**: dzika róża, żurawina i brusznica lekko goją
+  stłuczoną nogę; aronia, rokitnik, czarna porzeczka i czarny bez
+  krzepią (energii ubywa wolniej); chili rozgrzewa (praca idzie
+  raźniej). Słabiej i krócej niż napary.
+- **Nowe zioła**: płatki róży do naparu na sen, kwiat czarnego bzu do
+  naparu leczniczego.
+- Kompost da się sypać też na rozgrzebaną ziemię kamienistą.
+- Komenda `/ziemia`, osiągnięcia *Czarna bruzda* i *Owoc z charakterem*,
+  nowe punkty w poradniku.
+
+Znane braki: mnożnika nie widać na polu (tylko komendą); owoce w koronach
+drzew i wysokich krzewach dojrzewają zwykłym tempem. Reszta
+w `docs/ziemia.md`.
+
 ## 1.24.0 - Świeżość stosów, kompost w misce i pole z kompostem
 
 PR #177.

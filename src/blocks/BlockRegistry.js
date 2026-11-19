@@ -57,7 +57,7 @@ export const AIR_ID = 0;
 //   14300-14999             krzewy jagodowe (1.17.0, po 16 na gatunek - shrubs.js),
 //   15000-15199             rośliny niskie (1.19.0, po 8 na roślinę - lowPlants.js),
 //   15200-15399             opadłe owoce (1.22.0 - fallenFruit.js),
-//   15400-15499             pola z nawozem (1.24.0 - fertilizers.js),
+//   15400-15499             pola z nawozem i z innej ziemi (1.24.0, 1.25.0 - fertilizers.js),
 //   15500-65279             wolne na przyszłość.
 
 export const MAX_BLOCK_ID = 65279;
@@ -511,6 +511,60 @@ export const BLOCK_TYPES = {
     },
 
 
+    // Pola z innej ziemi (1.25.0, blocks/fertilizers.js - FIELDS):
+    // rozgrzebany czarnoziem (rośliny rosną szybciej) i rozgrzebana
+    // ziemia kamienista (wolniej). Puste zarastają z powrotem w swoją
+    // ziemię - nic się nie traci.
+
+    tilled_humus: {
+
+        id: 15401,
+        name: 'Tilled Humus',
+
+        label: 'Rozgrzebany czarnoziem',
+
+        sound: 'dirt',
+
+        soil: true,
+        drops: 'humus',
+
+        solid: true,
+
+        textures: {
+            top: 'tilled_humus',
+            side: 'humus',
+            bottom: 'humus'
+        },
+
+        grows: { into: 'humus', seconds: 900, empty: true }
+
+    },
+
+    tilled_coarse: {
+
+        id: 15402,
+        name: 'Tilled Coarse Dirt',
+
+        label: 'Rozgrzebana ziemia kamienista',
+
+        sound: 'gravel',
+
+        soil: true,
+        drops: 'coarse_dirt',
+
+        solid: true,
+
+        textures: {
+            top: 'tilled_coarse',
+            side: 'coarse_dirt',
+            bottom: 'coarse_dirt'
+        },
+
+        grows: { into: 'coarse_dirt', seconds: 900, empty: true }
+
+    },
+
+
     stone: {
 
         id: 3,
@@ -875,6 +929,7 @@ export const BLOCK_TYPES = {
         sound: 'dirt',
         solid: true,
         soil: true,
+        tills: 'tilled_humus',
         textures: { all: 'humus' },
         randomRotation: ['top', 'bottom']
     },
@@ -886,6 +941,7 @@ export const BLOCK_TYPES = {
         sound: 'gravel',
         solid: true,
         soil: true,
+        tills: 'tilled_coarse',
         textures: { all: 'coarse_dirt' },
         randomRotation: ['top', 'bottom']
     },

@@ -57,7 +57,7 @@ import { STATES, isNight } from './Wellbeing.js';
 import { getFood } from '../items/foods.js';
 import { POT, POT_WATER } from '../items/cooking.js';
 import { COMPOST, COMPOST_BOWL } from '../items/spoilage.js';
-import { FERTILIZERS, fertilizerOf, isFieldBlock } from '../blocks/fertilizers.js';
+import { FERTILIZERS, fertilizerOf, isFieldBlock, canFertilize } from '../blocks/fertilizers.js';
 
 // Z czego kompost robi czarnoziem.
 const COMPOSTABLE = ['grass', 'dirt', 'coarse_dirt', 'forest_floor'];
@@ -742,7 +742,7 @@ export class GameInteraction {
             this.onWellbeing?.({ type: 'meal' });
         }
 
-        // Napar: co daje (items/effects.js).
+        // Napar albo owoc z charakterem: co daje (items/effects.js).
 
         for (const effect of result.effects) {
             this.onNotice?.(`${EFFECTS[effect].text} (${EFFECTS[effect].label})`);
@@ -931,7 +931,7 @@ export class GameInteraction {
 
         const type = target?.type;
 
-        const into = type === FIELD_BLOCK ? FERTILIZERS[tool.fertilizer].field : COMPOSTABLE.includes(type) ? 'humus' : null;
+        const into = canFertilize(type) ? FERTILIZERS[tool.fertilizer].field : COMPOSTABLE.includes(type) ? 'humus' : null;
 
         if (!into) {
 

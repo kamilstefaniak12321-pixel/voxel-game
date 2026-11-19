@@ -1,5 +1,5 @@
 // ------------------------------------------------------------
-// ŚWIEŻOŚĆ STOSU (1.23.0) - pomysł Kamila
+// ŚWIEŻOŚĆ STOSU (1.24.0) - pomysł Kamila
 //
 // Stos psującego się jedzenia ma pole `fresh`: ile mu jeszcze zostało,
 // od 1 (świeże) do 0 (zepsute). Cały stos ma jedną świeżość i psuje się

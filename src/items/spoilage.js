@@ -1,5 +1,5 @@
 // ------------------------------------------------------------
-// PSUCIE SIĘ JEDZENIA (1.23.0) - zasady i liczby
+// PSUCIE SIĘ JEDZENIA (1.23.0; świeżość stosów od 1.24.0) - zasady i liczby
 //
 // Świeże jedzenie się psuje - tym szybciej, im cieplej. Każdy stos ma
 // swoją świeżość (items/freshness.js): od 1 (świeże) do 0. Gdy spadnie

@@ -1,5 +1,5 @@
 // ------------------------------------------------------------
-// UŻYŹNIANIE POLA (1.23.0) - pomysł Kamila
+// UŻYŹNIANIE POLA (1.24.0) - pomysł Kamila
 //
 // Rozgrzebaną ziemię da się posypać nawozem (PPM z nawozem w ręce):
 // pole zamienia się w użyźnione pole - osobny blok dla każdego nawozu.

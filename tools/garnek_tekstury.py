@@ -7,8 +7,8 @@ z tools/tekstury_gliny.py:
   - dish_<potrawa>                         - miska z potrawą (kolor potrawy
                                              jak w items/cookingData.js),
   - dried_fruit                            - suszone owoce (1.21.0),
-  - compost, compost_bowl                  - kompost i kompost w misce (1.23.0),
-  - tilled_compost                         - pole posypane kompostem (1.23.0):
+  - compost, compost_bowl                  - kompost (1.23.0) i kompost w misce (1.24.0),
+  - tilled_compost                         - pole posypane kompostem (1.24.0):
                                              bruzdy z teren.png, ciemniejsze,
                                              z okruchami kompostu.
 
@@ -170,7 +170,7 @@ def compost():
 
 
 def compost_bowl():
-    """Kompost w misce (1.23.0): miska z ciemną grudą, bez pary."""
+    """Kompost w misce (1.24.0): miska z ciemną grudą, bez pary."""
     image = bowl()
     dark, mid, light = (38, 26, 18), (66, 46, 30), (98, 72, 46)
     put = lambda x, y, c: image.putpixel((x, y), (*c, 255))

@@ -1811,7 +1811,7 @@ export class InventoryScreen {
     }
 
 
-    // Opis świeżości stosu (1.23.0): ile jeszcze poleży tu, gdzie leży
+    // Opis świeżości stosu (1.24.0): ile jeszcze poleży tu, gdzie leży
     // (place: 'pack', 'chest', 'cellar'). Lista elementów do podpowiedzi.
 
     freshNote(item, place = 'pack') {

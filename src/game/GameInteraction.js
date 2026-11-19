@@ -99,7 +99,7 @@ export class GameInteraction {
             breakPressed = false; placePressed = false; this.mining = null;
         }
 
-        // Kompost (1.23.0): PPM na rozgrzebanej ziemi - pole z kompostem,
+        // Kompost (1.23.0, pole od 1.24.0): PPM na rozgrzebanej ziemi - pole z kompostem,
         // na ziemi albo trawie - czarnoziem; miska z kompostem się opróżnia.
         if (placePressed && fertilizerOf(this.selectedBlock) && this.fertilize(this.currentHit)) {
             placePressed = false;

@@ -254,6 +254,12 @@ Zasady, których warto się trzymać:
 - świat bez pór roku (`world.seasonDays === null`: podglądy, sceny,
   testy) ma wyglądać jak dawniej.
 
+## Owocowanie (1.21.0)
+
+Od 1.21.0 w porach roku owocują też krzaki, krzewy jagodowe, rośliny
+niskie, jabłoń, oliwka i lipa, a zimą nic nie rośnie - osobna strona:
+[pory-owocowania.md](pory-owocowania.md).
+
 ## Znane ograniczenia
 
 - Rośliny spoza paczek (mak, chaber, mniszek, rumianek, trawy z kwiatami)

@@ -17,7 +17,7 @@
     "rosliny": {
       "file": "rosliny.png",
       "width": 256,
-      "height": 432
+      "height": 448
     },
     "przedmioty": {
       "file": "przedmioty.png",
@@ -9024,6 +9024,13 @@
       "y": 416,
       "width": 16,
       "height": 16
+    },
+    "dried_fruit": {
+      "sheet": "rosliny",
+      "x": 0,
+      "y": 432,
+      "width": 16,
+      "height": 16
     }
   },
   "aliases": {
@@ -16465,6 +16472,11 @@
       "x": 61,
       "y": 90,
       "region": "dish_mixed_stew"
+    },
+    "dried_fruit": {
+      "x": 62,
+      "y": 90,
+      "region": "dried_fruit"
     }
   }
 }

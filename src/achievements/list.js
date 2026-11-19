@@ -645,6 +645,16 @@ export const ACHIEVEMENTS = [
         when: (data) => String(data.type).startsWith('shrub_') && String(data.type).includes('_sapling')
     },
     {
+        id: 'dried_fruit',
+        tier: 'common',
+        title: 'Na czarną godzinę',
+        task: 'Ususz owoce na słońcu (wyrzuć je w dzień pod gołe niebo).',
+        comment: 'Latem wydaje się to przesadą. Zimą - przezornością.',
+        icon: 'dried_fruit',
+        on: 'dried',
+        when: (data) => data.type === 'dried_fruit'
+    },
+    {
         id: 'pot_cooked',
         tier: 'common',
         title: 'Coś na ciepło',

@@ -11,6 +11,28 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 1.21.0 - Owocowanie w porach roku
+
+PR #174.
+
+Druga część „kuchni i spiżarni".
+
+- **Każda roślina owocuje w swojej porze**: wiosną truskawki i poziomki,
+  latem maliny, porzeczki, agrest, borówki i jabłka, jesienią aronia,
+  rokitnik, leszczyna, żurawina i oliwki. Poza porą roślina wygląda jak
+  bez owoców - także dzika.
+- **Zimą nie rośnie nic**: ani krzaki, ani sadzonki drzew, ani dynie.
+  Na zimę zostają tylko owoce dzikiej róży, rokitnika i żurawiny.
+- **Suszenie owoców**: wyrzucone w dzień na słońce, po 2 minutach cały
+  stos to suszone owoce - syte, jeden stos zamiast dziesięciu, dobre do
+  garnka także zimą.
+- Palma kokosowa, baobab i figowiec owocują cały rok.
+- Komenda `/kalendarz`, rozdział „Pory roku i zapasy" w poradniku,
+  osiągnięcie *Na czarną godzinę*.
+
+Znane braki: pierwsza wiosna nowego świata jest chuda w owoce; nic się
+nie psuje. Reszta w `docs/pory-owocowania.md`.
+
 ## 1.20.0 - Gotowanie w garnku
 
 PR #173.

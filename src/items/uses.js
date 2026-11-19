@@ -17,7 +17,7 @@ import { ITEM_TYPES, getItemLabel, getTool } from './ItemRegistry.js';
 import { getFood, getRoast, isDrink } from './foods.js';
 import { EFFECTS } from './effects.js';
 import { TINDERS, fuelWood } from '../game/CampfireState.js';
-import { driesInto } from './clay.js';
+import { driesInto } from './drying.js';
 import { isIngredient } from './cooking.js';
 
 // Przedmioty, które działają same (nie są składnikiem ani jedzeniem).

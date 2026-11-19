@@ -16,7 +16,7 @@ import { atmosphericLightToBrightness } from './LightPolicy.js';
 import { getRiverPlantFaces, plantRandom, plantTransform, riverPlantTransform } from './RiverPlantGeometry.js';
 import { pickRegionalPlant } from './PlantRegionalVariants.js';
 import { barkTile } from './BarkSheets.js';
-import { SEASONAL, shownPlantId, nextPlantChange } from '../blocks/plantSeasons.js';
+import { SEASONAL, FRUIT_SEASONAL, shownPlantId, nextPlantChange } from '../blocks/plantSeasons.js';
 import { getBushyGrassFaces } from './BushyGrassGeometry.js';
 import { LEAF_TINT_BYTES } from './LeafSeasons.js';
 import { GRASS_TINT_UNIT } from '../config.js';
@@ -2311,6 +2311,8 @@ function* buildChunkGeometrySteps(chunk, world, { terrain, plants: includePlants
     meshHabitats = chunk.habitats ?? null;
     meshDays = world.seasonDays ?? null;
     if (includePlants) chunk.seasonNext = Infinity;
+    // Owocujące krzewy, drzewa i płyty są w geometrii terenu (1.21.0).
+    if (terrain) chunk.seasonTerrainNext = Infinity;
 
 
     // Lity kamień głęboko pod terenem nie ma żadnej widocznej
@@ -2369,6 +2371,10 @@ function* buildChunkGeometrySteps(chunk, world, { terrain, plants: includePlants
                     if (includePlants) {
                         const change = nextPlantChange(id, baseX + lx, y, baseZ + lz, meshDays);
                         if (change < chunk.seasonNext) chunk.seasonNext = change;
+                    }
+                    if (terrain && FRUIT_SEASONAL[id] === 1) {
+                        const change = nextPlantChange(id, baseX + lx, y, baseZ + lz, meshDays);
+                        if (change < chunk.seasonTerrainNext) chunk.seasonTerrainNext = change;
                     }
                     id = shownPlantId(id, baseX + lx, y, baseZ + lz, meshDays);
                 }

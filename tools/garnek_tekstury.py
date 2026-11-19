@@ -5,7 +5,8 @@ z tools/tekstury_gliny.py:
   - wet_clay_pot, clay_pot, clay_pot_water - garnek mokry, suchy, z wodą,
   - wet_clay_bowl, clay_bowl               - miska mokra i sucha,
   - dish_<potrawa>                         - miska z potrawą (kolor potrawy
-                                             jak w items/cookingData.js).
+                                             jak w items/cookingData.js),
+  - dried_fruit                            - suszone owoce (1.21.0).
 
 Kafelki trafiają do arkusza rosliny.png w wolne miejsca atlasu (te same
 co rośliny niskie - tools/niskie_tekstury.py).
@@ -121,6 +122,30 @@ def wet(image):
     return out
 
 
+def dried_fruit():
+    """Suszone owoce (1.21.0): garść pomarszczonych kawałków - ciemna
+    czerwień, fiolet i brąz."""
+    image = Image.new('RGBA', (16, 16), (0, 0, 0, 0))
+    pieces = [
+        # (x, y, szerokość, wysokość, cień, kolor, światło)
+        (2, 8, 5, 4, (74, 22, 30), (128, 40, 48), (176, 78, 76)),
+        (8, 9, 5, 4, (60, 28, 62), (104, 52, 104), (150, 92, 142)),
+        (5, 4, 5, 4, (96, 50, 22), (150, 86, 40), (198, 136, 78)),
+        (10, 5, 4, 3, (84, 26, 26), (146, 50, 40), (192, 96, 74))
+    ]
+    for x0, y0, w, h, dark, mid, light in pieces:
+        for y in range(h):
+            for x in range(w):
+                # Ścięte rogi.
+                if (x in (0, w - 1)) and (y in (0, h - 1)):
+                    continue
+                color = light if (x <= 1 and y <= 1) else dark if (y == h - 1 or x == w - 1) else mid
+                image.putpixel((x0 + x, y0 + y), (*color, 255))
+        # Zmarszczka.
+        image.putpixel((x0 + w // 2, y0 + h // 2), (*dark, 255))
+    return image
+
+
 def textures():
     out = {
         'clay_pot': pot(),
@@ -129,6 +154,7 @@ def textures():
         'clay_bowl': bowl(),
         'wet_clay_bowl': wet(bowl())
     }
+    out['dried_fruit'] = dried_fruit()
     for name, colors in DISHES.items():
         out[f'dish_{name}'] = bowl(colors)
     return out

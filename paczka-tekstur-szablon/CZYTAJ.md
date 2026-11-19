@@ -1,4 +1,4 @@
-# Paczka tekstur - szablon (Various Roots 1.20.0)
+# Paczka tekstur - szablon (Various Roots 1.21.0)
 
 Oryginalne tekstury gry, każda w osobnym pliku. Zrób z nich własną paczkę:
 
@@ -249,6 +249,7 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/dragon_tree/stripped_side.png` | Okorowany pień draceny |
 | `bloki/dragon_tree/stripped_top.png` | Okorowany pień draceny |
 | `bloki/dragon_tree_bark.png` | Kora draceny |
+| `bloki/dried_fruit.png` | Suszone owoce |
 | `bloki/dune_grass.png` | Piaskownica (trawa wydmowa) |
 | `bloki/dye_black.png` | Barwnik czarny |
 | `bloki/dye_blue.png` | Barwnik niebieski |

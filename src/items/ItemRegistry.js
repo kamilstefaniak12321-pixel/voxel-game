@@ -174,6 +174,9 @@ export const ITEM_TYPES = {
     roasted_pumpkin_slice: { name: 'Roasted Pumpkin Slice', label: 'Pieczona dynia', icon: 'roasted_pumpkin_slice', category: 'owoce' },
     roasted_zucchini: { name: 'Roasted Zucchini', label: 'Pieczona cukinia', icon: 'roasted_zucchini', category: 'owoce' },
 
+    // Suszone owoce (1.21.0, items/drying.js): z każdego owocu wysuszonego na słońcu.
+    dried_fruit: { name: 'Dried Fruit', label: 'Suszone owoce', icon: 'dried_fruit', category: 'owoce' },
+
     // Pieczone nad ogniskiem (0.97.0 - trzymany PPM z surowym w ręce na
     // płonącym ognisku, game/Campfires.js). Porządny posiłek: jedna
     // sztuka syci jak kilka surowych. Nie da się ich posadzić.

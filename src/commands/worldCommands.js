@@ -5,7 +5,7 @@
 // komendy jest w CommandRegistry.js, lista dla gracza w docs/komendy.md.
 // ------------------------------------------------------------
 
-import { SEASONS, SEASON_NAMES } from '../sky/Seasons.js';
+import { SEASONS, SEASON_NAMES, seasonAt } from '../sky/Seasons.js';
 import { CommandError, simplify } from './CommandRegistry.js';
 import {
     BLOCK_TYPES,
@@ -35,6 +35,7 @@ import { plantTree } from '../world/trees/plantTree.js';
 import { SHRUBS, SHRUB_NAMES, shrubType, SHRUB_STAGE_SECONDS } from '../blocks/shrubs.js';
 import { plantShrub } from '../world/shrubs/Shrubs.js';
 import { POT_WATER, BOWL, COOK_SECONDS, DISHES, DISH_NAMES } from '../items/cooking.js';
+import { fruitCalendar } from '../blocks/fruitSeasons.js';
 import { newPot, cookPot } from '../game/CookingState.js';
 import { newCampfire, addFirewood } from '../game/CampfireState.js';
 import { LOW_PLANTS, LOW_PLANT_NAMES, SPHAGNUM, lowPlantType, lowPlantInfo, LOW_STAGE_SECONDS, LOW_PLANT_FIRST_ID, LOW_PLANT_END_ID } from '../blocks/lowPlants.js';
@@ -1299,6 +1300,26 @@ export const WORLD_COMMANDS = [
 
     },
 
+
+    {
+        name: 'kalendarz',
+        aliases: ['owocowanie', 'calendar'],
+        usage: '/kalendarz',
+        description: 'Kalendarz owocowania (1.21.0): co kwitnie i owocuje teraz, a co w kolejnych porach roku.',
+
+        run(args, { game }) {
+
+            const now = seasonAt(game.time.days);
+            const names = ['wiosna', 'lato', 'jesień', 'zima'];
+            const list = (index) => fruitCalendar().filter(([, seasons]) => seasons.includes(index)).map(([label]) => label.toLowerCase());
+            const line = (index) => `${names[index]}: ${list(index).join(', ') || 'nic nie owocuje'}`;
+
+            return `Jest ${now.name}, dzień ${now.day} z ${now.days}. Teraz owocuje: ${list(now.index).join(', ') || 'nic - rośliny śpią'}. ` +
+                `Cały rok - ${[0, 1, 2, 3].map(line).join('; ')}. ` +
+                'Poza swoją porą roślina wygląda jak bez owoców i nie rośnie; zimą nie rośnie nic. Palma kokosowa, baobab, figowiec i szyszki - cały rok.';
+
+        }
+    },
 
     {
         name: 'garnek',

@@ -11,6 +11,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { registerHooks } from 'node:module';
 import { readTextureRegion } from './texture_regions.mjs';
+import { FRUIT_ICON_TILES, ROASTED_ICON_TILES } from './ikonki_owocow.mjs';
 
 registerHooks({
     resolve(specifier, context, next) {
@@ -25,10 +26,7 @@ let checks = 0;
 const check = (ok, message) => { assert.ok(ok, message); checks++; };
 const read = (path) => readFileSync(new URL(`../${path}`, import.meta.url), 'utf8');
 
-const source = read('tools/owoce_ikony.py');
-const tilesBlock = source.slice(source.indexOf('TILES = {'), source.indexOf('}', source.indexOf('TILES = {')));
-const tiles = [...tilesBlock.matchAll(/'[a-z_]+': '([a-z_/.]+)'/g)].map((m) => m[1]);
-const roasted = ['roasted_pumpkin_slice', 'roasted_zucchini'];
+const tiles = FRUIT_ICON_TILES, roasted = ROASTED_ICON_TILES;
 check(tiles.length === 29 && new Set(tiles).size === 29, `29 ikonek w skrypcie (${tiles.length})`);
 
 // Czarny bez: drobne jagody 2 x 2 (jasny róg, ciemny róg) - bez konturu.

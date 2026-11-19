@@ -17,7 +17,7 @@
     "rosliny": {
       "file": "rosliny.png",
       "width": 256,
-      "height": 528
+      "height": 544
     },
     "przedmioty": {
       "file": "przedmioty.png",
@@ -9213,6 +9213,13 @@
       "y": 512,
       "width": 16,
       "height": 16
+    },
+    "ice_block": {
+      "sheet": "rosliny",
+      "x": 0,
+      "y": 528,
+      "width": 16,
+      "height": 16
     }
   },
   "aliases": {
@@ -16789,6 +16796,11 @@
       "x": 62,
       "y": 92,
       "region": "tilled_coarse"
+    },
+    "ice_block": {
+      "x": 63,
+      "y": 92,
+      "region": "ice_block"
     }
   }
 }

@@ -137,6 +137,20 @@ SOUNDS.hurt = {
     category: 'blocks'
 };
 
+// Zimno (1.26.0, game/Freeze.js, GameInteraction - zdarzenie 'cold'):
+// zamarzanie, pękający lód przy odwilży i dreszcze. Słychać je "w głowie".
+
+for (const [name, volume] of [['ice_freeze', 0.9], ['ice_crack', 0.9], ['shiver', 0.7]]) {
+
+    SOUNDS[name] = {
+        files: [`body/${name}_1.ogg`, `body/${name}_2.ogg`],
+        volume,
+        pitch: [0.95, 1.06],
+        category: 'blocks'
+    };
+
+}
+
 SOUNDS.sizzle = {
     files: ['body/sizzle_1.ogg', 'body/sizzle_2.ogg'],
     volume: 0.55,

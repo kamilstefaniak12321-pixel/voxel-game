@@ -18,7 +18,9 @@
 //              Od 1.25.0 mają je też niektóre owoce ("z charakterem"):
 //              dzika róża, żurawina i borówka brusznica - lekkie gojenie,
 //              aronia, rokitnik, czarna porzeczka i czarny bez -
-//              pokrzepienie, chili - rozgrzanie,
+//              pokrzepienie, chili - rozgrzanie. Od 1.26.0 napary
+//              i potrawy z garnka dają też "ciepło w brzuchu" (zimno -
+//              game/Warmth.js),
 //   returns  - co zostaje w ręce po zjedzeniu albo wypiciu (kubek).
 //
 // Napary (0.98.1, docs/ziola.md): gliniany kubek + dwa zioła z jednej
@@ -88,7 +90,7 @@ export const FOODS = {
     ...DISH_FOODS,
 
     ...Object.fromEntries(Object.entries(TEAS).map(([effect, { tea }]) =>
-        [tea, { energy: 3, fullness: 30, kind: 'drink', effects: [effect], returns: CUP }]))
+        [tea, { energy: 3, fullness: 30, kind: 'drink', effects: [effect, 'warmth'], returns: CUP }]))
 };
 
 // Pieczenie nad ogniskiem: surowe -> pieczone. Trzeba trzymać PPM przez

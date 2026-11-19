@@ -15,7 +15,9 @@
 //   heal    - mnożnik szybkości gojenia stłuczonej nogi,
 //   sleep   - sen: { rate - mnożnik szybkości wysypiania się,
 //             cap - o ile punktów wyżej da się wyspać w danym miejscu }.
-//             Taki efekt kończy się po przespanej nocy.
+//             Taki efekt kończy się po przespanej nocy,
+//   heat    - o ile stopni cieplej się czuje (1.26.0, game/Warmth.js);
+//             ciepło z kilku efektów się dodaje.
 //
 // Nowy efekt: wpis tutaj i nazwa w polu effects jedzenia. Mnożniki,
 // których efekt nie podaje, to 1.
@@ -30,7 +32,10 @@ export const EFFECTS = {
     // od naparów - za to prosto z krzaka.
     mend: { label: 'lekkie gojenie', text: 'Stłuczona noga goi się trochę szybciej', hours: 2, heal: 1.5 },
     tonic: { label: 'pokrzepienie', text: 'Przez chwilę mniej się męczysz', hours: 2, drain: 0.9 },
-    warm: { label: 'rozgrzanie', text: 'Robi ci się gorąco - praca idzie raźniej', hours: 2, work: 1.06 }
+    warm: { label: 'rozgrzanie', text: 'Robi ci się gorąco - praca idzie raźniej', hours: 2, work: 1.06, heat: 4 },
+
+    // Zimno (1.26.0): ciepła potrawa z garnka albo napar grzeje od środka.
+    warmth: { label: 'ciepło w brzuchu', text: 'Ciepłe jedzenie grzeje od środka', hours: 3, heat: 6 }
 };
 
 // Słowami: co efekt robi (opisy przedmiotów, komendy).

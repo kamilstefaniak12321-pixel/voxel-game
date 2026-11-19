@@ -433,6 +433,61 @@ body.underwater #underwater {
     background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.3) 25%, rgba(0, 0, 0, 0.95) 85%);
 }
 
+/* Zimno (1.26.0): szron na brzegach obrazu, a w bryle lodu - lód na
+   całym obrazie (StatusPanel.showFrost; opacity z gry). */
+
+#frost {
+    position: fixed;
+    inset: 0;
+    z-index: 2;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.8s;
+    background:
+        radial-gradient(ellipse at center, rgba(120, 175, 220, 0) 30%, rgba(150, 200, 240, 0.45) 58%, rgba(205, 232, 252, 0.92) 82%, rgba(240, 249, 255, 1) 100%),
+        repeating-linear-gradient(55deg, rgba(255, 255, 255, 0.16) 0 2px, rgba(255, 255, 255, 0) 2px 9px),
+        repeating-linear-gradient(-35deg, rgba(110, 160, 210, 0.16) 0 1px, rgba(110, 160, 210, 0) 1px 13px),
+        linear-gradient(rgba(120, 180, 230, 0.14), rgba(120, 180, 230, 0.14));
+}
+
+/* Długi przeskok czasu: obraz całkiem zakryty lodem (bez migania dnia i nocy). */
+#frost.deep {
+    background:
+        repeating-linear-gradient(55deg, rgba(255, 255, 255, 0.12) 0 2px, rgba(255, 255, 255, 0) 2px 9px),
+        radial-gradient(ellipse at center, #b9d9f0 0%, #dcefff 70%, #f1f9ff 100%);
+}
+
+#frost-text {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: min(90vw, 560px);
+    font-family: var(--ui-font, monospace);
+    text-align: center;
+    color: #24506e;
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.7);
+    opacity: 0;
+    transition: opacity 0.6s;
+}
+
+#frost-text b { display: block; font-size: 26px; font-weight: normal; }
+#frost-text span { display: block; margin-top: 10px; font-size: 15px; }
+#frost.text #frost-text { opacity: 1; }
+
+/* Zmarznięty: przy sercu płatek śniegu. */
+#wellbeing.heart-cold::before {
+    content: '\2744';
+    position: absolute;
+    right: -10px;
+    bottom: -6px;
+    font-size: 12px;
+    line-height: 1;
+    color: #dff2ff;
+    text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.45);
+}
+
+body:not([data-screen="game"]) #frost,
 body:not([data-screen="game"]) #weary,
 body:not([data-screen="game"]) #wellbeing,
 body:not([data-screen="game"]) #status {

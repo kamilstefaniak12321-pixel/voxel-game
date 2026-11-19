@@ -1,4 +1,4 @@
-# Paczka tekstur - szablon (Various Roots 1.25.0)
+# Paczka tekstur - szablon (Various Roots 1.26.0)
 
 Oryginalne tekstury gry, każda w osobnym pliku. Zrób z nich własną paczkę:
 
@@ -364,6 +364,7 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/hazelnut.png` | - |
 | `bloki/heather.png` | Wrzos |
 | `bloki/humus.png` | Rozgrzebany czarnoziem, Czarnoziem |
+| `bloki/ice_block.png` | - |
 | `bloki/item_aronia.png` | Aronia |
 | `bloki/item_blackcurrant.png` | Czarne porzeczki |
 | `bloki/item_cranberry.png` | Żurawina |

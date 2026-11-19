@@ -113,6 +113,10 @@ Współrzędne można podawać względem gracza: `~` (tu, gdzie stoję),
 | `/psucie tempo <mnożnik>` | przyspiesza psucie (np. 50) albo je wyłącza (0); nie zapisuje się |
 | `/psucie dni <ile>` | od razu starzeje jedzenie w plecaku, skrzyniach i na ziemi tak, jakby minęło tyle dób gry (zmienia ekwipunek) |
 | `/psucie swiezosc <procent>` | ustawia świeżość stosu jedzenia w ręce (1-100) - do sprawdzania łączenia stosów i opisu |
+| `/zimno` | zimno (1.26.0, `docs/zimno.md`): odczuwalna temperatura tu, gdzie stoisz, rozbita na części (powietrze, schronienie, wiatr, woda, ogień i pochodnie, jedzenie) i wychłodzenie |
+| `/zimno ustaw <0-99>` | ustawia wychłodzenie (30 - chłód, 60 - zmarznięty) |
+| `/zimno zamarznij` | od razu zamienia w bryłę lodu (w grze solo zaraz rusza przyspieszony czas do odwilży) |
+| `/zimno odmroz` | roztapia bryłę lodu od razu |
 | `/rosliny` | rośliny z paczek roślin (`assets/rosliny/`, `docs/rosliny.md`): lista z wysokością |
 | `/rosliny <roslina>` | opis rośliny: etapy z rozmiarem w blokach i pikselach, przedmiot i zbiór, gdzie rośnie, numery bloków (np. `/rosliny amarantus`) |
 | `/rosliny ogrod [roslina]` | przed tobą wszystkie etapy każdej rośliny (roślina w rzędzie, co 3 bloki; zmienia świat) |

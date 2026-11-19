@@ -61,7 +61,7 @@ export const DISH_NAMES = Object.keys(DISHES);
 
 // Potrawy jako jedzenie (do FOODS w foods.js): porządny posiłek z miski.
 export const DISH_FOODS = Object.fromEntries(DISH_NAMES.map((dish) =>
-    [dishItem(dish), { energy: DISHES[dish].energy, fullness: DISHES[dish].fullness, kind: 'meal', effects: [], returns: BOWL }]));
+    [dishItem(dish), { energy: DISHES[dish].energy, fullness: DISHES[dish].fullness, kind: 'meal', effects: ['warmth'], returns: BOWL }]));
 
 // Przedmioty do ItemRegistry.js.
 export const COOKING_ITEMS = {

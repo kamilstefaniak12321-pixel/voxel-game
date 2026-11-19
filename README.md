@@ -156,7 +156,7 @@ jest w [`docs/opis-gry.md`](docs/opis-gry.md). Skrót:
 | Zapis świata | co i gdzie się zapisuje | [opis](docs/opis-gry.md#zapis-świata) | - |
 | Menu i motywy | ekrany menu, żywe tło, motywy interfejsu | [opis](docs/opis-gry.md#menu-i-motywy) | [zywe-menu.md](docs/zywe-menu.md) |
 
-Pozostałe strony: [ziemia i owoce z charakterem](docs/ziemia.md), [psucie się jedzenia](docs/psucie.md), [sad](docs/sad.md), [owocowanie w porach roku](docs/pory-owocowania.md), [gotowanie](docs/gotowanie.md), [zwierzęta](docs/zwierzeta.md), [rośliny niskie](docs/rosliny-niskie.md), [krzewy jagodowe](docs/krzewy.md),
+Pozostałe strony: [zimno i zamarzanie](docs/zimno.md), [plan kolejnych wersji](docs/plan.md), [ziemia i owoce z charakterem](docs/ziemia.md), [psucie się jedzenia](docs/psucie.md), [sad](docs/sad.md), [owocowanie w porach roku](docs/pory-owocowania.md), [gotowanie](docs/gotowanie.md), [zwierzęta](docs/zwierzeta.md), [rośliny niskie](docs/rosliny-niskie.md), [krzewy jagodowe](docs/krzewy.md),
 [uprawa i rozgrzebana ziemia](docs/uprawa.md),
 [aplikacja na komputer i wydania](docs/aplikacja.md),
 [telefon](docs/telefon.md), [numery bloków](docs/numery-blokow.md),

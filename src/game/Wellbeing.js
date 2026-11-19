@@ -37,7 +37,17 @@
 // pełna i z premią za wygodę na następny dzień (comfort). Niewyspany
 // pracuje i biega wolniej. Zasypianie i noc: game/Sleep.js.
 //
-// Sama logika, bez grafiki i dźwięku (testy: tools/sprawdz_energie.mjs).
+// Od 1.26.0 jest wychłodzenie (chill, 0-100): rośnie, gdy odczuwalna
+// temperatura (game/Warmth.js - activity.felt) jest poniżej COLD_COMFORT,
+// i spada, gdy jest cieplej. Stopnie (COLD_STATES): ciepło, chłód
+// (dreszcze), zmarznięty (coraz wolniejszy, szron na brzegach obrazu).
+// Pełne wychłodzenie (100) to zamarznięcie - update zgłasza 'freeze',
+// a gra zamienia gracza w bryłę lodu (game/Freeze.js). Zamarznąć da się
+// tylko na mrozie (odczuwalnie poniżej zera); w chłodzie powyżej zera
+// wychłodzenie staje na COLD_CAP_ABOVE_ZERO.
+//
+// Sama logika, bez grafiki i dźwięku (testy: tools/sprawdz_energie.mjs,
+// tools/sprawdz_zimna.mjs).
 // Stan trafia do zapisu świata (worldInfo.wellbeing).
 // ------------------------------------------------------------
 
@@ -151,6 +161,46 @@ export const COMFORT = {
     2: { label: 'bardzo wygodny sen', work: 1.1, drain: 0.8 }
 };
 
+// Zimno (1.26.0). Od tej odczuwalnej temperatury (°C) w górę gracz się
+// nie wychładza, tylko rozgrzewa (letnie noce bywają chłodne, ale nie
+// mroźne). Poniżej wychłodzenie rośnie o (COLD_COMFORT - felt) /
+// COLD_RATE na sekundę: przy -10°C od zera do zamarznięcia w niecałe
+// 7 minut (mniej niż zimowa noc), przy -20°C w 4 minuty.
+export const COLD_COMFORT = 5;
+const COLD_RATE = 60;
+// Rozgrzewanie: stałe tempo i więcej, im cieplej (przy ognisku szybko).
+const WARM_BASE = 0.15;
+const WARM_RATE = 15;
+// Powyżej zera da się zmarznąć, ale nie zamarznąć; we śnie (łóżko,
+// posłanie, ziemia) - też nie do końca: budzi się zmarznięty.
+export const COLD_CAP_ABOVE_ZERO = 70;
+export const COLD_CAP_ASLEEP = 85;
+// Ruch grzeje: tyle razy wolniej się wychładza idący i biegnący.
+const COLD_MOVING = 0.85;
+const COLD_SPRINTING = 0.7;
+// Wyczerpany marznie szybciej, najedzony wolniej.
+const COLD_EXHAUSTED = 1.25;
+const COLD_FULL = 0.85;
+// Po odmarznięciu zostaje tyle wychłodzenia (chłód, nie mróz).
+export const THAW_CHILL = 55;
+// Sen: o ile cieplej śpi się w danym miejscu (koc, materac).
+export const SLEEP_WARMTH = { ground: 0, mat: 4, bed: 8 };
+
+// Stopnie wychłodzenia od najcieplejszego (from - od ilu punktów).
+//   walk, sprint - mnożnik szybkości na początku stopnia (zmarznięty
+//                  zwalnia dalej, aż do FROZEN_SLOW przy 100),
+//   work, drain  - mnożniki pracy i zużycia energii.
+export const COLD_STATES = {
+    warm: { label: 'ciepło', from: 0, work: 1, drain: 1 },
+    chilly: { label: 'chłodno', from: 30, work: 0.95, drain: 1.1, text: 'Robi ci się zimno - przydałby się ogień albo dach nad głową' },
+    cold: { label: 'zmarznięty', from: 60, work: 0.85, drain: 1.3, text: 'Marzniesz! Ogrzej się przy ognisku, zanim zamarzniesz' }
+};
+const COLD_ORDER = ['cold', 'chilly', 'warm'];
+// Zmarznięty: przy 100 punktach chodzi tak wolno (część zwykłej szybkości)
+// i od tylu punktów nie biega.
+const FROZEN_SLOW = 0.45;
+const NO_SPRINT_CHILL = 85;
+
 // Burczenie w brzuchu: co ile sekund (losowo z przedziału).
 const RUMBLE_EVERY = [40, 80];
 
@@ -187,6 +237,7 @@ export class Wellbeing {
         this.rumbleIn = this.nextRumble();
         this.lastState = this.state;
         this.lastRest = this.restState;
+        this.lastCold = this.coldState;
         // Czas gry z ostatniego update - do sprawdzania, czy efekt jeszcze działa.
         this.now = days;
         // Oddech (1 - pełny). Nie zapisuje się: po wejściu do świata pełny.
@@ -224,6 +275,8 @@ export class Wellbeing {
             effects: Object.fromEntries(Object.entries(source.effects && typeof source.effects === 'object' ? source.effects : {})
                 .filter(([type, until]) => getEffect(type) && Number.isFinite(until))),
             meal,
+            // Wychłodzenie (1.26.0, 0-100).
+            chill: clamp(number(source.chill, 0), 0, 100),
             history: Array.isArray(source.history)
                 ? source.history.filter(Number.isFinite).slice(-3).map((n) => clamp(Math.floor(n), 0, 99)) : []
         };
@@ -245,15 +298,37 @@ export class Wellbeing {
         return 'exhausted';
     }
 
+    // Wychłodzenie (0-100) i jego stopień (COLD_STATES).
+    get chill() { return this.active ? (this.data.chill ?? 0) : 0; }
+
+    get coldState() {
+        const chill = this.chill;
+        for (const name of COLD_ORDER) if (chill >= COLD_STATES[name].from) return name;
+        return 'warm';
+    }
+
+    // Szron na brzegach obrazu (0-1): od połowy wychłodzenia w górę.
+    get frost() { return clamp((this.chill - 50) / 50, 0, 1); }
+
     // Skutki stanu (wyłączone - tryb kreatywny - jak "dobrze").
     get effects() {
         const state = STATES[this.active ? this.state : 'good'];
         const rest = this.active ? REST_STATES[this.restState] : REST_STATES.rested;
         const comfort = this.active ? COMFORT[this.data.comfort] : null;
         const boost = this.active ? this.effectFactor('work') : 1;
-        if (!this.limping && rest.work === 1 && rest.dim === 0 && !comfort && boost === 1 && !(this.pricked > 0)) return state;
-        const effects = { ...state, sprint: state.sprint * rest.sprint, work: state.work * rest.work * (comfort?.work ?? 1) * boost,
+        const cold = COLD_STATES[this.coldState];
+        if (!this.limping && rest.work === 1 && rest.dim === 0 && !comfort && boost === 1 && !(this.pricked > 0) && cold.work === 1) {
+            return state;
+        }
+        const effects = { ...state, sprint: state.sprint * rest.sprint, work: state.work * rest.work * (comfort?.work ?? 1) * boost * cold.work,
             dim: Math.max(state.dim, rest.dim) };
+        // Zmarznięty zwalnia tym bardziej, im bliżej zamarznięcia.
+        if (this.coldState === 'cold') {
+            const slow = 1 - (1 - FROZEN_SLOW) * clamp((this.chill - COLD_STATES.cold.from) / (100 - COLD_STATES.cold.from), 0, 1);
+            effects.walk *= slow;
+            effects.sprint *= slow;
+            if (this.chill >= NO_SPRINT_CHILL) { effects.sprint = 0; effects.canSprint = false; }
+        }
         // Stłuczona noga: wolniejszy chód i żadnego biegu, w każdym stanie.
         if (this.limping) Object.assign(effects, { walk: state.walk * LIMP_WALK, sprint: 0, canSprint: false });
         // Ukłucie: przez chwilę wolniej (chód i bieg).
@@ -271,7 +346,10 @@ export class Wellbeing {
     // Sen: hours godzin w miejscu place (klucz SLEEP_PLACES), comfort -
     // wygoda pościeli (tylko łóżko), days - czas gry przy pobudce.
     // Zwraca { rest, state, comfort } po śnie.
-    sleep(hours, place = 'ground', comfort = 0, days = this.data.day) {
+    // felt - odczuwalna temperatura w miejscu snu (1.26.0): na mrozie
+    // śpiący się wychładza (w łóżku i na posłaniu mniej - SLEEP_WARMTH),
+    // ale we śnie nie zamarza (COLD_CAP_ASLEEP).
+    sleep(hours, place = 'ground', comfort = 0, days = this.data.day, felt = null) {
         const data = this.data, spot = SLEEP_PLACES[place] ?? SLEEP_PLACES.ground;
         if (!this.active || !(hours > 0)) return { rest: data.rest, state: this.restState, comfort: 0 };
         // Efekty snu (napar na sen): szybciej i wyżej. Liczy się efekt, który
@@ -286,6 +364,8 @@ export class Wellbeing {
             if (hours >= 1) delete data.effects[type];
         }
         this.now = days;
+        // Godzina gry to 50 sekund (doba - DAY_LENGTH_MINUTES).
+        if (Number.isFinite(felt)) this.cool(hours * 50, felt + (SLEEP_WARMTH[place] ?? 0), { sleeping: true });
         data.rest = Math.max(data.rest, Math.min(cap, data.rest + hours * REST_PER_HOUR * rate));
         data.energy = Math.max(0, data.energy - hours * SLEEP_ENERGY_PER_HOUR);
         data.fullness = Math.max(0, data.fullness - hours * 50);
@@ -332,6 +412,60 @@ export class Wellbeing {
         let factor = 1;
         for (const type of this.activeEffects()) factor *= EFFECTS[type][field] ?? 1;
         return factor;
+    }
+
+    // Suma pola "field" działających efektów (heat - ciepło, °C).
+    effectSum(field) {
+        if (!this.active) return 0;
+        let sum = 0;
+        for (const type of this.activeEffects()) sum += EFFECTS[type][field] ?? 0;
+        return sum;
+    }
+
+    // --- Zimno (1.26.0) -----------------------------------------------------
+
+    // Zmiana wychłodzenia przez dt sekund w odczuwalnej temperaturze felt.
+    // activity jak w update. Zwraca nowe wychłodzenie.
+    cool(dt, felt, activity = {}) {
+        const data = this.data;
+        const chill = data.chill ?? 0;
+        if (!Number.isFinite(felt) || !(dt > 0)) return chill;
+        if (felt >= COLD_COMFORT) {
+            data.chill = Math.max(0, chill - (WARM_BASE + (felt - COLD_COMFORT) / WARM_RATE) * dt);
+            return data.chill;
+        }
+        let rate = (COLD_COMFORT - felt) / COLD_RATE;
+        if (activity.sprinting && !activity.swimming) rate *= COLD_SPRINTING;
+        else if (activity.moving && !activity.swimming) rate *= COLD_MOVING;
+        if (this.state === 'exhausted') rate *= COLD_EXHAUSTED;
+        if (this.full) rate *= COLD_FULL;
+        let cap = felt < 0 ? 100 : COLD_CAP_ABOVE_ZERO;
+        if (activity.sleeping) cap = Math.min(cap, COLD_CAP_ASLEEP);
+        // (Wychłodzenie ponad pułap nie spada samo - spada dopiero w cieple.)
+        if (chill < cap) data.chill = Math.min(cap, chill + rate * dt);
+        return data.chill;
+    }
+
+    // Odmarznięcie (Freeze.js): resztka energii, pusty żołądek, chłód.
+    thawed() {
+        const data = this.data;
+        data.energy = Math.min(data.energy, this.capacity * BLACKOUT_ENERGY);
+        data.fullness = 0;
+        data.chill = Math.min(data.chill ?? 0, THAW_CHILL);
+        this.lastCold = this.coldState;
+        this.breath = 1;
+        this.drowned = false;
+    }
+
+    // Przeskok czasu w bryle lodu (Freeze.js): nowa doba bez rozliczania
+    // posiłków - zamarznięty nie mógł jeść, więc kondycja nie spada.
+    skipTo(days) {
+        const data = this.data;
+        data.day = Math.floor(days);
+        data.mealsToday = 0;
+        data.lastMealAt = null;
+        data.meal = null;
+        this.now = days;
     }
 
     // Twarde lądowanie z prędkością speed (bloki/s). Zwraca liczbę sekund
@@ -381,7 +515,7 @@ export class Wellbeing {
             }
         }
 
-        let rate = REST_DRAIN * this.effectFactor('drain');
+        let rate = REST_DRAIN * this.effectFactor('drain') * COLD_STATES[this.coldState].drain;
         if (activity.swimming) rate *= DRAIN.swim;
         else if (activity.sprinting) rate *= DRAIN.sprint;
         else if (activity.moving) rate *= DRAIN.walk;
@@ -423,6 +557,18 @@ export class Wellbeing {
         }
 
         this.rollDay(days, events);
+
+        // Zimno (1.26.0): activity.felt - odczuwalna temperatura (Warmth.js).
+        if (Number.isFinite(activity.felt)) {
+            const before = data.chill ?? 0;
+            this.cool(dt, activity.felt, activity);
+            const cold = this.coldState;
+            if (cold !== this.lastCold) {
+                events.push({ type: 'cold', from: this.lastCold, to: cold });
+                this.lastCold = cold;
+            }
+            if (data.chill >= 100 && before < 100) events.push({ type: 'freeze' });
+        }
 
         const state = this.state;
         if (state !== this.lastState) {
@@ -521,6 +667,7 @@ export class Wellbeing {
         return { state: this.state, energy, condition, full: this.full, mealsToday: data.mealsToday,
             history: data.history, lastFood: data.lastFood, limp, pricked: this.pricked > 0,
             rest: REST_STATES[this.restState].label, comfort: COMFORT[data.comfort]?.label ?? null,
+            cold: COLD_STATES[this.coldState].label, chill: Math.round(this.chill),
             // Działające efekty: nazwa i ile godzin gry zostało.
             effects: this.activeEffects().map((type) => ({ type, label: EFFECTS[type].label,
                 hours: Math.max(0, (data.effects[type] - this.now) * 24) })) };

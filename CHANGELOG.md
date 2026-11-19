@@ -11,6 +11,36 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 1.26.0 - Zimno i zamarzanie
+
+PR #179.
+
+- **Zimno**: zimą, jesienią i w górach liczy się odczuwalna temperatura
+  - powietrze, wiatr na otwartym terenie, woda, dach nad głową. Poniżej
+  5°C gracz się wychładza.
+- **Co grzeje**: płonące ognisko (mocno, do 7 bloków), pochodnie
+  i lampy (trochę), dach nad głową, a od środka ciepła potrawa
+  z garnka, napar i chili.
+- **Trzy stopnie**: chłodno (dreszcze, płatek śniegu przy sercu),
+  zmarznięty (coraz wolniejszy chód, szron na brzegach obrazu), a na
+  końcu…
+- **Zamarznięcie na kość**: postać zamienia się w bryłę lodu, a czas
+  przyspiesza do odwilży - jesienną nocą do rana, zimą czasem aż do
+  wiosny. Po odwilży jesteś wyczerpany, głodny i zziębnięty.
+- **Gra ze znajomymi**: zamarznięty czeka w lodzie, aż ktoś rozpali
+  obok ognisko albo postawi pochodnię. Inni widzą bryłę lodu. Gdy
+  zamarzną wszyscy - czas przyspiesza.
+- **Sen na mrozie**: łóżko i posłanie grzeją; na gołej ziemi w mróz
+  budzisz się zmarznięty.
+- Nowe dźwięki (zamarzanie, pękający lód, dreszcze), komenda `/zimno`,
+  osiągnięcia *Sopel lodu*, *Grzanie rąk* i *Ratownik*, rozdział
+  „Zimno" w poradniku. Plan kolejnych wersji: `docs/plan.md`.
+- Tylko tryb przygody.
+
+Znane braki: nie ma jeszcze ubrań (przyjdą z włóknami); ciepło ogniska
+przechodzi przez ściany; gry ze znajomymi nie próbowałem w dwóch
+kartach. Reszta w `docs/zimno.md`.
+
 ## 1.25.0 - Ziemia i owoce z charakterem
 
 PR #178.

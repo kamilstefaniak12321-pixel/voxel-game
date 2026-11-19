@@ -814,6 +814,33 @@ export const ACHIEVEMENTS = [
         on: 'tilled'
     },
     {
+        id: 'frozen_solid',
+        tier: 'common',
+        title: 'Sopel lodu',
+        task: 'Zamarznij na kość - zimą, bez ognia i dachu nad głową.',
+        comment: 'Wiosna przyszła po ciebie osobiście.',
+        icon: 'snow',
+        on: 'frozen'
+    },
+    {
+        id: 'warmed_up',
+        tier: 'common',
+        title: 'Grzanie rąk',
+        task: 'Zmarznięty ogrzej się przy ognisku.',
+        comment: 'Najpierw palce, potem nos, na końcu humor.',
+        icon: 'fire_starter',
+        on: 'warmedUp'
+    },
+    {
+        id: 'rescuer',
+        tier: 'rare',
+        title: 'Ratownik',
+        task: 'W grze ze znajomymi bądź przy tym, jak zamarznięty gracz odtaje - rozpal przy nim ogień albo postaw pochodnię.',
+        comment: 'Lepszy ciepły kumpel niż zimna wiosna.',
+        icon: 'torch',
+        on: 'rescued'
+    },
+    {
         id: 'rich_field',
         tier: 'common',
         title: 'Czarna bruzda',
@@ -831,7 +858,7 @@ export const ACHIEVEMENTS = [
         comment: 'Babcia miała rację. Jak zwykle.',
         icon: 'rose_hip',
         on: 'ate',
-        when: (data) => data.kind !== 'drink' && (data.effects?.length ?? 0) > 0
+        when: (data) => data.kind === 'snack' && (data.effects?.length ?? 0) > 0
     },
     {
         id: 'first_roast',

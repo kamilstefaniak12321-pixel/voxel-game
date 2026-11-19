@@ -210,6 +210,18 @@ export const GUIDE = [
         ]
     },
     {
+        id: 'cold',
+        title: 'Zimno',
+        lines: [
+            'Zimą i w górach robi się zimno. Odczuwalną temperaturę zmienia wiatr na otwartym terenie, woda (w wodzie jest zimniej) i dach nad głową (pod dachem cieplej).',
+            'Najlepiej grzeje płonące ognisko - przy nim nawet w mróz jest ciepło. Pochodnie i lampy grzeją trochę. Ciepła potrawa z garnka, napar i chili grzeją od środka.',
+            'Na mrozie najpierw robi się chłodno (płatek śniegu przy sercu), potem marzniesz: coraz wolniej chodzisz, a brzegi obrazu pokrywa szron.',
+            'Kto nie zadba o ciepło, zamarza na kość w bryle lodu. Lód puszcza dopiero, gdy zrobi się cieplej - zimą bywa, że dopiero na wiosnę. Budzisz się wyczerpany i głodny.',
+            'W grze ze znajomymi zamarznięty czeka w lodzie, aż ktoś rozpali obok ognisko albo postawi pochodnię.',
+            'Na mrozie lepiej spać pod dachem, w łóżku albo na posłaniu - na gołej ziemi budzisz się zmarznięty.'
+        ]
+    },
+    {
         id: 'danger',
         title: 'Upadki i woda',
         lines: [

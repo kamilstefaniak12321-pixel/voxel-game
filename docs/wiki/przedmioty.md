@@ -2,7 +2,7 @@
 
 > Ta strona jest generowana z kodu gry (`python tools/wiki.py`) - nie zmieniaj jej ręcznie, zmiany przepadną przy następnym generowaniu.
 
-Wersja gry **1.25.0** - 212 przedmiotów. Przedmiotu nie da się postawić jak bloku; owoce i nasiona posadzone na ziemi (PPM) wyrastają w krzak albo drzewo, narzędzia przyspieszają kopanie.
+Wersja gry **1.26.0** - 212 przedmiotów. Przedmiotu nie da się postawić jak bloku; owoce i nasiona posadzone na ziemi (PPM) wyrastają w krzak albo drzewo, narzędzia przyspieszają kopanie.
 
 
 ## Drewno
@@ -78,12 +78,12 @@ Wersja gry **1.25.0** - 212 przedmiotów. Przedmiotu nie da się postawić jak b
 
 | | Nazwa | W komendach | Najważniejsze |
 |---|---|---|---|
-| <img src="ikony/dish_vegetable_stew.png" width="32" height="32" alt=""> | **Gulasz warzywny** | `dish_vegetable_stew` | **Służy też jako:** jedzenie; psuje się bardzo szybko - zjedz w dwa, trzy dni |
-| <img src="ikony/dish_pumpkin_soup.png" width="32" height="32" alt=""> | **Zupa dyniowa** | `dish_pumpkin_soup` | **Służy też jako:** jedzenie; psuje się bardzo szybko - zjedz w dwa, trzy dni |
-| <img src="ikony/dish_zucchini_stew.png" width="32" height="32" alt=""> | **Duszona cukinia** | `dish_zucchini_stew` | **Służy też jako:** jedzenie; psuje się bardzo szybko - zjedz w dwa, trzy dni |
-| <img src="ikony/dish_nut_soup.png" width="32" height="32" alt=""> | **Polewka orzechowa** | `dish_nut_soup` | **Służy też jako:** jedzenie; psuje się bardzo szybko - zjedz w dwa, trzy dni |
-| <img src="ikony/dish_compote.png" width="32" height="32" alt=""> | **Kompot owocowy** | `dish_compote` | **Służy też jako:** jedzenie; psuje się bardzo szybko - zjedz w dwa, trzy dni |
-| <img src="ikony/dish_mixed_stew.png" width="32" height="32" alt=""> | **Polewka** | `dish_mixed_stew` | **Służy też jako:** jedzenie; psuje się bardzo szybko - zjedz w dwa, trzy dni |
+| <img src="ikony/dish_vegetable_stew.png" width="32" height="32" alt=""> | **Gulasz warzywny** | `dish_vegetable_stew` | **Służy też jako:** jedzenie z działaniem (ciepło w brzuchu); psuje się bardzo szybko - zjedz w dwa, trzy dni |
+| <img src="ikony/dish_pumpkin_soup.png" width="32" height="32" alt=""> | **Zupa dyniowa** | `dish_pumpkin_soup` | **Służy też jako:** jedzenie z działaniem (ciepło w brzuchu); psuje się bardzo szybko - zjedz w dwa, trzy dni |
+| <img src="ikony/dish_zucchini_stew.png" width="32" height="32" alt=""> | **Duszona cukinia** | `dish_zucchini_stew` | **Służy też jako:** jedzenie z działaniem (ciepło w brzuchu); psuje się bardzo szybko - zjedz w dwa, trzy dni |
+| <img src="ikony/dish_nut_soup.png" width="32" height="32" alt=""> | **Polewka orzechowa** | `dish_nut_soup` | **Służy też jako:** jedzenie z działaniem (ciepło w brzuchu); psuje się bardzo szybko - zjedz w dwa, trzy dni |
+| <img src="ikony/dish_compote.png" width="32" height="32" alt=""> | **Kompot owocowy** | `dish_compote` | **Służy też jako:** jedzenie z działaniem (ciepło w brzuchu); psuje się bardzo szybko - zjedz w dwa, trzy dni |
+| <img src="ikony/dish_mixed_stew.png" width="32" height="32" alt=""> | **Polewka** | `dish_mixed_stew` | **Służy też jako:** jedzenie z działaniem (ciepło w brzuchu); psuje się bardzo szybko - zjedz w dwa, trzy dni |
 | <img src="ikony/strawberry.png" width="32" height="32" alt=""> | **Truskawki** | `strawberry` | **Posadzony (PPM na ziemi):** Sadzonka truskawki<br>**Skąd:** zbiór (PPM): Krzak truskawki (kilka owoców); zbiór (PPM): Krzak truskawki (pełen owoców); zbiór (PPM): Truskawki (owoce); zniszczony blok: Opadłe owoce (krzak truskawki); zniszczony blok: Opadłe owoce truskawek<br>**Przydaje się do:** Czerwona lampa, Barwnik czerwony<br>**Służy też jako:** jedzenie; składnik do garnka; psuje się szybko; suszenie na słońcu: Suszone owoce |
 | <img src="ikony/blackberry.png" width="32" height="32" alt=""> | **Jeżyny** | `blackberry` | **Posadzony (PPM na ziemi):** Sadzonka jeżyny<br>**Skąd:** zbiór (PPM): Krzak jeżyny (kilka owoców); zbiór (PPM): Krzak jeżyny (pełen owoców); zbiór (PPM): Owoce jeżyny; zniszczony blok: Opadłe owoce (krzak jeżyny); zniszczony blok: Opadłe owoce jeżyny<br>**Przydaje się do:** Fioletowa lampa, Barwnik fioletowy<br>**Służy też jako:** jedzenie; składnik do garnka; psuje się szybko; suszenie na słońcu: Suszone owoce |
 | <img src="ikony/chili_pepper.png" width="32" height="32" alt=""> | **Papryczki chili** | `chili_pepper` | **Posadzony (PPM na ziemi):** Sadzonka papryczki chili<br>**Skąd:** zbiór (PPM): Krzak papryczki chili (kilka papryczek); zbiór (PPM): Krzak papryczki chili (pełen papryczek); zniszczony blok: Opadłe owoce (krzak papryczki chili)<br>**Przydaje się do:** Czerwona lampa, Barwnik czerwony<br>**Służy też jako:** jedzenie z działaniem (rozgrzanie); składnik do garnka; psuje się powoli |
@@ -122,9 +122,9 @@ Wersja gry **1.25.0** - 212 przedmiotów. Przedmiotu nie da się postawić jak b
 | <img src="ikony/brew_calm.png" width="32" height="32" alt=""> | **Kubek ziół na sen** | `brew_calm` | **Przepis:** Kubek ziół na sen<br>**Służy też jako:** parzenie nad ogniskiem: Napar na sen |
 | <img src="ikony/brew_heal.png" width="32" height="32" alt=""> | **Kubek ziół leczniczych** | `brew_heal` | **Przepis:** Kubek ziół leczniczych<br>**Służy też jako:** parzenie nad ogniskiem: Napar leczniczy |
 | <img src="ikony/brew_vigor.png" width="32" height="32" alt=""> | **Kubek ziół wzmacniających** | `brew_vigor` | **Przepis:** Kubek ziół wzmacniających<br>**Służy też jako:** parzenie nad ogniskiem: Napar wzmacniający |
-| <img src="ikony/tea_calm.png" width="32" height="32" alt=""> | **Napar na sen** | `tea_calm` | **Skąd:** nad płonącym ogniskiem (trzymany PPM): Kubek ziół na sen<br>**Służy też jako:** napar (spokój); nie psuje się |
-| <img src="ikony/tea_heal.png" width="32" height="32" alt=""> | **Napar leczniczy** | `tea_heal` | **Skąd:** nad płonącym ogniskiem (trzymany PPM): Kubek ziół leczniczych<br>**Służy też jako:** napar (gojenie); nie psuje się |
-| <img src="ikony/tea_vigor.png" width="32" height="32" alt=""> | **Napar wzmacniający** | `tea_vigor` | **Skąd:** nad płonącym ogniskiem (trzymany PPM): Kubek ziół wzmacniających<br>**Służy też jako:** napar (wigor); nie psuje się |
+| <img src="ikony/tea_calm.png" width="32" height="32" alt=""> | **Napar na sen** | `tea_calm` | **Skąd:** nad płonącym ogniskiem (trzymany PPM): Kubek ziół na sen<br>**Służy też jako:** napar (spokój, ciepło w brzuchu); nie psuje się |
+| <img src="ikony/tea_heal.png" width="32" height="32" alt=""> | **Napar leczniczy** | `tea_heal` | **Skąd:** nad płonącym ogniskiem (trzymany PPM): Kubek ziół leczniczych<br>**Służy też jako:** napar (gojenie, ciepło w brzuchu); nie psuje się |
+| <img src="ikony/tea_vigor.png" width="32" height="32" alt=""> | **Napar wzmacniający** | `tea_vigor` | **Skąd:** nad płonącym ogniskiem (trzymany PPM): Kubek ziół wzmacniających<br>**Służy też jako:** napar (wigor, ciepło w brzuchu); nie psuje się |
 | <img src="ikony/jablon_jablko.png" width="32" height="32" alt=""> | **Jabłko** | `jablon_jablko` | **Posadzony (PPM na ziemi):** Sadzonka jabłoni<br>**Skąd:** czasem z bloku: Liście jabłoni (5%); czasem z bloku: Liście jabłoni z jabłkami (5%); zbiór (PPM): Liście jabłoni z jabłkami; czasem z bloku: Liście jabłoni (jabłka odrastają) (5%); zniszczony blok: Opadłe owoce jabłoni<br>**Przydaje się do:** Czerwona lampa<br>**Służy też jako:** jedzenie; pieczenie nad ogniskiem: Pieczone jabłko; składnik do garnka; psuje się powoli; suszenie na słońcu: Suszone owoce |
 | <img src="ikony/olcha_szyszki.png" width="32" height="32" alt=""> | **Szyszeczki olchy** | `olcha_szyszki` | **Posadzony (PPM na ziemi):** Sadzonka olchy<br>**Skąd:** czasem z bloku: Liście olchy (6%)<br>**Przydaje się do:** Wieniec świerkowy |
 | <img src="ikony/wierzba_bazie.png" width="32" height="32" alt=""> | **Bazie** | `wierzba_bazie` | **Posadzony (PPM na ziemi):** Sadzonka wierzby<br>**Skąd:** czasem z bloku: Liście wierzby (6%)<br>**Przydaje się do:** Lampa |

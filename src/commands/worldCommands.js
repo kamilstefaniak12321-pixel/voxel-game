@@ -38,6 +38,7 @@ import { POT_WATER, BOWL, COOK_SECONDS, DISHES, DISH_NAMES } from '../items/cook
 import { fruitCalendar } from '../blocks/fruitSeasons.js';
 import { seasonSerial } from '../game/Orchard.js';
 import { soilInfo, WATER_REACH, WATER_GROWTH } from '../blocks/soil.js';
+import { COLD_STATES, COLD_COMFORT } from '../game/Wellbeing.js';
 import { isFieldBlock } from '../blocks/fertilizers.js';
 import { spoilText, temperatureFactor, isPerishable, daysLeft, daysText, freshText } from '../items/spoilage.js';
 import { newPot, cookPot } from '../game/CookingState.js';
@@ -1304,6 +1305,54 @@ export const WORLD_COMMANDS = [
 
     },
 
+
+    {
+        name: 'zimno',
+        aliases: ['cold', 'chlod', 'mroz'],
+        usage: '/zimno | /zimno ustaw <0-100> | /zimno zamarznij | /zimno odmroz',
+        description: 'Zimno i zamarzanie (1.26.0): odczuwalna temperatura tu, gdzie stoisz (powietrze, schronienie, wiatr, woda, ogień, jedzenie) i wychłodzenie; "ustaw" zmienia wychłodzenie, "zamarznij" od razu zamienia w bryłę lodu, "odmroz" ją roztapia.',
+
+        run(args, { game }) {
+
+            const wellbeing = game.wellbeing, warmth = game.warmth, freeze = game.freeze;
+            const word = simplify(args[0] ?? '');
+
+            if (!wellbeing.active) throw new CommandError('Zimno działa tylko w trybie przygody');
+
+            if (!word) {
+                const p = warmth.update(0, true);
+                const n = (value) => `${value >= 0 ? '+' : ''}${Math.round(value * 10) / 10}`.replace('.', ',');
+                return `Odczuwalnie ${Math.round(p.felt)}°C: powietrze ${n(p.air)}, schronienie ${n(p.shelter)}, wiatr ${n(p.wind)}, ` +
+                    `woda ${n(p.water)}, ogień i pochodnie ${n(p.heat)}, jedzenie ${n(p.food)}. ` +
+                    `Wychłodzenie ${Math.round(wellbeing.chill)} z 100 (${COLD_STATES[wellbeing.coldState].label})` +
+                    `${p.felt >= COLD_COMFORT ? ' - tu się rozgrzewasz' : p.felt < 0 ? ' - tu można zamarznąć' : ' - tu marzniesz, ale nie zamarzniesz'}.` +
+                    `${freeze.active ? ` W bryle lodu (${freeze.phase}).` : ''}`;
+            }
+
+            if (word === 'ustaw') {
+                const value = parseNumber(args[1], 'wychłodzenie');
+                if (value < 0 || value > 99) throw new CommandError('Wychłodzenie: od 0 do 99 (100 to zamarznięcie - /zimno zamarznij)');
+                wellbeing.data.chill = value;
+                return `Wychłodzenie: ${value} (${COLD_STATES[wellbeing.coldState].label}).`;
+            }
+
+            if (word === 'zamarznij') {
+                if (freeze.active) throw new CommandError('Już jesteś w bryle lodu');
+                wellbeing.data.chill = 100;
+                if (!freeze.start()) throw new CommandError('Teraz nie da się zamarznąć');
+                return 'Zamarzasz…';
+            }
+
+            if (word === 'odmroz') {
+                if (!freeze.active) throw new CommandError('Nie jesteś w bryle lodu');
+                if (freeze.phase !== 'thaw') freeze.thaw(false);
+                return 'Lód topnieje.';
+            }
+
+            throw new CommandError('Użycie: /zimno | /zimno ustaw <0-100> | /zimno zamarznij | /zimno odmroz');
+
+        }
+    },
 
     {
         name: 'psucie',

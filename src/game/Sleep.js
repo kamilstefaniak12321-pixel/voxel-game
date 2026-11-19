@@ -82,7 +82,7 @@ export class Sleep {
     // Zwraca true, gdy gracz się położył.
     start(spot) {
         const game = this.game;
-        if (this.active || game.blackout?.active) return false;
+        if (this.active || game.blackout?.active || game.freeze?.active) return false;
         if (!isNight(game.time.days)) {
             game.onNotice?.(`Spać można nocą, od ${NIGHT_FROM}:00 do ${NIGHT_UNTIL}:00`);
             return false;
@@ -103,6 +103,7 @@ export class Sleep {
         this.startedAt = game.time.days;
         this.asleepFor = 0;
         this.released = new Set();
+        this.skipped = false;
         game.stopMining?.();
         // Kładąc się, gracz przestaje jeść (nic nie ubywa).
         game.eating = null;
@@ -145,6 +146,7 @@ export class Sleep {
                     game.time.days = nextWake(before);
                     game.advanceWorld?.((game.time.days - before) * DAY_LENGTH_MINUTES * 60);
                     game.net?.timeChanged?.();
+                    this.skipped = true;
                     this.wake();
                 }
             }
@@ -183,7 +185,11 @@ export class Sleep {
     wake(early = false) {
         const game = this.game, spot = this.spot;
         const hours = Math.max(0, (game.time.days - this.startedAt) * 24);
-        const result = game.wellbeing.sleep(hours, spot.place, spot.comfort, game.time.days);
+        // Noc przeskoczyła: zimno przez te godziny liczy się naraz, w cieple
+        // miejsca snu tuż przed pobudką (Warmth.js; ognisko mogło zgasnąć).
+        // Gdy czas płynął zwyczajnie, wychładzało się na bieżąco.
+        const felt = this.skipped ? game.warmth?.update(0, true).felt : null;
+        const result = game.wellbeing.sleep(hours, spot.place, spot.comfort, game.time.days, felt);
         this.phase = 'up';
         this.left = SLEEP_FADE_SECONDS;
         game.player.lying = false;
@@ -193,9 +199,10 @@ export class Sleep {
             game.onNotice?.('Wstajesz, zanim zdążyłeś zasnąć');
             return;
         }
-        const how = result.state === 'rested' ? 'Budzisz się wypoczęty.'
-            : result.state === 'ok' ? 'Budzisz się, ale mogło być lepiej.'
-                : 'Budzisz się niewyspany.';
+        const how = game.wellbeing.coldState === 'cold' ? 'Budzisz się zmarznięty - śpij pod dachem albo przy ognisku.'
+            : result.state === 'rested' ? 'Budzisz się wypoczęty.'
+                : result.state === 'ok' ? 'Budzisz się, ale mogło być lepiej.'
+                    : 'Budzisz się niewyspany.';
         const tip = spot.place === 'ground' ? ' Na gołej ziemi śpi się kiepsko - zrób posłanie ze słomy.'
             : spot.place === 'mat' ? ' W pościelonym łóżku wyspałbyś się lepiej.' : '';
         const bonus = result.comfort ? ` ${COMFORT[result.comfort].label[0].toUpperCase()}${COMFORT[result.comfort].label.slice(1)} doda ci dziś sił.` : '';

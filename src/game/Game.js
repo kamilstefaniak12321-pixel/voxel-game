@@ -98,6 +98,8 @@ import { Wellbeing } from './Wellbeing.js';
 import { Drops } from './Drops.js';
 import { Orchard } from './Orchard.js';
 import { Spoilage } from './Spoilage.js';
+import { Warmth } from './Warmth.js';
+import { Freeze } from './Freeze.js';
 import { DropRenderer } from '../rendering/DropRenderer.js';
 import { formatKeys } from '../input/bindings.js';
 
@@ -797,6 +799,13 @@ export class Game extends GameInteraction {
 
         this.sleep = new Sleep(this);
 
+        // Zimno i zamarzanie (1.26.0): odczuwalna temperatura (Warmth.js)
+        // i bryła lodu (Freeze.js).
+
+        this.warmth = new Warmth(this);
+
+        this.freeze = new Freeze(this);
+
 
         // Dawny "pasek" (komendy, testy): nazwy bloków i wybrane miejsce.
 
@@ -882,10 +891,12 @@ export class Game extends GameInteraction {
 
     update(dt) {
 
-        // Nieprzytomny gracz (Blackout.js) nie steruje.
-        const frozen = this.blackout.update(dt);
+        // Nieprzytomny gracz (Blackout.js), śpiący i zamarznięty w bryle
+        // lodu (Freeze.js) nie sterują.
+        const fainted = this.blackout.update(dt);
         const asleep = this.sleep.update(dt, this.input);
-        const input = frozen || asleep ? NO_INPUT : this.input;
+        const iced = this.freeze.update(dt);
+        const input = fainted || asleep || iced ? NO_INPUT : this.input;
         const profile = this.perfDiagnostics;
         profile?.beginStage('player');
 
@@ -909,7 +920,11 @@ export class Game extends GameInteraction {
 
         this.player.stamina = this.wellbeing.effects;
 
-        if (!this.rafts?.update(dt, input)) this.player.update(dt, input);
+        // W lodzie postać stoi; czekający na ratunek może się rozglądać.
+        if (iced) {
+            if (this.freeze.waiting) this.player.updateLook(this.input);
+        }
+        else if (!this.rafts?.update(dt, input)) this.player.update(dt, input);
 
         this.updateFootsteps();
 
@@ -924,7 +939,10 @@ export class Game extends GameInteraction {
         // Upływ czasu. Z włączonym debugiem (F3) klawisze [ i ]
         // przestawiają zegar o godzinę (do oglądania nieba).
 
-        this.time.update(dt);
+        // (W przyspieszonym czasie zegar ustawia Freeze.)
+        if (this.freeze.phase !== 'lapse') this.time.update(dt);
+
+        this.warmth.update(dt);
 
         this.updateWellbeing(dt, input);
 
@@ -1455,7 +1473,8 @@ export class Game extends GameInteraction {
 
         const player = this.player;
 
-        const pose = this.animator.update(dt, {
+        // W bryle lodu postać zastyga w ostatniej pozie.
+        const pose = this.freeze.active ? null : this.animator.update(dt, {
             vx: player.vel.x,
             vy: player.vel.y,
             vz: player.vel.z,
@@ -1470,18 +1489,23 @@ export class Game extends GameInteraction {
             eating: Boolean(this.eating)
         });
 
-        this.model.setPose(pose);
+        if (pose) this.model.setPose(pose);
 
         // Śpiący leży (stopy w miejscu gracza, głowa w stronę wezgłowia).
         this.model.place(player.pos, this.sleep.lying ? player.yaw : this.animator.bodyYaw, this.animator.previewLift, this.sleep.lying);
 
-        // Śpiący nie trzyma niczego w ręce.
-        this.model.setHeldBlock(this.sleep.lying ? null : this.selectedBlock);
+        // Śpiący i zamarznięty nie trzymają niczego w ręce.
+        const emptyHanded = this.sleep.lying || this.freeze.active;
+
+        this.model.setHeldBlock(emptyHanded ? null : this.selectedBlock);
+
+        // Bryła lodu wokół zamarzniętego (1.26.0).
+        this.model.setIce(this.freeze.ice);
 
 
         // Ręka w widoku z oczu i kamera w dół po upadku.
 
-        this.hand.setHeld(this.sleep.lying ? null : this.selectedBlock);
+        this.hand.setHeld(emptyHanded ? null : this.selectedBlock);
 
         this.hand.setEating(Boolean(this.eating));
 
@@ -1872,7 +1896,7 @@ export class Game extends GameInteraction {
         // Ręka w widoku z oczu - na wierzchu (nigdy nie wchodzi w ścianę).
         // Leżący (śpiący) gracz ma ręce wzdłuż ciała - nie widać ich.
 
-        if (!this.view && this.settings.get('showHand') && !this.sleep.lying) {
+        if (!this.view && this.settings.get('showHand') && !this.sleep.lying && !this.freeze.active) {
             const distanceLod = viewUniforms.uDistanceLodEnabled.value;
             viewUniforms.uDistanceLodEnabled.value = 0;
             try { this.hand.render(renderer, camera); }

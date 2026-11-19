@@ -123,7 +123,7 @@ export class RemotePlayers {
         if (state.onGround && !entry.wasGround && (entry.state?.vy ?? 0) < -6) entry.landed = -(entry.state.vy);
         entry.wasGround = state.onGround;
         entry.state = state;
-        entry.model.setHeldBlock(state.sleeping ? null : heldAllowed(state.held));
+        entry.model.setHeldBlock(state.sleeping || state.frozen ? null : heldAllowed(state.held));
         entry.model.object.visible = true;
     }
 
@@ -146,13 +146,20 @@ export class RemotePlayers {
             // Śpiący leży nieruchomo, tam gdzie się położył.
             const lying = Boolean(state.sleeping);
             if (lying) { entry.pos.set(state.x, state.y, state.z); entry.yaw = state.yaw; }
-            const pose = entry.animator.update(dt, lying ? { vx: 0, vy: 0, vz: 0, onGround: true, yaw: entry.yaw, pitch: 0, landed: 0 } : {
-                vx: state.vx, vy: state.vy, vz: state.vz, onGround: state.onGround, crouching: state.crouching,
-                sprinting: state.sprinting, flying: state.flying, swimming: state.swimming,
-                yaw: entry.yaw, pitch: entry.pitch, landed: entry.landed, eating: state.eating
-            });
+            // Zamarznięty (1.26.0) stoi w bryle lodu i zastyga w pozie;
+            // lód rośnie i topnieje płynnie.
+            const frozen = Boolean(state.frozen);
+            entry.ice = Math.max(0, Math.min(1, (entry.ice ?? 0) + (frozen ? dt / 2.2 : -dt / 2.5)));
+            entry.model.setIce(entry.ice);
+            if (!frozen) {
+                const pose = entry.animator.update(dt, lying ? { vx: 0, vy: 0, vz: 0, onGround: true, yaw: entry.yaw, pitch: 0, landed: 0 } : {
+                    vx: state.vx, vy: state.vy, vz: state.vz, onGround: state.onGround, crouching: state.crouching,
+                    sprinting: state.sprinting, flying: state.flying, swimming: state.swimming,
+                    yaw: entry.yaw, pitch: entry.pitch, landed: entry.landed, eating: state.eating
+                });
+                entry.model.setPose(pose);
+            }
             entry.landed = 0;
-            entry.model.setPose(pose);
             entry.model.place(entry.pos, lying ? entry.yaw : entry.animator.bodyYaw, 0, lying);
             // Leżący model jest obrócony: jego -z to góra świata.
             entry.label.position.set(0, lying ? 0.9 : state.crouching ? 1.95 : 2.15, lying ? -0.7 : 0);

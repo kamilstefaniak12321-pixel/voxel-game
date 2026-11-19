@@ -608,6 +608,14 @@ export class World {
         this.seasonScanAt = days + SEASON_SCAN_DAYS;
         const back = before === null || days < before;
         for (const chunk of this.chunks.values()) {
+            // Owocujący krzew, drzewo albo płyta zmienia wygląd: cały chunk.
+            const terrain = chunk.seasonTerrainNext;
+            if (terrain !== undefined && (back ? terrain !== Infinity : terrain <= days)) {
+                chunk.seasonTerrainNext = undefined;
+                chunk.seasonNext = undefined;
+                this.markDirty(chunk);
+                continue;
+            }
             const next = chunk.seasonNext;
             if (next === undefined) continue;
             if (back ? next !== Infinity : next <= days) {

@@ -1,5 +1,6 @@
 import { PLANT_PACKS } from './plantPacks.js';
 import { SEASON_DAYS, YEAR_DAYS, yearPosition, seasonAt } from '../sky/Seasons.js';
+import { fruitSeasonEntries } from './fruitSeasons.js';
 
 // ------------------------------------------------------------
 // KWIATY I PORY ROKU (1.4.0) - pomysł Kamila. Opis: docs/pory-roku.md.
@@ -22,6 +23,9 @@ import { SEASON_DAYS, YEAR_DAYS, yearPosition, seasonAt } from '../sky/Seasons.j
 // WAKE_DAYS pory, przez BUD_DAYS pokazuje pąki, potem kwitnie; zasypia
 // w ciągu ostatnich SLEEP_DAYS swojej ostatniej pory.
 // ------------------------------------------------------------
+
+// Numer zimy (sky/Seasons.js - SEASONS).
+const WINTER = 3;
 
 export const WAKE_DAYS = 1.5;
 export const BUD_DAYS = 0.5;
@@ -79,11 +83,27 @@ for (const pack of PLANT_PACKS) {
 }
 
 // Etap kłującej rośliny (0, 1, 2...) albo -1, gdy blok nie kłuje.
+// Owocowanie w porach roku (1.21.0, blocks/fruitSeasons.js): krzaki,
+// krzewy, rośliny niskie i drzewa owocowe. Etapy nie mają numerów po
+// kolei, więc wpis niesie `shown` - co widać na niższym poziomie.
+for (const entry of fruitSeasonEntries()) {
+    INFO.set(entry.id, { pack: null, firstId: entry.shown[0], stage: entry.stage, last: entry.last, runs: runsOf(entry.seasons),
+        boost: 1, seasons: entry.seasons, nightly: false, shown: entry.shown, fruit: true });
+    maxId = Math.max(maxId, entry.id);
+}
+
 export const pricklyStage = (id) => PRICKLY.get(id) ?? -1;
 
 export const SEASONAL = new Uint8Array(maxId + 1);
 
 for (const id of INFO.keys()) SEASONAL[id] = 1;
+
+// Owocujące bloki z kalendarza (fruitSeasons.js): nie wszystkie są
+// "roślinami" w geometrii (liście krzewów i drzew, płyty), więc zmiana
+// ich wyglądu przebudowuje cały chunk, nie same rośliny (World.updateSeasons).
+export const FRUIT_SEASONAL = new Uint8Array(maxId + 1);
+
+for (const [id, info] of INFO) if (info.fruit) FRUIT_SEASONAL[id] = 1;
 
 export const isSeasonalPlant = (id) => id <= maxId && SEASONAL[id] === 1;
 
@@ -175,7 +195,7 @@ export function shownPlantId(id, x, y, z, days) {
 
     const level = plantSeasonLevel(info, x, y, z, days);
 
-    return level >= info.stage ? id : info.firstId + level;
+    return level >= info.stage ? id : info.shown ? info.shown[level] : info.firstId + level;
 
 }
 
@@ -221,14 +241,17 @@ export function nextPlantChange(id, x, y, z, days) {
 
 
 // Tempo wzrostu rośliny w chwili `days`: w jej porze `boost` razy
-// szybciej, poza porą 0 (odpoczywa). Roślina bez pór: 1.
+// szybciej, poza porą 0 (odpoczywa). Roślina bez pór: 1, zimą 0.
 
 export function plantGrowthFactor(id, days) {
 
     const info = INFO.get(id);
+    const season = seasonAt(days).index;
 
-    if (!info || !info.seasons) return 1;
+    // Zimą nie rośnie nic (1.21.0) - poza roślinami, które mają zimę
+    // wśród swoich pór.
+    if (!info || !info.seasons) return season === WINTER ? 0 : 1;
 
-    return info.seasons.includes(seasonAt(days).index) ? info.boost : 0;
+    return info.seasons.includes(season) ? info.boost : 0;
 
 }

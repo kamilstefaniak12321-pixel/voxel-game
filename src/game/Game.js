@@ -2663,7 +2663,8 @@ export class Game extends GameInteraction {
         this.seasonIndex = season.index;
 
         if (changed) {
-            this.onNotice?.(season.key === 'lato' ? 'Nadeszło lato' : `Nadeszła ${season.name}`);
+            // (Zimą nic nie rośnie i nie owocuje - 1.21.0, blocks/fruitSeasons.js.)
+            this.onNotice?.(season.key === 'lato' ? 'Nadeszło lato' : season.key === 'zima' ? 'Nadeszła zima - rośliny zasypiają' : `Nadeszła ${season.name}`);
         }
 
         this.achieve('season', { key: season.key, changed });

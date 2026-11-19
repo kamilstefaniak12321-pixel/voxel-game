@@ -70,6 +70,8 @@ export const FOODS = {
     pumpkin_slice: { energy: 8, fullness: 80, kind: 'snack', effects: [] },
     pumpkin_seeds: { energy: 6, fullness: 60, kind: 'snack', effects: [] },
     zucchini: { energy: 6, fullness: 70, kind: 'snack', effects: [] },
+    // 1.21.0: suszone owoce (items/drying.js) - z każdego świeżego owocu.
+    dried_fruit: { energy: 9, fullness: 90, kind: 'snack', effects: [] },
 
     roasted_apple: { energy: 22, fullness: 150, kind: 'meal', effects: [] },
     roasted_hazelnut: { energy: 20, fullness: 180, kind: 'meal', effects: [] },

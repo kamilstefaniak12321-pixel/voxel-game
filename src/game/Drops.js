@@ -29,7 +29,8 @@ import { CHUNK_HEIGHT, WORLD_BORDER } from '../config.js';
 import { itemExists, currentType } from '../items/ItemRegistry.js';
 import { isLiquidId } from '../blocks/BlockRegistry.js';
 import { STACK_SIZE } from './Inventory.js';
-import { driesInto, sunDries, DRY_SECONDS, DRY_SKY_LIGHT } from '../items/clay.js';
+import { sunDries, DRY_SECONDS, DRY_SKY_LIGHT } from '../items/clay.js';
+import { driesInto } from '../items/drying.js';
 
 // Z jakiej odległości (bloki) gracz podnosi przedmiot.
 export const DROP_PICKUP_RADIUS = 1.4;

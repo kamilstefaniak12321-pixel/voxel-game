@@ -19,6 +19,7 @@ import { TORCH_BLOCKS } from './torches.js';
 import { CHEST_BLOCKS } from './chest.js';
 import { WOOD_SHAPE_BLOCKS } from './woodShapes.js';
 import { BEDDING_BLOCKS } from './bedding.js';
+import { SEWING_TABLE_BLOCKS } from './sewingTable.js';
 import { DECORATION_BLOCKS } from './decorations.js';
 import { FLOWING_WATER_BLOCKS, WATER_SOURCE_ID, WATER_FALLING_LAST_ID, plainWaterLevel, waterHeightForLevel } from './water.js';
 export { WATER_SOURCE_ID, WATER_FALLING_ID, WATER_FALL_MAX, waterIdForLevel, isFallingWaterId, waterFallDistance, fallingWaterId } from './water.js';
@@ -58,7 +59,7 @@ export const AIR_ID = 0;
 //   15000-15199             rośliny niskie (1.19.0, po 8 na roślinę - lowPlants.js),
 //   15200-15399             opadłe owoce (1.22.0 - fallenFruit.js),
 //   15400-15499             pola z nawozem i z innej ziemi (1.24.0, 1.25.0 - fertilizers.js),
-//   15500-15599             stanowiska pracy (1.27.0: stół krawiecki),
+//   15500-15599             stanowiska pracy (1.27.0: stół krawiecki 15500-15507 - sewingTable.js),
 //   15600-65279             wolne na przyszłość.
 
 export const MAX_BLOCK_ID = 65279;
@@ -395,6 +396,8 @@ export const BLOCK_TYPES = {
 
     // Posłania na ziemi (0.98.0) - bedding.js.
     ...BEDDING_BLOCKS,
+    // Stół krawiecki (1.27.0): dwa bloki, kierunek x część.
+    ...SEWING_TABLE_BLOCKS,
     ...DECORATION_BLOCKS,
     campfire: { id: 10000, name: 'Campfire', label: 'Ognisko', solid: false, opaque: false,
         model: 'structure', flat: { attach: 'down' }, inventory: false, creative: false,
@@ -508,36 +511,6 @@ export const BLOCK_TYPES = {
         },
 
         grows: { into: 'dirt', seconds: 1800, empty: true }
-
-    },
-
-
-    // Stół krawiecki (1.27.0, items/clothing.js, docs/ubrania.md): PPM
-    // otwiera ekwipunek ze stołem zamiast siatki wytwarzania - tkanie
-    // płótna, szycie ubrań i barwienie.
-
-    sewing_table: {
-
-        id: 15500,
-        name: 'Sewing Table',
-
-        label: 'Stół krawiecki',
-
-        sound: 'wood',
-
-        solid: true,
-
-        hardness: 2.5,
-
-        category: 'ozdoby',
-
-        station: 'sewing',
-
-        textures: {
-            top: 'sewing_table_top',
-            side: 'sewing_table_side',
-            bottom: 'oak_planks'
-        }
 
     },
 

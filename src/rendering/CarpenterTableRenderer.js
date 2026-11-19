@@ -9,6 +9,7 @@ import { boxFaces, buildFacesGeometry, itemShapeFaces } from './ShapeGeometry.js
 import { shapeBaseType } from '../blocks/woodShapes.js';
 import { woodOfPlanks } from '../blocks/woods.js';
 import { TABLE_PRODUCTS, TABLE_CAPACITY, BENCH_PRODUCTS } from '../crafting/carpentry.js';
+import { TABLE_ROTATION, productSpot } from './tableLayout.js';
 
 // ------------------------------------------------------------
 // STÓŁ STOLARSKI - CO LEŻY NA BLACIE (0.90.0)
@@ -28,14 +29,8 @@ import { TABLE_PRODUCTS, TABLE_CAPACITY, BENCH_PRODUCTS } from '../crafting/carp
 
 const SYNC_SECONDS = 0.2;
 const P = 1 / 16;
-export const TABLE_ROTATION = { north: 0, west: Math.PI / 2, south: Math.PI, east: -Math.PI / 2 };
-
-// Środek ćwiartki wyrobu (układ stołu przodem na północ, względem środka
-// części A; część B leży na -x).
-export function productSpot(index) {
-    const column = index % 2, row = Math.floor(index / 2);
-    return { x: (column === 0 ? 0.75 : 0.25) - 1.5, z: (row === 0 ? 0.25 : 0.75) - 0.5 };
-}
+// Obrót blatu i miejsca wyrobów - wspólne ze stołem krawieckim (tableLayout.js).
+export { TABLE_ROTATION, productSpot };
 
 const MINI_SCALE = 0.36;
 

@@ -175,7 +175,7 @@ export class NetHost extends NetSession {
             },
             you: { player: start, inventory: saved?.inventory ?? null, wellbeing: saved?.wellbeing ?? null },
             modified: this.modifiedKeys(),
-            state: { chests: this.state.snapshot('chests'), tables: this.state.snapshot('tables'), fires: this.state.snapshot('fires'), drops: this.state.snapshot('drops') },
+            state: { chests: this.state.snapshot('chests'), tables: this.state.snapshot('tables'), sewing: this.state.snapshot('sewing'), fires: this.state.snapshot('fires'), drops: this.state.snapshot('drops') },
             rafts: this.raftList(),
             host: { id: this.id, name: this.name, skin: this.skin(), s: this.playerMessage() },
             players: this.guestList.filter((other) => other !== guest)

@@ -9,7 +9,7 @@
 // Gotowe ikonki trzymamy w pamięci (klucz: krój i wygląd).
 // ------------------------------------------------------------
 
-import { cleanLook, lookColors } from '../items/clothing.js';
+import { CLOTHS, DYE_COLORS, clothOf, cleanLook, lookColors } from '../items/clothing.js';
 
 const cache = new Map();
 
@@ -73,4 +73,37 @@ export function garmentIcon(icons, item, onReady) {
     image.onerror = () => cache.delete(key);
     image.src = plain;
     return plain;
+}
+
+// --- Płótno na stole krawieckim (rendering/SewingTableRenderer.js) ---------------
+
+function darker(hex) {
+    return '#' + rgb(hex).map((value) => Math.round(value * 0.62).toString(16).padStart(2, '0')).join('');
+}
+
+// Kolory płótna na stole: barwnik albo naturalny kolor tkaniny.
+export function clothColors(type, table) {
+    const cloth = CLOTHS[clothOf(type) ?? 'linen'];
+    const main = table.main ? DYE_COLORS[table.main] : cloth.color;
+    const accent = table.pattern !== 'plain' && table.accent ? DYE_COLORS[table.accent] : table.main ? darker(DYE_COLORS[table.main]) : cloth.shade;
+    return { pattern: table.pattern ?? 'plain', main, accent };
+}
+
+// Piksele płótna 16 x 16 (RGBA): splot (co drugi piksel ciemniejszy),
+// na nim wzór.
+export function clothPixels(colors) {
+    const data = new Uint8ClampedArray(16 * 16 * 4);
+    const main = rgb(colors.main), accent = rgb(colors.accent);
+    for (let y = 0; y < 16; y++) {
+        for (let x = 0; x < 16; x++) {
+            const color = iconPattern(colors.pattern, x, y) === 'accent' ? accent : main;
+            const weave = (x + y) % 2 === 0 ? 1 : 0.92;
+            const i = (y * 16 + x) * 4;
+            data[i] = color[0] * weave;
+            data[i + 1] = color[1] * weave;
+            data[i + 2] = color[2] * weave;
+            data[i + 3] = 255;
+        }
+    }
+    return data;
 }

@@ -12,9 +12,10 @@ Rysowane tutaj, piksel po pikselu (16 x 16):
                                  barwione ubrania przemalowuje gra
                                  (ui/garmentIcons.js) - jasność pikseli
                                  względem koloru płótna zostaje,
-  - sewing_table_top, sewing_table_side - stół krawiecki: na blacie
-                                 kawałek płótna, nożyce i szpulka nici,
-                                 z boku szuflada i zwisająca nitka.
+  - sewing_table_top, sewing_table_top_b - blat stołu krawieckiego
+                                 (brzozowe deski z atlasu): część A z miarką
+                                 krawiecką, część B z kredowymi liniami.
+                                 Nogi i boki to zwykłe brzozowe deski.
 
 Kolory płócien muszą być takie jak w items/clothing.js (CLOTHS).
 Kafelki trafiają do arkusza rosliny.png w wolne miejsca atlasu
@@ -229,63 +230,40 @@ def cloth(key):
     return image
 
 
-WOOD = (156, 112, 70)
-
-
-def table_side():
-    image = blank()
-    for y in range(16):
-        for x in range(16):
-            k = 1.0 if (y // 4) % 2 == 0 else 0.92
-            if x in (0, 15):
-                k = 0.7
-            put(image, x, y, scale(WOOD, k))
-    # Blat (gruba krawędź), szuflada z gałką, nogi.
-    for x in range(16):
-        put(image, x, 0, scale(WOOD, 1.25))
-        put(image, x, 1, scale(WOOD, 1.1))
-        put(image, x, 2, scale(WOOD, 0.6))
-    for y in range(4, 9):
-        for x in range(3, 13):
-            put(image, x, y, scale(WOOD, 0.85 if y in (4, 8) or x in (3, 12) else 1.05))
-    put(image, 7, 6, (70, 50, 30))
-    put(image, 8, 6, (70, 50, 30))
-    for y in range(10, 16):
-        for x in range(3, 13):
-            put(image, x, y, scale(WOOD, 0.55))
-    # Zwisająca czerwona nitka.
-    for y in range(2, 9):
-        put(image, 13, y, (196, 52, 44))
-    return image
+def planks(name='birch_planks'):
+    """Kafelek desek z atlasu (blat stołu ma być z tego samego drewna co nogi)."""
+    import json
+    root = Path(__file__).resolve().parent.parent
+    data = json.loads((root / 'assets/textures/atlas.json').read_text(encoding='utf-8'))
+    region = data['regions'][name]
+    with Image.open(root / 'assets/textures' / data['sheets'][region['sheet']]['file']) as sheet:
+        return sheet.convert('RGBA').crop((region['x'], region['y'], region['x'] + 16, region['y'] + 16))
 
 
 def table_top():
-    image = blank()
-    for y in range(16):
-        for x in range(16):
-            k = 1.05 if (x // 4) % 2 == 0 else 0.95
-            if x in (0, 15) or y in (0, 15):
-                k = 0.72
-            put(image, x, y, scale(WOOD, k))
-    # Kawałek lnianego płótna z kredowym krojem.
-    linen = CLOTHS['linen'][0]
-    for y in range(2, 10):
-        for x in range(2, 11):
-            put(image, x, y, scale(linen, 0.95 if (x + y) % 2 else 1.02))
-    for x in range(3, 10):
-        put(image, x, 3, (245, 245, 240))
-    for y in range(3, 9):
-        put(image, 3, y, (245, 245, 240))
-    # Nożyce.
-    for i in range(5):
-        put(image, 9 + i, 11 + i // 2, (178, 182, 190))
-        put(image, 9 + i, 13 - i // 2, (150, 154, 162))
-    put(image, 8, 11, (60, 60, 70))
-    put(image, 8, 13, (60, 60, 70))
-    # Szpulka czerwonych nici.
-    for y in range(3, 7):
-        for x in range(12, 15):
-            put(image, x, y, (196, 52, 44) if y not in (3, 6) else (120, 84, 50))
+    """Część A blatu (tu leży materiał): brzozowe deski, wzdłuż przedniego
+    brzegu żółta miarka krawiecka z kreskami."""
+    image = planks()
+    for x in range(16):
+        put(image, x, 14, (226, 196, 76))
+        put(image, x, 15, (196, 164, 58))
+        if x % 2 == 0:
+            put(image, x, 14, (70, 60, 40))
+    for x in (0, 5, 10, 15):
+        put(image, x, 13, (70, 60, 40))
+    return image
+
+
+def table_top_b():
+    """Część B blatu (tu leżą wyroby): deski z kredowymi liniami wykroju."""
+    image = planks()
+    chalk = (238, 238, 232)
+    for i in range(16):
+        if i % 2 == 0:
+            put(image, 8, i, chalk)
+            put(image, i, 8, chalk)
+    for x, y in ((3, 3), (12, 3), (3, 12), (12, 12)):
+        put(image, x, y, chalk)
     return image
 
 
@@ -301,7 +279,7 @@ def textures():
         'nettle_cloth': cloth('nettle'),
         'bast_weave': cloth('bast'),
         'sewing_table_top': table_top(),
-        'sewing_table_side': table_side(),
+        'sewing_table_top_b': table_top_b(),
     }
     for kind, cloths in GARMENTS.items():
         for key in cloths:

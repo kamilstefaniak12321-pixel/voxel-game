@@ -216,10 +216,10 @@ export const GUIDE = [
             { text: 'Wiązkę lnu, pokrzywę albo korę lipową wrzuć do wody ([drop]). Po półtorej minuty w wodzie len i pokrzywa są moczone, a kora daje łyko.',
                 touch: 'Wiązkę lnu, pokrzywę albo korę lipową wyrzuć do wody (w ekwipunku weź ją i stuknij obok okna). Po półtorej minuty len i pokrzywa są moczone, a kora daje łyko.' },
             'Moczony len i moczona pokrzywa w siatce wytwarzania dają włókno. Trzy dowolne włókna to sznur, a dwie deski na dwóch sznurach - stół krawiecki.',
-            { text: 'Stół krawiecki otwiera się [use]. Na krośnie dwa włókna dają jedno płótno: lniane, pokrzywowe (grzeje lepiej) albo plecionkę z łyka (na łapcie).',
-                touch: 'Stół krawiecki otwiera się stuknięciem. Na krośnie dwa włókna dają jedno płótno: lniane, pokrzywowe (grzeje lepiej) albo plecionkę z łyka (na łapcie).' },
-            'Połóż płótno, wybierz krój (czapka, koszula, spodnie, buty...) i wzór (paski, krata, haft). Barwniki obok płótna dają kolor ubrania i kolor wzoru.',
-            'Postać w ekwipunku od razu przymierza to, co uszyjesz. Gotowe ubranie można zabarwić jeszcze raz - połóż je zamiast płótna.',
+            { text: 'Stół krawiecki ma dwa bloki, jak stolarski. Połóż włókno na lewej części ([use]), a [use] w prawą część tka płótno: lniane, pokrzywowe (cieplejsze) albo z łyka.',
+                touch: 'Stół krawiecki ma dwa bloki, jak stolarski. Połóż włókno na lewej części (stuknij), a stuknięcie w prawą część tka płótno: lniane, pokrzywowe (cieplejsze) albo z łyka.' },
+            'Na płótnie po prawej leżą cztery wykroje: z tyłu na głowę i tułów, z przodu na nogi i stopy. Kliknij wykrój - uszyjesz go; z kucaniem - zmienisz krój (np. czapka, chusta, opaska).',
+            'Barwnik na płótno to kolor ubrań, z kucaniem - kolor wzoru. Kucanie i pusta ręka na płótnie zmienia wzór: paski, krata, haft. Gotowe ubranie położone na stole barwisz tak samo.',
             'Ubrania zakłada się w miejsca obok postaci: głowa, tułów, nogi, stopy. Każde grzeje - im więcej na sobie, tym mniej marzniesz.'
         ]
     },

@@ -225,6 +225,8 @@ export function shapeBoxes(id, purpose = 'render', mask = 0) {
             if (purpose === 'collision') return [];
             return MAT[info.part].map((box) => rotateBox(box, info.facing));
         case 'table':
+        // Stół krawiecki (1.27.0, sewingTable.js) - ten sam kształt.
+        case 'sewing':
             if (purpose === 'collision' || purpose === 'outline') return FULL;
             return [...TABLE_COMMON, ...TABLE_PART[info.part]].map((box) => rotateBox(box, info.facing));
         default:

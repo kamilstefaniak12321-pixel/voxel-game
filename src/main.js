@@ -636,8 +636,7 @@ async function playWorld(worldInfo, { client = null } = {}) {
         game.onWellbeing = (event) => statusPanel.signal(event);
         game.onOpenChest = (chest) => openInventory(chest);
 
-        // Stół krawiecki (1.27.0) i ubrania na skórce gracza.
-        game.onOpenStation = (station) => openInventory(null, station);
+        // Ubrania na skórce gracza (1.27.0).
         game.onClothes = (equip) => setWornClothes(equip);
         game.clothesChanged();
 
@@ -1032,7 +1031,7 @@ function openAchievements() {
 
 // chest - skrzynia otwarta PPM (ChestState.js) albo nic (klawisz E).
 
-function openInventory(chest = null, station = null) {
+function openInventory(chest = null) {
 
     if (!game || state !== 'playing' || !inventoryScreen) {
         return;
@@ -1044,7 +1043,7 @@ function openInventory(chest = null, station = null) {
 
     input.enabled = false;
 
-    inventoryScreen.open(game, Array.isArray(chest?.layers) ? chest : null, station);
+    inventoryScreen.open(game, Array.isArray(chest?.layers) ? chest : null);
 
     document.exitPointerLock();
 

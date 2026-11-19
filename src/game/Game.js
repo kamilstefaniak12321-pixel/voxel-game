@@ -15,6 +15,7 @@ import { Hedgehogs } from './Hedgehogs.js';
 import { doorSound } from '../audio/doorSounds.js';
 import { Chests } from './Chests.js';
 import { CarpenterTables } from './CarpenterTables.js';
+import { SewingTables } from './SewingTables.js';
 import { World } from '../world/World.js';
 import { waitForTreeShowcase } from '../world/trees/TreeShowcase.js';
 import { Player } from '../player/Player.js';
@@ -841,11 +842,9 @@ export class Game extends GameInteraction {
         this.chests = new Chests(this, worldInfo.chests);
         // Stoły stolarskie i furtki (0.90.0) - deski na blatach w zapisie.
         this.carpenterTables = new CarpenterTables(this, worldInfo.carpenterTables);
+        // Stoły krawieckie (1.27.0) - materiał na blatach w zapisie.
+        this.sewingTables = new SewingTables(this, worldInfo.sewingTables);
         this.onOpenChest = null;
-
-        // Stanowisko pracy (1.27.0: 'sewing' - stół krawiecki) - main.js
-        // otwiera ekwipunek ze stołem.
-        this.onOpenStation = null;
 
         // Ubrania na postaci (1.27.0): main.js maluje je na skórce
         // (player/skin.js - setWornClothes). equip - 4 stosy albo null.
@@ -876,6 +875,7 @@ export class Game extends GameInteraction {
 
         this.saver.drops = this.drops;
         this.saver.orchard = this.orchard;
+        this.saver.sewingTables = this.sewingTables;
 
         this.saver.saveOnExit();
 
@@ -1026,6 +1026,7 @@ export class Game extends GameInteraction {
 
         this.chests.update(dt);
         this.carpenterTables.update(dt);
+        this.sewingTables.update(dt);
         this.torches.update(dt);
         this.world.updateLightHolds(dt);
         this.doors.update(dt);
@@ -2711,16 +2712,6 @@ export class Game extends GameInteraction {
     }
 
 
-    // Przymiarka przy stole krawieckim: postać w podglądzie nosi `equip`
-    // (null - to, co naprawdę ma na sobie).
-
-    previewClothes(equip) {
-
-        this.onClothes?.(equip ?? this.inventory.equip);
-
-    }
-
-
     advanceWorld(seconds) {
 
         if (!(seconds > 0)) {
@@ -3009,6 +3000,7 @@ export class Game extends GameInteraction {
 
         this.chests.dispose();
         this.carpenterTables.dispose();
+        this.sewingTables.dispose();
         this.torches.dispose();
         this.doors.dispose();
         this.hedgehogs.dispose();

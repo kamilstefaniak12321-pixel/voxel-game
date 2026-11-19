@@ -128,7 +128,7 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/birch_leaves.png` | Liście brzozy |
 | `bloki/birch_log_side.png` | Pień brzozy |
 | `bloki/birch_log_top.png` | Pień brzozy |
-| `bloki/birch_planks.png` | Schody brzozowe, Półblok brzozowy, Furtka brzozowa, Stół stolarski brzozowy, Łóżko brzozowe (pościelone), Łóżko brzozowe (stelaż), Deski brzozowe |
+| `bloki/birch_planks.png` | Schody brzozowe, Półblok brzozowy, Furtka brzozowa, Stół stolarski brzozowy, Łóżko brzozowe (pościelone), Łóżko brzozowe (stelaż), Stół krawiecki, Deski brzozowe |
 | `bloki/birch_sapling.png` | Sadzonka brzozy |
 | `bloki/birch_stripped_side.png` | Okorowany pień brzozy |
 | `bloki/birch_stripped_top.png` | Okorowany pień brzozy |
@@ -876,8 +876,8 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/sequoia/stripped_side.png` | Okorowany pień sekwoi |
 | `bloki/sequoia/stripped_top.png` | Okorowany pień sekwoi |
 | `bloki/sequoia_bark.png` | Kora sekwoi |
-| `bloki/sewing_table_side.png` | Stół krawiecki |
 | `bloki/sewing_table_top.png` | Stół krawiecki |
+| `bloki/sewing_table_top_b.png` | Stół krawiecki |
 | `bloki/shirt_linen.png` | Koszula lniana |
 | `bloki/shirt_nettle.png` | Koszula pokrzywowa |
 | `bloki/short_grass.png` | Krótka trawa |

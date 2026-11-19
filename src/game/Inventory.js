@@ -24,8 +24,7 @@ import { SLOTS as EQUIP_SLOTS, fitsSlot } from '../items/clothing.js';
 // cursor - stos pod kursorem też należy do zapisu: karta może zostać
 // zamknięta przy otwartym ekwipunku albo zabraknąć miejsca na odłożenie.
 // equip - noszone ubrania (1.27.0, items/clothing.js): głowa, tułów,
-// nogi, stopy. sew - pola stołu krawieckiego (włókno, materiał, barwnik
-// główny, barwnik wzoru); po zamknięciu okna wracają jak siatka.
+// nogi, stopy.
 // ------------------------------------------------------------
 
 export const STACK_SIZE = MAX_STACK;
@@ -37,9 +36,8 @@ export const SLOT_COUNT = HOTBAR_SIZE + MAIN_ROWS * HOTBAR_SIZE;
 // Siatka wytwarzania 2 x 2 (tak samo w Crafting.js - GRID_CELLS).
 export const CRAFT_SLOTS = 4;
 
-// Ubrania na sobie (głowa, tułów, nogi, stopy) i pola stołu krawieckiego.
+// Ubrania na sobie (głowa, tułów, nogi, stopy).
 export const EQUIP_COUNT = EQUIP_SLOTS.length;
-export const SEW_SLOTS = 4;
 
 
 // Poprawny stos albo null (zapis mógł być uszkodzony, blok usunięty z gry).
@@ -134,18 +132,13 @@ export class Inventory {
 
         // Ubrania (1.27.0): tylko takie, które pasują do swojego miejsca.
         const equip = new Array(EQUIP_COUNT).fill(null);
-        const sew = new Array(SEW_SLOTS).fill(null);
 
         for (let i = 0; i < EQUIP_COUNT; i++) {
             const item = cleanItem(saved?.equip?.[i]);
             equip[i] = item && fitsSlot(item, i) ? item : null;
         }
 
-        for (let i = 0; i < SEW_SLOTS; i++) {
-            sew[i] = cleanItem(saved?.sew?.[i]);
-        }
-
-        const inventory = new Inventory({ slots, selected, craft, cursor: cleanItem(saved?.cursor), equip, sew });
+        const inventory = new Inventory({ slots, selected, craft, cursor: cleanItem(saved?.cursor), equip });
 
         // Po wczytaniu gracz wraca do gry z zamkniętym oknem: trzymany
         // stos odkładamy od razu, a tylko nadmiar czeka pod kursorem.
@@ -189,17 +182,6 @@ export class Inventory {
         this.data.equip ??= new Array(EQUIP_COUNT).fill(null);
 
         return this.data.equip;
-
-    }
-
-
-    // Pola stołu krawieckiego (4 stosy albo null).
-
-    get sew() {
-
-        this.data.sew ??= new Array(SEW_SLOTS).fill(null);
-
-        return this.data.sew;
 
     }
 

@@ -1100,7 +1100,7 @@ Wersja gry **1.27.0** - 253 przepisów. Wytwarza się w ekwipunku (**E**): siatk
 
 <img src="przepisy/sewing_table.png" alt="Stół krawiecki: 2 x deski (dowolne) + 2 x Sznur (ułożenie: PP / RR; P = deski (dowolne), R = Sznur)">
 
-2 x deski (dowolne) + 2 x Sznur (z kształtem). Nazwa przepisu: `sewing_table`. PPM na stole: tkanie płótna z włókien, szycie ubrań (krój i wzór do wyboru) i barwienie.
+2 x deski (dowolne) + 2 x Sznur (z kształtem). Nazwa przepisu: `sewing_table`. Stół na dwa bloki, jak stolarski. Na lewej części kładziesz włókno, płótno albo ubranie; na prawej tkasz płótno albo szyjesz z wykrojów. Barwnik na płótno - kolor.
 
 ### Wianek z kwiatów
 

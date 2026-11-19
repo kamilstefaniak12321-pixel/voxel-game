@@ -300,7 +300,7 @@ export const RECIPES = [
     { id: 'rope', result: ['rope', 1], ingredients: ['#fibers', '#fibers', '#fibers'],
         note: 'Trzy dowolne włókna. Ze sznurów i desek - stół krawiecki.' },
     { id: 'sewing_table', result: ['sewing_table', 1], pattern: ['PP', 'RR'], key: { P: '#planks', R: 'rope' },
-        note: 'PPM na stole: tkanie płótna z włókien, szycie ubrań (krój i wzór do wyboru) i barwienie.' },
+        note: 'Stół na dwa bloki, jak stolarski. Na lewej części kładziesz włókno, płótno albo ubranie; na prawej tkasz płótno albo szyjesz z wykrojów. Barwnik na płótno - kolor.' },
 
     // Napary (0.98.1, docs/ziola.md): kubek z gliny, do niego dwa zioła
     // z jednej grupy; kubek ziół podgrzany nad płonącym ogniskiem

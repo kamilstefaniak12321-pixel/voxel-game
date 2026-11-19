@@ -2,7 +2,7 @@
 
 > Ta strona jest generowana z kodu gry (`python tools/wiki.py`) - nie zmieniaj jej ręcznie, zmiany przepadną przy następnym generowaniu.
 
-Wersja gry **1.27.0** - 741 bloków (do tego 3311 odmian, których nie ma w ekwipunku, np. wieniec zawieszony na boku bloku). Czas kopania dotyczy trybu przygody; w kreatywnym bloki znikają od razu.
+Wersja gry **1.27.0** - 741 bloków (do tego 3318 odmian, których nie ma w ekwipunku, np. wieniec zawieszony na boku bloku). Czas kopania dotyczy trybu przygody; w kreatywnym bloki znikają od razu.
 
 [Ziemia](#ziemia) · [Skały](#skały) · [Drewno](#drewno) · [Budulec](#budulec) · [Rośliny](#rośliny) · [Światło](#światło) · [Meble i ozdoby](#meble-i-ozdoby)
 
@@ -767,8 +767,8 @@ Wersja gry **1.27.0** - 741 bloków (do tego 3311 odmian, których nie ma w ekwi
 | <img src="ikony/bristlecone_bed.png" width="32" height="32" alt=""> | **Łóżko z sosny ościstej (stelaż)** | `bristlecone_bed` | **Kopanie:** 1,2 s (siekierą 0,4 s)<br>**Skąd:** zniszczony blok: Łóżko z sosny ościstej (pościelone); zniszczony blok: Łóżko z sosny ościstej (stelaż); potrójny warsztat: Deski z sosny ościstej (8 → 1 szt.) |
 | <img src="ikony/straw_bedding.png" width="32" height="32" alt=""> | **Słomiana pościel** | `straw_bedding` | **Kopanie:** 0,3 s (łopatą 0,1 s)<br>**Skąd:** rozbite pościelone łóżko (pościel wypada osobno); zniszczony blok: Słomiana pościel<br>**Przepis:** Słomiana pościel |
 | <img src="ikony/linen_bedding.png" width="32" height="32" alt=""> | **Lniana pościel** | `linen_bedding` | **Kopanie:** 0,3 s (łopatą 0,1 s)<br>**Skąd:** rozbite pościelone łóżko (pościel wypada osobno); zniszczony blok: Lniana pościel<br>**Przepis:** Lniana pościel |
+| <img src="ikony/sewing_table.png" width="32" height="32" alt=""> | **Stół krawiecki** | `sewing_table` | **Kopanie:** 1,2 s (siekierą 0,4 s)<br>**Skąd:** zniszczony blok: Stół krawiecki<br>**Przepis:** Stół krawiecki |
 | <img src="ikony/flower_wreath.png" width="32" height="32" alt=""> | **Wianek z kwiatów** | `flower_wreath` | **Kopanie:** od razu<br>**Skąd:** zniszczony blok: Wianek z kwiatów<br>**Przepis:** Wianek z kwiatów |
-| <img src="ikony/sewing_table.png" width="32" height="32" alt=""> | **Stół krawiecki** | `sewing_table` | **Kopanie:** 2,5 s (siekierą 0,83 s)<br>**Przepis:** Stół krawiecki |
 | <img src="ikony/spruce_wreath.png" width="32" height="32" alt=""> | **Wieniec świerkowy** | `spruce_wreath` | **Kopanie:** od razu<br>**Skąd:** zniszczony blok: Wieniec świerkowy<br>**Przepis:** Wieniec świerkowy |
 | <img src="ikony/beech_leaf_litter.png" width="32" height="32" alt=""> | **Opadłe liście buka** | `beech_leaf_litter` | **Kopanie:** od razu<br>**Przepis:** Opadłe liście buka x2<br>**Przydaje się do:** Czarnoziem |
 | <img src="ikony/oak_leaf_litter.png" width="32" height="32" alt=""> | **Opadłe liście dębu** | `oak_leaf_litter` | **Kopanie:** od razu<br>**Przepis:** Opadłe liście dębu x2<br>**Przydaje się do:** Czarnoziem |

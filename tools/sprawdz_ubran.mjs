@@ -2,10 +2,11 @@
 // SPRAWDZENIE WŁÓKIEN I UBRAŃ (1.27.0)
 //
 // - moczenie w wodzie (leżące przedmioty), włókna, sznur, stół krawiecki
-//   (blok, przepis, tekstury),
-// - płótna, kroje, wzory, kolory; tkanie, szycie, barwienie,
-// - stół w ekwipunku (SewingPanel): tkanie, szycie, barwienie, Shift,
-//   zwrot pól po zamknięciu,
+//   (dwa bloki jak stół stolarski, przepis, tekstury),
+// - płótna, kroje, wzory, kolory,
+// - stół w świecie (SewingTables): materiał na blat, tkanie, wykroje,
+//   zmiana kroju i wzoru, barwienie płótna i gotowego ubrania, zapis,
+//   rozbijanie, gra ze znajomymi,
 // - stosy z wyglądem: ubrania się nie układają, wygląd przeżywa
 //   kopiowanie, zapis, skrzynię i wyrzucenie,
 // - noszenie: miejsca, zapis, ciepło, kod dla innych graczy,
@@ -21,7 +22,17 @@ import { registerHooks } from 'node:module';
 import { textureManifest } from './texture_regions.mjs';
 
 registerHooks({
+    resolve(specifier, context, next) {
+        return next(specifier === 'three' ? new URL('../lib/three/three.module.js', import.meta.url).href : specifier, context);
+    },
     load(url, context, next) {
+        // Modele na blatach (WebGL) - poza tym sprawdzeniem.
+        if (url.endsWith('/src/rendering/CarpenterTableRenderer.js')) {
+            return { format: 'module', shortCircuit: true, source: 'export class CarpenterTableRenderer {}; export const TABLE_ROTATION = {};' };
+        }
+        if (url.endsWith('/src/rendering/SewingTableRenderer.js')) {
+            return { format: 'module', shortCircuit: true, source: 'export class SewingTableRenderer {}' };
+        }
         return next(url, url.endsWith('.js') && /\/(src|assets|lib)\//.test(url) ? { ...context, format: 'module' } : context);
     }
 });
@@ -37,8 +48,12 @@ const { Inventory, cleanItem, EQUIP_COUNT } = await import('../src/game/Inventor
 const CS = await import('../src/game/ChestState.js');
 const { Drops, restoreDrop, dropState } = await import('../src/game/Drops.js');
 const { paintClothes, BOXES, CUTS, SKIN } = await import('../src/player/clothes.js');
-const { recolor, iconPattern } = await import('../src/ui/garmentIcons.js');
-const { SewingPanel, SEW_FIBER, SEW_MATERIAL, SEW_MAIN, SEW_ACCENT } = await import('../src/ui/SewingPanel.js');
+const { recolor, iconPattern, clothColors, clothPixels } = await import('../src/ui/garmentIcons.js');
+const { SewingTables, sewingProducts, restoreSewingTable, sewingTableState, SEWING_CAPACITY } = await import('../src/game/SewingTables.js');
+const { shapeInfo, shapeId } = await import('../src/blocks/woodShapes.js');
+const { sewingTableId, SEWING_TABLE_BLOCKS } = await import('../src/blocks/sewingTable.js');
+const { shapeBoxes } = await import('../src/world/ShapeBoxes.js');
+const { stateSystems } = await import('../src/net/StateSync.js');
 const P = await import('../src/net/protocol.js');
 const { itemUses } = await import('../src/items/uses.js');
 const { ACHIEVEMENTS } = await import('../src/achievements/list.js');
@@ -65,7 +80,16 @@ const manifest = textureManifest();
     check(findRecipe(['oak_planks', 'oak_planks', 'rope', 'rope'])?.result.join() === 'sewing_table,1' && findRecipe(['oak_planks', 'oak_planks', 'stick', 'stick'])?.result[0] === 'oak_carpenter_table', 'Stół krawiecki: deski na sznurach (stolarski dalej na patykach)');
     check(findRecipe(['len_wiazka', 'len_wiazka', 'len_wiazka', 'len_wiazka'])?.result[0] === 'linen_bedding', 'Lniana pościel bez zmian');
     const table = R.getBlockDefinition('sewing_table');
-    check(table.id === 15500 && table.station === 'sewing' && table.solid && table.category === 'ozdoby' && manifest.tiles.sewing_table_top && manifest.tiles.sewing_table_side, 'Blok stołu krawieckiego z teksturami');
+    check(table.id === 15500 && table.model === 'shape' && table.solid && table.category === 'ozdoby' && manifest.tiles.sewing_table_top && manifest.tiles.sewing_table_top_b &&
+        table.textures.side === 'birch_planks' && !manifest.tiles.sewing_table_side, 'Blok stołu krawieckiego: blat z miarką, boki z desek');
+    const variants = Object.values(SEWING_TABLE_BLOCKS);
+    check(variants.length === 8 && variants.every((block) => block.id >= 15500 && block.id <= 15507 && block.drops === 'sewing_table' && block.pick === 'sewing_table' &&
+        shapeInfo(block.id)?.kind === 'sewing') && variants.filter((block) => block.inventory !== false).length === 1, 'Osiem odmian (4 kierunki x 2 części), w ekwipunku jedna');
+    check(sewingTableId('north', 'a') === 15500 && sewingTableId('east', 'b') === 15500 + 1 * 2 + 1 && R.getBlockDefinition(R.getBlockTypeById(sewingTableId('west', 'b'))).textures.top === 'sewing_table_top_b', 'Numery i tekstury części');
+    for (const [facing, part] of [['south', 'a'], ['east', 'b']]) {
+        check(JSON.stringify(shapeBoxes(sewingTableId(facing, part), 'render')) === JSON.stringify(shapeBoxes(shapeId('oak', 'table', { facing, part }), 'render')) &&
+            shapeBoxes(sewingTableId(facing, part), 'render').length > 1, `Kształt jak stół stolarski (${facing}, ${part})`);
+    }
     for (const type of Object.keys(C.CLOTHING_ITEMS)) check(itemExists(type) && manifest.tiles[ITEM_TYPES[type].icon] && ITEM_TYPES[type].category === 'narzedzia', `${type}: przedmiot z ikonką`);
 
     // Leżące w wodzie - moczą się; poza wodą - od nowa.
@@ -93,8 +117,8 @@ const manifest = textureManifest();
 
 {
     check(Object.keys(C.CLOTHS).join() === 'linen,nettle,bast' && C.CLOTHS.nettle.factor > C.CLOTHS.linen.factor, 'Trzy płótna; pokrzywowe grzeje lepiej');
-    check(C.weave('flax_fiber', 5).type === 'linen_cloth' && C.weave('flax_fiber', 5).count === 2 && C.weave('flax_fiber', 5).uses === 4 &&
-        C.weave('nettle_fiber', 2).type === 'nettle_cloth' && C.weave('bast', 2).type === 'bast_weave' && C.weave('flax_fiber', 1) === null && C.weave('stone', 8) === null, 'Tkanie: dwa włókna - jedno płótno, zależnie od włókna');
+    check(C.FIBERS_PER_CLOTH === 2 && C.clothFromFiber('flax_fiber') === 'linen' && C.clothFromFiber('nettle_fiber') === 'nettle' && C.clothFromFiber('bast') === 'bast' &&
+        C.clothFromFiber('stone') === null && C.clothOf('bast_weave') === 'bast', 'Tkanie: dwa włókna - jedno płótno, zależnie od włókna');
     check(Object.keys(C.GARMENT_TYPES).length === 20 && C.kindsFor('bast').join() === 'vest,lapcie' && C.kindsFor('linen').length === 9, 'Kroje i z czego');
     for (const [type, info] of Object.entries(C.GARMENT_TYPES)) {
         check(C.SLOTS.includes(info.slot) && info.warmth > 0 && info.cost >= 1 && getItemLabel(type) === info.label && F.stackSize(type) === 1, `${type}: ${info.label}`);
@@ -103,24 +127,11 @@ const manifest = textureManifest();
     check(getItemLabel('shirt_linen') === 'Koszula lniana' && getItemLabel('trousers_nettle') === 'Spodnie pokrzywowe' && getItemLabel('lapcie_bast') === 'Łapcie z łyka', 'Polskie nazwy');
     check(C.garmentInfo('tunic_nettle').warmth > C.garmentInfo('tunic_linen').warmth && C.garmentInfo('tunic_linen').warmth > C.garmentInfo('shirt_linen').warmth, 'Tunika grzeje bardziej niż koszula, pokrzywa bardziej niż len');
 
-    const linen = { type: 'linen_cloth', count: 5 };
-    const red = { type: 'dye_red', count: 3 }, white = { type: 'dye_white', count: 2 };
-    let result = C.sewResult(linen, { kind: 'shirt', pattern: 'stripes' }, [red, white]);
-    check(result.mode === 'sew' && result.item.type === 'shirt_linen' && result.material === 3 && result.dyes.join() === '1,1' &&
-        result.item.look.pattern === 'stripes' && result.item.look.main === 'red' && result.item.look.accent === 'white', 'Szycie: krój, wzór i dwa barwniki');
-    result = C.sewResult(linen, { kind: 'shirt', pattern: 'plain' }, [null, white]);
-    check(result.item.look.main === null && result.item.look.accent === null && result.dyes.join() === '0,0', 'Gładki - barwnik wzoru niepotrzebny');
-    check(C.sewResult({ type: 'linen_cloth', count: 2 }, { kind: 'shirt' }) === null && C.sewResult(linen, { kind: 'lapcie' }) === null &&
-        C.sewResult({ type: 'bast_weave', count: 2 }, { kind: 'lapcie' }).item.type === 'lapcie_bast' && C.sewResult(null, { kind: 'cap' }) === null &&
-        C.sewResult({ type: 'stone', count: 9 }, { kind: 'cap' }) === null && C.sewResult(linen, {}) === null, 'Za mało płótna, zły krój, złe płótno - nic');
-
-    // Barwienie gotowego ubrania.
-    const shirt = { type: 'shirt_linen', count: 1, look: C.cleanLook({ pattern: 'plain' }) };
-    const dyed = C.sewResult(shirt, { pattern: 'check' }, [{ type: 'dye_blue', count: 1 }, white]);
-    check(dyed.mode === 'dye' && dyed.item.type === 'shirt_linen' && dyed.material === 1 && dyed.item.look.main === 'blue' && dyed.item.look.pattern === 'check' && dyed.item.look.accent === 'white', 'Barwienie: nowy kolor i wzór');
-    check(C.sewResult(shirt, { pattern: 'plain' }, []) === null && C.sewResult(shirt, { pattern: 'check' }, [null, null]) === null, 'Barwienie bez barwnika - nic');
-    const blue = { type: 'shirt_linen', count: 1, look: C.cleanLook({ pattern: 'plain', main: 'blue' }) };
-    check(C.sewResult(blue, { pattern: 'plain' }, [{ type: 'dye_blue', count: 1 }]) === null, 'Ten sam kolor - nic do zrobienia');
+    // Wykroje na stole: po jednym miejscu na ciele, kroje w kółko.
+    check(C.PRODUCT_SLOTS.join() === 'legs,feet,head,body' && C.kindsForSlot('linen', 'head').join() === 'cap,scarf,headband' && C.kindsForSlot('bast', 'feet').join() === 'lapcie' &&
+        C.kindsForSlot('bast', 'legs').length === 0 && C.kindsForSlot('linen', 'body').join() === 'shirt,vest,tunic', 'Kroje na każde miejsce');
+    check(C.nextOf(['a', 'b', 'c'], 'c') === 'a' && C.nextOf(['a', 'b'], 'x') === 'a' && C.nextOf([], 'a') === null && C.nextOf(C.PATTERN_ORDER, 'plain') === 'stripes', 'Następny krój / wzór w kółko');
+    check(C.isTableMaterial('flax_fiber') && C.isTableMaterial('nettle_cloth') && C.isTableMaterial('vest_bast') && !C.isTableMaterial('dye_red') && !C.isTableMaterial('stone') && !C.isTableMaterial(null), 'Co można położyć na stole');
 
     check(JSON.stringify(C.cleanLook({ pattern: 'x', main: 'nope', accent: 'red' })) === '{"pattern":"plain","main":null,"accent":"red"}' && C.cleanLook(null).pattern === 'plain', 'Wygląd: poprawiany');
     const colors = C.lookColors('shirt_nettle', null);
@@ -129,53 +140,160 @@ const manifest = textureManifest();
 }
 
 
-// --- Stół w ekwipunku (SewingPanel) -------------------------------------------------------
+// --- Stół krawiecki w świecie (SewingTables) --------------------------------------------------
+
+function sewingGame(mode = 'adventure') {
+    const blocks = new Map();
+    const world = {
+        getBlockId: (x, y, z) => blocks.get(`${x},${y},${z}`) ?? 0,
+        setBlock(x, y, z, type) { blocks.set(`${x},${y},${z}`, type ? R.getBlockId(type) : 0); return true; },
+        getChunk: () => ({}),
+        toChunkCoord: (v) => Math.floor(v / 16)
+    };
+    const notices = [], achieved = [];
+    const inventory = Inventory.load({}, mode);
+    const game = { world, inventory, mode, notices, achieved, onNotice: (text) => notices.push(text), playBlockSound() {},
+        achieve: (name, data) => achieved.push([name, data]) };
+    game.sewingTables = new SewingTables(game, []);
+    return game;
+}
 
 {
-    const inventory = Inventory.load({}, 'adventure');
-    const achieved = [];
-    const game = { inventory, achieve: (name, data) => achieved.push([name, data]), previewClothes() {} };
-    const screen = { game, get cursor() { return inventory.cursor; }, set cursor(item) { inventory.cursor = item; }, icons: new Map() };
-    const panel = new SewingPanel(screen);
-    const sew = inventory.sew;
+    const game = sewingGame();
+    const { sewingTables: tables, world, inventory, notices, achieved } = game;
+    const free = { intersectsBlock: () => false };
+    // Gracz patrzy na +z: przód stołu na północ, część B po prawej (-x).
+    check(tables.place({ x: 0, y: 0, z: 0 }, Math.PI, free) === 'sewing_table' && shapeInfo(world.getBlockId(-1, 0, 0))?.part === 'b' &&
+        shapeInfo(world.getBlockId(0, 0, 0))?.facing === 'north', 'Stawianie: dwie części, przodem do gracza');
+    check(tables.place({ x: -1, y: 0, z: 0 }, Math.PI, free) === false && tables.place({ x: 5, y: 0, z: 0 }, Math.PI, { intersectsBlock: () => true }) === false, 'Zajęte miejsce albo gracz - nie stoi');
+    const a = { x: 0, y: 0, z: 0 };
+    const hitA = { hit: true, block: { x: 0, y: 0, z: 0 }, normal: { x: 0, y: 1, z: 0 }, point: { x: .5, y: 1, z: .5 } };
+    // Ćwiartki części B (przód stołu na północ: lewa kolumna to większe x).
+    const hitB = (index) => {
+        const fx = index % 2 === 0 ? .75 : .25, fz = index < 2 ? .25 : .75;
+        return { hit: true, block: { x: -1, y: 0, z: 0 }, normal: { x: 0, y: 1, z: 0 }, point: { x: -1 + fx, y: 1, z: fz } };
+    };
+    const hold = (slot, item) => { inventory.set(slot, item); inventory.selected = slot; return item?.type ?? null; };
+    const table = () => tables.state(a);
 
-    sew[SEW_FIBER] = { type: 'flax_fiber', count: 5 };
-    check(panel.clickWeave(false) === 1 && inventory.cursor.type === 'linen_cloth' && inventory.cursor.count === 1 && sew[SEW_FIBER].count === 3, 'Klik w krosno - jedno płótno pod kursor');
-    check(panel.clickWeave(false) === 1 && inventory.cursor.count === 2 && sew[SEW_FIBER].count === 1, 'Drugi klik - dokłada do trzymanego');
-    check(panel.clickWeave(false) === 0, 'Jedno włókno to za mało');
-    inventory.cursor = null;
-    sew[SEW_FIBER] = { type: 'nettle_fiber', count: 9 };
-    check(panel.clickWeave(true) === 4 && inventory.count('nettle_cloth') === 4 && sew[SEW_FIBER].count === 1, 'Shift - ile się da, prosto do ekwipunku');
-    check(achieved.filter(([name]) => name === 'woven').length === 3, 'Osiągnięcie za tkanie');
+    check(tables.interact(hitA, null) && /Połóż/.test(notices.at(-1)), 'Pusta ręka na pustym stole - podpowiedź');
+    check(tables.interact(hitB(0), null) && /lewej/.test(notices.at(-1)), 'Część B bez materiału - podpowiedź');
 
-    sew[SEW_MATERIAL] = { type: 'nettle_cloth', count: 4 };
-    sew[SEW_MAIN] = { type: 'dye_green', count: 2 };
-    sew[SEW_ACCENT] = { type: 'dye_yellow', count: 1 };
-    panel.choice = { kind: 'trousers', pattern: 'embroidery' };
-    check(panel.result().item.type === 'trousers_nettle', 'Podgląd wyniku');
-    check(panel.clickSew() && inventory.cursor.type === 'trousers_nettle' && inventory.cursor.look.pattern === 'embroidery' && inventory.cursor.look.main === 'green' &&
-        sew[SEW_MATERIAL].count === 1 && sew[SEW_MAIN].count === 1 && sew[SEW_ACCENT] === null, 'Szycie: ubranie pod kursor, zużyte płótno i barwniki');
-    check(!panel.clickSew(), 'Z ubraniem w ręce nie da się uszyć drugiego');
-    check(achieved.some(([name, data]) => name === 'sewn' && data.mode === 'sew'), 'Osiągnięcie za szycie');
+    // Włókno -> płótno.
+    let held = hold(0, { type: 'flax_fiber', count: 9 });
+    check(tables.interact(hitA, held) && table().material.type === 'flax_fiber' && table().material.count === 1 && inventory.get(0).count === 8, 'PPM włóknem - jedno włókno na blat');
+    check(/tkanie/.test(notices.at(-1)), 'Po położeniu - podpowiedź, co dalej');
+    check(tables.interact(hitA, held, true) && table().material.count === 9 && !inventory.get(0), 'Z kucaniem - cały stos');
+    check(!tables.canBreak(a) && !tables.canBreak({ x: -1, y: 0, z: 0 }), 'Z materiałem na blacie stołu nie da się rozbić');
+    check(tables.interact(hitB(3), null) && inventory.count('linen_cloth') === 1 && table().material.count === 7, 'PPM w część B - jedno płótno z dwóch włókien');
+    check(tables.interact(hitB(0), null, true) && inventory.count('linen_cloth') === 4 && table().material.count === 1, 'Z kucaniem - ile się da');
+    check(tables.interact(hitB(0), null) && /potrzeba 2/.test(notices.at(-1)) && inventory.count('linen_cloth') === 4, 'Jedno włókno - za mało');
+    check(achieved.filter(([name]) => name === 'woven').length === 2, 'Osiągnięcie za tkanie');
+    check(tables.interact(hitA, null) && inventory.count('flax_fiber') === 1 && table().material === null && tables.canBreak(a), 'Pusta ręka - włókno wraca, stół do rozbicia');
 
-    // Barwienie: ubranie na stół, nowy kolor.
-    const trousers = inventory.cursor;
-    inventory.cursor = null;
-    sew[SEW_MATERIAL] = trousers;
-    sew[SEW_MAIN] = { type: 'dye_black', count: 1 };
-    panel.choice.pattern = 'embroidery';
-    check(panel.clickSew() && inventory.cursor.look.main === 'black' && inventory.cursor.look.accent === 'yellow' && sew[SEW_MATERIAL] === null && sew[SEW_MAIN] === null, 'Barwienie gotowego: wzór zostaje, kolor nowy');
+    // Płótno: wykroje, kroje, wzór, barwniki.
+    inventory.add('linen_cloth', 6);
+    const clothSlot = inventory.slots.findIndex((item) => item?.type === 'linen_cloth');
+    check(clothSlot < 9, 'Płótno na pasku');
+    held = hold(clothSlot, inventory.get(clothSlot));
+    tables.interact(hitA, held, true);
+    check(table().material.type === 'linen_cloth' && table().material.count === 10 && inventory.count('linen_cloth') === 0, 'Płótno na blat (cały stos)');
+    let products = sewingProducts(table());
+    check(products.map((product) => product.kind).join() === 'trousers,boots,cap,shirt' && products.every((product) => product.enough && product.item.look.pattern === 'plain'), 'Cztery wykroje: spodnie, buty, czapka, koszula');
+    check(tables.interact(hitB(3), null, true) && table().cuts.body === 'vest' && tables.interact(hitB(3), null, true) && table().cuts.body === 'tunic' && /tunika/.test(notices.at(-1)), 'Kucanie i PPM w wykrój - następny krój');
+    check(tables.interact(hitB(2), null, true) && table().cuts.head === 'scarf', 'Krój czapki -> chusta');
 
-    // Shift + klik z ekwipunku na stół, zwrot po zamknięciu.
-    inventory.cursor = null;
-    const dye = { type: 'dye_red', count: 4 };
-    check(panel.quickMove(dye) && sew[SEW_MAIN].type === 'dye_red' && dye.count === 0, 'Shift: barwnik na pole koloru');
-    const second = { type: 'dye_white', count: 2 };
-    check(panel.quickMove(second) && sew[SEW_ACCENT].type === 'dye_white', 'Drugi inny barwnik - na pole wzoru');
-    check(panel.quickMove({ type: 'flax_fiber', count: 2 }) === false || sew[SEW_FIBER].type === 'nettle_fiber', 'Inne włókno nie miesza się z leżącym');
-    check(!panel.quickMove({ type: 'stone', count: 3 }), 'Kamień nie idzie na stół');
-    panel.close();
-    check(sew.every((item) => item === null) && inventory.count('dye_red') === 4 && inventory.count('dye_white') === 2, 'Po zamknięciu wszystko wraca do ekwipunku');
+    held = hold(2, { type: 'dye_red', count: 2 });
+    check(tables.interact(hitA, held) && table().main === 'red' && inventory.get(2).count === 1 && /Kolor/.test(notices.at(-1)), 'Barwnik na płótno - kolor, jeden barwnik zużyty');
+    check(tables.interact(hitA, held) && inventory.get(2).count === 1, 'Ten sam kolor drugi raz - barwnik zostaje');
+    held = hold(3, { type: 'dye_white', count: 1 });
+    check(tables.interact(hitA, held, true) && table().accent === 'white' && table().pattern === 'stripes' && !inventory.get(3), 'Z kucaniem - kolor wzoru (gładkie płótno dostaje paski)');
+    held = hold(3, null);
+    check(tables.interact(hitA, null, true) && table().pattern === 'check' && /krata/.test(notices.at(-1)), 'Kucanie pustą ręką - następny wzór');
+    products = sewingProducts(table());
+    check(products.every((product) => product.item.look.main === 'red' && product.item.look.accent === 'white' && product.item.look.pattern === 'check'), 'Wykroje od razu w kolorach i we wzorze');
+
+    check(tables.interact(hitB(3), null) && inventory.count('tunic_linen') === 1 && table().material.count === 6, 'PPM w wykrój - uszyta tunika (4 płótna)');
+    const tunic = inventory.slots.find((item) => item?.type === 'tunic_linen');
+    check(tunic.look.main === 'red' && tunic.look.accent === 'white' && tunic.look.pattern === 'check' && tunic.count === 1, 'Uszyte ubranie ma kolor i wzór ze stołu');
+    check(achieved.some(([name, data]) => name === 'sewn' && data.mode === 'sew' && data.type === 'tunic_linen'), 'Osiągnięcie za szycie');
+    tables.interact(hitB(3), null);
+    check(tables.interact(hitB(3), null) && /potrzeba 4/.test(notices.at(-1)) && inventory.count('tunic_linen') === 2 && table().material.count === 2 &&
+        sewingProducts(table())[3].enough === false, 'Za mało płótna - nic, napis ile trzeba (wykrój w cieniu)');
+    tables.interact(hitB(0), null);
+    check(inventory.count('trousers_linen') === 0, 'Spodnie (3) z dwóch płócien - nie');
+    tables.interact(hitB(1), null);
+    check(inventory.count('boots_linen') === 1 && table().material === null && table().main === null && table().pattern === 'check', 'Płótno się skończyło - barwy znikają (wzór i kroje zostają)');
+
+    // Inny materiał nie miesza się z leżącym.
+    held = hold(6, { type: 'nettle_cloth', count: 3 });
+    tables.interact(hitA, held, true);
+    held = hold(7, { type: 'linen_cloth', count: 2 });
+    check(tables.interact(hitA, held) && table().material.type === 'nettle_cloth' && /zabierz/.test(notices.at(-1)) && inventory.get(7).count === 2, 'Jeden rodzaj materiału naraz');
+    check(tables.interact(hitA, null) && inventory.count('nettle_cloth') === 3 && table().material === null, 'Pusta ręka - płótno wraca');
+
+    // Plecionka z łyka: tylko kamizelka i łapcie.
+    held = hold(6, { type: 'bast_weave', count: 4 });
+    tables.interact(hitA, held, true);
+    products = sewingProducts(table());
+    check(products[0] === null && products[2] === null && products[1].kind === 'lapcie' && products[3].kind === 'vest', 'Łyko: łapcie i kamizelka, reszta pusta');
+    check(tables.interact(hitB(0), null) && /nie uszyjesz/.test(notices.at(-1)), 'Pusty wykrój - napis');
+    check(tables.interact(hitB(3), null, true) && /tylko/.test(notices.at(-1)), 'Jeden krój - nie ma czego zmieniać');
+    tables.interact(hitA, null);
+
+    // Barwienie gotowego ubrania.
+    const bootsSlot = inventory.slots.findIndex((item) => item?.type === 'boots_linen');
+    const boots = inventory.get(bootsSlot);
+    inventory.set(bootsSlot, null);
+    held = hold(8, boots);
+    check(tables.interact(hitA, held, true) && table().material.type === 'boots_linen' && table().material.count === 1 && !inventory.get(8), 'Ubranie na blat (zawsze jedno)');
+    held = hold(7, { type: 'dye_blue', count: 1 });
+    check(tables.interact(hitA, held) && table().material.look.main === 'blue' && table().material.look.accent === 'white' && !inventory.get(7), 'Barwnik na ubranie - nowy kolor, wzór zostaje');
+    check(achieved.some(([name, data]) => name === 'sewn' && data.mode === 'dye' && data.look.main === 'blue'), 'Barwienie liczy się do osiągnięć');
+    check(tables.interact(hitA, null, true) && table().material.look.pattern === 'embroidery', 'Kucanie pustą ręką - inny wzór ubrania');
+    check(tables.interact(hitB(0), null) && /lewej/.test(notices.at(-1)), 'Ubranie barwi się na lewej części');
+    held = hold(7, { type: 'dye_black', count: 1 });
+    tables.interact(hitA, held, true);
+    check(table().material.look.accent === 'black', 'Z kucaniem - kolor wzoru ubrania');
+
+    // Zapis, gra ze znajomymi, rozbijanie.
+    const saved = JSON.parse(JSON.stringify(tables.getState()));
+    check(saved.length === 1 && saved[0].material.look.main === 'blue', 'Stół z ubraniem w zapisie');
+    const again = new SewingTables(game, saved);
+    check(again.state(a).material.look.pattern === 'embroidery' && again.state(a).cuts.body === 'tunic', 'Po wczytaniu - ubranie, wzór, kroje');
+    check(restoreSewingTable({ x: 1, y: 2, z: 3, material: { type: 'stone', count: 3 }, pattern: 'zła', main: 'nope', cuts: { head: 'shirt', legs: 'shorts' } }).material === null &&
+        restoreSewingTable({ x: 1, y: 2, z: 3, material: { type: 'linen_cloth', count: 999 }, cuts: { head: 'shirt', legs: 'shorts' } }).material.count === SEWING_CAPACITY &&
+        restoreSewingTable({ x: 1, y: 2, z: 3, cuts: { head: 'shirt', legs: 'shorts' } }).cuts.head === 'cap' && restoreSewingTable({ x: 1, y: 2, z: 3, cuts: { legs: 'shorts' } }).cuts.legs === 'shorts' &&
+        restoreSewingTable({ x: 'a' }) === null && restoreSewingTable({ x: 1, y: 2, z: 3, pattern: 'zła', main: 'nope' }).pattern === 'plain', 'Zły zapis - poprawiany');
+    const systems = stateSystems(game);
+    const signBefore = systems.sewing.sign(table());
+    tables.interact(hitA, null, true);
+    check(systems.sewing.map() === tables.tables && systems.sewing.sign(table()) !== signBefore && systems.sewing.restore(systems.sewing.save(table())).material.look.pattern === sewingTableState(table()).material.look.pattern,
+        'Gra ze znajomymi: zmiana na stole się wysyła');
+    check(stateSystems({}).sewing.map().size === 0, 'Gra bez stołów krawieckich (stare testy) - pusto');
+    tables.interact(hitA, null);
+    check(inventory.count('boots_linen') === 1 && tables.canBreak(a), 'Ubranie wraca do ekwipunku');
+    const info = shapeInfo(world.getBlockId(-1, 0, 0));
+    world.setBlock(-1, 0, 0, null);
+    tables.broken({ x: -1, y: 0, z: 0 }, info);
+    check(world.getBlockId(0, 0, 0) === 0 && !tables.state(a), 'Rozbita część B - znika i część A');
+
+    // Tryb twórczy: materiał z ręki nie ubywa.
+    const creative = sewingGame('creative');
+    creative.sewingTables.place({ x: 0, y: 0, z: 0 }, Math.PI, free);
+    creative.inventory.set(0, { type: 'linen_cloth', count: 3 });
+    creative.inventory.selected = 0;
+    creative.sewingTables.interact(hitA, 'linen_cloth', true);
+    check(creative.inventory.get(0).count === 3 && creative.sewingTables.state(a).material.count === 3, 'Tryb twórczy - z ręki nie ubywa');
+
+    // Płótno na blacie (rendering): kolory i piksele.
+    const natural = clothColors('nettle_cloth', { pattern: 'plain', main: null, accent: null });
+    check(natural.main === C.CLOTHS.nettle.color && natural.accent === C.CLOTHS.nettle.shade, 'Płótno bez barwnika - kolor tkaniny');
+    const dyedCloth = clothColors('linen_cloth', { pattern: 'stripes', main: 'red', accent: 'white' });
+    check(dyedCloth.main === DYE_ITEMS.dye_red.color && dyedCloth.accent === DYE_ITEMS.dye_white.color && clothColors('linen_cloth', { pattern: 'plain', main: 'red', accent: 'white' }).accent !== DYE_ITEMS.dye_white.color, 'Płótno barwione; gładkie bez koloru wzoru');
+    const pixels = clothPixels(dyedCloth);
+    check(pixels.length === 1024 && pixels[3] === 255 && pixels[0] > 200 && pixels[1] > 200 && Math.abs(pixels[16 * 4] - parseInt(DYE_ITEMS.dye_red.color.slice(1, 3), 16)) < 30, 'Piksele płótna: wiersz wzoru i wiersz koloru');
+    check(read('src/rendering/SewingTableRenderer.js').includes('sewingProducts(table)') && read('src/rendering/SewingTableRenderer.js').includes('SHORT_SHADE'), 'Wykroje na blacie, w cieniu gdy brak płótna');
 }
 
 
@@ -208,7 +326,7 @@ const manifest = textureManifest();
     const saved = { equip: [{ type: 'cap_linen', count: 1, look }, { type: 'trousers_linen', count: 1 }, { type: 'trousers_linen', count: 1 }, { type: 'stone', count: 1 }] };
     const inventory = Inventory.load({ inventory: saved }, 'adventure');
     check(EQUIP_COUNT === 4 && inventory.equip[0].look.main === 'red' && inventory.equip[1] === null && inventory.equip[2].type === 'trousers_linen' && inventory.equip[3] === null, 'Zapis: ubranie tylko na swoim miejscu');
-    check(Inventory.load({}, 'adventure').equip.every((item) => item === null) && Inventory.load({}, 'adventure').sew.length === 4, 'Nowy świat: nic na sobie, pusty stół');
+    check(Inventory.load({}, 'adventure').equip.every((item) => item === null) && !('sew' in Inventory.load({}, 'adventure').data), 'Nowy świat: nic na sobie (stół nie ma pól w ekwipunku)');
     check(C.fitsSlot({ type: 'cap_nettle' }, 0) && !C.fitsSlot({ type: 'cap_nettle' }, 1) && C.fitsSlot({ type: 'lapcie_bast' }, 3) && !C.fitsSlot(null, 0), 'Co gdzie pasuje');
     const full = [{ type: 'cap_nettle' }, { type: 'tunic_nettle' }, { type: 'trousers_nettle' }, { type: 'boots_nettle' }];
     const warmth = C.wornWarmth(full);
@@ -224,8 +342,12 @@ const manifest = textureManifest();
         P.unpackPlayer([0, 0, 0, 0, 0, 0, 0, 0, 0, null, 0]).clothes === '', 'Inni gracze dostają kod ubrań (starsza wersja - bez ubrań)');
     check(read('src/net/NetSession.js').includes("game.clothes ?? ''") && read('src/net/RemotePlayers.js').includes('entry.texture.userData.dress?.(entry.clothes)'), 'Sieć: wysyłanie i malowanie u innych');
     const game = read('src/game/Game.js');
-    check(game.includes('this.clothes = clothesCode(equip);') && game.includes('this.onClothes?.(equip);') && read('src/main.js').includes('game.onClothes = (equip) => setWornClothes(equip);') &&
-        read('src/main.js').includes("game.onOpenStation = (station) => openInventory(null, station);"), 'Gra: ubrania na skórce, stół otwiera ekwipunek');
+    check(game.includes('this.clothes = clothesCode(equip);') && game.includes('this.onClothes?.(equip);') && read('src/main.js').includes('game.onClothes = (equip) => setWornClothes(equip);'), 'Gra: ubrania na skórce');
+    const interaction = read('src/game/GameInteraction.js');
+    check(game.includes('new SewingTables(this, worldInfo.sewingTables)') && game.includes('this.sewingTables.update(dt)') && game.includes('this.sewingTables.dispose()') &&
+        interaction.includes('this.sewingTables.interact(this.currentHit') && interaction.includes('this.sewingTables.place(target') && interaction.includes('this.sewingTables.canBreak(hit.block)') &&
+        interaction.includes('this.sewingTables?.broken(hit.block') && read('src/storage/WorldSaver.js').includes('this.worldInfo.sewingTables = this.sewingTables.getState()') &&
+        read('src/net/NetHost.js').includes("sewing: this.state.snapshot('sewing')") && !read('src/main.js').includes('onOpenStation'), 'Gra: stół w świecie (stawianie, PPM, rozbijanie, zapis, sieć)');
 }
 
 
@@ -293,8 +415,8 @@ const manifest = textureManifest();
     check(/name: 'ubrania'/.test(commands) && commands.includes("word === 'zestaw'") && read('docs/komendy.md').includes('`/ubrania`'), 'Komenda /ubrania z opisem');
     const chapter = GUIDE.find((entry) => entry.id === 'clothes');
     const text = chapter.lines.map((line) => (typeof line === 'string' ? line : line.text)).join(' ');
-    check(text.includes('do wody') && text.includes('stół krawiecki') && text.includes('krój') && text.includes('Barwniki'), 'Poradnik: włókna i ubrania');
+    check(text.includes('do wody') && text.includes('stół krawiecki') && text.includes('krój') && text.includes('Barwnik') && text.includes('wykroje'), 'Poradnik: włókna i ubrania');
     check(read('docs/ubrania.md').includes('Stół krawiecki') && read('CHANGELOG.md').includes('## 1.27.0'), 'Dokumenty');
 }
 
-console.log(`OK: włókna i ubrania - ${checks} sprawdzeń (moczenie, tkanie, szycie, barwienie, stół w ekwipunku, stosy z wyglądem, noszenie, sieć, skórka, ikonki, stare krzaki).`);
+console.log(`OK: włókna i ubrania - ${checks} sprawdzeń (moczenie, tkanie, szycie, barwienie, stół w świecie, stosy z wyglądem, noszenie, sieć, skórka, ikonki, stare krzaki).`);

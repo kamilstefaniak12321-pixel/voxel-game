@@ -18,16 +18,20 @@ PR #180.
 - **Moczenie**: wiązka lnu, pokrzywa albo kora lipowa wrzucona do wody
   po półtorej minuty zamienia się w moczony len, moczoną pokrzywę albo
   łyko. Z nich włókno, z trzech włókien sznur.
-- **Stół krawiecki** (dwie deski na dwóch sznurach): PPM otwiera
-  ekwipunek ze stołem.
-  - **Krosno**: z dwóch włókien jedno płótno - lniane, pokrzywowe
-    (grzeje lepiej) albo plecionka z łyka.
-  - **Szycie**: płótno, krój (czapka, chusta, opaska, koszula,
-    kamizelka, tunika, spodnie, krótkie spodnie, buty, łapcie) i wzór
-    (gładki, paski, krata, haft). Postać w podglądzie od razu
-    przymierza to, co powstanie.
-  - **Barwienie**: barwnik koloru i barwnik wzoru - przy szyciu albo
-    później, na gotowym ubraniu.
+- **Stół krawiecki** (dwie deski na dwóch sznurach) - na dwa bloki, jak
+  stolarski; wszystko dzieje się na blacie, w świecie.
+  - Na lewą część kładzie się włókno, płótno albo ubranie (PPM, z
+    kucaniem - cały stos); pusta ręka zabiera.
+  - **Tkanie**: na włóknie PPM w prawą część daje płótno z dwóch
+    włókien - lniane, pokrzywowe (grzeje lepiej) albo plecionkę z łyka.
+  - **Szycie**: na płótnie po prawej leżą cztery wykroje - głowa,
+    tułów, nogi, stopy. PPM w wykrój szyje, z kucaniem zmienia krój
+    (czapka, chusta, opaska, koszula, kamizelka, tunika, spodnie,
+    krótkie spodnie, buty, łapcie).
+  - **Barwienie i wzory**: barwnik na płótno - kolor, z kucaniem -
+    kolor wzoru; kucanie pustą ręką zmienia wzór (gładki, paski, krata,
+    haft). Wykroje od razu mają kolory. Gotowe ubranie barwi się tak
+    samo, położone na stole.
 - **Ubrania na sobie**: cztery miejsca obok postaci (głowa, tułów, nogi,
   stopy). Ubrania widać na postaci i u innych graczy, barwione mają
   ikonki w swoich kolorach. Ubrania grzeją - mniej się marznie.

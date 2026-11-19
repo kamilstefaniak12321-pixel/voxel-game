@@ -17,7 +17,7 @@
     "rosliny": {
       "file": "rosliny.png",
       "width": 256,
-      "height": 560
+      "height": 576
     },
     "przedmioty": {
       "file": "przedmioty.png",
@@ -9277,20 +9277,6 @@
       "width": 16,
       "height": 16
     },
-    "sewing_table_top": {
-      "sheet": "rosliny",
-      "x": 144,
-      "y": 528,
-      "width": 16,
-      "height": 16
-    },
-    "sewing_table_side": {
-      "sheet": "rosliny",
-      "x": 160,
-      "y": 528,
-      "width": 16,
-      "height": 16
-    },
     "cap_linen": {
       "sheet": "rosliny",
       "x": 176,
@@ -9428,6 +9414,20 @@
       "sheet": "rosliny",
       "x": 224,
       "y": 544,
+      "width": 16,
+      "height": 16
+    },
+    "sewing_table_top": {
+      "sheet": "rosliny",
+      "x": 0,
+      "y": 560,
+      "width": 16,
+      "height": 16
+    },
+    "sewing_table_top_b": {
+      "sheet": "rosliny",
+      "x": 16,
+      "y": 560,
       "width": 16,
       "height": 16
     }
@@ -17052,16 +17052,6 @@
       "y": 93,
       "region": "bast_weave"
     },
-    "sewing_table_top": {
-      "x": 59,
-      "y": 93,
-      "region": "sewing_table_top"
-    },
-    "sewing_table_side": {
-      "x": 60,
-      "y": 93,
-      "region": "sewing_table_side"
-    },
     "cap_linen": {
       "x": 61,
       "y": 93,
@@ -17161,6 +17151,16 @@
       "x": 16,
       "y": 96,
       "region": "lapcie_bast"
+    },
+    "sewing_table_top": {
+      "x": 59,
+      "y": 93,
+      "region": "sewing_table_top"
+    },
+    "sewing_table_top_b": {
+      "x": 60,
+      "y": 93,
+      "region": "sewing_table_top_b"
     }
   }
 }

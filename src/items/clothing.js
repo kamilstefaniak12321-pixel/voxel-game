@@ -9,13 +9,15 @@
 //   2. Włókno: moczony len i moczona pokrzywa w siatce wytwarzania dają
 //      włókno (crafting/recipes.js). Łyko jest włóknem od razu.
 //      Trzy włókna - sznur.
-//   3. Tkanie (CLOTHS): na stole krawieckim dwa włókna to jedno płótno -
-//      jakie, zależy od włókna: lniane, pokrzywowe albo plecionka z łyka.
-//   4. Szycie (GARMENTS): płótno na stole, wybór kroju (czapka, koszula,
-//      spodnie...) i wzoru (PATTERNS) - powstaje ubranie. Krój zużywa
-//      `cost` płócien.
-//   5. Barwienie: barwnik główny (kolor ubrania) i barwnik wzoru - przy
-//      szyciu albo później, na gotowym ubraniu.
+//   3. Tkanie (CLOTHS): na stole krawieckim (game/SewingTables.js - stoi
+//      w świecie, jak stolarski) dwa włókna to jedno płótno - jakie,
+//      zależy od włókna: lniane, pokrzywowe albo plecionka z łyka.
+//   4. Szycie (GARMENTS): płótno na blacie, na drugiej części stołu
+//      wykroje na głowę, tułów, nogi i stopy; krój (czapka, koszula,
+//      spodnie...) i wzór (PATTERNS) się zmienia - powstaje ubranie.
+//      Krój zużywa `cost` płócien.
+//   5. Barwienie: barwnik na płótno (kolor) albo z kucaniem (kolor wzoru)
+//      - przed szyciem albo później, na gotowym ubraniu.
 //
 // Ubranie to przedmiot `${krój}_${płótno}` (np. shirt_linen) z wyglądem
 // `look` = { pattern, main, accent } (main, accent - klucz barwnika z
@@ -123,6 +125,8 @@ export const PATTERNS = {
     embroidery: { label: 'haft' }
 };
 
+export const PATTERN_ORDER = Object.keys(PATTERNS);
+
 export const DYE_COLORS = Object.fromEntries(Object.values(DYE_ITEMS).map((dye) => [dye.dye, dye.color]));
 
 const DYE_ADJECTIVES = Object.fromEntries(Object.values(DYE_ITEMS).map((dye) => [dye.dye, dye.label.replace(/^Barwnik /, '')]));
@@ -167,40 +171,30 @@ export function lookText(type, look) {
 }
 
 // --- Stół krawiecki: tkanie, szycie, barwienie ------------------------------------
+//
+// Stół stoi w świecie (game/SewingTables.js): materiał na lewej części,
+// wyroby na prawej - w czterech ćwiartkach, po jednej na każde miejsce
+// na ciele (PRODUCT_SLOTS).
 
-// Tkanie: z `count` włókien - ile płócien i jakich. null - to nie włókno.
-export function weave(fiber, count = FIBERS_PER_CLOTH) {
-    const cloth = clothFromFiber(fiber);
-    if (!cloth || count < FIBERS_PER_CLOTH) return null;
-    return { type: CLOTHS[cloth].item, count: Math.floor(count / FIBERS_PER_CLOTH), uses: Math.floor(count / FIBERS_PER_CLOTH) * FIBERS_PER_CLOTH };
+// Ćwiartki części B (numer wyrobu jak w stole stolarskim: rząd 0 - przód,
+// 1 - tył; kolumna 0 - lewa): z tyłu głowa i tułów, z przodu nogi i stopy.
+export const PRODUCT_SLOTS = ['legs', 'feet', 'head', 'body'];
+
+// Kroje na dane miejsce na ciele z tego płótna.
+export function kindsForSlot(cloth, slot) {
+    return kindsFor(cloth).filter((kind) => GARMENTS[kind].slot === slot);
 }
 
-// Szycie albo barwienie. material - stos w polu materiału (płótno albo
-// ubranie), choice - { kind, pattern }, dyes - [główny, wzoru] (stosy
-// albo null). Zwraca { item, material, dyes: [ile, ile], mode } albo
-// null (nic z tego nie będzie) - material: ile płócien zużyje.
-export function sewResult(material, choice = {}, dyes = []) {
-    if (!material) return null;
-    const main = dyeOfItem(dyes[0]?.type), accent = dyeOfItem(dyes[1]?.type);
-    const pattern = Object.hasOwn(PATTERNS, choice.pattern ?? '') ? choice.pattern : 'plain';
-    const usesAccent = pattern !== 'plain' && accent;
+// Następny element listy po `current` (w kółko); pierwszy, gdy go nie ma.
+export function nextOf(list, current) {
+    if (!list.length) return null;
+    const index = list.indexOf(current);
+    return list[(index + 1) % list.length];
+}
 
-    const garment = garmentInfo(material.type);
-    if (garment) {
-        // Barwienie gotowego ubrania: potrzebny choć jeden barwnik.
-        if (!main && !usesAccent) return null;
-        const old = cleanLook(material.look);
-        const look = cleanLook({ pattern, main: main ?? old.main, accent: usesAccent ? accent : pattern === old.pattern ? old.accent : null });
-        if (sameLook(look, old)) return null;
-        return { mode: 'dye', item: { type: material.type, count: 1, look }, material: 1, dyes: [main ? 1 : 0, usesAccent ? 1 : 0] };
-    }
-
-    const cloth = clothOf(material.type);
-    const kind = choice.kind;
-    if (!cloth || !Object.hasOwn(GARMENTS, kind ?? '') || !GARMENTS[kind].cloths.includes(cloth)) return null;
-    if (material.count < GARMENTS[kind].cost) return null;
-    const look = cleanLook({ pattern, main, accent: usesAccent ? accent : null });
-    return { mode: 'sew', item: { type: garmentType(kind, cloth), count: 1, look }, material: GARMENTS[kind].cost, dyes: [main ? 1 : 0, usesAccent ? 1 : 0] };
+// Czy to da się położyć na stole jako materiał.
+export function isTableMaterial(type) {
+    return Boolean(clothFromFiber(type) || clothOf(type) || isGarment(type));
 }
 
 // --- Noszenie -------------------------------------------------------------------

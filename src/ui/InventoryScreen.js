@@ -31,7 +31,6 @@ import { SETTINGS_DEFAULTS } from '../settings/Settings.js';
 import { bindings, formatKeys, mouseCode } from '../input/bindings.js';
 import { makeItem, withCount, sameBatch, blend, stackSize } from '../items/freshness.js';
 import { freshText } from '../items/spoilage.js';
-import { SewingPanel, sewSlotLabel } from './SewingPanel.js';
 import { garmentInfo, fitsSlot, lookText, SLOTS as CLOTHING_SLOTS, SLOT_LABELS, GARMENTS } from '../items/clothing.js';
 import { garmentIcon } from './garmentIcons.js';
 
@@ -284,10 +283,7 @@ export class InventoryScreen {
     // chest - skrzynia otwarta PPM (jej wnętrze w strefie
     // rzemieślniczej) albo null.
 
-    // station - stanowisko pracy otwarte PPM (1.27.0: 'sewing' - stół
-    // krawiecki, SewingPanel.js) albo null.
-
-    open(game, chest = null, station = null) {
+    open(game, chest = null) {
 
         this.unwatchSettings?.();
         this.game = game;
@@ -299,9 +295,7 @@ export class InventoryScreen {
 
         this.chest = chest;
 
-        this.station = chest ? null : station;
-
-        if (!isCreative(game.mode) || chest || this.station) {
+        if (!isCreative(game.mode) || chest) {
             this.tab = 'inventory';
         }
 
@@ -333,12 +327,7 @@ export class InventoryScreen {
 
         if (this.game) {
             returnGrid(this.game.inventory);
-            // Pola stołu krawieckiego wracają tak samo.
-            this.sewing?.close();
         }
-
-        this.sewing = null;
-        this.station = null;
 
         this.hover = null;
         this.ghost = null;
@@ -488,16 +477,9 @@ export class InventoryScreen {
                 (soon ? later : clothes).append(slot);
             });
 
-            // Stół krawiecki (1.27.0): zamiast siatki wytwarzania. Stół
-            // potrzebuje miejsca - plecak i pas (na razie puste) chowają się,
-            // a górny rząd ma jeden wiersz więcej.
-            this.sewing = this.station === 'sewing' ? (this.sewing ?? new SewingPanel(this)) : null;
+            equipment.append(clothes, later);
 
-            equipment.append(...(this.sewing ? [clothes] : [clothes, later]));
-
-            top.classList.toggle('inv-top-sewing', Boolean(this.sewing));
-
-            top.append(preview, equipment, this.chest ? this.chestElement() : this.sewing ? this.sewing.element() : this.craftElement());
+            top.append(preview, equipment, this.chest ? this.chestElement() : this.craftElement());
 
             const slots = el('div', 'inv-grid inv-items');
             for (let i = HOTBAR_SIZE; i < SLOT_COUNT; i++) {
@@ -1125,13 +1107,11 @@ export class InventoryScreen {
 
         }
 
-        // Ubrania na sobie i stół krawiecki (1.27.0).
+        // Ubrania na sobie (1.27.0).
 
         for (const slot of this.root.querySelectorAll('.inv-slot[data-kind="equip"]')) {
             this.showItem(slot, inventory.equip[Number(slot.dataset.index)] ?? null);
         }
-
-        this.sewing?.refresh();
 
         this.refreshBook();
 
@@ -1218,7 +1198,7 @@ export class InventoryScreen {
 
         // Przyciski: kategorie, księga przepisów.
 
-        if (this.sewing?.onButton(event.target) || this.onButton(event.target)) {
+        if (this.onButton(event.target)) {
             return;
         }
 
@@ -1303,9 +1283,6 @@ export class InventoryScreen {
         }
         else if (kind === 'equip') {
             this.clickEquip(Number(slot.dataset.index), event.shiftKey);
-        }
-        else if (kind === 'weave' || kind === 'sewresult') {
-            this.sewing?.click(kind, event.shiftKey);
         }
         else {
             this.clickSlot(kind, Number(slot.dataset.index), right, event.shiftKey);
@@ -1592,18 +1569,7 @@ export class InventoryScreen {
 
         }
 
-        // Pola stołu krawieckiego (1.27.0).
 
-        if (kind === 'sew') {
-
-            return {
-                get: (index) => inventory.sew[index] ?? null,
-                set: (index, item) => {
-                    inventory.sew[index] = item && item.count > 0 ? item : null;
-                }
-            };
-
-        }
 
         return {
             get: (index) => inventory.get(index),
@@ -1673,14 +1639,8 @@ export class InventoryScreen {
 
         if (shift && !this.cursor) {
 
-            // Stół krawiecki (1.27.0): z ekwipunku do pola stołu.
-            if (kind === 'slot' && item && this.sewing?.quickMove(item)) {
-                slots.set(index, item.count > 0 ? item : null);
-                return;
-            }
-
             // Ubranie z ekwipunku na siebie (zamiana z tym, co już noszone).
-            if (kind === 'slot' && item && garmentInfo(item.type) && !this.chest && !this.sewing) {
+            if (kind === 'slot' && item && garmentInfo(item.type) && !this.chest) {
                 const place = CLOTHING_SLOTS.indexOf(garmentInfo(item.type).slot);
                 slots.set(index, inventory.equip[place] ?? null);
                 inventory.equip[place] = item;
@@ -1688,7 +1648,7 @@ export class InventoryScreen {
                 return;
             }
 
-            if (kind === 'craft' || kind === 'sew') {
+            if (kind === 'craft') {
 
                 // Z siatki do ekwipunku (co się nie zmieści - zostaje).
 
@@ -2038,25 +1998,16 @@ export class InventoryScreen {
             return;
 
         }
-        else if (kind === 'equip' || kind === 'sew' || kind === 'weave' || kind === 'sewresult') {
+        else if (kind === 'equip') {
 
-            // Ubrania i stół krawiecki (1.27.0).
+            // Ubrania na sobie (1.27.0).
             const index = Number(slot.dataset.index);
-            const item = kind === 'equip' ? this.game.inventory.equip[index]
-                : kind === 'sew' ? this.game.inventory.sew[index]
-                    : kind === 'weave' ? (this.sewing?.weaveResult() ? { type: this.sewing.weaveResult().type, count: 1 } : null)
-                        : this.sewing?.result()?.item ?? null;
+            const item = this.game.inventory.equip[index];
 
-            this.hover = kind === 'sew' ? { kind, index } : null;
+            this.hover = null;
+            this.tooltip.hidden = false;
 
-            this.tooltip.hidden = Boolean(this.cursor) && kind !== 'equip';
-
-            if (this.tooltip.hidden) {
-                return;
-            }
-
-            const where = kind === 'equip' ? `${slot.dataset.label}: ${Object.values(GARMENTS).filter((garment) => garment.slot === CLOTHING_SLOTS[index]).map((garment) => garment.label.toLowerCase()).join(', ')}`
-                : kind === 'sew' ? sewSlotLabel(index) : kind === 'weave' ? 'Klik - utkaj płótno (dwa włókna), Shift - ile się da' : 'Klik - uszyj (albo zabarw)';
+            const where = `${slot.dataset.label}: ${Object.values(GARMENTS).filter((garment) => garment.slot === CLOTHING_SLOTS[index]).map((garment) => garment.label.toLowerCase()).join(', ')}`;
 
             this.tooltip.replaceChildren(...(item ? this.itemTooltip(item) : [el('div', 'inv-tooltip-title', slot.dataset.label ?? '')]),
                 el('div', 'inv-tooltip-note', where));

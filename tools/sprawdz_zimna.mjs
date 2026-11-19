@@ -153,6 +153,8 @@ const freezeTime = (felt, activity = {}) => {
     const cold = events.filter((event) => event.type === 'cold');
     check(cold.map((event) => event.to).join() === 'chilly,cold', 'Zdarzenia: chłodno, potem zmarznięty');
     check(events.filter((event) => event.type === 'freeze').length === 1, 'Zamarznięcie zgłoszone raz');
+    const loaded = make({ chill: 100 });
+    check(loaded.update(1, { felt: -15 }, 1).some((event) => event.type === 'freeze'), 'Zapis z pełnym wychłodzeniem: zamarza od razu po wczytaniu');
     check(COLD_STATES.chilly.text && COLD_STATES.cold.text, 'Napisy ostrzeżeń');
     const back = [];
     for (let i = 0; i < 600; i++) back.push(...w.update(1, { felt: 30 }, 1));

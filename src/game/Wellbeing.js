@@ -567,7 +567,10 @@ export class Wellbeing {
                 events.push({ type: 'cold', from: this.lastCold, to: cold });
                 this.lastCold = cold;
             }
-            if (data.chill >= 100 && before < 100) events.push({ type: 'freeze' });
+            // Raz na każde dojście do końca - także zaraz po wczytaniu
+            // zapisu, w którym gracz był już cały wychłodzony.
+            if (data.chill >= 100 && (before < 100 || !this.freezeSent)) events.push({ type: 'freeze' });
+            this.freezeSent = data.chill >= 100;
         }
 
         const state = this.state;

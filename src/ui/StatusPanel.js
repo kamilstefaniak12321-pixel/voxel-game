@@ -140,7 +140,9 @@ export class StatusPanel {
         if (progress) {
             const days = progress.days;
             title = 'Zamarzłeś na kość';
-            hint = progress.total >= 1.5 ? `Mija czas… ${Math.floor(days)} ${Math.floor(days) === 1 ? 'dzień' : 'dni'}` : `Mija czas… ${Math.floor(days * 24)} godz.`;
+            const total = progress.total;
+            hint = total >= 1.5 ? `Mija czas… dzień ${Math.min(Math.ceil(total), Math.floor(days) + 1)} z ${Math.ceil(total)}`
+                : `Mija czas… ${Math.min(Math.ceil(total * 24), Math.floor(days * 24) + 1)} godz. z ${Math.ceil(total * 24)}`;
         }
         else if (freeze?.waiting) {
             title = 'Zamarzłeś na kość';
@@ -189,7 +191,7 @@ export class StatusPanel {
         this.heartRoot.classList.toggle('heart-sleepy', state !== null && ['sleepy', 'worn'].includes(wellbeing.restState));
         // Zimno (1.26.0): przy sercu płatek śniegu, na brzegach obrazu szron.
         this.heartRoot.classList.toggle('heart-cold', state !== null && wellbeing.coldState !== 'warm');
-        this.showFrost(Math.max(wellbeing.frost * 0.75, game.freeze?.overlay ?? 0), game.freeze ?? null);
+        this.showFrost(Math.max(wellbeing.frost, game.freeze?.overlay ?? 0), game.freeze ?? null);
 
         // Oddech: bąbelki znikają po kolei; pełne płuca - nie pokazujemy.
         const bubbles = state && wellbeing.breath < 1 ? Math.ceil(wellbeing.breath * BUBBLES) : null;

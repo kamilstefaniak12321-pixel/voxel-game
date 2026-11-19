@@ -17,6 +17,8 @@ Niedokończone, niepalące się ognisko można rozebrać: odzyskuje się śwież
 
 Stan polan, podpałki, spalania, żaru i popiołu zapisuje się wraz ze światem. Ogniska poza wczytanymi chunkami nadal odmierzają czas aktywnej gry. Zamknięcie gry lub pauza zatrzymuje ten czas; zapis nie wznawia samoczynnie niedokończonego trzymania startera.
 
+Od 1.20.0 na ognisku można postawić **gliniany garnek** i gotować w nim potrawy - [gotowanie.md](gotowanie.md).
+
 ## Grafika i koszt
 
 - Model polan pochodzi z zatwierdzonego pliku Blockbench; jeden piksel odpowiada 1/16 bloku. Źródła i dziewięć atlasów są w `assets/models/campfire/`.

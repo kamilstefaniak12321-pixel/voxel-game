@@ -14,6 +14,7 @@ import { DYE_ITEMS } from './dyes.js';
 import { STONE_TOOL_ITEMS } from './stoneTools.js';
 import { barkType } from './bark.js';
 import { CLAY_ITEMS } from './clay.js';
+import { COOKING_ITEMS } from './cookingData.js';
 
 // ------------------------------------------------------------
 // PRZEDMIOTY
@@ -54,6 +55,8 @@ export const ITEM_TYPES = {
     ...STONE_TOOL_ITEMS,
     // Mokre i suche kubki i cegły z trzech glin (1.1.0).
     ...CLAY_ITEMS,
+    // Garnek, miska i potrawy (1.20.0, items/cooking.js).
+    ...COOKING_ITEMS,
     ...Object.fromEntries(Object.entries(FIRE_WOODS).map(([wood, [label]]) => [fuelType(wood), {
         name: `${wood} firewood`, label: `Opał — ${label}`, icon: `campfire_${wood}`, category: 'drewno'
     }])),

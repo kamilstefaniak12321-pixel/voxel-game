@@ -10,7 +10,23 @@ import { installEmissionDiagnostics, lightingUniforms } from './LightingDiagnost
 import { warmupObject } from './ShaderWarmup.js';
 import { loadTextureRegion } from './TextureSheets.js';
 
+import { DISHES, dishFor, POT_MINIMUM } from '../items/cooking.js';
+
 const VIEW_RANGE = 72, MAX_VISIBLE = 32, PARTICLES = 96;
+
+// Garnek na ognisku (1.20.0): gliniane pudełko 10 x 7 x 10 pikseli bez
+// wieka - dno, cztery ścianki i uszy; w środku tafla wody albo potrawy.
+// Ścianki: [szerokość, wysokość, głębokość, x, y, z] w pikselach.
+const POT_PARTS = [
+    [10, 1, 10, 0, .5, 0],
+    [10, 6, 1, 0, 4, -4.5], [10, 6, 1, 0, 4, 4.5],
+    [1, 6, 8, -4.5, 4, 0], [1, 6, 8, 4.5, 4, 0],
+    [1, 2, 3, -5.5, 5, 0], [1, 2, 3, 5.5, 5, 0]
+];
+const POT_CLAY = 0x96583e, POT_WATER_COLOR = 0x4f83b8;
+const DISH_COLOR = new THREE.Color();
+// Na czym stoi garnek: pełny stos, niski stos, sam popiół.
+const potHeight = (fire) => fire.logs.length > 3 ? .5 : fire.logs.length > 0 ? .25 : .07;
 const smooth = t => t * t * (3 - 2 * t);
 
 function logGeometry(index, wood) {
@@ -105,6 +121,9 @@ export class CampfireRenderer {
         this.ashGeometry.rotateX(-Math.PI/2);
         this.coalGeometry = new THREE.BoxGeometry(1/8, 1/16, 3/16);
         this.tinderGeometry = new THREE.BoxGeometry(.36, .035, .3);
+        this.potGeometries = POT_PARTS.map(([w, h, d]) => new THREE.BoxGeometry(w / 16, h / 16, d / 16));
+        this.potContentGeometry = new THREE.PlaneGeometry(8 / 16, 8 / 16);
+        this.potContentGeometry.rotateX(-Math.PI / 2);
         this.createParticles();
     }
 
@@ -189,8 +208,18 @@ export class CampfireRenderer {
         const tinderMaterial = createModelMaterial({lighting, baselineLambert:true});
         tinderMaterial.color.set(0x8c854b);
         const tinder = new THREE.Mesh(this.tinderGeometry,tinderMaterial); tinder.position.y=.27;
-        group.add(flames,ash,coals,tinder); this.game.scene.add(group);
-        const view = {group,flames,ash,coals,coalMaterial,tinder,logs:[],lighting,smoke:0,spark:0,created:this.time};
+        // Garnek (items/cooking.js) - widać go tylko, gdy stoi na ognisku.
+        const potMaterial = createModelMaterial({lighting, baselineLambert:true});
+        potMaterial.color.set(POT_CLAY); potMaterial.flatShading = true;
+        const contentMaterial = createModelMaterial({lighting, baselineLambert:true});
+        const pot = new THREE.Group(); pot.visible = false;
+        POT_PARTS.forEach(([, , , x, y, z], i) => {
+            const part = new THREE.Mesh(this.potGeometries[i], potMaterial);
+            part.position.set(x / 16, y / 16, z / 16); pot.add(part);
+        });
+        const content = new THREE.Mesh(this.potContentGeometry, contentMaterial); pot.add(content);
+        group.add(flames,ash,coals,tinder,pot); this.game.scene.add(group);
+        const view = {group,flames,ash,coals,coalMaterial,tinder,pot,potMaterial,content,contentMaterial,logs:[],lighting,smoke:0,spark:0,created:this.time};
         this.views.set(key,view); return view;
     }
 
@@ -224,6 +253,7 @@ export class CampfireRenderer {
         view.coals.visible=view.ash.visible;
         view.coalMaterial.emissiveIntensity=ember*(.42+.06*Math.sin(clock*2)) + (fire.phase==='collapsing'?.6*fire.collapse:0);
         view.tinder.visible=Boolean(fire.tinder);
+        this.syncPot(view, fire, dt, clock);
         const light=this.game.world.getLight(fire.x,fire.y+1,fire.z);
         view.lighting.uModelSky.value=atmosphericLightToBrightness(light.sky);
         const natural = this.game.sky.lightingLook === 'natural';
@@ -239,11 +269,34 @@ export class CampfireRenderer {
         }
     }
 
-    emit(fire,spark) {
+    // Garnek: stoi na stosie (opada razem z nim), tafla ma kolor wody,
+    // a w miarę gotowania - potrawy; nad gotującym się unosi się para.
+    syncPot(view, fire, dt, clock) {
+        const pot = fire.pot;
+        view.pot.visible = Boolean(pot);
+        if (!pot) { view.potY = undefined; return; }
+        const target = fire.phase === 'collapsing' ? .5 - .43 * smooth(fire.collapse) : potHeight(fire);
+        view.potY = view.potY === undefined ? target : view.potY + (target - view.potY) * Math.min(1, dt * 6);
+        view.pot.position.y = view.potY;
+        const dish = pot.dish ?? (pot.items.length >= POT_MINIMUM ? dishFor(pot.items) : null);
+        const cooked = pot.dish ? 1 : pot.progress;
+        view.content.visible = !pot.empty;
+        const level = pot.dish ? 2.5 + 3 * pot.portions / 3 : 5.5;
+        const boiling = fire.phase === 'burning' && !pot.dish && pot.items.length >= POT_MINIMUM;
+        view.content.position.y = (level + (boiling ? Math.sin(clock * 9) * .12 : 0)) / 16;
+        view.contentMaterial.color.set(POT_WATER_COLOR);
+        if (dish) view.contentMaterial.color.lerp(DISH_COLOR.set(DISHES[dish].color), cooked);
+        if (boiling || (pot.dish && fire.phase === 'burning')) {
+            view.steam = (view.steam ?? 0) + dt * (boiling ? 3 : 1.2);
+            if (view.steam >= 1) { view.steam %= 1; this.emit(fire, false, view.potY + .45); }
+        }
+    }
+
+    emit(fire,spark,steamAt=null) {
         const particle=this.particles.find(p=>p.life<=0); if(!particle) return;
-        Object.assign(particle,{x:fire.x+.5+(Math.random()-.5)*.25,y:fire.y+.65,z:fire.z+.5+(Math.random()-.5)*.25,
-            vx:(Math.random()-.5)*(spark?.7:.15),vz:(Math.random()-.5)*(spark?.7:.15),vy:spark?1.1:.42,
-            life:spark?1.8:3.8,max:spark?1.8:3.8,spark,seed:Math.random()*6});
+        Object.assign(particle,{x:fire.x+.5+(Math.random()-.5)*.25,y:fire.y+(steamAt ?? .65),z:fire.z+.5+(Math.random()-.5)*.25,
+            vx:(Math.random()-.5)*(spark?.7:.15),vz:(Math.random()-.5)*(spark?.7:.15),vy:spark?1.1:steamAt!==null?.3:.42,
+            life:spark?1.8:steamAt!==null?1.6:3.8,max:spark?1.8:steamAt!==null?1.6:3.8,spark,steam:steamAt!==null,seed:Math.random()*6});
     }
 
     update(dt, fires, clock) {
@@ -267,9 +320,9 @@ export class CampfireRenderer {
                 const age=1-p.life/p.max;
                 p.x+=(p.vx+Math.sin(clock+p.seed)*.08)*dt; p.y+=p.vy*dt; p.z+=p.vz*dt;
                 this.particlePosition.set([p.x,p.y,p.z],i*3);
-                this.particleSize[i]=p.spark?.028:.15+age*.46;
+                this.particleSize[i]=p.spark?.028:p.steam?.08+age*.2:.15+age*.46;
                 this.particleEmission[i]=p.spark?1:0;
-                this.particleColor.set(p.spark?[1,.42,.06,Math.sin(age*Math.PI)]:[.35,.34,.32,Math.sin(age*Math.PI)*.14],i*4);
+                this.particleColor.set(p.spark?[1,.42,.06,Math.sin(age*Math.PI)]:p.steam?[.92,.92,.9,Math.sin(age*Math.PI)*.2]:[.35,.34,.32,Math.sin(age*Math.PI)*.14],i*4);
             } else { this.particleColor[i*4+3]=0; this.particleSize[i]=0; }
         });
         this.particleMaterial.uniforms.uPixelScale.value=this.game.renderer.domElement.height;
@@ -277,7 +330,8 @@ export class CampfireRenderer {
     }
 
     removeView(key,view) { view.group.removeFromParent(); view.logs.forEach(log=>log.mesh.material.dispose());
-        view.coalMaterial.dispose(); view.ash.material.dispose(); view.tinder.material.dispose(); this.views.delete(key); }
+        view.coalMaterial.dispose(); view.ash.material.dispose(); view.tinder.material.dispose();
+        view.potMaterial.dispose(); view.contentMaterial.dispose(); this.views.delete(key); }
     renderShadows() { this.light.render(this.game.world,this.time); }
     // Wzory dla programów cieniujących (rendering/ShaderWarmup.js): płomień
     // i polano. Dzięki nim pierwsze ognisko nie zatrzymuje gry.
@@ -298,6 +352,7 @@ export class CampfireRenderer {
         for(const [key,view] of this.views) this.removeView(key,view);
         this.geometry.forEach(g=>g.dispose()); this.light.dispose(); this.points.removeFromParent();
         for(const resource of [this.fireTexture,this.flameGeometry,this.flameMaterial,this.ashGeometry,
-            this.coalGeometry,this.tinderGeometry,this.particleGeometry,this.particleMaterial]) resource.dispose();
+            this.coalGeometry,this.tinderGeometry,this.particleGeometry,this.particleMaterial,
+            this.potContentGeometry,...this.potGeometries]) resource.dispose();
     }
 }

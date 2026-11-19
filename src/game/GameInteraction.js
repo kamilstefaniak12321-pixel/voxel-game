@@ -55,6 +55,7 @@ import {
 import { getTool, getPlacedBlock, isItemType, getItemLabel } from '../items/ItemRegistry.js';
 import { STATES, isNight } from './Wellbeing.js';
 import { getFood } from '../items/foods.js';
+import { POT, POT_WATER } from '../items/cooking.js';
 import { EFFECTS } from '../items/effects.js';
 import {
     CREATIVE_REPEAT_SECONDS,
@@ -91,6 +92,11 @@ export class GameInteraction {
         // Jeżyk pod celownikiem (1.18.0): LPM - zwija się, PPM z jagodami - je.
         if (!raftInteraction && this.hedgehogs?.interact({ breakPressed, placePressed, terrainHit: this.currentHit })) {
             breakPressed = false; placePressed = false; this.mining = null;
+        }
+
+        // Garnek (1.20.0): PPM pustym garnkiem na wodzie nabiera wody.
+        if (placePressed && this.selectedBlock === POT && this.fillPot()) {
+            placePressed = false;
         }
 
         // Trzymany LPM: w przygodzie kopie (blok pęka i znika po czasie
@@ -882,6 +888,46 @@ export class GameInteraction {
     // Ten sam wynik służy do sprawdzenia miejsca i przyznania łupów.
     // tool - narzędzie w ręce: trawa, kwiaty i zioła (pole cut) zostają
     // tylko po ścięciu nożem; tak samo plon rośliny zbieranej nożem.
+
+    // Pusty gliniany garnek w ręce i woda pod celownikiem: garnek z wodą
+    // (items/cooking.js). Zwraca true, gdy nabrano wody.
+
+    fillPot() {
+
+        const hit = this.raycast.castFromCamera(this.camera, true);
+
+        if (!hit?.hit || !isLiquidId(getBlockId(hit.block.type))) {
+            return false;
+        }
+
+        const inventory = this.inventory;
+        const item = inventory.get(inventory.selected);
+
+        if (item?.type !== POT) {
+            return false;
+        }
+
+        if (item.count === 1) {
+            inventory.set(inventory.selected, { type: POT_WATER, count: 1 });
+        }
+        else if (inventory.canAdd(POT_WATER)) {
+            inventory.take(inventory.selected, 1);
+            inventory.add(POT_WATER);
+        }
+        else {
+            this.onNotice?.('Ekwipunek pełny');
+            return true;
+        }
+
+        this.sounds?.play('pot_serve');
+        this.swingArm();
+        this.onNotice?.('Garnek z wodą - postaw go na ognisku (PPM)');
+        this.achieve('potFilled', {});
+
+        return true;
+
+    }
+
 
     breakDrops(type, position = null, tool = null) {
 

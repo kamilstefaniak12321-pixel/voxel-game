@@ -152,8 +152,9 @@ def textures():
     return out
 
 
-def main():
-    images = textures()
+def install(images):
+    """Wkleja kafelki do rosliny.png; brakujące dopisuje w wolnych miejscach
+    atlasu (CELLS). Używa tego też tools/garnek_tekstury.py."""
     data = json.loads(MANIFEST.read_text(encoding='utf-8'))
     sheet = data['sheets']['rosliny']
     path = ROOT / 'assets/textures' / sheet['file']
@@ -190,6 +191,11 @@ def main():
     page.save(path, optimize=True)
     check()
     sync()
+
+
+def main():
+    images = textures()
+    install(images)
     print(f'{len(images)} tekstur roślin niskich -> rosliny.png')
 
 

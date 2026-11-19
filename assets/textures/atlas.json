@@ -17,7 +17,7 @@
     "rosliny": {
       "file": "rosliny.png",
       "width": 256,
-      "height": 416
+      "height": 432
     },
     "przedmioty": {
       "file": "przedmioty.png",
@@ -8947,6 +8947,83 @@
       "y": 400,
       "width": 16,
       "height": 16
+    },
+    "clay_pot": {
+      "sheet": "rosliny",
+      "x": 0,
+      "y": 416,
+      "width": 16,
+      "height": 16
+    },
+    "clay_pot_water": {
+      "sheet": "rosliny",
+      "x": 16,
+      "y": 416,
+      "width": 16,
+      "height": 16
+    },
+    "wet_clay_pot": {
+      "sheet": "rosliny",
+      "x": 32,
+      "y": 416,
+      "width": 16,
+      "height": 16
+    },
+    "clay_bowl": {
+      "sheet": "rosliny",
+      "x": 48,
+      "y": 416,
+      "width": 16,
+      "height": 16
+    },
+    "wet_clay_bowl": {
+      "sheet": "rosliny",
+      "x": 64,
+      "y": 416,
+      "width": 16,
+      "height": 16
+    },
+    "dish_vegetable_stew": {
+      "sheet": "rosliny",
+      "x": 80,
+      "y": 416,
+      "width": 16,
+      "height": 16
+    },
+    "dish_pumpkin_soup": {
+      "sheet": "rosliny",
+      "x": 96,
+      "y": 416,
+      "width": 16,
+      "height": 16
+    },
+    "dish_zucchini_stew": {
+      "sheet": "rosliny",
+      "x": 112,
+      "y": 416,
+      "width": 16,
+      "height": 16
+    },
+    "dish_nut_soup": {
+      "sheet": "rosliny",
+      "x": 128,
+      "y": 416,
+      "width": 16,
+      "height": 16
+    },
+    "dish_compote": {
+      "sheet": "rosliny",
+      "x": 144,
+      "y": 416,
+      "width": 16,
+      "height": 16
+    },
+    "dish_mixed_stew": {
+      "sheet": "rosliny",
+      "x": 160,
+      "y": 416,
+      "width": 16,
+      "height": 16
     }
   },
   "aliases": {
@@ -16333,6 +16410,61 @@
       "x": 63,
       "y": 89,
       "region": "roasted_zucchini"
+    },
+    "clay_pot": {
+      "x": 51,
+      "y": 90,
+      "region": "clay_pot"
+    },
+    "clay_pot_water": {
+      "x": 52,
+      "y": 90,
+      "region": "clay_pot_water"
+    },
+    "wet_clay_pot": {
+      "x": 53,
+      "y": 90,
+      "region": "wet_clay_pot"
+    },
+    "clay_bowl": {
+      "x": 54,
+      "y": 90,
+      "region": "clay_bowl"
+    },
+    "wet_clay_bowl": {
+      "x": 55,
+      "y": 90,
+      "region": "wet_clay_bowl"
+    },
+    "dish_vegetable_stew": {
+      "x": 56,
+      "y": 90,
+      "region": "dish_vegetable_stew"
+    },
+    "dish_pumpkin_soup": {
+      "x": 57,
+      "y": 90,
+      "region": "dish_pumpkin_soup"
+    },
+    "dish_zucchini_stew": {
+      "x": 58,
+      "y": 90,
+      "region": "dish_zucchini_stew"
+    },
+    "dish_nut_soup": {
+      "x": 59,
+      "y": 90,
+      "region": "dish_nut_soup"
+    },
+    "dish_compote": {
+      "x": 60,
+      "y": 90,
+      "region": "dish_compote"
+    },
+    "dish_mixed_stew": {
+      "x": 61,
+      "y": 90,
+      "region": "dish_mixed_stew"
     }
   }
 }

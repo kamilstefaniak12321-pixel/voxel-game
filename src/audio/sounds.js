@@ -145,6 +145,22 @@ SOUNDS.sizzle = {
 };
 
 
+// Garnek na ognisku (1.20.0, game/Campfires.js): bulgotanie, składnik
+// wpadający do wody, nabieranie miską, "gotowe".
+
+for (const [name, volume] of [['pot_boil', 0.7], ['pot_drop', 0.8], ['pot_serve', 0.8], ['pot_ready', 0.9]]) {
+
+    SOUNDS[name] = {
+        files: [`body/${name}_1.ogg`, `body/${name}_2.ogg`],
+        volume,
+        pitch: [0.95, 1.07],
+        category: 'blocks',
+        distance: { ref: 2, max: 16, rolloff: 1.2 }
+    };
+
+}
+
+
 // Woda (game/Game.js - updateWaterSounds): plusk przy wpadnięciu,
 // ruchy w wodzie, kroki w płytkiej wodzie, krople przy wychodzeniu.
 

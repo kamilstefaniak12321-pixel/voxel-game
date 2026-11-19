@@ -23,6 +23,8 @@
 // ------------------------------------------------------------
 
 // Rodzaje naparów: nazwa efektu -> przedmioty (kubek ziół, napar).
+import { DISH_FOODS } from './cookingData.js';
+
 export const TEAS = {
     calm: { brew: 'brew_calm', tea: 'tea_calm', herbs: 'herbs_calm' },
     heal: { brew: 'brew_heal', tea: 'tea_heal', herbs: 'herbs_heal' },
@@ -75,6 +77,9 @@ export const FOODS = {
     roasted_acorn: { energy: 18, fullness: 150, kind: 'meal', effects: [] },
     roasted_pumpkin_slice: { energy: 20, fullness: 170, kind: 'meal', effects: [] },
     roasted_zucchini: { energy: 18, fullness: 150, kind: 'meal', effects: [] },
+
+    // Potrawy z garnka (1.20.0, items/cooking.js): posiłek z glinianej miski.
+    ...DISH_FOODS,
 
     ...Object.fromEntries(Object.entries(TEAS).map(([effect, { tea }]) =>
         [tea, { energy: 3, fullness: 30, kind: 'drink', effects: [effect], returns: CUP }]))

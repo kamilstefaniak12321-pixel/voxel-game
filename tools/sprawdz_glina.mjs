@@ -98,7 +98,8 @@ check(Object.values(TEAS).every(({ brew, tea }) => ROASTS[brew] === tea && FOODS
 
 // --- Suszenie -------------------------------------------------------------------------
 
-check(Object.keys(C.DRYING).length === 6 && Object.entries(C.DRYING).every(([wet, dry]) => I.itemExists(wet) && I.itemExists(dry)), 'Sześć rzeczy do suszenia');
+// (1.20.0: doszły garnek i miska do gotowania.)
+check(Object.keys(C.DRYING).length === 8 && Object.entries(C.DRYING).every(([wet, dry]) => I.itemExists(wet) && I.itemExists(dry)), 'Osiem rzeczy do suszenia');
 check(C.driesInto('wet_clay_cup') === 'clay_cup' && C.driesInto('wet_red_clay_brick') === 'red_clay_brick', 'Mokre -> suche');
 check(C.driesInto('clay_cup') === null && C.driesInto('stick') === null && C.driesInto(null) === null && C.driesInto('toString') === null, 'Reszta nie schnie');
 check(!C.sunDries(0) && !C.sunDries(5 / 24) && C.sunDries(6 / 24) && C.sunDries(3.5) && C.sunDries(18.9 / 24) && !C.sunDries(19 / 24) && !C.sunDries(7 + 23 / 24), 'Słońce suszy od 6 do 19');

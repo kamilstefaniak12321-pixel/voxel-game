@@ -585,6 +585,62 @@ def hedgehog_curl(s):
     return out
 
 
+# ------------------------------------------------------------
+# Garnek (1.20.0): bulgotanie, plusk składnika, nabieranie, "gotowe"
+# ------------------------------------------------------------
+
+def bubble(s, freq, length=0.07):
+    """Jeden bąbel: krótki ton, który szybko rośnie."""
+    n = samples(length)
+    t = np.linspace(0, length, n)
+    tone = np.sin(2 * np.pi * (freq * t + freq * 0.9 * t * t / length))
+    return tone * soft_env(n, 0.004, length * 0.45)
+
+
+def pot_boil(s):
+    """Kilkanaście bąbli na tle cichego szumu wrzątku."""
+    out = lowpass(s.noise(1.4), 900) * 0.12
+    for _ in range(int(s.uniform(9, 14))):
+        place(out, bubble(s, s.uniform(260, 620), s.uniform(0.05, 0.09)) * s.uniform(0.4, 1.0), s.uniform(0.0, 1.25))
+    return out
+
+
+def pot_drop(s):
+    """Składnik wpada do wody: plusk i dwa bąble."""
+    out = np.zeros(samples(0.5))
+    n = samples(0.16)
+    place(out, band(s.noise(0.16), 500, 3800) * soft_env(n, 0.003, 0.05), 0.0)
+    place(out, bubble(s, s.uniform(300, 420), 0.09), 0.07)
+    place(out, bubble(s, s.uniform(420, 560), 0.07) * 0.6, 0.19)
+    return out
+
+
+def pot_serve(s):
+    """Nabieranie miską: chlupnięcie i stuk gliny o glinę."""
+    out = np.zeros(samples(0.55))
+    n = samples(0.22)
+    place(out, band(s.noise(0.22), 350, 2600) * soft_env(n, 0.02, 0.08), 0.0)
+    place(out, damped_sine(s.uniform(900, 1150), 0.12, 0.02) * 0.5, 0.26)
+    return out
+
+
+def pot_ready(s):
+    """Gotowe: dwa ciepłe stuknięcia w gliniany garnek."""
+    out = np.zeros(samples(0.7))
+    for at, freq in ((0.0, 520), (0.2, 690)):
+        place(out, damped_sine(freq * s.uniform(0.98, 1.02), 0.4, 0.09), at)
+        place(out, damped_sine(freq * 2.4, 0.15, 0.03) * 0.3, at)
+    return out
+
+
+POT = {
+    'pot_boil': (pot_boil, -27),
+    'pot_drop': (pot_drop, -22),
+    'pot_serve': (pot_serve, -22),
+    'pot_ready': (pot_ready, -20)
+}
+
+
 HEDGEHOG = {
     'hedgehog_sniff': (hedgehog_sniff, -27),
     'hedgehog_eat': (hedgehog_eat, -25),
@@ -1165,7 +1221,7 @@ def save(path, data):
         )
 
 
-GROUPS = ['bloki', 'meteoryt', 'owoce', 'menu', 'woda', 'kosmos', 'osiagniecia', 'wytwarzanie', 'snieg', 'strumien', 'cialo', 'drzwi', 'jez']
+GROUPS = ['bloki', 'meteoryt', 'owoce', 'menu', 'woda', 'kosmos', 'osiagniecia', 'wytwarzanie', 'snieg', 'strumien', 'cialo', 'drzwi', 'jez', 'garnek']
 
 
 def generate(root=ROOT, only=None):
@@ -1259,6 +1315,13 @@ def generate(root=ROOT, only=None):
             for v in range(1, 3):
                 sound = fade(loudness(make(Synth(118_000 + index * 10 + v)), level), 0.002, 0.04)
                 save(os.path.join(root, 'animals', f'{name}_{v}.ogg'), sound)
+
+    # Garnek (1.20.0) - własne ziarna.
+    if want('garnek'):
+        for index, (name, (make, level)) in enumerate(POT.items()):
+            for v in range(1, 3):
+                sound = fade(loudness(make(Synth(120_000 + index * 10 + v)), level), 0.002, 0.04)
+                save(os.path.join(root, 'body', f'{name}_{v}.ogg'), sound)
 
 
 if __name__ == '__main__':

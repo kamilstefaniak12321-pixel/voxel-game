@@ -2,6 +2,7 @@ import { CHUNK_HEIGHT, WORLD_BORDER } from '../config.js';
 import { PLANT_PACKS } from '../blocks/plantPacks.js';
 import { TREE_DEFINITIONS } from '../blocks/treeCatalog.js';
 import { BARK_TINDER, barkType } from '../items/bark.js';
+import { restorePot, cookPot, potDrops } from './CookingState.js';
 
 // Gameplay state is independent of meshes, distance, FPS and wall-clock time.
 //
@@ -51,8 +52,9 @@ const clamp = (value, max = 1) => Math.max(0, Math.min(max, Number.isFinite(valu
 
 export function newCampfire(x, y, z) {
     // lit - ile sekund temu ognisko się rozpaliło (płomień rośnie chwilę).
+    // pot - garnek na ognisku (1.20.0, game/CookingState.js) albo null.
     return { x, y, z, logs: [], tinder: null, phase: 'unlit', ignition: 0,
-        collapse: 0, embers: 0, ash: false, lit: 0 };
+        collapse: 0, embers: 0, ash: false, lit: 0, pot: null };
 }
 
 export function restoreCampfire(value) {
@@ -71,6 +73,7 @@ export function restoreCampfire(value) {
     if (['burning', 'collapsing'].includes(value.phase) && fire.logs.length >= 1) fire.phase = value.phase;
     if (fire.phase !== 'collapsing') fire.collapse = 0;
     fire.lit = fire.phase === 'unlit' ? 0 : clamp(value.lit ?? CAMPFIRE_FLARE_SECONDS, CAMPFIRE_FLARE_SECONDS);
+    fire.pot = restorePot(value.pot);
     return fire;
 }
 
@@ -94,8 +97,16 @@ export function addTinder(fire, type) {
     return true;
 }
 
+// Ognisko i garnek na nim. Zwraca nazwę potrawy, gdy właśnie się
+// ugotowała (inaczej null). Gotuje się tylko nad płonącym ogniem.
 export function updateCampfire(fire, dt, holdingStarter = false) {
     dt = Math.max(0, Number.isFinite(dt) ? dt : 0);
+    const cooked = fire.pot && fire.phase === 'burning' ? cookPot(fire.pot, Math.min(dt, burnSecondsLeft(fire))) : null;
+    burnCampfire(fire, dt, holdingStarter);
+    return cooked;
+}
+
+function burnCampfire(fire, dt, holdingStarter = false) {
     fire.embers = Math.max(0, fire.embers - dt);
     if (fire.phase === 'unlit') {
         const ready = fire.logs.length === 6 && fire.tinder;
@@ -118,7 +129,7 @@ export function updateCampfire(fire, dt, holdingStarter = false) {
             left -= need;
             if (fire.logs.length === 1) {
                 log.burn = 1; fire.phase = 'collapsing'; fire.collapse = 0;
-                updateCampfire(fire, left);
+                burnCampfire(fire, left);
                 return;
             }
             fire.logs.pop(); fire.ash = true;
@@ -165,5 +176,7 @@ export function campfireDrops(fire) {
         const type = fuelType(log.wood); counts.set(type, (counts.get(type) ?? 0) + 1);
     }
     if (fire.tinder) counts.set(fire.tinder, 1);
+    // Garnek i surowe składniki (gotowa potrawa bez misek przepada).
+    for (const drop of potDrops(fire.pot)) counts.set(drop.type, (counts.get(drop.type) ?? 0) + drop.count);
     return [...counts].map(([type, count]) => ({ type, count }));
 }

@@ -92,6 +92,9 @@ export const TOOL_SET = ['axe', 'pickaxe', 'shovel'];
 const SHRUB_FRUITS = ['aronia', 'redcurrant', 'blackcurrant', 'gooseberry', 'red_gooseberry', 'raspberry', 'yellow_raspberry',
     'rose_hip', 'elderberry', 'sea_buckthorn_berry'];
 
+// Ile jest potraw z garnka (1.20.0, items/cookingData.js) - do "Kuchmistrza".
+const COOKED_DISHES = 6;
+
 // Owoce roślin niskich z lasu i bagna (1.19.0) - do "Runa leśnego".
 const LOW_BERRIES = ['cranberry', 'lingonberry', 'wild_strawberry'];
 
@@ -640,6 +643,26 @@ export const ACHIEVEMENTS = [
         icon: 'redcurrant',
         on: 'planted',
         when: (data) => String(data.type).startsWith('shrub_') && String(data.type).includes('_sapling')
+    },
+    {
+        id: 'pot_cooked',
+        tier: 'common',
+        title: 'Coś na ciepło',
+        task: 'Ugotuj potrawę w glinianym garnku nad ogniskiem.',
+        comment: 'Woda, ogień i trochę cierpliwości. Reszta to już kuchnia.',
+        icon: 'clay_pot',
+        on: 'cooked'
+    },
+    {
+        id: 'pot_all_dishes',
+        tier: 'rare',
+        title: 'Kuchmistrz',
+        task: 'Ugotuj każdą z sześciu potraw.',
+        comment: 'Garnek ten sam, a za każdym razem pachnie inaczej.',
+        icon: 'dish_vegetable_stew',
+        on: 'cooked',
+        when: (data, book) => book.collect('dishes', data.dish) >= COOKED_DISHES,
+        goal: { key: 'dishes', count: COOKED_DISHES }
     },
     {
         id: 'low_berries',

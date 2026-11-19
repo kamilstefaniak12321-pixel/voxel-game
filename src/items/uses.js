@@ -18,9 +18,14 @@ import { getFood, getRoast, isDrink } from './foods.js';
 import { EFFECTS } from './effects.js';
 import { TINDERS, fuelWood } from '../game/CampfireState.js';
 import { driesInto } from './clay.js';
+import { isIngredient } from './cooking.js';
 
 // Przedmioty, które działają same (nie są składnikiem ani jedzeniem).
 const OWN_USES = {
+    // Gotowanie (1.20.0, items/cooking.js).
+    clay_pot: 'gotowanie: nabierz wody (PPM na wodzie)',
+    clay_pot_water: 'gotowanie: postaw na ognisku i wrzuć 2-3 składniki',
+    clay_bowl: 'nabieranie potrawy z garnka',
     raft: 'pływanie: PPM na wodzie',
     fire_starter: 'rozpalanie ogniska'
 };
@@ -52,6 +57,7 @@ export function itemUses(type) {
     }
     const roasted = getRoast(type);
     if (roasted) uses.push(`${isDrink(roasted) ? 'parzenie' : 'pieczenie'} nad ogniskiem: ${getItemLabel(roasted)}`);
+    if (isIngredient(type)) uses.push('składnik do garnka');
     if (Object.hasOwn(TINDERS, type)) {
         const times = TINDERS[type];
         uses.push(times > 1 ? `podpałka (${String(times).replace('.', ',')} ${Number.isInteger(times) ? 'razy' : 'raza'} szybsza od trawy)` : 'podpałka');

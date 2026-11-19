@@ -101,6 +101,9 @@ Współrzędne można podawać względem gracza: `~` (tu, gdzie stoję),
 | `/niskie` | rośliny niskie (1.19.0, `docs/rosliny-niskie.md`): lista roślin i biomów, w których rosną |
 | `/niskie galeria` | przed tobą galeria: każda roślina w rzędzie, od lewej kolejne etapy (sadzonka, roślina, kwiaty, owoce), przy dyni młoda i dojrzała dynia, w ostatnim rzędzie torfowce i chrobotek (zmienia świat) |
 | `/niskie znajdz [roślina]` | najbliższa roślina niska we wczytanym terenie (np. `zurawina`, `brusznica`, `poziomka`, `dynia`): odległość i komenda `/tp` |
+| `/garnek` | gotowanie (1.20.0, `docs/gotowanie.md`): zestaw do ekwipunku - garnek z wodą, trzy miski, składniki, opał, kora i starter ognia; wypisuje potrawy |
+| `/garnek ognisko` | dwa bloki przed tobą staje płonące ognisko z garnkiem wody (zmienia świat) |
+| `/garnek gotuj` | od razu dogotowuje potrawy w garnkach do 16 bloków od ciebie (garnek musi mieć co najmniej dwa składniki) |
 | `/rosliny` | rośliny z paczek roślin (`assets/rosliny/`, `docs/rosliny.md`): lista z wysokością |
 | `/rosliny <roslina>` | opis rośliny: etapy z rozmiarem w blokach i pikselach, przedmiot i zbiór, gdzie rośnie, numery bloków (np. `/rosliny amarantus`) |
 | `/rosliny ogrod [roslina]` | przed tobą wszystkie etapy każdej rośliny (roślina w rzędzie, co 3 bloki; zmienia świat) |

@@ -23,6 +23,8 @@
 // Nowa rzecz do suszenia: wpis w DRYING.
 // ------------------------------------------------------------
 
+import { POT, WET_POT, BOWL, WET_BOWL } from './cookingData.js';
+
 export const CLAY_KINDS = {
     clay: { label: 'glina', of: 'z gliny', cup: 'Gliniany kubek', brick: 'Cegła', bricks: 'Cegły' },
     red_clay: { label: 'czerwona glina', of: 'z czerwonej gliny', cup: 'Czerwony gliniany kubek', brick: 'Czerwona cegła', bricks: 'Czerwone cegły' },
@@ -50,10 +52,15 @@ export const DRY_UNTIL_HOUR = 19;
 export const DRY_SKY_LIGHT = 13;
 
 // Mokre -> suche.
-export const DRYING = Object.fromEntries(CLAY_TYPES.flatMap((clay) => [
-    [wetCup(clay), dryCup(clay)],
-    [wetBrick(clay), dryBrick(clay)]
-]));
+export const DRYING = {
+    ...Object.fromEntries(CLAY_TYPES.flatMap((clay) => [
+        [wetCup(clay), dryCup(clay)],
+        [wetBrick(clay), dryBrick(clay)]
+    ])),
+    // Garnek i miska do gotowania (1.20.0, items/cooking.js).
+    [WET_POT]: POT,
+    [WET_BOWL]: BOWL
+};
 
 export function driesInto(type) {
     return Object.hasOwn(DRYING, type ?? '') ? DRYING[type] : null;

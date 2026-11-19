@@ -249,6 +249,7 @@ import { CHEST_KINDS } from '../blocks/chest.js';
 import { WOODS } from '../blocks/woods.js';
 import { TEAS } from '../items/foods.js';
 import { CLAY_TYPES, CUPS, DRY_SECONDS, wetCup, wetBrick, dryBrick, brickBlock } from '../items/clay.js';
+import { WET_POT, WET_BOWL } from '../items/cookingData.js';
 import { EFFECTS } from '../items/effects.js';
 
 export const RECIPES = [
@@ -291,6 +292,18 @@ export const RECIPES = [
     ...CLAY_TYPES.map((clay) => ({
         id: wetCup(clay), result: [wetCup(clay), 2], ingredients: [clay, clay],
         note: `Mokry kubek trzeba wysuszyć: wyrzuć go (klawisz wyrzucania, domyślnie Q) na słońce - po ok. ${DRY_SECONDS / 60} minutach dnia zamieni się w kubek, z którego da się pić.`
+    })),
+    // Garnek i miska do gotowania (1.20.0, items/cooking.js): z każdej
+    // z trzech glin wychodzi taki sam garnek. Schną jak kubki.
+    // Garnek: trzy gliny i patyk do wygładzenia ścianek (cztery gliny to
+    // terakota); miski: trzy gliny - dwie miski.
+    ...CLAY_TYPES.map((clay) => ({
+        id: clay === 'clay' ? WET_POT : `${WET_POT}_${clay}`, result: [WET_POT, 1], ingredients: [clay, clay, clay, 'stick'],
+        note: `Mokry garnek trzeba wysuszyć na słońcu (wyrzuć go klawiszem wyrzucania, domyślnie Q - ok. ${DRY_SECONDS / 60} minuty dnia). Suchym nabierz wody (PPM na wodzie) i postaw go na ognisku.`
+    })),
+    ...CLAY_TYPES.map((clay) => ({
+        id: clay === 'clay' ? WET_BOWL : `${WET_BOWL}_${clay}`, result: [WET_BOWL, 2], ingredients: [clay, clay, clay],
+        note: 'Mokre miski trzeba wysuszyć na słońcu. Miską nabiera się potrawę z garnka; po zjedzeniu miska zostaje.'
     })),
     // Cegły: jedna glina - dwie mokre cegły; po wyschnięciu cztery cegły
     // dają blok.

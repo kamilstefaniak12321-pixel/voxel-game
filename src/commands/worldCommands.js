@@ -14,7 +14,8 @@ import {
     bushStages,
     getBlockId,
     getBlockTypeById,
-    isLiquidId
+    isLiquidId,
+    isSolidId
 } from '../blocks/BlockRegistry.js';
 import { waterUniforms } from '../rendering/BlockRenderData.js';
 import { getItemLabel, ITEM_TYPES } from '../items/ItemRegistry.js';
@@ -33,6 +34,9 @@ import {
 import { plantTree } from '../world/trees/plantTree.js';
 import { SHRUBS, SHRUB_NAMES, shrubType, SHRUB_STAGE_SECONDS } from '../blocks/shrubs.js';
 import { plantShrub } from '../world/shrubs/Shrubs.js';
+import { POT_WATER, BOWL, COOK_SECONDS, DISHES, DISH_NAMES } from '../items/cooking.js';
+import { newPot, cookPot } from '../game/CookingState.js';
+import { newCampfire, addFirewood } from '../game/CampfireState.js';
 import { LOW_PLANTS, LOW_PLANT_NAMES, SPHAGNUM, lowPlantType, lowPlantInfo, LOW_STAGE_SECONDS, LOW_PLANT_FIRST_ID, LOW_PLANT_END_ID } from '../blocks/lowPlants.js';
 import { hedgehogHome, findLeafCell } from '../game/Hedgehogs.js';
 import { HEDGEHOG_VARIANT_WEIGHTS } from '../world/animals/Hedgehog.js';
@@ -1295,6 +1299,66 @@ export const WORLD_COMMANDS = [
 
     },
 
+
+    {
+        name: 'garnek',
+        aliases: ['gotowanie', 'pot'],
+        usage: '/garnek | /garnek ognisko | /garnek gotuj',
+        description: 'Gotowanie (1.20.0): zestaw do ekwipunku (garnek z wodą, miski, składniki, opał), płonące ognisko z garnkiem przed tobą albo dogotowanie potraw w garnkach obok.',
+
+        run(args, { game, player, world }) {
+
+            const word = simplify(args[0] ?? '');
+
+            if (!word) {
+                const kit = [[POT_WATER, 1], [BOWL, 3], ['pumpkin_slice', 4], ['zucchini', 4], ['hazelnut', 4], ['raspberry', 4],
+                    ['oak_firewood', 6], ['oak_bark', 1], ['fire_starter', 1]];
+                for (const [type, count] of kit) game.inventory.add(type, count);
+                return 'Zestaw do gotowania w ekwipunku. Postaw garnek z wodą na ognisku (PPM), wrzuć 2-3 składniki, po ' +
+                    `${COOK_SECONDS} s nad ogniem nabierz potrawę miską. Potrawy: ` +
+                    DISH_NAMES.map((dish) => `${DISHES[dish].label} (${DISHES[dish].hint})`).join(', ') + '.';
+            }
+
+            if (['ognisko', 'fire'].includes(word)) {
+
+                const { forwardX, forwardZ } = lookAxes(player);
+                const x = Math.floor(player.pos.x) + forwardX * 2, z = Math.floor(player.pos.z) + forwardZ * 2;
+                const y = Math.floor(player.pos.y);
+
+                if (!isSolidId(world.getBlockId(x, y - 1, z)) || world.getBlockId(x, y, z) !== 0) {
+                    throw new CommandError('Dwa bloki przed tobą musi być wolne miejsce na stałym gruncie.');
+                }
+
+                world.setBlock(x, y, z, 'campfire');
+                const fire = newCampfire(x, y, z);
+                for (let i = 0; i < 6; i++) addFirewood(fire, 'oak');
+                fire.phase = 'burning';
+                fire.pot = newPot();
+                game.campfires.fires.set(`${x},${y},${z}`, fire);
+                game.campfires.version++;
+
+                return 'Płonące ognisko z garnkiem wody. Wrzuć składniki (PPM z jedzeniem w ręce).';
+
+            }
+
+            if (['gotuj', 'cook'].includes(word)) {
+
+                let done = 0;
+
+                for (const fire of game.campfires.fires.values()) {
+                    if (!fire.pot || Math.hypot(fire.x - player.pos.x, fire.z - player.pos.z) > 16) continue;
+                    const dish = cookPot(fire.pot, COOK_SECONDS);
+                    if (dish) { game.campfires.cooked(fire, dish); done++; }
+                }
+
+                return done > 0 ? `Dogotowano: ${done}.` : 'W pobliżu nie ma garnka z co najmniej dwoma składnikami.';
+
+            }
+
+            throw new CommandError('Użycie: /garnek | /garnek ognisko | /garnek gotuj');
+
+        }
+    },
 
     {
         name: 'niskie',

@@ -60,8 +60,8 @@ i wzorze ze stołu - jak wyroby na stole stolarskim:
 | **z tyłu** | głowa (czapka / chusta / opaska) | tułów (koszula / kamizelka / tunika) |
 | **z przodu** | nogi (spodnie / krótkie spodnie) | stopy (buty / łapcie) |
 
-**PPM w wykrój** szyje to ubranie (zużywa płótna z blatu), **z kucaniem
-- zmienia krój** na tym miejscu. Wykrój, na który nie starczy płótna,
+**PPM w wykrój** szyje to ubranie (zużywa płótna z blatu), a **PPM
+z kucaniem zmienia krój** na tym miejscu. Wykrój, na który nie starczy płótna,
 leży w cieniu (klik pokazuje, ile trzeba). Z plecionki z łyka są tylko
 kamizelka i łapcie - na głowę i nogi nic.
 

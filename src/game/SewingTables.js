@@ -44,6 +44,9 @@ import { SewingTableRenderer } from '../rendering/SewingTableRenderer.js';
 
 const keyOf = ({ x, y, z }) => `${x},${y},${z}`;
 
+// Dźwięk materiału na blacie (miękki - jak posłanie, blocks/bedding.js).
+const CLOTH_SOUND = 'grass';
+
 // Najwięcej materiału na blacie (jak desek na stole stolarskim).
 export const SEWING_CAPACITY = 64;
 
@@ -231,7 +234,7 @@ export class SewingTables {
         }
         if (game.mode === 'adventure') inventory.take(slot, moved);
         this.version++;
-        game.playBlockSound?.('place', 'white_wool', a);
+        game.playBlockSound?.('place', CLOTH_SOUND, a);
         if (!material) game.onNotice?.(this.hint(table));
         return true;
     }
@@ -255,7 +258,7 @@ export class SewingTables {
         material.count = left;
         if (left <= 0) this.clear(table);
         this.version++;
-        game.playBlockSound?.('step', 'white_wool', a);
+        game.playBlockSound?.('step', CLOTH_SOUND, a);
         return true;
     }
 
@@ -290,7 +293,7 @@ export class SewingTables {
         }
         if (game.mode === 'adventure') game.inventory.take(game.inventory.selected, 1);
         this.version++;
-        game.playBlockSound?.('place', 'white_wool', a);
+        game.playBlockSound?.('place', CLOTH_SOUND, a);
         game.onNotice?.(`${sneaking ? 'Kolor wzoru' : 'Kolor'}: ${getItemLabel(selected).replace(/^Barwnik /, '')}`);
         return true;
     }
@@ -304,7 +307,7 @@ export class SewingTables {
         if (garment) material.look = cleanLook({ ...cleanLook(material.look), pattern });
         else table.pattern = pattern;
         this.version++;
-        game.playBlockSound?.('step', 'white_wool', a);
+        game.playBlockSound?.('step', CLOTH_SOUND, a);
         game.onNotice?.(`Wzór: ${PATTERNS[pattern].label}`);
         return true;
     }
@@ -365,7 +368,7 @@ export class SewingTables {
         }
         if (material.count <= 0) this.clear(table);
         this.version++;
-        game.playBlockSound?.('place', 'white_wool', this.partB(a));
+        game.playBlockSound?.('place', CLOTH_SOUND, this.partB(a));
         game.achieve?.('woven', { count: woven, cloth });
         game.onNotice?.(`${getItemLabel(cloth)} × ${woven}`);
         return true;
@@ -380,7 +383,7 @@ export class SewingTables {
         }
         table.cuts[slot] = nextOf(kinds, cutFor(table, cloth, slot));
         this.version++;
-        game.playBlockSound?.('step', 'white_wool', this.partB(a));
+        game.playBlockSound?.('step', CLOTH_SOUND, this.partB(a));
         game.onNotice?.(`Krój: ${GARMENTS[table.cuts[slot]].label.toLowerCase()} (${GARMENTS[table.cuts[slot]].cost} płót.)`);
         return true;
     }
@@ -400,7 +403,7 @@ export class SewingTables {
         material.count -= product.cost;
         if (material.count <= 0) this.clear(table);
         this.version++;
-        game.playBlockSound?.('place', 'white_wool', this.partB(a));
+        game.playBlockSound?.('place', CLOTH_SOUND, this.partB(a));
         game.achieve?.('sewn', { type, look, mode: 'sew' });
         game.onNotice?.(`${getItemLabel(type)} - uszyte`);
         return true;

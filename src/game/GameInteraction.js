@@ -56,6 +56,10 @@ import { getTool, getPlacedBlock, isItemType, getItemLabel } from '../items/Item
 import { STATES, isNight } from './Wellbeing.js';
 import { getFood } from '../items/foods.js';
 import { POT, POT_WATER } from '../items/cooking.js';
+import { COMPOST } from '../items/spoilage.js';
+
+// Z czego kompost robi czarnoziem.
+const COMPOSTABLE = ['grass', 'dirt', 'coarse_dirt', 'forest_floor'];
 import { EFFECTS } from '../items/effects.js';
 import {
     CREATIVE_REPEAT_SECONDS,
@@ -92,6 +96,11 @@ export class GameInteraction {
         // Jeżyk pod celownikiem (1.18.0): LPM - zwija się, PPM z jagodami - je.
         if (!raftInteraction && this.hedgehogs?.interact({ breakPressed, placePressed, terrainHit: this.currentHit })) {
             breakPressed = false; placePressed = false; this.mining = null;
+        }
+
+        // Kompost (1.23.0): PPM na ziemi albo trawie robi z niej czarnoziem.
+        if (placePressed && this.selectedBlock === COMPOST && this.fertilize(this.currentHit)) {
+            placePressed = false;
         }
 
         // Garnek (1.20.0): PPM pustym garnkiem na wodzie nabiera wody.
@@ -888,6 +897,43 @@ export class GameInteraction {
     // Ten sam wynik służy do sprawdzenia miejsca i przyznania łupów.
     // tool - narzędzie w ręce: trawa, kwiaty i zioła (pole cut) zostają
     // tylko po ścięciu nożem; tak samo plon rośliny zbieranej nożem.
+
+    // Kompost w ręce i ziemia pod celownikiem: czarnoziem (items/spoilage.js).
+    // Zwraca true, gdy kliknięcie dotyczyło kompostu.
+
+    fertilize(hit) {
+
+        if (!hit?.hit) {
+            return false;
+        }
+
+        const { x, y, z, type } = hit.block;
+
+        if (type === 'humus') {
+            this.onNotice?.('To już czarnoziem');
+            return true;
+        }
+
+        if (!COMPOSTABLE.includes(type)) {
+            return false;
+        }
+
+        if (!this.world.setBlock(x, y, z, 'humus')) {
+            return false;
+        }
+
+        if (this.mode === 'adventure') {
+            this.inventory.take(this.inventory.selected, 1);
+        }
+
+        this.playBlockSound('place', 'humus', hit.block);
+        this.swingArm();
+        this.achieve('composted', { from: type });
+
+        return true;
+
+    }
+
 
     // Pusty gliniany garnek w ręce i woda pod celownikiem: garnek z wodą
     // (items/cooking.js). Zwraca true, gdy nabrano wody.

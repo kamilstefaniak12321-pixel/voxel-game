@@ -174,6 +174,9 @@ export const ITEM_TYPES = {
     roasted_pumpkin_slice: { name: 'Roasted Pumpkin Slice', label: 'Pieczona dynia', icon: 'roasted_pumpkin_slice', category: 'owoce' },
     roasted_zucchini: { name: 'Roasted Zucchini', label: 'Pieczona cukinia', icon: 'roasted_zucchini', category: 'owoce' },
 
+    // Kompost (1.23.0, items/spoilage.js): to, co zostaje z zepsutego jedzenia.
+    compost: { name: 'Compost', label: 'Kompost', icon: 'compost', category: 'narzedzia' },
+
     // Suszone owoce (1.21.0, items/drying.js): z każdego owocu wysuszonego na słońcu.
     dried_fruit: { name: 'Dried Fruit', label: 'Suszone owoce', icon: 'dried_fruit', category: 'owoce' },
 

@@ -193,7 +193,11 @@ export const GUIDE = [
             'Palma kokosowa, baobab i figowiec owocują cały rok.',
             { text: 'Owoce da się ususzyć: wyrzuć je ([drop]) w dzień pod gołe niebo. Po 2 minutach na słońcu cały stos to suszone owoce - syte i dobre do garnka.',
                 touch: 'Owoce da się ususzyć: w ekwipunku weź je i stuknij obok okna - w dzień, pod gołym niebem. Po 2 minutach na słońcu cały stos to suszone owoce.' },
-            'Przed zimą zrób zapasy: suszone owoce, orzechy, żołędzie i dynie leżą w skrzyni bez końca.',
+            'Świeże jedzenie się psuje - tym szybciej, im cieplej. Z miękkich owoców w plecaku połowa zostaje po 3 dniach, z jabłek i warzyw po 7, z potraw po 2. Na mrozie prawie nic się nie psuje.',
+            'W skrzyni jedzenie psuje się 2 razy wolniej, a w piwniczce (skrzynia pod dachem albo pod ziemią) 4 razy wolniej - i latem jest tam chłodniej.',
+            'Nie psują się: suszone owoce, orzechy, żołędzie, pestki i cała dynia. Z nich rób zapasy na zimę.',
+            { text: 'Zepsute jedzenie zamienia się w kompost. Kompostem kliknij ziemię albo trawę ([use]) - zrobi się z niej czarnoziem.',
+                touch: 'Zepsute jedzenie zamienia się w kompost. Z kompostem w ręce stuknij ziemię albo trawę - zrobi się z niej czarnoziem.' },
             'Owoce, których nie zbierzesz, po swojej porze spadają na ziemię. Przez zimę gniją: ziemia pod nimi może zamienić się w czarnoziem, a wiosną z części wyrasta sadzonka.',
             'Po zimie roślina może dawać o jeden owoc więcej przy każdym zbiorze (najwyżej o 3). Pomaga jej to, że w zeszłym roku zbierałeś z niej owoce, i czarnoziem pod spodem.',
             'Żurawina, brusznica, truskawki i poziomki po zimie rozrastają się na wolne miejsce obok.'

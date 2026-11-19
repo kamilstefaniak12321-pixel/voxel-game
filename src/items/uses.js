@@ -19,6 +19,7 @@ import { EFFECTS } from './effects.js';
 import { TINDERS, fuelWood } from '../game/CampfireState.js';
 import { driesInto } from './drying.js';
 import { isIngredient } from './cooking.js';
+import { spoilText } from './spoilage.js';
 
 // Przedmioty, które działają same (nie są składnikiem ani jedzeniem).
 const OWN_USES = {
@@ -26,6 +27,8 @@ const OWN_USES = {
     clay_pot: 'gotowanie: nabierz wody (PPM na wodzie)',
     clay_pot_water: 'gotowanie: postaw na ognisku i wrzuć 2-3 składniki',
     clay_bowl: 'nabieranie potrawy z garnka',
+    // Kompost (1.23.0, items/spoilage.js).
+    compost: 'użyźnianie: PPM na ziemi albo trawie robi z niej czarnoziem',
     raft: 'pływanie: PPM na wodzie',
     fire_starter: 'rozpalanie ogniska'
 };
@@ -58,6 +61,7 @@ export function itemUses(type) {
     const roasted = getRoast(type);
     if (roasted) uses.push(`${isDrink(roasted) ? 'parzenie' : 'pieczenie'} nad ogniskiem: ${getItemLabel(roasted)}`);
     if (isIngredient(type)) uses.push('składnik do garnka');
+    if (spoilText(type)) uses.push(spoilText(type));
     if (Object.hasOwn(TINDERS, type)) {
         const times = TINDERS[type];
         uses.push(times > 1 ? `podpałka (${String(times).replace('.', ',')} ${Number.isInteger(times) ? 'razy' : 'raza'} szybsza od trawy)` : 'podpałka');

@@ -34,7 +34,11 @@ PR #180.
     samo, położone na stole.
 - **Ubrania na sobie**: cztery miejsca obok postaci (głowa, tułów, nogi,
   stopy). Ubrania widać na postaci i u innych graczy, barwione mają
-  ikonki w swoich kolorach. Ubrania grzeją - mniej się marznie.
+  ikonki w swoich kolorach.
+- **Ubrania grzeją** (zimno z 1.26.0): ich ciepło dodaje się do
+  odczuwalnej temperatury - cały strój z pokrzywy to ok. +10,6°C, z lnu
+  ok. +7,6°C; w wodzie mokre grzeją słabo. `/zimno` pokazuje część
+  „ubrania".
 - **Stare krzaki** truskawki, jeżyny, leszczyny i borówki nie rosną już
   w nowym terenie (ich owoce dają nowe krzewy i rośliny niskie; borówka
   wysoka rośnie teraz także w lesie świerkowym). Chili zostaje.
@@ -44,6 +48,36 @@ PR #180.
 Znane braki: barwione ubranie na ziemi i w skrzyni ma naturalną ikonkę;
 nie ma wełny ani płaszczy; ubrania się nie zużywają. Reszta
 w `docs/ubrania.md`.
+
+## 1.26.0 - Zimno i zamarzanie
+
+PR #179.
+
+- **Zimno**: zimą, jesienią i w górach liczy się odczuwalna temperatura
+  - powietrze, wiatr na otwartym terenie, woda, dach nad głową. Poniżej
+  5°C gracz się wychładza.
+- **Co grzeje**: płonące ognisko (mocno, do 7 bloków), pochodnie
+  i lampy (trochę), dach nad głową, a od środka ciepła potrawa
+  z garnka, napar i chili.
+- **Trzy stopnie**: chłodno (dreszcze, płatek śniegu przy sercu),
+  zmarznięty (coraz wolniejszy chód, szron na brzegach obrazu), a na
+  końcu…
+- **Zamarznięcie na kość**: postać zamienia się w bryłę lodu, a czas
+  przyspiesza do odwilży - jesienną nocą do rana, zimą czasem aż do
+  wiosny. Po odwilży jesteś wyczerpany, głodny i zziębnięty.
+- **Gra ze znajomymi**: zamarznięty czeka w lodzie, aż ktoś rozpali
+  obok ognisko albo postawi pochodnię. Inni widzą bryłę lodu. Gdy
+  zamarzną wszyscy - czas przyspiesza.
+- **Sen na mrozie**: łóżko i posłanie grzeją; na gołej ziemi w mróz
+  budzisz się zmarznięty.
+- Nowe dźwięki (zamarzanie, pękający lód, dreszcze), komenda `/zimno`,
+  osiągnięcia *Sopel lodu*, *Grzanie rąk* i *Ratownik*, rozdział
+  „Zimno" w poradniku. Plan kolejnych wersji: `docs/plan.md`.
+- Tylko tryb przygody.
+
+Znane braki: nie ma jeszcze ubrań (przyjdą z włóknami); ciepło ogniska
+przechodzi przez ściany; gry ze znajomymi nie próbowałem w dwóch
+kartach. Reszta w `docs/zimno.md`.
 
 ## 1.25.0 - Ziemia i owoce z charakterem
 

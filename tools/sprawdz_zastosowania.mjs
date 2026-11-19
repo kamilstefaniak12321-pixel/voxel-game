@@ -145,7 +145,7 @@ function usesOf(type) {
         check(itemUses(type).length > 0 && itemUses(type).every((text) => typeof text === 'string' && text.length > 3), `${type}: opis zastosowania w grze`);
     }
     check(itemUses('huba_huba').some((text) => /podpałka \(2 razy/.test(text)) && craftsFrom('huba_huba').includes('Barwnik brązowy'), `Huba: podpałka i barwnik (${itemUses('huba_huba').join('; ')})`);
-    check(itemUses('tea_calm')[0] === `napar (${EFFECTS.calm.label})` && itemUses('brew_calm')[0].startsWith('parzenie nad ogniskiem: Napar na sen'), 'Napar i kubek ziół: opis');
+    check(itemUses('tea_calm')[0] === `napar (${EFFECTS.calm.label}, ${EFFECTS.warmth.label})` && itemUses('brew_calm')[0].startsWith('parzenie nad ogniskiem: Napar na sen'), 'Napar i kubek ziół: opis');
     check(itemUses('jablon_jablko').includes('jedzenie') && itemUses('jablon_jablko').some((text) => text.startsWith('pieczenie nad ogniskiem')), 'Jabłko: jedzenie i pieczenie');
     check([...craftsFrom('lawenda_bukiet')].sort().join() === ['Barwnik fioletowy', 'Fioletowa lampa', 'Kubek ziół na sen', 'Wianek z kwiatów'].join(),
         `Lawenda: barwnik, lampa, wianek, napar (${craftsFrom('lawenda_bukiet').join(', ')})`);
@@ -249,7 +249,7 @@ function usesOf(type) {
         check(findRecipe([CUP, first]) === null || findRecipe([CUP, first])?.result[0] !== brew, `${effect}: jedno zioło to za mało`);
         check(getRoast(brew) === tea && isDrink(tea) && !isDrink(brew) && !getFood(brew), `${brew} nad ogniskiem -> ${tea} (surowych ziół się nie pije)`);
         const food = FOODS[tea];
-        check(food.kind === 'drink' && KIND_LABELS.drink && food.effects.join() === effect && food.returns === CUP, `${tea}: napój z efektem, kubek wraca`);
+        check(food.kind === 'drink' && KIND_LABELS.drink && food.effects.join() === `${effect},warmth` && food.returns === CUP, `${tea}: napój z efektem (i ciepłem w brzuchu - 1.26.0), kubek wraca`);
     }
     check(findRecipe([CUP, 'linden_flower', 'nettle']) === null, 'Zioła z różnych grup nie dają naparu');
     for (const [type, food] of Object.entries(FOODS)) {
@@ -278,9 +278,9 @@ function run(w, seconds, activity, clock, dt = 0.5) {
     const w = fresh({ energy: 50, condition: 100, fullness: 100000 }, 0.5);
     check(!w.canEat('jablon_jablko').ok && w.canEat('tea_vigor').ok, 'Napar da się wypić z pełnym żołądkiem');
     const drank = w.eat('tea_vigor', 0.5);
-    check(drank.ok && drank.effects.join() === 'vigor' && w.hasEffect('vigor') && !w.hasEffect('calm'), 'Wypity napar włącza efekt');
+    check(drank.ok && drank.effects.join() === 'vigor,warmth' && w.hasEffect('vigor') && w.hasEffect('warmth') && !w.hasEffect('calm'), 'Wypity napar włącza efekt (i grzeje)');
     const info = w.describe().effects;
-    check(info.length === 1 && info[0].label === EFFECTS.vigor.label, 'Okno statusu: działający efekt');
+    check(info.length === 2 && info[0].label === EFFECTS.vigor.label && info[1].label === EFFECTS.warmth.label, 'Okno statusu: działające efekty');
     near(info[0].hours, EFFECTS.vigor.hours, 'Ile godzin zostało');
     check(fresh({ energy: 50 }, 0.5).eat('strawberry', 0.5).effects.length === 0, 'Zwykłe jedzenie - bez efektów');
 

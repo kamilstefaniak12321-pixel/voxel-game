@@ -641,6 +641,56 @@ POT = {
 }
 
 
+def ice_freeze(s):
+    """Zamarzanie (1.26.0): narastające trzaski kryształków lodu i szklisty
+    dzwięk na końcu - jak woda zamarzająca w jednej chwili."""
+    length = 2.0
+    out = np.zeros(samples(length))
+    # Kryształki: coraz gęstsze, coraz wyższe.
+    for k in range(70):
+        at = length * 0.85 * (k / 70) ** 0.7 + s.uniform(-0.02, 0.02)
+        freq = s.uniform(2600, 5200) + 1600 * at / length
+        place(out, damped_sine(freq, 0.03, 0.006) * s.uniform(0.15, 0.5) * (0.4 + 0.6 * at / length), max(0.0, at))
+    # Szum szronu.
+    hiss = band(s.noise(length), 3000, 9000) * np.linspace(0.0, 0.18, samples(length))
+    out += hiss
+    # Szklisty akord na końcu.
+    for freq in (1320, 1980, 2640):
+        place(out, damped_sine(freq * s.uniform(0.99, 1.01), 0.6, 0.18) * 0.22, length * 0.82)
+    return out
+
+
+def ice_crack(s):
+    """Odwilż: głuche pęknięcie lodu, kilka trzasków i kapanie."""
+    out = np.zeros(samples(1.6))
+    n = samples(0.12)
+    place(out, lowpass(s.noise(0.12), 1800) * soft_env(n, 0.002, 0.04) * 1.2, 0.0)
+    place(out, damped_sine(s.uniform(180, 230), 0.25, 0.07) * 0.8, 0.0)
+    for _ in range(6):
+        place(out, band(s.noise(0.03), 1500, 6000) * soft_env(samples(0.03), 0.001, 0.01) * s.uniform(0.3, 0.7), s.uniform(0.05, 0.5))
+    # Krople.
+    for at in (0.7, 1.0, 1.3):
+        place(out, bubble(s, s.uniform(900, 1300), 0.06) * 0.35, at + s.uniform(-0.05, 0.05))
+    return out
+
+
+def shiver(s):
+    """Dreszcze: szybkie szczękanie zębami i drżący oddech."""
+    out = np.zeros(samples(0.9))
+    for k in range(9):
+        place(out, band(s.noise(0.012), 1800, 5200) * soft_env(samples(0.012), 0.001, 0.004) * s.uniform(0.4, 0.8), 0.05 + k * 0.075 + s.uniform(-0.008, 0.008))
+    breath = band(s.noise(0.9), 400, 1800) * soft_env(samples(0.9), 0.15, 0.3) * 0.12
+    wobble = 1 + 0.5 * np.sin(2 * np.pi * 9 * time_axis(samples(0.9)))
+    return out + breath * wobble
+
+
+ICE = {
+    'ice_freeze': (ice_freeze, -19),
+    'ice_crack': (ice_crack, -18),
+    'shiver': (shiver, -24)
+}
+
+
 HEDGEHOG = {
     'hedgehog_sniff': (hedgehog_sniff, -27),
     'hedgehog_eat': (hedgehog_eat, -25),
@@ -1221,7 +1271,7 @@ def save(path, data):
         )
 
 
-GROUPS = ['bloki', 'meteoryt', 'owoce', 'menu', 'woda', 'kosmos', 'osiagniecia', 'wytwarzanie', 'snieg', 'strumien', 'cialo', 'drzwi', 'jez', 'garnek']
+GROUPS = ['bloki', 'meteoryt', 'owoce', 'menu', 'woda', 'kosmos', 'osiagniecia', 'wytwarzanie', 'snieg', 'strumien', 'cialo', 'drzwi', 'jez', 'garnek', 'lod']
 
 
 def generate(root=ROOT, only=None):
@@ -1321,6 +1371,13 @@ def generate(root=ROOT, only=None):
         for index, (name, (make, level)) in enumerate(POT.items()):
             for v in range(1, 3):
                 sound = fade(loudness(make(Synth(120_000 + index * 10 + v)), level), 0.002, 0.04)
+                save(os.path.join(root, 'body', f'{name}_{v}.ogg'), sound)
+
+    # Zimno (1.26.0) - własne ziarna.
+    if want('lod'):
+        for index, (name, (make, level)) in enumerate(ICE.items()):
+            for v in range(1, 3):
+                sound = fade(loudness(make(Synth(126_000 + index * 10 + v)), level), 0.002, 0.05)
                 save(os.path.join(root, 'body', f'{name}_{v}.ogg'), sound)
 
 

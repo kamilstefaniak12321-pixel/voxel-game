@@ -342,6 +342,18 @@ function sewingGame(mode = 'adventure') {
     const warmth = C.wornWarmth(full);
     check(warmth > 10 && warmth < 16 && C.wornWarmth([]) === 0 && C.wornWarmth([{ type: 'stone' }]) === 0 && C.wornWarmth([{ type: 'cap_linen' }]) === C.garmentInfo('cap_linen').warmth, `Cały pokrzywowy strój grzeje o ${warmth}°C`);
 
+    // Ciepło ubrań w odczuwalnej temperaturze (1.26.0 Warmth.js).
+    const W = await import('../src/game/Warmth.js');
+    const dressed = W.feltTemperature({ air: -2, sky: 15, clothes: warmth });
+    const naked = W.feltTemperature({ air: -2, sky: 15 });
+    check(Math.abs(dressed.felt - naked.felt - warmth) < 1e-9 && dressed.clothes === warmth && naked.clothes === 0, 'Ubrania podnoszą odczuwalną temperaturę');
+    check(Math.abs(W.feltTemperature({ air: 10, water: true, clothes: 10 }).clothes - 10 * W.WET_CLOTHES) < 1e-9, 'Mokre ubrania (w wodzie) grzeją słabiej');
+    const warmthGame = { player: { pos: { x: 0, y: 70, z: 0 } }, world: { getLight: () => ({ sky: 15 }), getBlockId: () => 0 }, weather: { temperature: -4, wind: { speed: 0 } },
+        inventory: { equip: full }, campfires: { fires: [] } };
+    const meter = new W.Warmth(warmthGame);
+    check(Math.abs(meter.update(0, true).clothes - warmth) < 1e-9, 'Warmth bierze ubrania z miejsc na postaci');
+    check(read('src/game/Freeze.js').includes('(parts.clothes ?? 0)') && read('src/commands/worldCommands.js').includes('ubrania ${n(p.clothes ?? 0)}'), 'Odwilż i /zimno liczą ubrania');
+
     const code = C.clothesCode([{ type: 'cap_linen', count: 1, look }, null, { type: 'trousers_linen', count: 1 }, null]);
     check(code === 'cap_linen.stripes.red.white|-|trousers_linen.plain..|-', `Kod ubrań (${code})`);
     const parsed = C.parseClothes(code);

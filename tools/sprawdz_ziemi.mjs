@@ -155,7 +155,8 @@ function makeWorld(soil, { water = null, plants = 400 } = {}) {
 {
     const traits = { rose_hip: 'mend', cranberry: 'mend', lingonberry: 'mend', aronia: 'tonic', sea_buckthorn_berry: 'tonic', blackcurrant: 'tonic', elderberry: 'tonic', chili_pepper: 'warm' };
     for (const [type, food] of Object.entries(FOODS)) {
-        if (food.kind === 'drink') continue;
+        // (Napary i potrawy z garnka grzeją od 1.26.0 - sprawdz_zimna.mjs.)
+        if (food.kind === 'drink' || type.startsWith('dish_')) continue;
         check(JSON.stringify(food.effects) === JSON.stringify(traits[type] ? [traits[type]] : []), `${type}: ${traits[type] ?? 'bez działania'}`);
     }
     for (const [type, effect] of Object.entries(traits)) {
@@ -201,7 +202,7 @@ function makeWorld(soil, { water = null, plants = 400 } = {}) {
     const byId = Object.fromEntries(ACHIEVEMENTS.map((entry) => [entry.id, entry]));
     check(byId.rich_field.on === 'tilled' && byId.rich_field.when({ into: 'tilled_humus' }) && !byId.rich_field.when({ into: 'tilled_dirt' }) && R.getBlockDefinition(byId.rich_field.icon), 'Osiągnięcie za rozgrzebany czarnoziem');
     check(byId.fruit_trait.on === 'ate' && byId.fruit_trait.when({ kind: 'snack', effects: ['mend'] }) && !byId.fruit_trait.when({ kind: 'snack', effects: [] }) &&
-        !byId.fruit_trait.when({ kind: 'drink', effects: ['heal'] }) && !byId.fruit_trait.when({ kind: 'snack' }) && itemExists(byId.fruit_trait.icon), 'Osiągnięcie za owoc z działaniem');
+        !byId.fruit_trait.when({ kind: 'drink', effects: ['heal'] }) && !byId.fruit_trait.when({ kind: 'meal', effects: ['warmth'] }) && !byId.fruit_trait.when({ kind: 'snack' }) && itemExists(byId.fruit_trait.icon), 'Osiągnięcie za owoc z działaniem');
     const commands = read('src/commands/worldCommands.js');
     check(/name: 'ziemia'/.test(commands) && commands.includes('soilInfo(world, x, y, z)') && read('docs/komendy.md').includes('`/ziemia`'), 'Komenda /ziemia z opisem');
     const lines = (id) => GUIDE.find((chapter) => chapter.id === id).lines.map((line) => (typeof line === 'string' ? line : line.text)).join(' ');

@@ -12,7 +12,10 @@
 //   #weary     - przyciemnienie brzegów obrazu u wyczerpanego,
 //   #breath    - bąbelki oddechu pod sercem (widać je pod wodą - 0.97.0),
 //   #blackout  - czarny ekran przy utracie przytomności (Blackout.js)
-//                i we śnie (Sleep.js; wtedy z napisem).
+//                i we śnie (Sleep.js; wtedy z napisem),
+//   #frost     - szron na brzegach obrazu u zmarzniętego i lód w bryle
+//                lodu (1.26.0 - Wellbeing.frost, Freeze.js; wtedy
+//                z napisem i licznikiem przyspieszonego czasu).
 //
 // W trybie kreatywnym energia jest wyłączona - serca nie widać,
 // a okno mówi, że nie trzeba jeść.
@@ -57,6 +60,8 @@ export function statusView(game) {
             ['Posiłki dzisiaj', `${Math.min(info.mealsToday, MEALS_PER_DAY)} z ${MEALS_PER_DAY}`],
             ['Żołądek', info.full ? 'najedzony' : 'pusty'],
             ['Sen', info.comfort ? `${info.rest} (${info.comfort})` : info.rest],
+            // Zimno (1.26.0): stopień wychłodzenia i odczuwalna temperatura.
+            ...(Number.isFinite(game.warmth?.felt) ? [['Ciepło', `${info.cold}, odczuwalnie ${Math.round(game.warmth.felt)}°C`]] : []),
             ...(info.limp ? [['Noga', `${info.limp} (utykasz)`]] : []),
             ...(info.pricked ? [['Ukłucie', 'piecze - zaraz przejdzie']] : []),
             // Działające napary: nazwa efektu i ile jeszcze godzin gry.
@@ -85,6 +90,10 @@ export class StatusPanel {
         this.heartRoot.addEventListener('click', () => this.toggle());
         this.panel = document.getElementById('status');
         this.weary = document.getElementById('weary');
+        this.frost = document.getElementById('frost');
+        this.frostTitle = this.frost?.querySelector('b') ?? null;
+        this.frostHint = this.frost?.querySelector('span') ?? null;
+        this.shownFrost = null;
         this.breath = document.getElementById('breath');
         this.blackout = document.getElementById('blackout');
         this.sleepHint = this.blackout?.querySelector('#blackout-text span') ?? null;
@@ -122,6 +131,33 @@ export class StatusPanel {
         }
     }
 
+    // Szron i lód na obrazie: amount 0-1, freeze - Freeze.js (napis).
+    showFrost(amount, freeze) {
+        if (!this.frost) return;
+        const value = Math.round(amount * 100) / 100;
+        let title = '', hint = '';
+        const progress = freeze?.progress;
+        if (progress) {
+            const days = progress.days;
+            title = 'Zamarzłeś na kość';
+            const total = progress.total;
+            hint = total >= 1.5 ? `Mija czas… dzień ${Math.min(Math.ceil(total), Math.floor(days) + 1)} z ${Math.ceil(total)}`
+                : `Mija czas… ${Math.min(Math.ceil(total * 24), Math.floor(days * 24) + 1)} godz. z ${Math.ceil(total * 24)}`;
+        }
+        else if (freeze?.waiting) {
+            title = 'Zamarzłeś na kość';
+            hint = 'Odtajesz, gdy ktoś rozpali obok ognisko albo postawi pochodnię - albo gdy samo zrobi się cieplej';
+        }
+        const key = `${value}|${title}|${hint}|${Boolean(freeze?.lapse?.covered)}`;
+        if (key === this.shownFrost) return;
+        this.shownFrost = key;
+        this.frost.style.opacity = String(value);
+        this.frost.classList.toggle('deep', freeze?.phase === 'lapse' && Boolean(freeze.lapse?.covered));
+        this.frost.classList.toggle('text', Boolean(title));
+        if (this.frostTitle) this.frostTitle.textContent = title;
+        if (this.frostHint) this.frostHint.textContent = hint;
+    }
+
     // Co klatkę (DOM zmienia się tylko, gdy zmieniły się dane).
     update(dt, game) {
         if (!game) {
@@ -130,6 +166,7 @@ export class StatusPanel {
             this.breath.hidden = true;
             this.blackout.classList.remove('on');
             this.weary.style.opacity = '0';
+            this.showFrost(0, null);
             return;
         }
         const wellbeing = game.wellbeing;
@@ -152,6 +189,9 @@ export class StatusPanel {
             : 'Rusz się albo kliknij, żeby wstać';
         if (this.sleepHint && this.sleepHint.textContent !== hint) this.sleepHint.textContent = hint;
         this.heartRoot.classList.toggle('heart-sleepy', state !== null && ['sleepy', 'worn'].includes(wellbeing.restState));
+        // Zimno (1.26.0): przy sercu płatek śniegu, na brzegach obrazu szron.
+        this.heartRoot.classList.toggle('heart-cold', state !== null && wellbeing.coldState !== 'warm');
+        this.showFrost(Math.max(wellbeing.frost, game.freeze?.overlay ?? 0), game.freeze ?? null);
 
         // Oddech: bąbelki znikają po kolei; pełne płuca - nie pokazujemy.
         const bubbles = state && wellbeing.breath < 1 ? Math.ceil(wellbeing.breath * BUBBLES) : null;

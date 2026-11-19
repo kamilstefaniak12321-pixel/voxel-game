@@ -374,6 +374,7 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/headband_nettle.png` | Opaska pokrzywowa |
 | `bloki/heather.png` | Wrzos |
 | `bloki/humus.png` | Rozgrzebany czarnoziem, Czarnoziem |
+| `bloki/ice_block.png` | - |
 | `bloki/item_aronia.png` | Aronia |
 | `bloki/item_blackcurrant.png` | Czarne porzeczki |
 | `bloki/item_cranberry.png` | Żurawina |

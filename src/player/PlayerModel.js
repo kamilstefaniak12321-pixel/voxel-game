@@ -612,6 +612,49 @@ export function buildBlockGeometry(type) {
 
 // ------------------------------------------------------------
 
+// Bryła lodu: dwa bloki lodu jeden na drugim, trochę szersze od postaci
+// (tekstura ice_block z atlasu, przezroczysta). Stopy w (0, 0, 0).
+
+export const ICE_SIZE = 0.95;
+
+function buildIceBlock(lighting) {
+
+    const material = createModelMaterial({ map: blockAtlasTexture, lighting });
+
+    material.transparent = true;
+    material.depthWrite = false;
+    material.opacity = 0.85;
+
+    const { uMin, uMax, vMin, vMax } = getAtlasUV('ice_block');
+    const group = new THREE.Group();
+
+    group.name = 'ice-block';
+
+    for (let level = 0; level < 2; level++) {
+
+        const geometry = new THREE.BoxGeometry(ICE_SIZE, 1, ICE_SIZE);
+        const uv = geometry.getAttribute('uv');
+
+        for (let i = 0; i < uv.count; i++) {
+            uv.setXY(i, uMin + uv.getX(i) * (uMax - uMin), vMin + uv.getY(i) * (vMax - vMin));
+        }
+
+        geometry.translate(0, level + 0.5, 0);
+
+        const mesh = new THREE.Mesh(geometry, material);
+
+        mesh.renderOrder = 2;
+        group.add(mesh);
+
+    }
+
+    group.userData.material = material;
+
+    return group;
+
+}
+
+
 export class PlayerModel {
 
     // texture - skórka (inni gracze w grze wieloosobowej mają swoją).
@@ -626,6 +669,13 @@ export class PlayerModel {
         this.object = new THREE.Group();
 
         this.object.name = 'player-model';
+
+        this.lighting = lighting;
+
+        // Bryła lodu wokół zamarzniętego (1.26.0 - setIce); powstaje,
+        // gdy pierwszy raz jest potrzebna.
+        this.ice = null;
+        this.iceAmount = 0;
 
 
         // Kości.
@@ -932,9 +982,43 @@ export class PlayerModel {
     }
 
 
+    // Bryła lodu (zamarznięcie - game/Freeze.js): amount 0 - nie ma,
+    // 1 - cała. Rośnie od stóp w górę i tak samo topnieje.
+
+    setIce(amount) {
+
+        const value = Math.max(0, Math.min(1, amount || 0));
+
+        if (value === this.iceAmount && (value === 0 || this.ice)) {
+            return;
+        }
+
+        this.iceAmount = value;
+
+        if (value > 0 && !this.ice) {
+            this.ice = buildIceBlock(this.lighting);
+            this.object.add(this.ice);
+        }
+
+        if (!this.ice) {
+            return;
+        }
+
+        this.ice.visible = value > 0;
+        this.ice.scale.set(0.6 + 0.4 * value, Math.max(0.02, value), 0.6 + 0.4 * value);
+        this.ice.userData.material.opacity = 0.35 + 0.5 * value;
+
+    }
+
+
     dispose() {
 
         this.object.removeFromParent();
+
+        if (this.ice) {
+            for (const child of this.ice.children) child.geometry.dispose();
+            this.ice.userData.material.dispose();
+        }
 
         this.mesh.geometry.dispose();
 

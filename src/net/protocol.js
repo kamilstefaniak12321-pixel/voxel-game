@@ -82,13 +82,15 @@ export const cleanChat = (text) => String(text ?? '').replace(/[\u0000-\u001f]/g
 // pozycja, prędkość, obrót, flagi ruchu, przedmiot w ręce, machnięcia.
 const FLAGS = ['onGround', 'crouching', 'sprinting', 'flying', 'swimming'];
 
-// clothes - kod noszonych ubrań (1.27.0 - items/clothing.js: clothesCode).
-export function packPlayer(player, held, swings, sleeping = false, eating = false, clothes = '') {
+// clothes - kod noszonych ubrań (1.27.0 - items/clothing.js: clothesCode),
+// frozen - zamarznięty w bryle lodu (1.26.0 - game/Freeze.js).
+export function packPlayer(player, held, swings, sleeping = false, eating = false, clothes = '', frozen = false) {
     const r = (v, k = 100) => Math.round(v * k) / k;
     let flags = 0;
     FLAGS.forEach((key, bit) => { if (player[key]) flags |= 1 << bit; });
     if (sleeping) flags |= 1 << FLAGS.length;
     if (eating) flags |= 1 << (FLAGS.length + 1);
+    if (frozen) flags |= 1 << (FLAGS.length + 2);
     return [r(player.pos.x), r(player.pos.y), r(player.pos.z), r(player.vel.x), r(player.vel.y), r(player.vel.z),
         r(player.yaw, 1000), r(player.pitch, 1000), flags, held ?? null, swings, clothes || ''];
 }
@@ -102,6 +104,8 @@ export function unpackPlayer(s) {
     state.sleeping = Boolean(s[8] & (1 << FLAGS.length));
     // Je albo pije (0.100.0): ręka przy ustach.
     state.eating = Boolean(s[8] & (1 << (FLAGS.length + 1)));
+    // Zamarznięty w bryle lodu (1.26.0 - game/Freeze.js).
+    state.frozen = Boolean(s[8] & (1 << (FLAGS.length + 2)));
     // Ubrania (1.27.0): krótki kod, starsi gracze go nie wysyłają.
     state.clothes = typeof s[11] === 'string' && s[11].length <= 400 ? s[11] : '';
     return state;

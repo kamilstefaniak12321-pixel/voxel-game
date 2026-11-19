@@ -54,7 +54,10 @@ import {
     FIELD_BLOCK
 } from '../blocks/BlockRegistry.js';
 import { getTool, getPlacedBlock, isItemType, getItemLabel } from '../items/ItemRegistry.js';
-import { STATES, isNight } from './Wellbeing.js';
+import { STATES, isNight, COLD_STATES, SLEEP_WARMTH } from './Wellbeing.js';
+
+// Stopnie zimna od najcieplejszego (Wellbeing.js - COLD_STATES).
+const COLD_ORDER_UP = ['warm', 'chilly', 'cold'];
 import { getFood } from '../items/foods.js';
 import { POT, POT_WATER } from '../items/cooking.js';
 import { COMPOST, COMPOST_BOWL } from '../items/spoilage.js';
@@ -544,7 +547,9 @@ export class GameInteraction {
 
         this.updateEating(dt, input.isMouseDown(0));
 
-        if (!wellbeing.active || player.flying) {
+        // W bryle lodu (Freeze.js) ciało czeka - nic nie ubywa ani nie przybywa.
+
+        if (!wellbeing.active || player.flying || this.freeze?.active) {
             return;
         }
 
@@ -571,13 +576,31 @@ export class GameInteraction {
             jumps,
             // Głowa pod wodą: zanurzone ponad 93% wysokości ciała.
             underwater: player.submerged >= 0.93 && !this.blackout?.active,
-            sleeping: Boolean(this.sleep?.lying)
+            sleeping: Boolean(this.sleep?.lying),
+            // Zimno (1.26.0): odczuwalna temperatura (Warmth.js).
+            // (Śpiący w łóżku albo na posłaniu jest przykryty - cieplej.)
+            felt: this.warmth ? this.warmth.felt + (this.sleep?.lying ? SLEEP_WARMTH[this.sleep.spot?.place] ?? 0 : 0) : undefined
         }, this.time.days);
 
         for (const event of events) {
 
             if (event.type === 'drown') {
                 this.blackout.start();
+            }
+            else if (event.type === 'freeze') {
+                this.freeze?.start();
+            }
+            else if (event.type === 'cold') {
+                // Zimno (1.26.0): coraz zimniej - ostrzeżenie; cieplej - ulga.
+                const colder = COLD_ORDER_UP.indexOf(event.to) > COLD_ORDER_UP.indexOf(event.from);
+                if (colder) {
+                    this.onNotice?.(COLD_STATES[event.to].text);
+                    this.sounds?.play('shiver');
+                }
+                else if (event.to === 'warm') this.onNotice?.('Rozgrzałeś się');
+                else this.onNotice?.('Robi ci się cieplej');
+                if (!colder && event.from === 'cold' && (this.warmth?.heat ?? 0) >= 10) this.achieve('warmedUp', {});
+                this.onWellbeing?.(event);
             }
             else if (event.type === 'rest') {
                 // Wyspanie zmieniło stan (pobudkę opisuje Sleep.wake).

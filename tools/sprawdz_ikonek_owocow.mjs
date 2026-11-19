@@ -11,7 +11,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { registerHooks } from 'node:module';
 import { readTextureRegion } from './texture_regions.mjs';
-import { FRUIT_ICON_TILES, ROASTED_ICON_TILES } from './ikonki_owocow.mjs';
+import { FRUIT_ICON_TILES, ROASTED_ICON_TILES, REDRAWN_ICONS, REDRAWN_ITEMS } from './ikonki_owocow.mjs';
 
 registerHooks({
     resolve(specifier, context, next) {
@@ -65,6 +65,14 @@ for (const tile of [...tiles, ...roasted]) {
     seen.add(Buffer.from(rgba).toString('base64'));
 }
 check(seen.size === tiles.length + roasted.length, 'Wszystkie ikonki są różne');
+
+// Lista przedmiotów z nowymi ikonkami zgadza się z rejestrem (testy w przeglądarce).
+const { ITEM_TYPES } = await import('../src/items/ItemRegistry.js');
+const R = await import('../src/blocks/BlockRegistry.js');
+const iconOf = (type) => ITEM_TYPES[type]?.icon ?? R.getBlockDefinition(type)?.textures?.all;
+const withNewIcon = Object.keys(ITEM_TYPES).filter((type) => REDRAWN_ICONS.has(iconOf(type)) || REDRAWN_ICONS.has(`${iconOf(type)}.png`));
+check(withNewIcon.every((type) => REDRAWN_ITEMS.has(type)) && [...REDRAWN_ITEMS].every((type) => REDRAWN_ICONS.has(iconOf(type)) || REDRAWN_ICONS.has(`${iconOf(type)}.png`)),
+    `Lista przedmiotów z nowymi ikonkami (${withNewIcon.length}) zgodna z rejestrem`);
 
 // Owoce krzaków: w ręce i w ekwipunku płaska ikonka, model zostaje na krzaku.
 const { getItemModel } = await import('../src/rendering/ItemGeometry.js');

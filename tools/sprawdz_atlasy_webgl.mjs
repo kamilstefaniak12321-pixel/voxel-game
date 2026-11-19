@@ -9,6 +9,7 @@ import { tmpdir } from 'node:os';
 import { spawn } from 'node:child_process';
 import { once } from 'node:events';
 import { createHash } from 'node:crypto';
+import { REDRAWN_ITEMS } from './ikonki_owocow.mjs';
 
 const ownRoot = fileURLToPath(new URL('../', import.meta.url));
 const root = resolve(process.env.VOXEL_TEST_ROOT ?? ownRoot);
@@ -140,8 +141,10 @@ try {
         // Ikony z 0.79.0 bez zmian; nowe gatunki (np. deski z 0.83.0) tylko dochodzą.
         const comparisonIcon = name => !electron && name.endsWith('_planks')
             ? report.plankIconsAt084SourceHeight[name] : report.iconHashes[name];
-        const kept = Object.fromEntries(Object.keys(expected.iconHashes).map(name => [name, comparisonIcon(name)]));
-        assert.deepEqual(kept, expected.iconHashes, electron ? 'Actual inventory icons preserve every visible pixel'
+        // 1.28.0: ikonki owoców przerysowane na prośbę Kamila (tools/owoce_ikony.py).
+        const oldIcons = Object.fromEntries(Object.entries(expected.iconHashes).filter(([name]) => !REDRAWN_ITEMS.has(name)));
+        const kept = Object.fromEntries(Object.keys(oldIcons).map(name => [name, comparisonIcon(name)]));
+        assert.deepEqual(kept, oldIcons, electron ? 'Actual inventory icons preserve every visible pixel'
             : 'Actual model icons and old planks at 0.84 source height preserve every visible pixel');
         const recent = JSON.parse(await readFile(resolve(ownRoot, `tools/fixtures/texture-atlas-visual-084${electron ? '-native' : ''}.json`), 'utf8'));
         const recentIcons = Object.fromEntries(Object.keys(recent.iconHashes).map(name => [name, comparisonIcon(name)]));

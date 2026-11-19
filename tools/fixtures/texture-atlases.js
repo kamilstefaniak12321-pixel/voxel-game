@@ -22,7 +22,8 @@ export async function run(expected) {
         check(JSON.stringify(tile)===JSON.stringify(rect),`${name}: original runtime UV rectangle`);
         const rgba=pixels.ctx.getImageData(tile.x*16,tile.y*16,(tile.w??1)*16,(tile.h??1)*16).data;
         atlasHashes[name]=await hash(rgba);
-        check(atlasHashes[name]===rgbaSha256,`${name}: original visible RGBA pixels`);
+        // 1.28.0: ikonki owoców przerysowane na prośbę Kamila (tools/owoce_ikony.py).
+        if(!expected.redrawn?.includes(name)) check(atlasHashes[name]===rgbaSha256,`${name}: original visible RGBA pixels`);
     }
     const {Game}=await import('/src/game/Game.js');
     const {Settings}=await import('/src/settings/Settings.js');

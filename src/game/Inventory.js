@@ -2,7 +2,8 @@ import { HOTBAR_SIZE, HOTBAR_DEFAULT, isCreative } from '../config.js';
 
 import { itemExists, currentType } from '../items/ItemRegistry.js';
 
-import { makeItem, withCount, sameBatch, blend } from '../items/freshness.js';
+import { makeItem, withCount, sameBatch, blend, stackSize, MAX_STACK } from '../items/freshness.js';
+import { SLOTS as EQUIP_SLOTS, fitsSlot } from '../items/clothing.js';
 
 // ------------------------------------------------------------
 // EKWIPUNEK
@@ -22,9 +23,12 @@ import { makeItem, withCount, sameBatch, blend } from '../items/freshness.js';
 // czeka w siatce (i w zapisie), więc nic nie ginie.
 // cursor - stos pod kursorem też należy do zapisu: karta może zostać
 // zamknięta przy otwartym ekwipunku albo zabraknąć miejsca na odłożenie.
+// equip - noszone ubrania (1.27.0, items/clothing.js): głowa, tułów,
+// nogi, stopy. sew - pola stołu krawieckiego (włókno, materiał, barwnik
+// główny, barwnik wzoru); po zamknięciu okna wracają jak siatka.
 // ------------------------------------------------------------
 
-export const STACK_SIZE = 64;
+export const STACK_SIZE = MAX_STACK;
 
 export const MAIN_ROWS = 3;
 
@@ -32,6 +36,10 @@ export const SLOT_COUNT = HOTBAR_SIZE + MAIN_ROWS * HOTBAR_SIZE;
 
 // Siatka wytwarzania 2 x 2 (tak samo w Crafting.js - GRID_CELLS).
 export const CRAFT_SLOTS = 4;
+
+// Ubrania na sobie (głowa, tułów, nogi, stopy) i pola stołu krawieckiego.
+export const EQUIP_COUNT = EQUIP_SLOTS.length;
+export const SEW_SLOTS = 4;
 
 
 // Poprawny stos albo null (zapis mógł być uszkodzony, blok usunięty z gry).
@@ -54,7 +62,8 @@ export function cleanItem(item) {
 
     // Świeżość psującego się jedzenia (items/freshness.js); stos ze
     // starego zapisu jest świeży.
-    return makeItem(type, Math.min(STACK_SIZE, count), Number(item.fresh));
+    // Wygląd ubrania (1.27.0, items/clothing.js) też.
+    return makeItem(type, Math.min(stackSize(type), count), Number(item.fresh), item.look);
 
 }
 
@@ -123,7 +132,20 @@ export class Inventory {
             }
         }
 
-        const inventory = new Inventory({ slots, selected, craft, cursor: cleanItem(saved?.cursor) });
+        // Ubrania (1.27.0): tylko takie, które pasują do swojego miejsca.
+        const equip = new Array(EQUIP_COUNT).fill(null);
+        const sew = new Array(SEW_SLOTS).fill(null);
+
+        for (let i = 0; i < EQUIP_COUNT; i++) {
+            const item = cleanItem(saved?.equip?.[i]);
+            equip[i] = item && fitsSlot(item, i) ? item : null;
+        }
+
+        for (let i = 0; i < SEW_SLOTS; i++) {
+            sew[i] = cleanItem(saved?.sew?.[i]);
+        }
+
+        const inventory = new Inventory({ slots, selected, craft, cursor: cleanItem(saved?.cursor), equip, sew });
 
         // Po wczytaniu gracz wraca do gry z zamkniętym oknem: trzymany
         // stos odkładamy od razu, a tylko nadmiar czeka pod kursorem.
@@ -156,6 +178,28 @@ export class Inventory {
         this.data.craft ??= new Array(CRAFT_SLOTS).fill(null);
 
         return this.data.craft;
+
+    }
+
+
+    // Ubrania na sobie (4 stosy albo null) - items/clothing.js.
+
+    get equip() {
+
+        this.data.equip ??= new Array(EQUIP_COUNT).fill(null);
+
+        return this.data.equip;
+
+    }
+
+
+    // Pola stołu krawieckiego (4 stosy albo null).
+
+    get sew() {
+
+        this.data.sew ??= new Array(SEW_SLOTS).fill(null);
+
+        return this.data.sew;
 
     }
 
@@ -233,17 +277,18 @@ export class Inventory {
     // (fresh - świeżość dokładanego jedzenia: liczą się tylko stosy
     // o takiej samej świeżości - items/freshness.js.)
 
-    room(type, fresh) {
+    room(type, fresh, look) {
 
         let room = 0;
+        const limit = stackSize(type);
 
         for (const item of this.data.slots) {
 
             if (!item) {
-                room += STACK_SIZE;
+                room += limit;
             }
-            else if (sameBatch(item, type, fresh)) {
-                room += STACK_SIZE - item.count;
+            else if (sameBatch(item, type, fresh, look)) {
+                room += Math.max(0, limit - item.count);
             }
 
         }
@@ -253,9 +298,9 @@ export class Inventory {
     }
 
 
-    canAdd(type, count = 1, fresh) {
+    canAdd(type, count = 1, fresh, look) {
 
-        return this.room(type, fresh) >= count;
+        return this.room(type, fresh, look) >= count;
 
     }
 
@@ -269,7 +314,7 @@ export class Inventory {
             slots: this.slots.map((item) => item ? { ...item } : null)
         });
 
-        return items.every(({ type, count, fresh }) => preview.add(type, count, 0, SLOT_COUNT, fresh) === 0);
+        return items.every(({ type, count, fresh, look }) => preview.add(type, count, 0, SLOT_COUNT, fresh, look) === 0);
 
     }
 
@@ -281,9 +326,12 @@ export class Inventory {
     // fresh - świeżość jedzenia (pominięte: świeże). Jedzenie dokłada się
     // tylko do stosów o takiej samej świeżości; inne - na puste miejsce.
 
-    add(type, count = 1, from = 0, to = SLOT_COUNT, fresh) {
+    // look - wygląd ubrania (items/clothing.js).
+
+    add(type, count = 1, from = 0, to = SLOT_COUNT, fresh, look) {
 
         const slots = this.data.slots;
+        const limit = stackSize(type);
 
         let left = count;
 
@@ -292,9 +340,9 @@ export class Inventory {
 
             const item = slots[i];
 
-            if (item && item.count < STACK_SIZE && sameBatch(item, type, fresh)) {
+            if (item && item.count < limit && sameBatch(item, type, fresh, look)) {
 
-                const moved = Math.min(left, STACK_SIZE - item.count);
+                const moved = Math.min(left, limit - item.count);
 
                 blend(item, moved, fresh);
                 left -= moved;
@@ -308,9 +356,9 @@ export class Inventory {
 
             if (!slots[i]) {
 
-                const moved = Math.min(left, STACK_SIZE);
+                const moved = Math.min(left, limit);
 
-                slots[i] = makeItem(type, moved, fresh);
+                slots[i] = makeItem(type, moved, fresh, look);
                 left -= moved;
 
             }
@@ -327,7 +375,7 @@ export class Inventory {
 
     addItem(item, from = 0, to = SLOT_COUNT) {
 
-        return this.add(item.type, item.count, from, to, item.fresh);
+        return this.add(item.type, item.count, from, to, item.fresh, item.look);
 
     }
 

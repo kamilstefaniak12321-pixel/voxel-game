@@ -98,6 +98,7 @@ import { Wellbeing } from './Wellbeing.js';
 import { Drops } from './Drops.js';
 import { Orchard } from './Orchard.js';
 import { Spoilage } from './Spoilage.js';
+import { clothesCode } from '../items/clothing.js';
 import { DropRenderer } from '../rendering/DropRenderer.js';
 import { formatKeys } from '../input/bindings.js';
 
@@ -841,6 +842,14 @@ export class Game extends GameInteraction {
         // Stoły stolarskie i furtki (0.90.0) - deski na blatach w zapisie.
         this.carpenterTables = new CarpenterTables(this, worldInfo.carpenterTables);
         this.onOpenChest = null;
+
+        // Stanowisko pracy (1.27.0: 'sewing' - stół krawiecki) - main.js
+        // otwiera ekwipunek ze stołem.
+        this.onOpenStation = null;
+
+        // Ubrania na postaci (1.27.0): main.js maluje je na skórce
+        // (player/skin.js - setWornClothes). equip - 4 stosy albo null.
+        this.onClothes = null;
         this.torches = new TorchRenderer(this);
         this.torches.setLowDetail(this.settings.get('potato'));
         // Drzwi (0.91.0) - modele z animacją otwierania.
@@ -2677,6 +2686,37 @@ export class Game extends GameInteraction {
         }
 
         this.achieve('season', { key: season.key, changed });
+
+    }
+
+
+    // UBRANIA (1.27.0, items/clothing.js). Po każdej zmianie tego, co
+    // gracz ma na sobie: nowa skórka (onClothes - main.js), kod dla innych
+    // graczy (NetSession) i osiągnięcia.
+
+    clothesChanged() {
+
+        const equip = this.inventory.equip;
+
+        this.clothes = clothesCode(equip);
+
+        this.onClothes?.(equip);
+
+        const worn = equip.filter(Boolean);
+
+        if (worn.length > 0) {
+            this.achieve('dressed', { count: worn.length, colored: worn.some((item) => item.look?.main) });
+        }
+
+    }
+
+
+    // Przymiarka przy stole krawieckim: postać w podglądzie nosi `equip`
+    // (null - to, co naprawdę ma na sobie).
+
+    previewClothes(equip) {
+
+        this.onClothes?.(equip ?? this.inventory.equip);
 
     }
 

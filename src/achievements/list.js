@@ -814,6 +814,54 @@ export const ACHIEVEMENTS = [
         on: 'tilled'
     },
     {
+        id: 'retted',
+        tier: 'common',
+        title: 'Moczenie lnu',
+        task: 'Wrzuć wiązkę lnu, pokrzywę albo korę lipową do wody i poczekaj, aż włókno puści.',
+        comment: 'Pachnie stawem. Tak ma być.',
+        icon: 'flax_retted',
+        on: 'retted'
+    },
+    {
+        id: 'woven',
+        tier: 'common',
+        title: 'Tkacz',
+        task: 'Utkaj płótno na stole krawieckim (dwa włókna - jedno płótno).',
+        comment: 'Wątek, osnowa, wątek, osnowa. I jeszcze raz.',
+        icon: 'linen_cloth',
+        on: 'woven'
+    },
+    {
+        id: 'tailor',
+        tier: 'common',
+        title: 'Krawiec',
+        task: 'Uszyj ubranie na stole krawieckim: płótno, krój i wzór.',
+        comment: 'Rękawy nierówne, ale za to własne.',
+        icon: 'shirt_linen',
+        on: 'sewn',
+        when: (data) => data.mode === 'sew'
+    },
+    {
+        id: 'colorful',
+        tier: 'common',
+        title: 'Kolorowo',
+        task: 'Zabarw ubranie - przy szyciu albo później, na gotowym.',
+        comment: 'Teraz cię widać z daleka.',
+        icon: 'dye_red',
+        on: 'sewn',
+        when: (data) => Boolean(data.look?.main || data.look?.accent)
+    },
+    {
+        id: 'head_to_toe',
+        tier: 'rare',
+        title: 'Od stóp do głów',
+        task: 'Ubierz się cały: coś na głowę, na tułów, na nogi i na stopy.',
+        comment: 'Wreszcie można iść do ludzi.',
+        icon: 'tunic_linen',
+        on: 'dressed',
+        when: (data) => data.count >= 4
+    },
+    {
         id: 'rich_field',
         tier: 'common',
         title: 'Czarna bruzda',

@@ -27,7 +27,7 @@ import { InventoryScreen } from './ui/InventoryScreen.js';
 import { NetHost } from './net/NetHost.js';
 import { NetClient } from './net/NetClient.js';
 import { normalizeInviteCode, newPlayerId, cleanName } from './net/protocol.js';
-import { skinDataURL } from './player/skin.js';
+import { skinDataURL, setWornClothes } from './player/skin.js';
 import { SoundManager } from './audio/SoundManager.js';
 import { MusicManager } from './audio/MusicManager.js';
 import { setUiSounds, playUi } from './audio/ui.js';
@@ -636,6 +636,11 @@ async function playWorld(worldInfo, { client = null } = {}) {
         game.onWellbeing = (event) => statusPanel.signal(event);
         game.onOpenChest = (chest) => openInventory(chest);
 
+        // Stół krawiecki (1.27.0) i ubrania na skórce gracza.
+        game.onOpenStation = (station) => openInventory(null, station);
+        game.onClothes = (equip) => setWornClothes(equip);
+        game.clothesChanged();
+
         // Pomiar wydajności (komenda /wydajnosc).
 
         game.perf = perf;
@@ -1027,7 +1032,7 @@ function openAchievements() {
 
 // chest - skrzynia otwarta PPM (ChestState.js) albo nic (klawisz E).
 
-function openInventory(chest = null) {
+function openInventory(chest = null, station = null) {
 
     if (!game || state !== 'playing' || !inventoryScreen) {
         return;
@@ -1039,7 +1044,7 @@ function openInventory(chest = null) {
 
     input.enabled = false;
 
-    inventoryScreen.open(game, Array.isArray(chest?.layers) ? chest : null);
+    inventoryScreen.open(game, Array.isArray(chest?.layers) ? chest : null, station);
 
     document.exitPointerLock();
 
@@ -1358,6 +1363,9 @@ function copyText(text) {
 
 
 function closeWorld() {
+
+    // Menu pokazuje postać bez ubrań z tego świata.
+    setWornClothes([]);
 
     diagnostics.breadcrumb('world.closed', 'Zakończono rozgrywkę w świecie.');
     void diagnostics.flush();

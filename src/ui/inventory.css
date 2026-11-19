@@ -631,11 +631,13 @@
 
 .inv-top {
     display: grid;
+    /* Postać | ubrania (głowa, tułów, nogi, stopy) i plecak z pasem |
+       strefa rzemieślnicza (1.27.0: cztery rzędy). */
     grid-template-columns:
         calc(var(--inv-slot-size) * 2 + var(--inv-gap))
-        var(--inv-slot-size)
+        calc(var(--inv-slot-size) * 2 + var(--inv-gap))
         minmax(0, 1fr);
-    grid-template-rows: repeat(3, var(--inv-slot-size));
+    grid-template-rows: repeat(4, var(--inv-slot-size));
     align-items: stretch;
     column-gap: var(--inv-gap);
     row-gap: var(--inv-gap);
@@ -647,7 +649,7 @@
 
 #inventory .inv-top .inv-character {
     grid-column: 1;
-    grid-row: 1 / 4;
+    grid-row: 1 / 5;
     min-height: 0;
     margin: 0;
     overflow: hidden;
@@ -660,19 +662,40 @@
 
 .inv-equipment {
     grid-column: 2;
-    grid-row: 1 / 4;
+    grid-row: 1 / 5;
     display: grid;
-    grid-template-rows: repeat(3, var(--inv-slot-size));
+    grid-template-columns: repeat(2, var(--inv-slot-size));
     gap: var(--inv-gap);
 }
 
-/* Miejsca na przyszłe ubrania: puste, przygaszone. */
-.inv-slot[data-kind="equip"] {
+.inv-equipment-column {
+    display: grid;
+    grid-template-rows: repeat(4, var(--inv-slot-size));
+    gap: var(--inv-gap);
+    align-content: start;
+}
+
+/* Puste miejsce na ubranie: krótki napis, co tu pasuje. */
+.inv-slot[data-kind="equip"]:not(:has(img:not([hidden])))::before {
+    content: attr(data-label);
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    color: var(--inv-muted);
+    opacity: 0.7;
+    pointer-events: none;
+}
+
+/* Miejsca na plecak i pas (wkrótce): puste, przygaszone. */
+.inv-slot[data-kind="soon"] {
     cursor: help;
     opacity: 0.75;
 }
 
-.inv-slot[data-kind="equip"]::after {
+.inv-slot[data-kind="soon"]::after {
     content: '';
     position: absolute;
     inset: 28%;
@@ -684,7 +707,7 @@
 /* Strefa rzemieślnicza - wnęka jak przy postaci. */
 #inventory .inv-zone {
     grid-column: 3;
-    grid-row: 1 / 4;
+    grid-row: 1 / 5;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -768,4 +791,58 @@
     object-fit: contain;
     image-rendering: pixelated;
     cursor: pointer;
+}
+
+
+/* --- Stół krawiecki (1.27.0, SewingPanel.js) --------------------------- */
+
+#inventory .inv-zone.inv-sewing {
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: center;
+    gap: 6px;
+    padding: 6px;
+}
+
+.inv-sew-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.inv-sew-label {
+    width: 52px;
+    font-size: 12px;
+    color: var(--inv-muted);
+}
+
+.inv-sew-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 3px;
+}
+
+.inv-sew-chip {
+    min-width: 0;
+    padding: 2px 5px;
+    font-size: 12px;
+}
+
+.inv-sew-chip img {
+    width: 20px;
+    height: 20px;
+}
+
+.inv-sew-chip.selected {
+    border-color: var(--inv-accent);
+    box-shadow: inset 0 0 0 1px var(--inv-accent);
+}
+
+.inv-sew-chip.missing {
+    opacity: 0.5;
+}
+
+.inv-sew-hint {
+    font-size: 12px;
+    color: var(--inv-muted);
 }

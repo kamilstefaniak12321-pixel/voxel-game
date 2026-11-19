@@ -1,6 +1,6 @@
 import { CHUNK_HEIGHT, WORLD_BORDER } from '../config.js';
 import { STACK_SIZE, cleanItem } from './Inventory.js';
-import { makeItem, withCount, sameBatch, blend } from '../items/freshness.js';
+import { makeItem, withCount, sameBatch, blend, stackSize } from '../items/freshness.js';
 
 // ------------------------------------------------------------
 // SKRZYNIA - ZAWARTOŚĆ (0.81.0, pomysł Kamila)
@@ -110,7 +110,7 @@ export function putIntoCell(chest, cell, held, count = Infinity) {
     if (!visible) return place(0);
 
     // Ręczne łączenie: zawsze, świeżość ze średniej (items/freshness.js).
-    if (visible.type === held.type) {
+    if (visible.type === held.type && stackSize(held.type) > 1) {
         const moved = Math.min(amount, STACK_SIZE - visible.count);
         blend(visible, moved, held.fresh);
         held.count -= moved;
@@ -129,12 +129,14 @@ export function putIntoCell(chest, cell, held, count = Infinity) {
 // widocznych takich samych stosów, potem na puste przegródki (spód),
 // na końcu na wierzch innych. Zwraca, ile sztuk się nie zmieściło.
 // (fresh - świeżość jedzenia: dokłada się tylko do stosów o takiej samej.)
-export function insertIntoChest(chest, type, count, fresh) {
+// (look - wygląd ubrania.)
+export function insertIntoChest(chest, type, count, fresh, look) {
     let left = count;
+    const limit = stackSize(type);
     for (let cell = 0; cell < CHEST_CELLS && left > 0; cell++) {
         const visible = visibleItem(chest, cell);
-        if (visible && visible.count < STACK_SIZE && sameBatch(visible, type, fresh)) {
-            const moved = Math.min(left, STACK_SIZE - visible.count);
+        if (visible && visible.count < limit && sameBatch(visible, type, fresh, look)) {
+            const moved = Math.min(left, limit - visible.count);
             blend(visible, moved, fresh);
             left -= moved;
         }
@@ -142,8 +144,8 @@ export function insertIntoChest(chest, type, count, fresh) {
     for (const layer of [0, 1]) {
         for (let cell = 0; cell < CHEST_CELLS && left > 0; cell++) {
             if (chest.layers[layer][cell] || (layer === 1 && !chest.layers[0][cell])) continue;
-            const moved = Math.min(left, STACK_SIZE);
-            chest.layers[layer][cell] = makeItem(type, moved, fresh);
+            const moved = Math.min(left, limit);
+            chest.layers[layer][cell] = makeItem(type, moved, fresh, look);
             left -= moved;
         }
     }

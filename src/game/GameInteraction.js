@@ -178,7 +178,7 @@ export class GameInteraction {
                 this.carpenterTables.interact(this.currentHit, this.selectedBlock, this.player.crouching));
         if (shapeInteraction) this.currentHit = this.raycast.castFromCamera(this.camera);
         const chestInteraction = !shapeInteraction && placing && !breakHeld && placePressed &&
-            this.chests.interact(this.currentHit);
+            (this.chests.interact(this.currentHit) || this.openStation(this.currentHit));
         const fireInteraction = !chestInteraction && placing && !breakHeld && placePressed &&
             this.campfires.interact(this.currentHit, this.selectedBlock);
         const torchInteraction = !fireInteraction && placing && !breakHeld && placePressed &&
@@ -996,6 +996,25 @@ export class GameInteraction {
         if (left > 0) {
             this.drops?.throwFromPlayer(type, left);
         }
+
+    }
+
+
+    // Stanowisko pracy pod celownikiem (1.27.0: stół krawiecki - pole
+    // `station` bloku): PPM otwiera ekwipunek ze stanowiskiem. Z kucaniem
+    // i blokiem w ręce - stawia blok obok, jak przy skrzyni.
+
+    openStation(hit) {
+
+        const station = hit?.hit ? getBlockDefinition(hit.block.type)?.station : null;
+
+        if (!station || (this.player.crouching && this.selectedBlock)) {
+            return false;
+        }
+
+        this.onOpenStation?.(station);
+
+        return true;
 
     }
 

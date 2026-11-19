@@ -15,6 +15,8 @@ import { atmosphericLightToBrightness } from '../rendering/LightPolicy.js';
 import { SHADOW_INDOOR_DARKNESS } from '../config.js';
 import { itemExists } from '../items/ItemRegistry.js';
 import { loadTextureRegion } from '../rendering/TextureSheets.js';
+import { composeSkin } from '../player/clothes.js';
+import { parseClothes } from '../items/clothing.js';
 
 const DEFAULT_SKIN = 'assets/textures/player/skin.png';
 
@@ -43,17 +45,31 @@ function nameSprite(name) {
     return sprite;
 }
 
+// Tekstura innego gracza: sama skórka (base) i skórka z jego ubraniami
+// (1.27.0 - player/clothes.js; dress - po zmianie kodu ubrań).
 function skinTextureFrom(dataUrl) {
     const canvas = document.createElement('canvas');
     canvas.width = canvas.height = 64;
+    const base = document.createElement('canvas');
+    base.width = base.height = 64;
     const texture = new THREE.CanvasTexture(canvas);
     texture.magFilter = THREE.NearestFilter;
     texture.minFilter = THREE.NearestFilter;
     texture.generateMipmaps = false;
     texture.colorSpace = THREE.SRGBColorSpace;
-    const draw = (image) => {
-        canvas.getContext('2d').drawImage(image, 0, 0, 64, 64);
+    let clothes = [];
+    const compose = () => {
+        composeSkin(canvas.getContext('2d', { willReadFrequently: true }), base, clothes);
         texture.needsUpdate = true;
+    };
+    texture.userData.dress = (code) => {
+        clothes = parseClothes(code);
+        compose();
+    };
+    const draw = (image) => {
+        base.getContext('2d').clearRect(0, 0, 64, 64);
+        base.getContext('2d').drawImage(image, 0, 0, 64, 64);
+        compose();
     };
     // Bez skórki (albo zła) - domyślna skórka gry.
     const fallback = () => loadTextureRegion(DEFAULT_SKIN).then(draw, () => {});
@@ -124,6 +140,11 @@ export class RemotePlayers {
         entry.wasGround = state.onGround;
         entry.state = state;
         entry.model.setHeldBlock(state.sleeping ? null : heldAllowed(state.held));
+        // Ubrania (1.27.0): skórka maluje się na nowo tylko po zmianie.
+        if ((state.clothes ?? '') !== (entry.clothes ?? '')) {
+            entry.clothes = state.clothes ?? '';
+            entry.texture.userData.dress?.(entry.clothes);
+        }
         entry.model.object.visible = true;
     }
 

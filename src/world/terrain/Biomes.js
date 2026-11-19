@@ -58,6 +58,9 @@ import { BIOME_SHAPE } from './TerrainShape.js';
 //               patches - rośliny w plamach (wrzos, krokusy, borówki):
 //                         [[blok, gęstość w plamie, ile plam 0-1], ...],
 //               bushes  - krzaki owocowe: gatunki (FRUIT_BUSHES),
+//                         od 1.27.0 tylko chili - truskawki, jeżyny,
+//                         leszczyna i borówki rosną jako nowe krzewy
+//                         (blocks/shrubs.js) i rośliny niskie (lowPlants.js),
 //                         gęstość zarośli (1 = jak dotąd) i próg pola
 //                         zarośli (threshold - mniej = więcej zarośli;
 //                         domyślnie PLANTS.bushThreshold).
@@ -120,7 +123,7 @@ export const BIOMES = {
             flowers: ['poppy', 'cornflower', 'chamomile', 'dandelion'],
             fern: 0.04,
             herbs: [['clover', 0.025], ['plantain', 0.012], ['nettle', 0.008], ['dandelion', 0.008]],
-            bushes: { species: ['strawberry', 'chili', 'blackberry'], density: 1 }
+            bushes: { species: ['chili'], density: 0.35 }
         }
     },
 
@@ -141,7 +144,7 @@ export const BIOMES = {
             fern: 0.12,
             herbs: [['nettle', 0.03], ['clover', 0.01], ['plantain', 0.006]],
             patches: [['moss_carpet', 0.5, 0.12]],
-            bushes: { species: ['hazel', 'blackberry'], density: 1.1 }
+            bushes: null
         }
     },
 
@@ -161,7 +164,7 @@ export const BIOMES = {
             fern: 0.06,
             herbs: [['nettle', 0.006]],
             patches: [['moss_carpet', 0.4, 0.1]],
-            bushes: { species: ['hazel'], density: 0.35 }
+            bushes: null
         }
     },
 
@@ -181,7 +184,7 @@ export const BIOMES = {
             flowerDensity: 0.4,
             fern: 0.16,
             herbs: [['nettle', 0.012], ['clover', 0.01]],
-            bushes: { species: ['blackberry', 'blueberry'], density: 1.2, threshold: 0.35 }
+            bushes: null
         }
     },
 
@@ -201,7 +204,7 @@ export const BIOMES = {
             fern: 0.05,
             herbs: [],
             patches: [['heather', 0.6, 0.3], ['moss_carpet', 0.5, 0.12]],
-            bushes: { species: ['blueberry'], density: 1.4, threshold: 0.2 }
+            bushes: null
         }
     },
 
@@ -221,7 +224,7 @@ export const BIOMES = {
             fern: 0.14,
             herbs: [],
             patches: [['moss_carpet', 0.6, 0.2]],
-            bushes: { species: ['blueberry'], density: 1.2, threshold: 0.25 }
+            bushes: null
         }
     },
 
@@ -242,7 +245,7 @@ export const BIOMES = {
             fern: 0,
             herbs: [['clover', 0.02], ['plantain', 0.008]],
             patches: [['crocus', 0.5, 0.25]],
-            bushes: { species: ['blueberry'], density: 0.5 }
+            bushes: null
         }
     },
 
@@ -294,7 +297,7 @@ export const BIOMES = {
             fern: 0.1,
             herbs: [['nettle', 0.03]],
             patches: [['reed', 0.6, 0.2], ['moss_carpet', 0.4, 0.15]],
-            bushes: { species: ['blackberry'], density: 0.5 }
+            bushes: null
         }
     },
 
@@ -317,7 +320,7 @@ export const BIOMES = {
             fern: 0.08,
             herbs: [['nettle', 0.01]],
             patches: [['moss_carpet', 0.4, 0.1]],
-            bushes: { species: ['hazel', 'blackberry'], density: 0.6 }
+            bushes: null
         }
     },
 
@@ -337,7 +340,7 @@ export const BIOMES = {
             fern: 0.3,
             herbs: [],
             patches: [['moss_carpet', 0.6, 0.25]],
-            bushes: { species: ['blueberry'], density: 0.8 }
+            bushes: null
         }
     },
 
@@ -359,7 +362,7 @@ export const BIOMES = {
             fern: 0.35,
             herbs: [['nettle', 0.02]],
             patches: [['moss_carpet', 0.5, 0.15]],
-            bushes: { species: ['chili', 'blackberry'], density: 0.9 }
+            bushes: { species: ['chili'], density: 0.45 }
         }
     },
 
@@ -380,7 +383,7 @@ export const BIOMES = {
             flowerDensity: 0.5,
             fern: 0,
             herbs: [['plantain', 0.01], ['clover', 0.008]],
-            bushes: { species: ['chili', 'strawberry'], density: 0.5 }
+            bushes: { species: ['chili'], density: 0.25 }
         }
     },
 
@@ -401,7 +404,7 @@ export const BIOMES = {
             fern: 0,
             herbs: [['clover', 0.01]],
             patches: [['crocus', 0.4, 0.15]],
-            bushes: { species: ['blueberry'], density: 1 }
+            bushes: null
         }
     },
 
@@ -467,7 +470,7 @@ export const BIOMES = {
             fern: 0.5,
             herbs: [['nettle', 0.01]],
             patches: [['moss_carpet', 0.6, 0.35]],
-            bushes: { species: ['chili', 'blackberry'], density: 0.6 }
+            bushes: { species: ['chili'], density: 0.3 }
         }
     },
 

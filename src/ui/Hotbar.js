@@ -6,6 +6,8 @@ import {
     HOTBAR_SIZE
 } from '../config.js';
 
+import { garmentIcon } from './garmentIcons.js';
+
 // ------------------------------------------------------------
 // PASEK BLOKÓW (na dole ekranu)
 //
@@ -90,7 +92,8 @@ export class Hotbar {
 
         const slots = items.map((item) => item?.type ?? null);
 
-        const slotsKey = items.map((item) => (item ? `${item.type}:${item.count}` : '')).join(',');
+        // (Ubranie: też jego wygląd - ikonka w kolorach, 1.27.0.)
+        const slotsKey = items.map((item) => (item ? `${item.type}:${item.count}${item.look ? `:${item.look.pattern}.${item.look.main}.${item.look.accent}` : ''}` : '')).join(',');
 
         const slotsChanged = slotsKey !== this.shownSlots;
         const selectionChanged = selected !== this.shownSelected;
@@ -121,7 +124,7 @@ export class Hotbar {
 
                 slot.lastChild.textContent = items[i] && items[i].count > 1 ? String(items[i].count) : '';
 
-                const icon = type ? this.icons.get(type) : null;
+                const icon = type ? (items[i].look ? garmentIcon(this.icons, items[i], () => { this.shownSlots = null; }) : this.icons.get(type)) : null;
 
 
                 if (icon) {

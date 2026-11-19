@@ -38,6 +38,7 @@ import { POT_WATER, BOWL, COOK_SECONDS, DISHES, DISH_NAMES } from '../items/cook
 import { fruitCalendar } from '../blocks/fruitSeasons.js';
 import { seasonSerial } from '../game/Orchard.js';
 import { soilInfo, WATER_REACH, WATER_GROWTH } from '../blocks/soil.js';
+import { CLOTHS, PATTERNS, DYE_COLORS, SLOTS as CLOTHING_SLOTS, SLOT_LABELS, cleanLook, lookText, wornWarmth } from '../items/clothing.js';
 import { isFieldBlock } from '../blocks/fertilizers.js';
 import { spoilText, temperatureFactor, isPerishable, daysLeft, daysText, freshText } from '../items/spoilage.js';
 import { newPot, cookPot } from '../game/CookingState.js';
@@ -1304,6 +1305,58 @@ export const WORLD_COMMANDS = [
 
     },
 
+
+    {
+        name: 'ubrania',
+        aliases: ['clothes', 'ubranie', 'szycie'],
+        usage: '/ubrania | /ubrania daj [płótno] | /ubrania zestaw <barwnik> [wzór] | /ubrania zdejmij',
+        description: 'Ubrania (1.27.0): co masz na sobie i ile to grzeje; "daj" - po stosie włókna, płótna, sznura i barwników do szycia; "zestaw" - od razu ubiera w cały strój (czapka, koszula, spodnie, buty) w danym kolorze i wzorze; "zdejmij" - zdejmuje wszystko do ekwipunku.',
+
+        run(args, { game }) {
+
+            const inventory = game.inventory;
+            const word = simplify(args[0] ?? '');
+
+            if (!word) {
+                const worn = inventory.equip.map((item, i) => `${SLOT_LABELS[CLOTHING_SLOTS[i]]}: ${item ? `${getItemLabel(item.type)} (${lookText(item.type, item.look)})` : 'nic'}`);
+                return `${worn.join('; ')}. Razem grzeje o ${String(wornWarmth(inventory.equip)).replace('.', ',')}°C.`;
+            }
+
+            if (word === 'daj') {
+                const cloth = simplify(args[1] ?? 'len');
+                const key = { len: 'linen', lniane: 'linen', linen: 'linen', pokrzywa: 'nettle', pokrzywowe: 'nettle', nettle: 'nettle', lyko: 'bast', bast: 'bast' }[cloth];
+                if (!key) throw new CommandError('Płótno: len, pokrzywa albo lyko');
+                const items = [[CLOTHS[key].fiber, 16], [CLOTHS[key].item, 16], ['rope', 4], ['sewing_table', 1], ['dye_red', 8], ['dye_white', 8], ['dye_blue', 8]];
+                for (const [type, count] of items) inventory.add(type, count);
+                return `Dostajesz: ${items.map(([type, count]) => `${count} × ${getItemLabel(type)}`).join(', ')}.`;
+            }
+
+            if (word === 'zestaw') {
+                const main = args[1] ? Object.keys(DYE_COLORS).find((key) => simplify(key) === simplify(args[1])) : null;
+                if (args[1] && !main) throw new CommandError(`Barwnik: ${Object.keys(DYE_COLORS).join(', ')}`);
+                const pattern = args[2] ? Object.keys(PATTERNS).find((key) => simplify(key) === simplify(args[2]) || simplify(PATTERNS[key].label) === simplify(args[2])) : 'plain';
+                if (!pattern) throw new CommandError('Wzór: gładki, paski, krata albo haft');
+                const accent = pattern === 'plain' ? null : 'white';
+                ['cap_linen', 'shirt_linen', 'trousers_linen', 'boots_linen'].forEach((type, i) => {
+                    inventory.equip[i] = { type, count: 1, look: cleanLook({ pattern, main, accent }) };
+                });
+                game.clothesChanged();
+                return `Masz na sobie lniany strój (${lookText('shirt_linen', { pattern, main, accent })}). Grzeje o ${String(wornWarmth(inventory.equip)).replace('.', ',')}°C.`;
+            }
+
+            if (word === 'zdejmij') {
+                let taken = 0;
+                inventory.equip.forEach((item, i) => {
+                    if (item && inventory.addItem(item) === 0) { inventory.equip[i] = null; taken++; }
+                });
+                game.clothesChanged();
+                return taken ? `Zdjęto ${taken} ubrań do ekwipunku.` : 'Nie masz nic do zdjęcia (albo brak miejsca w ekwipunku).';
+            }
+
+            throw new CommandError('Użycie: /ubrania | /ubrania daj [płótno] | /ubrania zestaw <barwnik> [wzór] | /ubrania zdejmij');
+
+        }
+    },
 
     {
         name: 'psucie',

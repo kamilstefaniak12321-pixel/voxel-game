@@ -58,7 +58,8 @@ export const AIR_ID = 0;
 //   15000-15199             rośliny niskie (1.19.0, po 8 na roślinę - lowPlants.js),
 //   15200-15399             opadłe owoce (1.22.0 - fallenFruit.js),
 //   15400-15499             pola z nawozem i z innej ziemi (1.24.0, 1.25.0 - fertilizers.js),
-//   15500-65279             wolne na przyszłość.
+//   15500-15599             stanowiska pracy (1.27.0: stół krawiecki),
+//   15600-65279             wolne na przyszłość.
 
 export const MAX_BLOCK_ID = 65279;
 
@@ -507,6 +508,36 @@ export const BLOCK_TYPES = {
         },
 
         grows: { into: 'dirt', seconds: 1800, empty: true }
+
+    },
+
+
+    // Stół krawiecki (1.27.0, items/clothing.js, docs/ubrania.md): PPM
+    // otwiera ekwipunek ze stołem zamiast siatki wytwarzania - tkanie
+    // płótna, szycie ubrań i barwienie.
+
+    sewing_table: {
+
+        id: 15500,
+        name: 'Sewing Table',
+
+        label: 'Stół krawiecki',
+
+        sound: 'wood',
+
+        solid: true,
+
+        hardness: 2.5,
+
+        category: 'ozdoby',
+
+        station: 'sewing',
+
+        textures: {
+            top: 'sewing_table_top',
+            side: 'sewing_table_side',
+            bottom: 'oak_planks'
+        }
 
     },
 

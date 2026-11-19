@@ -202,6 +202,13 @@ export const GROUPS = {
         types: ['chamomile', 'plantain', 'elderflower']
     },
 
+    // Włókna (1.27.0, items/clothing.js): z każdego da się skręcić sznur.
+    fibers: {
+        label: 'włókno (lniane, pokrzywowe, łyko)',
+        icon: 'flax_fiber',
+        types: ['flax_fiber', 'nettle_fiber', 'bast']
+    },
+
     herbs_vigor: {
         label: 'zioło wzmacniające (pokrzywa)',
         icon: 'nettle',
@@ -282,6 +289,18 @@ export const RECIPES = [
         note: 'PPM na ziemi: posłanie do spania. PPM na stelażu łóżka: ścieli łóżko.' },
     { id: 'linen_bedding', result: ['linen_bedding', 1], pattern: ['LL', 'LL'], key: { L: 'len_wiazka' },
         note: 'Wygodniejsza od słomianej. PPM na ziemi: posłanie. PPM na stelażu łóżka: ścieli łóżko.' },
+
+    // Włókna i ubrania (1.27.0, items/clothing.js, docs/ubrania.md):
+    // moczony w wodzie len i pokrzywa dają włókno (łyko jest włóknem od
+    // razu), trzy włókna - sznur, deski na sznurach - stół krawiecki.
+    { id: 'flax_fiber', result: ['flax_fiber', 2], ingredients: ['flax_retted'],
+        note: 'Moczony len: wrzuć wiązkę lnu do wody i poczekaj półtorej minuty. Z włókna na stole krawieckim tka się płótno.' },
+    { id: 'nettle_fiber', result: ['nettle_fiber', 1], ingredients: ['nettle_retted'],
+        note: 'Moczona pokrzywa: wrzuć pokrzywę do wody i poczekaj półtorej minuty. Płótno z pokrzywy grzeje lepiej niż lniane.' },
+    { id: 'rope', result: ['rope', 1], ingredients: ['#fibers', '#fibers', '#fibers'],
+        note: 'Trzy dowolne włókna. Ze sznurów i desek - stół krawiecki.' },
+    { id: 'sewing_table', result: ['sewing_table', 1], pattern: ['PP', 'RR'], key: { P: '#planks', R: 'rope' },
+        note: 'PPM na stole: tkanie płótna z włókien, szycie ubrań (krój i wzór do wyboru) i barwienie.' },
 
     // Napary (0.98.1, docs/ziola.md): kubek z gliny, do niego dwa zioła
     // z jednej grupy; kubek ziół podgrzany nad płonącym ogniskiem

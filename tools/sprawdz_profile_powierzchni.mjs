@@ -67,12 +67,10 @@ for (const [species, item] of [['strawberry', 'strawberry'], ['blackberry', 'bla
     assert.ok(bush.some(face => face.surfaceProfile[0] === K.FRUIT));
     if (species !== 'strawberry') assert.ok(bush.some(face => face.surfaceProfile[0] === K.BRANCH));
     assert.deepEqual(bush.filter(face => face.fruitIndex === 0).map(face => face.surfaceProfile), picked.faces.map(face => face.surfaceProfile));
-    const held = buildBlockGeometry(item), attribute = held.getAttribute('surfaceProfile');
-    assert.ok(attribute.array instanceof Uint8Array && !attribute.normalized);
-    assert.equal(attribute.count, held.getAttribute('position').count);
-    picked.faces.forEach((face, index) => {
-        for (let corner = 0; corner < 4; corner++) profileIs(attribute.array.subarray((index * 4 + corner) * 2, (index * 4 + corner + 1) * 2), face.surfaceProfile);
-    });
+    // Od 1.28.0 owoc w ręce to płaska ikonka (tools/owoce_ikony.py); model
+    // z profilami zostaje na krzaku.
+    const held = buildBlockGeometry(item);
+    assert.equal(held.index.count, 12);
     held.dispose();
 }
 for (const kind of ['sedge', 'cattail', 'loosestrife', 'milfoil', 'lily', 'duckweed']) {

@@ -1,15 +1,19 @@
-import { getFruitItemModel } from './FruitBushGeometry.js';
 import { CAMPFIRE_LOGS } from './CampfireGeometry.js';
 import { fuelWood } from '../game/CampfireState.js';
 import { SURFACE_PROFILES } from './SurfaceProfiles.js';
 
 import { RAFT_MODEL } from './RaftModel.js';
 
+// Przedmioty z własnym modelem 3D w ekwipunku i w ręce: tratwa, polana
+// i krzesiwo. Owoce krzaków (truskawka, jeżyna, borówka, chili, orzech
+// laskowy) do 1.27.0 miały tu model z krzaka; od 1.28.0 - decyzja Kamila -
+// w ręce i w ekwipunku mają płaską ikonkę jak inne owoce
+// (tools/owoce_ikony.py), a model zostaje na krzaku (FruitBushGeometry).
 const cache = new Map();
 export function getItemModel(type) {
     if (type === 'raft') return RAFT_MODEL;
     const wood = fuelWood(type);
-    if (!wood && type !== 'fire_starter') return getFruitItemModel(type);
+    if (!wood && type !== 'fire_starter') return null;
     if (cache.has(type)) return cache.get(type);
     const texture = `campfire_${wood ?? 'oak'}`;
     let faces = CAMPFIRE_LOGS[0].faces.map(face => ({ ...face, texture, surfaceProfile: SURFACE_PROFILES.wood }));

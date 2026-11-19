@@ -1,4 +1,4 @@
-# Paczka tekstur - szablon (Various Roots 1.26.0)
+# Paczka tekstur - szablon (Various Roots 1.28.0)
 
 Oryginalne tekstury gry, każda w osobnym pliku. Zrób z nich własną paczkę:
 
@@ -130,10 +130,10 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/birch_sapling.png` | Sadzonka brzozy |
 | `bloki/birch_stripped_side.png` | Okorowany pień brzozy |
 | `bloki/birch_stripped_top.png` | Okorowany pień brzozy |
-| `bloki/blackberry.png` | - |
+| `bloki/blackberry.png` | Jeżyny |
 | `bloki/blackberry_bush_few.png` | - |
 | `bloki/blackberry_bush_full.png` | - |
-| `bloki/blueberry.png` | - |
+| `bloki/blueberry.png` | Borówki |
 | `bloki/blueberry_bush.png` | - |
 | `bloki/blueberry_bush_few.png` | - |
 | `bloki/blueberry_bush_full.png` | - |
@@ -175,7 +175,7 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/cherry_bark.png` | Kora wiśni |
 | `bloki/chili_bush_few.png` | - |
 | `bloki/chili_bush_full.png` | - |
-| `bloki/chili_pepper.png` | - |
+| `bloki/chili_pepper.png` | Papryczki chili |
 | `bloki/clay.png` | Glina |
 | `bloki/clay_bowl.png` | Gliniana miska |
 | `bloki/clay_brick.png` | Cegła |
@@ -361,7 +361,7 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/gravel.png` | Żwir |
 | `bloki/hazel_bush_few.png` | - |
 | `bloki/hazel_bush_full.png` | - |
-| `bloki/hazelnut.png` | - |
+| `bloki/hazelnut.png` | Orzech laskowy |
 | `bloki/heather.png` | Wrzos |
 | `bloki/humus.png` | Rozgrzebany czarnoziem, Czarnoziem |
 | `bloki/ice_block.png` | - |
@@ -949,7 +949,7 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/stick.png` | Patyk |
 | `bloki/stone.png` | Kamień |
 | `bloki/straw.png` | Słoma |
-| `bloki/strawberry.png` | - |
+| `bloki/strawberry.png` | Truskawki |
 | `bloki/strawberry_bush_few.png` | - |
 | `bloki/strawberry_bush_full.png` | - |
 | `bloki/tall_grass.png` | Wysoka trawa |

@@ -81,6 +81,37 @@ Pęknięcia kopanych bloków (`tools/wzorce/pekniecia.png`,
 krycie 184-249 z 255): gra przyciemnia nimi teksturę bloku. Osiem klatek
 w siatce 4 × 2, pierwsza z lewej u góry.
 
+## Ikonki owoców i orzechów (1.28.0)
+
+Wzorzec od Kamila: poradnik „jak teksturować jak w Minecrafcie"
+(jabłko i gruszka w czterech krokach). Wszystkie 29 owoców i orzechów
+rysuje `tools/owoce_ikony.py`:
+
+1. **Kształt** - sylwetka narysowana piksel po pikselu (mapa znaków
+   16 × 16; każda litera to jedna część: owoc, listek, szypułka, kolejne
+   jagody w kiści - od tyłu do przodu). Dobry kształt wygląda dobrze już
+   w jednej barwie.
+2. **Kontur** - ciemniejszy i bardziej nasycony niż baza. Część z tyłu
+   nie dostaje konturu tam, gdzie zasłania ją część z przodu (jedna
+   kreska między jagodami, nie dwie).
+3. **Cieniowanie** - światło z lewej góry. Ciemniejsze odcienie są
+   bardziej nasycone i przesunięte ku błękitowi, jaśniejsze - mniej
+   nasycone i ku żółci (paleta `ramp`). Udział odcieni stały: mało
+   najjaśniejszego, najwięcej bazy, do tego połysk (1-3 piksele).
+4. **Brud** - na granicy dwóch odcieni piksele się przeplatają, trochę
+   losowo; górny kontur ma dwa jaśniejsze odcienie, dolny - drugi,
+   ciemniejszy kolor konturu.
+
+Szczegóły (pestki truskawki, guzki maliny i jeżyny, korona borówki,
+żyłki agrestu) to kropki dokładane po cieniowaniu. Pieczona dynia
+i cukinia powstają z nowych ikonek (`niskie_tekstury.roasted`).
+`tools/krzewy_tekstury.py` i `tools/niskie_tekstury.py` tych kafelków
+nie nadpisują (`owoce_ikony.OWNED`).
+
+    python3 tools/owoce_ikony.py                 # do atlasu
+    python3 tools/owoce_ikony.py podglad out.png # obecne obok nowych
+    python3 tools/owoce_ikony.py kroki out.png   # cztery kroki
+
 ## Pochodzenie wzorców
 
 Pliki są autorskimi materiałami Kamila, a nie nową paczką zewnętrznego

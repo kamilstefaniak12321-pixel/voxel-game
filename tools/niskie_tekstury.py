@@ -195,6 +195,10 @@ def install(images):
 
 def main():
     images = textures()
+    # Ikonki owoców (1.28.0) rysuje tools/owoce_ikony.py - nie nadpisujemy.
+    from owoce_ikony import OWNED
+    regions = json.loads(MANIFEST.read_text(encoding='utf-8'))['regions']
+    images = {key: image for key, image in images.items() if key not in OWNED or key not in regions}
     install(images)
     print(f'{len(images)} tekstur roślin niskich -> rosliny.png')
 

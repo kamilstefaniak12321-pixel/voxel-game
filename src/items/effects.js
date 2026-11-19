@@ -24,8 +24,20 @@
 export const EFFECTS = {
     calm: { label: 'spokój', text: 'Najbliższy sen będzie głębszy', hours: 14, sleep: { rate: 1.3, cap: 10 } },
     heal: { label: 'gojenie', text: 'Stłuczona noga goi się szybciej', hours: 4, heal: 3 },
-    vigor: { label: 'wigor', text: 'Mniej się męczysz i sprawniej pracujesz', hours: 5, drain: 0.8, work: 1.08 }
+    vigor: { label: 'wigor', text: 'Mniej się męczysz i sprawniej pracujesz', hours: 5, drain: 0.8, work: 1.08 },
+
+    // Owoce z charakterem (1.25.0, items/foods.js): słabsze i krótsze
+    // od naparów - za to prosto z krzaka.
+    mend: { label: 'lekkie gojenie', text: 'Stłuczona noga goi się trochę szybciej', hours: 2, heal: 1.5 },
+    tonic: { label: 'pokrzepienie', text: 'Przez chwilę mniej się męczysz', hours: 2, drain: 0.9 },
+    warm: { label: 'rozgrzanie', text: 'Robi ci się gorąco - praca idzie raźniej', hours: 2, work: 1.06 }
 };
+
+// Słowami: co efekt robi (opisy przedmiotów, komendy).
+export function effectText(type) {
+    const effect = getEffect(type);
+    return effect ? `${effect.label} - ${effect.text[0].toLowerCase()}${effect.text.slice(1)}` : '';
+}
 
 export function getEffect(type) {
     return Object.hasOwn(EFFECTS, type) ? EFFECTS[type] : null;

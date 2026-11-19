@@ -367,7 +367,7 @@ function setup(items, { mode = 'adventure', temperature = 15, days = 10 } = {}) 
     check(field.id === 15400 && field.soil && field.solid && R.getDropType('tilled_compost') === 'dirt' && field.field === 'compost' && manifest.tiles.tilled_compost && manifest.regions.tilled_compost &&
         field.textures.top === 'tilled_compost' && field.textures.side === 'dirt', 'Pole z kompostem: blok 15400, ziemia, własna tekstura z góry');
     check(R.getGrowth('tilled_compost').empty && R.getGrowth('tilled_compost').into === 'dirt' && R.getGrowth('tilled_compost').seconds > R.getGrowth('tilled_dirt').seconds && R.isGrowingId(field.id), 'Puste zarasta - wolniej niż zwykłe pole');
-    check(FERTILIZERS.compost.field === 'tilled_compost' && FERTILIZERS.compost.growth > 1 && FERTILIZERS.compost.rich && FIELD_BLOCKS.join() === 'tilled_dirt,tilled_compost' && isFieldBlock('tilled_compost') &&
+    check(FERTILIZERS.compost.field === 'tilled_compost' && FERTILIZERS.compost.growth > 1 && FERTILIZERS.compost.rich && FIELD_BLOCKS.includes('tilled_dirt') && FIELD_BLOCKS.includes('tilled_compost') && isFieldBlock('tilled_compost') &&
         isFieldBlock(R.FIELD_BLOCK) && !isFieldBlock('dirt') && !isFieldBlock(undefined), 'Tabela nawozów');
     for (const entry of Object.values(FERTILIZERS)) check(R.getBlockDefinition(entry.field)?.soil && itemExists(Object.keys(FE.FERTILIZER_ITEMS).find((item) => FE.FERTILIZER_ITEMS[item].fertilizer === 'compost')), `Nawóz ${entry.label}: jest blok pola i przedmiot`);
     check(fieldStats('tilled_compost').growth === 1.5 && fieldStats('tilled_compost').rich && fieldStats('tilled_dirt').growth === 1 && !fieldStats('tilled_dirt').rich && fieldStats('stone').growth === 1, 'Statystyki pola');
@@ -378,8 +378,8 @@ function setup(items, { mode = 'adventure', temperature = 15, days = 10 } = {}) 
     check(/if \(type === COMPOST_BOWL\) \{\s+this\.emptyBowl\(\);/.test(source), 'Zwykły PPM miską z kompostem ją opróżnia');
     check(/below === FIELD_BLOCK \|\| isFieldBlock\(below\)/.test(source), 'Na polu z kompostem sadzi się jak na zwykłym');
     const body = source.slice(source.indexOf('    fertilize(hit) {'), source.indexOf('    // Pusty gliniany garnek w ręce'));
-    const methods = new Function('COMPOSTABLE', 'FIELD_BLOCK', 'FERTILIZERS', 'fertilizerOf', 'isFieldBlock', 'isPlantId', 'COMPOST', 'COMPOST_BOWL',
-        `return class { ${body.replace(/^\s*\/\/.*$/gm, '')} }`)(['grass', 'dirt', 'coarse_dirt', 'forest_floor'], R.FIELD_BLOCK, FERTILIZERS, fertilizerOf, isFieldBlock, (id) => id === 77, COMPOST, COMPOST_BOWL).prototype;
+    const methods = new Function('COMPOSTABLE', 'canFertilize', 'FERTILIZERS', 'fertilizerOf', 'isFieldBlock', 'isPlantId', 'COMPOST', 'COMPOST_BOWL',
+        `return class { ${body.replace(/^\s*\/\/.*$/gm, '')} }`)(['grass', 'dirt', 'coarse_dirt', 'forest_floor'], FE.canFertilize, FERTILIZERS, fertilizerOf, isFieldBlock, (id) => id === 77, COMPOST, COMPOST_BOWL).prototype;
     const make = (type, { mode = 'adventure', held = COMPOST, below = null } = {}) => {
         const inventory = emptyInventory(mode);
         inventory.set(0, { type: held, count: 3 }); inventory.selected = 0;
@@ -425,7 +425,7 @@ function setup(items, { mode = 'adventure', temperature = 15, days = 10 } = {}) 
 
     // Szybszy wzrost na polu z kompostem; sad liczy je jak czarnoziem.
     const growth = read('src/game/PlantGrowth.js');
-    check(/FIELD_GROWTH\.get\(chunk\.blocks\[index - LAYER\]\) \?\? 1/.test(growth) && /season \* soil\)/.test(growth) && growth.includes('FERTILIZERS'), 'Wzrost: mnożnik pola pod rośliną');
+    check(/season \* \(SOIL_GROWTH_ID\.get\(below\) \?\? 1\)/.test(growth), 'Wzrost: mnożnik ziemi pod rośliną (blocks/soil.js)');
     check(/fertile\.has\(world\.getBlockId\(x, y - 1, z\)\)/.test(read('src/game/Orchard.js')), 'Sad: pole z nawozem jest żyzne');
 
     const gameSource = read('src/game/Game.js');

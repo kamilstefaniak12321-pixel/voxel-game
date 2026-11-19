@@ -1,7 +1,6 @@
 import { CHUNK_SIZE } from '../config.js';
 
 import {
-    getBlockId,
     getBlockTypeById,
     getGrowth,
     isLiquidId,
@@ -14,7 +13,7 @@ import { isPumpkinType } from '../blocks/lowPlants.js';
 import { plantTree } from '../world/trees/plantTree.js';
 import { plantShrub } from '../world/shrubs/Shrubs.js';
 import { plantGrowthFactor } from '../blocks/plantSeasons.js';
-import { FERTILIZERS } from '../blocks/fertilizers.js';
+import { SOIL_GROWTH_ID, WATER_GROWTH, isSoilId, nearWater } from '../blocks/soil.js';
 
 // ------------------------------------------------------------
 // WZROST ROŚLIN
@@ -149,16 +148,41 @@ export class PlantGrowth {
                 // poza nią odpoczywają (src/blocks/plantSeasons.js).
                 const season = this.days === null ? 1 : plantGrowthFactor(chunk.blocks[index], this.days);
 
-                // Pole z nawozem pod rośliną (blocks/fertilizers.js): szybciej.
-                const soil = index >= LAYER ? (FIELD_GROWTH.get(chunk.blocks[index - LAYER]) ?? 1) : 1;
+                if (season <= 0) {
+                    continue;
+                }
 
-                if (season > 0 && Math.random() < TICK / growth.seconds * season * soil) {
+                // Ziemia pod rośliną (blocks/soil.js): czarnoziem i pole
+                // z kompostem - szybciej, ziemia kamienista - wolniej.
+                const below = index >= LAYER ? chunk.blocks[index - LAYER] : 0;
+                const chance = TICK / growth.seconds * season * (SOIL_GROWTH_ID.get(below) ?? 1);
+                const roll = Math.random();
+
+                // Woda w pobliżu jeszcze przyspiesza. Szukamy jej tylko
+                // wtedy, gdy los wypadł tuż ponad zwykłą szansę - czyli
+                // rzadko, bez przeglądania okolicy każdej rośliny co krok.
+                if (roll < chance || (roll < chance * WATER_GROWTH && this.wet(chunk, index, below))) {
                     this.grow(chunk, index, growth);
                 }
 
             }
 
         }
+
+    }
+
+
+    // Czy roślina w komórce `index` stoi na ziemi, przy której jest woda.
+
+    wet(chunk, index, below) {
+
+        if (!isSoilId(below)) {
+            return false;
+        }
+
+        const { x, y, z } = cellPosition(chunk, index);
+
+        return nearWater(this.world, x, y - 1, z);
 
     }
 
@@ -358,9 +382,6 @@ export class PlantGrowth {
 
 // Jedna warstwa chunka (komórka niżej to index - LAYER).
 const LAYER = CHUNK_SIZE * CHUNK_SIZE;
-
-// Numer bloku pola -> mnożnik wzrostu rośliny, która na nim stoi.
-const FIELD_GROWTH = new Map(Object.values(FERTILIZERS).map((entry) => [getBlockId(entry.field), entry.growth]));
 
 function cellPosition(chunk, index) {
 

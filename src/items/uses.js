@@ -57,7 +57,7 @@ export function itemUses(type) {
     const food = getFood(type);
     if (food) {
         const effects = food.effects.map((effect) => EFFECTS[effect].label).join(', ');
-        uses.push(food.kind === 'drink' ? `napar${effects ? ` (${effects})` : ''}` : 'jedzenie');
+        uses.push(food.kind === 'drink' ? `napar${effects ? ` (${effects})` : ''}` : `jedzenie${effects ? ` z działaniem (${effects})` : ''}`);
     }
     const roasted = getRoast(type);
     if (roasted) uses.push(`${isDrink(roasted) ? 'parzenie' : 'pieczenie'} nad ogniskiem: ${getItemLabel(roasted)}`);

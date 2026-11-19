@@ -17,7 +17,7 @@
     "rosliny": {
       "file": "rosliny.png",
       "width": 256,
-      "height": 512
+      "height": 528
     },
     "przedmioty": {
       "file": "przedmioty.png",
@@ -9199,6 +9199,20 @@
       "y": 496,
       "width": 16,
       "height": 16
+    },
+    "tilled_humus": {
+      "sheet": "rosliny",
+      "x": 0,
+      "y": 512,
+      "width": 16,
+      "height": 16
+    },
+    "tilled_coarse": {
+      "sheet": "rosliny",
+      "x": 16,
+      "y": 512,
+      "width": 16,
+      "height": 16
     }
   },
   "aliases": {
@@ -16765,6 +16779,16 @@
       "x": 60,
       "y": 92,
       "region": "tilled_compost"
+    },
+    "tilled_humus": {
+      "x": 61,
+      "y": 92,
+      "region": "tilled_humus"
+    },
+    "tilled_coarse": {
+      "x": 62,
+      "y": 92,
+      "region": "tilled_coarse"
     }
   }
 }

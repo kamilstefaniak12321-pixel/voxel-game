@@ -136,9 +136,10 @@ export const GUIDE = [
                 touch: 'Kwiaty i zioła ścina się nożem (stuknij nim kwitnącą roślinę): bierzesz kwiat, łodyga zostaje i kwitnie od nowa.' },
             'Gliniany kubek: 2 gliny → 2 mokre kubki. Wysusz je na słońcu (niżej: Glina i cegły). Suchy kubek + dwa zioła z jednej grupy = kubek ziół.',
             'Kubek ziół trzymaj nad płonącym ogniskiem - powstaje napar. Po wypiciu kubek wraca.',
-            'Napar na sen (kwiat lipy, lawenda): następny sen jest głębszy.',
-            'Napar leczniczy (rumianek, babka, szałwia, nagietek): stłuczona noga goi się 3 razy szybciej.',
+            'Napar na sen (kwiat lipy, lawenda, płatki róży): następny sen jest głębszy.',
+            'Napar leczniczy (rumianek, babka, szałwia, nagietek, kwiat czarnego bzu): stłuczona noga goi się 3 razy szybciej.',
             'Napar wzmacniający (pokrzywa, gorczyca): energii ubywa wolniej.',
+            'Niektóre owoce działają same, słabiej niż napar: dzika róża, żurawina i brusznica goją, aronia, rokitnik, czarna porzeczka i czarny bez krzepią, chili rozgrzewa.',
             'Każdy kwiat daje też barwnik, a cztery dowolne kwiaty - wianek na ścianę.'
         ]
     },
@@ -180,6 +181,8 @@ export const GUIDE = [
             { text: 'Na rozgrzebanej ziemi posadzisz owoc, orzech, żołądź albo szyszkę. Gdzie indziej [use] zjada owoc.',
                 touch: 'Na rozgrzebanej ziemi posadzisz owoc, orzech, żołądź albo szyszkę. Gdzie indziej stuknięcie zjada owoc.' },
             'Krzak rośnie etapami i owocuje; zebrane owoce odrastają. Drzewo wyrasta po kilku minutach.',
+            'Ziemia ma znaczenie: na czarnoziemie rośliny rosną szybciej, na ziemi kamienistej wolniej. Jedną i drugą też da się rozgrzebać łopatą.',
+            'Pole blisko wody (do 3 bloków) rośnie o jedną czwartą szybciej. Pole z kompostem przy wodzie to najlepsze miejsce na grządkę.',
             'Puste pole po pewnym czasie zarasta z powrotem.'
         ]
     },

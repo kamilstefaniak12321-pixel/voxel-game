@@ -2,7 +2,7 @@
 
 > Ta strona jest generowana z kodu gry (`python tools/wiki.py`) - nie zmieniaj jej ręcznie, zmiany przepadną przy następnym generowaniu.
 
-Wersja gry **1.24.0** - 249 przepisów. Wytwarza się w ekwipunku (**E**): siatka 2 x 2 obok miejsc ekwipunku, wynik po prawej (klik - weź, Shift + klik - ile się da). Przycisk 📖 *Przepisy* otwiera księgę - klik na przepisie sam układa składniki. Przepisy *z kształtem* można przesuwać po siatce i odbijać w poziomie; przepisy *bez kształtu* - obojętne, gdzie leżą składniki. Z czatu: `/przepisy`, `/wytworz <przepis>`.
+Wersja gry **1.25.0** - 249 przepisów. Wytwarza się w ekwipunku (**E**): siatka 2 x 2 obok miejsc ekwipunku, wynik po prawej (klik - weź, Shift + klik - ile się da). Przycisk 📖 *Przepisy* otwiera księgę - klik na przepisie sam układa składniki. Przepisy *z kształtem* można przesuwać po siatce i odbijać w poziomie; przepisy *bez kształtu* - obojętne, gdzie leżą składniki. Z czatu: `/przepisy`, `/wytworz <przepis>`.
 
 
 ## Ziemia
@@ -522,15 +522,15 @@ Wersja gry **1.24.0** - 249 przepisów. Wytwarza się w ekwipunku (**E**): siatk
 
 ### Kubek ziół na sen
 
-<img src="przepisy/brew_calm.png" alt="Kubek ziół na sen: 1 x gliniany kubek (z dowolnej gliny, suchy) + 2 x zioło na sen (kwiat lipy, bukiet lawendy) (obojętne gdzie)">
+<img src="przepisy/brew_calm.png" alt="Kubek ziół na sen: 1 x gliniany kubek (z dowolnej gliny, suchy) + 2 x zioło na sen (kwiat lipy, płatki róży, bukiet lawendy) (obojętne gdzie)">
 
-1 x gliniany kubek (z dowolnej gliny, suchy) + 2 x zioło na sen (kwiat lipy, bukiet lawendy) (bez kształtu). Nazwa przepisu: `brew_calm`. Przytrzymaj PPM na płonącym ognisku - powstanie napar. Najbliższy sen będzie głębszy.
+1 x gliniany kubek (z dowolnej gliny, suchy) + 2 x zioło na sen (kwiat lipy, płatki róży, bukiet lawendy) (bez kształtu). Nazwa przepisu: `brew_calm`. Przytrzymaj PPM na płonącym ognisku - powstanie napar. Najbliższy sen będzie głębszy.
 
 ### Kubek ziół leczniczych
 
-<img src="przepisy/brew_heal.png" alt="Kubek ziół leczniczych: 1 x gliniany kubek (z dowolnej gliny, suchy) + 2 x zioło lecznicze (rumianek, babka, liście szałwii, kwiat nagietka) (obojętne gdzie)">
+<img src="przepisy/brew_heal.png" alt="Kubek ziół leczniczych: 1 x gliniany kubek (z dowolnej gliny, suchy) + 2 x zioło lecznicze (rumianek, babka, kwiat czarnego bzu, liście szałwii, kwiat nagietka) (obojętne gdzie)">
 
-1 x gliniany kubek (z dowolnej gliny, suchy) + 2 x zioło lecznicze (rumianek, babka, liście szałwii, kwiat nagietka) (bez kształtu). Nazwa przepisu: `brew_heal`. Przytrzymaj PPM na płonącym ognisku - powstanie napar. Stłuczona noga goi się szybciej.
+1 x gliniany kubek (z dowolnej gliny, suchy) + 2 x zioło lecznicze (rumianek, babka, kwiat czarnego bzu, liście szałwii, kwiat nagietka) (bez kształtu). Nazwa przepisu: `brew_heal`. Przytrzymaj PPM na płonącym ognisku - powstanie napar. Stłuczona noga goi się szybciej.
 
 ### Kubek ziół wzmacniających
 
@@ -1550,7 +1550,7 @@ Składnik z grupy to dowolna rzecz z listy (np. patyki z desek różnych drzew).
 - **coś pomarańczowego (kwiat nagietka, kwiat cynii)**: Kwiat nagietka, Kwiat cynii
 - **coś różowego (kwiat piwonii, kwiat zawilca)**: Kwiat piwonii, Kwiat zawilca
 - **kwiat (mak, chaber, rumianek, mniszek, krokus, wrzos i inne)**: Mak, Chaber, Rumianek, Mniszek, Krokus, Wrzos, Wiecha amarantusa, Bukiet kocanki, Bukiet lawendy, Kwiat piwonii, Kwiat zawilca, Kwiat dzwonka, Kwiat nagietka, Kwiat cynii, Kwiat mikołajka, Kwiat barwinka
-- **zioło na sen (kwiat lipy, bukiet lawendy)**: Kwiat lipy, Bukiet lawendy
-- **zioło lecznicze (rumianek, babka, liście szałwii, kwiat nagietka)**: Rumianek, Babka zwyczajna, Liście szałwii, Kwiat nagietka
+- **zioło na sen (kwiat lipy, płatki róży, bukiet lawendy)**: Kwiat lipy, Płatki dzikiej róży, Bukiet lawendy
+- **zioło lecznicze (rumianek, babka, kwiat czarnego bzu, liście szałwii, kwiat nagietka)**: Rumianek, Babka zwyczajna, Kwiat bzu czarnego, Liście szałwii, Kwiat nagietka
 - **zioło wzmacniające (pokrzywa, nasiona gorczycy)**: Pokrzywa, Nasiona gorczycy
 - **pień (gatunek)**: zwykły, okorowany, a u sosny także górny i z żywicą

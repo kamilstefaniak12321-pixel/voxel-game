@@ -2,7 +2,7 @@
 
 > Ta strona jest generowana z kodu gry (`python tools/wiki.py`) - nie zmieniaj jej ręcznie, zmiany przepadną przy następnym generowaniu.
 
-Wersja gry **1.24.0** - 738 bloków (do tego 3311 odmian, których nie ma w ekwipunku, np. wieniec zawieszony na boku bloku). Czas kopania dotyczy trybu przygody; w kreatywnym bloki znikają od razu.
+Wersja gry **1.25.0** - 740 bloków (do tego 3311 odmian, których nie ma w ekwipunku, np. wieniec zawieszony na boku bloku). Czas kopania dotyczy trybu przygody; w kreatywnym bloki znikają od razu.
 
 [Ziemia](#ziemia) · [Skały](#skały) · [Drewno](#drewno) · [Budulec](#budulec) · [Rośliny](#rośliny) · [Światło](#światło) · [Meble i ozdoby](#meble-i-ozdoby)
 
@@ -14,10 +14,12 @@ Wersja gry **1.24.0** - 738 bloków (do tego 3311 odmian, których nie ma w ekwi
 | <img src="ikony/dirt.png" width="32" height="32" alt=""> | **Ziemia** | `dirt` | **Kopanie:** 0,6 s (łopatą 0,2 s)<br>**Skąd:** zniszczony blok: Blok trawy; zniszczony blok: Rozgrzebana ziemia; wyrasta z: Rozgrzebana ziemia; zniszczony blok: Pole z kompostem; wyrasta z: Pole z kompostem<br>**Przydaje się do:** Ziemia kamienista, Czarnoziem, Ściółka leśna |
 | <img src="ikony/tilled_dirt.png" width="32" height="32" alt=""> | **Rozgrzebana ziemia** | `tilled_dirt` | **Kopanie:** 0,6 s (łopatą 0,2 s)<br>**Daje:** Ziemia<br>**Rośnie:** w: Ziemia |
 | <img src="ikony/tilled_compost.png" width="32" height="32" alt=""> | **Pole z kompostem** | `tilled_compost` | **Kopanie:** 0,6 s (łopatą 0,2 s)<br>**Daje:** Ziemia<br>**Rośnie:** w: Ziemia |
+| <img src="ikony/tilled_humus.png" width="32" height="32" alt=""> | **Rozgrzebany czarnoziem** | `tilled_humus` | **Kopanie:** 0,6 s (łopatą 0,2 s)<br>**Daje:** Czarnoziem<br>**Rośnie:** w: Czarnoziem |
+| <img src="ikony/tilled_coarse.png" width="32" height="32" alt=""> | **Rozgrzebana ziemia kamienista** | `tilled_coarse` | **Kopanie:** 0,7 s (łopatą 0,23 s)<br>**Daje:** Ziemia kamienista<br>**Rośnie:** w: Ziemia kamienista |
 | <img src="ikony/sand.png" width="32" height="32" alt=""> | **Piasek** | `sand` | **Kopanie:** 0,55 s (łopatą 0,18 s)<br>**Przydaje się do:** Piaskowiec, Tynk wapienny |
 | <img src="ikony/water.png" width="32" height="32" alt=""> | **Woda** | `water` | - |
-| <img src="ikony/humus.png" width="32" height="32" alt=""> | **Czarnoziem** | `humus` | **Kopanie:** 0,6 s (łopatą 0,2 s)<br>**Przepis:** Czarnoziem |
-| <img src="ikony/coarse_dirt.png" width="32" height="32" alt=""> | **Ziemia kamienista** | `coarse_dirt` | **Kopanie:** 0,7 s (łopatą 0,23 s)<br>**Przepis:** Ziemia kamienista x4 |
+| <img src="ikony/humus.png" width="32" height="32" alt=""> | **Czarnoziem** | `humus` | **Kopanie:** 0,6 s (łopatą 0,2 s)<br>**Skąd:** zniszczony blok: Rozgrzebany czarnoziem; wyrasta z: Rozgrzebany czarnoziem<br>**Przepis:** Czarnoziem |
+| <img src="ikony/coarse_dirt.png" width="32" height="32" alt=""> | **Ziemia kamienista** | `coarse_dirt` | **Kopanie:** 0,7 s (łopatą 0,23 s)<br>**Skąd:** zniszczony blok: Rozgrzebana ziemia kamienista; wyrasta z: Rozgrzebana ziemia kamienista<br>**Przepis:** Ziemia kamienista x4 |
 | <img src="ikony/forest_floor.png" width="32" height="32" alt=""> | **Ściółka leśna** | `forest_floor` | **Kopanie:** 0,6 s (łopatą 0,2 s)<br>**Przepis:** Ściółka leśna |
 | <img src="ikony/mud.png" width="32" height="32" alt=""> | **Błoto** | `mud` | **Kopanie:** 0,6 s (łopatą 0,2 s) |
 | <img src="ikony/clay.png" width="32" height="32" alt=""> | **Glina** | `clay` | **Kopanie:** 0,6 s (łopatą 0,2 s)<br>**Przydaje się do:** Tynk ochrowy, Terakota, Mokry kubek z gliny, Mokry garnek z gliny, Mokra miska z gliny, Mokra cegła z gliny |

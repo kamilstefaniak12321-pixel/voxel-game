@@ -37,6 +37,8 @@ import { plantShrub } from '../world/shrubs/Shrubs.js';
 import { POT_WATER, BOWL, COOK_SECONDS, DISHES, DISH_NAMES } from '../items/cooking.js';
 import { fruitCalendar } from '../blocks/fruitSeasons.js';
 import { seasonSerial } from '../game/Orchard.js';
+import { soilInfo, WATER_REACH, WATER_GROWTH } from '../blocks/soil.js';
+import { isFieldBlock } from '../blocks/fertilizers.js';
 import { spoilText, temperatureFactor, isPerishable, daysLeft, daysText, freshText } from '../items/spoilage.js';
 import { newPot, cookPot } from '../game/CookingState.js';
 import { newCampfire, addFirewood } from '../game/CampfireState.js';
@@ -1350,6 +1352,38 @@ export const WORLD_COMMANDS = [
             }
 
             throw new CommandError('Użycie: /psucie | /psucie tempo <mnożnik> | /psucie dni <ile> | /psucie swiezosc <procent>');
+
+        }
+    },
+
+    {
+        name: 'ziemia',
+        aliases: ['soil', 'gleba'],
+        usage: '/ziemia',
+        description: 'Ziemia z charakterem (1.25.0): jak szybko rosną rośliny na ziemi pod celownikiem (albo pod nogami) - rodzaj ziemi, woda w pobliżu i łączny mnożnik.',
+
+        run(args, { game, player, world }) {
+
+            const hit = game.currentHit?.hit ? game.currentHit.block : null;
+            let x = hit ? hit.x : Math.floor(player.pos.x), y = hit ? hit.y : Math.floor(player.pos.y) - 1, z = hit ? hit.z : Math.floor(player.pos.z);
+
+            // Bez celu: pierwszy blok pod nogami (do 6 bloków w dół).
+            if (!hit) for (let down = 0; down < 6 && world.getBlockId(x, y, z) === 0; down++) y--;
+
+            // Celownik na roślinie: liczy się ziemia pod nią.
+            if (!soilInfo(world, x, y, z).soil && soilInfo(world, x, y - 1, z).soil) y--;
+
+            const info = soilInfo(world, x, y, z);
+            const label = BLOCK_TYPES[info.type]?.label ?? info.type ?? 'powietrze';
+            const number = (value) => String(Math.round(value * 100) / 100).replace('.', ',');
+
+            if (!info.soil) {
+                return `${label} (${x} ${y} ${z}) to nie ziemia - rośliny tu nie rosną. Wyceluj w ziemię albo roślinę.`;
+            }
+
+            return `${label} (${x} ${y} ${z}): wzrost ×${number(info.growth)}` +
+                `${info.growth > 1 ? ' (żyzna)' : info.growth < 1 ? ' (jałowa)' : ''}, woda do ${WATER_REACH} bloków: ${info.water ? `jest (×${number(WATER_GROWTH)})` : 'brak'}. ` +
+                `Razem rośliny rosną tu ×${number(info.total)}.${isFieldBlock(info.type) ? ' To pole - można sadzić.' : ''}`;
 
         }
     },

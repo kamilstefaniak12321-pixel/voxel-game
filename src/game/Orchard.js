@@ -31,7 +31,7 @@
 // ------------------------------------------------------------
 
 import { CHUNK_SIZE } from '../config.js';
-import { FERTILIZERS } from '../blocks/fertilizers.js';
+import { FIELDS } from '../blocks/fertilizers.js';
 import { seasonAt } from '../sky/Seasons.js';
 import { BLOCK_TYPES, getBlockId, getBlockTypeById, isSoilId, isReplaceableId, canPlantStay, AIR_ID } from '../blocks/BlockRegistry.js';
 import { plantSeasonInfo } from '../blocks/plantSeasons.js';
@@ -235,7 +235,7 @@ export class Orchard {
             // --- Rośliny: większy plon i rozrastanie -----------------------
 
             // Żyzna ziemia: czarnoziem i pole z nawozem (blocks/fertilizers.js).
-            const fertile = new Set([getBlockId('humus'), ...Object.values(FERTILIZERS).filter((entry) => entry.rich).map((entry) => getBlockId(entry.field))]);
+            const fertile = new Set([getBlockId('humus'), ...Object.entries(FIELDS).filter(([, field]) => field.rich).map(([type]) => getBlockId(type))]);
 
             for (const i of plants) {
 

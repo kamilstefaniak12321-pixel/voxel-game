@@ -191,15 +191,15 @@ export const GROUPS = {
 
     // Zioła do naparów (docs/ziola.md): kubek + dwa zioła z jednej grupy.
     herbs_calm: {
-        label: 'zioło na sen (kwiat lipy)',
+        label: 'zioło na sen (kwiat lipy, płatki róży)',
         icon: 'linden_flower',
-        types: ['linden_flower']
+        types: ['linden_flower', 'rose_petals']
     },
 
     herbs_heal: {
-        label: 'zioło lecznicze (rumianek, babka)',
+        label: 'zioło lecznicze (rumianek, babka, kwiat czarnego bzu)',
         icon: 'chamomile',
-        types: ['chamomile', 'plantain']
+        types: ['chamomile', 'plantain', 'elderflower']
     },
 
     herbs_vigor: {

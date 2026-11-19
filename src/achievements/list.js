@@ -814,6 +814,26 @@ export const ACHIEVEMENTS = [
         on: 'tilled'
     },
     {
+        id: 'rich_field',
+        tier: 'common',
+        title: 'Czarna bruzda',
+        task: 'Rozgrzeb łopatą czarnoziem - na takim polu rośliny rosną szybciej.',
+        comment: 'Ziemia tak dobra, że aż szkoda po niej chodzić.',
+        icon: 'tilled_humus',
+        on: 'tilled',
+        when: (data) => data.into === 'tilled_humus'
+    },
+    {
+        id: 'fruit_trait',
+        tier: 'common',
+        title: 'Owoc z charakterem',
+        task: 'Zjedz owoc, który coś daje: dziką różę, żurawinę, brusznicę, aronię, rokitnik, czarną porzeczkę, czarny bez albo chili.',
+        comment: 'Babcia miała rację. Jak zwykle.',
+        icon: 'rose_hip',
+        on: 'ate',
+        when: (data) => data.kind !== 'drink' && (data.effects?.length ?? 0) > 0
+    },
+    {
         id: 'first_roast',
         tier: 'common',
         title: 'Kolacja przy ognisku',

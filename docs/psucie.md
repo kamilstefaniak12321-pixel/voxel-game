@@ -1,4 +1,4 @@
-# Psucie się jedzenia (1.23.0)
+# Psucie się jedzenia (1.23.0, świeżość stosów od 1.24.0)
 
 Świeże jedzenie się psuje - tym szybciej, im cieplej. Razem z porami
 roku ([pory-owocowania.md](pory-owocowania.md)) daje to sens zapasom:
@@ -6,6 +6,9 @@ latem jedzenia jest dużo, ale nie poleży; na zimę trzeba mieć to, co
 się nie psuje, albo chłodną piwniczkę.
 
 ## Zasada: świeżość stosu
+
+(Od 1.24.0. W 1.23.0 sztuki psuły się losowo, po jednej, i nie było
+widać, ile jedzenie ma jeszcze czasu.)
 
 Każdy stos psującego się jedzenia ma swoją **świeżość** - od 100%
 (świeże) do zera. Gdy spadnie do zera, **cały stos zamienia się
@@ -77,7 +80,7 @@ i żołędzie, napary, cała dynia (blok).
   ma miejsca, kompost albo miska lądują na ziemi przed graczem). PPM
   miską prosto na rozgrzebaną ziemię od razu ją użyźnia - miska wraca.
 
-## Użyźnianie pola
+## Użyźnianie pola (1.24.0)
 
 **PPM kompostem na rozgrzebanej ziemi** (albo na roślinie, która na niej
 rośnie) posypuje jej górną warstwę: powstaje **pole z kompostem**

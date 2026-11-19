@@ -6,6 +6,11 @@ zimą nie rośnie nic, a owoce da się ususzyć na zapas. Następny krok
 
 ![Te same rośliny jesienią, zimą i wiosną](pory-owocowania-1210.jpg)
 
+Na zrzucie ta sama galeria roślin niskich (od dołu: żurawina, brusznica,
+truskawki, poziomka...) jesienią, zimą i wiosną: jesienią owocują
+żurawina i brusznica, zimą owoce ma tylko żurawina, wiosną kwitną
+truskawki.
+
 ## Kalendarz
 
 Rok ma cztery pory po 8 dni ([pory-roku.md](pory-roku.md)).

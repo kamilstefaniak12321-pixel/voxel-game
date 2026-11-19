@@ -1,6 +1,7 @@
 import { CHUNK_SIZE } from '../config.js';
 
 import {
+    getBlockId,
     getBlockTypeById,
     getGrowth,
     isLiquidId,
@@ -13,6 +14,7 @@ import { isPumpkinType } from '../blocks/lowPlants.js';
 import { plantTree } from '../world/trees/plantTree.js';
 import { plantShrub } from '../world/shrubs/Shrubs.js';
 import { plantGrowthFactor } from '../blocks/plantSeasons.js';
+import { FERTILIZERS } from '../blocks/fertilizers.js';
 
 // ------------------------------------------------------------
 // WZROST ROŚLIN
@@ -147,7 +149,10 @@ export class PlantGrowth {
                 // poza nią odpoczywają (src/blocks/plantSeasons.js).
                 const season = this.days === null ? 1 : plantGrowthFactor(chunk.blocks[index], this.days);
 
-                if (season > 0 && Math.random() < TICK / growth.seconds * season) {
+                // Pole z nawozem pod rośliną (blocks/fertilizers.js): szybciej.
+                const soil = index >= LAYER ? (FIELD_GROWTH.get(chunk.blocks[index - LAYER]) ?? 1) : 1;
+
+                if (season > 0 && Math.random() < TICK / growth.seconds * season * soil) {
                     this.grow(chunk, index, growth);
                 }
 
@@ -350,6 +355,12 @@ export class PlantGrowth {
 
 
 // Pozycja w świecie komórki `index` chunka.
+
+// Jedna warstwa chunka (komórka niżej to index - LAYER).
+const LAYER = CHUNK_SIZE * CHUNK_SIZE;
+
+// Numer bloku pola -> mnożnik wzrostu rośliny, która na nim stoi.
+const FIELD_GROWTH = new Map(Object.values(FERTILIZERS).map((entry) => [getBlockId(entry.field), entry.growth]));
 
 function cellPosition(chunk, index) {
 

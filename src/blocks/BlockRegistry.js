@@ -57,7 +57,8 @@ export const AIR_ID = 0;
 //   14300-14999             krzewy jagodowe (1.17.0, po 16 na gatunek - shrubs.js),
 //   15000-15199             rośliny niskie (1.19.0, po 8 na roślinę - lowPlants.js),
 //   15200-15399             opadłe owoce (1.22.0 - fallenFruit.js),
-//   15400-65279             wolne na przyszłość.
+//   15400-15499             pola z nawozem (1.24.0 - fertilizers.js),
+//   15500-65279             wolne na przyszłość.
 
 export const MAX_BLOCK_ID = 65279;
 
@@ -475,6 +476,37 @@ export const BLOCK_TYPES = {
         },
 
         grows: { into: 'dirt', seconds: 900, empty: true }
+
+    },
+
+
+    // Pole posypane kompostem (1.24.0, blocks/fertilizers.js): PPM
+    // kompostem na rozgrzebanej ziemi. Rośliny rosną na nim szybciej,
+    // a sad liczy je jak czarnoziem. Puste zarasta wolniej niż zwykłe pole.
+
+    tilled_compost: {
+
+        id: 15400,
+        name: 'Composted Field',
+
+        label: 'Pole z kompostem',
+
+        sound: 'dirt',
+
+        soil: true,
+        drops: 'dirt',
+
+        solid: true,
+
+        field: 'compost',
+
+        textures: {
+            top: 'tilled_compost',
+            side: 'dirt',
+            bottom: 'dirt'
+        },
+
+        grows: { into: 'dirt', seconds: 1800, empty: true }
 
     },
 

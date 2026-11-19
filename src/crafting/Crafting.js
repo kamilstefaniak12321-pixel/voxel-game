@@ -536,9 +536,9 @@ export function returnGrid(inventory) {
             continue;
         }
 
-        const left = inventory.add(item.type, item.count);
+        const left = inventory.addItem(item);
 
-        grid[i] = left > 0 ? { type: item.type, count: left } : null;
+        grid[i] = left > 0 ? { ...item, count: left } : null;
 
     }
 

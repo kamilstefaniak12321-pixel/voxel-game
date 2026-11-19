@@ -20,7 +20,7 @@
 
 import { STATES, MEALS_PER_DAY } from '../game/Wellbeing.js';
 import { getFood, KIND_LABELS } from '../items/foods.js';
-import { spoilText } from '../items/spoilage.js';
+import { spoilText, freshText } from '../items/spoilage.js';
 import { getItemLabel } from '../items/ItemRegistry.js';
 import { HeartIcon, drawHeart } from './HeartIcon.js';
 import { formatKeys } from '../input/bindings.js';
@@ -63,7 +63,7 @@ export function statusView(game) {
             ...(info.effects.length ? [['Działa', info.effects.map((effect) => `${effect.label} (${hoursText(effect.hours)})`).join(', ')]] : [])
         ],
         history: info.history,
-        held: food ? { type: held, label: getItemLabel(held), kind: KIND_LABELS[food.kind], drink: food.kind === 'drink', can: wellbeing.canEat(held), spoils: spoilText(held) } : null
+        held: food ? { type: held, label: getItemLabel(held), kind: KIND_LABELS[food.kind], drink: food.kind === 'drink', can: wellbeing.canEat(held), spoils: (game.spoilage?.active && freshText(game.inventory.selectedItem, game.spoilage.temperature())) || spoilText(held) } : null
     };
 }
 

@@ -31,6 +31,7 @@
 // ------------------------------------------------------------
 
 import { CHUNK_SIZE } from '../config.js';
+import { FERTILIZERS } from '../blocks/fertilizers.js';
 import { seasonAt } from '../sky/Seasons.js';
 import { BLOCK_TYPES, getBlockId, getBlockTypeById, isSoilId, isReplaceableId, canPlantStay, AIR_ID } from '../blocks/BlockRegistry.js';
 import { plantSeasonInfo } from '../blocks/plantSeasons.js';
@@ -67,6 +68,7 @@ const NOTICE_RANGE = 64;
 
 // Z czego może powstać czarnoziem.
 const TO_HUMUS = ['grass', 'dirt', 'coarse_dirt', 'forest_floor', 'tilled_dirt'];
+
 
 // Bloki opadłych owoców: numer -> { item, sapling }.
 const FALLEN = new Map();
@@ -232,7 +234,8 @@ export class Orchard {
 
             // --- Rośliny: większy plon i rozrastanie -----------------------
 
-            const humus = getBlockId('humus');
+            // Żyzna ziemia: czarnoziem i pole z nawozem (blocks/fertilizers.js).
+            const fertile = new Set([getBlockId('humus'), ...Object.values(FERTILIZERS).filter((entry) => entry.rich).map((entry) => getBlockId(entry.field))]);
 
             for (const i of plants) {
 
@@ -244,7 +247,7 @@ export class Orchard {
                 if (!info?.fruit || !REGROWS.has(info.shown[0])) continue;
 
                 const key = keyOf(x, y, z);
-                const rich = world.getBlockId(x, y - 1, z) === humus;
+                const rich = fertile.has(world.getBlockId(x, y - 1, z));
                 const level = this.levels.get(key) ?? 0;
 
                 if (level < MAX_LEVEL && this.random() < GROW_CHANCE + (this.picked.has(key) ? GROW_PICKED : 0) + (rich ? GROW_HUMUS : 0)) {

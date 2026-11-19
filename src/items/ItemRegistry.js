@@ -176,6 +176,8 @@ export const ITEM_TYPES = {
 
     // Kompost (1.23.0, items/spoilage.js): to, co zostaje z zepsutego jedzenia.
     compost: { name: 'Compost', label: 'Kompost', icon: 'compost', category: 'narzedzia' },
+    // Zepsuta potrawa: PPM wysypuje kompost i oddaje miskę.
+    compost_bowl: { name: 'Compost in a Bowl', label: 'Kompost w misce', icon: 'compost_bowl', category: 'narzedzia' },
 
     // Suszone owoce (1.21.0, items/drying.js): z każdego owocu wysuszonego na słońcu.
     dried_fruit: { name: 'Dried Fruit', label: 'Suszone owoce', icon: 'dried_fruit', category: 'owoce' },

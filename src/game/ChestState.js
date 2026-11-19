@@ -1,5 +1,6 @@
 import { CHUNK_HEIGHT, WORLD_BORDER } from '../config.js';
 import { STACK_SIZE, cleanItem } from './Inventory.js';
+import { makeItem, withCount, sameBatch, blend } from '../items/freshness.js';
 
 // ------------------------------------------------------------
 // SKRZYNIA - ZAWARTOŚĆ (0.81.0, pomysł Kamila)
@@ -49,7 +50,7 @@ export function restoreChest(value) {
 
 export function chestState(chest) {
     return { x: chest.x, y: chest.y, z: chest.z,
-        layers: chest.layers.map((cells) => cells.map((item) => item ? { type: item.type, count: item.count } : null)) };
+        layers: chest.layers.map((cells) => cells.map((item) => item ? withCount(item, item.count) : null)) };
 }
 
 // Warstwa, która leży na wierzchu przegródki (1, 0) albo -1 - pusta.
@@ -88,7 +89,7 @@ export function takeFromCell(chest, cell, count = Infinity) {
     if (!(taken > 0)) return null;
     if (taken >= item.count) chest.layers[layer][cell] = null;
     else item.count -= taken;
-    return { type: item.type, count: taken };
+    return withCount(item, taken);
 }
 
 // Kładzie held (stos, zmieniany w miejscu) na przegródkę - count sztuk
@@ -101,16 +102,17 @@ export function putIntoCell(chest, cell, held, count = Infinity) {
     const visible = layer < 0 ? null : chest.layers[layer][cell];
 
     const place = (target) => {
-        chest.layers[target][cell] = { type: held.type, count: amount };
+        chest.layers[target][cell] = withCount(held, amount);
         held.count -= amount;
         return held.count > 0 ? held : null;
     };
 
     if (!visible) return place(0);
 
+    // Ręczne łączenie: zawsze, świeżość ze średniej (items/freshness.js).
     if (visible.type === held.type) {
         const moved = Math.min(amount, STACK_SIZE - visible.count);
-        visible.count += moved;
+        blend(visible, moved, held.fresh);
         held.count -= moved;
         return held.count > 0 ? held : null;
     }
@@ -119,20 +121,21 @@ export function putIntoCell(chest, cell, held, count = Infinity) {
 
     // Inny przedmiot na wierzchu: cały stos - zamiana, jedna sztuka - nic.
     if (amount < held.count) return held;
-    chest.layers[1][cell] = { type: held.type, count: held.count };
-    return { type: visible.type, count: visible.count };
+    chest.layers[1][cell] = withCount(held, held.count);
+    return withCount(visible, visible.count);
 }
 
 // Szybkie wkładanie (Shift + klik w ekwipunku): najpierw dokłada do
 // widocznych takich samych stosów, potem na puste przegródki (spód),
 // na końcu na wierzch innych. Zwraca, ile sztuk się nie zmieściło.
-export function insertIntoChest(chest, type, count) {
+// (fresh - świeżość jedzenia: dokłada się tylko do stosów o takiej samej.)
+export function insertIntoChest(chest, type, count, fresh) {
     let left = count;
     for (let cell = 0; cell < CHEST_CELLS && left > 0; cell++) {
         const visible = visibleItem(chest, cell);
-        if (visible?.type === type && visible.count < STACK_SIZE) {
+        if (visible && visible.count < STACK_SIZE && sameBatch(visible, type, fresh)) {
             const moved = Math.min(left, STACK_SIZE - visible.count);
-            visible.count += moved;
+            blend(visible, moved, fresh);
             left -= moved;
         }
     }
@@ -140,7 +143,7 @@ export function insertIntoChest(chest, type, count) {
         for (let cell = 0; cell < CHEST_CELLS && left > 0; cell++) {
             if (chest.layers[layer][cell] || (layer === 1 && !chest.layers[0][cell])) continue;
             const moved = Math.min(left, STACK_SIZE);
-            chest.layers[layer][cell] = { type, count: moved };
+            chest.layers[layer][cell] = makeItem(type, moved, fresh);
             left -= moved;
         }
     }

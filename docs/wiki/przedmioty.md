@@ -2,7 +2,7 @@
 
 > Ta strona jest generowana z kodu gry (`python tools/wiki.py`) - nie zmieniaj jej ręcznie, zmiany przepadną przy następnym generowaniu.
 
-Wersja gry **1.23.0** - 211 przedmiotów. Przedmiotu nie da się postawić jak bloku; owoce i nasiona posadzone na ziemi (PPM) wyrastają w krzak albo drzewo, narzędzia przyspieszają kopanie.
+Wersja gry **1.24.0** - 212 przedmiotów. Przedmiotu nie da się postawić jak bloku; owoce i nasiona posadzone na ziemi (PPM) wyrastają w krzak albo drzewo, narzędzia przyspieszają kopanie.
 
 
 ## Drewno
@@ -78,12 +78,12 @@ Wersja gry **1.23.0** - 211 przedmiotów. Przedmiotu nie da się postawić jak b
 
 | | Nazwa | W komendach | Najważniejsze |
 |---|---|---|---|
-| <img src="ikony/dish_vegetable_stew.png" width="32" height="32" alt=""> | **Gulasz warzywny** | `dish_vegetable_stew` | **Służy też jako:** jedzenie; psuje się bardzo szybko - zjedz w dzień lub dwa |
-| <img src="ikony/dish_pumpkin_soup.png" width="32" height="32" alt=""> | **Zupa dyniowa** | `dish_pumpkin_soup` | **Służy też jako:** jedzenie; psuje się bardzo szybko - zjedz w dzień lub dwa |
-| <img src="ikony/dish_zucchini_stew.png" width="32" height="32" alt=""> | **Duszona cukinia** | `dish_zucchini_stew` | **Służy też jako:** jedzenie; psuje się bardzo szybko - zjedz w dzień lub dwa |
-| <img src="ikony/dish_nut_soup.png" width="32" height="32" alt=""> | **Polewka orzechowa** | `dish_nut_soup` | **Służy też jako:** jedzenie; psuje się bardzo szybko - zjedz w dzień lub dwa |
-| <img src="ikony/dish_compote.png" width="32" height="32" alt=""> | **Kompot owocowy** | `dish_compote` | **Służy też jako:** jedzenie; psuje się bardzo szybko - zjedz w dzień lub dwa |
-| <img src="ikony/dish_mixed_stew.png" width="32" height="32" alt=""> | **Polewka** | `dish_mixed_stew` | **Służy też jako:** jedzenie; psuje się bardzo szybko - zjedz w dzień lub dwa |
+| <img src="ikony/dish_vegetable_stew.png" width="32" height="32" alt=""> | **Gulasz warzywny** | `dish_vegetable_stew` | **Służy też jako:** jedzenie; psuje się bardzo szybko - zjedz w dwa, trzy dni |
+| <img src="ikony/dish_pumpkin_soup.png" width="32" height="32" alt=""> | **Zupa dyniowa** | `dish_pumpkin_soup` | **Służy też jako:** jedzenie; psuje się bardzo szybko - zjedz w dwa, trzy dni |
+| <img src="ikony/dish_zucchini_stew.png" width="32" height="32" alt=""> | **Duszona cukinia** | `dish_zucchini_stew` | **Służy też jako:** jedzenie; psuje się bardzo szybko - zjedz w dwa, trzy dni |
+| <img src="ikony/dish_nut_soup.png" width="32" height="32" alt=""> | **Polewka orzechowa** | `dish_nut_soup` | **Służy też jako:** jedzenie; psuje się bardzo szybko - zjedz w dwa, trzy dni |
+| <img src="ikony/dish_compote.png" width="32" height="32" alt=""> | **Kompot owocowy** | `dish_compote` | **Służy też jako:** jedzenie; psuje się bardzo szybko - zjedz w dwa, trzy dni |
+| <img src="ikony/dish_mixed_stew.png" width="32" height="32" alt=""> | **Polewka** | `dish_mixed_stew` | **Służy też jako:** jedzenie; psuje się bardzo szybko - zjedz w dwa, trzy dni |
 | <img src="ikony/strawberry.png" width="32" height="32" alt=""> | **Truskawki** | `strawberry` | **Posadzony (PPM na ziemi):** Sadzonka truskawki<br>**Skąd:** zbiór (PPM): Krzak truskawki (kilka owoców); zbiór (PPM): Krzak truskawki (pełen owoców); zbiór (PPM): Truskawki (owoce); zniszczony blok: Opadłe owoce (krzak truskawki); zniszczony blok: Opadłe owoce truskawek<br>**Przydaje się do:** Czerwona lampa, Barwnik czerwony<br>**Służy też jako:** jedzenie; składnik do garnka; psuje się szybko; suszenie na słońcu: Suszone owoce |
 | <img src="ikony/blackberry.png" width="32" height="32" alt=""> | **Jeżyny** | `blackberry` | **Posadzony (PPM na ziemi):** Sadzonka jeżyny<br>**Skąd:** zbiór (PPM): Krzak jeżyny (kilka owoców); zbiór (PPM): Krzak jeżyny (pełen owoców); zbiór (PPM): Owoce jeżyny; zniszczony blok: Opadłe owoce (krzak jeżyny); zniszczony blok: Opadłe owoce jeżyny<br>**Przydaje się do:** Fioletowa lampa, Barwnik fioletowy<br>**Służy też jako:** jedzenie; składnik do garnka; psuje się szybko; suszenie na słońcu: Suszone owoce |
 | <img src="ikony/chili_pepper.png" width="32" height="32" alt=""> | **Papryczki chili** | `chili_pepper` | **Posadzony (PPM na ziemi):** Sadzonka papryczki chili<br>**Skąd:** zbiór (PPM): Krzak papryczki chili (kilka papryczek); zbiór (PPM): Krzak papryczki chili (pełen papryczek); zniszczony blok: Opadłe owoce (krzak papryczki chili)<br>**Przydaje się do:** Czerwona lampa, Barwnik czerwony<br>**Służy też jako:** jedzenie; składnik do garnka; psuje się powoli |
@@ -202,7 +202,8 @@ Wersja gry **1.23.0** - 211 przedmiotów. Przedmiotu nie da się postawić jak b
 | <img src="ikony/clay_bowl.png" width="32" height="32" alt=""> | **Gliniana miska** | `clay_bowl` | **Skąd:** wysuszenie na słońcu (wyrzucony w dzień pod gołym niebem): Mokra miska z gliny<br>**Służy też jako:** nabieranie potrawy z garnka |
 | <img src="ikony/fire_starter.png" width="32" height="32" alt=""> | **Starter ognia** | `fire_starter` | **Przepis:** Starter ognia<br>**Służy też jako:** rozpalanie ogniska |
 | <img src="ikony/resin.png" width="32" height="32" alt=""> | **Żywica** | `resin` | **Skąd:** zbiór (PPM): Pień sosny z żywicą<br>**Przydaje się do:** Pochodnia, Lampa |
-| <img src="ikony/compost.png" width="32" height="32" alt=""> | **Kompost** | `compost` | **Służy też jako:** użyźnianie: PPM na ziemi albo trawie robi z niej czarnoziem |
+| <img src="ikony/compost.png" width="32" height="32" alt=""> | **Kompost** | `compost` | **Służy też jako:** użyźnianie: PPM na rozgrzebanej ziemi - pole z kompostem (rośliny rosną szybciej); PPM na ziemi albo trawie - czarnoziem |
+| <img src="ikony/compost_bowl.png" width="32" height="32" alt=""> | **Kompost w misce** | `compost_bowl` | **Służy też jako:** PPM: wysypuje kompost i oddaje miskę (na rozgrzebanej ziemi - od razu ją użyźnia) |
 | <img src="ikony/straw.png" width="32" height="32" alt=""> | **Słoma** | `straw` | **Przepis:** Słoma<br>**Przydaje się do:** Słomiana pościel<br>**Służy też jako:** podpałka (1,25 raza szybsza od trawy) |
 | <img src="ikony/clay_cup.png" width="32" height="32" alt=""> | **Gliniany kubek** | `clay_cup` | **Skąd:** wysuszenie na słońcu (wyrzucony w dzień pod gołym niebem): Mokry kubek z gliny<br>**Przydaje się do:** Kubek ziół na sen, Kubek ziół leczniczych, Kubek ziół wzmacniających |
 | <img src="ikony/axe.png" width="32" height="32" alt=""> | **Siekiera** | `axe` | **Narzędzie:** kopie 3 razy szybciej: drewno<br>**Przepis:** Siekiera<br>**Przydaje się do:** Opał — dąb, Opał — brzoza, Opał — świerk, Opał — sosna, Opał — buk, Opał — lipa, Opał — olcha, Opał — wierzba, Opał — jabłoń, Opał — akacja, Opał — cypryśnik, Opał — wiśnia, Opał — klon, Opał — kosodrzewina, Opał — oliwka, Opał — eukaliptus, Opał — sekwoja, Opał — miłorząb, Opał — jakaranda, Opał — jodła, Opał — baobab, Opał — palma kokosowa, Opał — modrzew, Opał — namorzyn, Opał — puchowiec, Opał — jukka, Opał — osika, Opał — araukaria, Opał — figowiec, Opał — dracena, Opał — cedr, Opał — sosna oścista |

@@ -2,7 +2,7 @@
 
 > Ta strona jest generowana z kodu gry (`python tools/wiki.py`) - nie zmieniaj jej ręcznie, zmiany przepadną przy następnym generowaniu.
 
-Wersja gry **1.23.0** - 737 bloków (do tego 3311 odmian, których nie ma w ekwipunku, np. wieniec zawieszony na boku bloku). Czas kopania dotyczy trybu przygody; w kreatywnym bloki znikają od razu.
+Wersja gry **1.24.0** - 738 bloków (do tego 3311 odmian, których nie ma w ekwipunku, np. wieniec zawieszony na boku bloku). Czas kopania dotyczy trybu przygody; w kreatywnym bloki znikają od razu.
 
 [Ziemia](#ziemia) · [Skały](#skały) · [Drewno](#drewno) · [Budulec](#budulec) · [Rośliny](#rośliny) · [Światło](#światło) · [Meble i ozdoby](#meble-i-ozdoby)
 
@@ -11,8 +11,9 @@ Wersja gry **1.23.0** - 737 bloków (do tego 3311 odmian, których nie ma w ekwi
 | | Nazwa | W komendach | Najważniejsze |
 |---|---|---|---|
 | <img src="ikony/grass.png" width="32" height="32" alt=""> | **Blok trawy** | `grass` | **Kopanie:** 0,6 s (łopatą 0,2 s)<br>**Daje:** Ziemia |
-| <img src="ikony/dirt.png" width="32" height="32" alt=""> | **Ziemia** | `dirt` | **Kopanie:** 0,6 s (łopatą 0,2 s)<br>**Skąd:** zniszczony blok: Blok trawy; zniszczony blok: Rozgrzebana ziemia; wyrasta z: Rozgrzebana ziemia<br>**Przydaje się do:** Ziemia kamienista, Czarnoziem, Ściółka leśna |
+| <img src="ikony/dirt.png" width="32" height="32" alt=""> | **Ziemia** | `dirt` | **Kopanie:** 0,6 s (łopatą 0,2 s)<br>**Skąd:** zniszczony blok: Blok trawy; zniszczony blok: Rozgrzebana ziemia; wyrasta z: Rozgrzebana ziemia; zniszczony blok: Pole z kompostem; wyrasta z: Pole z kompostem<br>**Przydaje się do:** Ziemia kamienista, Czarnoziem, Ściółka leśna |
 | <img src="ikony/tilled_dirt.png" width="32" height="32" alt=""> | **Rozgrzebana ziemia** | `tilled_dirt` | **Kopanie:** 0,6 s (łopatą 0,2 s)<br>**Daje:** Ziemia<br>**Rośnie:** w: Ziemia |
+| <img src="ikony/tilled_compost.png" width="32" height="32" alt=""> | **Pole z kompostem** | `tilled_compost` | **Kopanie:** 0,6 s (łopatą 0,2 s)<br>**Daje:** Ziemia<br>**Rośnie:** w: Ziemia |
 | <img src="ikony/sand.png" width="32" height="32" alt=""> | **Piasek** | `sand` | **Kopanie:** 0,55 s (łopatą 0,18 s)<br>**Przydaje się do:** Piaskowiec, Tynk wapienny |
 | <img src="ikony/water.png" width="32" height="32" alt=""> | **Woda** | `water` | - |
 | <img src="ikony/humus.png" width="32" height="32" alt=""> | **Czarnoziem** | `humus` | **Kopanie:** 0,6 s (łopatą 0,2 s)<br>**Przepis:** Czarnoziem |

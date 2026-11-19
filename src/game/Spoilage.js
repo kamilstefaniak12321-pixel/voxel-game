@@ -10,9 +10,11 @@
 //              (teren nie jest wczytany): temperatura pory roku
 //              (SEASON_TEMPERATURE) i zwykłe tempo skrzyni.
 //
-// Zepsute sztuki zamieniają się w kompost w tym samym miejscu (plecak:
-// w wolnym miejscu plecaka; gdy go nie ma - przepadają). Zepsuta potrawa
-// oddaje miskę.
+//   ziemia   - leżące przedmioty psują się jak w plecaku.
+//
+// Każdy stos ma swoją świeżość (items/freshness.js); gdy spadnie do
+// zera, CAŁY stos zamienia się w kompost w tym samym miejscu - nic nie
+// ginie. Potrawa zamienia się w kompost w misce.
 //
 // Tylko w trybie przygody. W grze ze znajomymi każdy liczy swój plecak,
 // a skrzynie - gospodarz.
@@ -20,9 +22,9 @@
 
 import { DAY_LENGTH_MINUTES } from '../config.js';
 import { seasonAt } from '../sky/Seasons.js';
-import { getFood } from '../items/foods.js';
 import { getItemLabel } from '../items/ItemRegistry.js';
-import { COMPOST, isPerishable, spoilChance, spoiledCount } from '../items/spoilage.js';
+import { isPerishable, freshLoss, spoilsInto } from '../items/spoilage.js';
+import { freshOf } from '../items/freshness.js';
 
 // Co ile dób gry przegląd (godzina gry).
 export const SPOIL_STEP_DAYS = 1 / 24;
@@ -42,7 +44,6 @@ export class Spoilage {
         this.pending = 0;
         // Mnożnik tempa (/psucie tempo) - nie zapisuje się.
         this.speed = 1;
-        this.random = Math.random;
         // Ile sztuk zepsuło się od wejścia do świata.
         this.spoiled = 0;
     }
@@ -77,6 +78,20 @@ export class Spoilage {
         return Number.isFinite(sky) && sky < CELLAR_SKY ? 'cellar' : 'chest';
     }
 
+    // Stos starzeje się o `loss`. Zwraca stos po zmianie: ten sam albo
+    // (gdy się zepsuł) kompost - i wtedy dolicza go do `lost`.
+    age(item, loss, lost) {
+        if (!item || !(loss > 0)) return item;
+        const fresh = freshOf(item) - loss;
+        if (fresh > 0) {
+            item.fresh = fresh;
+            return item;
+        }
+        if (lost) lost.set(item.type, (lost.get(item.type) ?? 0) + item.count);
+        this.spoiled += item.count;
+        return { type: spoilsInto(item.type), count: item.count };
+    }
+
     // Mija `days` dób gry.
     step(days) {
 
@@ -84,22 +99,18 @@ export class Spoilage {
         const here = this.temperature();
         const lost = new Map();
 
-        // --- Plecak ----------------------------------------------------
+        // --- Plecak, siatka wytwarzania i stos pod kursorem --------------
         const inventory = game.inventory;
 
         if (inventory) {
-            for (let index = 0; index < inventory.slots.length; index++) {
-                const item = inventory.get(index);
-                if (!item || !isPerishable(item.type)) continue;
-                const count = spoiledCount(item.count, spoilChance(item.type, days, here, 'pack'), this.random);
-                if (count === 0) continue;
-                inventory.take(index, count);
-                const returns = getFood(item.type)?.returns;
-                if (returns) inventory.add(returns, count);
-                inventory.add(COMPOST, count);
-                lost.set(item.type, (lost.get(item.type) ?? 0) + count);
-                this.spoiled += count;
+            for (const list of [inventory.slots, inventory.craft]) {
+                for (let index = 0; index < list.length; index++) {
+                    const item = list[index];
+                    if (item && isPerishable(item.type)) list[index] = this.age(item, freshLoss(item.type, days, here, 'pack'), lost);
+                }
             }
+            const held = inventory.cursor;
+            if (held && isPerishable(held.type)) inventory.cursor = this.age(held, freshLoss(held.type, days, here, 'pack'), lost);
         }
 
         if (lost.size > 0) {
@@ -109,40 +120,54 @@ export class Spoilage {
             game.achieve?.('spoiled', { count: [...lost.values()].reduce((sum, count) => sum + count, 0) });
         }
 
-        // --- Skrzynie ----------------------------------------------------
-        const chests = game.chests;
-
-        if (!chests || game.net?.isClient) return;
+        // W grze ze znajomymi skrzynie i leżące przedmioty liczy gospodarz.
+        if (game.net?.isClient) return;
 
         const world = game.world;
         const season = SEASON_TEMPERATURE[seasonAt(game.time?.days ?? 0).index];
-        let changed = false;
+        const loadedAt = (x, z) => Boolean(world.getChunk(world.toChunkCoord(Math.floor(x)), world.toChunkCoord(Math.floor(z))));
 
-        for (const chest of chests.chests.values()) {
+        // --- Skrzynie ----------------------------------------------------
+        const chests = game.chests;
 
-            const loaded = Boolean(world.getChunk(world.toChunkCoord(chest.x), world.toChunkCoord(chest.z)));
-            const place = loaded ? this.placeOf(chest) : 'chest';
-            const temperature = loaded ? here : season;
+        if (chests) {
 
-            for (const cells of chest.layers) {
-                for (let cell = 0; cell < cells.length; cell++) {
-                    const item = cells[cell];
-                    if (!item || !isPerishable(item.type)) continue;
-                    const count = spoiledCount(item.count, spoilChance(item.type, days, temperature, place), this.random);
-                    if (count === 0) continue;
-                    // W przegródce zostaje jeden rodzaj rzeczy: gdy psuje się
-                    // cały stos, jego miejsce zajmuje kompost; inaczej zepsute
-                    // sztuki po prostu ubywają (kompost nie ma gdzie leżeć).
-                    if (count >= item.count) cells[cell] = { type: COMPOST, count: item.count };
-                    else item.count -= count;
-                    this.spoiled += count;
-                    changed = true;
+            let changed = false;
+
+            for (const chest of chests.chests.values()) {
+
+                const loaded = loadedAt(chest.x, chest.z);
+                const place = loaded ? this.placeOf(chest) : 'chest';
+                const temperature = loaded ? here : season;
+
+                for (const cells of chest.layers) {
+                    for (let cell = 0; cell < cells.length; cell++) {
+                        const item = cells[cell];
+                        if (!item || !isPerishable(item.type)) continue;
+                        cells[cell] = this.age(item, freshLoss(item.type, days, temperature, place));
+                        if (cells[cell] !== item) changed = true;
+                    }
                 }
+
             }
+
+            if (changed) chests.version++;
 
         }
 
-        if (changed) chests.version++;
+        // --- Przedmioty leżące na ziemi ------------------------------------
+        const drops = game.drops;
+
+        if (drops?.drops) {
+            for (const drop of drops.drops.values()) {
+                if (!isPerishable(drop.type)) continue;
+                const aged = this.age(drop, freshLoss(drop.type, days, loadedAt(drop.x, drop.z) ? here : season, 'pack'));
+                if (aged === drop) continue;
+                drop.type = aged.type;
+                delete drop.fresh;
+                drops.version++;
+            }
+        }
 
     }
 

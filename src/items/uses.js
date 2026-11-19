@@ -28,7 +28,8 @@ const OWN_USES = {
     clay_pot_water: 'gotowanie: postaw na ognisku i wrzuć 2-3 składniki',
     clay_bowl: 'nabieranie potrawy z garnka',
     // Kompost (1.23.0, items/spoilage.js).
-    compost: 'użyźnianie: PPM na ziemi albo trawie robi z niej czarnoziem',
+    compost: 'użyźnianie: PPM na rozgrzebanej ziemi - pole z kompostem (rośliny rosną szybciej); PPM na ziemi albo trawie - czarnoziem',
+    compost_bowl: 'PPM: wysypuje kompost i oddaje miskę (na rozgrzebanej ziemi - od razu ją użyźnia)',
     raft: 'pływanie: PPM na wodzie',
     fire_starter: 'rozpalanie ogniska'
 };

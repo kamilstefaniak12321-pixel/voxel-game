@@ -27,6 +27,9 @@ podpowiadają: *Najpierw rozgrzeb ziemię łopatą*.
 
 ## Szczegóły
 
+- **Pole z kompostem (1.24.0).** PPM kompostem na rozgrzebanej ziemi
+  posypuje ją: rośliny rosną na takim polu półtora raza szybciej
+  ([psucie.md](psucie.md)).
 - **Puste pole zarasta.** Rozgrzebana ziemia, na której nic nie rośnie
   ani nie stoi, po średnio 15 minutach wraca do zwykłej ziemi. Pole
   z rośliną zostaje polem.

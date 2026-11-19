@@ -2,7 +2,7 @@
 
 > Ta strona jest generowana z kodu gry (`python tools/wiki.py`) - nie zmieniaj jej ręcznie, zmiany przepadną przy następnym generowaniu.
 
-Wersja gry **1.23.0** - 110 osiągnięć. Księga osiągnięć: klawisz **L**. Uwaga, spoilery: sekretne osiągnięcia są tu opisane (w grze widać tylko „???”).
+Wersja gry **1.24.0** - 111 osiągnięć. Księga osiągnięć: klawisz **L**. Uwaga, spoilery: sekretne osiągnięcia są tu opisane (w grze widać tylko „???”).
 
 
 ## Zwykłe (10 pkt)
@@ -45,7 +45,8 @@ Wersja gry **1.23.0** - 110 osiągnięć. Księga osiągnięć: klawisz **L**. U
 | <img src="ikony/raspberry.png" width="32" height="32" alt=""> | **Prosto z krzewu** | Zbierz owoce z krzewu jagodowego (np. maliny, porzeczki albo aronię). | „Połowa do koszyka, połowa do buzi. Koszyk nie protestuje.” |
 | <img src="ikony/elderflower.png" width="32" height="32" alt=""> | **Zapach czerwca** | Zerwij płatki dzikiej róży albo kwiaty bzu czarnego z kwitnącego krzewu. | „Krzew zakwitnie jeszcze raz. Owoców z tej gałązki już nie będzie - coś za coś.” |
 | <img src="ikony/redcurrant.png" width="32" height="32" alt=""> | **Własny krzew** | Posadź owoc krzewu jagodowego na rozgrzebanej ziemi. | „Teraz tylko poczekać. Krzew się nie spieszy, ty też nie musisz.” |
-| <img src="ikony/compost.png" width="32" height="32" alt=""> | **Nic się nie marnuje** | Użyźnij ziemię kompostem z zepsutego jedzenia (PPM na ziemi albo trawie). | „Wczoraj kolacja, dziś czarnoziem, za rok maliny.” |
+| <img src="ikony/compost.png" width="32" height="32" alt=""> | **Nic się nie marnuje** | Użyźnij ziemię kompostem z zepsutego jedzenia (PPM kompostem na ziemi, trawie albo rozgrzebanej ziemi). | „Wczoraj kolacja, dziś czarnoziem, za rok maliny.” |
+| <img src="ikony/tilled_compost.png" width="32" height="32" alt=""> | **Posypane z wierzchu** | Posyp rozgrzebaną ziemię kompostem (PPM kompostem na polu). | „Rośliny nie pytają, co to było wcześniej. Po prostu rosną szybciej.” |
 | <img src="ikony/raspberry.png" width="32" height="32" alt=""> | **Dobrze przezimowały** | Doczekaj wiosny, po której twoja roślina daje więcej owoców. | „Nic nie robiłeś przez całą zimę. One - wręcz przeciwnie.” |
 | <img src="ikony/dried_fruit.png" width="32" height="32" alt=""> | **Na czarną godzinę** | Ususz owoce na słońcu (wyrzuć je w dzień pod gołe niebo). | „Latem wydaje się to przesadą. Zimą - przezornością.” |
 | <img src="ikony/clay_pot.png" width="32" height="32" alt=""> | **Coś na ciepło** | Ugotuj potrawę w glinianym garnku nad ogniskiem. | „Woda, ogień i trochę cierpliwości. Reszta to już kuchnia.” |

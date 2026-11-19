@@ -56,7 +56,8 @@ import { getTool, getPlacedBlock, isItemType, getItemLabel } from '../items/Item
 import { STATES, isNight } from './Wellbeing.js';
 import { getFood } from '../items/foods.js';
 import { POT, POT_WATER } from '../items/cooking.js';
-import { COMPOST } from '../items/spoilage.js';
+import { COMPOST, COMPOST_BOWL } from '../items/spoilage.js';
+import { FERTILIZERS, fertilizerOf, isFieldBlock } from '../blocks/fertilizers.js';
 
 // Z czego kompost robi czarnoziem.
 const COMPOSTABLE = ['grass', 'dirt', 'coarse_dirt', 'forest_floor'];
@@ -98,8 +99,9 @@ export class GameInteraction {
             breakPressed = false; placePressed = false; this.mining = null;
         }
 
-        // Kompost (1.23.0): PPM na ziemi albo trawie robi z niej czarnoziem.
-        if (placePressed && this.selectedBlock === COMPOST && this.fertilize(this.currentHit)) {
+        // Kompost (1.23.0, pole od 1.24.0): PPM na rozgrzebanej ziemi - pole z kompostem,
+        // na ziemi albo trawie - czarnoziem; miska z kompostem się opróżnia.
+        if (placePressed && fertilizerOf(this.selectedBlock) && this.fertilize(this.currentHit)) {
             placePressed = false;
         }
 
@@ -229,6 +231,12 @@ export class GameInteraction {
             const type = this.selectedBlock;
 
             const block = type ? getPlacedBlock(type) : null;
+
+            // Kompost w misce: PPM wysypuje kompost i oddaje miskę.
+
+            if (type === COMPOST_BOWL) {
+                this.emptyBowl();
+            }
 
             if (block && isItemType(type) && !this.canPlantAt(this.currentHit, block)) {
 
@@ -898,39 +906,96 @@ export class GameInteraction {
     // tool - narzędzie w ręce: trawa, kwiaty i zioła (pole cut) zostają
     // tylko po ścięciu nożem; tak samo plon rośliny zbieranej nożem.
 
-    // Kompost w ręce i ziemia pod celownikiem: czarnoziem (items/spoilage.js).
-    // Zwraca true, gdy kliknięcie dotyczyło kompostu.
+    // Nawóz w ręce (kompost albo kompost w misce - blocks/fertilizers.js):
+    //   rozgrzebana ziemia (albo roślina, która na niej rośnie) - pole
+    //     z nawozem: rośliny rosną na nim szybciej,
+    //   ziemia albo trawa - czarnoziem,
+    // Zwraca true, gdy kliknięcie dotyczyło nawozu.
 
     fertilize(hit) {
 
-        if (!hit?.hit) {
+        const tool = fertilizerOf(this.selectedBlock);
+
+        if (!tool) {
             return false;
         }
 
-        const { x, y, z, type } = hit.block;
+        let target = hit?.hit ? hit.block : null;
 
-        if (type === 'humus') {
-            this.onNotice?.('To już czarnoziem');
-            return true;
+        // Roślina na polu: nawóz trafia pod nią.
+
+        if (target && isPlantId(this.world.getBlockId(target.x, target.y, target.z)) &&
+            isFieldBlock(this.world.getBlock(target.x, target.y - 1, target.z))) {
+            target = { x: target.x, y: target.y - 1, z: target.z, type: this.world.getBlock(target.x, target.y - 1, target.z) };
         }
 
-        if (!COMPOSTABLE.includes(type)) {
+        const type = target?.type;
+
+        const into = type === FIELD_BLOCK ? FERTILIZERS[tool.fertilizer].field : COMPOSTABLE.includes(type) ? 'humus' : null;
+
+        if (!into) {
+
+            if (type === 'humus' || isFieldBlock(type)) {
+                this.onNotice?.('Ta ziemia jest już użyźniona');
+                return true;
+            }
+
+            // (Miska opróżnia się zwykłym PPM - niżej, gdy kliknięcie
+            // nie trafiło w skrzynię, ognisko ani nic innego.)
             return false;
+
         }
 
-        if (!this.world.setBlock(x, y, z, 'humus')) {
+        if (!this.world.setBlock(target.x, target.y, target.z, into)) {
             return false;
         }
 
         if (this.mode === 'adventure') {
             this.inventory.take(this.inventory.selected, 1);
+            if (tool.returns) this.giveOrDrop(tool.returns, 1);
         }
 
-        this.playBlockSound('place', 'humus', hit.block);
+        this.playBlockSound('place', into, target);
         this.swingArm();
-        this.achieve('composted', { from: type });
+        this.achieve('composted', { from: type, into });
 
         return true;
+
+    }
+
+
+    // Kompost w misce (zepsuta potrawa): PPM wysypuje kompost i oddaje
+    // miskę - jedna miska na kliknięcie. Zwraca true, gdy się udało.
+
+    emptyBowl() {
+
+        const item = this.inventory.selectedItem;
+
+        if (this.mode !== 'adventure' || item?.type !== COMPOST_BOWL) {
+            return false;
+        }
+
+        this.inventory.take(this.inventory.selected, 1);
+        this.giveOrDrop(COMPOST, 1);
+        this.giveOrDrop(fertilizerOf(COMPOST_BOWL).returns, 1);
+
+        this.sounds?.play('harvest', { volume: 0.4, pitch: 0.8 });
+        this.swingArm();
+
+        return true;
+
+    }
+
+
+    // Do ekwipunku, a gdy nie ma miejsca - na ziemię przed gracza.
+
+    giveOrDrop(type, count) {
+
+        const left = this.inventory.add(type, count);
+
+        if (left > 0) {
+            this.drops?.throwFromPlayer(type, left);
+        }
 
     }
 
@@ -1064,7 +1129,9 @@ export class GameInteraction {
             return false;
         }
 
-        if (this.world.getBlock(target.x, target.y - 1, target.z) === FIELD_BLOCK) {
+        const below = this.world.getBlock(target.x, target.y - 1, target.z);
+
+        if (below === FIELD_BLOCK || isFieldBlock(below)) {
             return true;
         }
 

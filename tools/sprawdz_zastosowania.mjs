@@ -116,7 +116,7 @@ const OWN_USE = { raft: 'stawia się na wodzie', fire_starter: 'rozpala ognisko'
     // Gotowanie (1.20.0, items/cooking.js).
     clay_pot: 'nabiera wody', clay_pot_water: 'staje na ognisku', clay_bowl: 'nabiera potrawę z garnka',
     // Kompost (1.23.0, items/spoilage.js).
-    compost: 'użyźnia ziemię' };
+    compost: 'użyźnia ziemię', compost_bowl: 'kompost i miska' };
 
 function usesOf(type) {
     const uses = [];

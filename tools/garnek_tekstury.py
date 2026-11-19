@@ -6,7 +6,11 @@ z tools/tekstury_gliny.py:
   - wet_clay_bowl, clay_bowl               - miska mokra i sucha,
   - dish_<potrawa>                         - miska z potrawą (kolor potrawy
                                              jak w items/cookingData.js),
-  - dried_fruit                            - suszone owoce (1.21.0).
+  - dried_fruit                            - suszone owoce (1.21.0),
+  - compost, compost_bowl                  - kompost (1.23.0) i kompost w misce (1.24.0),
+  - tilled_compost                         - pole posypane kompostem (1.24.0):
+                                             bruzdy z teren.png, ciemniejsze,
+                                             z okruchami kompostu.
 
 Kafelki trafiają do arkusza rosliny.png w wolne miejsca atlasu (te same
 co rośliny niskie - tools/niskie_tekstury.py).
@@ -165,6 +169,48 @@ def compost():
     return image
 
 
+def compost_bowl():
+    """Kompost w misce (1.24.0): miska z ciemną grudą, bez pary."""
+    image = bowl()
+    dark, mid, light = (38, 26, 18), (66, 46, 30), (98, 72, 46)
+    put = lambda x, y, c: image.putpixel((x, y), (*c, 255))
+    for x in range(4, 12):
+        put(x, 6, mid)
+    for x in range(3, 12):
+        put(x, 7, dark if x > 8 else mid)
+    for x in range(5, 11):
+        put(x, 5, light if x < 8 else mid)
+    for x in range(6, 9):
+        put(x, 4, mid)
+    put(7, 4, light)
+    put(9, 6, (70, 84, 40))
+    put(5, 7, (150, 120, 70))
+    put(10, 5, dark)
+    return image
+
+
+def tilled_compost():
+    """Pole posypane kompostem: bruzdy rozgrzebanej ziemi przyciemnione,
+    z ciemnymi grudkami i paroma jasnymi okruchami."""
+    import json
+    root = Path(__file__).resolve().parent.parent
+    data = json.loads((root / 'assets/textures/atlas.json').read_text(encoding='utf-8'))
+    region = data['regions']['tilled_dirt']
+    with Image.open(root / 'assets/textures' / data['sheets'][region['sheet']]['file']) as sheet:
+        image = sheet.convert('RGBA').crop((region['x'], region['y'], region['x'] + 16, region['y'] + 16))
+    for y in range(16):
+        for x in range(16):
+            r, g, b, a = image.getpixel((x, y))
+            image.putpixel((x, y), (int(r * 0.62), int(g * 0.6), int(b * 0.58), a))
+    clumps = [(2, 1), (9, 2), (13, 5), (5, 6), (1, 9), (10, 9), (6, 12), (13, 13), (3, 14)]
+    for x, y in clumps:
+        image.putpixel((x, y), (30, 20, 14, 255))
+        image.putpixel(((x + 1) % 16, y), (44, 30, 20, 255))
+    for (x, y), color in {(6, 3): (150, 120, 70), (12, 10): (70, 84, 40), (4, 11): (176, 160, 130), (14, 1): (120, 60, 44)}.items():
+        image.putpixel((x, y), (*color, 255))
+    return image
+
+
 def textures():
     out = {
         'clay_pot': pot(),
@@ -175,6 +221,8 @@ def textures():
     }
     out['dried_fruit'] = dried_fruit()
     out['compost'] = compost()
+    out['compost_bowl'] = compost_bowl()
+    out['tilled_compost'] = tilled_compost()
     for name, colors in DISHES.items():
         out[f'dish_{name}'] = bowl(colors)
     return out

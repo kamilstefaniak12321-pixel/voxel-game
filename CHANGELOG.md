@@ -11,6 +11,41 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 1.24.0 - Świeżość stosów, kompost w misce i pole z kompostem
+
+PR #177.
+
+Poprawki psucia się jedzenia z 1.23.0, według pomysłów Kamila.
+
+- **Każdy stos ma swoją świeżość** i widać ją w opisie: po najechaniu
+  myszą w ekwipunku i skrzyni („Świeże - zepsuje się za ok. 3 dni")
+  oraz w oknie statusu. Stos psuje się cały naraz (dotąd sztuki psuły
+  się losowo, po jednej).
+- **Nowe czasy**: w plecaku miękkie owoce leżą 5 dób, jabłka i warzywa
+  12, pieczone 6, potrawy z garnka 3 (przy 15°C; ciepło, mróz, skrzynia
+  i piwniczka działają jak dotąd).
+- **Łączenie stosów**: zbierane i podnoszone jedzenie dokłada się samo
+  tylko do stosu o takiej samej świeżości - inne trafia na puste
+  miejsce. Stos położony ręcznie na stos łączy się zawsze, a świeżość
+  wychodzi ze średniej.
+- **Nic nie ginie**: zepsuty stos zamienia się w kompost w tym samym
+  miejscu - także w skrzyni i przy pełnym plecaku.
+- **Kompost w misce**: zepsuta potrawa zamienia się w kompost w misce.
+  PPM wysypuje kompost i oddaje miskę.
+- **Pole z kompostem**: kompostem da się posypać rozgrzebaną ziemię
+  (także pod rosnącą rośliną). Rośliny rosną na takim polu półtora raza
+  szybciej, a po zimie chętniej dają większy plon. Gra jest gotowa na
+  kolejne rodzaje kompostu.
+- Jedzenie leżące na ziemi też się psuje.
+- Komenda `/psucie swiezosc`, osiągnięcie *Posypane z wierzchu*, nowe
+  punkty w poradniku.
+- Stare zapisy: jedzenie, które już jest w plecaku i skrzyniach, liczy
+  się jako świeże.
+
+Znane braki: świeżości nie widać na samej ikonce stosu, a na telefonie
+tylko w oknie statusu; zepsute jedzenie nie szkodzi. Reszta
+w `docs/psucie.md`.
+
 ## 1.23.0 - Psucie się jedzenia
 
 PR #176.

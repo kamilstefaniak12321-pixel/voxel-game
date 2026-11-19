@@ -29,6 +29,8 @@ import { coveredItem, insertIntoChest, putIntoCell, takeFromCell, visibleItem } 
 import { skyUniforms } from '../sky/skyShader.js';
 import { SETTINGS_DEFAULTS } from '../settings/Settings.js';
 import { bindings, formatKeys, mouseCode } from '../input/bindings.js';
+import { makeItem, withCount, sameBatch, blend } from '../items/freshness.js';
+import { freshText } from '../items/spoilage.js';
 
 // ------------------------------------------------------------
 // EKWIPUNEK (klawisz E)
@@ -353,13 +355,13 @@ export class InventoryScreen {
             return;
         }
 
-        let left = this.game.inventory.add(item.type, item.count);
+        let left = this.game.inventory.addItem(item);
 
         if (left > 0) {
-            left = this.storeInGrid({ type: item.type, count: left });
+            left = this.storeInGrid(withCount(item, left));
         }
 
-        this.cursor = left > 0 ? { type: item.type, count: left } : null;
+        this.cursor = left > 0 ? withCount(item, left) : null;
 
     }
 
@@ -378,9 +380,9 @@ export class InventoryScreen {
                 return 0;
             }
 
-            if (grid[i].type === item.type && grid[i].count < STACK_SIZE) {
+            if (grid[i].count < STACK_SIZE && sameBatch(grid[i], item.type, item.fresh)) {
                 const moved = Math.min(item.count, STACK_SIZE - grid[i].count);
-                grid[i].count += moved;
+                blend(grid[i], moved, item.fresh);
                 item.count -= moved;
             }
 
@@ -1003,9 +1005,9 @@ export class InventoryScreen {
 
         if (this.cursor) {
 
-            const left = inventory.add(this.cursor.type, this.cursor.count);
+            const left = inventory.addItem(this.cursor);
 
-            this.cursor = left > 0 ? { type: this.cursor.type, count: left } : null;
+            this.cursor = left > 0 ? withCount(this.cursor, left) : null;
 
         }
 
@@ -1473,11 +1475,11 @@ export class InventoryScreen {
 
         const thrown = Math.min(count, item.count);
 
-        if (!this.game.drops.throwFromPlayer(item.type, thrown)) {
+        if (!this.game.drops.throwFromPlayer(item.type, thrown, item.fresh)) {
             return false;
         }
 
-        this.cursor = item.count > thrown ? { type: item.type, count: item.count - thrown } : null;
+        this.cursor = item.count > thrown ? withCount(item, item.count - thrown) : null;
 
         return true;
 
@@ -1518,11 +1520,11 @@ export class InventoryScreen {
 
         const count = all ? item.count : 1;
 
-        if (!this.game.drops.throwFromPlayer(item.type, count)) {
+        if (!this.game.drops.throwFromPlayer(item.type, count, item.fresh)) {
             return;
         }
 
-        slots.set(this.hover.index, item.count > count ? { type: item.type, count: item.count - count } : null);
+        slots.set(this.hover.index, item.count > count ? withCount(item, item.count - count) : null);
 
         playUi('item_place', { pitch: 0.8 });
 
@@ -1571,7 +1573,7 @@ export class InventoryScreen {
             const item = visibleItem(chest, cell);
 
             if (item) {
-                const left = this.game.inventory.add(item.type, item.count);
+                const left = this.game.inventory.addItem(item);
                 const moved = item.count - left;
                 if (moved > 0) takeFromCell(chest, cell, moved);
             }
@@ -1620,9 +1622,9 @@ export class InventoryScreen {
 
                 if (item) {
 
-                    const left = inventory.add(item.type, item.count);
+                    const left = inventory.addItem(item);
 
-                    slots.set(index, left > 0 ? { type: item.type, count: left } : null);
+                    slots.set(index, left > 0 ? withCount(item, left) : null);
 
                 }
 
@@ -1638,9 +1640,9 @@ export class InventoryScreen {
 
                 // Otwarta skrzynia: z ekwipunku do skrzyni.
 
-                const left = insertIntoChest(this.chest, item.type, item.count);
+                const left = insertIntoChest(this.chest, item.type, item.count, item.fresh);
 
-                slots.set(index, left > 0 ? { type: item.type, count: left } : null);
+                slots.set(index, left > 0 ? withCount(item, left) : null);
 
                 if (left < item.count) {
                     this.game.chests?.changed();
@@ -1668,16 +1670,18 @@ export class InventoryScreen {
 
                 const half = Math.ceil(item.count / 2);
 
-                this.cursor = { type: item.type, count: half };
+                this.cursor = withCount(item, half);
 
-                slots.set(index, item.count - half > 0 ? { type: item.type, count: item.count - half } : null);
+                slots.set(index, item.count - half > 0 ? withCount(item, item.count - half) : null);
 
             }
             else if (held && (!item || (item.type === held.type && item.count < STACK_SIZE))) {
 
                 // Jedna sztuka do miejsca.
 
-                slots.set(index, { type: held.type, count: (item?.count ?? 0) + 1 });
+                // (Ręczne dokładanie: świeżość ze średniej - items/freshness.js.)
+
+                slots.set(index, item ? blend(item, 1, held.fresh) : withCount(held, 1));
 
                 held.count--;
 
@@ -1716,7 +1720,7 @@ export class InventoryScreen {
 
             const moved = Math.min(held.count, STACK_SIZE - item.count);
 
-            item.count += moved;
+            blend(item, moved, held.fresh);
             held.count -= moved;
 
             if (held.count <= 0) {
@@ -1773,7 +1777,7 @@ export class InventoryScreen {
 
         craftFromGrid(inventory);
 
-        this.cursor = { type: result.type, count: (held?.count ?? 0) + result.count };
+        this.cursor = held ? blend(held, result.count) : makeItem(result.type, result.count);
 
         this.crafted(result, 1);
 
@@ -1807,6 +1811,24 @@ export class InventoryScreen {
     }
 
 
+    // Opis świeżości stosu (1.24.0): ile jeszcze poleży tu, gdzie leży
+    // (place: 'pack', 'chest', 'cellar'). Lista elementów do podpowiedzi.
+
+    freshNote(item, place = 'pack') {
+
+        const spoilage = this.game.spoilage;
+
+        if (!item || !spoilage?.active) {
+            return [];
+        }
+
+        const text = freshText(item, spoilage.temperature(), place);
+
+        return text ? [el('div', 'inv-tooltip-note', text[0].toUpperCase() + text.slice(1))] : [];
+
+    }
+
+
     // Podpowiedź: polska nazwa i nazwa bloku w komendach; na przepisie -
     // składniki (✔ masz, ✖ brakuje).
 
@@ -1834,6 +1856,7 @@ export class InventoryScreen {
                 if (!this.tooltip.hidden) {
                     this.tooltip.replaceChildren(
                         el('div', 'inv-tooltip-title', `${getItemLabel(item.type)}${item.count > 1 ? ` x${item.count}` : ''}`),
+                        ...this.freshNote(item, this.game.spoilage?.placeOf(this.chest)),
                         ...(covered ? [el('div', 'inv-tooltip-note', `Pod spodem: ${getItemLabel(covered.type)}${covered.count > 1 ? ` x${covered.count}` : ''}`)] : [])
                     );
                     this.placeTooltip(event);
@@ -1848,6 +1871,10 @@ export class InventoryScreen {
         let label = '';
 
         let recipe = null;
+
+        // Stos pod kursorem myszy (do opisu świeżości).
+
+        let hovered = null;
 
         const kind = slot?.dataset.kind;
 
@@ -1864,7 +1891,9 @@ export class InventoryScreen {
 
             this.hover = { kind, index };
 
-            label = this.container(kind).get(index)?.type ?? '';
+            hovered = this.container(kind).get(index);
+
+            label = hovered?.type ?? '';
 
             if (!label && kind === 'craft' && this.ghost) {
                 label = recipeCells(this.ghost)[index] ?? '';
@@ -1916,7 +1945,7 @@ export class InventoryScreen {
             this.tooltip.replaceChildren(ingredientLabel(label));
         }
         else {
-            this.tooltip.replaceChildren(getItemLabel(label), el('span', 'inv-tooltip-id', label));
+            this.tooltip.replaceChildren(getItemLabel(label), el('span', 'inv-tooltip-id', label), ...this.freshNote(hovered));
         }
 
         this.placeTooltip(event);

@@ -648,10 +648,20 @@ export const ACHIEVEMENTS = [
         id: 'composted',
         tier: 'common',
         title: 'Nic się nie marnuje',
-        task: 'Użyźnij ziemię kompostem z zepsutego jedzenia (PPM na ziemi albo trawie).',
+        task: 'Użyźnij ziemię kompostem z zepsutego jedzenia (PPM kompostem na ziemi, trawie albo rozgrzebanej ziemi).',
         comment: 'Wczoraj kolacja, dziś czarnoziem, za rok maliny.',
         icon: 'compost',
         on: 'composted'
+    },
+    {
+        id: 'field_composted',
+        tier: 'common',
+        title: 'Posypane z wierzchu',
+        task: 'Posyp rozgrzebaną ziemię kompostem (PPM kompostem na polu).',
+        comment: 'Rośliny nie pytają, co to było wcześniej. Po prostu rosną szybciej.',
+        icon: 'tilled_compost',
+        on: 'composted',
+        when: (data) => data.into === 'tilled_compost'
     },
     {
         id: 'orchard_grown',

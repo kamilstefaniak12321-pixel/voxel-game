@@ -37,7 +37,7 @@ import { plantShrub } from '../world/shrubs/Shrubs.js';
 import { POT_WATER, BOWL, COOK_SECONDS, DISHES, DISH_NAMES } from '../items/cooking.js';
 import { fruitCalendar } from '../blocks/fruitSeasons.js';
 import { seasonSerial } from '../game/Orchard.js';
-import { spoilChance, spoilText, temperatureFactor, isPerishable } from '../items/spoilage.js';
+import { spoilText, temperatureFactor, isPerishable, daysLeft, daysText, freshText } from '../items/spoilage.js';
 import { newPot, cookPot } from '../game/CookingState.js';
 import { newCampfire, addFirewood } from '../game/CampfireState.js';
 import { LOW_PLANTS, LOW_PLANT_NAMES, SPHAGNUM, lowPlantType, lowPlantInfo, LOW_STAGE_SECONDS, LOW_PLANT_FIRST_ID, LOW_PLANT_END_ID } from '../blocks/lowPlants.js';
@@ -1306,8 +1306,8 @@ export const WORLD_COMMANDS = [
     {
         name: 'psucie',
         aliases: ['spoilage', 'psuje'],
-        usage: '/psucie | /psucie tempo <mnożnik> | /psucie dni <ile>',
-        description: 'Psucie się jedzenia (1.23.0): temperatura i tempo tu, gdzie stoisz; "tempo" przyspiesza albo wyłącza psucie (0), "dni" od razu psuje jedzenie tak, jakby minęło tyle dób gry.',
+        usage: '/psucie | /psucie tempo <mnożnik> | /psucie dni <ile> | /psucie swiezosc <procent>',
+        description: 'Psucie się jedzenia (1.23.0): temperatura i tempo tu, gdzie stoisz, i świeżość stosu w ręce; "tempo" przyspiesza albo wyłącza psucie (0), "dni" od razu starzeje jedzenie tak, jakby minęło tyle dób gry, "swiezosc" ustawia świeżość stosu w ręce.',
 
         run(args, { game }) {
 
@@ -1316,15 +1316,12 @@ export const WORLD_COMMANDS = [
             const temperature = spoilage.temperature();
 
             if (!word) {
-                const held = game.selectedBlock;
-                const half = (type, place) => {
-                    const chance = spoilChance(type, 1, temperature, place);
-                    return chance > 0 ? `${(Math.log(0.5) / Math.log(1 - chance)).toFixed(1).replace('.', ',')} doby` : 'nigdy';
-                };
+                const held = game.inventory.selectedItem;
+                const left = (type, place) => daysText(daysLeft(type, 1, temperature, place));
                 return `Psucie: ${spoilage.active ? 'włączone' : 'wyłączone (tylko tryb przygody)'}, tempo ×${spoilage.speed}, ` +
                     `temperatura ${Math.round(temperature)}°C (mnożnik ×${temperatureFactor(temperature).toFixed(2).replace('.', ',')}). ` +
-                    `Maliny tutaj: połowa po ${half('raspberry', 'pack')} w plecaku, ${half('raspberry', 'chest')} w skrzyni, ${half('raspberry', 'cellar')} w piwniczce. ` +
-                    (held && spoilText(held) ? `W ręce: ${getItemLabel(held)} - ${spoilText(held)}${isPerishable(held) ? ` (połowa po ${half(held, 'pack')})` : ''}. ` : '') +
+                    `Świeże maliny poleżą tutaj: ${left('raspberry', 'pack')} w plecaku, ${left('raspberry', 'chest')} w skrzyni, ${left('raspberry', 'cellar')} w piwniczce. ` +
+                    (held && spoilText(held.type) ? `W ręce: ${getItemLabel(held.type)} - ${isPerishable(held.type) ? `${freshText(held, temperature)} (świeżość ${Math.round((held.fresh ?? 1) * 100)}%)` : spoilText(held.type)}. ` : '') +
                     `Zepsuło się od wejścia do świata: ${spoilage.spoiled}.`;
             }
 
@@ -1340,10 +1337,19 @@ export const WORLD_COMMANDS = [
                 if (days <= 0 || days > 64) throw new CommandError('Liczba dób: od 0 do 64');
                 const before = spoilage.spoiled;
                 spoilage.step(days);
-                return `Minęło ${days} dób: zepsuło się ${spoilage.spoiled - before} sztuk (plecak i skrzynie).`;
+                return `Minęło ${days} dób: zepsuło się ${spoilage.spoiled - before} sztuk (plecak, skrzynie i przedmioty na ziemi).`;
             }
 
-            throw new CommandError('Użycie: /psucie | /psucie tempo <mnożnik> | /psucie dni <ile>');
+            if (word === 'swiezosc') {
+                const percent = parseNumber(args[1], 'świeżość w procentach');
+                if (percent < 1 || percent > 100) throw new CommandError('Świeżość: od 1 do 100 (procent)');
+                const held = game.inventory.selectedItem;
+                if (!held || !isPerishable(held.type)) throw new CommandError('Weź do ręki jedzenie, które się psuje');
+                held.fresh = percent / 100;
+                return `${getItemLabel(held.type)} w ręce: świeżość ${percent}% - ${freshText(held, temperature)}.`;
+            }
+
+            throw new CommandError('Użycie: /psucie | /psucie tempo <mnożnik> | /psucie dni <ile> | /psucie swiezosc <procent>');
 
         }
     },

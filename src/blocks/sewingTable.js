@@ -22,6 +22,11 @@ export function sewingTableId(facing, part) {
 
 export const sewingTableType = (facing, part) => facing === 'north' && part === 'a' ? SEWING_TABLE : `${SEWING_TABLE}_${facing}_${part}`;
 
+// Obrót wierzchu (ChunkMesher: obrót UV ściany górnej, ćwierćobroty), żeby
+// miarka leżała przy przednim brzegu stołu w każdym kierunku (na obrazku
+// jest przy dolnym brzegu - w świecie bez obrotu to strona +z).
+export const SEWING_TOP_TURN = { north: 2, east: 1, south: 0, west: 3 };
+
 function variants() {
     const out = [];
     for (const facing of SHAPE_FACINGS) for (const part of ['a', 'b']) {
@@ -42,7 +47,7 @@ function variants() {
             drops: SEWING_TABLE,
             ...(type === SEWING_TABLE ? {} : { inventory: false, creative: false })
         }]);
-        registerShape(id, { type, kind: 'sewing', facing, part });
+        registerShape(id, { type, kind: 'sewing', facing, part, topTurn: SEWING_TOP_TURN[facing] });
     }
     return out;
 }

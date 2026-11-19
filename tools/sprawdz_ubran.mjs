@@ -30,6 +30,9 @@ registerHooks({
         if (url.endsWith('/src/rendering/CarpenterTableRenderer.js')) {
             return { format: 'module', shortCircuit: true, source: 'export class CarpenterTableRenderer {}; export const TABLE_ROTATION = {};' };
         }
+        if (url.endsWith('/src/rendering/TextureAtlas.js')) {
+            return { format: 'module', shortCircuit: true, source: 'export const getAtlasUV = () => ({ uMin: 0, uMax: 1, vMin: 0, vMax: 1 });' };
+        }
         if (url.endsWith('/src/rendering/SewingTableRenderer.js')) {
             return { format: 'module', shortCircuit: true, source: 'export class SewingTableRenderer {}' };
         }
@@ -86,6 +89,13 @@ const manifest = textureManifest();
     check(variants.length === 8 && variants.every((block) => block.id >= 15500 && block.id <= 15507 && block.drops === 'sewing_table' && block.pick === 'sewing_table' &&
         shapeInfo(block.id)?.kind === 'sewing') && variants.filter((block) => block.inventory !== false).length === 1, 'Osiem odmian (4 kierunki x 2 części), w ekwipunku jedna');
     check(sewingTableId('north', 'a') === 15500 && sewingTableId('east', 'b') === 15500 + 1 * 2 + 1 && R.getBlockDefinition(R.getBlockTypeById(sewingTableId('west', 'b'))).textures.top === 'sewing_table_top_b', 'Numery i tekstury części');
+    const { itemShapeFaces } = await import('../src/rendering/ShapeGeometry.js');
+    const { SEWING_TOP_TURN } = await import('../src/blocks/sewingTable.js');
+    const iconFaces = itemShapeFaces('sewing_table');
+    check(iconFaces.filter((face) => face.texture === 'sewing_table_top').length === 1 && iconFaces.filter((face) => face.texture === 'sewing_table_top_b').length === 1 &&
+        iconFaces.filter((face) => face.texture === 'birch_planks').length > 20, 'Ikonka i model w ręce: stół z blatem z miarką');
+    check(new Set(Object.values(SEWING_TOP_TURN)).size === 4 && shapeInfo(sewingTableId('west', 'a')).topTurn === SEWING_TOP_TURN.west &&
+        read('src/rendering/ChunkMesher.js').includes('info.topTurn'), 'Miarka zawsze przy przednim brzegu (obrót wierzchu)');
     for (const [facing, part] of [['south', 'a'], ['east', 'b']]) {
         check(JSON.stringify(shapeBoxes(sewingTableId(facing, part), 'render')) === JSON.stringify(shapeBoxes(shapeId('oak', 'table', { facing, part }), 'render')) &&
             shapeBoxes(sewingTableId(facing, part), 'render').length > 1, `Kształt jak stół stolarski (${facing}, ${part})`);

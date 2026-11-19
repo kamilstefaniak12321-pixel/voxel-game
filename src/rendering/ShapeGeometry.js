@@ -12,6 +12,7 @@ import * as THREE from 'three';
 import { shapeBoxes, SIDE_BITS } from '../world/ShapeBoxes.js';
 import { shapeId, shapeItem, shapeBaseType, WOOD_SHAPE_BLOCKS } from '../blocks/woodShapes.js';
 import { BEDDINGS, beddingOf, matId } from '../blocks/bedding.js';
+import { SEWING_TABLE, sewingTableId } from '../blocks/sewingTable.js';
 import { getAtlasUV } from './TextureAtlas.js';
 
 const FACE_CORNERS = {
@@ -145,6 +146,7 @@ export function matFaces(bedding) {
 export function itemShapeFaces(type) {
     const bedding = beddingOf(type);
     if (bedding) return matFaces(bedding);
+    if (type === SEWING_TABLE) return sewingTableFaces();
     const item = shapeItem(type);
     if (!item) return null;
     const { wood, kind } = item;
@@ -167,6 +169,16 @@ export function itemShapeFaces(type) {
             : shapeId(wood, kind);
     const mask = kind === 'fence' ? SIDE_BITS.east | SIDE_BITS.west : 0;
     return boxFaces(shapeBoxes(id, 'render', mask), texture);
+}
+
+// Stół krawiecki (1.27.0): kształt stołu stolarskiego, boki z desek
+// brzozowych, blat z miarką (część A) i z kredą (część B). Przód na +z.
+function sewingTableFaces() {
+    const part = (name, offset) => boxFaces(shapeBoxes(sewingTableId('south', name), 'render'), 'birch_planks', offset)
+        .map((face) => face.normal[1] === 1 && face.vertices.every(([, y]) => y > 0.99)
+            ? { ...face, texture: name === 'a' ? 'sewing_table_top' : 'sewing_table_top_b' } : face);
+    return [...part('a', [-1, 0, 0]), ...part('b', [0, 0, 0])]
+        .map((face) => ({ ...face, vertices: face.vertices.map(([x, y, z]) => [x + 0.5, y, z]) }));
 }
 
 // Geometria z atlasu (UV przeliczone na kafelek tekstury).

@@ -1,4 +1,4 @@
-# Paczka tekstur - szablon (Various Roots 1.22.0)
+# Paczka tekstur - szablon (Various Roots 1.23.0)
 
 Oryginalne tekstury gry, każda w osobnym pliku. Zrób z nich własną paczkę:
 
@@ -195,6 +195,7 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/coconut_palm/stripped_side.png` | Okorowany pień palmy kokosowej |
 | `bloki/coconut_palm/stripped_top.png` | Okorowany pień palmy kokosowej |
 | `bloki/coconut_palm_bark.png` | Kora palmy kokosowej |
+| `bloki/compost.png` | Kompost |
 | `bloki/cornflower.png` | Chaber, Krwawnica pospolita |
 | `bloki/crocus.png` | Krokus |
 | `bloki/dandelion.png` | Mniszek |

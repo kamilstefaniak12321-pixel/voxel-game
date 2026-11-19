@@ -30,6 +30,7 @@ więcej niż dotąd - bez kolejnej zmiany zapisu.
 | 14208-14299 | wolne |
 | 14300-14999 | krzewy jagodowe (1.17.0, `src/blocks/shrubs.js`): po 16 numerów na gatunek - liście, pęd / pień, potem po 5 na odmianę (sadzonka, owoce, po zbiorze, kwiaty, niedojrzałe); aronia 14300, porzeczka 14316, agrest 14332, malina 14348, dzika róża 14364, bez czarny 14380, rokitnik 14396, borówka wysoka 14412, zarośla jeżyn 14428, krzew leszczyny 14444 |
 | 15000-15199 | rośliny niskie (1.19.0, `src/blocks/lowPlants.js`): po 8 numerów na roślinę - sadzonka, roślina, kwitnie, niedojrzałe, owoce, pnącze po owocowaniu; żurawina 15000, brusznica 15008, truskawki 15016, poziomka 15024, pnącze dyni 15032, cukinia 15040; od 15048: torfowiec zielony, zielony (kępa), czerwony, czerwony (kępa), chrobotek, dynia, młoda dynia |
+| 15200-15399 | opadłe owoce (1.22.0, `src/blocks/fallenFruit.js`): 15200+ krzaki z 0.50.0 (kolejność `FRUIT_BUSHES`), 15216 + 4 × gatunek + odmiana - krzewy jagodowe, 15300+ rośliny niskie, 15320 jabłoń, 15321 oliwka |
 | 15000-65279 | wolne na przyszłość |
 | 65280-65535 | zarezerwowane dla gry, nigdy w zapisie (np. odcienie trawy dalekiego terenu) |
 

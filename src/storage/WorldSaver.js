@@ -63,6 +63,10 @@ export class WorldSaver {
         this.drops = null;
         this.savedDropVersion = -1;
 
+        // Pamięć sadu (game/Orchard.js, 1.22.0) - ustawia Game po utworzeniu.
+        this.orchard = null;
+        this.savedOrchardVersion = -1;
+
 
         // Czas od ostatniego zapisu i od pierwszej niezapisanej zmiany.
 
@@ -213,6 +217,8 @@ export class WorldSaver {
             if (this.campfires) this.worldInfo.campfires = this.campfires.getState();
             const dropVersion = this.drops?.version ?? 0;
             if (this.drops) this.worldInfo.drops = this.drops.getState();
+            const orchardVersion = this.orchard?.version ?? 0;
+            if (this.orchard) this.worldInfo.orchard = this.orchard.getState();
             const chestVersion = this.chests?.version ?? 0;
             if (this.chests) this.worldInfo.chests = this.chests.getState();
             const tableVersion = this.tables?.version ?? 0;
@@ -231,6 +237,7 @@ export class WorldSaver {
 
             this.savedFireVersion = fireVersion;
             this.savedDropVersion = dropVersion;
+            this.savedOrchardVersion = orchardVersion;
             this.savedRaftVersion = raftVersion;
             this.savedChestVersion = chestVersion;
             this.savedTableVersion = tableVersion;
@@ -278,6 +285,7 @@ export class WorldSaver {
         return this.world.hasUnsavedChanges?.() || this.savedGuests !== this.worldInfo.guests ||
             (this.campfires && this.savedFireVersion !== (this.campfires.version ?? 0)) ||
             (this.drops && this.savedDropVersion !== (this.drops.version ?? 0)) ||
+            (this.orchard && this.savedOrchardVersion !== (this.orchard.version ?? 0)) ||
             (this.rafts && this.savedRaftVersion !== (this.rafts.version ?? 0)) ||
             (this.chests && this.savedChestVersion !== (this.chests.version ?? 0)) ||
             (this.tables && this.savedTableVersion !== (this.tables.version ?? 0));

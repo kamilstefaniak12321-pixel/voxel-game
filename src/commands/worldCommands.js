@@ -1332,7 +1332,8 @@ export const WORLD_COMMANDS = [
             let chunks = 0;
 
             for (const chunk of world.chunks.values()) {
-                if (Math.hypot(chunk.cx * CHUNK_SIZE + 8 - player.pos.x, chunk.cz * CHUNK_SIZE + 8 - player.pos.z) > 40) continue;
+                // (Jak w grze: tylko chunki zmienione przez gracza.)
+                if (!chunk.modified || Math.hypot(chunk.cx * CHUNK_SIZE + 8 - player.pos.x, chunk.cz * CHUNK_SIZE + 8 - player.pos.z) > 40) continue;
                 // "wiosna": od zeszłej zimy do tej wiosny; "opadnij": tak, jakby
                 // była pora, w której nic nie owocuje (zima bez zimujących owoców
                 // liczy się u roślin osobno - Orchard.settle).
@@ -1344,7 +1345,7 @@ export const WORLD_COMMANDS = [
 
             orchard.version++;
 
-            return `Rozliczono ${chunks} chunków: opadło ${total.fallen}, czarnoziem ${total.humus}, sadzonki ${total.saplings}, ` +
+            return `Rozliczono ${chunks} zmienionych chunków: opadło ${total.fallen}, czarnoziem ${total.humus}, sadzonki ${total.saplings}, ` +
                 `większy plon ${total.grown}, rozrosło się ${total.spread}.` + (spring ? '' : ' (Spadają tylko owoce roślin, których pora już minęła.)');
 
         }

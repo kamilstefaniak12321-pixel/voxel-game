@@ -11,6 +11,29 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 1.22.0 - Sad: opadłe owoce i zimowy rozwój
+
+PR #175.
+
+Pomysł Kamila: zima rozstrzyga o następnym roku.
+
+- **Niezebrane owoce opadają**: po swojej porze spadają na ziemię pod
+  krzew i drzewo albo obok rośliny. Opadłe owoce można podnieść.
+- **Wiosną gniją z pożytkiem**: ziemia pod nimi ma szansę zamienić się
+  w czarnoziem, a z części wyrasta sadzonka tej samej rośliny.
+- **Rośliny dojrzewają**: po zimie roślina może dawać o jeden owoc
+  więcej przy każdym zbiorze (najwyżej o 3). Pomaga jej to, że w zeszłym
+  roku zbierano z niej owoce, i czarnoziem pod spodem.
+- **Rośliny niskie się rozrastają**: żurawina, brusznica, truskawki
+  i poziomki po zimie zajmują wolne miejsce obok.
+- Dotyczy roślin w terenie zmienionym przez gracza - posadzonych
+  i tych, z których zbierał.
+- Dwa osiągnięcia (*Dobrze przezimowały*, *Samosiejka*), komenda `/sad`,
+  nowe punkty w poradniku.
+
+Znane braki: w grze ze znajomymi pamięć sadu ma tylko gospodarz; premii
+nie widać na roślinie. Reszta w `docs/sad.md`.
+
 ## 1.21.0 - Owocowanie w porach roku
 
 PR #174.

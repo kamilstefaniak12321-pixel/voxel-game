@@ -72,6 +72,9 @@ const TO_HUMUS = ['grass', 'dirt', 'coarse_dirt', 'forest_floor', 'tilled_dirt']
 const FALLEN = new Map();
 for (const definition of Object.values(BLOCK_TYPES)) if (definition.fallen) FALLEN.set(definition.id, definition.fallen);
 
+// Numery bloków "roślina bez owoców", które owocują od nowa.
+const REGROWS = new Set(Object.values(BLOCK_TYPES).filter((definition) => definition.grows).map((definition) => definition.id));
+
 const keyOf = (x, y, z) => `${x},${y},${z}`;
 
 // Numer pory od początku świata (rok * 4 + pora).
@@ -187,7 +190,9 @@ export class Orchard {
 
             if (!info?.fruit) continue;
 
-            plants.push(i);
+            // Rozwija się tylko to, co owocuje od nowa (gałązka z "grows");
+            // zwykłe liście lipy, które kwitną raz, nie mają pamięci.
+            if (REGROWS.has(info.shown[0])) plants.push(i);
 
             if (info.stage === 2 && !info.seasons.includes(season)) fruits.push(i);
 
@@ -234,7 +239,9 @@ export class Orchard {
                 const [x, y, z] = position(i);
                 const id = world.getBlockId(x, y, z);
 
-                if (!plantSeasonInfo(id)?.fruit) continue;
+                const info = plantSeasonInfo(id);
+
+                if (!info?.fruit || !REGROWS.has(info.shown[0])) continue;
 
                 const key = keyOf(x, y, z);
                 const rich = world.getBlockId(x, y - 1, z) === humus;

@@ -1,4 +1,4 @@
-# Paczka tekstur - szablon (Various Roots 1.21.0)
+# Paczka tekstur - szablon (Various Roots 1.22.0)
 
 Oryginalne tekstury gry, każda w osobnym pliku. Zrób z nich własną paczkę:
 
@@ -267,6 +267,27 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/dye_red.png` | Barwnik czerwony |
 | `bloki/dye_white.png` | Barwnik biały |
 | `bloki/dye_yellow.png` | Barwnik żółty |
+| `bloki/fallen_aronia.png` | Opadłe owoce aronii |
+| `bloki/fallen_blackberry.png` | Opadłe owoce (krzak jeżyny), Opadłe owoce jeżyny |
+| `bloki/fallen_blackcurrant.png` | Opadłe owoce porzeczki czarnej |
+| `bloki/fallen_blueberry.png` | Opadłe owoce (krzak borówki), Opadłe owoce borówki wysokiej |
+| `bloki/fallen_chili_pepper.png` | Opadłe owoce (krzak papryczki chili) |
+| `bloki/fallen_cranberry.png` | Opadłe owoce żurawiny |
+| `bloki/fallen_elderberry.png` | Opadłe owoce bzu czarnego |
+| `bloki/fallen_gooseberry.png` | Opadłe owoce agrestu |
+| `bloki/fallen_hazelnut.png` | Opadłe owoce (leszczyna), Opadłe owoce leszczyny |
+| `bloki/fallen_jablon_jablko.png` | Opadłe owoce jabłoni |
+| `bloki/fallen_lingonberry.png` | Opadłe owoce brusznicy |
+| `bloki/fallen_olive_oliwki.png` | Opadłe owoce oliwki |
+| `bloki/fallen_raspberry.png` | Opadłe owoce maliny |
+| `bloki/fallen_red_gooseberry.png` | Opadłe owoce agrestu czerwonego |
+| `bloki/fallen_redcurrant.png` | Opadłe owoce porzeczki czerwonej |
+| `bloki/fallen_rose_hip.png` | Opadłe owoce dzikiej róży |
+| `bloki/fallen_sea_buckthorn_berry.png` | Opadłe owoce rokitnika |
+| `bloki/fallen_strawberry.png` | Opadłe owoce (krzak truskawki), Opadłe owoce truskawek |
+| `bloki/fallen_wild_strawberry.png` | Opadłe owoce poziomki |
+| `bloki/fallen_yellow_raspberry.png` | Opadłe owoce maliny żółtej |
+| `bloki/fallen_zucchini.png` | Opadłe owoce cukinii |
 | `bloki/fern.png` | Paproć, Wywłócznik |
 | `bloki/fir/cone.png` | Szyszka jodły |
 | `bloki/fir/leaves.png` | Igliwie jodły, Igliwie jodły (szyszki odrastają) |

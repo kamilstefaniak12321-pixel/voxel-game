@@ -3,7 +3,8 @@
   - tilled_humus  - rozgrzebany czarnoziem: bruzdy pola w kolorach
                     czarnoziemu,
   - tilled_coarse - rozgrzebana ziemia kamienista: bruzdy w jej kolorach
-                    i kamyki przeniesione z tekstury ziemi kamienistej.
+                    i kamyki w kolorach kamyków ziemi kamienistej (od 1.29.0
+                    wyraźne, 2 x 2 i małe).
 
 Bruzdy bierze z tekstury tilled_dirt (teren.png), kolory - z humus
 i coarse_dirt. Kafelki trafiają do rosliny.png w wolne miejsca atlasu
@@ -54,14 +55,26 @@ def textures():
     furrows, humus, coarse = tile(data, 'tilled_dirt'), tile(data, 'humus'), tile(data, 'coarse_dirt')
     tilled_humus = recolor(furrows, humus)
     tilled_coarse = recolor(furrows, coarse)
-    # Kamyki: szare (mało nasycone) i jasne piksele ziemi kamienistej.
-    limit = light(mean(coarse)) * 1.12
-    for y in range(16):
-        for x in range(16):
-            r, g, b, _ = coarse.getpixel((x, y))
-            if max(r, g, b) - min(r, g, b) < 22 and light((r, g, b)) > limit:
-                tilled_coarse.putpixel((x, y), (r, g, b, 255))
+    # Kamyki (1.29.0 - wyraźniejsze): w kolorach szarych kamyków ziemi
+    # kamienistej, rozsiane po polu; większe 2 x 2 (jasny lewy górny róg,
+    # ciemny prawy dolny) i małe (jasny piksel, pod nim cień).
+    greys = sorted({coarse.getpixel((x, y))[:3] for y in range(16) for x in range(16)
+                    if max(coarse.getpixel((x, y))[:3]) - min(coarse.getpixel((x, y))[:3]) < 60}, key=light)
+    bright = tuple(min(255, int(c * 1.12)) for c in greys[-1])
+    middle = greys[len(greys) // 2]
+    shadow = tuple(int(c * 0.62) for c in greys[0])
+    for x, y in PEBBLES_BIG:
+        for (dx, dy), color in zip(((0, 0), (1, 0), (0, 1), (1, 1)), (bright, middle, middle, shadow)):
+            tilled_coarse.putpixel((x + dx, y + dy), (*color, 255))
+    for x, y in PEBBLES_SMALL:
+        tilled_coarse.putpixel((x, y), (*bright, 255))
+        tilled_coarse.putpixel((x, y + 1), (*shadow, 255))
     return {'tilled_humus': tilled_humus, 'tilled_coarse': tilled_coarse}
+
+
+# Miejsca kamyków na polu kamienistym (lewy górny róg).
+PEBBLES_BIG = [(2, 1), (11, 4), (6, 8), (13, 11), (3, 13)]
+PEBBLES_SMALL = [(8, 2), (14, 1), (1, 6), (9, 12), (12, 7)]
 
 
 if __name__ == '__main__':

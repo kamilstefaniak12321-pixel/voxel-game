@@ -29,7 +29,7 @@ import { coveredItem, insertIntoChest, putIntoCell, takeFromCell, visibleItem } 
 import { skyUniforms } from '../sky/skyShader.js';
 import { SETTINGS_DEFAULTS } from '../settings/Settings.js';
 import { bindings, formatKeys, mouseCode } from '../input/bindings.js';
-import { makeItem, withCount, sameBatch, blend, stackSize } from '../items/freshness.js';
+import { makeItem, withCount, sameBatch, blend, stackSize, freshBar } from '../items/freshness.js';
 import { freshText } from '../items/spoilage.js';
 import { garmentInfo, fitsSlot, lookText, SLOTS as CLOTHING_SLOTS, SLOT_LABELS, GARMENTS } from '../items/clothing.js';
 import { garmentIcon } from './garmentIcons.js';
@@ -88,8 +88,11 @@ const HELP = {
 // Na telefonie (stuknięcia zamiast myszy i klawiszy).
 const HELP_TOUCH = {
     blocks: 'Stuknięcie w blok - weź stos, potem stuknięcie w miejsce paska - połóż | kosz - usuń',
-    inventory: 'Stuknięcie - weź / połóż stos | stuknięcie obok okna - wyrzuć | wynik - wyrób prosto do ekwipunku | 📖 Przepisy - stuknięcie układa składniki w siatce'
+    inventory: 'Stuknięcie - weź / połóż stos | przytrzymanie - opis | stuknięcie obok okna - wyrzuć | wynik - wyrób prosto do ekwipunku | 📖 Przepisy - stuknięcie układa składniki w siatce'
 };
+
+// Ile trzeba przytrzymać palec na stosie, żeby zobaczyć opis (ms, 1.29.0).
+export const LONG_PRESS_MS = 450;
 
 // Księga przepisów otwarta / zamknięta - pamiętane w przeglądarce.
 const BOOK_KEY = 'voxel-game-recipe-book';
@@ -168,7 +171,7 @@ export class InventoryScreen {
         // kursorem było widać w lewym dolnym rogu ekranu (także w menu).
 
         this.cursorElement = el('div', 'inv-cursor');
-        this.cursorElement.append(el('img'), el('span', 'inv-count'));
+        this.cursorElement.append(el('img'), el('span', 'inv-count'), el('span', 'inv-fresh'));
         this.cursorElement.hidden = true;
 
         this.tooltip = el('div', 'inv-tooltip');
@@ -230,6 +233,14 @@ export class InventoryScreen {
         this.root.addEventListener('mousedown', (event) => this.onMouseDown(event));
         this.root.addEventListener('contextmenu', (event) => event.preventDefault());
         this.root.addEventListener('mousemove', (event) => this.onMouseMove(event));
+
+        // Telefon (1.29.0): przytrzymanie palca na stosie pokazuje opis
+        // (nazwa, świeżość, ubranie) - zwykłe stuknięcie dalej bierze
+        // i kładzie stos.
+        this.root.addEventListener('touchstart', (event) => this.onTouchStart(event), { passive: true });
+        this.root.addEventListener('touchmove', () => clearTimeout(this.pressTimer), { passive: true });
+        this.root.addEventListener('touchcancel', () => clearTimeout(this.pressTimer), { passive: true });
+        this.root.addEventListener('touchend', (event) => this.onTouchEnd(event), { passive: false });
 
         // Klawiatura uruchamia przycisk przez click, bez mousedown.
         this.root.addEventListener('click', (event) => {
@@ -340,6 +351,9 @@ export class InventoryScreen {
         this.root.hidden = true;
         this.cursorElement.hidden = true;
         this.tooltip.hidden = true;
+        clearTimeout(this.pressTimer);
+        this.pressShown = false;
+        this.pressed = false;
 
         this.unwatchSettings?.();
         this.unwatchSettings = null;
@@ -696,7 +710,8 @@ export class InventoryScreen {
         slot.dataset.kind = kind;
         slot.dataset.index = index;
 
-        slot.append(el('img'), el('span', 'inv-count'));
+        // Pasek świeżości (1.29.0) - tylko na stosach, które się psują.
+        slot.append(el('img'), el('span', 'inv-count'), el('span', 'inv-fresh'));
 
         return slot;
 
@@ -1150,7 +1165,67 @@ export class InventoryScreen {
 
         count.textContent = item && item.count > 1 ? String(item.count) : '';
 
+        // Pasek świeżości (1.29.0): od zielonego do czerwonego; w trybie
+        // twórczym nic się nie psuje, więc i paska nie ma.
+        const fresh = element.querySelector('.inv-fresh');
+
+        if (fresh) {
+
+            const bar = this.game?.spoilage?.active ? freshBar(item) : null;
+
+            fresh.hidden = !bar;
+
+            if (bar) {
+                fresh.style.setProperty('--fresh', bar.fresh.toFixed(3));
+                fresh.style.setProperty('--fresh-color', bar.color);
+            }
+
+        }
+
     }
+
+    // --------------------------------------------------------
+    // Telefon: przytrzymanie - opis stosu (1.29.0)
+    // --------------------------------------------------------
+
+    onTouchStart(event) {
+
+        clearTimeout(this.pressTimer);
+
+        // Opis z poprzedniego przytrzymania znika przy następnym dotknięciu.
+        if (this.pressShown) {
+            this.pressShown = false;
+            this.tooltip.hidden = true;
+        }
+
+        if (event.touches.length !== 1) {
+            return;
+        }
+
+        const { clientX, clientY } = event.touches[0];
+        const target = event.target;
+
+        this.pressTimer = setTimeout(() => {
+            this.updateTooltip({ target, clientX, clientY });
+            this.pressShown = !this.tooltip.hidden;
+            this.pressed = this.pressShown;
+        }, LONG_PRESS_MS);
+
+    }
+
+
+    onTouchEnd(event) {
+
+        clearTimeout(this.pressTimer);
+
+        // Po przytrzymaniu stos zostaje na miejscu (bez "kliknięcia").
+        if (this.pressed) {
+            event.preventDefault();
+            this.pressed = false;
+        }
+
+    }
+
 
     // --------------------------------------------------------
     // Myszka i klawisze
@@ -2342,7 +2417,7 @@ export class InventoryScreen {
         // Skrzynia - obok (w tym samym pełnym świetle).
 
         if (this.chest && this.chestView) {
-            this.chestView.render(renderer, 160, 0);
+            this.chestView.render(renderer, 160, 0, Boolean(this.game?.spoilage?.active));
         }
 
 

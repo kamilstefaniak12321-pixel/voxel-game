@@ -117,6 +117,7 @@ Współrzędne można podawać względem gracza: `~` (tu, gdzie stoję),
 | `/psucie tempo <mnożnik>` | przyspiesza psucie (np. 50) albo je wyłącza (0); nie zapisuje się |
 | `/psucie dni <ile>` | od razu starzeje jedzenie w plecaku, skrzyniach i na ziemi tak, jakby minęło tyle dób gry (zmienia ekwipunek) |
 | `/psucie swiezosc <procent>` | ustawia świeżość stosu jedzenia w ręce (1-100) - do sprawdzania łączenia stosów i opisu |
+| `/psucie paski` | daje 5 stosów malin o świeżości od 100% do 6% - do obejrzenia pasków świeżości na ikonkach (1.29.0; paski tylko w trybie przygody) |
 | `/zimno` | zimno (1.26.0, `docs/zimno.md`): odczuwalna temperatura tu, gdzie stoisz, rozbita na części (powietrze, schronienie, wiatr, woda, ogień i pochodnie, jedzenie) i wychłodzenie |
 | `/zimno ustaw <0-99>` | ustawia wychłodzenie (30 - chłód, 60 - zmarznięty) |
 | `/zimno zamarznij` | od razu zamienia w bryłę lodu (w grze solo zaraz rusza przyspieszony czas do odwilży) |

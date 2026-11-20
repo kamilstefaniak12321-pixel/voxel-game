@@ -5,6 +5,7 @@ import { blockAtlasTexture } from '../rendering/TextureAtlas.js';
 import { createChestModel, chestLidAngle, CHEST_OPEN_SECONDS } from '../rendering/ChestRenderer.js';
 import { chestCellCenter, chestCellAt, CHEST_INSIDE } from '../rendering/ChestGeometry.js';
 import { CHEST_CELLS, CHEST_COLUMNS, CHEST_LAYERS, CHEST_ROWS, topLayer } from '../game/ChestState.js';
+import { freshBar } from '../items/freshness.js';
 
 // ------------------------------------------------------------
 // OKNO SKRZYNI W EKWIPUNKU (0.81.0, pomysł Kamila)
@@ -264,7 +265,8 @@ export class ChestView {
     // Rysuje skrzynię rendererem podglądu (fragment jego płótna od
     // (x, y) od góry) i kopiuje na płótno okna.
 
-    render(renderer, x, y) {
+    // spoiling - czy jedzenie się psuje (paski świeżości, 1.29.0).
+    render(renderer, x, y, spoiling = false) {
 
         if (!this.chest) {
             return;
@@ -301,14 +303,15 @@ export class ChestView {
         ctx.clearRect(0, 0, CHEST_VIEW_WIDTH, CHEST_VIEW_HEIGHT);
         ctx.drawImage(renderer.domElement, x, y, CHEST_VIEW_WIDTH, CHEST_VIEW_HEIGHT, 0, 0, CHEST_VIEW_WIDTH, CHEST_VIEW_HEIGHT);
 
-        if (reveal > 0.5) this.drawCounts(ctx);
+        if (reveal > 0.5) this.drawCounts(ctx, spoiling);
 
     }
 
 
-    // Liczby sztuk przy widocznych stosach (jak w miejscach ekwipunku).
+    // Liczby sztuk przy widocznych stosach (jak w miejscach ekwipunku)
+    // i paski świeżości pod nimi (1.29.0).
 
-    drawCounts(ctx) {
+    drawCounts(ctx, spoiling = false) {
 
         const font = getComputedStyle(this.canvas).fontFamily || 'monospace';
 
@@ -320,6 +323,7 @@ export class ChestView {
         ctx.textBaseline = 'bottom';
 
         const corner = new THREE.Vector3();
+        const left = new THREE.Vector3();
 
         for (let cell = 0; cell < CHEST_CELLS; cell++) {
 
@@ -328,8 +332,9 @@ export class ChestView {
             if (layer < 0) continue;
 
             const item = this.chest.layers[layer][cell];
+            const bar = spoiling ? freshBar(item) : null;
 
-            if (item.count <= 1) continue;
+            if (item.count <= 1 && !bar) continue;
 
             const card = this.cards[layer * CHEST_CELLS + cell];
 
@@ -337,6 +342,18 @@ export class ChestView {
 
             const px = (corner.x + 1) / 2 * CHEST_VIEW_WIDTH + 2;
             const py = (1 - corner.y) / 2 * CHEST_VIEW_HEIGHT + 2;
+
+            if (bar) {
+                left.set(-CARD / 2, -CARD / 2, 0).applyMatrix4(card.matrixWorld).project(this.camera);
+                const lx = (left.x + 1) / 2 * CHEST_VIEW_WIDTH;
+                const width = Math.max(4, (px - 2 - lx) * 0.62);
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.55)';
+                ctx.fillRect(Math.round(lx + 1), Math.round(py - 4), Math.round(width + 2), 4);
+                ctx.fillStyle = bar.color;
+                ctx.fillRect(Math.round(lx + 2), Math.round(py - 3), Math.max(1, Math.round(width * bar.fresh)), 2);
+            }
+
+            if (item.count <= 1) continue;
 
             ctx.strokeStyle = '#1a0f08';
             ctx.strokeText(String(item.count), px, py);

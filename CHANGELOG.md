@@ -11,6 +11,30 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 1.29.0 - Wygoda
+
+PR #182. (Po 1.28.0 z PR #181 - nowe ikonki owoców; jeśli #181 nie
+zostanie scalony wcześniej, ta wersja zawiera też jego zmiany po
+dołączeniu `main`.)
+
+- **Pasek świeżości** na ikonce stosu: w ekwipunku, w skrzyni, na pasku
+  bloków i na stosie trzymanym kursorem - pełny zielony, coraz krótszy,
+  żółty, na końcu czerwony. Jedzenie prosto z krzaka paska nie ma;
+  w trybie twórczym nie ma pasków. Dwa stosy malin o różnej świeżości
+  widać od razu.
+- **Opis stosu na telefonie**: przytrzymanie palca na miejscu
+  w ekwipunku pokazuje opis (świeżość, ciepło ubrania...), stos zostaje
+  na miejscu.
+- **Ziemia pod celownikiem**: mały napis „Wzrost: pole z kompostem ×1,5
+  · woda ×1,25 = ×1,88" - na polu, na rosnącej roślinie (ziemia pod
+  nią) i na zwykłej ziemi, gdy w ręce jest coś do sadzenia, łopata albo
+  kompost. Zielony na żyznej ziemi, pomarańczowy na jałowej.
+- **Wyraźniejsze kamyki** na rozgrzebanej ziemi kamienistej (większe,
+  z cieniem) - łatwo ją odróżnić od zwykłego pola.
+- Osiągnięcie *Najlepsza grządka* (wyceluj w pole z kompostem przy
+  wodzie). Komenda `/psucie paski` - pięć stosów malin o różnej
+  świeżości.
+
 ## 1.27.0 - Włókna i ubrania
 
 PR #180.

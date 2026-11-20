@@ -20,6 +20,20 @@ w ekwipunku i w skrzyni („Świeże - zepsuje się za ok. 3 dni") oraz
 w oknie statusu, gdy jedzenie jest w ręce. Opis liczy czas dla miejsca,
 w którym stos leży, i temperatury, jaka jest teraz.
 
+**Pasek świeżości** (od 1.29.0): na ikonce stosu w ekwipunku, w skrzyni,
+na pasku bloków i na stosie trzymanym kursorem jest cienki pasek pod
+liczbą sztuk - pełny i zielony dla świeżego jedzenia, coraz krótszy,
+żółty, a na końcu czerwony. Jedzenie prosto z krzaka (powyżej 97%)
+paska nie ma, żeby ekwipunek nie był pełen kresek. W trybie twórczym,
+gdzie nic się nie psuje, pasków nie ma. Dwa stosy malin o różnej
+świeżości widać od razu.
+
+**Na telefonie** opis stosu pokazuje się po przytrzymaniu palca na
+miejscu w ekwipunku (ok. pół sekundy) - stos zostaje na miejscu.
+
+Do obejrzenia pasków: `/psucie paski` daje pięć stosów malin o różnej
+świeżości ([komendy.md](komendy.md)).
+
 **Ile dób gry leży świeże jedzenie** (w plecaku, przy 15°C):
 
 | Jedzenie | Leży |
@@ -133,6 +147,11 @@ starzeje jedzenie od razu tak, jakby minęło tyle dób;
   czas (`advance`).
 - `Inventory.add(typ, ile, od, do, świeżość)`, `addItem(stos)`,
   `insertIntoChest(..., świeżość)`, `Drops.spawn(..., świeżość)`.
+- Pasek świeżości: `freshBar` w `src/items/freshness.js` (od kiedy
+  i jaki kolor), rysują go `InventoryScreen.showItem`, `Hotbar.update`
+  i `ChestView.drawCounts`. Opis po przytrzymaniu palca:
+  `InventoryScreen.onTouchStart` (`LONG_PRESS_MS`). Test:
+  `tools/sprawdz_wygody.mjs`.
 - `src/blocks/fertilizers.js` - nawozy i pola; `GameInteraction.fertilize`
   i `emptyBowl`; mnożnik wzrostu w `PlantGrowth.tick` (`FIELD_GROWTH`).
 
@@ -143,11 +162,9 @@ liście niepsujących się.
 
 ## Czego nie ma (luki)
 
-- Świeżości nie widać na ikonce stosu (np. paska) - tylko w opisie.
-  Dwa stosy malin o różnej świeżości wyglądają tak samo, dopóki się na
-  nie nie najedzie.
-- Na telefonie nie ma najeżdżania myszą: świeżość widać tylko w oknie
-  statusu dla jedzenia w ręce.
+- Pasek świeżości pokazuje świeżość, nie czas: ten sam pasek w piwniczce
+  wystarczy na dłużej niż w plecaku latem. Ile dób zostało - w opisie.
+- Przedmioty leżące na ziemi nie mają paska (nie mają ikonki stosu).
 - Zepsute jedzenie nie szkodzi - po prostu przestaje być jedzeniem.
 - Potrawa ugotowana ze starych składników jest świeża; pieczenie też
   odświeża.

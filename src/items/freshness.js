@@ -45,6 +45,18 @@ export function freshOf(item) {
     return Number.isFinite(item.fresh) ? clamp(item.fresh) : 1;
 }
 
+// Pasek świeżości na ikonce stosu (1.29.0 - ekwipunek, pasek, kursor):
+// null - bez paska (nie psuje się albo prosto z krzaka), inaczej
+// { fresh, color } - kolor od zielonego (świeże) przez żółty do
+// czerwonego (zaraz się zepsuje).
+export const FRESH_BAR_FROM = 0.97;
+
+export function freshBar(item) {
+    const fresh = freshOf(item);
+    if (fresh === undefined || fresh >= FRESH_BAR_FROM) return null;
+    return { fresh, color: `hsl(${Math.round(fresh * 120)}, 80%, 45%)` };
+}
+
 // Nowy stos. fresh pomijane - świeże (dla psujących się); look -
 // wygląd ubrania (pominięty - gładkie, niebarwione).
 export function makeItem(type, count, fresh, look) {

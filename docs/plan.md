@@ -6,18 +6,13 @@ pamięć, nie umowa. Po każdej wydanej wersji wpis przechodzi do
 
 ## Teraz
 
-- **1.27.0 - Włókna i ubrania** ([ubrania.md](ubrania.md)): moczenie
-  lnu i pokrzywy, włókno, sznur, stół krawiecki w świecie (tkanie,
-  wykroje, wzory, barwienie), ubrania na postaci, grzeją w zimnie.
-- **1.28.0 - Nowe ikonki owoców** (prośba Kamila 19.11.2026): wszystkie
-  owoce i orzechy narysowane według czterech kroków (kształt, kontur,
-  cieniowanie, brud); owoce krzaków w ręce i w ekwipunku też z ikonki.
+- **1.29.0 - Wygoda** (PR #182): pasek świeżości na ikonce stosu
+  ([psucie.md](psucie.md)), opis stosu po przytrzymaniu palca na
+  telefonie, napis o ziemi pod celownikiem ([ziemia.md](ziemia.md)),
+  wyraźniejsze kamyki na polu kamienistym.
 
 ## Dalej
 
-- **1.29.0 - Wygoda**: pasek świeżości na ikonce stosu, opis stosu na
-  telefonie, mnożnik ziemi widoczny na polu, wyraźniejsze kamyki na
-  polu kamienistym.
 - **1.30.0 - Pnącza** z paczki Kamila (food_pack_all): winorośl, chmiel,
   kiwi, marakuja, fasola, groch.
 

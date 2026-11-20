@@ -62,10 +62,30 @@ z garnka działania nie mają.
 **Nowe zioła do naparów** ([ziola.md](ziola.md)): **płatki róży** - napar
 na sen, **kwiat czarnego bzu** - napar leczniczy.
 
+### Napis pod celownikiem
+
+(Od 1.29.0.) Pod celownikiem pojawia się mały napis, np. **„Wzrost:
+pole z kompostem ×1,5 · woda ×1,25 = ×1,88"** - zielony, gdy ziemia jest
+żyzna, pomarańczowy, gdy jałowa. Widać go:
+
+- na każdym polu (zwykłym, z kompostem, z czarnoziemu, kamienistym),
+- na rosnącej roślinie (sadzonka, krzak, roślina niska) - liczy się
+  ziemia pod nią,
+- na zwykłej ziemi (trawa, ziemia, czarnoziem, kamienista), gdy w ręce
+  jest coś do sadzenia, łopata albo kompost.
+
+Z pustą ręką na łące napisu nie ma, żeby nie przeszkadzał. Napis liczy
+się przy zmianie celu i co pół sekundy (szukanie wody to kilkadziesiąt
+odczytów bloków), nie w każdej klatce.
+
+**Pole kamieniste** ma od 1.29.0 wyraźniejsze kamyki (większe 2 × 2
+z cieniem i małe) - łatwo je odróżnić od zwykłego pola.
+
 ## Osiągnięcia i komendy
 
 *Czarna bruzda* - rozgrzeb czarnoziem. *Owoc z charakterem* - zjedz
-owoc, który coś daje.
+owoc, który coś daje. *Najlepsza grządka* (1.29.0) - wyceluj
+w pole z kompostem przy wodzie (napis ×1,88).
 
 `/ziemia` - ziemia pod celownikiem (albo pod nogami): rodzaj, mnożnik,
 czy jest woda w pobliżu i ile wychodzi razem.
@@ -82,11 +102,14 @@ czy jest woda w pobliżu i ile wychodzi razem.
 - Efekty owoców: `mend`, `tonic`, `warm` w `src/items/effects.js`,
   przypisanie w `FOODS` (`src/items/foods.js`).
 - Test: `tools/sprawdz_ziemi.mjs`. Tekstury pól: `tools/pola_tekstury.py`.
+- Napis pod celownikiem: `src/ui/SoilHint.js` (`soilHintTarget`,
+  `soilHintText`), test `tools/sprawdz_wygody.mjs`.
 
 ## Czego nie ma (luki)
 
-- Mnożnika nie widać na roślinie ani na polu - tylko komendą `/ziemia`
-  i po kolorze ziemi.
+- Napis pod celownikiem pokazuje mnożnik ziemi i wody, ale nie pory
+  roku ani sadu (zimą rośliny i tak stoją - [pory-owocowania.md](pory-owocowania.md)).
+- Owoców w koronie drzewa napis nie dotyczy (nie stoją na ziemi).
 - Owoce w koronie drzewa i w wysokim krzewie nie stoją na ziemi: ziemia
   i woda nie zmieniają tempa ich dojrzewania. Dotyczy to też drzew -
   na tempo rośnięcia sadzonki ziemia działa, na owocowanie korony nie.

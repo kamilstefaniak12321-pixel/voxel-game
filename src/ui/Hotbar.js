@@ -8,6 +8,8 @@ import {
 
 import { garmentIcon } from './garmentIcons.js';
 
+import { freshBar } from '../items/freshness.js';
+
 // ------------------------------------------------------------
 // PASEK BLOKÓW (na dole ekranu)
 //
@@ -62,7 +64,15 @@ export class Hotbar {
 
             count.className = 'hotbar-count';
 
-            slot.append(image, count);
+            // Pasek świeżości (1.29.0) - stos, który się psuje.
+
+            const fresh = document.createElement('span');
+
+            fresh.className = 'hotbar-fresh';
+
+            fresh.hidden = true;
+
+            slot.append(image, count, fresh);
 
 
             this.slotsElement.appendChild(slot);
@@ -86,14 +96,17 @@ export class Hotbar {
 
 
     // Wywoływane co klatkę: items = miejsca paska ({ type, count }
-    // albo null = puste miejsce), selected = numer wybranego miejsca.
+    // albo null = puste miejsce), selected = numer wybranego miejsca,
+    // spoiling - czy jedzenie się psuje (pasek świeżości, 1.29.0).
 
-    update(items, selected) {
+    update(items, selected, spoiling = false) {
 
         const slots = items.map((item) => item?.type ?? null);
 
-        // (Ubranie: też jego wygląd - ikonka w kolorach, 1.27.0.)
-        const slotsKey = items.map((item) => (item ? `${item.type}:${item.count}${item.look ? `:${item.look.pattern}.${item.look.main}.${item.look.accent}` : ''}` : '')).join(',');
+        // (Ubranie: też jego wygląd - ikonka w kolorach, 1.27.0; jedzenie -
+        // świeżość z dokładnością do setnej, 1.29.0.)
+        const bars = items.map((item) => (spoiling ? freshBar(item) : null));
+        const slotsKey = items.map((item, i) => (item ? `${item.type}:${item.count}${item.look ? `:${item.look.pattern}.${item.look.main}.${item.look.accent}` : ''}${bars[i] ? `~${bars[i].fresh.toFixed(2)}` : ''}` : '')).join(',');
 
         const slotsChanged = slotsKey !== this.shownSlots;
         const selectionChanged = selected !== this.shownSelected;
@@ -122,7 +135,16 @@ export class Hotbar {
                 const slot = this.slotElements[i];
                 const image = slot.firstChild;
 
-                slot.lastChild.textContent = items[i] && items[i].count > 1 ? String(items[i].count) : '';
+                slot.children[1].textContent = items[i] && items[i].count > 1 ? String(items[i].count) : '';
+
+                const fresh = slot.children[2];
+
+                fresh.hidden = !bars[i];
+
+                if (bars[i]) {
+                    fresh.style.setProperty('--fresh', bars[i].fresh.toFixed(3));
+                    fresh.style.setProperty('--fresh-color', bars[i].color);
+                }
 
                 const icon = type ? (items[i].look ? garmentIcon(this.icons, items[i], () => { this.shownSlots = null; }) : this.icons.get(type)) : null;
 

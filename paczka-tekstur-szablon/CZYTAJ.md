@@ -1,4 +1,4 @@
-# Paczka tekstur - szablon (Various Roots 1.28.0)
+# Paczka tekstur - szablon (Various Roots 1.29.0)
 
 Oryginalne tekstury gry, każda w osobnym pliku. Zrób z nich własną paczkę:
 

@@ -10,6 +10,7 @@ import { MenuBackdrop } from './menu/MenuBackdrop.js';
 import { TEXTS } from './ui/texts.js';
 import { Settings } from './settings/Settings.js';
 import { Hotbar } from './ui/Hotbar.js';
+import { SoilHint } from './ui/SoilHint.js';
 import { createBlockIcons } from './ui/BlockIcons.js';
 import { installUiTextureSheets } from './ui/UiTextureSheets.js';
 import { createChatControl } from './app/ChatControl.js';
@@ -1365,6 +1366,7 @@ function closeWorld() {
 
     // Menu pokazuje postać bez ubrań z tego świata.
     setWornClothes([]);
+    soilHint.hide();
 
     diagnostics.breadcrumb('world.closed', 'Zakończono rozgrywkę w świecie.');
     void diagnostics.flush();
@@ -1491,9 +1493,11 @@ function animate(now) {
 
     // Pasek bloków na dole ekranu.
 
-    hotbar.update(game.inventory.slots.slice(0, HOTBAR_SIZE), game.inventory.selected);
+    hotbar.update(game.inventory.slots.slice(0, HOTBAR_SIZE), game.inventory.selected, Boolean(game.spoilage?.active));
 
     statusPanel.update(dt, game);
+
+    soilHint.update(game, dt, state === 'playing' && game.cameraMode !== 'front');
 
     tutorialPanel.update(game);
 
@@ -1604,6 +1608,9 @@ const hotbar = new Hotbar(
     document.getElementById('hotbar'),
     blockIcons
 );
+
+// Ziemia pod celownikiem (1.29.0): jak szybko rosną tu rośliny.
+const soilHint = new SoilHint();
 
 let diagnosticErrorsShown = diagnostics.status().totalErrorOccurrences;
 let diagnosticNoticeAt = -Infinity;

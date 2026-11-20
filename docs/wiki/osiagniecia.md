@@ -2,7 +2,7 @@
 
 > Ta strona jest generowana z kodu gry (`python tools/wiki.py`) - nie zmieniaj jej ręcznie, zmiany przepadną przy następnym generowaniu.
 
-Wersja gry **1.28.0** - 121 osiągnięć. Księga osiągnięć: klawisz **L**. Uwaga, spoilery: sekretne osiągnięcia są tu opisane (w grze widać tylko „???”).
+Wersja gry **1.29.0** - 122 osiągnięć. Księga osiągnięć: klawisz **L**. Uwaga, spoilery: sekretne osiągnięcia są tu opisane (w grze widać tylko „???”).
 
 
 ## Zwykłe (10 pkt)
@@ -66,6 +66,7 @@ Wersja gry **1.28.0** - 121 osiągnięć. Księga osiągnięć: klawisz **L**. U
 | <img src="ikony/shirt_linen.png" width="32" height="32" alt=""> | **Krawiec** | Uszyj ubranie na stole krawieckim: płótno, krój i wzór. | „Rękawy nierówne, ale za to własne.” |
 | <img src="ikony/dye_red.png" width="32" height="32" alt=""> | **Kolorowo** | Zabarw ubranie - przy szyciu albo później, na gotowym. | „Teraz cię widać z daleka.” |
 | <img src="ikony/tilled_humus.png" width="32" height="32" alt=""> | **Czarna bruzda** | Rozgrzeb łopatą czarnoziem - na takim polu rośliny rosną szybciej. | „Ziemia tak dobra, że aż szkoda po niej chodzić.” |
+| <img src="ikony/tilled_compost.png" width="32" height="32" alt=""> | **Najlepsza grządka** | Wyceluj w ziemię, na której rośliny rosną najszybciej: pole z kompostem przy wodzie (napis pod celownikiem: ×1,88). | „Teraz tylko czekać. Najlepiej z herbatą.” |
 | <img src="ikony/rose_hip.png" width="32" height="32" alt=""> | **Owoc z charakterem** | Zjedz owoc, który coś daje: dziką różę, żurawinę, brusznicę, aronię, rokitnik, czarną porzeczkę, czarny bez albo chili. | „Babcia miała rację. Jak zwykle.” |
 | <img src="ikony/roasted_apple.png" width="32" height="32" alt=""> | **Kolacja przy ognisku** | Upiecz coś nad płonącym ogniskiem (trzymaj PPM z jedzeniem). | „Lekko przypalone. Czyli idealne.” |
 | <img src="ikony/stone.png" width="32" height="32" alt=""> | **Grawitacja działa** | Stłucz nogę, spadając z wysokości. | „Ziemia była bliżej, niż się wydawało. A potem nagle bardzo blisko.” |

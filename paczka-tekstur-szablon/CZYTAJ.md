@@ -1,4 +1,4 @@
-# Paczka tekstur - szablon (Various Roots 1.28.0)
+# Paczka tekstur - szablon (Various Roots 1.30.0)
 
 Oryginalne tekstury gry, każda w osobnym pliku. Zrób z nich własną paczkę:
 
@@ -312,6 +312,8 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/flower_wreath.png` | Wianek z kwiatów |
 | `bloki/forest_floor_side.png` | Ściółka leśna |
 | `bloki/forest_floor_top.png` | Ściółka leśna |
+| `bloki/garden_pole.png` | Młoda winorośl, Winorośl, Winorośl (zielone grona), Winorośl (winogrona), Młody chmiel, Chmiel, Chmiel (zielone szyszki), Chmiel (dojrzałe szyszki), Młode kiwi, Pnącze kiwi, Pnącze kiwi (kwitnie), Pnącze kiwi (owoce), Młoda marakuja, Marakuja, Marakuja (kwitnie), Marakuja (zielone owoce), Marakuja (owoce) |
+| `bloki/garden_pole_top.png` | Młoda winorośl, Winorośl, Winorośl (zielone grona), Winorośl (winogrona), Młody chmiel, Chmiel, Chmiel (zielone szyszki), Chmiel (dojrzałe szyszki), Młode kiwi, Pnącze kiwi, Pnącze kiwi (kwitnie), Pnącze kiwi (owoce), Młoda marakuja, Marakuja, Marakuja (kwitnie), Marakuja (zielone owoce), Marakuja (owoce) |
 | `bloki/ginkgo/leaves.png` | Liście miłorzębu |
 | `bloki/ginkgo/leaves_variant.png` | Liście miłorzębu — jasne złoto |
 | `bloki/ginkgo/log_side.png` | Pień miłorzębu |
@@ -381,7 +383,11 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/item_elderberry.png` | Owoce bzu czarnego |
 | `bloki/item_elderflower.png` | Kwiat bzu czarnego |
 | `bloki/item_gooseberry.png` | Agrest |
+| `bloki/item_grapes.png` | Winogrona |
+| `bloki/item_hop_cone.png` | Szyszka chmielu |
+| `bloki/item_kiwi.png` | Kiwi |
 | `bloki/item_lingonberry.png` | Borówki brusznice |
+| `bloki/item_passion_fruit.png` | Marakuja |
 | `bloki/item_pumpkin_seeds.png` | Pestki dyni |
 | `bloki/item_pumpkin_slice.png` | Kawałek dyni |
 | `bloki/item_raspberry.png` | Maliny |
@@ -791,6 +797,7 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/olive/stripped_side.png` | Okorowany pień oliwki |
 | `bloki/olive/stripped_top.png` | Okorowany pień oliwki |
 | `bloki/olive_bark.png` | Kora oliwki |
+| `bloki/pergola_slats.png` | Młoda winorośl, Winorośl, Winorośl (zielone grona), Winorośl (winogrona), Młody chmiel, Chmiel, Chmiel (zielone szyszki), Chmiel (dojrzałe szyszki), Młode kiwi, Pnącze kiwi, Pnącze kiwi (kwitnie), Pnącze kiwi (owoce), Młoda marakuja, Marakuja, Marakuja (kwitnie), Marakuja (zielone owoce), Marakuja (owoce) |
 | `bloki/pickaxe.png` | Kilof |
 | `bloki/pickaxe_basalt.png` | Kilof bazaltowy |
 | `bloki/pickaxe_granite.png` | Kilof granitowy |
@@ -1109,6 +1116,26 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/vest_bast.png` | Kamizelka z łyka |
 | `bloki/vest_linen.png` | Kamizelka lniana |
 | `bloki/vest_nettle.png` | Kamizelka pokrzywowa |
+| `bloki/vine_grape_leaves.png` | Winorośl |
+| `bloki/vine_grape_ripe.png` | Winorośl (winogrona) |
+| `bloki/vine_grape_unripe.png` | Winorośl (zielone grona) |
+| `bloki/vine_grape_young.png` | Młoda winorośl |
+| `bloki/vine_hop_leaves.png` | Chmiel |
+| `bloki/vine_hop_ripe.png` | Chmiel (dojrzałe szyszki) |
+| `bloki/vine_hop_unripe.png` | Chmiel (zielone szyszki) |
+| `bloki/vine_hop_young.png` | Młody chmiel |
+| `bloki/vine_kiwi_flower.png` | Pnącze kiwi (kwitnie) |
+| `bloki/vine_kiwi_hang.png` | - |
+| `bloki/vine_kiwi_leaves.png` | Pnącze kiwi |
+| `bloki/vine_kiwi_ripe.png` | Pnącze kiwi (owoce) |
+| `bloki/vine_kiwi_young.png` | Młode kiwi |
+| `bloki/vine_passion_fruit_flower.png` | Marakuja (kwitnie) |
+| `bloki/vine_passion_fruit_hang.png` | - |
+| `bloki/vine_passion_fruit_leaves.png` | Marakuja |
+| `bloki/vine_passion_fruit_ripe.png` | Marakuja (owoce) |
+| `bloki/vine_passion_fruit_unripe.png` | Marakuja (zielone owoce) |
+| `bloki/vine_passion_fruit_young.png` | Młoda marakuja |
+| `bloki/vine_trellis.png` | Kratka, Młoda winorośl, Winorośl, Winorośl (zielone grona), Winorośl (winogrona), Młody chmiel, Chmiel, Chmiel (zielone szyszki), Chmiel (dojrzałe szyszki), Młode kiwi, Pnącze kiwi, Pnącze kiwi (kwitnie), Pnącze kiwi (owoce), Młoda marakuja, Marakuja, Marakuja (kwitnie), Marakuja (zielone owoce), Marakuja (owoce) |
 | `bloki/water.png` | Woda, Płynąca woda |
 | `bloki/wet_clay_bowl.png` | Mokra miska z gliny |
 | `bloki/wet_clay_brick.png` | Mokra cegła z gliny |

@@ -216,11 +216,29 @@ check(F.fruitCalendar().some(([label]) => label === 'Marakuja'), 'Kalendarz: mar
 check(FOODS.grapes && FOODS.kiwi && FOODS.passion_fruit && !FOODS.hop_cone, 'Winogrona, kiwi, marakuja - jedzenie; chmiel - nie');
 check(GROUPS.herbs_calm.types.includes('hop_cone'), 'Szyszki chmielu: napar na sen');
 
+// --- Przepisy, osiągnięcia, komenda, dzikie pnącza ----------------------------------
+
+const { RECIPES } = await import('../src/crafting/recipes.js');
+const { ACHIEVEMENTS } = await import('../src/achievements/list.js');
+for (const type of ['vine_trellis', 'garden_pole', 'pergola']) check(RECIPES.some((recipe) => recipe.result[0] === type), `${type}: przepis`);
+const byId = Object.fromEntries(ACHIEVEMENTS.map((entry) => [entry.id, entry]));
+check(byId.vine_planted.when({ vine: 'grape' }) && !byId.vine_planted.when({ type: 'shrub_raspberry_sapling' }), 'Osiągnięcie: Na podporze');
+check(byId.grape_harvest.when({ item: 'grapes', type: 'vine_grape_ripe_north' }), 'Osiągnięcie: Winobranie');
+check(byId.hop_garden.when({ item: 'hop_cone', type: 'vine_hop_ripe_pole' }) && !byId.hop_garden.when({ item: 'hop_cone', type: 'vine_hop_ripe_north' }), 'Osiągnięcie: Chmielnik - z tyczki');
+check(byId.under_pergola.when({ item: 'kiwi', type: 'vine_kiwi_ripe_roof' }) && !byId.under_pergola.when({ item: 'kiwi', type: 'vine_kiwi_ripe_trellis' }), 'Osiągnięcie: Pod pergolą');
+const commands = read('src/commands/worldCommands.js');
+check(commands.includes("name: 'pnacza'") && commands.includes('vineGallery(player, world)') && read('docs/komendy.md').includes('/pnacza galeria'), 'Komenda /pnacza (galeria, daj, znajdz) w komendy.md');
+const generator = read('src/world/terrain/RealisticGenerator.js');
+check(generator.includes('this.decorateVines(chunk') && /const WILD_VINES = \{/.test(generator), 'Dzikie pnącza na pniach');
+const { BIOMES } = await import('../src/world/terrain/Biomes.js');
+for (const key of ['deciduous', 'beech', 'birch', 'maple_forest', 'olive_grove', 'savanna', 'rainforest', 'eucalyptus_forest', 'mangrove']) check(BIOMES[key], `Biom ${key} istnieje`);
+
 // --- Kod i dokumentacja -----------------------------------------------------------
 
 check(read('src/rendering/ChunkMesher.js').includes('cutoutShapes.push(lx, y, lz, id)'), 'Kształty z prześwitami rysowane z roślinami');
 check(read('src/interaction/BlockBreaker.js').includes('vineLeftover('), 'Zniszczenie zostawia podporę');
 check(read('src/game/PlantGrowth.js').includes('climbVine(this.world, x, y, z)'), 'Wzrost: wspinanie');
-check(read('docs/pnacza.md').includes('po podporze'), 'docs/pnacza.md');
+check(read('docs/pnacza.md').includes('po podporze') && read('docs/pnacza.md').includes('## Czego nie ma (luki)') && !read('docs/pnacza.md').includes('w budowie'), 'docs/pnacza.md: zasady i luki');
+check(read('docs/ziola.md').includes('szyszki chmielu') && read('docs/numery-blokow.md').includes('15600-15999'), 'Zioła i numery bloków');
 
 console.log(`OK: pnącza - ${checks} sprawdzeń (bloki, kształty, sadzenie, wspinanie po murze, kratce, tyczce i pergoli, pory roku).`);

@@ -45,6 +45,8 @@ import { spoilText, temperatureFactor, isPerishable, daysLeft, daysText, freshTe
 import { newPot, cookPot } from '../game/CookingState.js';
 import { newCampfire, addFirewood } from '../game/CampfireState.js';
 import { LOW_PLANTS, LOW_PLANT_NAMES, SPHAGNUM, lowPlantType, lowPlantInfo, LOW_STAGE_SECONDS, LOW_PLANT_FIRST_ID, LOW_PLANT_END_ID } from '../blocks/lowPlants.js';
+import { VINES, VINE_NAMES, VINE_FIRST_ID, VINE_END_ID, VINE_STAGE_SECONDS, vineType, vineInfoById } from '../blocks/vines.js';
+import { MOUNT_OFFSET } from '../game/VineGrowth.js';
 import { hedgehogHome, findLeafCell } from '../game/Hedgehogs.js';
 import { HEDGEHOG_VARIANT_WEIGHTS } from '../world/animals/Hedgehog.js';
 import { getTreeShowcase, undoTreeShowcase, startTreeShowcase } from '../world/trees/TreeShowcase.js';
@@ -470,6 +472,86 @@ function plantLowGallery(player, world) {
         'ostatni: torfowce i chrobotek), w każdym od lewej kolejne etapy - od sadzonki po owoce. PPM na owocach - zbiór.';
 
 }
+
+// --- Pnącza (/pnacza, 1.30.0) ---------------------------------
+
+// Galeria pnączy przed graczem: mur z winoroślą, kratki z marakują,
+// tyczki z chmielem i pergola z kiwi - w każdej wszystkie etapy.
+function vineGallery(player, world) {
+
+    const { forwardX, forwardZ, rightX, rightZ } = lookAxes(player);
+    const y = Math.floor(player.pos.y);
+    const at = (right, ahead) => [Math.floor(player.pos.x) + rightX * right + forwardX * ahead, Math.floor(player.pos.z) + rightZ * right + forwardZ * ahead];
+    const set = (right, up, ahead, type) => { const [x, z] = at(right, ahead); world.setBlock(x, y + up, z, type); };
+
+    // Płaskie pnącze przed murem przylega do niego (w stronę patrzenia).
+    const wallMount = Object.keys(MOUNT_OFFSET).find((mount) => MOUNT_OFFSET[mount][0] === forwardX && MOUNT_OFFSET[mount][2] === forwardZ);
+    const trellis = forwardX === 0 ? 'vine_trellis' : 'vine_trellis_z';
+    const trellisMount = forwardX === 0 ? 'trellis' : 'trellis_z';
+
+    // Plac: trawa, nad nią pusto.
+    for (let right = -11; right <= 11; right++) for (let ahead = 3; ahead <= 9; ahead++) {
+        const [x, z] = at(right, ahead);
+        world.setBlock(x, y - 1, z, 'grass');
+        for (let up = 0; up < 7; up++) world.clearBlock(x, y + up, z);
+    }
+
+    // Mur 3 x 5 i winorośl: łodyga, liście, zielone grona, winogrona.
+    const grape = ['young', ...VINES.grape.stages];
+    for (let right = -10; right <= -8; right++) for (let up = 0; up < 5; up++) set(right, up, 6, 'red_clay_bricks');
+    for (let right = -10; right <= -8; right++) for (let up = 0; up < 4; up++) set(right, up, 5, vineType('grape', grape[Math.min(up, 3)], wallMount));
+
+    // Kratki 3 x 2 z marakują.
+    const passion = ['young', ...VINES.passion_fruit.stages];
+    passion.forEach((stage, k) => set(-6 + (k % 3), Math.floor(k / 3), 5, vineType('passion_fruit', stage, trellisMount)));
+    set(-4, 1, 5, trellis);
+
+    // Tyczki z chmielem: łodyga, liście, zielone i dojrzałe szyszki.
+    ['young', ...VINES.hop.stages].forEach((stage, k) => {
+        for (let up = 0; up < 5; up++) set(-1 + k, up, 5, up <= k + 1 ? vineType('hop', stage, 'pole') : 'garden_pole');
+    });
+
+    // Pergola 3 x 3 na czterech tyczkach (wysokość 3) z kiwi.
+    for (const [right, ahead] of [[5, 4], [7, 4], [5, 6], [7, 6]]) {
+        set(right, 0, ahead, vineType('kiwi', 'leaves', 'pole'));
+        set(right, 1, ahead, vineType('kiwi', 'leaves', 'pole'));
+        set(right, 2, ahead, 'garden_pole');
+    }
+    const kiwi = VINES.kiwi.stages;
+    for (let right = 5; right <= 7; right++) for (let ahead = 4; ahead <= 6; ahead++) {
+        set(right, 3, ahead, vineType('kiwi', kiwi[(right + ahead) % kiwi.length], 'roof'));
+    }
+    set(9, 3, 5, 'pergola');
+
+    return 'Galeria pnączy: od lewej mur z winoroślą, kratki z marakują, tyczki z chmielem i pergola z kiwi - w każdej kolejne etapy. ' +
+        'PPM na dojrzałych owocach - zbiór (poza porą roku owoców nie widać: /pora lato).';
+
+}
+
+// Najbliższe pnącze (we wczytanych chunkach): { x, y, z, type, distance }.
+function nearestVine(world, center, species) {
+
+    const layer = CHUNK_SIZE * CHUNK_SIZE;
+    let best = null;
+
+    for (const chunk of world.chunks.values()) {
+        const baseX = chunk.cx * CHUNK_SIZE, baseZ = chunk.cz * CHUNK_SIZE;
+        for (let i = chunk.solidBelow * layer; i < chunk.maxY * layer; i++) {
+            const id = chunk.blocks[i];
+            if (id < VINE_FIRST_ID || id >= VINE_END_ID) continue;
+            const info = vineInfoById(id);
+            if (!info || (species && info.species !== species)) continue;
+            const x = baseX + (i % CHUNK_SIZE), z = baseZ + Math.floor((i % layer) / CHUNK_SIZE);
+            const distance = Math.hypot(x + 0.5 - center.x, z + 0.5 - center.z);
+            if (!best || distance < best.distance) best = { x, y: Math.floor(i / layer), z, type: getBlockTypeById(id), distance };
+        }
+    }
+
+    return best;
+
+}
+
+const vineByWord = (word) => VINE_NAMES.find((species) => simplify(species) === simplify(word) || simplify(VINES[species].label) === simplify(word)) ?? null;
 
 // Najbliższa roślina niska (we wczytanych chunkach): { x, y, z, type, distance }.
 function nearestLowPlant(world, center, species) {
@@ -1663,6 +1745,47 @@ export const WORLD_COMMANDS = [
             }
 
             throw new CommandError('Użycie: /niskie | /niskie galeria | /niskie znajdz [roślina]');
+
+        }
+    },
+
+    {
+        name: 'pnacza',
+        aliases: ['vines', 'pnacze'],
+        usage: '/pnacza | /pnacza galeria | /pnacza daj | /pnacza znajdz [pnącze]',
+        description: 'Pnącza (1.30.0): winorośl, chmiel, kiwi i marakuja - lista, galeria etapów na murze, kratkach, tyczkach i pergoli, podpory i owoce do sadzenia albo najbliższe dzikie pnącze.',
+
+        run(args, { player, world, game }) {
+
+            const word = simplify(args[0] ?? '');
+
+            if (!word) {
+                return `Pnącza (${VINE_NAMES.length}): ` + VINE_NAMES.map((species) => {
+                    const vine = VINES[species];
+                    return `${species} - ${vine.label} (do ${vine.height} bloków, sadzi się: ${getItemLabel(vine.item).toLowerCase()})`;
+                }).join('; ') + `. Rosną po podporze: mur, kratka, tyczka, pergola. Etap trwa średnio ${VINE_STAGE_SECONDS} s (szybciej: /krzaki tempo). ` +
+                    'Galeria: /pnacza galeria, podpory i owoce: /pnacza daj, najbliższe dzikie: /pnacza znajdz.';
+            }
+
+            if (['galeria', 'gallery', 'pokaz'].includes(word)) {
+                return vineGallery(player, world);
+            }
+
+            if (['daj', 'give'].includes(word)) {
+                const kit = [['vine_trellis', 16], ['garden_pole', 16], ['pergola', 16], ...VINE_NAMES.map((species) => [VINES[species].item, 8])];
+                for (const [type, count] of kit) game.inventory.add(type, count);
+                return `Dano: ${kit.map(([type, count]) => `${count} × ${getItemLabel(type).toLowerCase()}`).join(', ')}.`;
+            }
+
+            if (['znajdz', 'find'].includes(word)) {
+                const species = args[1] === undefined ? null : vineByWord(args[1]);
+                if (args[1] !== undefined && !species) throw new CommandError(`Nie znam pnącza "${args[1]}". Lista: /pnacza.`);
+                const found = nearestVine(world, player.pos, species);
+                if (!found) return `We wczytanym terenie nie rośnie ${species ? VINES[species].label.toLowerCase() : 'żadne pnącze'} (dziko: na pniach w lasach liściastych - chmiel, w gajach oliwnych - winorośl, w lasach deszczowych - kiwi i marakuja).`;
+                return `Najbliżej: ${getBlockLabel(found.type).toLowerCase()}, ${Math.round(found.distance)} bloków stąd. /tp ${found.x} ${found.y + 2} ${found.z}`;
+            }
+
+            throw new CommandError('Użycie: /pnacza | /pnacza galeria | /pnacza daj | /pnacza znajdz [pnącze]');
 
         }
     },

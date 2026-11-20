@@ -2,7 +2,7 @@
 
 > Ta strona jest generowana z kodu gry (`python tools/wiki.py`) - nie zmieniaj jej ręcznie, zmiany przepadną przy następnym generowaniu.
 
-Wersja gry **1.28.0** - 121 osiągnięć. Księga osiągnięć: klawisz **L**. Uwaga, spoilery: sekretne osiągnięcia są tu opisane (w grze widać tylko „???”).
+Wersja gry **1.30.0** - 125 osiągnięć. Księga osiągnięć: klawisz **L**. Uwaga, spoilery: sekretne osiągnięcia są tu opisane (w grze widać tylko „???”).
 
 
 ## Zwykłe (10 pkt)
@@ -66,6 +66,10 @@ Wersja gry **1.28.0** - 121 osiągnięć. Księga osiągnięć: klawisz **L**. U
 | <img src="ikony/shirt_linen.png" width="32" height="32" alt=""> | **Krawiec** | Uszyj ubranie na stole krawieckim: płótno, krój i wzór. | „Rękawy nierówne, ale za to własne.” |
 | <img src="ikony/dye_red.png" width="32" height="32" alt=""> | **Kolorowo** | Zabarw ubranie - przy szyciu albo później, na gotowym. | „Teraz cię widać z daleka.” |
 | <img src="ikony/tilled_humus.png" width="32" height="32" alt=""> | **Czarna bruzda** | Rozgrzeb łopatą czarnoziem - na takim polu rośliny rosną szybciej. | „Ziemia tak dobra, że aż szkoda po niej chodzić.” |
+| <img src="ikony/vine_trellis.png" width="32" height="32" alt=""> | **Na podporze** | Posadź pnącze: owoc winorośli, kiwi albo marakui (albo szyszkę chmielu) PPM przy murze, w kratkę albo tyczkę na ziemi. | „Teraz niech samo wejdzie na górę. Ono wie jak.” |
+| <img src="ikony/grapes.png" width="32" height="32" alt=""> | **Winobranie** | Zbierz winogrona z winorośli. | „Słodkie, bo z muru od strony słońca.” |
+| <img src="ikony/hop_cone.png" width="32" height="32" alt=""> | **Chmielnik** | Zbierz szyszki chmielu z tyczki. | „Pachnie tak, że od razu chce się spać. Na zdrowie - w naparze.” |
+| <img src="ikony/kiwi.png" width="32" height="32" alt=""> | **Pod pergolą** | Zerwij kiwi albo marakuję wiszące pod pergolą. | „Cień, owoce nad głową. Można tu zostać.” |
 | <img src="ikony/rose_hip.png" width="32" height="32" alt=""> | **Owoc z charakterem** | Zjedz owoc, który coś daje: dziką różę, żurawinę, brusznicę, aronię, rokitnik, czarną porzeczkę, czarny bez albo chili. | „Babcia miała rację. Jak zwykle.” |
 | <img src="ikony/roasted_apple.png" width="32" height="32" alt=""> | **Kolacja przy ognisku** | Upiecz coś nad płonącym ogniskiem (trzymaj PPM z jedzeniem). | „Lekko przypalone. Czyli idealne.” |
 | <img src="ikony/stone.png" width="32" height="32" alt=""> | **Grawitacja działa** | Stłucz nogę, spadając z wysokości. | „Ziemia była bliżej, niż się wydawało. A potem nagle bardzo blisko.” |

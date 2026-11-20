@@ -22,7 +22,7 @@ Nowy sposób na poprawę samopoczucia - obok jedzenia i snu.
 
 | Napar | Zioła | Co daje | Jak długo |
 |---|---|---|---|
-| **Napar na sen** | kwiat lipy, bukiet lawendy, **płatki róży** (1.25.0) | najbliższy sen jest głębszy: wysypiasz się szybciej i lepiej niż zwykle w danym miejscu (na posłaniu - do pełna, nawet na gołej ziemi - „wypoczęty") | do najbliższej przespanej nocy, najwyżej 14 godzin gry |
+| **Napar na sen** | kwiat lipy, bukiet lawendy, **płatki róży** (1.25.0), **szyszki chmielu** (1.30.0, [pnacza.md](pnacza.md)) | najbliższy sen jest głębszy: wysypiasz się szybciej i lepiej niż zwykle w danym miejscu (na posłaniu - do pełna, nawet na gołej ziemi - „wypoczęty") | do najbliższej przespanej nocy, najwyżej 14 godzin gry |
 | **Napar leczniczy** | rumianek, babka, liście szałwii, kwiat nagietka, **kwiat czarnego bzu** (1.25.0) | stłuczona noga goi się 3 razy szybciej | 4 godziny gry |
 | **Napar wzmacniający** | pokrzywa, nasiona gorczycy | energii ubywa o 1/5 wolniej, kopanie jest trochę szybsze | 5 godzin gry |
 

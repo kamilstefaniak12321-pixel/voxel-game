@@ -1,5 +1,5 @@
 // Sprawdzenie ikonek owoców i orzechów (1.28.0, tools/owoce_ikony.py):
-// - każda z 29 ikonek (i pieczona dynia, cukinia) jest w atlasie: 16 x 16,
+// - każda z 33 ikonek (od 1.30.0 też owoce pnączy; i pieczona dynia, cukinia) jest w atlasie: 16 x 16,
 //   przezroczyste tło, czytelna wielkość, kilka odcieni (cieniowanie),
 // - kontur ciemniejszy niż środek; górny kontur jaśniejszy niż dolny
 //   (krok 4 z poradnika Kamila),
@@ -27,12 +27,13 @@ const check = (ok, message) => { assert.ok(ok, message); checks++; };
 const read = (path) => readFileSync(new URL(`../${path}`, import.meta.url), 'utf8');
 
 const tiles = FRUIT_ICON_TILES, roasted = ROASTED_ICON_TILES;
-check(tiles.length === 29 && new Set(tiles).size === 29, `29 ikonek w skrypcie (${tiles.length})`);
+check(tiles.length === 33 && new Set(tiles).size === 33, `33 ikonki w skrypcie (${tiles.length})`);
 
 // Czarny bez: drobne jagody 2 x 2 (jasny róg, ciemny róg) - bez konturu.
 const NO_OUTLINE = new Set(['item_elderberry']);
-// Orzech laskowy: na dole jasna podstawa (inna część niż brązowy orzech).
-const LIGHT_BOTTOM = new Set(['hazelnut']);
+// Orzech laskowy: na dole jasna podstawa (inna część niż brązowy orzech);
+// marakuja (1.30.0): na dole jasna przekrojona połówka.
+const LIGHT_BOTTOM = new Set(['hazelnut', 'item_passion_fruit']);
 const light = (rgba, i) => 0.299 * rgba[i] + 0.587 * rgba[i + 1] + 0.114 * rgba[i + 2];
 const seen = new Set();
 for (const tile of [...tiles, ...roasted]) {
@@ -89,4 +90,4 @@ check(read('tools/krzewy_tekstury.py').includes('from owoce_ikony import OWNED')
 check(read('AGENTS.md').includes('tools/owoce_ikony.py') && !read('AGENTS.md').includes('musi pochodzić z tej samej geometrii'), 'Nowa zasada w AGENTS.md');
 check(read('docs/styl-tekstur.md').includes('## Ikonki owoców i orzechów (1.28.0)'), 'Styl opisany w docs/styl-tekstur.md');
 
-console.log(`OK: ikonki owoców - ${checks} sprawdzeń (29 owoców i orzechów, pieczona dynia i cukinia, kontur, cieniowanie, brud, owoce krzaków z ikonki).`);
+console.log(`OK: ikonki owoców - ${checks} sprawdzeń (33 owoce i orzechy, pieczona dynia i cukinia, kontur, cieniowanie, brud, owoce krzaków z ikonki).`);

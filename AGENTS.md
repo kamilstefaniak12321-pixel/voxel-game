@@ -62,9 +62,22 @@ nowa roślina z paczki dostaje je bez dodatkowego kodu. Dywany, porosty
 i huby (zależą od sąsiadów) jeszcze bez animacji.
 
 Od 0.50.0 również truskawka, jeżyna, chili i leszczyna mają pełne
-przejścia wzrostu i owocowania (`FruitBushAnimation.js`). Model owocu
-w ekwipunku i w dłoni musi pochodzić z tej samej geometrii co owoc na
-roślinie (`FruitBushGeometry.js`), z zachowaniem kształtu i kolorów.
+przejścia wzrostu i owocowania (`FruitBushAnimation.js`). Owoc na
+krzaku to model z `FruitBushGeometry.js`. Od 1.28.0 (decyzja Kamila)
+owoc w ekwipunku i w dłoni to płaska ikonka, jak inne owoce - patrz
+„Ikonki owoców" niżej.
+
+## Ikonki owoców (1.28.0)
+
+Ikonki owoców i orzechów rysuje `tools/owoce_ikony.py` w czterech
+krokach z poradnika, który przysłał Kamil: 1. kształt (sylwetka
+narysowana piksel po pikselu, jedna barwa), 2. kontur ciemniejszy
+i bardziej nasycony niż baza, 3. cieniowanie ze światłem z lewej góry
+(ciemne odcienie nasycone i chłodniejsze, jasne mniej nasycone
+i cieplejsze, mały połysk), 4. brud (odcienie przeplatają się na
+granicach, górny kontur ma dwa jaśniejsze odcienie, dolny - drugi
+ciemny). Nowy owoc dostaje ikonkę w tym stylu, dopisaną do tego
+skryptu. Szczegóły: [docs/styl-tekstur.md](docs/styl-tekstur.md).
 
 ## Zwierzęta
 

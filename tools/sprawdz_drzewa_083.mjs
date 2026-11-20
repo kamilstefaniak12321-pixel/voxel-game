@@ -18,6 +18,7 @@ import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
 import { registerHooks } from 'node:module';
 import { readTextureRegion } from './texture_regions.mjs';
+import { REDRAWN_ICONS } from './ikonki_owocow.mjs';
 
 registerHooks({
     resolve(specifier, context, next) {
@@ -121,7 +122,8 @@ for (const [name, info] of Object.entries(NEW)) {
         const region = readTextureRegion(texture);
         equal([region.width, region.height], [16, 16], `${texture}: 16 x 16`);
         check(WORLD_ATLAS_TILES[texture], `${texture}: kafelek w atlasie gry`);
-        if (ORIGINALS[texture]) equal(sha(region.rgba), ORIGINALS[texture], `${texture}: oryginał z paczki piksel w piksel`);
+        // 1.28.0: ikonki owoców przerysowane na prośbę Kamila (tools/owoce_ikony.py).
+        if (ORIGINALS[texture] && !REDRAWN_ICONS.has(texture)) equal(sha(region.rgba), ORIGINALS[texture], `${texture}: oryginał z paczki piksel w piksel`);
         else check(region.rgba.some((value, i) => i % 4 === 3 && value > 0), `${texture}: narysowana tekstura pochodna`);
     }
 }

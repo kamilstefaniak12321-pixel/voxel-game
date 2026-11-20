@@ -6,9 +6,6 @@ pamięć, nie umowa. Po każdej wydanej wersji wpis przechodzi do
 
 ## Teraz
 
-- **1.28.0 - Nowe ikonki owoców** (prośba Kamila 19.11.2026): wszystkie
-  owoce i orzechy narysowane według czterech kroków (kształt, kontur,
-  cieniowanie, brud); owoce krzaków w ręce i w ekwipunku też z ikonki.
 - **1.29.0 - Wygoda** (PR #182): pasek świeżości na ikonce stosu
   ([psucie.md](psucie.md)), opis stosu po przytrzymaniu palca na
   telefonie, napis o ziemi pod celownikiem ([ziemia.md](ziemia.md)),

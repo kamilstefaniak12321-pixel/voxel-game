@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import { textureManifest, readTextureRegion, readTexturePng, decodeTexturePng } from './texture_regions.mjs';
+import { REDRAWN_ICONS } from './ikonki_owocow.mjs';
 
 // Recorded from the actual 0.79.0 browser atlas before the migration. The
 // fixture is independent of new packing code: every visible tile must retain
@@ -36,7 +37,8 @@ for(const [name,old] of Object.entries(baseline.tiles)) {
     // A torch icon now views frame0 of its original animation directly.
     // Check its unpremultiplied source bytes here; the browser regression
     // checks all363 final GPU tiles against the old Canvas2D-visible pixels.
-    equal(hash(image.rgba),torchFrames[name]??rgbaSha256,`${name}: all original source pixels are preserved`);
+    // 1.28.0: ikonki owoców przerysowane na prośbę Kamila (tools/owoce_ikony.py).
+    if(!REDRAWN_ICONS.has(name)) equal(hash(image.rgba),torchFrames[name]??rgbaSha256,`${name}: all original source pixels are preserved`);
 }
 for(const [name,sheet] of Object.entries(data.sheets)) {
     check(/^[a-z0-9_-]+\.png$/.test(sheet.file),`${name}: one local thematic PNG`);

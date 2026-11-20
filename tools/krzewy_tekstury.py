@@ -238,6 +238,9 @@ def main():
     sheets = model_sheets()
     write_models(images)
     data = json.loads(MANIFEST.read_text(encoding='utf-8'))
+    # Ikonki owoców (1.28.0) rysuje tools/owoce_ikony.py - nie nadpisujemy.
+    from owoce_ikony import OWNED
+    images = {key: image for key, image in images.items() if key not in OWNED or key not in data['regions']}
     sheet = data['sheets']['rosliny']
     path = ROOT / 'assets/textures' / sheet['file']
     missing = [key for key in [*images, *sheets] if key not in data['regions']]

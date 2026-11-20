@@ -5,6 +5,7 @@ import { readFileSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import { registerHooks } from 'node:module';
 import { textureManifest, readTextureRegion } from './texture_regions.mjs';
+import { REDRAWN_ICONS } from './ikonki_owocow.mjs';
 
 registerHooks({
     resolve(specifier, context, next) {
@@ -52,7 +53,8 @@ check(manifest.rows >= baseline.rows + 1, 'Extra GPU rows only appended - old te
 for (const [key, previous] of Object.entries(baseline.tiles)) {
     const { rgbaSha256, ...layout } = previous;
     equal(manifest.tiles[key], layout, `${key}: old GPU UV and region remain identical`);
-    equal(sha(readTextureRegion(layout.region).rgba), rgbaSha256, `${key}: old source RGBA unchanged`);
+    // 1.28.0: ikonki owoców przerysowane na prośbę Kamila (tools/owoce_ikony.py).
+    if (!REDRAWN_ICONS.has(key)) equal(sha(readTextureRegion(layout.region).rgba), rgbaSha256, `${key}: old source RGBA unchanged`);
 }
 equal(TREE_TEXTURE_NAMES.slice(0, baseline.textureNames.length), baseline.textureNames, 'All existing texture names preserve order');
 const oldBlocks = Object.fromEntries(Object.entries(treeBlocks()).filter(([, block]) => baseline.species.includes(block.tree)));

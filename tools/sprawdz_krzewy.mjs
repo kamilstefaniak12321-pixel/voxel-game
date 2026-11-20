@@ -159,7 +159,8 @@ check(ITEM_TYPES.blueberry.plants === 'blueberry_sapling' && ITEM_TYPES.blackber
         return true;
     };
     check(same('shrub_aronia_leaves', 'aronia', 'bush_leaves'), 'Aronia: liście z paczki');
-    check(same('shrub_currant_fruit_black', 'currant', 'bush_leaves_fruit_black') && same('item_blackcurrant', 'currant', 'item_blackcurrants', false), 'Porzeczka czarna z paczki');
+    // Ikonki owoców od 1.28.0 rysuje tools/owoce_ikony.py (prośba Kamila) - nie z paczki.
+    check(same('shrub_currant_fruit_black', 'currant', 'bush_leaves_fruit_black') && !same('item_blackcurrant', 'currant', 'item_blackcurrants', false), 'Porzeczka czarna z paczki (ikonka - nowa, 1.28.0)');
     check(same('shrub_elderberry_flower_top', 'elderberry', 'bush_leaves_flower_top') && same('shrub_hazel_flower', 'hazel', 'bush_leaves_catkins'), 'Bez i leszczyna z paczki');
     check(same('shrub_highbush_blueberry_fruit', 'blueberry', 'bush_leaves_fruit') && same('shrub_bramble_fruit', 'blackberry', 'bush_leaves_fruit'), 'Borówka wysoka i jeżyna z paczki');
     // Jasne gatunki zostają bez zmian, ciemne są jaśniejsze.

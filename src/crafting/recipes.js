@@ -302,6 +302,14 @@ export const RECIPES = [
     { id: 'sewing_table', result: ['sewing_table', 1], pattern: ['PP', 'RR'], key: { P: '#planks', R: 'rope' },
         note: 'Stół na dwa bloki, jak stolarski. Na lewej części kładziesz włókno, płótno albo ubranie; na prawej tkasz płótno albo szyjesz z wykrojów. Barwnik na płótno - kolor.' },
 
+    // Podpory pnączy (1.30.0, blocks/vines.js, docs/pnacza.md).
+    { id: 'vine_trellis', result: ['vine_trellis', 2], ingredients: ['stick', 'stick', 'stick', 'rope'],
+        note: 'Kratka staje przodem do ciebie. Owoc pnącza (winogrona, kiwi, marakuja) PPM w kratkę na ziemi - pnącze ją zarasta, a dalej kratki obok i nad nią.' },
+    { id: 'garden_pole', result: ['garden_pole', 2], ingredients: ['stick', 'stick', 'stick'],
+        note: 'Kilka tyczek jedna na drugiej - chmielnik. Szyszka chmielu PPM w tyczkę na ziemi - chmiel pnie się do góry (do 6 bloków).' },
+    { id: 'pergola', result: ['pergola', 2], ingredients: ['#planks', '#planks', 'stick', 'rope'],
+        note: 'Daszek z listew - postaw go na tyczkach albo płocie. Pnącze, które do niego dojdzie, rozchodzi się pod daszkiem; kiwi i marakuja wiszą pod liśćmi.' },
+
     // Napary (0.98.1, docs/ziola.md): kubek z gliny, do niego dwa zioła
     // z jednej grupy; kubek ziół podgrzany nad płonącym ogniskiem
     // (trzymany PPM) to napar. Wypity napar oddaje kubek.

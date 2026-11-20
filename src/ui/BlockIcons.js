@@ -421,9 +421,12 @@ async function drawBlockIcons() {
 
         // Schody, półbloki, płoty, furtki, stół (0.90.0) - prawdziwy model.
         if (definition.model === 'shape' || definition.model === 'door') {
-            const icon = sharedIcon(`shape:${definition.pick}:${definition.textures.all}`, () => {
-                const faces = itemShapeFaces(definition.pick);
-                return faces ? modelIcon(faces, definition.textures.all) : null;
+            // (Kratka, tyczka, pergola - 1.30.0: bez pola pick, tekstura boku.)
+            const shapeItemType = definition.pick ?? type;
+            const shapeTexture = definition.textures.all ?? definition.textures.side;
+            const icon = sharedIcon(`shape:${shapeItemType}:${shapeTexture}`, () => {
+                const faces = itemShapeFaces(shapeItemType);
+                return faces ? modelIcon(faces, shapeTexture) : null;
             });
             if (icon) {
                 icons.set(type, icon);

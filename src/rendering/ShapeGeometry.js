@@ -8,6 +8,7 @@
 // (CarpenterTableRenderer). W świecie te same pudełka rysuje ChunkMesher.
 // ------------------------------------------------------------
 
+import { VINE_SUPPORTS } from '../blocks/vines.js';
 import * as THREE from 'three';
 import { shapeBoxes, SIDE_BITS } from '../world/ShapeBoxes.js';
 import { shapeId, shapeItem, shapeBaseType, WOOD_SHAPE_BLOCKS } from '../blocks/woodShapes.js';
@@ -147,6 +148,11 @@ export function itemShapeFaces(type) {
     const bedding = beddingOf(type);
     if (bedding) return matFaces(bedding);
     if (type === SEWING_TABLE) return sewingTableFaces();
+    // Kratka, tyczka, pergola (1.30.0): kształt podpory z jej teksturą.
+    if (VINE_SUPPORTS[type]) {
+        const support = VINE_SUPPORTS[type];
+        return boxFaces(shapeBoxes(support.id), support.textures.all ?? support.textures.side);
+    }
     const item = shapeItem(type);
     if (!item) return null;
     const { wood, kind } = item;

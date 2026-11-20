@@ -14,7 +14,8 @@
 //   - płaskie pnącze: wolne miejsce z pełnym blokiem z tej samej strony,
 //   - kratka: kratka obok (ta sama strona), tyczka: tyczka wyżej,
 //   - każde: pergola nad nim (daszek), a z daszku - pergole obok.
-// Limit: wysokość gatunku (licząc od ziemi pod pnączem) i VINE_CROWD
+// Limit: wysokość gatunku (licząc od ziemi pod pnączem), najwyżej
+// VINE_REACH bloków w bok od korzenia (kawałka na ziemi) i VINE_CROWD
 // kawałków jednego gatunku w kostce 7 x 7 x 7. Liczy się tylko przy
 // wzroście (średnio co kilka minut na kawałek), nie co klatkę.
 // ------------------------------------------------------------
@@ -28,7 +29,7 @@ import {
     isReplaceableId
 } from '../blocks/BlockRegistry.js';
 import { isSoilId } from '../blocks/soil.js';
-import { VINES, VINE_CROWD, FLAT_MOUNTS, vineInfoById, vineType, supportMount } from '../blocks/vines.js';
+import { VINES, VINE_CROWD, VINE_REACH, FLAT_MOUNTS, vineInfoById, vineType, supportMount } from '../blocks/vines.js';
 
 // Płaskie pnącze 'north' przylega do bloku po stronie -z itd.
 export const MOUNT_OFFSET = { north: [0, 0, -1], south: [0, 0, 1], east: [1, 0, 0], west: [-1, 0, 0] };
@@ -131,6 +132,19 @@ export function heightAboveGround(world, x, y, z, limit) {
 
 }
 
+// Czy w zasięgu VINE_REACH bloków w bok od (x, y, z) i niżej (do `limit`
+// w dół) jest korzeń gatunku - kawałek pnącza stojący na ziemi. Pnącze
+// rozchodzi się tylko blisko swojego korzenia.
+export function rootNear(world, x, y, z, species, limit) {
+
+    for (let dy = 0; dy <= limit; dy++) for (let dz = -VINE_REACH; dz <= VINE_REACH; dz++) for (let dx = -VINE_REACH; dx <= VINE_REACH; dx++) {
+        if (vineInfoById(world.getBlockId(x + dx, y - dy, z + dz))?.species === species && isSoilId(world.getBlockId(x + dx, y - dy - 1, z + dz))) return true;
+    }
+
+    return false;
+
+}
+
 // Ile kawałków gatunku jest w kostce 7 x 7 x 7 wokół (x, y, z).
 export function crowdAround(world, x, y, z, species, stop = Infinity) {
 
@@ -167,8 +181,12 @@ export function climbVine(world, x, y, z, random = Math.random) {
         const mount = climbMount(world, tx, ty, tz, info.mount, dy === 1);
 
         if (!mount) continue;
+        // Przy ziemi pnącze nie rozchodzi się w bok - jeden pień, korona wyżej
+        // (inaczej każdy kawałek przy ziemi byłby nowym korzeniem).
+        if (dy === 0 && isSoilId(world.getBlockId(tx, ty - 1, tz))) continue;
         if (heightAboveGround(world, tx, ty, tz, vine.height) > vine.height) continue;
         if (crowdAround(world, tx, ty, tz, info.species, VINE_CROWD) >= VINE_CROWD) continue;
+        if (!rootNear(world, tx, ty, tz, info.species, vine.height)) continue;
 
         const type = vineType(info.species, 'young', mount);
 

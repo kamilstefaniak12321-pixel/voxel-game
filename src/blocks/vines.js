@@ -48,6 +48,9 @@ export const VINE_YOUNG_SECONDS = BUSH_GROWTH_SECONDS;
 // w które pnącze chce urosnąć (tyle mniej więcej ma jedna roślina).
 export const VINE_CROWD = 18;
 
+// Najdalej tyle bloków w bok od korzenia (kawałka, który stoi na ziemi).
+export const VINE_REACH = 3;
+
 // Podpory: typ -> numer, mocowanie pnącza na niej, tekstury.
 export const VINE_SUPPORTS = {
     vine_trellis: { id: 15600, mount: 'trellis', name: 'Trellis', label: 'Kratka', textures: { all: 'vine_trellis' } },

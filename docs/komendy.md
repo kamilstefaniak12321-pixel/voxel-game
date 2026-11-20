@@ -109,6 +109,10 @@ Współrzędne można podawać względem gracza: `~` (tu, gdzie stoję),
 | `/sad wiosna` | rozlicza od razu zmienione przez gracza chunki do 40 bloków od ciebie tak, jakby minęła zima: opadłe owoce gniją (czarnoziem, sadzonki), rośliny dostają większy plon i się rozrastają (zmienia świat) |
 | `/sad opadnij` | rozlicza koniec pory: owoce roślin, których pora już minęła, spadają na ziemię (zmienia świat) |
 | `/ziemia` | ziemia z charakterem (1.25.0, `docs/ziemia.md`): rodzaj ziemi pod celownikiem (albo pod nogami), mnożnik wzrostu roślin, czy w pobliżu jest woda i ile wychodzi razem |
+| `/ubrania` | ubrania (1.27.0, `docs/ubrania.md`): co masz na sobie (krój, kolor, wzór) i ile to razem grzeje |
+| `/ubrania daj [len\|pokrzywa\|lyko]` | daje po stosie włókna i płótna, sznur, stół krawiecki i barwniki - do wypróbowania szycia |
+| `/ubrania zestaw <barwnik> [wzór]` | od razu ubiera w lniany strój (czapka, koszula, spodnie, buty) w kolorze barwnika (np. `red`) i we wzorze (`paski`, `krata`, `haft`) |
+| `/ubrania zdejmij` | zdejmuje wszystkie ubrania do ekwipunku |
 | `/psucie` | psucie się jedzenia (1.23.0, `docs/psucie.md`): czy działa, temperatura i mnożnik tu, gdzie stoisz, ile poleżą świeże maliny w plecaku, skrzyni i piwniczce; z jedzeniem w ręce - jego świeżość i ile jeszcze poleży |
 | `/psucie tempo <mnożnik>` | przyspiesza psucie (np. 50) albo je wyłącza (0); nie zapisuje się |
 | `/psucie dni <ile>` | od razu starzeje jedzenie w plecaku, skrzyniach i na ziemi tak, jakby minęło tyle dób gry (zmienia ekwipunek) |

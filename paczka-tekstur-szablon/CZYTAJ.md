@@ -110,6 +110,8 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/baobab_bark.png` | Kora baobabu |
 | `bloki/basalt_side.png` | Bazalt |
 | `bloki/basalt_top.png` | Bazalt |
+| `bloki/bast.png` | Łyko |
+| `bloki/bast_weave.png` | Plecionka z łyka |
 | `bloki/bedding_linen.png` | Lniana pościel |
 | `bloki/bedding_straw.png` | Słomiana pościel |
 | `bloki/beech_bark.png` | Kora buka |
@@ -126,7 +128,7 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/birch_leaves.png` | Liście brzozy |
 | `bloki/birch_log_side.png` | Pień brzozy |
 | `bloki/birch_log_top.png` | Pień brzozy |
-| `bloki/birch_planks.png` | Schody brzozowe, Półblok brzozowy, Furtka brzozowa, Stół stolarski brzozowy, Łóżko brzozowe (pościelone), Łóżko brzozowe (stelaż), Deski brzozowe |
+| `bloki/birch_planks.png` | Schody brzozowe, Półblok brzozowy, Furtka brzozowa, Stół stolarski brzozowy, Łóżko brzozowe (pościelone), Łóżko brzozowe (stelaż), Stół krawiecki, Deski brzozowe |
 | `bloki/birch_sapling.png` | Sadzonka brzozy |
 | `bloki/birch_stripped_side.png` | Okorowany pień brzozy |
 | `bloki/birch_stripped_top.png` | Okorowany pień brzozy |
@@ -137,6 +139,8 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/blueberry_bush.png` | - |
 | `bloki/blueberry_bush_few.png` | - |
 | `bloki/blueberry_bush_full.png` | - |
+| `bloki/boots_linen.png` | Buty lniane |
+| `bloki/boots_nettle.png` | Buty pokrzywowe |
 | `bloki/brew_calm.png` | Kubek ziół na sen |
 | `bloki/brew_heal.png` | Kubek ziół leczniczych |
 | `bloki/brew_vigor.png` | Kubek ziół wzmacniających |
@@ -153,6 +157,8 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/bristlecone_bark.png` | Kora sosny ościstej |
 | `bloki/bush_leaves.png` | - |
 | `bloki/bush_sapling.png` | - |
+| `bloki/cap_linen.png` | Czapka lniana |
+| `bloki/cap_nettle.png` | Czapka pokrzywowa |
 | `bloki/cedar/cone.png` | Szyszka cedru |
 | `bloki/cedar/leaves.png` | Igliwie cedru, Igliwie cedru (szyszki odrastają) |
 | `bloki/cedar/leaves_variant.png` | Igliwie cedru z szyszkami |
@@ -301,6 +307,8 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/fir/stripped_side.png` | Okorowany pień jodły |
 | `bloki/fir/stripped_top.png` | Okorowany pień jodły |
 | `bloki/fir_bark.png` | Kora jodły |
+| `bloki/flax_fiber.png` | Włókno lniane |
+| `bloki/flax_retted.png` | Moczony len |
 | `bloki/flower_wreath.png` | Wianek z kwiatów |
 | `bloki/forest_floor_side.png` | Ściółka leśna |
 | `bloki/forest_floor_top.png` | Ściółka leśna |
@@ -362,6 +370,8 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/hazel_bush_few.png` | - |
 | `bloki/hazel_bush_full.png` | - |
 | `bloki/hazelnut.png` | Orzech laskowy |
+| `bloki/headband_linen.png` | Opaska lniana |
+| `bloki/headband_nettle.png` | Opaska pokrzywowa |
 | `bloki/heather.png` | Wrzos |
 | `bloki/humus.png` | Rozgrzebany czarnoziem, Czarnoziem |
 | `bloki/ice_block.png` | - |
@@ -436,6 +446,7 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/lamp_green.png` | Zielona lampa |
 | `bloki/lamp_purple.png` | Fioletowa lampa |
 | `bloki/lamp_red.png` | Czerwona lampa |
+| `bloki/lapcie_bast.png` | Łapcie z łyka |
 | `bloki/larch/cone.png` | Szyszka modrzewia |
 | `bloki/larch/leaf_litter.png` | Opadłe igliwie modrzewia |
 | `bloki/larch/leaves.png` | Igliwie modrzewia, Igliwie modrzewia (szyszki odrastają) |
@@ -461,6 +472,7 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/linden_sapling.png` | Sadzonka lipy |
 | `bloki/linden_stripped_side.png` | Okorowany pień lipy |
 | `bloki/linden_stripped_top.png` | Okorowany pień lipy |
+| `bloki/linen_cloth.png` | Płótno lniane |
 | `bloki/low_cranberry_flower_side.png` | Żurawina (kwitnie) |
 | `bloki/low_cranberry_flower_top.png` | - |
 | `bloki/low_cranberry_fruit_side.png` | Żurawina (owoce) |
@@ -746,6 +758,9 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/mugo/stripped_top.png` | Okorowany pień kosodrzewiny |
 | `bloki/mugo_bark.png` | Kora kosodrzewiny |
 | `bloki/nettle.png` | Pokrzywa |
+| `bloki/nettle_cloth.png` | Płótno pokrzywowe |
+| `bloki/nettle_fiber.png` | Włókno pokrzywowe |
+| `bloki/nettle_retted.png` | Moczona pokrzywa |
 | `bloki/oak_bark.png` | Kora dębu |
 | `bloki/oak_leaf_litter.png` | Opadłe liście dębu |
 | `bloki/oak_leaves.png` | Liście dębu |
@@ -827,6 +842,7 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/roasted_hazelnut.png` | Prażone orzechy laskowe |
 | `bloki/roasted_pumpkin_slice.png` | Pieczona dynia |
 | `bloki/roasted_zucchini.png` | Pieczona cukinia |
+| `bloki/rope.png` | Sznur |
 | `bloki/rosliny/amarantus/wiecha.png` | Wiecha amarantusa |
 | `bloki/rosliny/barwinek/kwiat.png` | Kwiat barwinka |
 | `bloki/rosliny/cynia/kwiat.png` | Kwiat cynii |
@@ -849,6 +865,8 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/sand.png` | Piasek |
 | `bloki/sandstone_side.png` | Piaskowiec |
 | `bloki/sandstone_top.png` | Piaskowiec |
+| `bloki/scarf_linen.png` | Chusta lniana |
+| `bloki/scarf_nettle.png` | Chusta pokrzywowa |
 | `bloki/sequoia/cone.png` | Szyszka sekwoi |
 | `bloki/sequoia/leaves.png` | Igliwie sekwoi, Igliwie sekwoi (szyszki odrastają) |
 | `bloki/sequoia/leaves_variant.png` | Igliwie sekwoi z szyszkami |
@@ -859,7 +877,13 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/sequoia/stripped_side.png` | Okorowany pień sekwoi |
 | `bloki/sequoia/stripped_top.png` | Okorowany pień sekwoi |
 | `bloki/sequoia_bark.png` | Kora sekwoi |
+| `bloki/sewing_table_top.png` | Stół krawiecki |
+| `bloki/sewing_table_top_b.png` | Stół krawiecki |
+| `bloki/shirt_linen.png` | Koszula lniana |
+| `bloki/shirt_nettle.png` | Koszula pokrzywowa |
 | `bloki/short_grass.png` | Krótka trawa |
+| `bloki/shorts_linen.png` | Krótkie spodnie lniane |
+| `bloki/shorts_nettle.png` | Krótkie spodnie pokrzywowe |
 | `bloki/shovel.png` | Łopata |
 | `bloki/shovel_basalt.png` | Łopata bazaltowa |
 | `bloki/shovel_granite.png` | Łopata granitowa |
@@ -1078,6 +1102,13 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/trapdoor_wierzba.png` | Klapa wierzbowa |
 | `bloki/trapdoor_wierzba_bottom.png` | - |
 | `bloki/trapdoor_wierzba_edge.png` | - |
+| `bloki/trousers_linen.png` | Spodnie lniane |
+| `bloki/trousers_nettle.png` | Spodnie pokrzywowe |
+| `bloki/tunic_linen.png` | Tunika lniana |
+| `bloki/tunic_nettle.png` | Tunika pokrzywowa |
+| `bloki/vest_bast.png` | Kamizelka z łyka |
+| `bloki/vest_linen.png` | Kamizelka lniana |
+| `bloki/vest_nettle.png` | Kamizelka pokrzywowa |
 | `bloki/water.png` | Woda, Płynąca woda |
 | `bloki/wet_clay_bowl.png` | Mokra miska z gliny |
 | `bloki/wet_clay_brick.png` | Mokra cegła z gliny |

@@ -16,7 +16,10 @@
 //                 nic dalej niż TORCH_REACH), razem najwyżej BLOCKS_MAX;
 //                 rozgrzany meteoryt też,
 //   jedzenie    - ciepła potrawa, napar, chili (efekty z polem heat -
-//                 items/effects.js).
+//                 items/effects.js),
+//   ubrania     - (1.27.0) to, co gracz ma na sobie (items/clothing.js:
+//                 wornWarmth, pełny strój z pokrzywy to około +10°C);
+//                 mokre (w wodzie) grzeją tylko w WET_CLOTHES.
 //
 // Z odczuwalnej temperatury Wellbeing liczy wychłodzenie (chill) i jego
 // skutki, a Freeze.js - zamarzanie i odwilż.
@@ -28,6 +31,7 @@ import { SEA_LEVEL } from '../config.js';
 import { getBlockId } from '../blocks/BlockRegistry.js';
 import { isTorchId } from '../blocks/torches.js';
 import { tempAtHeight } from '../weather/WeatherField.js';
+import { wornWarmth } from '../items/clothing.js';
 
 export const SHELTER = 5;
 export const WIND_CHILL = 0.7;
@@ -43,6 +47,8 @@ export const EMBERS = 0.5;
 export const TORCH_HEAT = 6;
 export const TORCH_REACH = 4;
 export const BLOCKS_MAX = 12;
+// Ile grzeją ubrania w wodzie (mokre).
+export const WET_CLOTHES = 0.3;
 const SCAN = Math.ceil(TORCH_REACH);
 
 // Bloki, które grzeją: numer -> ciepło tuż obok (°C).
@@ -95,8 +101,9 @@ export function blocksHeat(world, x, y, z) {
 // Odczuwalna temperatura z części. air - powietrze (°C), sky - światło
 // nieba przy głowie (0-15), wind - prędkość wiatru (bloki/s), water -
 // czy gracz jest w wodzie, heat - ciepło ognisk i pochodni, food -
-// ciepło z jedzenia. Zwraca { felt, air, shelter, wind, water, heat, food }.
-export function feltTemperature({ air = 10, sky = 15, wind = 0, water = false, heat = 0, food = 0 } = {}) {
+// ciepło z jedzenia, clothes - ciepło ubrań (suchych).
+// Zwraca { felt, air, shelter, wind, water, heat, food, clothes }.
+export function feltTemperature({ air = 10, sky = 15, wind = 0, water = false, heat = 0, food = 0, clothes = 0 } = {}) {
     const exposure = Math.max(0, Math.min(1, sky / 15));
     const parts = {
         air,
@@ -104,9 +111,10 @@ export function feltTemperature({ air = 10, sky = 15, wind = 0, water = false, h
         wind: -Math.min(WIND_MAX, WIND_CHILL * Math.max(0, wind)) * exposure,
         water: water ? -WATER_CHILL : 0,
         heat,
-        food
+        food,
+        clothes: water ? clothes * WET_CLOTHES : clothes
     };
-    parts.felt = parts.air + parts.shelter + parts.wind + parts.water + parts.heat + parts.food;
+    parts.felt = parts.air + parts.shelter + parts.wind + parts.water + parts.heat + parts.food + parts.clothes;
     return parts;
 }
 
@@ -164,7 +172,8 @@ export class Warmth {
             wind: weather?.wind?.speed ?? 0,
             water: Boolean(player.swimming) || (player.submerged ?? 0) > 0.5,
             heat: this.heat,
-            food: game.wellbeing?.effectSum?.('heat') ?? 0
+            food: game.wellbeing?.effectSum?.('heat') ?? 0,
+            clothes: wornWarmth(game.inventory?.equip)
         });
     }
 

@@ -20,6 +20,8 @@ import { TINDERS, fuelWood } from '../game/CampfireState.js';
 import { driesInto } from './drying.js';
 import { isIngredient } from './cooking.js';
 import { spoilText } from './spoilage.js';
+import { retsInto, garmentInfo, clothOf, clothFromFiber, CLOTHS, SLOT_LABELS, RET_SECONDS } from './clothing.js';
+import { getDyeColor } from './dyes.js';
 
 // Przedmioty, które działają same (nie są składnikiem ani jedzeniem).
 const OWN_USES = {
@@ -70,6 +72,12 @@ export function itemUses(type) {
     if (fuelWood(type)) uses.push('opał do ogniska');
     // Mokra glina (items/clay.js): schnie na słońcu.
     if (driesInto(type)) uses.push(`suszenie na słońcu: ${getItemLabel(driesInto(type))}`);
+    // Włókna i ubrania (1.27.0, items/clothing.js).
+    if (retsInto(type)) uses.push(`moczenie w wodzie (${Math.round(RET_SECONDS / 60 * 10) / 10} min): ${getItemLabel(retsInto(type))}`.replace('.', ','));
+    if (clothFromFiber(type)) uses.push(`tkanie na stole krawieckim: ${CLOTHS[clothFromFiber(type)].label.toLowerCase()}`);
+    if (clothOf(type)) uses.push('szycie ubrań na stole krawieckim');
+    if (garmentInfo(type)) uses.push(`ubranie (${SLOT_LABELS[garmentInfo(type).slot].toLowerCase()}) - grzeje o ${String(garmentInfo(type).warmth).replace('.', ',')}°C`);
+    if (getDyeColor(type)) uses.push('barwienie ubrań na stole krawieckim');
     if (getTool(type)) uses.push('narzędzie');
     if (ITEM_TYPES[type]?.plants) uses.push('sadzenie na rozgrzebanej ziemi');
     if (OWN_USES[type]) uses.push(OWN_USES[type]);

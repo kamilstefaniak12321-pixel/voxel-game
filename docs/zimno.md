@@ -17,6 +17,7 @@ Liczy się co pół sekundy w miejscu gracza (`src/game/Warmth.js`):
 | ognisko | płonące: +22°C tuż przy nim (do 1,5 bloku), słabiej dalej, nic dalej niż 7 bloków; żar - połowa |
 | pochodnia, lampa | +6°C tuż obok, nic dalej niż 4 bloki; razem najwyżej +12°C; rozgrzany meteoryt +4°C |
 | jedzenie | ciepła potrawa z garnka i każdy napar: **ciepło w brzuchu** +6°C przez 3 godziny gry; chili: +4°C przez 2 godziny |
+| ubrania | (od 1.27.0) suma ciepła noszonych ubrań ([ubrania.md](ubrania.md)): pełny strój z pokrzywy ok. +10,6°C, z lnu ok. +7,6°C; w wodzie mokre ubrania grzeją tylko w 30% |
 
 `/zimno` pokazuje wszystkie części tu, gdzie stoisz.
 
@@ -91,9 +92,8 @@ ognisku. *Ratownik* - bądź przy tym, jak inny gracz odtaje.
 
 ## Czego nie ma (luki)
 
-- **Ubrań** - przyjdą z włóknami (1.27.0) i będą chronić przed zimnem.
-- Mokre ubranie po kąpieli nie wychładza dłużej - liczy się tylko
-  bycie w wodzie.
+- Mokre ubranie po kąpieli nie wychładza dłużej - słabiej grzeje
+  tylko, dopóki jesteś w wodzie.
 - Śnieg pod nogami i burza śnieżna nie wychładzają osobno (tylko przez
   temperaturę powietrza, opad i wiatr).
 - Ciepło ogniska nie zależy od ścian - przechodzi przez nie.

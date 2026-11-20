@@ -32,6 +32,44 @@ PR #181.
   `kroki` - cztery kroki); styl opisany w `docs/styl-tekstur.md`, zasada
   w `AGENTS.md`.
 
+## 1.27.0 - Włókna i ubrania
+
+PR #180.
+
+- **Moczenie**: wiązka lnu, pokrzywa albo kora lipowa wrzucona do wody
+  po półtorej minuty zamienia się w moczony len, moczoną pokrzywę albo
+  łyko. Z nich włókno, z trzech włókien sznur.
+- **Stół krawiecki** (dwie deski na dwóch sznurach) - na dwa bloki, jak
+  stolarski; wszystko dzieje się na blacie, w świecie.
+  - Na lewą część kładzie się włókno, płótno albo ubranie (PPM, z
+    kucaniem - cały stos); pusta ręka zabiera.
+  - **Tkanie**: na włóknie PPM w prawą część daje płótno z dwóch
+    włókien - lniane, pokrzywowe (grzeje lepiej) albo plecionkę z łyka.
+  - **Szycie**: na płótnie po prawej leżą cztery wykroje - głowa,
+    tułów, nogi, stopy. PPM w wykrój szyje, z kucaniem zmienia krój
+    (czapka, chusta, opaska, koszula, kamizelka, tunika, spodnie,
+    krótkie spodnie, buty, łapcie).
+  - **Barwienie i wzory**: barwnik na płótno - kolor, z kucaniem -
+    kolor wzoru; kucanie pustą ręką zmienia wzór (gładki, paski, krata,
+    haft). Wykroje od razu mają kolory. Gotowe ubranie barwi się tak
+    samo, położone na stole.
+- **Ubrania na sobie**: cztery miejsca obok postaci (głowa, tułów, nogi,
+  stopy). Ubrania widać na postaci i u innych graczy, barwione mają
+  ikonki w swoich kolorach.
+- **Ubrania grzeją** (zimno z 1.26.0): ich ciepło dodaje się do
+  odczuwalnej temperatury - cały strój z pokrzywy to ok. +10,6°C, z lnu
+  ok. +7,6°C; w wodzie mokre grzeją słabo. `/zimno` pokazuje część
+  „ubrania".
+- **Stare krzaki** truskawki, jeżyny, leszczyny i borówki nie rosną już
+  w nowym terenie (ich owoce dają nowe krzewy i rośliny niskie; borówka
+  wysoka rośnie teraz także w lesie świerkowym). Chili zostaje.
+- Komenda `/ubrania`, osiągnięcia *Moczenie lnu*, *Tkacz*, *Krawiec*,
+  *Kolorowo*, *Od stóp do głów*, rozdział „Włókna i ubrania" w poradniku.
+
+Znane braki: barwione ubranie na ziemi i w skrzyni ma naturalną ikonkę;
+nie ma wełny ani płaszczy; ubrania się nie zużywają. Reszta
+w `docs/ubrania.md`.
+
 ## 1.26.0 - Zimno i zamarzanie
 
 PR #179.

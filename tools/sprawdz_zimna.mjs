@@ -62,7 +62,7 @@ const DAY_SECONDS = DAY_LENGTH_MINUTES * 60;
     check(feltTemperature({ air: 0, sky: 15, wind: 100 }).wind === -W.WIND_MAX, 'Wiatr ma pułap');
     check(feltTemperature({ air: 10, water: true }).felt === 10 - W.WATER_CHILL, 'W wodzie zimniej');
     check(feltTemperature({ air: -10, heat: 22, food: 6 }).felt === 18, 'Ogień i jedzenie się dodają');
-    check(feltTemperature().felt === 10 && Object.keys(feltTemperature()).join() === 'air,shelter,wind,water,heat,food,felt', 'Domyślnie 10°C, wszystkie części');
+    check(feltTemperature().felt === 10 && Object.keys(feltTemperature()).join() === 'air,shelter,wind,water,heat,food,clothes,felt', 'Domyślnie 10°C, wszystkie części');
     check(falloff(10, 0.5, 1, 4) === 10 && falloff(10, 2.5, 1, 4) === 5 && falloff(10, 4, 1, 4) === 0 && falloff(10, NaN, 1, 4) === 0, 'Ciepło słabnie z odległością');
 
     const fires = new Map([
@@ -338,8 +338,8 @@ const run = (freeze, seconds, step = 0.05) => { for (let t = 0; t < seconds; t +
 
 {
     const player = { pos: { x: 1, y: 2, z: 3 }, vel: { x: 0, y: 0, z: 0 }, yaw: 0, pitch: 0 };
-    check(P.unpackPlayer(P.packPlayer(player, null, 0, false, false, true)).frozen === true && P.unpackPlayer(P.packPlayer(player, null, 0)).frozen === false &&
-        P.unpackPlayer(P.packPlayer(player, null, 0, true, true, false)).sleeping === true, 'Flaga "zamarznięty" w stanie gracza');
+    check(P.unpackPlayer(P.packPlayer(player, null, 0, false, false, '', true)).frozen === true && P.unpackPlayer(P.packPlayer(player, null, 0)).frozen === false &&
+        P.unpackPlayer(P.packPlayer(player, null, 0, true, true, '', false)).sleeping === true, 'Flaga "zamarznięty" w stanie gracza');
     check(read('src/net/NetSession.js').includes('Boolean(game.freeze?.active)'), 'Gra wysyła flagę');
     const remote = read('src/net/RemotePlayers.js');
     check(remote.includes('entry.model.setIce(entry.ice)') && remote.includes('if (!frozen) {'), 'Inni gracze widzą bryłę lodu i zastygłą pozę');

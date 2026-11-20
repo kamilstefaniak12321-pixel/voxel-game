@@ -1445,7 +1445,7 @@ for (
 
         // Schody, półbloki, płoty, furtki, stół stolarski (0.90.0):
         // pudełka z ShapeBoxes.js (ChunkMesher.addShape).
-        shape: definition.model === 'shape' ? { kind: shapeInfo(definition.id)?.kind } : null,
+        shape: definition.model === 'shape' ? { kind: shapeInfo(definition.id)?.kind, topTurn: shapeInfo(definition.id)?.topTurn ?? 0 } : null,
 
         // Dodatkowe tekstury pudełek kształtu (np. pościel na łóżku):
         // pudełko z numerem tekstury n bierze shapeUv[n - 1].

@@ -91,7 +91,7 @@ export class NetSession {
 
     playerMessage() {
         const game = this.game;
-        return packPlayer(game.player, game.selectedBlock, this.swings, Boolean(game.sleep?.lying), Boolean(game.eating), Boolean(game.freeze?.active));
+        return packPlayer(game.player, game.selectedBlock, this.swings, Boolean(game.sleep?.lying), Boolean(game.eating), game.clothes ?? '', Boolean(game.freeze?.active));
     }
 
     chatLine(text) {

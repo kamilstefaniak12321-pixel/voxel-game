@@ -97,8 +97,10 @@ TEXTURES = {
 
 GENERATED = ['low_zucchini_plant_side', 'roasted_pumpkin_slice', 'roasted_zucchini']
 
-# Wolne kafelki atlasu (kolumna, wiersz).
-CELLS = [(x, 88) for x in range(17, 64)] + [(x, y) for y in range(89, 94) for x in range(51, 64)]
+# Wolne kafelki atlasu (kolumna, wiersz). Od 1.27.0 także dwa nowe
+# wiersze na samym dole (atlas rośnie sam - TextureAtlas.js: ATLAS_ROWS).
+CELLS = ([(x, 88) for x in range(17, 64)] + [(x, y) for y in range(89, 94) for x in range(51, 64)] +
+         [(x, y) for y in (96, 97) for x in range(64)])
 
 
 def source(folder, name):

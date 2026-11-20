@@ -67,6 +67,10 @@ export class WorldSaver {
         this.orchard = null;
         this.savedOrchardVersion = -1;
 
+        // Stoły krawieckie (game/SewingTables.js, 1.27.0) - ustawia Game.
+        this.sewingTables = null;
+        this.savedSewingVersion = -1;
+
 
         // Czas od ostatniego zapisu i od pierwszej niezapisanej zmiany.
 
@@ -222,6 +226,8 @@ export class WorldSaver {
             const chestVersion = this.chests?.version ?? 0;
             if (this.chests) this.worldInfo.chests = this.chests.getState();
             const tableVersion = this.tables?.version ?? 0;
+            const sewingVersion = this.sewingTables?.version ?? 0;
+            if (this.sewingTables) this.worldInfo.sewingTables = this.sewingTables.getState();
             const guests = this.worldInfo.guests;
             if (this.tables) this.worldInfo.carpenterTables = this.tables.getState();
             this.worldInfo.player = this.player.getState();
@@ -241,6 +247,7 @@ export class WorldSaver {
             this.savedRaftVersion = raftVersion;
             this.savedChestVersion = chestVersion;
             this.savedTableVersion = tableVersion;
+            this.savedSewingVersion = sewingVersion;
             this.savedGuests = guests;
             this.diagnostic('info', 'world.saved', 'Zakończono zapis świata.', {
                 chunks: chunks.length, immediate, wallMs: performance.now() - diagnosticStart
@@ -288,7 +295,8 @@ export class WorldSaver {
             (this.orchard && this.savedOrchardVersion !== (this.orchard.version ?? 0)) ||
             (this.rafts && this.savedRaftVersion !== (this.rafts.version ?? 0)) ||
             (this.chests && this.savedChestVersion !== (this.chests.version ?? 0)) ||
-            (this.tables && this.savedTableVersion !== (this.tables.version ?? 0));
+            (this.tables && this.savedTableVersion !== (this.tables.version ?? 0)) ||
+            (this.sewingTables && this.savedSewingVersion !== (this.sewingTables.version ?? 0));
     }
 
     // Wywoływane co klatkę z pętli gry.

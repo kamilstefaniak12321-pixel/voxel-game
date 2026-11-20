@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { loadTextureRegion } from '../rendering/TextureSheets.js';
+import { composeSkin } from './clothes.js';
 
 // ------------------------------------------------------------
 // SKÓRKA GRACZA (tekstura modelu)
@@ -12,6 +13,10 @@ import { loadTextureRegion } from '../rendering/TextureSheets.js';
 // wczytać własną (Ustawienia -> Gracz albo /skorka plik) - zostaje
 // zapamiętana w przeglądarce. Stary format 64 x 32 też działa (lewa
 // ręka i noga są wtedy kopią prawych).
+//
+// Od 1.27.0 na skórkę nakłada się noszone ubrania (player/clothes.js):
+// sama skórka leży na osobnym płótnie (base), a tekstura modelu to
+// skórka z ubraniami (setWornClothes).
 // ------------------------------------------------------------
 
 const STORAGE_KEY = 'voxel-game-skin';
@@ -28,6 +33,20 @@ canvas.height = SIZE;
 
 const context = canvas.getContext('2d', { willReadFrequently: true });
 
+// Sama skórka (bez ubrań) - z niej składa się tekstura i to ją dostają
+// inni gracze (ubrania wysyła się osobno - net/protocol.js).
+
+const base = document.createElement('canvas');
+
+base.width = SIZE;
+base.height = SIZE;
+
+const baseContext = base.getContext('2d', { willReadFrequently: true });
+
+// Noszone ubrania (4 stosy albo null) - setWornClothes.
+
+let worn = [];
+
 
 // Wspólna tekstura modelu - po wczytaniu innej skórki zmienia się
 // tylko obrazek, więc model nie musi nic przebudowywać.
@@ -43,7 +62,28 @@ skinTexture.colorSpace = THREE.SRGBColorSpace;
 // Skórka jako obrazek PNG (data URL) - dla innych graczy (gra wieloosobowa).
 
 export function skinDataURL() {
-    return canvas.toDataURL('image/png');
+    return base.toDataURL('image/png');
+}
+
+
+// Ubrania na postaci (game/Game.js - po każdej zmianie tego, co gracz
+// ma na sobie, i podgląd przy szyciu).
+
+export function setWornClothes(equip = []) {
+
+    worn = equip.map((item) => item ?? null);
+
+    compose();
+
+}
+
+
+function compose() {
+
+    composeSkin(context, base, worn);
+
+    skinTexture.needsUpdate = true;
+
 }
 
 
@@ -89,22 +129,22 @@ function drawSkin(image) {
     }
 
 
-    context.clearRect(0, 0, SIZE, SIZE);
+    baseContext.clearRect(0, 0, SIZE, SIZE);
 
-    context.drawImage(image, 0, 0);
+    baseContext.drawImage(image, 0, 0);
 
 
     // Stary format (64 x 32): bez lewej ręki i nogi - kopiujemy prawe.
 
     if (legacy) {
 
-        context.drawImage(canvas, 0, 16, 16, 16, 16, 48, 16, 16);
-        context.drawImage(canvas, 40, 16, 16, 16, 32, 48, 16, 16);
+        baseContext.drawImage(base, 0, 16, 16, 16, 16, 48, 16, 16);
+        baseContext.drawImage(base, 40, 16, 16, 16, 32, 48, 16, 16);
 
     }
 
 
-    skinTexture.needsUpdate = true;
+    compose();
 
     return true;
 

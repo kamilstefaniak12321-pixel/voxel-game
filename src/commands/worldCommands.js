@@ -524,7 +524,7 @@ function vineGallery(player, world) {
     set(9, 3, 5, 'pergola');
 
     return 'Galeria pnączy: od lewej mur z winoroślą, kratki z marakują, tyczki z chmielem i pergola z kiwi - w każdej kolejne etapy. ' +
-        'PPM na dojrzałych owocach - zbiór (poza porą roku owoców nie widać: /pora lato).';
+        'PPM na dojrzałych owocach - zbiór (poza porą roku owoców nie widać: /pora ustaw lato).';
 
 }
 

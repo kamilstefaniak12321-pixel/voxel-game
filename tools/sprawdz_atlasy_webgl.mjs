@@ -9,6 +9,7 @@ import { tmpdir } from 'node:os';
 import { spawn } from 'node:child_process';
 import { once } from 'node:events';
 import { createHash } from 'node:crypto';
+import { REDRAWN_ITEMS, REDRAWN_ICONS } from './ikonki_owocow.mjs';
 
 const ownRoot = fileURLToPath(new URL('../', import.meta.url));
 const root = resolve(process.env.VOXEL_TEST_ROOT ?? ownRoot);
@@ -51,7 +52,7 @@ const server = createServer(async (req, res) => {
                 </style><body><div id="qa-heading"><span id="qa-title">Atlasy tekstur 0.80.0</span><div id="qa-command"></div></div>
                 <script type="importmap">{"imports":{"three":"/lib/three/three.module.js"}}</script>
                 <script type="module">import {run} from '/tools/fixtures/texture-atlases.js';
-                try{window.treeQA=await run(await fetch('/tools/fixtures/texture-atlas-079.json').then(r=>r.json()));window.treeReady=true}catch(error){window.treeError=error.stack;console.error(error)}</script>`);
+                try{const expected=await fetch('/tools/fixtures/texture-atlas-079.json').then(r=>r.json());expected.redrawn=${JSON.stringify([...REDRAWN_ICONS])};window.treeQA=await run(expected);window.treeReady=true}catch(error){window.treeError=error.stack;console.error(error)}</script>`);
             return;
         }
         const servingRoot = pathname.startsWith('/tools/fixtures/texture-atlas') ? ownRoot : root;
@@ -140,12 +141,15 @@ try {
         // Ikony z 0.79.0 bez zmian; nowe gatunki (np. deski z 0.83.0) tylko dochodzą.
         const comparisonIcon = name => !electron && name.endsWith('_planks')
             ? report.plankIconsAt084SourceHeight[name] : report.iconHashes[name];
-        const kept = Object.fromEntries(Object.keys(expected.iconHashes).map(name => [name, comparisonIcon(name)]));
-        assert.deepEqual(kept, expected.iconHashes, electron ? 'Actual inventory icons preserve every visible pixel'
+        // 1.28.0: ikonki owoców przerysowane na prośbę Kamila (tools/owoce_ikony.py).
+        const oldIcons = Object.fromEntries(Object.entries(expected.iconHashes).filter(([name]) => !REDRAWN_ITEMS.has(name)));
+        const kept = Object.fromEntries(Object.keys(oldIcons).map(name => [name, comparisonIcon(name)]));
+        assert.deepEqual(kept, oldIcons, electron ? 'Actual inventory icons preserve every visible pixel'
             : 'Actual model icons and old planks at 0.84 source height preserve every visible pixel');
         const recent = JSON.parse(await readFile(resolve(ownRoot, `tools/fixtures/texture-atlas-visual-084${electron ? '-native' : ''}.json`), 'utf8'));
-        const recentIcons = Object.fromEntries(Object.keys(recent.iconHashes).map(name => [name, comparisonIcon(name)]));
-        assert.deepEqual(recentIcons, recent.iconHashes, electron ? 'All seventeen actual wood and firewood icons survive the extra atlas row'
+        const recentOld = Object.fromEntries(Object.entries(recent.iconHashes).filter(([name]) => !REDRAWN_ITEMS.has(name)));
+        const recentIcons = Object.fromEntries(Object.keys(recentOld).map(name => [name, comparisonIcon(name)]));
+        assert.deepEqual(recentIcons, recentOld, electron ? 'All seventeen actual wood and firewood icons survive the extra atlas row'
             : 'Seventeen actual firewood icons and plank icons at 0.84 source height match the independent baseline');
         report.actualIconDifferencesFrom084 = Object.keys(recent.iconHashes).filter(name => report.iconHashes[name].rgbaSha256 !== recent.iconHashes[name].rgbaSha256);
         assert.ok(report.textureRequests.length <= 9, 'At most nine thematic image requests instead of individual tiles');

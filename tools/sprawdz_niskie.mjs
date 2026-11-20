@@ -124,11 +124,13 @@ const HEIGHTS = { cranberry: [3, 6], lingonberry: [3, 5], strawberry: [4, 8], wi
         ['low_pumpkin_plant_top', 'pumpkin_zucchini/pvine_top'], ['low_pumpkin_spent_side', 'pumpkin_zucchini/pvine_yellow_side'],
         ['pumpkin_side', 'pumpkin_zucchini/pumpkin'], ['pumpkin_young_top', 'pumpkin_zucchini/pumpkin_young_top'],
         ['low_zucchini_fruit_side', 'pumpkin_zucchini/zuc_side'], ['sphagnum_red_tall_top', 'cranberry/sphagnum_red_top_hi'],
-        ['reindeer_lichen', 'lingonberry/lichen_heath'], ['item_cranberry', 'cranberry/item_cranberries'],
-        ['item_lingonberry', 'lingonberry/item_lingonberries'], ['item_wild_strawberry', 'strawberry/item_wild_strawberry'],
-        ['item_pumpkin_slice', 'pumpkin_zucchini/item_pumpkin_slice'], ['item_zucchini', 'pumpkin_zucchini/item_zucchini']
+        ['reindeer_lichen', 'lingonberry/lichen_heath']
     ];
     for (const [tile, file] of pairs) check(same(tile, file), `${tile}: rysunek Kamila piksel w piksel (${file})`);
+    // Ikonki owoców od 1.28.0 rysuje tools/owoce_ikony.py (prośba Kamila) - nie z paczki.
+    for (const [tile, file] of [['item_cranberry', 'cranberry/item_cranberries'], ['item_lingonberry', 'lingonberry/item_lingonberries'],
+        ['item_wild_strawberry', 'strawberry/item_wild_strawberry'], ['item_pumpkin_slice', 'pumpkin_zucchini/item_pumpkin_slice'],
+        ['item_zucchini', 'pumpkin_zucchini/item_zucchini']]) check(!same(tile, file), `${tile}: nowa ikonka (1.28.0), nie ${file}`);
 
     // Bok płyty: w dolnych wierszach (tyle, ile płyta ma wysokości) jest rysunek.
     const filledRows = (tile) => {

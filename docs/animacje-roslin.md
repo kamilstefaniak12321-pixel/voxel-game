@@ -103,10 +103,12 @@ a sadzonka płynnie dorasta wokół podstawy. Wszystkie części jednego
 owocu (np. zagięta papryczka wraz z ogonkiem) mają wspólny środek
 skalowania i przesunięcie od wiatru. Krzak nie rozrywa owocu na kostki.
 
-Owoc na krzaku, jego ikona w ekwipunku oraz model w dłoni korzystają
-z jednej geometrii i tych samych kolorów/UV. Podgląd może zmieniać
-obrót i skalę wyświetlania, ale nie proporcje ani kształt. Dotyczy to
-również borówki: przedmiot jest jej oryginalną kostką 1/16 bloku.
+Owoc na krzaku korzysta z jednej geometrii i tych samych kolorów/UV we
+wszystkich etapach (dotyczy to również borówki - jej owoc to oryginalna
+kostka 1/16 bloku). Do 1.27.0 ten sam model był też ikoną w ekwipunku
+i przedmiotem w dłoni; od 1.28.0 (decyzja Kamila) w ekwipunku i w dłoni
+jest płaska ikonka jak u innych owoców (`tools/owoce_ikony.py`,
+[styl-tekstur.md](styl-tekstur.md)).
 
 Limit 12 aktywnych przejść jest wspólny dla borówki, pozostałych krzaków
 owocowych i roślin z paczek. ID 34–49 i 94–97, plony, etapy biologicznego

@@ -127,8 +127,8 @@ for(const [s,name] of species.entries()) {
     heldBush.dispose();
 }
 
-// The item is one actual fruit from the bush, not a separately invented icon.
-const iconHashes=new Set();
+// Model owocu to prawdziwy owoc z krzaka (na roślinie). Od 1.28.0 - decyzja
+// Kamila - w ręce i w ekwipunku owoc jest płaską ikonką (tools/owoce_ikony.py).
 for(const [s,item]of [...items,'blueberry'].entries()){
     const name=species[s]??'blueberry',model=getFruitItemModel(item);
     assert.equal(model.species,name);
@@ -143,28 +143,10 @@ for(const [s,item]of [...items,'blueberry'].entries()){
         normal:f.normal.map(round),color:f.color,uv:f.uv?.map(v=>v.map(round))
     })).sort();
     assert.deepEqual(geometrySignature(model.faces,local.center),geometrySignature(onBush,planted.center),`${name}: identical fruit source`);
-    const held=buildBlockGeometry(item);held.computeBoundingBox();
-    const extent=held.boundingBox.getSize(new Vector3());
-    assert.ok(extent.x>0&&extent.y>0&&extent.z>0,'Held fruit is 3D');
-    near(Math.max(extent.x,extent.y,extent.z),.8,'Readable held fruit size');
-    assert.equal(held.index.count,model.faces.length*6);
-    for(const attr of Object.values(held.attributes))assert.ok(attr.array.every(Number.isFinite));
+    const held=buildBlockGeometry(item);
+    assert.equal(held.index.count,12,`${name}: w ręce płaska ikonka (1.28.0)`);
     held.dispose();
-    let texturedSamples=0;
-    const pixels=modelIconPixels(model.faces,48,(texture,u,v,out)=>{
-        assert.ok(Number.isFinite(u)&&Number.isFinite(v));
-        if(texture==='models/blueberry/atlas')texturedSamples++;
-        out[0]=texture==='models/blueberry/atlas'?100:255;
-        out[1]=texture==='models/blueberry/atlas'?50:255;
-        out[2]=texture==='models/blueberry/atlas'?190:255;out[3]=255;
-    },model.texture);
-    assert.equal(pixels.length,48*48*4);
-    assert.ok(pixels.some((n,i)=>i%4===3&&n>0),'Fruit icon is visible');
-    assert.ok(pixels.some((n,i)=>i%4===3&&n===0),'Icon retains transparent background');
-    if(name==='blueberry')assert.ok(texturedSamples>0,'Blueberry icon samples its imported texture');
-    iconHashes.add(Buffer.from(pixels).toString('base64'));
 }
-assert.equal(iconHashes.size,5,'All five fruit items are visually distinguishable');
 assert.equal(getFruitItemModel('stone'),null);
 const legacy=buildBlockGeometry('stick');assert.equal(legacy.index.count,12,'Unrelated flat items retain their geometry');legacy.dispose();
 

@@ -11,6 +11,27 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 1.28.0 - Nowe ikonki owoców
+
+PR #181.
+
+- **Nowe ikonki wszystkich owoców i orzechów** (29: truskawki, poziomki,
+  maliny i żółte maliny, jeżyny, borówki, brusznice, żurawina, porzeczki
+  czerwone i czarne, agrest i czerwony agrest, aronia, czarny bez,
+  rokitnik, dzika róża, jabłko, figa, oliwki, kokos, owoc baobabu,
+  jagody draceny, chili, orzech laskowy, orzeszki bukowe, żołądź,
+  orzeszki araukarii, kawałek dyni, cukinia) - prośba Kamila, w czterech
+  krokach z jego poradnika: kształt, ciemniejszy kontur, cieniowanie
+  (ciemne nasycone i chłodne, jasne mniej nasycone i ciepłe, połysk)
+  i „brud" na granicach odcieni. Pieczona dynia i cukinia - z nowych
+  ikonek.
+- **Owoce krzaków w ręce i w ekwipunku** (truskawka, jeżyna, borówka,
+  chili, orzech laskowy) mają teraz płaską ikonkę jak inne owoce, a nie
+  model z krzaka - decyzja Kamila. Na krzaku owoce wyglądają jak dotąd.
+- Ikonki rysuje `tools/owoce_ikony.py` (`podglad` - obecne obok nowych,
+  `kroki` - cztery kroki); styl opisany w `docs/styl-tekstur.md`, zasada
+  w `AGENTS.md`.
+
 ## 1.27.0 - Włókna i ubrania
 
 PR #180.

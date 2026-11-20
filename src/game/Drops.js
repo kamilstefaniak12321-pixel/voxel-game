@@ -16,7 +16,10 @@
 //   wait - ile sekund jeszcze nie da się go podnieść (żeby wyrzucony
 //          przedmiot nie wrócił od razu do ręki),
 //   dry  - ile sekund mokra gliniana rzecz schła już na słońcu (1.1.0 -
-//          items/clay.js): po DRY_SECONDS zamienia się w suchą.
+//          items/clay.js): po DRY_SECONDS zamienia się w suchą,
+//   ret  - ile sekund len, pokrzywa albo kora lipowa moczy się w wodzie
+//          (1.27.0 - items/clothing.js): po RET_SECONDS włókno puszcza,
+//   look - wygląd ubrania (1.27.0).
 //
 // Przedmiot nie znika z czasem - leży, dopóki ktoś go nie podniesie.
 // Gdy jest ich za dużo (DROP_LIMIT), znikają najstarsze.
@@ -31,7 +34,8 @@ import { isLiquidId } from '../blocks/BlockRegistry.js';
 import { STACK_SIZE } from './Inventory.js';
 import { sunDries, DRY_SECONDS, DRY_SKY_LIGHT } from '../items/clay.js';
 import { driesInto } from '../items/drying.js';
-import { makeItem, sameBatch, blend } from '../items/freshness.js';
+import { makeItem, sameBatch, blend, stackSize } from '../items/freshness.js';
+import { isGarment, cleanLook, retsInto, RET_SECONDS } from '../items/clothing.js';
 
 // Z jakiej odległości (bloki) gracz podnosi przedmiot.
 export const DROP_PICKUP_RADIUS = 1.4;
@@ -78,7 +82,9 @@ export function restoreDrop(value) {
         vx: finite(value.vx), vy: finite(value.vy), vz: finite(value.vz),
         rest: value.rest === true, age: 0, wait: DROP_WAIT,
         dry: Math.max(0, Math.min(DRY_SECONDS, finite(value.dry))),
-        ...freshField(type, value.fresh)
+        ret: Math.max(0, Math.min(RET_SECONDS, finite(value.ret))),
+        ...freshField(type, value.fresh),
+        ...lookField(type, value.look)
     };
 }
 
@@ -86,6 +92,11 @@ export function restoreDrop(value) {
 function freshField(type, fresh) {
     const item = makeItem(type, 1, Number(fresh));
     return item.fresh === undefined ? {} : { fresh: Math.round(item.fresh * 1000) / 1000 };
+}
+
+// Wygląd ubrania (items/clothing.js) - pole wpisu.
+function lookField(type, look) {
+    return isGarment(type) ? { look: cleanLook(look) } : {};
 }
 
 // To, co idzie do zapisu i do innych graczy.
@@ -96,7 +107,9 @@ export function dropState(drop) {
         x: round(drop.x), y: round(drop.y), z: round(drop.z),
         vx: round(drop.vx), vy: round(drop.vy), vz: round(drop.vz), rest: drop.rest,
         ...(drop.dry > 0 ? { dry: Math.round(drop.dry) } : {}),
-        ...freshField(drop.type, drop.fresh)
+        ...(drop.ret > 0 ? { ret: Math.round(drop.ret) } : {}),
+        ...freshField(drop.type, drop.fresh),
+        ...lookField(drop.type, drop.look)
     };
 }
 
@@ -123,15 +136,16 @@ export class Drops {
 
     // Nowy przedmiot w świecie. position - { x, y, z } (dół przedmiotu),
     // velocity - { x, y, z } albo nic. Zwraca wpis.
-    // fresh - świeżość jedzenia (pominięte: świeże).
-    spawn(type, count, position, velocity = null, wait = DROP_WAIT, fresh) {
+    // fresh - świeżość jedzenia (pominięte: świeże), look - wygląd ubrania.
+    spawn(type, count, position, velocity = null, wait = DROP_WAIT, fresh, look) {
         if (!itemExists(type) || !(count >= 1)) return null;
         const drop = {
             id: newId(), type, count: Math.floor(count),
             x: position.x, y: position.y, z: position.z,
             vx: velocity?.x ?? 0, vy: velocity?.y ?? 0, vz: velocity?.z ?? 0,
-            rest: false, age: 0, wait, dry: 0,
-            ...freshField(type, fresh)
+            rest: false, age: 0, wait, dry: 0, ret: 0,
+            ...freshField(type, fresh),
+            ...lookField(type, look)
         };
         this.drops.set(drop.id, drop);
         // Za dużo przedmiotów: znikają najstarsze (Map trzyma kolejność).
@@ -141,7 +155,7 @@ export class Drops {
     }
 
     // Rzut przed siebie z wysokości oczu: tam, gdzie gracz patrzy.
-    throwFromPlayer(type, count, fresh) {
+    throwFromPlayer(type, count, fresh, look) {
         const player = this.game.player;
         const yaw = player.yaw, pitch = player.pitch ?? 0;
         const flat = Math.cos(pitch);
@@ -161,7 +175,7 @@ export class Drops {
             x: direction.x * THROW_SPEED + (player.vel?.x ?? 0) * 0.5,
             y: direction.y * THROW_SPEED + THROW_LIFT,
             z: direction.z * THROW_SPEED + (player.vel?.z ?? 0) * 0.5
-        }, DROP_THROW_WAIT, fresh);
+        }, DROP_THROW_WAIT, fresh, look);
     }
 
     // Wyrzucenie z wybranego miejsca paska: jedna sztuka albo cały stos.
@@ -171,7 +185,7 @@ export class Drops {
         const item = inventory.selectedItem;
         if (!item) return false;
         const count = all ? item.count : 1;
-        if (!this.throwFromPlayer(item.type, count, item.fresh)) return false;
+        if (!this.throwFromPlayer(item.type, count, item.fresh, item.look)) return false;
         inventory.take(inventory.selected, count);
         this.game.sounds?.play('harvest', { volume: 0.45, pitch: 0.75 });
         this.game.achieve?.('dropped', { type: item.type, count });
@@ -245,6 +259,26 @@ export class Drops {
         game.achieve?.('dried', { type: into, count: drop.count });
     }
 
+    // MOCZENIE (1.27.0, items/clothing.js). Wiązka lnu, pokrzywa albo
+    // kora lipowa leżąca w wodzie po RET_SECONDS zamienia się w moczony
+    // len, moczoną pokrzywę albo łyko (cały stos naraz). Wyjęta z wody
+    // przed czasem - zaczyna od nowa.
+    updateRetting(drop, dt) {
+        const into = retsInto(drop.type);
+        if (!into) return;
+        const world = this.game.world;
+        if (!isLiquidId(world.getBlockId(Math.floor(drop.x), Math.floor(drop.y + 0.1), Math.floor(drop.z)))) {
+            drop.ret = 0;
+            return;
+        }
+        drop.ret = (drop.ret ?? 0) + dt;
+        if (drop.ret < RET_SECONDS) return;
+        drop.type = into;
+        drop.ret = 0;
+        this.version++;
+        this.game.achieve?.('retted', { type: into, count: drop.count });
+    }
+
     // Czy leżący przedmiot dalej ma na czym leżeć (ktoś wykopał blok).
     supported(drop) {
         return this.solid(drop.x, drop.y - 0.05, drop.z);
@@ -264,12 +298,13 @@ export class Drops {
             else if (Math.abs(drop.x - px) < 24 && Math.abs(drop.z - pz) < 24 && !this.supported(drop)) drop.rest = false;
 
             this.updateDrying(drop, dt);
+            this.updateRetting(drop, dt);
 
             // Podnoszenie: tyle, ile się zmieści; reszta zostaje.
             if (!canPick || drop.wait > 0) continue;
             const distance = Math.hypot(drop.x - px, (drop.y - py) * 0.7, drop.z - pz);
             if (distance > DROP_PICKUP_RADIUS) continue;
-            const left = inventory.add(drop.type, drop.count, 0, inventory.slots.length, drop.fresh);
+            const left = inventory.add(drop.type, drop.count, 0, inventory.slots.length, drop.fresh, drop.look);
             if (left === drop.count) continue;
             const taken = drop.count - left;
             game.sounds?.play('harvest', { volume: 0.5, pitch: 1.25 });
@@ -296,7 +331,7 @@ export class Drops {
             if (!this.drops.has(a.id)) continue;
             for (let j = i + 1; j < resting.length; j++) {
                 const b = resting[j];
-                if (!this.drops.has(b.id) || a.count + b.count > STACK_SIZE || !sameBatch(a, b.type, b.fresh)) continue;
+                if (!this.drops.has(b.id) || a.count + b.count > stackSize(a.type) || !sameBatch(a, b.type, b.fresh, b.look)) continue;
                 if (Math.hypot(a.x - b.x, a.y - b.y, a.z - b.z) > DROP_MERGE_RADIUS) continue;
                 blend(a, b.count, b.fresh);
                 a.wait = Math.max(a.wait, b.wait);

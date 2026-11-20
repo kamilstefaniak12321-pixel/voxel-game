@@ -46,6 +46,7 @@ const { RECIPES, GROUPS } = await import('../src/crafting/recipes.js');
 const { findRecipe } = await import('../src/crafting/Crafting.js');
 const { FOODS, ROASTS, TEAS, CUP, KIND_LABELS, getFood, getRoast, isDrink } = await import('../src/items/foods.js');
 const { EFFECTS, getEffect } = await import('../src/items/effects.js');
+const { retsInto, clothFromFiber, clothOf, garmentInfo } = await import('../src/items/clothing.js');
 const { PLANT_PACKS, PLANT_GROUPS, PLANT_COLOR_GROUPS, plantStageType } = await import('../src/blocks/plantPacks.js');
 const { TINDERS, isTinder, fuelWood, newCampfire, addFirewood, addTinder, updateCampfire, CAMPFIRE_IGNITE_SECONDS } = await import('../src/game/CampfireState.js');
 const { Wellbeing, SLEEP_PLACES } = await import('../src/game/Wellbeing.js');
@@ -71,7 +72,7 @@ const everything = [...inventoryBlocks, ...Object.keys(ITEM_TYPES)];
 
     // Jedna zasada na rodzaj rzeczy.
     const expected = { stairs: 'budowa', slab: 'budowa', fence: 'budowa', gate: 'budowa', door: 'budowa', trapdoor: 'budowa',
-        table: 'ozdoby', bed: 'ozdoby', mat: 'ozdoby', gourd: 'rosliny' };
+        table: 'ozdoby', sewing: 'ozdoby', bed: 'ozdoby', mat: 'ozdoby', gourd: 'rosliny' };
     for (const type of inventoryBlocks) {
         const definition = R.BLOCK_TYPES[type];
         const kind = shapeInfo(definition.id)?.kind;
@@ -129,6 +130,11 @@ function usesOf(type) {
     if (getTool(type)) uses.push('narzędzie');
     if (ITEM_TYPES[type]?.plants) uses.push('sadzenie');
     if (OWN_USE[type]) uses.push(OWN_USE[type]);
+    // Włókna i ubrania (1.27.0, items/clothing.js): moczenie, tkanie,
+    // szycie, noszenie.
+    if (retsInto(type)) uses.push('moczenie');
+    if (clothFromFiber(type) || clothOf(type)) uses.push('stół krawiecki');
+    if (garmentInfo(type)) uses.push('noszenie');
     return uses;
 }
 

@@ -2,7 +2,7 @@
 
 > Ta strona jest generowana z kodu gry (`python tools/wiki.py`) - nie zmieniaj jej ręcznie, zmiany przepadną przy następnym generowaniu.
 
-Wersja gry **1.26.0** - 249 przepisów. Wytwarza się w ekwipunku (**E**): siatka 2 x 2 obok miejsc ekwipunku, wynik po prawej (klik - weź, Shift + klik - ile się da). Przycisk 📖 *Przepisy* otwiera księgę - klik na przepisie sam układa składniki. Przepisy *z kształtem* można przesuwać po siatce i odbijać w poziomie; przepisy *bez kształtu* - obojętne, gdzie leżą składniki. Z czatu: `/przepisy`, `/wytworz <przepis>`.
+Wersja gry **1.27.0** - 253 przepisów. Wytwarza się w ekwipunku (**E**): siatka 2 x 2 obok miejsc ekwipunku, wynik po prawej (klik - weź, Shift + klik - ile się da). Przycisk 📖 *Przepisy* otwiera księgę - klik na przepisie sam układa składniki. Przepisy *z kształtem* można przesuwać po siatce i odbijać w poziomie; przepisy *bez kształtu* - obojętne, gdzie leżą składniki. Z czatu: `/przepisy`, `/wytworz <przepis>`.
 
 
 ## Ziemia
@@ -1096,6 +1096,12 @@ Wersja gry **1.26.0** - 249 przepisów. Wytwarza się w ekwipunku (**E**): siatk
 
 4 x Wiązka lnu (z kształtem). Nazwa przepisu: `linen_bedding`. Wygodniejsza od słomianej. PPM na ziemi: posłanie. PPM na stelażu łóżka: ścieli łóżko.
 
+### Stół krawiecki
+
+<img src="przepisy/sewing_table.png" alt="Stół krawiecki: 2 x deski (dowolne) + 2 x Sznur (ułożenie: PP / RR; P = deski (dowolne), R = Sznur)">
+
+2 x deski (dowolne) + 2 x Sznur (z kształtem). Nazwa przepisu: `sewing_table`. Stół na dwa bloki, jak stolarski. Na lewej części kładziesz włókno, płótno albo ubranie; na prawej tkasz płótno albo szyjesz z wykrojów. Barwnik na płótno - kolor.
+
 ### Wianek z kwiatów
 
 <img src="przepisy/flower_wreath.png" alt="Wianek z kwiatów: 4 x kwiat (mak, chaber, rumianek, mniszek, krokus, wrzos i inne) (ułożenie: FF / FF; F = kwiat (mak, chaber, rumianek, mniszek, krokus, wrzos i inne))">
@@ -1188,6 +1194,24 @@ Wersja gry **1.26.0** - 249 przepisów. Wytwarza się w ekwipunku (**E**): siatk
 <img src="przepisy/straw.png" alt="Słoma: 2 x trawa (krótka, wysoka, wydmowa) albo trzcina (obojętne gdzie)">
 
 2 x trawa (krótka, wysoka, wydmowa) albo trzcina (bez kształtu). Nazwa przepisu: `straw`. Wysuszona trawa. Cztery sztuki dają słomianą pościel.
+
+### Włókno lniane x2
+
+<img src="przepisy/flax_fiber.png" alt="Włókno lniane x2: 1 x Moczony len (obojętne gdzie)">
+
+1 x Moczony len (bez kształtu). Nazwa przepisu: `flax_fiber`. Moczony len: wrzuć wiązkę lnu do wody i poczekaj półtorej minuty. Z włókna na stole krawieckim tka się płótno.
+
+### Włókno pokrzywowe
+
+<img src="przepisy/nettle_fiber.png" alt="Włókno pokrzywowe: 1 x Moczona pokrzywa (obojętne gdzie)">
+
+1 x Moczona pokrzywa (bez kształtu). Nazwa przepisu: `nettle_fiber`. Moczona pokrzywa: wrzuć pokrzywę do wody i poczekaj półtorej minuty. Płótno z pokrzywy grzeje lepiej niż lniane.
+
+### Sznur
+
+<img src="przepisy/rope.png" alt="Sznur: 3 x włókno (lniane, pokrzywowe, łyko) (obojętne gdzie)">
+
+3 x włókno (lniane, pokrzywowe, łyko) (bez kształtu). Nazwa przepisu: `rope`. Trzy dowolne włókna. Ze sznurów i desek - stół krawiecki.
 
 ### Mokry kubek z gliny x2
 
@@ -1552,5 +1576,6 @@ Składnik z grupy to dowolna rzecz z listy (np. patyki z desek różnych drzew).
 - **kwiat (mak, chaber, rumianek, mniszek, krokus, wrzos i inne)**: Mak, Chaber, Rumianek, Mniszek, Krokus, Wrzos, Wiecha amarantusa, Bukiet kocanki, Bukiet lawendy, Kwiat piwonii, Kwiat zawilca, Kwiat dzwonka, Kwiat nagietka, Kwiat cynii, Kwiat mikołajka, Kwiat barwinka
 - **zioło na sen (kwiat lipy, płatki róży, bukiet lawendy)**: Kwiat lipy, Płatki dzikiej róży, Bukiet lawendy
 - **zioło lecznicze (rumianek, babka, kwiat czarnego bzu, liście szałwii, kwiat nagietka)**: Rumianek, Babka zwyczajna, Kwiat bzu czarnego, Liście szałwii, Kwiat nagietka
+- **włókno (lniane, pokrzywowe, łyko)**: Włókno lniane, Włókno pokrzywowe, Łyko
 - **zioło wzmacniające (pokrzywa, nasiona gorczycy)**: Pokrzywa, Nasiona gorczycy
 - **pień (gatunek)**: zwykły, okorowany, a u sosny także górny i z żywicą

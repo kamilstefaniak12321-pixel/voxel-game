@@ -15,9 +15,13 @@
 import { restoreChest, chestState } from '../game/ChestState.js';
 import { restoreCampfire } from '../game/CampfireState.js';
 import { restoreTable } from '../game/CarpenterTables.js';
+import { restoreSewingTable, sewingTableState } from '../game/SewingTables.js';
 import { restoreDrop, dropState } from '../game/Drops.js';
 
 const LEASE = 1.2;
+
+// Pusta lista (gra bez stołów krawieckich - np. w testach).
+const NONE = new Map();
 
 export function stateSystems(game) {
     return {
@@ -34,6 +38,14 @@ export function stateSystems(game) {
             restore: restoreTable,
             sign: (table) => `${table.planks}:${table.count}`,
             changed: () => game.carpenterTables.version++
+        },
+        // Stoły krawieckie (1.27.0): materiał, barwy, wzór i kroje.
+        sewing: {
+            map: () => game.sewingTables?.tables ?? NONE,
+            save: sewingTableState,
+            restore: restoreSewingTable,
+            sign: (table) => JSON.stringify(sewingTableState(table)),
+            changed: () => { if (game.sewingTables) game.sewingTables.version++; }
         },
         fires: {
             map: () => game.campfires.fires,

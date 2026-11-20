@@ -1758,7 +1758,8 @@ function addShape(id, renderData, lx, y, lz, faceCount, baseX, baseZ) {
 
             if (edge && padOpaque[front]) continue;
 
-            const fullUv = (box[6] ? renderData.shapeUv[box[6] - 1] : renderData.uv)[faceIndex][0];
+            // Wierzch może być obrócony (stół krawiecki - miarka z przodu).
+            const fullUv = (box[6] ? renderData.shapeUv[box[6] - 1] : renderData.uv)[faceIndex][normal[1] > 0 ? info.topTurn ?? 0 : 0];
 
             ensureCapacity(faceCount + 1);
 

@@ -552,7 +552,7 @@ export function getTileColors(tileName) {
 
 // Kształt kafelka 16 x 16 (1 - piksel widoczny, wiersz 0 = góra
 // obrazka) albo null, dopóki atlas się nie wczyta. Do grubych
-// przedmiotów w ręce (PlayerModel.buildExtrudedItemGeometry).
+// przedmiotów w ręce (ExtrudedItemGeometry.buildExtrudedItemGeometry).
 
 const tileMasks = new Map();
 

@@ -27,7 +27,7 @@ import { InventoryScreen } from './ui/InventoryScreen.js';
 import { NetHost } from './net/NetHost.js';
 import { NetClient } from './net/NetClient.js';
 import { normalizeInviteCode, newPlayerId, cleanName } from './net/protocol.js';
-import { skinDataURL } from './player/skin.js';
+import { skinDataURL, setWornClothes } from './player/skin.js';
 import { SoundManager } from './audio/SoundManager.js';
 import { MusicManager } from './audio/MusicManager.js';
 import { setUiSounds, playUi } from './audio/ui.js';
@@ -635,6 +635,10 @@ async function playWorld(worldInfo, { client = null } = {}) {
         // Serce (samopoczucie) reaguje na burczenie, posiłki i nową dobę.
         game.onWellbeing = (event) => statusPanel.signal(event);
         game.onOpenChest = (chest) => openInventory(chest);
+
+        // Ubrania na skórce gracza (1.27.0).
+        game.onClothes = (equip) => setWornClothes(equip);
+        game.clothesChanged();
 
         // Pomiar wydajności (komenda /wydajnosc).
 
@@ -1358,6 +1362,9 @@ function copyText(text) {
 
 
 function closeWorld() {
+
+    // Menu pokazuje postać bez ubrań z tego świata.
+    setWornClothes([]);
 
     diagnostics.breadcrumb('world.closed', 'Zakończono rozgrywkę w świecie.');
     void diagnostics.flush();

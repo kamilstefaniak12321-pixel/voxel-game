@@ -208,7 +208,7 @@ function emptyInventory(mode = 'adventure') {
     const screen = read('src/ui/InventoryScreen.js');
     check(!/\{ type: (item|held|this\.cursor)\.type, count: /.test(screen), 'InventoryScreen nie kopiuje stosów bez świeżości');
     check(screen.includes('blend(item, moved, held.fresh)') && screen.includes('blend(item, 1, held.fresh)') && screen.includes('withCount(item, half)') &&
-        screen.includes("insertIntoChest(this.chest, item.type, item.count, item.fresh)") && screen.includes('throwFromPlayer(item.type, thrown, item.fresh)'), 'Ręczne łączenie: średnia; połowa stosu, skrzynia i wyrzucanie ze świeżością');
+        screen.includes("insertIntoChest(this.chest, item.type, item.count, item.fresh") && screen.includes('throwFromPlayer(item.type, thrown, item.fresh'), 'Ręczne łączenie: średnia; połowa stosu, skrzynia i wyrzucanie ze świeżością');
     check(screen.includes('freshNote(hovered)') && screen.includes("this.freshNote(item, this.game.spoilage?.placeOf(this.chest))") && /freshText\(item, spoilage\.temperature\(\), place\)/.test(screen), 'Opis stosu pokazuje, ile jeszcze poleży (ekwipunek i skrzynia)');
     check(read('src/ui/StatusPanel.js').includes('freshText(game.inventory.selectedItem'), 'Okno statusu: świeżość jedzenia w ręce');
 }

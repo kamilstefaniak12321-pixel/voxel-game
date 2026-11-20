@@ -137,10 +137,12 @@ async function setupUi(iconNames) {
             check(document.querySelector('.inv-result.ready'), 'Gotowy wynik wytwarzania nie jest wyróżniony');
             click(document.querySelector('.inv-result'));
             check(screen.cursor?.type === 'oak_planks', 'Wytwarzanie nie działa'); screen.returnCursor();
-            // Układ 0.77.0: pasek nad ramą, postać | 3 miejsca na ubrania | strefa rzemieślnicza, 4 x 9.
+            // Układ 0.77.0: pasek nad ramą, postać | miejsca na ubrania | strefa rzemieślnicza, 4 x 9.
+            // 1.27.0: 4 miejsca na ubrania (głowa, tułów, nogi, stopy) i 2 "wkrótce" (plecak, pas), w dwóch kolumnach.
             const rect = (selector) => document.querySelector(selector).getBoundingClientRect();
             check(rect('.inv-bar').bottom <= rect('.inv-panel').top + 1, 'Pasek nie jest nad ramą');
-            check(document.querySelectorAll('.inv-equipment .inv-slot[data-kind="equip"]').length === 3, 'Brak 3 miejsc na ubrania');
+            check(document.querySelectorAll('.inv-equipment .inv-slot[data-kind="equip"]').length === 4 &&
+                document.querySelectorAll('.inv-equipment .inv-slot[data-kind="soon"]').length === 2, 'Brak 4 miejsc na ubrania i 2 na później');
             check(document.querySelector('.inv-zone .inv-craft-grid') && document.querySelector('.inv-zone .inv-result'), 'Wytwarzanie nie jest w strefie rzemieślniczej');
             const character = rect('.inv-character'), equipment = rect('.inv-equipment'), zone = rect('.inv-zone'), items = rect('.inv-items');
             check(character.right <= equipment.left && equipment.right <= zone.left, 'Zła kolejność: postać, ubrania, strefa');
@@ -150,8 +152,13 @@ async function setupUi(iconNames) {
             check(document.querySelectorAll('.inv-items .inv-slot').length === 27 && document.querySelectorAll('.inv-hotbar .inv-slot').length === 9, 'Siatka nie ma 4 x 9');
             const equipSlot = document.querySelector('.inv-slot[data-kind="equip"]'); const kept = game.inventory.slots[12];
             click(document.querySelector('[data-kind="slot"][data-index="12"]')); click(equipSlot);
-            check(screen.cursor?.type === kept.type && !equipSlot.querySelector('img').src.includes('/ikony/'), 'Miejsce na ubranie przyjęło przedmiot');
+            check(screen.cursor?.type === kept.type && !game.inventory.equip[0], 'Miejsce na ubranie przyjęło nie-ubranie');
             click(document.querySelector('[data-kind="slot"][data-index="12"]'));
+            // 1.27.0: koszula wchodzi na tułów (drugie miejsce), Shift + klik zdejmuje.
+            game.inventory.set(13, { type: 'shirt_linen', count: 1 }); screen.refresh();
+            click(document.querySelector('[data-kind="slot"][data-index="13"]')); click(document.querySelectorAll('.inv-slot[data-kind="equip"]')[1]);
+            check(!screen.cursor && game.inventory.equip[1]?.type === 'shirt_linen', 'Koszula nie weszła na tułów');
+            game.inventory.equip[1] = null; screen.refresh();
             click(document.querySelector('.inv-book-toggle')); check(screen.book.open && document.querySelector('.inv-book'), 'Nie otworzono księgi');
             tests.push('Przeniesienie stosu, opis przedmiotu, wytwarzanie, księga, nowy układ ekwipunku');
             await inventory('creative');
@@ -227,7 +234,8 @@ async function setupUi(iconNames) {
                 settings.set('inventoryStyle', style); settings.set('inventoryScale', 100); await inventory();
                 const base = dimensions(), hud = document.querySelector('.hotbar-slot').getBoundingClientRect().width;
                 settings.set('inventoryScale', 175); await tick(); const large = dimensions();
-                check(large.width > base.width * 1.45 && large.height > innerHeight * .78, 'Domyślne okno jest wyraźnie większe na1080p');
+                // 1.27.0: okno jest wyższe (miejsca na ubrania w dwóch kolumnach), więc przy 175% pierwsza kończy się wysokość.
+                check(large.width > base.width * 1.35 && large.height > innerHeight * .78, `Domyślne okno jest wyraźnie większe na1080p (${Math.round(base.width)}x${Math.round(base.height)} -> ${Math.round(large.width)}x${Math.round(large.height)}, ekran ${innerHeight})`);
                 check(large.height <= innerHeight * .89, 'Domyślne okno zachowuje margines ekranu');
                 check(document.querySelector('.hotbar-slot').getBoundingClientRect().width === hud, 'Rozmiar ekwipunku nie powiększa HUD');
                 game.inventory.set(18, { type: 'stone', count: 13 }); game.inventory.set(20, null); screen.refresh();

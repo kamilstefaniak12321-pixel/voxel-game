@@ -123,7 +123,7 @@ export class Freeze {
         const warmth = this.game.warmth;
         if (!warmth) return false;
         const parts = warmth.parts;
-        return warmth.heat >= THAW_HEAT || parts.air + parts.shelter + parts.water + parts.heat >= THAW_TEMP;
+        return warmth.heat >= THAW_HEAT || parts.air + parts.shelter + parts.water + parts.heat + (parts.clothes ?? 0) >= THAW_TEMP;
     }
 
     // Co klatkę. Zwraca true, dopóki gracz nie steruje.
@@ -164,7 +164,7 @@ export class Freeze {
         const from = game.time.days;
         const field = game.weather?.field;
         // Stałe dodatki w tym miejscu: schronienie, woda i ciepło obok.
-        const bonus = parts ? parts.shelter + parts.water + parts.heat : 0;
+        const bonus = parts ? parts.shelter + parts.water + parts.heat + (parts.clothes ?? 0) : 0;
         const to = field ? findWarm(field, player.pos.x, player.pos.y + 0.9, player.pos.z, from, THAW_TEMP, bonus, { limit: LAPSE_LIMIT }) : from + 1;
         const days = Math.max(1 / 24, to - from);
         this.lapse = { from, to: from + days, start: this.time, seconds: lapseSeconds(days), covered: days > LAPSE_COVERED };

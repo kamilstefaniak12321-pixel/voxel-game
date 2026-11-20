@@ -124,7 +124,7 @@ export const SHRUBS = {
     // Borówka wysoka (amerykańska) - owoce jak u borówki czarnej z lasu.
     highbush_blueberry: {
         firstId: 14412, name: 'Highbush Blueberry', label: 'Borówka wysoka', of: 'borówki wysokiej', palette: 'czerwony',
-        habitat: { wetland: 0.4, pine: 0.45, maple_forest: 0.5 },
+        habitat: { wetland: 0.4, pine: 0.45, maple_forest: 0.5, spruce: 0.25 },
         varieties: [{ key: '', of: 'borówki wysokiej', item: 'blueberry', count: [2, 5], fruit: 'fruit' }],
         flower: true, stem: null,
         shape: { kind: 'mound', height: [1, 2], radius: [0.6, 2.6], fruit: 0.45 }

@@ -2,7 +2,7 @@
   "version": 1,
   "tileSize": 16,
   "columns": 64,
-  "rows": 96,
+  "rows": 97,
   "sheets": {
     "drzewa": {
       "file": "drzewa.png",
@@ -17,7 +17,7 @@
     "rosliny": {
       "file": "rosliny.png",
       "width": 256,
-      "height": 544
+      "height": 576
     },
     "przedmioty": {
       "file": "przedmioty.png",
@@ -9220,6 +9220,223 @@
       "y": 528,
       "width": 16,
       "height": 16
+    },
+    "flax_retted": {
+      "sheet": "rosliny",
+      "x": 0,
+      "y": 544,
+      "width": 16,
+      "height": 16
+    },
+    "nettle_retted": {
+      "sheet": "rosliny",
+      "x": 16,
+      "y": 544,
+      "width": 16,
+      "height": 16
+    },
+    "flax_fiber": {
+      "sheet": "rosliny",
+      "x": 32,
+      "y": 544,
+      "width": 16,
+      "height": 16
+    },
+    "nettle_fiber": {
+      "sheet": "rosliny",
+      "x": 48,
+      "y": 544,
+      "width": 16,
+      "height": 16
+    },
+    "bast": {
+      "sheet": "rosliny",
+      "x": 64,
+      "y": 544,
+      "width": 16,
+      "height": 16
+    },
+    "rope": {
+      "sheet": "rosliny",
+      "x": 80,
+      "y": 544,
+      "width": 16,
+      "height": 16
+    },
+    "linen_cloth": {
+      "sheet": "rosliny",
+      "x": 96,
+      "y": 544,
+      "width": 16,
+      "height": 16
+    },
+    "nettle_cloth": {
+      "sheet": "rosliny",
+      "x": 112,
+      "y": 544,
+      "width": 16,
+      "height": 16
+    },
+    "bast_weave": {
+      "sheet": "rosliny",
+      "x": 128,
+      "y": 544,
+      "width": 16,
+      "height": 16
+    },
+    "sewing_table_top": {
+      "sheet": "rosliny",
+      "x": 144,
+      "y": 544,
+      "width": 16,
+      "height": 16
+    },
+    "sewing_table_top_b": {
+      "sheet": "rosliny",
+      "x": 160,
+      "y": 544,
+      "width": 16,
+      "height": 16
+    },
+    "cap_linen": {
+      "sheet": "rosliny",
+      "x": 176,
+      "y": 544,
+      "width": 16,
+      "height": 16
+    },
+    "cap_nettle": {
+      "sheet": "rosliny",
+      "x": 192,
+      "y": 544,
+      "width": 16,
+      "height": 16
+    },
+    "scarf_linen": {
+      "sheet": "rosliny",
+      "x": 208,
+      "y": 544,
+      "width": 16,
+      "height": 16
+    },
+    "scarf_nettle": {
+      "sheet": "rosliny",
+      "x": 224,
+      "y": 544,
+      "width": 16,
+      "height": 16
+    },
+    "headband_linen": {
+      "sheet": "rosliny",
+      "x": 240,
+      "y": 544,
+      "width": 16,
+      "height": 16
+    },
+    "headband_nettle": {
+      "sheet": "rosliny",
+      "x": 0,
+      "y": 560,
+      "width": 16,
+      "height": 16
+    },
+    "shirt_linen": {
+      "sheet": "rosliny",
+      "x": 16,
+      "y": 560,
+      "width": 16,
+      "height": 16
+    },
+    "shirt_nettle": {
+      "sheet": "rosliny",
+      "x": 32,
+      "y": 560,
+      "width": 16,
+      "height": 16
+    },
+    "vest_linen": {
+      "sheet": "rosliny",
+      "x": 48,
+      "y": 560,
+      "width": 16,
+      "height": 16
+    },
+    "vest_nettle": {
+      "sheet": "rosliny",
+      "x": 64,
+      "y": 560,
+      "width": 16,
+      "height": 16
+    },
+    "vest_bast": {
+      "sheet": "rosliny",
+      "x": 80,
+      "y": 560,
+      "width": 16,
+      "height": 16
+    },
+    "tunic_linen": {
+      "sheet": "rosliny",
+      "x": 96,
+      "y": 560,
+      "width": 16,
+      "height": 16
+    },
+    "tunic_nettle": {
+      "sheet": "rosliny",
+      "x": 112,
+      "y": 560,
+      "width": 16,
+      "height": 16
+    },
+    "trousers_linen": {
+      "sheet": "rosliny",
+      "x": 128,
+      "y": 560,
+      "width": 16,
+      "height": 16
+    },
+    "trousers_nettle": {
+      "sheet": "rosliny",
+      "x": 144,
+      "y": 560,
+      "width": 16,
+      "height": 16
+    },
+    "shorts_linen": {
+      "sheet": "rosliny",
+      "x": 160,
+      "y": 560,
+      "width": 16,
+      "height": 16
+    },
+    "shorts_nettle": {
+      "sheet": "rosliny",
+      "x": 176,
+      "y": 560,
+      "width": 16,
+      "height": 16
+    },
+    "boots_linen": {
+      "sheet": "rosliny",
+      "x": 192,
+      "y": 560,
+      "width": 16,
+      "height": 16
+    },
+    "boots_nettle": {
+      "sheet": "rosliny",
+      "x": 208,
+      "y": 560,
+      "width": 16,
+      "height": 16
+    },
+    "lapcie_bast": {
+      "sheet": "rosliny",
+      "x": 224,
+      "y": 560,
+      "width": 16,
+      "height": 16
     }
   },
   "aliases": {
@@ -16801,6 +17018,161 @@
       "x": 63,
       "y": 92,
       "region": "ice_block"
+    },
+    "flax_retted": {
+      "x": 51,
+      "y": 93,
+      "region": "flax_retted"
+    },
+    "nettle_retted": {
+      "x": 52,
+      "y": 93,
+      "region": "nettle_retted"
+    },
+    "flax_fiber": {
+      "x": 53,
+      "y": 93,
+      "region": "flax_fiber"
+    },
+    "nettle_fiber": {
+      "x": 54,
+      "y": 93,
+      "region": "nettle_fiber"
+    },
+    "bast": {
+      "x": 55,
+      "y": 93,
+      "region": "bast"
+    },
+    "rope": {
+      "x": 56,
+      "y": 93,
+      "region": "rope"
+    },
+    "linen_cloth": {
+      "x": 57,
+      "y": 93,
+      "region": "linen_cloth"
+    },
+    "nettle_cloth": {
+      "x": 58,
+      "y": 93,
+      "region": "nettle_cloth"
+    },
+    "bast_weave": {
+      "x": 59,
+      "y": 93,
+      "region": "bast_weave"
+    },
+    "sewing_table_top": {
+      "x": 60,
+      "y": 93,
+      "region": "sewing_table_top"
+    },
+    "sewing_table_top_b": {
+      "x": 61,
+      "y": 93,
+      "region": "sewing_table_top_b"
+    },
+    "cap_linen": {
+      "x": 62,
+      "y": 93,
+      "region": "cap_linen"
+    },
+    "cap_nettle": {
+      "x": 63,
+      "y": 93,
+      "region": "cap_nettle"
+    },
+    "scarf_linen": {
+      "x": 0,
+      "y": 96,
+      "region": "scarf_linen"
+    },
+    "scarf_nettle": {
+      "x": 1,
+      "y": 96,
+      "region": "scarf_nettle"
+    },
+    "headband_linen": {
+      "x": 2,
+      "y": 96,
+      "region": "headband_linen"
+    },
+    "headband_nettle": {
+      "x": 3,
+      "y": 96,
+      "region": "headband_nettle"
+    },
+    "shirt_linen": {
+      "x": 4,
+      "y": 96,
+      "region": "shirt_linen"
+    },
+    "shirt_nettle": {
+      "x": 5,
+      "y": 96,
+      "region": "shirt_nettle"
+    },
+    "vest_linen": {
+      "x": 6,
+      "y": 96,
+      "region": "vest_linen"
+    },
+    "vest_nettle": {
+      "x": 7,
+      "y": 96,
+      "region": "vest_nettle"
+    },
+    "vest_bast": {
+      "x": 8,
+      "y": 96,
+      "region": "vest_bast"
+    },
+    "tunic_linen": {
+      "x": 9,
+      "y": 96,
+      "region": "tunic_linen"
+    },
+    "tunic_nettle": {
+      "x": 10,
+      "y": 96,
+      "region": "tunic_nettle"
+    },
+    "trousers_linen": {
+      "x": 11,
+      "y": 96,
+      "region": "trousers_linen"
+    },
+    "trousers_nettle": {
+      "x": 12,
+      "y": 96,
+      "region": "trousers_nettle"
+    },
+    "shorts_linen": {
+      "x": 13,
+      "y": 96,
+      "region": "shorts_linen"
+    },
+    "shorts_nettle": {
+      "x": 14,
+      "y": 96,
+      "region": "shorts_nettle"
+    },
+    "boots_linen": {
+      "x": 15,
+      "y": 96,
+      "region": "boots_linen"
+    },
+    "boots_nettle": {
+      "x": 16,
+      "y": 96,
+      "region": "boots_nettle"
+    },
+    "lapcie_bast": {
+      "x": 17,
+      "y": 96,
+      "region": "lapcie_bast"
     }
   }
 }

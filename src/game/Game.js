@@ -15,6 +15,7 @@ import { Hedgehogs } from './Hedgehogs.js';
 import { doorSound } from '../audio/doorSounds.js';
 import { Chests } from './Chests.js';
 import { CarpenterTables } from './CarpenterTables.js';
+import { SewingTables } from './SewingTables.js';
 import { World } from '../world/World.js';
 import { waitForTreeShowcase } from '../world/trees/TreeShowcase.js';
 import { Player } from '../player/Player.js';
@@ -100,6 +101,7 @@ import { Orchard } from './Orchard.js';
 import { Spoilage } from './Spoilage.js';
 import { Warmth } from './Warmth.js';
 import { Freeze } from './Freeze.js';
+import { clothesCode } from '../items/clothing.js';
 import { DropRenderer } from '../rendering/DropRenderer.js';
 import { formatKeys } from '../input/bindings.js';
 
@@ -849,7 +851,13 @@ export class Game extends GameInteraction {
         this.chests = new Chests(this, worldInfo.chests);
         // Stoły stolarskie i furtki (0.90.0) - deski na blatach w zapisie.
         this.carpenterTables = new CarpenterTables(this, worldInfo.carpenterTables);
+        // Stoły krawieckie (1.27.0) - materiał na blatach w zapisie.
+        this.sewingTables = new SewingTables(this, worldInfo.sewingTables);
         this.onOpenChest = null;
+
+        // Ubrania na postaci (1.27.0): main.js maluje je na skórce
+        // (player/skin.js - setWornClothes). equip - 4 stosy albo null.
+        this.onClothes = null;
         this.torches = new TorchRenderer(this);
         this.torches.setLowDetail(this.settings.get('potato'));
         // Drzwi (0.91.0) - modele z animacją otwierania.
@@ -876,6 +884,7 @@ export class Game extends GameInteraction {
 
         this.saver.drops = this.drops;
         this.saver.orchard = this.orchard;
+        this.saver.sewingTables = this.sewingTables;
 
         this.saver.saveOnExit();
 
@@ -1035,6 +1044,7 @@ export class Game extends GameInteraction {
 
         this.chests.update(dt);
         this.carpenterTables.update(dt);
+        this.sewingTables.update(dt);
         this.torches.update(dt);
         this.world.updateLightHolds(dt);
         this.doors.update(dt);
@@ -2705,6 +2715,27 @@ export class Game extends GameInteraction {
     }
 
 
+    // UBRANIA (1.27.0, items/clothing.js). Po każdej zmianie tego, co
+    // gracz ma na sobie: nowa skórka (onClothes - main.js), kod dla innych
+    // graczy (NetSession) i osiągnięcia.
+
+    clothesChanged() {
+
+        const equip = this.inventory.equip;
+
+        this.clothes = clothesCode(equip);
+
+        this.onClothes?.(equip);
+
+        const worn = equip.filter(Boolean);
+
+        if (worn.length > 0) {
+            this.achieve('dressed', { count: worn.length, colored: worn.some((item) => item.look?.main) });
+        }
+
+    }
+
+
     advanceWorld(seconds) {
 
         if (!(seconds > 0)) {
@@ -2993,6 +3024,7 @@ export class Game extends GameInteraction {
 
         this.chests.dispose();
         this.carpenterTables.dispose();
+        this.sewingTables.dispose();
         this.torches.dispose();
         this.doors.dispose();
         this.hedgehogs.dispose();

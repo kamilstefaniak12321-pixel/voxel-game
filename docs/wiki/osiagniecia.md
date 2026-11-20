@@ -2,7 +2,7 @@
 
 > Ta strona jest generowana z kodu gry (`python tools/wiki.py`) - nie zmieniaj jej ręcznie, zmiany przepadną przy następnym generowaniu.
 
-Wersja gry **1.26.0** - 116 osiągnięć. Księga osiągnięć: klawisz **L**. Uwaga, spoilery: sekretne osiągnięcia są tu opisane (w grze widać tylko „???”).
+Wersja gry **1.27.0** - 121 osiągnięć. Księga osiągnięć: klawisz **L**. Uwaga, spoilery: sekretne osiągnięcia są tu opisane (w grze widać tylko „???”).
 
 
 ## Zwykłe (10 pkt)
@@ -61,6 +61,10 @@ Wersja gry **1.26.0** - 116 osiągnięć. Księga osiągnięć: klawisz **L**. U
 | <img src="ikony/tilled_dirt.png" width="32" height="32" alt=""> | **Rolnik z przypadku** | Rozgrzeb ziemię łopatą (PPM) - powstanie pole. | „Dziura w ziemi, ale twoja. I coś na niej wyrośnie.” |
 | <img src="ikony/snow.png" width="32" height="32" alt=""> | **Sopel lodu** | Zamarznij na kość - zimą, bez ognia i dachu nad głową. | „Wiosna przyszła po ciebie osobiście.” |
 | <img src="ikony/fire_starter.png" width="32" height="32" alt=""> | **Grzanie rąk** | Zmarznięty ogrzej się przy ognisku. | „Najpierw palce, potem nos, na końcu humor.” |
+| <img src="ikony/flax_retted.png" width="32" height="32" alt=""> | **Moczenie lnu** | Wrzuć wiązkę lnu, pokrzywę albo korę lipową do wody i poczekaj, aż włókno puści. | „Pachnie stawem. Tak ma być.” |
+| <img src="ikony/linen_cloth.png" width="32" height="32" alt=""> | **Tkacz** | Utkaj płótno na stole krawieckim (dwa włókna - jedno płótno). | „Wątek, osnowa, wątek, osnowa. I jeszcze raz.” |
+| <img src="ikony/shirt_linen.png" width="32" height="32" alt=""> | **Krawiec** | Uszyj ubranie na stole krawieckim: płótno, krój i wzór. | „Rękawy nierówne, ale za to własne.” |
+| <img src="ikony/dye_red.png" width="32" height="32" alt=""> | **Kolorowo** | Zabarw ubranie - przy szyciu albo później, na gotowym. | „Teraz cię widać z daleka.” |
 | <img src="ikony/tilled_humus.png" width="32" height="32" alt=""> | **Czarna bruzda** | Rozgrzeb łopatą czarnoziem - na takim polu rośliny rosną szybciej. | „Ziemia tak dobra, że aż szkoda po niej chodzić.” |
 | <img src="ikony/rose_hip.png" width="32" height="32" alt=""> | **Owoc z charakterem** | Zjedz owoc, który coś daje: dziką różę, żurawinę, brusznicę, aronię, rokitnik, czarną porzeczkę, czarny bez albo chili. | „Babcia miała rację. Jak zwykle.” |
 | <img src="ikony/roasted_apple.png" width="32" height="32" alt=""> | **Kolacja przy ognisku** | Upiecz coś nad płonącym ogniskiem (trzymaj PPM z jedzeniem). | „Lekko przypalone. Czyli idealne.” |
@@ -92,6 +96,7 @@ Wersja gry **1.26.0** - 116 osiągnięć. Księga osiągnięć: klawisz **L**. U
 | <img src="ikony/dish_vegetable_stew.png" width="32" height="32" alt=""> | **Kuchmistrz** | Ugotuj każdą z sześciu potraw. | „Garnek ten sam, a za każdym razem pachnie inaczej.” |
 | <img src="ikony/elderflower.png" width="32" height="32" alt=""> | **Biały kruk wśród jeży** | Spotkaj jeżyka albinosa. | „Kremowe kolce, czerwone oczka. Trafia się raz na kilkadziesiąt jeży.” |
 | <img src="ikony/torch.png" width="32" height="32" alt=""> | **Ratownik** | W grze ze znajomymi bądź przy tym, jak zamarznięty gracz odtaje - rozpal przy nim ogień albo postaw pochodnię. | „Lepszy ciepły kumpel niż zimna wiosna.” |
+| <img src="ikony/tunic_linen.png" width="32" height="32" alt=""> | **Od stóp do głów** | Ubierz się cały: coś na głowę, na tułów, na nogi i na stopy. | „Wreszcie można iść do ludzi.” |
 | <img src="ikony/granite.png" width="32" height="32" alt=""> | **Murarz** | Postaw 500 bloków. | „Pięćset bloków. Kręgosłup pamięta każdy z nich.” |
 | <img src="ikony/gravel.png" width="32" height="32" alt=""> | **Głębinowiec** | Zanurkuj 10 bloków pod powierzchnię wody. | „Ryb brak, ale za to jest ciemno, mokro i trochę strasznie.” |
 | <img src="ikony/lamp_blue.png" width="32" height="32" alt=""> | **Ponad chmurami** | Wzleć na wysokość 1000 bloków. | „Stąd wszystko wygląda tak malutko. Ty też.” |

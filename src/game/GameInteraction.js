@@ -54,6 +54,8 @@ import {
     FIELD_BLOCK
 } from '../blocks/BlockRegistry.js';
 import { getTool, getPlacedBlock, isItemType, getItemLabel } from '../items/ItemRegistry.js';
+import { vineOfItem } from '../blocks/vines.js';
+import { vinePlanting } from './VineGrowth.js';
 import { STATES, isNight, COLD_STATES, SLEEP_WARMTH } from './Wellbeing.js';
 
 // Stopnie zimna od najcieplejszego (Wellbeing.js - COLD_STATES).
@@ -237,7 +239,14 @@ export class GameInteraction {
 
             const type = this.selectedBlock;
 
-            const block = type ? getPlacedBlock(type) : null;
+            // Owoc pnącza (1.30.0): sadzi się przy podporze, nie na polu.
+            const vineSpecies = type ? vineOfItem(type) : null;
+
+            const block = type && !vineSpecies ? getPlacedBlock(type) : null;
+
+            if (vineSpecies) {
+                this.plantVine(vineSpecies, type);
+            }
 
             // Kompost w misce: PPM wysypuje kompost i oddaje miskę.
 
@@ -1247,6 +1256,34 @@ export class GameInteraction {
     // Zbiór (PPM na krzaku z owocami): owoce trafiają do ekwipunku
     // (w obu trybach), krzak wraca do etapu bez owoców i owocuje od
     // nowa (PlantGrowth.js). Pełny ekwipunek - nic się nie dzieje.
+
+    // Sadzenie pnącza owocem (1.30.0, game/VineGrowth.js): przy murze,
+    // w kratkę albo tyczkę na ziemi. Gdzie indziej jedzenie się zjada,
+    // a chmiel podpowiada, gdzie go posadzić.
+
+    plantVine(species, item) {
+
+        const spot = vinePlanting(this.world, this.currentHit, species);
+
+        if (!spot) {
+            if (getFood(item) && this.wellbeing.active) this.eat();
+            else this.onNotice?.('Pnącze sadzi się przy murze, w kratkę albo tyczkę - na ziemi');
+            return false;
+        }
+
+        if (!this.world.setBlock(spot.x, spot.y, spot.z, spot.type)) return false;
+
+        this.playBlockSound('place', spot.type, spot);
+        this.achieve('planted', { type: spot.type, item, vine: species });
+
+        if (this.mode === 'adventure') this.inventory.take(this.inventory.selected, 1);
+
+        this.currentHit = this.raycast.castFromCamera(this.camera);
+
+        return true;
+
+    }
+
 
     harvestTarget(hit) {
 

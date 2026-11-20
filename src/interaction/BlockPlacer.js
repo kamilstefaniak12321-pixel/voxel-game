@@ -99,6 +99,13 @@ export class BlockPlacer {
             blockType = shaped.type;
         }
 
+        // Kratka (1.30.0): przodem do gracza - wzdłuż x, gdy patrzy na
+        // północ albo południe.
+        if (blockType === 'vine_trellis') {
+            const look = lookFacing(this.player?.yaw ?? 0);
+            blockType = look === 'north' || look === 'south' ? 'vine_trellis' : 'vine_trellis_z';
+        }
+
         const target = this.targetOf(hit, blockType);
 
         if (!target) {

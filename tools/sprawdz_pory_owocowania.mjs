@@ -85,7 +85,9 @@ const NAMES = ['wiosna', 'lato', 'jesień', 'zima'];
         check(seasons.length >= 1 && seasons.every((season) => season >= 0 && season <= 2), 'Pory wzrostu: wiosna, lato, jesień - nigdy zima');
     }
     const calendar = F.fruitCalendar();
-    check(calendar.length === 24 && calendar.every(([label, seasons]) => typeof label === 'string' && label.length > 2 && seasons.length >= 1), 'Kalendarz: każda roślina ma nazwę');
+    // (1.30.0: + 4 pnącza.)
+    check(Object.keys(F.VINE_SEASONS).sort().join() === 'grape,hop,kiwi,passion_fruit', 'Każde pnącze ma pory');
+    check(calendar.length === 28 && calendar.every(([label, seasons]) => typeof label === 'string' && label.length > 2 && seasons.length >= 1), 'Kalendarz: każda roślina ma nazwę');
     for (let season = 0; season < 3; season++) check(calendar.some(([, seasons]) => seasons.includes(season)), `${NAMES[season]}: coś owocuje`);
     const winter = calendar.filter(([, seasons]) => seasons.includes(3)).map(([label]) => label);
     check(winter.length === 3, `Zimą zostają trzy owoce (${winter.join(', ')})`);

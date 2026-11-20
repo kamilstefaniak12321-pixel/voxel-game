@@ -10,6 +10,7 @@ import {
 import { treeBlocks } from './trees.js';
 import { shrubBlocks } from './shrubs.js';
 import { lowPlantBlocks } from './lowPlants.js';
+import { vineBlocks } from './vines.js';
 import { fallenFruitBlocks } from './fallenFruit.js';
 import { RIVER_PLANT_BLOCKS } from './riverPlants.js';
 import { BLUEBERRY_STAGES, BLUEBERRY_TEXTURE, blueberryIcon } from './blueberry.js';
@@ -60,7 +61,8 @@ export const AIR_ID = 0;
 //   15200-15399             opadłe owoce (1.22.0 - fallenFruit.js),
 //   15400-15499             pola z nawozem i z innej ziemi (1.24.0, 1.25.0 - fertilizers.js),
 //   15500-15599             stanowiska pracy (1.27.0: stół krawiecki 15500-15507 - sewingTable.js),
-//   15600-65279             wolne na przyszłość.
+//   15600-15999             pnącza i ich podpory (1.30.0 - vines.js),
+//   16000-65279             wolne na przyszłość.
 
 export const MAX_BLOCK_ID = 65279;
 
@@ -101,6 +103,9 @@ export const MAX_BLOCK_ID = 65279;
 //   wall           - wersje bloku na każdą stronę { north, south,
 //                    east, west } - BlockPlacer.js stawia tę, która
 //                    pasuje do klikniętej ściany
+//   cutout         - model 'shape' z prześwitami w teksturze (kratka,
+//                    pnącza - 1.30.0): rysowany razem z roślinami
+//   vine...        - pnącze i podpora pnącza (vines.js, 1.30.0)
 //   pick           - co bierze środkowy przycisk (zamiast samego bloku)
 //   soil           - na tym bloku mogą rosnąć rośliny
 //   ground         - roślina rośnie też na tych blokach (poza ziemią),
@@ -1363,6 +1368,10 @@ export const BLOCK_TYPES = {
     // Rośliny niskie (src/blocks/lowPlants.js, 1.19.0) - płyty niższe niż blok.
 
     ...lowPlantBlocks(),
+
+    // Pnącza i ich podpory (src/blocks/vines.js, 1.30.0).
+
+    ...vineBlocks(),
 
     // Opadłe owoce (src/blocks/fallenFruit.js, 1.22.0).
 

@@ -117,6 +117,13 @@ export const ITEM_TYPES = {
     elderflower: { name: 'Elderflower', label: 'Kwiat bzu czarnego', icon: 'item_elderflower', category: 'owoce' },
     sea_buckthorn_berry: { name: 'Sea Buckthorn Berries', label: 'Owoce rokitnika', icon: 'item_sea_buckthorn', category: 'owoce', plants: 'shrub_sea_buckthorn_sapling' },
 
+    // Owoce pnączy (1.30.0, blocks/vines.js): sadzi się je PPM przy podporze
+    // (mur, kratka, tyczka) na ziemi - GameInteraction.plantVine.
+    grapes: { name: 'Grapes', label: 'Winogrona', icon: 'item_grapes', category: 'owoce' },
+    hop_cone: { name: 'Hop Cone', label: 'Szyszka chmielu', icon: 'item_hop_cone', category: 'owoce' },
+    kiwi: { name: 'Kiwi', label: 'Kiwi', icon: 'item_kiwi', category: 'owoce' },
+    passion_fruit: { name: 'Passion Fruit', label: 'Marakuja', icon: 'item_passion_fruit', category: 'owoce' },
+
 
     // Dodatki drzew (src/blocks/trees.js). Szyszki, orzeszki, żołędzie
     // i kwiat lipy (z nasionkami na przysadce) posadzone na rozgrzebanej

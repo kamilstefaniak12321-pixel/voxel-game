@@ -17,7 +17,7 @@
     "rosliny": {
       "file": "rosliny.png",
       "width": 256,
-      "height": 576
+      "height": 608
     },
     "przedmioty": {
       "file": "przedmioty.png",
@@ -9437,6 +9437,195 @@
       "y": 560,
       "width": 16,
       "height": 16
+    },
+    "vine_trellis": {
+      "sheet": "rosliny",
+      "x": 0,
+      "y": 576,
+      "width": 16,
+      "height": 16
+    },
+    "garden_pole": {
+      "sheet": "rosliny",
+      "x": 16,
+      "y": 576,
+      "width": 16,
+      "height": 16
+    },
+    "garden_pole_top": {
+      "sheet": "rosliny",
+      "x": 32,
+      "y": 576,
+      "width": 16,
+      "height": 16
+    },
+    "pergola_slats": {
+      "sheet": "rosliny",
+      "x": 48,
+      "y": 576,
+      "width": 16,
+      "height": 16
+    },
+    "vine_grape_young": {
+      "sheet": "rosliny",
+      "x": 64,
+      "y": 576,
+      "width": 16,
+      "height": 16
+    },
+    "vine_grape_leaves": {
+      "sheet": "rosliny",
+      "x": 80,
+      "y": 576,
+      "width": 16,
+      "height": 16
+    },
+    "vine_grape_unripe": {
+      "sheet": "rosliny",
+      "x": 96,
+      "y": 576,
+      "width": 16,
+      "height": 16
+    },
+    "vine_grape_ripe": {
+      "sheet": "rosliny",
+      "x": 112,
+      "y": 576,
+      "width": 16,
+      "height": 16
+    },
+    "vine_hop_young": {
+      "sheet": "rosliny",
+      "x": 128,
+      "y": 576,
+      "width": 16,
+      "height": 16
+    },
+    "vine_hop_leaves": {
+      "sheet": "rosliny",
+      "x": 144,
+      "y": 576,
+      "width": 16,
+      "height": 16
+    },
+    "vine_hop_unripe": {
+      "sheet": "rosliny",
+      "x": 160,
+      "y": 576,
+      "width": 16,
+      "height": 16
+    },
+    "vine_hop_ripe": {
+      "sheet": "rosliny",
+      "x": 176,
+      "y": 576,
+      "width": 16,
+      "height": 16
+    },
+    "vine_kiwi_young": {
+      "sheet": "rosliny",
+      "x": 192,
+      "y": 576,
+      "width": 16,
+      "height": 16
+    },
+    "vine_kiwi_leaves": {
+      "sheet": "rosliny",
+      "x": 208,
+      "y": 576,
+      "width": 16,
+      "height": 16
+    },
+    "vine_kiwi_flower": {
+      "sheet": "rosliny",
+      "x": 224,
+      "y": 576,
+      "width": 16,
+      "height": 16
+    },
+    "vine_kiwi_ripe": {
+      "sheet": "rosliny",
+      "x": 240,
+      "y": 576,
+      "width": 16,
+      "height": 16
+    },
+    "vine_kiwi_hang": {
+      "sheet": "rosliny",
+      "x": 0,
+      "y": 592,
+      "width": 16,
+      "height": 16
+    },
+    "vine_passion_fruit_young": {
+      "sheet": "rosliny",
+      "x": 16,
+      "y": 592,
+      "width": 16,
+      "height": 16
+    },
+    "vine_passion_fruit_leaves": {
+      "sheet": "rosliny",
+      "x": 32,
+      "y": 592,
+      "width": 16,
+      "height": 16
+    },
+    "vine_passion_fruit_flower": {
+      "sheet": "rosliny",
+      "x": 48,
+      "y": 592,
+      "width": 16,
+      "height": 16
+    },
+    "vine_passion_fruit_unripe": {
+      "sheet": "rosliny",
+      "x": 64,
+      "y": 592,
+      "width": 16,
+      "height": 16
+    },
+    "vine_passion_fruit_ripe": {
+      "sheet": "rosliny",
+      "x": 80,
+      "y": 592,
+      "width": 16,
+      "height": 16
+    },
+    "vine_passion_fruit_hang": {
+      "sheet": "rosliny",
+      "x": 96,
+      "y": 592,
+      "width": 16,
+      "height": 16
+    },
+    "item_grapes": {
+      "sheet": "rosliny",
+      "x": 112,
+      "y": 592,
+      "width": 16,
+      "height": 16
+    },
+    "item_hop_cone": {
+      "sheet": "rosliny",
+      "x": 128,
+      "y": 592,
+      "width": 16,
+      "height": 16
+    },
+    "item_kiwi": {
+      "sheet": "rosliny",
+      "x": 144,
+      "y": 592,
+      "width": 16,
+      "height": 16
+    },
+    "item_passion_fruit": {
+      "sheet": "rosliny",
+      "x": 160,
+      "y": 592,
+      "width": 16,
+      "height": 16
     }
   },
   "aliases": {
@@ -17173,6 +17362,141 @@
       "x": 17,
       "y": 96,
       "region": "lapcie_bast"
+    },
+    "vine_trellis": {
+      "x": 18,
+      "y": 96,
+      "region": "vine_trellis"
+    },
+    "garden_pole": {
+      "x": 19,
+      "y": 96,
+      "region": "garden_pole"
+    },
+    "garden_pole_top": {
+      "x": 20,
+      "y": 96,
+      "region": "garden_pole_top"
+    },
+    "pergola_slats": {
+      "x": 21,
+      "y": 96,
+      "region": "pergola_slats"
+    },
+    "vine_grape_young": {
+      "x": 22,
+      "y": 96,
+      "region": "vine_grape_young"
+    },
+    "vine_grape_leaves": {
+      "x": 23,
+      "y": 96,
+      "region": "vine_grape_leaves"
+    },
+    "vine_grape_unripe": {
+      "x": 24,
+      "y": 96,
+      "region": "vine_grape_unripe"
+    },
+    "vine_grape_ripe": {
+      "x": 25,
+      "y": 96,
+      "region": "vine_grape_ripe"
+    },
+    "vine_hop_young": {
+      "x": 26,
+      "y": 96,
+      "region": "vine_hop_young"
+    },
+    "vine_hop_leaves": {
+      "x": 27,
+      "y": 96,
+      "region": "vine_hop_leaves"
+    },
+    "vine_hop_unripe": {
+      "x": 28,
+      "y": 96,
+      "region": "vine_hop_unripe"
+    },
+    "vine_hop_ripe": {
+      "x": 29,
+      "y": 96,
+      "region": "vine_hop_ripe"
+    },
+    "vine_kiwi_young": {
+      "x": 30,
+      "y": 96,
+      "region": "vine_kiwi_young"
+    },
+    "vine_kiwi_leaves": {
+      "x": 31,
+      "y": 96,
+      "region": "vine_kiwi_leaves"
+    },
+    "vine_kiwi_flower": {
+      "x": 32,
+      "y": 96,
+      "region": "vine_kiwi_flower"
+    },
+    "vine_kiwi_ripe": {
+      "x": 33,
+      "y": 96,
+      "region": "vine_kiwi_ripe"
+    },
+    "vine_kiwi_hang": {
+      "x": 34,
+      "y": 96,
+      "region": "vine_kiwi_hang"
+    },
+    "vine_passion_fruit_young": {
+      "x": 35,
+      "y": 96,
+      "region": "vine_passion_fruit_young"
+    },
+    "vine_passion_fruit_leaves": {
+      "x": 36,
+      "y": 96,
+      "region": "vine_passion_fruit_leaves"
+    },
+    "vine_passion_fruit_flower": {
+      "x": 37,
+      "y": 96,
+      "region": "vine_passion_fruit_flower"
+    },
+    "vine_passion_fruit_unripe": {
+      "x": 38,
+      "y": 96,
+      "region": "vine_passion_fruit_unripe"
+    },
+    "vine_passion_fruit_ripe": {
+      "x": 39,
+      "y": 96,
+      "region": "vine_passion_fruit_ripe"
+    },
+    "vine_passion_fruit_hang": {
+      "x": 40,
+      "y": 96,
+      "region": "vine_passion_fruit_hang"
+    },
+    "item_grapes": {
+      "x": 41,
+      "y": 96,
+      "region": "item_grapes"
+    },
+    "item_hop_cone": {
+      "x": 42,
+      "y": 96,
+      "region": "item_hop_cone"
+    },
+    "item_kiwi": {
+      "x": 43,
+      "y": 96,
+      "region": "item_kiwi"
+    },
+    "item_passion_fruit": {
+      "x": 44,
+      "y": 96,
+      "region": "item_passion_fruit"
     }
   }
 }

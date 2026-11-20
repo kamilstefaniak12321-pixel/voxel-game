@@ -21,6 +21,7 @@
 import { BLOCK_TYPES, bushStages, blockExists, getBlockId } from './BlockRegistry.js';
 import { SHRUBS, SHRUB_NAMES, shrubType } from './shrubs.js';
 import { LOW_PLANTS, LOW_PLANT_NAMES, lowPlantType } from './lowPlants.js';
+import { VINES, VINE_NAMES, VINE_MOUNTS, vineType } from './vines.js';
 
 // Krzaki z 0.50.0 (blocks/BlockRegistry.js - FRUIT_BUSHES).
 export const BUSH_SEASONS = {
@@ -55,6 +56,14 @@ export const LOW_SEASONS = {
     cranberry: [2]
 };
 
+// Pnącza (1.30.0, blocks/vines.js): kwitną i owocują latem i jesienią.
+export const VINE_SEASONS = {
+    grape: [1, 2],
+    hop: [1, 2],
+    kiwi: [1, 2],
+    passion_fruit: [1, 2]
+};
+
 // Drzewa: [blok z owocami albo kwiatami, blok bez nich, pory].
 export const TREE_SEASONS = [
     ['jablon_leaves_jablka', 'jablon_leaves_jablka_growing', [1, 2]],
@@ -76,6 +85,7 @@ export function fruitCalendar() {
         ...Object.entries(BUSH_SEASONS).map(([species, seasons]) => [BLOCK_TYPES[bushStages(species)[1]].label.replace(/ \(.*\)$/, ''), seasons]),
         ...Object.entries(SHRUB_SEASONS).map(([species, seasons]) => [SHRUBS[species].label, withWinter(seasons, WINTER_KEEPERS.shrub.includes(species))]),
         ...Object.entries(LOW_SEASONS).map(([species, seasons]) => [LOW_PLANTS[species].label, withWinter(seasons, WINTER_KEEPERS.low.includes(species))]),
+        ...Object.entries(VINE_SEASONS).map(([species, seasons]) => [VINES[species].label, seasons]),
         ['Jabłoń', [1, 2]], ['Oliwka', [2]], ['Lipa (kwiaty)', [1]]
     ];
 }
@@ -123,6 +133,12 @@ export function fruitSeasonEntries() {
         add([type('plant'), type('flower'), type('unripe'), type('fruit')], seasons, WINTER_KEEPERS.low.includes(species));
         // Pnącze dyni po owocowaniu: poza porą też wygląda jak zielone.
         if (blockExists(type('spent'))) entries.push({ id: getBlockId(type('spent')), stage: 1, last: 2, seasons, growth: seasons, shown: [getBlockId(type('plant')), getBlockId(type('spent'))] });
+    }
+
+    for (const species of VINE_NAMES) {
+        const seasons = VINE_SEASONS[species];
+        if (!seasons) continue;
+        for (const mount of VINE_MOUNTS) add(VINES[species].stages.map((stage) => vineType(species, stage, mount)), seasons);
     }
 
     for (const [fruit, rest, seasons] of TREE_SEASONS) add([rest, null, fruit], seasons);

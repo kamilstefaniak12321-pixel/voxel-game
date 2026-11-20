@@ -93,7 +93,8 @@ const IDS = {
     for (const entry of F.fruitSeasonEntries()) {
         if (entry.stage !== 2) continue;
         const type = getBlockTypeById(entry.id), harvest = getHarvest(type);
-        if (!harvest || type.includes('unripe') || type === 'linden_leaves_flowering') { check(FF.fallenFor(type) === null, `${type}: nie ma czego zrzucić`); continue; }
+        // (Pnącza - 1.30.0: owoce po porze znikają, nie opadają - docs/pnacza.md.)
+        if (!harvest || type.includes('unripe') || type === 'linden_leaves_flowering' || type.startsWith('vine_')) { check(FF.fallenFor(type) === null, `${type}: nie ma czego zrzucić`); continue; }
         const fallen = FF.fallenFor(type);
         check(fallen && getBlockDefinition(fallen).fallen.item === harvest.item, `${type}: opadają ${harvest.item}`);
     }

@@ -2350,6 +2350,7 @@ function* buildChunkGeometrySteps(chunk, world, { terrain, plants: includePlants
     const leaves = [];
 
     const flats = [];
+    const cutoutShapes = [];
 
     const liquids = [];
 
@@ -2403,6 +2404,16 @@ function* buildChunkGeometrySteps(chunk, world, { terrain, plants: includePlants
                     const liquid = getLiquidKindId(id);
                     if (terrain && liquid) liquids.push(lx, y, lz, liquid);
                     continue;
+                }
+
+                // Kratka i pnącza (1.30.0): kształt z prześwitami - z roślinami.
+
+                if (renderData.cutout) {
+
+                    if (includePlants) cutoutShapes.push(lx, y, lz, id);
+
+                    continue;
+
                 }
 
                 if (renderData.cross) {
@@ -2495,6 +2506,12 @@ function* buildChunkGeometrySteps(chunk, world, { terrain, plants: includePlants
     for (let k = 0; k < bushyGrass.length; k += 4) {
         faceCount = addRiverPlants(bushyGrass, faceCount, baseX, baseZ, grassDetail, null, null, k, k + 4);
         yield;
+    }
+
+    for (let k = 0; k < cutoutShapes.length; k += 4) {
+        const id = cutoutShapes[k + 3];
+        faceCount = addShape(id, blockRenderData[id], cutoutShapes[k], cutoutShapes[k + 1], cutoutShapes[k + 2], faceCount, baseX, baseZ);
+        if ((k & 31) === 28) yield;
     }
 
     const plantFaces = faceCount - cubeFaces;

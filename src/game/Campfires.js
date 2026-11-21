@@ -1,6 +1,7 @@
 import { newCampfire, restoreCampfire, updateCampfire, addFirewood, addTinder, addKindling,
     fuelWood, isTinder, campfireDrops, burnSecondsLeft, TINDERS, FIRE_WOODS, KINDLING, KINDLING_MAX, KINDLING_TEMP,
-    canIgnite, catchesFromEmbers, startTemp, emberTemp, campfireTemp, cookSpeed, woodIgnite, topLog } from './CampfireState.js';
+    canIgnite, catchesFromEmbers, startTemp, emberTemp, campfireTemp, cookSpeed, logIgnite, topLog } from './CampfireState.js';
+import { wetOf, isWet } from '../items/moisture.js';
 import { getBlockId, isLiquidId, isSolidId, blockExists } from '../blocks/BlockRegistry.js';
 import { CampfireRenderer } from '../rendering/CampfireRenderer.js';
 import { getRoast, isDrink, ROAST_SECONDS } from '../items/foods.js';
@@ -30,10 +31,11 @@ const keyOf = ({x, y, z}) => `${x},${y},${z}`;
 const TINDER_HINT = 'Dodaj podpałkę: korę, trawę, słomę albo hubę';
 
 // Podpałka nie da rady polanu z wierzchu: co z tym zrobić.
+// (Od 1.33.0 mokre polano ma wyższy zapłon - wtedy pomaga też suszenie.)
 function tooCold(fire) {
-    const top = topLog(fire).wood;
-    const more = (fire.kindling ?? 0) < KINDLING_MAX ? `Dołóż patyk jako rozpałkę (+${KINDLING_TEMP}°)` : 'Użyj lepszej podpałki';
-    return `${woodName(top)} zajmuje się od ${woodIgnite(top)}°, a podpałka daje ${startTemp(fire)}°. ${more} albo zacznij od łatwiejszego drewna na wierzchu.`;
+    const top = topLog(fire), wet = isWet(top.wet ?? 0);
+    const more = (fire.kindling ?? 0) < KINDLING_MAX ? `Dołóż patyk jako rozpałkę (+${KINDLING_TEMP}°)` : wet ? 'Wysusz drewno, użyj lepszej podpałki' : 'Użyj lepszej podpałki';
+    return `${woodName(top.wood)}${wet ? ' (mokre drewno)' : ''} zajmuje się od ${Math.round(logIgnite(top))}°, a podpałka daje ${startTemp(fire)}°. ${more} albo zacznij od ${wet ? 'suchego' : 'łatwiejszego'} drewna na wierzchu.`;
 }
 
 export class Campfires {
@@ -47,6 +49,8 @@ export class Campfires {
         this.roast = null;
         // Kiedy następne bulgotanie gotującego się garnka (ognisko -> sekundy).
         this.bubbles = new WeakMap();
+        // Kiedy następny syk mokrego polana (ognisko -> sekundy).
+        this.hisses = new WeakMap();
         for (const value of Array.isArray(saved) ? saved : []) {
             const fire = restoreCampfire(value);
             if (fire) this.fires.set(keyOf(fire), fire);
@@ -68,15 +72,17 @@ export class Campfires {
     interact(hit, type) {
         const game = this.game, world = game.world, wood = fuelWood(type);
         if (!hit?.hit) return false;
+        // Wilgotność polan w ręce (1.33.0).
+        const held = game.inventory?.selectedItem, wet = wetOf(held?.type === type ? held : null);
         let fire = this.get(hit.block);
         if (hit.block.type === 'campfire') {
             // Recover a harmless empty structure if an old/modded save has no metadata.
             if (!fire) { fire = newCampfire(hit.block.x, hit.block.y, hit.block.z); this.fires.set(keyOf(fire), fire); }
             if (wood) {
-                if (addFirewood(fire, wood)) {
+                if (addFirewood(fire, wood, wet)) {
                     this.consume(); game.playBlockSound('place', 'oak_log', fire);
                     // Dołożone do płonącego ogniska - pali się dłużej.
-                    if (fire.phase === 'burning') { this.noticeAt = -10; this.notice(`Dołożono opał: ${fire.logs.length}/6`); }
+                    if (fire.phase === 'burning') { this.noticeAt = -10; this.notice(`Dołożono opał: ${fire.logs.length}/6${isWet(wet) ? ' (mokre - syczy i dymi, póki nie przeschnie)' : ''}`); }
                     // Na żar: łatwe drewno zajmie się samo.
                     else if (fire.embers > 0) { this.noticeAt = -10; this.notice(this.description(fire)); }
                 }
@@ -119,7 +125,7 @@ export class Campfires {
         }
         if (game.placer.placeBlock(hit, 'campfire')) {
             fire = newCampfire(target.x, target.y, target.z);
-            addFirewood(fire, wood); this.fires.set(keyOf(fire), fire); this.consume();
+            addFirewood(fire, wood, wet); this.fires.set(keyOf(fire), fire); this.consume();
             game.playBlockSound('place', 'oak_log', fire);
             this.notice('Opał 1/6. Dokładaj polana PPM.');
         }
@@ -188,7 +194,8 @@ export class Campfires {
         // prawdziwego czasu).
         if (fire.phase === 'burning') {
             const minutes = burnSecondsLeft(fire) / 60;
-            return `Ognisko płonie (${degrees(campfireTemp(fire))}) - opał ${fire.logs.length}/6, ${minutes >= 1 ? `jeszcze ok. ${Math.round(minutes)} min` : 'zaraz zgaśnie'}`;
+            const damp = isWet(topLog(fire).wet ?? 0) ? ', mokre drewno' : '';
+            return `Ognisko płonie (${degrees(campfireTemp(fire))}${damp}) - opał ${fire.logs.length}/6, ${minutes >= 1 ? `jeszcze ok. ${Math.round(minutes)} min` : 'zaraz zgaśnie'}`;
         }
         if (fire.phase === 'collapsing') return 'Polana opadają w żar';
         // Żar po ognisku: polano zajmuje się samo, jeśli żar jest dość gorący.
@@ -196,8 +203,8 @@ export class Campfires {
         if (fire.ignition > 0) return `Rozpalanie: ${Math.round(fire.ignition * 100)}% — trzymaj PPM`;
         if (fire.embers > 0 && fire.logs.length === 0) return `Żar (${degrees(emberTemp(fire))}) - dołóż polano, a zajmie się samo`;
         if (fire.embers > 0 && fire.logs.length < 6) {
-            const top = topLog(fire).wood;
-            return `Żar (${degrees(emberTemp(fire))}) jest za słaby: ${woodName(top).toLowerCase()} zajmuje się od ${woodIgnite(top)}°. Opał ${fire.logs.length}/6`;
+            const top = topLog(fire);
+            return `Żar (${degrees(emberTemp(fire))}) jest za słaby: ${woodName(top.wood).toLowerCase()}${isWet(top.wet ?? 0) ? ' (mokre drewno)' : ''} zajmuje się od ${Math.round(logIgnite(top))}°. Opał ${fire.logs.length}/6`;
         }
         if (fire.logs.length < 6) return `Opał ${fire.logs.length}/6 — dokładaj PPM`;
         if (!fire.tinder) return TINDER_HINT;
@@ -217,6 +224,8 @@ export class Campfires {
             const cooked = updateCampfire(fire, dt, active);
             if (cooked) this.cooked(fire, cooked);
             else if (chunk && fire.phase === 'burning' && isCooking(fire.pot)) this.bubble(fire, dt);
+            // Mokre polano w ogniu syczy (1.33.0).
+            if (chunk && fire.phase === 'burning' && isWet(topLog(fire).wet ?? 0)) this.hiss(fire, dt);
             // Wypalone polano: stos jest niższy (zapis, gra ze znajomymi).
             if (logs !== fire.logs.length) this.version++;
             if (phase !== fire.phase) {
@@ -224,12 +233,12 @@ export class Campfires {
                 if (active && fire.phase === 'burning') {
                     this.noticeAt = -10;
                     this.notice('Ognisko rozpalone');
-                    game.achieve('fireLit', { wood: topLog(fire).wood, woods: fire.logs.map((log) => log.wood), embers: false });
+                    game.achieve('fireLit', { wood: topLog(fire).wood, woods: fire.logs.map((log) => log.wood), embers: false, wet: topLog(fire).wet ?? 0 });
                 } else if (phase === 'unlit' && fire.phase === 'burning' && this.near(fire, EMBER_NOTICE_RANGE)) {
                     // Polano zajęło się samo od żaru.
                     this.noticeAt = -10;
                     this.notice('Polano zajęło się od żaru');
-                    game.achieve('fireLit', { wood: topLog(fire).wood, woods: fire.logs.map((log) => log.wood), embers: true });
+                    game.achieve('fireLit', { wood: topLog(fire).wood, woods: fire.logs.map((log) => log.wood), embers: true, wet: topLog(fire).wet ?? 0 });
                 }
             }
             if (active && fire.ignition > 0 && fire.phase === 'unlit') {
@@ -264,6 +273,14 @@ export class Campfires {
         this.bubbles.set(fire, left > 0 ? left : 1.6 + Math.random() * 1.4);
         if (left > 0) return;
         this.game.sounds?.play('pot_boil', { position: { x: fire.x + .5, y: fire.y + .6, z: fire.z + .5 } });
+    }
+
+    // Syk mokrego drewna (co kilka sekund, słychać z bliska).
+    hiss(fire, dt) {
+        const left = (this.hisses.get(fire) ?? 0.6) - dt;
+        this.hisses.set(fire, left > 0 ? left : 2.2 + Math.random() * 2.2);
+        if (left > 0) return;
+        this.game.sounds?.play('sizzle', { position: { x: fire.x + .5, y: fire.y + .4, z: fire.z + .5 }, volume: 0.6 });
     }
 
     // Pieczenie: trzymany PPM z surowym jedzeniem na płonącym ognisku.

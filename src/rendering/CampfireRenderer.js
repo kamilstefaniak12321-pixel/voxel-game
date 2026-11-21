@@ -5,6 +5,7 @@ import { blockAtlasTexture, getAtlasUV } from './TextureAtlas.js';
 import { CampfireLight } from './CampfireLight.js';
 import { fireIntensity, emberGlow, KINDLING_MAX } from '../game/CampfireState.js';
 import { woodTraits } from '../blocks/woodTraits.js';
+import { wetFactor } from '../items/moisture.js';
 import { atmosphericLightToBrightness } from './LightPolicy.js';
 import { FLAME_FRAMES, FLAME_FPS, makeFlameAtlas } from './CampfireFlame.js';
 import { installEmissionDiagnostics, lightingUniforms } from './LightingDiagnostics.js';
@@ -282,9 +283,10 @@ export class CampfireRenderer {
             natural ? light.green / 255 : 0, natural ? light.blue / 255 : 0);
         if(intensity>.02 && fire.logs.length) {
             // Dymi i strzela to polano, które właśnie się pali (z wierzchu).
-            const wood=woodTraits(fire.logs.at(-1).wood);
-            view.smoke+=dt*2.2*intensity*SMOKE_RATE[wood.smoke]; view.spark+=dt;
-            if(view.smoke>=1) { view.smoke%=1; this.emit(fire,false,null,wood.dark); }
+            // Mokre polano (1.33.0) dymi gęsto i biało, póki nie przeschnie.
+            const top=fire.logs.at(-1), wood=woodTraits(top.wood), damp=wetFactor(top.wet ?? 0);
+            view.smoke+=dt*2.2*intensity*(SMOKE_RATE[wood.smoke]+2.5*damp); view.spark+=dt;
+            if(view.smoke>=1) { view.smoke%=1; this.emit(fire,false,null,damp>.15 ? 1+1.2*damp : wood.dark ? .55 : 1); }
             if(view.spark>.25 && Math.random()<dt*SPARK_RATE[wood.sparks]) { view.spark=0; this.emit(fire,true); }
         }
     }
@@ -312,10 +314,10 @@ export class CampfireRenderer {
         }
     }
 
-    emit(fire,spark,steamAt=null,dark=false) {
+    emit(fire,spark,steamAt=null,shade=1) {
         const particle=this.particles.find(p=>p.life<=0); if(!particle) return;
-        // Żywiczne drewno daje ciemny dym.
-        particle.shade=dark ? .55 : 1;
+        // Żywiczne drewno daje ciemny dym (shade < 1), mokre - biały (> 1).
+        particle.shade=shade;
         Object.assign(particle,{x:fire.x+.5+(Math.random()-.5)*.25,y:fire.y+(steamAt ?? .65),z:fire.z+.5+(Math.random()-.5)*.25,
             vx:(Math.random()-.5)*(spark?.7:.15),vz:(Math.random()-.5)*(spark?.7:.15),vy:spark?1.1:steamAt!==null?.3:.42,
             life:spark?1.8:steamAt!==null?1.6:3.8,max:spark?1.8:steamAt!==null?1.6:3.8,spark,steam:steamAt!==null,seed:Math.random()*6});
@@ -345,7 +347,7 @@ export class CampfireRenderer {
                 this.particleSize[i]=p.spark?.028:p.steam?.08+age*.2:.15+age*.46;
                 this.particleEmission[i]=p.spark?1:0;
                 this.particleColor.set(p.spark?[1,.42,.06,Math.sin(age*Math.PI)]:p.steam?[.92,.92,.9,Math.sin(age*Math.PI)*.2]
-                    :[.35*p.shade,.34*p.shade,.32*p.shade,Math.sin(age*Math.PI)*(p.shade<1?.2:.14)],i*4);
+                    :[Math.min(.9,.35*p.shade),Math.min(.9,.34*p.shade),Math.min(.9,.32*p.shade),Math.sin(age*Math.PI)*(p.shade<1?.2:p.shade>1?.22:.14)],i*4);
             } else { this.particleColor[i*4+3]=0; this.particleSize[i]=0; }
         });
         this.particleMaterial.uniforms.uPixelScale.value=this.game.renderer.domElement.height;

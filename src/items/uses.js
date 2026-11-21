@@ -18,6 +18,7 @@ import { getFood, getRoast, isDrink } from './foods.js';
 import { EFFECTS } from './effects.js';
 import { TINDERS, fuelWood, tinderTemp, KINDLING, KINDLING_MAX, KINDLING_TEMP } from '../game/CampfireState.js';
 import { woodTraits } from '../blocks/woodTraits.js';
+import { isWet, wetWord } from './moisture.js';
 import { driesInto } from './drying.js';
 import { isIngredient } from './cooking.js';
 import { spoilText } from './spoilage.js';
@@ -78,6 +79,8 @@ export function itemUses(type) {
         const wood = woodTraits(fuelWood(type));
         uses.push(`opał do ogniska: zapłon ${wood.ignite}°, żar ${wood.heat}°, polano pali się ${wood.burn} s`);
         uses.push(wood.note);
+        // Wilgotność (1.33.0, items/moisture.js).
+        uses.push(isWet(wood.fresh) ? `świeżo porąbane jest ${wetWord(wood.fresh)} (${Math.round(wood.fresh * 100)}% wody) - schnie z czasem, przy ognisku szybko` : 'pali się nawet świeżo porąbane');
     }
     // Mokra glina (items/clay.js): schnie na słońcu.
     if (driesInto(type)) uses.push(`suszenie na słońcu: ${getItemLabel(driesInto(type))}`);

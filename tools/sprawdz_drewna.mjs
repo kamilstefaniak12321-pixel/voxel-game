@@ -406,7 +406,7 @@ const hold = (fire, seconds = 20) => {
     check(itemUses('stick').some((text) => text.startsWith('rozpałka do ogniska')), 'Zastosowania patyka: rozpałka');
     check(itemUses('birch_bark').some((text) => text.startsWith('podpałka 330° (1,5 raza szybsza od trawy)')) && itemUses('short_grass').includes('podpałka 260°'), 'Zastosowania podpałki: temperatura');
     const screen = read('src/ui/InventoryScreen.js');
-    check(/fireNotes\(type\)\.map/.test(screen) && (screen.match(/\.\.\.this\.fireNote\(/g) ?? []).length === 2, 'Ekwipunek pokazuje opis drewna w podpowiedzi');
+    check(/\.\.\.fireNotes\(type\)/.test(screen) && (screen.match(/\.\.\.this\.fireNote\(/g) ?? []).length === 2, 'Ekwipunek pokazuje opis drewna w podpowiedzi');
 
     const byId = Object.fromEntries(ACHIEVEMENTS.map((entry) => [entry.id, entry]));
     const hard = byId.hardwood_fire, glow = byId.fire_from_embers, forge = byId.forge_heat;

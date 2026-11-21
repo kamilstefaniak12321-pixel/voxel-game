@@ -1026,6 +1026,26 @@ export const ACHIEVEMENTS = [
             return false;
         }
     },
+    // Wilgotność drewna (1.33.0).
+    {
+        id: 'seasoned_wood',
+        tier: 'common',
+        title: 'Sezonowane',
+        task: 'Wysusz mokre polana - w plecaku, na słońcu albo przy ognisku.',
+        comment: 'Drewno jak dobry żart: najlepsze, gdy jest suche.',
+        icon: 'oak_firewood',
+        on: 'woodDried'
+    },
+    {
+        id: 'wet_wood_fire',
+        tier: 'rare',
+        title: 'Syczy, ale płonie',
+        task: 'Rozpal ognisko, w którym na wierzchu leży mokre polano.',
+        comment: 'Więcej dymu niż ognia. Ale ogień też jest - gdzieś tam, w środku.',
+        icon: 'birch_firewood',
+        on: 'fireLit',
+        when: (data) => data.embers === false && (data.wet ?? 0) > 0.15
+    },
     {
         id: 'first_roast',
         tier: 'common',

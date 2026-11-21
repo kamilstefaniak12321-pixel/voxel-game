@@ -3,6 +3,7 @@ import { PLANT_PACKS } from '../blocks/plantPacks.js';
 import { TREE_DEFINITIONS } from '../blocks/treeCatalog.js';
 import { BARK_TINDER, barkType } from '../items/bark.js';
 import { woodTraits } from '../blocks/woodTraits.js';
+import { wetFactor, WET_IGNITE, WET_HEAT, DRY_WET } from '../items/moisture.js';
 import { restorePot, cookPot, potDrops } from './CookingState.js';
 
 // Gameplay state is independent of meshes, distance, FPS and wall-clock time.
@@ -21,6 +22,11 @@ import { restorePot, cookPot, potDrops } from './CookingState.js';
 //     gotowania (cookSpeed),
 //   - po twardym drewnie żar trzyma długo (emberSeconds), a polano
 //     dołożone na gorący żar zajmuje się samo.
+//
+// Od 1.33.0 polano ma WILGOTNOŚĆ (log.wet 0-1, items/moisture.js):
+// mokre ma wyższy zapłon i słabszy żar (logIgnite, logHeat). W płonącym
+// ognisku polana schną: to, które się pali - przez cały czas palenia,
+// te pod nim - powoli od ciepła (STACK_DRY_SECONDS).
 export const CAMPFIRE_CAPACITY = 6;
 // Tyle sekund po rozpaleniu płomień rośnie do pełnej wielkości.
 const CAMPFIRE_FLARE_SECONDS = 5;
@@ -48,6 +54,9 @@ export const WARMTH_FROM = 300;
 export const WARMTH_DEGREES = 25;
 // Zapadające się ognisko grzeje słabiej.
 export const COLLAPSE_WARMTH = 0.5;
+// W płonącym ognisku w pełni mokre polano pod spodem wysycha w tyle
+// sekund (polano z wierzchu schnie, paląc się).
+export const STACK_DRY_SECONDS = 300;
 // Rozpałka: patyki dołożone do podpałki. Każdy podnosi temperaturę.
 export const KINDLING = 'stick';
 export const KINDLING_MAX = 2;
@@ -73,6 +82,9 @@ export const fuelWood = type => Object.keys(FIRE_WOODS).find(wood => fuelType(wo
 export const logSeconds = wood => woodTraits(wood).burn;
 export const woodIgnite = wood => woodTraits(wood).ignite;
 export const woodHeat = wood => woodTraits(wood).heat;
+// Zapłon i żar konkretnego polana - z jego wilgotnością (1.33.0).
+export const logIgnite = log => woodIgnite(log.wood) + WET_IGNITE * wetFactor(log.wet ?? 0);
+export const logHeat = log => woodHeat(log.wood) * (1 - WET_HEAT * wetFactor(log.wet ?? 0));
 // Pełny stos jednego gatunku pali się tyle sekund.
 export const stackSeconds = wood => CAMPFIRE_CAPACITY * logSeconds(wood);
 // Ile sekund żaru zostawia jedno wypalone polano: miękkie drewno kilka
@@ -125,7 +137,7 @@ export function restoreCampfire(value) {
     const fire = newCampfire(value.x, value.y, value.z);
     fire.logs = (Array.isArray(value.logs) ? value.logs : []).slice(0, 6)
         .filter(log => log && Object.hasOwn(FIRE_WOODS, log.wood))
-        .map(log => ({ wood: log.wood, burn: clamp(log.burn) }));
+        .map(log => ({ wood: log.wood, burn: clamp(log.burn), ...wetField(clamp(log.wet)) }));
     fire.tinder = isTinder(value.tinder) ? value.tinder : null;
     fire.ash = value.ash === true;
     fire.embers = clamp(value.embers, EMBER_MAX_SECONDS);
@@ -137,17 +149,30 @@ export function restoreCampfire(value) {
     fire.lit = fire.phase === 'unlit' ? 0 : clamp(value.lit ?? CAMPFIRE_FLARE_SECONDS, CAMPFIRE_FLARE_SECONDS);
     fire.kindling = fire.phase === 'unlit' && Number.isInteger(value.kindling) ? Math.max(0, Math.min(KINDLING_MAX, value.kindling)) : 0;
     // Zapis sprzed 1.32.0 nie ma temperatury: ogień jest od razu gorący.
-    fire.temp = fire.phase === 'unlit' ? 0 : Number.isFinite(value.temp) ? clamp(value.temp, 1400) : woodHeat(fire.logs.at(-1).wood);
+    fire.temp = fire.phase === 'unlit' ? 0 : Number.isFinite(value.temp) ? clamp(value.temp, 1400) : logHeat(fire.logs.at(-1));
     fire.pot = restorePot(value.pot);
     return fire;
 }
 
 // Polano na stos: przed rozpaleniem i do płonącego ogniska (nie wtedy,
 // gdy ostatnie polana już opadają w żar).
-export function addFirewood(fire, wood) {
+// wet - wilgotność polana (0 - suche; 1.33.0).
+export function addFirewood(fire, wood, wet = 0) {
     if (!Object.hasOwn(FIRE_WOODS, wood) || !['unlit', 'burning'].includes(fire.phase) || fire.logs.length >= 6) return false;
-    fire.logs.push({ wood, burn: 0 });
+    fire.logs.push({ wood, burn: 0, ...wetField(clamp(wet)) });
     return true;
+}
+
+// Suche polano nie nosi pola wet (zapis wygląda jak dotąd).
+function wetField(wet) {
+    return wet > 0 ? { wet } : {};
+}
+
+// Zmienia wilgotność polana (schnięcie, deszcz) - w granicach 0-1.
+export function setLogWet(log, wet) {
+    const value = clamp(wet);
+    if (value > 0) log.wet = value;
+    else delete log.wet;
 }
 
 // Ile sekund ognisko będzie jeszcze płonąć (0 - nie płonie).
@@ -187,19 +212,19 @@ export const topLog = fire => fire.logs.at(-1) ?? null;
 // Czy podpałka z rozpałką zapali polano z wierzchu.
 export function canIgnite(fire) {
     return fire.phase === 'unlit' && fire.logs.length === 6 && Boolean(fire.tinder) &&
-        startTemp(fire) >= woodIgnite(topLog(fire).wood);
+        startTemp(fire) >= logIgnite(topLog(fire));
 }
 
 // Czy polano z wierzchu zajmie się samo od żaru.
 export function catchesFromEmbers(fire) {
     return fire.phase === 'unlit' && fire.logs.length >= 1 && topLog(fire).burn === 0 &&
-        emberTemp(fire) >= woodIgnite(topLog(fire).wood);
+        emberTemp(fire) >= logIgnite(topLog(fire));
 }
 
 // Temperatura ogniska teraz (°C): ogień, zapadający się stos albo żar.
 export function campfireTemp(fire) {
     if (fire.phase === 'unlit') return emberTemp(fire);
-    const temp = Number.isFinite(fire.temp) && fire.temp > 0 ? fire.temp : fire.logs?.length ? woodHeat(topLog(fire).wood) : EMBER_TEMP;
+    const temp = Number.isFinite(fire.temp) && fire.temp > 0 ? fire.temp : fire.logs?.length ? logHeat(topLog(fire)) : EMBER_TEMP;
     return fire.phase === 'collapsing' ? temp + (EMBER_TEMP - temp) * clamp(fire.collapse) : temp;
 }
 
@@ -242,7 +267,7 @@ function burnCampfire(fire, dt, holdingStarter, result) {
     }
     if (fire.phase === 'burning') {
         fire.lit = Math.min(CAMPFIRE_FLARE_SECONDS, fire.lit + dt);
-        if (!(fire.temp > 0)) fire.temp = woodHeat(topLog(fire).wood);
+        if (!(fire.temp > 0)) fire.temp = logHeat(topLog(fire));
         // Pali się polano z wierzchu stosu; gdy się wypali, znika, a ogień
         // przechodzi na następne. Ostatnie zostaje, żeby opaść w żar.
         let left = dt;
@@ -253,12 +278,22 @@ function burnCampfire(fire, dt, holdingStarter, result) {
             const span = Math.min(left, need);
             // Temperatura dochodzi do żaru tego polana; garnek gotuje się
             // tym szybciej, im goręcej (krokami - jak przy zwykłych klatkach).
-            const target = woodHeat(log.wood);
+            // Mokre polano schnie, paląc się (nadmiar wody maleje z kwadratem
+            // tego, ile polana zostało), a te pod nim - powoli od ciepła.
+            const excess = Math.max(0, (log.wet ?? 0) - DRY_WET);
+            const wetAfter = (seconds) => (excess > 0 ? DRY_WET + excess * Math.max(0, (need - seconds) / need) ** 2 : log.wet ?? 0);
             for (let done = 0; done < span;) {
                 const step = Math.min(BURN_STEP, span - done), before = fire.temp;
+                // (Żar z wilgotnością w połowie kroku - długi skok czasu
+                // daje wtedy to samo, co wiele klatek.)
+                const target = logHeat({ wood: log.wood, wet: wetAfter(done + step / 2) });
                 fire.temp = target + (before - target) * Math.exp(-step / TEMP_SECONDS);
                 if (fire.pot) result.cooked = cookPot(fire.pot, step * cookSpeed((before + fire.temp) / 2)) ?? result.cooked;
                 done += step;
+                if (excess > 0) setLogWet(log, wetAfter(done));
+                for (let i = 0; i < fire.logs.length - 1; i++) {
+                    if (fire.logs[i].wet > 0) setLogWet(fire.logs[i], fire.logs[i].wet - step / STACK_DRY_SECONDS);
+                }
             }
             left -= span;
             if (span < need) { log.burn += span / seconds; break; }
@@ -313,12 +348,19 @@ export function emberGlow(fire) {
 export function campfireDrops(fire) {
     if (!fire) return [];
     const counts = new Map();
+    // Polana jednego gatunku wracają jednym stosem; wilgotność - średnia
+    // (pole fresh to suchość stosu, items/moisture.js).
+    const wetness = new Map();
     for (const log of fire.logs) if (log.burn === 0 && fire.phase === 'unlit') {
         const type = fuelType(log.wood); counts.set(type, (counts.get(type) ?? 0) + 1);
+        wetness.set(type, (wetness.get(type) ?? 0) + (log.wet ?? 0));
     }
     if (fire.tinder) counts.set(fire.tinder, 1);
     if (fire.phase === 'unlit' && fire.kindling > 0) counts.set(KINDLING, fire.kindling);
     // Garnek i surowe składniki (gotowa potrawa bez misek przepada).
     for (const drop of potDrops(fire.pot)) counts.set(drop.type, (counts.get(drop.type) ?? 0) + drop.count);
-    return [...counts].map(([type, count]) => ({ type, count }));
+    return [...counts].map(([type, count]) => {
+        const wet = (wetness.get(type) ?? 0) / count;
+        return wet > 0 ? { type, count, fresh: Math.round((1 - wet) * 1000) / 1000 } : { type, count };
+    });
 }

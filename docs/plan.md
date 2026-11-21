@@ -6,21 +6,21 @@ pamięć, nie umowa. Po każdej wydanej wersji wpis przechodzi do
 
 ## Teraz
 
-- **1.32.0 - Charakter drewna** (PR #185): pierwsza część projektu
-  drewna (A1). Każdy z 32 gatunków ma zapłon, żar i czas palenia;
-  ognisko ma temperaturę - rozpalanie etapami, rozpałka z patyków,
-  ciepło i gotowanie zależne od drewna, żar ([ogniska.md](ogniska.md),
+- **1.33.0 - Wilgotność drewna** (PR #186): druga część projektu drewna
+  (A2). Polana prosto spod siekiery są mokre (niebieski pasek): trudniej
+  je zapalić i słabiej grzeją; schną w plecaku, na ziemi, w słońcu
+  i przy ognisku, deszcz je moczy ([ogniska.md](ogniska.md),
   [drewno.md](drewno.md)).
 
 ## Dalej
 
 **Drewno, ogień i ścinanie drzew** - duży projekt Kamila, uzgodniony
 21.11.2026 ([drewno.md](drewno.md)). Sześć części; pierwsza (A) jest
-podzielona na trzy wersje:
+podzielona na mniejsze wersje (1.32.0 - cechy i ognisko, 1.33.0 -
+wilgotność):
 
-- **A2 - Wilgotność**: świeże drewno jest mokre, schnie na stosie pod
-  dachem i przy ognisku; mokre drewno trudniej zapalić i słabiej grzeje;
-  drewutnia.
+- **A2b - Drewutnia**: stos polan pod dachem - schną i nie zajmują
+  ekwipunku.
 - **A3 - Pochodnie i deszcz**: pochodnie się wypalają, łuczywo, deszcz
   chłodzi i gasi ognisko.
 - **B - Ścinanie**: drzewo jako jeden byt, ciosy i karb, upadek, leżący
@@ -51,8 +51,10 @@ podzielona na trzy wersje:
 - Drewno, dopowiedzenia (21.11.2026): pod padającym drzewem
   **ogłuszenie jak pod wodą, tylko urwane** - nagłe skupienie na
   drzewie, „ciach" i ciemność. **Pierwsze drewno z powalonego drzewa**,
-  które leży w lesie (pomysł Kamila; wejdzie ze ścinaniem). Do
-  ustalenia: gołą ręką tylko gałęzie i kora, czy także kłody.
+  które leży w lesie (pomysł Kamila; wejdzie ze ścinaniem). Gołą ręką
+  bierze się z niego **gałęzie, korę i spróchniałe drewno** (polano na
+  start, próchno do noszenia żaru i jako nawóz - [drewno.md](drewno.md),
+  rozdział 9); zdrowe kłody tnie się siekierą.
 
 - Pnącza (20.11.2026): rosną **po podporze** - sadzonka przy murze,
   płocie, kratce, tyczce albo pniu, sama pnie się w górę i na boki po

@@ -110,14 +110,14 @@ export const TUTORIAL_STEPS = [
         title: 'Ułóż ognisko',
         text: 'Zrób opał: w siatce wytwarzania połóż pień obok siekiery (siekiera zostaje). Z opałem w ręce kliknij ziemię ([use]) i dokładaj, aż będzie 6 polan.',
         touch: 'Zrób opał: w siatce wytwarzania połóż pień obok siekiery (siekiera zostaje). Z opałem w ręce stuknij ziemię i dokładaj, aż będzie 6 polan.',
-        hint: 'Z jednego pnia wychodzą 4 polana - potrzebujesz dwóch pni.',
+        hint: 'Z jednego pnia wychodzą 4 polana - potrzebujesz dwóch pni. Świeże polana są mokre (niebieski pasek): schną z czasem, a przy ognisku szybko.',
         done: (t) => t.saw('fireLit') || anyFire(t.game, (fire) => fire.logs.length >= 6)
     },
     {
         id: 'fire',
         title: 'Rozpal ognisko',
-        text: 'Podpałką jest kora: kliknij pień siekierą ([use]) i dołóż korę do ogniska. Twarde drewno (dąb, buk) potrzebuje jeszcze rozpałki - dołóż patyk. Z dwóch patyków zrób starter ognia, wyceluj nim w ognisko i przytrzymaj [use] przez 5 sekund.',
-        touch: 'Podpałką jest kora: stuknij pień siekierą i dołóż korę do ogniska. Twarde drewno (dąb, buk) potrzebuje jeszcze rozpałki - dołóż patyk. Z dwóch patyków zrób starter ognia, wyceluj nim w ognisko i przytrzymaj przycisk z kostką przez 5 sekund.',
+        text: 'Podpałką jest kora: kliknij pień siekierą ([use]) i dołóż korę do ogniska. Mokre albo twarde drewno potrzebuje jeszcze rozpałki - dołóż patyk albo dwa. Z dwóch patyków zrób starter ognia, wyceluj nim w ognisko i przytrzymaj [use] przez 5 sekund.',
+        touch: 'Podpałką jest kora: stuknij pień siekierą i dołóż korę do ogniska. Mokre albo twarde drewno potrzebuje jeszcze rozpałki - dołóż patyk albo dwa. Z dwóch patyków zrób starter ognia, wyceluj nim w ognisko i przytrzymaj przycisk z kostką przez 5 sekund.',
         hint: 'Nad ogniem upieczesz jabłka, orzechy i żołędzie. Każde drewno pali się inaczej: świerk krótko, dąb długo i gorąco. Do płonącego ogniska możesz dokładać polana.',
         done: (t) => t.saw('fireLit')
     },

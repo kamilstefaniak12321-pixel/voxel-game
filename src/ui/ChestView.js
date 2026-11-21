@@ -332,7 +332,7 @@ export class ChestView {
             if (layer < 0) continue;
 
             const item = this.chest.layers[layer][cell];
-            const bar = spoiling ? freshBar(item) : null;
+            const bar = freshBar(item, spoiling);
 
             if (item.count <= 1 && !bar) continue;
 

@@ -11,6 +11,34 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 1.33.0 - Wilgotność drewna
+
+PR #186. Druga część projektu Kamila „drewno, ogień i ścinanie drzew"
+(`docs/drewno.md`).
+
+- **Polana prosto spod siekiery są mokre** - tym bardziej, im więcej
+  soku ma gatunek: brzoza i olcha bardzo, dąb i buk mocno, sosna trochę,
+  a oliwka i akacja palą się od razu. Mokry stos ma **niebieski pasek**
+  na ikonce i opis po najechaniu.
+- **Mokre drewno trudniej zapalić i słabiej grzeje**: zapłon do 100°
+  wyższy, żar do 30% niższy. Świeży dąb potrzebuje kory i dwóch patyków
+  (albo suchego polana na wierzchu). Gra mówi, czego brakuje.
+- **W ogniu drewno schnie**: mokre polano najpierw syczy i dymi na
+  biało, potem pali się normalnie; polana pod nim schną od ciepła.
+- **Schnięcie**: w plecaku i skrzyni powoli (dąb ok. 4 doby gry), na
+  ziemi szybciej, w słońcu jeszcze szybciej, **przy płonącym ognisku
+  w kilka minut**. Na mrozie prawie wcale. Gdy drewno wyschnie, gra
+  o tym pisze.
+- **Deszcz moczy** polana leżące pod gołym niebem i zimne stosy ognisk;
+  plecak, skrzynia i dach chronią.
+- Suche i mokre polana leżą w osobnych stosach; złożone ręcznie mieszają
+  się. Pnie wilgotności nie mają - drewno schnie dopiero porąbane.
+- Osiągnięcia *Sezonowane* i *Syczy, ale płonie*; komendy
+  `/drewno swieze`, `/drewno mokre`, `/drewno schniecie`,
+  `/drewno tempo`. Opis: `docs/ogniska.md`.
+- W dokumentacji: decyzja Kamila o **spróchniałym drewnie** z powalonych
+  drzew (wejdzie ze ścinaniem).
+
 ## 1.32.0 - Charakter drewna
 
 PR #185. Pierwsza część projektu Kamila „drewno, ogień i ścinanie

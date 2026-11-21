@@ -99,6 +99,7 @@ import { Wellbeing } from './Wellbeing.js';
 import { Drops } from './Drops.js';
 import { Orchard } from './Orchard.js';
 import { Spoilage } from './Spoilage.js';
+import { WoodDrying } from './WoodDrying.js';
 import { Warmth } from './Warmth.js';
 import { Freeze } from './Freeze.js';
 import { clothesCode } from '../items/clothing.js';
@@ -844,6 +845,8 @@ export class Game extends GameInteraction {
         this.orchard = new Orchard(this, worldInfo.orchard);
         // Psucie się jedzenia (1.23.0).
         this.spoilage = new Spoilage(this);
+        // Schnięcie drewna (1.33.0).
+        this.woodDrying = new WoodDrying(this);
         this.drops.renderer = new DropRenderer(this);
 
         // Skrzynie: zawartość i modele (Chests.js); PPM otwiera ekwipunek
@@ -1129,6 +1132,7 @@ export class Game extends GameInteraction {
         this.plantGrowth.update(dt);
         this.orchard.update(dt);
         this.spoilage.update(dt);
+        this.woodDrying.update(dt);
         this.plantAnimations.update(dt);
         profile?.endStage('plants');
 
@@ -2747,6 +2751,7 @@ export class Game extends GameInteraction {
         this.plantGrowth.advance(seconds);
 
         this.spoilage.advance(seconds);
+        this.woodDrying.advance(seconds);
 
     }
 

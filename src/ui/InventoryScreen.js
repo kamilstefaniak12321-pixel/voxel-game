@@ -32,6 +32,7 @@ import { bindings, formatKeys, mouseCode } from '../input/bindings.js';
 import { makeItem, withCount, sameBatch, blend, stackSize, freshBar } from '../items/freshness.js';
 import { freshText } from '../items/spoilage.js';
 import { fireNotes } from '../items/woodNotes.js';
+import { wetNotes } from '../items/moisture.js';
 import { garmentInfo, fitsSlot, lookText, SLOTS as CLOTHING_SLOTS, SLOT_LABELS, GARMENTS } from '../items/clothing.js';
 import { garmentIcon } from './garmentIcons.js';
 
@@ -754,7 +755,8 @@ export class InventoryScreen {
         const result = el('div', 'inv-slot inv-result');
 
         result.dataset.kind = 'result';
-        result.append(el('img'), el('span', 'inv-count'));
+        // (inv-fresh: pasek wilgotności świeżo porąbanych polan, 1.33.0.)
+        result.append(el('img'), el('span', 'inv-count'), el('span', 'inv-fresh'));
 
         area.append(grid, el('span', 'inv-craft-arrow', '➜'), result);
 
@@ -1114,8 +1116,9 @@ export class InventoryScreen {
 
             const result = gridResult(grid);
 
+            // (fresh: polano prosto spod siekiery jest mokre - widać pasek.)
             this.showItem(resultSlot, result
-                ? { type: result.type, count: result.count }
+                ? { type: result.type, count: result.count, fresh: result.fresh }
                 : this.ghost ? { type: this.ghost.result[0], count: this.ghost.result[1] } : null);
 
             resultSlot.classList.toggle('ready', Boolean(result));
@@ -1172,7 +1175,7 @@ export class InventoryScreen {
 
         if (fresh) {
 
-            const bar = this.game?.spoilage?.active ? freshBar(item) : null;
+            const bar = freshBar(item, Boolean(this.game?.spoilage?.active));
 
             fresh.hidden = !bar;
 
@@ -1885,7 +1888,7 @@ export class InventoryScreen {
 
         craftFromGrid(inventory);
 
-        this.cursor = held ? blend(held, result.count) : makeItem(result.type, result.count);
+        this.cursor = held ? blend(held, result.count, result.fresh) : makeItem(result.type, result.count, result.fresh);
 
         this.crafted(result, 1);
 
@@ -1978,9 +1981,11 @@ export class InventoryScreen {
     // Charakter drewna (1.32.0): polano - zapłon, żar i czas palenia,
     // podpałka - temperatura (items/woodNotes.js).
 
-    fireNote(type) {
+    // Od 1.33.0 także wilgotność stosu polan (items/moisture.js).
 
-        return fireNotes(type).map((text) => el('div', 'inv-tooltip-note', text));
+    fireNote(type, item = null) {
+
+        return [...fireNotes(type), ...wetNotes(item?.type === type ? item : null)].map((text) => el('div', 'inv-tooltip-note', text));
 
     }
 
@@ -2123,7 +2128,7 @@ export class InventoryScreen {
             this.tooltip.replaceChildren(...this.itemTooltip(hovered));
         }
         else {
-            this.tooltip.replaceChildren(getItemLabel(label), el('span', 'inv-tooltip-id', label), ...this.fireNote(label), ...this.freshNote(hovered));
+            this.tooltip.replaceChildren(getItemLabel(label), el('span', 'inv-tooltip-id', label), ...this.fireNote(label, hovered), ...this.freshNote(hovered));
         }
 
         this.placeTooltip(event);
@@ -2138,7 +2143,7 @@ export class InventoryScreen {
         const info = garmentInfo(item.type);
 
         if (!info) {
-            return [getItemLabel(item.type), el('span', 'inv-tooltip-id', item.type), ...this.fireNote(item.type), ...this.freshNote(item)];
+            return [getItemLabel(item.type), el('span', 'inv-tooltip-id', item.type), ...this.fireNote(item.type, item), ...this.freshNote(item)];
         }
 
         return [

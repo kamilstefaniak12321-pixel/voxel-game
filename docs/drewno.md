@@ -6,10 +6,10 @@
 > meteoryty). Moje dodatki są oznaczone *(dodatek)*. Wszystkie liczby to
 > punkt wyjścia do strojenia w grze.
 >
-> **W grze:** od **1.32.0** cechy gatunków (rozdział 1, bez wilgotności)
-> i ognisko z temperaturą (rozdział 2, bez deszczu i pochodni) - opis
-> tego, co działa: [ogniska.md](ogniska.md). Reszta czeka - kolejność
-> w rozdziale 11.
+> **W grze:** od **1.32.0** cechy gatunków (rozdział 1) i ognisko
+> z temperaturą (rozdział 2, bez deszczu i pochodni); od **1.33.0**
+> wilgotność polan i schnięcie (bez drewutni). Opis tego, co działa:
+> [ogniska.md](ogniska.md). Reszta czeka - kolejność w rozdziale 11.
 
 ## W skrócie
 
@@ -103,8 +103,11 @@ i zaokrąglone pod grę.
   wilgotna, ale ma niski zapłon, więc zajmuje się mimo to. Brzoza ma
   sok (wodę), więc świeża pali się słabo - ale jej **kora** zapala się
   nawet mokra.
-- Mokre drewno: zapłon wyższy (do +120°), żar niższy (do 30%), syczy
-  i mocno dymi.
+- Mokre drewno: zapłon wyższy (w grze do +100° - przy +120° świeżego
+  dębu nie dałoby się rozpalić zwykłą korą i patykami), żar niższy (do
+  30%), syczy i mocno dymi.
+- *(w grze od 1.33.0)* Wilgotność mają **polana**, nie pnie: drewno
+  schnie dopiero porąbane, a polano prosto spod siekiery jest świeże.
 - **Schnie** na stosie: pod dachem albo w słoneczne dni; przy ognisku
   szybciej. Deszcz moczy drewno leżące pod gołym niebem.
 - Wilgotność stosu działa jak świeżość jedzenia (1.29.0): **niebieski
@@ -439,21 +442,34 @@ Kamila): starego pnia, który kiedyś sam upadł i leży w lesie.
 - To ten sam leżący pień, który gracz później sam położy siekierą -
   najpierw poznaje obróbkę na bezpiecznym przykładzie, dopiero potem
   ścinanie.
-- **Gołą ręką**: odłamuje się gałęzie (patyki) i zdziera korę
-  (podpałka). **Siekierą**: tnie się pień na kłody.
+- **Gołą ręką** (decyzja Kamila): odłamuje się gałęzie (patyki), zdziera
+  korę (podpałka) i wyłamuje **spróchniałe drewno** - puste w środku,
+  lekkie. **Siekierą**: tnie się zdrową część pnia na kłody.
 - Drewno jest **suche** (leżało latami), więc pierwsze ognisko rozpala
   się łatwo. Świeżo ścięte drzewo będzie mokre - gracz sam zobaczy
   różnicę.
 - Drewna jest tyle, żeby starczyło na narzędzia, kozły i pierwsze
   ognisko. Potem trzeba już ścinać.
-- *(dodatek)* Pień jest częściowo **spróchniały**: próchno to podpałka,
-  która długo się tli.
+- **Spróchniałe drewno** (pomysł Kamila; do czego służy - moja
+  propozycja):
+  - **polano na start**: zajmuje się od byle czego (zapłon 200°, niżej
+    niż każde zdrowe drewno), ale grzeje słabo (ok. 450°), pali się pół
+    minuty i mocno dymi. Położone na wierzchu stosu rozpala resztę -
+    pierwsze ognisko da się zrobić bez siekiery, a prawdziwe ciepło daje
+    dopiero zdrowe drewno,
+  - **próchno** (kłoda rozkruszona w dłoniach): podpałka, która się tli.
+    Przytknięta do płonącego ogniska **niesie żar** do następnego - bez
+    startera; po kilku minutach gaśnie,
+  - **próchno do ziemi**: nawóz jak kompost,
+  - *(później)* **pusta kłoda jako blok**: kryjówka dla jeży i koryto na
+    kwiaty.
 - *(dodatek, później)* **Wichura** powala stare drzewa, więc leżące pnie
   pojawiają się też w trakcie gry.
 
 **Kolejność na początku**
 
-1. **Patyki i kora**: z powalonego drzewa, gołą ręką.
+1. **Patyki, kora i spróchniałe drewno**: z powalonego drzewa, gołą ręką
+   - wystarczy na pierwsze ognisko.
 2. **Skały**: jak dziś.
 3. **Siekiera**: 3 skały i patyk, jak dziś.
 4. **Kłody z powalonego pnia**: siekierą.
@@ -488,7 +504,8 @@ Każda część to osobna wersja, grywalna sama.
 | Wersja | Część | Co wchodzi |
 |---|---|---|
 | A1 | **Charakter drewna** - **1.32.0, w grze** | cechy gatunków, ognisko z temperaturą: rozpalanie etapami, rozpałka z patyków, czas palenia, ciepło, gotowanie, żar, dym i iskry |
-| A2 | **Wilgotność** | świeże drewno mokre, suszenie (stos, dach, słońce, ognisko), mokre drewno w ognisku, drewutnia |
+| A2 | **Wilgotność** - **1.33.0, w grze** | świeże polana mokre (pasek, opis), mokre drewno w ognisku, schnięcie (plecak, skrzynia, ziemia, słońce, ogień), deszcz moczy |
+| A2b | **Drewutnia** | stos polan pod dachem: schną i nie zajmują ekwipunku |
 | A3 | **Pochodnie i deszcz** | wypalające się pochodnie, łuczywo, deszcz a ognisko |
 | B | **Ścinanie** | drzewo-byt, ciosy i karb, upadek, leżący pień, konary, kozły, **powalone drzewa na start** (rozdział 9), nowy samouczek |
 | C | **Narzędzia i kołysanie** | twardość skał, widoczne zużycie, kołysanie drzew |
@@ -522,6 +539,6 @@ Kamil wybrał wszystkie polecane warianty, a pochodnie mają się wypalać.
 7. **Kiedy**: najpierw fasola i groch (1.31.0), potem drewno - od
    części A.
 8. **Pierwsze drewno z powalonego drzewa** (pomysł Kamila, 21.11.2026):
-   opis w rozdziale 9. Wchodzi razem ze ścinaniem (część B). Do
-   ustalenia: czy gołą ręką da się z niego wziąć tylko gałęzie i korę
-   (polecane), czy także kłody, tylko wolno.
+   opis w rozdziale 9. Wchodzi razem ze ścinaniem (część B). **Gołą ręką
+   tylko gałęzie, kora i spróchniałe drewno** (puste w środku); zdrowe
+   kłody - siekierą.

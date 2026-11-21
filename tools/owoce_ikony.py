@@ -848,6 +848,82 @@ def passion_fruit():
                'y': body('#f2b21e', gloss=1, contrast=0.9)}, 'Pwy'
 
 
+
+# --- fasola i groch (1.31.0, blocks/vines.js) ----------------------------------
+
+def bean_pod():
+    # Strąk fasoli: długi, cienki, lekko wygięty, z ogonkiem u góry.
+    s = Sprite([
+        "................",
+        ".............tt.",
+        "...........PPt..",
+        "..........PPPP..",
+        ".........PPPP...",
+        "........PPPP....",
+        ".......PPPP.....",
+        "......PPPP......",
+        ".....PPPP.......",
+        "....PPPP........",
+        "...PPPP.........",
+        "..PPPP..........",
+        "..PPP...........",
+        "..PP............",
+        ".p..............",
+        "................"])
+    # Zgrubienia na ziarnach - jaśniejsze punkty wzdłuż strąka.
+    for x, y in [(11, 4), (9, 6), (7, 8), (5, 10)]:
+        s.dot(x, y, 'l2')
+    return s, {'P': body('#7fae3e', gloss=1, contrast=1.1), 'p': body('#7fae3e', gloss=0), 't': stroke(STEM_G)}, 'tPp'
+
+
+def beans():
+    # Sucha fasola: dwa ziarna kremowe i dwa brązowe, każde z wcięciem.
+    s = Sprite()
+    places = {'a': (1, 1), 'b': (9, 3), 'c': (3, 8), 'd': (10, 10)}
+    for ch, (x, y) in places.items():
+        s.blob(ch, oval(6, 5), x, y)
+    cream = body('#e9dfc6', gloss=1, contrast=0.5, dirt=0.05, warm=0.3)
+    brown = body('#8c4b2e', gloss=1, contrast=1.1)
+    # Znaczek (wcięcie) na boku ziarna.
+    for ch, (x, y) in places.items():
+        s.dot(x + 3, y + 3, 's1' if ch in 'ad' else 's2')
+    return s, {'a': cream, 'b': brown, 'c': brown, 'd': cream}, 'abcd'
+
+
+def pea_pod():
+    # Strąk grochu: gruby, poziomy, z wybrzuszeniami od groszków.
+    s = Sprite([
+        "................",
+        "................",
+        "................",
+        "................",
+        ".t..............",
+        ".tt.............",
+        "..PPPPPPPPPP....",
+        ".PPPPPPPPPPPPP..",
+        ".PPPPPPPPPPPPPP.",
+        ".PPPPPPPPPPPPPp.",
+        "..PPPPPPPPPPPP..",
+        "....PPPPPPPP....",
+        "................",
+        "................",
+        "................",
+        "................"])
+    for x in (3, 6, 9, 12):
+        s.dot(x, 7, 'l2').dot(x, 8, 'l1').dot(x + 1, 8, 'l1')
+    return s, {'P': body('#6fa843', gloss=1, contrast=1.05), 'p': body('#6fa843', gloss=0), 't': stroke(STEM_G)}, 'tPp'
+
+
+def peas():
+    # Wyłuskany groch: sześć okrągłych ziaren.
+    s = Sprite()
+    order = 'abcdef'
+    for ch, (x, y) in zip(order, [(1, 1), (7, 2), (12, 4), (3, 7), (9, 8), (5, 12)]):
+        s.blob(ch, DOT[4], x, y)
+    pea = body('#8fc24e', gloss=1, contrast=1.1)
+    return s, {c: pea for c in order}, order
+
+
 ICONS = {
     'strawberry': strawberry, 'wild_strawberry': wild_strawberry, 'raspberry': raspberry,
     'yellow_raspberry': lambda: raspberry('#e6b648'), 'blackberry': blackberry, 'blueberry': blueberry,
@@ -859,6 +935,7 @@ ICONS = {
     'dragon_berries': dragon_berries, 'chili': chili, 'hazelnut': hazelnut, 'beechnuts': beechnuts,
     'acorn': acorn, 'araucaria': araucaria, 'pumpkin_slice': pumpkin_slice, 'zucchini': zucchini,
     'grapes': grapes, 'hop_cone': hop_cone, 'kiwi': kiwi, 'passion_fruit': passion_fruit,
+    'bean_pod': bean_pod, 'beans': beans, 'pea_pod': pea_pod, 'peas': peas,
 }
 
 
@@ -881,6 +958,7 @@ TILES = {
     'araucaria': 'araucaria/nuts.png', 'pumpkin_slice': 'item_pumpkin_slice',
     'zucchini': 'item_zucchini',
     'grapes': 'item_grapes', 'hop_cone': 'item_hop_cone', 'kiwi': 'item_kiwi', 'passion_fruit': 'item_passion_fruit',
+    'bean_pod': 'item_bean_pod', 'beans': 'item_beans', 'pea_pod': 'item_pea_pod', 'peas': 'item_peas',
 }
 # Pieczone - z nowych ikonek (niskie_tekstury.roasted).
 ROASTED = {'roasted_pumpkin_slice': 'pumpkin_slice', 'roasted_zucchini': 'zucchini'}

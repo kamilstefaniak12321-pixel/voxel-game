@@ -2,7 +2,7 @@
   "version": 1,
   "tileSize": 16,
   "columns": 64,
-  "rows": 97,
+  "rows": 102,
   "sheets": {
     "drzewa": {
       "file": "drzewa.png",
@@ -17,7 +17,7 @@
     "rosliny": {
       "file": "rosliny.png",
       "width": 256,
-      "height": 608
+      "height": 688
     },
     "przedmioty": {
       "file": "przedmioty.png",
@@ -9626,6 +9626,160 @@
       "y": 592,
       "width": 16,
       "height": 16
+    },
+    "bean_wigwam": {
+      "sheet": "rosliny",
+      "x": 0,
+      "y": 608,
+      "width": 32,
+      "height": 48
+    },
+    "bean_wigwam_young": {
+      "sheet": "rosliny",
+      "x": 32,
+      "y": 608,
+      "width": 32,
+      "height": 48
+    },
+    "bean_wigwam_leaves": {
+      "sheet": "rosliny",
+      "x": 64,
+      "y": 608,
+      "width": 32,
+      "height": 48
+    },
+    "bean_wigwam_flower": {
+      "sheet": "rosliny",
+      "x": 96,
+      "y": 608,
+      "width": 32,
+      "height": 48
+    },
+    "bean_wigwam_ripe": {
+      "sheet": "rosliny",
+      "x": 128,
+      "y": 608,
+      "width": 32,
+      "height": 48
+    },
+    "bean_wigwam_dry": {
+      "sheet": "rosliny",
+      "x": 160,
+      "y": 608,
+      "width": 32,
+      "height": 48
+    },
+    "pea_net": {
+      "sheet": "rosliny",
+      "x": 0,
+      "y": 656,
+      "width": 16,
+      "height": 16
+    },
+    "pea_brush": {
+      "sheet": "rosliny",
+      "x": 16,
+      "y": 656,
+      "width": 16,
+      "height": 16
+    },
+    "vine_bean_young": {
+      "sheet": "rosliny",
+      "x": 32,
+      "y": 656,
+      "width": 16,
+      "height": 16
+    },
+    "vine_bean_leaves": {
+      "sheet": "rosliny",
+      "x": 48,
+      "y": 656,
+      "width": 16,
+      "height": 16
+    },
+    "vine_bean_flower": {
+      "sheet": "rosliny",
+      "x": 64,
+      "y": 656,
+      "width": 16,
+      "height": 16
+    },
+    "vine_bean_ripe": {
+      "sheet": "rosliny",
+      "x": 80,
+      "y": 656,
+      "width": 16,
+      "height": 16
+    },
+    "vine_bean_dry": {
+      "sheet": "rosliny",
+      "x": 96,
+      "y": 656,
+      "width": 16,
+      "height": 16
+    },
+    "vine_pea_young": {
+      "sheet": "rosliny",
+      "x": 112,
+      "y": 656,
+      "width": 16,
+      "height": 16
+    },
+    "vine_pea_leaves": {
+      "sheet": "rosliny",
+      "x": 128,
+      "y": 656,
+      "width": 16,
+      "height": 16
+    },
+    "vine_pea_flower": {
+      "sheet": "rosliny",
+      "x": 144,
+      "y": 656,
+      "width": 16,
+      "height": 16
+    },
+    "vine_pea_ripe": {
+      "sheet": "rosliny",
+      "x": 160,
+      "y": 656,
+      "width": 16,
+      "height": 16
+    },
+    "item_bean_pod": {
+      "sheet": "rosliny",
+      "x": 176,
+      "y": 656,
+      "width": 16,
+      "height": 16
+    },
+    "item_beans": {
+      "sheet": "rosliny",
+      "x": 192,
+      "y": 656,
+      "width": 16,
+      "height": 16
+    },
+    "item_pea_pod": {
+      "sheet": "rosliny",
+      "x": 208,
+      "y": 656,
+      "width": 16,
+      "height": 16
+    },
+    "item_peas": {
+      "sheet": "rosliny",
+      "x": 224,
+      "y": 656,
+      "width": 16,
+      "height": 16
+    },
+    "item_bean_wigwam": {
+      "sheet": "rosliny",
+      "x": 0,
+      "y": 672,
+      "width": 16,
+      "height": 16
     }
   },
   "aliases": {
@@ -17497,6 +17651,140 @@
       "x": 44,
       "y": 96,
       "region": "item_passion_fruit"
+    },
+    "bean_wigwam": {
+      "x": 0,
+      "y": 99,
+      "w": 2,
+      "h": 3,
+      "pw": 32,
+      "ph": 48,
+      "region": "bean_wigwam"
+    },
+    "bean_wigwam_young": {
+      "x": 2,
+      "y": 99,
+      "w": 2,
+      "h": 3,
+      "pw": 32,
+      "ph": 48,
+      "region": "bean_wigwam_young"
+    },
+    "bean_wigwam_leaves": {
+      "x": 4,
+      "y": 99,
+      "w": 2,
+      "h": 3,
+      "pw": 32,
+      "ph": 48,
+      "region": "bean_wigwam_leaves"
+    },
+    "bean_wigwam_flower": {
+      "x": 6,
+      "y": 99,
+      "w": 2,
+      "h": 3,
+      "pw": 32,
+      "ph": 48,
+      "region": "bean_wigwam_flower"
+    },
+    "bean_wigwam_ripe": {
+      "x": 8,
+      "y": 99,
+      "w": 2,
+      "h": 3,
+      "pw": 32,
+      "ph": 48,
+      "region": "bean_wigwam_ripe"
+    },
+    "bean_wigwam_dry": {
+      "x": 10,
+      "y": 99,
+      "w": 2,
+      "h": 3,
+      "pw": 32,
+      "ph": 48,
+      "region": "bean_wigwam_dry"
+    },
+    "pea_net": {
+      "x": 45,
+      "y": 96,
+      "region": "pea_net"
+    },
+    "pea_brush": {
+      "x": 46,
+      "y": 96,
+      "region": "pea_brush"
+    },
+    "vine_bean_young": {
+      "x": 47,
+      "y": 96,
+      "region": "vine_bean_young"
+    },
+    "vine_bean_leaves": {
+      "x": 48,
+      "y": 96,
+      "region": "vine_bean_leaves"
+    },
+    "vine_bean_flower": {
+      "x": 49,
+      "y": 96,
+      "region": "vine_bean_flower"
+    },
+    "vine_bean_ripe": {
+      "x": 50,
+      "y": 96,
+      "region": "vine_bean_ripe"
+    },
+    "vine_bean_dry": {
+      "x": 51,
+      "y": 96,
+      "region": "vine_bean_dry"
+    },
+    "vine_pea_young": {
+      "x": 52,
+      "y": 96,
+      "region": "vine_pea_young"
+    },
+    "vine_pea_leaves": {
+      "x": 53,
+      "y": 96,
+      "region": "vine_pea_leaves"
+    },
+    "vine_pea_flower": {
+      "x": 54,
+      "y": 96,
+      "region": "vine_pea_flower"
+    },
+    "vine_pea_ripe": {
+      "x": 55,
+      "y": 96,
+      "region": "vine_pea_ripe"
+    },
+    "item_bean_pod": {
+      "x": 56,
+      "y": 96,
+      "region": "item_bean_pod"
+    },
+    "item_beans": {
+      "x": 57,
+      "y": 96,
+      "region": "item_beans"
+    },
+    "item_pea_pod": {
+      "x": 58,
+      "y": 96,
+      "region": "item_pea_pod"
+    },
+    "item_peas": {
+      "x": 59,
+      "y": 96,
+      "region": "item_peas"
+    },
+    "item_bean_wigwam": {
+      "x": 60,
+      "y": 96,
+      "region": "item_bean_wigwam"
     }
   }
 }

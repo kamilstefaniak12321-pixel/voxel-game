@@ -307,6 +307,15 @@ export const RECIPES = [
         note: 'Kratka staje przodem do ciebie. Owoc pnącza (winogrona, kiwi, marakuja) PPM w kratkę na ziemi - pnącze ją zarasta, a dalej kratki obok i nad nią.' },
     { id: 'garden_pole', result: ['garden_pole', 2], ingredients: ['stick', 'stick', 'stick'],
         note: 'Kilka tyczek jedna na drugiej - chmielnik. Szyszka chmielu PPM w tyczkę na ziemi - chmiel pnie się do góry (do 6 bloków).' },
+    // Fasola i groch (1.31.0).
+    { id: 'pea_net', result: ['pea_net', 2], ingredients: ['rope', 'rope', 'stick', 'stick'],
+        note: 'Siatka na groch staje przodem do ciebie. Groch PPM w siatkę na ziemi - oplata ją i owocuje wiosną i latem; siatka na siatce - groch wejdzie na drugi poziom.' },
+    { id: 'pea_brush', result: ['pea_brush', 3], ingredients: ['stick', 'stick', 'stick', 'stick'],
+        note: 'Chrust - gałązki wbite w ziemię. Najprostsza podpora dla grochu: groch PPM w chrust na ziemi.' },
+    { id: 'bean_wigwam', result: ['bean_wigwam', 1], ingredients: ['garden_pole', 'garden_pole', 'garden_pole', 'rope'],
+        note: 'Wigwam z tyczek stawia się na ziemi (potrzebuje 3 bloków w górę). Fasola PPM w wigwam - oplata go cały i daje najwięcej strąków.' },
+    { id: 'peas', result: ['peas', 2], ingredients: ['pea_pod'],
+        note: 'Wyłuskany groch: do jedzenia, do garnka i do siania. Nie psuje się.' },
     { id: 'pergola', result: ['pergola', 2], ingredients: ['#planks', '#planks', 'stick', 'rope'],
         note: 'Daszek z listew - postaw go na tyczkach albo płocie. Pnącze, które do niego dojdzie, rozchodzi się pod daszkiem; kiwi i marakuja wiszą pod liśćmi.' },
 

@@ -45,11 +45,12 @@ const SHELF_DAYS = {
 };
 
 // Twarde owoce i warzywa (reszta surowych owoców jest miękka).
-const FIRM = new Set(['jablon_jablko', 'coconut_palm_kokos', 'baobab_fruit', 'olive_oliwki', 'chili_pepper', 'pumpkin_slice', 'zucchini', 'kiwi']);
+const FIRM = new Set(['jablon_jablko', 'coconut_palm_kokos', 'baobab_fruit', 'olive_oliwki', 'chili_pepper', 'pumpkin_slice', 'zucchini', 'kiwi', 'bean_pod', 'pea_pod']);
 
 // Nie psują się, choć są surowymi przekąskami.
 // (Prażone orzechy i żołędzie też leżą długo.)
-const KEEPS = new Set(['dried_fruit', 'pumpkin_seeds', 'roasted_hazelnut', 'roasted_beechnuts', 'roasted_acorn']);
+// (Sucha fasola i groch - nasiona na następny rok - leżą bez końca.)
+const KEEPS = new Set(['dried_fruit', 'pumpkin_seeds', 'roasted_hazelnut', 'roasted_beechnuts', 'roasted_acorn', 'beans', 'peas']);
 
 export const CHEST = 0.5;
 export const CELLAR = 0.5;

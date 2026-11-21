@@ -1445,7 +1445,8 @@ for (
 
         // Schody, półbloki, płoty, furtki, stół stolarski (0.90.0):
         // pudełka z ShapeBoxes.js (ChunkMesher.addShape).
-        shape: definition.model === 'shape' ? { kind: shapeInfo(definition.id)?.kind, topTurn: shapeInfo(definition.id)?.topTurn ?? 0 } : null,
+        // sprite - obrazek większy niż blok rozciągnięty na pudełka (wigwam - 1.31.0).
+        shape: definition.model === 'shape' ? { kind: shapeInfo(definition.id)?.kind, topTurn: shapeInfo(definition.id)?.topTurn ?? 0, sprite: shapeInfo(definition.id)?.sprite ?? null } : null,
 
         // Kształt z prześwitami (kratka, pnącza - 1.30.0): rysowany
         // z roślinami (materiał z alphaTest), nie z sześcianami.

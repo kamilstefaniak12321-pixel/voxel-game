@@ -22,7 +22,7 @@ import { isIngredient } from './cooking.js';
 import { spoilText } from './spoilage.js';
 import { retsInto, garmentInfo, clothOf, clothFromFiber, CLOTHS, SLOT_LABELS, RET_SECONDS } from './clothing.js';
 import { getDyeColor } from './dyes.js';
-import { vineOfItem } from '../blocks/vines.js';
+import { VINES, vineOfItem } from '../blocks/vines.js';
 
 // Przedmioty, które działają same (nie są składnikiem ani jedzeniem).
 const OWN_USES = {
@@ -81,7 +81,9 @@ export function itemUses(type) {
     if (getDyeColor(type)) uses.push('barwienie ubrań na stole krawieckim');
     if (getTool(type)) uses.push('narzędzie');
     if (ITEM_TYPES[type]?.plants) uses.push('sadzenie na rozgrzebanej ziemi');
-    if (vineOfItem(type)) uses.push('sadzenie przy podporze (mur, kratka, tyczka) na ziemi - pnącze');
+    if (vineOfItem(type)) uses.push(VINES[vineOfItem(type)].annual
+        ? `sadzenie: ${type === 'beans' ? 'w tyczkę, kratkę albo wigwam' : 'w siatkę, chrust albo kratkę'} na ziemi; bez podpory płoży się i daje mało`
+        : 'sadzenie przy podporze (mur, kratka, tyczka) na ziemi - pnącze');
     if (OWN_USES[type]) uses.push(OWN_USES[type]);
     const crafts = craftsFrom(type);
     if (crafts.length > 0) {

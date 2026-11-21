@@ -2,7 +2,7 @@
 
 > Ta strona jest generowana z kodu gry (`python tools/wiki.py`) - nie zmieniaj jej ręcznie, zmiany przepadną przy następnym generowaniu.
 
-Wersja gry **1.30.0** - 744 bloków (do tego 3455 odmian, których nie ma w ekwipunku, np. wieniec zawieszony na boku bloku). Czas kopania dotyczy trybu przygody; w kreatywnym bloki znikają od razu.
+Wersja gry **1.31.0** - 747 bloków (do tego 3505 odmian, których nie ma w ekwipunku, np. wieniec zawieszony na boku bloku). Czas kopania dotyczy trybu przygody; w kreatywnym bloki znikają od razu.
 
 [Ziemia](#ziemia) · [Skały](#skały) · [Drewno](#drewno) · [Budulec](#budulec) · [Rośliny](#rośliny) · [Światło](#światło) · [Meble i ozdoby](#meble-i-ozdoby)
 
@@ -360,8 +360,11 @@ Wersja gry **1.30.0** - 744 bloków (do tego 3455 odmian, których nie ma w ekwi
 | <img src="ikony/polished_stone.png" width="32" height="32" alt=""> | **Polerowany kamień** | `polished_stone` | **Kopanie:** 2,2 s (kilofem 0,73 s)<br>**Przepis:** Polerowany kamień x4 |
 | <img src="ikony/dark_planks.png" width="32" height="32" alt=""> | **Ciemne deski** | `dark_planks` | **Kopanie:** 2 s (siekierą 0,67 s)<br>**Przepis:** Ciemne deski x3<br>**Przydaje się do:** Ciemna skrzynia, Stół stolarski z ciemnego drewna |
 | <img src="ikony/vine_trellis.png" width="32" height="32" alt=""> | **Kratka** | `vine_trellis` | **Kopanie:** 0,6 s (siekierą 0,2 s)<br>**Skąd:** zniszczony blok: Kratka<br>**Przepis:** Kratka x2 |
-| <img src="ikony/garden_pole.png" width="32" height="32" alt=""> | **Tyczka** | `garden_pole` | **Kopanie:** 0,6 s (siekierą 0,2 s)<br>**Przepis:** Tyczka x2 |
+| <img src="ikony/garden_pole.png" width="32" height="32" alt=""> | **Tyczka** | `garden_pole` | **Kopanie:** 0,6 s (siekierą 0,2 s)<br>**Przepis:** Tyczka x2<br>**Przydaje się do:** Wigwam z tyczek |
 | <img src="ikony/pergola.png" width="32" height="32" alt=""> | **Pergola** | `pergola` | **Kopanie:** 0,6 s (siekierą 0,2 s)<br>**Przepis:** Pergola x2 |
+| <img src="ikony/pea_net.png" width="32" height="32" alt=""> | **Siatka na groch** | `pea_net` | **Kopanie:** 0,6 s (siekierą 0,2 s)<br>**Skąd:** zniszczony blok: Siatka na groch<br>**Przepis:** Siatka na groch x2 |
+| <img src="ikony/pea_brush.png" width="32" height="32" alt=""> | **Chrust na groch** | `pea_brush` | **Kopanie:** 0,6 s (siekierą 0,2 s)<br>**Przepis:** Chrust na groch x3 |
+| <img src="ikony/bean_wigwam.png" width="32" height="32" alt=""> | **Wigwam z tyczek** | `bean_wigwam` | **Kopanie:** 0,6 s (siekierą 0,2 s)<br>**Przepis:** Wigwam z tyczek |
 
 ## Rośliny
 

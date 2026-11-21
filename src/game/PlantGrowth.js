@@ -1,6 +1,7 @@
 import { CHUNK_SIZE } from '../config.js';
 
 import {
+    getBlockDefinition,
     getBlockTypeById,
     getGrowth,
     isLiquidId,
@@ -14,7 +15,8 @@ import { plantTree } from '../world/trees/plantTree.js';
 import { plantShrub } from '../world/shrubs/Shrubs.js';
 import { plantGrowthFactor } from '../blocks/plantSeasons.js';
 import { SOIL_GROWTH_ID, WATER_GROWTH, isSoilId, nearWater } from '../blocks/soil.js';
-import { vineInfoById } from '../blocks/vines.js';
+import { vineInfoById, ANNUAL_WITHER_SECONDS } from '../blocks/vines.js';
+import { seasonAt } from '../sky/Seasons.js';
 import { climbVine } from './VineGrowth.js';
 
 // ------------------------------------------------------------
@@ -42,6 +44,9 @@ import { climbVine } from './VineGrowth.js';
 
 // Co ile sekund rośliny "losują" wzrost.
 const TICK = 1;
+
+// Numer zimy (sky/Seasons.js - SEASONS).
+const WINTER = 3;
 
 // Najwięcej kroków naraz (po długiej przerwie, np. karta w tle).
 const MAX_STEPS = 5;
@@ -146,6 +151,20 @@ export class PlantGrowth {
 
                 }
 
+                // Rośliny jednoroczne (fasola, groch - 1.31.0, blocks/vines.js):
+                // zimą giną - kawałek znika, zostaje sama podpora. Ostatni
+                // etap (rest) tylko na to czeka.
+                if (growth.annual) {
+
+                    if (this.days !== null && seasonAt(this.days).index === WINTER) {
+                        if (Math.random() < TICK / ANNUAL_WITHER_SECONDS) this.wither(chunk, index);
+                        continue;
+                    }
+
+                    if (growth.rest) continue;
+
+                }
+
                 // Kwiaty z porami roku: w swojej porze rosną szybciej,
                 // poza nią odpoczywają (src/blocks/plantSeasons.js).
                 const season = this.days === null ? 1 : plantGrowthFactor(chunk.blocks[index], this.days);
@@ -170,6 +189,23 @@ export class PlantGrowth {
             }
 
         }
+
+    }
+
+
+    // Roślina jednoroczna w komórce `index` ginie: zostaje podpora albo nic.
+
+    wither(chunk, index) {
+
+        const { x, y, z } = cellPosition(chunk, index);
+        const leftover = getBlockDefinition(getBlockTypeById(chunk.blocks[index]))?.annualLeftover ?? null;
+
+        if (this.world.setBlock(x, y, z, leftover)) {
+            this.withered = (this.withered ?? 0) + 1;
+            return true;
+        }
+
+        return false;
 
     }
 
@@ -351,7 +387,8 @@ export class PlantGrowth {
 
                     const growth = getGrowth(getBlockTypeById(chunk.blocks[index]));
 
-                    if (growth && this.grow(chunk, index, growth)) {
+                    // (Ostatni etap rośliny jednorocznej już nie rośnie.)
+                    if (growth && !growth.rest && this.grow(chunk, index, growth)) {
                         count++;
                     }
 

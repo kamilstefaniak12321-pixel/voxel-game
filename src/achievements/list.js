@@ -919,6 +919,36 @@ export const ACHIEVEMENTS = [
         when: (data) => Boolean(data.vine)
     },
     {
+        id: 'bean_wigwam',
+        tier: 'common',
+        title: 'Wigwam',
+        task: 'Posiej fasolę na wigwamie z tyczek (3 tyczki i sznur; fasola PPM w wigwam stojący na ziemi).',
+        comment: 'Za miesiąc nie będzie widać tyczek.',
+        icon: 'beans',
+        on: 'planted',
+        when: (data) => data.vine === 'bean' && String(data.type).endsWith('_wigwam')
+    },
+    {
+        id: 'green_peas',
+        tier: 'common',
+        title: 'Zielony groszek',
+        task: 'Zbierz strąki grochu z siatki albo chrustu.',
+        comment: 'Połowa nie doniesie się do domu. Tak ma być.',
+        icon: 'pea_pod',
+        on: 'harvested',
+        when: (data) => data.item === 'pea_pod' && !String(data.type).endsWith('_ground')
+    },
+    {
+        id: 'seeds_for_next_year',
+        tier: 'common',
+        title: 'Na przyszły rok',
+        task: 'Zostaw strąki fasoli na pędach, aż wyschną, i zbierz suchą fasolę.',
+        comment: 'Kto zjadł wszystko latem, ten zimą szuka nasion po sąsiadach.',
+        icon: 'beans',
+        on: 'harvested',
+        when: (data) => data.item === 'beans'
+    },
+    {
         id: 'grape_harvest',
         tier: 'common',
         title: 'Winobranie',

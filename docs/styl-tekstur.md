@@ -85,7 +85,8 @@ w siatce 4 × 2, pierwsza z lewej u góry.
 
 Wzorzec od Kamila: poradnik „jak teksturować jak w Minecrafcie"
 (jabłko i gruszka w czterech krokach). Wszystkie owoce i orzechy (29,
-od 1.30.0 też winogrona, szyszka chmielu, kiwi i marakuja - 33) rysuje
+od 1.30.0 też winogrona, szyszka chmielu, kiwi i marakuja, od 1.31.0
+strąki i ziarna fasoli i grochu - 37) rysuje
 `tools/owoce_ikony.py`:
 
 1. **Kształt** - sylwetka narysowana piksel po pikselu (mapa znaków

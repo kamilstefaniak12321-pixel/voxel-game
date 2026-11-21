@@ -54,7 +54,7 @@ import {
     FIELD_BLOCK
 } from '../blocks/BlockRegistry.js';
 import { getTool, getPlacedBlock, isItemType, getItemLabel } from '../items/ItemRegistry.js';
-import { vineOfItem } from '../blocks/vines.js';
+import { VINES, vineOfItem } from '../blocks/vines.js';
 import { vinePlanting } from './VineGrowth.js';
 import { STATES, isNight, COLD_STATES, SLEEP_WARMTH } from './Wellbeing.js';
 
@@ -1267,7 +1267,9 @@ export class GameInteraction {
 
         if (!spot) {
             if (getFood(item) && this.wellbeing.active) this.eat();
-            else this.onNotice?.('Pnącze sadzi się przy murze, w kratkę albo tyczkę - na ziemi');
+            else this.onNotice?.(VINES[species].annual
+                ? `${VINES[species].label} sieje się w ${species === 'bean' ? 'tyczkę, kratkę albo wigwam' : 'siatkę, chrust albo kratkę'} na ziemi - albo prosto na polu`
+                : 'Pnącze sadzi się przy murze, w kratkę albo tyczkę - na ziemi');
             return false;
         }
 

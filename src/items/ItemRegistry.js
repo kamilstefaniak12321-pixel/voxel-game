@@ -124,6 +124,14 @@ export const ITEM_TYPES = {
     kiwi: { name: 'Kiwi', label: 'Kiwi', icon: 'item_kiwi', category: 'owoce' },
     passion_fruit: { name: 'Passion Fruit', label: 'Marakuja', icon: 'item_passion_fruit', category: 'owoce' },
 
+    // Fasola i groch (1.31.0, blocks/vines.js) - jednoroczne. Sadzi się je
+    // nasionami: suchą fasolą i grochem (PPM w tyczkę, wigwam, siatkę,
+    // chrust albo w ziemię). Strąki to świeże warzywo.
+    bean_pod: { name: 'Bean Pod', label: 'Strąk fasoli', icon: 'item_bean_pod', category: 'owoce' },
+    beans: { name: 'Beans', label: 'Fasola', icon: 'item_beans', category: 'owoce' },
+    pea_pod: { name: 'Pea Pod', label: 'Strąk grochu', icon: 'item_pea_pod', category: 'owoce' },
+    peas: { name: 'Peas', label: 'Groch', icon: 'item_peas', category: 'owoce' },
+
 
     // Dodatki drzew (src/blocks/trees.js). Szyszki, orzeszki, żołędzie
     // i kwiat lipy (z nasionkami na przysadce) posadzone na rozgrzebanej

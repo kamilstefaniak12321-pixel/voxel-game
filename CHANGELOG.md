@@ -11,6 +11,28 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 1.31.0 - Fasola i groch
+
+PR #184.
+
+- **Fasola i groch** z paczki Kamila - rośliny **jednoroczne**: zimą
+  giną i zostaje sama podpora, na wiosnę sieje się je od nowa.
+- **Groch** sieje się grochem (wyłuskanym ze strąka) w **siatkę**,
+  **chrust** albo kratkę; kwitnie i owocuje wiosną i latem.
+- **Fasola** sieje się suchą fasolą w tyczkę, kratkę albo **wigwam
+  z tyczek** (3 tyczki i sznur) - wigwam daje najwięcej strąków; kwitnie
+  i owocuje latem i jesienią. Strąki zostawione na pędach **wysychają**
+  i dają suchą fasolę - nasiona na następny rok.
+- Bez podpory obie sieje się na polu: płożą się po ziemi i dają mało.
+  Tak rosną też dziko: groch na łąkach i w gajach oliwnych, fasola na
+  sawannie i w lesie deszczowym.
+- Strąki i nasiona to warzywa do garnka; sucha fasola i groch nie psują
+  się.
+- Ikonki w stylu z 1.28.0. Osiągnięcia *Wigwam*, *Zielony groszek*,
+  *Na przyszły rok*; komenda `/pnacza grzadka`. Opis: `docs/pnacza.md`.
+- W dokumentacji: uzgodniony z Kamilem projekt **drewna, ognia
+  i ścinania drzew** (`docs/drewno.md`) - sam opis, w grze jeszcze nic.
+
 ## 1.30.0 - Pnącza
 
 PR #183.

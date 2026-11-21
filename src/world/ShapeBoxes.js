@@ -179,12 +179,56 @@ export function connectMask(getId, x, y, z) {
 // Młoda dynia (1.19.0): 10 x 9 x 10 pikseli na środku komórki.
 const GOURD = [[3 / 16, 0, 3 / 16, 13 / 16, 9 / 16, 13 / 16]];
 
+// --- Podpory i pnącza (1.30.0, blocks/vines.js) ----------------------------
+// Kratka "north": płyta 1 px na środku komórki, wzdłuż x. Liście pnącza na
+// kratce - cienkie płyty po obu stronach (miejsce tekstury 1), na tyczce -
+// pudełko dookoła słupka, na pergoli - warstwa pod listwami daszku, a pod
+// nią dwie skrzyżowane płyty z wiszącymi owocami (miejsce 2).
+const slot = (n) => (box) => [...box, n];
+const VINE_SHAPES = {
+    vine_trellis: {
+        support: [px(0, 0, 7.5, 16, 16, 8.5)],
+        leaves: [px(0, 0, 6.4, 16, 16, 6.5), px(0, 0, 9.5, 16, 16, 9.6)].map(slot(1)),
+        collision: [px(0, 0, 7, 16, 16, 9)],
+        outline: [px(0, 0, 7, 16, 16, 9)],
+        vineOutline: [px(0, 0, 6.4, 16, 16, 9.6)]
+    },
+    vine_pole: {
+        support: [px(7, 0, 7, 9, 16, 9)],
+        leaves: [px(2.5, 0, 2.5, 13.5, 16, 13.5)].map(slot(1)),
+        collision: [px(6.5, 0, 6.5, 9.5, 16, 9.5)],
+        outline: [px(6.5, 0, 6.5, 9.5, 16, 9.5)],
+        vineOutline: [px(2.5, 0, 2.5, 13.5, 16, 13.5)]
+    },
+    vine_roof: {
+        support: [px(0, 14, 0, 16, 16, 16)],
+        leaves: [px(0, 12, 0, 16, 15.9, 16)].map(slot(1)),
+        hang: [px(0, 0, 7.95, 16, 16, 8.05), px(7.95, 0, 0, 8.05, 16, 16)].map(slot(2)),
+        collision: [px(0, 14, 0, 16, 16, 16)],
+        outline: [px(0, 14, 0, 16, 16, 16)],
+        vineOutline: [px(0, 12, 0, 16, 16, 16)],
+        hangOutline: [px(0, 4, 0, 16, 16, 16)]
+    }
+};
+
+function vineShapeBoxes(info, purpose) {
+    const shape = VINE_SHAPES[info.kind];
+    const turn = (boxes) => (info.facing ? boxes.map((box) => rotateBox(box, info.facing)) : boxes);
+    if (purpose === 'collision') return turn(shape.collision);
+    if (purpose === 'outline') return turn(info.support ? shape.outline : info.hang ? shape.hangOutline : shape.vineOutline);
+    return turn(info.support ? shape.support : [...shape.support, ...shape.leaves, ...(info.hang ? shape.hang : [])]);
+}
+
 // Pudełka kształtu. purpose: 'render' | 'collision' | 'outline'; mask -
 // połączenia płotu (connectMask).
 export function shapeBoxes(id, purpose = 'render', mask = 0) {
     const info = shapeInfo(id);
     if (!info) return null;
     switch (info.kind) {
+        case 'vine_trellis':
+        case 'vine_pole':
+        case 'vine_roof':
+            return vineShapeBoxes(info, purpose);
         case 'stairs': {
             const boxes = STAIRS.map((box) => rotateBox(box, info.facing));
             return info.half === 'top' ? boxes.map(flipY) : boxes;

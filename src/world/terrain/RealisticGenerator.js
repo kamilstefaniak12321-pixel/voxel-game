@@ -7,6 +7,8 @@ import {
 
 import { getBlockId, getBlockTypeById, FRUIT_BUSHES, bushStages, BLOCK_TYPES, blockExists } from '../../blocks/BlockRegistry.js';
 import { LOW_PLANTS, LOW_PLANT_NAMES, LOW_COVER_HABITAT, lowPlantType } from '../../blocks/lowPlants.js';
+import { VINES, VINE_NAMES, vineId } from '../../blocks/vines.js';
+import { isSoilId } from '../../blocks/soil.js';
 
 import { PLANT_PACKS, plantStageType } from '../../blocks/plantPacks.js';
 
@@ -343,6 +345,15 @@ for (const [type, definition] of Object.entries(BLOCK_TYPES)) {
 }
 
 const TRUNK_PACKS = PLANT_PACKS.filter((pack) => pack.where?.on.includes('pnie'));
+
+// Gdzie dziko rosną pnącza (1.30.0): gatunek -> biom -> część
+// powierzchni pod plamami.
+const WILD_VINES = {
+    hop: { deciduous: 0.12, beech: 0.1, birch: 0.08, maple_forest: 0.08 },
+    grape: { olive_grove: 0.25, savanna: 0.04 },
+    kiwi: { rainforest: 0.12, eucalyptus_forest: 0.08 },
+    passion_fruit: { rainforest: 0.1, mangrove: 0.12 }
+};
 
 function patchLevel(cover) {
 
@@ -1004,6 +1015,11 @@ export class RealisticGenerator {
         this.decorateTrunks(chunk, baseX, baseZ, heights, samples, W);
 
 
+        // Dzikie pnącza na pniach (1.30.0, blocks/vines.js).
+
+        this.decorateVines(chunk, baseX, baseZ, heights, samples, W);
+
+
         // Kolor trawy w rogach kolumn (ChunkMesher.js) - wysokość rogu
         // to średnia czterech kolumn wokół niego.
 
@@ -1080,6 +1096,70 @@ export class RealisticGenerator {
                         }
 
                     }
+
+                }
+
+            }
+
+        }
+
+    }
+
+
+    // Dzikie pnącza (1.30.0): przy pniu, który wyrasta z ziemi, czasem
+    // pnie się po nim winorośl, chmiel, kiwi albo marakuja - kolumna
+    // płaskich kawałków od ziemi w górę (najwyżej wysokość gatunku i pnia).
+    // Plamy z szumu (jak porosty), więc pnącza trafiają się kępami drzew.
+
+    decorateVines(chunk, baseX, baseZ, heights, samples, W) {
+
+        const size = CHUNK_SIZE;
+        // Strona pnia -> mocowanie płaskiego pnącza obok niego.
+        const sides = [[1, 0, 'west'], [-1, 0, 'east'], [0, 1, 'north'], [0, -1, 'south']];
+
+        for (let lz = 0; lz < size; lz++) {
+
+            for (let lx = 0; lx < size; lx++) {
+
+                const x = baseX + lx;
+                const z = baseZ + lz;
+                const ground = heights[(lz + 1) * W + (lx + 1)];
+                const base = ground + 1;
+
+                if (base >= CHUNK_HEIGHT - 8 || !LOG_IDS[chunk.getId(lx, base, lz)]) continue;
+
+                const key = BIOME_KEYS[BIOME_INDEX[this.biomes.classify(x, z, samples[lz * size + lx])]];
+                const options = VINE_NAMES.filter((name) => WILD_VINES[name]?.[key]);
+
+                if (options.length === 0) continue;
+
+                const species = options[Math.floor(hash01(this.plantSeed, x, z, 4099) * options.length)];
+
+                const salt = 4100 + VINES[species].index * 37;
+
+                if (this.field(this.noise.patches, x + salt * 977, z - salt * 613, 24, 2) <= patchLevel(WILD_VINES[species][key]) ||
+                    hash01(this.plantSeed, x, z, salt) > 0.35) continue;
+
+                // Jedna strona pnia (losowa), wolna i nad ziemią.
+                const first = Math.floor(hash01(this.plantSeed, x, z, salt + 1) * 4);
+
+                for (let k = 0; k < 4; k++) {
+
+                    const [dx, dz, mount] = sides[(first + k) % 4];
+                    const ax = lx + dx, az = lz + dz;
+
+                    if (ax < 0 || az < 0 || ax >= size || az >= size || chunk.getId(ax, base, az) !== 0 || !isSoilId(chunk.getId(ax, ground, az))) continue;
+
+                    const roll = hash01(this.plantSeed, x, z, salt + 2);
+                    const stage = roll < 0.45 ? 'leaves' : roll < 0.75 ? 'ripe' : VINES[species].stages[VINES[species].stages.length - 2];
+                    const tall = 2 + Math.floor(hash01(this.plantSeed, x, z, salt + 3) * (VINES[species].height - 1));
+
+                    for (let y = base; y < base + tall; y++) {
+                        if (!LOG_IDS[chunk.getId(lx, y, lz)] || chunk.getId(ax, y, az) !== 0) break;
+                        chunk.setId(ax, y, az, vineId(species, y === base + tall - 1 ? 'young' : stage, mount));
+                    }
+
+                    break;
 
                 }
 

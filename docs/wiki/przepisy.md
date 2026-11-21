@@ -2,7 +2,7 @@
 
 > Ta strona jest generowana z kodu gry (`python tools/wiki.py`) - nie zmieniaj jej ręcznie, zmiany przepadną przy następnym generowaniu.
 
-Wersja gry **1.29.0** - 253 przepisów. Wytwarza się w ekwipunku (**E**): siatka 2 x 2 obok miejsc ekwipunku, wynik po prawej (klik - weź, Shift + klik - ile się da). Przycisk 📖 *Przepisy* otwiera księgę - klik na przepisie sam układa składniki. Przepisy *z kształtem* można przesuwać po siatce i odbijać w poziomie; przepisy *bez kształtu* - obojętne, gdzie leżą składniki. Z czatu: `/przepisy`, `/wytworz <przepis>`.
+Wersja gry **1.30.0** - 256 przepisów. Wytwarza się w ekwipunku (**E**): siatka 2 x 2 obok miejsc ekwipunku, wynik po prawej (klik - weź, Shift + klik - ile się da). Przycisk 📖 *Przepisy* otwiera księgę - klik na przepisie sam układa składniki. Przepisy *z kształtem* można przesuwać po siatce i odbijać w poziomie; przepisy *bez kształtu* - obojętne, gdzie leżą składniki. Z czatu: `/przepisy`, `/wytworz <przepis>`.
 
 
 ## Ziemia
@@ -442,6 +442,24 @@ Wersja gry **1.29.0** - 253 przepisów. Wytwarza się w ekwipunku (**E**): siatk
 
 ## Budulec
 
+### Kratka x2
+
+<img src="przepisy/vine_trellis.png" alt="Kratka x2: 3 x Patyk + 1 x Sznur (obojętne gdzie)">
+
+3 x Patyk + 1 x Sznur (bez kształtu). Nazwa przepisu: `vine_trellis`. Kratka staje przodem do ciebie. Owoc pnącza (winogrona, kiwi, marakuja) PPM w kratkę na ziemi - pnącze ją zarasta, a dalej kratki obok i nad nią.
+
+### Tyczka x2
+
+<img src="przepisy/garden_pole.png" alt="Tyczka x2: 3 x Patyk (obojętne gdzie)">
+
+3 x Patyk (bez kształtu). Nazwa przepisu: `garden_pole`. Kilka tyczek jedna na drugiej - chmielnik. Szyszka chmielu PPM w tyczkę na ziemi - chmiel pnie się do góry (do 6 bloków).
+
+### Pergola x2
+
+<img src="przepisy/pergola.png" alt="Pergola x2: 2 x deski (dowolne) + 1 x Patyk + 1 x Sznur (obojętne gdzie)">
+
+2 x deski (dowolne) + 1 x Patyk + 1 x Sznur (bez kształtu). Nazwa przepisu: `pergola`. Daszek z listew - postaw go na tyczkach albo płocie. Pnącze, które do niego dojdzie, rozchodzi się pod daszkiem; kiwi i marakuja wiszą pod liśćmi.
+
 ### Cegły
 
 <img src="przepisy/clay_bricks.png" alt="Cegły: 4 x Cegła (ułożenie: BB / BB; B = Cegła)">
@@ -522,9 +540,9 @@ Wersja gry **1.29.0** - 253 przepisów. Wytwarza się w ekwipunku (**E**): siatk
 
 ### Kubek ziół na sen
 
-<img src="przepisy/brew_calm.png" alt="Kubek ziół na sen: 1 x gliniany kubek (z dowolnej gliny, suchy) + 2 x zioło na sen (kwiat lipy, płatki róży, bukiet lawendy) (obojętne gdzie)">
+<img src="przepisy/brew_calm.png" alt="Kubek ziół na sen: 1 x gliniany kubek (z dowolnej gliny, suchy) + 2 x zioło na sen (kwiat lipy, płatki róży, szyszki chmielu, bukiet lawendy) (obojętne gdzie)">
 
-1 x gliniany kubek (z dowolnej gliny, suchy) + 2 x zioło na sen (kwiat lipy, płatki róży, bukiet lawendy) (bez kształtu). Nazwa przepisu: `brew_calm`. Przytrzymaj PPM na płonącym ognisku - powstanie napar. Najbliższy sen będzie głębszy.
+1 x gliniany kubek (z dowolnej gliny, suchy) + 2 x zioło na sen (kwiat lipy, płatki róży, szyszki chmielu, bukiet lawendy) (bez kształtu). Nazwa przepisu: `brew_calm`. Przytrzymaj PPM na płonącym ognisku - powstanie napar. Najbliższy sen będzie głębszy.
 
 ### Kubek ziół leczniczych
 
@@ -1574,7 +1592,7 @@ Składnik z grupy to dowolna rzecz z listy (np. patyki z desek różnych drzew).
 - **coś pomarańczowego (kwiat nagietka, kwiat cynii)**: Kwiat nagietka, Kwiat cynii
 - **coś różowego (kwiat piwonii, kwiat zawilca)**: Kwiat piwonii, Kwiat zawilca
 - **kwiat (mak, chaber, rumianek, mniszek, krokus, wrzos i inne)**: Mak, Chaber, Rumianek, Mniszek, Krokus, Wrzos, Wiecha amarantusa, Bukiet kocanki, Bukiet lawendy, Kwiat piwonii, Kwiat zawilca, Kwiat dzwonka, Kwiat nagietka, Kwiat cynii, Kwiat mikołajka, Kwiat barwinka
-- **zioło na sen (kwiat lipy, płatki róży, bukiet lawendy)**: Kwiat lipy, Płatki dzikiej róży, Bukiet lawendy
+- **zioło na sen (kwiat lipy, płatki róży, szyszki chmielu, bukiet lawendy)**: Kwiat lipy, Płatki dzikiej róży, Szyszka chmielu, Bukiet lawendy
 - **zioło lecznicze (rumianek, babka, kwiat czarnego bzu, liście szałwii, kwiat nagietka)**: Rumianek, Babka zwyczajna, Kwiat bzu czarnego, Liście szałwii, Kwiat nagietka
 - **włókno (lniane, pokrzywowe, łyko)**: Włókno lniane, Włókno pokrzywowe, Łyko
 - **zioło wzmacniające (pokrzywa, nasiona gorczycy)**: Pokrzywa, Nasiona gorczycy

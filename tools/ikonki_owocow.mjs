@@ -17,5 +17,7 @@ export const REDRAWN_ITEMS = new Set([
     'strawberry', 'wild_strawberry', 'raspberry', 'yellow_raspberry', 'blackberry', 'blueberry', 'lingonberry', 'cranberry',
     'redcurrant', 'blackcurrant', 'gooseberry', 'red_gooseberry', 'aronia', 'elderberry', 'sea_buckthorn_berry', 'rose_hip',
     'jablon_jablko', 'banyan_fig', 'olive_oliwki', 'coconut_palm_kokos', 'baobab_fruit', 'dragon_tree_berries', 'chili_pepper',
-    'hazelnut', 'beechnuts', 'acorn', 'araucaria_nuts', 'pumpkin_slice', 'zucchini', 'roasted_pumpkin_slice', 'roasted_zucchini'
+    'hazelnut', 'beechnuts', 'acorn', 'araucaria_nuts', 'pumpkin_slice', 'zucchini', 'roasted_pumpkin_slice', 'roasted_zucchini',
+    // 1.30.0: owoce pnączy.
+    'grapes', 'hop_cone', 'kiwi', 'passion_fruit'
 ]);

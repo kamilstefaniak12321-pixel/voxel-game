@@ -298,6 +298,12 @@ function chew(game, seconds, dt = 0.05) {
     };
     const stages = () => Array.from({ length: 8 }, (_, x) => world.getBlock(x, 5, 2));
     const growth = new PlantGrowth(world);
+    // Wzrost jest losowy: przy prawdziwym losowaniu "wszystkie dorosły po
+    // 2000 s" nie udawało się raz na kilkadziesiąt uruchomień (dwa etapy
+    // po średnio 240 s). Stały ciąg liczb - test daje zawsze ten sam wynik.
+    const realRandom = Math.random;
+    let randomState = 20261121;
+    Math.random = () => (randomState = (Math.imul(randomState, 1664525) + 1013904223) >>> 0) / 4294967296;
     plant();
     growth.advance(1);
     check(stages().filter((type) => type !== 'nagietek_etap1').length <= 1, 'Sekunda: prawie nic nie urosło');
@@ -317,6 +323,7 @@ function chew(game, seconds, dt = 0.05) {
     growth.shouldTick = () => false;
     growth.advance(2000);
     check(stages().every((type) => type === 'nagietek_etap3'), 'Nadrabianie nie pyta, kto jest najbliżej chunka');
+    Math.random = realRandom;
 
     // Sen: przeskok nocy woła advanceWorld z przespanymi sekundami.
     const advanced = [];

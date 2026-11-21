@@ -909,6 +909,46 @@ export const ACHIEVEMENTS = [
         when: (data) => data.total >= 1.8
     },
     {
+        id: 'vine_planted',
+        tier: 'common',
+        title: 'Na podporze',
+        task: 'Posadź pnącze: owoc winorośli, kiwi albo marakui (albo szyszkę chmielu) PPM przy murze, w kratkę albo tyczkę na ziemi.',
+        comment: 'Teraz niech samo wejdzie na górę. Ono wie jak.',
+        icon: 'vine_trellis',
+        on: 'planted',
+        when: (data) => Boolean(data.vine)
+    },
+    {
+        id: 'grape_harvest',
+        tier: 'common',
+        title: 'Winobranie',
+        task: 'Zbierz winogrona z winorośli.',
+        comment: 'Słodkie, bo z muru od strony słońca.',
+        icon: 'grapes',
+        on: 'harvested',
+        when: (data) => data.item === 'grapes'
+    },
+    {
+        id: 'hop_garden',
+        tier: 'common',
+        title: 'Chmielnik',
+        task: 'Zbierz szyszki chmielu z tyczki.',
+        comment: 'Pachnie tak, że od razu chce się spać. Na zdrowie - w naparze.',
+        icon: 'hop_cone',
+        on: 'harvested',
+        when: (data) => data.item === 'hop_cone' && String(data.type).endsWith('_pole')
+    },
+    {
+        id: 'under_pergola',
+        tier: 'common',
+        title: 'Pod pergolą',
+        task: 'Zerwij kiwi albo marakuję wiszące pod pergolą.',
+        comment: 'Cień, owoce nad głową. Można tu zostać.',
+        icon: 'kiwi',
+        on: 'harvested',
+        when: (data) => String(data.type).endsWith('_roof')
+    },
+    {
         id: 'fruit_trait',
         tier: 'common',
         title: 'Owoc z charakterem',

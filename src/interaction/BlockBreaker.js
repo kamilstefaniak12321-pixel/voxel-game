@@ -1,3 +1,5 @@
+import { vineLeftover } from '../game/VineGrowth.js';
+
 export class BlockBreaker {
 
     constructor(world) {
@@ -20,13 +22,14 @@ export class BlockBreaker {
         const block = hit.block;
 
 
-        // true tylko wtedy, gdy świat naprawdę się zmienił.
+        // true tylko wtedy, gdy świat naprawdę się zmienił. Pnącze na
+        // kratce, tyczce albo pergoli (1.30.0) - zostaje sama podpora.
 
         return this.world.setBlock(
             block.x,
             block.y,
             block.z,
-            null
+            vineLeftover(this.world.getBlock(block.x, block.y, block.z))
         );
 
     }

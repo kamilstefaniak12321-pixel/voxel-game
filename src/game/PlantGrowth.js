@@ -14,6 +14,8 @@ import { plantTree } from '../world/trees/plantTree.js';
 import { plantShrub } from '../world/shrubs/Shrubs.js';
 import { plantGrowthFactor } from '../blocks/plantSeasons.js';
 import { SOIL_GROWTH_ID, WATER_GROWTH, isSoilId, nearWater } from '../blocks/soil.js';
+import { vineInfoById } from '../blocks/vines.js';
+import { climbVine } from './VineGrowth.js';
 
 // ------------------------------------------------------------
 // WZROST ROŚLIN
@@ -265,9 +267,17 @@ export class PlantGrowth {
         }
 
 
+        // Pnącze (1.30.0): kawałek, który z łodygi albo z liści rośnie dalej,
+        // próbuje się wspiąć - zasadzić łodygę obok (game/VineGrowth.js).
+        const vine = growth.vine ? vineInfoById(chunk.blocks[index]) : null;
+
         if (this.world.setBlock(x, y, z, growth.into)) {
 
             this.grown++;
+
+            if (vine && (vine.stage === 'young' || vine.stage === 'leaves') && climbVine(this.world, x, y, z)) {
+                this.climbed = (this.climbed ?? 0) + 1;
+            }
 
             return true;
 

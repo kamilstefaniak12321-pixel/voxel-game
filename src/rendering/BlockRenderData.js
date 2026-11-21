@@ -1447,6 +1447,10 @@ for (
         // pudełka z ShapeBoxes.js (ChunkMesher.addShape).
         shape: definition.model === 'shape' ? { kind: shapeInfo(definition.id)?.kind, topTurn: shapeInfo(definition.id)?.topTurn ?? 0 } : null,
 
+        // Kształt z prześwitami (kratka, pnącza - 1.30.0): rysowany
+        // z roślinami (materiał z alphaTest), nie z sześcianami.
+        cutout: definition.model === 'shape' && definition.cutout === true,
+
         // Dodatkowe tekstury pudełek kształtu (np. pościel na łóżku):
         // pudełko z numerem tekstury n bierze shapeUv[n - 1].
         shapeUv: (definition.shapeTextures ?? []).map(texture => FACE_NAMES.map(() => createRotatedUVs(texture))),

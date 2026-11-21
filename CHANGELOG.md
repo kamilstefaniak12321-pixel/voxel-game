@@ -11,6 +11,26 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 1.30.0 - Pnącza
+
+PR #183.
+
+- **Winorośl, chmiel, kiwi i marakuja** z paczki Kamila - pnącza, które
+  **rosną po podporze** (decyzja Kamila): owoc sadzi się PPM w kratkę
+  albo tyczkę na ziemi, w bok muru albo w ziemię przy murze, a dalej
+  pnącze samo pnie się w górę i na boki po tej podporze (winorośl do 5
+  bloków, chmiel do 6, kiwi i marakuja do 4).
+- **Nowe podpory**: **kratka** (3 patyki + sznur), **tyczka** (3 patyki,
+  chmielnik) i **pergola** (daszek z listew na tyczkach - kiwi
+  i marakuja wiszą pod liśćmi).
+- Owocują latem i jesienią; zbiór PPM, zostają liście. Winogrona, kiwi
+  i marakuja to jedzenie, **szyszki chmielu** - zioło do naparu na sen.
+- Dzikie pnącza na pniach: chmiel w lasach liściastych, winorośl
+  w gajach oliwnych, kiwi i marakuja w lesie deszczowym.
+- Ikonki owoców w stylu z 1.28.0. Osiągnięcia *Na podporze*,
+  *Winobranie*, *Chmielnik*, *Pod pergolą*; komenda `/pnacza` (galeria,
+  daj, znajdz). Opis: `docs/pnacza.md`.
+
 ## 1.29.0 - Wygoda
 
 PR #182.

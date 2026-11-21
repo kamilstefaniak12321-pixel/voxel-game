@@ -45,7 +45,7 @@ const SHELF_DAYS = {
 };
 
 // Twarde owoce i warzywa (reszta surowych owoców jest miękka).
-const FIRM = new Set(['jablon_jablko', 'coconut_palm_kokos', 'baobab_fruit', 'olive_oliwki', 'chili_pepper', 'pumpkin_slice', 'zucchini']);
+const FIRM = new Set(['jablon_jablko', 'coconut_palm_kokos', 'baobab_fruit', 'olive_oliwki', 'chili_pepper', 'pumpkin_slice', 'zucchini', 'kiwi']);
 
 // Nie psują się, choć są surowymi przekąskami.
 // (Prażone orzechy i żołędzie też leżą długo.)

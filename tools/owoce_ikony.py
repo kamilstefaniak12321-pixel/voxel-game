@@ -757,6 +757,97 @@ def zucchini():
     return s, {'z': body('#2f6b2a', gloss=2), 's': body('#a3a35a', gloss=0, contrast=0.8)}, 'zs'
 
 
+
+# --- pnącza (1.30.0, blocks/vines.js) ------------------------------------------
+
+def grapes():
+    # Kiść: jagody 4 x 4 w zwężających się rzędach, łodyżka i listek.
+    s = Sprite()
+    s.blob('l', oval(6, 4), 10, 0)
+    s.line('t', [(8, 0), (7, 3)])
+    berries = [(0, 3), (4, 2), (8, 3), (3, 6), (7, 6), (11, 5), (5, 9), (9, 9), (7, 12)]
+    order = 'abcdefghi'
+    for ch, (x, y) in zip(order, berries):
+        s.blob(ch, DOT[5], x, y)
+    # Każda jagoda z własnym błyskiem w lewym górnym rogu.
+    for x, y in berries:
+        s.dot(x + 1, y + 1, 'h').dot(x + 2, y + 1, 'l2')
+    berry = body('#5b3a7c', gloss=0, gloss_tint='#c4aee6', contrast=1.35)
+    # Rzędy z tyłu (wyżej) przykryte przez niższe - kontury między jagodami.
+    return s, {'l': flat(LEAF), 't': stroke(STEM_G), **{c: berry for c in order}}, 'lt' + order
+
+
+def hop_cone():
+    # Szyszka chmielu: jasnozielone łuski zachodzące na siebie, łodyżka.
+    s = Sprite([
+        "........t.......",
+        "........t.......",
+        "......HHHH......",
+        ".....HHHHHH.....",
+        "....HHHHHHHH....",
+        "....HHHHHHHH....",
+        "...HHHHHHHHHH...",
+        "...HHHHHHHHHH...",
+        "...HHHHHHHHHH...",
+        "...HHHHHHHHHH...",
+        "....HHHHHHHH....",
+        "....HHHHHHHH....",
+        ".....HHHHHH.....",
+        "......HHHH......",
+        ".......HH.......",
+        "................"])
+    # Krawędzie łusek: ciemne łuki co dwa wiersze, na zmianę przesunięte.
+    for row, y in enumerate(range(4, 14, 2)):
+        for x in range(3 + row % 2, 13, 3):
+            for dx in (0, 1):
+                if s.g[y][x + dx] == 'H' and s.g[y + 1][x + dx] == 'H':
+                    s.dot(x + dx, y + 1, 's1' if lit(x + dx, y + 1) else 's2')
+            if s.g[y][x] == 'H':
+                s.dot(x, y, 'l1' if lit(x, y) else 'b')
+    return s, {'H': body('#a9c85a', gloss=1, contrast=0.9, dirt=0.1), 't': stroke(STEM_G)}, 'tH'
+
+
+def kiwi():
+    # Całe kiwi (brązowe, włochate) z tyłu i połówka z przodu: skórka,
+    # zielony miąższ, wianuszek czarnych pestek, jasny środek.
+    s = Sprite()
+    s.blob('K', oval(10, 12), 0, 1)
+    for y in range(16):
+        for x in range(16):
+            d = ((x + 0.5 - 10.5) ** 2 + (y + 0.5 - 10.0) ** 2) ** 0.5
+            if d <= 5.4:
+                s.g[y][x] = 'r' if d > 4.4 else 'g' if d > 1.6 else 'c'
+    rng = random.Random(11)
+    for y in range(16):
+        for x in range(16):
+            ch = s.g[y][x]
+            d = ((x + 0.5 - 10.5) ** 2 + (y + 0.5 - 10.0) ** 2) ** 0.5
+            if ch == 'g' and 2.0 < d < 3.0 and (x + y) % 2 == 0:
+                s.dot(x, y, '#1c1a14')
+            if ch == 'K' and rng.random() < 0.18:
+                s.dot(x, y, 'l1' if lit(x, y, 5, 7) else 's1')
+    return s, {'K': body('#8a6436', gloss=0, dirt=0.14), 'r': body('#6b4a26', gloss=0),
+               'g': body('#7cb63a', gloss=0, contrast=0.8), 'c': body('#e6eab0', gloss=0, contrast=0.6)}, 'Krgc'
+
+
+def passion_fruit():
+    # Marakuja: ciemnofioletowy owoc z połyskiem i przekrojona połówka -
+    # biała skórka, żółty miąższ z ciemnymi pestkami.
+    s = Sprite()
+    s.blob('P', oval(12, 12), 0, 0)
+    for y in range(16):
+        for x in range(16):
+            d = ((x + 0.5 - 10.8) ** 2 + (y + 0.5 - 10.8) ** 2) ** 0.5
+            if d <= 5.0:
+                s.g[y][x] = 'w' if d > 3.9 else 'y'
+    for x, y in [(9, 9), (11, 10), (10, 12), (12, 12), (12, 9), (9, 11)]:
+        if s.g[y][x] == 'y':
+            s.dot(x, y, '#3a2410')
+    s.dot(5, 0, '#5e7a3a').dot(6, 0, '#5e7a3a')
+    return s, {'P': body('#5a2448', gloss=2, gloss_tint='#d6a0c8', contrast=1.2), 'w': body('#efe4c6', gloss=0, contrast=0.6),
+               'y': body('#f2b21e', gloss=1, contrast=0.9)}, 'Pwy'
+
+
 ICONS = {
     'strawberry': strawberry, 'wild_strawberry': wild_strawberry, 'raspberry': raspberry,
     'yellow_raspberry': lambda: raspberry('#e6b648'), 'blackberry': blackberry, 'blueberry': blueberry,
@@ -767,6 +858,7 @@ ICONS = {
     'apple': apple, 'fig': fig, 'olives': olives, 'coconut': coconut, 'baobab': baobab,
     'dragon_berries': dragon_berries, 'chili': chili, 'hazelnut': hazelnut, 'beechnuts': beechnuts,
     'acorn': acorn, 'araucaria': araucaria, 'pumpkin_slice': pumpkin_slice, 'zucchini': zucchini,
+    'grapes': grapes, 'hop_cone': hop_cone, 'kiwi': kiwi, 'passion_fruit': passion_fruit,
 }
 
 
@@ -788,6 +880,7 @@ TILES = {
     'hazelnut': 'hazelnut', 'beechnuts': 'beechnuts', 'acorn': 'acorn',
     'araucaria': 'araucaria/nuts.png', 'pumpkin_slice': 'item_pumpkin_slice',
     'zucchini': 'item_zucchini',
+    'grapes': 'item_grapes', 'hop_cone': 'item_hop_cone', 'kiwi': 'item_kiwi', 'passion_fruit': 'item_passion_fruit',
 }
 # Pieczone - z nowych ikonek (niskie_tekstury.roasted).
 ROASTED = {'roasted_pumpkin_slice': 'pumpkin_slice', 'roasted_zucchini': 'zucchini'}

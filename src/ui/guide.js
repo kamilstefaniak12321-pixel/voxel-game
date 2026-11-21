@@ -122,7 +122,11 @@ export const GUIDE = [
             'Zapłon, żar i czas palenia polana widać po najechaniu na nie w ekwipunku. Iglaste strzelają iskrami, sosna i olcha dymią, buk i osika prawie nie.',
             'Polana prosto spod siekiery są mokre (niebieski pasek na ikonce): trudniej je zapalić i słabiej grzeją. Brzoza i olcha są bardzo mokre, oliwka i akacja prawie suche.',
             'Drewno schnie: w plecaku i skrzyni powoli, rzucone na ziemię w słońcu szybciej, przy płonącym ognisku w kilka minut. Deszcz moczy polana pod gołym niebem.',
-            'Mokre polano dołożone do płonącego ogniska przeschnie od ciepła - najpierw syczy i dymi na biało.'
+            'Mokre polano dołożone do płonącego ogniska przeschnie od ciepła - najpierw syczy i dymi na biało.',
+            { text: 'Stos drewna: kucnij ([crouch]) i kliknij ziemię polanem ([use]), potem dokładaj - mieści 16 polan. Schną na nim jak na powietrzu i nie zajmują plecaka; pod dachem nie zmokną.',
+                touch: 'Stos drewna: trzymaj ▼ i stuknij ziemię polanem, potem dokładaj - mieści 16 polan. Schną na nim jak na powietrzu i nie zajmują plecaka; pod dachem nie zmokną.' },
+            { text: 'Pusta ręka ([use]) zdejmuje polano ze stosu, z kucnięciem - wszystkie z wierzchu naraz. Ciemniejsze polana na stosie są jeszcze mokre.',
+                touch: 'Pusta ręka zdejmuje polano ze stosu, z ▼ - wszystkie z wierzchu naraz. Ciemniejsze polana na stosie są jeszcze mokre.' }
         ]
     },
     {

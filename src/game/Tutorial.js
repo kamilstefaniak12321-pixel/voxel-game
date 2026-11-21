@@ -110,7 +110,7 @@ export const TUTORIAL_STEPS = [
         title: 'Ułóż ognisko',
         text: 'Zrób opał: w siatce wytwarzania połóż pień obok siekiery (siekiera zostaje). Z opałem w ręce kliknij ziemię ([use]) i dokładaj, aż będzie 6 polan.',
         touch: 'Zrób opał: w siatce wytwarzania połóż pień obok siekiery (siekiera zostaje). Z opałem w ręce stuknij ziemię i dokładaj, aż będzie 6 polan.',
-        hint: 'Z jednego pnia wychodzą 4 polana - potrzebujesz dwóch pni. Świeże polana są mokre (niebieski pasek): schną z czasem, a przy ognisku szybko.',
+        hint: 'Z jednego pnia wychodzą 4 polana - potrzebujesz dwóch pni. Świeże polana są mokre (niebieski pasek): schną z czasem, najszybciej przy ognisku albo na stosie (kucnij i kliknij ziemię polanem).',
         done: (t) => t.saw('fireLit') || anyFire(t.game, (fire) => fire.logs.length >= 6)
     },
     {

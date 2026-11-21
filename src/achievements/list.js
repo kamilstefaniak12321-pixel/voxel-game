@@ -1046,6 +1046,17 @@ export const ACHIEVEMENTS = [
         on: 'fireLit',
         when: (data) => data.embers === false && (data.wet ?? 0) > 0.15
     },
+    // Drewutnia (1.34.0).
+    {
+        id: 'woodpile_full',
+        tier: 'common',
+        title: 'Zapas na zimę',
+        task: 'Ułóż pełny stos drewna: 16 polan (kucnij i kliknij ziemię polanem, potem dokładaj).',
+        comment: 'Kto latem układa, ten zimą nie szczęka zębami.',
+        icon: 'spruce_firewood',
+        on: 'woodpile',
+        when: (data) => data.full === true
+    },
     {
         id: 'first_roast',
         tier: 'common',

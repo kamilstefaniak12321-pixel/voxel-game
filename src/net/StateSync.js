@@ -15,6 +15,7 @@
 import { restoreChest, chestState } from '../game/ChestState.js';
 import { restoreCampfire } from '../game/CampfireState.js';
 import { isSeasonable, wetOf } from '../items/moisture.js';
+import { restoreWoodpile, pileSign } from '../game/WoodpileState.js';
 import { restoreTable } from '../game/CarpenterTables.js';
 import { restoreSewingTable, sewingTableState } from '../game/SewingTables.js';
 import { restoreDrop, dropState } from '../game/Drops.js';
@@ -56,6 +57,14 @@ export function stateSystems(game) {
             sign: (fire) => JSON.stringify([fire.logs.map((log) => log.wood + Math.round((log.wet ?? 0) * 4)), fire.tinder, fire.kindling ?? 0, fire.phase, fire.ash,
                 Math.round(fire.ignition * 8), fire.embers > 0]),
             changed: () => game.campfires.version++
+        },
+        // Drewutnie (1.34.0): polana i ich wilgotność co ćwierć.
+        woodpiles: {
+            map: () => game.woodpiles?.piles ?? NONE,
+            save: (pile) => structuredClone(pile),
+            restore: restoreWoodpile,
+            sign: pileSign,
+            changed: () => game.woodpiles?.changed()
         },
         // Wyrzucone przedmioty (0.100.0): wpis po nazwie (id), nie po
         // pozycji. Lot liczy każdy u siebie - podpis to tylko "co i ile".

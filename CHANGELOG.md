@@ -11,6 +11,26 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 1.34.0 - Drewutnia
+
+PR #187. Dalszy ciąg projektu drewna (`docs/drewno.md`).
+
+- **Stos drewna**: kucnij i kliknij ziemię polanem - powstaje stos, do
+  którego dokładasz kolejne (z kucnięciem wszystkie naraz). Mieści 16
+  polan różnych gatunków.
+- Polana na stosie **schną jak na powietrzu** - ponad trzy razy szybciej
+  niż w plecaku - i **nie zajmują ekwipunku**. Przy ognisku i w słońcu
+  jeszcze szybciej.
+- **Pod dachem stos nie moknie.** Pod gołym niebem deszcz go moczy.
+- Pusta ręka zdejmuje polano z wierzchu (z kucnięciem - wszystkie tego
+  gatunku), rozbity stos oddaje wszystko.
+- **Mokre polana na stosie są ciemniejsze**; kliknięcie czymkolwiek
+  innym pokazuje, ile jest polan i ile jeszcze schnie. Gdy stos obok
+  ciebie wyschnie, gra o tym pisze.
+- Opis mokrych polan w ekwipunku podpowiada, jak je suszyć.
+- Osiągnięcie *Zapas na zimę*; komenda `/drewno stos`. Opis:
+  `docs/ogniska.md`.
+
 ## 1.33.0 - Wilgotność drewna
 
 PR #186. Druga część projektu Kamila „drewno, ogień i ścinanie drzew"

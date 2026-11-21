@@ -6,21 +6,17 @@ pamięć, nie umowa. Po każdej wydanej wersji wpis przechodzi do
 
 ## Teraz
 
-- **1.33.0 - Wilgotność drewna** (PR #186): druga część projektu drewna
-  (A2). Polana prosto spod siekiery są mokre (niebieski pasek): trudniej
-  je zapalić i słabiej grzeją; schną w plecaku, na ziemi, w słońcu
-  i przy ognisku, deszcz je moczy ([ogniska.md](ogniska.md),
-  [drewno.md](drewno.md)).
+- **1.34.0 - Drewutnia** (PR #187): stos polan do suszenia (A2b) -
+  kucnięcie i polano w ziemię, 16 polan na blok; schną jak na powietrzu,
+  nie zajmują plecaka, pod dachem nie mokną ([ogniska.md](ogniska.md)).
 
 ## Dalej
 
 **Drewno, ogień i ścinanie drzew** - duży projekt Kamila, uzgodniony
 21.11.2026 ([drewno.md](drewno.md)). Sześć części; pierwsza (A) jest
 podzielona na mniejsze wersje (1.32.0 - cechy i ognisko, 1.33.0 -
-wilgotność):
+wilgotność, 1.34.0 - drewutnia):
 
-- **A2b - Drewutnia**: stos polan pod dachem - schną i nie zajmują
-  ekwipunku.
 - **A3 - Pochodnie i deszcz**: pochodnie się wypalają, łuczywo, deszcz
   chłodzi i gasi ognisko.
 - **B - Ścinanie**: drzewo jako jeden byt, ciosy i karb, upadek, leżący

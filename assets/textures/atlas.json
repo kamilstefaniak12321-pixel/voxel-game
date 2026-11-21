@@ -17,7 +17,7 @@
     "rosliny": {
       "file": "rosliny.png",
       "width": 256,
-      "height": 720
+      "height": 736
     },
     "przedmioty": {
       "file": "przedmioty.png",
@@ -9801,6 +9801,48 @@
       "y": 704,
       "width": 16,
       "height": 16
+    },
+    "rotten_log_side": {
+      "sheet": "rosliny",
+      "x": 0,
+      "y": 720,
+      "width": 16,
+      "height": 16
+    },
+    "rotten_log_end": {
+      "sheet": "rosliny",
+      "x": 16,
+      "y": 720,
+      "width": 16,
+      "height": 16
+    },
+    "campfire_rotten": {
+      "sheet": "rosliny",
+      "x": 32,
+      "y": 720,
+      "width": 16,
+      "height": 16
+    },
+    "dead_branch": {
+      "sheet": "rosliny",
+      "x": 48,
+      "y": 720,
+      "width": 16,
+      "height": 16
+    },
+    "prochno": {
+      "sheet": "rosliny",
+      "x": 64,
+      "y": 720,
+      "width": 16,
+      "height": 16
+    },
+    "prochno_zar": {
+      "sheet": "rosliny",
+      "x": 80,
+      "y": 720,
+      "width": 16,
+      "height": 16
     }
   },
   "aliases": {
@@ -17821,6 +17863,36 @@
       "x": 63,
       "y": 96,
       "region": "konar"
+    },
+    "rotten_log_side": {
+      "x": 0,
+      "y": 97,
+      "region": "rotten_log_side"
+    },
+    "rotten_log_end": {
+      "x": 1,
+      "y": 97,
+      "region": "rotten_log_end"
+    },
+    "campfire_rotten": {
+      "x": 2,
+      "y": 97,
+      "region": "campfire_rotten"
+    },
+    "dead_branch": {
+      "x": 3,
+      "y": 97,
+      "region": "dead_branch"
+    },
+    "prochno": {
+      "x": 4,
+      "y": 97,
+      "region": "prochno"
+    },
+    "prochno_zar": {
+      "x": 5,
+      "y": 97,
+      "region": "prochno_zar"
     }
   }
 }

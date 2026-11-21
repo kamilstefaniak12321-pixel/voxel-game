@@ -17,17 +17,20 @@ pamięć, nie umowa. Po każdej wydanej wersji wpis przechodzi do
   gracza jako jedna bryła, zostaje pniak, leżący pień i konary
   ([scinanie.md](scinanie.md)).
 
+- **1.37.0 - Powalone drzewa** (PR #190): druga wersja części B. Stare
+  pnie w lesie (i zawsze jeden przy starcie) jako pierwsze drewno,
+  spróchniałe drewno i próchno, które niesie żar; gołą ręką żywego
+  drzewa już się nie zetnie; nowy samouczek
+  ([powalone-drzewa.md](powalone-drzewa.md)).
+
 ## Dalej
 
 **Drewno, ogień i ścinanie drzew** - duży projekt Kamila, uzgodniony
 21.11.2026 ([drewno.md](drewno.md)). Sześć części; pierwsza (A) jest
 w grze cała (1.32.0 - cechy i ognisko, 1.33.0 - wilgotność, 1.34.0 -
-drewutnia, 1.35.0 - pochodnie i deszcz), druga (B) w części (1.36.0 -
-ścinanie). Zostało:
+drewutnia, 1.35.0 - pochodnie i deszcz), druga (B) prawie cała (1.36.0 -
+ścinanie, 1.37.0 - powalone drzewa). Zostało:
 
-- **B2 - Powalone drzewa**: stare pnie w lesie jako **pierwsze drewno**,
-  spróchniałe drewno i próchno, gołą ręką już się nie zetnie, nowy
-  samouczek.
 - **B3 - Kozły**: obróbka leżącego pnia (kłody, opał, okorowanie).
 - **C - Narzędzia i kołysanie**: twardość skał, widoczne zużycie,
   kołysanie drzew.

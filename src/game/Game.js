@@ -102,6 +102,7 @@ import { Spoilage } from './Spoilage.js';
 import { WoodDrying } from './WoodDrying.js';
 import { Woodpiles } from './Woodpiles.js';
 import { Felling } from './Felling.js';
+import { StarterLog } from './StarterLog.js';
 import { TorchBurn } from './TorchBurn.js';
 import { Warmth } from './Warmth.js';
 import { Freeze } from './Freeze.js';
@@ -865,6 +866,8 @@ export class Game extends GameInteraction {
         this.woodpiles = new Woodpiles(this, worldInfo.woodpiles);
         // Ścinanie drzew (1.36.0): karby i padające drzewa (bez zapisu).
         this.felling = new Felling(this);
+        // Powalony pień przy miejscu startu nowego świata (1.37.0).
+        this.starterLog = new StarterLog(this, !worldInfo.player);
         this.onOpenChest = null;
 
         // Ubrania na postaci (1.27.0): main.js maluje je na skórce
@@ -1075,6 +1078,7 @@ export class Game extends GameInteraction {
         this.sewingTables.update(dt);
         this.woodpiles.update(dt);
         this.felling.update(dt);
+        this.starterLog.update(dt);
         this.torchBurn.update(dt);
         this.torches.update(dt);
         this.world.updateLightHolds(dt);

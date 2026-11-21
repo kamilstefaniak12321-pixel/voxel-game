@@ -27,6 +27,8 @@ import { SPECIES_SHAPE_LIMITS } from '../../blocks/treeCatalog.js';
 
 import { BIOMES, BIOME_KEYS } from '../terrain/Biomes.js';
 
+import { FallenTrees } from './FallenTrees.js';
+
 // ------------------------------------------------------------
 // LASY - gdzie w terenie realistycznym rosną drzewa i jakie
 //
@@ -187,6 +189,9 @@ export class Forests {
         this.scores = new Float32Array(TREE_NAMES.length);
 
         this.ids = new Map();
+
+        // Powalone pnie w lasach (1.37.0, FallenTrees.js).
+        this.fallen = new FallenTrees(this);
 
     }
 
@@ -725,6 +730,10 @@ export class Forests {
         this.forEachTree(baseX, baseZ, baseX + CHUNK_SIZE - 1, baseZ + CHUNK_SIZE - 1, (tree) => {
             placeTree(chunk, baseX, baseZ, tree, (type) => this.idOf(type));
         });
+
+        // Powalone pnie - po drzewach (nie wchodzą w stojące pnie).
+
+        this.fallen.place(chunk, (type) => this.idOf(type));
 
     }
 

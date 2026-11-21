@@ -110,7 +110,8 @@ Wyjątki:
 - **Banian**: podpory (korzenie podporowe z dala od głównego pnia) kopie
   się jak bloki; całość pada po ścięciu głównego pnia.
 - **Tryb twórczy**: pień znika od razu, bez ścinania.
-- Gołą ręką i innymi narzędziami pień kopie się **na razie** jak dotąd.
+- Od 1.37.0 bez siekiery żywego drzewa się nie ruszy
+  ([powalone-drzewa.md](powalone-drzewa.md)).
 
 ## Wydajność
 
@@ -144,9 +145,9 @@ Wyjątki:
 
 Rzeczy, których w 1.36.0 nie ma albo są uproszczone:
 
-- **Gołą ręką** pień żywego drzewa kopie się jak dotąd, blok po bloku.
-  Zmieni się razem z powalonymi drzewami na start (następna wersja) -
-  inaczej nie byłoby skąd wziąć pierwszej siekiery.
+- ~~Gołą ręką pień żywego drzewa kopie się jak dotąd~~ - od 1.37.0 już
+  nie: pierwsze drewno bierze się z powalonego pnia
+  ([powalone-drzewa.md](powalone-drzewa.md)).
 - **Kozłów nie ma**: leżący pień kopie się siekierą blok po bloku
   i każdy blok daje zwykły pień.
 - **Każda siekiera tnie tak samo.** Twardość skał i zużycie to część C;
@@ -170,7 +171,7 @@ Rzeczy, których w 1.36.0 nie ma albo są uproszczone:
 - **Konar** jest wspólny dla wszystkich gatunków i służy tylko na patyki.
 - Martwe drzewo bez liści **nie pada** (gra bierze je za słup); słup
   z pni z liśćmi tego gatunku tuż obok może zostać uznany za drzewo.
-- Leżącego pnia nie da się okorować ani postawić ręką.
+- Leżącego pnia nie da się postawić ręką (okorować - od 1.37.0 można).
 - Drzewo w wodzie (namorzyn, cypryśnik): pień nie układa się w wodzie -
   spada jako pnie; po ściętych kłodach pod wodą zostaje na chwilę pusta
   dziura, którą woda zalewa sama.

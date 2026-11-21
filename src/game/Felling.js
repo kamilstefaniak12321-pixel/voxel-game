@@ -27,7 +27,7 @@
 // z powalonymi drzewami na start (kolejna wersja).
 // ------------------------------------------------------------
 
-import { getBlockTypeById, getLoot, getHarvest, getDropType } from '../blocks/BlockRegistry.js';
+import { getBlockDefinition, getBlockTypeById, getLoot, getHarvest, getDropType } from '../blocks/BlockRegistry.js';
 import { getTool } from '../items/ItemRegistry.js';
 import { woodTraits } from '../blocks/woodTraits.js';
 import { FallingTreeRenderer } from '../rendering/FallingTreeRenderer.js';
@@ -167,6 +167,24 @@ export class Felling {
             this.fell(scan, direction);
         }
         return true;
+    }
+
+    // Czy tego bloku nie da się wykopać bez siekiery (1.37.0): żywe
+    // drzewo i zdrowy leżący pień. Zwraca podpowiedź dla gracza albo null.
+    needsAxe(hit) {
+        const game = this.game;
+        if (game.mode !== 'adventure' || !hit?.hit || getTool(game.selectedBlock) === 'axe') return null;
+        const { x, y, z, type } = hit.block;
+        const definition = getBlockDefinition(type);
+        if (definition?.lying) return definition.rotten ? null : 'Zdrowy pień tnie się siekierą. Gołą ręką wyłamiesz spróchniałe kawałki i zedrzesz korę (PPM).';
+        const id = game.world.getBlockId(x, y, z);
+        if (!logSpecies(id)) return null;
+        const key = `${x},${y},${z},${id}`;
+        if (this.target?.key !== key) this.target = { key, scan: scanTree(game.world, x, y, z) };
+        const scan = this.target.scan;
+        // Krzew, olbrzym, podpora i pień postawiony ręką - po staremu.
+        if (!scan || !scan.living || scan.blocked || scan.prop) return null;
+        return 'Żywe drzewo ścina się siekierą. Pierwsze drewno weź z powalonego pnia w lesie.';
     }
 
     // Opis karbu pod celownikiem (komenda /scinanie) albo null.

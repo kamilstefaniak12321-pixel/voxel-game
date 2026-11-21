@@ -296,6 +296,31 @@ export const ITEM_TYPES = {
         label: 'Konar',
         icon: 'konar',
         category: 'drewno'
+    },
+
+    // Powalone drzewa (1.37.0, blocks/lyingLogs.js, items/prochno.js).
+    // Spróchniałe drewno: wyłamane gołą ręką z powalonego pnia - polano
+    // na start (zajmuje się od byle czego, grzeje słabo).
+    rotten_wood: {
+        name: 'Rotten wood',
+        label: 'Spróchniałe drewno',
+        icon: 'campfire_rotten',
+        category: 'drewno'
+    },
+
+    // Próchno: podpałka, nawóz, a zajęte od ognia - niesie żar.
+    prochno: {
+        name: 'Punk wood',
+        label: 'Próchno',
+        icon: 'prochno',
+        category: 'drewno'
+    },
+
+    prochno_zar: {
+        name: 'Smoldering punk wood',
+        label: 'Tlące się próchno',
+        icon: 'prochno_zar',
+        category: 'drewno'
     }
 
 };

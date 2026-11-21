@@ -129,7 +129,7 @@ for (const wood of L.LYING_WOODS) {
         for (const face of ['right', 'left', 'top', 'bottom', 'front', 'back']) {
             equal(definition.textures[face], ends.includes(face) ? log.textures.top : log.textures.side, `${type}: ściana ${face}`);
         }
-        equal(L.lyingLogInfo(type), { wood, axis }, `${type}: gatunek i oś po nazwie`);
+        equal(L.lyingLogInfo(type), { wood, axis, stripped: false }, `${type}: gatunek i oś po nazwie`);
     }
 }
 equal(lyingIds.size, 64, '64 bloki leżących pni');
@@ -137,7 +137,7 @@ check(L.lyingLogInfo('oak_log') === null, 'stojący pień to nie leżący');
 equal(L.LYING_TURNS, { x: [0, 0, 1, 1, 1, 1], z: [1, 1, 0, 0, 0, 0] }, 'kora obrócona wzdłuż pnia');
 const mesher = read('src/rendering/ChunkMesher.js'), renderData = read('src/rendering/BlockRenderData.js');
 check(mesher.includes('renderData.turn[faceIndex]') && mesher.includes('renderData.barkFaces[faceIndex]'), 'siatka chunka: stały obrót ścian i kora na ścianach wzdłuż pnia');
-check(renderData.includes('LYING_TURNS[definition.lying]') && renderData.includes('barkSheet(definition.lying ?'), 'dane ścian: obrót i arkusz kory leżącego pnia');
+check(renderData.includes('LYING_TURNS[definition.lying]') && renderData.includes('barkSheet(definition.barkOf ?? name)'), 'dane ścian: obrót i arkusz kory leżącego pnia');
 
 // ------------------------------------------------------------
 // 2. Ciosy
@@ -644,7 +644,7 @@ const chapter = GUIDE.find((entry) => entry.id === 'felling');
 check(chapter && chapter.lines.length >= 6 && chapter.lines.every((line) => (line.text ?? line).length <= 190 && (!line.touch || line.touch.length <= 190)), 'poradnik: rozdział o ścinaniu, linie do 190 znaków');
 const docs = read('docs/scinanie.md'), numbers = read('docs/numery-blokow.md');
 check(docs.includes('1.36.0') && docs.includes('Luki') && numbers.includes('16100-16299'), 'dokumentacja: docs/scinanie.md i numery bloków');
-check(Object.values(BLOCK_TYPES).filter((definition) => definition.lying).length === 64, 'w rejestrze 64 leżące pnie');
+check(Object.values(BLOCK_TYPES).filter((definition) => definition.lying && definition.tree && !definition.id.toString().startsWith('164')).length === 64, 'w rejestrze 64 leżące pnie z korą');
 check(JSON.parse(read('package.json')).scripts.test.includes('sprawdz_scinania.mjs'), 'test w npm test');
 
 console.log(`OK: ścinanie drzew - ${checks} sprawdzeń.`);

@@ -29,7 +29,9 @@ export const FERTILIZERS = {
 // Przedmioty, którymi też się nawozi (kompost w misce - zostaje miska).
 export const FERTILIZER_ITEMS = {
     compost: { fertilizer: 'compost' },
-    compost_bowl: { fertilizer: 'compost', returns: 'clay_bowl' }
+    compost_bowl: { fertilizer: 'compost', returns: 'clay_bowl' },
+    // Próchno z powalonego pnia (1.37.0, items/prochno.js) nawozi jak kompost.
+    prochno: { fertilizer: 'compost' }
 };
 
 export function fertilizerOf(item) {

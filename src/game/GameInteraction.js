@@ -126,10 +126,13 @@ export class GameInteraction {
 
         // PPM siekierą na pniu - okorowanie.
 
+        // (Leżący pień - 1.37.0 - da się okorować także gołą ręką.)
+
         const stripping =
             placePressed &&
-            getTool(this.selectedBlock) === 'axe' &&
             this.currentHit?.hit &&
+            (getTool(this.selectedBlock) === 'axe' ||
+                (!this.selectedBlock && Boolean(getBlockDefinition(this.currentHit.block.type)?.lying))) &&
             getStrip(this.currentHit.block.type) !== null;
 
 
@@ -413,6 +416,21 @@ export class GameInteraction {
         // i karb zamiast kopania bloku.
 
         if (hit && this.felling?.chop(hit, pressed, held)) {
+
+            this.stopMining();
+
+            return false;
+
+        }
+
+        // Bez siekiery (1.37.0): żywego drzewa i zdrowego leżącego pnia
+        // się nie ruszy - pierwsze drewno bierze się z powalonego pnia.
+
+        const needsAxe = hit && (pressed || held) ? this.felling?.needsAxe(hit) : null;
+
+        if (needsAxe) {
+
+            if (pressed) this.onNotice?.(needsAxe);
 
             this.stopMining();
 

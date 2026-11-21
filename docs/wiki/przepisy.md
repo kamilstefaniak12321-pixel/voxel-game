@@ -2,7 +2,7 @@
 
 > Ta strona jest generowana z kodu gry (`python tools/wiki.py`) - nie zmieniaj jej ręcznie, zmiany przepadną przy następnym generowaniu.
 
-Wersja gry **1.36.0** - 263 przepisów. Wytwarza się w ekwipunku (**E**): siatka 2 x 2 obok miejsc ekwipunku, wynik po prawej (klik - weź, Shift + klik - ile się da). Przycisk 📖 *Przepisy* otwiera księgę - klik na przepisie sam układa składniki. Przepisy *z kształtem* można przesuwać po siatce i odbijać w poziomie; przepisy *bez kształtu* - obojętne, gdzie leżą składniki. Z czatu: `/przepisy`, `/wytworz <przepis>`.
+Wersja gry **1.37.0** - 264 przepisów. Wytwarza się w ekwipunku (**E**): siatka 2 x 2 obok miejsc ekwipunku, wynik po prawej (klik - weź, Shift + klik - ile się da). Przycisk 📖 *Przepisy* otwiera księgę - klik na przepisie sam układa składniki. Przepisy *z kształtem* można przesuwać po siatce i odbijać w poziomie; przepisy *bez kształtu* - obojętne, gdzie leżą składniki. Z czatu: `/przepisy`, `/wytworz <przepis>`.
 
 
 ## Ziemia
@@ -438,6 +438,12 @@ Wersja gry **1.36.0** - 263 przepisów. Wytwarza się w ekwipunku (**E**): siatk
 <img src="przepisy/bristlecone_planks.png" alt="Deski z sosny ościstej x4: 1 x pień sosny ościstej (też okorowany) (obojętne gdzie)">
 
 1 x pień sosny ościstej (też okorowany) (bez kształtu). Nazwa przepisu: `bristlecone_planks`.
+
+### Próchno x2
+
+<img src="przepisy/prochno.png" alt="Próchno x2: 1 x Spróchniałe drewno (obojętne gdzie)">
+
+1 x Spróchniałe drewno (bez kształtu). Nazwa przepisu: `prochno`. Podpałka i nawóz. PPM próchnem na płonącym ognisku daje tlące się próchno - przeniesiesz nim ogień bez startera.
 
 
 ## Budulec

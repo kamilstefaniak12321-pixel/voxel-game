@@ -101,6 +101,20 @@ export const GUIDE = [
         ]
     },
     {
+        id: 'fallen',
+        title: 'Powalone drzewa',
+        lines: [
+            'Gołą ręką żywego drzewa nie zetniesz. Pierwsze drewno bierze się ze starego, powalonego pnia - leżą w lasach co jakiś czas, a jeden zawsze przy miejscu startu.',
+            { text: 'Suche gałęzie obok pnia łamią się na patyki ([break]). Korę z leżącego pnia zdzierasz pustą ręką ([use]) - to podpałka.',
+                touch: 'Suche gałęzie obok pnia łamią się na patyki (trzymaj na nich palec). Korę z leżącego pnia zdzierasz, stukając go pustą ręką - to podpałka.' },
+            'Ciemne, dziurawe kawałki pnia są spróchniałe: wyłamiesz je gołą ręką. Zdrową część tnie się siekierą - każdy metr to jeden pień.',
+            'Spróchniałe drewno to polano na start: zajmuje się od byle czego (200°), ale grzeje słabo, pali się pół minuty i kopci. Połóż je na wierzchu stosu - rozpali resztę.',
+            'Spróchniałe drewno w siatce wytwarzania kruszy się na próchno: podpałkę, która długo się tli, i nawóz jak kompost.',
+            { text: 'Próchno niesie ogień: kliknij nim płonące ognisko albo żar ([use]) - zajmie się i tli się 4 minuty. Położone na ułożonym stosie rozpala go samo, bez startera.',
+                touch: 'Próchno niesie ogień: stuknij nim płonące ognisko albo żar - zajmie się i tli się 4 minuty. Położone na ułożonym stosie rozpala go samo, bez startera.' }
+        ]
+    },
+    {
         id: 'felling',
         title: 'Ścinanie drzew',
         lines: [
@@ -112,14 +126,14 @@ export const GUIDE = [
             'Po upadku zostaje pniak i leżący pień - wykop go siekierą, da zwykłe pnie. Z korony spadają konary (konar w siatce wytwarzania to 3 patyki), patyki, sadzonki i owoce.',
             'Pień układa się na ziemi. Na uskoku albo przy skale pęka, a kawałki, które się nie mieszczą, leżą jako pnie do zebrania.',
             'Cios w konar odcina sam konar. Nie stój tam, gdzie pada pień: stracisz przytomność i obudzisz się obok, wyczerpany.',
-            'Kosodrzewinę i baobab rąbie się po staremu, blok po bloku. Pień postawiony ręką (ściana domu) też kopie się jak zwykły blok.'
+            'Kosodrzewinę i baobab rąbie się po staremu, blok po bloku - także ręką. Pień postawiony ręką (ściana domu) też kopie się jak zwykły blok.'
         ]
     },
     {
         id: 'fire',
         title: 'Ognisko',
         lines: [
-            'Opał: pień i siekiera w siatce wytwarzania dają 4 polana (siekiera zostaje).',
+            'Opał: pień i siekiera w siatce wytwarzania dają 4 polana (siekiera zostaje). Bez siekiery opałem jest spróchniałe drewno z powalonego pnia.',
             'Opałem kliknij ziemię i dokładaj, aż będzie 6 polan. Potem dołóż podpałkę.',
             { text: 'Podpałka: kora (kliknij pień siekierą: [use]), trawa, słoma albo huba. Huba rozpala dwa razy szybciej niż trawa, kora brzozowa - półtora raza.',
                 touch: 'Podpałka: kora (stuknij pień siekierą), trawa, słoma albo huba. Huba rozpala dwa razy szybciej niż trawa, kora brzozowa - półtora raza.' },

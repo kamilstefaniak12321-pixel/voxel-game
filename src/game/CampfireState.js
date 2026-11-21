@@ -88,8 +88,16 @@ export const FIRE_WOODS = {
     banyan: ['figowiec', 'figowiec'], dragon_tree: ['dracena', 'dracena'], cedar: ['cedr', 'cedr'],
     bristlecone: ['sosna oścista', 'oscista']
 };
-export const fuelType = wood => `${wood}_firewood`;
-export const fuelWood = type => Object.keys(FIRE_WOODS).find(wood => fuelType(wood) === type) ?? null;
+// Spróchniałe drewno (1.37.0, blocks/lyingLogs.js): pali się jak polano,
+// ale nie jest gatunkiem drzewa (nie ma kory, pnia ani przepisu na opał).
+export const ROTTEN = 'rotten';
+const ROTTEN_ITEM = 'rotten_wood';
+// Czym da się palić: gatunki drzew i spróchniałe drewno.
+export const isFuelWood = wood => Object.hasOwn(FIRE_WOODS, wood ?? '') || wood === ROTTEN;
+// Nazwa paliwa do komunikatów ("dąb", "spróchniałe drewno").
+export const fuelName = wood => wood === ROTTEN ? 'spróchniałe drewno' : FIRE_WOODS[wood]?.[0] ?? wood;
+export const fuelType = wood => wood === ROTTEN ? ROTTEN_ITEM : `${wood}_firewood`;
+export const fuelWood = type => type === ROTTEN_ITEM ? ROTTEN : Object.keys(FIRE_WOODS).find(wood => fuelType(wood) === type) ?? null;
 // Cechy polana (suche drewno).
 export const logSeconds = wood => woodTraits(wood).burn;
 export const woodIgnite = wood => woodTraits(wood).ignite;
@@ -114,6 +122,8 @@ export const TINDERS = {
     short_grass: 1, tall_grass: 1, dune_grass: 1, reed: 1, straw: 1.25,
     // Łuczywo (1.35.0, items/torchFuel.js): szczapa żywicznego drewna.
     luczywo: 1.5,
+    // Próchno (1.37.0, items/prochno.js); tlące się rozpala stos samo.
+    prochno: 1, prochno_zar: 1,
     // Kora każdego drzewa (items/bark.js): brzozowa i żywiczne palą się lepiej.
     ...Object.fromEntries(Object.keys(FIRE_WOODS).map(wood => [barkType(wood), BARK_TINDER[wood] ?? 1])),
     ...Object.fromEntries(PLANT_PACKS.filter(pack => pack.item?.tinder).map(pack => [pack.item.type, pack.item.tinder])),
@@ -138,7 +148,9 @@ export const TINDER_TEMPS = {
 };
 export const tinderTemp = type => TINDER_TEMPS[type] ?? 0;
 // Huba tli się długo: puszczone rozpalanie stygnie tyle razy wolniej.
-const TINDER_SMOLDER = { huba_huba: 3 };
+const TINDER_SMOLDER = { huba_huba: 3, prochno: 3 };
+// Podpałka, która już się tli: rozpala stos bez startera ognia.
+export const SELF_LIGHTING = 'prochno_zar';
 const clamp = (value, max = 1) => Math.max(0, Math.min(max, Number.isFinite(value) ? value : 0));
 
 export function newCampfire(x, y, z) {
@@ -154,7 +166,7 @@ export function restoreCampfire(value) {
         value.x < -WORLD_BORDER || value.x >= WORLD_BORDER || value.z < -WORLD_BORDER || value.z >= WORLD_BORDER) return null;
     const fire = newCampfire(value.x, value.y, value.z);
     fire.logs = (Array.isArray(value.logs) ? value.logs : []).slice(0, 6)
-        .filter(log => log && Object.hasOwn(FIRE_WOODS, log.wood))
+        .filter(log => log && isFuelWood(log.wood))
         .map(log => ({ wood: log.wood, burn: clamp(log.burn), ...wetField(clamp(log.wet)) }));
     fire.tinder = isTinder(value.tinder) ? value.tinder : null;
     fire.ash = value.ash === true;
@@ -176,7 +188,7 @@ export function restoreCampfire(value) {
 // gdy ostatnie polana już opadają w żar).
 // wet - wilgotność polana (0 - suche; 1.33.0).
 export function addFirewood(fire, wood, wet = 0) {
-    if (!Object.hasOwn(FIRE_WOODS, wood) || !['unlit', 'burning'].includes(fire.phase) || fire.logs.length >= 6) return false;
+    if (!isFuelWood(wood) || !['unlit', 'burning'].includes(fire.phase) || fire.logs.length >= 6) return false;
     fire.logs.push({ wood, burn: 0, ...wetField(clamp(wet)) });
     return true;
 }
@@ -275,7 +287,7 @@ function burnCampfire(fire, dt, holdingStarter, result) {
         // Polano na gorącym żarze zajmuje się samo; inaczej potrzeba
         // podpałki, która da radę polanu z wierzchu, i startera.
         const embers = catchesFromEmbers(fire);
-        const ready = canIgnite(fire) && holdingStarter;
+        const ready = canIgnite(fire) && (holdingStarter || fire.tinder === SELF_LIGHTING);
         const hot = embers ? emberTemp(fire) : 0;
         if (embers) fire.ignition = Math.min(1, fire.ignition + dt / EMBER_CATCH_SECONDS);
         else if (ready) fire.ignition = Math.min(1, fire.ignition + dt * (TINDERS[fire.tinder] ?? 1) / CAMPFIRE_IGNITE_SECONDS);

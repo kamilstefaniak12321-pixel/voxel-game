@@ -55,6 +55,8 @@ function plateBox(id, height) {
 
 // Ognisko: stos polan do połowy bloku. Skrzynia: 14 x 14 x 14 pikseli.
 const CAMPFIRE_BOX = [[0, 0, 0, 1, 0.5, 1]];
+// Stos drewna (1.34.0): cały blok (osobne pudełko - to nie jest pełny sześcian bloku).
+const WOODPILE_BOX = [[0, 0, 0, 1, 1, 1]];
 const CHEST_BOX = [[1 / 16, 0, 1 / 16, 15 / 16, 14 / 16, 15 / 16]];
 
 // Kępka trawy, kwiat, sadzonka (model 'cross'): pudełko wokół środka
@@ -80,6 +82,8 @@ function kindOf(id) {
     const definition = getBlockDefinition(getBlockTypeById(id));
     if (!definition || isLiquidId(id) || getTorchInfo(id) || getRiverPlant(id)) kind = 'none';
     else if (shapeInfo(id)) kind = 'shape';
+    // Stos drewna (1.34.0) zajmuje cały blok.
+    else if (definition.structure === 'woodpile') kind = 'woodpile';
     else if (definition.model === 'structure') kind = 'campfire';
     else if (definition.model === 'chest') kind = 'chest';
     else if (definition.model === 'flat' && FLAT_BOXES[definition.flat?.attach]) kind = 'flat';
@@ -96,6 +100,7 @@ export function cellBoxes(world, id, x, y, z) {
         case 'none': return NOTHING;
         case 'full': return FULL_CELL;
         case 'campfire': return CAMPFIRE_BOX;
+        case 'woodpile': return WOODPILE_BOX;
         case 'chest': return CHEST_BOX;
         case 'flat': {
             // Niska płyta (rośliny niskie - flat.height): pudełko do jej wysokości.

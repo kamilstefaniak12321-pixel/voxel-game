@@ -407,6 +407,12 @@ export const BLOCK_TYPES = {
     campfire: { id: 10000, name: 'Campfire', label: 'Ognisko', solid: false, opaque: false,
         model: 'structure', flat: { attach: 'down' }, inventory: false, creative: false,
         drops: null, sound: 'wood', pick: 'oak_firewood', textures: { all: 'oak_log_side' } },
+    // Drewutnia (1.34.0): stos polan do suszenia - zawartość w game/Woodpiles.js,
+    // obraz w rendering/WoodpileRenderer.js. Nie ma go w ekwipunku: układa się
+    // go polanami (kucnięcie + PPM).
+    woodpile: { id: 10001, name: 'Woodpile', label: 'Stos drewna', solid: true, opaque: false,
+        model: 'structure', structure: 'woodpile', flat: { attach: 'down' }, inventory: false, creative: false,
+        drops: null, sound: 'wood', pick: 'oak_firewood', textures: { all: 'oak_log_side' } },
 
     grass: {
 

@@ -93,14 +93,15 @@ export function wetBar(item) {
     return { fresh: wet, color: `hsl(205, 85%, ${Math.round(72 - wet * 26)}%)` };
 }
 
-// Opis stosu do podpowiedzi: ['Mokre (60%) - zapłon 389°, żar 729°'] albo [].
+// Opis stosu do podpowiedzi: ['Mokre (60%) - zapłon 389°, żar 729°', jak suszyć] albo [].
 export function wetNotes(item) {
     const wood = seasonedWood(item?.type);
     if (!wood) return [];
     const wet = wetOf(item);
     if (!isWet(wet)) return ['Suche'];
     const word = wetWord(wet);
-    return [`${word[0].toUpperCase() + word.slice(1)} (${Math.round(wet * 100)}% wody) - teraz zapłon ${wetIgnite(wood, wet)}°, żar ${wetHeat(wood, wet)}°`];
+    return [`${word[0].toUpperCase() + word.slice(1)} (${Math.round(wet * 100)}% wody) - teraz zapłon ${wetIgnite(wood, wet)}°, żar ${wetHeat(wood, wet)}°`,
+        'Schnie: przy ognisku albo na stosie (kucnij i kliknij ziemię polanem)'];
 }
 
 // Ustawia wilgotność stosu polan (pole fresh to suchość; suchy stos

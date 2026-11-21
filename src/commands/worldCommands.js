@@ -53,6 +53,7 @@ import { WOOD_TRAITS } from '../blocks/woodTraits.js';
 import { barkType } from '../items/bark.js';
 import { seasonedWood, freshWet, wetOf, setWet, wetWord, wetIgnite, wetHeat, isWet, DRY_WET } from '../items/moisture.js';
 import { dryingRate, dryDaysLeft } from '../game/WoodDrying.js';
+import { WOODPILE, WOODPILE_CAPACITY, newWoodpile, addLogs } from '../game/WoodpileState.js';
 import { LOW_PLANTS, LOW_PLANT_NAMES, SPHAGNUM, lowPlantType, lowPlantInfo, LOW_STAGE_SECONDS, LOW_PLANT_FIRST_ID, LOW_PLANT_END_ID } from '../blocks/lowPlants.js';
 import { VINES, VINE_NAMES, VINE_FIRST_ID, VINE_END_ID, VINE_STAGE_SECONDS, vineType, vineInfoById } from '../blocks/vines.js';
 import { MOUNT_OFFSET } from '../game/VineGrowth.js';
@@ -1833,8 +1834,8 @@ export const WORLD_COMMANDS = [
     {
         name: 'drewno',
         aliases: ['wood', 'opal'],
-        usage: '/drewno | /drewno <gatunek> | /drewno ognisko <gatunek> [zimne|mokre|zar] | /drewno rzad | /drewno zestaw [gatunek] | /drewno swieze [gatunek] | /drewno mokre [procent] | /drewno schniecie | /drewno tempo <mnożnik>',
-        description: 'Charakter drewna (1.32.0): zapłon, żar i czas palenia każdego gatunku, ognisko do prób (płonące, zimny stos albo sam żar), rząd ognisk do porównania dymu i iskier, zestaw do rozpalania. Wilgotność (1.33.0): "swieze" daje mokre polana prosto spod siekiery, "mokre" ustawia wilgotność polan w ręce, "schniecie" mówi, jak szybko drewno schnie tu, gdzie stoisz, "tempo" przyspiesza schnięcie.',
+        usage: '/drewno | /drewno <gatunek> | /drewno ognisko <gatunek> [zimne|mokre|zar] | /drewno rzad | /drewno zestaw [gatunek] | /drewno stos [gatunek] [mokre] | /drewno swieze [gatunek] | /drewno mokre [procent] | /drewno schniecie | /drewno tempo <mnożnik>',
+        description: 'Charakter drewna (1.32.0): zapłon, żar i czas palenia każdego gatunku, ognisko do prób (płonące, zimny stos albo sam żar), rząd ognisk do porównania dymu i iskier, zestaw do rozpalania. Wilgotność (1.33.0): "swieze" daje mokre polana prosto spod siekiery, "mokre" ustawia wilgotność polan w ręce, "schniecie" mówi, jak szybko drewno schnie tu, gdzie stoisz, "tempo" przyspiesza schnięcie. Drewutnia (1.34.0): "stos" stawia pełny stos polan do suszenia.',
 
         run(args, { player, world, game }) {
 
@@ -1899,6 +1900,23 @@ export const WORLD_COMMANDS = [
             const percent = (value) => `${Math.round(value * 100)}%`;
             const daysWord = (days) => !Number.isFinite(days) ? 'wcale' : days >= 1 ? `${String(Math.round(days * 10) / 10).replace('.', ',')} doby` : `${Math.max(1, Math.round(days * 20))} min`;
 
+            if (['stos', 'drewutnia', 'pile'].includes(word)) {
+                const damp = ['mokre', 'swieze', 'wet'].includes(simplify(args[2] ?? args[1] ?? ''));
+                const wood = args[1] === undefined || (damp && args[2] === undefined) ? 'oak' : woodByWord(args[1]);
+                if (!wood) throw new CommandError(`Nie znam drewna "${args[1]}". Lista: /drewno.`);
+                const { forwardX, forwardZ } = lookAxes(player);
+                const x = Math.floor(player.pos.x) + forwardX * 2, z = Math.floor(player.pos.z) + forwardZ * 2, y = Math.floor(player.pos.y);
+                if (!isSolidId(world.getBlockId(x, y - 1, z)) || world.getBlockId(x, y, z) !== 0) {
+                    throw new CommandError('Dwa bloki przed tobą musi być wolne miejsce na stałym gruncie.');
+                }
+                world.setBlock(x, y, z, WOODPILE);
+                const pile = newWoodpile(x, y, z, forwardX !== 0 ? 'x' : 'z');
+                addLogs(pile, wood, WOODPILE_CAPACITY, damp ? freshWet(wood) : 0);
+                game.woodpiles.piles.set(`${x},${y},${z}`, pile);
+                game.woodpiles.version++;
+                return `Stos drewna: ${WOODPILE_CAPACITY} × ${name(wood)}${damp ? ` - ${wetWord(freshWet(wood))} (${percent(freshWet(wood))} wody); schnięcie tutaj: /drewno schniecie` : ' - suche'}. PPM pustą ręką zdejmuje polano, PPM polanem dokłada.`;
+            }
+
             if (['swieze', 'fresh'].includes(word)) {
                 const wood = args[1] === undefined ? 'oak' : woodByWord(args[1]);
                 if (!wood) throw new CommandError(`Nie znam drewna "${args[1]}". Lista: /drewno.`);
@@ -1939,7 +1957,7 @@ export const WORLD_COMMANDS = [
             }
 
             const wood = woodByWord(args[0]);
-            if (!wood) throw new CommandError('Użycie: /drewno | /drewno <gatunek> | /drewno ognisko <gatunek> [zimne|mokre|zar] | /drewno rzad | /drewno zestaw [gatunek] | /drewno swieze [gatunek] | /drewno mokre [procent] | /drewno schniecie | /drewno tempo <mnożnik>');
+            if (!wood) throw new CommandError('Użycie: /drewno | /drewno <gatunek> | /drewno ognisko <gatunek> [zimne|mokre|zar] | /drewno rzad | /drewno zestaw [gatunek] | /drewno stos [gatunek] [mokre] | /drewno swieze [gatunek] | /drewno mokre [procent] | /drewno schniecie | /drewno tempo <mnożnik>');
             const traits = WOOD_TRAITS[wood];
             return `${name(wood)[0].toUpperCase() + name(wood).slice(1)}: zapłon ${traits.ignite}°, żar ${traits.heat}° (ok. +${warmth(wood)}°C przy ogniu), polano pali się ${traits.burn} s ` +
                 `(pełny stos ${minutes(stackSeconds(wood))} min), żar po polanie ${emberSeconds(wood)} s, twardość ${traits.hardness}/10 - ${traits.note}. ` +

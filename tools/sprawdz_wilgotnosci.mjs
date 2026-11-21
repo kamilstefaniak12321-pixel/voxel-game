@@ -135,7 +135,7 @@ const DAY_SECONDS = DAY_LENGTH_MINUTES * 60;
     check(freshBar(makeItem('raspberry', 1, 0.5), false) === null && freshBar(makeItem('raspberry', 1, 0.5), true).color !== bar.color, 'Jedzenie: pasek jak dotąd');
 
     equal(wetNotes(dry), ['Suche'], 'Opis suchego stosu');
-    equal(wetNotes(wet), ['Mokre (60% wody) - teraz zapłon 389°, żar 729°'], 'Opis mokrego stosu');
+    equal(wetNotes(wet), ['Mokre (60% wody) - teraz zapłon 389°, żar 729°', 'Schnie: przy ognisku albo na stosie (kucnij i kliknij ziemię polanem)'], 'Opis mokrego stosu (od 1.34.0 z podpowiedzią suszenia)');
     equal(wetNotes(makeItem('stick', 1)), [], 'Inne rzeczy bez opisu');
     equal(wetNotes(null), [], 'Bez stosu - bez opisu');
 }

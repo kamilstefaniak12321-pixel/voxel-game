@@ -2,7 +2,7 @@
 
 > Ta strona jest generowana z kodu gry (`python tools/wiki.py`) - nie zmieniaj jej ręcznie, zmiany przepadną przy następnym generowaniu.
 
-Wersja gry **1.33.0** - 134 osiągnięć. Księga osiągnięć: klawisz **L**. Uwaga, spoilery: sekretne osiągnięcia są tu opisane (w grze widać tylko „???”).
+Wersja gry **1.34.0** - 135 osiągnięć. Księga osiągnięć: klawisz **L**. Uwaga, spoilery: sekretne osiągnięcia są tu opisane (w grze widać tylko „???”).
 
 
 ## Zwykłe (10 pkt)
@@ -78,6 +78,7 @@ Wersja gry **1.33.0** - 134 osiągnięć. Księga osiągnięć: klawisz **L**. U
 | <img src="ikony/stick.png" width="32" height="32" alt=""> | **Od patyka do polana** | Rozpal ognisko, w którym na wierzchu leży twarde drewno (zapłon od 300°: dąb, buk, klon, jabłoń...). Pomogą patyki jako rozpałka. | „Podpałka, rozpałka, opał. W tej kolejności, nie na odwrót - sprawdzone na dębie.” |
 | <img src="ikony/birch_firewood.png" width="32" height="32" alt=""> | **Jeszcze się tli** | Dołóż polano na żar po ognisku i poczekaj, aż samo się zajmie. | „Bez startera, bez podpałki, bez wysiłku. Żar pamięta.” |
 | <img src="ikony/oak_firewood.png" width="32" height="32" alt=""> | **Sezonowane** | Wysusz mokre polana - w plecaku, na słońcu albo przy ognisku. | „Drewno jak dobry żart: najlepsze, gdy jest suche.” |
+| <img src="ikony/spruce_firewood.png" width="32" height="32" alt=""> | **Zapas na zimę** | Ułóż pełny stos drewna: 16 polan (kucnij i kliknij ziemię polanem, potem dokładaj). | „Kto latem układa, ten zimą nie szczęka zębami.” |
 | <img src="ikony/roasted_apple.png" width="32" height="32" alt=""> | **Kolacja przy ognisku** | Upiecz coś nad ogniskiem (trzymaj PPM z jedzeniem). | „Lekko przypalone. Czyli idealne.” |
 | <img src="ikony/stone.png" width="32" height="32" alt=""> | **Grawitacja działa** | Stłucz nogę, spadając z wysokości. | „Ziemia była bliżej, niż się wydawało. A potem nagle bardzo blisko.” |
 | <img src="ikony/oak_bed.png" width="32" height="32" alt=""> | **Pościelone** | Pościel stelaż łóżka (PPM pościelą na stelażu). | „Mama mówiła, żeby ścielić łóżko. Nie mówiła, że najpierw trzeba je zbudować.” |

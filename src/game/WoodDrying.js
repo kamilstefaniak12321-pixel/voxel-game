@@ -2,8 +2,8 @@
 // SCHNIĘCIE DREWNA (1.33.0, pomysł Kamila - docs/drewno.md)
 //
 // Zasady i liczby wilgotności: items/moisture.js. Tutaj: co kilkanaście
-// sekund przegląd polan w plecaku, skrzyniach, na ziemi i w zimnych
-// stosach ognisk. (Polana w PŁONĄCYM ognisku schną w CampfireState.js.)
+// sekund przegląd polan w plecaku, skrzyniach, na ziemi, w zimnych
+// stosach ognisk i w drewutniach (game/Woodpiles.js). (Polana w PŁONĄCYM ognisku schną w CampfireState.js.)
 //
 // Ile wilgotności ubywa na dobę gry (dryingRate):
 //
@@ -246,10 +246,34 @@ export class WoodDrying {
 
         }
 
+        // --- Drewutnie (1.34.0) ----------------------------------------
+        // Stos schnie jak polana na powietrzu; pod gołym niebem moknie.
+        if (!game.net?.isClient) {
+            const woodpiles = game.woodpiles;
+            for (const pile of woodpiles?.piles?.values?.() ?? []) {
+                if (pile.logs.length === 0) continue;
+                const conditions = this.conditionsAt(pile.x + 0.5, pile.y + 0.5, pile.z + 0.5);
+                let changed = false, done = 0;
+                for (const log of pile.logs) {
+                    const wet = log.wet ?? 0;
+                    const next = this.next(wet, days, conditions);
+                    if (next === wet) continue;
+                    setLogWet(log, next);
+                    if (Math.round(next * 4) !== Math.round(wet * 4)) changed = true;
+                    if (next === 0 && isWet(wet)) done++;
+                }
+                if (changed) woodpiles.version++;
+                // Cały stos suchy: napis dla gracza obok.
+                if (done > 0 && pile.logs.every((log) => !isWet(log.wet ?? 0)) && this.near({ x: pile.x + 0.5, y: pile.y, z: pile.z + 0.5 }, player)) {
+                    dried.set('woodpile', (dried.get('woodpile') ?? 0) + pile.logs.length);
+                }
+            }
+        }
+
         if (dried.size > 0) {
             const count = [...dried.values()].reduce((sum, value) => sum + value, 0);
             this.dried += count;
-            game.onNotice?.(`Drewno wyschło: ${[...dried].map(([type, amount]) => `${amount} × ${getItemLabel(type)}`).join(', ')}`);
+            game.onNotice?.(`Drewno wyschło: ${[...dried].map(([type, amount]) => (type === 'woodpile' ? `stos (${amount} polan)` : `${amount} × ${getItemLabel(type)}`)).join(', ')}`);
             game.achieve?.('woodDried', { count });
         }
 

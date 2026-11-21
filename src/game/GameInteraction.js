@@ -188,8 +188,12 @@ export class GameInteraction {
         if (shapeInteraction) this.currentHit = this.raycast.castFromCamera(this.camera);
         const chestInteraction = !shapeInteraction && placing && !breakHeld && placePressed &&
             this.chests.interact(this.currentHit);
-        const fireInteraction = !chestInteraction && placing && !breakHeld && placePressed &&
-            this.campfires.interact(this.currentHit, this.selectedBlock);
+        // Drewutnia (1.34.0): stos polan - przed ogniskiem, bo kucnięcie
+        // z polanem układa stos zamiast ogniska.
+        const pileInteraction = !chestInteraction && !shapeInteraction && placing && !breakHeld && placePressed &&
+            this.woodpiles.interact(this.currentHit, this.selectedBlock, this.player.crouching);
+        const fireInteraction = pileInteraction || (!chestInteraction && placing && !breakHeld && placePressed &&
+            this.campfires.interact(this.currentHit, this.selectedBlock));
         const torchInteraction = !fireInteraction && placing && !breakHeld && placePressed &&
             dyeTorch(this, this.currentHit, this.selectedBlock);
 
@@ -1092,6 +1096,7 @@ export class GameInteraction {
     breakDrops(type, position = null, tool = null) {
 
         if (type === 'campfire') return this.campfires.drops(position);
+        if (type === 'woodpile') return this.woodpiles.drops(position);
 
         const drops = [];
         const drop = getDropType(type);

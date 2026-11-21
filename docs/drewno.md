@@ -8,7 +8,8 @@
 >
 > **W grze:** od **1.32.0** cechy gatunków (rozdział 1) i ognisko
 > z temperaturą (rozdział 2, bez deszczu i pochodni); od **1.33.0**
-> wilgotność polan i schnięcie (bez drewutni). Opis tego, co działa:
+> wilgotność polan i schnięcie; od **1.34.0** drewutnia (stos polan).
+> Opis tego, co działa:
 > [ogniska.md](ogniska.md). Reszta czeka - kolejność w rozdziale 11.
 
 ## W skrócie
@@ -113,9 +114,9 @@ i zaokrąglone pod grę.
 - Wilgotność stosu działa jak świeżość jedzenia (1.29.0): **niebieski
   pasek** na ikonce, opis po najechaniu, stosy o różnej wilgotności się
   uśredniają.
-- *(dodatek)* **Drewutnia**: polana ułożone w stos przy ścianie pod
-  dachem (jak deski na stole stolarskim) - schną i nie zajmują
-  ekwipunku.
+- *(dodatek, w grze od 1.34.0)* **Drewutnia**: polana ułożone w stos
+  (kucnięcie i polano w ziemię, 16 polan na blok) - schną i nie zajmują
+  ekwipunku; pod dachem nie mokną.
 
 ---
 
@@ -505,7 +506,7 @@ Każda część to osobna wersja, grywalna sama.
 |---|---|---|
 | A1 | **Charakter drewna** - **1.32.0, w grze** | cechy gatunków, ognisko z temperaturą: rozpalanie etapami, rozpałka z patyków, czas palenia, ciepło, gotowanie, żar, dym i iskry |
 | A2 | **Wilgotność** - **1.33.0, w grze** | świeże polana mokre (pasek, opis), mokre drewno w ognisku, schnięcie (plecak, skrzynia, ziemia, słońce, ogień), deszcz moczy |
-| A2b | **Drewutnia** | stos polan pod dachem: schną i nie zajmują ekwipunku |
+| A2b | **Drewutnia** - **1.34.0, w grze** | stos 16 polan: schną jak na powietrzu i nie zajmują ekwipunku; pod dachem nie mokną |
 | A3 | **Pochodnie i deszcz** | wypalające się pochodnie, łuczywo, deszcz a ognisko |
 | B | **Ścinanie** | drzewo-byt, ciosy i karb, upadek, leżący pień, konary, kozły, **powalone drzewa na start** (rozdział 9), nowy samouczek |
 | C | **Narzędzia i kołysanie** | twardość skał, widoczne zużycie, kołysanie drzew |

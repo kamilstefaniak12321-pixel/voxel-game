@@ -93,7 +93,7 @@ Ubytek wilgotności na dobę gry (20 minut) = 0,35 × miejsce × temperatura + o
 |---|---|---|
 | plecak, skrzynia | 0,3 | ok. 4 doby |
 | piwniczka (skrzynia bez nieba nad sobą) | 0,15 | ok. 8,5 doby |
-| na ziemi albo w zimnym stosie ogniska | 1 | ok. 1,3 doby |
+| na ziemi, w zimnym stosie ogniska, w drewutni (1.34.0) | 1 | ok. 1,3 doby |
 | to samo w słońcu (dzień, gołe niebo, bez deszczu) | 1,5 | niecała doba |
 | dwa bloki od płonącego ogniska | +4 na dobę | ok. 2 minuty |
 
@@ -104,16 +104,40 @@ Ubytek wilgotności na dobę gry (20 minut) = 0,35 × miejsce × temperatura + o
 
 ### Luki (wilgotność)
 
-- **Drewutni jeszcze nie ma** - wygodny stos do suszenia pod dachem to następna wersja. Na razie suszy się w plecaku, w skrzyni, na ziemi i przy ogniu.
+- (1.33.0) Drewutni jeszcze nie było - od 1.34.0 jest stos drewna, opis niżej.
 - **Deszcz nie gasi płonącego ogniska** i nie moczy polan, które się palą (pogoda a ogień - wersja A3).
 - **Pnie i deski nie mają wilgotności**; mokry jest każdy świeżo porąbany stos polan, nawet z pnia, który rok leżał w skrzyni. Suche drewno z powalonych drzew dojdzie ze ścinaniem (część B).
 - Deszcz i temperaturę liczy się tam, gdzie stoi gracz - dalekie (niewczytane) polana schną w zwykłym tempie pory roku i nie mokną.
-- Mokrych polan na stosie nie widać po teksturze - tylko po pasku, opisie, dymie i syku.
+- Mokrych polan w stosie ogniska nie widać po teksturze - tylko po pasku, opisie, dymie i syku (w drewutni są ciemniejsze).
 - Liczby (100°, 30%, tempo schnięcia) są na oko - do strojenia. `/drewno tempo` przyspiesza schnięcie do prób.
 
 ### Do sprawdzania (wilgotność)
 
 `/drewno swieze dąb` (mokre polana), `/drewno mokre 60`, `/drewno ognisko dąb mokre`, `/drewno schniecie`, `/drewno tempo 50` ([komendy.md](komendy.md)). Test: `tools/sprawdz_wilgotnosci.mjs`.
+
+## Drewutnia (1.34.0)
+
+Stos polan do suszenia ([drewno.md](drewno.md), A2b).
+
+![Stosy drewna: suchy, mokry i mieszany, pod dachem i na deszczu](drewutnia-1340.jpg)
+
+- **Układanie**: kucnij i kliknij ziemię polanem (PPM) - powstaje **stos drewna**. Bez kucania polano zakłada ognisko, jak dotąd. Potem PPM polanem dokłada jedno, a z kucnięciem - tyle, ile się zmieści.
+- Stos mieści **16 polan** (cztery warstwy po cztery), różnych gatunków. Polana leżą wzdłuż spojrzenia: od przodu widać ich czoła.
+- **Zdejmowanie**: PPM pustą ręką zdejmuje jedno polano z wierzchu, z kucnięciem - wszystkie tego gatunku, które leżą na wierzchu. Rozbity stos oddaje wszystko (przy pełnym ekwipunku rozbiórka jest zablokowana, jak przy ognisku).
+- **Schnięcie**: polana na stosie schną jak na powietrzu - ponad trzy razy szybciej niż w plecaku (świeży dąb ok. 1,3 doby gry, w słońcu niecała doba, przy ognisku kilka minut) - i **nie zajmują ekwipunku**. Gdy cały stos obok gracza wyschnie, gra pisze „Drewno wyschło: stos (16 polan)".
+- **Dach**: stos pod gołym niebem moknie w deszczu (do 60% wody). Pod dachem - dowolnym blokiem nad nim - nie zmoknie i schnie dalej, tylko bez dopłaty za słońce. Drewutnia to po prostu stosy pod daszkiem.
+- **Mokre polana widać**: są ciemniejsze. PPM czymkolwiek innym pokazuje opis: „Stos drewna 16/16: dąb 12, brzoza 4 - mokrych 4 z 16 - schnie".
+- Stos jest stały (nie da się przez niego przejść) i stoi na podłożu - usunięcie bloku pod nim rozbiera stos.
+
+Obraz: każdy stos to jedna siatka (jedno rysowanie), budowana od nowa tylko po zmianie zawartości; widać najwyżej 48 stosów w promieniu 64 bloków. Do prób: `/drewno stos`, `/drewno stos brzoza mokre`, `/drewno tempo 50`. Test: `tools/sprawdz_drewutni.mjs`.
+
+### Luki (drewutnia)
+
+- Nie ma osobnego bloku wiaty ani stojaka - dach buduje się samemu ze zwykłych bloków.
+- Niepełny stos też zajmuje cały blok (kolizja i celownik), choć polan widać mniej.
+- Stos nie płonie i nie zajmuje się od ogniska obok (pożar to część E).
+- Dalekie (niewczytane) stosy schną w zwykłym tempie pory roku i nie mokną.
+- Zdjęte naraz polana o różnej wilgotności dostają średnią.
 
 ## Wcześniej
 

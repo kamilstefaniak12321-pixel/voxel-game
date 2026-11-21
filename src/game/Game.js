@@ -100,6 +100,7 @@ import { Drops } from './Drops.js';
 import { Orchard } from './Orchard.js';
 import { Spoilage } from './Spoilage.js';
 import { WoodDrying } from './WoodDrying.js';
+import { Woodpiles } from './Woodpiles.js';
 import { Warmth } from './Warmth.js';
 import { Freeze } from './Freeze.js';
 import { clothesCode } from '../items/clothing.js';
@@ -366,6 +367,7 @@ export class Game extends GameInteraction {
             collect(world, this.torches?.shaderPrototypes?.());
             collect(world, this.drops?.renderer?.shaderPrototypes?.());
             collect(world, this.campfires?.renderer?.shaderPrototypes?.());
+            collect(world, this.woodpiles?.renderer?.shaderPrototypes?.());
             collect(world, this.meteorites?.shaderPrototypes?.());
             collect(far, this.farTerrain?.shaderPrototypes?.());
 
@@ -856,6 +858,8 @@ export class Game extends GameInteraction {
         this.carpenterTables = new CarpenterTables(this, worldInfo.carpenterTables);
         // Stoły krawieckie (1.27.0) - materiał na blatach w zapisie.
         this.sewingTables = new SewingTables(this, worldInfo.sewingTables);
+        // Drewutnie (1.34.0) - stosy polan do suszenia.
+        this.woodpiles = new Woodpiles(this, worldInfo.woodpiles);
         this.onOpenChest = null;
 
         // Ubrania na postaci (1.27.0): main.js maluje je na skórce
@@ -888,6 +892,7 @@ export class Game extends GameInteraction {
         this.saver.drops = this.drops;
         this.saver.orchard = this.orchard;
         this.saver.sewingTables = this.sewingTables;
+        this.saver.woodpiles = this.woodpiles;
 
         this.saver.saveOnExit();
 
@@ -1048,6 +1053,7 @@ export class Game extends GameInteraction {
         this.chests.update(dt);
         this.carpenterTables.update(dt);
         this.sewingTables.update(dt);
+        this.woodpiles.update(dt);
         this.torches.update(dt);
         this.world.updateLightHolds(dt);
         this.doors.update(dt);
@@ -1945,6 +1951,7 @@ export class Game extends GameInteraction {
         this.bounce.update(this.world, this.camera.position,
             updateBounceLightingState(this.bounceLighting, this.settings, this.sky));
         this.campfires.renderer.updateBounce();
+        this.woodpiles.renderer.updateBounce();
         this.torches.updateBounce();
 
     }
@@ -2597,6 +2604,7 @@ export class Game extends GameInteraction {
         const bounce = this.bounce.sample(position.x, position.y + 1.2, position.z);
         modelLight.uModelBounce.value.set(bounce[0], bounce[1], bounce[2]);
         this.campfires?.renderer.updateBounce();
+        this.woodpiles?.renderer.updateBounce();
         this.torches?.updateBounce();
 
         // Po starcie: nowy kod shaderów przygotuj przy zmianie ustawień.
@@ -3030,6 +3038,7 @@ export class Game extends GameInteraction {
         this.chests.dispose();
         this.carpenterTables.dispose();
         this.sewingTables.dispose();
+        this.woodpiles.dispose();
         this.torches.dispose();
         this.doors.dispose();
         this.hedgehogs.dispose();

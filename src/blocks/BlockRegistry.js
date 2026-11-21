@@ -62,7 +62,8 @@ export const AIR_ID = 0;
 //   15400-15499             pola z nawozem i z innej ziemi (1.24.0, 1.25.0 - fertilizers.js),
 //   15500-15599             stanowiska pracy (1.27.0: stół krawiecki 15500-15507 - sewingTable.js),
 //   15600-15999             pnącza i ich podpory (1.30.0 - vines.js),
-//   16000-65279             wolne na przyszłość.
+//   16000-16089             etapy wypalania pochodni (1.35.0, torches.js),
+//   16090-65279             wolne na przyszłość.
 
 export const MAX_BLOCK_ID = 65279;
 

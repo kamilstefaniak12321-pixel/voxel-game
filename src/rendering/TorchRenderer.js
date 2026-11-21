@@ -12,6 +12,8 @@ const PARTICLE_CAPACITY = 96;
 const PARTICLE_RANGE = 28;
 const MAX_EMITTERS = 24;
 const SYNC_SECONDS = 0.15;
+// Wielkość płomienia przygasającej pochodni i odcień trzonka ogarka (1.35.0).
+const DIM_FLAME = 0.62, OUT_SHADE = 0.42;
 const LAYER = CHUNK_SIZE * CHUNK_SIZE;
 
 const rgb = hex => {
@@ -61,10 +63,24 @@ export class TorchRenderer {
         };
         const group = createTorchModel(info.colorKey, info.attach, { lighting });
         group.position.set(x + 0.5, y, z + 0.5);
+        // Etapy wypalania (1.35.0): przygasająca ma mniejszy płomień,
+        // ogarek - żadnego i osmalony trzonek. Gra dowiaduje się o pochodni.
+        const stage = info.stage ?? 'lit';
+        const own = group.userData.torch;
+        if (stage === 'dim') {
+            const at = group.userData.flamePosition;
+            own.flame.scale.setScalar(DIM_FLAME);
+            own.flame.position.copy(at).multiplyScalar(1 - DIM_FLAME);
+        }
+        else if (stage === 'out') {
+            own.flame.visible = false;
+            own.shaft.material.color.setScalar(OUT_SHADE);
+        }
+        this.game.torchBurn?.ensure(x, y, z, info);
         setPotatoDefine(modelMaterials(group), this.lowDetail);
         this.game.scene.add(group);
         const flamePosition = new THREE.Vector3(...getTorchFlamePosition(info.attach)).add(group.position);
-        const view = { key, id: info.id, group, lighting, x, y, z, flamePosition,
+        const view = { key, id: info.id, stage, group, lighting, x, y, z, flamePosition,
             color: rgb(info.variant.particleColor ?? info.variant.color), smoke: 0, spark: 0 };
         this.views.set(key, view);
         this.updateViewLight(view);
@@ -110,6 +126,7 @@ export class TorchRenderer {
         // nearby emitters and share a fixed budget independent of torch count.
         const camera = this.game.camera.position;
         this.emitters = [...this.views.values()]
+            .filter(view => view.stage !== 'out')
             .map(view => ({ view, distance: view.flamePosition.distanceToSquared(camera) }))
             .filter(entry => entry.distance < PARTICLE_RANGE ** 2)
             .sort((a, b) => a.distance - b.distance)
@@ -240,7 +257,8 @@ export class TorchRenderer {
         if (!this.lowDetail) for (const view of this.emitters) {
             if (this.views.get(view.key) !== view) continue;
             view.smoke += step * .65;
-            view.spark += step * .27;
+            // (Przygasająca pochodnia już nie iskrzy.)
+            if (view.stage !== 'dim') view.spark += step * .27;
             if (view.smoke >= 1) { view.smoke %= 1; this.emit(view, false); }
             if (view.spark >= 1) { view.spark %= 1; this.emit(view, true); }
         }

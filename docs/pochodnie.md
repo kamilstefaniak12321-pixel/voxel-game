@@ -7,6 +7,7 @@ Animacja działa w świecie oraz na pochodni trzymanej w ręce.
 
 ## Wytwarzanie i używanie
 
+- (Od 1.35.0 pochodnie się wypalają - rozdział „Wypalanie".)
 - **Patyk + żywica (albo oliwki) → 4 pochodnie.** Żywicę zbiera się PPM z żywicznego
   pnia sosny. Przepis działa w siatce 2 × 2, bez ustalonego układu.
 - Pochodnia może stać na pełnym bloku albo wisieć na jego bocznej ścianie.
@@ -19,6 +20,33 @@ Animacja działa w świecie oraz na pochodni trzymanej w ręce.
 - Zniszczona kolorowa pochodnia zachowuje kolor. Kolor i mocowanie są
   również zapisywane w świecie. W kreatywnym odmiany są w kategorii
   **Światło**, a barwniki w **Narzędzia i surowce**.
+
+## Wypalanie (1.35.0)
+
+Decyzja Kamila ([drewno.md](drewno.md)): pochodnie się wypalają.
+
+![Pochodnia płonąca, przygasająca i ogarek; pasek paliwa; łuczywo](pochodnie-1350.jpg)
+
+- Postawiona pochodnia pali się **godzinę** (trzy doby gry). Przez ostatnie 12 minut **przygasa**: mniejszy płomień, słabsze światło (9 zamiast 14), bez iskier. Potem zostaje **ogarek** - nie świeci i nie ma koloru.
+- **Dolewanie paliwa**: PPM żywicą albo oliwkami na pochodni albo ogarku - pali się znów godzinę, w dawnym kolorze. Ogarek zdjęty ze ściany to przedmiot; z żywicą albo oliwkami w siatce wytwarzania daje nową pochodnię.
+- **Paliwo zostaje w pochodni.** Zdjęta ze ściany wraca do ekwipunku z resztą paliwa (pomarańczowy pasek na ikonce, opis „Nadpalona - paliwa na ok. 15 min"); postawiona znów - pali się tyle, ile jej zostało. Nowe i nadpalone leżą w osobnych stosach. Barwienie nie dolewa paliwa.
+- **PPM pustą ręką** mówi, na ile starczy paliwa.
+- **Deszcz** gasi pochodnie pod gołym niebem po ok. 20 sekundach ulewy (słabszy deszcz - dłużej, mżawka wcale). Zgaszona ma jeszcze paliwo: **PPM starterem ognia** rozpala ją na nowo. Pod dachem pochodnie płoną dalej.
+- **Lampy nie gasną** - to nagroda za trudniejszy przepis.
+- **Łuczywo**: żywiczne polano (sosna, kosodrzewina, świerk, modrzew, sosna oścista) i siekiera dają 4 szczapy. To najlepsza podpałka (350° - zapala dąb bez patyków), a postawione świeci jak pochodnia, tylko **6 minut** (od razu słabszym światłem).
+- Sen i utrata przytomności spalają paliwo o przespany czas. Pochodnie w dawnych światach dostają pełne paliwo, gdy gra je pierwszy raz zobaczy.
+- Przygasająca pochodnia grzeje o połowę słabiej, ogarek wcale.
+
+Do prób: `/pochodnia`, `/pochodnia daj`, `/pochodnia paliwo 15`, `/pochodnia czas 50`. Test: `tools/sprawdz_pochodni_paliwa.mjs`. Pliki: `src/items/torchFuel.js` (liczby), `src/game/TorchBurn.js` (wypalanie), `src/blocks/torches.js` (etapy jako bloki 16000-16089).
+
+### Luki (wypalanie)
+
+- Pochodnia pali się tyle samo bez względu na to, czy zrobiono ją z żywicy, czy z oliwek (w projekcie: olej dłużej).
+- Pochodnia w ręce i w ekwipunku nie traci paliwa - tylko postawiona.
+- Łuczywo postawione wygląda jak zwykła przygasająca pochodnia; zdjęte wraca jako nadpalona pochodnia, nie łuczywo.
+- Deszcz liczy się tam, gdzie stoi gracz; dalekim pochodniom ubywa tylko paliwa, a blok zmienia się po wczytaniu terenu.
+- W grze ze znajomymi bloki zmienia gospodarz; u gościa etap może zmienić się z sekundowym opóźnieniem.
+- Liczby (godzina, 12 minut, 20 sekund deszczu) są na oko - do strojenia.
 
 ## Barwniki z roślin
 
@@ -57,7 +85,7 @@ drewniany trzonek i ciepły dół pozostają rozpoznawalne. Światło otoczenia
 korzysta ze wspólnego systemu RGB gry i uwzględnia ciepłą podstawę
 płomienia. Czarna odmiana nie odejmuje światła od świata.
 
-Każda pochodnia ma stałą emisję (poziom 14). Klatki animacji wybiera GPU
+Płonąca pochodnia ma stałą emisję (poziom 14; przygasająca 9, ogarek 0 - to osobne bloki). Klatki animacji wybiera GPU
 ze wspólnej tekstury. Zmiana klatki nie zapisuje bloku ani nie uruchamia
 ponownie rozchodzenia światła. Kolorowanie uruchamia standardową zmianę
 bloku i aktualizuje oświetlenie tylko wtedy, kiedy kolor się zmienił.

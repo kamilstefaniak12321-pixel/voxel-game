@@ -2,7 +2,7 @@
 
 > Ta strona jest generowana z kodu gry (`python tools/wiki.py`) - nie zmieniaj jej ręcznie, zmiany przepadną przy następnym generowaniu.
 
-Wersja gry **1.34.0** - 135 osiągnięć. Księga osiągnięć: klawisz **L**. Uwaga, spoilery: sekretne osiągnięcia są tu opisane (w grze widać tylko „???”).
+Wersja gry **1.35.0** - 137 osiągnięć. Księga osiągnięć: klawisz **L**. Uwaga, spoilery: sekretne osiągnięcia są tu opisane (w grze widać tylko „???”).
 
 
 ## Zwykłe (10 pkt)
@@ -79,6 +79,8 @@ Wersja gry **1.34.0** - 135 osiągnięć. Księga osiągnięć: klawisz **L**. U
 | <img src="ikony/birch_firewood.png" width="32" height="32" alt=""> | **Jeszcze się tli** | Dołóż polano na żar po ognisku i poczekaj, aż samo się zajmie. | „Bez startera, bez podpałki, bez wysiłku. Żar pamięta.” |
 | <img src="ikony/oak_firewood.png" width="32" height="32" alt=""> | **Sezonowane** | Wysusz mokre polana - w plecaku, na słońcu albo przy ognisku. | „Drewno jak dobry żart: najlepsze, gdy jest suche.” |
 | <img src="ikony/spruce_firewood.png" width="32" height="32" alt=""> | **Zapas na zimę** | Ułóż pełny stos drewna: 16 polan (kucnij i kliknij ziemię polanem, potem dokładaj). | „Kto latem układa, ten zimą nie szczęka zębami.” |
+| <img src="ikony/torch_stub.png" width="32" height="32" alt=""> | **Drugie życie ogarka** | Dolej żywicy albo oliwek do wypalonej pochodni (PPM na ogarku). | „Patyk ten sam, płomień nowy. Recykling starszy niż koło.” |
+| <img src="ikony/kapok_firewood.png" width="32" height="32" alt=""> | **Pogoda wygrała** | Bądź przy ognisku, które zgasił deszcz. | „Następnym razem dach. Albo dąb.” |
 | <img src="ikony/roasted_apple.png" width="32" height="32" alt=""> | **Kolacja przy ognisku** | Upiecz coś nad ogniskiem (trzymaj PPM z jedzeniem). | „Lekko przypalone. Czyli idealne.” |
 | <img src="ikony/stone.png" width="32" height="32" alt=""> | **Grawitacja działa** | Stłucz nogę, spadając z wysokości. | „Ziemia była bliżej, niż się wydawało. A potem nagle bardzo blisko.” |
 | <img src="ikony/oak_bed.png" width="32" height="32" alt=""> | **Pościelone** | Pościel stelaż łóżka (PPM pościelą na stelażu). | „Mama mówiła, żeby ścielić łóżko. Nie mówiła, że najpierw trzeba je zbudować.” |

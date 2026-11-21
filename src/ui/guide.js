@@ -130,6 +130,19 @@ export const GUIDE = [
         ]
     },
     {
+        id: 'torches',
+        title: 'Pochodnie i deszcz',
+        lines: [
+            'Pochodnia (patyk i żywica albo oliwki) pali się godzinę, czyli trzy doby gry. Pod koniec przygasa i świeci słabiej, potem zostaje ogarek.',
+            { text: 'Żywica albo oliwki dolewają paliwa: [use] na postawionej pochodni albo ogarek z żywicą w siatce wytwarzania. Pusta ręka mówi, na ile starczy.',
+                touch: 'Żywica albo oliwki dolewają paliwa: stuknij nimi postawioną pochodnię albo połóż ogarek z żywicą w siatce wytwarzania. Pusta ręka mówi, na ile starczy.' },
+            'Pochodnia zdjęta ze ściany wraca z resztą paliwa (pomarańczowy pasek na ikonce). Lampy z lepidolitu nie gasną nigdy.',
+            'Deszcz gasi pochodnie pod gołym niebem - rozpalisz je starterem ognia. Pod dachem płoną dalej.',
+            'Łuczywo: żywiczne polano (sosna, świerk, modrzew) i siekiera dają 4 szczapy. To najlepsza podpałka (350°), a postawione świeci jak pochodnia przez kilka minut.',
+            'Deszcz chłodzi ognisko pod gołym niebem, a słabe gasi. Ogień z dębu, buka czy oliwki przetrwa ulewę, z lipy albo wierzby - nie. Dach załatwia sprawę.'
+        ]
+    },
+    {
         id: 'sleep',
         title: 'Noc i sen',
         lines: [

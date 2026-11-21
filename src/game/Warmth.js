@@ -32,7 +32,7 @@
 
 import { SEA_LEVEL } from '../config.js';
 import { getBlockId } from '../blocks/BlockRegistry.js';
-import { isTorchId } from '../blocks/torches.js';
+import { isTorchId, torchStage } from '../blocks/torches.js';
 import { tempAtHeight } from '../weather/WeatherField.js';
 import { wornWarmth } from '../items/clothing.js';
 import { fireWarmth, WARMTH_FROM, WARMTH_DEGREES, COLLAPSE_WARMTH } from './CampfireState.js';
@@ -63,7 +63,8 @@ for (const type of ['lamp', 'lamp_red', 'lamp_green', 'lamp_blue', 'lamp_purple'
 HEAT_BLOCKS.set(getBlockId('meteorite'), 4);
 
 export function blockHeat(id) {
-    if (isTorchId(id)) return TORCH_HEAT;
+    // (Od 1.35.0: przygasająca pochodnia grzeje o połowę słabiej, ogarek wcale.)
+    if (isTorchId(id)) { const stage = torchStage(id); return stage === 'out' ? 0 : stage === 'dim' ? TORCH_HEAT / 2 : TORCH_HEAT; }
     return HEAT_BLOCKS.get(id) ?? 0;
 }
 

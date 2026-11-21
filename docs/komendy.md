@@ -101,6 +101,10 @@ Współrzędne można podawać względem gracza: `~` (tu, gdzie stoję),
 | `/niskie` | rośliny niskie (1.19.0, `docs/rosliny-niskie.md`): lista roślin i biomów, w których rosną |
 | `/niskie galeria` | przed tobą galeria: każda roślina w rzędzie, od lewej kolejne etapy (sadzonka, roślina, kwiaty, owoce), przy dyni młoda i dojrzała dynia, w ostatnim rzędzie torfowce i chrobotek (zmienia świat) |
 | `/niskie znajdz [roślina]` | najbliższa roślina niska we wczytanym terenie (np. `zurawina`, `brusznica`, `poziomka`, `dynia`): odległość i komenda `/tp` |
+| `/pochodnia` | wypalające się pochodnie (1.35.0, `docs/pochodnie.md`): ile pali się pochodnia i łuczywo, ile pochodni w świecie płonie, przygasa i zgasło |
+| `/pochodnia daj` | do ekwipunku: 8 nowych pochodni, 4 nadpalone, 8 łuczyw, 4 ogarki, 8 żywic, starter ognia i 4 polana sosny |
+| `/pochodnia paliwo <procent>` | ustawia paliwo pochodni pod celownikiem (blok zmieni etap w ciągu sekundy) albo stosu pochodni w ręce |
+| `/pochodnia czas <minuty>` | wszystkie pochodnie spalają paliwo z tylu minut - do oglądania przygasania i ogarków |
 | `/drewno` | charakter drewna (1.32.0, `docs/drewno.md`): zapłon, żar i czas palenia polana wszystkich 32 gatunków, od najłatwiejszego do rozpalenia |
 | `/drewno <gatunek>` | jeden gatunek (np. `/drewno dąb`): zapłon, żar, ciepło przy ogniu, czas palenia polana i stosu, żar po polanie, twardość |
 | `/drewno ognisko <gatunek> [zimne\|mokre\|zar]` | dwa bloki przed tobą: płonące ognisko z tego drewna; `zimne` - sam ułożony stos (do prób z podpałką i patykami), `mokre` - stos świeżego, mokrego drewna (1.33.0), `zar` - sam żar po ognisku (zmienia świat) |

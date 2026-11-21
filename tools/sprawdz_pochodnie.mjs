@@ -49,7 +49,8 @@ const check = (condition, message) => { assert.ok(condition, message); checks++;
 const colors = ['plain','white','orange','magenta','light_blue','yellow','lime','pink','gray','light_gray','cyan','purple','blue','brown','green','red','black'];
 const attaches = ['down','north','south','east','west'];
 check(TORCH_VARIANTS.length === 17, 'Podstawowa pochodnia i 16 barw');
-check(Object.keys(TORCH_BLOCKS).length === 85, 'Każda barwa ma pięć mocowań');
+// (Od 1.35.0 dochodzą etapy wypalania: 85 przygasających i 5 ogarków - tools/sprawdz_pochodni_paliwa.mjs.)
+check(Object.keys(TORCH_BLOCKS).length === 85 + 85 + 5 && Object.values(TORCH_BLOCKS).filter(block => !block.torch.stage).length === 85, 'Każda barwa ma pięć mocowań');
 check(new Set(Object.values(R.BLOCK_TYPES).map(d => d.id)).size === Object.keys(R.BLOCK_TYPES).length, 'Numery bloków nie kolidują');
 check(R.getBlockId('campfire') === 10000, 'Numer istniejącego ogniska pozostał bez zmian');
 for (const [colorIndex,color] of colors.entries()) for (const [sideIndex,attach] of attaches.entries()) {
@@ -143,19 +144,19 @@ for (const attach of attaches) {
 // Zapis przez prawdziwą warstwę IndexedDB, z portem pamięciowym.
 const chunk=new Chunk(-1,2);
 for (const [i,type] of Object.keys(TORCH_BLOCKS).entries()) chunk.setId(i%16,2+Math.floor(i/16),7,R.getBlockId(type));
-check(chunk.torches.size===85, 'Indeks obejmuje wszystkie postawione pochodnie');
+check(chunk.torches.size===Object.keys(TORCH_BLOCKS).length, 'Indeks obejmuje wszystkie postawione pochodnie (także przygasające i ogarki)');
 const revision=chunk.torchRevision;chunk.setId(0,2,7,R.getBlockId('torch'));
 check(chunk.torchRevision===revision, 'Ten sam blok nie zmienia rewizji indeksu');
 const storage=new WorldStorage(memoryDatabase()), info=createWorldInfo('Pochodnie','torches','flat','adventure');
 await storage.saveWorldAndChunks(info,[chunk]);const stored=await storage.loadChunks(info.id);
 check(stored.get('-1,2') instanceof Uint16Array,'Numery pochodni zapisane bez obcinania do bajtu');
 const restored=new Chunk(-1,2);check(restored.loadBlocks(stored.get('-1,2')),'Wczytanie chunka');
-assert.deepEqual(restored.blocks,chunk.blocks);check(restored.torches.size===85,'Indeks odbudowany po wczytaniu');
+assert.deepEqual(restored.blocks,chunk.blocks);check(restored.torches.size===Object.keys(TORCH_BLOCKS).length,'Indeks odbudowany po wczytaniu');
 const generated=new ChunkGenerationData('flat',123).generate(-1,2,stored.get('-1,2'));
 const transferred=structuredClone(generated,{transfer:generationTransfers(generated)});
-check(transferred.torches.length===85&&transferred.modified,'Wątek generacji przekazuje indeks zapisanych pochodni');
+check(transferred.torches.length===Object.keys(TORCH_BLOCKS).length&&transferred.modified,'Wątek generacji przekazuje indeks zapisanych pochodni');
 assert.deepEqual(transferred.blocks,chunk.blocks);
-restored.setId(0,2,7,0);check(restored.torches.size===84&&restored.torchRevision>0,'Usunięcie czyści indeks');
+restored.setId(0,2,7,0);check(restored.torches.size===Object.keys(TORCH_BLOCKS).length-1&&restored.torchRevision>0,'Usunięcie czyści indeks');
 const old=new Chunk(0,0);old.loadBlocks(new Uint8Array(old.blocks.length));check(old.torches.size===0,'Stary zapis nadal się wczytuje');
 
 // Wąska pochodnia nie przechwytuje promienia idącego przez resztę komórki.

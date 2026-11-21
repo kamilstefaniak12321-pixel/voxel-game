@@ -1,6 +1,14 @@
 // Pochodnie Reactive Torch: trwałe numery bloków i paleta, bez DOM/Three.
 // Kolejność kolorów i mocowania jest częścią formatu zapisu świata.
 // Numery 10010–10094: 17 odmian × (podłoga, północ, południe, wschód, zachód).
+//
+// Od 1.35.0 pochodnie się wypalają (game/TorchBurn.js) i mają etapy:
+//   lit - płonie (numery jak dotąd, światło 14),
+//   dim - przygasa: te same odmiany i mocowania, numery 16000–16084
+//         (ta sama kolejność), światło TORCH_DIM_LIGHT,
+//   out - ogarek: bez płomienia, światła i koloru, numery 16085–16089
+//         (pięć mocowań).
+// Etapów dim i out nie ma w ekwipunku - pochodnia przechodzi w nie sama.
 
 const COLORS = [
     // klucz, przymiotnik pochodni, przymiotnik barwnika, iskry, jasny czubek
@@ -75,9 +83,62 @@ TORCH_VARIANTS.forEach((variant, colorIndex) => {
     });
 });
 
+// --- Etapy wypalania (1.35.0) ---------------------------------------------
+export const TORCH_DIM_LIGHT = 9;
+export const TORCH_DIM_FIRST_ID = 16000;
+export const TORCH_OUT_FIRST_ID = 16085;
+export const TORCH_LAST_ID = 16089;
+
+// Nazwa bloku pochodni w danym etapie ('lit', 'dim', 'out').
+export function torchStageType(colorKey, attach = 'down', stage = 'lit') {
+    if (stage === 'out') return TORCH_ATTACHMENTS.includes(attach) ? (attach === 'down' ? 'torch_out' : `torch_out_${attach}`) : null;
+    const lit = torchType(colorKey, attach);
+    return lit && stage === 'dim' ? `${lit}_dim` : lit;
+}
+
+TORCH_VARIANTS.forEach((variant, colorIndex) => {
+    TORCH_ATTACHMENTS.forEach((attach, orientation) => {
+        const type = torchStageType(variant.key, attach, 'dim');
+        const id = TORCH_DIM_FIRST_ID + colorIndex * TORCH_ATTACHMENTS.length + orientation;
+        const info = Object.freeze({ id, type, colorKey: variant.key, attach, standingType: variant.type, variant, stage: 'dim' });
+        infoByType.set(type, info);
+        infoById.set(id, info);
+        TORCH_BLOCKS[type] = {
+            id, name: type, label: `${variant.label} (przygasa)`, solid: false, opaque: false,
+            model: 'structure', torch: { colorKey: variant.key, attach, stage: 'dim' },
+            flat: { attach }, creative: false, inventory: false,
+            light: TORCH_DIM_LIGHT, lightColor: variant.color, category: 'swiatlo',
+            sound: 'wood', hardness: .15, pick: variant.type, drops: variant.type,
+            textures: { all: variant.texture }
+        };
+    });
+});
+
+TORCH_ATTACHMENTS.forEach((attach, orientation) => {
+    const type = torchStageType('plain', attach, 'out');
+    const id = TORCH_OUT_FIRST_ID + orientation;
+    const variant = TORCH_VARIANTS[0];
+    const info = Object.freeze({ id, type, colorKey: 'plain', attach, standingType: variant.type, variant, stage: 'out' });
+    infoByType.set(type, info);
+    infoById.set(id, info);
+    TORCH_BLOCKS[type] = {
+        id, name: type, label: 'Ogarek pochodni', solid: false, opaque: false,
+        model: 'structure', torch: { colorKey: 'plain', attach, stage: 'out' },
+        flat: { attach }, creative: false, inventory: false, category: 'swiatlo',
+        sound: 'wood', hardness: .15, pick: 'torch_stub', drops: 'torch_stub',
+        textures: { all: variant.texture }
+    };
+});
+
 export function isTorchId(id) {
     // setId wywołuje to także podczas generowania zwykłego terenu.
-    return id >= 10010 && id <= 10094 && infoById.has(id);
+    return ((id >= 10010 && id <= 10094) || (id >= TORCH_DIM_FIRST_ID && id <= TORCH_LAST_ID)) && infoById.has(id);
+}
+
+// Etap pochodni: 'lit', 'dim', 'out' albo null (to nie pochodnia).
+export function torchStage(typeOrId) {
+    const info = getTorchInfo(typeOrId);
+    return info ? info.stage ?? 'lit' : null;
 }
 
 export function getTorchInfo(typeOrId) {

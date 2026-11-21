@@ -269,6 +269,24 @@ export const ITEM_TYPES = {
         name: 'Stick',
         label: 'Patyk',
         icon: 'stick'
+    },
+
+    // Wypalające się pochodnie (1.35.0, items/torchFuel.js).
+    // Łuczywo: szczapa żywicznego drewna - podpałka i krótka pochodnia
+    // (PPM stawia zwykłą pochodnię z małym zapasem paliwa - GameInteraction.js).
+    luczywo: {
+        name: 'Fatwood',
+        label: 'Łuczywo',
+        icon: 'luczywo',
+        category: 'swiatlo'
+    },
+
+    // Ogarek: wypalona pochodnia. Z żywicą albo oliwkami - znów pochodnia.
+    torch_stub: {
+        name: 'Torch stub',
+        label: 'Ogarek pochodni',
+        icon: 'torch_stub',
+        category: 'swiatlo'
     }
 
 };

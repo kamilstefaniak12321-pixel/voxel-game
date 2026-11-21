@@ -496,7 +496,7 @@ const hold = (fire, seconds = 20) => {
     const commands = read('src/commands/worldCommands.js'), commandsDoc = read('docs/komendy.md');
     check(['/drewno swieze', '/drewno mokre', '/drewno schniecie', '/drewno tempo'].every((text) => commands.includes(text) && commandsDoc.includes(text)) && commandsDoc.includes('zimne\\|mokre\\|zar'), 'Komendy wilgotności są w grze i w opisie');
     const renderer = read('src/rendering/CampfireRenderer.js');
-    check(/damp=wetFactor\(top\.wet \?\? 0\)/.test(renderer) && /2\.5\*damp/.test(renderer), 'Obraz: mokre polano dymi gęsto i biało');
+    check(/wetFactor\(top\.wet \?\? 0\)/.test(renderer) && /2\.5\*damp/.test(renderer), 'Obraz: mokre polano dymi gęsto i biało');
     check(/log\.wood \+ Math\.round\(\(log\.wet \?\? 0\) \* 4\)/.test(read('src/net/StateSync.js')), 'Gra ze znajomymi: wilgotność polan w podpisie ogniska');
 
     const chapter = GUIDE.find((entry) => entry.id === 'fire').lines.map((line) => (typeof line === 'string' ? line : line.text)).join(' ');

@@ -1,4 +1,4 @@
-# Paczka tekstur - szablon (Various Roots 1.31.0)
+# Paczka tekstur - szablon (Various Roots 1.35.0)
 
 Oryginalne tekstury gry, każda w osobnym pliku. Zrób z nich własną paczkę:
 
@@ -523,6 +523,7 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/low_zucchini_fruit_side.png` | Cukinia (owoce) |
 | `bloki/low_zucchini_plant_side.png` | Sadzonka cukinii, Cukinia, Cukinia (kwitnie) |
 | `bloki/low_zucchini_plant_top.png` | - |
+| `bloki/luczywo.png` | Łuczywo |
 | `bloki/mangrove/leaves.png` | Liście namorzynu, Liście namorzynu (siewki odrastają) |
 | `bloki/mangrove/leaves_variant.png` | Liście namorzynu z siewkami |
 | `bloki/mangrove/log_side.png` | Pień namorzynu |
@@ -775,7 +776,7 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/oak_bark.png` | Kora dębu |
 | `bloki/oak_leaf_litter.png` | Opadłe liście dębu |
 | `bloki/oak_leaves.png` | Liście dębu |
-| `bloki/oak_log_side.png` | Ognisko, Pień dębu |
+| `bloki/oak_log_side.png` | Ognisko, Stos drewna, Pień dębu |
 | `bloki/oak_log_top.png` | Pień dębu |
 | `bloki/oak_planks.png` | Schody dębowe, Półblok dębowy, Furtka dębowa, Stół stolarski dębowy, Łóżko dębowe (pościelone), Łóżko dębowe (stelaż), Deski dębowe |
 | `bloki/oak_sapling.png` | Sadzonka dębu |
@@ -1000,23 +1001,24 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/tilled_dirt.png` | Rozgrzebana ziemia |
 | `bloki/tilled_humus.png` | Rozgrzebany czarnoziem |
 | `bloki/tool_handle_source.png` | - |
-| `bloki/torch.png` | Pochodnia |
-| `bloki/torch_black.png` | Pochodnia czarna |
-| `bloki/torch_blue.png` | Pochodnia niebieska |
-| `bloki/torch_brown.png` | Pochodnia brązowa |
-| `bloki/torch_cyan.png` | Pochodnia turkusowa |
-| `bloki/torch_gray.png` | Pochodnia szara |
-| `bloki/torch_green.png` | Pochodnia zielona |
-| `bloki/torch_light_blue.png` | Pochodnia jasnoniebieska |
-| `bloki/torch_light_gray.png` | Pochodnia jasnoszara |
-| `bloki/torch_lime.png` | Pochodnia limonkowa |
-| `bloki/torch_magenta.png` | Pochodnia purpurowa |
-| `bloki/torch_orange.png` | Pochodnia pomarańczowa |
-| `bloki/torch_pink.png` | Pochodnia różowa |
-| `bloki/torch_purple.png` | Pochodnia fioletowa |
-| `bloki/torch_red.png` | Pochodnia czerwona |
-| `bloki/torch_white.png` | Pochodnia biała |
-| `bloki/torch_yellow.png` | Pochodnia żółta |
+| `bloki/torch.png` | Pochodnia, Pochodnia (przygasa), Ogarek pochodni |
+| `bloki/torch_black.png` | Pochodnia czarna, Pochodnia czarna (przygasa) |
+| `bloki/torch_blue.png` | Pochodnia niebieska, Pochodnia niebieska (przygasa) |
+| `bloki/torch_brown.png` | Pochodnia brązowa, Pochodnia brązowa (przygasa) |
+| `bloki/torch_cyan.png` | Pochodnia turkusowa, Pochodnia turkusowa (przygasa) |
+| `bloki/torch_gray.png` | Pochodnia szara, Pochodnia szara (przygasa) |
+| `bloki/torch_green.png` | Pochodnia zielona, Pochodnia zielona (przygasa) |
+| `bloki/torch_light_blue.png` | Pochodnia jasnoniebieska, Pochodnia jasnoniebieska (przygasa) |
+| `bloki/torch_light_gray.png` | Pochodnia jasnoszara, Pochodnia jasnoszara (przygasa) |
+| `bloki/torch_lime.png` | Pochodnia limonkowa, Pochodnia limonkowa (przygasa) |
+| `bloki/torch_magenta.png` | Pochodnia purpurowa, Pochodnia purpurowa (przygasa) |
+| `bloki/torch_orange.png` | Pochodnia pomarańczowa, Pochodnia pomarańczowa (przygasa) |
+| `bloki/torch_pink.png` | Pochodnia różowa, Pochodnia różowa (przygasa) |
+| `bloki/torch_purple.png` | Pochodnia fioletowa, Pochodnia fioletowa (przygasa) |
+| `bloki/torch_red.png` | Pochodnia czerwona, Pochodnia czerwona (przygasa) |
+| `bloki/torch_stub.png` | Ogarek pochodni |
+| `bloki/torch_white.png` | Pochodnia biała, Pochodnia biała (przygasa) |
+| `bloki/torch_yellow.png` | Pochodnia żółta, Pochodnia żółta (przygasa) |
 | `bloki/trapdoor_acacia.png` | Klapa z akacji |
 | `bloki/trapdoor_acacia_bottom.png` | - |
 | `bloki/trapdoor_acacia_edge.png` | - |

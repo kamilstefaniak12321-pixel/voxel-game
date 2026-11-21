@@ -1057,6 +1057,26 @@ export const ACHIEVEMENTS = [
         on: 'woodpile',
         when: (data) => data.full === true
     },
+    // Wypalające się pochodnie i deszcz (1.35.0).
+    {
+        id: 'torch_refilled',
+        tier: 'common',
+        title: 'Drugie życie ogarka',
+        task: 'Dolej żywicy albo oliwek do wypalonej pochodni (PPM na ogarku).',
+        comment: 'Patyk ten sam, płomień nowy. Recykling starszy niż koło.',
+        icon: 'torch_stub',
+        on: 'torchRefilled',
+        when: (data) => data.stub === true
+    },
+    {
+        id: 'rain_doused',
+        tier: 'common',
+        title: 'Pogoda wygrała',
+        task: 'Bądź przy ognisku, które zgasił deszcz.',
+        comment: 'Następnym razem dach. Albo dąb.',
+        icon: 'kapok_firewood',
+        on: 'fireDoused'
+    },
     {
         id: 'first_roast',
         tier: 'common',

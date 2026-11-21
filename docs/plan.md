@@ -6,19 +6,19 @@ pamięć, nie umowa. Po każdej wydanej wersji wpis przechodzi do
 
 ## Teraz
 
-- **1.34.0 - Drewutnia** (PR #187): stos polan do suszenia (A2b) -
-  kucnięcie i polano w ziemię, 16 polan na blok; schną jak na powietrzu,
-  nie zajmują plecaka, pod dachem nie mokną ([ogniska.md](ogniska.md)).
+- **1.35.0 - Pochodnie i deszcz** (PR #188): ostatni kawałek części A.
+  Pochodnie się wypalają (godzina, przygasanie, ogarek, dolewanie
+  żywicy), łuczywo, deszcz gasi pochodnie pod gołym niebem, chłodzi
+  ognisko i gasi słabe ([pochodnie.md](pochodnie.md),
+  [ogniska.md](ogniska.md)).
 
 ## Dalej
 
 **Drewno, ogień i ścinanie drzew** - duży projekt Kamila, uzgodniony
 21.11.2026 ([drewno.md](drewno.md)). Sześć części; pierwsza (A) jest
-podzielona na mniejsze wersje (1.32.0 - cechy i ognisko, 1.33.0 -
-wilgotność, 1.34.0 - drewutnia):
+w grze cała (1.32.0 - cechy i ognisko, 1.33.0 - wilgotność, 1.34.0 -
+drewutnia, 1.35.0 - pochodnie i deszcz). Zostało:
 
-- **A3 - Pochodnie i deszcz**: pochodnie się wypalają, łuczywo, deszcz
-  chłodzi i gasi ognisko.
 - **B - Ścinanie**: drzewo jako jeden byt, ciosy i karb, upadek, leżący
   pień, konary, kozły, **powalone drzewa jako pierwsze drewno**, nowy
   samouczek.

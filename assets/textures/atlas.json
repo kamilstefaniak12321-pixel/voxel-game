@@ -17,7 +17,7 @@
     "rosliny": {
       "file": "rosliny.png",
       "width": 256,
-      "height": 688
+      "height": 704
     },
     "przedmioty": {
       "file": "przedmioty.png",
@@ -9780,6 +9780,20 @@
       "y": 672,
       "width": 16,
       "height": 16
+    },
+    "luczywo": {
+      "sheet": "rosliny",
+      "x": 0,
+      "y": 688,
+      "width": 16,
+      "height": 16
+    },
+    "torch_stub": {
+      "sheet": "rosliny",
+      "x": 16,
+      "y": 688,
+      "width": 16,
+      "height": 16
     }
   },
   "aliases": {
@@ -17785,6 +17799,16 @@
       "x": 60,
       "y": 96,
       "region": "item_bean_wigwam"
+    },
+    "luczywo": {
+      "x": 61,
+      "y": 96,
+      "region": "luczywo"
+    },
+    "torch_stub": {
+      "x": 62,
+      "y": 96,
+      "region": "torch_stub"
     }
   }
 }

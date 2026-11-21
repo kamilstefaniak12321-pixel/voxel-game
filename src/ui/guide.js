@@ -119,7 +119,10 @@ export const GUIDE = [
             'Każde drewno pali się inaczej: pełny stos świerka starcza na 5,5 minuty, brzozy na 10 minut, dębu na 15 minut. Polana spalają się po kolei - do płonącego możesz dokładać.',
             'Twarde drewno grzeje mocniej: przy ognisku z lipy jest o 14°C cieplej, z sosny o 18, z brzozy o 22, z dębu o 25. Nad gorętszym ogniem szybciej się piecze i gotuje.',
             'Po ognisku zostaje żar: po świerku na minutę, po dębie na kilka minut. Polano dołożone na gorący żar zajmuje się samo, a nad żarem da się piec.',
-            'Zapłon, żar i czas palenia polana widać po najechaniu na nie w ekwipunku. Iglaste strzelają iskrami, sosna i olcha dymią, buk i osika prawie nie.'
+            'Zapłon, żar i czas palenia polana widać po najechaniu na nie w ekwipunku. Iglaste strzelają iskrami, sosna i olcha dymią, buk i osika prawie nie.',
+            'Polana prosto spod siekiery są mokre (niebieski pasek na ikonce): trudniej je zapalić i słabiej grzeją. Brzoza i olcha są bardzo mokre, oliwka i akacja prawie suche.',
+            'Drewno schnie: w plecaku i skrzyni powoli, rzucone na ziemię w słońcu szybciej, przy płonącym ognisku w kilka minut. Deszcz moczy polana pod gołym niebem.',
+            'Mokre polano dołożone do płonącego ogniska przeschnie od ciepła - najpierw syczy i dymi na biało.'
         ]
     },
     {

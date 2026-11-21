@@ -926,8 +926,9 @@ export class GameInteraction {
             }
         }
 
-        for (const { type: item, count } of drops) {
-            this.inventory.add(item, count);
+        // (Stos z jego stanem: mokre polana z rozebranego ogniska zostają mokre.)
+        for (const drop of drops) {
+            this.inventory.addItem(drop);
         }
 
         this.playBlockSound('break', type, hit.block);

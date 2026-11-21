@@ -103,9 +103,13 @@ Współrzędne można podawać względem gracza: `~` (tu, gdzie stoję),
 | `/niskie znajdz [roślina]` | najbliższa roślina niska we wczytanym terenie (np. `zurawina`, `brusznica`, `poziomka`, `dynia`): odległość i komenda `/tp` |
 | `/drewno` | charakter drewna (1.32.0, `docs/drewno.md`): zapłon, żar i czas palenia polana wszystkich 32 gatunków, od najłatwiejszego do rozpalenia |
 | `/drewno <gatunek>` | jeden gatunek (np. `/drewno dąb`): zapłon, żar, ciepło przy ogniu, czas palenia polana i stosu, żar po polanie, twardość |
-| `/drewno ognisko <gatunek> [zimne\|zar]` | dwa bloki przed tobą: płonące ognisko z tego drewna; `zimne` - sam ułożony stos (do prób z podpałką i patykami), `zar` - sam żar po ognisku (zmienia świat) |
+| `/drewno ognisko <gatunek> [zimne\|mokre\|zar]` | dwa bloki przed tobą: płonące ognisko z tego drewna; `zimne` - sam ułożony stos (do prób z podpałką i patykami), `mokre` - stos świeżego, mokrego drewna (1.33.0), `zar` - sam żar po ognisku (zmienia świat) |
 | `/drewno rzad` | pięć bloków przed tobą rząd dziesięciu płonących ognisk, od puchowca do oliwki - do porównania płomienia, dymu i iskier (zmienia świat) |
 | `/drewno zestaw [gatunek]` | do ekwipunku: 12 polan gatunku (domyślnie dąb), 6 polan świerka, trawa, kora dębu, sosny i brzozy, 4 patyki i starter ognia |
+| `/drewno swieze [gatunek]` | wilgotność (1.33.0): 12 polan prosto spod siekiery - mokrych tak, jak mokry jest ten gatunek (domyślnie dąb); wypisuje zapłon i żar mokrego drewna |
+| `/drewno mokre [procent]` | ustawia wilgotność polan w ręce (0 - suche; bez liczby - jak świeżo porąbane) |
+| `/drewno schniecie` | jak szybko drewno schnie tu, gdzie stoisz: w plecaku, na ziemi (słońce, deszcz, ogień obok), w skrzyni i piwniczce; dla polan w ręce - za ile wyschną |
+| `/drewno tempo <mnożnik>` | schnięcie tyle razy szybsze (0 - wyłączone, 1 - zwykłe); do wyjścia ze świata |
 | `/pnacza` | pnącza (1.30.0, `docs/pnacza.md`): winorośl, chmiel, kiwi, marakuja - wysokość, czym się sadzi, na czym rosną |
 | `/pnacza galeria` | przed tobą: mur z winoroślą, kratki z marakują, tyczki z chmielem i pergola z kiwi - wszystkie etapy (zmienia świat) |
 | `/pnacza grzadka` | grządka fasoli i grochu (1.31.0): wigwamy i tyczki z fasolą, siatki i chrust z grochem, na polu obie rośliny bez podpory - wszystkie etapy (zmienia świat) |

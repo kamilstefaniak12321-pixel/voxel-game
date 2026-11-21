@@ -105,7 +105,7 @@ export class Hotbar {
 
         // (Ubranie: też jego wygląd - ikonka w kolorach, 1.27.0; jedzenie -
         // świeżość z dokładnością do setnej, 1.29.0.)
-        const bars = items.map((item) => (spoiling ? freshBar(item) : null));
+        const bars = items.map((item) => freshBar(item, spoiling));
         const slotsKey = items.map((item, i) => (item ? `${item.type}:${item.count}${item.look ? `:${item.look.pattern}.${item.look.main}.${item.look.accent}` : ''}${bars[i] ? `~${bars[i].fresh.toFixed(2)}` : ''}` : '')).join(',');
 
         const slotsChanged = slotsKey !== this.shownSlots;

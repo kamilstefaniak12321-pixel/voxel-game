@@ -46,11 +46,11 @@ check(F.freshBar(null) === null, 'Puste miejsce - bez paska');
 
 const inventory = read('src/ui/InventoryScreen.js');
 const hotbar = read('src/ui/Hotbar.js');
-check(inventory.includes("el('span', 'inv-fresh')") && inventory.includes("this.game?.spoilage?.active ? freshBar(item) : null"), 'Ekwipunek i kursor: pasek tylko gdy jedzenie się psuje');
+check(inventory.includes("el('span', 'inv-fresh')") && inventory.includes("freshBar(item, Boolean(this.game?.spoilage?.active))"), 'Ekwipunek i kursor: pasek tylko gdy jedzenie się psuje');
 check(hotbar.includes("fresh.className = 'hotbar-fresh'") && hotbar.includes('bars[i].fresh.toFixed(2)') && read('src/main.js').includes('game.inventory.selected, Boolean(game.spoilage?.active))'),
     'Pasek bloków: pasek świeżości, odświeżany co setną');
 const chest = read('src/ui/ChestView.js');
-check(chest.includes('const bar = spoiling ? freshBar(item) : null;') && inventory.includes('this.chestView.render(renderer, 160, 0, Boolean(this.game?.spoilage?.active))'),
+check(chest.includes('const bar = freshBar(item, spoiling);') && inventory.includes('this.chestView.render(renderer, 160, 0, Boolean(this.game?.spoilage?.active))'),
     'Skrzynia: pasek rysowany na obrazku skrzyni');
 check(read('src/ui/inventory.css').includes('.inv-fresh {') && read('src/ui/hud.css').includes('.hotbar-fresh {'), 'Wygląd paska w CSS');
 

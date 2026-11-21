@@ -19,10 +19,19 @@
 // Od 1.27.0 to samo dotyczy wyglądu ubrania (look - items/clothing.js):
 // stos ubrania niesie swój krój i kolory, a ubrania się nie układają
 // w stosy (stackSize - 1).
+//
+// Od 1.33.0 pole `fresh` mają też polana: znaczy u nich SUCHOŚĆ (1 -
+// suche, mniej - mokre; items/moisture.js). Suche polano pola nie ma,
+// więc wygląda w zapisie jak dotąd. Łączenie stosów działa tak samo.
 // ------------------------------------------------------------
 
 import { isPerishable } from './spoilage.js';
 import { isGarment, cleanLook, sameLook } from './clothing.js';
+import { isSeasonable, wetBar } from './moisture.js';
+
+// Czy stos tej rzeczy niesie pole `fresh` (świeżość jedzenia albo
+// suchość drewna).
+export const hasFresh = (type) => isPerishable(type) || isSeasonable(type);
 
 // Najwięcej sztuk w stosie (Inventory.js - STACK_SIZE).
 export const MAX_STACK = 64;
@@ -39,9 +48,10 @@ export const SAME_FRESH = 0.1;
 
 const clamp = (value) => Math.max(0.001, Math.min(1, value));
 
-// Świeżość stosu (1 - świeże) albo undefined, gdy rzecz się nie psuje.
+// Świeżość stosu (1 - świeże; dla polan: 1 - suche) albo undefined,
+// gdy rzecz jej nie ma.
 export function freshOf(item) {
-    if (!item || !isPerishable(item.type)) return undefined;
+    if (!item || !hasFresh(item.type)) return undefined;
     return Number.isFinite(item.fresh) ? clamp(item.fresh) : 1;
 }
 
@@ -51,18 +61,29 @@ export function freshOf(item) {
 // czerwonego (zaraz się zepsuje).
 export const FRESH_BAR_FROM = 0.97;
 
-export function freshBar(item) {
+// Polano (1.33.0): niebieski pasek - ile ma wody; suche bez paska.
+// spoiling - czy jedzenie w tym świecie się psuje (tryb przygody);
+// wilgotność drewna widać zawsze.
+export function freshBar(item, spoiling = true) {
+    if (item && isSeasonable(item.type)) return wetBar(item);
+    if (!spoiling) return null;
     const fresh = freshOf(item);
     if (fresh === undefined || fresh >= FRESH_BAR_FROM) return null;
     return { fresh, color: `hsl(${Math.round(fresh * 120)}, 80%, 45%)` };
+}
+
+// Pole `fresh` nowego stosu: suche polano go nie ma.
+function freshField(type, fresh) {
+    const value = Number.isFinite(fresh) ? clamp(fresh) : 1;
+    return isSeasonable(type) && value >= 1 ? {} : { fresh: value };
 }
 
 // Nowy stos. fresh pomijane - świeże (dla psujących się); look -
 // wygląd ubrania (pominięty - gładkie, niebarwione).
 export function makeItem(type, count, fresh, look) {
     if (isGarment(type)) return { type, count, look: cleanLook(look) };
-    if (!isPerishable(type)) return { type, count };
-    return { type, count, fresh: Number.isFinite(fresh) ? clamp(fresh) : 1 };
+    if (!hasFresh(type)) return { type, count };
+    return { type, count, ...freshField(type, fresh) };
 }
 
 // Kopia stosu z inną liczbą sztuk (ta sama świeżość i ten sam wygląd).
@@ -75,16 +96,18 @@ export function withCount(item, count) {
 export function sameBatch(item, type, fresh, look) {
     if (!item || item.type !== type) return false;
     if (isGarment(type)) return sameLook(item.look, look);
-    if (!isPerishable(type)) return true;
+    if (!hasFresh(type)) return true;
     return Math.abs(freshOf(item) - (Number.isFinite(fresh) ? clamp(fresh) : 1)) <= SAME_FRESH;
 }
 
 // Dokłada `count` sztuk o świeżości `fresh` do stosu `item` (w miejscu):
 // świeżość to średnia ważona liczbą sztuk.
 export function blend(item, count, fresh) {
-    if (isPerishable(item.type) && count > 0) {
+    if (hasFresh(item.type) && count > 0) {
         const added = Number.isFinite(fresh) ? clamp(fresh) : 1;
-        item.fresh = clamp((freshOf(item) * item.count + added * count) / (item.count + count));
+        const mixed = clamp((freshOf(item) * item.count + added * count) / (item.count + count));
+        if (isSeasonable(item.type) && mixed >= 1) delete item.fresh;
+        else item.fresh = mixed;
     }
     item.count += count;
     return item;

@@ -14,6 +14,7 @@
 
 import { restoreChest, chestState } from '../game/ChestState.js';
 import { restoreCampfire } from '../game/CampfireState.js';
+import { isSeasonable, wetOf } from '../items/moisture.js';
 import { restoreTable } from '../game/CarpenterTables.js';
 import { restoreSewingTable, sewingTableState } from '../game/SewingTables.js';
 import { restoreDrop, dropState } from '../game/Drops.js';
@@ -52,7 +53,7 @@ export function stateSystems(game) {
             save: (fire) => structuredClone(fire),
             restore: restoreCampfire,
             // Spalanie polan liczy każdy u siebie - podpis bez postępu.
-            sign: (fire) => JSON.stringify([fire.logs.map((log) => log.wood), fire.tinder, fire.kindling ?? 0, fire.phase, fire.ash,
+            sign: (fire) => JSON.stringify([fire.logs.map((log) => log.wood + Math.round((log.wet ?? 0) * 4)), fire.tinder, fire.kindling ?? 0, fire.phase, fire.ash,
                 Math.round(fire.ignition * 8), fire.embers > 0]),
             changed: () => game.campfires.version++
         },
@@ -63,8 +64,9 @@ export function stateSystems(game) {
             key: (drop) => drop.id,
             save: dropState,
             restore: restoreDrop,
-            // (Typ zmienia się też, gdy mokra glina wyschnie.)
-            sign: (drop) => `${drop.type}:${drop.count}`,
+            // (Typ zmienia się też, gdy mokra glina wyschnie; polana -
+            // z wilgotnością co ćwierć, żeby gość podniósł to, co wyschło.)
+            sign: (drop) => `${drop.type}:${drop.count}${isSeasonable(drop.type) ? `:${Math.round(wetOf(drop) * 4)}` : ''}`,
             changed: () => game.drops.changed()
         }
     };

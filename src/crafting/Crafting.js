@@ -4,6 +4,7 @@ import { getCategory, CATEGORY_ORDER } from '../items/categories.js';
 import { STACK_SIZE } from '../game/Inventory.js';
 import { GROUPS, RECIPES } from './recipes.js';
 import { stoneToolInfo, stoneToolResult } from '../items/stoneTools.js';
+import { choppedFresh } from '../items/moisture.js';
 
 // ------------------------------------------------------------
 // WYTWARZANIE (crafting) - siatka 2 x 2 w ekwipunku
@@ -317,15 +318,21 @@ export function findRecipe(grid) {
 }
 
 
-// Wynik siatki: { recipe, type, count } albo null.
+// Wynik siatki: { recipe, type, count, fresh } albo null.
+// fresh (1.33.0) - polano prosto spod siekiery jest mokre (suchość
+// stosu, items/moisture.js); dla innych rzeczy undefined.
 
 export function gridResult(grid) {
 
     const recipe = findRecipe(grid);
 
-    return recipe ? { recipe,
-        type: recipe.stoneTool ? stoneToolResult(recipe.stoneTool, grid) : recipe.result[0],
-        count: recipe.result[1] } : null;
+    if (!recipe) {
+        return null;
+    }
+
+    const type = recipe.stoneTool ? stoneToolResult(recipe.stoneTool, grid) : recipe.result[0];
+
+    return { recipe, type, count: recipe.result[1], fresh: choppedFresh(type) };
 
 }
 
@@ -630,13 +637,13 @@ export function craftAll(inventory, limit = STACK_SIZE) {
 
         const result = gridResult(inventory.craft);
 
-        if (!result || (first && result.recipe !== first.recipe) || !inventory.canAdd(result.type, result.count)) {
+        if (!result || (first && result.recipe !== first.recipe) || !inventory.canAdd(result.type, result.count, result.fresh)) {
             break;
         }
 
         craftFromGrid(inventory);
 
-        inventory.add(result.type, result.count);
+        inventory.addItem(result);
 
         first ??= result;
 

@@ -65,13 +65,55 @@ Dymi i strzela polano, które właśnie się pali. Modrzew sypie iskrami, świer
 
 ### Luki i świadome uproszczenia
 
-- **Drewno jest zawsze suche.** Wilgotność świeżego drewna, suszenie i mokre drewno w ognisku to następna wersja (cechy `fresh` są już w danych).
+- (1.32.0) Drewno było zawsze suche - od 1.33.0 jest wilgotność, opis niżej.
 - **Deszcz nie gasi ogniska**, a pochodnie jeszcze się nie wypalają - kolejne wersje części A.
 - **Twardość** drewna jest w danych i w `/drewno`, ale nic jeszcze nie robi - czeka na ścinanie i narzędzia (części B i C).
 - Temperatura zależy tylko od polana z wierzchu, nie od wielkości stosu; liczby (stała 12 s dochodzenia do żaru, wzór na ciepło, czas żaru) dobrałem na oko - do strojenia w grze.
 - Polano na żarze zajmuje się także, gdy nikt nie patrzy; napis i osiągnięcie dostaje tylko gracz w promieniu 8 bloków.
 - W grze ze znajomymi temperaturę i żar każdy liczy u siebie (jak dotąd spalanie) - krótko po dołączeniu liczby mogą się różnić o kilka stopni.
 - Rozpałka to dwa patyki wetknięte między górne polana; nie mają własnej animacji zapłonu.
+
+## Wilgotność drewna (1.33.0)
+
+Druga część projektu drewna ([drewno.md](drewno.md), A2).
+
+![Mokre i suche polana: pasek, opis, dym, schnięcie przy ogniu](wilgotnosc-1330.jpg)
+
+- **Polana prosto spod siekiery są mokre** - tym bardziej, im więcej soku ma gatunek. Brzoza, olcha, wierzba, cypryśnik i namorzyn są bardzo mokre (80% wody), dąb, buk, klon i lipa mokre (60%), sosna, świerk i większość iglastych wilgotne (40%), a **oliwka, akacja, sosna oścista i jukka palą się od razu** (15%). Baobab jest nasiąknięty (95%).
+- Wilgotność niesie **stos polan**: mokry ma **niebieski pasek** na ikonce (tym dłuższy, im więcej wody) i opis po najechaniu, np. „Mokre (60% wody) - teraz zapłon 389°, żar 729°". Suche i mokre polana leżą w osobnych stosach; położone ręcznie jeden na drugi mieszają się i wilgotność wychodzi ze średniej. **Pnie wilgotności nie mają** - drewno schnie dopiero porąbane.
+- **Mokre polano trudniej zapalić i słabiej grzeje.** Do 15% wody jest suche; powyżej kara rośnie i przy 80% jest pełna: zapłon **o 100° wyższy**, żar **o 30% niższy**. Świeży dąb: zapłon 389° zamiast 320°, żar 729° zamiast 920°. Świeża sosna prawie tego nie czuje (258°) - żywica pomaga.
+- Zwykła kora (280°) i dwa patyki (400°) zapalą świeże drewno każdego gatunku poza namorzynem i baobabem - te trzeba najpierw podsuszyć albo dołożyć do płonącego ognia. Gra mówi wprost: „Dąb (mokre drewno) zajmuje się od 389°, a podpałka daje 280°…".
+- **W płonącym ognisku drewno schnie.** Polano z wierzchu schnie, paląc się (w połowie palenia zostaje ćwierć nadmiaru wody) - najpierw **syczy i dymi na biało**, a ogień jest chłodniejszy. Polana pod nim schną od ciepła (w pełni mokre w 5 minut). Mokre polano dołożone do ognia zawsze się zajmie, ale na chwilę studzi ognisko.
+
+### Schnięcie
+
+Ubytek wilgotności na dobę gry (20 minut) = 0,35 × miejsce × temperatura + ogień:
+
+| Miejsce | Mnożnik | Świeży dąb wyschnie (15°C) |
+|---|---|---|
+| plecak, skrzynia | 0,3 | ok. 4 doby |
+| piwniczka (skrzynia bez nieba nad sobą) | 0,15 | ok. 8,5 doby |
+| na ziemi albo w zimnym stosie ogniska | 1 | ok. 1,3 doby |
+| to samo w słońcu (dzień, gołe niebo, bez deszczu) | 1,5 | niecała doba |
+| dwa bloki od płonącego ogniska | +4 na dobę | ok. 2 minuty |
+
+- **Temperatura**: przy 15°C zwykłe tempo, w upale do dwóch razy szybciej, na mrozie pięć razy wolniej - zimą drewno suszy się przy ogniu.
+- **Ogień**: liczy się ciepło ogniska w tym miejscu (jak przy ogrzewaniu gracza) - im bliżej i im gorętszy ogień, tym szybciej. W plecaku działa w 30%: stojąc przy ognisku, wysuszysz dąb w ok. 7 minut; polana rzucone obok ognia (klawisz wyrzucania) wyschną w ok. 2 minuty.
+- **Deszcz** moczy polana leżące pod gołym niebem i zimne stosy ognisk (do 60% wody); plecak, skrzynia i dach chronią. Polano w wodzie nasiąka (95%).
+- Gdy drewno w plecaku albo obok gracza wyschnie, gra pisze „Drewno wyschło: …".
+
+### Luki (wilgotność)
+
+- **Drewutni jeszcze nie ma** - wygodny stos do suszenia pod dachem to następna wersja. Na razie suszy się w plecaku, w skrzyni, na ziemi i przy ogniu.
+- **Deszcz nie gasi płonącego ogniska** i nie moczy polan, które się palą (pogoda a ogień - wersja A3).
+- **Pnie i deski nie mają wilgotności**; mokry jest każdy świeżo porąbany stos polan, nawet z pnia, który rok leżał w skrzyni. Suche drewno z powalonych drzew dojdzie ze ścinaniem (część B).
+- Deszcz i temperaturę liczy się tam, gdzie stoi gracz - dalekie (niewczytane) polana schną w zwykłym tempie pory roku i nie mokną.
+- Mokrych polan na stosie nie widać po teksturze - tylko po pasku, opisie, dymie i syku.
+- Liczby (100°, 30%, tempo schnięcia) są na oko - do strojenia. `/drewno tempo` przyspiesza schnięcie do prób.
+
+### Do sprawdzania (wilgotność)
+
+`/drewno swieze dąb` (mokre polana), `/drewno mokre 60`, `/drewno ognisko dąb mokre`, `/drewno schniecie`, `/drewno tempo 50` ([komendy.md](komendy.md)). Test: `tools/sprawdz_wilgotnosci.mjs`.
 
 ## Wcześniej
 

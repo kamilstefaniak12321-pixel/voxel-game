@@ -899,6 +899,16 @@ export const ACHIEVEMENTS = [
         when: (data) => data.into === 'tilled_humus'
     },
     {
+        id: 'best_soil',
+        tier: 'common',
+        title: 'Najlepsza grządka',
+        task: 'Wyceluj w ziemię, na której rośliny rosną najszybciej: pole z kompostem przy wodzie (napis pod celownikiem: ×1,88).',
+        comment: 'Teraz tylko czekać. Najlepiej z herbatą.',
+        icon: 'tilled_compost',
+        on: 'soil_seen',
+        when: (data) => data.total >= 1.8
+    },
+    {
         id: 'vine_planted',
         tier: 'common',
         title: 'Na podporze',

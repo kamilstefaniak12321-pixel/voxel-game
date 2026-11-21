@@ -9,15 +9,9 @@ pamięć, nie umowa. Po każdej wydanej wersji wpis przechodzi do
 - **1.30.0 - Pnącza** (PR #183) z paczki Kamila (food_pack_all):
   winorośl, chmiel, kiwi i marakuja - wieloletnie, rosną po podporach;
   nowe podpory: kratka, tyczka, pergola ([pnacza.md](pnacza.md)).
-- **1.27.0 - Włókna i ubrania** ([ubrania.md](ubrania.md)): moczenie
-  lnu i pokrzywy, włókno, sznur, stół krawiecki w świecie (tkanie,
-  wykroje, wzory, barwienie), ubrania na postaci, grzeją w zimnie.
 
 ## Dalej
 
-- **1.29.0 - Wygoda**: pasek świeżości na ikonce stosu, opis stosu na
-  telefonie, mnożnik ziemi widoczny na polu, wyraźniejsze kamyki na
-  polu kamienistym.
 - **1.31.0 - Fasola i groch**: jednoroczne, na tyczkach (też wigwam
   i rząd w kształcie A) i na siatce / chruście; suche strąki na koniec
   sezonu.

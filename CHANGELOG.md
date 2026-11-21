@@ -13,7 +13,7 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ## 1.30.0 - Pnącza
 
-PR #183. (Po 1.29.0 z PR #182.)
+PR #183.
 
 - **Winorośl, chmiel, kiwi i marakuja** z paczki Kamila - pnącza, które
   **rosną po podporze** (decyzja Kamila): owoc sadzi się PPM w kratkę
@@ -30,6 +30,28 @@ PR #183. (Po 1.29.0 z PR #182.)
 - Ikonki owoców w stylu z 1.28.0. Osiągnięcia *Na podporze*,
   *Winobranie*, *Chmielnik*, *Pod pergolą*; komenda `/pnacza` (galeria,
   daj, znajdz). Opis: `docs/pnacza.md`.
+
+## 1.29.0 - Wygoda
+
+PR #182.
+
+- **Pasek świeżości** na ikonce stosu: w ekwipunku, w skrzyni, na pasku
+  bloków i na stosie trzymanym kursorem - pełny zielony, coraz krótszy,
+  żółty, na końcu czerwony. Jedzenie prosto z krzaka paska nie ma;
+  w trybie twórczym nie ma pasków. Dwa stosy malin o różnej świeżości
+  widać od razu.
+- **Opis stosu na telefonie**: przytrzymanie palca na miejscu
+  w ekwipunku pokazuje opis (świeżość, ciepło ubrania...), stos zostaje
+  na miejscu.
+- **Ziemia pod celownikiem**: mały napis „Wzrost: pole z kompostem ×1,5
+  · woda ×1,25 = ×1,88" - na polu, na rosnącej roślinie (ziemia pod
+  nią) i na zwykłej ziemi, gdy w ręce jest coś do sadzenia, łopata albo
+  kompost. Zielony na żyznej ziemi, pomarańczowy na jałowej.
+- **Wyraźniejsze kamyki** na rozgrzebanej ziemi kamienistej (większe,
+  z cieniem) - łatwo ją odróżnić od zwykłego pola.
+- Osiągnięcie *Najlepsza grządka* (wyceluj w pole z kompostem przy
+  wodzie). Komenda `/psucie paski` - pięć stosów malin o różnej
+  świeżości.
 
 ## 1.28.0 - Nowe ikonki owoców
 

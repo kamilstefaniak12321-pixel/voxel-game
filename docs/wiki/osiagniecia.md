@@ -2,7 +2,7 @@
 
 > Ta strona jest generowana z kodu gry (`python tools/wiki.py`) - nie zmieniaj jej ręcznie, zmiany przepadną przy następnym generowaniu.
 
-Wersja gry **1.30.0** - 125 osiągnięć. Księga osiągnięć: klawisz **L**. Uwaga, spoilery: sekretne osiągnięcia są tu opisane (w grze widać tylko „???”).
+Wersja gry **1.30.0** - 126 osiągnięć. Księga osiągnięć: klawisz **L**. Uwaga, spoilery: sekretne osiągnięcia są tu opisane (w grze widać tylko „???”).
 
 
 ## Zwykłe (10 pkt)
@@ -66,6 +66,7 @@ Wersja gry **1.30.0** - 125 osiągnięć. Księga osiągnięć: klawisz **L**. U
 | <img src="ikony/shirt_linen.png" width="32" height="32" alt=""> | **Krawiec** | Uszyj ubranie na stole krawieckim: płótno, krój i wzór. | „Rękawy nierówne, ale za to własne.” |
 | <img src="ikony/dye_red.png" width="32" height="32" alt=""> | **Kolorowo** | Zabarw ubranie - przy szyciu albo później, na gotowym. | „Teraz cię widać z daleka.” |
 | <img src="ikony/tilled_humus.png" width="32" height="32" alt=""> | **Czarna bruzda** | Rozgrzeb łopatą czarnoziem - na takim polu rośliny rosną szybciej. | „Ziemia tak dobra, że aż szkoda po niej chodzić.” |
+| <img src="ikony/tilled_compost.png" width="32" height="32" alt=""> | **Najlepsza grządka** | Wyceluj w ziemię, na której rośliny rosną najszybciej: pole z kompostem przy wodzie (napis pod celownikiem: ×1,88). | „Teraz tylko czekać. Najlepiej z herbatą.” |
 | <img src="ikony/vine_trellis.png" width="32" height="32" alt=""> | **Na podporze** | Posadź pnącze: owoc winorośli, kiwi albo marakui (albo szyszkę chmielu) PPM przy murze, w kratkę albo tyczkę na ziemi. | „Teraz niech samo wejdzie na górę. Ono wie jak.” |
 | <img src="ikony/grapes.png" width="32" height="32" alt=""> | **Winobranie** | Zbierz winogrona z winorośli. | „Słodkie, bo z muru od strony słońca.” |
 | <img src="ikony/hop_cone.png" width="32" height="32" alt=""> | **Chmielnik** | Zbierz szyszki chmielu z tyczki. | „Pachnie tak, że od razu chce się spać. Na zdrowie - w naparze.” |

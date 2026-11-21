@@ -42,6 +42,10 @@ import { COLD_STATES, COLD_COMFORT } from '../game/Wellbeing.js';
 import { CLOTHS, PATTERNS, DYE_COLORS, SLOTS as CLOTHING_SLOTS, SLOT_LABELS, cleanLook, lookText, wornWarmth } from '../items/clothing.js';
 import { isFieldBlock } from '../blocks/fertilizers.js';
 import { spoilText, temperatureFactor, isPerishable, daysLeft, daysText, freshText } from '../items/spoilage.js';
+import { makeItem } from '../items/freshness.js';
+
+// Świeżość stosów z /psucie paski.
+const FRESH_BAR_SAMPLES = [1, 0.8, 0.5, 0.25, 0.06];
 import { newPot, cookPot } from '../game/CookingState.js';
 import { newCampfire, addFirewood } from '../game/CampfireState.js';
 import { LOW_PLANTS, LOW_PLANT_NAMES, SPHAGNUM, lowPlantType, lowPlantInfo, LOW_STAGE_SECONDS, LOW_PLANT_FIRST_ID, LOW_PLANT_END_ID } from '../blocks/lowPlants.js';
@@ -1492,8 +1496,8 @@ export const WORLD_COMMANDS = [
     {
         name: 'psucie',
         aliases: ['spoilage', 'psuje'],
-        usage: '/psucie | /psucie tempo <mnożnik> | /psucie dni <ile> | /psucie swiezosc <procent>',
-        description: 'Psucie się jedzenia (1.23.0): temperatura i tempo tu, gdzie stoisz, i świeżość stosu w ręce; "tempo" przyspiesza albo wyłącza psucie (0), "dni" od razu starzeje jedzenie tak, jakby minęło tyle dób gry, "swiezosc" ustawia świeżość stosu w ręce.',
+        usage: '/psucie | /psucie tempo <mnożnik> | /psucie dni <ile> | /psucie swiezosc <procent> | /psucie paski',
+        description: 'Psucie się jedzenia (1.23.0): temperatura i tempo tu, gdzie stoisz, i świeżość stosu w ręce; "tempo" przyspiesza albo wyłącza psucie (0), "dni" od razu starzeje jedzenie tak, jakby minęło tyle dób gry, "swiezosc" ustawia świeżość stosu w ręce, "paski" daje maliny o różnej świeżości (paski świeżości, 1.29.0).',
 
         run(args, { game }) {
 
@@ -1535,7 +1539,16 @@ export const WORLD_COMMANDS = [
                 return `${getItemLabel(held.type)} w ręce: świeżość ${percent}% - ${freshText(held, temperature)}.`;
             }
 
-            throw new CommandError('Użycie: /psucie | /psucie tempo <mnożnik> | /psucie dni <ile> | /psucie swiezosc <procent>');
+            if (word === 'paski') {
+                // Pięć stosów malin od świeżych do prawie zepsutych - do
+                // obejrzenia pasków świeżości (1.29.0).
+                const given = FRESH_BAR_SAMPLES.filter((fresh) => game.inventory.addItem(makeItem('raspberry', 4, fresh)) === 0).length;
+                if (!given) throw new CommandError('Brak miejsca w ekwipunku');
+                return `Dano ${given} stosów malin o świeżości ${FRESH_BAR_SAMPLES.slice(0, given).map((fresh) => `${Math.round(fresh * 100)}%`).join(', ')}` +
+                    `${spoilage.active ? '' : ' - paski widać tylko w trybie przygody'}.`;
+            }
+
+            throw new CommandError('Użycie: /psucie | /psucie tempo <mnożnik> | /psucie dni <ile> | /psucie swiezosc <procent> | /psucie paski');
 
         }
     },

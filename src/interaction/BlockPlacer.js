@@ -1,3 +1,4 @@
+import { isSoilId } from '../blocks/soil.js';
 import {
     isLiquidId,
     isPlantId,
@@ -101,9 +102,10 @@ export class BlockPlacer {
 
         // Kratka (1.30.0): przodem do gracza - wzdłuż x, gdy patrzy na
         // północ albo południe.
-        if (blockType === 'vine_trellis') {
+        // (Siatka na groch - 1.31.0 - tak samo.)
+        if (blockType === 'vine_trellis' || blockType === 'pea_net') {
             const look = lookFacing(this.player?.yaw ?? 0);
-            blockType = look === 'north' || look === 'south' ? 'vine_trellis' : 'vine_trellis_z';
+            blockType = look === 'north' || look === 'south' ? blockType : `${blockType}_z`;
         }
 
         const target = this.targetOf(hit, blockType);
@@ -113,6 +115,13 @@ export class BlockPlacer {
         }
 
         const { x, y, z } = target;
+
+        // Wigwam z tyczek (1.31.0) stoi na ziemi i ma trzy bloki wysokości -
+        // nad nim musi być wolne.
+        if (blockType === 'bean_wigwam' && (!isSoilId(this.world.getBlockId(x, y - 1, z)) ||
+            this.world.getBlockId(x, y + 1, z) !== 0 || this.world.getBlockId(x, y + 2, z) !== 0)) {
+            return false;
+        }
 
 
         // Wieniec: wersja zwrócona od klikniętej ściany (nie na górze

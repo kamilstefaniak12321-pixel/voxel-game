@@ -19,5 +19,7 @@ export const REDRAWN_ITEMS = new Set([
     'jablon_jablko', 'banyan_fig', 'olive_oliwki', 'coconut_palm_kokos', 'baobab_fruit', 'dragon_tree_berries', 'chili_pepper',
     'hazelnut', 'beechnuts', 'acorn', 'araucaria_nuts', 'pumpkin_slice', 'zucchini', 'roasted_pumpkin_slice', 'roasted_zucchini',
     // 1.30.0: owoce pnączy.
-    'grapes', 'hop_cone', 'kiwi', 'passion_fruit'
+    'grapes', 'hop_cone', 'kiwi', 'passion_fruit',
+    // 1.31.0: fasola i groch.
+    'bean_pod', 'beans', 'pea_pod', 'peas'
 ]);

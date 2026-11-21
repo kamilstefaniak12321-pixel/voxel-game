@@ -24,7 +24,7 @@ export * from './cookingData.js';
 
 // Rodzaje składników. Czego tu nie ma, a jest surową przekąską - owoc.
 const KINDS = {
-    vegetable: ['pumpkin_slice', 'zucchini'],
+    vegetable: ['pumpkin_slice', 'zucchini', 'bean_pod', 'beans', 'pea_pod', 'peas'],
     nut: ['hazelnut', 'beechnuts', 'acorn', 'araucaria_nuts', 'pumpkin_seeds', 'coconut_palm_kokos'],
     savory: ['olive_oliwki', 'chili_pepper']
 };

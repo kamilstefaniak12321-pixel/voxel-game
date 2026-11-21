@@ -294,7 +294,23 @@ function resolveBiome(biome, key) {
             density: habitat[key][0],
             level: patchLevel(habitat[key][1]),
             salt: getBlockId(type)
-        }))
+        })),
+        // Dzika fasola i groch (1.31.0, blocks/vines.js): płożą się po
+        // ziemi - plamy jak u roślin niskich, na końcu listy.
+        ...VINE_NAMES.filter((species) => VINES[species].habitat?.[key]).map((species) => {
+            const vine = VINES[species];
+            const [density, cover] = vine.habitat[key];
+            const stages = Object.entries(vine.wild);
+            let sum = 0;
+            return {
+                id: 0,
+                ids: stages.map(([stage]) => vineId(species, stage, 'ground')),
+                weights: stages.map(([, weight]) => (sum += weight)),
+                density,
+                level: patchLevel(cover),
+                salt: vineId(species, 'young', 'ground')
+            };
+        })
     ];
 
     return {

@@ -282,7 +282,9 @@ const HEIGHTS = { cranberry: [3, 6], lingonberry: [3, 5], strawberry: [4, 8], wi
     for (const [index, key] of BIOME_KEYS.entries()) {
         const patches = generator.biomeData[index].plants?.patches ?? [];
         const firstLow = patches.findIndex((patch) => low(patch.id) || patch.ids?.some(low));
-        check(firstLow < 0 || patches.slice(firstLow).every((patch) => low(patch.id) || patch.ids?.every(low)), `${key}: plamy roślin niskich na końcu`);
+        // (Od 1.31.0 po nich jeszcze dzika fasola i groch - blocks/vines.js, 15600-15999.)
+        const vine = (id) => id >= 15600 && id < 16000;
+        check(firstLow < 0 || patches.slice(firstLow).every((patch) => low(patch.id) || patch.ids?.every((id) => low(id) || vine(id))), `${key}: plamy roślin niskich na końcu`);
         const own = (BIOMES[key].plants?.patches ?? []).length;
         check(patches.slice(0, own).every((patch) => !low(patch.id)), `${key}: plamy biomu bez zmian`);
         const expected = new Set([

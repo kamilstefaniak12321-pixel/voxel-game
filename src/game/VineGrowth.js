@@ -18,6 +18,11 @@
 // VINE_REACH bloków w bok od korzenia (kawałka na ziemi) i VINE_CROWD
 // kawałków jednego gatunku w kostce 7 x 7 x 7. Liczy się tylko przy
 // wzroście (średnio co kilka minut na kawałek), nie co klatkę.
+//
+// Fasola i groch (1.31.0): każdy gatunek wchodzi tylko na swoje podpory
+// (vineMounts) - groch na siatkę, chrust i kratkę, fasola na tyczkę,
+// kratkę i wigwam. Posiane na polu bez podpory płożą się (ground)
+// i nigdzie się nie pną; wigwam to jeden blok - też bez wspinania.
 // ------------------------------------------------------------
 
 import {
@@ -29,7 +34,8 @@ import {
     isReplaceableId
 } from '../blocks/BlockRegistry.js';
 import { isSoilId } from '../blocks/soil.js';
-import { VINES, VINE_CROWD, VINE_REACH, FLAT_MOUNTS, vineInfoById, vineType, supportMount } from '../blocks/vines.js';
+import { isFieldBlock } from '../blocks/fertilizers.js';
+import { VINES, VINE_CROWD, VINE_REACH, FLAT_MOUNTS, vineInfoById, vineType, vineMounts, supportMount } from '../blocks/vines.js';
 
 // Płaskie pnącze 'north' przylega do bloku po stronie -z itd.
 export const MOUNT_OFFSET = { north: [0, 0, -1], south: [0, 0, 1], east: [1, 0, 0], west: [-1, 0, 0] };
@@ -57,29 +63,39 @@ export function vinePlanting(world, hit, species) {
     const { x, y, z } = hit.block;
     const id = world.getBlockId(x, y, z);
     const mount = supportMount(getBlockTypeById(id));
+    const mounts = vineMounts(species);
 
-    // Kratka albo tyczka na ziemi (pergola wisi wysoko - pnącze dochodzi
-    // do niej samo).
+    // Kratka, tyczka, siatka, chrust albo wigwam na ziemi (pergola wisi
+    // wysoko - pnącze dochodzi do niej samo). Tylko podpora tego gatunku.
     if (mount && mount !== 'roof') {
-        return isSoilId(world.getBlockId(x, y - 1, z)) ? { x, y, z, type: vineType(species, 'young', mount) } : null;
+        return mounts.includes(mount) && isSoilId(world.getBlockId(x, y - 1, z)) ? { x, y, z, type: vineType(species, 'young', mount) } : null;
     }
 
     const normal = hit.normal ?? { x: 0, y: 0, z: 0 };
+    const onWalls = mounts.includes('north');
 
     // Bok muru: pnącze w wolnym miejscu przed nim, nad ziemią.
-    if (normal.y === 0 && isWallId(id)) {
+    if (onWalls && normal.y === 0 && isWallId(id)) {
         const tx = x + normal.x, tz = z + normal.z;
         const side = wallSide(normal);
         if (!side || !isFree(world.getBlockId(tx, y, tz)) || !isSoilId(world.getBlockId(tx, y - 1, tz))) return null;
         return { x: tx, y, z: tz, type: vineType(species, 'young', side) };
     }
 
-    // Ziemia przy murze: pnącze nad nią, na pierwszym murze obok.
     if (normal.y === 1 && isSoilId(id) && isFree(world.getBlockId(x, y + 1, z))) {
-        for (const side of FLAT_MOUNTS) {
-            const [dx, , dz] = MOUNT_OFFSET[side];
-            if (isWallId(world.getBlockId(x + dx, y + 1, z + dz))) return { x, y: y + 1, z, type: vineType(species, 'young', side) };
+
+        // Ziemia przy murze: pnącze nad nią, na pierwszym murze obok.
+        if (onWalls) {
+            for (const side of FLAT_MOUNTS) {
+                const [dx, , dz] = MOUNT_OFFSET[side];
+                if (isWallId(world.getBlockId(x + dx, y + 1, z + dz))) return { x, y: y + 1, z, type: vineType(species, 'young', side) };
+            }
         }
+
+        // Fasola i groch: bez podpory płożą się po ziemi - siane na polu
+        // (rozgrzebanej ziemi), jak inne uprawy.
+        if (mounts.includes('ground') && isFieldBlock(getBlockTypeById(id))) return { x, y: y + 1, z, type: vineType(species, 'young', 'ground') };
+
     }
 
     return null;
@@ -90,24 +106,31 @@ export function vinePlanting(world, hit, species) {
 // Kierunki wzrostu z mocowania: [dx, dy, dz, waga].
 function directions(mount) {
     const up = [0, 1, 0, 3];
-    if (mount === 'north' || mount === 'south' || mount === 'trellis') return [up, [1, 0, 0, 1], [-1, 0, 0, 1]];
-    if (mount === 'east' || mount === 'west' || mount === 'trellis_z') return [up, [0, 0, 1, 1], [0, 0, -1, 1]];
-    if (mount === 'pole') return [up];
+    if (mount === 'north' || mount === 'south' || mount === 'trellis' || mount === 'net') return [up, [1, 0, 0, 1], [-1, 0, 0, 1]];
+    if (mount === 'east' || mount === 'west' || mount === 'trellis_z' || mount === 'net_z') return [up, [0, 0, 1, 1], [0, 0, -1, 1]];
+    if (mount === 'pole' || mount === 'brush') return [up];
+    // Na ziemi i na wigwamie roślina nigdzie się nie pnie.
+    if (mount === 'ground' || mount === 'wigwam') return [];
     return [[1, 0, 0, 1], [-1, 0, 0, 1], [0, 0, 1, 1], [0, 0, -1, 1]];
 }
 
 // Mocowanie pnącza, które z `mount` wejdzie w komórkę (x, y, z), albo null.
-export function climbMount(world, x, y, z, mount, up) {
+// species - gatunek: wchodzi tylko na swoje podpory (bez niego - na każdą).
+export function climbMount(world, x, y, z, mount, up, species = null) {
 
     const id = world.getBlockId(x, y, z);
     const target = supportMount(getBlockTypeById(id));
 
     if (target) {
+        if (species && !vineMounts(species).includes(target)) return null;
+        // Wigwam to osobna roślina - sadzi się go osobno.
+        if (target === 'wigwam') return null;
         // Na pergolę wchodzi się od dołu (z każdej podpory) albo z daszku obok.
         if (target === 'roof') return up || mount === 'roof' ? 'roof' : null;
-        // Kratka - ta sama strona; tyczka - tylko z tyczki.
+        // Kratka i siatka - ta sama strona; tyczka - tylko z tyczki, chrust -
+        // tylko z chrustu.
         if (mount === 'roof') return null;
-        if (target === 'pole') return mount === 'pole' ? 'pole' : null;
+        if (target === 'pole' || target === 'brush') return mount === target ? target : null;
         return target === mount || FLAT_MOUNTS.includes(mount) ? target : null;
     }
 
@@ -171,14 +194,14 @@ export function climbVine(world, x, y, z, random = Math.random) {
     const options = directions(info.mount).map(([dx, dy, dz, weight]) => ({ dx, dy, dz, key: random() ** (1 / weight) }));
 
     // Pergola nad kratką, tyczką albo murem - też "w górę".
-    if (info.mount !== 'roof' && info.mount !== 'pole' && !options.some((o) => o.dy === 1)) options.push({ dx: 0, dy: 1, dz: 0, key: random() });
+    if (options.length > 0 && info.mount !== 'roof' && info.mount !== 'pole' && !options.some((o) => o.dy === 1)) options.push({ dx: 0, dy: 1, dz: 0, key: random() });
 
     options.sort((a, b) => b.key - a.key);
 
     for (const { dx, dy, dz } of options) {
 
         const tx = x + dx, ty = y + dy, tz = z + dz;
-        const mount = climbMount(world, tx, ty, tz, info.mount, dy === 1);
+        const mount = climbMount(world, tx, ty, tz, info.mount, dy === 1, info.species);
 
         if (!mount) continue;
         // Przy ziemi pnącze nie rozchodzi się w bok - jeden pień, korona wyżej

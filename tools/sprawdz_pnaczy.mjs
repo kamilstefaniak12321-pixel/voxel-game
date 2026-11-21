@@ -51,7 +51,7 @@ check(R.getBlockDefinition('vine_trellis_z').inventory === false && R.getBlockDe
 let pieces = 0;
 for (const species of V.VINE_NAMES) {
     const vine = V.VINES[species];
-    for (const stage of ['young', ...vine.stages]) for (const mount of V.VINE_MOUNTS) {
+    for (const stage of ['young', ...vine.stages]) for (const mount of V.vineMounts(species)) {
         const type = V.vineType(species, stage, mount);
         const id = R.getBlockId(type);
         pieces++;
@@ -60,7 +60,8 @@ for (const species of V.VINE_NAMES) {
         if (info.species !== species || info.stage !== stage || info.mount !== mount) check(false, `${type}: opis`);
     }
 }
-check(pieces === 4 * 8 + 4 * 8 + 4 * 8 + 5 * 8, `Kawałki pnączy: ${pieces} bloków (gatunek × etap × mocowanie)`);
+// (1.31.0: + fasola 5 etapów × 5 mocowań i groch 4 × 6 - tools/sprawdz_fasoli.mjs.)
+check(pieces === 4 * 8 + 4 * 8 + 4 * 8 + 5 * 8 + 5 * 5 + 4 * 6, `Kawałki pnączy: ${pieces} bloków (gatunek × etap × mocowanie)`);
 check(R.getBlockDefinition('vine_grape_young_north').model === 'flat' && R.getBlockDefinition('vine_grape_young_north').flat.attach === 'north', 'Na murze: płaski obrazek');
 check(R.getBlockDefinition('vine_hop_leaves_pole').model === 'shape' && R.getBlockDefinition('vine_hop_leaves_pole').vineSupportType === 'garden_pole', 'Na tyczce: kształt, pod spodem tyczka');
 check(R.getGrowth('vine_grape_young_north').into === 'vine_grape_leaves_north' && R.getGrowth('vine_grape_leaves_north').into === 'vine_grape_unripe_north' &&

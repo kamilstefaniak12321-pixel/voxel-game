@@ -1741,6 +1741,8 @@ function addShape(id, renderData, lx, y, lz, faceCount, baseX, baseZ) {
     if (!boxes) return faceCount;
 
     const emission = getLightEmission(id) / MAX_LIGHT * 255;
+    // side - o ile obrazek wystaje w bok poza komórkę (z każdej strony).
+    const sprite = info.sprite ? { width: info.sprite.width, height: info.sprite.height, side: (info.sprite.width - 1) / 2 } : null;
 
     for (const box of boxes) {
 
@@ -1786,12 +1788,16 @@ function addShape(id, renderData, lx, y, lz, faceCount, baseX, baseZ) {
                 normalBuffer[p + i * 3 + 2] = normal[2];
 
                 // UV: punkt ściany pudełka w pełnej ścianie (dwuliniowo
-                // z jej czterech rogów).
+                // z jej czterech rogów). Obrazek większy niż blok
+                // (info.sprite, wigwam - 1.31.0): pudełka sięgają poza
+                // komórkę, a obrazek rozciąga się na całą ich szerokość
+                // i wysokość.
                 let u = 0, v = 0;
+                const at = sprite ? [(local[0] + sprite.side) / sprite.width, local[1] / sprite.height, (local[2] + sprite.side) / sprite.width] : local;
 
                 for (let j = 0; j < 4; j++) {
                     const other = face.corners[j];
-                    const w = (other[a1] ? local[a1] : 1 - local[a1]) * (other[a2] ? local[a2] : 1 - local[a2]);
+                    const w = (other[a1] ? at[a1] : 1 - at[a1]) * (other[a2] ? at[a2] : 1 - at[a2]);
                     u += w * fullUv[j * 2];
                     v += w * fullUv[j * 2 + 1];
                 }

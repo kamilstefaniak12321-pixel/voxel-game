@@ -63,7 +63,9 @@ const read = (path) => readFileSync(new URL(path, root), 'utf8');
 
 {
     const keeps = ['dried_fruit', 'hazelnut', 'beechnuts', 'acorn', 'araucaria_nuts', 'pumpkin_seeds', 'coconut_palm_kokos',
-        'roasted_hazelnut', 'roasted_beechnuts', 'roasted_acorn', 'tea_calm', 'tea_heal', 'tea_vigor'];
+        'roasted_hazelnut', 'roasted_beechnuts', 'roasted_acorn', 'tea_calm', 'tea_heal', 'tea_vigor',
+        // 1.31.0: nasiona na następny rok.
+        'beans', 'peas'];
     for (const type of Object.keys(FOODS)) {
         const kind = spoilKind(type);
         check(keeps.includes(type) ? kind === null : ['soft', 'firm', 'roasted', 'dish'].includes(kind), `${type}: ${keeps.includes(type) ? 'nie psuje się' : 'psuje się'}`);

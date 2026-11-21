@@ -532,6 +532,46 @@ function vineGallery(player, world) {
 
 }
 
+// Grządka fasoli i grochu przed graczem (1.31.0): wigwamy i tyczki
+// z fasolą, siatki i chrust z grochem, a z przodu obie rośliny bez
+// podpory - w każdym miejscu kolejny etap.
+function beanGarden(player, world) {
+
+    const { forwardX, forwardZ, rightX, rightZ } = lookAxes(player);
+    const y = Math.floor(player.pos.y);
+    const at = (right, ahead) => [Math.floor(player.pos.x) + rightX * right + forwardX * ahead, Math.floor(player.pos.z) + rightZ * right + forwardZ * ahead];
+    const set = (right, up, ahead, type) => { const [x, z] = at(right, ahead); world.setBlock(x, y + up, z, type); };
+    const net = forwardX === 0 ? 'net' : 'net_z';
+    const bean = ['young', ...VINES.bean.stages];
+    const pea = ['young', ...VINES.pea.stages];
+
+    for (let right = -12; right <= 12; right++) for (let ahead = 2; ahead <= 9; ahead++) {
+        const [x, z] = at(right, ahead);
+        world.setBlock(x, y - 1, z, right >= 4 && ahead <= 4 ? 'tilled_dirt' : 'grass');
+        for (let up = 0; up < 6; up++) world.clearBlock(x, y + up, z);
+    }
+
+    // Z tyłu: sześć wigwamów (pusty i pięć etapów fasoli) i pięć tyczek.
+    set(-11, 0, 7, 'bean_wigwam');
+    bean.forEach((stage, k) => set(-9 + k * 2, 0, 7, vineType('bean', stage, 'wigwam')));
+    bean.forEach((stage, k) => { for (let up = 0; up < 3; up++) set(3 + k * 2, up, 7, vineType('bean', stage, 'pole')); });
+
+    // Z przodu: groch na siatce (pusta i cztery etapy; dwie wysokie),
+    // na chruście, a na polu groch i fasola bez podpory.
+    set(-11, 0, 4, net === 'net' ? 'pea_net' : 'pea_net_z');
+    pea.forEach((stage, k) => set(-10 + k, 0, 4, vineType('pea', stage, net)));
+    set(-7, 1, 4, vineType('pea', 'ripe', net));
+    set(-8, 1, 4, vineType('pea', 'flower', net));
+    set(-4, 0, 4, 'pea_brush');
+    pea.forEach((stage, k) => set(-3 + k, 0, 4, vineType('pea', stage, 'brush')));
+    pea.forEach((stage, k) => set(4 + k, 0, 3, vineType('pea', stage, 'ground')));
+    bean.forEach((stage, k) => set(4 + k, 0, 4, vineType('bean', stage, 'ground')));
+
+    return 'Grządka: z tyłu wigwamy i tyczki z fasolą (siewki, liście, kwiaty, strąki, suche strąki), z przodu groch na siatce i chruście, ' +
+        'a na polu groch i fasola bez podpory. Kwiaty i strąki widać w porze roku: groch wiosną i latem, fasola latem i jesienią (/pora ustaw lato).';
+
+}
+
 // Najbliższe pnącze (we wczytanych chunkach): { x, y, z, type, distance }.
 function nearestVine(world, center, species) {
 
@@ -1765,8 +1805,8 @@ export const WORLD_COMMANDS = [
     {
         name: 'pnacza',
         aliases: ['vines', 'pnacze'],
-        usage: '/pnacza | /pnacza galeria | /pnacza daj | /pnacza znajdz [pnącze]',
-        description: 'Pnącza (1.30.0): winorośl, chmiel, kiwi i marakuja - lista, galeria etapów na murze, kratkach, tyczkach i pergoli, podpory i owoce do sadzenia albo najbliższe dzikie pnącze.',
+        usage: '/pnacza | /pnacza galeria | /pnacza grzadka | /pnacza daj | /pnacza znajdz [pnącze]',
+        description: 'Pnącza (1.30.0): winorośl, chmiel, kiwi i marakuja, od 1.31.0 fasola i groch - lista, galeria etapów na murze, kratkach, tyczkach i pergoli, grządka fasoli i grochu, podpory i nasiona albo najbliższe dzikie pnącze.',
 
         run(args, { player, world, game }) {
 
@@ -1775,17 +1815,22 @@ export const WORLD_COMMANDS = [
             if (!word) {
                 return `Pnącza (${VINE_NAMES.length}): ` + VINE_NAMES.map((species) => {
                     const vine = VINES[species];
-                    return `${species} - ${vine.label} (do ${vine.height} bloków, sadzi się: ${getItemLabel(vine.item).toLowerCase()})`;
-                }).join('; ') + `. Rosną po podporze: mur, kratka, tyczka, pergola. Etap trwa średnio ${VINE_STAGE_SECONDS} s (szybciej: /krzaki tempo). ` +
-                    'Galeria: /pnacza galeria, podpory i owoce: /pnacza daj, najbliższe dzikie: /pnacza znajdz.';
+                    return `${species} - ${vine.label} (${vine.annual ? 'jednoroczna, ' : ''}do ${vine.height} bloków, sadzi się: ${getItemLabel(vine.seed ?? vine.item).toLowerCase()})`;
+                }).join('; ') + `. Rosną po podporze: mur, kratka, tyczka, pergola; fasola też na wigwamie, groch na siatce i chruście. Etap trwa średnio ${VINE_STAGE_SECONDS} s (szybciej: /krzaki tempo). ` +
+                    'Galeria: /pnacza galeria, fasola i groch: /pnacza grzadka, podpory i nasiona: /pnacza daj, najbliższe dzikie: /pnacza znajdz.';
             }
 
             if (['galeria', 'gallery', 'pokaz'].includes(word)) {
                 return vineGallery(player, world);
             }
 
+            if (['grzadka', 'fasola', 'groch', 'garden'].includes(word)) {
+                return beanGarden(player, world);
+            }
+
             if (['daj', 'give'].includes(word)) {
-                const kit = [['vine_trellis', 16], ['garden_pole', 16], ['pergola', 16], ...VINE_NAMES.map((species) => [VINES[species].item, 8])];
+                const kit = [['vine_trellis', 16], ['garden_pole', 16], ['pergola', 16], ['pea_net', 8], ['pea_brush', 8], ['bean_wigwam', 4],
+                    ...VINE_NAMES.map((species) => [VINES[species].seed ?? VINES[species].item, 8])];
                 for (const [type, count] of kit) game.inventory.add(type, count);
                 return `Dano: ${kit.map(([type, count]) => `${count} × ${getItemLabel(type).toLowerCase()}`).join(', ')}.`;
             }
@@ -1794,11 +1839,11 @@ export const WORLD_COMMANDS = [
                 const species = args[1] === undefined ? null : vineByWord(args[1]);
                 if (args[1] !== undefined && !species) throw new CommandError(`Nie znam pnącza "${args[1]}". Lista: /pnacza.`);
                 const found = nearestVine(world, player.pos, species);
-                if (!found) return `We wczytanym terenie nie rośnie ${species ? VINES[species].label.toLowerCase() : 'żadne pnącze'} (dziko: na pniach w lasach liściastych - chmiel, w gajach oliwnych - winorośl, w lasach deszczowych - kiwi i marakuja).`;
+                if (!found) return `We wczytanym terenie nie rośnie ${species ? VINES[species].label.toLowerCase() : 'żadne pnącze'} (dziko: na pniach w lasach liściastych - chmiel, w gajach oliwnych - winorośl, w lasach deszczowych - kiwi i marakuja; na ziemi: groch na łąkach i w gajach oliwnych, fasola na sawannie i w lesie deszczowym).`;
                 return `Najbliżej: ${getBlockLabel(found.type).toLowerCase()}, ${Math.round(found.distance)} bloków stąd. /tp ${found.x} ${found.y + 2} ${found.z}`;
             }
 
-            throw new CommandError('Użycie: /pnacza | /pnacza galeria | /pnacza daj | /pnacza znajdz [pnącze]');
+            throw new CommandError('Użycie: /pnacza | /pnacza galeria | /pnacza grzadka | /pnacza daj | /pnacza znajdz [pnącze]');
 
         }
     },

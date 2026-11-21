@@ -26,6 +26,8 @@ import {
     blockExists,
     getBlockId,
     getBlockTypeById,
+    getBlockDefinition,
+    isSoilId,
     isSolidId,
     isPassableId,
     isOpaqueId,
@@ -866,6 +868,14 @@ export class World {
             )) {
                 this.setBlock(x, py, z, null);
             }
+        }
+
+
+        // Fasola i groch płożące się po ziemi i wigwam z tyczek (1.31.0,
+        // blocks/vines.js - needsGround) stoją na ziemi jak rośliny.
+        if (y + 1 < CHUNK_HEIGHT && !isSoilId(id)) {
+            const aboveId = this.getBlockId(x, y + 1, z);
+            if (aboveId !== AIR_ID && getBlockDefinition(getBlockTypeById(aboveId))?.needsGround) this.setBlock(x, y + 1, z, null);
         }
 
 

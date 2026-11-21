@@ -200,6 +200,35 @@ const VINE_SHAPES = {
         outline: [px(6.5, 0, 6.5, 9.5, 16, 9.5)],
         vineOutline: [px(2.5, 0, 2.5, 13.5, 16, 13.5)]
     },
+    // Chrust na groch (1.31.0): dwie skrzyżowane płyty gałązek; groch
+    // oplata je z obu stron.
+    vine_brush: {
+        support: [px(0, 0, 7.5, 16, 16, 8.5), px(7.5, 0, 0, 8.5, 16, 16)],
+        leaves: [px(0, 0, 6.4, 16, 16, 6.5), px(0, 0, 9.5, 16, 16, 9.6), px(6.4, 0, 0, 6.5, 16, 16), px(9.5, 0, 0, 9.6, 16, 16)].map(slot(1)),
+        collision: [px(5, 0, 5, 11, 16, 11)],
+        outline: [px(2, 0, 2, 14, 16, 14)],
+        vineOutline: [px(1, 0, 1, 15, 16, 15)]
+    },
+    // Fasola i groch bez podpory (1.31.0): dwie skrzyżowane płyty z liśćmi,
+    // bez kolizji.
+    vine_ground: {
+        support: [],
+        leaves: [px(0, 0, 7.95, 16, 16, 8.05), px(7.95, 0, 0, 8.05, 16, 16)].map(slot(1)),
+        collision: [],
+        outline: [px(2, 0, 2, 14, 12, 14)],
+        vineOutline: [px(2, 0, 2, 14, 12, 14)]
+    },
+    // Wigwam z tyczek (1.31.0): dwie skrzyżowane płyty 2 x 3 bloki z całym
+    // obrazkiem (info.sprite - ChunkMesher rozciąga na nie teksturę), bez
+    // kolizji. Z fasolą - te same płyty, inny obrazek.
+    vine_wigwam: {
+        support: [px(-8, 0, 7.95, 24, 48, 8.05), px(7.95, 0, -8, 8.05, 48, 24)],
+        leaves: [],
+        collision: [],
+        // (Celownik sprawdza tylko komórkę bloku - celuje się w dół wigwamu.)
+        outline: [px(1, 0, 1, 15, 16, 15)],
+        vineOutline: [px(1, 0, 1, 15, 16, 15)]
+    },
     vine_roof: {
         support: [px(0, 14, 0, 16, 16, 16)],
         leaves: [px(0, 12, 0, 16, 15.9, 16)].map(slot(1)),
@@ -227,6 +256,9 @@ export function shapeBoxes(id, purpose = 'render', mask = 0) {
     switch (info.kind) {
         case 'vine_trellis':
         case 'vine_pole':
+        case 'vine_brush':
+        case 'vine_ground':
+        case 'vine_wigwam':
         case 'vine_roof':
             return vineShapeBoxes(info, purpose);
         case 'stairs': {

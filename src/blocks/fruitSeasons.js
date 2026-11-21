@@ -21,7 +21,7 @@
 import { BLOCK_TYPES, bushStages, blockExists, getBlockId } from './BlockRegistry.js';
 import { SHRUBS, SHRUB_NAMES, shrubType } from './shrubs.js';
 import { LOW_PLANTS, LOW_PLANT_NAMES, lowPlantType } from './lowPlants.js';
-import { VINES, VINE_NAMES, VINE_MOUNTS, vineType } from './vines.js';
+import { VINES, VINE_NAMES, vineMounts, vineType } from './vines.js';
 
 // Krzaki z 0.50.0 (blocks/BlockRegistry.js - FRUIT_BUSHES).
 export const BUSH_SEASONS = {
@@ -61,7 +61,11 @@ export const VINE_SEASONS = {
     grape: [1, 2],
     hop: [1, 2],
     kiwi: [1, 2],
-    passion_fruit: [1, 2]
+    passion_fruit: [1, 2],
+    // 1.31.0, jednoroczne: groch wcześnie (wiosna, lato), fasola później
+    // (lato, jesień).
+    bean: [1, 2],
+    pea: [0, 1]
 };
 
 // Drzewa: [blok z owocami albo kwiatami, blok bez nich, pory].
@@ -138,7 +142,7 @@ export function fruitSeasonEntries() {
     for (const species of VINE_NAMES) {
         const seasons = VINE_SEASONS[species];
         if (!seasons) continue;
-        for (const mount of VINE_MOUNTS) add(VINES[species].stages.map((stage) => vineType(species, stage, mount)), seasons);
+        for (const mount of vineMounts(species)) add(VINES[species].stages.map((stage) => vineType(species, stage, mount)), seasons);
     }
 
     for (const [fruit, rest, seasons] of TREE_SEASONS) add([rest, null, fruit], seasons);

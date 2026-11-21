@@ -1,4 +1,4 @@
-# Paczka tekstur - szablon (Various Roots 1.30.0)
+# Paczka tekstur - szablon (Various Roots 1.31.0)
 
 Oryginalne tekstury gry, każda w osobnym pliku. Zrób z nich własną paczkę:
 
@@ -312,8 +312,8 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/flower_wreath.png` | Wianek z kwiatów |
 | `bloki/forest_floor_side.png` | Ściółka leśna |
 | `bloki/forest_floor_top.png` | Ściółka leśna |
-| `bloki/garden_pole.png` | Młoda winorośl, Winorośl, Winorośl (zielone grona), Winorośl (winogrona), Młody chmiel, Chmiel, Chmiel (zielone szyszki), Chmiel (dojrzałe szyszki), Młode kiwi, Pnącze kiwi, Pnącze kiwi (kwitnie), Pnącze kiwi (owoce), Młoda marakuja, Marakuja, Marakuja (kwitnie), Marakuja (zielone owoce), Marakuja (owoce) |
-| `bloki/garden_pole_top.png` | Młoda winorośl, Winorośl, Winorośl (zielone grona), Winorośl (winogrona), Młody chmiel, Chmiel, Chmiel (zielone szyszki), Chmiel (dojrzałe szyszki), Młode kiwi, Pnącze kiwi, Pnącze kiwi (kwitnie), Pnącze kiwi (owoce), Młoda marakuja, Marakuja, Marakuja (kwitnie), Marakuja (zielone owoce), Marakuja (owoce) |
+| `bloki/garden_pole.png` | Młoda winorośl, Winorośl, Winorośl (zielone grona), Winorośl (winogrona), Młody chmiel, Chmiel, Chmiel (zielone szyszki), Chmiel (dojrzałe szyszki), Młode kiwi, Pnącze kiwi, Pnącze kiwi (kwitnie), Pnącze kiwi (owoce), Młoda marakuja, Marakuja, Marakuja (kwitnie), Marakuja (zielone owoce), Marakuja (owoce), Siewki fasoli, Fasola, Fasola (kwitnie), Fasola (strąki), Fasola (suche strąki) |
+| `bloki/garden_pole_top.png` | Młoda winorośl, Winorośl, Winorośl (zielone grona), Winorośl (winogrona), Młody chmiel, Chmiel, Chmiel (zielone szyszki), Chmiel (dojrzałe szyszki), Młode kiwi, Pnącze kiwi, Pnącze kiwi (kwitnie), Pnącze kiwi (owoce), Młoda marakuja, Marakuja, Marakuja (kwitnie), Marakuja (zielone owoce), Marakuja (owoce), Siewki fasoli, Fasola, Fasola (kwitnie), Fasola (strąki), Fasola (suche strąki) |
 | `bloki/ginkgo/leaves.png` | Liście miłorzębu |
 | `bloki/ginkgo/leaves_variant.png` | Liście miłorzębu — jasne złoto |
 | `bloki/ginkgo/log_side.png` | Pień miłorzębu |
@@ -378,6 +378,9 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/humus.png` | Rozgrzebany czarnoziem, Czarnoziem |
 | `bloki/ice_block.png` | - |
 | `bloki/item_aronia.png` | Aronia |
+| `bloki/item_bean_pod.png` | Strąk fasoli |
+| `bloki/item_bean_wigwam.png` | - |
+| `bloki/item_beans.png` | Fasola |
 | `bloki/item_blackcurrant.png` | Czarne porzeczki |
 | `bloki/item_cranberry.png` | Żurawina |
 | `bloki/item_elderberry.png` | Owoce bzu czarnego |
@@ -388,6 +391,8 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/item_kiwi.png` | Kiwi |
 | `bloki/item_lingonberry.png` | Borówki brusznice |
 | `bloki/item_passion_fruit.png` | Marakuja |
+| `bloki/item_pea_pod.png` | Strąk grochu |
+| `bloki/item_peas.png` | Groch |
 | `bloki/item_pumpkin_seeds.png` | Pestki dyni |
 | `bloki/item_pumpkin_slice.png` | Kawałek dyni |
 | `bloki/item_raspberry.png` | Maliny |
@@ -797,6 +802,8 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/olive/stripped_side.png` | Okorowany pień oliwki |
 | `bloki/olive/stripped_top.png` | Okorowany pień oliwki |
 | `bloki/olive_bark.png` | Kora oliwki |
+| `bloki/pea_brush.png` | Siewki grochu, Groch, Groch (kwitnie), Groch (strąki) |
+| `bloki/pea_net.png` | Siatka na groch, Siewki grochu, Groch, Groch (kwitnie), Groch (strąki) |
 | `bloki/pergola_slats.png` | Młoda winorośl, Winorośl, Winorośl (zielone grona), Winorośl (winogrona), Młody chmiel, Chmiel, Chmiel (zielone szyszki), Chmiel (dojrzałe szyszki), Młode kiwi, Pnącze kiwi, Pnącze kiwi (kwitnie), Pnącze kiwi (owoce), Młoda marakuja, Marakuja, Marakuja (kwitnie), Marakuja (zielone owoce), Marakuja (owoce) |
 | `bloki/pickaxe.png` | Kilof |
 | `bloki/pickaxe_basalt.png` | Kilof bazaltowy |
@@ -1116,6 +1123,11 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/vest_bast.png` | Kamizelka z łyka |
 | `bloki/vest_linen.png` | Kamizelka lniana |
 | `bloki/vest_nettle.png` | Kamizelka pokrzywowa |
+| `bloki/vine_bean_dry.png` | Fasola (suche strąki) |
+| `bloki/vine_bean_flower.png` | Fasola (kwitnie) |
+| `bloki/vine_bean_leaves.png` | Fasola |
+| `bloki/vine_bean_ripe.png` | Fasola (strąki) |
+| `bloki/vine_bean_young.png` | Siewki fasoli |
 | `bloki/vine_grape_leaves.png` | Winorośl |
 | `bloki/vine_grape_ripe.png` | Winorośl (winogrona) |
 | `bloki/vine_grape_unripe.png` | Winorośl (zielone grona) |
@@ -1135,7 +1147,11 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/vine_passion_fruit_ripe.png` | Marakuja (owoce) |
 | `bloki/vine_passion_fruit_unripe.png` | Marakuja (zielone owoce) |
 | `bloki/vine_passion_fruit_young.png` | Młoda marakuja |
-| `bloki/vine_trellis.png` | Kratka, Młoda winorośl, Winorośl, Winorośl (zielone grona), Winorośl (winogrona), Młody chmiel, Chmiel, Chmiel (zielone szyszki), Chmiel (dojrzałe szyszki), Młode kiwi, Pnącze kiwi, Pnącze kiwi (kwitnie), Pnącze kiwi (owoce), Młoda marakuja, Marakuja, Marakuja (kwitnie), Marakuja (zielone owoce), Marakuja (owoce) |
+| `bloki/vine_pea_flower.png` | Groch (kwitnie) |
+| `bloki/vine_pea_leaves.png` | Groch |
+| `bloki/vine_pea_ripe.png` | Groch (strąki) |
+| `bloki/vine_pea_young.png` | Siewki grochu |
+| `bloki/vine_trellis.png` | Kratka, Młoda winorośl, Winorośl, Winorośl (zielone grona), Winorośl (winogrona), Młody chmiel, Chmiel, Chmiel (zielone szyszki), Chmiel (dojrzałe szyszki), Młode kiwi, Pnącze kiwi, Pnącze kiwi (kwitnie), Pnącze kiwi (owoce), Młoda marakuja, Marakuja, Marakuja (kwitnie), Marakuja (zielone owoce), Marakuja (owoce), Siewki fasoli, Fasola, Fasola (kwitnie), Fasola (strąki), Fasola (suche strąki), Siewki grochu, Groch, Groch (kwitnie), Groch (strąki) |
 | `bloki/water.png` | Woda, Płynąca woda |
 | `bloki/wet_clay_bowl.png` | Mokra miska z gliny |
 | `bloki/wet_clay_brick.png` | Mokra cegła z gliny |

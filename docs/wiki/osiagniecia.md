@@ -2,7 +2,7 @@
 
 > Ta strona jest generowana z kodu gry (`python tools/wiki.py`) - nie zmieniaj jej ręcznie, zmiany przepadną przy następnym generowaniu.
 
-Wersja gry **1.30.0** - 126 osiągnięć. Księga osiągnięć: klawisz **L**. Uwaga, spoilery: sekretne osiągnięcia są tu opisane (w grze widać tylko „???”).
+Wersja gry **1.31.0** - 129 osiągnięć. Księga osiągnięć: klawisz **L**. Uwaga, spoilery: sekretne osiągnięcia są tu opisane (w grze widać tylko „???”).
 
 
 ## Zwykłe (10 pkt)
@@ -68,6 +68,9 @@ Wersja gry **1.30.0** - 126 osiągnięć. Księga osiągnięć: klawisz **L**. U
 | <img src="ikony/tilled_humus.png" width="32" height="32" alt=""> | **Czarna bruzda** | Rozgrzeb łopatą czarnoziem - na takim polu rośliny rosną szybciej. | „Ziemia tak dobra, że aż szkoda po niej chodzić.” |
 | <img src="ikony/tilled_compost.png" width="32" height="32" alt=""> | **Najlepsza grządka** | Wyceluj w ziemię, na której rośliny rosną najszybciej: pole z kompostem przy wodzie (napis pod celownikiem: ×1,88). | „Teraz tylko czekać. Najlepiej z herbatą.” |
 | <img src="ikony/vine_trellis.png" width="32" height="32" alt=""> | **Na podporze** | Posadź pnącze: owoc winorośli, kiwi albo marakui (albo szyszkę chmielu) PPM przy murze, w kratkę albo tyczkę na ziemi. | „Teraz niech samo wejdzie na górę. Ono wie jak.” |
+| <img src="ikony/beans.png" width="32" height="32" alt=""> | **Wigwam** | Posiej fasolę na wigwamie z tyczek (3 tyczki i sznur; fasola PPM w wigwam stojący na ziemi). | „Za miesiąc nie będzie widać tyczek.” |
+| <img src="ikony/pea_pod.png" width="32" height="32" alt=""> | **Zielony groszek** | Zbierz strąki grochu z siatki albo chrustu. | „Połowa nie doniesie się do domu. Tak ma być.” |
+| <img src="ikony/beans.png" width="32" height="32" alt=""> | **Na przyszły rok** | Zostaw strąki fasoli na pędach, aż wyschną, i zbierz suchą fasolę. | „Kto zjadł wszystko latem, ten zimą szuka nasion po sąsiadach.” |
 | <img src="ikony/grapes.png" width="32" height="32" alt=""> | **Winobranie** | Zbierz winogrona z winorośli. | „Słodkie, bo z muru od strony słońca.” |
 | <img src="ikony/hop_cone.png" width="32" height="32" alt=""> | **Chmielnik** | Zbierz szyszki chmielu z tyczki. | „Pachnie tak, że od razu chce się spać. Na zdrowie - w naparze.” |
 | <img src="ikony/kiwi.png" width="32" height="32" alt=""> | **Pod pergolą** | Zerwij kiwi albo marakuję wiszące pod pergolą. | „Cień, owoce nad głową. Można tu zostać.” |

@@ -80,6 +80,11 @@ export const FOODS = {
     grapes: { energy: 7, fullness: 50, kind: 'snack', effects: [] },
     kiwi: { energy: 7, fullness: 55, kind: 'snack', effects: [] },
     passion_fruit: { energy: 6, fullness: 50, kind: 'snack', effects: [] },
+    // 1.31.0: fasola i groch - warzywa do garnka; na surowo dają mało.
+    bean_pod: { energy: 4, fullness: 45, kind: 'snack', effects: [] },
+    beans: { energy: 5, fullness: 60, kind: 'snack', effects: [] },
+    pea_pod: { energy: 5, fullness: 45, kind: 'snack', effects: [] },
+    peas: { energy: 5, fullness: 50, kind: 'snack', effects: [] },
     // 1.21.0: suszone owoce (items/drying.js) - z każdego świeżego owocu.
     dried_fruit: { energy: 9, fullness: 90, kind: 'snack', effects: [] },
 

@@ -149,7 +149,9 @@ export function itemShapeFaces(type) {
     if (bedding) return matFaces(bedding);
     if (type === SEWING_TABLE) return sewingTableFaces();
     // Kratka, tyczka, pergola (1.30.0): kształt podpory z jej teksturą.
-    if (VINE_SUPPORTS[type]) {
+    // (Wigwam z tyczek ma płaską ikonkę - obrazek 2 x 3 bloki nie mieści się
+    // w modelu przedmiotu.)
+    if (VINE_SUPPORTS[type] && VINE_SUPPORTS[type].mount !== 'wigwam') {
         const support = VINE_SUPPORTS[type];
         return boxFaces(shapeBoxes(support.id), support.textures.all ?? support.textures.side);
     }

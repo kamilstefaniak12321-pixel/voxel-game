@@ -103,7 +103,8 @@ Współrzędne można podawać względem gracza: `~` (tu, gdzie stoję),
 | `/niskie znajdz [roślina]` | najbliższa roślina niska we wczytanym terenie (np. `zurawina`, `brusznica`, `poziomka`, `dynia`): odległość i komenda `/tp` |
 | `/pnacza` | pnącza (1.30.0, `docs/pnacza.md`): winorośl, chmiel, kiwi, marakuja - wysokość, czym się sadzi, na czym rosną |
 | `/pnacza galeria` | przed tobą: mur z winoroślą, kratki z marakują, tyczki z chmielem i pergola z kiwi - wszystkie etapy (zmienia świat) |
-| `/pnacza daj` | 16 kratek, 16 tyczek, 16 pergoli i po 8 owoców do sadzenia (winogrona, szyszki chmielu, kiwi, marakuja) |
+| `/pnacza grzadka` | grządka fasoli i grochu (1.31.0): wigwamy i tyczki z fasolą, siatki i chrust z grochem, na polu obie rośliny bez podpory - wszystkie etapy (zmienia świat) |
+| `/pnacza daj` | 16 kratek, 16 tyczek, 16 pergoli, 8 siatek, 8 chrustów, 4 wigwamy i po 8 owoców albo nasion do sadzenia (winogrona, szyszki chmielu, kiwi, marakuja, fasola, groch) |
 | `/pnacza znajdz [pnącze]` | najbliższe pnącze we wczytanym terenie (np. `chmiel`, `kiwi`): odległość i komenda `/tp` |
 | `/garnek` | gotowanie (1.20.0, `docs/gotowanie.md`): zestaw do ekwipunku - garnek z wodą, trzy miski, składniki, opał, kora i starter ognia; wypisuje potrawy |
 | `/garnek ognisko` | dwa bloki przed tobą staje płonące ognisko z garnkiem wody (zmienia świat) |

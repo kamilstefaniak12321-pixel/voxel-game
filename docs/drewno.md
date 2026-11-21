@@ -1,7 +1,8 @@
 # Drewno, ogień i ścinanie drzew - projekt
 
-> **Stan: projekt do uzgodnienia z Kamilem (21.11.2026). Nic z tego nie
-> jest jeszcze w grze.** Zarys jest Kamila; tu jest ułożony tak, żeby
+> **Stan: projekt uzgodniony z Kamilem 21.11.2026 (odpowiedzi w rozdziale
+> 12). Nic z tego nie jest jeszcze w grze** - zaczynamy po fasoli
+> i grochu (1.31.0). Zarys jest Kamila; tu jest ułożony tak, żeby
 > pasował do tego, co gra już ma (ognisko, kora, nóż, pory roku, pogoda,
 > zimno, glina, meteoryty). Moje dodatki są oznaczone *(dodatek)*.
 > Wszystkie liczby to punkt wyjścia do strojenia w grze.
@@ -149,11 +150,21 @@ Dziś każde polano pali się 80 s i grzeje tak samo. Po zmianie:
 - PPM pustą ręką na ognisku mówi (jak dziś) ile polan zostało,
   a dodatkowo jaką ma temperaturę.
 
-**Pochodnie.** Patyk jest wspólny dla wszystkich gatunków, więc
-w pochodni liczy się paliwo. *(dodatek)* **Łuczywo**: żywiczne polano
-(sosna, kosodrzewina, świerk, modrzew, sosna oścista) → 4 łuczywa -
-pochodnia bez zbierania żywicy, jasna, ale pali się krótko. Czy zwykłe
-pochodnie mają się wypalać - pytanie na końcu.
+**Pochodnie się wypalają** (decyzja Kamila). Patyk jest wspólny dla
+wszystkich gatunków, więc w pochodni liczy się paliwo:
+
+- Pochodnia pali się ograniczony czas: **łuczywo** krótko, pochodnia
+  z **żywicą** dłużej, z **olejem** najdłużej (rząd wielkości: od kilku
+  minut do doby-dwóch gry - do strojenia, żeby nie męczyło).
+- **Przygasa etapami**: światło słabnie, na końcu zostaje sam żar
+  i wypalony ogarek.
+- Ogarek **odnawia się** żywicą albo olejem (PPM) i rozpala starterem
+  ognia. Deszcz gasi pochodnie pod gołym niebem.
+- **Lampy** (lepidolit, olej, kora brzozowa) nie gasną - to nagroda za
+  trudniejszy przepis.
+- *(dodatek)* **Łuczywo**: żywiczne polano (sosna, kosodrzewina, świerk,
+  modrzew, sosna oścista) → 4 łuczywa - pochodnia bez zbierania żywicy,
+  jasna, ale na krótko.
 
 ---
 
@@ -442,7 +453,7 @@ Każda część to osobna wersja, grywalna sama.
 
 | Wersja | Część | Co wchodzi |
 |---|---|---|
-| A | **Charakter drewna** | cechy gatunków, ognisko z temperaturą, wilgotność i suszenie, łuczywo, deszcz a ognisko |
+| A | **Charakter drewna** | cechy gatunków, ognisko z temperaturą, wilgotność i suszenie, wypalające się pochodnie i łuczywo, deszcz a ognisko |
 | B | **Ścinanie** | drzewo-byt, ciosy i karb, upadek, leżący pień, konary, kozły, nowy początek gry i samouczek |
 | C | **Narzędzia i kołysanie** | twardość skał, widoczne zużycie, kołysanie drzew |
 | D | **Dary pnia** | soki, żywice, guma, łyko - nacinanie nożem |
@@ -454,19 +465,20 @@ głębię). B jest największa i najtrudniejsza.
 
 ---
 
-## 12. Pytania do Kamila
+## 12. Odpowiedzi Kamila (21.11.2026)
 
-1. **Kierunek upadku**: od gracza (polecam - przewidywalne), czy
-   w stronę karbu, czyli na gracza (jak naprawdę przy cięciu z jednej
-   strony)?
-2. **Kozły**: obowiązkowe, czy jak wyżej - bez nich wolno i z większym
-   zużyciem siekiery (polecam)?
-3. **Gracz pod padającym drzewem**: nic się nie dzieje, czy krótkie
-   ogłuszenie (jak utrata przytomności pod wodą)?
-4. **Olbrzymy** (sekwoja, puchowiec, baobab): nie do ruszenia kamieniem,
-   baobab wcale - pasuje?
-5. **Pożar a budowle**: na początek nie płoną i jest ustawienie świata -
-   pasuje?
-6. **Pochodnie**: zostają wieczne i dochodzi tylko łuczywo, czy mają się
-   wypalać (jak w Reactive Torch)?
-7. **Kiedy**: najpierw fasola i groch (1.31.0), czy od razu drewno?
+Kamil wybrał wszystkie polecane warianty, a pochodnie mają się wypalać.
+
+1. **Kierunek upadku**: drzewo pada **od gracza**.
+2. **Kozły**: **nieobowiązkowe** - bez nich da się ciąć pień, ale trzy
+   razy wolniej i z dwa razy szybszym zużyciem siekiery.
+3. **Gracz pod padającym drzewem**: tu nie było polecanego wariantu.
+   Przyjmuję **krótkie ogłuszenie** (jak utrata przytomności pod wodą) -
+   daje sens ostrzeżeniu przed upadkiem; do potwierdzenia przy części B.
+4. **Olbrzymy**: sekwoja i puchowiec tylko siekierą z metalu, baobabu
+   nie da się ściąć.
+5. **Pożar a budowle**: na początek **nie płoną**; jest ustawienie
+   świata (wyłączone / tylko od gracza / pełne).
+6. **Pochodnie**: **wypalają się** (rozdział 2), do tego łuczywo.
+7. **Kiedy**: najpierw fasola i groch (1.31.0), potem drewno - od
+   części A.

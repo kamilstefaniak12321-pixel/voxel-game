@@ -2,7 +2,7 @@
 
 > Ta strona jest generowana z kodu gry (`python tools/wiki.py`) - nie zmieniaj jej ręcznie, zmiany przepadną przy następnym generowaniu.
 
-Wersja gry **1.30.0** - 256 przepisów. Wytwarza się w ekwipunku (**E**): siatka 2 x 2 obok miejsc ekwipunku, wynik po prawej (klik - weź, Shift + klik - ile się da). Przycisk 📖 *Przepisy* otwiera księgę - klik na przepisie sam układa składniki. Przepisy *z kształtem* można przesuwać po siatce i odbijać w poziomie; przepisy *bez kształtu* - obojętne, gdzie leżą składniki. Z czatu: `/przepisy`, `/wytworz <przepis>`.
+Wersja gry **1.31.0** - 260 przepisów. Wytwarza się w ekwipunku (**E**): siatka 2 x 2 obok miejsc ekwipunku, wynik po prawej (klik - weź, Shift + klik - ile się da). Przycisk 📖 *Przepisy* otwiera księgę - klik na przepisie sam układa składniki. Przepisy *z kształtem* można przesuwać po siatce i odbijać w poziomie; przepisy *bez kształtu* - obojętne, gdzie leżą składniki. Z czatu: `/przepisy`, `/wytworz <przepis>`.
 
 
 ## Ziemia
@@ -454,6 +454,24 @@ Wersja gry **1.30.0** - 256 przepisów. Wytwarza się w ekwipunku (**E**): siatk
 
 3 x Patyk (bez kształtu). Nazwa przepisu: `garden_pole`. Kilka tyczek jedna na drugiej - chmielnik. Szyszka chmielu PPM w tyczkę na ziemi - chmiel pnie się do góry (do 6 bloków).
 
+### Siatka na groch x2
+
+<img src="przepisy/pea_net.png" alt="Siatka na groch x2: 2 x Sznur + 2 x Patyk (obojętne gdzie)">
+
+2 x Sznur + 2 x Patyk (bez kształtu). Nazwa przepisu: `pea_net`. Siatka na groch staje przodem do ciebie. Groch PPM w siatkę na ziemi - oplata ją i owocuje wiosną i latem; siatka na siatce - groch wejdzie na drugi poziom.
+
+### Chrust na groch x3
+
+<img src="przepisy/pea_brush.png" alt="Chrust na groch x3: 4 x Patyk (obojętne gdzie)">
+
+4 x Patyk (bez kształtu). Nazwa przepisu: `pea_brush`. Chrust - gałązki wbite w ziemię. Najprostsza podpora dla grochu: groch PPM w chrust na ziemi.
+
+### Wigwam z tyczek
+
+<img src="przepisy/bean_wigwam.png" alt="Wigwam z tyczek: 3 x Tyczka + 1 x Sznur (obojętne gdzie)">
+
+3 x Tyczka + 1 x Sznur (bez kształtu). Nazwa przepisu: `bean_wigwam`. Wigwam z tyczek stawia się na ziemi (potrzebuje 3 bloków w górę). Fasola PPM w wigwam - oplata go cały i daje najwięcej strąków.
+
 ### Pergola x2
 
 <img src="przepisy/pergola.png" alt="Pergola x2: 2 x deski (dowolne) + 1 x Patyk + 1 x Sznur (obojętne gdzie)">
@@ -537,6 +555,12 @@ Wersja gry **1.30.0** - 256 przepisów. Wytwarza się w ekwipunku (**E**): siatk
 <img src="przepisy/pumpkin_seeds.png" alt="Pestki dyni x2: 1 x Kawałek dyni (obojętne gdzie)">
 
 1 x Kawałek dyni (bez kształtu). Nazwa przepisu: `pumpkin_seeds`. Pestki sadzi się na rozgrzebanej ziemi: wyrasta pnącze, a obok niego dynie.
+
+### Groch x2
+
+<img src="przepisy/peas.png" alt="Groch x2: 1 x Strąk grochu (obojętne gdzie)">
+
+1 x Strąk grochu (bez kształtu). Nazwa przepisu: `peas`. Wyłuskany groch: do jedzenia, do garnka i do siania. Nie psuje się.
 
 ### Kubek ziół na sen
 

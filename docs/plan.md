@@ -22,6 +22,10 @@ pamięć, nie umowa. Po każdej wydanej wersji wpis przechodzi do
 - Kamienne kształty (schody, płyty, murki).
 - Pogoda, część 6.
 - Kompostownik i inne rodzaje kompostu (`blocks/fertilizers.js`).
+- **Drewno, ogień i ścinanie drzew** - duży projekt Kamila w sześciu
+  częściach (charakter drewna i ognisko z temperaturą, ścinanie
+  i kozły, twardość narzędzi, dary pnia, pożar, metal meteorytowy):
+  [drewno.md](drewno.md). Do uzgodnienia - pytania na końcu pliku.
 
 ## Odpowiedzi Kamila
 

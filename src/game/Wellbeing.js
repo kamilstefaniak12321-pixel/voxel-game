@@ -480,6 +480,12 @@ export class Wellbeing {
         return this.data.limp - before;
     }
 
+    // Jednorazowy wysiłek (cios siekierą w drzewo - game/Felling.js).
+    spend(amount) {
+        if (!this.active || !(amount > 0)) return;
+        this.data.energy = clamp(this.data.energy - amount, 0, this.capacity);
+    }
+
     // Utrata przytomności pod wodą: zostaje resztka energii, pusty
     // żołądek i pełne płuca (gracz budzi się już na brzegu).
     blackout() {

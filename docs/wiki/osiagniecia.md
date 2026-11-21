@@ -2,7 +2,7 @@
 
 > Ta strona jest generowana z kodu gry (`python tools/wiki.py`) - nie zmieniaj jej ręcznie, zmiany przepadną przy następnym generowaniu.
 
-Wersja gry **1.35.0** - 137 osiągnięć. Księga osiągnięć: klawisz **L**. Uwaga, spoilery: sekretne osiągnięcia są tu opisane (w grze widać tylko „???”).
+Wersja gry **1.36.0** - 141 osiągnięć. Księga osiągnięć: klawisz **L**. Uwaga, spoilery: sekretne osiągnięcia są tu opisane (w grze widać tylko „???”).
 
 
 ## Zwykłe (10 pkt)
@@ -81,6 +81,8 @@ Wersja gry **1.35.0** - 137 osiągnięć. Księga osiągnięć: klawisz **L**. U
 | <img src="ikony/spruce_firewood.png" width="32" height="32" alt=""> | **Zapas na zimę** | Ułóż pełny stos drewna: 16 polan (kucnij i kliknij ziemię polanem, potem dokładaj). | „Kto latem układa, ten zimą nie szczęka zębami.” |
 | <img src="ikony/torch_stub.png" width="32" height="32" alt=""> | **Drugie życie ogarka** | Dolej żywicy albo oliwek do wypalonej pochodni (PPM na ogarku). | „Patyk ten sam, płomień nowy. Recykling starszy niż koło.” |
 | <img src="ikony/kapok_firewood.png" width="32" height="32" alt=""> | **Pogoda wygrała** | Bądź przy ognisku, które zgasił deszcz. | „Następnym razem dach. Albo dąb.” |
+| <img src="ikony/axe.png" width="32" height="32" alt=""> | **Drzewooo!** | Zetnij drzewo siekierą: bij w pień, aż padnie. | „Padło tam, gdzie miało. Mniej więcej.” |
+| <img src="ikony/oak_log.png" width="32" height="32" alt=""> | **Z dwóch stron** | Zetnij drzewo o grubym pniu (2 × 2 albo grubszym) - trzeba je obejść. | „Pierwszy karb to dopiero połowa roboty.” |
 | <img src="ikony/roasted_apple.png" width="32" height="32" alt=""> | **Kolacja przy ognisku** | Upiecz coś nad ogniskiem (trzymaj PPM z jedzeniem). | „Lekko przypalone. Czyli idealne.” |
 | <img src="ikony/stone.png" width="32" height="32" alt=""> | **Grawitacja działa** | Stłucz nogę, spadając z wysokości. | „Ziemia była bliżej, niż się wydawało. A potem nagle bardzo blisko.” |
 | <img src="ikony/oak_bed.png" width="32" height="32" alt=""> | **Pościelone** | Pościel stelaż łóżka (PPM pościelą na stelażu). | „Mama mówiła, żeby ścielić łóżko. Nie mówiła, że najpierw trzeba je zbudować.” |
@@ -113,6 +115,8 @@ Wersja gry **1.35.0** - 137 osiągnięć. Księga osiągnięć: klawisz **L**. U
 | <img src="ikony/tunic_linen.png" width="32" height="32" alt=""> | **Od stóp do głów** | Ubierz się cały: coś na głowę, na tułów, na nogi i na stopy. | „Wreszcie można iść do ludzi.” |
 | <img src="ikony/olive_firewood.png" width="32" height="32" alt=""> | **Gorąco jak w kuźni** | Rozgrzej ognisko powyżej 930° - potrzeba najgorętszego drewna: oliwki, akacji albo namorzynu. | „Jeszcze trochę i będzie można kuć. Na razie można się poparzyć.” |
 | <img src="ikony/birch_firewood.png" width="32" height="32" alt=""> | **Syczy, ale płonie** | Rozpal ognisko, w którym na wierzchu leży mokre polano. | „Więcej dymu niż ognia. Ale ogień też jest - gdzieś tam, w środku.” |
+| <img src="ikony/konar.png" width="32" height="32" alt=""> | **Zna las od pnia** | Zetnij drzewa ośmiu różnych gatunków. | „Każde pada inaczej. Każde tak samo głośno.” |
+| <img src="ikony/spruce_log.png" width="32" height="32" alt=""> | **Mówili, żeby nie stać** *(sekret)* | Daj się przygnieść padającemu drzewu. | „Drzewo pada od ciebie. Chyba że staniesz z drugiej strony.” |
 | <img src="ikony/granite.png" width="32" height="32" alt=""> | **Murarz** | Postaw 500 bloków. | „Pięćset bloków. Kręgosłup pamięta każdy z nich.” |
 | <img src="ikony/gravel.png" width="32" height="32" alt=""> | **Głębinowiec** | Zanurkuj 10 bloków pod powierzchnię wody. | „Ryb brak, ale za to jest ciemno, mokro i trochę strasznie.” |
 | <img src="ikony/lamp_blue.png" width="32" height="32" alt=""> | **Ponad chmurami** | Wzleć na wysokość 1000 bloków. | „Stąd wszystko wygląda tak malutko. Ty też.” |

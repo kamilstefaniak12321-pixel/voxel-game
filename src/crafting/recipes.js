@@ -419,6 +419,10 @@ export const RECIPES = [
         key: { P: '#planks' }
     },
 
+    // Konar ze ściętego drzewa (1.36.0, game/Felling.js) łamie się na patyki.
+    { id: 'stick_from_konar', result: ['stick', 3], ingredients: ['konar'],
+        note: 'Konary spadają ze ściętego drzewa razem z koroną.' },
+
 
     // NARZĘDZIA: głowica ze skały, trzonek z patyka.
 

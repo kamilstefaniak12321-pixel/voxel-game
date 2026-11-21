@@ -409,6 +409,17 @@ export class GameInteraction {
 
         this.miningDelay = Math.max(0, this.miningDelay - dt);
 
+        // Siekiera na pniu żywego drzewa (1.36.0, Felling.js): ciosy
+        // i karb zamiast kopania bloku.
+
+        if (hit && this.felling?.chop(hit, pressed, held)) {
+
+            this.stopMining();
+
+            return false;
+
+        }
+
         if (!(pressed || held) || !hit) {
 
             // Puszczony LPM tuż przed rozbiciem (osiągnięcie).

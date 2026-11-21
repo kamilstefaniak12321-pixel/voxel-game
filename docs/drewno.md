@@ -10,8 +10,11 @@
 > z temperaturą (rozdział 2, bez deszczu i pochodni); od **1.33.0**
 > wilgotność polan i schnięcie; od **1.34.0** drewutnia (stos polan);
 > od **1.35.0** wypalające się pochodnie, łuczywo i deszcz gaszący
-> ognisko - **część A jest w grze cała**. Opis tego, co działa:
-> [ogniska.md](ogniska.md). Reszta czeka - kolejność w rozdziale 11.
+> ognisko - **część A jest w grze cała**; od **1.36.0** ścinanie:
+> drzewo-byt, ciosy i karb, upadek, leżący pień, konary (część B bez
+> kozłów i powalonych drzew). Opis tego, co działa:
+> [ogniska.md](ogniska.md), [scinanie.md](scinanie.md). Reszta czeka -
+> kolejność w rozdziale 11.
 
 ## W skrócie
 
@@ -509,7 +512,9 @@ Każda część to osobna wersja, grywalna sama.
 | A2 | **Wilgotność** - **1.33.0, w grze** | świeże polana mokre (pasek, opis), mokre drewno w ognisku, schnięcie (plecak, skrzynia, ziemia, słońce, ogień), deszcz moczy |
 | A2b | **Drewutnia** - **1.34.0, w grze** | stos 16 polan: schną jak na powietrzu i nie zajmują ekwipunku; pod dachem nie mokną |
 | A3 | **Pochodnie i deszcz** - **1.35.0, w grze** | wypalające się pochodnie (przygasanie, ogarek, dolewanie paliwa), łuczywo, deszcz chłodzi i gasi ognisko, gasi pochodnie |
-| B | **Ścinanie** | drzewo-byt, ciosy i karb, upadek, leżący pień, konary, kozły, **powalone drzewa na start** (rozdział 9), nowy samouczek |
+| B1 | **Ścinanie** - **1.36.0, w grze** | drzewo-byt, ciosy i karb, upadek od gracza, leżący pień, konary, gracz pod drzewem ([scinanie.md](scinanie.md)) |
+| B2 | **Powalone drzewa** | stare pnie w lesie jako pierwsze drewno (rozdział 9), spróchniałe drewno i próchno, gołą ręką już się nie zetnie, nowy samouczek |
+| B3 | **Kozły** | obróbka leżącego pnia: kłody, łupanie na opał, okorowanie |
 | C | **Narzędzia i kołysanie** | twardość skał, widoczne zużycie, kołysanie drzew |
 | D | **Dary pnia** | soki, żywice, guma, łyko - nacinanie nożem |
 | E | **Pożar** | płonące drzewa i trawa, piorun, popiół, zwęglone pnie |
@@ -517,7 +522,8 @@ Każda część to osobna wersja, grywalna sama.
 
 A jest najbezpieczniejsza (nie zmienia sposobu gry, od razu daje
 głębię), dlatego jest podzielona na trzy mniejsze wersje - każdą da się
-sprawdzić osobno. B jest największa i najtrudniejsza.
+sprawdzić osobno. B jest największa i najtrudniejsza - też idzie
+w trzech wersjach.
 
 ---
 

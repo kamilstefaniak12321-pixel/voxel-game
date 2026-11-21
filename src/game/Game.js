@@ -101,6 +101,7 @@ import { Orchard } from './Orchard.js';
 import { Spoilage } from './Spoilage.js';
 import { WoodDrying } from './WoodDrying.js';
 import { Woodpiles } from './Woodpiles.js';
+import { Felling } from './Felling.js';
 import { TorchBurn } from './TorchBurn.js';
 import { Warmth } from './Warmth.js';
 import { Freeze } from './Freeze.js';
@@ -369,6 +370,7 @@ export class Game extends GameInteraction {
             collect(world, this.drops?.renderer?.shaderPrototypes?.());
             collect(world, this.campfires?.renderer?.shaderPrototypes?.());
             collect(world, this.woodpiles?.renderer?.shaderPrototypes?.());
+            collect(world, this.felling?.renderer?.shaderPrototypes?.());
             collect(world, this.meteorites?.shaderPrototypes?.());
             collect(far, this.farTerrain?.shaderPrototypes?.());
 
@@ -861,6 +863,8 @@ export class Game extends GameInteraction {
         this.sewingTables = new SewingTables(this, worldInfo.sewingTables);
         // Drewutnie (1.34.0) - stosy polan do suszenia.
         this.woodpiles = new Woodpiles(this, worldInfo.woodpiles);
+        // Ścinanie drzew (1.36.0): karby i padające drzewa (bez zapisu).
+        this.felling = new Felling(this);
         this.onOpenChest = null;
 
         // Ubrania na postaci (1.27.0): main.js maluje je na skórce
@@ -899,6 +903,9 @@ export class Game extends GameInteraction {
         this.saver.woodpiles = this.woodpiles;
         this.saver.torchBurn = this.torchBurn;
 
+        // Drzewo w locie ląduje, zanim świat zapisze się przy wyjściu.
+        this.saver.beforeExitSave = () => this.felling.finishAll();
+
         this.saver.saveOnExit();
 
         // Od razu zapisujemy, żeby nowy świat pojawił się w bazie.
@@ -918,7 +925,15 @@ export class Game extends GameInteraction {
         const fainted = this.blackout.update(dt);
         const asleep = this.sleep.update(dt, this.input);
         const iced = this.freeze.update(dt);
-        const input = fainted || asleep || iced ? NO_INPUT : this.input;
+        // Padające drzewo tuż nad głową (Felling.js): widok skupia się na
+        // nim, sterowanie zamiera - za chwilę ciemność.
+        const focus = this.felling.focus;
+        if (focus && !fainted) {
+            const eye = this.player.pos, fx = focus.x - eye.x, fy = focus.y - (eye.y + (this.player.eyeHeight ?? 1.6)), fz = focus.z - eye.z;
+            this.player.yaw = Math.atan2(-fx, -fz);
+            this.player.pitch = Math.atan2(fy, Math.hypot(fx, fz));
+        }
+        const input = fainted || asleep || iced || focus ? NO_INPUT : this.input;
         const profile = this.perfDiagnostics;
         profile?.beginStage('player');
 
@@ -1059,6 +1074,7 @@ export class Game extends GameInteraction {
         this.carpenterTables.update(dt);
         this.sewingTables.update(dt);
         this.woodpiles.update(dt);
+        this.felling.update(dt);
         this.torchBurn.update(dt);
         this.torches.update(dt);
         this.world.updateLightHolds(dt);
@@ -1775,7 +1791,7 @@ export class Game extends GameInteraction {
 
         const camera = this.camera;
 
-        const shake = Math.max(this.meteorites.shake, this.skyfall.shake);
+        const shake = Math.max(this.meteorites.shake, this.skyfall.shake, this.felling?.shake ?? 0);
 
         // Kołysanie widoku z oczu przy chodzeniu (i w dół po upadku).
 
@@ -3009,6 +3025,8 @@ export class Game extends GameInteraction {
         // A tree command writes over several frames. Finish before the final
         // snapshot so leaving the world cannot save a half-built specimen.
         await waitForTreeShowcase(this.world);
+        // Padające drzewo ląduje przed ostatnim zapisem (Felling.js).
+        this.felling.finishAll();
 
         if (save && !(await (this.net?.isClient ? this.net.saveBeforeExit() : this.saver.flush()))) {
             return false;
@@ -3046,6 +3064,7 @@ export class Game extends GameInteraction {
         this.carpenterTables.dispose();
         this.sewingTables.dispose();
         this.woodpiles.dispose();
+        this.felling.dispose();
         this.torchBurn.dispose();
         this.torches.dispose();
         this.doors.dispose();

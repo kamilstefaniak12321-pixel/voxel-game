@@ -11,6 +11,39 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 1.36.0 - Ścinanie drzew
+
+PR #189. Pierwsza wersja części B projektu drewna (`docs/drewno.md`,
+opis: `docs/scinanie.md`).
+
+- **Drzewo jest jednym bytem.** Siekierą w pień żywego drzewa (tryb
+  przygody) zadajesz **ciosy** - zamach trwa 0,6 s i kosztuje trochę
+  energii. To już nie kopanie bloku.
+- W pniu rośnie **karb** - po tej stronie, w którą bijesz.
+- **Ile ciosów**, zależy od twardości drewna i grubości pnia: świerk 3,
+  sosna 5, brzoza 8, dąb 11, dąb 2 × 2 - 21.
+- **Gruby pień tnie się z dwóch stron** (karb z jednej dochodzi do
+  połowy), najgrubsze - z czterech.
+- Po ostatnim ciosie drzewo **trzeszczy, przechyla się i pada w całości
+  - od ciebie**, tam, gdzie patrzysz. Na końcu huk, wstrząs obrazu
+  i chmura liści.
+- Zostaje **pniak**, **leżący pień** (nowe bloki: kora wzdłuż pnia,
+  słoje na końcach; wykopane dają zwykłe pnie) oraz **konary**, patyki,
+  sadzonki i owoce z korony - jako przedmioty na ziemi.
+- Pień **układa się na terenie**; na skale, budowli albo urwisku pęka,
+  a kawałki, które się nie mieszczą, leżą jako pnie. Budowli nie niszczy.
+- **Konar** (nowy przedmiot) w siatce wytwarzania to 3 patyki. Cios
+  w konar na drzewie odcina sam konar.
+- **Pod padającym pniem** tracisz przytomność: widok nagle skupia się na
+  drzewie i od razu ciemność - budzisz się obok, wyczerpany.
+- Kosodrzewina i baobab nie padają; pień postawiony ręką kopie się jak
+  dotąd. W trybie twórczym bez zmian.
+- Komenda `/scinanie` (opis drzewa, `zetnij`, `cios`, `siekiera`),
+  osiągnięcia „Drzewooo!", „Z dwóch stron", „Zna las od pnia" i jedno ukryte,
+  nowy rozdział poradnika.
+- Luki (kozły, powalone drzewa na start, twardość siekier, gra ze
+  znajomymi) - `docs/scinanie.md`.
+
 ## 1.35.0 - Pochodnie i deszcz
 
 PR #188. Ostatni kawałek części A projektu drewna (`docs/drewno.md`).

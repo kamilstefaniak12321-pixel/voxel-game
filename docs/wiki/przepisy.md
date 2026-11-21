@@ -2,7 +2,7 @@
 
 > Ta strona jest generowana z kodu gry (`python tools/wiki.py`) - nie zmieniaj jej ręcznie, zmiany przepadną przy następnym generowaniu.
 
-Wersja gry **1.35.0** - 262 przepisów. Wytwarza się w ekwipunku (**E**): siatka 2 x 2 obok miejsc ekwipunku, wynik po prawej (klik - weź, Shift + klik - ile się da). Przycisk 📖 *Przepisy* otwiera księgę - klik na przepisie sam układa składniki. Przepisy *z kształtem* można przesuwać po siatce i odbijać w poziomie; przepisy *bez kształtu* - obojętne, gdzie leżą składniki. Z czatu: `/przepisy`, `/wytworz <przepis>`.
+Wersja gry **1.36.0** - 263 przepisów. Wytwarza się w ekwipunku (**E**): siatka 2 x 2 obok miejsc ekwipunku, wynik po prawej (klik - weź, Shift + klik - ile się da). Przycisk 📖 *Przepisy* otwiera księgę - klik na przepisie sam układa składniki. Przepisy *z kształtem* można przesuwać po siatce i odbijać w poziomie; przepisy *bez kształtu* - obojętne, gdzie leżą składniki. Z czatu: `/przepisy`, `/wytworz <przepis>`.
 
 
 ## Ziemia
@@ -1458,6 +1458,12 @@ Wersja gry **1.35.0** - 262 przepisów. Wytwarza się w ekwipunku (**E**): siatk
 <img src="przepisy/stick.png" alt="Patyk x4: 2 x deski (dowolne) (ułożenie: P / P; P = deski (dowolne))">
 
 2 x deski (dowolne) (z kształtem). Nazwa przepisu: `stick`.
+
+### Patyk x3
+
+<img src="przepisy/stick_from_konar.png" alt="Patyk x3: 1 x Konar (obojętne gdzie)">
+
+1 x Konar (bez kształtu). Nazwa przepisu: `stick_from_konar`. Konary spadają ze ściętego drzewa razem z koroną.
 
 ### Siekiera
 

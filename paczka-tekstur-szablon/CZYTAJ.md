@@ -1,4 +1,4 @@
-# Paczka tekstur - szablon (Various Roots 1.35.0)
+# Paczka tekstur - szablon (Various Roots 1.36.0)
 
 Oryginalne tekstury gry, każda w osobnym pliku. Zrób z nich własną paczkę:
 
@@ -40,8 +40,8 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 |---|---|
 | `bloki/acacia/leaves.png` | Liście akacji |
 | `bloki/acacia/leaves_variant.png` | Kwitnące liście akacji |
-| `bloki/acacia/log_side.png` | Pień akacji |
-| `bloki/acacia/log_top.png` | Pień akacji |
+| `bloki/acacia/log_side.png` | Pień akacji, Leżący pień akacji |
+| `bloki/acacia/log_top.png` | Pień akacji, Leżący pień akacji |
 | `bloki/acacia/planks.png` | Schody z akacji, Półblok z akacji, Furtka z akacji, Stół stolarski z akacji, Łóżko z akacji (pościelone), Łóżko z akacji (stelaż), Deski akacji |
 | `bloki/acacia/sapling.png` | Sadzonka akacji |
 | `bloki/acacia/stripped_side.png` | Okorowany pień akacji |
@@ -50,8 +50,8 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/acorn.png` | Żołądź |
 | `bloki/araucaria/leaves.png` | Igliwie araukarii, Igliwie araukarii (szyszki odrastają) |
 | `bloki/araucaria/leaves_variant.png` | Igliwie araukarii z szyszkami |
-| `bloki/araucaria/log_side.png` | Pień araukarii |
-| `bloki/araucaria/log_top.png` | Pień araukarii |
+| `bloki/araucaria/log_side.png` | Pień araukarii, Leżący pień araukarii |
+| `bloki/araucaria/log_top.png` | Pień araukarii, Leżący pień araukarii |
 | `bloki/araucaria/nuts.png` | Orzeszki araukarii |
 | `bloki/araucaria/planks.png` | Schody araukariowe, Półblok araukariowy, Furtka araukariowa, Stół stolarski araukariowy, Łóżko araukariowe (pościelone), Łóżko araukariowe (stelaż), Deski araukariowe |
 | `bloki/araucaria/sapling.png` | Sadzonka araukarii |
@@ -61,9 +61,9 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/aspen/leaf_litter.png` | Opadłe liście osiki |
 | `bloki/aspen/leaves.png` | Liście osiki |
 | `bloki/aspen/leaves_variant.png` | Złote liście osiki |
-| `bloki/aspen/log_side.png` | Pień osiki |
+| `bloki/aspen/log_side.png` | Pień osiki, Leżący pień osiki |
 | `bloki/aspen/log_side_base.png` | Pień osiki (przy ziemi) |
-| `bloki/aspen/log_top.png` | Pień osiki, Pień osiki (przy ziemi) |
+| `bloki/aspen/log_top.png` | Pień osiki, Pień osiki (przy ziemi), Leżący pień osiki |
 | `bloki/aspen/planks.png` | Schody osikowe, Półblok osikowy, Furtka osikowa, Stół stolarski osikowy, Łóżko osikowe (pościelone), Łóżko osikowe (stelaż), Deski osikowe |
 | `bloki/aspen/sapling.png` | Sadzonka osiki |
 | `bloki/aspen/stripped_side.png` | Okorowany pień osiki |
@@ -77,8 +77,8 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/axe_slate.png` | Siekiera łupkowa |
 | `bloki/bald_cypress/leaves.png` | Igliwie cypryśnika |
 | `bloki/bald_cypress/leaves_variant.png` | Jesienne igliwie cypryśnika |
-| `bloki/bald_cypress/log_side.png` | Pień cypryśnika |
-| `bloki/bald_cypress/log_top.png` | Pień cypryśnika |
+| `bloki/bald_cypress/log_side.png` | Pień cypryśnika, Leżący pień cypryśnika |
+| `bloki/bald_cypress/log_top.png` | Pień cypryśnika, Leżący pień cypryśnika |
 | `bloki/bald_cypress/planks.png` | Schody z cypryśnika, Półblok z cypryśnika, Furtka z cypryśnika, Stół stolarski z cypryśnika, Łóżko z cypryśnika (pościelone), Łóżko z cypryśnika (stelaż), Deski cypryśnika |
 | `bloki/bald_cypress/sapling.png` | Sadzonka cypryśnika |
 | `bloki/bald_cypress/stripped_side.png` | Okorowany pień cypryśnika |
@@ -88,8 +88,8 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/banyan/leaf_litter.png` | Opadłe liście figowca |
 | `bloki/banyan/leaves.png` | Liście figowca, Liście figowca (figi odrastają) |
 | `bloki/banyan/leaves_variant.png` | Liście figowca z figami |
-| `bloki/banyan/log_side.png` | Pień figowca |
-| `bloki/banyan/log_top.png` | Pień figowca |
+| `bloki/banyan/log_side.png` | Pień figowca, Leżący pień figowca |
+| `bloki/banyan/log_top.png` | Pień figowca, Leżący pień figowca |
 | `bloki/banyan/planks.png` | Schody figowcowe, Półblok figowcowy, Furtka figowcowa, Stół stolarski figowcowy, Łóżko figowcowe (pościelone), Łóżko figowcowe (stelaż), Deski figowcowe |
 | `bloki/banyan/roots.png` | Korzenie powietrzne figowca |
 | `bloki/banyan/sapling.png` | Sadzonka figowca |
@@ -101,8 +101,8 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/baobab/leaves.png` | Liście baobabu, Liście baobabu (owoce odrastają) |
 | `bloki/baobab/leaves_fruit.png` | Liście baobabu z owocami |
 | `bloki/baobab/leaves_variant.png` | Liście baobabu z kwiatami |
-| `bloki/baobab/log_side.png` | Pień baobabu |
-| `bloki/baobab/log_top.png` | Pień baobabu |
+| `bloki/baobab/log_side.png` | Pień baobabu, Leżący pień baobabu |
+| `bloki/baobab/log_top.png` | Pień baobabu, Leżący pień baobabu |
 | `bloki/baobab/planks.png` | Schody baobabowe, Półblok baobabowy, Furtka baobabowa, Stół stolarski baobabowy, Łóżko baobabowe (pościelone), Łóżko baobabowe (stelaż), Deski baobabowe |
 | `bloki/baobab/sapling.png` | Sadzonka baobabu |
 | `bloki/baobab/stripped_side.png` | Okorowany pień baobabu |
@@ -117,8 +117,8 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/beech_bark.png` | Kora buka |
 | `bloki/beech_leaf_litter.png` | Opadłe liście buka |
 | `bloki/beech_leaves.png` | Liście buka |
-| `bloki/beech_log_side.png` | Pień buka |
-| `bloki/beech_log_top.png` | Pień buka |
+| `bloki/beech_log_side.png` | Pień buka, Leżący pień buka |
+| `bloki/beech_log_top.png` | Pień buka, Leżący pień buka |
 | `bloki/beech_planks.png` | Schody bukowe, Półblok bukowy, Furtka bukowa, Stół stolarski bukowy, Łóżko bukowe (pościelone), Łóżko bukowe (stelaż), Deski bukowe |
 | `bloki/beech_sapling.png` | Sadzonka buka |
 | `bloki/beech_stripped_side.png` | Okorowany pień buka |
@@ -126,8 +126,8 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/beechnuts.png` | Orzeszki bukowe |
 | `bloki/birch_bark.png` | Kora brzozowa |
 | `bloki/birch_leaves.png` | Liście brzozy |
-| `bloki/birch_log_side.png` | Pień brzozy |
-| `bloki/birch_log_top.png` | Pień brzozy |
+| `bloki/birch_log_side.png` | Pień brzozy, Leżący pień brzozy |
+| `bloki/birch_log_top.png` | Pień brzozy, Leżący pień brzozy |
 | `bloki/birch_planks.png` | Schody brzozowe, Półblok brzozowy, Furtka brzozowa, Stół stolarski brzozowy, Łóżko brzozowe (pościelone), Łóżko brzozowe (stelaż), Stół krawiecki, Deski brzozowe |
 | `bloki/birch_sapling.png` | Sadzonka brzozy |
 | `bloki/birch_stripped_side.png` | Okorowany pień brzozy |
@@ -147,9 +147,9 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/bristlecone/cone.png` | Szyszka sosny ościstej |
 | `bloki/bristlecone/leaves.png` | Igliwie sosny ościstej, Igliwie sosny ościstej (szyszki odrastają) |
 | `bloki/bristlecone/leaves_variant.png` | Igliwie sosny ościstej z szyszkami |
-| `bloki/bristlecone/log_side.png` | Pień sosny ościstej |
+| `bloki/bristlecone/log_side.png` | Pień sosny ościstej, Leżący pień sosny ościstej |
 | `bloki/bristlecone/log_side_dead.png` | Pień sosny ościstej (martwe drewno) |
-| `bloki/bristlecone/log_top.png` | Pień sosny ościstej, Pień sosny ościstej (martwe drewno) |
+| `bloki/bristlecone/log_top.png` | Pień sosny ościstej, Pień sosny ościstej (martwe drewno), Leżący pień sosny ościstej |
 | `bloki/bristlecone/planks.png` | Schody z sosny ościstej, Półblok z sosny ościstej, Furtka z sosny ościstej, Stół stolarski z sosny ościstej, Łóżko z sosny ościstej (pościelone), Łóżko z sosny ościstej (stelaż), Deski z sosny ościstej |
 | `bloki/bristlecone/sapling.png` | Sadzonka sosny ościstej |
 | `bloki/bristlecone/stripped_side.png` | Okorowany pień sosny ościstej |
@@ -162,8 +162,8 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/cedar/cone.png` | Szyszka cedru |
 | `bloki/cedar/leaves.png` | Igliwie cedru, Igliwie cedru (szyszki odrastają) |
 | `bloki/cedar/leaves_variant.png` | Igliwie cedru z szyszkami |
-| `bloki/cedar/log_side.png` | Pień cedru |
-| `bloki/cedar/log_top.png` | Pień cedru |
+| `bloki/cedar/log_side.png` | Pień cedru, Leżący pień cedru |
+| `bloki/cedar/log_top.png` | Pień cedru, Leżący pień cedru |
 | `bloki/cedar/planks.png` | Schody cedrowe, Półblok cedrowy, Furtka cedrowa, Stół stolarski cedrowy, Łóżko cedrowe (pościelone), Łóżko cedrowe (stelaż), Deski cedrowe |
 | `bloki/cedar/sapling.png` | Sadzonka cedru |
 | `bloki/cedar/stripped_side.png` | Okorowany pień cedru |
@@ -172,8 +172,8 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/chamomile.png` | Rumianek |
 | `bloki/cherry/leaves.png` | Liście wiśni |
 | `bloki/cherry/leaves_variant.png` | Liście wiśni — rzadsze kwiaty |
-| `bloki/cherry/log_side.png` | Pień wiśni |
-| `bloki/cherry/log_top.png` | Pień wiśni |
+| `bloki/cherry/log_side.png` | Pień wiśni, Leżący pień wiśni |
+| `bloki/cherry/log_top.png` | Pień wiśni, Leżący pień wiśni |
 | `bloki/cherry/planks.png` | Schody wiśniowe, Półblok wiśniowy, Furtka wiśniowa, Stół stolarski wiśniowy, Łóżko wiśniowe (pościelone), Łóżko wiśniowe (stelaż), Deski wiśni |
 | `bloki/cherry/sapling.png` | Sadzonka wiśni |
 | `bloki/cherry/stripped_side.png` | Okorowany pień wiśni |
@@ -194,8 +194,8 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/coconut_palm/coconut.png` | Kokos |
 | `bloki/coconut_palm/leaves.png` | Liście palmy kokosowej, Liście palmy (kokosy odrastają) |
 | `bloki/coconut_palm/leaves_variant.png` | Liście palmy z kokosami |
-| `bloki/coconut_palm/log_side.png` | Pień palmy kokosowej |
-| `bloki/coconut_palm/log_top.png` | Pień palmy kokosowej |
+| `bloki/coconut_palm/log_side.png` | Pień palmy kokosowej, Leżący pień palmy kokosowej |
+| `bloki/coconut_palm/log_top.png` | Pień palmy kokosowej, Leżący pień palmy kokosowej |
 | `bloki/coconut_palm/planks.png` | Schody palmowe, Półblok palmowy, Furtka palmowa, Stół stolarski palmowy, Łóżko palmowe (pościelone), Łóżko palmowe (stelaż), Deski palmowe |
 | `bloki/coconut_palm/sapling.png` | Sadzonka palmy kokosowej |
 | `bloki/coconut_palm/stripped_side.png` | Okorowany pień palmy kokosowej |
@@ -250,8 +250,8 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/dragon_tree/berries.png` | Jagody draceny |
 | `bloki/dragon_tree/leaves.png` | Liście draceny, Liście draceny (jagody odrastają) |
 | `bloki/dragon_tree/leaves_variant.png` | Liście draceny z jagodami |
-| `bloki/dragon_tree/log_side.png` | Pień draceny |
-| `bloki/dragon_tree/log_top.png` | Pień draceny |
+| `bloki/dragon_tree/log_side.png` | Pień draceny, Leżący pień draceny |
+| `bloki/dragon_tree/log_top.png` | Pień draceny, Leżący pień draceny |
 | `bloki/dragon_tree/planks.png` | Schody z draceny, Półblok z draceny, Furtka z draceny, Stół stolarski z draceny, Łóżko z draceny (pościelone), Łóżko z draceny (stelaż), Deski z draceny |
 | `bloki/dragon_tree/sapling.png` | Sadzonka draceny |
 | `bloki/dragon_tree/stripped_side.png` | Okorowany pień draceny |
@@ -300,8 +300,8 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/fir/cone.png` | Szyszka jodły |
 | `bloki/fir/leaves.png` | Igliwie jodły, Igliwie jodły (szyszki odrastają) |
 | `bloki/fir/leaves_variant.png` | Igliwie jodły z szyszkami |
-| `bloki/fir/log_side.png` | Pień jodły |
-| `bloki/fir/log_top.png` | Pień jodły |
+| `bloki/fir/log_side.png` | Pień jodły, Leżący pień jodły |
+| `bloki/fir/log_top.png` | Pień jodły, Leżący pień jodły |
 | `bloki/fir/planks.png` | Schody jodłowe, Półblok jodłowy, Furtka jodłowa, Stół stolarski jodłowy, Łóżko jodłowe (pościelone), Łóżko jodłowe (stelaż), Deski jodłowe |
 | `bloki/fir/sapling.png` | Sadzonka jodły |
 | `bloki/fir/stripped_side.png` | Okorowany pień jodły |
@@ -316,8 +316,8 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/garden_pole_top.png` | Młoda winorośl, Winorośl, Winorośl (zielone grona), Winorośl (winogrona), Młody chmiel, Chmiel, Chmiel (zielone szyszki), Chmiel (dojrzałe szyszki), Młode kiwi, Pnącze kiwi, Pnącze kiwi (kwitnie), Pnącze kiwi (owoce), Młoda marakuja, Marakuja, Marakuja (kwitnie), Marakuja (zielone owoce), Marakuja (owoce), Siewki fasoli, Fasola, Fasola (kwitnie), Fasola (strąki), Fasola (suche strąki) |
 | `bloki/ginkgo/leaves.png` | Liście miłorzębu |
 | `bloki/ginkgo/leaves_variant.png` | Liście miłorzębu — jasne złoto |
-| `bloki/ginkgo/log_side.png` | Pień miłorzębu |
-| `bloki/ginkgo/log_top.png` | Pień miłorzębu |
+| `bloki/ginkgo/log_side.png` | Pień miłorzębu, Leżący pień miłorzębu |
+| `bloki/ginkgo/log_top.png` | Pień miłorzębu, Leżący pień miłorzębu |
 | `bloki/ginkgo/planks.png` | Schody miłorzębowe, Półblok miłorzębowy, Furtka miłorzębowa, Stół stolarski miłorzębowy, Łóżko miłorzębowe (pościelone), Łóżko miłorzębowe (stelaż), Deski miłorzębowe |
 | `bloki/ginkgo/sapling.png` | Sadzonka miłorzębu |
 | `bloki/ginkgo/stripped_side.png` | Okorowany pień miłorzębu |
@@ -411,14 +411,14 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/jablon/okorowany_bok.png` | Okorowany pień jabłoni |
 | `bloki/jablon/okorowany_gora.png` | Okorowany pień jabłoni |
 | `bloki/jablon/opadle_liscie.png` | Opadłe liście jabłoni |
-| `bloki/jablon/pien_bok.png` | Pień jabłoni |
-| `bloki/jablon/pien_gora.png` | Pień jabłoni |
+| `bloki/jablon/pien_bok.png` | Pień jabłoni, Leżący pień jabłoni |
+| `bloki/jablon/pien_gora.png` | Pień jabłoni, Leżący pień jabłoni |
 | `bloki/jablon/sadzonka.png` | Sadzonka jabłoni |
 | `bloki/jablon_bark.png` | Kora jabłoni |
 | `bloki/jacaranda/leaves.png` | Liście jakarandy |
 | `bloki/jacaranda/leaves_variant.png` | Liście jakarandy — jasne kwiaty |
-| `bloki/jacaranda/log_side.png` | Pień jakarandy |
-| `bloki/jacaranda/log_top.png` | Pień jakarandy |
+| `bloki/jacaranda/log_side.png` | Pień jakarandy, Leżący pień jakarandy |
+| `bloki/jacaranda/log_top.png` | Pień jakarandy, Leżący pień jakarandy |
 | `bloki/jacaranda/planks.png` | Schody jakarandowe, Półblok jakarandowy, Furtka jakarandowa, Stół stolarski jakarandowy, Łóżko jakarandowe (pościelone), Łóżko jakarandowe (stelaż), Deski jakarandowe |
 | `bloki/jacaranda/sapling.png` | Sadzonka jakarandy |
 | `bloki/jacaranda/stripped_side.png` | Okorowany pień jakarandy |
@@ -427,9 +427,9 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/joshua_tree/flowers.png` | Kwiaty jukki |
 | `bloki/joshua_tree/leaves.png` | Liście jukki, Liście jukki (kwiaty odrastają) |
 | `bloki/joshua_tree/leaves_variant.png` | Liście jukki z kwiatami |
-| `bloki/joshua_tree/log_side.png` | Pień jukki |
+| `bloki/joshua_tree/log_side.png` | Pień jukki, Leżący pień jukki |
 | `bloki/joshua_tree/log_side_shaggy.png` | Pień jukki (z suchymi liśćmi) |
-| `bloki/joshua_tree/log_top.png` | Pień jukki |
+| `bloki/joshua_tree/log_top.png` | Pień jukki, Leżący pień jukki |
 | `bloki/joshua_tree/planks.png` | Schody z jukki, Półblok z jukki, Furtka z jukki, Stół stolarski z jukki, Łóżko z jukki (pościelone), Łóżko z jukki (stelaż), Deski z jukki |
 | `bloki/joshua_tree/sapling.png` | Sadzonka jukki |
 | `bloki/joshua_tree/stripped_side.png` | Okorowany pień jukki |
@@ -439,8 +439,8 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/kapok/leaf_litter.png` | Opadłe liście puchowca |
 | `bloki/kapok/leaves.png` | Liście puchowca, Liście puchowca (puch odrasta) |
 | `bloki/kapok/leaves_variant.png` | Liście puchowca z puchem |
-| `bloki/kapok/log_side.png` | Pień puchowca |
-| `bloki/kapok/log_top.png` | Pień puchowca |
+| `bloki/kapok/log_side.png` | Pień puchowca, Leżący pień puchowca |
+| `bloki/kapok/log_top.png` | Pień puchowca, Leżący pień puchowca |
 | `bloki/kapok/planks.png` | Schody z puchowca, Półblok z puchowca, Furtka z puchowca, Stół stolarski z puchowca, Łóżko z puchowca (pościelone), Łóżko z puchowca (stelaż), Deski z puchowca |
 | `bloki/kapok/sapling.png` | Sadzonka puchowca |
 | `bloki/kapok/stripped_side.png` | Okorowany pień puchowca |
@@ -452,6 +452,7 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/knife_limestone.png` | Nóż wapienny |
 | `bloki/knife_sandstone.png` | Nóż piaskowcowy |
 | `bloki/knife_slate.png` | Nóż łupkowy |
+| `bloki/konar.png` | Konar |
 | `bloki/lamp.png` | Lampa |
 | `bloki/lamp_blue.png` | Niebieska lampa |
 | `bloki/lamp_green.png` | Zielona lampa |
@@ -463,8 +464,8 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/larch/leaves.png` | Igliwie modrzewia, Igliwie modrzewia (szyszki odrastają) |
 | `bloki/larch/leaves_cones.png` | Igliwie modrzewia z szyszkami |
 | `bloki/larch/leaves_variant.png` | Złote igliwie modrzewia |
-| `bloki/larch/log_side.png` | Pień modrzewia |
-| `bloki/larch/log_top.png` | Pień modrzewia |
+| `bloki/larch/log_side.png` | Pień modrzewia, Leżący pień modrzewia |
+| `bloki/larch/log_top.png` | Pień modrzewia, Leżący pień modrzewia |
 | `bloki/larch/planks.png` | Schody modrzewiowe, Półblok modrzewiowy, Furtka modrzewiowa, Stół stolarski modrzewiowy, Łóżko modrzewiowe (pościelone), Łóżko modrzewiowe (stelaż), Deski modrzewiowe |
 | `bloki/larch/sapling.png` | Sadzonka modrzewia |
 | `bloki/larch/stripped_side.png` | Okorowany pień modrzewia |
@@ -477,8 +478,8 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/linden_flower.png` | Kwiat lipy |
 | `bloki/linden_leaves.png` | Liście lipy |
 | `bloki/linden_leaves_flowering.png` | Kwitnące liście lipy |
-| `bloki/linden_log_side.png` | Pień lipy |
-| `bloki/linden_log_top.png` | Pień lipy |
+| `bloki/linden_log_side.png` | Pień lipy, Leżący pień lipy |
+| `bloki/linden_log_top.png` | Pień lipy, Leżący pień lipy |
 | `bloki/linden_planks.png` | Schody lipowe, Półblok lipowy, Furtka lipowa, Stół stolarski lipowy, Łóżko lipowe (pościelone), Łóżko lipowe (stelaż), Deski lipowe |
 | `bloki/linden_sapling.png` | Sadzonka lipy |
 | `bloki/linden_stripped_side.png` | Okorowany pień lipy |
@@ -526,8 +527,8 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/luczywo.png` | Łuczywo |
 | `bloki/mangrove/leaves.png` | Liście namorzynu, Liście namorzynu (siewki odrastają) |
 | `bloki/mangrove/leaves_variant.png` | Liście namorzynu z siewkami |
-| `bloki/mangrove/log_side.png` | Pień namorzynu |
-| `bloki/mangrove/log_top.png` | Pień namorzynu |
+| `bloki/mangrove/log_side.png` | Pień namorzynu, Leżący pień namorzynu |
+| `bloki/mangrove/log_top.png` | Pień namorzynu, Leżący pień namorzynu |
 | `bloki/mangrove/planks.png` | Schody namorzynowe, Półblok namorzynowy, Furtka namorzynowa, Stół stolarski namorzynowy, Łóżko namorzynowe (pościelone), Łóżko namorzynowe (stelaż), Deski namorzynowe |
 | `bloki/mangrove/propagule.png` | Siewka namorzynu |
 | `bloki/mangrove/roots.png` | Korzenie namorzynu |
@@ -538,8 +539,8 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/maple/leaf_litter.png` | Opadłe liście klonu |
 | `bloki/maple/leaves.png` | Liście klonu |
 | `bloki/maple/leaves_variant.png` | Złote liście klonu |
-| `bloki/maple/log_side.png` | Pień klonu |
-| `bloki/maple/log_top.png` | Pień klonu |
+| `bloki/maple/log_side.png` | Pień klonu, Leżący pień klonu |
+| `bloki/maple/log_top.png` | Pień klonu, Leżący pień klonu |
 | `bloki/maple/planks.png` | Schody klonowe, Półblok klonowy, Furtka klonowa, Stół stolarski klonowy, Łóżko klonowe (pościelone), Łóżko klonowe (stelaż), Deski klonowe |
 | `bloki/maple/sapling.png` | Sadzonka klonu |
 | `bloki/maple/stripped_side.png` | Okorowany pień klonu |
@@ -762,8 +763,8 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/mugo/cone.png` | Szyszka kosodrzewiny |
 | `bloki/mugo/leaves.png` | Igliwie kosodrzewiny |
 | `bloki/mugo/leaves_variant.png` | Igliwie kosodrzewiny z młodymi pędami |
-| `bloki/mugo/log_side.png` | Pień kosodrzewiny |
-| `bloki/mugo/log_top.png` | Pień kosodrzewiny |
+| `bloki/mugo/log_side.png` | Pień kosodrzewiny, Leżący pień kosodrzewiny |
+| `bloki/mugo/log_top.png` | Pień kosodrzewiny, Leżący pień kosodrzewiny |
 | `bloki/mugo/planks.png` | Schody z kosodrzewiny, Półblok z kosodrzewiny, Furtka z kosodrzewiny, Stół stolarski z kosodrzewiny, Łóżko z kosodrzewiny (pościelone), Łóżko z kosodrzewiny (stelaż), Deski z kosodrzewiny |
 | `bloki/mugo/sapling.png` | Sadzonka kosodrzewiny |
 | `bloki/mugo/stripped_side.png` | Okorowany pień kosodrzewiny |
@@ -776,8 +777,8 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/oak_bark.png` | Kora dębu |
 | `bloki/oak_leaf_litter.png` | Opadłe liście dębu |
 | `bloki/oak_leaves.png` | Liście dębu |
-| `bloki/oak_log_side.png` | Ognisko, Stos drewna, Pień dębu |
-| `bloki/oak_log_top.png` | Pień dębu |
+| `bloki/oak_log_side.png` | Ognisko, Stos drewna, Pień dębu, Leżący pień dębu |
+| `bloki/oak_log_top.png` | Pień dębu, Leżący pień dębu |
 | `bloki/oak_planks.png` | Schody dębowe, Półblok dębowy, Furtka dębowa, Stół stolarski dębowy, Łóżko dębowe (pościelone), Łóżko dębowe (stelaż), Deski dębowe |
 | `bloki/oak_sapling.png` | Sadzonka dębu |
 | `bloki/oak_stripped_side.png` | Okorowany pień dębu |
@@ -788,15 +789,15 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/olcha/okorowany_bok.png` | Okorowany pień olchy |
 | `bloki/olcha/okorowany_gora.png` | Okorowany pień olchy |
 | `bloki/olcha/opadle_liscie.png` | Opadłe liście olchy |
-| `bloki/olcha/pien_bok.png` | Pień olchy |
-| `bloki/olcha/pien_gora.png` | Pień olchy |
+| `bloki/olcha/pien_bok.png` | Pień olchy, Leżący pień olchy |
+| `bloki/olcha/pien_gora.png` | Pień olchy, Leżący pień olchy |
 | `bloki/olcha/sadzonka.png` | Sadzonka olchy |
 | `bloki/olcha/szyszki.png` | Szyszeczki olchy |
 | `bloki/olcha_bark.png` | Kora olchy |
 | `bloki/olive/leaves.png` | Liście oliwki, Liście oliwki (oliwki odrastają) |
 | `bloki/olive/leaves_variant.png` | Liście oliwki z oliwkami |
-| `bloki/olive/log_side.png` | Pień oliwki |
-| `bloki/olive/log_top.png` | Pień oliwki |
+| `bloki/olive/log_side.png` | Pień oliwki, Leżący pień oliwki |
+| `bloki/olive/log_top.png` | Pień oliwki, Leżący pień oliwki |
 | `bloki/olive/olives.png` | Oliwki |
 | `bloki/olive/planks.png` | Schody oliwkowe, Półblok oliwkowy, Furtka oliwkowa, Stół stolarski oliwkowy, Łóżko oliwkowe (pościelone), Łóżko oliwkowe (stelaż), Deski oliwkowe |
 | `bloki/olive/sapling.png` | Sadzonka oliwki |
@@ -819,8 +820,8 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/pine_cone.png` | Szyszka sosny |
 | `bloki/pine_leaves.png` | Igliwie sosny |
 | `bloki/pine_log_resin_side.png` | Pień sosny z żywicą |
-| `bloki/pine_log_side.png` | Pień sosny |
-| `bloki/pine_log_top.png` | Pień sosny, Pień sosny (górny), Pień sosny z żywicą |
+| `bloki/pine_log_side.png` | Pień sosny, Leżący pień sosny |
+| `bloki/pine_log_top.png` | Pień sosny, Pień sosny (górny), Pień sosny z żywicą, Leżący pień sosny |
 | `bloki/pine_log_transition_1.png` | - |
 | `bloki/pine_log_transition_2.png` | - |
 | `bloki/pine_log_transition_3.png` | - |
@@ -837,8 +838,8 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/pumpkin_young_side.png` | Młoda dynia |
 | `bloki/pumpkin_young_top.png` | Młoda dynia |
 | `bloki/rainbow_eucalyptus/leaves.png` | Liście eukaliptusa |
-| `bloki/rainbow_eucalyptus/log_side.png` | Pień eukaliptusa |
-| `bloki/rainbow_eucalyptus/log_top.png` | Pień eukaliptusa |
+| `bloki/rainbow_eucalyptus/log_side.png` | Pień eukaliptusa, Leżący pień eukaliptusa |
+| `bloki/rainbow_eucalyptus/log_top.png` | Pień eukaliptusa, Leżący pień eukaliptusa |
 | `bloki/rainbow_eucalyptus/planks.png` | Schody eukaliptusowe, Półblok eukaliptusowy, Furtka eukaliptusowa, Stół stolarski eukaliptusowy, Łóżko eukaliptusowe (pościelone), Łóżko eukaliptusowe (stelaż), Deski eukaliptusowe |
 | `bloki/rainbow_eucalyptus/sapling.png` | Sadzonka eukaliptusa |
 | `bloki/rainbow_eucalyptus/stripped_side.png` | Okorowany pień eukaliptusa |
@@ -885,8 +886,8 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/sequoia/cone.png` | Szyszka sekwoi |
 | `bloki/sequoia/leaves.png` | Igliwie sekwoi, Igliwie sekwoi (szyszki odrastają) |
 | `bloki/sequoia/leaves_variant.png` | Igliwie sekwoi z szyszkami |
-| `bloki/sequoia/log_side.png` | Pień sekwoi |
-| `bloki/sequoia/log_top.png` | Pień sekwoi |
+| `bloki/sequoia/log_side.png` | Pień sekwoi, Leżący pień sekwoi |
+| `bloki/sequoia/log_top.png` | Pień sekwoi, Leżący pień sekwoi |
 | `bloki/sequoia/planks.png` | Schody sekwojowe, Półblok sekwojowy, Furtka sekwojowa, Stół stolarski sekwojowy, Łóżko sekwojowe (pościelone), Łóżko sekwojowe (stelaż), Deski sekwojowe |
 | `bloki/sequoia/sapling.png` | Sadzonka sekwoi |
 | `bloki/sequoia/stripped_side.png` | Okorowany pień sekwoi |
@@ -978,8 +979,8 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/spruce_bark.png` | Kora świerka |
 | `bloki/spruce_cone.png` | Szyszka świerka |
 | `bloki/spruce_leaves.png` | Igliwie świerka |
-| `bloki/spruce_log_side.png` | Pień świerka |
-| `bloki/spruce_log_top.png` | Pień świerka |
+| `bloki/spruce_log_side.png` | Pień świerka, Leżący pień świerka |
+| `bloki/spruce_log_top.png` | Pień świerka, Leżący pień świerka |
 | `bloki/spruce_planks.png` | Schody świerkowe, Półblok świerkowy, Furtka świerkowa, Stół stolarski świerkowy, Łóżko świerkowe (pościelone), Łóżko świerkowe (stelaż), Deski świerkowe |
 | `bloki/spruce_sapling.png` | Sadzonka świerka |
 | `bloki/spruce_stripped_side.png` | Okorowany pień świerka |
@@ -1173,7 +1174,7 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/wierzba/okorowany_bok.png` | Okorowany pień wierzby |
 | `bloki/wierzba/okorowany_gora.png` | Okorowany pień wierzby |
 | `bloki/wierzba/opadle_liscie.png` | Opadłe liście wierzby |
-| `bloki/wierzba/pien_bok.png` | Pień wierzby |
-| `bloki/wierzba/pien_gora.png` | Pień wierzby |
+| `bloki/wierzba/pien_bok.png` | Pień wierzby, Leżący pień wierzby |
+| `bloki/wierzba/pien_gora.png` | Pień wierzby, Leżący pień wierzby |
 | `bloki/wierzba/sadzonka.png` | Sadzonka wierzby |
 | `bloki/wierzba_bark.png` | Kora wierzby |

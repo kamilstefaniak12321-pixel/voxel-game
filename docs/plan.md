@@ -12,16 +12,23 @@ pamięć, nie umowa. Po każdej wydanej wersji wpis przechodzi do
   ognisko i gasi słabe ([pochodnie.md](pochodnie.md),
   [ogniska.md](ogniska.md)).
 
+- **1.36.0 - Ścinanie drzew** (PR #189): pierwsza wersja części B.
+  Siekiera w pień żywego drzewa to cios; rośnie karb, drzewo pada od
+  gracza jako jedna bryła, zostaje pniak, leżący pień i konary
+  ([scinanie.md](scinanie.md)).
+
 ## Dalej
 
 **Drewno, ogień i ścinanie drzew** - duży projekt Kamila, uzgodniony
 21.11.2026 ([drewno.md](drewno.md)). Sześć części; pierwsza (A) jest
 w grze cała (1.32.0 - cechy i ognisko, 1.33.0 - wilgotność, 1.34.0 -
-drewutnia, 1.35.0 - pochodnie i deszcz). Zostało:
+drewutnia, 1.35.0 - pochodnie i deszcz), druga (B) w części (1.36.0 -
+ścinanie). Zostało:
 
-- **B - Ścinanie**: drzewo jako jeden byt, ciosy i karb, upadek, leżący
-  pień, konary, kozły, **powalone drzewa jako pierwsze drewno**, nowy
+- **B2 - Powalone drzewa**: stare pnie w lesie jako **pierwsze drewno**,
+  spróchniałe drewno i próchno, gołą ręką już się nie zetnie, nowy
   samouczek.
+- **B3 - Kozły**: obróbka leżącego pnia (kłody, opał, okorowanie).
 - **C - Narzędzia i kołysanie**: twardość skał, widoczne zużycie,
   kołysanie drzew.
 - **D - Dary pnia**: soki, żywice, guma, łyko - nacinanie nożem.

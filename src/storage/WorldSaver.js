@@ -72,6 +72,8 @@ export class WorldSaver {
         this.savedSewingVersion = -1;
         // Drewutnie (game/Woodpiles.js, 1.34.0) - ustawia Game.
         this.woodpiles = null;
+        // Przed zapisem przy wyjściu (np. padające drzewo ląduje - Felling.js).
+        this.beforeExitSave = null;
         this.savedWoodpileVersion = -1;
         // Paliwo pochodni (game/TorchBurn.js, 1.35.0) - ustawia Game.
         this.torchBurn = null;
@@ -347,12 +349,14 @@ export class WorldSaver {
         this.onVisibilityChange = () => {
 
             if (document.visibilityState === 'hidden') {
+                this.beforeExitSave?.();
                 this.save({ immediate: true });
             }
 
         };
 
         this.onPageHide = () => {
+            this.beforeExitSave?.();
             this.save({ immediate: true });
         };
 

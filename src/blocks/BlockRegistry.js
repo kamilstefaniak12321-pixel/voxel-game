@@ -8,6 +8,7 @@ import {
 } from '../config.js';
 
 import { treeBlocks } from './trees.js';
+import { lyingLogBlocks } from './lyingLogs.js';
 import { shrubBlocks } from './shrubs.js';
 import { lowPlantBlocks } from './lowPlants.js';
 import { vineBlocks } from './vines.js';
@@ -63,7 +64,8 @@ export const AIR_ID = 0;
 //   15500-15599             stanowiska pracy (1.27.0: stół krawiecki 15500-15507 - sewingTable.js),
 //   15600-15999             pnącza i ich podpory (1.30.0 - vines.js),
 //   16000-16089             etapy wypalania pochodni (1.35.0, torches.js),
-//   16090-65279             wolne na przyszłość.
+//   16100-16299             leżące pnie (1.36.0, po 2 na gatunek: wzdłuż X i Z - lyingLogs.js),
+//   16090-16099, 16300-65279 wolne na przyszłość.
 
 export const MAX_BLOCK_ID = 65279;
 
@@ -1367,6 +1369,10 @@ export const BLOCK_TYPES = {
     // Drzewa (src/blocks/trees.js) - po 5 bloków na gatunek i dodatki.
 
     ...treeBlocks(),
+
+    // Leżące pnie ściętych drzew (src/blocks/lyingLogs.js, 1.36.0).
+
+    ...lyingLogBlocks(),
 
     // Krzewy jagodowe (src/blocks/shrubs.js, 1.17.0) - po 16 numerów na gatunek.
 

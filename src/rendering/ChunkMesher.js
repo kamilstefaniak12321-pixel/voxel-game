@@ -1939,13 +1939,13 @@ function addCubeFaces(id, renderData, lx, y, lz, faceCount, baseX, baseZ, textur
         const rotation =
             renderData.rotate[faceIndex]
                 ? getRotationAt(baseX + lx, y, baseZ + lz)
-                : 0;
+                : renderData.turn[faceIndex];
 
         const uv = liquid
             ? (water && fall > 0 && face.normal[1] === 0
                 ? fallingWaterUv(surfaceUV[faceIndex][rotation], fall)
                 : waterUv(surfaceUV[faceIndex][rotation], lx, lz, water))
-            : bark !== null && face.normal[1] === 0
+            : bark !== null && renderData.barkFaces[faceIndex]
                 ? bark.uv[barkTile(bark.lookup, baseX + lx, y, baseZ + lz, faceIndex)][rotation]
                 : surfaceUV[faceIndex][rotation];
 

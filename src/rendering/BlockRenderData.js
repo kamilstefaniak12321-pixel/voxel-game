@@ -1,5 +1,6 @@
 import { leafSeasonUniforms, leafCode, LEAF_VERTEX_PARS_GLSL, LEAF_VERTEX_GLSL, LEAF_FRAGMENT_PARS_GLSL, LEAF_FRAGMENT_GLSL } from './LeafSeasons.js';
 import { BARK_SHEETS, BARK_GRID, barkLookup } from './BarkSheets.js';
+import { LYING_TURNS } from '../blocks/lyingLogs.js';
 import * as THREE from 'three';
 import { campfireLightUniforms, CAMPFIRE_LIGHT_GLSL } from './CampfireLight.js';
 import { SURFACE_LIGHTING_GLSL } from './SurfaceLighting.js';
@@ -1366,6 +1367,11 @@ const FLAT_FACES = {
     [ATTACH_WEST]: { face: 0, axis: 0, far: false }     // sąsiad -X: prawa (+X)
 };
 
+// Obrót ścian bloku bez leżenia i ściany z korą stojącego pnia (boki).
+const NO_TURN = [0, 0, 0, 0, 0, 0];
+const SIDE_FACES = [true, true, false, false, true, true];
+const LYING_END_FACES = { x: [0, 1], z: [4, 5] };
+
 export const blockRenderData =
     new Array(MAX_BLOCK_ID + 1).fill(null);
 
@@ -1404,7 +1410,8 @@ for (
         // Composed once while loading the atlas; variants reuse the same
         // opaque/cutout face and material instead of adding overlay geometry.
         // Pień z arkuszem kory: boki losowane z 64 kafelków.
-        bark: barkSheet(name),
+        // (Leżący pień - 1.36.0 - ma arkusz stojącego pnia swojego gatunku.)
+        bark: barkSheet(definition.lying ? `${definition.tree}_log` : name),
 
         worldTextureVariants: name === 'pine_log_upper'
             ? [definition.textures.side, ...PINE_TRANSITION_TEXTURES].map(texture => FACE_NAMES.map(faceName =>
@@ -1480,7 +1487,14 @@ for (
 
         rotate: FACE_NAMES.map(
             faceName => rotatedFaces.includes(faceName)
-        )
+        ),
+
+        // Leżący pień (1.36.0): stały obrót kory na ścianach (słoje wzdłuż
+        // pnia) i ściany, na które idzie arkusz kory (bez czół).
+        turn: definition.lying ? LYING_TURNS[definition.lying] : NO_TURN,
+        barkFaces: definition.lying
+            ? LYING_TURNS[definition.lying].map((_, face) => !LYING_END_FACES[definition.lying].includes(face))
+            : SIDE_FACES
 
     };
 

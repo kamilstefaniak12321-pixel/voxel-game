@@ -101,6 +101,10 @@ Współrzędne można podawać względem gracza: `~` (tu, gdzie stoję),
 | `/niskie` | rośliny niskie (1.19.0, `docs/rosliny-niskie.md`): lista roślin i biomów, w których rosną |
 | `/niskie galeria` | przed tobą galeria: każda roślina w rzędzie, od lewej kolejne etapy (sadzonka, roślina, kwiaty, owoce), przy dyni młoda i dojrzała dynia, w ostatnim rzędzie torfowce i chrobotek (zmienia świat) |
 | `/niskie znajdz [roślina]` | najbliższa roślina niska we wczytanym terenie (np. `zurawina`, `brusznica`, `poziomka`, `dynia`): odległość i komenda `/tp` |
+| `/scinanie` | ścinanie drzew (1.36.0, `docs/scinanie.md`): co gra wie o drzewie pod celownikiem - gatunek, twardość, grubość pnia, ile ciosów i z ilu stron, ile kłód spadnie |
+| `/scinanie zetnij [polnoc\|poludnie\|wschod\|zachod]` | kładzie drzewo (albo odcina konar) pod celownikiem od razu; bez strony - tam, gdzie patrzysz |
+| `/scinanie cios [liczba]` | zadaje podaną liczbę ciosów siekierą bez czekania na zamach (tryb przygody, siekiera w ręce) |
+| `/scinanie siekiera` | daje siekierę |
 | `/pochodnia` | wypalające się pochodnie (1.35.0, `docs/pochodnie.md`): ile pali się pochodnia i łuczywo, ile pochodni w świecie płonie, przygasa i zgasło |
 | `/pochodnia daj` | do ekwipunku: 8 nowych pochodni, 4 nadpalone, 8 łuczyw, 4 ogarki, 8 żywic, starter ognia i 4 polana sosny |
 | `/pochodnia paliwo <procent>` | ustawia paliwo pochodni pod celownikiem (blok zmieni etap w ciągu sekundy) albo stosu pochodni w ręce |

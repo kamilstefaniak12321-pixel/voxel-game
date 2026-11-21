@@ -17,7 +17,7 @@
     "rosliny": {
       "file": "rosliny.png",
       "width": 256,
-      "height": 704
+      "height": 720
     },
     "przedmioty": {
       "file": "przedmioty.png",
@@ -9794,6 +9794,13 @@
       "y": 688,
       "width": 16,
       "height": 16
+    },
+    "konar": {
+      "sheet": "rosliny",
+      "x": 0,
+      "y": 704,
+      "width": 16,
+      "height": 16
     }
   },
   "aliases": {
@@ -17809,6 +17816,11 @@
       "x": 62,
       "y": 96,
       "region": "torch_stub"
+    },
+    "konar": {
+      "x": 63,
+      "y": 96,
+      "region": "konar"
     }
   }
 }

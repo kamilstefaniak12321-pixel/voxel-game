@@ -35,7 +35,9 @@ więcej niż dotąd - bez kolejnej zmiany zapisu.
 | 15500-15599 | stanowiska pracy (1.27.0: stół krawiecki 15500-15507 - `src/blocks/sewingTable.js`) |
 | 15600-15999 | pnącza (1.30.0, `src/blocks/vines.js`): podpory 15600-15603 (kratka wzdłuż x i z, tyczka, pergola) i od 1.31.0 15604-15607 (siatka na groch wzdłuż x i z, chrust, wigwam z tyczek); od 15616 po 64 numery na gatunek (winorośl, chmiel, kiwi, marakuja, fasola od 15872, groch od 15936): 8 × etap (łodyga, liście, kwiaty, zielone owoce, dojrzałe, od 1.31.0 suche strąki) + mocowanie (płaskie na 4 strony muru, kratka x, kratka z, tyczka, pergola; fasola: ziemia, tyczka, kratka x, kratka z, wigwam; groch: ziemia, siatka x, siatka z, chrust, kratka x, kratka z) |
 | 16000-16089 | etapy wypalania pochodni (1.35.0, `src/blocks/torches.js`): 16000-16084 przygasające pochodnie (17 odmian × 5 mocowań, kolejność jak 10010-10094), 16085-16089 ogarki (5 mocowań) |
-| 16090-65279 | wolne na przyszłość |
+| 16090-16099 | wolne |
+| 16100-16299 | leżące pnie ściętych drzew (1.36.0, `src/blocks/lyingLogs.js`): 16100 + 2 × miejsce gatunku na liście `LYING_WOODS` (świerk 16100, sosna 16102, buk 16104, lipa 16106, dąb 16108, brzoza 16110... sosna oścista 16162), +0 wzdłuż X, +1 wzdłuż Z; zajęte 16100-16163, reszta dla kolejnych gatunków |
+| 16300-65279 | wolne na przyszłość |
 | 65280-65535 | zarezerwowane dla gry, nigdy w zapisie (np. odcienie trawy dalekiego terenu) |
 
 Stałe: `MAX_BLOCK_ID` w `src/blocks/BlockRegistry.js` (tam też ta lista),

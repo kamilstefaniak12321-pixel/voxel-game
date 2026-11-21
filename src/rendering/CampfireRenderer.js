@@ -284,7 +284,8 @@ export class CampfireRenderer {
         if(intensity>.02 && fire.logs.length) {
             // Dymi i strzela to polano, które właśnie się pali (z wierzchu).
             // Mokre polano (1.33.0) dymi gęsto i biało, póki nie przeschnie.
-            const top=fire.logs.at(-1), wood=woodTraits(top.wood), damp=wetFactor(top.wet ?? 0);
+            // (W deszczu - 1.35.0 - ogień paruje tak samo.)
+            const top=fire.logs.at(-1), wood=woodTraits(top.wood), damp=Math.max(wetFactor(top.wet ?? 0), Math.min(1, (fire.rain ?? 0) * 1.2));
             view.smoke+=dt*2.2*intensity*(SMOKE_RATE[wood.smoke]+2.5*damp); view.spark+=dt;
             if(view.smoke>=1) { view.smoke%=1; this.emit(fire,false,null,damp>.15 ? 1+1.2*damp : wood.dark ? .55 : 1); }
             if(view.spark>.25 && Math.random()<dt*SPARK_RATE[wood.sparks]) { view.spark=0; this.emit(fire,true); }

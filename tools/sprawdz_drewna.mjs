@@ -140,7 +140,7 @@ const hold = (fire, seconds = 20) => {
     equal([tinderTemp('short_grass'), tinderTemp('tall_grass'), tinderTemp('reed'), tinderTemp('straw')], [260, 260, 260, 260], 'Trawa i słoma: 260°');
     equal([tinderTemp('oak_bark'), tinderTemp('beech_bark'), tinderTemp('huba_huba'), tinderTemp('porostiglasty_galazki'), tinderTemp('kapok_fluff')], [280, 280, 280, 280, 280], 'Kora, huba, porost, puch: 280°');
     equal([tinderTemp('pine_bark'), tinderTemp('spruce_bark'), tinderTemp('mugo_bark'), tinderTemp('rainbow_eucalyptus_bark'), tinderTemp('fir_cone'), tinderTemp('larch_cone')], [300, 300, 300, 300, 300, 300], 'Kora żywiczna i szyszki: 300°');
-    check(tinderTemp('birch_bark') === 330 && Math.max(...Object.values(TINDER_TEMPS)) === 330 && tinderTemp('stick') === 0 && tinderTemp('stone') === 0, 'Kora brzozowa najlepsza: 330°');
+    check(tinderTemp('birch_bark') === 330 && tinderTemp('luczywo') === 350 && Math.max(...Object.values(TINDER_TEMPS)) === 350 && tinderTemp('stick') === 0 && tinderTemp('stone') === 0, 'Kora brzozowa 330°, łuczywo (1.35.0) najlepsze: 350°');
 
     // Co czym się zapali (bez rozpałki).
     const lights = (tinder, wood) => { const fire = stack(wood); addTinder(fire, tinder); return canIgnite(fire); };

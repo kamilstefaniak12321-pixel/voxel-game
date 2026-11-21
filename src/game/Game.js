@@ -101,6 +101,7 @@ import { Orchard } from './Orchard.js';
 import { Spoilage } from './Spoilage.js';
 import { WoodDrying } from './WoodDrying.js';
 import { Woodpiles } from './Woodpiles.js';
+import { TorchBurn } from './TorchBurn.js';
 import { Warmth } from './Warmth.js';
 import { Freeze } from './Freeze.js';
 import { clothesCode } from '../items/clothing.js';
@@ -865,6 +866,9 @@ export class Game extends GameInteraction {
         // Ubrania na postaci (1.27.0): main.js maluje je na skórce
         // (player/skin.js - setWornClothes). equip - 4 stosy albo null.
         this.onClothes = null;
+        // Wypalanie się pochodni (1.35.0) - przed obrazem pochodni, który
+        // zgłasza mu każdą zobaczoną pochodnię.
+        this.torchBurn = new TorchBurn(this, worldInfo.torchBurn);
         this.torches = new TorchRenderer(this);
         this.torches.setLowDetail(this.settings.get('potato'));
         // Drzwi (0.91.0) - modele z animacją otwierania.
@@ -893,6 +897,7 @@ export class Game extends GameInteraction {
         this.saver.orchard = this.orchard;
         this.saver.sewingTables = this.sewingTables;
         this.saver.woodpiles = this.woodpiles;
+        this.saver.torchBurn = this.torchBurn;
 
         this.saver.saveOnExit();
 
@@ -1054,6 +1059,7 @@ export class Game extends GameInteraction {
         this.carpenterTables.update(dt);
         this.sewingTables.update(dt);
         this.woodpiles.update(dt);
+        this.torchBurn.update(dt);
         this.torches.update(dt);
         this.world.updateLightHolds(dt);
         this.doors.update(dt);
@@ -2760,6 +2766,7 @@ export class Game extends GameInteraction {
 
         this.spoilage.advance(seconds);
         this.woodDrying.advance(seconds);
+        this.torchBurn.advance(seconds);
 
     }
 
@@ -3039,6 +3046,7 @@ export class Game extends GameInteraction {
         this.carpenterTables.dispose();
         this.sewingTables.dispose();
         this.woodpiles.dispose();
+        this.torchBurn.dispose();
         this.torches.dispose();
         this.doors.dispose();
         this.hedgehogs.dispose();

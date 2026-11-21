@@ -347,7 +347,7 @@ function chew(game, seconds, dt = 0.05) {
     const gameSource = source('src/game/Game.js');
     check(/advanceWorld\(seconds\) \{[\s\S]*?this\.campfires\.advance\(seconds\);[\s\S]*?this\.plantGrowth\.advance\(seconds\);/.test(gameSource), 'advanceWorld: ogniska i rośliny');
     check(/game\.advanceWorld\?\.\(HOURS_LOST \/ 24 \* DAY_LENGTH_MINUTES \* 60\)/.test(source('src/game/Blackout.js')), 'Utrata przytomności też przesuwa świat');
-    check(/advance\(seconds\) \{\s*for \(const fire of this\.fires\.values\(\)\) updateCampfire\(fire, seconds\);/.test(source('src/game/Campfires.js')), 'Ogniska dopalają się przez przespany czas');
+    check(/advance\(seconds\) \{[\s\S]{0,160}?for \(const fire of this\.fires\.values\(\)\) \{ fire\.rain = 0; updateCampfire\(fire, seconds\);/.test(source('src/game/Campfires.js')), 'Ogniska dopalają się przez przespany czas (bez deszczu)');
 }
 
 console.log(`OK: nóż, kora, jedzenie i nadrabianie czasu - ${checks} sprawdzeń.`);

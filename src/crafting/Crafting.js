@@ -5,6 +5,7 @@ import { STACK_SIZE } from '../game/Inventory.js';
 import { GROUPS, RECIPES } from './recipes.js';
 import { stoneToolInfo, stoneToolResult } from '../items/stoneTools.js';
 import { choppedFresh } from '../items/moisture.js';
+import { isTorchItem, fuelOf } from '../items/torchFuel.js';
 
 // ------------------------------------------------------------
 // WYTWARZANIE (crafting) - siatka 2 x 2 w ekwipunku
@@ -332,7 +333,11 @@ export function gridResult(grid) {
 
     const type = recipe.stoneTool ? stoneToolResult(recipe.stoneTool, grid) : recipe.result[0];
 
-    return { recipe, type, count: recipe.result[1], fresh: choppedFresh(type) };
+    // Pochodnia z pochodni (barwienie, 1.35.0): paliwa tyle, ile miała.
+    const fuels = isTorchItem(type) ? grid.filter((item) => item && isTorchItem(item.type)).map(fuelOf) : [];
+    const fresh = fuels.length > 0 && Math.min(...fuels) < 1 ? Math.min(...fuels) : choppedFresh(type);
+
+    return { recipe, type, count: recipe.result[1], fresh };
 
 }
 

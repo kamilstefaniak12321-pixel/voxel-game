@@ -2,7 +2,7 @@
 
 > Ta strona jest generowana z kodu gry (`python tools/wiki.py`) - nie zmieniaj jej ręcznie, zmiany przepadną przy następnym generowaniu.
 
-Wersja gry **1.34.0** - 260 przepisów. Wytwarza się w ekwipunku (**E**): siatka 2 x 2 obok miejsc ekwipunku, wynik po prawej (klik - weź, Shift + klik - ile się da). Przycisk 📖 *Przepisy* otwiera księgę - klik na przepisie sam układa składniki. Przepisy *z kształtem* można przesuwać po siatce i odbijać w poziomie; przepisy *bez kształtu* - obojętne, gdzie leżą składniki. Z czatu: `/przepisy`, `/wytworz <przepis>`.
+Wersja gry **1.35.0** - 262 przepisów. Wytwarza się w ekwipunku (**E**): siatka 2 x 2 obok miejsc ekwipunku, wynik po prawej (klik - weź, Shift + klik - ile się da). Przycisk 📖 *Przepisy* otwiera księgę - klik na przepisie sam układa składniki. Przepisy *z kształtem* można przesuwać po siatce i odbijać w poziomie; przepisy *bez kształtu* - obojętne, gdzie leżą składniki. Z czatu: `/przepisy`, `/wytworz <przepis>`.
 
 
 ## Ziemia
@@ -587,7 +587,19 @@ Wersja gry **1.34.0** - 260 przepisów. Wytwarza się w ekwipunku (**E**): siatk
 
 <img src="przepisy/torch.png" alt="Pochodnia x4: 1 x Patyk + 1 x żywica albo oliwki (obojętne gdzie)">
 
-1 x Patyk + 1 x żywica albo oliwki (bez kształtu). Nazwa przepisu: `torch`. Żywicę zbierz PPM z pnia sosny, oliwki - z liści oliwki. Pochodnię postaw na podłożu albo na ścianie.
+1 x Patyk + 1 x żywica albo oliwki (bez kształtu). Nazwa przepisu: `torch`. Żywicę zbierz PPM z pnia sosny, oliwki - z liści oliwki. Pochodnię postaw na podłożu albo na ścianie. Pali się godzinę, potem zostaje ogarek.
+
+### Pochodnia
+
+<img src="przepisy/torch_from_stub.png" alt="Pochodnia: 1 x Ogarek pochodni + 1 x żywica albo oliwki (obojętne gdzie)">
+
+1 x Ogarek pochodni + 1 x żywica albo oliwki (bez kształtu). Nazwa przepisu: `torch_from_stub`. Ogarek po wypalonej pochodni i świeże paliwo. Na postawiony ogarek wystarczy PPM żywicą albo oliwkami.
+
+### Łuczywo x4
+
+<img src="przepisy/luczywo.png" alt="Łuczywo x4: 1 x żywiczne polano (sosna, kosodrzewina, świerk, modrzew, sosna oścista) + 1 x siekiera (dowolny kamień) (zostaje) (obojętne gdzie)">
+
+1 x żywiczne polano (sosna, kosodrzewina, świerk, modrzew, sosna oścista) + 1 x siekiera (dowolny kamień) (bez kształtu). Nazwa przepisu: `luczywo`. Siekiera zostaje. Najlepsza podpałka (350°), a postawione świeci jak pochodnia - ale tylko kilka minut.
 
 ### Pochodnia biała
 
@@ -1597,6 +1609,7 @@ Wersja gry **1.34.0** - 260 przepisów. Wytwarza się w ekwipunku (**E**): siatk
 Składnik z grupy to dowolna rzecz z listy (np. patyki z desek różnych drzew).
 
 - **siekiera (dowolny kamień)**: Siekiera, Siekiera granitowa, Siekiera wapienna, Siekiera piaskowcowa, Siekiera łupkowa, Siekiera bazaltowa
+- **żywiczne polano (sosna, kosodrzewina, świerk, modrzew, sosna oścista)**: Opał — sosna, Opał — kosodrzewina, Opał — świerk, Opał — modrzew, Opał — sosna oścista
 - **pochodnia (dowolny kolor)**: Pochodnia, Pochodnia biała, Pochodnia pomarańczowa, Pochodnia purpurowa, Pochodnia jasnoniebieska, Pochodnia żółta, Pochodnia limonkowa, Pochodnia różowa, Pochodnia szara, Pochodnia jasnoszara, Pochodnia turkusowa, Pochodnia fioletowa, Pochodnia niebieska, Pochodnia brązowa, Pochodnia zielona, Pochodnia czerwona, Pochodnia czarna
 - **deski (dowolne)**: Deski świerkowe, Deski sosnowe, Deski bukowe, Deski lipowe, Deski dębowe, Deski brzozowe, Deski jabłoniowe, Deski olchowe, Deski wierzbowe, Deski akacji, Deski cypryśnika, Deski wiśni, Deski klonowe, Deski z kosodrzewiny, Deski oliwkowe, Deski eukaliptusowe, Deski sekwojowe, Deski miłorzębowe, Deski jakarandowe, Deski jodłowe, Deski baobabowe, Deski palmowe, Deski modrzewiowe, Deski namorzynowe, Deski z puchowca, Deski z jukki, Deski osikowe, Deski araukariowe, Deski figowcowe, Deski z draceny, Deski cedrowe, Deski z sosny ościstej
 - **skała (kamień, granit, wapień, piaskowiec, łupek, bazalt)**: Kamień, Granit, Wapień, Piaskowiec, Łupek, Bazalt

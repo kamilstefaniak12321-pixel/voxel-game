@@ -16,6 +16,9 @@ const COOK_NOTICE_RANGE = 12;
 // także na samym żarze po ognisku - wolniej).
 const canRoastOn = (fire) => fire.phase === 'burning' || fire.phase === 'collapsing' || fire.embers > 0;
 
+// Od takiej jasności nieba ognisko stoi pod gołym niebem (0-15).
+const OPEN_SKY = 12;
+
 // Z jak daleka gracz dostaje napis, że polano zajęło się od żaru.
 const EMBER_NOTICE_RANGE = 8;
 
@@ -194,7 +197,7 @@ export class Campfires {
         // prawdziwego czasu).
         if (fire.phase === 'burning') {
             const minutes = burnSecondsLeft(fire) / 60;
-            const damp = isWet(topLog(fire).wet ?? 0) ? ', mokre drewno' : '';
+            const damp = (isWet(topLog(fire).wet ?? 0) ? ', mokre drewno' : '') + (fire.rain > 0 ? ', pada na nie deszcz' : '');
             return `Ognisko płonie (${degrees(campfireTemp(fire))}${damp}) - opał ${fire.logs.length}/6, ${minutes >= 1 ? `jeszcze ok. ${Math.round(minutes)} min` : 'zaraz zgaśnie'}`;
         }
         if (fire.phase === 'collapsing') return 'Polana opadają w żar';
@@ -214,6 +217,7 @@ export class Campfires {
     update(dt, holding) {
         this.clock += dt;
         const game = this.game, hit = game.currentHit;
+        const rain = Number.isFinite(game.rainNow) && game.rainNow > 0.05 ? Math.min(1, game.rainNow) : 0;
         for (const [key, fire] of this.fires) {
             const chunk = game.world.getChunk(game.world.toChunkCoord(fire.x), game.world.toChunkCoord(fire.z));
             if (chunk && game.world.getBlockId(fire.x, fire.y, fire.z) !== getBlockId('campfire')) {
@@ -221,7 +225,20 @@ export class Campfires {
             }
             const active = holding && hit?.hit && keyOf(hit.block) === key && game.selectedBlock === 'fire_starter';
             const phase = fire.phase, logs = fire.logs.length;
+            // Deszcz (1.35.0): pada na ogniska pod gołym niebem.
+            fire.rain = chunk && rain > 0 && (fire.phase !== 'unlit' || fire.embers > 0) &&
+                (game.world.getLight?.(fire.x, fire.y + 1, fire.z)?.sky ?? 0) >= OPEN_SKY ? rain : 0;
             const cooked = updateCampfire(fire, dt, active);
+            if (fire.doused) {
+                // Deszcz zgasił ognisko: syk i napis dla gracza obok.
+                delete fire.doused;
+                if (this.near(fire, EMBER_NOTICE_RANGE * 2)) {
+                    this.noticeAt = -10;
+                    this.notice('Deszcz zgasił ognisko');
+                    game.sounds?.play('sizzle', { position: { x: fire.x + .5, y: fire.y + .4, z: fire.z + .5 } });
+                    game.achieve('fireDoused', { wood: topLog(fire)?.wood ?? null });
+                }
+            }
             if (cooked) this.cooked(fire, cooked);
             else if (chunk && fire.phase === 'burning' && isCooking(fire.pot)) this.bubble(fire, dt);
             // Mokre polano w ogniu syczy (1.33.0).
@@ -323,7 +340,8 @@ export class Campfires {
     // Game.advanceWorld): ogniska palą się tak, jakby minęło tyle sekund.
     // Garnek gotuje się tak długo, jak przez ten czas płonął ogień.
     advance(seconds) {
-        for (const fire of this.fires.values()) updateCampfire(fire, seconds);
+        // (Przespanego deszczu nie liczymy - ogniska dopalają się jak w pogodę.)
+        for (const fire of this.fires.values()) { fire.rain = 0; updateCampfire(fire, seconds); delete fire.doused; }
         this.version++;
     }
 

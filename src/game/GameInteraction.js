@@ -55,6 +55,8 @@ import {
 } from '../blocks/BlockRegistry.js';
 import { getTool, getPlacedBlock, isItemType, getItemLabel } from '../items/ItemRegistry.js';
 import { VINES, vineOfItem } from '../blocks/vines.js';
+// Łuczywo (1.35.0, items/torchFuel.js) stawia się jak pochodnię.
+const LUCZYWO = 'luczywo';
 import { vinePlanting } from './VineGrowth.js';
 import { STATES, isNight, COLD_STATES, SLEEP_WARMTH } from './Wellbeing.js';
 
@@ -194,8 +196,9 @@ export class GameInteraction {
             this.woodpiles.interact(this.currentHit, this.selectedBlock, this.player.crouching);
         const fireInteraction = pileInteraction || (!chestInteraction && placing && !breakHeld && placePressed &&
             this.campfires.interact(this.currentHit, this.selectedBlock));
+        // Pochodnia (1.35.0): dolanie paliwa, rozpalenie, opis - potem barwienie.
         const torchInteraction = !fireInteraction && placing && !breakHeld && placePressed &&
-            dyeTorch(this, this.currentHit, this.selectedBlock);
+            (this.torchBurn?.interact(this.currentHit, this.selectedBlock) || dyeTorch(this, this.currentHit, this.selectedBlock));
 
         // Sen na gołej ziemi: kucnięcie + PPM pustą ręką w ziemię pod nogami.
         const groundSleep = !shapeInteraction && !chestInteraction && !fireInteraction && placing && !breakHeld && placePressed &&
@@ -246,7 +249,8 @@ export class GameInteraction {
             // Owoc pnącza (1.30.0): sadzi się przy podporze, nie na polu.
             const vineSpecies = type ? vineOfItem(type) : null;
 
-            const block = type && !vineSpecies ? getPlacedBlock(type) : null;
+            // Łuczywo (1.35.0) stawia się jak pochodnię - pali się krótko.
+            const block = type === LUCZYWO ? 'torch' : type && !vineSpecies ? getPlacedBlock(type) : null;
 
             if (vineSpecies) {
                 this.plantVine(vineSpecies, type);
@@ -258,7 +262,7 @@ export class GameInteraction {
                 this.emptyBowl();
             }
 
-            if (block && isItemType(type) && !this.canPlantAt(this.currentHit, block)) {
+            if (block && isItemType(type) && type !== LUCZYWO && !this.canPlantAt(this.currentHit, block)) {
 
                 // Nie na polu: jedzenie się zjada, nasiono podpowiada.
 
@@ -312,11 +316,15 @@ export class GameInteraction {
                         this.chests.ensure(target);
                     }
 
+                    // Pochodnia (1.35.0): paliwa tyle, ile miał stos; łuczywo - mało.
+                    const torch = typeof placed === 'string' ? getBlockDefinition(placed)?.torch : null;
+                    if (torch && target) this.torchBurn?.placedItem(target, this.inventory.selectedItem, torch.colorKey);
+
                     this.achieve('blockPlaced', { type: block, placed });
 
                     // Owoc postawiony jako sadzonka - posadzony.
 
-                    if (block !== type) {
+                    if (block !== type && type !== LUCZYWO) {
                         this.achieve('planted', { type: block, item: type });
                     }
 
@@ -1097,6 +1105,8 @@ export class GameInteraction {
 
         if (type === 'campfire') return this.campfires.drops(position);
         if (type === 'woodpile') return this.woodpiles.drops(position);
+        // Pochodnia (1.35.0): z resztą paliwa albo ogarek.
+        if (this.torchBurn && getBlockDefinition(type)?.torch) return this.torchBurn.drops(type, position);
 
         const drops = [];
         const drop = getDropType(type);

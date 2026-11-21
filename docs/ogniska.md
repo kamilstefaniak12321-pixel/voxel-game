@@ -66,7 +66,7 @@ Dymi i strzela polano, które właśnie się pali. Modrzew sypie iskrami, świer
 ### Luki i świadome uproszczenia
 
 - (1.32.0) Drewno było zawsze suche - od 1.33.0 jest wilgotność, opis niżej.
-- **Deszcz nie gasi ogniska**, a pochodnie jeszcze się nie wypalają - kolejne wersje części A.
+- (1.32.0) Deszcz nie gasił ogniska, a pochodnie się nie wypalały - od 1.35.0 jedno i drugie działa.
 - **Twardość** drewna jest w danych i w `/drewno`, ale nic jeszcze nie robi - czeka na ścinanie i narzędzia (części B i C).
 - Temperatura zależy tylko od polana z wierzchu, nie od wielkości stosu; liczby (stała 12 s dochodzenia do żaru, wzór na ciepło, czas żaru) dobrałem na oko - do strojenia w grze.
 - Polano na żarze zajmuje się także, gdy nikt nie patrzy; napis i osiągnięcie dostaje tylko gracz w promieniu 8 bloków.
@@ -105,7 +105,7 @@ Ubytek wilgotności na dobę gry (20 minut) = 0,35 × miejsce × temperatura + o
 ### Luki (wilgotność)
 
 - (1.33.0) Drewutni jeszcze nie było - od 1.34.0 jest stos drewna, opis niżej.
-- **Deszcz nie gasi płonącego ogniska** i nie moczy polan, które się palą (pogoda a ogień - wersja A3).
+- (1.33.0) Deszcz nie gasił płonącego ogniska - od 1.35.0 chłodzi je i gasi słabe, opis niżej.
 - **Pnie i deski nie mają wilgotności**; mokry jest każdy świeżo porąbany stos polan, nawet z pnia, który rok leżał w skrzyni. Suche drewno z powalonych drzew dojdzie ze ścinaniem (część B).
 - Deszcz i temperaturę liczy się tam, gdzie stoi gracz - dalekie (niewczytane) polana schną w zwykłym tempie pory roku i nie mokną.
 - Mokrych polan w stosie ogniska nie widać po teksturze - tylko po pasku, opisie, dymie i syku (w drewutni są ciemniejsze).
@@ -138,6 +138,18 @@ Obraz: każdy stos to jedna siatka (jedno rysowanie), budowana od nowa tylko po 
 - Stos nie płonie i nie zajmuje się od ogniska obok (pożar to część E).
 - Dalekie (niewczytane) stosy schną w zwykłym tempie pory roku i nie mokną.
 - Zdjęte naraz polana o różnej wilgotności dostają średnią.
+
+## Deszcz a ognisko (1.35.0)
+
+- Deszcz pada na ogniska **pod gołym niebem** (nad ogniskiem widać niebo); pod dachem nic się nie zmienia.
+- **Chłodzi ogień**: żar palącego się polana jest niższy nawet o 35% (ulewa). Dąb w ulewie ma ok. 600° zamiast 920° - mniej grzeje i wolniej gotuje.
+- **Słabe ognisko gaśnie**: gdy pada porządnie (natężenie od 0,3), a schłodzony żar spada poniżej 560°, ogień gaśnie po ok. 12 sekundach ulewy. Ulewę przetrwa dąb, buk, klon, jabłoń, akacja, oliwka, namorzyn i eukaliptus; świerk, sosna, brzoza, lipa czy wierzba zgasną. Zwykły deszcz gasi tylko najsłabsze drewno (lipa, wierzba, osika, puchowiec), mżawka żadnego. Mokre drewno gaśnie łatwiej.
+- Zgaszone ognisko zostaje ze stosem (wierzchnie polano nadpalone) i resztką żaru; gra pisze „Deszcz zgasił ognisko". Stos pod gołym niebem dalej moknie.
+- **Żar po ognisku** gaśnie w ulewie pięć razy szybciej.
+- PPM pustą ręką pokazuje to w opisie: „Ognisko płonie (600°, pada na nie deszcz) - …"; ogień w deszczu paruje na biało.
+- Przespanego deszczu gra nie liczy - ogniska dopalają się jak w pogodę.
+
+Pochodnie w deszczu i ich wypalanie: [pochodnie.md](pochodnie.md#wypalanie-1350). Test: `tools/sprawdz_pochodni_paliwa.mjs`.
 
 ## Wcześniej
 

@@ -28,6 +28,9 @@ import { VINES, vineOfItem } from '../blocks/vines.js';
 
 // Przedmioty, które działają same (nie są składnikiem ani jedzeniem).
 const OWN_USES = {
+    // Wypalające się pochodnie (1.35.0, items/torchFuel.js).
+    luczywo: 'postawione świeci jak pochodnia przez kilka minut',
+    torch_stub: 'z żywicą albo oliwkami znów jest pochodnią',
     // Gotowanie (1.20.0, items/cooking.js).
     clay_pot: 'gotowanie: nabierz wody (PPM na wodzie)',
     clay_pot_water: 'gotowanie: postaw na ognisku i wrzuć 2-3 składniki',

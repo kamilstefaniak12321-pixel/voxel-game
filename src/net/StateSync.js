@@ -16,6 +16,7 @@ import { restoreChest, chestState } from '../game/ChestState.js';
 import { restoreCampfire } from '../game/CampfireState.js';
 import { isSeasonable, wetOf } from '../items/moisture.js';
 import { restoreWoodpile, pileSign } from '../game/WoodpileState.js';
+import { restoreTorch, torchSign } from '../game/TorchBurn.js';
 import { restoreTable } from '../game/CarpenterTables.js';
 import { restoreSewingTable, sewingTableState } from '../game/SewingTables.js';
 import { restoreDrop, dropState } from '../game/Drops.js';
@@ -65,6 +66,14 @@ export function stateSystems(game) {
             restore: restoreWoodpile,
             sign: pileSign,
             changed: () => game.woodpiles?.changed()
+        },
+        // Paliwo pochodni (1.35.0): etap i paliwo co 5%.
+        torches: {
+            map: () => game.torchBurn?.torches ?? NONE,
+            save: (torch) => ({ ...torch }),
+            restore: restoreTorch,
+            sign: torchSign,
+            changed: () => game.torchBurn?.changed()
         },
         // Wyrzucone przedmioty (0.100.0): wpis po nazwie (id), nie po
         // pozycji. Lot liczy każdy u siebie - podpis to tylko "co i ile".

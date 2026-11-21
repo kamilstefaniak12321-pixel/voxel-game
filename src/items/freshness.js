@@ -28,10 +28,15 @@
 import { isPerishable } from './spoilage.js';
 import { isGarment, cleanLook, sameLook } from './clothing.js';
 import { isSeasonable, wetBar } from './moisture.js';
+import { isTorchItem, fuelBar } from './torchFuel.js';
 
-// Czy stos tej rzeczy niesie pole `fresh` (świeżość jedzenia albo
-// suchość drewna).
-export const hasFresh = (type) => isPerishable(type) || isSeasonable(type);
+// Czy stos tej rzeczy niesie pole `fresh` (świeżość jedzenia, suchość
+// drewna albo - od 1.35.0 - paliwo pochodni, items/torchFuel.js).
+export const hasFresh = (type) => isPerishable(type) || isSeasonable(type) || isTorchItem(type);
+
+// Rzeczy, których stos w pełnym stanie (1) nie ma pola: suche polano,
+// nowa pochodnia.
+const bareWhenFull = (type) => isSeasonable(type) || isTorchItem(type);
 
 // Najwięcej sztuk w stosie (Inventory.js - STACK_SIZE).
 export const MAX_STACK = 64;
@@ -66,6 +71,8 @@ export const FRESH_BAR_FROM = 0.97;
 // wilgotność drewna widać zawsze.
 export function freshBar(item, spoiling = true) {
     if (item && isSeasonable(item.type)) return wetBar(item);
+    // Pochodnia (1.35.0): pomarańczowy pasek - ile paliwa; nowa bez paska.
+    if (item && isTorchItem(item.type)) return fuelBar(item);
     if (!spoiling) return null;
     const fresh = freshOf(item);
     if (fresh === undefined || fresh >= FRESH_BAR_FROM) return null;
@@ -75,7 +82,7 @@ export function freshBar(item, spoiling = true) {
 // Pole `fresh` nowego stosu: suche polano go nie ma.
 function freshField(type, fresh) {
     const value = Number.isFinite(fresh) ? clamp(fresh) : 1;
-    return isSeasonable(type) && value >= 1 ? {} : { fresh: value };
+    return bareWhenFull(type) && value >= 1 ? {} : { fresh: value };
 }
 
 // Nowy stos. fresh pomijane - świeże (dla psujących się); look -
@@ -106,7 +113,7 @@ export function blend(item, count, fresh) {
     if (hasFresh(item.type) && count > 0) {
         const added = Number.isFinite(fresh) ? clamp(fresh) : 1;
         const mixed = clamp((freshOf(item) * item.count + added * count) / (item.count + count));
-        if (isSeasonable(item.type) && mixed >= 1) delete item.fresh;
+        if (bareWhenFull(item.type) && mixed >= 1) delete item.fresh;
         else item.fresh = mixed;
     }
     item.count += count;

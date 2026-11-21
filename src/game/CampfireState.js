@@ -57,6 +57,18 @@ export const COLLAPSE_WARMTH = 0.5;
 // W płonącym ognisku w pełni mokre polano pod spodem wysycha w tyle
 // sekund (polano z wierzchu schnie, paląc się).
 export const STACK_DRY_SECONDS = 300;
+// DESZCZ (1.35.0). fire.rain - natężenie deszczu padającego na ognisko
+// (0-1; ustawia game/Campfires.js, pod dachem 0; nie zapisuje się).
+// Deszcz chłodzi ogień: żar palącego się polana niższy o RAIN_COOL
+// (przy ulewie). Gdy tak schłodzony żar spada poniżej RAIN_OUT_TEMP,
+// a pada co najmniej RAIN_OUT_MIN, ognisko gaśnie po RAIN_OUT_SECONDS
+// ulewy - słabe drewno nie przetrwa deszczu, dąb czy buk przetrwają.
+export const RAIN_COOL = 0.35;
+export const RAIN_OUT_TEMP = 560;
+export const RAIN_OUT_MIN = 0.3;
+export const RAIN_OUT_SECONDS = 12;
+// Tyle razy szybciej gaśnie w ulewie żar po ognisku.
+export const RAIN_EMBERS = 5;
 // Rozpałka: patyki dołożone do podpałki. Każdy podnosi temperaturę.
 export const KINDLING = 'stick';
 export const KINDLING_MAX = 2;
@@ -85,6 +97,8 @@ export const woodHeat = wood => woodTraits(wood).heat;
 // Zapłon i żar konkretnego polana - z jego wilgotnością (1.33.0).
 export const logIgnite = log => woodIgnite(log.wood) + WET_IGNITE * wetFactor(log.wet ?? 0);
 export const logHeat = log => woodHeat(log.wood) * (1 - WET_HEAT * wetFactor(log.wet ?? 0));
+// Żar polana w deszczu o natężeniu `rain` (0-1).
+export const rainHeat = (log, rain = 0) => logHeat(log) * (1 - RAIN_COOL * clamp(rain));
 // Pełny stos jednego gatunku pali się tyle sekund.
 export const stackSeconds = wood => CAMPFIRE_CAPACITY * logSeconds(wood);
 // Ile sekund żaru zostawia jedno wypalone polano: miękkie drewno kilka
@@ -98,6 +112,8 @@ export const cookSpeed = temp => Math.max(0.4, Math.min(1.25, (Number.isFinite(t
 // się same polem "podpalka" w roslina.json (huba, porost iglasty).
 export const TINDERS = {
     short_grass: 1, tall_grass: 1, dune_grass: 1, reed: 1, straw: 1.25,
+    // Łuczywo (1.35.0, items/torchFuel.js): szczapa żywicznego drewna.
+    luczywo: 1.5,
     // Kora każdego drzewa (items/bark.js): brzozowa i żywiczne palą się lepiej.
     ...Object.fromEntries(Object.keys(FIRE_WOODS).map(wood => [barkType(wood), BARK_TINDER[wood] ?? 1])),
     ...Object.fromEntries(PLANT_PACKS.filter(pack => pack.item?.tinder).map(pack => [pack.item.type, pack.item.tinder])),
@@ -108,15 +124,17 @@ export const TINDERS = {
 export const isTinder = type => Object.hasOwn(TINDERS, type);
 // Temperatura, jaką podpałka daje na start (°C). Trawa i słoma - 260,
 // kora i reszta - 280, żywiczne (kora sosny, szyszki) - 300, kora
-// brzozowa - 330.
-const GRASS_TEMP = 260, TINDER_TEMP = 280, RESIN_TEMP = 300, BIRCH_TEMP = 330;
+// brzozowa - 330, łuczywo - 350.
+const GRASS_TEMP = 260, TINDER_TEMP = 280, RESIN_TEMP = 300, BIRCH_TEMP = 330, FATWOOD_TEMP = 350;
 export const TINDER_TEMPS = {
     ...Object.fromEntries(Object.keys(TINDERS).map(type => [type, TINDER_TEMP])),
     ...Object.fromEntries(['short_grass', 'tall_grass', 'dune_grass', 'reed', 'straw'].map(type => [type, GRASS_TEMP])),
     ...Object.fromEntries(Object.keys(FIRE_WOODS).map(wood => [barkType(wood),
         (BARK_TINDER[wood] ?? 1) >= 1.5 ? BIRCH_TEMP : (BARK_TINDER[wood] ?? 1) > 1 ? RESIN_TEMP : TINDER_TEMP])),
     // Szyszki są żywiczne.
-    ...Object.fromEntries(Object.keys(TINDERS).filter(type => type.endsWith('_cone')).map(type => [type, RESIN_TEMP]))
+    ...Object.fromEntries(Object.keys(TINDERS).filter(type => type.endsWith('_cone')).map(type => [type, RESIN_TEMP])),
+    // Łuczywo - najlepsza podpałka.
+    luczywo: FATWOOD_TEMP
 };
 export const tinderTemp = type => TINDER_TEMPS[type] ?? 0;
 // Huba tli się długo: puszczone rozpalanie stygnie tyle razy wolniej.
@@ -247,7 +265,8 @@ export function updateCampfire(fire, dt, holdingStarter = false) {
 }
 
 function ignite(fire, temp) {
-    fire.phase = 'burning'; fire.tinder = null; fire.kindling = 0; fire.lit = 0; fire.ignition = 0;
+    fire.phase = 'burning'; fire.tinder = null; fire.kindling = 0; fire.lit = 0; fire.ignition = 0; fire.soak = 0;
+    delete fire.doused;
     fire.temp = temp;
 }
 
@@ -261,7 +280,8 @@ function burnCampfire(fire, dt, holdingStarter, result) {
         if (embers) fire.ignition = Math.min(1, fire.ignition + dt / EMBER_CATCH_SECONDS);
         else if (ready) fire.ignition = Math.min(1, fire.ignition + dt * (TINDERS[fire.tinder] ?? 1) / CAMPFIRE_IGNITE_SECONDS);
         else fire.ignition = Math.max(0, fire.ignition - dt * .7 / (TINDER_SMOLDER[fire.tinder] ?? 1));
-        fire.embers = Math.max(0, fire.embers - dt);
+        // (W deszczu żar gaśnie szybciej.)
+        fire.embers = Math.max(0, fire.embers - dt * (1 + (RAIN_EMBERS - 1) * clamp(fire.rain ?? 0)));
         if (fire.ignition >= 1) ignite(fire, embers ? hot : startTemp(fire));
         return;
     }
@@ -282,11 +302,19 @@ function burnCampfire(fire, dt, holdingStarter, result) {
             // tego, ile polana zostało), a te pod nim - powoli od ciepła.
             const excess = Math.max(0, (log.wet ?? 0) - DRY_WET);
             const wetAfter = (seconds) => (excess > 0 ? DRY_WET + excess * Math.max(0, (need - seconds) / need) ** 2 : log.wet ?? 0);
+            const rain = clamp(fire.rain ?? 0);
+            let doused = false, burnt = 0;
             for (let done = 0; done < span;) {
                 const step = Math.min(BURN_STEP, span - done), before = fire.temp;
                 // (Żar z wilgotnością w połowie kroku - długi skok czasu
                 // daje wtedy to samo, co wiele klatek.)
-                const target = logHeat({ wood: log.wood, wet: wetAfter(done + step / 2) });
+                const target = rainHeat({ wood: log.wood, wet: wetAfter(done + step / 2) }, rain);
+                // Deszcz (1.35.0): za słaby ogień moknie i gaśnie.
+                if (rain >= RAIN_OUT_MIN && target < RAIN_OUT_TEMP) {
+                    fire.soak = (fire.soak ?? 0) + step * rain;
+                    if (fire.soak >= RAIN_OUT_SECONDS) { doused = true; burnt = done; break; }
+                }
+                else if (fire.soak > 0) fire.soak = Math.max(0, fire.soak - step);
                 fire.temp = target + (before - target) * Math.exp(-step / TEMP_SECONDS);
                 if (fire.pot) result.cooked = cookPot(fire.pot, step * cookSpeed((before + fire.temp) / 2)) ?? result.cooked;
                 done += step;
@@ -294,6 +322,13 @@ function burnCampfire(fire, dt, holdingStarter, result) {
                 for (let i = 0; i < fire.logs.length - 1; i++) {
                     if (fire.logs[i].wet > 0) setLogWet(fire.logs[i], fire.logs[i].wet - step / STACK_DRY_SECONDS);
                 }
+            }
+            if (doused) {
+                // Zgaszone: stos zostaje (wierzchnie polano nadpalone), żar prawie znika.
+                log.burn = Math.min(1, log.burn + burnt / seconds);
+                fire.phase = 'unlit'; fire.ignition = 0; fire.lit = 0; fire.temp = 0; fire.soak = 0;
+                fire.embers = Math.min(fire.embers, 15); fire.doused = true;
+                return;
             }
             left -= span;
             if (span < need) { log.burn += span / seconds; break; }

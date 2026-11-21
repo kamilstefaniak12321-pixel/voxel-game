@@ -54,6 +54,8 @@ import { barkType } from '../items/bark.js';
 import { seasonedWood, freshWet, wetOf, setWet, wetWord, wetIgnite, wetHeat, isWet, DRY_WET } from '../items/moisture.js';
 import { dryingRate, dryDaysLeft } from '../game/WoodDrying.js';
 import { WOODPILE, WOODPILE_CAPACITY, newWoodpile, addLogs } from '../game/WoodpileState.js';
+import { TORCH_BURN_SECONDS, TORCH_DIM_PART, LUCZYWO, LUCZYWO_PART, TORCH_STUB, isTorchItem, fuelMinutes } from '../items/torchFuel.js';
+import { stageFor, RAIN_OUT_SECONDS } from '../game/TorchBurn.js';
 import { LOW_PLANTS, LOW_PLANT_NAMES, SPHAGNUM, lowPlantType, lowPlantInfo, LOW_STAGE_SECONDS, LOW_PLANT_FIRST_ID, LOW_PLANT_END_ID } from '../blocks/lowPlants.js';
 import { VINES, VINE_NAMES, VINE_FIRST_ID, VINE_END_ID, VINE_STAGE_SECONDS, vineType, vineInfoById } from '../blocks/vines.js';
 import { MOUNT_OFFSET } from '../game/VineGrowth.js';
@@ -1827,6 +1829,62 @@ export const WORLD_COMMANDS = [
             }
 
             throw new CommandError('Użycie: /niskie | /niskie galeria | /niskie znajdz [roślina]');
+
+        }
+    },
+
+    {
+        name: 'pochodnia',
+        aliases: ['torch', 'pochodnie'],
+        usage: '/pochodnia | /pochodnia daj | /pochodnia paliwo <procent> | /pochodnia czas <minuty>',
+        description: 'Wypalające się pochodnie (1.35.0): ile pali się pochodnia i ile ich płonie w świecie; "daj" - pochodnie (nowe i nadpalone), łuczywo, ogarki i żywica; "paliwo" ustawia paliwo pochodni pod celownikiem albo stosu w ręce; "czas" przesuwa wszystkie pochodnie o tyle minut.',
+
+        run(args, { game }) {
+
+            const burn = game.torchBurn;
+            const word = simplify(args[0] ?? '');
+            const number = (text) => Number(String(text ?? '').replace(',', '.').replace('%', ''));
+
+            if (!word) {
+                const all = [...burn.torches.values()];
+                const lit = all.filter((torch) => stageFor(torch) === 'lit').length, dim = all.filter((torch) => stageFor(torch) === 'dim').length;
+                return `Pochodnia pali się ${fuelMinutes(1)} min (trzy doby gry); przez ostatnie ${fuelMinutes(TORCH_DIM_PART)} min przygasa, potem zostaje ogarek. ` +
+                    `Łuczywo świeci ${fuelMinutes(LUCZYWO_PART)} min. Deszcz gasi pochodnie pod gołym niebem po ok. ${RAIN_OUT_SECONDS} s ulewy. ` +
+                    `W świecie: płonie ${lit}, przygasa ${dim}, zgasło ${all.length - lit - dim}. PPM żywicą albo oliwkami dolewa paliwa, starter ognia rozpala zgaszoną przez deszcz.`;
+            }
+
+            if (['daj', 'give', 'zestaw'].includes(word)) {
+                const kit = [makeItem('torch', 8), makeItem('torch', 4, 0.3), makeItem(LUCZYWO, 8), makeItem(TORCH_STUB, 4), makeItem('resin', 8), makeItem('fire_starter', 1), makeItem('pine_firewood', 4)];
+                for (const item of kit) game.inventory.addItem(item);
+                return 'Dano: 8 nowych pochodni, 4 nadpalone (30% paliwa), 8 łuczyw, 4 ogarki, 8 żywic, starter ognia i 4 polana sosny (łuczywo: polano + siekiera).';
+            }
+
+            if (['paliwo', 'fuel'].includes(word)) {
+                const value = number(args[1]);
+                if (!(value >= 0 && value <= 100)) throw new CommandError('Podaj paliwo od 0 do 100, np. /pochodnia paliwo 25.');
+                const hit = game.currentHit?.hit ? game.currentHit.block : null;
+                const info = hit ? BLOCK_TYPES[hit.type]?.torch : null;
+                if (info) {
+                    const torch = burn.ensure(hit.x, hit.y, hit.z, { colorKey: info.colorKey, stage: info.stage });
+                    torch.left = TORCH_BURN_SECONDS * value / 100; torch.out = false;
+                    burn.version++;
+                    return `Pochodnia pod celownikiem: ${value}% paliwa (ok. ${fuelMinutes(value / 100)} min) - blok zmieni się w ciągu sekundy.`;
+                }
+                const held = game.inventory.selectedItem;
+                if (!isTorchItem(held?.type)) throw new CommandError('Wyceluj w postawioną pochodnię albo weź pochodnie do ręki.');
+                if (value >= 100) delete held.fresh; else held.fresh = Math.max(0.01, value / 100);
+                return `${getItemLabel(held.type)} w ręce: ${value}% paliwa.`;
+            }
+
+            if (['czas', 'time'].includes(word)) {
+                const minutes = number(args[1]);
+                if (!(minutes > 0 && minutes <= 600)) throw new CommandError('Podaj minuty od 1 do 600, np. /pochodnia czas 50.');
+                burn.advance(minutes * 60);
+                burn.pending = 1;
+                return `Pochodnie spaliły paliwo z ${String(minutes).replace('.', ',')} min. Bloki zmieniają się po kilka na sekundę.`;
+            }
+
+            throw new CommandError('Użycie: /pochodnia | /pochodnia daj | /pochodnia paliwo <procent> | /pochodnia czas <minuty>');
 
         }
     },

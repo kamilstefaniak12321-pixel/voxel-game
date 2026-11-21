@@ -11,6 +11,32 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 1.35.0 - Pochodnie i deszcz
+
+PR #188. Ostatni kawałek części A projektu drewna (`docs/drewno.md`).
+
+- **Pochodnie się wypalają.** Postawiona pali się godzinę (trzy doby
+  gry); przez ostatnie 12 minut przygasa - mniejszy płomień, słabsze
+  światło - a potem zostaje **ogarek**.
+- **Dolewanie paliwa**: PPM żywicą albo oliwkami na pochodni albo ogarku
+  i znów płonie godzinę, w dawnym kolorze. Ogarek z żywicą w siatce
+  wytwarzania też daje pochodnię.
+- Pochodnia zdjęta ze ściany **wraca z resztą paliwa** (pomarańczowy
+  pasek na ikonce) - nowa i nadpalona leżą osobno. Pusta ręka na
+  pochodni mówi, na ile starczy.
+- **Lampy nie gasną.**
+- **Deszcz gasi pochodnie** pod gołym niebem; rozpala się je starterem
+  ognia. Pod dachem płoną dalej.
+- **Łuczywo**: żywiczne polano i siekiera dają 4 szczapy - najlepsza
+  podpałka (350°, zapala dąb bez patyków) i pochodnia na 6 minut.
+- **Deszcz a ognisko**: pod gołym niebem deszcz chłodzi ogień, a słabe
+  ognisko gasi. Ulewę przetrwa dąb, buk czy oliwka; świerk, sosna
+  i brzoza zgasną. Dach załatwia sprawę.
+- Osiągnięcia *Drugie życie ogarka* i *Pogoda wygrała*; komenda
+  `/pochodnia`. Opis: `docs/pochodnie.md`, `docs/ogniska.md`.
+- Pochodnie w dawnych światach dostają pełne paliwo przy pierwszym
+  wczytaniu.
+
 ## 1.34.0 - Drewutnia
 
 PR #187. Dalszy ciąg projektu drewna (`docs/drewno.md`).

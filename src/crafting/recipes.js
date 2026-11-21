@@ -72,6 +72,13 @@ export const GROUPS = {
         types: STONE_TOOL_MATERIALS.map(material => stoneToolType('axe', material.stone))
     },
 
+    // Żywiczne polana - na łuczywo (1.35.0).
+    resinous_firewood: {
+        label: 'żywiczne polano (sosna, kosodrzewina, świerk, modrzew, sosna oścista)',
+        icon: 'campfire_pine',
+        types: ['pine', 'mugo', 'spruce', 'larch', 'bristlecone'].map(wood => `${wood}_firewood`)
+    },
+
     torches: {
         label: 'pochodnia (dowolny kolor)',
         icon: 'torch',
@@ -385,7 +392,12 @@ export const RECIPES = [
         note: 'Mieszanie barwników.'
     })),
     { id: 'torch', result: ['torch', 4], ingredients: ['stick', '#oil'],
-        note: 'Żywicę zbierz PPM z pnia sosny, oliwki - z liści oliwki. Pochodnię postaw na podłożu albo na ścianie.' },
+        note: 'Żywicę zbierz PPM z pnia sosny, oliwki - z liści oliwki. Pochodnię postaw na podłożu albo na ścianie. Pali się godzinę, potem zostaje ogarek.' },
+    // Wypalające się pochodnie (1.35.0, items/torchFuel.js).
+    { id: 'torch_from_stub', result: ['torch', 1], ingredients: ['torch_stub', '#oil'],
+        note: 'Ogarek po wypalonej pochodni i świeże paliwo. Na postawiony ogarek wystarczy PPM żywicą albo oliwkami.' },
+    { id: 'luczywo', result: ['luczywo', 4], ingredients: ['#resinous_firewood', '#axes'], keep: ['#axes'],
+        note: 'Siekiera zostaje. Najlepsza podpałka (350°), a postawione świeci jak pochodnia - ale tylko kilka minut.' },
     ...TORCH_VARIANTS.filter(variant => variant.key !== 'plain').map(variant => ({
         id: variant.type, result: [variant.type, 1], ingredients: ['#torches', `dye_${variant.key}`],
         note: 'Zmienia końcówki płomienia i odcień światła. Postawioną pochodnię można też zabarwić PPM.'

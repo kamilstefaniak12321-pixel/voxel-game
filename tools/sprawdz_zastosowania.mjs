@@ -145,7 +145,7 @@ function usesOf(type) {
         // Ta sama odpowiedź w grze (items/uses.js - komenda /rosliny).
         check(itemUses(type).length > 0 && itemUses(type).every((text) => typeof text === 'string' && text.length > 3), `${type}: opis zastosowania w grze`);
     }
-    check(itemUses('huba_huba').some((text) => /podpałka \(2 razy/.test(text)) && craftsFrom('huba_huba').includes('Barwnik brązowy'), `Huba: podpałka i barwnik (${itemUses('huba_huba').join('; ')})`);
+    check(itemUses('huba_huba').some((text) => /podpałka 280° \(2 razy/.test(text)) && craftsFrom('huba_huba').includes('Barwnik brązowy'), `Huba: podpałka i barwnik (${itemUses('huba_huba').join('; ')})`);
     check(itemUses('tea_calm')[0] === `napar (${EFFECTS.calm.label}, ${EFFECTS.warmth.label})` && itemUses('brew_calm')[0].startsWith('parzenie nad ogniskiem: Napar na sen'), 'Napar i kubek ziół: opis');
     check(itemUses('jablon_jablko').includes('jedzenie') && itemUses('jablon_jablko').some((text) => text.startsWith('pieczenie nad ogniskiem')), 'Jabłko: jedzenie i pieczenie');
     check([...craftsFrom('lawenda_bukiet')].sort().join() === ['Barwnik fioletowy', 'Fioletowa lampa', 'Kubek ziół na sen', 'Wianek z kwiatów'].join(),
@@ -221,8 +221,9 @@ function usesOf(type) {
     check(Object.keys(TINDERS).every((type) => itemExists(type) && TINDERS[type] > 0), 'Każda podpałka istnieje');
     check(TINDERS.huba_huba > TINDERS.birch_bark && TINDERS.birch_bark > TINDERS.straw && TINDERS.straw > TINDERS.short_grass, 'Huba najlepsza, trawa najsłabsza');
     const ignite = (tinder) => {
+        // (Świerk zajmuje się od każdej podpałki - od 1.32.0 dąb potrzebuje lepszej.)
         const fire = newCampfire(0, 0, 0);
-        for (let i = 0; i < 6; i++) addFirewood(fire, 'oak');
+        for (let i = 0; i < 6; i++) addFirewood(fire, 'spruce');
         check(addTinder(fire, tinder), `${tinder}: da się dołożyć na podpałkę`);
         let seconds = 0;
         while (fire.phase === 'unlit' && seconds < 20) { updateCampfire(fire, 0.05, true); seconds += 0.05; }

@@ -6,20 +6,26 @@ pamięć, nie umowa. Po każdej wydanej wersji wpis przechodzi do
 
 ## Teraz
 
-- **1.31.0 - Fasola i groch** (PR #184): jednoroczne; fasola na
-  tyczkach, kratce i wigwamie z tyczek, groch na siatce, chruście
-  i kratce; suche strąki fasoli na nasiona ([pnacza.md](pnacza.md)).
+- **1.32.0 - Charakter drewna** (PR #185): pierwsza część projektu
+  drewna (A1). Każdy z 32 gatunków ma zapłon, żar i czas palenia;
+  ognisko ma temperaturę - rozpalanie etapami, rozpałka z patyków,
+  ciepło i gotowanie zależne od drewna, żar ([ogniska.md](ogniska.md),
+  [drewno.md](drewno.md)).
 
 ## Dalej
 
 **Drewno, ogień i ścinanie drzew** - duży projekt Kamila, uzgodniony
-21.11.2026 ([drewno.md](drewno.md)). Sześć części, każda osobną wersją:
+21.11.2026 ([drewno.md](drewno.md)). Sześć części; pierwsza (A) jest
+podzielona na trzy wersje:
 
-- **A - Charakter drewna**: cechy gatunków (twardość, wilgotność, zapłon,
-  żar, czas), ognisko z temperaturą, suszenie drewna, wypalające się
-  pochodnie i łuczywo, deszcz a ognisko.
+- **A2 - Wilgotność**: świeże drewno jest mokre, schnie na stosie pod
+  dachem i przy ognisku; mokre drewno trudniej zapalić i słabiej grzeje;
+  drewutnia.
+- **A3 - Pochodnie i deszcz**: pochodnie się wypalają, łuczywo, deszcz
+  chłodzi i gasi ognisko.
 - **B - Ścinanie**: drzewo jako jeden byt, ciosy i karb, upadek, leżący
-  pień, konary, kozły, nowy początek gry i samouczek.
+  pień, konary, kozły, **powalone drzewa jako pierwsze drewno**, nowy
+  samouczek.
 - **C - Narzędzia i kołysanie**: twardość skał, widoczne zużycie,
   kołysanie drzew.
 - **D - Dary pnia**: soki, żywice, guma, łyko - nacinanie nożem.
@@ -42,6 +48,11 @@ pamięć, nie umowa. Po każdej wydanej wersji wpis przechodzi do
   olbrzymy tylko metalem (baobab wcale), budowle na początek nie płoną
   i jest ustawienie świata; **pochodnie mają się wypalać**; najpierw
   fasola i groch, potem drewno.
+- Drewno, dopowiedzenia (21.11.2026): pod padającym drzewem
+  **ogłuszenie jak pod wodą, tylko urwane** - nagłe skupienie na
+  drzewie, „ciach" i ciemność. **Pierwsze drewno z powalonego drzewa**,
+  które leży w lesie (pomysł Kamila; wejdzie ze ścinaniem). Do
+  ustalenia: gołą ręką tylko gałęzie i kora, czy także kłody.
 
 - Pnącza (20.11.2026): rosną **po podporze** - sadzonka przy murze,
   płocie, kratce, tyczce albo pniu, sama pnie się w górę i na boki po

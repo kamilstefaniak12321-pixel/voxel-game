@@ -1,5 +1,6 @@
-import { newCampfire, restoreCampfire, updateCampfire, addFirewood, addTinder,
-    fuelWood, isTinder, campfireDrops, burnSecondsLeft, TINDERS } from './CampfireState.js';
+import { newCampfire, restoreCampfire, updateCampfire, addFirewood, addTinder, addKindling,
+    fuelWood, isTinder, campfireDrops, burnSecondsLeft, TINDERS, FIRE_WOODS, KINDLING, KINDLING_MAX, KINDLING_TEMP,
+    canIgnite, catchesFromEmbers, startTemp, emberTemp, campfireTemp, cookSpeed, woodIgnite, topLog } from './CampfireState.js';
 import { getBlockId, isLiquidId, isSolidId, blockExists } from '../blocks/BlockRegistry.js';
 import { CampfireRenderer } from '../rendering/CampfireRenderer.js';
 import { getRoast, isDrink, ROAST_SECONDS } from '../items/foods.js';
@@ -10,13 +11,30 @@ import { newPot, addIngredient, canAddIngredient, takePortion, potDrops, potDesc
 // Z jak daleka gracz słyszy i widzi napis, że potrawa gotowa.
 const COOK_NOTICE_RANGE = 12;
 
-// Ognisko, nad którym da się piec: płonie albo żarzy się.
-const canRoastOn = (fire) => fire.phase === 'burning' || fire.phase === 'collapsing';
+// Ognisko, nad którym da się piec: płonie albo żarzy się (od 1.32.0
+// także na samym żarze po ognisku - wolniej).
+const canRoastOn = (fire) => fire.phase === 'burning' || fire.phase === 'collapsing' || fire.embers > 0;
+
+// Z jak daleka gracz dostaje napis, że polano zajęło się od żaru.
+const EMBER_NOTICE_RANGE = 8;
+
+// Temperatura do napisów: w dziesiątkach stopni.
+const degrees = (temp) => `${Math.round(temp / 10) * 10}°`;
+
+// Nazwa drewna wielką literą ("Dąb", "Sosna oścista").
+const woodName = (wood) => { const name = FIRE_WOODS[wood]?.[0] ?? wood; return name[0].toUpperCase() + name.slice(1); };
 
 const keyOf = ({x, y, z}) => `${x},${y},${z}`;
 
 // Podpowiedź, czym rozpalić (lista: TINDERS w CampfireState.js).
 const TINDER_HINT = 'Dodaj podpałkę: korę, trawę, słomę albo hubę';
+
+// Podpałka nie da rady polanu z wierzchu: co z tym zrobić.
+function tooCold(fire) {
+    const top = topLog(fire).wood;
+    const more = (fire.kindling ?? 0) < KINDLING_MAX ? `Dołóż patyk jako rozpałkę (+${KINDLING_TEMP}°)` : 'Użyj lepszej podpałki';
+    return `${woodName(top)} zajmuje się od ${woodIgnite(top)}°, a podpałka daje ${startTemp(fire)}°. ${more} albo zacznij od łatwiejszego drewna na wierzchu.`;
+}
 
 export class Campfires {
     constructor(game, saved = []) {
@@ -59,23 +77,37 @@ export class Campfires {
                     this.consume(); game.playBlockSound('place', 'oak_log', fire);
                     // Dołożone do płonącego ogniska - pali się dłużej.
                     if (fire.phase === 'burning') { this.noticeAt = -10; this.notice(`Dołożono opał: ${fire.logs.length}/6`); }
+                    // Na żar: łatwe drewno zajmie się samo.
+                    else if (fire.embers > 0) { this.noticeAt = -10; this.notice(this.description(fire)); }
                 }
                 else this.notice(fire.phase === 'unlit' ? `Jest już 6 polan. ${TINDER_HINT}.`
                     : fire.phase === 'burning' ? 'Ognisko jest pełne - dołóż, gdy polano się wypali.' : 'Poczekaj, aż polana opadną w żar.');
             } else if (isTinder(type)) {
                 if (addTinder(fire, type)) {
                     this.consume(); game.playBlockSound('place', blockExists(type) ? type : 'short_grass', fire);
+                    // Za słaba na polano z wierzchu - od razu wiadomo, co zrobić.
+                    if (!canIgnite(fire)) { this.noticeAt = -10; this.notice(tooCold(fire)); }
                     // Lepsza podpałka - krótsze rozpalanie.
-                    if (TINDERS[type] > 1) this.notice('Dobra podpałka - ognisko rozpali się szybciej');
+                    else if (TINDERS[type] > 1) this.notice('Dobra podpałka - ognisko rozpali się szybciej');
                 }
                 else this.notice(fire.logs.length < 6 ? `Najpierw opał: ${fire.logs.length}/6` : 'Podpałka jest już gotowa lub ognisko płonie.');
+            } else if (type === KINDLING && fire.phase === 'unlit') {
+                // Patyki jako rozpałka (1.32.0): podnoszą temperaturę podpałki.
+                if (addKindling(fire)) {
+                    this.consume(); game.playBlockSound('place', 'oak_log', fire);
+                    this.noticeAt = -10;
+                    this.notice(`Rozpałka z patyków ${fire.kindling}/${KINDLING_MAX}` + (!fire.tinder ? ` (+${fire.kindling * KINDLING_TEMP}° do podpałki). ${TINDER_HINT}.`
+                        : canIgnite(fire) ? `: ${startTemp(fire)}° - wystarczy. Przytrzymaj PPM starterem ognia.` : `. ${tooCold(fire)}`));
+                }
+                else this.notice(fire.logs.length < 6 ? `Najpierw opał: ${fire.logs.length}/6` : `Więcej patyków się nie zmieści (${KINDLING_MAX}/${KINDLING_MAX}).`);
             } else if (this.interactPot(fire, type)) {
                 // Garnek (1.20.0): postawiony, składnik, porcja albo zdjęcie.
             } else if (getRoast(type)) {
                 // Samo pieczenie liczy update (trzeba trzymać PPM).
-                if (!canRoastOn(fire)) this.notice(isDrink(getRoast(type)) ? 'Żeby zaparzyć zioła, ognisko musi płonąć.' : 'Żeby coś upiec, ognisko musi płonąć.');
+                if (!canRoastOn(fire)) this.notice(isDrink(getRoast(type)) ? 'Żeby zaparzyć zioła, ognisko musi płonąć albo się żarzyć.' : 'Żeby coś upiec, ognisko musi płonąć albo się żarzyć.');
             } else if (type === 'fire_starter') {
                 if (fire.phase === 'unlit' && (fire.logs.length < 6 || !fire.tinder)) this.notice(`Potrzeba 6 polan i podpałki (${fire.logs.length}/6).`);
+                else if (fire.phase === 'unlit' && !canIgnite(fire)) { this.noticeAt = -10; this.notice(tooCold(fire)); }
             } else this.notice(this.description(fire));
             return true;
         }
@@ -152,15 +184,24 @@ export class Campfires {
     }
 
     description(fire) {
-        // Płonie: ile polan zostało i na jak długo (minuty prawdziwego czasu).
+        // Płonie: temperatura, ile polan zostało i na jak długo (minuty
+        // prawdziwego czasu).
         if (fire.phase === 'burning') {
             const minutes = burnSecondsLeft(fire) / 60;
-            return `Ognisko płonie - opał ${fire.logs.length}/6, ${minutes >= 1 ? `jeszcze ok. ${Math.round(minutes)} min` : 'zaraz zgaśnie'}`;
+            return `Ognisko płonie (${degrees(campfireTemp(fire))}) - opał ${fire.logs.length}/6, ${minutes >= 1 ? `jeszcze ok. ${Math.round(minutes)} min` : 'zaraz zgaśnie'}`;
         }
         if (fire.phase === 'collapsing') return 'Polana opadają w żar';
+        // Żar po ognisku: polano zajmuje się samo, jeśli żar jest dość gorący.
+        if (catchesFromEmbers(fire)) return `Polano zajmuje się od żaru: ${Math.round(fire.ignition * 100)}%`;
         if (fire.ignition > 0) return `Rozpalanie: ${Math.round(fire.ignition * 100)}% — trzymaj PPM`;
+        if (fire.embers > 0 && fire.logs.length === 0) return `Żar (${degrees(emberTemp(fire))}) - dołóż polano, a zajmie się samo`;
+        if (fire.embers > 0 && fire.logs.length < 6) {
+            const top = topLog(fire).wood;
+            return `Żar (${degrees(emberTemp(fire))}) jest za słaby: ${woodName(top).toLowerCase()} zajmuje się od ${woodIgnite(top)}°. Opał ${fire.logs.length}/6`;
+        }
         if (fire.logs.length < 6) return `Opał ${fire.logs.length}/6 — dokładaj PPM`;
-        return fire.tinder ? 'Przytrzymaj PPM starterem ognia' : TINDER_HINT;
+        if (!fire.tinder) return TINDER_HINT;
+        return canIgnite(fire) ? 'Przytrzymaj PPM starterem ognia' : tooCold(fire);
     }
 
     update(dt, holding) {
@@ -183,6 +224,12 @@ export class Campfires {
                 if (active && fire.phase === 'burning') {
                     this.noticeAt = -10;
                     this.notice('Ognisko rozpalone');
+                    game.achieve('fireLit', { wood: topLog(fire).wood, woods: fire.logs.map((log) => log.wood), embers: false });
+                } else if (phase === 'unlit' && fire.phase === 'burning' && this.near(fire, EMBER_NOTICE_RANGE)) {
+                    // Polano zajęło się samo od żaru.
+                    this.noticeAt = -10;
+                    this.notice('Polano zajęło się od żaru');
+                    game.achieve('fireLit', { wood: topLog(fire).wood, woods: fire.logs.map((log) => log.wood), embers: true });
                 }
             }
             if (active && fire.ignition > 0 && fire.phase === 'unlit') {
@@ -194,11 +241,16 @@ export class Campfires {
         this.renderer.update(dt, this.fires, this.clock);
     }
 
+    // Czy gracz jest nie dalej niż `range` bloków od ogniska.
+    near(fire, range) {
+        const player = this.game.player?.pos;
+        return Boolean(player) && Math.hypot(fire.x + .5 - player.x, fire.y - player.y, fire.z + .5 - player.z) <= range;
+    }
+
     // Potrawa właśnie się ugotowała: zapis, napis i dźwięk dla gracza obok.
     cooked(fire, dish) {
         this.version++;
-        const player = this.game.player?.pos;
-        if (!player || Math.hypot(fire.x + .5 - player.x, fire.y - player.y, fire.z + .5 - player.z) > COOK_NOTICE_RANGE) return;
+        if (!this.near(fire, COOK_NOTICE_RANGE)) return;
         this.noticeAt = -10;
         this.notice(`Gotowe: ${DISHES[dish].label} - nabierz glinianą miską`);
         this.game.sounds?.play('pot_ready', { position: { x: fire.x + .5, y: fire.y + .6, z: fire.z + .5 } });
@@ -227,7 +279,8 @@ export class Campfires {
             game.sounds?.play('sizzle');
         }
         const before = this.roast.time;
-        this.roast.time += dt;
+        // Nad gorętszym ogniem piecze się szybciej, na samym żarze wolniej.
+        this.roast.time += dt * cookSpeed(campfireTemp(fire));
         if (Math.floor(this.roast.time * 2.5) !== Math.floor(before * 2.5)) game.swingArm();
         if (Math.floor(this.roast.time / 0.9) !== Math.floor(before / 0.9)) game.sounds?.play('sizzle');
         if (this.roast.time < ROAST_SECONDS) {

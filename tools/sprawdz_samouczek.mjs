@@ -45,7 +45,7 @@ const { SETTINGS_DEFAULTS } = await import('../src/settings/Settings.js');
 const { SETTINGS_TABS } = await import('../src/ui/settingsLayout.js');
 const { TEXTS } = await import('../src/ui/texts.js');
 const { ACHIEVEMENTS } = await import('../src/achievements/list.js');
-const { CAMPFIRE_IGNITE_SECONDS, CAMPFIRE_BURN_SECONDS, CAMPFIRE_CAPACITY, TINDERS } = await import('../src/game/CampfireState.js');
+const { CAMPFIRE_IGNITE_SECONDS, CAMPFIRE_CAPACITY, TINDERS, TINDER_TEMPS, KINDLING_TEMP, KINDLING_MAX, stackSeconds, woodIgnite, woodHeat, WARMTH_FROM, WARMTH_DEGREES } = await import('../src/game/CampfireState.js');
 const { ROAST_SECONDS } = await import('../src/items/foods.js');
 const { EFFECTS } = await import('../src/items/effects.js');
 const { NIGHT_FROM, NIGHT_UNTIL } = await import('../src/game/Wellbeing.js');
@@ -358,7 +358,16 @@ const settle = (game) => run(game, TUTORIAL_DONE_SECONDS + 0.6);
     check(GUIDE[0].id === 'controls' && GUIDE[0].touch?.length >= 6, 'Pierwszy rozdział: sterowanie, z wersją na telefon');
     // Liczby w poradniku zgodne z grą.
     check(chapter('fire').includes(`${CAMPFIRE_CAPACITY} polan`) && chapter('fire').includes(`${CAMPFIRE_IGNITE_SECONDS} sekund`) && chapter('fire').includes(`${ROAST_SECONDS} sekundy`), 'Ognisko: polana, rozpalanie, pieczenie');
-    check(chapter('fire').includes(`${CAMPFIRE_BURN_SECONDS / 60} minut`) && TINDERS.huba_huba === 2 && /dwa razy szybciej/.test(chapter('fire')), 'Ognisko: czas palenia i huba');
+    check(TINDERS.huba_huba === 2 && /dwa razy szybciej/.test(chapter('fire')), 'Ognisko: huba');
+    // Charakter drewna (1.32.0): liczby w poradniku są takie jak w grze.
+    const minutes = (wood) => String(stackSeconds(wood) / 60).replace('.', ',');
+    check(chapter('fire').includes(`świerka starcza na ${minutes('spruce')} minuty`) && chapter('fire').includes(`brzozy na ${minutes('birch')} minut`) && chapter('fire').includes(`dębu na ${minutes('oak')} minut`), 'Ognisko: czas palenia stosu świerka, brzozy i dębu');
+    check(chapter('fire').includes(`trawa i słoma ${TINDER_TEMPS.short_grass}°`) && chapter('fire').includes(`kora ${TINDER_TEMPS.oak_bark}°`) && chapter('fire').includes(`kora sosny i świerka ${TINDER_TEMPS.pine_bark}°`) && chapter('fire').includes(`kora brzozy ${TINDER_TEMPS.birch_bark}°`), 'Ognisko: temperatury podpałek');
+    check(['pine', 'spruce', 'birch', 'beech', 'oak'].every((wood) => chapter('fire').includes(`${woodIgnite(wood)}°`)) && chapter('fire').includes(`dodaje ${KINDLING_TEMP}°`) && KINDLING_MAX === 2 && /mieszczą się dwa/.test(chapter('fire')), 'Ognisko: zapłon drewna i rozpałka');
+    const warmth = (wood) => Math.round((woodHeat(wood) - WARMTH_FROM) / WARMTH_DEGREES);
+    check(chapter('fire').includes(`z lipy jest o ${warmth('linden')}°C cieplej, z sosny o ${warmth('pine')}, z brzozy o ${warmth('birch')}, z dębu o ${warmth('oak')}`), 'Ognisko: ciepło zależy od drewna');
+    const fireStep = TUTORIAL_STEPS.find((step) => step.id === 'fire');
+    check(/rozpałki - dołóż patyk/.test(fireStep.text) && /rozpałki - dołóż patyk/.test(fireStep.touch), 'Samouczek: twarde drewno potrzebuje rozpałki');
     check(chapter('sleep').includes(`${NIGHT_FROM}:00 do ${NIGHT_UNTIL}:00`) && chapter('sleep').includes(`${WAKE_HOUR}:00`) && chapter('sleep').includes(`${BENCH_PRODUCTS.bed.planks} desek`), 'Sen: godziny i stelaż');
     check(chapter('herbs').includes(`${EFFECTS.heal.heal} razy szybciej`), 'Napary: gojenie');
     check(TOOL_SPEED === 3 && /trzy razy/.test(chapter('crafting')) && /trzy razy/.test(chapter('first-day')), 'Narzędzia: trzy razy szybciej');

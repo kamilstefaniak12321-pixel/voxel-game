@@ -66,13 +66,20 @@ const DAY_SECONDS = DAY_LENGTH_MINUTES * 60;
     check(falloff(10, 0.5, 1, 4) === 10 && falloff(10, 2.5, 1, 4) === 5 && falloff(10, 4, 1, 4) === 0 && falloff(10, NaN, 1, 4) === 0, 'Ciepło słabnie z odległością');
 
     const fires = new Map([
-        ['a', { x: 0, y: 0, z: 0, phase: 'burning' }],
-        ['b', { x: 40, y: 0, z: 0, phase: 'collapsing' }],
+        ['a', { x: 0, y: 0, z: 0, phase: 'burning', temp: 850 }],
+        ['b', { x: 40, y: 0, z: 0, phase: 'collapsing', temp: 850 }],
         ['c', { x: 80, y: 0, z: 0, phase: 'unlit' }]
     ]);
     check(fireHeat(fires, 0.5, 0.9, 0.5) === W.FIRE_HEAT, 'Tuż przy płonącym ognisku - pełne ciepło');
     check(fireHeat(fires, 40.5, 0.9, 0.5) === W.FIRE_HEAT * W.EMBERS, 'Żar grzeje o połowę słabiej');
     check(fireHeat(fires, 80.5, 0.9, 0.5) === 0 && fireHeat(fires, 0.5 + W.FIRE_REACH + 0.1, 0.9, 0.5) === 0 && fireHeat(null, 0, 0, 0) === 0, 'Zgaszone i dalekie nie grzeją');
+    // Od 1.32.0 ciepło zależy od temperatury ognia (drewna), a żar po
+    // ognisku grzeje jeszcze trochę.
+    const fireOf = (temp, phase = 'burning', embers = 0) => new Map([['a', { x: 0, y: 0, z: 0, phase, temp, embers }]]);
+    const near = (map) => fireHeat(map, 0.5, 0.9, 0.5);
+    check(near(fireOf(650)) === 14 && near(fireOf(920)) > 24 && near(fireOf(920)) < 26 && near(fireOf(960)) > near(fireOf(920)), 'Lipa grzeje o 14°C, dąb o prawie 25, oliwka najmocniej');
+    check(near(fireOf(280)) === 0 && near(fireOf(300)) === 0 && near(fireOf(400)) === 4, 'Świeżo rozpalony ogień jeszcze nie grzeje');
+    check(near(fireOf(0, 'unlit', 600)) === 5 && near(fireOf(0, 'unlit', 60)) === 2.5 && near(fireOf(0, 'unlit', 0)) === 0, 'Żar po ognisku: kilka stopni, słabnie pod koniec');
     const middle = fireHeat(fires, 0.5 + 4, 0.9, 0.5);
     check(middle > 0 && middle < W.FIRE_HEAT, `Cztery bloki od ogniska - trochę (${middle.toFixed(1)}°C)`);
 

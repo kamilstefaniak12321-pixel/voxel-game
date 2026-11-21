@@ -14,7 +14,7 @@ Liczy się co pół sekundy w miejscu gracza (`src/game/Warmth.js`):
 | schronienie | do +5°C - im mniej nieba nad głową, tym cieplej (zamknięta izba +5) |
 | wiatr | na otwartym terenie -0,7°C na każdy blok/s wiatru, najwyżej -6°C; pod dachem nie wieje |
 | woda | w wodzie -6°C |
-| ognisko | płonące: +22°C tuż przy nim (do 1,5 bloku), słabiej dalej, nic dalej niż 7 bloków; żar - połowa |
+| ognisko | płonące: tuż przy nim (do 1,5 bloku) tym cieplej, im gorętszy ogień - od 1.32.0 zależy od drewna: lipa ok. +14°C, sosna +18, brzoza +22, dąb +25 ([ogniska.md](ogniska.md)); słabiej dalej, nic dalej niż 7 bloków; zapadający się stos - połowa, sam żar po ognisku - do +5°C |
 | pochodnia, lampa | +6°C tuż obok, nic dalej niż 4 bloki; razem najwyżej +12°C; rozgrzany meteoryt +4°C |
 | jedzenie | ciepła potrawa z garnka i każdy napar: **ciepło w brzuchu** +6°C przez 3 godziny gry; chili: +4°C przez 2 godziny |
 | ubrania | (od 1.27.0) suma ciepła noszonych ubrań ([ubrania.md](ubrania.md)): pełny strój z pokrzywy ok. +10,6°C, z lnu ok. +7,6°C; w wodzie mokre ubrania grzeją tylko w 30% |

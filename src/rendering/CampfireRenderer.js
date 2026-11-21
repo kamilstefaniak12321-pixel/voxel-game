@@ -3,7 +3,8 @@ import { CAMPFIRE_LOGS } from './CampfireGeometry.js';
 import { createModelMaterial } from './ModelMaterial.js';
 import { blockAtlasTexture, getAtlasUV } from './TextureAtlas.js';
 import { CampfireLight } from './CampfireLight.js';
-import { fireIntensity } from '../game/CampfireState.js';
+import { fireIntensity, emberGlow, KINDLING_MAX } from '../game/CampfireState.js';
+import { woodTraits } from '../blocks/woodTraits.js';
 import { atmosphericLightToBrightness } from './LightPolicy.js';
 import { FLAME_FRAMES, FLAME_FPS, makeFlameAtlas } from './CampfireFlame.js';
 import { installEmissionDiagnostics, lightingUniforms } from './LightingDiagnostics.js';
@@ -13,6 +14,13 @@ import { loadTextureRegion } from './TextureSheets.js';
 import { DISHES, dishFor, POT_MINIMUM } from '../items/cooking.js';
 
 const VIEW_RANGE = 72, MAX_VISIBLE = 32, PARTICLES = 96;
+// Dym i iskry zależą od drewna (blocks/woodTraits.js: smoke i sparks 0-3).
+// Ile razy gęstszy dym niż zwykle i ile iskier na sekundę.
+const SMOKE_RATE = [.3, 1, 1.7, 2.5];
+const SPARK_RATE = [0, .35, .9, 2.2];
+// Patyki rozpałki wetknięte w szpary między górnymi polanami i sterczące
+// na boki (obok garnka, jeśli stoi): [x, y, z, pochylenie].
+const KINDLING_STICKS = [[.28, .44, .1875, .65], [-.28, .44, -.1875, -.65]];
 
 // Garnek na ognisku (1.20.0): gliniane pudełko 10 x 7 x 10 pikseli bez
 // wieka - dno, cztery ścianki i uszy; w środku tafla wody albo potrawy.
@@ -121,6 +129,7 @@ export class CampfireRenderer {
         this.ashGeometry.rotateX(-Math.PI/2);
         this.coalGeometry = new THREE.BoxGeometry(1/8, 1/16, 3/16);
         this.tinderGeometry = new THREE.BoxGeometry(.36, .035, .3);
+        this.kindlingGeometry = new THREE.BoxGeometry(.55, 1 / 16, 1 / 16);
         this.potGeometries = POT_PARTS.map(([w, h, d]) => new THREE.BoxGeometry(w / 16, h / 16, d / 16));
         this.potContentGeometry = new THREE.PlaneGeometry(8 / 16, 8 / 16);
         this.potContentGeometry.rotateX(-Math.PI / 2);
@@ -208,6 +217,14 @@ export class CampfireRenderer {
         const tinderMaterial = createModelMaterial({lighting, baselineLambert:true});
         tinderMaterial.color.set(0x8c854b);
         const tinder = new THREE.Mesh(this.tinderGeometry,tinderMaterial); tinder.position.y=.27;
+        // Rozpałka (1.32.0): patyki oparte o stos.
+        const kindlingMaterial = createModelMaterial({lighting, baselineLambert:true});
+        kindlingMaterial.color.set(0x8a6a43);
+        const kindling = KINDLING_STICKS.slice(0, KINDLING_MAX).map(([x, y, z, lean]) => {
+            const stick = new THREE.Mesh(this.kindlingGeometry, kindlingMaterial);
+            stick.position.set(x, y, z); stick.rotation.z = lean; stick.visible = false;
+            return stick;
+        });
         // Garnek (items/cooking.js) - widać go tylko, gdy stoi na ognisku.
         const potMaterial = createModelMaterial({lighting, baselineLambert:true});
         potMaterial.color.set(POT_CLAY); potMaterial.flatShading = true;
@@ -218,8 +235,8 @@ export class CampfireRenderer {
             part.position.set(x / 16, y / 16, z / 16); pot.add(part);
         });
         const content = new THREE.Mesh(this.potContentGeometry, contentMaterial); pot.add(content);
-        group.add(flames,ash,coals,tinder,pot); this.game.scene.add(group);
-        const view = {group,flames,ash,coals,coalMaterial,tinder,pot,potMaterial,content,contentMaterial,logs:[],lighting,smoke:0,spark:0,created:this.time};
+        group.add(flames,ash,coals,tinder,...kindling,pot); this.game.scene.add(group);
+        const view = {group,flames,ash,coals,coalMaterial,tinder,kindling,kindlingMaterial,pot,potMaterial,content,contentMaterial,logs:[],lighting,smoke:0,spark:0,created:this.time};
         this.views.set(key,view); return view;
     }
 
@@ -248,11 +265,12 @@ export class CampfireRenderer {
         const intensity=fireIntensity(fire);
         view.flames.visible=intensity>.008;
         view.flames.scale.set(.6+.4*intensity,Math.max(.01,intensity),.6+.4*intensity);
-        const ember=fire.embers/90;
+        const ember=emberGlow(fire);
         view.ash.visible=fire.ash || fire.phase==='collapsing';
         view.coals.visible=view.ash.visible;
         view.coalMaterial.emissiveIntensity=ember*(.42+.06*Math.sin(clock*2)) + (fire.phase==='collapsing'?.6*fire.collapse:0);
         view.tinder.visible=Boolean(fire.tinder);
+        view.kindling.forEach((stick,i)=>{ stick.visible=fire.phase==='unlit' && i<(fire.kindling ?? 0); });
         this.syncPot(view, fire, dt, clock);
         const light=this.game.world.getLight(fire.x,fire.y+1,fire.z);
         view.lighting.uModelSky.value=atmosphericLightToBrightness(light.sky);
@@ -262,10 +280,12 @@ export class CampfireRenderer {
         view.lighting.uModelSun.value = natural ? view.lighting.uModelSky.value ** 2.2 : 1;
         view.lighting.uModelBlock.value.set(natural ? light.red / 255 : 0,
             natural ? light.green / 255 : 0, natural ? light.blue / 255 : 0);
-        if(intensity>.02) {
-            view.smoke+=dt*2.2*intensity; view.spark+=dt;
-            if(view.smoke>=1) { view.smoke%=1; this.emit(fire,false); }
-            if(view.spark>1.4 && Math.random()<dt*.65) { view.spark=0; this.emit(fire,true); }
+        if(intensity>.02 && fire.logs.length) {
+            // Dymi i strzela to polano, które właśnie się pali (z wierzchu).
+            const wood=woodTraits(fire.logs.at(-1).wood);
+            view.smoke+=dt*2.2*intensity*SMOKE_RATE[wood.smoke]; view.spark+=dt;
+            if(view.smoke>=1) { view.smoke%=1; this.emit(fire,false,null,wood.dark); }
+            if(view.spark>.25 && Math.random()<dt*SPARK_RATE[wood.sparks]) { view.spark=0; this.emit(fire,true); }
         }
     }
 
@@ -292,8 +312,10 @@ export class CampfireRenderer {
         }
     }
 
-    emit(fire,spark,steamAt=null) {
+    emit(fire,spark,steamAt=null,dark=false) {
         const particle=this.particles.find(p=>p.life<=0); if(!particle) return;
+        // Żywiczne drewno daje ciemny dym.
+        particle.shade=dark ? .55 : 1;
         Object.assign(particle,{x:fire.x+.5+(Math.random()-.5)*.25,y:fire.y+(steamAt ?? .65),z:fire.z+.5+(Math.random()-.5)*.25,
             vx:(Math.random()-.5)*(spark?.7:.15),vz:(Math.random()-.5)*(spark?.7:.15),vy:spark?1.1:steamAt!==null?.3:.42,
             life:spark?1.8:steamAt!==null?1.6:3.8,max:spark?1.8:steamAt!==null?1.6:3.8,spark,steam:steamAt!==null,seed:Math.random()*6});
@@ -310,7 +332,7 @@ export class CampfireRenderer {
         const sources=[];
         for(const {key,fire,d} of selected) {
             const view=this.views.get(key) ?? this.createView(key,fire); this.syncView(view,fire,dt,clock);
-            const power=fireIntensity(fire)+(fire.phase==='collapsing'?fire.collapse:fire.embers/90)*.055;
+            const power=fireIntensity(fire)+(fire.phase==='collapsing'?fire.collapse:emberGlow(fire))*.055;
             if(power>.002 && d<32*32) sources.push({key,position:new THREE.Vector3(fire.x+.5,fire.y+.85,fire.z+.5),power});
         }
         this.light.update(this.game.settings.get('dynamicLight') ? sources : [],clock);
@@ -322,7 +344,8 @@ export class CampfireRenderer {
                 this.particlePosition.set([p.x,p.y,p.z],i*3);
                 this.particleSize[i]=p.spark?.028:p.steam?.08+age*.2:.15+age*.46;
                 this.particleEmission[i]=p.spark?1:0;
-                this.particleColor.set(p.spark?[1,.42,.06,Math.sin(age*Math.PI)]:p.steam?[.92,.92,.9,Math.sin(age*Math.PI)*.2]:[.35,.34,.32,Math.sin(age*Math.PI)*.14],i*4);
+                this.particleColor.set(p.spark?[1,.42,.06,Math.sin(age*Math.PI)]:p.steam?[.92,.92,.9,Math.sin(age*Math.PI)*.2]
+                    :[.35*p.shade,.34*p.shade,.32*p.shade,Math.sin(age*Math.PI)*(p.shade<1?.2:.14)],i*4);
             } else { this.particleColor[i*4+3]=0; this.particleSize[i]=0; }
         });
         this.particleMaterial.uniforms.uPixelScale.value=this.game.renderer.domElement.height;
@@ -330,7 +353,7 @@ export class CampfireRenderer {
     }
 
     removeView(key,view) { view.group.removeFromParent(); view.logs.forEach(log=>log.mesh.material.dispose());
-        view.coalMaterial.dispose(); view.ash.material.dispose(); view.tinder.material.dispose();
+        view.coalMaterial.dispose(); view.ash.material.dispose(); view.tinder.material.dispose(); view.kindlingMaterial.dispose();
         view.potMaterial.dispose(); view.contentMaterial.dispose(); this.views.delete(key); }
     renderShadows() { this.light.render(this.game.world,this.time); }
     // Wzory dla programów cieniujących (rendering/ShaderWarmup.js): płomień
@@ -352,7 +375,7 @@ export class CampfireRenderer {
         for(const [key,view] of this.views) this.removeView(key,view);
         this.geometry.forEach(g=>g.dispose()); this.light.dispose(); this.points.removeFromParent();
         for(const resource of [this.fireTexture,this.flameGeometry,this.flameMaterial,this.ashGeometry,
-            this.coalGeometry,this.tinderGeometry,this.particleGeometry,this.particleMaterial,
+            this.coalGeometry,this.tinderGeometry,this.kindlingGeometry,this.particleGeometry,this.particleMaterial,
             this.potContentGeometry,...this.potGeometries]) resource.dispose();
     }
 }

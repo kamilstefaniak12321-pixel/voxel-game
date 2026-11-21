@@ -1,5 +1,5 @@
 import { TEST_SITE_FLOOR } from '../world/terrain/TestSiteGenerator.js';
-import { newCampfire, addFirewood, addTinder, updateCampfire,
+import { newCampfire, addFirewood, addTinder, addKindling, updateCampfire, logSeconds,
     CAMPFIRE_IGNITE_SECONDS } from '../game/CampfireState.js';
 
 // Stały, niewielki zestaw odniesienia: działa również z rendererem 0.56.1.
@@ -139,9 +139,12 @@ export function buildLightingReference({ world, player, game }, origin = LIGHTIN
         const [x, y, z] = toWorld([-3, 1, 16], origin);
         const fire = newCampfire(x, y, z);
         for (let i = 0; i < 6; i++) addFirewood(fire, 'oak');
+        // (Od 1.32.0 dąb potrzebuje rozpałki. Wierzchnie polano jest
+        // wypalone w 30% - tak jak w odniesieniu sprzed zmiany.)
         addTinder(fire, 'short_grass');
+        addKindling(fire);
         updateCampfire(fire, CAMPFIRE_IGNITE_SECONDS, true);
-        updateCampfire(fire, 24);
+        updateCampfire(fire, 0.3 * logSeconds('oak'));
         block(-3, 1, 16, 'campfire');
         game.campfires.fires.set(`${x},${y},${z}`, fire);
         game.campfires.version++;

@@ -167,8 +167,9 @@ function tileFree(name) {
     check(TINDERS.birch_bark === 1.5 && TINDERS.pine_bark === 1.25 && TINDERS.spruce_bark === 1.25 && TINDERS.oak_bark === 1 && TINDERS.beech_bark === 1, 'Brzoza najlepsza, iglaste lepsze, reszta jak trawa');
     for (const wood of Object.keys(BARK_TINDER)) check(Object.hasOwn(FIRE_WOODS, wood), `Lepsza kora: znane drzewo ${wood}`);
     const time = (tinder) => {
+        // (Świerk zajmuje się od każdej kory - od 1.32.0 dąb potrzebuje lepszej podpałki.)
         const fire = newCampfire(0, 60, 0);
-        for (let i = 0; i < 6; i++) addFirewood(fire, 'oak');
+        for (let i = 0; i < 6; i++) addFirewood(fire, 'spruce');
         addTinder(fire, tinder);
         let seconds = 0;
         while (fire.phase === 'unlit' && seconds < 20) { updateCampfire(fire, 0.05, true); seconds += 0.05; }

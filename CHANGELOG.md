@@ -11,6 +11,36 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 1.32.0 - Charakter drewna
+
+PR #185. Pierwsza część projektu Kamila „drewno, ogień i ścinanie
+drzew" (`docs/drewno.md`).
+
+- **Każde drewno pali się inaczej.** Każdy z 32 gatunków ma zapłon, żar
+  i czas palenia polana - widać je po najechaniu na polano w ekwipunku.
+  Pełny stos świerka pali się 5,5 minuty, brzozy 10, dębu 15, oliwki
+  16,5 (dotąd każdy 8 minut).
+- **Ognisko ma temperaturę.** Zaczyna od temperatury podpałki i dochodzi
+  do żaru polana, które właśnie się pali. PPM pustą ręką pokazuje, ile
+  ma stopni.
+- **Rozpalanie etapami.** Podpałka daje 260-330° (trawa najmniej, kora
+  brzozowa najwięcej), a polano z wierzchu zajmie się tylko od
+  gorętszej niż jego zapłon. Samego dębu trawą się nie rozpali.
+- **Rozpałka z patyków**: patyk dołożony do stosu (PPM) dodaje podpałce
+  60°, mieszczą się dwa. Druga droga to łatwe drewno na wierzchu - od
+  świerka zajmie się dąb pod spodem. Gra od razu mówi, czego brakuje.
+- **Ciepło zależy od drewna**: przy ognisku z lipy jest o ok. 14°C
+  cieplej, z sosny o 18, z brzozy o 22 (tyle było dotąd zawsze), z dębu
+  o 25. Nad gorętszym ogniem szybciej się też gotuje i piecze.
+- **Żar**: po świerku trzyma minutę, po dębie 7,5 minuty. Polano
+  dołożone na gorący żar **zajmuje się samo**, a nad żarem da się piec.
+- **Dym i iskry** zależą od drewna: modrzew sypie iskrami, olcha kopci,
+  sosna daje ciemny dym, buk i osika palą się prawie bez dymu.
+- Osiągnięcia *Od patyka do polana*, *Jeszcze się tli*, *Gorąco jak
+  w kuźni*; komenda `/drewno`. Opis: `docs/ogniska.md`.
+- Drewno jest na razie zawsze suche - wilgotność, suszenie, wypalające
+  się pochodnie i deszcz gaszący ognisko to następne wersje.
+
 ## 1.31.0 - Fasola i groch
 
 PR #184.

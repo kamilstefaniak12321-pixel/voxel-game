@@ -116,9 +116,9 @@ export const TUTORIAL_STEPS = [
     {
         id: 'fire',
         title: 'Rozpal ognisko',
-        text: 'Podpałką jest kora: kliknij pień siekierą ([use]) i dołóż korę do ogniska. Z dwóch patyków zrób starter ognia, wyceluj nim w ognisko i przytrzymaj [use] przez 5 sekund.',
-        touch: 'Podpałką jest kora: stuknij pień siekierą i dołóż korę do ogniska. Z dwóch patyków zrób starter ognia, wyceluj nim w ognisko i przytrzymaj przycisk z kostką przez 5 sekund.',
-        hint: 'Nad ogniem upieczesz jabłka, orzechy i żołędzie. Polana spalają się po kolei - do płonącego ogniska możesz je dokładać.',
+        text: 'Podpałką jest kora: kliknij pień siekierą ([use]) i dołóż korę do ogniska. Twarde drewno (dąb, buk) potrzebuje jeszcze rozpałki - dołóż patyk. Z dwóch patyków zrób starter ognia, wyceluj nim w ognisko i przytrzymaj [use] przez 5 sekund.',
+        touch: 'Podpałką jest kora: stuknij pień siekierą i dołóż korę do ogniska. Twarde drewno (dąb, buk) potrzebuje jeszcze rozpałki - dołóż patyk. Z dwóch patyków zrób starter ognia, wyceluj nim w ognisko i przytrzymaj przycisk z kostką przez 5 sekund.',
+        hint: 'Nad ogniem upieczesz jabłka, orzechy i żołędzie. Każde drewno pali się inaczej: świerk krótko, dąb długo i gorąco. Do płonącego ogniska możesz dokładać polana.',
         done: (t) => t.saw('fireLit')
     },
     {

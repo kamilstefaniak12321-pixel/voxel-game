@@ -37,6 +37,7 @@ import { getTool } from '../items/ItemRegistry.js';
 import { TEAS, isDrink } from '../items/foods.js';
 
 import { TREE_DEFINITIONS } from '../blocks/treeCatalog.js';
+import { WOOD_TRAITS } from '../blocks/woodTraits.js';
 
 import { getPlantPack } from '../blocks/plantPacks.js';
 
@@ -988,11 +989,48 @@ export const ACHIEVEMENTS = [
         on: 'ate',
         when: (data) => data.kind === 'snack' && (data.effects?.length ?? 0) > 0
     },
+    // Charakter drewna (1.32.0, docs/drewno.md): ognisko z temperaturą.
+    {
+        id: 'hardwood_fire',
+        tier: 'common',
+        title: 'Od patyka do polana',
+        task: 'Rozpal ognisko, w którym na wierzchu leży twarde drewno (zapłon od 300°: dąb, buk, klon, jabłoń...). Pomogą patyki jako rozpałka.',
+        comment: 'Podpałka, rozpałka, opał. W tej kolejności, nie na odwrót - sprawdzone na dębie.',
+        icon: 'stick',
+        on: 'fireLit',
+        when: (data) => data.embers === false && (WOOD_TRAITS[data.wood]?.ignite ?? 0) >= 300
+    },
+    {
+        id: 'fire_from_embers',
+        tier: 'common',
+        title: 'Jeszcze się tli',
+        task: 'Dołóż polano na żar po ognisku i poczekaj, aż samo się zajmie.',
+        comment: 'Bez startera, bez podpałki, bez wysiłku. Żar pamięta.',
+        icon: 'birch_firewood',
+        on: 'fireLit',
+        when: (data) => data.embers === true
+    },
+    {
+        id: 'forge_heat',
+        tier: 'rare',
+        title: 'Gorąco jak w kuźni',
+        task: 'Rozgrzej ognisko powyżej 930° - potrzeba najgorętszego drewna: oliwki, akacji albo namorzynu.',
+        comment: 'Jeszcze trochę i będzie można kuć. Na razie można się poparzyć.',
+        icon: 'olive_firewood',
+        check: (game) => {
+            const player = game.player?.pos;
+            if (!player) return false;
+            for (const fire of game.campfires?.fires?.values() ?? []) {
+                if (fire.phase === 'burning' && fire.temp >= 930 && Math.hypot(fire.x + 0.5 - player.x, fire.z + 0.5 - player.z) <= 8) return true;
+            }
+            return false;
+        }
+    },
     {
         id: 'first_roast',
         tier: 'common',
         title: 'Kolacja przy ognisku',
-        task: 'Upiecz coś nad płonącym ogniskiem (trzymaj PPM z jedzeniem).',
+        task: 'Upiecz coś nad ogniskiem (trzymaj PPM z jedzeniem).',
         comment: 'Lekko przypalone. Czyli idealne.',
         icon: 'roasted_apple',
         on: 'roasted',

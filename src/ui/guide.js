@@ -108,11 +108,18 @@ export const GUIDE = [
             'Opałem kliknij ziemię i dokładaj, aż będzie 6 polan. Potem dołóż podpałkę.',
             { text: 'Podpałka: kora (kliknij pień siekierą: [use]), trawa, słoma albo huba. Huba rozpala dwa razy szybciej niż trawa, kora brzozowa - półtora raza.',
                 touch: 'Podpałka: kora (stuknij pień siekierą), trawa, słoma albo huba. Huba rozpala dwa razy szybciej niż trawa, kora brzozowa - półtora raza.' },
+            'Podpałka daje temperaturę na start: trawa i słoma 260°, kora 280°, kora sosny i świerka 300°, kora brzozy 330°.',
+            'Polano z wierzchu zajmie się tylko od podpałki gorętszej niż jego zapłon: sosna 220°, świerk 240°, brzoza 270°, buk 300°, dąb 320°.',
+            { text: 'Za słaba podpałka? Dołóż patyk jako rozpałkę ([use] patykiem na stosie): każdy dodaje 60°, mieszczą się dwa. Albo połóż na wierzchu łatwiejsze drewno.',
+                touch: 'Za słaba podpałka? Dołóż patyk jako rozpałkę (stuknij stos patykiem): każdy dodaje 60°, mieszczą się dwa. Albo połóż na wierzchu łatwiejsze drewno.' },
             { text: 'Starter ognia to 2 patyki. Wyceluj w ognisko i trzymaj [use] przez 5 sekund.',
                 touch: 'Starter ognia to 2 patyki. Wyceluj w ognisko i trzymaj przycisk z kostką przez 5 sekund.' },
             { text: 'Pieczenie: jabłkiem, orzechami albo żołędziami wyceluj w płomień i trzymaj [use] przez 4 sekundy.',
                 touch: 'Pieczenie: jabłkiem, orzechami albo żołędziami wyceluj w płomień i trzymaj przycisk z kostką przez 4 sekundy.' },
-            'Pełny stos pali się 8 minut. Polana spalają się po kolei, a ogień przygasa - do płonącego ogniska możesz dokładać opał.'
+            'Każde drewno pali się inaczej: pełny stos świerka starcza na 5,5 minuty, brzozy na 10 minut, dębu na 15 minut. Polana spalają się po kolei - do płonącego możesz dokładać.',
+            'Twarde drewno grzeje mocniej: przy ognisku z lipy jest o 14°C cieplej, z sosny o 18, z brzozy o 22, z dębu o 25. Nad gorętszym ogniem szybciej się piecze i gotuje.',
+            'Po ognisku zostaje żar: po świerku na minutę, po dębie na kilka minut. Polano dołożone na gorący żar zajmuje się samo, a nad żarem da się piec.',
+            'Zapłon, żar i czas palenia polana widać po najechaniu na nie w ekwipunku. Iglaste strzelają iskrami, sosna i olcha dymią, buk i osika prawie nie.'
         ]
     },
     {

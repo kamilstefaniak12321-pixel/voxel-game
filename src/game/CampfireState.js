@@ -2,22 +2,56 @@ import { CHUNK_HEIGHT, WORLD_BORDER } from '../config.js';
 import { PLANT_PACKS } from '../blocks/plantPacks.js';
 import { TREE_DEFINITIONS } from '../blocks/treeCatalog.js';
 import { BARK_TINDER, barkType } from '../items/bark.js';
+import { woodTraits } from '../blocks/woodTraits.js';
 import { restorePot, cookPot, potDrops } from './CookingState.js';
 
 // Gameplay state is independent of meshes, distance, FPS and wall-clock time.
 //
 // Od 0.100.0 polana spalają się PO KOLEI, od wierzchu stosu: ognisko
 // przygasa sześcioma etapami (tyle, ile zostało polan), a do płonącego
-// można dokładać opał. Pełny stos pali się tyle samo co dotąd.
+// można dokładać opał.
+//
+// Od 1.32.0 OGNISKO MA TEMPERATURĘ (pomysł Kamila, docs/drewno.md):
+//   - każde drewno ma zapłon, żar i czas palenia (blocks/woodTraits.js),
+//   - podpałka daje temperaturę na start (TINDER_TEMPS), patyki jako
+//     rozpałka ją podnoszą (KINDLING_TEMP za patyk),
+//   - polano z wierzchu zajmuje się, gdy ogień jest gorętszy niż jego
+//     zapłon; potem temperatura dochodzi do żaru palącego się polana,
+//   - od temperatury zależy ciepło przy ognisku (fireWarmth) i szybkość
+//     gotowania (cookSpeed),
+//   - po twardym drewnie żar trzyma długo (emberSeconds), a polano
+//     dołożone na gorący żar zajmuje się samo.
 export const CAMPFIRE_CAPACITY = 6;
-export const CAMPFIRE_BURN_SECONDS = 8 * 60;
-// Jedno polano.
-export const CAMPFIRE_LOG_SECONDS = CAMPFIRE_BURN_SECONDS / CAMPFIRE_CAPACITY;
 // Tyle sekund po rozpaleniu płomień rośnie do pełnej wielkości.
 const CAMPFIRE_FLARE_SECONDS = 5;
 export const CAMPFIRE_IGNITE_SECONDS = 5;
 export const CAMPFIRE_COLLAPSE_SECONDS = 2.4;
-export const CAMPFIRE_EMBER_SECONDS = 90;
+// Żar po ognisku: najwyżej tyle sekund (zbiera się z wypalonych polan).
+export const EMBER_MAX_SECONDS = 600;
+// Żar jest gorący (EMBER_TEMP), póki zostało go na tyle sekund; potem
+// stygnie do EMBER_COLD_TEMP i gaśnie.
+export const EMBER_HOT_SECONDS = 120;
+export const EMBER_TEMP = 500;
+export const EMBER_COLD_TEMP = 250;
+// Po tylu sekundach polano dołożone na gorący żar zajmuje się samo.
+export const EMBER_CATCH_SECONDS = 4;
+// Ciepło samego żaru tuż przy ognisku (°C).
+export const EMBER_WARMTH = 5;
+// Jak szybko temperatura ognia dochodzi do żaru palącego się polana
+// (po tylu sekundach zostaje 37% różnicy).
+export const TEMP_SECONDS = 12;
+// Krok liczenia temperatury i gotowania - długi skok czasu (sen) daje
+// to samo, co wiele klatek.
+const BURN_STEP = 5;
+// Ciepło przy ognisku: (temperatura - WARMTH_FROM) / WARMTH_DEGREES °C.
+export const WARMTH_FROM = 300;
+export const WARMTH_DEGREES = 25;
+// Zapadające się ognisko grzeje słabiej.
+export const COLLAPSE_WARMTH = 0.5;
+// Rozpałka: patyki dołożone do podpałki. Każdy podnosi temperaturę.
+export const KINDLING = 'stick';
+export const KINDLING_MAX = 2;
+export const KINDLING_TEMP = 60;
 export const FIRE_WOODS = {
     oak: ['dąb', 'dab'], birch: ['brzoza', 'brzoza'], spruce: ['świerk', 'swierk'],
     pine: ['sosna', 'sosna'], beech: ['buk', 'buk'], linden: ['lipa', 'lipa'],
@@ -35,6 +69,18 @@ export const FIRE_WOODS = {
 };
 export const fuelType = wood => `${wood}_firewood`;
 export const fuelWood = type => Object.keys(FIRE_WOODS).find(wood => fuelType(wood) === type) ?? null;
+// Cechy polana (suche drewno).
+export const logSeconds = wood => woodTraits(wood).burn;
+export const woodIgnite = wood => woodTraits(wood).ignite;
+export const woodHeat = wood => woodTraits(wood).heat;
+// Pełny stos jednego gatunku pali się tyle sekund.
+export const stackSeconds = wood => CAMPFIRE_CAPACITY * logSeconds(wood);
+// Ile sekund żaru zostawia jedno wypalone polano: miękkie drewno kilka
+// sekund, twarde ponad minutę (dąb 75 s, świerk 10 s).
+export const emberSeconds = wood => Math.round((logSeconds(wood) / 10) ** 2 / 3);
+// Ile razy szybciej gotuje się i piecze nad ogniem o tej temperaturze
+// (800° - zwykła szybkość).
+export const cookSpeed = temp => Math.max(0.4, Math.min(1.25, (Number.isFinite(temp) ? temp : 0) / 800));
 // Podpałka: czym da się rozpalić ognisko i ile razy szybciej niż trawą
 // (1 - 5 sekund trzymania startera, 2 - dwa i pół). Plony roślin dopisują
 // się same polem "podpalka" w roslina.json (huba, porost iglasty).
@@ -48,13 +94,29 @@ export const TINDERS = {
         .filter(item => item.tinder).map(item => [item.type, item.tinder]))
 };
 export const isTinder = type => Object.hasOwn(TINDERS, type);
+// Temperatura, jaką podpałka daje na start (°C). Trawa i słoma - 260,
+// kora i reszta - 280, żywiczne (kora sosny, szyszki) - 300, kora
+// brzozowa - 330.
+const GRASS_TEMP = 260, TINDER_TEMP = 280, RESIN_TEMP = 300, BIRCH_TEMP = 330;
+export const TINDER_TEMPS = {
+    ...Object.fromEntries(Object.keys(TINDERS).map(type => [type, TINDER_TEMP])),
+    ...Object.fromEntries(['short_grass', 'tall_grass', 'dune_grass', 'reed', 'straw'].map(type => [type, GRASS_TEMP])),
+    ...Object.fromEntries(Object.keys(FIRE_WOODS).map(wood => [barkType(wood),
+        (BARK_TINDER[wood] ?? 1) >= 1.5 ? BIRCH_TEMP : (BARK_TINDER[wood] ?? 1) > 1 ? RESIN_TEMP : TINDER_TEMP])),
+    // Szyszki są żywiczne.
+    ...Object.fromEntries(Object.keys(TINDERS).filter(type => type.endsWith('_cone')).map(type => [type, RESIN_TEMP]))
+};
+export const tinderTemp = type => TINDER_TEMPS[type] ?? 0;
+// Huba tli się długo: puszczone rozpalanie stygnie tyle razy wolniej.
+const TINDER_SMOLDER = { huba_huba: 3 };
 const clamp = (value, max = 1) => Math.max(0, Math.min(max, Number.isFinite(value) ? value : 0));
 
 export function newCampfire(x, y, z) {
     // lit - ile sekund temu ognisko się rozpaliło (płomień rośnie chwilę).
     // pot - garnek na ognisku (1.20.0, game/CookingState.js) albo null.
-    return { x, y, z, logs: [], tinder: null, phase: 'unlit', ignition: 0,
-        collapse: 0, embers: 0, ash: false, lit: 0, pot: null };
+    // temp - temperatura ognia (°C), kindling - patyki rozpałki (1.32.0).
+    return { x, y, z, logs: [], tinder: null, kindling: 0, phase: 'unlit', ignition: 0,
+        collapse: 0, embers: 0, ash: false, lit: 0, temp: 0, pot: null };
 }
 
 export function restoreCampfire(value) {
@@ -66,13 +128,16 @@ export function restoreCampfire(value) {
         .map(log => ({ wood: log.wood, burn: clamp(log.burn) }));
     fire.tinder = isTinder(value.tinder) ? value.tinder : null;
     fire.ash = value.ash === true;
-    fire.embers = clamp(value.embers, CAMPFIRE_EMBER_SECONDS);
+    fire.embers = clamp(value.embers, EMBER_MAX_SECONDS);
     fire.collapse = clamp(value.collapse);
     // Holding the button is never restored as unattended ignition.
     // (Płonące ognisko może mieć mniej niż 6 polan - reszta już się spaliła.)
     if (['burning', 'collapsing'].includes(value.phase) && fire.logs.length >= 1) fire.phase = value.phase;
     if (fire.phase !== 'collapsing') fire.collapse = 0;
     fire.lit = fire.phase === 'unlit' ? 0 : clamp(value.lit ?? CAMPFIRE_FLARE_SECONDS, CAMPFIRE_FLARE_SECONDS);
+    fire.kindling = fire.phase === 'unlit' && Number.isInteger(value.kindling) ? Math.max(0, Math.min(KINDLING_MAX, value.kindling)) : 0;
+    // Zapis sprzed 1.32.0 nie ma temperatury: ogień jest od razu gorący.
+    fire.temp = fire.phase === 'unlit' ? 0 : Number.isFinite(value.temp) ? clamp(value.temp, 1400) : woodHeat(fire.logs.at(-1).wood);
     fire.pot = restorePot(value.pot);
     return fire;
 }
@@ -88,7 +153,7 @@ export function addFirewood(fire, wood) {
 // Ile sekund ognisko będzie jeszcze płonąć (0 - nie płonie).
 export function burnSecondsLeft(fire) {
     if (fire.phase !== 'burning') return 0;
-    return fire.logs.reduce((sum, log) => sum + (1 - log.burn) * CAMPFIRE_LOG_SECONDS, 0);
+    return fire.logs.reduce((sum, log) => sum + (1 - log.burn) * logSeconds(log.wood), 0);
 }
 
 export function addTinder(fire, type) {
@@ -97,53 +162,123 @@ export function addTinder(fire, type) {
     return true;
 }
 
-// Ognisko i garnek na nim. Zwraca nazwę potrawy, gdy właśnie się
-// ugotowała (inaczej null). Gotuje się tylko nad płonącym ogniem.
-export function updateCampfire(fire, dt, holdingStarter = false) {
-    dt = Math.max(0, Number.isFinite(dt) ? dt : 0);
-    const cooked = fire.pot && fire.phase === 'burning' ? cookPot(fire.pot, Math.min(dt, burnSecondsLeft(fire))) : null;
-    burnCampfire(fire, dt, holdingStarter);
-    return cooked;
+// Patyk jako rozpałka (najwyżej KINDLING_MAX): do ułożonego stosu.
+export function addKindling(fire) {
+    if (fire.phase !== 'unlit' || fire.logs.length !== 6 || (fire.kindling ?? 0) >= KINDLING_MAX) return false;
+    fire.kindling = (fire.kindling ?? 0) + 1;
+    return true;
 }
 
-function burnCampfire(fire, dt, holdingStarter = false) {
-    fire.embers = Math.max(0, fire.embers - dt);
+// Temperatura, od której zacznie się ogień: podpałka i rozpałka
+// (0 - nie ma podpałki).
+export function startTemp(fire) {
+    return fire.tinder ? tinderTemp(fire.tinder) + (fire.kindling ?? 0) * KINDLING_TEMP : 0;
+}
+
+// Temperatura samego żaru (0 - żaru nie ma).
+export function emberTemp(fire) {
+    if (!(fire.embers > 0)) return 0;
+    return EMBER_COLD_TEMP + (EMBER_TEMP - EMBER_COLD_TEMP) * Math.min(1, fire.embers / EMBER_HOT_SECONDS);
+}
+
+// Polano z wierzchu stosu - to ono zajmuje się pierwsze.
+export const topLog = fire => fire.logs.at(-1) ?? null;
+
+// Czy podpałka z rozpałką zapali polano z wierzchu.
+export function canIgnite(fire) {
+    return fire.phase === 'unlit' && fire.logs.length === 6 && Boolean(fire.tinder) &&
+        startTemp(fire) >= woodIgnite(topLog(fire).wood);
+}
+
+// Czy polano z wierzchu zajmie się samo od żaru.
+export function catchesFromEmbers(fire) {
+    return fire.phase === 'unlit' && fire.logs.length >= 1 && topLog(fire).burn === 0 &&
+        emberTemp(fire) >= woodIgnite(topLog(fire).wood);
+}
+
+// Temperatura ogniska teraz (°C): ogień, zapadający się stos albo żar.
+export function campfireTemp(fire) {
+    if (fire.phase === 'unlit') return emberTemp(fire);
+    const temp = Number.isFinite(fire.temp) && fire.temp > 0 ? fire.temp : fire.logs?.length ? woodHeat(topLog(fire).wood) : EMBER_TEMP;
+    return fire.phase === 'collapsing' ? temp + (EMBER_TEMP - temp) * clamp(fire.collapse) : temp;
+}
+
+// Ile stopni ciepła daje ognisko tuż obok (game/Warmth.js): dąb ok. +25,
+// brzoza +22, sosna +18, lipa +14. Żar po ognisku grzeje trochę.
+export function fireWarmth(fire) {
+    if (fire.phase === 'unlit') return EMBER_WARMTH * Math.min(1, Math.max(0, fire.embers ?? 0) / EMBER_HOT_SECONDS);
+    const warmth = Math.max(0, (campfireTemp(fire) - WARMTH_FROM) / WARMTH_DEGREES);
+    return fire.phase === 'collapsing' ? warmth * COLLAPSE_WARMTH : warmth;
+}
+
+// Ognisko i garnek na nim. Zwraca nazwę potrawy, gdy właśnie się
+// ugotowała (inaczej null). Gotuje się tylko nad płonącym ogniem, tym
+// szybciej, im jest gorętszy.
+export function updateCampfire(fire, dt, holdingStarter = false) {
+    dt = Math.max(0, Number.isFinite(dt) ? dt : 0);
+    const result = { cooked: null };
+    burnCampfire(fire, dt, holdingStarter, result);
+    return result.cooked;
+}
+
+function ignite(fire, temp) {
+    fire.phase = 'burning'; fire.tinder = null; fire.kindling = 0; fire.lit = 0; fire.ignition = 0;
+    fire.temp = temp;
+}
+
+function burnCampfire(fire, dt, holdingStarter, result) {
     if (fire.phase === 'unlit') {
-        const ready = fire.logs.length === 6 && fire.tinder;
-        fire.ignition = ready && holdingStarter ? Math.min(1, fire.ignition + dt * (TINDERS[fire.tinder] ?? 1) / CAMPFIRE_IGNITE_SECONDS)
-            : Math.max(0, fire.ignition - dt * .7);
-        if (fire.ignition >= 1) {
-            fire.phase = 'burning'; fire.tinder = null; fire.lit = 0;
-        }
+        // Polano na gorącym żarze zajmuje się samo; inaczej potrzeba
+        // podpałki, która da radę polanu z wierzchu, i startera.
+        const embers = catchesFromEmbers(fire);
+        const ready = canIgnite(fire) && holdingStarter;
+        const hot = embers ? emberTemp(fire) : 0;
+        if (embers) fire.ignition = Math.min(1, fire.ignition + dt / EMBER_CATCH_SECONDS);
+        else if (ready) fire.ignition = Math.min(1, fire.ignition + dt * (TINDERS[fire.tinder] ?? 1) / CAMPFIRE_IGNITE_SECONDS);
+        else fire.ignition = Math.max(0, fire.ignition - dt * .7 / (TINDER_SMOLDER[fire.tinder] ?? 1));
+        fire.embers = Math.max(0, fire.embers - dt);
+        if (fire.ignition >= 1) ignite(fire, embers ? hot : startTemp(fire));
         return;
     }
     if (fire.phase === 'burning') {
         fire.lit = Math.min(CAMPFIRE_FLARE_SECONDS, fire.lit + dt);
+        if (!(fire.temp > 0)) fire.temp = woodHeat(topLog(fire).wood);
         // Pali się polano z wierzchu stosu; gdy się wypali, znika, a ogień
         // przechodzi na następne. Ostatnie zostaje, żeby opaść w żar.
         let left = dt;
         while (left > 0) {
-            const log = fire.logs.at(-1);
-            const need = (1 - log.burn) * CAMPFIRE_LOG_SECONDS;
-            if (left < need) { log.burn += left / CAMPFIRE_LOG_SECONDS; break; }
-            left -= need;
+            const log = fire.logs.at(-1), seconds = logSeconds(log.wood);
+            const need = (1 - log.burn) * seconds;
+            // Tyle sekund z tego wywołania pali się to polano.
+            const span = Math.min(left, need);
+            // Temperatura dochodzi do żaru tego polana; garnek gotuje się
+            // tym szybciej, im goręcej (krokami - jak przy zwykłych klatkach).
+            const target = woodHeat(log.wood);
+            for (let done = 0; done < span;) {
+                const step = Math.min(BURN_STEP, span - done), before = fire.temp;
+                fire.temp = target + (before - target) * Math.exp(-step / TEMP_SECONDS);
+                if (fire.pot) result.cooked = cookPot(fire.pot, step * cookSpeed((before + fire.temp) / 2)) ?? result.cooked;
+                done += step;
+            }
+            left -= span;
+            if (span < need) { log.burn += span / seconds; break; }
+            // Wypalone polano zostawia żar.
+            fire.embers = Math.min(EMBER_MAX_SECONDS, fire.embers + emberSeconds(log.wood));
             if (fire.logs.length === 1) {
                 log.burn = 1; fire.phase = 'collapsing'; fire.collapse = 0;
-                burnCampfire(fire, left);
+                burnCampfire(fire, left, false, result);
                 return;
             }
             fire.logs.pop(); fire.ash = true;
         }
-        // Pod płonącym stosem żarzy się to, co już się spaliło.
-        if (fire.ash) fire.embers = CAMPFIRE_EMBER_SECONDS;
         return;
     }
     if (fire.phase === 'collapsing') {
         const remaining = (1 - fire.collapse) * CAMPFIRE_COLLAPSE_SECONDS;
         fire.collapse = Math.min(1, fire.collapse + dt / CAMPFIRE_COLLAPSE_SECONDS);
         if (fire.collapse >= 1) {
-            fire.phase = 'unlit'; fire.logs = []; fire.ignition = 0; fire.collapse = 0; fire.ash = true; fire.lit = 0;
-            fire.embers = Math.max(0, CAMPFIRE_EMBER_SECONDS - Math.max(0, dt - remaining));
+            fire.phase = 'unlit'; fire.logs = []; fire.ignition = 0; fire.collapse = 0; fire.ash = true; fire.lit = 0; fire.temp = 0;
+            fire.embers = Math.max(0, fire.embers - Math.max(0, dt - remaining));
         }
     }
 }
@@ -169,6 +304,12 @@ export function fireIntensity(fire) {
     return Math.pow(fire.ignition, 2) * .32;
 }
 
+// Jak mocno żarzą się węgle po ognisku, 0-1 (gasną przez ostatnie
+// półtorej minuty).
+export function emberGlow(fire) {
+    return Math.min(1, Math.max(0, fire.embers ?? 0) / 90);
+}
+
 export function campfireDrops(fire) {
     if (!fire) return [];
     const counts = new Map();
@@ -176,6 +317,7 @@ export function campfireDrops(fire) {
         const type = fuelType(log.wood); counts.set(type, (counts.get(type) ?? 0) + 1);
     }
     if (fire.tinder) counts.set(fire.tinder, 1);
+    if (fire.phase === 'unlit' && fire.kindling > 0) counts.set(KINDLING, fire.kindling);
     // Garnek i surowe składniki (gotowa potrawa bez misek przepada).
     for (const drop of potDrops(fire.pot)) counts.set(drop.type, (counts.get(drop.type) ?? 0) + drop.count);
     return [...counts].map(([type, count]) => ({ type, count }));

@@ -31,6 +31,7 @@ import { SETTINGS_DEFAULTS } from '../settings/Settings.js';
 import { bindings, formatKeys, mouseCode } from '../input/bindings.js';
 import { makeItem, withCount, sameBatch, blend, stackSize, freshBar } from '../items/freshness.js';
 import { freshText } from '../items/spoilage.js';
+import { fireNotes } from '../items/woodNotes.js';
 import { garmentInfo, fitsSlot, lookText, SLOTS as CLOTHING_SLOTS, SLOT_LABELS, GARMENTS } from '../items/clothing.js';
 import { garmentIcon } from './garmentIcons.js';
 
@@ -1974,6 +1975,16 @@ export class InventoryScreen {
     }
 
 
+    // Charakter drewna (1.32.0): polano - zapłon, żar i czas palenia,
+    // podpałka - temperatura (items/woodNotes.js).
+
+    fireNote(type) {
+
+        return fireNotes(type).map((text) => el('div', 'inv-tooltip-note', text));
+
+    }
+
+
     // Podpowiedź: polska nazwa i nazwa bloku w komendach; na przepisie -
     // składniki (✔ masz, ✖ brakuje).
 
@@ -2112,7 +2123,7 @@ export class InventoryScreen {
             this.tooltip.replaceChildren(...this.itemTooltip(hovered));
         }
         else {
-            this.tooltip.replaceChildren(getItemLabel(label), el('span', 'inv-tooltip-id', label), ...this.freshNote(hovered));
+            this.tooltip.replaceChildren(getItemLabel(label), el('span', 'inv-tooltip-id', label), ...this.fireNote(label), ...this.freshNote(hovered));
         }
 
         this.placeTooltip(event);
@@ -2127,7 +2138,7 @@ export class InventoryScreen {
         const info = garmentInfo(item.type);
 
         if (!info) {
-            return [getItemLabel(item.type), el('span', 'inv-tooltip-id', item.type), ...this.freshNote(item)];
+            return [getItemLabel(item.type), el('span', 'inv-tooltip-id', item.type), ...this.fireNote(item.type), ...this.freshNote(item)];
         }
 
         return [

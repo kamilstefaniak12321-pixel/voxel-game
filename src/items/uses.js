@@ -16,7 +16,8 @@ import { RECIPES, GROUPS } from '../crafting/recipes.js';
 import { ITEM_TYPES, getItemLabel, getTool } from './ItemRegistry.js';
 import { getFood, getRoast, isDrink } from './foods.js';
 import { EFFECTS } from './effects.js';
-import { TINDERS, fuelWood } from '../game/CampfireState.js';
+import { TINDERS, fuelWood, tinderTemp, KINDLING, KINDLING_MAX, KINDLING_TEMP } from '../game/CampfireState.js';
+import { woodTraits } from '../blocks/woodTraits.js';
 import { driesInto } from './drying.js';
 import { isIngredient } from './cooking.js';
 import { spoilText } from './spoilage.js';
@@ -68,9 +69,16 @@ export function itemUses(type) {
     if (spoilText(type)) uses.push(spoilText(type));
     if (Object.hasOwn(TINDERS, type)) {
         const times = TINDERS[type];
-        uses.push(times > 1 ? `podpałka (${String(times).replace('.', ',')} ${Number.isInteger(times) ? 'razy' : 'raza'} szybsza od trawy)` : 'podpałka');
+        // Od 1.32.0 podpałka ma temperaturę: od niej zależy, które drewno się zajmie.
+        uses.push(`podpałka ${tinderTemp(type)}°` + (times > 1 ? ` (${String(times).replace('.', ',')} ${Number.isInteger(times) ? 'razy' : 'raza'} szybsza od trawy)` : ''));
     }
-    if (fuelWood(type)) uses.push('opał do ogniska');
+    if (type === KINDLING) uses.push(`rozpałka do ogniska (patyk dodaje podpałce ${KINDLING_TEMP}°, najwyżej ${KINDLING_MAX})`);
+    if (fuelWood(type)) {
+        // Charakter drewna (blocks/woodTraits.js).
+        const wood = woodTraits(fuelWood(type));
+        uses.push(`opał do ogniska: zapłon ${wood.ignite}°, żar ${wood.heat}°, polano pali się ${wood.burn} s`);
+        uses.push(wood.note);
+    }
     // Mokra glina (items/clay.js): schnie na słońcu.
     if (driesInto(type)) uses.push(`suszenie na słońcu: ${getItemLabel(driesInto(type))}`);
     // Włókna i ubrania (1.27.0, items/clothing.js).

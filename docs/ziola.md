@@ -56,12 +56,17 @@ Te same rzeczy barwią lampy (czerwona, zielona, niebieska, fioletowa).
 Ognisko rozpala się już nie tylko trawą. Lepsza podpałka skraca
 trzymanie startera ognia:
 
-| Podpałka | Rozpalanie |
-|---|---|
-| trawa (krótka, wysoka, wydmowa), trzcina | 5 sekund |
-| słoma | 4 sekundy |
-| kora brzozowa, gałązki porostu iglastego | ok. 3,3 sekundy |
-| **huba** | 2,5 sekundy |
+| Podpałka | Rozpalanie | Temperatura (od 1.32.0) |
+|---|---|---|
+| trawa (krótka, wysoka, wydmowa), trzcina | 5 sekund | 260° |
+| słoma | 4 sekundy | 260° |
+| kora brzozowa | ok. 3,3 sekundy | 330° |
+| gałązki porostu iglastego | ok. 3,3 sekundy | 280° |
+| **huba** | 2,5 sekundy | 280° |
+
+Od 1.32.0 od temperatury podpałki zależy, które drewno się od niej
+zajmie (dąb potrzebuje 320°) - opis i rozpałka z patyków:
+[ogniska.md](ogniska.md#rozpalanie-etapami).
 
 ## Pozostałe zastosowania
 

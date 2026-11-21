@@ -1,11 +1,15 @@
 # Drewno, ogień i ścinanie drzew - projekt
 
 > **Stan: projekt uzgodniony z Kamilem 21.11.2026 (odpowiedzi w rozdziale
-> 12). Nic z tego nie jest jeszcze w grze** - zaczynamy po fasoli
-> i grochu (1.31.0). Zarys jest Kamila; tu jest ułożony tak, żeby
-> pasował do tego, co gra już ma (ognisko, kora, nóż, pory roku, pogoda,
-> zimno, glina, meteoryty). Moje dodatki są oznaczone *(dodatek)*.
-> Wszystkie liczby to punkt wyjścia do strojenia w grze.
+> 12).** Zarys jest Kamila; tu jest ułożony tak, żeby pasował do tego,
+> co gra już ma (ognisko, kora, nóż, pory roku, pogoda, zimno, glina,
+> meteoryty). Moje dodatki są oznaczone *(dodatek)*. Wszystkie liczby to
+> punkt wyjścia do strojenia w grze.
+>
+> **W grze:** od **1.32.0** cechy gatunków (rozdział 1, bez wilgotności)
+> i ognisko z temperaturą (rozdział 2, bez deszczu i pochodni) - opis
+> tego, co działa: [ogniska.md](ogniska.md). Reszta czeka - kolejność
+> w rozdziale 11.
 
 ## W skrócie
 
@@ -87,7 +91,7 @@ i zaokrąglone pod grę.
 | Namorzyn | 8 | bardzo mokre | 320° | 940° | 155 s | najlepszy na węgiel drzewny |
 | Puchowiec | 1 | średnie | 250° | 600° | 35 s | lekki jak korek |
 | Jukka | 1 | suche | 240° | 600° | 35 s | włókniste, pali się chwilę |
-| Banian | 3 | mokre | 290° | 700° | 65 s | stoi na wielu pniach |
+| Figowiec (banian) | 3 | mokre | 290° | 700° | 65 s | stoi na wielu pniach |
 | Dracena | 2 | mokre | 300° | 640° | 55 s | czerwona żywica |
 
 ### Wilgotność
@@ -130,6 +134,10 @@ Dziś każde polano pali się 80 s i grzeje tak samo. Po zmianie:
 - **Polano zajmuje się, gdy ogień jest gorętszy niż jego zapłon.**
   Najpierw łapią łatwe (świerk, sosna, lipa), podnoszą temperaturę
   i wtedy zajmuje się dąb czy buk. Samego dębu trawą się nie rozpali.
+- *(dodatek, w grze od 1.32.0)* **Rozpałka z patyków**: patyk dołożony
+  do ułożonego stosu podnosi temperaturę podpałki o 60° (najwyżej dwa).
+  Dzięki temu nikt nie utknie z samym twardym drewnem - samouczek uczy
+  rozpalać tym, co rośnie obok. Podpałka → rozpałka → opał.
 - **Temperatura ogniska** = żar palących się polan. Od niej zależy:
   - **ciepło** przy ognisku (dziś zawsze +22°): lipa ok. +14°, sosna
     +18°, brzoza +22°, dąb +25°, oliwka +26°,
@@ -137,8 +145,10 @@ Dziś każde polano pali się 80 s i grzeje tak samo. Po zmianie:
   - później: **wypalanie gliny** (od 800°) i **wytop metalu** (od 1200° -
     tylko węgiel drzewny w dymarce).
 - **Czas**: polano pali się od 35 s (puchowiec) do 165 s (oliwka).
-- **Żar po ognisku** (dziś 90 s): po twardym drewnie trzyma kilka minut,
-  po miękkim kilkadziesiąt sekund. Na żar łatwo dołożyć i rozpalić od nowa.
+- **Żar po ognisku** (do 1.31.0 zawsze 90 s): po twardym drewnie trzyma
+  kilka minut, po miękkim kilkadziesiąt sekund. Na żar łatwo dołożyć
+  i rozpalić od nowa - w grze polano na gorącym żarze zajmuje się samo,
+  a nad żarem da się piec.
 - **Dym i iskry**: mokre drewno - gęsty biały dym; żywiczne - ciemny dym
   i iskry; osika i buk - prawie bez dymu.
 - **Zima i lato**: zimą dąb, buk, akacja - gorąco i żar do rana. Latem
@@ -418,17 +428,41 @@ drzewny** zamiast kłód.
 ## 9. Początek gry po zmianie
 
 Dziś pierwszy krok to "rozbij pień ręką". Gołą ręką drzewa się już nie
-zetnie, więc:
+zetnie, więc **pierwsze drewno bierze się z powalonego drzewa** (pomysł
+Kamila): starego pnia, który kiedyś sam upadł i leży w lesie.
 
-1. **Patyki**: z gałęzi leżących pod drzewami (nowy drobiazg na ziemi
-   w lasach) i czasem z liści zrywanych ręką.
+**Powalone drzewo**
+
+- Leży w każdym lesie co jakiś czas: pień miejscowego gatunku na ziemi,
+  kilka sterczących konarów, trochę mchu i hub. Przy miejscu startu
+  zawsze jedno jest w zasięgu wzroku.
+- To ten sam leżący pień, który gracz później sam położy siekierą -
+  najpierw poznaje obróbkę na bezpiecznym przykładzie, dopiero potem
+  ścinanie.
+- **Gołą ręką**: odłamuje się gałęzie (patyki) i zdziera korę
+  (podpałka). **Siekierą**: tnie się pień na kłody.
+- Drewno jest **suche** (leżało latami), więc pierwsze ognisko rozpala
+  się łatwo. Świeżo ścięte drzewo będzie mokre - gracz sam zobaczy
+  różnicę.
+- Drewna jest tyle, żeby starczyło na narzędzia, kozły i pierwsze
+  ognisko. Potem trzeba już ścinać.
+- *(dodatek)* Pień jest częściowo **spróchniały**: próchno to podpałka,
+  która długo się tli.
+- *(dodatek, później)* **Wichura** powala stare drzewa, więc leżące pnie
+  pojawiają się też w trakcie gry.
+
+**Kolejność na początku**
+
+1. **Patyki i kora**: z powalonego drzewa, gołą ręką.
 2. **Skały**: jak dziś.
 3. **Siekiera**: 3 skały i patyk, jak dziś.
-4. **Pierwsze drzewo**: cienki świerk, sosna albo brzoza - kilka ciosów.
-5. Konary → **kozły** → kłody → deski.
+4. **Kłody z powalonego pnia**: siekierą.
+5. **Pierwsze stojące drzewo**: cienki świerk, sosna albo brzoza - kilka
+   ciosów.
+6. Konary → **kozły** → kłody → deski.
 
-Samouczek dostaje nowe kroki: zbierz patyki, zrób siekierę, zetnij
-drzewo, potnij pień.
+Samouczek dostaje nowe kroki: znajdź powalone drzewo, zbierz patyki
+i korę, zrób siekierę, potnij pień, zetnij drzewo.
 
 ---
 
@@ -453,15 +487,18 @@ Każda część to osobna wersja, grywalna sama.
 
 | Wersja | Część | Co wchodzi |
 |---|---|---|
-| A | **Charakter drewna** | cechy gatunków, ognisko z temperaturą, wilgotność i suszenie, wypalające się pochodnie i łuczywo, deszcz a ognisko |
-| B | **Ścinanie** | drzewo-byt, ciosy i karb, upadek, leżący pień, konary, kozły, nowy początek gry i samouczek |
+| A1 | **Charakter drewna** - **1.32.0, w grze** | cechy gatunków, ognisko z temperaturą: rozpalanie etapami, rozpałka z patyków, czas palenia, ciepło, gotowanie, żar, dym i iskry |
+| A2 | **Wilgotność** | świeże drewno mokre, suszenie (stos, dach, słońce, ognisko), mokre drewno w ognisku, drewutnia |
+| A3 | **Pochodnie i deszcz** | wypalające się pochodnie, łuczywo, deszcz a ognisko |
+| B | **Ścinanie** | drzewo-byt, ciosy i karb, upadek, leżący pień, konary, kozły, **powalone drzewa na start** (rozdział 9), nowy samouczek |
 | C | **Narzędzia i kołysanie** | twardość skał, widoczne zużycie, kołysanie drzew |
 | D | **Dary pnia** | soki, żywice, guma, łyko - nacinanie nożem |
 | E | **Pożar** | płonące drzewa i trawa, piorun, popiół, zwęglone pnie |
 | F | **Metal meteorytowy** | węgiel drzewny, dymarka, narzędzia z meteorytu, olbrzymy |
 
 A jest najbezpieczniejsza (nie zmienia sposobu gry, od razu daje
-głębię). B jest największa i najtrudniejsza.
+głębię), dlatego jest podzielona na trzy mniejsze wersje - każdą da się
+sprawdzić osobno. B jest największa i najtrudniejsza.
 
 ---
 
@@ -472,9 +509,11 @@ Kamil wybrał wszystkie polecane warianty, a pochodnie mają się wypalać.
 1. **Kierunek upadku**: drzewo pada **od gracza**.
 2. **Kozły**: **nieobowiązkowe** - bez nich da się ciąć pień, ale trzy
    razy wolniej i z dwa razy szybszym zużyciem siekiery.
-3. **Gracz pod padającym drzewem**: tu nie było polecanego wariantu.
-   Przyjmuję **krótkie ogłuszenie** (jak utrata przytomności pod wodą) -
-   daje sens ostrzeżeniu przed upadkiem; do potwierdzenia przy części B.
+3. **Gracz pod padającym drzewem**: **ogłuszenie jak pod wodą, tylko
+   urwane** (decyzja Kamila). Bez powolnego ściemniania: nagle widok
+   skupia się na padającym drzewie, „ciach" i od razu ciemność. Dalej
+   jak przy utracie przytomności (świat nadrabia czas, gracz budzi się
+   obok).
 4. **Olbrzymy**: sekwoja i puchowiec tylko siekierą z metalu, baobabu
    nie da się ściąć.
 5. **Pożar a budowle**: na początek **nie płoną**; jest ustawienie
@@ -482,3 +521,7 @@ Kamil wybrał wszystkie polecane warianty, a pochodnie mają się wypalać.
 6. **Pochodnie**: **wypalają się** (rozdział 2), do tego łuczywo.
 7. **Kiedy**: najpierw fasola i groch (1.31.0), potem drewno - od
    części A.
+8. **Pierwsze drewno z powalonego drzewa** (pomysł Kamila, 21.11.2026):
+   opis w rozdziale 9. Wchodzi razem ze ścinaniem (część B). Do
+   ustalenia: czy gołą ręką da się z niego wziąć tylko gałęzie i korę
+   (polecane), czy także kłody, tylko wolno.

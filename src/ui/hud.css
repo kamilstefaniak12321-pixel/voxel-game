@@ -585,6 +585,9 @@ body.touch #breath {
 
 #blackout.on { opacity: 1; }
 
+/* Padające drzewo (1.36.0): ciemność od razu, bez ściemniania. */
+#blackout.cut { transition: none; }
+
 /* Sen (Sleep.js): napis na czarnym ekranie. */
 
 #blackout-text {

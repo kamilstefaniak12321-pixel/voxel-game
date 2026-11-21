@@ -1077,6 +1077,47 @@ export const ACHIEVEMENTS = [
         icon: 'kapok_firewood',
         on: 'fireDoused'
     },
+    // Ścinanie drzew (1.36.0).
+    {
+        id: 'first_felling',
+        tier: 'common',
+        title: 'Drzewooo!',
+        task: 'Zetnij drzewo siekierą: bij w pień, aż padnie.',
+        comment: 'Padło tam, gdzie miało. Mniej więcej.',
+        icon: 'axe',
+        on: 'treeFelled'
+    },
+    {
+        id: 'thick_trunk',
+        tier: 'common',
+        title: 'Z dwóch stron',
+        task: 'Zetnij drzewo o grubym pniu (2 × 2 albo grubszym) - trzeba je obejść.',
+        comment: 'Pierwszy karb to dopiero połowa roboty.',
+        icon: 'oak_log',
+        on: 'treeFelled',
+        when: (data) => data.width >= 2
+    },
+    {
+        id: 'eight_trees',
+        tier: 'rare',
+        title: 'Zna las od pnia',
+        task: 'Zetnij drzewa ośmiu różnych gatunków.',
+        comment: 'Każde pada inaczej. Każde tak samo głośno.',
+        icon: 'konar',
+        on: 'treeFelled',
+        when: (data, book) => book.collect('felled', data.species) >= 8
+    },
+    {
+        id: 'under_tree',
+        tier: 'rare',
+        title: 'Mówili, żeby nie stać',
+        task: 'Daj się przygnieść padającemu drzewu.',
+        comment: 'Drzewo pada od ciebie. Chyba że staniesz z drugiej strony.',
+        icon: 'spruce_log',
+        secret: true,
+        on: 'treeFelled',
+        when: (data) => data.crushed === true
+    },
     {
         id: 'first_roast',
         tier: 'common',
@@ -1615,7 +1656,9 @@ export const ACHIEVEMENTS = [
         comment: 'Ryby patrzyły. Żadna nie pomogła.',
         icon: 'water',
         secret: true,
-        on: 'blackout'
+        on: 'blackout',
+        // (Nie pod drzewem - to osobne osiągnięcie: under_tree.)
+        when: (data) => !data.tree
     },
 
     // --------------------------------------------------------

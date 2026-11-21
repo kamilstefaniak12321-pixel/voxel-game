@@ -20,6 +20,8 @@ import { isLiquidId, isSolidId } from '../blocks/BlockRegistry.js';
 import { DAY_LENGTH_MINUTES } from '../config.js';
 
 export const FADE_SECONDS = 1.6;
+// Ciemność po uderzeniu drzewa (bez ściemniania).
+export const CUT_SECONDS = 1.4;
 const HOURS_LOST = 2;
 
 // Brzeg: najlepiej w tej odległości od miejsca utonięcia (bloki).
@@ -83,14 +85,21 @@ export class Blackout {
         this.game = game;
         this.phase = null;
         this.left = 0;
+        this.abrupt = false;
+        this.tree = null;
     }
 
     get active() { return this.phase !== null; }
 
-    start() {
+    // tree (1.36.0): gracza przygniotło padające drzewo - obraz gaśnie
+    // OD RAZU (bez ściemniania), a gracz budzi się obok, w miejscu
+    // { x, y, z } (Felling.js).
+    start(tree = null) {
         if (this.active) return;
         this.phase = 'out';
-        this.left = FADE_SECONDS;
+        this.tree = tree;
+        this.abrupt = Boolean(tree);
+        this.left = tree ? CUT_SECONDS : FADE_SECONDS;
         this.game.stopMining?.();
         // Utrata przytomności przerywa sen (bez wyspania).
         this.game.sleep?.cancel();
@@ -105,6 +114,7 @@ export class Blackout {
             this.wake();
             this.phase = 'in';
             this.left = FADE_SECONDS;
+            this.abrupt = false;
             return true;
         }
         this.phase = null;
@@ -114,8 +124,12 @@ export class Blackout {
     // Pobudka na brzegu.
     wake() {
         const game = this.game, player = game.player;
-        const shore = findShore(game.world, player.pos.x, player.pos.y, player.pos.z);
-        if (shore) {
+        const tree = this.tree;
+        this.tree = null;
+        const shore = tree ? null : findShore(game.world, player.pos.x, player.pos.y, player.pos.z);
+        if (tree) {
+            player.pos.set(tree.x, tree.y, tree.z);
+        } else if (shore) {
             player.pos.set(shore.x, shore.y, shore.z);
         } else {
             // Nie ma lądu w pobliżu (otwarte morze): wynurzenie na powierzchnię.
@@ -132,8 +146,8 @@ export class Blackout {
             // Świat nie czekał (ogniska, rośliny - Game.advanceWorld).
             game.advanceWorld?.(HOURS_LOST / 24 * DAY_LENGTH_MINUTES * 60);
         }
-        game.achieve('blackout', { shore: Boolean(shore) });
-        game.onMessage?.(shore
+        game.achieve('blackout', { shore: Boolean(shore), tree: Boolean(tree) });
+        game.onMessage?.(tree ? 'Przygniotło cię padające drzewo. Budzisz się obok, wyczerpany.' : shore
             ? 'Straciłeś przytomność pod wodą. Budzisz się na brzegu, wyczerpany.'
             : 'Straciłeś przytomność pod wodą. Budzisz się wyczerpany.');
     }

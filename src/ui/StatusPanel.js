@@ -182,6 +182,8 @@ export class StatusPanel {
         this.heartRoot.classList.toggle('heart-limp', wellbeing.limping);
         // Czarny ekran: utrata przytomności albo sen (z napisem).
         const sleeping = Boolean(game.sleep?.lying);
+        // (cut - drzewo: ciemność od razu, bez ściemniania.)
+        this.blackout.classList.toggle('cut', Boolean(game.blackout?.abrupt));
         this.blackout.classList.toggle('on', game.blackout?.phase === 'out' || sleeping);
         this.blackout.classList.toggle('sleep', Boolean(game.sleep?.asleep));
         // W grze ze znajomymi noc mija dopiero, gdy śpią wszyscy.

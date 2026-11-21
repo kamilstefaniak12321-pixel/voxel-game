@@ -18,7 +18,7 @@ import {
     isSolidId
 } from '../blocks/BlockRegistry.js';
 import { waterUniforms } from '../rendering/BlockRenderData.js';
-import { getItemLabel, ITEM_TYPES } from '../items/ItemRegistry.js';
+import { getItemLabel, ITEM_TYPES, getTool } from '../items/ItemRegistry.js';
 import { itemUses } from '../items/uses.js';
 import { STACK_SIZE } from '../game/Inventory.js';
 import { BIOMES } from '../world/terrain/Biomes.js';
@@ -49,7 +49,7 @@ const FRESH_BAR_SAMPLES = [1, 0.8, 0.5, 0.25, 0.06];
 import { newPot, cookPot } from '../game/CookingState.js';
 import { newCampfire, addFirewood, FIRE_WOODS, fuelType, woodHeat, stackSeconds, emberSeconds, TINDER_TEMPS,
     KINDLING, KINDLING_MAX, KINDLING_TEMP, EMBER_HOT_SECONDS, EMBER_MAX_SECONDS, WARMTH_FROM, WARMTH_DEGREES } from '../game/CampfireState.js';
-import { WOOD_TRAITS } from '../blocks/woodTraits.js';
+import { WOOD_TRAITS, woodTraits } from '../blocks/woodTraits.js';
 import { barkType } from '../items/bark.js';
 import { seasonedWood, freshWet, wetOf, setWet, wetWord, wetIgnite, wetHeat, isWet, DRY_WET } from '../items/moisture.js';
 import { dryingRate, dryDaysLeft } from '../game/WoodDrying.js';
@@ -1885,6 +1885,74 @@ export const WORLD_COMMANDS = [
             }
 
             throw new CommandError('Użycie: /pochodnia | /pochodnia daj | /pochodnia paliwo <procent> | /pochodnia czas <minuty>');
+
+        }
+    },
+
+    {
+        name: 'scinanie',
+        aliases: ['zetnij', 'fell', 'felling'],
+        usage: '/scinanie | /scinanie zetnij [polnoc|poludnie|wschod|zachod] | /scinanie cios [liczba] | /scinanie siekiera',
+        description: 'Ścinanie drzew (1.36.0): bez słowa - co gra wie o drzewie pod celownikiem (gatunek, twardość, grubość pnia, ile ciosów i z ilu stron, ile kłód spadnie); "zetnij" kładzie je od razu (domyślnie tam, gdzie patrzysz); "cios" zadaje podaną liczbę ciosów siekierą bez czekania; "siekiera" daje siekierę.',
+
+        run(args, { game }) {
+
+            const word = simplify(args[0] ?? '');
+            const felling = game.felling;
+
+            if (['siekiera', 'axe', 'daj'].includes(word)) {
+                game.inventory.add('axe', 1);
+                return 'Dano siekierę. W trybie przygody LPM w pień żywego drzewa to cios - pień 2 × 2 tnij z dwóch stron.';
+            }
+
+            const hit = game.currentHit?.hit ? game.currentHit.block : null;
+            const info = hit ? felling.describe(hit.x, hit.y, hit.z) : null;
+            if (!info) throw new CommandError('Wyceluj w pień drzewa.');
+            const { scan } = info;
+            const name = TREE_SPECIES[scan.species].labels[0];
+            if (scan.blocked) return `${name}. ${scan.blocked === 'krzew' ? 'To krzew - nie pada, rąbie się go blok po bloku.' : 'Za grube na siekierę - nie da się go ściąć; bloki kopie się jak dotąd.'}`;
+            if (!scan.living) return `${name}. To nie jest żywe drzewo (bez korony albo nie stoi na ziemi) - kopie się go jak zwykły blok.`;
+            if (scan.prop) return `${name}. To podpora, nie główny pień - kopie się ją jak zwykły blok. Całość padnie po ścięciu głównego pnia.`;
+
+            if (!word) {
+                const traits = woodTraits(scan.species);
+                const done = info.notch ? ` Karb: ${info.notch.total} z ${info.notch.needed}.` : '';
+                return `${name} (żywe drzewo), twardość ${traits.hardness}. ${scan.trunk ? `Pień ${scan.width} × ${scan.width}` : 'Konar'}: ${info.needed} ciosów` +
+                    `${info.sides > 1 ? ` z ${info.sides} stron` : ''}.${done} Spadnie ${scan.falling.length} kłód, wysokość ${scan.top} bloków. ` +
+                    'Drzewo pada od ciebie - tam, gdzie patrzysz przy ostatnim ciosie.';
+            }
+
+            if (['zetnij', 'fell', 'poloz'].includes(word)) {
+                const sides = { polnoc: 'north', north: 'north', poludnie: 'south', south: 'south', wschod: 'east', east: 'east', zachod: 'west', west: 'west' };
+                const side = simplify(args[1] ?? '');
+                if (side && !sides[side]) throw new CommandError('Strona: polnoc, poludnie, wschod albo zachod.');
+                felling.notches.delete(scan.key);
+                felling.target = null;
+                const fall = felling.fell(scan, sides[side] ?? felling.lookDirection());
+                return scan.trunk ? `${name}: pada (${scan.falling.length} kłód, ${fall.leaves} liści). Pień ułoży się na ${fall.plan.length} blokach.`
+                    : `${name}: konar spada (${scan.falling.length} kłód).`;
+            }
+
+            if (['cios', 'ciosy', 'chop'].includes(word)) {
+                const count = args[1] === undefined ? 1 : Number(args[1]);
+                if (!(Number.isInteger(count) && count >= 1 && count <= 200)) throw new CommandError('Podaj liczbę ciosów od 1 do 200, np. /scinanie cios 5.');
+                if (game.mode !== 'adventure' || getTool(game.selectedBlock) !== 'axe') throw new CommandError('Ciosy działają w trybie przygody z siekierą w ręce (/scinanie siekiera).');
+                let given = 0;
+                for (; given < count; given++) {
+                    felling.cooldown = 0;
+                    const before = felling.notches.get(scan.key)?.total ?? 0;
+                    if (!felling.chop(game.currentHit, true, false)) break;
+                    const notch = felling.notches.get(scan.key);
+                    // Padło albo karb z tej strony jest pełny.
+                    if (!notch) { given++; break; }
+                    if (notch.total === before) break;
+                }
+                const notch = felling.notches.get(scan.key);
+                return notch ? `Ciosów: ${given}. Karb: ${notch.total} z ${notch.needed}${notch.sidesNeeded > 1 ? ` (z jednej strony najwyżej ${notch.limit})` : ''}.`
+                    : `Ciosów: ${given}. ${name} pada.`;
+            }
+
+            throw new CommandError('Użycie: /scinanie | /scinanie zetnij [strona] | /scinanie cios [liczba] | /scinanie siekiera');
 
         }
     },

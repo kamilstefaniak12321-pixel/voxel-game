@@ -287,6 +287,15 @@ export const ITEM_TYPES = {
         label: 'Ogarek pochodni',
         icon: 'torch_stub',
         category: 'swiatlo'
+    },
+
+    // Konar (1.36.0, game/Felling.js): gruba gałąź ze ściętego drzewa -
+    // na patyki (a od następnych wersji na kozły do cięcia pnia).
+    konar: {
+        name: 'Bough',
+        label: 'Konar',
+        icon: 'konar',
+        category: 'drewno'
     }
 
 };

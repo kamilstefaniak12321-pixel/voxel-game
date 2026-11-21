@@ -52,7 +52,7 @@ export function stateSystems(game) {
             save: (fire) => structuredClone(fire),
             restore: restoreCampfire,
             // Spalanie polan liczy każdy u siebie - podpis bez postępu.
-            sign: (fire) => JSON.stringify([fire.logs.map((log) => log.wood), fire.tinder, fire.phase, fire.ash,
+            sign: (fire) => JSON.stringify([fire.logs.map((log) => log.wood), fire.tinder, fire.kindling ?? 0, fire.phase, fire.ash,
                 Math.round(fire.ignition * 8), fire.embers > 0]),
             changed: () => game.campfires.version++
         },

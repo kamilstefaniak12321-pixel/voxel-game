@@ -101,13 +101,18 @@ Współrzędne można podawać względem gracza: `~` (tu, gdzie stoję),
 | `/niskie` | rośliny niskie (1.19.0, `docs/rosliny-niskie.md`): lista roślin i biomów, w których rosną |
 | `/niskie galeria` | przed tobą galeria: każda roślina w rzędzie, od lewej kolejne etapy (sadzonka, roślina, kwiaty, owoce), przy dyni młoda i dojrzała dynia, w ostatnim rzędzie torfowce i chrobotek (zmienia świat) |
 | `/niskie znajdz [roślina]` | najbliższa roślina niska we wczytanym terenie (np. `zurawina`, `brusznica`, `poziomka`, `dynia`): odległość i komenda `/tp` |
+| `/drewno` | charakter drewna (1.32.0, `docs/drewno.md`): zapłon, żar i czas palenia polana wszystkich 32 gatunków, od najłatwiejszego do rozpalenia |
+| `/drewno <gatunek>` | jeden gatunek (np. `/drewno dąb`): zapłon, żar, ciepło przy ogniu, czas palenia polana i stosu, żar po polanie, twardość |
+| `/drewno ognisko <gatunek> [zimne\|zar]` | dwa bloki przed tobą: płonące ognisko z tego drewna; `zimne` - sam ułożony stos (do prób z podpałką i patykami), `zar` - sam żar po ognisku (zmienia świat) |
+| `/drewno rzad` | pięć bloków przed tobą rząd dziesięciu płonących ognisk, od puchowca do oliwki - do porównania płomienia, dymu i iskier (zmienia świat) |
+| `/drewno zestaw [gatunek]` | do ekwipunku: 12 polan gatunku (domyślnie dąb), 6 polan świerka, trawa, kora dębu, sosny i brzozy, 4 patyki i starter ognia |
 | `/pnacza` | pnącza (1.30.0, `docs/pnacza.md`): winorośl, chmiel, kiwi, marakuja - wysokość, czym się sadzi, na czym rosną |
 | `/pnacza galeria` | przed tobą: mur z winoroślą, kratki z marakują, tyczki z chmielem i pergola z kiwi - wszystkie etapy (zmienia świat) |
 | `/pnacza grzadka` | grządka fasoli i grochu (1.31.0): wigwamy i tyczki z fasolą, siatki i chrust z grochem, na polu obie rośliny bez podpory - wszystkie etapy (zmienia świat) |
 | `/pnacza daj` | 16 kratek, 16 tyczek, 16 pergoli, 8 siatek, 8 chrustów, 4 wigwamy i po 8 owoców albo nasion do sadzenia (winogrona, szyszki chmielu, kiwi, marakuja, fasola, groch) |
 | `/pnacza znajdz [pnącze]` | najbliższe pnącze we wczytanym terenie (np. `chmiel`, `kiwi`): odległość i komenda `/tp` |
 | `/garnek` | gotowanie (1.20.0, `docs/gotowanie.md`): zestaw do ekwipunku - garnek z wodą, trzy miski, składniki, opał, kora i starter ognia; wypisuje potrawy |
-| `/garnek ognisko` | dwa bloki przed tobą staje płonące ognisko z garnkiem wody (zmienia świat) |
+| `/garnek ognisko` | dwa bloki przed tobą staje płonące ognisko (dąb, 920°) z garnkiem wody (zmienia świat) |
 | `/garnek gotuj` | od razu dogotowuje potrawy w garnkach do 16 bloków od ciebie (garnek musi mieć co najmniej dwa składniki) |
 | `/kalendarz` | kalendarz owocowania (1.21.0, `docs/pory-owocowania.md`): pora i dzień, co owocuje teraz i co w każdej porze roku |
 | `/sad` | opadłe owoce i zimowy rozwój roślin (1.22.0, `docs/sad.md`): ile roślin daje większy plon, z ilu zbierano w tym roku; pod celownikiem - o ile owoców więcej daje roślina |

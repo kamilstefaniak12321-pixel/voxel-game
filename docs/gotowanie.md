@@ -19,7 +19,9 @@ gotowane potrawy są najmocniejszym posiłkiem.
 5. **Czekaj.** Nad płonącym ogniem potrawa gotuje się **45 sekund**. Nie
    trzeba trzymać przycisku ani stać obok; nad garnkiem unosi się para
    i słychać bulgotanie. Dorzucony składnik zaczyna gotowanie od nowa.
-   Gdy ogień zgaśnie, gotowanie czeka na następny.
+   Gdy ogień zgaśnie, gotowanie czeka na następny. Od 1.32.0 45 sekund
+   to czas nad ogniem o temperaturze 800°: nad dębem (920°) wychodzi
+   ok. 39 sekund, nad lipą (650°) ok. 55 ([ogniska.md](ogniska.md)).
 6. **Nabierz miską** (PPM z glinianą miską): tyle porcji, ile było
    składników. Zjedzona potrawa **oddaje miskę**.
 7. **Pusty garnek zdejmij pustą ręką** (PPM) i nabierz wody od nowa.

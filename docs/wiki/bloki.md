@@ -2,7 +2,7 @@
 
 > Ta strona jest generowana z kodu gry (`python tools/wiki.py`) - nie zmieniaj jej ręcznie, zmiany przepadną przy następnym generowaniu.
 
-Wersja gry **1.31.0** - 747 bloków (do tego 3505 odmian, których nie ma w ekwipunku, np. wieniec zawieszony na boku bloku). Czas kopania dotyczy trybu przygody; w kreatywnym bloki znikają od razu.
+Wersja gry **1.32.0** - 747 bloków (do tego 3505 odmian, których nie ma w ekwipunku, np. wieniec zawieszony na boku bloku). Czas kopania dotyczy trybu przygody; w kreatywnym bloki znikają od razu.
 
 [Ziemia](#ziemia) · [Skały](#skały) · [Drewno](#drewno) · [Budulec](#budulec) · [Rośliny](#rośliny) · [Światło](#światło) · [Meble i ozdoby](#meble-i-ozdoby)
 
@@ -370,8 +370,8 @@ Wersja gry **1.31.0** - 747 bloków (do tego 3505 odmian, których nie ma w ekwi
 
 | | Nazwa | W komendach | Najważniejsze |
 |---|---|---|---|
-| <img src="ikony/short_grass.png" width="32" height="32" alt=""> | **Krótka trawa** | `short_grass` | **Kopanie:** od razu<br>**Przydaje się do:** Słoma<br>**Służy też jako:** podpałka |
-| <img src="ikony/tall_grass.png" width="32" height="32" alt=""> | **Wysoka trawa** | `tall_grass` | **Kopanie:** od razu<br>**Przydaje się do:** Słoma<br>**Służy też jako:** podpałka |
+| <img src="ikony/short_grass.png" width="32" height="32" alt=""> | **Krótka trawa** | `short_grass` | **Kopanie:** od razu<br>**Przydaje się do:** Słoma<br>**Służy też jako:** podpałka 260° |
+| <img src="ikony/tall_grass.png" width="32" height="32" alt=""> | **Wysoka trawa** | `tall_grass` | **Kopanie:** od razu<br>**Przydaje się do:** Słoma<br>**Służy też jako:** podpałka 260° |
 | <img src="ikony/fern.png" width="32" height="32" alt=""> | **Paproć** | `fern` | **Kopanie:** od razu<br>**Przydaje się do:** Zielona lampa, Barwnik zielony |
 | <img src="ikony/clover.png" width="32" height="32" alt=""> | **Koniczyna** | `clover` | **Kopanie:** od razu<br>**Przydaje się do:** Zielona lampa, Barwnik zielony |
 | <img src="ikony/nettle.png" width="32" height="32" alt=""> | **Pokrzywa** | `nettle` | **Kopanie:** od razu<br>**Przydaje się do:** Kubek ziół wzmacniających, Zielona lampa, Barwnik zielony<br>**Służy też jako:** moczenie w wodzie (1,5 min): Moczona pokrzywa |
@@ -381,10 +381,10 @@ Wersja gry **1.31.0** - 747 bloków (do tego 3505 odmian, których nie ma w ekwi
 | <img src="ikony/chamomile.png" width="32" height="32" alt=""> | **Rumianek** | `chamomile` | **Kopanie:** od razu<br>**Przydaje się do:** Kubek ziół leczniczych, Wianek z kwiatów, Barwnik biały |
 | <img src="ikony/dandelion.png" width="32" height="32" alt=""> | **Mniszek** | `dandelion` | **Kopanie:** od razu<br>**Przydaje się do:** Wianek z kwiatów, Barwnik żółty |
 | <img src="ikony/moss_carpet.png" width="32" height="32" alt=""> | **Kępki mchu** | `moss_carpet` | **Kopanie:** od razu<br>**Przepis:** Kępki mchu x4<br>**Przydaje się do:** Mech |
-| <img src="ikony/reed.png" width="32" height="32" alt=""> | **Trzcina** | `reed` | **Kopanie:** od razu<br>**Przydaje się do:** Słoma<br>**Służy też jako:** podpałka |
+| <img src="ikony/reed.png" width="32" height="32" alt=""> | **Trzcina** | `reed` | **Kopanie:** od razu<br>**Przydaje się do:** Słoma<br>**Służy też jako:** podpałka 260° |
 | <img src="ikony/heather.png" width="32" height="32" alt=""> | **Wrzos** | `heather` | **Kopanie:** od razu<br>**Przydaje się do:** Fioletowa lampa, Wianek z kwiatów, Barwnik fioletowy |
 | <img src="ikony/crocus.png" width="32" height="32" alt=""> | **Krokus** | `crocus` | **Kopanie:** od razu<br>**Przydaje się do:** Fioletowa lampa, Wianek z kwiatów, Barwnik fioletowy |
-| <img src="ikony/dune_grass.png" width="32" height="32" alt=""> | **Piaskownica (trawa wydmowa)** | `dune_grass` | **Kopanie:** od razu<br>**Przydaje się do:** Słoma<br>**Służy też jako:** podpałka |
+| <img src="ikony/dune_grass.png" width="32" height="32" alt=""> | **Piaskownica (trawa wydmowa)** | `dune_grass` | **Kopanie:** od razu<br>**Przydaje się do:** Słoma<br>**Służy też jako:** podpałka 260° |
 | <img src="ikony/strawberry_sapling.png" width="32" height="32" alt=""> | **Sadzonka truskawki** | `strawberry_sapling` | **Kopanie:** od razu<br>**Rośnie:** w: Krzak truskawki<br>**Skąd:** zniszczony blok: Krzak truskawki; zniszczony blok: Krzak truskawki (kilka owoców); zniszczony blok: Krzak truskawki (pełen owoców); posadzony przedmiot: Truskawki |
 | <img src="ikony/strawberry_bush.png" width="32" height="32" alt=""> | **Krzak truskawki** | `strawberry_bush` | **Kopanie:** od razu<br>**Daje:** Sadzonka truskawki<br>**Rośnie:** w: Krzak truskawki (kilka owoców)<br>**Skąd:** wyrasta z: Sadzonka truskawki |
 | <img src="ikony/strawberry_bush_few.png" width="32" height="32" alt=""> | **Krzak truskawki (kilka owoców)** | `strawberry_bush_few` | **Kopanie:** od razu<br>**Daje:** Sadzonka truskawki<br>**Zbiór (PPM):** Truskawki 1-2<br>**Rośnie:** w: Krzak truskawki (pełen owoców)<br>**Skąd:** wyrasta z: Krzak truskawki |

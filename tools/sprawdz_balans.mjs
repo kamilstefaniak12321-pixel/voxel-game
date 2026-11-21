@@ -28,7 +28,7 @@ import assert from 'node:assert/strict';
 
 const { Wellbeing, SLEEP_PLACES, BREATH_SECONDS, LIMP_MAX, REST_START, NIGHT_FROM, CONDITION_START } = await import('../src/game/Wellbeing.js');
 const { FOODS, ROAST_SECONDS } = await import('../src/items/foods.js');
-const { CAMPFIRE_BURN_SECONDS, CAMPFIRE_IGNITE_SECONDS } = await import('../src/game/CampfireState.js');
+const { stackSeconds, CAMPFIRE_IGNITE_SECONDS } = await import('../src/game/CampfireState.js');
 const { DAY_LENGTH_MINUTES, START_TIME_OF_DAY, BREAK_SECONDS, TOOL_SPEED } = await import('../src/config.js');
 
 const REPORT = process.argv.includes('--raport');
@@ -199,9 +199,12 @@ function simulate(profile, { days = 1, eat = null, sleep = 'none', comfort = 0 }
     check(BREAK_SECONDS.wood / TOOL_SPEED <= 1 && BREAK_SECONDS.stone / TOOL_SPEED <= 1, 'Z narzędziem blok pęka w niecałą sekundę');
     between(ROAST_SECONDS, 3, 6, 'Pieczenie jednej sztuki');
     between(CAMPFIRE_IGNITE_SECONDS, 3, 7, 'Rozpalanie ogniska trawą');
-    // Ognisko ma starczyć na prawie całą noc (10 godzin gry).
+    // Ognisko a noc (10 godzin gry). Od 1.32.0 zależy od drewna: łatwe
+    // (świerk) starcza na ponad pół nocy, brzoza na całą, dąb z zapasem.
     const night = 10 / 24 * DAY;
-    between(CAMPFIRE_BURN_SECONDS / night, 0.8, 1.3, 'Ognisko pali się przez taką część nocy');
+    between(stackSeconds('spruce') / night, 0.55, 1, 'Stos świerka pali się przez taką część nocy');
+    between(stackSeconds('birch') / night, 0.9, 1.5, 'Stos brzozy pali się przez taką część nocy');
+    between(stackSeconds('oak') / night, 1.3, 2.2, 'Stos dębu pali się przez taką część nocy');
 }
 
 console.log(`OK: strojenie liczb - ${checks} celów spełnionych (pierwsze minuty, zwykły dzień, sen, upadki, oddech, czasy).`);

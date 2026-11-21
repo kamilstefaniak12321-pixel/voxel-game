@@ -47,7 +47,10 @@ import { makeItem } from '../items/freshness.js';
 // Świeżość stosów z /psucie paski.
 const FRESH_BAR_SAMPLES = [1, 0.8, 0.5, 0.25, 0.06];
 import { newPot, cookPot } from '../game/CookingState.js';
-import { newCampfire, addFirewood } from '../game/CampfireState.js';
+import { newCampfire, addFirewood, FIRE_WOODS, fuelType, woodHeat, stackSeconds, emberSeconds, TINDER_TEMPS,
+    KINDLING, KINDLING_MAX, KINDLING_TEMP, EMBER_HOT_SECONDS, EMBER_MAX_SECONDS, WARMTH_FROM, WARMTH_DEGREES } from '../game/CampfireState.js';
+import { WOOD_TRAITS } from '../blocks/woodTraits.js';
+import { barkType } from '../items/bark.js';
 import { LOW_PLANTS, LOW_PLANT_NAMES, SPHAGNUM, lowPlantType, lowPlantInfo, LOW_STAGE_SECONDS, LOW_PLANT_FIRST_ID, LOW_PLANT_END_ID } from '../blocks/lowPlants.js';
 import { VINES, VINE_NAMES, VINE_FIRST_ID, VINE_END_ID, VINE_STAGE_SECONDS, vineType, vineInfoById } from '../blocks/vines.js';
 import { MOUNT_OFFSET } from '../game/VineGrowth.js';
@@ -190,6 +193,27 @@ function directionName(dx, dz) {
 
 // Kierunek patrzenia gracza zaokrąglony do osi X albo Z (do przodu)
 // i kierunek "w prawo" od niego.
+
+// Drewno po słowie gracza: nazwa z gry ("oak"), polska ("dąb") albo bez
+// ogonków ("dab").
+function woodByWord(word) {
+    const wanted = simplify(word ?? '');
+    return Object.keys(FIRE_WOODS).find((wood) => wood === wanted || FIRE_WOODS[wood].some((name) => simplify(name) === wanted)) ?? null;
+}
+
+// Ognisko do prób (/drewno ognisko, /drewno rzad): płonące, zimny stos
+// albo sam żar. Zwraca false, gdy nie ma na nie miejsca.
+function placeTestCampfire(world, game, x, y, z, wood, state = 'burning') {
+    if (!isSolidId(world.getBlockId(x, y - 1, z)) || world.getBlockId(x, y, z) !== 0) return false;
+    world.setBlock(x, y, z, 'campfire');
+    const fire = newCampfire(x, y, z);
+    if (state === 'embers') { fire.ash = true; fire.embers = EMBER_HOT_SECONDS * 2; }
+    else for (let i = 0; i < 6; i++) addFirewood(fire, wood);
+    if (state === 'burning') { fire.phase = 'burning'; fire.temp = woodHeat(wood); fire.lit = 5; }
+    game.campfires.fires.set(`${x},${y},${z}`, fire);
+    game.campfires.version++;
+    return true;
+}
 
 function lookAxes(player) {
 
@@ -1727,6 +1751,7 @@ export const WORLD_COMMANDS = [
                 const fire = newCampfire(x, y, z);
                 for (let i = 0; i < 6; i++) addFirewood(fire, 'oak');
                 fire.phase = 'burning';
+                fire.temp = woodHeat('oak');
                 fire.pot = newPot();
                 game.campfires.fires.set(`${x},${y},${z}`, fire);
                 game.campfires.version++;
@@ -1798,6 +1823,78 @@ export const WORLD_COMMANDS = [
             }
 
             throw new CommandError('Użycie: /niskie | /niskie galeria | /niskie znajdz [roślina]');
+
+        }
+    },
+
+    {
+        name: 'drewno',
+        aliases: ['wood', 'opal'],
+        usage: '/drewno | /drewno <gatunek> | /drewno ognisko <gatunek> [zimne|zar] | /drewno rzad | /drewno zestaw [gatunek]',
+        description: 'Charakter drewna (1.32.0): zapłon, żar i czas palenia każdego gatunku, ognisko do prób (płonące, zimny stos albo sam żar), rząd ognisk do porównania dymu i iskier, zestaw do rozpalania.',
+
+        run(args, { player, world, game }) {
+
+            const word = simplify(args[0] ?? '');
+            const name = (wood) => FIRE_WOODS[wood][0];
+            const warmth = (wood) => Math.round((woodHeat(wood) - WARMTH_FROM) / WARMTH_DEGREES);
+            const minutes = (seconds) => String(Math.round(seconds / 6) / 10).replace('.', ',');
+
+            if (!word) {
+                const woods = Object.keys(FIRE_WOODS).sort((a, b) => WOOD_TRAITS[a].ignite - WOOD_TRAITS[b].ignite);
+                return `Drewno (${woods.length}) - zapłon/żar/polano, od najłatwiejszego: ` +
+                    woods.map((wood) => `${name(wood)} ${WOOD_TRAITS[wood].ignite}°/${WOOD_TRAITS[wood].heat}°/${WOOD_TRAITS[wood].burn} s`).join('; ') +
+                    `. Podpałka daje ${Math.min(...Object.values(TINDER_TEMPS))}-${Math.max(...Object.values(TINDER_TEMPS))}°, patyk-rozpałka +${KINDLING_TEMP}° (najwyżej ${KINDLING_MAX}). ` +
+                    'Jeden gatunek: /drewno dąb. Ognisko do prób: /drewno ognisko dąb. Porównanie: /drewno rzad. Zestaw: /drewno zestaw.';
+            }
+
+            if (['ognisko', 'fire'].includes(word)) {
+                const wood = woodByWord(args[1]);
+                if (!wood) throw new CommandError(`Podaj gatunek, np. /drewno ognisko dąb. Lista: /drewno.`);
+                const variant = simplify(args[2] ?? '');
+                const state = ['zimne', 'stos', 'cold'].includes(variant) ? 'stack' : ['zar', 'embers'].includes(variant) ? 'embers' : 'burning';
+                if (args[2] !== undefined && state === 'burning') throw new CommandError('Trzecie słowo: zimne (sam stos) albo zar (sam żar).');
+                const { forwardX, forwardZ } = lookAxes(player);
+                const x = Math.floor(player.pos.x) + forwardX * 2, z = Math.floor(player.pos.z) + forwardZ * 2, y = Math.floor(player.pos.y);
+                if (!placeTestCampfire(world, game, x, y, z, wood, state)) {
+                    throw new CommandError('Dwa bloki przed tobą musi być wolne miejsce na stałym gruncie.');
+                }
+                if (state === 'stack') return `Zimny stos: ${name(wood)} (zapłon ${WOOD_TRAITS[wood].ignite}°). Dołóż podpałkę, w razie potrzeby patyki, i rozpal starterem. Zestaw: /drewno zestaw.`;
+                if (state === 'embers') return 'Sam żar po ognisku. Dołóż polano - łatwe drewno zajmie się samo.';
+                return `Płonące ognisko: ${name(wood)} - żar ${woodHeat(wood)}° (ok. +${warmth(wood)}°C przy ogniu), pełny stos pali się ${minutes(stackSeconds(wood))} min, żar po nim ${minutes(Math.min(EMBER_MAX_SECONDS, 6 * emberSeconds(wood)))} min.`;
+            }
+
+            if (['rzad', 'row', 'porownanie'].includes(word)) {
+                // Obok siebie: od słabego do najgorętszego, z iskrami i z dymem.
+                const woods = ['kapok', 'linden', 'spruce', 'larch', 'pine', 'olcha', 'birch', 'beech', 'oak', 'olive'];
+                const { forwardX, forwardZ, rightX, rightZ } = lookAxes(player);
+                const y = Math.floor(player.pos.y);
+                const placed = [];
+                woods.forEach((wood, i) => {
+                    const side = (i - (woods.length - 1) / 2) * 3;
+                    const x = Math.floor(player.pos.x) + forwardX * 5 + Math.round(rightX * side);
+                    const z = Math.floor(player.pos.z) + forwardZ * 5 + Math.round(rightZ * side);
+                    if (placeTestCampfire(world, game, x, y, z, wood)) placed.push(wood);
+                });
+                if (placed.length === 0) throw new CommandError('Pięć bloków przed tobą musi być wolny, równy teren.');
+                return `Ogniska od lewej: ${placed.map((wood) => `${name(wood)} ${woodHeat(wood)}°`).join(', ')}. Modrzew strzela iskrami, olcha i sosna dymią, buk prawie nie.`;
+            }
+
+            if (['zestaw', 'daj', 'kit'].includes(word)) {
+                const wood = args[1] === undefined ? 'oak' : woodByWord(args[1]);
+                if (!wood) throw new CommandError(`Nie znam drewna "${args[1]}". Lista: /drewno.`);
+                const kit = [[fuelType(wood), 12], [fuelType('spruce'), 6], ['short_grass', 2], [barkType('oak'), 2], [barkType('pine'), 2], [barkType('birch'), 2],
+                    [KINDLING, 4], ['fire_starter', 1]];
+                for (const [type, count] of kit) game.inventory.add(type, count);
+                return `Dano: ${kit.map(([type, count]) => `${count} × ${getItemLabel(type).toLowerCase()}`).join(', ')}. ` +
+                    'Ułóż 6 polan, dołóż podpałkę (trawa 260°, kora 280°, kora sosny 300°, kora brzozy 330°), przy twardym drewnie patyk, i rozpal starterem.';
+            }
+
+            const wood = woodByWord(args[0]);
+            if (!wood) throw new CommandError('Użycie: /drewno | /drewno <gatunek> | /drewno ognisko <gatunek> [zimne|zar] | /drewno rzad | /drewno zestaw [gatunek]');
+            const traits = WOOD_TRAITS[wood];
+            return `${name(wood)[0].toUpperCase() + name(wood).slice(1)}: zapłon ${traits.ignite}°, żar ${traits.heat}° (ok. +${warmth(wood)}°C przy ogniu), polano pali się ${traits.burn} s ` +
+                `(pełny stos ${minutes(stackSeconds(wood))} min), żar po polanie ${emberSeconds(wood)} s, twardość ${traits.hardness}/10 - ${traits.note}.`;
 
         }
     },

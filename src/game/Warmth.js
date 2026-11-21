@@ -10,8 +10,11 @@
 //   wiatr       - na otwartym terenie wiatr wychładza (WIND_CHILL na
 //                 każdy blok/s prędkości, najwyżej WIND_MAX),
 //   woda        - w wodzie jest o WATER_CHILL zimniej,
-//   ogień       - płonące ognisko grzeje mocno (FIRE_HEAT tuż przy nim,
-//                 nic dalej niż FIRE_REACH), żar - o połowę słabiej,
+//   ogień       - płonące ognisko grzeje mocno, nic dalej niż FIRE_REACH.
+//                 Od 1.32.0 tym mocniej, im gorętszy ogień (fireWarmth
+//                 w game/CampfireState.js: lipa ok. +14°C, sosna +18,
+//                 brzoza +22, dąb +25); zapadający się stos - o połowę
+//                 słabiej, sam żar po ognisku - kilka stopni,
 //   pochodnie   - pochodnia i lampa grzeją trochę (TORCH_HEAT tuż obok,
 //                 nic dalej niż TORCH_REACH), razem najwyżej BLOCKS_MAX;
 //                 rozgrzany meteoryt też,
@@ -32,17 +35,20 @@ import { getBlockId } from '../blocks/BlockRegistry.js';
 import { isTorchId } from '../blocks/torches.js';
 import { tempAtHeight } from '../weather/WeatherField.js';
 import { wornWarmth } from '../items/clothing.js';
+import { fireWarmth, WARMTH_FROM, WARMTH_DEGREES, COLLAPSE_WARMTH } from './CampfireState.js';
 
 export const SHELTER = 5;
 export const WIND_CHILL = 0.7;
 export const WIND_MAX = 6;
 export const WATER_CHILL = 6;
 
-export const FIRE_HEAT = 22;
+// Ciepło przy ognisku o temperaturze 850° (brzoza) - punkt odniesienia;
+// ile grzeje konkretne ognisko, liczy fireWarmth.
+export const FIRE_HEAT = (850 - WARMTH_FROM) / WARMTH_DEGREES;
 export const FIRE_CLOSE = 1.5;
 export const FIRE_REACH = 7;
 // Żarzące się (zapadające) ognisko grzeje słabiej.
-export const EMBERS = 0.5;
+export const EMBERS = COLLAPSE_WARMTH;
 
 export const TORCH_HEAT = 6;
 export const TORCH_REACH = 4;
@@ -74,10 +80,10 @@ export function falloff(heat, distance, close, reach) {
 export function fireHeat(fires, x, y, z) {
     let heat = 0;
     for (const fire of fires?.values?.() ?? []) {
-        const strength = fire.phase === 'burning' ? 1 : fire.phase === 'collapsing' ? EMBERS : 0;
-        if (!strength) continue;
+        const warmth = fireWarmth(fire);
+        if (!warmth) continue;
         const distance = Math.hypot(fire.x + 0.5 - x, (fire.y + 0.5 - y) * 1.5, fire.z + 0.5 - z);
-        heat += strength * falloff(FIRE_HEAT, distance, FIRE_CLOSE, FIRE_REACH);
+        heat += falloff(warmth, distance, FIRE_CLOSE, FIRE_REACH);
     }
     return heat;
 }

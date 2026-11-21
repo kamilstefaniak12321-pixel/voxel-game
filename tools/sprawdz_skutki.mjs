@@ -217,7 +217,7 @@ function lake({ radius = 20, shore = true, size = 96 } = {}) {
 // --- Pieczenie nad ogniskiem (prawdziwe Campfires) ----------------------------------------
 {
     const campfire = getBlockId('campfire');
-    const setup = (phase, { mode = 'adventure', item = { type: 'jablon_jablko', count: 3 } } = {}) => {
+    const setup = (phase, { mode = 'adventure', item = { type: 'jablon_jablko', count: 3 }, ...options } = {}) => {
         const notices = [], sounds = [], achieved = [];
         const inventory = Inventory.load({}, mode);
         for (let i = 0; i < inventory.slots.length; i++) inventory.set(i, null);
@@ -228,8 +228,10 @@ function lake({ radius = 20, shore = true, size = 96 } = {}) {
             get selectedBlock() { return inventory.selectedItem?.type ?? null; },
             currentHit: { hit: true, block: { x: 4, y: 10, z: 4, type: 'campfire' } } };
         const fires = new Campfires(game, []);
-        fires.fires.set('4,10,4', { x: 4, y: 10, z: 4, logs: Array.from({ length: 6 }, () => ({ wood: 'oak', burn: 0.2 })),
-            tinder: null, phase, ignition: 0, collapse: 0, embers: 0, ash: false });
+        // Sosna oścista daje równo 800° - zwykłą szybkość pieczenia (od
+        // 1.32.0 gorętszy ogień piecze szybciej).
+        fires.fires.set('4,10,4', { x: 4, y: 10, z: 4, logs: Array.from({ length: 6 }, () => ({ wood: options.wood ?? 'bristlecone', burn: 0.2 })),
+            tinder: null, phase, ignition: 0, collapse: 0, embers: options.embers ?? 0, ash: false });
         return { game, fires, inventory, notices, sounds, achieved };
     };
     const hold = (f, seconds, holding = true) => { for (let t = 0; t < seconds; t += 0.1) f.fires.updateRoast(0.1, holding, f.game.currentHit); };
@@ -255,6 +257,15 @@ function lake({ radius = 20, shore = true, size = 96 } = {}) {
     ok(cold.notices.at(-1).includes('musi płonąć'), 'podpowiedź przy zimnym ognisku');
     const embers = setup('collapsing'); hold(embers, ROAST_SECONDS + 0.2);
     equal(count(embers, 'roasted_apple'), 1, 'na żarze też się piecze');
+    // 1.32.0: dąb piecze szybciej niż lipa, a na żarze po ognisku piecze
+    // się wolniej.
+    const oak = setup('burning', { wood: 'oak' }); hold(oak, ROAST_SECONDS * 0.9);
+    const linden = setup('burning', { wood: 'linden' }); hold(linden, ROAST_SECONDS * 0.9);
+    equal([count(oak, 'roasted_apple'), count(linden, 'roasted_apple')], [1, 0], 'gorętszy ogień piecze szybciej');
+    const glow = setup('unlit', { embers: 300 }); hold(glow, ROAST_SECONDS + 0.2);
+    equal(count(glow, 'roasted_apple'), 0, 'na samym żarze piecze się wolniej');
+    hold(glow, ROAST_SECONDS);
+    equal(count(glow, 'roasted_apple'), 1, 'ale się upiecze');
     // Truskawki, patrzenie obok, tryb kreatywny, pełny ekwipunek.
     const berry = setup('burning', { item: { type: 'strawberry', count: 2 } }); hold(berry, ROAST_SECONDS + 1);
     equal(count(berry, 'strawberry'), 2, 'truskawek się nie piecze');

@@ -118,10 +118,13 @@ const manifest = textureManifest();
 
 // --- Stan garnka ----------------------------------------------------------------------
 
-const burning = (logs = 6) => {
+// Od 1.32.0 szybkość gotowania zależy od temperatury ognia. Sosna
+// oścista daje równo 800° - zwykłą szybkość - więc na niej liczy się czas.
+const burning = (logs = 6, wood = 'bristlecone') => {
     const fire = S.newCampfire(4, 10, 4);
-    for (let i = 0; i < logs; i++) S.addFirewood(fire, 'oak');
+    for (let i = 0; i < logs; i++) S.addFirewood(fire, wood);
     fire.phase = 'burning';
+    fire.temp = S.woodHeat(wood);
     return fire;
 };
 
@@ -168,13 +171,31 @@ const burning = (logs = 6) => {
     cold.pot = P.newPot(); P.addIngredient(cold.pot, 'acorn'); P.addIngredient(cold.pot, 'acorn');
     check(S.updateCampfire(cold, 500) === null && cold.pot.progress === 0, 'Na zimnym ognisku nic się nie ugotuje');
     const weak = burning(1);
-    weak.logs[0].burn = 1 - 10 / S.CAMPFIRE_LOG_SECONDS;
+    weak.logs[0].burn = 1 - 10 / S.logSeconds('bristlecone');
     weak.pot = P.newPot(); P.addIngredient(weak.pot, 'acorn'); P.addIngredient(weak.pot, 'acorn');
     check(S.updateCampfire(weak, 500) === null && Math.abs(weak.pot.progress - 10 / COOK_SECONDS) < 1e-6 && weak.phase === 'unlit', 'Ogień zgasł po 10 s - garnek ugotował się tylko przez 10 s');
     equal(S.campfireDrops(weak).filter((drop) => drop.type !== POT_WATER), [{ type: 'acorn', count: 2 }], 'Rozebrane ognisko oddaje garnek i składniki');
     check(S.campfireDrops(weak).some((drop) => drop.type === POT_WATER), 'Garnek też');
 
-    // Przespana noc: ognisko pali się 8 minut, potrawa zdąży.
+    // Gorętszy ogień gotuje szybciej (1.32.0): dąb 920°, lipa 650°.
+    check(S.cookSpeed(800) === 1 && S.cookSpeed(S.woodHeat('oak')) > 1.1 && S.cookSpeed(S.woodHeat('linden')) < 0.85 && S.cookSpeed(0) === 0.4 && S.cookSpeed(2000) === 1.25, 'Szybkość gotowania rośnie z temperaturą (w granicach)');
+    const cookTime = (wood) => {
+        const fire = burning(6, wood);
+        fire.pot = P.newPot(); P.addIngredient(fire.pot, 'acorn'); P.addIngredient(fire.pot, 'acorn');
+        let time = 0;
+        while (!fire.pot.dish && time < 600) { S.updateCampfire(fire, 0.5); time += 0.5; }
+        return time;
+    };
+    const onOak = cookTime('oak'), onPine = cookTime('bristlecone'), onLinden = cookTime('linden');
+    check(onOak < onPine && onPine < onLinden && Math.abs(onPine - COOK_SECONDS) <= 0.5, `Na dębie gotuje się szybciej niż na lipie (${onOak} s, ${onPine} s, ${onLinden} s)`);
+    // Jeden długi skok czasu gotuje tyle samo, co wiele klatek.
+    const skip = burning(6, 'oak'), frames = burning(6, 'oak');
+    for (const fire of [skip, frames]) { fire.temp = 300; fire.pot = P.newPot(); P.addIngredient(fire.pot, 'acorn'); P.addIngredient(fire.pot, 'acorn'); }
+    S.updateCampfire(skip, 20);
+    for (let i = 0; i < 200; i++) S.updateCampfire(frames, 0.1);
+    check(Math.abs(skip.pot.progress - frames.pot.progress) < 0.01 && Math.abs(skip.temp - frames.temp) < 1, `Skok czasu i klatki: ten sam postęp (${skip.pot.progress.toFixed(3)} i ${frames.pot.progress.toFixed(3)})`);
+
+    // Przespana noc: ognisko pali się kilka minut, potrawa zdąży.
     const night = burning();
     night.pot = P.newPot(); P.addIngredient(night.pot, 'zucchini'); P.addIngredient(night.pot, 'pumpkin_slice');
     check(S.updateCampfire(night, 3600) === 'vegetable_stew' && night.pot.portions === 2, 'Przespany czas: potrawa gotowa rano');
